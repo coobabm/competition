@@ -1,0 +1,158 @@
+[
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/ReferenceConsistencyTests.cs",
+    "sha256": "f87b884f15c10952d69399f2d55bd1b07a59d3f55bd86d79ac59d15c76fe55e0"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/TestKit.cs",
+    "sha256": "b8a3fd3b5ff966ad17d037e9a8c43e585fddb06f95ad410dfe444a9466957c06"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/AcceptanceTests.cs",
+    "sha256": "e3898ab11f07f20d7cc091d2c29c0c3662f2c5cd674928343471312a986e23a4"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/Lingguang.Core.Tests.asmdef",
+    "sha256": "915e57b6091beaef90a873650a7dad29a65eb0e750854b16795f792443c9aaf2"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/AcceptanceV05Tests.cs",
+    "sha256": "05297d4fc5e2fd1663ff8819485fb9e351285c4cb9c6f1f70628bdd23540ee89"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/EmergenceBench.cs",
+    "sha256": "94ee1ee9657a1171ed2b5752b2a96b47f4ca878e417b23b97f5c1bf20789408c"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/ReferenceCases.txt",
+    "sha256": "4011b1ca9c0ffdacd3edd7c25d1a0e82689f4cf783a795b5d27def797912d541"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/ExtraTests.cs",
+    "sha256": "e583bedb52393ecfe460a1ba54f44d5a24b2ebb881cc2b0eaa4a99792077cf32"
+  },
+  {
+    "path": "Assets/Lingguang/Tests/EditMode/RuleV05Tests.cs",
+    "sha256": "79203cd6fa9606b8067b74e76a0aeaab9979f25a7ce079164ba52c7080c0c924"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Lingguang.Core.asmdef",
+    "sha256": "03878aef3734bbfb4f943280596cceca73e18746b9feb60ddb48b918b3cd262a"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Rules/PatternRules.cs",
+    "sha256": "a0b5eaef1e0f84e6a328b129704f59df74caa27efc7d3abcce403f8e513a0f53"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Rules/BoardRules.cs",
+    "sha256": "d91f20410e7151200ce3dbb905df9354b7a6a45a44ec7aacca3ae2013245a8c5"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Rules/EffectQuery.cs",
+    "sha256": "0a71954e41851bb402b6b0d53959ba151148bf02cc943127612e29f978f9b7ec"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Rules/Lifecycle.cs",
+    "sha256": "aa9050768baa92132eda77108fb88e9bacc1664fb54da70af7f5e3865988cf44"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Config/Effects.cs",
+    "sha256": "e7733a3aafb21357eff730ef273b39ee1c5aaaa9a9797afa698114919110ab32"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Config/BoardLayout.cs",
+    "sha256": "d2fb6f89fa3ffbaf89d25f5e00f98fb4d274fef490e9610cd914f0258b58a738"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Config/GameConfig.cs",
+    "sha256": "87a2f95e005b3bb3d75c2c7c969ddf8e45680d34cc0f094191997dc58e848f44"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Model/Board.cs",
+    "sha256": "26deb7cc39783df5369f8945bd7309b9a870ff88a8d48e47b7fe557c320ea85b"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Model/GameState.cs",
+    "sha256": "2a8ce0b41669786f368400dcfb968d0f2ab5e25d160aebfa18b7bb3f3de81d2f"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Model/HexTypes.cs",
+    "sha256": "dfe5ad145f94714b39b7d0d7b5bc78803dc07930594c29f461ade48d1d3a5d85"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Model/Rng.cs",
+    "sha256": "7ff8b5185671cf81855c973972f3229a3ddf045dccee29741c2bae5332c82b6d"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Model/Entities.cs",
+    "sha256": "3172d8d45fbbfbb7542fed7a34979e50a377db19fcbd6a5d01c0af1276c5d22d"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Sim/Simulator.cs",
+    "sha256": "6a0ce7e3f2b3cbf61036d752c416ee31b872250f30b3512712e0297b5feedae8"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/Sim/SimEvent.cs",
+    "sha256": "71582a48e463044cdd581c1cceea1826ba8eeae6eb9e4ea60234b831c4a98dfb"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/Core/GameSession.cs",
+    "sha256": "5f30ba2aa91202bce136a72ee26b2f33e38f6f8e30626795bec4974cde8e6e8d"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/UnityBridge/BoardLayoutAsset.cs",
+    "sha256": "5abff65b3c3156edf8affb23398fbc3539cd7d06767b8a67da3d64e694f606cc"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/UnityBridge/ConfigHotReloader.cs",
+    "sha256": "548a6776a788a24d1aebd9093dd89fc3fc028fbf25a07919a8968e02e707dfa7"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/UnityBridge/GameConfigAsset.cs",
+    "sha256": "dcd7ff6cd39f385e960cdf34d85b561b93e30a5373bf07f88fd615702e9b00f2"
+  },
+  {
+    "path": "Assets/Lingguang/Runtime/UnityBridge/Lingguang.UnityBridge.asmdef",
+    "sha256": "efee49112139ec854a35296b9757574e86b09d10046159aeeb88cfcf1c688841"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Implementation/DotnetHarness/Tests/Lingguang.Core.Tests.csproj",
+    "sha256": "9b79b81b40952e8b6ba73d05d2dc0cc9c3f34e3ed72b37b5b7f5909b20063a5d"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Implementation/DotnetHarness/Core/Lingguang.Core.csproj",
+    "sha256": "de1ede8b4528b5248fa019c7ba969ca821541b292d52943de591305e755c7bb7"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Implementation/实现说明.md",
+    "sha256": "b48198e17758773d11b387d8d1d0dc4450a7afd5d9205d3a6dcd28fcc860f355"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/board_ref.py",
+    "sha256": "eda30f47581e8e6dbeff2c875c03cafb0355904da8fd3dae8512e2397302dd53"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/sim.py",
+    "sha256": "6ff8048fc9ea9b9751413161eb36d3b4b73f903e539f1fe9de377756419c83d2"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/README.md",
+    "sha256": "2cb862ff066860747577c3dea11b870f76ab656168a32c1e34cc058adcaf402b"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/bench.py",
+    "sha256": "bec01208a23bd53fb1b75c441f703b375fb344218e453ab6b3d3a4dfa1bb573a"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/board_bench.py",
+    "sha256": "1ad4cb775b63d4c8a4f05d3da95534c8e24533a9197eee6fd5c8fc7c8e6896d6"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/Benchmark/灵光规则基准测试/ReferenceCases.txt",
+    "sha256": "4011b1ca9c0ffdacd3edd7c25d1a0e82689f4cf783a795b5d27def797912d541"
+  },
+  {
+    "path": "Documentation/Lingguang-v0.6/实现说明.md",
+    "sha256": "b48198e17758773d11b387d8d1d0dc4450a7afd5d9205d3a6dcd28fcc860f355"
+  }
+]

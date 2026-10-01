@@ -1,0 +1,8075 @@
+# 由 board_ref.py 生成，勿手改。flags LEAK_STORED=0 LEAK_LAST=0 COUNT_WHOLE_BEAT=1
+case 0
+glow 3 0 cone 0
+glow 4 0 conduct 1
+glow 5 0 conv 1
+glow 6 0 conduct 5
+glow 2 1 conduct 5
+glow 3 1 cone 1
+glow 4 1 conv 3
+glow 5 1 conv 5
+glow 6 1 cone 0
+glow 7 1 conduct 5
+glow 3 2 cone 0
+glow 4 2 conduct 0
+glow 5 2 conduct 2
+glow 6 2 cone 4
+glow 7 2 conv 3
+glow 8 2 cone 1
+glow 9 2 conduct 0
+glow 0 3 conduct 3
+glow 1 3 conduct 0
+glow 2 3 conduct 5
+glow 3 3 conduct 0
+glow 5 3 conduct 1
+glow 6 3 conduct 2
+glow 9 3 cone 5
+glow 2 4 conduct 3
+glow 3 4 cone 1
+glow 4 4 conduct 3
+glow 6 4 cone 5
+glow 2 5 conduct 4
+glow 3 5 conduct 0
+glow 6 5 cone 1
+glow 7 5 conduct 1
+glow 4 6 conduct 2
+round
+confirm 3 1 3 4
+fire 0 0 3 1
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 4
+fire 0 2 3 3
+fire 0 2 3 5
+fire 0 3 4 2
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 3 3 1
+count 3 3 4 2 1
+count 3 4 2 3 1
+count 3 4 2 5 1
+count 3 4 4 4 1
+count 4 4 3 5 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 2 3 3
+fire 0 3 4 2
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 2 3 3 2
+count 3 3 4 2 2
+count 3 4 2 3 1
+count 3 4 2 5 1
+count 3 4 4 4 1
+count 4 4 3 5 1
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 3 5
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 2 3 3 2
+count 3 3 4 2 2
+count 3 4 2 3 2
+count 3 4 2 5 2
+count 3 4 4 4 2
+count 4 4 3 5 2
+round
+confirm 6 2
+confirm 3 4
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 5 3
+fire 1 0 3 4
+fire 1 1 2 3
+fire 1 1 2 5
+fire 1 1 4 4
+fire 1 2 3 5
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 2 3 3 2
+count 3 3 4 2 2
+count 3 4 2 3 3
+count 3 4 2 5 3
+count 3 4 4 4 3
+count 4 4 3 5 3
+count 5 2 5 3 1
+count 6 2 5 2 1
+count 6 2 6 1 1
+count 6 2 6 3 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 2 3 3
+fire 0 3 4 2
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 3 3 3
+count 3 3 4 2 3
+count 3 4 2 3 3
+count 3 4 2 5 3
+count 3 4 4 4 3
+count 4 4 3 5 3
+count 5 2 5 3 1
+count 6 2 5 2 1
+count 6 2 6 1 1
+count 6 2 6 3 1
+round
+confirm 6 2 3 1
+fire 0 0 3 1
+fire 0 0 6 2
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 3 3
+fire 0 2 5 3
+fire 0 3 4 2
+count 3 1 3 0 4
+count 3 1 3 2 4
+count 3 2 3 3 4
+count 3 3 4 2 4
+count 3 4 2 3 3
+count 3 4 2 5 3
+count 3 4 4 4 3
+count 4 4 3 5 3
+count 5 2 5 3 2
+count 6 2 5 2 2
+count 6 2 6 1 2
+count 6 2 6 3 2
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 5 3
+count 3 1 3 0 4
+count 3 1 3 2 4
+count 3 2 3 3 4
+count 3 3 4 2 4
+count 3 4 2 3 3
+count 3 4 2 5 3
+count 3 4 4 4 3
+count 4 4 3 5 3
+count 5 2 5 3 3
+count 6 2 5 2 3
+count 6 2 6 1 3
+count 6 2 6 3 3
+round
+confirm 3 4
+confirm 3 1
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 3 5
+fire 1 0 3 1
+fire 1 1 3 0
+fire 1 1 3 2
+fire 1 2 3 3
+fire 1 3 4 2
+count 3 1 3 0 5
+count 3 1 3 2 5
+count 3 2 3 3 5
+count 3 3 4 2 5
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 4 4 3 5 4
+count 5 2 5 3 3
+count 6 2 5 2 3
+count 6 2 6 1 3
+count 6 2 6 3 3
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 2 3 3
+fire 0 3 4 2
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 3 3 6
+count 3 3 4 2 6
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 4 4 3 5 4
+count 5 2 5 3 3
+count 6 2 5 2 3
+count 6 2 6 1 3
+count 6 2 6 3 3
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 3 5
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 3 3 6
+count 3 3 4 2 6
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 4 4 3 5 5
+count 5 2 5 3 3
+count 6 2 5 2 3
+count 6 2 6 1 3
+count 6 2 6 3 3
+round
+confirm 3 1 6 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 4 2
+fire 0 0 6 2
+fire 0 1 4 1
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 4 2
+fire 0 2 5 3
+count 3 1 3 0 7
+count 3 1 3 2 7
+count 3 1 4 1 1
+count 3 2 3 3 7
+count 3 3 4 2 7
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 4 1 4 2 1
+count 4 2 4 1 1
+count 4 4 3 5 5
+count 5 2 5 3 4
+count 6 2 5 2 4
+count 6 2 6 1 4
+count 6 2 6 3 4
+round
+confirm 3 1
+confirm 6 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 4 2
+fire 0 1 4 1
+fire 0 2 4 2
+fire 1 0 6 2
+fire 1 1 5 2
+fire 1 1 6 1
+fire 1 1 6 3
+fire 1 2 5 3
+count 3 1 3 0 8
+count 3 1 3 2 8
+count 3 1 4 1 2
+count 3 2 3 3 8
+count 3 3 4 2 8
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 4 1 4 2 2
+count 4 2 4 1 2
+count 4 4 3 5 5
+count 5 2 5 3 5
+count 6 2 5 2 5
+count 6 2 6 1 5
+count 6 2 6 3 5
+round
+confirm 3 4 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 2
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 1
+fire 0 1 4 4
+fire 0 2 3 5
+fire 0 2 4 2
+count 3 1 3 0 9
+count 3 1 3 2 9
+count 3 1 4 1 3
+count 3 2 3 3 9
+count 3 3 4 2 9
+count 3 4 2 3 6
+count 3 4 2 5 6
+count 3 4 4 4 6
+count 4 1 4 2 3
+count 4 2 4 1 3
+count 4 4 3 5 6
+count 5 2 5 3 5
+count 6 2 5 2 5
+count 6 2 6 1 5
+count 6 2 6 3 5
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 5 3
+count 3 1 3 0 9
+count 3 1 3 2 9
+count 3 1 4 1 3
+count 3 2 3 3 9
+count 3 3 4 2 9
+count 3 4 2 3 6
+count 3 4 2 5 6
+count 3 4 4 4 6
+count 4 1 4 2 3
+count 4 2 4 1 3
+count 4 4 3 5 6
+count 5 2 5 3 6
+count 6 2 5 2 6
+count 6 2 6 1 6
+count 6 2 6 3 6
+round
+confirm 3 4
+fire 0 0 2 3
+fire 0 0 2 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+count 3 1 3 0 9
+count 3 1 3 2 9
+count 3 1 4 1 3
+count 3 2 3 3 9
+count 3 3 4 2 9
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 3
+count 4 2 4 1 3
+count 4 4 3 5 7
+count 5 2 5 3 6
+count 6 2 5 2 6
+count 6 2 6 1 6
+count 6 2 6 3 6
+round
+confirm 6 2
+confirm 3 1
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 3 3
+fire 1 0 4 2
+fire 1 1 4 1
+fire 1 2 4 2
+count 3 1 3 0 10
+count 3 1 3 2 10
+count 3 1 4 1 4
+count 3 2 3 3 10
+count 3 3 4 2 10
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 4
+count 4 2 4 1 4
+count 4 4 3 5 7
+count 5 2 5 3 7
+count 6 2 5 2 7
+count 6 2 6 1 7
+count 6 2 6 3 7
+round
+confirm 6 2 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 4 2
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 1 4 1
+fire 0 2 4 2
+count 3 1 3 0 11
+count 3 1 3 2 11
+count 3 1 4 1 5
+count 3 2 3 3 11
+count 3 3 4 2 11
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 5
+count 4 2 4 1 5
+count 4 4 3 5 7
+count 5 2 5 3 8
+count 6 2 5 2 8
+count 6 2 6 1 8
+count 6 2 6 3 8
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+count 3 1 3 0 11
+count 3 1 3 2 11
+count 3 1 4 1 5
+count 3 2 3 3 11
+count 3 3 4 2 11
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 5
+count 4 2 4 1 5
+count 4 4 3 5 7
+count 5 2 5 3 9
+count 6 2 5 2 9
+count 6 2 6 1 9
+count 6 2 6 3 9
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+count 3 1 3 0 11
+count 3 1 3 2 11
+count 3 1 4 1 5
+count 3 2 3 3 11
+count 3 3 4 2 11
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 5
+count 4 2 4 1 5
+count 4 4 3 5 7
+count 5 2 5 3 10
+count 6 2 5 2 10
+count 6 2 6 1 10
+count 6 2 6 3 10
+round
+confirm 3 1
+confirm 6 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 4 2
+fire 0 1 4 1
+fire 0 2 4 2
+fire 1 0 5 2
+fire 1 0 5 3
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 6 3
+count 3 1 3 0 12
+count 3 1 3 2 12
+count 3 1 4 1 6
+count 3 2 3 3 12
+count 3 3 4 2 12
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 4 1 4 2 6
+count 4 2 4 1 6
+count 4 4 3 5 7
+count 5 2 5 3 11
+count 6 2 5 2 11
+count 6 2 6 1 11
+count 6 2 6 3 11
+case 1
+glow 4 0 cone 0
+glow 5 0 conduct 1
+glow 6 0 conduct 5
+glow 4 1 cone 0
+glow 3 2 conduct 4
+glow 5 2 cone 5
+glow 8 2 cone 3
+glow 9 2 conduct 4
+glow 1 3 conduct 3
+glow 2 3 cone 4
+glow 3 3 conduct 2
+glow 4 3 conv 1
+glow 5 3 conv 1
+glow 6 3 conduct 3
+glow 8 3 conv 0
+glow 2 4 conduct 4
+glow 3 4 conduct 2
+glow 4 4 cone 3
+glow 5 4 conduct 0
+glow 4 5 conv 0
+glow 5 5 conduct 1
+glow 7 5 conduct 0
+glow 4 6 conduct 3
+glow 5 6 conduct 2
+round
+confirm 4 0 5 0
+fire 0 0 4 0
+fire 0 0 5 0
+fire 0 1 4 1
+fire 0 1 6 0
+count 4 0 4 1 1
+count 5 0 6 0 1
+round
+confirm 5 0 2 3
+fire 0 0 2 3
+fire 0 0 5 0
+fire 0 1 3 2
+fire 0 1 3 4
+fire 0 1 6 0
+count 2 3 3 2 1
+count 2 3 3 4 1
+count 4 0 4 1 1
+count 5 0 6 0 2
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+count 2 3 3 2 1
+count 2 3 3 4 1
+count 4 0 4 1 2
+count 5 0 6 0 2
+round
+confirm 2 3
+confirm 5 0
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 4
+fire 1 0 5 0
+fire 1 1 6 0
+count 2 3 3 2 2
+count 2 3 3 4 2
+count 4 0 4 1 2
+count 5 0 6 0 3
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 4
+count 2 3 3 2 3
+count 2 3 3 4 3
+count 4 0 4 1 2
+count 5 0 6 0 3
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+count 2 3 3 2 3
+count 2 3 3 4 3
+count 4 0 4 1 3
+count 5 0 6 0 3
+round
+confirm 2 3 5 0
+fire 0 0 2 3
+fire 0 0 5 0
+fire 0 1 3 2
+fire 0 1 3 4
+fire 0 1 6 0
+count 2 3 3 2 4
+count 2 3 3 4 4
+count 4 0 4 1 3
+count 5 0 6 0 4
+round
+confirm 2 3
+confirm 2 3
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 4
+fire 1 0 2 3
+fire 1 1 3 2
+fire 1 1 3 4
+count 2 3 3 2 6
+count 2 3 3 4 6
+count 4 0 4 1 3
+count 5 0 6 0 4
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 1 6 0
+count 2 3 3 2 6
+count 2 3 3 4 6
+count 4 0 4 1 3
+count 5 0 6 0 5
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 1 6 0
+count 2 3 3 2 6
+count 2 3 3 4 6
+count 4 0 4 1 3
+count 5 0 6 0 6
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+count 2 3 3 2 7
+count 2 3 3 4 7
+count 4 0 4 1 3
+count 5 0 6 0 6
+round
+confirm 5 0
+confirm 4 0
+fire 0 0 5 0
+fire 0 0 6 0
+fire 1 0 4 0
+fire 1 1 4 1
+count 2 3 3 2 7
+count 2 3 3 4 7
+count 4 0 4 1 4
+count 5 0 6 0 7
+round
+confirm 5 0 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 5 0
+fire 0 0 6 0
+count 2 3 3 2 8
+count 2 3 3 4 8
+count 4 0 4 1 4
+count 5 0 6 0 8
+round
+confirm 2 3 5 0
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 5 0
+fire 0 0 6 0
+count 2 3 3 2 9
+count 2 3 3 4 9
+count 4 0 4 1 4
+count 5 0 6 0 9
+round
+confirm 5 0 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 5 0
+fire 0 0 6 0
+count 2 3 3 2 10
+count 2 3 3 4 10
+count 4 0 4 1 4
+count 5 0 6 0 10
+round
+confirm 5 0
+confirm 2 3
+fire 0 0 5 0
+fire 0 0 6 0
+fire 1 0 2 3
+fire 1 0 3 2
+fire 1 0 3 4
+count 2 3 3 2 11
+count 2 3 3 4 11
+count 4 0 4 1 4
+count 5 0 6 0 11
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+count 2 3 3 2 11
+count 2 3 3 4 11
+count 4 0 4 1 5
+count 5 0 6 0 11
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+count 2 3 3 2 12
+count 2 3 3 4 12
+count 4 0 4 1 5
+count 5 0 6 0 11
+round
+confirm 2 3 5 0
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 5 0
+fire 0 0 6 0
+count 2 3 3 2 13
+count 2 3 3 4 13
+count 4 0 4 1 5
+count 5 0 6 0 12
+round
+confirm 5 0
+confirm 2 3
+fire 0 0 5 0
+fire 0 0 6 0
+fire 1 0 2 3
+fire 1 0 3 2
+fire 1 0 3 4
+count 2 3 3 2 14
+count 2 3 3 4 14
+count 4 0 4 1 5
+count 5 0 6 0 13
+case 2
+glow 3 0 conduct 1
+glow 4 0 conduct 1
+glow 5 0 cone 5
+glow 2 1 conduct 0
+glow 3 1 conduct 5
+glow 4 1 conduct 2
+glow 5 1 cone 5
+glow 6 1 conv 4
+glow 0 2 cone 4
+glow 1 2 cone 0
+glow 2 2 conduct 0
+glow 3 2 conv 4
+glow 5 2 conduct 3
+glow 6 2 cone 4
+glow 7 2 conduct 0
+glow 8 2 conduct 3
+glow 9 2 conduct 0
+glow 0 3 conduct 0
+glow 3 3 cone 0
+glow 4 3 conduct 3
+glow 6 3 conduct 1
+glow 8 3 conduct 4
+glow 2 4 conduct 0
+glow 3 4 conduct 5
+glow 4 4 conduct 3
+glow 5 4 conv 0
+glow 6 4 conduct 3
+glow 2 5 conduct 5
+glow 3 5 cone 5
+glow 4 5 conduct 0
+glow 5 5 conduct 3
+glow 5 6 conduct 3
+round
+confirm 3 5
+fire 0 0 3 5
+fire 0 1 3 4
+fire 0 1 4 5
+count 3 5 3 4 1
+count 3 5 4 5 1
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 3
+count 3 5 3 4 1
+count 3 5 4 5 1
+count 6 2 5 2 1
+count 6 2 6 3 1
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 5 2
+count 3 5 3 4 1
+count 3 5 4 5 1
+count 5 1 5 0 1
+count 5 1 5 2 1
+count 6 2 5 2 1
+count 6 2 6 3 1
+round
+confirm 6 2
+confirm 3 5
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 3
+fire 1 0 3 5
+fire 1 1 3 4
+fire 1 1 4 5
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 1 5 0 1
+count 5 1 5 2 1
+count 6 2 5 2 2
+count 6 2 6 3 2
+round
+confirm 5 1 6 2
+fire 0 0 5 1
+fire 0 0 6 2
+fire 0 1 5 0
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 3
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 2 5 2 3
+count 6 2 6 1 1
+count 6 2 6 3 3
+round
+confirm 6 2 3 5
+fire 0 0 3 5
+fire 0 0 6 2
+fire 0 1 3 4
+fire 0 1 4 5
+fire 0 1 5 2
+fire 0 1 6 3
+count 3 5 3 4 3
+count 3 5 4 5 3
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 2 5 2 4
+count 6 2 6 1 1
+count 6 2 6 3 4
+round
+confirm 3 5
+fire 0 0 3 5
+fire 0 1 3 4
+fire 0 1 4 5
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 2 5 2 4
+count 6 2 6 1 1
+count 6 2 6 3 4
+round
+confirm 6 2
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 3
+fire 1 0 6 2
+fire 1 1 5 2
+fire 1 1 6 1
+fire 1 1 6 3
+fire 1 2 5 1
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 1 5 1 1
+count 6 2 5 2 6
+count 6 2 6 1 2
+count 6 2 6 3 6
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 6 2
+fire 0 0 6 3
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 1 5 1 1
+count 6 2 5 2 7
+count 6 2 6 1 2
+count 6 2 6 3 7
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 6 2
+fire 0 0 6 3
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 1 5 0 2
+count 5 1 5 2 2
+count 5 1 6 1 1
+count 6 1 5 1 1
+count 6 2 5 2 8
+count 6 2 6 1 2
+count 6 2 6 3 8
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 5 2
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 1 5 0 3
+count 5 1 5 2 3
+count 6 1 5 1 1
+count 6 2 5 2 8
+count 6 2 6 1 2
+count 6 2 6 3 8
+round
+confirm 5 1
+confirm 3 5
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 5 2
+fire 1 0 3 5
+fire 1 1 3 4
+fire 1 1 4 5
+count 3 5 3 4 5
+count 3 5 4 5 5
+count 5 1 5 0 4
+count 5 1 5 2 4
+count 6 1 5 1 1
+count 6 2 5 2 8
+count 6 2 6 1 2
+count 6 2 6 3 8
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 5 2
+count 3 5 3 4 5
+count 3 5 4 5 5
+count 5 1 5 0 5
+count 5 1 5 2 5
+count 6 1 5 1 1
+count 6 2 5 2 8
+count 6 2 6 1 2
+count 6 2 6 3 8
+round
+confirm 6 2 3 5
+fire 0 0 3 5
+fire 0 0 5 2
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 1 3 4
+fire 0 1 4 5
+count 3 5 3 4 6
+count 3 5 4 5 6
+count 5 1 5 0 5
+count 5 1 5 2 5
+count 6 2 5 2 9
+count 6 2 6 3 9
+round
+confirm 5 1 3 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 5 2
+count 3 5 3 4 7
+count 3 5 4 5 7
+count 5 1 5 0 6
+count 5 1 5 2 6
+count 6 2 5 2 9
+count 6 2 6 3 9
+round
+confirm 3 5
+confirm 3 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 5
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 1 5 0 6
+count 5 1 5 2 6
+count 6 2 5 2 9
+count 6 2 6 3 9
+round
+confirm 5 1 6 2
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 1 6 1
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 1 5 0 7
+count 5 1 5 2 7
+count 5 1 6 1 1
+count 6 2 5 2 10
+count 6 2 6 1 1
+count 6 2 6 3 10
+round
+confirm 5 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 5 2
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 1 5 0 8
+count 5 1 5 2 8
+count 5 1 6 1 1
+count 6 2 5 2 10
+count 6 2 6 1 1
+count 6 2 6 3 10
+round
+confirm 5 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 5 2
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 1 5 0 9
+count 5 1 5 2 9
+count 5 1 6 1 1
+count 6 2 5 2 10
+count 6 2 6 1 1
+count 6 2 6 3 10
+round
+confirm 5 1
+confirm 3 5
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 5 2
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 5
+count 3 5 3 4 10
+count 3 5 4 5 10
+count 5 1 5 0 10
+count 5 1 5 2 10
+count 5 1 6 1 1
+count 6 2 5 2 10
+count 6 2 6 1 1
+count 6 2 6 3 10
+case 3
+glow 3 0 conduct 5
+glow 4 0 conduct 3
+glow 5 0 conduct 3
+glow 6 0 conduct 2
+glow 3 1 conduct 5
+glow 5 1 conduct 4
+glow 6 1 conduct 5
+glow 7 1 conduct 3
+glow 0 2 conduct 5
+glow 2 2 conduct 1
+glow 4 2 conduct 1
+glow 5 2 conduct 1
+glow 7 2 conduct 5
+glow 8 2 conduct 0
+glow 0 3 conduct 5
+glow 1 3 conduct 3
+glow 2 3 conduct 5
+glow 3 3 conduct 4
+glow 4 3 conduct 3
+glow 8 3 cone 3
+glow 9 3 cone 4
+glow 2 4 cone 3
+glow 3 4 conduct 5
+glow 4 4 conduct 3
+glow 6 4 cone 0
+glow 2 5 conduct 5
+glow 3 5 conduct 3
+glow 5 5 cone 2
+glow 7 5 conduct 0
+glow 4 6 conduct 4
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 3 0
+count 3 1 3 0 1
+count 4 0 3 1 1
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 3 0
+count 3 1 3 0 2
+count 4 0 3 1 2
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 3 0
+count 3 1 3 0 3
+count 4 0 3 1 3
+round
+confirm 4 0
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 3 0
+fire 1 0 4 0
+fire 1 1 3 1
+fire 1 2 3 0
+count 3 1 3 0 5
+count 4 0 3 1 5
+round
+confirm 8 3 6 0
+fire 0 0 6 0
+fire 0 0 8 3
+fire 0 1 6 1
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 1 3 0 5
+count 4 0 3 1 5
+count 6 0 6 1 1
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 4 0 6 0
+fire 0 0 4 0
+fire 0 0 6 0
+fire 0 1 3 1
+fire 0 1 6 1
+fire 0 2 3 0
+count 3 1 3 0 6
+count 4 0 3 1 6
+count 6 0 6 1 2
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 1 3 0 7
+count 4 0 3 1 7
+count 6 0 6 1 2
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 8 3
+confirm 6 0
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+fire 1 0 6 0
+fire 1 1 6 1
+count 3 1 3 0 7
+count 4 0 3 1 7
+count 6 0 6 1 3
+count 8 3 8 2 2
+count 8 3 9 3 2
+round
+confirm 4 0 8 3
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 1 3 0 8
+count 4 0 3 1 8
+count 6 0 6 1 3
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 1 3 0 9
+count 4 0 3 1 9
+count 6 0 6 1 3
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 1 3 0 10
+count 4 0 3 1 10
+count 6 0 6 1 3
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 8 3
+confirm 6 0
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+fire 1 0 6 0
+fire 1 1 6 1
+count 3 1 3 0 10
+count 4 0 3 1 10
+count 6 0 6 1 4
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 4 0 8 3
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 1 3 0 11
+count 4 0 3 1 11
+count 6 0 6 1 4
+count 8 3 8 2 5
+count 8 3 9 3 5
+round
+confirm 8 3 6 0
+fire 0 0 6 0
+fire 0 0 8 3
+fire 0 1 6 1
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 1 3 0 11
+count 4 0 3 1 11
+count 6 0 6 1 5
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 1 3 0 12
+count 4 0 3 1 12
+count 6 0 6 1 5
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 6 0
+confirm 4 0
+fire 0 0 6 0
+fire 0 1 6 1
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 4 0
+count 3 1 3 0 13
+count 4 0 3 1 13
+count 6 0 6 1 6
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 0 6 1
+count 3 1 3 0 13
+count 4 0 3 1 13
+count 6 0 6 1 7
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 0 6 1
+count 3 1 3 0 13
+count 4 0 3 1 13
+count 6 0 6 1 8
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 1 3 0 14
+count 4 0 3 1 14
+count 6 0 6 1 8
+count 8 3 8 2 6
+count 8 3 9 3 6
+round
+confirm 8 3
+confirm 8 3
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 3
+fire 1 0 8 2
+fire 1 0 8 3
+fire 1 0 9 3
+count 3 1 3 0 14
+count 4 0 3 1 14
+count 6 0 6 1 8
+count 8 3 8 2 8
+count 8 3 9 3 8
+case 4
+glow 3 0 conv 4
+glow 4 0 cone 5
+glow 5 0 cone 1
+glow 6 0 conduct 5
+glow 3 1 cone 0
+glow 4 1 cone 1
+glow 5 1 conduct 0
+glow 7 1 conduct 0
+glow 0 2 conduct 5
+glow 1 2 conv 4
+glow 2 2 cone 5
+glow 3 2 conv 0
+glow 4 2 conduct 3
+glow 6 2 cone 3
+glow 7 2 conduct 1
+glow 8 2 cone 0
+glow 9 2 conv 4
+glow 0 3 conduct 2
+glow 1 3 conduct 3
+glow 4 3 conduct 5
+glow 5 3 cone 4
+glow 6 3 conduct 3
+glow 8 3 conv 5
+glow 9 3 conduct 3
+glow 2 4 conduct 2
+glow 3 4 conduct 0
+glow 4 4 conduct 3
+glow 6 4 cone 3
+glow 2 5 conv 0
+glow 3 5 conduct 1
+glow 4 5 conduct 1
+glow 5 5 conduct 4
+glow 6 5 cone 0
+glow 4 6 conduct 5
+glow 5 6 cone 2
+round
+confirm 5 3 4 1
+fire 0 0 4 1
+fire 0 0 5 3
+fire 0 1 4 0
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 6 2
+fire 0 1 6 4
+fire 0 2 5 5
+fire 0 2 6 0
+fire 0 2 7 2
+fire 0 3 4 5
+count 4 1 4 0 1
+count 4 1 4 2 1
+count 4 1 5 1 1
+count 5 1 6 0 1
+count 5 3 4 3 1
+count 5 3 6 2 1
+count 5 3 6 4 1
+count 5 5 4 5 1
+count 6 2 7 2 1
+count 6 4 5 5 1
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 4 0
+fire 0 1 4 2
+fire 0 1 5 1
+fire 0 2 6 0
+count 4 1 4 0 2
+count 4 1 4 2 2
+count 4 1 5 1 2
+count 5 1 6 0 2
+count 5 3 4 3 1
+count 5 3 6 2 1
+count 5 3 6 4 1
+count 5 5 4 5 1
+count 6 2 7 2 1
+count 6 4 5 5 1
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 4 0
+fire 0 1 4 2
+fire 0 1 5 1
+fire 0 2 6 0
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 5 1 6 0 3
+count 5 3 4 3 1
+count 5 3 6 2 1
+count 5 3 6 4 1
+count 5 5 4 5 1
+count 6 2 7 2 1
+count 6 4 5 5 1
+round
+confirm 5 3
+confirm 5 3
+fire 0 0 5 3
+fire 0 1 4 3
+fire 0 1 6 2
+fire 0 1 6 4
+fire 0 2 4 2
+fire 0 2 5 1
+fire 0 2 5 5
+fire 0 2 7 2
+fire 0 3 4 5
+fire 0 3 6 0
+fire 1 0 5 3
+fire 1 1 4 3
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 4 3 4 2 1
+count 5 1 6 0 4
+count 5 3 4 3 3
+count 5 3 6 2 2
+count 5 3 6 4 2
+count 5 5 4 5 2
+count 6 2 5 1 1
+count 6 2 7 2 2
+count 6 4 5 5 2
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 4 3
+fire 0 2 6 0
+fire 0 3 4 2
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 4 3 4 2 2
+count 5 1 6 0 5
+count 5 3 4 3 4
+count 5 3 6 2 2
+count 5 3 6 4 2
+count 5 5 4 5 2
+count 6 2 5 1 2
+count 6 2 5 3 1
+count 6 2 7 2 3
+count 6 4 5 5 2
+round
+confirm 5 3 6 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 6 4
+fire 0 1 7 2
+fire 0 2 4 2
+fire 0 2 5 5
+fire 0 2 6 0
+fire 0 3 4 5
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 4 3 4 2 3
+count 5 1 6 0 6
+count 5 3 4 3 5
+count 5 3 6 2 2
+count 5 3 6 4 3
+count 5 5 4 5 3
+count 6 2 5 1 3
+count 6 2 5 3 1
+count 6 2 7 2 4
+count 6 4 5 5 3
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 6 0
+fire 0 1 7 2
+fire 0 2 4 3
+fire 0 2 6 4
+fire 0 3 4 2
+fire 0 3 5 5
+fire 0 4 4 5
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 4 3 4 2 4
+count 5 1 6 0 7
+count 5 3 4 3 6
+count 5 3 6 2 2
+count 5 3 6 4 4
+count 5 5 4 5 4
+count 6 2 5 1 4
+count 6 2 5 3 2
+count 6 2 7 2 5
+count 6 4 5 5 4
+round
+confirm 6 2
+confirm 5 3
+fire 0 0 6 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 6 0
+fire 0 1 7 2
+fire 0 2 4 2
+fire 0 2 6 4
+fire 0 3 5 5
+fire 0 4 4 5
+fire 1 0 4 3
+fire 1 0 5 3
+fire 1 1 4 2
+fire 1 1 6 4
+fire 1 2 5 5
+fire 1 3 4 5
+count 4 1 4 0 3
+count 4 1 4 2 3
+count 4 1 5 1 3
+count 4 3 4 2 6
+count 5 1 6 0 8
+count 5 3 4 3 8
+count 5 3 6 2 2
+count 5 3 6 4 6
+count 5 5 4 5 6
+count 6 2 5 1 5
+count 6 2 5 3 3
+count 6 2 7 2 6
+count 6 4 5 5 6
+round
+confirm 4 1 6 2
+fire 0 0 4 1
+fire 0 0 6 2
+fire 0 0 7 2
+fire 0 1 4 0
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 1 6 0
+fire 0 1 6 4
+count 4 1 4 0 4
+count 4 1 4 2 4
+count 4 1 5 1 4
+count 4 3 4 2 6
+count 5 1 6 0 9
+count 5 3 4 3 9
+count 5 3 6 2 2
+count 5 3 6 4 7
+count 5 5 4 5 7
+count 6 2 5 1 6
+count 6 2 5 3 4
+count 6 2 7 2 7
+count 6 4 5 5 7
+round
+confirm 6 2
+fire 0 0 5 1
+fire 0 0 6 0
+fire 0 0 6 2
+fire 0 0 7 2
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 1 6 4
+count 4 1 4 0 4
+count 4 1 4 2 4
+count 4 1 5 1 4
+count 4 3 4 2 7
+count 5 1 6 0 10
+count 5 3 4 3 10
+count 5 3 6 4 8
+count 5 5 4 5 8
+count 6 2 5 1 7
+count 6 2 5 3 5
+count 6 2 7 2 8
+count 6 4 5 5 8
+round
+confirm 5 3
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 4
+fire 0 1 5 1
+fire 0 1 6 0
+fire 0 1 6 2
+fire 0 1 7 2
+count 4 1 4 0 4
+count 4 1 4 2 4
+count 4 1 5 1 4
+count 4 3 4 2 8
+count 5 1 6 0 11
+count 5 3 4 3 11
+count 5 3 6 2 1
+count 5 3 6 4 9
+count 5 5 4 5 9
+count 6 2 5 1 8
+count 6 2 5 3 5
+count 6 2 7 2 9
+count 6 4 5 5 9
+round
+confirm 4 1
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 4 0
+fire 0 1 4 2
+fire 0 1 5 1
+fire 0 1 6 0
+fire 1 0 4 1
+fire 1 1 4 0
+fire 1 1 4 2
+fire 1 1 5 1
+fire 1 1 6 0
+fire 1 2 3 1
+count 4 0 3 1 1
+count 4 1 4 0 6
+count 4 1 4 2 6
+count 4 1 5 1 6
+count 4 3 4 2 8
+count 5 1 6 0 13
+count 5 3 4 3 11
+count 5 3 6 2 1
+count 5 3 6 4 9
+count 5 5 4 5 9
+count 6 2 5 1 8
+count 6 2 5 3 5
+count 6 2 7 2 9
+count 6 4 5 5 9
+round
+confirm 4 1 5 3
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 0
+fire 0 0 6 4
+fire 0 1 5 1
+fire 0 1 6 0
+fire 0 1 6 2
+fire 0 1 7 2
+count 4 0 3 1 1
+count 4 1 4 0 7
+count 4 1 4 2 7
+count 4 1 5 1 7
+count 4 3 4 2 8
+count 5 1 6 0 15
+count 5 3 4 3 12
+count 5 3 6 2 2
+count 5 3 6 4 10
+count 5 5 4 5 10
+count 6 2 5 1 9
+count 6 2 5 3 5
+count 6 2 7 2 10
+count 6 4 5 5 10
+round
+confirm 6 2 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 2
+fire 0 0 5 1
+fire 0 0 6 0
+fire 0 0 6 2
+fire 0 0 7 2
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 1 6 4
+count 4 0 3 1 1
+count 4 1 4 0 8
+count 4 1 4 2 8
+count 4 1 5 1 8
+count 4 3 4 2 9
+count 5 1 6 0 16
+count 5 3 4 3 13
+count 5 3 6 2 2
+count 5 3 6 4 11
+count 5 5 4 5 11
+count 6 2 5 1 10
+count 6 2 5 3 6
+count 6 2 7 2 11
+count 6 4 5 5 11
+round
+confirm 5 3
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 4
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 6 0
+fire 0 1 6 2
+fire 0 1 7 2
+count 4 0 3 1 1
+count 4 1 4 0 8
+count 4 1 4 2 8
+count 4 1 5 1 8
+count 4 3 4 2 11
+count 5 1 6 0 17
+count 5 3 4 3 15
+count 5 3 6 2 3
+count 5 3 6 4 12
+count 5 5 4 5 12
+count 6 2 5 1 11
+count 6 2 5 3 7
+count 6 2 7 2 12
+count 6 4 5 3 1
+count 6 4 5 5 12
+round
+confirm 4 1
+confirm 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 2
+fire 0 0 5 1
+fire 0 0 6 0
+fire 1 0 4 0
+fire 1 0 4 1
+fire 1 0 4 2
+fire 1 0 5 1
+fire 1 0 6 0
+fire 1 1 3 1
+count 4 0 3 1 2
+count 4 1 4 0 10
+count 4 1 4 2 10
+count 4 1 5 1 10
+count 4 3 4 2 11
+count 5 1 6 0 19
+count 5 3 4 3 15
+count 5 3 6 2 3
+count 5 3 6 4 12
+count 5 5 4 5 12
+count 6 2 5 1 11
+count 6 2 5 3 7
+count 6 2 7 2 12
+count 6 4 5 3 1
+count 6 4 5 5 12
+round
+confirm 5 3
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 4
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 6 0
+fire 0 1 6 2
+fire 0 1 7 2
+count 4 0 3 1 2
+count 4 1 4 0 10
+count 4 1 4 2 10
+count 4 1 5 1 10
+count 4 3 4 2 13
+count 5 1 6 0 20
+count 5 3 4 3 17
+count 5 3 6 2 4
+count 5 3 6 4 13
+count 5 5 4 5 13
+count 6 2 5 1 12
+count 6 2 5 3 8
+count 6 2 7 2 13
+count 6 4 5 3 2
+count 6 4 5 5 13
+round
+confirm 6 2 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 0
+fire 0 0 6 2
+fire 0 0 6 4
+fire 0 0 7 2
+count 4 0 3 1 2
+count 4 1 4 0 11
+count 4 1 4 2 11
+count 4 1 5 1 11
+count 4 3 4 2 13
+count 5 1 6 0 21
+count 5 3 4 3 18
+count 5 3 6 2 4
+count 5 3 6 4 14
+count 5 5 4 5 14
+count 6 2 5 1 13
+count 6 2 5 3 9
+count 6 2 7 2 14
+count 6 4 5 3 2
+count 6 4 5 5 14
+round
+confirm 4 1 6 2
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 0
+fire 0 0 6 2
+fire 0 0 6 4
+fire 0 0 7 2
+count 4 0 3 1 2
+count 4 1 4 0 12
+count 4 1 4 2 12
+count 4 1 5 1 12
+count 4 3 4 2 13
+count 5 1 6 0 22
+count 5 3 4 3 19
+count 5 3 6 2 4
+count 5 3 6 4 15
+count 5 5 4 5 15
+count 6 2 5 1 14
+count 6 2 5 3 10
+count 6 2 7 2 15
+count 6 4 5 3 2
+count 6 4 5 5 15
+round
+confirm 5 3
+confirm 5 3
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 5
+fire 0 0 5 3
+fire 0 0 5 5
+fire 0 0 6 4
+fire 0 1 4 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 1 5 3
+fire 0 1 6 0
+fire 0 1 6 2
+fire 0 1 7 2
+fire 1 0 4 2
+fire 1 0 4 3
+fire 1 0 4 5
+fire 1 0 5 3
+fire 1 0 5 5
+fire 1 0 6 4
+fire 1 1 5 1
+fire 1 1 5 3
+fire 1 1 6 0
+fire 1 1 6 2
+fire 1 1 7 2
+fire 1 2 8 2
+count 4 0 3 1 2
+count 4 1 4 0 12
+count 4 1 4 2 12
+count 4 1 5 1 12
+count 4 3 4 2 16
+count 5 1 6 0 24
+count 5 3 4 3 22
+count 5 3 6 2 6
+count 5 3 6 4 17
+count 5 5 4 5 17
+count 6 2 5 1 16
+count 6 2 5 3 12
+count 6 2 7 2 17
+count 6 4 5 3 4
+count 6 4 5 5 17
+count 7 2 8 2 1
+case 5
+glow 3 0 conv 4
+glow 4 0 conv 5
+glow 6 0 cone 3
+glow 2 1 cone 2
+glow 6 1 conduct 0
+glow 7 1 conduct 1
+glow 0 2 cone 3
+glow 1 2 cone 3
+glow 6 2 cone 5
+glow 9 2 conduct 3
+glow 0 3 conduct 2
+glow 1 3 conv 0
+glow 2 3 conduct 4
+glow 5 3 conv 4
+glow 2 4 conduct 0
+glow 3 4 conduct 0
+glow 4 4 conduct 1
+glow 6 4 conduct 5
+glow 2 5 conduct 3
+glow 4 5 conduct 4
+glow 5 5 conv 2
+glow 6 5 conv 4
+glow 7 5 conduct 5
+glow 4 6 conduct 1
+glow 5 6 conduct 0
+round
+confirm 0 2 2 1
+fire 0 0 0 2
+fire 0 0 2 1
+fire 0 1 1 2
+fire 0 2 0 3
+count 0 2 1 2 1
+count 1 2 0 3 1
+round
+confirm 2 1 1 2
+fire 0 0 1 2
+fire 0 0 2 1
+fire 0 1 0 3
+count 0 2 1 2 1
+count 1 2 0 3 2
+round
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 3
+count 0 2 1 2 1
+count 1 2 0 3 3
+round
+confirm 1 2
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 3
+fire 1 0 1 2
+fire 1 1 0 3
+count 0 2 1 2 1
+count 1 2 0 3 5
+round
+confirm 0 2
+fire 0 0 0 2
+fire 0 1 1 2
+fire 0 2 0 3
+count 0 2 1 2 2
+count 1 2 0 3 6
+round
+confirm 2 1 1 2
+fire 0 0 0 3
+fire 0 0 1 2
+fire 0 0 2 1
+count 0 2 1 2 2
+count 1 2 0 3 7
+round
+confirm 0 2 1 2
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 2
+count 0 2 1 2 2
+count 1 2 0 3 8
+round
+confirm 1 2
+confirm 0 2
+fire 0 0 0 3
+fire 0 0 1 2
+fire 1 0 0 2
+count 0 2 1 2 2
+count 1 2 0 3 9
+round
+confirm 2 1 0 2
+fire 0 0 0 2
+fire 0 0 2 1
+fire 0 1 0 3
+fire 0 1 1 2
+count 0 2 1 2 3
+count 1 2 0 3 10
+round
+confirm 2 1
+fire 0 0 2 1
+count 0 2 1 2 3
+count 1 2 0 3 10
+round
+confirm 2 1
+fire 0 0 2 1
+count 0 2 1 2 3
+count 1 2 0 3 10
+round
+confirm 1 2
+confirm 2 1
+fire 0 0 0 3
+fire 0 0 1 2
+fire 1 0 2 1
+count 0 2 1 2 3
+count 1 2 0 3 11
+round
+confirm 0 2 2 1
+fire 0 0 0 2
+fire 0 0 2 1
+fire 0 1 0 3
+fire 0 1 1 2
+count 0 2 1 2 4
+count 1 2 0 3 12
+round
+confirm 0 2
+fire 0 0 0 2
+fire 0 1 0 3
+fire 0 1 1 2
+count 0 2 1 2 5
+count 1 2 0 3 13
+round
+confirm 1 2 2 1
+fire 0 0 0 3
+fire 0 0 1 2
+fire 0 0 2 1
+count 0 2 1 2 5
+count 1 2 0 3 14
+round
+confirm 2 1
+confirm 2 1
+fire 0 0 2 1
+fire 1 0 2 1
+fire 1 1 3 0
+count 0 2 1 2 5
+count 1 2 0 3 14
+count 2 1 3 0 1
+round
+confirm 0 2 1 2
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 2
+fire 0 1 0 3
+fire 0 1 1 2
+count 0 2 1 2 6
+count 1 2 0 3 16
+count 2 1 3 0 1
+round
+confirm 0 2 2 1
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 2
+fire 0 0 2 1
+count 0 2 1 2 7
+count 1 2 0 3 17
+count 2 1 3 0 1
+round
+confirm 0 2 1 2
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 2
+count 0 2 1 2 7
+count 1 2 0 3 18
+count 2 1 3 0 1
+round
+confirm 2 1
+confirm 2 1
+fire 0 0 2 1
+fire 1 0 2 1
+fire 1 1 3 0
+count 0 2 1 2 7
+count 1 2 0 3 18
+count 2 1 3 0 2
+case 6
+glow 3 0 conduct 0
+glow 4 0 conduct 5
+glow 5 0 conduct 4
+glow 3 1 conduct 3
+glow 5 1 conduct 2
+glow 6 1 cone 5
+glow 7 1 conduct 2
+glow 2 2 cone 0
+glow 3 2 conduct 2
+glow 4 2 conduct 3
+glow 6 2 conduct 5
+glow 7 2 conv 4
+glow 8 2 conduct 0
+glow 0 3 conduct 3
+glow 1 3 conduct 0
+glow 2 3 cone 0
+glow 3 3 conduct 3
+glow 5 3 conduct 1
+glow 8 3 conduct 3
+glow 3 4 conduct 2
+glow 5 4 conduct 3
+glow 6 4 conduct 4
+glow 2 5 cone 0
+glow 3 5 conduct 0
+glow 4 5 conv 4
+glow 5 5 conduct 2
+glow 6 5 conduct 0
+glow 7 5 conv 0
+glow 4 6 cone 0
+round
+confirm 3 1 6 1
+fire 0 0 3 1
+fire 0 0 6 1
+fire 0 1 3 2
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 3 3
+fire 0 2 5 1
+fire 0 3 3 4
+fire 0 4 3 5
+count 3 1 3 2 1
+count 3 2 3 3 1
+count 3 3 3 4 1
+count 3 4 3 5 1
+count 6 1 6 2 1
+count 6 1 7 1 1
+count 6 2 5 1 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 2
+fire 0 2 3 3
+fire 0 3 3 4
+fire 0 4 3 5
+count 3 1 3 2 2
+count 3 2 3 3 2
+count 3 3 3 4 2
+count 3 4 3 5 2
+count 6 1 6 2 1
+count 6 1 7 1 1
+count 6 2 5 1 1
+round
+confirm 2 3 6 1
+fire 0 0 2 3
+fire 0 0 6 1
+fire 0 1 3 2
+fire 0 1 3 4
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 3 3
+fire 0 2 3 5
+fire 0 2 5 1
+count 2 3 3 2 1
+count 2 3 3 4 1
+count 3 1 3 2 2
+count 3 2 3 3 3
+count 3 3 3 4 2
+count 3 4 3 5 3
+count 6 1 6 2 2
+count 6 1 7 1 2
+count 6 2 5 1 2
+round
+confirm 6 1
+confirm 2 3
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 5 1
+fire 1 0 2 3
+fire 1 1 3 2
+fire 1 1 3 4
+fire 1 2 3 3
+fire 1 2 3 5
+count 2 3 3 2 2
+count 2 3 3 4 2
+count 3 1 3 2 2
+count 3 2 3 3 4
+count 3 3 3 4 2
+count 3 4 3 5 4
+count 6 1 6 2 3
+count 6 1 7 1 3
+count 6 2 5 1 3
+round
+confirm 6 1 3 1
+fire 0 0 3 1
+fire 0 0 6 1
+fire 0 1 3 2
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 3 3
+fire 0 2 5 1
+fire 0 3 3 4
+fire 0 4 3 5
+count 2 3 3 2 2
+count 2 3 3 4 2
+count 3 1 3 2 3
+count 3 2 3 3 5
+count 3 3 3 4 3
+count 3 4 3 5 5
+count 6 1 6 2 4
+count 6 1 7 1 4
+count 6 2 5 1 4
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 4
+fire 0 2 3 3
+fire 0 2 3 5
+fire 0 3 3 4
+fire 0 3 3 5
+count 2 3 3 2 3
+count 2 3 3 4 3
+count 3 1 3 2 3
+count 3 2 3 3 6
+count 3 3 3 4 4
+count 3 4 3 5 7
+count 6 1 6 2 4
+count 6 1 7 1 4
+count 6 2 5 1 4
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 3
+fire 0 1 3 4
+fire 0 1 3 5
+fire 0 2 3 4
+fire 0 2 3 5
+count 2 3 3 2 4
+count 2 3 3 4 4
+count 3 1 3 2 3
+count 3 2 3 3 7
+count 3 3 3 4 5
+count 3 4 3 5 9
+count 6 1 6 2 4
+count 6 1 7 1 4
+count 6 2 5 1 4
+round
+confirm 2 3
+confirm 2 3
+fire 0 0 2 3
+fire 0 1 3 2
+fire 0 1 3 3
+fire 0 1 3 4
+fire 0 1 3 5
+fire 0 2 3 4
+fire 0 2 3 5
+fire 1 0 2 3
+fire 1 1 3 2
+fire 1 1 3 3
+fire 1 1 3 4
+fire 1 1 3 5
+count 2 3 3 2 6
+count 2 3 3 4 6
+count 3 1 3 2 3
+count 3 2 3 3 9
+count 3 3 3 4 6
+count 3 4 3 5 12
+count 6 1 6 2 4
+count 6 1 7 1 4
+count 6 2 5 1 4
+round
+confirm 2 3 6 1
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 5 1
+count 2 3 3 2 7
+count 2 3 3 4 7
+count 3 1 3 2 3
+count 3 2 3 3 10
+count 3 3 3 4 6
+count 3 4 3 5 13
+count 6 1 6 2 5
+count 6 1 7 1 5
+count 6 2 5 1 5
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 2
+fire 0 1 3 3
+fire 0 1 3 4
+fire 0 1 3 5
+count 2 3 3 2 7
+count 2 3 3 4 7
+count 3 1 3 2 4
+count 3 2 3 3 11
+count 3 3 3 4 7
+count 3 4 3 5 14
+count 6 1 6 2 5
+count 6 1 7 1 5
+count 6 2 5 1 5
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+count 2 3 3 2 8
+count 2 3 3 4 8
+count 3 1 3 2 4
+count 3 2 3 3 12
+count 3 3 3 4 7
+count 3 4 3 5 15
+count 6 1 6 2 5
+count 6 1 7 1 5
+count 6 2 5 1 5
+round
+confirm 6 1
+confirm 3 1
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 5 1
+fire 1 0 3 1
+fire 1 1 3 2
+fire 1 1 3 3
+fire 1 1 3 4
+fire 1 1 3 5
+count 2 3 3 2 8
+count 2 3 3 4 8
+count 3 1 3 2 5
+count 3 2 3 3 13
+count 3 3 3 4 8
+count 3 4 3 5 16
+count 6 1 6 2 6
+count 6 1 7 1 6
+count 6 2 5 1 6
+round
+confirm 6 1 3 1
+fire 0 0 3 1
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 0 1 3 2
+fire 0 1 3 3
+fire 0 1 3 4
+fire 0 1 3 5
+count 2 3 3 2 8
+count 2 3 3 4 8
+count 3 1 3 2 6
+count 3 2 3 3 14
+count 3 3 3 4 9
+count 3 4 3 5 17
+count 6 1 6 2 7
+count 6 1 7 1 7
+count 6 2 5 1 7
+round
+confirm 2 3 3 1
+fire 0 0 2 3
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+count 2 3 3 2 9
+count 2 3 3 4 9
+count 3 1 3 2 7
+count 3 2 3 3 15
+count 3 3 3 4 9
+count 3 4 3 5 18
+count 6 1 6 2 7
+count 6 1 7 1 7
+count 6 2 5 1 7
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+count 2 3 3 2 10
+count 2 3 3 4 10
+count 3 1 3 2 7
+count 3 2 3 3 16
+count 3 3 3 4 9
+count 3 4 3 5 19
+count 6 1 6 2 7
+count 6 1 7 1 7
+count 6 2 5 1 7
+round
+confirm 6 1
+confirm 2 3
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 1 0 2 3
+fire 1 0 3 2
+fire 1 0 3 3
+fire 1 0 3 4
+fire 1 0 3 5
+count 2 3 3 2 11
+count 2 3 3 4 11
+count 3 1 3 2 7
+count 3 2 3 3 17
+count 3 3 3 4 9
+count 3 4 3 5 20
+count 6 1 6 2 8
+count 6 1 7 1 8
+count 6 2 5 1 8
+round
+confirm 3 1 6 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 3 3 2 11
+count 2 3 3 4 11
+count 3 1 3 2 8
+count 3 2 3 3 18
+count 3 3 3 4 10
+count 3 4 3 5 21
+count 6 1 6 2 9
+count 6 1 7 1 9
+count 6 2 5 1 9
+round
+confirm 6 1 3 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 3 3 2 11
+count 2 3 3 4 11
+count 3 1 3 2 9
+count 3 2 3 3 19
+count 3 3 3 4 11
+count 3 4 3 5 22
+count 6 1 6 2 10
+count 6 1 7 1 10
+count 6 2 5 1 10
+round
+confirm 2 3
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+count 2 3 3 2 12
+count 2 3 3 4 12
+count 3 1 3 2 9
+count 3 2 3 3 20
+count 3 3 3 4 11
+count 3 4 3 5 23
+count 6 1 6 2 10
+count 6 1 7 1 10
+count 6 2 5 1 10
+round
+confirm 6 1
+confirm 6 1
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 1 0 5 1
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 7 1
+count 2 3 3 2 12
+count 2 3 3 4 12
+count 3 1 3 2 9
+count 3 2 3 3 20
+count 3 3 3 4 11
+count 3 4 3 5 23
+count 6 1 6 2 12
+count 6 1 7 1 12
+count 6 2 5 1 12
+case 7
+glow 5 0 cone 5
+glow 2 1 conduct 0
+glow 3 1 conduct 3
+glow 4 1 cone 4
+glow 5 1 conduct 1
+glow 6 1 cone 0
+glow 7 1 conv 5
+glow 0 2 conduct 5
+glow 1 2 conduct 1
+glow 2 2 conduct 2
+glow 3 2 conv 0
+glow 4 2 conduct 3
+glow 5 2 cone 2
+glow 7 2 conv 3
+glow 8 2 conduct 4
+glow 0 3 cone 1
+glow 2 3 conduct 0
+glow 3 3 conduct 1
+glow 4 3 cone 2
+glow 2 4 cone 5
+glow 3 4 conduct 2
+glow 4 4 conduct 2
+glow 6 4 conduct 3
+glow 2 5 cone 4
+glow 3 5 conduct 5
+glow 4 5 conduct 0
+glow 6 5 conv 2
+glow 5 6 conduct 2
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 3 1
+count 4 1 3 1 1
+round
+confirm 3 1
+fire 0 0 3 1
+count 4 1 3 1 1
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 3 1
+count 4 1 3 1 2
+round
+confirm 4 1
+confirm 3 1
+fire 0 0 4 1
+fire 0 1 3 1
+fire 1 0 3 1
+fire 1 1 3 2
+count 3 1 3 2 1
+count 4 1 3 1 3
+round
+confirm 3 1 4 1
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 1 3 1
+fire 0 2 3 2
+count 3 1 3 2 2
+count 4 1 3 1 4
+round
+confirm 3 1
+fire 0 0 3 1
+count 3 1 3 2 2
+count 4 1 3 1 4
+round
+confirm 3 1 4 1
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 1 3 1
+fire 0 2 3 2
+count 3 1 3 2 3
+count 4 1 3 1 5
+round
+confirm 4 1
+confirm 6 1
+fire 0 0 4 1
+fire 0 1 3 1
+fire 1 0 6 1
+fire 1 1 5 1
+count 3 1 3 2 3
+count 4 1 3 1 6
+count 6 1 5 1 1
+round
+confirm 4 1
+fire 0 0 3 1
+fire 0 0 4 1
+count 3 1 3 2 3
+count 4 1 3 1 7
+count 6 1 5 1 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 2
+fire 0 2 3 1
+count 3 1 3 2 4
+count 3 2 3 1 1
+count 4 1 3 1 7
+count 6 1 5 1 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 2
+fire 0 2 3 1
+count 3 1 3 2 5
+count 3 2 3 1 2
+count 4 1 3 1 7
+count 6 1 5 1 1
+round
+confirm 6 1
+confirm 6 1
+fire 0 0 6 1
+fire 0 1 5 1
+fire 1 0 6 1
+fire 1 1 5 1
+fire 1 1 7 2
+count 3 1 3 2 5
+count 3 2 3 1 2
+count 4 1 3 1 7
+count 6 1 5 1 3
+count 6 1 7 2 1
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 1 5 1
+count 3 1 3 2 5
+count 3 2 3 1 2
+count 4 1 3 1 7
+count 6 1 5 1 4
+count 6 1 7 2 1
+round
+confirm 4 1 6 1
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 0 6 1
+fire 0 1 5 1
+count 3 1 3 2 5
+count 3 2 3 1 2
+count 4 1 3 1 8
+count 6 1 5 1 5
+count 6 1 7 2 1
+round
+confirm 3 1 4 1
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 1 3 2
+fire 0 2 3 1
+count 3 1 3 2 6
+count 3 2 3 1 3
+count 4 1 3 1 8
+count 6 1 5 1 5
+count 6 1 7 2 1
+round
+confirm 4 1
+confirm 3 1
+fire 0 0 3 1
+fire 0 0 4 1
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 1 3 1
+count 3 1 3 2 7
+count 3 2 3 1 4
+count 4 1 3 1 9
+count 6 1 5 1 5
+count 6 1 7 2 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 1 3 1
+count 3 1 3 2 8
+count 3 2 3 1 5
+count 4 1 3 1 9
+count 6 1 5 1 5
+count 6 1 7 2 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 1 3 1
+count 3 1 3 2 9
+count 3 2 3 1 6
+count 4 1 3 1 9
+count 6 1 5 1 5
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 1 5 1
+count 3 1 3 2 9
+count 3 2 3 1 6
+count 4 1 3 1 9
+count 6 1 5 1 6
+round
+confirm 6 1
+confirm 3 1
+fire 0 0 5 1
+fire 0 0 6 1
+fire 1 0 3 1
+fire 1 0 3 2
+count 3 1 3 2 10
+count 3 2 3 1 6
+count 4 1 3 1 9
+count 6 1 5 1 7
+case 8
+glow 3 0 conv 2
+glow 4 0 cone 0
+glow 5 0 cone 1
+glow 2 1 conduct 2
+glow 3 1 conduct 2
+glow 4 1 conduct 4
+glow 5 1 conduct 0
+glow 7 1 conduct 0
+glow 0 2 conduct 1
+glow 3 2 cone 2
+glow 4 2 conv 3
+glow 5 2 cone 2
+glow 6 2 cone 2
+glow 7 2 conduct 2
+glow 8 2 conduct 3
+glow 9 2 conduct 3
+glow 0 3 conduct 5
+glow 1 3 conduct 4
+glow 2 3 conduct 5
+glow 3 3 conduct 3
+glow 4 3 conduct 0
+glow 5 3 conduct 5
+glow 6 3 cone 4
+glow 8 3 conduct 1
+glow 9 3 conduct 3
+glow 2 4 conduct 5
+glow 3 4 conduct 1
+glow 4 4 cone 1
+glow 6 4 conv 5
+glow 2 5 conduct 2
+glow 3 5 cone 5
+glow 4 5 cone 1
+glow 5 5 conv 4
+glow 6 5 cone 3
+glow 7 5 conduct 3
+glow 4 6 conduct 1
+glow 5 6 cone 2
+round
+confirm 4 5 3 2
+fire 0 0 3 2
+fire 0 0 4 5
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 4
+count 3 2 3 1 1
+count 3 2 3 3 1
+count 3 3 3 4 1
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+fire 0 2 3 1
+count 3 2 3 1 1
+count 3 2 3 3 1
+count 3 3 3 4 1
+count 4 0 4 1 1
+count 4 1 3 1 1
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 3 4
+count 3 2 3 1 2
+count 3 2 3 3 2
+count 3 3 3 4 2
+count 4 0 4 1 1
+count 4 1 3 1 1
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 4 0
+confirm 3 2
+fire 0 0 4 0
+fire 0 1 4 1
+fire 0 2 3 1
+fire 1 0 3 2
+fire 1 1 3 1
+fire 1 1 3 3
+fire 1 2 3 4
+count 3 2 3 1 3
+count 3 2 3 3 3
+count 3 3 3 4 3
+count 4 0 4 1 2
+count 4 1 3 1 2
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 3 4
+count 3 2 3 1 4
+count 3 2 3 3 4
+count 3 3 3 4 4
+count 4 0 4 1 2
+count 4 1 3 1 2
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 3 4
+count 3 2 3 1 5
+count 3 2 3 3 5
+count 3 3 3 4 5
+count 4 0 4 1 2
+count 4 1 3 1 2
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 3 4
+count 3 2 3 1 6
+count 3 2 3 3 6
+count 3 3 3 4 6
+count 4 0 4 1 2
+count 4 1 3 1 2
+round
+confirm 3 2
+confirm 4 5
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 1 0 4 5
+fire 1 1 4 4
+fire 1 1 4 6
+count 3 2 3 1 7
+count 3 2 3 3 7
+count 3 3 3 4 7
+count 4 0 4 1 2
+count 4 1 3 1 2
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+fire 0 2 3 1
+count 3 2 3 1 7
+count 3 2 3 3 7
+count 3 3 3 4 7
+count 4 0 4 1 3
+count 4 1 3 1 3
+count 4 5 4 4 1
+count 4 5 4 6 1
+round
+confirm 4 5 4 0
+fire 0 0 4 0
+fire 0 0 4 5
+fire 0 1 4 1
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 1
+fire 0 2 3 3
+fire 0 2 3 4
+count 3 2 3 1 7
+count 3 2 3 3 7
+count 3 3 3 4 8
+count 4 0 4 1 4
+count 4 1 3 1 4
+count 4 4 3 3 1
+count 4 5 4 4 2
+count 4 5 4 6 2
+round
+confirm 4 0 3 2
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 0
+fire 0 1 4 1
+fire 0 2 3 1
+count 3 2 3 1 8
+count 3 2 3 3 8
+count 3 3 3 4 9
+count 4 0 4 1 5
+count 4 1 3 1 5
+count 4 4 3 3 1
+count 4 5 4 4 2
+count 4 5 4 6 2
+round
+confirm 4 5
+confirm 3 2
+fire 0 0 4 5
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 3
+fire 0 2 3 4
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 3 3
+fire 1 0 3 4
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 3 3 3 4 11
+count 4 0 4 1 5
+count 4 1 3 1 5
+count 4 4 3 3 2
+count 4 5 4 4 3
+count 4 5 4 6 3
+round
+confirm 4 5
+fire 0 0 4 5
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 3
+fire 0 2 3 4
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 3 3 3 4 12
+count 4 0 4 1 5
+count 4 1 3 1 5
+count 4 4 3 3 3
+count 4 5 4 4 4
+count 4 5 4 6 4
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 4 1
+fire 0 2 3 1
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 3 3 3 4 12
+count 4 0 4 1 6
+count 4 1 3 1 6
+count 4 4 3 3 3
+count 4 5 4 4 4
+count 4 5 4 6 4
+round
+confirm 4 0 3 2
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 2 3 1 10
+count 3 2 3 3 10
+count 3 3 3 4 13
+count 4 0 4 1 7
+count 4 1 3 1 6
+count 4 4 3 3 3
+count 4 5 4 4 4
+count 4 5 4 6 4
+round
+confirm 3 2
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 1 0 3 1
+fire 1 0 4 0
+fire 1 0 4 1
+count 3 2 3 1 11
+count 3 2 3 3 11
+count 3 3 3 4 14
+count 4 0 4 1 8
+count 4 1 3 1 7
+count 4 4 3 3 3
+count 4 5 4 4 4
+count 4 5 4 6 4
+round
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 2 3 1 11
+count 3 2 3 3 11
+count 3 3 3 4 14
+count 4 0 4 1 9
+count 4 1 3 1 8
+count 4 4 3 3 3
+count 4 5 4 4 4
+count 4 5 4 6 4
+round
+confirm 4 5
+fire 0 0 4 5
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 3
+fire 0 2 3 4
+count 3 2 3 1 11
+count 3 2 3 3 11
+count 3 3 3 4 15
+count 4 0 4 1 9
+count 4 1 3 1 8
+count 4 4 3 3 4
+count 4 5 4 4 5
+count 4 5 4 6 5
+round
+confirm 4 0 4 5
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 5
+fire 0 1 4 4
+fire 0 1 4 6
+fire 0 2 3 3
+fire 0 2 3 4
+count 3 2 3 1 11
+count 3 2 3 3 11
+count 3 3 3 4 16
+count 4 0 4 1 10
+count 4 1 3 1 9
+count 4 4 3 3 5
+count 4 5 4 4 6
+count 4 5 4 6 6
+round
+confirm 3 2
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 1 0 3 1
+fire 1 0 4 0
+fire 1 0 4 1
+count 3 2 3 1 12
+count 3 2 3 3 12
+count 3 3 3 4 17
+count 4 0 4 1 11
+count 4 1 3 1 10
+count 4 4 3 3 5
+count 4 5 4 4 6
+count 4 5 4 6 6
+case 9
+glow 3 0 conduct 0
+glow 5 0 cone 1
+glow 6 0 cone 1
+glow 2 1 conduct 1
+glow 3 1 conduct 3
+glow 4 1 cone 4
+glow 5 1 conduct 1
+glow 7 1 cone 1
+glow 1 2 cone 3
+glow 2 2 conduct 3
+glow 3 2 conduct 3
+glow 4 2 conduct 0
+glow 5 2 conduct 1
+glow 7 2 cone 2
+glow 9 2 cone 5
+glow 1 3 conv 1
+glow 3 3 conduct 1
+glow 4 3 conv 2
+glow 5 3 conduct 2
+glow 6 3 conduct 4
+glow 8 3 conduct 2
+glow 3 4 cone 3
+glow 6 4 conduct 1
+glow 2 5 conv 2
+glow 3 5 conduct 0
+glow 4 5 conv 3
+glow 5 5 conduct 4
+glow 6 5 conduct 3
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 1 3 1
+fire 0 2 3 2
+count 2 1 3 1 1
+count 3 1 3 2 1
+round
+confirm 5 0 2 1
+fire 0 0 2 1
+fire 0 0 5 0
+fire 0 1 3 1
+fire 0 1 6 0
+fire 0 2 3 2
+fire 0 2 5 1
+count 2 1 3 1 2
+count 3 1 3 2 2
+count 5 0 6 0 1
+count 6 0 5 1 1
+round
+confirm 6 0 2 1
+fire 0 0 2 1
+fire 0 0 6 0
+fire 0 1 3 1
+fire 0 1 5 1
+fire 0 2 3 2
+count 2 1 3 1 3
+count 3 1 3 2 3
+count 5 0 6 0 1
+count 6 0 5 1 2
+round
+confirm 5 0
+confirm 5 0
+fire 0 0 5 0
+fire 0 1 6 0
+fire 0 2 5 1
+fire 1 0 5 0
+count 2 1 3 1 3
+count 3 1 3 2 3
+count 5 0 6 0 2
+count 6 0 5 1 3
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 1 3 1
+fire 0 2 3 2
+count 2 1 3 1 4
+count 3 1 3 2 4
+count 5 0 6 0 2
+count 6 0 5 1 3
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 1 3 1
+fire 0 2 3 2
+count 2 1 3 1 5
+count 3 1 3 2 5
+count 5 0 6 0 2
+count 6 0 5 1 3
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 1 6 0
+fire 0 2 5 1
+count 2 1 3 1 5
+count 3 1 3 2 5
+count 5 0 6 0 3
+count 6 0 5 1 4
+round
+confirm 2 1
+confirm 2 1
+fire 0 0 2 1
+fire 0 1 3 1
+fire 0 2 3 2
+fire 1 0 2 1
+fire 1 0 3 1
+fire 1 0 3 2
+count 2 1 3 1 7
+count 3 1 3 2 7
+count 5 0 6 0 3
+count 6 0 5 1 4
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 1 6 0
+fire 0 2 5 1
+count 2 1 3 1 7
+count 3 1 3 2 7
+count 5 0 6 0 4
+count 6 0 5 1 5
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 3 2
+count 2 1 3 1 8
+count 3 1 3 2 8
+count 5 0 6 0 4
+count 6 0 5 1 5
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 3 2
+count 2 1 3 1 9
+count 3 1 3 2 9
+count 5 0 6 0 4
+count 6 0 5 1 5
+round
+confirm 5 0
+confirm 6 0
+fire 0 0 5 0
+fire 0 1 6 0
+fire 0 2 5 1
+fire 1 0 5 1
+fire 1 0 6 0
+count 2 1 3 1 9
+count 3 1 3 2 9
+count 5 0 6 0 5
+count 6 0 5 1 7
+round
+confirm 5 0 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 5 0
+fire 0 1 5 1
+fire 0 1 6 0
+count 2 1 3 1 10
+count 3 1 3 2 10
+count 5 0 6 0 6
+count 6 0 5 1 8
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 2 1 3 1 10
+count 3 1 3 2 10
+count 5 0 6 0 7
+count 6 0 5 1 9
+round
+confirm 2 1 5 0
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 2 1 3 1 11
+count 3 1 3 2 11
+count 5 0 6 0 8
+count 6 0 5 1 10
+round
+confirm 5 0
+confirm 2 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+fire 1 0 2 1
+fire 1 0 3 1
+fire 1 0 3 2
+count 2 1 3 1 12
+count 3 1 3 2 12
+count 5 0 6 0 9
+count 6 0 5 1 11
+round
+confirm 6 0 5 0
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 2 1 3 1 12
+count 3 1 3 2 12
+count 5 0 6 0 9
+count 6 0 5 1 12
+round
+confirm 5 0
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 2 1 3 1 12
+count 3 1 3 2 12
+count 5 0 6 0 10
+count 6 0 5 1 13
+round
+confirm 6 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 2 1 3 1 12
+count 3 1 3 2 12
+count 5 0 6 0 10
+count 6 0 5 1 14
+round
+confirm 5 0
+confirm 2 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+fire 1 0 2 1
+fire 1 0 3 1
+fire 1 0 3 2
+count 2 1 3 1 13
+count 3 1 3 2 13
+count 5 0 6 0 11
+count 6 0 5 1 15
+case 10
+glow 3 0 cone 1
+glow 4 0 conduct 3
+glow 5 0 conduct 5
+glow 2 1 cone 5
+glow 3 1 conv 4
+glow 4 1 conduct 4
+glow 5 1 conduct 0
+glow 6 1 conduct 5
+glow 7 1 cone 1
+glow 0 2 conv 1
+glow 2 2 conv 5
+glow 3 2 conv 0
+glow 4 2 conduct 5
+glow 6 2 conduct 4
+glow 7 2 conduct 2
+glow 9 2 conduct 5
+glow 0 3 conduct 4
+glow 1 3 conduct 2
+glow 3 3 conduct 3
+glow 4 3 conduct 4
+glow 5 3 cone 3
+glow 8 3 conduct 4
+glow 9 3 conv 2
+glow 5 4 conv 3
+glow 3 5 conduct 0
+glow 4 5 conduct 0
+glow 5 5 conduct 4
+glow 6 5 conduct 3
+glow 7 5 conduct 1
+glow 4 6 conduct 2
+glow 5 6 conduct 2
+round
+confirm 3 0 4 0
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 4 0
+fire 0 2 3 1
+count 2 1 3 1 1
+count 3 0 2 1 1
+count 3 0 4 0 1
+count 4 0 3 1 1
+round
+confirm 2 1
+fire 0 0 2 1
+count 2 1 3 1 1
+count 3 0 2 1 1
+count 3 0 4 0 1
+count 4 0 3 1 1
+round
+confirm 4 0
+fire 0 0 4 0
+count 2 1 3 1 1
+count 3 0 2 1 1
+count 3 0 4 0 1
+count 4 0 3 1 1
+round
+confirm 2 1
+confirm 4 0
+fire 0 0 2 1
+fire 1 0 4 0
+fire 1 1 3 1
+count 2 1 3 1 1
+count 3 0 2 1 1
+count 3 0 4 0 1
+count 4 0 3 1 2
+round
+confirm 2 1
+fire 0 0 2 1
+count 2 1 3 1 1
+count 3 0 2 1 1
+count 3 0 4 0 1
+count 4 0 3 1 2
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 1 2 1
+fire 0 1 4 0
+count 2 1 3 1 1
+count 3 0 2 1 2
+count 3 0 4 0 2
+count 4 0 3 1 2
+round
+confirm 4 0
+fire 0 0 4 0
+count 3 0 2 1 2
+count 3 0 4 0 2
+count 4 0 3 1 2
+round
+confirm 2 1
+confirm 4 0
+fire 0 0 2 1
+fire 1 0 4 0
+fire 1 1 3 1
+count 3 0 2 1 2
+count 3 0 4 0 2
+count 4 0 3 1 3
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 2 1
+count 3 0 2 1 2
+count 3 0 4 0 2
+count 3 1 2 1 1
+count 4 0 3 1 4
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 1 2 1
+fire 0 1 4 0
+fire 0 2 3 1
+count 2 1 3 1 1
+count 3 0 2 1 3
+count 3 0 4 0 3
+count 3 1 2 1 1
+count 4 0 3 1 5
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 1 2 1
+fire 0 1 4 0
+fire 0 2 3 1
+count 2 1 3 1 2
+count 3 0 2 1 4
+count 3 0 4 0 4
+count 3 1 2 1 1
+count 4 0 3 1 6
+round
+confirm 3 0
+confirm 4 0
+fire 0 0 3 0
+fire 0 1 2 1
+fire 0 1 4 0
+fire 1 0 3 1
+fire 1 0 4 0
+count 2 1 3 1 2
+count 3 0 2 1 5
+count 3 0 4 0 5
+count 3 1 2 1 1
+count 4 0 3 1 7
+round
+confirm 2 1 4 0
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 4 0
+count 2 1 3 1 2
+count 3 0 2 1 5
+count 3 0 4 0 5
+count 3 1 2 1 1
+count 4 0 3 1 8
+round
+confirm 2 1 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 1 2 1
+fire 0 1 3 1
+fire 0 1 4 0
+fire 0 2 2 2
+count 2 1 2 2 1
+count 2 1 3 1 3
+count 3 0 2 1 6
+count 3 0 4 0 6
+count 3 1 2 1 1
+count 4 0 3 1 9
+round
+confirm 4 0 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 4 0
+count 2 1 2 2 1
+count 2 1 3 1 3
+count 3 0 2 1 6
+count 3 0 4 0 6
+count 4 0 3 1 10
+round
+confirm 2 1
+confirm 3 0
+fire 0 0 2 1
+fire 0 1 3 1
+fire 1 0 2 1
+fire 1 0 3 0
+fire 1 0 4 0
+fire 1 1 2 2
+fire 1 1 3 1
+count 2 1 2 2 2
+count 2 1 3 1 5
+count 3 0 2 1 7
+count 3 0 4 0 7
+count 4 0 3 1 10
+round
+confirm 4 0 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+fire 0 0 4 0
+count 2 1 2 2 2
+count 2 1 3 1 5
+count 3 0 2 1 7
+count 3 0 4 0 7
+count 4 0 3 1 11
+round
+confirm 3 0 2 1
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 2 2 1
+count 2 1 2 2 2
+count 2 1 3 1 6
+count 3 0 2 1 7
+count 3 0 4 0 8
+count 3 1 2 1 1
+count 4 0 3 1 11
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 0 3 1
+count 2 1 2 2 2
+count 2 1 3 1 7
+count 3 0 2 1 7
+count 3 0 4 0 8
+count 3 1 2 1 1
+count 4 0 3 1 11
+round
+confirm 3 0
+confirm 2 1
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 1 0 2 1
+fire 1 1 2 2
+count 2 1 2 2 3
+count 2 1 3 1 8
+count 3 0 2 1 8
+count 3 0 4 0 9
+count 3 1 2 1 1
+count 4 0 3 1 12
+case 11
+glow 3 0 conduct 1
+glow 5 0 cone 4
+glow 6 0 conduct 5
+glow 2 1 cone 3
+glow 5 1 conduct 4
+glow 6 1 conv 3
+glow 1 2 cone 4
+glow 2 2 conv 5
+glow 3 2 conv 1
+glow 4 2 conduct 1
+glow 5 2 cone 1
+glow 6 2 conduct 1
+glow 7 2 cone 5
+glow 8 2 conduct 1
+glow 9 2 conduct 2
+glow 0 3 conduct 4
+glow 2 3 conduct 5
+glow 3 3 conduct 0
+glow 4 3 cone 1
+glow 5 3 conduct 3
+glow 8 3 conduct 3
+glow 9 3 conduct 5
+glow 4 4 conduct 1
+glow 5 4 cone 4
+glow 2 5 conduct 4
+glow 3 5 conduct 1
+glow 4 5 conduct 3
+glow 5 5 cone 4
+glow 4 6 conduct 1
+round
+confirm 4 3 7 2
+fire 0 0 4 3
+fire 0 0 7 2
+fire 0 1 4 2
+fire 0 1 4 4
+fire 0 1 5 3
+fire 0 1 8 2
+fire 0 2 9 2
+fire 0 3 9 3
+count 4 3 4 2 1
+count 4 3 4 4 1
+count 4 3 5 3 1
+count 7 2 8 2 1
+count 8 2 9 2 1
+count 9 2 9 3 1
+round
+confirm 4 3
+fire 0 0 4 3
+fire 0 1 4 2
+fire 0 1 4 4
+fire 0 1 5 3
+count 4 3 4 2 2
+count 4 3 4 4 2
+count 4 3 5 3 2
+count 7 2 8 2 1
+count 8 2 9 2 1
+count 9 2 9 3 1
+round
+confirm 5 4 7 2
+fire 0 0 5 4
+fire 0 0 7 2
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 1 8 2
+fire 0 2 4 5
+fire 0 2 9 2
+fire 0 3 4 6
+fire 0 3 9 3
+count 4 3 4 2 2
+count 4 3 4 4 2
+count 4 3 5 3 2
+count 4 5 4 6 1
+count 5 4 5 3 1
+count 5 4 5 5 1
+count 5 5 4 5 1
+count 7 2 8 2 2
+count 8 2 9 2 2
+count 9 2 9 3 2
+round
+confirm 7 2
+confirm 4 3
+fire 0 0 7 2
+fire 0 1 8 2
+fire 0 2 9 2
+fire 0 3 9 3
+fire 1 0 4 3
+fire 1 1 4 2
+fire 1 1 4 4
+fire 1 1 5 3
+count 4 3 4 2 3
+count 4 3 4 4 3
+count 4 3 5 3 3
+count 4 5 4 6 1
+count 5 4 5 3 1
+count 5 4 5 5 1
+count 5 5 4 5 1
+count 7 2 8 2 3
+count 8 2 9 2 3
+count 9 2 9 3 3
+round
+confirm 5 4
+fire 0 0 5 4
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 2 4 5
+fire 0 3 4 6
+count 4 3 4 2 3
+count 4 3 4 4 3
+count 4 3 5 3 3
+count 4 5 4 6 2
+count 5 4 5 3 2
+count 5 4 5 5 2
+count 5 5 4 5 2
+count 7 2 8 2 3
+count 8 2 9 2 3
+count 9 2 9 3 3
+round
+confirm 5 4 7 2
+fire 0 0 5 4
+fire 0 0 7 2
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 1 8 2
+fire 0 2 4 5
+fire 0 2 9 2
+fire 0 3 4 6
+fire 0 3 9 3
+count 4 3 4 2 3
+count 4 3 4 4 3
+count 4 3 5 3 3
+count 4 5 4 6 3
+count 5 4 5 3 3
+count 5 4 5 5 3
+count 5 5 4 5 3
+count 7 2 8 2 4
+count 8 2 9 2 4
+count 9 2 9 3 4
+round
+confirm 4 3
+fire 0 0 4 3
+fire 0 1 4 2
+fire 0 1 4 4
+fire 0 1 5 3
+count 4 3 4 2 4
+count 4 3 4 4 4
+count 4 3 5 3 4
+count 4 5 4 6 3
+count 5 4 5 3 3
+count 5 4 5 5 3
+count 5 5 4 5 3
+count 7 2 8 2 4
+count 8 2 9 2 4
+count 9 2 9 3 4
+round
+confirm 4 3
+confirm 5 4
+fire 0 0 4 3
+fire 0 1 4 2
+fire 0 1 4 4
+fire 0 1 5 3
+fire 1 0 5 4
+fire 1 1 5 3
+fire 1 1 5 5
+fire 1 2 4 5
+fire 1 3 4 6
+count 4 3 4 2 5
+count 4 3 4 4 5
+count 4 3 5 3 5
+count 4 5 4 6 4
+count 5 4 5 3 4
+count 5 4 5 5 4
+count 5 5 4 5 4
+count 7 2 8 2 4
+count 8 2 9 2 4
+count 9 2 9 3 4
+round
+confirm 7 2 4 3
+fire 0 0 4 3
+fire 0 0 7 2
+fire 0 1 4 2
+fire 0 1 4 4
+fire 0 1 5 3
+fire 0 1 8 2
+fire 0 2 9 2
+fire 0 3 9 3
+count 4 3 4 2 6
+count 4 3 4 4 6
+count 4 3 5 3 6
+count 4 5 4 6 4
+count 5 4 5 3 4
+count 5 4 5 5 4
+count 5 5 4 5 4
+count 7 2 8 2 5
+count 8 2 9 2 5
+count 9 2 9 3 5
+round
+confirm 4 3 7 2
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 5 3
+fire 0 0 7 2
+fire 0 1 8 2
+fire 0 2 9 2
+fire 0 3 9 3
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 4
+count 5 4 5 3 4
+count 5 4 5 5 4
+count 5 5 4 5 4
+count 7 2 8 2 6
+count 8 2 9 2 6
+count 9 2 9 3 6
+round
+confirm 5 4
+fire 0 0 5 4
+fire 0 1 5 3
+fire 0 1 5 5
+fire 0 2 4 5
+fire 0 3 4 6
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 5
+count 5 4 5 3 5
+count 5 4 5 5 5
+count 5 5 4 5 5
+count 7 2 8 2 6
+count 8 2 9 2 6
+count 9 2 9 3 6
+round
+confirm 7 2
+confirm 5 4
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 9 2
+fire 0 0 9 3
+fire 1 0 5 4
+fire 1 1 5 3
+fire 1 1 5 5
+fire 1 2 4 5
+fire 1 3 4 6
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 6
+count 5 4 5 3 6
+count 5 4 5 5 6
+count 5 5 4 5 6
+count 7 2 8 2 7
+count 8 2 9 2 7
+count 9 2 9 3 7
+round
+confirm 5 4
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 7
+count 5 4 5 3 7
+count 5 4 5 5 7
+count 5 5 4 5 7
+count 7 2 8 2 7
+count 8 2 9 2 7
+count 9 2 9 3 7
+round
+confirm 5 4
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 8
+count 5 4 5 3 8
+count 5 4 5 5 8
+count 5 5 4 5 8
+count 7 2 8 2 7
+count 8 2 9 2 7
+count 9 2 9 3 7
+round
+confirm 7 2 5 4
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 9 2
+fire 0 0 9 3
+count 4 3 4 2 7
+count 4 3 4 4 7
+count 4 3 5 3 7
+count 4 5 4 6 9
+count 5 4 5 3 9
+count 5 4 5 5 9
+count 5 5 4 5 9
+count 7 2 8 2 8
+count 8 2 9 2 8
+count 9 2 9 3 8
+round
+confirm 4 3
+confirm 5 4
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 5 3
+fire 1 0 4 5
+fire 1 0 4 6
+fire 1 0 5 3
+fire 1 0 5 4
+fire 1 0 5 5
+count 4 3 4 2 8
+count 4 3 4 4 8
+count 4 3 5 3 8
+count 4 5 4 6 10
+count 5 4 5 3 10
+count 5 4 5 5 10
+count 5 5 4 5 10
+count 7 2 8 2 8
+count 8 2 9 2 8
+count 9 2 9 3 8
+round
+confirm 7 2 4 3
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 5 3
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 9 2
+fire 0 0 9 3
+count 4 3 4 2 9
+count 4 3 4 4 9
+count 4 3 5 3 9
+count 4 5 4 6 10
+count 5 4 5 3 10
+count 5 4 5 5 10
+count 5 5 4 5 10
+count 7 2 8 2 9
+count 8 2 9 2 9
+count 9 2 9 3 9
+round
+confirm 5 4
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+count 4 3 4 2 9
+count 4 3 4 4 9
+count 4 3 5 3 9
+count 4 5 4 6 11
+count 5 4 5 3 11
+count 5 4 5 5 11
+count 5 5 4 5 11
+count 7 2 8 2 9
+count 8 2 9 2 9
+count 9 2 9 3 9
+round
+confirm 4 3 5 4
+fire 0 0 4 2
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+count 4 3 4 2 10
+count 4 3 4 4 10
+count 4 3 5 3 10
+count 4 5 4 6 12
+count 5 4 5 3 12
+count 5 4 5 5 12
+count 5 5 4 5 12
+count 7 2 8 2 9
+count 8 2 9 2 9
+count 9 2 9 3 9
+round
+confirm 5 4
+confirm 4 3
+fire 0 0 4 5
+fire 0 0 4 6
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 1 0 4 2
+fire 1 0 4 3
+fire 1 0 4 4
+fire 1 0 5 3
+count 4 3 4 2 11
+count 4 3 4 4 11
+count 4 3 5 3 11
+count 4 5 4 6 13
+count 5 4 5 3 13
+count 5 4 5 5 13
+count 5 5 4 5 13
+count 7 2 8 2 9
+count 8 2 9 2 9
+count 9 2 9 3 9
+case 12
+glow 3 0 conduct 1
+glow 4 0 conduct 5
+glow 6 0 conduct 1
+glow 2 1 conduct 3
+glow 4 1 cone 3
+glow 5 1 conduct 1
+glow 6 1 conduct 4
+glow 0 2 cone 2
+glow 1 2 cone 0
+glow 6 2 conduct 4
+glow 7 2 cone 1
+glow 0 3 cone 4
+glow 3 3 conduct 4
+glow 6 3 conduct 5
+glow 8 3 cone 4
+glow 9 3 conduct 0
+glow 2 4 conduct 5
+glow 3 4 conduct 0
+glow 4 4 cone 0
+glow 5 4 conduct 4
+glow 6 4 cone 5
+glow 2 5 conduct 5
+glow 3 5 conduct 4
+glow 4 5 conduct 2
+glow 5 5 conduct 2
+glow 6 5 cone 1
+glow 7 5 cone 2
+glow 4 6 conv 1
+round
+confirm 4 1 7 2
+fire 0 0 4 1
+fire 0 0 7 2
+fire 0 1 4 0
+fire 0 1 5 1
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 6 2
+count 4 1 4 0 1
+count 4 1 5 1 1
+count 6 3 6 2 1
+count 7 2 6 1 1
+count 7 2 6 3 1
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 4 0
+fire 0 1 5 1
+fire 0 2 6 1
+count 4 1 4 0 2
+count 4 1 5 1 2
+count 5 1 6 1 1
+count 6 3 6 2 1
+count 7 2 6 1 1
+count 7 2 6 3 1
+round
+confirm 7 2 4 1
+fire 0 0 4 1
+fire 0 0 7 2
+fire 0 1 4 0
+fire 0 1 5 1
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 6 2
+count 4 1 4 0 3
+count 4 1 5 1 3
+count 5 1 6 1 1
+count 6 3 6 2 2
+count 7 2 6 1 2
+count 7 2 6 3 2
+round
+confirm 7 2
+confirm 4 1
+fire 0 0 7 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 5 1
+fire 0 2 6 2
+fire 1 0 4 1
+fire 1 1 4 0
+fire 1 1 5 1
+fire 1 2 6 1
+count 4 1 4 0 4
+count 4 1 5 1 4
+count 5 1 6 1 2
+count 6 1 5 1 1
+count 6 3 6 2 3
+count 7 2 6 1 3
+count 7 2 6 3 3
+round
+confirm 4 1 4 4
+fire 0 0 4 1
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 0
+fire 0 1 4 5
+fire 0 1 5 1
+fire 0 2 3 3
+fire 0 2 6 1
+count 3 4 3 3 1
+count 4 1 4 0 5
+count 4 1 5 1 5
+count 4 4 3 4 1
+count 4 4 4 5 1
+count 5 1 6 1 3
+count 6 1 5 1 1
+count 6 3 6 2 3
+count 7 2 6 1 3
+count 7 2 6 3 3
+round
+confirm 4 4 7 2
+fire 0 0 4 4
+fire 0 0 7 2
+fire 0 1 3 4
+fire 0 1 4 5
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 3 3
+fire 0 2 5 1
+fire 0 2 6 2
+fire 0 3 6 1
+count 3 4 3 3 2
+count 4 1 4 0 5
+count 4 1 5 1 5
+count 4 4 3 4 2
+count 4 4 4 5 2
+count 5 1 6 1 4
+count 6 1 5 1 2
+count 6 3 6 2 4
+count 7 2 6 1 4
+count 7 2 6 3 4
+round
+confirm 7 2 4 4
+fire 0 0 4 4
+fire 0 0 7 2
+fire 0 1 3 4
+fire 0 1 4 5
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 3 3
+fire 0 2 5 1
+fire 0 2 6 2
+fire 0 3 6 1
+fire 0 4 5 1
+count 3 4 3 3 3
+count 4 1 4 0 5
+count 4 1 5 1 5
+count 4 4 3 4 3
+count 4 4 4 5 3
+count 5 1 6 1 5
+count 6 1 5 1 4
+count 6 3 6 2 5
+count 7 2 6 1 5
+count 7 2 6 3 5
+round
+confirm 7 2
+confirm 4 4
+fire 0 0 7 2
+fire 0 1 6 1
+fire 0 1 6 3
+fire 0 2 5 1
+fire 0 2 6 2
+fire 0 3 6 1
+fire 0 4 5 1
+fire 1 0 4 4
+fire 1 1 3 4
+fire 1 1 4 5
+fire 1 2 3 3
+count 3 4 3 3 4
+count 4 1 4 0 5
+count 4 1 5 1 5
+count 4 4 3 4 4
+count 4 4 4 5 4
+count 5 1 6 1 6
+count 6 1 5 1 6
+count 6 3 6 2 6
+count 7 2 6 1 6
+count 7 2 6 3 6
+round
+confirm 4 4 4 1
+fire 0 0 4 1
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 0
+fire 0 1 4 5
+fire 0 1 5 1
+fire 0 1 6 1
+fire 0 2 3 3
+count 3 4 3 3 5
+count 4 1 4 0 6
+count 4 1 5 1 6
+count 4 4 3 4 5
+count 4 4 4 5 5
+count 5 1 6 1 7
+count 6 1 5 1 6
+count 6 3 6 2 6
+count 7 2 6 1 6
+count 7 2 6 3 6
+round
+confirm 4 1 4 4
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 4
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 1 3 4
+fire 0 1 4 5
+fire 0 2 3 3
+count 3 4 3 3 6
+count 4 1 4 0 7
+count 4 1 5 1 7
+count 4 4 3 4 6
+count 4 4 4 5 6
+count 5 1 6 1 8
+count 6 1 5 1 6
+count 6 3 6 2 6
+count 7 2 6 1 6
+count 7 2 6 3 6
+round
+confirm 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 6 1
+count 3 4 3 3 6
+count 4 1 4 0 8
+count 4 1 5 1 8
+count 4 4 3 4 6
+count 4 4 4 5 6
+count 5 1 6 1 9
+count 6 1 5 1 6
+count 6 3 6 2 6
+count 7 2 6 1 6
+count 7 2 6 3 6
+round
+confirm 4 1
+confirm 4 4
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 6 1
+fire 1 0 3 3
+fire 1 0 3 4
+fire 1 0 4 4
+fire 1 0 4 5
+count 3 4 3 3 7
+count 4 1 4 0 9
+count 4 1 5 1 9
+count 4 4 3 4 7
+count 4 4 4 5 7
+count 5 1 6 1 10
+count 6 1 5 1 6
+count 6 3 6 2 6
+count 7 2 6 1 6
+count 7 2 6 3 6
+round
+confirm 4 4 7 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 4
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 3 3 8
+count 4 1 4 0 9
+count 4 1 5 1 9
+count 4 4 3 4 8
+count 4 4 4 5 8
+count 5 1 6 1 10
+count 6 1 5 1 7
+count 6 3 6 2 7
+count 7 2 6 1 7
+count 7 2 6 3 7
+round
+confirm 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 6 1
+count 3 4 3 3 8
+count 4 1 4 0 10
+count 4 1 5 1 10
+count 4 4 3 4 8
+count 4 4 4 5 8
+count 5 1 6 1 11
+count 6 1 5 1 7
+count 6 3 6 2 7
+count 7 2 6 1 7
+count 7 2 6 3 7
+round
+confirm 4 4
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 4
+fire 0 0 4 5
+count 3 4 3 3 9
+count 4 1 4 0 10
+count 4 1 5 1 10
+count 4 4 3 4 9
+count 4 4 4 5 9
+count 5 1 6 1 11
+count 6 1 5 1 7
+count 6 3 6 2 7
+count 7 2 6 1 7
+count 7 2 6 3 7
+round
+confirm 7 2
+confirm 7 2
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+fire 1 0 5 1
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 6 3
+fire 1 0 7 2
+count 3 4 3 3 9
+count 4 1 4 0 10
+count 4 1 5 1 10
+count 4 4 3 4 9
+count 4 4 4 5 9
+count 5 1 6 1 11
+count 6 1 5 1 9
+count 6 3 6 2 9
+count 7 2 6 1 9
+count 7 2 6 3 9
+round
+confirm 7 2 4 1
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 3 3 9
+count 4 1 4 0 11
+count 4 1 5 1 11
+count 4 4 3 4 9
+count 4 4 4 5 9
+count 5 1 6 1 11
+count 6 1 5 1 9
+count 6 3 6 2 10
+count 7 2 6 1 10
+count 7 2 6 3 10
+round
+confirm 7 2 4 4
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 4
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 3 3 10
+count 4 1 4 0 11
+count 4 1 5 1 11
+count 4 4 3 4 10
+count 4 4 4 5 10
+count 5 1 6 1 11
+count 6 1 5 1 10
+count 6 3 6 2 11
+count 7 2 6 1 11
+count 7 2 6 3 11
+round
+confirm 4 1 4 4
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 0
+fire 0 0 4 1
+fire 0 0 4 4
+fire 0 0 4 5
+fire 0 0 5 1
+fire 0 0 6 1
+count 3 4 3 3 11
+count 4 1 4 0 12
+count 4 1 5 1 12
+count 4 4 3 4 11
+count 4 4 4 5 11
+count 5 1 6 1 12
+count 6 1 5 1 10
+count 6 3 6 2 11
+count 7 2 6 1 11
+count 7 2 6 3 11
+round
+confirm 4 4
+confirm 7 2
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 4 4
+fire 0 0 4 5
+fire 1 0 5 1
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 6 3
+fire 1 0 7 2
+count 3 4 3 3 12
+count 4 1 4 0 12
+count 4 1 5 1 12
+count 4 4 3 4 12
+count 4 4 4 5 12
+count 5 1 6 1 12
+count 6 1 5 1 11
+count 6 3 6 2 12
+count 7 2 6 1 12
+count 7 2 6 3 12
+case 13
+glow 4 1 conduct 0
+glow 5 1 cone 0
+glow 6 1 conduct 3
+glow 7 1 conduct 2
+glow 0 2 cone 1
+glow 1 2 conduct 5
+glow 4 2 cone 3
+glow 5 2 conduct 3
+glow 6 2 cone 0
+glow 8 2 conduct 2
+glow 9 2 cone 2
+glow 0 3 cone 2
+glow 1 3 conduct 4
+glow 2 3 conduct 3
+glow 3 3 conduct 0
+glow 4 3 conduct 2
+glow 5 3 cone 0
+glow 6 3 conv 1
+glow 8 3 conduct 1
+glow 9 3 conduct 2
+glow 3 4 conduct 5
+glow 4 4 cone 2
+glow 2 5 cone 5
+glow 6 5 conduct 1
+glow 7 5 cone 5
+round
+confirm 9 2
+fire 0 0 9 2
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 8 3
+count 8 2 8 3 1
+count 9 2 8 2 1
+count 9 2 9 3 1
+round
+confirm 9 2 6 2
+fire 0 0 6 2
+fire 0 0 9 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 8 3
+count 6 2 5 2 1
+count 6 2 6 1 1
+count 8 2 8 3 2
+count 9 2 8 2 2
+count 9 2 9 3 2
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 4 1
+fire 0 1 6 2
+fire 0 2 5 2
+fire 0 2 6 1
+count 5 1 4 1 1
+count 5 1 6 2 1
+count 6 2 5 2 2
+count 6 2 6 1 2
+count 8 2 8 3 2
+count 9 2 8 2 2
+count 9 2 9 3 2
+round
+confirm 5 1
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 4 1
+fire 0 1 6 2
+fire 0 2 5 2
+fire 0 2 6 1
+fire 1 0 5 1
+fire 1 1 4 1
+fire 1 1 6 2
+fire 1 2 5 2
+fire 1 2 6 1
+count 5 1 4 1 3
+count 5 1 6 2 3
+count 6 2 5 2 4
+count 6 2 6 1 4
+count 8 2 8 3 2
+count 9 2 8 2 2
+count 9 2 9 3 2
+round
+confirm 9 2
+fire 0 0 9 2
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 8 3
+count 5 1 4 1 3
+count 5 1 6 2 3
+count 6 2 5 2 4
+count 6 2 6 1 4
+count 8 2 8 3 3
+count 9 2 8 2 3
+count 9 2 9 3 3
+round
+confirm 6 2
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 1
+count 5 1 4 1 3
+count 5 1 6 2 3
+count 6 2 5 2 5
+count 6 2 6 1 5
+count 8 2 8 3 3
+count 9 2 8 2 3
+count 9 2 9 3 3
+round
+confirm 9 2
+fire 0 0 9 2
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 8 3
+count 5 1 4 1 3
+count 5 1 6 2 3
+count 6 2 5 2 5
+count 6 2 6 1 5
+count 8 2 8 3 4
+count 9 2 8 2 4
+count 9 2 9 3 4
+round
+confirm 5 1
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 4 1
+fire 0 1 6 2
+fire 0 2 5 2
+fire 0 2 6 1
+fire 1 0 5 1
+fire 1 1 4 1
+fire 1 1 5 2
+fire 1 1 6 1
+fire 1 1 6 2
+count 5 1 4 1 5
+count 5 1 6 2 5
+count 6 2 5 2 7
+count 6 2 6 1 7
+count 8 2 8 3 4
+count 9 2 8 2 4
+count 9 2 9 3 4
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+count 5 1 4 1 5
+count 5 1 6 2 5
+count 6 2 5 2 8
+count 6 2 6 1 8
+count 8 2 8 3 4
+count 9 2 8 2 4
+count 9 2 9 3 4
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+count 5 1 4 1 5
+count 5 1 6 2 5
+count 6 2 5 2 9
+count 6 2 6 1 9
+count 8 2 8 3 4
+count 9 2 8 2 4
+count 9 2 9 3 4
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 4 1
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 2
+count 5 1 4 1 6
+count 5 1 6 2 6
+count 6 2 5 2 10
+count 6 2 6 1 10
+count 8 2 8 3 4
+count 9 2 8 2 4
+count 9 2 9 3 4
+round
+confirm 5 1
+confirm 9 2
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 1 0 9 2
+fire 1 1 8 2
+fire 1 1 9 3
+fire 1 2 8 3
+count 5 1 4 1 7
+count 5 1 6 2 7
+count 6 2 5 2 11
+count 6 2 6 1 11
+count 8 2 8 3 5
+count 9 2 8 2 5
+count 9 2 9 3 5
+round
+confirm 9 2
+fire 0 0 9 2
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 8 3
+count 5 1 4 1 7
+count 5 1 6 2 7
+count 6 2 5 2 11
+count 6 2 6 1 11
+count 8 2 8 3 6
+count 9 2 8 2 6
+count 9 2 9 3 6
+round
+confirm 9 2 6 2
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 5 1 4 1 7
+count 5 1 6 2 7
+count 6 2 5 2 12
+count 6 2 6 1 12
+count 8 2 8 3 7
+count 9 2 8 2 7
+count 9 2 9 3 7
+round
+confirm 9 2 5 1
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 5 1 4 1 8
+count 5 1 6 2 8
+count 6 2 5 2 13
+count 6 2 6 1 13
+count 8 2 8 3 8
+count 9 2 8 2 8
+count 9 2 9 3 8
+round
+confirm 5 1
+confirm 6 2
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 1 0 5 2
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 1 6 3
+count 5 1 4 1 9
+count 5 1 6 2 9
+count 6 2 5 2 15
+count 6 2 6 1 15
+count 6 2 6 3 1
+count 8 2 8 3 8
+count 9 2 8 2 8
+count 9 2 9 3 8
+round
+confirm 9 2 5 1
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 5 1 4 1 10
+count 5 1 6 2 10
+count 6 2 5 2 16
+count 6 2 6 1 16
+count 6 2 6 3 1
+count 8 2 8 3 9
+count 9 2 8 2 9
+count 9 2 9 3 9
+round
+confirm 5 1 6 2
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 1 5 2
+fire 0 1 6 1
+fire 0 1 6 2
+fire 0 2 6 3
+count 5 1 4 1 11
+count 5 1 6 2 10
+count 6 1 6 2 1
+count 6 2 5 2 18
+count 6 2 6 1 18
+count 6 2 6 3 2
+count 8 2 8 3 9
+count 9 2 8 2 9
+count 9 2 9 3 9
+round
+confirm 6 2
+fire 0 0 5 2
+fire 0 0 6 1
+fire 0 0 6 2
+count 5 1 4 1 11
+count 5 1 6 2 10
+count 6 1 6 2 1
+count 6 2 5 2 19
+count 6 2 6 1 19
+count 6 2 6 3 2
+count 8 2 8 3 9
+count 9 2 8 2 9
+count 9 2 9 3 9
+round
+confirm 9 2
+confirm 9 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 1 0 8 2
+fire 1 0 8 3
+fire 1 0 9 2
+fire 1 0 9 3
+count 5 1 4 1 11
+count 5 1 6 2 10
+count 6 1 6 2 1
+count 6 2 5 2 19
+count 6 2 6 1 19
+count 6 2 6 3 2
+count 8 2 8 3 11
+count 9 2 8 2 11
+count 9 2 9 3 11
+case 14
+glow 3 0 conduct 0
+glow 4 0 cone 4
+glow 5 0 conduct 4
+glow 6 0 cone 3
+glow 2 1 conduct 1
+glow 3 1 cone 1
+glow 4 1 conduct 4
+glow 5 1 cone 1
+glow 6 1 conduct 2
+glow 7 1 conduct 4
+glow 0 2 conduct 4
+glow 2 2 conduct 3
+glow 3 2 cone 4
+glow 4 2 conduct 0
+glow 5 2 conv 3
+glow 8 2 conduct 0
+glow 9 2 conduct 5
+glow 1 3 conduct 4
+glow 2 3 conduct 5
+glow 5 3 conduct 0
+glow 6 3 conduct 3
+glow 8 3 conduct 5
+glow 9 3 conduct 1
+glow 2 4 conduct 0
+glow 3 4 cone 3
+glow 4 4 conduct 0
+glow 5 4 conduct 0
+glow 6 4 cone 5
+glow 2 5 conduct 1
+glow 3 5 conduct 2
+glow 4 5 conduct 1
+glow 5 5 conduct 5
+glow 6 5 conduct 1
+glow 7 5 conduct 2
+glow 4 6 conduct 5
+round
+confirm 3 1 5 1
+fire 0 0 3 1
+fire 0 0 5 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 1 5 0
+fire 0 1 6 1
+fire 0 2 2 2
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 1 4 1 1
+count 3 2 2 2 1
+count 5 1 5 0 1
+count 5 1 6 1 1
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 2 2
+fire 0 2 3 5
+fire 0 3 4 6
+count 2 3 2 2 1
+count 2 5 3 5 1
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 1 4 1 1
+count 3 2 2 2 1
+count 3 4 2 3 1
+count 3 4 2 5 1
+count 3 4 4 4 1
+count 3 5 4 6 1
+count 5 1 5 0 1
+count 5 1 6 1 1
+round
+confirm 3 1 5 1
+fire 0 0 3 1
+fire 0 0 5 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 1 5 0
+fire 0 1 6 1
+fire 0 2 2 2
+count 2 3 2 2 1
+count 2 5 3 5 1
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 1 4 1 2
+count 3 2 2 2 2
+count 3 4 2 3 1
+count 3 4 2 5 1
+count 3 4 4 4 1
+count 3 5 4 6 1
+count 5 1 5 0 2
+count 5 1 6 1 2
+round
+confirm 3 4
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 2 2
+fire 0 2 3 5
+fire 0 3 4 6
+fire 1 0 3 4
+fire 1 1 2 3
+fire 1 1 2 5
+fire 1 1 4 4
+fire 1 2 3 5
+count 2 3 2 2 2
+count 2 5 3 5 3
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 1 4 1 2
+count 3 2 2 2 2
+count 3 4 2 3 3
+count 3 4 2 5 3
+count 3 4 4 4 3
+count 3 5 4 6 2
+count 5 1 5 0 2
+count 5 1 6 1 2
+round
+confirm 3 1 3 4
+fire 0 0 3 1
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 1 4 4
+fire 0 2 2 2
+fire 0 2 3 5
+fire 0 3 4 6
+count 2 3 2 2 3
+count 2 5 3 5 4
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 1 4 1 3
+count 3 2 2 2 3
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 3 5 4 6 3
+count 5 1 5 0 2
+count 5 1 6 1 2
+round
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 6 1
+count 2 3 2 2 3
+count 2 5 3 5 4
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 1 4 1 3
+count 3 2 2 2 3
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 3 5 4 6 3
+count 5 1 5 0 3
+count 5 1 6 1 3
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 2 2 2
+count 2 3 2 2 3
+count 2 5 3 5 4
+count 3 1 3 0 4
+count 3 1 3 2 4
+count 3 1 4 1 4
+count 3 2 2 2 4
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 3 5 4 6 3
+count 5 1 5 0 3
+count 5 1 6 1 3
+round
+confirm 5 1
+confirm 5 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 6 1
+fire 1 0 5 1
+fire 1 1 5 0
+fire 1 1 5 2
+fire 1 1 6 1
+count 2 3 2 2 3
+count 2 5 3 5 4
+count 3 1 3 0 4
+count 3 1 3 2 4
+count 3 1 4 1 4
+count 3 2 2 2 4
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 3 5 4 6 3
+count 5 1 5 0 5
+count 5 1 5 2 1
+count 5 1 6 1 5
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 2 2 2
+count 2 3 2 2 3
+count 2 5 3 5 4
+count 3 1 3 0 5
+count 3 1 3 2 5
+count 3 1 4 1 5
+count 3 2 2 2 5
+count 3 4 2 3 4
+count 3 4 2 5 4
+count 3 4 4 4 4
+count 3 5 4 6 3
+count 5 1 5 0 5
+count 5 1 5 2 1
+count 5 1 6 1 5
+round
+confirm 3 4 3 1
+fire 0 0 3 1
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 1
+fire 0 1 4 4
+fire 0 2 2 2
+fire 0 2 3 5
+fire 0 3 4 6
+count 2 3 2 2 4
+count 2 5 3 5 5
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 1 4 1 6
+count 3 2 2 2 6
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 3 5 4 6 4
+count 5 1 5 0 5
+count 5 1 5 2 1
+count 5 1 6 1 5
+round
+confirm 5 1 3 1
+fire 0 0 2 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 4 1
+fire 0 0 5 1
+fire 0 1 5 0
+fire 0 1 6 1
+count 2 3 2 2 4
+count 2 5 3 5 5
+count 3 1 3 0 7
+count 3 1 3 2 7
+count 3 1 4 1 7
+count 3 2 2 2 7
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 3 5 4 6 4
+count 5 1 5 0 6
+count 5 1 5 2 1
+count 5 1 6 1 6
+round
+confirm 3 1
+confirm 3 1
+fire 0 0 2 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 4 1
+fire 1 0 2 2
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 4 1
+count 2 3 2 2 4
+count 2 5 3 5 5
+count 3 1 3 0 9
+count 3 1 3 2 9
+count 3 1 4 1 9
+count 3 2 2 2 9
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 3 5 4 6 4
+count 5 1 5 0 6
+count 5 1 5 2 1
+count 5 1 6 1 6
+round
+confirm 3 1 5 1
+fire 0 0 2 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 4 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 1
+count 2 3 2 2 4
+count 2 5 3 5 5
+count 3 1 3 0 10
+count 3 1 3 2 10
+count 3 1 4 1 10
+count 3 2 2 2 10
+count 3 4 2 3 5
+count 3 4 2 5 5
+count 3 4 4 4 5
+count 3 5 4 6 4
+count 5 1 5 0 7
+count 5 1 5 2 1
+count 5 1 6 1 7
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 2 5
+fire 0 1 4 4
+fire 0 2 2 2
+fire 0 2 3 5
+fire 0 3 4 6
+count 2 3 2 2 5
+count 2 5 3 5 6
+count 3 1 3 0 10
+count 3 1 3 2 10
+count 3 1 4 1 10
+count 3 2 2 2 10
+count 3 4 2 3 6
+count 3 4 2 5 6
+count 3 4 4 4 6
+count 3 5 4 6 5
+count 5 1 5 0 7
+count 5 1 6 1 7
+round
+confirm 5 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 1
+count 2 3 2 2 5
+count 2 5 3 5 6
+count 3 1 3 0 10
+count 3 1 3 2 10
+count 3 1 4 1 10
+count 3 2 2 2 10
+count 3 4 2 3 6
+count 3 4 2 5 6
+count 3 4 4 4 6
+count 3 5 4 6 5
+count 5 1 5 0 8
+count 5 1 6 1 8
+round
+confirm 5 1
+confirm 3 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 1
+fire 1 0 2 2
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 4 1
+count 2 3 2 2 5
+count 2 5 3 5 6
+count 3 1 3 0 11
+count 3 1 3 2 11
+count 3 1 4 1 11
+count 3 2 2 2 11
+count 3 4 2 3 6
+count 3 4 2 5 6
+count 3 4 4 4 6
+count 3 5 4 6 5
+count 5 1 5 0 9
+count 5 1 6 1 9
+round
+confirm 3 4 3 1
+fire 0 0 2 2
+fire 0 0 2 3
+fire 0 0 2 5
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 1
+fire 0 0 4 4
+fire 0 1 2 2
+fire 0 1 4 6
+count 2 3 2 2 6
+count 2 5 3 5 7
+count 3 1 3 0 12
+count 3 1 3 2 12
+count 3 1 4 1 12
+count 3 2 2 2 12
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 3 5 4 6 6
+count 5 1 5 0 9
+count 5 1 6 1 9
+round
+confirm 5 1
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 1
+count 2 3 2 2 6
+count 2 5 3 5 7
+count 3 1 3 0 12
+count 3 1 3 2 12
+count 3 1 4 1 12
+count 3 2 2 2 12
+count 3 4 2 3 7
+count 3 4 2 5 7
+count 3 4 4 4 7
+count 3 5 4 6 6
+count 5 1 5 0 10
+count 5 1 6 1 10
+round
+confirm 3 4
+fire 0 0 2 2
+fire 0 0 2 3
+fire 0 0 2 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+fire 0 0 4 6
+count 2 3 2 2 7
+count 2 5 3 5 8
+count 3 1 3 0 12
+count 3 1 3 2 12
+count 3 1 4 1 12
+count 3 2 2 2 12
+count 3 4 2 3 8
+count 3 4 2 5 8
+count 3 4 4 4 8
+count 3 5 4 6 7
+count 5 1 5 0 10
+count 5 1 6 1 10
+round
+confirm 3 1
+confirm 5 1
+fire 0 0 2 2
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 4 1
+fire 1 0 5 0
+fire 1 0 5 1
+fire 1 0 6 1
+count 2 3 2 2 7
+count 2 5 3 5 8
+count 3 1 3 0 13
+count 3 1 3 2 13
+count 3 1 4 1 13
+count 3 2 2 2 13
+count 3 4 2 3 8
+count 3 4 2 5 8
+count 3 4 4 4 8
+count 3 5 4 6 7
+count 5 1 5 0 11
+count 5 1 6 1 11
+case 15
+glow 3 0 conduct 3
+glow 4 0 cone 5
+glow 5 0 conduct 5
+glow 2 1 cone 0
+glow 3 1 cone 3
+glow 6 1 cone 5
+glow 7 1 conduct 0
+glow 0 2 cone 3
+glow 1 2 conduct 3
+glow 2 2 conduct 4
+glow 3 2 conduct 1
+glow 4 2 conduct 0
+glow 5 2 conduct 4
+glow 6 2 conduct 0
+glow 7 2 conduct 3
+glow 9 2 conduct 3
+glow 0 3 cone 2
+glow 1 3 cone 4
+glow 2 3 cone 4
+glow 3 3 cone 0
+glow 4 3 conduct 5
+glow 5 3 conduct 5
+glow 6 3 conduct 1
+glow 8 3 cone 0
+glow 9 3 cone 1
+glow 5 4 cone 5
+glow 5 5 conv 0
+glow 6 5 conduct 4
+glow 4 6 cone 5
+glow 5 6 conduct 5
+round
+confirm 3 1 6 1
+fire 0 0 3 1
+fire 0 0 6 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 4 2
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 1
+count 6 1 6 2 1
+count 6 1 7 1 1
+round
+confirm 2 1
+fire 0 0 2 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 2 4 2
+count 2 1 3 0 1
+count 2 1 3 2 1
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 2
+count 6 1 6 2 1
+count 6 1 7 1 1
+round
+confirm 6 1 2 1
+fire 0 0 2 1
+fire 0 0 6 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 4 2
+count 2 1 3 0 2
+count 2 1 3 2 2
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 3
+count 6 1 6 2 2
+count 6 1 7 1 2
+round
+confirm 6 1
+confirm 2 1
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+fire 1 0 2 1
+fire 1 1 3 0
+fire 1 1 3 2
+fire 1 2 4 2
+count 2 1 3 0 3
+count 2 1 3 2 3
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 4
+count 6 1 6 2 3
+count 6 1 7 1 3
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+count 2 1 3 0 3
+count 2 1 3 2 3
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 4
+count 6 1 6 2 4
+count 6 1 7 1 4
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 1 6 2
+fire 0 1 7 1
+count 2 1 3 0 3
+count 2 1 3 2 3
+count 3 1 3 0 1
+count 3 1 3 2 1
+count 3 2 4 2 4
+count 6 1 6 2 5
+count 6 1 7 1 5
+round
+confirm 3 1 6 1
+fire 0 0 3 1
+fire 0 0 6 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 6 2
+fire 0 1 7 1
+fire 0 2 4 2
+count 2 1 3 0 3
+count 2 1 3 2 3
+count 3 1 3 0 2
+count 3 1 3 2 2
+count 3 2 4 2 5
+count 6 1 6 2 6
+count 6 1 7 1 6
+round
+confirm 2 1
+confirm 3 1
+fire 0 0 2 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 2 4 2
+fire 1 0 3 1
+fire 1 1 3 0
+fire 1 1 3 2
+fire 1 1 4 2
+count 2 1 3 0 4
+count 2 1 3 2 4
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 7
+count 6 1 6 2 6
+count 6 1 7 1 6
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 4
+count 2 1 3 2 4
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 7
+count 6 1 6 2 7
+count 6 1 7 1 7
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 4
+count 2 1 3 2 4
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 7
+count 6 1 6 2 8
+count 6 1 7 1 8
+round
+confirm 6 1 2 1
+fire 0 0 2 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 2
+count 2 1 3 0 5
+count 2 1 3 2 5
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 8
+count 6 1 6 2 9
+count 6 1 7 1 9
+round
+confirm 6 1
+confirm 2 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 1 0 2 1
+fire 1 1 3 0
+fire 1 1 3 2
+fire 1 1 4 2
+count 2 1 3 0 6
+count 2 1 3 2 6
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 9
+count 6 1 6 2 10
+count 6 1 7 1 10
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 6
+count 2 1 3 2 6
+count 3 1 3 0 3
+count 3 1 3 2 3
+count 3 2 4 2 9
+count 6 1 6 2 11
+count 6 1 7 1 11
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 2
+count 2 1 3 0 6
+count 2 1 3 2 6
+count 3 1 3 0 4
+count 3 1 3 2 4
+count 3 2 4 2 10
+count 6 1 6 2 11
+count 6 1 7 1 11
+round
+confirm 3 1 6 1
+fire 0 0 3 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 2
+count 2 1 3 0 6
+count 2 1 3 2 6
+count 3 1 3 0 5
+count 3 1 3 2 5
+count 3 2 4 2 11
+count 6 1 6 2 12
+count 6 1 7 1 12
+round
+confirm 3 1
+confirm 6 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 3 2
+fire 0 1 4 2
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 7 1
+count 2 1 3 0 6
+count 2 1 3 2 6
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 4 2 12
+count 6 1 6 2 13
+count 6 1 7 1 13
+round
+confirm 2 1 6 1
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 3 2
+fire 0 0 4 2
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 7
+count 2 1 3 2 7
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 4 2 13
+count 6 1 6 2 14
+count 6 1 7 1 14
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 7
+count 2 1 3 2 7
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 4 2 13
+count 6 1 6 2 15
+count 6 1 7 1 15
+round
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+count 2 1 3 0 7
+count 2 1 3 2 7
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 4 2 13
+count 6 1 6 2 16
+count 6 1 7 1 16
+round
+confirm 6 1
+confirm 6 1
+fire 0 0 6 1
+fire 0 0 6 2
+fire 0 0 7 1
+fire 1 0 6 1
+fire 1 0 6 2
+fire 1 0 7 1
+count 2 1 3 0 7
+count 2 1 3 2 7
+count 3 1 3 0 6
+count 3 1 3 2 6
+count 3 2 4 2 13
+count 6 1 6 2 18
+count 6 1 7 1 18
+case 16
+glow 3 0 conduct 2
+glow 4 0 conduct 5
+glow 5 0 conduct 3
+glow 6 0 conduct 3
+glow 2 1 conduct 1
+glow 3 1 conduct 4
+glow 4 1 conduct 2
+glow 6 1 conduct 4
+glow 7 1 conduct 0
+glow 0 2 conduct 1
+glow 1 2 conduct 2
+glow 2 2 conduct 2
+glow 3 2 cone 0
+glow 5 2 cone 4
+glow 6 2 conduct 2
+glow 7 2 conduct 0
+glow 8 2 cone 2
+glow 9 2 conduct 1
+glow 1 3 cone 3
+glow 2 3 conv 3
+glow 3 3 conduct 5
+glow 5 3 conduct 3
+glow 6 3 conv 0
+glow 8 3 cone 3
+glow 9 3 cone 1
+glow 2 4 cone 1
+glow 3 4 conduct 1
+glow 4 4 conduct 0
+glow 6 4 cone 3
+glow 2 5 conduct 4
+glow 3 5 conduct 1
+glow 4 5 conduct 0
+glow 5 5 cone 5
+glow 6 5 conduct 0
+glow 7 5 cone 5
+glow 4 6 conduct 2
+round
+confirm 8 2 8 3
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 1 7 2
+fire 0 1 9 3
+fire 0 2 7 1
+fire 0 2 9 2
+count 7 2 7 1 1
+count 8 2 7 2 1
+count 8 3 9 3 1
+count 9 3 9 2 1
+round
+confirm 3 2 8 3
+fire 0 0 3 2
+fire 0 0 8 3
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 2 1
+fire 0 2 7 2
+fire 0 2 9 2
+fire 0 3 7 1
+count 3 1 2 1 1
+count 3 2 2 2 1
+count 3 2 3 1 1
+count 3 2 3 3 1
+count 7 2 7 1 2
+count 8 2 7 2 2
+count 8 3 8 2 1
+count 8 3 9 3 2
+count 9 3 9 2 2
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 2 1
+count 3 1 2 1 2
+count 3 2 2 2 2
+count 3 2 3 1 2
+count 3 2 3 3 2
+count 7 2 7 1 2
+count 8 2 7 2 2
+count 8 3 8 2 1
+count 8 3 9 3 2
+count 9 3 9 2 2
+round
+confirm 3 2
+confirm 8 2
+fire 0 0 3 2
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 2 1
+fire 1 0 8 2
+fire 1 1 7 2
+fire 1 1 8 3
+fire 1 2 7 1
+count 3 1 2 1 3
+count 3 2 2 2 3
+count 3 2 3 1 3
+count 3 2 3 3 3
+count 7 2 7 1 3
+count 8 2 7 2 3
+count 8 2 8 3 1
+count 8 3 8 2 1
+count 8 3 9 3 2
+count 9 3 9 2 2
+round
+confirm 8 2
+fire 0 0 8 2
+fire 0 1 7 2
+fire 0 1 8 3
+fire 0 2 7 1
+count 3 1 2 1 3
+count 3 2 2 2 3
+count 3 2 3 1 3
+count 3 2 3 3 3
+count 7 2 7 1 4
+count 8 2 7 2 4
+count 8 2 8 3 2
+count 8 3 8 2 1
+count 8 3 9 3 2
+count 9 3 9 2 2
+round
+confirm 8 3 3 2
+fire 0 0 3 2
+fire 0 0 8 3
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 2 1
+fire 0 2 7 2
+fire 0 2 9 2
+fire 0 3 7 1
+count 3 1 2 1 4
+count 3 2 2 2 4
+count 3 2 3 1 4
+count 3 2 3 3 4
+count 7 2 7 1 5
+count 8 2 7 2 5
+count 8 2 8 3 2
+count 8 3 8 2 2
+count 8 3 9 3 3
+count 9 3 9 2 3
+round
+confirm 8 2
+fire 0 0 8 2
+fire 0 1 7 2
+fire 0 1 8 3
+fire 0 2 7 1
+fire 0 2 9 3
+fire 0 3 9 2
+count 3 1 2 1 4
+count 3 2 2 2 4
+count 3 2 3 1 4
+count 3 2 3 3 4
+count 7 2 7 1 6
+count 8 2 7 2 6
+count 8 2 8 3 3
+count 8 3 8 2 2
+count 8 3 9 3 4
+count 9 3 9 2 4
+round
+confirm 3 2
+confirm 8 3
+fire 0 0 3 2
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 2 1
+fire 1 0 8 3
+fire 1 1 7 1
+fire 1 1 7 2
+fire 1 1 8 2
+fire 1 1 9 3
+fire 1 2 9 2
+count 3 1 2 1 5
+count 3 2 2 2 5
+count 3 2 3 1 5
+count 3 2 3 3 5
+count 7 2 7 1 7
+count 8 2 7 2 7
+count 8 2 8 3 3
+count 8 3 8 2 3
+count 8 3 9 3 5
+count 9 3 9 2 5
+round
+confirm 3 2
+fire 0 0 3 2
+fire 0 1 2 2
+fire 0 1 3 1
+fire 0 1 3 3
+fire 0 2 2 1
+count 3 1 2 1 6
+count 3 2 2 2 6
+count 3 2 3 1 6
+count 3 2 3 3 6
+count 7 2 7 1 7
+count 8 2 7 2 7
+count 8 2 8 3 3
+count 8 3 8 2 3
+count 8 3 9 3 5
+count 9 3 9 2 5
+round
+confirm 8 2 3 2
+fire 0 0 2 1
+fire 0 0 2 2
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 1 8 3
+fire 0 2 9 3
+fire 0 3 9 2
+count 3 1 2 1 7
+count 3 2 2 2 7
+count 3 2 3 1 7
+count 3 2 3 3 7
+count 7 2 7 1 8
+count 8 2 7 2 8
+count 8 2 8 3 4
+count 8 3 8 2 3
+count 8 3 9 3 6
+count 9 3 9 2 6
+round
+confirm 3 2 8 3
+fire 0 0 2 1
+fire 0 0 2 2
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 0 1 7 1
+fire 0 1 7 2
+fire 0 1 8 2
+count 3 1 2 1 8
+count 3 2 2 2 8
+count 3 2 3 1 8
+count 3 2 3 3 8
+count 7 2 7 1 9
+count 8 2 7 2 9
+count 8 2 8 3 4
+count 8 3 8 2 4
+count 8 3 9 3 7
+count 9 3 9 2 7
+round
+confirm 8 3
+confirm 3 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 0 1 7 1
+fire 0 1 7 2
+fire 0 1 8 2
+fire 1 0 2 1
+fire 1 0 2 2
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 3 3
+count 3 1 2 1 9
+count 3 2 2 2 9
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 7 2 7 1 10
+count 8 2 7 2 10
+count 8 2 8 3 4
+count 8 3 8 2 5
+count 8 3 9 3 8
+count 9 3 9 2 8
+round
+confirm 8 2
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 1 8 3
+fire 0 1 9 2
+fire 0 1 9 3
+count 3 1 2 1 9
+count 3 2 2 2 9
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 7 2 7 1 11
+count 8 2 7 2 11
+count 8 2 8 3 5
+count 8 3 8 2 5
+count 8 3 9 3 9
+count 9 3 9 2 9
+round
+confirm 8 3
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 0 1 7 1
+fire 0 1 7 2
+fire 0 1 8 2
+count 3 1 2 1 9
+count 3 2 2 2 9
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 7 2 7 1 12
+count 8 2 7 2 12
+count 8 2 8 3 5
+count 8 3 8 2 6
+count 8 3 9 3 10
+count 9 3 9 2 10
+round
+confirm 8 2 8 3
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 0 1 7 1
+fire 0 1 7 2
+fire 0 1 8 2
+fire 0 1 8 3
+count 3 1 2 1 9
+count 3 2 2 2 9
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 7 2 7 1 14
+count 8 2 7 2 14
+count 8 2 8 3 6
+count 8 3 8 2 7
+count 8 3 9 3 11
+count 9 3 9 2 11
+round
+confirm 8 3
+confirm 8 2
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 1 0 7 1
+fire 1 0 7 2
+fire 1 0 8 2
+fire 1 0 8 3
+count 3 1 2 1 9
+count 3 2 2 2 9
+count 3 2 3 1 9
+count 3 2 3 3 9
+count 7 2 7 1 16
+count 8 2 7 2 16
+count 8 2 8 3 7
+count 8 3 8 2 8
+count 8 3 9 3 12
+count 9 3 9 2 12
+round
+confirm 3 2 8 3
+fire 0 0 2 1
+fire 0 0 2 2
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 3 1 2 1 10
+count 3 2 2 2 10
+count 3 2 3 1 10
+count 3 2 3 3 10
+count 7 2 7 1 17
+count 8 2 7 2 17
+count 8 2 8 3 7
+count 8 3 8 2 9
+count 8 3 9 3 13
+count 9 3 9 2 13
+round
+confirm 8 3
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 3 1 2 1 10
+count 3 2 2 2 10
+count 3 2 3 1 10
+count 3 2 3 3 10
+count 7 2 7 1 18
+count 8 2 7 2 18
+count 8 2 8 3 7
+count 8 3 8 2 10
+count 8 3 9 3 14
+count 9 3 9 2 14
+round
+confirm 8 2
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+count 3 1 2 1 10
+count 3 2 2 2 10
+count 3 2 3 1 10
+count 3 2 3 3 10
+count 7 2 7 1 19
+count 8 2 7 2 19
+count 8 2 8 3 8
+count 8 3 8 2 10
+count 8 3 9 3 15
+count 9 3 9 2 15
+round
+confirm 8 3
+confirm 3 2
+fire 0 0 7 1
+fire 0 0 7 2
+fire 0 0 8 2
+fire 0 0 8 3
+fire 0 0 9 2
+fire 0 0 9 3
+fire 1 0 2 1
+fire 1 0 2 2
+fire 1 0 3 1
+fire 1 0 3 2
+fire 1 0 3 3
+count 3 1 2 1 11
+count 3 2 2 2 11
+count 3 2 3 1 11
+count 3 2 3 3 11
+count 7 2 7 1 20
+count 8 2 7 2 20
+count 8 2 8 3 8
+count 8 3 8 2 11
+count 8 3 9 3 16
+count 9 3 9 2 16
+case 17
+glow 3 0 cone 1
+glow 5 0 conduct 2
+glow 3 1 conduct 3
+glow 5 1 conduct 3
+glow 6 1 conduct 5
+glow 7 1 conv 3
+glow 1 2 conduct 1
+glow 2 2 cone 1
+glow 3 2 conduct 4
+glow 4 2 conduct 3
+glow 5 2 conduct 3
+glow 6 2 conduct 4
+glow 7 2 conduct 4
+glow 8 2 conduct 2
+glow 9 2 conv 0
+glow 0 3 conduct 4
+glow 2 3 conduct 4
+glow 3 3 conduct 1
+glow 5 3 conduct 5
+glow 6 3 cone 2
+glow 8 3 cone 5
+glow 9 3 conduct 1
+glow 3 4 cone 1
+glow 4 4 cone 5
+glow 6 4 conduct 4
+glow 3 5 conduct 5
+glow 4 5 cone 4
+glow 5 5 cone 0
+glow 6 5 conduct 3
+glow 5 6 cone 1
+round
+confirm 3 4 6 3
+fire 0 0 3 4
+fire 0 0 6 3
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 3 3
+fire 0 2 3 5
+fire 0 2 5 2
+fire 0 2 6 2
+count 3 4 2 3 1
+count 3 4 4 4 1
+count 4 4 3 3 1
+count 4 4 3 5 1
+count 5 3 5 2 1
+count 6 3 5 3 1
+count 6 3 7 2 1
+count 7 2 6 2 1
+round
+confirm 6 3
+fire 0 0 6 3
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 5 2
+fire 0 2 6 2
+count 3 4 2 3 1
+count 3 4 4 4 1
+count 4 4 3 3 1
+count 4 4 3 5 1
+count 5 3 5 2 2
+count 6 3 5 3 2
+count 6 3 7 2 2
+count 7 2 6 2 2
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 2 3 3
+fire 0 2 3 5
+count 3 4 2 3 2
+count 3 4 4 4 2
+count 4 4 3 3 2
+count 4 4 3 5 2
+count 5 3 5 2 2
+count 6 3 5 3 2
+count 6 3 7 2 2
+count 7 2 6 2 2
+round
+confirm 6 3
+confirm 8 3
+fire 0 0 6 3
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 5 2
+fire 0 2 6 2
+fire 1 0 8 3
+fire 1 1 8 2
+fire 1 1 9 3
+count 3 4 2 3 2
+count 3 4 4 4 2
+count 4 4 3 3 2
+count 4 4 3 5 2
+count 5 3 5 2 3
+count 6 3 5 3 3
+count 6 3 7 2 3
+count 7 2 6 2 3
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 2 3 3
+fire 0 2 3 5
+count 3 4 2 3 3
+count 3 4 4 4 3
+count 4 4 3 3 3
+count 4 4 3 5 3
+count 5 3 5 2 3
+count 6 3 5 3 3
+count 6 3 7 2 3
+count 7 2 6 2 3
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 8 3
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 4 2 3 3
+count 3 4 4 4 3
+count 4 4 3 3 3
+count 4 4 3 5 3
+count 5 3 5 2 3
+count 6 3 5 3 3
+count 6 3 7 2 3
+count 7 2 6 2 3
+count 8 3 8 2 2
+count 8 3 9 3 2
+round
+confirm 6 3
+fire 0 0 6 3
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 5 2
+fire 0 2 6 2
+count 3 4 2 3 3
+count 3 4 4 4 3
+count 4 4 3 3 3
+count 4 4 3 5 3
+count 5 3 5 2 4
+count 6 3 5 3 4
+count 6 3 7 2 4
+count 7 2 6 2 4
+count 8 3 8 2 2
+count 8 3 9 3 2
+round
+confirm 3 4
+confirm 8 3
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 2 3 3
+fire 0 2 3 5
+fire 1 0 8 3
+fire 1 1 8 2
+fire 1 1 9 3
+count 3 4 2 3 4
+count 3 4 4 4 4
+count 4 4 3 3 4
+count 4 4 3 5 4
+count 5 3 5 2 4
+count 6 3 5 3 4
+count 6 3 7 2 4
+count 7 2 6 2 4
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 3 4
+fire 0 0 3 4
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 2 3 3
+fire 0 2 3 5
+count 3 4 2 3 5
+count 3 4 4 4 5
+count 4 4 3 3 5
+count 4 4 3 5 5
+count 5 3 5 2 4
+count 6 3 5 3 4
+count 6 3 7 2 4
+count 7 2 6 2 4
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 6 3 8 3
+fire 0 0 6 3
+fire 0 0 8 3
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 1 8 2
+fire 0 1 9 3
+fire 0 2 5 2
+fire 0 2 6 2
+count 3 4 2 3 5
+count 3 4 4 4 5
+count 4 4 3 3 5
+count 4 4 3 5 5
+count 5 3 5 2 5
+count 6 3 5 3 5
+count 6 3 7 2 5
+count 7 2 6 2 5
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 6 3 3 4
+fire 0 0 3 4
+fire 0 0 6 3
+fire 0 1 2 3
+fire 0 1 4 4
+fire 0 1 5 3
+fire 0 1 7 2
+fire 0 2 3 3
+fire 0 2 3 5
+fire 0 2 5 2
+fire 0 2 6 2
+count 3 4 2 3 6
+count 3 4 4 4 6
+count 4 4 3 3 6
+count 4 4 3 5 6
+count 5 3 5 2 6
+count 6 3 5 3 6
+count 6 3 7 2 6
+count 7 2 6 2 6
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 6 3
+confirm 3 4
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+fire 1 0 2 3
+fire 1 0 3 3
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 4
+count 3 4 2 3 7
+count 3 4 4 4 7
+count 4 4 3 3 7
+count 4 4 3 5 7
+count 5 3 5 2 7
+count 6 3 5 3 7
+count 6 3 7 2 7
+count 7 2 6 2 7
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 3 4 6 3
+fire 0 0 2 3
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 2 3 8
+count 3 4 4 4 8
+count 4 4 3 3 8
+count 4 4 3 5 8
+count 5 3 5 2 8
+count 6 3 5 3 8
+count 6 3 7 2 8
+count 7 2 6 2 8
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 6 3
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 2 3 8
+count 3 4 4 4 8
+count 4 4 3 3 8
+count 4 4 3 5 8
+count 5 3 5 2 9
+count 6 3 5 3 9
+count 6 3 7 2 9
+count 7 2 6 2 9
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 3 4
+fire 0 0 2 3
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+count 3 4 2 3 9
+count 3 4 4 4 9
+count 4 4 3 3 9
+count 4 4 3 5 9
+count 5 3 5 2 9
+count 6 3 5 3 9
+count 6 3 7 2 9
+count 7 2 6 2 9
+count 8 3 8 2 4
+count 8 3 9 3 4
+round
+confirm 3 4
+confirm 6 3
+fire 0 0 2 3
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+fire 1 0 5 2
+fire 1 0 5 3
+fire 1 0 6 2
+fire 1 0 6 3
+fire 1 0 7 2
+count 3 4 2 3 10
+count 3 4 4 4 10
+count 4 4 3 3 10
+count 4 4 3 5 10
+count 5 3 5 2 10
+count 6 3 5 3 10
+count 6 3 7 2 10
+count 7 2 6 2 10
+count 8 3 8 2 1
+count 8 3 9 3 1
+round
+confirm 8 3 3 4
+fire 0 0 2 3
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 4 2 3 11
+count 3 4 4 4 11
+count 4 4 3 3 11
+count 4 4 3 5 11
+count 5 3 5 2 10
+count 6 3 5 3 10
+count 6 3 7 2 10
+count 7 2 6 2 10
+count 8 3 8 2 2
+count 8 3 9 3 2
+round
+confirm 8 3 6 3
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+fire 0 0 8 3
+fire 0 1 8 2
+fire 0 1 9 3
+count 3 4 2 3 11
+count 3 4 4 4 11
+count 4 4 3 3 11
+count 4 4 3 5 11
+count 5 3 5 2 11
+count 6 3 5 3 11
+count 6 3 7 2 11
+count 7 2 6 2 11
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 3 4 6 3
+fire 0 0 2 3
+fire 0 0 3 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 4
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+count 3 4 2 3 12
+count 3 4 4 4 12
+count 4 4 3 3 12
+count 4 4 3 5 12
+count 5 3 5 2 12
+count 6 3 5 3 12
+count 6 3 7 2 12
+count 7 2 6 2 12
+count 8 3 8 2 3
+count 8 3 9 3 3
+round
+confirm 6 3
+confirm 8 3
+fire 0 0 5 2
+fire 0 0 5 3
+fire 0 0 6 2
+fire 0 0 6 3
+fire 0 0 7 2
+fire 1 0 8 3
+fire 1 1 8 2
+fire 1 1 9 3
+count 3 4 2 3 12
+count 3 4 4 4 12
+count 4 4 3 3 12
+count 4 4 3 5 12
+count 5 3 5 2 13
+count 6 3 5 3 13
+count 6 3 7 2 13
+count 7 2 6 2 13
+count 8 3 8 2 4
+count 8 3 9 3 4
+case 18
+glow 3 0 cone 5
+glow 4 0 conduct 4
+glow 5 0 cone 1
+glow 2 1 conduct 0
+glow 4 1 conduct 4
+glow 5 1 conduct 3
+glow 6 1 cone 3
+glow 0 2 conduct 0
+glow 1 2 conduct 2
+glow 2 2 conduct 2
+glow 4 2 conduct 2
+glow 5 2 cone 4
+glow 6 2 conduct 0
+glow 8 2 conduct 0
+glow 9 2 cone 1
+glow 0 3 conduct 1
+glow 2 3 conduct 1
+glow 3 3 conv 5
+glow 4 3 conduct 0
+glow 8 3 conduct 0
+glow 3 4 conduct 1
+glow 5 4 conduct 1
+glow 6 4 conduct 2
+glow 2 5 conv 3
+glow 3 5 cone 0
+glow 4 5 conduct 4
+glow 5 5 conduct 0
+glow 6 5 cone 1
+glow 4 6 conv 3
+glow 5 6 conduct 5
+round
+confirm 3 5
+fire 0 0 3 5
+round
+confirm 3 5
+fire 0 0 3 5
+round
+confirm 4 0 3 5
+fire 0 0 3 5
+fire 0 0 4 0
+fire 0 1 3 0
+fire 0 2 2 1
+count 3 0 2 1 1
+count 4 0 3 0 1
+round
+confirm 4 0
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 0
+fire 0 2 2 1
+fire 1 0 4 0
+fire 1 1 3 0
+count 3 0 2 1 2
+count 4 0 3 0 3
+round
+confirm 3 0 4 0
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+fire 0 2 2 1
+fire 0 3 3 0
+fire 0 4 2 1
+count 2 1 3 0 1
+count 3 0 2 1 5
+count 3 0 4 0 1
+count 4 0 3 0 4
+round
+confirm 3 0 4 0
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+count 2 1 3 0 1
+count 3 0 2 1 6
+count 3 0 4 0 2
+count 4 0 3 0 5
+round
+confirm 3 0 4 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+count 2 1 3 0 2
+count 3 0 2 1 8
+count 3 0 4 0 3
+count 4 0 3 0 6
+round
+confirm 4 0
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+fire 1 0 2 1
+fire 1 0 3 0
+fire 1 1 3 0
+fire 1 1 4 0
+count 2 1 3 0 4
+count 3 0 2 1 11
+count 3 0 4 0 5
+count 4 0 3 0 9
+round
+confirm 3 0 3 5
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 3 5
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+count 2 1 3 0 5
+count 3 0 2 1 13
+count 3 0 4 0 6
+count 4 0 3 0 10
+round
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+count 2 1 3 0 6
+count 3 0 2 1 15
+count 3 0 4 0 8
+count 4 0 3 0 10
+round
+confirm 4 0 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+count 2 1 3 0 6
+count 3 0 2 1 16
+count 3 0 4 0 8
+count 4 0 3 0 10
+round
+confirm 4 0
+confirm 4 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 1 0 2 1
+fire 1 0 3 0
+fire 1 0 4 0
+count 2 1 3 0 6
+count 3 0 2 1 18
+count 3 0 4 0 8
+count 4 0 3 0 12
+round
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+count 2 1 3 0 6
+count 3 0 2 1 19
+count 3 0 4 0 9
+count 4 0 3 0 12
+round
+confirm 3 5
+fire 0 0 3 5
+count 2 1 3 0 6
+count 3 0 2 1 19
+count 3 0 4 0 9
+count 4 0 3 0 12
+round
+confirm 3 5
+fire 0 0 3 5
+count 2 1 3 0 6
+count 3 0 2 1 19
+count 3 0 4 0 9
+count 4 0 3 0 12
+round
+confirm 4 0
+confirm 3 5
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 1 0 3 5
+count 2 1 3 0 3
+count 3 0 2 1 20
+count 3 0 4 0 9
+count 4 0 3 0 13
+round
+confirm 3 5
+fire 0 0 3 5
+count 2 1 3 0 3
+count 3 0 2 1 20
+count 3 0 4 0 9
+count 4 0 3 0 13
+round
+confirm 4 0 3 5
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 3 5
+fire 0 0 4 0
+count 2 1 3 0 3
+count 3 0 2 1 21
+count 3 0 4 0 9
+count 4 0 3 0 14
+round
+confirm 3 0 4 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 2 1
+fire 0 1 3 0
+fire 0 1 4 0
+fire 0 2 2 1
+fire 0 2 3 0
+fire 0 2 4 0
+fire 0 3 3 0
+count 2 1 3 0 6
+count 3 0 2 1 24
+count 3 0 4 0 11
+count 4 0 3 0 14
+round
+confirm 3 0
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 1 0 2 1
+fire 1 0 3 0
+fire 1 0 4 0
+count 2 1 3 0 6
+count 3 0 2 1 26
+count 3 0 4 0 13
+count 4 0 3 0 14
+case 19
+glow 3 0 conduct 1
+glow 4 0 conv 5
+glow 5 0 cone 2
+glow 2 1 conduct 2
+glow 3 1 cone 3
+glow 4 1 cone 2
+glow 7 1 cone 3
+glow 0 2 conv 4
+glow 2 2 conduct 5
+glow 4 2 conduct 0
+glow 5 2 conduct 4
+glow 9 2 cone 1
+glow 0 3 conduct 3
+glow 1 3 conduct 1
+glow 2 3 conduct 2
+glow 4 3 conduct 0
+glow 5 3 conduct 5
+glow 6 3 conduct 5
+glow 8 3 conduct 2
+glow 9 3 conduct 1
+glow 2 4 conv 5
+glow 3 4 conduct 4
+glow 5 4 cone 3
+glow 6 4 conv 5
+glow 2 5 conduct 3
+glow 3 5 conduct 2
+glow 4 5 conduct 0
+glow 5 5 conv 0
+glow 7 5 conduct 4
+glow 4 6 conduct 1
+glow 5 6 cone 3
+round
+confirm 3 1 3 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 4 1
+fire 0 2 4 0
+count 3 0 4 0 1
+count 3 1 3 0 1
+count 3 1 4 1 1
+round
+confirm 3 1
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 4 1
+count 3 0 4 0 1
+count 3 1 3 0 2
+count 3 1 4 1 2
+round
+confirm 3 0 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 1 3 0
+fire 0 1 4 1
+fire 0 2 4 0
+count 3 0 4 0 2
+count 3 1 3 0 3
+count 3 1 4 1 3
+round
+confirm 3 0
+confirm 3 1
+fire 0 0 3 0
+fire 1 0 3 1
+fire 1 1 3 0
+fire 1 1 4 1
+fire 1 2 4 0
+count 3 0 4 0 3
+count 3 1 3 0 4
+count 3 1 4 1 4
+round
+confirm 3 0 4 1
+fire 0 0 3 0
+fire 0 0 4 1
+fire 0 1 3 1
+fire 0 1 4 0
+fire 0 2 3 0
+count 3 0 4 0 4
+count 3 1 3 0 5
+count 3 1 4 1 4
+count 4 1 3 1 1
+round
+confirm 4 1
+fire 0 0 4 1
+fire 0 1 3 1
+fire 0 2 3 0
+count 3 0 4 0 4
+count 3 1 3 0 6
+count 3 1 4 1 4
+count 4 1 3 1 2
+round
+confirm 3 0 4 1
+fire 0 0 3 0
+fire 0 0 4 1
+fire 0 1 3 0
+fire 0 1 3 1
+fire 0 1 4 0
+count 3 0 4 0 5
+count 3 1 3 0 7
+count 3 1 4 1 4
+count 4 1 3 1 3
+round
+confirm 3 1
+confirm 4 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 1 4 1
+fire 1 0 4 1
+fire 1 1 3 0
+fire 1 1 3 1
+fire 1 2 4 0
+count 3 0 4 0 6
+count 3 1 3 0 9
+count 3 1 4 1 5
+count 4 1 3 1 4
+round
+confirm 4 1 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 1 3 0
+fire 0 1 3 1
+fire 0 1 4 0
+fire 0 1 4 1
+count 3 0 4 0 7
+count 3 1 3 0 11
+count 3 1 4 1 6
+count 4 1 3 1 5
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 0 4 0
+count 3 0 4 0 8
+count 3 1 3 0 11
+count 3 1 4 1 6
+count 4 1 3 1 5
+round
+confirm 3 1 3 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 0 4 0 9
+count 3 1 3 0 11
+count 3 1 4 1 7
+count 4 1 3 1 5
+round
+confirm 3 1
+confirm 3 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 1
+fire 1 0 3 0
+fire 1 0 4 0
+count 3 0 4 0 10
+count 3 1 3 0 12
+count 3 1 4 1 8
+count 4 1 3 1 5
+round
+confirm 4 1 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 1
+fire 0 1 3 0
+fire 0 1 3 1
+fire 0 1 4 0
+fire 0 1 4 1
+count 3 0 4 0 11
+count 3 1 3 0 14
+count 3 1 4 1 9
+count 4 1 3 1 6
+round
+confirm 4 1 3 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 0 4 0 12
+count 3 1 3 0 14
+count 3 1 4 1 9
+count 4 1 3 1 7
+round
+confirm 3 0 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 0 4 0 13
+count 3 1 3 0 14
+count 3 1 4 1 10
+count 4 1 3 1 7
+round
+confirm 3 0
+confirm 4 1
+fire 0 0 3 0
+fire 0 0 4 0
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 4 1
+count 3 0 4 0 14
+count 3 1 3 0 15
+count 3 1 4 1 10
+count 4 1 3 1 8
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 0 4 0
+count 3 0 4 0 15
+count 3 1 3 0 15
+count 3 1 4 1 10
+count 4 1 3 1 8
+round
+confirm 4 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 1
+count 3 0 4 0 15
+count 3 1 3 0 16
+count 3 1 4 1 10
+count 4 1 3 1 9
+round
+confirm 3 0 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 4 1
+count 3 0 4 0 16
+count 3 1 3 0 16
+count 3 1 4 1 11
+count 4 1 3 1 9
+round
+confirm 4 1
+confirm 3 1
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 1
+fire 1 0 3 0
+fire 1 0 3 1
+fire 1 0 4 0
+fire 1 0 4 1
+count 3 0 4 0 17
+count 3 1 3 0 18
+count 3 1 4 1 12
+count 4 1 3 1 10
+case 20
+glow 3 0 conduct 3
+glow 4 0 conduct 1
+glow 5 0 conduct 4
+glow 6 0 conv 3
+glow 2 1 conduct 4
+glow 3 1 conduct 4
+glow 4 1 conduct 3
+glow 5 1 conduct 5
+glow 6 1 conduct 1
+glow 7 1 conduct 1
+glow 2 2 conduct 0
+glow 3 2 conduct 0
+glow 4 2 conduct 3
+glow 5 2 conv 1
+glow 7 2 conduct 0
+glow 8 2 conduct 0
+glow 0 3 conduct 4
+glow 1 3 conv 4
+glow 2 3 cone 2
+glow 3 3 cone 5
+glow 4 3 conduct 1
+glow 5 3 conduct 5
+glow 8 3 conduct 0
+glow 2 4 conduct 1
+glow 4 4 conduct 1
+glow 5 4 conduct 0
+glow 6 4 conduct 5
+glow 2 5 conduct 0
+glow 3 5 conduct 5
+glow 5 5 conv 2
+glow 6 5 conduct 2
+glow 7 5 conduct 5
+glow 4 6 conduct 5
+glow 5 6 conduct 0
+round
+confirm 3 3 3 0
+fire 0 0 3 0
+fire 0 0 3 3
+fire 0 1 2 1
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 2 3 1
+fire 0 2 5 3
+count 3 0 2 1 1
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+round
+confirm 6 0 3 0
+fire 0 0 3 0
+fire 0 0 6 0
+fire 0 1 2 1
+fire 0 1 5 1
+fire 0 2 5 0
+count 3 0 2 1 2
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 1
+count 6 0 5 1 1
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 1 5 1
+fire 0 2 5 0
+count 3 0 2 1 2
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 2
+count 6 0 5 1 2
+round
+confirm 3 0
+confirm 3 0
+fire 0 0 3 0
+fire 0 1 2 1
+fire 1 0 3 0
+fire 1 1 2 1
+count 3 0 2 1 4
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 2
+count 6 0 5 1 2
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 1 5 1
+fire 0 2 5 0
+count 3 0 2 1 4
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 3
+count 6 0 5 1 3
+round
+confirm 3 0
+fire 0 0 3 0
+fire 0 1 2 1
+count 3 0 2 1 5
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 3
+count 6 0 5 1 3
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 1 5 1
+fire 0 2 5 0
+count 3 0 2 1 5
+count 5 1 5 0 4
+count 6 0 5 1 4
+round
+confirm 6 0
+confirm 3 0
+fire 0 0 6 0
+fire 0 1 5 1
+fire 0 2 5 0
+fire 1 0 3 0
+fire 1 1 2 1
+count 3 0 2 1 6
+count 5 1 5 0 5
+count 6 0 5 1 5
+round
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+count 3 0 2 1 7
+count 5 1 5 0 5
+count 6 0 5 1 5
+round
+confirm 3 3 6 0
+fire 0 0 3 3
+fire 0 0 6 0
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 1 5 1
+fire 0 2 3 1
+fire 0 2 5 0
+fire 0 2 5 3
+fire 0 3 2 1
+count 3 0 2 1 7
+count 3 1 2 1 1
+count 3 2 3 1 1
+count 3 3 3 2 1
+count 3 3 4 3 1
+count 4 3 5 3 1
+count 5 1 5 0 6
+count 6 0 5 1 6
+round
+confirm 3 3 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 0 0 3 3
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 2 3 1
+fire 0 2 5 3
+count 3 0 2 1 8
+count 3 1 2 1 1
+count 3 2 3 1 2
+count 3 3 3 2 2
+count 3 3 4 3 2
+count 4 3 5 3 2
+count 5 1 5 0 6
+count 6 0 5 1 6
+round
+confirm 3 3
+confirm 3 3
+fire 0 0 3 3
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 2 3 1
+fire 0 2 5 3
+fire 0 3 2 1
+fire 1 0 3 3
+fire 1 1 3 2
+fire 1 1 4 3
+fire 1 2 3 1
+fire 1 2 5 3
+count 3 0 2 1 8
+count 3 1 2 1 2
+count 3 2 3 1 4
+count 3 3 3 2 4
+count 3 3 4 3 4
+count 4 3 5 3 4
+count 5 1 5 0 6
+count 6 0 5 1 6
+round
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+count 3 0 2 1 9
+count 3 1 2 1 2
+count 3 2 3 1 4
+count 3 3 3 2 4
+count 3 3 4 3 4
+count 4 3 5 3 4
+count 5 1 5 0 6
+count 6 0 5 1 6
+round
+confirm 3 3 6 0
+fire 0 0 3 3
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 2 3 1
+fire 0 2 5 3
+fire 0 3 2 1
+count 3 0 2 1 9
+count 3 1 2 1 3
+count 3 2 3 1 5
+count 3 3 3 2 5
+count 3 3 4 3 5
+count 4 3 5 3 5
+count 5 1 5 0 7
+count 6 0 5 1 7
+round
+confirm 6 0 3 3
+fire 0 0 3 3
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+fire 0 1 3 2
+fire 0 1 4 3
+fire 0 2 3 1
+fire 0 2 5 3
+fire 0 3 2 1
+count 3 0 2 1 9
+count 3 1 2 1 4
+count 3 2 3 1 6
+count 3 3 3 2 6
+count 3 3 4 3 6
+count 4 3 5 3 6
+count 5 1 5 0 8
+count 6 0 5 1 8
+round
+confirm 6 0
+confirm 6 0
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+fire 1 0 5 0
+fire 1 0 5 1
+fire 1 0 6 0
+count 3 0 2 1 9
+count 3 1 2 1 4
+count 3 2 3 1 6
+count 3 3 3 2 6
+count 3 3 4 3 6
+count 4 3 5 3 6
+count 5 1 5 0 10
+count 6 0 5 1 10
+round
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+count 3 0 2 1 10
+count 3 1 2 1 4
+count 3 2 3 1 6
+count 3 3 3 2 6
+count 3 3 4 3 6
+count 4 3 5 3 6
+count 5 1 5 0 10
+count 6 0 5 1 10
+round
+confirm 3 3 6 0
+fire 0 0 3 1
+fire 0 0 3 2
+fire 0 0 3 3
+fire 0 0 4 3
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 5 3
+fire 0 0 6 0
+fire 0 1 2 1
+count 3 0 2 1 10
+count 3 1 2 1 5
+count 3 2 3 1 7
+count 3 3 3 2 7
+count 3 3 4 3 7
+count 4 3 5 3 7
+count 5 1 5 0 11
+count 6 0 5 1 11
+round
+confirm 6 0
+fire 0 0 5 0
+fire 0 0 5 1
+fire 0 0 6 0
+count 3 0 2 1 10
+count 3 1 2 1 5
+count 3 2 3 1 7
+count 3 3 3 2 7
+count 3 3 4 3 7
+count 4 3 5 3 7
+count 5 1 5 0 12
+count 6 0 5 1 12
+round
+confirm 3 0
+confirm 3 0
+fire 0 0 2 1
+fire 0 0 3 0
+fire 1 0 2 1
+fire 1 0 3 0
+count 3 0 2 1 12
+count 3 1 2 1 5
+count 3 2 3 1 7
+count 3 3 3 2 7
+count 3 3 4 3 7
+count 4 3 5 3 7
+count 5 1 5 0 12
+count 6 0 5 1 12
+case 21
+glow 3 0 conduct 1
+glow 5 0 cone 5
+glow 6 0 conduct 3
+glow 2 1 conduct 5
+glow 4 1 conduct 0
+glow 5 1 conduct 2
+glow 6 1 conduct 2
+glow 7 1 cone 3
+glow 0 2 cone 3
+glow 1 2 cone 4
+glow 2 2 conduct 2
+glow 4 2 conduct 1
+glow 8 2 conduct 0
+glow 9 2 conduct 2
+glow 1 3 conduct 1
+glow 2 3 conduct 2
+glow 3 3 conv 0
+glow 5 3 conduct 4
+glow 6 3 cone 4
+glow 8 3 cone 0
+glow 3 4 conduct 4
+glow 4 4 conduct 1
+glow 5 4 conduct 0
+glow 2 5 conduct 5
+glow 3 5 cone 1
+glow 4 5 conduct 4
+glow 5 5 cone 5
+glow 4 6 conduct 1
+glow 5 6 conduct 1
+round
+confirm 3 5 1 2
+fire 0 0 1 2
+fire 0 0 3 5
+fire 0 1 0 2
+fire 0 1 1 3
+fire 0 1 3 4
+fire 0 1 4 5
+count 1 2 0 2 1
+count 1 2 1 3 1
+count 3 5 3 4 1
+count 3 5 4 5 1
+round
+confirm 3 5
+fire 0 0 3 5
+fire 0 1 3 4
+fire 0 1 4 5
+count 1 2 0 2 1
+count 1 2 1 3 1
+count 3 5 3 4 2
+count 3 5 4 5 2
+round
+confirm 5 5
+fire 0 0 5 5
+fire 0 1 5 4
+fire 0 1 5 6
+fire 0 2 5 3
+count 1 2 0 2 1
+count 1 2 1 3 1
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 4 5 3 1
+count 5 5 5 4 1
+count 5 5 5 6 1
+round
+confirm 1 2
+confirm 5 5
+fire 0 0 1 2
+fire 0 1 0 2
+fire 0 1 1 3
+fire 1 0 5 5
+fire 1 1 5 4
+fire 1 1 5 6
+fire 1 2 5 3
+count 1 2 0 2 2
+count 1 2 1 3 2
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 4 5 3 2
+count 5 5 5 4 2
+count 5 5 5 6 2
+round
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 2
+fire 0 1 1 3
+count 1 2 0 2 3
+count 1 2 1 3 3
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 4 5 3 2
+count 5 5 5 4 2
+count 5 5 5 6 2
+round
+confirm 5 5
+fire 0 0 5 5
+fire 0 1 5 4
+fire 0 1 5 6
+fire 0 2 5 3
+count 1 2 0 2 3
+count 1 2 1 3 3
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 4 5 3 3
+count 5 5 5 4 3
+count 5 5 5 6 3
+round
+confirm 5 5
+fire 0 0 5 5
+fire 0 1 5 4
+fire 0 1 5 6
+fire 0 2 5 3
+count 1 2 0 2 3
+count 1 2 1 3 3
+count 3 5 3 4 2
+count 3 5 4 5 2
+count 5 4 5 3 4
+count 5 5 5 4 4
+count 5 5 5 6 4
+round
+confirm 3 5
+confirm 3 5
+fire 0 0 3 5
+fire 0 1 3 4
+fire 0 1 4 5
+fire 1 0 3 5
+fire 1 1 3 4
+fire 1 1 4 5
+count 1 2 0 2 3
+count 1 2 1 3 3
+count 3 5 3 4 4
+count 3 5 4 5 4
+count 5 4 5 3 4
+count 5 5 5 4 4
+count 5 5 5 6 4
+round
+confirm 3 5 1 2
+fire 0 0 1 2
+fire 0 0 3 5
+fire 0 1 0 2
+fire 0 1 1 3
+fire 0 1 3 4
+fire 0 1 4 5
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 5
+count 3 5 4 5 5
+count 5 4 5 3 4
+count 5 5 5 4 4
+count 5 5 5 6 4
+round
+confirm 5 5 3 5
+fire 0 0 3 5
+fire 0 0 5 5
+fire 0 1 3 4
+fire 0 1 4 5
+fire 0 1 5 4
+fire 0 1 5 6
+fire 0 2 5 3
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 6
+count 3 5 4 5 6
+count 5 4 5 3 5
+count 5 5 5 4 5
+count 5 5 5 6 5
+round
+confirm 3 5 5 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 0 0 5 5
+fire 0 1 5 4
+fire 0 1 5 6
+fire 0 2 5 3
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 7
+count 3 5 4 5 7
+count 5 4 5 3 6
+count 5 5 5 4 6
+count 5 5 5 6 6
+round
+confirm 5 5
+confirm 3 5
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 5 6
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 5
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 8
+count 3 5 4 5 8
+count 5 4 5 3 7
+count 5 5 5 4 7
+count 5 5 5 6 7
+round
+confirm 3 5 5 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 5 6
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 4 5 3 8
+count 5 5 5 4 8
+count 5 5 5 6 8
+round
+confirm 5 5
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 5 6
+count 1 2 0 2 4
+count 1 2 1 3 4
+count 3 5 3 4 9
+count 3 5 4 5 9
+count 5 4 5 3 9
+count 5 5 5 4 9
+count 5 5 5 6 9
+round
+confirm 1 2 3 5
+fire 0 0 1 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 0 1 0 2
+fire 0 1 1 3
+count 1 2 0 2 5
+count 1 2 1 3 5
+count 3 5 3 4 10
+count 3 5 4 5 10
+count 5 4 5 3 9
+count 5 5 5 4 9
+count 5 5 5 6 9
+round
+confirm 3 5
+confirm 3 5
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 5
+count 1 2 0 2 5
+count 1 2 1 3 5
+count 3 5 3 4 12
+count 3 5 4 5 12
+count 5 4 5 3 9
+count 5 5 5 4 9
+count 5 5 5 6 9
+round
+confirm 1 2 5 5
+fire 0 0 1 2
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 5 6
+fire 0 1 0 2
+fire 0 1 1 3
+count 1 2 0 2 6
+count 1 2 1 3 6
+count 3 5 3 4 12
+count 3 5 4 5 12
+count 5 4 5 3 10
+count 5 5 5 4 10
+count 5 5 5 6 10
+round
+confirm 1 2 5 5
+fire 0 0 0 2
+fire 0 0 1 2
+fire 0 0 1 3
+fire 0 0 5 3
+fire 0 0 5 4
+fire 0 0 5 5
+fire 0 0 5 6
+count 1 2 0 2 7
+count 1 2 1 3 7
+count 3 5 3 4 12
+count 3 5 4 5 12
+count 5 4 5 3 11
+count 5 5 5 4 11
+count 5 5 5 6 11
+round
+confirm 3 5 1 2
+fire 0 0 0 2
+fire 0 0 1 2
+fire 0 0 1 3
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 5
+count 1 2 0 2 8
+count 1 2 1 3 8
+count 3 5 3 4 13
+count 3 5 4 5 13
+count 5 4 5 3 11
+count 5 5 5 4 11
+count 5 5 5 6 11
+round
+confirm 1 2
+confirm 3 5
+fire 0 0 0 2
+fire 0 0 1 2
+fire 0 0 1 3
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 5
+count 1 2 0 2 9
+count 1 2 1 3 9
+count 3 5 3 4 14
+count 3 5 4 5 14
+count 5 4 5 3 11
+count 5 5 5 4 11
+count 5 5 5 6 11
+case 22
+glow 3 0 conv 2
+glow 4 0 conduct 5
+glow 5 0 cone 2
+glow 6 0 conduct 2
+glow 2 1 conduct 5
+glow 3 1 conduct 3
+glow 4 1 cone 0
+glow 5 1 conduct 0
+glow 6 1 conv 5
+glow 7 1 cone 3
+glow 0 2 conduct 4
+glow 1 2 cone 1
+glow 2 2 conduct 1
+glow 3 2 conduct 5
+glow 4 2 conv 2
+glow 5 2 cone 5
+glow 6 2 conduct 2
+glow 7 2 conduct 1
+glow 8 2 conduct 4
+glow 9 2 conduct 1
+glow 0 3 cone 3
+glow 1 3 conduct 2
+glow 2 3 conduct 0
+glow 3 3 conduct 3
+glow 4 3 conduct 2
+glow 6 3 conv 3
+glow 8 3 conv 5
+glow 9 3 cone 0
+glow 2 4 conduct 3
+glow 3 4 conduct 5
+glow 4 4 cone 0
+glow 6 4 cone 2
+glow 2 5 cone 4
+glow 3 5 conduct 5
+glow 4 5 cone 4
+glow 4 6 cone 2
+round
+confirm 4 4 0 3
+fire 0 0 0 3
+fire 0 0 4 4
+fire 0 1 0 2
+fire 0 1 1 3
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 3 2
+fire 0 4 2 1
+count 0 3 0 2 1
+count 0 3 1 3 1
+count 2 3 3 2 1
+count 3 2 2 1 1
+count 3 4 2 3 1
+count 4 4 3 4 1
+count 4 4 4 3 1
+count 4 4 4 5 1
+count 4 5 3 5 1
+round
+confirm 0 3
+fire 0 0 0 3
+fire 0 1 0 2
+fire 0 1 1 3
+count 0 3 0 2 2
+count 0 3 1 3 2
+count 2 3 3 2 1
+count 3 2 2 1 1
+count 3 4 2 3 1
+count 4 4 3 4 1
+count 4 4 4 3 1
+count 4 4 4 5 1
+count 4 5 3 5 1
+round
+confirm 4 4 0 3
+fire 0 0 0 3
+fire 0 0 4 4
+fire 0 1 0 2
+fire 0 1 1 3
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 3 2
+fire 0 4 2 1
+count 0 3 0 2 3
+count 0 3 1 3 3
+count 2 3 3 2 2
+count 3 2 2 1 2
+count 3 4 2 3 2
+count 4 4 3 4 2
+count 4 4 4 3 2
+count 4 4 4 5 2
+count 4 5 3 5 2
+round
+confirm 4 4
+confirm 1 2
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 3 2
+fire 0 4 2 1
+fire 1 0 1 2
+fire 1 1 0 3
+fire 1 1 2 2
+fire 1 2 0 2
+fire 1 2 1 3
+count 0 3 0 2 4
+count 0 3 1 3 4
+count 1 2 0 3 1
+count 1 2 2 2 1
+count 2 3 3 2 3
+count 3 2 2 1 3
+count 3 4 2 3 3
+count 4 4 3 4 3
+count 4 4 4 3 3
+count 4 4 4 5 3
+count 4 5 3 5 3
+round
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 3
+fire 0 1 2 2
+fire 0 2 0 2
+fire 0 2 1 3
+fire 0 2 3 2
+fire 0 3 2 1
+count 0 3 0 2 5
+count 0 3 1 3 5
+count 1 2 0 3 2
+count 1 2 2 2 2
+count 2 2 3 2 1
+count 2 3 3 2 3
+count 3 2 2 1 4
+count 3 4 2 3 3
+count 4 4 3 4 3
+count 4 4 4 3 3
+count 4 4 4 5 3
+count 4 5 3 5 3
+round
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 3
+fire 0 1 2 2
+fire 0 2 0 2
+fire 0 2 1 3
+fire 0 2 3 2
+fire 0 3 2 1
+count 0 3 0 2 6
+count 0 3 1 3 6
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 3
+count 3 2 2 1 5
+count 3 4 2 3 3
+count 4 4 3 4 3
+count 4 4 4 3 3
+count 4 4 4 5 3
+count 4 5 3 5 3
+round
+confirm 0 3
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 3
+count 0 3 0 2 7
+count 0 3 1 3 7
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 3
+count 3 2 2 1 5
+count 3 4 2 3 3
+count 4 4 3 4 3
+count 4 4 4 3 3
+count 4 4 4 5 3
+count 4 5 3 5 3
+round
+confirm 4 4
+confirm 0 3
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 3 2
+fire 0 4 2 1
+fire 1 0 0 2
+fire 1 0 0 3
+fire 1 0 1 3
+count 0 3 0 2 8
+count 0 3 1 3 8
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 4
+count 3 2 2 1 6
+count 3 4 2 3 4
+count 4 4 3 4 4
+count 4 4 4 3 4
+count 4 4 4 5 4
+count 4 5 3 5 4
+round
+confirm 0 3 4 4
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 3
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 2 1
+fire 0 3 3 2
+count 0 3 0 2 9
+count 0 3 1 3 9
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 5
+count 3 2 2 1 7
+count 3 4 2 3 5
+count 4 4 3 4 5
+count 4 4 4 3 5
+count 4 4 4 5 5
+count 4 5 3 5 5
+round
+confirm 4 4
+fire 0 0 4 4
+fire 0 1 3 4
+fire 0 1 4 3
+fire 0 1 4 5
+fire 0 2 2 3
+fire 0 2 3 5
+fire 0 3 2 1
+fire 0 3 3 2
+count 0 3 0 2 9
+count 0 3 1 3 9
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 6
+count 3 2 2 1 8
+count 3 4 2 3 6
+count 4 4 3 4 6
+count 4 4 4 3 6
+count 4 4 4 5 6
+count 4 5 3 5 6
+round
+confirm 4 4
+fire 0 0 2 1
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 4 5
+count 0 3 0 2 9
+count 0 3 1 3 9
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 7
+count 3 2 2 1 9
+count 3 4 2 3 7
+count 4 4 3 4 7
+count 4 4 4 3 7
+count 4 4 4 5 7
+count 4 5 3 5 7
+round
+confirm 0 3
+confirm 4 4
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 3
+fire 1 0 2 1
+fire 1 0 2 3
+fire 1 0 3 2
+fire 1 0 3 4
+fire 1 0 3 5
+fire 1 0 4 3
+fire 1 0 4 4
+fire 1 0 4 5
+count 0 3 0 2 10
+count 0 3 1 3 10
+count 2 3 3 2 8
+count 3 2 2 1 10
+count 3 4 2 3 8
+count 4 4 3 4 8
+count 4 4 4 3 8
+count 4 4 4 5 8
+count 4 5 3 5 8
+round
+confirm 4 4
+fire 0 0 2 1
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 4 5
+count 0 3 0 2 10
+count 0 3 1 3 10
+count 2 3 3 2 9
+count 3 2 2 1 11
+count 3 4 2 3 9
+count 4 4 3 4 9
+count 4 4 4 3 9
+count 4 4 4 5 9
+count 4 5 3 5 9
+round
+confirm 0 3
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 3
+count 0 3 0 2 11
+count 0 3 1 3 11
+count 2 3 3 2 9
+count 3 2 2 1 11
+count 3 4 2 3 9
+count 4 4 3 4 9
+count 4 4 4 3 9
+count 4 4 4 5 9
+count 4 5 3 5 9
+round
+confirm 4 4
+fire 0 0 2 1
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 4 5
+count 0 3 0 2 11
+count 0 3 1 3 11
+count 2 3 3 2 10
+count 3 2 2 1 12
+count 3 4 2 3 10
+count 4 4 3 4 10
+count 4 4 4 3 10
+count 4 4 4 5 10
+count 4 5 3 5 10
+round
+confirm 1 2
+confirm 0 3
+fire 0 0 1 2
+fire 0 1 0 2
+fire 0 1 0 3
+fire 0 1 1 3
+fire 0 1 2 2
+fire 0 2 2 1
+fire 0 2 3 2
+fire 1 0 0 2
+fire 1 0 0 3
+fire 1 0 1 3
+count 0 3 0 2 13
+count 0 3 1 3 13
+count 1 2 0 3 1
+count 1 2 2 2 1
+count 2 2 3 2 1
+count 2 3 3 2 10
+count 3 2 2 1 13
+count 3 4 2 3 10
+count 4 4 3 4 10
+count 4 4 4 3 10
+count 4 4 4 5 10
+count 4 5 3 5 10
+round
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 2
+fire 0 1 0 3
+fire 0 1 1 3
+fire 0 1 2 2
+fire 0 2 2 1
+fire 0 2 3 2
+count 0 3 0 2 14
+count 0 3 1 3 14
+count 1 2 0 3 2
+count 1 2 2 2 2
+count 2 2 3 2 2
+count 2 3 3 2 10
+count 3 2 2 1 14
+count 3 4 2 3 10
+count 4 4 3 4 10
+count 4 4 4 3 10
+count 4 4 4 5 10
+count 4 5 3 5 10
+round
+confirm 1 2 4 4
+fire 0 0 1 2
+fire 0 0 2 1
+fire 0 0 2 3
+fire 0 0 3 2
+fire 0 0 3 4
+fire 0 0 3 5
+fire 0 0 4 3
+fire 0 0 4 4
+fire 0 0 4 5
+fire 0 1 0 2
+fire 0 1 0 3
+fire 0 1 1 3
+fire 0 1 2 2
+count 0 3 0 2 15
+count 0 3 1 3 15
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 11
+count 3 2 2 1 15
+count 3 4 2 3 11
+count 4 4 3 4 11
+count 4 4 4 3 11
+count 4 4 4 5 11
+count 4 5 3 5 11
+round
+confirm 0 3
+fire 0 0 0 2
+fire 0 0 0 3
+fire 0 0 1 3
+count 0 3 0 2 16
+count 0 3 1 3 16
+count 1 2 0 3 3
+count 1 2 2 2 3
+count 2 2 3 2 2
+count 2 3 3 2 11
+count 3 2 2 1 15
+count 3 4 2 3 11
+count 4 4 3 4 11
+count 4 4 4 3 11
+count 4 4 4 5 11
+count 4 5 3 5 11
+round
+confirm 1 2
+confirm 1 2
+fire 0 0 1 2
+fire 0 1 0 2
+fire 0 1 0 3
+fire 0 1 1 3
+fire 0 1 2 2
+fire 0 2 2 1
+fire 0 2 3 2
+fire 1 0 1 2
+fire 1 1 0 2
+fire 1 1 0 3
+fire 1 1 1 3
+fire 1 1 2 2
+fire 1 2 2 1
+fire 1 2 3 2
+count 0 3 0 2 18
+count 0 3 1 3 18
+count 1 2 0 3 5
+count 1 2 2 2 5
+count 2 2 3 2 4
+count 2 3 3 2 11
+count 3 2 2 1 17
+count 3 4 2 3 11
+count 4 4 3 4 11
+count 4 4 4 3 11
+count 4 4 4 5 11
+count 4 5 3 5 11
+case 23
+glow 3 0 conduct 1
+glow 4 0 conduct 3
+glow 5 0 conduct 3
+glow 6 0 conduct 4
+glow 2 1 conv 5
+glow 3 1 conduct 4
+glow 5 1 conduct 3
+glow 0 2 conduct 3
+glow 2 2 conduct 2
+glow 3 2 conduct 2
+glow 4 2 conv 1
+glow 5 2 cone 1
+glow 9 2 conv 4
+glow 0 3 conduct 1
+glow 1 3 conduct 2
+glow 3 3 conduct 4
+glow 4 3 conduct 4
+glow 5 3 conduct 5
+glow 6 3 conduct 3
+glow 9 3 conv 2
+glow 2 4 cone 0
+glow 3 4 conduct 2
+glow 4 4 conduct 5
+glow 5 4 conduct 0
+glow 6 4 conduct 5
+glow 2 5 cone 4
+glow 3 5 conduct 3
+glow 5 5 conduct 4
+glow 7 5 cone 3
+glow 4 6 conduct 5
+round
+confirm 3 0 4 0
+fire 0 0 3 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 1 4 0
+count 3 0 4 0 1
+count 4 0 3 1 1
+round
+confirm 6 0 4 0
+fire 0 0 4 0
+fire 0 0 6 0
+fire 0 1 3 1
+fire 0 1 5 0
+count 3 0 4 0 1
+count 4 0 3 1 2
+count 6 0 5 0 1
+round
+confirm 6 0
+fire 0 0 6 0
+fire 0 1 5 0
+count 3 0 4 0 1
+count 4 0 3 1 2
+count 6 0 5 0 2
+round
+confirm 4 0
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+fire 1 0 4 0
+fire 1 1 3 1
+count 3 0 4 0 1
+count 4 0 3 1 4
+count 6 0 5 0 2
+round
+confirm 4 0
+fire 0 0 4 0
+fire 0 1 3 1
+count 3 0 4 0 1
+count 4 0 3 1 5
+count 6 0 5 0 2
+round
+confirm 6 0 4 0
+fire 0 0 4 0
+fire 0 0 6 0
+fire 0 1 3 1
+fire 0 1 5 0
+count 3 0 4 0 1
+count 4 0 3 1 6
+count 6 0 5 0 3
+round
+confirm 6 0 3 0
+fire 0 0 3 0
+fire 0 0 6 0
+fire 0 1 3 1
+fire 0 1 4 0
+fire 0 1 5 0
+count 3 0 4 0 2
+count 4 0 3 1 7
+count 6 0 5 0 4
+round
+confirm 4 0
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 1 0 3 1
+fire 1 0 4 0
+count 3 0 4 0 2
+count 4 0 3 1 9
+count 6 0 5 0 4
+round
+confirm 3 0 4 0
+fire 0 0 3 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 1 3 1
+fire 0 1 4 0
+count 3 0 4 0 3
+count 4 0 3 1 11
+count 6 0 5 0 4
+round
+confirm 4 0 6 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 6 0
+fire 0 1 5 0
+count 3 0 4 0 3
+count 4 0 3 1 12
+count 6 0 5 0 5
+round
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 0 4 0 3
+count 4 0 3 1 13
+count 6 0 5 0 5
+round
+confirm 3 0
+confirm 4 0
+fire 0 0 3 0
+fire 0 1 3 1
+fire 0 1 4 0
+fire 1 0 3 1
+fire 1 0 4 0
+count 3 0 4 0 4
+count 4 0 3 1 15
+count 6 0 5 0 5
+round
+confirm 4 0 6 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 6 0
+fire 0 1 5 0
+count 3 0 4 0 4
+count 4 0 3 1 16
+count 6 0 5 0 6
+round
+confirm 6 0
+fire 0 0 5 0
+fire 0 0 6 0
+count 3 0 4 0 4
+count 4 0 3 1 16
+count 6 0 5 0 7
+round
+confirm 6 0
+fire 0 0 5 0
+fire 0 0 6 0
+count 3 0 4 0 4
+count 4 0 3 1 16
+count 6 0 5 0 8
+round
+confirm 3 0
+confirm 4 0
+fire 0 0 3 0
+fire 0 1 3 1
+fire 0 1 4 0
+fire 1 0 3 1
+fire 1 0 4 0
+count 3 0 4 0 5
+count 4 0 3 1 18
+count 6 0 5 0 8
+round
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 0 4 0 5
+count 4 0 3 1 19
+count 6 0 5 0 8
+round
+confirm 4 0
+fire 0 0 3 1
+fire 0 0 4 0
+count 3 0 4 0 5
+count 4 0 3 1 20
+count 6 0 5 0 8
+round
+confirm 4 0 6 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 0 0 5 0
+fire 0 0 6 0
+count 3 0 4 0 5
+count 4 0 3 1 21
+count 6 0 5 0 9
+round
+confirm 4 0
+confirm 6 0
+fire 0 0 3 1
+fire 0 0 4 0
+fire 1 0 5 0
+fire 1 0 6 0
+count 3 0 4 0 5
+count 4 0 3 1 22
+count 6 0 5 0 10

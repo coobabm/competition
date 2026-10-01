@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "com.coplaydev.unity-mcp": "file:com.coplaydev.unity-mcp",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.physics2d": "1.0.0",
+    "com.unity.modules.screencapture": "1.0.0"
+  }
+}
