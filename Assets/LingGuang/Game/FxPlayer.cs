@@ -24,9 +24,11 @@ namespace LingGuang.Game
         public bool stepRequested;
         public bool playing;
         public FeelElectricFeedback Electric { get; private set; }
+        public ChainFeelSettings feel = new ChainFeelSettings();
 
         Pool<LineRenderer> lightning;
         Pool<SpriteRenderer> rings;
+        Pool<LineRenderer> fireRings;
         Pool<SpriteRenderer> dots;
         Pool<TextMeshPro> texts;
         TMP_FontAsset font;
@@ -36,6 +38,12 @@ namespace LingGuang.Game
         int frameStamp;
         float flashBudget; // photosensitivity: large flashes per second
         bool electricSkipCleared;
+        int firesThisChain, ringsThisBeat;
+        float slowUntil;
+        const int RingSegs = 48;
+
+        /// <summary>Playback speed of chain animation; drops below 1 during a milestone slow-mo.</summary>
+        float Speed => !fastForward && feel != null && Time.unscaledTime < slowUntil ? feel.slowMoScale : 1f;
 
         sealed class Anim { public float t, life; public Action<float> step; public Action done; }
         readonly List<Anim> anims = new List<Anim>();
@@ -48,6 +56,7 @@ namespace LingGuang.Game
             Electric.Initialize();
             lightning = new Pool<LineRenderer>(() => { var lr = Gfx.MakeLine("bolt", transform, Gfx.Additive, 30, 0.05f); lr.positionCount = 10; return lr; });
             rings = new Pool<SpriteRenderer>(() => Gfx.MakeSprite("ring", transform, Gfx.ThinRing, Gfx.Additive, 25, 1f));
+            fireRings = new Pool<LineRenderer>(() => { var lr = Gfx.MakeLine("fire-ring", transform, Gfx.Additive, 26, 0.05f); lr.loop = true; lr.positionCount = RingSegs; return lr; });
             dots = new Pool<SpriteRenderer>(() => Gfx.MakeSprite("dot", transform, Gfx.Square, Gfx.Additive, 31, 0.07f));
             texts = new Pool<TextMeshPro>(() =>
             {
@@ -83,10 +92,11 @@ namespace LingGuang.Game
                 electricSkipCleared = skipRequested;
             }
             float dt = Time.deltaTime;
+            float animDt = dt * Speed;
             for (int i = anims.Count - 1; i >= 0; i--)
             {
                 var a = anims[i];
-                a.t += dt;
+                a.t += animDt;
                 float u = Mathf.Clamp01(a.t / a.life);
                 a.step?.Invoke(u);
                 if (u >= 1f) { anims.RemoveAt(i); a.done?.Invoke(); }
@@ -120,6 +130,8 @@ namespace LingGuang.Game
         {
             playing = true;
             skipRequested = false;
+            firesThisChain = 0;
+            slowUntil = 0f;
             var byBeat = new SortedDictionary<int, List<SimEvent>>();
             foreach (var e in events)
             {
@@ -132,6 +144,7 @@ namespace LingGuang.Game
                 int firesThisBeat = kv.Value.Count(e => e.type == SimEventType.Fire);
                 int notes = 0;
                 bool pause = false;
+                ringsThisBeat = 0;
                 foreach (var e in kv.Value)
                 {
                     onEvent?.Invoke(e);
@@ -186,12 +199,12 @@ namespace LingGuang.Game
                 else
                 {
                     float t = 0f;
-                    while (t < d && !skipRequested) { t += Time.deltaTime; yield return null; }
+                    while (t < d && !skipRequested) { t += Time.deltaTime * Speed; yield return null; }
                 }
             }
             // let the last effects breathe
             float tail = skipRequested ? 0f : 0.35f;
-            while (tail > 0f && !skipRequested) { tail -= Time.deltaTime * (fastForward ? 4f : 1f); yield return null; }
+            while (tail > 0f && !skipRequested) { tail -= Time.deltaTime * Speed * (fastForward ? 4f : 1f); yield return null; }
             playing = false;
         }
 
@@ -221,6 +234,7 @@ namespace LingGuang.Game
             v?.Flash(Mathf.Clamp(scale, 0.25f, 1f));
             var pos = board.CellPos(e.cell);
             var col = SparkView.ShapeColor(board.state.SparkAt(e.cell));
+            ChainJuice(pos, col, Mathf.Clamp(scale, 0.25f, 1f), e.isStart);
             board.WaveField?.Emit(pos, e.isStart ? 1f : 0.6f, Time.time);
             if (Electric != null)
             {
@@ -245,6 +259,37 @@ namespace LingGuang.Game
             if (e.light > 0) FlyTo(pos, "+" + e.light, Color.Lerp(Color.white, col, 0.4f), e.isStart ? 3.4f : 2.8f, lightBarWorld);
             if (e.mult > 0) FlyTo(pos + Vector3.up * 0.2f, $"+{e.mult:0.#}倍", new Color(0.7f, 1f, 0.8f), 2.6f, multBarWorld);
             if (e.fireIndex >= 2) FloatText(pos + new Vector3(0.25f, 0.25f), "回荡", new Color(0.8f, 0.8f, 1f), 0.6f);
+        }
+
+        // Ripple-style feel: ring per fire, accumulating camera trauma, slow-mo at chain milestones.
+        void ChainJuice(Vector3 pos, Color col, float strength, bool isStart)
+        {
+            if (feel == null) return;
+            firesThisChain++;
+            if (!reduceFlash) rig?.AddTrauma(feel.shakePerFire, feel.maxShake, feel.shakeRecover);
+            if (!fastForward && feel.IsMilestone(firesThisChain)) slowUntil = Time.unscaledTime + feel.slowMoDuration;
+            if (feel.fireRings && ringsThisBeat++ < feel.maxRingsPerBeat)
+                FireRing(pos, col, strength, isStart ? feel.startRingScale : 1f);
+        }
+
+        void FireRing(Vector3 center, Color col, float strength, float radiusScale)
+        {
+            var lr = fireRings.Get();
+            float maxR = feel.ringRadiusCells * radiusScale * BoardView.HexSize * BoardView.Sqrt3;
+            float life = Mathf.Max(0.05f, feel.ringLife) / (fastForward ? 2f : 1f);
+            Action<float> step = u =>
+            {
+                float r = Mathf.Max(0.001f, maxR * (1f - (1f - u) * (1f - u)));
+                for (int i = 0; i < RingSegs; i++)
+                {
+                    float a = i / (float)RingSegs * Mathf.PI * 2f;
+                    lr.SetPosition(i, center + new Vector3(Mathf.Cos(a), Mathf.Sin(a)) * r);
+                }
+                lr.widthMultiplier = Mathf.Lerp(feel.ringWidthStart, feel.ringWidthEnd, u);
+                Gfx.SetLineColor(lr, Gfx.HDR(col, feel.ringIntensity * strength * (1f - u * u)));
+            };
+            step(0f); // pooled objects must not show the preceding ring for one frame
+            Animate(life, step, () => fireRings.Release(lr));
         }
 
         void FlyTo(Vector3 from, string text, Color c0, float size, Func<Vector3> dest)
@@ -376,7 +421,9 @@ namespace LingGuang.Game
             Electric?.Clear();
             board?.WaveField?.Clear();
             anims.Clear();
-            lightning?.ReleaseAll(); rings?.ReleaseAll(); dots?.ReleaseAll(); texts?.ReleaseAll();
+            lightning?.ReleaseAll(); rings?.ReleaseAll(); fireRings?.ReleaseAll(); dots?.ReleaseAll(); texts?.ReleaseAll();
+            firesThisChain = 0;
+            slowUntil = 0f;
         }
     }
 
@@ -390,6 +437,7 @@ namespace LingGuang.Game
         float targetSize;
         Vector3 shakeOffset;
         float shakeAmp, shakeT;
+        float trauma, traumaRecover = 0.7f;
         public Bounds limits;
 
         public Vector3 Center => new Vector3(targetPos.x, targetPos.y, 0);
@@ -438,18 +486,33 @@ namespace LingGuang.Game
 
         public void Shake(float amp, float time) { shakeAmp = Mathf.Max(shakeAmp, amp); shakeT = Mathf.Max(shakeT, time); }
 
+        /// <summary>Accumulating, smoothly recovering shake (one small kick per fire).</summary>
+        public void AddTrauma(float amount, float max, float recover)
+        {
+            trauma = Mathf.Min(max, trauma + amount);
+            traumaRecover = Mathf.Max(0.01f, recover);
+        }
+
         void LateUpdate()
         {
             if (cam == null) return;
             float k = 1f - Mathf.Exp(-Time.deltaTime * 6f);
             cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetSize, k);
+            var offset = Vector3.zero;
             if (shakeT > 0f)
             {
                 shakeT -= Time.deltaTime;
-                shakeOffset = (Vector3)UnityEngine.Random.insideUnitCircle * shakeAmp;
-                if (shakeT <= 0f) { shakeOffset = Vector3.zero; shakeAmp = 0f; }
+                if (shakeT > 0f) offset += (Vector3)UnityEngine.Random.insideUnitCircle * shakeAmp;
+                else shakeAmp = 0f;
+            }
+            if (trauma > 0f)
+            {
+                trauma = Mathf.MoveTowards(trauma, 0f, traumaRecover * Time.deltaTime);
+                float n = Time.time * 25f;
+                offset += new Vector3(Mathf.PerlinNoise(n, 0f) - 0.5f, Mathf.PerlinNoise(0f, n) - 0.5f, 0f) * 2f * trauma;
             }
             var p = Vector3.Lerp(cam.transform.position - shakeOffset, targetPos, k);
+            shakeOffset = offset;
             cam.transform.position = p + shakeOffset;
         }
     }

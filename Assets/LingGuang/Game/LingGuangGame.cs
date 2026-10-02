@@ -21,6 +21,8 @@ namespace LingGuang.Game
     {
         public int seed = 0;               // 0 = random
         public bool showNoticeOnStart = true;
+        [Tooltip("连锁手感（移植自 RipplePrototype）：放电圆环、累积震屏、里程碑慢动作。运行中改也会立即生效")]
+        public ChainFeelSettings chainFeel = new ChainFeelSettings();
 
         GameConfig cfg;
         RunState state;
@@ -127,6 +129,7 @@ namespace LingGuang.Game
             hud.Build(font);
             WireHud();
             fx.Init(board, rig, synth, font);
+            fx.feel = chainFeel;
             fx.lightBarWorld = () => UiWorld(hud.lightAnchor);
             fx.multBarWorld = () => UiWorld(hud.multText.rectTransform);
             fx.onEvent = OnPlayEvent;
