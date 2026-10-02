@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b40a963a2367f6741b8732f69626c971
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 227547
+  packageName: Reach - Complete Sci-Fi UI
+  packageVersion: 1.3.10
+  assetPath: Assets/Reach - Complete Sci-Fi UI/Animations/UI Elements/Modal Window/ModalWindow.controller
+  uploadId: 718231

@@ -1,0 +1,275 @@
+{
+    "mapRows": [
+        "...FFFF...",
+        "..FFFFFF..",
+        "TTCCCCCCTT",
+        "TTKCCCK.TT",
+        "..KKKKK...",
+        "..IIIIII..",
+        "....II...."
+    ],
+    "midlineLeftCol": 4,
+    "bridges": [
+        {
+            "row": 5,
+            "openStage": 0
+        },
+        {
+            "row": 3,
+            "openStage": 2
+        },
+        {
+            "row": 1,
+            "openStage": 3
+        }
+    ],
+    "outerGapPairs": [
+        1,
+        2,
+        2,
+        2,
+        7,
+        2,
+        8,
+        2
+    ],
+    "secondaryGulliesMin": 3,
+    "secondaryGulliesMax": 4,
+    "leakPerBeat": 1,
+    "leakAfterLastBeat": false,
+    "refireThresholdStep": 2,
+    "startOutputBonus": 2,
+    "maxBeats": 200,
+    "stpStep": 1,
+    "stpCap": 2,
+    "shapes": [
+        {
+            "name": "传导",
+            "dirs": [
+                0
+            ],
+            "threshold": 2,
+            "light": 5,
+            "output": 2
+        },
+        {
+            "name": "锥体",
+            "dirs": [
+                0,
+                2,
+                4
+            ],
+            "threshold": 4,
+            "light": 10,
+            "output": 2
+        },
+        {
+            "name": "汇聚",
+            "dirs": [
+                0
+            ],
+            "threshold": 6,
+            "light": 20,
+            "output": 4
+        },
+        {
+            "name": "本能",
+            "dirs": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "threshold": 2,
+            "light": 8,
+            "output": 2
+        }
+    ],
+    "convergeMinSources": 3,
+    "convergeBonusPerSource": 10,
+    "thickAt": 3,
+    "myelinAt": 6,
+    "levelOutputBonus": 2,
+    "baseDelay": 1,
+    "bridgePenaltyAmount": 1,
+    "bridgePenaltyDelay": 1,
+    "bridgeGraduateAt": 3,
+    "rippleBaseRadius": 1,
+    "rippleMergeDistance": 2,
+    "rippleRadiusCap": 3,
+    "rippleCharge": 1,
+    "weakLinksEnabled": true,
+    "weakLinkActiveAt": 3,
+    "weakLinkCharge": 1,
+    "lighthouseCharge": 2,
+    "lighthouseAnchorRow": 6,
+    "lighthouseRadiusByStage": [
+        3,
+        2,
+        2,
+        1,
+        1,
+        0
+    ],
+    "lighthouseFocus": "Memory",
+    "decayRoundsByStage": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        1
+    ],
+    "decayAmount": 3,
+    "youthPruneBonus": 3,
+    "memoryMin": 3,
+    "memoryMax": 6,
+    "memoryThreshold": 2,
+    "plasticityInit": 3,
+    "plasticityMax": 3,
+    "rootRounds": 3,
+    "driftAfterRounds": 2,
+    "instinctCount": 3,
+    "instinctLightDecay": 2,
+    "instinctOldGain": 2,
+    "instinctLightMax": 8,
+    "oldDisableCellsPerRound": 2,
+    "startsPerRound": 2,
+    "movesPerRound": 1,
+    "movesBossRound": 2,
+    "candidatesPerRound": 3,
+    "targets": [
+        30,
+        45,
+        60,
+        120,
+        180,
+        240,
+        400,
+        600,
+        800,
+        1200,
+        1800,
+        2400,
+        3000,
+        4500,
+        6000,
+        5000,
+        7500,
+        10000
+    ],
+    "stageNames": [
+        "婴儿",
+        "童年",
+        "青春期",
+        "成年",
+        "中年",
+        "老年"
+    ],
+    "itemSlotsByStage": [
+        0,
+        2,
+        3,
+        5,
+        5,
+        5
+    ],
+    "pickupStage": 1,
+    "pickupMin": 1,
+    "pickupMax": 2,
+    "pickupLife": 2,
+    "shopFromStage": 2,
+    "patterns": [
+        {
+            "id": "infinite",
+            "name": "无限回荡",
+            "light": 100,
+            "mult": 6,
+            "minStage": 0
+        },
+        {
+            "id": "long",
+            "name": "长链",
+            "light": 30,
+            "mult": 4,
+            "minStage": 1
+        },
+        {
+            "id": "converge",
+            "name": "汇聚",
+            "light": 25,
+            "mult": 3,
+            "minStage": 2
+        },
+        {
+            "id": "diverge",
+            "name": "发散",
+            "light": 20,
+            "mult": 3,
+            "minStage": 1
+        },
+        {
+            "id": "short",
+            "name": "短链",
+            "light": 10,
+            "mult": 2,
+            "minStage": 1
+        },
+        {
+            "id": "spark",
+            "name": "火花",
+            "light": 5,
+            "mult": 1,
+            "minStage": 1
+        }
+    ],
+    "longChainBeats": 4,
+    "shortChainBeats": 2,
+    "divergeMinFires": 3,
+    "freshnessFromStage": 3,
+    "freshnessStep": 0.10000000149011612,
+    "freshnessMin": 0.5,
+    "coinsPerRound": 3,
+    "coinsBonusOverTarget": 1,
+    "itemPrice": 5,
+    "drugPrice": 3,
+    "shopItems": 2,
+    "shopDrugs": 1,
+    "drugCarryMax": 2,
+    "drugsPerRound": 1,
+    "insightEnabled": true,
+    "interestPer": 5,
+    "interestMax": 3,
+    "insightPerLevel": 3,
+    "levelLightPercent": 10,
+    "levelMult": 0.25,
+    "reviewCost": 1,
+    "rerollCost": 1,
+    "charactersEnabled": true,
+    "characterSpawnPermilleByStage": [
+        0,
+        350,
+        450,
+        350,
+        300,
+        200
+    ],
+    "characterTargetByStage": [
+        0,
+        6,
+        8,
+        6,
+        6,
+        4
+    ],
+    "characterHardCap": 12,
+    "characterFamiliarAt": 3,
+    "characterKnownAt": 6,
+    "patternLevelMax": 5,
+    "refireRaiseCap": 6,
+    "infiniteEnabled": true,
+    "infiniteCredits": 6,
+    "carryOverFire": true
+}

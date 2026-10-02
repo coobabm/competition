@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3210f972da6729c4b8fba218c9830a37
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 59deb41d54b5d8745aab5f6369a24361, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 227547
+  packageName: Reach - Complete Sci-Fi UI
+  packageVersion: 1.3.10
+  assetPath: Assets/Reach - Complete Sci-Fi UI/Scripts/Credits/CreditsSectionItem.cs
+  uploadId: 718231

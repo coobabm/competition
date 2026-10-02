@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "com.ramenvr.aura-unity": "https://github.com/ramenvr/AuraForUnityPlugin.git",
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#30d22075093d1d35dfb0091c1c7550e9ad948577",
     "com.unity.ai.navigation": "2.0.12",
     "com.unity.collab-proxy": "2.12.4",
     "com.unity.ide.rider": "3.0.39",

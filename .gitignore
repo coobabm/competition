@@ -112,3 +112,29 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Project collaboration: keep caches, private agent state and local evidence out.
+.DS_Store
+/.plastic/
+/.Aura/
+/.claude/
+/.codex/
+/Evidence/
+/Packages/Aura/Editor/AuraLogs/
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+/Assets/Screenshots/
+/Assets/Screenshots.meta
+/Tools/**/bin/
+/Tools/**/obj/
+# These are authored CLI projects, not Unity-generated project files.
+!/Tools/LingGuangSim/LingGuangSim.csproj
+!/Tools/LingGuangSim.Tests/LingGuangSim.Tests.csproj
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks

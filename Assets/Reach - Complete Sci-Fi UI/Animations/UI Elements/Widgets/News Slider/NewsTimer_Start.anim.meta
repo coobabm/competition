@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 26f6e16b92cddde48ae9f3e21e9ee206
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 227547
+  packageName: Reach - Complete Sci-Fi UI
+  packageVersion: 1.3.10
+  assetPath: Assets/Reach - Complete Sci-Fi UI/Animations/UI Elements/Widgets/News
+    Slider/NewsTimer_Start.anim
+  uploadId: 718231
