@@ -1,0 +1,338 @@
+{
+  "snapshotDate": "2026-10-02",
+  "sourceProject": "competition",
+  "version": "v0.8",
+  "kind": "Unity source snapshot, not a standalone Unity project",
+  "files": [
+    {
+      "path": "Assets/Emergence/Resources/Fonts/NotoSansCJKsc-Regular.otf",
+      "bytes": 16437364,
+      "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+    },
+    {
+      "path": "Assets/Emergence/Resources/Fonts/NotoSansCJKsc-Regular.otf.meta",
+      "bytes": 481,
+      "sha256": "53a88b7c256cd6efb5117819e1d8952631e50d5b21da8e5e1e9f5ee547583206"
+    },
+    {
+      "path": "Assets/Emergence/Resources/Fonts/OFL.txt",
+      "bytes": 4301,
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "path": "Assets/Emergence/Resources/Fonts/OFL.txt.meta",
+      "bytes": 158,
+      "sha256": "01d8f1cf3581a14613d890d01edae2da682ddc34e0fa63c737dc8b66b101a2f8"
+    },
+    {
+      "path": "Assets/Emergence/Resources/Fonts.meta",
+      "bytes": 172,
+      "sha256": "5c2db16bfa07f6967111b8dc69dadc78f8d3f00242c0d0d879aa95c32906ade9"
+    },
+    {
+      "path": "Assets/Emergence/Resources.meta",
+      "bytes": 172,
+      "sha256": "c5998b1c2d73514c0416278764af79617569ac68a1d76fd90aa9f96221cf9ed2"
+    },
+    {
+      "path": "Assets/Emergence.meta",
+      "bytes": 172,
+      "sha256": "a688d93e58489cbe20808d741b46fa6f7a958c758d55c16c79f147173c28e78c"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Bot.cs",
+      "bytes": 4694,
+      "sha256": "59a16771ba9209d93e02efd8ea01a92ece7f000e16d71efbdc91cdfc91753747"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Bot.cs.meta",
+      "bytes": 59,
+      "sha256": "ac088fdc3b2214e40f476255a669e076869bffdecf6fc2b7e88add899656d48d"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Effects.cs",
+      "bytes": 12885,
+      "sha256": "d738fe657727164ad3b4dbcb4714a5d60fab024d5e6387805e799efe52e1be69"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Effects.cs.meta",
+      "bytes": 59,
+      "sha256": "b0a4276b21727ae1a1024ed9adac99caa02f1eb1507cb0eef43815f443501e92"
+    },
+    {
+      "path": "Assets/LingGuang/Core/EndingNamer.cs",
+      "bytes": 5933,
+      "sha256": "05e9838baca70c5a3abf43ccddcb68fc40509fa61996d35ea22680fa6213437c"
+    },
+    {
+      "path": "Assets/LingGuang/Core/EndingNamer.cs.meta",
+      "bytes": 59,
+      "sha256": "d5d182452e25dbf2d281153e72acef87ea9e9f36fe577591b20797f79e3720bd"
+    },
+    {
+      "path": "Assets/LingGuang/Core/GameConfig.cs",
+      "bytes": 7483,
+      "sha256": "5b7b0331736baf7bd28e7c5206e82d5872c3d4647fd1735a9b8fbb202f6db8e7"
+    },
+    {
+      "path": "Assets/LingGuang/Core/GameConfig.cs.meta",
+      "bytes": 59,
+      "sha256": "65ca7825a89a043a304250bcde57eb1a7fe888b80b4f88d0f34e5f5b94b0f896"
+    },
+    {
+      "path": "Assets/LingGuang/Core/HexBoard.cs",
+      "bytes": 9273,
+      "sha256": "bf714b88061cc36ba9d7babc361c1278d2f972bb770b89612638197a298cbc64"
+    },
+    {
+      "path": "Assets/LingGuang/Core/HexBoard.cs.meta",
+      "bytes": 59,
+      "sha256": "7a6995f89127de071b870639c15d17ccd0e7063dc1fd8302f7778849ea6007c4"
+    },
+    {
+      "path": "Assets/LingGuang/Core/LingGuang.Core.asmdef",
+      "bytes": 361,
+      "sha256": "4603f352633e32bb55d64bcebbd2ef6b67e98494e68bd0c1bcb4f14dba3b5809"
+    },
+    {
+      "path": "Assets/LingGuang/Core/LingGuang.Core.asmdef.meta",
+      "bytes": 166,
+      "sha256": "6170fea6cb4b481332fc88209d01b561900dc9ab84000a9c904211a2e7627ac7"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Model.cs",
+      "bytes": 4826,
+      "sha256": "9428d8d2d0eae3f7ade459df2df8074885ad23e8147964c0be210f36ae7e51ed"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Model.cs.meta",
+      "bytes": 59,
+      "sha256": "606650781b9d1a3422c91f7022250787aa22a11b65b3826c691ff154c5a28a42"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Mods.cs",
+      "bytes": 7637,
+      "sha256": "9ef06911ded265bebf6c0caa251e716032f14787e063839e6627833e812d3bfe"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Mods.cs.meta",
+      "bytes": 59,
+      "sha256": "074ced14867d6827e7c012a99428aca5f86e329a321a3a4b6e787b82e60c2131"
+    },
+    {
+      "path": "Assets/LingGuang/Core/RunFlow.cs",
+      "bytes": 37679,
+      "sha256": "0b5ac8e90f4b25f196003e946ef70e994f1ad6378cbd136ff3bb7abc1d3696ef"
+    },
+    {
+      "path": "Assets/LingGuang/Core/RunFlow.cs.meta",
+      "bytes": 59,
+      "sha256": "1ea89bc60cc5786b017241bff8ca851bfb986b7d4c5a0189c9d5a3d52e9527e0"
+    },
+    {
+      "path": "Assets/LingGuang/Core/RunState.cs",
+      "bytes": 15705,
+      "sha256": "502b8cb4f6c287ca60b88bff4ac049d37b64506fa019c714ba585bd43ca7c22d"
+    },
+    {
+      "path": "Assets/LingGuang/Core/RunState.cs.meta",
+      "bytes": 59,
+      "sha256": "85fbf9a58369d13d12252b537641eb1bdcd6c1bd798c95d64b70cadac9046e53"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Simulator.cs",
+      "bytes": 19949,
+      "sha256": "1293399245ea73e99acfed25817910f8310892cb6132a94ab6f18c29b25038ce"
+    },
+    {
+      "path": "Assets/LingGuang/Core/Simulator.cs.meta",
+      "bytes": 59,
+      "sha256": "f7d52decc934e916e1d83fdbe60815723f703bb10929c8f89178ef16352bc896"
+    },
+    {
+      "path": "Assets/LingGuang/Core.meta",
+      "bytes": 172,
+      "sha256": "4d726f123ec715cff4376c25d2f49645213a228a6740f5b0f7b28cfbe62a2710"
+    },
+    {
+      "path": "Assets/LingGuang/Game/BoardView.cs",
+      "bytes": 31583,
+      "sha256": "664ebacc377db049a990db037c946dc08893542f4f5952e79d7b02daec28b7ab"
+    },
+    {
+      "path": "Assets/LingGuang/Game/BoardView.cs.meta",
+      "bytes": 59,
+      "sha256": "aec79a4443f88759332124fb2c403ad452605aa59f80f175915dd2f352c758e6"
+    },
+    {
+      "path": "Assets/LingGuang/Game/FxPlayer.cs",
+      "bytes": 17139,
+      "sha256": "a965b5608541bf2c816c13320d17116c736a5e9631599d020ed2898994c7fc1f"
+    },
+    {
+      "path": "Assets/LingGuang/Game/FxPlayer.cs.meta",
+      "bytes": 59,
+      "sha256": "cfd8820561aff7443e6ec98e4d4eb052614018bf2603a47bad6b77f330b561fb"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Gfx.cs",
+      "bytes": 7115,
+      "sha256": "9b454d44e7acad677ccb5ea65942343eb4e5adecc43a16f7998f06f5da98025d"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Gfx.cs.meta",
+      "bytes": 59,
+      "sha256": "478f99a49c67a2d796612a1943d8abee460f29c7f9d86623abe436ffd66f648e"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Hud.cs",
+      "bytes": 24141,
+      "sha256": "182dc4a1bb7296f5cf08a96cbefa5597dff7d84eba8323a75eef5867784fcfcc"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Hud.cs.meta",
+      "bytes": 59,
+      "sha256": "b6c5c45a81f742e3b1d414449f5345b88fd546258209c6e2601c1c4048bb9763"
+    },
+    {
+      "path": "Assets/LingGuang/Game/LingGuang.Game.asmdef",
+      "bytes": 573,
+      "sha256": "07897d3e87a44dab1dd8b42fe5028dd30af4fd8f21f4cf63995866ff919ec777"
+    },
+    {
+      "path": "Assets/LingGuang/Game/LingGuang.Game.asmdef.meta",
+      "bytes": 166,
+      "sha256": "99810e9f450b0ee0fdb1bfb560a33fab75f75c28c67e178677af28025a6ac3f6"
+    },
+    {
+      "path": "Assets/LingGuang/Game/LingGuangGame.cs",
+      "bytes": 42753,
+      "sha256": "52b85056c87433d56fe753b3eb223b618ca8f913f7202902b057a15ea1403be0"
+    },
+    {
+      "path": "Assets/LingGuang/Game/LingGuangGame.cs.meta",
+      "bytes": 59,
+      "sha256": "4aa1dbbd2813bbf047c891ef3815951968a57f0e955abfa42374db0a371bad7a"
+    },
+    {
+      "path": "Assets/LingGuang/Game/SynthAudio.cs",
+      "bytes": 4663,
+      "sha256": "303e9f7d377bca553248baf02c13176d4ca0626df77bcc60909211124f751e1f"
+    },
+    {
+      "path": "Assets/LingGuang/Game/SynthAudio.cs.meta",
+      "bytes": 59,
+      "sha256": "febf57888cec6e312e671a05ac38142dd6501543734dcf08a58cecb69d44cbca"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Tutorial.cs",
+      "bytes": 5443,
+      "sha256": "8433c81da68900f9c605db07a5b85c188320a52b7874d97c72691cde4d03d1bc"
+    },
+    {
+      "path": "Assets/LingGuang/Game/Tutorial.cs.meta",
+      "bytes": 59,
+      "sha256": "904a4f3a73c204e257087f7964aacf50c7b7b4e3b28f0f83d824e338bef23a0a"
+    },
+    {
+      "path": "Assets/LingGuang/Game.meta",
+      "bytes": 172,
+      "sha256": "02d31c3f79bb95c789184d0dd382622d40e2e52706c1c6da6ba87fe7460119b3"
+    },
+    {
+      "path": "Assets/LingGuang/README.md",
+      "bytes": 7432,
+      "sha256": "1c8c55cc7f6ca35ecfe256e3a94511f0aaf463133e4b39ef4975021376018475"
+    },
+    {
+      "path": "Assets/LingGuang/README.md.meta",
+      "bytes": 158,
+      "sha256": "dd58e34967f6f48bc7914a738c0e0cab76f3a7d02e7d469e75cfc081fb2dfe70"
+    },
+    {
+      "path": "Assets/LingGuang/Resources/LingGuangGlow.shader",
+      "bytes": 1821,
+      "sha256": "05dfdaf7f884ddc3e167ea2a9a10954edcaf04e7d51254cc5cd7e6d9cf66c544"
+    },
+    {
+      "path": "Assets/LingGuang/Resources/LingGuangGlow.shader.meta",
+      "bytes": 204,
+      "sha256": "ca287b80ee8ddab9d4a90312a04c11714b0e12d536398c0121334212ad2c5ae9"
+    },
+    {
+      "path": "Assets/LingGuang/Resources.meta",
+      "bytes": 172,
+      "sha256": "908bf4d7a56cf76e6a9d3d85a662cbf81d16f2815e8e4f519e26cb600403f4f9"
+    },
+    {
+      "path": "Assets/LingGuang/Scenes/LingGuang.unity",
+      "bytes": 7157,
+      "sha256": "d38748d50ab2e00c92481123846863b60cb772aa9cee07cc08d135d37a69dceb"
+    },
+    {
+      "path": "Assets/LingGuang/Scenes/LingGuang.unity.meta",
+      "bytes": 155,
+      "sha256": "6e43382945f13213946439fa438caa14f7f49e2812c5e33e902798c4c03e7673"
+    },
+    {
+      "path": "Assets/LingGuang/Scenes.meta",
+      "bytes": 172,
+      "sha256": "67be389e0f30d24b953ad46c09a80e11dc2fa41978bfcabaeef0544b79069437"
+    },
+    {
+      "path": "Assets/LingGuang/Tests/Editor/LingGuang.Tests.asmdef",
+      "bytes": 554,
+      "sha256": "a326d81700f4835f008a88c2a7836e4f6465662ba3eac08cc0fe3584e5a9a6e4"
+    },
+    {
+      "path": "Assets/LingGuang/Tests/Editor/LingGuang.Tests.asmdef.meta",
+      "bytes": 166,
+      "sha256": "cbd271d594e02322d860705f98a8d34c8ca40f5be40008647ac088824c1bd458"
+    },
+    {
+      "path": "Assets/LingGuang/Tests/Editor/SimulatorTests.cs",
+      "bytes": 19827,
+      "sha256": "c6db5ed5fa895efb305d86e173ee56ae8db2c7f7f133b11b0d8ad874f9d53f31"
+    },
+    {
+      "path": "Assets/LingGuang/Tests/Editor/SimulatorTests.cs.meta",
+      "bytes": 59,
+      "sha256": "6020eda7e23364a5f3e51a70ec22b232e1c33440fb772711f37a2196a462c967"
+    },
+    {
+      "path": "Assets/LingGuang/Tests/Editor.meta",
+      "bytes": 172,
+      "sha256": "cb2db19b57a2718e8c119f27df90ca5102b1b2c9933ab9f65e03b8b693dc45ef"
+    },
+    {
+      "path": "Assets/LingGuang/Tests.meta",
+      "bytes": 172,
+      "sha256": "027df58f8565150517a49f7c34f7ff9acc51cfdf88ab0fdd8b1965be534f8f45"
+    },
+    {
+      "path": "Assets/LingGuang.meta",
+      "bytes": 172,
+      "sha256": "5866bbf623b6693d91ec588b82a43388bbcfbf3d42dc5cee0dbd41c8a61dbfdf"
+    },
+    {
+      "path": "Assets/StreamingAssets/LingGuang/GameConfig.json",
+      "bytes": 5143,
+      "sha256": "c91c6319cca2cf5d330d2e8e31c264c24bdd5d684aa2718e758c818bd83cd677"
+    },
+    {
+      "path": "Assets/StreamingAssets/LingGuang/GameConfig.json.meta",
+      "bytes": 155,
+      "sha256": "f9a0b18737045842ebe21ac2760e44ddec01ad67037dfd0b8ded160be3f894bd"
+    },
+    {
+      "path": "Assets/StreamingAssets/LingGuang.meta",
+      "bytes": 172,
+      "sha256": "33bba3fc673bb43532ab93167e8571db1f7bf1c90c75111becb113e949d60e33"
+    },
+    {
+      "path": "Assets/StreamingAssets.meta",
+      "bytes": 172,
+      "sha256": "96396a7a4c4a406071dcf381a1fabe837190c974417f27c8dd8084478a4fd325"
+    }
+  ]
+}
