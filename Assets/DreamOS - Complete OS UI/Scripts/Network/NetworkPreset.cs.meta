@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: af185ded097dbb24cb3659083f4eed19
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 8c251e0e28a8ea1478d666c3bd682f37, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkPreset.cs
+  uploadId: 718228

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c7243e79ffe3c1d4192600a08c44f8d0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 6f97d46f384772c40a9927409365e3a6, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Localization/LocalizationTable.cs
+  uploadId: 718228

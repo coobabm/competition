@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2792e2b173ae90646b7a828f3cd57e60
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Apps/Game Hub/SliderIndicator_Start.anim
+  uploadId: 718228

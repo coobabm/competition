@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d8bba19c96fb84e46ac2dcce99b77ece
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Date & Time/DateAndTimeTaskbar.controller
+  uploadId: 718228

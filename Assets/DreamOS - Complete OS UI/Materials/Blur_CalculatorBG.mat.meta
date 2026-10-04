@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bd6242cc5d7802146b2751b35bb932ef
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_CalculatorBG.mat
+  uploadId: 718228

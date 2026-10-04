@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9c61ccf7c51544149baa88bc22f0e5c7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_CommanderBG.mat
+  uploadId: 718228

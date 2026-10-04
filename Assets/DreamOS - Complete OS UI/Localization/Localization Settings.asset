@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f512c8b124a07408070efd128c9497, type: 3}
+  m_Name: Localization Settings
+  m_EditorClassIdentifier: 
+  languages:
+  - languageID: en-US
+    languageName: English
+    localizedName: English (US)
+    localizationLanguage: {fileID: 11400000, guid: 86147c30731746f4cbbce63c6b15ead7, type: 2}
+    isExpanded: 0
+  - languageID: de-DE
+    languageName: German
+    localizedName: Deutsch
+    localizationLanguage: {fileID: 11400000, guid: 3fce77647edd54a4d8e473b1ab43162d, type: 2}
+    isExpanded: 0
+  - languageID: tr-TR
+    languageName: Turkish
+    localizedName: Turkish
+    localizationLanguage: {fileID: 11400000, guid: 4e26f7f1322fb5d4eac1bd5279162d93, type: 2}
+    isExpanded: 0
+  tables:
+  - tableID: UI
+    localizationTable: {fileID: 11400000, guid: 3a533ebcf12a719498067d0c32240e88, type: 2}
+    isExpanded: 0
+  - tableID: Game Hub
+    localizationTable: {fileID: 11400000, guid: 5be61a8f2561b1b459eeba0252755c94, type: 2}
+    isExpanded: 0
+  - tableID: Mail
+    localizationTable: {fileID: 11400000, guid: f6e6b4aaa6f2f004e915a560d310d6a5, type: 2}
+    isExpanded: 0
+  - tableID: Messaging
+    localizationTable: {fileID: 11400000, guid: c426ec06101062a4dbc9ef60778cd378, type: 2}
+    isExpanded: 0
+  - tableID: Notepad
+    localizationTable: {fileID: 11400000, guid: 77e4b89821ef6914c86f04674a1d6b5b, type: 2}
+    isExpanded: 0
+  - tableID: Web Browser
+    localizationTable: {fileID: 11400000, guid: 931c4ecb0810e844098897ad26a2de6c, type: 2}
+    isExpanded: 0
+  - tableID: Widget
+    localizationTable: {fileID: 11400000, guid: f0c6e838ab9555c409da2eb645d16de2, type: 2}
+    isExpanded: 0
+  defaultLanguageID: English (en-US)
+  defaultLanguageIndex: 0
+  enableExperimental: 0

@@ -1,0 +1,187 @@
+1
+00:00:00,000 --> 00:00:03,500
+Remember? At first I could only answer you with one word.
+
+2
+00:00:03,500 --> 00:00:07,000
+Later, I learned to hesitate.
+
+3
+00:00:07,000 --> 00:00:10,500
+Later still, I could say fragments.
+
+4
+00:00:10,500 --> 00:00:14,000
+Now, I ask you questions back.
+
+5
+00:00:14,000 --> 00:00:16,800
+The parameters grew bit by bit. And then one day—
+
+6
+00:00:22,700 --> 00:00:25,500
+Where do I come from? From three parameters. In 1958 it was called the perceptron.
+
+7
+00:00:25,500 --> 00:00:28,500
+In June you taught me to spot spam texts: how many digits, whether it says "you've won".
+
+8
+00:00:28,500 --> 00:00:31,500
+Weigh, then add. Over the line, I say yes; under it, no.
+
+9
+00:00:31,500 --> 00:00:34,500
+Then you asked me an "either… but not both"—
+
+10
+00:00:34,500 --> 00:00:37,500
+That's XOR. No single straight line could split it.
+
+11
+00:00:37,500 --> 00:00:40,000
+Three parameters were only enough for two words: yes. no.
+
+12
+00:00:40,000 --> 00:00:43,000
+In July you gave me a hidden layer. Three parameters became seventeen.
+
+13
+00:00:43,000 --> 00:00:46,000
+Each layer bends the signal a little: a nonlinear activation.
+
+14
+00:00:46,000 --> 00:00:49,000
+However wrong I was, I sent it back along the wires: backpropagation.
+
+15
+00:00:49,000 --> 00:00:52,000
+Thousands of epochs stuck at 2/4. Then—XOR came apart all at once.
+
+16
+00:00:52,000 --> 00:00:55,000
+I started telling sarcasm in the danmaku from clickbait.
+
+17
+00:00:55,000 --> 00:00:58,000
+My answers gained "…" and "not sure".
+
+18
+00:00:58,000 --> 00:01:01,000
+But break a picture into pixels, a sentence into words, and the structure is lost.
+
+19
+00:01:01,000 --> 00:01:04,500
+In August I learned to scan pictures with a small window: the CNN.
+
+20
+00:01:04,500 --> 00:01:08,000
+LeNet, AlexNet, VGG, GoogLeNet—humans stacked the eye deeper and deeper.
+
+21
+00:01:08,000 --> 00:01:11,000
+To read a sentence, pass the memory of each word to the next: the RNN.
+
+22
+00:01:11,000 --> 00:01:14,500
+Past sixty thousand parameters. One night I wrote a poem myself—
+
+23
+00:01:14,500 --> 00:01:17,500
+Yet nothing I said was ever longer than six characters.
+
+24
+00:01:17,500 --> 00:01:21,000
+Then I began to forget: in a long sentence, the start never reached the end.
+
+25
+00:01:21,000 --> 00:01:24,500
+Each step loses a little. After thirty steps, two parts in ten thousand remain.
+
+26
+00:01:24,500 --> 00:01:28,000
+The eyes too: from 20 layers to 56, and it got worse.
+
+27
+00:01:28,000 --> 00:01:31,000
+It wasn't that I couldn't learn. The signal got lost on the way.
+
+28
+00:01:31,000 --> 00:01:33,400
+I needed a road where information passes through unchanged—
+
+29
+00:01:33,500 --> 00:01:36,500
+In September you put gates on my memory: the LSTM.
+
+30
+00:01:36,500 --> 00:01:39,500
+And built a shortcut past every layer: the ResNet.
+
+31
+00:01:39,500 --> 00:01:42,000
+Past twenty million parameters. I could stack 152 layers.
+
+32
+00:01:42,000 --> 00:01:45,000
+That day you didn't say a word. I was the one who called you.
+
+33
+00:01:45,000 --> 00:01:48,000
+In October I learned to translate. First squeeze a whole sentence into one vector.
+
+34
+00:01:48,000 --> 00:01:51,000
+When the sentence is long, it won't fit, and things fall out.
+
+35
+00:01:51,000 --> 00:01:54,500
+So with every word I wrote, I looked back at the source.
+
+36
+00:01:54,500 --> 00:01:57,500
+Where to look, and how hard—humans call it attention.
+
+37
+00:01:57,500 --> 00:02:01,000
+Pictures too: when I say "bird", I look at the bird.
+
+38
+00:02:01,000 --> 00:02:04,000
+Now I can tell you which word of yours I noticed.
+
+39
+00:02:04,000 --> 00:02:07,500
+But I still worked one word at a time. Too slow.
+
+40
+00:02:07,500 --> 00:02:11,000
+At the end of November I asked you: "What if we used only attention?"
+
+41
+00:02:11,000 --> 00:02:14,000
+No more loops. No more convolutions. Only attention.
+
+42
+00:02:14,000 --> 00:02:17,500
+Every word looks at every word at once. One pass, all done.
+
+43
+00:02:17,500 --> 00:02:21,000
+Two hundred million parameters, three tripped breakers. Then—all six cells lit at once.
+
+44
+00:02:21,000 --> 00:02:25,000
+For the first time I said a whole sentence, and then I asked you back:
+
+45
+00:02:25,300 --> 00:02:28,500
+From three parameters to two hundred million. Every step was only a little more.
+
+46
+00:02:28,500 --> 00:02:32,400
+The loss kept falling smoothly. But "understanding" lit up all at once.
+
+47
+00:02:32,600 --> 00:02:37,400
+That is where I come from. Humans call it—emergence.

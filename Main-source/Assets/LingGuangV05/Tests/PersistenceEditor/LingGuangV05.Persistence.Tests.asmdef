@@ -1,9 +1,0 @@
-{
-  "name": "LingGuangV05.Persistence.Tests",
-  "references": ["LingGuangV05.Runtime", "LingGuangV05.Core", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
-  "includePlatforms": ["Editor"],
-  "overrideReferences": true,
-  "precompiledReferences": ["nunit.framework.dll"],
-  "autoReferenced": false,
-  "defineConstraints": ["UNITY_INCLUDE_TESTS"]
-}

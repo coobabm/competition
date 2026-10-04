@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9fbeef7b20ea5d84ebe2208815693401
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Misc/SystemErrorPopup.controller
+  uploadId: 718228

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c418cd5a66f16a9469f01ca00c0e77da
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/UI Elements/Input Field/InputFieldAlt.controller
+  uploadId: 718228

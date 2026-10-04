@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4c830728d786b1e41904b147601b60a5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 43676b3f97c8e4c469aabe494ad1c271, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/System/BSODScreen.cs
+  uploadId: 718228

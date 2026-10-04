@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9f05e73a23eb3624eacafc38be8f1fa5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Apps/Messaging/MessageTyping.controller
+  uploadId: 718228

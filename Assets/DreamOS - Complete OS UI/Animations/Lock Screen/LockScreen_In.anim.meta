@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6ad1cbb5c79a1e64e90882fc49f25f54
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Lock Screen/LockScreen_In.anim
+  uploadId: 718228

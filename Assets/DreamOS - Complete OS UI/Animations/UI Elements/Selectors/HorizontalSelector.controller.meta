@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3d60f7f43b232a64c8fc6b56dd1472ec
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/UI Elements/Selectors/HorizontalSelector.controller
+  uploadId: 718228

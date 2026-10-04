@@ -1,4 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><LangVersion>9</LangVersion><Nullable>disable</Nullable><ImplicitUsings>disable</ImplicitUsings><RollForward>Major</RollForward></PropertyGroup>
-<ItemGroup><Compile Include="../../../Assets/LingGuangV05/XingGuang/Core/*.cs" /><Compile Include="../../../Assets/LingGuangV05/Core/**/*.cs" /></ItemGroup>
-</Project>

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 977dbeeee925e2148807e0b877676753
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_WidgetLibraryBG.mat
+  uploadId: 718228

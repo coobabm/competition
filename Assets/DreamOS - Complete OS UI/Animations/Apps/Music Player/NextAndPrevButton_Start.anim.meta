@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 584e55defaec6a646ba349848b6b5797
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/NextAndPrevButton_Start.anim
+  uploadId: 718228

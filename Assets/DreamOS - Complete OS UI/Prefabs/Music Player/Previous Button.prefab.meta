@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 79f094572fec8844785ec95891a0468e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Music Player/Previous Button.prefab
+  uploadId: 718228

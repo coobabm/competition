@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 90c2ef77e8a13cd4bbc0d5eb55821b12
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 6495f87f955968b4b982bccf9b5dba7d, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/UI Manager/UIManagerFontChanger.cs
+  uploadId: 718228

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bd4e6f6ac27f7ad40a1a524338b7ece3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Textures/Placeholders/Game Hub/3D Test
+    Renderer.renderTexture
+  uploadId: 718228

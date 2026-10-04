@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 42d2d1e7e7a1b574b870926d7eac3002
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim
+  uploadId: 718228
