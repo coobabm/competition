@@ -1,0 +1,6 @@
+{
+  "name": "LingGuangV05.Runtime",
+  "rootNamespace": "LingGuangV05.Runtime",
+  "references": ["LingGuangV05.Core"],
+  "autoReferenced": true
+}

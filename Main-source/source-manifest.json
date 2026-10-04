@@ -1,0 +1,2495 @@
+{
+  "captured_at": "2026-10-04T20:24:14+09:00",
+  "scope": "Main scene source snapshot; not a standalone Unity project",
+  "source_scene": "Assets/LingGuangV05/Scenes/Main.unity",
+  "source_scene_sha256": "30f6516b19fbb635154cc81d449688d71109f3eec498139fe01346ab76005a2d",
+  "source_scene_included": false,
+  "files": [
+    {
+      "path": "Assets/HongmengOS/Aero2010/Rendering/AeroGlass.shader",
+      "bytes": 1901,
+      "sha256": "e0f0b7b63147d2ebf4c45fa0cd30727e69fca0fe3841e7446aa7c1ac63e2a73c"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Rendering/AeroGlass.shader.meta",
+      "bytes": 204,
+      "sha256": "a95e6c765416b9569f9a69bf5342a126a8169efb5bac16c9c1ef1a7f74944955"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Rendering.meta",
+      "bytes": 172,
+      "sha256": "e393955963be2c9336690294a798ab15c6bb14e1f8b00d917b99afe8c48f1e35"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroCaptionFeedback.cs",
+      "bytes": 1132,
+      "sha256": "7fbb0f2a5a2b80ad7ad82b9a87c182c88dd58c521850b19ebf5303a41ff37d91"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroCaptionFeedback.cs.meta",
+      "bytes": 59,
+      "sha256": "2397b195fa4eccd4f93e9de581912895afb89e398a1d6a407c6590cec9810a91"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdController.cs",
+      "bytes": 4331,
+      "sha256": "696b006699b051d1933ba4a4507590936b0259c53d75fd580b3461327080583a"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdController.cs.meta",
+      "bytes": 59,
+      "sha256": "3ce281992f337bf524e28c2b559cb0694007f21cc3de3f0042b6910b595a376b"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdInputSurface.cs",
+      "bytes": 20778,
+      "sha256": "a88838d5b61ab314ebc8a59ad2d42a9cf24ec72e22b1459f8f70b5448fbbc39e"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdInputSurface.cs.meta",
+      "bytes": 59,
+      "sha256": "c05e7c83239bcd70b544eb0eb31a932eac25e7f690741969ea8ca323e5898cfd"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdKeyTravel.cs",
+      "bytes": 1073,
+      "sha256": "72f581ae5ea80acdac3344f8124ecdb7fb62e2569761f3aa3a6a2f738856ab15"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdKeyTravel.cs.meta",
+      "bytes": 59,
+      "sha256": "b89c8ee00f93d871fece920f7d570cba543f101467de27d5ef99307ba7fdfd66"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdResolution.cs",
+      "bytes": 3817,
+      "sha256": "971bf167440663fdc2654a4cf5885d90f6d6e775e7fbf1aa37ca796be57e8816"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdResolution.cs.meta",
+      "bytes": 59,
+      "sha256": "3cd021556425c6e38b7c1994a8ebfa5d84fab571416e23f401f0c3b82116675a"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdSourceBridge.cs",
+      "bytes": 5592,
+      "sha256": "d20c79e1dccc1376f970f050e99c299a9f784cfdbba1901c2bb0178fa4aacae7"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLcdSourceBridge.cs.meta",
+      "bytes": 59,
+      "sha256": "4065b68e2202142ac7e0db782e7dca77fe7a4372f60c7b75aaac0871aa132847"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLicensedIconLoader.cs",
+      "bytes": 20397,
+      "sha256": "35b4283a61a0f6eca80c800bce6596df7922ca2a5e9be4e748255073d9918d73"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroLicensedIconLoader.cs.meta",
+      "bytes": 59,
+      "sha256": "f0bc393838d7a7e3170908da788c5e6cf89ac2626bbb11004a318885dbefb6d4"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroMonitorFraming.cs",
+      "bytes": 326,
+      "sha256": "8554beece1e5759ad95a4477ef129311a6ac897f6d8ec826c303aefa87574c8c"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroMonitorFraming.cs.meta",
+      "bytes": 59,
+      "sha256": "e3cbdd3e56b0faff5271f495859f169a472431b338763d7dd1e3491311020695"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellClock.cs",
+      "bytes": 1250,
+      "sha256": "e7dad9463bc87a18276d87c6852bd69a0aca096952f40d952cd636560046c8ff"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellClock.cs.meta",
+      "bytes": 59,
+      "sha256": "e30f2d4a40c77f01109ee4f9a526e760153ad8dfc19c8587b699fcf3f9cabe23"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellGraphic.cs",
+      "bytes": 10365,
+      "sha256": "974b8ca60cbe3df7a862ddf3c7b26e2b30a4edb2bc42f1bba0fefb577347fe98"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellGraphic.cs.meta",
+      "bytes": 59,
+      "sha256": "624189352ff8d2ba011a0e63ecaf06b29248f4d82f6d1653929dcafa16a6c595"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellHover.cs",
+      "bytes": 1056,
+      "sha256": "0b93b67e0021a7cc9e33a99670b0d952376c43c6abfe48b791b2656613941706"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroShellHover.cs.meta",
+      "bytes": 59,
+      "sha256": "2ee76538d7a2e23a611a3c091ad10cd817aa738d41ace3557fe826a6e5f024f7"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenu.cs",
+      "bytes": 5955,
+      "sha256": "1e80f3cf3384f434dc8863d788a43e37ec1a53f8ba7c0beb00c5d6a884e69fd5"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenu.cs.meta",
+      "bytes": 59,
+      "sha256": "25913410a11b0689a2d476b024ec8405612d2da286867818fa60843c619c009c"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenuPanel.cs",
+      "bytes": 359,
+      "sha256": "06ae98ba3d4f8a7808c698226215621dc2c06249e1ab0e31ee90106a2eb920ad"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenuPanel.cs.meta",
+      "bytes": 59,
+      "sha256": "7b1d2ab6cad7f8030fab80357844090ddad8ad181e7c41e2e767ce2ee04790fc"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroTaskbarLayout.cs",
+      "bytes": 2965,
+      "sha256": "912cba0f4bb4f29abe0036d6e367a66fbb9968625c848a57001672e8f5c8e3ac"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroTaskbarLayout.cs.meta",
+      "bytes": 59,
+      "sha256": "a60615a6c3ec9930beb82d1dfeffdcf165e7537fe18dfae45232d6ba1347b7aa"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts.meta",
+      "bytes": 172,
+      "sha256": "ebd67548ca3722f3065d72ad774eb9da2efe84a6f1e4fbf5c73e0af5a1f817f8"
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010.meta",
+      "bytes": 172,
+      "sha256": "3f6d66c4086add9621808153cb1849c6277e32f12a8873b52cb92b564ccb27e9"
+    },
+    {
+      "path": "Assets/HongmengOS.meta",
+      "bytes": 172,
+      "sha256": "9c9b72e21d27e0bf43d39b1bbd165ba3ce0638046d09ddaf57759662ef210fdf"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/AppNames.cs",
+      "bytes": 1241,
+      "sha256": "bd29fc25aece0c229c1755a338612afcf07b25dd3edd0dd3235e0abe76052fa5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/AppNames.cs.meta",
+      "bytes": 59,
+      "sha256": "2cacd95097cf1d7d3b6d46c3a555b1b6d59821508b9b49673bc75eee3569626f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/ChapterOneSim.cs",
+      "bytes": 41581,
+      "sha256": "92e2e85b585a90ed2aeef56569ed2640b8e67ccf64fb6ccecc55ef111770b710"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/ChapterOneSim.cs.meta",
+      "bytes": 59,
+      "sha256": "ef21d4142a0ac8dc6638a75a721eb75fa0c550ec4c2380bdbd64e69e7a458aac"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/EmailTemplates.cs",
+      "bytes": 6308,
+      "sha256": "73b3e86f337024e7aff1903432c189c56b85ef87f8aa6cb453231eb443c7590d"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/EmailTemplates.cs.meta",
+      "bytes": 59,
+      "sha256": "affb2478633ab5ff34aee2a597d81db068aa7af211be0c738bc02c0acac56f80"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era/EraEvents.cs",
+      "bytes": 7141,
+      "sha256": "cea871a8dc7604deea91cda7eba19d2ce62b50afd6f82ba8f1bd8e32d2b6d9a1"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era/EraEvents.cs.meta",
+      "bytes": 59,
+      "sha256": "2890d065bb433233431eb61a9dea71ceb0fae6787b498e81842a2ce944853fe2"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era/EraLexicon.cs",
+      "bytes": 3217,
+      "sha256": "048b36df13a04b2745ec18d4ebdff4a90e87f90a018dd7b7fe0ccee5e23dab35"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era/EraLexicon.cs.meta",
+      "bytes": 59,
+      "sha256": "24511ee8fefa940ad77a331dcba7cf8999d9f5acc2a3eb91fb99be1cb1adac26"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era.meta",
+      "bytes": 172,
+      "sha256": "7fc5be53226a5a961ff2881a9d41a52204989bca787e4fa10fc142583cb3bbe7"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/Forum.cs",
+      "bytes": 11270,
+      "sha256": "b0de280b97177bf912ef3ef72239bdd7b06bdf5091c0b5f2da3608064b0eef99"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/Forum.cs.meta",
+      "bytes": 59,
+      "sha256": "baf2a388d32047ecee1fb47add9651098c2e1b728096f5343fc681627e5f82e3"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhou.cs",
+      "bytes": 21291,
+      "sha256": "347df907250d7f413af8024e8995698941d1f519946710724c637242a21600f5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhou.cs.meta",
+      "bytes": 59,
+      "sha256": "cc69d08a2cb33d77104cdc72b56e7876f4028ad5a71865fcbf653d705cb98e7c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum.meta",
+      "bytes": 172,
+      "sha256": "2a6cc0753432637d2849ed7f3fdd540b2bbb8ae90221b2c34af710aa328f8a98"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/GameCalendar.cs",
+      "bytes": 5779,
+      "sha256": "f328939b96f6c176d957fcbda26b915fba3295782b638e07d431869949c8f405"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/GameCalendar.cs.meta",
+      "bytes": 59,
+      "sha256": "2d4e87d4d5d9a8ca9070776c5159d060af1b4b7ad81c891641cdc6cfb4cb55ae"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChessGame.cs",
+      "bytes": 34392,
+      "sha256": "804b3d3cf1114c405c4c5c2d72557456c515edcb696aae17ef8ab0be6ac5480f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChessGame.cs.meta",
+      "bytes": 59,
+      "sha256": "95b707ee839012e5dc63848e2e00bbdb1204248e92a2c692cd5260f4f34b9a51"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GoGame.cs",
+      "bytes": 16272,
+      "sha256": "b4e2f9c0bfc786a7fd578e4ef45fed0e4dd88abdeb206b69114ce6a1d421c520"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GoGame.cs.meta",
+      "bytes": 59,
+      "sha256": "9a43189fa39cad69368543519ff37b15eca1c7b7749ba70c03b83b8692fe8953"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/Gomoku.cs",
+      "bytes": 5162,
+      "sha256": "126d339802d1137958a57579977160fa3c6452ed848a29ffec9b9ccde5580905"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/Gomoku.cs.meta",
+      "bytes": 59,
+      "sha256": "033d10fc90c8f949af73c0ef1f0d2a48122239271b314912fe5323520ad79e87"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games.meta",
+      "bytes": 172,
+      "sha256": "4bbb2535cca54aa749651eecc441a812b4b266216710d8ba49b1ca216bd0ccf1"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/LingGuangV05.Core.asmdef",
+      "bytes": 129,
+      "sha256": "d086aebd3b72e41416838ef64658185e46440f79c59d1b4b2661c51c40813249"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/LingGuangV05.Core.asmdef.meta",
+      "bytes": 166,
+      "sha256": "b3e2c1227e350872d6a3efd397871587e9c330caddbcbcb39e82f86deee2aa26"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Models.cs",
+      "bytes": 6084,
+      "sha256": "1c58a5de685d212fd016b45da4c6fb4b357a495453526adcffcab1f6a683621f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Models.cs.meta",
+      "bytes": 59,
+      "sha256": "5f8dda659ebe4fd53698162df27aa4013467fc606e00f952540774805dcb53b5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Prologue/Prologue.cs",
+      "bytes": 5404,
+      "sha256": "b473c0099cbb2d4ebd8480eeab37e251d9a1e225bfe05ba83d1f4a1ed7ecb5a4"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Prologue/Prologue.cs.meta",
+      "bytes": 59,
+      "sha256": "2108fbd54c5e6ad4a15a89cced8edab27bf5f38c40ae44a2ce7c359c5aa699e5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Prologue/PrologueProfile.cs",
+      "bytes": 9777,
+      "sha256": "f0cdbe25462a598e0c7ef098a12ea8e8dc5ca396c4578b5f95964c573e0cb41f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Prologue/PrologueProfile.cs.meta",
+      "bytes": 59,
+      "sha256": "e704d01beea7f194906ed630c3fe12ee170a281c956197500dbe90c4db918653"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Prologue.meta",
+      "bytes": 172,
+      "sha256": "33a8d4d576335c213623234cb730e46e7ae47757fd11c16012ff6b2ad8d92652"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/ChapterOneStoryVars.cs",
+      "bytes": 7164,
+      "sha256": "5b6d8fd1e42595099d89d28e1e477c85f0aba00b5b5a5d6ad20161c16c29cf3f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/ChapterOneStoryVars.cs.meta",
+      "bytes": 59,
+      "sha256": "6251b8f4443d262c4cc2b16a0659287e3c74432b2209de914b6f943df276ee75"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryCondition.cs",
+      "bytes": 3646,
+      "sha256": "5b3dccfac4f37bccc8a8db486b18c6236b401fbe1e534b2db70d172ea8134764"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryCondition.cs.meta",
+      "bytes": 59,
+      "sha256": "18991770ad6c1d2aa6dd0fb52abc5fed357f3175c17be58cc507ce02834fcc82"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryEngine.cs",
+      "bytes": 6797,
+      "sha256": "a01b054629352d9b403da7ec3e06be0eed74b1f2e7a12f37eb73ed4feecd4a55"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryEngine.cs.meta",
+      "bytes": 59,
+      "sha256": "f7a474d0f67116a26f8f01f248d82bae712345620c25ab4114529f1c536f5d00"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryJson.cs",
+      "bytes": 7515,
+      "sha256": "028a91b9238554a05da82669082f36bb90a4924a207449617486ffaa95d589cc"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryJson.cs.meta",
+      "bytes": 59,
+      "sha256": "1f2e35baab82d50eeac9bff51a0a25819e87fb410ca622dc83f019846048066e"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryLibrary.cs",
+      "bytes": 10448,
+      "sha256": "bef70e02d75f5920682a13022d56f48d452fa6edaeb54725b82cee1e096d20d9"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryLibrary.cs.meta",
+      "bytes": 59,
+      "sha256": "500e07ff30bd8fe19e517844203e8c682dd6522d7377ccbafaf58f93fcf2a560"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryRunner.cs",
+      "bytes": 14853,
+      "sha256": "c402d833f673020105e2a016962f4674f5d64cefcaf3b1fa9c0eb2cb2ece54cd"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryRunner.cs.meta",
+      "bytes": 59,
+      "sha256": "264a851adc9b66714ae795fa39f57af9d0cdd1b24f78d72e1931e7d1fd162a9c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryState.cs",
+      "bytes": 3818,
+      "sha256": "e8e28b856896f27c4b197a544a337b172ceadc7c697f18d663f8ebfcc6b10d2c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryState.cs.meta",
+      "bytes": 59,
+      "sha256": "738846ea534d2479f5e95d33b550dab3b108d0fd21cedb340310a0e5b878a57b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryText.cs",
+      "bytes": 1429,
+      "sha256": "39e93fc4c2c1bb28670cf16ebe626c8c6d6de3d2748c68e4ea6aaf05d6692942"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryText.cs.meta",
+      "bytes": 59,
+      "sha256": "b601b230588f985b0b6a7d3948b01bb5b94f6cc8e3f74b92b2ba00939e98dd9e"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryVars.cs",
+      "bytes": 3778,
+      "sha256": "6e202b47352445706ac4571ba0ef98db5d4748daa66949c1090cbfe1d212c4f1"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/StoryVars.cs.meta",
+      "bytes": 59,
+      "sha256": "73b7f30da7a4945ce7f2fe41566e3ebc2f61557867549f3eb2db32f880a9b463"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story.meta",
+      "bytes": 172,
+      "sha256": "efc913b48973a226e6573ec0b237c490b592a4c09b731d4779c2d1d557428519"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core.meta",
+      "bytes": 172,
+      "sha256": "15715ca5a3db7b2f8f25df19e3d7d9f995437afdd5148175b073a0d6090137a0"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+      "bytes": 19060,
+      "sha256": "b5d4d458668a5f7955f91f5e0b1b5d5e12c908c39bdb0214553c67fc95cc90bf"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs.meta",
+      "bytes": 59,
+      "sha256": "c0891f9f2d4be3ae7ffd15062d7771dd309ee80a03e9a7ba3d9585790ef3c067"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu.meta",
+      "bytes": 172,
+      "sha256": "8411d2ddc9c0ed71a8fe114b91ae8005a6190748e69ab24febfd6f20c684271b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopBridge.cs",
+      "bytes": 11792,
+      "sha256": "3ee7a5e9e042f752fa8554e23ed449d53712d139d9680bd8246d241e12fb0041"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopBridge.cs.meta",
+      "bytes": 59,
+      "sha256": "ce011bb7c643d4bfed458a4b267bd59130d77888727b2b4d3ab2477451d48b72"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopRouter.cs",
+      "bytes": 1353,
+      "sha256": "e9afff62c826ee10004c93ef9a3b1c2f51411a57fb23a38ae6f61305e3f18808"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopRouter.cs.meta",
+      "bytes": 59,
+      "sha256": "51c0933b0ccec0ee42fdbed82b02bb79032824da450c7728be25e3100325badf"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneIconGraphic.cs",
+      "bytes": 8569,
+      "sha256": "987315ead2a34e7ff19629debe4dd21793962d810b42a5b39305e4600ba610d0"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneIconGraphic.cs.meta",
+      "bytes": 59,
+      "sha256": "1832675517472f199eae0d0a49b590e4d5b729e005c0d0af1bbb74831b0fe6ed"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneNativeAppView.cs",
+      "bytes": 38348,
+      "sha256": "f1fc9e20b5750e261560806946d0264fb3402be11825ff6fb2ab2162942b1522"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneNativeAppView.cs.meta",
+      "bytes": 59,
+      "sha256": "e533c4963cd2260b992b43e9faa7bbd0276cafd2f3a024393effc3ff7e3350f1"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneNativeChatAdapter.cs",
+      "bytes": 19576,
+      "sha256": "4f05b0bd483b4fddca036d824bbac0ed2a83b6a056ab86bd5b183b1a3cb6970a"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneNativeChatAdapter.cs.meta",
+      "bytes": 59,
+      "sha256": "f255db4957d21d3f9ccd46c93d20be995bd3d3e26f7782d03c9885f8dacfb81f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneWindowFocus.cs",
+      "bytes": 537,
+      "sha256": "cb91b56fa00cde7fe8d850a1f83d7d0cd59a3368260321e1b2a466eab843ea63"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneWindowFocus.cs.meta",
+      "bytes": 59,
+      "sha256": "7b0bc5bc1b3859825c2739d99ac8963902c09bc4fa519b7c4f775ba8b871f4ed"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/ChessPanel.cs",
+      "bytes": 13150,
+      "sha256": "8ab25e18e3edfa06790298f05d821da90b5e0c92aca79e3cc48bb6dbebee85fd"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/ChessPanel.cs.meta",
+      "bytes": 59,
+      "sha256": "d20cf88992da59d553bfa3de8262f513d5285b57c414edcfd18d5e78687f535b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "bytes": 15501,
+      "sha256": "72e961378a24509c9fd9abf350ecc4b3e6c810463b2103ac1b1e22f31f91c822"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs.meta",
+      "bytes": 59,
+      "sha256": "aac41bbf1836b6d8fd0b20850f00a3ce3de5501bf0fd0a78c542882aad62872e"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs",
+      "bytes": 13102,
+      "sha256": "e21d1428dc1c56d0eab1daa23c457aec0a102515e140727ba2d8edc95790ac42"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs.meta",
+      "bytes": 59,
+      "sha256": "ca7144dc4bb546c0d14fc4312ad22dc08c966e8e6617133074b5de0323c940e6"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs",
+      "bytes": 10366,
+      "sha256": "95542ad8d9cbdbf3dbe1ad85501a770dcfe138dce667d6da42a2aad5fa593e6f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs.meta",
+      "bytes": 59,
+      "sha256": "8bfff6d0b535fdc8b23b7659f6fbd4844a5ebccbd3b5a8dc1582232de72c593f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs",
+      "bytes": 7948,
+      "sha256": "82e924e856372c3ddc7e71ad47da280109bd57e9643b4840016b5e73fd315674"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs.meta",
+      "bytes": 59,
+      "sha256": "32b0482ad80dc370bba578d2b53e8cfc53892e6ddba24f724f97abc7c7167c39"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games.meta",
+      "bytes": 172,
+      "sha256": "735b1d080d4aaa679fd4ca960d756d6b40fd372a5be19a72d8009516fe7b0100"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLanguageController.cs",
+      "bytes": 2930,
+      "sha256": "dd6b469a6c3c38568b060d0c294a764c18a0c6d5f85af10d13cbb52c7783c407"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLanguageController.cs.meta",
+      "bytes": 59,
+      "sha256": "47a701eeb1c4f1b7098300cfa5218b05f0c049aec5ea1e60bcf4397af72b3514"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedClock.cs",
+      "bytes": 1186,
+      "sha256": "50b6ba39564b8ac9b007037d676109facd79886dacd26b6a189e3f0e16f92f9d"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedClock.cs.meta",
+      "bytes": 59,
+      "sha256": "d92ca933aba637710769351ae17cc9df5c02dbc98ef3d4e4ab420d2902c87fa4"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedMonitor.cs",
+      "bytes": 1334,
+      "sha256": "31ae1a85029ff670d34c0bbac2d801445c450bfa3498ae29d0f769539747dcb5"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedMonitor.cs.meta",
+      "bytes": 59,
+      "sha256": "245d77f6655df5860e0eedb96d64466ded565843df54acd50b68e6f3655d508a"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedReminder.cs",
+      "bytes": 1775,
+      "sha256": "176a45d7e08808cebfb1fb7986b013bedea2f8c481843d34a466f3fb57efa850"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedReminder.cs.meta",
+      "bytes": 59,
+      "sha256": "ac71f5b6e30d84520158765fb44e27f2973479e7dcc045fed83d47e25cf52460"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedText.cs",
+      "bytes": 1418,
+      "sha256": "7c95ae20c20aa577ea64002dd434776a0e655697fb496c6318f2b3bd4f3d00e9"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedText.cs.meta",
+      "bytes": 59,
+      "sha256": "4103e8351b4ab930ed6c2a24de9c436527bc82f9d8f5ee85e2c8b99831e763a5"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopNativeContentLocalization.cs",
+      "bytes": 6935,
+      "sha256": "e1eb095c505077675fe9861c420454ccb53f5a2fe09188aaf1dd81926fef8bdb"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization/DesktopNativeContentLocalization.cs.meta",
+      "bytes": 59,
+      "sha256": "2c4e141f4687aaf8dcc698de2741e4fb274cc39fbf334de8c60e8902810d0ef0"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Localization.meta",
+      "bytes": 172,
+      "sha256": "debcc869d5b645f6ac48ff95cddd40246ccae5a01def6357461bcb0af190075a"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Music2016.cs",
+      "bytes": 7204,
+      "sha256": "30a1b16896f2b5074f2ca2fa60220d01b03c0977d696ba1180842e4cb97513af"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Music2016.cs.meta",
+      "bytes": 59,
+      "sha256": "451015a5a269cf85e3d56a9a1129cb2d6d1f7857844e8c7053969034143d63b9"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/NativeAppBindings.cs",
+      "bytes": 1161,
+      "sha256": "5609a273fadf3b0ae8e6f620323e80fd497987f70bd8beb4f103a1eb2a9c32b7"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/NativeAppBindings.cs.meta",
+      "bytes": 59,
+      "sha256": "c1f34195196df3e6a68e361d7a89e82d730feccec07013950bf570dc3da00f88"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/NativeAppFontFallback.cs",
+      "bytes": 4372,
+      "sha256": "215f5a97698f9a9ac7eefc26097279a3f1488499b40c466bfefc536502a6a8fe"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/NativeAppFontFallback.cs.meta",
+      "bytes": 59,
+      "sha256": "1f619b5c52a1c285b5a9ebdbf13ecc13fa4d8bee2ec5da8f308ea05c1f7fed4c"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs",
+      "bytes": 25796,
+      "sha256": "01e2f86d3447ca2c7727726d83edc21bd4f797646431e97cab7c25f7421667d8"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs.meta",
+      "bytes": 59,
+      "sha256": "80ebdc4fc98a1412476702cfa521cbd3b5fad06654451a00bbef7ae4282711a7"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs",
+      "bytes": 1695,
+      "sha256": "e9164dd69224c5e742d9a8d99bcebefd70c4c87205812c178d48fe5ef550b357"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs.meta",
+      "bytes": 59,
+      "sha256": "1f1534b6779607f2f8a99ee5bc3c625e41be1c495f21b3aa240edc555eaf3c9b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+      "bytes": 19429,
+      "sha256": "cd6e9a3d32df4d345304e3f43d7c1f9dfaf48a2d7293f9a8424d12a4d271bc3f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs.meta",
+      "bytes": 59,
+      "sha256": "c75728caf444971da2dae4f4afdea82a7a981245807fd6daca5ed3b54d5f5c2d"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/InnerVoice.cs",
+      "bytes": 10338,
+      "sha256": "e2a2d76ef656160af5462c9ea4fa6d728a6f7f9a4686fde9e12492a62416331b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/InnerVoice.cs.meta",
+      "bytes": 59,
+      "sha256": "35ed04b26641c4e9e43195f1e7e692a32372664efa79ceaff8ddf18638c93ba1"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/LingGuangDownloadPage.cs",
+      "bytes": 7825,
+      "sha256": "3cdfca3ef581a26b54591394cf8f0167643f577532a29f0480bd795c37e811bf"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/LingGuangDownloadPage.cs.meta",
+      "bytes": 59,
+      "sha256": "cb96f7574bc5f451857f191f6aaec3393cdf2884cae6a4f661544656686c775e"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/LingGuangInstallFlow.cs",
+      "bytes": 8643,
+      "sha256": "d39041ce5e40d4d0297d8640dfabffc31b3a77ebad5179d34249c033587796dd"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/LingGuangInstallFlow.cs.meta",
+      "bytes": 59,
+      "sha256": "dd71c71205edc200e4333bc560b76505f7956fd61d620da88163b73bf5653e4d"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs",
+      "bytes": 20317,
+      "sha256": "8f820e4d8edaf51ac69cded58fbf218846b03995335ca08adefe48ba805765bd"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs.meta",
+      "bytes": 59,
+      "sha256": "60bfa7fc395020e8418a0243a851d958d8904bdc3313ea7479273872a04934ef"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDirector.cs",
+      "bytes": 44239,
+      "sha256": "17c699f6db5d57d56b09a67842a7193b59585f5d0bcf2883e488641047c72355"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDirector.cs.meta",
+      "bytes": 59,
+      "sha256": "a94052249ea7fa628dcb221f7fa2baba60be6dac1fe4f590e96ed128aca4abbd"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/StoryBootstrap.cs",
+      "bytes": 1693,
+      "sha256": "3d96ca242f3cb9744536573c88d42d809f675b6b0ca26900aa57f007df1cb6b8"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/StoryBootstrap.cs.meta",
+      "bytes": 59,
+      "sha256": "ec4a975635afcd696aa58e42a58e01e17cfc1488b5fc5e31295b3aba2eefbd2f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/StoryDesktopPresenter.cs",
+      "bytes": 46286,
+      "sha256": "86dc3a556d2e77e385f0bee436758f5d8a06217df79d3f57b6474133a5512e2f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/StoryDesktopPresenter.cs.meta",
+      "bytes": 59,
+      "sha256": "a9a225384409a8bbc60f44555b66a1c68e163e99f42edd86099124ef06e58978"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/TrayApps.cs",
+      "bytes": 3655,
+      "sha256": "0026cdb03ed011895f678572a92ee35f8899a09aac860d5efceae2b5dada398a"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/TrayApps.cs.meta",
+      "bytes": 59,
+      "sha256": "2c6ae82fa559a716345f13595305e7f09208d55e74caed87363fc0e8bec210db"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs",
+      "bytes": 8511,
+      "sha256": "270be4283c6d198e734163b5f5180960543ff1a99b9a6d85907aa66ae69458e1"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs.meta",
+      "bytes": 59,
+      "sha256": "56b909d4983bd24b6fe7c565a7f20f2b241e4ad3624e491164ccd2bf692ef2df"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/UniverseFlicker.cs",
+      "bytes": 1800,
+      "sha256": "92b2a7136b84816a7f86adb922f4810d0ea6ac4769400d48edfd20fc61d4eb22"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/UniverseFlicker.cs.meta",
+      "bytes": 59,
+      "sha256": "60f3be55a9dc76b37ddff3e7b76925894f502a28fcba8febf5265851c2b7d032"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story.meta",
+      "bytes": 172,
+      "sha256": "aec9cadef23edfcd05b2e7b433231f7d704229300344f0d846f80f00ae307e9a"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "bytes": 15118,
+      "sha256": "1deb400c3ccaee8a66f78a6436d59487b01b74747c38bc10cd1858e3b3cdc90f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs.meta",
+      "bytes": 59,
+      "sha256": "8ffd5df17d851d5f3bc38f05575a36dd19a6c71e8acdd02ab83e4e1e0ffe34a1"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+      "bytes": 27842,
+      "sha256": "7a1d7fc1e30a712ee09e0c70d3654e14d520c82b9e9d6d83e8d7591a4211c951"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs.meta",
+      "bytes": 59,
+      "sha256": "53ff1cddd2574e11c2ee9d9495202b7b41f402a40b28a618622e75afbd5551c1"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba.meta",
+      "bytes": 172,
+      "sha256": "aa07bc7b39f0159af9c2a0235b5467614d063e8b1068304fca46a67583664079"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/UiFitScale.cs",
+      "bytes": 3015,
+      "sha256": "0e8e9b5a152a6161969dfd0ac76496160d33ff92bd8c86d1398b6b8add5b0ea2"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/UiFitScale.cs.meta",
+      "bytes": 59,
+      "sha256": "d6901d035b23dde2f583bb04e2b89f5f5043f391ef821c002fa0ada3191cf9cb"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/UiTip.cs",
+      "bytes": 5958,
+      "sha256": "faa2f6168b29189e049a93e6cd65c2b25bbfe688abd1c71960504f468391661e"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/UiTip.cs.meta",
+      "bytes": 59,
+      "sha256": "8623129b31725fc16abfc478759a44dc9cd70fe3da56b6e3823b37baf5cf4500"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/YY2010MessageStamp.cs",
+      "bytes": 5018,
+      "sha256": "7f408d977df23e87bbe81a2beb2eae8324d38f9a06d3b55e61343118084afe8c"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/YY2010MessageStamp.cs.meta",
+      "bytes": 59,
+      "sha256": "c2387521019c114d47fbe553cda43b3fb1c3091d34ead13b68954d998ef97e27"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/YY2010ShellController.cs",
+      "bytes": 24290,
+      "sha256": "afd0697edb1f63c4083fc178987c52f61232bc19aeee31df1b3a461497a1416b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/YY2010ShellController.cs.meta",
+      "bytes": 59,
+      "sha256": "4cc5661b265b241e9f375bb704ce4051802d2ce59453d454c646c4ca8d5bbb4f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge.meta",
+      "bytes": 172,
+      "sha256": "98847e0c2219ac8bb649601e066c93dde1e1a586fd3e185a49a03cc53877d706"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/Editor/LlamaBuildStrip.cs",
+      "bytes": 2812,
+      "sha256": "250bcdf6949542b6ec98bed16146f4ee23cb80245473ed41f672b8e98ce1b7b0"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/Editor/LlamaBuildStrip.cs.meta",
+      "bytes": 59,
+      "sha256": "88e40647b969c3e33e7b67c17401aa0570c38df647e7cc2db367b2b9aa6347bc"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/Editor.meta",
+      "bytes": 172,
+      "sha256": "d7460370ce1896bcc7e9f63f18934475e3558867bb4d77491efe3d7fe25af21b"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+      "bytes": 15177,
+      "sha256": "6414178bfd88972aa119a351756b3bd1a92faffea2ef0699fa96c257628b1b2f"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs.meta",
+      "bytes": 59,
+      "sha256": "66c92b91f8f4a6b8dbd6c2ebcc1e924eb8ff51fcaffa717a089df068000796f0"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "bytes": 26291,
+      "sha256": "653b9aca2d80f37275bd12707b8ae01fdda078d7f87eb9b15a00feb61cd1fd7d"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs.meta",
+      "bytes": 59,
+      "sha256": "ec82984aebc002bfd786b32a0ee9b76554d1fa607e2812806501ae6a1f2fb505"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM.meta",
+      "bytes": 172,
+      "sha256": "4496529de3b6f97ef2066f045d0ff57be548e92fcfa055698c2e40363d28cef2"
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/MailInboxView.cs",
+      "bytes": 15532,
+      "sha256": "e618fa0c3356deb2010cfc0f138e654be0a3e8d085657816eacb0c6bba3072df"
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/MailInboxView.cs.meta",
+      "bytes": 59,
+      "sha256": "b1cbbaaff9d8f3e08c36f9a31bc44a4e927094de1b3b2afa5a66f23b489e1f5a"
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016.meta",
+      "bytes": 172,
+      "sha256": "a7f120e25e60b21cb132621e49deed0c41cfd806db60fd5c823b5bb624e9918d"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "bytes": 21980,
+      "sha256": "f5d64fe5b0d534c97e33364c879937cd78c59dac140e9b2f5194a5916fadc38e"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json.meta",
+      "bytes": 158,
+      "sha256": "baada3d7e8fb5066d60f1afb1809692f540a0b87f6f2d31b64f17432d51ecba3"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era.meta",
+      "bytes": 172,
+      "sha256": "0594f5090563816d9566396279106f642aa7610f86a906f6fdb156ce2e2f7bdf"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Forum/forum.json",
+      "bytes": 35369,
+      "sha256": "55fe182c9127f852f99d31e108130d7357b3edbb51cf4d09a3097c5eff06d34a"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Forum/forum.json.meta",
+      "bytes": 158,
+      "sha256": "a03531fff7de3034576569bda20b202332cc6bce11b2c8647d2e40fc0c56a983"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Forum.meta",
+      "bytes": 172,
+      "sha256": "7f5b2944837a413a473d66d3e3eabbadb116fd39cbbff106d4be8cde944ccc2c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json",
+      "bytes": 8003,
+      "sha256": "b763f4248b5d2bdfa9debbd71ad799b24ec9e944b8d9bc75368ce68a0cada866"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json.meta",
+      "bytes": 158,
+      "sha256": "bd0a5b12a83ae60f19e2a2cfe57b7587ff820b1b415e09f67393efa62bd42726"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Prologue.meta",
+      "bytes": 172,
+      "sha256": "d353bb3cdacf96bdc256d9af6d6ad9f6ca75f1f29638b2d5b9ee94dc2d464da5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/ch1_lines.json",
+      "bytes": 645,
+      "sha256": "678a0fd6127fa9c2bd1518af991996764bc81e23d3bd7fb0ed7f443c1eee89bb"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/ch1_lines.json.meta",
+      "bytes": 158,
+      "sha256": "6119e9aac2f06b925f8b601903cecc486066b5f24bc063c7f16ce37c601021c9"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/ch1_story.json",
+      "bytes": 755,
+      "sha256": "caddab39ec496a00d9f49ab03a5a01df83a533c527984e3e75a8bc4b2fb2e937"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/ch1_story.json.meta",
+      "bytes": 158,
+      "sha256": "5c150a872f03e4f914708cf326eaa4375a10ea40ba25b490398aefa30f9287a1"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json",
+      "bytes": 3665,
+      "sha256": "ab8b92b89aa799d7af67c4d97ea15b6d1164087dd78d58f1c1baa3648608e40c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json.meta",
+      "bytes": 158,
+      "sha256": "ac9bcf052fce58b4326f6bc3f98ef00fe61975529a8901e677bad87a22f82fcd"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json",
+      "bytes": 13180,
+      "sha256": "a0a16efc66741b68470fac0038a3bd1be71a187e1097c300d718bf22ac9a5f70"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json.meta",
+      "bytes": 158,
+      "sha256": "f4339f697f9b9358f4e6a34d45d6941ac1686ce49c2a46a3286c7a51cccf302a"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story.meta",
+      "bytes": 172,
+      "sha256": "9993c2e3d7e39a7db122f79d27b2b1c4eb2127f8bf3f2619dfd12e561aa41751"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05.meta",
+      "bytes": 172,
+      "sha256": "e554895cb868596fe90cfc2099f32ce5ddbcf025f482e9f0bc2baa67e7dbff63"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/GameplayText.json",
+      "bytes": 319243,
+      "sha256": "f3810ad6b2293336fe8bda8e6c259aba8c4aee36044d3d433a942ddfaf2ba210"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/GameplayText.json.meta",
+      "bytes": 158,
+      "sha256": "8097b3ff60b88685508224d00d6624dbf7e417189bc6e47270958b33816d8578"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/NativeExtraText.json",
+      "bytes": 522,
+      "sha256": "7daf79931c6cd7ded823cfd6b8d4e296b580c416653efdc10ece034c7841fd2b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/NativeExtraText.json.meta",
+      "bytes": 158,
+      "sha256": "83b301d701014b8020b81690e1f3ef6e71a6cde95839b9695959ba4de4e7d5b5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/SceneText.json",
+      "bytes": 14873,
+      "sha256": "bea3280d5d25dd412a81e8146b731abf720027ff1b113eff20e1befc5ae2eb31"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/SceneText.json.meta",
+      "bytes": 158,
+      "sha256": "1791cb75cf90457203b9052f5761b3b20c4884f370b9f398fb3fb514d28d1f16"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/StoryText.json",
+      "bytes": 23759,
+      "sha256": "124f2d7911b69aa1365bfcfebaeb32f48cb45b8f9a6dd325dcca978645ee3729"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/StoryText.json.meta",
+      "bytes": 158,
+      "sha256": "bb4c29366d2172871508ee2b018fcd4fb43b57d93259bae23e9c1180dfbfff02"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization.meta",
+      "bytes": 172,
+      "sha256": "1460e9d7da0a8121f3624dfb2888d60fef8340d1a11236ced92361d6bb783fdc"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources.meta",
+      "bytes": 172,
+      "sha256": "d659847fb1a18ac6111ffcbf3437fe95114a23b7bd348a18824b5ed1fe7fca5b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/AssemblyInfo.cs",
+      "bytes": 104,
+      "sha256": "defc28bd26bb077c87fa41d4293744921a46b7632aaabab8dd17ec829eb9cbb9"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/AssemblyInfo.cs.meta",
+      "bytes": 59,
+      "sha256": "0825f3dadc75cdc42796b6f9439840180d0f99dc987ea41576bf67b55209f888"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "bytes": 10474,
+      "sha256": "4845943bb339f1e67769290715c3bc70a245502bc6a811b9b2b16c0eb1311223"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs.meta",
+      "bytes": 59,
+      "sha256": "110ec14090bc9ec8fb229fecda3938a959089513969653a17c13338057b02def"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/EraContent.cs",
+      "bytes": 1810,
+      "sha256": "cefffb4cf84bcc2c568a9537b4923d4272aa4b89c478e3769256d0c6ca39c588"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/EraContent.cs.meta",
+      "bytes": 59,
+      "sha256": "3e0a6ca4add5238bea6f8e9525aaab18b887aeab85e98e83bbccbb4735c2e145"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/GameText.cs",
+      "bytes": 6932,
+      "sha256": "a8ce1a5bf03188c62c64fa7db2921fc8908092931cdb000013d24f795d02ab65"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/GameText.cs.meta",
+      "bytes": 59,
+      "sha256": "209f2b713aa6fb76c19503e8cfc2f641a6d9dbcc6617067117ffa97d02921e43"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/LingGuangV05.Runtime.asmdef",
+      "bytes": 145,
+      "sha256": "a797e6a7590dee3bf178d4bc01c8272b41076c71e071d6b60af938e21527dd44"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/LingGuangV05.Runtime.asmdef.meta",
+      "bytes": 166,
+      "sha256": "0c2be7a9dcddfabc684af90c6621373fc321add7bfc509c4c99b013c35cf6999"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/NativeLaoZhouReplies.cs",
+      "bytes": 7511,
+      "sha256": "1691cdb721acd0be5396263fbccf796fff68069a7c5e58fc54aaf07af7791ce4"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/NativeLaoZhouReplies.cs.meta",
+      "bytes": 59,
+      "sha256": "542340d912ac0fafc38c369f74d213b57b42738a1c8ae45e74fa4ade780190f5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs",
+      "bytes": 7853,
+      "sha256": "ed17ae11132fdcb20643814dd4407083c2094f266774c8a64a51fd9ec904f123"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs.meta",
+      "bytes": 59,
+      "sha256": "b080b666bc0d23ab298462579943e3ec0f88a4cdd53138cae721a0673c8196a6"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence.meta",
+      "bytes": 172,
+      "sha256": "46762bb1eae96015c46b39263da32a295b2afbe63f73baf2d98577ffe4457f6f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/PrologueContent.cs",
+      "bytes": 1362,
+      "sha256": "a8fc1f6841ccf8ac468d9d4c1405ad6b0702d2552eebbe51c6c78d7c5f339c12"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/PrologueContent.cs.meta",
+      "bytes": 59,
+      "sha256": "bacd99a80775a9feb19fd012169e77dad37e6e71a89bec218bb324fcf0c78759"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Story/StoryDirector.cs",
+      "bytes": 8151,
+      "sha256": "345e8829a4867a6033f285eee05429448d04636ededb37ed78ae1a7dfece508f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Story/StoryDirector.cs.meta",
+      "bytes": 59,
+      "sha256": "86f3d9f2154e4699e48deed43c32c186110004bac5e1d3d15b6afbbc13cc58c7"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Story.meta",
+      "bytes": 172,
+      "sha256": "41e312d5e1a1727c1e2c894333f8dc2d4c819156da4a3a4b8dda39cc73817e1a"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime.meta",
+      "bytes": 172,
+      "sha256": "745a29b3b14d2b9c54f530a50e09a514800b56f5bd3f141f0d780b6eba686ee7"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/CoreTests.cs",
+      "bytes": 25397,
+      "sha256": "09cd32231401ef2dc62f6a3b413b53f7ea22c8fc039e13c35d2a3b630fbc3403"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/CoreTests.cs.meta",
+      "bytes": 59,
+      "sha256": "62c182a6ff9224d35f1a98082d59a208cfdaa4f7c64226516d6dc676c2bd3812"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/EndgameTests.cs",
+      "bytes": 2682,
+      "sha256": "defd834ed2ad4a0f05ed44c8f94e18cdcb852013998636d59448feb001ebd4b0"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/EndgameTests.cs.meta",
+      "bytes": 59,
+      "sha256": "2a48648b3b7388cd3fcf942680f67992d19a4bcb44967b650e80ae05db1c338f"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/EraCalendarTests.cs",
+      "bytes": 8143,
+      "sha256": "4d5e01eeedaf566312486e86451bdb75017b7ca960d0e14ae35742b90629b9e5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/EraCalendarTests.cs.meta",
+      "bytes": 59,
+      "sha256": "b43a9965f63cb3a6e3a1f269c814564b8eafca32f5cabecb65f28ec1d722d601"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ForumTests.cs",
+      "bytes": 9774,
+      "sha256": "e6c29484076b1a6f98995ef4d33fa53297c6d0c5a5bd5fa11814e67461ad4724"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ForumTests.cs.meta",
+      "bytes": 59,
+      "sha256": "98c8806ad769563e121dcb76b4d818dc70e3b26d96ff839802eb4a7c9ea3470b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/IncrementalTests.cs",
+      "bytes": 16170,
+      "sha256": "31b24e12efb0e86147d273dbbf2f75cd811ecad7ebf08d43b2cd880815f8a698"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/IncrementalTests.cs.meta",
+      "bytes": 59,
+      "sha256": "726af9a01a7e99a855af3b6942fa09a73cbd3570ca278c4648b29ba05c9a8d7c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LingGuangV05.Core.Tests.asmdef",
+      "bytes": 232,
+      "sha256": "c6581471466264ab738d6208bd5e342246afc43b4c28e09bdc035b331b2b26b5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LingGuangV05.Core.Tests.asmdef.meta",
+      "bytes": 166,
+      "sha256": "908ba8c65cd7b2ef78e3ecca8a57f21911a9abf978d294b710670869de6398c5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/MiniGameTests.cs",
+      "bytes": 16591,
+      "sha256": "6974670aa02bc6d329f356f7c17ffe242da308b33090276bed555caadc80bbde"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/MiniGameTests.cs.meta",
+      "bytes": 59,
+      "sha256": "c207f4c7951e182621aaf1f8e694a633cafb289e08a5841813a15dbfdd7c51a2"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/PrologueTests.cs",
+      "bytes": 6358,
+      "sha256": "4dd66db6e2362ac126c128468cb7683bfc99f10fd81ce032776c5a780d858453"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/PrologueTests.cs.meta",
+      "bytes": 59,
+      "sha256": "a5cd8177e56435bccf8f6b5fe7076f9a253361e01bb479a94e81e066b5585c64"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/SixStageStoryContractTests.cs",
+      "bytes": 4322,
+      "sha256": "1cb94be9a2fc143c779379a107014c75a76e2f3872f09f1095c7538b3b40aa00"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/SixStageStoryContractTests.cs.meta",
+      "bytes": 59,
+      "sha256": "c5474f73149bb99f8537a886c9b327a1160c27a5c5ac8c5421efcedc29eb2fb0"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/StoryTests.cs",
+      "bytes": 21315,
+      "sha256": "7456abaf80f1ba5803cdb0400d064b0999b9cc3925e8139e6c91d76bdad71c0e"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/StoryTests.cs.meta",
+      "bytes": 59,
+      "sha256": "c3b30a9a0dbb3b77d91f50778747896e1bc1f7f3f18e56807280df7fbc78719d"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor.meta",
+      "bytes": 172,
+      "sha256": "a8c209f737bf27497109f1ee4caa40d4669705c7bd2ff06b46c0aa77e7019c20"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/LingGuangV05.Persistence.Tests.asmdef",
+      "bytes": 353,
+      "sha256": "8db6acdceaad86ad2555b77139a8db8a4c767cfd971bed4addb9a7586d2580dc"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/LingGuangV05.Persistence.Tests.asmdef.meta",
+      "bytes": 166,
+      "sha256": "35a9159c66fc6475e689405e9602285c99f4e7616dab862ffad66470cb065189"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/NativeLaoZhouTests.cs",
+      "bytes": 9182,
+      "sha256": "da34b48ff1e7869467cd3c2c42b4552ebbb535fe2312d61055cab6f770d47d54"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/NativeLaoZhouTests.cs.meta",
+      "bytes": 59,
+      "sha256": "61f9ce2b07b92c9af158d7c9e5a2702c906f3cd213ed42a67576744f6015b36c"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/RuntimeDiskTests.cs",
+      "bytes": 6439,
+      "sha256": "c17d94816c2fffd9b7925661563e8eddfff7c9d39dbfa694c3e739c1488108aa"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/RuntimeDiskTests.cs.meta",
+      "bytes": 59,
+      "sha256": "97ffbf0e85783173498f5fa8cf592dbcb5afd9eb5807869e3cbf9150e1d4aaf9"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/RuntimeTests.cs",
+      "bytes": 3497,
+      "sha256": "d42e20ec888d10b8975222b1cfa9856d59f7e2278cc79062038d1ec4eaa8aebf"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/RuntimeTests.cs.meta",
+      "bytes": 59,
+      "sha256": "80416a705f2c7dd9b08daeb7e9e555d92c5c5e8f6590eff56bf5f6b19a7d0a00"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/SaveStoreTests.cs",
+      "bytes": 4347,
+      "sha256": "7893683b55c999a714a9e098679b60f285d0b62763de5aa45154016019d98109"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/SaveStoreTests.cs.meta",
+      "bytes": 59,
+      "sha256": "33831cbda25590b2a424dfff2f8bb82dc39877ecca34ef9adec2c319abb6978b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor.meta",
+      "bytes": 172,
+      "sha256": "c05b4ab447f42189f1c9c1f33243f4d734a380d81597395b2e1850de0df47755"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests.meta",
+      "bytes": 172,
+      "sha256": "8f42118fcf828637a99a4e0ca51f9ad0efc9d8edd0655447355e09d23729b122"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/BoardEdgesGraphic.cs",
+      "bytes": 2680,
+      "sha256": "b7156d0c56c0707468a2e9b69945f39e580a03dc9c83af3258cca624039d43b4"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/BoardEdgesGraphic.cs.meta",
+      "bytes": 59,
+      "sha256": "1f60484f5c752aef6f08e17f4eee4a421f3853f6517c99c221c99638af30f7e3"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/ChapterOneApp.cs",
+      "bytes": 84599,
+      "sha256": "3772ca22194eeb8d6f2861362f454169f5bc3ea9ed4d2844a5e3fa3cdfff7434"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/ChapterOneApp.cs.meta",
+      "bytes": 59,
+      "sha256": "77e3bd2e1f6beb0f983a1c25bd3842c7e9a606db449a35a4dce907bb272040f7"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/HexCellGraphic.cs",
+      "bytes": 1545,
+      "sha256": "685f752863dcaba176f4a4ed0cd4b6713f6932770a4869cb307f205542647b5e"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/HexCellGraphic.cs.meta",
+      "bytes": 59,
+      "sha256": "edee7ce4eeada27700fbaae51e1806410dff989f995efc0f3ff4d93a588dcd41"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/LingGuangV05.UI.asmdef",
+      "bytes": 226,
+      "sha256": "66638438365a749f6c523302ef768644fecaffcd375d760707ace5cb30a73828"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/LingGuangV05.UI.asmdef.meta",
+      "bytes": 166,
+      "sha256": "e1609c020ba1282f3da2a2e3e54a1be3cb9293e28af516afab402d80aeae7060"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/ChapterOneAppTests.cs",
+      "bytes": 11231,
+      "sha256": "53154518fc9f5e21436565f12573d7bd85e7646c0cbf6a055cb17732afabd3ae"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/ChapterOneAppTests.cs.meta",
+      "bytes": 59,
+      "sha256": "b56c9eefda1af55a222b671dff3468a7cf0ee9d127a846c874988367b3ee98c7"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/DesktopLocalizationTests.cs",
+      "bytes": 832,
+      "sha256": "a314614c0e79fa4534b7c51762d95e7bf0f74256599afd638283dbb7f1d2c791"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/DesktopLocalizationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "7199388d7ca776f6c4966cdc875eaee48a23438d024d6567398b50d9a3b49fdc"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/GameTextTests.cs",
+      "bytes": 2558,
+      "sha256": "e1f16f2ff5f908a22cab9fc77fd1b5bd9c20dba2571fae9a9bb8897345865984"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/GameTextTests.cs.meta",
+      "bytes": 59,
+      "sha256": "6bd1c35bf9807bf1c4b39f44a05b8cf2c78941a424782ba2ac2329a4d878954a"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/GameplayLocalizationTests.cs",
+      "bytes": 6858,
+      "sha256": "f0c4116b1eef7fa30f9dd0bbb05083ad57d32210854ccd6a59c2df7f5172e980"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/GameplayLocalizationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "90891c77f3cb352a7f936b613d37f2451da83e78bca7b4fe4f5072ac90a846c7"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/LingGuangV05.UI.Tests.asmdef",
+      "bytes": 402,
+      "sha256": "f4e7831c62e7ca559f9a661ffcb606916d4c000f772984f3ebb5cd9272a9a893"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/LingGuangV05.UI.Tests.asmdef.meta",
+      "bytes": 166,
+      "sha256": "c69f69d94ba9e27fe1999591ab192431dc065350f7cc0a221ec0d4a8ba482634"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/RemovedYyIntroTests.cs",
+      "bytes": 1021,
+      "sha256": "3301334a144036bc9254dd9055358d7eddf054c74da06631e595288e3f96bb03"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/RemovedYyIntroTests.cs.meta",
+      "bytes": 59,
+      "sha256": "dabab3ade4a6664d7f34e0aaf8d482c543c4b697e729c58491742dd7b40a07fc"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor.meta",
+      "bytes": 172,
+      "sha256": "784234376218c6d89dc70edc47fce77ed5940e5fd0a9ed853bca3ddb859e19f9"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests.meta",
+      "bytes": 172,
+      "sha256": "45738c674bc004ee811ef79311a5600ae4ed5a286ddb03daca3b0b267be71e23"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI.meta",
+      "bytes": 172,
+      "sha256": "5cd5fe9ac43343e9bf081493674e38bfaaf0bf2ce2b5959b25b3f21f514982ce"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/LingGuangV05.XingGuang.Core.asmdef",
+      "bytes": 162,
+      "sha256": "3e615f3140229cdbc8337d875269c8874b5fbd83ad29f3fcdbc55267e23acbe8"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/LingGuangV05.XingGuang.Core.asmdef.meta",
+      "bytes": 166,
+      "sha256": "457e4b3dcdb42f7aa9437a7a23e7039ed9003afe6837a7afc3567bc2d65acd16"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs",
+      "bytes": 31039,
+      "sha256": "5f3343032fe5d23f132a2f7a901e39578dda52a8dde1df6973dee04ee1bb67a5"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs.meta",
+      "bytes": 59,
+      "sha256": "015a2a6112bd1279b247397ae4d2a94856c6882fd55dbafb7787410b32f6ee07"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs",
+      "bytes": 19953,
+      "sha256": "e39366893ef4e4182a0c983c99b3aa0542ba5f81cc9f526aa584ad4b1f8cb7ae"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs.meta",
+      "bytes": 59,
+      "sha256": "dd2fec3f4a618079f26b664d0737a6ba1f8a76d2d1d7dd40b26f9b21a782b26f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardPhenomena.cs",
+      "bytes": 9424,
+      "sha256": "e08741a3e52dd546e81e2ce17296487649c4bf99f8c23eb585bb1de49260eac9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardPhenomena.cs.meta",
+      "bytes": 59,
+      "sha256": "9b32b4ff226f5f3256df1aee2fb80071da37c0ba58a8d38784a8854816d9a76f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardTasks.cs",
+      "bytes": 4871,
+      "sha256": "1b4aad7cec1a69973b8c53c5a086722188af5d2ecb55554ccfc2b9725cb7d91c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardTasks.cs.meta",
+      "bytes": 59,
+      "sha256": "ee32f11444f79c2ba082ddac74a40d625550cb3329510e2136de220b4179fd77"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "bytes": 63595,
+      "sha256": "3b52fb626f5b9175a74dc31ba57f09e65195970a6c0bc668e393385dd3116f92"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs.meta",
+      "bytes": 59,
+      "sha256": "13ee3e4700bdfba99d85313f0a2a5ecbbdb300f3145443cb6701db09420ff4b1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCollaborationModels.cs",
+      "bytes": 2889,
+      "sha256": "6d3242eab1871d6f301144b7674eac8c937bf8bec01bd44415d8c0a317a6f070"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCollaborationModels.cs.meta",
+      "bytes": 59,
+      "sha256": "63b4adae6777fc32bbcab4fe857b0d58489980e636e88250ce7a45a63c0dd69b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgGuide.cs",
+      "bytes": 32246,
+      "sha256": "02d036ca8e318882ea810e7f53c63498b4f9a28e69e02c2f885fd0b029cb61df"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgGuide.cs.meta",
+      "bytes": 59,
+      "sha256": "e865c19ca221229772375da4cbeefde946b60855c3026d298898a941dabbb05a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs",
+      "bytes": 10993,
+      "sha256": "e57dcb5b90d6c4a5601bddabb4a3d59b1af95f9a931f3b27d6cad47e65ca1fa9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs.meta",
+      "bytes": 59,
+      "sha256": "c81fbacd08afb85ab932900691ced21e56e72e05668ff6099587efc4311cc65c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgJudgeProtocol.cs",
+      "bytes": 9825,
+      "sha256": "d0a718b06fce1713c88896080f455ca51a30ff1d3bfbde161b2df8a646c41aa4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgJudgeProtocol.cs.meta",
+      "bytes": 59,
+      "sha256": "2a454e9ce372edd57f132f9c4a605b8a87ce7d7a250e3338d2f5b9f2d7a9a619"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgLogic.cs",
+      "bytes": 42544,
+      "sha256": "9126f02d087b4d149f3ef9e5f414998984a1d82081606dc7d961b6eadd1cf205"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgLogic.cs.meta",
+      "bytes": 59,
+      "sha256": "2fd0202146b307809bc6378dee799915305b2c15beaa098ea1322d51541d7304"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.cs",
+      "bytes": 32647,
+      "sha256": "d4613625b079763d68ecd289221381d16a755a7e8700c5e92cfb2c453d10e2e6"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.cs.meta",
+      "bytes": 59,
+      "sha256": "83fa65d217b6b4e18860d661eb6b1bc331809586e20457a10a8ae37613d53993"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgModels.cs",
+      "bytes": 8390,
+      "sha256": "3cd8e45d6436b6edb60eb58564f57b3f308e13bb6fc445c728f34e7e9f0b38bf"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgModels.cs.meta",
+      "bytes": 59,
+      "sha256": "a9581bbc22e45374b798148a2ab9ac89e19e41354487f99fccb8316c3775cda1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgProgressionModels.cs",
+      "bytes": 1859,
+      "sha256": "945232449e9f24407426bc54099428bb44dcd61f6e58c7d1200e2a0900517bce"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgProgressionModels.cs.meta",
+      "bytes": 59,
+      "sha256": "7b34dc6b2905483400465aee0ae4e05761ea8eb0b5933efcf5072545fa94f33a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs",
+      "bytes": 5993,
+      "sha256": "f469470963fbfa0a903972e30f54be73a2798056a23d9c473d03c9c05a7afc86"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs.meta",
+      "bytes": 59,
+      "sha256": "1cb07c2bad89e192ba7862814a6e17f42aae66b7431bce94fc86290dfc2646c0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs",
+      "bytes": 14144,
+      "sha256": "d0efd49e359f2a9f76d23ec8a7919028fa8512277ef73b9523feb285a41a111c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs.meta",
+      "bytes": 59,
+      "sha256": "f8691cc685447ec2f6ed26b3a5105fa90ae2a2a80f1c6a79d8b4e360f2a551b0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Captcha.cs",
+      "bytes": 11879,
+      "sha256": "0633956373a8df3f82c8ad80ba710532115485f6f911f8ca31c9fcb8c65a1b7f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Captcha.cs.meta",
+      "bytes": 59,
+      "sha256": "2db0ed50154666e4e6e8d0e58594756af27b679fc63d322519a00675102d00d8"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs",
+      "bytes": 29750,
+      "sha256": "604721a82eb82fcf092402b33b2d3e7f3228899b61d9466e00b8e7cb10e37fd4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs.meta",
+      "bytes": 59,
+      "sha256": "4d6dd03fe96d63d91b3fac67cd73e872cd9f413cecaca374c9ae374e006a8198"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs",
+      "bytes": 10450,
+      "sha256": "6d6bf3eea167c672de411b69274b54333fb47b7b338d4dddd32282c9ab4dea1d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs.meta",
+      "bytes": 59,
+      "sha256": "0ec8f3d5b51987cd3927003f8bc17a1c2d5693171f509f517a501833103a5dc6"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Diagnostics.cs",
+      "bytes": 12465,
+      "sha256": "5c7e355eab55e4a2e23a40388abc67b1f1c4a107992e7dab2037b1b295414036"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Diagnostics.cs.meta",
+      "bytes": 59,
+      "sha256": "afc0097a889c00a45922a2b34a8f43a7256c7330c5812733e1c4d7ffded5fe78"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs",
+      "bytes": 7591,
+      "sha256": "81a087415dff44cf67af6c9e7154c287da1119b18e0cd658c3e5b2d5a45e1dfe"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs.meta",
+      "bytes": 59,
+      "sha256": "18182bbafb5e92d02a987834e18548330c6a4c40a699f986e44c0c87227cae28"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs",
+      "bytes": 1879,
+      "sha256": "b74e96b14a630b202ed50f90a5fca923dde03467e2ce6348ea0a4cc38d646b4e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs.meta",
+      "bytes": 59,
+      "sha256": "aa16331c1293faf3504ecef2f5242c0af5e8f4234c60ac9f53615a574cea761f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+      "bytes": 1719,
+      "sha256": "aa7610f5386b9555fcede18dfe7bdead0890ac2b4b8a4fb80a5e78ade50887c2"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs.meta",
+      "bytes": 59,
+      "sha256": "2b40eb7574bb4a7bc8721553294c76ecb8538cc9d5782596e73fba691e907bcd"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs",
+      "bytes": 25239,
+      "sha256": "4de3196c9d5d35ae292f3e15ad7e105b944aea4cbdf1be1b7c80d20b19387f1c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs.meta",
+      "bytes": 59,
+      "sha256": "8da67110697183add31d15d1a21a382ab826a389f1ea01f72716ba1a3eaec96e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs",
+      "bytes": 26733,
+      "sha256": "0de3c08b24fbd775f9562f3edd379e7bdcd255a65ca4cb10b167f27f8c9a8d4c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs.meta",
+      "bytes": 59,
+      "sha256": "52e386db7b8b3daf5503b741f29adba5d5fe0809a9290f7cd7c5396f951b05be"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs",
+      "bytes": 5690,
+      "sha256": "58c9da5f871de78c378d84f749c34e66b98628590ef7592757cf0671976a9818"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs.meta",
+      "bytes": 59,
+      "sha256": "afff2509734cec2d7f5721da2469a80a0ede15563665338059b71fa853ae15d1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Market.cs",
+      "bytes": 25748,
+      "sha256": "fc21b6a4cb1ca33abe30995206c54cd9a598c7fc9e8e4f24f188828ed4fe202a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Market.cs.meta",
+      "bytes": 59,
+      "sha256": "6197da8f82e0f8fd6beacde2c2bf05ec8cb6da52e5cde9a9a5c01a3e576ed7db"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs",
+      "bytes": 56989,
+      "sha256": "51dae5013b95abf62aa4790f146376a535efa8d3b674f0341831eb357dd8bb33"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs.meta",
+      "bytes": 59,
+      "sha256": "70b2f44902f203b4947cdac47a15137c2ad2821e6edd47bce8db33d31c58f588"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "bytes": 42260,
+      "sha256": "fa84ab5000af54f82cd1b609e0a922ab94273449271d072c4c41df8c45520027"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs.meta",
+      "bytes": 59,
+      "sha256": "c8b1c7078d3acb59004b1a1cbf5fa23b9c452203047acc336e3e54cb5f3d85d3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Quality.cs",
+      "bytes": 16550,
+      "sha256": "48f489b2ad7d3442b168379d02b74a321d45e995265a2238db8d0087be9a146d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Quality.cs.meta",
+      "bytes": 59,
+      "sha256": "a9a3e2d56dff76c7c7c958e307a3344a5f7960fa97f5b730a4da320780f4adc9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs",
+      "bytes": 5303,
+      "sha256": "a83d5d7143d677d04327aad29cecefe56e59b9e3b4e30d75fb829698df027978"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs.meta",
+      "bytes": 59,
+      "sha256": "3356e15862840a0379753d763a900e176b83b6b89ae647df74124b9029a8477e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs",
+      "bytes": 23894,
+      "sha256": "cb54f5198545abe19e0bd9ad2f896dfd783e229df7d58369806ea672a29e9d38"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs.meta",
+      "bytes": 59,
+      "sha256": "6dcfa2fefc71398320b19ced87086e60ca2ee4db0279c4959e182c82589c1012"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Walls.cs",
+      "bytes": 24969,
+      "sha256": "9476d3c1a88af260c87163e8210645f178230fa7f3895b1061c7ae4084ac2a4e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Walls.cs.meta",
+      "bytes": 59,
+      "sha256": "c32b4e1dae870ec50e7028f05403f861447935b3a9f41e67f02939b6823ca3f5"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "bytes": 66585,
+      "sha256": "73a772aaae892c853137708b63a1f138d6f1aad31d0c8e26d128a6271a15df9a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs.meta",
+      "bytes": 59,
+      "sha256": "efde7987ce3a149e27ade83c03e581131357d93c3abd88fef09fd54e088d972b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSpeechPolicy.cs",
+      "bytes": 18314,
+      "sha256": "b55e38c617ddcee3af0b716edce36e61ad66d6480e9d2e0b060a33841a7130c4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSpeechPolicy.cs.meta",
+      "bytes": 59,
+      "sha256": "77362e988d26b4cf6e627ddfc1c79e5eaf76d69df7fe6ad06f08305fe73f350c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgStoryMilestones.cs",
+      "bytes": 1793,
+      "sha256": "7f08fbd12b3483324e7fc0f3752e1949d53cbc13c182bcf3980fe4d91d07af15"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgStoryMilestones.cs.meta",
+      "bytes": 59,
+      "sha256": "8d8443b14358487c4ffb6fc81f64e141671be5d9bb5181820ec712fad803105e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgVisual.cs",
+      "bytes": 13639,
+      "sha256": "981fd99d5253033dfcc635dd6cbf2dc3f12cd96be1205da40a04526aa918759a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgVisual.cs.meta",
+      "bytes": 59,
+      "sha256": "f8f6f798cbc56ab2d810751b6a5fde48a268ddf6f3d74ff09e753e11071e7ce8"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core.meta",
+      "bytes": 172,
+      "sha256": "b9023de3b5e2341c1c84ae92a83e7bd10b1ed6c59acecf1f00447bf0f994e309"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAfterthoughtRelay.cs",
+      "bytes": 5709,
+      "sha256": "55fad6aeb42d8f27a7c02c88419f7df70695985d5653cd85ce69099a52a0dc11"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAfterthoughtRelay.cs.meta",
+      "bytes": 59,
+      "sha256": "5419e346a4926fd92e56024a46469e09aa5dfd57f43e1a730a1e103bc301a256"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.cs",
+      "bytes": 8184,
+      "sha256": "5788cb5c29b0e0096b9313ae389065fa2bf17574445be55894fdfc0634bb3a7d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.cs.meta",
+      "bytes": 59,
+      "sha256": "7368fcd84268d6d39b37686c7fdb9f5738904903c53fe3629880af601fc714ca"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrain.cs",
+      "bytes": 6117,
+      "sha256": "8ff0d03f94ea6e6da227be80b3916c1df77d7040dca0b842958507a6a6105951"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrain.cs.meta",
+      "bytes": 59,
+      "sha256": "33f8fa1d249b9dad09c39fdd67fd2cbd6f32f14ac510c737211ef6db9df8473b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgCaptchaCard.cs",
+      "bytes": 7518,
+      "sha256": "248b26a9fae227e253748e2d613d1f805063a4e127ab2f0529aee06226c373ba"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgCaptchaCard.cs.meta",
+      "bytes": 59,
+      "sha256": "a062c4f9bcd88b67f8a46528f343e07a0bb7dd99ff4b97c6b55d1df27cc190f8"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.cs",
+      "bytes": 14630,
+      "sha256": "21b027bf1a5b2520bd659a221478377042c660fe03560c2905d09927342d717d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.cs.meta",
+      "bytes": 59,
+      "sha256": "d45cde57ec6e27d11ae01d79cc2b7caedeadbde987f2607162c601918992ac9d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+      "bytes": 10929,
+      "sha256": "9a9d40e8db640f98691acfda8ecced9911ac6a80ff2d6c2590967665ee9a93eb"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs.meta",
+      "bytes": 59,
+      "sha256": "255a23fc6a0e9da2058b0f478c059073246ffa50fc082605ddaefb557d2e0c66"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDeskGraphics.cs",
+      "bytes": 16603,
+      "sha256": "c6ef11775ada23ae80bc70b1d40968472fe4fb997062619ce6bab64c3b505895"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDeskGraphics.cs.meta",
+      "bytes": 59,
+      "sha256": "b6df019d2d21a71fa6c46e5be439df9231feded3664f2edd7173c8b494c0d5ac"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs",
+      "bytes": 14853,
+      "sha256": "68c2e1ede39b60258bd13a9e98f5c84ab7b0b3ba83f6ef9b9f35f46e8352e4e4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs.meta",
+      "bytes": 59,
+      "sha256": "35bdc302e4c6948ec4f6c73af69ce9129829a902dd63c8e88540d945273ff934"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGraphics.cs",
+      "bytes": 28743,
+      "sha256": "594a8c16766c81527b2c5acd98d712d910fba20838150bc889f25c27bb00e117"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGraphics.cs.meta",
+      "bytes": 59,
+      "sha256": "fab42eb3ef76bd208ed8406d8bd4aca7fc27b66cbdbeb8e7195cfea1546a8967"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGuideHighlight.cs",
+      "bytes": 9004,
+      "sha256": "1f4829ec2f2c17bbd8e6aff3492ac23def82ef90e6a1648992719c8939597630"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGuideHighlight.cs.meta",
+      "bytes": 59,
+      "sha256": "7caf194313d13c5999dfc3325a673ef4da323fb2b3c19ce0eb0c55babb9b0207"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgHoloCard.cs",
+      "bytes": 14664,
+      "sha256": "498c11c13f99f842c6161fb3f6a324b2861b995c2e2b1b32724b7b638248ae72"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgHoloCard.cs.meta",
+      "bytes": 59,
+      "sha256": "bc21a52d78e425b5a2a0df1d6dff3a52929cab839ef51d8be5f94f01bc6b2d4d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+      "bytes": 25021,
+      "sha256": "345023c67b3595fb7c1807b3470895b6c4119ea94ae71f44f7d1215f54eae8ac"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs.meta",
+      "bytes": 59,
+      "sha256": "7ff45f6e73c18cb1871e231252f9d42512d1777cbc7b080e433fe8efd1a24460"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelGhost.cs",
+      "bytes": 3397,
+      "sha256": "ffddf4aa32d073604c9cf55f3bad8c987f34027a6027169b8382d020fa365975"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelGhost.cs.meta",
+      "bytes": 59,
+      "sha256": "9eb26a2b2aa3cf7ae4157f5a04973a4112165d872014d1eafa6582c07763acaa"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+      "bytes": 87390,
+      "sha256": "59e9f55c03e1448b96c64065772a0712dd394a8d7279468219de2a879672bbae"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs.meta",
+      "bytes": 59,
+      "sha256": "14436fce6bebd28f3316843f7f6840f467e1cc95b426b6fb4263ccd25614e6cb"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPreviewGraphic.cs",
+      "bytes": 2875,
+      "sha256": "88ca6f02d8abc388090c31c9094371f2630a7f9808cfdfd54a1a595d8c23e0ff"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPreviewGraphic.cs.meta",
+      "bytes": 59,
+      "sha256": "cb5f3b9ef89606183c494db1c18f2023bb82f9e857aa0c0ec0a323bfdcfc1bd4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs",
+      "bytes": 6178,
+      "sha256": "e87f3877fc2c804f6cd604b8521e9a489dd2e9511204a600e0231b32c911a7f3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs.meta",
+      "bytes": 59,
+      "sha256": "9dd9d29f1ed727fc0bf93f39642a2e80d3c98cbdded800b21d49c7738400d277"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgMarketSection.cs",
+      "bytes": 18722,
+      "sha256": "4133cc2ef416e1e4a85a215cc32d69b2b7eb532d2bb140c7cbcd5c0312cc287a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgMarketSection.cs.meta",
+      "bytes": 59,
+      "sha256": "ce433b8a0da49c1a2df85888cf5d63d54d5a89323e988cd3fbe10a5fe46ab8cd"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgPlatformPopups.cs",
+      "bytes": 6817,
+      "sha256": "c6478605925b383bc8752af93048a1fc2ec73f3e3da8820de2482e21f019fa34"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgPlatformPopups.cs.meta",
+      "bytes": 59,
+      "sha256": "c55c08e3ea9188fc2baf74a8f6a414020026be3a321023e3c9dc768a79aecad0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRepoPage.cs",
+      "bytes": 14613,
+      "sha256": "cde795f6e8383ae8ec3ffe0b9454ebc6b5458765e8f15158d92be1d4d29fb598"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRepoPage.cs.meta",
+      "bytes": 59,
+      "sha256": "4431aa009161bb6a59a55c40ce4af0511fbde4a20eb55be39fde15a1626f6161"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs",
+      "bytes": 11497,
+      "sha256": "8e796423d5d3f59e60ece9122bcf4e7371d3cf8b504c4a21d718ca92851d0fd1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs.meta",
+      "bytes": 59,
+      "sha256": "661af0ff7baff8285c60f39ebde45770945864f12af46cf3235da749b4066e10"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgShapes.cs",
+      "bytes": 13855,
+      "sha256": "041e9cf6a69f6c669dc0ee7269915f5bf5858cfa8162434523ec31b759071896"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgShapes.cs.meta",
+      "bytes": 59,
+      "sha256": "23b31146b5a5fc8c687f8b9c2caae915dff462cf0f8b3fb343de699f80fad028"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs",
+      "bytes": 11810,
+      "sha256": "df0705823091d391f2279505e801c27489fdf959ae2dd0dca05341bb77d8c45c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs.meta",
+      "bytes": 59,
+      "sha256": "8e5ca4306dfe8df0be35521f2b3f4725c15b59bb6987a2b9ec42891237784cf5"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+      "bytes": 61230,
+      "sha256": "3f94243a5ed91625ac104207b21f6174240c632a74f072408bc584d6d05feec4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs.meta",
+      "bytes": 59,
+      "sha256": "b23ee65570c92278eb3468c8aac4648bf8054a264d3852f94b992a5eaf5f2b8c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+      "bytes": 39560,
+      "sha256": "c49aff16795104c37c533d359138be59c8c7f09dedbba52dbaa2c58f945a3e65"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs.meta",
+      "bytes": 59,
+      "sha256": "f2dd50f0b3335554f6f6b51c1079fb7524e9fb162311f6092b1fa298552f4e28"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+      "bytes": 11085,
+      "sha256": "7b299b834aafc350fbf22c431c985d8976b4a587468c8086f5afcf6e690b88f3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs.meta",
+      "bytes": 59,
+      "sha256": "612e7679ab4f010ddff4b197fc4775f875c0cc1bcda6bb18707753f4d223b157"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallPage.cs",
+      "bytes": 12657,
+      "sha256": "55e678eeaf9fcf48a4dd5326cebdb11968e7b57d2bb19f26a574d146f292c40b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallPage.cs.meta",
+      "bytes": 59,
+      "sha256": "224a8d70b6bcf56022b6e35ca20a85d589fa0b79c75557a277b84b9cd4c2c905"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+      "bytes": 16210,
+      "sha256": "68e5a46ed6a6192590e0826a5a745b35feb5348e4ad85596b3d05cde9f9bcd11"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs.meta",
+      "bytes": 59,
+      "sha256": "2502e4efcbec32fa2ce30cb8bf24d6b5778a4f2c4e60e462fd7ae8bf3e33865c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs",
+      "bytes": 3086,
+      "sha256": "2644331750ca3b424543268c0bbfe0b8036e6db8e8e2c3b3ff71f49b82f285b3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs.meta",
+      "bytes": 59,
+      "sha256": "fec70ba108206924893af6d18f77274ec12e5252470649ec468ce5ca88911ea7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+      "bytes": 29982,
+      "sha256": "8cb9e0f29ebe6227499a50052f8c2a938391bc0190b88f38c6611a2feb66effc"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs.meta",
+      "bytes": 59,
+      "sha256": "c309ec4aa92879a996653d4267a4e4e9b600aa75edbfb3a1de0062a376c249b1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop.meta",
+      "bytes": 172,
+      "sha256": "39c80870c668e3e74e240ae11b8a8852fcd17560c6d29c99e1725c02e132921a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/LingGuangV05.XingGuang.Tests.asmdef",
+      "bytes": 276,
+      "sha256": "e3a0f974078d3ac4d388ded763e0b99df818b64e0e7876f62f9997b90e2c47a0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/LingGuangV05.XingGuang.Tests.asmdef.meta",
+      "bytes": 166,
+      "sha256": "25d42d036fd70f5bfd844c2c47e2fd70f3600ff2bba8c18ade62854fca679292"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAfterthoughtTests.cs",
+      "bytes": 2423,
+      "sha256": "ffa3d67cf15de8e9843a941080c47c5f3f04a75312dfbb59252fb89e820d79e1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAfterthoughtTests.cs.meta",
+      "bytes": 59,
+      "sha256": "cc7f3a6f8cb5365b874b26c03c180accaa55867d8e0d5d76063ba38850529817"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs",
+      "bytes": 15185,
+      "sha256": "7fef80ddd3a3f8fa26d1652fd5272b1dd887eb2c6ffb47eda9f5bbdae7c15789"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs.meta",
+      "bytes": 59,
+      "sha256": "6e93c1d1d8da43165702ca04cb1f4189f501e0630cd87e097cced94f4a9b655b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCaptchaTests.cs",
+      "bytes": 12326,
+      "sha256": "df2b1e51ec3d1f69228f613d04e0ad6cd41d0002f2d1da4d0c930deb6245d275"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCaptchaTests.cs.meta",
+      "bytes": 59,
+      "sha256": "b28b1ddd75deaf31d467202a2ddfc11261f8f748edab0a0cc30b811af84edb03"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgChatVarietyTests.cs",
+      "bytes": 10222,
+      "sha256": "36517031a06ac151620704923697dc244b2bc04ce3194a079f35c190b0a5a431"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgChatVarietyTests.cs.meta",
+      "bytes": 59,
+      "sha256": "95cd873b52c61ab5017a3ffb4c56238368676bf01acde3d113aaae664388dd4b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCollaborationTests.cs",
+      "bytes": 26627,
+      "sha256": "47f630afcbf7034d062f949076a572827487341c9a2a945656fb18d4416bdb6c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCollaborationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "3011fd64eb21a0e87d4f518d239e3d5816dab9dab54713696a2baa1da39d6db1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCollectionTests.cs",
+      "bytes": 5286,
+      "sha256": "075176e71b915d6679cb45365d48ec5f0a5d71e491ca9ea7f7afc97892d7e5a4"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCollectionTests.cs.meta",
+      "bytes": 59,
+      "sha256": "7df4f7f37777d374cf3ec3a931b685c28b720e0fbd474a9288bc4160f8971503"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs",
+      "bytes": 9567,
+      "sha256": "29e7e1d803bd826c827f3102a08af6887c1905c0e00317346adb3c51ab185442"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs.meta",
+      "bytes": 59,
+      "sha256": "9220ccf5a1b8b89abab91fb1825c5f9c5f23005bf3322a5f5fe01fb44698b5fb"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpiphanyTests.cs",
+      "bytes": 15129,
+      "sha256": "36fc083fb31bc745c0d0e7868169e509527a63dd3e64b6ecd1062a908cb30e9d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpiphanyTests.cs.meta",
+      "bytes": 59,
+      "sha256": "350d2374a6cccb9e5e0ffe6973d921020ed22d7663e77ac93e79e8969f85632e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpochActionTests.cs",
+      "bytes": 3434,
+      "sha256": "a9f6db2e40deceeb026d4b0f4801c020d0efe81a1f50552bd60208c1633b7b5b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpochActionTests.cs.meta",
+      "bytes": 59,
+      "sha256": "868eed1a0366be02c5dd52bfc0862fb805685886202c6dc29409f1f7a56d0144"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEraTests.cs",
+      "bytes": 5399,
+      "sha256": "e4203ea5413f61325e0fad1410f9fcc1aa39f19135dc5b97f889c370e75fd44b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEraTests.cs.meta",
+      "bytes": 59,
+      "sha256": "1cbff8460ec282a217711cbb34df88dcef80274cc7ddd2f4f531040890e2d51a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgFeatureTests.cs",
+      "bytes": 2289,
+      "sha256": "499b74215f4e1eaf41c3df4996163cc50ad5f63dbd592a972313bf8e1d0cda64"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgFeatureTests.cs.meta",
+      "bytes": 59,
+      "sha256": "a55450ab89b924455428082b9d6ac76f411fcd22e0276d4cd6cc59f78bcbe4b0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs",
+      "bytes": 11723,
+      "sha256": "d38762e5d937e01d2333574bef786a09bccf53a2d65b0bde44f58cbabf79e9e7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs.meta",
+      "bytes": 59,
+      "sha256": "147338b1cc44e03eeeb5df5e9c015624f3a11dfe440bae639c4ef5667356c319"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGamesTests.cs",
+      "bytes": 9423,
+      "sha256": "fb24d9063312b2f4caf630e9fdea38c71707876950f8dc9df6aea0d64c73eff9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGamesTests.cs.meta",
+      "bytes": 59,
+      "sha256": "0127a24966be0fbc20ed0c1abe6ba70994bdec2d7e46353f77bab7061e2eef67"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs",
+      "bytes": 16573,
+      "sha256": "8f11d2928236a75b89fc0261f954519606203b7b5832f34fbf82eec57702b545"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs.meta",
+      "bytes": 59,
+      "sha256": "47272040e3ef4e908fc2c5237b40a249d589c76f8590388894313bb195ff6fc1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgInbreedingTests.cs",
+      "bytes": 7890,
+      "sha256": "df4b0767915bbba291ad7d5f47ae7067727fca480ade361791a4bfa4b750c582"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgInbreedingTests.cs.meta",
+      "bytes": 59,
+      "sha256": "f841d8f9d6575e24e4022ba5588546d5b7dfd607329ff7c1771b2529949b348f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgJudgeProtocolTests.cs",
+      "bytes": 12598,
+      "sha256": "e49143533e452d92eb24e73056397795ca5c5c966e58c20700eb55efcb631a44"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgJudgeProtocolTests.cs.meta",
+      "bytes": 59,
+      "sha256": "6efcb8b267dffde395f566ac70f6231c273b6da94ad94f1eb38146814a92ae13"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs",
+      "bytes": 7935,
+      "sha256": "e0f77fd6cbddffe994fe0c4a48c9b0a7da4183b7463ff91baff6ad75f639c54f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs.meta",
+      "bytes": 59,
+      "sha256": "58c44ead5bd65a5698f61d9a13febef79c91e4c787703d421954addd21bd4183"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMarketTests.cs",
+      "bytes": 22132,
+      "sha256": "2fcbbbacc988d38d715f3a073c4eb93b79f67b2613951b5aa002a543018f6288"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMarketTests.cs.meta",
+      "bytes": 59,
+      "sha256": "965736576ffd8f48382c4fdbf4fd7a6b12219278034c62988a01cba75c592a36"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgProgressionTests.cs",
+      "bytes": 23254,
+      "sha256": "ee53a32fb6d42c1aa798fd7419fb15883c9f5f6349d5b07b8ec80ed4705c28c7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgProgressionTests.cs.meta",
+      "bytes": 59,
+      "sha256": "181d3cd5912ca018d3fa7d763364c8fc2af68ba523c4b6402ae89d927fc08ed2"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgQualityTests.cs",
+      "bytes": 23379,
+      "sha256": "f8985bd2060e13b138727e95798fe39cd4f9f5b738c19936463dfc3ec9978226"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgQualityTests.cs.meta",
+      "bytes": 59,
+      "sha256": "e846d31bff4b32f4ae1737c5d6486c415bb6b121896c5948754368914fb6e0ee"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgQualityTrapTests.cs",
+      "bytes": 7895,
+      "sha256": "da319770022310fc2489990a4b77692b808bf89cfe0365e555a0136e23a283b7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgQualityTrapTests.cs.meta",
+      "bytes": 59,
+      "sha256": "00b7e6ec6e185c4d327a1927ae172a796d9082597b0c2e3ea8f077f50a49aa85"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgResearchCompletionTests.cs",
+      "bytes": 1500,
+      "sha256": "7805bca2fc1820023b1e5b61709f60758c5a480ecd8543e72562a8b19c3af7ea"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgResearchCompletionTests.cs.meta",
+      "bytes": 59,
+      "sha256": "d9abed7a827fa76c08f61911183841d35d4c4bcf52f76e6a82ef07adc1890115"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgSpeechPolicyTests.cs",
+      "bytes": 1921,
+      "sha256": "2e535a818168240784fe9c66ab8ecfc6a725642164a2b5656f5f409852925113"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgSpeechPolicyTests.cs.meta",
+      "bytes": 59,
+      "sha256": "e6be471d8071791d8136f54c73be7fc160d4ff86f9a3b5f417930139cbeb5ddf"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgSubcontractTests.cs",
+      "bytes": 17890,
+      "sha256": "d97ad6ce382560e86fbeea6b20a1d0fde27e20ab2998f89268d40cd79d4afcda"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgSubcontractTests.cs.meta",
+      "bytes": 59,
+      "sha256": "a3b93c4124f20a81f7d8a3d454c0afe07e1dba9b8b04718f89503fc35052f632"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XingGuangTests.cs",
+      "bytes": 37816,
+      "sha256": "48cdd42222e524631cc7be1085412bd72732dd49a87edabb625e7da639563ab6"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XingGuangTests.cs.meta",
+      "bytes": 59,
+      "sha256": "ab6e0e795920edffd7498d917c08fd32dd790c1648499ca50c8b425e1499d608"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor.meta",
+      "bytes": 172,
+      "sha256": "322bc864e0765a4c1371bd71b25a301c2ca999de20aa63f8c1122a118017205a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests.meta",
+      "bytes": 172,
+      "sha256": "7daf0d8e6078000af1228c09a5564f6e09588e96a74e26fe098190bfa1cfda10"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang.meta",
+      "bytes": 172,
+      "sha256": "b427b43d9de06896811a8114406049b5d5c5163097a44b8cf0c49b418a9a0de0"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "bytes": 40660,
+      "sha256": "f378d8de7bdf8c53e7b94933d22aa46245f533600171d9c3393eddea86185378"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs.meta",
+      "bytes": 59,
+      "sha256": "f8b62e5e502e3f3feed30b0870202a2fccb95ff2e4a6c9bb7e5f437f6f93b8a1"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "bytes": 41339,
+      "sha256": "8ee7410d71da51b112f356ce39235100c9dea91764b1ca328b728368ce2f5673"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs.meta",
+      "bytes": 59,
+      "sha256": "1f62328dddd868217059bbe3d713b451518e368ef61891139ece650a0af948ee"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYShapes.cs",
+      "bytes": 5240,
+      "sha256": "6095282a3e388d167a72715290e8d15cb6712ae76870ee1c75f0f0e6b8cdb867"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYShapes.cs.meta",
+      "bytes": 59,
+      "sha256": "b9b5b53edbaebd6d85dc17a87f294060dde8800278345966326923ccd96c4801"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016.meta",
+      "bytes": 172,
+      "sha256": "b80afb7a25243ccc563c411bc5ee7d9d3526de7acb793c298d91d1c29466fc3e"
+    },
+    {
+      "path": "Assets/LingGuangV05.meta",
+      "bytes": 172,
+      "sha256": "2478be797cd2ae77ee7f9725b46e3f32aa3016df0e64d13d4e841490f2ba1457"
+    },
+    {
+      "path": "Tools/LingGuangChapterOne.Tests/LingGuangChapterOne.Tests.csproj",
+      "bytes": 650,
+      "sha256": "26199601db476e43d7460437f558302d68c03cf5ed4cf50e4b90ce9f9eb371e1"
+    },
+    {
+      "path": "Tools/LingGuangPersistence.Tests/LingGuangPersistence.Tests.csproj",
+      "bytes": 696,
+      "sha256": "61aac509ef44df4e8f37b3a82bae5ed1b799bae3a44364fdcfbd5828f90ab5d3"
+    },
+    {
+      "path": "Tools/LingGuangStory.Tests/LingGuangStory.Tests.csproj",
+      "bytes": 1122,
+      "sha256": "0139ac848d78042b0ce836cc67b65ad9a9f9c2568b8b758636f78230473d06b8"
+    },
+    {
+      "path": "Tools/LocalLLM/bundle_llama_macos.py",
+      "bytes": 4439,
+      "sha256": "f051292e3086c5f002cbade61ab1ca576421fbbec4f363d0343ca55fc2721e56"
+    },
+    {
+      "path": "Tools/XingGuang/bot/Bot.csproj",
+      "bytes": 431,
+      "sha256": "675e80f92088f747d9ab102042b87c002bed9ec0bbd83a5ed5cc3dd6c9d9408e"
+    },
+    {
+      "path": "Tools/XingGuang/bot/Program.cs",
+      "bytes": 31764,
+      "sha256": "529445ed6ffd5944c18106c0ca7b6694aeebe544e431b6d990037957da3fb278"
+    },
+    {
+      "path": "Tools/XingGuang/tests/Tests.csproj",
+      "bytes": 860,
+      "sha256": "461fe0ae1d6968a6e6d0ccb4003d8f9bcddc1a0a30b58bfaac1cdce5c3dc03a0"
+    }
+  ],
+  "excluded": [
+    "model weights and local inference binaries",
+    "Unity scene/prefab/material/font/image/audio/video assets",
+    "third-party asset packages including DreamOS",
+    "Assets/LingGuang and RipplePrototype old versions",
+    "Core/Incremental unused previous simulation",
+    "scene installers and Editor QA utilities",
+    "Library/Temp/Logs/Builds/UserSettings/bin/obj",
+    "Evidence/graphify-out/understand-out",
+    "agent settings, session histories, local saves and credentials"
+  ]
+}

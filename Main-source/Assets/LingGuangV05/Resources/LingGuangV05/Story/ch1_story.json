@@ -1,0 +1,37 @@
+{
+  "comment": "第一章节拍表。每个节拍 = 触发信号 + 条件 + 步骤。字段说明见 Documentation/剧情系统设计.md。台词只写 key，文本在 ch1_lines.json。",
+  "beats": [
+    {
+      "id": "n_first_open",
+      "on": "app.open:lingguang",
+      "steps": [
+        {
+          "op": "narrate",
+          "key": "n_first_open"
+        }
+      ],
+      "when": [
+        "labStage <= 1"
+      ]
+    },
+    {
+      "id": "n_named",
+      "on": "name.set",
+      "when": [
+        "named",
+        "labStage <= 1"
+      ],
+      "steps": [
+        {
+          "op": "first",
+          "id": "name",
+          "text": "{name}"
+        },
+        {
+          "op": "narrate",
+          "key": "n_named"
+        }
+      ]
+    }
+  ]
+}

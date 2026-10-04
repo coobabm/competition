@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup><EnableDefaultCompileItems>false</EnableDefaultCompileItems><TargetFramework>net8.0</TargetFramework><LangVersion>9</LangVersion><Nullable>disable</Nullable><ImplicitUsings>disable</ImplicitUsings><IsPackable>false</IsPackable><RollForward>Major</RollForward></PropertyGroup>
+<ItemGroup><Compile Include="../../../Assets/LingGuangV05/XingGuang/Core/*.cs" /><Compile Include="../../../Assets/LingGuangV05/Core/AppNames.cs" /><Compile Include="../../../Assets/LingGuangV05/Core/Era/EraLexicon.cs" /><Compile Include="../../../Assets/LingGuangV05/XingGuang/Tests/Editor/*.cs" /></ItemGroup>
+<ItemGroup><PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" /><PackageReference Include="NUnit" Version="3.14.0" /><PackageReference Include="NUnit3TestAdapter" Version="4.6.0" /></ItemGroup>
+</Project>
