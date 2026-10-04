@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "zh": "操作\n[W, A, S, D] 移动角色\n[鼠标] 移动视角",
+      "en": "Keys\n[W, A, S, D] Move player\n[Mouse] Move camera"
+    },
+    {
+      "zh": "你的电脑遇到问题，需要重新启动。\n我们正在收集错误信息，完成后会自动重新启动。",
+      "en": "Your PC ran into a problem and needs to restart.\nWe're just collecting some error info, and then we'll restart for you."
+    },
+    {
+      "zh": "错误代码：",
+      "en": "Error code:"
+    }
+  ]
+}
