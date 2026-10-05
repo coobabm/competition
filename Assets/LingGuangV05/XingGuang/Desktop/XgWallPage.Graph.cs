@@ -84,7 +84,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var note = new StringBuilder();
             note.Append(h.full ? "<color=#D63031>" : "").Append(T("格子 ", "Cells ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? T("（满了：权重最小的让位）", " (full: the weakest weights give way)") + "</color>" : "");
             if (h.evicted > 0) note.Append(T("  上一轮挤掉 ", "  last epoch squeezed out ")).Append(h.evicted).Append(T(" 个", ""));
-            note.Append(T("    块越厚 = 这一层占的格子越多    ", "    thicker box = more cells on that layer    "));
+            if (h.memory10 < 1) note.Append(h.memory10 < .2 ? "  <color=#D63031>" : "  <color=#F07820>").Append(T("回环记忆：隔 10 个字还剩 ", "loop memory: 10 words back keeps ")).Append(N(h.memory10 * 100, "0")).Append("%</color>");
+            note.Append(T("    块越厚 = 这一层占的格子越多    上方的带子 = 传到输出的信号（越窄越弱，越红越乱）    ", "    thicker box = more cells on that layer    ribbon = signal reaching the answer (narrower = weaker, redder = noisier)    "));
             note.Append("<color=#D63031>").Append(T("红 = 卡在这一层", "red = stuck here")).Append("</color>");
             networkNote.text = note.ToString();
             PlaceBoxLabels(h, name);
@@ -124,7 +125,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (b.gap) continue;
                 if (boxLabels.Count <= n)
                 {
-                    var label = ui.Text(Rect("BoxLabel", parent, Vector2.zero, Vector2.zero, new Vector2(-70, -34), new Vector2(70, -2)), "", 11, XgPalette.Muted, TextAlignmentOptions.Top);
+                    var label = ui.Text(Rect("BoxLabel", parent, Vector2.zero, Vector2.zero, new Vector2(-70, -48), new Vector2(70, -2)), "", 11, XgPalette.Muted, TextAlignmentOptions.Top);
                     var problem = ui.Text(Rect("BoxProblem", parent, Vector2.zero, Vector2.zero, new Vector2(-80, 4), new Vector2(80, 40)), "", 11, XgNetworkGraphic.SickEdge, TextAlignmentOptions.Bottom);
                     boxLabels.Add(label); boxNotes.Add(problem);
                 }
@@ -140,7 +141,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 else
                 {
                     var layer = h.layers[b.layer - 1];
-                    boxLabels[n].text = T("第 " + layer.layer + " 层", "Layer " + layer.layer) + "\n" + layer.concepts + T(" 个概念", " concepts");
+                    boxLabels[n].text = T("第 " + layer.layer + " 层", "Layer " + layer.layer) + "\n" + layer.concepts + T(" 个概念", " concepts")
+                        + (layer.layer < h.depth ? "\n" + T("传到输出 ", "reaches answer ") + N(layer.relay * 100, "0") + "%" : "");
                     problemText = LayerProblem(layer);
                 }
                 boxNotes[n].text = problemText;
@@ -155,6 +157,7 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (layer.problem)
             {
                 case "step": return T("阶跃没有坡度\n误差传不下来", "A step has no slope:\nno error gets here");
+                case "relay": return T("传到输出只剩 ", "Only ") + N(layer.relay * 100, "0") + "%" + T("\n噪声盖过了信号", " arrives\nnoise drowns it");
                 case "signal": return T("误差只剩 ", "Only ") + N(layer.signal * 100, layer.signal < .01 ? "0.0" : "0") + "%" + T("\n几乎学不动", " of the error\nbarely learns");
                 case "nomerge": return T("一个组合\n都没长出来", "No combined\nconcept yet");
                 default: return "";

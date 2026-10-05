@@ -43,6 +43,9 @@ namespace LingGuangV05.XingGuang
         public long segmentCards, lastCreated, lastEvicted;
         public float segmentBest;
         public int flat;
+        /// <summary>Depth and best training accuracy of the segment before this one (加深反而变差 compares against it).</summary>
+        public int depth, previousDepth;
+        public float trainBest = -1, previousTrainBest = -1;
 
         public bool Noted(string id)
         {
@@ -59,7 +62,9 @@ namespace LingGuangV05.XingGuang
         /// <summary>Concepts living on this layer, their mean |weight|, and the share of the error that reaches them (R1).</summary>
         public int concepts;
         public double strength, signal;
-        /// <summary>"" when healthy, else step / signal / nomerge (a problem id of <see cref="XgSim.TraceEventText"/>).</summary>
+        /// <summary>传话 (forward relay): what is left of this layer's votes at the answer, and how garbled they are.</summary>
+        public double relay = 1, garble;
+        /// <summary>"" when healthy, else step / signal / relay / nomerge (see <see cref="XgSim.TraceEventText"/>).</summary>
         public string problem = "";
     }
 
@@ -72,6 +77,8 @@ namespace LingGuangV05.XingGuang
         public bool full, features, skip;
         /// <summary>Concepts squeezed out (R3) in the last trained epoch.</summary>
         public int evicted;
+        /// <summary>For looped wiring: what a loop still carries of a word ten words back (R6), else 1.</summary>
+        public double memory10 = 1;
         public List<XgLayerHealth> layers = new List<XgLayerHealth>();
         /// <summary>The first layer with a problem (0 = none): the one the diagram marks red.</summary>
         public int worst;
@@ -152,20 +159,26 @@ namespace LingGuangV05.XingGuang
                 h.cells++;
             }
             h.full = h.cells >= h.cap;
+            if (k.wiring == XgWiring.Recurrent || k.wiring == XgWiring.GatedRecurrent || k.wiring == XgWiring.EncoderDecoder) h.memory10 = Math.Pow(k.SequenceDecay, 10);
             var t = TraceOf(run.track, run.dataset, false);
             long trained = t != null && t.settings == TraceSettings(run) ? t.segmentCards : 0;
             if (t != null && t.points.Count > 0) h.evicted = t.points[t.points.Count - 1].evicted;
             for (int l = 1; l <= k.depth; l++)
             {
-                var layer = new XgLayerHealth { layer = l, concepts = count[l], strength = count[l] > 0 ? sum[l] / count[l] : 0, signal = Math.Pow(k.G, k.depth - l) };
+                var layer = new XgLayerHealth { layer = l, concepts = count[l], strength = count[l] > 0 ? sum[l] / count[l] : 0, signal = Math.Pow(k.G, k.depth - l),
+                    relay = k.RelayLeft(k.depth - l), garble = k.RelayGarble(k.depth - l) };
                 if (l < k.depth && k.G <= 0) layer.problem = "step";
+                else if (l < k.depth && layer.garble >= layer.relay) layer.problem = "relay";
                 else if (l < k.depth && layer.signal < WeakSignal) layer.problem = "signal";
-                else if (l > 1 && count[l] == 0 && trained >= 400) layer.problem = "nomerge";
+                // Upper layers of a deep net may well stay empty; only a net with no combination at all is stuck (marked on layer 2).
+                else if (l == 2 && trained >= 400 && NoCombination(count)) layer.problem = "nomerge";
                 if (layer.problem.Length > 0 && h.worst == 0) h.worst = l;
                 h.layers.Add(layer);
             }
             return h;
         }
+
+        static bool NoCombination(int[] count) { for (int l = 2; l < count.Length; l++) if (count[l] > 0) return false; return true; }
 
         void RecordTrace(XgRun run, bool diverged, int cards)
         {
@@ -177,7 +190,8 @@ namespace LingGuangV05.XingGuang
             if (settings != t.settings)
             {
                 if (t.points.Count > 0) Note(t, run.epoch, "change", 0, settings);
-                t.settings = settings; t.segmentFrom = run.epoch; t.segmentCards = 0; t.segmentBest = -1; t.flat = 0;
+                if (t.trainBest >= 0) { t.previousTrainBest = t.trainBest; t.previousDepth = t.depth; }
+                t.settings = settings; t.segmentFrom = run.epoch; t.segmentCards = 0; t.segmentBest = -1; t.flat = 0; t.trainBest = -1;
             }
             t.segmentCards += cards;
             float test = (float)b.Accuracy(TestSet(run.dataset), k);
@@ -194,10 +208,16 @@ namespace LingGuangV05.XingGuang
             if (diverged) Note(t, run.epoch, "nan", k.lr, "");
             if (k.depth > 1 && k.G <= 0) Note(t, run.epoch, "step", 0, "");
             else if (k.depth > 1 && signal < WeakSignal) Note(t, run.epoch, "signal", signal, "");
+            if (k.depth > 1 && k.RelayGarble(k.depth - 1) >= k.RelayLeft(k.depth - 1)) Note(t, run.epoch, "relay", k.RelayLeft(k.depth - 1), "");
             if (used >= cap && evicted >= Math.Max(3, cards * .02)) Note(t, run.epoch, "cells", cap, "");
             if (used >= cap && evicted >= Math.Max(8, cards * ThrashShare)) Note(t, run.epoch, "thrash", evicted, "");
             if (k.depth > 1 && k.G > 0 && p.layer <= 1 && t.segmentCards >= 400) Note(t, run.epoch, "nomerge", t.segmentCards, "");
             if (train - test >= .25) Note(t, run.epoch, "memorize", train - test, "");
+            t.depth = k.depth;
+            if (train > t.trainBest) t.trainBest = train;
+            // 越深越差: deeper than the segment before, and after a fair try even the training cards are worse.
+            if (k.depth > t.previousDepth && t.previousTrainBest >= 0 && run.epoch - t.segmentFrom >= PlateauEpochs && t.trainBest < t.previousTrainBest - .05f)
+                Note(t, run.epoch, "degrade", t.previousTrainBest - t.trainBest, t.previousDepth + "→" + k.depth);
             if (test > t.segmentBest + .02f) { t.segmentBest = test; t.flat = 0; }
             else if (++t.flat >= PlateauEpochs && test < TraceGoal(run)) Note(t, run.epoch, "plateau", test, "");
             foreach (var id in tracePhenomena) Note(t, run.epoch, "ph:" + id, 0, "");
@@ -235,6 +255,12 @@ namespace LingGuangV05.XingGuang
                 case "cells":
                     en = "All " + e.value + " cells are full: new concepts squeeze old ones out (R3)";
                     return "格子满了（" + e.value + " 格）：新概念把旧的挤掉（R3）";
+                case "relay":
+                    en = "Votes from low layers reach the answer as noise: each plain layer weakens and garbles them on the way up";
+                    return "底层的票传到输出已经成了噪声：每过一层普通层就弱一点、花一点（传话）";
+                case "degrade":
+                    en = "Deeper (" + e.detail + " layers) and even the training cards got worse by " + Math.Round(e.value * 100) + " points: not memorising, the signal no longer gets through. Skip connections, or BatchNorm and fewer layers";
+                    return "加深（" + e.detail + " 层）以后连训练题都差了 " + Math.Round(e.value * 100) + " 分：不是死记硬背，是信号传不上来。开跨层直连，或者 BatchNorm 加少几层";
                 case "thrash":
                     en = e.value + " concepts squeezed out in one epoch: learnt and forgotten at once (R3). Widen, share the wiring, or hand-make fewer features";
                     return "挤得太凶：一轮挤掉 " + e.value + " 个概念，学了就忘（R3）。加宽、换能共用的连法，或者用特征工程省格子";

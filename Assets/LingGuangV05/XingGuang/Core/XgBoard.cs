@@ -106,6 +106,28 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>
+        /// 传话 (forward relay): the share of a vote that survives one layer on its way up to the answer. A plain
+        /// layer squeezes what passes through it (ReLU .95, a step's yes/no .9, a saturating S-curve .8 — the step's
+        /// trouble is the way back, not the way up); BatchNorm keeps a little more; a skip connection lets it through.
+        /// </summary>
+        public double RelayKeep
+        {
+            get
+            {
+                if (skip) return 1;
+                double keep = activation == XgActivation.Step ? .9 : activation == XgActivation.Sigmoid ? .8 : .95;
+                return Math.Min(1, keep + (batchNorm ? .03 : 0));
+            }
+        }
+
+        /// <summary>传话: how much each plain layer garbles a vote passing through (relative to the vote); BatchNorm softens it, a skip removes it.</summary>
+        public double RelayNoise => skip ? 0 : batchNorm ? .09 : .12;
+
+        /// <summary>What is left of a vote cast <paramref name="layersAbove"/> layers below the answer, and how garbled it is.</summary>
+        public double RelayLeft(int layersAbove) => layersAbove <= 0 ? 1 : Math.Pow(RelayKeep, layersAbove);
+        public double RelayGarble(int layersAbove) => layersAbove <= 0 ? 0 : RelayNoise * Math.Sqrt(layersAbove);
+
         /// <summary>Per-step memory of the sequence wiring (R6): plain loops ×.75, gated loops ×.97, others no decay.</summary>
         public double SequenceDecay
         {
@@ -163,6 +185,10 @@ namespace LingGuangV05.XingGuang
         public const int LinksPerCell = 6;
         /// <summary>A new concept cannot be squeezed out for this many training cards: it gets the chance to earn a weight.</summary>
         public const int GraceCards = 50;
+        /// <summary>Weights this close to zero are dead: a new raw element may take their cell (R3).</summary>
+        public const double DeadWeight = .05;
+        /// <summary>Test hook: the balance bot switches 传话 off to measure one rule change at a time.</summary>
+        internal static bool RelayOn = true;
 
         public XgBoard(XgBoardState state = null)
         {
@@ -348,26 +374,45 @@ namespace LingGuangV05.XingGuang
         /// Readout: every matched concept votes with its weight; the highest layer reached is reported. Nothing with a
         /// weight matched means a guess.
         /// </summary>
-        public double Score(List<Match> matches, out bool guessed, out int topLayer)
+        public double Score(List<Match> matches, XgKnobs k, int seed, out bool guessed, out int topLayer)
         {
             topLayer = 0;
             double score = 0;
             foreach (var m in matches)
                 if (m.c.pinned && Math.Abs(m.c.w) > 1e-3) { topLayer = Math.Max(1, m.c.layer); guessed = false; return m.c.w * 100; }
+            int depth = k != null ? k.depth : 1;
             foreach (var m in matches)
             {
                 if (Math.Abs(m.c.w) <= 1e-3) continue;
-                score += m.c.w * m.act;
+                double vote = m.c.w * m.act;
+                // 传话: a vote cast below the top layer is relayed up through the layers above it, weaker and more
+                // garbled each time. The garble belongs to the layer, not to the concept: everything one layer sends up
+                // on a card is distorted the same way, so many votes cannot average it out (and the same card always
+                // reads the same).
+                int above = Math.Max(0, depth - Math.Min(depth, m.c.layer));
+                if (above > 0 && RelayOn) vote = vote * k.RelayLeft(above) + Math.Abs(vote) * k.RelayGarble(above) * Jitter(seed, m.c.layer);
+                score += vote;
                 if (m.c.layer > topLayer) topLayer = m.c.layer;
             }
             guessed = topLayer == 0;
             return score;
         }
 
+        /// <summary>A fixed number in [−1, 1] per (card, layer): 传话 garble.</summary>
+        static double Jitter(int seed, int id)
+        {
+            unchecked
+            {
+                uint h = (uint)seed * 2654435761u ^ (uint)id * 2246822519u;
+                h ^= h >> 15; h *= 0x2C1B3C6Du; h ^= h >> 12; h *= 0x297A2D39u; h ^= h >> 15;
+                return (h & 0xFFFF) / 32767.5 - 1;
+            }
+        }
+
         public bool Predict(XgBoardCard card, XgKnobs k, out bool guessed)
         {
             var elements = Elements(card, k);
-            double score = Score(Matches(card, elements, k), out guessed, out _);
+            double score = Score(Matches(card, elements, k), k, card.seed, out guessed, out _);
             return guessed ? (card.seed & 1) == 0 : score > 0;
         }
 
@@ -390,7 +435,7 @@ namespace LingGuangV05.XingGuang
             for (int i = 0; i < elements.Count; i++)
                 if (!byKey.ContainsKey(card.region + "|" + elements[i].id)) { if (Create(card.region, elements[i].id, 1, k) != null) step.created++; }
             var matches = Matches(card, elements, k);
-            double score = Score(matches, out bool guessed, out _);
+            double score = Score(matches, k, card.seed, out bool guessed, out _);
             bool predicted = guessed ? (card.seed & 1) == 0 : score > 0;
             step.correct = predicted == card.truth; step.guessed = guessed;
             double target = card.truth ? 1 : -1;
@@ -503,6 +548,10 @@ namespace LingGuangV05.XingGuang
                     return null;
                 }
                 if (victim == null) return null;
+                // A raw element seen for the first time has earned nothing yet: it only takes a cell freed by a dead
+                // weight. A merged concept has earned its place through repeated co-occurrence (R2) and may push out the
+                // weakest weight, whatever it is.
+                if (layer <= 1 && Math.Abs(victim.w) >= DeadWeight) return null;
                 Remove(victim); S.evicted++;
             }
             var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards, born = S.cards };

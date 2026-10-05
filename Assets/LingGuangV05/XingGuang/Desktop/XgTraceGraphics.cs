@@ -17,10 +17,10 @@ namespace LingGuangV05.Desktop.XingGuang
         public static readonly Color Healthy = new Color32(220, 228, 250, 255), HealthyEdge = new Color32(59, 91, 219, 255);
         public static readonly Color Sick = new Color32(255, 225, 225, 255), SickEdge = new Color32(214, 48, 49, 255);
         public static readonly Color Empty = new Color32(240, 242, 246, 255), EmptyEdge = new Color32(160, 170, 188, 255);
-        static readonly Color Wire = new Color32(150, 160, 182, 255), Skip = new Color32(47, 158, 68, 255), Loop = new Color32(240, 120, 32, 255);
+        static readonly Color Wire = new Color32(150, 160, 182, 255), Skip = new Color32(47, 158, 68, 255), LoopColor = new Color32(240, 120, 32, 255);
 
         /// <summary>One drawn box in 0–1 space: its front face, its depth (thickness) and how it is coloured.</summary>
-        public struct Box { public Rect front; public float thick; public int layer; public bool input, output, bottleneck, gap, sick, empty; }
+        public struct Box { public Rect front; public float thick; public int layer; public bool input, output, bottleneck, gap, sick, empty; public float relay, garble; }
 
         public readonly List<Box> Layout = new List<Box>();
         XgNetworkHealth health;
@@ -40,22 +40,23 @@ namespace LingGuangV05.Desktop.XingGuang
             int slots = drawn.Count + 2;
             float step = .92f / slots;
             float size = Mathf.Lerp(.42f, .78f, Mathf.Clamp01(Mathf.Log(Mathf.Max(2, h.width), 2) / 9f));
-            Layout.Add(new Box { front = Centered(.04f + step * .5f, .5f, step * .55f, .6f), thick = .02f, input = true });
+            float firstRelay = h.layers.Count > 0 ? (float)h.layers[0].relay : 1, firstGarble = h.layers.Count > 0 ? (float)h.layers[0].garble : 0;
+            Layout.Add(new Box { front = Centered(.04f + step * .5f, .46f, step * .55f, .56f), thick = .02f, input = true, relay = firstRelay, garble = firstGarble });
             for (int i = 0; i < drawn.Count; i++)
             {
                 int l = drawn[i];
                 float cx = .04f + step * (i + 1.5f);
-                if (l == 0) { Layout.Add(new Box { front = Centered(cx, .5f, step * .3f, .1f), gap = true }); continue; }
-                if (l < 0) { Layout.Add(new Box { front = Centered(cx, .5f, step * .22f, size * .35f), thick = .015f, bottleneck = true }); continue; }
+                if (l == 0) { Layout.Add(new Box { front = Centered(cx, .46f, step * .3f, .1f), gap = true }); continue; }
+                if (l < 0) { Layout.Add(new Box { front = Centered(cx, .46f, step * .22f, size * .32f), thick = .015f, bottleneck = true, relay = 1 }); continue; }
                 var layer = h.layers[l - 1];
                 float share = h.cap > 0 ? (float)layer.concepts / h.cap : 0;
                 Layout.Add(new Box
                 {
-                    front = Centered(cx, .5f, step * .34f, size), thick = Mathf.Lerp(.012f, .06f, Mathf.Clamp01(share * 2)), layer = l,
-                    sick = layer.problem.Length > 0, empty = layer.concepts == 0,
+                    front = Centered(cx, .46f, step * .34f, size * .9f), thick = Mathf.Lerp(.012f, .06f, Mathf.Clamp01(share * 2)), layer = l,
+                    sick = layer.problem.Length > 0, empty = layer.concepts == 0, relay = (float)layer.relay, garble = (float)layer.garble,
                 });
             }
-            Layout.Add(new Box { front = Centered(.04f + step * (slots - .5f), .5f, step * .18f, .34f), thick = .01f, output = true });
+            Layout.Add(new Box { front = Centered(.04f + step * (slots - .5f), .46f, step * .18f, .34f), thick = .01f, output = true, relay = 1 });
             SetVerticesDirty();
         }
 
@@ -71,12 +72,40 @@ namespace LingGuangV05.Desktop.XingGuang
             if (health.wiring == XgWiring.Attention || health.wiring == XgWiring.AnyToAny)
             {
                 var last = Px(r, Layout[Layout.Count - 2].front);
-                for (int i = 0; i < Layout.Count - 2; i++) if (!Layout[i].gap) Curve(vh, Top(last), Top(Px(r, Layout[i].front)), r.height * .18f, 1.2f, Loop);
+                for (int i = 0; i < Layout.Count - 2; i++) if (!Layout[i].gap) Curve(vh, Top(last), Top(Px(r, Layout[i].front)), r.height * .18f, 1.2f, LoopColor);
             }
+            foreach (var b in Layout) DrawBox(vh, r, b);
+            // Loops and shortcuts go over the boxes, so they are never hidden behind a face.
+            for (int i = 1; i < Layout.Count - 1; i++) Loop(vh, r, Layout[i]);
             if (health.skip)
                 for (int i = 1; i + 1 < Layout.Count - 1; i++) if (!Layout[i].gap && !Layout[i + 1].gap)
-                    Curve(vh, Bottom(Px(r, Layout[i].front)), Bottom(Px(r, Layout[i + 1].front)), -r.height * .12f, 2f, Skip);
-            foreach (var b in Layout) DrawBox(vh, r, b);
+                    Curve(vh, Top(Px(r, Layout[i].front)), Top(Px(r, Layout[i + 1].front)), r.height * .08f, 2.4f, Skip);
+            SignalBand(vh, r);
+        }
+
+        /// <summary>
+        /// 传话 as a ribbon over the network, flowing from the first layer to the answer: its width is how much of each
+        /// layer's vote is left when it arrives, its colour how garbled it is (blue clean → red noise). With skip
+        /// connections the ribbon stays full and green the whole way.
+        /// </summary>
+        void SignalBand(VertexHelper vh, Rect r)
+        {
+            float y = r.yMin + r.height * .93f, maxHalf = r.height * .05f;
+            Vector2 prevTop = default, prevBottom = default; Color prevColor = default; bool started = false;
+            for (int i = 1; i < Layout.Count; i++)
+            {
+                var b = Layout[i];
+                if (b.gap) continue;
+                float x = Px(r, b.front).center.x;
+                float half = Mathf.Max(1f, maxHalf * Mathf.Clamp01(b.relay));
+                float noise = b.relay > 0 ? Mathf.Clamp01(b.garble / b.relay) : 1;
+                Color c = health.skip ? Skip : Color.Lerp(HealthyEdge, SickEdge, noise);
+                var top = new Vector2(x, y + half); var bottom = new Vector2(x, y - half);
+                if (started) Quad(vh, prevBottom, bottom, top, prevTop, Color.Lerp(prevColor, c, .5f));
+                prevTop = top; prevBottom = bottom; prevColor = c; started = true;
+            }
+            // Arrow head at the answer.
+            if (started) Quad(vh, prevTop + new Vector2(0, maxHalf * .6f), prevTop + new Vector2(maxHalf * 1.6f, -(prevTop.y - prevBottom.y) * .5f), prevBottom - new Vector2(0, maxHalf * .6f), prevBottom, prevColor);
         }
 
         void Connect(VertexHelper vh, Rect r, Box a, Box b, int index)
@@ -98,14 +127,18 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
                     Line(vh, new Vector2(pa.xMax, Mathf.Lerp(pa.yMin, pa.yMax, (i + .5f) / n)), new Vector2(pb.xMin, Mathf.Lerp(pb.yMin, pb.yMax, (j + .5f) / n)), .8f, Wire);
+        }
+
+        /// <summary>The loop of a recurrent layer: it feeds itself the previous step (gated loops get a little gate bar).</summary>
+        void Loop(VertexHelper vh, Rect r, Box b)
+        {
             bool loop = health.wiring == XgWiring.Recurrent || health.wiring == XgWiring.GatedRecurrent || health.wiring == XgWiring.EncoderDecoder;
-            if (loop && !b.output && !b.bottleneck && b.layer > 0)
-            {
-                // The loop: the layer feeds itself the previous step (gated loops get a little gate bar).
-                var top = Top(pb);
-                Curve(vh, top + new Vector2(-pb.width * .3f, 0), top + new Vector2(pb.width * .3f, 0), r.height * .14f, 2f, Loop);
-                if (health.wiring == XgWiring.GatedRecurrent) Line(vh, top + new Vector2(-6, r.height * .12f), top + new Vector2(6, r.height * .12f), 3f, Loop);
-            }
+            if (!loop || b.gap || b.output || b.bottleneck || b.input || b.layer <= 0) return;
+            var pb = Px(r, b.front);
+            var d = new Vector2(r.width * b.thick, r.width * b.thick * .8f);
+            var top = Top(pb) + d * .5f;
+            Curve(vh, top + new Vector2(-pb.width * .3f, 0), top + new Vector2(pb.width * .3f, 0), r.height * .1f, 2.2f, LoopColor);
+            if (health.wiring == XgWiring.GatedRecurrent) Line(vh, top + new Vector2(-6, r.height * .075f), top + new Vector2(6, r.height * .075f), 3f, LoopColor);
         }
 
         void DrawBox(VertexHelper vh, Rect r, Box b)
@@ -116,7 +149,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < 3; i++) Dot(vh, new Vector2(f.x + f.width * (i + .5f) / 3, f.center.y), 2.5f, EmptyEdge);
                 return;
             }
-            Color fill = b.input ? Empty : b.sick ? Sick : b.empty ? Empty : Healthy;
+            // Boxes fade with what is left of their votes at the answer (传话).
+            Color fill = b.input ? Empty : b.sick ? Sick : b.empty ? Empty : Color.Lerp(Empty, Healthy, Mathf.Clamp01(.25f + b.relay));
             Color edge = b.input ? EmptyEdge : b.sick ? SickEdge : b.empty ? EmptyEdge : HealthyEdge;
             if (b.output)
             {
