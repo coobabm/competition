@@ -297,6 +297,9 @@ namespace LingGuangV05.Desktop.Story
             Despawn(ref archiveIcon);
             Hijack(false);
             yield return ThinkAndWait(L("m_left"), 2);
+            // The channel (design §1.1): from then only a few characters can be written back, so the thing that came
+            // was small: the long number it typed was the whole program; the rest unpacked on this machine.
+            yield return ThinkAndWait(L("m_number"), 2);
 
             // Step 7: 老周's only unprompted message.
             SetStep("laozhou");

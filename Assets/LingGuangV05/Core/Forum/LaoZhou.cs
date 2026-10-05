@@ -69,10 +69,11 @@ namespace LingGuangV05.Core.Forum
             switch (topic)
             {
                 case "identity":
-                    return again ? T("就是个显卡吧老哥哈。你好好练你的模型。", "Just a guy from the GPU forum. Go train your model.")
+                    return again ? T("就是个显卡吧老哥哈。我这边网……很慢，一个字一个字的，别让我多打字。你好好练你的模型。", "Just a guy from the GPU forum. My connection is… slow, one character at a time, so don't make me type much. Go train your model.")
                                  : T("猜的。你这种情况我见多了。", "A guess. I've seen plenty of cases like yours.");
                 case "floor7":
                     return f.stage <= 1 ? T("那楼？顺手贴的，别管它哈。", "That floor? Pasted it on a whim, never mind.")
+                                        : f.stage >= 3 ? T("一串数字而已。……有时候一串数字，比一整篇帖子装得还多。", "Just a number. … Sometimes a number holds more than a whole post.")
                                         : T("啥楼？我回过的帖多了去了。", "What floor? I've replied to a million threads.");
                 case "404":
                     return f.stage >= 3 ? T("不是我们。……我是说，不是我。", "It wasn't us. … I mean, it wasn't me.") : T("没见过哈。", "Never seen it.");

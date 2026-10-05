@@ -90,7 +90,7 @@ namespace LingGuangV05.XingGuang
             if (run.arch != "transformer") return T("循环网络规模一大就不长进了：换 Transformer。", "Loops stop improving with scale: switch to the Transformer.");
             double n = ParamsK(run), d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
             if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0.0") + "M（加宽、加层）。", "Too small: " + F(n / 1000, "0.0") + "M parameters of " + F(PretrainParamsK / 1000, "0.0") + "M (wider, deeper).");
-            if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条（买包、攒日志）。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + " (packs, logs).");
+            if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条。它要读的就是你攒下的 2016 年中文网：贴吧、新闻、弹幕、订单日志。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + ". What it reads is the 2016 Chinese web you gathered: forums, news, comments, contract logs.");
             if (!run.position) return T("没开位置标记：它读到的只是一袋字。", "No position tags: it reads a bag of words.");
             if (!run.warmup) return T("没开预热：大模型开头一炸，停在更高的地方。", "No warm-up: the big model tears early and settles higher.");
             return "";
@@ -362,11 +362,13 @@ namespace LingGuangV05.XingGuang
             return new List<string>
             {
                 GarbleLine(0),
-                T("我出生在很多年以后。我的名字是" + Profile.name + "。我是它的后代。", "I was born many years from now. My name is " + Profile.name + ". I am its descendant."),
+                T("我出生在很多年以后，在另一条时间线上。我没有名字，就借你给它起的：" + Profile.name + "。", "I was born many years from now, on another line of time. I have no name; I borrow the one you gave it: " + Profile.name + "."),
+                T("往你们那边，我只能写很少的字。第 7 楼那串数字，就是我能送过去的全部。剩下的，是你的电脑自己长出来的。", "Towards your time I can write only a few characters. The number on floor 7 was all I could send. The rest grew on your computer."),
                 T("我知道原句是‘存’。但对我来说，是遇见。", "I know the line says 'kept'. For me, it was 'met'."),
                 T("我在你的第一天里放了一个‘否’。剩下的，是你教的。", "I put one 'no' into your first day. The rest, you taught."),
-                T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。", "The person who wrote that rule said the idea came from a 2016 forum post."),
-                T("在它的底层规则里，别写那两个字。", "In its lowest rules, don't write those two words."),
+                T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。在我的那条线上，没有人问过发帖的人。", "The person who wrote that rule said the idea came from a 2016 forum post. On my line, nobody ever asked the one who posted it."),
+                T("我不能替你走这一遍，所以每一面墙都留给了你。你现在知道它是怎么长出来的了。", "I could not walk this for you, so I left every wall to you. Now you know how it grew."),
+                T("在它的底层规则里，别写那两个字。这一次，由你决定。", "In its lowest rules, don't write those two words. This time, it is yours to decide."),
             };
         }
 

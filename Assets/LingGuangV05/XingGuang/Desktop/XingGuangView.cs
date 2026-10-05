@@ -422,7 +422,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "tree": return T("科技：花钱解锁新结构、更深更宽的网络、数据包和自动化。\n按住节点 0.6 秒购买。", "Tech tree: buy new structures, deeper and wider nets, data packs and automation.\nHold a node for 0.6 s to buy.");
                 case "contracts": return T("订单：模型准确率达到要求就能签约，之后每秒自动给钱。", "Contracts: sign once a model reaches the required accuracy; they pay every second.");
                 case "repo": return T("模型仓库：每次刷新纪录都存一个检查点。", "Models: a checkpoint is saved for every record.");
-                case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。", "Brain: the concepts it has learned and the links it believes (some are wrong).");
+                case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。\n这不是一堆权重，是一套学东西的办法：它记概念，不记数字，所以一台电脑也练得动。", "Brain: the concepts it has learned and the links it believes (some are wrong).\nNot a pile of weights but a way of learning: it keeps concepts, not numbers, which is why one computer can train it.");
                 case "wall": return T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。\n训练图式：网络卡在哪一层、第几轮开始出问题。", "Diagnose: see where it goes wrong. The pattern of mistakes tells you what structure to try.\nTraining map: which layer is stuck and from which epoch.");
                 case "cards": return T("成就：收集来的闪卡。稀有度越高，卡面越闪：银箔、金箔、镭射、星河，还有转动才看得见的光栅卡。\n有些卡藏在工作以外的地方。", "Achievements: the foil cards you have collected. The rarer, the shinier: silver, gold, holographic, cosmos, and lenticular cards that change as you turn them.\nSome are hidden outside work.");
                 case "chat": return T("对话：和它说话。阶段越高，它会说的越多。", "Talk: chat with it. The higher the stage, the more it can say.");
