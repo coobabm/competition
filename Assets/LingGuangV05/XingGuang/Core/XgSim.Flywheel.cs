@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         /// <summary>Logs per second per ¥/s of a contract's base income (design v1.1 §13).</summary>
-        public const double LogPerIncome = 2;
+        public const double LogPerIncome = 8;
         /// <summary>Before stage 5 the flywheel turns slowly, so buying data still matters.</summary>
         public const double LogEarlyFactor = .1;
         public const int FlywheelStage = 5;

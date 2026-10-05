@@ -98,7 +98,7 @@ namespace LingGuangV05.Desktop.Taohuo
             if (!o.available && !o.owned && o.lockedReason.Length > 0) return T(o.lockedReason, o.lockedReasonEn);
             return o.source == XgDataSource.Junk
                 ? T("便宜量大，但标签错得多：噪声会拉低准确率。配上「数据清洗」才划算。", "Cheap and big, but many labels are wrong: noise lowers accuracy. Worth it with 数据清洗.")
-                : T("公开包：和技能树里的数据节点是同一样东西，买一次就行。", "Public pack: the same thing as the data node in the skill tree, bought once.");
+                : T("公开包：和科技里的数据节点是同一样东西，买一次就行。", "Public pack: the same thing as the data node in the tech tree, bought once.");
         }
 
         void BuyData(string id)

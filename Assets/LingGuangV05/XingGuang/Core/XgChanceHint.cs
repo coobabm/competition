@@ -195,7 +195,7 @@ namespace LingGuangV05.XingGuang
                     return lrKnob
                         ? Make(id, "模型只会瞎猜：学习率 " + XgCatalog.LearningRates[run.lr] + " 太大，调到 " + to, "The model only guesses: learning rate " + XgCatalog.LearningRates[run.lr] + " is too big, set it to " + to,
                             seen + "每一步都改过头，学到的又被冲掉。", seenEn + " Every step overshoots and wipes out what it learnt.", "train", "label:" + to, arg)
-                        : Make(id, "模型只会瞎猜：学习率太大，技能树买「学习率旋钮」", "The model only guesses: the rate is too big, buy the learning-rate knob in the tree",
+                        : Make(id, "模型只会瞎猜：学习率太大，科技买「学习率旋钮」", "The model only guesses: the rate is too big, buy the learning-rate knob in the tree",
                             seen + "每一步都改过头。", seenEn + " Every step overshoots.", "tree", "node:shared.lr", "");
                 }
                 case XgChanceCause.StepActivation:
@@ -203,7 +203,7 @@ namespace LingGuangV05.XingGuang
                     int act = sim.ActivationOwned(2) ? 2 : sim.ActivationOwned(1) ? 1 : 0;
                     string why = seen + "阶跃没有坡度，误差传不回下层，多层的格子合不成新概念。", whyEn = seenEn + " A step has no slope: the error cannot reach the lower layer, so layers cannot merge concepts.";
                     if (act == 0)
-                        return Make(id, "模型只会瞎猜：激活是「阶跃」，去技能树买「S 形」激活", "The model only guesses: the activation is a step, buy the S-curve in the skill tree",
+                        return Make(id, "模型只会瞎猜：激活是「阶跃」，去科技买「S 形」激活", "The model only guesses: the activation is a step, buy the S-curve in the tech tree",
                             why, whyEn, "tree", "node:sigmoid", "");
                     string name = act == 2 ? "ReLU" : "S 形", nameEn = act == 2 ? "ReLU" : "S-curve";
                     return Make(id, "模型只会瞎猜：激活从「阶跃」换成「" + name + "」", "The model only guesses: switch the activation from step to " + nameEn,
@@ -231,7 +231,7 @@ namespace LingGuangV05.XingGuang
                     }
                     var node = NextWidthNode(sim, track);
                     return node != null
-                        ? Make(id, "模型只会瞎猜：宽度 " + now + " 太窄，技能树买「" + node.name + "」", "The model only guesses: width " + now + " is too narrow, buy " + node.nameEn + " in the skill tree",
+                        ? Make(id, "模型只会瞎猜：宽度 " + now + " 太窄，科技买「" + node.name + "」", "The model only guesses: width " + now + " is too narrow, buy " + node.nameEn + " in the tech tree",
                             why, whyEn, "tree", "node:" + node.id, "")
                         : Make(id, "模型只会瞎猜：宽度已到顶，少一层或换个结构", "The model only guesses: the width is maxed, try fewer layers or another structure",
                             why, whyEn, "train", "name:Width", arg);

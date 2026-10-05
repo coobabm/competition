@@ -545,7 +545,7 @@
         },
         {
           "author": "liandan",
-          "text": "有了数据：训练几轮 → 评估一次 → 看分数。不评估你永远不知道它练到哪了。",
+          "text": "有了数据：训练几轮 → 看每轮考的分数。分数不涨了，就该想想是数据不够还是结构不对。",
           "textEn": "Once you have data: train a few epochs, evaluate once, look at the score. Without evaluating you never know where it stands."
         },
         {
@@ -601,8 +601,8 @@
       "floors": [
         {
           "author": "liandan",
-          "text": "写个 run.sh，按一次它自己接着跑；再挂个 crontab 定时训练；最后弄成后台进程，关了窗口它也在练。",
-          "textEn": "Write a run.sh so one press keeps it going; add a crontab to train on a timer; finally make it a daemon so it trains with the window closed."
+          "text": "挂个 crontab 定时训练，人不用守着；再弄成后台进程，关了窗口它也在练。",
+          "textEn": "Add a crontab to train on a timer so you need not sit there; then make it a daemon so it trains with the window closed."
         },
         {
           "author": "xiaobai",

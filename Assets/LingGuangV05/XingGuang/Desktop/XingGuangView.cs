@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
     /// <summary>
     /// 灵光.exe content, built in code inside the 灵光.exe window: HUD (with the combo), nav, four pages
-    /// (标注台, 训练, 技能树, 订单), toasts and the effect layer. Presentation only; rules live in XgSim.
+    /// (标注台, 训练, 科技, 订单), toasts and the effect layer. Presentation only; rules live in XgSim.
     /// </summary>
     public sealed class XingGuangView : MonoBehaviour
     {
@@ -371,7 +371,7 @@ namespace LingGuangV05.Desktop.XingGuang
             UiTip.Add(hudIncome.transform.parent, () => controller != null && controller.Sim != null && controller.Sim.AutoLabelHidden
                 ? T("每秒自动进账 = 已签订单。\n去「订单」页：模型准确率够了就能签。", "Money per second = signed contracts.\nOpen Contracts: once a model is accurate enough you can sign.")
                 : T("每秒自动进账 = 已签订单 + 自动答题。\n去「订单」页：模型准确率够了就能签。", "Money per second = signed contracts + auto-answering.\nOpen Contracts: once a model is accurate enough you can sign."));
-            UiTip.Add(hudMoney.transform.parent, "经费。手动标注、订单、评级奖励会加钱；电费、显卡、技能树会花钱。", "Funds. Labelling, contracts and grade rewards add money; power, cards and the skill tree cost money.");
+            UiTip.Add(hudMoney.transform.parent, "经费。手动标注、订单、评级奖励会加钱；电费、显卡、科技会花钱。", "Funds. Labelling, contracts and grade rewards add money; power, cards and the tech tree cost money.");
             UiTip.Add(comboChip, "连击：连续答对、连续手动训练都会叠加。\n连击越高，标注报酬和手动训练效果越高。\n答错、超时或停太久会清零。", "Combo: builds with every right answer and every hand-pressed epoch.\nHigher combo pays more for labels and trains faster by hand.\nA wrong answer, a timeout or a long pause resets it.");
         }
 
@@ -414,8 +414,8 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "label": return T("标注台：亲手给数据打标签。\n答对赚钱，也给模型攒训练数据。逻辑题最值钱。", "Labelling: tag data by hand.\nRight answers earn money and give the model training data. Logic pays best.");
-                case "train": return T("训练：选数据集和结构，按「训练一轮」让它学。\n隔几轮按「评估」看成绩；成绩好才能签订单。", "Train: pick a dataset and structure, press Train epoch.\nEvaluate every few epochs; good scores unlock contracts.");
-                case "tree": return T("技能树：花钱解锁新结构、更深更宽的网络、数据包和自动化。\n按住节点 0.6 秒购买。", "Skill tree: buy new structures, deeper and wider nets, data packs and automation.\nHold a node for 0.6 s to buy.");
+                case "train": return T("训练：选数据集和结构，按「训练一轮」让它学。\n每轮练完自动考一次；成绩好才能签订单。", "Train: pick a dataset and structure, press Train epoch.\nEvery epoch ends with an exam; good scores unlock contracts.");
+                case "tree": return T("科技：花钱解锁新结构、更深更宽的网络、数据包和自动化。\n按住节点 0.6 秒购买。", "Tech tree: buy new structures, deeper and wider nets, data packs and automation.\nHold a node for 0.6 s to buy.");
                 case "contracts": return T("订单：模型准确率达到要求就能签约，之后每秒自动给钱。", "Contracts: sign once a model reaches the required accuracy; they pay every second.");
                 case "repo": return T("模型仓库：每次刷新纪录都存一个检查点。", "Models: a checkpoint is saved for every record.");
                 case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。", "Brain: the concepts it has learned and the links it believes (some are wrong).");
@@ -455,7 +455,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double vramUse = Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
             hudCompute.text = T("算力 ", "GPU ") + N(Host.Compute, "0.0") + T(" · 显存 ", " · VRAM ") + N(vramUse / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G";
             hudStage.text = T("阶段 ", "Stage ") + Sim.S.stage + "/6" + (Sim.Winter ? T(" · 寒冬", " · winter") : "");
-            string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("技能树", "Skill tree"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("对话", "Talk"), T("终章", "Finale") };
+            string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("科技", "Tech"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("对话", "Talk"), T("终章", "Finale") };
             bool trainable = Sim.TrainingUnlocked(XgTrack.Vision) || Sim.TrainingUnlocked(XgTrack.Sequence);
             bool[] open = { controller.FeatureVisible("label"), controller.FeatureVisible("train"), controller.FeatureVisible("tree"), controller.FeatureVisible("contracts"), controller.FeatureVisible("repo"), controller.FeatureVisible("board"), controller.FeatureVisible("wall"), controller.FeatureVisible("chat"), controller.FeatureVisible("final") };
             int current = tabs.FindIndex(x => x.id == tab);

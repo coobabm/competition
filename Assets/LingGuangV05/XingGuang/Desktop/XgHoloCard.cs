@@ -14,7 +14,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// a card with a recessed art window, a subject glyph standing in front of it, a frame with the text, and a
     /// laser-rainbow foil (shader LingGuang/UIHolo) whose colours run across the card as it tilts after the pointer.
     /// Finishes rise with the stage: silver, gold, pearl, full laser; 「灵光一现」 for all six is the legendary card.
-    /// It flips in when a wall is worked out alone, and opens again from the gold secret node in the skill tree.
+    /// It flips in when a wall is worked out alone, and opens again from the gold secret node in the tech tree.
     /// </summary>
     public sealed class XgHoloCard : MonoBehaviour
     {

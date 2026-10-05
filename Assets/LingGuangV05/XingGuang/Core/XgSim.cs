@@ -7,7 +7,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// 灵光: an incremental game about training CNNs and RNNs. Pure rules, no Unity.
     /// Loop: label yes/no cards (¥ + samples) → press 训练一轮 (one epoch) → every few epochs an assessment scores the
-    /// model 0–1000 and pays for new records → spend ¥ in the skill tree (architectures, layers, width, rates, data,
+    /// model 0–1000 and pays for new records → spend ¥ in the tech tree (architectures, layers, width, rates, data,
     /// research, automation). One combo counter spans labelling and training; only hand actions build it.
     ///
     /// The curve is a stylised scaling law:
@@ -166,7 +166,7 @@ namespace LingGuangV05.XingGuang
         static string F(double v, string format) { return v.ToString(format, CultureInfo.InvariantCulture); }
         public static string Pct(double v) { return F(v * 100, v >= .995 ? "0.00" : "0.0") + "%"; }
 
-        // ───────────── skill tree ─────────────
+        // ───────────── tech tree ─────────────
 
         public bool Has(string id) { return S.unlocked.Contains(id); }
         /// <summary>Some pack of this dataset is in: the public pack, or a junk / story pack (XgSim.DataSources.cs).</summary>
@@ -275,16 +275,22 @@ namespace LingGuangV05.XingGuang
         public bool HasLrKnob(XgTrack track) { return Has("shared.lr") || Has("v.lr") || Has("s.lr"); }
         public static int DefaultLr(XgTrack track) { return 2; }
 
-        /// <summary>0 = hand only … 5 = AutoML. Each automation node needs the one before.</summary>
+        /// <summary>
+        /// 0 = hand only, 2 = crontab … 5 = AutoML. Each automation node needs the one before; the chain starts at
+        /// crontab (auto2): the old run.sh (auto1, hold to repeat) is gone, so level 1 no longer exists.
+        /// </summary>
         public int AutoTrainLevel
         {
-            get { int level = 0; for (int i = 1; i <= 5; i++) if (Has("auto" + i)) level = i; else break; return level; }
+            get { int level = 0; for (int i = 2; i <= 5; i++) if (Has("auto" + i)) level = i; else break; return level; }
         }
 
         /// <summary>Seconds between automatic epochs at this automation level.</summary>
         public static double AutoInterval(int level) { return level >= 5 ? 1 : level == 4 ? 1.5 : level == 3 ? 2 : 3; }
 
-        public int EvalEvery { get { return AutoTrainLevel >= 4 ? 1 : 4; } }
+        /// <summary>Every epoch ends with an exam on unseen cards (a record saves the checkpoint and pays).</summary>
+        public int EvalEvery => 1;
+        /// <summary>Epochs in a row without a record before the hint, AutoML's dataset switch, and early stopping.</summary>
+        public const int StaleHintEpochs = 12, AutoSwitchEpochs = 8, EarlyStopEpochs = 12;
 
         public XgResearch Optimizer
         {
@@ -448,7 +454,7 @@ namespace LingGuangV05.XingGuang
         public bool SetLr(XgTrack track, int index)
         {
             if (Run(track).epochActive) return false;
-            if (!HasLrKnob(track)) { Say(T("先在技能树买「学习率旋钮」", "Buy the learning-rate knob in the skill tree first")); return false; }
+            if (!HasLrKnob(track)) { Say(T("先在科技买「学习率旋钮」", "Buy the learning-rate knob in the tech tree first")); return false; }
             var run = Run(track);
             run.lr = Math.Max(0, Math.Min(XgCatalog.LearningRates.Length - 1, index));
             run.autoLr = false;
@@ -730,12 +736,12 @@ namespace LingGuangV05.XingGuang
             if (!a.record)
             {
                 run.staleEvals++;
-                if (run.staleEvals == 3) Say(StaleHint(run));
-                if (AutoTrainLevel >= 5 && run.staleEvals >= 2) AutoSwitchData(run);
-                else if (!hand && AutoTrainLevel == 4 && run.staleEvals >= 3)
+                if (run.staleEvals == StaleHintEpochs) Say(StaleHint(run));
+                if (AutoTrainLevel >= 5 && run.staleEvals >= AutoSwitchEpochs) AutoSwitchData(run);
+                else if (!hand && AutoTrainLevel == 4 && run.staleEvals >= EarlyStopEpochs)
                 {
                     run.running = false;
-                    Say(T("早停：连续三次评估未刷新纪录，已保留最佳检查点。", "Early stop: three assessments without a record; the best checkpoint is preserved."));
+                    Say(T("早停：连续 " + EarlyStopEpochs + " 轮没有刷新纪录，已保留最佳检查点。", "Early stop: " + EarlyStopEpochs + " epochs without a record; the best checkpoint is preserved."));
                 }
             }
             run.lastScore = a.score;
@@ -817,8 +823,8 @@ namespace LingGuangV05.XingGuang
             var track = (XgTrack)m.track;
             if (!Has(m.arch)) return T("架构还没解锁", "Architecture locked");
             if (!DatasetAvailable(m.dataset)) return T("数据集不可用", "Dataset unavailable");
-            if (m.depth > DepthCap(track)) return T("层数超过技能树上限 " + DepthCap(track), "Depth above the cap " + DepthCap(track));
-            if (m.width > WidthCap(track)) return T("宽度超过技能树上限", "Width above the cap");
+            if (m.depth > DepthCap(track)) return T("层数超过科技上限 " + DepthCap(track), "Depth above the cap " + DepthCap(track));
+            if (m.width > WidthCap(track)) return T("宽度超过科技上限", "Width above the cap");
             return null;
         }
 
@@ -846,9 +852,9 @@ namespace LingGuangV05.XingGuang
         {
             var d = XgCatalog.Dataset(run.dataset);
             if (Hazard(run) > 0 && S.nanEvents > 0) return T("学习率太大，老在炸。调小一档。", "The rate keeps blowing up. Turn it down a notch.");
-            if (Samples(d.id) < d.need) return T("数据不够了：去标注台多标点「" + d.name + "」，或在技能树买完整包。", "Data is the limit: label more " + d.nameEn + " or buy the full pack.");
+            if (Samples(d.id) < d.need) return T("数据不够了：去标注台多标点「" + d.name + "」，或在科技买完整包。", "Data is the limit: label more " + d.nameEn + " or buy the full pack.");
             if (run.depth < DepthCap((XgTrack)run.track) || run.width < WidthCap((XgTrack)run.track)) return T("模型到顶了：在训练页把层数或宽度调大。", "The model has peaked: raise its depth or width on the training page.");
-            return T("模型到顶了：去技能树加层、加宽或换架构。", "The model has peaked: add layers, width or a new architecture in the skill tree.");
+            return T("模型到顶了：去科技加层、加宽或换架构。", "The model has peaked: add layers, width or a new architecture in the tech tree.");
         }
 
         void AutoSwitchData(XgRun run)
@@ -987,7 +993,7 @@ namespace LingGuangV05.XingGuang
         {
             if (desk == null || ProgressionDeskAvailable(desk.id)) return "";
             var pack = XgCatalog.Node(desk.id + ".pack");
-            return pack == null ? "" : T("第 " + pack.stage + " 阶段在技能树买「" + pack.name + "」后开放", "Opens with " + pack.nameEn + " in the skill tree (stage " + pack.stage + ")");
+            return pack == null ? "" : T("第 " + pack.stage + " 阶段在科技买「" + pack.name + "」后开放", "Opens with " + pack.nameEn + " in the tech tree (stage " + pack.stage + ")");
         }
 
         void CheckDesks()

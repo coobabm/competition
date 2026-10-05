@@ -191,6 +191,14 @@ namespace LingGuangV05.Desktop.XingGuang
             content.localScale = Vector3.one * .9f;
             Panel(content, Color.clear).raycastTarget = true;
             Pan = viewport.gameObject.AddComponent<XgPan>(); Pan.content = content; Pan.viewport = viewport;
+            // Lane bands as alternating stripes behind everything, so each row of the tree reads as one track.
+            int band = 0;
+            foreach (var lane in XgCatalog.Lanes)
+            {
+                float top = 70 + XgCatalog.LaneTop(lane) - 44, height = XgCatalog.LaneHeight(lane) + 48;
+                var stripe = Rect("LaneBand " + lane, content, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -top - height), new Vector2(0, -top));
+                Panel(stripe, band++ % 2 == 0 ? new Color32(236, 240, 248, 255) : new Color32(246, 248, 252, 0)).raycastTarget = false;
+            }
             var linkRt = Rect("Links", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             linkRt.pivot = new Vector2(0, 1);
             links = linkRt.gameObject.AddComponent<XgLinksGraphic>(); links.raycastTarget = false;
@@ -254,6 +262,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         LaneTitle("VisionLane" + i, i, "视觉", "Vision", "vision");
                         LaneTitle("SequenceLane" + i, i, "序列", "Sequence", "sequence");
                     }
+                    if (i >= 1) LaneTitle("TrunkLane" + i, i, "主干", "Core", "trunk");
                     if (i >= 1) { LaneTitle("ResearchLane" + i, i, "研究", "Research", "research"); LaneTitle("AutomationLane" + i, i, "自动化", "Automation", "auto"); LaneTitle("AtlasLane" + i, i, "图鉴 · 现象与能力", "Atlas · phenomena and abilities", "atlas"); }
                 }
             }
@@ -268,14 +277,14 @@ namespace LingGuangV05.Desktop.XingGuang
                     miniButtons[i].Set(i == 0 ? T("标注", "Labels") : i.ToString(), true, i == stage ? XgPalette.AccentSoft : XgPalette.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
-                foreach (string prefix in new[] { "VisionLane", "SequenceLane", "ResearchLane", "AutomationLane", "AtlasLane" })
+                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "AutomationLane", "AtlasLane" })
                 {
                     var lane = content.Find(prefix + pair.Key);
                     if (lane != null)
                     {
                         lane.gameObject.SetActive(visible);
                         var label = lane.GetComponent<TMP_Text>();
-                        label.text = prefix == "VisionLane" ? T("视觉", "Vision") : prefix == "SequenceLane" ? T("序列", "Sequence") : prefix == "ResearchLane" ? T("研究", "Research") : prefix == "AtlasLane" ? T("图鉴 · 现象与能力", "Atlas · phenomena and abilities") : T("自动化", "Automation");
+                        label.text = prefix == "TrunkLane" ? T("主干", "Core") : prefix == "VisionLane" ? T("视觉", "Vision") : prefix == "SequenceLane" ? T("序列", "Sequence") : prefix == "ResearchLane" ? T("研究", "Research") : prefix == "AtlasLane" ? T("图鉴 · 现象与能力", "Atlas · phenomena and abilities") : T("自动化", "Automation");
                     }
                 }
             }
@@ -372,7 +381,13 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         public override void Shown() { SyncRevealedContent(false); FocusFrontier(); }
         void Focus(XgNodeView node) => Pan.GlideTo(((RectTransform)node.transform).anchoredPosition);
-        public void Hover(XgNodeView node) { if (!node.gameObject.activeSelf) return; selected = node; RefreshInfo(); }
+        public void Hover(XgNodeView node)
+        {
+            if (!node.gameObject.activeSelf) return;
+            bool changed = selected != node; selected = node;
+            // The selected node's prerequisites in other lanes are drawn: rebuild the links at once.
+            if (changed) Refresh(); else RefreshInfo();
+        }
         /// <summary>Shows a self-insight card (wall id); set by the card overlay.</summary>
         public static Action<string> OpenInsightCard;
 
@@ -481,9 +496,12 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (progress >= 1) entrances.Remove(node);
                 }
             }
-            float pulse = .5f + .5f * Mathf.Sin(Time.unscaledTime * 5);
-            foreach (var node in nodes) if (node.gameObject.activeSelf) Paint(node, pulse);
+            // Painted once per frame from here only, with a steady glow: nothing breathes or blinks (Refresh used to repaint
+            // at a fixed glow every 0.2 s against this frame's pulse, which made buyable nodes flicker).
+            foreach (var node in nodes) if (node.gameObject.activeSelf) Paint(node, SteadyGlow);
         }
+
+        const float SteadyGlow = .6f;
 
         void Paint(XgNodeView node, float pulse)
         {
@@ -523,7 +541,7 @@ namespace LingGuangV05.Desktop.XingGuang
             SyncRevealedContent(true);
             int buyable = 0;
             foreach (var node in nodes) if (node.gameObject.activeSelf && Sim.Status(node.node, Host) == XgSim.NodeStatus.Buyable) buyable++;
-            header.text = "<b>" + T("技能树", "Skill tree") + "</b>  <color=#E86E14>¥ " + Money(Host.Money) + "</color>";
+            header.text = "<b>" + T("科技", "Tech") + "</b>  <color=#E86E14>¥ " + Money(Host.Money) + "</color>";
             toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
             toolbar[2].Set(T("可买 ", "Buy ") + buyable, true, buyable > 0 ? XgPalette.AccentSoft : XgPalette.Button);
             var edges = new List<XgLinksGraphic.Link>();
@@ -538,7 +556,6 @@ namespace LingGuangV05.Desktop.XingGuang
                     item.label.text = lit || node.kind == XgNodeKind.Ability ? Sim.NodeName(node) : T("？？？", "???");
                     item.label.color = lit && node.kind == XgNodeKind.Ability ? Color.white : lit ? XgPalette.Ink : XgPalette.Muted;
                     item.cost.text = lit ? "<color=#2F9E44>✓</color>" : "";
-                    Paint(item, .5f);
                     continue;
                 }
                 bool mystery = Sim.NodeMystery(node);
@@ -547,17 +564,25 @@ namespace LingGuangV05.Desktop.XingGuang
                 item.cost.text = status == XgSim.NodeStatus.Owned ? "<color=#2F9E44>✓</color>" : mystery ? "" : ProjectNodeRunning(node) ? T("研发中", "Researching") : cost > 0 && !double.IsInfinity(cost) ? "¥" + Money(cost) : "";
                 AddEdge(node.parent, node, false);
                 foreach (string need in node.needs) AddEdge(need, node, true);
-                Paint(item, .5f);
             }
             links.SetLinks(edges); RefreshInfo();
             void AddEdge(string parentId, XgNode node, bool dashed)
             {
                 var parent = XgCatalog.Node(parentId);
                 if (parent == null || !Sim.NodeVisible(parent)) return;
+                // Only links inside a lane are always drawn; a prerequisite in another lane shows while either end is selected.
+                bool crossLane = XgCatalog.Band(parent.lane) != XgCatalog.Band(node.lane);
+                bool focus = selected != null && (selected.node == node || selected.node == parent);
+                if (crossLane && !focus) return;
                 var start = Pos(parent); var end = Pos(node);
                 bool forward = end.x > start.x;
                 float from = HalfWidth(parent), to = HalfWidth(node);
-                edges.Add(new XgLinksGraphic.Link { a = start + new Vector2(forward ? from : -from, 0), b = end + new Vector2(forward ? -to : to, 0), color = Sim.Has(node.id) ? LaneColor(node.lane) : new Color32(170, 180, 200, 210), width = Sim.Has(node.id) ? 4 : 2, dashed = dashed });
+                var a = start + new Vector2(forward ? from : -from, 0); var b = end + new Vector2(forward ? -to : to, 0);
+                // Links into another stage turn in that stage's left gutter, so a fan from one parent shares one bus;
+                // links within a stage turn just left of the child.
+                float? turn = !forward ? (float?)null : parent.stage != node.stage ? node.stage * XgCatalog.StageWidth + 40 : b.x - 16;
+                Color color = focus ? XgPalette.Gold : Sim.Has(node.id) ? LaneColor(node.lane) : new Color32(170, 180, 200, 210);
+                edges.Add(new XgLinksGraphic.Link { a = a, b = b, color = color, width = focus ? 4 : Sim.Has(node.id) ? 4 : 2, dashed = dashed, turnX = turn });
             }
         }
 

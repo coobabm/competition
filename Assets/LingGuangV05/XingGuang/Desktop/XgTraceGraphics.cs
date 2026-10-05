@@ -27,9 +27,12 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Layers drawn at most; deeper networks show the first and last ones around a gap.</summary>
         public const int MaxDrawn = 7;
 
-        public void SetData(XgNetworkHealth h)
+        /// <summary>The layer the verdict points at (red, with an arrow); 0 = none. alertAll frames the whole net (e.g. cells).</summary>
+        int focus; bool alertAll;
+
+        public void SetData(XgNetworkHealth h, int focusLayer = -1, bool alertWhole = false)
         {
-            health = h;
+            health = h; focus = focusLayer; alertAll = alertWhole;
             Layout.Clear();
             if (h == null) { SetVerticesDirty(); return; }
             var drawn = new List<int>();
@@ -53,7 +56,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 Layout.Add(new Box
                 {
                     front = Centered(cx, .46f, step * .34f, size * .9f), thick = Mathf.Lerp(.012f, .06f, Mathf.Clamp01(share * 2)), layer = l,
-                    sick = layer.problem.Length > 0, empty = layer.concepts == 0, relay = (float)layer.relay, garble = (float)layer.garble,
+                    sick = focusLayer < 0 ? layer.problem.Length > 0 : l == focusLayer, empty = layer.concepts == 0, relay = (float)layer.relay, garble = (float)layer.garble,
                 });
             }
             Layout.Add(new Box { front = Centered(.04f + step * (slots - .5f), .46f, step * .18f, .34f), thick = .01f, output = true, relay = 1 });
@@ -75,6 +78,27 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < Layout.Count - 2; i++) if (!Layout[i].gap) Curve(vh, Top(last), Top(Px(r, Layout[i].front)), r.height * .18f, 1.2f, LoopColor);
             }
             foreach (var b in Layout) DrawBox(vh, r, b);
+            // The verdict: an arrow over the stuck layer, or a red frame round the whole net when the net as a whole is short.
+            foreach (var b in Layout)
+                if (b.sick && b.layer > 0 && b.layer == focus)
+                {
+                    var f = Px(r, b.front); var tip = new Vector2(f.center.x, f.yMax + r.height * .03f);
+                    Quad(vh, tip, tip + new Vector2(-10, 16), tip + new Vector2(10, 16), tip, SickEdge);
+                    Line(vh, tip + new Vector2(0, 14), tip + new Vector2(0, 34), 4, SickEdge);
+                }
+            if (alertAll)
+            {
+                float x0 = float.MaxValue, x1 = float.MinValue, y0 = float.MaxValue, y1 = float.MinValue;
+                foreach (var b in Layout) { if (b.input || b.output || b.gap) continue; var f = Px(r, b.front); x0 = Mathf.Min(x0, f.xMin); x1 = Mathf.Max(x1, f.xMax); y0 = Mathf.Min(y0, f.yMin); y1 = Mathf.Max(y1, f.yMax); }
+                if (x1 > x0)
+                {
+                    var frame = new Rect(x0 - 14, y0 - 12, x1 - x0 + 40, y1 - y0 + 34);
+                    Dashed(vh, new Vector2(frame.xMin, frame.yMin), new Vector2(frame.xMax, frame.yMin), 2.5f, SickEdge);
+                    Dashed(vh, new Vector2(frame.xMax, frame.yMin), new Vector2(frame.xMax, frame.yMax), 2.5f, SickEdge);
+                    Dashed(vh, new Vector2(frame.xMax, frame.yMax), new Vector2(frame.xMin, frame.yMax), 2.5f, SickEdge);
+                    Dashed(vh, new Vector2(frame.xMin, frame.yMax), new Vector2(frame.xMin, frame.yMin), 2.5f, SickEdge);
+                }
+            }
             // Loops and shortcuts go over the boxes, so they are never hidden behind a face.
             for (int i = 1; i < Layout.Count - 1; i++) Loop(vh, r, Layout[i]);
             if (health.skip)
@@ -244,13 +268,17 @@ namespace LingGuangV05.Desktop.XingGuang
         static readonly Color Change = new Color32(150, 160, 182, 255), Phenomenon = new Color32(132, 94, 247, 255);
         XgTrace trace;
         float goal;
+        int highlight = -1;
         /// <summary>Epoch span on screen (first and last point), for the page's axis labels.</summary>
         public int FromEpoch { get; private set; }
         public int ToEpoch { get; private set; }
 
-        public void SetData(XgTrace t, float goalLine)
+        /// <summary>X of an epoch in 0–1 across the chart (for the page's marker label).</summary>
+        public float EpochX(int epoch) => ToEpoch <= FromEpoch ? 1 : Mathf.Clamp01((epoch - FromEpoch) / (float)(ToEpoch - FromEpoch));
+
+        public void SetData(XgTrace t, float goalLine, int highlightEpoch = -1)
         {
-            trace = t; goal = goalLine;
+            trace = t; goal = goalLine; highlight = highlightEpoch;
             FromEpoch = t != null && t.points.Count > 0 ? t.points[0].epoch : 0;
             ToEpoch = t != null && t.points.Count > 0 ? t.points[t.points.Count - 1].epoch : 0;
             SetVerticesDirty();
@@ -278,11 +306,18 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (goal > .5f)
                 for (float x = r.xMin; x < r.xMax; x += 12) XgNetworkGraphic.Line(vh, new Vector2(x, Y(r, goal)), new Vector2(Mathf.Min(r.xMax, x + 7), Y(r, goal)), 2, XgChartGraphic.BestColor);
+            // Settings changes stay as faint grey ticks; only the epoch the verdict's problem began is drawn strong and red.
             foreach (var e in trace.events)
             {
-                if (e.epoch < FromEpoch) continue;
-                var c = XgSim.TraceEventIsProblem(e) ? XgNetworkGraphic.SickEdge : e.id == "change" ? Change : Phenomenon;
-                XgNetworkGraphic.Line(vh, new Vector2(X(r, e.epoch), r.yMin), new Vector2(X(r, e.epoch), r.yMax), e.id == "change" ? 1.2f : 1.8f, new Color(c.r, c.g, c.b, .8f));
+                if (e.epoch < FromEpoch || e.id != "change") continue;
+                XgNetworkGraphic.Line(vh, new Vector2(X(r, e.epoch), r.yMin), new Vector2(X(r, e.epoch), r.yMax), 1.2f, new Color(Change.r, Change.g, Change.b, .5f));
+            }
+            if (highlight >= FromEpoch)
+            {
+                float x = X(r, highlight);
+                XgNetworkGraphic.Line(vh, new Vector2(x, r.yMin), new Vector2(x, r.yMax), 3f, XgNetworkGraphic.SickEdge);
+                // Everything after the problem began is shaded, so the bad stretch reads at a glance.
+                XgNetworkGraphic.Line(vh, new Vector2((x + r.xMax) * .5f, r.yMin), new Vector2((x + r.xMax) * .5f, r.yMax), Mathf.Max(1, r.xMax - x), new Color(1, .3f, .3f, .07f));
             }
             for (int i = 1; i < pts.Count; i++)
             {

@@ -287,7 +287,11 @@ namespace LingGuangV05.XingGuang
         /// <summary>Skill-tree geometry: one column per stage, cards in rows of <see cref="NodesPerRow"/>, lanes stacked top to bottom.</summary>
         public const float StageWidth = 720, NodeWidth = 136, NodeHeight = 64, BreakthroughSize = 120, SlotWidth = 150, RowHeight = 84;
         public const int NodesPerRow = 4;
-        static readonly string[] LaneOrder = { "vision", "trunk", "sequence", "research", "auto", "atlas" };
+        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "auto", "atlas" };
+        /// <summary>Lane bands in drawing order (the tree page paints their stripes).</summary>
+        public static IReadOnlyList<string> Lanes => LaneOrder;
+        /// <summary>Height of a lane's band (after layout).</summary>
+        public static float LaneHeight(string lane) { var _ = Nodes; return laneHeight.TryGetValue(Band(lane), out float h) ? h : 0; }
         static readonly Dictionary<string, float> laneTop = new Dictionary<string, float>();
         static readonly Dictionary<string, float> laneHeight = new Dictionary<string, float>();
         static float treeHeight;
@@ -295,7 +299,8 @@ namespace LingGuangV05.XingGuang
         public static float TreeHeight { get { var _ = Nodes; return treeHeight; } }
         /// <summary>Top of a lane's band (its title sits just above).</summary>
         public static float LaneTop(string lane) { var _ = Nodes; return laneTop.TryGetValue(Band(lane), out float y) ? y : 0; }
-        static string Band(string lane) => lane == "label" || Array.IndexOf(LaneOrder, lane) < 0 ? "vision" : lane;
+        /// <summary>The band a lane is drawn in: the labelling skills (stage 0 only) share the trunk band.</summary>
+        public static string Band(string lane) => lane == "label" ? "trunk" : Array.IndexOf(LaneOrder, lane) < 0 ? "vision" : lane;
         public static readonly string[] StageNames = { "标注", "学会简单判断", "学会组合特征", "走向专长", "学会保留信息", "学会寻找重点", "重构学习方式" };
         public static readonly string[] StageNamesEn = { "Labelling", "Simple decisions", "Combine features", "Specialize", "Keep information", "Find what matters", "Rebuild learning" };
         public static readonly int[] StageYears = { 0, 1958, 1986, 1998, 1997, 2014, 2017 };
@@ -406,8 +411,9 @@ namespace LingGuangV05.XingGuang
                 Add(N("ab." + i, "atlas", null, XgNodeKind.Ability, null, i, 0, 0, 0, AbilityNames[i], AbilityNamesEn[i], AbilityNotes[i], AbilityNotesEn[i]), i, "atlas");
             S("secret.6", 6, "transformer", 30000, "秘籍 · 预训练", "Secret · pre-training");
             Add(Simple("datacenter", XgNodeKind.Label, "transformer", 60000, "机房", "Server room", "预训练一开，一台机箱的 3500W 就跳闸。机房把整排机柜接上专线。", "Pre-training trips one case's 3500 W breaker. A server room puts racks on a dedicated line."), 6, "research");
-            for (int i = 0; i < AutoNames.Length; i++)
-                Add(N("auto" + (i + 1), "research", i == 0 ? "perceptron" : "auto" + i, XgNodeKind.Auto, null, i + 1, AutoCosts[i], 0, 0, AutoNames[i], AutoNamesEn[i], AutoNotes[i], AutoNotesEn[i]), i + 1, "auto");
+            // Automation starts at crontab (auto2); run.sh (auto1) is retired.
+            for (int i = 1; i < AutoNames.Length; i++)
+                Add(N("auto" + (i + 1), "research", i == 1 ? "perceptron" : "auto" + i, XgNodeKind.Auto, null, i + 1, AutoCosts[i], 0, 0, AutoNames[i], AutoNamesEn[i], AutoNotes[i], AutoNotesEn[i]), i + 1, "auto");
             foreach (var node in XgSim.LabelNodes) Add(node, 0, "label");
             LayoutStages(list);
             return list.ToArray();
@@ -417,26 +423,44 @@ namespace LingGuangV05.XingGuang
         /// Lays the cards out: each lane is as tall as its fullest stage needs, so nothing overlaps and the names
         /// stay large. Breakthroughs sit on the border between two stages, centred on their lane.
         /// </summary>
+        /// <summary>
+        /// Lays the cards out as chains that read left to right. In each stage and lane, a node sits directly right of
+        /// its parent on the parent's row when the parent is in the same stage and lane (so links run straight across);
+        /// other nodes start a chain at the left edge on the first free row, and siblings stack below. A chain longer
+        /// than <see cref="NodesPerRow"/> wraps onto a new row. Each lane is as tall as its fullest stage needs.
+        /// Breakthroughs sit on the border between two stages, centred on their lane.
+        /// </summary>
         static void LayoutStages(List<XgNode> list)
         {
-            var counts = new Dictionary<string, int>();
+            var byId = new Dictionary<string, XgNode>();
+            foreach (var n in list) byId[n.id] = n;
+            var row = new Dictionary<string, int>(); var column = new Dictionary<string, int>();
+            var taken = new HashSet<string>(); var rows = new Dictionary<string, int>();
             foreach (var n in list)
             {
                 if (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project) continue;
                 string key = n.stage + ":" + Band(n.lane);
-                counts.TryGetValue(key, out int c); counts[key] = c + 1;
+                int r = 0, c = 0;
+                if (n.parent != null && byId.TryGetValue(n.parent, out var p) && column.ContainsKey(p.id) && p.stage == n.stage && Band(p.lane) == Band(n.lane))
+                {
+                    r = row[p.id]; c = column[p.id] + 1;
+                    if (c >= NodesPerRow) { c = 0; r++; }
+                }
+                while (taken.Contains(key + ":" + r + ":" + c)) r++;
+                taken.Add(key + ":" + r + ":" + c);
+                row[n.id] = r; column[n.id] = c;
+                rows.TryGetValue(key, out int used); rows[key] = Math.Max(used, r + 1);
             }
             float top = 110;
             laneTop.Clear(); laneHeight.Clear();
             foreach (var lane in LaneOrder)
             {
-                int rows = 1;
-                foreach (var kv in counts) if (kv.Key.EndsWith(":" + lane, StringComparison.Ordinal)) rows = Math.Max(rows, (kv.Value + NodesPerRow - 1) / NodesPerRow);
-                laneTop[lane] = top; laneHeight[lane] = rows * RowHeight;
-                top += rows * RowHeight + 48;
+                int most = 1;
+                foreach (var kv in rows) if (kv.Key.EndsWith(":" + lane, StringComparison.Ordinal)) most = Math.Max(most, kv.Value);
+                laneTop[lane] = top; laneHeight[lane] = most * RowHeight;
+                top += most * RowHeight + 48;
             }
             treeHeight = top;
-            var slots = new Dictionary<string, int>();
             foreach (var n in list)
             {
                 string band = Band(n.lane);
@@ -447,10 +471,8 @@ namespace LingGuangV05.XingGuang
                     n.y = laneTop[home] + Math.Max(RowHeight, laneHeight[home]) * .5f - RowHeight * .5f + NodeHeight * .5f;
                     continue;
                 }
-                string key = n.stage + ":" + band;
-                slots.TryGetValue(key, out int slot); slots[key] = slot + 1;
-                n.x = n.stage * StageWidth + 120 + (slot % NodesPerRow) * SlotWidth;
-                n.y = laneTop[band] + NodeHeight * .5f + (slot / NodesPerRow) * RowHeight;
+                n.x = n.stage * StageWidth + 120 + column[n.id] * SlotWidth;
+                n.y = laneTop[band] + NodeHeight * .5f + row[n.id] * RowHeight;
             }
         }
 
@@ -460,23 +482,24 @@ namespace LingGuangV05.XingGuang
         static readonly string[] AbilityNotes = { "", "它只会回答「是」或「否」。", "它能在几个选项里挑一个。", "它会说一个词，看图也能说出一个词。", "它能说 20 个字以内的短句，记得最近几轮。", "它记得你们聊过什么，能翻译，能读懂乱码。", "规模上去以后，能力一起冒了出来：写诗、解题、写代码、看图、总结、推理。" };
         static readonly string[] AbilityNotesEn = { "", "It can only answer yes or no.", "It can pick one of a few options.", "It says one word, and names a picture in one word.", "It speaks short sentences of up to 20 characters and remembers the last few turns.", "It remembers what you talked about, translates and reads the garbled page.", "With scale the abilities came all at once: poems, puzzles, code, pictures, summaries, reasoning." };
 
-        public static readonly string[] AutoNames = { "训练脚本 run.sh", "定时任务 crontab", "后台守护进程", "自动评估 + 早停", "AutoML 流水线" };
-        public static readonly string[] AutoNamesEn = { "Training script run.sh", "crontab job", "Background daemon", "Auto-evaluate + early stop", "AutoML pipeline" };
+        // Index 0 (run.sh) is retired: it is not in the tree any more; the chain starts at crontab.
+        public static readonly string[] AutoNames = { "训练脚本 run.sh", "定时任务 crontab", "后台守护进程", "早停", "AutoML 流水线" };
+        public static readonly string[] AutoNamesEn = { "Training script run.sh", "crontab job", "Background daemon", "Early stopping", "AutoML pipeline" };
         static readonly string[] AutoNotes =
         {
             "按住「训练一轮」不放就会一轮接一轮地按，连击不断。",
             LingGuangV05.Core.AppNames.AppZh + "窗口开着时，每 3 秒自动训练一轮（只有手按的一半效果，不算连击）。",
-            "窗口关了也在后台训练，离线时间按真实时间补上。",
-            "每一轮都评估一次，刷新纪录自动存检查点。",
-            "自动调学习率、自动换到样本最多的数据集、自动签能签的订单。你只管技能树。",
+            "窗口关了也在后台训练（游戏开着才算，关掉游戏就停）。",
+            "自动训练时，连续 12 轮没刷新纪录就停下，保留最佳检查点，不白烧电。",
+            "自动调学习率、自动换到样本最多的数据集、自动签能签的订单。你只管科技。",
         };
         static readonly string[] AutoNotesEn =
         {
             "Hold 训练一轮 and it keeps pressing for you; the combo stays alive.",
             "While the window is open, trains one epoch every 3 s (half as strong as a hand press; no combo).",
-            "Keeps training in the background with the window closed, and catches up on time away.",
-            "Evaluates after every epoch and saves every record checkpoint.",
-            "Tunes the rate, moves to the dataset with most samples and signs every contract it can. You just shop the tree.",
+            "Keeps training in the background with the window closed (only while the game runs).",
+            "While auto-training, stops after 12 epochs without a record and keeps the best checkpoint: no wasted power.",
+            "Tunes the rate, moves to the dataset with most samples and signs every contract it can. You just pick research.",
         };
         static readonly double[] AutoCosts = { 250, 900, 3000, 5000, 20000 };
 
@@ -511,26 +534,26 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgContract[] Contracts =
         {
-            new XgContract { id = "cheque", client = "城郊信用社", clientEn = "Suburban credit union", job = "支票金额识别", jobEn = "Cheque amount reading", dataset = "mnist", threshold = .97, income = 1.5, signBonus = 60 },
-            new XgContract { id = "zipcode", client = "区邮政局", clientEn = "District post office", job = "邮政编码分拣", jobEn = "Postcode sorting", dataset = "mnist", threshold = .99, income = 4, signBonus = 200 },
-            new XgContract { id = "memetag", client = "斗图网", clientEn = "A meme site", job = "表情包自动打标签", jobEn = "Meme auto-tagging", dataset = "meme", threshold = .85, income = 2.5, signBonus = 120 },
-            new XgContract { id = "captcha", client = "某购票网站", clientEn = "A ticketing site", job = "验证码难度测评", jobEn = "Captcha difficulty testing", dataset = "cifar", threshold = .7, income = 9, signBonus = 450 },
-            new XgContract { id = "goclub", client = "县围棋协会", clientEn = "County Go club", job = "死活题批改", jobEn = "Life-and-death marking", dataset = "go", threshold = .9, income = 16, signBonus = 900 },
-            new XgContract { id = "parking", client = "小区停车场", clientEn = "Estate car park", job = "车辆识别抬杆", jobEn = "Vehicle recognition gate", dataset = "cifar", threshold = .8, income = 12, signBonus = 600 },
-            new XgContract { id = "taobao", client = "淘宝卖家联盟", clientEn = "Taobao seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 45, signBonus = 2500 },
-            new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "人脸考勤", jobEn = "Face clock-in", dataset = "imagenet", threshold = .9, income = 140, signBonus = 8000 },
+            new XgContract { id = "cheque", client = "城郊信用社", clientEn = "Suburban credit union", job = "支票金额识别", jobEn = "Cheque amount reading", dataset = "mnist", threshold = .97, income = .4, signBonus = 60 },
+            new XgContract { id = "zipcode", client = "区邮政局", clientEn = "District post office", job = "邮政编码分拣", jobEn = "Postcode sorting", dataset = "mnist", threshold = .99, income = 1, signBonus = 200 },
+            new XgContract { id = "memetag", client = "斗图网", clientEn = "A meme site", job = "表情包自动打标签", jobEn = "Meme auto-tagging", dataset = "meme", threshold = .85, income = .6, signBonus = 120 },
+            new XgContract { id = "captcha", client = "某购票网站", clientEn = "A ticketing site", job = "验证码难度测评", jobEn = "Captcha difficulty testing", dataset = "cifar", threshold = .7, income = 2, signBonus = 450 },
+            new XgContract { id = "goclub", client = "县围棋协会", clientEn = "County Go club", job = "死活题批改", jobEn = "Life-and-death marking", dataset = "go", threshold = .9, income = 4, signBonus = 900 },
+            new XgContract { id = "parking", client = "小区停车场", clientEn = "Estate car park", job = "车辆识别抬杆", jobEn = "Vehicle recognition gate", dataset = "cifar", threshold = .8, income = 3, signBonus = 600 },
+            new XgContract { id = "taobao", client = "淘宝卖家联盟", clientEn = "Taobao seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 11, signBonus = 2500 },
+            new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "人脸考勤", jobEn = "Face clock-in", dataset = "imagenet", threshold = .9, income = 35, signBonus = 8000 },
 
-            new XgContract { id = "acrostic", client = "公众号「每日一诗」", clientEn = "WeChat account Daily Poem", job = "藏头诗生成", jobEn = "Acrostic poems", dataset = "poems", threshold = .35, income = 2, signBonus = 80 },
-            new XgContract { id = "homework", client = "家教网站", clientEn = "Tutoring site", job = "作业是非题自动批改", jobEn = "Homework auto-marking", dataset = "logic", threshold = .75, income = 6, signBonus = 300 },
-            new XgContract { id = "civilexam", client = "考公培训班", clientEn = "Civil-service prep school", job = "判断推理陪练", jobEn = "Reasoning drills", dataset = "logic", threshold = .88, income = 28, signBonus = 1500 },
-            new XgContract { id = "danmaku", client = "某弹幕网站", clientEn = "A danmaku video site", job = "弹幕情绪审核", jobEn = "Comment moderation", dataset = "danmu", threshold = .85, income = 3, signBonus = 150 },
-            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈骗短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 5, signBonus = 250 },
-            new XgContract { id = "clickbait", client = "某浏览器资讯频道", clientEn = "A browser news feed", job = "标题党降权", jobEn = "Clickbait demotion", dataset = "headline", threshold = .85, income = 8, signBonus = 400 },
-            new XgContract { id = "fakereview", client = "电商平台风控部", clientEn = "Marketplace risk team", job = "刷单评论识别", jobEn = "Fake-review detection", dataset = "review", threshold = .85, income = 14, signBonus = 800 },
-            new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 9, signBonus = 450 },
-            new XgContract { id = "support", client = "网店客服外包", clientEn = "Shop support outsourcer", job = "自动客服回复", jobEn = "Auto support replies", dataset = "news", threshold = .58, income = 25, signBonus = 1200 },
-            new XgContract { id = "crossborder", client = "表姐的微商小店", clientEn = "Cousin’s online shop", job = "商品描述翻译", jobEn = "Listing translation", dataset = "translate", threshold = .45, income = 70, signBonus = 4000 },
-            new XgContract { id = "subtitle", client = "字幕组", clientEn = "Fansub group", job = "美剧字幕初翻", jobEn = "Subtitle first drafts", dataset = "translate", threshold = .62, income = 180, signBonus = 10000 },
+            new XgContract { id = "acrostic", client = "公众号「每日一诗」", clientEn = "WeChat account Daily Poem", job = "藏头诗生成", jobEn = "Acrostic poems", dataset = "poems", threshold = .35, income = .5, signBonus = 80 },
+            new XgContract { id = "homework", client = "家教网站", clientEn = "Tutoring site", job = "作业是非题自动批改", jobEn = "Homework auto-marking", dataset = "logic", threshold = .75, income = 1.5, signBonus = 300 },
+            new XgContract { id = "civilexam", client = "考公培训班", clientEn = "Civil-service prep school", job = "判断推理陪练", jobEn = "Reasoning drills", dataset = "logic", threshold = .88, income = 7, signBonus = 1500 },
+            new XgContract { id = "danmaku", client = "某弹幕网站", clientEn = "A danmaku video site", job = "弹幕情绪审核", jobEn = "Comment moderation", dataset = "danmu", threshold = .85, income = .75, signBonus = 150 },
+            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈骗短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 1, signBonus = 250 },
+            new XgContract { id = "clickbait", client = "某浏览器资讯频道", clientEn = "A browser news feed", job = "标题党降权", jobEn = "Clickbait demotion", dataset = "headline", threshold = .85, income = 2, signBonus = 400 },
+            new XgContract { id = "fakereview", client = "电商平台风控部", clientEn = "Marketplace risk team", job = "刷单评论识别", jobEn = "Fake-review detection", dataset = "review", threshold = .85, income = 3.5, signBonus = 800 },
+            new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },
+            new XgContract { id = "support", client = "网店客服外包", clientEn = "Shop support outsourcer", job = "自动客服回复", jobEn = "Auto support replies", dataset = "news", threshold = .58, income = 6, signBonus = 1200 },
+            new XgContract { id = "crossborder", client = "表姐的微商小店", clientEn = "Cousin’s online shop", job = "商品描述翻译", jobEn = "Listing translation", dataset = "translate", threshold = .45, income = 18, signBonus = 4000 },
+            new XgContract { id = "subtitle", client = "字幕组", clientEn = "Fansub group", job = "美剧字幕初翻", jobEn = "Subtitle first drafts", dataset = "translate", threshold = .62, income = 45, signBonus = 10000 },
         };
 
         public static readonly XgResearch[] Research =
@@ -586,7 +609,7 @@ namespace LingGuangV05.XingGuang
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;
         /// <summary>Cards per second per auto-answer level (needs the GPUs running).</summary>
-        public const double AutoRatePerLevel = .3;
+        public const double AutoRatePerLevel = .15;
         public static double AutoCost(int level) { return 60 * Math.Pow(1.7, level); }
 
         /// <summary>Lines for the sequence cards (public-domain Tang poems).</summary>

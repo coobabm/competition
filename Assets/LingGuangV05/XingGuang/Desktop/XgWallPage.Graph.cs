@@ -19,7 +19,9 @@ namespace LingGuangV05.Desktop.XingGuang
         bool graphChosen;
         XgNetworkGraphic network;
         XgTraceGraphic timeline;
-        TMP_Text networkTitle, networkNote, timelineTitle, timelineAxis, events;
+        TMP_Text networkTitle, networkNote, timelineTitle, timelineAxis, events, verdictText, remedyText, sinceLabel;
+        UnityEngine.UI.Image verdictPanel;
+        XgVerdict verdict;
         readonly List<TMP_Text> boxLabels = new List<TMP_Text>(), boxNotes = new List<TMP_Text>();
 
         void BuildGraph(RectTransform card)
@@ -30,7 +32,14 @@ namespace LingGuangV05.Desktop.XingGuang
             PlaceTopRight(diagnosisTab, 200, 8, 92, 28);
 
             graphView = Rect("TrainingGraph", card, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -44));
-            var net = Rect("Network", graphView, new Vector2(0, .42f), Vector2.one, Vector2.zero, Vector2.zero);
+            // The answer first: one line saying where it is stuck, and the two roads out.
+            var verdictRt = Rect("Verdict", graphView, new Vector2(0, 1), Vector2.one, new Vector2(0, -74), Vector2.zero);
+            verdictPanel = Panel(verdictRt, XgPalette.Page);
+            verdictText = ui.Text(Rect("Headline", verdictRt, new Vector2(0, .45f), Vector2.one, new Vector2(14, 0), new Vector2(-14, -4)), "", 18, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            verdictText.fontStyle = FontStyles.Bold; verdictText.enableAutoSizing = true; verdictText.fontSizeMin = 12; verdictText.fontSizeMax = 18;
+            remedyText = ui.Text(Rect("Remedies", verdictRt, Vector2.zero, new Vector2(1, .45f), new Vector2(14, 4), new Vector2(-14, 0)), "", 13, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            remedyText.enableAutoSizing = true; remedyText.fontSizeMin = 10; remedyText.fontSizeMax = 13;
+            var net = Rect("Network", graphView, new Vector2(0, .4f), Vector2.one, new Vector2(0, 0), new Vector2(0, -80));
             Panel(net, XgPalette.Page);
             networkTitle = ui.Text(Strip("Title", net, 6, 22, 12, 12), "", 14, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             networkTitle.textWrappingMode = TextWrappingModes.NoWrap;
@@ -38,7 +47,7 @@ namespace LingGuangV05.Desktop.XingGuang
             network = Rect("Diagram", net, Vector2.zero, Vector2.one, new Vector2(8, 34), new Vector2(-8, -32)).gameObject.AddComponent<XgNetworkGraphic>();
             network.raycastTarget = false;
 
-            var time = Rect("Timeline", graphView, Vector2.zero, new Vector2(.62f, .42f), Vector2.zero, new Vector2(-6, -8));
+            var time = Rect("Timeline", graphView, Vector2.zero, new Vector2(.62f, .4f), Vector2.zero, new Vector2(-6, -8));
             Panel(time, XgPalette.Page);
             timelineTitle = ui.Text(Strip("Title", time, 6, 22, 12, 12), "", 13, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             timelineTitle.textWrappingMode = TextWrappingModes.NoWrap;
@@ -48,8 +57,10 @@ namespace LingGuangV05.Desktop.XingGuang
             ui.Text(Rect("Top", timeline.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(-42, -9), new Vector2(-4, 9)), "100%", 11, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
             ui.Text(Rect("Coin", timeline.rectTransform, new Vector2(0, .18f), new Vector2(0, .18f), new Vector2(-42, -9), new Vector2(-4, 9)), "50%", 11, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
             ui.Text(Rect("Cells", timeline.rectTransform, new Vector2(0, 0), new Vector2(0, 0), new Vector2(-42, 0), new Vector2(-4, 14)), T("格子", "cells"), 10, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
+            sinceLabel = ui.Text(Rect("Since", timeline.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(4, -20), new Vector2(150, 0)), "", 12, XgNetworkGraphic.SickEdge, TextAlignmentOptions.MidlineLeft);
+            sinceLabel.fontStyle = FontStyles.Bold;
 
-            var list = Rect("Events", graphView, new Vector2(.62f, 0), new Vector2(1, .42f), new Vector2(6, 0), new Vector2(0, -8));
+            var list = Rect("Events", graphView, new Vector2(.62f, 0), new Vector2(1, .4f), new Vector2(6, 0), new Vector2(0, -8));
             Panel(list, XgPalette.Page);
             events = ui.Text(Rect("Text", list, Vector2.zero, Vector2.one, new Vector2(10, 8), new Vector2(-10, -8)), "", 12, XgPalette.Ink, TextAlignmentOptions.TopLeft);
             events.enableAutoSizing = true; events.fontSizeMin = 9; events.fontSizeMax = 12;
@@ -79,7 +90,17 @@ namespace LingGuangV05.Desktop.XingGuang
             header.text = (wall != null ? T("墙 · ", "Wall · ") + T(wall.name, wall.nameEn) + "  " : "") + "<size=13><color=#68748C>" + T("训练图式 · ", "Training map · ") + name + "</color></size>";
 
             var h = Sim.NetworkHealth(run);
-            network.SetData(h);
+            verdict = Sim.Verdict(run);
+            bool bad = verdict.problem;
+            verdictPanel.color = bad ? new Color32(255, 236, 236, 255) : verdict.id == "untrained" ? XgPalette.Page : new Color32(230, 246, 234, 255);
+            verdictText.color = bad ? XgNetworkGraphic.SickEdge : verdict.id == "untrained" ? XgPalette.Muted : XgPalette.Good;
+            verdictText.text = (bad ? "✖ " : verdict.id == "untrained" ? "" : "✔ ") + T(verdict.headline, verdict.headlineEn)
+                + (verdict.since >= 0 ? "  <size=70%><color=#68748C>" + T("第 " + verdict.since + " 轮起", "since epoch " + verdict.since) + "</color></size>" : "");
+            var remedies = new StringBuilder();
+            if (verdict.structure.Length > 0) remedies.Append("<b>").Append(T("换结构：", "Structure: ")).Append("</b>").Append(T(verdict.structure, verdict.structureEn));
+            if (verdict.method.Length > 0) remedies.Append(remedies.Length > 0 ? "      " : "").Append("<b>").Append(T("换练法：", "Method: ")).Append("</b>").Append(T(verdict.method, verdict.methodEn));
+            remedyText.text = remedies.Length > 0 ? remedies.ToString() : bad ? "" : T("继续训练就好。", "Keep training.");
+            network.SetData(h, bad ? verdict.layer : 0, bad && verdict.layer == 0 && verdict.id == "cells");
             networkTitle.text = "<b>" + T("网络结构", "Network") + "</b>  <size=12><color=#68748C>" + Sim.TraceSettings(run) + "</color></size>";
             var note = new StringBuilder();
             note.Append(h.full ? "<color=#D63031>" : "").Append(T("格子 ", "Cells ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? T("（满了：权重最小的让位）", " (full: the weakest weights give way)") + "</color>" : "");
@@ -92,7 +113,18 @@ namespace LingGuangV05.Desktop.XingGuang
 
             var trace = Sim.Trace((XgTrack)run.track);
             float goal = (float)Sim.TraceGoal(run);
-            timeline.SetData(trace, goal);
+            timeline.SetData(trace, goal, verdict.since);
+            sinceLabel.gameObject.SetActive(verdict.since >= 0 && trace != null && trace.points.Count > 1);
+            if (verdict.since >= 0)
+            {
+                float x = timeline.EpochX(verdict.since);
+                var rt = sinceLabel.rectTransform; rt.anchorMin = rt.anchorMax = new Vector2(x, 1);
+                bool flip = x > .7f;
+                sinceLabel.alignment = flip ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                rt.offsetMin = new Vector2(flip ? -150 : 4, -20); rt.offsetMax = new Vector2(flip ? -4 : 150, 0);
+                sinceLabel.text = T("← 第 " + verdict.since + " 轮起出问题", "← trouble from epoch " + verdict.since);
+                if (flip) sinceLabel.text = T("第 " + verdict.since + " 轮起出问题 →", "trouble from epoch " + verdict.since + " →");
+            }
             timelineTitle.text = "<b>" + T("训练时间线", "Timeline") + "</b>  <size=11>" + Hex(XgChartGraphic.ValColor) + T("— 考试", "— exam") + "</color>  "
                 + Hex(XgChartGraphic.TrainColor) + T("— 训练", "— training") + "</color>  " + Hex(XgChartGraphic.BestColor) + T("- - 及格线 ", "- - target ") + XgSim.Pct(goal) + "</color>  "
                 + Hex(XgNetworkGraphic.SickEdge) + T("| 出问题", "| problem") + "</color></size>";
@@ -126,7 +158,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (boxLabels.Count <= n)
                 {
                     var label = ui.Text(Rect("BoxLabel", parent, Vector2.zero, Vector2.zero, new Vector2(-70, -48), new Vector2(70, -2)), "", 11, XgPalette.Muted, TextAlignmentOptions.Top);
-                    var problem = ui.Text(Rect("BoxProblem", parent, Vector2.zero, Vector2.zero, new Vector2(-80, 4), new Vector2(80, 40)), "", 11, XgNetworkGraphic.SickEdge, TextAlignmentOptions.Bottom);
+                    var problem = ui.Text(Rect("BoxProblem", parent, Vector2.zero, Vector2.zero, new Vector2(-90, 46), new Vector2(90, 96)), "", 12, XgNetworkGraphic.SickEdge, TextAlignmentOptions.Bottom);
+                    problem.fontStyle = FontStyles.Bold;
+                    // A white rim keeps the words readable where they cross the signal ribbon.
+                    problem.outlineWidth = .25f; problem.outlineColor = new Color32(255, 255, 255, 255);
                     boxLabels.Add(label); boxNotes.Add(problem);
                 }
                 var below = new Vector2(b.front.center.x, b.front.yMin);
@@ -143,7 +178,8 @@ namespace LingGuangV05.Desktop.XingGuang
                     var layer = h.layers[b.layer - 1];
                     boxLabels[n].text = T("第 " + layer.layer + " 层", "Layer " + layer.layer) + "\n" + layer.concepts + T(" 个概念", " concepts")
                         + (layer.layer < h.depth ? "\n" + T("传到输出 ", "reaches answer ") + N(layer.relay * 100, "0") + "%" : "");
-                    problemText = LayerProblem(layer);
+                    // Only the layer the verdict points at gets words; the rest stay quiet.
+                    problemText = verdict != null && verdict.problem && verdict.layer == layer.layer ? T("▼ 卡在这里", "▼ stuck here") + "\n" + (verdict.id == "memory" ? T("隔 10 个字只剩 ", "10 words back: ") + N(h.memory10 * 100, "0") + "%" : LayerProblem(layer)) : "";
                 }
                 boxNotes[n].text = problemText;
                 boxNotes[n].gameObject.SetActive(problemText.Length > 0);

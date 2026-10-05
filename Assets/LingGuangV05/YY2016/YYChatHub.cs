@@ -667,17 +667,17 @@ namespace LingGuangV05.Desktop.YY
                          "The combo is shared: +1 per right card or epoch, +5 per record. Too slow, a miss or a NaN resets it. Up to ×2 on pay and training. Your best: ×" + lab.S.bestCombo + ".");
             // Before the protagonist has the auto-labelling idea, 老周 only talks about training automation.
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab") && lab.AutoLabelHidden)
-                return T("训练的自动化在「技能树」研究那一列，从 run.sh 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Training automation is in the skill tree's research column, run.sh to AutoML. Labelling? That's by hand. Level " + lab.AutoTrainLevel + " now.");
+                return T("训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
+                         "Training automation is in Research, the automation row, crontab to AutoML. Labelling? That's by hand. Level " + lab.AutoTrainLevel + " now.");
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab"))
-                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「技能树」研究那一列，从 run.sh 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in the skill tree, run.sh to AutoML. Level " + lab.AutoTrainLevel + " now.");
+                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
+                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in Research, crontab to AutoML. Level " + lab.AutoTrainLevel + " now.");
             if (Has(q, "技能", "架构", "层", "宽", "tree", "skill", "layer", "alexnet", "lstm"))
-                return T("「技能树」用钱买：层数、宽度、学习率旋钮、数据包、新架构。每个阶段的必修节点买齐、看懂瓶颈，才能突破到下一阶段。按住节点不放就买了。",
-                         "The skill tree takes ¥: layers, width, the rate knob, data packs, new architectures. Buy a stage's required nodes and understand its bottleneck to break through. Hold a node to buy.");
+                return T("「科技」用钱买：层数、宽度、学习率旋钮、数据包、新架构。每个阶段的必修节点买齐、看懂瓶颈，才能突破到下一阶段。按住节点不放就买了。",
+                         "The tech tree takes ¥: layers, width, the rate knob, data packs, new architectures. Buy a stage's required nodes and understand its bottleneck to break through. Hold a node to buy.");
             if (Has(q, "训练", "模型", "准确", "曲线", "过拟合", "检查点", "评估", "train", "model", "overfit", "checkpoint", "assess"))
-                return T("训练页按「训练一轮」，按一下跑一轮。每 4 轮评估一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
-                         "Press Train for one epoch. Every 4 epochs an assessment scores the model; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
+                return T("训练页按「训练一轮」，按一下跑一轮。每轮练完自动考一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
+                         "Press Train for one epoch. Every epoch ends with an exam; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
             if (Has(q, "显卡", "显存", "gpu", "vram", "寻宝", "淘货", "喵鱼", "机箱", "硬件", "1080"))
                 return T("新卡在「" + AppNames.ShopZh + "」买，旧卡去「" + AppNames.UsedZh + "」卖。" + AppNames.AppZh + "的算力和显存都算你的卡：现在 " + sim.S.gpuCount + " 张，算力 ×" + sim.CardCompute.ToString("0.##") + "，显存 " + (sim.MemoryCapacity / 1024).ToString("0") + " G。模型太大塞不下就得加卡。",
                          "New cards are on " + AppNames.ShopEn + ", old ones sell on " + AppNames.UsedEn + ". " + AppNames.AppEn + "'s compute and VRAM are your cards: " + sim.S.gpuCount + " now, compute ×" + sim.CardCompute.ToString("0.##") + ", " + (sim.MemoryCapacity / 1024).ToString("0") + " GB. Bigger models need more cards.");
@@ -685,7 +685,7 @@ namespace LingGuangV05.Desktop.YY
                 return T("电费在「家庭」看。训练时显卡多吃一半的电，记在同一张单子上。现在待付 ¥" + sim.S.billDue.ToString("0.00") + "，钱包 ¥" + sim.S.money.ToString("0.00") + "。" + (sim.S.unpaidPower ? "已经停电了，先去缴费。" : ""),
                          "Check power in Home. Training adds half the cards' power to the same bill. Due ¥" + sim.S.billDue.ToString("0.00") + ", wallet ¥" + sim.S.money.ToString("0.00") + "." + (sim.S.unpaidPower ? " Power is cut: pay first." : ""));
             if (Has(q, "突破", "阶段", "必修", "研究", "stage", "breakthrough", "research"))
-                return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，技能树前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
+                return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，科技前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
                          "Each stage has required nodes. Own them and understand the current bottleneck, then the breakthrough on the frontier opens. You are at stage " + lab.S.stage + ".");
             if (Has(q, "订单", "赚钱", "收入", "钱", "order", "contract", "money", "earn"))
                 return T("一开始只能在标注台手点挣钱。有了检查点就能接「订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
@@ -693,7 +693,7 @@ namespace LingGuangV05.Desktop.YY
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label"))
                 return T("先去" + AppNames.AppZh + "的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局先做数字和垃圾短信，其它桌要买包。你现在数字 " + mnist.ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
                          "Open the labelling desk in " + AppNames.AppEn + " and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. Start with digits and spam; other desks need packs. Digits " + mnist.ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
-            return T("我不一定马上回。可以问我：怎么开始、训练、连击、技能树、自动化、学习率、显卡、电费、阶段、订单。", "I may not reply right away. Ask about: starting, training, combo, skill tree, automation, learning rate, GPUs, power, stages, contracts.");
+            return T("我不一定马上回。可以问我：怎么开始、训练、连击、科技、自动化、学习率、显卡、电费、阶段、订单。", "I may not reply right away. Ask about: starting, training, combo, tech tree, automation, learning rate, GPUs, power, stages, contracts.");
         }
 
         static string Best(XgSim lab, string dataset) { double b = lab.BestAcc(dataset); return b > 0 ? P(b) : "—"; }

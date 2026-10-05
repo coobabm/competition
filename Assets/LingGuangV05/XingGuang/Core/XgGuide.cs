@@ -283,7 +283,7 @@ namespace LingGuangV05.XingGuang
                         "论坛里有人撞过同一堵墙。", "Someone on the forum hit the same wall.", Tieba, "thread", "", WallThread(wall.id));
                     break;
                 default:
-                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "实在卡住：技能树买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "' in the skill tree",
+                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "实在卡住：科技买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "' in the tech tree",
                         "秘籍写明了配法。自己配出来有奖金，买了就没有了。", "The secret spells it out. Working it out yourself pays a bonus; buying gives that up.",
                         Lab, "tree", "node:" + secret.id, "");
                     double cost = sim.NodeCost(secret);
@@ -316,7 +316,7 @@ namespace LingGuangV05.XingGuang
                 foreach (var id in group) { var n = XgCatalog.Node(id); if (n != null && sim.Status(n, wallet) == XgSim.NodeStatus.Buyable) { buy = n; break; } }
                 if (buy != null)
                 {
-                    list.Add(Step("need." + buy.id, XgGuideKind.Wall, "技能树买「" + KnobName(buy, false) + "」", "Buy '" + KnobName(buy, true) + "' in the skill tree",
+                    list.Add(Step("need." + buy.id, XgGuideKind.Wall, "科技买「" + KnobName(buy, false) + "」", "Buy '" + KnobName(buy, true) + "' in the tech tree",
                         "过这堵墙要用到它。", "Passing this wall needs it.", Lab, "tree", "node:" + buy.id, ""));
                     continue;
                 }
@@ -327,7 +327,7 @@ namespace LingGuangV05.XingGuang
             }
             if (missing.Count > 0)
                 list.Add(Step("needs." + wall.id, XgGuideKind.Wall, "准备好需要的旋钮：" + string.Join("、", missing), "Get the knobs it needs: " + string.Join(", ", missingEn),
-                    "技能树里还没解锁，或者钱还不够。", "Not unlocked in the skill tree yet, or not affordable yet.", Lab, "tree", "node:" + firstMissing, ""));
+                    "科技里还没解锁，或者钱还不够。", "Not unlocked in the tech tree yet, or not affordable yet.", Lab, "tree", "node:" + firstMissing, ""));
         }
 
         /// <summary>A node's name without numbers for layer and width caps (those numbers are part of golden settings).</summary>
@@ -363,7 +363,7 @@ namespace LingGuangV05.XingGuang
                 if (!dc && s.pretrainStalled)
                 {
                     var node = XgCatalog.Node("datacenter");
-                    var step = Step("final.datacenter", XgGuideKind.Finale, "技能树买「" + node.name + "」", "Buy the '" + node.nameEn + "' in the skill tree",
+                    var step = Step("final.datacenter", XgGuideKind.Finale, "科技买「" + node.name + "」", "Buy the '" + node.nameEn + "' in the tech tree",
                         "一台机箱扛不住预训练，一开就跳闸。", "One case cannot run pre-training; it trips the breaker.", Lab, "tree", "node:datacenter", "");
                     double cost = sim.NodeCost(node);
                     if (wallet.money + 1e-9 < cost) { step.current = wallet.money; step.goal = cost; step.money = true; }
@@ -377,12 +377,12 @@ namespace LingGuangV05.XingGuang
                     {
                         var n = XgCatalog.Node(id);
                         if (n == null || sim.Has(id)) continue;
-                        list.Add(Step("need." + id, XgGuideKind.Finale, "技能树买「" + n.name + "」", "Buy '" + n.nameEn + "' in the skill tree",
+                        list.Add(Step("need." + id, XgGuideKind.Finale, "科技买「" + n.name + "」", "Buy '" + n.nameEn + "' in the tech tree",
                             "预训练要用到这个旋钮。", "Pre-training needs this knob.", Lab, "tree", "node:" + id, ""));
                     }
                     var secret = XgCatalog.Node("secret.6");
                     if (secret != null && !sim.Has(secret.id) && sim.NodeVisible(secret))
-                        list.Add(Step("final.secret", XgGuideKind.Finale, "实在卡住：技能树买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "'",
+                        list.Add(Step("final.secret", XgGuideKind.Finale, "实在卡住：科技买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "'",
                             "自己跑通能拿奖金，买了就没有了。", "Working it out yourself pays a bonus; buying it gives that up.", Lab, "tree", "node:secret.6", ""));
                     if (!s.pretrainRunning)
                         list.Add(Step("final.pretrain", XgGuideKind.Finale, "调好后回终章页继续预训练", "Then resume pre-training on the Finale page",
@@ -441,7 +441,7 @@ namespace LingGuangV05.XingGuang
             }
             if (best == null) return;
             bool wallStands = sim.ActiveWall != null;
-            list.Add(Step("node." + best.id, XgGuideKind.Boost, "技能树买「" + (wallStands ? KnobName(best, false) : best.name) + "」", "Buy '" + (wallStands ? KnobName(best, true) : best.nameEn) + "' in the skill tree",
+            list.Add(Step("node." + best.id, XgGuideKind.Boost, "科技买「" + (wallStands ? KnobName(best, false) : best.name) + "」", "Buy '" + (wallStands ? KnobName(best, true) : best.nameEn) + "' in the tech tree",
                 "不贵，买得起。", "Cheap, and you can afford it.", Lab, "tree", "node:" + best.id, ""));
         }
 

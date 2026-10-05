@@ -327,7 +327,7 @@ namespace LingGuangV05.Desktop.XingGuang
             hints.text = h.ToString();
             hintButton.Show(max > 0);
             hintButton.Set(level < max ? T("下一条提示", "Next hint") : T("提示已全部给出", "All hints shown"), level < max);
-            footer.text = (wall.secret.Length > 0 ? (Sim.Has(wall.secret) ? T("已看过参考解法（秘籍）", "Reference seen (secret)") : T("参考解法在技能树的秘籍里", "The reference is the secret in the tree")) : "")
+            footer.text = (wall.secret.Length > 0 ? (Sim.Has(wall.secret) ? T("已看过参考解法（秘籍）", "Reference seen (secret)") : T("参考解法在科技的秘籍里", "The reference is the secret in the tree")) : "")
                 + "\n" + T("没看参考解法就过墙 = 自悟", "Pass without the reference = insight");
         }
 

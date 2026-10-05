@@ -11,13 +11,14 @@ using static LingGuangV05.Desktop.XingGuang.XgUi;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// 训练: one big 训练一轮 button (0.6 s per epoch; hold to repeat once run.sh is bought), the learning curve,
-    /// four pips to the next assessment, the assessment card with its grade stamp, and the model's knobs.
+    /// 训练: one big 训练一轮 button (0.6 s per epoch), the learning curve, the assessment card every record earns
+    /// (each epoch ends with an exam) with its grade stamp, and the model's knobs.
     /// </summary>
     public sealed partial class XgTrainPage : XgPage
     {
         public const float AutomaticCardSeconds = 3;
-        public static bool UseAssessmentOverlay(bool hand, int automationLevel) => hand || automationLevel < 4;
+        /// <summary>Every epoch is assessed; only a new grade by hand earns the big card, other records a corner card.</summary>
+        public static bool UseAssessmentOverlay(XgAssessment a) => a.hand && a.newGrade >= 1;
         XgBtn[] trackTabs = new XgBtn[2];
         XgBtn summary, train, assess, autoTrain, depthDown, depthUp, widthDown, widthUp, saveModel, cleanNoise;
         /// <summary>Rule knobs (design v1.1 §4.3): activation, gradient clipping, skip connections, position tags, warm-up.</summary>
@@ -130,10 +131,9 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildModel();
             BuildCard();
             for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线：视觉（看图）和序列（读文字）。各练各的，共用显卡和经费。", "Two tracks: vision (images) and sequence (text). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, "训练一轮：让模型把数据过一遍。\n手动按会叠连击（学得更多）；按住不放可以连续训练（需要技能树里的训练脚本）。", "Train one epoch: the model goes through the data once.\nPressing by hand builds combo (it learns more); hold to repeat once you own the training script.");
-            UiTip.Add(assess.rt, "评估：在没见过的题上考一次，记下成绩。\n成绩决定评级奖励和能签哪些订单。", "Evaluate: test on unseen cards and record the score.\nThe score decides grade rewards and which contracts you can sign.");
+            UiTip.Add(train.rt, "训练一轮：让模型把数据过一遍，练完自动在没见过的题上考一次。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: the model goes through the data once, then sits an exam on unseen cards.\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
             UiTip.Add(autoTrain.rt, "自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).");
-            UiTip.Add(summary.rt, "当前结构的摘要。点一下在技能树里找到它。", "Summary of the current structure. Click to find it in the skill tree.");
+            UiTip.Add(summary.rt, "当前结构的摘要。点一下在科技里找到它。", "Summary of the current structure. Click to find it in Research.");
         }
 
         void BuildCard()
@@ -298,7 +298,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double now = XgSim.ParamsK(run);
             int cap = Sim.DepthCap(Track);
             string up = run.depth < cap ? T("加一层 → ", "One more layer → ") + Params(XgSim.ParamsKWith(run, run.depth + 1, run.width))
-                : T("已到上限：技能树买「" + (run.depth + 1) + " 层」之类的层数节点", "At the cap: buy a layer node such as \"" + (run.depth + 1) + " layers\" in the skill tree");
+                : T("已到上限：科技买「" + (run.depth + 1) + " 层」之类的层数节点", "At the cap: buy a layer node such as \"" + (run.depth + 1) + " layers\" in the tech tree");
             string down = run.depth > 1 ? T("减一层 → ", "One fewer → ") + Params(XgSim.ParamsKWith(run, run.depth - 1, run.width)) : "";
             return T("层数：网络有几层。层多能学更复杂的东西，但更慢、更占显存；太深还会越练越差（要靠跨层直连）。", "Depth: how many layers. More layers learn harder things but are slower and use more VRAM; too deep gets worse without skip connections.")
                 + "\n" + T("现在 ", "Now ") + run.depth + T(" 层 · 参数量 ", " layers · ") + Params(now) + T("", " parameters") + T("（参数量跟层数成正比）", " (grows in step with depth)")
@@ -312,7 +312,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double now = XgSim.ParamsK(run);
             int cap = Sim.WidthCap(Track), w = XgCatalog.Widths[run.width];
             string up = run.width < cap ? T("加宽到 ", "Widen to ") + XgCatalog.Widths[run.width + 1] + " → " + Params(XgSim.ParamsKWith(run, run.depth, run.width + 1)) + T("（×4）", " (×4)")
-                : run.width + 1 < XgCatalog.Widths.Length ? T("已到上限：技能树买「宽 " + XgCatalog.Widths[run.width + 1] + "」", "At the cap: buy \"Width " + XgCatalog.Widths[run.width + 1] + "\" in the skill tree")
+                : run.width + 1 < XgCatalog.Widths.Length ? T("已到上限：科技买「宽 " + XgCatalog.Widths[run.width + 1] + "」", "At the cap: buy \"Width " + XgCatalog.Widths[run.width + 1] + "\" in the tech tree")
                 : T("已是最宽", "Already the widest");
             return T("宽度：每层有多少个单元。越宽记得越多，也越占显存。", "Width: units per layer. Wider remembers more and uses more VRAM.")
                 + "\n" + T("现在宽 ", "Now width ") + w + T(" · 参数量 ", " · ") + Params(now) + T("", " parameters") + T("（宽度翻倍，参数量 ×4）", " (double the width, ×4 parameters)")
@@ -536,7 +536,6 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var run = Sim.Run(Track);
             SetBar(epochFill, run.epochActive ? (float)run.epochProgress : 0);
-            if (!run.epochActive && hold.Held && Sim.AutoTrainLevel >= 1 && !AssessmentBlocksInput) Press();
             if (glitch > 0)
             {
                 glitch -= dt;
@@ -570,11 +569,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             if (AssessmentBlocksInput && shown != null && shown.hand && !a.hand) return;
+            // Every epoch is assessed; only a record is worth a card.
+            if (!a.record) return;
             shown = a;
             assessmentOwner = Sim;
-            cardBig = UseAssessmentOverlay(a.hand, Sim.AutoTrainLevel);
+            cardBig = UseAssessmentOverlay(a);
             cardT = 0; stamped = false;
-            cardLife = a.hand ? float.PositiveInfinity : AutomaticCardSeconds;
+            cardLife = cardBig ? float.PositiveInfinity : AutomaticCardSeconds;
             rollFrom = 0;
             rollTo = (float)a.score;
             nextTick = 0;
@@ -688,7 +689,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 trackTabs[i].Show(open);
                 trackTabs[i].Set(names[i] + (Sim.Runs[i].running ? " ●" : ""), open, on ? XgPalette.Accent : XgPalette.Button, on ? Color.white : XgPalette.Ink);
             }
-            summary.Set(T(d.name, d.nameEn) + " · " + T(a.name, a.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + T(" · 学习率 ", " · rate ") + XgCatalog.LearningRates[run.lr] + "  <color=#3B5BDB>" + T("技能树 →", "tree →") + "</color>", true, Color.clear);
+            summary.Set(T(d.name, d.nameEn) + " · " + T(a.name, a.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + T(" · 学习率 ", " · rate ") + XgCatalog.LearningRates[run.lr] + "  <color=#3B5BDB>" + T("科技 →", "tree →") + "</color>", true, Color.clear);
 
             double best = Sim.BestAcc(d.id), bestScore = Sim.BestScore(d.id);
             int grade = XgSim.Grade(bestScore);
@@ -705,21 +706,17 @@ namespace LingGuangV05.Desktop.XingGuang
             legend.text = Hex(XgChartGraphic.TrainColor) + "━ " + T("模拟损失 −log(训练准确率)", "Simulated loss −log(train accuracy)") + "</color>";
             RefreshDiagnostics(run);
 
-            int every = Sim.EvalEvery;
-            for (int i = 0; i < pips.Length; i++)
-            {
-                pips[i].gameObject.SetActive(i < every);
-                pips[i].GetComponent<Image>().color = i < run.sinceEval ? XgPalette.Accent : XgPalette.Disabled;
-            }
+            // Every epoch is assessed: no countdown pips, no separate assess button.
+            for (int i = 0; i < pips.Length; i++) pips[i].gameObject.SetActive(false);
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.Blocker(run, Host);
             int level = Sim.AutoTrainLevel;
             train.Set(T("训练一轮", "Train 1 epoch"), unlocked && blocker == null && !run.epochActive, XgPalette.Accent, Color.white);
-            trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? T(" · 连击 ×", " · combo ×") + N(Sim.ComboMultiplier, "0.00") : "") + (level >= 1 ? T(" · 按住连发", " · hold to repeat") : "") : T("先标够样本", "label first");
-            string[] modes = { "☛ " + T("手动", "hand"), "▤ run.sh", "◷ crontab", "▣ " + T("守护进程", "daemon"), "✓ " + T("自动评估", "auto-eval"), "⇒ AutoML" };
+            trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? T(" · 连击 ×", " · combo ×") + N(Sim.ComboMultiplier, "0.00") : "") : T("先标够样本", "label first");
+            string[] modes = { "☛ " + T("手动", "hand"), "", "◷ crontab", "▣ " + T("守护进程", "daemon"), "✓ " + T("自动评估", "auto-eval"), "⇒ AutoML" };
             mode.text = modes[Mathf.Clamp(level, 0, 5)];
-            assess.Set(T("评估", "Assess") + "\n<size=13>" + T("每 " + every + " 轮自动", "auto every " + every) + "</size>", unlocked && !run.epochActive, XgPalette.AccentSoft, XgPalette.Accent);
+            assess.Show(false);
             autoTrain.Show(level >= 2);
             if (level >= 2) autoTrain.Set(T("自动训练\n", "Auto-train\n") + (run.running ? T("开", "on") : T("关", "off")), true, run.running ? new Color32(226, 246, 230, 255) : (Color?)null, run.running ? XgPalette.Good : (Color?)null);
 
@@ -743,8 +740,8 @@ namespace LingGuangV05.Desktop.XingGuang
         string Hint(XgRun run, double best)
         {
             if (!Sim.TrainingUnlocked(Track)) return T("先去标注台标够 " + XgCatalog.SamplesToTrain + " 条样本。", "Label " + XgCatalog.SamplesToTrain + " samples first.");
-            if (run.epoch == 0) return T("按「训练一轮」。每 4 轮评估一次：刷新纪录才给钱。", "Press Train. Every 4 epochs an assessment pays for new records.");
-            if (run.staleEvals >= 3) return Sim.StaleHint(run);
+            if (run.epoch == 0) return T("按「训练一轮」。每轮练完都会考一次：刷新纪录才给钱。", "Press Train. Every epoch ends with an exam; a new record pays.");
+            if (run.staleEvals >= XgSim.StaleHintEpochs) return Sim.StaleHint(run);
             if (run.valAcc + .002 < run.trainAcc - .01 && run.valAcc < best - .002)
                 return T("验证集在掉、训练集还在涨：过拟合了。最佳检查点已经存好；加数据或买 Dropout。", "Validation falls while training rises: overfitting. The best checkpoint is safe; add data or Dropout.");
             return T("连击越高，每轮学得越多（最多 ×2）。学习率越大越快，但太大会 NaN。", "A higher combo trains more per epoch (up to ×2). Higher rates are faster but may NaN.");
@@ -795,7 +792,7 @@ namespace LingGuangV05.Desktop.XingGuang
             widthDown.Set("−", run.width > 0 && !run.epochActive);
             widthUp.Set("+", run.width < wcap && !run.epochActive);
             bool knob = Sim.HasLrKnob(track), scheduled = run.autoLr && (Sim.Has("lrschedule") || Sim.AutoTrainLevel >= 5);
-            lrText.text = T("学习率", "Learning rate") + (knob ? (scheduled ? T("（自动调度中）", " (scheduled)") : "") : T("：" + XgCatalog.LearningRates[XgSim.DefaultLr(track)] + "（技能树买「学习率旋钮」才能调）", ": " + XgCatalog.LearningRates[XgSim.DefaultLr(track)] + " (buy the knob in the tree)"));
+            lrText.text = T("学习率", "Learning rate") + (knob ? (scheduled ? T("（自动调度中）", " (scheduled)") : "") : T("：" + XgCatalog.LearningRates[XgSim.DefaultLr(track)] + "（科技买「学习率旋钮」才能调）", ": " + XgCatalog.LearningRates[XgSim.DefaultLr(track)] + " (buy the knob in the tree)"));
             RefreshKnobs(run);
             for (int i = 0; i < lrs.Length; i++)
             {

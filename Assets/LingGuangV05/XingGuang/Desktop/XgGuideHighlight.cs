@@ -86,7 +86,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>
         /// A control on a lab page. Locators: "" = the tab button, "name:Foo", "label:是|Yes", "node:id" (also
-        /// scrolls the skill tree to it), "contract:id", "chip:n" (the HUD chips).
+        /// scrolls the tech tree to it), "contract:id", "chip:n" (the HUD chips).
         /// </summary>
         public static RectTransform Find(XingGuangView view, string tab, string target)
         {
