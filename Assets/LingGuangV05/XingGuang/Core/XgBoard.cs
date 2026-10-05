@@ -49,8 +49,10 @@ namespace LingGuangV05.XingGuang
         public bool seed;
         /// <summary>Rule 7 钉 (design v1.1 §4.4, the ending's 底层规则): R4 cannot fade it, R3 cannot evict it, R1 cannot pull it, and any card it matches is answered by it.</summary>
         public bool pinned;
-        /// <summary>Board card count when this concept last matched a training card (R3 squeezes stale ones first).</summary>
+        /// <summary>Board card count when this concept last matched a training card.</summary>
         public long seen;
+        /// <summary>Board card count when it was made (R3 spares it for <see cref="XgBoard.GraceCards"/> cards; 0 in older saves).</summary>
+        public long born;
         public XgConcept MemberwiseCloneConcept() => (XgConcept)MemberwiseClone();
     }
 
@@ -159,8 +161,8 @@ namespace LingGuangV05.XingGuang
         readonly Dictionary<int, string[]> altParts = new Dictionary<int, string[]>();
         /// <summary>Links are capped at this many per cell; the weakest are pruned.</summary>
         public const int LinksPerCell = 6;
-        /// <summary>A concept not matched for this many training cards is stale: R3 squeezes it out first.</summary>
-        public const int StaleCards = 500;
+        /// <summary>A new concept cannot be squeezed out for this many training cards: it gets the chance to earn a weight.</summary>
+        public const int GraceCards = 50;
 
         public XgBoard(XgBoardState state = null)
         {
@@ -478,29 +480,30 @@ namespace LingGuangV05.XingGuang
             int cap = k.Cells;
             if (Count(region) >= cap)
             {
-                // A similar concept on the same layer takes it in (superposition); otherwise the weakest goes.
-                XgConcept similar = null, weakest = null, stale = null; double bestSim = .5;
+                // A similar concept on the same layer takes it in (superposition: one cell, two meanings, as real
+                // neurons end up serving several features when there are too few of them). Otherwise R3 prunes by
+                // magnitude: the concept whose weight is nearest zero, the one that adds least to any answer, gives way,
+                // however often it fires. Concepts younger than GraceCards are spared so a newcomer can earn a weight.
+                XgConcept similar = null, victim = null; double bestSim = .5;
                 var mine = key.Split('+');
                 foreach (var c in S.concepts)
                 {
                     if (c.region != region || c.seed || c.pinned) continue;
                     if (c.layer == layer && c.alt.Length == 0) { double sim = Jaccard(keyParts[c.id], mine); if (sim >= bestSim) { bestSim = sim; similar = c; } }
-                    if (weakest == null || c.s < weakest.s) weakest = c;
-                    if (S.cards - c.seen > StaleCards && (stale == null || c.s < stale.s)) stale = c;
+                    if (S.cards - c.born < GraceCards) continue;
+                    double w = Math.Abs(c.w), vw = victim == null ? 0 : Math.Abs(victim.w);
+                    if (victim == null || w < vw || w == vw && c.s < victim.s) victim = c;
                 }
-                // R3 挤: a concept nobody has used for a while gives way first, however strong it once was.
-                if (stale != null && similar == null) { Remove(stale); S.evicted++; similar = null; weakest = null; goto Make; }
                 if (similar != null)
                 {
                     similar.alt = key; S.superposed++; altParts[similar.id] = mine;
                     Index(mine, similar); byKey[region + "|" + key] = similar;
                     return null;
                 }
-                if (weakest == null || weakest.s >= 1) return null;
-                Remove(weakest); S.evicted++;
+                if (victim == null) return null;
+                Remove(victim); S.evicted++;
             }
-            Make:
-            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards };
+            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards, born = S.cards };
             Add(made); S.created++;
             return made;
         }

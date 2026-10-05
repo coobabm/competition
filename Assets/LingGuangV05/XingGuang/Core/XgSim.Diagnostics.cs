@@ -344,7 +344,7 @@ namespace LingGuangV05.XingGuang
                 foreach (var c in b.concepts)
                 {
                     w.Write(c.id); Text(c.region); Text(c.key); Text(c.alt); w.Write(c.layer); w.Write(c.w); w.Write(c.s);
-                    w.Write(c.seen); w.Write(c.seed); w.Write(c.pinned);
+                    w.Write(c.seen); w.Write(c.born); w.Write(c.seed); w.Write(c.pinned);
                 }
                 w.Write(b.links == null ? -1 : b.links.Count);
                 if (b.links != null) foreach (var l in b.links) { w.Write(l.a); w.Write(l.b); w.Write(l.c); }

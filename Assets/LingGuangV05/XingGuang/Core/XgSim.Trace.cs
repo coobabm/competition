@@ -70,6 +70,8 @@ namespace LingGuangV05.XingGuang
         public XgWiring wiring;
         public int depth, width, cells, cap;
         public bool full, features, skip;
+        /// <summary>Concepts squeezed out (R3) in the last trained epoch.</summary>
+        public int evicted;
         public List<XgLayerHealth> layers = new List<XgLayerHealth>();
         /// <summary>The first layer with a problem (0 = none): the one the diagram marks red.</summary>
         public int worst;
@@ -93,6 +95,8 @@ namespace LingGuangV05.XingGuang
         public const double WeakSignal = .1;
         /// <summary>Epochs without a better test score before the trace calls it a plateau.</summary>
         public const int PlateauEpochs = 8;
+        /// <summary>Squeezing out this share of an epoch's cards in concepts counts as 挤得太凶 (learnt and forgotten).</summary>
+        public const double ThrashShare = .2;
 
         readonly List<string> tracePhenomena = new List<string>();
 
@@ -150,6 +154,7 @@ namespace LingGuangV05.XingGuang
             h.full = h.cells >= h.cap;
             var t = TraceOf(run.track, run.dataset, false);
             long trained = t != null && t.settings == TraceSettings(run) ? t.segmentCards : 0;
+            if (t != null && t.points.Count > 0) h.evicted = t.points[t.points.Count - 1].evicted;
             for (int l = 1; l <= k.depth; l++)
             {
                 var layer = new XgLayerHealth { layer = l, concepts = count[l], strength = count[l] > 0 ? sum[l] / count[l] : 0, signal = Math.Pow(k.G, k.depth - l) };
@@ -190,6 +195,7 @@ namespace LingGuangV05.XingGuang
             if (k.depth > 1 && k.G <= 0) Note(t, run.epoch, "step", 0, "");
             else if (k.depth > 1 && signal < WeakSignal) Note(t, run.epoch, "signal", signal, "");
             if (used >= cap && evicted >= Math.Max(3, cards * .02)) Note(t, run.epoch, "cells", cap, "");
+            if (used >= cap && evicted >= Math.Max(8, cards * ThrashShare)) Note(t, run.epoch, "thrash", evicted, "");
             if (k.depth > 1 && k.G > 0 && p.layer <= 1 && t.segmentCards >= 400) Note(t, run.epoch, "nomerge", t.segmentCards, "");
             if (train - test >= .25) Note(t, run.epoch, "memorize", train - test, "");
             if (test > t.segmentBest + .02f) { t.segmentBest = test; t.flat = 0; }
@@ -229,6 +235,9 @@ namespace LingGuangV05.XingGuang
                 case "cells":
                     en = "All " + e.value + " cells are full: new concepts squeeze old ones out (R3)";
                     return "格子满了（" + e.value + " 格）：新概念把旧的挤掉（R3）";
+                case "thrash":
+                    en = e.value + " concepts squeezed out in one epoch: learnt and forgotten at once (R3). Widen, share the wiring, or hand-make fewer features";
+                    return "挤得太凶：一轮挤掉 " + e.value + " 个概念，学了就忘（R3）。加宽、换能共用的连法，或者用特征工程省格子";
                 case "nomerge": en = e.value + " cards trained and no combined concept has grown yet (R2)"; return "练了 " + e.value + " 张卡，还没长出任何组合概念（R2）";
                 case "memorize":
                     en = "Training cards right, unseen ones wrong (" + Math.Round(e.value * 100) + " points apart): memorising";

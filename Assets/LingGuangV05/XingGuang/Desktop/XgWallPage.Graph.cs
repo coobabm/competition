@@ -82,7 +82,8 @@ namespace LingGuangV05.Desktop.XingGuang
             network.SetData(h);
             networkTitle.text = "<b>" + T("网络结构", "Network") + "</b>  <size=12><color=#68748C>" + Sim.TraceSettings(run) + "</color></size>";
             var note = new StringBuilder();
-            note.Append(h.full ? "<color=#D63031>" : "").Append(T("格子 ", "Cells ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? T("（满了：新概念要挤掉旧的）", " (full: new concepts squeeze old ones out)") + "</color>" : "");
+            note.Append(h.full ? "<color=#D63031>" : "").Append(T("格子 ", "Cells ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? T("（满了：权重最小的让位）", " (full: the weakest weights give way)") + "</color>" : "");
+            if (h.evicted > 0) note.Append(T("  上一轮挤掉 ", "  last epoch squeezed out ")).Append(h.evicted).Append(T(" 个", ""));
             note.Append(T("    块越厚 = 这一层占的格子越多    ", "    thicker box = more cells on that layer    "));
             note.Append("<color=#D63031>").Append(T("红 = 卡在这一层", "red = stuck here")).Append("</color>");
             networkNote.text = note.ToString();
