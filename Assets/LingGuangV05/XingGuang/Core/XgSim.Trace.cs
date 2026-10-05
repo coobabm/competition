@@ -137,6 +137,7 @@ namespace LingGuangV05.XingGuang
             if (k.skip) parts.Add(T("直连", "skip"));
             if (k.position) parts.Add(T("位置", "positions"));
             if (k.warmup) parts.Add(T("预热", "warm-up"));
+            if (k.batchNorm) parts.Add("BN");
             return string.Join(" · ", parts);
         }
 
@@ -256,11 +257,11 @@ namespace LingGuangV05.XingGuang
                     en = "All " + e.value + " cells are full: new concepts squeeze old ones out (R3)";
                     return "格子满了（" + e.value + " 格）：新概念把旧的挤掉（R3）";
                 case "relay":
-                    en = "Votes from low layers reach the answer as noise: each plain layer weakens and garbles them on the way up";
-                    return "底层的票传到输出已经成了噪声：每过一层普通层就弱一点、花一点（传话）";
+                    en = "Votes from low layers reach the answer rewritten: every plain layer has to learn to pass them on unchanged, and never quite does";
+                    return "底层的票到输出时已经被改写了：每层普通层都得学会原样转交，可总会改动一点（传话）";
                 case "degrade":
-                    en = "Deeper (" + e.detail + " layers) and even the training cards got worse by " + Math.Round(e.value * 100) + " points: not memorising, the signal no longer gets through. Skip connections, or BatchNorm and fewer layers";
-                    return "加深（" + e.detail + " 层）以后连训练题都差了 " + Math.Round(e.value * 100) + " 分：不是死记硬背，是信号传不上来。开跨层直连，或者 BatchNorm 加少几层";
+                    en = "Deeper (" + e.detail + " layers) and even the training cards got worse by " + Math.Round(e.value * 100) + " points: not memorising: the extra layers cannot learn to pass things on unchanged. Skip connections, or BatchNorm and fewer layers";
+                    return "加深（" + e.detail + " 层）以后连训练题都差了 " + Math.Round(e.value * 100) + " 分：不是死记硬背，是多出来的层学不会「原样转交」。开跨层直连，或者 BatchNorm 加少几层";
                 case "thrash":
                     en = e.value + " concepts squeezed out in one epoch: learnt and forgotten at once (R3). Widen, share the wiring, or hand-make fewer features";
                     return "挤得太凶：一轮挤掉 " + e.value + " 个概念，学了就忘（R3）。加宽、换能共用的连法，或者用特征工程省格子";

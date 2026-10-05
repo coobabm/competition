@@ -15,6 +15,11 @@ namespace LingGuangV05.XingGuang
         public Func<XgSim, XgRun, XgKnobs, bool> golden;
         /// <summary>The task condition itself, not a solution (越深越差 is about networks past 20 layers). Null = none.</summary>
         public Func<XgRun, XgKnobs, bool> condition;
+        /// <summary>
+        /// A deadline (串行瓶颈): reaching the target is not enough, the same settings must also get there from an empty
+        /// brain within this many epochs' worth of cards (<see cref="XgSim.Sprint"/>). 0 = no deadline.
+        /// </summary>
+        public int sprintEpochs;
     }
 
     /// <summary>A stage's wall (design v1.1 §5): its datasets, golden settings, secret card and the knobs it needs.</summary>
@@ -62,6 +67,8 @@ namespace LingGuangV05.XingGuang
         public static readonly double[] StageMinutes = { 0, 8, 10, 20, 20, 20, 20 };
         public static double MinutesFor(int stage) => StageMinutes[Math.Max(0, Math.Min(StageMinutes.Length - 1, stage))];
         public const int WallPoolSize = 600;
+        /// <summary>串行瓶颈's deadline, in epochs from an empty brain.</summary>
+        public const int SprintEpochs = 10;
         public const double WinterIdleSeconds = 60;
         public const double SelfInsightBonus = 1.5;
         public const double StageFiveInsightBonus = 10000;
@@ -112,9 +119,9 @@ namespace LingGuangV05.XingGuang
             {
                 stage = 3, id = "length", name = "长句失忆", nameEn = "Long-sentence amnesia", secret = "secret.3",
                 why = "让它自己决定记住什么、忘掉什么。", whyEn = "Let it decide what to keep and what to forget.",
-                golden = "「门控回环」（LSTM）· 梯度裁剪开 · 学习率 ≤ 0.01", goldenEn = "Gated loop (LSTM) · gradient clipping on · learning rate ≤ 0.01",
+                golden = "「门控回环」（LSTM）：门管住遗忘，误差不再越传越小 · 梯度裁剪开：管住偶尔的爆炸", goldenEn = "Gated loop (LSTM): gates stop the fading, so errors no longer vanish · gradient clipping on: stops the occasional explosion",
                 needs = Needs("bt.gate", "gradclip", "shared.lr", "s.w3"),
-                checks = new[] { new XgWallCheck { dataset = "longtext", target = .75, minDistance = 10, golden = (s, r, k) => k.wiring == XgWiring.GatedRecurrent && k.clip && k.lr <= .01 } },
+                checks = new[] { new XgWallCheck { dataset = "longtext", target = .75, minDistance = 10, golden = (s, r, k) => k.wiring == XgWiring.GatedRecurrent && k.clip } },
             },
             new XgWall
             {
@@ -127,7 +134,7 @@ namespace LingGuangV05.XingGuang
             new XgWall
             {
                 stage = 4, id = "degrade", name = "越深越差", nameEn = "Deeper is worse", secret = "secret.deep", extra = true,
-                why = "每层 ×0.9，十九层以后就剩一成多。给每层留一条捷径。", whyEn = "×0.9 per layer leaves a tenth after nineteen. Give every layer a shortcut.",
+                why = "多出来的层学不会「什么都不做、原样转交」。给每层留一条捷径，原样转交就成了默认。", whyEn = "The extra layers cannot learn to do nothing and pass things on. Give every layer a shortcut and passing on becomes the default.",
                 golden = "视觉线 20 层以上 · 跨层直连开（ResNet）", goldenEn = "Vision past 20 layers · skip connections on (ResNet)",
                 needs = Needs("bt.residual"),
                 checks = new[] { new XgWallCheck { dataset = "*vision", target = .85, condition = (r, k) => r.track == 0 && k.depth >= 20, golden = (s, r, k) => r.track == 0 && k.depth >= 20 && k.skip } },
@@ -135,10 +142,11 @@ namespace LingGuangV05.XingGuang
             new XgWall
             {
                 stage = 5, id = "parallel", name = "串行瓶颈", nameEn = "Serial bottleneck",
-                why = "循环只能一个字一个字地算。只用注意力。", whyEn = "A loop computes one step at a time. Use attention alone.",
+                why = "订单有期限：从头练起，" + SprintEpochs + " 轮内要读完这批长文档。循环一句话里只能一个字一个字地算，太慢；只用注意力，整句一起算。注意力本身不分先后，所以要加位置标记。",
+                whyEn = "The order has a deadline: from scratch, these long documents must be learnt within " + SprintEpochs + " epochs. A loop computes a sentence one word at a time, too slowly; attention alone takes the whole sentence at once. Attention itself ignores order, so add position tags.",
                 golden = "回环关 · 局部共享关 ·「只用注意力」· 位置标记开", goldenEn = "No loop · no local sharing · attention only · position tags on",
                 needs = Needs("attention", "position"),
-                checks = new[] { new XgWallCheck { dataset = "parallel", target = .85, golden = (s, r, k) => k.wiring == XgWiring.AnyToAny && k.position } },
+                checks = new[] { new XgWallCheck { dataset = "parallel", target = .85, sprintEpochs = SprintEpochs, golden = (s, r, k) => k.wiring == XgWiring.AnyToAny && k.position } },
             },
         };
 
@@ -241,6 +249,22 @@ namespace LingGuangV05.XingGuang
                     // Behaviour decides: unseen exam variants of the same kind, whatever architecture got there.
                     double acc = Board.Accuracy(ExamSet(run.dataset, check), k);
                     if (acc + 1e-9 < check.target) continue;
+                    if (check.sprintEpochs > 0)
+                    {
+                        // On target, but would these settings make the deadline from scratch?
+                        double sprint = Sprint(run, check, host, out int cards);
+                        if (sprint + 1e-9 < check.target)
+                        {
+                            string note = TraceSettings(run);
+                            if (note != lastSprintNote)
+                            {
+                                lastSprintNote = note;
+                                Say(T("达标了，可这套设置从头练 " + check.sprintEpochs + " 轮（" + cards + " 张卡）只到 " + Pct(sprint) + "，赶不上期限。" + (SerialWiring(k) ? "循环一句话里只能一个字一个字地算，一轮读不了几句。" : ""),
+                                    "On target, but from scratch these settings reach only " + Pct(sprint) + " in " + check.sprintEpochs + " epochs (" + cards + " cards): too slow for the deadline." + (SerialWiring(k) ? " A loop reads a sentence one word at a time, so an epoch covers few sentences." : "")));
+                            }
+                            continue;
+                        }
+                    }
                     if (!WallSeen(wall.id)) RaiseWall(wall);
                     S.wallPassed.Add(check.dataset + "#" + wall.id);
                     if (S.wallRoutes == null) S.wallRoutes = new List<string>();
@@ -251,6 +275,26 @@ namespace LingGuangV05.XingGuang
                 }
                 if (WallPassed(wall)) PassWall(wall, host);
             }
+        }
+
+        string lastSprintNote = "";
+
+        /// <summary>Recurrent wirings read a sentence one step after another (encoder–decoders and their attention too).</summary>
+        public static bool SerialWiring(XgKnobs k) =>
+            k.wiring == XgWiring.Recurrent || k.wiring == XgWiring.GatedRecurrent || k.wiring == XgWiring.EncoderDecoder || k.wiring == XgWiring.Attention;
+
+        /// <summary>
+        /// The deadline run of a check: an empty brain, the same settings, <see cref="XgWallCheck.sprintEpochs"/> epochs'
+        /// worth of cards from the labelled pool (hand epochs without the combo), then the exam. Deterministic.
+        /// </summary>
+        public double Sprint(XgRun run, XgWallCheck check, IXgHost host, out int cards)
+        {
+            var k = Knobs(run);
+            int perEpoch = (int)Math.Max(4, Math.Round(CardsPerEpoch(run, host != null ? host.Compute : 1, false) / AutoEpochFactor));
+            cards = perEpoch * check.sprintEpochs;
+            var board = new XgBoard();
+            for (int i = 0; i < cards; i++) board.Train(PoolCardAt(run, i), k);
+            return board.Accuracy(ExamSet(run.dataset, check), k);
         }
 
         public const string RouteStructure = "structure", RouteFeatures = "features", RouteMixed = "mixed";

@@ -57,7 +57,12 @@ namespace LingGuangV05.XingGuang
     }
 
     [Serializable]
-    public sealed class XgLink { public int a, b; public double c; }
+    public sealed class XgLink
+    {
+        public int a, b; public double c;
+        /// <summary>Seed of the card the link last grew on (Dropout: a pair must fire together on different cards).</summary>
+        [NonSerialized] public int last;
+    }
 
     /// <summary>Everything the brain remembers. Plain lists so it serialises with the lab save.</summary>
     [Serializable]
@@ -87,29 +92,60 @@ namespace LingGuangV05.XingGuang
         public XgActivation activation = XgActivation.Step;
         public XgWiring wiring = XgWiring.Full;
         public bool skip, clip, position, warmup, batchNorm;
+        /// <summary>
+        /// Dropout: each training card leaves some concepts out (they are not pulled), and a combination only grows from
+        /// pairs that fire together on different cards — the coincidences of a single card cannot build anything.
+        /// </summary>
+        public bool dropout;
         /// <summary>特征工程 (the pre-deep-learning road): hand-made features, read per region (see <see cref="XgBoard.Elements"/>).</summary>
         public bool features;
         /// <summary>偏置: every card also lights a constant element, so the board can shift its threshold.</summary>
         public bool bias;
         public double lr = .1;
+        /// <summary>The optimiser's tolerance for big steps (Adam 1.25, RMSProp 1.15, SGD 1).</summary>
+        public double steadiness = 1;
+
+        /// <summary>
+        /// The step (rate × error) past which the weights tear (NaN). Deeper stacks tear sooner (each layer multiplies
+        /// the step; less so behind shortcuts), loops sooner still (the same weights again every word, gradients
+        /// explode) unless clipped; BatchNorm lets the rate go higher, clipping caps the step, adaptive optimisers help
+        /// a little. Nothing makes a step of any size safe.
+        /// </summary>
+        public double TearAt
+        {
+            get
+            {
+                bool loop = wiring == XgWiring.Recurrent || wiring == XgWiring.GatedRecurrent || wiring == XgWiring.EncoderDecoder || wiring == XgWiring.Attention;
+                double limit = XgBoard.TearLimit * (batchNorm ? 1.5 : 1) * (clip ? 2 : 1) * steadiness;
+                limit /= 1 + .03 * Math.Max(0, depth - 1) * (skip ? .3 : 1);
+                if (loop && !clip) limit *= .75;
+                return limit;
+            }
+        }
 
         public int Cells { get { return Math.Max(1, width) * Math.Max(1, depth); } }
 
-        /// <summary>Layer factor g: step passes nothing down, S-curve .25, ReLU .9, skip connections 1.0; BatchNorm +.05.</summary>
+        /// <summary>
+        /// Layer factor g, the share of the error that gets one layer further down: a step passes nothing (its slope
+        /// is zero), an S-curve at most .25 (its steepest slope), ReLU .98 (slope 1 where it is on); BatchNorm +.05.
+        /// A skip connection carries the error past a layer whole, but only around a layer that has a slope at all.
+        /// </summary>
         public double G
         {
             get
             {
-                if (skip) return 1;
-                double g = activation == XgActivation.Step ? 0 : activation == XgActivation.Sigmoid ? .25 : .9;
-                return g <= 0 ? 0 : Math.Min(1, g + (batchNorm ? .05 : 0));
+                double g = activation == XgActivation.Step ? 0 : activation == XgActivation.Sigmoid ? .25 : .98;
+                if (g <= 0) return 0;
+                return skip ? 1 : Math.Min(1, g + (batchNorm ? .05 : 0));
             }
         }
 
         /// <summary>
-        /// 传话 (forward relay): the share of a vote that survives one layer on its way up to the answer. A plain
-        /// layer squeezes what passes through it (ReLU .95, a step's yes/no .9, a saturating S-curve .8 — the step's
-        /// trouble is the way back, not the way up); BatchNorm keeps a little more; a skip connection lets it through.
+        /// 传话 (the degradation of plain deep nets, He et al. 2015): a vote cast below the top has to be passed on by
+        /// every layer above it, and a plain layer cannot learn to pass things on exactly unchanged (an identity map
+        /// is hard to learn through stacked nonlinear layers). Each keeps this share of the vote as it was (ReLU .95,
+        /// a step's yes/no .9, a saturating S-curve .8) and rewrites the rest (<see cref="RelayNoise"/>). BatchNorm
+        /// helps a little — enough for about 20 layers, not for 30 — and a skip connection makes passing on the default.
         /// </summary>
         public double RelayKeep
         {
@@ -117,12 +153,12 @@ namespace LingGuangV05.XingGuang
             {
                 if (skip) return 1;
                 double keep = activation == XgActivation.Step ? .9 : activation == XgActivation.Sigmoid ? .8 : .95;
-                return Math.Min(1, keep + (batchNorm ? .03 : 0));
+                return Math.Min(1, keep + (batchNorm ? .02 : 0));
             }
         }
 
-        /// <summary>传话: how much each plain layer garbles a vote passing through (relative to the vote); BatchNorm softens it, a skip removes it.</summary>
-        public double RelayNoise => skip ? 0 : batchNorm ? .09 : .12;
+        /// <summary>传话: how much each plain layer rewrites a vote it should pass on unchanged (relative to the vote); BatchNorm softens it, a skip removes it.</summary>
+        public double RelayNoise => skip ? 0 : batchNorm ? .095 : .12;
 
         /// <summary>What is left of a vote cast <paramref name="layersAbove"/> layers below the answer, and how garbled it is.</summary>
         public double RelayLeft(int layersAbove) => layersAbove <= 0 ? 1 : Math.Pow(RelayKeep, layersAbove);
@@ -161,7 +197,7 @@ namespace LingGuangV05.XingGuang
         public const double OtherRegionDecay = .0002;
         public const int DecayEvery = 16;
         public const int PairCandidates = 16;
-        /// <summary>R1 pull above this without gradient clipping tears the weights apart (NaN).</summary>
+        /// <summary>R1 step (rate × error) above this tears the weights apart (NaN) for a shallow plain net; see <see cref="XgKnobs.TearAt"/>.</summary>
         public const double TearLimit = .8;
         public const double ClipLimit = .5;
         public const double WeightLimit = 4;
@@ -245,6 +281,8 @@ namespace LingGuangV05.XingGuang
                     default: // Recurrent / GatedRecurrent: the loop carries the past forward, weaker every step.
                         e.id = f.name;
                         e.act = Math.Pow(k.SequenceDecay, fromEnd);
+                        // A loop starts at the first word, so it knows which word opened the sentence.
+                        if (f.x == 0 && f.seq == 0) list.Add(new Element { id = "^" + f.name, act = e.act, x = f.x, y = f.y, seq = f.seq, back = fromEnd, positioned = true });
                         break;
                 }
                 list.Add(e);
@@ -398,6 +436,12 @@ namespace LingGuangV05.XingGuang
             return score;
         }
 
+        /// <summary>Dropout's share of concepts left out of a training card.</summary>
+        public const double DropoutRate = .2;
+
+        /// <summary>Whether Dropout leaves this concept out of this card (fixed per pair, so a replay drops the same).</summary>
+        static bool Dropped(int seed, int id) => (Jitter(seed ^ 0x6D2B79F5, id) + 1) * .5 < DropoutRate;
+
         /// <summary>A fixed number in [−1, 1] per (card, layer): 传话 garble.</summary>
         static double Jitter(int seed, int id)
         {
@@ -443,13 +487,14 @@ namespace LingGuangV05.XingGuang
             step.error = err;
             double g = k.G;
 
-            // A rate this large tears the output apart before anything else happens (NaN), unless gradients are clipped.
-            if (!k.clip && k.lr * Math.Abs(err) > TearLimit) step.diverged = true;
+            // A step this large tears the weights apart before anything else happens (NaN).
+            if (k.lr * Math.Abs(err) > k.TearAt) step.diverged = true;
 
             // R1 拉: pull every matched concept toward the label, weaker per layer below the output (g).
             foreach (var m in matches)
             {
                 if (m.c.pinned) continue;
+                if (k.dropout && Dropped(card.seed, m.c.id)) continue;
                 double pull = k.lr * err * m.act * Math.Pow(g, Math.Max(0, k.depth - m.c.layer));
                 if (k.clip) pull = Math.Max(-ClipLimit, Math.Min(ClipLimit, pull));
                 m.c.w = Math.Max(-WeightLimit, Math.Min(WeightLimit, m.c.w + pull));
@@ -471,6 +516,9 @@ namespace LingGuangV05.XingGuang
                         string key = Union(keyParts[a.c.id], keyParts[b.c.id]);
                         if (key == null || byKey.ContainsKey(card.region + "|" + key)) continue;
                         var link = Link(a.c.id, b.c.id);
+                        // Dropout: the same card again proves nothing new about this pair.
+                        if (k.dropout && link.last == card.seed && link.c > 0) continue;
+                        link.last = card.seed;
                         link.c += k.lr * Math.Abs(err) * Math.Min(a.act, b.act) * Math.Pow(g, Math.Max(0, k.depth - layer + 1)) * 4;
                         if (link.c < LinkThreshold) continue;
                         link.c = 0;

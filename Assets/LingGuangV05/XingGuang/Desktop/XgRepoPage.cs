@@ -190,7 +190,7 @@ namespace LingGuangV05.Desktop.XingGuang
             dGrade.transform.parent.GetComponent<XgRingGraphic>().color = XgPalette.Grades[grade];
             dStats.text = T("模型分 ", "Score ") + "<b>" + N(sel.score, "0") + "</b>  ·  " + T("验证 ", "val ") + XgSim.Pct(sel.acc) + "  ·  " + T("训练 ", "train ") + XgSim.Pct(sel.trainAcc) + "\n"
                 + T(sd.name, sd.nameEn) + " · " + T(sa.name, sa.nameEn) + "\n"
-                + sel.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[sel.width] + T(" · 学习率 ", " · rate ") + XgCatalog.LearningRates[sel.lr] + "\n"
+                + sel.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[sel.width] + T(" · 学习率 ", " · rate ") + Sim.RateLabel(sel.lr) + "\n"
                 + T("参数 ", "Params ") + Params(XgSim.ParamsK(new XgRun { arch = sel.arch, depth = sel.depth, width = sel.width })) + " · " + Size(XgSim.SizeMB(sel)) + "\n"
                 + T("第 ", "Epoch ") + sel.epoch + T(" 轮 · 存于 ", " · saved ") + When(sel) + " · " + (sel.record ? T("评估纪录", "assessment record") : T("手动保存", "saved by hand"))
                 + (Sim.IsDeployed(sel) ? "\n<color=#2F9E44>" + (Sim.AutoLabelHidden ? T("已部署：订单、论文都用它", "Deployed: contracts and papers use it") : T("已部署：订单、自动答题、论文都用它", "Deployed: contracts, auto-answer and papers use it")) + "</color>" : "");

@@ -73,7 +73,7 @@ namespace LingGuangV05.XingGuang
             if (sim == null || run == null) return XgChanceCause.None;
             var k = sim.Knobs(run);
             double rate = k.lr;
-            if (rate * 1.5 > XgBoard.TearLimit && !k.clip) return XgChanceCause.RateTooHigh;
+            if (rate * 1.5 > k.TearAt) return XgChanceCause.RateTooHigh;
             if (k.activation == XgActivation.Step && k.depth >= 2) return XgChanceCause.StepActivation;
             if (BetterArchitecture(sim, run) != null) return XgChanceCause.Architecture;
             int used = sim.Board.Count(XgSim.RegionOf(run.dataset));
@@ -191,9 +191,9 @@ namespace LingGuangV05.XingGuang
                 case XgChanceCause.RateTooHigh:
                 {
                     int lower = Math.Min(XgCatalog.LearningRates.Length - 1, run.lr + 1);
-                    string to = XgCatalog.LearningRates[lower];
+                    string to = sim.RateLabel(lower);
                     return lrKnob
-                        ? Make(id, "模型只会瞎猜：学习率 " + XgCatalog.LearningRates[run.lr] + " 太大，调到 " + to, "The model only guesses: learning rate " + XgCatalog.LearningRates[run.lr] + " is too big, set it to " + to,
+                        ? Make(id, "模型只会瞎猜：学习率 " + sim.RateLabel(run.lr) + " 太大，调到 " + to, "The model only guesses: learning rate " + sim.RateLabel(run.lr) + " is too big, set it to " + to,
                             seen + "每一步都改过头，学到的又被冲掉。", seenEn + " Every step overshoots and wipes out what it learnt.", "train", "label:" + to, arg)
                         : Make(id, "模型只会瞎猜：学习率太大，科技买「学习率旋钮」", "The model only guesses: the rate is too big, buy the learning-rate knob in the tree",
                             seen + "每一步都改过头。", seenEn + " Every step overshoots.", "tree", "node:shared.lr", "");
@@ -239,8 +239,8 @@ namespace LingGuangV05.XingGuang
                 case XgChanceCause.RateTooLow:
                 {
                     int higher = Math.Max(0, run.lr - 1);
-                    string to = XgCatalog.LearningRates[higher];
-                    return Make(id, "模型只会瞎猜：学习率 " + XgCatalog.LearningRates[run.lr] + " 太小，调到 " + to, "The model only guesses: learning rate " + XgCatalog.LearningRates[run.lr] + " is too small, set it to " + to,
+                    string to = sim.RateLabel(higher);
+                    return Make(id, "模型只会瞎猜：学习率 " + sim.RateLabel(run.lr) + " 太小，调到 " + to, "The model only guesses: learning rate " + sim.RateLabel(run.lr) + " is too small, set it to " + to,
                         seen + "每一步只挪一点点，格子都还没长出来。", seenEn + " Each step barely moves; the cells have not even grown yet.", "train", lrKnob ? "label:" + to : "name:LrText", arg);
                 }
                 default:

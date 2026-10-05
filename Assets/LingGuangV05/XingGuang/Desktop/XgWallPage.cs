@@ -250,7 +250,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var p = draft.proposal; var arch = XgCatalog.Arch(p.arch);
             string On(bool on) => on ? T("开", "on") : T("关", "off");
             string[] names = { T("架构：", "Architecture: ") + T(arch.name, arch.nameEn), T("层数：", "Depth: ") + p.depth,
-                T("宽度：", "Width: ") + XgCatalog.Widths[p.width], T("学习率：", "Rate: ") + XgCatalog.LearningRates[p.lr],
+                T("宽度：", "Width: ") + XgCatalog.Widths[p.width], T("学习率：", "Rate: ") + Sim.RateLabel(p.lr),
                 T("激活：", "Activation: ") + new[] { T("阶跃", "Step"), T("S 形", "Sigmoid"), "ReLU" }[p.act],
                 T("梯度裁剪：", "Clipping: ") + On(p.clip), T("跨层直连：", "Skip: ") + On(p.skip),
                 T("位置标记：", "Position: ") + On(p.position), T("预热：", "Warm-up: ") + On(p.warmup), T("只用注意力：", "Attention only: ") + On(p.attnOnly) };

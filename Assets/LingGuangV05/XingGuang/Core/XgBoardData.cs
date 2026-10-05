@@ -55,7 +55,7 @@ namespace LingGuangV05.XingGuang
             switch (dataset)
             {
                 case "xor": return XgBoardTasks.Xor(seed);
-                case "parallel": return Parallel(seed, r, 14);
+                case "parallel": return Parallel(seed, r, ParallelLength);
                 case "longtext": return LongText(seed, r, 11 + level * 3, false);
                 case "crosssentence": return LongText(seed, r, 13 + level * 3, true);
                 case "translate": return Translation(seed, r, 3 + level * 2);
@@ -105,6 +105,31 @@ namespace LingGuangV05.XingGuang
                 default: Words(b, card.dataset, card.question); break;
             }
             return b;
+        }
+
+        /// <summary>
+        /// An augmented copy of a picture card (see <see cref="XgSim.AugmentFactor"/>): digits and pictures shift by a
+        /// cell, Go positions turn or mirror. The answer does not change. A new seed, so it is a different card.
+        /// </summary>
+        public static XgBoardCard Augment(XgBoardCard card, string dataset, int variant)
+        {
+            var copy = new XgBoardCard { region = card.region, truth = card.truth, seed = card.seed * 31 + variant, distance = card.distance, text = card.text };
+            int n = XgVisual.Board - 1;
+            foreach (var f in card.features)
+            {
+                if (f.x < 0) { copy.Add(f.name, f.x, f.y, f.seq); continue; }
+                int x = f.x, y = f.y;
+                if (dataset == "go")
+                {
+                    if ((variant & 1) != 0) x = n - x;
+                    if ((variant & 2) != 0) y = n - y;
+                    if ((variant & 4) != 0) { int t = x; x = y; y = t; }
+                }
+                else if (variant == 1) x += 1;
+                else y += 1;
+                copy.Add(f.name, x, y, f.seq);
+            }
+            return copy;
         }
 
         // ───────────── 视觉 ─────────────
@@ -300,9 +325,13 @@ namespace LingGuangV05.XingGuang
             return card;
         }
 
+        /// <summary>Length of 串行瓶颈's long documents.</summary>
+        public const int ParallelLength = 16;
+
         /// <summary>
-        /// 串行瓶颈的墙: the first character decides, and the same characters also appear as distractors later, so only
-        /// knowing where each character sits (position tags) separates them.
+        /// 串行瓶颈的墙: long documents whose first character decides; the same characters also appear later as
+        /// distractors. A loop knows which came first (it starts there) but reads slowly; attention reads the whole
+        /// sentence at once but cannot tell the first 春 from a later one without position tags.
         /// </summary>
         static XgBoardCard Parallel(int seed, Random r, int length)
         {

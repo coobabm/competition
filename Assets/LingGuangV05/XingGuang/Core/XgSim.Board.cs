@@ -19,6 +19,11 @@ namespace LingGuangV05.XingGuang
         /// -1 (also older saves) = the best activation owned.</summary>
         public int act = -1;
         public bool clip, skip, position, warmup;
+        /// <summary>BatchNorm switched off (owned BatchNorm is on by default; older saves read false = on).</summary>
+        public bool batchNormOff;
+        /// <summary>Warm-up: cards trained since the settings last changed, and those settings (not saved).</summary>
+        [NonSerialized] internal long warmupCards;
+        [NonSerialized] internal string warmupKey = "";
         /// <summary>特征工程 switched on (hand-made features; see <see cref="XgBoard.Engineered"/>).</summary>
         public bool features;
         /// <summary>Attention with the loop switched off (design v1.1 阶段 5「只用注意力」).</summary>
@@ -98,7 +103,9 @@ namespace LingGuangV05.XingGuang
                 position = PositionOwned && run.position,
                 warmup = WarmupOwned && run.warmup,
                 features = FeaturesOwned && run.features,
-                batchNorm = Has("batchnorm"),
+                batchNorm = BatchNormOwned && !run.batchNormOff,
+                dropout = Has("dropout"),
+                steadiness = OptimizerSteadiness,
                 bias = Has("bias"),
                 lr = RateValues[Math.Max(0, Math.Min(RateValues.Length - 1, run.lr))],
             };
@@ -116,6 +123,8 @@ namespace LingGuangV05.XingGuang
         public bool SetPosition(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !PositionOwned) return false; run.position = on; Evaluate(run); return true; }
         public bool SetAttentionOnly(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !AttentionOnlyOwned) return false; run.attnOnly = on; Evaluate(run); return true; }
         public bool SetWarmup(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !WarmupOwned) return false; run.warmup = on; return true; }
+        public bool SetBatchNorm(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !BatchNormOwned) return false; run.batchNormOff = !on; Evaluate(run); return true; }
+        public bool BatchNormOwned => Has("batchnorm");
         public bool SetFeatures(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !FeaturesOwned) return false; run.features = on; Evaluate(run); return true; }
 
         /// <summary>Buying a knob switches it on for both tracks, the way a new architecture is switched to.</summary>
@@ -151,17 +160,39 @@ namespace LingGuangV05.XingGuang
         /// <summary>The next card of the labelled pool (the pool grows with the samples you own).</summary>
         XgBoardCard PoolCard(XgRun run) => PoolCardAt(run, run.cursor++);
 
+        /// <summary>Warm-up length in cards.</summary>
+        public const int WarmupCards = 60;
+
+        /// <summary>
+        /// Data augmentation, per kind of picture: digits shift (×2; flipped, a 6 is not a 6), pictures shift and crop
+        /// (×3), Go positions turn and mirror (×8 symmetries). Text is not augmented.
+        /// </summary>
+        public int AugmentFactor(string dataset)
+        {
+            if (!Has("augment")) return 1;
+            switch (dataset) { case "mnist": return 2; case "go": return 8; case "cifar": case "imagenet": case "meme": return 3; default: return 1; }
+        }
+
         /// <summary>The pool card at a position (trials read ahead without moving the cursor).</summary>
         XgBoardCard PoolCardAt(XgRun run, long position)
         {
             int pool = BoardPoolAt(Samples(run.dataset), BoardCardsOn(run.dataset));
-            int index = (int)(position % pool);
+            int factor = AugmentFactor(run.dataset);
+            int at = (int)(position % ((long)pool * factor));
+            int index = at % pool, variant = at / pool;
             var card = XgBoardData.Make(run.dataset, XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Train, S.dataSalt), BoardLevel(run.dataset), Today);
+            if (variant > 0) card = XgBoardData.Augment(card, run.dataset, variant);
             // R5 噪: rows wrongly labelled by automation, packs or crowds pull the wrong way (XgSim.DataSources.cs).
             double noise = BoardFlipRate(run.dataset);
             if (noise > 0 && (XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Diagnostic, S.dataSalt) % 1000) < noise * 1000) card.truth = !card.truth;
             return card;
         }
+
+        /// <summary>
+        /// 串行瓶颈's long documents: a loop reads each sentence one word after another, so an epoch covers this share of
+        /// the sentences attention (whole sentence at once) does.
+        /// </summary>
+        public const double SerialCardFactor = .25;
 
         /// <summary>Cards one epoch feeds: compute, optimiser and research speed; bigger boards cost more per card.</summary>
         public int CardsPerEpoch(XgRun run, double compute, bool hand)
@@ -170,7 +201,8 @@ namespace LingGuangV05.XingGuang
             var a = XgCatalog.Arch(run.arch);
             var k = Knobs(run);
             double n = 24 * Math.Pow(Math.Max(.5, compute), .7) * OptSpeed * (a == null ? 1 : a.speed) * SpeedResearch * ProgressionSpeed(run)
-                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1);
+                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
+                * (run.dataset == "parallel" && SerialWiring(k) ? SerialCardFactor : 1);
             return (int)Math.Max(4, Math.Min(MaxCardsPerEpoch, Math.Round(n)));
         }
 
@@ -196,8 +228,15 @@ namespace LingGuangV05.XingGuang
             var k = Knobs(run);
             RememberFormalKnobs(run);
             int right = 0, torn = 0;
+            // Warm-up: after a change of settings the rate climbs from almost nothing over the first cards, when the
+            // errors are largest.
+            string key = run.dataset + "|" + TraceSettings(run);
+            if (run.warmupKey != key) { run.warmupKey = key; run.warmupCards = 0; }
+            double rate = k.lr;
             for (int i = 0; i < cards; i++)
             {
+                run.warmupCards++;
+                if (k.warmup) k.lr = rate * Math.Min(1, run.warmupCards / (double)WarmupCards);
                 var step = Board.Train(PoolCard(run), k);
                 if (step.correct) right++;
                 if (step.diverged) torn++;

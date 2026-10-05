@@ -303,6 +303,22 @@ namespace LingGuangV05.XingGuang
             }
         }
         public string OptimizerName { get { var o = Optimizer; return o == null ? "SGD" : T(o.name, o.nameEn); } }
+
+        /// <summary>
+        /// The number a rate button shows. Adaptive optimisers (RMSProp, Adam) divide each step by the gradient's own
+        /// size, so the same step needs a far smaller number: Adam's usual 0.001 is SGD's 0.1. The board trains on the
+        /// step size (<see cref="RateValues"/>); only the label follows the optimiser.
+        /// </summary>
+        public double RateDisplayScale { get { var o = Optimizer; return o != null && (o.id == "adam" || o.id == "rmsprop") ? .01 : 1; } }
+
+        public string RateLabel(int index)
+        {
+            int i = Math.Max(0, Math.Min(RateValues.Length - 1, index));
+            return (RateValues[i] * RateDisplayScale).ToString("0.#####", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>How much more an optimiser tolerates a big step before it tears (adaptive steps are a little steadier).</summary>
+        public double OptimizerSteadiness { get { var o = Optimizer; return o == null ? 1 : o.id == "adam" ? 1.25 : o.id == "rmsprop" ? 1.15 : 1; } }
         double OptSpeed { get { var o = Optimizer; return o == null ? 1 : o.speed; } }
         public double Stability { get { var o = Optimizer; return (o == null ? 1 : o.stability) * (Has("batchnorm") ? 1.5 : 1); } }
         double SpeedResearch { get { return (Has("batchnorm") ? 1.2 : 1) * (Has("cudnn") ? 1.5 : 1) * FeelSpeed; } }
@@ -499,7 +515,7 @@ namespace LingGuangV05.XingGuang
         public double SamplesEffective(XgRun run)
         {
             var d = XgCatalog.Dataset(run.dataset);
-            return EffectiveLabelSamples(d.id) * (d.track == XgTrack.Vision && Has("augment") ? 3 : 1);
+            return EffectiveLabelSamples(d.id) * AugmentFactor(d.id);
         }
 
         public double OverfitScale(XgRun run)
@@ -558,6 +574,14 @@ namespace LingGuangV05.XingGuang
 
         public int SafeLr(XgRun run)
         {
+            if (UseBoard)
+            {
+                // The largest step that cannot tear even on a confidently wrong card (|error| = 2).
+                var k = Knobs(run);
+                for (int i = 0; i < RateValues.Length; i++)
+                    if (RateValues[i] * 2 <= k.TearAt + 1e-9) return i;
+                return RateValues.Length - 1;
+            }
             var a = XgCatalog.Arch(run.arch);
             double instability = a.instability * (Has("gradclip") ? .2 : 1);
             for (int i = 0; i < XgCatalog.LearningRates.Length; i++)
@@ -670,7 +694,7 @@ namespace LingGuangV05.XingGuang
             if (UseBoard) Board.Shake(RegionOf(run.dataset), .5);
             S.nanEvents++;
             BreakCombo();
-            Say(T("loss = NaN！学习率 " + XgCatalog.LearningRates[run.lr] + " 太大，训练发散，退回一半进度", "loss = NaN! Rate " + XgCatalog.LearningRates[run.lr] + " is too high; training diverged and lost half its progress"));
+            Say(T("loss = NaN！学习率 " + RateLabel(run.lr) + " 太大，训练发散，退回一半进度", "loss = NaN! Rate " + RateLabel(run.lr) + " is too high; training diverged and lost half its progress"));
             Diverged?.Invoke(run.track);
         }
 

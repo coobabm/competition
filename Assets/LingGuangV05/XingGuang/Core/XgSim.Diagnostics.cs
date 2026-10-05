@@ -182,7 +182,7 @@ namespace LingGuangV05.XingGuang
             if (actBefore != actNow) list.Add(T("激活 ", "Activation ") + acts[actBefore] + " → " + acts[actNow]);
             if (f.depth != run.depth) list.Add(T("层数 ", "Layers ") + f.depth + " → " + run.depth);
             if (f.width != run.width) list.Add(T("宽度 ", "Width ") + XgCatalog.Widths[f.width] + " → " + XgCatalog.Widths[run.width]);
-            if (f.lr != run.lr) list.Add(T("学习率 ", "Rate ") + XgCatalog.LearningRates[f.lr] + " → " + XgCatalog.LearningRates[run.lr]);
+            if (f.lr != run.lr) list.Add(T("学习率 ", "Rate ") + RateLabel(f.lr) + " → " + RateLabel(run.lr));
             if (f.clip != run.clip) list.Add(T("梯度裁剪 ", "Clipping ") + (run.clip ? T("开", "on") : T("关", "off")));
             if (f.skip != run.skip) list.Add(T("跨层直连 ", "Skip links ") + (run.skip ? T("开", "on") : T("关", "off")));
             if (f.position != run.position) list.Add(T("位置标记 ", "Positions ") + (run.position ? T("开", "on") : T("关", "off")));

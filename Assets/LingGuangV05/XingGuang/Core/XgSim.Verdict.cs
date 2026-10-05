@@ -26,7 +26,7 @@ namespace LingGuangV05.XingGuang
     {
         /// <summary>
         /// Picks the single most important problem of the run, in order of what blocks learning hardest: a torn rate,
-        /// a step activation, votes drowned on the way up (传话), going deeper made it worse, errors fading on the way
+        /// a step activation, votes rewritten on the way up by layers that cannot pass things on unchanged (传话), going deeper made it worse, errors fading on the way
         /// down, a loop that forgets (on texts read in order), cells too few, memorising, no combinations, a plateau. Healthy runs say how far they are from the goal.
         /// </summary>
         public XgVerdict Verdict(XgRun run)
@@ -60,25 +60,25 @@ namespace LingGuangV05.XingGuang
             }
             else if (First("relay") is XgLayerHealth relay)
             {
-                Set(v, "relay", relay.layer, "卡在第 " + relay.layer + " 层：它的票传到输出只剩 " + Pct(relay.relay) + "，路上的噪声盖过了信号（层太多）。",
-                    "Stuck at layer " + relay.layer + ": only " + Pct(relay.relay) + " of its votes reach the answer, drowned in noise on the way up (too many layers).",
-                    "打开「跨层直连」（残差）：信号原样到达。", "Switch on skip connections (residual): the signal arrives untouched.",
+                Set(v, "relay", relay.layer, "卡在第 " + relay.layer + " 层：它的票要经过上面的层转交，原样到达输出的只剩 " + Pct(relay.relay) + "，其余被一层层改写了（层太多）。",
+                    "Stuck at layer " + relay.layer + ": its votes are passed on by the layers above, and only " + Pct(relay.relay) + " arrives unchanged; the rest is rewritten layer by layer (too many layers).",
+                    "打开「跨层直连」（残差）：原样转交成了默认。", "Switch on skip connections (residual): passing on unchanged becomes the default.",
                     "或者 BatchNorm + 少几层（20 层以内）。", "Or BatchNorm and fewer layers (20 at most).");
             }
             else if (t.Noted("degrade") && p.test < v.goal && !k.skip)
             {
                 // Deeper than before and worse even on training cards: point at the layer whose votes arrive weakest.
                 var low = h.layers.Count > 0 ? h.layers[0] : null;
-                Set(v, "degrade", low != null ? low.layer : 0, "越深越差：加深以后连练过的题都变差了，第 " + (low != null ? low.layer : 1) + " 层的票传到输出只剩 " + Pct(low != null ? low.relay : 1) + "。",
-                    "Deeper is worse: since going deeper even the trained cards got worse; layer " + (low != null ? low.layer : 1) + "'s votes reach the answer at only " + Pct(low != null ? low.relay : 1) + ".",
+                Set(v, "degrade", low != null ? low.layer : 0, "越深越差：加深以后连练过的题都变差了。多出来的层学不会原样转交，第 " + (low != null ? low.layer : 1) + " 层的票原样到达输出的只剩 " + Pct(low != null ? low.relay : 1) + "。",
+                    "Deeper is worse: since going deeper even the trained cards got worse. The extra layers cannot learn to pass things on unchanged; only " + Pct(low != null ? low.relay : 1) + " of layer " + (low != null ? low.layer : 1) + "'s votes arrive unchanged.",
                     "打开「跨层直连」（残差）。", "Switch on skip connections (residual).",
-                    k.batchNorm ? "或者少几层。" : "或者 BatchNorm + 少几层。", k.batchNorm ? "Or use fewer layers." : "Or BatchNorm and fewer layers.");
+                    k.batchNorm ? "或者少几层（BatchNorm 能撑到 20 层左右）。" : "或者 BatchNorm + 20 层以内。", k.batchNorm ? "Or use fewer layers (BatchNorm holds up to about 20)." : "Or BatchNorm and at most 20 layers.");
             }
             else if (First("signal") is XgLayerHealth weak)
             {
                 Set(v, "signal", weak.layer, "卡在第 " + weak.layer + " 层：误差传到这里只剩 " + Pct(weak.signal) + "，它几乎学不动（梯度消失）。",
                     "Stuck at layer " + weak.layer + ": only " + Pct(weak.signal) + " of the error gets here, so it barely learns (vanishing gradients).",
-                    "激活换成「ReLU」：每层只损失一成。", "Switch to ReLU: each layer loses only a tenth.", "或者少几层。", "Or use fewer layers.");
+                    "激活换成「ReLU」：坡度是 1，误差几乎原样传下来。", "Switch to ReLU: its slope is 1, so the error comes down almost whole.", "或者少几层。", "Or use fewer layers.");
             }
             else if (sequential && h.memory10 < .2 && p.test < v.goal)
             {
