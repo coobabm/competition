@@ -420,6 +420,7 @@ namespace LingGuangV05.XingGuang
                     for (int j = i + 1; j < top.Count; j++)
                     {
                         var a = top[i]; var b = top[j];
+                        if (!byId.ContainsKey(a.c.id) || !byId.ContainsKey(b.c.id)) continue;
                         int layer = Math.Max(a.c.layer, b.c.layer) + 1;
                         if (layer > k.depth || !Reachable(a, b, elements, k)) continue;
                         string key = Union(keyParts[a.c.id], keyParts[b.c.id]);
@@ -490,7 +491,8 @@ namespace LingGuangV05.XingGuang
                 {
                     if (c.region != region || c.seed || c.pinned) continue;
                     if (c.layer == layer && c.alt.Length == 0) { double sim = Jaccard(keyParts[c.id], mine); if (sim >= bestSim) { bestSim = sim; similar = c; } }
-                    if (S.cards - c.born < GraceCards) continue;
+                    // Spared: newcomers, and anything the card being trained right now is using (R1 just stamped it).
+                    if (S.cards - c.born < GraceCards || c.seen == S.cards) continue;
                     double w = Math.Abs(c.w), vw = victim == null ? 0 : Math.Abs(victim.w);
                     if (victim == null || w < vw || w == vw && c.s < victim.s) victim = c;
                 }
