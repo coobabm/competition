@@ -97,8 +97,10 @@ namespace LingGuangV05.XingGuang
             int returned = BlackjackRules.Returned(h.player, h.dealer, h.stake);
             Casino.returned += returned; Casino.nextBetAt = Clock + CasinoRules.RoundSeconds;
             if (Casino.history.Count >= 8) Casino.history.RemoveRange(0, Casino.history.Count - 7);
-            Casino.history.Add(new XgCasinoRound { number = ++Casino.rounds, game = "blackjack", stake = h.stake, returned = returned, values = h.player.ToArray() });
+            var round = new XgCasinoRound { number = ++Casino.rounds, game = "blackjack", stake = h.stake, returned = returned, values = h.player.ToArray() };
+            Casino.history.Add(round);
             if (returned > 0) host.Earn(returned);
+            CasinoSettled(round, BlackjackRules.Natural(h.player), host);
         }
     }
 }

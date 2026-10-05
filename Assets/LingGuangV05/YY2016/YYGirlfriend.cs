@@ -60,6 +60,7 @@ namespace LingGuangV05.Desktop.YY
         double aiDueGame = -1;
         float nextIdleCheck;
         string lastStatus = "", lastSignature = "";
+        float nextCardCheck;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Attach()
@@ -110,6 +111,22 @@ namespace LingGuangV05.Desktop.YY
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
             StandIn(g, now);
+            if (Time.unscaledTime >= nextCardCheck) { nextCardCheck = Time.unscaledTime + 1; LifeCards(g); }
+        }
+
+        /// <summary>The hidden 下班以后 cards she gives (XgSim.Cards.cs), read off her state once a second.</summary>
+        void LifeCards(GirlfriendState g)
+        {
+            var lab = Lab;
+            if (lab == null || g == null || !g.started) return;
+            if (g.totalMessages > g.herMessages) lab.EarnSecret("life.gf.chat");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagFought)) lab.EarnSecret("life.gf.fight");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagMadeUp)) lab.EarnSecret("life.gf.makeup");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagCaughtAi)) lab.EarnSecret("life.gf.caught");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagIphone)) lab.EarnSecret("life.gf.iphone");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagNewYear)) lab.EarnSecret("life.gf.newyear");
+            if (GirlfriendRules.Tier(g) == GirlfriendTier.Sweet) lab.EarnSecret("life.gf.sweet");
+            foreach (var key in g.done) if (key.StartsWith("forgot:", StringComparison.Ordinal)) { lab.EarnSecret("life.gf.forgot"); break; }
         }
 
         void Rebind(GirlfriendState g)
@@ -507,6 +524,7 @@ namespace LingGuangV05.Desktop.YY
             runtime.Sim.S.money -= amount;
             runtime.MarkDirty();
             nextPacketAmount = amount;
+            if (GirlfriendRules.IsLucky(amount)) Lab?.EarnSecret("life.gf.packet");
             hub.Send(YYChatHub.GirlfriendId, GirlfriendRules.PacketText(amount, English));
             return true;
         }

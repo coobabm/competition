@@ -390,6 +390,9 @@ namespace LingGuangV05.XingGuang
             if (outcome == XgGameOutcome.PlayerWon) r.playerWins++;
             else if (outcome == XgGameOutcome.PlayerLost) r.playerLosses++;
             else r.draws++;
+            // Against its own model (once it plays the game): beating it, or being beaten by it.
+            if (AiPlays(game) && outcome == XgGameOutcome.PlayerWon) Earn("life.game.won");
+            if (AiPlays(game) && outcome == XgGameOutcome.PlayerLost) Earn("life.game.lost");
             int n = XgGames.SamplesFor(game, outcome, moves);
             AddGameSamples(GameDataset(game), n);
             r.samples += n;

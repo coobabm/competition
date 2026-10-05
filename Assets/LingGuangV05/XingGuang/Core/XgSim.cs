@@ -649,7 +649,7 @@ namespace LingGuangV05.XingGuang
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = gained };
             if (UseBoard ? torn : run.steps > Tau(run) * .5 && Roll() < Hazard(run) * EpochSeconds) { Diverge(run); e.diverged = true; }
             Evaluate(run);
-            if (UseBoard) { ObservePhenomena(run); RecordTrace(run, e.diverged, (int)gained); }
+            if (UseBoard) { ObservePhenomena(run); RecordTrace(run, e.diverged, (int)gained); WatchCure(run); }
             S.stageEpochs++;
             if (UseBoard) { CheckWallAppears(); CheckWallPass(run, host); }
             Push(run.histTrain, (float)run.trainAcc);

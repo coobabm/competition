@@ -713,7 +713,7 @@ namespace LingGuangV05.Desktop.Story
             if ((desk.LocalOf(icon) - desk.LocalOf(recycleIcon)).magnitude > 80) return;
             StartCoroutine(Bounce(icon, from));
             // 智子锁死 (design v1.1 §10.2 #6): the file is held open by the monitor.
-            if (icon != dllIcon) Locked(T(AppNames.ExeZh, AppNames.ExeEn));
+            if (icon != dllIcon) { Locked(T(AppNames.ExeZh, AppNames.ExeEn)); labNow?.EarnSecret("life.santi.sophon"); }
         }
 
         IEnumerator Bounce(RectTransform icon, Vector3 to)

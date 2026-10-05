@@ -695,6 +695,7 @@ namespace LingGuangV05.XingGuang
             m.opened = true;
             bool late = JuxinIsGroup(thread) && S.jxClock - m.at > JuxinRedPacketLife;
             m.got = late || host == null ? 0 : m.amount;
+            if (late) Earn("life.redpacket.slow");
             if (m.got > 0)
             {
                 host.Earn(m.got);

@@ -231,7 +231,7 @@ namespace LingGuangV05.XingGuang
             if (S.listeningUntil > Clock) return "……";
             if (S.stage >= 4 && (q.Contains("不要回答") || q.IndexOf("don't answer", StringComparison.OrdinalIgnoreCase) >= 0))
             {
-                if (++S.dontAnswer >= 3) { S.dontAnswer = 0; S.listeningUntil = Clock + 60; return T("……好。", "… All right."); }
+                if (++S.dontAnswer >= 3) { S.dontAnswer = 0; S.listeningUntil = Clock + 60; Earn("life.santi.silence"); return T("……好。", "… All right."); }
                 return null;
             }
             S.dontAnswer = 0;
@@ -240,7 +240,10 @@ namespace LingGuangV05.XingGuang
             // 「她……爱我吗？」 (XgSim.Love.cs): consent, cooldown or the verdict cutscene.
             if (IsLoveQuestion(q)) return LoveReply();
             if (S.stage >= 4 && (q.Contains("虫子") || q.IndexOf("bug", StringComparison.OrdinalIgnoreCase) >= 0 && q.Length < 20))
+            {
+                Earn("life.santi.bug");
                 return T("虫子从来没有被真正战胜过。", "The bugs have never truly been defeated.");
+            }
             return null;
         }
 

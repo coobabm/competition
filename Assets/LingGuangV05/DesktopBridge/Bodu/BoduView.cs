@@ -22,9 +22,10 @@ namespace LingGuangV05.Desktop.Bodu
     /// shop's new arrivals; search over news and forum threads. Searching the long number opens the garbled page
     /// the SI typed in the prologue: at stage 5 it decodes line by line with the translation accuracy, a faint
     /// countdown runs to New Year's Eve, and after the final test the AI reads the SI's letter from it. 「三体」 is a
-    /// login page that never lets anyone in. Lives in the desktop's spare native Widget Library window.
+    /// login page that lets in only those who keep trying (BoduView.Santi.cs). Lives in the desktop's spare native
+    /// Widget Library window.
     /// </summary>
-    public sealed class BoduView : MonoBehaviour
+    public sealed partial class BoduView : MonoBehaviour
     {
         public const string NativeWindow = "Widget Library";
         static readonly Color Blue = new Color32(51, 102, 204, 255), Ink = new Color32(34, 34, 34, 255), Muted = new Color32(120, 120, 120, 255), Link = new Color32(26, 13, 171, 255);
@@ -201,6 +202,7 @@ namespace LingGuangV05.Desktop.Bodu
             if (page == "home") Home(today);
             else if (page == "number") Number(today, lab);
             else if (page == "santi") Santi();
+            else if (page == "santi.game") SantiGame();
             else Results(today, lab);
         }
 
@@ -313,13 +315,6 @@ namespace LingGuangV05.Desktop.Bodu
         }
 
         bool Matches(string text) => query.Length > 0 && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
-
-        void Santi()
-        {
-            Line("<b>" + T("三体", "Three Body") + "</b>", 26, Ink);
-            Line(T("需要 V 装备与邀请码。", "Requires a V-suit and an invitation code."), 18, Muted);
-            Line("<color=#1A0DAB><u>" + T("【输入邀请码】", "[Enter invitation code]") + "</u></color>", 18, Ink, () => Line("<color=#C00000>" + T("邀请码无效。本游戏只对有缘人开放。", "Invalid invitation code. This game is only open to those it was meant for.") + "</color>", 17, Ink));
-        }
 
         /// <summary>The page behind the long number (the prologue's garbled page).</summary>
         void Number(DateTime today, XgSim lab)

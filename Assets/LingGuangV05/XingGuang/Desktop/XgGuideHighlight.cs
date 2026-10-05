@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public const float DefaultSeconds = 4f;
         /// <summary>The lab's nav order (XingGuangView.BuildNav): the first buttons under "Nav" are these tabs.</summary>
-        public static readonly string[] TabIds = { "label", "train", "tree", "contracts", "repo", "board", "wall", "chat", "final" };
+        public static readonly string[] TabIds = { "label", "train", "tree", "contracts", "repo", "board", "wall", "cards", "chat", "final" };
         static readonly Color Gold = new Color32(255, 190, 40, 255);
         const float Pad = 6, Fade = .35f;
 

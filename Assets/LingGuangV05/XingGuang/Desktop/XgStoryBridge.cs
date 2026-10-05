@@ -94,6 +94,9 @@ namespace LingGuangV05.Desktop.XingGuang
         { if (assessment != null && assessment.reward + assessment.gradeBonus > 0) EmitOnce("lg.paidAssessment"); }
         void OnRuntimeSignal(string signal, string arg)
         {
+            // Hidden 下班以后 cards from the hardware shop (XgSim.Cards.cs).
+            if (bound != null && signal == "gpu.bought" && arg == LingGuangV05.Core.Hardware.HardwareCatalog.TitanXp) bound.EarnSecret("life.hw.titan");
+            if (bound != null && signal == "breaker.tripped" && controller.runtime.Sim.S.pcieBurned) bound.EarnSecret("life.hw.burn");
             if (signal != "story.delivered" || string.IsNullOrEmpty(arg) || bound == null) return;
             bound.MarkIntroDelivered(arg);
             if (arg.StartsWith("wall_", StringComparison.Ordinal)) bound.MarkWallExplained(arg.Substring(5));

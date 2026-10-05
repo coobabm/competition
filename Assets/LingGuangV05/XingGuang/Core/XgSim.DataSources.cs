@@ -350,6 +350,7 @@ namespace LingGuangV05.XingGuang
             string key = PackSwitchKey(o);
             if (PackIncluded(key) == on) return false;
             if (on) S.dataExcluded.Remove(key); else S.dataExcluded.Add(key);
+            if (!on && o.source == XgDataSource.Junk) Earn("data.junkoff");
             var d = XgCatalog.Dataset(o.datasetId);
             string name = d != null ? T(d.name, d.nameEn) : o.datasetId;
             Say(on ? T("「" + name + "」训练重新用上：", name + " trains on it again: ") + T(o.name, o.nameEn)

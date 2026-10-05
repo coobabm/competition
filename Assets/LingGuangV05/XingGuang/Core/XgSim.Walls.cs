@@ -245,6 +245,8 @@ namespace LingGuangV05.XingGuang
                     S.wallPassed.Add(check.dataset + "#" + wall.id);
                     if (S.wallRoutes == null) S.wallRoutes = new List<string>();
                     S.wallRoutes.Add(check.dataset + "#" + wall.id + "=" + (k.features ? RouteFeatures : RouteStructure));
+                    // 越深越差 passed on BatchNorm with the shortcuts off: the 硬扛 card.
+                    if (wall.id == "degrade" && !k.skip) Earn("road.batchnorm");
                     Say(T("达标：", "Passed: ") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
                 }
                 if (WallPassed(wall)) PassWall(wall, host);

@@ -66,6 +66,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgWallPage Wall { get; private set; }
         public XgChatPage Chat { get; private set; }
         public XgFinalePage Finale { get; private set; }
+        public XgCardsPage Cards { get; private set; }
+        /// <summary>The big card overlay (earned cards flip in; the album opens them).</summary>
+        public XgHoloCard Holo { get; private set; }
         public bool Visible => controller != null && controller.Window != null && controller.Window.isOn && isActiveAndEnabled;
         public string Tab => tab;
         public RectTransform ComboChip => comboChip;
@@ -89,6 +92,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Repo = Add("repo", new XgRepoPage(), area);
             Board = Add("board", new XgBoardPage(), area);
             Wall = Add("wall", new XgWallPage(), area);
+            Cards = Add("cards", new XgCardsPage(), area);
             Chat = Add("chat", new XgChatPage(), area);
             Finale = Add("final", new XgFinalePage(), area);
             Repo.SeenUpTo = owner.Sim.S.nextModelId - 1;
@@ -101,7 +105,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Juice.Init(root, root, fontAsset);
             Juice.Visible = () => Visible;
             // Self-insight cards (闪卡) over the whole window.
-            XgHoloCard.Install(this, root, fontAsset);
+            Holo = XgHoloCard.Install(this, root, fontAsset);
             // The one real training (XOR wall, stage-one breakthrough, recognising 0) in a corner panel.
             XgRealTrainPanel.Install(this, root, fontAsset);
             Bind(owner);
@@ -391,7 +395,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var nav = Rect("Nav", root, Vector2.zero, new Vector2(0, 1), new Vector2(12, 12), new Vector2(138, -70));
             Panel(nav, XgPalette.Card);
-            string[] ids = { "label", "train", "tree", "contracts", "repo", "board", "wall", "chat", "final" };
+            string[] ids = { "label", "train", "tree", "contracts", "repo", "board", "wall", "cards", "chat", "final" };
             for (int i = 0; i < ids.Length; i++)
             {
                 string id = ids[i];
@@ -420,6 +424,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "repo": return T("模型仓库：每次刷新纪录都存一个检查点。", "Models: a checkpoint is saved for every record.");
                 case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。", "Brain: the concepts it has learned and the links it believes (some are wrong).");
                 case "wall": return T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。\n训练图式：网络卡在哪一层、第几轮开始出问题。", "Diagnose: see where it goes wrong. The pattern of mistakes tells you what structure to try.\nTraining map: which layer is stuck and from which epoch.");
+                case "cards": return T("成就：收集来的闪卡。稀有度越高，卡面越闪：银箔、金箔、镭射、星河，还有转动才看得见的光栅卡。\n有些卡藏在工作以外的地方。", "Achievements: the foil cards you have collected. The rarer, the shinier: silver, gold, holographic, cosmos, and lenticular cards that change as you turn them.\nSome are hidden outside work.");
                 case "chat": return T("对话：和它说话。阶段越高，它会说的越多。", "Talk: chat with it. The higher the stage, the more it can say.");
                 default: return T("终章。", "Finale.");
             }
@@ -455,22 +460,26 @@ namespace LingGuangV05.Desktop.XingGuang
             double vramUse = Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
             hudCompute.text = T("算力 ", "GPU ") + N(Host.Compute, "0.0") + T(" · 显存 ", " · VRAM ") + N(vramUse / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G";
             hudStage.text = T("阶段 ", "Stage ") + Sim.S.stage + "/6" + (Sim.Winter ? T(" · 寒冬", " · winter") : "");
-            string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("科技", "Tech"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("对话", "Talk"), T("终章", "Finale") };
+            string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("科技", "Tech"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("成就", "Cards"), T("对话", "Talk"), T("终章", "Finale") };
             bool trainable = Sim.TrainingUnlocked(XgTrack.Vision) || Sim.TrainingUnlocked(XgTrack.Sequence);
-            bool[] open = { controller.FeatureVisible("label"), controller.FeatureVisible("train"), controller.FeatureVisible("tree"), controller.FeatureVisible("contracts"), controller.FeatureVisible("repo"), controller.FeatureVisible("board"), controller.FeatureVisible("wall"), controller.FeatureVisible("chat"), controller.FeatureVisible("final") };
+            bool[] open = { controller.FeatureVisible("label"), controller.FeatureVisible("train"), controller.FeatureVisible("tree"), controller.FeatureVisible("contracts"), controller.FeatureVisible("repo"), controller.FeatureVisible("board"), controller.FeatureVisible("wall"), controller.FeatureVisible("cards"), controller.FeatureVisible("chat"), controller.FeatureVisible("final") };
             int current = tabs.FindIndex(x => x.id == tab);
             if (current >= 0 && !open[current]) { tab = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
             int buyable = 0; foreach (var n in XgCatalog.Nodes) if (Sim.Status(n, Host) == XgSim.NodeStatus.Buyable) buyable++;
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0);
-            string[] badges = { raiseReady ? "加薪" : "", "", buyable > 0 ? buyable.ToString() : "", "", fresh > 0 && tab != "repo" ? "+" + fresh : "", "", Sim.ActiveWall != null && tab != "wall" ? "!" : "", "", Sim.EndingOpen && tab != "final" ? "!" : "" };
-            int visibleRow = 0;
+            int newCards = Sim.NewCards();
+            string[] badges = { raiseReady ? "加薪" : "", "", buyable > 0 ? buyable.ToString() : "", "", fresh > 0 && tab != "repo" ? "+" + fresh : "", "", Sim.ActiveWall != null && tab != "wall" ? "!" : "", newCards > 0 ? "+" + newCards : "", "", Sim.EndingOpen && tab != "final" ? "!" : "" };
+            int visibleRow = 0, visibleCount = 0;
+            foreach (bool o in open) if (o) visibleCount++;
+            // Ten tabs do not fit at full height above the two toggles: squeeze the rows when most are open.
+            float step = visibleCount > 8 ? 52 : 58;
             for (int i = 0; i < tabs.Count; i++)
             {
                 tabs[i].btn.rt.gameObject.SetActive(open[i]);
                 if (!open[i]) continue;
-                tabs[i].btn.rt.offsetMin = new Vector2(8, -8 - (visibleRow + 1) * 58);
-                tabs[i].btn.rt.offsetMax = new Vector2(-8, -8 - visibleRow * 58 - 6);
+                tabs[i].btn.rt.offsetMin = new Vector2(8, -8 - (visibleRow + 1) * step);
+                tabs[i].btn.rt.offsetMax = new Vector2(-8, -8 - visibleRow * step - 6);
                 visibleRow++;
                 bool on = tabs[i].id == tab;
                 string badge = badges[i].Length > 0 ? "  <size=13><color=#" + (on ? "FFE08A" : "E08A00") + ">" + (i == 0 ? T(badges[i], "raise") : badges[i]) + "</color></size>" : "";
