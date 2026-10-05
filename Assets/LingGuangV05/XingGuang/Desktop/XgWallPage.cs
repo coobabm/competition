@@ -14,7 +14,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// 诊断: the standing wall as an investigation (look at mistakes → guess → cheap trial → independent exam).
     /// Groups and mistakes come from the real diagnostic cards; trials run on copies and change nothing real.
     /// </summary>
-    public sealed class XgWallPage : XgPage
+    public sealed partial class XgWallPage : XgPage
     {
         TMP_Text header, exam, diagnosis, mistakes, trialText, hints, footer;
         XgBtn trialButton, hintButton, editButton, applyButton, cancelButton;
@@ -37,19 +37,23 @@ namespace LingGuangV05.Desktop.XingGuang
             root = card;
             header = ui.Text(Strip("Header", card, 8, 30, 16, 16), "", 18, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             header.fontStyle = FontStyles.Bold;
-            exam = ui.Text(Strip("Exam", card, 40, 24, 16, 16), "", 14, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            // Two views share the page: the wall investigation and the 训练图式 (XgWallPage.Graph.cs).
+            var view = Rect("DiagnosisView", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            diagnosisView = view;
+            BuildGraph(card);
+            exam = ui.Text(Strip("Exam", view, 40, 24, 16, 16), "", 14, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
 
-            var left = Rect("Diagnosis", card, new Vector2(0, .36f), new Vector2(.5f, 1), new Vector2(12, 0), new Vector2(-6, -72));
+            var left = Rect("Diagnosis", view, new Vector2(0, .36f), new Vector2(.5f, 1), new Vector2(12, 0), new Vector2(-6, -72));
             Panel(left, XgPalette.Page);
             diagnosis = ui.Text(Rect("Text", left, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
             diagnosis.enableAutoSizing = true; diagnosis.fontSizeMin = 10; diagnosis.fontSizeMax = 14;
 
-            var middle = Rect("Mistakes", card, new Vector2(0, 0), new Vector2(.5f, .36f), new Vector2(12, 12), new Vector2(-6, -6));
+            var middle = Rect("Mistakes", view, new Vector2(0, 0), new Vector2(.5f, .36f), new Vector2(12, 12), new Vector2(-6, -6));
             Panel(middle, XgPalette.Page);
             mistakes = ui.Text(Rect("Text", middle, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 13, XgPalette.Ink, TextAlignmentOptions.TopLeft);
             mistakes.enableAutoSizing = true; mistakes.fontSizeMin = 9; mistakes.fontSizeMax = 13;
 
-            var right = Rect("Trial", card, new Vector2(.5f, .36f), new Vector2(1, 1), new Vector2(6, 0), new Vector2(-12, -72));
+            var right = Rect("Trial", view, new Vector2(.5f, .36f), new Vector2(1, 1), new Vector2(6, 0), new Vector2(-12, -72));
             Panel(right, XgPalette.Page);
             trialPanel = right;
             editButton = ui.Button(right, "", EditDraft, 12);
@@ -83,7 +87,7 @@ namespace LingGuangV05.Desktop.XingGuang
             trialText.enableAutoSizing = true; trialText.fontSizeMin = 10; trialText.fontSizeMax = 13;
             root.gameObject.AddComponent<XgTrialPageLifetime>().Disabled = CancelDraft;
 
-            var bottom = Rect("Hints", card, new Vector2(.5f, 0), new Vector2(1, .36f), new Vector2(6, 12), new Vector2(-12, -6));
+            var bottom = Rect("Hints", view, new Vector2(.5f, 0), new Vector2(1, .36f), new Vector2(6, 12), new Vector2(-12, -6));
             Panel(bottom, XgPalette.Page);
             hintButton = ui.Button(bottom, "", () => { var w = Sim.ActiveWall; if (w != null && Sim.RevealHint(w.id)) { Fx.Play(XgJuice.Sfx.Id.Tick); Refresh(); } }, 13);
             hintButton.rt.anchorMin = new Vector2(1, 1); hintButton.rt.anchorMax = new Vector2(1, 1);
@@ -265,6 +269,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (header == null) return;
             var wall = Sim.ActiveWall;
+            if (ShowGraph(wall)) return;
             if (wall == null)
             {
                 header.text = T("现在没有墙", "No wall right now"); exam.text = diagnosis.text = mistakes.text = trialText.text = hints.text = footer.text = "";

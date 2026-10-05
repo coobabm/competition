@@ -128,6 +128,7 @@ namespace LingGuangV05.Desktop.XingGuang
             boundSim.EpochStarted += OnEpochStarted;
             boundSim.BreakthroughDone += OnBreakthrough;
             boundSim.Emerged += OnEmerged;
+            boundSim.InsightReached += OnInsight;
             boundSim.StageAdvanced += OnStageAdvanced;
             boundSim.Assessed += OnAssessed;
             boundSim.NodeBought += OnNodeBought;
@@ -144,7 +145,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Unsubscribe(XgSim sim)
         {
-            sim.EpochStarted -= OnEpochStarted; sim.BreakthroughDone -= OnBreakthrough; sim.Emerged -= OnEmerged; sim.StageAdvanced -= OnStageAdvanced;
+            sim.EpochStarted -= OnEpochStarted; sim.BreakthroughDone -= OnBreakthrough; sim.Emerged -= OnEmerged; sim.InsightReached -= OnInsight; sim.StageAdvanced -= OnStageAdvanced;
             sim.Message -= OnMessage; sim.Diverged -= OnDiverged; sim.EpochDone -= OnEpoch; sim.Assessed -= OnAssessed;
             sim.NodeBought -= OnNodeBought; sim.ComboTier -= OnComboTier; sim.ComboBroken -= OnComboBroken; sim.DeskOpened -= OnDeskOpened;
             sim.CardTimedOut -= OnCardTimedOut; sim.DuelDone -= OnDuelDone; sim.ModelSaved -= OnModelSaved;
@@ -173,6 +174,13 @@ namespace LingGuangV05.Desktop.XingGuang
             Juice.Play(XgJuice.Sfx.Id.Fanfare, .8f);
             Juice.Float(Juice.At(root), line, XgPalette.Gold, 22, 90, 3.5f, 1.1f);
             Refresh(true);
+        }
+
+        /// <summary>A wall worked out alone: the AI reacts, as far as its stage lets it speak (XgSim.InsightLine).</summary>
+        void OnInsight(int stage, string route, string line)
+        {
+            Juice.Play(XgJuice.Sfx.Id.Unlock, 1.1f);
+            Juice.Float(Juice.At(root), line, XgPalette.Gold, 22, 60, 3f, 1.1f);
         }
 
         void OnStageAdvanced(int from)
@@ -411,7 +419,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "contracts": return T("订单：模型准确率达到要求就能签约，之后每秒自动给钱。", "Contracts: sign once a model reaches the required accuracy; they pay every second.");
                 case "repo": return T("模型仓库：每次刷新纪录都存一个检查点。", "Models: a checkpoint is saved for every record.");
                 case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。", "Brain: the concepts it has learned and the links it believes (some are wrong).");
-                case "wall": return T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。", "Diagnose: see where it goes wrong. The pattern of mistakes tells you what structure to try.");
+                case "wall": return T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。\n训练图式：网络卡在哪一层、第几轮开始出问题。", "Diagnose: see where it goes wrong. The pattern of mistakes tells you what structure to try.\nTraining map: which layer is stuck and from which epoch.");
                 case "chat": return T("对话：和它说话。阶段越高，它会说的越多。", "Talk: chat with it. The higher the stage, the more it can say.");
                 default: return T("终章。", "Finale.");
             }

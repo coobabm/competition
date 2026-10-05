@@ -254,6 +254,10 @@ namespace LingGuangV05.XingGuang
         }
 
         static readonly string[] Fillers = { "2", "3", "啊", "哈", "嗯", "这", "。" };
+        /// <summary>Filler words padded around a danmaku line (特征工程 drops them as stop words).</summary>
+        public static bool IsFiller(string word) => Array.IndexOf(Fillers, word) >= 0;
+        /// <summary>The stray dot drawn on some vision cards (特征工程 removes it as noise).</summary>
+        public const string StrayDot = "点";
 
         /// <summary>A sentence as positioned characters with filler on both sides, so meaning never sits at a fixed slot.</summary>
         static void Sentence(XgBoardCard b, Random r, string text)

@@ -19,6 +19,8 @@ namespace LingGuangV05.XingGuang
         /// -1 (also older saves) = the best activation owned.</summary>
         public int act = -1;
         public bool clip, skip, position, warmup;
+        /// <summary>特征工程 switched on (hand-made features; see <see cref="XgBoard.Engineered"/>).</summary>
+        public bool features;
         /// <summary>Attention with the loop switched off (design v1.1 阶段 5「只用注意力」).</summary>
         public bool attnOnly;
         /// <summary>Next card of the training pool and the running training accuracy on fed cards.</summary>
@@ -74,6 +76,10 @@ namespace LingGuangV05.XingGuang
         public bool SkipOwned => Has("resnet") || Has("transformer");
         public bool PositionOwned => Has("position");
         public bool WarmupOwned => Has("warmup");
+        public bool FeaturesOwned => Has(FeaturesId);
+        public const string FeaturesId = "features";
+        /// <summary>Hand-made features take people's time: an epoch with them on feeds this share of the cards.</summary>
+        public const double FeaturesCardFactor = .5;
         public bool AttentionOnlyOwned => Has("attention");
 
         /// <summary>The rule parameters this run trains with. Knobs the player has not bought stay off.</summary>
@@ -91,6 +97,7 @@ namespace LingGuangV05.XingGuang
                 clip = ClipOwned && run.clip,
                 position = PositionOwned && run.position,
                 warmup = WarmupOwned && run.warmup,
+                features = FeaturesOwned && run.features,
                 batchNorm = Has("batchnorm"),
                 bias = Has("bias"),
                 lr = RateValues[Math.Max(0, Math.Min(RateValues.Length - 1, run.lr))],
@@ -109,6 +116,7 @@ namespace LingGuangV05.XingGuang
         public bool SetPosition(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !PositionOwned) return false; run.position = on; Evaluate(run); return true; }
         public bool SetAttentionOnly(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !AttentionOnlyOwned) return false; run.attnOnly = on; Evaluate(run); return true; }
         public bool SetWarmup(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !WarmupOwned) return false; run.warmup = on; return true; }
+        public bool SetFeatures(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !FeaturesOwned) return false; run.features = on; Evaluate(run); return true; }
 
         /// <summary>Buying a knob switches it on for both tracks, the way a new architecture is switched to.</summary>
         void ApplyKnobNode(XgNode node)
@@ -162,7 +170,7 @@ namespace LingGuangV05.XingGuang
             var a = XgCatalog.Arch(run.arch);
             var k = Knobs(run);
             double n = 24 * Math.Pow(Math.Max(.5, compute), .7) * OptSpeed * (a == null ? 1 : a.speed) * SpeedResearch * ProgressionSpeed(run)
-                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0);
+                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1);
             return (int)Math.Max(4, Math.Min(MaxCardsPerEpoch, Math.Round(n)));
         }
 
@@ -220,6 +228,7 @@ namespace LingGuangV05.XingGuang
             };
             foreach (var id in XgPhenomena.Observe(o, S.phenomena, Board))
             {
+                tracePhenomena.Add(id);
                 var p = XgPhenomena.Get(id);
                 Say(T("现象：", "Phenomenon: ") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
                 PhenomenonFound?.Invoke(p);

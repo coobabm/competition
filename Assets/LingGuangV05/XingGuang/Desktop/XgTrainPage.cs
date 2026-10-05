@@ -232,12 +232,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 acts[i].rt.offsetMin = new Vector2(14, -312); acts[i].rt.offsetMax = new Vector2(-4, -286);
                 UiTip.Add(acts[i].rt, "激活函数：每个单元怎么「出声」。\n阶跃没有坡度，误差传不回去，多层网络学不动；S 形和 ReLU 可以。", "Activation: how each unit responds.\nA step has no slope, so errors cannot flow back through layers; S-curve and ReLU can.");
             }
-            toggles = new XgBtn[5];
+            toggles = new XgBtn[6];
             for (int i = 0; i < toggles.Length; i++)
             {
                 int index = i;
                 toggles[i] = ui.Button(right, "", () => { if (Toggle(index)) Knob(toggles[index]); }, 11);
-                toggles[i].rt.anchorMin = new Vector2(i / 5f, 1); toggles[i].rt.anchorMax = new Vector2((i + 1f) / 5, 1);
+                toggles[i].label.enableAutoSizing = true; toggles[i].label.fontSizeMin = 8; toggles[i].label.fontSizeMax = 11;
+                toggles[i].rt.anchorMin = new Vector2(i / 6f, 1); toggles[i].rt.anchorMax = new Vector2((i + 1f) / 6, 1);
                 toggles[i].rt.offsetMin = new Vector2(14, -344); toggles[i].rt.offsetMax = new Vector2(-4, -318);
                 UiTip.Add(toggles[i].rt, () => ToggleHelp(index));
             }
@@ -281,6 +282,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 case 1: return T("跨层直连：每层留一条捷径，信号能原样穿过。网络超过 20 层时必须开。", "Skip connections: a shortcut around every layer so the signal passes through. Needed past 20 layers.");
                 case 2: return T("位置标记：给每个字一个位置编号。不用循环时，它靠这个知道先后顺序。", "Position tags: number every word's position. Without a loop this is how it knows the order.");
                 case 3: return T("预热：开头几步先用很小的学习率，再慢慢加大。大模型更稳。", "Warm-up: start with a tiny learning rate and raise it. Steadier for big models.");
+                case 5: return T("特征工程：人替它做特征——逻辑题把两个条件拼成一个，图片去噪点再居中，句子去掉语气词、按字和两字词读。\n不换结构也能过墙，但人工整理费时间：每轮训练量减半。",
+                    "Feature engineering: people make the features — logic pairs two conditions, pictures are denoised and centred, sentences drop fillers and are read as words and word pairs.\nPasses walls without a new structure, but by hand: half the cards per epoch.");
                 default: return T("只用注意力：拿掉循环，每个字直接看所有字，可以并行算。", "Attention only: drop the loop; every word looks at every word, all in parallel.");
             }
         }
@@ -340,6 +343,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case 1: return Sim.SetSkip(Track, !run.skip);
                 case 2: return Sim.SetPosition(Track, !run.position);
                 case 3: return Sim.SetWarmup(Track, !run.warmup);
+                case 5: return Sim.SetFeatures(Track, !run.features);
                 default: return Sim.SetAttentionOnly(Track, !run.attnOnly);
             }
         }
@@ -354,9 +358,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool on = Sim.EffectiveActivation(run) == i;
                 acts[i].Set(T(new[] { "激活：阶跃", "S 形", "ReLU" }[i], new[] { "Act: step", "S-curve", "ReLU" }[i]), !run.epochActive, on ? XgPalette.Accent : XgPalette.Button, on ? Color.white : XgPalette.Ink);
             }
-            bool[] owned = { Sim.ClipOwned, Sim.SkipOwned, Sim.PositionOwned, Sim.WarmupOwned, Sim.AttentionOnlyOwned && run.arch == "attention" };
-            bool[] state = { run.clip, run.skip || run.arch == "resnet" || run.arch == "transformer", run.position, run.warmup, run.attnOnly };
-            string[] zh = { "梯度裁剪", "跨层直连", "位置标记", "预热", "只用注意力" }, en = { "Clip", "Skip", "Positions", "Warm-up", "Attn only" };
+            bool[] owned = { Sim.ClipOwned, Sim.SkipOwned, Sim.PositionOwned, Sim.WarmupOwned, Sim.AttentionOnlyOwned && run.arch == "attention", Sim.FeaturesOwned };
+            bool[] state = { run.clip, run.skip || run.arch == "resnet" || run.arch == "transformer", run.position, run.warmup, run.attnOnly, run.features };
+            string[] zh = { "梯度裁剪", "跨层直连", "位置标记", "预热", "只用注意力", "特征工程" }, en = { "Clip", "Skip", "Positions", "Warm-up", "Attn only", "Features" };
             for (int i = 0; i < toggles.Length; i++)
             {
                 toggles[i].Show(board && owned[i]);

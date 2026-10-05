@@ -399,6 +399,20 @@ namespace LingGuangV05.XingGuang
 
         public static readonly Dictionary<string, string[]> Hints = new Dictionary<string, string[]>
         {
+            { "combo", new[]
+                {
+                    "看「训练图式」：曲线一直在五五开附近晃，加宽、多练都没用。", "Open the training map: the curve hovers around a coin toss; more width or more epochs change nothing.",
+                    "猜想：没有哪一个条件单独能说明答案，要看两个条件是不是「不一样」。一层只能一个一个条件地算。", "Hypothesis: no single condition gives the answer; it is whether the two differ. One layer can only weigh them one by one.",
+                    "两条路：让它自己长出组合（多一层，还要能把误差传回去）；或者人替它把两个条件拼成一个（特征工程，慢一些）。", "Two roads: let it grow combinations itself (another layer that can pass the error back), or have people pair the two conditions for it (feature engineering, slower).",
+                }
+            },
+            { "structure", new[]
+                {
+                    "看「训练图式」：格子很快就满了，练过的题会、没见过的位置不会。", "Open the training map: the cells fill up fast; trained cards are right, unseen positions wrong.",
+                    "猜想：它把每个位置上的每一笔都当成新东西死记，同一个字挪一格就不认识了。", "Hypothesis: it memorises every stroke at every position as something new; move a digit one step and it is a stranger.",
+                    "两条路：换一种只看邻近、到处共用的连法（图看邻居，句子看前文）；或者人先把图居中、把句子拆成字和词再喂（特征工程，慢一些）。", "Two roads: a wiring that only looks nearby and is shared everywhere (images look at neighbours, sentences at what came before), or have people centre the pictures and split the sentences first (feature engineering, slower).",
+                }
+            },
             { "length", new[]
                 {
                     "看诊断：错误集中在离得远的条件上，近处的几乎都对。", "Look at the diagnosis: the errors sit on far conditions; near ones are almost all right.",

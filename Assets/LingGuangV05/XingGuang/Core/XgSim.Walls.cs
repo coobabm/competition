@@ -98,7 +98,7 @@ namespace LingGuangV05.XingGuang
             },
             new XgWall
             {
-                stage = 2, id = "structure", name = "梯度消失", nameEn = "Vanishing gradients", secret = "secret.2",
+                stage = 2, id = "structure", name = "看不懂整张图", nameEn = "Can't see the whole picture", secret = "secret.2",
                 why = "不是每个格子都要连每个格子：看图看邻居，读句子看前文。", whyEn = "Not every cell needs every other: images look at neighbours, sentences at what came before.",
                 golden = "手写桌用「局部共享」（卷积），弹幕桌用「回环」（循环），两张桌都要达标", goldenEn = "Digits with local sharing (convolution), danmaku with a loop (recurrence); both must pass",
                 needs = Needs("bt.vision", "bt.sequence", "s.d3", "s.w2"),
@@ -243,22 +243,69 @@ namespace LingGuangV05.XingGuang
                     if (acc + 1e-9 < check.target) continue;
                     if (!WallSeen(wall.id)) RaiseWall(wall);
                     S.wallPassed.Add(check.dataset + "#" + wall.id);
+                    if (S.wallRoutes == null) S.wallRoutes = new List<string>();
+                    S.wallRoutes.Add(check.dataset + "#" + wall.id + "=" + (k.features ? RouteFeatures : RouteStructure));
                     Say(T("达标：", "Passed: ") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
                 }
                 if (WallPassed(wall)) PassWall(wall, host);
             }
         }
 
+        public const string RouteStructure = "structure", RouteFeatures = "features", RouteMixed = "mixed";
+
+        /// <summary>
+        /// How a passed wall was passed: 换结构 (a new structure), 换练法 (the 特征工程 road, no new structure) or both
+        /// across its checks; "" while it stands.
+        /// </summary>
+        public string WallRoute(string wallId)
+        {
+            bool structure = false, features = false;
+            if (S.wallRoutes != null)
+                foreach (var r in S.wallRoutes)
+                {
+                    int hash = r.IndexOf('#'), eq = r.LastIndexOf('=');
+                    if (hash < 0 || eq < hash || r.Substring(hash + 1, eq - hash - 1) != wallId) continue;
+                    if (r.Substring(eq + 1) == RouteFeatures) features = true; else structure = true;
+                }
+            return structure && features ? RouteMixed : features ? RouteFeatures : structure ? RouteStructure : "";
+        }
+
+        /// <summary>A wall worked out without the secret: stage, route and the AI's own reaction (as much as it can say yet).</summary>
+        public event Action<int, string, string> InsightReached;
+
+        /// <summary>
+        /// What the AI says when the player works a wall out alone. It speaks as far as its stage allows (是/否 at 1,
+        /// a choice at 2, one word at 3, sentences from 4), and the road matters: a new structure surprises it, the
+        /// slow hand-made road ("笨办法") makes it think again.
+        /// </summary>
+        public string InsightLine(int stage, string route)
+        {
+            string self = Profile.self.Length > 0 ? Profile.self : T("我", "I"), call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you");
+            bool slow = route == RouteFeatures;
+            switch (stage)
+            {
+                case 1: return T("是！", "Yes!");
+                case 2: return slow ? T("是……是！", "Ye… yes!") : T("是！是！", "Yes! Yes!");
+                case 3: return slow ? T("笨办法？", "Slow way?") : T("厉害", "Wow");
+                default:
+                    return slow ? T("……原来笨办法也行。", "…so the slow way works too.")
+                                : T(call + "自己想出来的？" + self + "都没想到。", "You worked it out yourself? " + self + " never thought of it.");
+            }
+        }
+
         void PassWall(XgWall wall, IXgHost host)
         {
             bool self = wall.secret.Length > 0 ? !Has(wall.secret) : wall.stage == 5 && !S.emerged.Contains(5);
+            string route = WallRoute(wall.id);
             if (self)
             {
                 S.insights.Add(wall.id);
                 double bonus = wall.stage == 5 ? StageFiveInsightBonus : NodeCost(XgCatalog.Node(wall.secret)) * SelfInsightBonus;
                 if (host != null && bonus > 0) { host.Earn(bonus); S.totalIncome += bonus; }
                 if (wall.secret.Length > 0 && !Has(wall.secret)) S.unlocked.Add(wall.secret);
-                Say(T("自悟！没买秘籍就配出了黄金参数，自悟奖金 ¥", "Worked it out! Golden settings found without the secret: insight bonus ¥") + F(bonus, "0"));
+                Say((route == RouteFeatures ? T("自悟！没买秘籍，也没换结构，靠特征工程硬是练过去了。自悟奖金 ¥", "Worked it out! No secret and no new structure: hand-made features got it through. Insight bonus ¥")
+                    : T("自悟！没买秘籍就找到了过墙的办法，自悟奖金 ¥", "Worked it out! A way past the wall found without the secret: insight bonus ¥")) + F(bonus, "0"));
+                InsightReached?.Invoke(wall.stage, route, InsightLine(wall.stage, route));
             }
             if (wall.extra) { BreakthroughDone?.Invoke("bt.residual"); return; }
             AdvanceStage(wall.stage);

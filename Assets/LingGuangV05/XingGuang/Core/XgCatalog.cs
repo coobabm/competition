@@ -322,10 +322,12 @@ namespace LingGuangV05.XingGuang
             void S(string id, int stage, string parent, double price, string zh, string en)
                 => Add(Simple(id, XgNodeKind.Secret, parent, price, zh, en, "秘籍：写明这一阶段墙的黄金参数。自己配出来能拿 1.5 倍奖金。", "Secret: the golden settings for this stage's wall. Finding them yourself pays 1.5× its price."), stage, "trunk");
 
-            // ── 阶段 1 · 感知机：墙「异或」，黄金参数 = 隐藏层 + S 形 + 学习率 0.1–0.5
+            // ── 阶段 1 · 感知机：墙「异或」，换结构 = 隐藏层 + S 形 + 学习率 0.1–0.5；换练法 = 特征工程（把两个条件拼成一个）
             A("perceptron", 1, "trunk", null, 0);
             R("weights", "perceptron", 15, 1); R("learnrule", "weights", 40, 1); R("step", "perceptron", 30, 1);
             R("bias", "perceptron", 20, 1);
+            // The pre-network road: people hand-make the features (练法 instead of 结构; XgBoard.Engineered).
+            R("features", "bias", 60, 1);
             Add(Simple("shared.lr", XgNodeKind.LrKnob, "perceptron", 60, "学习率旋钮", "Learning-rate knob", "两条线共用一个学习率权限。", "One learning-rate unlock for both tracks."), 1, "trunk");
             P("spam", "perceptron", 300, 1, "sequence");
             Break("bt.hidden", 1, "trunk", "perceptron", 150, "隐藏层", "Hidden layers");
@@ -334,7 +336,7 @@ namespace LingGuangV05.XingGuang
             R("sigmoid", "mlp", 120, 1);
             S("secret.1", 1, "perceptron", 200, "秘籍 · 异或", "Secret · XOR");
 
-            // ── 阶段 2 · 多层感知机：墙「梯度消失」，黄金参数 = 手写桌局部共享 + 弹幕桌回环
+            // ── 阶段 2 · 多层感知机：墙「看不懂整张图」，换结构 = 手写桌局部共享 + 弹幕桌回环；换练法 = 特征工程（去噪居中、按字词读）
             D("trunk", 3, "s.d2", 100, 2, "trunk");
             W("trunk", 1, "mlp", 150, 2, "trunk");
             W("trunk", 2, "s.w1", 450, 2, "trunk");
@@ -345,7 +347,7 @@ namespace LingGuangV05.XingGuang
             Break("bt.sequence", 2, "sequence", "mlp", 500, "循环", "Recurrence");
             A("lenet", 2, "vision", "bt.vision", 0);
             A("rnn", 2, "sequence", "bt.sequence", 0);
-            S("secret.2", 2, "mlp", 800, "秘籍 · 梯度消失", "Secret · vanishing gradients");
+            S("secret.2", 2, "mlp", 800, "秘籍 · 看不懂整张图", "Secret · can't see the whole picture");
 
             // ── 阶段 3 · CNN + RNN：墙「长句失忆」，黄金参数 = 门控回环 + 梯度裁剪 + 学习率 ≤ 0.01
             A("alexnet", 3, "vision", "lenet", 500);
@@ -546,6 +548,9 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "sigmoid", kind = XgResearchKind.ManualPay, name = "Sigmoid", nameEn = "Sigmoid", cost = 120, effect = "把硬门槛换成平滑的 S 形曲线，梯度才能往回传。验证准确率 +1%", effectEn = "A smooth S-curve instead of a hard threshold, so gradients can flow back. Validation +1%" },
             new XgResearch { id = "backprop", kind = XgResearchKind.ManualPay, name = "反向传播", nameEn = "Backpropagation", cost = 200, effect = "Rumelhart、Hinton、Williams 1986：误差从输出层一层层传回去。训练速度 ×1.2", effectEn = "Rumelhart, Hinton & Williams 1986: send the error back layer by layer. Training ×1.2" },
             new XgResearch { id = "chainrule", kind = XgResearchKind.ManualPay, name = "链式法则", nameEn = "Chain rule", cost = 250, effect = "每层的梯度等于后面各层梯度相乘。训练速度 ×1.1", effectEn = "Each layer's gradient is the product of the gradients after it. Training ×1.1" },
+            new XgResearch { id = "features", kind = XgResearchKind.ManualPay, name = "特征工程", nameEn = "Feature engineering", cost = 60,
+                effect = "旋钮：人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。不用换结构也能过墙，但人工整理很费时间：训练量减半。",
+                effectEn = "Knob: people make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. Passes walls without a new structure, but by hand: half the cards per epoch." },
             new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "旋钮：不靠循环也知道字的先后顺序", effectEn = "Knob: word order without recurrence" },
             new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "旋钮：大模型开局先慢后快，不炸", effectEn = "Knob: big models start slow and do not blow up" },
             new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "训练速度 ×1.3", effectEn = "Training speed ×1.3" },

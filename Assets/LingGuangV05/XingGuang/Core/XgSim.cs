@@ -70,6 +70,7 @@ namespace LingGuangV05.XingGuang
             S = state ?? new XgState();
             // Data sources first: everything below evaluates runs, which reads samples (XgSim.DataSources.cs).
             RepairDataSources();
+            RepairTraces();
             RepairFlywheel();
             PrepareProgression(state == null);
             Repair();
@@ -642,7 +643,7 @@ namespace LingGuangV05.XingGuang
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = gained };
             if (UseBoard ? torn : run.steps > Tau(run) * .5 && Roll() < Hazard(run) * EpochSeconds) { Diverge(run); e.diverged = true; }
             Evaluate(run);
-            if (UseBoard) ObservePhenomena(run);
+            if (UseBoard) { ObservePhenomena(run); RecordTrace(run, e.diverged, (int)gained); }
             S.stageEpochs++;
             if (UseBoard) { CheckWallAppears(); CheckWallPass(run, host); }
             Push(run.histTrain, (float)run.trainAcc);

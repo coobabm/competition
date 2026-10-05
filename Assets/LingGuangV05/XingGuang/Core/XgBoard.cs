@@ -15,6 +15,8 @@ namespace LingGuangV05.XingGuang
     {
         public string name = "";
         public int x = -1, y, seq;
+        /// <summary>A hand-made feature (特征工程 n-gram): used as it is, never merged with others by R2.</summary>
+        public bool made;
         public XgFeature() { }
         public XgFeature(string name, int x = -1, int y = 0, int seq = 0) { this.name = name; this.x = x; this.y = y; this.seq = seq; }
     }
@@ -83,6 +85,8 @@ namespace LingGuangV05.XingGuang
         public XgActivation activation = XgActivation.Step;
         public XgWiring wiring = XgWiring.Full;
         public bool skip, clip, position, warmup, batchNorm;
+        /// <summary>特征工程 (the pre-deep-learning road): hand-made features, read per region (see <see cref="XgBoard.Elements"/>).</summary>
+        public bool features;
         /// <summary>偏置: every card also lights a constant element, so the board can shift its threshold.</summary>
         public bool bias;
         public double lr = .1;
@@ -139,6 +143,8 @@ namespace LingGuangV05.XingGuang
         public const double WeightLimit = 4;
         /// <summary>Source tokens an encoder–decoder keeps after squeezing the sentence into one cell.</summary>
         public const int BottleneckTokens = 6;
+        /// <summary>How far apart two strokes may be for a hand-made (特征工程) descriptor to combine them.</summary>
+        public const int FeatureReach = 2;
         public const string BiasElement = "偏置";
 
         public XgBoardState S { get; private set; }
@@ -167,10 +173,11 @@ namespace LingGuangV05.XingGuang
         // ───────────── elements (R6 decides what a card exposes) ─────────────
 
         /// <summary>An element of one card under the current wiring: id, activation and where it sits (for reach).</summary>
-        public struct Element { public string id; public double act; public int x, y, seq, back; public bool positioned; }
+        public struct Element { public string id; public double act; public int x, y, seq, back; public bool positioned, made; }
 
         public static List<Element> Elements(XgBoardCard card, XgKnobs k)
         {
+            if (k.features) card = Engineered(card);
             var list = new List<Element>(card.features.Count + 1);
             if (k.bias) list.Add(new Element { id = BiasElement, act = 1, x = -1 });
             var lengths = new Dictionary<int, int>();
@@ -179,7 +186,7 @@ namespace LingGuangV05.XingGuang
             bool sequence = card.region == "sequence";
             foreach (var f in card.features)
             {
-                var e = new Element { act = 1, x = f.x, y = f.y, seq = f.seq, positioned = f.x >= 0 };
+                var e = new Element { act = 1, x = f.x, y = f.y, seq = f.seq, positioned = f.x >= 0, made = f.made };
                 if (!e.positioned) { e.id = f.name; list.Add(e); continue; }
                 int len = lengths[f.seq];
                 int fromEnd = len - 1 - f.x;
@@ -217,10 +224,61 @@ namespace LingGuangV05.XingGuang
             return list;
         }
 
+        /// <summary>
+        /// 特征工程: what a person would hand-make before networks could find it themselves. 逻辑 cards gain every pair of
+        /// their elements as one new element (a feature cross: one layer can then answer 异或); 视觉 cards lose the stray
+        /// dot and move to their top-left corner (denoise + centre); 序列 cards drop filler words and become fixed
+        /// unigram and bigram features that R2 never merges (a linear n-gram reader: no word order beyond two).
+        /// </summary>
+        public static XgBoardCard Engineered(XgBoardCard card)
+        {
+            var made = new XgBoardCard { region = card.region, seed = card.seed, truth = card.truth };
+            switch (card.region)
+            {
+                case "logic":
+                    made.features.AddRange(card.features);
+                    for (int i = 0; i < card.features.Count; i++)
+                        for (int j = i + 1; j < card.features.Count; j++)
+                        {
+                            var a = card.features[i]; var b = card.features[j];
+                            if (a.x >= 0 || b.x >= 0) continue;
+                            made.features.Add(new XgFeature(string.CompareOrdinal(a.name, b.name) < 0 ? a.name + "&" + b.name : b.name + "&" + a.name));
+                        }
+                    break;
+                case "vision":
+                    // Denoise (drop the stray dot), then move the figure to the top-left corner.
+                    int minX = int.MaxValue, minY = int.MaxValue;
+                    foreach (var f in card.features) if (f.x >= 0 && f.name != XgBoardData.StrayDot) { minX = Math.Min(minX, f.x); minY = Math.Min(minY, f.y); }
+                    foreach (var f in card.features)
+                    {
+                        if (f.x < 0) made.features.Add(f);
+                        else if (f.name != XgBoardData.StrayDot) made.features.Add(new XgFeature(f.name, f.x - minX, f.y - minY, f.seq));
+                    }
+                    break;
+                default:
+                    // Unigrams and bigrams, each one fixed feature: a linear n-gram reader, the way text was classified
+                    // before networks read in order.
+                    XgFeature previous = null;
+                    foreach (var f in card.features)
+                    {
+                        if (f.x < 0 || f.seq > 0) { made.features.Add(f); continue; }
+                        if (XgBoardData.IsFiller(f.name)) continue;
+                        made.features.Add(new XgFeature(f.name) { made = true });
+                        if (previous != null) made.features.Add(new XgFeature(previous.name + f.name) { made = true });
+                        previous = f;
+                    }
+                    break;
+            }
+            return made;
+        }
+
         /// <summary>R6 reach between two elements of the same card.</summary>
         public static bool Reach(Element a, Element b, XgKnobs k)
         {
+            if (a.made || b.made) return false;
             if (!a.positioned || !b.positioned) return true;
+            // 特征工程 on a dense net: hand-made local descriptors only combine strokes near each other (positions stay bound).
+            if (k.features && k.wiring == XgWiring.Full) return a.seq == b.seq && Math.Abs(a.x - b.x) <= FeatureReach && Math.Abs(a.y - b.y) <= FeatureReach;
             switch (k.wiring)
             {
                 case XgWiring.Full: case XgWiring.AnyToAny: return true;
