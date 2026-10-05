@@ -310,6 +310,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 24 + Mathf.Min(10, r.combo * .3f));
                 Fx.Burst(at, 6 + Mathf.Min(14, r.combo / 3), XgPalette.Gold, XgJuice.Shape.Yen, 240);
                 Fx.Play(XgJuice.Sfx.Id.Ding, 1 + Mathf.Min(1, r.combo * .025f));
+                if (r.bounty)
+                {
+                    Fx.Shockwave(at, new Color32(123, 47, 247, 255), 260, .4f, 12);
+                    Fx.Float(at + new Vector2(0, 90), T("悬赏到手 ×", "Bounty ×") + N(XgSim.BountyMultiplier, "0"), new Color32(123, 47, 247, 255), 30);
+                    Fx.Play(XgJuice.Sfx.Id.Coin);
+                }
                 if (r.gold)
                 {
                     Fx.Shockwave(at, XgPalette.Gold, 260, .4f, 12);
@@ -445,8 +451,9 @@ namespace LingGuangV05.Desktop.XingGuang
             int level = card.level > 0 ? card.level : Sim.LevelOf(desk), max = XgSim.MaxLevelOf(desk);
             string stars = max > 1 ? "  <color=#E0A800>" + new string('★', Math.Min(level, max)) + "</color><color=#C8CEDA>" + new string('☆', Math.Max(0, max - level)) + "</color>" : "";
             string cat = card.category.Length > 0 ? T(card.category, card.categoryEn) : T(info.name, info.nameEn);
-            meta.text = (card.gold ? "<color=#E0A000><b>" + T("前方高能 ×3", "HYPE ×3") + "</b></color>  " : "") + (Sim.InDuel && desk == "meme" ? "<color=#D63031><b>" + T("斗图中 ", "Battle ") + (XgSim.DuelLength - Sim.DuelLeft + 1) + "/" + XgSim.DuelLength + "</b></color>  " : "")
-                + (Sim.ReviewCard(desk) != null ? "<color=#B36A00>" + T("待复核 · ", "Review · ") + "</color>" + QcTags(card) : "") + cat + stars + "  <color=#E86E14>¥" + N(Sim.ManualPayFor(desk, level), "0.00") + T("/题", "/card") + "</color>";
+            meta.text = (card.gold ? "<color=#E0A000><b>" + T("前方高能 ×3", "HYPE ×3") + "</b></color>  " : "")
+                + (card.bounty ? "<color=#7B2FF7><b>" + T("专家题悬赏 ×", "Expert bounty ×") + N(XgSim.BountyMultiplier, "0") + "</b></color>  " : "") + (Sim.InDuel && desk == "meme" ? "<color=#D63031><b>" + T("斗图中 ", "Battle ") + (XgSim.DuelLength - Sim.DuelLeft + 1) + "/" + XgSim.DuelLength + "</b></color>  " : "")
+                + (Sim.ReviewCard(desk) != null ? "<color=#B36A00>" + T("待复核 · ", "Review · ") + "</color>" + QcTags(card) : "") + cat + stars + "  <color=#E86E14>¥" + N(Sim.ManualPayFor(desk, level) * (card.bounty ? XgSim.BountyMultiplier : 1), "0.00") + T("/题", "/card") + "</color>";
 
             if (!dedicatedPreview) switch (kind)
             {

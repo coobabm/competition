@@ -152,13 +152,22 @@ namespace LingGuangV05.XingGuang
         public List<XgBoardCard> TestSet(string dataset)
         {
             int level = BoardLevel(dataset);
-            string key = dataset + "|" + level + "|" + Today / 100 + "|" + S.dataSalt;
-            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = XgBoardData.TestSet(dataset, level, Today, S.dataSalt);
+            // A fixed set per dataset and level: a new month only brings new cards where the cards follow the calendar.
+            bool topical = XgBoardData.Topical(dataset);
+            string key = dataset + "|" + level + "|" + (topical ? Today / 100 : 0) + "|" + S.dataSalt;
+            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = XgBoardData.TestSet(dataset, level, topical ? Today : 0, S.dataSalt);
             return set;
         }
 
         /// <summary>The next card of the labelled pool (the pool grows with the samples you own).</summary>
         XgBoardCard PoolCard(XgRun run) => PoolCardAt(run, run.cursor++);
+
+        /// <summary>
+        /// "一轮" is one batch of cards, not a pass over the data: the labelled pool (with augmented copies) and how
+        /// many times the cards trained so far would have gone through it.
+        /// </summary>
+        public int PoolSize(XgRun run) => BoardPoolAt(Samples(run.dataset), BoardCardsOn(run.dataset)) * AugmentFactor(run.dataset);
+        public double PassesOverData(XgRun run) { int pool = PoolSize(run); return pool > 0 ? BoardCardsOn(run.dataset) / pool : 0; }
 
         /// <summary>Warm-up length in cards.</summary>
         public const int WarmupCards = 60;
@@ -182,9 +191,19 @@ namespace LingGuangV05.XingGuang
             int index = at % pool, variant = at / pool;
             var card = XgBoardData.Make(run.dataset, XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Train, S.dataSalt), BoardLevel(run.dataset), Today);
             if (variant > 0) card = XgBoardData.Augment(card, run.dataset, variant);
-            // R5 噪: rows wrongly labelled by automation, packs or crowds pull the wrong way (XgSim.DataSources.cs).
+            // R5 噪: rows wrongly labelled by packs or crowds pull the wrong way at random; rows the lab's own model
+            // labelled wrong are not random: they are the cards it gets wrong, labelled its way (近亲繁殖, XgSim.DataSources.cs).
             double noise = BoardFlipRate(run.dataset);
-            if (noise > 0 && (XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Diagnostic, S.dataSalt) % 1000) < noise * 1000) card.truth = !card.truth;
+            if (noise > 0)
+            {
+                int roll = XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Diagnostic, S.dataSalt);
+                double own = Noise(run.dataset), outside = DataNoise(run.dataset), ownShare = own + outside > 0 ? own / (own + outside) : 0;
+                double ownFlips = noise * ownShare, randomFlips = noise - ownFlips;
+                double modelWrong = Math.Max(.05, 1 - BinaryAccuracy(run.dataset, BestAcc(run.dataset)));
+                double pick = (roll % 1000) / 1000.0, pick2 = ((roll / 1000) % 1000) / 1000.0;
+                if (pick < randomFlips) card.truth = !card.truth;
+                else if (ownFlips > 0 && pick2 < Math.Min(1, ownFlips / modelWrong) && Board.Predict(card, Knobs(run), out bool guessed) != card.truth && !guessed) card.truth = !card.truth;
+            }
             return card;
         }
 

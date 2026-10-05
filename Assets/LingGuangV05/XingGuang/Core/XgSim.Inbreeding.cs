@@ -44,6 +44,14 @@ namespace LingGuangV05.XingGuang
             run.inbreedingPenalty = 0;
             double penalty = InbreedingPenaltyFor(run.dataset);
             if (penalty <= 0 || !FiniteCollaboration(run.valAcc)) return;
+            if (UseBoard)
+            {
+                // The board already trains on its own uncaught mistakes (systematic flips in the pool), so the drag is
+                // in the score itself: name it, do not take it off twice.
+                run.inbreedingPenalty = penalty;
+                Observe(InbreedingId);
+                return;
+            }
             var d = XgCatalog.Dataset(run.dataset);
             // Never below a coin toss on this dataset.
             double floor = Math.Min(run.valAcc, d != null ? 1 - d.chanceError : .5);

@@ -201,8 +201,9 @@ namespace LingGuangV05.XingGuang
         public const double TearLimit = .8;
         public const double ClipLimit = .5;
         public const double WeightLimit = 4;
-        /// <summary>Source tokens an encoder–decoder keeps after squeezing the sentence into one cell.</summary>
-        public const int BottleneckTokens = 6;
+        /// <summary>Source tokens an encoder–decoder keeps sharp after squeezing the sentence into one vector; earlier ones fade.</summary>
+        public const int BottleneckTokens = 4;
+        public const double BottleneckFade = .75;
         /// <summary>How far apart two strokes may be for a hand-made (特征工程) descriptor to combine them.</summary>
         public const int FeatureReach = 2;
         public const string BiasElement = "偏置";
@@ -267,11 +268,10 @@ namespace LingGuangV05.XingGuang
                         e.id = k.position ? f.name + "@-" + fromEnd + (f.seq > 0 ? "s" + f.seq : "") : f.name;
                         break;
                     case XgWiring.EncoderDecoder:
-                        // The whole source sentence is squeezed into one fixed-size cell (定长瓶颈): only its last
-                        // BottleneckTokens survive the squeeze.
-                        if (f.seq == 0 && fromEnd >= BottleneckTokens) continue;
+                        // The whole source sentence is squeezed into one fixed-size vector (定长瓶颈): the end of the
+                        // sentence comes through clearly, the further back a word is the more it blurs.
                         e.id = f.name + (f.seq > 0 ? "→" : "");
-                        e.act = f.seq == 0 ? 1 : Math.Pow(k.SequenceDecay, fromEnd);
+                        e.act = f.seq == 0 ? Math.Pow(BottleneckFade, Math.Max(0, fromEnd - BottleneckTokens + 1)) : Math.Pow(k.SequenceDecay, fromEnd);
                         break;
                     case XgWiring.Attention:
                         // The decoder may look back at any source position.
@@ -349,7 +349,8 @@ namespace LingGuangV05.XingGuang
             {
                 case XgWiring.Full: case XgWiring.AnyToAny: return true;
                 case XgWiring.LocalShared: return a.seq == b.seq && Math.Abs(a.x - b.x) <= 1 && Math.Abs(a.y - b.y) <= 1;
-                // Across the two sentences the decoder lines each output word up with its source word.
+                // Across the two sentences the decoder lines each output word up with its source word (with an
+                // encoder–decoder only as clearly as the squeezed sentence still holds that word; see Elements).
                 case XgWiring.EncoderDecoder: case XgWiring.Attention: return a.seq != b.seq ? a.x == b.x : Math.Abs(a.x - b.x) <= 1;
                 default: return a.seq == b.seq && Math.Abs(a.x - b.x) <= 1;
             }
@@ -453,9 +454,33 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>Gated memory keeps a word it has learnt matters this much per step, and lets the rest go this fast.</summary>
+        public const double GateKeep = .99, GateForget = .95, GateWeight = .3;
+
+        /// <summary>
+        /// LSTM / GRU gates decide what to keep: a word that takes part in a concept carrying weight (alone or in a
+        /// combination) is remembered across the sentence (×.99 a step); the rest fades faster (×.95). Plain loops fade
+        /// everything alike (×.75).
+        /// </summary>
+        void Gate(List<Element> elements, XgBoardCard card, XgKnobs k)
+        {
+            if (k.wiring != XgWiring.GatedRecurrent) return;
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var e = elements[i];
+                if (!e.positioned || e.made) continue;
+                bool matters = false;
+                if (byElement.TryGetValue(e.id, out var uses))
+                    foreach (var c in uses) if (c.region == card.region && Math.Abs(c.w) >= GateWeight) { matters = true; break; }
+                e.act = Math.Pow(matters ? GateKeep : GateForget, e.back);
+                elements[i] = e;
+            }
+        }
+
         public bool Predict(XgBoardCard card, XgKnobs k, out bool guessed)
         {
             var elements = Elements(card, k);
+            Gate(elements, card, k);
             double score = Score(Matches(card, elements, k), k, card.seed, out guessed, out _);
             return guessed ? (card.seed & 1) == 0 : score > 0;
         }
@@ -475,6 +500,7 @@ namespace LingGuangV05.XingGuang
         {
             var step = new XgBoardStep();
             var elements = Elements(card, k);
+            Gate(elements, card, k);
             // Unknown elements become layer-1 concepts first (R3 decides whether they fit).
             for (int i = 0; i < elements.Count; i++)
                 if (!byKey.ContainsKey(card.region + "|" + elements[i].id)) { if (Create(card.region, elements[i].id, 1, k) != null) step.created++; }
@@ -671,6 +697,29 @@ namespace LingGuangV05.XingGuang
             foreach (var c in S.concepts.ToArray()) if (!c.seed && !c.pinned && (region == null || c.region == region)) Remove(c);
             S.links.RemoveAll(l => !byId.ContainsKey(l.a) || !byId.ContainsKey(l.b));
             links.Clear(); foreach (var l in S.links) links[Pair(l.a, l.b)] = l;
+        }
+
+        /// <summary>A copy of a region's learnt concepts (a checkpoint's weights; the "？" seed and pinned rules stay out).</summary>
+        public List<XgConcept> SnapshotRegion(string region)
+        {
+            var list = new List<XgConcept>();
+            foreach (var c in S.concepts) if (c.region == region && !c.seed && !c.pinned) list.Add(c.MemberwiseCloneConcept());
+            return list;
+        }
+
+        /// <summary>Puts a checkpoint's weights back: the region is cleared and refilled (fresh ids; links regrow).</summary>
+        public void RestoreRegion(string region, List<XgConcept> snapshot)
+        {
+            Reinitialise(region);
+            if (snapshot != null)
+                foreach (var saved in snapshot)
+                {
+                    if (saved.region != region || byKey.ContainsKey(region + "|" + saved.key)) continue;
+                    var c = saved.MemberwiseCloneConcept();
+                    c.id = S.nextId++; c.seen = S.cards; c.born = S.cards; c.seed = false; c.pinned = false;
+                    S.concepts.Add(c);
+                }
+            Rebuild();
         }
 
         /// <summary>NaN: the weights of a region are torn apart and lose part of what they held.</summary>

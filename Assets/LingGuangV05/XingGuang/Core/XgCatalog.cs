@@ -123,28 +123,28 @@ namespace LingGuangV05.XingGuang
                 note = "隐藏层组合特征；空间和顺序还没有专长。", noteEn = "Hidden layers combine features, without spatial or sequential specialization." },
             new XgArch { id = "caption", name = "看图说话", nameEn = "Image captioning", track = XgTrack.Vision, year = 2015, maxDepth = 999, bias = .3, span = 999, seq2seq = true, paramFactor = 2,
                 note = "两条专长汇合：看图、关注区域，再描述。", noteEn = "Both specialties meet: look, attend to a region, then describe." },
-            new XgArch { id = "transformer", name = "Transformer", nameEn = "Transformer", shared = true, year = 2017, maxDepth = 999, span = 999, seq2seq = true, bias = .2, paramFactor = 2,
+            new XgArch { id = "transformer", name = "Transformer", nameEn = "Transformer", shared = true, year = 2017, maxDepth = 999, span = 999, seq2seq = true, bias = .2, paramFactor = 12,
                 note = "架空的提前突破；真实论文发表于 2017 年。", noteEn = "A fictional early discovery; the real paper was published in 2017." },
-            new XgArch { id = "lenet", name = "LeNet-5", nameEn = "LeNet-5", track = XgTrack.Vision, year = 1998, cost = 0, bias = 1, maxDepth = 5, paramFactor = 1, speed = 1,
+            new XgArch { id = "lenet", name = "LeNet-5", nameEn = "LeNet-5", track = XgTrack.Vision, year = 1998, cost = 0, bias = 1, maxDepth = 5, paramFactor = 3, speed = 1,
                 note = "杨立昆的老网络，读支票用了二十年。", noteEn = "LeCun's classic; read bank cheques for twenty years." },
-            new XgArch { id = "alexnet", name = "AlexNet", nameEn = "AlexNet", track = XgTrack.Vision, year = 2012, cost = 6, bias = .7, maxDepth = 8, paramFactor = 1.5, speed = 1.3,
+            new XgArch { id = "alexnet", name = "AlexNet", nameEn = "AlexNet", track = XgTrack.Vision, year = 2012, cost = 6, bias = .7, maxDepth = 8, paramFactor = 7, speed = 1.3,
                 note = "ReLU + 两块显卡，2012 年 ImageNet 一战成名。", noteEn = "ReLU and two GPUs; won ImageNet 2012." },
-            new XgArch { id = "vgg", name = "VGG-16", nameEn = "VGG-16", track = XgTrack.Vision, year = 2014, cost = 50, bias = .55, maxDepth = 16, paramFactor = 2, speed = .8,
+            new XgArch { id = "vgg", name = "VGG-16", nameEn = "VGG-16", track = XgTrack.Vision, year = 2014, cost = 50, bias = .55, maxDepth = 16, paramFactor = 9, speed = .8,
                 note = "全是 3×3 卷积，又深又吃显存。", noteEn = "All 3×3 convolutions: deep and memory hungry." },
-            new XgArch { id = "googlenet", name = "GoogLeNet", nameEn = "GoogLeNet", track = XgTrack.Vision, year = 2014, cost = 200, bias = .45, maxDepth = 22, paramFactor = .6, speed = 1,
+            new XgArch { id = "googlenet", name = "GoogLeNet", nameEn = "GoogLeNet", track = XgTrack.Vision, year = 2014, cost = 200, bias = .45, maxDepth = 22, paramFactor = 1.2, speed = 1,
                 note = "Inception 模块，参数少，效果好。", noteEn = "Inception modules: fewer parameters, better results." },
-            new XgArch { id = "resnet", name = "ResNet", nameEn = "ResNet", track = XgTrack.Vision, year = 2015, cost = 600, bias = .35, maxDepth = 999, paramFactor = 1, speed = 1,
+            new XgArch { id = "resnet", name = "ResNet", nameEn = "ResNet", track = XgTrack.Vision, year = 2015, cost = 600, bias = .35, maxDepth = 999, paramFactor = 9, speed = 1,
                 note = "残差连接：层数不再有上限。", noteEn = "Residual connections: no more depth limit." },
 
-            new XgArch { id = "rnn", name = "朴素 RNN", nameEn = "Vanilla RNN", track = XgTrack.Sequence, year = 1990, cost = 0, bias = 1, maxDepth = 2, span = 8, paramFactor = 1, speed = 1, instability = .35,
+            new XgArch { id = "rnn", name = "朴素 RNN", nameEn = "Vanilla RNN", track = XgTrack.Sequence, year = 1990, cost = 0, bias = 1, maxDepth = 2, span = 8, paramFactor = 2, speed = 1, instability = .35,
                 note = "只记得住最近几个字，梯度还爱爆炸。", noteEn = "Remembers a few tokens; gradients love to explode." },
-            new XgArch { id = "lstm", name = "LSTM", nameEn = "LSTM", track = XgTrack.Sequence, year = 1997, cost = 6, bias = .75, maxDepth = 3, span = 80, paramFactor = 4, speed = .8, instability = .1,
+            new XgArch { id = "lstm", name = "LSTM", nameEn = "LSTM", track = XgTrack.Sequence, year = 1997, cost = 6, bias = .75, maxDepth = 3, span = 80, paramFactor = 8, speed = .8, instability = .1,
                 note = "门控记忆，能记住整句话。", noteEn = "Gated memory: keeps a whole sentence." },
-            new XgArch { id = "gru", name = "GRU", nameEn = "GRU", track = XgTrack.Sequence, year = 2014, cost = 40, bias = .7, maxDepth = 3, span = 80, paramFactor = 3, speed = 1.05, instability = .1,
+            new XgArch { id = "gru", name = "GRU", nameEn = "GRU", track = XgTrack.Sequence, year = 2014, cost = 40, bias = .7, maxDepth = 3, span = 80, paramFactor = 6, speed = 1.05, instability = .1,
                 note = "LSTM 的精简版，跑得更快。", noteEn = "A leaner LSTM that trains faster." },
-            new XgArch { id = "seq2seq", name = "Seq2Seq", nameEn = "Seq2Seq", track = XgTrack.Sequence, year = 2014, cost = 120, bias = .6, maxDepth = 4, span = 80, seq2seq = true, paramFactor = 6, speed = .85, instability = .1,
+            new XgArch { id = "seq2seq", name = "Seq2Seq", nameEn = "Seq2Seq", track = XgTrack.Sequence, year = 2014, cost = 120, bias = .6, maxDepth = 4, span = 80, seq2seq = true, paramFactor = 16, speed = .85, instability = .1,
                 note = "编码器 + 解码器，终于能做翻译。", noteEn = "Encoder plus decoder: translation becomes possible." },
-            new XgArch { id = "attention", name = "注意力", nameEn = "Attention", track = XgTrack.Sequence, year = 2015, cost = 400, bias = .4, maxDepth = 6, span = 999, seq2seq = true, paramFactor = 6, speed = .9, instability = .05,
+            new XgArch { id = "attention", name = "注意力", nameEn = "Attention", track = XgTrack.Sequence, year = 2015, cost = 400, bias = .4, maxDepth = 6, span = 999, seq2seq = true, paramFactor = 16, speed = .9, instability = .05,
                 note = "解码时回头看原文，长句不再遗忘。", noteEn = "Looks back at the source while decoding; long sentences survive." },
         };
 
@@ -159,7 +159,7 @@ namespace LingGuangV05.XingGuang
             new XgDataset { id = "mnist", name = "MNIST 手写数字", nameEn = "MNIST digits", metric = "准确率", metricEn = "accuracy", track = XgTrack.Vision,
                 price = 300, samples = 60000, chanceError = .9, floorError = .002, scale = .5, complexity = 1, handLabel = true, need = 850,
                 rewardBase = 1,
-                note = "先在标注台亲手标；买下完整包一次得 6 万张。", noteEn = "Label by hand first; the full pack adds 60k at once." },
+                note = "先在标注台亲手标；买下完整包一次得 6 万张。这里的数字会在画布上挪位置，比原版 MNIST（数字都居中）难：全连接把位置绑死，挪一格就不认得了。", noteEn = "Label by hand first; the full pack adds 60k at once. Digits here move around the canvas, harder than the real (centred) MNIST: a dense net binds positions and loses a digit moved by one cell." },
             new XgDataset { id = "cifar", name = "CIFAR-10", nameEn = "CIFAR-10", metric = "准确率", metricEn = "accuracy", track = XgTrack.Vision,
                 price = 600, samples = 50000, chanceError = .9, floorError = .03, scale = 120, complexity = 3, need = 21000, handLabel = true,
                 rewardBase = 6,
@@ -247,7 +247,7 @@ namespace LingGuangV05.XingGuang
         {
             string p = tree == "vision" ? "v" : "s";
             return N(p + ".d" + depth, tree, parent, XgNodeKind.Depth, null, depth, cost, x, y, depth + " 层", depth + " layers",
-                "可用层数上限 " + depth + "。层越多越能学，也越容易过拟合、越吃显存。", "Layer cap " + depth + ". Deeper learns more, overfits more and needs more VRAM.", needs);
+                "可用层数上限 " + depth + "。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。", "Layer cap " + depth + ". Deeper can combine more complex things; layers it does not need must learn to pass things on, or deeper gets worse. More VRAM too.", needs);
         }
 
         static XgNode Width(string tree, int index, string parent, double cost, float x, float y, params string[] needs)
@@ -598,7 +598,7 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "cudnn", kind = XgResearchKind.CuDnn, name = "cuDNN 加速", nameEn = "cuDNN kernels", cost = 250,
                 effect = "所有训练 ×1.5", effectEn = "All training ×1.5" },
             new XgResearch { id = "transfer", kind = XgResearchKind.Transfer, name = "迁移学习", nameEn = "Transfer learning", cost = 400,
-                effect = "换架构或数据集时保留 60% 进度", effectEn = "Keep 60% progress when switching model or data" },
+                effect = "同一个网络换数据集时，接着用已经学到的底层特征（笔画、边角、常用字）。换架构不行：结构变了，权重对不上", effectEn = "When the same network moves to a new dataset it keeps the low-level features it learnt (strokes, corners, common words). Not across architectures: a new structure, weights that no longer fit" },
         };
 
         /// <summary>Training unlocks once the run's dataset has this many samples.</summary>

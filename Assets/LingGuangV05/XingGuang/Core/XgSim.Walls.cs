@@ -67,6 +67,8 @@ namespace LingGuangV05.XingGuang
         public static readonly double[] StageMinutes = { 0, 8, 10, 20, 20, 20, 20 };
         public static double MinutesFor(int stage) => StageMinutes[Math.Max(0, Math.Min(StageMinutes.Length - 1, stage))];
         public const int WallPoolSize = 600;
+        /// <summary>Cards in a wall's exam.</summary>
+        public const int WallExamSize = 120;
         /// <summary>串行瓶颈's deadline, in epochs from an empty brain.</summary>
         public const int SprintEpochs = 10;
         public const double WinterIdleSeconds = 60;
@@ -180,7 +182,7 @@ namespace LingGuangV05.XingGuang
             string key = dataset + "|" + check.minDistance + "|" + S.dataSalt;
             if (examSets.TryGetValue(key, out var set)) return set;
             set = new List<XgBoardCard>();
-            for (int i = 0; set.Count < XgBoardData.TestSize && i < XgBoardData.TestSize * 20; i++)
+            for (int i = 0; set.Count < WallExamSize && i < WallExamSize * 20; i++)
             {
                 var c = XgBoardData.Make(dataset, XgBoardData.Seed(dataset, i, XgBoardData.Use.Exam, S.dataSalt), 1, Today);
                 if (c.distance >= check.minDistance) set.Add(c);

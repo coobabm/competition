@@ -359,7 +359,7 @@ namespace LingGuangV05.XingGuang
             if (!s.abilities)
             {
                 bool dc = sim.Has("datacenter");
-                bool plateau = s.pretrain >= XgSim.PretrainPlateau - 1e-9 && !sim.PretrainScaleReady;
+                bool plateau = s.pretrain >= sim.PretrainCap - 1e-9 && !sim.PretrainScaleReady;
                 if (!dc && s.pretrainStalled)
                 {
                     var node = XgCatalog.Node("datacenter");
@@ -371,8 +371,8 @@ namespace LingGuangV05.XingGuang
                 }
                 else if (dc && plateau)
                 {
-                    list.Add(Step("final.scale", XgGuideKind.Finale, "loss 不动了：序列线开得更宽更深，打开预热和位置标记", "The loss is flat: make the sequence model wider and deeper, turn on warm-up and positions",
-                        "预训练要规模，不是要更久。", "Pre-training needs scale, not more time.", Lab, "train", "name:Width", "sequence"));
+                    list.Add(Step("final.scale", XgGuideKind.Finale, "loss 不动了：" + sim.PretrainLimit(), "The loss is flat: " + sim.PretrainLimit(),
+                        "预训练要规模（参数和数据），不是要更久：每加一倍，loss 就低一截。", "Pre-training needs scale (parameters and data), not more time: every doubling lowers the loss a step.", Lab, "train", "name:Width", "sequence"));
                     foreach (var id in new[] { "warmup", "position" })
                     {
                         var n = XgCatalog.Node(id);

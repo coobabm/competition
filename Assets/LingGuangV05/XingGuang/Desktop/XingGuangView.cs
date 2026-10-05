@@ -458,7 +458,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (shownMoney < 0) hudMoney.text = "¥ " + Money(Host.Money);
             hudIncome.text = T("收入 ", "Income ") + "¥" + Money(IncomeRate) + T("/秒", "/s");
             double vramUse = Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
-            hudCompute.text = T("算力 ", "GPU ") + N(Host.Compute, "0.0") + T(" · 显存 ", " · VRAM ") + N(vramUse / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G";
+            hudCompute.text = T("算力 ", "GPU ") + N(Host.Compute, "0.0") + T(" · 单卡显存 ", " · VRAM per card ") + N(vramUse / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G";
             hudStage.text = T("阶段 ", "Stage ") + Sim.S.stage + "/6" + (Sim.Winter ? T(" · 寒冬", " · winter") : "");
             string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("科技", "Tech"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("成就", "Cards"), T("对话", "Talk"), T("终章", "Finale") };
             bool trainable = Sim.TrainingUnlocked(XgTrack.Vision) || Sim.TrainingUnlocked(XgTrack.Sequence);

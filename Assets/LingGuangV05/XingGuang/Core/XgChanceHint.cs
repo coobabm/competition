@@ -214,8 +214,8 @@ namespace LingGuangV05.XingGuang
                     var a = BetterArchitecture(sim, run);
                     bool images = track == XgTrack.Vision;
                     return Make(id, "模型只会瞎猜：全连接不适合这张桌，换「" + a.name + "」", "The model only guesses: fully connected does not suit this desk, switch to " + a.nameEn,
-                        seen + (images ? "全连接把每个像素位置当成新东西，字挪一格就不认识了；局部共享在哪儿都通用。" : "全连接只看出现了哪些字，不管先后；回环一个字一个字地读。"),
-                        seenEn + (images ? " Full wiring treats every pixel position as new, so a shifted digit is a stranger; local sharing works anywhere." : " Full wiring only sees which words appear, not their order; a loop reads them one by one."),
+                        seen + (images ? "全连接把每个像素位置当成新东西，字挪一格就不认识了；局部共享在哪儿都通用。" : "全连接把每个字的位置绑死，整句挪一格就成了新句子；回环一个字一个字地读，哪儿出现都认得。"),
+                        seenEn + (images ? " Full wiring treats every pixel position as new, so a shifted digit is a stranger; local sharing works anywhere." : " Full wiring binds every word to its position, so the same sentence moved by one word is new to it; a loop reads word by word and knows them anywhere."),
                         "train", "label:" + a.name + "|" + a.nameEn, arg);
                 }
                 case XgChanceCause.TooNarrow:

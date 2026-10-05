@@ -228,7 +228,7 @@ namespace LingGuangV05.XingGuang
             {
                 var wall = WallOfSecret(node.id);
                 if (wall != null) Say(T("秘籍：", "Secret: ") + T(wall.golden, wall.goldenEn) + T("。", ". ") + T(wall.why, wall.whyEn));
-                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线宽度 × 层数 ≥ 1024、学习率预热、位置标记都开，再上「机房」。喂进去的始终是数据，飞跃来自规模。", "Secret: pre-training needs scale — sequence width × layers ≥ 1024, warm-up and positions on, and the server room. It is always data going in; the leap comes from scale."));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1.5M 以上，文本 2 万条以上，学习率预热、位置标记都开，再上「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。", "Secret: pre-training needs scale — a Transformer on the sequence line, 1.5M+ parameters, 20,000+ text samples, warm-up and positions on, and the server room. The loss falls smoothly with parameters and data; every doubling lowers it a step."));
             }
             RefreshStages();
         }
@@ -247,10 +247,25 @@ namespace LingGuangV05.XingGuang
             S.walls.Add(id); WallObserved?.Invoke(id); return true;
         }
 
+        /// <summary>
+        /// The chance the model answers one yes/no card right, from its score on the dataset's own measure (top-5,
+        /// next-character accuracy…): the inverse of <see cref="Scale"/>. A model at chance on a hard measure still
+        /// gets half the yes/no cards.
+        /// </summary>
+        public static double BinaryAccuracy(string dataset, double metric)
+        {
+            var d = XgCatalog.Dataset(dataset);
+            if (d == null || d.chanceError - d.floorError <= 1e-9) return Math.Max(0, Math.Min(1, metric));
+            double q = (metric - (1 - d.chanceError)) / (d.chanceError - d.floorError);
+            return .5 + .5 * Math.Max(0, Math.Min(1, q));
+        }
+
         public double CardAccuracy(XgRun run, XgCard card, double accuracy)
         {
             if (run == null || card == null) return 0;
             accuracy = Finite(accuracy) ? Math.Max(0, Math.Min(1, accuracy)) : 0;
+            // The score is on the dataset's own measure; a card is one yes/no question.
+            if (UseBoard) accuracy = BinaryAccuracy(card.dataset, accuracy);
             if (run.arch == "perceptron" && card.kind == "combo") accuracy = Math.Min(.55, accuracy);
             if (run.arch == "mlp" && (card.kind == "spatial" || card.kind == "order")) accuracy = Math.Min(.6, accuracy);
             if (card.distance > 0)

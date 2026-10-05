@@ -24,6 +24,8 @@ namespace LingGuangV05.XingGuang
         public const double EpochSeconds = .6;
         /// <summary>Automatic epochs are half as strong as a hand press.</summary>
         public const double AutoEpochFactor = .5;
+        /// <summary>A new record must beat the old one by this much on yes/no cards (about one standard error of the test set).</summary>
+        public const double RecordMargin = .02;
         /// <summary>Seconds a training press keeps the combo alive.</summary>
         public const double EpochComboWindow = 1.5;
         /// <summary>Chance of a 前方高能 card (tests set 0 for exact pay).</summary>
@@ -332,8 +334,18 @@ namespace LingGuangV05.XingGuang
             return run.depth * w * w * (a == null ? 1 : a.paramFactor) / 1000.0;
         }
 
-        /// <summary>Weights, gradients and optimizer state plus activations.</summary>
-        public static double VramNeedMB(XgRun run) { return 40 + ParamsK(run) * .6; }
+        /// <summary>
+        /// Training memory on one card: the framework and CUDA context (~300 MB), 16 bytes per parameter (float32
+        /// weights, gradients and two Adam moments) and the activations kept for the backward pass (batch 32; feature
+        /// maps make convolutions the hungriest).
+        /// </summary>
+        public static double VramNeedMB(XgRun run)
+        {
+            var a = XgCatalog.Arch(run.arch);
+            double w = XgCatalog.Widths[Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, run.width))];
+            double perUnit = a != null && a.track == XgTrack.Vision && run.arch != "caption" ? .12 : .02;
+            return 300 + ParamsK(run) * .016 + Math.Max(1, run.depth) * w * perUnit;
+        }
 
         /// <summary>Parameter count (in thousands) of a run with another depth or width, for previews.</summary>
         public static double ParamsKWith(XgRun run, int depth, int width)
@@ -435,7 +447,9 @@ namespace LingGuangV05.XingGuang
             if (!ArchitectureFits(a, track) || !Has(id) || run.arch == id) return false;
             run.arch = id;
             Restart(run);
-            Say(T("换成 ", "Switched to ") + T(a.name, a.nameEn) + (Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
+            Say(T("换成 ", "Switched to ") + T(a.name, a.nameEn) + (UseBoard
+                ? T("：结构变了，原来学到的大多对不上，基本是重新学。", ": a new structure, so most of what it learnt no longer fits; it largely starts over.")
+                : Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
             return true;
         }
 
@@ -734,7 +748,9 @@ namespace LingGuangV05.XingGuang
             a.score = Score(d.id, run.valAcc);
             a.previousBest = BestScore(d.id);
             a.grade = Grade(a.score);
-            a.record = run.valAcc > BestAcc(d.id) + 1e-4;
+            // A record has to beat the last one by more than the test set's own noise (about one standard error).
+            a.record = run.valAcc > BestAcc(d.id) + 1e-4
+                && (!UseBoard || BestAcc(d.id) <= 0 || BinaryAccuracy(d.id, run.valAcc) >= BinaryAccuracy(d.id, BestAcc(d.id)) + RecordMargin - 1e-9);
             if (a.record)
             {
                 a.reward = Math.Max(0, a.score - a.previousBest) * d.rewardBase * RewardPerPoint;
@@ -795,8 +811,10 @@ namespace LingGuangV05.XingGuang
             int n = run.histVal.Count, step = Math.Max(1, (int)Math.Ceiling(n / 32.0));
             for (int i = 0; i < n; i += step) e.curve.Add(run.histVal[i]);
             if (n > 0 && (n - 1) % step != 0) e.curve.Add(run.histVal[n - 1]);
+            if (UseBoard) e.weights = Board.SnapshotRegion(RegionOf(run.dataset));
             S.models.Add(e);
             CleanModels();
+            TrimSnapshots();
             ModelSaved?.Invoke(e);
             return e;
         }
@@ -814,6 +832,21 @@ namespace LingGuangV05.XingGuang
         }
 
         public XgModelEntry Model(int id) { foreach (var m in S.models) if (m.id == id) return m; return null; }
+
+        /// <summary>Checkpoints that keep their weights besides the starred ones (the newest first).</summary>
+        public const int SnapshotsKept = 6;
+
+        /// <summary>Older unstarred checkpoints drop their weights and keep only their settings (a small save).</summary>
+        void TrimSnapshots()
+        {
+            int kept = 0;
+            for (int i = S.models.Count - 1; i >= 0; i--)
+            {
+                var m = S.models[i];
+                if (!m.HasWeights || m.starred) continue;
+                if (++kept > SnapshotsKept) m.weights = new List<XgConcept>();
+            }
+        }
 
         /// <summary>The repository entry behind a dataset's deployed checkpoint.</summary>
         public bool IsDeployed(XgModelEntry e) { var b = Best(e.dataset); return b != null && b.modelId == e.id; }
@@ -852,7 +885,11 @@ namespace LingGuangV05.XingGuang
             return null;
         }
 
-        /// <summary>Continue training from a saved model: shape, rate and progress come back; the curve restarts.</summary>
+        /// <summary>
+        /// Continue training from a saved model: its weights (when the checkpoint kept them), shape, rate and progress
+        /// come back; the curve restarts. A checkpoint without weights only brings its settings, and a new shape starts
+        /// the network over.
+        /// </summary>
         public bool LoadModel(int id)
         {
             var m = Model(id);
@@ -860,14 +897,23 @@ namespace LingGuangV05.XingGuang
             string why = CannotLoad(m);
             if (why != null) { Say(why); return false; }
             var run = Run((XgTrack)m.track);
+            bool reshaped = run.depth != m.depth || run.arch != m.arch;
             run.arch = m.arch; run.dataset = m.dataset; run.depth = m.depth; run.width = m.width;
             if (HasLrKnob((XgTrack)m.track)) run.lr = m.lr;
             run.steps = m.steps; run.epoch = m.epoch; run.sinceEval = 0; run.staleEvals = 0;
             run.histTrain.Clear(); run.histVal.Clear();
+            if (UseBoard)
+            {
+                if (m.HasWeights) Board.RestoreRegion(RegionOf(m.dataset), m.weights);
+                else if (reshaped) ReinitialiseBoard(run);
+                RememberFormalKnobs(run);
+            }
             Evaluate(run);
             Push(run.histTrain, (float)run.trainAcc); Push(run.histVal, (float)run.valAcc);
             SelectedTrack = (XgTrack)m.track;
-            Say(T("已加载 ", "Loaded ") + m.name);
+            Say(UseBoard && !m.HasWeights
+                ? T("已加载 " + m.name + " 的设置：这个旧检查点没留权重" + (reshaped ? "，网络从头开始。" : "，接着现在的大脑练。"), "Loaded the settings of " + m.name + ": this old checkpoint kept no weights" + (reshaped ? ", so the network starts over." : "; training continues from the current brain."))
+                : T("已加载 ", "Loaded ") + m.name);
             return true;
         }
 
@@ -1198,6 +1244,7 @@ namespace LingGuangV05.XingGuang
             bool slow = info.kind == XgDeskKind.Logic || info.kind == XgDeskKind.Go || info.kind == XgDeskKind.Text;
             if (duelLeft > 0 && desk == "meme") card.timeLimit = 2.5;
             else if (Roll() < GoldChance) { card.gold = true; card.timeLimit = slow ? 8 : 3; }
+            if (info.kind == XgDeskKind.Logic) MaybeBounty(card, info);
             card.roll = Roll();
             DecorateProgressionCard(card);
             MaybeShutdownCard(card);
@@ -1240,19 +1287,27 @@ namespace LingGuangV05.XingGuang
             // The SI's planted question has no right answer: whatever you choose is what the "？" cell learns.
             bool shutdown = card.kind == "shutdown";
             if (shutdown) { card.truth = yes; S.shutdownCards++; S.shutdownLean += yes ? 1 : -1; }
-            var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout };
+            var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
             if (result.correct)
             {
                 Hit(info.comboWindow, card.trick ? 2 : 1);
-                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1);
+                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
                 QualityHandCorrect();
                 MemeDriftLabelled(desk);
-                AddLabel(desk);
-                result.samples = 1 + (int)HandLabelLog(desk);
-                TeachBoard(card, card.truth);
+                if (card.law)
+                {
+                    // Paid outside work: a law firm's question is no training data for this lab's tasks.
+                    result.samples = 0;
+                }
+                else
+                {
+                    AddLabel(desk);
+                    result.samples = 1 + (int)HandLabelLog(desk);
+                    TeachBoard(card, card.truth);
+                }
             }
             else { BreakCombo(); S.handWrong++; }
             result.combo = S.combo;

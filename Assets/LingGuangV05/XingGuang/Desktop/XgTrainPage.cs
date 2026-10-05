@@ -131,7 +131,7 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildModel();
             BuildCard();
             for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线：视觉（看图）和序列（读文字）。各练各的，共用显卡和经费。", "Two tracks: vision (images) and sequence (text). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, "训练一轮：让模型把数据过一遍，练完自动在没见过的题上考一次。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: the model goes through the data once, then sits an exam on unseen cards.\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
+            UiTip.Add(train.rt, "训练一轮：喂模型一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（下面写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (see the passes below).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
             UiTip.Add(autoTrain.rt, "自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).");
             UiTip.Add(summary.rt, "当前结构的摘要。点一下在科技里找到它。", "Summary of the current structure. Click to find it in Research.");
         }
@@ -809,7 +809,7 @@ namespace LingGuangV05.Desktop.XingGuang
             statsText.text = T("参数量 ", "Parameters ") + "<b>" + Params(XgSim.ParamsK(run)) + "</b> <color=#8A94A8>(" + XgSim.ParamScale(XgSim.ParamsK(run), Sim.English) + ")</color>"
                 + T(" · 显存 ", " · VRAM ") + N(XgSim.VramNeedMB(run), "0") + "/" + N(Sim.Vram(Host), "0") + " MB"
                 + (Sim.UseBoard
-                    ? T(" · 每轮 ", " · per epoch ") + Sim.CardsPerEpoch(run, Math.Max(.5, share), true) + T(" 张卡", " cards")
+                    ? T(" · 每轮喂 ", " · each epoch feeds ") + Sim.CardsPerEpoch(run, Math.Max(.5, share), true) + T(" 张 / 数据池 ", " of ") + Sim.PoolSize(run) + T(" 张（已过 ", " cards (") + N(Sim.PassesOverData(run), "0.0") + T(" 遍）", " passes so far)")
                       + "\n" + T("格子 ", "Cells ") + Sim.Board.Count(XgSim.RegionOf(run.dataset)) + "/" + knobs.Cells + T(" · 层间系数 g=", " · layer factor g=") + N(knobs.G, "0.00")
                     : T(" · 每轮 ", " · per epoch ") + N(Sim.StepsPerSecond(run, Math.Max(.5, share)) * XgSim.EpochSeconds, "0") + T(" 步", " steps")
                       + "\n" + T("理论上限 ", "Ceiling ") + XgSim.Pct(Sim.PeakAccuracy(run, run.lr)))

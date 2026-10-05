@@ -197,7 +197,7 @@ namespace LingGuangV05.Desktop.XingGuang
             dChart.Capacity = Mathf.Max(8, sel.curve.Count);
             dChart.SetData(new List<float>(), sel.curve, (float)sel.acc);
             string why = Sim.CannotLoad(sel);
-            load.Set(why == null ? T("加载到训练，接着练", "Load into training") : why, why == null, XgPalette.Accent, Color.white);
+            load.Set(why == null ? (!Sim.UseBoard || sel.HasWeights ? T("加载权重，接着练", "Load weights and continue") : T("只载入设置（没留权重）", "Load settings only (no weights kept)")) : why, why == null, XgPalette.Accent, Color.white);
             star.Set(sel.starred ? T("★ 已收藏", "★ Starred") : T("☆ 收藏（不会被清理）", "☆ Star (kept)"), true, sel.starred ? new Color32(255, 244, 210, 255) : (Color?)null);
             bool dep2 = Sim.IsDeployed(sel);
             delete.Set(dep2 ? T("已部署，不能删", "Deployed") : confirmDelete == sel.id ? T("再点一次确认删除", "Click again to delete") : T("删除", "Delete"), !dep2,

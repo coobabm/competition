@@ -29,6 +29,8 @@ namespace LingGuangV05.XingGuang
         public const double LogEarlyFactor = .1;
         public const int FlywheelStage = 5;
         public const double LogPileCap = 200000;
+        /// <summary>Samples one log the model labelled itself is worth (it mostly repeats what it already knows).</summary>
+        public const double PseudoLabelWorth = .25;
         /// <summary>Samples one hand-labelled log is worth.</summary>
         public const double LogHandSamples = 4;
         /// <summary>Logs per second the model labels per unit of compute (square root).</summary>
@@ -58,7 +60,7 @@ namespace LingGuangV05.XingGuang
         public bool LogAutoOn(string dataset) => S.logAuto.Contains(dataset);
 
         /// <summary>Share of logs the deployed model would label wrong (1 − its accuracy).</summary>
-        public double LogAutoNoise(string dataset) => Math.Max(0, Math.Min(1, 1 - BestAcc(dataset)));
+        public double LogAutoNoise(string dataset) => Math.Max(0, Math.Min(1, 1 - (UseBoard ? BinaryAccuracy(dataset, BestAcc(dataset)) : BestAcc(dataset))));
 
         /// <summary>Why the model cannot label this dataset's logs (null when it can).</summary>
         public string LogAutoBlocker(string dataset)
@@ -95,7 +97,8 @@ namespace LingGuangV05.XingGuang
         {
             double wrong = n * LogAutoNoise(dataset);
             SetCount(S.logs, dataset, Math.Max(0, Logs(dataset) - n));
-            SetCount(S.dataExtra, dataset, ExtraSamples(dataset) + n - wrong);
+            // A label the model already agrees with teaches it little (self-training): worth a quarter of a fresh one.
+            SetCount(S.dataExtra, dataset, ExtraSamples(dataset) + (n - wrong) * (UseBoard ? PseudoLabelWorth : 1));
             if (wrong > 0) SetCount(S.noise, dataset, Noise(dataset) + wrong);
             S.logsAuto += n;
             host.Train(n * LogAutoGpuSeconds);

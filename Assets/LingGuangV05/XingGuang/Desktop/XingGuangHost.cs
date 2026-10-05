@@ -20,7 +20,8 @@ namespace LingGuangV05.Desktop.XingGuang
         private bool Live => runtime != null && runtime.Sim != null && !runtime.TestMode;
 
         public double Compute => Live ? runtime.Sim.HeartbeatsPerSecond : 0;
-        public double VramMB => Live ? runtime.Sim.MemoryCapacity : 0;
+        /// <summary>One card's memory: every card holds a whole copy of the model (data parallel).</summary>
+        public double VramMB => Live ? runtime.Sim.LargestCardVram : 0;
         public double Money => Live ? runtime.Sim.S.money : 0;
 
         public bool Spend(double amount)

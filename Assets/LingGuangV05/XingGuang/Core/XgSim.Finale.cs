@@ -58,9 +58,42 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── 6.2 pre-training ─────────────
 
-        public bool PretrainScaleReady
+        /// <summary>Parameters (thousands) and text samples at which pre-training reaches the abilities.</summary>
+        public const double PretrainParamsK = 1500, PretrainSamples = 20000;
+
+        /// <summary>
+        /// How far pre-training can get with the sequence model as set (scaling laws, Kaplan 2020 / Hoffmann 2022): the
+        /// loss falls smoothly with parameters and with data, both with diminishing returns, so the plateau rises with
+        /// scale instead of a switch. A Transformer scales best (loops plateau early); without position tags it reads a
+        /// bag of words; without warm-up a big model tears early and settles lower.
+        /// </summary>
+        public double PretrainCap
         {
-            get { var run = S.sequence; return XgCatalog.Widths[Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, run.width))] * run.depth >= PretrainCells && run.warmup && run.position; }
+            get
+            {
+                var run = S.sequence;
+                double n = ParamsK(run) * (run.arch == "transformer" ? 1 : .25);
+                double d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
+                double model = Math.Min(1, Math.Pow(Math.Max(0, n) / PretrainParamsK, .5));
+                double data = Math.Min(1, Math.Pow(Math.Max(0, d) / PretrainSamples, .3));
+                double knobs = (run.position || run.arch != "transformer" ? 1 : .75) * (run.warmup ? 1 : .9);
+                return PretrainPlateau + (1 - PretrainPlateau) * model * data * knobs;
+            }
+        }
+
+        public bool PretrainScaleReady => PretrainCap >= 1 - 1e-9;
+
+        /// <summary>What holds pre-training back most right now (for the stall message), or "".</summary>
+        public string PretrainLimit()
+        {
+            var run = S.sequence;
+            if (run.arch != "transformer") return T("循环网络规模一大就不长进了：换 Transformer。", "Loops stop improving with scale: switch to the Transformer.");
+            double n = ParamsK(run), d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
+            if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0.0") + "M（加宽、加层）。", "Too small: " + F(n / 1000, "0.0") + "M parameters of " + F(PretrainParamsK / 1000, "0.0") + "M (wider, deeper).");
+            if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条（买包、攒日志）。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + " (packs, logs).");
+            if (!run.position) return T("没开位置标记：它读到的只是一袋字。", "No position tags: it reads a bag of words.");
+            if (!run.warmup) return T("没开预热：大模型开头一炸，停在更高的地方。", "No warm-up: the big model tears early and settles higher.");
+            return "";
         }
 
         /// <summary>Why pre-training cannot run, or null.</summary>
@@ -87,17 +120,17 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        /// <summary>The loss curve the page draws: falls, then stays flat at the plateau until there is scale.</summary>
+        /// <summary>The loss curve the page draws: falls, then flattens where the scale allows (more scale, lower floor).</summary>
         public double PretrainLoss => .3 + 3.7 * Math.Exp(-3 * Math.Min(1, S.pretrain));
 
         void TickFinale(double dt, IXgHost host)
         {
             if (!S.pretrainRunning) return;
             if (PretrainBlocker(host) != null) { S.pretrainRunning = false; return; }
-            double cap = PretrainScaleReady ? 1 : PretrainPlateau;
+            double cap = PretrainCap;
             if (S.pretrain >= cap - 1e-9)
             {
-                if (!S.pretrainStalled) { S.pretrainStalled = true; Say(T("loss 停着不动了。", "The loss has stopped moving.")); }
+                if (!S.pretrainStalled) { S.pretrainStalled = true; Say(T("loss 停着不动了。", "The loss has stopped moving.") + PretrainLimit()); }
                 return;
             }
             double work = host.Compute * dt;

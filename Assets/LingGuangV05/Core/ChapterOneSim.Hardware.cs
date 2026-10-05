@@ -29,6 +29,15 @@ namespace LingGuangV05.Core
             }
         }
 
+        /// <summary>
+        /// The biggest single card's memory: training copies the whole model onto every card (data parallel, as in
+        /// 2016), so cards add speed, not room for a bigger model.
+        /// </summary>
+        public double LargestCardVram
+        {
+            get { double max = 0; foreach (string id in S.gpuModels) { var g = HardwareCatalog.Gpu(id); if (g != null) max = Math.Max(max, g.vramMB); } return max; }
+        }
+
         public double CardVram
         {
             get { double sum = 0; foreach (string id in S.gpuModels) { var g = HardwareCatalog.Gpu(id); if (g != null) sum += g.vramMB; } return sum; }

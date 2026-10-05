@@ -10,7 +10,8 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public static class XgBoardData
     {
-        public const int TestSize = 120;
+        /// <summary>Held-out cards per test set: about ±2.5 points of noise on a yes/no score.</summary>
+        public const int TestSize = 400;
         public const int PoolLimit = 4096;
 
         /// <summary>Board region per dataset: 视觉 / 序列 / 逻辑 (语气 comes from tone elements later).</summary>
@@ -40,11 +41,58 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>
+        /// A held-out set: cards that are not also in the training pool (same elements, same answer), so "unseen" means
+        /// unseen. Small card spaces may run out of new cards; the set then fills up with what it has.
+        /// </summary>
         public static List<XgBoardCard> TestSet(string dataset, int level, int today, int salt = 0, Use use = Use.Diagnostic)
         {
+            var train = TrainSignatures(dataset, level, today, salt);
             var list = new List<XgBoardCard>(TestSize);
-            for (int i = 0; i < TestSize; i++) list.Add(Make(dataset, Seed(dataset, i, use, salt), level, today));
+            var spare = new List<XgBoardCard>();
+            for (int i = 0; list.Count < TestSize && i < TestSize * 4; i++)
+            {
+                var card = Make(dataset, Seed(dataset, i, use, salt), level, today);
+                if (train.Contains(Signature(card))) { if (spare.Count < TestSize) spare.Add(card); }
+                else list.Add(card);
+            }
+            for (int i = 0; list.Count < TestSize && i < spare.Count; i++) list.Add(spare[i]);
             return list;
+        }
+
+        static readonly Dictionary<string, HashSet<string>> trainSignatures = new Dictionary<string, HashSet<string>>();
+
+        /// <summary>What a card is to the brain: its elements and its answer.</summary>
+        public static string Signature(XgBoardCard card)
+        {
+            var parts = new List<string>(card.features.Count);
+            foreach (var f in card.features) parts.Add(f.name + "@" + f.x + "," + f.y + "," + f.seq);
+            parts.Sort(string.CompareOrdinal);
+            return card.region + "|" + card.truth + "|" + string.Join(";", parts);
+        }
+
+        static HashSet<string> TrainSignatures(string dataset, int level, int today, int salt)
+        {
+            string key = dataset + "|" + level + "|" + today + "|" + salt;
+            lock (trainSignatures)
+            {
+                if (trainSignatures.TryGetValue(key, out var set)) return set;
+                set = new HashSet<string>();
+                for (int i = 0; i < PoolLimit; i++) set.Add(Signature(Make(dataset, Seed(dataset, i, Use.Train, salt), level, today)));
+                trainSignatures[key] = set;
+                return set;
+            }
+        }
+
+        /// <summary>Datasets whose cards follow the calendar (this month's memes and phrases); the rest never change.</summary>
+        public static bool Topical(string dataset)
+        {
+            switch (dataset)
+            {
+                case "xor": case "parallel": case "longtext": case "crosssentence": case "translate": case "mnist": case "poems":
+                case "news": case "logic": case "cifar": case "imagenet": case "go": return false;
+                default: return true;
+            }
         }
 
         /// <summary>A labelled example of the dataset, generated from its seed.</summary>
