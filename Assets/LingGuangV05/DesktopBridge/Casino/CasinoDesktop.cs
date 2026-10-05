@@ -93,8 +93,9 @@ namespace LingGuangV05.Desktop.Casino
         bool Held()
         {
             var p = presenter != null ? presenter.GetComponent<PrologueDirector>() : null;
-            return p != null && (p.Running || p.EndingPlaying) || presenter != null && presenter.CutscenePlaying
-                || AutoLabelEpiphany.Playing || presenter != null && presenter.GetComponent<OriginCurtain>() != null && presenter.GetComponent<OriginCurtain>().Playing;
+            return p != null && (p.Running || p.EndingPlaying) || presenter != null && presenter.NotificationsHeld
+                || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LoveQuestionCutscene.Playing
+                || presenter != null && presenter.GetComponent<OriginCurtain>() != null && presenter.GetComponent<OriginCurtain>().Playing;
         }
 
         void Update()
@@ -130,14 +131,17 @@ namespace LingGuangV05.Desktop.Casino
             PrologueDesk.Fill(ad, new Color32(240, 191, 92, 255));
             var inner = PrologueDesk.Rect("Advert Content", ad, Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2));
             PrologueDesk.Fill(inner, new Color32(90, 8, 27, 255));
+            LingGuangV05.Desktop.Media.DesktopMedia.Paint(inner, "casino");
+            PrologueDesk.Fill(PrologueDesk.Rect("Copy shade", inner, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), new Color(0, 0, 0, .18f), false);
             desk.Text(PrologueDesk.Rect("Brand", inner, new Vector2(0, 1), Vector2.one, new Vector2(14, -35), new Vector2(-28, -5)), T("888国际娱乐", "888 VIP CLUB"), 21, CasinoPage.Gold, TextAlignmentOptions.MidlineLeft);
-            desk.Text(PrologueDesk.Rect("Pitch", inner, Vector2.zero, Vector2.one, new Vector2(14, 66), new Vector2(-14, -43)), T("显卡还差一点？\n来两把，试试手气。", "Short on GPU money?\nTry your luck."), 22, Color.white, TextAlignmentOptions.Center);
+            var pitch = desk.Text(PrologueDesk.Rect("Pitch", inner, Vector2.zero, Vector2.one, new Vector2(14, 66), new Vector2(-14, -43)), T("缺钱吗？\n来两把试试手气", "Short on cash?\nTry your luck."), 22, Color.white, TextAlignmentOptions.Center);
+            pitch.outlineWidth = .18f; pitch.outlineColor = new Color32(20, 10, 25, 230);
             var visit = PrologueDesk.Rect("Visit Casino", inner, Vector2.zero, new Vector2(1, 0), new Vector2(30, 30), new Vector2(-30, 62));
             var fill = PrologueDesk.Fill(visit, CasinoPage.Gold);
             var button = visit.gameObject.AddComponent<Button>(); button.targetGraphic = fill;
             button.onClick.AddListener(() => OpenSite()); // does NOT dismiss the persistent ad
             desk.Text(PrologueDesk.Rect("Text", visit, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("进入大厅  888.vip", "ENTER  888.vip"), 17, new Color32(60, 12, 20, 255), TextAlignmentOptions.Center);
-            desk.Text(PrologueDesk.Rect("Notice", inner, Vector2.zero, new Vector2(1, 0), new Vector2(6, 3), new Vector2(-6, 26)), T("游戏内广告 · 输赢扣游戏钱包", "In-game advert · game wallet at risk"), 12, new Color32(226, 178, 164, 255), TextAlignmentOptions.Center);
+            desk.Text(PrologueDesk.Rect("Notice", inner, Vector2.zero, new Vector2(1, 0), new Vector2(6, 3), new Vector2(-6, 26)), T("游戏内广告", "In-game advert"), 12, Color.white, TextAlignmentOptions.Center);
             var close = PrologueDesk.Rect("Close Casino Advert", ad, Vector2.one, Vector2.one, new Vector2(-20, -20), new Vector2(-2, -2));
             var img = PrologueDesk.Fill(close, new Color32(95, 37, 42, 255));
             var x = close.gameObject.AddComponent<Button>(); x.targetGraphic = img;

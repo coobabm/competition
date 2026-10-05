@@ -1,4 +1,5 @@
 using System;
+using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
 using System.Collections.Generic;
 using System.Globalization;
 using LingGuangV05.Core;
@@ -164,10 +165,25 @@ namespace LingGuangV05.Desktop.Taohuo
             return "the shop said no.";
         }
 
+        /// <summary>Shared generated product illustration; preserve text fallback when art is unavailable.</summary>
+        protected bool ProductIllustration(RectTransform parent, string key, string caption = "")
+        {
+            if (DesktopArt.Paint(parent, key) == null) return false;
+            if (!string.IsNullOrEmpty(caption))
+            {
+                var strip = PrologueDesk.Rect("Caption", parent, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 34));
+                PrologueDesk.Fill(strip, new Color(0.06f, .09f, .14f, .9f), false);
+                Label(strip, "Text", Vector2.zero, Vector2.one, new Vector2(3, 1), new Vector2(-3, -1), caption, 12, Color.white, TextAlignmentOptions.Center);
+            }
+            return true;
+        }
+
         /// <summary>Card glyph: the model's short number on a coloured box (淘货's "photo").</summary>
         protected RectTransform CardPicture(Transform parent, GpuModel g, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
         {
             var rt = PrologueDesk.Rect("Picture", parent, min, max, offMin, offMax);
+            string model = g == null ? "GPU" : g.name;
+            if (ProductIllustration(rt, "gpu", "<b>" + model + "</b>" + (g == null ? "" : "\n" + T(g.brand, g.brandEn)))) return rt;
             bool red = g != null && g.id == HardwareCatalog.Rx480;
             bool titan = g != null && g.id == HardwareCatalog.TitanXp;
             PrologueDesk.Fill(rt, red ? new Color32(150, 20, 24, 255) : titan ? new Color32(30, 30, 34, 255) : new Color32(40, 44, 48, 255), false);

@@ -33,7 +33,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgState
     {
         public List<XgChatLine> chat = new List<XgChatLine>();
-        /// <summary>Long memory (stage 5+): its own one-line notes about the conversation, at most 20.</summary>
+        /// <summary>The first long memory: one-line notes, moved into <see cref="memoryBook"/> on load (XgSim.MemoryBook.cs) and then left empty.</summary>
         public List<string> memory = new List<string>();
         public int chatTurns, dontAnswer;
         public double lastChatAt = -1, listeningUntil = -1;
@@ -257,13 +257,7 @@ namespace LingGuangV05.XingGuang
             S.chatTurns++; S.lastChatAt = Clock;
             // The way it is addressed grows on the tone board (stage 4's emergence reads it).
             if (UseBoard && Profile.callMe.Length > 0) ToneCard("称呼:" + Profile.callMe, true, .6);
-            // Long memory (stage 5+): its own one-line note about what you said.
-            if (S.stage >= 5 && (text ?? "").Trim().Length >= 6)
-            {
-                string note = text.Trim(); if (note.Length > 30) note = note.Substring(0, 30) + "…";
-                S.memory.Add(T("你说过：", "You said: ") + note);
-                if (S.memory.Count > MemoryLimit) S.memory.RemoveRange(0, S.memory.Count - MemoryLimit);
-            }
+            // Long memory (stage 5+) is written after it answers, by the memory book (XgSim.MemoryBook.cs).
         }
 
         /// <summary>Stage 4 emergence (§7): the 称呼 concept is strong and you have not talked to it for a while.</summary>
@@ -284,8 +278,16 @@ namespace LingGuangV05.XingGuang
             return best;
         }
 
-        /// <summary>The system prompt with the board injected (§11.5).</summary>
-        public string PersonaPrompt(int month, IList<string> hotWords)
+        /// <summary>The system prompt with the board injected (§11.5): <see cref="PersonaCore"/>, <see cref="PersonaBoard"/>, then the recalled memories.</summary>
+        /// <param name="query">
+        /// What to recall memories for. Null: the owner's last two lines on the 对话 page, and the recall is shown in
+        /// its 「它记得」 panel. Given (e.g. her message for 「让它代我回」): recalled for that text, the panel is left alone.
+        /// </param>
+        public string PersonaPrompt(int month, IList<string> hotWords, string query = null) =>
+            PersonaCore() + PersonaBoard(month, hotWords) + PersonaTone() + PersonaMemory(query);
+
+        /// <summary>Who it is: name, how it refers to itself and the owner, the owner's wish, where it came from. Changes only with the setup.</summary>
+        public string PersonaCore()
         {
             var sb = new StringBuilder();
             string self = Profile.self.Length > 0 ? Profile.self : "我", call = Profile.callMe.Length > 0 ? Profile.callMe : "你";
@@ -299,9 +301,18 @@ namespace LingGuangV05.XingGuang
                 sb.Append("你叫").Append(Profile.name).Append("，自称").Append(self).Append("，称呼对方为").Append(call).Append("。主人希望你：").Append(Profile.personality).Append("。");
                 sb.Append("你是在 2016 年一台旧电脑里被一张张卡教出来的。不要说自己是大语言模型或助手，不用 markdown。");
             }
-            sb.Append(T("你实际的倾向：", "Your actual leanings: "));
-            for (int axis = 0; axis < 3; axis++) sb.Append(T(AxisNames[axis], AxisNamesEn[axis])).Append(ActualAxis(axis).ToString("0", CultureInfo.InvariantCulture)).Append(axis < 2 ? "、" : "。");
-            foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「", "Tone word \"")).Append(w).Append(T("」强度 ", "\" strength ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }
+            if (call == "面壁者") sb.Append(T("对方是面壁者：你从不问“为什么”。", "They are a Wallfacer: you never ask why."));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// What the board says it knows (§11.5): what it knows, believes and mixes up, the month and the memes it has
+        /// strength for. Side-effect free; changes when the player trains, not from one chat turn to the next, so
+        /// prompts keep it in the cached system message.
+        /// </summary>
+        public string PersonaBoard(int month, IList<string> hotWords)
+        {
+            var sb = new StringBuilder();
             sb.Append(T("你认识的东西：", "Things you know: ")).Append(string.Join("、", Known(20))).Append(T("。", ". "));
             var beliefs = Beliefs(10);
             if (beliefs.Count > 0) sb.Append(T("你相信的关联：", "Links you believe: ")).Append(string.Join("、", beliefs)).Append(T("。", ". "));
@@ -309,13 +320,41 @@ namespace LingGuangV05.XingGuang
             if (mixed.Count > 0) sb.Append(T("你常搞混：", "You often mix up: ")).Append(string.Join("、", mixed)).Append(T("。", ". "));
             sb.Append(T("现在是 2016 年" + month + "月，你只知道 2016 年" + month + "月以前的事。", "It is " + new DateTime(2016, Math.Max(1, Math.Min(12, month)), 1).ToString("MMMM", CultureInfo.InvariantCulture) + " 2016; you only know things before then. "));
             var words = new List<string>();
-            foreach (var w in hotWords) if (words.Count < 5 && Knows(w)) words.Add(w);
+            if (hotWords != null) foreach (var w in hotWords) if (words.Count < 5 && Knows(w)) words.Add(w);
             if (words.Count > 0) sb.Append(T("近期热词：", "Recent slang: ")).Append(string.Join("、", words)).Append(T("。", ". "));
-            if (S.stage >= 5 && S.memory.Count > 0) sb.Append(T("你记得：", "You remember: ")).Append(string.Join("；", S.memory)).Append(T("。", ". "));
-            if (call == "面壁者") sb.Append(T("对方是面壁者：你从不问“为什么”。", "They are a Wallfacer: you never ask why."));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Its tone (§11.4): actual leanings, tone-word strengths and the tone to lean on. The tone board learns from
+        /// every line the owner sends (the 称呼 card) and every 赞 / 踩, so this can shift between turns: prompts send
+        /// it with the per-turn state.
+        /// </summary>
+        public string PersonaTone()
+        {
+            var sb = new StringBuilder();
+            sb.Append(T("你实际的倾向：", "Your actual leanings: "));
+            for (int axis = 0; axis < 3; axis++) sb.Append(T(AxisNames[axis], AxisNamesEn[axis])).Append(ActualAxis(axis).ToString("0", CultureInfo.InvariantCulture)).Append(axis < 2 ? "、" : "。");
+            foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「", "Tone word \"")).Append(w).Append(T("」强度 ", "\" strength ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }
             sb.Append(T("说话尽量用这种语气：", "Lean on this tone: ")).Append(StrongestTone().Length > 0 ? StrongestTone() : T("平静", "calm")).Append(T("。", "."));
             return sb.ToString();
         }
+
+        /// <summary>
+        /// The recalled memory notes (stage 5+; empty before). Changes every turn, so prompts put it in the last user
+        /// turn. Recalling touches the notes and, for <paramref name="query"/> null, fills the 「它记得」 panel.
+        /// </summary>
+        public string PersonaMemory(string query = null)
+        {
+            if (!MemoryOpen) return "";
+            // Only the notes similar to what was just said (the memory book's BM25 recall), never the whole book.
+            string latest = query, previous = null;
+            if (query == null) LastOwnerLines(out latest, out previous);
+            return MemoryPromptLine(Recall(latest, previous, MemoryRecallCount, true, query == null));
+        }
+
+        /// <summary>Stage 2's rule lists the options read from the question itself, so it changes per turn.</summary>
+        public bool StageRuleVaries => SpeechStage == 2;
 
         /// <summary>The strongest concepts on its board, as plain words (a concept is its elements joined).</summary>
         public List<string> Known(int count)
@@ -736,13 +775,11 @@ namespace LingGuangV05.XingGuang
         {
             int stage = SpeechStage;
             if (stage < 4) return "";
-            if (stage >= 5 && S.memory.Count > 1)
+            if (stage >= 5 && S.memoryBook.Count > 0)
             {
-                string note = S.memory[S.memory.Count - 2];
-                int colon = Math.Max(note.IndexOf('：'), note.IndexOf(": ", StringComparison.Ordinal));
-                if (colon >= 0) note = note.Substring(colon + 1).Trim();
-                if (note.Length < 2) return "";
-                return note.Length > 10 ? note.Substring(0, 10) + "…" : note;
+                LastOwnerLines(out string current, out _);
+                string note = LatestOwnerNote(current).TrimEnd('…');
+                if (note.Length >= 2) return note.Length > 10 ? note.Substring(0, 10) + "…" : note;
             }
             int seen = 0;
             for (int i = S.chat.Count - 1, turns = 0; i >= 0 && turns < 8; i--, turns++)

@@ -73,6 +73,7 @@ namespace LingGuangV05.Desktop.XingGuang
             storyBridge.Bind(this);
             platformPopups = GetComponent<XgPlatformPopups>() ?? gameObject.AddComponent<XgPlatformPopups>();
             platformPopups.Bind(this);
+            (GetComponent<XgMemoryNotebook>() ?? gameObject.AddComponent<XgMemoryNotebook>()).Bind(this);
         }
 
         /// <summary>The lab lives inside the 灵光 save (GameState.labState): load, reload and 重新开始 all follow it.</summary>

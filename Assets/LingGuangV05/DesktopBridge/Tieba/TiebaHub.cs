@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LingGuangV05.Core;
 using LingGuangV05.Core.Era;
 using LingGuangV05.Core.Forum;
+using LingGuangV05.Desktop.Media;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
@@ -149,6 +150,10 @@ namespace LingGuangV05.Desktop.Tieba
             var conv = S.Conversation(id);
             conv.messages.Add(new ForumMessage { from = id, text = text, gameSeconds = Now });
             if (!seen) conv.unread++;
+            if (id != ForumLibrary.Me)
+                DesktopNotifications.Notify(runtime, GameText.T("贴吧私信", "Tieba DM"),
+                    id == ForumLibrary.ZhouNow ? "周而复始_" : id == ForumLibrary.LaoZhou ? "周而复始" : id,
+                    text, seen || IsShowing(id), () => { if (View != null) View.Open("chat", id); });
             Touch();
         }
 
@@ -193,7 +198,7 @@ namespace LingGuangV05.Desktop.Tieba
                     if (!ReferenceEquals(S, state)) return;
                     inFlight.Remove(id); pending.Remove(id);
                     if (awayFor.Remove(id)) text = GameText.T("刚才网不好。", "Connection was bad just now. ") + text;
-                    Receive(id, text, Showing == id);
+                    Receive(id, text, IsShowing(id));
                 });
             }
         }
@@ -216,6 +221,11 @@ namespace LingGuangV05.Desktop.Tieba
 
         /// <summary>The conversation open on screen (set by the view), so its new messages are not counted unread.</summary>
         public string Showing { get; set; }
+
+        bool IsShowing(string id)
+        {
+            return Showing == id && View != null && View.isActiveAndEnabled && DesktopNotifications.IsWindowVisible(View);
+        }
 
         void Reply(string id, Action<string> done)
         {

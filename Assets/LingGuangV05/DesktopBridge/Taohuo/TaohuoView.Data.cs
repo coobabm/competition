@@ -54,7 +54,9 @@ namespace LingGuangV05.Desktop.Taohuo
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -56), new Vector2(126, 56));
             PrologueDesk.Fill(pic, junk ? new Color32(120, 40, 30, 255) : new Color32(30, 70, 130, 255), false);
             var d = XgCatalog.Dataset(o.datasetId);
-            Label(pic, "Name", Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0), "<b>" + (d != null ? T(d.name, d.nameEn) : o.datasetId) + "</b>", 18, Color.white, TextAlignmentOptions.Center);
+            string datasetName = d != null ? T(d.name, d.nameEn) : o.datasetId;
+            if (!ProductIllustration(pic, "data", "<b>" + datasetName + "</b>"))
+                Label(pic, "Name", Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0), "<b>" + datasetName + "</b>", 18, Color.white, TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(140, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -28), Vector2.zero, "<b>" + o.Name(GameText.IsEnglish) + "</b>", 18, Ink);
             string badge = "<color=#" + ColorUtility.ToHtmlStringRGB(junk ? Red : Blue) + ">[" + o.SourceLabel(GameText.IsEnglish) + "]</color>"

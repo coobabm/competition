@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Media;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Desktop.YY;
@@ -42,7 +43,11 @@ namespace LingGuangV05.Desktop.Juxin
         }
 
         void Awake() { Instance = this; }
-        void OnDestroy() { if (Instance == this) Instance = null; }
+        void OnDestroy()
+        {
+            if (bound != null) bound.JuxinReceived -= OnReceived;
+            if (Instance == this) Instance = null;
+        }
 
         static string T(string zh, string en) => GameText.T(zh, en);
 
@@ -55,7 +60,13 @@ namespace LingGuangV05.Desktop.Juxin
                 if (view != null) view.SetUnlocked(false);
                 return;
             }
-            if (!ReferenceEquals(bound, controller.Sim)) { bound = controller.Sim; jobRunning = false; sinceTick = 0; }
+            if (!ReferenceEquals(bound, controller.Sim))
+            {
+                if (bound != null) bound.JuxinReceived -= OnReceived;
+                bound = controller.Sim;
+                bound.JuxinReceived += OnReceived;
+                jobRunning = false; sinceTick = 0;
+            }
             bool unlocked = !runtime.Sim.InPrologue && bound.JuxinUnlocked;
             if (view != null) view.SetUnlocked(unlocked);
             if (!unlocked) return;
@@ -71,6 +82,19 @@ namespace LingGuangV05.Desktop.Juxin
                 if (!jobRunning) RunAutoReply();
             }
             if (view != null) view.UpdateBadges(bound.JuxinUnread > 0);
+        }
+
+        void OnReceived(XgJxThread thread, XgJxMessage message)
+        {
+            if (thread == null || message == null || message.mine || bound == null || controller == null
+                || !ReferenceEquals(bound, controller.Sim)) return;
+            string sender = XgSim.JuxinName(thread.id, GameText.IsEnglish);
+            string who = T(message.whoZh, message.whoEn);
+            string title = T(message.titleZh, message.titleEn);
+            string body = (who.Length > 0 ? who + ": " : "") + (title.Length > 0 ? title + "\n" : "") + T(message.zh, message.en);
+            bool visible = bound.JuxinShowing == thread.id && view != null && view.isActiveAndEnabled && DesktopNotifications.IsWindowVisible(view);
+            DesktopNotifications.Notify(runtime, T("巨信", "Juxin"), sender, body, visible,
+                () => { if (view != null) view.Open(thread.id); });
         }
 
         /// <summary>
@@ -119,7 +143,8 @@ namespace LingGuangV05.Desktop.Juxin
                 jobRunning = false;
                 sim.CompleteAutoReply(job, reply);
                 if (runtime != null) runtime.MarkDirty();
-            }, false, sampling);
+                // An automatic reply nobody is waiting on: background lane (null after its budget runs out).
+            }, false, sampling, LingGuangV05.Core.Chat.LlmSeat.Others, LingGuangV05.Core.Chat.LlmLane.Background);
         }
 
         public void Changed() { if (runtime != null && !runtime.TestMode) runtime.MarkDirty(); }

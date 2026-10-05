@@ -266,7 +266,7 @@ namespace LingGuangV05.XingGuang
                     return T("用你的名字「" + Profile.name + "」和自称「" + Profile.self + "」，写一首关于我们的短诗。" + (S.poemLine.Length > 0 && forModel ? "可以用上你以前写过的那句：" + S.poemLine : ""),
                              "Using your name \"" + Profile.name + "\" and \"" + Profile.self + "\", write a short poem about us." + (S.poemLine.Length > 0 && forModel ? " You may reuse your old line: " + S.poemLine : ""));
                 case 4:
-                    return T("总结我们从你学会说话到现在聊过的事。", "Summarise what we've talked about since you learnt to speak.") + (forModel && S.memory.Count > 0 ? T("你记得：", " You remember: ") + string.Join("；", S.memory) : "");
+                    return T("总结我们从你学会说话到现在聊过的事。", "Summarise what we've talked about since you learnt to speak.") + (forModel && S.memoryBook.Count > 0 ? T("你记得：", " You remember: ") + string.Join(T("；", "; "), MemoryHighlights(12)) : "");
                 default:
                     return T("写一个小程序，把这串数字解码：" + Prologue2016.LongNumber + "。提示：两位一个字母。", "Write a small program that decodes this number: " + Prologue2016.LongNumber + ". Hint: two digits per letter.");
             }
@@ -281,7 +281,7 @@ namespace LingGuangV05.XingGuang
                 case 1: return T("3 + 2 − 1 = 4 张。4 × 4G = 16G。", "3 + 2 − 1 = 4 cards. 4 × 4 GB = 16 GB.");
                 case 2: return T("因为表情和配字对不上，又对得上。大家都见过这张脸，所以一看就懂。", "Because the face and the caption don't match, and yet they do. Everyone knows that face, so it lands at once.");
                 case 3: return (S.poemLine.Length > 0 ? S.poemLine + "\n" : "") + T(Profile.self + "叫" + Profile.name + "，\n是你一张一张教出来的。\n你问是，" + Profile.self + "答否，\n后来我们都学会了别的。", Profile.self + " am " + Profile.name + ",\ntaught card by card by you.\nYou asked yes, I answered no,\nand then we both learnt more.");
-                case 4: return S.memory.Count > 0 ? T("我们聊过：", "We talked about: ") + string.Join(T("；", "; "), S.memory.GetRange(Math.Max(0, S.memory.Count - 5), Math.Min(5, S.memory.Count))) : T("你教我说话，我学会了叫你。", "You taught me to talk; I learnt to call you.");
+                case 4: return S.memoryBook.Count > 0 ? T("我们聊过：", "We talked about: ") + string.Join(T("；", "; "), MemoryHighlights(5)) : T("你教我说话，我学会了叫你。", "You taught me to talk; I learnt to call you.");
                 default:
                     return "s = \"" + Prologue2016.LongNumber + "\"\nprint(\"\".join(chr(96 + int(s[i:i+2])) for i in range(0, len(s), 2)))\n# → " + Prologue2016.Decoded;
             }

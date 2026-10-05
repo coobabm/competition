@@ -405,7 +405,8 @@ namespace LingGuangV05.Desktop.Miaoyu
             var row = Row(list, "Cafe", 190, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -134), new Vector2(134, -14));
             PrologueDesk.Fill(pic, new Color32(20, 20, 24, 255), false);
-            Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + T("网吧", "NET\nCAFE") + "</b>\n<size=14>×" + HardwareCatalog.CafeBoxLimit + "</size>", 26, new Color32(255, 90, 90, 255), TextAlignmentOptions.Center);
+            if (!ProductIllustration(pic, "esports", T("网吧清仓 · 配图", "Net café · illustration")))
+                Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + T("网吧", "NET\nCAFE") + "</b>\n<size=14>×" + HardwareCatalog.CafeBoxLimit + "</size>", 26, new Color32(255, 90, 90, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(150, 10), new Vector2(-190, -12));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -52), Vector2.zero, T("<b>【网吧倒闭清仓】E5-2670 + X79 寨板 + 16G + GTX 970 整机，共 8 台</b>", "<b>[Net cafe closing down] E5-2670 + X79 knock-off board + 16 GB + GTX 970 PCs, 8 in total</b>"), 18, Ink);
             Label(mid, "Desc", new Vector2(0, 1), Vector2.one, new Vector2(0, -78), new Vector2(0, -54), T(Description, DescriptionEn) + T("（键盘有点油）", " (keyboards a bit greasy)"), 15, new Color32(90, 90, 90, 255));

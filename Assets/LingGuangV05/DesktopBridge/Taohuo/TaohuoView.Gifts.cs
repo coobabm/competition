@@ -53,7 +53,9 @@ namespace LingGuangV05.Desktop.Taohuo
             var row = Row(list, gift.id, 112, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -46), new Vector2(106, 46));
             PrologueDesk.Fill(pic, new Color32(255, 228, 236, 255), false);
-            Label(pic, "Glyph", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + Glyph(gift.id) + "</b>", 30, new Color32(232, 80, 120, 255), TextAlignmentOptions.Center);
+            string art = gift.id == GirlfriendRules.GiftPlush ? "plush" : gift.id == GirlfriendRules.GiftTickets ? "cinema" : gift.id == GirlfriendRules.GiftIphone ? "iphone" : null;
+            if (art == null || !ProductIllustration(pic, art))
+                Label(pic, "Glyph", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + Glyph(gift.id) + "</b>", 30, new Color32(232, 80, 120, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(122, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -30), Vector2.zero, "<b>" + T(gift.zh, gift.en) + "</b>", 18, Ink);
             bool onSale = GirlfriendRules.OnSale(gift, today);

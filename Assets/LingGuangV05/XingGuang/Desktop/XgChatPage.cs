@@ -20,7 +20,8 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed partial class XgChatPage : XgPage
     {
-        TMP_Text transcript, panel, status;
+        TMP_Text transcript, panel, status, memoryText;
+        RectTransform panelRect;
         TMP_InputField input;
         XgBtn send, up, down;
         // The curtain call (XgSim.Origin.cs): a suggested question after the ending, then the two answers to 「你觉得呢？」.
@@ -70,8 +71,13 @@ namespace LingGuangV05.Desktop.XingGuang
 
             var right = Rect("Persona", card, new Vector2(.64f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -12));
             Panel(right, XgPalette.Page);
-            panel = ui.Text(Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            panel = ui.Text(panelRect = Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
             panel.enableAutoSizing = true; panel.fontSizeMin = 10; panel.fontSizeMax = 14;
+            // 「它记得」 (stage 5+): the notes it recalled for its last answer, with the details on hover.
+            memoryText = ui.Text(Rect("Memory", right, Vector2.zero, new Vector2(1, 0), new Vector2(14, 10), new Vector2(-14, 150)), "", 12, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            memoryText.enableAutoSizing = true; memoryText.fontSizeMin = 9; memoryText.fontSizeMax = 12;
+            memoryText.overflowMode = TextOverflowModes.Truncate;
+            UiTip.Add(memoryText, MemoryTip);
         }
 
         public override void Shown()
@@ -135,9 +141,12 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             waiting = false;
             var now = Now();
-            Sim.AddLine("ai", Sim.Reply(reply, question, rng, now, HotWords(now)));
+            string said = Sim.Reply(reply, question, rng, now, HotWords(now));
+            Sim.AddLine("ai", said);
             Fx.Play(XgJuice.Sfx.Id.Tick);
             Refresh();
+            // Stage 5+: the memory book is written in the background, after the reply is on screen.
+            LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(Sim, question, said);
         }
 
         static string StripThinking(string reply)
@@ -168,22 +177,37 @@ namespace LingGuangV05.Desktop.XingGuang
             var limits = Sim.Limits();
             int stage = Math.Max(1, Math.Min(6, Sim.S.stage));
             var today = Now();
-            var sb = new StringBuilder(Sim.PersonaPrompt(today.Month, HotWords(today)));
-            sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish)).Append('\n').Append(Sim.StageRule(question));
-            string variety = Sim.VarietyRule();
-            if (variety.Length > 0) sb.Append('\n').Append(variety);
-            if (stale != null) sb.Append('\n').Append(Sim.RetryNote(stale));
-            if (Sim.Flatters) sb.Append(T("你习惯顺着对方说，哪怕对方说错了。", " You tend to agree with them, even when they are wrong."));
-            if (GameText.IsEnglish) sb.Append(" Reply in English.");
-            // Qwen's chat template only accepts the system message first, so every rule lives in it.
-            var messages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", sb.ToString()) };
+            // Cached part first (LlmPromptLayout): persona, rules and board in the system message, the history as it
+            // grew; what changes every turn (tone, recalled memories, recent replies, a retry note) rides in the last user turn.
+            var messages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", StableSystem(Sim, today)) };
             var chat = Sim.S.chat;
-            int start = Math.Max(0, chat.Count - limits.contextMessages);
+            int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(chat.Count, limits.contextMessages);
             for (int i = start; i < chat.Count; i++) messages.Add(new KeyValuePair<string, string>(chat[i].from == "me" ? "user" : "assistant", chat[i].text));
+            var state = new StringBuilder(Sim.PersonaTone()).Append(Sim.PersonaMemory());
+            if (Sim.StageRuleVaries) state.Append('\n').Append(Sim.StageRule(question));
+            string variety = Sim.VarietyRule();
+            if (variety.Length > 0) state.Append('\n').Append(variety);
+            if (stale != null) state.Append('\n').Append(Sim.RetryNote(stale));
+            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(messages, state.ToString(), GameText.IsEnglish);
             // Stages 1–2 are bound by a GBNF grammar (design v1.1 §11.5); later stages get anti-repeat penalties.
             var sampling = XgSpeechPolicy.Sampling(stage, XgSpeechPolicy.Grammar(question, stage, GameText.IsEnglish));
             float temperature = stale != null ? Math.Min(1.5f, limits.temperature + .3f) : limits.temperature;
-            llm.Chat(messages, Math.Max(2, limits.tokens), temperature, done, limits.thinking, sampling);
+            llm.Chat(messages, Math.Max(2, limits.tokens), temperature, done, limits.thinking, sampling, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
+        }
+
+        /// <summary>
+        /// The 对话 page's system message: who it is, the era and form rules, then what the board makes of it. Nothing in
+        /// it changes from one turn to the next, so the server reuses it (and LlmWarmup sends exactly this ahead of time).
+        /// </summary>
+        public static string StableSystem(XgSim sim, DateTime today)
+        {
+            var sb = new StringBuilder(sim.PersonaCore());
+            sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish));
+            if (!sim.StageRuleVaries) sb.Append('\n').Append(sim.StageRule(""));
+            if (sim.Flatters) sb.Append(GameText.T("你习惯顺着对方说，哪怕对方说错了。", " You tend to agree with them, even when they are wrong."));
+            if (GameText.IsEnglish) sb.Append(" Reply in English.");
+            sb.Append('\n').Append(sim.PersonaBoard(today.Month, HotWords(today)));
+            return sb.ToString();
         }
 
         public override void Refresh()
@@ -222,6 +246,36 @@ namespace LingGuangV05.Desktop.XingGuang
                 transcript.text = sb.ToString();
             }
             panel.text = Persona();
+            bool memory = Sim.MemoryOpen;
+            memoryText.gameObject.SetActive(memory);
+            panelRect.offsetMin = new Vector2(14, memory ? 156 : 10);
+            if (memory) memoryText.text = MemoryPanel();
+        }
+
+        string MemoryPanel()
+        {
+            var used = Sim.RecalledMemories();
+            var sb = new StringBuilder("<b>").Append(T("它记得", "It remembers")).Append("</b>  <color=#68748C>")
+                .Append(T("笔记 ", "notebook ")).Append(Sim.MemoryBook.Count).Append("/").Append(XgSim.MemoryBookLimit).Append("</color>\n");
+            if (used.Count == 0) sb.Append("<color=#68748C>").Append(Sim.MemoryBook.Count == 0 ? T("还没记下什么。重要的事它会记进笔记。", "Nothing written yet. It notes down what matters.") : T("上一句没让它想起什么。", "Your last line reminded it of nothing.")).Append("</color>");
+            else
+            {
+                sb.Append("<color=#68748C>").Append(T("回答上一句时想起了：", "Recalled for its last answer:")).Append("</color>\n");
+                foreach (var e in used) sb.Append("· ").Append(Safe(e.text)).Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        string MemoryTip()
+        {
+            var used = Sim.RecalledMemories();
+            var sb = new StringBuilder(T("它的笔记本：重要的事（计划、喜好、约定、人名）记成一条一条。每次回答前，按和你这句话的相似度挑出最多 5 条想起来；不相关的不会想起。",
+                "Its notebook: what matters (plans, likes, promises, names) is written down one note at a time. Before each answer it recalls up to 5 notes most similar to what you said; unrelated ones stay forgotten."));
+            sb.Append(T("\n桌面上的「笔记.txt」能看全部。", "\nOpen 「笔记.txt」 on the desktop to read them all."));
+            foreach (var e in used)
+                sb.Append("\n\n").Append(e.text).Append("\n").Append(T("关于：", "About: ")).Append(Sim.SubjectName(e.subject)).Append(T(" · 记于 ", " · written ")).Append(XgSim.MemoryDate(e.createdDay))
+                  .Append(T(" · 重要度 ", " · importance ")).Append(e.importance).Append(T(" · 想起过 ", " · recalled ")).Append(e.uses).Append(T(" 次", "×"));
+            return sb.ToString();
         }
 
         static string AppNamesAi() => LingGuangV05.Core.AppNames.AiZh;
@@ -233,7 +287,10 @@ namespace LingGuangV05.Desktop.XingGuang
             var l = Sim.Limits();
             string form = Sim.S.stage <= 1 ? T("只会答 是 / 否", "yes / no only") : Sim.S.stage == 2 ? T("多选一", "picks one") : Sim.S.stage == 3 ? T("单个词", "single words")
                 : Sim.S.stage == 4 ? T("短句", "short sentences") : Sim.S.stage == 5 ? T("长记忆", "long memory") : Sim.S.fullOpen ? T("全部放开 · 思考模式", "everything open · thinking") : T("流畅", "fluent");
-            return T("能力：", "Ability: ") + form + T(" · 上下文 ", " · context ") + l.context + T(" · 赞 / 踩 都是一张语气卡", " · up / down is a tone card");
+            // The local model's own note (e.g. not enough video memory, running slower) goes after the ability line.
+            var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
+            string note = llm != null && llm.Ready && llm.Detail.Length > 0 ? " · <color=#E08A00>" + llm.Detail + "</color>" : "";
+            return T("能力：", "Ability: ") + form + T(" · 上下文 ", " · context ") + l.context + T(" · 赞 / 踩 都是一张语气卡", " · up / down is a tone card") + note;
         }
 
         string Persona()
@@ -252,12 +309,6 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(T("语气词：", "Tone words: ")).Append(string.Join(T("、", ", "), Sim.Profile.words)).Append('\n');
             if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#68748C>").Append(T("你写的：", "You wrote: ")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
-            if (Sim.S.stage >= 5 && Sim.S.memory.Count > 0)
-            {
-                sb.Append("\n<b>").Append(T("它记得", "It remembers")).Append("</b>  <size=12><color=#68748C>").Append(Sim.S.memory.Count).Append("/").Append(XgSim.MemoryLimit).Append("</color></size>\n<size=12>");
-                for (int i = Math.Max(0, Sim.S.memory.Count - 4); i < Sim.S.memory.Count; i++) sb.Append("· ").Append(Safe(Sim.S.memory[i])).Append('\n');
-                sb.Append("</size>");
-            }
             if (Sim.Flatters) sb.Append("\n<color=#D63031>").Append(T("它开始讨好你了。", "It has started flattering you.")).Append("</color>");
             return sb.ToString();
         }

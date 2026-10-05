@@ -313,7 +313,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (ticket != modelTicket) return;
                 r.model = sim.CleanLoveLine(EraLexicon.Scrub(reply ?? "") ?? "", r.yes);
                 r.modelDone = true;
-            });
+            }, false, null, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
         }
 
         void Begin()

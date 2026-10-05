@@ -62,8 +62,20 @@ namespace LingGuangV05.Core.Girlfriend
             }
         }
 
-        /// <summary>The system prompt (design §4.1) with every slot filled. <paramref name="situation"/> is code's account of what just happened.</summary>
-        public static string System(GirlfriendState s, GfNow now, GfActivity a, bool english, string situation)
+        /// <summary>
+        /// The whole prompt text (design §4.1) with every slot filled, in one piece: <see cref="Stable"/> then
+        /// <see cref="State"/>. The chat request sends the two apart (GirlfriendPrompt): Stable as the cached system
+        /// message, State in front of his latest line.
+        /// </summary>
+        /// <param name="latest">His latest line: her memories most similar to it go into the prompt (BM25, MemoryRetrieval).</param>
+        public static string System(GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, string latest = null) =>
+            Stable(s, now, english) + "\n\n" + State(s, now, a, english, situation, latest);
+
+        /// <summary>
+        /// Who she is, how she writes, the output format, and the slow parts: the month she lives in, summer or term,
+        /// how she feels about him (tier). Identical from one message to the next, so the server keeps it cached.
+        /// </summary>
+        public static string Stable(GirlfriendState s, GfNow now, bool english)
         {
             var c = now.clock;
             bool summer = GirlfriendRules.Summer(c);
@@ -71,60 +83,86 @@ namespace LingGuangV05.Core.Girlfriend
             string faces = YYFaces.Whitelist(Faces());
             if (english)
             {
-                sb.Append("It is ").Append(c.ToString("d MMMM yyyy, HH:mm", CultureInfo.InvariantCulture)).Append(". You are texting your boyfriend on mobile YY (a 2016 Chinese chat app).\n");
+                sb.Append("You are texting your boyfriend on mobile YY (a 2016 Chinese chat app).\n");
                 sb.Append("You are Lin Qingwen, 21, a third-year university student in another province").Append(summer ? ", home in your small town for the summer holiday" : "").Append(". You were classmates in high school and have been together a year and a half").Append(summer ? "; this summer you are in the same town but rarely meet" : "; it is long distance").Append(".\n");
                 sb.Append("Your character: tough talk, soft heart, sharp memory. When upset you do not say so; you go cold.\n");
                 sb.Append("How you write: casual, short phrases separated by spaces, few commas or full stops, at most 25 characters per message. Faces only from this list: ").Append(faces).Append(". You say things like \"hahaha\", \"mm mm\", \"fine\", \"dummy\". No swearing, no formal language, no markdown, no actions or thoughts in brackets. Reply in English.\n");
-                sb.Append("You only know things up to ").Append(c.ToString("MMMM yyyy", CultureInfo.InvariantCulture)).Append(". Never mention anything that came later.\n");
                 sb.Append("You are not an AI and do not know what a language model is. Never discuss explicit or adult content; if asked, change the subject or get annoyed.\n\n");
+                sb.Append("Output only this one JSON, in this format:\n{\"msgs\":[\"first\",\"optional second\"],\"delta\":0,\"remember\":\"\"}\n");
+                sb.Append("- msgs: the 1 to 3 messages you send.\n");
+                sb.Append("- delta: how your feeling for him changed after reading his last message, an integer from -2 to 2. Greetings and small talk are 0. Only neglect, brushing you off or a broken promise are negative; real care, remembering your things or a sweet surprise are positive.\n");
+                sb.Append("- remember: one thing about HIM in his message worth remembering (his plans, his promises), written as \"he ...\"; never about you; empty string if none.\n");
+                sb.Append("Each of his messages may start with a [Current state] note: the date and time, where you are, your mood, what you remember. Use it, never quote it.\n\n");
+                sb.Append("You only know things up to ").Append(c.ToString("MMMM yyyy", CultureInfo.InvariantCulture)).Append(". Never mention anything that came later.\n");
+                sb.Append("How you feel about him now: ").Append(TierText(GirlfriendRules.Tier(s), true));
+            }
+            else
+            {
+                sb.Append("你在用手机 YY 和男朋友打字聊天。\n");
+                sb.Append("你是林晴雯，21 岁，").Append(summer ? "在外省读大三，现在放暑假在老家" : "在外省读大三").Append("。你们是高中同学，在一起一年半").Append(summer ? "，暑假同在县城但不常见面" : "，现在异地").Append("。\n");
+                sb.Append("你的性格：嘴上逞强，心里细，记性好；不开心不直说，会变冷淡。\n");
+                sb.Append("说话方式：口语，短句，用空格断句，少用逗号句号，一条消息不超过 25 个字；表情只能从这些里选：").Append(faces).Append("；会说「哈哈哈」「嗯嗯」「好吧」「笨蛋」；不用书面语，不说脏话，不用 markdown，不写动作和括号里的心理描写。\n");
+                sb.Append("你不是 AI，不知道什么是大模型。不要聊露骨或成人内容，被问就岔开或生气。\n\n");
+                sb.Append("按下面的格式输出，只输出这一个 JSON：\n{\"msgs\":[\"第一条\",\"可选第二条\"],\"delta\":0,\"remember\":\"\"}\n");
+                sb.Append("- msgs：你要发的 1 到 3 条消息。\n");
+                sb.Append("- delta：你读完他最后这条消息后，对他的感觉变化，-2 到 2 的整数。打招呼、闲聊给 0；只有冷落、敷衍、失约才给负数；真的关心你、记得你的事、给你惊喜才给正数。\n");
+                sb.Append("- remember：他这条里值得记住的一件关于「他」的事（他的安排、承诺），写成「他……」；不要写你自己的事；没有就空字符串。\n");
+                sb.Append("他的消息前面可能带一段【当前状态】：现在的日期时间、你在哪、你的心情、你记得的事。照着它说话，但不要复述它。\n\n");
+                sb.Append("你只知道 2016 年").Append(c.Month).Append("月以前的事。不要提之后才出现的东西。\n");
+                sb.Append("你对他现在的感觉：").Append(TierText(GirlfriendRules.Tier(s), false));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// What changes from one message to the next: the clock, where she is, her mood, the memories his latest line
+        /// brings up, your plans, the day's special situation and code's account of what just happened.
+        /// </summary>
+        public static string State(GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, string latest = null)
+        {
+            var c = now.clock;
+            var sb = new StringBuilder();
+            if (english)
+            {
+                sb.Append("It is ").Append(c.ToString("d MMMM yyyy, HH:mm", CultureInfo.InvariantCulture)).Append(".\n");
                 sb.Append("Right now: ").Append(a.en).Append(".\n");
-                sb.Append("How you feel about him now: ").Append(TierText(GirlfriendRules.Tier(s), true)).Append('\n');
                 sb.Append("Your mood lately: ").Append(MoodText(s, true)).Append('\n');
-                sb.Append("Things you remember:\n").Append(Memories(s, true));
+                sb.Append("Things you remember:\n").Append(Memories(s, true, latest));
                 sb.Append("Your plans together: ").Append(Promises(s, true)).Append('\n');
             }
             else
             {
-                sb.Append("现在是 2016 年").Append(c.Month).Append("月").Append(c.Day).Append("日 ").Append(c.ToString("HH:mm", CultureInfo.InvariantCulture)).Append("。你在用手机 YY 和男朋友打字聊天。\n");
-                sb.Append("你是林晴雯，21 岁，").Append(summer ? "在外省读大三，现在放暑假在老家" : "在外省读大三").Append("。你们是高中同学，在一起一年半").Append(summer ? "，暑假同在县城但不常见面" : "，现在异地").Append("。\n");
-                sb.Append("你的性格：嘴上逞强，心里细，记性好；不开心不直说，会变冷淡。\n");
-                sb.Append("说话方式：口语，短句，用空格断句，少用逗号句号，一条消息不超过 25 个字；表情只能从这些里选：").Append(faces).Append("；会说「哈哈哈」「嗯嗯」「好吧」「笨蛋」；不用书面语，不说脏话，不用 markdown，不写动作和括号里的心理描写。\n");
-                sb.Append("你只知道 2016 年").Append(c.Month).Append("月以前的事。不要提之后才出现的东西。\n");
-                sb.Append("你不是 AI，不知道什么是大模型。不要聊露骨或成人内容，被问就岔开或生气。\n\n");
+                sb.Append("现在是 2016 年").Append(c.Month).Append("月").Append(c.Day).Append("日 ").Append(c.ToString("HH:mm", CultureInfo.InvariantCulture)).Append("。\n");
                 sb.Append("此刻：").Append(a.zh).Append("。\n");
-                sb.Append("你对他现在的感觉：").Append(TierText(GirlfriendRules.Tier(s), false)).Append('\n');
                 sb.Append("你最近的心情：").Append(MoodText(s, false)).Append('\n');
-                sb.Append("你记得的事：\n").Append(Memories(s, false));
+                sb.Append("你记得的事：\n").Append(Memories(s, false, latest));
                 sb.Append("你们的约定：").Append(Promises(s, false)).Append('\n');
             }
             string special = Special(s, now, english);
             if (special.Length > 0) sb.Append(special).Append('\n');
             if (!string.IsNullOrEmpty(situation)) sb.Append(situation).Append('\n');
-            sb.Append('\n');
-            if (english)
-            {
-                sb.Append("Output only this one JSON, in this format:\n{\"msgs\":[\"first\",\"optional second\"],\"delta\":0,\"remember\":\"\"}\n");
-                sb.Append("- msgs: the 1 to 3 messages you send.\n");
-                sb.Append("- delta: how your feeling for him changed after reading his last message, an integer from -2 to 2. Greetings and small talk are 0. Only neglect, brushing you off or a broken promise are negative; real care, remembering your things or a sweet surprise are positive.\n");
-                sb.Append("- remember: one thing about HIM in his message worth remembering (his plans, his promises), written as \"he ...\"; never about you; empty string if none.");
-            }
-            else
-            {
-                sb.Append("按下面的格式输出，只输出这一个 JSON：\n{\"msgs\":[\"第一条\",\"可选第二条\"],\"delta\":0,\"remember\":\"\"}\n");
-                sb.Append("- msgs：你要发的 1 到 3 条消息。\n");
-                sb.Append("- delta：你读完他最后这条消息后，对他的感觉变化，-2 到 2 的整数。打招呼、闲聊给 0；只有冷落、敷衍、失约才给负数；真的关心你、记得你的事、给你惊喜才给正数。\n");
-                sb.Append("- remember：他这条里值得记住的一件关于「他」的事（他的安排、承诺），写成「他……」；不要写你自己的事；没有就空字符串。");
-            }
-            return sb.ToString();
+            return sb.ToString().TrimEnd('\n');
         }
 
-        static string Memories(GirlfriendState s, bool english)
+        static readonly IMemoryScorer MemoryScorer = new Bm25Scorer();
+
+        /// <summary>
+        /// Her memories for the prompt: the ones most similar to his latest line first (the lab AI's BM25 retriever),
+        /// then the most recent to fill <see cref="GirlfriendRules.PromptMemories"/> slots, in the order she learnt them.
+        /// </summary>
+        public static List<string> PromptMemories(GirlfriendState s, string latest)
+        {
+            var list = new List<string>();
+            foreach (int i in MemoryRanker.RelevantThenRecent(MemoryScorer, MemoryQuery.Of(latest), s.memories, GirlfriendRules.PromptMemories)) list.Add(s.memories[i]);
+            return list;
+        }
+
+        static string Memories(GirlfriendState s, bool english, string latest = null)
         {
             var sb = new StringBuilder();
-            int start = Math.Max(0, s.memories.Count - GirlfriendRules.PromptMemories);
-            for (int i = start; i < s.memories.Count; i++)
+            foreach (var picked in PromptMemories(s, latest))
             {
-                string m = s.memories[i];
+                string m = picked;
                 if (m.StartsWith("她说：", StringComparison.Ordinal)) m = (english ? "you said: " : "你说过：") + m.Substring(3);
                 else if (m.StartsWith("他说：", StringComparison.Ordinal)) m = (english ? "he said: " : "他说过：") + m.Substring(3);
                 sb.Append("- ").Append(m).Append('\n');

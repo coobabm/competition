@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using LingGuangV05.Core;
 using LingGuangV05.Core.Era;
 using LingGuangV05.Core.Story;
+using LingGuangV05.Desktop.Media;
 using LingGuangV05.Runtime;
 using LingGuangV05.Runtime.Story;
 using Michsky.DreamOS;
@@ -67,6 +68,8 @@ namespace LingGuangV05.Desktop.Story
 
         public bool ReduceMotion { get { return PlayerPrefs.GetInt(ReduceMotionPref, 0) == 1; } }
         public bool CutscenePlaying { get { return cutsceneRoutine != null; } }
+        /// <summary>Shares the established cutscene/prologue/hologram gate with desktop message delivery.</summary>
+        public bool NotificationsHeld => InnerVoiceHeld();
 
         PrologueDirector prologueForVoice;
         LingGuangV05.Desktop.XingGuang.XgHoloCard holoForVoice;
@@ -248,8 +251,6 @@ namespace LingGuangV05.Desktop.Story
             if (yy != null && yy.S != null && yy.Conversation(pendingChat.who) != null)
             {
                 yy.Receive(pendingChat.who, GameText.Source(text));
-                if (!yy.IsShowing(pendingChat.who))
-                    EnqueueToast(() => GameText.Source(text), () => OpenApp("yy", pendingChat.who));
                 NoteChatDelivered(pendingChat.beat);
                 return;
             }
@@ -283,8 +284,9 @@ namespace LingGuangV05.Desktop.Story
                 }
                 catch (Exception e) { Debug.LogWarning("[Story] YY post failed: " + e.Message); }
             }
-            bool visible = posted && chatAdapter.Window != null && chatAdapter.Window.isOn && chatManager.selectedLayout == laoZhouLayout;
-            if (!visible) EnqueueToast(() => GameText.F("老周：{0}", "Lao Zhou: {0}", GameText.Source(text)), () => OpenApp("yy", null));
+            bool visible = posted && DesktopNotifications.IsWindowVisible(chatAdapter.Window) && chatManager.selectedLayout == laoZhouLayout;
+            DesktopNotifications.Notify(director != null ? director.runtime : null, "YY", GameText.T("老周", "Lao Zhou"),
+                GameText.Source(text), visible, () => OpenApp("yy", null));
             NoteChatDelivered(pendingChat.beat);
         }
 
@@ -413,8 +415,9 @@ namespace LingGuangV05.Desktop.Story
 
         public void ShowToast(string text, Action onClick)
         {
-            if (string.IsNullOrEmpty(text) || toastGroup == null) return;
-            EnqueueToast(() => GameText.Source(text), onClick);
+            if (string.IsNullOrEmpty(text)) return;
+            var runtime = director != null ? director.runtime : GetComponent<ChapterOneRuntime>();
+            DesktopNotifications.Notify(runtime, GameText.T("桌面消息", "Desktop message"), "", GameText.Source(text), false, onClick);
         }
 
         private void EnqueueToast(Func<string> render, Action onClick)

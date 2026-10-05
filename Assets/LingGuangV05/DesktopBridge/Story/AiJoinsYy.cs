@@ -343,7 +343,6 @@ namespace LingGuangV05.Desktop.Story
             opener = ChatHistoryStats.DefaultOpener(english);
             Unlock();
             Deliver(3);
-            if (presenter != null) presenter.ShowToast(aiName + T("：", ": ") + opener, () => OpenYY(YYChatHub.LingGuangId));
             hub = null; state = null;
         }
 
@@ -370,8 +369,9 @@ namespace LingGuangV05.Desktop.Story
         {
             if (hub == null || !ReferenceEquals(hub.S, state)) return;
             if (delivered < 1) Unlock();
-            if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener); }
-            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, T("……是。", "…yes.")); }
+            // The playing scene already shows these bubbles and dings. Quiet fallback still needs normal notifications.
+            if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener, !Playing); }
+            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, T("……是。", "…yes."), !Playing); }
         }
 
         void OpenYY(string contact)

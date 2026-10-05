@@ -74,12 +74,39 @@ namespace LingGuangV05.Desktop.Story
             font = fontAsset;
             icons = desktopList;
             windows = appsAndWindows;
-            layer = Rect("Prologue Layer", desktop, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            // The managed desk is lost on a script reload; the scene objects are not.
+            // Keep the shared layer (and other apps' popups) instead of stacking a new one.
+            layer = desktop.Find("Prologue Layer") as RectTransform
+                ?? Rect("Prologue Layer", desktop, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            for (int i = desktop.childCount - 1; i >= 0; i--)
+            {
+                var old = desktop.GetChild(i);
+                if (old == layer || old.name != "Prologue Layer") continue;
+                old.gameObject.SetActive(false); // stop the old popup controller before moving shared children
+                for (int j = old.childCount - 1; j >= 0; j--)
+                {
+                    var child = old.GetChild(j);
+                    if (child.name == "Tray Popup Area") RemoveTransient(child.gameObject);
+                    else child.SetParent(layer, false);
+                }
+                RemoveTransient(old.gameObject);
+            }
+            Cursor = layer.Find("Cursor") as RectTransform;
+            HideCursor();
             layer.SetAsLastSibling();
             rounded = FindSprite(desktopList, "Notepad", "Background");
             notepadIcon = FindSprite(desktopList, "Notepad", "Icon");
             photoIcon = FindSprite(desktopList, "Photo Gallery", "Icon");
             browserIcon = FindSprite(desktopList, "Web Browser", "Icon");
+        }
+
+        internal static void RemoveTransient(GameObject go)
+        {
+            if (go == null) return;
+            // Stop intercepting input immediately, even before end-of-frame destruction.
+            go.SetActive(false);
+            if (Application.isPlaying) UnityEngine.Object.Destroy(go);
+            else UnityEngine.Object.DestroyImmediate(go);
         }
 
         static Sprite FindSprite(RectTransform list, string item, string part)

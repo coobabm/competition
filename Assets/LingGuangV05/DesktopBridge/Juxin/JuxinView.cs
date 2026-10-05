@@ -1,4 +1,5 @@
 using System;
+using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
 using System.Collections.Generic;
 using System.Globalization;
 using LingGuangV05.Core;
@@ -205,7 +206,7 @@ namespace LingGuangV05.Desktop.Juxin
             PrologueDesk.Fill(nav, NavBg);
             var me = PrologueDesk.Rect("Me", nav, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-20, -62), new Vector2(20, -22));
             PrologueDesk.Fill(me, new Color32(90, 140, 210, 255));
-            Text(PrologueDesk.Rect("T", me, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("我", "Me"), 18, Color.white, TextAlignmentOptions.Center);
+            Portrait(me, "me", T("我", "Me"));
             navChats = NavButton(nav, 0, "聊", "Chat", () => { page = "chats"; signature = ""; });
             navMoments = NavButton(nav, 1, "圈", "Feed", () => { page = "moments"; signature = ""; });
             UiTip.Add(navChats, "聊天：甲方、朋友、家族群；公众号收在「订阅号」里。", "Chats: clients, friends, the family group. Official accounts are folded into Subscriptions.");
@@ -272,7 +273,13 @@ namespace LingGuangV05.Desktop.Juxin
 
         public void Open(string where = null)
         {
-            if (window != null && !window.isOn) window.OpenWindow();
+            if (window != null)
+            {
+                // Explicit visits must restore/focus minimized windows; reuse YY's first-open recovery.
+                LingGuangV05.Desktop.XingGuang.XingGuangController.KeepOpenOnFirstStart(window);
+                window.OpenWindow();
+                LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(hub, window);
+            }
             if (where != null) { page = "chats"; thread = where; inFolder = XgSim.JuxinIsSubscription(where); signature = ""; }
         }
 
@@ -281,7 +288,7 @@ namespace LingGuangV05.Desktop.Juxin
         void Update()
         {
             if (root == null || Sim == null || Sim.S.jxThreads == null || Sim.S.jxLikes == null) return;
-            if (window == null || !window.isOn) { Sim.JuxinShowing = null; return; }
+            if (!LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) { Sim.JuxinShowing = null; return; }
             Sim.JuxinShowing = page == "chats" ? thread : null;
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .35f;
@@ -302,7 +309,7 @@ namespace LingGuangV05.Desktop.Juxin
         void Redraw()
         {
             if (Sim == null) return;
-            if (thread != null) Sim.JuxinMarkRead(thread);
+            if (page == "chats" && thread != null && LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) Sim.JuxinMarkRead(thread);
             navChats.color = page == "chats" ? new Color32(70, 72, 78, 255) : NavBg;
             navMoments.color = page == "moments" ? new Color32(70, 72, 78, 255) : NavBg;
             var searchText = list.Find("Search/T")?.GetComponent<TMP_Text>();
@@ -357,7 +364,7 @@ namespace LingGuangV05.Desktop.Juxin
             var latest = subs[0];
             var m = latest.messages[latest.messages.Count - 1];
             int unread = Sim.JuxinSubscriptionUnread;
-            var row = ListRow(T("订阅号", "Subscriptions"), XgSim.JuxinName(latest.id, GameText.IsEnglish) + T("：", ": ") + Preview(m), new Color32(52, 120, 200, 255), "订", unread, false, () => { inFolder = true; signature = ""; }, Clock(m));
+            var row = ListRow(T("订阅号", "Subscriptions"), XgSim.JuxinName(latest.id, GameText.IsEnglish) + T("：", ": ") + Preview(m), new Color32(52, 120, 200, 255), unread, false, () => { inFolder = true; signature = ""; }, Clock(m), Folder);
             UiTip.Add(row, "公众号的推送都收在这里：甲方的签约喜报、招募、结算通知，还有摆渡新闻。", "Official accounts post here: clients' launch notices, hiring calls and settlements, plus Bodu News.");
         }
 
@@ -367,10 +374,10 @@ namespace LingGuangV05.Desktop.Juxin
             var m = t.messages.Count > 0 ? t.messages[t.messages.Count - 1] : null;
             string preview = m == null ? "" : (m.ai ? T("[代回] ", "[AI] ") : "") + (m.whoZh.Length > 0 ? T(m.whoZh, m.whoEn) + T("：", ": ") : "") + Preview(m);
             string id = t.id;
-            ListRow(name, preview, AvatarColor(id), Initial(name), t.unread, thread == id && page == "chats", () => { thread = id; page = "chats"; signature = ""; }, m != null ? Clock(m) : "");
+            ListRow(name, preview, AvatarColor(id), t.unread, thread == id && page == "chats", () => { thread = id; page = "chats"; signature = ""; }, m != null ? Clock(m) : "", id);
         }
 
-        Image ListRow(string name, string preview, Color avatar, string initial, int unread, bool selected, Action click, string time)
+        Image ListRow(string name, string preview, Color avatar, int unread, bool selected, Action click, string time, string identity)
         {
             var row = Row(listContent, RowHeight);
             var img = PrologueDesk.Fill(row, selected ? ListSelected : ListBg);
@@ -378,7 +385,7 @@ namespace LingGuangV05.Desktop.Juxin
             var colors = b.colors; colors.highlightedColor = new Color(.93f, .93f, .93f, 1); b.colors = colors;
             var av = PrologueDesk.Rect("Avatar", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(12, -21), new Vector2(54, 21));
             PrologueDesk.Fill(av, avatar, false);
-            Text(PrologueDesk.Rect("T", av, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), initial, 18, Color.white, TextAlignmentOptions.Center);
+            Portrait(av, identity, name);
             var nameText = Text(PrologueDesk.Rect("Name", row, new Vector2(0, .5f), new Vector2(1, 1), new Vector2(64, 0), new Vector2(-58, -8)), name, 16, Ink, TextAlignmentOptions.BottomLeft);
             nameText.textWrappingMode = TextWrappingModes.NoWrap; nameText.overflowMode = TextOverflowModes.Ellipsis;
             var prev = Text(PrologueDesk.Rect("Preview", row, Vector2.zero, new Vector2(1, .5f), new Vector2(64, 8), new Vector2(-12, -2)), Safe(preview), 13, Muted, TextAlignmentOptions.TopLeft);
@@ -409,6 +416,45 @@ namespace LingGuangV05.Desktop.Juxin
             int dot = name.IndexOf('·');
             string s = dot >= 0 && dot + 1 < name.Length ? name.Substring(dot + 1).Trim() : name;
             return s.Length > 0 ? s.Substring(0, 1).ToUpperInvariant() : "?";
+        }
+
+        void Portrait(RectTransform holder, string identity, string name)
+        {
+            Sprite sprite;
+            if (identity == Folder || XgSim.JuxinIsSubscription(identity))
+                sprite = DesktopArt.Picture(identity != null && identity.Contains("goclub") ? "go" : "news");
+            else
+            {
+                // Keep client identities stable across Chinese/English names and message types.
+                string key = identity;
+                switch (identity)
+                {
+                    case "dm.cheque": key = "wang"; break;
+                    case "dm.zipcode": key = "liu"; break;
+                    case "dm.memetag": key = "xiaolu"; break;
+                    case "dm.taobao": key = "afang"; break;
+                    case "dm.captcha": case "dm.fakereview": key = "laozhou"; break;
+                    case "dm.goclub": case "dm.homework": case "dm.support": key = "liu"; break;
+                    case "dm.parking": case "dm.civilexam": case "dm.antifraud": case "dm.sla.courier": key = "wang"; break;
+                    case "dm.faceclock": key = "aunt"; break;
+                    case "dm.acrostic": case "dm.sla.meme": key = "xiaolu"; break;
+                    case "dm.danmaku": key = "ajie"; break;
+                    case "dm.clickbait": case "dm.sla.danmu": case "dm.sla.portal": key = "dawei"; break;
+                    case "dm.ime": case "dm.sla.homework": key = "cousin"; break;
+                    case "dm.subtitle": key = "xiaogang"; break;
+                    case "dm.sla.takeout": key = "afang"; break;
+                    case "dm.sla.bank": key = "zhou_now"; break;
+                    case XgSim.JxFamily: key = "dad"; break;
+                }
+                sprite = DesktopArt.Avatar(string.IsNullOrEmpty(key) ? name : key);
+            }
+            if (sprite == null)
+            {
+                Text(PrologueDesk.Rect("T", holder, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Initial(name), 17, Color.white, TextAlignmentOptions.Center);
+                return;
+            }
+            var image = PrologueDesk.Rect("Portrait", holder, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<Image>();
+            image.sprite = sprite; image.preserveAspect = true; image.raycastTarget = false;
         }
 
         static Color AvatarColor(string id)
@@ -458,7 +504,9 @@ namespace LingGuangV05.Desktop.Juxin
             string title = "<b>" + Safe(XgSim.JuxinName(t.id, GameText.IsEnglish)) + "</b>";
             if (XgSim.JuxinIsGroup(t.id)) title += " (4)";
             if (sim.JuxinReplying(t.id)) title += "  <size=13><color=#1AAD19>" + T(AppNames.AiZh + "正在代你输入…", AppNames.AiEn + " is typing for you…") + "</color></size>";
-            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(24, 0), new Vector2(-280, 0)), title, 19, Ink, TextAlignmentOptions.MidlineLeft);
+            var portrait = PrologueDesk.Rect("Portrait", header, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(20, -18), new Vector2(56, 18));
+            Portrait(portrait, t.id, XgSim.JuxinName(t.id, GameText.IsEnglish));
+            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(68, 0), new Vector2(-280, 0)), title, 19, Ink, TextAlignmentOptions.MidlineLeft);
             string relation = Relation(t);
             if (relation.Length > 0)
             {
@@ -524,13 +572,13 @@ namespace LingGuangV05.Desktop.Juxin
             row.GetComponent<LayoutElement>().preferredHeight = Mathf.Max(28, h);
         }
 
-        RectTransform Avatar(RectTransform row, bool mine, string name, Color color)
+        RectTransform Avatar(RectTransform row, bool mine, string name, Color color, string identity)
         {
             var av = PrologueDesk.Rect("Avatar", row, mine ? Vector2.one : new Vector2(0, 1), mine ? Vector2.one : new Vector2(0, 1), mine ? new Vector2(-40, -40) : Vector2.zero, mine ? Vector2.zero : new Vector2(40, 40));
             av.offsetMin = mine ? new Vector2(-40, -40) : new Vector2(0, -40);
             av.offsetMax = mine ? Vector2.zero : new Vector2(40, 0);
             PrologueDesk.Fill(av, color, false);
-            Text(PrologueDesk.Rect("T", av, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Initial(name), 17, Color.white, TextAlignmentOptions.Center);
+            Portrait(av, mine ? "me" : identity, name);
             return av;
         }
 
@@ -548,7 +596,7 @@ namespace LingGuangV05.Desktop.Juxin
             float markHeight = m.ai ? 20 : 0;
             row.GetComponent<LayoutElement>().preferredHeight = top + h + markHeight + 6;
             string who = m.mine ? T("我", "Me") : group ? speaker : XgSim.JuxinName(t.id, GameText.IsEnglish);
-            Avatar(row, m.mine, who, m.mine ? new Color32(90, 140, 210, 255) : group ? AvatarColor(speaker) : AvatarColor(t.id));
+            Avatar(row, m.mine, who, m.mine ? new Color32(90, 140, 210, 255) : group ? AvatarColor(speaker) : AvatarColor(t.id), group ? m.whoZh : t.id);
             if (group)
                 Text(PrologueDesk.Rect("Speaker", row, new Vector2(0, 1), new Vector2(1, 1), new Vector2(52, -18), new Vector2(0, 0)), Safe(speaker), 12, Muted, TextAlignmentOptions.TopLeft);
             var bubble = m.mine
@@ -576,8 +624,16 @@ namespace LingGuangV05.Desktop.Juxin
             var card = PrologueDesk.Rect("Card", row, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-width / 2, 0), new Vector2(width / 2, 0));
             PrologueDesk.Fill(card, Color.white);
             card.gameObject.AddComponent<Outline>().effectColor = new Color32(225, 225, 225, 255);
-            var t = Text(PrologueDesk.Rect("T", card, Vector2.zero, Vector2.one, new Vector2(18, 44), new Vector2(-18, -14)), text, 15, Ink);
-            float h = t.GetPreferredValues(text, width - 36, 0).y + 14 + 44;
+            bool illustrated = DesktopArt.Picture("news") != null;
+            if (illustrated)
+            {
+                var art = PrologueDesk.Rect("Illustration", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -72), new Vector2(76, -14));
+                DesktopArt.Paint(art, "news");
+                Text(PrologueDesk.Rect("Caption", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -90), new Vector2(76, -74)), T("配图", "Illustration"), 10, Muted, TextAlignmentOptions.Center);
+            }
+            float inset = illustrated ? 92 : 18;
+            var t = Text(PrologueDesk.Rect("T", card, Vector2.zero, Vector2.one, new Vector2(inset, 44), new Vector2(-18, -14)), text, 15, Ink);
+            float h = Mathf.Max(illustrated ? 144 : 0, t.GetPreferredValues(text, width - inset - 18, 0).y + 14 + 44);
             card.offsetMin = new Vector2(-width / 2, -h);
             row.GetComponent<LayoutElement>().preferredHeight = h + 6;
             var foot = PrologueDesk.Rect("Foot", card, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, 38));
@@ -598,7 +654,7 @@ namespace LingGuangV05.Desktop.Juxin
             float top = group ? 20 : 0;
             const float w = 250, h = 96;
             var row = Row(chatContent, top + h + 6, "Packet");
-            Avatar(row, false, group ? speaker : XgSim.JuxinName(t.id, GameText.IsEnglish), group ? AvatarColor(speaker) : AvatarColor(t.id));
+            Avatar(row, false, group ? speaker : XgSim.JuxinName(t.id, GameText.IsEnglish), group ? AvatarColor(speaker) : AvatarColor(t.id), group ? m.whoZh : t.id);
             if (group) Text(PrologueDesk.Rect("Speaker", row, new Vector2(0, 1), new Vector2(1, 1), new Vector2(52, -18), Vector2.zero), Safe(speaker), 12, Muted, TextAlignmentOptions.TopLeft);
             var card = PrologueDesk.Rect("Card", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(52, -top - h), new Vector2(52 + w, -top));
             var img = PrologueDesk.Fill(card, m.opened ? PacketOpen : Packet);
@@ -691,12 +747,28 @@ namespace LingGuangV05.Desktop.Juxin
 
         // ───────────── 朋友圈 ─────────────
 
+        static string MomentArt(string id)
+        {
+            switch (id)
+            {
+                case "m.aj1080": return "gpu";
+                case "m.czagent": return "phone";
+                case "m.xgholiday": return "books";
+                case "m.ajciv": case "m.xgskt": case "m.ajsteam": return "esports";
+                case "m.cz11": return "shopping";
+                case "m.xgname": return "cinema";
+                default: return null; // Not every status is a photo post.
+            }
+        }
+
         void DrawMoments()
         {
             var sim = Sim;
             NewScroll(pane, Vector2.zero, Vector2.zero, out var content, 0, 0);
             var cover = Row(content, 200, "Cover");
             PrologueDesk.Fill(cover, new Color32(52, 74, 98, 255), false);
+            if (DesktopArt.Paint(cover, "desk") != null)
+                PrologueDesk.Fill(PrologueDesk.Rect("Shade", cover, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), new Color(0, .04f, .1f, .62f), false);
             Text(PrologueDesk.Rect("T", cover, Vector2.zero, Vector2.one, new Vector2(30, 20), new Vector2(-30, -20)), "<size=30><b>" + T("朋友圈", "Moments") + "</b></size>\n<color=#C0CCD8>" + T("2016 · 只看朋友们的", "2016 · friends only") + "</color>", 16, Color.white, TextAlignmentOptions.BottomLeft);
             var posts = sim.JuxinMomentsVisible();
             if (posts.Count == 0) { var none = Row(content, 60); Text(PrologueDesk.Rect("T", none, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("还没有动态。", "Nothing yet."), 15, Muted, TextAlignmentOptions.Center); return; }
@@ -708,21 +780,30 @@ namespace LingGuangV05.Desktop.Juxin
                 PrologueDesk.Fill(row, Color.white, false);
                 var av = PrologueDesk.Rect("Avatar", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(24, -64), new Vector2(68, -20));
                 PrologueDesk.Fill(av, AvatarColor(p.who), false);
-                Text(PrologueDesk.Rect("T", av, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Initial(name), 18, Color.white, TextAlignmentOptions.Center);
+                Portrait(av, p.who, name);
                 Text(PrologueDesk.Rect("Name", row, new Vector2(0, 1), new Vector2(1, 1), new Vector2(84, -44), new Vector2(-24, -18)), "<b>" + Safe(name) + "</b>", 16, Link, TextAlignmentOptions.TopLeft);
                 var body = Text(PrologueDesk.Rect("Body", row, new Vector2(0, 1), new Vector2(1, 1), new Vector2(84, -200), new Vector2(-24, -48)), text, 16, Ink, TextAlignmentOptions.TopLeft);
                 float th = body.GetPreferredValues(text, 760, 0).y;
                 body.rectTransform.offsetMin = new Vector2(84, -48 - th);
+                string artKey = MomentArt(p.id);
+                float artHeight = 0;
+                if (artKey != null && DesktopArt.Picture(artKey) != null)
+                {
+                    var art = PrologueDesk.Rect("Illustration", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -166 - th), new Vector2(264, -58 - th));
+                    DesktopArt.Paint(art, artKey);
+                    Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -184 - th), new Vector2(264, -168 - th)), T("配图", "Illustration"), 11, Muted, TextAlignmentOptions.MidlineLeft);
+                    artHeight = 136;
+                }
                 bool liked = sim.JuxinLiked(p.id);
                 string likes = liked ? T("我", "Me") : "";
-                Text(PrologueDesk.Rect("Date", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -78 - th), new Vector2(400, -54 - th)), Day(p.date) + (likes.Length > 0 ? "    <color=#576B95>♥ " + likes + "</color>" : ""), 12, Muted, TextAlignmentOptions.MidlineLeft);
-                var like = PrologueDesk.Rect("Like", row, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-110, -78 - th), new Vector2(-24, -54 - th));
+                Text(PrologueDesk.Rect("Date", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -78 - th - artHeight), new Vector2(400, -54 - th - artHeight)), Day(p.date) + (likes.Length > 0 ? "    <color=#576B95>♥ " + likes + "</color>" : ""), 12, Muted, TextAlignmentOptions.MidlineLeft);
+                var like = PrologueDesk.Rect("Like", row, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-110, -78 - th - artHeight), new Vector2(-24, -54 - th - artHeight));
                 var limg = PrologueDesk.Fill(like, new Color32(246, 246, 246, 255));
                 var lb = like.gameObject.AddComponent<Button>(); lb.targetGraphic = limg;
                 string id = p.id;
                 lb.onClick.AddListener(() => { sim.JuxinLike(id); hub.Changed(); signature = ""; });
                 Text(PrologueDesk.Rect("T", like, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), liked ? T("取消", "Unlike") : T("赞", "Like"), 13, Link, TextAlignmentOptions.Center);
-                row.GetComponent<LayoutElement>().preferredHeight = 96 + th;
+                row.GetComponent<LayoutElement>().preferredHeight = 96 + th + artHeight;
                 var sep = Row(content, 1, "Rule");
                 PrologueDesk.Fill(sep, new Color32(236, 236, 236, 255), false);
             }

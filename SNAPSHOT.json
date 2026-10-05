@@ -8,7 +8,7 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.Core",
-      "sources": 42,
+      "sources": 46,
       "exit_code": 0
     },
     {
@@ -26,19 +26,19 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 46,
+      "sources": 47,
       "exit_code": 0
     },
     {
       "mode": "player",
       "assembly": "Assembly-CSharp",
-      "sources": 343,
+      "sources": 348,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "LingGuangV05.Core",
-      "sources": 42,
+      "sources": 46,
       "exit_code": 0
     },
     {
@@ -56,13 +56,13 @@
     {
       "mode": "editor",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 46,
+      "sources": 47,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "Assembly-CSharp",
-      "sources": 343,
+      "sources": 348,
       "exit_code": 0
     }
   ],
@@ -713,5 +713,8 @@
     }
   ],
   "fresh_unity_import_play_verified": false,
-  "secret_pattern_findings": []
+  "secret_pattern_findings": [],
+  "captured_local_time": "2026-10-05T17:33:59+09:00",
+  "base_commit": "587431341a6edfbf1baf6d35edf354709a93bb6b",
+  "source_scope": "Saved Main scene and runtime dependencies; local model weights, inference binaries, personal saves and development tools excluded."
 }

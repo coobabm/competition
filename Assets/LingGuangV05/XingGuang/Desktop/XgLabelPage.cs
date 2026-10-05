@@ -1159,7 +1159,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!Sim.FeatureVisible("lingguang-contact")) return;
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
-            if (llm == null || !llm.Ready || llm.Busy) return;
+            if (llm == null || !llm.Ready) return;
             var info = XgCatalog.Desk(desk);
             string q;
             if (card.bottleneckPreview || card.kind == "combo" || card.kind == "long" || card.kind == "attention" || card.kind == "translation") q = VisibleText(card.question, card.questionEn);
@@ -1174,8 +1174,10 @@ namespace LingGuangV05.Desktop.XingGuang
             long id = card.id;
             var owner = Sim;
             bool replyEnglish = En;
+            long previousId = commentCardId; var previousOwner = commentOwner;
             commentCardId = id; commentOwner = owner;
-            llm.Chat(LingGuangV05.Desktop.LLM.LlmPersonas.CardComment(q, guess, confidence, Sim),
+            // A comment nobody asked for: background, and simply skipped while the model is busy.
+            bool queued = llm.ChatBackground(LingGuangV05.Desktop.LLM.LlmPersonas.CardComment(q, guess, confidence, Sim),
                 LingGuangV05.Desktop.LLM.LlmPersonas.MaxTokens("lingguang", Sim), .9f,
                 reply =>
                 {
@@ -1185,6 +1187,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     comment = FormatCardComment(reply, q, Sim.S.stage, replyEnglish);
                     Refresh();
                 });
+            if (!queued) { commentCardId = previousId; commentOwner = previousOwner; }
         }
 
     }

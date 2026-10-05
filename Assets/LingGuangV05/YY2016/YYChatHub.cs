@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Media;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
@@ -196,18 +197,34 @@ namespace LingGuangV05.Desktop.YY
 
         public bool IsShowing(string id)
         {
-            return View != null && View.IsOpen && S.selected == id;
+            return S != null && S.selected == id && DesktopNotifications.IsWindowVisible(View);
         }
 
         /// <summary>A message from a contact (story lines, replies).</summary>
         public void Receive(string id, string text)
         {
+            Receive(id, text, true);
+        }
+
+        /// <summary>A scripted scene may already show and sound this arrival; only its duplicate notification is suppressed.</summary>
+        public void Receive(string id, string text, bool notify)
+        {
             var conv = Conversation(id);
             if (conv == null || string.IsNullOrEmpty(text)) return;
             conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now });
             if (!IsShowing(id)) conv.unread++;
+            if (notify) NotifyReceived(id, text);
             EnsureFileOffer();
             Touch();
+        }
+
+        void NotifyReceived(string id, string text)
+        {
+            if (id == Me) return;
+            var contact = Contact(id);
+            string sender = contact == null ? id : GameText.T(contact.name, contact.nameEn);
+            DesktopNotifications.Notify(runtime, "YY", sender, text, IsShowing(id),
+                () => { if (router != null) router.Open(AppId, id); });
         }
 
         public void Send(string id, string text)
@@ -280,7 +297,7 @@ namespace LingGuangV05.Desktop.YY
                 llm.Chat(messages, LingGuangV05.Desktop.LLM.LlmPersonas.MaxTokens(id, lab), LingGuangV05.Desktop.LLM.LlmPersonas.Temperature(id), text =>
                 {
                     if (!ReferenceEquals(S, expectedState)) { done(null); return; }
-                    if (text == null) { done(Fallback(id, conv, lab)); return; }
+                    if (text == null) { done(Fallback(id, conv, lab)); if (id == LingGuangId && userMessage != null && lab != null) lab.RememberOffline(userMessage.text); return; }
                     text = LingGuangV05.Core.Era.EraLexicon.Scrub(text); // it is 2016: no later memes
                     if (id == LingGuangId)
                     {
@@ -296,10 +313,13 @@ namespace LingGuangV05.Desktop.YY
                         if (RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
                     }
                     done(Shape(id, text));
-                }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab));
+                    if (id == LingGuangId && userMessage != null) LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(lab, userMessage.text, text);
+                }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab),
+                    id == LingGuangId ? LingGuangV05.Core.Chat.LlmSeat.LingGuang : LingGuangV05.Core.Chat.LlmSeat.Others);
                 return;
             }
             done(Fallback(id, conv, lab));
+            if (id == LingGuangId && lab != null && conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { lab.RememberOffline(conv.messages[i].text); break; }
         }
 
         /// <summary>Group lines keep the "[name] text" form the view renders as a sender label.</summary>
@@ -459,12 +479,13 @@ namespace LingGuangV05.Desktop.YY
         {
             if (Conversation(id) == null) return;
             S.selected = id;
-            if (View != null && View.IsOpen) Conversation(id).unread = 0;
+            if (IsShowing(id)) Conversation(id).unread = 0;
             Touch();
         }
 
         public void MarkSeen()
         {
+            if (S == null || !IsShowing(S.selected)) return;
             var conv = Conversation(S.selected);
             if (conv != null && conv.unread > 0) { conv.unread = 0; Touch(); }
         }
@@ -490,6 +511,7 @@ namespace LingGuangV05.Desktop.YY
             if (said == 0) conv.messages.Add(new YYMessage { from = LaoZhou, text = GameText.T(AppNames.AppZh + "我直接传给你了，点「接收」，下完它会出现在桌面上。", "I'm sending you " + AppNames.AppEn + " directly. Press Receive and it will appear on your desktop."), gameSeconds = Now });
             conv.messages.Add(new YYMessage { from = LaoZhou, kind = YYKind.File, file = FileName, sizeMB = FileSizeMB, gameSeconds = Now });
             if (!IsShowing(LaoZhou)) conv.unread++;
+            NotifyReceived(LaoZhou, GameText.F("发来文件：{0}", "Sent a file: {0}", FileName));
             Touch();
         }
 
@@ -508,8 +530,9 @@ namespace LingGuangV05.Desktop.YY
         void TickTransfers(float dt)
         {
             foreach (var conv in S.conversations)
-                foreach (var m in conv.messages)
+                for (int i = 0, count = conv.messages.Count; i < count; i++)
                 {
+                    var m = conv.messages[i];
                     if (m.kind != YYKind.File) continue;
                     if (m.file == FileName && AppInstalled && m.fileState != YYFileState.Done) { m.fileState = YYFileState.Done; m.received = m.sizeMB; Touch(); continue; }
                     if (m.file == FileName && !AppInstalled && m.fileState == YYFileState.Done) { m.fileState = YYFileState.Offered; m.received = 0; Touch(); continue; }
@@ -520,6 +543,8 @@ namespace LingGuangV05.Desktop.YY
                         m.fileState = YYFileState.Done;
                         conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = "你已成功接收文件「" + m.file + "」，已放到桌面。", gameSeconds = Now });
                         if (m.file == FileName && runtime.Sim != null && !runtime.Sim.AppInstalled) runtime.Sim.InstallApp();
+                        DesktopNotifications.Notify(runtime, "YY", GameText.T("文件接收完成", "Transfer complete"),
+                            GameText.F("{0} 已放到桌面。", "{0} is on your desktop.", m.file), false, () => OpenFile(m));
                         SaveNow();
                     }
                     Changed?.Invoke();

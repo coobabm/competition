@@ -90,6 +90,8 @@ namespace LingGuangV05.Desktop.Casino
             faces.Clear(); dicePips.Clear(); tabs.Clear(); chips.Clear(); choices.Clear(); blackjackButtons.Clear();
             root = PrologueDesk.Rect("888 VIP Casino", transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             PrologueDesk.Fill(root, Background);
+            var backdrop = LingGuangV05.Desktop.Media.DesktopMedia.Paint(root, "casino");
+            if (backdrop != null) backdrop.color = new Color(1, 1, 1, .28f);
             var fit = root.gameObject.AddComponent<UiFitScale>(); fit.designSize = new Vector2(1120, 660); fit.minScale = .25f; fit.Apply(true);
             // Fixed centred artboard inside the fit root; extra aspect-ratio space remains dark.
             board = PrologueDesk.Centered("Casino Board", root, Vector2.zero, new Vector2(1120, 660));

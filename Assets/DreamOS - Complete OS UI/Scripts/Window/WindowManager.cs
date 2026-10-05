@@ -75,8 +75,8 @@ namespace Michsky.DreamOS
 
         void Start()
         {
-            // Disable the object for optimization purposes
-            if (disableAtStart) { gameObject.SetActive(false); }
+            // A first explicit open can run before Start on an initially inactive window.
+            if (disableAtStart && !isOn) { gameObject.SetActive(false); }
         }
 
         void OnEnable()

@@ -58,7 +58,7 @@ namespace LingGuangV05.Desktop.YY
         double nextPacketAmount;
         bool nextLineByAi, aiInFlight;
         double aiDueGame = -1;
-        float nextIdleCheck, lastPopup = -999;
+        float nextIdleCheck;
         string lastStatus = "", lastSignature = "";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -339,7 +339,8 @@ namespace LingGuangV05.Desktop.YY
                 Hesitation(g, b);
                 outbox.Enqueue(b);
                 runtime.MarkDirty();
-            }, false, GirlfriendPrompt.Sampling());
+                // Her own slot keeps her prompt cached; a message she starts herself waits behind anything the player is waiting for.
+            }, false, GirlfriendPrompt.Sampling(), LingGuangV05.Core.Chat.LlmSeat.Girlfriend, proactive ? LingGuangV05.Core.Chat.LlmLane.Background : LingGuangV05.Core.Chat.LlmLane.Visible);
         }
 
         void Offline(GirlfriendState g, GfNow now, bool proactive, string[] fallback, Action after, string topic)
@@ -407,11 +408,6 @@ namespace LingGuangV05.Desktop.YY
         {
             hub.Receive(YYChatHub.GirlfriendId, line);
             GirlfriendLines.Note(G, line);
-            if (!hub.IsShowing(YYChatHub.GirlfriendId) && Time.unscaledTime - lastPopup > 15)
-            {
-                lastPopup = Time.unscaledTime;
-                PrologueDirector.Desk?.Popup("晴雯ˇ", LingGuangV05.Core.Chat.YYFaces.ToPlainText(line, English), 6);
-            }
         }
 
         void Finish(GirlfriendState g, Batch b)
@@ -623,7 +619,7 @@ namespace LingGuangV05.Desktop.YY
                     if (!ReferenceEquals(G, expected) || !expected.awaitingReply) return;
                     string text = GirlfriendPrompt.CleanStandIn(raw);
                     PostStandIn(expected, text.Length > 0 ? text : GirlfriendPrompt.OfflineStandIn(expected.aiReplies, English));
-                }, false, XgSpeechPolicy.Sampling(XgSpeechPolicy.Stage(lab.S.stage)));
+                }, false, XgSpeechPolicy.Sampling(XgSpeechPolicy.Stage(lab.S.stage)), LingGuangV05.Core.Chat.LlmSeat.LingGuang);
             }
             else PostStandIn(g, GirlfriendPrompt.OfflineStandIn(g.aiReplies, English));
         }

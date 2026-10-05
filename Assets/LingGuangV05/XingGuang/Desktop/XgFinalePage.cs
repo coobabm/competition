@@ -281,7 +281,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 new KeyValuePair<string, string>("system", Sim.PersonaPrompt(12, new string[0]) + "\n" + EraLexicon.PromptRule(GameText.IsEnglish) + (GameText.IsEnglish ? " Reply in English." : "")),
                 new KeyValuePair<string, string>("user", Sim.ExamQuestion(i, true)),
             };
-            llm.Chat(messages, 260, .7f, done, Sim.S.fullOpen);
+            llm.Chat(messages, 260, .7f, done, Sim.S.fullOpen, null, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
         }
 
         public override void Refresh()

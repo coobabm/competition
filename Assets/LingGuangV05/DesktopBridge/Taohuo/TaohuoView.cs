@@ -383,7 +383,8 @@ namespace LingGuangV05.Desktop.Taohuo
             var row = Row(list, "Case", 150, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -60), new Vector2(146, 60));
             PrologueDesk.Fill(pic, new Color32(30, 30, 30, 255), false);
-            Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>PC</b>", 30, new Color32(120, 220, 255, 255), TextAlignmentOptions.Center);
+            if (!ProductIllustration(pic, "desk", T("准系统 · 配图", "Barebone · illustration")))
+                Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>PC</b>", 30, new Color32(120, 220, 255, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, T("【准系统】游戏悍将机箱 + Z170 主板 + 600W 电源 + 16G 内存（不含显卡）", "[Barebone] Gaming case + Z170 board + 600 W PSU + 16 GB RAM (no graphics card)"), 18, Ink);
             Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), "<color=#FF5000>" + T("[包邮]", "[Free shipping]") + "</color>  <color=#3C8CE7>" + T("[装好再发]", "[Assembled]") + "</color>", 14, Ink);

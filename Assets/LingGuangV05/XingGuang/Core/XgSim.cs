@@ -79,6 +79,7 @@ namespace LingGuangV05.XingGuang
             RepairMarket();
             RepairAfterthoughts();
             RepairAlignment();
+            RepairMemoryBook();
             EnsureSeed();
         }
 

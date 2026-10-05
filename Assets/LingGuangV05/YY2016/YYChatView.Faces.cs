@@ -106,7 +106,7 @@ namespace LingGuangV05.Desktop.YY
             const float avatar = 36, gap = 10, size = 112;
             var sticker = YYStickers.Find(m.sticker);
             float left = mine ? width - 16 - avatar - gap - size : 16 + avatar + gap;
-            if (!mine) Avatar(scrollContent, who != null && who.id == YYChatHub.LaoZhou ? laoZhouSprite : null, Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
+            if (!mine) Avatar(scrollContent, MessageSprite(m, who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
             else Avatar(scrollContent, meSprite, "我", C.Mine, new Vector2(width - 16 - avatar, -y), avatar);
             var card = Rect("Sticker", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - size), new Vector2(left + size, -y));
             var hit = card.gameObject.AddComponent<Image>(); hit.color = new Color(1, 1, 1, 0);

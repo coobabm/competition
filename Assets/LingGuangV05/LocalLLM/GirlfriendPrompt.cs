@@ -26,14 +26,32 @@ namespace LingGuangV05.Desktop.LLM
             };
         }
 
-        /// <summary>System prompt, few-shots and recent history. A proactive message ends on a nudge instead of his line.</summary>
+        /// <summary>
+        /// The cached start of every request for her (LlmPromptLayout): the stable system prompt and the few-shots.
+        /// LlmWarmup sends exactly this ahead of time.
+        /// </summary>
+        public static List<KeyValuePair<string, string>> Prefix(GirlfriendState s, GfNow now, bool english)
+        {
+            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", GirlfriendPromptText.Stable(s, now, english)) };
+            list.AddRange(GirlfriendPromptText.FewShots(GirlfriendRules.Tier(s), english));
+            return list;
+        }
+
+        /// <summary>
+        /// Stable system prompt, few-shots and recent history; the per-message state (clock, mood, memories, plans,
+        /// situation) goes in front of his latest line. A proactive message ends on a nudge instead of his line.
+        /// </summary>
         public static List<KeyValuePair<string, string>> Messages(YYConversation conv, GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, bool proactive)
         {
-            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", GirlfriendPromptText.System(s, now, a, english, situation)) };
-            list.AddRange(GirlfriendPromptText.FewShots(GirlfriendRules.Tier(s), english));
+            // His latest line picks which of her memories she is reminded of.
+            string latest = null;
+            if (conv != null) for (int i = conv.messages.Count - 1; i >= 0 && latest == null; i--) if (conv.messages[i].from == YYChatHub.Me && conv.messages[i].kind == YYKind.Text) latest = conv.messages[i].text;
+            var list = Prefix(s, now, english);
+            int first = list.Count;
             var history = new List<YYMessage>();
             if (conv != null) foreach (var m in conv.messages) if (m.kind == YYKind.Text) history.Add(m);
-            int start = Math.Max(0, history.Count - GirlfriendPromptText.HistoryLines);
+            // The window moves in steps, so between steps each request extends the previous one (cache reuse).
+            int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(history.Count, GirlfriendPromptText.HistoryLines);
             var hers = new List<string>();
             var his = new StringBuilder();
             void FlushHers() { if (hers.Count == 0) return; list.Add(new KeyValuePair<string, string>("assistant", Json(hers))); hers.Clear(); }
@@ -46,10 +64,10 @@ namespace LingGuangV05.Desktop.LLM
             }
             FlushHers(); FlushHis();
             // A chat must not start with her answer; drop a leading assistant turn left by the window.
-            int first = 1 + GirlfriendPromptText.FewShots(GirlfriendTier.Normal, english).Count;
             if (list.Count > first && list[first].Key == "assistant") list.RemoveAt(first);
             if (proactive || list[list.Count - 1].Key != "user")
                 list.Add(new KeyValuePair<string, string>("user", english ? "(He has not said anything. You message him first.)" : "（他没说话。你主动发一条消息。）"));
+            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, GirlfriendPromptText.State(s, now, a, english, situation, latest), english, english ? "[His message]" : "【他发来的】");
             return list;
         }
 
@@ -72,17 +90,20 @@ namespace LingGuangV05.Desktop.LLM
             foreach (var w in XgMemes.HotWordsFor("A", lab.Today)) hot.Add(w.word);
             string incoming = "";
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == YYChatHub.GirlfriendId && conv.messages[i].kind == YYKind.Text) { incoming = conv.messages[i].text; break; }
-            var sb = new StringBuilder(lab.PersonaPrompt(Math.Max(1, Math.Min(12, lab.Today / 100 % 100)), hot));
+            // Persona, the stand-in brief and the board stay put (cached); the memories her message recalls go with it.
+            var sb = new StringBuilder(lab.PersonaCore());
             string owner = lab.Profile.callMe.Length > 0 ? lab.Profile.callMe : (english ? "your owner" : "主人");
             sb.Append('\n').Append(english
                 ? "You are answering YY messages for " + owner + ". The sender is his girlfriend, Lin Qingwen, a university student far away. She thinks it is " + owner + " writing. Never say you are a program. One or two short casual lines."
                 : "现在你在 YY 上替" + owner + "回他女朋友林晴雯的消息。她在外地读大学，以为是" + owner + "本人在回。不要说你是程序，不要叫她「" + owner + "」。像真人打字，一两句，口语。");
-            sb.Append('\n').Append(LingGuangV05.Core.Era.EraLexicon.PromptRule(english)).Append('\n').Append(lab.StageRule(incoming));
+            sb.Append('\n').Append(LingGuangV05.Core.Era.EraLexicon.PromptRule(english));
+            if (!lab.StageRuleVaries) sb.Append('\n').Append(lab.StageRule(incoming));
             if (english) sb.Append(" Reply in English.");
+            sb.Append('\n').Append(lab.PersonaBoard(Math.Max(1, Math.Min(12, lab.Today / 100 % 100)), hot));
             var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", sb.ToString()) };
             if (conv != null)
             {
-                int start = Math.Max(0, conv.messages.Count - 8);
+                int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(conv.messages.Count, 8);
                 for (int i = start; i < conv.messages.Count; i++)
                 {
                     var m = conv.messages[i];
@@ -91,6 +112,9 @@ namespace LingGuangV05.Desktop.LLM
                 }
             }
             if (list[list.Count - 1].Key != "user") list.Add(new KeyValuePair<string, string>("user", incoming.Length > 0 ? incoming : "在吗"));
+            string state = lab.PersonaTone() + lab.PersonaMemory(incoming);
+            if (lab.StageRuleVaries) state += (state.Length > 0 ? "\n" : "") + lab.StageRule(incoming);
+            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state, english);
             return list;
         }
 

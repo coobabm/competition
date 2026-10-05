@@ -1,4 +1,5 @@
 using System;
+using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -34,6 +35,7 @@ namespace LingGuangV05.Desktop.Bodu
         TMP_InputField search;
         ScrollRect scroll;
         RectTransform content;
+        readonly List<(TMP_Text label, LayoutElement layout, float width)> newsRows = new List<(TMP_Text, LayoutElement, float)>();
         string page = "home", query = "";
         string signature = "";
         float nextRefresh;
@@ -172,11 +174,27 @@ namespace LingGuangV05.Desktop.Bodu
             Redraw(s, lab);
         }
 
+        void LateUpdate()
+        {
+            if (window == null || !window.isOn) return;
+            for (int i = 0; i < newsRows.Count; i++)
+            {
+                var row = newsRows[i];
+                if (row.label == null || row.layout == null) continue;
+                float width = row.label.rectTransform.rect.width;
+                if (width <= 0 || Mathf.Approximately(width, row.width)) continue;
+                // Measure only after layout has its real width, and again when the window resizes.
+                row.layout.preferredHeight = Mathf.Max(92, row.label.GetPreferredValues(row.label.text, width, 0).y + 8);
+                newsRows[i] = (row.label, row.layout, width);
+            }
+        }
+
         void Redraw(GameState s, XgSim lab)
         {
             var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>(); if (logo != null) logo.text = T("摆渡", "Bodu");
             var goText = root.GetComponentsInChildren<TMP_Text>(true); foreach (var t in goText) if (t.name == "GoText") t.text = T("摆渡一下", "Search");
             ((TMP_Text)search.placeholder).text = T("搜点什么……", "Search…");
+            newsRows.Clear();
             for (int i = body.childCount - 1; i >= 0; i--) Destroy(body.GetChild(i).gameObject);
             NewScroll();
             var today = s != null ? GameCalendar.Now(s).Date : GameCalendar.Start.Date;
@@ -213,14 +231,49 @@ namespace LingGuangV05.Desktop.Bodu
 
         static string Date(DateTime d) => GameText.IsEnglish ? d.ToString("MMM d", CultureInfo.InvariantCulture) : d.Month + "-" + d.Day;
 
+        static string NewsArt(string text)
+        {
+            string s = (text ?? "").ToLowerInvariant();
+            if (s.Contains("alphago") || s.Contains("围棋")) return "go";
+            if (s.Contains("显卡") || s.Contains("gtx") || s.Contains("radeon")) return "gpu";
+            if (s.Contains("手机") || s.Contains("iphone") || s.Contains("note 7")) return "phone";
+            if (s.Contains("电影") || s.Contains("你的名字") || s.Contains("cinema")) return "cinema";
+            if (s.Contains("购物") || s.Contains("双11") || s.Contains("双 11")) return "shopping";
+            if (s.Contains("人工智能") || s.Contains("机器人") || s.Contains("deepmind")) return "ai";
+            if (s.Contains("航天") || s.Contains("天宫") || s.Contains("太空")) return "space";
+            if (s.Contains("游戏") || s.Contains("守望") || s.Contains("skt")) return "esports";
+            return "news";
+        }
+
+        void NewsRow(string text, string key)
+        {
+            if (DesktopArt.Picture(key) == null) { Line(text, 18, Ink); return; }
+            var row = PrologueDesk.Rect("NewsRow", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var label = Text(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(128, 4), new Vector2(0, -4)), text, 18, Ink, TextAlignmentOptions.TopLeft);
+            var layout = row.gameObject.AddComponent<LayoutElement>();
+            layout.preferredHeight = 92;
+            newsRows.Add((label, layout, -1));
+            var picture = PrologueDesk.Rect("Illustration", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -68), new Vector2(108, 0));
+            DesktopArt.Paint(picture, key);
+            Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -87), new Vector2(108, -69)), T("配图", "Illustration"), 11, Muted, TextAlignmentOptions.Center);
+        }
+
         void Home(DateTime today)
         {
+            if (DesktopArt.Picture("news") != null)
+            {
+                var banner = PrologueDesk.Rect("NewsBanner", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                banner.gameObject.AddComponent<LayoutElement>().preferredHeight = 84;
+                var art = PrologueDesk.Rect("Illustration", banner, new Vector2(0, 0), new Vector2(0, 1), Vector2.zero, new Vector2(136, 0));
+                DesktopArt.Paint(art, "news");
+                Text(PrologueDesk.Rect("Caption", banner, Vector2.zero, Vector2.one, new Vector2(156, 0), Vector2.zero), T("看见世界的每一天\n<size=12>配图 · 非新闻现场照片</size>", "A window on every day\n<size=12>Illustration · not an event photograph</size>"), 21, Blue, TextAlignmentOptions.MidlineLeft);
+            }
             Line("<b>" + T("摆渡新闻", "Bodu News") + "</b>  <size=14><color=#787878>" + today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture) + "</color></size>", 22, Ink);
             int n = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
             {
                 if (n++ >= 10) break;
-                Line("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", 18, Ink);
+                NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", NewsArt(e.title + " " + e.text));
             }
             var shop = EraContent.Events.Visible(EraEvents.Taobao, today);
             if (shop.Count > 0)
@@ -247,7 +300,7 @@ namespace LingGuangV05.Desktop.Bodu
             }
             int found = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
-                if (Matches(EraContent.Title(e) + EraContent.Text(e)) && found++ < 10) Line("<color=#1A0DAB>" + EraContent.Title(e) + "</color>\n<size=12><color=#787878>" + T("摆渡新闻", "Bodu News") + " · " + Date(e.date) + "</color></size>", 18, Ink);
+                if (Matches(EraContent.Title(e) + EraContent.Text(e)) && found++ < 10) NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>\n<size=12><color=#787878>" + T("摆渡新闻", "Bodu News") + " · " + Date(e.date) + "</color></size>", NewsArt(e.title + " " + e.text));
             var hub = TiebaHub.Instance;
             if (hub != null)
                 foreach (var t in hub.Library.Threads)

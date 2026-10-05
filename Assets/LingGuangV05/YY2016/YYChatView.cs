@@ -1,4 +1,5 @@
 using System;
+using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
 using System.Collections.Generic;
 using LingGuangV05.Runtime;
 using Michsky.DreamOS;
@@ -38,7 +39,8 @@ namespace LingGuangV05.Desktop.YY
         WindowManager window;
         TMP_FontAsset font;
         Sprite laoZhouSprite, meSprite;
-        RectTransform root, contactList, scrollContent, messageArea, choiceStrip;
+        RectTransform root, contactList, scrollContent, messageArea, choiceStrip, peerAvatar;
+        string peerAvatarId = "";
         string shownChoices = "";
         ScrollRect scroll;
         TMP_Text peerName, peerSign, typing, meName;
@@ -49,7 +51,7 @@ namespace LingGuangV05.Desktop.YY
         float nextBuild;
         readonly List<(YYMessage message, RectTransform fill, TMP_Text status, float width)> liveFiles = new List<(YYMessage, RectTransform, TMP_Text, float)>();
 
-        public bool IsOpen => window != null && window.isOn;
+        public bool IsOpen => LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this);
 
         // ───────────── bootstrap ─────────────
 
@@ -118,7 +120,7 @@ namespace LingGuangV05.Desktop.YY
 
         void Setup(YYChatHub chat, WindowManager win, TMP_FontAsset fontAsset, Sprite lz, Sprite me)
         {
-            hub = chat; window = win; font = fontAsset; laoZhouSprite = lz; meSprite = me;
+            hub = chat; window = win; font = fontAsset; laoZhouSprite = DesktopArt.Avatar("laozhou") ?? lz; meSprite = DesktopArt.Avatar("me") ?? me;
             hub.View = this;
             hub.Changed += () => dirty = true;
             GameText.Changed += OnLanguage;
@@ -176,10 +178,11 @@ namespace LingGuangV05.Desktop.YY
             var header = Rect("Header", main, new Vector2(0, 1), Vector2.one, new Vector2(0, -HeaderHeight), Vector2.zero);
             Fill(header, Color.white);
             Fill(Rect("Line", header, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 1)), C.Line);
-            peerName = Text(Rect("Name", header, new Vector2(0, 1), new Vector2(1, 1), new Vector2(18, -34), new Vector2(-180, -4)), "", 19, C.Ink, TextAlignmentOptions.MidlineLeft);
+            peerAvatar = Rect("PeerAvatar", header, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -48), new Vector2(54, -8));
+            peerName = Text(Rect("Name", header, new Vector2(0, 1), new Vector2(1, 1), new Vector2(66, -34), new Vector2(-180, -4)), "", 19, C.Ink, TextAlignmentOptions.MidlineLeft);
             peerName.fontStyle = FontStyles.Bold;
             peerName.overflowMode = TextOverflowModes.Overflow; peerName.textWrappingMode = TextWrappingModes.NoWrap;
-            peerSign = Text(Rect("Sign", header, Vector2.zero, new Vector2(1, 0), new Vector2(18, 4), new Vector2(-180, 24)), "", 13, C.Muted, TextAlignmentOptions.MidlineLeft);
+            peerSign = Text(Rect("Sign", header, Vector2.zero, new Vector2(1, 0), new Vector2(66, 4), new Vector2(-180, 24)), "", 13, C.Muted, TextAlignmentOptions.MidlineLeft);
             typing = Text(Rect("Typing", header, new Vector2(1, 0), Vector2.one, new Vector2(-176, 0), new Vector2(-16, 0)), "", 13, C.Muted, TextAlignmentOptions.MidlineRight);
 
             float bottom = BottomHeight + InputHeight + ToolHeight;
@@ -275,6 +278,7 @@ namespace LingGuangV05.Desktop.YY
         void Update()
         {
             if (!built || !IsOpen) return;
+            hub.MarkSeen(); // Also runs after the opening/minimize animation becomes visible.
             if (typing != null) typing.text = hub.IsTyping(hub.S.selected) ? GameText.T("对方正在输入…", "typing…") : "";
             foreach (var f in liveFiles) UpdateFile(f.message, f.fill, f.status, f.width);
             if (dirty && Time.unscaledTime >= nextBuild) Rebuild();
@@ -327,6 +331,12 @@ namespace LingGuangV05.Desktop.YY
             var contact = YYChatHub.Contact(hub.S.selected);
             if (contact == null || !hub.IsVisible(contact)) contact = YYChatHub.Contacts[0];
             peerName.text = GameText.T(contact.name, contact.nameEn);
+            if (peerAvatarId != contact.id)
+            {
+                peerAvatarId = contact.id;
+                for (int i = peerAvatar.childCount - 1; i >= 0; i--) Destroy(peerAvatar.GetChild(i).gameObject);
+                Avatar(peerAvatar, SpriteFor(contact), Initial(contact), contact.color, Vector2.zero, 40, !contact.online && !contact.group);
+            }
             peerSign.text = (contact.group ? GameText.T("群 · ", "Group · ") : contact.online ? GameText.T("<color=#4CAF50>●</color> 在线 · ", "<color=#4CAF50>●</color> Online · ") : GameText.T("○ 离线 · ", "○ Offline · ")) + GameText.T(contact.signature, contact.signatureEn);
             if (contact.id == YYChatHub.GirlfriendId && hub.Girlfriend != null) peerSign.text = hub.Girlfriend.StatusLine();
             peerSign.richText = true;
@@ -393,7 +403,7 @@ namespace LingGuangV05.Desktop.YY
             bool group = who != null && who.group;
             float nameH = group ? 18 : 0;
             float left = mine ? width - 16 - avatar - gap - bw : 16 + avatar + gap;
-            if (!mine) Avatar(scrollContent, SpriteFor(who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
+            if (!mine) Avatar(scrollContent, MessageSprite(m, who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
             else Avatar(scrollContent, meSprite, "我", C.Mine, new Vector2(width - 16 - avatar, -y), avatar);
             if (group && !mine && HasSenderLabel(body))
             {
@@ -422,7 +432,7 @@ namespace LingGuangV05.Desktop.YY
         {
             const float avatar = 36, gap = 10, cw = 300, ch = 104;
             float left = mine ? width - 16 - avatar - gap - cw : 16 + avatar + gap;
-            Avatar(scrollContent, SpriteFor(who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
+            Avatar(scrollContent, mine ? meSprite : MessageSprite(m, who), mine ? "我" : Initial(who), mine ? C.Mine : who != null ? who.color : C.Muted, new Vector2(mine ? width - 16 - avatar : 16, -y), avatar);
             var card = Rect("File", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - ch), new Vector2(left + cw, -y));
             var shape = card.gameObject.AddComponent<YYRoundRect>(); shape.radius = 8; shape.color = Color.white; shape.border = 1; shape.borderColor = C.Line;
             var icon = Rect("Icon", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -60), new Vector2(50, -14));
@@ -551,13 +561,21 @@ namespace LingGuangV05.Desktop.YY
             return PreviewLine(m); // YYChatView.Faces.cs: inline faces, stickers, never cuts a face code in half
         }
 
-        /// <summary>A contact's picture, or null for a coloured initial: 老周's panda, the AI's 8×8 「0」 (AiJoinsYy).</summary>
+        /// <summary>Generated human identities; the AI keeps its narrative 8×8 「0」 (AiJoinsYy).</summary>
         Sprite SpriteFor(YYContact c)
         {
             if (c == null) return null;
             if (c.id == YYChatHub.LaoZhou) return laoZhouSprite;
             if (c.id == YYChatHub.LingGuangId) return LingGuangV05.Desktop.Story.AiJoinsYy.PixelZero();
-            return null;
+            return DesktopArt.Avatar(c.id);
+        }
+
+        Sprite MessageSprite(YYMessage message, YYContact contact)
+        {
+            string body = message.text ?? "";
+            if (contact != null && contact.group && HasSenderLabel(body))
+                return DesktopArt.Avatar(body.Substring(1, body.IndexOf(']') - 1));
+            return SpriteFor(contact);
         }
 
         static string Initial(YYContact c) { if (c == null) return "?"; string n = GameText.T(c.name, c.nameEn); return n.Length > 0 ? n.Substring(0, 1) : "?"; }

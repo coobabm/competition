@@ -34,9 +34,9 @@ namespace LingGuangV05.Desktop.Story
         TMP_Text thought;
         CanvasGroup thoughtGroup;
         AudioSource voice;
-        Coroutine run, thinking;
-        ChapterOneSim playing;
-        bool hijacked;
+        [NonSerialized] Coroutine run, thinking;
+        [NonSerialized] ChapterOneSim playing;
+        [SerializeField, HideInInspector] bool hijacked;
 
         RectTransform txtIcon, archiveIcon, dllIcon, recycleIcon, notepad, browser, menu, dialog;
         TMP_Text notepadText;
@@ -52,13 +52,16 @@ namespace LingGuangV05.Desktop.Story
 
         void SetStep(string step) { Step = step; Debug.Log("[Prologue] " + step); }
 
-        void Start()
+        void OnEnable()
         {
             runtime = FindAnyObjectByType<ChapterOneRuntime>();
             router = FindAnyObjectByType<ChapterOneDesktopRouter>(FindObjectsInactive.Include);
             surface = FindAnyObjectByType<AeroLcdInputSurface>(FindObjectsInactive.Include);
-            voice = gameObject.AddComponent<AudioSource>();
+            // Keep our own source across reloads; never borrow another cutscene's source.
+            if (voice == null) voice = gameObject.AddComponent<AudioSource>();
             voice.playOnAwake = false;
+            Release();
+            playing = null;
         }
 
         void Update()
@@ -82,7 +85,11 @@ namespace LingGuangV05.Desktop.Story
             }
         }
 
-        void OnDisable() { Release(); }
+        void OnDisable()
+        {
+            StopPrologue();
+            playing = null; // re-enabling must not wait on a coroutine that no longer exists
+        }
 
         bool BuildDesk()
         {
@@ -100,7 +107,17 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>Full-screen layer for the title card and the player's own thoughts (subtitles, not on the monitor).</summary>
         void BuildScreen()
         {
-            var go = new GameObject("LingGuang Prologue Screen", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            // Sweep legacy duplicates as well as avoiding new ones. Only our named screen in this scene is owned here.
+            foreach (var candidate in FindObjectsByType<Canvas>(FindObjectsInactive.Include))
+            {
+                if (candidate.name != "LingGuang Prologue Screen" || candidate.gameObject.scene != gameObject.scene) continue;
+                if (screen == null) screen = candidate;
+                else if (candidate != screen) PrologueDesk.RemoveTransient(candidate.gameObject);
+            }
+            var go = screen != null ? screen.gameObject
+                : new GameObject("LingGuang Prologue Screen", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            for (int i = go.transform.childCount - 1; i >= 0; i--)
+                PrologueDesk.RemoveTransient(go.transform.GetChild(i).gameObject);
             screen = go.GetComponent<Canvas>();
             screen.renderMode = RenderMode.ScreenSpaceOverlay;
             screen.sortingOrder = 990;
@@ -114,7 +131,12 @@ namespace LingGuangV05.Desktop.Story
             thought = desk.Text(PrologueDesk.Rect("Text", box, Vector2.zero, Vector2.one, new Vector2(30, 6), new Vector2(-30, -6)), "", 28, new Color(.95f, .95f, .9f), TextAlignmentOptions.Center);
         }
 
-        void OnDestroy() { Release(); if (screen != null) Destroy(screen.gameObject); }
+        void OnDestroy()
+        {
+            Release();
+            if (ReferenceEquals(Desk, desk)) Desk = null;
+            if (screen != null) PrologueDesk.RemoveTransient(screen.gameObject);
+        }
 
         // ───────────── control of the mouse ─────────────
 
@@ -127,10 +149,10 @@ namespace LingGuangV05.Desktop.Story
             else desk.HideCursor();
         }
 
-        void Release(bool force = false)
+        void Release()
         {
-            // force: a script reload in the editor forgets `hijacked` but may leave the real cursor hidden and input off.
-            if (!hijacked && !force) return;
+            // Do not unlock another cutscene's input. Ownership survives reload and is released on disable.
+            if (!hijacked) return;
             hijacked = false;
             if (surface != null) surface.SetInputEnabled(true);
             UnityEngine.Cursor.visible = true;
@@ -778,8 +800,6 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>Its last words, sophon.dll turning into a drop of water and vanishing, 2017, and the last 360 bubble.</summary>
         IEnumerator PlayEnding(LingGuangV05.XingGuang.XgSim lab)
         {
-            runtime.Sim.S.endingPlayed = true;
-            runtime.MarkDirty();
             lab.AddLine("ai", lab.EndingWords());
             lab.AddLine("ai", lab.SeedLine());
             Think(lab.EndingWords(), 3);
@@ -807,6 +827,8 @@ namespace LingGuangV05.Desktop.Story
             for (float t = 0; t < 1; t += Time.unscaledDeltaTime) { group.alpha = 1 - t; yield return null; }
             Destroy(black.gameObject);
             StartCoroutine(desk.Balloon(this, L("who_360"), T("新年快乐，您的电脑已连续开机 5424 小时。", "Happy New Year. Your computer has been on for 5424 hours."), 8));
+            runtime.Sim.S.endingPlayed = true;
+            runtime.MarkDirty();
             ending = null;
         }
 
@@ -828,24 +850,46 @@ namespace LingGuangV05.Desktop.Story
 
         void StopPrologue()
         {
-            if (run != null) StopCoroutine(run);
+            // Includes nested downloads, boot balloons and delayed LaoZhou actions.
+            // Disabling a MonoBehaviour alone does not stop its coroutines.
+            bool speaking = thinking != null;
+            StopAllCoroutines();
             run = null;
-            if (thinking != null) StopCoroutine(thinking);
             thinking = null;
-            VoiceLines.Stop();
+            ending = null;
+            if (speaking || (thoughtGroup != null && thoughtGroup.alpha > 0) || hijacked) VoiceLines.Stop();
+            if (voice != null) voice.Stop();
             if (thoughtGroup != null) thoughtGroup.alpha = 0;
-            foreach (var go in spawned) if (go != null) Destroy(go);
+            if (thought != null) thought.text = "";
+            foreach (var go in spawned) PrologueDesk.RemoveTransient(go);
             spawned.Clear();
             // A script reload in the editor forgets the spawned list; never leave a dead copy of a scripted window behind.
             if (desk != null)
                 foreach (var parent in new[] { desk.windows, desk.icons })
-                    foreach (Transform child in parent)
-                        if (System.Array.IndexOf(ScriptedNames, child.name) >= 0) Destroy(child.gameObject);
+                {
+                    if (parent == null) continue; // desktop can be destroyed before the director on scene exit
+                    for (int i = parent.childCount - 1; i >= 0; i--)
+                    {
+                        var child = parent.GetChild(i);
+                        if (System.Array.IndexOf(ScriptedNames, child.name) >= 0) PrologueDesk.RemoveTransient(child.gameObject);
+                    }
+                }
             txtIcon = archiveIcon = notepad = browser = menu = dialog = virusBox = null;
-            if (screenRoot != null) foreach (Transform child in screenRoot) if (child.name == "Title") Destroy(child.gameObject);
-            if (desk != null) foreach (Transform child in desk.layer) if (child.name != "Cursor") Destroy(child.gameObject);
-            LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.EndScript();
-            Release(force: true);
+            if (screenRoot != null)
+                for (int i = screenRoot.childCount - 1; i >= 0; i--)
+                    if (screenRoot.GetChild(i).name == "Title") PrologueDesk.RemoveTransient(screenRoot.GetChild(i).gameObject);
+            // The layer is shared with notifications, guides and other scenes. Remove only our transient blockers.
+            if (desk != null && desk.layer != null)
+                for (int i = desk.layer.childCount - 1; i >= 0; i--)
+                {
+                    var child = desk.layer.GetChild(i);
+                    if (child.name == "Boot" || child.name == "Shutdown" || child.name == "Prologue Menu")
+                        PrologueDesk.RemoveTransient(child.gameObject);
+                    else if (child.name == "Cursor") child.gameObject.SetActive(false);
+                }
+            var hub = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
+            if (hub != null) hub.EndScript();
+            Release();
             Step = "";
         }
     }
