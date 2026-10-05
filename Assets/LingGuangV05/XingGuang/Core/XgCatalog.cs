@@ -134,7 +134,7 @@ namespace LingGuangV05.XingGuang
             new XgArch { id = "googlenet", name = "GoogLeNet", nameEn = "GoogLeNet", track = XgTrack.Vision, year = 2014, cost = 200, bias = .45, maxDepth = 22, paramFactor = 1.2, speed = 1,
                 note = "Inception 模块，参数少，效果好。", noteEn = "Inception modules: fewer parameters, better results." },
             new XgArch { id = "resnet", name = "ResNet", nameEn = "ResNet", track = XgTrack.Vision, year = 2015, cost = 600, bias = .35, maxDepth = 999, paramFactor = 9, speed = 1,
-                note = "残差连接：层数不再有上限。", noteEn = "Residual connections: no more depth limit." },
+                note = "残差连接：152 层也练得动（再深到一千多层反而略差）。", noteEn = "Residual connections: 152 layers train (past a thousand it gets slightly worse again)." },
 
             new XgArch { id = "rnn", name = "朴素 RNN", nameEn = "Vanilla RNN", track = XgTrack.Sequence, year = 1990, cost = 0, bias = 1, maxDepth = 2, span = 8, paramFactor = 2, speed = 1, instability = .35,
                 note = "只记得住最近几个字，梯度还爱爆炸。", noteEn = "Remembers a few tokens; gradients love to explode." },
@@ -171,7 +171,7 @@ namespace LingGuangV05.XingGuang
             new XgDataset { id = "go", name = "围棋局面", nameEn = "Go positions", metric = "气数判断准确率", metricEn = "liberty accuracy", track = XgTrack.Vision,
                 price = 2500, samples = 50000, chanceError = .5, floorError = .02, scale = 60, complexity = 3, handLabel = true, need = 2500,
                 rewardBase = 10,
-                note = "9 路小棋盘数气。AlphaGo 两个月前刚赢了李世石。", noteEn = "Count liberties on a 9×9 board. AlphaGo beat Lee Sedol two months ago." },
+                note = "9 路小棋盘数气。AlphaGo 今年三月刚赢了李世石。", noteEn = "Count liberties on a 9×9 board. AlphaGo beat Lee Sedol this March." },
             new XgDataset { id = "imagenet", name = "ImageNet", nameEn = "ImageNet", metric = "Top-5 准确率", metricEn = "top-5 accuracy", track = XgTrack.Vision,
                 price = 4000, samples = 1200000, chanceError = .995, floorError = .03, scale = 4000, complexity = 8, need = 260000,
                 rewardBase = 40,
@@ -303,7 +303,8 @@ namespace LingGuangV05.XingGuang
         public static string Band(string lane) => lane == "label" ? "trunk" : Array.IndexOf(LaneOrder, lane) < 0 ? "vision" : lane;
         public static readonly string[] StageNames = { "标注", "学会简单判断", "学会组合特征", "走向专长", "学会保留信息", "学会寻找重点", "重构学习方式" };
         public static readonly string[] StageNamesEn = { "Labelling", "Simple decisions", "Combine features", "Specialize", "Keep information", "Find what matters", "Rebuild learning" };
-        public static readonly int[] StageYears = { 0, 1958, 1986, 1998, 1997, 2014, 2017 };
+        /// <summary>The years each stage's ideas come from (a range where the stage spans several papers).</summary>
+        public static readonly string[] StageYears = { "", "1958", "1986", "1989–2014", "1997–2015", "2014–2015", "2017" };
 
         static XgNode[] BuildNodes()
         {
@@ -345,8 +346,8 @@ namespace LingGuangV05.XingGuang
             D("trunk", 3, "s.d2", 100, 2, "trunk");
             W("trunk", 1, "mlp", 150, 2, "trunk");
             W("trunk", 2, "s.w1", 450, 2, "trunk");
-            R("relu", "mlp", 200, 2); R("momentum", "mlp", 200, 2);
-            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2);
+            R("momentum", "mlp", 200, 2);
+            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2); R("cudnn", "mlp", 600, 2);
             P("mnist", "mlp", 300, 2, "vision"); P("danmu", "mlp", 300, 2, "sequence"); P("headline", "mlp", 450, 2, "sequence"); P("logic", "mlp", 500, 2, "sequence");
             Break("bt.vision", 2, "vision", "mlp", 500, "卷积", "Convolution");
             Break("bt.sequence", 2, "sequence", "mlp", 500, "循环", "Recurrence");
@@ -364,7 +365,7 @@ namespace LingGuangV05.XingGuang
             W("vision", 3, "v.w2", 1350, 3, "vision"); W("vision", 4, "v.w3", 4050, 3, "vision"); W("vision", 5, "v.w4", 12000, 3, "vision");
             P("cifar", "lenet", 600, 3, "vision"); P("meme", "lenet", 700, 3, "vision");
             P("poems", "rnn", 300, 3, "sequence"); P("news", "rnn", 800, 3, "sequence");
-            R("gradclip", "rnn", 150, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
+            R("relu", "lenet", 200, 3); R("gradclip", "rnn", 150, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
             Break("bt.gate", 3, "sequence", "rnn", 4000, "门控记忆", "Gated memory");
             A("lstm", 3, "sequence", "bt.gate", 0); A("gru", 3, "sequence", "lstm", 1500);
             P("longtext", "lstm", 2500, 3, "sequence");
@@ -391,13 +392,13 @@ namespace LingGuangV05.XingGuang
             P("translate", "attention", 5000, 5, "sequence");
             Break("bt.spatial", 5, "vision", "resnet", 15000, "空间注意力", "Spatial attention");
             A("caption", 5, "vision", "bt.spatial", 20000); list[list.Count - 1].needs = new[] { "attention" };
-            R("cudnn", "lrschedule", 8000, 5); R("transfer", "cudnn", 12000, 5);
+            R("transfer", "lrschedule", 12000, 5);
 
             // ── 阶段 6 · Transformer：阶段 5 过墙后免费获得
             Add(Simple("project.transformer", XgNodeKind.Project, "attention", 0, "只要注意力", "Attention is all we need", "阶段 5 的涌现。", "Stage five's emergence."), 6, "trunk");
             A("transformer", 6, "trunk", "project.transformer", 0);
             Add(Simple("multihead", XgNodeKind.Label, "transformer", 0, "多头注意力", "Multi-head attention", "研发产出，不另收费。", "Research output; no additional charge."), 6, "research");
-            Add(Simple("layernorm", XgNodeKind.Label, "transformer", 0, "LayerNorm", "LayerNorm", "由 BatchNorm 演化：按一句话内部做归一化。", "Evolved from BatchNorm: normalize within each sentence."), 6, "research");
+            Add(Simple("layernorm", XgNodeKind.Label, "transformer", 0, "LayerNorm", "LayerNorm", "2016 年提出：每个字按自己的各项特征归一化，不依赖整批数据（BatchNorm 是按一批样本）。", "Proposed in 2016: each word is normalised across its own features, without the batch (BatchNorm uses a batch of samples)."), 6, "research");
             Add(Simple("residual", XgNodeKind.Label, "transformer", 0, "残差连接", "Residual connections", "继承 ResNet：每层都留一条捷径。", "Inherited from ResNet: a shortcut around every layer."), 6, "research");
             R("warmup", "transformer", 20000, 6);
             // Side research of stages 4–6 (design v1.1 §11.2): no walls, only a little speed.
@@ -553,7 +554,7 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },
             new XgContract { id = "support", client = "网店客服外包", clientEn = "Shop support outsourcer", job = "自动客服回复", jobEn = "Auto support replies", dataset = "news", threshold = .58, income = 6, signBonus = 1200 },
             new XgContract { id = "crossborder", client = "表姐的微商小店", clientEn = "Cousin’s online shop", job = "商品描述翻译", jobEn = "Listing translation", dataset = "translate", threshold = .45, income = 18, signBonus = 4000 },
-            new XgContract { id = "subtitle", client = "字幕组", clientEn = "Fansub group", job = "美剧字幕初翻", jobEn = "Subtitle first drafts", dataset = "translate", threshold = .62, income = 45, signBonus = 10000 },
+            new XgContract { id = "subtitle", client = "视频网站版权部", clientEn = "A video site's licensing team", job = "美剧字幕初翻", jobEn = "Subtitle first drafts", dataset = "translate", threshold = .62, income = 45, signBonus = 10000 },
         };
 
         public static readonly XgResearch[] Research =
@@ -562,21 +563,21 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "wordvec", kind = XgResearchKind.Feel, name = "词向量", nameEn = "Word vectors", cost = 3500, effect = "国王 − 男人 + 女人 ≈ 女王（2013）：文字训练 +8%。", effectEn = "king − man + woman ≈ queen (2013): text training +8%." },
             new XgResearch { id = "beamsearch", kind = XgResearchKind.Feel, name = "束搜索", nameEn = "Beam search", cost = 7000, effect = "翻译时同时留几条候选句：翻译训练 +10%。", effectEn = "Keep a few candidate sentences while translating: translation training +10%." },
             new XgResearch { id = "subword", kind = XgResearchKind.Feel, name = "子词切分", nameEn = "Subword units", cost = 9000, effect = "生僻词拆成常见的小块（2016）：文字训练 +5%。", effectEn = "Rare words split into common pieces (2016): text training +5%." },
-            new XgResearch { id = "sft", kind = XgResearchKind.Feel, name = "指令微调", nameEn = "Instruction tuning", cost = 25000, effect = "教它听懂「请帮我……」这样的话：预训练 +5%。", effectEn = "Teach it to follow \"please help me…\": pre-training +5%." },
+            new XgResearch { id = "sft", kind = XgResearchKind.Feel, name = "指令微调", nameEn = "Instruction tuning", cost = 25000, effect = "教它听懂「请帮我……」这样的话：预训练 +5%。这个词要到 2021 年前后才有。", effectEn = "Teach it to follow \"please help me…\": pre-training +5%. The term dates from about 2021." },
             new XgResearch { id = "cot", kind = XgResearchKind.Feel, name = "思维链", nameEn = "Chain of thought", cost = 40000, effect = "让它一步一步想：预训练 +5%。这个词要到 2022 年才有。", effectEn = "Let it think step by step: pre-training +5%. The term only appears in 2022." },
             new XgResearch { id = "bias", kind = XgResearchKind.ManualPay, name = "偏置", nameEn = "Bias", cost = 20, effect = "验证准确率 +2%（不能突破架构瓶颈）", effectEn = "Validation +2% (architecture limits still apply)" },
             new XgResearch { id = "weights", kind = XgResearchKind.ManualPay, name = "权重", nameEn = "Weights", cost = 15, effect = "Rosenblatt 1958：每个输入一个可调的权重。训练速度 ×1.1", effectEn = "Rosenblatt 1958: one adjustable weight per input. Training ×1.1" },
             new XgResearch { id = "learnrule", kind = XgResearchKind.ManualPay, name = "感知机学习规则", nameEn = "Perceptron learning rule", cost = 40, effect = "Rosenblatt 1958：答错就把权重往对的方向推一点。训练速度 ×1.15", effectEn = "Rosenblatt 1958: nudge the weights toward the right answer after a mistake. Training ×1.15" },
             new XgResearch { id = "step", kind = XgResearchKind.ManualPay, name = "阶跃激活", nameEn = "Step activation", cost = 30, effect = "加权和过了门槛就输出「是」，否则「否」。验证准确率 +1%", effectEn = "Output yes once the weighted sum crosses a threshold. Validation +1%" },
             new XgResearch { id = "sigmoid", kind = XgResearchKind.ManualPay, name = "Sigmoid", nameEn = "Sigmoid", cost = 120, effect = "把硬门槛换成平滑的 S 形曲线，梯度才能往回传。验证准确率 +1%", effectEn = "A smooth S-curve instead of a hard threshold, so gradients can flow back. Validation +1%" },
-            new XgResearch { id = "backprop", kind = XgResearchKind.ManualPay, name = "反向传播", nameEn = "Backpropagation", cost = 200, effect = "Rumelhart、Hinton、Williams 1986：误差从输出层一层层传回去。训练速度 ×1.2", effectEn = "Rumelhart, Hinton & Williams 1986: send the error back layer by layer. Training ×1.2" },
-            new XgResearch { id = "chainrule", kind = XgResearchKind.ManualPay, name = "链式法则", nameEn = "Chain rule", cost = 250, effect = "每层的梯度等于后面各层梯度相乘。训练速度 ×1.1", effectEn = "Each layer's gradient is the product of the gradients after it. Training ×1.1" },
+            new XgResearch { id = "backprop", kind = XgResearchKind.ManualPay, name = "小批量训练", nameEn = "Mini-batch training", cost = 200, effect = "一次算一小批卡的平均梯度，又快又稳（反向传播本身在「隐藏层」突破里就有了）。训练速度 ×1.2", effectEn = "Average the gradient over a small batch at a time, faster and steadier (backpropagation itself came with the hidden-layer breakthrough). Training ×1.2" },
+            new XgResearch { id = "chainrule", kind = XgResearchKind.ManualPay, name = "自动求导", nameEn = "Automatic differentiation", cost = 250, effect = "框架按链式法则自动算出每层的梯度（Theano、TensorFlow），不用再手推。训练速度 ×1.1", effectEn = "The framework works out every layer's gradient by the chain rule (Theano, TensorFlow), no more deriving by hand. Training ×1.1" },
             new XgResearch { id = "features", kind = XgResearchKind.ManualPay, name = "特征工程", nameEn = "Feature engineering", cost = 60,
                 effect = "旋钮：人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。不用换结构也能过墙，但人工整理很费时间：训练量减半。",
                 effectEn = "Knob: people make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. Passes walls without a new structure, but by hand: half the cards per epoch." },
             new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "旋钮：不靠循环也知道字的先后顺序", effectEn = "Knob: word order without recurrence" },
             new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "旋钮：换设置以后前 60 张卡的学习率从很小慢慢升上去，开头误差最大的时候不炸。深网络和 Transformer 尤其需要", effectEn = "Knob: after a change the rate climbs from almost nothing over the first 60 cards, so the large early errors do not tear it. Deep nets and Transformers need it most" },
-            new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "训练速度 ×1.3", effectEn = "Training speed ×1.3" },
+            new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "坡度是 1，误差几乎原样往下传，深网络练得动。2010 年前后才流行开（AlexNet 2012 靠它一战成名）。训练速度 ×1.3", effectEn = "Its slope is 1, so the error comes down almost whole and deep nets train. Popular only from about 2010 (AlexNet 2012 made its name). Training ×1.3" },
             new XgResearch { id = "momentum", kind = XgResearchKind.Optimizer, name = "动量 SGD", nameEn = "Momentum SGD", cost = 3, speed = 1.3, stability = 1.4,
                 effect = "训练速度 ×1.3：每一步顺着上一步的方向冲", effectEn = "Training ×1.3: each step keeps some of the last one's direction" },
             new XgResearch { id = "gradclip", kind = XgResearchKind.GradClip, name = "梯度裁剪", nameEn = "Gradient clipping", cost = 5,
@@ -596,7 +597,7 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "adam", kind = XgResearchKind.Optimizer, name = "Adam", nameEn = "Adam", cost = 150, speed = 2, stability = 3,
                 effect = "训练速度 ×2，比 SGD 稍稳。按梯度自己的大小调步长：学习率数字要小一百倍（常用 0.001）", effectEn = "Training ×2, a little steadier than SGD. Scales each step by the gradient's own size: rates a hundred times smaller (0.001 is usual)" },
             new XgResearch { id = "cudnn", kind = XgResearchKind.CuDnn, name = "cuDNN 加速", nameEn = "cuDNN kernels", cost = 250,
-                effect = "所有训练 ×1.5", effectEn = "All training ×1.5" },
+                effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3" },
             new XgResearch { id = "transfer", kind = XgResearchKind.Transfer, name = "迁移学习", nameEn = "Transfer learning", cost = 400,
                 effect = "同一个网络换数据集时，接着用已经学到的底层特征（笔画、边角、常用字）。换架构不行：结构变了，权重对不上", effectEn = "When the same network moves to a new dataset it keeps the low-level features it learnt (strokes, corners, common words). Not across architectures: a new structure, weights that no longer fit" },
         };

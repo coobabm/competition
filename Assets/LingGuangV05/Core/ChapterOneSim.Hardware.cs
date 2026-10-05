@@ -114,7 +114,7 @@ namespace LingGuangV05.Core
         public bool BuyNvme(DateTime today)
         {
             if (S.nvme) return Reject("已经装了一块 950 Pro。");
-            if (today.Date < HardwareCatalog.NvmeRelease) return Reject("三星 950 Pro 9 月到货。");
+            if (today.Date < HardwareCatalog.NvmeRelease) return Reject("淘货 9 月才进三星 950 Pro 的货。");
             if (!CanSpend(HardwareCatalog.NvmePrice)) return Reject("经费不足：要 ¥" + HardwareCatalog.NvmePrice.ToString("0") + "。");
             S.money -= HardwareCatalog.NvmePrice;
             S.nvme = true;

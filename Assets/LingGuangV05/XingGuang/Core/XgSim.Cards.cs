@@ -82,7 +82,7 @@ namespace LingGuangV05.XingGuang
             var list = new List<XgAchievement>
             {
                 // 突破: every wall passed, however.
-                Card(CardWall, 1, "wall.combo", "异", "第一道墙", "The first wall", "过了阶段 1 的墙「异或」。", "Passed stage 1's wall, XOR.", "1969 年 Minsky 说一层学不会异或，AI 冷了十几年。", "In 1969 Minsky showed one layer cannot learn XOR; AI went cold for over a decade."),
+                Card(CardWall, 1, "wall.combo", "异", "第一道墙", "The first wall", "过了阶段 1 的墙「异或」。", "Passed stage 1's wall, XOR.", "1969 年 Minsky 和 Papert 证明一层学不会异或，神经网络冷了十几年。", "In 1969 Minsky and Papert showed one layer cannot learn XOR; neural nets went cold for over a decade."),
                 Card(CardWall, 1, "wall.structure", "图", "看懂整张图", "The whole picture", "过了阶段 2 的墙「看不懂整张图」。", "Passed stage 2's wall.", "图看邻居，句子看前文：不是每个格子都要连每个格子。", "Pictures look at neighbours, sentences at what came before."),
                 Card(CardWall, 1, "wall.length", "忆", "学会记住", "Learning to remember", "过了阶段 3 的墙「长句失忆」。", "Passed stage 3's wall.", "让它自己决定记住什么、忘掉什么。", "Let it decide what to keep and what to forget."),
                 Card(CardWall, 1, "wall.degrade", "深", "越深越好", "Deeper is better", "过了附加墙「越深越差」。", "Passed the extra wall, deeper is worse.", "给每一层留一条捷径，信号就能原样穿过去。", "Give every layer a shortcut and the signal passes untouched."),

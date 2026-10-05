@@ -47,7 +47,7 @@
     "month_3": "第 3 阶段 · CNN + RNN",
     "month_3_sub": "卷积网络看图，循环网络读句子",
     "month_4": "第 4 阶段 · LSTM + ResNet",
-    "month_4_sub": "1997 · LSTM：学会该忘什么，才能记住该记的",
+    "month_4_sub": "1997–2015 · LSTM 守住长记忆，ResNet 让信息原样穿过深层",
     "month_5": "第 5 阶段 · Seq2Seq + 注意力",
     "month_5_sub": "2014–2015 · 注意力：需要时，回头看相关的部分",
     "month_6": "第 6 阶段 · Transformer",

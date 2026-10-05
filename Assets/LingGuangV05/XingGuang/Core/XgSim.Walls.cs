@@ -228,7 +228,7 @@ namespace LingGuangV05.XingGuang
             if (!ObserveWall(wall.id)) return;
             if (!wall.extra) S.wallSeenAt = Math.Max(1e-3, S.stageSeconds);
             Say(T("撞墙了：", "A wall: ") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。", ". Its dataset is now on the training page."));
-            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 证明单层感知机学不会异或，经费断崖。订单收入减半。", "AI winter: in 1969 Minsky showed one layer cannot learn XOR and funding collapsed. Contracts pay half."));
+            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 和 Papert 在《感知机》里证明单层学不会异或；再加上 1973 年英国的莱特希尔报告，经费断崖。订单收入减半。", "AI winter: in 1969 Minsky and Papert's 'Perceptrons' showed one layer cannot learn XOR; with Britain's 1973 Lighthill report, funding collapsed. Contracts pay half."));
         }
 
         // ───────────── passing ─────────────

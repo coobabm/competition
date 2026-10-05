@@ -447,9 +447,9 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "bt.hidden": year = 1986; zh = "反向传播 · 错误可以一层一层往回传"; en = "Backpropagation · errors can travel backward through layers"; break;
-                case "bt.vision": year = 1998; zh = "卷积网络 · 先看局部，再看整体"; en = "Convolution · local structure before the whole"; break;
+                case "bt.vision": year = 1989; zh = "卷积网络 · 先看局部，再看整体（LeCun 1989；LeNet-5 是 1998）"; en = "Convolution · local structure before the whole (LeCun 1989; LeNet-5 in 1998)"; break;
                 case "bt.sequence": year = 1990; zh = "循环网络 · 前一个词影响后一个词"; en = "Recurrent networks · the previous word affects the next"; break;
-                case "bt.gate": year = 1997; zh = "LSTM · 学会该忘什么，才能记住该记的"; en = "LSTM · learning what to forget lets us remember"; break;
+                case "bt.gate": year = 1997; zh = "LSTM · 用门守住记忆（「遗忘门」是 1999–2000 年加上的）"; en = "LSTM · gates guard the memory (the forget gate came in 1999–2000)"; break;
                 case "bt.residual": year = 2015; zh = "ResNet · 让信息原样穿过深层网络"; en = "ResNet · let information pass through deep layers"; break;
                 case "bt.attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
                 case "bt.spatial": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;

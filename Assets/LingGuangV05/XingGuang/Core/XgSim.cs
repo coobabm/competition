@@ -323,7 +323,7 @@ namespace LingGuangV05.XingGuang
         public double OptimizerSteadiness { get { var o = Optimizer; return o == null ? 1 : o.id == "adam" ? 1.25 : o.id == "rmsprop" ? 1.15 : 1; } }
         double OptSpeed { get { var o = Optimizer; return o == null ? 1 : o.speed; } }
         public double Stability { get { var o = Optimizer; return (o == null ? 1 : o.stability) * (Has("batchnorm") ? 1.5 : 1); } }
-        double SpeedResearch { get { return (Has("batchnorm") ? 1.2 : 1) * (Has("cudnn") ? 1.5 : 1) * FeelSpeed; } }
+        double SpeedResearch { get { return (Has("batchnorm") ? 1.2 : 1) * (Has("cudnn") ? 1.3 : 1) * FeelSpeed; } }
 
         // ───────────── model shape ─────────────
 

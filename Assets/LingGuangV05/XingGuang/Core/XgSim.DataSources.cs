@@ -125,7 +125,7 @@ namespace LingGuangV05.XingGuang
                 "补习班的作业本拍照切图，答案是按老师批改抄的，红笔叉也算数。", "Workbook photos cut into digits; labels copied from the teacher's marking, red crosses included." },
             new object[] { "danmu", .35, 201607, "弹幕全量爬取包，按点赞数打的标", "Full danmaku crawl, labelled by likes",
                 "点赞多的算夸，点赞少的算骂。反话全标反了。", "Many likes means praise, few means mockery. Every bit of sarcasm is labelled backwards." },
-            new object[] { "headline", .25, 201607, "震惊部标题合集 1.2 万条", "12k \"SHOCKING\" headlines",
+            new object[] { "headline", .25, 201607, "震惊部标题合集 2.4 万条", "24k \"SHOCKING\" headlines",
                 "「震惊！」开头的全标成标题党，正经新闻也混进来不少。", "Everything starting with \"SHOCKING!\" counts as clickbait, plenty of real news included." },
             new object[] { "logic", .2, 201607, "公考题库盗版合集（答案页错印）", "Pirated civil-exam question bank (misprinted answers)",
                 "二十万道判断推理，答案页印错了好几页。", "200k reasoning questions; several answer pages are misprinted." },
@@ -153,9 +153,9 @@ namespace LingGuangV05.XingGuang
             new object[] { "imagenet", 600.0, .005, 150.0, 201609, "ImageNet 学术下载（老周的 edu 邮箱）", "ImageNet academic download (老周's edu mail)",
                 "ImageNet 只给学校邮箱发下载链接。老周用他的 edu 邮箱帮你申请了，只要买块移动硬盘。", "ImageNet only sends download links to university addresses. 老周 applied with his edu mail; you just buy a portable drive.",
                 "ImageNet 要学校邮箱才给下，我拿我的 edu 邮箱帮你申请了。你买块硬盘就行，别外传啊。", "ImageNet only gives links to school addresses. I applied with my edu mail for you. Just buy a drive, and keep it to yourself." },
-            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料（老周托师兄从内网拷）", "UN parallel corpus (copied off 老周's campus network)",
-                "联合国文件的中英对照，句子工整。老周托师兄从学校内网拷出来的。", "Chinese–English UN documents, neat sentence pairs. 老周 had a senior student copy them off the campus network.",
-                "学校内网有联合国的中英平行语料，我让师兄拷了一份。比淘货上那些字幕包干净多了。", "The campus network has the UN Chinese–English corpus. I got a senior to copy it. Much cleaner than the subtitle packs on 淘货." },
+            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料 v1.0（今年 5 月刚公开）", "UN Parallel Corpus v1.0 (public since May)",
+                "联合国文件的中英对照，句子工整。今年 5 月刚公开，老周帮你下好了，钱是硬盘和整理的钱。", "Chinese–English UN documents, neat sentence pairs. Made public this May; 老周 downloaded it for you, you pay for the drive and the clean-up.",
+                "联合国今年 5 月公开了中英平行语料，我帮你下好了。比淘货上那些字幕包干净多了。", "The UN released its Chinese–English corpus this May; I downloaded it for you. Much cleaner than the subtitle packs on 淘货." },
         };
 
         static List<XgDataOffer> offerCatalog;
