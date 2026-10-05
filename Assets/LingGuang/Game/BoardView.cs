@@ -28,6 +28,8 @@ namespace LingGuang.Game
         public readonly HashSet<int> collapsedMemories = new HashSet<int>();
         Transform cellsRoot, gullyRoot, edgeRoot, sparkRoot, miscRoot;
         SpriteRenderer hoverSr, selectSr, lighthouseSr;
+        LineRenderer connectionPreview, connectionPreviewArrow, connectionPreviewReverse;
+        readonly List<SpriteRenderer> connectionTargets = new List<SpriteRenderer>();
         bool placementGrid;
         readonly List<SpriteRenderer> lighthouseCover = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> previewMarks = new List<SpriteRenderer>();
@@ -59,7 +61,7 @@ namespace LingGuang.Game
             foreach (Transform c in transform) Destroy(c.gameObject);
             cellFill.Clear(); cellOutline.Clear(); gullyLines.Clear(); sparkViews.Clear(); edgeViews.Clear(); pickupViews.Clear(); memoryHulls.Clear(); weakViews.Clear();
             gullyStage = -1;
-            lighthouseCover.Clear(); previewMarks.Clear(); collapsedMemories.Clear();
+            lighthouseCover.Clear(); previewMarks.Clear(); collapsedMemories.Clear(); connectionTargets.Clear();
             cellsRoot = NewRoot("Cells"); gullyRoot = NewRoot("Gullies"); edgeRoot = NewRoot("Edges"); sparkRoot = NewRoot("Sparks"); miscRoot = NewRoot("Misc");
 
             var b = s.board;
@@ -85,6 +87,16 @@ namespace LingGuang.Game
             selectSr = Gfx.MakeSprite("select", miscRoot, Gfx.HexOutline, Gfx.Additive, 6, HexSize * 2.08f);
             Gfx.SetColor(selectSr, Gfx.HDR(new Color(0.55f, 0.94f, 1f), 1.3f));
             hoverSr.enabled = false; selectSr.enabled = false;
+            connectionPreview = Gfx.MakeLine("ConnectionPreview", miscRoot, Gfx.Additive, 20, .045f);
+            connectionPreviewArrow = Gfx.MakeLine("ConnectionPreviewArrow", miscRoot, Gfx.Additive, 21, .045f);
+            connectionPreviewReverse = Gfx.MakeLine("ConnectionPreviewReverse", miscRoot, Gfx.Additive, 21, .045f);
+            connectionPreview.enabled = connectionPreviewArrow.enabled = connectionPreviewReverse.enabled = false;
+            for (int i = 0; i < 6; i++)
+            {
+                var mark = Gfx.MakeSprite("WireTarget" + i, miscRoot, Gfx.HexOutline, Gfx.Additive, 7, HexSize * 1.8f);
+                mark.enabled = false;
+                connectionTargets.Add(mark);
+            }
 
             // lighthouse glyph below the anchors
             var anchors = b.AllCells().Where(c => b.Row(c) == s.cfg.lighthouseAnchorRow).ToList();
@@ -378,6 +390,51 @@ namespace LingGuang.Game
             if (cell >= 0) selectSr.transform.position = CellPos(cell);
         }
 
+        public void ShowConnectionTargets(int sourceId, int mode)
+        {
+            foreach (var mark in connectionTargets) mark.enabled = false;
+            if (state == null || mode == 0 || !state.sparks.TryGetValue(sourceId, out var source)) return;
+            for (int d = 0; d < 6 && d < connectionTargets.Count; d++)
+            {
+                int cell = state.board.Neighbor(source.cell, d);
+                var target = state.SparkAt(cell);
+                if (target == null) continue;
+                bool valid = mode == 3 ? state.CanDisconnect(sourceId, target.id, out _) : state.CanConnect(sourceId, target.id, mode == 2, out _);
+                var mark = connectionTargets[d];
+                mark.enabled = true;
+                mark.transform.position = CellPos(cell);
+                Gfx.SetColor(mark, valid ? Gfx.HDR(new Color(.3f, 1f, .72f), .8f) : new Color(1f, .3f, .26f, .5f));
+            }
+        }
+
+        public void ShowConnectionPreview(int sourceCell, int targetCell, bool valid, int mode)
+        {
+            if (connectionPreview == null) return;
+            bool show = mode != 0 && sourceCell >= 0 && targetCell >= 0 && sourceCell != targetCell;
+            connectionPreview.enabled = connectionPreviewArrow.enabled = show;
+            connectionPreviewReverse.enabled = show && mode == 2;
+            if (!show) return;
+            Vector3 a = CellPos(sourceCell), b = CellPos(targetCell);
+            var color = valid ? (mode == 3 ? new Color(1f, .65f, .25f) : new Color(.3f, 1f, .72f)) : new Color(1f, .25f, .2f);
+            connectionPreview.positionCount = 2;
+            connectionPreview.SetPosition(0, Vector3.Lerp(a, b, .15f));
+            connectionPreview.SetPosition(1, Vector3.Lerp(a, b, .85f));
+            Gfx.SetLineColor(connectionPreview, color);
+            DrawConnectionArrow(connectionPreviewArrow, Vector3.Lerp(a, b, .75f), b - a, color);
+            if (mode == 2) DrawConnectionArrow(connectionPreviewReverse, Vector3.Lerp(a, b, .25f), a - b, color);
+        }
+
+        internal static void DrawConnectionArrow(LineRenderer line, Vector3 tip, Vector3 direction, Color color)
+        {
+            var along = direction.normalized;
+            var across = new Vector3(-along.y, along.x, 0);
+            line.positionCount = 3;
+            line.SetPosition(0, tip - along * .11f + across * .065f);
+            line.SetPosition(1, tip);
+            line.SetPosition(2, tip - along * .11f - across * .065f);
+            Gfx.SetLineColor(line, color);
+        }
+
         public void SetGhost(bool on, int cell, Shape shape, int dir)
         {
             SetPlacementGrid(on);
@@ -530,8 +587,9 @@ namespace LingGuang.Game
             ghostMode = false;
             disabled = isDisabled;
             baseColor = ShapeColor(sp);
-            SetNeuron(sp.shape, sp.dir, sp.id);
             var dirs = s.Dirs(sp);
+            int visualDir = dirs.Length == 1 ? (sp.dir + dirs[0]) % 6 : sp.dir;
+            SetNeuron(sp.shape, visualDir, sp.id);
             float ratio = threshold > 0 ? Mathf.Clamp01(charge / (float)threshold) : 0f;
             brightness = ratio;
             SetSpikes(a01Active ? System.Array.Empty<int>() : dirs, sp.dir, Gfx.HDR(baseColor, disabled ? 0.12f : 0.65f), 0.46f);
@@ -656,6 +714,7 @@ namespace LingGuang.Game
     public sealed class EdgeView : MonoBehaviour
     {
         LineRenderer lr;
+        LineRenderer arrow;
         Vector3 a, b;
         int level;
         bool pruned, internalMem, fading, bridgePenalty, dead;
@@ -668,6 +727,7 @@ namespace LingGuang.Game
             go.transform.SetParent(parent, false);
             var v = go.AddComponent<EdgeView>();
             v.lr = Gfx.MakeLine("line", go.transform, Gfx.Additive, 5, 0.05f);
+            v.arrow = Gfx.MakeLine("direction", go.transform, Gfx.Additive, 6, 0.025f);
             v.lr.positionCount = Pts;
             v.lr.numCapVertices = 0;
             // taper towards the target: shows direction without an arrow head
@@ -718,7 +778,8 @@ namespace LingGuang.Game
             var col = Gfx.HDR(c, inten);
             col.a = pruned ? 0.35f : 1f;
             Gfx.SetLineColor(lr, col);
-
+            arrow.enabled = !pruned && !internalMem && !dead;
+            if (arrow.enabled) BoardView.DrawConnectionArrow(arrow, SamplePath(.7f), SamplePath(.74f) - SamplePath(.66f), col);
         }
     }
 }

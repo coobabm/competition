@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fae08bfc9b5a3d14c96803b2b2c405cb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/UI Elements/Buttons/Taskbar/TaskbarButton_ActiveToClosed.anim
+  uploadId: 718228

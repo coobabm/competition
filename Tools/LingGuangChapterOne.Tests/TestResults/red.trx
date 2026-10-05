@@ -1,0 +1,541 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b811058d-2de0-4788-b410-446e1aaf61a9" name="@Mac 2026-10-03 04:18:17" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T04:18:17.7234500+09:00" queuing="2026-10-03T04:18:17.7234500+09:00" start="2026-10-03T04:18:16.7732960+09:00" finish="2026-10-03T04:18:17.7396010+09:00" />
+  <TestSettings name="default" id="f80d5b2f-33ed-4885-afc1-7da7965bb823">
+    <Deployment runDeploymentRoot="_Mac_2026-10-03_04_18_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b4de3656-09cb-4522-9516-6da2a3045c93" testId="1ac6c134-b6c3-3576-18d5-63d4d3380b33" testName="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" computerName="Mac" duration="00:00:00.0001360" startTime="2026-10-03T04:18:17.4818060+09:00" endTime="2026-10-03T04:18:17.4819420+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4de3656-09cb-4522-9516-6da2a3045c93">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.Prepared() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 276
+   at LingGuangV05.Tests.CoreTests.InvalidExamProgressSaveIsRejectedRatherThanGrantingReward() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 267
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bd9a8ff6-10cb-4bb8-a62c-32788c480d63" testId="10435959-0d40-cec4-99e3-375c091b5f3b" testName="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" computerName="Mac" duration="00:00:00.0006840" startTime="2026-10-03T04:18:17.4785450+09:00" endTime="2026-10-03T04:18:17.4792290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd9a8ff6-10cb-4bb8-a62c-32788c480d63">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="597faa8f-2953-4fc6-a52d-5b386f2ad81e" testId="99b8144d-b196-0519-26c5-cc773d8e5865" testName="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" computerName="Mac" duration="00:00:00.0001820" startTime="2026-10-03T04:18:17.4845880+09:00" endTime="2026-10-03T04:18:17.4847700+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="597faa8f-2953-4fc6-a52d-5b386f2ad81e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 23
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="508d6753-d85d-415b-bf5b-a828c330e056" testId="82673fc2-830e-38c7-076f-32ff1c3e2f92" testName="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" computerName="Mac" duration="00:00:00.0001890" startTime="2026-10-03T04:18:17.4840060+09:00" endTime="2026-10-03T04:18:17.4841950+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="508d6753-d85d-415b-bf5b-a828c330e056">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 96
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="979d99d5-a607-4f5a-a478-4c1e4bf9c606" testId="24600395-c20b-97ce-23b2-3274a7fad188" testName="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" computerName="Mac" duration="00:00:00.0001780" startTime="2026-10-03T04:18:17.4810140+09:00" endTime="2026-10-03T04:18:17.4811920+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="979d99d5-a607-4f5a-a478-4c1e4bf9c606">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 13
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cec15ed6-11f3-4410-9b59-e5dee0785796" testId="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395" testName="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" computerName="Mac" duration="00:00:00.0002040" startTime="2026-10-03T04:18:17.4811950+09:00" endTime="2026-10-03T04:18:17.4813980+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cec15ed6-11f3-4410-9b59-e5dee0785796">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.Prepared() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 276
+   at LingGuangV05.Tests.CoreTests.FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 236
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cadaf357-a3b8-409a-b585-5f1a7b18bcda" testId="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac" testName="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" computerName="Mac" duration="00:00:00.0050770" startTime="2026-10-03T04:18:17.4723390+09:00" endTime="2026-10-03T04:18:17.4773770+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cadaf357-a3b8-409a-b585-5f1a7b18bcda">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 145
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6b293cb5-4e84-42af-8e94-49cdd889709d" testId="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d" testName="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" computerName="Mac" duration="00:00:00.0002750" startTime="2026-10-03T04:18:17.4804940+09:00" endTime="2026-10-03T04:18:17.4807690+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b293cb5-4e84-42af-8e94-49cdd889709d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.Prepared() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 276
+   at LingGuangV05.Tests.CoreTests.ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 254
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2e9707cd-b0ef-49a7-a975-f448707af49f" testId="e87a9960-466d-5f94-9bd6-7c708cde71fe" testName="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" computerName="Mac" duration="00:00:00.0001930" startTime="2026-10-03T04:18:17.4814010+09:00" endTime="2026-10-03T04:18:17.4815940+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e9707cd-b0ef-49a7-a975-f448707af49f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 158
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ebbfb975-8f06-432f-9565-1bcabee699d9" testId="5b77b7ac-3023-6323-2d8c-808eb6bde553" testName="VramPreventsOversizedBoardWithoutChargingMoney" computerName="Mac" duration="00:00:00.0001740" startTime="2026-10-03T04:18:17.4844110+09:00" endTime="2026-10-03T04:18:17.4845850+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebbfb975-8f06-432f-9565-1bcabee699d9">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.VramPreventsOversizedBoardWithoutChargingMoney() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 121
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3b092441-3e6b-47ba-bf45-09f59a1854aa" testId="1270b21f-0b28-744c-3047-96b83c52db9c" testName="ExamGateExplainsMissingPreparation" computerName="Mac" duration="00:00:00.0001280" startTime="2026-10-03T04:18:17.4803590+09:00" endTime="2026-10-03T04:18:17.4804860+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b092441-3e6b-47ba-bf45-09f59a1854aa">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.ExamGateExplainsMissingPreparation() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 231
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f4598203-0ea9-4fbc-b8ef-bd9ccbf7a5d4" testId="f890a48d-27f6-658b-e323-fb5b8dda60af" testName="DailyBillingAndSimulationAreIndependentOfTickPartition" computerName="Mac" duration="00:00:00.0004410" startTime="2026-10-03T04:18:17.4794960+09:00" endTime="2026-10-03T04:18:17.4799370+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4598203-0ea9-4fbc-b8ef-bd9ccbf7a5d4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.DailyBillingAndSimulationAreIndependentOfTickPartition() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 177
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2da8fa12-5490-4cd3-920f-4718595e0d74" testId="4e0b4551-7a20-291c-d79a-3326b32e4033" testName="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" computerName="Mac" duration="00:00:00.0003440" startTime="2026-10-03T04:18:17.4781930+09:00" endTime="2026-10-03T04:18:17.4785360+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2da8fa12-5490-4cd3-920f-4718595e0d74">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 90
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7b40dad5-54a1-4899-bcf8-e98e15326471" testId="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00" testName="SameSeedProducesSameCardsPredictionsAndConfidence" computerName="Mac" duration="00:00:00.0001700" startTime="2026-10-03T04:18:17.4830200+09:00" endTime="2026-10-03T04:18:17.4831900+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b40dad5-54a1-4899-bcf8-e98e15326471">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.SameSeedProducesSameCardsPredictionsAndConfidence() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 57
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="736d0479-1758-4de6-8952-b62d39f6eaf0" testId="cc134237-42b6-4ccc-1499-fac987a3576f" testName="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" computerName="Mac" duration="00:00:00.0001700" startTime="2026-10-03T04:18:17.4819480+09:00" endTime="2026-10-03T04:18:17.4821180+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="736d0479-1758-4de6-8952-b62d39f6eaf0">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 217
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9d68d9f0-530b-4d84-a325-70103f84f310" testId="554d6421-6140-c325-612b-1f3a56256ae7" testName="SavedActiveCardRngAndPulseStateContinueExactly" computerName="Mac" duration="00:00:00.0002410" startTime="2026-10-03T04:18:17.4833720+09:00" endTime="2026-10-03T04:18:17.4836120+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d68d9f0-530b-4d84-a325-70103f84f310">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.SavedActiveCardRngAndPulseStateContinueExactly() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 68
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1ba84535-6919-4817-8fc5-d2b0c4562b99" testId="f133d777-8201-5e01-3111-d8179312a197" testName="OverloadRequiresReducedLoadBeforeManualBreakerReset" computerName="Mac" duration="00:00:00.0001860" startTime="2026-10-03T04:18:17.4825270+09:00" endTime="2026-10-03T04:18:17.4827130+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ba84535-6919-4817-8fc5-d2b0c4562b99">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.OverloadRequiresReducedLoadBeforeManualBreakerReset() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 204
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="49a831fe-c637-4e75-b45b-6c5bc5632f2a" testId="cfe90e22-5074-4fbe-bc28-1520a97e4d62" testName="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" computerName="Mac" duration="00:00:00.0001570" startTime="2026-10-03T04:18:17.4827160+09:00" endTime="2026-10-03T04:18:17.4828730+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="49a831fe-c637-4e75-b45b-6c5bc5632f2a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 116
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d37c2a7a-fe25-4700-a399-dbb4a1b7067b" testId="f7a7d623-71c1-a126-588d-8b7341afa0d7" testName="DirectedPathRemovalStopsTrainingAndJobIncome" computerName="Mac" duration="00:00:00.0001840" startTime="2026-10-03T04:18:17.4799420+09:00" endTime="2026-10-03T04:18:17.4801270+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d37c2a7a-fe25-4700-a399-dbb4a1b7067b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.DirectedPathRemovalStopsTrainingAndJobIncome() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 83
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b195fead-236b-4bcc-aa74-c622b10d846b" testId="76f34c4a-d717-477e-c250-a185c56fb58a" testName="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" computerName="Mac" duration="00:00:00.0002390" startTime="2026-10-03T04:18:17.4822860+09:00" endTime="2026-10-03T04:18:17.4825240+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b195fead-236b-4bcc-aa74-c622b10d846b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 104
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6524f31a-00d9-4485-b55f-19bfd62e94e5" testId="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5" testName="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" computerName="Mac" duration="00:00:00.0002400" startTime="2026-10-03T04:18:17.4807710+09:00" endTime="2026-10-03T04:18:17.4810110+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6524f31a-00d9-4485-b55f-19bfd62e94e5">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.Prepared() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 276
+   at LingGuangV05.Tests.CoreTests.FailedExamCanRetryAndRewardIsGrantedOnlyOnce() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 244
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ae1ebe51-4cda-4f5f-8840-ad6ee94d8ca4" testId="6b5bd723-1778-655a-ea2e-4988cdc3b28d" testName="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" computerName="Mac" duration="00:00:00.0002330" startTime="2026-10-03T04:18:17.4837710+09:00" endTime="2026-10-03T04:18:17.4840040+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae1ebe51-4cda-4f5f-8840-ad6ee94d8ca4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 187
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dc9e0f11-7d44-4892-b3dc-5ecf6f9a1a73" testId="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad" testName="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" computerName="Mac" duration="00:00:00.0001510" startTime="2026-10-03T04:18:17.4836180+09:00" endTime="2026-10-03T04:18:17.4837680+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc9e0f11-7d44-4892-b3dc-5ecf6f9a1a73">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 198
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="558caf0c-5492-486f-903d-7392d64989de" testId="7be3107d-201b-1476-7acc-2015b8ec78eb" testName="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" computerName="Mac" duration="00:00:00.0002240" startTime="2026-10-03T04:18:17.4801310+09:00" endTime="2026-10-03T04:18:17.4803550+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="558caf0c-5492-486f-903d-7392d64989de">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 128
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9804322b-ac98-4011-9f71-488b25a1299f" testId="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff" testName="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" computerName="Mac" duration="00:00:00.0001540" startTime="2026-10-03T04:18:17.4821200+09:00" endTime="2026-10-03T04:18:17.4822740+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9804322b-ac98-4011-9f71-488b25a1299f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.JobsPayAccordingToAccuracyAndOnlyWhileEnabled() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 150
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="80b2b00e-2e3d-493a-92d5-c80928863407" testId="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1" testName="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" computerName="Mac" duration="00:00:00.0002530" startTime="2026-10-03T04:18:17.4792390+09:00" endTime="2026-10-03T04:18:17.4794920+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80b2b00e-2e3d-493a-92d5-c80928863407">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 223
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fccfcdc5-7449-4906-a303-26002a0a5551" testId="5d2a16d0-83f7-bc6d-2577-555c7ef79f44" testName="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" computerName="Mac" duration="00:00:00.0001760" startTime="2026-10-03T04:18:17.4831930+09:00" endTime="2026-10-03T04:18:17.4833690+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fccfcdc5-7449-4906-a303-26002a0a5551">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.SamplesStepsAndBoardParametersEachCanBeTheBottleneck() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 138
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="68ea2cd1-d8c4-46e1-b6e4-2b1136391c40" testId="77493835-e909-808d-bffa-7a6371cdec56" testName="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" computerName="Mac" duration="00:00:00.0002090" startTime="2026-10-03T04:18:17.4841980+09:00" endTime="2026-10-03T04:18:17.4844060+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68ea2cd1-d8c4-46e1-b6e4-2b1136391c40">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.UpgradesSpendPointsExactlyOnceAndRespectLevelCaps() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 167
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a5f25046-3e51-4379-8620-9340d7d797ed" testId="e7fafa4d-8c88-520a-072a-adca22522b7c" testName="HeatCausesThrottlingAndOutageAllowsCooling" computerName="Mac" duration="00:00:00.0002070" startTime="2026-10-03T04:18:17.4815960+09:00" endTime="2026-10-03T04:18:17.4818030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5f25046-3e51-4379-8620-9340d7d797ed">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.HeatCausesThrottlingAndOutageAllowsCooling() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 210
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="19846270-a115-4635-8637-cb9aa152d74c" testId="b25ff1cb-4447-ed3c-cd7c-d0da8400f271" testName="ReplayedCardIdIsRejectedWithoutDuplicateReward" computerName="Mac" duration="00:00:00.0001430" startTime="2026-10-03T04:18:17.4828750+09:00" endTime="2026-10-03T04:18:17.4830180+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19846270-a115-4635-8637-cb9aa152d74c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : Chapter-one simulation not implemented (RED)</Message>
+          <StackTrace>   at LingGuangV05.Core.ChapterOneSim..ctor(GameState state, GameConfig config) in /Users/kk/competition/Assets/LingGuangV05/Core/ChapterOneSim.cs:line 6
+   at LingGuangV05.Tests.CoreTests.ReplayedCardIdIsRejectedWithoutDuplicateReward() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ExamGateExplainsMissingPreparation" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="1270b21f-0b28-744c-3047-96b83c52db9c">
+      <Execution id="3b092441-3e6b-47ba-bf45-09f59a1854aa" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExamGateExplainsMissingPreparation" />
+    </UnitTest>
+    <UnitTest name="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="7be3107d-201b-1476-7acc-2015b8ec78eb">
+      <Execution id="558caf0c-5492-486f-903d-7392d64989de" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" />
+    </UnitTest>
+    <UnitTest name="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="4e0b4551-7a20-291c-d79a-3326b32e4033">
+      <Execution id="2da8fa12-5490-4cd3-920f-4718595e0d74" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" />
+    </UnitTest>
+    <UnitTest name="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff">
+      <Execution id="9804322b-ac98-4011-9f71-488b25a1299f" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" />
+    </UnitTest>
+    <UnitTest name="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="99b8144d-b196-0519-26c5-cc773d8e5865">
+      <Execution id="597faa8f-2953-4fc6-a52d-5b386f2ad81e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" />
+    </UnitTest>
+    <UnitTest name="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="6b5bd723-1778-655a-ea2e-4988cdc3b28d">
+      <Execution id="ae1ebe51-4cda-4f5f-8840-ad6ee94d8ca4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" />
+    </UnitTest>
+    <UnitTest name="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad">
+      <Execution id="dc9e0f11-7d44-4892-b3dc-5ecf6f9a1a73" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" />
+    </UnitTest>
+    <UnitTest name="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="1ac6c134-b6c3-3576-18d5-63d4d3380b33">
+      <Execution id="b4de3656-09cb-4522-9516-6da2a3045c93" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" />
+    </UnitTest>
+    <UnitTest name="HeatCausesThrottlingAndOutageAllowsCooling" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e7fafa4d-8c88-520a-072a-adca22522b7c">
+      <Execution id="a5f25046-3e51-4379-8620-9340d7d797ed" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="HeatCausesThrottlingAndOutageAllowsCooling" />
+    </UnitTest>
+    <UnitTest name="DirectedPathRemovalStopsTrainingAndJobIncome" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f7a7d623-71c1-a126-588d-8b7341afa0d7">
+      <Execution id="d37c2a7a-fe25-4700-a399-dbb4a1b7067b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="DirectedPathRemovalStopsTrainingAndJobIncome" />
+    </UnitTest>
+    <UnitTest name="SavedActiveCardRngAndPulseStateContinueExactly" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="554d6421-6140-c325-612b-1f3a56256ae7">
+      <Execution id="9d68d9f0-530b-4d84-a325-70103f84f310" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SavedActiveCardRngAndPulseStateContinueExactly" />
+    </UnitTest>
+    <UnitTest name="SameSeedProducesSameCardsPredictionsAndConfidence" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00">
+      <Execution id="7b40dad5-54a1-4899-bcf8-e98e15326471" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SameSeedProducesSameCardsPredictionsAndConfidence" />
+    </UnitTest>
+    <UnitTest name="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="77493835-e909-808d-bffa-7a6371cdec56">
+      <Execution id="68ea2cd1-d8c4-46e1-b6e4-2b1136391c40" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" />
+    </UnitTest>
+    <UnitTest name="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="10435959-0d40-cec4-99e3-375c091b5f3b">
+      <Execution id="bd9a8ff6-10cb-4bb8-a62c-32788c480d63" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" />
+    </UnitTest>
+    <UnitTest name="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d">
+      <Execution id="6b293cb5-4e84-42af-8e94-49cdd889709d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" />
+    </UnitTest>
+    <UnitTest name="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="76f34c4a-d717-477e-c250-a185c56fb58a">
+      <Execution id="b195fead-236b-4bcc-aa74-c622b10d846b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" />
+    </UnitTest>
+    <UnitTest name="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5">
+      <Execution id="6524f31a-00d9-4485-b55f-19bfd62e94e5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="24600395-c20b-97ce-23b2-3274a7fad188">
+      <Execution id="979d99d5-a607-4f5a-a478-4c1e4bf9c606" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" />
+    </UnitTest>
+    <UnitTest name="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1">
+      <Execution id="80b2b00e-2e3d-493a-92d5-c80928863407" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" />
+    </UnitTest>
+    <UnitTest name="VramPreventsOversizedBoardWithoutChargingMoney" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="5b77b7ac-3023-6323-2d8c-808eb6bde553">
+      <Execution id="ebbfb975-8f06-432f-9565-1bcabee699d9" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="VramPreventsOversizedBoardWithoutChargingMoney" />
+    </UnitTest>
+    <UnitTest name="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="5d2a16d0-83f7-bc6d-2577-555c7ef79f44">
+      <Execution id="fccfcdc5-7449-4906-a303-26002a0a5551" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" />
+    </UnitTest>
+    <UnitTest name="ReplayedCardIdIsRejectedWithoutDuplicateReward" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b25ff1cb-4447-ed3c-cd7c-d0da8400f271">
+      <Execution id="19846270-a115-4635-8637-cb9aa152d74c" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ReplayedCardIdIsRejectedWithoutDuplicateReward" />
+    </UnitTest>
+    <UnitTest name="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="cc134237-42b6-4ccc-1499-fac987a3576f">
+      <Execution id="736d0479-1758-4de6-8952-b62d39f6eaf0" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="82673fc2-830e-38c7-076f-32ff1c3e2f92">
+      <Execution id="508d6753-d85d-415b-bf5b-a828c330e056" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" />
+    </UnitTest>
+    <UnitTest name="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac">
+      <Execution id="cadaf357-a3b8-409a-b585-5f1a7b18bcda" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" />
+    </UnitTest>
+    <UnitTest name="OverloadRequiresReducedLoadBeforeManualBreakerReset" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f133d777-8201-5e01-3111-d8179312a197">
+      <Execution id="1ba84535-6919-4817-8fc5-d2b0c4562b99" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="OverloadRequiresReducedLoadBeforeManualBreakerReset" />
+    </UnitTest>
+    <UnitTest name="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="cfe90e22-5074-4fbe-bc28-1520a97e4d62">
+      <Execution id="49a831fe-c637-4e75-b45b-6c5bc5632f2a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" />
+    </UnitTest>
+    <UnitTest name="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e87a9960-466d-5f94-9bd6-7c708cde71fe">
+      <Execution id="2e9707cd-b0ef-49a7-a975-f448707af49f" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" />
+    </UnitTest>
+    <UnitTest name="DailyBillingAndSimulationAreIndependentOfTickPartition" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f890a48d-27f6-658b-e323-fb5b8dda60af">
+      <Execution id="f4598203-0ea9-4fbc-b8ef-bd9ccbf7a5d4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="DailyBillingAndSimulationAreIndependentOfTickPartition" />
+    </UnitTest>
+    <UnitTest name="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395">
+      <Execution id="cec15ed6-11f3-4410-9b59-e5dee0785796" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1ac6c134-b6c3-3576-18d5-63d4d3380b33" executionId="b4de3656-09cb-4522-9516-6da2a3045c93" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10435959-0d40-cec4-99e3-375c091b5f3b" executionId="bd9a8ff6-10cb-4bb8-a62c-32788c480d63" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99b8144d-b196-0519-26c5-cc773d8e5865" executionId="597faa8f-2953-4fc6-a52d-5b386f2ad81e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82673fc2-830e-38c7-076f-32ff1c3e2f92" executionId="508d6753-d85d-415b-bf5b-a828c330e056" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24600395-c20b-97ce-23b2-3274a7fad188" executionId="979d99d5-a607-4f5a-a478-4c1e4bf9c606" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395" executionId="cec15ed6-11f3-4410-9b59-e5dee0785796" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac" executionId="cadaf357-a3b8-409a-b585-5f1a7b18bcda" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d" executionId="6b293cb5-4e84-42af-8e94-49cdd889709d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e87a9960-466d-5f94-9bd6-7c708cde71fe" executionId="2e9707cd-b0ef-49a7-a975-f448707af49f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b77b7ac-3023-6323-2d8c-808eb6bde553" executionId="ebbfb975-8f06-432f-9565-1bcabee699d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1270b21f-0b28-744c-3047-96b83c52db9c" executionId="3b092441-3e6b-47ba-bf45-09f59a1854aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f890a48d-27f6-658b-e323-fb5b8dda60af" executionId="f4598203-0ea9-4fbc-b8ef-bd9ccbf7a5d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e0b4551-7a20-291c-d79a-3326b32e4033" executionId="2da8fa12-5490-4cd3-920f-4718595e0d74" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00" executionId="7b40dad5-54a1-4899-bcf8-e98e15326471" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc134237-42b6-4ccc-1499-fac987a3576f" executionId="736d0479-1758-4de6-8952-b62d39f6eaf0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="554d6421-6140-c325-612b-1f3a56256ae7" executionId="9d68d9f0-530b-4d84-a325-70103f84f310" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f133d777-8201-5e01-3111-d8179312a197" executionId="1ba84535-6919-4817-8fc5-d2b0c4562b99" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfe90e22-5074-4fbe-bc28-1520a97e4d62" executionId="49a831fe-c637-4e75-b45b-6c5bc5632f2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7a7d623-71c1-a126-588d-8b7341afa0d7" executionId="d37c2a7a-fe25-4700-a399-dbb4a1b7067b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76f34c4a-d717-477e-c250-a185c56fb58a" executionId="b195fead-236b-4bcc-aa74-c622b10d846b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5" executionId="6524f31a-00d9-4485-b55f-19bfd62e94e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b5bd723-1778-655a-ea2e-4988cdc3b28d" executionId="ae1ebe51-4cda-4f5f-8840-ad6ee94d8ca4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad" executionId="dc9e0f11-7d44-4892-b3dc-5ecf6f9a1a73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7be3107d-201b-1476-7acc-2015b8ec78eb" executionId="558caf0c-5492-486f-903d-7392d64989de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff" executionId="9804322b-ac98-4011-9f71-488b25a1299f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1" executionId="80b2b00e-2e3d-493a-92d5-c80928863407" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d2a16d0-83f7-bc6d-2577-555c7ef79f44" executionId="fccfcdc5-7449-4906-a303-26002a0a5551" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77493835-e909-808d-bffa-7a6371cdec56" executionId="68ea2cd1-d8c4-46e1-b6e4-2b1136391c40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7fafa4d-8c88-520a-072a-adca22522b7c" executionId="a5f25046-3e51-4379-8620-9340d7d797ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b25ff1cb-4447-ed3c-cd7c-d0da8400f271" executionId="19846270-a115-4635-8637-cb9aa152d74c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="30" executed="30" passed="0" failed="30" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started
+Running all tests in /Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll
+   NUnit3TestExecutor discovered 30 of 30 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.6.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

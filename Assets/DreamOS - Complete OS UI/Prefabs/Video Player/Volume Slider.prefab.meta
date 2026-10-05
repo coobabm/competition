@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f34fe8f2d2577894c990c24866832ac5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Video Player/Volume Slider.prefab
+  uploadId: 718228

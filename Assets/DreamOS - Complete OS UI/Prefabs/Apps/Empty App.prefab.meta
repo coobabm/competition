@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 76dc9586dbbd5f14287fb9eb9ec484d8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Apps/Empty App.prefab
+  uploadId: 718228

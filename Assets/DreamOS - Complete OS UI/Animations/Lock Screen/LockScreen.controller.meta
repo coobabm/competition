@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6a4e5c47e3fb67c4b810a994c7ea842b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Lock Screen/LockScreen.controller
+  uploadId: 718228

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 803603510f9384c41a0183cae84ddc42
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Music Player/Shuffle Button.prefab
+  uploadId: 718228

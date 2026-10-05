@@ -1,0 +1,7 @@
+Bundled third-party software (local, offline inference for 灵光):
+
+- llama.cpp / ggml (https://github.com/ggml-org/llama.cpp), MIT License, Copyright (c) 2023-2026 The ggml authors.
+  macOS: Homebrew build 9580 (mac-arm64/), Windows: release b11370 Vulkan x64 (win-x64/).
+- LLVM OpenMP runtime (libomp), Apache License 2.0 with LLVM Exceptions (win-x64/LICENSE-LLVM-OpenMP).
+- OpenSSL 3 (macOS libssl / libcrypto), Apache License 2.0.
+- Model: Qwen3.5-4B (Qwen team, Alibaba Cloud), Apache License 2.0; GGUF Q4_K_M quantization by bartowski.

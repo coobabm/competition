@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b022ef4166f57564590ee137e1b164fd, type: 3}
+  m_Name: Aero 2010 Apps
+  m_EditorClassIdentifier: 
+  alwaysUpdate: 0
+  optimizeUpdates: 1
+  apps:
+  - appTitle: Calculator
+    localizationKey: CalculatorTitle
+    appIconPreview: {fileID: 2800000, guid: dc4ce9298bd6a4209b31585a83b969c9, type: 3}
+    appIconBig: {fileID: 21300000, guid: dc4ce9298bd6a4209b31585a83b969c9, type: 3}
+    appIconMedium: {fileID: 21300000, guid: dc4ce9298bd6a4209b31585a83b969c9, type: 3}
+    appIconSmall: {fileID: 21300000, guid: dc4ce9298bd6a4209b31585a83b969c9, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Commander
+    localizationKey: CommanderTitle
+    appIconPreview: {fileID: 2800000, guid: 5b8541986eb4b43a0801eb11d9559766, type: 3}
+    appIconBig: {fileID: 21300000, guid: 5b8541986eb4b43a0801eb11d9559766, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 5b8541986eb4b43a0801eb11d9559766, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 5b8541986eb4b43a0801eb11d9559766, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Game Hub
+    localizationKey: GameHubTitle
+    appIconPreview: {fileID: 2800000, guid: 9046dd5b79d3e4cd2a11171f103f6d7e, type: 3}
+    appIconBig: {fileID: 21300000, guid: 9046dd5b79d3e4cd2a11171f103f6d7e, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 9046dd5b79d3e4cd2a11171f103f6d7e, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 9046dd5b79d3e4cd2a11171f103f6d7e, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Mail
+    localizationKey: MailTitle
+    appIconPreview: {fileID: 2800000, guid: 7f74316d41a0b465f8fb24a7d9dd7625, type: 3}
+    appIconBig: {fileID: 21300000, guid: 7f74316d41a0b465f8fb24a7d9dd7625, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 7f74316d41a0b465f8fb24a7d9dd7625, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 7f74316d41a0b465f8fb24a7d9dd7625, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Messaging
+    localizationKey: MessagingTitle
+    appIconPreview: {fileID: 2800000, guid: 10e2cb5f1dcb64ad2b3d54c9bd341d11, type: 3}
+    appIconBig: {fileID: 21300000, guid: 10e2cb5f1dcb64ad2b3d54c9bd341d11, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 10e2cb5f1dcb64ad2b3d54c9bd341d11, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 10e2cb5f1dcb64ad2b3d54c9bd341d11, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Music Player
+    localizationKey: MusicPlayerTitle
+    appIconPreview: {fileID: 2800000, guid: e7e273d5d82614b0dab17865ff4ae1d8, type: 3}
+    appIconBig: {fileID: 21300000, guid: e7e273d5d82614b0dab17865ff4ae1d8, type: 3}
+    appIconMedium: {fileID: 21300000, guid: e7e273d5d82614b0dab17865ff4ae1d8, type: 3}
+    appIconSmall: {fileID: 21300000, guid: e7e273d5d82614b0dab17865ff4ae1d8, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Notepad
+    localizationKey: NotepadTitle
+    appIconPreview: {fileID: 2800000, guid: 78a5b2a6714544e218d36bc87e245695, type: 3}
+    appIconBig: {fileID: 21300000, guid: 78a5b2a6714544e218d36bc87e245695, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 78a5b2a6714544e218d36bc87e245695, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 78a5b2a6714544e218d36bc87e245695, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Photo Gallery
+    localizationKey: PhotoGalleryTitle
+    appIconPreview: {fileID: 2800000, guid: 0ef55b060918049ae81e22c596b38f08, type: 3}
+    appIconBig: {fileID: 21300000, guid: 0ef55b060918049ae81e22c596b38f08, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 0ef55b060918049ae81e22c596b38f08, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 0ef55b060918049ae81e22c596b38f08, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Reminder
+    localizationKey: ReminderTitle
+    appIconPreview: {fileID: 2800000, guid: ba57ff81f60884324bbde0a6b52eaaff, type: 3}
+    appIconBig: {fileID: 21300000, guid: ba57ff81f60884324bbde0a6b52eaaff, type: 3}
+    appIconMedium: {fileID: 21300000, guid: ba57ff81f60884324bbde0a6b52eaaff, type: 3}
+    appIconSmall: {fileID: 21300000, guid: ba57ff81f60884324bbde0a6b52eaaff, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Settings
+    localizationKey: SettingsTitle
+    appIconPreview: {fileID: 2800000, guid: f87b24a5116c94bfabb10995971de4ba, type: 3}
+    appIconBig: {fileID: 21300000, guid: f87b24a5116c94bfabb10995971de4ba, type: 3}
+    appIconMedium: {fileID: 21300000, guid: f87b24a5116c94bfabb10995971de4ba, type: 3}
+    appIconSmall: {fileID: 21300000, guid: f87b24a5116c94bfabb10995971de4ba, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Video Player
+    localizationKey: VideoPlayerTitle
+    appIconPreview: {fileID: 2800000, guid: cebf3459e617b44b9a8b1a64761a5902, type: 3}
+    appIconBig: {fileID: 21300000, guid: cebf3459e617b44b9a8b1a64761a5902, type: 3}
+    appIconMedium: {fileID: 21300000, guid: cebf3459e617b44b9a8b1a64761a5902, type: 3}
+    appIconSmall: {fileID: 21300000, guid: cebf3459e617b44b9a8b1a64761a5902, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Web Browser
+    localizationKey: WebBrowserTitle
+    appIconPreview: {fileID: 2800000, guid: f736da900528c49d09c2966c89a601ac, type: 3}
+    appIconBig: {fileID: 21300000, guid: f736da900528c49d09c2966c89a601ac, type: 3}
+    appIconMedium: {fileID: 21300000, guid: f736da900528c49d09c2966c89a601ac, type: 3}
+    appIconSmall: {fileID: 21300000, guid: f736da900528c49d09c2966c89a601ac, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}
+  - appTitle: Widget Library
+    localizationKey: WidgetLibraryTitle
+    appIconPreview: {fileID: 2800000, guid: 37ec0fd63497b4bae806c6828ada2275, type: 3}
+    appIconBig: {fileID: 21300000, guid: 37ec0fd63497b4bae806c6828ada2275, type: 3}
+    appIconMedium: {fileID: 21300000, guid: 37ec0fd63497b4bae806c6828ada2275, type: 3}
+    appIconSmall: {fileID: 21300000, guid: 37ec0fd63497b4bae806c6828ada2275, type: 3}
+    gradientLeft: {r: 1, g: 1, b: 1, a: 1}
+    gradientRight: {r: 1, g: 1, b: 1, a: 1}

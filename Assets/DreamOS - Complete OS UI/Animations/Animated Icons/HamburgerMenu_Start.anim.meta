@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a94c35ab5fcb99740a9072a68df6156d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Animated Icons/HamburgerMenu_Start.anim
+  uploadId: 718228

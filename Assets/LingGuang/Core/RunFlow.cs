@@ -408,6 +408,22 @@ namespace LingGuang.Core
 
         // ------------------------------------------------------------------ settlement
 
+        /// <summary>Check after a real confirm finishes playing, never during a trial or tutorial.</summary>
+        public bool ShouldAutoSettleRound
+        {
+            get
+            {
+                if (phase != Phase.Prepare) return false;
+                if (startsLeft <= 0) return true;
+                if (EstimateScore() < Target) return false;
+                // Reaching the score alone must not force a loss at a gate with extra requirements.
+                int fired = FiredSparksThisRound();
+                foreach (var effect in new Mods(this).Of(Op.MinFiresRequired))
+                    if (fired < effect.value) return false;
+                return true;
+            }
+        }
+
         public SettleReport Settle()
         {
             var rep = new SettleReport();

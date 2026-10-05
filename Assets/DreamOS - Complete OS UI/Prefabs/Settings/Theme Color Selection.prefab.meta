@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b93b216d15b5029478f4036deda59570
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Settings/Theme Color Selection.prefab
+  uploadId: 718228

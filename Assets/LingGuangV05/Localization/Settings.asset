@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f512c8b124a07408070efd128c9497, type: 3}
+  m_Name: Settings
+  m_EditorClassIdentifier: 
+  languages:
+  - languageID: zh-CN
+    languageName: Chinese
+    localizedName: "\u7B80\u4F53\u4E2D\u6587"
+    localizationLanguage: {fileID: 11400000, guid: 42cdf62e0198e4ea78bbe23e9c6b9dbc, type: 2}
+    isExpanded: 0
+  - languageID: en-US
+    languageName: English
+    localizedName: English
+    localizationLanguage: {fileID: 11400000, guid: 05402ec2d3abf486a9d7dfae97e5dacd, type: 2}
+    isExpanded: 0
+  tables:
+  - tableID: UI
+    localizationTable: {fileID: 11400000, guid: 5ac09aca7d0464f428f1aec00e687ed0, type: 2}
+    isExpanded: 0
+  - tableID: Game Hub
+    localizationTable: {fileID: 11400000, guid: 0eb7e7ab93f454510aac812a1eb2dc34, type: 2}
+    isExpanded: 0
+  - tableID: Mail
+    localizationTable: {fileID: 11400000, guid: dc672a0ecdb45452ca99ca66877dd108, type: 2}
+    isExpanded: 0
+  - tableID: Messaging
+    localizationTable: {fileID: 11400000, guid: 2fa470c6e81c0416c927921207db7f4a, type: 2}
+    isExpanded: 0
+  - tableID: Notepad
+    localizationTable: {fileID: 11400000, guid: 66868c0254b8442c399bf741211329a8, type: 2}
+    isExpanded: 0
+  - tableID: Web Browser
+    localizationTable: {fileID: 11400000, guid: 1da696a1c583845c6a546abe32bc24ee, type: 2}
+    isExpanded: 0
+  - tableID: Widget
+    localizationTable: {fileID: 11400000, guid: 9b9b36ae7523f43d692e31673d8db053, type: 2}
+    isExpanded: 0
+  defaultLanguageID: zh-CN
+  defaultLanguageIndex: 0
+  enableExperimental: 0

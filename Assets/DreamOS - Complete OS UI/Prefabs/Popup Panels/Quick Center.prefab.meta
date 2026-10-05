@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e950fd541d21571458dd36097e65f9a2
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Popup Panels/Quick Center.prefab
+  uploadId: 718228

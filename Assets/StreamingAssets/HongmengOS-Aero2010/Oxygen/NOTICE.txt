@@ -1,0 +1,13 @@
+Oxygen Icon Theme — selected unmodified icons
+Copyright (C) 2007 Oxygen Team and contributors, see licenses/AUTHORS and licenses/COPYING.
+License: LGPL-3.0-or-later, with the artwork clarification in licenses/COPYING.
+This is not Microsoft Windows artwork and is not affiliated with Microsoft.
+
+These PNG files are loaded at runtime as separate, replaceable files; they are not packed into a Unity sprite atlas.
+Keep this NOTICE, licenses/, source/, and manifest.json with the distributed desktop.
+Preferred editable SVG sources and complete license texts are included locally; no source-code offer or external download is necessary.
+To replace an icon, preserve the corresponding application filename and supply a valid PNG.
+The parent application must not prohibit modification of these LGPL library files or reverse engineering for debugging such modifications.
+No artwork pixel changes were made; files have only been given application-specific runtime filenames. Exact upstream paths and SHA-256 values are in manifest.json.
+
+Historical upstream file: licenses/COPYING.LIB contains an older LGPLv2.1 text and is preserved verbatim for provenance. The applicable license for this selected artwork is LGPL-3.0-or-later as stated by upstream REUSE.toml and COPYING, including its artwork clarification.

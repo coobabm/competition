@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 880749a8cb23d3d479995ff8dab32268
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Apps/Reminder/ReminderManagerEditor.cs
+  uploadId: 718228

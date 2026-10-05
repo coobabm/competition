@@ -1,0 +1,9 @@
+{
+  "tested_on_isolated_copy": true,
+  "test_root": "/var/folders/kk/_d0z97ls5rq8cz5kr9pfsfyr0000gn/T/dreamos-rollback-test-soxjrv6p",
+  "preflight": true,
+  "user_edit_refusal": true,
+  "no_partial_restore_on_preflight_failure": true,
+  "restored_originals": 328,
+  "metadata_unchanged": true
+}

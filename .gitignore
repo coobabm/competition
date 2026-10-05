@@ -138,3 +138,19 @@ InitTestScene*.unity*
 *.pfx
 *.keystore
 *.jks
+
+# LingGuang: large local-only files (model weights, llama.cpp binaries, build outputs, exports, tool caches)
+/Assets/StreamingAssets/LingGuang/Models/*.gguf
+/Assets/StreamingAssets/LingGuang/Models/*.gguf.meta
+/Assets/StreamingAssets/LingGuang/llama/mac-arm64/
+/Assets/StreamingAssets/LingGuang/llama/win-x64/
+/Exports/
+/DreamOS_UserData/
+/graphify-out/
+/understand-out/
+/Tools/**/bin/
+/Tools/**/obj/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

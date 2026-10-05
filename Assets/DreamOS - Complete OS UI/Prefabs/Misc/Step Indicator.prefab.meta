@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: be7c623fb9fbc434ea5b7ebf7310dbb5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Misc/Step Indicator.prefab
+  uploadId: 718228

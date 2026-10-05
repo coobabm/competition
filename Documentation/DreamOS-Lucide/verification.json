@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-02",
+  "project": "/Users/kk/competition",
+  "replacement_pngs": 328,
+  "lucide_source_icons": 99,
+  "preserved_pngs": 44,
+  "unchanged_protected_files": 1850,
+  "unity_sprite_guid_fileid_and_import_size_checks_passed": 328,
+  "unity_gpu_texture_alpha_checks_passed": 328,
+  "scene_icon_image_references": 646,
+  "rollback_test": "Passed on isolated copy, including refusal to overwrite modified PNGs",
+  "playmode_scene": "Assets/DreamOS - Complete OS UI/Scenes/Desktop.unity",
+  "playmode_console_errors": 0,
+  "playmode_console_warnings": 12,
+  "visual_check": {
+    "lockscreen": "Lucide lock icon visible",
+    "desktop": "Verified in Play Mode after the user requested removal of startup login",
+    "note": "Editor active scene changed from Assets/Scenes/Desktop.unity to the vendor demo scene during work; no scene files were modified by this replacement."
+  },
+  "followup_auto_login": {
+    "scene": "Assets/DreamOS - Complete OS UI/Scenes/Desktop.unity",
+    "playing": true,
+    "disableLockScreen": true,
+    "hasPassword": false,
+    "savedPasswordEmpty": true,
+    "desktopVisible": true,
+    "lockScreenActive": false,
+    "bootActive": false,
+    "consoleErrors": 1,
+    "consoleWarnings": 8
+  },
+  "followup_known_error": "Pre-existing TMP_InputField.OnDisable DestroyImmediate Mesh error remains; no new script changes."
+}

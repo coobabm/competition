@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ac2b97dae3c203a4ba484dbb673dd047
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/System/BSODManagerEditor.cs
+  uploadId: 718228

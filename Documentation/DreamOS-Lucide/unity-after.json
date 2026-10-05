@@ -1,0 +1,2635 @@
+{
+  "sprites": [
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Accessibility.png",
+      "valid": true,
+      "guid": "2817ed80f1bc4124db7c292c09c5d3e1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Add Circle.png",
+      "valid": true,
+      "guid": "37cbd296357478c4182f972ef7e50b15",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Add.png",
+      "valid": true,
+      "guid": "5091ea98ef91c8640b8b31dfebd85669",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Alarm.png",
+      "valid": true,
+      "guid": "0955dc463a608394297b133313f2ae40",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Apps.png",
+      "valid": true,
+      "guid": "6026f398064076a43af4b394a1ce71f8",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Arrow Down.png",
+      "valid": true,
+      "guid": "fe183c2841f5bfa4c9f5ec29cb038e4a",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Arrow Left.png",
+      "valid": true,
+      "guid": "13fa9e9138a48674f949cff5fe1e64f0",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Arrow Right.png",
+      "valid": true,
+      "guid": "08b4969ffdcbd22449bd9618cadc6027",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Arrow Top.png",
+      "valid": true,
+      "guid": "4462e76e237d7d54d84dd48b767cd5c9",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Calculator.png",
+      "valid": true,
+      "guid": "09b052498806c5a4d8a13f6c85684386",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Cannot Reach.png",
+      "valid": true,
+      "guid": "552e79806ff91324980830af6d36ab2a",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Chat Image.png",
+      "valid": true,
+      "guid": "153d77adcdf09ed47927c04b515d2efc",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Chat Voice.png",
+      "valid": true,
+      "guid": "1b0ebfc8897d6cd4bb4f0e7dca42e948",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Chat.png",
+      "valid": true,
+      "guid": "2b0fd523c657ccf42b5715c43de6f39c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Check Circle.png",
+      "valid": true,
+      "guid": "491a854728ed587408a10f474d68ce88",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Check.png",
+      "valid": true,
+      "guid": "6aa10c3ea298b6c46993826b0982464d",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Clock.png",
+      "valid": true,
+      "guid": "2d11229e772947649b2d0d3681fc753f",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Close Circle.png",
+      "valid": true,
+      "guid": "47c5645af7bda6843a81942676bacd16",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Close.png",
+      "valid": true,
+      "guid": "2f843117fad432b48a288b203977b27c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Commander.png",
+      "valid": true,
+      "guid": "3ec63597f9e5c314c81ac95c0d5e8544",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Compass.png",
+      "valid": true,
+      "guid": "adf082bedfd318c4095717317ac91efb",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Customization.png",
+      "valid": true,
+      "guid": "26f90b28ba480164d8f6b310bf076cd9",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Delete Back.png",
+      "valid": true,
+      "guid": "4a090649b87f2244caa9a43c1472eb3b",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Delete.png",
+      "valid": true,
+      "guid": "6c0a8267acde2f94e986c204c25ad848",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Desktop Order.png",
+      "valid": true,
+      "guid": "c34db8f6c894a3d41bed40a1b1067147",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Download.png",
+      "valid": true,
+      "guid": "7aeb98513684f6b4baf6fed355993941",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Downloads.png",
+      "valid": true,
+      "guid": "44b998a4218833e469521c1449a4d33b",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Enter.png",
+      "valid": true,
+      "guid": "00a75f5ba5409434aa34ea6b07c01ea0",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Error.png",
+      "valid": true,
+      "guid": "76ec490725116474d8f22eb6b49669d0",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Eye Off.png",
+      "valid": true,
+      "guid": "8523ce0d53beb2b45ad697f7e0634eab",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Eye.png",
+      "valid": true,
+      "guid": "b72762b8685a1814284b9fbd6913c6ee",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Fullscreen Exit.png",
+      "valid": true,
+      "guid": "3f797bcd1ceb3de43b53470901b0e0ad",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Fullscreen.png",
+      "valid": true,
+      "guid": "640bef43ddb6aa244a2312d0b5ae6a8d",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Game Hub.png",
+      "valid": true,
+      "guid": "364a1d9561771964990ff0a1676660bc",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Hamburger Menu.png",
+      "valid": true,
+      "guid": "a360168a0dca0d348be17b168214ffcb",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Heart Filled.png",
+      "valid": true,
+      "guid": "fd620ff46c534ff4e8148d417033a9b1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Heart.png",
+      "valid": true,
+      "guid": "53599cfc89eb0c949a35663a1fa02a06",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Home.png",
+      "valid": true,
+      "guid": "79d58ac14ccb56244b604e18d2b01546",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Inbox.png",
+      "valid": true,
+      "guid": "6831493aaa96f6c49a26d4a654a09683",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Info.png",
+      "valid": true,
+      "guid": "e0d757e22cd287d439d6aa5b28bf36c8",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Library.png",
+      "valid": true,
+      "guid": "db76a74d662daea4fad318b30c677a3c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Lock.png",
+      "valid": true,
+      "guid": "e43e493993dd7164e9880216a2967af9",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Lyrics.png",
+      "valid": true,
+      "guid": "965d2b1629c6b4b41885a12a6e8ba655",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Mail.png",
+      "valid": true,
+      "guid": "1d6c491c0411986488682e45bc910f94",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Messages.png",
+      "valid": true,
+      "guid": "9c94eab1747245142bca2a0517708fad",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Messaging.png",
+      "valid": true,
+      "guid": "0aa36720c7411c043b7be8a6116e546c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Minus.png",
+      "valid": true,
+      "guid": "773e7370a63492d469603d1eafec6825",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Mods.png",
+      "valid": true,
+      "guid": "eea362212091bc04dbd48a3c978f95f3",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/More.png",
+      "valid": true,
+      "guid": "9adcd21db60bf394e9895ad47b573ed8",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Music Player.png",
+      "valid": true,
+      "guid": "f9910dc5004d4004eb8043534f900bac",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Music.png",
+      "valid": true,
+      "guid": "83e208fa2fe52754bb16499079d2e98a",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Next.png",
+      "valid": true,
+      "guid": "6e98c55b971a65144b7b1dc4fed69f3e",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/No Connection.png",
+      "valid": true,
+      "guid": "0a6de46815a11cc46afd740a98651e24",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Note Add.png",
+      "valid": true,
+      "guid": "3b3caaa813ceea54a919c4c10bd62a84",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Note.png",
+      "valid": true,
+      "guid": "6f722a8a254a39f43b3fbcf133b85e28",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Notepad.png",
+      "valid": true,
+      "guid": "1a46c73762a2e3748bdc199558a73d0c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Notification.png",
+      "valid": true,
+      "guid": "ff8c853a548ed3542b2c85e635433f27",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Now Playing.png",
+      "valid": true,
+      "guid": "f9d839eb29d7c504d98fc75b313301ac",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Options.png",
+      "valid": true,
+      "guid": "46e4d9688a01c35459907f3e3a884744",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Pause.png",
+      "valid": true,
+      "guid": "724607ffdc7e6694ba0aec3d346bb5c7",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Photo Gallery.png",
+      "valid": true,
+      "guid": "de3018f1c9a832445b0a2e4afd405e06",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Photo.png",
+      "valid": true,
+      "guid": "a70a02d64cc2fe44b9675810d8f74e8d",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Pin Filled.png",
+      "valid": true,
+      "guid": "bd2effa7249be2346b5701958239306a",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Pin.png",
+      "valid": true,
+      "guid": "e6b2dbffd09e56f4298a4fb98b1055f1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Play Filled.png",
+      "valid": true,
+      "guid": "27a443777450e554ea5f3b54cad97ddc",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Play.png",
+      "valid": true,
+      "guid": "5a7eb901722a7544e840cbe431b47f7c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Playlist.png",
+      "valid": true,
+      "guid": "32a2086c24e717745a8d78b094faf4b7",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Power.png",
+      "valid": true,
+      "guid": "f6b4ea217e5aaac4ca5bd87c50373f34",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Previous.png",
+      "valid": true,
+      "guid": "432a7af5b0733ed48bbe00739b968a7c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Refresh.png",
+      "valid": true,
+      "guid": "ae22dde3f573bc24a92b884561c3c253",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Repeat.png",
+      "valid": true,
+      "guid": "72c748368b7aca4408842a65907299bd",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Rotate Lock.png",
+      "valid": true,
+      "guid": "c393f9813b4e0f4429287d134b352691",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Seek.png",
+      "valid": true,
+      "guid": "49a4d0604de53e04e998a6b07927c329",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Send.png",
+      "valid": true,
+      "guid": "7b3a3978155500b4ea9a7ff85ec56d80",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Settings.png",
+      "valid": true,
+      "guid": "cac5d1bae77a81144b2b2b641b79dd0c",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Shopping Bag.png",
+      "valid": true,
+      "guid": "c9a53a2323c9de14e994165dbf419e3b",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Shuffle.png",
+      "valid": true,
+      "guid": "905e0338eb1a66b429588086cca105b3",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Signal Best.png",
+      "valid": true,
+      "guid": "842b1bce016667446807008797be547b",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Signal Normal.png",
+      "valid": true,
+      "guid": "1491e3196fa6c6745a4462ad54886894",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Signal Strong.png",
+      "valid": true,
+      "guid": "be852456bbc27304881baf4a82c95a1f",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Signal Weak.png",
+      "valid": true,
+      "guid": "2dae41e627990cd4290c6d92d30d54e4",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Spam.png",
+      "valid": true,
+      "guid": "fd51f7958aecc234791b83930b66c472",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Star Filled.png",
+      "valid": true,
+      "guid": "6ffb716598c3afe49a8f55e197c0037a",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Star.png",
+      "valid": true,
+      "guid": "267913608170e034484b2f80209f404f",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Theme.png",
+      "valid": true,
+      "guid": "783d3d0955154c74b9a8daa81ba88c70",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Timer.png",
+      "valid": true,
+      "guid": "8f72dca1640a13b4c959b5274c408858",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/User.png",
+      "valid": true,
+      "guid": "64fd92925b040194e8d4931e8c9b0559",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Video Clip.png",
+      "valid": true,
+      "guid": "c40f11fb6b100814bb6c761172b5bc29",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Video Player.png",
+      "valid": true,
+      "guid": "6885369c3e9c1c046946e7e3400c75a8",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Visualizer.png",
+      "valid": true,
+      "guid": "80027ba2389440245808b7b81d7cfede",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Volume Low.png",
+      "valid": true,
+      "guid": "a00e3be4d99dad74f9eb132cbdf95f75",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Volume Mute.png",
+      "valid": true,
+      "guid": "3267266d2bcb725478721eaf923eabfd",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Volume.png",
+      "valid": true,
+      "guid": "152bf36e12bcfcc468a3592fcb1fe3a3",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Web Browser.png",
+      "valid": true,
+      "guid": "286e5b52850c7ab4c9e2b7885f491148",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Wi-Fi.png",
+      "valid": true,
+      "guid": "0a680eb2392e36d42a20e55ca1f0d515",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/128x/Widgets.png",
+      "valid": true,
+      "guid": "261f5c9a344ff4c458cf8a02f7fec756",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Accessibility.png",
+      "valid": true,
+      "guid": "d3e8580f4b72c644e8685c27a0cc58e2",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Add Circle.png",
+      "valid": true,
+      "guid": "6f8bd9245e1803849967d4e978c03ec5",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Add.png",
+      "valid": true,
+      "guid": "47c23c7d959b56545b70c054f349f20d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Alarm.png",
+      "valid": true,
+      "guid": "39a5df0c9dd9c6e4ea31fc8397410c3b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Apps.png",
+      "valid": true,
+      "guid": "c61e0efcddf3d2e45b2c58faae5d514d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Arrow Down.png",
+      "valid": true,
+      "guid": "33422f5277f55ef4aba30a7e793d94da",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Arrow Left.png",
+      "valid": true,
+      "guid": "a50db6a3bdc2acd4c8944a3930f9951d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Arrow Right.png",
+      "valid": true,
+      "guid": "1d023b4008256a244a0fb5eb3437a0c7",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Arrow Top.png",
+      "valid": true,
+      "guid": "884fabf1d37fc92489ffced43b0a55fa",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Calculator.png",
+      "valid": true,
+      "guid": "9b00cd5f9259df948ad388a18a1e3c0b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Cannot Reach.png",
+      "valid": true,
+      "guid": "471def560efab6e499cc4ccd216ef03a",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Chat Image.png",
+      "valid": true,
+      "guid": "0dbc292918f1388409db42ffa91117a3",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Chat Voice.png",
+      "valid": true,
+      "guid": "86c4967b1ac242b47894f1bcc8ece4aa",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Chat.png",
+      "valid": true,
+      "guid": "915ba268ff6c03f4eb1d7aab224ac5cb",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Check Circle.png",
+      "valid": true,
+      "guid": "c17c92129d9f6dd4d8b7fa3a9bbf372c",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Check.png",
+      "valid": true,
+      "guid": "e648977b720aede41a769473cfa42096",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Clock.png",
+      "valid": true,
+      "guid": "2f7e532a36d49ce4fa242788b9c4f23b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Close Circle.png",
+      "valid": true,
+      "guid": "13e34d2cf0d86154f9a604d6c26becf3",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Close.png",
+      "valid": true,
+      "guid": "eaf3ceffa9b4bd8469e1950af81d85f1",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Commander.png",
+      "valid": true,
+      "guid": "9ad6ef8d0f10b2b46b5a25efed05d24a",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Compass.png",
+      "valid": true,
+      "guid": "4a645a7c6439baf4998df8f602c686cb",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Customization.png",
+      "valid": true,
+      "guid": "48d7e5f3af06cce44a5091e324247d25",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Delete Back.png",
+      "valid": true,
+      "guid": "c45e789e1e2c50e4191ff2e46f22e2d2",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Delete.png",
+      "valid": true,
+      "guid": "f880892c09e17724284f2f514a08245a",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Desktop Order.png",
+      "valid": true,
+      "guid": "28e1c395560d04a4abe948a4b49396ab",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Download.png",
+      "valid": true,
+      "guid": "6d83eef8e4c126f4c9394ab05fb0fe83",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Downloads.png",
+      "valid": true,
+      "guid": "c7211fe68292dfd46818d5b2a09d8967",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Enter.png",
+      "valid": true,
+      "guid": "cbe6ae4425a77e742a9b9c28d9997e0b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Error.png",
+      "valid": true,
+      "guid": "6a770fbb63e358b459943ba2c09bc395",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Eye Off.png",
+      "valid": true,
+      "guid": "8579ad97b17aa32429cacb5a9aed8fcd",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Eye.png",
+      "valid": true,
+      "guid": "5fccd86b0ca11044ea69eae46484569d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Fullscreen Exit.png",
+      "valid": true,
+      "guid": "a1050659ba089d742a620efd74a3ba7b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Fullscreen.png",
+      "valid": true,
+      "guid": "ec1a3dea323aabf4885d6166a29faaea",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Game Hub.png",
+      "valid": true,
+      "guid": "bf3a214668bade94c8eacdc68a12c1bd",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Hamburger Menu.png",
+      "valid": true,
+      "guid": "904d0a933b9c7794e8a42fc81c9b5f9e",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Heart Filled.png",
+      "valid": true,
+      "guid": "18297c261974a6641851a05824270c1c",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Heart.png",
+      "valid": true,
+      "guid": "5eea847880571e04cad24551162aa6f9",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Home.png",
+      "valid": true,
+      "guid": "5fe121f8df5024c4f9543af30c8c60b1",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Inbox.png",
+      "valid": true,
+      "guid": "6dcf8b75297167f4cbb75d9772892e2c",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Info.png",
+      "valid": true,
+      "guid": "a7cef580b351b3349984e1287822d859",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Library.png",
+      "valid": true,
+      "guid": "17a54d90d0367d04cb03adaa38f1167c",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Lock.png",
+      "valid": true,
+      "guid": "eaeb2743757d14c429e33d9f47505db5",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Lyrics.png",
+      "valid": true,
+      "guid": "9f9dd2648cc68884c91b4da4cb943e83",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Mail.png",
+      "valid": true,
+      "guid": "526a64c36d8b8f3418b9e0bc0c2e2566",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Messages.png",
+      "valid": true,
+      "guid": "01bbb5ff39f7f4a4eb1a588a4378143f",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Messaging.png",
+      "valid": true,
+      "guid": "94ef4bf63ff50a54f9f3b3752f02ac3f",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Minus.png",
+      "valid": true,
+      "guid": "ceb3db2dbd2be784790bc712b04553a6",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Mods.png",
+      "valid": true,
+      "guid": "9f7808c18ae40c14e8906a0451aebdff",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/More.png",
+      "valid": true,
+      "guid": "3404f30f986ed534c9a5e78e74dff50b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Music Player.png",
+      "valid": true,
+      "guid": "2138e89baaf36b54db710181266857cf",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Music.png",
+      "valid": true,
+      "guid": "98670da6ee84324498ef9b692490695d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Next.png",
+      "valid": true,
+      "guid": "54e71457b3fa1cd458cfe2ee1a8eaffd",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/No Connection.png",
+      "valid": true,
+      "guid": "773f0f50f7a392c4fa3af60517f0e3be",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Note Add.png",
+      "valid": true,
+      "guid": "9868ec1f690d4a649be6376158f5f313",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Note.png",
+      "valid": true,
+      "guid": "7b31f393fe437634580d9dec65232b45",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Notepad.png",
+      "valid": true,
+      "guid": "1940596db7ab32c478e0f34f85655071",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Notification.png",
+      "valid": true,
+      "guid": "8f4a2c8baa348b54a83b9a1e92c67106",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Now Playing.png",
+      "valid": true,
+      "guid": "754ac7317beaed64aa805557c4bc2449",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Options.png",
+      "valid": true,
+      "guid": "7ef26b42675e8944383fb4c52d5bcafe",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Pause.png",
+      "valid": true,
+      "guid": "68e5363b61397b745bb0c2ac0dde1033",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Photo Gallery.png",
+      "valid": true,
+      "guid": "2fb230a10ed48f24d8c676c3768687ae",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Photo.png",
+      "valid": true,
+      "guid": "57891fddd935b0845b3c57b7d90bcd2f",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Pin Filled.png",
+      "valid": true,
+      "guid": "e2310fc5cf777624ca3392c2d5cee1bf",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Pin.png",
+      "valid": true,
+      "guid": "615237cfcf02f234698347cd3ccd7d29",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Play Filled.png",
+      "valid": true,
+      "guid": "aaef9fc22e5006e44909cec491545e85",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Play.png",
+      "valid": true,
+      "guid": "21215e0f5fd4ff1499a8e2f8ca528493",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Playlist.png",
+      "valid": true,
+      "guid": "0ee0ecc01c9bee8419c8b6300d73a8a3",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Power.png",
+      "valid": true,
+      "guid": "adca1c2406b9d514eb685ef3c4d40b52",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Previous.png",
+      "valid": true,
+      "guid": "4dbc00757c3d9634c879431ecb38f84f",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Refresh.png",
+      "valid": true,
+      "guid": "6672e5a6579c36f44b4e5a39331818c1",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Repeat.png",
+      "valid": true,
+      "guid": "f72cca3b4c02a044cb02b89f840d7b8f",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Rotate Lock.png",
+      "valid": true,
+      "guid": "8be5a17a574c6ba41bdd7a3582295328",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Seek.png",
+      "valid": true,
+      "guid": "626c2df74dcdf234cbd4ef77cf2e6e62",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Send.png",
+      "valid": true,
+      "guid": "555ffaab62bf52441abbcb0ad20cdde6",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Settings.png",
+      "valid": true,
+      "guid": "eeeddc560f3eb6f48877925023c8907d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Shopping Bag.png",
+      "valid": true,
+      "guid": "71895c3ed1cd35f47b1647740ab4d510",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Shuffle.png",
+      "valid": true,
+      "guid": "fe5733185dad6ed4085e389f0a0a0b6b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Signal Best.png",
+      "valid": true,
+      "guid": "d4aee7dc370d1ac4dbac012fa7e48b36",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Signal Normal.png",
+      "valid": true,
+      "guid": "fcb700b1cd12d0e4c91cb83eaf4837e7",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Signal Strong.png",
+      "valid": true,
+      "guid": "041906dc6af675f4997b8ca1210844c1",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Signal Weak.png",
+      "valid": true,
+      "guid": "a9bfd21c414ba6c4a8587d7e4cb6b4aa",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Spam.png",
+      "valid": true,
+      "guid": "5c691042332f7b34b8566161f2cbd5ec",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Star Filled.png",
+      "valid": true,
+      "guid": "d563d17e842d507469127a2a92d611ba",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Star.png",
+      "valid": true,
+      "guid": "e502df8a58ef6db47a20cfde2245abb3",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Theme.png",
+      "valid": true,
+      "guid": "4cf20d69466992d4aa16e2278a481216",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Timer.png",
+      "valid": true,
+      "guid": "fc8c1a13ed3372648b520e80a2ce8a47",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/User.png",
+      "valid": true,
+      "guid": "5c92fa980fe1fbd43be26d360065cc2b",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Video Clip.png",
+      "valid": true,
+      "guid": "d40f6c57170c6474a81fa622881b09e5",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Video Player.png",
+      "valid": true,
+      "guid": "c84f22deb8f152944b6bb455c476479c",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Visualizer.png",
+      "valid": true,
+      "guid": "7416cfda5477bd64198410eb7a89e973",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Volume Low.png",
+      "valid": true,
+      "guid": "bced807ed5644914b8d7039fc91c12d7",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Volume Mute.png",
+      "valid": true,
+      "guid": "bbb262cd6de3dd04a95878df2c180808",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Volume.png",
+      "valid": true,
+      "guid": "31a7b4f2ec7e95d4cb782bc17414ec9d",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Web Browser.png",
+      "valid": true,
+      "guid": "e1dbc4c6d8a824a47bc03b453faaf2a4",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Wi-Fi.png",
+      "valid": true,
+      "guid": "d225e69b502d832469ac4bed52f84814",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/256x/Widgets.png",
+      "valid": true,
+      "guid": "3495942995da28549b22562f3b36a031",
+      "fileID": 21300000,
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Accessibility.png",
+      "valid": true,
+      "guid": "d87e1d5de8c7e3e4a95081c1f2df0215",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Clock.png",
+      "valid": true,
+      "guid": "e7bc4b108adad584abd256febad55bd8",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Compass.png",
+      "valid": true,
+      "guid": "6ff2a1cb39dd88d41b2625e2d7d70d38",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Customization.png",
+      "valid": true,
+      "guid": "1ee498f7ec44afd48ae92f7122bc9796",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Download.png",
+      "valid": true,
+      "guid": "5087074134d24fe40bf1c418681a53ae",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Heart.png",
+      "valid": true,
+      "guid": "a1becc9e64bd9d34c83674aa6f016c00",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Home.png",
+      "valid": true,
+      "guid": "898c195eb0f34be4983bf4ddbe6f0cef",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Inbox.png",
+      "valid": true,
+      "guid": "a4b7fcd756c805341b6d9039ccf12fe5",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Info.png",
+      "valid": true,
+      "guid": "cc481feb1335e4745bc3f2b7584aa0d8",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Library.png",
+      "valid": true,
+      "guid": "34447702239c0b247b85b12ae689bd86",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Lyrics.png",
+      "valid": true,
+      "guid": "25c7684e677785144bffd3c62d82a558",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Messages.png",
+      "valid": true,
+      "guid": "0528499360c4857498bd07211e7ead45",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Mods.png",
+      "valid": true,
+      "guid": "b464b2b900b844f4c9e02b2ec43204f5",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Music.png",
+      "valid": true,
+      "guid": "9e9bd8d2df0c4be4fb54b69c479420a9",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Note Add.png",
+      "valid": true,
+      "guid": "b6b6099d7b0c900448df5ab8b72ffd58",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Note.png",
+      "valid": true,
+      "guid": "909406cce3beceb4487d0ff767f8c94d",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Now Playing.png",
+      "valid": true,
+      "guid": "fa2501c5d9ce26f42b2346149fee497e",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Photo.png",
+      "valid": true,
+      "guid": "30db5027456dd9c41a4a5aef1db44cd4",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Playlist.png",
+      "valid": true,
+      "guid": "3d2a5e435bca08544a65cb4c9c00bf5b",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Send.png",
+      "valid": true,
+      "guid": "85da0ab35e6de3b48a98165610a56ba2",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Settings.png",
+      "valid": true,
+      "guid": "6ed478d921c0abb43a918da59e9953f2",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Shopping Bag.png",
+      "valid": true,
+      "guid": "e735a65ba8f99654792f1702b227cf55",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Spam.png",
+      "valid": true,
+      "guid": "206a102485b060b42a666aa5efcd737b",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/User.png",
+      "valid": true,
+      "guid": "fe7bb99325543b246b4d0666a882476a",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/32x/Video Clip.png",
+      "valid": true,
+      "guid": "5d8658ed8b4f1b0428a8d97a1faf52a4",
+      "fileID": 21300000,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Accessibility.png",
+      "valid": true,
+      "guid": "3bad32a923bfc0545b1e8976c5f1eec1",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Add Circle.png",
+      "valid": true,
+      "guid": "2455040cad9442543b4a647e930dc33c",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Add.png",
+      "valid": true,
+      "guid": "1a48193e06a12a748a0f4a91c07685cd",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Alarm.png",
+      "valid": true,
+      "guid": "c4476ef20a4f22149a4d2d407d85f8b9",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Apps.png",
+      "valid": true,
+      "guid": "49b10e50f0ff4ea40b61717e01f74de4",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Arrow Down.png",
+      "valid": true,
+      "guid": "2c01166ea867ac84399426bf192a66b2",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Arrow Left.png",
+      "valid": true,
+      "guid": "8ab3df24f43f66545add47fc21d6b181",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Arrow Right.png",
+      "valid": true,
+      "guid": "e96423138e5c0924c960085b62dfc55f",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Arrow Top.png",
+      "valid": true,
+      "guid": "8a3780498e7588142a42ab9d772d5f15",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Calculator.png",
+      "valid": true,
+      "guid": "856a1263d180d4d489a735e300ed113b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Cannot Reach.png",
+      "valid": true,
+      "guid": "5227b89c785c84243a1e77989219cd65",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Chat Image.png",
+      "valid": true,
+      "guid": "5866b6e208bfd244aa0804b9d70a1983",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Chat Voice.png",
+      "valid": true,
+      "guid": "37dcade2d5075cd4b9e5fcfa9dfe890f",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Chat.png",
+      "valid": true,
+      "guid": "f6896d45663950947990caf589c09dea",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Check Circle.png",
+      "valid": true,
+      "guid": "1b96bfc2022657c4e964d433bab7c271",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Check.png",
+      "valid": true,
+      "guid": "2fed13bf43ed76e46a6158d2bcda5c11",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Clock.png",
+      "valid": true,
+      "guid": "d9fd2ced3002f7d4a9e119b38c76a958",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Close Circle.png",
+      "valid": true,
+      "guid": "65e166a3b7def81499945723b6f3ec9e",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Close.png",
+      "valid": true,
+      "guid": "fe4dd52dfe2c3184caa86121a8bbe5a6",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Commander Input.png",
+      "valid": true,
+      "guid": "c9b7041e41583eb4080c39846fbe2f21",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Commander.png",
+      "valid": true,
+      "guid": "03a5b5ac1dbe76f43b8e7662ba54a6f1",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Compass.png",
+      "valid": true,
+      "guid": "3366358e6817df3449c0c15e2516fdaa",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Customization.png",
+      "valid": true,
+      "guid": "27a328722e4d56f46809ac60abcbd47f",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Delete Back.png",
+      "valid": true,
+      "guid": "31be17119af787644a6ced1e504cde6a",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Delete.png",
+      "valid": true,
+      "guid": "e5786f174fb3c1a4cbc5cca4e86eed34",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Desktop Order.png",
+      "valid": true,
+      "guid": "a3a7be64ae3a87943873284dae21e314",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Download.png",
+      "valid": true,
+      "guid": "b2fce583b028aa4438e8bbe2f2f5e154",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Downloads.png",
+      "valid": true,
+      "guid": "2ffcc23b0c165444090fa63adb657a3b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Enter.png",
+      "valid": true,
+      "guid": "0fa9a145a4ef38847a84b800de4c9b0e",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Error.png",
+      "valid": true,
+      "guid": "4281ae288f2506949a1233cf7b2f0e5d",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Eye Off.png",
+      "valid": true,
+      "guid": "2914220d50f913e4e9b75bdbfbe8a5c3",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Eye.png",
+      "valid": true,
+      "guid": "204d2960b4252c348a9b83b5b5d154a9",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Fullscreen Exit.png",
+      "valid": true,
+      "guid": "d7d9d609575e51843a912695f423e504",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Fullscreen.png",
+      "valid": true,
+      "guid": "ea9b284428fa6324494ffd90111c63cc",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Game Hub.png",
+      "valid": true,
+      "guid": "89ced9ff926ebcc44a10bbc83e773a88",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Hamburger Menu.png",
+      "valid": true,
+      "guid": "7310210b36b802d479dc1558cbdb57a4",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Heart Filled.png",
+      "valid": true,
+      "guid": "da7a231363f8ecb4bac5a0c6103b3662",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Heart.png",
+      "valid": true,
+      "guid": "d2267b01cadf7fb459eef60449b47101",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Home.png",
+      "valid": true,
+      "guid": "5a3c41d9b21911a4e88e133546304c88",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Inbox.png",
+      "valid": true,
+      "guid": "d7a3c50b784a6dd49891e437600ebf52",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Info.png",
+      "valid": true,
+      "guid": "427fa65e1f60f5b42bc35b2c0b4384d9",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Library.png",
+      "valid": true,
+      "guid": "55837990abc04c24097dee83d3b70a95",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Lock.png",
+      "valid": true,
+      "guid": "f03ed73256f68e241afcf5d1a2149648",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Lyrics.png",
+      "valid": true,
+      "guid": "71f76f1e2ff48ce43b31fbd6005756b8",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Mail.png",
+      "valid": true,
+      "guid": "c95bb353bd460954fb44a687e0658164",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Messages.png",
+      "valid": true,
+      "guid": "599e2ac2b10279d46bc36e8a5ac8e2bd",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Messaging.png",
+      "valid": true,
+      "guid": "364a6b14e9da516458c162498534d3f8",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Minus.png",
+      "valid": true,
+      "guid": "6b7353cd6ac899b4d9131ecc73e31472",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Mods.png",
+      "valid": true,
+      "guid": "0d09d9120e718ab48acbce08b7ec1fdd",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/More.png",
+      "valid": true,
+      "guid": "7e70cd77cc834ca459d006ff4ce1026e",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Music Player.png",
+      "valid": true,
+      "guid": "fc7cd26ef9ef59245a539f55ee66541b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Music.png",
+      "valid": true,
+      "guid": "afebe500761114f4eb2e3a0578052c07",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Next.png",
+      "valid": true,
+      "guid": "1ed66292977f4a54d9a957d97193471b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/No Connection.png",
+      "valid": true,
+      "guid": "9266e8a21f099224e916da764381c9c4",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Note Add.png",
+      "valid": true,
+      "guid": "6bc2fb0ccf1f99b4e8c97a071167d840",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Note.png",
+      "valid": true,
+      "guid": "67664fa97160a4448932b2d1f769ec3c",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Notepad.png",
+      "valid": true,
+      "guid": "368792e62724afd4c9fc4db387f121ba",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Notification.png",
+      "valid": true,
+      "guid": "c75b71875e69bec43b7b400c297f1504",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Now Playing.png",
+      "valid": true,
+      "guid": "96014e079ba2e0e4fbfed4d0285ee174",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Options.png",
+      "valid": true,
+      "guid": "a9f58ec1cce25a54599fe13f79b44080",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Pause.png",
+      "valid": true,
+      "guid": "550267751b9a7f346a1b2b812e7899bd",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Photo Gallery.png",
+      "valid": true,
+      "guid": "226e709d5553bea4c8adc362ac6fea02",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Photo.png",
+      "valid": true,
+      "guid": "c89f77996326c5846ba672562eafb44d",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Pin Filled.png",
+      "valid": true,
+      "guid": "164cd1ae791e4ac4694a6ecf1857a20b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Pin.png",
+      "valid": true,
+      "guid": "9644f74578ae28a49ae18d6e81541083",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Play Filled.png",
+      "valid": true,
+      "guid": "196f1c8e2d14fa445a0de6f11dc844a1",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Play.png",
+      "valid": true,
+      "guid": "7e4862fa17f593a46a3a40d3fe638458",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Playlist.png",
+      "valid": true,
+      "guid": "55b9c39ccd84eff48b396cc8770a3a67",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Power.png",
+      "valid": true,
+      "guid": "6fb58e750f5cffa4c8c8341ed3d8d7c4",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Previous.png",
+      "valid": true,
+      "guid": "7862e99c6c1ff074fb2ddcdc1ab6c969",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Refresh.png",
+      "valid": true,
+      "guid": "d04aba743a625d54c924b45fb2f1e5e8",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Repeat.png",
+      "valid": true,
+      "guid": "77c333310a95cea49b9640bad1f4cf7a",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Rotate Lock.png",
+      "valid": true,
+      "guid": "a9cf36853fa8350408a478aa61c57543",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Seek.png",
+      "valid": true,
+      "guid": "20645f2348ea673499654262c4dd45f0",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Send.png",
+      "valid": true,
+      "guid": "9d2614f24e179aa49b7b08f0e2186098",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Settings.png",
+      "valid": true,
+      "guid": "d2c47371232e9794998200162a100896",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Shopping Bag.png",
+      "valid": true,
+      "guid": "f6a26a3d67993194c8d0bf1e6a549fd6",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Shuffle.png",
+      "valid": true,
+      "guid": "415a845d6f93cf34494d00604962c4de",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Signal Best.png",
+      "valid": true,
+      "guid": "74ce39d8e65906a48b21201c293c943d",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Signal Normal.png",
+      "valid": true,
+      "guid": "090f06d1c531bfd43a543c3ad52aa1e2",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Signal Strong.png",
+      "valid": true,
+      "guid": "f9f4e2f5d3b92f64f881c00da22759df",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Signal Weak.png",
+      "valid": true,
+      "guid": "3973c161bb977de43b542b30a02b18cb",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Spam.png",
+      "valid": true,
+      "guid": "d49894502c3156e44a6ccd9e05b02053",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Star Filled.png",
+      "valid": true,
+      "guid": "f98ded389c1928b4e975042a233a710c",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Star.png",
+      "valid": true,
+      "guid": "e371975b1b13be54187946bdc47818ec",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Theme.png",
+      "valid": true,
+      "guid": "0f19c5ffc65bdf94f87ea8430d39b795",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Timer.png",
+      "valid": true,
+      "guid": "a660c39f88617c14bb3136e75239bbe6",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/User.png",
+      "valid": true,
+      "guid": "d63ccb83499f57e44a300e82ce683007",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Video Clip.png",
+      "valid": true,
+      "guid": "8b9f682043b18aa47a5312ceceb738e1",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Video Player.png",
+      "valid": true,
+      "guid": "7490a17fb0be07f4ebf394280ab0020b",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Visualizer.png",
+      "valid": true,
+      "guid": "fc298c9bf94bea746a3bfdc74bb200f6",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Volume Low.png",
+      "valid": true,
+      "guid": "101f8ab2df280364984f676376418851",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Volume Mute.png",
+      "valid": true,
+      "guid": "0941c2568f50d33488f6c62866ef8975",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Volume.png",
+      "valid": true,
+      "guid": "6191a97a9e068e94a88fd0cb59664054",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Web Browser.png",
+      "valid": true,
+      "guid": "e94a74d29166acd41933288895309f22",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Wi-Fi.png",
+      "valid": true,
+      "guid": "94ca3b52aa2c76a4bba4c625783e03ab",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Widgets.png",
+      "valid": true,
+      "guid": "7ffead7e6de095045ab7d159d8b82255",
+      "fileID": 21300000,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Date & Time.png",
+      "valid": true,
+      "guid": "b6cebb4b10484e94aa6ce5bb2239e855",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Language.png",
+      "valid": true,
+      "guid": "3fb84c726c24b5c4ab486869514d7f0e",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Microphone.png",
+      "valid": true,
+      "guid": "ab023f378a9457744ade579fd729252f",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Notification.png",
+      "valid": true,
+      "guid": "106a53a6c7877384c8e71db33acdca7e",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Reset Password.png",
+      "valid": true,
+      "guid": "9d9a39f93a85a884b895afeb113bd834",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Save Desktop Layout.png",
+      "valid": true,
+      "guid": "dc16af0fc5f3bf845a3eb85a6f088eb1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Snap Desktop Items.png",
+      "valid": true,
+      "guid": "fff3d4a0a5da8ef4dab19bb9b6e739f1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Spectrum.png",
+      "valid": true,
+      "guid": "1dca9a73de21af44e8bbc0c94e2da19b",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Support.png",
+      "valid": true,
+      "guid": "73481aa1c41401c4ba264fcdbc6a3952",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Theme.png",
+      "valid": true,
+      "guid": "8824ac83c904e774db2b5a7b001eac11",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Update.png",
+      "valid": true,
+      "guid": "dd27f3ad214527149b367825d2b07e67",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/User.png",
+      "valid": true,
+      "guid": "370ec3d81f8326e41a8a9038980116e1",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Wallpaper.png",
+      "valid": true,
+      "guid": "224f1819d39e635459d1d63c6b0ba63f",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Textures/Icons/Others/Settings Elements/Wipe Data.png",
+      "valid": true,
+      "guid": "1957d3dbb7534604a9896a5dfeaf3810",
+      "fileID": 21300000,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "runtimeIconImages": 646,
+  "errors": 1,
+  "warnings": 13,
+  "scene": "Assets/DreamOS - Complete OS UI/Scenes/Desktop.unity",
+  "dirty": false,
+  "playing": false,
+  "compiling": false
+}

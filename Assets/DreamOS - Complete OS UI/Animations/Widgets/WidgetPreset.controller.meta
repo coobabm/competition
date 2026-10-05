@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9743371c945a0e84b992bfce817ae346
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Widgets/WidgetPreset.controller
+  uploadId: 718228

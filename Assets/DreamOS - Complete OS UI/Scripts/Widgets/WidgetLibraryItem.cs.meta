@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 0a0273a587eb9a34fb354a51d2ec5260
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 04956588d0ed9974a8df18e5d7e4bcd3, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Widgets/WidgetLibraryItem.cs
+  uploadId: 718228

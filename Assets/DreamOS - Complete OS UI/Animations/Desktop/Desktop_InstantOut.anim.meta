@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 91579c9eb1fca7c46820dc797e125714
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Desktop/Desktop_InstantOut.anim
+  uploadId: 718228

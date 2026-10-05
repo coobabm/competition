@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d8b4bd9d3281da34da11984778c2caae
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Game Hub/Slider Indicator.prefab
+  uploadId: 718228

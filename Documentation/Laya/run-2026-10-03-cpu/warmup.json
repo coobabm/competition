@@ -1,0 +1,28 @@
+[
+  {
+    "language": "zh",
+    "elapsed_ms": 102.97545802313834,
+    "p_yes": 0.2492,
+    "usage": {
+      "input_tokens": 90,
+      "output_tokens": 0,
+      "state_tokens": 27,
+      "state_tokens_dropped": 0,
+      "truncated": false,
+      "truncated_questions": []
+    }
+  },
+  {
+    "language": "en",
+    "elapsed_ms": 42.48637502314523,
+    "p_yes": 0.3526,
+    "usage": {
+      "input_tokens": 77,
+      "output_tokens": 0,
+      "state_tokens": 23,
+      "state_tokens_dropped": 0,
+      "truncated": false,
+      "truncated_questions": []
+    }
+  }
+]

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3f80ce5574285e94a88aa6e64ddf8193
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Editor/Scripts/CreateMenu.cs
+  uploadId: 718228

@@ -1,0 +1,2708 @@
+{
+  "metadata": {
+    "model": "convaiinnovations/laya-multilingual",
+    "revision": "e4e9ddf21a7b1903b7acffd8814ad4307bf63a67",
+    "expected_sha256": {
+      "model.safetensors": "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204",
+      "tokenizer/tokenizer.json": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f"
+    },
+    "versions": {
+      "laya": "0.3.24",
+      "torch": "2.14.1",
+      "transformers": "5.18.0",
+      "tokenizers": "0.23.2",
+      "huggingface-hub": "1.33.0"
+    },
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "device": "cpu",
+    "torch_threads": 4,
+    "batch_size": 1,
+    "started_utc": "2026-10-03T07:01:48.539259+00:00",
+    "model_load_seconds": 5.629457333008759,
+    "corpus_sha256": "f8e2436f8abdbf9e85c651f34d7068865ff4852085dd0ae2691bdcda7f5bc803",
+    "generator_sha256": "fd00d4dfba8eff9d901b40ae9ef8266af9a8ff02dd20cffe56ddddd47bd1d3ea",
+    "evaluator_sha256": "25659ff2b4b7180f0f231421b22e469b304e95936b42b90efe3cbcdd295ac2c1",
+    "corpus_rows": 680,
+    "expected_predictions": 1720,
+    "suite_sizes": {
+      "balanced": 180,
+      "natural": 500
+    },
+    "unique_questions": {
+      "balanced": 180,
+      "natural": 424
+    },
+    "gate_policy": "Chinese primary both suites >=0.75; balanced each category >=0.60, n>=20; no errors/truncation",
+    "prompt_policy": "Both prompts fixed before inference; direct is diagnostic only; no tuning or training",
+    "probability_note": "Uncalibrated on game data; confidence is NOT empirical accuracy"
+  },
+  "complete": true,
+  "actual_predictions": 1720,
+  "gate": {
+    "passed": false,
+    "reasons": [
+      "balanced Chinese accuracy below 75%",
+      "natural Chinese accuracy below 75%",
+      "算术: fewer than 20 examples or accuracy below 60%",
+      "数的性质: fewer than 20 examples or accuracy below 60%",
+      "数列: fewer than 20 examples or accuracy below 60%",
+      "三段论: fewer than 20 examples or accuracy below 60%",
+      "真假运算: fewer than 20 examples or accuracy below 60%",
+      "日历: fewer than 20 examples or accuracy below 60%",
+      "真话假话: fewer than 20 examples or accuracy below 60%"
+    ],
+    "overall_threshold": 0.75,
+    "category_threshold": 0.6
+  },
+  "results": {
+    "primary/zh/balanced": {
+      "overall": {
+        "n": 180,
+        "valid": 180,
+        "errors": 0,
+        "correct": 88,
+        "accuracy": 0.4888888888888889,
+        "wilson95": [
+          0.41686216064501447,
+          0.5613799615310212
+        ],
+        "yes_count": 90,
+        "majority_baseline": 0.5,
+        "predicted_yes": 116,
+        "confusion": {
+          "tp": 57,
+          "tn": 31,
+          "fp": 59,
+          "fn": 33
+        },
+        "brier": 0.31921686816666683,
+        "ece10": 0.22612055555555557,
+        "mean_confidence": 0.7150094444444445,
+        "high_confidence_n": 56,
+        "high_confidence_errors": 28,
+        "high_confidence_accuracy": 0.5,
+        "truncated": 0,
+        "latency_median_ms": 47.82793749473058,
+        "latency_p95_ms": 53.02079097600654
+      },
+      "by_category": {
+        "三段论": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 19,
+          "confusion": {
+            "tp": 9,
+            "tn": 0,
+            "fp": 10,
+            "fn": 1
+          },
+          "brier": 0.463272853,
+          "ece10": 0.4196,
+          "mean_confidence": 0.82751,
+          "high_confidence_n": 14,
+          "high_confidence_errors": 9,
+          "high_confidence_accuracy": 0.35714285714285715,
+          "truncated": 0,
+          "latency_median_ms": 48.50643750978634,
+          "latency_p95_ms": 49.5044169947505
+        },
+        "数列": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 1,
+          "confusion": {
+            "tp": 0,
+            "tn": 9,
+            "fp": 1,
+            "fn": 10
+          },
+          "brier": 0.2453011915,
+          "ece10": 0.163435,
+          "mean_confidence": 0.587775,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 45.140186994103715,
+          "latency_p95_ms": 49.88316702656448
+        },
+        "数的性质": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 0,
+          "confusion": {
+            "tp": 0,
+            "tn": 10,
+            "fp": 0,
+            "fn": 10
+          },
+          "brier": 0.40792211950000007,
+          "ece10": 0.378865,
+          "mean_confidence": 0.807105,
+          "high_confidence_n": 9,
+          "high_confidence_errors": 5,
+          "high_confidence_accuracy": 0.4444444444444444,
+          "truncated": 0,
+          "latency_median_ms": 42.50172903994098,
+          "latency_p95_ms": 43.989375000819564
+        },
+        "日历": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 8,
+          "accuracy": 0.4,
+          "wilson95": [
+            0.21880653237281705,
+            0.6134184992377469
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 16,
+          "confusion": {
+            "tp": 7,
+            "tn": 1,
+            "fp": 9,
+            "fn": 3
+          },
+          "brier": 0.2939822195,
+          "ece10": 0.245515,
+          "mean_confidence": 0.645515,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 51.26093700528145,
+          "latency_p95_ms": 51.9009999698028
+        },
+        "条件推理": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.65,
+          "wilson95": [
+            0.43285427668523624,
+            0.818808175898918
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 11,
+          "confusion": {
+            "tp": 7,
+            "tn": 6,
+            "fp": 4,
+            "fn": 3
+          },
+          "brier": 0.2474299265,
+          "ece10": 0.23242500000000002,
+          "mean_confidence": 0.743045,
+          "high_confidence_n": 9,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.6666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 48.13391651259735,
+          "latency_p95_ms": 52.989875024650246
+        },
+        "比较": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 12,
+          "accuracy": 0.6,
+          "wilson95": [
+            0.3865815007622531,
+            0.781193467627183
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 18,
+          "confusion": {
+            "tp": 10,
+            "tn": 2,
+            "fp": 8,
+            "fn": 0
+          },
+          "brier": 0.30805746849999993,
+          "ece10": 0.24093500000000004,
+          "mean_confidence": 0.840935,
+          "high_confidence_n": 14,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.5714285714285714,
+          "truncated": 0,
+          "latency_median_ms": 49.46416651364416,
+          "latency_p95_ms": 54.2000419809483
+        },
+        "真假运算": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 19,
+          "confusion": {
+            "tp": 9,
+            "tn": 0,
+            "fp": 10,
+            "fn": 1
+          },
+          "brier": 0.309168118,
+          "ece10": 0.2963,
+          "mean_confidence": 0.7463,
+          "high_confidence_n": 7,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.7142857142857143,
+          "truncated": 0,
+          "latency_median_ms": 47.384645527927205,
+          "latency_p95_ms": 51.199042005464435
+        },
+        "真话假话": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 19,
+          "confusion": {
+            "tp": 9,
+            "tn": 0,
+            "fp": 10,
+            "fn": 1
+          },
+          "brier": 0.332009734,
+          "ece10": 0.22270000000000004,
+          "mean_confidence": 0.6587999999999999,
+          "high_confidence_n": 3,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.0,
+          "truncated": 0,
+          "latency_median_ms": 52.73054147255607,
+          "latency_p95_ms": 54.096875013783574
+        },
+        "算术": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 13,
+          "confusion": {
+            "tp": 6,
+            "tn": 3,
+            "fp": 7,
+            "fn": 4
+          },
+          "brier": 0.2658081830000001,
+          "ece10": 0.12809999999999996,
+          "mean_confidence": 0.5781,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 42.32322901953012,
+          "latency_p95_ms": 44.4992080447264
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 23,
+          "valid": 23,
+          "errors": 0,
+          "correct": 12,
+          "accuracy": 0.5217391304347826,
+          "wilson95": [
+            0.32962737336427406,
+            0.7076284258335335
+          ],
+          "yes_count": 13,
+          "majority_baseline": 0.5652173913043478,
+          "predicted_yes": 4,
+          "confusion": {
+            "tp": 3,
+            "tn": 9,
+            "fp": 1,
+            "fn": 10
+          },
+          "brier": 0.250727197826087,
+          "ece10": 0.23543043478260867,
+          "mean_confidence": 0.6797521739130434,
+          "high_confidence_n": 6,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.6666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 44.05262495856732,
+          "latency_p95_ms": 49.33616699418053
+        },
+        "2": {
+          "n": 27,
+          "valid": 27,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.48148148148148145,
+          "wilson95": [
+            0.3074322697621846,
+            0.6601438424504771
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.6296296296296297,
+          "predicted_yes": 12,
+          "confusion": {
+            "tp": 4,
+            "tn": 9,
+            "fp": 8,
+            "fn": 6
+          },
+          "brier": 0.3385573292592592,
+          "ece10": 0.25151481481481486,
+          "mean_confidence": 0.7329962962962963,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.4,
+          "truncated": 0,
+          "latency_median_ms": 46.36399995069951,
+          "latency_p95_ms": 53.230416029691696
+        },
+        "3": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 18,
+          "accuracy": 0.4186046511627907,
+          "wilson95": [
+            0.28384550927849195,
+            0.5667142261303578
+          ],
+          "yes_count": 24,
+          "majority_baseline": 0.5581395348837209,
+          "predicted_yes": 29,
+          "confusion": {
+            "tp": 14,
+            "tn": 4,
+            "fp": 15,
+            "fn": 10
+          },
+          "brier": 0.3538797458139535,
+          "ece10": 0.3206953488372093,
+          "mean_confidence": 0.7304441860465116,
+          "high_confidence_n": 13,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.5384615384615384,
+          "truncated": 0,
+          "latency_median_ms": 47.164375020656735,
+          "latency_p95_ms": 51.9009999698028
+        },
+        "4": {
+          "n": 41,
+          "valid": 41,
+          "errors": 0,
+          "correct": 20,
+          "accuracy": 0.4878048780487805,
+          "wilson95": [
+            0.34254429554432664,
+            0.6351549134845619
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5121951219512195,
+          "predicted_yes": 35,
+          "confusion": {
+            "tp": 17,
+            "tn": 3,
+            "fp": 18,
+            "fn": 3
+          },
+          "brier": 0.321715743902439,
+          "ece10": 0.22784878048780485,
+          "mean_confidence": 0.7156536585365854,
+          "high_confidence_n": 12,
+          "high_confidence_errors": 7,
+          "high_confidence_accuracy": 0.4166666666666667,
+          "truncated": 0,
+          "latency_median_ms": 48.29295800300315,
+          "latency_p95_ms": 51.86887498712167
+        },
+        "5": {
+          "n": 46,
+          "valid": 46,
+          "errors": 0,
+          "correct": 25,
+          "accuracy": 0.5434782608695652,
+          "wilson95": [
+            0.4018018105980127,
+            0.6784526621771542
+          ],
+          "yes_count": 23,
+          "majority_baseline": 0.5,
+          "predicted_yes": 36,
+          "confusion": {
+            "tp": 19,
+            "tn": 6,
+            "fp": 17,
+            "fn": 4
+          },
+          "brier": 0.30748017956521734,
+          "ece10": 0.2020652173913044,
+          "mean_confidence": 0.7070782608695653,
+          "high_confidence_n": 15,
+          "high_confidence_errors": 7,
+          "high_confidence_accuracy": 0.5333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 49.12989601143636,
+          "latency_p95_ms": 54.096875013783574
+        }
+      }
+    },
+    "primary/zh/natural": {
+      "overall": {
+        "n": 500,
+        "valid": 500,
+        "errors": 0,
+        "correct": 233,
+        "accuracy": 0.466,
+        "wilson95": [
+          0.42270077745690987,
+          0.5098176776944758
+        ],
+        "yes_count": 239,
+        "majority_baseline": 0.522,
+        "predicted_yes": 286,
+        "confusion": {
+          "tp": 129,
+          "tn": 104,
+          "fp": 157,
+          "fn": 110
+        },
+        "brier": 0.31848970258000037,
+        "ece10": 0.2461642,
+        "mean_confidence": 0.7121642,
+        "high_confidence_n": 168,
+        "high_confidence_errors": 85,
+        "high_confidence_accuracy": 0.49404761904761907,
+        "truncated": 0,
+        "latency_median_ms": 47.833833494223654,
+        "latency_p95_ms": 57.70195898367092
+      },
+      "by_category": {
+        "三段论": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 25,
+          "accuracy": 0.5813953488372093,
+          "wilson95": [
+            0.4332857738696422,
+            0.7161544907215082
+          ],
+          "yes_count": 26,
+          "majority_baseline": 0.6046511627906976,
+          "predicted_yes": 42,
+          "confusion": {
+            "tp": 25,
+            "tn": 0,
+            "fp": 17,
+            "fn": 1
+          },
+          "brier": 0.3364511504651162,
+          "ece10": 0.26215581395348836,
+          "mean_confidence": 0.8319790697674418,
+          "high_confidence_n": 30,
+          "high_confidence_errors": 14,
+          "high_confidence_accuracy": 0.5333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 48.5969579895027,
+          "latency_p95_ms": 53.49958298029378
+        },
+        "数列": {
+          "n": 73,
+          "valid": 73,
+          "errors": 0,
+          "correct": 29,
+          "accuracy": 0.3972602739726027,
+          "wilson95": [
+            0.29286701857646835,
+            0.5119258597705996
+          ],
+          "yes_count": 42,
+          "majority_baseline": 0.5753424657534246,
+          "predicted_yes": 6,
+          "confusion": {
+            "tp": 2,
+            "tn": 27,
+            "fp": 4,
+            "fn": 40
+          },
+          "brier": 0.2720793341095891,
+          "ece10": 0.1664095890410959,
+          "mean_confidence": 0.5636698630136986,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 48.1502499897033,
+          "latency_p95_ms": 60.57262502145022
+        },
+        "数的性质": {
+          "n": 78,
+          "valid": 78,
+          "errors": 0,
+          "correct": 35,
+          "accuracy": 0.44871794871794873,
+          "wilson95": [
+            0.3433437231709858,
+            0.5589063085943674
+          ],
+          "yes_count": 43,
+          "majority_baseline": 0.5512820512820513,
+          "predicted_yes": 0,
+          "confusion": {
+            "tp": 0,
+            "tn": 35,
+            "fp": 0,
+            "fn": 43
+          },
+          "brier": 0.38501326948717957,
+          "ece10": 0.35047948717948724,
+          "mean_confidence": 0.7991974358974359,
+          "high_confidence_n": 38,
+          "high_confidence_errors": 22,
+          "high_confidence_accuracy": 0.42105263157894735,
+          "truncated": 0,
+          "latency_median_ms": 43.188083480345085,
+          "latency_p95_ms": 53.85150003712624
+        },
+        "日历": {
+          "n": 38,
+          "valid": 38,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.34210526315789475,
+          "wilson95": [
+            0.21212415179959412,
+            0.5010789644821693
+          ],
+          "yes_count": 11,
+          "majority_baseline": 0.7105263157894737,
+          "predicted_yes": 30,
+          "confusion": {
+            "tp": 8,
+            "tn": 5,
+            "fp": 22,
+            "fn": 3
+          },
+          "brier": 0.3154011452631579,
+          "ece10": 0.2856105263157895,
+          "mean_confidence": 0.6277157894736842,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.0,
+          "truncated": 0,
+          "latency_median_ms": 51.42291649826802,
+          "latency_p95_ms": 74.11945902276784
+        },
+        "条件推理": {
+          "n": 61,
+          "valid": 61,
+          "errors": 0,
+          "correct": 44,
+          "accuracy": 0.7213114754098361,
+          "wilson95": [
+            0.5982856941182984,
+            0.8181145610743403
+          ],
+          "yes_count": 27,
+          "majority_baseline": 0.5573770491803278,
+          "predicted_yes": 26,
+          "confusion": {
+            "tp": 18,
+            "tn": 26,
+            "fp": 8,
+            "fn": 9
+          },
+          "brier": 0.2270105326229508,
+          "ece10": 0.2807688524590164,
+          "mean_confidence": 0.7427590163934427,
+          "high_confidence_n": 28,
+          "high_confidence_errors": 9,
+          "high_confidence_accuracy": 0.6785714285714286,
+          "truncated": 0,
+          "latency_median_ms": 48.45491598825902,
+          "latency_p95_ms": 58.77733294619247
+        },
+        "比较": {
+          "n": 76,
+          "valid": 76,
+          "errors": 0,
+          "correct": 35,
+          "accuracy": 0.4605263157894737,
+          "wilson95": [
+            0.35307731232622985,
+            0.5717737601789127
+          ],
+          "yes_count": 33,
+          "majority_baseline": 0.5657894736842105,
+          "predicted_yes": 74,
+          "confusion": {
+            "tp": 33,
+            "tn": 2,
+            "fp": 41,
+            "fn": 0
+          },
+          "brier": 0.4139228656578947,
+          "ece10": 0.4057328947368421,
+          "mean_confidence": 0.8419618421052631,
+          "high_confidence_n": 58,
+          "high_confidence_errors": 34,
+          "high_confidence_accuracy": 0.41379310344827586,
+          "truncated": 0,
+          "latency_median_ms": 49.53610399388708,
+          "latency_p95_ms": 58.32808301784098
+        },
+        "真假运算": {
+          "n": 35,
+          "valid": 35,
+          "errors": 0,
+          "correct": 20,
+          "accuracy": 0.5714285714285714,
+          "wilson95": [
+            0.4085741114397492,
+            0.7201543182281931
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5714285714285714,
+          "predicted_yes": 35,
+          "confusion": {
+            "tp": 20,
+            "tn": 0,
+            "fp": 15,
+            "fn": 0
+          },
+          "brier": 0.2687979565714285,
+          "ece10": 0.18965142857142855,
+          "mean_confidence": 0.7563657142857143,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.7,
+          "truncated": 0,
+          "latency_median_ms": 46.824707998894155,
+          "latency_p95_ms": 56.43833294743672
+        },
+        "真话假话": {
+          "n": 28,
+          "valid": 28,
+          "errors": 0,
+          "correct": 4,
+          "accuracy": 0.14285714285714285,
+          "wilson95": [
+            0.05699005319749392,
+            0.31489802163525293
+          ],
+          "yes_count": 5,
+          "majority_baseline": 0.8214285714285714,
+          "predicted_yes": 27,
+          "confusion": {
+            "tp": 4,
+            "tn": 0,
+            "fp": 23,
+            "fn": 1
+          },
+          "brier": 0.3516061082142858,
+          "ece10": 0.4911678571428571,
+          "mean_confidence": 0.634025,
+          "high_confidence_n": 3,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.3333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 52.522791986120865,
+          "latency_p95_ms": 56.749833980575204
+        },
+        "算术": {
+          "n": 68,
+          "valid": 68,
+          "errors": 0,
+          "correct": 28,
+          "accuracy": 0.4117647058823529,
+          "wilson95": [
+            0.302580197505184,
+            0.5303853324689461
+          ],
+          "yes_count": 32,
+          "majority_baseline": 0.5294117647058824,
+          "predicted_yes": 46,
+          "confusion": {
+            "tp": 19,
+            "tn": 9,
+            "fp": 27,
+            "fn": 13
+          },
+          "brier": 0.2697162073529413,
+          "ece10": 0.16831764705882352,
+          "mean_confidence": 0.5800823529411765,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 43.74070803169161,
+          "latency_p95_ms": 50.22083397489041
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 44,
+          "accuracy": 0.44,
+          "wilson95": [
+            0.34672026630160796,
+            0.5377189534832302
+          ],
+          "yes_count": 55,
+          "majority_baseline": 0.55,
+          "predicted_yes": 33,
+          "confusion": {
+            "tp": 16,
+            "tn": 28,
+            "fp": 17,
+            "fn": 39
+          },
+          "brier": 0.3258363154000001,
+          "ece10": 0.257988,
+          "mean_confidence": 0.6979879999999999,
+          "high_confidence_n": 35,
+          "high_confidence_errors": 18,
+          "high_confidence_accuracy": 0.4857142857142857,
+          "truncated": 0,
+          "latency_median_ms": 45.88352103019133,
+          "latency_p95_ms": 56.19075003778562
+        },
+        "2": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 49,
+          "accuracy": 0.49,
+          "wilson95": [
+            0.3942199893044113,
+            0.5865198806597283
+          ],
+          "yes_count": 49,
+          "majority_baseline": 0.51,
+          "predicted_yes": 44,
+          "confusion": {
+            "tp": 21,
+            "tn": 28,
+            "fp": 23,
+            "fn": 28
+          },
+          "brier": 0.29794838339999985,
+          "ece10": 0.197652,
+          "mean_confidence": 0.687652,
+          "high_confidence_n": 31,
+          "high_confidence_errors": 15,
+          "high_confidence_accuracy": 0.5161290322580645,
+          "truncated": 0,
+          "latency_median_ms": 47.75862497626804,
+          "latency_p95_ms": 56.767832953482866
+        },
+        "3": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 52,
+          "accuracy": 0.52,
+          "wilson95": [
+            0.4231657776522397,
+            0.615354482419481
+          ],
+          "yes_count": 51,
+          "majority_baseline": 0.51,
+          "predicted_yes": 67,
+          "confusion": {
+            "tp": 35,
+            "tn": 17,
+            "fp": 32,
+            "fn": 16
+          },
+          "brier": 0.3112825318000001,
+          "ece10": 0.19239200000000004,
+          "mean_confidence": 0.712392,
+          "high_confidence_n": 32,
+          "high_confidence_errors": 16,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 47.97679095645435,
+          "latency_p95_ms": 57.534084015060216
+        },
+        "4": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 43,
+          "accuracy": 0.43,
+          "wilson95": [
+            0.33733298524110106,
+            0.5278461045078768
+          ],
+          "yes_count": 40,
+          "majority_baseline": 0.6,
+          "predicted_yes": 71,
+          "confusion": {
+            "tp": 27,
+            "tn": 16,
+            "fp": 44,
+            "fn": 13
+          },
+          "brier": 0.3244058426,
+          "ece10": 0.2945,
+          "mean_confidence": 0.7245,
+          "high_confidence_n": 33,
+          "high_confidence_errors": 18,
+          "high_confidence_accuracy": 0.45454545454545453,
+          "truncated": 0,
+          "latency_median_ms": 48.34025050513446,
+          "latency_p95_ms": 57.64766701031476
+        },
+        "5": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 45,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.3561453797951198,
+            0.5475539700255787
+          ],
+          "yes_count": 44,
+          "majority_baseline": 0.56,
+          "predicted_yes": 71,
+          "confusion": {
+            "tp": 30,
+            "tn": 15,
+            "fp": 41,
+            "fn": 14
+          },
+          "brier": 0.33297543970000004,
+          "ece10": 0.28828899999999996,
+          "mean_confidence": 0.738289,
+          "high_confidence_n": 37,
+          "high_confidence_errors": 18,
+          "high_confidence_accuracy": 0.5135135135135135,
+          "truncated": 0,
+          "latency_median_ms": 49.43860450293869,
+          "latency_p95_ms": 58.77733294619247
+        }
+      }
+    },
+    "primary/en/balanced": {
+      "overall": {
+        "n": 180,
+        "valid": 180,
+        "errors": 0,
+        "correct": 95,
+        "accuracy": 0.5277777777777778,
+        "wilson95": [
+          0.4550302612186342,
+          0.5993644333412761
+        ],
+        "yes_count": 90,
+        "majority_baseline": 0.5,
+        "predicted_yes": 111,
+        "confusion": {
+          "tp": 58,
+          "tn": 37,
+          "fp": 53,
+          "fn": 32
+        },
+        "brier": 0.3200292478333333,
+        "ece10": 0.20467833333333335,
+        "mean_confidence": 0.7324561111111111,
+        "high_confidence_n": 55,
+        "high_confidence_errors": 30,
+        "high_confidence_accuracy": 0.45454545454545453,
+        "truncated": 0,
+        "latency_median_ms": 51.92368751158938,
+        "latency_p95_ms": 64.24670794513077
+      },
+      "by_category": {
+        "三段论": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 6,
+          "accuracy": 0.3,
+          "wilson95": [
+            0.1454772448676043,
+            0.5189728183535235
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 16,
+          "confusion": {
+            "tp": 6,
+            "tn": 0,
+            "fp": 10,
+            "fn": 4
+          },
+          "brier": 0.5316188104999999,
+          "ece10": 0.603845,
+          "mean_confidence": 0.865325,
+          "high_confidence_n": 15,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.3333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 53.79931250354275,
+          "latency_p95_ms": 58.455208025407046
+        },
+        "数列": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 20,
+          "confusion": {
+            "tp": 10,
+            "tn": 0,
+            "fp": 10,
+            "fn": 0
+          },
+          "brier": 0.25726136349999995,
+          "ece10": 0.13460500000000003,
+          "mean_confidence": 0.608095,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 49.97125000227243,
+          "latency_p95_ms": 53.8395419716835
+        },
+        "数的性质": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 7,
+          "accuracy": 0.35,
+          "wilson95": [
+            0.18119182410108206,
+            0.5671457233147638
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 11,
+          "confusion": {
+            "tp": 4,
+            "tn": 3,
+            "fp": 7,
+            "fn": 6
+          },
+          "brier": 0.430917499,
+          "ece10": 0.43421000000000004,
+          "mean_confidence": 0.71472,
+          "high_confidence_n": 7,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.14285714285714285,
+          "truncated": 0,
+          "latency_median_ms": 45.918395509943366,
+          "latency_p95_ms": 54.2391249909997
+        },
+        "日历": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 1,
+          "confusion": {
+            "tp": 0,
+            "tn": 9,
+            "fp": 1,
+            "fn": 10
+          },
+          "brier": 0.32091794399999996,
+          "ece10": 0.27376,
+          "mean_confidence": 0.72156,
+          "high_confidence_n": 4,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.25,
+          "truncated": 0,
+          "latency_median_ms": 53.886395500740036,
+          "latency_p95_ms": 58.657166024204344
+        },
+        "条件推理": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 11,
+          "accuracy": 0.55,
+          "wilson95": [
+            0.34208534245034233,
+            0.7418021417443759
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 11,
+          "confusion": {
+            "tp": 6,
+            "tn": 5,
+            "fp": 5,
+            "fn": 4
+          },
+          "brier": 0.319582551,
+          "ece10": 0.31557,
+          "mean_confidence": 0.83448,
+          "high_confidence_n": 12,
+          "high_confidence_errors": 4,
+          "high_confidence_accuracy": 0.6666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 53.39924947475083,
+          "latency_p95_ms": 60.42770796921104
+        },
+        "比较": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 14,
+          "accuracy": 0.7,
+          "wilson95": [
+            0.4810271816464765,
+            0.8545227551323956
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 14,
+          "confusion": {
+            "tp": 9,
+            "tn": 5,
+            "fp": 5,
+            "fn": 1
+          },
+          "brier": 0.22358907849999993,
+          "ece10": 0.150225,
+          "mean_confidence": 0.707305,
+          "high_confidence_n": 4,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 54.59510401124135,
+          "latency_p95_ms": 61.52958300663158
+        },
+        "真假运算": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 12,
+          "accuracy": 0.6,
+          "wilson95": [
+            0.3865815007622531,
+            0.781193467627183
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 14,
+          "confusion": {
+            "tp": 8,
+            "tn": 4,
+            "fp": 6,
+            "fn": 2
+          },
+          "brier": 0.280387569,
+          "ece10": 0.28771,
+          "mean_confidence": 0.80318,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.7,
+          "truncated": 0,
+          "latency_median_ms": 49.41393749322742,
+          "latency_p95_ms": 55.331041978206486
+        },
+        "真话假话": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.65,
+          "wilson95": [
+            0.43285427668523624,
+            0.818808175898918
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 9,
+          "confusion": {
+            "tp": 6,
+            "tn": 7,
+            "fp": 3,
+            "fn": 4
+          },
+          "brier": 0.2656826445,
+          "ece10": 0.28920500000000005,
+          "mean_confidence": 0.697565,
+          "high_confidence_n": 3,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.3333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 59.01695799548179,
+          "latency_p95_ms": 328.6928749876097
+        },
+        "算术": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.65,
+          "wilson95": [
+            0.43285427668523624,
+            0.818808175898918
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 15,
+          "confusion": {
+            "tp": 9,
+            "tn": 4,
+            "fp": 6,
+            "fn": 1
+          },
+          "brier": 0.25030577049999997,
+          "ece10": 0.07397499999999999,
+          "mean_confidence": 0.639875,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 48.41072848648764,
+          "latency_p95_ms": 53.52091701934114
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 23,
+          "valid": 23,
+          "errors": 0,
+          "correct": 16,
+          "accuracy": 0.6956521739130435,
+          "wilson95": [
+            0.49134243731240795,
+            0.8439597554678597
+          ],
+          "yes_count": 13,
+          "majority_baseline": 0.5652173913043478,
+          "predicted_yes": 18,
+          "confusion": {
+            "tp": 12,
+            "tn": 4,
+            "fp": 6,
+            "fn": 1
+          },
+          "brier": 0.20921432304347826,
+          "ece10": 0.13303043478260873,
+          "mean_confidence": 0.6556652173913043,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.0,
+          "truncated": 0,
+          "latency_median_ms": 48.172042006626725,
+          "latency_p95_ms": 58.26625000918284
+        },
+        "2": {
+          "n": 27,
+          "valid": 27,
+          "errors": 0,
+          "correct": 12,
+          "accuracy": 0.4444444444444444,
+          "wilson95": [
+            0.27585858177023004,
+            0.6268697548677552
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.6296296296296297,
+          "predicted_yes": 21,
+          "confusion": {
+            "tp": 8,
+            "tn": 4,
+            "fp": 13,
+            "fn": 2
+          },
+          "brier": 0.31564391148148135,
+          "ece10": 0.2658111111111111,
+          "mean_confidence": 0.7102555555555555,
+          "high_confidence_n": 8,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.625,
+          "truncated": 0,
+          "latency_median_ms": 49.95366599177942,
+          "latency_p95_ms": 55.97895901883021
+        },
+        "3": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 20,
+          "accuracy": 0.46511627906976744,
+          "wilson95": [
+            0.32511057704121815,
+            0.6108435952768602
+          ],
+          "yes_count": 24,
+          "majority_baseline": 0.5581395348837209,
+          "predicted_yes": 19,
+          "confusion": {
+            "tp": 10,
+            "tn": 10,
+            "fp": 9,
+            "fn": 14
+          },
+          "brier": 0.3732903606976744,
+          "ece10": 0.286346511627907,
+          "mean_confidence": 0.7514627906976744,
+          "high_confidence_n": 17,
+          "high_confidence_errors": 11,
+          "high_confidence_accuracy": 0.35294117647058826,
+          "truncated": 0,
+          "latency_median_ms": 52.23800003295764,
+          "latency_p95_ms": 57.408666994888335
+        },
+        "4": {
+          "n": 41,
+          "valid": 41,
+          "errors": 0,
+          "correct": 19,
+          "accuracy": 0.4634146341463415,
+          "wilson95": [
+            0.32056233976336046,
+            0.6125352873233052
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5121951219512195,
+          "predicted_yes": 24,
+          "confusion": {
+            "tp": 11,
+            "tn": 8,
+            "fp": 13,
+            "fn": 9
+          },
+          "brier": 0.32530425878048785,
+          "ece10": 0.27531951219512196,
+          "mean_confidence": 0.7387341463414634,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 5,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 53.52091701934114,
+          "latency_p95_ms": 60.42770796921104
+        },
+        "5": {
+          "n": 46,
+          "valid": 46,
+          "errors": 0,
+          "correct": 28,
+          "accuracy": 0.6086956521739131,
+          "wilson95": [
+            0.46456843231620754,
+            0.7360677496217098
+          ],
+          "yes_count": 23,
+          "majority_baseline": 0.5,
+          "predicted_yes": 29,
+          "confusion": {
+            "tp": 17,
+            "tn": 11,
+            "fp": 12,
+            "fn": 6
+          },
+          "brier": 0.32352150978260874,
+          "ece10": 0.2721673913043478,
+          "mean_confidence": 0.7605195652173913,
+          "high_confidence_n": 19,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.47368421052631576,
+          "truncated": 0,
+          "latency_median_ms": 53.349208494182676,
+          "latency_p95_ms": 193.69129097322002
+        }
+      }
+    },
+    "primary/en/natural": {
+      "overall": {
+        "n": 500,
+        "valid": 500,
+        "errors": 0,
+        "correct": 275,
+        "accuracy": 0.55,
+        "wilson95": [
+          0.5061772177351765,
+          0.5930603482186684
+        ],
+        "yes_count": 239,
+        "majority_baseline": 0.522,
+        "predicted_yes": 304,
+        "confusion": {
+          "tp": 159,
+          "tn": 116,
+          "fp": 145,
+          "fn": 80
+        },
+        "brier": 0.28385633100000024,
+        "ece10": 0.16263599999999998,
+        "mean_confidence": 0.712636,
+        "high_confidence_n": 145,
+        "high_confidence_errors": 59,
+        "high_confidence_accuracy": 0.593103448275862,
+        "truncated": 0,
+        "latency_median_ms": 54.0679789846763,
+        "latency_p95_ms": 63.37908300338313
+      },
+      "by_category": {
+        "三段论": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 15,
+          "accuracy": 0.3488372093023256,
+          "wilson95": [
+            0.22418589997352706,
+            0.49828218007147956
+          ],
+          "yes_count": 26,
+          "majority_baseline": 0.6046511627906976,
+          "predicted_yes": 30,
+          "confusion": {
+            "tp": 14,
+            "tn": 1,
+            "fp": 16,
+            "fn": 12
+          },
+          "brier": 0.4363731546511628,
+          "ece10": 0.43976976744186047,
+          "mean_confidence": 0.788606976744186,
+          "high_confidence_n": 24,
+          "high_confidence_errors": 16,
+          "high_confidence_accuracy": 0.3333333333333333,
+          "truncated": 0,
+          "latency_median_ms": 56.18158297147602,
+          "latency_p95_ms": 63.375749974511564
+        },
+        "数列": {
+          "n": 73,
+          "valid": 73,
+          "errors": 0,
+          "correct": 43,
+          "accuracy": 0.589041095890411,
+          "wilson95": [
+            0.4744922324418476,
+            0.6946872729906935
+          ],
+          "yes_count": 42,
+          "majority_baseline": 0.5753424657534246,
+          "predicted_yes": 72,
+          "confusion": {
+            "tp": 42,
+            "tn": 1,
+            "fp": 30,
+            "fn": 0
+          },
+          "brier": 0.25359205972602744,
+          "ece10": 0.15191780821917805,
+          "mean_confidence": 0.6188739726027397,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 52.92345798807219,
+          "latency_p95_ms": 59.96070895344019
+        },
+        "数的性质": {
+          "n": 78,
+          "valid": 78,
+          "errors": 0,
+          "correct": 39,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.39167432239746397,
+            0.608325677602536
+          ],
+          "yes_count": 43,
+          "majority_baseline": 0.5512820512820513,
+          "predicted_yes": 40,
+          "confusion": {
+            "tp": 22,
+            "tn": 17,
+            "fp": 18,
+            "fn": 21
+          },
+          "brier": 0.3358950723076922,
+          "ece10": 0.24103846153846156,
+          "mean_confidence": 0.7410384615384615,
+          "high_confidence_n": 33,
+          "high_confidence_errors": 19,
+          "high_confidence_accuracy": 0.42424242424242425,
+          "truncated": 0,
+          "latency_median_ms": 49.73608299042098,
+          "latency_p95_ms": 57.68345802789554
+        },
+        "日历": {
+          "n": 38,
+          "valid": 38,
+          "errors": 0,
+          "correct": 27,
+          "accuracy": 0.7105263157894737,
+          "wilson95": [
+            0.5524286232424794,
+            0.8299672217151693
+          ],
+          "yes_count": 11,
+          "majority_baseline": 0.7105263157894737,
+          "predicted_yes": 0,
+          "confusion": {
+            "tp": 0,
+            "tn": 27,
+            "fp": 0,
+            "fn": 11
+          },
+          "brier": 0.21389467447368424,
+          "ece10": 0.11420263157894736,
+          "mean_confidence": 0.7156131578947369,
+          "high_confidence_n": 8,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.75,
+          "truncated": 0,
+          "latency_median_ms": 55.792687518987805,
+          "latency_p95_ms": 61.296415980905294
+        },
+        "条件推理": {
+          "n": 61,
+          "valid": 61,
+          "errors": 0,
+          "correct": 39,
+          "accuracy": 0.639344262295082,
+          "wilson95": [
+            0.5139190536533693,
+            0.748258884801255
+          ],
+          "yes_count": 27,
+          "majority_baseline": 0.5573770491803278,
+          "predicted_yes": 27,
+          "confusion": {
+            "tp": 16,
+            "tn": 23,
+            "fp": 11,
+            "fn": 11
+          },
+          "brier": 0.2550964690163935,
+          "ece10": 0.2592213114754099,
+          "mean_confidence": 0.8416475409836065,
+          "high_confidence_n": 40,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.75,
+          "truncated": 0,
+          "latency_median_ms": 55.912167008500546,
+          "latency_p95_ms": 63.71395796304569
+        },
+        "比较": {
+          "n": 76,
+          "valid": 76,
+          "errors": 0,
+          "correct": 43,
+          "accuracy": 0.5657894736842105,
+          "wilson95": [
+            0.4538575306835998,
+            0.6713906818078296
+          ],
+          "yes_count": 33,
+          "majority_baseline": 0.5657894736842105,
+          "predicted_yes": 44,
+          "confusion": {
+            "tp": 22,
+            "tn": 21,
+            "fp": 22,
+            "fn": 11
+          },
+          "brier": 0.25373623894736835,
+          "ece10": 0.13627631578947366,
+          "mean_confidence": 0.695921052631579,
+          "high_confidence_n": 18,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.6666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 55.25585397845134,
+          "latency_p95_ms": 63.560667040292174
+        },
+        "真假运算": {
+          "n": 35,
+          "valid": 35,
+          "errors": 0,
+          "correct": 24,
+          "accuracy": 0.6857142857142857,
+          "wilson95": [
+            0.5202023638793081,
+            0.8144915532573418
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5714285714285714,
+          "predicted_yes": 23,
+          "confusion": {
+            "tp": 16,
+            "tn": 8,
+            "fp": 7,
+            "fn": 4
+          },
+          "brier": 0.24462799200000004,
+          "ece10": 0.22907428571428576,
+          "mean_confidence": 0.7668685714285715,
+          "high_confidence_n": 16,
+          "high_confidence_errors": 4,
+          "high_confidence_accuracy": 0.75,
+          "truncated": 0,
+          "latency_median_ms": 51.11045902594924,
+          "latency_p95_ms": 59.95716596953571
+        },
+        "真话假话": {
+          "n": 28,
+          "valid": 28,
+          "errors": 0,
+          "correct": 15,
+          "accuracy": 0.5357142857142857,
+          "wilson95": [
+            0.358126892344679,
+            0.7046843001720462
+          ],
+          "yes_count": 5,
+          "majority_baseline": 0.8214285714285714,
+          "predicted_yes": 18,
+          "confusion": {
+            "tp": 5,
+            "tn": 10,
+            "fp": 13,
+            "fn": 0
+          },
+          "brier": 0.2873309396428571,
+          "ece10": 0.2805678571428571,
+          "mean_confidence": 0.682725,
+          "high_confidence_n": 4,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 59.938208491075784,
+          "latency_p95_ms": 68.52783402428031
+        },
+        "算术": {
+          "n": 68,
+          "valid": 68,
+          "errors": 0,
+          "correct": 30,
+          "accuracy": 0.4411764705882353,
+          "wilson95": [
+            0.32946233969530203,
+            0.5591813469541181
+          ],
+          "yes_count": 32,
+          "majority_baseline": 0.5294117647058824,
+          "predicted_yes": 50,
+          "confusion": {
+            "tp": 22,
+            "tn": 8,
+            "fp": 28,
+            "fn": 10
+          },
+          "brier": 0.2775294326470588,
+          "ece10": 0.1856558823529412,
+          "mean_confidence": 0.6183617647058823,
+          "high_confidence_n": 2,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": 1.0,
+          "truncated": 0,
+          "latency_median_ms": 50.535604503238574,
+          "latency_p95_ms": 61.36499997228384
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 58,
+          "accuracy": 0.58,
+          "wilson95": [
+            0.4820648670304296,
+            0.6720161732564526
+          ],
+          "yes_count": 55,
+          "majority_baseline": 0.55,
+          "predicted_yes": 75,
+          "confusion": {
+            "tp": 44,
+            "tn": 14,
+            "fp": 31,
+            "fn": 11
+          },
+          "brier": 0.26558628399999995,
+          "ece10": 0.09344,
+          "mean_confidence": 0.665786,
+          "high_confidence_n": 14,
+          "high_confidence_errors": 7,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 51.4392500044778,
+          "latency_p95_ms": 60.22070802282542
+        },
+        "2": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 59,
+          "accuracy": 0.59,
+          "wilson95": [
+            0.4920143005341078,
+            0.6813268697886348
+          ],
+          "yes_count": 49,
+          "majority_baseline": 0.51,
+          "predicted_yes": 62,
+          "confusion": {
+            "tp": 35,
+            "tn": 24,
+            "fp": 27,
+            "fn": 14
+          },
+          "brier": 0.2550769198999999,
+          "ece10": 0.14957499999999999,
+          "mean_confidence": 0.704693,
+          "high_confidence_n": 28,
+          "high_confidence_errors": 8,
+          "high_confidence_accuracy": 0.7142857142857143,
+          "truncated": 0,
+          "latency_median_ms": 53.40164550580084,
+          "latency_p95_ms": 60.929708008188754
+        },
+        "3": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 51,
+          "accuracy": 0.51,
+          "wilson95": [
+            0.4134801193402717,
+            0.6057800106955886
+          ],
+          "yes_count": 51,
+          "majority_baseline": 0.51,
+          "predicted_yes": 52,
+          "confusion": {
+            "tp": 27,
+            "tn": 24,
+            "fp": 25,
+            "fn": 24
+          },
+          "brier": 0.31726474970000007,
+          "ece10": 0.23695699999999997,
+          "mean_confidence": 0.742799,
+          "high_confidence_n": 39,
+          "high_confidence_errors": 18,
+          "high_confidence_accuracy": 0.5384615384615384,
+          "truncated": 0,
+          "latency_median_ms": 54.30318749858998,
+          "latency_p95_ms": 61.11350003629923
+        },
+        "4": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 51,
+          "accuracy": 0.51,
+          "wilson95": [
+            0.4134801193402717,
+            0.6057800106955886
+          ],
+          "yes_count": 40,
+          "majority_baseline": 0.6,
+          "predicted_yes": 55,
+          "confusion": {
+            "tp": 23,
+            "tn": 28,
+            "fp": 32,
+            "fn": 17
+          },
+          "brier": 0.3017518052000001,
+          "ece10": 0.200186,
+          "mean_confidence": 0.710186,
+          "high_confidence_n": 29,
+          "high_confidence_errors": 15,
+          "high_confidence_accuracy": 0.4827586206896552,
+          "truncated": 0,
+          "latency_median_ms": 54.594333516433835,
+          "latency_p95_ms": 63.375749974511564
+        },
+        "5": {
+          "n": 100,
+          "valid": 100,
+          "errors": 0,
+          "correct": 56,
+          "accuracy": 0.56,
+          "wilson95": [
+            0.4622810465167699,
+            0.6532797336983921
+          ],
+          "yes_count": 44,
+          "majority_baseline": 0.56,
+          "predicted_yes": 60,
+          "confusion": {
+            "tp": 30,
+            "tn": 26,
+            "fp": 30,
+            "fn": 14
+          },
+          "brier": 0.2796018962000001,
+          "ece10": 0.18435200000000002,
+          "mean_confidence": 0.739716,
+          "high_confidence_n": 35,
+          "high_confidence_errors": 11,
+          "high_confidence_accuracy": 0.6857142857142857,
+          "truncated": 0,
+          "latency_median_ms": 54.85035400488414,
+          "latency_p95_ms": 66.45183399086818
+        }
+      }
+    },
+    "direct/zh/balanced": {
+      "overall": {
+        "n": 180,
+        "valid": 180,
+        "errors": 0,
+        "correct": 88,
+        "accuracy": 0.4888888888888889,
+        "wilson95": [
+          0.41686216064501447,
+          0.5613799615310212
+        ],
+        "yes_count": 90,
+        "majority_baseline": 0.5,
+        "predicted_yes": 130,
+        "confusion": {
+          "tp": 64,
+          "tn": 24,
+          "fp": 66,
+          "fn": 26
+        },
+        "brier": 0.3372290167222223,
+        "ece10": 0.2415127777777778,
+        "mean_confidence": 0.7304016666666666,
+        "high_confidence_n": 61,
+        "high_confidence_errors": 31,
+        "high_confidence_accuracy": 0.4918032786885246,
+        "truncated": 0,
+        "latency_median_ms": 48.79854200407863,
+        "latency_p95_ms": 55.24966702796519
+      },
+      "by_category": {
+        "三段论": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 20,
+          "confusion": {
+            "tp": 10,
+            "tn": 0,
+            "fp": 10,
+            "fn": 0
+          },
+          "brier": 0.474531557,
+          "ece10": 0.44823,
+          "mean_confidence": 0.94823,
+          "high_confidence_n": 20,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 48.92989600193687,
+          "latency_p95_ms": 50.535625021439046
+        },
+        "数列": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 20,
+          "confusion": {
+            "tp": 10,
+            "tn": 0,
+            "fp": 10,
+            "fn": 0
+          },
+          "brier": 0.29536089800000004,
+          "ece10": 0.20181,
+          "mean_confidence": 0.70181,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 48.57131247990765,
+          "latency_p95_ms": 51.626249973196536
+        },
+        "数的性质": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 8,
+          "confusion": {
+            "tp": 4,
+            "tn": 6,
+            "fp": 4,
+            "fn": 6
+          },
+          "brier": 0.2764132125,
+          "ece10": 0.189275,
+          "mean_confidence": 0.689275,
+          "high_confidence_n": 2,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 42.72427098476328,
+          "latency_p95_ms": 47.46570799034089
+        },
+        "日历": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.45,
+          "wilson95": [
+            0.2581978582556243,
+            0.6579146575496577
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 11,
+          "confusion": {
+            "tp": 5,
+            "tn": 4,
+            "fp": 6,
+            "fn": 5
+          },
+          "brier": 0.35464039249999996,
+          "ece10": 0.21294500000000002,
+          "mean_confidence": 0.662945,
+          "high_confidence_n": 4,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.25,
+          "truncated": 0,
+          "latency_median_ms": 50.41604148573242,
+          "latency_p95_ms": 52.47462500119582
+        },
+        "条件推理": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 11,
+          "accuracy": 0.55,
+          "wilson95": [
+            0.34208534245034233,
+            0.7418021417443759
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 17,
+          "confusion": {
+            "tp": 9,
+            "tn": 2,
+            "fp": 8,
+            "fn": 1
+          },
+          "brier": 0.38201395899999996,
+          "ece10": 0.38488,
+          "mean_confidence": 0.85281,
+          "high_confidence_n": 16,
+          "high_confidence_errors": 8,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 49.00862500653602,
+          "latency_p95_ms": 51.8455840065144
+        },
+        "比较": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 18,
+          "confusion": {
+            "tp": 9,
+            "tn": 1,
+            "fp": 9,
+            "fn": 1
+          },
+          "brier": 0.41475925249999995,
+          "ece10": 0.38968499999999995,
+          "mean_confidence": 0.859685,
+          "high_confidence_n": 16,
+          "high_confidence_errors": 8,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 50.523562502348796,
+          "latency_p95_ms": 55.88304199045524
+        },
+        "真假运算": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 11,
+          "accuracy": 0.55,
+          "wilson95": [
+            0.34208534245034233,
+            0.7418021417443759
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 13,
+          "confusion": {
+            "tp": 7,
+            "tn": 4,
+            "fp": 6,
+            "fn": 3
+          },
+          "brier": 0.295984664,
+          "ece10": 0.28071,
+          "mean_confidence": 0.64714,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": 1.0,
+          "truncated": 0,
+          "latency_median_ms": 48.50004147738218,
+          "latency_p95_ms": 49.589957983698696
+        },
+        "真话假话": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 10,
+          "confusion": {
+            "tp": 5,
+            "tn": 5,
+            "fp": 5,
+            "fn": 5
+          },
+          "brier": 0.2881932255,
+          "ece10": 0.197455,
+          "mean_confidence": 0.640325,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.0,
+          "truncated": 0,
+          "latency_median_ms": 54.03950050822459,
+          "latency_p95_ms": 58.531375019811094
+        },
+        "算术": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 7,
+          "accuracy": 0.35,
+          "wilson95": [
+            0.18119182410108206,
+            0.5671457233147638
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 13,
+          "confusion": {
+            "tp": 5,
+            "tn": 2,
+            "fp": 8,
+            "fn": 5
+          },
+          "brier": 0.25316398949999996,
+          "ece10": 0.239875,
+          "mean_confidence": 0.571395,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": 1.0,
+          "truncated": 0,
+          "latency_median_ms": 42.99750001518987,
+          "latency_p95_ms": 44.142625003587455
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 23,
+          "valid": 23,
+          "errors": 0,
+          "correct": 14,
+          "accuracy": 0.6086956521739131,
+          "wilson95": [
+            0.4078552239138171,
+            0.7784237720752205
+          ],
+          "yes_count": 13,
+          "majority_baseline": 0.5652173913043478,
+          "predicted_yes": 16,
+          "confusion": {
+            "tp": 10,
+            "tn": 4,
+            "fp": 6,
+            "fn": 3
+          },
+          "brier": 0.2442428969565217,
+          "ece10": 0.1503521739130435,
+          "mean_confidence": 0.667091304347826,
+          "high_confidence_n": 3,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.6666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 47.57237498415634,
+          "latency_p95_ms": 50.18620903138071
+        },
+        "2": {
+          "n": 27,
+          "valid": 27,
+          "errors": 0,
+          "correct": 9,
+          "accuracy": 0.3333333333333333,
+          "wilson95": [
+            0.18643261498715644,
+            0.5217523949267991
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.6296296296296297,
+          "predicted_yes": 26,
+          "confusion": {
+            "tp": 9,
+            "tn": 0,
+            "fp": 17,
+            "fn": 1
+          },
+          "brier": 0.4683791374074074,
+          "ece10": 0.46982592592592587,
+          "mean_confidence": 0.8031592592592592,
+          "high_confidence_n": 15,
+          "high_confidence_errors": 11,
+          "high_confidence_accuracy": 0.26666666666666666,
+          "truncated": 0,
+          "latency_median_ms": 48.716916993726045,
+          "latency_p95_ms": 52.16920800739899
+        },
+        "3": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 21,
+          "accuracy": 0.4883720930232558,
+          "wilson95": [
+            0.3461744754671859,
+            0.632476915305507
+          ],
+          "yes_count": 24,
+          "majority_baseline": 0.5581395348837209,
+          "predicted_yes": 28,
+          "confusion": {
+            "tp": 15,
+            "tn": 6,
+            "fp": 13,
+            "fn": 9
+          },
+          "brier": 0.3334523011627907,
+          "ece10": 0.2347418604651163,
+          "mean_confidence": 0.7180255813953489,
+          "high_confidence_n": 14,
+          "high_confidence_errors": 7,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 48.01695799687877,
+          "latency_p95_ms": 52.47462500119582
+        },
+        "4": {
+          "n": 41,
+          "valid": 41,
+          "errors": 0,
+          "correct": 22,
+          "accuracy": 0.5365853658536586,
+          "wilson95": [
+            0.38746471267669474,
+            0.6794376602366394
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5121951219512195,
+          "predicted_yes": 27,
+          "confusion": {
+            "tp": 14,
+            "tn": 8,
+            "fp": 13,
+            "fn": 6
+          },
+          "brier": 0.2882089563414634,
+          "ece10": 0.17704634146341464,
+          "mean_confidence": 0.7136317073170731,
+          "high_confidence_n": 13,
+          "high_confidence_errors": 4,
+          "high_confidence_accuracy": 0.6923076923076923,
+          "truncated": 0,
+          "latency_median_ms": 49.78116700658575,
+          "latency_p95_ms": 53.72633400838822
+        },
+        "5": {
+          "n": 46,
+          "valid": 46,
+          "errors": 0,
+          "correct": 22,
+          "accuracy": 0.4782608695652174,
+          "wilson95": [
+            0.34124689434045685,
+            0.6186258692719597
+          ],
+          "yes_count": 23,
+          "majority_baseline": 0.5,
+          "predicted_yes": 33,
+          "confusion": {
+            "tp": 16,
+            "tn": 6,
+            "fp": 17,
+            "fn": 7
+          },
+          "brier": 0.35396485891304347,
+          "ece10": 0.26760652173913047,
+          "mean_confidence": 0.7458673913043479,
+          "high_confidence_n": 16,
+          "high_confidence_errors": 8,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 49.17283350368962,
+          "latency_p95_ms": 58.49966697860509
+        }
+      }
+    },
+    "direct/en/balanced": {
+      "overall": {
+        "n": 180,
+        "valid": 180,
+        "errors": 0,
+        "correct": 91,
+        "accuracy": 0.5055555555555555,
+        "wilson95": [
+          0.43316746219446267,
+          0.5777114767175194
+        ],
+        "yes_count": 90,
+        "majority_baseline": 0.5,
+        "predicted_yes": 91,
+        "confusion": {
+          "tp": 46,
+          "tn": 45,
+          "fp": 45,
+          "fn": 44
+        },
+        "brier": 0.3360299440555556,
+        "ece10": 0.2547483333333333,
+        "mean_confidence": 0.7603038888888889,
+        "high_confidence_n": 79,
+        "high_confidence_errors": 38,
+        "high_confidence_accuracy": 0.5189873417721519,
+        "truncated": 0,
+        "latency_median_ms": 48.96718802046962,
+        "latency_p95_ms": 56.118917011190206
+      },
+      "by_category": {
+        "三段论": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 20,
+          "confusion": {
+            "tp": 10,
+            "tn": 0,
+            "fp": 10,
+            "fn": 0
+          },
+          "brier": 0.4393445719999999,
+          "ece10": 0.42831,
+          "mean_confidence": 0.92831,
+          "high_confidence_n": 20,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 50.13293697265908,
+          "latency_p95_ms": 52.70220903912559
+        },
+        "数列": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 11,
+          "accuracy": 0.55,
+          "wilson95": [
+            0.34208534245034233,
+            0.7418021417443759
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 1,
+          "confusion": {
+            "tp": 1,
+            "tn": 10,
+            "fp": 0,
+            "fn": 9
+          },
+          "brier": 0.238031614,
+          "ece10": 0.09904999999999996,
+          "mean_confidence": 0.59978,
+          "high_confidence_n": 0,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": null,
+          "truncated": 0,
+          "latency_median_ms": 48.867729521589354,
+          "latency_p95_ms": 53.072082984726876
+        },
+        "数的性质": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 8,
+          "accuracy": 0.4,
+          "wilson95": [
+            0.21880653237281705,
+            0.6134184992377469
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 4,
+          "confusion": {
+            "tp": 1,
+            "tn": 7,
+            "fp": 3,
+            "fn": 9
+          },
+          "brier": 0.513137909,
+          "ece10": 0.5108699999999999,
+          "mean_confidence": 0.83006,
+          "high_confidence_n": 13,
+          "high_confidence_errors": 9,
+          "high_confidence_accuracy": 0.3076923076923077,
+          "truncated": 0,
+          "latency_median_ms": 42.88937448291108,
+          "latency_p95_ms": 45.442208007443696
+        },
+        "日历": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 0,
+          "confusion": {
+            "tp": 0,
+            "tn": 10,
+            "fp": 0,
+            "fn": 10
+          },
+          "brier": 0.3460019105,
+          "ece10": 0.337955,
+          "mean_confidence": 0.7614650000000001,
+          "high_confidence_n": 8,
+          "high_confidence_errors": 4,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 50.08464597631246,
+          "latency_p95_ms": 53.47695801174268
+        },
+        "条件推理": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 11,
+          "accuracy": 0.55,
+          "wilson95": [
+            0.34208534245034233,
+            0.7418021417443759
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 11,
+          "confusion": {
+            "tp": 6,
+            "tn": 5,
+            "fp": 5,
+            "fn": 4
+          },
+          "brier": 0.3405540365,
+          "ece10": 0.376195,
+          "mean_confidence": 0.812615,
+          "high_confidence_n": 12,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 49.51345850713551,
+          "latency_p95_ms": 51.86829197918996
+        },
+        "比较": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 10,
+          "accuracy": 0.5,
+          "wilson95": [
+            0.2992980081982123,
+            0.7007019918017877
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 20,
+          "confusion": {
+            "tp": 10,
+            "tn": 0,
+            "fp": 10,
+            "fn": 0
+          },
+          "brier": 0.3396822985,
+          "ece10": 0.36682499999999996,
+          "mean_confidence": 0.853725,
+          "high_confidence_n": 14,
+          "high_confidence_errors": 5,
+          "high_confidence_accuracy": 0.6428571428571429,
+          "truncated": 0,
+          "latency_median_ms": 49.35481247957796,
+          "latency_p95_ms": 55.92991696903482
+        },
+        "真假运算": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 12,
+          "accuracy": 0.6,
+          "wilson95": [
+            0.3865815007622531,
+            0.781193467627183
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 16,
+          "confusion": {
+            "tp": 9,
+            "tn": 3,
+            "fp": 7,
+            "fn": 1
+          },
+          "brier": 0.27200255449999994,
+          "ece10": 0.22521500000000003,
+          "mean_confidence": 0.753165,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 3,
+          "high_confidence_accuracy": 0.7,
+          "truncated": 0,
+          "latency_median_ms": 43.82999998051673,
+          "latency_p95_ms": 49.33916701702401
+        },
+        "真话假话": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 5,
+          "accuracy": 0.25,
+          "wilson95": [
+            0.11186170140766569,
+            0.468700877618744
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 13,
+          "confusion": {
+            "tp": 4,
+            "tn": 1,
+            "fp": 9,
+            "fn": 6
+          },
+          "brier": 0.32388165,
+          "ece10": 0.40139,
+          "mean_confidence": 0.62491,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 1,
+          "high_confidence_accuracy": 0.0,
+          "truncated": 0,
+          "latency_median_ms": 52.65604148735292,
+          "latency_p95_ms": 60.6617089943029
+        },
+        "算术": {
+          "n": 20,
+          "valid": 20,
+          "errors": 0,
+          "correct": 14,
+          "accuracy": 0.7,
+          "wilson95": [
+            0.4810271816464765,
+            0.8545227551323956
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.5,
+          "predicted_yes": 6,
+          "confusion": {
+            "tp": 5,
+            "tn": 9,
+            "fp": 1,
+            "fn": 5
+          },
+          "brier": 0.21163295149999994,
+          "ece10": 0.07780500000000003,
+          "mean_confidence": 0.678705,
+          "high_confidence_n": 1,
+          "high_confidence_errors": 0,
+          "high_confidence_accuracy": 1.0,
+          "truncated": 0,
+          "latency_median_ms": 43.599541968433186,
+          "latency_p95_ms": 44.69254199648276
+        }
+      },
+      "by_level": {
+        "1": {
+          "n": 23,
+          "valid": 23,
+          "errors": 0,
+          "correct": 14,
+          "accuracy": 0.6086956521739131,
+          "wilson95": [
+            0.4078552239138171,
+            0.7784237720752205
+          ],
+          "yes_count": 13,
+          "majority_baseline": 0.5652173913043478,
+          "predicted_yes": 12,
+          "confusion": {
+            "tp": 8,
+            "tn": 6,
+            "fp": 4,
+            "fn": 5
+          },
+          "brier": 0.2667335534782609,
+          "ece10": 0.14047391304347825,
+          "mean_confidence": 0.6887434782608696,
+          "high_confidence_n": 4,
+          "high_confidence_errors": 2,
+          "high_confidence_accuracy": 0.5,
+          "truncated": 0,
+          "latency_median_ms": 43.84666704572737,
+          "latency_p95_ms": 50.14991702046245
+        },
+        "2": {
+          "n": 27,
+          "valid": 27,
+          "errors": 0,
+          "correct": 13,
+          "accuracy": 0.48148148148148145,
+          "wilson95": [
+            0.3074322697621846,
+            0.6601438424504771
+          ],
+          "yes_count": 10,
+          "majority_baseline": 0.6296296296296297,
+          "predicted_yes": 12,
+          "confusion": {
+            "tp": 4,
+            "tn": 9,
+            "fp": 8,
+            "fn": 6
+          },
+          "brier": 0.338959302962963,
+          "ece10": 0.3349555555555556,
+          "mean_confidence": 0.7460592592592592,
+          "high_confidence_n": 10,
+          "high_confidence_errors": 6,
+          "high_confidence_accuracy": 0.4,
+          "truncated": 0,
+          "latency_median_ms": 49.49104198021814,
+          "latency_p95_ms": 53.40916698332876
+        },
+        "3": {
+          "n": 43,
+          "valid": 43,
+          "errors": 0,
+          "correct": 22,
+          "accuracy": 0.5116279069767442,
+          "wilson95": [
+            0.3675230846944931,
+            0.6538255245328142
+          ],
+          "yes_count": 24,
+          "majority_baseline": 0.5581395348837209,
+          "predicted_yes": 19,
+          "confusion": {
+            "tp": 11,
+            "tn": 11,
+            "fp": 8,
+            "fn": 13
+          },
+          "brier": 0.37970244139534887,
+          "ece10": 0.3107767441860465,
+          "mean_confidence": 0.7940558139534883,
+          "high_confidence_n": 25,
+          "high_confidence_errors": 13,
+          "high_confidence_accuracy": 0.48,
+          "truncated": 0,
+          "latency_median_ms": 44.48345897253603,
+          "latency_p95_ms": 53.072082984726876
+        },
+        "4": {
+          "n": 41,
+          "valid": 41,
+          "errors": 0,
+          "correct": 20,
+          "accuracy": 0.4878048780487805,
+          "wilson95": [
+            0.34254429554432664,
+            0.6351549134845619
+          ],
+          "yes_count": 20,
+          "majority_baseline": 0.5121951219512195,
+          "predicted_yes": 23,
+          "confusion": {
+            "tp": 11,
+            "tn": 9,
+            "fp": 12,
+            "fn": 9
+          },
+          "brier": 0.3374272595121952,
+          "ece10": 0.2965024390243903,
+          "mean_confidence": 0.7601560975609756,
+          "high_confidence_n": 17,
+          "high_confidence_errors": 7,
+          "high_confidence_accuracy": 0.5882352941176471,
+          "truncated": 0,
+          "latency_median_ms": 49.47816696949303,
+          "latency_p95_ms": 55.48895802348852
+        },
+        "5": {
+          "n": 46,
+          "valid": 46,
+          "errors": 0,
+          "correct": 22,
+          "accuracy": 0.4782608695652174,
+          "wilson95": [
+            0.34124689434045685,
+            0.6186258692719597
+          ],
+          "yes_count": 23,
+          "majority_baseline": 0.5,
+          "predicted_yes": 25,
+          "confusion": {
+            "tp": 12,
+            "tn": 10,
+            "fp": 13,
+            "fn": 11
+          },
+          "brier": 0.3268890086956522,
+          "ece10": 0.29476521739130435,
+          "mean_confidence": 0.7730260869565218,
+          "high_confidence_n": 23,
+          "high_confidence_errors": 10,
+          "high_confidence_accuracy": 0.5652173913043478,
+          "truncated": 0,
+          "latency_median_ms": 49.7172080213204,
+          "latency_p95_ms": 60.6617089943029
+        }
+      }
+    }
+  },
+  "peak_process_rss_bytes": 2758230016,
+  "total_seconds": 93.64041150000412
+}

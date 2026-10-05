@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="66c0c0ba-96e2-4118-b68c-47bd9e07864e" name="@Mac 2026-10-03 04:28:40" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T04:28:40.2341120+09:00" queuing="2026-10-03T04:28:40.2341120+09:00" start="2026-10-03T04:28:39.2361440+09:00" finish="2026-10-03T04:28:40.2493420+09:00" />
+  <TestSettings name="default" id="20eeb82c-c446-44ff-8b5d-893fc64215b7">
+    <Deployment runDeploymentRoot="_Mac_2026-10-03_04_28_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e8c3e0c4-cd22-422d-ae9a-d5797ab712ac" testId="99b8144d-b196-0519-26c5-cc773d8e5865" testName="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" computerName="Mac" duration="00:00:00.0002060" startTime="2026-10-03T04:28:40.0030300+09:00" endTime="2026-10-03T04:28:40.0032360+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8c3e0c4-cd22-422d-ae9a-d5797ab712ac" />
+    <UnitTestResult executionId="9f3aa8bd-9dd1-4db9-a1db-5ec2d6d7b623" testId="77493835-e909-808d-bffa-7a6371cdec56" testName="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" computerName="Mac" duration="00:00:00.0001770" startTime="2026-10-03T04:28:40.0026780+09:00" endTime="2026-10-03T04:28:40.0028550+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f3aa8bd-9dd1-4db9-a1db-5ec2d6d7b623" />
+    <UnitTestResult executionId="c5915d65-c64d-454a-9aa5-19c977448751" testId="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00" testName="SameSeedProducesSameCardsPredictionsAndConfidence" computerName="Mac" duration="00:00:00.0004720" startTime="2026-10-03T04:28:39.9971190+09:00" endTime="2026-10-03T04:28:39.9975900+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5915d65-c64d-454a-9aa5-19c977448751" />
+    <UnitTestResult executionId="4e443f9a-089a-4f92-9fb2-9d7f2b8eaaad" testId="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5" testName="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" computerName="Mac" duration="00:00:00.0006500" startTime="2026-10-03T04:28:39.9923680+09:00" endTime="2026-10-03T04:28:39.9930180+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e443f9a-089a-4f92-9fb2-9d7f2b8eaaad" />
+    <UnitTestResult executionId="c21bec42-06d4-4e6c-9aff-aa8fb5fa8d69" testId="5b77b7ac-3023-6323-2d8c-808eb6bde553" testName="VramPreventsOversizedBoardWithoutChargingMoney" computerName="Mac" duration="00:00:00.0001710" startTime="2026-10-03T04:28:40.0028570+09:00" endTime="2026-10-03T04:28:40.0030280+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c21bec42-06d4-4e6c-9aff-aa8fb5fa8d69" />
+    <UnitTestResult executionId="4e554e3e-f580-4105-a242-4b4ccc709275" testId="1270b21f-0b28-744c-3047-96b83c52db9c" testName="ExamGateExplainsMissingPreparation" computerName="Mac" duration="00:00:00.0005380" startTime="2026-10-03T04:28:39.9906120+09:00" endTime="2026-10-03T04:28:39.9911500+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e554e3e-f580-4105-a242-4b4ccc709275" />
+    <UnitTestResult executionId="73ee77e0-ff6f-4544-8a81-103071e1e7fe" testId="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1" testName="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" computerName="Mac" duration="00:00:00.0028190" startTime="2026-10-03T04:28:39.9700220+09:00" endTime="2026-10-03T04:28:39.9728400+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73ee77e0-ff6f-4544-8a81-103071e1e7fe" />
+    <UnitTestResult executionId="7d466f2b-a198-48d0-ac90-729e8adb3a9a" testId="c8c21033-de5b-0a38-1860-9f830481902f" testName="ReversePulseCallbackCannotSubmitSameCardReentrantly" computerName="Mac" duration="00:00:00.0004560" startTime="2026-10-03T04:28:39.9966560+09:00" endTime="2026-10-03T04:28:39.9971120+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d466f2b-a198-48d0-ac90-729e8adb3a9a">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: False
+  But was:  True
+</Message>
+          <StackTrace>   at LingGuangV05.Tests.CoreTests.ReversePulseCallbackCannotSubmitSameCardReentrantly() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 277
+
+1)    at LingGuangV05.Tests.CoreTests.ReversePulseCallbackCannotSubmitSameCardReentrantly() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 277
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8cd8a575-d9f8-4979-9150-d3b27a8a074e" testId="1ac6c134-b6c3-3576-18d5-63d4d3380b33" testName="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" computerName="Mac" duration="00:00:00.0004890" startTime="2026-10-03T04:28:39.9950100+09:00" endTime="2026-10-03T04:28:39.9954980+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cd8a575-d9f8-4979-9150-d3b27a8a074e" />
+    <UnitTestResult executionId="aa6b4a74-4f46-4a1b-bde4-87782258bcc6" testId="06b77137-4fec-71b2-8a24-a60bd3c20f06" testName="FourteenQuickReviewsThenNinetySecondsReachFirstExamWithoutMandatoryPurchase" computerName="Mac" duration="00:00:00.0003150" startTime="2026-10-03T04:28:39.9930220+09:00" endTime="2026-10-03T04:28:39.9933370+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa6b4a74-4f46-4a1b-bde4-87782258bcc6" />
+    <UnitTestResult executionId="c32d273f-ad78-4855-8639-095c73f79600" testId="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac" testName="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" computerName="Mac" duration="00:00:00.0084000" startTime="2026-10-03T04:28:39.9489040+09:00" endTime="2026-10-03T04:28:39.9572710+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c32d273f-ad78-4855-8639-095c73f79600" />
+    <UnitTestResult executionId="d576cea8-9481-4da7-a0b2-299ffdc34b2b" testId="f133d777-8201-5e01-3111-d8179312a197" testName="OverloadRequiresReducedLoadBeforeManualBreakerReset" computerName="Mac" duration="00:00:00.0002220" startTime="2026-10-03T04:28:39.9961410+09:00" endTime="2026-10-03T04:28:39.9963630+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d576cea8-9481-4da7-a0b2-299ffdc34b2b" />
+    <UnitTestResult executionId="956835a2-b193-48cc-9043-59618767237a" testId="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395" testName="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" computerName="Mac" duration="00:00:00.0005540" startTime="2026-10-03T04:28:39.9935560+09:00" endTime="2026-10-03T04:28:39.9941100+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="956835a2-b193-48cc-9043-59618767237a" />
+    <UnitTestResult executionId="2480811a-0d2e-4ff8-a55a-4982fe1ab189" testId="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d" testName="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" computerName="Mac" duration="00:00:00.0012030" startTime="2026-10-03T04:28:39.9911600+09:00" endTime="2026-10-03T04:28:39.9923630+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2480811a-0d2e-4ff8-a55a-4982fe1ab189" />
+    <UnitTestResult executionId="beafd98c-666d-41f1-a667-30037dda14e7" testId="7be3107d-201b-1476-7acc-2015b8ec78eb" testName="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" computerName="Mac" duration="00:00:00.0014319" startTime="2026-10-03T04:28:39.9891670+09:00" endTime="2026-10-03T04:28:39.9905990+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="beafd98c-666d-41f1-a667-30037dda14e7" />
+    <UnitTestResult executionId="202e25a4-782d-48df-8e98-a408c37bdd0d" testId="cfe90e22-5074-4fbe-bc28-1520a97e4d62" testName="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" computerName="Mac" duration="00:00:00.0001700" startTime="2026-10-03T04:28:39.9963660+09:00" endTime="2026-10-03T04:28:39.9965350+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="202e25a4-782d-48df-8e98-a408c37bdd0d" />
+    <UnitTestResult executionId="7bf4bcea-aa90-447a-b731-b3ac2a05e394" testId="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad" testName="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" computerName="Mac" duration="00:00:00.0002130" startTime="2026-10-03T04:28:40.0020300+09:00" endTime="2026-10-03T04:28:40.0022430+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bf4bcea-aa90-447a-b731-b3ac2a05e394" />
+    <UnitTestResult executionId="a821eb14-15b9-4fac-adf0-191b657bf88c" testId="10435959-0d40-cec4-99e3-375c091b5f3b" testName="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" computerName="Mac" duration="00:00:00.0098850" startTime="2026-10-03T04:28:39.9601150+09:00" endTime="2026-10-03T04:28:39.9700000+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a821eb14-15b9-4fac-adf0-191b657bf88c" />
+    <UnitTestResult executionId="4cbfe565-3e6c-4b60-b936-e9af7686cabd" testId="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff" testName="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" computerName="Mac" duration="00:00:00.0001499" startTime="2026-10-03T04:28:39.9956700+09:00" endTime="2026-10-03T04:28:39.9958210+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4cbfe565-3e6c-4b60-b936-e9af7686cabd" />
+    <UnitTestResult executionId="a45fced8-2c2b-4b3f-9f00-0938ce853166" testId="554d6421-6140-c325-612b-1f3a56256ae7" testName="SavedActiveCardRngAndPulseStateContinueExactly" computerName="Mac" duration="00:00:00.0004470" startTime="2026-10-03T04:28:40.0015790+09:00" endTime="2026-10-03T04:28:40.0020250+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a45fced8-2c2b-4b3f-9f00-0938ce853166" />
+    <UnitTestResult executionId="5731633c-a845-4106-ae85-222b14ab2531" testId="e7fafa4d-8c88-520a-072a-adca22522b7c" testName="HeatCausesThrottlingAndOutageAllowsCooling" computerName="Mac" duration="00:00:00.0003230" startTime="2026-10-03T04:28:39.9946810+09:00" endTime="2026-10-03T04:28:39.9950030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5731633c-a845-4106-ae85-222b14ab2531" />
+    <UnitTestResult executionId="cb109616-5f84-41de-ae92-ded7aac8709c" testId="f7a7d623-71c1-a126-588d-8b7341afa0d7" testName="DirectedPathRemovalStopsTrainingAndJobIncome" computerName="Mac" duration="00:00:00.0005430" startTime="2026-10-03T04:28:39.9740510+09:00" endTime="2026-10-03T04:28:39.9745950+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb109616-5f84-41de-ae92-ded7aac8709c" />
+    <UnitTestResult executionId="2f5b2925-55ce-4f13-a1b0-0bb23b64513d" testId="f890a48d-27f6-658b-e323-fb5b8dda60af" testName="DailyBillingAndSimulationAreIndependentOfTickPartition" computerName="Mac" duration="00:00:00.0011689" startTime="2026-10-03T04:28:39.9728630+09:00" endTime="2026-10-03T04:28:39.9740320+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f5b2925-55ce-4f13-a1b0-0bb23b64513d" />
+    <UnitTestResult executionId="a349e930-8dd3-458b-a0b2-22b515fbab32" testId="4e0b4551-7a20-291c-d79a-3326b32e4033" testName="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" computerName="Mac" duration="00:00:00.0019600" startTime="2026-10-03T04:28:39.9581440+09:00" endTime="2026-10-03T04:28:39.9601040+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a349e930-8dd3-458b-a0b2-22b515fbab32" />
+    <UnitTestResult executionId="6d15f09e-cfa0-4ffc-850a-8ac4215db013" testId="6b5bd723-1778-655a-ea2e-4988cdc3b28d" testName="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" computerName="Mac" duration="00:00:00.0002300" startTime="2026-10-03T04:28:40.0022490+09:00" endTime="2026-10-03T04:28:40.0024790+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d15f09e-cfa0-4ffc-850a-8ac4215db013" />
+    <UnitTestResult executionId="cff7f2df-2a15-4fc9-9ead-77ab1c244390" testId="5d2a16d0-83f7-bc6d-2577-555c7ef79f44" testName="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" computerName="Mac" duration="00:00:00.0039670" startTime="2026-10-03T04:28:39.9975970+09:00" endTime="2026-10-03T04:28:40.0015640+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cff7f2df-2a15-4fc9-9ead-77ab1c244390" />
+    <UnitTestResult executionId="6fe293ea-c7ad-40da-99fa-bca9b786eee5" testId="b25ff1cb-4447-ed3c-cd7c-d0da8400f271" testName="ReplayedCardIdIsRejectedWithoutDuplicateReward" computerName="Mac" duration="00:00:00.0001160" startTime="2026-10-03T04:28:39.9965380+09:00" endTime="2026-10-03T04:28:39.9966540+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6fe293ea-c7ad-40da-99fa-bca9b786eee5" />
+    <UnitTestResult executionId="3686e8cc-6084-42be-8d1d-ef02ba500202" testId="cc134237-42b6-4ccc-1499-fac987a3576f" testName="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" computerName="Mac" duration="00:00:00.0001660" startTime="2026-10-03T04:28:39.9955020+09:00" endTime="2026-10-03T04:28:39.9956680+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3686e8cc-6084-42be-8d1d-ef02ba500202" />
+    <UnitTestResult executionId="7e2f74c7-a593-4782-b3be-7ef07971900b" testId="e87a9960-466d-5f94-9bd6-7c708cde71fe" testName="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" computerName="Mac" duration="00:00:00.0005640" startTime="2026-10-03T04:28:39.9941130+09:00" endTime="2026-10-03T04:28:39.9946780+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e2f74c7-a593-4782-b3be-7ef07971900b" />
+    <UnitTestResult executionId="816db5d8-02ee-42d2-af7c-7c264608946f" testId="24600395-c20b-97ce-23b2-3274a7fad188" testName="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" computerName="Mac" duration="00:00:00.0002130" startTime="2026-10-03T04:28:39.9933400+09:00" endTime="2026-10-03T04:28:39.9935530+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="816db5d8-02ee-42d2-af7c-7c264608946f" />
+    <UnitTestResult executionId="6886a374-1b18-48b3-9930-1df169b8b301" testId="82673fc2-830e-38c7-076f-32ff1c3e2f92" testName="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" computerName="Mac" duration="00:00:00.0001920" startTime="2026-10-03T04:28:40.0024820+09:00" endTime="2026-10-03T04:28:40.0026750+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6886a374-1b18-48b3-9930-1df169b8b301" />
+    <UnitTestResult executionId="104ec13b-6562-4ae9-ab7c-2ef6fe5dba5e" testId="76f34c4a-d717-477e-c250-a185c56fb58a" testName="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" computerName="Mac" duration="00:00:00.0003150" startTime="2026-10-03T04:28:39.9958240+09:00" endTime="2026-10-03T04:28:39.9961390+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="104ec13b-6562-4ae9-ab7c-2ef6fe5dba5e" />
+    <UnitTestResult executionId="2c794485-8809-4ddf-bf23-944228554d08" testId="d4b80a15-22d7-483b-eaaa-c217b369d420" testName="DuplicateRecordedRoutesAndOverflowedCountersAreRejected" computerName="Mac" duration="00:00:00.0144870" startTime="2026-10-03T04:28:39.9746110+09:00" endTime="2026-10-03T04:28:39.9890980+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c794485-8809-4ddf-bf23-944228554d08">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: &lt;System.ArgumentException&gt;
+  But was:  null
+</Message>
+          <StackTrace>   at LingGuangV05.Tests.CoreTests.DuplicateRecordedRoutesAndOverflowedCountersAreRejected() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 288
+
+1)    at LingGuangV05.Tests.CoreTests.DuplicateRecordedRoutesAndOverflowedCountersAreRejected() in /Users/kk/competition/Assets/LingGuangV05/Tests/Editor/CoreTests.cs:line 288
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ExamGateExplainsMissingPreparation" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="1270b21f-0b28-744c-3047-96b83c52db9c">
+      <Execution id="4e554e3e-f580-4105-a242-4b4ccc709275" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExamGateExplainsMissingPreparation" />
+    </UnitTest>
+    <UnitTest name="FourteenQuickReviewsThenNinetySecondsReachFirstExamWithoutMandatoryPurchase" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="06b77137-4fec-71b2-8a24-a60bd3c20f06">
+      <Execution id="aa6b4a74-4f46-4a1b-bde4-87782258bcc6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FourteenQuickReviewsThenNinetySecondsReachFirstExamWithoutMandatoryPurchase" />
+    </UnitTest>
+    <UnitTest name="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="7be3107d-201b-1476-7acc-2015b8ec78eb">
+      <Execution id="beafd98c-666d-41f1-a667-30037dda14e7" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExactFourNodeFanOutAndConvergenceAreRecognizedNotLargerStars" />
+    </UnitTest>
+    <UnitTest name="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="4e0b4551-7a20-291c-d79a-3326b32e4033">
+      <Execution id="a349e930-8dd3-458b-a0b2-22b515fbab32" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ConnectedBoardActuallyTrainsAndStrengthensUsedSynapses" />
+    </UnitTest>
+    <UnitTest name="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff">
+      <Execution id="4cbfe565-3e6c-4b60-b936-e9af7686cabd" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="JobsPayAccordingToAccuracyAndOnlyWhileEnabled" />
+    </UnitTest>
+    <UnitTest name="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="99b8144d-b196-0519-26c5-cc773d8e5865">
+      <Execution id="e8c3e0c4-cd22-422d-ae9a-d5797ab712ac" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="WrongLabelGivesNoSamplesOrLearningPointsButExplainsAnswer" />
+    </UnitTest>
+    <UnitTest name="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="6b5bd723-1778-655a-ea2e-4988cdc3b28d">
+      <Execution id="6d15f09e-cfa0-4ffc-850a-8ac4215db013" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UnpaidPowerStopsJobsAndCorrectManualLabelsRepayDebtWithoutCashGrant" />
+    </UnitTest>
+    <UnitTest name="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad">
+      <Execution id="7bf4bcea-aa90-447a-b731-b3ac2a05e394" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SpareGpuSaleAndPayBillRecoverWithoutDuplicatingSettlement" />
+    </UnitTest>
+    <UnitTest name="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="1ac6c134-b6c3-3576-18d5-63d4d3380b33">
+      <Execution id="8cd8a575-d9f8-4979-9150-d3b27a8a074e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="InvalidExamProgressSaveIsRejectedRatherThanGrantingReward" />
+    </UnitTest>
+    <UnitTest name="HeatCausesThrottlingAndOutageAllowsCooling" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e7fafa4d-8c88-520a-072a-adca22522b7c">
+      <Execution id="5731633c-a845-4106-ae85-222b14ab2531" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="HeatCausesThrottlingAndOutageAllowsCooling" />
+    </UnitTest>
+    <UnitTest name="DirectedPathRemovalStopsTrainingAndJobIncome" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f7a7d623-71c1-a126-588d-8b7341afa0d7">
+      <Execution id="cb109616-5f84-41de-ae92-ded7aac8709c" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="DirectedPathRemovalStopsTrainingAndJobIncome" />
+    </UnitTest>
+    <UnitTest name="SavedActiveCardRngAndPulseStateContinueExactly" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="554d6421-6140-c325-612b-1f3a56256ae7">
+      <Execution id="a45fced8-2c2b-4b3f-9f00-0938ce853166" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SavedActiveCardRngAndPulseStateContinueExactly" />
+    </UnitTest>
+    <UnitTest name="SameSeedProducesSameCardsPredictionsAndConfidence" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00">
+      <Execution id="c5915d65-c64d-454a-9aa5-19c977448751" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SameSeedProducesSameCardsPredictionsAndConfidence" />
+    </UnitTest>
+    <UnitTest name="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="77493835-e909-808d-bffa-7a6371cdec56">
+      <Execution id="9f3aa8bd-9dd1-4db9-a1db-5ec2d6d7b623" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UpgradesSpendPointsExactlyOnceAndRespectLevelCaps" />
+    </UnitTest>
+    <UnitTest name="ReversePulseCallbackCannotSubmitSameCardReentrantly" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="c8c21033-de5b-0a38-1860-9f830481902f">
+      <Execution id="7d466f2b-a198-48d0-ac90-729e8adb3a9a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ReversePulseCallbackCannotSubmitSameCardReentrantly" />
+    </UnitTest>
+    <UnitTest name="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="10435959-0d40-cec4-99e3-375c091b5f3b">
+      <Execution id="a821eb14-15b9-4fac-adf0-191b657bf88c" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="CorrectionDoublesSamplesWeakensRecordedRouteAndEmitsReversePulse" />
+    </UnitTest>
+    <UnitTest name="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d">
+      <Execution id="2480811a-0d2e-4ff8-a55a-4982fe1ab189" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ExamSaveRestorePreservesQuestionIndexScoreAndRemainingDeck" />
+    </UnitTest>
+    <UnitTest name="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="76f34c4a-d717-477e-c250-a185c56fb58a">
+      <Execution id="104ec13b-6562-4ae9-ab7c-2ef6fe5dba5e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="OnlyHexAdjacentDirectedEdgesAreAllowedAndPortsAreProtected" />
+    </UnitTest>
+    <UnitTest name="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5">
+      <Execution id="4e443f9a-089a-4f92-9fb2-9d7f2b8eaaad" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FailedExamCanRetryAndRewardIsGrantedOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="24600395-c20b-97ce-23b2-3274a7fad188">
+      <Execution id="816db5d8-02ee-42d2-af7c-7c264608946f" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FreshStateHasGiftGpuGrantAndBothDirectedOutputPaths" />
+    </UnitTest>
+    <UnitTest name="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1">
+      <Execution id="73ee77e0-ff6f-4544-8a81-103071e1e7fe" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="CorruptDuplicateNodesDanglingEdgesAndOversizedBoardAreRejected" />
+    </UnitTest>
+    <UnitTest name="VramPreventsOversizedBoardWithoutChargingMoney" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="5b77b7ac-3023-6323-2d8c-808eb6bde553">
+      <Execution id="c21bec42-06d4-4e6c-9aff-aa8fb5fa8d69" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="VramPreventsOversizedBoardWithoutChargingMoney" />
+    </UnitTest>
+    <UnitTest name="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="5d2a16d0-83f7-bc6d-2577-555c7ef79f44">
+      <Execution id="cff7f2df-2a15-4fc9-9ead-77ab1c244390" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="SamplesStepsAndBoardParametersEachCanBeTheBottleneck" />
+    </UnitTest>
+    <UnitTest name="ReplayedCardIdIsRejectedWithoutDuplicateReward" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b25ff1cb-4447-ed3c-cd7c-d0da8400f271">
+      <Execution id="6fe293ea-c7ad-40da-99fa-bca9b786eee5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="ReplayedCardIdIsRejectedWithoutDuplicateReward" />
+    </UnitTest>
+    <UnitTest name="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="cc134237-42b6-4ccc-1499-fac987a3576f">
+      <Execution id="3686e8cc-6084-42be-8d1d-ef02ba500202" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="InvalidTimeDoesNothingAndCorruptNumericSaveIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="82673fc2-830e-38c7-076f-32ff1c3e2f92">
+      <Execution id="6886a374-1b18-48b3-9930-1df169b8b301" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="UnusedSynapseDecaysWhileChargeLeaksAndFatigueRecovers" />
+    </UnitTest>
+    <UnitTest name="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac">
+      <Execution id="c32d273f-ad78-4855-8639-095c73f79600" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="AccuracyStaysFiniteAndBelowCapEvenWithStructuresAndHugeResources" />
+    </UnitTest>
+    <UnitTest name="OverloadRequiresReducedLoadBeforeManualBreakerReset" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f133d777-8201-5e01-3111-d8179312a197">
+      <Execution id="d576cea8-9481-4da7-a0b2-299ffdc34b2b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="OverloadRequiresReducedLoadBeforeManualBreakerReset" />
+    </UnitTest>
+    <UnitTest name="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="cfe90e22-5074-4fbe-bc28-1520a97e4d62">
+      <Execution id="202e25a4-782d-48df-8e98-a408c37bdd0d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="RemovingHiddenNodeAlsoRemovesIncidentEdgesAndClearsPath" />
+    </UnitTest>
+    <UnitTest name="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="e87a9960-466d-5f94-9bd6-7c708cde71fe">
+      <Execution id="7e2f74c7-a593-4782-b3be-7ef07971900b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="GpuSlotsCaseCostAndResaleDoNotCreateFreeMoney" />
+    </UnitTest>
+    <UnitTest name="DailyBillingAndSimulationAreIndependentOfTickPartition" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="f890a48d-27f6-658b-e323-fb5b8dda60af">
+      <Execution id="2f5b2925-55ce-4f13-a1b0-0bb23b64513d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="DailyBillingAndSimulationAreIndependentOfTickPartition" />
+    </UnitTest>
+    <UnitTest name="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395">
+      <Execution id="956835a2-b193-48cc-9043-59618767237a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="FullFreshWalkthroughEarnsIncomeUpgradesAndCompletesOneChapterOnly" />
+    </UnitTest>
+    <UnitTest name="DuplicateRecordedRoutesAndOverflowedCountersAreRejected" storage="/users/kk/competition/tools/lingguangchapterone.tests/bin/debug/net8.0/lingguangchapterone.tests.dll" id="d4b80a15-22d7-483b-eaaa-c217b369d420">
+      <Execution id="2c794485-8809-4ddf-bf23-944228554d08" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.Tests.CoreTests" name="DuplicateRecordedRoutesAndOverflowedCountersAreRejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="99b8144d-b196-0519-26c5-cc773d8e5865" executionId="e8c3e0c4-cd22-422d-ae9a-d5797ab712ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77493835-e909-808d-bffa-7a6371cdec56" executionId="9f3aa8bd-9dd1-4db9-a1db-5ec2d6d7b623" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b62b1f0a-a6bb-bdcb-7747-ee7be6838a00" executionId="c5915d65-c64d-454a-9aa5-19c977448751" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b03dfe80-0d6a-e31a-6afb-dd05edf3eac5" executionId="4e443f9a-089a-4f92-9fb2-9d7f2b8eaaad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b77b7ac-3023-6323-2d8c-808eb6bde553" executionId="c21bec42-06d4-4e6c-9aff-aa8fb5fa8d69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1270b21f-0b28-744c-3047-96b83c52db9c" executionId="4e554e3e-f580-4105-a242-4b4ccc709275" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bcc6e7c6-8c9b-26ab-a588-f6e7cfe0f6b1" executionId="73ee77e0-ff6f-4544-8a81-103071e1e7fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8c21033-de5b-0a38-1860-9f830481902f" executionId="7d466f2b-a198-48d0-ac90-729e8adb3a9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ac6c134-b6c3-3576-18d5-63d4d3380b33" executionId="8cd8a575-d9f8-4979-9150-d3b27a8a074e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06b77137-4fec-71b2-8a24-a60bd3c20f06" executionId="aa6b4a74-4f46-4a1b-bde4-87782258bcc6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b82e8da3-b0ac-8d0f-35cd-9bb1d284ceac" executionId="c32d273f-ad78-4855-8639-095c73f79600" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f133d777-8201-5e01-3111-d8179312a197" executionId="d576cea8-9481-4da7-a0b2-299ffdc34b2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8a8f9e3-dd14-9e55-2aab-3e38c31a8395" executionId="956835a2-b193-48cc-9043-59618767237a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a79a9951-9188-9ce5-a3cd-6ab3ea977a3d" executionId="2480811a-0d2e-4ff8-a55a-4982fe1ab189" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7be3107d-201b-1476-7acc-2015b8ec78eb" executionId="beafd98c-666d-41f1-a667-30037dda14e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfe90e22-5074-4fbe-bc28-1520a97e4d62" executionId="202e25a4-782d-48df-8e98-a408c37bdd0d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5ff29a4-3ca0-e09b-da33-237d1e8d36ad" executionId="7bf4bcea-aa90-447a-b731-b3ac2a05e394" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10435959-0d40-cec4-99e3-375c091b5f3b" executionId="a821eb14-15b9-4fac-adf0-191b657bf88c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9bd0dd5a-870b-e91b-ab93-0136a2b5c9ff" executionId="4cbfe565-3e6c-4b60-b936-e9af7686cabd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="554d6421-6140-c325-612b-1f3a56256ae7" executionId="a45fced8-2c2b-4b3f-9f00-0938ce853166" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7fafa4d-8c88-520a-072a-adca22522b7c" executionId="5731633c-a845-4106-ae85-222b14ab2531" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7a7d623-71c1-a126-588d-8b7341afa0d7" executionId="cb109616-5f84-41de-ae92-ded7aac8709c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f890a48d-27f6-658b-e323-fb5b8dda60af" executionId="2f5b2925-55ce-4f13-a1b0-0bb23b64513d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e0b4551-7a20-291c-d79a-3326b32e4033" executionId="a349e930-8dd3-458b-a0b2-22b515fbab32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b5bd723-1778-655a-ea2e-4988cdc3b28d" executionId="6d15f09e-cfa0-4ffc-850a-8ac4215db013" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d2a16d0-83f7-bc6d-2577-555c7ef79f44" executionId="cff7f2df-2a15-4fc9-9ead-77ab1c244390" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b25ff1cb-4447-ed3c-cd7c-d0da8400f271" executionId="6fe293ea-c7ad-40da-99fa-bca9b786eee5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc134237-42b6-4ccc-1499-fac987a3576f" executionId="3686e8cc-6084-42be-8d1d-ef02ba500202" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e87a9960-466d-5f94-9bd6-7c708cde71fe" executionId="7e2f74c7-a593-4782-b3be-7ef07971900b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24600395-c20b-97ce-23b2-3274a7fad188" executionId="816db5d8-02ee-42d2-af7c-7c264608946f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82673fc2-830e-38c7-076f-32ff1c3e2f92" executionId="6886a374-1b18-48b3-9930-1df169b8b301" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76f34c4a-d717-477e-c250-a185c56fb58a" executionId="104ec13b-6562-4ae9-ab7c-2ef6fe5dba5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4b80a15-22d7-483b-eaaa-c217b369d420" executionId="2c794485-8809-4ddf-bf23-944228554d08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="33" executed="33" passed="31" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started
+Running all tests in /Users/kk/competition/Tools/LingGuangChapterOne.Tests/bin/Debug/net8.0/LingGuangChapterOne.Tests.dll
+   NUnit3TestExecutor discovered 33 of 33 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.6.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

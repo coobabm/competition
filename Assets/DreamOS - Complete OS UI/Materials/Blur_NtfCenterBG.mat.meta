@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 451b2151d790d8e49bc8f8cf53c2e6e7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_NtfCenterBG.mat
+  uploadId: 718228

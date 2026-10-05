@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ecaedafe294d96d4f9725d2b0a5da2d5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_NewAppBG.mat
+  uploadId: 718228

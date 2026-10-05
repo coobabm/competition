@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 55c20b0d7c8185d4fa71150c831959d9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Apps/Web Browser.prefab
+  uploadId: 718228

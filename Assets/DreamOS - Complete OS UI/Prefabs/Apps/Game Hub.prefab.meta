@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fec1ced1cad809d44b9524cde2f812d6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Apps/Game Hub.prefab
+  uploadId: 718228

@@ -1,0 +1,179 @@
+{
+  "project": "KDE Oxygen Icon Theme",
+  "repository": "https://github.com/KDE/oxygen-icons",
+  "commit": "65ccf0752df19c9cf97da4884e41bfd4e8c8ec69",
+  "assets": [
+    {
+      "app": "Calculator",
+      "file": "Calculator.png",
+      "upstream_path": "128x128/apps/accessories-calculator.png",
+      "resolved_png": "128x128/apps/accessories-calculator.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/accessories-calculator.png",
+      "sha256": "649ab7951d7af146a6e0fd2c1120a66d2aeace611434cfdfe7121bc821d7f79c",
+      "source_files": [
+        "scalable/apps/accessories-calculator.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Commander",
+      "file": "Commander.png",
+      "upstream_path": "128x128/apps/utilities-terminal.png",
+      "resolved_png": "128x128/apps/utilities-terminal.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/utilities-terminal.png",
+      "sha256": "61e5fc9959431022e14bc34b342994370d7dcc2cc5f5874bff20aba1a706ce1a",
+      "source_files": [
+        "scalable/apps/utilities-terminal.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Game Hub",
+      "file": "Game Hub.png",
+      "upstream_path": "128x128/categories/applications-games.png",
+      "resolved_png": "128x128/categories/applications-games.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/categories/applications-games.png",
+      "sha256": "7f9422af908743422e4d48cbb29155c5aed4716d1556477d392c3fed7c0c545b",
+      "source_files": [
+        "scalable/categories/applications-games.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Mail",
+      "file": "Mail.png",
+      "upstream_path": "128x128/apps/internet-mail.png",
+      "resolved_png": "128x128/apps/internet-mail.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/internet-mail.png",
+      "sha256": "955598b7127fd2df26186d153d3c9eff9ee4f687206660564f0e5efe9b2e6974",
+      "source_files": [
+        "scalable/apps/internet-mail.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Messaging",
+      "file": "Messaging.png",
+      "upstream_path": "128x128/apps/kopete.png",
+      "resolved_png": "128x128/apps/kopete.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/kopete.png",
+      "sha256": "9f8c2e2fe72d78a912e8f7b529640ab7c318500dab9419478673ce22f5f527fa",
+      "source_files": [
+        "scalable/apps/kopete.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Music Player",
+      "file": "Music Player.png",
+      "upstream_path": "128x128/mimetypes/audio-x-generic.png",
+      "resolved_png": "128x128/mimetypes/audio-x-flac+ogg.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/mimetypes/audio-x-flac+ogg.png",
+      "sha256": "de25525bed6e411308a8d93164690706ae7e394c854f39924897a72b6da82811",
+      "source_files": [
+        "scalable/mimetypes/audio-x-generic.svgz",
+        "scalable/mimetypes/audio-x-flac+ogg.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Notepad",
+      "file": "Notepad.png",
+      "upstream_path": "128x128/apps/accessories-text-editor.png",
+      "resolved_png": "128x128/apps/accessories-text-editor.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/accessories-text-editor.png",
+      "sha256": "fc0305ae0d9a41cfcf64cad8d37a8d1ec52393de3847521700e8c6105bf5b614",
+      "source_files": [
+        "scalable/apps/accessories-text-editor.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Photo Gallery",
+      "file": "Photo Gallery.png",
+      "upstream_path": "128x128/mimetypes/image-x-generic.png",
+      "resolved_png": "128x128/mimetypes/application-x-egon.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/mimetypes/application-x-egon.png",
+      "sha256": "38e30666c5e25c90dcf205147d6a38ff9e11f682b6f10d9910e9b37afe9f2555",
+      "source_files": [
+        "scalable/mimetypes/image-x-generic.svgz",
+        "scalable/mimetypes/application-x-egon.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Reminder",
+      "file": "Reminder.png",
+      "upstream_path": "128x128/apps/office-calendar.png",
+      "resolved_png": "128x128/apps/korganizer.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/korganizer.png",
+      "sha256": "6c573807815050db01b2bd82e9e8a7fb20ae8e2b7cb12150ede3051ae70514cf",
+      "source_files": [
+        "scalable/apps/office-calendar.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Settings",
+      "file": "Settings.png",
+      "upstream_path": "128x128/categories/preferences-system.png",
+      "resolved_png": "128x128/categories/preferences-system.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/categories/preferences-system.png",
+      "sha256": "b2d68deea0537e24c854c16205234b6b772e11b6ee3343483d70c42f3fd69af8",
+      "source_files": [
+        "scalable/categories/preferences-system.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Video Player",
+      "file": "Video Player.png",
+      "upstream_path": "128x128/mimetypes/video-x-generic.png",
+      "resolved_png": "128x128/mimetypes/application-vnd.rn-realmedia.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/mimetypes/application-vnd.rn-realmedia.png",
+      "sha256": "efade796a2a8e572478259a23441b31ca1c425988ce160e3eaa0a213fd8830c7",
+      "source_files": [
+        "scalable/mimetypes/video-x-generic.svgz",
+        "scalable/mimetypes/application-vnd.rn-realmedia.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Web Browser",
+      "file": "Web Browser.png",
+      "upstream_path": "128x128/apps/internet-web-browser.png",
+      "resolved_png": "128x128/apps/internet-web-browser.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/internet-web-browser.png",
+      "sha256": "9bca62725b6c0d9d658bc7b76c43004c1c984f631b3eec0309c03746d3221d5b",
+      "source_files": [
+        "scalable/apps/internet-web-browser.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    },
+    {
+      "app": "Widget Library",
+      "file": "Widget Library.png",
+      "upstream_path": "128x128/categories/applications-other.png",
+      "resolved_png": "128x128/categories/applications-other.png",
+      "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/categories/applications-other.png",
+      "sha256": "8cd9c164f463d32867251962cd36712c57202bb1c24a281363da9970082a9a37",
+      "source_files": [
+        "scalable/categories/applications-other.svgz"
+      ],
+      "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
+      "modified": false
+    }
+  ]
+}

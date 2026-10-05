@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b0c8d41103add704c87ca5e8bc134892
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_PhotoGalleryBG.mat
+  uploadId: 718228

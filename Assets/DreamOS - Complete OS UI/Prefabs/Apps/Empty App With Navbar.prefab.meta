@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 838fc119b133c6e45b65847ee0f9bd65
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Apps/Empty App With Navbar.prefab
+  uploadId: 718228

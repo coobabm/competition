@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fed85aa2aad0b9b43a8c99ab07f56c4e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Animated Icons/CoriListening.controller
+  uploadId: 718228

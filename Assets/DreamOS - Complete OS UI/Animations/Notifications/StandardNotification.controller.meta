@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8f3a8a68e7cc41541a1685a04ee96ef0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Notifications/StandardNotification.controller
+  uploadId: 718228

@@ -8,6 +8,9 @@ namespace LingGuang.Core
         public int id;
         public Shape shape;
         public int dir;
+        // -1: original shape outputs; otherwise six relative direction bits chosen by the player.
+        // Value type deliberately keeps preview/undo clones isolated.
+        public int connectionMask = -1;
         public int cell;
         public int light;
         public int nodeId;

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4e26f7f1322fb5d4eac1bd5279162d93
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Localization/Languages/Turkish (tr-TR).asset
+  uploadId: 718228

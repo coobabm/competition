@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 704dd7aa9a447454eb4a939c667e6db3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 0591906a0fdabaf4a970b40c5f89a1ab, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/System/SystemErrorPopup.cs
+  uploadId: 718228

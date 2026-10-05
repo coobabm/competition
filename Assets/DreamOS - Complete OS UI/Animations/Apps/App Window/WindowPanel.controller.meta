@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ef1fd07ca0dbfc949b5b95542e6d6890
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Apps/App Window/WindowPanel.controller
+  uploadId: 718228

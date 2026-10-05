@@ -296,7 +296,9 @@ namespace LingGuang.Core
             foreach (var k in edges.Keys.ToList()) if (!valid.Contains(k)) edges.Remove(k);
         }
 
-        public int[] Dirs(Spark sp) => sp.dirsOverride ?? cfg.Shape(sp.shape).dirs;
+        public int[] Dirs(Spark sp) => sp.connectionMask >= 0
+            ? RoutedDirections[sp.connectionMask & 63]
+            : sp.dirsOverride ?? cfg.Shape(sp.shape).dirs;
 
         public Edge EdgeBetween(Spark a, Spark b) => edges.TryGetValue(Edge.Key(a.id, b.id), out var e) ? e : null;
 

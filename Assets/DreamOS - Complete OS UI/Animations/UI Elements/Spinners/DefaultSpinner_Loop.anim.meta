@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 54a8e79224dd1ed41bffbaa316ed272d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim
+  uploadId: 718228

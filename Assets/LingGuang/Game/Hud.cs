@@ -24,6 +24,8 @@ namespace LingGuang.Game
         Image progressFill;
         float toastT;
         public Action<int> onCandidate, onBuy, onUseDrug, onSellItem;
+        public Action<int> onConnectionMode;
+        public Action onConnectionSource;
         public Action onReview, onReroll, onRefreshShop, onSkipCandidates, onConfirm, onEndRound, onUndo, onTrial, onNewRun, onStep, onSkipAnim, onToggleStep, onToggleInternal, onToggleReduceFlash;
         public Func<string> modalAction1, modalAction2;
         Action modalCb1, modalCb2;
@@ -34,6 +36,10 @@ namespace LingGuang.Game
         public float shownMult;
         Button trialButton, reviewBtn, rerollBtn;
         RectTransform insightBar;
+        public RectTransform connectionPanel;
+        public TextMeshProUGUI connectionStatus;
+        readonly List<Button> connectionButtons = new List<Button>();
+        Button connectionSourceButton, connectionExitButton;
         HudUiHint gateHint;
         HudUiHint activeUiHint;
         public HudUiHint ActiveUiHint
@@ -123,6 +129,34 @@ namespace LingGuang.Game
             Btn(br, "结束本轮", new Vector2(158, 0), new Vector2(148, 56), () => onEndRound?.Invoke(), 22);
             Btn(br, "撤销 [Esc]", new Vector2(0, -66), new Vector2(148, 56), () => onUndo?.Invoke(), 20);
             trialButton = Btn(br, "试运行 [T]", new Vector2(158, -66), new Vector2(148, 56), () => onTrial?.Invoke(), 20);
+
+            // A compact workbench above the round actions, in the same paper/chalk visual language.
+            connectionPanel = Panel(root, Vector2.right, Vector2.right, new Vector2(-330, 166), new Vector2(306, 302));
+            connectionPanel.name = "ConnectionWorkbench";
+            Text(connectionPanel, "神经布线 · 每轮可调整", 22, Accent, new Vector2(0, 0), new Vector2(306, 32));
+            string[] labels = { "连线 [C]", "双向", "断线" };
+            string[] descriptions = {
+                "先选源，再点相邻目标，连接 A→B。传导与汇聚只有 1 条输出，改接会替换旧方向；锥体最多 3 条。",
+                "同时连接 A→B 和 B→A。两端都满足输出限制才会成功；足够强的反馈可以回荡，不保证无限循环。",
+                "只断开源→目标，不会顺带删除反方向。重新连接从新生光丝开始；撤销可恢复误操作。"
+            };
+            for (int i = 0; i < labels.Length; i++)
+            {
+                int mode = i + 1;
+                var button = Btn(connectionPanel, labels[i], new Vector2(i * 104, -38), new Vector2(98, 42), () => onConnectionMode?.Invoke(mode), 19);
+                button.name = "WireMode" + mode;
+                Hint(button.gameObject, descriptions[i]);
+                connectionButtons.Add(button);
+            }
+            connectionStatus = Text(connectionPanel, "选择工具，亲手决定电往哪里走", 18, IsaacHudSkin.Chalk, new Vector2(2, -90), new Vector2(302, 80));
+            connectionStatus.enableWordWrapping = true;
+            connectionStatus.enableAutoSizing = true;
+            connectionStatus.fontSizeMin = 15;
+            connectionSourceButton = Btn(connectionPanel, "换源", new Vector2(0, -178), new Vector2(98, 36), () => onConnectionSource?.Invoke(), 18);
+            connectionExitButton = Btn(connectionPanel, "完成 / 选起点", new Vector2(108, -178), new Vector2(198, 36), () => onConnectionMode?.Invoke(0), 18);
+            var guide = Text(connectionPanel, "串联→长链  分叉→发散\n多源同拍→汇聚  闭环→回荡\nShift+点击换源 · 右键取消选源", 16, IsaacHudSkin.Muted, new Vector2(2, -228), new Vector2(302, 68));
+            guide.enableWordWrapping = true;
+            Hint(connectionPanel.gameObject, "改线不消耗起点或移动次数，可在两次发动之间继续修改。连接会保留到下一轮。\n结构决定传电路径；是否形成回路加成，以实际闪烁和计分为准。\n本能可改输出连接但不能移动/旋转；记忆只能改对外连线；不能修改流光的输出。");
 
             // ---- toast & tooltip
             toast = Text(root, "", 26, Color.white, Vector2.zero, new Vector2(1000, 40));
@@ -283,6 +317,29 @@ namespace LingGuang.Game
 
         // ------------------------------------------------------------------ refresh
 
+        void SetConnectionAvailability(bool available)
+        {
+            foreach (var b in connectionButtons) b.interactable = available;
+            connectionSourceButton.interactable = connectionExitButton.interactable = available;
+        }
+
+        public void RefreshConnections(RunState s, int mode, int sourceId, bool locked)
+        {
+            SetConnectionAvailability(!locked && s.phase == Phase.Prepare);
+            for (int i = 0; i < connectionButtons.Count; i++)
+                connectionButtons[i].GetComponent<Image>().color = mode == i + 1 ? IsaacHudSkin.Gold : IsaacHudSkin.PaperLight;
+            connectionSourceButton.interactable &= mode != 0 && sourceId >= 0;
+            connectionExitButton.interactable &= mode != 0;
+            if (s.phase != Phase.Prepare) { connectionStatus.text = "本轮已结算\n下一轮开始时可继续改线"; return; }
+            if (locked) { connectionStatus.text = "正在传播…\n动画结束后未达标可继续改线"; return; }
+            if (mode == 0) { connectionStatus.text = "选择工具，亲手决定电往哪里走\n连线保留到下一轮 · 支持撤销"; return; }
+            if (!s.sparks.TryGetValue(sourceId, out var source))
+            { connectionStatus.text = "第 1 步：点击一个灵光作为源\n也可以从源拖到相邻目标"; return; }
+            int outgoing = s.edges.Values.Count(e => e.from == sourceId && !e.pruned);
+            string action = mode == 3 ? "点目标：断开源→目标" : mode == 2 ? "点目标：建立双向连接" : "点目标：连接源→目标";
+            connectionStatus.text = $"源 #{sourceId} · {s.cfg.Shape(source.shape).name}  输出 {outgoing}/{s.ConnectionCapacity(source)}\n{action}\n相邻格有效 · 不可跨沟";
+        }
+
         public void Refresh(RunState s, bool playing)
         {
             var cfg = s.cfg;
@@ -301,6 +358,7 @@ namespace LingGuang.Game
             reviewBtn.GetComponentInChildren<TextMeshProUGUI>().text = s.reviewActive ? "复盘中" : $"复盘 ({cfg.reviewCost})";
             rerollBtn.GetComponentInChildren<TextMeshProUGUI>().text = $"再来一次 ({cfg.rerollCost})";
             trialButton.gameObject.SetActive(s.items.Contains("computer"));
+            SetConnectionAvailability(!playing && s.phase == Phase.Prepare);
 
             // candidates
             ClearChildren(candidateBar, 1);

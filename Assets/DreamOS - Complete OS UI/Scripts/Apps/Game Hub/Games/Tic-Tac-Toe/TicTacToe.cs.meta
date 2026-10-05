@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 6c818b0104d7c854ea183422b220b840
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Apps/Game Hub/Games/Tic-Tac-Toe/TicTacToe.cs
+  uploadId: 718228

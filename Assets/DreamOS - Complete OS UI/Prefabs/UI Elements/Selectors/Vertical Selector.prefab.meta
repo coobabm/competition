@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: eda0b3161464368479edf0aee6477715
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Selectors/Vertical
+    Selector.prefab
+  uploadId: 718228

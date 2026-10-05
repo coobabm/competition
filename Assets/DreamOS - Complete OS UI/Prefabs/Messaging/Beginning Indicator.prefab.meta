@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c3454b3ac6e4fb94597a161195f40f83
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Messaging/Beginning Indicator.prefab
+  uploadId: 718228

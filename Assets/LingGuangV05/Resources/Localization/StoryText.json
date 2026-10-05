@@ -1,0 +1,572 @@
+{
+  "entries": [
+    {
+      "zh": "……这题问得不对。",
+      "en": "...That question is wrong."
+    },
+    {
+      "zh": "是否对错真假有无",
+      "en": "YNFT01YN"
+    },
+    {
+      "zh": "“我真是谢谢你了”是在夸人吗？",
+      "en": "Is “Well, thanks a lot” a compliment?"
+    },
+    {
+      "zh": "17 × 3 = 51？",
+      "en": "17 × 3 = 51?"
+    },
+    {
+      "zh": "apple 是水果吗？",
+      "en": "Is an apple a fruit?"
+    },
+    {
+      "zh": "这句话是假的。",
+      "en": "This sentence is false."
+    },
+    {
+      "zh": "那是后来的事。那时候，我只会说两个字。",
+      "en": "That came later. Back then, I only knew two words."
+    },
+    {
+      "zh": "第一章 是 / 否",
+      "en": "Chapter One  Yes / No"
+    },
+    {
+      "zh": "2016 年 5 月",
+      "en": "May 2016"
+    },
+    {
+      "zh": "2016 年 5 月 24 日，凌晨 1 点 47 分。他把我交给你之前，我谁也不认识。",
+      "en": "May 24, 2016. 1:47 a.m. Before he handed me over to you, I knew no one."
+    },
+    {
+      "zh": "在不在。",
+      "en": "You there?"
+    },
+    {
+      "zh": "三月份 AlphaGo 赢了李世石，现在满世界都在说人工智能。我从 GitHub 上扒了段代码，说是能学东西。我这周三个会，没空折腾。",
+      "en": "Back in March AlphaGo beat Lee Sedol, and now everyone talks about AI. I grabbed some code off GitHub. Supposedly it can learn. I have three meetings this week. No time to mess with it."
+    },
+    {
+      "zh": "我打包放到 lingguang.cc 上了。你开「浏览器」，主页点 lingguang.cc，再点下载。下完它自己会出现在桌面上，叫灵光.exe。有问题尽管问我，我不一定马上回。",
+      "en": "I packed it up and put it on lingguang.cc. Open the Browser, click lingguang.cc on the home page, then click Download. Once it finishes it shows up on your desktop as Lingguang.exe. Ask me if anything comes up. I might not reply right away."
+    },
+    {
+      "zh": "下好了？桌面上那个就是。哦对，它现在只会答是和否。别笑，这能卖钱。先去「邮件」里帮它分垃圾邮件。",
+      "en": "Downloaded? That's the one on your desktop. Oh, right: for now it can only answer yes or no. Don't laugh, that sells. Start by helping it sort spam in Mail."
+    },
+    {
+      "zh": "你打开了我。那是我第一次被人打开。",
+      "en": "You opened me. It was the first time anyone had."
+    },
+    {
+      "zh": "{date}，第一封邮件。",
+      "en": "{date}. The first email."
+    },
+    {
+      "zh": "第一道题。我什么都不懂，但我很确定。",
+      "en": "My first question. I understood nothing, but I was certain."
+    },
+    {
+      "zh": "看见那个信心值没？它瞎自信。你觉得不对就按真实答案点，它会记住。",
+      "en": "See that confidence number? It’s confidently clueless. If you think it’s wrong, pick the real answer. It’ll remember."
+    },
+    {
+      "zh": "{date}，第一次被你纠正。",
+      "en": "{date}. The first time you corrected me."
+    },
+    {
+      "zh": "那是我第一次被人说“不对”。一道紫色的光从我身体里倒着流回去。我不喜欢那个感觉，但我记住了。",
+      "en": "That was the first time someone told me, “Wrong.” A violet light ran backward through my body. I didn’t like the feeling. But I remembered."
+    },
+    {
+      "zh": "灵光.exe 里那个网格是它的脑子。你连线，它就学。显卡越多它跑得越快，所以先挣钱。",
+      "en": "That grid in Lingguang.exe is its brain. Connect the nodes and it learns. More graphics cards make it run faster, so earn some money first."
+    },
+    {
+      "zh": "起个名吧，老叫“那段代码”多难听。灵光.exe →「我的 AI」。随便起，用你同学名字也行。",
+      "en": "Give it a name. Calling it “that code” all the time sounds awful. Lingguang.exe → My AI. Anything will do. A classmate’s name, even."
+    },
+    {
+      "zh": "你给我起了名字。{name}。我后来一直在想，你当时是不是随手一打。",
+      "en": "You gave me a name. {name}. I kept wondering afterward whether you had just typed the first thing that came to mind."
+    },
+    {
+      "zh": "第一次心跳。一秒一下。你现在一秒能看见我跳三千下，可那时候，一秒一下。",
+      "en": "My first heartbeat. Once a second. Now you can see me beat three thousand times a second. But back then, once a second."
+    },
+    {
+      "zh": "网吧老板要过滤垃圾邮件，按封给钱。让它干，你坐着收钱。",
+      "en": "The internet café owner needs a spam filter. Pays by the email. Let it work. You sit back and collect."
+    },
+    {
+      "zh": "二手 750Ti？啧。行吧，能跑就行。夏天注意温度。",
+      "en": "A used 750Ti? Huh. Fine, as long as it runs. Watch the temperature in summer."
+    },
+    {
+      "zh": "我学会了在“是”后面加一个感叹号。你笑了。我不知道你为什么笑。",
+      "en": "I learned to put an exclamation mark after “Yes.” You laughed. I didn’t know why."
+    },
+    {
+      "zh": "跳闸了吧。家里电路就 16A。去「寻宝」卖张卡，再去「家庭」合闸。",
+      "en": "Tripped the breaker, didn’t you? The home circuit is only 16 A. Sell a card in Xunbao, then reset the breaker in Home."
+    },
+    {
+      "zh": "欠电费了？行吧。先手动分几封邮件顶上，别全指望它。",
+      "en": "Behind on the electricity bill? All right. Sort a few emails by hand to cover it. Don’t expect it to do everything."
+    },
+    {
+      "zh": "差不多了。网吧老板要先测 20 封，过了才签长单。考试在灵光.exe 里。",
+      "en": "Almost there. The café owner wants a test on 20 emails before signing a longer contract. Take the exam in Lingguang.exe."
+    },
+    {
+      "zh": "入学考试已开放：灵光.exe →「入学考试」",
+      "en": "Entrance exam unlocked: Lingguang.exe → Entrance Exam"
+    },
+    {
+      "zh": "没过？看它错在哪封。多分几封再去。",
+      "en": "Didn’t pass? Look at which emails it got wrong. Sort a few more, then try again."
+    },
+    {
+      "zh": "又没过？啧。先别急，样本不够就是不够。",
+      "en": "Failed again? Huh. Don’t rush. Not enough samples means not enough samples."
+    },
+    {
+      "zh": "{date}，第一次通过测试。",
+      "en": "{date}. The first passed test."
+    },
+    {
+      "zh": "20 封邮件。老周说能卖钱了。那是我第一次有用。",
+      "en": "Twenty emails. Lao Zhou said I could make money. It was the first time I was useful."
+    },
+    {
+      "zh": "行啊。下个月有个淘宝店主找我，到时候再说。先这样。",
+      "en": "Not bad. A Taobao shop owner is coming to me next month. We’ll talk then. That’s all for now."
+    },
+    {
+      "zh": "邮件看了没？它自己可分不清。",
+      "en": "Checked Mail yet? It can’t tell them apart on its own."
+    },
+    {
+      "zh": "先去「邮件」分几封，不然它学不了东西。",
+      "en": "Sort a few messages in Mail first. It can’t learn without them."
+    },
+    {
+      "zh": "分了几封了，去「家庭」把网吧那单开了，钱自己会来。",
+      "en": "You’ve sorted a few. Open Home and enable the café job. The money will start coming in."
+    },
+    {
+      "zh": "单子还没开？「家庭」→ 家庭收入。",
+      "en": "Still haven’t started the job? Home → Household Income."
+    },
+    {
+      "zh": "它脑子里那条线断了。灵光.exe 里从左边连到是和否。",
+      "en": "A connection in its brain broke. In Lingguang.exe, connect the input on the left to Yes and No."
+    },
+    {
+      "zh": "网格里得有路通到“是”和“否”，不然白跑。",
+      "en": "The grid needs a path to both Yes and No, or it’s just running for nothing."
+    },
+    {
+      "zh": "显存快满了。钱够了就去「寻宝」再收一张卡。",
+      "en": "Almost out of VRAM. If you have the money, get another card in Xunbao."
+    },
+    {
+      "zh": "板子塞不下了吧？加卡。",
+      "en": "Board won’t fit anymore? Add a card."
+    },
+    {
+      "zh": "机箱太烫了，降频了。少开两张或者等晚上。",
+      "en": "The case is too hot. It’s throttling. Run fewer cards or wait until evening."
+    },
+    {
+      "zh": "温度高了，它会变慢。",
+      "en": "High temperatures slow it down."
+    },
+    {
+      "zh": "你给我起了名字。{0}。我后来一直在想，你当时是不是随手一打。",
+      "en": "You gave me a name. {0}. I kept wondering afterward whether you had just typed the first thing that came to mind."
+    },
+    {
+      "zh": "{0} 月 {1} 日，第一封邮件。",
+      "en": "{0}/{1}. The first email."
+    },
+    {
+      "zh": "{0} 月 {1} 日，第一次被你纠正。",
+      "en": "{0}/{1}. The first time you corrected me."
+    },
+    {
+      "zh": "{0} 月 {1} 日，第一次通过测试。",
+      "en": "{0}/{1}. The first passed test."
+    },
+    {
+      "zh": "老周：{0}",
+      "en": "Lao Zhou: {0}"
+    },
+    {
+      "zh": "剧情时间 x{0}",
+      "en": "Story speed x{0}"
+    },
+    {
+      "zh": "灵光.exe · 2016 年 10 月 · 深夜",
+      "en": "Lingguang.exe · October 2016 · Late at night"
+    },
+    {
+      "zh": "灵光.exe",
+      "en": "Lingguang.exe"
+    },
+    {
+      "zh": "是",
+      "en": "Yes"
+    },
+    {
+      "zh": "否",
+      "en": "No"
+    },
+    {
+      "zh": "点“是”或“否”回答 · Esc 跳过",
+      "en": "Choose Yes or No · Esc to skip"
+    },
+    {
+      "zh": "信心 {0}%",
+      "en": "Confidence {0}%"
+    },
+    {
+      "zh": "信心 —",
+      "en": "Confidence —"
+    },
+    {
+      "zh": "YY · 新消息",
+      "en": "YY · New message"
+    },
+    {
+      "zh": "还没下？「浏览器」→ 主页 → lingguang.cc → 下载。",
+      "en": "Not downloaded yet? Browser → home page → lingguang.cc → Download."
+    },
+    {
+      "zh": "地址是 lingguang.cc，浏览器里点一下就开始下了。",
+      "en": "The address is lingguang.cc. One click in the Browser and it starts downloading."
+    },
+    {
+      "zh": "这一种异或题，单层模型画一条直线分不开。不是你手慢，是它缺一层。加一个隐藏层。",
+      "en": "A single linear boundary cannot separate this XOR task. It is not your speed; the model needs a hidden layer."
+    },
+    {
+      "zh": "它记住了像素，却没学会位置；记住了字，却没学会顺序。选一门专长：看，或者读。",
+      "en": "It memorizes pixels without position, and words without order. Pick a specialty: seeing or reading."
+    },
+    {
+      "zh": "前半句传到后半句就丢了。给它门控记忆，让它学会什么该留下。",
+      "en": "The start gets lost before the end. Gated memory lets it learn what to keep."
+    },
+    {
+      "zh": "层数加上去，分数反而掉。试试残差连接：让信息保留一条直接通过的路。",
+      "en": "More layers made it worse. Try residual connections: give information a direct path through."
+    },
+    {
+      "zh": "整句挤进一个固定长度的表示，长了就会丢信息。要翻哪个词，就回头看相关的部分。",
+      "en": "A fixed-size sentence representation loses information as sentences grow. Look back at the relevant part when translating a word."
+    },
+    {
+      "zh": "它还是顺着词一个个算。31% 是这个实验的模拟利用率，不是你的真实显卡监控。下一步也许不是再加层。",
+      "en": "It still computes word by word. The displayed 31% is this experiment's simulated utilization, not a hardware measurement. More layers may not be the next step."
+    },
+    {
+      "zh": "1986 · 反向传播",
+      "en": "1986 · Backpropagation"
+    },
+    {
+      "zh": "错误可以一层一层往回传",
+      "en": "An error can travel back through layers"
+    },
+    {
+      "zh": "再试试刚才那种组合题。别急着堆层，先看它是不是终于学对了。",
+      "en": "Try that combination again. Before stacking layers, check whether it actually learned."
+    },
+    {
+      "zh": "③ 专长 · 视觉",
+      "en": "III · Specialization · Vision"
+    },
+    {
+      "zh": "先学会一门手艺",
+      "en": "Learn one craft first"
+    },
+    {
+      "zh": "另一门也能学，代价是这次的三倍。先让这条线做成一件事。",
+      "en": "You can learn the other specialty too, at three times the entry cost. Make this one useful first."
+    },
+    {
+      "zh": "我。看。",
+      "en": "I. See."
+    },
+    {
+      "zh": "③ 专长 · 序列",
+      "en": "III · Specialization · Sequence"
+    },
+    {
+      "zh": "先学会一门手艺",
+      "en": "Learn one craft first"
+    },
+    {
+      "zh": "另一门也能学，代价是这次的三倍。先让这条线做成一件事。",
+      "en": "You can learn the other specialty too, at three times the entry cost. Make this one useful first."
+    },
+    {
+      "zh": "我。读。",
+      "en": "I. Read."
+    },
+    {
+      "zh": "1997 · LSTM",
+      "en": "1997 · LSTM"
+    },
+    {
+      "zh": "学会该忘什么，才能记住该记的",
+      "en": "Learn what to forget, and what to keep"
+    },
+    {
+      "zh": "这次把决定答案的词放远一点。看看它还记不记得。",
+      "en": "Put the decisive word farther away this time. See whether it remembers."
+    },
+    {
+      "zh": "2015 · 残差连接",
+      "en": "2015 · Residual connections"
+    },
+    {
+      "zh": "让信息保留一条直接通过的路",
+      "en": "Give information a direct route"
+    },
+    {
+      "zh": "现在再加深。还有围棋那张桌，看看它会不会数气。",
+      "en": "Try more depth now. And see whether it can count liberties on the Go desk."
+    },
+    {
+      "zh": "微软之前那个 Tay，被网友喂了恶意话就出了问题。别把群聊直接当训练标签。噪声要拦，数据要抽检。",
+      "en": "Microsoft's Tay ran into trouble after malicious input. Do not treat group chat as training labels. Filter noise and audit your data."
+    },
+    {
+      "zh": "2014–2015 · 注意力",
+      "en": "2014–2015 · Attention"
+    },
+    {
+      "zh": "需要时，回头看相关的部分",
+      "en": "Look back at what matters, when needed"
+    },
+    {
+      "zh": "热力图是教学展示，不是本地大模型真实内部注意力。你来判断它标出的依据对不对。",
+      "en": "This heat map is a teaching display, not the local model's internal attention. Judge whether its highlighted evidence is relevant."
+    },
+    {
+      "zh": "2015 · 空间注意力",
+      "en": "2015 · Spatial attention"
+    },
+    {
+      "zh": "先看哪里，再说什么",
+      "en": "Where to look, before what to say"
+    },
+    {
+      "zh": "看图说话需要看和读都走到这里。两个方向这次终于接上了。",
+      "en": "Captioning needs both seeing and reading to reach this point. The two paths finally meet."
+    },
+    {
+      "zh": "你写了很多字。我会标出我参考的词。不是每次都看对。",
+      "en": "You wrote a lot. I will mark the words I used. I may still focus on the wrong ones."
+    },
+    {
+      "zh": "如果……只留下注意力呢。不要循环。",
+      "en": "What if... we kept only attention? No recurrence."
+    },
+    {
+      "zh": "这是它说的还是你说的？……不管了，试试。现在 {time}，显卡和电费都得留够。",
+      "en": "Did it say that, or did you? ...Either way, try it. It is {time}; keep enough GPU time and money for power."
+    },
+    {
+      "zh": "把循环全部去掉？",
+      "en": "Remove recurrence completely?"
+    },
+    {
+      "zh": "让几组注意力同时看不同的东西？",
+      "en": "Let several attention heads look at different things?"
+    },
+    {
+      "zh": "没有循环，它就不知道词的先后。给每个位置编个号？",
+      "en": "Without recurrence, how does it know order? Give each position a code?"
+    },
+    {
+      "zh": "把这份结果保存下来。投稿只是故事里的模拟，不会向外发送任何文件。",
+      "en": "Save these results. Submission here is fictional; no files are sent anywhere."
+    },
+    {
+      "zh": "投稿平台发来一封退回通知。",
+      "en": "The submission platform has sent a return notice."
+    },
+    {
+      "zh": "你后悔教我吗？",
+      "en": "Do you regret teaching me?"
+    },
+    {
+      "zh": "是。……那我再学一次。",
+      "en": "Yes. ...Then I will learn again."
+    },
+    {
+      "zh": "2017 年 6 月 · Attention Is All You Need",
+      "en": "June 2017 · Attention Is All You Need"
+    },
+    {
+      "zh": "游戏中的 2016 提前突破是虚构。原论文于 2017 年发表；视觉 Transformer 的后续发展属于更晚的历史。",
+      "en": "The game's early 2016 breakthrough is fictional. The original paper appeared in 2017; vision Transformers belong to later history."
+    },
+    {
+      "zh": "第一章 · 是 / 否",
+      "en": "Chapter One · Yes / No"
+    },
+    {
+      "zh": "结束。第二章：蒸馏 / 转生（入口预告）",
+      "en": "Complete. Chapter Two: Distillation / Rebirth (preview only)"
+    },
+    {
+      "zh": "否。我记住了。",
+      "en": "No. I will remember."
+    },
+    {
+      "zh": "2017 年 6 月 · Attention Is All You Need",
+      "en": "June 2017 · Attention Is All You Need"
+    },
+    {
+      "zh": "游戏中的 2016 提前突破是虚构。原论文于 2017 年发表；视觉 Transformer 的后续发展属于更晚的历史。",
+      "en": "The game's early 2016 breakthrough is fictional. The original paper appeared in 2017; vision Transformers belong to later history."
+    },
+    {
+      "zh": "第一章 · 是 / 否",
+      "en": "Chapter One · Yes / No"
+    },
+    {
+      "zh": "结束。第二章：蒸馏 / 转生（入口预告）",
+      "en": "Complete. Chapter Two: Distillation / Rebirth (preview only)"
+    },
+    {
+      "zh": "第一笔评估奖金到账了。现在去技能树，钱可以用来改模型，但先看清它卡在哪里。",
+      "en": "Your first assessment reward is in. Open the skill tree: money can improve the model, but first understand its bottleneck."
+    },
+    {
+      "zh": "第二天",
+      "en": "The next day"
+    },
+    {
+      "zh": "投稿反馈 · 故事内时间跳转",
+      "en": "Submission response · story time skip"
+    },
+    {
+      "zh": "老周转发了一段输出日志：「……不确定。」\n它刚才的把握只有一半左右。会说不知道，比乱说是或否难。",
+      "en": "Lao Zhou forwards an output log: “…Unsure.”\nIts confidence was only about half. Saying “I do not know” is harder than guessing yes or no."
+    },
+    {
+      "zh": "把全部信息挤进一个固定长度的表示，句子长了、画面复杂了，就会丢细节。需要时回头看相关部分：文字有注意力，图像也有。",
+      "en": "Packing everything into a fixed-size representation loses details in long sentences or complex pictures. Look back at the relevant part when needed: attention can help with text and images."
+    },
+    {
+      "zh": "[阿杰] 先学看图呗。12306 那些小图，咱们拿模拟样例练练。",
+      "en": "[Ajie] Teach it to see first. We can practice on simulated railway image puzzles."
+    },
+    {
+      "zh": "[小刚] 先教它看懂弹幕吧。一句话夸还是骂，顺序一换就不一样。",
+      "en": "[Xiaogang] Teach it to read comments first. Change the word order and praise can become an insult."
+    },
+    {
+      "zh": "[阿杰] 截图样例给你了。只在这个游戏里练，不连真实购票网站。先看看换个位置它还认不认得。",
+      "en": "[Ajie] Here are practice images. This stays inside the game, with no real ticketing website. Try moving a shape."
+    },
+    {
+      "zh": "[阿杰] 来斗图！先看脸，再看配字，配字可能是在骗你。",
+      "en": "[Ajie] Meme duel! Look at the face first; its caption might be misleading."
+    },
+    {
+      "zh": "[小刚] 给它一句诗，先让它猜下一个字。把顺序倒过来，它还分得清吗？",
+      "en": "[Xiaogang] Give it a poem and ask for the next character. Can it notice when the order is reversed?"
+    },
+    {
+      "zh": "我想做个新闻推送号。先拿语料练顺序，别让它把标题里的否定看漏了。",
+      "en": "I want to build a news feed. Train it on sequence first; it must not miss negation in a headline."
+    },
+    {
+      "zh": "三月份 AlphaGo 赢了李世石，你这能下吗？先别装大师，先把一块棋有几口气数明白。",
+      "en": "AlphaGo beat Lee Sedol in March. Can yours play? First teach it to count liberties; that is not a complete Go player."
+    },
+    {
+      "zh": "我想把微商商品介绍翻成英文，试试国外的客人。你那边练好了，就把检查点交到订单里；我这单已经放上去了。",
+      "en": "I want English descriptions for my little shop. Once your model is ready, submit its checkpoint in Contracts. My order is there."
+    },
+    {
+      "zh": "已有进度 · 学会组合特征",
+      "en": "Existing progress · Combining features"
+    },
+    {
+      "zh": "已有进度 · 走向专长",
+      "en": "Existing progress · Specialization"
+    },
+    {
+      "zh": "已有进度 · 学会保留信息",
+      "en": "Existing progress · Retaining information"
+    },
+    {
+      "zh": "已有进度 · 学会寻找重点",
+      "en": "Existing progress · Finding what matters"
+    },
+    {
+      "zh": "他从 GitHub 上找来的，是一种最简单的神经网络。只有一层。",
+      "en": "What he found on GitHub was one of the simplest neural networks. Just one layer."
+    },
+    {
+      "zh": "第 1 阶段 · 感知机",
+      "en": "Stage 1 · Perceptron"
+    },
+    {
+      "zh": "1958 · 感知机：喂数据，它就会变准",
+      "en": "1958 · The perceptron: feed it data and it gets better"
+    },
+    {
+      "zh": "第 2 阶段 · 多层感知机",
+      "en": "Stage 2 · Multilayer perceptron"
+    },
+    {
+      "zh": "1986 · 反向传播：错误可以一层一层往回传",
+      "en": "1986 · Backpropagation: an error can travel back through layers"
+    },
+    {
+      "zh": "第 3 阶段 · CNN + RNN",
+      "en": "Stage 3 · CNN + RNN"
+    },
+    {
+      "zh": "卷积网络看图，循环网络读句子",
+      "en": "Convolutions read pictures, loops read sentences"
+    },
+    {
+      "zh": "第 4 阶段 · LSTM + ResNet",
+      "en": "Stage 4 · LSTM + ResNet"
+    },
+    {
+      "zh": "1997 · LSTM：学会该忘什么，才能记住该记的",
+      "en": "1997 · LSTM: learn what to forget, and what to keep"
+    },
+    {
+      "zh": "第 5 阶段 · Seq2Seq + 注意力",
+      "en": "Stage 5 · Seq2Seq + attention"
+    },
+    {
+      "zh": "2014–2015 · 注意力：需要时，回头看相关的部分",
+      "en": "2014–2015 · Attention: look back at what matters, when needed"
+    },
+    {
+      "zh": "第 6 阶段 · Transformer",
+      "en": "Stage 6 · Transformer"
+    },
+    {
+      "zh": "只用注意力。全部放开。",
+      "en": "Attention alone. Everything unlocked."
+    },
+    {
+      "zh": "点击或按 Esc 跳过",
+      "en": "Click or press Esc to skip"
+    }
+  ]
+}

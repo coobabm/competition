@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f13f962ea89c68d499fabfad1f205b0d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Resources/Apps/App Library.asset
+  uploadId: 718228

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 63c31c3be8e85364db16df2a3ba56772
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Button/Quick Center
+    Button.prefab
+  uploadId: 718228

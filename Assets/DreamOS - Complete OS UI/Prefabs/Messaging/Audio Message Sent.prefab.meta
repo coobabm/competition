@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 60ecdae3669420b4890439039ef927fe
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Messaging/Audio Message Sent.prefab
+  uploadId: 718228

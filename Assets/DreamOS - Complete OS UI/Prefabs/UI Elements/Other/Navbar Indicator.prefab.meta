@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ad0f81f811b95134fbd723487436b2cb
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Other/Navbar Indicator.prefab
+  uploadId: 718228

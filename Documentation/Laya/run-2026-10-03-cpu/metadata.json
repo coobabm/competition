@@ -1,0 +1,38 @@
+{
+  "model": "convaiinnovations/laya-multilingual",
+  "revision": "e4e9ddf21a7b1903b7acffd8814ad4307bf63a67",
+  "expected_sha256": {
+    "model.safetensors": "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204",
+    "tokenizer/tokenizer.json": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f"
+  },
+  "versions": {
+    "laya": "0.3.24",
+    "torch": "2.14.1",
+    "transformers": "5.18.0",
+    "tokenizers": "0.23.2",
+    "huggingface-hub": "1.33.0"
+  },
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "device": "cpu",
+  "torch_threads": 4,
+  "batch_size": 1,
+  "started_utc": "2026-10-03T07:01:48.539259+00:00",
+  "model_load_seconds": 5.629457333008759,
+  "corpus_sha256": "f8e2436f8abdbf9e85c651f34d7068865ff4852085dd0ae2691bdcda7f5bc803",
+  "generator_sha256": "fd00d4dfba8eff9d901b40ae9ef8266af9a8ff02dd20cffe56ddddd47bd1d3ea",
+  "evaluator_sha256": "25659ff2b4b7180f0f231421b22e469b304e95936b42b90efe3cbcdd295ac2c1",
+  "corpus_rows": 680,
+  "expected_predictions": 1720,
+  "suite_sizes": {
+    "balanced": 180,
+    "natural": 500
+  },
+  "unique_questions": {
+    "balanced": 180,
+    "natural": 424
+  },
+  "gate_policy": "Chinese primary both suites >=0.75; balanced each category >=0.60, n>=20; no errors/truncation",
+  "prompt_policy": "Both prompts fixed before inference; direct is diagnostic only; no tuning or training",
+  "probability_note": "Uncalibrated on game data; confidence is NOT empirical accuracy"
+}

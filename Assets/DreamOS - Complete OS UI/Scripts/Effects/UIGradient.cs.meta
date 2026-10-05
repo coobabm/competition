@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3fb48d82dc0e94a2b9246d17d04f8748
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: dbbf2b29e6d0c114790c8b6189f54937, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Effects/UIGradient.cs
+  uploadId: 718228

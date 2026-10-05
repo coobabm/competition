@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 23b5d88510f5dbe49893c87a06bd66c2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Widgets/Widget Library Item.prefab
+  uploadId: 718228

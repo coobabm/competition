@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6a0d5240e0669e74ea2d258f90495709
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Music Player/Playlist Track
+    Preset.prefab
+  uploadId: 718228

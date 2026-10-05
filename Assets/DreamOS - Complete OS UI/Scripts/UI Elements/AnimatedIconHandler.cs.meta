@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a3335d576e7268140b8d8c11a0a6b904
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: fe2474f5e90f25040ac648e776b7a3ec, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/UI Elements/AnimatedIconHandler.cs
+  uploadId: 718228

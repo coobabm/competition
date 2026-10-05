@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8764067f5d69ea9499bf1d0d0f25627c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Widgets/Quick Note.prefab
+  uploadId: 718228

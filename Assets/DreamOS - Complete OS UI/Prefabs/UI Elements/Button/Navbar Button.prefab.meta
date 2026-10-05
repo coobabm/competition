@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 53832dbc08f2b8c4bb7deb07986c3b0a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Button/Navbar Button.prefab
+  uploadId: 718228

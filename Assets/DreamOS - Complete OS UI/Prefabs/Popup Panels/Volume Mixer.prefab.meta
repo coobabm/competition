@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8365b1f705174624da709301c7b89cfb
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Popup Panels/Volume Mixer.prefab
+  uploadId: 718228

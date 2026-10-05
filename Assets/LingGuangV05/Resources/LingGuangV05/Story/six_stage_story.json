@@ -1,0 +1,656 @@
+{
+  "comment": "六阶段正序剧情；当前角色对话，不增加第二幕后回忆旁白。",
+  "beats": [
+    {
+      "id": "wall_combo",
+      "on": "lg.wall:combo",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.combo"
+        }
+      ]
+    },
+    {
+      "id": "wall_structure",
+      "on": "lg.wall:structure",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.structure"
+        }
+      ]
+    },
+    {
+      "id": "wall_length",
+      "on": "lg.wall:length",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.length"
+        }
+      ]
+    },
+    {
+      "id": "wall_degrade",
+      "on": "lg.wall:degrade",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.degrade"
+        }
+      ]
+    },
+    {
+      "id": "wall_translation",
+      "on": "lg.wall:translation",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.translation"
+        }
+      ]
+    },
+    {
+      "id": "wall_parallel",
+      "on": "lg.wall:parallel",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "flag",
+          "key": "wall_explained.parallel"
+        }
+      ]
+    },
+    {
+      "id": "month_1",
+      "on": "lg.month:1",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "1",
+          "key": "month_1",
+          "subKey": "month_1_sub"
+        }
+      ]
+    },
+    {
+      "id": "month_2",
+      "on": "lg.month:2",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "2",
+          "key": "month_2",
+          "subKey": "month_2_sub"
+        }
+      ]
+    },
+    {
+      "id": "month_3",
+      "on": "lg.month:3",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "3",
+          "key": "month_3",
+          "subKey": "month_3_sub"
+        }
+      ]
+    },
+    {
+      "id": "month_4",
+      "on": "lg.month:4",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "4",
+          "key": "month_4",
+          "subKey": "month_4_sub"
+        }
+      ]
+    },
+    {
+      "id": "month_5",
+      "on": "lg.month:5",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "5",
+          "key": "month_5",
+          "subKey": "month_5_sub"
+        }
+      ]
+    },
+    {
+      "id": "month_6",
+      "on": "lg.month:6",
+      "priority": 70,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "TimeSkip",
+          "stage": "6",
+          "key": "month_6",
+          "subKey": "month_6_sub"
+        }
+      ]
+    },
+    {
+      "id": "bt_specialty_vision",
+      "on": "lg.breakthrough:bt.vision",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_first_words_vision",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:bt_specialty_vision"
+        }
+      ]
+    },
+    {
+      "id": "bt_specialty_sequence",
+      "on": "lg.breakthrough:bt.sequence",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_first_words_sequence",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:bt_specialty_sequence"
+        }
+      ]
+    },
+    {
+      "id": "bt_residual",
+      "on": "lg.breakthrough:bt.residual",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "era_residual",
+          "subKey": "era_residual_sub"
+        }
+      ]
+    },
+    {
+      "id": "ll_remember",
+      "on": "state",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_remember_real"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ll_remember"
+        }
+      ],
+      "when": [
+        "labStage >= 4"
+      ]
+    },
+    {
+      "id": "bt_spatial",
+      "on": "lg.breakthrough:bt.spatial",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "era_spatial",
+          "subKey": "era_spatial_sub"
+        }
+      ]
+    },
+    {
+      "id": "ll_underline",
+      "on": "state",
+      "priority": 60,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_underline",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ll_underline"
+        }
+      ],
+      "when": [
+        "labStage >= 5"
+      ]
+    },
+    {
+      "id": "ll_proposal",
+      "on": "state",
+      "priority": 90,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_proposal",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ll_proposal"
+        },
+        {
+          "op": "flag",
+          "key": "project_proposed"
+        }
+      ],
+      "when": [
+        "labCanProject"
+      ]
+    },
+    {
+      "id": "proj_1",
+      "on": "lg.project:1",
+      "priority": 110,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_project_1",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:proj_1"
+        },
+        {
+          "op": "open",
+          "app": "lingguang",
+          "tab": "label"
+        }
+      ]
+    },
+    {
+      "id": "proj_2",
+      "on": "lg.project:2",
+      "priority": 110,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_project_2",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:proj_2"
+        },
+        {
+          "op": "open",
+          "app": "lingguang",
+          "tab": "label"
+        }
+      ]
+    },
+    {
+      "id": "proj_3",
+      "on": "lg.project:3",
+      "priority": 110,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_project_3",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:proj_3"
+        },
+        {
+          "op": "open",
+          "app": "lingguang",
+          "tab": "label"
+        }
+      ]
+    },
+    {
+      "id": "ending_reject",
+      "on": "lg.project:completed",
+      "priority": 110,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "six_next_day",
+          "subKey": "six_next_day_sub"
+        },
+        {
+          "op": "notify",
+          "key": "six_reject_notice",
+          "app": "mail"
+        },
+        {
+          "op": "flag",
+          "key": "rejection_mail"
+        },
+        {
+          "op": "wait",
+          "seconds": 3
+        },
+        {
+          "op": "emit",
+          "ev": "story.next",
+          "arg": "ending_card"
+        }
+      ]
+    },
+    {
+      "id": "ending_card",
+      "on": "story.next:ending_card",
+      "priority": 110,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_final_question",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ending_card"
+        },
+        {
+          "op": "flag",
+          "key": "ending_card_ready"
+        },
+        {
+          "op": "open",
+          "app": "lingguang",
+          "tab": "label"
+        }
+      ]
+    },
+    {
+      "id": "ending_title_yes",
+      "on": "lg.ending:yes",
+      "priority": 200,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_ending_yes",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ending_title_yes"
+        },
+        {
+          "op": "wait",
+          "seconds": 2
+        },
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "history_yes",
+          "subKey": "history_yes_sub"
+        },
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "six_end_yes",
+          "subKey": "six_end_yes_sub"
+        },
+        {
+          "op": "flag",
+          "key": "chapter_one_ending_shown"
+        }
+      ]
+    },
+    {
+      "id": "ending_title_no",
+      "on": "lg.ending:no",
+      "priority": 200,
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "six_ending_no",
+          "delay": 0
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:ending_title_no"
+        },
+        {
+          "op": "wait",
+          "seconds": 2
+        },
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "history_no",
+          "subKey": "history_no_sub"
+        },
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "six_end_no",
+          "subKey": "six_end_no_sub"
+        },
+        {
+          "op": "flag",
+          "key": "chapter_one_ending_shown"
+        }
+      ]
+    },
+    {
+      "id": "specialty_motivation",
+      "on": "lg.wall:structure",
+      "priority": 65,
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "six_aj_choice"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:specialty_motivation"
+        },
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "six_xg_choice"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:specialty_motivation"
+        }
+      ]
+    },
+    {
+      "id": "aj_captcha",
+      "on": "state",
+      "priority": 35,
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "six_captcha"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:aj_captcha"
+        }
+      ],
+      "when": [
+        "labVisionStage >= 3",
+        "labCaptcha"
+      ]
+    },
+    {
+      "id": "netbar_meme",
+      "on": "state",
+      "priority": 35,
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "six_meme"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:netbar_meme"
+        }
+      ],
+      "when": [
+        "labStage >= 3",
+        "labMeme"
+      ]
+    },
+    {
+      "id": "xz_poems",
+      "on": "state",
+      "priority": 35,
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "six_poems"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:xz_poems"
+        }
+      ],
+      "when": [
+        "labSequenceStage >= 3",
+        "labPoems"
+      ]
+    },
+    {
+      "id": "cousin_translation_order",
+      "on": "state",
+      "priority": 35,
+      "steps": [
+        {
+          "op": "say",
+          "who": "cousin",
+          "key": "six_cousin_order"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:cousin_translation_order"
+        }
+      ],
+      "when": [
+        "labSequenceStage >= 5",
+        "labTranslate"
+      ]
+    },
+    {
+      "id": "migration_era_2",
+      "on": "lg.migration:2",
+      "priority": 45,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "migration_era_2",
+          "subKey": "migration_era_2_sub"
+        }
+      ]
+    },
+    {
+      "id": "migration_era_3",
+      "on": "lg.migration:3",
+      "priority": 45,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "migration_era_3",
+          "subKey": "migration_era_3_sub"
+        }
+      ]
+    },
+    {
+      "id": "migration_era_4",
+      "on": "lg.migration:4",
+      "priority": 45,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "migration_era_4",
+          "subKey": "migration_era_4_sub"
+        }
+      ]
+    },
+    {
+      "id": "migration_era_5",
+      "on": "lg.migration:5",
+      "priority": 45,
+      "steps": [
+        {
+          "op": "cutscene",
+          "name": "Title",
+          "key": "migration_era_5",
+          "subKey": "migration_era_5_sub"
+        }
+      ]
+    }
+  ]
+}

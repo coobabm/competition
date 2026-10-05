@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c0e66679e57c7b94b9e9dba4414060c8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_EmailBG.mat
+  uploadId: 718228

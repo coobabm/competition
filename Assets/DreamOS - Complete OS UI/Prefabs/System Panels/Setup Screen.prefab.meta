@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 98f512480f11d7a49afc46b3f3006717
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/System Panels/Setup Screen.prefab
+  uploadId: 718228

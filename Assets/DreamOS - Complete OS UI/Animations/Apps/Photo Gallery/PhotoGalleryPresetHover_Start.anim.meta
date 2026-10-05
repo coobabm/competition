@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1ef575f47c86e3f4b98d86560c9898f1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Apps/Photo Gallery/PhotoGalleryPresetHover_Start.anim
+  uploadId: 718228

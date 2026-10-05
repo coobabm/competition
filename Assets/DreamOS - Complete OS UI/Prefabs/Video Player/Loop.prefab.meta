@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b4d8f0b36ed53b8489388c7af832a95b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Video Player/Loop.prefab
+  uploadId: 718228

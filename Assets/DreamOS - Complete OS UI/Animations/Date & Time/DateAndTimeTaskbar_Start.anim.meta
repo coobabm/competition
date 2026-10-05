@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 224048e9c3ebb6448ac9c0d177d950f8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Animations/Date & Time/DateAndTimeTaskbar_Start.anim
+  uploadId: 718228

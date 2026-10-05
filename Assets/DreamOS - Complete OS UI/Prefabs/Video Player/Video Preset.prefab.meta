@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c3dc45b7b3cbf38438c14d64d65e45f7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Video Player/Video Preset.prefab
+  uploadId: 718228

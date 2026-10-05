@@ -41,6 +41,31 @@ namespace LingGuang.Tests
 
         [TearDown] public void Cleanup() { Object.DestroyImmediate(root); }
 
+        [Test]
+        public void WiringControlsAreVisible_AndLockedDuringPlaybackOrSettlement()
+        {
+            var s = Populated();
+            hud.Refresh(s, false);
+            var buttons = new[] { "连线", "双向", "断线" }.Select(label =>
+                hud.GetComponentsInChildren<Button>().FirstOrDefault(b => b.GetComponentInChildren<TextMeshProUGUI>().text.Contains(label))).ToArray();
+            Assert.That(buttons.All(b => b != null), Is.True, "Players need visible wiring controls, not only hidden shortcuts.");
+            Assert.That(buttons.All(b => b.interactable), Is.True);
+            hud.Refresh(s, true);
+            Assert.That(buttons.All(b => !b.interactable), Is.True);
+            s.phase = Phase.RoundSettled; hud.Refresh(s, false);
+            Assert.That(buttons.All(b => !b.interactable), Is.True);
+            s.phase = Phase.Prepare; hud.Refresh(s, false);
+            Assert.That(buttons.All(b => b.interactable), Is.True);
+        }
+
+        [Test]
+        public void SettledWorkbench_DoesNotClaimPropagationIsStillRunning()
+        {
+            var s = Populated(); s.phase = Phase.RoundSettled;
+            hud.RefreshConnections(s, 0, -1, true);
+            Assert.That(hud.connectionStatus.text, Does.Contain("已结算"));
+        }
+
         static RunState Populated()
         {
             var s = RunState.NewRun(new GameConfig(), 17);
@@ -156,7 +181,7 @@ namespace LingGuang.Tests
             canvas.sizeDelta = new Vector2(width, height);
             Canvas.ForceUpdateCanvases();
             var corners = new Vector3[4];
-            foreach (var panel in new[] { hud.itemsPanel, hud.drugsPanel, hud.shopPanel, hud.candidateBar })
+            foreach (var panel in new[] { hud.itemsPanel, hud.drugsPanel, hud.shopPanel, hud.candidateBar, hud.connectionPanel })
             {
                 panel.GetWorldCorners(corners);
                 foreach (var p in corners)

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0a4c2ee0e8ea08f4ea76d41771fb5e65
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Apps/Music Player.prefab
+  uploadId: 718228

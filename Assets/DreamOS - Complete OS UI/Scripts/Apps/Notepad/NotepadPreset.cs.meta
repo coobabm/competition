@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b25be81f45637ba4382b27a608398dce
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: d7a7fc8d144c5794ebe5339fce25f1ab, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Apps/Notepad/NotepadPreset.cs
+  uploadId: 718228

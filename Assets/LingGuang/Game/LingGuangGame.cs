@@ -40,6 +40,10 @@ namespace LingGuang.Game
         int selectedStart = -1;
         int placingCandidate = -1;
         int ghostDir = 0;
+        int connectionMode; // 0 select/start, 1 directed, 2 bidirectional, 3 cut source -> target
+        int connectionSource = -1;
+        public int ConnectionMode => connectionMode;
+        public int ConnectionSource => connectionSource;
         bool busy;
         bool reduceFlash;
         bool debugOpen;
@@ -49,7 +53,7 @@ namespace LingGuang.Game
         // mouse state
         Vector2 pressPos;
         int pressCell = -1;
-        bool pressing, dragging, panning, draggingSpark;
+        bool pressing, dragging, panning, draggingSpark, draggingConnection;
         float lastClickTime;
         Vector3 lastPanWorld;
         float rotateCooldown;
@@ -254,7 +258,9 @@ namespace LingGuang.Game
 
         void WireHud()
         {
-            hud.onCandidate = i => { if (busy) return; placingCandidate = placingCandidate == i ? -1 : i; hud.selectedCandidate = placingCandidate; ghostDir = 0; Refresh(); };
+            hud.onCandidate = i => { if (busy) return; ResetConnectionInput(); placingCandidate = placingCandidate == i ? -1 : i; hud.selectedCandidate = placingCandidate; ghostDir = 0; Refresh(); };
+            hud.onConnectionMode = mode => SetConnectionMode(mode != 0 && mode == connectionMode ? 0 : mode);
+            hud.onConnectionSource = () => { if (!busy) { connectionSource = -1; Refresh(); } };
             hud.onSkipCandidates = () => Do(() => state.SkipCandidates());
             hud.onConfirm = TryConfirm;
             hud.onEndRound = () =>
@@ -303,7 +309,7 @@ namespace LingGuang.Game
             hud.ShowModal("灵光一闪",
                 "<color=#ffd9a0>光敏提示</color>：本作包含闪光与快速明暗变化。如果你对闪光敏感，请开启“降低闪烁”（随时按 F2 切换）。\n\n" +
                 "三条规则：\n一、电点亮灵光，到达阈值闪烁\n二、闪烁的灵光通过光丝把电传给其他灵光\n三、不传电的光丝变细，传电的光丝变粗\n\n" +
-                "<size=20>左键：选择/放置/选为起点    滚轮：指向灵光时旋转，指向背景时缩放\n拖拽灵光：移动    拖拽背景：平移    双击背景：复位视角\nEnter：发动    长按空格：快进    Tab：跳过动画    Esc：撤销/暂停\nF1：调试面板    F2：降低闪烁    F3：自动演示    F5：重载配置</size>",
+                "<size=20>C / 右侧布线：先点源再点相邻目标；可单向、双向或断线\n每轮与两次发动之间都可改线；串联、发散、汇聚、闭环产生不同效果\n普通模式左键选起点，滚轮旋转；拖拽灵光移动，背景平移\nEnter 发动 · 空格快进 · Tab 跳过动画 · Esc 退出布线/撤销\nCtrl/Cmd+Z 撤销 · F1 调试 · F2 降低闪烁 · F3 自动演示</size>",
                 "开始", null, "胎儿期教学", () => StartTutorial(0));
         }
 
@@ -311,6 +317,7 @@ namespace LingGuang.Game
 
         public void StartTutorial(int index)
         {
+            ResetConnectionInput();
             StopAllCoroutines();
             busy = false;
             fx.ClearAll();
@@ -375,6 +382,7 @@ namespace LingGuang.Game
 
         void NewRun(int sd)
         {
+            ResetConnectionInput();
             tutorialIndex = -1;
             StopAllCoroutines();
             busy = false;
@@ -400,11 +408,15 @@ namespace LingGuang.Game
         {
             if (state == null) return;
             if (selectedStart >= 0 && !state.sparks.ContainsKey(selectedStart)) selectedStart = -1;
-            board.SetSelected(selectedStart >= 0 ? state.sparks[selectedStart].cell : -1);
+            if (connectionSource >= 0 && !state.sparks.ContainsKey(connectionSource)) connectionSource = -1;
+            int selected = connectionMode != 0 ? connectionSource : selectedStart;
+            board.SetSelected(selected >= 0 ? state.sparks[selected].cell : -1);
             board.Sync();
             hud.selectedCandidate = placingCandidate < state.candidates.Count ? placingCandidate : -1;
             if (hud.selectedCandidate < 0) placingCandidate = -1;
             hud.Refresh(state, false);
+            hud.RefreshConnections(state, connectionMode, connectionSource, busy);
+            board.ShowConnectionTargets(connectionMode != 0 && !busy ? connectionSource : -1, connectionMode);
             UpdatePreview();
             hud.hintText.text = Hint();
             if (tutorialIndex >= 0 && tutorial != null)
@@ -424,9 +436,10 @@ namespace LingGuang.Game
         string Hint()
         {
             if (state.phase != Phase.Prepare) return "";
+            if (connectionMode != 0) return "布线：先点源再点相邻目标；Shift+点击换源，Esc 完成，Ctrl/Cmd+Z 撤销";
             if (placingCandidate >= 0) return "点击空格放置，滚轮旋转朝向，右键取消";
-            if (selectedStart < 0) return "点击一个灵光作为起点";
-            return "按 Enter 发动；起点次数用完或点“结束本轮”时结算";
+            if (selectedStart < 0) return "点击灵光选起点；按 C 或右侧工具调整连接";
+            return "按 Enter 发动；连锁结束达标自动结算，未达标可继续改线";
         }
 
         void UpdatePreview()
@@ -486,12 +499,14 @@ namespace LingGuang.Game
             if (busy || hud.ModalOpen) return;
             if (state.phase != Phase.Prepare) return;
             if (!state.CanConfirm(selectedStart, out var why)) { hud.Toast(why); return; }
+            ResetConnectionInput();
             StartCoroutine(ConfirmFlow());
         }
 
         IEnumerator ConfirmFlow()
         {
             busy = true;
+            hud.RefreshConnections(state, connectionMode, connectionSource, true);
             board.ShowPreview(null);
             board.SnapshotDisplay();
             hud.shownLight = state.roundLight; hud.shownMult = state.roundAddMult;
@@ -506,7 +521,7 @@ namespace LingGuang.Game
             Refresh();
             idleTimer = 0f;
             if (tutorialIndex >= 0) { CheckTutorial(res); yield break; }
-            if (state.startsLeft <= 0) StartCoroutine(SettleFlow());
+            if (state.ShouldAutoSettleRound) yield return SettleFlow();
         }
 
         void TryTrial()
@@ -521,6 +536,8 @@ namespace LingGuang.Game
         IEnumerator TrialFlow()
         {
             busy = true;
+            ResetConnectionInput();
+            hud.RefreshConnections(state, connectionMode, connectionSource, true);
             var real = state;
             var clone = state.Clone();
             board.state = clone;
@@ -572,12 +589,15 @@ namespace LingGuang.Game
         {
             if (busy) yield break;
             busy = true;
+            ResetConnectionInput();
+            hud.RefreshConnections(state, connectionMode, connectionSource, true);
             int oldStage = state.stage;
             int preLight = state.roundLight;
             float preMult = state.roundAddMult;
             var rep = state.Settle();
             var sc = rep.score;
             if (sc == null) { busy = false; yield break; }
+            hud.RefreshConnections(state, connectionMode, connectionSource, true);
             yield return MultiplyAnimation(preLight, preMult, sc.score);
             synth.PlayChord(sc.passed);
             if (state.separationUnlocked) PlayerPrefs.SetInt("lg_separation", 1);
@@ -701,6 +721,52 @@ namespace LingGuang.Game
 
         // ------------------------------------------------------------------ input
 
+        void ResetConnectionInput()
+        {
+            connectionMode = 0;
+            connectionSource = -1;
+            pressing = dragging = draggingSpark = draggingConnection = panning = false;
+            board?.ShowConnectionTargets(-1, 0);
+            board?.ShowConnectionPreview(-1, -1, false, 0);
+        }
+
+        public void SetConnectionMode(int mode)
+        {
+            if (state == null || busy || hud.ModalOpen || state.phase != Phase.Prepare) return;
+            connectionMode = Mathf.Clamp(mode, 0, 3);
+            placingCandidate = -1;
+            pressing = dragging = draggingSpark = draggingConnection = panning = false;
+            if (connectionMode == 0) connectionSource = -1;
+            else if (connectionSource < 0 && state.sparks.TryGetValue(selectedStart, out var selected) && !selected.isCharacter)
+                connectionSource = selectedStart;
+            board.ShowConnectionPreview(-1, -1, false, 0);
+            Refresh();
+        }
+
+        // Shared by click/drag input and the workbench; all mutations still go through Do for undo.
+        public bool SelectConnectionTarget(int sparkId, bool asSource = false)
+        {
+            if (busy || hud.ModalOpen || state.phase != Phase.Prepare || connectionMode == 0) return false;
+            if (!state.sparks.TryGetValue(sparkId, out var sp) || !state.IsActiveCell(sp.cell)) return false;
+            if (asSource || connectionSource < 0)
+            {
+                if (sp.isCharacter) { hud.Toast("流光不能作为改线的源，请选择自己的灵光"); return false; }
+                connectionSource = sparkId;
+                selectedStart = sparkId;
+                Refresh();
+                return true;
+            }
+            if (connectionSource == sparkId) { connectionSource = -1; Refresh(); return true; }
+            int from = connectionSource;
+            bool changed = Do(() => connectionMode == 3 ? state.Disconnect(from, sparkId) : state.TryConnect(from, sparkId, connectionMode == 2));
+            if (changed)
+            {
+                string action = connectionMode == 3 ? "已断开" : connectionMode == 2 ? "已双向连接" : "已连接";
+                hud.Toast($"{action} #{from} → #{sparkId}；可继续连线，或点“完成”发动");
+            }
+            return changed;
+        }
+
         Vector3 MouseWorld()
         {
             var mp = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
@@ -740,10 +806,14 @@ namespace LingGuang.Game
                 if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) hud.modalButton.onClick.Invoke();
                 return;
             }
+            if (kb.cKey.wasPressedThisFrame) SetConnectionMode(connectionMode == 0 ? 1 : 0);
+            bool command = kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed || kb.leftCommandKey.isPressed || kb.rightCommandKey.isPressed;
+            if (command && kb.zKey.wasPressedThisFrame) Undo();
             if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) TryConfirm();
             if (kb.escapeKey.wasPressedThisFrame)
             {
-                if (placingCandidate >= 0) { placingCandidate = -1; Refresh(); }
+                if (connectionMode != 0) SetConnectionMode(0);
+                else if (placingCandidate >= 0) { placingCandidate = -1; Refresh(); }
                 else Undo();
             }
             if (kb.tKey.wasPressedThisFrame) TryTrial();
@@ -759,7 +829,17 @@ namespace LingGuang.Game
             // hover + ghost + tooltip
             if (cell != hoverCell) hoverCell = cell;
             bool placing = placingCandidate >= 0 && placingCandidate < state.candidates.Count;
-            if (placing)
+            if (connectionMode != 0 && !busy)
+            {
+                board.SetGhost(false, -1, Shape.Conduct, 0);
+                bool valid = sparkUnder != null && (connectionSource < 0 ? !sparkUnder.isCharacter :
+                    connectionMode == 3 ? state.CanDisconnect(connectionSource, sparkUnder.id, out _) :
+                    state.CanConnect(connectionSource, sparkUnder.id, connectionMode == 2, out _));
+                board.SetHover(sparkUnder != null ? cell : -1, valid);
+                int fromCell = state.sparks.TryGetValue(connectionSource, out var from) ? from.cell : -1;
+                board.ShowConnectionPreview(fromCell, cell, valid, connectionMode);
+            }
+            else if (placing)
             {
                 bool ok = cell >= 0 && state.CanPlaceAt(cell);
                 board.SetHover(cell, ok);
@@ -782,7 +862,7 @@ namespace LingGuang.Game
                 {
                     if (rotateCooldown <= 0f) { ghostDir = (ghostDir + (scroll > 0 ? 5 : 1)) % 6; rotateCooldown = 0.12f; }
                 }
-                else if (!ctrl && sparkUnder != null && !busy)
+                else if (!ctrl && sparkUnder != null && !busy && connectionMode == 0)
                 {
                     if (rotateCooldown <= 0f)
                     {
@@ -797,13 +877,14 @@ namespace LingGuang.Game
             // buttons
             if (mouse.rightButton.wasPressedThisFrame)
             {
-                if (placingCandidate >= 0) placingCandidate = -1;
+                if (connectionMode != 0) { connectionSource = -1; board.ShowConnectionPreview(-1, -1, false, 0); }
+                else if (placingCandidate >= 0) placingCandidate = -1;
                 else selectedStart = -1;
                 Refresh();
             }
             if (mouse.leftButton.wasPressedThisFrame && !overUI)
             {
-                pressing = true; dragging = false; panning = false; draggingSpark = false;
+                pressing = true; dragging = false; panning = false; draggingSpark = false; draggingConnection = false;
                 pressPos = mouse.position.ReadValue();
                 pressCell = cell;
                 lastPanWorld = world;
@@ -814,7 +895,9 @@ namespace LingGuang.Game
                 {
                     dragging = true;
                     var ps = pressCell >= 0 ? state.SparkAt(pressCell) : null;
-                    if (ps != null && !busy && !placing && state.phase == Phase.Prepare && state.CanAdjust(ps, out _) && !state.nodes[ps.nodeId].isMemory)
+                    if (connectionMode != 0 && ps != null && !busy)
+                        draggingConnection = SelectConnectionTarget(ps.id, true);
+                    else if (ps != null && !busy && !placing && state.phase == Phase.Prepare && state.CanAdjust(ps, out _) && !state.nodes[ps.nodeId].isMemory)
                         draggingSpark = true;
                     else panning = true;
                 }
@@ -832,7 +915,13 @@ namespace LingGuang.Game
             if (pressing && mouse.leftButton.wasReleasedThisFrame)
             {
                 pressing = false;
-                if (draggingSpark)
+                if (draggingConnection)
+                {
+                    if (sparkUnder != null && cell != pressCell) SelectConnectionTarget(sparkUnder.id);
+                    draggingConnection = false;
+                    board.ShowConnectionPreview(-1, -1, false, 0);
+                }
+                else if (draggingSpark)
                 {
                     var ps = state.SparkAt(pressCell);
                     if (ps != null && cell >= 0 && cell != pressCell)
@@ -853,6 +942,12 @@ namespace LingGuang.Game
             bool dbl = Time.unscaledTime - lastClickTime < 0.3f;
             lastClickTime = Time.unscaledTime;
             if (busy) return;
+            if (connectionMode != 0)
+            {
+                if (sparkUnder != null) SelectConnectionTarget(sparkUnder.id,
+                    Keyboard.current != null && (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed));
+                return;
+            }
             if (placingCandidate >= 0 && placingCandidate < state.candidates.Count)
             {
                 if (cell >= 0 && state.CanPlaceAt(cell))

@@ -1,0 +1,232 @@
+0	CalculatorTitle	计算器
+0	CommanderTitle	命令终端
+0	GameHubTitle	游戏中心
+0	MailTitle	邮件
+0	MessagingTitle	聊天
+0	MusicPlayerTitle	音乐播放器
+0	NotepadTitle	记事本
+0	PhotoGalleryTitle	相册
+0	ReminderTitle	提醒事项
+0	SettingsTitle	设置
+0	VideoPlayerTitle	视频播放器
+0	WebBrowserTitle	浏览器
+0	WidgetLibraryTitle	小组件库
+0	LabelHome	主页
+0	LabelLibrary	资源库
+0	LabelPlay	播放
+0	MessagingChatsLabel	聊天
+0	LabelNowPlaying	正在播放
+0	LabelPlaylists	播放列表
+0	LabelSettings	设置
+0	ReminderOnceLabel	仅一次
+0	ReminderDailyLabel	每天
+0	LabelCustomization	个性化
+0	LabelAccount	账户
+0	LabelDateAndTime	日期与时间
+0	LabelAccessibility	辅助功能
+0	LabelAbout	关于
+0	LabelMods	模组
+0	ModsEmptyDescription	暂无可用模组
+0	SettingsLabelWallpaper	壁纸
+0	SettingsDescWallpaper	更换桌面壁纸
+0	SettingsLabelCustomTheme	自定义主题
+0	SettingsDescCustomTheme	替换默认配色并选择自定义强调色
+0	SettingsLabelSnapDesktopItems	桌面图标对齐
+0	SettingsDescSnapDesktopItems	将桌面图标对齐到网格，或自由移动图标
+0	SettingsLabelSaveDesktopLayout	保存桌面布局
+0	SettingsDescSaveDesktopLayout	重启后保留桌面布局
+0	SettingsLabelAdjustYourPhoto	更换头像
+0	SettingsDescAdjustYourPhoto	选择个人头像
+0	SettingsLabelResetPassword	重置密码
+0	SettingsDescResetPassword	重置个人账户密码
+0	SettingsLabelWipeUserData	清除用户数据
+0	SettingsDescWipeUserData	删除所有个人数据并重置系统
+0	SettingsLabel12HourClock	12 小时制
+0	SettingsDesc12HourClock	使用 12 小时制（AM/PM）或 24 小时制
+0	SettingsLabelLanguage	语言
+0	SettingsDescLanguage	选择首选语言
+0	SettingsLabelSpeechRecognition	语音识别（Cori）
+0	SettingsDescSpeechRecognition	通过 Cori 使用语音控制设备
+0	SettingsLabelSupport	帮助与支持
+0	SettingsDescSupport	需要帮助？可通过支持渠道联系我们
+0	SettingsDescDiscord	加入我们的 Discord 服务器
+0	SettingsDescTwitter	在 Twitter 上关注我们
+0	SettingsDescYouTube	在 YouTube 上关注我们
+0	WebBrowserLabelFavorites	收藏夹
+0	WebBrowserLabelDownloads	下载
+0	LabelApps	应用
+0	LabelWelcome	欢迎
+0	LabelClear	清空
+0	NotificationEmptyDesc	暂无新通知
+0	BootScreenWelcomeMessage	欢迎
+0	LockScreenLoginDesc	按任意键登录
+0	LabelPassword	密码
+0	LabelResetPassword	重置密码
+0	WrongPasswordDesc	密码错误
+0	ModalProfilePictureTitle	选择头像
+0	LabelCancel	取消
+0	LabelConfirm	确认
+0	ModalResetPasswordTitle	重置密码
+0	ModalWipeUserDataTitle	清除用户数据
+0	ModalWipeUserDataDesc	确定要删除所有个人数据吗？此操作无法撤销。
+0	SetupWelcomeTitle	你好！
+0	SetupWelcomeDesc	我将帮助你完成 <b>DreamOS</b> 的初始设置。\n准备好了吗？
+0	SetupButtonLetsGo	开始设置
+0	SetupUserInfoTitle	如何称呼你？
+0	SetupUserInfoDesc	请输入姓名。你也可以选择一张头像。
+0	LabelContinue	继续
+0	SetupPrivacyTitle	保护你的隐私
+0	SetupPrivacyDesc	你可以为个人账户设置密码。
+0	LabelRetypePassword	再次输入密码
+0	LabelSecurityQuestion	安全问题
+0	LabelSecurityQuestionAnswer	安全问题答案
+0	SetupNetworkTitle	连接网络
+0	SetupNetworkDesc	连接到 Wi-Fi 网络。你也可以跳过此步骤，稍后再设置。
+0	SetupFinalTitle	最后一步
+0	SetupFinalDesc	即将完成！现在请选择一张壁纸。
+0	LabelReboot	重启
+0	SetupWelcomeStep	欢迎
+0	SetupUserInfoStep	用户信息
+0	SetupPrivacyStep	隐私
+0	SetupNetworkStep	网络
+0	SetupFinalStep	完成设置
+0	LabelNewPassword	新密码
+0	MailInboxLabel	收件箱
+0	MailSentLabel	已发送
+0	MailJunkLabel	垃圾邮件
+0	LabelConntect	连接
+0	LabelDisconnect	断开连接
+0	LabelMyNotes	我的笔记
+0	LabelNewNote	新建笔记
+0	LabelDelete	删除
+0	LabelPlayAll	全部播放
+0	LabelDesktopSettings	桌面设置
+0	EmptyReminderIndicator	尚未设置提醒事项
+0	EmptyFavoritePagesIndicator	尚未收藏任何网页
+0	EmptyDownloadsIndicator	尚未下载任何文件
+0	LabelPreviousPage	上一页
+0	LabelSystemVersion	系统版本
+0	LabelCloseWindow	关闭窗口
+0	LabelPinTaskbar	固定到任务栏
+0	LabelUnpinTaskbar	从任务栏取消固定
+0	LabelView	查看
+0	SetupErrorName	名字至少需要 2 个字符
+0	SetupErrorLastName	姓氏至少需要 2 个字符
+0	SetupErrorPassword	密码至少需要 4 个字符
+0	SetupErrorPasswordCheck	两次输入的密码不一致
+0	ResetPasswordError	安全问题答案错误，或两次输入的密码不一致
+0	LabelRefresh	刷新
+0	LabelShutDown	关机
+0	LabelRestart	重启
+0	LabelLock	锁定
+0	LabelNotifications	通知
+0	LoginLabel	登录
+0	SetupFinalDescSimple	即将完成！\n现在可以重启系统，开始使用 <b>DreamOS</b>。
+1	TicTacToeDescription	井字棋由两名玩家在三乘三的棋盘上对弈，双方轮流在九个格子中的一个空格内标记 X 或 O。\n
+1	3DTestDescription	这是另一个示例游戏，用于测试游戏中心内的 3D 摄像机渲染。
+1	EmptyGameDescription	这是一个空白示例游戏，用于展示游戏窗口。
+2	SampleMail1Subject	示例邮件
+2	SampleMail1Content	这是一封通过邮件条目创建的示例邮件。你可以使用 <b>Create > DreamOS > New Mail Item</b> 添加新的邮件条目。\n\n也可以添加附件和自定义内容。
+2	SampleMail2Subject	相信我，飞行员
+2	SampleMail2Content	这是另一封通过邮件条目创建的示例邮件。
+2	SampleMail3Subject	已发送邮件示例
+2	SampleMail3Content	这是位于“已发送”文件夹中的另一封示例邮件。
+2	SampleMail4Subject	垃圾邮件示例
+2	SampleMail4Content	这是位于“垃圾邮件”文件夹中的另一封示例邮件。
+3	ExampleChat_1	嗨，你还好吗？
+3	ExampleChat_2	挺好的，你呢？
+3	ExampleChat_3	还算可以吧。对了，你把剧情做完了吗？
+3	ExampleChat_4	还在做，可这截止时间也太离谱了，只好砍掉一些功能。
+3	ExampleChat_5	更别提那些 bug 了……
+3	ExampleChat_6	真讨厌赶工……希望快点结束吧……
+3	ExampleChat_7	同感
+3	ExampleChat_8	哥们，你知道延期的事吗？
+3	ExampleChat_9	不知道，刚在社交媒体上看到。
+3	ExampleChat_10	好可爱！
+3	ExampleChat_11	哇，真是个乖孩子！
+3	ExampleChat2_1	Erin！！！好久不见，你最近怎么样？
+3	ExampleChat2_2	照常上班 :( 最近压力挺大的。你呢？
+3	ExampleChat2_3	嗯……我刚辞职了。说实话，感觉好多了
+3	ExampleChat2_4	你开心就好！
+3	ExampleChat2_5	对了，我把你的号码弄丢了，试着联系你好多次都没成功……抱歉啊
+3	ExampleChat2_6	现在你又有我的号码了 ;)
+3	ExampleChat2_7	那……改天一起喝杯咖啡？
+3	ExampleChat2_8	叙叙旧应该挺不错的 ;)
+3	ExampleChat2_9	好啊，没问题
+3	ExampleChat2_10	太好了！那就……明天下午 5 点见？
+3	ExampleChat2_11	好，就这么定了！
+3	ExampleChat2_12	还不错，你呢？
+3	ExampleChat3_1	我是一位尼日利亚王子，想向你的账户转入 $1.000.000。请回复此消息以继续操作。这 100% 合法，绝对不是诈骗。
+3	ExampleDynamicMessage_1	输入 "What's up?" 即可收到回复。
+3	ExampleDynamicMessage_2	挺好的，希望你也一切顺利！
+3	ExampleDynamicMessage_3	发生什么事了？
+3	ExampleStoryTeller_1	如果你想创建文字对话序列，可以启用 <b>StoryTeller</b> 功能。
+3	ExampleStoryTeller_2	可以创建 StoryTeller 条目，根据玩家的选择引导他们走向不同的分支。
+3	ExampleStoryTeller_3	使用 <b>'Call After'</b>，即可通过 ID 调用另一个条目。
+3	ExampleStoryTeller_4	如果要通过外部脚本或脚本工具调用条目，可以使用 <b>MessagingManager.CreateStoryTeller("Chat ID", "StoryTeller ID");</b>。
+3	ExampleStoryTeller_5	要查看实际演示，可以输入 <b>SEQ_0</b>。只要启用了 'Debug StoryTeller' 选项，就能通过输入 ID 测试条目。
+3	SEQ0_1	嗨，你最近怎么样？
+3	SEQ0_R1B	不太好
+3	SEQ0_R1C	最近感觉很不好……
+3	SEQ0_R1F	真的吗？发生什么事了？
+3	SEQ0_R2B	还不错
+3	SEQ0_R2C	还不错，你呢？
+3	SEQ0_R2F	我也是
+3	SEQ0_R3B	感觉很好
+3	SEQ0_R3C	挺好的，你呢？
+3	SEQ0_R3F	那我们一样！
+3	SEQ1_1	就是……
+3	SEQ1_R1B	感觉很累
+3	SEQ1_R1C	不知道，就是觉得很累
+3	SEQ1_R1F	从什么时候开始的？
+3	SEQ1_R2B	肚子疼
+3	SEQ1_R2C	我肚子疼得厉害
+3	SEQ1_R2F	那你得赶紧去看医生
+3	SEQ1_R3B	睡不着
+3	SEQ1_R3C	最近睡不着，也不知道为什么
+3	SEQ1_R3F	希望不是什么大问题！
+3	SEQ2_1	我们改天一起出去玩吧
+3	SEQ2_R1B	好啊
+3	SEQ2_R1C	好啊，没问题 :)
+3	SEQ2_R1F	太好了！有空的时候告诉我 :)
+3	SEQ2_R2B	我很忙
+3	SEQ2_R2C	恐怕不行，我最近挺忙的 :/
+3	SEQ2_R2F	真可惜，那改天吧。
+3	SEQ2_R3B	不了
+3	SEQ2_R3C	不了，我不想和你一起出去。
+3	SEQ2_R3F	扎心了 :'/
+3	SEQ3_1	那么，要不要聚一聚？
+3	SEQ3_R1B	好啊
+3	SEQ3_R1C	好啊，没问题 :)
+3	SEQ3_R1F	太好了！有空的时候告诉我 :)
+3	SEQ3_R2B	我很忙
+3	SEQ3_R2C	恐怕不行，我最近挺忙的 :/
+3	SEQ3_R2F	真可惜，那改天吧。
+3	SEQ3_R3B	不了
+3	SEQ3_R3C	不了，我不想和你一起出去。
+3	SEQ3_R3F	扎心了 :'/
+3	SEQ1-1_1	照顾好自己，喝点水。
+3	SEQ1-1_R1B	会的
+3	SEQ1-1_R1C	嗯，会的
+3	SEQ1-1_R2B	不要
+3	SEQ1-1_R2C	不要，我不喜欢喝水
+3	SEQ1-1_R2F	为什么？喝水对健康很重要。
+3	BeginningIndicator	以上是你们的私聊记录起点
+3	TypeIndicator	输入消息……
+4	SampleNote1Title	示例笔记
+4	SampleNote1Content	这是一篇由 'Notepad Manager' 组件创建的示例笔记。你也可以使用该管理器添加新的预设笔记！\n\n你还可以编辑这篇笔记及其标题。点击相应内容即可开始修改！
+4	SampleNote2Title	另一篇笔记
+4	SampleNote2Content	中国长城是世界上最长的人工建筑，全长约 21,196 公里（13,171 英里）。它历经多个世纪修建，从公元前 7 世纪开始，一直延续至公元 17 世纪。长城是一项防御工事，用于保护中国北部边境免遭入侵和袭扰。
+5	HomePageTitle	主页
+5	NoConnectionTitle	未连接网络
+5	NotFoundTitle	找不到网页
+5	NoConnectionErrorTitle	网络连接出错
+5	NoConnectionErrorDesc	似乎没有网络连接。\n请检查网络或重试。
+5	NoutFoundErrorTitle	无法打开网页
+5	NoutFoundErrorDesc	无法访问此网站。\n你可以稍后重试。
+6	AnalogClockTitle	指针时钟
+6	AnalogClockDesc	简洁的指针时钟
+6	MusicPlayerTitle	音乐播放器
+6	MusicPlayerDesc	控制音乐播放
+6	QuickNoteTitle	快速笔记
+6	QuickNoteDesc	快速记录笔记

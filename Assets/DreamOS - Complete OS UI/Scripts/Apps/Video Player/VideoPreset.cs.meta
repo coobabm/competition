@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 075fe5fdf16be6d4997fe83f4a8c15c9
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 8fca21bcfc006c34bbcc0229ca51acbe, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Modern OS UI
+  packageVersion: 3.2.3
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Apps/Video Player/VideoPreset.cs
+  uploadId: 718228

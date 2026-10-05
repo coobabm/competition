@@ -1,0 +1,11 @@
+# Generated desktop artwork
+
+Created for this project with the built-in image_gen tool; no API key, external stock images or paid third-party asset pack was used. Original outputs remain under Codex generated_images; these workspace copies are the runtime deliverables.
+
+- casino_backdrop.png: source exec-43cceed1-4739-4e5f-b4de-7a4579957333.png. Prompt: colourful fictional 2016 Chinese online-casino advertising background, red/gold/emerald/purple palette, roulette, cards, chips and coins; dark open centre for separately rendered text; no logos, URLs, people or baked UI copy.
+- portraits_atlas.png: source exec-903b2171-0229-4d71-8ede-9a1018c22524.png. Prompt: exactly 4x4 equal square portrait grid, no gutters or text; fictional East Asian adult characters, semi-realistic warm editorial painting; row-major me, Lao Zhou, cousin, Qingwen / Ajie, Xiaogang, Dawei, internet-cafe group / young Zhou, dad, mom, aunt / Wang, Liu, Xiaolu, Afang. Centred heads with breathing room for circular crops.
+- content_atlas.png: source exec-b5f0f8c7-8258-47b0-8163-1526c9c3cf69.png. Prompt: exactly 4x4 equal square editorial-art grid, no gutters/logos/labels; 2016-appropriate generic subjects; row-major AI neural network, GPU, programmer desk, esports / rocket, smartphone, cinema, shopping / roses, teddy, headset, training cards / Go board, news desk, books, laptop+desktop.
+
+Atlas rows are top-to-bottom; runtime Sprite.Create slices the original PNG with a small inset, without modifying or splitting the generated artwork. Runtime labels remain localized code/data, not baked into the image. News images are illustrative, not archival photographs. The AI's existing pixel-zero identity remains unchanged for story consistency.
+- lili.png: source exec-15b97412-3f42-409c-9e59-4c59bbd53331.png. Prompt: fictional adult Lili, age24, round glasses, short dark hair/teal clip, lavender sweatshirt, warm semi-realistic square portrait with circular-crop margins, no logos/text.
+- iphone_2016.png: source exec-02bcb563-c2d8-4ad3-a73d-ed10e11cbae8.png. Prompt: 2016 silver/white iPhone-style gift-shop illustration, circular home button, black inactive screen, no notch or modern camera cluster, warm ivory tabletop, no words/logos. Kept separate from the generic Android-style news phone tile to avoid mismatching gift identity.
