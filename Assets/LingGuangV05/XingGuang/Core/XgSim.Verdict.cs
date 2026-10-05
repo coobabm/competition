@@ -9,7 +9,10 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public sealed class XgVerdict
     {
-        /// <summary>untrained, nan, step, relay, degrade, signal, cells, memorize, memory, nomerge, plateau, passed, improving.</summary>
+        /// <summary>
+        /// untrained, nan, step, linear, positions, reach, deadline, order, overtrained, relay, degrade, signal, cells,
+        /// memorize, memory, nomerge, plateau, passed, improving.
+        /// </summary>
         public string id = "untrained";
         public bool problem;
         /// <summary>The layer to point at (1-based), 0 = the whole network.</summary>
@@ -19,6 +22,9 @@ namespace LingGuangV05.XingGuang
         public string structure = "", structureEn = "", method = "", methodEn = "";
         /// <summary>Epoch the trace first noticed this problem in the current settings (-1 = not noticed yet).</summary>
         public int since = -1;
+        /// <summary>练过头: the best test score of these settings and its epoch.</summary>
+        public double peak;
+        public int peakEpoch;
         public double test, goal;
     }
 
@@ -56,7 +62,18 @@ namespace LingGuangV05.XingGuang
             else if (k.depth > 1 && k.G <= 0)
             {
                 Set(v, "step", 1, "卡在第 1 层：阶跃激活没有坡度，误差传不下来，长不出组合。", "Stuck at layer 1: a step has no slope, so no error gets down and nothing combines.",
-                    "激活换成「S 形」或「ReLU」。", "Switch the activation to S-curve or ReLU.", "或者只留 1 层，开「特征工程」让人替它组合。", "Or keep one layer and switch on feature engineering so people combine for it.");
+                    Has("relu") ? "激活换成「S 形」或「ReLU」。" : "激活换成「S 形」。", Has("relu") ? "Switch the activation to S-curve or ReLU." : "Switch the activation to S-curve.",
+                    "或者只留 1 层，开「特征工程」让人替它组合。", "Or keep one layer and switch on feature engineering so people combine for it.");
+            }
+            else if (WallVerdict(v, run, k, p)) { }
+            else if (Overtrained(t, p, out double peak, out int peakEpoch))
+            {
+                v.peak = peak; v.peakEpoch = peakEpoch;
+                Set(v, "overtrained", 0, "练过头了：第 " + peakEpoch + " 轮最高 " + Pct(peak) + "，现在 " + Pct(p.test) + "。" + (full ? "格子满了，新学的把旧的挤掉了。" : "越练越偏向练过的题。"),
+                    "Overtrained: " + Pct(peak) + " at epoch " + peakEpoch + ", " + Pct(p.test) + " now. " + (full ? "The cells are full; new concepts push out the old ones." : "It keeps leaning towards the trained cards."),
+                    "去模型仓库读回最好那次的检查点。", "Load the best checkpoint back from the model repository.",
+                    Has("auto4") ? "早停开着时，分数不涨它会自己停在最好那次。" : "买「早停」：分数不再涨就自动停，留住最高那次。",
+                    Has("auto4") ? "With early stopping on it stops at the best epoch by itself." : "Buy early stopping: it stops once the score stops rising and keeps the best.");
             }
             else if (First("relay") is XgLayerHealth relay)
             {
@@ -76,9 +93,12 @@ namespace LingGuangV05.XingGuang
             }
             else if (First("signal") is XgLayerHealth weak)
             {
+                bool relu = ActivationOwned(2);
                 Set(v, "signal", weak.layer, "卡在第 " + weak.layer + " 层：误差传到这里只剩 " + Pct(weak.signal) + "，它几乎学不动（梯度消失）。",
                     "Stuck at layer " + weak.layer + ": only " + Pct(weak.signal) + " of the error gets here, so it barely learns (vanishing gradients).",
-                    "激活换成「ReLU」：坡度是 1，误差几乎原样传下来。", "Switch to ReLU: its slope is 1, so the error comes down almost whole.", "或者少几层。", "Or use fewer layers.");
+                    relu ? "激活换成「ReLU」：坡度是 1，误差几乎原样传下来。" : "少几层：S 形每往下一层，误差只剩四分之一。",
+                    relu ? "Switch to ReLU: its slope is 1, so the error comes down almost whole." : "Use fewer layers: an S-curve passes a quarter of the error per layer.",
+                    relu ? "或者少几层。" : "（ReLU 要到后面的阶段才有。）", relu ? "Or use fewer layers." : "(ReLU comes in a later stage.)");
             }
             else if (sequential && h.memory10 < .2 && p.test < v.goal)
             {
@@ -123,6 +143,58 @@ namespace LingGuangV05.XingGuang
             }
             if (v.problem) v.since = FirstEventSince(t, v.id == "cells" ? new[] { "cells", "thrash" } : v.id == "memory" ? new[] { "ph:amnesia" } : new[] { v.id });
             return v;
+        }
+
+        /// <summary>
+        /// The standing wall's own reason, when these settings cannot get through it whatever the number of epochs:
+        /// one layer cannot split XOR, a dense net binds positions, a loop cannot reach the other sentence, a loop
+        /// misses the deadline, attention without positions cannot tell first from later.
+        /// </summary>
+        bool WallVerdict(XgVerdict v, XgRun run, XgKnobs k, XgTracePoint p)
+        {
+            if (p.test >= TraceGoal(run)) return false;
+            var wall = ActiveWall;
+            bool serial = SerialWiring(k);
+            switch (run.dataset)
+            {
+                case "xor" when k.depth == 1 && !k.features:
+                    Set(v, "linear", 1, "单层只能画一条直线：「恰好一个为真」分不开，练多少轮、加多宽都一样。", "One layer draws one straight line: 'exactly one is true' cannot be split, however many epochs or however wide.",
+                        "加一层隐藏层（激活用 S 形）。", "Add a hidden layer (S-curve activation).", "或者开「特征工程」，让人把两个条件拼成一个。", "Or switch on feature engineering so people pair the two conditions.");
+                    return true;
+                case "mnist" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                    Set(v, "positions", 1, "全连接把每个位置绑死：同一个数字挪一格，它就当成新东西，练不出通用的笔画。", "A dense net binds every position: the same digit moved by one cell is new to it, so no stroke carries over.",
+                        "换「局部共享」（卷积）：同一个笔画在哪儿都认得。", "Switch to local sharing (convolution): a stroke is known anywhere.", "或者开「特征工程」：先把图去噪、挪到同一个位置。", "Or switch on feature engineering: denoise and move every picture to the same place.");
+                    return true;
+                case "danmu" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                    Set(v, "positions", 1, "全连接把每个字的位置绑死：同一句话挪一个字，它就当成新句子。", "A dense net binds every word to its position: the same sentence moved by one word is new to it.",
+                        "换「回环」（循环）：一个字一个字读，在哪儿出现都认得。", "Switch to a loop (recurrence): it reads word by word and knows a word anywhere.", "或者开「特征工程」：去掉语气词，按字和两字词读。", "Or switch on feature engineering: drop fillers and read words and word pairs.");
+                    return true;
+                case "translate" when k.wiring != XgWiring.EncoderDecoder && k.wiring != XgWiring.Attention:
+                    Set(v, "reach", 0, "一条序列只够得着自己相邻的字，够不着另一句：原句和译文对不上。", "A sequence only reaches its own neighbouring words, never the other sentence: source and translation never meet.",
+                        "换「编码器-解码器」：先把整句读完，再从头说一遍。", "Switch to an encoder–decoder: read the whole sentence, then say it again.", "", "");
+                    return true;
+                case "parallel" when serial:
+                    Set(v, "deadline", 0, "订单有期限：循环在一句话里只能一个字一个字地算，从头练 " + SprintEpochs + " 轮读不完这批长文档。", "The order has a deadline: a loop computes a sentence one word at a time, and from scratch " + SprintEpochs + " epochs cannot get through these long documents.",
+                        "拿掉循环，「只用注意力」：整句一起算。", "Drop the loop, attention only: the whole sentence at once.", "", "");
+                    return true;
+                case "parallel" when k.wiring == XgWiring.AnyToAny && !k.position:
+                    Set(v, "order", 0, "只用注意力就分不清先后：句首的「春」和后面又出现的「春」，在它看来是同一个东西。", "Attention alone cannot tell order: the 春 that opens the sentence and a later 春 look the same to it.",
+                        "打开「位置标记」：给每个字一个位置编号。", "Switch on position tags: number every word's position.", "", "");
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 练过头: in these settings the test score peaked at least five epochs ago and has fallen ten points or more
+        /// since (cells squeezing each other out, or leaning ever more on the trained cards).
+        /// </summary>
+        static bool Overtrained(XgTrace t, XgTracePoint p, out double peak, out int peakEpoch)
+        {
+            peak = 0; peakEpoch = 0;
+            foreach (var q in t.points)
+                if (q.epoch >= t.segmentFrom && q.test > peak) { peak = q.test; peakEpoch = q.epoch; }
+            return peakEpoch > 0 && p.epoch - peakEpoch >= 5 && peak - p.test >= .1;
         }
 
         static void Set(XgVerdict v, string id, int layer, string zh, string en, string structure, string structureEn, string method, string methodEn)

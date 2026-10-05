@@ -73,6 +73,20 @@
       "level": 4,
       "sign": "众包挂机 · 承接各类脚本 · 价格私聊",
       "signEn": "Crowd-task bots · scripts made to order · DM for prices"
+    },
+    "tiaocan": {
+      "name": "调参侠本侠",
+      "nameEn": "TheHyperparamGuy",
+      "level": 13,
+      "sign": "某厂 CV 组 · 科普帖不定期更新 · 不接私活",
+      "signEn": "CV team at a big company · explainers now and then · no side jobs"
+    },
+    "nlplsj": {
+      "name": "NLP老司机",
+      "nameEn": "NLP_OldHand",
+      "level": 12,
+      "sign": "做机器翻译的 · 语料比命长",
+      "signEn": "Machine translation · my corpora outlive me"
     }
   },
   "boards": [
@@ -412,17 +426,37 @@
       "author": "xiaobai",
       "date": "2016-06-12",
       "title": "显存不够怎么办",
-      "titleEn": "What do I do when I run out of VRAM",
+      "titleEn": "Out of VRAM, what do I do",
       "floors": [
         {
           "author": "xiaobai",
           "text": "跑个小网络都说 out of memory。",
-          "textEn": "Even a small network says out of memory."
+          "textEn": "Even a small net says out of memory."
         },
         {
           "author": "liandan",
           "text": "batch 调小。或者加卡。或者两个都。",
           "textEn": "Smaller batch. Or more cards. Or both."
+        },
+        {
+          "author": "tiaocan",
+          "text": "楼上说加卡要注意：现在主流的多卡训练是数据并行，每张卡各放一份完整的模型，各算一部分数据，最后把梯度加起来。所以两张 6G 不等于 12G，模型还得塞进一张卡里。加卡是变快，不是变大。",
+          "textEn": "Careful with 'more cards': multi-GPU training today is data parallel — every card holds a full copy of the model, works on part of the data, and the gradients are summed. Two 6 GB cards are not 12 GB; the model still has to fit on one. More cards means faster, not bigger."
+        },
+        {
+          "author": "tiaocan",
+          "text": "粗算一下显存：参数每个大概 16 字节（权重、梯度、Adam 的两份状态），再加上中间结果，batch 越大、图越大，中间结果越多。卷积网络主要吃在中间结果上。框架和 CUDA 自己还要占几百 M。",
+          "textEn": "Rough VRAM sums: about 16 bytes per parameter (weights, gradients and Adam's two states), plus the intermediate results, which grow with the batch and the image size. Convnets mostly eat memory there. The framework and CUDA take a few hundred MB on their own."
+        },
+        {
+          "author": "akazhan",
+          "text": "A 卡显存大啊，RX 480 8G 才一千九",
+          "textEn": "AMD cards have more VRAM. An RX 480 8 GB is only 1,999."
+        },
+        {
+          "author": "liandan",
+          "text": "大是大，Caffe、TensorFlow 都只认 CUDA，A 卡插上去基本跑不了。战未来吧。",
+          "textEn": "Sure, but Caffe and TensorFlow only speak CUDA; an AMD card basically won't run them. 'AMD for the future' indeed."
         }
       ]
     },
@@ -587,6 +621,24 @@
           "author": "yanglaji",
           "text": "电费记得交，欠费停电了啥都白搭。",
           "textEn": "Pay the power bill. Once it is cut off, nothing works."
+        },
+        {
+          "author": "dengdeng",
+          "text": "更新一下：平台这两天多了个「专家题悬赏」，律所外包的法律判断题，还有难一档的逻辑题，一条顶普通题八条。不过得真会，错了白干。",
+          "textEn": "Update: the platform has 'expert bounties' now — yes/no law questions outsourced by law firms, and harder logic questions — one pays eight ordinary ones. You have to actually know it though; wrong means no pay.",
+          "since": "2016-07-15"
+        },
+        {
+          "author": "akazhan",
+          "text": "法律题那种标了也不能拿去练自己的模型吧",
+          "textEn": "Those law ones can't train your own model though, right?",
+          "since": "2016-07-15"
+        },
+        {
+          "author": "dengdeng",
+          "text": "对，那是人家律所的活，纯赚钱。数据跟你要做的任务对不上，练了也白练。",
+          "textEn": "Right, that's the law firm's job, pure money. Data that doesn't match your task teaches it nothing.",
+          "since": "2016-07-15"
         }
       ]
     },
@@ -626,24 +678,34 @@
       "board": "ai",
       "author": "xiaobai",
       "date": "2016-07-04",
-      "title": "练了几百轮死活不涨，是我人品问题吗",
-      "titleEn": "Hundreds of epochs and it will not improve. Is it my karma?",
       "minStage": 1,
+      "title": "练了几百轮死活不涨，是我人品问题吗",
+      "titleEn": "Hundreds of epochs and it won't improve. Is it my karma?",
       "floors": [
         {
           "author": "xiaobai",
-          "text": "分数卡在一个地方，再怎么练都上不去。",
-          "textEn": "The score is stuck at one level. More training does nothing."
+          "text": "分数卡在一个地方，再怎么练都上不去。有时候还越练越低，心态崩了。",
+          "textEn": "The score is stuck in one place however much I train. Sometimes it even goes down. I'm losing it."
         },
         {
-          "author": "kedaibiao",
-          "text": "不是人品，是结构到顶了。光加轮数没用，得换结构或者换训练方法。",
-          "textEn": "Not karma. The structure has hit its ceiling. More epochs will not help; change the structure or how you train."
+          "author": "tiaocan",
+          "text": "不是人品。练很多轮不涨，一般就三种情况，挨个自查：\n\n① 撞墙了：结构本身做不到。比如一层网络学异或、全连接网络认挪了位置的数字。这种加多少轮都没用，看错题有什么规律——近的对远的错？挪了位置就错？规律就是该换什么。\n\n② 练过头了：中间某一轮其实挺高，后面越练越低。往回翻曲线，找到最高那次，把那次的检查点读回来；以后开早停，分数几轮不涨就自动停。\n\n③ 装不下了：模型太小，新学的东西把旧的挤掉，学了就忘。加宽，或者换能共用参数的结构（图用卷积、句子用循环），别把乱七八糟的数据都喂进去。",
+          "textEn": "It's not karma. Many epochs without progress is usually one of three things; check them in turn:\n\n① You hit a wall: the structure can't do it. Like one layer on XOR, or a dense net reading digits that move around. No number of epochs helps. Look at the pattern in the mistakes — near right, far wrong? wrong once it's shifted? — the pattern tells you what to change.\n\n② You overtrained: somewhere in the middle it was quite high and it's been sliding since. Scroll back, find the best epoch, load that checkpoint back; next time turn on early stopping so it stops when the score hasn't risen for a few epochs.\n\n③ It's full: the model is too small, new things push old ones out, learnt and forgotten. Go wider, or use a structure that shares parameters (convolution for pictures, recurrence for sentences), and don't feed it every scrap of data."
+        },
+        {
+          "author": "xiaobai",
+          "text": "我好像是第二种……第 60 轮 88%，现在 67%",
+          "textEn": "I think mine's the second… 88% at epoch 60, 67% now."
+        },
+        {
+          "author": "tiaocan",
+          "text": "那就读回第 60 轮那个。好的检查点是会存权重的，读回来就是那时候的模型。",
+          "textEn": "Then load epoch 60 back. A proper checkpoint keeps the weights; loading it gives you the model as it was then."
         },
         {
           "author": "liandan",
-          "text": "先看诊断：错题都错在哪一类？近的对远的错，还是简单的对复杂的错？错的规律就是答案。",
-          "textEn": "Look at the diagnosis first: what kind of cards does it get wrong? Near right and far wrong, or simple right and complex wrong? The pattern of mistakes is the answer."
+          "text": "工具里那个诊断页别光看曲线，最上面那行字会直接告诉你卡在哪一层、从哪一轮开始。",
+          "textEn": "In that tool, don't just stare at the curve on the diagnosis page: the line at the top tells you which layer is stuck and since which epoch."
         },
         {
           "author": "haixing",
@@ -651,55 +713,65 @@
           "textEn": "This field hits a wall every few years, and every time a new paper knocks it down."
         },
         {
-          "author": "liandan",
-          "text": "还有，练得不够多是看不出问题的。别跑两轮就下结论，多跑一阵，墙自己会露出来。",
-          "textEn": "Also, you will not see the problem without enough training. Do not judge after two epochs; run it a while and the wall shows itself."
-        },
-        {
           "author": "chigua",
           "text": "听说有人卖「秘籍」，就是把论文结论直接告诉你。",
-          "textEn": "I hear people sell \"cheat sheets\" that just tell you the paper's conclusion."
+          "textEn": "I heard someone sells 'secrets' — just tells you the paper's conclusion."
         },
         {
           "author": "liandan",
           "text": "买了省事，自己琢磨出来更爽，平台还有奖金。",
-          "textEn": "Buying saves time. Working it out yourself feels better, and the platform pays a bonus for it."
+          "textEn": "Buying saves time; working it out yourself feels better, and the platform pays a bonus."
+        },
+        {
+          "author": "dengdeng",
+          "text": "火钳刘明，等我练崩了回来看",
+          "textEn": "Leaving a mark here; I'll be back when mine collapses."
         }
       ]
     },
     {
       "id": "tip_lr",
       "board": "ai",
-      "author": "kedaibiao",
+      "author": "tiaocan",
       "date": "2016-06-15",
-      "title": "loss 一夜之间变成 NaN，科普一下学习率",
-      "titleEn": "Loss turned into NaN overnight: a primer on learning rate",
       "minStage": 1,
+      "title": "【科普】loss 一夜之间变成 NaN？聊聊学习率",
+      "titleEn": "[Explainer] Loss turned into NaN overnight? Let's talk learning rates",
       "floors": [
         {
-          "author": "kedaibiao",
-          "text": "学习率就是每一步迈多大。迈太大会跳过最低点，越跳越远，最后溢出成 NaN。",
-          "textEn": "The learning rate is how big each step is. Too big and it jumps past the minimum, further each time, until it overflows into NaN."
+          "author": "tiaocan",
+          "text": "学习率就是每一步迈多大。迈太小，几百轮还在原地挪；迈太大，跳过了最低点，在两边来回晃，晃着晃着数值溢出，loss 就成 NaN 了。前者是慢，后者是炸。",
+          "textEn": "The learning rate is how big each step is. Too small and you're still shuffling in place after hundreds of epochs; too big and you jump past the bottom, swing from side to side, and eventually the numbers overflow and the loss is NaN. One is slow, the other blows up."
         },
         {
-          "author": "kedaibiao",
-          "text": "一般 0.1 起步，炸了就往小调；越往后模型越复杂，越要小，0.01 甚至 0.001。",
-          "textEn": "Usually start at 0.1 and go smaller if it blows up. The more complex the model, the smaller: 0.01 or even 0.001."
-        },
-        {
-          "author": "liandan",
-          "text": "再加一个「梯度裁剪」：步子再大也不让超过一个上限。循环网络必备。",
-          "textEn": "Add gradient clipping too: however big the step, it never exceeds a cap. A must for recurrent networks."
+          "author": "tiaocan",
+          "text": "几个经验：\n· SGD 一般 0.1 起步，炸了降一档。\n· 网络越深越容易炸，循环网络更容易（同一组权重每个字乘一遍）。\n· 梯度裁剪是给每一步封个顶，能扛住偶尔的爆炸，但不是开了就随便调大，太大照样炸。\n· BatchNorm 能让你用大一点的学习率。",
+          "textEn": "Some rules of thumb:\n· SGD usually starts at 0.1; if it blows up, go down a notch.\n· The deeper the net, the easier it blows up, and loops are worse (the same weights multiplied again for every word).\n· Gradient clipping puts a cap on each step. It survives the odd explosion, but it isn't a licence to crank the rate; too big still blows up.\n· BatchNorm lets you use a somewhat larger rate."
         },
         {
           "author": "xiaobai",
-          "text": "阶跃函数也不行吗？我用的就是阶跃。",
-          "textEn": "Is a step function no good either? That is what I use."
+          "text": "我换了 Adam，学习率还填 0.1，一跑就炸，Adam 不是说很稳吗",
+          "textEn": "I switched to Adam and kept 0.1 as the rate. It blows up instantly. Isn't Adam supposed to be stable?"
+        },
+        {
+          "author": "tiaocan",
+          "text": "Adam 的学习率不是一个尺度的。它会按梯度自己的大小把步子缩放，所以数字要小得多，常用 0.001，差不多相当于 SGD 的 0.1。拿 SGD 的数往 Adam 上套，等于一步迈出去一百倍。",
+          "textEn": "Adam's rate is on a different scale. It rescales each step by the gradient's own size, so the number has to be far smaller: 0.001 is usual, about what 0.1 is for SGD. Copy an SGD number into Adam and every step is a hundred times too big."
+        },
+        {
+          "author": "liandan",
+          "text": "再补一个：大模型开头误差最大，可以先用小学习率热身几百步再加上去。ResNet 论文里练 110 层就是先用 0.01 热身的。",
+          "textEn": "One more: big models have their largest errors at the start, so warm up with a small rate for a few hundred steps, then raise it. The ResNet paper warms up its 110-layer net at 0.01 first."
         },
         {
           "author": "kedaibiao",
-          "text": "阶跃没有坡度，误差传不回去，多层网络学不动。换 S 形或者 ReLU。",
-          "textEn": "A step has no slope, so the error cannot flow back and a multi-layer net cannot learn. Use an S-curve or ReLU."
+          "text": "阶跃函数那个问题也顺便说了吧：阶跃没有坡度，多层网络学不动，换 S 形。跟学习率没关系，调多少都没用。",
+          "textEn": "And the step-function question while we're here: a step has no slope, so a multi-layer net can't learn. Use an S-curve. It has nothing to do with the rate; no value will fix it."
+        },
+        {
+          "author": "chigua",
+          "text": "炼丹嘛，炸几次炉很正常",
+          "textEn": "It's alchemy. A few explosions are normal."
         }
       ]
     },
@@ -708,60 +780,85 @@
       "board": "ai",
       "author": "xiaobai",
       "date": "2016-08-09",
-      "title": "RNN 读到句子后面，前面的全忘了",
-      "titleEn": "My RNN forgets the start of the sentence by the end",
       "minStage": 3,
+      "title": "RNN 读到句子后面，前面的全忘了",
+      "titleEn": "My RNN forgets the start by the end of the sentence",
       "floors": [
         {
           "author": "xiaobai",
           "text": "短句子挺准，长一点就不行，问它开头说了啥一脸懵。",
-          "textEn": "Short sentences are fine. Longer ones fail: ask about the beginning and it has no idea."
+          "textEn": "Short sentences are fine; longer ones and it has no idea what the start said."
         },
         {
           "author": "liandan",
-          "text": "普通循环网络就是金鱼记忆，信息一个字一个字往后传，传远了就没了。",
-          "textEn": "A plain recurrent net has a goldfish memory: information is passed along word by word and fades with distance."
+          "text": "普通循环网络就是金鱼记忆：信息一个字一个字往后传，每传一步打个折，传十几个字就没了。往回算误差也是一样，越往前误差越小，前面的字等于没在学。",
+          "textEn": "A plain RNN has a goldfish memory: information is passed on word by word, discounted at every step, and after a dozen words it's gone. The error going back is the same: the further back, the smaller, so the early words barely learn."
         },
         {
-          "author": "kedaibiao",
-          "text": "97 年那篇 LSTM，给它加几道门，让它自己决定记什么、忘什么。",
-          "textEn": "The 1997 LSTM paper: give it gates so it decides what to keep and what to forget."
+          "author": "nlplsj",
+          "text": "LSTM，1997 年 Hochreiter 和 Schmidhuber。给记忆加了几道门，该留的原样留着往后传，不该留的放掉。现在大家用的带「遗忘门」的版本是 1999–2000 年 Gers 他们加上的。2014 年又出了个简化版 GRU，效果差不多。",
+          "textEn": "LSTM, Hochreiter and Schmidhuber, 1997. It puts gates on the memory: what matters is carried forward unchanged, the rest let go. The version everyone uses, with a 'forget gate', came from Gers and colleagues in 1999–2000. In 2014 a simpler GRU appeared that works about as well."
         },
         {
-          "author": "liandan",
-          "text": "LSTM 配梯度裁剪，学习率压到 0.01 以下，宽度给够。一次只改一样，对比远距离那一行的分数。",
-          "textEn": "LSTM with gradient clipping, learning rate at 0.01 or lower, and enough width. Change one thing at a time and compare the long-distance row."
+          "author": "nlplsj",
+          "text": "配一个梯度裁剪：循环网络偶尔会梯度爆炸，一步迈出去几千倍，裁剪给它封个顶。LSTM 解决的是越传越小，裁剪管的是偶尔太大，俩是一对。学习率倒不用压得特别小，正常就行。",
+          "textEn": "Pair it with gradient clipping: loops sometimes explode, a step thousands of times too big, and clipping caps it. LSTM fixes 'smaller and smaller'; clipping handles 'occasionally far too big'. They go together. The rate needn't be tiny; normal is fine."
+        },
+        {
+          "author": "xiaobai",
+          "text": "试了，远距离那一行从五成多到八成了！",
+          "textEn": "Tried it: the far-distance row went from just over 50% to 80%!"
+        },
+        {
+          "author": "haixing",
+          "text": "金鱼终于长记性了",
+          "textEn": "The goldfish finally remembers."
         }
       ]
     },
     {
       "id": "tip_deep",
       "board": "ai",
-      "author": "liandan",
+      "author": "tiaocan",
       "date": "2016-09-06",
-      "title": "层数堆到 20 层以上，效果反而变差？",
-      "titleEn": "Past 20 layers it gets worse, not better?",
       "minStage": 4,
+      "title": "【论文笔记】ResNet：为什么 56 层比 20 层还差",
+      "titleEn": "[Paper notes] ResNet: why 56 layers do worse than 20",
       "floors": [
         {
-          "author": "liandan",
-          "text": "不是过拟合，训练集都变差。每一层都让信号打个折，叠多了就没了。",
-          "textEn": "It is not overfitting; even the training score drops. Every layer weakens the signal a little, and stacked deep enough it is gone."
+          "author": "tiaocan",
+          "text": "今年 CVPR 最佳论文，何恺明他们那篇。吧里有人问「层数堆到 20 层以上反而变差」，这篇就是讲这个的，写点笔记。\n\n现象：普通网络从 20 层加到 56 层，测试变差不奇怪，怪的是训练集上也变差。所以不是过拟合。",
+          "textEn": "This year's CVPR best paper, from Kaiming He's group. Someone asked why going past 20 layers makes things worse; this paper is about exactly that, so here are my notes.\n\nThe observation: a plain net going from 20 to 56 layers gets worse on the test set — not surprising — but also on the training set. So it isn't overfitting."
         },
         {
-          "author": "haixing",
-          "text": "去年那篇 ResNet：每层留条捷径，让信号能原样跳过去。",
-          "textEn": "Last year's ResNet paper: give every layer a shortcut so the signal can skip it unchanged."
+          "author": "tiaocan",
+          "text": "很多人第一反应是梯度消失。论文专门排除了：他们的普通网络都加了 BatchNorm，前向、反向的信号都没消失。问题出在优化上：照理说多出来的层只要「什么都不做」、把下面的结果原样往上传，56 层至少不该比 20 层差。可一堆非线性层要学会「原样传」恰恰很难，每层都会改动一点，层一多就走样了。",
+          "textEn": "Most people's first guess is vanishing gradients. The paper rules it out: their plain nets all use BatchNorm, and neither the forward nor the backward signal vanishes. The trouble is optimisation: in principle the extra layers only need to do nothing and pass the lower result up unchanged, so 56 layers should be no worse than 20. But a stack of nonlinear layers finds 'pass it on unchanged' surprisingly hard to learn; each layer changes it a little, and with enough layers it drifts."
+        },
+        {
+          "author": "tiaocan",
+          "text": "解法很简单：每两层旁边加一条捷径，把输入直接加到输出上。这样「原样传」就成了默认，层只需要学在上面改多少。效果：152 层也能练，ImageNet 上把错误率打到了 3.6%。不过也不是无限深，他们试了 1202 层，反而比 110 层略差。",
+          "textEn": "The fix is simple: next to every couple of layers add a shortcut that adds the input straight to the output. Passing on unchanged becomes the default, and the layers only learn how much to change on top. Result: 152 layers train, and ImageNet error drops to 3.6%. Not infinitely deep though: they tried 1,202 layers and it came out slightly worse than 110."
+        },
+        {
+          "author": "liandan",
+          "text": "没有残差的话，BatchNorm + 20 层左右也还能练，VGG 就是 16、19 层。再往上堆就是论文里那条越来越高的训练误差了。",
+          "textEn": "Without residuals, BatchNorm and around 20 layers still trains; VGG is 16 or 19 layers. Stack more and you get the paper's rising training error."
         },
         {
           "author": "xiaobai",
           "text": "所以设置里那个「跨层直连」就是干这个的？",
-          "textEn": "So that skip connection setting is for this?"
+          "textEn": "So that 'skip connections' setting does exactly this?"
         },
         {
-          "author": "liandan",
+          "author": "tiaocan",
           "text": "对，开了再往深堆。",
           "textEn": "Yes. Turn it on, then go deeper."
+        },
+        {
+          "author": "chigua",
+          "text": "弱小和无知不是生存的障碍，傲慢才是",
+          "textEn": "Weakness and ignorance are not barriers to survival; arrogance is."
         }
       ]
     },
@@ -770,24 +867,36 @@
       "board": "ai",
       "author": "kedaibiao",
       "date": "2016-09-20",
-      "title": "做机器翻译，逐字翻出来全是中式英语",
-      "titleEn": "Machine translation word by word comes out as Chinglish",
       "minStage": 4,
+      "title": "做机器翻译，逐字翻出来全是中式英语",
+      "titleEn": "My machine translation comes out word by word: pure Chinglish",
       "floors": [
         {
           "author": "kedaibiao",
-          "text": "逐字对逐字永远不通顺，因为两种语言语序不一样。",
-          "textEn": "Word for word never reads right, because the two languages order words differently."
+          "text": "逐字对逐字永远不通顺，两种语言语序不一样。用一个 LSTM 读中文、顺手往后吐英文，也老对不上。",
+          "textEn": "Word for word is never fluent; the two languages order words differently. One LSTM reading Chinese and emitting English as it goes never lines up either."
         },
         {
-          "author": "liandan",
-          "text": "先把整句读完压成一个意思，再从头用另一种语言说一遍。编码器 + 解码器，宽度至少 256。",
-          "textEn": "Read the whole sentence into one meaning first, then say it again from the start in the other language. Encoder plus decoder, width 256 at least."
+          "author": "nlplsj",
+          "text": "干这行的说两句。2014 年 Sutskever 那篇 Seq2Seq：一个编码器把整句读完压成一个向量，一个解码器再从这个向量开始，用另一种语言从头说一遍。短句效果很好。\n\n毛病是整句压成一个定长的向量，句子一长，前面的词就糊了。他们有个土办法：把原句倒过来输入，让开头离解码器近一点，居然有效。",
+          "textEn": "From someone in the trade. Sutskever's 2014 Seq2Seq: an encoder reads the whole sentence and squeezes it into one vector; a decoder starts from that vector and says it again in the other language. Great on short sentences.\n\nThe flaw: the whole sentence is squeezed into one fixed-size vector, so in a long sentence the early words blur. Their low-tech trick was to feed the source reversed, so the start sits closer to the decoder — and it helped."
         },
         {
-          "author": "haixing",
-          "text": "再进一步就是注意力：说每个词的时候回头看原句对应的地方。",
-          "textEn": "One step further is attention: when saying each word, look back at the matching part of the original."
+          "author": "nlplsj",
+          "text": "再进一步就是注意力（Bahdanau 2014）：解码器说每个词的时候，回头在原句里找最相关的那几个词看一眼，不用全指望那一个向量了。宽度给够，至少 256。",
+          "textEn": "The next step is attention (Bahdanau, 2014): while saying each word, the decoder looks back at the most relevant source words, instead of relying on that one vector. Give it width, 256 at least."
+        },
+        {
+          "author": "nlplsj",
+          "text": "刚看到谷歌发了 GNMT，8 层 LSTM 加注意力，说已经上线谷歌翻译了，中英错误率降了一大截。我们组看完沉默了。",
+          "textEn": "Just saw Google's GNMT: 8 layers of LSTM with attention, already live in Google Translate, with Chinese–English errors cut a lot. My group read it and went quiet.",
+          "since": "2016-09-28"
+        },
+        {
+          "author": "chigua",
+          "text": "吃瓜，等它把我英语六级也考了",
+          "textEn": "Watching. Waiting for it to sit my CET-6 for me.",
+          "since": "2016-09-28"
         }
       ]
     },
@@ -796,29 +905,39 @@
       "board": "ai",
       "author": "haixing",
       "date": "2016-10-18",
-      "title": "循环网络太慢了，能不能一口气并行算",
-      "titleEn": "Recurrent nets are too slow. Can we compute it all in parallel?",
       "minStage": 5,
+      "title": "循环网络太慢了，能不能一口气并行算",
+      "titleEn": "Recurrent nets are so slow. Can't it all run in parallel?",
       "floors": [
         {
           "author": "haixing",
-          "text": "循环只能一个字一个字算，卡再多也用不上。",
-          "textEn": "A loop computes one word at a time; more cards do not help."
+          "text": "接了个长文档的活，客户要两周交，一跑循环网络慢得要死，加了张卡也没快多少。",
+          "textEn": "Took a job on long documents, due in two weeks. The recurrent net is painfully slow and another card barely helped."
         },
         {
-          "author": "liandan",
-          "text": "把循环拿掉，只留注意力：每个字直接看所有字。",
-          "textEn": "Remove the loop and keep only attention: every word looks at every other word directly."
+          "author": "tiaocan",
+          "text": "多卡能同时算好几句话，可一句话里面还是得等前一个字算完才能算下一个，句子越长越慢。这是循环结构本身的事，换卡解决不了。",
+          "textEn": "More cards run several sentences at once, but inside one sentence each word still waits for the one before, so the longer the sentence the slower. That's the recurrent structure itself; cards won't fix it."
+        },
+        {
+          "author": "nlplsj",
+          "text": "卷积那条路有人在试，一次看一段，能并行。还有个思路：注意力本身是能一口气算完的，每个字直接看所有字。2015 年 Facebook 那篇端到端记忆网络就没用循环，靠注意力，再给每个位置加个编号。不过人家做的是问答，翻译上还没见谁这么干。",
+          "textEn": "Some are trying convolutions, a window at a time, which parallelises. Another thought: attention itself can be computed in one go, every word looking at every word. Facebook's 2015 end-to-end memory networks used no recurrence at all, just attention plus a number for each position. That was question answering though; nobody's done it for translation yet."
         },
         {
           "author": "kedaibiao",
-          "text": "但没了循环它就不知道谁先谁后了，得给每个位置打个编号。",
-          "textEn": "But without the loop it no longer knows the order. Give each position a number."
+          "text": "位置编号这个要注意：注意力本身不分先后，没编号的话「我打你」和「你打我」对它来说一样。",
+          "textEn": "Mind the position numbers: attention by itself ignores order; without them 'I hit you' and 'you hit me' look the same to it."
         },
         {
           "author": "chigua",
           "text": "你们说的这个，会不会就是以后的大模型？",
-          "textEn": "Could this be what the big models will be later?"
+          "textEn": "Could what you're describing be the big models of the future?"
+        },
+        {
+          "author": "tiaocan",
+          "text": "谁要是真在翻译上做成了，记得发论文。",
+          "textEn": "If anyone actually makes it work for translation, write the paper."
         }
       ]
     },
@@ -827,24 +946,39 @@
       "board": "gpu",
       "author": "yanglaji",
       "date": "2016-12-03",
-      "title": "听说大公司一次用几千张卡训模型，家里能玩吗",
-      "titleEn": "Big companies train on thousands of cards at once. Can you do it at home?",
       "minStage": 6,
+      "title": "听说大公司一次用几千张卡训模型，家里能玩吗",
+      "titleEn": "Big companies train on thousands of cards at once. Can I do it at home?",
       "floors": [
         {
           "author": "yanglaji",
           "text": "家里一台机箱 3500 瓦就到头了，再加卡就跳闸。",
-          "textEn": "One case at home tops out at 3500 W. Add more cards and the breaker trips."
+          "textEn": "One case at home tops out at 3,500 W; another card and the breaker trips."
         },
         {
           "author": "akazhan",
           "text": "要么租机房，整排机柜专线供电。",
-          "textEn": "Or rent a server room: whole racks on a dedicated line."
+          "textEn": "Either rent a server room, with racks on their own power line."
+        },
+        {
+          "author": "tiaocan",
+          "text": "规模这件事，我们组这一年的体会：模型加大、数据加多，效果是一点点往上走的，加一倍就好一截，没有哪一刻突然开窍。但两样得一起加，光加模型不加数据，很快就背题了。",
+          "textEn": "On scale, my group's experience this year: bigger model, more data, and it improves step by step — double it and it's a notch better, no single moment where it suddenly gets it. But grow both together; grow the model without the data and it soon memorises."
+        },
+        {
+          "author": "tiaocan",
+          "text": "还有两个细节：模型大了开头一定要预热，学习率从小慢慢加，不然头几百步就炸；读句子的话位置信息不能丢，丢了就是一袋子字。",
+          "textEn": "Two details: a big model must warm up at the start, the rate climbing slowly from small, or it blows up in the first few hundred steps; and when reading sentences don't lose position information, or it's just a bag of words."
         },
         {
           "author": "liandan",
-          "text": "规模上去了，有些本事是突然出来的，之前一点征兆都没有。模型要够宽够深，数据要够多。",
-          "textEn": "Once the scale is there, some abilities appear all at once with no warning before. The model has to be wide and deep enough, and the data big enough."
+          "text": "说是这么说，有时候规模一上去，有些本事是突然出来的，之前一点征兆都没有。",
+          "textEn": "That's the theory, but sometimes once the scale goes up, some abilities appear all at once, with no warning before."
+        },
+        {
+          "author": "dengdeng",
+          "text": "先定一个能达到的小目标，比如先买它一张 1080",
+          "textEn": "Set an achievable little goal first, like buying one 1080."
         }
       ]
     },
@@ -927,6 +1061,175 @@
           "author": "xiezhi",
           "text": "谢邀，楼上号已经被封了。",
           "textEn": "Thanks for the invite. The poster above just got banned."
+        }
+      ]
+    },
+    {
+      "id": "ai_perceptron",
+      "board": "ai",
+      "author": "tiaocan",
+      "date": "2016-06-08",
+      "minStage": 1,
+      "title": "【历史向】感知机为什么被骂了十几年（顺便讲讲异或）",
+      "titleEn": "[History] Why the perceptron was mocked for over a decade (and XOR)",
+      "floors": [
+        {
+          "author": "tiaocan",
+          "text": "看吧里好几个人问「单层网络练异或死活 50%」，开个帖统一说一下，顺便讲点历史。\n\n先说结论：一层感知机本质上是在平面上画一条直线，线这边算「是」，那边算「否」。异或是「恰好一个为真」：(真,假) 和 (假,真) 是「是」，(真,真) 和 (假,假) 是「否」。你拿张纸画一下就知道，一条直线怎么都分不开这四个点。",
+          "textEn": "Several people here asked why a one-layer net sits at 50% on XOR, so here is one thread for it, plus some history.\n\nShort answer: a one-layer perceptron draws one straight line on the plane; one side is 'yes', the other 'no'. XOR is 'exactly one is true': (T,F) and (F,T) are yes, (T,T) and (F,F) are no. Draw it on paper: no single line splits those four points."
+        },
+        {
+          "author": "tiaocan",
+          "text": "1969 年 Minsky 和 Papert 写了本《感知机》，把这件事证明得明明白白。再加上 1973 年英国那份莱特希尔报告把 AI 批了一顿，经费一断，神经网络冷了十几年。所以你们看老一辈说起神经网络都有点 PTSD。",
+          "textEn": "In 1969 Minsky and Papert's book 'Perceptrons' proved it cleanly. Add Britain's 1973 Lighthill report tearing into AI, the money dried up, and neural nets went cold for over a decade. That's why the older folks still flinch at the word."
+        },
+        {
+          "author": "tiaocan",
+          "text": "怎么解？两条路：\n1. 加一层隐藏层。中间那层先学出「至少一个为真」「两个都为真」这种组合，上一层再拿它们做判断，异或就出来了。但激活别用阶跃：阶跃是个台阶，没有坡度，误差传不回去，中间那层永远学不动。用 S 形曲线，误差才能一层层往回传——这就是 1986 年 Rumelhart、Hinton、Williams 那篇反向传播。\n2. 不加层，人来干活：把两个条件拼成一个新特征（「一真一假」），一层就够了。深度学习之前大家基本都是这么干的，叫特征工程。",
+          "textEn": "Two ways out:\n1. Add a hidden layer. The middle layer learns combinations like 'at least one true' and 'both true', and the top layer decides from those. But not with a step activation: a step is flat, it has no slope, the error cannot flow back and the middle layer never learns. Use an S-curve and the error goes back layer by layer — that's the 1986 backpropagation paper by Rumelhart, Hinton and Williams.\n2. No new layer, people do the work: pair the two conditions into one new feature ('one true, one false') and a single layer is enough. Before deep learning that's mostly how it was done; it's called feature engineering."
+        },
+        {
+          "author": "chigua",
+          "text": "前排，听懂了一半",
+          "textEn": "Front row. Understood half of it."
+        },
+        {
+          "author": "xiaobai",
+          "text": "所以我把单层加宽到 32 也没用？我还以为是不够宽……",
+          "textEn": "So widening my single layer to 32 doesn't help? I thought it just wasn't wide enough…"
+        },
+        {
+          "author": "tiaocan",
+          "text": "单层再宽也还是一层，每个单元各画各的直线，没有人把它们组合起来。宽不是问题，深才是。",
+          "textEn": "However wide, it's still one layer: each unit draws its own line and nobody combines them. Width isn't the problem; depth is."
+        },
+        {
+          "author": "kedaibiao",
+          "text": "补充：S 形的导数最大也就 0.25，层多了误差一层层乘下去会越来越小。两三层没事，堆多了就是另一个坑了，以后再说。",
+          "textEn": "To add: an S-curve's slope is at most 0.25, so with many layers the error shrinks layer after layer. Two or three layers are fine; stack more and it's another trap, for another day."
+        },
+        {
+          "author": "haixing",
+          "text": "mark，楼主好人一生平安",
+          "textEn": "Bookmarked. Bless you, OP."
+        }
+      ]
+    },
+    {
+      "id": "tip_overfit",
+      "board": "ai",
+      "author": "tiaocan",
+      "date": "2016-07-12",
+      "minStage": 2,
+      "title": "【干货】练过的全对，没见过的全错：过拟合怎么治",
+      "titleEn": "[How-to] All right on trained cards, all wrong on new ones: curing overfitting",
+      "floors": [
+        {
+          "author": "tiaocan",
+          "text": "过拟合就是死记硬背：数据少、模型大，它干脆把每道题的答案背下来，换一道没见过的就傻眼。判断很简单，看训练分和考试分差多少，差个二三十分基本就是了。",
+          "textEn": "Overfitting is rote learning: little data, big model, so it just memorises each card's answer and is lost on anything new. Easy to spot: compare the training score with the exam score; a gap of twenty or thirty points is it."
+        },
+        {
+          "author": "tiaocan",
+          "text": "治法按效果排：\n1. 多弄数据。最管用，没有之一。\n2. 换结构。全连接最爱背，卷积、循环这种共用参数的结构天生不容易背。\n3. 数据增强：把手上的数据变出新样本。注意按数据类型来——图片可以平移、裁剪；手写数字可以挪一挪但别翻转，6 左右翻过来就不是 6 了；围棋棋盘转一转、照镜子是同一个局面，8 种对称，AlphaGo 就这么用的。文字基本没法这么增强。\n4. Dropout：训练时每次随机关掉一部分单元，逼它别指望某几个巧合。Hinton 他们组搞的，现在基本标配。\n5. 早停：考试分不涨了就停，留最好那次。",
+          "textEn": "Cures, best first:\n1. More data. Nothing beats it.\n2. A different structure. Dense nets love to memorise; shared-parameter structures like convolution and recurrence resist it by nature.\n3. Data augmentation: make new samples from the ones you have. Mind the kind of data — pictures can shift and crop; handwritten digits can move a bit but don't flip them, a mirrored 6 isn't a 6; a Go board rotated or mirrored is the same position, eight symmetries, which is what AlphaGo used. Text mostly can't be augmented this way.\n4. Dropout: at each training step switch off a random share of units, so it can't rely on a few coincidences. From Hinton's group; pretty much standard now.\n5. Early stopping: stop when the exam score stops rising and keep the best."
+        },
+        {
+          "author": "xiaobai",
+          "text": "Dropout 开了以后好像练得更慢了？",
+          "textEn": "With Dropout on it seems to train slower?"
+        },
+        {
+          "author": "tiaocan",
+          "text": "正常。每次都有一部分不参与，当然慢一点，换来的是练过和没练过的差距小了。别指望它把考试分拉多高，它主要是让你别背题。",
+          "textEn": "Normal. Part of it sits out every time, so it's slower; what you get is a smaller gap between trained and unseen. Don't expect it to lift the exam score much; it mainly stops the memorising."
+        },
+        {
+          "author": "kedaibiao",
+          "text": "补一句：增强治不了「捷径」。比如狗的照片全在草地上，它学会的是「草地 = 狗」，你怎么平移裁剪草地都还在。这种只能补反例，多找几张不在草地上的狗。",
+          "textEn": "One addition: augmentation won't cure shortcuts. If every dog photo is on grass, it learns 'grass = dog', and no amount of shifting or cropping removes the grass. Only counter-examples help: find dogs that aren't on grass."
+        },
+        {
+          "author": "yanglaji",
+          "text": "mark，回头给我那破 MNIST 试试",
+          "textEn": "Bookmarked, going to try it on my sad MNIST."
+        }
+      ]
+    },
+    {
+      "id": "tip_structure",
+      "board": "ai",
+      "author": "liandan",
+      "date": "2016-07-20",
+      "minStage": 2,
+      "title": "全连接、卷积、循环到底差在哪？（萌新向，大佬轻喷）",
+      "titleEn": "Dense, convolution, recurrence: what's actually different? (for beginners, go easy)",
+      "floors": [
+        {
+          "author": "liandan",
+          "text": "最近吧里问「为什么我的网络认不出数字」的太多了，写点自己的理解，有错欢迎指正。\n\n全连接：每个输入格子都接到每个单元上。听着很强，问题是它把位置绑死了——同一个笔画出现在左上角和右下角，在它眼里是两个毫不相干的东西。数字挪一格，它就当新东西从头学。",
+          "textEn": "Too many 'why can't my net read digits' threads lately, so here's my understanding; corrections welcome.\n\nDense: every input cell is wired to every unit. Sounds powerful, but it binds positions — the same stroke top-left and bottom-right are two unrelated things to it. Move a digit by one cell and it learns it from scratch."
+        },
+        {
+          "author": "liandan",
+          "text": "卷积：一小块一小块地看，而且同一套参数在整张图上滑着用。所以学会一个笔画，在哪儿都认得，参数还少。LeCun 1989 年就做出来了，1998 年的 LeNet-5 用来认支票上的手写数字。\n\n循环：读句子用的，一个字一个字往后读，前面读到的东西带到后面去。同一个词在句首还是句尾都认得，也知道谁先谁后。",
+          "textEn": "Convolution: looks at small patches, and slides the same parameters over the whole picture. Learn a stroke once and it's known anywhere, with far fewer parameters. LeCun had it in 1989; LeNet-5 in 1998 read handwritten digits on cheques.\n\nRecurrence: for sentences. It reads word by word and carries what it read forward. The same word is known at the start or the end, and it knows what came first."
+        },
+        {
+          "author": "kedaibiao",
+          "text": "那深度学习之前大家怎么办？",
+          "textEn": "So what did people do before deep learning?"
+        },
+        {
+          "author": "liandan",
+          "text": "人来做特征。图片先去噪、把字挪到中间、算边缘方向（SIFT、HOG 这一路）；文字拆成单字和两字词数个数（n-gram）。然后一层分类器就够了。现在照样能用，就是费人工，而且到了复杂任务人也想不出好特征。",
+          "textEn": "People made the features. Pictures were denoised, the figure moved to the centre, edge directions computed (SIFT, HOG and the like); text split into single words and word pairs and counted (n-grams). Then one layer of classifier was enough. It still works, it just costs people's time, and on hard tasks people can't think of good features."
+        },
+        {
+          "author": "xiaobai",
+          "text": "我全连接堆了三层 S 形，诊断说梯度消失……",
+          "textEn": "I stacked three dense S-curve layers and the diagnosis says vanishing gradients…"
+        },
+        {
+          "author": "liandan",
+          "text": "S 形每往下一层误差最多剩四分之一，三层就只剩十几分之一了。这两年大家都改用 ReLU（AlexNet 2012 就靠它），坡度是 1，误差基本原样往下传。没有的话就少堆几层。不过你那个是认数字吧？先换卷积，层数是次要的。",
+          "textEn": "An S-curve passes at most a quarter of the error per layer; three layers down there's a sixteenth left. These last couple of years everyone moved to ReLU (AlexNet in 2012 ran on it): slope 1, the error comes down almost whole. Without it, stack fewer layers. But you're reading digits, right? Switch to convolution first; depth is secondary."
+        },
+        {
+          "author": "chigua",
+          "text": "大佬受我一拜",
+          "textEn": "I bow to you, master."
+        }
+      ]
+    },
+    {
+      "id": "tip_selflabel",
+      "board": "ai",
+      "author": "kedaibiao",
+      "date": "2016-11-05",
+      "minStage": 5,
+      "title": "让模型自己标数据？小心「近亲繁殖」",
+      "titleEn": "Letting the model label its own data? Beware of 'inbreeding'",
+      "floors": [
+        {
+          "author": "kedaibiao",
+          "text": "上线以后用户日志一天几万条，手标不过来，很多人就让模型自己标了再喂回去。听着很美，坑在这：它标错的，恰恰是它本来就不会的那些题，而且错得很有规律。你把这些错题喂回去，它就把自己的错当成答案又学了一遍，越学越确信。",
+          "textEn": "Once it's live, user logs come in tens of thousands a day, too many to label by hand, so many people let the model label them and feed them back. Sounds lovely; here's the trap: what it labels wrong is exactly what it couldn't do, and wrong in a consistent way. Feed those back and it learns its own mistakes as answers, more sure of them each time."
+        },
+        {
+          "author": "kedaibiao",
+          "text": "另外，它本来就答对的那些，喂回去也学不到什么新东西，别指望一条顶一条。",
+          "textEn": "Also, the ones it already gets right teach it little that's new; don't count them as one-for-one."
+        },
+        {
+          "author": "tiaocan",
+          "text": "办法：抽检，定期抽一批人工看；拿不准的题交给人；隔一段时间把老的自动标注翻出来人工复核一遍。",
+          "textEn": "The cure: spot checks, a batch reviewed by people regularly; hand the uncertain ones to a person; every so often send old automatic labels back for a human recheck."
+        },
+        {
+          "author": "dengdeng",
+          "text": "怪不得我们组的模型越练越自信越练越错",
+          "textEn": "So that's why our group's model got more confident and more wrong the longer it trained."
         }
       ]
     }
