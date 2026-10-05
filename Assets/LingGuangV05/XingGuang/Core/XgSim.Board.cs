@@ -11,6 +11,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Cards trained per dataset, and the board's card count when each was last trained (forgetting).</summary>
         public List<XgScore> boardCards = new List<XgScore>();
         public List<XgScore> boardLastTrained = new List<XgScore>();
+        /// <summary>Best validation accuracy per dataset of a model without a loop (realtime contracts, XgContract.realtime).</summary>
+        public List<XgScore> parallelBest = new List<XgScore>();
     }
 
     public sealed partial class XgRun
@@ -61,7 +63,7 @@ namespace LingGuangV05.XingGuang
         {
             switch (arch)
             {
-                case "lenet": case "alexnet": case "vgg": case "googlenet": case "resnet": case "caption": return XgWiring.LocalShared;
+                case "lenet": case "alexnet": case "vgg": case "googlenet": case "resnet": case "caption": case "textcnn": return XgWiring.LocalShared;
                 case "rnn": return XgWiring.Recurrent;
                 case "lstm": case "gru": return XgWiring.GatedRecurrent;
                 case "seq2seq": return XgWiring.EncoderDecoder;
@@ -105,6 +107,7 @@ namespace LingGuangV05.XingGuang
                 features = FeaturesOwned && run.features,
                 batchNorm = BatchNormOwned && !run.batchNormOff,
                 dropout = Has("dropout"),
+                identityInit = Has("irnn"),
                 steadiness = OptimizerSteadiness,
                 bias = Has("bias"),
                 lr = RateValues[Math.Max(0, Math.Min(RateValues.Length - 1, run.lr))],
@@ -236,7 +239,7 @@ namespace LingGuangV05.XingGuang
         void EvaluateBoard(XgRun run)
         {
             var test = TestSet(run.dataset);
-            double acc = Board.Accuracy(test, Knobs(run));
+            double acc = ExamWithMistakes(run, test, Knobs(run));
             run.valAcc = Scale(run.dataset, acc);
             run.trainAcc = Scale(run.dataset, run.boardTrain < 0 ? acc : run.boardTrain);
         }

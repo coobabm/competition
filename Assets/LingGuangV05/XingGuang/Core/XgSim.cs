@@ -749,6 +749,12 @@ namespace LingGuangV05.XingGuang
             a.previousBest = BestScore(d.id);
             a.grade = Grade(a.score);
             // A record has to beat the last one by more than the test set's own noise (about one standard error).
+            // A model that reads the whole sentence at once also counts for realtime jobs (直播实时字幕).
+            if (!SerialWiring(Knobs(run)) && run.valAcc > ParallelAcc(d.id))
+            {
+                if (S.parallelBest == null) S.parallelBest = new List<XgScore>();
+                Count(S.parallelBest, d.id).value = run.valAcc;
+            }
             a.record = run.valAcc > BestAcc(d.id) + 1e-4
                 && (!UseBoard || BestAcc(d.id) <= 0 || BinaryAccuracy(d.id, run.valAcc) >= BinaryAccuracy(d.id, BestAcc(d.id)) + RecordMargin - 1e-9);
             if (a.record)
@@ -927,13 +933,72 @@ namespace LingGuangV05.XingGuang
             return T("模型到顶了：去科技加层、加宽或换架构。", "The model has peaked: add layers, width or a new architecture in the tech tree.");
         }
 
+        /// <summary>
+        /// AutoML's next dataset once the current one stops setting records: first a desk this month's new meme has
+        /// dragged down (新题型; every epoch there wins a point back), then a contract almost within reach (its bar
+        /// within <see cref="AutoContractReach"/>), then the dataset with the most samples still short of 950.
+        /// </summary>
         void AutoSwitchData(XgRun run)
         {
-            XgDataset best = null;
+            XgDataset best = null; double bestKey = double.NegativeInfinity;
             foreach (var d in XgCatalog.DatasetsFor((XgTrack)run.track))
-                if (DatasetAvailable(d.id) && Samples(d.id) >= XgCatalog.SamplesToTrain && BestScore(d.id) < 950 && (best == null || Samples(d.id) > Samples(best.id))) best = d;
-            if (best != null && best.id != run.dataset) SetDataset((XgTrack)run.track, best.id);
+            {
+                if (!DatasetAvailable(d.id) || Samples(d.id) < XgCatalog.SamplesToTrain) continue;
+                double drift = MemeDrift(d.id), gap = ContractGap(d.id), key;
+                if (drift > 0) key = 3e9 + drift;
+                else if (gap > 0 && gap <= AutoContractReach) key = 2e9 - gap * 1e6;
+                else if (BestScore(d.id) < 950) key = Samples(d.id);
+                else continue;
+                if (key > bestKey) { bestKey = key; best = d; }
+            }
+            if (best == null || best.id == run.dataset) return;
+            string why = MemeDrift(best.id) > 0 ? T("（新题型拖了分，先回炉）", " (a new meme dragged it down: retrain first)")
+                : ContractGap(best.id) > 0 && ContractGap(best.id) <= AutoContractReach ? T("（离签约线只差一点）", " (just short of a contract's bar)") : "";
+            SetDataset((XgTrack)run.track, best.id);
+            Say(T("AutoML：换到「" + XgCatalog.Dataset(best.id).name + "」" + why, "AutoML: switched to " + XgCatalog.Dataset(best.id).nameEn + why));
         }
+
+        /// <summary>A contract counts as within reach for AutoML when its bar is this close above the best checkpoint.</summary>
+        public const double AutoContractReach = .08;
+
+        /// <summary>How far the best checkpoint is below the nearest unsigned contract's bar on this dataset (0 = none open).</summary>
+        public double ContractGap(string dataset)
+        {
+            double gap = 0;
+            foreach (var c in XgCatalog.Contracts)
+            {
+                if (c.dataset != dataset || Signed(c.id)) continue;
+                double g = c.threshold - ContractAcc(c);
+                if (g > 1e-9 && (gap <= 0 || g < gap)) gap = g;
+            }
+            return gap;
+        }
+
+        /// <summary>
+        /// AutoML runs the data flywheel too: the model labels a dataset's user logs itself once it answers at least
+        /// <see cref="AutoLogAccuracy"/> right (few enough of its own mistakes get in), and stops before the noise
+        /// reaches the 近亲繁殖 line.
+        /// </summary>
+        void AutoFlywheel()
+        {
+            foreach (var l in S.logs)
+            {
+                if (l.count <= 0 || XgCatalog.Dataset(l.dataset) == null) continue;
+                bool on = LogAutoOn(l.dataset);
+                bool clean = NoiseShare(l.dataset) < InbreedingFreeShare * .8;
+                if (!on && clean && LogAutoBlocker(l.dataset) == null && 1 - LogAutoNoise(l.dataset) >= AutoLogAccuracy)
+                {
+                    if (SetLogAuto(l.dataset, true)) Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」的用户日志交给模型自己标。", "AutoML: the model now labels the user logs of " + XgCatalog.Dataset(l.dataset).nameEn + "."));
+                }
+                else if (on && !clean)
+                {
+                    SetLogAuto(l.dataset, false);
+                    Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」自己标的错快到一成了，先停下，免得近亲繁殖。", "AutoML: own labelling mistakes on " + XgCatalog.Dataset(l.dataset).nameEn + " near a tenth; stopped before inbreeding."));
+                }
+            }
+        }
+
+        public const double AutoLogAccuracy = .9;
 
         // ───────────── checkpoints, contracts ─────────────
 
@@ -946,7 +1011,13 @@ namespace LingGuangV05.XingGuang
 
         public bool Signed(string contractId) { return S.contracts.Contains(contractId); }
 
-        public bool CanSign(XgContract c) { return !Signed(c.id) && BestAcc(c.dataset) + 1e-9 >= c.threshold; }
+        public bool CanSign(XgContract c) { return !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+
+        /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
+        public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
+
+        /// <summary>Best validation accuracy a model that reads the whole sentence at once (no loop) reached on this dataset.</summary>
+        public double ParallelAcc(string dataset) { if (S.parallelBest != null) foreach (var x in S.parallelBest) if (x.key == dataset) return x.value; return 0; }
 
         public bool Sign(string contractId, IXgHost host)
         {
@@ -962,7 +1033,7 @@ namespace LingGuangV05.XingGuang
         public double ContractIncome(XgContract c)
         {
             if (!Signed(c.id)) return 0;
-            double acc = BestAcc(c.dataset);
+            double acc = ContractAcc(c);
             if (acc < c.threshold) return 0;
             return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * (Winter ? .5 : 1);
         }
@@ -1411,7 +1482,7 @@ namespace LingGuangV05.XingGuang
             TickMarket(dt, host);
             double income = IncomePerSecond * dt;
             if (income > 0) { host.Earn(income); S.totalIncome += income; }
-            if (level >= 5) foreach (var c in XgCatalog.Contracts) if (CanSign(c)) Sign(c.id, host);
+            if (level >= 5) { foreach (var c in XgCatalog.Contracts) if (CanSign(c)) Sign(c.id, host); AutoFlywheel(); }
             CheckDesks();
         }
 

@@ -273,6 +273,9 @@ namespace LingGuangV05.XingGuang
                     S.wallRoutes.Add(check.dataset + "#" + wall.id + "=" + (k.features ? RouteFeatures : RouteStructure));
                     // 越深越差 passed on BatchNorm with the shortcuts off: the 硬扛 card.
                     if (wall.id == "degrade" && !k.skip) Earn("road.batchnorm");
+                    // The other roads: a plain loop that keeps its memory (IRNN), a convolution that reads in parallel.
+                    if (wall.id == "length" && k.IdentityLoop) Earn("road.identity");
+                    if (wall.id == "parallel" && k.wiring == XgWiring.LocalShared) Earn("road.conv");
                     Say(T("达标：", "Passed: ") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
                 }
                 if (WallPassed(wall)) PassWall(wall, host);

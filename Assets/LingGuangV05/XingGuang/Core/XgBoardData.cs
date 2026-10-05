@@ -136,7 +136,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The elements of a label card as the brain sees them. Also used for hand-labelled cards.</summary>
         public static XgBoardCard FromCard(XgCard card)
         {
-            var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth };
+            var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth, source = card };
             var r = new Random(card.seed ^ 0x5A17);
             switch (card.dataset)
             {
@@ -161,7 +161,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static XgBoardCard Augment(XgBoardCard card, string dataset, int variant)
         {
-            var copy = new XgBoardCard { region = card.region, truth = card.truth, seed = card.seed * 31 + variant, distance = card.distance, text = card.text };
+            var copy = new XgBoardCard { region = card.region, truth = card.truth, seed = card.seed * 31 + variant, distance = card.distance, text = card.text, source = card.source };
             int n = XgVisual.Board - 1;
             foreach (var f in card.features)
             {

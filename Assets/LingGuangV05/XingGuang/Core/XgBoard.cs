@@ -22,7 +22,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>A card as the brain sees it: raw features, the region it trains and the label it was given.</summary>
-    public sealed class XgBoardCard
+    public sealed partial class XgBoardCard
     {
         public string region = "logic";
         public List<XgFeature> features = new List<XgFeature>();
@@ -97,6 +97,12 @@ namespace LingGuangV05.XingGuang
         /// pairs that fire together on different cards — the coincidences of a single card cannot build anything.
         /// </summary>
         public bool dropout;
+        /// <summary>
+        /// 单位初始化 (IRNN, Le, Jaitly &amp; Hinton 2015): a plain loop of ReLU units whose recurrent weights start as the
+        /// identity passes its memory on unchanged by default, so it remembers far back without gates. Only with ReLU
+        /// (an S-curve squashes it again), and the same open path lets a high rate blow the gradient up (clip it).
+        /// </summary>
+        public bool identityInit;
         /// <summary>特征工程 (the pre-deep-learning road): hand-made features, read per region (see <see cref="XgBoard.Elements"/>).</summary>
         public bool features;
         /// <summary>偏置: every card also lights a constant element, so the board can shift its threshold.</summary>
@@ -119,6 +125,7 @@ namespace LingGuangV05.XingGuang
                 double limit = XgBoard.TearLimit * (batchNorm ? 1.5 : 1) * (clip ? 2 : 1) * steadiness;
                 limit /= 1 + .03 * Math.Max(0, depth - 1) * (skip ? .3 : 1);
                 if (loop && !clip) limit *= .75;
+                if (IdentityLoop && !clip) limit *= .5;
                 return limit;
             }
         }
@@ -164,14 +171,17 @@ namespace LingGuangV05.XingGuang
         public double RelayLeft(int layersAbove) => layersAbove <= 0 ? 1 : Math.Pow(RelayKeep, layersAbove);
         public double RelayGarble(int layersAbove) => layersAbove <= 0 ? 0 : RelayNoise * Math.Sqrt(layersAbove);
 
-        /// <summary>Per-step memory of the sequence wiring (R6): plain loops ×.75, gated loops ×.97, others no decay.</summary>
+        /// <summary>A plain ReLU loop started from the identity (IRNN): it hands its memory on unchanged by default.</summary>
+        public bool IdentityLoop => identityInit && wiring == XgWiring.Recurrent && activation == XgActivation.Relu;
+
+        /// <summary>Per-step memory of the sequence wiring (R6): plain loops ×.75 (×.97 as an IRNN), gated loops ×.97, others no decay.</summary>
         public double SequenceDecay
         {
             get
             {
                 switch (wiring)
                 {
-                    case XgWiring.Recurrent: return .75;
+                    case XgWiring.Recurrent: return IdentityLoop ? XgBoard.IdentityKeep : .75;
                     case XgWiring.GatedRecurrent: case XgWiring.EncoderDecoder: case XgWiring.Attention: return .97;
                     default: return 1;
                 }
@@ -262,10 +272,16 @@ namespace LingGuangV05.XingGuang
                         e.id = f.name + "@" + (f.seq > 0 ? "s" + f.seq + ":" : "") + f.x + (sequence ? "" : "," + f.y);
                         break;
                     case XgWiring.LocalShared:
-                        e.id = f.name;
+                        // A convolution over text (TextCNN) reads word groups wherever they are; with position tags
+                        // (as convolutional translators added them) it also knows where each word sits.
+                        e.id = sequence && k.position ? f.name + "@-" + fromEnd : f.name;
                         break;
                     case XgWiring.AnyToAny:
-                        e.id = k.position ? f.name + "@-" + fromEnd + (f.seq > 0 ? "s" + f.seq : "") : f.name;
+                        // Two sentences (translation): every word may look at every word of both; with position tags
+                        // the output word lines itself up with the source word in the same place (see Reach). One
+                        // sentence: position tags tell the first 春 from a later one.
+                        if (lengths.Count > 1) e.id = f.name + (f.seq > 0 ? "→" : "");
+                        else e.id = k.position ? f.name + "@-" + fromEnd : f.name;
                         break;
                     case XgWiring.EncoderDecoder:
                         // The whole source sentence is squeezed into one fixed-size vector (定长瓶颈): the end of the
@@ -347,7 +363,9 @@ namespace LingGuangV05.XingGuang
             if (k.features && k.wiring == XgWiring.Full) return a.seq == b.seq && Math.Abs(a.x - b.x) <= FeatureReach && Math.Abs(a.y - b.y) <= FeatureReach;
             switch (k.wiring)
             {
-                case XgWiring.Full: case XgWiring.AnyToAny: return true;
+                case XgWiring.Full: return true;
+                // Self-attention reaches everything; position tags let it line two sentences up word for word.
+                case XgWiring.AnyToAny: return a.seq == b.seq || !k.position || a.x == b.x;
                 case XgWiring.LocalShared: return a.seq == b.seq && Math.Abs(a.x - b.x) <= 1 && Math.Abs(a.y - b.y) <= 1;
                 // Across the two sentences the decoder lines each output word up with its source word (with an
                 // encoder–decoder only as clearly as the squeezed sentence still holds that word; see Elements).
@@ -453,6 +471,9 @@ namespace LingGuangV05.XingGuang
                 return (h & 0xFFFF) / 32767.5 - 1;
             }
         }
+
+        /// <summary>What an identity-initialised ReLU loop (IRNN) keeps of every word per step: all words alike, unlike gates.</summary>
+        public const double IdentityKeep = .96;
 
         /// <summary>Gated memory keeps a word it has learnt matters this much per step, and lets the rest go this fast.</summary>
         public const double GateKeep = .99, GateForget = .95, GateWeight = .3;

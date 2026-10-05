@@ -813,6 +813,24 @@
           "author": "haixing",
           "text": "金鱼终于长记性了",
           "textEn": "The goldfish finally remembers."
+        },
+        {
+          "author": "kedaibiao",
+          "since": "2016-08-12",
+          "text": "补个冷知识：不用门其实也行。Hinton 组去年那篇 IRNN，朴素 RNN 激活换 ReLU，回环的权重一开始设成单位矩阵，记忆默认原样往下传，长序列上跟 LSTM 差不多。缺点是误差也原样往回传，学习率一大就炸，得开裁剪。用 S 形不行，一压又没了。",
+          "textEn": "A footnote: you can do without gates. Hinton's group's IRNN paper last year: a vanilla RNN with ReLU, the loop's weights started as the identity matrix, so memory passes on unchanged by default; on long sequences it is about as good as LSTM. The catch: errors come back unchanged too, so a high rate blows up; clip. With an S-curve it doesn't work, it squashes everything again."
+        },
+        {
+          "author": "xiaobai",
+          "since": "2016-08-12",
+          "text": "原样往下传……LSTM 那个记忆格不也是这个意思吗",
+          "textEn": "Pass it on unchanged... isn't that what LSTM's memory cell does too?"
+        },
+        {
+          "author": "kedaibiao",
+          "since": "2016-08-12",
+          "text": "对，一个道理。ResNet 的捷径也是。",
+          "textEn": "Yes, same idea. So is ResNet's shortcut."
         }
       ]
     },
@@ -938,6 +956,24 @@
           "author": "tiaocan",
           "text": "谁要是真在翻译上做成了，记得发论文。",
           "textEn": "If anyone actually makes it work for translation, write the paper."
+        },
+        {
+          "author": "nlplsj",
+          "since": "2016-11-01",
+          "text": "说曹操曹操到：DeepMind 昨天挂了篇 ByteNet，翻译不用循环，用一层层卷积，整句一起算，时间跟句子长度成正比。卷积本身也不分先后，他们是靠位置把顺序补回来的。",
+          "textEn": "Speak of the devil: DeepMind put up ByteNet yesterday. Translation without loops, stacked convolutions, the whole sentence at once, time linear in its length. A convolution doesn't know order by itself either; position puts it back."
+        },
+        {
+          "author": "chigua",
+          "since": "2016-11-01",
+          "text": "所以只要不一个字一个字地等，卷积也行、注意力也行？",
+          "textEn": "So as long as it doesn't wait word by word, convolutions work, attention works?"
+        },
+        {
+          "author": "tiaocan",
+          "since": "2016-11-01",
+          "text": "差不多是这个意思。剩下的就看谁先把注意力那条路走通了。",
+          "textEn": "Roughly. Now it's about who gets the attention road working first."
         }
       ]
     },

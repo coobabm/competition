@@ -104,7 +104,9 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 Fx.Knock(row, .02f, new Vector2(12, 0));
                 Fx.Play(XgJuice.Sfx.Id.Thud);
-                view.ShowToast(c.dataset != chip.dataset ? T("这个检查点干不了这活：需要「", "Wrong checkpoint: needs ") + XgCatalog.Dataset(c.dataset).name + T("」", "") : T("准确率还没到门槛 ", "Below the bar ") + XgSim.Pct(c.threshold), 2.5f);
+                view.ShowToast(c.dataset != chip.dataset ? T("这个检查点干不了这活：需要「", "Wrong checkpoint: needs ") + XgCatalog.Dataset(c.dataset).name + T("」", "")
+                    : c.realtime && Sim.BestAcc(c.dataset) + 1e-9 >= c.threshold ? T("直播等不了：循环网络一个字一个字地算，跟不上。要不用循环的模型达到 ", "Live can't wait: a loop computes word by word and falls behind. A model without a loop must reach ") + XgSim.Pct(c.threshold)
+                    : T("准确率还没到门槛 ", "Below the bar ") + XgSim.Pct(c.threshold), 2.5f);
                 return;
             }
             Sign(c, row);
@@ -181,9 +183,10 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var (c, row, text, btn, bg) in rows)
             {
                 var d = XgCatalog.Dataset(c.dataset);
-                double best = Sim.BestAcc(c.dataset);
+                double best = Sim.ContractAcc(c);
                 bool signed = Sim.Signed(c.id), can = Sim.CanSign(c);
                 text.text = "<b>" + T(c.client, c.clientEn) + "</b> · " + T(c.job, c.jobEn) + "\n<size=13><color=#68748C>" + T(d.name, d.nameEn) + " ≥ " + XgSim.Pct(c.threshold)
+                    + (c.realtime ? T(" · 实时：只认不用循环的模型", " · realtime: models without a loop only") : "")
                     + T("  当前 ", "  now ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>\n<color=#E86E14>¥" + Money(c.income) + T("/秒起", "/s base") + "</color>"
                     + (signed ? "  <color=#2F9E44>" + T("在跑 ¥", "earning ¥") + Money(Sim.ContractIncome(c)) + T("/秒", "/s") + "</color>" : "  <size=13><color=#68748C>" + T("首付 ¥", "advance ¥") + Money(c.signBonus) + "</color></size>");
                 bool target = dragging != null && dragging == c.dataset && can;

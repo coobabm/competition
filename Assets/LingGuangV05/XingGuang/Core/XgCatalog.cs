@@ -51,6 +51,11 @@ namespace LingGuangV05.XingGuang
     {
         public string id, client, clientEn, job, jobEn, dataset;
         public double threshold, income, signBonus;
+        /// <summary>
+        /// 实时: the job runs as it happens (live subtitles), so only a model that reads the whole sentence at once
+        /// counts (<see cref="XgSim.ParallelAcc"/>); a loop reading word by word falls behind.
+        /// </summary>
+        public bool realtime;
     }
 
     public enum XgResearchKind { Optimizer, Dropout, Augment, GradClip, AutoCheckpoint, LrSchedule, BatchNorm, CuDnn, Transfer, ManualPay, Feel }
@@ -146,6 +151,8 @@ namespace LingGuangV05.XingGuang
                 note = "编码器 + 解码器，终于能做翻译。", noteEn = "Encoder plus decoder: translation becomes possible." },
             new XgArch { id = "attention", name = "注意力", nameEn = "Attention", track = XgTrack.Sequence, year = 2015, cost = 400, bias = .4, maxDepth = 6, span = 999, seq2seq = true, paramFactor = 16, speed = .9, instability = .05,
                 note = "解码时回头看原文，长句不再遗忘。", noteEn = "Looks back at the source while decoding; long sentences survive." },
+            new XgArch { id = "textcnn", name = "文字卷积", nameEn = "TextCNN", track = XgTrack.Sequence, year = 2014, cost = 100, bias = .7, maxDepth = 6, span = 5, paramFactor = 3, speed = 1.3,
+                note = "Kim 2014：把看图的卷积搬到句子上，按词组读，整句一起算，很快；只看得见附近几个字。", noteEn = "Kim 2014: the picture convolution moved onto sentences. It reads word groups, the whole sentence at once and fast, but sees only a few words around." },
         };
 
         public static readonly XgDataset[] Datasets =
@@ -365,7 +372,7 @@ namespace LingGuangV05.XingGuang
             W("vision", 3, "v.w2", 1350, 3, "vision"); W("vision", 4, "v.w3", 4050, 3, "vision"); W("vision", 5, "v.w4", 12000, 3, "vision");
             P("cifar", "lenet", 600, 3, "vision"); P("meme", "lenet", 700, 3, "vision");
             P("poems", "rnn", 300, 3, "sequence"); P("news", "rnn", 800, 3, "sequence");
-            R("relu", "lenet", 200, 3); R("gradclip", "rnn", 150, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
+            R("relu", "lenet", 200, 3); R("gradclip", "rnn", 150, 3); R("irnn", "gradclip", 1200, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
             Break("bt.gate", 3, "sequence", "rnn", 4000, "门控记忆", "Gated memory");
             A("lstm", 3, "sequence", "bt.gate", 0); A("gru", 3, "sequence", "lstm", 1500);
             P("longtext", "lstm", 2500, 3, "sequence");
@@ -375,6 +382,7 @@ namespace LingGuangV05.XingGuang
             // ── 阶段 4 · LSTM + ResNet：墙「翻译不了」，黄金参数 = 编码器-解码器 + 宽 ≥ 256；附加秘籍「越深越差」= 跨层直连
             W("sequence", 4, "s.w3", 4050, 4, "sequence");
             P("crosssentence", "lstm", 2500, 4, "sequence"); P("review", "lstm", 1000, 4, "sequence");
+            A("textcnn", 4, "sequence", "rnn", 2500);
             Break("bt.residual", 4, "vision", "lenet", 4000, "残差连接", "Residual connections");
             A("resnet", 4, "vision", "bt.residual", 0); D("vision", 32, "v.d16", 4000, 4, "vision"); W("vision", 6, "v.w5", 36000, 4, "vision");
             P("go", "resnet", 2500, 4, "vision"); P("imagenet", "resnet", 4000, 4, "vision");
@@ -492,7 +500,7 @@ namespace LingGuangV05.XingGuang
             LingGuangV05.Core.AppNames.AppZh + "窗口开着时，每 3 秒自动训练一轮（只有手按的一半效果，不算连击）。",
             "窗口关了也在后台训练（游戏开着才算，关掉游戏就停）。",
             "自动训练时，连续 12 轮没刷新纪录就停下，保留最佳检查点，不白烧电。",
-            "自动调学习率、自动换到样本最多的数据集、自动签能签的订单。你只管科技。",
+            "自动调学习率、自动签能签的订单；一个数据集练不动了，先回炉被新题型拖分的桌，再去够快能签的订单，再换样本最多的；用户日志够准就交给模型自己标。你只管科技。",
         };
         static readonly string[] AutoNotesEn =
         {
@@ -500,7 +508,7 @@ namespace LingGuangV05.XingGuang
             "While the window is open, trains one epoch every 3 s (half as strong as a hand press; no combo).",
             "Keeps training in the background with the window closed (only while the game runs).",
             "While auto-training, stops after 12 epochs without a record and keeps the best checkpoint: no wasted power.",
-            "Tunes the rate, moves to the dataset with most samples and signs every contract it can. You just pick research.",
+            "Tunes the rate and signs every contract it can; when a dataset stalls it retrains desks a new meme dragged down first, then contracts almost within reach, then the dataset with most samples; it lets the model label user logs once it is accurate enough. You just pick research.",
         };
         static readonly double[] AutoCosts = { 250, 900, 3000, 5000, 20000 };
 
@@ -554,7 +562,10 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },
             new XgContract { id = "support", client = "网店客服外包", clientEn = "Shop support outsourcer", job = "自动客服回复", jobEn = "Auto support replies", dataset = "news", threshold = .58, income = 6, signBonus = 1200 },
             new XgContract { id = "crossborder", client = "表姐的微商小店", clientEn = "Cousin’s online shop", job = "商品描述翻译", jobEn = "Listing translation", dataset = "translate", threshold = .45, income = 18, signBonus = 4000 },
+            new XgContract { id = "webnovel", client = "网文平台", clientEn = "A web-novel site", job = "连载吃书检测", jobEn = "Plot-hole detection", dataset = "longtext", threshold = .9, income = 9, signBonus = 2000 },
+            new XgContract { id = "lawfirm", client = "律师事务所", clientEn = "A law firm", job = "合同前后条款核对", jobEn = "Cross-clause contract checks", dataset = "crosssentence", threshold = .9, income = 20, signBonus = 5000 },
             new XgContract { id = "subtitle", client = "视频网站版权部", clientEn = "A video site's licensing team", job = "美剧字幕初翻", jobEn = "Subtitle first drafts", dataset = "translate", threshold = .62, income = 45, signBonus = 10000 },
+            new XgContract { id = "livesub", client = "直播平台", clientEn = "A live-streaming site", job = "直播实时字幕", jobEn = "Live subtitles", dataset = "translate", threshold = .6, income = 80, signBonus = 20000, realtime = true },
         };
 
         public static readonly XgResearch[] Research =
@@ -575,6 +586,9 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "features", kind = XgResearchKind.ManualPay, name = "特征工程", nameEn = "Feature engineering", cost = 60,
                 effect = "旋钮：人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。不用换结构也能过墙，但人工整理很费时间：训练量减半。",
                 effectEn = "Knob: people make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. Passes walls without a new structure, but by hand: half the cards per epoch." },
+            new XgResearch { id = "irnn", kind = XgResearchKind.ManualPay, name = "单位初始化", nameEn = "Identity initialisation", cost = 1200,
+                effect = "朴素 RNN 配 ReLU 时，回环一开始就是「原样转交」：记忆不再一个字一个字地漏掉（Le、Jaitly、Hinton 2015，IRNN）。误差也原样回传，学习率一大就爆，配梯度裁剪更稳。",
+                effectEn = "With ReLU, a vanilla RNN's loop starts as 'pass it on unchanged': memory no longer leaks word by word (Le, Jaitly, Hinton 2015, IRNN). The error comes back unchanged too: a high rate blows it up, so clip the gradients." },
             new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "旋钮：不靠循环也知道字的先后顺序", effectEn = "Knob: word order without recurrence" },
             new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "旋钮：换设置以后前 60 张卡的学习率从很小慢慢升上去，开头误差最大的时候不炸。深网络和 Transformer 尤其需要", effectEn = "Knob: after a change the rate climbs from almost nothing over the first 60 cards, so the large early errors do not tear it. Deep nets and Transformers need it most" },
             new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "坡度是 1，误差几乎原样往下传，深网络练得动。2010 年前后才流行开（AlexNet 2012 靠它一战成名）。训练速度 ×1.3", effectEn = "Its slope is 1, so the error comes down almost whole and deep nets train. Popular only from about 2010 (AlexNet 2012 made its name). Training ×1.3" },

@@ -103,7 +103,9 @@ namespace LingGuangV05.XingGuang
             else if (sequential && h.memory10 < .2 && p.test < v.goal)
             {
                 Set(v, "memory", h.depth, "记不住远处：回环每过一个字就忘一点，隔 10 个字只剩 " + Pct(h.memory10) + "。", "Forgets far back: the loop loses a little every word; ten words back only " + Pct(h.memory10) + " is left.",
-                    "换「门控记忆」（LSTM / GRU）：让它自己决定记住什么。", "Use gated memory (LSTM / GRU): let it decide what to keep.", "", "");
+                    "换「门控记忆」（LSTM / GRU）：让它自己决定记住什么。", "Use gated memory (LSTM / GRU): let it decide what to keep.",
+                    Has("irnn") ? "或者：朴素 RNN 配 ReLU（已买「单位初始化」），回环默认原样转交，不用门也记得住；记得开梯度裁剪。" : "",
+                    Has("irnn") ? "Or: a vanilla RNN with ReLU (identity initialisation owned) hands its memory on unchanged, no gates needed; keep gradient clipping on." : "");
             }
             else if (full && (t.Noted("thrash") || p.evicted > 0 && t.flat >= 3))
             {
@@ -175,10 +177,13 @@ namespace LingGuangV05.XingGuang
                     return true;
                 case "parallel" when serial:
                     Set(v, "deadline", 0, "订单有期限：循环在一句话里只能一个字一个字地算，从头练 " + SprintEpochs + " 轮读不完这批长文档。", "The order has a deadline: a loop computes a sentence one word at a time, and from scratch " + SprintEpochs + " epochs cannot get through these long documents.",
-                        "拿掉循环，「只用注意力」：整句一起算。", "Drop the loop, attention only: the whole sentence at once.", "", "");
+                        "拿掉循环，「只用注意力」：整句一起算。", "Drop the loop, attention only: the whole sentence at once.",
+                        Has("textcnn") ? "或者换「文字卷积」：卷积也是整句一起算。" : "", Has("textcnn") ? "Or switch to TextCNN: a convolution also computes the whole sentence at once." : "");
                     return true;
-                case "parallel" when k.wiring == XgWiring.AnyToAny && !k.position:
-                    Set(v, "order", 0, "只用注意力就分不清先后：句首的「春」和后面又出现的「春」，在它看来是同一个东西。", "Attention alone cannot tell order: the 春 that opens the sentence and a later 春 look the same to it.",
+                case "parallel" when (k.wiring == XgWiring.AnyToAny || k.wiring == XgWiring.LocalShared) && !k.position:
+                    bool conv = k.wiring == XgWiring.LocalShared;
+                    Set(v, "order", 0, (conv ? "卷积" : "只用注意力") + "就分不清先后：句首的「春」和后面又出现的「春」，在它看来是同一个东西。",
+                        (conv ? "A convolution" : "Attention alone") + " cannot tell order: the 春 that opens the sentence and a later 春 look the same to it.",
                         "打开「位置标记」：给每个字一个位置编号。", "Switch on position tags: number every word's position.", "", "");
                     return true;
             }

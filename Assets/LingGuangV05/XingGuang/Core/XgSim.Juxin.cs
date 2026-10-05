@@ -152,6 +152,9 @@ namespace LingGuangV05.XingGuang
             JxC("support", "客服外包", "Support Outsourcing", "外包公司 · 刘总", "Boss Liu (outsourcing)"),
             JxC("crossborder", "表姐的微商小店", "Cousin's Online Shop", "表姐", "Cousin"),
             JxC("subtitle", "字幕组", "Fansub Group", "字幕组校对 · 小林", "Xiaolin, fansub proofreader"),
+            JxC("webnovel", "某网文平台", "A Web-Novel Site", "网文平台 · 责编小周", "Xiaozhou, web-novel editor"),
+            JxC("lawfirm", "律师事务所", "Law Firm", "律所 · 王律师", "Lawyer Wang"),
+            JxC("livesub", "某直播平台", "A Live-Streaming Site", "直播平台 · 运营阿伟", "Awei, streaming ops"),
             JxC("sla.danmu", "某视频网站", "A Video Site", "弹幕组 · 组长", "Danmaku team lead", true),
             JxC("sla.meme", "某表情包 App", "A Sticker App", "表情包 App · 运营", "Sticker app ops", true),
             JxC("sla.takeout", "某外卖平台", "A Food-Delivery App", "外卖平台 · 品控", "Delivery app QA", true),
@@ -405,7 +408,7 @@ namespace LingGuangV05.XingGuang
         XgJxMessage SignedArticle(XgContract c)
         {
             var oa = JuxinClient(c.id);
-            string acc = Pct(BestAcc(c.dataset));
+            string acc = Pct(ContractAcc(c));
             return new XgJxMessage
             {
                 kind = (int)XgJxKind.Article, date = Today, minute = JxMinute(), at = S.jxClock,

@@ -95,13 +95,15 @@ namespace LingGuangV05.XingGuang
                 Card(CardInsight, 2, "insight.structure", "邻", "看邻居，读前文", "Neighbours and context", "第 2 阶段没买秘籍就过了墙。", "Passed stage 2 without the secret."),
                 Card(CardInsight, 2, "insight.length", "忘", "学会忘记", "Learning to forget", "第 3 阶段没买秘籍就过了墙。", "Passed stage 3 without the secret."),
                 Card(CardInsight, 2, "insight.translation", "译", "先读完再说", "Read it all first", "第 4 阶段没买秘籍就过了墙。", "Passed stage 4 without the secret."),
-                Card(CardInsight, 2, "insight.parallel", "注", "也想到了", "Thought of it too", "第 5 阶段在它开口之前，自己只用了注意力。", "In stage 5 you went attention-only before it said so."),
+                Card(CardInsight, 2, "insight.parallel", "注", "也想到了", "Thought of it too", "第 5 阶段在它开口之前，自己找到了不用循环的读法。", "In stage 5 you found a way to read without loops before it said so."),
                 Card(CardInsight, 2, "insight.pretrain", "模", "规模和稳定", "Scale and stability", "第 6 阶段没买秘籍就让预训练跑通。", "Got pre-training through in stage 6 without the secret."),
                 Card(CardInsight, 4, "lingguang", "灵", "灵光一现", "A Flash of Insight", "六个阶段全部自悟。", "Worked out all six stages yourself.", "没有秘籍，没有提示，只有一次又一次地试。这张卡只发给你。", "No secrets, no hints, only trying again and again. This card is yours alone.", hidden: true, glyph2: "光"),
 
                 // 笨办法: the training-method roads.
                 Card(CardRoad, 1, "road.features", "笨", "笨办法也行", "The slow way works", "不换结构，靠「特征工程」过了一面墙。", "Passed a wall with feature engineering instead of a new structure.", "深度学习之前，人们就是这样替机器想特征的。", "Before deep learning, this is how people thought up features for machines."),
                 Card(CardRoad, 1, "road.batchnorm", "扛", "硬扛", "Toughed it out", "没开跨层直连，靠 BatchNorm 过了「越深越差」。", "Passed deeper-is-worse without skip connections, on BatchNorm.", "2015 年，BatchNorm 先让深网络能练；残差才真正解决。", "In 2015 BatchNorm made deep nets trainable first; residuals truly solved it."),
+                Card(CardRoad, 1, "road.identity", "传", "不用门也记得住", "Memory without gates", "用朴素 RNN + ReLU + 单位初始化过了「长句失忆」。", "Passed long-sentence amnesia with a vanilla RNN, ReLU and identity initialisation.", "2015 年 Hinton 组的 IRNN：让回环默认原样转交，和 LSTM 的记忆格、ResNet 的捷径是同一个想法。", "Hinton's group, 2015: let the loop pass things on unchanged by default, the same idea as LSTM's memory cell and ResNet's shortcut."),
+                Card(CardRoad, 2, "road.conv", "卷", "卷积也能并行", "Convolutions run in parallel too", "用「文字卷积」+ 位置标记过了「串行瓶颈」。", "Passed the serial bottleneck with TextCNN and position tags.", "2016 年 DeepMind 的 ByteNet、2017 年 Facebook 的 ConvS2S：不用循环，也能整句一起翻译。", "DeepMind's ByteNet (2016) and Facebook's ConvS2S (2017): whole sentences translated at once, without loops."),
                 Card(CardRoad, 2, "road.both", "双", "两条路都走过", "Both roads", "既换过结构过墙，也换过练法过墙。", "Passed walls both by a new structure and by a training method."),
 
                 // 对症下药: cures read off the 训练图式.

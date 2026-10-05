@@ -18,6 +18,8 @@ namespace LingGuangV05.XingGuang
         public string text = "", group = "";
         public bool answer, truth;
         public int distance;
+        /// <summary>The card itself (pictures have no text; the wall page names them with <see cref="XgSim.CardText"/>).</summary>
+        public XgBoardCard card;
     }
 
     /// <summary>What the diagnostic set says about the model: per-group results, the main error and wrong samples.</summary>
@@ -107,7 +109,9 @@ namespace LingGuangV05.XingGuang
         public XgDiagnosis Diagnose(string dataset, XgKnobs k, XgBoard board = null)
         {
             board = board ?? Board;
-            return DiagnoseCards(dataset, k, board, TestSet(dataset));
+            var d = DiagnoseCards(dataset, k, board, TestSet(dataset));
+            foreach (var m in d.mistakes) if (m.text.Length == 0 && m.card != null) m.text = CardText(m.card, dataset);
+            return d;
         }
 
         static XgDiagnosis DiagnoseCards(string dataset, XgKnobs k, XgBoard board, List<XgBoardCard> cards)
@@ -122,7 +126,7 @@ namespace LingGuangV05.XingGuang
                 bool answer = board.Predict(card, k, out _);
                 group.total++;
                 if (answer == card.truth) { group.right++; right++; }
-                else if (card.text.Length > 0) d.mistakes.Add(new XgMistake { text = card.text, answer = answer, truth = card.truth, distance = card.distance, group = g.id });
+                else d.mistakes.Add(new XgMistake { text = card.text, answer = answer, truth = card.truth, distance = card.distance, group = g.id, card = card });
             }
             d.groups.Sort((a, b) => Rank(a.id).CompareTo(Rank(b.id)));
             d.overall = cards.Count == 0 ? 0 : (double)right / cards.Count;
@@ -247,7 +251,7 @@ namespace LingGuangV05.XingGuang
 
         static XgBoardCard CopyCard(XgBoardCard c)
         {
-            var copy = new XgBoardCard { region = c.region, truth = c.truth, seed = c.seed, distance = c.distance, text = c.text };
+            var copy = new XgBoardCard { region = c.region, truth = c.truth, seed = c.seed, distance = c.distance, text = c.text, source = c.source };
             foreach (var f in c.features) copy.Add(f.name, f.x, f.y, f.seq);
             return copy;
         }
