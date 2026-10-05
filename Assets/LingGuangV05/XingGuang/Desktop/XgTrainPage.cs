@@ -879,6 +879,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 else packBtns[i].Set(owned ? T("已安装", "Installed") : node != null ? "↓ ¥" + Money(Sim.NodeCost(node)) : "", !owned && canBuy, canBuy ? XgPalette.AccentSoft : XgPalette.Button, canBuy ? XgPalette.Accent : XgPalette.Muted);
             }
+            // Pack switches of the current dataset below the list; also sizes the scroll content (XgTrainPage.Sources.cs).
+            RefreshSources(run, dataBtns.Count);
             double watts = Host is XingGuangHost home ? home.TrainingWatts : 0;
             gpuLabel.text = "▣ GPU  · " + T("松手安装数据包", "drop data pack to install") + "\n" +
                 T("训练负载 ", "Training load ") + N(watts, "0") + " W  · " + T("累计 GPU 时间 ", "GPU time ") + N(Sim.S.trainedSeconds, "0.0") + " s";

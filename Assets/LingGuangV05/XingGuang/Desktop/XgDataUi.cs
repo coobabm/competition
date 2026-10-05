@@ -74,9 +74,19 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var o in sim.OffersFor(dataset))
             {
                 if (!o.owned && !o.available && o.source != XgDataSource.Public) continue;
-                sb.Append(o.owned ? "■ " : "□ ").Append(o.Name(En)).Append("  <size=12><color=#68748C>").Append(SourceLine(o)).Append("</color></size>\n");
+                bool on = o.owned && o.included;
+                sb.Append(on ? "■ " : "□ ").Append(o.Name(En)).Append("  <size=12><color=#68748C>").Append(SourceLine(o)).Append("</color></size>")
+                    .Append(o.owned && !o.included ? " <color=#D63031>" + T("训练不用", "left out") + "</color>" : "").Append('\n');
             }
-            return sb.ToString().TrimEnd('\n');
+            sb.Append(AlwaysOnLine(sim, dataset));
+            return sb.ToString();
+        }
+
+        /// <summary>"手标 1,800 条 · 众包 / 日志 300 条（总会用上）": the sources that always train, next to the pack switches.</summary>
+        public static string AlwaysOnLine(XgSim sim, string dataset)
+        {
+            return T("手标 ", "Hand labels ") + Samples(sim.Labels(dataset)) + T(" · 众包 / 日志 ", " · crowd / logs ") + Samples(sim.ExtraSamples(dataset))
+                + T("（总会用上）· 合计 ", " (always used) · total ") + Samples(sim.Samples(dataset));
         }
 
         /// <summary>"噪声 3.1% · 有效样本 …" for the training page's data line.</summary>

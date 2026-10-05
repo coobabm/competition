@@ -47,6 +47,8 @@ namespace LingGuangV05.XingGuang
         public bool isNew;
         /// <summary>Noise after 数据清洗.</summary>
         public double effectiveNoise;
+        /// <summary>The pack feeds training (packs the player switched off stay owned but are left out).</summary>
+        public bool included = true;
         /// <summary>Why it cannot be bought now (empty when it can).</summary>
         public string lockedReason = "", lockedReasonEn = "";
 
@@ -82,6 +84,8 @@ namespace LingGuangV05.XingGuang
         public List<string> crowdOn = new List<string>();
         /// <summary>Story offers 老周 has already mentioned.</summary>
         public List<string> storyOffered = new List<string>();
+        /// <summary>Owned packs switched off for training: "logic.pack" (public or story data), "logic.junk".</summary>
+        public List<string> dataExcluded = new List<string>();
     }
 
     /// <summary>
@@ -272,38 +276,87 @@ namespace LingGuangV05.XingGuang
             return false;
         }
 
-        /// <summary>Samples from packs that finished downloading (public pack + junk packs; story data stands for the public pack).</summary>
+        /// <summary>Samples from packs that finished downloading and are switched on (public pack + junk packs; story data stands for the public pack).</summary>
         public double PackSamples(string dataset)
         {
             var d = XgCatalog.Dataset(dataset);
             if (d == null) return 0;
+            bool full = PackIncluded(dataset + ".pack");
             bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            double n = publicPack ? d.samples : 0;
+            double n = publicPack && full ? d.samples : 0;
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
                 if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) n += o.samples;
+                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) n += o.samples; }
                 // Story data is the public pack by another road; it only counts if the public one is not already in.
-                else if (o.source == XgDataSource.Story && !publicPack) { n += o.samples; publicPack = true; }
+                else if (o.source == XgDataSource.Story && full && !publicPack) { n += o.samples; publicPack = true; }
             }
             return n;
         }
 
-        /// <summary>Wrong rows that came with the packs, before cleaning.</summary>
+        /// <summary>Wrong rows that came with the switched-on packs, before cleaning.</summary>
         double PackNoiseRows(string dataset, bool dirtyOnly)
         {
             double rows = 0;
+            bool full = PackIncluded(dataset + ".pack");
             bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            if (publicPack && !dirtyOnly) { var o = DataOfferDef(dataset + ".pack"); if (o != null) rows += o.samples * o.noise; }
+            if (publicPack && full && !dirtyOnly) { var o = DataOfferDef(dataset + ".pack"); if (o != null) rows += o.samples * o.noise; }
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
                 if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) rows += o.samples * o.noise;
-                else if (o.source == XgDataSource.Story && !publicPack && !dirtyOnly) { rows += o.samples * o.noise; publicPack = true; }
+                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) rows += o.samples * o.noise; }
+                else if (o.source == XgDataSource.Story && full && !publicPack && !dirtyOnly) { rows += o.samples * o.noise; publicPack = true; }
             }
             return rows;
+        }
+
+        // ───────────── training sources ─────────────
+
+        /// <summary>The switch a pack answers to: story data shares the public pack's ("imagenet.pack"), junk packs their own.</summary>
+        public static string PackSwitchKey(XgDataOffer o) =>
+            o == null ? "" : o.source == XgDataSource.Story ? o.datasetId + ".pack" : o.id;
+
+        /// <summary>Only packs can be switched off; hand labels, crowd rows and user logs always train.</summary>
+        public static bool PackSwitchable(XgDataOffer o) =>
+            o != null && (o.source == XgDataSource.Public || o.source == XgDataSource.Story || o.source == XgDataSource.Junk);
+
+        /// <summary>The pack (by switch key) feeds training; packs are on unless the player switched them off.</summary>
+        public bool PackIncluded(string key) => !S.dataExcluded.Contains(key);
+
+        /// <summary>Why this pack cannot be switched now (null when it can).</summary>
+        public string PackSwitchBlocker(string offerId, out string en)
+        {
+            en = null;
+            var o = DataOfferDef(offerId);
+            if (!PackSwitchable(o)) { en = "Only packs can be switched"; return "只有数据包能开关"; }
+            if (!OfferOwned(offerId)) { en = "Not owned"; return "还没买"; }
+            if (Downloading(DownloadKey(o))) { en = "Still downloading"; return "还在下载"; }
+            var d = XgCatalog.Dataset(o.datasetId);
+            if (d != null && Run(d.track).epochActive && Run(d.track).dataset == o.datasetId) { en = "Finish the active epoch first"; return "先完成当前训练轮次"; }
+            return null;
+        }
+
+        /// <summary>
+        /// Switches an owned pack in or out of training. It stays owned (desks, ownership, the shop do not change); only
+        /// <see cref="Samples"/> and the outside noise leave it out, so the curve is re-evaluated at once.
+        /// </summary>
+        public bool SetPackIncluded(string offerId, bool on)
+        {
+            var o = DataOfferDef(offerId);
+            var why = PackSwitchBlocker(offerId, out string whyEn);
+            if (why != null) { Say(T(why, whyEn)); return false; }
+            string key = PackSwitchKey(o);
+            if (PackIncluded(key) == on) return false;
+            if (on) S.dataExcluded.Remove(key); else S.dataExcluded.Add(key);
+            var d = XgCatalog.Dataset(o.datasetId);
+            string name = d != null ? T(d.name, d.nameEn) : o.datasetId;
+            Say(on ? T("「" + name + "」训练重新用上：", name + " trains on it again: ") + T(o.name, o.nameEn)
+                   : T("「" + name + "」训练不再用：", name + " no longer trains on: ") + T(o.name, o.nameEn)
+                     + (Samples(o.datasetId) < XgCatalog.SamplesToTrain ? T("（剩下的样本不够训练了，先去标注台标）", " (too few samples left to train; label some first)") : ""));
+            foreach (var run in Runs) if (run.dataset == o.datasetId) Evaluate(run);
+            return true;
         }
 
         /// <summary>Distinct training-pool cards are never more than this.</summary>
@@ -406,6 +459,7 @@ namespace LingGuangV05.XingGuang
             double total = DownloadTotal(key, def);
             o.downloadProgress = o.downloading ? Math.Max(0, Math.Min(1, 1 - o.downloadLeft / Math.Max(1, total))) : o.owned ? 1 : 0;
             o.effectiveNoise = def.noise * (Has(DataCleanId) && (def.source == XgDataSource.Junk || def.source == XgDataSource.Crowd) ? CleanNoiseFactor : 1);
+            o.included = !PackSwitchable(def) || PackIncluded(PackSwitchKey(def));
             o.isNew = def.month == CurrentMonth;
             string why = OfferBlocker(def, out string whyEn);
             o.available = why == null;
@@ -619,7 +673,10 @@ namespace LingGuangV05.XingGuang
             if (S.dataCleaned == null) S.dataCleaned = new List<XgLabelCount>();
             if (S.crowdOn == null) S.crowdOn = new List<string>();
             if (S.storyOffered == null) S.storyOffered = new List<string>();
+            if (S.dataExcluded == null) S.dataExcluded = new List<string>();
             S.dataOffers.RemoveAll(id => DataOfferDef(id) == null);
+            S.dataExcluded.RemoveAll(id => !PackSwitchable(DataOfferDef(id)) || id.EndsWith(".story", StringComparison.Ordinal));
+            for (int i = S.dataExcluded.Count - 1; i > 0; i--) if (S.dataExcluded.IndexOf(S.dataExcluded[i]) < i) S.dataExcluded.RemoveAt(i);
             foreach (var list in new[] { S.dataExtra, S.crowdNoise, S.dataCleaned })
                 list.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             S.crowdOn.RemoveAll(id => DataOfferDef(id + ".crowd") == null);
