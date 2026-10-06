@@ -9,6 +9,8 @@ namespace LingGuangV05.XingGuang
     public sealed class XgArch
     {
         public string id, name, nameEn, note, noteEn;
+        /// <summary>What choosing it does to 灵光's own brain: the way one region of the concept board is wired.</summary>
+        public string wire = "", wireEn = "";
         public XgTrack track;
         public int year;
         public bool shared;
@@ -122,36 +124,36 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgArch[] Archs =
         {
-            new XgArch { id = "perceptron", name = "感知机", nameEn = "Perceptron", shared = true, year = 1958, maxDepth = 1, span = 1, bias = 1.1,
+            new XgArch { id = "perceptron", wire = "每个输入直接连到「是 / 否」，中间没有一层：只能画一条直线。", wireEn = "Every input is wired straight to yes / no with nothing in between: it can only draw one straight line.", name = "感知机", nameEn = "Perceptron", shared = true, year = 1958, maxDepth = 1, span = 1, bias = 1.1,
                 note = "线性判断。能认特征，不能解决异或组合。", noteEn = "A linear decision: features, but no XOR." },
-            new XgArch { id = "mlp", name = "多层感知机", nameEn = "MLP", shared = true, year = 1986, maxDepth = 3, span = 4, bias = .85,
+            new XgArch { id = "mlp", wire = "中间加几层，概念可以两两组合；但每个位置单独连线，挪一格就是新东西。", wireEn = "A few layers in between, so concepts combine in pairs; but every position has its own wires, so one cell over is something new.", name = "多层感知机", nameEn = "MLP", shared = true, year = 1986, maxDepth = 3, span = 4, bias = .85,
                 note = "隐藏层组合特征；空间和顺序还没有专长。", noteEn = "Hidden layers combine features, without spatial or sequential specialization." },
-            new XgArch { id = "caption", name = "看图说话", nameEn = "Image captioning", track = XgTrack.Vision, year = 2015, maxDepth = 999, bias = .3, span = 999, seq2seq = true, paramFactor = 2,
+            new XgArch { id = "caption", wire = "看图区和读字区接在一起：边看图，边一个字一个字说。", wireEn = "The seeing and reading regions wired together: it looks and speaks word by word.", name = "看图说话", nameEn = "Image captioning", track = XgTrack.Vision, year = 2015, maxDepth = 999, bias = .3, span = 999, seq2seq = true, paramFactor = 2,
                 note = "两条专长汇合：看图、关注区域，再描述。", noteEn = "Both specialties meet: look, attend to a region, then describe." },
-            new XgArch { id = "transformer", name = "Transformer", nameEn = "Transformer", shared = true, year = 2017, maxDepth = 999, span = 999, seq2seq = true, bias = .2, paramFactor = 12,
+            new XgArch { id = "transformer", wire = "每个字直接连到所有字，不用一个字一个字地等：整颗脑子同时亮。", wireEn = "Every word wired straight to every word, no waiting word by word: the whole brain lights at once.", name = "Transformer", nameEn = "Transformer", shared = true, year = 2017, maxDepth = 999, span = 999, seq2seq = true, bias = .2, paramFactor = 12,
                 note = "架空的提前突破；真实论文发表于 2017 年。", noteEn = "A fictional early discovery; the real paper was published in 2017." },
-            new XgArch { id = "lenet", name = "LeNet-5", nameEn = "LeNet-5", track = XgTrack.Vision, year = 1998, cost = 0, bias = 1, maxDepth = 5, paramFactor = 3, speed = 1,
+            new XgArch { id = "lenet", wire = "看图区只连挨着的笔画，同一套连法在整张图上共用：挪了位置也认得。", wireEn = "The seeing region wires only neighbouring strokes, and the same wiring is shared across the picture: it knows a stroke wherever it moves.", name = "LeNet-5", nameEn = "LeNet-5", track = XgTrack.Vision, year = 1998, cost = 0, bias = 1, maxDepth = 5, paramFactor = 3, speed = 1,
                 note = "杨立昆的老网络，读支票用了二十年。", noteEn = "LeCun's classic; read bank cheques for twenty years." },
-            new XgArch { id = "alexnet", name = "AlexNet", nameEn = "AlexNet", track = XgTrack.Vision, year = 2012, cost = 6, bias = .7, maxDepth = 8, paramFactor = 7, speed = 1.3,
+            new XgArch { id = "alexnet", wire = "和 LeNet 一样只连邻居，叠得更深、更宽。", wireEn = "Neighbours only, like LeNet, stacked deeper and wider.", name = "AlexNet", nameEn = "AlexNet", track = XgTrack.Vision, year = 2012, cost = 6, bias = .7, maxDepth = 8, paramFactor = 7, speed = 1.3,
                 note = "ReLU + 两块显卡，2012 年 ImageNet 一战成名。", noteEn = "ReLU and two GPUs; won ImageNet 2012." },
-            new XgArch { id = "vgg", name = "VGG-16", nameEn = "VGG-16", track = XgTrack.Vision, year = 2014, cost = 50, bias = .55, maxDepth = 16, paramFactor = 9, speed = .8,
+            new XgArch { id = "vgg", wire = "只连邻居，一层层叠到十几层。", wireEn = "Neighbours only, stacked to a dozen and more layers.", name = "VGG-16", nameEn = "VGG-16", track = XgTrack.Vision, year = 2014, cost = 50, bias = .55, maxDepth = 16, paramFactor = 9, speed = .8,
                 note = "全是 3×3 卷积，又深又吃显存。", noteEn = "All 3×3 convolutions: deep and memory hungry." },
-            new XgArch { id = "googlenet", name = "GoogLeNet", nameEn = "GoogLeNet", track = XgTrack.Vision, year = 2014, cost = 200, bias = .45, maxDepth = 22, paramFactor = 1.2, speed = 1,
+            new XgArch { id = "googlenet", wire = "只连邻居，同一层里同时看大大小小几种范围。", wireEn = "Neighbours only, with several window sizes side by side in one layer.", name = "GoogLeNet", nameEn = "GoogLeNet", track = XgTrack.Vision, year = 2014, cost = 200, bias = .45, maxDepth = 22, paramFactor = 1.2, speed = 1,
                 note = "Inception 模块，参数少，效果好。", noteEn = "Inception modules: fewer parameters, better results." },
-            new XgArch { id = "resnet", name = "ResNet", nameEn = "ResNet", track = XgTrack.Vision, year = 2015, cost = 600, bias = .35, maxDepth = 999, paramFactor = 9, speed = 1,
+            new XgArch { id = "resnet", wire = "只连邻居，每隔几层留一条原样转交的捷径，能叠得很深。", wireEn = "Neighbours only, with a pass-it-on shortcut every few layers, so it stacks very deep.", name = "ResNet", nameEn = "ResNet", track = XgTrack.Vision, year = 2015, cost = 600, bias = .35, maxDepth = 999, paramFactor = 9, speed = 1,
                 note = "残差连接：152 层也练得动（再深到一千多层反而略差）。", noteEn = "Residual connections: 152 layers train (past a thousand it gets slightly worse again)." },
 
-            new XgArch { id = "rnn", name = "朴素 RNN", nameEn = "Vanilla RNN", track = XgTrack.Sequence, year = 1990, cost = 0, bias = 1, maxDepth = 2, span = 8, paramFactor = 2, speed = 1, instability = .35,
+            new XgArch { id = "rnn", wire = "读字区连上「上一刻的自己」，一个字一个字往下读；记忆每读一个字就淡一点。", wireEn = "The reading region is wired to its own last moment and reads word by word; memory fades a little with every word.", name = "朴素 RNN", nameEn = "Vanilla RNN", track = XgTrack.Sequence, year = 1990, cost = 0, bias = 1, maxDepth = 2, span = 8, paramFactor = 2, speed = 1, instability = .35,
                 note = "只记得住最近几个字，梯度还爱爆炸。", noteEn = "Remembers a few tokens; gradients love to explode." },
-            new XgArch { id = "lstm", name = "LSTM", nameEn = "LSTM", track = XgTrack.Sequence, year = 1997, cost = 6, bias = .75, maxDepth = 3, span = 80, paramFactor = 8, speed = .8, instability = .1,
+            new XgArch { id = "lstm", wire = "连回自己的线路上加了门：要紧的记住，不要紧的忘掉。", wireEn = "Gates on the wire back to itself: what matters is kept, the rest let go.", name = "LSTM", nameEn = "LSTM", track = XgTrack.Sequence, year = 1997, cost = 6, bias = .75, maxDepth = 3, span = 80, paramFactor = 8, speed = .8, instability = .1,
                 note = "门控记忆，能记住整句话。", noteEn = "Gated memory: keeps a whole sentence." },
-            new XgArch { id = "gru", name = "GRU", nameEn = "GRU", track = XgTrack.Sequence, year = 2014, cost = 40, bias = .7, maxDepth = 3, span = 80, paramFactor = 6, speed = 1.05, instability = .1,
+            new XgArch { id = "gru", wire = "和 LSTM 一样有门，门少一道，跑得快些。", wireEn = "Gated like LSTM with one gate fewer, a little faster.", name = "GRU", nameEn = "GRU", track = XgTrack.Sequence, year = 2014, cost = 40, bias = .7, maxDepth = 3, span = 80, paramFactor = 6, speed = 1.05, instability = .1,
                 note = "LSTM 的精简版，跑得更快。", noteEn = "A leaner LSTM that trains faster." },
-            new XgArch { id = "seq2seq", name = "Seq2Seq", nameEn = "Seq2Seq", track = XgTrack.Sequence, year = 2014, cost = 120, bias = .6, maxDepth = 4, span = 80, seq2seq = true, paramFactor = 16, speed = .85, instability = .1,
+            new XgArch { id = "seq2seq", wire = "一段线路先把整句读完压成一团，另一段再从这团里一个字一个字说出来。", wireEn = "One stretch reads the whole sentence into a single knot, another speaks it out word by word from that knot.", name = "Seq2Seq", nameEn = "Seq2Seq", track = XgTrack.Sequence, year = 2014, cost = 120, bias = .6, maxDepth = 4, span = 80, seq2seq = true, paramFactor = 16, speed = .85, instability = .1,
                 note = "编码器 + 解码器，终于能做翻译。", noteEn = "Encoder plus decoder: translation becomes possible." },
-            new XgArch { id = "attention", name = "注意力", nameEn = "Attention", track = XgTrack.Sequence, year = 2015, cost = 400, bias = .4, maxDepth = 6, span = 999, seq2seq = true, paramFactor = 16, speed = .9, instability = .05,
+            new XgArch { id = "attention", wire = "说每个字时，都能回头直接连到原句的任何一个字。", wireEn = "While saying each word it can wire straight back to any word of the source.", name = "注意力", nameEn = "Attention", track = XgTrack.Sequence, year = 2015, cost = 400, bias = .4, maxDepth = 6, span = 999, seq2seq = true, paramFactor = 16, speed = .9, instability = .05,
                 note = "解码时回头看原文，长句不再遗忘。", noteEn = "Looks back at the source while decoding; long sentences survive." },
-            new XgArch { id = "textcnn", name = "文字卷积", nameEn = "TextCNN", track = XgTrack.Sequence, year = 2014, cost = 100, bias = .7, maxDepth = 6, span = 5, paramFactor = 3, speed = 1.3,
+            new XgArch { id = "textcnn", wire = "读字区像看图区那样只连挨着的几个字，整句一起算。", wireEn = "The reading region wires only a few neighbouring words, like the seeing region, and the whole sentence runs at once.", name = "文字卷积", nameEn = "TextCNN", track = XgTrack.Sequence, year = 2014, cost = 100, bias = .7, maxDepth = 6, span = 5, paramFactor = 3, speed = 1.3,
                 note = "Kim 2014：把看图的卷积搬到句子上，按词组读，整句一起算，很快；只看得见附近几个字。", noteEn = "Kim 2014: the picture convolution moved onto sentences. It reads word groups, the whole sentence at once and fast, but sees only a few words around." },
         };
 

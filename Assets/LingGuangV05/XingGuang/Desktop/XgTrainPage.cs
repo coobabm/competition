@@ -130,10 +130,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
             BuildModel();
             BuildCard();
-            for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线：视觉（看图）和序列（读文字）。各练各的，共用显卡和经费。", "Two tracks: vision (images) and sequence (text). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, "训练一轮：喂模型一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（下面写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (see the passes below).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
+            for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
+            UiTip.Add(train.rt, "训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（下面写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (see the passes below).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
             UiTip.Add(autoTrain.rt, "自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).");
-            UiTip.Add(summary.rt, "当前结构的摘要。点一下在科技里找到它。", "Summary of the current structure. Click to find it in Research.");
+            UiTip.Add(summary.rt, "这个区现在的接法（结构）。点一下在科技里找到它。", "How this region is wired now (the structure). Click to find it in Research.");
         }
 
         void BuildCard()
@@ -370,6 +370,27 @@ namespace LingGuangV05.Desktop.XingGuang
                 toggles[i].Set(T(zh[i], en[i]) + (state[i] ? T(" 开", " on") : T(" 关", " off")), !run.epochActive, state[i] ? XgPalette.AccentSoft : XgPalette.Button, state[i] ? XgPalette.Accent : XgPalette.Muted);
             }
         }
+        /// <summary>An architecture is a way of wiring one region of 灵光's brain; its history comes second.</summary>
+        string ArchTip(string id)
+        {
+            var n = XgCatalog.Node(id); var a = XgCatalog.Arch(id);
+            if (a == null) return n != null ? T(n.note, n.noteEn) : "";
+            string region = a.shared ? Sim.RegionOfTrack(Track) : a.track == XgTrack.Vision ? "vision" : "sequence";
+            return "<b>" + T(a.name, a.nameEn) + "</b>  " + a.year + "\n"
+                + T("让灵光的" + XgSim.RegionName(region, false) + "这样接线：", "Wire 灵光's " + XgSim.RegionName(region, true).ToLowerInvariant() + " region like this: ") + T(a.wire, a.wireEn)
+                + (string.IsNullOrEmpty(a.note) ? "" : "\n<color=#68748C>" + T("历史上：", "In history: ") + T(a.note, a.noteEn) + "</color>");
+        }
+
+        /// <summary>The first change of structure: the protagonist works out what a "network" is to 灵光 (once per save).</summary>
+        void VoiceWiring()
+        {
+            if (Sim.S.wiringVoiced) return;
+            Sim.S.wiringVoiced = true;
+            LingGuangV05.Desktop.Story.InnerVoice.Say("等等……论文里这些网络，不是别的 AI。", "Wait… these networks from the papers aren't other AIs.", 2.4f);
+            LingGuangV05.Desktop.Story.InnerVoice.Say("是给它的脑子换一种接线。像人的大脑皮层，看图的、读字的、想事的，各管一块。", "They're ways of wiring its brain. Like a human cortex: seeing, reading, thinking, each has its own patch.", 3.2f);
+            LingGuangV05.Desktop.Story.InnerVoice.Say("……难怪机箱风扇一下子狂转。整颗脑子一亮，整张显卡都是它的。", "…No wonder the case fans just roared. When the whole brain lights up, the whole card is its.", 3f);
+        }
+
         void Deny(XgBtn b) { Fx.Knock(b.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud, 1.4f, .6f); Refresh(); }
 
         // ───────────── pressing ─────────────
@@ -692,7 +713,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 trackTabs[i].Show(open);
                 trackTabs[i].Set(names[i] + (Sim.Runs[i].running ? " ●" : ""), open, on ? XgPalette.Accent : XgPalette.Button, on ? Color.white : XgPalette.Ink);
             }
-            summary.Set(T(d.name, d.nameEn) + " · " + T(a.name, a.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + T(" · 学习率 ", " · rate ") + Sim.RateLabel(run.lr) + "  <color=#3B5BDB>" + T("科技 →", "tree →") + "</color>", true, Color.clear);
+            string region = XgSim.RegionOf(run.dataset);
+            summary.Set(T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + T("接法 ", " wiring ") + T(a.name, a.nameEn) + " · " + T(d.name, d.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + T(" · 学习率 ", " · rate ") + Sim.RateLabel(run.lr) + "  <color=#3B5BDB>" + T("科技 →", "tree →") + "</color>", true, Color.clear);
 
             double best = Sim.BestAcc(d.id), bestScore = Sim.BestScore(d.id);
             int grade = XgSim.Grade(bestScore);
@@ -767,11 +789,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < archs.Count; i++)
                 {
                     string id = archs[i].id;
-                    var b = ui.Button(archBox, "", () => { if (Sim.SetArch(Track, id)) { Fx.Play(XgJuice.Sfx.Id.Swoosh); Fx.Knock(archBtns[archIds.IndexOf(id)].rt, .12f); } Refresh(); }, 14);
+                    var b = ui.Button(archBox, "", () => { if (Sim.SetArch(Track, id)) { Fx.Play(XgJuice.Sfx.Id.Swoosh); Fx.Knock(archBtns[archIds.IndexOf(id)].rt, .12f); VoiceWiring(); } Refresh(); }, 14);
                     b.rt.anchorMin = new Vector2((i % 2) * .5f, 1); b.rt.anchorMax = new Vector2((i % 2 + 1) * .5f, 1);
                     b.rt.offsetMin = new Vector2(2, -(i / 2) * 36 - 32); b.rt.offsetMax = new Vector2(-2, -(i / 2) * 36);
                     archBtns.Add(b); archIds.Add(id);
-                    UiTip.Add(b.rt, () => { var n = XgCatalog.Node(id); var a = XgCatalog.Arch(id); return (a != null ? "<b>" + T(a.name, a.nameEn) + "</b>  " + a.year + "\n" : "") + (a != null && !string.IsNullOrEmpty(a.note) ? T(a.note, a.noteEn) : n != null ? T(n.note, n.noteEn) : ""); });
+                    UiTip.Add(b.rt, () => ArchTip(id));
                 }
                 archBox.sizeDelta = new Vector2(0, Mathf.CeilToInt(archs.Count / 2f) * 36);
             }

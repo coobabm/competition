@@ -370,6 +370,9 @@ namespace LingGuangV05.XingGuang
             S.stage = from + 1; S.stageEpochs = 0; S.stageSeconds = 0; S.winterIdle = 0; S.wallSeenAt = 0;
             S.stageVision = S.stageSequence = S.stage;
             Say(T("进入第 " + S.stage + " 阶段：", "Stage " + S.stage + ": ") + T(XgCatalog.StageNames[S.stage], XgCatalog.StageNamesEn[S.stage]));
+            // Training and talking are one brain: a region that learnt something new lets it say a little more.
+            var ability = XgCatalog.Node("ab." + S.stage);
+            if (ability != null) Say(T("它的脑子又连通了一层：", "Its brain has wired up one layer more: ") + T(ability.note, ability.noteEn));
             switch (from)
             {
                 case 1: BreakthroughDone?.Invoke("bt.hidden"); break;

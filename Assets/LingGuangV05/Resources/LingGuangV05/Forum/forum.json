@@ -1268,6 +1268,69 @@
           "textEn": "So that's why our group's model got more confident and more wrong the longer it trained."
         }
       ]
+    },
+    {
+      "id": "legend_cortex",
+      "board": "ai",
+      "author": "chigua",
+      "date": "2016-05-28",
+      "minStage": 1,
+      "title": "有没有人记得13年那个「人造大脑皮层」的帖？",
+      "titleEn": "Does anyone remember the 2013 'artificial cortex' thread?",
+      "floors": [
+        {
+          "author": "chigua",
+          "text": "13年吧里有个神帖，楼主说要做一个像人脑一样分区的 AI：看图一块、读字一块、推理一块（他说那块就像前额叶），每块用不同的接法，但整颗脑子共用一套概念，一起学。\n后来原帖没了，楼主的号也注销了。有人存过截图吗？",
+          "textEn": "Back in 2013 there was a legendary thread here. The OP wanted an AI partitioned like a human brain: one patch for seeing, one for reading, one for reasoning (he said that one was like the prefrontal cortex), each wired differently but the whole brain sharing one set of concepts and learning together.\nThe thread is gone and the account deleted. Anyone keep a screenshot?"
+        },
+        {
+          "author": "kedaibiao",
+          "text": "记得。我当时按他说的规模算过：整颗脑子要一起跑，一张泰坦连一个区都带不动，至少一个机房。",
+          "textEn": "I remember. I did the sums at the time: the whole brain has to run at once; one Titan can't carry even one region, you'd need a server room."
+        },
+        {
+          "author": "liandan",
+          "text": "思路不算新，大脑皮层分区谁都知道。难的是让几种接法共用一套概念还一起学。我们实验室试过把两个网络拼一起，互相干扰，学了这个忘那个。",
+          "textEn": "The idea isn't new; everyone knows the cortex has areas. The hard part is several wirings sharing one set of concepts and learning together. Our lab tried gluing two networks together: they interfered, learning one thing wiped the other."
+        },
+        {
+          "author": "zhou_now",
+          "text": "我们组跑一个 VGG 都要排队抢卡。整颗脑子……想想就好。",
+          "textEn": "Our group queues for GPUs just to run one VGG. A whole brain… dream on."
+        },
+        {
+          "author": "guaji",
+          "text": "民科年年有，今年特别多",
+          "textEn": "There are cranks every year, extra many this year."
+        },
+        {
+          "author": "xiaobai",
+          "text": "我也有印象，楼主最后一句好像是「等显卡够了，会有人做出来的」",
+          "textEn": "I remember it too. I think the OP's last line was 'once there are enough GPUs, someone will build it'."
+        },
+        {
+          "author": "tiaocan",
+          "text": "说真的，谁家电脑要是真把这玩意跑起来了，显卡吧第一个知道：风扇声能把楼上吵醒。",
+          "textEn": "Honestly, if anyone's PC ever runs that thing, the GPU forum will know first: the fans would wake the floor above."
+        },
+        {
+          "author": "chigua",
+          "text": "截图找到了，只拍到半句：「接法可以换，脑子只要一颗。」",
+          "textEn": "Found a screenshot, only half a line: 'the wiring can change; it needs only one brain.'"
+        },
+        {
+          "author": "haixing",
+          "text": "挖坟。显卡吧前两天有个帖，说家里电脑半夜风扇自己狂转，楼主说是在养一个「会说话的脑子」，被当钓鱼帖删了。",
+          "textEn": "Grave-digging. A few days ago someone in the GPU forum said their PC's fans roar by themselves at night; they said they were raising 'a brain that talks'. It got deleted as bait.",
+          "since": "2016-09-03"
+        },
+        {
+          "author": "kedaibiao",
+          "text": "那得是什么显卡……",
+          "textEn": "What card would that even take…",
+          "since": "2016-09-03"
+        }
+      ]
     }
   ]
 }

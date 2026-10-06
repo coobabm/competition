@@ -19,8 +19,6 @@ namespace LingGuangV05.Desktop.XingGuang
         public const int CellsShown = 160;
         public const int Columns = 16;
         static readonly string[] Regions = { "vision", "sequence", "logic", "tone" };
-        static readonly string[] RegionZh = { "视觉", "序列", "逻辑", "语气" };
-        static readonly string[] RegionEn = { "Vision", "Sequence", "Logic", "Tone" };
 
         sealed class RegionView
         {
@@ -73,8 +71,16 @@ namespace LingGuangV05.Desktop.XingGuang
             int seen = Sim.S.phenomena != null ? Sim.S.phenomena.seen.Count : 0;
             if (board.S.cards == shownCards && seen == shownPhenomena) return;
             shownCards = board.S.cards; shownPhenomena = seen;
-            for (int i = 0; i < 4; i++) DrawRegion(regions[i], Regions[i], T(RegionZh[i], RegionEn[i]), board);
+            for (int i = 0; i < 4; i++) DrawRegion(regions[i], Regions[i], RegionTitle(Regions[i]), board);
             DrawAtlas();
+        }
+
+        /// <summary>灵光's one brain in regions like a cortex: the region, the part of a human brain it plays, and how it is wired now.</summary>
+        string RegionTitle(string region)
+        {
+            var wired = Sim.RegionWiring(region);
+            return T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + " <size=11><color=#68748C>" + T(XgSim.RegionLikeness(region, false), XgSim.RegionLikeness(region, true))
+                + (wired != null ? T(" · 接法 ", " · wired as ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
         }
 
         void DrawRegion(RegionView view, string region, string name, XgBoard board)

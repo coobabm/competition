@@ -447,8 +447,9 @@ namespace LingGuangV05.XingGuang
             if (!ArchitectureFits(a, track) || !Has(id) || run.arch == id) return false;
             run.arch = id;
             Restart(run);
-            Say(T("换成 ", "Switched to ") + T(a.name, a.nameEn) + (UseBoard
-                ? T("：结构变了，原来学到的大多对不上，基本是重新学。", ": a new structure, so most of what it learnt no longer fits; it largely starts over.")
+            string region = RegionOf(run.dataset);
+            Say(T(RegionName(region, false) + "换成 " + a.name + " 的接法", "The " + RegionName(region, true).ToLowerInvariant() + " region now wired as " + a.nameEn) + (UseBoard
+                ? T("：线路变了，原来学到的大多对不上，基本是重新学。", ": the wiring changed, so most of what it learnt no longer fits; it largely starts over.")
                 : Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
             return true;
         }
