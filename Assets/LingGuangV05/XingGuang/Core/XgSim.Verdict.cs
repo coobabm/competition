@@ -1,0 +1,225 @@
+using System;
+using System.Collections.Generic;
+
+namespace LingGuangV05.XingGuang
+{
+    /// <summary>
+    /// The one-line answer of the 训练图式: what holds the run back most right now, where (a layer, or the whole net),
+    /// since which epoch, and the two roads out of it (a new structure, or a training method).
+    /// </summary>
+    public sealed class XgVerdict
+    {
+        /// <summary>
+        /// untrained, nan, step, linear, positions, reach, deadline, order, overtrained, relay, degrade, signal, cells,
+        /// memorize, memory, nomerge, plateau, passed, improving.
+        /// </summary>
+        public string id = "untrained";
+        public bool problem;
+        /// <summary>The layer to point at (1-based), 0 = the whole network.</summary>
+        public int layer;
+        public string headline = "", headlineEn = "";
+        /// <summary>Remedies: change the structure, or change how it is trained ("" when there is none).</summary>
+        public string structure = "", structureEn = "", method = "", methodEn = "";
+        /// <summary>Epoch the trace first noticed this problem in the current settings (-1 = not noticed yet).</summary>
+        public int since = -1;
+        /// <summary>练过头: the best test score of these settings and its epoch.</summary>
+        public double peak;
+        public int peakEpoch;
+        public double test, goal;
+    }
+
+    public sealed partial class XgSim
+    {
+        /// <summary>
+        /// Picks the single most important problem of the run, in order of what blocks learning hardest: a torn rate,
+        /// a step activation, votes rewritten on the way up by layers that cannot pass things on unchanged (传话), going deeper made it worse, errors fading on the way
+        /// down, a loop that forgets (on texts read in order), cells too few, memorising, no combinations, a plateau. Healthy runs say how far they are from the goal.
+        /// </summary>
+        public XgVerdict Verdict(XgRun run)
+        {
+            var v = new XgVerdict();
+            var t = TraceOf(run.track, run.dataset, false);
+            var h = NetworkHealth(run);
+            var k = Knobs(run);
+            v.goal = TraceGoal(run);
+            if (t == null || t.points.Count == 0)
+            {
+                v.headline = "还没在这个数据集上训练过：先练几轮再来看。"; v.headlineEn = "Not trained on this dataset yet: train a few epochs and look again.";
+                return v;
+            }
+            var p = t.points[t.points.Count - 1];
+            v.test = p.test;
+            string Pct(double x) => Math.Round(x * 100) + "%";
+            XgLayerHealth First(string problem) { foreach (var l in h.layers) if (l.problem == problem) return l; return null; }
+            bool full = p.cap > 0 && p.cells >= p.cap;
+            bool sequential = SequentialDatasets.Contains(run.dataset) || run.dataset == "longtext" || run.dataset == "crosssentence";
+
+            if (LastEvent(t, "nan") >= p.epoch - 1)
+            {
+                Set(v, "nan", 0, "学习率 " + k.lr + " 太大：权重被撕碎（NaN），练了的又退回去一半。", "Rate " + k.lr + " is too high: the weights tear (NaN) and lose half of what they learnt.",
+                    "", "", k.clip ? "学习率调小一档。" : "学习率调小一档，或打开梯度裁剪。", k.clip ? "Lower the rate a notch." : "Lower the rate a notch, or switch on gradient clipping.");
+            }
+            else if (k.depth > 1 && k.G <= 0)
+            {
+                Set(v, "step", 1, "卡在第 1 层：阶跃激活没有坡度，误差传不下来，长不出组合。", "Stuck at layer 1: a step has no slope, so no error gets down and nothing combines.",
+                    Has("relu") ? "激活换成「S 形」或「ReLU」。" : "激活换成「S 形」。", Has("relu") ? "Switch the activation to S-curve or ReLU." : "Switch the activation to S-curve.",
+                    "或者只留 1 层，开「特征工程」让人替它组合。", "Or keep one layer and switch on feature engineering so people combine for it.");
+            }
+            else if (WallVerdict(v, run, k, p)) { }
+            else if (Overtrained(t, p, out double peak, out int peakEpoch))
+            {
+                v.peak = peak; v.peakEpoch = peakEpoch;
+                Set(v, "overtrained", 0, "练过头了：第 " + peakEpoch + " 轮最高 " + Pct(peak) + "，现在 " + Pct(p.test) + "。" + (full ? "格子满了，新学的把旧的挤掉了。" : "越练越偏向练过的题。"),
+                    "Overtrained: " + Pct(peak) + " at epoch " + peakEpoch + ", " + Pct(p.test) + " now. " + (full ? "The cells are full; new concepts push out the old ones." : "It keeps leaning towards the trained cards."),
+                    "去模型仓库读回最好那次的检查点。", "Load the best checkpoint back from the model repository.",
+                    Has("auto4") ? "早停开着时，分数不涨它会自己停在最好那次。" : "买「早停」：分数不再涨就自动停，留住最高那次。",
+                    Has("auto4") ? "With early stopping on it stops at the best epoch by itself." : "Buy early stopping: it stops once the score stops rising and keeps the best.");
+            }
+            else if (First("relay") is XgLayerHealth relay)
+            {
+                Set(v, "relay", relay.layer, "卡在第 " + relay.layer + " 层：它的票要经过上面的层转交，原样到达输出的只剩 " + Pct(relay.relay) + "，其余被一层层改写了（层太多）。",
+                    "Stuck at layer " + relay.layer + ": its votes are passed on by the layers above, and only " + Pct(relay.relay) + " arrives unchanged; the rest is rewritten layer by layer (too many layers).",
+                    "打开「跨层直连」（残差）：原样转交成了默认。", "Switch on skip connections (residual): passing on unchanged becomes the default.",
+                    "或者 BatchNorm + 少几层（20 层以内）。", "Or BatchNorm and fewer layers (20 at most).");
+            }
+            else if (t.Noted("degrade") && p.test < v.goal && !k.skip)
+            {
+                // Deeper than before and worse even on training cards: point at the layer whose votes arrive weakest.
+                var low = h.layers.Count > 0 ? h.layers[0] : null;
+                Set(v, "degrade", low != null ? low.layer : 0, "越深越差：加深以后连练过的题都变差了。多出来的层学不会原样转交，第 " + (low != null ? low.layer : 1) + " 层的票原样到达输出的只剩 " + Pct(low != null ? low.relay : 1) + "。",
+                    "Deeper is worse: since going deeper even the trained cards got worse. The extra layers cannot learn to pass things on unchanged; only " + Pct(low != null ? low.relay : 1) + " of layer " + (low != null ? low.layer : 1) + "'s votes arrive unchanged.",
+                    "打开「跨层直连」（残差）。", "Switch on skip connections (residual).",
+                    k.batchNorm ? "或者少几层（BatchNorm 能撑到 20 层左右）。" : "或者 BatchNorm + 20 层以内。", k.batchNorm ? "Or use fewer layers (BatchNorm holds up to about 20)." : "Or BatchNorm and at most 20 layers.");
+            }
+            else if (First("signal") is XgLayerHealth weak)
+            {
+                bool relu = ActivationOwned(2);
+                Set(v, "signal", weak.layer, "卡在第 " + weak.layer + " 层：误差传到这里只剩 " + Pct(weak.signal) + "，它几乎学不动（梯度消失）。",
+                    "Stuck at layer " + weak.layer + ": only " + Pct(weak.signal) + " of the error gets here, so it barely learns (vanishing gradients).",
+                    relu ? "激活换成「ReLU」：坡度是 1，误差几乎原样传下来。" : "少几层：S 形每往下一层，误差只剩四分之一。",
+                    relu ? "Switch to ReLU: its slope is 1, so the error comes down almost whole." : "Use fewer layers: an S-curve passes a quarter of the error per layer.",
+                    relu ? "或者少几层。" : "（ReLU 要到后面的阶段才有。）", relu ? "Or use fewer layers." : "(ReLU comes in a later stage.)");
+            }
+            else if (sequential && h.memory10 < .2 && p.test < v.goal)
+            {
+                Set(v, "memory", h.depth, "记不住远处：回环每过一个字就忘一点，隔 10 个字只剩 " + Pct(h.memory10) + "。", "Forgets far back: the loop loses a little every word; ten words back only " + Pct(h.memory10) + " is left.",
+                    "换「门控记忆」（LSTM / GRU）：让它自己决定记住什么。", "Use gated memory (LSTM / GRU): let it decide what to keep.",
+                    Has("irnn") ? "或者：朴素 RNN 配 ReLU（已买「单位初始化」），回环默认原样转交，不用门也记得住；记得开梯度裁剪。" : "",
+                    Has("irnn") ? "Or: a vanilla RNN with ReLU (identity initialisation owned) hands its memory on unchanged, no gates needed; keep gradient clipping on." : "");
+            }
+            else if (full && (t.Noted("thrash") || p.evicted > 0 && t.flat >= 3))
+            {
+                bool dense = k.wiring == XgWiring.Full;
+                Set(v, "cells", 0, "格子不够：" + p.cells + " / " + p.cap + " 全满，上一轮挤掉 " + p.evicted + " 个概念，学了就忘。",
+                    "Too few cells: all " + p.cap + " are full and the last epoch squeezed out " + p.evicted + " concepts: learnt and forgotten.",
+                    dense ? "换能共用的连法：图用卷积，句子用循环（同一个概念到处复用，省格子）。" : "加宽：给每层更多格子。",
+                    dense ? "Use shared wiring: convolution for pictures, recurrence for sentences (one concept reused everywhere saves cells)." : "Widen: more cells per layer.",
+                    k.features ? "加宽，或者关掉一些脏数据包让它少学乱七八糟的。" : "加宽，或者开「特征工程」：人先整理好特征，省格子。",
+                    k.features ? "Widen, or switch off some dirty packs so it learns less noise." : "Widen, or switch on feature engineering: tidied features take fewer cells.");
+            }
+            else if (p.train - p.test >= .2f)
+            {
+                bool dense = k.wiring == XgWiring.Full;
+                Set(v, "memorize", 0, "死记硬背：练过的题 " + Pct(p.train) + "，没见过的只有 " + Pct(p.test) + "。", "Memorising: " + Pct(p.train) + " on trained cards, only " + Pct(p.test) + " on unseen ones.",
+                    dense ? "换能共用的连法（卷积 / 循环）：学到的东西换个位置也认得。" : "", dense ? "Use shared wiring (convolution / recurrence): what it learns carries over to new positions." : "",
+                    "多标数据、买数据包，或研究「数据增强」。", "Label more, buy a pack, or research data augmentation.");
+            }
+            else if (First("nomerge") is XgLayerHealth empty)
+            {
+                Set(v, "nomerge", empty.layer, "卡在第 " + empty.layer + " 层：练了很多卡，一个组合都没长出来。", "Stuck at layer " + empty.layer + ": many cards trained and not one combination has grown.",
+                    "检查激活（要 S 形或 ReLU）和学习率。", "Check the activation (S-curve or ReLU) and the rate.", "或者开「特征工程」，让人替它组合。", "Or switch on feature engineering so people combine for it.");
+            }
+            else if (p.test < v.goal && t.flat >= PlateauEpochs)
+            {
+                Set(v, "plateau", 0, "卡在 " + Pct(p.test) + "（目标 " + Pct(v.goal) + "）：结构没大毛病，但不够大，或者数据不够。", "Stuck at " + Pct(p.test) + " (goal " + Pct(v.goal) + "): nothing broken, but too small or too little data.",
+                    "加宽加深，或换更强的结构。", "Go wider or deeper, or a stronger structure.", "多标数据、买数据包；看看是不是在用脏数据包。", "Label more or buy a pack; check for dirty packs.");
+            }
+            else if (p.test >= v.goal)
+            {
+                v.id = "passed"; v.headline = "达标：" + Pct(p.test) + " ≥ " + Pct(v.goal) + "。"; v.headlineEn = "On target: " + Pct(p.test) + " ≥ " + Pct(v.goal) + ".";
+            }
+            else
+            {
+                v.id = "improving"; v.headline = "还在进步：" + Pct(p.test) + "，离目标 " + Pct(v.goal) + " 还差 " + Math.Round((v.goal - p.test) * 100) + " 分。";
+                v.headlineEn = "Still improving: " + Pct(p.test) + ", " + Math.Round((v.goal - p.test) * 100) + " points short of " + Pct(v.goal) + ".";
+            }
+            if (v.problem) v.since = FirstEventSince(t, v.id == "cells" ? new[] { "cells", "thrash" } : v.id == "memory" ? new[] { "ph:amnesia" } : new[] { v.id });
+            return v;
+        }
+
+        /// <summary>
+        /// The standing wall's own reason, when these settings cannot get through it whatever the number of epochs:
+        /// one layer cannot split XOR, a dense net binds positions, a loop cannot reach the other sentence, a loop
+        /// misses the deadline, attention without positions cannot tell first from later.
+        /// </summary>
+        bool WallVerdict(XgVerdict v, XgRun run, XgKnobs k, XgTracePoint p)
+        {
+            if (p.test >= TraceGoal(run)) return false;
+            var wall = ActiveWall;
+            bool serial = SerialWiring(k);
+            switch (run.dataset)
+            {
+                case "xor" when k.depth == 1 && !k.features:
+                    Set(v, "linear", 1, "单层只能画一条直线：「恰好一个为真」分不开，练多少轮、加多宽都一样。", "One layer draws one straight line: 'exactly one is true' cannot be split, however many epochs or however wide.",
+                        "加一层隐藏层（激活用 S 形）。", "Add a hidden layer (S-curve activation).", "或者开「特征工程」，让人把两个条件拼成一个。", "Or switch on feature engineering so people pair the two conditions.");
+                    return true;
+                case "mnist" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                    Set(v, "positions", 1, "全连接把每个位置绑死：同一个数字挪一格，它就当成新东西，练不出通用的笔画。", "A dense net binds every position: the same digit moved by one cell is new to it, so no stroke carries over.",
+                        "换「局部共享」（卷积）：同一个笔画在哪儿都认得。", "Switch to local sharing (convolution): a stroke is known anywhere.", "或者开「特征工程」：先把图去噪、挪到同一个位置。", "Or switch on feature engineering: denoise and move every picture to the same place.");
+                    return true;
+                case "danmu" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                    Set(v, "positions", 1, "全连接把每个字的位置绑死：同一句话挪一个字，它就当成新句子。", "A dense net binds every word to its position: the same sentence moved by one word is new to it.",
+                        "换「回环」（循环）：一个字一个字读，在哪儿出现都认得。", "Switch to a loop (recurrence): it reads word by word and knows a word anywhere.", "或者开「特征工程」：去掉语气词，按字和两字词读。", "Or switch on feature engineering: drop fillers and read words and word pairs.");
+                    return true;
+                case "translate" when k.wiring != XgWiring.EncoderDecoder && k.wiring != XgWiring.Attention:
+                    Set(v, "reach", 0, "一条序列只够得着自己相邻的字，够不着另一句：原句和译文对不上。", "A sequence only reaches its own neighbouring words, never the other sentence: source and translation never meet.",
+                        "换「编码器-解码器」：先把整句读完，再从头说一遍。", "Switch to an encoder–decoder: read the whole sentence, then say it again.", "", "");
+                    return true;
+                case "parallel" when serial:
+                    Set(v, "deadline", 0, "订单有期限：循环在一句话里只能一个字一个字地算，从头练 " + SprintEpochs + " 轮读不完这批长文档。", "The order has a deadline: a loop computes a sentence one word at a time, and from scratch " + SprintEpochs + " epochs cannot get through these long documents.",
+                        "拿掉循环，「只用注意力」：整句一起算。", "Drop the loop, attention only: the whole sentence at once.",
+                        Has("textcnn") ? "或者换「文字卷积」：卷积也是整句一起算。" : "", Has("textcnn") ? "Or switch to TextCNN: a convolution also computes the whole sentence at once." : "");
+                    return true;
+                case "parallel" when (k.wiring == XgWiring.AnyToAny || k.wiring == XgWiring.LocalShared) && !k.position:
+                    bool conv = k.wiring == XgWiring.LocalShared;
+                    Set(v, "order", 0, (conv ? "卷积" : "只用注意力") + "就分不清先后：句首的「春」和后面又出现的「春」，在它看来是同一个东西。",
+                        (conv ? "A convolution" : "Attention alone") + " cannot tell order: the 春 that opens the sentence and a later 春 look the same to it.",
+                        "打开「位置标记」：给每个字一个位置编号。", "Switch on position tags: number every word's position.", "", "");
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 练过头: in these settings the test score peaked at least five epochs ago and has fallen ten points or more
+        /// since (cells squeezing each other out, or leaning ever more on the trained cards).
+        /// </summary>
+        static bool Overtrained(XgTrace t, XgTracePoint p, out double peak, out int peakEpoch)
+        {
+            peak = 0; peakEpoch = 0;
+            foreach (var q in t.points)
+                if (q.epoch >= t.segmentFrom && q.test > peak) { peak = q.test; peakEpoch = q.epoch; }
+            return peakEpoch > 0 && p.epoch - peakEpoch >= 5 && peak - p.test >= .1;
+        }
+
+        static void Set(XgVerdict v, string id, int layer, string zh, string en, string structure, string structureEn, string method, string methodEn)
+        {
+            v.id = id; v.problem = true; v.layer = layer; v.headline = zh; v.headlineEn = en;
+            v.structure = structure; v.structureEn = structureEn; v.method = method; v.methodEn = methodEn;
+        }
+
+        static int LastEvent(XgTrace t, string id)
+        {
+            for (int i = t.events.Count - 1; i >= 0; i--) if (t.events[i].id == id) return t.events[i].epoch;
+            return int.MinValue;
+        }
+
+        /// <summary>The first epoch, in the current settings, at which one of these problems was noted (-1 if none).</summary>
+        static int FirstEventSince(XgTrace t, string[] ids)
+        {
+            foreach (var e in t.events)
+                if (e.epoch >= t.segmentFrom && Array.IndexOf(ids, e.id) >= 0) return e.epoch;
+            return -1;
+        }
+    }
+}

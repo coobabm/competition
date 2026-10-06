@@ -4,48 +4,130 @@ using LingGuangV05.XingGuang;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// The self-insight "闪卡" (design v1.1 §5.3), after the layered holographic collectible cards of RuiC-card-skill:
-    /// a card with a recessed art window, a subject glyph standing in front of it, a frame with the text, and a
-    /// laser-rainbow foil (shader LingGuang/UIHolo) whose colours run across the card as it tilts after the pointer.
-    /// Finishes rise with the stage: silver, gold, pearl, full laser; 「灵光一现」 for all six is the legendary card.
-    /// It flips in when a wall is worked out alone, and opens again from the gold secret node in the skill tree.
+    /// The look of a card, shared by the big card and the album thumbnails: the theme of its category, the finish of
+    /// its rarity, and the three materials of LingGuang/UIHoloCard (art, tint, shine).
     /// </summary>
-    public sealed class XgHoloCard : MonoBehaviour
+    public static class XgCardArt
     {
-        const float W = 380, H = 540;
-        XingGuangView view;
-        TMP_FontAsset font;
-        XgSim bound;
-        RectTransform overlay, card, art, subject, sparkle;
-        CanvasGroup group;
-        Image holo, frame, artBack;
-        Material holoMat;
-        TMP_Text title, stageLine, glyph, golden, why, stamp, serial, hint;
-        readonly Queue<string> pending = new Queue<string>();
-        Vector2 tilt;
-        float shownAt = -1;
-        bool closing;
-        float closeAt;
+        public const int Silver = 0, Gold = 1, Holo = 2, Cosmos = 3, Lenticular = 4;
+
+        /// <summary>Finish of a rarity: 普通 silver, 稀有 gold, 史诗 holographic, 传说 cosmos, 隐藏传说 lenticular.</summary>
+        public static int Finish(int rarity) => Mathf.Clamp(rarity, Silver, Lenticular);
+
+        public static string FinishName(int rarity) => new[] { Lang.T("银箔"), Lang.T("金箔"), Lang.T("镭射"), Lang.T("星河"), Lang.T("光栅") }[Finish(rarity)];
+
+        /// <summary>The frame around the art: the metal of the finish.</summary>
+        public static Color Frame(int rarity)
+        {
+            switch (Finish(rarity))
+            {
+                case Silver: return new Color32(122, 132, 152, 255);
+                case Gold: return new Color32(168, 120, 30, 255);
+                case Holo: return new Color32(96, 72, 160, 255);
+                case Cosmos: return new Color32(24, 30, 82, 255);
+                default: return new Color32(18, 16, 30, 255);
+            }
+        }
+
+        /// <summary>Theme colours of a category (light, dark), and the second state of a lenticular card.</summary>
+        public static void Theme(string category, out Color light, out Color dark, out Color light2, out Color dark2)
+        {
+            switch (category)
+            {
+                case XgSim.CardWall: light = new Color(.35f, .52f, 1f); dark = new Color(.04f, .07f, .22f); break;
+                case XgSim.CardInsight: light = new Color(.72f, .48f, 1f); dark = new Color(.12f, .05f, .26f); break;
+                case XgSim.CardRoad: light = new Color(.36f, .86f, .6f); dark = new Color(.03f, .15f, .12f); break;
+                case XgSim.CardCure: light = new Color(1f, .48f, .45f); dark = new Color(.22f, .04f, .07f); break;
+                case XgSim.CardPhenomenon: light = new Color(.3f, .8f, .95f); dark = new Color(.03f, .12f, .18f); break;
+                case XgSim.CardData: light = new Color(1f, .76f, .32f); dark = new Color(.2f, .1f, .02f); break;
+                case XgSim.CardFun: light = new Color(1f, .5f, .76f); dark = new Color(.22f, .05f, .15f); break;
+                case XgSim.CardLife: light = new Color(1f, .62f, .4f); dark = new Color(.2f, .07f, .05f); break;
+                default: light = new Color(1f, .9f, .62f); dark = new Color(.1f, .08f, .12f); break;
+            }
+            // The other side of the lens: the complementary hue, so the flip is plain to see.
+            Color.RGBToHSV(light, out float h, out float sat, out float v);
+            light2 = Color.HSVToRGB((h + .45f) % 1, sat, v);
+            Color.RGBToHSV(dark, out h, out sat, out v);
+            dark2 = Color.HSVToRGB((h + .45f) % 1, sat, v);
+        }
+
+        static Shader shader;
+        static bool looked;
+
+        public static Shader Shader
+        {
+            get
+            {
+                if (!looked) { shader = Shader.Find("LingGuang/UIHoloCard"); looked = true; }
+                return shader;
+            }
+        }
+
+        /// <summary>A material for one layer (0 art, 1 tint, 2 shine) of a card of this size; null without the shader.</summary>
+        public static Material Make(int mode, string category, int rarity, Vector2 size, float radius)
+        {
+            if (Shader == null) return null;
+            var m = new Material(Shader) { hideFlags = HideFlags.DontSave };
+            m.SetFloat("_Mode", mode);
+            m.SetFloat("_SrcBlend", (float)(mode == 0 ? BlendMode.One : mode == 1 ? BlendMode.DstColor : BlendMode.One));
+            m.SetFloat("_DstBlend", (float)(mode == 0 ? BlendMode.OneMinusSrcAlpha : mode == 1 ? BlendMode.SrcColor : BlendMode.One));
+            m.SetVector("_Size", new Vector4(size.x, size.y, radius, 0));
+            Style(m, category, rarity);
+            return m;
+        }
+
+        public static void Style(Material m, string category, int rarity)
+        {
+            if (m == null) return;
+            int finish = Finish(rarity);
+            Theme(category, out var a, out var b, out var c, out var d);
+            m.SetFloat("_Finish", finish);
+            m.SetColor("_ColorA", a); m.SetColor("_ColorB", b); m.SetColor("_ColorC", c); m.SetColor("_ColorD", d);
+            m.SetFloat("_Foil", new[] { .45f, .6f, .75f, .9f, 1f }[finish]);
+            m.SetFloat("_Rim", new[] { 0f, .6f, .5f, .85f, 1f }[finish]);
+            m.SetFloat("_BgDepth", finish == Cosmos ? -.35f : -.25f);
+        }
+
+        /// <summary>The lenticular flip at the middle of the card for a tilt (the shader adds the strips).</summary>
+        public static float Flip(Vector2 tilt)
+        {
+            float t = Mathf.Min(Mathf.Abs(tilt.x * 20) / 14, 1);
+            return Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.5f - .22f, .5f + .22f, t));
+        }
+
+        public static RawImage Layer(RectTransform rt, Material m)
+        {
+            var img = rt.gameObject.AddComponent<RawImage>();
+            img.raycastTarget = false; img.material = m;
+            if (m == null) img.enabled = false;
+            return img;
+        }
+
+        static AeroLcdInputSurface surface;
+
+        /// <summary>The pointer in a rect's local space, mapped through the desktop monitor.</summary>
+        public static bool Pointer(RectTransform rt, out Vector2 local)
+        {
+            local = default;
+            var mouse = Mouse.current;
+            if (mouse == null || rt == null) return false;
+            if (surface == null) surface = Object.FindFirstObjectByType<AeroLcdInputSurface>();
+            if (surface == null || !surface.TryMap(mouse.position.ReadValue(), out var source)) return false;
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, source, surface.sourceCamera, out local);
+        }
 
         static Sprite rounded;
 
-        public static XgHoloCard Install(XingGuangView view, RectTransform root, TMP_FontAsset font)
-        {
-            var c = view.gameObject.GetComponent<XgHoloCard>() ?? view.gameObject.AddComponent<XgHoloCard>();
-            c.view = view; c.font = font;
-            c.Build(root);
-            XgTreePage.OpenInsightCard = c.Show;
-            return c;
-        }
-
-        /// <summary>A rounded white card shape, used for the mask, the frame and the art window.</summary>
-        static Sprite Rounded()
+        /// <summary>A rounded white card shape for sliced frames and panels.</summary>
+        public static Sprite Rounded()
         {
             if (rounded != null) return rounded;
             const int n = 64, r = 14;
@@ -62,11 +144,46 @@ namespace LingGuangV05.Desktop.XingGuang
             return rounded;
         }
 
-        Image Sliced(RectTransform rt, Color c)
+        public static Image Sliced(RectTransform rt, Color c, float pixelsPerUnit = 1)
         {
             var img = rt.gameObject.AddComponent<Image>();
             img.sprite = Rounded(); img.type = Image.Type.Sliced; img.color = c; img.raycastTarget = false;
+            img.pixelsPerUnitMultiplier = pixelsPerUnit;
             return img;
+        }
+    }
+
+    /// <summary>
+    /// The big card (design v1.1 §5.3), after holo-card-studio's layered holographic cards: a recessed art window
+    /// sunk behind the frame by parallax, the subject glyph standing in front, the foil tinting it, and the shine on
+    /// top: sweep, stars, particles and the edge. The finish follows the rarity (XgCardArt). It flips in when a
+    /// card is earned (rare and up, and every self-insight card), and opens from the 成就 album and the tech tree.
+    /// </summary>
+    public sealed class XgHoloCard : MonoBehaviour
+    {
+        const float W = 380, H = 540, ArtW = 344, ArtH = 254;
+        XingGuangView view;
+        TMP_FontAsset font;
+        XgSim bound;
+        RectTransform overlay, card, art, subject;
+        CanvasGroup group;
+        Image frame;
+        RawImage artLayer, tintLayer, shineLayer;
+        Material artMat, tintMat, shineMat;
+        TMP_Text title, kicker, glyph, glyph2, headline, body, stamp, serial, hint;
+        readonly Queue<string> pending = new Queue<string>();
+        Vector2 tilt;
+        float shownAt = -1;
+        bool closing, quiet, lenticular;
+        float closeAt;
+
+        public static XgHoloCard Install(XingGuangView view, RectTransform root, TMP_FontAsset font)
+        {
+            var c = view.gameObject.GetComponent<XgHoloCard>() ?? view.gameObject.AddComponent<XgHoloCard>();
+            c.view = view; c.font = font;
+            c.Build(root);
+            XgTreePage.OpenInsightCard = id => c.Show(id);
+            return c;
         }
 
         TMP_Text Label(RectTransform rt, float size, Color c, TextAlignmentOptions align)
@@ -78,55 +195,52 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Build(RectTransform root)
         {
-            overlay = Rect("Insight Card", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            overlay = Rect("Card Overlay", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var dim = overlay.gameObject.AddComponent<Image>(); dim.color = new Color(.03f, .04f, .09f, .82f);
             var close = overlay.gameObject.AddComponent<Button>(); close.targetGraphic = dim; close.transition = Selectable.Transition.None;
             close.onClick.AddListener(Close);
             group = overlay.gameObject.AddComponent<CanvasGroup>();
 
             card = Rect("Card", overlay, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-W / 2, -H / 2 + 10), new Vector2(W / 2, H / 2 + 10));
-            frame = Sliced(card, Color.white);
+            frame = XgCardArt.Sliced(card, Color.white);
             frame.raycastTarget = true; // clicks on the card do not close it
 
-            // Art window: recessed background, then the subject glyph in front (parallax moves them apart).
-            art = Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(18, -312), new Vector2(-18, -58));
-            artBack = Sliced(art, Color.gray);
+            // Art window: the recessed background, the subject in front (parallax moves them apart), the foil over both.
+            art = Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(18, -58 - ArtH), new Vector2(-18, -58));
             art.gameObject.AddComponent<RectMask2D>();
-            sparkle = Rect("Lines", art, Vector2.zero, Vector2.one, new Vector2(-30, -30), new Vector2(30, 30));
-            for (int i = 0; i < 9; i++)
-            {
-                var line = Rect("Line", sparkle, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-260, -1), new Vector2(260, 1));
-                line.localRotation = Quaternion.Euler(0, 0, -60 + i * 15);
-                line.anchoredPosition = new Vector2(0, (i - 4) * 22);
-                var img = line.gameObject.AddComponent<Image>(); img.color = new Color(1, 1, 1, .13f); img.raycastTarget = false;
-            }
+            artMat = XgCardArt.Make(0, XgSim.CardWall, 2, new Vector2(ArtW, ArtH), 10);
+            artLayer = XgCardArt.Layer(Rect("Background", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), artMat);
+            if (artMat == null) { var plain = XgCardArt.Sliced(Rect("Plain", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), new Color(.1f, .12f, .25f)); plain.transform.SetAsFirstSibling(); }
             subject = Rect("Subject", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             glyph = Label(subject, 150, Color.white, TextAlignmentOptions.Center);
             glyph.fontStyle = FontStyles.Bold;
             glyph.outlineWidth = .12f; glyph.outlineColor = new Color32(0, 0, 0, 90);
+            glyph2 = Label(Rect("Subject B", subject, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), 150, Color.white, TextAlignmentOptions.Center);
+            glyph2.fontStyle = FontStyles.Bold;
+            glyph2.outlineWidth = .12f; glyph2.outlineColor = new Color32(0, 0, 0, 90);
+            tintMat = XgCardArt.Make(1, XgSim.CardWall, 2, new Vector2(ArtW, ArtH), 10);
+            tintLayer = XgCardArt.Layer(Rect("Foil", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), tintMat);
+
+            // The shine covers the whole card but stays under the words so they remain readable.
+            shineMat = XgCardArt.Make(2, XgSim.CardWall, 2, new Vector2(W, H), 14);
+            shineLayer = XgCardArt.Layer(Rect("Shine", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), shineMat);
 
             title = Label(Rect("Title", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -52), new Vector2(-22, -12)), 26, Color.white, TextAlignmentOptions.MidlineLeft);
             title.fontStyle = FontStyles.Bold;
+            title.enableAutoSizing = true; title.fontSizeMin = 18; title.fontSizeMax = 26;
+            title.margin = new Vector4(0, 0, 70, 0);
             serial = Label(Rect("Serial", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -52), new Vector2(-22, -12)), 14, Color.white, TextAlignmentOptions.MidlineRight);
-            stageLine = Label(Rect("Stage", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -346), new Vector2(-22, -318)), 15, Color.white, TextAlignmentOptions.MidlineLeft);
-            golden = Label(Rect("Golden", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -414), new Vector2(-22, -348)), 18, Color.white, TextAlignmentOptions.TopLeft);
-            golden.fontStyle = FontStyles.Bold;
-            why = Label(Rect("Why", card, Vector2.zero, Vector2.one, new Vector2(22, 46), new Vector2(-22, -418)), 15, Color.white, TextAlignmentOptions.TopLeft);
+            kicker = Label(Rect("Kicker", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -346), new Vector2(-22, -318)), 15, Color.white, TextAlignmentOptions.MidlineLeft);
+            headline = Label(Rect("Headline", card, new Vector2(0, 1), Vector2.one, new Vector2(22, -414), new Vector2(-22, -348)), 18, Color.white, TextAlignmentOptions.TopLeft);
+            headline.fontStyle = FontStyles.Bold;
+            headline.enableAutoSizing = true; headline.fontSizeMin = 13; headline.fontSizeMax = 18;
+            body = Label(Rect("Body", card, Vector2.zero, Vector2.one, new Vector2(22, 22), new Vector2(-22, -418)), 15, Color.white, TextAlignmentOptions.TopLeft);
+            body.enableAutoSizing = true; body.fontSizeMin = 11; body.fontSizeMax = 15;
             stamp = Label(Rect("Stamp", card, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-150, -300), new Vector2(-24, -240)), 28, new Color32(214, 40, 40, 230), TextAlignmentOptions.Center);
             stamp.fontStyle = FontStyles.Bold; stamp.rectTransform.localRotation = Quaternion.Euler(0, 0, 14);
             stamp.outlineWidth = .2f; stamp.outlineColor = new Color32(214, 40, 40, 230);
-
-            // The foil shines over the frame and the art, but under the card's text so the words stay readable.
-            var foil = Rect("Foil", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            foil.SetSiblingIndex(art.GetSiblingIndex() + 1);
-            holo = Sliced(foil, Color.white);
-            holo.raycastTarget = false;
-            var shader = Shader.Find("LingGuang/UIHolo");
-            if (shader != null) { holoMat = new Material(shader) { hideFlags = HideFlags.DontSave }; holo.material = holoMat; }
-            else holo.enabled = false;
-
-            // A dark rim keeps the white words readable wherever the foil is brightest.
-            foreach (var text in new[] { title, serial, stageLine, golden, why })
+            // A dark rim keeps the white words readable wherever the shine is brightest.
+            foreach (var text in new[] { title, serial, kicker, headline, body })
             {
                 text.outlineWidth = .18f; text.outlineColor = new Color32(10, 14, 40, 200);
             }
@@ -135,62 +249,69 @@ namespace LingGuangV05.Desktop.XingGuang
             overlay.gameObject.SetActive(false);
         }
 
-        void OnDestroy() { if (bound != null) { bound.InsightCard -= Enqueue; bound.AchievementEarned -= OnAchievement; } if (holoMat != null) Destroy(holoMat); }
+        void OnDestroy()
+        {
+            if (bound != null) { bound.InsightCard -= Enqueue; bound.AchievementEarned -= OnAchievement; }
+            foreach (var m in new[] { artMat, tintMat, shineMat }) if (m != null) Destroy(m);
+        }
 
-        void Enqueue(string wall) { pending.Enqueue(wall); }
-        void OnAchievement(XgAchievement a) { if (a.id == "lingguang") pending.Enqueue("lingguang"); }
+        void Enqueue(string wall) { if (!pending.Contains(wall)) pending.Enqueue(wall); }
+
+        /// <summary>
+        /// A new card flips in when it is rare or better; commons only toast (XgSim.Earn says so). Self-insight cards
+        /// come through InsightCard with the wall's own face, so their album twins stay quiet. A batch earned at once
+        /// (an old save catching up) shows its first few only.
+        /// </summary>
+        void OnAchievement(XgAchievement a)
+        {
+            if (a.rarity < 1 || a.category == XgSim.CardInsight && a.id != "lingguang") return;
+            if (pending.Count < 3) Enqueue(a.id);
+        }
 
         /// <summary>A card is on screen (or still fading out).</summary>
         public bool Showing => overlay != null && overlay.gameObject.activeSelf;
 
-        /// <summary>Shows a card now (from the tree) or after the one on screen.</summary>
-        public void Show(string wall)
+        /// <summary>Shows a card now or after the one on screen. From the album it opens without the fanfare.</summary>
+        public void Show(string id, bool fromAlbum = false)
         {
-            if (overlay.gameObject.activeSelf) { pending.Enqueue(wall); return; }
-            Fill(wall);
+            if (overlay.gameObject.activeSelf) { Enqueue(id); return; }
+            quiet = fromAlbum;
+            Fill(id);
             overlay.gameObject.SetActive(true);
             overlay.SetAsLastSibling();
             shownAt = Time.unscaledTime; closing = false;
+            bound?.MarkCardViewed(id);
+            if (fromAlbum) { view.Juice.Play(XgJuice.Sfx.Id.Click); return; }
             view.Juice.Play(XgJuice.Sfx.Id.Unlock);
             view.Juice.Flash(Color.white, .15f, .6f);
         }
 
         void Close()
         {
-            if (!overlay.gameObject.activeSelf || closing || Time.unscaledTime - shownAt < .6f) return;
+            if (!overlay.gameObject.activeSelf || closing || Time.unscaledTime - shownAt < (quiet ? .25f : .6f)) return;
             closing = true; closeAt = Time.unscaledTime;
         }
 
-        static readonly string[] Glyphs = { "", "异", "邻", "忘", "译", "注", "模" };
-
-        void Fill(string wall)
+        void Fill(string id)
         {
-            bool legend = wall == "lingguang";
-            int stage; string name, nameEn, gold, goldEn, w, wEn;
-            if (legend) { stage = 7; name = "灵光一现"; nameEn = "A Flash of Insight"; gold = "六个阶段，全部自己想通。"; goldEn = "Six stages, all worked out yourself."; w = "没有秘籍，没有提示，只有一次又一次地试。这张卡只发给你。"; wEn = "No secrets, no hints, only trying again and again. This card is yours alone."; }
-            else XgSim.InsightCardText(wall, out stage, out name, out nameEn, out gold, out goldEn, out w, out wEn);
-            int finish = legend ? 3 : stage <= 2 ? 1 : stage <= 4 ? 0 : stage == 5 ? 2 : 3;
-            Color baseColor = finish == 1 ? new Color32(96, 110, 140, 255) : finish == 0 ? new Color32(150, 108, 30, 255) : finish == 2 ? new Color32(150, 110, 150, 255) : new Color32(40, 50, 120, 255);
-            frame.color = baseColor;
-            artBack.color = Color.Lerp(baseColor, Color.black, .35f);
-            bool inbreeding = wall == XgSim.InbreedingId; // 近亲繁殖: a phenomenon card, not a solved wall
-            title.text = (legend ? "" : inbreeding ? T("现象 · ", "Phenomenon · ") : T("自悟 · ", "Insight · ")) + T(name, nameEn);
-            bool autolabel = wall == XgSim.EpiphanyCardId; // the auto-labelling realisation (AutoLabelEpiphany)
-            serial.text = legend ? "★ 7/7" : wall == "degrade" || autolabel || inbreeding ? T("附卡", "Extra") : "No." + stage + "/6";
-            glyph.text = legend ? "灵" : wall == "degrade" ? "捷" : autolabel ? "替" : inbreeding ? "近" : Glyphs[Mathf.Clamp(stage, 1, 6)];
-            stageLine.text = legend ? T("隐藏成就", "Hidden achievement") : autolabel ? T("标注台 · 自己想到的", "Labelling desk · your own idea")
-                : T("第 " + stage + " 阶段 · ", "Stage " + stage + " · ") + XgCatalog.StageYears[Mathf.Clamp(stage, 1, 6)];
-            golden.text = T(gold, goldEn);
-            why.text = T(w, wEn);
-            stamp.text = legend ? T("灵光\n一现", "FLASH") : inbreeding ? T("已发现", "FOUND") : T("已自悟", "SOLVED");
-            hint.text = T("移动鼠标转动卡片 · 点空白处收下", "Move the pointer to tilt the card · click outside to keep it");
-            if (holoMat != null)
-            {
-                holoMat.SetFloat("_Finish", finish);
-                holoMat.SetFloat("_Strength", legend ? .55f : .3f + .04f * stage);
-                holoMat.SetFloat("_Sparkle", legend ? 1f : .45f + .06f * stage);
-                holoMat.SetFloat("_Density", legend ? 4.5f : 3f);
-            }
+            var f = XgSim.CardFace(id);
+            int finish = XgCardArt.Finish(f.rarity);
+            lenticular = finish == XgCardArt.Lenticular && !string.IsNullOrEmpty(f.glyph2);
+            var frameColor = XgCardArt.Frame(f.rarity);
+            frame.color = frameColor;
+            foreach (var m in new[] { artMat, tintMat, shineMat }) XgCardArt.Style(m, f.category, f.rarity);
+            title.text = T(f.title, f.titleEn);
+            serial.text = f.serial == "附卡" ? Lang.T("附卡") : f.serial;
+            glyph.text = f.glyph; glyph2.text = lenticular ? f.glyph2 : "";
+            glyph2.alpha = 0; glyph.alpha = 1;
+            string stars = new string('★', Mathf.Clamp(f.rarity + 1, 1, 5));
+            kicker.text = T(f.kicker, f.kickerEn) + "  <color=#FFE08A>" + stars + "</color>  <size=12><alpha=#B0>" + XgCardArt.FinishName(f.rarity) + "</size>";
+            headline.text = T(f.headline, f.headlineEn);
+            body.text = T(f.body, f.bodyEn);
+            stamp.text = T(f.stamp, f.stampEn);
+            hint.text = lenticular ? Lang.T("左右转动卡片，看它的另一面 · 点空白处收下")
+                : quiet ? Lang.T("移动鼠标转动卡片 · 点空白处放回卡册")
+                : Lang.T("移动鼠标转动卡片 · 点空白处收下");
         }
 
         void Update()
@@ -209,10 +330,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             float t = Time.unscaledTime - shownAt;
-            // Flip in: from the back, spinning once, settling with a little overshoot.
-            float enter = Mathf.Clamp01(t / .9f), ease = 1 - Mathf.Pow(1 - enter, 3);
-            float spin = (1 - ease) * 540;
-            float scale = Mathf.Lerp(.4f, 1, ease) + Mathf.Sin(enter * Mathf.PI) * .06f;
+            // Flip in: from the back, spinning once, settling with a little overshoot (from the album: a quick lift).
+            float enter = Mathf.Clamp01(t / (quiet ? .35f : .9f)), ease = 1 - Mathf.Pow(1 - enter, 3);
+            float spin = quiet ? 0 : (1 - ease) * 540;
+            float scale = Mathf.Lerp(quiet ? .8f : .4f, 1, ease) + Mathf.Sin(enter * Mathf.PI) * (quiet ? .02f : .06f);
             if (closing)
             {
                 float k = Mathf.Clamp01((Time.unscaledTime - closeAt) / .35f);
@@ -222,25 +343,19 @@ namespace LingGuangV05.Desktop.XingGuang
             else group.alpha = Mathf.Clamp01(t / .25f);
             // Tilt after the pointer (through the monitor), with an idle sway when it is elsewhere.
             Vector2 target = new Vector2(Mathf.Sin(t * .9f) * .35f, Mathf.Cos(t * .7f) * .25f);
-            if (Pointer(out var local)) target = new Vector2(Mathf.Clamp(local.x / (W * .6f), -1, 1), Mathf.Clamp(local.y / (H * .6f), -1, 1));
+            if (XgCardArt.Pointer(card, out var local)) target = new Vector2(Mathf.Clamp(local.x / (W * .6f), -1, 1), Mathf.Clamp(local.y / (H * .6f), -1, 1));
             tilt = Vector2.Lerp(tilt, target, 1 - Mathf.Exp(-8 * Time.unscaledDeltaTime));
             card.localRotation = Quaternion.Euler(-tilt.y * 16, tilt.x * 20 + spin, 0);
             card.localScale = new Vector3(scale, scale, 1);
             subject.anchoredPosition = tilt * 12;
-            sparkle.anchoredPosition = -tilt * 6;
-            if (holoMat != null) holoMat.SetVector("_Tilt", new Vector4(tilt.x + spin / 180f, tilt.y, 0, 0));
-        }
-
-        AeroLcdInputSurface surface;
-
-        bool Pointer(out Vector2 local)
-        {
-            local = default;
-            var mouse = Mouse.current;
-            if (mouse == null) return false;
-            if (surface == null) surface = FindFirstObjectByType<AeroLcdInputSurface>();
-            if (surface == null || !surface.TryMap(mouse.position.ReadValue(), out var source)) return false;
-            return RectTransformUtility.ScreenPointToLocalPointInRectangle(card, source, surface.sourceCamera, out local);
+            var shaderTilt = new Vector4(tilt.x + spin / 180f, tilt.y, 0, 0);
+            foreach (var m in new[] { artMat, tintMat, shineMat }) if (m != null) m.SetVector("_Tilt", shaderTilt);
+            if (lenticular)
+            {
+                // The subject flips with the lens: one glyph fades as the other comes through.
+                float m = XgCardArt.Flip(tilt);
+                glyph.alpha = 1 - m; glyph2.alpha = m;
+            }
         }
     }
 }

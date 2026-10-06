@@ -5,6 +5,7 @@ using Michsky.DreamOS;
 using TMPro;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>
@@ -223,7 +224,7 @@ namespace LingGuangV05.Desktop
         {
             if (_disposed || !IsReady) return;
             RefreshNativeInputPlaceholder(Manager.messageInput);
-            _conversation.personName = GameText.T("老周", "Lao Zhou");
+            _conversation.personName = Lang.T("老周");
             if (_conversation.nameText != null) _conversation.nameText.text = _conversation.personName;
             string latest = null;
             Transform records = _conversation.messageParent;
@@ -241,7 +242,7 @@ namespace LingGuangV05.Desktop
             foreach (ChatItemPreset contact in _contacts)
             {
                 if (contact == null || contact.name != ContactTitle) continue;
-                if (contact.nameText != null) contact.nameText.text = GameText.T("老周", "Lao Zhou");
+                if (contact.nameText != null) contact.nameText.text = Lang.T("老周");
                 if (latest != null && contact.latestMessage != null) contact.latestMessage.text = latest;
             }
             PrepareContacts();
@@ -268,7 +269,7 @@ namespace LingGuangV05.Desktop
             {
                 if (_contacts[i] == null) continue;
                 if (_contacts[i].name == ContactTitle && _contacts[i].nameText != null)
-                    _contacts[i].nameText.text = GameText.T("老周", "Lao Zhou");
+                    _contacts[i].nameText.text = Lang.T("老周");
                 if (_contacts[i].latestMessage != null) _contacts[i].latestMessage.richText = false;
                 ApplyNativeFont(_contacts[i].nameText);
                 ApplyNativeFont(_contacts[i].latestMessage);

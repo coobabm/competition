@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -36,10 +37,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
             var header = Strip("Header", Root, 0, 34, 0, 0);
             Panel(header, new Color32(41, 50, 225, 255)).raycastTarget = false;
-            var title = ui.Text(Rect("Title", header, Vector2.zero, Vector2.one, new Vector2(12, 0), new Vector2(-90, 0)), "<b>" + T("摆渡众包 · 人机验证", "Bodu Crowdsourcing · Captcha") + "</b>", 16, Color.white, TextAlignmentOptions.MidlineLeft);
+            var title = ui.Text(Rect("Title", header, Vector2.zero, Vector2.one, new Vector2(12, 0), new Vector2(-90, 0)), "<b>" + Lang.T("摆渡众包 · 人机验证") + "</b>", 16, Color.white, TextAlignmentOptions.MidlineLeft);
             title.textWrappingMode = TextWrappingModes.NoWrap;
             timer = ui.Text(Rect("Timer", header, new Vector2(1, 0), Vector2.one, new Vector2(-86, 0), new Vector2(-10, 0)), "", 16, Color.white, TextAlignmentOptions.MidlineRight);
-            ui.Text(Strip("Prompt", Root, 42, 22, 10, 10), T("为确认您不是机器，请输入下图中的 4 个数字", "To confirm you are not a machine, type the 4 digits below"), 14, XgPalette.Muted, TextAlignmentOptions.Center);
+            ui.Text(Strip("Prompt", Root, 42, 22, 10, 10), Lang.T("为确认您不是机器，请输入下图中的 4 个数字"), 14, XgPalette.Muted, TextAlignmentOptions.Center);
 
             const float box = 96, gap = 14;
             float start = -(XgSim.CaptchaLength * box + (XgSim.CaptchaLength - 1) * gap) / 2;
@@ -70,7 +71,7 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < row.Length; i++)
             {
                 int d = row[i];
-                var b = ui.Button(Root, d < 0 ? T("删", "Del") : d.ToString(), () => { if (d < 0) Backspace(); else Press(d); }, 20);
+                var b = ui.Button(Root, d < 0 ? Lang.T("删") : d.ToString(), () => { if (d < 0) Backspace(); else Press(d); }, 20);
                 b.rt.anchorMin = b.rt.anchorMax = new Vector2(.5f, 1);
                 float x = start + i * (w + gap);
                 b.rt.offsetMin = new Vector2(x, -y - h); b.rt.offsetMax = new Vector2(x + w, -y);
@@ -105,8 +106,8 @@ namespace LingGuangV05.Desktop.XingGuang
             double left = s.CaptchaSecondsLeft;
             timer.text = (left < 10 ? "<color=#FFD0D0>" : "") + XgSim.FreezeClock(left) + (left < 10 ? "</color>" : "");
             hint.text = s.Has(XgSim.CaptchaAutofillNode)
-                ? T("验证码代填正在填写……", "Captcha autofill is filling it in…")
-                : T("也可以直接按键盘上的数字键。答错或超时：自动标注暂停 2 分钟，信用 −3。", "You can also type the digits. Wrong or too late: auto labelling pauses for 2 minutes, credit −3.");
+                ? Lang.T("验证码代填正在填写……")
+                : Lang.T("也可以直接按键盘上的数字键。答错或超时：自动标注暂停 2 分钟，信用 −3。");
         }
 
         /// <summary>Per frame while shown: the clock, and keyboard digits when the label page has the user's attention.</summary>

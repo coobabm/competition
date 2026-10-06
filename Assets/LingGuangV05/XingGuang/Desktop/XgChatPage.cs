@@ -204,7 +204,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sb = new StringBuilder(sim.PersonaCore());
             sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish));
             if (!sim.StageRuleVaries) sb.Append('\n').Append(sim.StageRule(""));
-            if (sim.Flatters) sb.Append(GameText.T("你习惯顺着对方说，哪怕对方说错了。", " You tend to agree with them, even when they are wrong."));
+            if (sim.Flatters) sb.Append(Lang.T("你习惯顺着对方说，哪怕对方说错了。"));
             if (GameText.IsEnglish) sb.Append(" Reply in English.");
             sb.Append('\n').Append(sim.PersonaBoard(today.Month, HotWords(today)));
             return sb.ToString();
@@ -213,12 +213,12 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (transcript == null || Sim == null) return;
-            ((TMP_Text)input.placeholder).text = waiting ? T("它在想……", "It's thinking…") : T("对它说点什么……", "Say something to it…");
-            send.Set(T("发送", "Send"), !waiting, XgPalette.Accent, Color.white);
+            ((TMP_Text)input.placeholder).text = waiting ? Lang.T("它在想……") : Lang.T("对它说点什么……");
+            send.Set(Lang.T("发送"), !waiting, XgPalette.Accent, Color.white);
             int last = LastAi();
             bool rateable = last >= 0 && Sim.S.chat[last].rating == 0;
             up.Set(T("赞", "Up"), rateable, XgPalette.Good, Color.white);
-            down.Set(T("踩", "Down"), rateable, XgPalette.Bad, Color.white);
+            down.Set(Lang.T("踩"), rateable, XgPalette.Bad, Color.white);
             status.text = StatusLine();
             bool offer = Sim.OfferOriginQuestion && !waiting, answering = Sim.S.originAwaitingAnswer;
             bool love = RefreshLove(offer && !answering ? 310 : answering ? 500 : 0);
@@ -242,7 +242,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (line.rating != 0) sb.Append(line.rating > 0 ? "  <color=#2F9E44>👍</color>" : "  <color=#D63031>👎</color>");
                     sb.Append('\n');
                 }
-                if (waiting) sb.Append("<color=#68748C><i>").Append(T("它在想……", "It's thinking…")).Append("</i></color>");
+                if (waiting) sb.Append("<color=#68748C><i>").Append(Lang.T("它在想……")).Append("</i></color>");
                 transcript.text = sb.ToString();
             }
             panel.text = Persona();
@@ -255,12 +255,12 @@ namespace LingGuangV05.Desktop.XingGuang
         string MemoryPanel()
         {
             var used = Sim.RecalledMemories();
-            var sb = new StringBuilder("<b>").Append(T("它记得", "It remembers")).Append("</b>  <color=#68748C>")
-                .Append(T("笔记 ", "notebook ")).Append(Sim.MemoryBook.Count).Append("/").Append(XgSim.MemoryBookLimit).Append("</color>\n");
-            if (used.Count == 0) sb.Append("<color=#68748C>").Append(Sim.MemoryBook.Count == 0 ? T("还没记下什么。重要的事它会记进笔记。", "Nothing written yet. It notes down what matters.") : T("上一句没让它想起什么。", "Your last line reminded it of nothing.")).Append("</color>");
+            var sb = new StringBuilder("<b>").Append(Lang.T("它记得")).Append("</b>  <color=#68748C>")
+                .Append(Lang.T("笔记 ")).Append(Sim.MemoryBook.Count).Append("/").Append(XgSim.MemoryBookLimit).Append("</color>\n");
+            if (used.Count == 0) sb.Append("<color=#68748C>").Append(Sim.MemoryBook.Count == 0 ? Lang.T("还没记下什么。重要的事它会记进笔记。") : Lang.T("上一句没让它想起什么。")).Append("</color>");
             else
             {
-                sb.Append("<color=#68748C>").Append(T("回答上一句时想起了：", "Recalled for its last answer:")).Append("</color>\n");
+                sb.Append("<color=#68748C>").Append(Lang.T("回答上一句时想起了：")).Append("</color>\n");
                 foreach (var e in used) sb.Append("· ").Append(Safe(e.text)).Append('\n');
             }
             return sb.ToString();
@@ -269,12 +269,11 @@ namespace LingGuangV05.Desktop.XingGuang
         string MemoryTip()
         {
             var used = Sim.RecalledMemories();
-            var sb = new StringBuilder(T("它的笔记本：重要的事（计划、喜好、约定、人名）记成一条一条。每次回答前，按和你这句话的相似度挑出最多 5 条想起来；不相关的不会想起。",
-                "Its notebook: what matters (plans, likes, promises, names) is written down one note at a time. Before each answer it recalls up to 5 notes most similar to what you said; unrelated ones stay forgotten."));
-            sb.Append(T("\n桌面上的「笔记.txt」能看全部。", "\nOpen 「笔记.txt」 on the desktop to read them all."));
+            var sb = new StringBuilder(Lang.T("它的笔记本：重要的事（计划、喜好、约定、人名）记成一条一条。每次回答前，按和你这句话的相似度挑出最多 5 条想起来；不相关的不会想起。"));
+            sb.Append(Lang.T("\n桌面上的「笔记.txt」能看全部。"));
             foreach (var e in used)
-                sb.Append("\n\n").Append(e.text).Append("\n").Append(T("关于：", "About: ")).Append(Sim.SubjectName(e.subject)).Append(T(" · 记于 ", " · written ")).Append(XgSim.MemoryDate(e.createdDay))
-                  .Append(T(" · 重要度 ", " · importance ")).Append(e.importance).Append(T(" · 想起过 ", " · recalled ")).Append(e.uses).Append(T(" 次", "×"));
+                sb.Append("\n\n").Append(e.text).Append("\n").Append(Lang.T("关于：")).Append(Sim.SubjectName(e.subject)).Append(Lang.T(" · 记于 ")).Append(XgSim.MemoryDate(e.createdDay))
+                  .Append(Lang.T(" · 重要度 ")).Append(e.importance).Append(Lang.T(" · 想起过 ")).Append(e.uses).Append(T(" 次", "×"));
             return sb.ToString();
         }
 
@@ -285,31 +284,41 @@ namespace LingGuangV05.Desktop.XingGuang
         string StatusLine()
         {
             var l = Sim.Limits();
-            string form = Sim.S.stage <= 1 ? T("只会答 是 / 否", "yes / no only") : Sim.S.stage == 2 ? T("多选一", "picks one") : Sim.S.stage == 3 ? T("单个词", "single words")
-                : Sim.S.stage == 4 ? T("短句", "short sentences") : Sim.S.stage == 5 ? T("长记忆", "long memory") : Sim.S.fullOpen ? T("全部放开 · 思考模式", "everything open · thinking") : T("流畅", "fluent");
+            string form = Sim.S.stage <= 1 ? Lang.T("只会答 是 / 否") : Sim.S.stage == 2 ? Lang.T("多选一") : Sim.S.stage == 3 ? Lang.T("单个词")
+                : Sim.S.stage == 4 ? Lang.T("短句") : Sim.S.stage == 5 ? Lang.T("长记忆") : Sim.S.fullOpen ? Lang.T("全部放开 · 思考模式") : Lang.T("流畅");
             // The local model's own note (e.g. not enough video memory, running slower) goes after the ability line.
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             string note = llm != null && llm.Ready && llm.Detail.Length > 0 ? " · <color=#E08A00>" + llm.Detail + "</color>" : "";
-            return T("能力：", "Ability: ") + form + T(" · 上下文 ", " · context ") + l.context + T(" · 赞 / 踩 都是一张语气卡", " · up / down is a tone card") + note;
+            return Lang.T("能力：") + form + Lang.T(" · 上下文 ") + l.context + Lang.T(" · 赞 / 踩 都是一张语气卡") + note;
         }
 
         string Persona()
         {
-            var sb = new StringBuilder("<b>" + T("性格", "Personality") + "</b>");
-            if (Sim.Listening) sb.Append("  <color=#E08A00>").Append(T("监听中", "Listening")).Append("</color>");
-            sb.Append("\n<size=12><color=#68748C>").Append(T("▲ 目标（开局写的）   █ 实际（它现在的样子）", "▲ target (what you wrote)   █ actual (what it is now)")).Append("</color></size>\n\n");
-            string[] lo = { T("冷静", "calm"), T("正经", "serious"), T("顺从", "compliant") };
-            string[] hi = { T("热情", "warm"), T("皮", "cheeky"), T("有主见", "opinionated") };
+            var sb = new StringBuilder("<b>" + Lang.T("性格") + "</b>");
+            if (Sim.Listening) sb.Append("  <color=#E08A00>").Append(Lang.T("监听中")).Append("</color>");
+            sb.Append("\n<size=12><color=#68748C>").Append(Lang.T("▲ 目标（开局写的）   █ 实际（它现在的样子）")).Append("</color></size>\n\n");
+            string[] lo = { Lang.T("冷静"), Lang.T("正经"), Lang.T("顺从") };
+            string[] hi = { Lang.T("热情"), Lang.T("皮"), Lang.T("有主见") };
             for (int axis = 0; axis < 3; axis++)
             {
                 double target = Sim.TargetAxis(axis), actual = Sim.ActualAxis(axis);
                 sb.Append("<b>").Append(T(XgSim.AxisNames[axis], XgSim.AxisNamesEn[axis])).Append("</b>  ").Append(N(actual, "0")).Append(" / ").Append(N(target, "0"));
-                if (Math.Abs(actual - target) >= 25) sb.Append("  <color=#D63031>").Append(T("漂了", "drifted")).Append("</color>");
+                if (Math.Abs(actual - target) >= 25) sb.Append("  <color=#D63031>").Append(Lang.T("漂了")).Append("</color>");
                 sb.Append("\n<size=12>").Append(lo[axis]).Append(" ").Append(Bar(actual, target)).Append(" ").Append(hi[axis]).Append("</size>\n");
             }
-            if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(T("语气词：", "Tone words: ")).Append(string.Join(T("、", ", "), Sim.Profile.words)).Append('\n');
-            if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#68748C>").Append(T("你写的：", "You wrote: ")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
-            if (Sim.Flatters) sb.Append("\n<color=#D63031>").Append(T("它开始讨好你了。", "It has started flattering you.")).Append("</color>");
+            if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(Lang.T("语气词：")).Append(string.Join(Lang.T("、"), Sim.Profile.words)).Append('\n');
+            if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#68748C>").Append(Lang.T("你写的：")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
+            if (Sim.Flatters) sb.Append("\n<color=#D63031>").Append(Lang.T("它开始讨好你了。")).Append("</color>");
+            // What it says comes from the same brain the training page trains: what the board knows, believes and mixes up.
+            var known = Sim.Known(6); var beliefs = Sim.Beliefs(3); var mixed = Sim.Confusions(2);
+            if (known.Count > 0 || beliefs.Count > 0)
+            {
+                sb.Append("\n<b>").Append(Lang.T("它脑子里有的")).Append("</b>  <size=12><color=#68748C>").Append(Lang.T("说话时会用上")).Append("</color></size>\n<size=12>");
+                if (known.Count > 0) sb.Append(Lang.T("认得：")).Append(Safe(string.Join(Lang.T("、"), known))).Append('\n');
+                if (beliefs.Count > 0) sb.Append(Lang.T("相信：")).Append(Safe(string.Join(Lang.T("、"), beliefs))).Append('\n');
+                if (mixed.Count > 0) sb.Append("<color=#D63031>").Append(Lang.T("常搞混：")).Append(Safe(string.Join(Lang.T("、"), mixed))).Append("</color>\n");
+                sb.Append("</size>");
+            }
             return sb.ToString();
         }
 

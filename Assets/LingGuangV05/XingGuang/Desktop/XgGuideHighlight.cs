@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public const float DefaultSeconds = 4f;
         /// <summary>The lab's nav order (XingGuangView.BuildNav): the first buttons under "Nav" are these tabs.</summary>
-        public static readonly string[] TabIds = { "label", "train", "tree", "contracts", "repo", "board", "wall", "chat", "final" };
+        public static readonly string[] TabIds = { "label", "train", "tree", "contracts", "repo", "board", "wall", "cards", "chat", "final" };
         static readonly Color Gold = new Color32(255, 190, 40, 255);
         const float Pad = 6, Fade = .35f;
 
@@ -86,7 +86,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>
         /// A control on a lab page. Locators: "" = the tab button, "name:Foo", "label:是|Yes", "node:id" (also
-        /// scrolls the skill tree to it), "contract:id", "chip:n" (the HUD chips).
+        /// scrolls the tech tree to it), "contract:id", "chip:n" (the HUD chips).
         /// </summary>
         public static RectTransform Find(XingGuangView view, string tab, string target)
         {

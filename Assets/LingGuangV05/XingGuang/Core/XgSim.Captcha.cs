@@ -125,7 +125,7 @@ namespace LingGuangV05.XingGuang
             if (S.qcAutoPause > 0)
             {
                 S.qcAutoPause = Math.Max(0, S.qcAutoPause - dt);
-                if (S.qcAutoPause <= 0) Say(T("摆渡众包：自动标注恢复提交。", "Bodu Crowdsourcing: automatic labels may be submitted again."));
+                if (S.qcAutoPause <= 0) Say(T("摆渡众包：自动标注恢复提交。"));
             }
             if (S.qcCaptcha)
             {
@@ -157,7 +157,7 @@ namespace LingGuangV05.XingGuang
             S.qcSuspicion = 0;
             S.qcCaptchaTotal++;
             S.qcAutofillIn = Has(CaptchaAutofillNode) ? AutofillMinDelay + (AutofillMaxDelay - AutofillMinDelay) * QualityRoll() : -1;
-            Say(T("摆渡众包：检测到操作过快，请完成人机验证（30 秒内），自动标注暂停。", "Bodu Crowdsourcing: unusually fast activity. Please complete the captcha within 30 s; automatic labelling is paused."));
+            Say(T("摆渡众包：检测到操作过快，请完成人机验证（30 秒内），自动标注暂停。"));
             CaptchaRequired?.Invoke();
         }
 
@@ -178,8 +178,8 @@ namespace LingGuangV05.XingGuang
             S.qcCaptchaFails = 0;
             AddCredit(CaptchaCreditPass);
             if (autofilled) S.qcAutofills++;
-            Say(autofilled ? T("验证码代填：已提交，自动标注继续。", "Captcha autofill: submitted; automatic labelling continues.")
-                : T("摆渡众包：验证通过，信用 +1。", "Bodu Crowdsourcing: captcha passed, credit +1."));
+            Say(autofilled ? T("验证码代填：已提交，自动标注继续。")
+                : T("摆渡众包：验证通过，信用 +1。"));
             CaptchaSolved?.Invoke(autofilled);
             if (!autofilled) return;
             double roll = ForcedAutofillRoll >= 0 ? ForcedAutofillRoll : QualityRoll();
@@ -197,8 +197,8 @@ namespace LingGuangV05.XingGuang
             AddCredit(-CaptchaCreditFail);
             S.qcAutoPause = CaptchaPause;
             int inARow = S.qcCaptchaFails;
-            Say(timeout ? T("摆渡众包：验证超时，自动标注暂停 2 分钟，信用 −3。", "Bodu Crowdsourcing: captcha timed out. Automatic labelling paused for 2 min, credit −3.")
-                : T("摆渡众包：验证码错误，自动标注暂停 2 分钟，信用 −3。", "Bodu Crowdsourcing: wrong captcha. Automatic labelling paused for 2 min, credit −3."));
+            Say(timeout ? T("摆渡众包：验证超时，自动标注暂停 2 分钟，信用 −3。")
+                : T("摆渡众包：验证码错误，自动标注暂停 2 分钟，信用 −3。"));
             CaptchaFailed?.Invoke(timeout, inARow);
             if (inARow < CaptchaFailsToReport) return;
             S.qcCaptchaFails = 0;

@@ -2,6 +2,7 @@ using LingGuangV05.Runtime;
 using UnityEngine;
 using Michsky.DreamOS;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>Decorates native records. Only explicitly bound authored content is localized.</summary>
@@ -86,7 +87,7 @@ namespace LingGuangV05.Desktop
             if (_stamped == value) { enabled = false; return; }
             string author = string.IsNullOrWhiteSpace(Author) ? "老周" : Author.Replace("\r", "").Replace("\n", "").Trim();
             if (author.Length > 16) author = author.Substring(0, 16);
-            string localizedAuthor = author == "老周" ? GameText.T("老周", "Lao Zhou") : author == "我" ? GameText.T("我", "Me") : author;
+            string localizedAuthor = author == "老周" ? Lang.T("老周") : author == "我" ? GameText.T("我", "Me") : author;
             // Strip only known stamp prefixes, never timestamps or player-authored message text.
             string[] prefixes = { author + "  ", localizedAuthor + "  ", "我  ", "老周  ", "Me  ", "Lao Zhou  " };
             for (int i = 0; i < 4; i++)

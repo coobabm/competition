@@ -170,12 +170,12 @@ namespace LingGuangV05.XingGuang
 
         public string ProgressionBlocker(XgNode node)
         {
-            if (node == null) return T("未知节点", "Unknown node");
+            if (node == null) return T("未知节点");
             if (Has(node.id)) return null;
-            if (!NodeVisible(node)) return node.kind == XgNodeKind.Secret ? T("撞墙之后才会出现", "Appears once the wall stands") : T("还没到这一阶段", "Not at this stage yet");
+            if (!NodeVisible(node)) return node.kind == XgNodeKind.Secret ? T("撞墙之后才会出现") : T("还没到这一阶段");
             if (node.id == "transformer" || node.id == "multihead" || node.id == "layernorm" || node.id == "residual")
-                return T("阶段 5 过墙后获得", "Earned by passing stage five's wall");
-            if (node.id == "caption" && S.stage < 5) return T("需要第五阶段", "Requires stage five");
+                return T("阶段 5 过墙后获得");
+            if (node.id == "caption" && S.stage < 5) return T("需要第五阶段");
             return null;
         }
 
@@ -189,10 +189,10 @@ namespace LingGuangV05.XingGuang
                 for (int i = 0; i < group.Length; i++)
                 {
                     var tree = XgCatalog.Node(group[i]).tree;
-                    if (tree == "vision") names[i] = T("视觉 ", "Vision ") + names[i];
-                    else if (tree == "sequence" || tree == "trunk") names[i] = T("序列 ", "Sequence ") + names[i];
+                    if (tree == "vision") names[i] = T("视觉 ") + names[i];
+                    else if (tree == "sequence" || tree == "trunk") names[i] = T("序列 ") + names[i];
                 }
-            return string.Join(T(" 或 ", " or "), names);
+            return string.Join(T(" 或 "), names);
         }
 
         public int TrackGrade(XgTrack track)
@@ -227,8 +227,8 @@ namespace LingGuangV05.XingGuang
             if (node.kind == XgNodeKind.Secret)
             {
                 var wall = WallOfSecret(node.id);
-                if (wall != null) Say(T("秘籍：", "Secret: ") + T(wall.golden, wall.goldenEn) + T("。", ". ") + T(wall.why, wall.whyEn));
-                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线宽度 × 层数 ≥ 1024、学习率预热、位置标记都开，再上「机房」。喂进去的始终是数据，飞跃来自规模。", "Secret: pre-training needs scale — sequence width × layers ≥ 1024, warm-up and positions on, and the server room. It is always data going in; the leap comes from scale."));
+                if (wall != null) Say(T("秘籍：") + T(wall.golden, wall.goldenEn) + T("。", ". ") + T(wall.why, wall.whyEn));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1 亿左右（宽 1024、8 层以上），文本 2 万条以上，学习率预热、位置标记都开，再租「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。"));
             }
             RefreshStages();
         }
@@ -247,10 +247,25 @@ namespace LingGuangV05.XingGuang
             S.walls.Add(id); WallObserved?.Invoke(id); return true;
         }
 
+        /// <summary>
+        /// The chance the model answers one yes/no card right, from its score on the dataset's own measure (top-5,
+        /// next-character accuracy…): the inverse of <see cref="Scale"/>. A model at chance on a hard measure still
+        /// gets half the yes/no cards.
+        /// </summary>
+        public static double BinaryAccuracy(string dataset, double metric)
+        {
+            var d = XgCatalog.Dataset(dataset);
+            if (d == null || d.chanceError - d.floorError <= 1e-9) return Math.Max(0, Math.Min(1, metric));
+            double q = (metric - (1 - d.chanceError)) / (d.chanceError - d.floorError);
+            return .5 + .5 * Math.Max(0, Math.Min(1, q));
+        }
+
         public double CardAccuracy(XgRun run, XgCard card, double accuracy)
         {
             if (run == null || card == null) return 0;
             accuracy = Finite(accuracy) ? Math.Max(0, Math.Min(1, accuracy)) : 0;
+            // The score is on the dataset's own measure; a card is one yes/no question.
+            if (UseBoard) accuracy = BinaryAccuracy(card.dataset, accuracy);
             if (run.arch == "perceptron" && card.kind == "combo") accuracy = Math.Min(.55, accuracy);
             if (run.arch == "mlp" && (card.kind == "spatial" || card.kind == "order")) accuracy = Math.Min(.6, accuracy);
             if (card.distance > 0)
@@ -608,7 +623,7 @@ namespace LingGuangV05.XingGuang
             if (!yes)
             {
                 S.project.gpuSeconds = S.project.experiments * ProjectGpuSeconds / 3; S.project.retries++;
-                Say(T("否。……好。那我再想想。", "No. … all right. Let me think again."));
+                Say(T("否。……好。那我再想想。"));
                 return true;
             }
             S.project.experiments++;
@@ -625,7 +640,7 @@ namespace LingGuangV05.XingGuang
             Grant("layernorm"); Grant("residual"); Grant("warmup");
             S.vision.arch = S.sequence.arch = "transformer"; RefreshStages();
             foreach (var run in Runs) Evaluate(run);
-            if (announce && first) { Say(T("只要注意力。", "Attention is all we need.")); BreakthroughDone?.Invoke("transformer"); }
+            if (announce && first) { Say(T("只要注意力。")); BreakthroughDone?.Invoke("transformer"); }
         }
 
         public bool EndingAnswer(bool regret)

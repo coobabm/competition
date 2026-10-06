@@ -228,7 +228,8 @@ namespace LingGuangV05.Desktop.XingGuang
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class XgLinksGraphic : MaskableGraphic
     {
-        public struct Link { public Vector2 a, b; public Color color; public float width; public bool dashed; }
+        /// <summary>A link from a to b. turnX, when set, is where it turns vertical (a shared gutter keeps a fan of links on one bus).</summary>
+        public struct Link { public Vector2 a, b; public Color color; public float width; public bool dashed; public float? turnX; }
         readonly List<Link> links = new List<Link>();
 
         public void SetLinks(IEnumerable<Link> list) { links.Clear(); links.AddRange(list); SetVerticesDirty(); }
@@ -238,11 +239,17 @@ namespace LingGuangV05.Desktop.XingGuang
             vh.Clear();
             foreach (var l in links)
             {
-                if (l.dashed) XgDraw.Dashed(vh, l.a, l.b, l.width, 8, l.color);
+                if (l.dashed)
+                {
+                    // Same route as a solid link, dashed.
+                    float x = l.turnX ?? (l.a.x + l.b.x) * .5f;
+                    var q1 = new Vector2(x, l.a.y); var q2 = new Vector2(x, l.b.y);
+                    XgDraw.Dashed(vh, l.a, q1, l.width, 8, l.color); XgDraw.Dashed(vh, q1, q2, l.width, 8, l.color); XgDraw.Dashed(vh, q2, l.b, l.width, 8, l.color);
+                }
                 else
                 {
                     // Horizontal progression: right from the parent, across lanes, then into the child.
-                    float midX = (l.a.x + l.b.x) * .5f;
+                    float midX = l.turnX ?? (l.a.x + l.b.x) * .5f;
                     var p1 = new Vector2(midX, l.a.y); var p2 = new Vector2(midX, l.b.y);
                     XgDraw.Seg(vh, l.a, p1, l.width, l.color);
                     XgDraw.Seg(vh, p1, p2, l.width, l.color);

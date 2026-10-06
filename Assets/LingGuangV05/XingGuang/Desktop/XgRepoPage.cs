@@ -138,7 +138,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (root == null) return;
             double mb = 0; int deployed = 0;
             foreach (var m in Sim.S.models) { mb += XgSim.SizeMB(m); if (Sim.IsDeployed(m)) deployed++; }
-            header.text = "<b>" + T("模型仓库", "Model repository") + "</b>  <color=#68748C>" + T("共 ", "") + Sim.S.models.Count + T(" 个 · 已部署 ", " models · deployed ") + deployed
+            header.text = "<b>" + T("模型仓库", "Model repository") + "</b>  <color=#68748C>" + Lang.T("共 ") + Sim.S.models.Count + Lang.T(" 个 · 已部署 ") + deployed
                 + " · " + Size(mb) + "</color>";
             for (int i = 0; i < filters.Length; i++) filters[i].Set(filters[i].label.text, true, i == filter ? XgPalette.Accent : XgPalette.Button, i == filter ? Color.white : XgPalette.Ink);
             for (int i = 0; i < sorts.Length; i++) sorts[i].Set(sorts[i].label.text, true, i == sort ? XgPalette.AccentSoft : XgPalette.Button, i == sort ? XgPalette.Accent : XgPalette.Ink);
@@ -168,15 +168,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 list.sizeDelta = new Vector2(0, shown.Count * 58 + 8);
             }
-            empty.text = shown.Count == 0 ? T("还没有模型。评估刷新纪录时会自动存一个；训练页右上角也能手动「存入仓库」。", "No models yet. Each assessment record saves one; you can also save from the training page.") : "";
+            empty.text = shown.Count == 0 ? Lang.T("还没有模型。评估刷新纪录时会自动存一个；训练页右上角也能手动「存入仓库」。") : "";
             foreach (var (m, row, bg, left, right, badge) in rows)
             {
                 var d = XgCatalog.Dataset(m.dataset); var a = XgCatalog.Arch(m.arch);
                 bool on = m.id == selectedId, dep = Sim.IsDeployed(m);
                 bg.color = on ? XgPalette.AccentSoft : dep ? new Color32(236, 250, 240, 255) : Color.white;
-                left.text = "<b>" + m.name + "</b>" + (m.starred ? " <color=#E0A800>★</color>" : "") + (m.id > SeenUpTo ? " <color=#E86E14>" + T("新", "new") + "</color>" : "")
+                left.text = "<b>" + m.name + "</b>" + (m.starred ? " <color=#E0A800>★</color>" : "") + (m.id > SeenUpTo ? " <color=#E86E14>" + Lang.T("新") + "</color>" : "")
                     + "\n<color=#68748C>" + T(d.name, d.nameEn) + " · " + T(a.name, a.nameEn) + " · " + m.depth + T(" 层 · 宽 ", "L · w") + XgCatalog.Widths[m.width] + " · " + T("第 ", "epoch ") + m.epoch + T(" 轮", "") + " · " + When(m) + "</color>";
-                right.text = "<size=18><b>" + N(m.score, "0") + "</b></size>\n" + (dep ? "<color=#2F9E44>" + T("已部署", "deployed") + "</color>" : "<color=#68748C>" + XgSim.Pct(m.acc) + "</color>");
+                right.text = "<size=18><b>" + N(m.score, "0") + "</b></size>\n" + (dep ? "<color=#2F9E44>" + Lang.T("已部署") + "</color>" : "<color=#68748C>" + XgSim.Pct(m.acc) + "</color>");
             }
 
             var sel = Sim.Model(selectedId);
@@ -188,19 +188,19 @@ namespace LingGuangV05.Desktop.XingGuang
             dTitle.text = sel.name;
             dGrade.text = XgCatalog.GradeNames[grade]; dGrade.color = XgPalette.Grades[grade];
             dGrade.transform.parent.GetComponent<XgRingGraphic>().color = XgPalette.Grades[grade];
-            dStats.text = T("模型分 ", "Score ") + "<b>" + N(sel.score, "0") + "</b>  ·  " + T("验证 ", "val ") + XgSim.Pct(sel.acc) + "  ·  " + T("训练 ", "train ") + XgSim.Pct(sel.trainAcc) + "\n"
+            dStats.text = Lang.T("模型分 ") + "<b>" + N(sel.score, "0") + "</b>  ·  " + T("验证 ", "val ") + XgSim.Pct(sel.acc) + "  ·  " + T("训练 ", "train ") + XgSim.Pct(sel.trainAcc) + "\n"
                 + T(sd.name, sd.nameEn) + " · " + T(sa.name, sa.nameEn) + "\n"
-                + sel.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[sel.width] + T(" · 学习率 ", " · rate ") + XgCatalog.LearningRates[sel.lr] + "\n"
-                + T("参数 ", "Params ") + Params(XgSim.ParamsK(new XgRun { arch = sel.arch, depth = sel.depth, width = sel.width })) + " · " + Size(XgSim.SizeMB(sel)) + "\n"
-                + T("第 ", "Epoch ") + sel.epoch + T(" 轮 · 存于 ", " · saved ") + When(sel) + " · " + (sel.record ? T("评估纪录", "assessment record") : T("手动保存", "saved by hand"))
-                + (Sim.IsDeployed(sel) ? "\n<color=#2F9E44>" + (Sim.AutoLabelHidden ? T("已部署：订单、论文都用它", "Deployed: contracts and papers use it") : T("已部署：订单、自动答题、论文都用它", "Deployed: contracts, auto-answer and papers use it")) + "</color>" : "");
+                + sel.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[sel.width] + Lang.T(" · 学习率 ") + Sim.RateLabel(sel.lr) + "\n"
+                + Lang.T("参数 ") + Params(XgSim.ParamsK(new XgRun { arch = sel.arch, depth = sel.depth, width = sel.width })) + " · " + Size(XgSim.SizeMB(sel)) + "\n"
+                + T("第 ", "Epoch ") + sel.epoch + Lang.T(" 轮 · 存于 ") + When(sel) + " · " + (sel.record ? Lang.T("评估纪录") : Lang.T("手动保存"))
+                + (Sim.IsDeployed(sel) ? "\n<color=#2F9E44>" + (Sim.AutoLabelHidden ? Lang.T("已部署：订单、论文都用它") : Lang.T("已部署：订单、自动答题、论文都用它")) + "</color>" : "");
             dChart.Capacity = Mathf.Max(8, sel.curve.Count);
             dChart.SetData(new List<float>(), sel.curve, (float)sel.acc);
             string why = Sim.CannotLoad(sel);
-            load.Set(why == null ? T("加载到训练，接着练", "Load into training") : why, why == null, XgPalette.Accent, Color.white);
-            star.Set(sel.starred ? T("★ 已收藏", "★ Starred") : T("☆ 收藏（不会被清理）", "☆ Star (kept)"), true, sel.starred ? new Color32(255, 244, 210, 255) : (Color?)null);
+            load.Set(why == null ? (!Sim.UseBoard || sel.HasWeights ? Lang.T("加载权重，接着练") : Lang.T("只载入设置（没留权重）")) : why, why == null, XgPalette.Accent, Color.white);
+            star.Set(sel.starred ? Lang.T("★ 已收藏") : Lang.T("☆ 收藏（不会被清理）"), true, sel.starred ? new Color32(255, 244, 210, 255) : (Color?)null);
             bool dep2 = Sim.IsDeployed(sel);
-            delete.Set(dep2 ? T("已部署，不能删", "Deployed") : confirmDelete == sel.id ? T("再点一次确认删除", "Click again to delete") : T("删除", "Delete"), !dep2,
+            delete.Set(dep2 ? Lang.T("已部署，不能删") : confirmDelete == sel.id ? Lang.T("再点一次确认删除") : Lang.T("删除"), !dep2,
                 confirmDelete == sel.id ? XgPalette.Bad : (Color?)null, confirmDelete == sel.id ? Color.white : (Color?)null);
         }
 

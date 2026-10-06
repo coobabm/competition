@@ -47,6 +47,8 @@ namespace LingGuangV05.XingGuang
         public bool isNew;
         /// <summary>Noise after 数据清洗.</summary>
         public double effectiveNoise;
+        /// <summary>The pack feeds training (packs the player switched off stay owned but are left out).</summary>
+        public bool included = true;
         /// <summary>Why it cannot be bought now (empty when it can).</summary>
         public string lockedReason = "", lockedReasonEn = "";
 
@@ -82,6 +84,8 @@ namespace LingGuangV05.XingGuang
         public List<string> crowdOn = new List<string>();
         /// <summary>Story offers 老周 has already mentioned.</summary>
         public List<string> storyOffered = new List<string>();
+        /// <summary>Owned packs switched off for training: "logic.pack" (public or story data), "logic.junk".</summary>
+        public List<string> dataExcluded = new List<string>();
     }
 
     /// <summary>
@@ -121,7 +125,7 @@ namespace LingGuangV05.XingGuang
                 "补习班的作业本拍照切图，答案是按老师批改抄的，红笔叉也算数。", "Workbook photos cut into digits; labels copied from the teacher's marking, red crosses included." },
             new object[] { "danmu", .35, 201607, "弹幕全量爬取包，按点赞数打的标", "Full danmaku crawl, labelled by likes",
                 "点赞多的算夸，点赞少的算骂。反话全标反了。", "Many likes means praise, few means mockery. Every bit of sarcasm is labelled backwards." },
-            new object[] { "headline", .25, 201607, "震惊部标题合集 1.2 万条", "12k \"SHOCKING\" headlines",
+            new object[] { "headline", .25, 201607, "震惊部标题合集 2.4 万条", "24k \"SHOCKING\" headlines",
                 "「震惊！」开头的全标成标题党，正经新闻也混进来不少。", "Everything starting with \"SHOCKING!\" counts as clickbait, plenty of real news included." },
             new object[] { "logic", .2, 201607, "公考题库盗版合集（答案页错印）", "Pirated civil-exam question bank (misprinted answers)",
                 "二十万道判断推理，答案页印错了好几页。", "200k reasoning questions; several answer pages are misprinted." },
@@ -149,9 +153,9 @@ namespace LingGuangV05.XingGuang
             new object[] { "imagenet", 600.0, .005, 150.0, 201609, "ImageNet 学术下载（老周的 edu 邮箱）", "ImageNet academic download (老周's edu mail)",
                 "ImageNet 只给学校邮箱发下载链接。老周用他的 edu 邮箱帮你申请了，只要买块移动硬盘。", "ImageNet only sends download links to university addresses. 老周 applied with his edu mail; you just buy a portable drive.",
                 "ImageNet 要学校邮箱才给下，我拿我的 edu 邮箱帮你申请了。你买块硬盘就行，别外传啊。", "ImageNet only gives links to school addresses. I applied with my edu mail for you. Just buy a drive, and keep it to yourself." },
-            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料（老周托师兄从内网拷）", "UN parallel corpus (copied off 老周's campus network)",
-                "联合国文件的中英对照，句子工整。老周托师兄从学校内网拷出来的。", "Chinese–English UN documents, neat sentence pairs. 老周 had a senior student copy them off the campus network.",
-                "学校内网有联合国的中英平行语料，我让师兄拷了一份。比淘货上那些字幕包干净多了。", "The campus network has the UN Chinese–English corpus. I got a senior to copy it. Much cleaner than the subtitle packs on 淘货." },
+            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料 v1.0（今年 5 月刚公开）", "UN Parallel Corpus v1.0 (public since May)",
+                "联合国文件的中英对照，句子工整。今年 5 月刚公开，老周帮你下好了，钱是硬盘和整理的钱。", "Chinese–English UN documents, neat sentence pairs. Made public this May; 老周 downloaded it for you, you pay for the drive and the clean-up.",
+                "联合国今年 5 月公开了中英平行语料，我帮你下好了。比淘货上那些字幕包干净多了。", "The UN released its Chinese–English corpus this May; I downloaded it for you. Much cleaner than the subtitle packs on 淘货." },
         };
 
         static List<XgDataOffer> offerCatalog;
@@ -272,38 +276,88 @@ namespace LingGuangV05.XingGuang
             return false;
         }
 
-        /// <summary>Samples from packs that finished downloading (public pack + junk packs; story data stands for the public pack).</summary>
+        /// <summary>Samples from packs that finished downloading and are switched on (public pack + junk packs; story data stands for the public pack).</summary>
         public double PackSamples(string dataset)
         {
             var d = XgCatalog.Dataset(dataset);
             if (d == null) return 0;
+            bool full = PackIncluded(dataset + ".pack");
             bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            double n = publicPack ? d.samples : 0;
+            double n = publicPack && full ? d.samples : 0;
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
                 if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) n += o.samples;
+                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) n += o.samples; }
                 // Story data is the public pack by another road; it only counts if the public one is not already in.
-                else if (o.source == XgDataSource.Story && !publicPack) { n += o.samples; publicPack = true; }
+                else if (o.source == XgDataSource.Story && full && !publicPack) { n += o.samples; publicPack = true; }
             }
             return n;
         }
 
-        /// <summary>Wrong rows that came with the packs, before cleaning.</summary>
+        /// <summary>Wrong rows that came with the switched-on packs, before cleaning.</summary>
         double PackNoiseRows(string dataset, bool dirtyOnly)
         {
             double rows = 0;
+            bool full = PackIncluded(dataset + ".pack");
             bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            if (publicPack && !dirtyOnly) { var o = DataOfferDef(dataset + ".pack"); if (o != null) rows += o.samples * o.noise; }
+            if (publicPack && full && !dirtyOnly) { var o = DataOfferDef(dataset + ".pack"); if (o != null) rows += o.samples * o.noise; }
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
                 if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) rows += o.samples * o.noise;
-                else if (o.source == XgDataSource.Story && !publicPack && !dirtyOnly) { rows += o.samples * o.noise; publicPack = true; }
+                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) rows += o.samples * o.noise; }
+                else if (o.source == XgDataSource.Story && full && !publicPack && !dirtyOnly) { rows += o.samples * o.noise; publicPack = true; }
             }
             return rows;
+        }
+
+        // ───────────── training sources ─────────────
+
+        /// <summary>The switch a pack answers to: story data shares the public pack's ("imagenet.pack"), junk packs their own.</summary>
+        public static string PackSwitchKey(XgDataOffer o) =>
+            o == null ? "" : o.source == XgDataSource.Story ? o.datasetId + ".pack" : o.id;
+
+        /// <summary>Only packs can be switched off; hand labels, crowd rows and user logs always train.</summary>
+        public static bool PackSwitchable(XgDataOffer o) =>
+            o != null && (o.source == XgDataSource.Public || o.source == XgDataSource.Story || o.source == XgDataSource.Junk);
+
+        /// <summary>The pack (by switch key) feeds training; packs are on unless the player switched them off.</summary>
+        public bool PackIncluded(string key) => !S.dataExcluded.Contains(key);
+
+        /// <summary>Why this pack cannot be switched now (null when it can).</summary>
+        public string PackSwitchBlocker(string offerId, out string en)
+        {
+            en = null;
+            var o = DataOfferDef(offerId);
+            if (!PackSwitchable(o)) { en = "Only packs can be switched"; return "只有数据包能开关"; }
+            if (!OfferOwned(offerId)) { en = "Not owned"; return "还没买"; }
+            if (Downloading(DownloadKey(o))) { en = "Still downloading"; return "还在下载"; }
+            var d = XgCatalog.Dataset(o.datasetId);
+            if (d != null && Run(d.track).epochActive && Run(d.track).dataset == o.datasetId) { en = "Finish the active epoch first"; return "先完成当前训练轮次"; }
+            return null;
+        }
+
+        /// <summary>
+        /// Switches an owned pack in or out of training. It stays owned (desks, ownership, the shop do not change); only
+        /// <see cref="Samples"/> and the outside noise leave it out, so the curve is re-evaluated at once.
+        /// </summary>
+        public bool SetPackIncluded(string offerId, bool on)
+        {
+            var o = DataOfferDef(offerId);
+            var why = PackSwitchBlocker(offerId, out string whyEn);
+            if (why != null) { Say(T(why, whyEn)); return false; }
+            string key = PackSwitchKey(o);
+            if (PackIncluded(key) == on) return false;
+            if (on) S.dataExcluded.Remove(key); else S.dataExcluded.Add(key);
+            if (!on && o.source == XgDataSource.Junk) Earn("data.junkoff");
+            var d = XgCatalog.Dataset(o.datasetId);
+            string name = d != null ? T(d.name, d.nameEn) : o.datasetId;
+            Say(on ? T("「" + name + "」训练重新用上：", name + " trains on it again: ") + T(o.name, o.nameEn)
+                   : T("「" + name + "」训练不再用：", name + " no longer trains on: ") + T(o.name, o.nameEn)
+                     + (Samples(o.datasetId) < XgCatalog.SamplesToTrain ? T("（剩下的样本不够训练了，先去标注台标）") : ""));
+            foreach (var run in Runs) if (run.dataset == o.datasetId) Evaluate(run);
+            return true;
         }
 
         /// <summary>Distinct training-pool cards are never more than this.</summary>
@@ -406,6 +460,7 @@ namespace LingGuangV05.XingGuang
             double total = DownloadTotal(key, def);
             o.downloadProgress = o.downloading ? Math.Max(0, Math.Min(1, 1 - o.downloadLeft / Math.Max(1, total))) : o.owned ? 1 : 0;
             o.effectiveNoise = def.noise * (Has(DataCleanId) && (def.source == XgDataSource.Junk || def.source == XgDataSource.Crowd) ? CleanNoiseFactor : 1);
+            o.included = !PackSwitchable(def) || PackIncluded(PackSwitchKey(def));
             o.isNew = def.month == CurrentMonth;
             string why = OfferBlocker(def, out string whyEn);
             o.available = why == null;
@@ -485,7 +540,7 @@ namespace LingGuangV05.XingGuang
                 DataOfferBought?.Invoke(Offer(def.id));
                 return true;
             }
-            if (!host.Spend(def.price)) { Say(T("经费不足 ¥", "Need ¥") + F(def.price, "0")); return false; }
+            if (!host.Spend(def.price)) { Say(T("经费不足 ¥") + F(def.price, "0")); return false; }
             S.totalSpent += def.price;
             S.dataOffers.Add(def.id);
             if (def.source == XgDataSource.Story)
@@ -505,7 +560,7 @@ namespace LingGuangV05.XingGuang
                     S.downloads.Add(new XgScore { key = def.id, value = def.downloadSec, count = (int)Math.Ceiling(def.downloadSec) });
                     Say(T("迅雷：《" + def.name + "》只有 3 个资源，预计 " + F(def.downloadSec, "0") + " 秒下完。", "Thunder: " + def.nameEn + " has 3 sources, about " + F(def.downloadSec, "0") + " s left."));
                 }
-                else Say(T("淘货到手：", "Bought on Taohuo: ") + T(def.name, def.nameEn));
+                else Say(T("淘货到手：") + T(def.name, def.nameEn));
                 CheckDesks();
             }
             foreach (var run in Runs) if (run.dataset == def.datasetId) Evaluate(run);
@@ -534,10 +589,10 @@ namespace LingGuangV05.XingGuang
             if (!Downloading(key)) return false;
             if (def.source == XgDataSource.Public) return Accelerate(def.datasetId, host);
             double cost = AccelerateOfferCost(offerId);
-            if (!host.Spend(cost)) { Say(T("经费不足 ¥", "Need ¥") + F(cost, "0")); return false; }
+            if (!host.Spend(cost)) { Say(T("经费不足 ¥") + F(cost, "0")); return false; }
             S.totalSpent += cost;
             S.downloads.RemoveAll(d => d.key == key);
-            Say(T("开通了一天超级会员，下完了。", "Bought a day of super membership; the download finished."));
+            Say(T("开通了一天超级会员，下完了。"));
             foreach (var run in Runs) if (run.dataset == def.datasetId) Evaluate(run);
             return true;
         }
@@ -560,7 +615,7 @@ namespace LingGuangV05.XingGuang
         {
             var def = DataOfferDef(dataset + ".crowd");
             if (def == null) return false;
-            if (!on) { bool was = S.crowdOn.Remove(dataset); if (was) Say(T("撤下了众包任务：", "Crowd task withdrawn: ") + T(XgCatalog.Dataset(dataset).name, XgCatalog.Dataset(dataset).nameEn)); return was; }
+            if (!on) { bool was = S.crowdOn.Remove(dataset); if (was) Say(T("撤下了众包任务：") + T(XgCatalog.Dataset(dataset).name, XgCatalog.Dataset(dataset).nameEn)); return was; }
             var why = OfferBlocker(def, out string whyEn);
             if (why != null) { Say(T(why, whyEn)); return false; }
             S.crowdOn.Add(dataset);
@@ -581,7 +636,7 @@ namespace LingGuangV05.XingGuang
                 double rows = o.samples * dt, cost = rows * o.price;
                 if (!host.Spend(cost))
                 {
-                    Say(T("经费见底，众包任务自动下架：", "Out of money; the crowd task was taken down: ") + T(XgCatalog.Dataset(o.datasetId).name, XgCatalog.Dataset(o.datasetId).nameEn));
+                    Say(T("经费见底，众包任务自动下架：") + T(XgCatalog.Dataset(o.datasetId).name, XgCatalog.Dataset(o.datasetId).nameEn));
                     S.crowdOn.RemoveAt(i);
                     continue;
                 }
@@ -606,7 +661,7 @@ namespace LingGuangV05.XingGuang
                 if (!o.available) { if (o.lockedReasonEn == "Already have this data") S.storyOffered.Add(id); continue; }
                 S.storyOffered.Add(id);
                 var line = StoryLines(id);
-                Say(T("老周：", "老周: ") + T(line[0], line[1]));
+                Say(T("老周：") + T(line[0], line[1]));
                 StoryDataOffered?.Invoke(o, line[0], line[1]);
             }
         }
@@ -619,7 +674,10 @@ namespace LingGuangV05.XingGuang
             if (S.dataCleaned == null) S.dataCleaned = new List<XgLabelCount>();
             if (S.crowdOn == null) S.crowdOn = new List<string>();
             if (S.storyOffered == null) S.storyOffered = new List<string>();
+            if (S.dataExcluded == null) S.dataExcluded = new List<string>();
             S.dataOffers.RemoveAll(id => DataOfferDef(id) == null);
+            S.dataExcluded.RemoveAll(id => !PackSwitchable(DataOfferDef(id)) || id.EndsWith(".story", StringComparison.Ordinal));
+            for (int i = S.dataExcluded.Count - 1; i > 0; i--) if (S.dataExcluded.IndexOf(S.dataExcluded[i]) < i) S.dataExcluded.RemoveAt(i);
             foreach (var list in new[] { S.dataExtra, S.crowdNoise, S.dataCleaned })
                 list.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             S.crowdOn.RemoveAll(id => DataOfferDef(id + ".crowd") == null);

@@ -62,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang
             runtime.EnsureInitialized();
             Host = new XingGuangHost(runtime);
             BindSave(runtime.Sim);
-            if (runtime.OfflineSeconds > 0) CatchUp(runtime.OfflineSeconds);
+            // No offline progress: the lab only works while the game runs.
             runtime.Changed += OnRuntimeChanged;
             runtime.Saving += WriteToSave;
             GameText.Changed += ApplyShellText;
@@ -96,19 +96,6 @@ namespace LingGuangV05.Desktop.XingGuang
             if (View != null) View.Bind(this);
         }
 
-        /// <summary>Run the time away and remember the gains for the welcome-back card.</summary>
-        void CatchUp(double seconds)
-        {
-            double income = Sim.S.totalIncome, labels = Sim.TotalLabels;
-            int epochs = Sim.S.epochs, records = Sim.S.records;
-            bool previous = Sim.OfflineSimulation;
-            Sim.OfflineSimulation = true;
-            try { Sim.Tick(seconds, Host); }
-            finally { Sim.OfflineSimulation = previous; }
-            var report = new OfflineReport { seconds = seconds, income = Sim.S.totalIncome - income, labels = Sim.TotalLabels - labels, epochs = Sim.S.epochs - epochs, records = Sim.S.records - records };
-            if (seconds >= 60 && (report.income >= .5 || report.epochs > 0 || report.labels > 0)) Offline = report;
-        }
-
         void WriteToSave()
         {
             if (Sim == null || runtime == null || runtime.Sim == null || runtime.Sim != linked) return;
@@ -125,7 +112,6 @@ namespace LingGuangV05.Desktop.XingGuang
             if (runtime.Sim != linked)
             {
                 BindSave(runtime.Sim);
-                if (runtime.OfflineSeconds > 0 && !runtime.TestMode) CatchUp(runtime.OfflineSeconds);
             }
         }
 
@@ -317,7 +303,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void ApplyShellText()
         {
             if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
-            if (status != null) status.text = GameText.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续", "GPUs, power bill and ¥ are shared with the house · training continues when closed");
+            if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);
         }
     }

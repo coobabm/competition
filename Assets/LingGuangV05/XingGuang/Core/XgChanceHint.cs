@@ -73,7 +73,7 @@ namespace LingGuangV05.XingGuang
             if (sim == null || run == null) return XgChanceCause.None;
             var k = sim.Knobs(run);
             double rate = k.lr;
-            if (rate * 1.5 > XgBoard.TearLimit && !k.clip) return XgChanceCause.RateTooHigh;
+            if (rate * 1.5 > k.TearAt) return XgChanceCause.RateTooHigh;
             if (k.activation == XgActivation.Step && k.depth >= 2) return XgChanceCause.StepActivation;
             if (BetterArchitecture(sim, run) != null) return XgChanceCause.Architecture;
             int used = sim.Board.Count(XgSim.RegionOf(run.dataset));
@@ -191,11 +191,11 @@ namespace LingGuangV05.XingGuang
                 case XgChanceCause.RateTooHigh:
                 {
                     int lower = Math.Min(XgCatalog.LearningRates.Length - 1, run.lr + 1);
-                    string to = XgCatalog.LearningRates[lower];
+                    string to = sim.RateLabel(lower);
                     return lrKnob
-                        ? Make(id, "模型只会瞎猜：学习率 " + XgCatalog.LearningRates[run.lr] + " 太大，调到 " + to, "The model only guesses: learning rate " + XgCatalog.LearningRates[run.lr] + " is too big, set it to " + to,
+                        ? Make(id, "模型只会瞎猜：学习率 " + sim.RateLabel(run.lr) + " 太大，调到 " + to, "The model only guesses: learning rate " + sim.RateLabel(run.lr) + " is too big, set it to " + to,
                             seen + "每一步都改过头，学到的又被冲掉。", seenEn + " Every step overshoots and wipes out what it learnt.", "train", "label:" + to, arg)
-                        : Make(id, "模型只会瞎猜：学习率太大，技能树买「学习率旋钮」", "The model only guesses: the rate is too big, buy the learning-rate knob in the tree",
+                        : Make(id, "模型只会瞎猜：学习率太大，科技买「学习率旋钮」", "The model only guesses: the rate is too big, buy the learning-rate knob in the tree",
                             seen + "每一步都改过头。", seenEn + " Every step overshoots.", "tree", "node:shared.lr", "");
                 }
                 case XgChanceCause.StepActivation:
@@ -203,7 +203,7 @@ namespace LingGuangV05.XingGuang
                     int act = sim.ActivationOwned(2) ? 2 : sim.ActivationOwned(1) ? 1 : 0;
                     string why = seen + "阶跃没有坡度，误差传不回下层，多层的格子合不成新概念。", whyEn = seenEn + " A step has no slope: the error cannot reach the lower layer, so layers cannot merge concepts.";
                     if (act == 0)
-                        return Make(id, "模型只会瞎猜：激活是「阶跃」，去技能树买「S 形」激活", "The model only guesses: the activation is a step, buy the S-curve in the skill tree",
+                        return Make(id, "模型只会瞎猜：激活是「阶跃」，去科技买「S 形」激活", "The model only guesses: the activation is a step, buy the S-curve in the tech tree",
                             why, whyEn, "tree", "node:sigmoid", "");
                     string name = act == 2 ? "ReLU" : "S 形", nameEn = act == 2 ? "ReLU" : "S-curve";
                     return Make(id, "模型只会瞎猜：激活从「阶跃」换成「" + name + "」", "The model only guesses: switch the activation from step to " + nameEn,
@@ -214,8 +214,8 @@ namespace LingGuangV05.XingGuang
                     var a = BetterArchitecture(sim, run);
                     bool images = track == XgTrack.Vision;
                     return Make(id, "模型只会瞎猜：全连接不适合这张桌，换「" + a.name + "」", "The model only guesses: fully connected does not suit this desk, switch to " + a.nameEn,
-                        seen + (images ? "全连接把每个像素位置当成新东西，字挪一格就不认识了；局部共享在哪儿都通用。" : "全连接只看出现了哪些字，不管先后；回环一个字一个字地读。"),
-                        seenEn + (images ? " Full wiring treats every pixel position as new, so a shifted digit is a stranger; local sharing works anywhere." : " Full wiring only sees which words appear, not their order; a loop reads them one by one."),
+                        seen + (images ? "全连接把每个像素位置当成新东西，字挪一格就不认识了；局部共享在哪儿都通用。" : "全连接把每个字的位置绑死，整句挪一格就成了新句子；回环一个字一个字地读，哪儿出现都认得。"),
+                        seenEn + (images ? " Full wiring treats every pixel position as new, so a shifted digit is a stranger; local sharing works anywhere." : " Full wiring binds every word to its position, so the same sentence moved by one word is new to it; a loop reads word by word and knows them anywhere."),
                         "train", "label:" + a.name + "|" + a.nameEn, arg);
                 }
                 case XgChanceCause.TooNarrow:
@@ -231,7 +231,7 @@ namespace LingGuangV05.XingGuang
                     }
                     var node = NextWidthNode(sim, track);
                     return node != null
-                        ? Make(id, "模型只会瞎猜：宽度 " + now + " 太窄，技能树买「" + node.name + "」", "The model only guesses: width " + now + " is too narrow, buy " + node.nameEn + " in the skill tree",
+                        ? Make(id, "模型只会瞎猜：宽度 " + now + " 太窄，科技买「" + node.name + "」", "The model only guesses: width " + now + " is too narrow, buy " + node.nameEn + " in the tech tree",
                             why, whyEn, "tree", "node:" + node.id, "")
                         : Make(id, "模型只会瞎猜：宽度已到顶，少一层或换个结构", "The model only guesses: the width is maxed, try fewer layers or another structure",
                             why, whyEn, "train", "name:Width", arg);
@@ -239,8 +239,8 @@ namespace LingGuangV05.XingGuang
                 case XgChanceCause.RateTooLow:
                 {
                     int higher = Math.Max(0, run.lr - 1);
-                    string to = XgCatalog.LearningRates[higher];
-                    return Make(id, "模型只会瞎猜：学习率 " + XgCatalog.LearningRates[run.lr] + " 太小，调到 " + to, "The model only guesses: learning rate " + XgCatalog.LearningRates[run.lr] + " is too small, set it to " + to,
+                    string to = sim.RateLabel(higher);
+                    return Make(id, "模型只会瞎猜：学习率 " + sim.RateLabel(run.lr) + " 太小，调到 " + to, "The model only guesses: learning rate " + sim.RateLabel(run.lr) + " is too small, set it to " + to,
                         seen + "每一步只挪一点点，格子都还没长出来。", seenEn + " Each step barely moves; the cells have not even grown yet.", "train", lrKnob ? "label:" + to : "name:LrText", arg);
                 }
                 default:

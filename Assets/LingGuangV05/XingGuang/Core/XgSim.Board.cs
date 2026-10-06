@@ -11,6 +11,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Cards trained per dataset, and the board's card count when each was last trained (forgetting).</summary>
         public List<XgScore> boardCards = new List<XgScore>();
         public List<XgScore> boardLastTrained = new List<XgScore>();
+        /// <summary>Best validation accuracy per dataset of a model without a loop (realtime contracts, XgContract.realtime).</summary>
+        public List<XgScore> parallelBest = new List<XgScore>();
     }
 
     public sealed partial class XgRun
@@ -19,6 +21,13 @@ namespace LingGuangV05.XingGuang
         /// -1 (also older saves) = the best activation owned.</summary>
         public int act = -1;
         public bool clip, skip, position, warmup;
+        /// <summary>BatchNorm switched off (owned BatchNorm is on by default; older saves read false = on).</summary>
+        public bool batchNormOff;
+        /// <summary>Warm-up: cards trained since the settings last changed, and those settings (not saved).</summary>
+        [NonSerialized] internal long warmupCards;
+        [NonSerialized] internal string warmupKey = "";
+        /// <summary>特征工程 switched on (hand-made features; see <see cref="XgBoard.Engineered"/>).</summary>
+        public bool features;
         /// <summary>Attention with the loop switched off (design v1.1 阶段 5「只用注意力」).</summary>
         public bool attnOnly;
         /// <summary>Next card of the training pool and the running training accuracy on fed cards.</summary>
@@ -54,7 +63,7 @@ namespace LingGuangV05.XingGuang
         {
             switch (arch)
             {
-                case "lenet": case "alexnet": case "vgg": case "googlenet": case "resnet": case "caption": return XgWiring.LocalShared;
+                case "lenet": case "alexnet": case "vgg": case "googlenet": case "resnet": case "caption": case "textcnn": return XgWiring.LocalShared;
                 case "rnn": return XgWiring.Recurrent;
                 case "lstm": case "gru": return XgWiring.GatedRecurrent;
                 case "seq2seq": return XgWiring.EncoderDecoder;
@@ -74,6 +83,10 @@ namespace LingGuangV05.XingGuang
         public bool SkipOwned => Has("resnet") || Has("transformer");
         public bool PositionOwned => Has("position");
         public bool WarmupOwned => Has("warmup");
+        public bool FeaturesOwned => Has(FeaturesId);
+        public const string FeaturesId = "features";
+        /// <summary>Hand-made features take people's time: an epoch with them on feeds this share of the cards.</summary>
+        public const double FeaturesCardFactor = .5;
         public bool AttentionOnlyOwned => Has("attention");
 
         /// <summary>The rule parameters this run trains with. Knobs the player has not bought stay off.</summary>
@@ -91,7 +104,12 @@ namespace LingGuangV05.XingGuang
                 clip = ClipOwned && run.clip,
                 position = PositionOwned && run.position,
                 warmup = WarmupOwned && run.warmup,
-                batchNorm = Has("batchnorm"),
+                features = FeaturesOwned && run.features,
+                batchNorm = BatchNormOwned && !run.batchNormOff,
+                dropout = Has("dropout"),
+                identityInit = Has("irnn"),
+                multiHead = arch == "transformer",
+                steadiness = OptimizerSteadiness,
                 bias = Has("bias"),
                 lr = RateValues[Math.Max(0, Math.Min(RateValues.Length - 1, run.lr))],
             };
@@ -109,6 +127,9 @@ namespace LingGuangV05.XingGuang
         public bool SetPosition(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !PositionOwned) return false; run.position = on; Evaluate(run); return true; }
         public bool SetAttentionOnly(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !AttentionOnlyOwned) return false; run.attnOnly = on; Evaluate(run); return true; }
         public bool SetWarmup(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !WarmupOwned) return false; run.warmup = on; return true; }
+        public bool SetBatchNorm(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !BatchNormOwned) return false; run.batchNormOff = !on; Evaluate(run); return true; }
+        public bool BatchNormOwned => Has("batchnorm");
+        public bool SetFeatures(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !FeaturesOwned) return false; run.features = on; Evaluate(run); return true; }
 
         /// <summary>Buying a knob switches it on for both tracks, the way a new architecture is switched to.</summary>
         void ApplyKnobNode(XgNode node)
@@ -135,25 +156,66 @@ namespace LingGuangV05.XingGuang
         public List<XgBoardCard> TestSet(string dataset)
         {
             int level = BoardLevel(dataset);
-            string key = dataset + "|" + level + "|" + Today / 100 + "|" + S.dataSalt;
-            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = XgBoardData.TestSet(dataset, level, Today, S.dataSalt);
+            // A fixed set per dataset and level: a new month only brings new cards where the cards follow the calendar.
+            bool topical = XgBoardData.Topical(dataset);
+            string key = dataset + "|" + level + "|" + (topical ? Today / 100 : 0) + "|" + S.dataSalt;
+            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = XgBoardData.TestSet(dataset, level, topical ? Today : 0, S.dataSalt);
             return set;
         }
 
         /// <summary>The next card of the labelled pool (the pool grows with the samples you own).</summary>
         XgBoardCard PoolCard(XgRun run) => PoolCardAt(run, run.cursor++);
 
+        /// <summary>
+        /// "一轮" is one batch of cards, not a pass over the data: the labelled pool (with augmented copies) and how
+        /// many times the cards trained so far would have gone through it.
+        /// </summary>
+        public int PoolSize(XgRun run) => BoardPoolAt(Samples(run.dataset), BoardCardsOn(run.dataset)) * AugmentFactor(run.dataset);
+        public double PassesOverData(XgRun run) { int pool = PoolSize(run); return pool > 0 ? BoardCardsOn(run.dataset) / pool : 0; }
+
+        /// <summary>Warm-up length in cards.</summary>
+        public const int WarmupCards = 60;
+
+        /// <summary>
+        /// Data augmentation, per kind of picture: digits shift (×2; flipped, a 6 is not a 6), pictures shift and crop
+        /// (×3), Go positions turn and mirror (×8 symmetries). Text is not augmented.
+        /// </summary>
+        public int AugmentFactor(string dataset)
+        {
+            if (!Has("augment")) return 1;
+            switch (dataset) { case "mnist": return 2; case "go": return 8; case "cifar": case "imagenet": case "meme": return 3; default: return 1; }
+        }
+
         /// <summary>The pool card at a position (trials read ahead without moving the cursor).</summary>
         XgBoardCard PoolCardAt(XgRun run, long position)
         {
             int pool = BoardPoolAt(Samples(run.dataset), BoardCardsOn(run.dataset));
-            int index = (int)(position % pool);
+            int factor = AugmentFactor(run.dataset);
+            int at = (int)(position % ((long)pool * factor));
+            int index = at % pool, variant = at / pool;
             var card = XgBoardData.Make(run.dataset, XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Train, S.dataSalt), BoardLevel(run.dataset), Today);
-            // R5 噪: rows wrongly labelled by automation, packs or crowds pull the wrong way (XgSim.DataSources.cs).
+            if (variant > 0) card = XgBoardData.Augment(card, run.dataset, variant);
+            // R5 噪: rows wrongly labelled by packs or crowds pull the wrong way at random; rows the lab's own model
+            // labelled wrong are not random: they are the cards it gets wrong, labelled its way (近亲繁殖, XgSim.DataSources.cs).
             double noise = BoardFlipRate(run.dataset);
-            if (noise > 0 && (XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Diagnostic, S.dataSalt) % 1000) < noise * 1000) card.truth = !card.truth;
+            if (noise > 0)
+            {
+                int roll = XgBoardData.Seed(run.dataset, index, XgBoardData.Use.Diagnostic, S.dataSalt);
+                double own = Noise(run.dataset), outside = DataNoise(run.dataset), ownShare = own + outside > 0 ? own / (own + outside) : 0;
+                double ownFlips = noise * ownShare, randomFlips = noise - ownFlips;
+                double modelWrong = Math.Max(.05, 1 - BinaryAccuracy(run.dataset, BestAcc(run.dataset)));
+                double pick = (roll % 1000) / 1000.0, pick2 = ((roll / 1000) % 1000) / 1000.0;
+                if (pick < randomFlips) card.truth = !card.truth;
+                else if (ownFlips > 0 && pick2 < Math.Min(1, ownFlips / modelWrong) && Board.Predict(card, Knobs(run), out bool guessed) != card.truth && !guessed) card.truth = !card.truth;
+            }
             return card;
         }
+
+        /// <summary>
+        /// 串行瓶颈's long documents: a loop reads each sentence one word after another, so an epoch covers this share of
+        /// the sentences attention (whole sentence at once) does.
+        /// </summary>
+        public const double SerialCardFactor = .25;
 
         /// <summary>Cards one epoch feeds: compute, optimiser and research speed; bigger boards cost more per card.</summary>
         public int CardsPerEpoch(XgRun run, double compute, bool hand)
@@ -162,7 +224,8 @@ namespace LingGuangV05.XingGuang
             var a = XgCatalog.Arch(run.arch);
             var k = Knobs(run);
             double n = 24 * Math.Pow(Math.Max(.5, compute), .7) * OptSpeed * (a == null ? 1 : a.speed) * SpeedResearch * ProgressionSpeed(run)
-                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0);
+                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
+                * (run.dataset == "parallel" && SerialWiring(k) ? SerialCardFactor : 1);
             return (int)Math.Max(4, Math.Min(MaxCardsPerEpoch, Math.Round(n)));
         }
 
@@ -177,7 +240,7 @@ namespace LingGuangV05.XingGuang
         void EvaluateBoard(XgRun run)
         {
             var test = TestSet(run.dataset);
-            double acc = Board.Accuracy(test, Knobs(run));
+            double acc = ExamWithMistakes(run, test, Knobs(run));
             run.valAcc = Scale(run.dataset, acc);
             run.trainAcc = Scale(run.dataset, run.boardTrain < 0 ? acc : run.boardTrain);
         }
@@ -188,8 +251,15 @@ namespace LingGuangV05.XingGuang
             var k = Knobs(run);
             RememberFormalKnobs(run);
             int right = 0, torn = 0;
+            // Warm-up: after a change of settings the rate climbs from almost nothing over the first cards, when the
+            // errors are largest.
+            string key = run.dataset + "|" + TraceSettings(run);
+            if (run.warmupKey != key) { run.warmupKey = key; run.warmupCards = 0; }
+            double rate = k.lr;
             for (int i = 0; i < cards; i++)
             {
+                run.warmupCards++;
+                if (k.warmup) k.lr = rate * Math.Min(1, run.warmupCards / (double)WarmupCards);
                 var step = Board.Train(PoolCard(run), k);
                 if (step.correct) right++;
                 if (step.diverged) torn++;
@@ -220,8 +290,9 @@ namespace LingGuangV05.XingGuang
             };
             foreach (var id in XgPhenomena.Observe(o, S.phenomena, Board))
             {
+                tracePhenomena.Add(id);
                 var p = XgPhenomena.Get(id);
-                Say(T("现象：", "Phenomenon: ") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
+                Say(T("现象：") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
                 PhenomenonFound?.Invoke(p);
             }
             // Datasets left alone fade (catastrophic forgetting) — checked against their own test sets.
@@ -231,7 +302,7 @@ namespace LingGuangV05.XingGuang
                 long idle = Board.S.cards - (long)other.value;
                 if (idle < 500) continue;
                 var po = new XgObservation { dataset = other.key, region = o.region, knobs = o.knobs, train = .5, test = Board.Accuracy(TestSet(other.key), o.knobs), cards = (long)Count(S.boardCards, other.key).value, idle = idle };
-                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board)) { var p = XgPhenomena.Get(id); Say(T("现象：", "Phenomenon: ") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
+                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board)) { var p = XgPhenomena.Get(id); Say(T("现象：") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
             }
         }
 

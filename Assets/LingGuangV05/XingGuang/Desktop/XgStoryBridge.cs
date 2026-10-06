@@ -94,6 +94,9 @@ namespace LingGuangV05.Desktop.XingGuang
         { if (assessment != null && assessment.reward + assessment.gradeBonus > 0) EmitOnce("lg.paidAssessment"); }
         void OnRuntimeSignal(string signal, string arg)
         {
+            // Hidden 下班以后 cards from the hardware shop (XgSim.Cards.cs).
+            if (bound != null && signal == "gpu.bought" && arg == LingGuangV05.Core.Hardware.HardwareCatalog.TitanXp) bound.EarnSecret("life.hw.titan");
+            if (bound != null && signal == "breaker.tripped" && controller.runtime.Sim.S.pcieBurned) bound.EarnSecret("life.hw.burn");
             if (signal != "story.delivered" || string.IsNullOrEmpty(arg) || bound == null) return;
             bound.MarkIntroDelivered(arg);
             if (arg.StartsWith("wall_", StringComparison.Ordinal)) bound.MarkWallExplained(arg.Substring(5));
@@ -166,6 +169,8 @@ namespace LingGuangV05.Desktop.XingGuang
                         (LingGuangV05.Runtime.GameText.IsEnglish ? "\nNo duplicate fees or story replay." : "\n没有重复收费，也不会重播旧剧情。");
                 }
             }
+            string story = StoryText(name);
+            if (story != null) return story;
             if (name != "rememberedLine") return null;
             var yy = LingGuangV05.Desktop.YY.YYChatHub.Instance;
             var conversation = yy != null ? yy.Conversation("lingguang") : null;
@@ -178,6 +183,31 @@ namespace LingGuangV05.Desktop.XingGuang
                     }
             return LingGuangV05.Runtime.GameText.IsEnglish ? "We have not talked much yet. I can remember more now." : "我们还没说过几句话。现在，我能记住更多了。";
         }
+        /// <summary>Lines of the stage 2 / 4 / 5 story that depend on the save (Chinese only; see CLAUDE.md).</summary>
+        string StoryText(string name)
+        {
+            var sim = controller != null ? controller.Sim : null;
+            if (sim == null) return null;
+            switch (name)
+            {
+                case "aiName": return sim.Profile.name.Length > 0 ? sim.Profile.name : LingGuangV05.Core.AppNames.AiZh;
+                case "firstChoicePick": return sim.FirstTrack == "vision" ? "[阿杰] 它点了 A。哈，先学看图！" : "[小刚] 它点了 B，读弹幕。我就说吧。";
+                case "firstDayAnswer":
+                    int answer = sim.FirstDayAnswer;
+                    return answer > 0 ? "你教我：是。" : answer < 0 ? "你教我：否。" : "你没教。我自己亮了「否」。";
+                case "wishQuote":
+                    string wish = sim.Profile.personality ?? "";
+                    if (wish.Length == 0) return "你什么都没写。";
+                    return "「" + (wish.Length > 18 ? wish.Substring(0, 18) + "……" : wish) + "」";
+                case "wishVerdict": return sim.Profile.personality.Length == 0 ? "那我就长成你喂的样子。" : sim.WishDrifted ? "不太像。我被喂歪了。" : "我在学。";
+                case "garble1": return sim.GarbleLine(0);
+                case "garble2": return sim.GarbleLine(1);
+                case "garble3": return sim.GarbleLine(2);
+                case "garble4": return sim.GarbleLine(3);
+                default: return null;
+            }
+        }
+
         double? ReadFact(string name)
         {
             var sim = controller != null ? controller.Sim : null;
@@ -199,6 +229,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "labEndingAnswered": return sim.S.chapterComplete ? 1 : 0;
                 case "labMigrated": return sim.S.migratedBeats.Count > 0 ? 1 : 0;
                 case "labCanProject": return sim.HasEmerged(5) && !sim.Has("transformer") ? 1 : 0;
+                case "labStageEpochs": return sim.S.stageEpochs;
+                case "labChatTurns": return sim.S.chatTurns;
+                case "labGarble": return sim.GarbleLinesRead;
                 default: return null;
             }
         }

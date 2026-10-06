@@ -123,7 +123,7 @@ namespace LingGuangV05.Desktop.Games
                 }
                 case XgReaction.RecycleBin:
                     if (!RenameRecycleBin(T(XgGames.RecycleName(c)))) return false;
-                    desk.Popup(who, T("看看回收站。", "Look at the recycle bin."), 5);
+                    desk.Popup(who, Lang.T("看看回收站。"), 5);
                     return true;
                 default:
                     return false;
@@ -187,7 +187,7 @@ namespace LingGuangV05.Desktop.Games
             var text = new List<string>();
             foreach (var l in lines) text.Add(T(l));
             var pos = new Vector2(UnityEngine.Random.Range(-300f, 100f), UnityEngine.Random.Range(-80f, 160f));
-            var client = desk.Window("Game Review", T("复盘.txt - 记事本", "review.txt - Notepad"), pos, new Vector2(460, 210), out review);
+            var client = desk.Window("Game Review", Lang.T("复盘.txt - 记事本"), pos, new Vector2(460, 210), out review);
             desk.Text(PrologueDesk.Rect("Text", client, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), string.Join("\n", text), 18, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
             return true;
         }
@@ -197,11 +197,11 @@ namespace LingGuangV05.Desktop.Games
         {
             if (desk.icons == null || log == null || log.Count == 0) return false;
             int day = lab.Today;
-            string file = T("棋谱_", "games_") + day + ".txt";
+            string file = Lang.T("棋谱_") + day + ".txt";
             var g = XgGames.Name(c.game);
-            string result = c.outcome == XgGameOutcome.Draw ? T("和棋", "draw") : c.outcome == XgGameOutcome.PlayerWon ? T("你赢", "you won") : T("你输", "you lost");
+            string result = c.outcome == XgGameOutcome.Draw ? Lang.T("和棋") : c.outcome == XgGameOutcome.PlayerWon ? Lang.T("你赢") : Lang.T("你输");
             var body = new System.Text.StringBuilder();
-            body.Append(T(g.zh, g.en)).Append(" · ").Append(result).Append(" · ").Append(c.moves).Append(T(" 手", " moves")).Append('\n');
+            body.Append(T(g.zh, g.en)).Append(" · ").Append(result).Append(" · ").Append(c.moves).Append(Lang.T(" 手")).Append('\n');
             for (int i = 0; i < log.Count; i += 2)
             {
                 body.Append(i / 2 + 1).Append(". ").Append(log[i]);
@@ -218,14 +218,14 @@ namespace LingGuangV05.Desktop.Games
                 icon.GetComponent<PrologueClick>().Open = () => OpenRecord(day, file);
                 recordIcons[day] = icon;
             }
-            desk.Popup(who, T("棋谱存到桌面了：", "Saved the game record on the desktop: ") + file, 6);
+            desk.Popup(who, Lang.T("棋谱存到桌面了：") + file, 6);
             return true;
         }
 
         void OpenRecord(int day, string file)
         {
             if (!records.TryGetValue(day, out var games)) return;
-            var client = desk.Window("Game Record Window", file + T(" - 记事本", " - Notepad"), new Vector2(-120, 60), new Vector2(620, 460), out _);
+            var client = desk.Window("Game Record Window", file + Lang.T(" - 记事本"), new Vector2(-120, 60), new Vector2(620, 460), out _);
             var t = desk.Text(PrologueDesk.Rect("Text", client, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), string.Join("\n\n", games), 15, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
             t.overflowMode = TextOverflowModes.Truncate;
         }

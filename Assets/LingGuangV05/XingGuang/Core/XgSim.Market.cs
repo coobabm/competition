@@ -316,11 +316,11 @@ namespace LingGuangV05.XingGuang
         public bool CanSignSla(XgSlaOffer offer, out string why)
         {
             why = null;
-            if (offer == null) { why = T("没有这个订单", "No such offer"); return false; }
-            if (!SlaVisible) { why = T("需要先接入摆渡众包（买自动答题）", "Join Bodu Crowdsourcing first (buy auto labelling)"); return false; }
-            if (SlaActive) { why = S.slaId == offer.id ? T("正在履约", "In progress") : T("一次只能接一单高价单", "One high-paying contract at a time"); return false; }
-            if (QualityFrozen) { why = T("账号冻结中，甲方不接", "The account is frozen; clients won't sign"); return false; }
-            if (!DeskOpen(offer.dataset)) { why = T("还没开这张标注桌", "That desk is not open yet"); return false; }
+            if (offer == null) { why = T("没有这个订单"); return false; }
+            if (!SlaVisible) { why = T("需要先接入摆渡众包（买自动答题）"); return false; }
+            if (SlaActive) { why = S.slaId == offer.id ? T("正在履约") : T("一次只能接一单高价单"); return false; }
+            if (QualityFrozen) { why = T("账号冻结中，甲方不接"); return false; }
+            if (!DeskOpen(offer.dataset)) { why = T("还没开这张标注桌"); return false; }
             double cooldown = SlaCooldown(offer.id);
             if (cooldown > 0) { why = T("甲方 " + FreezeClock(cooldown) + " 后再派单", "The client sends a new order in " + FreezeClock(cooldown)); return false; }
             if (Credit + 1e-9 < SlaMinCredit) { why = T("信用分需 ≥ " + F(SlaMinCredit, "0") + "（现在 " + F(Credit, "0") + "）", "Credit must be at least " + F(SlaMinCredit, "0") + " (now " + F(Credit, "0") + ")"); return false; }

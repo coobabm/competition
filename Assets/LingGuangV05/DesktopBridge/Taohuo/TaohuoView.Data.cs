@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Taohuo
 {
     /// <summary>
@@ -35,7 +36,7 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             var lab = Lab;
             var host = FindAnyObjectByType<XingGuang.XingGuangController>()?.Host;
-            if (lab == null) { Note(T("灵光还没装好。", "LingGuang is not installed yet.")); return; }
+            if (lab == null) { Note(Lang.T("灵光还没装好。")); return; }
             int shown = 0;
             foreach (var o in lab.ShopDataOffers())
             {
@@ -43,8 +44,8 @@ namespace LingGuangV05.Desktop.Taohuo
                 DataRow(lab, host, o);
                 shown++;
             }
-            if (shown == 0) Note(q.Length > 0 ? T("没有找到「" + q + "」相关的数据包。", "No data packs for \"" + q + "\".") : T("这个月还没有数据包上架。", "No data packs on the shelves this month."));
-            else Note(T("公开包干净，杂包便宜但脏（噪声高）。研究树的「数据清洗」能把杂包噪声减半。", "Public packs are clean; junk packs are cheap but noisy. 数据清洗 in the research tree halves junk noise."));
+            if (shown == 0) Note(q.Length > 0 ? T("没有找到「" + q + "」相关的数据包。", "No data packs for \"" + q + "\".") : Lang.T("这个月还没有数据包上架。"));
+            else Note(Lang.T("公开包干净，杂包便宜但脏（噪声高）。研究树的「数据清洗」能把杂包噪声减半。"));
         }
 
         void DataRow(XgSim lab, IXgHost host, XgDataOffer o)
@@ -60,16 +61,16 @@ namespace LingGuangV05.Desktop.Taohuo
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(140, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -28), Vector2.zero, "<b>" + o.Name(GameText.IsEnglish) + "</b>", 18, Ink);
             string badge = "<color=#" + ColorUtility.ToHtmlStringRGB(junk ? Red : Blue) + ">[" + o.SourceLabel(GameText.IsEnglish) + "]</color>"
-                + (o.isNew ? "  <color=#FF5000>" + T("[新品]", "[New]") + "</color>" : "")
-                + (junk ? "  <color=#999999>" + T("[爬虫新鲜货]", "[Freshly scraped]") + "</color>" : "  <color=#999999>" + T("[正规授权]", "[Licensed]") + "</color>");
+                + (o.isNew ? "  <color=#FF5000>" + Lang.T("[新品]") + "</color>" : "")
+                + (junk ? "  <color=#999999>" + Lang.T("[爬虫新鲜货]") + "</color>" : "  <color=#999999>" + Lang.T("[正规授权]") + "</color>");
             Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -52), new Vector2(0, -30), badge, 14, Ink);
-            string facts = T("样本 ", "Samples ") + o.samples.ToString("#,0", CultureInfo.InvariantCulture) + "  ·  " + T("噪声 ", "Noise ") + (o.effectiveNoise * 100).ToString("0", CultureInfo.InvariantCulture) + "%"
-                + (o.downloadSec > 0 ? "  ·  " + T("下载约 ", "Download ~") + o.downloadSec.ToString("0", CultureInfo.InvariantCulture) + T(" 秒", " s") : "");
+            string facts = T("样本 ", "Samples ") + o.samples.ToString("#,0", CultureInfo.InvariantCulture) + "  ·  " + Lang.T("噪声 ") + (o.effectiveNoise * 100).ToString("0", CultureInfo.InvariantCulture) + "%"
+                + (o.downloadSec > 0 ? "  ·  " + Lang.T("下载约 ") + o.downloadSec.ToString("0", CultureInfo.InvariantCulture) + Lang.T(" 秒") : "");
             Label(mid, "Facts", new Vector2(0, 1), Vector2.one, new Vector2(0, -76), new Vector2(0, -54), facts, 15, Ink);
             Label(mid, "Desc", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -78), o.Description(GameText.IsEnglish), 14, Muted);
             var right = PrologueDesk.Rect("Right", row, new Vector2(1, 0), Vector2.one, new Vector2(-190, 12), new Vector2(-14, -12));
             Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero, "<b>" + Money(o.price) + "</b>", 28, Orange, TextAlignmentOptions.TopRight);
-            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), junk ? T("月销 9999+ 笔", "9,999+ sold this month") : T("包邮 · 秒发", "Instant delivery"), 14, Muted, TextAlignmentOptions.TopRight);
+            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), junk ? Lang.T("月销 9999+ 笔") : Lang.T("包邮 · 秒发"), 14, Muted, TextAlignmentOptions.TopRight);
             string id = o.id;
             var b = Btn(right, "Buy", Vector2.zero, new Vector2(1, 0), new Vector2(20, 0), new Vector2(0, 44), Orange, "", 17, Color.white, () => BuyData(id), out var label);
             buyButtons.Add((b, label, () => DataState(id)));
@@ -82,11 +83,11 @@ namespace LingGuangV05.Desktop.Taohuo
             if (lab == null || sim == null) return (false, "—");
             var o = lab.Offer(id);
             if (o == null) return (false, "—");
-            if (o.downloading) return (sim.S.money + 1e-9 >= lab.AccelerateOfferCost(id), T("下载中 ", "Downloading ") + (o.downloadProgress * 100).ToString("0") + "%  " + T("加速 ", "Speed up ") + Money(lab.AccelerateOfferCost(id)));
-            if (o.owned) return (false, T("已拥有", "Owned"));
+            if (o.downloading) return (sim.S.money + 1e-9 >= lab.AccelerateOfferCost(id), Lang.T("下载中 ") + (o.downloadProgress * 100).ToString("0") + "%  " + Lang.T("加速 ") + Money(lab.AccelerateOfferCost(id)));
+            if (o.owned) return (false, Lang.T("已拥有"));
             if (!o.available) return (false, T(o.lockedReason, o.lockedReasonEn));
-            if (sim.S.money + 1e-9 < o.price) return (false, T("钱不够", "Not enough ¥"));
-            return (true, T("立即购买", "Buy now"));
+            if (sim.S.money + 1e-9 < o.price) return (false, Lang.T("钱不够"));
+            return (true, Lang.T("立即购买"));
         }
 
         string DataTip(string id)
@@ -94,24 +95,24 @@ namespace LingGuangV05.Desktop.Taohuo
             var lab = Lab;
             var o = lab != null ? lab.Offer(id) : null;
             if (o == null) return "";
-            if (o.downloading) return T("迅雷下载中。摆渡云超级会员一天，立刻下完。", "Downloading through Thunder. A day of Bodu Cloud super membership finishes it now.");
+            if (o.downloading) return Lang.T("迅雷下载中。摆渡云超级会员一天，立刻下完。");
             if (!o.available && !o.owned && o.lockedReason.Length > 0) return T(o.lockedReason, o.lockedReasonEn);
             return o.source == XgDataSource.Junk
-                ? T("便宜量大，但标签错得多：噪声会拉低准确率。配上「数据清洗」才划算。", "Cheap and big, but many labels are wrong: noise lowers accuracy. Worth it with 数据清洗.")
-                : T("公开包：和技能树里的数据节点是同一样东西，买一次就行。", "Public pack: the same thing as the data node in the skill tree, bought once.");
+                ? Lang.T("便宜量大，但标签错得多：噪声会拉低准确率。配上「数据清洗」才划算。")
+                : Lang.T("公开包：和科技里的数据节点是同一样东西，买一次就行。");
         }
 
         void BuyData(string id)
         {
             var lab = Lab;
             var host = FindAnyObjectByType<XingGuang.XingGuangController>()?.Host;
-            if (lab == null || host == null) { Say(T("灵光还没装好。", "LingGuang is not installed yet.")); return; }
+            if (lab == null || host == null) { Say(Lang.T("灵光还没装好。")); return; }
             var o = lab.Offer(id);
             if (o == null) return;
             bool ok = o.downloading ? lab.AccelerateOffer(id, host) : lab.BuyDataOffer(id, host);
             string last = lab.S.log.Count > 0 ? lab.S.log[lab.S.log.Count - 1] : "";
-            if (ok) { Dirty(); Say(last.Length > 0 ? last : T("亲，数据包已发货～", "Dear, your data pack is on its way~")); }
-            else Say(last.Length > 0 ? last : T("现在买不了。", "Can't buy that right now."));
+            if (ok) { Dirty(); Say(last.Length > 0 ? last : Lang.T("亲，数据包已发货～")); }
+            else Say(last.Length > 0 ? last : Lang.T("现在买不了。"));
             signature = "";
         }
     }

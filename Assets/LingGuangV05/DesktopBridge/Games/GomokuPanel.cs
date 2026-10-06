@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Games
 {
     /// <summary>
@@ -24,11 +25,11 @@ namespace LingGuangV05.Desktop.Games
         bool counted;
 
         public override string Id => "gomoku";
-        public override string Title => GameReactions.GomokuTitle ?? T("五子棋", "Gomoku");
+        public override string Title => GameReactions.GomokuTitle ?? Lang.T("五子棋");
         public override string Blurb => T("15 路棋盘，连成五子就赢。和" + LingGuangV05.Core.AppNames.AiZh + "下：它用同一个小窗口扫过整盘棋。", "15 × 15, five in a row wins. Play the lab's AI: it slides one small window over the whole board.");
         public override string Glyph => "●";
         public override Color Accent => new Color32(196, 140, 70, 255);
-        public override string Locked => Stage >= 3 ? null : T("第 3 阶段（卷积）以后它才看得懂棋盘", "It can read the board from stage 3 (convolutions)");
+        public override string Locked => Stage >= 3 ? null : Lang.T("第 3 阶段（卷积）以后它才看得懂棋盘");
 
         public override void Build(RectTransform area)
         {
@@ -121,15 +122,15 @@ namespace LingGuangV05.Desktop.Games
                     if (x == game.LastX && y == game.LastY && s != 0) stones[x, y].color = s == Gomoku.Black ? new Color32(60, 60, 90, 255) : new Color32(255, 240, 200, 255);
                 }
             string head = "<b><size=26>" + Title + "</size></b>\n\n";
-            if (Locked != null) status.text = head + T("它还看不懂棋盘。\n第 3 阶段（卷积）以后，它就能和你下了。", "It can't read the board yet.\nFrom stage 3 (convolutions) it can play you.");
+            if (Locked != null) status.text = head + Lang.T("它还看不懂棋盘。\n第 3 阶段（卷积）以后，它就能和你下了。");
             else
             {
-                string state = game.Winner == Gomoku.Black ? T("你赢了。", "You win.") : game.Winner == Gomoku.White ? AiName + T("赢了。", " wins.") : game.Full ? T("棋盘下满了，和棋。", "The board is full: a draw.")
-                    : aiAt >= 0 ? AiName + T("在看棋盘……", " is reading the board…") : T("你执黑，先手。", "You play black and move first.");
-                status.text = head + T("对手：", "Opponent: ") + AiName + T(" · 看对棋盘 ", " · reads the board right ") + Mathf.RoundToInt((float)Skill * 100) + "%\n\n" + state + "\n\n" + T("胜 ", "Won ") + wins + T(" · 负 ", " · lost ") + losses + LabLines() + "\n\n<size=15><color=#806040>" +
-                    T("它用同一个小窗口扫过整个棋盘：每个空点看四条线，自己能连几个、你能连几个。这就是卷积在干的事。视觉准确率越高，它越少看错。", "It slides one small window over the whole board: for every empty point it reads four lines, how many it can connect and how many you can. That is what a convolution does. The better its vision accuracy, the fewer points it misreads.") + "</color></size>";
+                string state = game.Winner == Gomoku.Black ? Lang.T("你赢了。") : game.Winner == Gomoku.White ? AiName + Lang.T("赢了。") : game.Full ? Lang.T("棋盘下满了，和棋。")
+                    : aiAt >= 0 ? AiName + Lang.T("在看棋盘……") : Lang.T("你执黑，先手。");
+                status.text = head + Lang.T("对手：") + AiName + Lang.T(" · 看对棋盘 ") + Mathf.RoundToInt((float)Skill * 100) + "%\n\n" + state + "\n\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + LabLines() + "\n\n<size=15><color=#806040>" +
+                    Lang.T("它用同一个小窗口扫过整个棋盘：每个空点看四条线，自己能连几个、你能连几个。这就是卷积在干的事。视觉准确率越高，它越少看错。") + "</color></size>";
             }
-            again.text = T("再来一局", "New game");
+            again.text = Lang.T("再来一局");
         }
     }
 }

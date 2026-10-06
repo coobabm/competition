@@ -3,6 +3,7 @@ using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -38,7 +39,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sincePoll < ReflectionPoll || bound.OfflineSimulation) return;
             sincePoll = 0;
             if (bound.TakeReflectionLine() != null)
-                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, GameText.T("对话页有一条新消息。", "A new line on the chat page."), 5f);
+                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, Lang.T("对话页有一条新消息。"), 5f);
         }
 
         void Rebind(XgSim sim)

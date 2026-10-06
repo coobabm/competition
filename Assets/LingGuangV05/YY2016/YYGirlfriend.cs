@@ -60,6 +60,7 @@ namespace LingGuangV05.Desktop.YY
         double aiDueGame = -1;
         float nextIdleCheck;
         string lastStatus = "", lastSignature = "";
+        float nextCardCheck;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         internal static void Attach()
@@ -110,6 +111,22 @@ namespace LingGuangV05.Desktop.YY
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
             StandIn(g, now);
+            if (Time.unscaledTime >= nextCardCheck) { nextCardCheck = Time.unscaledTime + 1; LifeCards(g); }
+        }
+
+        /// <summary>The hidden 下班以后 cards she gives (XgSim.Cards.cs), read off her state once a second.</summary>
+        void LifeCards(GirlfriendState g)
+        {
+            var lab = Lab;
+            if (lab == null || g == null || !g.started) return;
+            if (g.totalMessages > g.herMessages) lab.EarnSecret("life.gf.chat");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagFought)) lab.EarnSecret("life.gf.fight");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagMadeUp)) lab.EarnSecret("life.gf.makeup");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagCaughtAi)) lab.EarnSecret("life.gf.caught");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagIphone)) lab.EarnSecret("life.gf.iphone");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagNewYear)) lab.EarnSecret("life.gf.newyear");
+            if (GirlfriendRules.Tier(g) == GirlfriendTier.Sweet) lab.EarnSecret("life.gf.sweet");
+            foreach (var key in g.done) if (key.StartsWith("forgot:", StringComparison.Ordinal)) { lab.EarnSecret("life.gf.forgot"); break; }
         }
 
         void Rebind(GirlfriendState g)
@@ -236,7 +253,7 @@ namespace LingGuangV05.Desktop.YY
                     bool asks = o.asksMoney;
                     after = () =>
                     {
-                        System(T("晴雯ˇ 领取了你的红包。", "Qingwenˇ opened your red packet."));
+                        System(Lang.T("晴雯ˇ 领取了你的红包。"));
                         if (asks) hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh);
                     };
                 }
@@ -303,7 +320,7 @@ namespace LingGuangV05.Desktop.YY
             if (b.proactive || !GirlfriendRules.Hesitates(g)) return;
             b.hesitate = true;
             b.lines.Clear();
-            b.lines.Add(T("嗯", "Mm"));
+            b.lines.Add(Lang.T("嗯"));
         }
 
         /// <summary>Asks the local model for her words; falls back to <paramref name="fallback"/> or the line library.</summary>
@@ -462,7 +479,7 @@ namespace LingGuangV05.Desktop.YY
         void Shake(bool first)
         {
             if (first) Voice("first.shake");
-            System(T("晴雯ˇ 给你发送了一个窗口抖动。", "Qingwenˇ sent you a nudge."));
+            System(Lang.T("晴雯ˇ 给你发送了一个窗口抖动。"));
             QueueLines(new[] { "人呢[疑问]", "Hello?? [疑问]" }, true);
             var router = hub.router;
             if (router == null) return;
@@ -501,12 +518,13 @@ namespace LingGuangV05.Desktop.YY
         {
             problem = "";
             var g = G;
-            if (g == null || !g.started || runtime == null || runtime.Sim == null) { problem = T("现在发不了。", "Can't send now."); return false; }
+            if (g == null || !g.started || runtime == null || runtime.Sim == null) { problem = Lang.T("现在发不了。"); return false; }
             if (amount <= 0) return false;
-            if (runtime.Sim.S.money + 1e-9 < amount) { problem = T("余额不足。", "Not enough money."); return false; }
+            if (runtime.Sim.S.money + 1e-9 < amount) { problem = Lang.T("余额不足。"); return false; }
             runtime.Sim.S.money -= amount;
             runtime.MarkDirty();
             nextPacketAmount = amount;
+            if (GirlfriendRules.IsLucky(amount)) Lab?.EarnSecret("life.gf.packet");
             hub.Send(YYChatHub.GirlfriendId, GirlfriendRules.PacketText(amount, English));
             return true;
         }
@@ -521,17 +539,17 @@ namespace LingGuangV05.Desktop.YY
             message = "";
             var g = G;
             var gift = GirlfriendRules.Gift(giftId);
-            if (g == null || !g.started || gift == null || runtime == null || runtime.Sim == null) { message = T("亲，现在下不了单哦。", "Dear, ordering isn't possible right now."); return false; }
+            if (g == null || !g.started || gift == null || runtime == null || runtime.Sim == null) { message = Lang.T("亲，现在下不了单哦。"); return false; }
             var now = Now;
-            if (!GirlfriendRules.OnSale(gift, now.clock)) { message = T("亲，还没上架哦～", "Dear, not on sale yet~"); return false; }
-            if (GirlfriendRules.SoldOut(g, gift, now.day, now.clock)) { message = T("亲，今天已售罄，明天再来抢～", "Dear, sold out today. Try again tomorrow~"); return false; }
-            if (runtime.Sim.S.money + 1e-9 < gift.price) { message = T("亲，余额不足哦。", "Dear, not enough money."); return false; }
+            if (!GirlfriendRules.OnSale(gift, now.clock)) { message = Lang.T("亲，还没上架哦～"); return false; }
+            if (GirlfriendRules.SoldOut(g, gift, now.day, now.clock)) { message = Lang.T("亲，今天已售罄，明天再来抢～"); return false; }
+            if (runtime.Sim.S.money + 1e-9 < gift.price) { message = Lang.T("亲，余额不足哦。"); return false; }
             runtime.Sim.S.money -= gift.price;
             var o = GirlfriendRules.Order(g, now, giftId);
             runtime.MarkDirty();
             var arrive = GameCalendar.DateOf(o.arriveDay);
             message = gift.id == GirlfriendRules.GiftMilkTea
-                ? T("下单成功！骑手已接单，预计 30 分钟送到她宿舍楼下。", "Ordered! A rider took it; it reaches her dorm in about 30 minutes.")
+                ? Lang.T("下单成功！骑手已接单，预计 30 分钟送到她宿舍楼下。")
                 : T("下单成功！包邮，预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达。", "Ordered! Free shipping, arriving " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture) + ".");
             return true;
         }
@@ -541,9 +559,9 @@ namespace LingGuangV05.Desktop.YY
             if (a.refused)
             {
                 runtime.Sim.S.money += a.order.price;
-                PrologueDirector.Desk?.Popup(T("淘货", "Taohuo"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
+                PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
             }
-            else PrologueDirector.Desk?.Popup(T("淘货", "Taohuo"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
+            else PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
             runtime.MarkDirty();
             var events = a.events;
             QueueLines(a.lines, true, () => { foreach (var e in events) Queue(e, true, e.key == "money" ? (Action)(() => hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh)) : null); });

@@ -82,7 +82,7 @@ namespace LingGuangV05.XingGuang
             if (S.stage < 5 || S.autoCorrect < ReflectionLabels || AfterthoughtSaid(ReflectionKey)) return null;
             if (S.afterthoughts == null) S.afterthoughts = new List<string>();
             S.afterthoughts.Add(ReflectionKey);
-            string line = T("我标的那些，是在教谁？", "The cards I label. Who are they teaching?");
+            string line = T("我标的那些，是在教谁？");
             AddLine("ai", line);
             return line;
         }

@@ -122,12 +122,12 @@ namespace LingGuangV05.XingGuang
         public string WorkerIdleReason(string id)
         {
             var w = Worker(id);
-            if (w == null || !w.hired) return T("未雇用", "Not hired");
-            if (QualityFrozen) return T("账号冻结，干等着", "Account frozen, waiting");
-            if (CaptchaPending) return T("等你输验证码", "Waiting for your captcha");
+            if (w == null || !w.hired) return T("未雇用");
+            if (QualityFrozen) return T("账号冻结，干等着");
+            if (CaptchaPending) return T("等你输验证码");
             // Their labels leave through your account, so the platform's pause after a failed captcha holds them too.
-            if (CaptchaPauseLeft > 0) return T("账号被暂停提交，干等着", "Account submissions paused, waiting");
-            if (!DeskOpen(w.desk)) return T("这张桌还没开", "Desk not open");
+            if (CaptchaPauseLeft > 0) return T("账号被暂停提交，干等着");
+            if (!DeskOpen(w.desk)) return T("这张桌还没开");
             return null;
         }
 
@@ -239,12 +239,12 @@ namespace LingGuangV05.XingGuang
         {
             why = null;
             var info = WorkerInfo(id); var w = Worker(id);
-            if (info == null || w == null) { why = T("没有这个人", "No such person"); return false; }
-            if (!S.scUnlocked) { why = T("转包还没开张", "Subcontracting is not open yet"); return false; }
-            if (w.hired) { why = T("已经在干活了", "Already working"); return false; }
-            if (info.nightOnly && !NightShift) { why = T("老板只上网吧夜班（22:00–06:00）", "The boss only works the netbar night shift (22:00–06:00)"); return false; }
-            if (WorkerDesk(id).Length == 0) { why = T("没有开放的标注桌", "No open desk"); return false; }
-            if (host == null || !FiniteMarket(host.Money) || host.Money + 1e-9 < info.wage) { why = T("连第一分钟工钱都付不起", "You cannot pay the first minute"); return false; }
+            if (info == null || w == null) { why = T("没有这个人"); return false; }
+            if (!S.scUnlocked) { why = T("转包还没开张"); return false; }
+            if (w.hired) { why = T("已经在干活了"); return false; }
+            if (info.nightOnly && !NightShift) { why = T("老板只上网吧夜班（22:00–06:00）"); return false; }
+            if (WorkerDesk(id).Length == 0) { why = T("没有开放的标注桌"); return false; }
+            if (host == null || !FiniteMarket(host.Money) || host.Money + 1e-9 < info.wage) { why = T("连第一分钟工钱都付不起"); return false; }
             return true;
         }
 
@@ -253,7 +253,7 @@ namespace LingGuangV05.XingGuang
         {
             if (!CanHire(id, host, out string why)) { if (why != null) Say(why); return false; }
             var info = WorkerInfo(id); var w = Worker(id);
-            if (!host.Spend(info.wage)) { Say(T("经费不足", "Insufficient funds")); return false; }
+            if (!host.Spend(info.wage)) { Say(T("经费不足")); return false; }
             S.totalSpent += info.wage; w.wagesPaid += info.wage;
             if (id == "ajie" && S.scTwist == 2) S.scScriptWages += info.wage;
             w.desk = WorkerDesk(id); w.hired = true; w.timer = 0; w.wageTimer = WageSeconds;
@@ -285,7 +285,7 @@ namespace LingGuangV05.XingGuang
                 if (refund > 0 && host != null) { host.Earn(refund); S.totalIncome += refund; }
                 Line("ajie", "哥，对不起……我开了按键精灵，一路点的「是」。这几分钟的工钱" + (refund > 0 ? "（¥" + F(refund, "0") + "）" : "") + "我退给你了。",
                     "Sorry, bro… I ran a click macro that just hit Yes on everything. I'm giving back the pay for those minutes" + (refund > 0 ? " (¥" + F(refund, "0") + ")" : "") + ".");
-                Say(T("你辞退了阿杰。他承认开了按键精灵。", "You let Ajie go. He admits he ran a click macro."));
+                Say(T("你辞退了阿杰。他承认开了按键精灵。"));
             }
             else Say(T("你辞退了" + WorkerInfo(id).name + "。", "You let " + WorkerInfo(id).nameEn + " go."));
             WorkerLeft?.Invoke(id, "fired");
@@ -306,7 +306,7 @@ namespace LingGuangV05.XingGuang
                 S.scUnlocked = true;
                 foreach (var w in S.scWorkers) if (w.desk.Length == 0) w.desk = DefaultWorkerDesk();
                 Line("ajie", "你那个众包还缺人不？我反正在网吧坐着。", "Does your crowd-labelling gig need hands? I'm sitting in the netbar anyway.");
-                Say(T("阿杰在 YY 群里问要不要帮你标：订单页开了「转包」。", "Ajie offers in the YY group to label for you: Subcontract opened on the Contracts page."));
+                Say(T("阿杰在 YY 群里问要不要帮你标：订单页开了「转包」。"));
                 SubcontractOpened?.Invoke();
             }
             if (S.scDay != Today) { S.scDay = Today; foreach (var w in S.scWorkers) w.labelsToday = 0; }

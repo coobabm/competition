@@ -19,7 +19,10 @@ namespace LingGuangV05.XingGuang
                 case "contracts": return S.best.Count > 0;
                 case "repo": return S.best.Count > 0;
                 case "board": return UseBoard && S.epochs > 0;
-                case "wall": return UseBoard && ActiveWall != null;
+                // Opens with the first wall and stays: without a wall the page shows the 训练图式 (XgSim.Trace.cs).
+                case "wall": return UseBoard && (ActiveWall != null || S.walls.Count > 0);
+                // The album opens with the first card.
+                case "cards": return S.achievements.Count > 0;
                 case "chat": return true;
                 case "final": return S.stage >= 6;
                 case "save-model": return S.epochs > 0;
