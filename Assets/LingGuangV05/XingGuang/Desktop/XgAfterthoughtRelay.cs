@@ -20,7 +20,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float sincePoll;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.GetComponent<XgAfterthoughtRelay>() != null) return;

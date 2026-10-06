@@ -12,7 +12,7 @@ namespace LingGuangV05.Desktop.Story
     public static class StoryBootstrap
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void Attach()
+        internal static void Attach()
         {
             var runtime = Object.FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null) return;

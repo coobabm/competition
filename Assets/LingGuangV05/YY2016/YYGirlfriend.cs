@@ -62,7 +62,7 @@ namespace LingGuangV05.Desktop.YY
         string lastStatus = "", lastSignature = "";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var rt = FindAnyObjectByType<ChapterOneRuntime>();
             if (rt == null || rt.TestMode || rt.GetComponent<YYGirlfriend>() != null) return;
