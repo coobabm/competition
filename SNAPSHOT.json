@@ -1,9 +1,9 @@
 {
-  "entry_scene": "Assets/LingGuangV05/Scenes/Main.unity",
+  "entry_scene": "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
   "unity": "6000.4.5f1",
   "captured_local_date": "2026-10-05",
   "model_weights_included": false,
-  "only_scene": true,
+  "only_scene": false,
   "compile_checks": [
     {
       "mode": "player",
@@ -32,37 +32,7 @@
     {
       "mode": "player",
       "assembly": "Assembly-CSharp",
-      "sources": 348,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "LingGuangV05.Core",
-      "sources": 46,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "LingGuangV05.Runtime",
-      "sources": 8,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "LingGuangV05.UI",
-      "sources": 3,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 47,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "Assembly-CSharp",
-      "sources": 348,
+      "sources": 356,
       "exit_code": 0
     }
   ],
@@ -716,5 +686,25 @@
   "secret_pattern_findings": [],
   "captured_local_time": "2026-10-05T17:33:59+09:00",
   "base_commit": "587431341a6edfbf1baf6d35edf354709a93bb6b",
-  "source_scope": "Saved Main scene and runtime dependencies; local model weights, inference binaries, personal saves and development tools excluded."
+  "source_scope": "Saved Main scene and runtime dependencies; local model weights, inference binaries, personal saves and development tools excluded.",
+  "scenes": [
+    "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
+    "Assets/LingGuangV05/Scenes/Main.unity"
+  ],
+  "main_scene_preserved": true,
+  "computer_menu": {
+    "source_project": "/Users/kk/competition",
+    "source_commit": "88a2fae187d2c8ec4fd4afb67da876bde1759331",
+    "captured_local_time": "2026-10-06T16:08:15+09:00",
+    "dependency_files": 420,
+    "native_import_verified": true,
+    "missing_scripts": 0,
+    "controller_references_complete": true,
+    "build_scene_order": [
+      "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
+      "Assets/LingGuangV05/Scenes/Main.unity"
+    ],
+    "startup_hook_changes": "Visibility changed to internal; no existing game rules were modified.",
+    "play_mode_transition_verified": false
+  }
 }

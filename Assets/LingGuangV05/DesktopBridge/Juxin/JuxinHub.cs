@@ -35,7 +35,7 @@ namespace LingGuangV05.Desktop.Juxin
         public XingGuangController Controller => controller;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.TestMode || runtime.GetComponent<JuxinHub>() != null) return;

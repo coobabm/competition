@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly HashSet<string> raised = new HashSet<string>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null) return;

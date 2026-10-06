@@ -120,7 +120,7 @@ namespace LingGuangV05.Desktop.LLM
         string BaseUrl => "http://127.0.0.1:" + endpointPort;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.TestMode) return;

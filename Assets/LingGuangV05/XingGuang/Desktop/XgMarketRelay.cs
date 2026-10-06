@@ -25,7 +25,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float sinceLine = LineGap;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Attach()
+        internal static void Attach()
         {
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.GetComponent<XgMarketRelay>() != null) return;
