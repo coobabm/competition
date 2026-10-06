@@ -64,7 +64,7 @@ namespace LingGuangV05.Desktop.Taohuo
         void Relabel()
         {
             Rebrand(window, new[] { "寻宝", "Xunbao", "淘货", "Taohuo" }, T(AppNames.ShopZh, AppNames.ShopEn), null,
-                T("亲，本店所有交易都在这台电脑里模拟完成，不连真的网", "Dear, every order is simulated on this computer, no real shopping"),
+                Lang.T("亲，本店所有交易都在这台电脑里模拟完成，不连真的网"),
                 binding != null && binding.DesktopShortcut != null ? binding.DesktopShortcut.gameObject : null,
                 binding != null && binding.TaskbarShortcut != null ? binding.TaskbarShortcut.gameObject : null);
             signature = "";
@@ -197,8 +197,8 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>(); if (logo != null) logo.text = "<b>" + T(AppNames.ShopZh, AppNames.ShopEn) + "</b>";
             var rigTitle = root.Find("Body/Side/RigTitle")?.GetComponent<TMP_Text>(); if (rigTitle != null) rigTitle.text = "<b>" + T("我的电脑", "My computer") + "</b>";
-            var wangTitle = root.Find("Body/Side/Wangwang/WangTitle")?.GetComponent<TMP_Text>(); if (wangTitle != null) wangTitle.text = "<b>" + T("旺旺 · 亮影旗舰店客服", "WangWang · Liangying store support") + "</b>";
-            ((TMP_Text)search.placeholder).text = T("搜索宝贝：1080、机箱、固态……", "Search: 1080, case, SSD…");
+            var wangTitle = root.Find("Body/Side/Wangwang/WangTitle")?.GetComponent<TMP_Text>(); if (wangTitle != null) wangTitle.text = "<b>" + Lang.T("旺旺 · 亮影旗舰店客服") + "</b>";
+            ((TMP_Text)search.placeholder).text = Lang.T("搜索宝贝：1080、机箱、固态……");
             foreach (var kv in tabs)
             {
                 kv.Value.label.text = TabName(kv.Key);
@@ -208,8 +208,7 @@ namespace LingGuangV05.Desktop.Taohuo
                 kv.Value.fill.transform.gameObject.SetActive((kv.Key != "data" || data) && (kv.Key != GiftTab || HasGifts));
             }
             closed.gameObject.SetActive(!open);
-            closedText.text = T("<size=34><b>亲，淘货正在装修中～</b></size>\n\n第二阶段开张：显卡、机箱、固态硬盘、数据包都在这里买。\n本店<color=#FF5000>不卖</color>秘籍哦。\n\n先去标注台赚点钱吧，开张了旺旺叫您～",
-                "<size=34><b>Dear, Taohuo is being renovated~</b></size>\n\nOpening at stage 2: graphics cards, cases, SSDs and data packs.\nWe do <color=#FF5000>not</color> sell secret settings.\n\nGo earn some money at the label desk first. We'll message you when we open~");
+            closedText.text = Lang.T("<size=34><b>亲，淘货正在装修中～</b></size>\n\n第二阶段开张：显卡、机箱、固态硬盘、数据包都在这里买。\n本店<color=#FF5000>不卖</color>秘籍哦。\n\n先去标注台赚点钱吧，开张了旺旺叫您～");
             buyButtons.Clear();
             Clear(list);
             if (!open) return;
@@ -229,22 +228,22 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             switch (id)
             {
-                case "gpu": return T("显卡", "GPUs");
-                case "pc": return T("整机 · 机箱", "PCs · cases");
-                case "disk": return T("存储", "Storage");
-                case "data": return T("数据", "Data");
+                case "gpu": return Lang.T("显卡");
+                case "pc": return Lang.T("整机 · 机箱");
+                case "disk": return Lang.T("存储");
+                case "data": return Lang.T("数据");
                 case GiftTab: return T("送她", "For her");
-                default: return T("装机必备", "Must-haves");
+                default: return Lang.T("装机必备");
             }
         }
 
         void UpdateLive(ChapterOneSim sim)
         {
-            wallet.text = sim == null ? "" : T("亲，欢迎来淘货！  钱包 ", "Welcome, dear!  Wallet ") + "<b>" + Money(sim.S.money) + "</b>";
+            wallet.text = sim == null ? "" : Lang.T("亲，欢迎来淘货！  钱包 ") + "<b>" + Money(sim.S.money) + "</b>";
             rig.text = RigSummary(sim);
             if (Time.unscaledTime >= nextWang) { nextWang = Time.unscaledTime + 7; wangIndex++; }
             wangwang.text = WangLine(wangIndex, sim);
-            if (!StatusBusy) status.text = T("亲，所有宝贝包邮，下单即到，装好就能跑。", "Dear, free shipping on everything; it arrives at once and is installed for you.");
+            if (!StatusBusy) status.text = Lang.T("亲，所有宝贝包邮，下单即到，装好就能跑。");
             foreach (var b in buyButtons)
             {
                 var st = b.state();
@@ -267,7 +266,7 @@ namespace LingGuangV05.Desktop.Taohuo
         static string WangLine(int i, ChapterOneSim sim)
         {
             var w = Wang[((i % Wang.Length) + Wang.Length) % Wang.Length];
-            return "<color=#FF5000>" + T("亮影旗舰店", "Liangying store") + "</color>  " + T("说：", "says:") + "\n" + T(w.zh, w.en);
+            return "<color=#FF5000>" + Lang.T("亮影旗舰店") + "</color>  " + Lang.T("说：") + "\n" + T(w.zh, w.en);
         }
 
         // ───────────── tabs ─────────────
@@ -277,7 +276,7 @@ namespace LingGuangV05.Desktop.Taohuo
             if (today.Date == HardwareCatalog.SinglesDay)
             {
                 var banner = Row(list, "SinglesDay", 54, Orange);
-                Label(banner, "Text", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0), T("<b>双 11 狂欢：全场显卡 8 折！只限今天！</b>", "<b>Singles' Day: every card 20% off, today only!</b>"), 22, Color.white, TextAlignmentOptions.MidlineLeft);
+                Label(banner, "Text", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0), Lang.T("<b>双 11 狂欢：全场显卡 8 折！只限今天！</b>"), 22, Color.white, TextAlignmentOptions.MidlineLeft);
             }
             int shown = 0;
             foreach (var g in HardwareCatalog.Listings(today))
@@ -286,7 +285,7 @@ namespace LingGuangV05.Desktop.Taohuo
                 GpuRow(g, today);
                 shown++;
             }
-            if (shown == 0) Note(q.Length > 0 ? T("没有找到「" + q + "」相关的宝贝，换个词试试～", "No items for \"" + q + "\". Try another word~") : T("新卡还没上市。", "No new cards yet."));
+            if (shown == 0) Note(q.Length > 0 ? T("没有找到「" + q + "」相关的宝贝，换个词试试～", "No items for \"" + q + "\". Try another word~") : Lang.T("新卡还没上市。"));
         }
 
         void GpuRow(GpuModel g, DateTime today)
@@ -296,10 +295,10 @@ namespace LingGuangV05.Desktop.Taohuo
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, T(g.title, g.titleEn), 18, Ink);
             string badges = g.rumour
-                ? "<color=#999999>" + T("[预约]  [到货时间待定]", "[Pre-order]  [Date unknown]") + "</color>"
-                : "<color=#FF5000>" + T("[包邮]", "[Free shipping]") + "</color>  <color=#3C8CE7>" + T("[淘货自营]", "[Taohuo official]") + "</color>  <color=#999999>" + T("[7 天无理由]", "[7-day returns]") + "</color>";
+                ? "<color=#999999>" + Lang.T("[预约]  [到货时间待定]") + "</color>"
+                : "<color=#FF5000>" + Lang.T("[包邮]") + "</color>  <color=#3C8CE7>" + Lang.T("[淘货自营]") + "</color>  <color=#999999>" + Lang.T("[7 天无理由]") + "</color>";
             Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), badges, 14, Ink);
-            Label(mid, "Stats", new Vector2(0, 1), Vector2.one, new Vector2(0, -98), new Vector2(0, -76), g.rumour ? T("传闻：算力 ×2.2 · 显存 11G", "Rumour: compute ×2.2 · VRAM 11G") : Stats(g) + "  ·  " + T(g.pitch, g.pitchEn), 15, g.rumour ? Muted : Ink);
+            Label(mid, "Stats", new Vector2(0, 1), Vector2.one, new Vector2(0, -98), new Vector2(0, -76), g.rumour ? Lang.T("传闻：算力 ×2.2 · 显存 11G") : Stats(g) + "  ·  " + T(g.pitch, g.pitchEn), 15, g.rumour ? Muted : Ink);
             var review = Review(g, today);
             Label(mid, "Review", new Vector2(0, 0), new Vector2(1, 1), new Vector2(0, 26), new Vector2(0, -102), review, 14, Muted);
             Label(mid, "Ask", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, 24), Ask(g), 14, Muted);
@@ -307,10 +306,10 @@ namespace LingGuangV05.Desktop.Taohuo
             double price = HardwareCatalog.Price(g, today);
             Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero, g.rumour ? "<b>¥ ????</b>" : "<b>" + Money(price) + "</b>" + (price < g.price ? "  <s><size=14><color=#999999>" + Money(g.price) + "</color></size></s>" : ""), 28, Orange, TextAlignmentOptions.TopRight);
             int days = Math.Max(0, (today.Date - g.release.Date).Days);
-            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), g.rumour ? T("已有 23333 人想要", "23,333 people want this") : T("月销 ", "") + (g.sold + days * 37).ToString("#,0", CultureInfo.InvariantCulture) + T(" 笔", " sold this month"), 14, Muted, TextAlignmentOptions.TopRight);
+            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), g.rumour ? Lang.T("已有 23333 人想要") : Lang.T("月销 ") + (g.sold + days * 37).ToString("#,0", CultureInfo.InvariantCulture) + Lang.T(" 笔"), 14, Muted, TextAlignmentOptions.TopRight);
             string id = g.id;
             var b = Btn(right, "Buy", new Vector2(0, 0), new Vector2(1, 0), new Vector2(20, 0), new Vector2(0, 44), Orange, "", 18, Color.white, () => BuyGpu(id), out var label);
-            if (g.rumour) buyButtons.Add((b, label, () => (true, T("到货通知我", "Notify me"))));
+            if (g.rumour) buyButtons.Add((b, label, () => (true, Lang.T("到货通知我"))));
             else buyButtons.Add((b, label, () => GpuState(id)));
             TipFor(b, g.rumour ? ("厂家还没发布。", "Not announced yet.") : ("买下立刻装进机箱：算力、显存、功耗都加上去。", "Bought cards go straight into a slot: compute, VRAM and watts all add up."));
         }
@@ -320,22 +319,22 @@ namespace LingGuangV05.Desktop.Taohuo
             var sim = Sim;
             var g = HardwareCatalog.Gpu(id);
             if (sim == null || g == null) return (false, "—");
-            if (confirmId == id && Time.unscaledTime < confirmUntil) return (true, T("钱包警告：确定？", "Wallet warning: sure?"));
-            if (!sim.SlotFree) return (false, T("插槽已满", "Slots full"));
-            if (sim.S.money + 1e-9 < HardwareCatalog.Price(g, Today)) return (false, T("钱不够", "Not enough ¥"));
-            return (true, T("立即购买", "Buy now"));
+            if (confirmId == id && Time.unscaledTime < confirmUntil) return (true, Lang.T("钱包警告：确定？"));
+            if (!sim.SlotFree) return (false, Lang.T("插槽已满"));
+            if (sim.S.money + 1e-9 < HardwareCatalog.Price(g, Today)) return (false, Lang.T("钱不够"));
+            return (true, Lang.T("立即购买"));
         }
 
         void BuyGpu(string id)
         {
             var g = HardwareCatalog.Gpu(id);
             if (g == null) return;
-            if (g.rumour) { Say(T("亲，已登记，到货第一时间通知您～（厂家还没通知哦）", "Dear, you're on the list, we'll tell you the moment it arrives~ (the factory hasn't said when)")); return; }
+            if (g.rumour) { Say(Lang.T("亲，已登记，到货第一时间通知您～（厂家还没通知哦）")); return; }
             // §14.3: the TITAN X pops a wallet warning first.
             if (id == HardwareCatalog.TitanXp && !(confirmId == id && Time.unscaledTime < confirmUntil))
             {
                 confirmId = id; confirmUntil = Time.unscaledTime + 5;
-                Say(T("钱包警告：这张卡比整台电脑还贵。再点一次确认购买。", "Wallet warning: this card costs more than the whole computer. Click again to buy."));
+                Say(Lang.T("钱包警告：这张卡比整台电脑还贵。再点一次确认购买。"));
                 return;
             }
             confirmId = "";
@@ -354,7 +353,7 @@ namespace LingGuangV05.Desktop.Taohuo
 
         static string Review(GpuModel g, DateTime today)
         {
-            if (g.rumour) return T("还没有评价。", "No reviews yet.");
+            if (g.rumour) return Lang.T("还没有评价。");
             string zh, en;
             if (g.id == HardwareCatalog.Rx480 && today.Day % 2 == 0) { zh = "装上开机一股焦味，换了个电源就好了。A 卡战未来！"; en = "Smelled burnt on first boot, a new PSU fixed it. AMD is the future!"; }
             else if (g.id == HardwareCatalog.TitanXp && today.Day % 2 == 0) { zh = "老婆以为是 999 买的，求别说破。"; en = "My wife thinks it cost 999. Please don't tell her."; }
@@ -372,10 +371,10 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             // §10.3: the 1080 Ti only ever comes up as a question.
             if (g.id == HardwareCatalog.Gtx1080 || g.rumour)
-                return T("问大家：1080 Ti 什么时候出？  答：亲，厂家还没通知哦，等等党永远不亏～", "Q: When is the 1080 Ti coming out?  A: Dear, the factory hasn't said, waiting never hurts~");
+                return Lang.T("问大家：1080 Ti 什么时候出？  答：亲，厂家还没通知哦，等等党永远不亏～");
             if (g.id == HardwareCatalog.Rx480)
-                return T("问大家：能跑深度学习吗？  答：亲，A 卡的话……建议您咨询一下老周哦～", "Q: Can it do deep learning?  A: Dear, for AMD cards… please ask Lao Zhou~");
-            return T("问大家：能跑深度学习吗？  答：亲，能的哦，CUDA 都支持～", "Q: Can it do deep learning?  A: Dear, yes, CUDA is fully supported~");
+                return Lang.T("问大家：能跑深度学习吗？  答：亲，A 卡的话……建议您咨询一下老周哦～");
+            return Lang.T("问大家：能跑深度学习吗？  答：亲，能的哦，CUDA 都支持～");
         }
 
         void BuildPc(ChapterOneSim sim, DateTime today)
@@ -383,29 +382,29 @@ namespace LingGuangV05.Desktop.Taohuo
             var row = Row(list, "Case", 150, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -60), new Vector2(146, 60));
             PrologueDesk.Fill(pic, new Color32(30, 30, 30, 255), false);
-            if (!ProductIllustration(pic, "desk", T("准系统 · 配图", "Barebone · illustration")))
+            if (!ProductIllustration(pic, "desk", Lang.T("准系统 · 配图")))
                 Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>PC</b>", 30, new Color32(120, 220, 255, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
-            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, T("【准系统】游戏悍将机箱 + Z170 主板 + 600W 电源 + 16G 内存（不含显卡）", "[Barebone] Gaming case + Z170 board + 600 W PSU + 16 GB RAM (no graphics card)"), 18, Ink);
-            Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), "<color=#FF5000>" + T("[包邮]", "[Free shipping]") + "</color>  <color=#3C8CE7>" + T("[装好再发]", "[Assembled]") + "</color>", 14, Ink);
+            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, Lang.T("【准系统】游戏悍将机箱 + Z170 主板 + 600W 电源 + 16G 内存（不含显卡）"), 18, Ink);
+            Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), "<color=#FF5000>" + Lang.T("[包邮]") + "</color>  <color=#3C8CE7>" + Lang.T("[装好再发]") + "</color>", 14, Ink);
             Label(mid, "Stats", new Vector2(0, 0), Vector2.one, new Vector2(0, 0), new Vector2(0, -78),
                 T("多 2 个显卡插槽。卡分开放，温度更低。机箱本身 " + (sim != null ? sim.Config.caseWatts.ToString("0") : "45") + "W。", "Two more card slots. Spread out, the cards run cooler. The case itself draws " + (sim != null ? sim.Config.caseWatts.ToString("0") : "45") + " W."), 15, Ink);
             var right = PrologueDesk.Rect("Right", row, new Vector2(1, 0), Vector2.one, new Vector2(-190, 12), new Vector2(-14, -12));
             double price = sim != null ? sim.Config.casePrice : 2000;
             Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero, "<b>" + Money(price) + "</b>", 28, Orange, TextAlignmentOptions.TopRight);
-            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), T("月销 642 笔", "642 sold this month"), 14, Muted, TextAlignmentOptions.TopRight);
+            Label(right, "Sold", new Vector2(0, 1), Vector2.one, new Vector2(0, -70), new Vector2(0, -46), Lang.T("月销 642 笔"), 14, Muted, TextAlignmentOptions.TopRight);
             var b = Btn(right, "Buy", new Vector2(0, 0), new Vector2(1, 0), new Vector2(20, 0), new Vector2(0, 44), Orange, "", 18, Color.white,
                 () => Run(s => s.BuyCase(), "A new case is connected: two more slots."), out var label);
             buyButtons.Add((b, label, () =>
             {
                 var s = Sim;
                 if (s == null) return (false, "—");
-                if (s.S.caseCount >= s.Config.maxCases) return (false, T("放不下了", "No room"));
-                if (s.S.money + 1e-9 < s.Config.casePrice) return (false, T("钱不够", "Not enough ¥"));
-                return (true, T("立即购买", "Buy now"));
+                if (s.S.caseCount >= s.Config.maxCases) return (false, Lang.T("放不下了"));
+                if (s.S.money + 1e-9 < s.Config.casePrice) return (false, Lang.T("钱不够"));
+                return (true, Lang.T("立即购买"));
             }));
             TipFor(b, ("一个机箱两个插槽。插槽满了，要么买机箱，要么去喵鱼卖旧卡。", "Each case has two slots. When they're full, buy a case or sell an old card on Miaoyu."));
-            Note(T("想要便宜的？喵鱼上 10 月有网吧倒闭清仓的整机，自带一张 970。", "On a budget? In October Miaoyu has whole PCs from a closing net cafe, each with a 970 inside."));
+            Note(Lang.T("想要便宜的？喵鱼上 10 月有网吧倒闭清仓的整机，自带一张 970。"));
         }
 
         void BuildDisk(ChapterOneSim sim, DateTime today)
@@ -416,8 +415,8 @@ namespace LingGuangV05.Desktop.Taohuo
             Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>950 PRO</b>\n<size=14>NVMe M.2</size>", 22, Color.white, TextAlignmentOptions.Center);
             bool released = today.Date >= HardwareCatalog.NvmeRelease;
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
-            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, T("三星 950 Pro 256G NVMe M.2 固态 读取 2500MB/s", "Samsung 950 Pro 256 GB NVMe M.2 SSD, reads 2,500 MB/s"), 18, Ink);
-            Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), released ? "<color=#FF5000>" + T("[包邮]", "[Free shipping]") + "</color>  <color=#3C8CE7>" + T("[淘货自营]", "[Taohuo official]") + "</color>" : "<color=#999999>" + T("[9 月 1 日到货]", "[Arrives 1 September]") + "</color>", 14, Ink);
+            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, Lang.T("三星 950 Pro 256G NVMe M.2 固态 读取 2500MB/s"), 18, Ink);
+            Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -74), new Vector2(0, -52), released ? "<color=#FF5000>" + Lang.T("[包邮]") + "</color>  <color=#3C8CE7>" + Lang.T("[淘货自营]") + "</color>" : "<color=#999999>" + Lang.T("[9 月 1 日到货]") + "</color>", 14, Ink);
             Label(mid, "Stats", new Vector2(0, 0), Vector2.one, new Vector2(0, 0), new Vector2(0, -78),
                 T("数据集从固态读，显卡不再干等：所有卡训练 ×" + HardwareCatalog.NvmeBoost.ToString("0.0#") + "。只能装一块。\n<color=#8C8C8C>「装了以后开机 8 秒，进系统前我都没来得及眨眼。」— 等***党</color>",
                   "Datasets load from the SSD, so the cards stop waiting: every card trains ×" + HardwareCatalog.NvmeBoost.ToString("0.0#") + ". One per computer.\n<color=#8C8C8C>\"Boots in 8 seconds. I didn't have time to blink.\" — w***r</color>"), 15, Ink);
@@ -429,12 +428,12 @@ namespace LingGuangV05.Desktop.Taohuo
             {
                 var s = Sim;
                 if (s == null) return (false, "—");
-                if (s.S.nvme) return (false, T("已安装", "Installed"));
-                if (Today.Date < HardwareCatalog.NvmeRelease) return (false, T("9 月到货", "September"));
-                if (s.S.money + 1e-9 < HardwareCatalog.NvmePrice) return (false, T("钱不够", "Not enough ¥"));
-                return (true, T("立即购买", "Buy now"));
+                if (s.S.nvme) return (false, Lang.T("已安装"));
+                if (Today.Date < HardwareCatalog.NvmeRelease) return (false, Lang.T("9 月到货"));
+                if (s.S.money + 1e-9 < HardwareCatalog.NvmePrice) return (false, Lang.T("钱不够"));
+                return (true, Lang.T("立即购买"));
             }));
-            Note(T("本机自带：240G 固态（系统盘，已经快满了）。", "Already inside: a 240 GB SSD (the system drive, almost full)."));
+            Note(Lang.T("本机自带：240G 固态（系统盘，已经快满了）。"));
         }
 
         static readonly (string name, string nameEn, string zh, string en)[] Soft =
@@ -451,11 +450,11 @@ namespace LingGuangV05.Desktop.Taohuo
             foreach (var s in Soft)
             {
                 var row = Row(list, s.nameEn, 64, Color.white);
-                Label(row, "Name", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-200, 0), "<b>" + T(s.name, s.nameEn) + "</b>   <color=#8C8C8C>" + T("装机必备 · 免费", "Must-have · free") + "</color>", 17, Ink, TextAlignmentOptions.MidlineLeft);
+                Label(row, "Name", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-200, 0), "<b>" + T(s.name, s.nameEn) + "</b>   <color=#8C8C8C>" + Lang.T("装机必备 · 免费") + "</color>", 17, Ink, TextAlignmentOptions.MidlineLeft);
                 var line = (s.zh, s.en);
-                Btn(row, "Get", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-150, -20), new Vector2(-18, 20), new Color32(60, 140, 231, 255), T("免费下载", "Download"), 16, Color.white, () => Say(T(line.zh, line.en), 8), out _);
+                Btn(row, "Get", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-150, -20), new Vector2(-18, 20), new Color32(60, 140, 231, 255), Lang.T("免费下载"), 16, Color.white, () => Say(T(line.zh, line.en), 8), out _);
             }
-            Note(T("提示：安装时记得取消勾选捆绑软件。", "Tip: untick the bundled extras when you install."));
+            Note(Lang.T("提示：安装时记得取消勾选捆绑软件。"));
         }
 
         void Note(string text)

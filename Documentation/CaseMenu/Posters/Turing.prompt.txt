@@ -1,0 +1,10 @@
+Use case: stylized-concept.
+Asset type: original flat print-ready Alan Turing wall-poster artwork, to become a Unity game texture in a programmer's bedroom in 2016.
+Create a portrait-format 2:3 image, ideally 1024 by 1536 pixels. The full image must be ONLY the flat front-facing paper artwork, perfectly rectangular, edge to edge. No wall, no room, no frame, no mockup, no perspective, no surrounding scene, no cast shadow around paper edges.
+Warm ivory fibrous paper printed in ink-black and muted teal, with restrained rust-orange accents. Original engraved and fine halftone portrait of Alan Turing occupying the upper 60 percent. A thoughtful young adult Alan Turing in a period suit, recognizable facial features, sensitively drawn and dignified. Behind and around the portrait, small abstract unlabelled paper-tape strips and state-machine circles/arrows integrate into the graphic composition; subtle and scholarly, not a futuristic interface.
+A cohesive retro programmer study poster, distressed screenprinted academic character, controlled ink texture, editorial Swiss-inspired typography, strong readable hierarchy, generous deliberate negative space in the lower third.
+Exact text, and ONLY this text anywhere in the artwork:
+"ALAN TURING" prominently in the lower third.
+"COMPUTATION / LOGIC" small below it.
+No other letters, numbers, dates, quotations, signatures, labels, logos or watermark. Do not copy any existing poster composition. No modern sci-fi aesthetics and no neon. Keep the design original, restrained, tactile and visually cohesive.
+

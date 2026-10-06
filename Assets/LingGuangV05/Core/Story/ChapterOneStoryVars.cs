@@ -35,7 +35,7 @@ namespace LingGuangV05.Core
             "examAttempts", "examActive", "lastExamPassed", "chapterOneComplete",
             "jobEnabled", "breakerTripped", "unpaidPower", "powered",
             "accuracy", "heartbeatsPerSecond", "incomePerSecond", "hasOutputPath", "canStartExam",
-            "labCaptcha", "labMeme", "labGo", "labPoems", "labNews", "labTranslate", "labUnsure", "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labCanProject", "labExperiment", "labEndingAnswered", "labMigrated",
+            "labCaptcha", "labMeme", "labGo", "labPoems", "labNews", "labTranslate", "labUnsure", "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labCanProject", "labExperiment", "labEndingAnswered", "labMigrated", "labStageEpochs", "labChatTurns", "labGarble",
             "hiddenNodes", "edges", "memoryUsed", "memoryRatio", "fanOutCount", "convergeCount", "named", "appInstalled", "prologueDone",
         };
 

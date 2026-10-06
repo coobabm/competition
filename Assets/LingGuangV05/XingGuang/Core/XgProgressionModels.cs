@@ -24,6 +24,8 @@ namespace LingGuangV05.XingGuang
         public int comboObservations, spatialObservations, orderObservations, memoryObservations;
         public bool visionCompressionObserved, sequenceCompressionObserved, uncertaintyObserved;
         public bool chapterComplete, endingRegret;
+        /// <summary>How each wall check was passed: "mnist#structure=features" (换练法) or "=structure" (换结构).</summary>
+        public List<string> wallRoutes = new List<string>();
     }
 
     public sealed partial class XgCard

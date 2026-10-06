@@ -201,9 +201,9 @@ namespace LingGuangV05.Desktop.Tieba
             var c = hub.Context();
             var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>();
             if (logo != null) logo.text = T("摆渡贴吧", "Bodu Tieba");
-            navHome.text = T("首页", "Home");
-            navMine.text = T("我的", "Me");
-            navInbox.text = T("私信", "Messages") + (hub.Unread > 0 ? " <color=#FFD24A>(" + hub.Unread + ")</color>" : "");
+            navHome.text = Lang.T("首页");
+            navMine.text = Lang.T("我的");
+            navInbox.text = Lang.T("私信") + (hub.Unread > 0 ? " <color=#FFD24A>(" + hub.Unread + ")</color>" : "");
             DrawSide(c);
             // A half-typed message survives the redraw that a new reply causes.
             string draft = input != null ? input.text : "";
@@ -233,7 +233,7 @@ namespace LingGuangV05.Desktop.Tieba
         void DrawSide(ForumContext c)
         {
             for (int i = side.childCount - 1; i >= 0; i--) Destroy(side.GetChild(i).gameObject);
-            var head = Text(PrologueDesk.Rect("Head", side, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-10, -12)), T("我关注的吧", "My forums"), 16, Muted, TextAlignmentOptions.MidlineLeft);
+            var head = Text(PrologueDesk.Rect("Head", side, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-10, -12)), Lang.T("我关注的吧"), 16, Muted, TextAlignmentOptions.MidlineLeft);
             int i2 = 0;
             foreach (var b in hub.Library.Boards)
             {
@@ -308,14 +308,14 @@ namespace LingGuangV05.Desktop.Tieba
             DesktopArt.Paint(art, key);
             var label = Text(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(108, 16), Vector2.zero), title, 19, Link, TextAlignmentOptions.MidlineLeft);
             if (click != null) { label.raycastTarget = true; var button = label.gameObject.AddComponent<Button>(); button.targetGraphic = label; button.onClick.AddListener(() => click()); }
-            Text(PrologueDesk.Rect("Caption", row, Vector2.zero, new Vector2(1, 0), new Vector2(108, 0), new Vector2(0, 18)), T("配图", "Illustration"), 11, Muted, TextAlignmentOptions.MidlineLeft);
+            Text(PrologueDesk.Rect("Caption", row, Vector2.zero, new Vector2(1, 0), new Vector2(108, 0), new Vector2(0, 18)), Lang.T("配图"), 11, Muted, TextAlignmentOptions.MidlineLeft);
         }
 
         static string BoardArt(string id) => id == "gpu" ? "gpu" : id == "ai" ? "ai" : id == "santi" ? "space" : "esports";
 
         string Name(string user)
         {
-            if (user == ForumLibrary.LaoZhou && hub.S != null && hub.S.zhouGone) return T("该用户已注销", "Account closed");
+            if (user == ForumLibrary.LaoZhou && hub.S != null && hub.S.zhouGone) return Lang.T("该用户已注销");
             return hub.Library.Users.TryGetValue(user, out var u) ? T(u.name, u.nameEn) : user;
         }
         static string Date(DateTime d) => GameText.IsEnglish ? d.ToString("MMM d", CultureInfo.InvariantCulture) : d.Month + "-" + d.Day;
@@ -326,12 +326,12 @@ namespace LingGuangV05.Desktop.Tieba
             int floors = 0; foreach (var f in t.floors) if (ForumLibrary.View(f, c) != FloorView.Hidden) floors++;
             var board = hub.Library.Boards.Find(b => b.id == t.board);
             TopicLine(card, BoardArt(t.board), "<b>" + T(t.title, t.titleEn) + "</b>", () => Go("thread", t.id));
-            AuthorLine(card, t.author, (showBoard && board != null ? T(board.name, board.nameEn) + "  ·  " : "") + Name(t.author) + "  ·  " + Date(t.date) + "  ·  " + T("回复 ", "replies ") + Math.Max(0, floors - 1), 14, Muted);
+            AuthorLine(card, t.author, (showBoard && board != null ? T(board.name, board.nameEn) + "  ·  " : "") + Name(t.author) + "  ·  " + Date(t.date) + "  ·  " + Lang.T("回复 ") + Math.Max(0, floors - 1), 14, Muted);
         }
 
         void DrawHome(ForumContext c)
         {
-            Line(Card(new Color32(255, 250, 230, 255)), "<b>" + T("今日热议", "Hot today") + "</b>  " + c.today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture), 17, Ink);
+            Line(Card(new Color32(255, 250, 230, 255)), "<b>" + Lang.T("今日热议") + "</b>  " + c.today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture), 17, Ink);
             int n = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.Tieba, c.today))
             {
@@ -355,8 +355,8 @@ namespace LingGuangV05.Desktop.Tieba
             {
                 var card = Card(new Color32(255, 248, 235, 255));
                 var help = hub.Library.Get("help_bios");
-                Line(card, T("发个帖子问问？", "Ask the forum?") + "\n<color=#6E7480>" + T(help.title, help.titleEn) + "</color>", 16, Ink);
-                Line(card, "<b>" + T("【发表】", "[Post it]") + "</b>", 17, Link, () => { hub.PostHelp(); Go("thread", "help_bios"); });
+                Line(card, Lang.T("发个帖子问问？") + "\n<color=#6E7480>" + T(help.title, help.titleEn) + "</color>", 16, Ink);
+                Line(card, "<b>" + Lang.T("【发表】") + "</b>", 17, Link, () => { hub.PostHelp(); Go("thread", "help_bios"); });
             }
             foreach (var t in hub.Library.Board(board, c)) ThreadRow(t, c, false);
             foreach (var t in hub.Library.Mine(c)) if (t.board == board) ThreadRow(t, c, false);
@@ -365,12 +365,12 @@ namespace LingGuangV05.Desktop.Tieba
         void DrawThread(ForumContext c, string id)
         {
             var t = hub.Library.Get(id);
-            if (t == null || !ForumLibrary.Visible(t, c)) { Line(Card(), T("帖子不存在。", "This thread doesn't exist."), 18, Muted); return; }
+            if (t == null || !ForumLibrary.Visible(t, c)) { Line(Card(), Lang.T("帖子不存在。"), 18, Muted); return; }
             if (t.dead)
             {
                 var card = Card();
                 Line(card, "<size=60><b>404</b></size>", 20, Muted);
-                Line(card, T("很抱歉，该贴已被删除。", "Sorry, this thread has been deleted."), 18, Muted);
+                Line(card, Lang.T("很抱歉，该贴已被删除。"), 18, Muted);
                 return;
             }
             Line(Card(new Color32(232, 240, 255, 255)), "<b><size=22>" + T(t.title, t.titleEn) + "</size></b>", 20, Ink);
@@ -383,28 +383,28 @@ namespace LingGuangV05.Desktop.Tieba
                 var card = Card();
                 var author = f.author;
                 hub.Library.Users.TryGetValue(author, out var user);
-                string head = "<b>" + Name(author) + "</b>  <color=#E08A00>Lv." + (user != null ? user.level : 1) + "</color>" + (floor == 1 ? "  <color=#3878E6>" + T("楼主", "OP") + "</color>" : "");
+                string head = "<b>" + Name(author) + "</b>  <color=#E08A00>Lv." + (user != null ? user.level : 1) + "</color>" + (floor == 1 ? "  <color=#3878E6>" + Lang.T("楼主") + "</color>" : "");
                 AuthorLine(card, author, head, 16, Link, author == ForumLibrary.Me ? (Action)(() => Go("mine", "")) : () => Go("user", author));
-                if (v == FloorView.Deleted) Line(card, T("该楼层已被删除", "This floor has been deleted"), 17, Muted);
-                else if (v == FloorView.Folded) Line(card, T("该楼层疑似违规已被系统折叠", "This floor was folded by the system for suspected violation"), 17, Muted);
+                if (v == FloorView.Deleted) Line(card, Lang.T("该楼层已被删除"), 17, Muted);
+                else if (v == FloorView.Folded) Line(card, Lang.T("该楼层疑似违规已被系统折叠"), 17, Muted);
                 else Line(card, T(f.text, f.textEn), 18, Ink);
                 string sign = user != null && user.sign.Length > 0 && v == FloorView.Shown ? "\n<size=13><color=#A0A6B0>—— " + T(user.sign, user.signEn) + "</color></size>" : "";
-                Line(card, "<color=#A0A6B0>" + floor + T(" 楼", " #") + "</color>" + sign, 13, Muted);
+                Line(card, "<color=#A0A6B0>" + floor + Lang.T(" 楼") + "</color>" + sign, 13, Muted);
             }
         }
 
         void DrawEra(string id)
         {
             var e = EraContent.Events.Get(id);
-            if (e == null) { Line(Card(), T("帖子不存在。", "This thread doesn't exist."), 18, Muted); return; }
+            if (e == null) { Line(Card(), Lang.T("帖子不存在。"), 18, Muted); return; }
             Line(Card(new Color32(232, 240, 255, 255)), "<b><size=22>" + EraContent.Title(e) + "</size></b>", 20, Ink);
             var card = Card();
-            AuthorLine(card, "chigua", "<b>" + Name("chigua") + "</b>  <color=#E08A00>Lv.3</color>  <color=#3878E6>" + T("楼主", "OP") + "</color>", 16, Link);
+            AuthorLine(card, "chigua", "<b>" + Name("chigua") + "</b>  <color=#E08A00>Lv.3</color>  <color=#3878E6>" + Lang.T("楼主") + "</color>", 16, Link);
             TopicLine(card, "news", EraContent.Title(e));
             Line(card, EraContent.Text(e), 18, Ink);
             var reply = Card();
             AuthorLine(reply, "xiaobai", "<b>" + Name("xiaobai") + "</b>  <color=#E08A00>Lv.2</color>", 16, Link);
-            Line(reply, T("前排。", "Front row."), 18, Ink);
+            Line(reply, Lang.T("前排。"), 18, Ink);
         }
 
         void DrawUser(ForumContext c, string id)
@@ -412,17 +412,17 @@ namespace LingGuangV05.Desktop.Tieba
             hub.Library.Users.TryGetValue(id, out var user);
             var head = Card(new Color32(232, 240, 255, 255));
             AuthorLine(head, id, "<b><size=24>" + Name(id) + "</size></b>  <color=#E08A00>Lv." + (user != null ? user.level : 1) + "</color>", 20, Ink);
-            if (user != null && user.sign.Length > 0) Line(head, T("签名：", "Signature: ") + T(user.sign, user.signEn), 16, Muted);
-            if (hub.CanMessage(id)) Line(head, "<b>" + T("【私信】", "[Message]") + "</b>", 17, Link, () => Go("chat", id));
-            Line(Card(new Color32(248, 248, 248, 255)), id == ForumLibrary.Me ? T("我的帖子", "My posts") : T("TA 的帖子", "Their posts"), 16, Muted);
+            if (user != null && user.sign.Length > 0) Line(head, Lang.T("签名：") + T(user.sign, user.signEn), 16, Muted);
+            if (hub.CanMessage(id)) Line(head, "<b>" + Lang.T("【私信】") + "</b>", 17, Link, () => Go("chat", id));
+            Line(Card(new Color32(248, 248, 248, 255)), id == ForumLibrary.Me ? Lang.T("我的帖子") : Lang.T("TA 的帖子"), 16, Muted);
             var threads = id == ForumLibrary.Me ? hub.Library.Mine(c) : hub.Library.By(id, c);
             foreach (var t in threads) ThreadRow(t, c, true);
-            if (threads.Count == 0) Line(Card(), T("还没有发过帖子。", "No posts yet."), 16, Muted);
+            if (threads.Count == 0) Line(Card(), Lang.T("还没有发过帖子。"), 16, Muted);
         }
 
         void DrawInbox(ForumContext c)
         {
-            Line(Card(new Color32(232, 240, 255, 255)), "<b>" + T("私信", "Messages") + "</b>", 20, Ink);
+            Line(Card(new Color32(232, 240, 255, 255)), "<b>" + Lang.T("私信") + "</b>", 20, Ink);
             foreach (var id in new[] { ForumLibrary.LaoZhou, ForumLibrary.ZhouNow })
             {
                 if (!hub.CanMessage(id) && !(id == ForumLibrary.LaoZhou && hub.S.zhouGone)) continue;
@@ -445,7 +445,7 @@ namespace LingGuangV05.Desktop.Tieba
             float bottom = choices ? 120 : 76;
             var header = PrologueDesk.Rect("Header", main, new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero);
             PrologueDesk.Fill(header, Color.white);
-            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + T("对方正在输入…", "typing…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
+            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
             var body = PrologueDesk.Rect("Body", main, Vector2.zero, Vector2.one, new Vector2(0, bottom), new Vector2(0, -44));
             NewScroll(body, Vector2.zero);
             DateTime lastDay = DateTime.MinValue;
@@ -479,7 +479,7 @@ namespace LingGuangV05.Desktop.Tieba
             PrologueDesk.Fill(box, new Color32(244, 246, 250, 255));
             var area = PrologueDesk.Rect("Text Area", box, Vector2.zero, Vector2.one, new Vector2(10, 4), new Vector2(-10, -4));
             area.gameObject.AddComponent<RectMask2D>();
-            var placeholder = Text(PrologueDesk.Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("说点什么……", "Say something…"), 16, Muted, TextAlignmentOptions.MidlineLeft);
+            var placeholder = Text(PrologueDesk.Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Lang.T("说点什么……"), 16, Muted, TextAlignmentOptions.MidlineLeft);
             var textLabel = Text(PrologueDesk.Rect("Text", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 16, Ink, TextAlignmentOptions.MidlineLeft);
             textLabel.richText = false;
             input = box.gameObject.AddComponent<TMP_InputField>();
@@ -489,7 +489,7 @@ namespace LingGuangV05.Desktop.Tieba
             var send = PrologueDesk.Rect("Send", bar, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-118, 12), new Vector2(-12, 64));
             var sendImg = PrologueDesk.Fill(send, Blue);
             var sb = send.gameObject.AddComponent<Button>(); sb.targetGraphic = sendImg; sb.onClick.AddListener(() => SendTyped(id));
-            Text(PrologueDesk.Rect("Text", send, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("发送", "Send"), 17, Color.white, TextAlignmentOptions.Center);
+            Text(PrologueDesk.Rect("Text", send, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Lang.T("发送"), 17, Color.white, TextAlignmentOptions.Center);
         }
 
         System.Collections.IEnumerator ScrollToEnd()

@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.YY
 {
     /// <summary>
@@ -84,16 +85,16 @@ namespace LingGuangV05.Desktop.YY
         void BuildFaces()
         {
             float y = Pad;
-            Label(body, GameText.T("最近使用", "Recently used"), Pad, y, 12, Muted);
+            Label(body, Lang.T("最近使用"), Pad, y, 12, Muted);
             y += 18;
             var recent = Recent();
-            if (recent.Count == 0) Label(body, GameText.T("（还没有。点一个表情试试）", "(None yet. Pick a face below.)"), Pad + 4, y + 6, 12, Muted);
+            if (recent.Count == 0) Label(body, Lang.T("（还没有。点一个表情试试）"), Pad + 4, y + 6, 12, Muted);
             for (int i = 0; i < recent.Count; i++) FaceCell(recent[i], Pad + i * CellSize, y);
             y += CellSize + 6;
             var line = PrologueDesk.Rect("Divider", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(Pad, -y), new Vector2(-Pad, -y + 1));
             PrologueDesk.Fill(line, Border, false);
             y += 4;
-            Label(body, GameText.T("默认表情", "Default faces"), Pad, y, 12, Muted);
+            Label(body, Lang.T("默认表情"), Pad, y, 12, Muted);
             y += 18;
             for (int i = 0; i < YYFaces.Count; i++) FaceCell(YYFaces.At(i), Pad + (i % Columns) * CellSize, y + (i / Columns) * CellSize);
         }
@@ -138,7 +139,7 @@ namespace LingGuangV05.Desktop.YY
                 button.colors = colors;
                 button.onClick.AddListener(() => { Hide(); onSticker?.Invoke(sticker); });
                 StickerView(cell, sticker, font, 2);
-                UiTip.Add(cell, () => GameText.T("斗图：", "Sticker: ") + sticker.Caption(GameText.IsEnglish) + GameText.T("\n<color=#9AA4B2>点一下直接发送</color>", "\n<color=#9AA4B2>Click to send</color>"));
+                UiTip.Add(cell, () => Lang.T("斗图：") + sticker.Caption(GameText.IsEnglish) + Lang.T("\n<color=#9AA4B2>点一下直接发送</color>"));
                 focus?.Invoke(cell.gameObject);
             }
         }
@@ -164,8 +165,8 @@ namespace LingGuangV05.Desktop.YY
         {
             var bar = PrologueDesk.Rect("Tabs", panel, Vector2.zero, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-1, TabHeight));
             PrologueDesk.Fill(bar, TabBar, false);
-            Tab(bar, 0, GameText.T("☺ 默认", "☺ Faces"), !stickersTab, () => { stickersTab = false; Rebuild(); });
-            Tab(bar, 1, GameText.T("斗图", "Stickers"), stickersTab, () => { stickersTab = true; Rebuild(); });
+            Tab(bar, 0, Lang.T("☺ 默认"), !stickersTab, () => { stickersTab = false; Rebuild(); });
+            Tab(bar, 1, Lang.T("斗图"), stickersTab, () => { stickersTab = true; Rebuild(); });
         }
 
         void Tab(RectTransform bar, int index, string label, bool on, Action click)

@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Casino
 {
     /// <summary>Five playable local games in a DreamOS tab; presentation never settles money.</summary>
@@ -42,11 +43,11 @@ namespace LingGuangV05.Desktop.Casino
         {
             switch (id)
             {
-                case "slots": return T("幸运老虎机", "LUCKY SLOTS");
-                case "dice": return T("骰子大小", "SIC BO");
-                case "roulette": return T("欧式轮盘", "ROULETTE");
-                case "blackjack": return T("21 点", "BLACKJACK");
-                default: return T("龙虎斗", "DRAGON / TIGER");
+                case "slots": return Lang.T("幸运老虎机");
+                case "dice": return Lang.T("骰子大小");
+                case "roulette": return Lang.T("欧式轮盘");
+                case "blackjack": return Lang.T("21 点");
+                default: return Lang.T("龙虎斗");
             }
         }
 
@@ -97,10 +98,10 @@ namespace LingGuangV05.Desktop.Casino
             board = PrologueDesk.Centered("Casino Board", root, Vector2.zero, new Vector2(1120, 660));
             var header = Rect("Header", board, 0, 0, 1120, 86); PrologueDesk.Fill(header, new Color32(64, 11, 29, 255));
             Label("Logo", board, 25, 6, 156, 68, "<b>888</b><size=16> .vip</size>", 57, Gold);
-            Label("Brand", board, 204, 10, 360, 36, T("国际线上娱乐", "INTERNATIONAL VIP CLUB"), 26, White);
-            Label("Year", board, 205, 47, 450, 25, T("2016 · 五大经典 · 即开即玩", "EST. 2016  /  FIVE CLASSICS  /  PLAY NOW"), 14, Gold);
+            Label("Brand", board, 204, 10, 360, 36, Lang.T("国际线上娱乐"), 26, White);
+            Label("Year", board, 205, 47, 450, 25, Lang.T("2016 · 五大经典 · 即开即玩"), 14, Gold);
             wallet = Label("Wallet", board, 754, 16, 340, 30, "", 23, Gold, TextAlignmentOptions.MidlineRight);
-            Label("Shared Wallet", board, 722, 48, 372, 22, T("游戏币与桌面钱包共用 · 1 币 = ¥1", "Shared game wallet · 1 credit = ¥1"), 13, Muted, TextAlignmentOptions.MidlineRight);
+            Label("Shared Wallet", board, 722, 48, 372, 22, Lang.T("游戏币与桌面钱包共用 · 1 币 = ¥1"), 13, Muted, TextAlignmentOptions.MidlineRight);
             for (int i = 0; i < Games.Length; i++)
             {
                 int index = i;
@@ -109,14 +110,14 @@ namespace LingGuangV05.Desktop.Casino
             arena = Rect("Arena", board, 24, 154, 720, 318);
             PrologueDesk.Fill(arena, Panel);
             var slip = Rect("Bet Slip", board, 762, 154, 334, 318); PrologueDesk.Fill(slip, Panel);
-            Label("Ticket Label", slip, 20, 12, 294, 25, T("下注单 / BET SLIP", "YOUR BET SLIP"), 17, Gold);
+            Label("Ticket Label", slip, 20, 12, 294, 25, Lang.T("下注单 / BET SLIP"), 17, Gold);
             ticket = Label("Selected Bet", slip, 20, 42, 294, 24, "", 17, White);
             for (int i = 0; i < Stakes.Length; i++)
             {
                 int value = Stakes[i];
                 chips.Add(Button("Stake " + value, slip, 18 + i * 77, 80, 68, 46, value.ToString(), () => { if (PresentationBusy) return; stake = value; feedback = null; }));
             }
-            Label("Choice Label", slip, 20, 139, 294, 23, T("选择押注", "PICK A SIDE"), 15, Muted);
+            Label("Choice Label", slip, 20, 139, 294, 23, Lang.T("选择押注"), 15, Muted);
             choices.Add(Button("Choice 0", slip, 18, 170, 144, 40, "", () => { if (!PresentationBusy) { choice = 0; feedback = null; } }));
             choices.Add(Button("Choice 1", slip, 174, 170, 142, 40, "", () => { if (!PresentationBusy) { choice = 1; feedback = null; } }));
             AddBlackjackButtons(slip);
@@ -127,7 +128,7 @@ namespace LingGuangV05.Desktop.Casino
             rules = Label("Rules", board, 26, 522, 1070, 46, "", 15, White, TextAlignmentOptions.TopLeft);
             history = Label("Recent Results", board, 26, 575, 1070, 36, "", 14, Muted, TextAlignmentOptions.TopLeft);
             PrologueDesk.Fill(Rect("Footer Line", board, 24, 620, 1072, 1), Burgundy, false);
-            Label("Notice", board, 24, 628, 1072, 25, T("虚构游戏支线 · 无充值提现 · 单局有输有赢，长期赔率偏向庄家 · 别拿电费试手气", "FICTIONAL SIDE GAME / NO REAL PAYMENTS / HOUSE EDGE APPLIES / KEEP YOUR POWER MONEY"), 13, Muted, TextAlignmentOptions.Center);
+            Label("Notice", board, 24, 628, 1072, 25, Lang.T("虚构游戏支线 · 无充值提现 · 单局有输有赢，长期赔率偏向庄家 · 别拿电费试手气"), 13, Muted, TextAlignmentOptions.Center);
             EnsureEffects(); BuildArena();
         }
 
@@ -143,10 +144,10 @@ namespace LingGuangV05.Desktop.Casino
             gameTitle = Label("Table Title", arena, 20, 12, 500, 32, GameName(id), 25, Gold);
             Label("Table Number", arena, 532, 14, 168, 28, "VIP / 0" + (game + 1), 16, Muted, TextAlignmentOptions.MidlineRight);
             if (id == "blackjack") { BuildBlackjackTable(); return; }
-            string boast = id == "slots" ? T("三枚相同 · 返还 20 倍", "THREE MATCHING SYMBOLS · 20x RETURN")
-                : id == "dice" ? T("三骰定大小 · 豹子通吃", "THREE DICE · TRIPLES LOSE")
-                : id == "roulette" ? T("红与黑之间 · 还有一个零", "BETWEEN RED AND BLACK · THERE IS ZERO")
-                : T("一张定胜负 · A 最小 K 最大", "ONE CARD EACH · ACE LOW, KING HIGH");
+            string boast = id == "slots" ? Lang.T("三枚相同 · 返还 20 倍")
+                : id == "dice" ? Lang.T("三骰定大小 · 豹子通吃")
+                : id == "roulette" ? Lang.T("红与黑之间 · 还有一个零")
+                : Lang.T("一张定胜负 · A 最小 K 最大");
             odds = Label("Paytable Banner", arena, 20, 51, 680, 31, boast, 19, White, TextAlignmentOptions.Center);
             if (id == "roulette") { BuildWheel(); if (!Spinning) ShowLastResult(); return; }
             int count = id == "roulette" ? 1 : id == "dragon" ? 2 : 3;
@@ -181,7 +182,7 @@ namespace LingGuangV05.Desktop.Casino
                 }
             }
             Label("Table Caption", arena, 20, 265, 680, 31,
-                id == "dragon" ? T("龙  <size=16>VS</size>  虎     /     同点庄家赢", "DRAGON  vs  TIGER    /    TIES LOSE") : T("请先选筹码，再按下方按钮下注", "SELECT YOUR CHIPS, THEN PLACE A BET"), 17, Muted, TextAlignmentOptions.Center);
+                id == "dragon" ? Lang.T("龙  <size=16>VS</size>  虎     /     同点庄家赢") : Lang.T("请先选筹码，再按下方按钮下注"), 17, Muted, TextAlignmentOptions.Center);
             if (!Spinning) ShowLastResult();
         }
 
@@ -202,8 +203,8 @@ namespace LingGuangV05.Desktop.Casino
             var fill = PrologueDesk.Fill(center, White, false); fill.sprite = PrologueDesk.Circle();
             faces.Add(Label("Value", center, 0, 0, 112, 112, "?", 48, Burgundy, TextAlignmentOptions.Center));
             PrologueDesk.Fill(Rect("Pointer", arena, 356, 87, 8, 22), Gold, false);
-            Label("Red Pockets", arena, 24, 126, 210, 90, T("18 格红\n18 格黑\n1 格绿色的零", "18 RED\n18 BLACK\n1 GREEN ZERO"), 21, White, TextAlignmentOptions.Center);
-            Label("Roulette Return", arena, 490, 126, 206, 90, T("押中颜色\n返还 2 倍\n零点两边都输", "MATCH COLOUR\n2x RETURN\nZERO LOSES"), 20, Gold, TextAlignmentOptions.Center);
+            Label("Red Pockets", arena, 24, 126, 210, 90, Lang.T("18 格红\n18 格黑\n1 格绿色的零"), 21, White, TextAlignmentOptions.Center);
+            Label("Roulette Return", arena, 490, 126, 206, 90, Lang.T("押中颜色\n返还 2 倍\n零点两边都输"), 20, Gold, TextAlignmentOptions.Center);
         }
 
         void SetFace(int index, int value)
@@ -219,11 +220,11 @@ namespace LingGuangV05.Desktop.Casino
             if (Games[game] == "blackjack")
             {
                 int before = bound.Casino.rounds;
-                if (!bound.StartBlackjack(stake, controller.Host)) { feedback = T("余额不足或上一手尚未结束", "Insufficient balance or unfinished hand"); return; }
+                if (!bound.StartBlackjack(stake, controller.Host)) { feedback = Lang.T("余额不足或上一手尚未结束"); return; }
                 PersistBlackjack(before); return;
             }
             if (!bound.TryCasinoBet(Games[game], choice, stake, controller.Host, out var round))
-            { feedback = T("余额不足或上一局尚未结束", "Insufficient balance or round still busy"); return; }
+            { feedback = Lang.T("余额不足或上一局尚未结束"); return; }
             reveal = round; revealAt = Time.unscaledTime + 1.2f;
             QueuePayout(round);
             if (round.game == "dragon") { revealAt = Time.unscaledTime; BuildArena(); }
@@ -266,8 +267,8 @@ namespace LingGuangV05.Desktop.Casino
             if (bound == null) return;
             var c = bound.Casino;
             double money = controller.Host.Money - (pendingPayout != null ? pendingPayout.returned : 0);
-            wallet.text = T("余额  ", "BALANCE  ") + "¥" + Money(money);
-            totals.text = T("累计净输赢  ", "TOTAL NET  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0));
+            wallet.text = Lang.T("余额  ") + "¥" + Money(money);
+            totals.text = Lang.T("累计净输赢  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0));
             string id = Games[game];
             for (int i = 0; i < tabs.Count; i++) { tabs[i].interactable = !PresentationBusy; tabs[i].GetComponent<Image>().color = game == i ? Burgundy : Panel; }
             for (int i = 0; i < chips.Count; i++) { chips[i].interactable = !PresentationBusy && !bound.BlackjackActive; chips[i].GetComponent<Image>().color = stake == Stakes[i] ? new Color32(151, 100, 37, 255) : Burgundy; }
@@ -277,25 +278,25 @@ namespace LingGuangV05.Desktop.Casino
                 choices[i].GetComponentInChildren<TMP_Text>().text = ChoiceName(id, i);
                 choices[i].GetComponent<Image>().color = choice == i ? new Color32(151, 100, 37, 255) : Burgundy;
             }
-            ticket.text = T("本局  ", "THIS BET  ") + "¥" + (id == "blackjack" && bound.BlackjackActive ? c.blackjack.stake : stake) + "  /  " + (id == "blackjack" ? "BLACKJACK" : id == "slots" ? T("单次旋转", "one spin") : ChoiceName(id, choice));
-            bet.GetComponentInChildren<TMP_Text>().text = bound.BlackjackActive ? T("请先完成 21 点这一手", "FINISH YOUR BLACKJACK HAND") : Spinning ? T("开奖中…", "REVEALING…") : T("下注  ", "BET  ") + "¥" + stake;
+            ticket.text = Lang.T("本局  ") + "¥" + (id == "blackjack" && bound.BlackjackActive ? c.blackjack.stake : stake) + "  /  " + (id == "blackjack" ? "BLACKJACK" : id == "slots" ? Lang.T("单次旋转") : ChoiceName(id, choice));
+            bet.GetComponentInChildren<TMP_Text>().text = bound.BlackjackActive ? Lang.T("请先完成 21 点这一手") : Spinning ? Lang.T("开奖中…") : Lang.T("下注  ") + "¥" + stake;
             bet.interactable = !bound.BlackjackActive && !PresentationBusy && bound.Clock >= c.nextBetAt && money >= stake && !double.IsNaN(money) && !double.IsInfinity(money);
-            hint.text = feedback ?? (bound.BlackjackActive ? T("关页不退注 · 回到 21 点可继续", "Close and reopen to resume; no refund") : money < stake ? T("余额不足，去标注台赚些零钱", "Not enough. Earn credits by labelling.") : T("点击即扣款 · 返还包含本金", "Charged on click · returns include stake"));
+            hint.text = feedback ?? (bound.BlackjackActive ? Lang.T("关页不退注 · 回到 21 点可继续") : money < stake ? Lang.T("余额不足，去标注台赚些零钱") : Lang.T("点击即扣款 · 返还包含本金"));
             RefreshBlackjackButtons();
             rules.text = RuleText(id);
-            if (Spinning) result.text = T("正在开奖… 本局已经结算，关页不退注。", "Revealing… This round is settled; closing does not refund.");
+            if (Spinning) result.text = Lang.T("正在开奖… 本局已经结算，关页不退注。");
             else
             {
                 var last = c.history.Count > 0 ? c.history[c.history.Count - 1] : null;
-                result.text = last == null ? T("欢迎光临。输赢都会计入游戏钱包。", "Welcome. Wins and losses use your game wallet.")
-                    : "#" + last.number + "  " + GameName(last.game) + "   " + T("净输赢 ", "NET ") + Signed(last.returned - last.stake) + "   <size=15>" + T("返还 ", "RETURN ") + "¥" + last.returned + "</size>";
+                result.text = last == null ? Lang.T("欢迎光临。输赢都会计入游戏钱包。")
+                    : "#" + last.number + "  " + GameName(last.game) + "   " + Lang.T("净输赢 ") + Signed(last.returned - last.stake) + "   <size=15>" + Lang.T("返还 ") + "¥" + last.returned + "</size>";
             }
-            if (bound.BlackjackActive) result.text = T("21 点待续：本手已押 ¥", "BLACKJACK IN PROGRESS: stake ¥") + c.blackjack.stake + T("，要牌或停牌后结算。", ". Hit or stand to finish.");
-            if (CardsBusy) result.text = T("发牌 / 翻牌中…", "DEALING / REVEALING…");
+            if (bound.BlackjackActive) result.text = Lang.T("21 点待续：本手已押 ¥") + c.blackjack.stake + Lang.T("，要牌或停牌后结算。");
+            if (CardsBusy) result.text = Lang.T("发牌 / 翻牌中…");
             var items = new List<string>();
             for (int i = Math.Max(0, c.history.Count - 5); i < c.history.Count; i++)
             { var r = c.history[i]; if (pendingPayout == r) continue; items.Add("#" + r.number + " " + Signed(r.returned - r.stake)); }
-            history.text = T("最近记录：", "RECENT: ") + (items.Count == 0 ? "—" : string.Join("    /    ", items));
+            history.text = Lang.T("最近记录：") + (items.Count == 0 ? "—" : string.Join("    /    ", items));
         }
 
         void ShowLastResult()
@@ -321,19 +322,19 @@ namespace LingGuangV05.Desktop.Casino
             return value.ToString();
         }
 
-        static string ChoiceName(string id, int side) => id == "dice" ? (side == 0 ? T("小 4–10", "SMALL 4–10") : T("大 11–17", "BIG 11–17"))
-            : id == "roulette" ? (side == 0 ? T("红", "RED") : T("黑", "BLACK")) : side == 0 ? T("龙", "DRAGON") : T("虎", "TIGER");
+        static string ChoiceName(string id, int side) => id == "dice" ? (side == 0 ? Lang.T("小 4–10") : Lang.T("大 11–17"))
+            : id == "roulette" ? (side == 0 ? Lang.T("红") : Lang.T("黑")) : side == 0 ? Lang.T("龙") : Lang.T("虎");
         static string Money(double value) => value.ToString("N0", CultureInfo.InvariantCulture);
         static string Signed(double value) => (value > 0 ? "+" : value < 0 ? "−" : "") + "¥" + Money(Math.Abs(value));
         static string RuleText(string id)
         {
             switch (id)
             {
-                case "slots": return T("规则：三轴各有 6 种等概率符号；三个相同返还 20 倍，恰有两个相同返还本金，其余为 0。", "RULES: 3 independent reels, 6 equally likely symbols each. Three matching returns 20x; exactly a pair returns 1x; otherwise 0.");
-                case "dice": return T("规则：三枚六面骰。小为总点数 4–10，大为 11–17；三个相同（豹子）无论大小都输，押中返还 2 倍。", "RULES: Three fair dice. Small = 4–10; big = 11–17. All triples lose on both sides. Correct side returns 2x.");
-                case "roulette": return T("规则：0–36 共 37 格等概率，18 红、18 黑；0 为绿色，两边都输，押中颜色返还 2 倍。", "RULES: 37 equally likely pockets, 0–36. 18 red, 18 black; green zero loses on both sides. Correct colour returns 2x.");
-                case "blackjack": return T("规则：单副牌每手洗牌，A 计 1 或 11，J/Q/K 计 10。庄家软 17 停牌；自然 21 点赢 3:2，普通胜局赢 1:1，平局退注。首两张可加倍，只补一张；不分牌、无保险。", "RULES: Fresh single deck; A = 1/11, faces = 10. Dealer stands on soft 17. Natural pays 3:2; other wins 1:1; ties return stake. Double on first two cards, then one card only. No split/insurance.");
-                default: return T("规则：龙、虎各独立抽取 A–K（1–13），点数大的一方胜；同点两边都输，押中返还 2 倍。", "RULES: Dragon and Tiger independently draw A–K (1–13), ace low. Higher card wins; ties lose on both sides. Correct side returns 2x.");
+                case "slots": return Lang.T("规则：三轴各有 6 种等概率符号；三个相同返还 20 倍，恰有两个相同返还本金，其余为 0。");
+                case "dice": return Lang.T("规则：三枚六面骰。小为总点数 4–10，大为 11–17；三个相同（豹子）无论大小都输，押中返还 2 倍。");
+                case "roulette": return Lang.T("规则：0–36 共 37 格等概率，18 红、18 黑；0 为绿色，两边都输，押中颜色返还 2 倍。");
+                case "blackjack": return Lang.T("规则：单副牌每手洗牌，A 计 1 或 11，J/Q/K 计 10。庄家软 17 停牌；自然 21 点赢 3:2，普通胜局赢 1:1，平局退注。首两张可加倍，只补一张；不分牌、无保险。");
+                default: return Lang.T("规则：龙、虎各独立抽取 A–K（1–13），点数大的一方胜；同点两边都输，押中返还 2 倍。");
             }
         }
     }

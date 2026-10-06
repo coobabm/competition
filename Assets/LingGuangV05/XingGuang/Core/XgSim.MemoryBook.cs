@@ -298,7 +298,7 @@ namespace LingGuangV05.XingGuang
             foreach (var c in MemoryCues) if (line.IndexOf(c, StringComparison.OrdinalIgnoreCase) >= 0) { cue = true; break; }
             foreach (var c in StrongCues) if (line.IndexOf(c, StringComparison.OrdinalIgnoreCase) >= 0) { strong = true; break; }
             if (!cue && !strong) return none;
-            var op = new XgMemoryOp { kind = XgMemoryOpKind.Add, text = T("主人说：", "Owner said: ") + line, subject = MemorySubjects[0], importance = strong ? 2 : 1 };
+            var op = new XgMemoryOp { kind = XgMemoryOpKind.Add, text = T("主人说：") + line, subject = MemorySubjects[0], importance = strong ? 2 : 1 };
             return ApplyMemoryOps(new[] { op });
         }
 
@@ -353,7 +353,7 @@ namespace LingGuangV05.XingGuang
             if (notes == null || notes.Count == 0) return "";
             var parts = new List<string>();
             foreach (var e in notes) parts.Add(e.text);
-            return T("你记得：", "You remember: ") + string.Join(T("；", "; "), parts) + T("。", ". ");
+            return T("你记得：", "You remember: ") + string.Join(T("；"), parts) + T("。", ". ");
         }
 
         /// <summary>Recall for a prompt from the given lines (the YY contact): use counts update, the 对话 page's panel does not.</summary>
@@ -413,7 +413,7 @@ namespace LingGuangV05.XingGuang
             foreach (var e in similar) { shown.Add(e.id); book.Append('[').Append(e.id).Append("] ").Append(e.text).Append('\n'); }
             string ai = MemoryAiName;
             string system = English ? ExtractorEn(ai, book.Length > 0 ? book.ToString() : "(empty)\n") : ExtractorZh(ai, book.Length > 0 ? book.ToString() : "（空）\n");
-            string user = T("主人：", "Owner: ") + (playerLine ?? "").Trim() + "\n" + ai + T("：", ": ") + (aiLine ?? "").Trim();
+            string user = T("主人：") + (playerLine ?? "").Trim() + "\n" + ai + T("：", ": ") + (aiLine ?? "").Trim();
             return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", system), new KeyValuePair<string, string>("user", user) };
         }
 
@@ -549,9 +549,9 @@ namespace LingGuangV05.XingGuang
         {
             DateUndatedMemories();
             var sb = new StringBuilder();
-            sb.Append(T(MemoryAiName + "的笔记", MemoryAiName + "'s notes")).Append(T("（共 ", " (")).Append(S.memoryBook.Count).Append(T(" 条，最多 ", " of at most ")).Append(MemoryBookLimit).Append(T(" 条）", ")")).Append('\n');
-            sb.Append(T("每行一件事：日期  [关于谁] 内容  ★ 越多越重要", "One thing per line: date  [about whom] note  more ★ = more important")).Append("\n\n");
-            if (S.memoryBook.Count == 0) sb.Append(T("（还没有记下什么。）", "(Nothing written down yet.)")).Append('\n');
+            sb.Append(T(MemoryAiName + "的笔记", MemoryAiName + "'s notes")).Append(T("（共 ")).Append(S.memoryBook.Count).Append(T(" 条，最多 ")).Append(MemoryBookLimit).Append(T(" 条）")).Append('\n');
+            sb.Append(T("每行一件事：日期  [关于谁] 内容  ★ 越多越重要")).Append("\n\n");
+            if (S.memoryBook.Count == 0) sb.Append(T("（还没有记下什么。）")).Append('\n');
             foreach (var e in S.memoryBook) sb.Append(NotebookLine(e)).Append('\n');
             return sb.ToString();
         }
@@ -562,7 +562,7 @@ namespace LingGuangV05.XingGuang
             string name = MemoryAiName;
             var sb = new StringBuilder();
             foreach (char c in name) sb.Append("\\/:*?\"<>|".IndexOf(c) >= 0 || c < 32 ? '_' : c);
-            return sb.ToString().Trim() + T("的笔记.txt", " notes.txt");
+            return sb.ToString().Trim() + T("的笔记.txt");
         }
     }
 }

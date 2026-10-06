@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>A deployed checkpoint chip that can be dragged onto a contract.</summary>
@@ -104,7 +105,9 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 Fx.Knock(row, .02f, new Vector2(12, 0));
                 Fx.Play(XgJuice.Sfx.Id.Thud);
-                view.ShowToast(c.dataset != chip.dataset ? T("这个检查点干不了这活：需要「", "Wrong checkpoint: needs ") + XgCatalog.Dataset(c.dataset).name + T("」", "") : T("准确率还没到门槛 ", "Below the bar ") + XgSim.Pct(c.threshold), 2.5f);
+                view.ShowToast(c.dataset != chip.dataset ? Lang.T("这个检查点干不了这活：需要「") + XgCatalog.Dataset(c.dataset).name + T("」", "")
+                    : c.realtime && Sim.BestAcc(c.dataset) + 1e-9 >= c.threshold ? Lang.T("直播等不了：循环网络一个字一个字地算，跟不上。要不用循环的模型达到 ") + XgSim.Pct(c.threshold)
+                    : Lang.T("准确率还没到门槛 ") + XgSim.Pct(c.threshold), 2.5f);
                 return;
             }
             Sign(c, row);
@@ -120,16 +123,15 @@ namespace LingGuangV05.Desktop.XingGuang
             Fx.Play(XgJuice.Sfx.Id.Stamp);
             Fx.Play(XgJuice.Sfx.Id.Coin, 1, .7f);
             Fx.Burst(at, 24, XgPalette.Gold, XgJuice.Shape.Yen, 300);
-            Fx.Float(at + new Vector2(0, 40), T("签约！首付 +¥", "Signed! +¥") + Money(c.signBonus), XgPalette.Good, 26);
+            Fx.Float(at + new Vector2(0, 40), Lang.T("签约！首付 +¥") + Money(c.signBonus), XgPalette.Good, 26);
             view.Refresh(true);
         }
 
         public override void Refresh()
         {
             if (root == null) return;
-            header.text = T("订单用<b>最佳检查点</b>干活，每秒把钱打进和家里共用的钱包；高出门槛越多单价越高（最多 ×2）。<color=#3B5BDB>把下面的检查点拖到订单上签约。</color>",
-                "Contracts run on your <b>best checkpoint</b> and pay every second; the further above the bar, the higher the rate (up to ×2). <color=#3B5BDB>Drag a checkpoint onto a contract to sign.</color>")
-                + "  " + T("合计 ", "Total ") + "<color=#E86E14>¥" + Money(Sim.IncomePerSecond) + T("/秒", "/s") + "</color>";
+            header.text = Lang.T("订单用<b>最佳检查点</b>干活，每秒把钱打进和家里共用的钱包；高出门槛越多单价越高（最多 ×2）。<color=#3B5BDB>把下面的检查点拖到订单上签约。</color>")
+                + "  " + Lang.T("合计 ") + "<color=#E86E14>¥" + Money(Sim.IncomePerSecond) + T("/秒", "/s") + "</color>";
 
             // Checkpoint chips.
             var ready = new List<XgBest>(Sim.S.best);
@@ -181,15 +183,17 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var (c, row, text, btn, bg) in rows)
             {
                 var d = XgCatalog.Dataset(c.dataset);
-                double best = Sim.BestAcc(c.dataset);
+                double best = Sim.ContractAcc(c);
                 bool signed = Sim.Signed(c.id), can = Sim.CanSign(c);
                 text.text = "<b>" + T(c.client, c.clientEn) + "</b> · " + T(c.job, c.jobEn) + "\n<size=13><color=#68748C>" + T(d.name, d.nameEn) + " ≥ " + XgSim.Pct(c.threshold)
-                    + T("  当前 ", "  now ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>\n<color=#E86E14>¥" + Money(c.income) + T("/秒起", "/s base") + "</color>"
-                    + (signed ? "  <color=#2F9E44>" + T("在跑 ¥", "earning ¥") + Money(Sim.ContractIncome(c)) + T("/秒", "/s") + "</color>" : "  <size=13><color=#68748C>" + T("首付 ¥", "advance ¥") + Money(c.signBonus) + "</color></size>");
+                    + (c.realtime ? Lang.T(" · 实时：只认不用循环的模型") : "")
+                    + (Sim.DriftPay(c) < 1 - 1e-9 ? "  <color=#D63031>" + Lang.T("新题型：收入 −") + XgSim.Pct(1 - Sim.DriftPay(c)) + Lang.T("，回炉训练能补回来") + "</color>" : "")
+                    + Lang.T("  当前 ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>\n<color=#E86E14>¥" + Money(c.income) + Lang.T("/秒起") + "</color>"
+                    + (signed ? "  <color=#2F9E44>" + Lang.T("在跑 ¥") + Money(Sim.ContractIncome(c)) + T("/秒", "/s") + "</color>" : "  <size=13><color=#68748C>" + Lang.T("首付 ¥") + Money(c.signBonus) + "</color></size>");
                 bool target = dragging != null && dragging == c.dataset && can;
                 bg.color = target ? new Color32(226, 246, 230, 255) : signed ? new Color32(240, 250, 242, 255) : new Color32(247, 249, 253, 255);
-                if (signed) btn.Set(T("已签约", "Signed"), false);
-                else btn.Set(T("签约", "Sign"), can, can ? XgPalette.Accent : (Color?)null, can ? Color.white : (Color?)null);
+                if (signed) btn.Set(Lang.T("已签约"), false);
+                else btn.Set(Lang.T("签约"), can, can ? XgPalette.Accent : (Color?)null, can ? Color.white : (Color?)null);
             }
             list.sizeDelta = new Vector2(0, rowsHeight + (market != null ? market.Refresh(rowsHeight) : 0));
         }

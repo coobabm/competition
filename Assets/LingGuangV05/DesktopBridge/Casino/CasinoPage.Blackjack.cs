@@ -4,6 +4,7 @@ using LingGuangV05.XingGuang;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Casino
 {
     public sealed partial class CasinoPage
@@ -17,7 +18,7 @@ namespace LingGuangV05.Desktop.Casino
         void AddBlackjackButtons(RectTransform slip)
         {
             string[] actions = { "hit", "stand", "double" };
-            string[] labels = { T("要牌", "HIT"), T("停牌", "STAND"), T("加倍", "DOUBLE") };
+            string[] labels = { Lang.T("要牌"), Lang.T("停牌"), Lang.T("加倍") };
             for (int i = 0; i < actions.Length; i++)
             {
                 string action = actions[i];
@@ -47,11 +48,11 @@ namespace LingGuangV05.Desktop.Casino
                     && (i != 2 || hand.player.Count == 2 && !hand.doubled && controller.Host.Money >= hand.stake);
             }
             if (Games[game] != "blackjack" || dealerScore == null || playerScore == null) return;
-            dealerScore.text = T("庄家", "DEALER"); playerScore.text = T("你", "YOU");
+            dealerScore.text = Lang.T("庄家"); playerScore.text = T("你", "YOU");
             if (hand == null) return;
             if (CardsBusy) { dealerScore.text += "\n…"; playerScore.text += "\n…"; return; }
-            dealerScore.text += hand.active ? T("\n暗牌未翻", "\nHOLE CARD HIDDEN") : "\n" + BlackjackRules.Score(hand.dealer);
-            playerScore.text += "\n" + BlackjackRules.Score(hand.player) + (BlackjackRules.Score(hand.player) > 21 ? T(" 爆牌", " BUST") : "");
+            dealerScore.text += hand.active ? Lang.T("\n暗牌未翻") : "\n" + BlackjackRules.Score(hand.dealer);
+            playerScore.text += "\n" + BlackjackRules.Score(hand.player) + (BlackjackRules.Score(hand.player) > 21 ? Lang.T(" 爆牌") : "");
         }
         void BuildBlackjackTable()
         {
@@ -62,8 +63,8 @@ namespace LingGuangV05.Desktop.Casino
             float flipDelay = hand != null && same && hand.player.Count > oldPlayers ? .68f : 0;
             shownHand = hand; shownBlackjackRevision = hand?.revision ?? 0;
             shownPlayers = hand?.player.Count ?? 0; shownDealer = hand?.dealer.Count ?? 0; shownHoleHidden = hand != null && hand.active;
-            Label("Blackjack Terms", arena, 20, 47, 680, 27, T("BLACKJACK 3:2    /    庄家软 17 停牌", "BLACKJACK PAYS 3:2    /    DEALER STANDS ON SOFT 17"), 17, Gold, TextAlignmentOptions.Center);
-            dealerScore = Label("Dealer Score", arena, 18, 84, 132, 70, T("庄家", "DEALER"), 18, White, TextAlignmentOptions.Center);
+            Label("Blackjack Terms", arena, 20, 47, 680, 27, Lang.T("BLACKJACK 3:2    /    庄家软 17 停牌"), 17, Gold, TextAlignmentOptions.Center);
+            dealerScore = Label("Dealer Score", arena, 18, 84, 132, 70, Lang.T("庄家"), 18, White, TextAlignmentOptions.Center);
             playerScore = Label("Player Score", arena, 18, 192, 132, 70, T("你", "YOU"), 18, White, TextAlignmentOptions.Center);
             for (int i = 2; i >= 0; i--)
             {
@@ -72,13 +73,13 @@ namespace LingGuangV05.Desktop.Casino
                 if (i == 0) Label("Shoe Mark", shoe, 1, 1, 44, 64, "888\n<size=10>VIP</size>", 18, Gold, TextAlignmentOptions.Center);
             }
             if (hand == null)
-                Label("Deal Prompt", arena, 160, 100, 470, 150, T("先选筹码，再发牌。\n不要超过 21 点。", "Choose a stake and deal.\nGet close to 21 without going over."), 26, White, TextAlignmentOptions.Center);
+                Label("Deal Prompt", arena, 160, 100, 470, 150, Lang.T("先选筹码，再发牌。\n不要超过 21 点。"), 26, White, TextAlignmentOptions.Center);
             else
             {
                 DrawHand(hand.dealer, 82, false, hand.active, oldPlayers, oldDealer, flipHole, flipDelay);
                 DrawHand(hand.player, 190, true, false, oldPlayers, oldDealer, false, flipDelay);
             }
-            Label("Hand Status", arena, 20, 282, 680, 25, T("牌从牌堆发出 · 可轻拖牌面，松手归位 · 关页保留本手", "DEALT FROM THE SHOE / DRAG CARDS TO INSPECT / CLOSE TO RESUME LATER"), 13, White, TextAlignmentOptions.Center);
+            Label("Hand Status", arena, 20, 282, 680, 25, Lang.T("牌从牌堆发出 · 可轻拖牌面，松手归位 · 关页保留本手"), 13, White, TextAlignmentOptions.Center);
         }
         void DrawHand(List<int> cards, float y, bool player, bool hideHole, int oldPlayers, int oldDealer, bool flipHole, float flipDelay)
         {
@@ -92,7 +93,7 @@ namespace LingGuangV05.Desktop.Casino
                 var front = Rect("Card Front", rt, 1, 1, 50, 74); PrologueDesk.Fill(front, White, false);
                 var back = Rect("Card Back", rt, 1, 1, 50, 74); PrologueDesk.Fill(back, Burgundy, false);
                 string rank = Face("dragon", BlackjackRules.Rank(cards[i]));
-                string[] suit = { T("黑桃", "S"), T("红桃", "H"), T("梅花", "C"), T("方片", "D") };
+                string[] suit = { Lang.T("黑桃"), Lang.T("红桃"), Lang.T("梅花"), Lang.T("方片") };
                 Color ink = cards[i] / 13 == 1 || cards[i] / 13 == 3 ? Burgundy : Background;
                 Label("Card Value", front, 1, 2, 48, 70, "<size=12>" + suit[cards[i] / 13] + "</size>\n" + rank, 28, ink, TextAlignmentOptions.Center);
                 Label(!player && i == 1 ? "Hidden Dealer Card" : "Card Back Value", back, 1, 2, 48, 70, "888", 20, Gold, TextAlignmentOptions.Center);

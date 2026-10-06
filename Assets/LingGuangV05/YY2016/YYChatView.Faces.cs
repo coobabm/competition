@@ -30,10 +30,10 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>The session-list preview line (TMP markup).</summary>
         static string PreviewLine(YYMessage m)
         {
-            if (m.kind == YYKind.File) return YYFaceRenderer.Markup(GameText.T("[文件] ", "[File] ") + m.file);
-            string prefix = m.from == YYChatHub.Me ? GameText.T("我：", "Me: ") : "";
+            if (m.kind == YYKind.File) return YYFaceRenderer.Markup(Lang.T("[文件] ") + m.file);
+            string prefix = m.from == YYChatHub.Me ? Lang.T("我：") : "";
             if (IsSticker(m))
-                return YYFaceRenderer.Markup(prefix + GameText.T("[斗图] ", "[Sticker] ") + YYStickers.Find(m.sticker).Caption(GameText.IsEnglish));
+                return YYFaceRenderer.Markup(prefix + Lang.T("[斗图] ") + YYStickers.Find(m.sticker).Caption(GameText.IsEnglish));
             return YYFaceRenderer.Markup(prefix) + YYFaceRenderer.PreviewMarkup(m.text ?? "", 24);
         }
 
@@ -111,7 +111,7 @@ namespace LingGuangV05.Desktop.YY
             var card = Rect("Sticker", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - size), new Vector2(left + size, -y));
             var hit = card.gameObject.AddComponent<Image>(); hit.color = new Color(1, 1, 1, 0);
             YYFacePicker.StickerView(card, sticker, font, 0);
-            UiTip.Add(card, () => GameText.T("斗图：", "Sticker: ") + sticker.Caption(GameText.IsEnglish));
+            UiTip.Add(card, () => Lang.T("斗图：") + sticker.Caption(GameText.IsEnglish));
             return size;
         }
     }

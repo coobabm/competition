@@ -24,10 +24,10 @@ namespace LingGuangV05.Desktop.LLM
         const string Rules =
             AppNames.AppZh + "的玩法（给建议时以此为准）：在" + AppNames.AppZh + "的「标注台」看题点「是」或「否」，答对给钱、多一条样本，答错不给钱、连击清零、那条作废；" +
             "标注台有手写数字、唐诗、逻辑题，后来还有弹幕、垃圾短信、标题党、刷单评论、验证码、表情包、中式英语、围棋；" +
-            "某条线够 12 条样本就能训练：在「训练」页按「训练一轮」，按一下一轮，每 4 轮评估一次打分（0 到 1000，D C B A S），刷新纪录才给钱、自动存成检查点；" +
-            "连击是标注和训练共用的，答错、太慢、NaN 都会清零，连击越高钱和训练越多；钱拿去「技能树」买层数、宽度、学习率旋钮、数据包、新架构和自动化，每个阶段的必修节点买齐、看懂瓶颈才能突破到下一阶段；" +
+            "某条线够 12 条样本就能训练：在「训练」页按「训练一轮」，按一下一轮，每轮练完自动考一次打分（0 到 1000，D C B A S），刷新纪录才给钱、自动存成检查点；" +
+            "连击是标注和训练共用的，答错、太慢、NaN 都会清零，连击越高钱和训练越多；钱拿去「科技」买层数、宽度、学习率旋钮、数据包、新架构和自动化，每个阶段的必修节点买齐、看懂瓶颈才能突破到下一阶段；" +
             "学习率太大会 loss = NaN、退回一半进度；新显卡在「淘货」买，旧卡在「喵鱼」卖，电费在「家庭」交。" +
-            "开局是感知机，只有数字与垃圾短信两桌；其它桌买对应包才出现。科技树按阶段横向展开，先观察实际瓶颈，再听说明和购买突破。不要叫玩家点击尚未出现的页签或桌。";
+            "开局是感知机，只有数字与垃圾短信两桌；其它桌买对应包才出现。科技按阶段横向展开，先观察实际瓶颈，再听说明和购买突破。不要叫玩家点击尚未出现的页签或桌。";
 
         public static int MaxTokens(string contact, XgSim lab)
         {
@@ -229,7 +229,7 @@ namespace LingGuangV05.Desktop.LLM
                 }
                 sb.Append("；订单 ").Append(lab.S.contracts.Count).Append(" 个，每秒 ¥").Append(lab.IncomePerSecond.ToString("0.0", CultureInfo.InvariantCulture))
                   .Append("；炸过 NaN ").Append(lab.S.nanEvents).Append(" 次")
-                  .Append("；最高连击 ").Append(lab.S.bestCombo).Append("；技能树自动化 ").Append(lab.AutoTrainLevel).Append(" 级");
+                  .Append("；最高连击 ").Append(lab.S.bestCombo).Append("；科技自动化 ").Append(lab.AutoTrainLevel).Append(" 级");
             }
             return sb.ToString();
         }

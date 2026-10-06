@@ -341,12 +341,12 @@ namespace LingGuangV05.Desktop.YY
             switch (id)
             {
                 case LaoZhou: return LaoZhouHelp.Reply(last, runtime.Sim, lab);
-                case "cousin": return GameText.T("在上班，晚点说。早点睡，别熬夜。", "At work, talk later. Get some sleep.");
+                case "cousin": return Lang.T("在上班，晚点说。早点睡，别熬夜。");
                 case "netbar": return null;
                 default:
                     int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
                     if (lab == null)
-                        return XgSpeechPolicy.Constrain(stage <= 2 ? "……" : GameText.T("我。在学。", "Me. Learning."), stage, GameText.IsEnglish);
+                        return XgSpeechPolicy.Constrain(stage <= 2 ? "……" : Lang.T("我。在学。"), stage, GameText.IsEnglish);
                     // The lab's offline pools (topics, time of day, personality) give the same variety as the 对话 page;
                     // a few tries keep it clear of its last lines in this YY window too.
                     string line = null;
@@ -394,13 +394,13 @@ namespace LingGuangV05.Desktop.YY
                 var p = XgMemes.Pick("spam", rng, XgMemes.MaxLevel, lab.Today, lab.Topic);
                 // 老周 is not in YY since the prologue; 表姐 forwards the suspicious SMS instead.
                 string from = runtime.Sim.S.prologue != 0 ? "cousin" : LaoZhou;
-                Ask(from, "spam", p, GameText.T("帮我看看这条短信是不是骗子？\n「", "Is this SMS a scam?\n「") + p.text + "」");
+                Ask(from, "spam", p, Lang.T("帮我看看这条短信是不是骗子？\n「") + p.text + "」");
             }
             else if (danmu > S.quizDanmuMarks)
             {
                 S.quizDanmuMarks = danmu;
                 var p = XgMemes.Pick("danmu", rng, XgMemes.MaxLevel, lab.Today, lab.Topic);
-                Ask("netbar", "danmu", p, "[小刚] " + GameText.T("这条弹幕算夸还是骂？「", "Is this comment praise or not? 「") + p.text + GameText.T("」回个「夸」或「骂」", "」Say 夸 or 骂"));
+                Ask("netbar", "danmu", p, "[小刚] " + Lang.T("这条弹幕算夸还是骂？「") + p.text + Lang.T("」回个「夸」或「骂」"));
             }
         }
 
@@ -422,10 +422,10 @@ namespace LingGuangV05.Desktop.YY
             string reply;
             if (S.quizDesk == "spam")
                 reply = correct
-                    ? (S.quizTruth ? GameText.T("果然是垃圾短信，删了。还好问了你，差点就回了。", "Junk indeed, deleted. Glad I asked.") : GameText.T("哦，是正经短信啊，那我回一下。谢了。", "Oh, it's legit. I'll reply then, thanks."))
+                    ? (S.quizTruth ? Lang.T("果然是垃圾短信，删了。还好问了你，差点就回了。") : Lang.T("哦，是正经短信啊，那我回一下。谢了。"))
                     : GameText.T("你确定？我刚问了别人……" + S.quizWhy + " 下次看仔细点。", "Sure? I just checked… " + S.quizWhy);
             else
-                reply = correct ? "[小刚] " + GameText.T("懂哥，666", "Nice, you get it") : "[阿杰] " + GameText.T("错啦，" + S.quizWhy, "Nope: " + S.quizWhy);
+                reply = correct ? "[小刚] " + Lang.T("懂哥，666") : "[阿杰] " + GameText.T("错啦，" + S.quizWhy, "Nope: " + S.quizWhy);
             quizReplies[id] = reply;
             var conv = Conversation(id);
             if (correct && pay > 0 && conv != null)
@@ -543,7 +543,7 @@ namespace LingGuangV05.Desktop.YY
                         m.fileState = YYFileState.Done;
                         conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = "你已成功接收文件「" + m.file + "」，已放到桌面。", gameSeconds = Now });
                         if (m.file == FileName && runtime.Sim != null && !runtime.Sim.AppInstalled) runtime.Sim.InstallApp();
-                        DesktopNotifications.Notify(runtime, "YY", GameText.T("文件接收完成", "Transfer complete"),
+                        DesktopNotifications.Notify(runtime, "YY", Lang.T("文件接收完成"),
                             GameText.F("{0} 已放到桌面。", "{0} is on your desktop.", m.file), false, () => OpenFile(m));
                         SaveNow();
                     }
@@ -585,14 +585,13 @@ namespace LingGuangV05.Desktop.YY
             if (!S.seedZhouHand && hand >= SeedZhouHandLabels)
             {
                 S.seedZhouHand = true;
-                if (IsVisible(Contact(LaoZhou))) Receive(LaoZhou, GameText.T("标注这活我也干过，标到最后手都是麻的。", "I've done this labelling work too. By the end my hand was numb."));
+                if (IsVisible(Contact(LaoZhou))) Receive(LaoZhou, Lang.T("标注这活我也干过，标到最后手都是麻的。"));
                 else Touch();
             }
             else if (!S.seedJieAsk && hand >= SeedJieAskLabels)
             {
                 S.seedJieAsk = true;
-                Receive("netbar", "[阿杰] " + GameText.T("听说你天天在摆渡众包上做标注？反正你都在标了，顺手帮我也标点呗，钱分你一半。",
-                    "Heard you label on Bodu Crowdsourcing every day? Since you're at it anyway, could you do some for me too? I'll split the money."));
+                Receive("netbar", "[阿杰] " + Lang.T("听说你天天在摆渡众包上做标注？反正你都在标了，顺手帮我也标点呗，钱分你一半。"));
             }
         }
 
@@ -649,8 +648,8 @@ namespace LingGuangV05.Desktop.YY
         public static string Reply(string input, ChapterOneSim sim, XgSim lab)
         {
             string q = (input ?? "").ToLowerInvariant();
-            if (sim == null) return T("我在开会，晚点回你。", "In a meeting, will reply later.");
-            if (sim.InPrologue) return T("在忙，晚点说。", "Busy, talk later.");
+            if (sim == null) return Lang.T("我在开会，晚点回你。");
+            if (sim.InPrologue) return Lang.T("在忙，晚点说。");
             if (!sim.AppInstalled)
                 return T("先把" + AppNames.AppZh + "收了：咱俩聊天记录里那个文件，点「接收」。", "Grab " + AppNames.AppEn + " first: the file in our chat, press Receive.");
             if (lab == null) return T(AppNames.AppZh + "还在启动，等一下再问。", AppNames.AppEn + " is still starting, ask again in a bit.");
@@ -667,17 +666,16 @@ namespace LingGuangV05.Desktop.YY
                          "The combo is shared: +1 per right card or epoch, +5 per record. Too slow, a miss or a NaN resets it. Up to ×2 on pay and training. Your best: ×" + lab.S.bestCombo + ".");
             // Before the protagonist has the auto-labelling idea, 老周 only talks about training automation.
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab") && lab.AutoLabelHidden)
-                return T("训练的自动化在「技能树」研究那一列，从 run.sh 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Training automation is in the skill tree's research column, run.sh to AutoML. Labelling? That's by hand. Level " + lab.AutoTrainLevel + " now.");
+                return T("训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
+                         "Training automation is in Research, the automation row, crontab to AutoML. Labelling? That's by hand. Level " + lab.AutoTrainLevel + " now.");
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab"))
-                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「技能树」研究那一列，从 run.sh 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in the skill tree, run.sh to AutoML. Level " + lab.AutoTrainLevel + " now.");
+                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
+                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in Research, crontab to AutoML. Level " + lab.AutoTrainLevel + " now.");
             if (Has(q, "技能", "架构", "层", "宽", "tree", "skill", "layer", "alexnet", "lstm"))
-                return T("「技能树」用钱买：层数、宽度、学习率旋钮、数据包、新架构。每个阶段的必修节点买齐、看懂瓶颈，才能突破到下一阶段。按住节点不放就买了。",
-                         "The skill tree takes ¥: layers, width, the rate knob, data packs, new architectures. Buy a stage's required nodes and understand its bottleneck to break through. Hold a node to buy.");
+                return Lang.T("「科技」用钱买：层数、宽度、学习率旋钮、数据包、新架构。每个阶段的必修节点买齐、看懂瓶颈，才能突破到下一阶段。按住节点不放就买了。");
             if (Has(q, "训练", "模型", "准确", "曲线", "过拟合", "检查点", "评估", "train", "model", "overfit", "checkpoint", "assess"))
-                return T("训练页按「训练一轮」，按一下跑一轮。每 4 轮评估一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
-                         "Press Train for one epoch. Every 4 epochs an assessment scores the model; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
+                return T("训练页按「训练一轮」，按一下跑一轮。每轮练完自动考一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
+                         "Press Train for one epoch. Every epoch ends with an exam; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
             if (Has(q, "显卡", "显存", "gpu", "vram", "寻宝", "淘货", "喵鱼", "机箱", "硬件", "1080"))
                 return T("新卡在「" + AppNames.ShopZh + "」买，旧卡去「" + AppNames.UsedZh + "」卖。" + AppNames.AppZh + "的算力和显存都算你的卡：现在 " + sim.S.gpuCount + " 张，算力 ×" + sim.CardCompute.ToString("0.##") + "，显存 " + (sim.MemoryCapacity / 1024).ToString("0") + " G。模型太大塞不下就得加卡。",
                          "New cards are on " + AppNames.ShopEn + ", old ones sell on " + AppNames.UsedEn + ". " + AppNames.AppEn + "'s compute and VRAM are your cards: " + sim.S.gpuCount + " now, compute ×" + sim.CardCompute.ToString("0.##") + ", " + (sim.MemoryCapacity / 1024).ToString("0") + " GB. Bigger models need more cards.");
@@ -685,7 +683,7 @@ namespace LingGuangV05.Desktop.YY
                 return T("电费在「家庭」看。训练时显卡多吃一半的电，记在同一张单子上。现在待付 ¥" + sim.S.billDue.ToString("0.00") + "，钱包 ¥" + sim.S.money.ToString("0.00") + "。" + (sim.S.unpaidPower ? "已经停电了，先去缴费。" : ""),
                          "Check power in Home. Training adds half the cards' power to the same bill. Due ¥" + sim.S.billDue.ToString("0.00") + ", wallet ¥" + sim.S.money.ToString("0.00") + "." + (sim.S.unpaidPower ? " Power is cut: pay first." : ""));
             if (Has(q, "突破", "阶段", "必修", "研究", "stage", "breakthrough", "research"))
-                return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，技能树前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
+                return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，科技前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
                          "Each stage has required nodes. Own them and understand the current bottleneck, then the breakthrough on the frontier opens. You are at stage " + lab.S.stage + ".");
             if (Has(q, "订单", "赚钱", "收入", "钱", "order", "contract", "money", "earn"))
                 return T("一开始只能在标注台手点挣钱。有了检查点就能接「订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
@@ -693,7 +691,7 @@ namespace LingGuangV05.Desktop.YY
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label"))
                 return T("先去" + AppNames.AppZh + "的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局先做数字和垃圾短信，其它桌要买包。你现在数字 " + mnist.ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
                          "Open the labelling desk in " + AppNames.AppEn + " and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. Start with digits and spam; other desks need packs. Digits " + mnist.ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
-            return T("我不一定马上回。可以问我：怎么开始、训练、连击、技能树、自动化、学习率、显卡、电费、阶段、订单。", "I may not reply right away. Ask about: starting, training, combo, skill tree, automation, learning rate, GPUs, power, stages, contracts.");
+            return Lang.T("我不一定马上回。可以问我：怎么开始、训练、连击、科技、自动化、学习率、显卡、电费、阶段、订单。");
         }
 
         static string Best(XgSim lab, string dataset) { double b = lab.BestAcc(dataset); return b > 0 ? P(b) : "—"; }

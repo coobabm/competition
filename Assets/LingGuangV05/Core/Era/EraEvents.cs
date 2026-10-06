@@ -57,8 +57,12 @@ namespace LingGuangV05.Core.Era
                 if (Array.IndexOf(Channels, e.channel) < 0) throw new FormatException("era_events: unknown channel " + e.channel + " in " + e.id);
                 if (e.date.Year != 2015 && e.date.Year != 2016 || e.date > GameCalendar.Ending) throw new FormatException("era_events: " + e.id + " is not dated in 2015–2016");
                 if (e.title.Length == 0 && e.text.Length == 0) throw new FormatException("era_events: " + e.id + " has no text");
-                if (e.title.Length > 0 != e.titleEn.Length > 0 || e.text.Length > 0 != e.textEn.Length > 0 || e.who.Length > 0 != e.whoEn.Length > 0)
-                    throw new FormatException("era_events: " + e.id + " needs an English line for every Chinese line");
+                // Chinese is the source; a missing English falls back to it (English is not maintained for now).
+                if (e.titleEn.Length == 0) e.titleEn = e.title;
+                if (e.textEn.Length == 0) e.textEn = e.text;
+                if (e.whoEn.Length == 0) e.whoEn = e.who;
+                if (e.titleEn.Length > 0 && e.title.Length == 0 || e.textEn.Length > 0 && e.text.Length == 0 || e.whoEn.Length > 0 && e.who.Length == 0)
+                    throw new FormatException("era_events: " + e.id + " has English without Chinese");
                 if (e.brief && e.text.Length > 0) throw new FormatException("era_events: " + e.id + " is a one-line headline");
                 if (IsPush(e.channel) && e.text.Length == 0) throw new FormatException("era_events: " + e.id + " needs a message");
                 result.all.Add(e);

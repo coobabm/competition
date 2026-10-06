@@ -125,7 +125,7 @@ namespace LingGuangV05.Desktop.Media
             if (pending.Count > 0) { item = pending[0]; pending.RemoveAt(0); }
             else
             {
-                item = new Pending { channel = GameText.T("消息", "Messages"), sender = "",
+                item = new Pending { channel = Lang.T("消息"), sender = "",
                     body = GameText.F("另有 {0} 条新消息，请查看应用的未读标记。", "{0} more new messages. Check the apps' unread badges.", overflow) };
                 overflow = 0;
             }

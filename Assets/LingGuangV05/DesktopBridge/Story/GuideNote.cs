@@ -168,7 +168,7 @@ namespace LingGuangV05.Desktop.Story
             foldButton.colors = Tint(0, .18f, .3f);
             foldButton.onClick.AddListener(() => { collapsed = !collapsed; Layout(); });
             foldLabel = d.Text(PrologueDesk.Rect("Label", fold, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "–", 18, Soft, TextAlignmentOptions.Center);
-            UiTip.Add(fold, () => collapsed ? GameText.T("展开便笺", "Unfold the note") : GameText.T("收起便笺", "Fold the note"));
+            UiTip.Add(fold, () => collapsed ? Lang.T("展开便笺") : Lang.T("收起便笺"));
 
             for (int i = 0; i < rows.Length; i++)
             {
@@ -238,9 +238,9 @@ namespace LingGuangV05.Desktop.Story
             string date = GameText.IsEnglish ? now.ToString("MMM d", System.Globalization.CultureInfo.InvariantCulture) : now.Month + "月" + now.Day + "日";
             // 女友系统 §7: the note never hints at her feelings, only names the day.
             var holiday = LingGuangV05.Core.Girlfriend.GirlfriendRules.HolidayOn(now);
-            if (holiday != null && holiday.wish.Length > 0) date += holiday.key == "birthday" ? GameText.T(" · 今天晴雯生日", " · Qingwen's birthday today") : GameText.T(" · 今天" + holiday.zh, " · " + holiday.en + " today");
+            if (holiday != null && holiday.wish.Length > 0) date += holiday.key == "birthday" ? Lang.T(" · 今天晴雯生日") : GameText.T(" · 今天" + holiday.zh, " · " + holiday.en + " today");
             var first = shown.Count > 0 ? shown[0] : null;
-            title.text = collapsed && first != null ? GameText.T("待办：", "To do: ") + first.Text(GameText.IsEnglish) : GameText.T("待办 · ", "To do · ") + date;
+            title.text = collapsed && first != null ? Lang.T("待办：") + first.Text(GameText.IsEnglish) : Lang.T("待办 · ") + date;
             foldLabel.text = collapsed ? "+" : "–";
             float y = TitleHeight + 6;
             for (int i = 0; i < rows.Length; i++)

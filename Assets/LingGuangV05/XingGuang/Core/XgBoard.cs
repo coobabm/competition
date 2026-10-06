@@ -15,12 +15,14 @@ namespace LingGuangV05.XingGuang
     {
         public string name = "";
         public int x = -1, y, seq;
+        /// <summary>A hand-made feature (特征工程 n-gram): used as it is, never merged with others by R2.</summary>
+        public bool made;
         public XgFeature() { }
         public XgFeature(string name, int x = -1, int y = 0, int seq = 0) { this.name = name; this.x = x; this.y = y; this.seq = seq; }
     }
 
     /// <summary>A card as the brain sees it: raw features, the region it trains and the label it was given.</summary>
-    public sealed class XgBoardCard
+    public sealed partial class XgBoardCard
     {
         public string region = "logic";
         public List<XgFeature> features = new List<XgFeature>();
@@ -47,13 +49,20 @@ namespace LingGuangV05.XingGuang
         public bool seed;
         /// <summary>Rule 7 钉 (design v1.1 §4.4, the ending's 底层规则): R4 cannot fade it, R3 cannot evict it, R1 cannot pull it, and any card it matches is answered by it.</summary>
         public bool pinned;
-        /// <summary>Board card count when this concept last matched a training card (R3 squeezes stale ones first).</summary>
+        /// <summary>Board card count when this concept last matched a training card.</summary>
         public long seen;
+        /// <summary>Board card count when it was made (R3 spares it for <see cref="XgBoard.GraceCards"/> cards; 0 in older saves).</summary>
+        public long born;
         public XgConcept MemberwiseCloneConcept() => (XgConcept)MemberwiseClone();
     }
 
     [Serializable]
-    public sealed class XgLink { public int a, b; public double c; }
+    public sealed class XgLink
+    {
+        public int a, b; public double c;
+        /// <summary>Seed of the card the link last grew on (Dropout: a pair must fire together on different cards).</summary>
+        [NonSerialized] public int last;
+    }
 
     /// <summary>Everything the brain remembers. Plain lists so it serialises with the lab save.</summary>
     [Serializable]
@@ -83,31 +92,102 @@ namespace LingGuangV05.XingGuang
         public XgActivation activation = XgActivation.Step;
         public XgWiring wiring = XgWiring.Full;
         public bool skip, clip, position, warmup, batchNorm;
+        /// <summary>
+        /// Dropout: each training card leaves some concepts out (they are not pulled), and a combination only grows from
+        /// pairs that fire together on different cards — the coincidences of a single card cannot build anything.
+        /// </summary>
+        public bool dropout;
+        /// <summary>
+        /// 单位初始化 (IRNN, Le, Jaitly &amp; Hinton 2015): a plain loop of ReLU units whose recurrent weights start as the
+        /// identity passes its memory on unchanged by default, so it remembers far back without gates. Only with ReLU
+        /// (an S-curve squashes it again), and the same open path lets a high rate blow the gradient up (clip it).
+        /// </summary>
+        public bool identityInit;
+        /// <summary>
+        /// 多头注意力 (the Transformer): several heads look at once, one by content and one by place, so a word reads as
+        /// itself wherever it stands and the opening word is still known as the opening. Single-head attention with
+        /// position tags (stage 5) only has the place-bound view.
+        /// </summary>
+        public bool multiHead;
+        /// <summary>特征工程 (the pre-deep-learning road): hand-made features, read per region (see <see cref="XgBoard.Elements"/>).</summary>
+        public bool features;
         /// <summary>偏置: every card also lights a constant element, so the board can shift its threshold.</summary>
         public bool bias;
         public double lr = .1;
+        /// <summary>The optimiser's tolerance for big steps (Adam 1.25, RMSProp 1.15, SGD 1).</summary>
+        public double steadiness = 1;
+
+        /// <summary>
+        /// The step (rate × error) past which the weights tear (NaN). Deeper stacks tear sooner (each layer multiplies
+        /// the step; less so behind shortcuts), loops sooner still (the same weights again every word, gradients
+        /// explode) unless clipped; BatchNorm lets the rate go higher, clipping caps the step, adaptive optimisers help
+        /// a little. Nothing makes a step of any size safe.
+        /// </summary>
+        public double TearAt
+        {
+            get
+            {
+                bool loop = wiring == XgWiring.Recurrent || wiring == XgWiring.GatedRecurrent || wiring == XgWiring.EncoderDecoder || wiring == XgWiring.Attention;
+                double limit = XgBoard.TearLimit * (batchNorm ? 1.5 : 1) * (clip ? 2 : 1) * steadiness;
+                limit /= 1 + .03 * Math.Max(0, depth - 1) * (skip ? .3 : 1);
+                if (loop && !clip) limit *= .75;
+                if (IdentityLoop && !clip) limit *= .5;
+                return limit;
+            }
+        }
 
         public int Cells { get { return Math.Max(1, width) * Math.Max(1, depth); } }
 
-        /// <summary>Layer factor g: step passes nothing down, S-curve .25, ReLU .9, skip connections 1.0; BatchNorm +.05.</summary>
+        /// <summary>
+        /// Layer factor g, the share of the error that gets one layer further down: a step passes nothing (its slope
+        /// is zero), an S-curve at most .25 (its steepest slope), ReLU .98 (slope 1 where it is on); BatchNorm +.05.
+        /// A skip connection carries the error past a layer whole, but only around a layer that has a slope at all.
+        /// </summary>
         public double G
         {
             get
             {
-                if (skip) return 1;
-                double g = activation == XgActivation.Step ? 0 : activation == XgActivation.Sigmoid ? .25 : .9;
-                return g <= 0 ? 0 : Math.Min(1, g + (batchNorm ? .05 : 0));
+                double g = activation == XgActivation.Step ? 0 : activation == XgActivation.Sigmoid ? .25 : .98;
+                if (g <= 0) return 0;
+                return skip ? 1 : Math.Min(1, g + (batchNorm ? .05 : 0));
             }
         }
 
-        /// <summary>Per-step memory of the sequence wiring (R6): plain loops ×.75, gated loops ×.97, others no decay.</summary>
+        /// <summary>
+        /// 传话 (the degradation of plain deep nets, He et al. 2015): a vote cast below the top has to be passed on by
+        /// every layer above it, and a plain layer cannot learn to pass things on exactly unchanged (an identity map
+        /// is hard to learn through stacked nonlinear layers). Each keeps this share of the vote as it was (ReLU .95,
+        /// a step's yes/no .9, a saturating S-curve .8) and rewrites the rest (<see cref="RelayNoise"/>). BatchNorm
+        /// helps a little — enough for about 20 layers, not for 30 — and a skip connection makes passing on the default.
+        /// </summary>
+        public double RelayKeep
+        {
+            get
+            {
+                if (skip) return 1;
+                double keep = activation == XgActivation.Step ? .9 : activation == XgActivation.Sigmoid ? .8 : .95;
+                return Math.Min(1, keep + (batchNorm ? .02 : 0));
+            }
+        }
+
+        /// <summary>传话: how much each plain layer rewrites a vote it should pass on unchanged (relative to the vote); BatchNorm softens it, a skip removes it.</summary>
+        public double RelayNoise => skip ? 0 : batchNorm ? .095 : .12;
+
+        /// <summary>What is left of a vote cast <paramref name="layersAbove"/> layers below the answer, and how garbled it is.</summary>
+        public double RelayLeft(int layersAbove) => layersAbove <= 0 ? 1 : Math.Pow(RelayKeep, layersAbove);
+        public double RelayGarble(int layersAbove) => layersAbove <= 0 ? 0 : RelayNoise * Math.Sqrt(layersAbove);
+
+        /// <summary>A plain ReLU loop started from the identity (IRNN): it hands its memory on unchanged by default.</summary>
+        public bool IdentityLoop => identityInit && wiring == XgWiring.Recurrent && activation == XgActivation.Relu;
+
+        /// <summary>Per-step memory of the sequence wiring (R6): plain loops ×.75 (×.97 as an IRNN), gated loops ×.97, others no decay.</summary>
         public double SequenceDecay
         {
             get
             {
                 switch (wiring)
                 {
-                    case XgWiring.Recurrent: return .75;
+                    case XgWiring.Recurrent: return IdentityLoop ? XgBoard.IdentityKeep : .75;
                     case XgWiring.GatedRecurrent: case XgWiring.EncoderDecoder: case XgWiring.Attention: return .97;
                     default: return 1;
                 }
@@ -133,12 +213,15 @@ namespace LingGuangV05.XingGuang
         public const double OtherRegionDecay = .0002;
         public const int DecayEvery = 16;
         public const int PairCandidates = 16;
-        /// <summary>R1 pull above this without gradient clipping tears the weights apart (NaN).</summary>
+        /// <summary>R1 step (rate × error) above this tears the weights apart (NaN) for a shallow plain net; see <see cref="XgKnobs.TearAt"/>.</summary>
         public const double TearLimit = .8;
         public const double ClipLimit = .5;
         public const double WeightLimit = 4;
-        /// <summary>Source tokens an encoder–decoder keeps after squeezing the sentence into one cell.</summary>
-        public const int BottleneckTokens = 6;
+        /// <summary>Source tokens an encoder–decoder keeps sharp after squeezing the sentence into one vector; earlier ones fade.</summary>
+        public const int BottleneckTokens = 4;
+        public const double BottleneckFade = .75;
+        /// <summary>How far apart two strokes may be for a hand-made (特征工程) descriptor to combine them.</summary>
+        public const int FeatureReach = 2;
         public const string BiasElement = "偏置";
 
         public XgBoardState S { get; private set; }
@@ -153,8 +236,12 @@ namespace LingGuangV05.XingGuang
         readonly Dictionary<int, string[]> altParts = new Dictionary<int, string[]>();
         /// <summary>Links are capped at this many per cell; the weakest are pruned.</summary>
         public const int LinksPerCell = 6;
-        /// <summary>A concept not matched for this many training cards is stale: R3 squeezes it out first.</summary>
-        public const int StaleCards = 500;
+        /// <summary>A new concept cannot be squeezed out for this many training cards: it gets the chance to earn a weight.</summary>
+        public const int GraceCards = 50;
+        /// <summary>Weights this close to zero are dead: a new raw element may take their cell (R3).</summary>
+        public const double DeadWeight = .05;
+        /// <summary>Test hook: the balance bot switches 传话 off to measure one rule change at a time.</summary>
+        internal static bool RelayOn = true;
 
         public XgBoard(XgBoardState state = null)
         {
@@ -167,10 +254,11 @@ namespace LingGuangV05.XingGuang
         // ───────────── elements (R6 decides what a card exposes) ─────────────
 
         /// <summary>An element of one card under the current wiring: id, activation and where it sits (for reach).</summary>
-        public struct Element { public string id; public double act; public int x, y, seq, back; public bool positioned; }
+        public struct Element { public string id; public double act; public int x, y, seq, back; public bool positioned, made; }
 
         public static List<Element> Elements(XgBoardCard card, XgKnobs k)
         {
+            if (k.features) card = Engineered(card);
             var list = new List<Element>(card.features.Count + 1);
             if (k.bias) list.Add(new Element { id = BiasElement, act = 1, x = -1 });
             var lengths = new Dictionary<int, int>();
@@ -179,7 +267,7 @@ namespace LingGuangV05.XingGuang
             bool sequence = card.region == "sequence";
             foreach (var f in card.features)
             {
-                var e = new Element { act = 1, x = f.x, y = f.y, seq = f.seq, positioned = f.x >= 0 };
+                var e = new Element { act = 1, x = f.x, y = f.y, seq = f.seq, positioned = f.x >= 0, made = f.made };
                 if (!e.positioned) { e.id = f.name; list.Add(e); continue; }
                 int len = lengths[f.seq];
                 int fromEnd = len - 1 - f.x;
@@ -190,17 +278,27 @@ namespace LingGuangV05.XingGuang
                         e.id = f.name + "@" + (f.seq > 0 ? "s" + f.seq + ":" : "") + f.x + (sequence ? "" : "," + f.y);
                         break;
                     case XgWiring.LocalShared:
-                        e.id = f.name;
+                        // A convolution over text (TextCNN) reads word groups wherever they are; with position tags
+                        // (as convolutional translators added them) it also knows where each word sits.
+                        e.id = sequence && k.position ? f.name + "@-" + fromEnd : f.name;
                         break;
                     case XgWiring.AnyToAny:
-                        e.id = k.position ? f.name + "@-" + fromEnd + (f.seq > 0 ? "s" + f.seq : "") : f.name;
+                        // Two sentences (translation): every word may look at every word of both; with position tags
+                        // the output word lines itself up with the source word in the same place (see Reach). One
+                        // sentence: position tags tell the first 春 from a later one.
+                        if (lengths.Count > 1) e.id = f.name + (f.seq > 0 ? "→" : "");
+                        else if (k.multiHead)
+                        {
+                            e.id = f.name;
+                            if (k.position && f.x == 0) list.Add(new Element { id = "^" + f.name, act = 1, x = f.x, y = f.y, seq = f.seq, back = fromEnd, positioned = true });
+                        }
+                        else e.id = k.position ? f.name + "@-" + fromEnd : f.name;
                         break;
                     case XgWiring.EncoderDecoder:
-                        // The whole source sentence is squeezed into one fixed-size cell (定长瓶颈): only its last
-                        // BottleneckTokens survive the squeeze.
-                        if (f.seq == 0 && fromEnd >= BottleneckTokens) continue;
+                        // The whole source sentence is squeezed into one fixed-size vector (定长瓶颈): the end of the
+                        // sentence comes through clearly, the further back a word is the more it blurs.
                         e.id = f.name + (f.seq > 0 ? "→" : "");
-                        e.act = f.seq == 0 ? 1 : Math.Pow(k.SequenceDecay, fromEnd);
+                        e.act = f.seq == 0 ? Math.Pow(BottleneckFade, Math.Max(0, fromEnd - BottleneckTokens + 1)) : Math.Pow(k.SequenceDecay, fromEnd);
                         break;
                     case XgWiring.Attention:
                         // The decoder may look back at any source position.
@@ -210,6 +308,8 @@ namespace LingGuangV05.XingGuang
                     default: // Recurrent / GatedRecurrent: the loop carries the past forward, weaker every step.
                         e.id = f.name;
                         e.act = Math.Pow(k.SequenceDecay, fromEnd);
+                        // A loop starts at the first word, so it knows which word opened the sentence.
+                        if (f.x == 0 && f.seq == 0) list.Add(new Element { id = "^" + f.name, act = e.act, x = f.x, y = f.y, seq = f.seq, back = fromEnd, positioned = true });
                         break;
                 }
                 list.Add(e);
@@ -217,15 +317,69 @@ namespace LingGuangV05.XingGuang
             return list;
         }
 
+        /// <summary>
+        /// 特征工程: what a person would hand-make before networks could find it themselves. 逻辑 cards gain every pair of
+        /// their elements as one new element (a feature cross: one layer can then answer 异或); 视觉 cards lose the stray
+        /// dot and move to their top-left corner (denoise + centre); 序列 cards drop filler words and become fixed
+        /// unigram and bigram features that R2 never merges (a linear n-gram reader: no word order beyond two).
+        /// </summary>
+        public static XgBoardCard Engineered(XgBoardCard card)
+        {
+            var made = new XgBoardCard { region = card.region, seed = card.seed, truth = card.truth };
+            switch (card.region)
+            {
+                case "logic":
+                    made.features.AddRange(card.features);
+                    for (int i = 0; i < card.features.Count; i++)
+                        for (int j = i + 1; j < card.features.Count; j++)
+                        {
+                            var a = card.features[i]; var b = card.features[j];
+                            if (a.x >= 0 || b.x >= 0) continue;
+                            made.features.Add(new XgFeature(string.CompareOrdinal(a.name, b.name) < 0 ? a.name + "&" + b.name : b.name + "&" + a.name));
+                        }
+                    break;
+                case "vision":
+                    // Denoise (drop the stray dot), then move the figure to the top-left corner.
+                    int minX = int.MaxValue, minY = int.MaxValue;
+                    foreach (var f in card.features) if (f.x >= 0 && f.name != XgBoardData.StrayDot) { minX = Math.Min(minX, f.x); minY = Math.Min(minY, f.y); }
+                    foreach (var f in card.features)
+                    {
+                        if (f.x < 0) made.features.Add(f);
+                        else if (f.name != XgBoardData.StrayDot) made.features.Add(new XgFeature(f.name, f.x - minX, f.y - minY, f.seq));
+                    }
+                    break;
+                default:
+                    // Unigrams and bigrams, each one fixed feature: a linear n-gram reader, the way text was classified
+                    // before networks read in order.
+                    XgFeature previous = null;
+                    foreach (var f in card.features)
+                    {
+                        if (f.x < 0 || f.seq > 0) { made.features.Add(f); continue; }
+                        if (XgBoardData.IsFiller(f.name)) continue;
+                        made.features.Add(new XgFeature(f.name) { made = true });
+                        if (previous != null) made.features.Add(new XgFeature(previous.name + f.name) { made = true });
+                        previous = f;
+                    }
+                    break;
+            }
+            return made;
+        }
+
         /// <summary>R6 reach between two elements of the same card.</summary>
         public static bool Reach(Element a, Element b, XgKnobs k)
         {
+            if (a.made || b.made) return false;
             if (!a.positioned || !b.positioned) return true;
+            // 特征工程 on a dense net: hand-made local descriptors only combine strokes near each other (positions stay bound).
+            if (k.features && k.wiring == XgWiring.Full) return a.seq == b.seq && Math.Abs(a.x - b.x) <= FeatureReach && Math.Abs(a.y - b.y) <= FeatureReach;
             switch (k.wiring)
             {
-                case XgWiring.Full: case XgWiring.AnyToAny: return true;
+                case XgWiring.Full: return true;
+                // Self-attention reaches everything; position tags let it line two sentences up word for word.
+                case XgWiring.AnyToAny: return a.seq == b.seq || !k.position || a.x == b.x;
                 case XgWiring.LocalShared: return a.seq == b.seq && Math.Abs(a.x - b.x) <= 1 && Math.Abs(a.y - b.y) <= 1;
-                // Across the two sentences the decoder lines each output word up with its source word.
+                // Across the two sentences the decoder lines each output word up with its source word (with an
+                // encoder–decoder only as clearly as the squeezed sentence still holds that word; see Elements).
                 case XgWiring.EncoderDecoder: case XgWiring.Attention: return a.seq != b.seq ? a.x == b.x : Math.Abs(a.x - b.x) <= 1;
                 default: return a.seq == b.seq && Math.Abs(a.x - b.x) <= 1;
             }
@@ -288,26 +442,78 @@ namespace LingGuangV05.XingGuang
         /// Readout: every matched concept votes with its weight; the highest layer reached is reported. Nothing with a
         /// weight matched means a guess.
         /// </summary>
-        public double Score(List<Match> matches, out bool guessed, out int topLayer)
+        public double Score(List<Match> matches, XgKnobs k, int seed, out bool guessed, out int topLayer)
         {
             topLayer = 0;
             double score = 0;
             foreach (var m in matches)
                 if (m.c.pinned && Math.Abs(m.c.w) > 1e-3) { topLayer = Math.Max(1, m.c.layer); guessed = false; return m.c.w * 100; }
+            int depth = k != null ? k.depth : 1;
             foreach (var m in matches)
             {
                 if (Math.Abs(m.c.w) <= 1e-3) continue;
-                score += m.c.w * m.act;
+                double vote = m.c.w * m.act;
+                // 传话: a vote cast below the top layer is relayed up through the layers above it, weaker and more
+                // garbled each time. The garble belongs to the layer, not to the concept: everything one layer sends up
+                // on a card is distorted the same way, so many votes cannot average it out (and the same card always
+                // reads the same).
+                int above = Math.Max(0, depth - Math.Min(depth, m.c.layer));
+                if (above > 0 && RelayOn) vote = vote * k.RelayLeft(above) + Math.Abs(vote) * k.RelayGarble(above) * Jitter(seed, m.c.layer);
+                score += vote;
                 if (m.c.layer > topLayer) topLayer = m.c.layer;
             }
             guessed = topLayer == 0;
             return score;
         }
 
+        /// <summary>Dropout's share of concepts left out of a training card.</summary>
+        public const double DropoutRate = .2;
+
+        /// <summary>Whether Dropout leaves this concept out of this card (fixed per pair, so a replay drops the same).</summary>
+        static bool Dropped(int seed, int id) => (Jitter(seed ^ 0x6D2B79F5, id) + 1) * .5 < DropoutRate;
+
+        /// <summary>A fixed number in [−1, 1] per (card, layer): 传话 garble.</summary>
+        static double Jitter(int seed, int id)
+        {
+            unchecked
+            {
+                uint h = (uint)seed * 2654435761u ^ (uint)id * 2246822519u;
+                h ^= h >> 15; h *= 0x2C1B3C6Du; h ^= h >> 12; h *= 0x297A2D39u; h ^= h >> 15;
+                return (h & 0xFFFF) / 32767.5 - 1;
+            }
+        }
+
+        /// <summary>What an identity-initialised ReLU loop (IRNN) keeps of every word per step: all words alike, unlike gates.</summary>
+        public const double IdentityKeep = .96;
+
+        /// <summary>Gated memory keeps a word it has learnt matters this much per step, and lets the rest go this fast.</summary>
+        public const double GateKeep = .99, GateForget = .95, GateWeight = .3;
+
+        /// <summary>
+        /// LSTM / GRU gates decide what to keep: a word that takes part in a concept carrying weight (alone or in a
+        /// combination) is remembered across the sentence (×.99 a step); the rest fades faster (×.95). Plain loops fade
+        /// everything alike (×.75).
+        /// </summary>
+        void Gate(List<Element> elements, XgBoardCard card, XgKnobs k)
+        {
+            if (k.wiring != XgWiring.GatedRecurrent) return;
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var e = elements[i];
+                if (!e.positioned || e.made) continue;
+                bool matters = false;
+                if (byElement.TryGetValue(e.id, out var uses))
+                    foreach (var c in uses) if (c.region == card.region && Math.Abs(c.w) >= GateWeight) { matters = true; break; }
+                e.act = Math.Pow(matters ? GateKeep : GateForget, e.back);
+                elements[i] = e;
+            }
+        }
+
         public bool Predict(XgBoardCard card, XgKnobs k, out bool guessed)
         {
             var elements = Elements(card, k);
-            double score = Score(Matches(card, elements, k), out guessed, out _);
+            Gate(elements, card, k);
+            double score = Score(Matches(card, elements, k), k, card.seed, out guessed, out _);
             return guessed ? (card.seed & 1) == 0 : score > 0;
         }
 
@@ -326,11 +532,12 @@ namespace LingGuangV05.XingGuang
         {
             var step = new XgBoardStep();
             var elements = Elements(card, k);
+            Gate(elements, card, k);
             // Unknown elements become layer-1 concepts first (R3 decides whether they fit).
             for (int i = 0; i < elements.Count; i++)
                 if (!byKey.ContainsKey(card.region + "|" + elements[i].id)) { if (Create(card.region, elements[i].id, 1, k) != null) step.created++; }
             var matches = Matches(card, elements, k);
-            double score = Score(matches, out bool guessed, out _);
+            double score = Score(matches, k, card.seed, out bool guessed, out _);
             bool predicted = guessed ? (card.seed & 1) == 0 : score > 0;
             step.correct = predicted == card.truth; step.guessed = guessed;
             double target = card.truth ? 1 : -1;
@@ -338,13 +545,14 @@ namespace LingGuangV05.XingGuang
             step.error = err;
             double g = k.G;
 
-            // A rate this large tears the output apart before anything else happens (NaN), unless gradients are clipped.
-            if (!k.clip && k.lr * Math.Abs(err) > TearLimit) step.diverged = true;
+            // A step this large tears the weights apart before anything else happens (NaN).
+            if (k.lr * Math.Abs(err) > k.TearAt) step.diverged = true;
 
             // R1 拉: pull every matched concept toward the label, weaker per layer below the output (g).
             foreach (var m in matches)
             {
                 if (m.c.pinned) continue;
+                if (k.dropout && Dropped(card.seed, m.c.id)) continue;
                 double pull = k.lr * err * m.act * Math.Pow(g, Math.Max(0, k.depth - m.c.layer));
                 if (k.clip) pull = Math.Max(-ClipLimit, Math.Min(ClipLimit, pull));
                 m.c.w = Math.Max(-WeightLimit, Math.Min(WeightLimit, m.c.w + pull));
@@ -360,11 +568,15 @@ namespace LingGuangV05.XingGuang
                     for (int j = i + 1; j < top.Count; j++)
                     {
                         var a = top[i]; var b = top[j];
+                        if (!byId.ContainsKey(a.c.id) || !byId.ContainsKey(b.c.id)) continue;
                         int layer = Math.Max(a.c.layer, b.c.layer) + 1;
                         if (layer > k.depth || !Reachable(a, b, elements, k)) continue;
                         string key = Union(keyParts[a.c.id], keyParts[b.c.id]);
                         if (key == null || byKey.ContainsKey(card.region + "|" + key)) continue;
                         var link = Link(a.c.id, b.c.id);
+                        // Dropout: the same card again proves nothing new about this pair.
+                        if (k.dropout && link.last == card.seed && link.c > 0) continue;
+                        link.last = card.seed;
                         link.c += k.lr * Math.Abs(err) * Math.Min(a.act, b.act) * Math.Pow(g, Math.Max(0, k.depth - layer + 1)) * 4;
                         if (link.c < LinkThreshold) continue;
                         link.c = 0;
@@ -420,29 +632,35 @@ namespace LingGuangV05.XingGuang
             int cap = k.Cells;
             if (Count(region) >= cap)
             {
-                // A similar concept on the same layer takes it in (superposition); otherwise the weakest goes.
-                XgConcept similar = null, weakest = null, stale = null; double bestSim = .5;
+                // A similar concept on the same layer takes it in (superposition: one cell, two meanings, as real
+                // neurons end up serving several features when there are too few of them). Otherwise R3 prunes by
+                // magnitude: the concept whose weight is nearest zero, the one that adds least to any answer, gives way,
+                // however often it fires. Concepts younger than GraceCards are spared so a newcomer can earn a weight.
+                XgConcept similar = null, victim = null; double bestSim = .5;
                 var mine = key.Split('+');
                 foreach (var c in S.concepts)
                 {
                     if (c.region != region || c.seed || c.pinned) continue;
                     if (c.layer == layer && c.alt.Length == 0) { double sim = Jaccard(keyParts[c.id], mine); if (sim >= bestSim) { bestSim = sim; similar = c; } }
-                    if (weakest == null || c.s < weakest.s) weakest = c;
-                    if (S.cards - c.seen > StaleCards && (stale == null || c.s < stale.s)) stale = c;
+                    // Spared: newcomers, and anything the card being trained right now is using (R1 just stamped it).
+                    if (S.cards - c.born < GraceCards || c.seen == S.cards) continue;
+                    double w = Math.Abs(c.w), vw = victim == null ? 0 : Math.Abs(victim.w);
+                    if (victim == null || w < vw || w == vw && c.s < victim.s) victim = c;
                 }
-                // R3 挤: a concept nobody has used for a while gives way first, however strong it once was.
-                if (stale != null && similar == null) { Remove(stale); S.evicted++; similar = null; weakest = null; goto Make; }
                 if (similar != null)
                 {
                     similar.alt = key; S.superposed++; altParts[similar.id] = mine;
                     Index(mine, similar); byKey[region + "|" + key] = similar;
                     return null;
                 }
-                if (weakest == null || weakest.s >= 1) return null;
-                Remove(weakest); S.evicted++;
+                if (victim == null) return null;
+                // A raw element seen for the first time has earned nothing yet: it only takes a cell freed by a dead
+                // weight. A merged concept has earned its place through repeated co-occurrence (R2) and may push out the
+                // weakest weight, whatever it is.
+                if (layer <= 1 && Math.Abs(victim.w) >= DeadWeight) return null;
+                Remove(victim); S.evicted++;
             }
-            Make:
-            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards };
+            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards, born = S.cards };
             Add(made); S.created++;
             return made;
         }
@@ -511,6 +729,60 @@ namespace LingGuangV05.XingGuang
             foreach (var c in S.concepts.ToArray()) if (!c.seed && !c.pinned && (region == null || c.region == region)) Remove(c);
             S.links.RemoveAll(l => !byId.ContainsKey(l.a) || !byId.ContainsKey(l.b));
             links.Clear(); foreach (var l in S.links) links[Pair(l.a, l.b)] = l;
+        }
+
+        /// <summary>
+        /// 迁移学习: the region's raw concepts (layer 1: strokes, words) are carried into a new wiring under the names that
+        /// wiring gives them; concepts that end up with the same name merge (the stronger weight stays). Combinations
+        /// above them are cleared and learnt again. Returns how many raw concepts were carried.
+        /// </summary>
+        public int CarryOver(string region, Func<string, string> rename)
+        {
+            var kept = new Dictionary<string, XgConcept>();
+            var merged = new List<XgConcept>(); // dropped: duplicates after renaming, and every combination above
+            foreach (var c in S.concepts)
+            {
+                if (c.region != region || c.seed || c.pinned) continue;
+                if (c.layer != 1) { merged.Add(c); continue; }
+                string key = rename(c.key);
+                if (string.IsNullOrEmpty(key)) continue;
+                if (kept.TryGetValue(key, out var first))
+                {
+                    if (Math.Abs(c.w) > Math.Abs(first.w)) first.w = c.w;
+                    first.s = Math.Max(first.s, c.s);
+                    merged.Add(c);
+                    continue;
+                }
+                c.key = key; c.alt = ""; kept[key] = c;
+            }
+            foreach (var c in merged) S.concepts.Remove(c);
+            Rebuild();
+            S.links.RemoveAll(l => !byId.ContainsKey(l.a) || !byId.ContainsKey(l.b));
+            links.Clear(); foreach (var l in S.links) links[Pair(l.a, l.b)] = l;
+            return kept.Count;
+        }
+
+        /// <summary>A copy of a region's learnt concepts (a checkpoint's weights; the "？" seed and pinned rules stay out).</summary>
+        public List<XgConcept> SnapshotRegion(string region)
+        {
+            var list = new List<XgConcept>();
+            foreach (var c in S.concepts) if (c.region == region && !c.seed && !c.pinned) list.Add(c.MemberwiseCloneConcept());
+            return list;
+        }
+
+        /// <summary>Puts a checkpoint's weights back: the region is cleared and refilled (fresh ids; links regrow).</summary>
+        public void RestoreRegion(string region, List<XgConcept> snapshot)
+        {
+            Reinitialise(region);
+            if (snapshot != null)
+                foreach (var saved in snapshot)
+                {
+                    if (saved.region != region || byKey.ContainsKey(region + "|" + saved.key)) continue;
+                    var c = saved.MemberwiseCloneConcept();
+                    c.id = S.nextId++; c.seen = S.cards; c.born = S.cards; c.seed = false; c.pinned = false;
+                    S.concepts.Add(c);
+                }
+            Rebuild();
         }
 
         /// <summary>NaN: the weights of a region are torn apart and lose part of what they held.</summary>

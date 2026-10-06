@@ -29,6 +29,15 @@ namespace LingGuangV05.Core
             }
         }
 
+        /// <summary>
+        /// The biggest single card's memory: training copies the whole model onto every card (data parallel, as in
+        /// 2016), so cards add speed, not room for a bigger model.
+        /// </summary>
+        public double LargestCardVram
+        {
+            get { double max = 0; foreach (string id in S.gpuModels) { var g = HardwareCatalog.Gpu(id); if (g != null) max = Math.Max(max, g.vramMB); } return max; }
+        }
+
         public double CardVram
         {
             get { double sum = 0; foreach (string id in S.gpuModels) { var g = HardwareCatalog.Gpu(id); if (g != null) sum += g.vramMB; } return sum; }
@@ -105,7 +114,7 @@ namespace LingGuangV05.Core
         public bool BuyNvme(DateTime today)
         {
             if (S.nvme) return Reject("已经装了一块 950 Pro。");
-            if (today.Date < HardwareCatalog.NvmeRelease) return Reject("三星 950 Pro 9 月到货。");
+            if (today.Date < HardwareCatalog.NvmeRelease) return Reject("淘货 9 月才进三星 950 Pro 的货。");
             if (!CanSpend(HardwareCatalog.NvmePrice)) return Reject("经费不足：要 ¥" + HardwareCatalog.NvmePrice.ToString("0") + "。");
             S.money -= HardwareCatalog.NvmePrice;
             S.nvme = true;

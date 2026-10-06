@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="26" result="Passed" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="1.192804">
+  <test-suite type="TestSuite" id="1000" name="competition" fullname="competition" runstate="Runnable" testcasecount="1056" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="1.192804" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1559" name="LingGuangV05.UI.Tests.dll" fullname="/Users/kk/competition/Library/ScriptAssemblies/LingGuangV05.UI.Tests.dll" runstate="Runnable" testcasecount="87" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="1.104175" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1749" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1560" name="LingGuangV05" fullname="LingGuangV05" runstate="Runnable" testcasecount="87" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="1.009446" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1561" name="UI" fullname="LingGuangV05.UI" runstate="Runnable" testcasecount="87" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="0.908405" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1562" name="Tests" fullname="LingGuangV05.UI.Tests" runstate="Runnable" testcasecount="87" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="0.809003" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1452" name="CaseMenuHudTests" fullname="LingGuangV05.UI.Tests.CaseMenuHudTests" classname="LingGuangV05.UI.Tests.CaseMenuHudTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.312874" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1455" name="FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters" fullname="LingGuangV05.UI.Tests.CaseMenuHudTests.FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters" classname="LingGuangV05.UI.Tests.CaseMenuHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.206228" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1453" name="FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(&quot;Title&quot;,&quot;灵光&quot;)" fullname="LingGuangV05.UI.Tests.CaseMenuHudTests.FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(&quot;Title&quot;,&quot;灵光&quot;)" methodname="FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters" classname="LingGuangV05.UI.Tests.CaseMenuHudTests" runstate="Runnable" seed="404222172" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.099495" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1454" name="FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(&quot;SettingsTitle&quot;,&quot;设置&quot;)" fullname="LingGuangV05.UI.Tests.CaseMenuHudTests.FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(&quot;SettingsTitle&quot;,&quot;设置&quot;)" methodname="FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters" classname="LingGuangV05.UI.Tests.CaseMenuHudTests" runstate="Runnable" seed="1960656026" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.005103" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1456" name="MainTitleLineBoxDoesNotOverlapItsSubheading" fullname="LingGuangV05.UI.Tests.CaseMenuHudTests.MainTitleLineBoxDoesNotOverlapItsSubheading" methodname="MainTitleLineBoxDoesNotOverlapItsSubheading" classname="LingGuangV05.UI.Tests.CaseMenuHudTests" runstate="Runnable" seed="1078173958" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.004749" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1457" name="CaseMenuTests" fullname="LingGuangV05.UI.Tests.CaseMenuTests" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="0.193519" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1467" name="ALoadingHitchCannotSkipMostOfTheCameraFlight" fullname="LingGuangV05.UI.Tests.CaseMenuTests.ALoadingHitchCannotSkipMostOfTheCameraFlight" methodname="ALoadingHitchCannotSkipMostOfTheCameraFlight" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="682960853" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:54Z" duration="0.001288" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1464" name="CameraEasingIsClampedAndReachesEndpoints" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-05 13:16:54Z" end-time="2026-10-05 13:16:55Z" duration="0.099324" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1459" name="CameraEasingIsClampedAndReachesEndpoints(-1.0f,0.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints(-1.0f,0.0f)" methodname="CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="516957097" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000750" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1460" name="CameraEasingIsClampedAndReachesEndpoints(0.0f,0.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints(0.0f,0.0f)" methodname="CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="19987540" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000108" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1461" name="CameraEasingIsClampedAndReachesEndpoints(0.5f,0.5f)" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints(0.5f,0.5f)" methodname="CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1357699015" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000113" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1462" name="CameraEasingIsClampedAndReachesEndpoints(1.0f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints(1.0f,1.0f)" methodname="CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="2119157270" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000087" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1463" name="CameraEasingIsClampedAndReachesEndpoints(2.0f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraEasingIsClampedAndReachesEndpoints(2.0f,1.0f)" methodname="CameraEasingIsClampedAndReachesEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1963664288" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000070" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1465" name="CameraPathHasExactEndpoints" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraPathHasExactEndpoints" methodname="CameraPathHasExactEndpoints" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="138934333" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.001927" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1466" name="CameraRotationUsesTheSameEasingAsPosition" fullname="LingGuangV05.UI.Tests.CaseMenuTests.CameraRotationUsesTheSameEasingAsPosition" methodname="CameraRotationUsesTheSameEasingAsPosition" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1120873691" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.001090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1470" name="MainSceneIsPreservedAndMenuIsASeparateAsset" fullname="LingGuangV05.UI.Tests.CaseMenuTests.MainSceneIsPreservedAndMenuIsASeparateAsset" methodname="MainSceneIsPreservedAndMenuIsASeparateAsset" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1101541155" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1468" name="ReleaseOffButtonCancelsClick" fullname="LingGuangV05.UI.Tests.CaseMenuTests.ReleaseOffButtonCancelsClick" methodname="ReleaseOffButtonCancelsClick" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1274953096" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.001280" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1469" name="ReleaseOnCapturedButtonClicksExactlyOnce" fullname="LingGuangV05.UI.Tests.CaseMenuTests.ReleaseOnCapturedButtonClicksExactlyOnce" methodname="ReleaseOnCapturedButtonClicksExactlyOnce" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="1500755637" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000389" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1458" name="SceneLocalMenuControllerExists" fullname="LingGuangV05.UI.Tests.CaseMenuTests.SceneLocalMenuControllerExists" methodname="SceneLocalMenuControllerExists" classname="LingGuangV05.UI.Tests.CaseMenuTests" runstate="Runnable" seed="585330503" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000126" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1529" name="MainSceneEntryTests" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.201963" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1541" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.105487" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1532" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Story.StoryBootstrap&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Story.StoryBootstrap&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="1128648931" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.002831" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1533" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XingGuangController&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XingGuangController&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="334696769" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000244" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1534" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.YY.YYChatView&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.YY.YYChatView&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="129491576" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000199" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1535" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.YY.YYGirlfriend&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.YY.YYGirlfriend&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="1340251168" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000146" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1536" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Mail.MailInboxView&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Mail.MailInboxView&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="103913530" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000136" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1537" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Juxin.JuxinHub&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.Juxin.JuxinHub&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="197878376" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000154" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1538" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XgMarketRelay&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XgMarketRelay&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="1478581483" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000306" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1539" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XgAfterthoughtRelay&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.XingGuang.XgAfterthoughtRelay&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="855242561" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000215" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1540" name="ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.LLM.LocalLlm&quot;)" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.ExplicitInitializersKeepTheirOriginalDirectMainStartup(&quot;LingGuangV05.Desktop.LLM.LocalLlm&quot;)" methodname="ExplicitInitializersKeepTheirOriginalDirectMainStartup" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="1842747460" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000123" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1531" name="MainEntryDoesNotInitializeOrTouchSavesInEditMode" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.MainEntryDoesNotInitializeOrTouchSavesInEditMode" methodname="MainEntryDoesNotInitializeOrTouchSavesInEditMode" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="88240600" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.000999" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1530" name="MenuHasAnExplicitMainSceneEntryWithoutReflectionInProduction" fullname="LingGuangV05.UI.Tests.MainSceneEntryTests.MenuHasAnExplicitMainSceneEntryWithoutReflectionInProduction" methodname="MenuHasAnExplicitMainSceneEntryWithoutReflectionInProduction" classname="LingGuangV05.UI.Tests.MainSceneEntryTests" runstate="Runnable" seed="944703323" result="Passed" start-time="2026-10-05 13:16:55Z" end-time="2026-10-05 13:16:55Z" duration="0.001649" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /Users/kk/Library/Application Support/DefaultCompany/competition/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

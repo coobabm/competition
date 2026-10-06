@@ -106,6 +106,7 @@ namespace LingGuangV05.XingGuang
             if (c.history.Count >= 8) c.history.RemoveRange(0, c.history.Count - 7);
             c.history.Add(round);
             if (returned > 0) host.Earn(returned);
+            CasinoSettled(round, false, host);
             return true;
         }
 

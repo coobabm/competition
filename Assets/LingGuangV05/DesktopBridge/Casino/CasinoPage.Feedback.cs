@@ -5,6 +5,7 @@ using LingGuangV05.XingGuang;
 using Michsky.DreamOS;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Casino
 {
     public sealed partial class CasinoPage
@@ -65,7 +66,7 @@ namespace LingGuangV05.Desktop.Casino
             juice.Knock(arena, juice.Reduced ? .02f : .07f, new Vector2(big ? 12 : 6, -5), .32f, true);
             juice.Knock(wallet.rectTransform, .12f, Vector2.up * 4, .32f, true);
             foreach (var m in cardMotions) if (m != null) juice.Knock((RectTransform)m.transform, .09f, new Vector2(4, -5), .3f, true);
-            juice.Float(at + Vector2.up * 35, (big ? T("大赢！ ", "BIG WIN! ") : "") + Signed(round.returned - round.stake), Gold, big ? 42 : 34, 85, 1.05f, 1.4f);
+            juice.Float(at + Vector2.up * 35, (big ? Lang.T("大赢！ ") : "") + Signed(round.returned - round.stake), Gold, big ? 42 : 34, 85, 1.05f, 1.4f);
             juice.Burst(at, big ? 28 : 14, Gold, XgJuice.Shape.Yen, big ? 300 : 190, 440, .8f);
             if (big) juice.Burst(at, 16, Gold, XgJuice.Shape.Confetti, 260, 360, .8f);
             juice.Shockwave(at, Gold, big ? 250 : 170, .4f, big ? 10 : 6);
@@ -73,7 +74,7 @@ namespace LingGuangV05.Desktop.Casino
             juice.Play(big ? XgJuice.Sfx.Id.Fanfare : XgJuice.Sfx.Id.Coin, Mathf.Min(1.35f, 1 + .04f * pendingStreak), .8f);
             if (pendingStreak >= 2)
             {
-                juice.Float(at + Vector2.down * 30, T("连胜 ×", "WIN STREAK ×") + pendingStreak + (pendingStreak >= 8 ? "+" : ""), White, 24, 35, 1.2f);
+                juice.Float(at + Vector2.down * 30, Lang.T("连胜 ×") + pendingStreak + (pendingStreak >= 8 ? "+" : ""), White, 24, 35, 1.2f);
                 juice.Play(XgJuice.Sfx.Id.Tier, 1 + Mathf.Min(pendingStreak, 6) * .04f, .5f);
             }
             glowUntil = Time.unscaledTime + 1.3f;

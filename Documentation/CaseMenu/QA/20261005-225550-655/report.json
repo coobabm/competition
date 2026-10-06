@@ -1,0 +1,423 @@
+{
+    "scope": "Editor Play; queued InputSystem events for menu; existing LCD relay for desktop. Not a Player-build or audible-listening certification.",
+    "complete": true,
+    "phase": "completed",
+    "outputDirectory": "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655",
+    "passed": 79,
+    "failed": 0,
+    "elapsedSeconds": 18.367595672607423,
+    "configuredBootSeconds": 4.199999809265137,
+    "observedBootSeconds": 8.487227439880371,
+    "clickToDesktopSeconds": 9.564383506774903,
+    "fanPeakVolume": 0.2199999988079071,
+    "fanPeakPitch": 1.5,
+    "fanStableVolume": 0.03200000151991844,
+    "fanStablePitch": 0.8999999761581421,
+    "checks": [
+        {
+            "name": "Desktop preload finishes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Real Main is ready before pressing Start",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native LCD texture is rendered but input is gated",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Preloaded desktop stays physically black until the power click",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Preloading alone cannot start or complete the visible boot",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Real gameplay is initialized, with simulation paused before Start",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Waiting at the menu does not consume gameplay time",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "All button and startup sounds assigned",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Fan is silent and stopped before power on",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Switch projects inside view: StartButton",
+            "passed": true,
+            "detail": "(1039.32, 723.04, 2.34)"
+        },
+        {
+            "name": "Switch projects inside view: SettingsButton",
+            "passed": true,
+            "detail": "(1041.70, 608.44, 2.36)"
+        },
+        {
+            "name": "Power switch is physically hittable",
+            "passed": true,
+            "detail": "(1039.32, 723.04)"
+        },
+        {
+            "name": "Settings switch is physically hittable",
+            "passed": true,
+            "detail": "(1041.70, 608.44)"
+        },
+        {
+            "name": "Queued mouse enters physical switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Mouse down depresses real keycap without entering Main",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Release outside cancels activation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Other input source cannot steal or release mouse capture",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings opens on release, not down",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings modal opened through physical button",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings slider changes total volume and stored preference",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Zero volume mutes the global listener",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Reduce-motion preference reaches both switches",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Full camera move restored for transition QA",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Escape closes modal",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Tab selects power switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Tab selects settings switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Keyboard confirm waits for release",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Keyboard release opens settings",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical power click starts exactly one transition",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Only the accepted power click starts the native LCD backlight",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Power click begins a visible incomplete boot",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Gameplay remains gated during the visible boot",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Repeated start commands are ignored during flight",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.25",
+            "passed": true,
+            "detail": "(-1.46, 1.20, -2.27); progress=0.2604166"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical LCD backlight is on during flight at 0.25",
+            "passed": true,
+            "detail": "Backlight only: the screen-contained boot can still cover the real desktop."
+        },
+        {
+            "name": "Boot progress remains bounded and monotonic at 0.25",
+            "passed": true,
+            "detail": "bootProgress=0.3333333"
+        },
+        {
+            "name": "Loading remains visible in the LCD at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Loading cannot release gameplay input at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.5",
+            "passed": true,
+            "detail": "(-0.38, 0.93, -1.71); progress=0.5104164"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical LCD backlight is on during flight at 0.5",
+            "passed": true,
+            "detail": "Backlight only: the screen-contained boot can still cover the real desktop."
+        },
+        {
+            "name": "Boot progress remains bounded and monotonic at 0.5",
+            "passed": true,
+            "detail": "bootProgress=0.6190473"
+        },
+        {
+            "name": "Loading remains visible in the LCD at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Loading cannot release gameplay input at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.85",
+            "passed": true,
+            "detail": "(0.46, 0.73, -1.07); progress=0.8503214"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical LCD backlight is on during flight at 0.85",
+            "passed": true,
+            "detail": "Backlight only: the screen-contained boot can still cover the real desktop."
+        },
+        {
+            "name": "Boot progress remains bounded and monotonic at 0.85",
+            "passed": true,
+            "detail": "bootProgress=1"
+        },
+        {
+            "name": "Same-camera movement finishes and enters desktop",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Boot completes and its screen-contained artwork disappears before gameplay",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Visible boot is not bypassed by camera arrival",
+            "passed": true,
+            "detail": "configured=4.2s; observedCompletion=8.487227s; clickToDesktop=9.564384s (completion sampled once per rendered frame)"
+        },
+        {
+            "name": "Entry retains the original camera and preloaded Main",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Main has one ChapterOneRuntime",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Main entry remains safe to call twice",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Nine gameplay services are present",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "YY and Mail views are not duplicated",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "One active EventSystem and AudioListener across both loaded scenes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical menu no longer accepts input after arrival",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Master volume survives desktop entry",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Fan audibly ramps in volume and pitch then settles to a continuous idle",
+            "passed": true,
+            "detail": "peak=0.22/1.5; stable=0.032/0.9"
+        },
+        {
+            "name": "Desktop presentation is ready",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "LCD input restored for ordinary desktop use",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native Calculator shortcut exists",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Calculator opens through real LCD pointer relay",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 01-idle.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 02-settings.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-25.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-50.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-85.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 04-main-desktop.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 05-main-calculator.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No runtime error/exception logged during QA",
+            "passed": true,
+            "detail": ""
+        }
+    ],
+    "errors": [],
+    "screenshots": [
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/01-idle.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/02-settings.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/03-flight-25.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/03-flight-50.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/03-flight-85.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/04-main-desktop.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-225550-655/05-main-calculator.png"
+    ]
+}

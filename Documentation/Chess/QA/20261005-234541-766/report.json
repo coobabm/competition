@@ -1,0 +1,279 @@
+{
+    "scope": "Editor Play; physical LCD-coordinate PointerEventData through the native LCD relay. Not hardware input, Player-build, or audible-listening certification. FEN fixtures are temporary; runtime/lab state and flags are restored.",
+    "complete": true,
+    "phase": "completed",
+    "outputDirectory": "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766",
+    "passed": 51,
+    "failed": 0,
+    "initialFaces": 32,
+    "spriteTypes": 12,
+    "elapsedSeconds": 10.174513816833496,
+    "maximumCaptureFlash": 1.0,
+    "checks": [
+        {
+            "name": "Native Game Hub window exists",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Game Hub finishes opening",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Installed GameHubView exists",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Chess board has been built and is visible",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Presentation feedback is installed",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Initial board renders exactly 32 nonempty sprite faces",
+            "passed": true,
+            "detail": "faces=32"
+        },
+        {
+            "name": "All 12 original sprite types and flash resources load",
+            "passed": true,
+            "detail": "types=12"
+        },
+        {
+            "name": "Real LCD click on e2 exposes only e3 and e4 dots",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Illegal e2 to e5 click does not move a piece",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag source maps into the LCD: e2",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native LCD threshold dispatch starts a piece drag",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native LCD drop commits e2 to e4 once",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Piece animation completes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Quiet move restores the destination sprite",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag source maps into the LCD: e2",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag began before outside cancellation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "outside leaves FEN unchanged and restores the original piece",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag source maps into the LCD: e2",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag began before focus cancellation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "focus leaves FEN unchanged and restores the original piece",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag source maps into the LCD: e2",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag began before tab cancellation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "tab leaves FEN unchanged and restores the original piece",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag source maps into the LCD: e2",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Drag began before end-drag-without-drop cancellation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "end-drag-without-drop leaves FEN unchanged and restores the original piece",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Only e1 is marked as the checked king",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "King-only check motion is nonzero and bounded",
+            "passed": true,
+            "detail": "maximumOffset=1.707898"
+        },
+        {
+            "name": "Unchecked rook faces stay still",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Changing the position clears every old check offset",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Capture is committed by native LCD clicks",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Captured piece reaches a positive silhouette flash",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Capture ghost is visible and hit-stop stays board-local",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Piece animation completes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Capture settles the board, hides both ghosts, and records combo one",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "En passant moves e5 to d6 and removes d5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "En passant capture ghost starts on d5, not d6",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Piece animation completes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Piece animation completes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Rook a1 to a8 produces WhiteWins and exactly one local win",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Repeated Finish cannot repeat the win or lab reward",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Victory has active confetti and visible outcome text",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native New game clears state, combo, both ghosts, and celebration",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "The entry fan countdown exists",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Only the actual Main entry has scheduled fan shutdown",
+            "passed": true,
+            "detail": "deadline=93.186511458618"
+        },
+        {
+            "name": "Ten seconds after Main entry have elapsed",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Looping fan is stopped and silent after the entry deadline",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "SetStable cannot resurrect an expired fan",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "QA kept disk writes and simulation ticking disabled",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No runtime errors were logged during the QA window",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Every requested screenshot was written",
+            "passed": true,
+            "detail": ""
+        }
+    ],
+    "errors": [],
+    "screenshots": [
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/start.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/e2dots.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/drag.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/check.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/capture.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/en-passant.png",
+        "/Users/kk/competition/Documentation/Chess/QA/20261005-234541-766/victory.png"
+    ]
+}

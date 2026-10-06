@@ -29,7 +29,6 @@ namespace LingGuangV05.Runtime
         // NonSerialized: after a script hot reload in Play mode, Sim is gone, so initialization must run again (reloads the save).
         [NonSerialized] bool initialized, dirty, notify, persistenceBlocked;
         float sinceSave, sinceNotify;
-        const double MaxOfflineSeconds = 1800;
         internal Func<long> ClockOverride;
         [NonSerialized] internal string SaveDirectoryOverride;
         long UtcNow => ClockOverride != null ? ClockOverride() : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -97,11 +96,8 @@ namespace LingGuangV05.Runtime
         {
             long now = UtcNow;
             long last = Sim.S.lastSeenUnix;
-            OfflineSeconds = last <= 0 || last >= now ? 0 : Math.Min(MaxOfflineSeconds, (double)now - last);
-            double left = OfflineSeconds;
-            // Bounded, deterministic accounting goes through the same day, thermal,
-            // debt and training rules as foreground ticks. No UI heartbeat playback.
-            while (left > 0) { double dt = Math.Min(1, left); Sim.Tick(dt); left -= dt; }
+            // No offline progress: time away is not simulated (no income, power bills or training while closed).
+            OfflineSeconds = 0;
             Sim.S.lastSeenUnix = Math.Max(last, now);
         }
 

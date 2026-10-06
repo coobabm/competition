@@ -140,7 +140,7 @@ namespace LingGuangV05.XingGuang
             JxC("goclub", "县围棋协会", "County Go Club", "围棋协会 · 陈老师", "Teacher Chen (Go club)"),
             JxC("parking", "幸福里物业", "Happy Lane Property", "物业 · 赵经理", "Manager Zhao (property)"),
             JxC("taobao", "淘宝卖家联盟", "Taobao Seller Alliance", "卖家联盟 · 阿芳", "Afang, seller alliance"),
-            JxC("faceclock", "工业园区管委会", "Industrial Park Office", "园区人事 · 黄姐", "Sister Huang, park HR"),
+            JxC("faceclock", "工业园区管委会", "Industrial Park Office", "园区安保 · 黄姐", "Sister Huang, park security"),
             JxC("acrostic", "每日一诗", "Daily Poem", "每日一诗 · 小编", "Daily Poem editor"),
             JxC("homework", "家教网", "Tutor Net", "家教网 · 孙老师", "Teacher Sun (Tutor Net)"),
             JxC("civilexam", "考公培训班", "Civil Exam Prep", "培训班 · 李教务", "Registrar Li (exam prep)"),
@@ -152,6 +152,9 @@ namespace LingGuangV05.XingGuang
             JxC("support", "客服外包", "Support Outsourcing", "外包公司 · 刘总", "Boss Liu (outsourcing)"),
             JxC("crossborder", "表姐的微商小店", "Cousin's Online Shop", "表姐", "Cousin"),
             JxC("subtitle", "字幕组", "Fansub Group", "字幕组校对 · 小林", "Xiaolin, fansub proofreader"),
+            JxC("webnovel", "某网文平台", "A Web-Novel Site", "网文平台 · 责编小周", "Xiaozhou, web-novel editor"),
+            JxC("lawfirm", "律师事务所", "Law Firm", "律所 · 王律师", "Lawyer Wang"),
+            JxC("livesub", "某直播平台", "A Live-Streaming Site", "直播平台 · 运营阿伟", "Awei, streaming ops"),
             JxC("sla.danmu", "某视频网站", "A Video Site", "弹幕组 · 组长", "Danmaku team lead", true),
             JxC("sla.meme", "某表情包 App", "A Sticker App", "表情包 App · 运营", "Sticker app ops", true),
             JxC("sla.takeout", "某外卖平台", "A Food-Delivery App", "外卖平台 · 品控", "Delivery app QA", true),
@@ -405,7 +408,7 @@ namespace LingGuangV05.XingGuang
         XgJxMessage SignedArticle(XgContract c)
         {
             var oa = JuxinClient(c.id);
-            string acc = Pct(BestAcc(c.dataset));
+            string acc = Pct(ContractAcc(c));
             return new XgJxMessage
             {
                 kind = (int)XgJxKind.Article, date = Today, minute = JxMinute(), at = S.jxClock,
@@ -695,6 +698,7 @@ namespace LingGuangV05.XingGuang
             m.opened = true;
             bool late = JuxinIsGroup(thread) && S.jxClock - m.at > JuxinRedPacketLife;
             m.got = late || host == null ? 0 : m.amount;
+            if (late) Earn("life.redpacket.slow");
             if (m.got > 0)
             {
                 host.Earn(m.got);
@@ -852,9 +856,9 @@ namespace LingGuangV05.XingGuang
             var sb = new StringBuilder(PersonaPrompt(month, hot));
             string owner = Profile.callMe.Length > 0 ? Profile.callMe : T("主人", "your owner");
             sb.Append('\n').Append(T("现在你在巨信上替" + owner + "回消息，对方以为是" + owner + "本人在回。", "You are answering Juxin messages for " + owner + "; the other person thinks it is " + owner + " writing."));
-            sb.Append(T("发消息的是：", " The sender is: ")).Append(JuxinName(thread, English)).Append(T("，", ", ")).Append(Relation(thread)).Append(T("。", ". "));
+            sb.Append(T("发消息的是：")).Append(JuxinName(thread, English)).Append(T("，")).Append(Relation(thread)).Append(T("。", ". "));
             sb.Append(T("对方不是" + owner + "，不要用「" + owner + "」称呼对方，也不要说你是程序。", "They are not " + owner + ": do not call them that, and never say you are a program. "));
-            sb.Append(T("像真人发巨信一样，一两句，口语。", "Write like a person texting: one or two casual sentences. "));
+            sb.Append(T("像真人发巨信一样，一两句，口语。"));
             sb.Append('\n').Append(EraLexicon.PromptRule(English)).Append('\n').Append(StageRule(incoming));
             if (English) sb.Append(" Reply in English.");
             return sb.ToString();
@@ -872,10 +876,10 @@ namespace LingGuangV05.XingGuang
             }
             switch (thread)
             {
-                case JxAjie: return T("主人的朋友阿杰，十九岁网管，懂显卡，爱吹牛", "a friend, Ajie, a 19-year-old café admin who knows GPUs and likes to brag");
-                case JxXiaogang: return T("主人的朋友小刚，高中生，沉迷英雄联盟，嘴贫", "a friend, Xiaogang, a high-schooler hooked on League of Legends");
-                case JxCousin: return T("主人的表姐，在省城做会计，也开微商小店，爱唠叨", "the owner's cousin, an accountant who also runs a small online shop and fusses");
-                case JxFamily: return T("家族群，长辈们爱转养生文章，要有礼貌", "the family group, where elders forward health articles; be polite");
+                case JxAjie: return T("主人的朋友阿杰，十九岁网管，懂显卡，爱吹牛");
+                case JxXiaogang: return T("主人的朋友小刚，高中生，沉迷英雄联盟，嘴贫");
+                case JxCousin: return T("主人的表姐，在省城做会计，也开微商小店，爱唠叨");
+                case JxFamily: return T("家族群，长辈们爱转养生文章，要有礼貌");
             }
             return "";
         }
@@ -973,7 +977,7 @@ namespace LingGuangV05.XingGuang
             string self = Profile.self.Length > 0 ? Profile.self : T("我", "I");
             bool group = JuxinIsGroup(thread);
             bool client = ClientOfThread(thread) != null || thread == JxCousin && Signed("crossborder");
-            string meme = Today >= 20161001 ? T("蓝瘦，香菇。", "So sad, want to cry.") : T("洪荒之力已经用完了。", "My primordial power is all used up.");
+            string meme = Today >= 20161001 ? T("蓝瘦，香菇。") : T("洪荒之力已经用完了。");
             var options = new List<string[]>();
             if (group)
             {

@@ -71,7 +71,8 @@ namespace LingGuangV05.Core
             {
                 var pair = kv.Value as Dictionary<string, object>;
                 string zh = pair != null && pair.TryGetValue("zh", out var z) ? z as string : null, en = pair != null && pair.TryGetValue("en", out var e) ? e as string : null;
-                if (string.IsNullOrEmpty(zh) || string.IsNullOrEmpty(en)) throw new FormatException("prologue_lines: " + kv.Key + " needs zh and en");
+                if (string.IsNullOrEmpty(zh)) throw new FormatException("prologue_lines: " + kv.Key + " needs zh");
+                if (string.IsNullOrEmpty(en)) en = zh; // English is not maintained for now: a missing line shows the Chinese.
                 result.lines[kv.Key] = new[] { zh, en };
             }
             if (root.TryGetValue("history", out var h) && h is List<object> items)
@@ -85,7 +86,8 @@ namespace LingGuangV05.Core
                         from = o.TryGetValue("from", out var f) ? f as string ?? "" : "",
                         zh = o.TryGetValue("zh", out var hz) ? hz as string ?? "" : "", en = o.TryGetValue("en", out var he) ? he as string ?? "" : "",
                     };
-                    if (line.days >= 0 || line.zh.Length == 0 || line.en.Length == 0) throw new FormatException("prologue_lines: history lines are dated before the game, in both languages");
+                    if (line.days >= 0 || line.zh.Length == 0) throw new FormatException("prologue_lines: history lines are dated before the game");
+                    if (line.en.Length == 0) line.en = line.zh;
                     result.History.Add(line);
                 }
             return result;

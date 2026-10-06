@@ -43,6 +43,7 @@
     "txt_poem": { "zh": "海内逢知己，天涯若比邻。感谢你愿意相信我。这份文件包是对你的信任的回报。仔细研究他，你不会后悔的。", "en": "A kindred soul met within the seas makes the ends of the earth next door. Thank you for trusting me. This package repays your trust. Study him closely; you won't regret it." },
     "m_poem": { "zh": "图种？这玩意儿还有人用？……还有，不应该是“海内存知己”吗？这人儿语文咋学的……", "en": "A file hidden in a picture? People still do that? … And isn't it \"a kindred soul *kept* within the seas\"? Who taught this guy Chinese…" },
     "m_left": { "zh": "……就这么走了？", "en": "… That's it? It just left?" },
+    "m_number": { "zh": "从头到尾，它只往地址栏里敲了一串数字。……这么短一串数字，能装下这么多东西？", "en": "From start to finish it only typed one long number into the address bar. … That short a number held all this?" },
     "lz_first": { "zh": "守望先锋开服了，今晚开黑不？", "en": "Overwatch is live. Squad up tonight?" },
     "lz_pick_odd": { "zh": "今晚不了，电脑刚刚出了点怪事", "en": "Not tonight, something weird just happened to my computer" },
     "lz_pick_yes": { "zh": "好啊", "en": "Sure" },

@@ -72,7 +72,10 @@ namespace LingGuangV05.Core.Forum
                 {
                     var o = (Dictionary<string, object>)kv.Value;
                     var user = new ForumUser { id = kv.Key, name = S(o, "name"), nameEn = S(o, "nameEn"), sign = S(o, "sign"), signEn = S(o, "signEn"), level = (int)N(o, "level", 1) };
-                    if (user.name.Length == 0 || user.nameEn.Length == 0 || user.sign.Length > 0 != user.signEn.Length > 0) throw new FormatException("forum: user " + kv.Key + " needs zh and en");
+                    // Chinese is the source; a missing English falls back to it (English is not maintained for now).
+                    if (user.name.Length == 0) throw new FormatException("forum: user " + kv.Key + " needs a name");
+                    if (user.nameEn.Length == 0) user.nameEn = user.name;
+                    if (user.signEn.Length == 0) user.signEn = user.sign;
                     lib.Users[kv.Key] = user;
                 }
             if (root.TryGetValue("boards", out var b) && b is List<object> boards)
@@ -88,7 +91,8 @@ namespace LingGuangV05.Core.Forum
                         mine = B(o, "mine"), dead = B(o, "dead"), helpPost = B(o, "helpPost"), requires = S(o, "requires"),
                     };
                     if (!ids.Add(thread.id)) throw new FormatException("forum: repeated thread " + thread.id);
-                    if (thread.title.Length == 0 || thread.titleEn.Length == 0) throw new FormatException("forum: " + thread.id + " needs a title in zh and en");
+                    if (thread.title.Length == 0) throw new FormatException("forum: " + thread.id + " needs a title");
+                    if (thread.titleEn.Length == 0) thread.titleEn = thread.title;
                     if (!lib.Users.ContainsKey(thread.author)) throw new FormatException("forum: " + thread.id + " has an unknown author");
                     if (!lib.Boards.Exists(x => x.id == thread.board)) throw new FormatException("forum: " + thread.id + " is on an unknown board");
                     if (o.TryGetValue("floors", out var f) && f is List<object> floors)
@@ -100,7 +104,8 @@ namespace LingGuangV05.Core.Forum
                                 minStage = (int)N(fo, "minStage", 0), deletedFromStage = (int)N(fo, "deletedFromStage", 0), afterSeconds = N(fo, "afterSeconds", 0), folded = B(fo, "folded"),
                             };
                             if (!lib.Users.ContainsKey(floor.author)) throw new FormatException("forum: unknown floor author in " + thread.id);
-                            if (floor.text.Length == 0 || floor.textEn.Length == 0) throw new FormatException("forum: a floor of " + thread.id + " needs zh and en");
+                            if (floor.text.Length == 0) throw new FormatException("forum: a floor of " + thread.id + " needs text");
+                            if (floor.textEn.Length == 0) floor.textEn = floor.text;
                             thread.floors.Add(floor);
                         }
                     lib.Threads.Add(thread);

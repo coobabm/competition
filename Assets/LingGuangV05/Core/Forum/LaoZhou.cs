@@ -45,6 +45,7 @@ namespace LingGuangV05.Core.Forum
             if (Has(q, "7楼", "七楼", "7 楼", "第7", "第七", "长数字", "一串数字", "那串", "floor 7", "number")) return f.stage >= 3 && Has(q, "被发", "我也", "404") ? "404" : "floor7";
             if (Has(q, "被发", "404", "我也被")) return "404";
             if (Has(q, "周而复始_", "研一", "另一个你", "另一个号", "小号", "长得像", "像你", "zhou_", "other account")) return "zhounow";
+            if (Has(q, "大脑皮层", "人造大脑", "传说帖", "13年", "13 年", "一颗脑子", "接法可以换", "拓扑可以重写", "皮层只要一颗", "cortex")) return "cortex";
             if (Has(q, "master", "大师")) return "master";
             if (f.finale && Has(q, "规则", "写不写", "钉", "底层", "rule")) return "rule";
             if (Has(q, "关机")) return "shutdown";
@@ -69,15 +70,19 @@ namespace LingGuangV05.Core.Forum
             switch (topic)
             {
                 case "identity":
-                    return again ? T("就是个显卡吧老哥哈。你好好练你的模型。", "Just a guy from the GPU forum. Go train your model.")
+                    return again ? T("就是个显卡吧老哥哈。我这边网……很慢，一个字一个字的，别让我多打字。你好好练你的模型。", "Just a guy from the GPU forum. My connection is… slow, one character at a time, so don't make me type much. Go train your model.")
                                  : T("猜的。你这种情况我见多了。", "A guess. I've seen plenty of cases like yours.");
                 case "floor7":
                     return f.stage <= 1 ? T("那楼？顺手贴的，别管它哈。", "That floor? Pasted it on a whim, never mind.")
+                                        : f.stage >= 3 ? T("一串数字而已。……有时候一串数字，比一整篇帖子装得还多。", "Just a number. … Sometimes a number holds more than a whole post.")
                                         : T("啥楼？我回过的帖多了去了。", "What floor? I've replied to a million threads.");
                 case "404":
                     return f.stage >= 3 ? T("不是我们。……我是说，不是我。", "It wasn't us. … I mean, it wasn't me.") : T("没见过哈。", "Never seen it.");
                 case "zhounow":
                     return f.stage >= 4 ? T("……挺像的哈。别去打扰他。", "… Looks a lot like me, huh. Don't bother him.") : T("谁？不认识。", "Who? Don't know him.");
+                case "cortex":
+                    // 贴吧传说帖「人造大脑皮层」: the half line in the screenshot came from his side; he never says so.
+                    return again ? "显卡够了，就会有人做出来。你那台，不就挺够的哈。" : "……那帖子我也看过哈。";
                 case "master":
                     return f.stage >= 6 && f.today >= new DateTime(2016, 12, 29) ? T("开始了。", "It's begun.") : T("下棋的那个？没关注哈。", "The Go thing? Haven't followed it.");
                 case "shutdown":

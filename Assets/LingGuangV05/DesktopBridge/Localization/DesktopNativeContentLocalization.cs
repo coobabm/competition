@@ -5,6 +5,7 @@ using LingGuangV05.Runtime;
 using Michsky.DreamOS;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>Refreshes explicitly assigned native controls without recreating their data or listeners.</summary>
@@ -128,10 +129,10 @@ namespace LingGuangV05.Desktop
         {
             switch (source)
             {
-                case "AM": return GameText.T("上午", "AM");
-                case "PM": return GameText.T("下午", "PM");
-                case "Once": return GameText.T("仅一次", "Once");
-                case "Daily": return GameText.T("每天", "Daily");
+                case "AM": return Lang.T("上午");
+                case "PM": return Lang.T("下午");
+                case "Once": return Lang.T("仅一次");
+                case "Daily": return Lang.T("每天");
                 default: return GameText.Source(source);
             }
         }

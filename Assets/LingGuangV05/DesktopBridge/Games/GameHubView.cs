@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Games
 {
     /// <summary>One game inside the 游戏中心: it builds its own board into the area it is given and keeps its state while hidden.</summary>
@@ -69,7 +70,7 @@ namespace LingGuangV05.Desktop.Games
             {
                 var lab = Lab;
                 string name = lab != null && lab.Profile != null ? lab.Profile.name : null;
-                return string.IsNullOrEmpty(name) ? T("它", "It") : name;
+                return string.IsNullOrEmpty(name) ? Lang.T("它") : name;
             }
         }
 
@@ -97,7 +98,7 @@ namespace LingGuangV05.Desktop.Games
         string SampleText(XgSim lab, int n)
         {
             var d = XgCatalog.Dataset(lab.GameDataset(Id));
-            return "+" + n + T(" 样本 · ", " samples · ") + (d == null ? "" : T(d.name, d.nameEn));
+            return "+" + n + Lang.T(" 样本 · ") + (d == null ? "" : T(d.name, d.nameEn));
         }
 
         /// <summary>Stage 6: a canned commentary line after the AI's move (never the same line twice in a row for a situation).</summary>
@@ -119,7 +120,7 @@ namespace LingGuangV05.Desktop.Games
         protected string LabLines()
         {
             string s = "";
-            if (commentary.Length > 0) s += "\n\n<color=#7A4FA0>" + AiName + T("：「", ": “") + commentary + T("」", "”") + "</color>";
+            if (commentary.Length > 0) s += "\n\n<color=#7A4FA0>" + AiName + Lang.T("：「") + commentary + T("」", "”") + "</color>";
             if (sampleNote.Length > 0) s += "\n\n<size=15><color=#2E8B57>" + sampleNote + "</color></size>";
             return s;
         }
@@ -253,17 +254,17 @@ namespace LingGuangV05.Desktop.Games
         void Relabel()
         {
             if (sideTitle == null) return;
-            sideTitle.text = T("游戏中心", "Game Hub");
-            navLabels["home"].text = T("首页", "Home");
+            sideTitle.text = Lang.T("游戏中心");
+            navLabels["home"].text = Lang.T("首页");
             foreach (var g in games) navLabels[g.Id].text = g.Title;
-            homeTitle.text = T("游戏中心", "Game Hub");
-            homeLine.text = T("2016 · 本地对战 · 不用联网", "2016 · local play · no internet needed");
+            homeTitle.text = Lang.T("游戏中心");
+            homeLine.text = Lang.T("2016 · 本地对战 · 不用联网");
             foreach (var c in cards)
             {
                 c.title.text = c.game.Title;
                 c.blurb.text = c.game.Blurb;
                 c.state.text = c.game.Locked ?? "";
-                c.button.text = T("开始", "Play");
+                c.button.text = Lang.T("开始");
             }
         }
 

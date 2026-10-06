@@ -36,16 +36,16 @@ namespace LingGuangV05.Desktop.Taohuo
         void BuildGifts(DateTime today)
         {
             var g = Girl;
-            if (g == null || !HasGifts) { Note(T("这里还没有东西。", "Nothing here yet.")); return; }
+            if (g == null || !HasGifts) { Note(Lang.T("这里还没有东西。")); return; }
             int day = GameCalendar.DayIndex(today);
             if (today.Month == 11 && today.Day == 11)
             {
                 var banner = Row(list, "CartBanner", 54, Orange);
-                Label(banner, "Text", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0), T("<b>双 11：帮她清空购物车！</b>", "<b>Singles' Day: empty her cart!</b>"), 22, Color.white, TextAlignmentOptions.MidlineLeft);
+                Label(banner, "Text", Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0), Lang.T("<b>双 11：帮她清空购物车！</b>"), 22, Color.white, TextAlignmentOptions.MidlineLeft);
             }
             foreach (var gift in GirlfriendRules.Gifts) GiftRow(g, gift, today, day);
             OrdersList(g);
-            Note(T("包邮，2–3 天送到她学校（奶茶当天到）。签收以后她会在 YY 上找你。", "Free shipping, 2–3 days to her university (bubble tea the same day). She'll message you in YY once it's signed for."));
+            Note(Lang.T("包邮，2–3 天送到她学校（奶茶当天到）。签收以后她会在 YY 上找你。"));
         }
 
         void GiftRow(GirlfriendState g, GfGift gift, DateTime today, int day)
@@ -60,7 +60,7 @@ namespace LingGuangV05.Desktop.Taohuo
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -30), Vector2.zero, "<b>" + T(gift.zh, gift.en) + "</b>", 18, Ink);
             bool onSale = GirlfriendRules.OnSale(gift, today);
             string badges = onSale
-                ? "<color=#FF5000>" + T("[包邮]", "[Free shipping]") + "</color>  <color=#999999>" + T(gift.id == GirlfriendRules.GiftMilkTea ? "[当天送达]" : "[2–3 天送达]", gift.id == GirlfriendRules.GiftMilkTea ? "[Same day]" : "[2–3 days]") + "</color>"
+                ? "<color=#FF5000>" + Lang.T("[包邮]") + "</color>  <color=#999999>" + T(gift.id == GirlfriendRules.GiftMilkTea ? "[当天送达]" : "[2–3 天送达]", gift.id == GirlfriendRules.GiftMilkTea ? "[Same day]" : "[2–3 days]") + "</color>"
                 : "<color=#999999>" + T("[" + gift.from.Month + " 月 " + gift.from.Day + " 日上架]", "[On sale " + gift.from.ToString("d MMMM", CultureInfo.InvariantCulture) + "]") + "</color>";
             Label(mid, "Badges", new Vector2(0, 1), Vector2.one, new Vector2(0, -54), new Vector2(0, -32), badges, 14, Ink);
             Label(mid, "Pitch", new Vector2(0, 0), Vector2.one, Vector2.zero, new Vector2(0, -56), T(gift.pitchZh, gift.pitchEn), 15, Muted);
@@ -76,16 +76,16 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             var g = Girl; var gift = GirlfriendRules.Gift(id); var sim = Sim;
             if (g == null || gift == null || sim == null) return (false, "—");
-            if (!GirlfriendRules.OnSale(gift, Today)) return (false, T("未上架", "Not yet"));
-            if (GirlfriendRules.SoldOut(g, gift, GameCalendar.DayIndex(Today), Today)) return (false, T("已售罄", "Sold out"));
-            if (sim.S.money + 1e-9 < gift.price) return (false, T("钱不够", "Not enough ¥"));
+            if (!GirlfriendRules.OnSale(gift, Today)) return (false, Lang.T("未上架"));
+            if (GirlfriendRules.SoldOut(g, gift, GameCalendar.DayIndex(Today), Today)) return (false, Lang.T("已售罄"));
+            if (sim.S.money + 1e-9 < gift.price) return (false, Lang.T("钱不够"));
             return (true, T("送她", "Send to her"));
         }
 
         void BuyGift(string id)
         {
             var gf = YYGirlfriend.Instance;
-            if (gf == null) { Say(T("亲，现在下不了单哦。", "Dear, ordering isn't possible right now.")); return; }
+            if (gf == null) { Say(Lang.T("亲，现在下不了单哦。")); return; }
             gf.OrderGift(id, out string message);
             Say(message, 8);
             signature = "";
@@ -95,15 +95,15 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             if (g.orders.Count == 0) return;
             var head = Row(list, "OrdersHead", 34, new Color(0, 0, 0, 0));
-            Label(head, "Text", Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0), "<b>" + T("我的订单", "My orders") + "</b>", 17, Ink, TextAlignmentOptions.MidlineLeft);
+            Label(head, "Text", Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0), "<b>" + Lang.T("我的订单") + "</b>", 17, Ink, TextAlignmentOptions.MidlineLeft);
             for (int i = g.orders.Count - 1, shown = 0; i >= 0 && shown < 8; i--, shown++)
             {
                 var o = g.orders[i];
                 var gift = GirlfriendRules.Gift(o.gift);
                 if (gift == null) continue;
                 var arrive = GameCalendar.DateOf(o.arriveDay);
-                string state = o.state == 1 ? "<color=#3CB371>" + T("已签收", "Signed for") + "</color>" + (o.matched ? T("  · 她说过想要", "  · she'd asked for it") : "")
-                    : o.state == 2 ? "<color=#999999>" + T("已拒收 · 已退款", "Refused · refunded") + "</color>"
+                string state = o.state == 1 ? "<color=#3CB371>" + Lang.T("已签收") + "</color>" + (o.matched ? Lang.T("  · 她说过想要") : "")
+                    : o.state == 2 ? "<color=#999999>" + Lang.T("已拒收 · 已退款") + "</color>"
                     : "<color=#FF5000>" + T("运输中 · 预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达", "On the way · arrives " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture)) + "</color>";
                 var row = Row(list, "Order", 36, Color.white);
                 Label(row, "Text", Vector2.zero, Vector2.one, new Vector2(14, 0), new Vector2(-14, 0), T(gift.zh, gift.en) + "   " + Money(o.price) + "   " + state, 15, Ink, TextAlignmentOptions.MidlineLeft);
@@ -114,14 +114,14 @@ namespace LingGuangV05.Desktop.Taohuo
         {
             switch (id)
             {
-                case GirlfriendRules.GiftMilkTea: return T("奶茶", "Tea");
-                case GirlfriendRules.GiftPlush: return T("熊", "Bear");
-                case GirlfriendRules.GiftBand: return T("手环", "Band");
-                case GirlfriendRules.GiftPowerBank: return T("充电", "Power");
+                case GirlfriendRules.GiftMilkTea: return Lang.T("奶茶");
+                case GirlfriendRules.GiftPlush: return Lang.T("熊");
+                case GirlfriendRules.GiftBand: return Lang.T("手环");
+                case GirlfriendRules.GiftPowerBank: return Lang.T("充电");
                 case GirlfriendRules.GiftLipstick: return "YSL";
-                case GirlfriendRules.GiftTickets: return T("电影", "Film");
+                case GirlfriendRules.GiftTickets: return Lang.T("电影");
                 case GirlfriendRules.GiftIphone: return "7";
-                default: return T("情侣", "Pair");
+                default: return Lang.T("情侣");
             }
         }
     }

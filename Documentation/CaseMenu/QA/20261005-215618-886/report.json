@@ -1,0 +1,346 @@
+{
+    "scope": "Editor Play; queued InputSystem events for menu; existing LCD relay for desktop. Not a Player-build or audible-listening certification.",
+    "complete": true,
+    "phase": "completed",
+    "outputDirectory": "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886",
+    "passed": 65,
+    "failed": 0,
+    "elapsedSeconds": 20.334144592285158,
+    "checks": [
+        {
+            "name": "Desktop preload finishes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Real Main is ready before pressing Start",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native LCD texture is rendered but input is gated",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Preloaded desktop stays physically black until the power click",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Real gameplay is initialized, with simulation paused before Start",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Waiting at the menu does not consume gameplay time",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "All button and startup sounds assigned",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Switch projects inside view: StartButton",
+            "passed": true,
+            "detail": "(1003.34, 925.35, 2.33)"
+        },
+        {
+            "name": "Switch projects inside view: SettingsButton",
+            "passed": true,
+            "detail": "(1007.72, 793.78, 2.37)"
+        },
+        {
+            "name": "Power switch is physically hittable",
+            "passed": true,
+            "detail": "(1003.34, 925.35)"
+        },
+        {
+            "name": "Settings switch is physically hittable",
+            "passed": true,
+            "detail": "(1007.72, 793.78)"
+        },
+        {
+            "name": "Queued mouse enters physical switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Mouse down depresses real keycap without entering Main",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Release outside cancels activation",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Other input source cannot steal or release mouse capture",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings opens on release, not down",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings modal opened through physical button",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Settings slider changes total volume and stored preference",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Zero volume mutes the global listener",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Reduce-motion preference reaches both switches",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Full camera move restored for transition QA",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Escape closes modal",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Tab selects power switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Tab selects settings switch",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Keyboard confirm waits for release",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Keyboard release opens settings",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical power click starts exactly one transition",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Only the accepted power click starts the native LCD backlight",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Repeated start commands are ignored during flight",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.25",
+            "passed": true,
+            "detail": "(-1.46, 1.17, -2.28); progress=0.2604166"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "The real preloaded screen is visibly powered at 0.25",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.5",
+            "passed": true,
+            "detail": "(-0.39, 0.91, -1.71); progress=0.5104164"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "The real preloaded screen is visibly powered at 0.5",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Camera reaches 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Flight position at 0.85",
+            "passed": true,
+            "detail": "(0.46, 0.73, -1.07); progress=0.8541661"
+        },
+        {
+            "name": "Flight has no camera swap or scene reload at 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No blackout during flight at 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "The real preloaded screen is visibly powered at 0.85",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Same-camera movement finishes and enters desktop",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Entry retains the original camera and preloaded Main",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Main has one ChapterOneRuntime",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Main entry remains safe to call twice",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Nine gameplay services are present",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "YY and Mail views are not duplicated",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "One active EventSystem and AudioListener across both loaded scenes",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Physical menu no longer accepts input after arrival",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Master volume survives desktop entry",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Desktop presentation is ready",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "LCD input restored for ordinary desktop use",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Native Calculator shortcut exists",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Calculator opens through real LCD pointer relay",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 01-idle.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 02-settings.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-25.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-50.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 03-flight-85.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 04-main-desktop.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "Screenshot written: 05-main-calculator.png",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "No runtime error/exception logged during QA",
+            "passed": true,
+            "detail": ""
+        }
+    ],
+    "errors": [],
+    "screenshots": [
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/01-idle.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/02-settings.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/03-flight-25.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/03-flight-50.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/03-flight-85.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/04-main-desktop.png",
+        "/Users/kk/competition/Documentation/CaseMenu/QA/20261005-215618-886/05-main-calculator.png"
+    ]
+}

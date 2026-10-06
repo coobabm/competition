@@ -151,7 +151,7 @@ namespace LingGuangV05.Desktop.Tieba
             conv.messages.Add(new ForumMessage { from = id, text = text, gameSeconds = Now });
             if (!seen) conv.unread++;
             if (id != ForumLibrary.Me)
-                DesktopNotifications.Notify(runtime, GameText.T("贴吧私信", "Tieba DM"),
+                DesktopNotifications.Notify(runtime, Lang.T("贴吧私信"),
                     id == ForumLibrary.ZhouNow ? "周而复始_" : id == ForumLibrary.LaoZhou ? "周而复始" : id,
                     text, seen || IsShowing(id), () => { if (View != null) View.Open("chat", id); });
             Touch();
@@ -197,7 +197,7 @@ namespace LingGuangV05.Desktop.Tieba
                 {
                     if (!ReferenceEquals(S, state)) return;
                     inFlight.Remove(id); pending.Remove(id);
-                    if (awayFor.Remove(id)) text = GameText.T("刚才网不好。", "Connection was bad just now. ") + text;
+                    if (awayFor.Remove(id)) text = Lang.T("刚才网不好。") + text;
                     Receive(id, text, IsShowing(id));
                 });
             }
@@ -215,7 +215,7 @@ namespace LingGuangV05.Desktop.Tieba
             S.endingHandled = true;
             bool shutdown = lab.S.ending == "E1" || lab.S.ending == "E3-1";
             if (shutdown) S.zhouGone = true;
-            else Receive(ForumLibrary.LaoZhou, S.metZhouNow ? GameText.T("替我跟年轻的我说声加油。", "Tell the young me to keep going.") : GameText.T("保重。", "Take care."));
+            else Receive(ForumLibrary.LaoZhou, S.metZhouNow ? Lang.T("替我跟年轻的我说声加油。") : Lang.T("保重。"));
             Touch();
         }
 

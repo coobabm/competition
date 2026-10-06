@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using AppNames = LingGuangV05.Core.AppNames;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
@@ -62,13 +63,11 @@ namespace LingGuangV05.Desktop.Story
         {
             nextRefresh = Time.unscaledTime + .2f;
             Set(title, GameText.T(AppNames.AppZh + " " + AppNames.AppEn, AppNames.AppEn));
-            Set(tagline, GameText.T("一个会自己学习的小程序", "A little program that learns by itself"));
+            Set(tagline, Lang.T("一个会自己学习的小程序"));
             Set(meta, GameText.T("v0.1.3 · 2016-05-20 · Windows 7 / 8 / 10 · " + Mb(fileSizeMB) + " MB",
                 "v0.1.3 · 2016-05-20 · Windows 7 / 8 / 10 · " + Mb(fileSizeMB) + " MB"));
-            Set(body, GameText.T(
-                "它一开始什么都不会，只会回答「是」和「否」。\n你教它，它就会学。\n\n·  本地运行，不联网也能用\n·  开源，由几个爱好者维护\n·  我们不保证它会学成什么样",
-                "At first it knows nothing. It can only answer \"yes\" or \"no\".\nTeach it, and it learns.\n\n·  Runs locally, works offline\n·  Open source, maintained by a few hobbyists\n·  No promises about what it turns into"));
-            Set(footer, GameText.T("© 2016 lingguang.cc · 下载即表示你知道这只是个实验", "© 2016 lingguang.cc · By downloading you accept this is an experiment"));
+            Set(body, Lang.T("它一开始什么都不会，只会回答「是」和「否」。\n你教它，它就会学。\n\n·  本地运行，不联网也能用\n·  开源，由几个爱好者维护\n·  我们不保证它会学成什么样"));
+            Set(footer, Lang.T("© 2016 lingguang.cc · 下载即表示你知道这只是个实验"));
 
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             bool installed = runtime != null && runtime.Sim != null && runtime.Sim.AppInstalled;
@@ -92,13 +91,13 @@ namespace LingGuangV05.Desktop.Story
                 Set(status, connected
                     ? GameText.F("正在下载  {0} MB / {1} MB  ·  {2} MB/s  ·  剩余 {3}", "Downloading  {0} MB / {1} MB  ·  {2} MB/s  ·  {3} left", Mb(done), Mb(total), Mb(speed), left)
                     : GameText.F("网络已断开，下载暂停在 {0} MB。在右下角连接网络后自动继续。", "Disconnected. Paused at {0} MB; reconnect from the taskbar to resume.", Mb(done)));
-                SetButton(GameText.T("下载中…", "Downloading…"), false);
+                SetButton(Lang.T("下载中…"), false);
             }
             else
             {
                 ShowProgress(0, 1);
-                Set(status, GameText.T("内测版不公开下载。认识开发者的人会直接用 YY 传给你。", "The beta is not public. Someone who knows the developers will send it to you on YY."));
-                SetButton(GameText.T("打开 YY 找老周要", "Ask Lao Zhou on YY"), true);
+                Set(status, Lang.T("内测版不公开下载。认识开发者的人会直接用 YY 传给你。"));
+                SetButton(Lang.T("打开 YY 找老周要"), true);
             }
         }
 

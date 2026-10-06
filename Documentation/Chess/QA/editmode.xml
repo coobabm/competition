@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="64" result="Passed" total="64" passed="64" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:27Z" duration="1.8897689">
+  <test-suite type="TestSuite" id="1000" name="competition" fullname="competition" runstate="Runnable" testcasecount="1106" result="Passed" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:27Z" duration="1.889769" total="64" passed="64" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1406" name="LingGuangV05.Core.Tests.dll" fullname="/Users/kk/competition/Library/ScriptAssemblies/LingGuangV05.Core.Tests.dll" runstate="Runnable" testcasecount="253" result="Passed" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:26Z" duration="0.514751" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1749" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1407" name="LingGuangV05" fullname="LingGuangV05" runstate="Runnable" testcasecount="253" result="Passed" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:26Z" duration="0.420554" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1408" name="Tests" fullname="LingGuangV05.Tests" runstate="Runnable" testcasecount="253" result="Passed" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:26Z" duration="0.321892" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1345" name="MiniGameTests" fullname="LingGuangV05.Tests.MiniGameTests" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-05 14:43:25Z" end-time="2026-10-05 14:43:26Z" duration="0.220857" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1362" name="ChessAiFindsMateInOne" fullname="LingGuangV05.Tests.MiniGameTests.ChessAiFindsMateInOne" methodname="ChessAiFindsMateInOne" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1157456317" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.025420" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1363" name="ChessAiIsFastAndDeterministic" fullname="LingGuangV05.Tests.MiniGameTests.ChessAiIsFastAndDeterministic" methodname="ChessAiIsFastAndDeterministic" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="631257854" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.012123" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[start d3 b1c3, kiwipete d3 e2a6 in 6.3 ms
+]]></output>
+            </test-case>
+            <test-case id="1364" name="ChessAiSelfPlayStaysLegal" fullname="LingGuangV05.Tests.MiniGameTests.ChessAiSelfPlayStaysLegal" methodname="ChessAiSelfPlayStaysLegal" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="471724307" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.057972" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Chess self-play: 64 plies, result 2 Checkmate, 0.9 ms/ply, 3brk2/2p2ppp/2B3b1/Q1P1p1P1/8/P3B2P/1P1R1P2/Kq6 w - - 3 33
+]]></output>
+            </test-case>
+            <test-case id="1355" name="ChessBoardIndexerUsesFenLetters" fullname="LingGuangV05.Tests.MiniGameTests.ChessBoardIndexerUsesFenLetters" methodname="ChessBoardIndexerUsesFenLetters" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="954084094" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000470" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1359" name="ChessCastlingCannotPassThroughCheck" fullname="LingGuangV05.Tests.MiniGameTests.ChessCastlingCannotPassThroughCheck" methodname="ChessCastlingCannotPassThroughCheck" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1130199079" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000216" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1361" name="ChessDrawRules" fullname="LingGuangV05.Tests.MiniGameTests.ChessDrawRules" methodname="ChessDrawRules" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="2082674828" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000231" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1358" name="ChessEnPassant" fullname="LingGuangV05.Tests.MiniGameTests.ChessEnPassant" methodname="ChessEnPassant" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="529974847" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000244" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1356" name="ChessFoolsMateIsCheckmate" fullname="LingGuangV05.Tests.MiniGameTests.ChessFoolsMateIsCheckmate" methodname="ChessFoolsMateIsCheckmate" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="2092755517" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000151" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1353" name="ChessPerftFromTheStart" fullname="LingGuangV05.Tests.MiniGameTests.ChessPerftFromTheStart" methodname="ChessPerftFromTheStart" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="881104747" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.001302" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1354" name="ChessPerftKiwipete" fullname="LingGuangV05.Tests.MiniGameTests.ChessPerftKiwipete" methodname="ChessPerftKiwipete" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="502566047" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.011166" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1360" name="ChessPromotionDefaultsToQueenAndCanUnderpromote" fullname="LingGuangV05.Tests.MiniGameTests.ChessPromotionDefaultsToQueenAndCanUnderpromote" methodname="ChessPromotionDefaultsToQueenAndCanUnderpromote" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1166255921" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000155" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1357" name="ChessStalemateIsADraw" fullname="LingGuangV05.Tests.MiniGameTests.ChessStalemateIsADraw" methodname="ChessStalemateIsADraw" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="896729147" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000106" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1351" name="GoAiCapturesAndSaves" fullname="LingGuangV05.Tests.MiniGameTests.GoAiCapturesAndSaves" methodname="GoAiCapturesAndSaves" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1741021368" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.001228" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1352" name="GoAiSelfPlayIsLegalAndEnds" fullname="LingGuangV05.Tests.MiniGameTests.GoAiSelfPlayIsLegalAndEnds" methodname="GoAiSelfPlayIsLegalAndEnds" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="265813714" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.002451" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Go self-play: 67 turns, winner 2, 0.019 ms/move
+]]></output>
+            </test-case>
+            <test-case id="1350" name="GoAreaScoringCountsStonesAndTerritory" fullname="LingGuangV05.Tests.MiniGameTests.GoAreaScoringCountsStonesAndTerritory" methodname="GoAreaScoringCountsStonesAndTerritory" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="2094490743" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000423" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1348" name="GoKoCannotBeRetakenAtOnce" fullname="LingGuangV05.Tests.MiniGameTests.GoKoCannotBeRetakenAtOnce" methodname="GoKoCannotBeRetakenAtOnce" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="855716802" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000184" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1347" name="GoSuicideIsIllegal" fullname="LingGuangV05.Tests.MiniGameTests.GoSuicideIsIllegal" methodname="GoSuicideIsIllegal" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="2139675496" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000096" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1346" name="GoSurroundedStoneIsCaptured" fullname="LingGuangV05.Tests.MiniGameTests.GoSurroundedStoneIsCaptured" methodname="GoSurroundedStoneIsCaptured" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1529619920" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000127" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1349" name="GoTwoPassesEndTheGame" fullname="LingGuangV05.Tests.MiniGameTests.GoTwoPassesEndTheGame" methodname="GoTwoPassesEndTheGame" classname="LingGuangV05.Tests.MiniGameTests" runstate="Runnable" seed="1002663947" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000184" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1617" name="LingGuangV05.UI.Tests.dll" fullname="/Users/kk/competition/Library/ScriptAssemblies/LingGuangV05.UI.Tests.dll" runstate="Runnable" testcasecount="137" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="1.283725" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1749" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1618" name="LingGuangV05" fullname="LingGuangV05" runstate="Runnable" testcasecount="137" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="1.207765" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1619" name="UI" fullname="LingGuangV05.UI" runstate="Runnable" testcasecount="137" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="1.107191" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1620" name="Tests" fullname="LingGuangV05.UI.Tests" runstate="Runnable" testcasecount="137" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="1.003007" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1458" name="CaseMenuFanTests" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="0.412283" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1469" name="ConfigureReusesOneSourceAndKeepsItSilentBeforePowerOn" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.ConfigureReusesOneSourceAndKeepsItSilentBeforePowerOn" methodname="ConfigureReusesOneSourceAndKeepsItSilentBeforePowerOn" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1573554368" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.012068" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1480" name="CountdownStartsOnlyExplicitlyAndRepeatedCallsCannotExtendItsDeadline" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.CountdownStartsOnlyExplicitlyAndRepeatedCallsCannotExtendItsDeadline" methodname="CountdownStartsOnlyExplicitlyAndRepeatedCallsCannotExtendItsDeadline" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="517216859" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.034914" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1468" name="EnvelopeIsContinuousBoundedAndMonotonicWithinEachRamp" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeIsContinuousBoundedAndMonotonicWithinEachRamp" methodname="EnvelopeIsContinuousBoundedAndMonotonicWithinEachRamp" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="42768865" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.054767" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1466" name="EnvelopeStartsQuietlySurgesThenSettles" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.097439" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1459" name="EnvelopeStartsQuietlySurgesThenSettles(0.0f,0.03f,0.55f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(0.0f,0.03f,0.55f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="782157676" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000428" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1460" name="EnvelopeStartsQuietlySurgesThenSettles(0.65f,0.22f,1.5f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(0.65f,0.22f,1.5f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="914037701" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000078" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1461" name="EnvelopeStartsQuietlySurgesThenSettles(0.9f,0.22f,1.5f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(0.9f,0.22f,1.5f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="69477305" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000078" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1462" name="EnvelopeStartsQuietlySurgesThenSettles(1.15f,0.22f,1.5f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(1.15f,0.22f,1.5f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1361714699" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000071" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1463" name="EnvelopeStartsQuietlySurgesThenSettles(3.7f,0.032f,0.9f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(3.7f,0.032f,0.9f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="428959458" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000058" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1464" name="EnvelopeStartsQuietlySurgesThenSettles(4.2f,0.032f,0.9f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(4.2f,0.032f,0.9f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="68945044" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000056" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1465" name="EnvelopeStartsQuietlySurgesThenSettles(100.0f,0.032f,0.9f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.EnvelopeStartsQuietlySurgesThenSettles(100.0f,0.032f,0.9f)" methodname="EnvelopeStartsQuietlySurgesThenSettles" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="85805289" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000056" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="1478" name="GameplayGainFadesOnlyInsideTheFinalFourTenths" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.104572" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1470" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(-1.0f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(-1.0f,1.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1064514514" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.001993" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1471" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(0.0f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(0.0f,1.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="271762643" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000112" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1472" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(9.599f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(9.599f,1.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1072639760" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000090" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1473" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(9.6f,1.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(9.6f,1.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1483316422" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000120" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1474" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(9.8f,0.5f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(9.8f,0.5f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1262953406" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000106" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1475" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(10.0f,0.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(10.0f,0.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="41148836" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000092" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1476" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(10.1f,0.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(10.1f,0.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1951610101" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000096" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1477" name="GameplayGainFadesOnlyInsideTheFinalFourTenths(100.0f,0.0f)" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainFadesOnlyInsideTheFinalFourTenths(100.0f,0.0f)" methodname="GameplayGainFadesOnlyInsideTheFinalFourTenths" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1928132302" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:26Z" duration="0.000098" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1479" name="GameplayGainIsContinuousFiniteAndNeverIncreases" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.GameplayGainIsContinuousFiniteAndNeverIncreases" methodname="GameplayGainIsContinuousFiniteAndNeverIncreases" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="924721329" result="Passed" start-time="2026-10-05 14:43:26Z" end-time="2026-10-05 14:43:27Z" duration="0.005785" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1467" name="InvalidOrNegativeElapsedTimeIsFiniteAndOff" fullname="LingGuangV05.UI.Tests.CaseMenuFanTests.InvalidOrNegativeElapsedTimeIsFiniteAndOff" methodname="InvalidOrNegativeElapsedTimeIsFiniteAndOff" classname="LingGuangV05.UI.Tests.CaseMenuFanTests" runstate="Runnable" seed="1252021837" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000601" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1523" name="ChessFeedbackTests" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.207463" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1526" name="CaptureFeedbackNeverPausesTheSharedSimulationClock" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.CaptureFeedbackNeverPausesTheSharedSimulationClock" methodname="CaptureFeedbackNeverPausesTheSharedSimulationClock" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="854696376" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.114223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1525" name="ClearingPendingFeedbackCompletesExactlyOnceAndRestoresBoardPose" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.ClearingPendingFeedbackCompletesExactlyOnceAndRestoresBoardPose" methodname="ClearingPendingFeedbackCompletesExactlyOnceAndRestoresBoardPose" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="1819928676" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.001359" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1527" name="EachSideHasItsOwnCosmeticCaptureChain" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.EachSideHasItsOwnCosmeticCaptureChain" methodname="EachSideHasItsOwnCosmeticCaptureChain" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="1074316989" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000677" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1524" name="FeedbackExposesThePresentationOnlyContract" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.FeedbackExposesThePresentationOnlyContract" methodname="FeedbackExposesThePresentationOnlyContract" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="98928682" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1528" name="HidingTheBoardCancelsAnimationAndUnblocksThePanelExactlyOnce" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.HidingTheBoardCancelsAnimationAndUnblocksThePanelExactlyOnce" methodname="HidingTheBoardCancelsAnimationAndUnblocksThePanelExactlyOnce" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="2051161344" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000796" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1529" name="QuietMoveAnimationFinishesOnceAndReusesTwoNonInteractiveGhosts" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.QuietMoveAnimationFinishesOnceAndReusesTwoNonInteractiveGhosts" methodname="QuietMoveAnimationFinishesOnceAndReusesTwoNonInteractiveGhosts" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="254221974" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.001325" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1530" name="SilhouetteFlashShaderKeepsTheUiStencilAndClipContracts" fullname="LingGuangV05.UI.Tests.ChessFeedbackTests.SilhouetteFlashShaderKeepsTheUiStencilAndClipContracts" methodname="SilhouetteFlashShaderKeepsTheUiStencilAndClipContracts" classname="LingGuangV05.UI.Tests.ChessFeedbackTests" runstate="Runnable" seed="149736408" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000599" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1531" name="ChessPresentationTests" fullname="LingGuangV05.UI.Tests.ChessPresentationTests" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.286558" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1551" name="BoardCoordinateMappingRejectsOutsideDrops" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.BoardCoordinateMappingRejectsOutsideDrops" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.101427" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1547" name="BoardCoordinateMappingRejectsOutsideDrops(-300.0f,-300.0f,True,0,0)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.BoardCoordinateMappingRejectsOutsideDrops(-300.0f,-300.0f,True,0,0)" methodname="BoardCoordinateMappingRejectsOutsideDrops" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="98204462" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.001348" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1548" name="BoardCoordinateMappingRejectsOutsideDrops(299.9f,299.9f,True,7,7)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.BoardCoordinateMappingRejectsOutsideDrops(299.9f,299.9f,True,7,7)" methodname="BoardCoordinateMappingRejectsOutsideDrops" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="701399191" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000106" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1549" name="BoardCoordinateMappingRejectsOutsideDrops(300.0f,0.0f,False,-1,-1)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.BoardCoordinateMappingRejectsOutsideDrops(300.0f,0.0f,False,-1,-1)" methodname="BoardCoordinateMappingRejectsOutsideDrops" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="845295530" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000086" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1550" name="BoardCoordinateMappingRejectsOutsideDrops(-300.1f,0.0f,False,-1,-1)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.BoardCoordinateMappingRejectsOutsideDrops(-300.1f,0.0f,False,-1,-1)" methodname="BoardCoordinateMappingRejectsOutsideDrops" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="840909180" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000082" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1546" name="CheckedKingMotionIsSubtleAndReducedMotionCanStopIt" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.CheckedKingMotionIsSubtleAndReducedMotionCanStopIt" methodname="CheckedKingMotionIsSubtleAndReducedMotionCanStopIt" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1727011153" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.001901" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1545" name="SpriteGridMatchesBothCompleteChessSets" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.103097" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1532" name="SpriteGridMatchesBothCompleteChessSets('P',0)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('P',0)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1617188885" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.002070" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1533" name="SpriteGridMatchesBothCompleteChessSets('R',1)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('R',1)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1583724468" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000163" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1534" name="SpriteGridMatchesBothCompleteChessSets('N',2)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('N',2)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="96697374" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000117" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1535" name="SpriteGridMatchesBothCompleteChessSets('B',3)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('B',3)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1530752794" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000143" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1536" name="SpriteGridMatchesBothCompleteChessSets('Q',4)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('Q',4)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="909977895" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000098" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1537" name="SpriteGridMatchesBothCompleteChessSets('K',5)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('K',5)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="29271778" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000095" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1538" name="SpriteGridMatchesBothCompleteChessSets('p',6)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('p',6)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="365438528" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000091" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1539" name="SpriteGridMatchesBothCompleteChessSets('r',7)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('r',7)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="273060195" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000103" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1540" name="SpriteGridMatchesBothCompleteChessSets('n',8)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('n',8)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1745473687" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000125" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1541" name="SpriteGridMatchesBothCompleteChessSets('b',9)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('b',9)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="2044988437" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000085" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1542" name="SpriteGridMatchesBothCompleteChessSets('q',10)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('q',10)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="232223616" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000089" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1543" name="SpriteGridMatchesBothCompleteChessSets('k',11)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('k',11)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="1675084395" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000084" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1544" name="SpriteGridMatchesBothCompleteChessSets('.',-1)" fullname="LingGuangV05.UI.Tests.ChessPresentationTests.SpriteGridMatchesBothCompleteChessSets('.',-1)" methodname="SpriteGridMatchesBothCompleteChessSets" classname="LingGuangV05.UI.Tests.ChessPresentationTests" runstate="Runnable" seed="188988192" result="Passed" start-time="2026-10-05 14:43:27Z" end-time="2026-10-05 14:43:27Z" duration="0.000085" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /Users/kk/Library/Application Support/DefaultCompany/competition/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

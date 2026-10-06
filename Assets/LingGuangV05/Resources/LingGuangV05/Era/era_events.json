@@ -82,7 +82,7 @@
 
     { "id": "leeco", "date": "2016-11-07", "channel": "news", "title": "乐视被曝资金链紧张", "titleEn": "LeEco reportedly short of cash", "brief": true },
     { "id": "us_election", "date": "2016-11-09", "channel": "news", "title": "美国大选结果揭晓", "titleEn": "US election results announced", "brief": true },
-    { "id": "d11_shop", "date": "2016-11-11", "channel": "taobao", "title": "双 11：显卡、硬盘、数据集全场五折起", "titleEn": "Singles' Day: GPUs, drives and datasets from 50% off", "text": "只限今天。", "textEn": "Today only." },
+    { "id": "d11_shop", "date": "2016-11-11", "channel": "taobao", "title": "双 11：显卡、硬盘、数据集全场八折起", "titleEn": "Singles' Day: GPUs, drives and datasets from 20% off", "text": "只限今天。", "textEn": "Today only." },
     { "id": "d11_luban", "date": "2016-11-11", "channel": "news", "title": "AI 已经在设计海报了：阿里“鲁班”今年做了 1.7 亿张", "titleEn": "AI designs the posters now: Alibaba's Luban made 170 million this year" },
     { "id": "d11_total", "date": "2016-11-12", "channel": "news", "title": "双 11 全天成交 1207 亿元", "titleEn": "Singles' Day sales reach ¥120.7 billion" },
     { "id": "book_drop", "date": "2016-11-15", "channel": "tieba", "title": "丢书大作战：地铁上捡到一本书", "titleEn": "Book drop: found a book on the metro", "text": "书里夹着纸条：看完请留给下一个人。", "textEn": "A note inside: leave it for the next person when you're done." },
@@ -93,7 +93,7 @@
     { "id": "nips2016", "date": "2016-12-05", "channel": "news", "title": "NIPS 2016 在巴塞罗那开幕，参会人数创新高", "titleEn": "NIPS 2016 opens in Barcelona with record attendance" },
     { "id": "rmb", "date": "2016-12-15", "channel": "news", "title": "人民币兑美元跌破 6.9", "titleEn": "The yuan falls past 6.9 to the dollar", "brief": true },
     { "id": "great_wall", "date": "2016-12-16", "channel": "yy", "who": "大伟", "whoEn": "Da Wei", "text": "《长城》看了，怪兽挺多的。", "textEn": "Saw The Great Wall. Lots of monsters." },
-    { "id": "faye_tickets", "date": "2016-12-20", "channel": "tieba", "title": "王菲演唱会票价 7800，比 Titan X 还贵", "titleEn": "Faye Wong tickets cost ¥7,800, more than a Titan X", "text": "显卡吧表示看不懂。", "textEn": "The GPU forum does not understand." },
+    { "id": "faye_tickets", "date": "2016-12-20", "channel": "tieba", "title": "王菲演唱会票价 7800，比一张 GTX 1080 还贵", "titleEn": "Faye Wong tickets cost ¥7,800, more than a GTX 1080", "text": "显卡吧表示看不懂。", "textEn": "The GPU forum does not understand." },
     { "id": "steam_winter", "date": "2016-12-22", "channel": "yy", "who": "阿杰", "whoEn": "A-Jie", "text": "Steam 冬促了，库里又要多二十个没玩的。", "textEn": "Steam winter sale. Twenty more unplayed games for my library." },
     { "id": "master", "date": "2016-12-30", "channel": "news", "title": "神秘棋手 Master 在网上连胜中日韩高手", "titleEn": "Mystery player \"Master\" beats top Go players online, game after game", "text": "没人知道它是谁。", "textEn": "Nobody knows who it is." }
   ]

@@ -1,0 +1,295 @@
+Use case: stylized-concept.
+Asset type: production 2D chess-piece sprite atlas for a mobile educational chess game.
+Create ONE portrait PNG, exactly 1024 pixels wide by 1536 pixels high, with a genuinely transparent alpha background. This is a sprite sheet, not a poster or game screenshot.
+
+LAYOUT IS CRITICAL: invisible mathematically even grid of exactly 3 columns and exactly 4 rows. There are exactly TWELVE isolated complete chess pieces, one and only one in each grid cell, no duplicates or missing cells. Column centers in pixels are x=170.67, 512, 853.33. Row centers are y=192, 576, 960, 1344. Cell size is 341.33 by 384 pixels. Each piece centered horizontally within its own cell, full body visible, same common pedestal baseline near row-bottom minus 48 pixels, approximately 250–280 pixels tall and 200–245 pixels wide. Keep 12–15 percent empty transparent margins on every cell; nothing may cross a cell boundary. No labels, visible grid lines, borders or cast shadows outside the piece silhouette.
+
+EXACT CELL ORDER, reading left to right:
+Top row: WHITE PAWN | WHITE ROOK | WHITE KNIGHT.
+Second row: WHITE BISHOP | WHITE QUEEN | WHITE KING.
+Third row: BLACK PAWN | BLACK ROOK | BLACK KNIGHT.
+Bottom row: BLACK BISHOP | BLACK QUEEN | BLACK KING.
+
+STYLE: original friendly, rounded, chunky flat vector-style educational mobile-game icons. Confident thick outlines, smooth curves, gently beveled graphic shapes, one or two flat-tone shadow facets only. Playful but unmistakably chess pieces. Straight-on orthographic front view, knight in clear side profile. No eyes or faces needed. Shapes must remain clearly distinct and immediately readable at 60 pixels tall. Consistent design family and outline thickness across all twelve.
+WHITE pieces: warm ivory and cream main bodies, restrained warm gold trim and shadow accents, thick very dark teal outlines.
+BLACK pieces: rich deep teal / blue main bodies, light cyan and muted turquoise trim, pale cyan outlines sufficiently clear against a dark chessboard. They must look dark-colored, not another white set.
+
+REQUIRED SILHOUETTES:
+Pawn = large round head over a simple short-neck pedestal and wide rounded base.
+Rook = solid rounded castle tower with three strong crenellations and wide pedestal.
+Knight = unmistakable horse head profile with ears, muzzle, curved neck and pedestal, facing left in both colors.
+Bishop = tall mitre with a very visible diagonal notch, rounded shoulder and pedestal.
+Queen = clearly pointed five-point crown with a small gold/cyan central jewel, tapered body and pedestal.
+King = rounded crown topped by a large obvious simple cross, sturdy body and pedestal.
+White and black versions of each role should share matching recognizable silhouettes.
+
+ABSOLUTE CONSTRAINTS: real alpha transparency, no fake checkerboard, no background of any color, no board, no floor, no scenery, no text, no letters, no numbers, no watermark, no logo, no owl mascot, no copied brand character, no photographic or realistic 3D rendering, no isometric staging, no extra pieces or accessories. Export the entire sheet with clean anti-aliased transparent edges.
+
+--- TARGETED EDIT 1 (SELECTED OUTPUT) ---
+Edit this twelve-piece chess sprite atlas, preserving the exact 3-column 4-row piece order and each recognizable chess silhouette. Output exactly 1024×1536 PNG with REAL TRANSPARENT ALPHA.
+Mandatory corrective change: every piece must be substantially SMALLER within its cell. Shrink all 12 pieces by about 23% and re-center them so there is a broad completely transparent empty gutter above, below, left and right of EACH piece, including the lowest row. Never let any pixel belonging to a piece cross these invisible grid boundaries: x=341 and 683; y=384,768,1152. Each piece must fit wholly within a central maximum 250px-wide by 285px-high rectangle of its own 341×384 cell. Center X positions 170.7,512,853.3; consistent per-row bottom baselines at y=335,719,1103,1487. Keep at least 48 completely empty pixels below each piece and at least 45 above it. No visible grid.
+Remove ALL background glow, haze, blurred shadows and shiny rendering. Fully transparent empty pixels between every isolated piece; NO dark background, NO cyan aura, NO checkerboard. Silhouettes should have crisp anti-aliased edges with opaque flat-colored interiors.
+Simplify shading to friendly chunky FLAT 2D vector-style educational mobile-game icons: just one light main flat fill and one clean darker shadow facet. Remove shiny specular blobs and realistic glossy gradients. Keep warm ivory+gold white pieces with dark teal outlines, deep teal+cyan black pieces with pale cyan outlines. All twelve have the same clean rounded playful graphic design family.
+Exact unchanged order: row1 white pawn, white rook, white knight; row2 white bishop, white queen, white king; row3 black pawn, black rook, black knight; row4 black bishop, black queen, black king. Both knights face left. Keep bishops' diagonal notches, queens' pointed crowns and jewel, kings' crown and obvious cross. No text, numbers, logo, watermark, eyes, mascots, backdrop, board or extra objects.
+
+--- TARGETED EDIT 2 (NOT SELECTED: LOST PALE BLACK-PIECE OUTLINES) ---
+Precise sprite-sheet layout edit only. Preserve exactly these same 12 chess-piece designs, sizes, colors and row order. Keep exactly 1024×1536 portrait PNG, TRUE alpha-transparent background.
+Correct the POSITION of individual pieces inside the existing invisible 3×4 equal grid:
+1. Move all SIX white pieces in the upper two rows UP by 45 pixels, so their bases have more blank transparent space below. Do not change their height or design.
+2. Move the three dark pieces in the third row UP by 12 pixels.
+3. Keep the bottom-row dark pieces at their current vertical positions.
+4. Move every left-column piece LEFT by 20 pixels and every right-column piece RIGHT by 20 pixels. Keep the middle column at the same horizontal position.
+The final twelve icons should be perfectly centered horizontally at x=170.67,512,853.33. Relative to each row, their wide bases should all end near y=320, giving 64 transparent pixels below each piece. All complete pieces stay within their own cells. Row boundaries are y=384,768,1152. Column boundaries x=341.33,682.67. Absolutely NO icon pixel may touch these boundaries.
+Retain exact order: top row white Pawn/Rook/Knight, row2 white Bishop/Queen/King, row3 black Pawn/Rook/Knight, bottom row black Bishop/Queen/King. Do not merge, replace, redesign, add, remove, crop or reorder pieces.
+The empty background and gutters must be genuinely fully transparent, not a dark background, not a glow, not checkerboard. Preserve clean edges and thick graphic outlines. No text or marks anywhere.
+
+--- DELIVERY NOTE ---
+Selected image: exec-984bc4e7-5cf4-4ee0-9076-cd116d71e800.png. The original and both edits are preserved under /Users/kk/.codex/generated_images/01a10c03-869b-7552-a6ad-6003863358c6/. This is an unmodified copy of the selected builtin image_gen output; no image postprocessing was performed. Native Unity per-cell alpha-bounds cropping can normalize minor position/baseline differences. Read rows top-to-bottom, columns left-to-right: WP WR WN / WB WQ WK / BP BR BN / BB BQ BK.
+
+--- VERIFIED DELIVERY METADATA ---
+{
+  "selected": "/Users/kk/competition/Assets/LingGuangV05/Resources/LingGuangV05/Chess/ChessPieces.png",
+  "preserved_existing_destination": false,
+  "raw_source": "/Users/kk/.codex/generated_images/01a10c03-869b-7552-a6ad-6003863358c6/exec-984bc4e7-5cf4-4ee0-9076-cd116d71e800.png",
+  "width": 1024,
+  "height": 1536,
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    254
+  ],
+  "alpha_zero_pixels": 1166531,
+  "alpha_zero_fraction": 0.7416604359944662,
+  "alpha_threshold_for_bbox": 16,
+  "sha256": "80903808143b3a6742b592663b14a8c3decccc43452355377491b91df9a5b070",
+  "pieces": [
+    {
+      "type": "WhitePawn",
+      "cell_xy_top_origin": [
+        0,
+        0
+      ],
+      "bbox_local_top_origin": [
+        109,
+        141,
+        272,
+        361
+      ],
+      "unity_rect_tight_bottom_origin": [
+        109,
+        1175,
+        163,
+        220
+      ]
+    },
+    {
+      "type": "WhiteRook",
+      "cell_xy_top_origin": [
+        1,
+        0
+      ],
+      "bbox_local_top_origin": [
+        85,
+        123,
+        258,
+        361
+      ],
+      "unity_rect_tight_bottom_origin": [
+        426,
+        1175,
+        173,
+        238
+      ]
+    },
+    {
+      "type": "WhiteKnight",
+      "cell_xy_top_origin": [
+        2,
+        0
+      ],
+      "bbox_local_top_origin": [
+        57,
+        112,
+        240,
+        363
+      ],
+      "unity_rect_tight_bottom_origin": [
+        740,
+        1173,
+        183,
+        251
+      ]
+    },
+    {
+      "type": "WhiteBishop",
+      "cell_xy_top_origin": [
+        0,
+        1
+      ],
+      "bbox_local_top_origin": [
+        105,
+        98,
+        270,
+        365
+      ],
+      "unity_rect_tight_bottom_origin": [
+        105,
+        787,
+        165,
+        267
+      ]
+    },
+    {
+      "type": "WhiteQueen",
+      "cell_xy_top_origin": [
+        1,
+        1
+      ],
+      "bbox_local_top_origin": [
+        77,
+        97,
+        265,
+        365
+      ],
+      "unity_rect_tight_bottom_origin": [
+        418,
+        787,
+        188,
+        268
+      ]
+    },
+    {
+      "type": "WhiteKing",
+      "cell_xy_top_origin": [
+        2,
+        1
+      ],
+      "bbox_local_top_origin": [
+        72,
+        80,
+        247,
+        365
+      ],
+      "unity_rect_tight_bottom_origin": [
+        755,
+        787,
+        175,
+        285
+      ]
+    },
+    {
+      "type": "BlackPawn",
+      "cell_xy_top_origin": [
+        0,
+        2
+      ],
+      "bbox_local_top_origin": [
+        107,
+        106,
+        275,
+        331
+      ],
+      "unity_rect_tight_bottom_origin": [
+        107,
+        437,
+        168,
+        225
+      ]
+    },
+    {
+      "type": "BlackRook",
+      "cell_xy_top_origin": [
+        1,
+        2
+      ],
+      "bbox_local_top_origin": [
+        82,
+        102,
+        261,
+        332
+      ],
+      "unity_rect_tight_bottom_origin": [
+        423,
+        436,
+        179,
+        230
+      ]
+    },
+    {
+      "type": "BlackKnight",
+      "cell_xy_top_origin": [
+        2,
+        2
+      ],
+      "bbox_local_top_origin": [
+        57,
+        80,
+        246,
+        335
+      ],
+      "unity_rect_tight_bottom_origin": [
+        740,
+        433,
+        189,
+        255
+      ]
+    },
+    {
+      "type": "BlackBishop",
+      "cell_xy_top_origin": [
+        0,
+        3
+      ],
+      "bbox_local_top_origin": [
+        108,
+        57,
+        276,
+        320
+      ],
+      "unity_rect_tight_bottom_origin": [
+        108,
+        64,
+        168,
+        263
+      ]
+    },
+    {
+      "type": "BlackQueen",
+      "cell_xy_top_origin": [
+        1,
+        3
+      ],
+      "bbox_local_top_origin": [
+        74,
+        59,
+        269,
+        320
+      ],
+      "unity_rect_tight_bottom_origin": [
+        415,
+        64,
+        195,
+        261
+      ]
+    },
+    {
+      "type": "BlackKing",
+      "cell_xy_top_origin": [
+        2,
+        3
+      ],
+      "bbox_local_top_origin": [
+        67,
+        49,
+        248,
+        321
+      ],
+      "unity_rect_tight_bottom_origin": [
+        750,
+        63,
+        181,
+        272
+      ]
+    }
+  ]
+}

@@ -145,7 +145,7 @@ namespace LingGuangV05.Desktop.Story
                 string score = LingGuangV05.Core.Hardware.HardwareCatalog.LudashiPercent(arg).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
                 string zh = arg == "nvme" ? "硬盘跑分完成：读写速度战胜了全国 99% 的用户！" : "显卡跑分完成：战胜了全国 " + score + "% 的用户！";
                 string en = arg == "nvme" ? "Disk benchmark done: faster than 99% of users nationwide!" : "GPU benchmark done: faster than " + score + "% of users nationwide!";
-                if (PrologueDirector.Desk != null) PrologueDirector.Desk.Popup(GameText.T("鲁大师", "Master Lu"), GameText.T(zh, en), 8);
+                if (PrologueDirector.Desk != null) PrologueDirector.Desk.Popup(Lang.T("鲁大师"), GameText.T(zh, en), 8);
                 else EnqueueToast(() => GameText.T("鲁大师\n" + zh, "Master Lu\n" + en), null);
             }
         }
@@ -171,6 +171,7 @@ namespace LingGuangV05.Desktop.Story
                 case "narrate": Narrate(command.Text, done); break;
                 case "cutscene": PlayCutscene(command, done); break;
                 case "say": Say(command.Arg("who", LaoZhou), command.Text, (float)command.DelaySeconds, command.BeatId); break;
+                case "think": InnerVoice.Say(command.Text, command.Text); break;
                 case "notify":
                     string app = command.Arg("app"), tab = command.Arg("tab");
                     ShowToast(command.Text, app == null ? (Action)null : () => OpenApp(app, tab));
@@ -285,7 +286,7 @@ namespace LingGuangV05.Desktop.Story
                 catch (Exception e) { Debug.LogWarning("[Story] YY post failed: " + e.Message); }
             }
             bool visible = posted && DesktopNotifications.IsWindowVisible(chatAdapter.Window) && chatManager.selectedLayout == laoZhouLayout;
-            DesktopNotifications.Notify(director != null ? director.runtime : null, "YY", GameText.T("老周", "Lao Zhou"),
+            DesktopNotifications.Notify(director != null ? director.runtime : null, "YY", Lang.T("老周"),
                 GameText.Source(text), visible, () => OpenApp("yy", null));
             NoteChatDelivered(pendingChat.beat);
         }
@@ -417,7 +418,7 @@ namespace LingGuangV05.Desktop.Story
         {
             if (string.IsNullOrEmpty(text)) return;
             var runtime = director != null ? director.runtime : GetComponent<ChapterOneRuntime>();
-            DesktopNotifications.Notify(runtime, GameText.T("桌面消息", "Desktop message"), "", GameText.Source(text), false, onClick);
+            DesktopNotifications.Notify(runtime, Lang.T("桌面消息"), "", GameText.Source(text), false, onClick);
         }
 
         private void EnqueueToast(Func<string> render, Action onClick)

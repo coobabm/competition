@@ -14,6 +14,8 @@ namespace LingGuangV05.XingGuang
             for (int i = 0; i < Nodes.Length; i++)
             {
                 bool reached = ReachedAt[i] > 0 ? state.stage >= ReachedAt[i] : state.unlocked.Contains(Nodes[i]);
+                // The second of stage 3's first words waits until that track trains (XgSim.StoryBeats.cs).
+                if (Nodes[i] == state.firstWordsHeld) continue;
                 if (reached && !state.migratedBeats.Contains(Beats[i]) && !fired(Beats[i])) yield return Nodes[i];
             }
         }

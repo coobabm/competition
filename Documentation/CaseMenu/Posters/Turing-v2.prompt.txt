@@ -1,0 +1,12 @@
+Use case: photorealistic-natural.
+Asset type: an original monochrome archival-photographic memorial poster of Alan Turing for a programmer's bedroom, delivered as a Unity texture.
+Create a flat, front-facing, edge-to-edge portrait artwork in a 2:3 aspect ratio, ideally 1024 by 1536 pixels. The full image is the poster itself: no frame, no wall, no room, no mockup, no perspective, no objects outside the print.
+Portrait: an original synthesized photographic interpretation of Alan Turing as a recognizable contemplative young adult man of the late 1930s to 1940s. Handsome, thoughtful, reserved expression, neatly side-parted hair, period suit and tie. Natural believable human features, authentic photographic tonal transitions, exquisite face detail, soft archival film grain, dramatic understated studio light against a deep dark background. Do not exactly reproduce any existing photograph or poster.
+Style: minimal museum-quality photographic memorial poster of a historic computing pioneer. Restrained composition with a large photographic portrait and modest refined typography toward the lower part, enough quiet black negative space for effortless reading. Dignified, intimate, photographic, not illustrated.
+STRICT palette: deep black, white and silver gray ONLY. Pure neutral grayscale, no cream, no sepia, no teal, no warm or cool color tint.
+Exact and only text anywhere:
+"ALAN TURING"
+"COMPUTATION / LOGIC"
+The name should be modestly sized and refined, with the secondary line small beneath. No dates, quotations, captions, signatures, credits, other words, logos or watermarks.
+Avoid: risograph, screenprint, halftone dots, engraving, paper-fiber texture, distressed ink, diagrams, state machines, computer circuitry, decorations, neon, sci-fi visuals. This must feel like a quiet black-and-white photographic poster, distinct from a colored graphic-art academic poster.
+

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using LingGuangV05.Desktop.XingGuang;
+using LingGuangV05.XingGuang;
 using UnityEngine;
 
 namespace LingGuangV05.EditorTools
@@ -23,9 +24,9 @@ namespace LingGuangV05.EditorTools
             float scale = Time.timeScale;
             try
             {
-                Check(XgTrainPage.UseAssessmentOverlay(true, 5), "Manual assessments retain the dismissible overlay"); report.passed++;
-                Check(!XgTrainPage.UseAssessmentOverlay(false, 4), "Auto4 uses mini-card even for a new grade"); report.passed++;
-                Check(XgTrainPage.UseAssessmentOverlay(false, 3), "Pre-auto4 assessment remains an overlay"); report.passed++;
+                Check(XgTrainPage.UseAssessmentOverlay(new XgAssessment { hand = true, newGrade = 1 }), "Manual grade improvements retain the dismissible overlay"); report.passed++;
+                Check(!XgTrainPage.UseAssessmentOverlay(new XgAssessment { hand = false, newGrade = 1 }), "Automatic assessments use mini-cards even for a new grade"); report.passed++;
+                Check(!XgTrainPage.UseAssessmentOverlay(new XgAssessment { hand = true, newGrade = 0 }), "Manual assessments without a grade improvement use mini-cards"); report.passed++;
                 Check(Math.Abs(XgTrainPage.AutomaticCardSeconds - 3f) < .0001f, "Automatic card lasts three seconds"); report.passed++;
                 Check(XgJuice.Sfx.VariantsPerEvent == 3, "Each sound has three real clips");
                 foreach (XgJuice.Sfx.Id id in Enum.GetValues(typeof(XgJuice.Sfx.Id)))

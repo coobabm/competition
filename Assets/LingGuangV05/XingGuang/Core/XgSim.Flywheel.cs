@@ -24,11 +24,13 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         /// <summary>Logs per second per ¥/s of a contract's base income (design v1.1 §13).</summary>
-        public const double LogPerIncome = 2;
+        public const double LogPerIncome = 8;
         /// <summary>Before stage 5 the flywheel turns slowly, so buying data still matters.</summary>
         public const double LogEarlyFactor = .1;
         public const int FlywheelStage = 5;
         public const double LogPileCap = 200000;
+        /// <summary>Samples one log the model labelled itself is worth (it mostly repeats what it already knows).</summary>
+        public const double PseudoLabelWorth = .25;
         /// <summary>Samples one hand-labelled log is worth.</summary>
         public const double LogHandSamples = 4;
         /// <summary>Logs per second the model labels per unit of compute (square root).</summary>
@@ -58,13 +60,13 @@ namespace LingGuangV05.XingGuang
         public bool LogAutoOn(string dataset) => S.logAuto.Contains(dataset);
 
         /// <summary>Share of logs the deployed model would label wrong (1 − its accuracy).</summary>
-        public double LogAutoNoise(string dataset) => Math.Max(0, Math.Min(1, 1 - BestAcc(dataset)));
+        public double LogAutoNoise(string dataset) => Math.Max(0, Math.Min(1, 1 - (UseBoard ? BinaryAccuracy(dataset, BestAcc(dataset)) : BestAcc(dataset))));
 
         /// <summary>Why the model cannot label this dataset's logs (null when it can).</summary>
         public string LogAutoBlocker(string dataset)
         {
-            if (XgCatalog.Dataset(dataset) == null) return T("未知数据集", "Unknown dataset");
-            if (BestAcc(dataset) <= 0) return T("先训练出一个检查点", "Train a checkpoint first");
+            if (XgCatalog.Dataset(dataset) == null) return T("未知数据集");
+            if (BestAcc(dataset) <= 0) return T("先训练出一个检查点");
             return null;
         }
 
@@ -95,7 +97,8 @@ namespace LingGuangV05.XingGuang
         {
             double wrong = n * LogAutoNoise(dataset);
             SetCount(S.logs, dataset, Math.Max(0, Logs(dataset) - n));
-            SetCount(S.dataExtra, dataset, ExtraSamples(dataset) + n - wrong);
+            // A label the model already agrees with teaches it little (self-training): worth a quarter of a fresh one.
+            SetCount(S.dataExtra, dataset, ExtraSamples(dataset) + (n - wrong) * (UseBoard ? PseudoLabelWorth : 1));
             if (wrong > 0) SetCount(S.noise, dataset, Noise(dataset) + wrong);
             S.logsAuto += n;
             host.Train(n * LogAutoGpuSeconds);
@@ -122,7 +125,7 @@ namespace LingGuangV05.XingGuang
                 double before = Logs(c.dataset);
                 double add = Math.Min(rate * dt, Math.Max(0, LogPileCap - before));
                 if (add <= 0) continue;
-                if (S.logsTotal <= 0) Say(T("订单开始回传用户日志：没标注过的真实数据，里面有用户的聊天记录。", "Contracts start sending back user logs: real, unlabelled data, with users' chats in it."));
+                if (S.logsTotal <= 0) Say(T("订单开始回传用户日志：没标注过的真实数据，里面有用户的聊天记录。"));
                 SetCount(S.logs, c.dataset, before + add);
                 S.logsTotal += add;
             }

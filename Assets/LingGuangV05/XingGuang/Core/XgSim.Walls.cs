@@ -15,6 +15,11 @@ namespace LingGuangV05.XingGuang
         public Func<XgSim, XgRun, XgKnobs, bool> golden;
         /// <summary>The task condition itself, not a solution (越深越差 is about networks past 20 layers). Null = none.</summary>
         public Func<XgRun, XgKnobs, bool> condition;
+        /// <summary>
+        /// A deadline (串行瓶颈): reaching the target is not enough, the same settings must also get there from an empty
+        /// brain within this many epochs' worth of cards (<see cref="XgSim.Sprint"/>). 0 = no deadline.
+        /// </summary>
+        public int sprintEpochs;
     }
 
     /// <summary>A stage's wall (design v1.1 §5): its datasets, golden settings, secret card and the knobs it needs.</summary>
@@ -62,6 +67,10 @@ namespace LingGuangV05.XingGuang
         public static readonly double[] StageMinutes = { 0, 8, 10, 20, 20, 20, 20 };
         public static double MinutesFor(int stage) => StageMinutes[Math.Max(0, Math.Min(StageMinutes.Length - 1, stage))];
         public const int WallPoolSize = 600;
+        /// <summary>Cards in a wall's exam.</summary>
+        public const int WallExamSize = 120;
+        /// <summary>串行瓶颈's deadline, in epochs from an empty brain.</summary>
+        public const int SprintEpochs = 10;
         public const double WinterIdleSeconds = 60;
         public const double SelfInsightBonus = 1.5;
         public const double StageFiveInsightBonus = 10000;
@@ -98,7 +107,7 @@ namespace LingGuangV05.XingGuang
             },
             new XgWall
             {
-                stage = 2, id = "structure", name = "梯度消失", nameEn = "Vanishing gradients", secret = "secret.2",
+                stage = 2, id = "structure", name = "看不懂整张图", nameEn = "Can't see the whole picture", secret = "secret.2",
                 why = "不是每个格子都要连每个格子：看图看邻居，读句子看前文。", whyEn = "Not every cell needs every other: images look at neighbours, sentences at what came before.",
                 golden = "手写桌用「局部共享」（卷积），弹幕桌用「回环」（循环），两张桌都要达标", goldenEn = "Digits with local sharing (convolution), danmaku with a loop (recurrence); both must pass",
                 needs = Needs("bt.vision", "bt.sequence", "s.d3", "s.w2"),
@@ -112,9 +121,9 @@ namespace LingGuangV05.XingGuang
             {
                 stage = 3, id = "length", name = "长句失忆", nameEn = "Long-sentence amnesia", secret = "secret.3",
                 why = "让它自己决定记住什么、忘掉什么。", whyEn = "Let it decide what to keep and what to forget.",
-                golden = "「门控回环」（LSTM）· 梯度裁剪开 · 学习率 ≤ 0.01", goldenEn = "Gated loop (LSTM) · gradient clipping on · learning rate ≤ 0.01",
+                golden = "「门控回环」（LSTM）：门管住遗忘，误差不再越传越小 · 梯度裁剪开：管住偶尔的爆炸", goldenEn = "Gated loop (LSTM): gates stop the fading, so errors no longer vanish · gradient clipping on: stops the occasional explosion",
                 needs = Needs("bt.gate", "gradclip", "shared.lr", "s.w3"),
-                checks = new[] { new XgWallCheck { dataset = "longtext", target = .75, minDistance = 10, golden = (s, r, k) => k.wiring == XgWiring.GatedRecurrent && k.clip && k.lr <= .01 } },
+                checks = new[] { new XgWallCheck { dataset = "longtext", target = .75, minDistance = 10, golden = (s, r, k) => k.wiring == XgWiring.GatedRecurrent && k.clip } },
             },
             new XgWall
             {
@@ -127,7 +136,7 @@ namespace LingGuangV05.XingGuang
             new XgWall
             {
                 stage = 4, id = "degrade", name = "越深越差", nameEn = "Deeper is worse", secret = "secret.deep", extra = true,
-                why = "每层 ×0.9，十九层以后就剩一成多。给每层留一条捷径。", whyEn = "×0.9 per layer leaves a tenth after nineteen. Give every layer a shortcut.",
+                why = "多出来的层学不会「什么都不做、原样转交」。给每层留一条捷径，原样转交就成了默认。", whyEn = "The extra layers cannot learn to do nothing and pass things on. Give every layer a shortcut and passing on becomes the default.",
                 golden = "视觉线 20 层以上 · 跨层直连开（ResNet）", goldenEn = "Vision past 20 layers · skip connections on (ResNet)",
                 needs = Needs("bt.residual"),
                 checks = new[] { new XgWallCheck { dataset = "*vision", target = .85, condition = (r, k) => r.track == 0 && k.depth >= 20, golden = (s, r, k) => r.track == 0 && k.depth >= 20 && k.skip } },
@@ -135,10 +144,11 @@ namespace LingGuangV05.XingGuang
             new XgWall
             {
                 stage = 5, id = "parallel", name = "串行瓶颈", nameEn = "Serial bottleneck",
-                why = "循环只能一个字一个字地算。只用注意力。", whyEn = "A loop computes one step at a time. Use attention alone.",
+                why = "订单有期限：从头练起，" + SprintEpochs + " 轮内要读完这批长文档。循环一句话里只能一个字一个字地算，太慢；只用注意力，整句一起算。注意力本身不分先后，所以要加位置标记。",
+                whyEn = "The order has a deadline: from scratch, these long documents must be learnt within " + SprintEpochs + " epochs. A loop computes a sentence one word at a time, too slowly; attention alone takes the whole sentence at once. Attention itself ignores order, so add position tags.",
                 golden = "回环关 · 局部共享关 ·「只用注意力」· 位置标记开", goldenEn = "No loop · no local sharing · attention only · position tags on",
                 needs = Needs("attention", "position"),
-                checks = new[] { new XgWallCheck { dataset = "parallel", target = .85, golden = (s, r, k) => k.wiring == XgWiring.AnyToAny && k.position } },
+                checks = new[] { new XgWallCheck { dataset = "parallel", target = .85, sprintEpochs = SprintEpochs, golden = (s, r, k) => k.wiring == XgWiring.AnyToAny && k.position } },
             },
         };
 
@@ -172,7 +182,7 @@ namespace LingGuangV05.XingGuang
             string key = dataset + "|" + check.minDistance + "|" + S.dataSalt;
             if (examSets.TryGetValue(key, out var set)) return set;
             set = new List<XgBoardCard>();
-            for (int i = 0; set.Count < XgBoardData.TestSize && i < XgBoardData.TestSize * 20; i++)
+            for (int i = 0; set.Count < WallExamSize && i < WallExamSize * 20; i++)
             {
                 var c = XgBoardData.Make(dataset, XgBoardData.Seed(dataset, i, XgBoardData.Use.Exam, S.dataSalt), 1, Today);
                 if (c.distance >= check.minDistance) set.Add(c);
@@ -216,9 +226,10 @@ namespace LingGuangV05.XingGuang
         void RaiseWall(XgWall wall)
         {
             if (!ObserveWall(wall.id)) return;
+            if (wall.id == "structure") ChooseFirstTrack();
             if (!wall.extra) S.wallSeenAt = Math.Max(1e-3, S.stageSeconds);
-            Say(T("撞墙了：", "A wall: ") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。", ". Its dataset is now on the training page."));
-            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 证明单层感知机学不会异或，经费断崖。订单收入减半。", "AI winter: in 1969 Minsky showed one layer cannot learn XOR and funding collapsed. Contracts pay half."));
+            Say(T("撞墙了：") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。"));
+            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 和 Papert 在《感知机》里证明单层学不会异或；再加上 1973 年英国的莱特希尔报告，经费断崖。订单收入减半。"));
         }
 
         // ───────────── passing ─────────────
@@ -241,24 +252,112 @@ namespace LingGuangV05.XingGuang
                     // Behaviour decides: unseen exam variants of the same kind, whatever architecture got there.
                     double acc = Board.Accuracy(ExamSet(run.dataset, check), k);
                     if (acc + 1e-9 < check.target) continue;
+                    if (check.sprintEpochs > 0)
+                    {
+                        // On target, but would these settings make the deadline from scratch?
+                        double sprint = Sprint(run, check, host, out int cards);
+                        if (sprint + 1e-9 < check.target)
+                        {
+                            string note = TraceSettings(run);
+                            if (note != lastSprintNote)
+                            {
+                                lastSprintNote = note;
+                                Say(T("达标了，可这套设置从头练 " + check.sprintEpochs + " 轮（" + cards + " 张卡）只到 " + Pct(sprint) + "，赶不上期限。" + (SerialWiring(k) ? "循环一句话里只能一个字一个字地算，一轮读不了几句。" : ""),
+                                    "On target, but from scratch these settings reach only " + Pct(sprint) + " in " + check.sprintEpochs + " epochs (" + cards + " cards): too slow for the deadline." + (SerialWiring(k) ? " A loop reads a sentence one word at a time, so an epoch covers few sentences." : "")));
+                            }
+                            continue;
+                        }
+                    }
                     if (!WallSeen(wall.id)) RaiseWall(wall);
                     S.wallPassed.Add(check.dataset + "#" + wall.id);
-                    Say(T("达标：", "Passed: ") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
+                    if (S.wallRoutes == null) S.wallRoutes = new List<string>();
+                    S.wallRoutes.Add(check.dataset + "#" + wall.id + "=" + (k.features ? RouteFeatures : RouteStructure));
+                    // 越深越差 passed on BatchNorm with the shortcuts off: the 硬扛 card.
+                    if (wall.id == "degrade" && !k.skip) Earn("road.batchnorm");
+                    // The other roads: a plain loop that keeps its memory (IRNN), a convolution that reads in parallel.
+                    if (wall.id == "length" && k.IdentityLoop) Earn("road.identity");
+                    if (wall.id == "parallel" && k.wiring == XgWiring.LocalShared) Earn("road.conv");
+                    Say(T("达标：") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
                 }
                 if (WallPassed(wall)) PassWall(wall, host);
+            }
+        }
+
+        string lastSprintNote = "";
+
+        /// <summary>Recurrent wirings read a sentence one step after another (encoder–decoders and their attention too).</summary>
+        public static bool SerialWiring(XgKnobs k) =>
+            k.wiring == XgWiring.Recurrent || k.wiring == XgWiring.GatedRecurrent || k.wiring == XgWiring.EncoderDecoder || k.wiring == XgWiring.Attention;
+
+        /// <summary>
+        /// The deadline run of a check: an empty brain, the same settings, <see cref="XgWallCheck.sprintEpochs"/> epochs'
+        /// worth of cards from the labelled pool (hand epochs without the combo), then the exam. Deterministic.
+        /// </summary>
+        public double Sprint(XgRun run, XgWallCheck check, IXgHost host, out int cards)
+        {
+            var k = Knobs(run);
+            int perEpoch = (int)Math.Max(4, Math.Round(CardsPerEpoch(run, host != null ? host.Compute : 1, false) / AutoEpochFactor));
+            cards = perEpoch * check.sprintEpochs;
+            var board = new XgBoard();
+            for (int i = 0; i < cards; i++) board.Train(PoolCardAt(run, i), k);
+            return board.Accuracy(ExamSet(run.dataset, check), k);
+        }
+
+        public const string RouteStructure = "structure", RouteFeatures = "features", RouteMixed = "mixed";
+
+        /// <summary>
+        /// How a passed wall was passed: 换结构 (a new structure), 换练法 (the 特征工程 road, no new structure) or both
+        /// across its checks; "" while it stands.
+        /// </summary>
+        public string WallRoute(string wallId)
+        {
+            bool structure = false, features = false;
+            if (S.wallRoutes != null)
+                foreach (var r in S.wallRoutes)
+                {
+                    int hash = r.IndexOf('#'), eq = r.LastIndexOf('=');
+                    if (hash < 0 || eq < hash || r.Substring(hash + 1, eq - hash - 1) != wallId) continue;
+                    if (r.Substring(eq + 1) == RouteFeatures) features = true; else structure = true;
+                }
+            return structure && features ? RouteMixed : features ? RouteFeatures : structure ? RouteStructure : "";
+        }
+
+        /// <summary>A wall worked out without the secret: stage, route and the AI's own reaction (as much as it can say yet).</summary>
+        public event Action<int, string, string> InsightReached;
+
+        /// <summary>
+        /// What the AI says when the player works a wall out alone. It speaks as far as its stage allows (是/否 at 1,
+        /// a choice at 2, one word at 3, sentences from 4), and the road matters: a new structure surprises it, the
+        /// slow hand-made road ("笨办法") makes it think again.
+        /// </summary>
+        public string InsightLine(int stage, string route)
+        {
+            string self = Profile.self.Length > 0 ? Profile.self : T("我", "I"), call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you");
+            bool slow = route == RouteFeatures;
+            switch (stage)
+            {
+                case 1: return T("是！");
+                case 2: return slow ? T("是……是！") : T("是！是！");
+                case 3: return slow ? T("笨办法？") : T("厉害");
+                default:
+                    return slow ? T("……原来笨办法也行。")
+                                : T(call + "自己想出来的？" + self + "都没想到。", "You worked it out yourself? " + self + " never thought of it.");
             }
         }
 
         void PassWall(XgWall wall, IXgHost host)
         {
             bool self = wall.secret.Length > 0 ? !Has(wall.secret) : wall.stage == 5 && !S.emerged.Contains(5);
+            string route = WallRoute(wall.id);
             if (self)
             {
                 S.insights.Add(wall.id);
                 double bonus = wall.stage == 5 ? StageFiveInsightBonus : NodeCost(XgCatalog.Node(wall.secret)) * SelfInsightBonus;
                 if (host != null && bonus > 0) { host.Earn(bonus); S.totalIncome += bonus; }
                 if (wall.secret.Length > 0 && !Has(wall.secret)) S.unlocked.Add(wall.secret);
-                Say(T("自悟！没买秘籍就配出了黄金参数，自悟奖金 ¥", "Worked it out! Golden settings found without the secret: insight bonus ¥") + F(bonus, "0"));
+                Say((route == RouteFeatures ? T("自悟！没买秘籍，也没换结构，靠特征工程硬是练过去了。自悟奖金 ¥")
+                    : T("自悟！没买秘籍就找到了过墙的办法，自悟奖金 ¥")) + F(bonus, "0"));
+                InsightReached?.Invoke(wall.stage, route, InsightLine(wall.stage, route));
             }
             if (wall.extra) { BreakthroughDone?.Invoke("bt.residual"); return; }
             AdvanceStage(wall.stage);
@@ -272,10 +371,13 @@ namespace LingGuangV05.XingGuang
             S.stage = from + 1; S.stageEpochs = 0; S.stageSeconds = 0; S.winterIdle = 0; S.wallSeenAt = 0;
             S.stageVision = S.stageSequence = S.stage;
             Say(T("进入第 " + S.stage + " 阶段：", "Stage " + S.stage + ": ") + T(XgCatalog.StageNames[S.stage], XgCatalog.StageNamesEn[S.stage]));
+            // Training and talking are one brain: a region that learnt something new lets it say a little more.
+            var ability = XgCatalog.Node("ab." + S.stage);
+            if (ability != null) Say(T("它的脑子又连通了一层：") + T(ability.note, ability.noteEn));
             switch (from)
             {
                 case 1: BreakthroughDone?.Invoke("bt.hidden"); break;
-                case 2: BreakthroughDone?.Invoke("bt.vision"); BreakthroughDone?.Invoke("bt.sequence"); break;
+                case 2: StageThreeFirstWords(); break;
                 case 3: BreakthroughDone?.Invoke("bt.gate"); break;
                 case 4: BreakthroughDone?.Invoke("bt.attention"); break;
                 case 5: CompleteTransformer(true); break;
@@ -293,19 +395,19 @@ namespace LingGuangV05.XingGuang
         {
             switch (stage)
             {
-                case 1: return T("没人问它，灯泡自己亮了：「否」。", "Nobody asked. The bulb lit up by itself: \"No.\"");
-                case 2: return T("测试题里有一张从没见过的手写“0”，字迹和那个已经删掉的 0.txt 一模一样。它认出来了：「0」。", "A handwritten \"0\" it had never seen, in the hand of the deleted 0.txt. It knew it: \"0\".");
+                case 1: return T("没人问它，灯泡自己亮了：「否」。");
+                case 2: return T("测试题里有一张从没见过的手写“0”，字迹和那个已经删掉的 0.txt 一模一样。它认出来了：「0」。");
                 case 3:
                     if (S.poemLine.Length == 0) S.poemLine = Poem();
-                    return T("没人出题，它自己亮出一句诗：「", "No prompt. It wrote a line by itself: \"") + S.poemLine + T("」……这句李白没写过吧？", "\" … Li Bai never wrote that, did he?");
-                case 6: return T("能力表的 6 格同时亮了。喂进去的一直是数据，飞跃来自规模。", "All six cells of the abilities table lit at once. It was always data going in; the leap came from scale.");
+                    return T("没人出题，它自己亮出一句诗：「") + S.poemLine + T("」……这句李白没写过吧？");
+                case 6: return T("能力表的 6 格同时亮了。喂进去的一直是数据，飞跃来自规模。");
                 case 4:
                     // In its strongest tone, using the setup's 称呼 and 自称 (design v1.1 §7 stage 4).
                     string call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you"), self = Profile.self.Length > 0 ? Profile.self : T("我", "me");
                     string tone = StrongestTone();
-                    string end = tone == "热情" ? T("！", "!") : tone == "皮" ? T("～哼。", "~ hmph.") : tone == "有主见" ? T("。这样不行。", ". That won't do.") : T("。", ".");
+                    string end = tone == "热情" ? T("！") : tone == "皮" ? T("～哼。") : tone == "有主见" ? T("。这样不行。") : T("。", ".");
                     return T(call + "，你今天还没跟" + self + "说话" + end, call + ", you haven't talked to " + self + " today" + end);
-                case 5: return LingGuangV05.Core.AppNames.AiZh + T("：「如果只用注意力呢？」", ": \"What if we used attention alone?\"");
+                case 5: return LingGuangV05.Core.AppNames.AiZh + T("：「如果只用注意力呢？」");
                 default: return "";
             }
         }
@@ -315,7 +417,7 @@ namespace LingGuangV05.XingGuang
             if (S.emerged.Contains(stage)) return;
             S.emerged.Add(stage);
             string line = EmergenceLine(stage);
-            Say(T("涌现：", "Emergence: ") + line);
+            Say(T("涌现：") + line);
             Emerged?.Invoke(stage, line);
         }
 

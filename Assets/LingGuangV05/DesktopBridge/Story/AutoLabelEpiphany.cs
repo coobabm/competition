@@ -25,7 +25,7 @@ namespace LingGuangV05.Desktop.Story
     /// <see cref="XgSim.DeferAutoLabelReveal"/>), this waits for a quiet moment, dims the desktop, takes the mouse
     /// and plays: two thoughts; the cursor glides to 摆渡贴吧 (its desktop icon when that is not covered, else the
     /// taskbar button), opens the 挂机脚本 thread, scrolls to 「要是脚本真认得字就好了。」 and stops on it; a jolt and
-    /// 「！」; three more thoughts; then input comes back, the lab opens on the skill tree, the 「让它替我标」 flash card
+    /// 「！」; three more thoughts; then input comes back, the lab opens on the tech tree, the 「让它替我标」 flash card
     /// flips in, 自动答题 is revealed and ringed. Click or Esc skips once the first thought has been shown.
     /// If the forum cannot open, that part is skipped. Input is never left blocked: the blocked part has a time
     /// limit, and OnDisable restores everything and reveals 自动答题 if the scene could not finish.
@@ -407,7 +407,7 @@ namespace LingGuangV05.Desktop.Story
             bang = null;
         }
 
-        /// <summary>After the blocked part: the lab on the skill tree, the flash card, then 自动答题 revealed and ringed.</summary>
+        /// <summary>After the blocked part: the lab on the tech tree, the flash card, then 自动答题 revealed and ringed.</summary>
         IEnumerator Finish(XgSim sim)
         {
             var c = lab;

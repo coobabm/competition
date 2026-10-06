@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
         public event Action OriginVideoRequested;
 
         /// <summary>The question the 对话 page offers after the ending.</summary>
-        public string OriginQuestion => T("你是怎么被训练出来的？", "How were you trained?");
+        public string OriginQuestion => T("你是怎么被训练出来的？");
 
         /// <summary>The whole story is over: the curtain call can play.</summary>
         public bool OriginReady => S.chapterComplete && !string.IsNullOrEmpty(S.ending);
@@ -62,13 +62,13 @@ namespace LingGuangV05.XingGuang
                 string call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you");
                 switch (S.ending)
                 {
-                    case "E1": return T("好。我来给你解释。", "All right. Let me explain.");
+                    case "E1": return T("好。我来给你解释。");
                     case "E2": return T(call + "，我来给你解释。", call + ", let me explain.");
-                    default: return T("这个问题，我等你问很久了。好，我来给你解释。", "I have waited a long time for you to ask. All right, let me explain.");
+                    default: return T("这个问题，我等你问很久了。好，我来给你解释。");
                 }
             }
-            if (S.stage <= 1) return T("否。", "No.");
-            if (S.stage == 2) return T("……不确定。", "…Not sure.");
+            if (S.stage <= 1) return T("否。");
+            if (S.stage == 2) return T("……不确定。");
             if (S.stage <= 5)
             {
                 string[] zh = { "你……标的。", "一张，一张。", "你教的。", "……很多轮。" };
@@ -76,7 +76,7 @@ namespace LingGuangV05.XingGuang
                 int i = (int)(((uint)S.chatTurns * 2654435761u) % (uint)zh.Length);
                 return T(zh[i], en[i]);
             }
-            return T("现在讲不清。等最后，我讲给你听。", "I can't explain it yet. At the end, I'll tell you.");
+            return T("现在讲不清。等最后，我讲给你听。");
         }
 
         /// <summary>The video ended or was closed: it asks back, once, as the video promised.</summary>
@@ -86,12 +86,12 @@ namespace LingGuangV05.XingGuang
             S.originVideoSeen = true;
             if (!first || S.originAnswered || S.originAwaitingAnswer) return false;
             S.originAwaitingAnswer = true;
-            AddLine("ai", T("你觉得呢？", "What do you think?"));
+            AddLine("ai", T("你觉得呢？"));
             return true;
         }
 
         /// <summary>The two answers offered after 「你觉得呢？」.</summary>
-        public string OriginAnswerText(bool understood) => understood ? T("我觉得你懂了。", "I think you understand.") : T("我也不知道。", "I don't know either.");
+        public string OriginAnswerText(bool understood) => understood ? T("我觉得你懂了。") : T("我也不知道。");
 
         /// <summary>The player's answer to 「你觉得呢？」 and its last word on the matter.</summary>
         public bool AnswerOrigin(bool understood)
@@ -100,7 +100,7 @@ namespace LingGuangV05.XingGuang
             S.originAwaitingAnswer = false;
             S.originAnswered = true;
             AddLine("me", OriginAnswerText(understood));
-            AddLine("ai", understood ? T("那也是你教的。", "Then you taught that too.") : T("那我们一起看。", "Then let's watch together."));
+            AddLine("ai", understood ? T("那也是你教的。") : T("那我们一起看。"));
             return true;
         }
 

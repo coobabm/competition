@@ -109,7 +109,7 @@ namespace LingGuangV05.Desktop.Juxin
         void Relabel()
         {
             if (window == null) return;
-            string name = T("巨信", "Juxin");
+            string name = Lang.T("巨信");
             foreach (var title in window.GetComponentsInChildren<TMP_Text>(true)) if (title.name == "Aero Window Title") title.text = name;
             var sprite = AppIcon();
             if (icon != null) { Relabel(icon, name, sprite, true); iconBadge = iconBadge ?? MakeBadge(icon.transform as RectTransform, new Vector2(24, 30)); }
@@ -313,7 +313,7 @@ namespace LingGuangV05.Desktop.Juxin
             navChats.color = page == "chats" ? new Color32(70, 72, 78, 255) : NavBg;
             navMoments.color = page == "moments" ? new Color32(70, 72, 78, 255) : NavBg;
             var searchText = list.Find("Search/T")?.GetComponent<TMP_Text>();
-            if (searchText != null) searchText.text = T("搜索", "Search");
+            if (searchText != null) searchText.text = Lang.T("搜索");
             foreach (var n in navLabels) { n.label.text = T(n.zh, n.en); n.label.fontSize = GameText.IsEnglish ? 14 : 20; }
             DrawList();
             string draft = input != null ? input.text : "";
@@ -343,7 +343,7 @@ namespace LingGuangV05.Desktop.Juxin
                 var back = Row(listContent, 40, "Back");
                 var img = PrologueDesk.Fill(back, ListBg);
                 var b = back.gameObject.AddComponent<Button>(); b.targetGraphic = img; b.onClick.AddListener(() => { inFolder = false; signature = ""; });
-                Text(PrologueDesk.Rect("T", back, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero), T("‹ 订阅号", "‹ Subscriptions"), 16, Link, TextAlignmentOptions.MidlineLeft);
+                Text(PrologueDesk.Rect("T", back, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero), Lang.T("‹ 订阅号"), 16, Link, TextAlignmentOptions.MidlineLeft);
                 foreach (var t in Sim.JuxinSubscriptions()) ThreadRow(t);
                 return;
             }
@@ -364,7 +364,7 @@ namespace LingGuangV05.Desktop.Juxin
             var latest = subs[0];
             var m = latest.messages[latest.messages.Count - 1];
             int unread = Sim.JuxinSubscriptionUnread;
-            var row = ListRow(T("订阅号", "Subscriptions"), XgSim.JuxinName(latest.id, GameText.IsEnglish) + T("：", ": ") + Preview(m), new Color32(52, 120, 200, 255), unread, false, () => { inFolder = true; signature = ""; }, Clock(m), Folder);
+            var row = ListRow(Lang.T("订阅号"), XgSim.JuxinName(latest.id, GameText.IsEnglish) + T("：", ": ") + Preview(m), new Color32(52, 120, 200, 255), unread, false, () => { inFolder = true; signature = ""; }, Clock(m), Folder);
             UiTip.Add(row, "公众号的推送都收在这里：甲方的签约喜报、招募、结算通知，还有摆渡新闻。", "Official accounts post here: clients' launch notices, hiring calls and settlements, plus Bodu News.");
         }
 
@@ -372,7 +372,7 @@ namespace LingGuangV05.Desktop.Juxin
         {
             string name = XgSim.JuxinName(t.id, GameText.IsEnglish);
             var m = t.messages.Count > 0 ? t.messages[t.messages.Count - 1] : null;
-            string preview = m == null ? "" : (m.ai ? T("[代回] ", "[AI] ") : "") + (m.whoZh.Length > 0 ? T(m.whoZh, m.whoEn) + T("：", ": ") : "") + Preview(m);
+            string preview = m == null ? "" : (m.ai ? Lang.T("[代回] ") : "") + (m.whoZh.Length > 0 ? T(m.whoZh, m.whoEn) + T("：", ": ") : "") + Preview(m);
             string id = t.id;
             ListRow(name, preview, AvatarColor(id), t.unread, thread == id && page == "chats", () => { thread = id; page = "chats"; signature = ""; }, m != null ? Clock(m) : "", id);
         }
@@ -404,7 +404,7 @@ namespace LingGuangV05.Desktop.Juxin
         {
             switch ((XgJxKind)m.kind)
             {
-                case XgJxKind.Article: return "[" + T("链接", "Link") + "] " + T(m.titleZh, m.titleEn);
+                case XgJxKind.Article: return "[" + Lang.T("链接") + "] " + T(m.titleZh, m.titleEn);
                 case XgJxKind.RedPacket: return "[" + T("巨信红包", "Red packet") + "] " + T(m.zh, m.en);
                 default: return T(m.zh, m.en).Replace('\n', ' ');
             }
@@ -489,7 +489,7 @@ namespace LingGuangV05.Desktop.Juxin
 
         void DrawEmpty()
         {
-            var t = Text(PrologueDesk.Rect("Empty", pane, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "<size=46><color=#C8C8C8><b>" + T("巨信", "Juxin") + "</b></color></size>\n<color=#B4B4B4>2016</color>", 16, Muted, TextAlignmentOptions.Center);
+            var t = Text(PrologueDesk.Rect("Empty", pane, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "<size=46><color=#C8C8C8><b>" + Lang.T("巨信") + "</b></color></size>\n<color=#B4B4B4>2016</color>", 16, Muted, TextAlignmentOptions.Center);
             t.name = "Empty";
         }
 
@@ -552,8 +552,8 @@ namespace LingGuangV05.Desktop.Juxin
             }
             if (job.Length == 0) return "";
             var sb = new System.Text.StringBuilder();
-            if (job.Length > 0) sb.Append(T("合作：", "Job: ")).Append(job).Append("   ");
-            sb.Append(T("满意度 ", "Mood "));
+            if (job.Length > 0) sb.Append(Lang.T("合作：")).Append(job).Append("   ");
+            sb.Append(Lang.T("满意度 "));
             for (int i = -XgSim.JuxinMoodLimit; i < XgSim.JuxinMoodLimit; i++) sb.Append(i < t.mood ? "<color=#1AAD19>■</color>" : "<color=#D0D0D0>■</color>");
             return sb.ToString();
         }
@@ -629,7 +629,7 @@ namespace LingGuangV05.Desktop.Juxin
             {
                 var art = PrologueDesk.Rect("Illustration", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -72), new Vector2(76, -14));
                 DesktopArt.Paint(art, "news");
-                Text(PrologueDesk.Rect("Caption", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -90), new Vector2(76, -74)), T("配图", "Illustration"), 10, Muted, TextAlignmentOptions.Center);
+                Text(PrologueDesk.Rect("Caption", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -90), new Vector2(76, -74)), Lang.T("配图"), 10, Muted, TextAlignmentOptions.Center);
             }
             float inset = illustrated ? 92 : 18;
             var t = Text(PrologueDesk.Rect("T", card, Vector2.zero, Vector2.one, new Vector2(inset, 44), new Vector2(-18, -14)), text, 15, Ink);
@@ -639,7 +639,7 @@ namespace LingGuangV05.Desktop.Juxin
             var foot = PrologueDesk.Rect("Foot", card, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, 38));
             var rule = PrologueDesk.Rect("Rule", foot, new Vector2(0, 1), Vector2.one, new Vector2(18, -1), new Vector2(-18, 0));
             PrologueDesk.Fill(rule, new Color32(235, 235, 235, 255), false);
-            var read = Text(PrologueDesk.Rect("Read", foot, Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0)), T("阅读原文", "Read the original"), 14, Link, TextAlignmentOptions.MidlineLeft);
+            var read = Text(PrologueDesk.Rect("Read", foot, Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0)), Lang.T("阅读原文"), 14, Link, TextAlignmentOptions.MidlineLeft);
             read.raycastTarget = true;
             UiTip.Add(read, "2016 年的公众号都爱写「点击阅读原文」。……这里没有原文。", "Every 2016 official account says \"Read the original\". ...There is no original here.");
             var qr = PrologueDesk.Rect("QR", foot, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-46, 6), new Vector2(-18, -6));
@@ -658,7 +658,7 @@ namespace LingGuangV05.Desktop.Juxin
             if (group) Text(PrologueDesk.Rect("Speaker", row, new Vector2(0, 1), new Vector2(1, 1), new Vector2(52, -18), Vector2.zero), Safe(speaker), 12, Muted, TextAlignmentOptions.TopLeft);
             var card = PrologueDesk.Rect("Card", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(52, -top - h), new Vector2(52 + w, -top));
             var img = PrologueDesk.Fill(card, m.opened ? PacketOpen : Packet);
-            string state = !m.opened ? T("领取红包", "Open it") : m.got > 0 ? T("已领取 ¥", "You got ¥") + m.got.ToString("0.00", CultureInfo.InvariantCulture) : T("手慢了，红包派完了", "Too slow, it's all gone");
+            string state = !m.opened ? Lang.T("领取红包") : m.got > 0 ? Lang.T("已领取 ¥") + m.got.ToString("0.00", CultureInfo.InvariantCulture) : Lang.T("手慢了，红包派完了");
             Text(PrologueDesk.Rect("T", card, Vector2.zero, Vector2.one, new Vector2(16, 28), new Vector2(-12, -10)), "<b>" + Safe(T(m.zh, m.en)) + "</b>\n<size=13>" + state + "</size>", 16, Color.white, TextAlignmentOptions.TopLeft);
             var foot = PrologueDesk.Rect("Foot", card, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 24));
             PrologueDesk.Fill(foot, Color.white, false);
@@ -710,18 +710,18 @@ namespace LingGuangV05.Desktop.Juxin
             var timg = PrologueDesk.Fill(toggle, on ? Green : can ? new Color32(236, 236, 236, 255) : new Color32(245, 245, 245, 255));
             var tb = toggle.gameObject.AddComponent<Button>(); tb.targetGraphic = timg; tb.interactable = can;
             tb.onClick.AddListener(() => { sim.SetJuxinAutoReply(!sim.JuxinAutoReply); hub.Changed(); signature = ""; });
-            string label = T("让 AI 代我回：", "Let the AI reply: ") + (on ? T("开", "on") : T("关", "off")) + (can ? "" : T("（阶段 5）", " (stage 5)"));
+            string label = Lang.T("让 AI 代我回：") + (on ? Lang.T("开") : Lang.T("关")) + (can ? "" : Lang.T("（阶段 5）"));
             Text(PrologueDesk.Rect("T", toggle, Vector2.zero, Vector2.one, new Vector2(12, 0), new Vector2(-8, 0)), label, 14, on ? Color.white : can ? Ink : Muted, TextAlignmentOptions.MidlineLeft);
             UiTip.Add(toggle, () => can
                 ? T("打开后，" + AppNames.AiZh + "会用和「对话」页一样的人格替你回甲方和朋友的消息（不回公众号）。对方以为是你。它偶尔会说错话。",
                     "When on, " + AppNames.AiEn + " answers clients and friends for you, with the same personality as the Chat page (not official accounts). They think it's you. Sometimes it says the wrong thing.")
-                : T("阶段 5 解锁：它要先学会长句子和记事。", "Unlocks at stage 5, once it can manage longer sentences and remember things."));
+                : Lang.T("阶段 5 解锁：它要先学会长句子和记事。"));
 
             var box = PrologueDesk.Rect("Field", bar, Vector2.zero, Vector2.one, new Vector2(14, 52), new Vector2(-14, -46));
             PrologueDesk.Fill(box, Color.white);
             var area = PrologueDesk.Rect("Text Area", box, Vector2.zero, Vector2.one, new Vector2(4, 2), new Vector2(-4, -2));
             area.gameObject.AddComponent<RectMask2D>();
-            var placeholder = Text(PrologueDesk.Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), on ? T("AI 正在替你回消息，你也可以自己打字。", "The AI is answering for you; you can still type.") : T("输入消息……", "Type a message…"), 15, Muted, TextAlignmentOptions.TopLeft);
+            var placeholder = Text(PrologueDesk.Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), on ? Lang.T("AI 正在替你回消息，你也可以自己打字。") : Lang.T("输入消息……"), 15, Muted, TextAlignmentOptions.TopLeft);
             var textLabel = Text(PrologueDesk.Rect("Text", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, Ink, TextAlignmentOptions.TopLeft);
             textLabel.richText = false;
             input = box.gameObject.AddComponent<TMP_InputField>();
@@ -769,9 +769,9 @@ namespace LingGuangV05.Desktop.Juxin
             PrologueDesk.Fill(cover, new Color32(52, 74, 98, 255), false);
             if (DesktopArt.Paint(cover, "desk") != null)
                 PrologueDesk.Fill(PrologueDesk.Rect("Shade", cover, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), new Color(0, .04f, .1f, .62f), false);
-            Text(PrologueDesk.Rect("T", cover, Vector2.zero, Vector2.one, new Vector2(30, 20), new Vector2(-30, -20)), "<size=30><b>" + T("朋友圈", "Moments") + "</b></size>\n<color=#C0CCD8>" + T("2016 · 只看朋友们的", "2016 · friends only") + "</color>", 16, Color.white, TextAlignmentOptions.BottomLeft);
+            Text(PrologueDesk.Rect("T", cover, Vector2.zero, Vector2.one, new Vector2(30, 20), new Vector2(-30, -20)), "<size=30><b>" + Lang.T("朋友圈") + "</b></size>\n<color=#C0CCD8>" + Lang.T("2016 · 只看朋友们的") + "</color>", 16, Color.white, TextAlignmentOptions.BottomLeft);
             var posts = sim.JuxinMomentsVisible();
-            if (posts.Count == 0) { var none = Row(content, 60); Text(PrologueDesk.Rect("T", none, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("还没有动态。", "Nothing yet."), 15, Muted, TextAlignmentOptions.Center); return; }
+            if (posts.Count == 0) { var none = Row(content, 60); Text(PrologueDesk.Rect("T", none, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Lang.T("还没有动态。"), 15, Muted, TextAlignmentOptions.Center); return; }
             foreach (var p in posts)
             {
                 string name = XgSim.JuxinName(p.who, GameText.IsEnglish);
@@ -791,7 +791,7 @@ namespace LingGuangV05.Desktop.Juxin
                 {
                     var art = PrologueDesk.Rect("Illustration", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -166 - th), new Vector2(264, -58 - th));
                     DesktopArt.Paint(art, artKey);
-                    Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -184 - th), new Vector2(264, -168 - th)), T("配图", "Illustration"), 11, Muted, TextAlignmentOptions.MidlineLeft);
+                    Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(84, -184 - th), new Vector2(264, -168 - th)), Lang.T("配图"), 11, Muted, TextAlignmentOptions.MidlineLeft);
                     artHeight = 136;
                 }
                 bool liked = sim.JuxinLiked(p.id);

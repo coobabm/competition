@@ -18,6 +18,8 @@ namespace LingGuangV05.XingGuang
         public string text = "", group = "";
         public bool answer, truth;
         public int distance;
+        /// <summary>The card itself (pictures have no text; the wall page names them with <see cref="XgSim.CardText"/>).</summary>
+        public XgBoardCard card;
     }
 
     /// <summary>What the diagnostic set says about the model: per-group results, the main error and wrong samples.</summary>
@@ -107,7 +109,9 @@ namespace LingGuangV05.XingGuang
         public XgDiagnosis Diagnose(string dataset, XgKnobs k, XgBoard board = null)
         {
             board = board ?? Board;
-            return DiagnoseCards(dataset, k, board, TestSet(dataset));
+            var d = DiagnoseCards(dataset, k, board, TestSet(dataset));
+            foreach (var m in d.mistakes) if (m.text.Length == 0 && m.card != null) m.text = CardText(m.card, dataset);
+            return d;
         }
 
         static XgDiagnosis DiagnoseCards(string dataset, XgKnobs k, XgBoard board, List<XgBoardCard> cards)
@@ -122,7 +126,7 @@ namespace LingGuangV05.XingGuang
                 bool answer = board.Predict(card, k, out _);
                 group.total++;
                 if (answer == card.truth) { group.right++; right++; }
-                else if (card.text.Length > 0) d.mistakes.Add(new XgMistake { text = card.text, answer = answer, truth = card.truth, distance = card.distance, group = g.id });
+                else d.mistakes.Add(new XgMistake { text = card.text, answer = answer, truth = card.truth, distance = card.distance, group = g.id, card = card });
             }
             d.groups.Sort((a, b) => Rank(a.id).CompareTo(Rank(b.id)));
             d.overall = cards.Count == 0 ? 0 : (double)right / cards.Count;
@@ -178,15 +182,15 @@ namespace LingGuangV05.XingGuang
             string Arch(string id) { var a = XgCatalog.Arch(id); return a == null ? id : T(a.name, a.nameEn); }
             string[] acts = { T("阶跃", "step"), T("S 形", "S-curve"), "ReLU" };
             int actBefore = f.act >= 0 && ActivationOwned(f.act) ? f.act : BestActivation, actNow = EffectiveActivation(run);
-            if (f.arch != run.arch) list.Add(T("架构 ", "Architecture ") + Arch(f.arch) + " → " + Arch(run.arch));
-            if (actBefore != actNow) list.Add(T("激活 ", "Activation ") + acts[actBefore] + " → " + acts[actNow]);
-            if (f.depth != run.depth) list.Add(T("层数 ", "Layers ") + f.depth + " → " + run.depth);
-            if (f.width != run.width) list.Add(T("宽度 ", "Width ") + XgCatalog.Widths[f.width] + " → " + XgCatalog.Widths[run.width]);
-            if (f.lr != run.lr) list.Add(T("学习率 ", "Rate ") + XgCatalog.LearningRates[f.lr] + " → " + XgCatalog.LearningRates[run.lr]);
-            if (f.clip != run.clip) list.Add(T("梯度裁剪 ", "Clipping ") + (run.clip ? T("开", "on") : T("关", "off")));
-            if (f.skip != run.skip) list.Add(T("跨层直连 ", "Skip links ") + (run.skip ? T("开", "on") : T("关", "off")));
-            if (f.position != run.position) list.Add(T("位置标记 ", "Positions ") + (run.position ? T("开", "on") : T("关", "off")));
-            if (f.attnOnly != run.attnOnly) list.Add(T("只用注意力 ", "Attention only ") + (run.attnOnly ? T("开", "on") : T("关", "off")));
+            if (f.arch != run.arch) list.Add(T("架构 ") + Arch(f.arch) + " → " + Arch(run.arch));
+            if (actBefore != actNow) list.Add(T("激活 ") + acts[actBefore] + " → " + acts[actNow]);
+            if (f.depth != run.depth) list.Add(T("层数 ") + f.depth + " → " + run.depth);
+            if (f.width != run.width) list.Add(T("宽度 ") + XgCatalog.Widths[f.width] + " → " + XgCatalog.Widths[run.width]);
+            if (f.lr != run.lr) list.Add(T("学习率 ", "Rate ") + RateLabel(f.lr) + " → " + RateLabel(run.lr));
+            if (f.clip != run.clip) list.Add(T("梯度裁剪 ") + (run.clip ? T("开") : T("关")));
+            if (f.skip != run.skip) list.Add(T("跨层直连 ") + (run.skip ? T("开") : T("关")));
+            if (f.position != run.position) list.Add(T("位置标记 ") + (run.position ? T("开") : T("关")));
+            if (f.attnOnly != run.attnOnly) list.Add(T("只用注意力 ") + (run.attnOnly ? T("开") : T("关")));
             return list;
         }
 
@@ -221,7 +225,7 @@ namespace LingGuangV05.XingGuang
         {
             if (track != XgTrack.Vision && track != XgTrack.Sequence) throw new ArgumentOutOfRangeException(nameof(track));
             var run = Run(track);
-            if (run.epochActive || run.running) throw new InvalidOperationException(T("先停止自动训练，等本轮结束。", "Stop auto-training and wait for this epoch to finish."));
+            if (run.epochActive || run.running) throw new InvalidOperationException(T("先停止自动训练，等本轮结束。"));
             var original = Snapshot(run);
             original.act = EffectiveActivation(run);
             var draft = new XgTrialDraft
@@ -247,7 +251,7 @@ namespace LingGuangV05.XingGuang
 
         static XgBoardCard CopyCard(XgBoardCard c)
         {
-            var copy = new XgBoardCard { region = c.region, truth = c.truth, seed = c.seed, distance = c.distance, text = c.text };
+            var copy = new XgBoardCard { region = c.region, truth = c.truth, seed = c.seed, distance = c.distance, text = c.text, source = c.source };
             foreach (var f in c.features) copy.Add(f.name, f.x, f.y, f.seq);
             return copy;
         }
@@ -344,7 +348,7 @@ namespace LingGuangV05.XingGuang
                 foreach (var c in b.concepts)
                 {
                     w.Write(c.id); Text(c.region); Text(c.key); Text(c.alt); w.Write(c.layer); w.Write(c.w); w.Write(c.s);
-                    w.Write(c.seen); w.Write(c.seed); w.Write(c.pinned);
+                    w.Write(c.seen); w.Write(c.born); w.Write(c.seed); w.Write(c.pinned);
                 }
                 w.Write(b.links == null ? -1 : b.links.Count);
                 if (b.links != null) foreach (var l in b.links) { w.Write(l.a); w.Write(l.b); w.Write(l.c); }
@@ -356,7 +360,7 @@ namespace LingGuangV05.XingGuang
         public bool TryApplyTrial(XgTrialDraft draft, IXgHost host, out string reason)
         {
             reason = "";
-            if (!IsTrialCurrent(draft)) { reason = T("结果已过期，请停止训练并重新试训。", "Result expired. Stop training and start a new trial."); return false; }
+            if (!IsTrialCurrent(draft)) { reason = T("结果已过期，请停止训练并重新试训。"); return false; }
             var p = draft.proposal; var run = Run(draft.track);
             if (p == null || !ArchitectureFits(XgCatalog.Arch(p.arch), draft.track) || !Has(p.arch)
                 || p.act < 0 || p.act > 2 || !ActivationOwned(p.act)
@@ -365,13 +369,13 @@ namespace LingGuangV05.XingGuang
                 || p.lr < 0 || p.lr >= RateValues.Length || p.lr != run.lr && !HasLrKnob(draft.track)
                 || p.clip && !ClipOwned || p.skip && !SkipOwned || p.position && !PositionOwned
                 || p.warmup && !WarmupOwned || p.attnOnly && !AttentionOnlyOwned)
-            { reason = T("方案包含未解锁或超出上限的参数。", "The proposal contains locked or out-of-range settings."); return false; }
+            { reason = T("方案包含未解锁或超出上限的参数。"); return false; }
             // Like SetDepth/SetWidth, only a shape that needs more memory than the live one is checked against VRAM,
             // so a smaller or unchanged shape still applies on a host that lost cards since it last trained.
             var shape = new XgRun { arch = p.arch, depth = p.depth, width = p.width };
             double need = VramNeedMB(shape);
             if (host == null || double.IsNaN(Vram(host)) || need > Vram(host) && need > VramNeedMB(run))
-            { reason = T("显存不足，正式设置未改变。", "Insufficient VRAM. Live settings are unchanged."); return false; }
+            { reason = T("显存不足，正式设置未改变。"); return false; }
             bool archChanged = run.arch != p.arch, depthChanged = run.depth != p.depth, widthChanged = run.width != p.width;
             bool lrChanged = run.lr != p.lr;
             // An untouched activation keeps the run's automatic choice (act = -1), so a later ReLU purchase still upgrades it.
@@ -399,6 +403,20 @@ namespace LingGuangV05.XingGuang
 
         public static readonly Dictionary<string, string[]> Hints = new Dictionary<string, string[]>
         {
+            { "combo", new[]
+                {
+                    "看「训练图式」：曲线一直在五五开附近晃，加宽、多练都没用。", "Open the training map: the curve hovers around a coin toss; more width or more epochs change nothing.",
+                    "猜想：没有哪一个条件单独能说明答案，要看两个条件是不是「不一样」。一层只能一个一个条件地算。", "Hypothesis: no single condition gives the answer; it is whether the two differ. One layer can only weigh them one by one.",
+                    "两条路：让它自己长出组合（多一层，还要能把误差传回去）；或者人替它把两个条件拼成一个（特征工程，慢一些）。", "Two roads: let it grow combinations itself (another layer that can pass the error back), or have people pair the two conditions for it (feature engineering, slower).",
+                }
+            },
+            { "structure", new[]
+                {
+                    "看「训练图式」：格子很快就满了，练过的题会、没见过的位置不会。", "Open the training map: the cells fill up fast; trained cards are right, unseen positions wrong.",
+                    "猜想：它把每个位置上的每一笔都当成新东西死记，同一个字挪一格就不认识了。", "Hypothesis: it memorises every stroke at every position as something new; move a digit one step and it is a stranger.",
+                    "两条路：换一种只看邻近、到处共用的连法（图看邻居，句子看前文）；或者人先把图居中、把句子拆成字和词再喂（特征工程，慢一些）。", "Two roads: a wiring that only looks nearby and is shared everywhere (images look at neighbours, sentences at what came before), or have people centre the pictures and split the sentences first (feature engineering, slower).",
+                }
+            },
             { "length", new[]
                 {
                     "看诊断：错误集中在离得远的条件上，近处的几乎都对。", "Look at the diagnosis: the errors sit on far conditions; near ones are almost all right.",

@@ -233,7 +233,7 @@ namespace LingGuangV05.Desktop
             if (!_initialized) return;
             TranslateAuthoredControls();
             Refresh();
-            if (_reloadConfirmUntil > Time.unscaledTime) ButtonText("ReloadSave", GameText.T("确认读取", "Confirm load"));
+            if (_reloadConfirmUntil > Time.unscaledTime) ButtonText("ReloadSave", Lang.T("确认读取"));
         }
         private void MarkDirty() { _dirty = true; }
         private void OnNameEdited(string ignored) { _nameDraft = true; }
@@ -270,11 +270,11 @@ namespace LingGuangV05.Desktop
             _dirty = false; _nextRefresh = Time.unscaledTime + .25f;
             Text("HeaderMoney", "¥" + Money(state.money));
             Text("HeaderSamples", GameText.T("样本 ", "Samples ") + Whole(state.samples));
-            Text("HeaderSteps", GameText.T("训练步 ", "Steps ") + Whole(state.steps));
-            Text("HeaderLearning", GameText.T("学习点 ", "Learning points ") + Whole(state.learningPoints));
+            Text("HeaderSteps", Lang.T("训练步 ") + Whole(state.steps));
+            Text("HeaderLearning", Lang.T("学习点 ") + Whole(state.learningPoints));
             Text("SaveStatus", GameText.Source(runtime.SaveStatus));
             Text("Status", GameText.Source(_status));
-            if (_reloadConfirmUntil > 0 && Time.unscaledTime > _reloadConfirmUntil) { _reloadConfirmUntil = 0; ButtonText("ReloadSave", GameText.T("读取存档", "Load save")); }
+            if (_reloadConfirmUntil > 0 && Time.unscaledTime > _reloadConfirmUntil) { _reloadConfirmUntil = 0; ButtonText("ReloadSave", Lang.T("读取存档")); }
             if (profileId == "xunbao") RefreshShop(sim);
             else if (profileId == "home") RefreshHome(sim);
             else RefreshWorkbench(sim);
@@ -283,12 +283,12 @@ namespace LingGuangV05.Desktop
         private void RefreshWorkbench(ChapterOneSim sim)
         {
             GameState state = sim.S;
-            Text("Objective", state.chapterOneComplete ? GameText.T("第一章已完成。第二章尚未开放；仍可优化网络和管理设备。", "Chapter One complete. Chapter Two is not available; you can still optimize the network and manage hardware.") : state.examActive ? GameText.T("入学考试 ", "Entrance exam ") + state.examAnswered + " / " + sim.Config.examQuestions + GameText.T("；邮件分拣暂停，请在这里继续。", "; mail sorting is paused. Continue here.") : GameText.T("在「邮件」标注，在「家庭」接单与缴费，在「寻宝」添置硬件；达标后参加入学考试。", "Label in Mail, manage jobs and bills in Home, buy hardware in Xunbao, then take the entrance exam."));
-            Text("SemanticStats", GameText.T("语义等级 ", "Semantic level ") + state.semanticLevel + " / " + sim.Config.maxSkillLevel + GameText.T("\n模拟识别率 ", "\nSimulated accuracy ") + Percent(sim.Accuracy) + GameText.T("\n升级需要 ", "\nUpgrade cost: ") + Whole(sim.Config.skillPointCost * state.semanticLevel) + GameText.T(" 学习点", " learning points"));
-            Text("TrainingStats", GameText.T("训练等级 ", "Training level ") + state.trainingLevel + " / " + sim.Config.maxTrainingLevel + GameText.T("\n当前心跳 ", "\nHeartbeats ") + Decimal(sim.HeartbeatsPerSecond) + GameText.T(" / 秒\n升级需要 ", " / sec\nUpgrade cost: ") + Whole(sim.Config.trainingPointCost * state.trainingLevel) + GameText.T(" 学习点", " learning points"));
+            Text("Objective", state.chapterOneComplete ? Lang.T("第一章已完成。第二章尚未开放；仍可优化网络和管理设备。") : state.examActive ? Lang.T("入学考试 ") + state.examAnswered + " / " + sim.Config.examQuestions + Lang.T("；邮件分拣暂停，请在这里继续。") : Lang.T("在「邮件」标注，在「家庭」接单与缴费，在「寻宝」添置硬件；达标后参加入学考试。"));
+            Text("SemanticStats", Lang.T("语义等级 ") + state.semanticLevel + " / " + sim.Config.maxSkillLevel + Lang.T("\n模拟识别率 ") + Percent(sim.Accuracy) + Lang.T("\n升级需要 ") + Whole(sim.Config.skillPointCost * state.semanticLevel) + Lang.T(" 学习点"));
+            Text("TrainingStats", Lang.T("训练等级 ") + state.trainingLevel + " / " + sim.Config.maxTrainingLevel + Lang.T("\n当前心跳 ") + Decimal(sim.HeartbeatsPerSecond) + Lang.T(" / 秒\n升级需要 ") + Whole(sim.Config.trainingPointCost * state.trainingLevel) + Lang.T(" 学习点"));
             Interactable("UpgradeSkill", state.semanticLevel < sim.Config.maxSkillLevel);
             Interactable("UpgradeTraining", state.trainingLevel < sim.Config.maxTrainingLevel);
-            Text("PersonaStats", GameText.T("已保存名称：", "Saved name: ") + state.aiName + GameText.T("\n标注 ", "\nReviewed ") + state.cardsReviewed + GameText.T(" 封 · 纠正模型 ", " emails · Model corrections ") + state.correctedCards + GameText.T(" 次\n仅本地规则模拟，不是真实大模型。", "\nLocal rule simulation, not a real language model."));
+            Text("PersonaStats", Lang.T("已保存名称：") + state.aiName + Lang.T("\n标注 ") + state.cardsReviewed + Lang.T(" 封 · 纠正模型 ") + state.correctedCards + Lang.T(" 次\n仅本地规则模拟，不是真实大模型。"));
             if (_inputs.TryGetValue("NameInput", out TMP_InputField name) && !name.isFocused && !_nameDraft && name.text != state.aiName) name.SetTextWithoutNotify(state.aiName);
             if (_activeTab == "board") RefreshDiagram(sim);
             RefreshExam(sim);
@@ -297,11 +297,11 @@ namespace LingGuangV05.Desktop
         private void RefreshExam(ChapterOneSim sim)
         {
             GameState state = sim.S;
-            Text("ExamSummary", state.chapterOneComplete ? GameText.T("第一章完成 · ", "Chapter One complete · ") + state.examCorrect + " / " + sim.Config.examQuestions + GameText.T("\n首次奖励只发放一次；第二章尚未开放。", "\nFirst-pass reward is granted once. Chapter Two is not available.") : state.examActive ? GameText.T("入学考试 ", "Entrance exam ") + state.examAnswered + " / " + sim.Config.examQuestions + GameText.T(" · 当前答对 ", " · Correct so far ") + state.examCorrect + GameText.T("\n通过线 ", "\nPassing score: ") + sim.Config.examPassScore + GameText.T(" 题，可以保存后继续。", ". Save and continue later if needed.") : GameText.T("准备：标注 ", "Requirements: reviewed ") + state.cardsReviewed + "/" + sim.Config.examRequiredCards + GameText.T(" · 训练步 ", " · Training steps ") + Whole(state.steps) + "/" + Whole(sim.Config.examRequiredSteps) + GameText.T("\n模拟识别率 ", "\nSimulated accuracy ") + Percent(sim.Accuracy) + "/" + Percent(sim.Config.examRequiredAccuracy) + GameText.T("；两个输出与供电须正常。", "; both outputs and power must work.") + (state.examAttempts > 0 ? GameText.T(" 上次答对 ", " Previous correct answers: ") + state.examCorrect + GameText.T(" 题。", ".") : ""));
+            Text("ExamSummary", state.chapterOneComplete ? Lang.T("第一章完成 · ") + state.examCorrect + " / " + sim.Config.examQuestions + Lang.T("\n首次奖励只发放一次；第二章尚未开放。") : state.examActive ? Lang.T("入学考试 ") + state.examAnswered + " / " + sim.Config.examQuestions + Lang.T(" · 当前答对 ") + state.examCorrect + Lang.T("\n通过线 ") + sim.Config.examPassScore + Lang.T(" 题，可以保存后继续。") : Lang.T("准备：标注 ") + state.cardsReviewed + "/" + sim.Config.examRequiredCards + Lang.T(" · 训练步 ") + Whole(state.steps) + "/" + Whole(sim.Config.examRequiredSteps) + Lang.T("\n模拟识别率 ") + Percent(sim.Accuracy) + "/" + Percent(sim.Config.examRequiredAccuracy) + Lang.T("；两个输出与供电须正常。") + (state.examAttempts > 0 ? Lang.T(" 上次答对 ") + state.examCorrect + Lang.T(" 题。") : ""));
             CardData card = state.examActive ? sim.CurrentCard : null;
             _displayedExamCard = card == null ? -1 : card.id;
-            Text("ExamPrompt", card == null ? state.chapterOneComplete ? GameText.T("考试已通过。你可以返回网络继续优化。", "Exam passed. You can return to the network to keep optimizing.") : GameText.T("开始考试后，在此阅读邮件并判断真实分类。", "Start the exam, then read each email here and judge its actual category.") : GameText.Source(card.prompt));
-            Text("ExamSuggestion", card == null ? "" : GameText.T("模拟模型建议：", "Simulated suggestion: ") + (card.predictedYes ? GameText.T("垃圾邮件", "Spam") : GameText.T("正常邮件", "Not spam")) + GameText.T(" · 模拟置信度 ", " · Simulated confidence ") + Percent(card.confidence));
+            Text("ExamPrompt", card == null ? state.chapterOneComplete ? Lang.T("考试已通过。你可以返回网络继续优化。") : Lang.T("开始考试后，在此阅读邮件并判断真实分类。") : GameText.Source(card.prompt));
+            Text("ExamSuggestion", card == null ? "" : Lang.T("模拟模型建议：") + (card.predictedYes ? Lang.T("垃圾邮件") : Lang.T("正常邮件")) + Lang.T(" · 模拟置信度 ") + Percent(card.confidence));
             Text("ExamFeedback", GameText.Source(_examFeedback));
             Interactable("StartExam", !state.examActive && !state.chapterOneComplete);
             Interactable("ExamCardAnswerYes", card != null);
@@ -320,25 +320,25 @@ namespace LingGuangV05.Desktop
         private void RefreshShop(ChapterOneSim sim)
         {
             GameState state = sim.S;
-            Text("Objective", GameText.T("本地硬件集市 · 所有金额属于游戏，不会真实付款。", "Local hardware market · All payments are simulated in-game."));
+            Text("Objective", Lang.T("本地硬件集市 · 所有金额属于游戏，不会真实付款。"));
             Text("GpuPrice", "¥" + Money(sim.Config.gpuPrice));
             Text("CasePrice", "¥" + Money(sim.Config.casePrice));
-            Text("GpuStats", GameText.T("已安装 ", "Installed ") + state.gpuCount + GameText.T(" 张 / ", " / ") + state.caseCount * sim.Config.gpusPerCase + GameText.T(" 槽位\n每张显存 ", " slots\nVRAM per GPU ") + Whole(sim.Config.memoryPerGpu) + GameText.T(" MB\n回收价 ¥", " MB\nResale ¥") + Money(sim.Config.gpuPrice * sim.Config.gpuResaleFraction));
-            Text("CaseStats", GameText.T("已拥有 ", "Owned ") + state.caseCount + GameText.T(" 台\n每台 ", "\nEach case provides ") + sim.Config.gpusPerCase + GameText.T(" 个 GPU 插槽\n机箱扩展安装空间，也增加基础功耗。", " GPU slots\nCases expand installation space but add base power consumption."));
-            Text("ShopSummary", GameText.T("显存 ", "VRAM ") + Whole(sim.MemoryUsed) + " / " + Whole(sim.MemoryCapacity) + GameText.T(" MB · 当前功率 ", " MB · Current power ") + Whole(sim.PowerWatts) + GameText.T(" W\n商品采用模拟供货；可安装数量受余额、机箱插槽与显存约束。电费请查看「家庭」。", " W\nSimulated stock; purchases depend on funds, case slots and VRAM. Check Home for electricity bills."));
+            Text("GpuStats", Lang.T("已安装 ") + state.gpuCount + Lang.T(" 张 / ") + state.caseCount * sim.Config.gpusPerCase + Lang.T(" 槽位\n每张显存 ") + Whole(sim.Config.memoryPerGpu) + Lang.T(" MB\n回收价 ¥") + Money(sim.Config.gpuPrice * sim.Config.gpuResaleFraction));
+            Text("CaseStats", Lang.T("已拥有 ") + state.caseCount + Lang.T(" 台\n每台 ") + sim.Config.gpusPerCase + Lang.T(" 个 GPU 插槽\n机箱扩展安装空间，也增加基础功耗。"));
+            Text("ShopSummary", Lang.T("显存 ") + Whole(sim.MemoryUsed) + " / " + Whole(sim.MemoryCapacity) + Lang.T(" MB · 当前功率 ") + Whole(sim.PowerWatts) + Lang.T(" W\n商品采用模拟供货；可安装数量受余额、机箱插槽与显存约束。电费请查看「家庭」。"));
         }
 
         private void RefreshHome(ChapterOneSim sim)
         {
             GameState state = sim.S;
-            Text("Objective", GameText.T("家庭账务 · 展示当前真实模拟账单，不生成虚构历史账单。", "Home accounts · Current simulated bills only; no invented billing history."));
+            Text("Objective", Lang.T("家庭账务 · 展示当前真实模拟账单，不生成虚构历史账单。"));
             Text("BillAmount", "¥" + Money(state.billDue));
-            Text("BillDetails", GameText.T("第 ", "Day ") + state.day + GameText.T(" 天 · 本日累计 ", " · Usage today ") + state.energyKwh.ToString("0.000", CultureInfo.InvariantCulture) + GameText.T(" kWh\n电价 ¥", "kWh\nRate ¥") + Money(sim.Config.electricityPrice) + GameText.T(" / kWh\n本日未结算电费 ¥", " / kWh\nUnbilled today ¥") + Money(state.energyKwh * sim.Config.electricityPrice) + GameText.T("\n每日自动结算；待付金额只表示已到期欠费。", "\nAutomatically billed daily; amount due includes overdue charges only."));
-            Text("BillStatus", state.unpaidPower ? GameText.T("欠费停机 · 可缴费或在「邮件」正确标注抵扣欠费。", "Power suspended for arrears · Pay the bill or label correctly in Mail to repay it.") : GameText.T("当前无到期欠费。下一账期仍会按实际用电扣款。", "No overdue balance. The next bill still charges for actual simulated usage."));
-            Text("PowerStats", "GPU " + state.gpuCount + GameText.T(" 张 × ", " × ") + Whole(sim.Config.gpuWatts) + GameText.T(" W\n机箱 ", " W\nCases ") + state.caseCount + GameText.T(" 台 × ", " × ") + Whole(sim.Config.caseWatts) + GameText.T(" W\n实际功率 ", " W\nActual power ") + Whole(sim.PowerWatts) + GameText.T(" W · 上限 ", " W · Limit ") + Whole(sim.Config.powerLimitWatts) + GameText.T(" W\n温度 ", " W\nTemperature ") + Decimal(state.temperature) + " °C · " + (state.breakerTripped ? GameText.T("断路器已跳闸", "Breaker tripped") : GameText.T("断路器正常", "Breaker normal")));
-            Text("JobStats", GameText.T("当前收入 ¥", "Current income ¥") + Money(sim.IncomePerSecond) + GameText.T(" / 秒\n累计订单收入 ¥", " / sec\nTotal job income ¥") + Money(state.totalEarned) + GameText.T("\n已核对邮件 ", "\nEmails reviewed ") + state.cardsReviewed + GameText.T(" / 3 封启动条件\n网络瓶颈：", " / 3 required to start\nBottleneck: ") + GameText.Source(sim.Bottleneck));
-            Text("JobStatus", state.jobEnabled ? GameText.T("订单已启用；能否产生收入取决于训练与供电状态。", "Jobs enabled. Earnings depend on training and power status.") : GameText.T("订单已暂停；训练和用电不会因此暂停。", "Jobs paused. Training and power usage continue."));
-            ButtonText("ToggleJob", state.jobEnabled ? GameText.T("暂停订单", "Pause jobs") : GameText.T("启用订单", "Enable jobs"));
+            Text("BillDetails", GameText.T("第 ", "Day ") + state.day + Lang.T(" 天 · 本日累计 ") + state.energyKwh.ToString("0.000", CultureInfo.InvariantCulture) + Lang.T(" kWh\n电价 ¥") + Money(sim.Config.electricityPrice) + Lang.T(" / kWh\n本日未结算电费 ¥") + Money(state.energyKwh * sim.Config.electricityPrice) + Lang.T("\n每日自动结算；待付金额只表示已到期欠费。"));
+            Text("BillStatus", state.unpaidPower ? Lang.T("欠费停机 · 可缴费或在「邮件」正确标注抵扣欠费。") : Lang.T("当前无到期欠费。下一账期仍会按实际用电扣款。"));
+            Text("PowerStats", "GPU " + state.gpuCount + Lang.T(" 张 × ") + Whole(sim.Config.gpuWatts) + Lang.T(" W\n机箱 ") + state.caseCount + Lang.T(" 台 × ") + Whole(sim.Config.caseWatts) + Lang.T(" W\n实际功率 ") + Whole(sim.PowerWatts) + Lang.T(" W · 上限 ") + Whole(sim.Config.powerLimitWatts) + Lang.T(" W\n温度 ") + Decimal(state.temperature) + " °C · " + (state.breakerTripped ? Lang.T("断路器已跳闸") : Lang.T("断路器正常")));
+            Text("JobStats", Lang.T("当前收入 ¥") + Money(sim.IncomePerSecond) + Lang.T(" / 秒\n累计订单收入 ¥") + Money(state.totalEarned) + Lang.T("\n已核对邮件 ") + state.cardsReviewed + Lang.T(" / 3 封启动条件\n网络瓶颈：") + GameText.Source(sim.Bottleneck));
+            Text("JobStatus", state.jobEnabled ? Lang.T("订单已启用；能否产生收入取决于训练与供电状态。") : Lang.T("订单已暂停；训练和用电不会因此暂停。"));
+            ButtonText("ToggleJob", state.jobEnabled ? Lang.T("暂停订单") : Lang.T("启用订单"));
         }
 
         private void RecordName()
@@ -519,7 +519,7 @@ namespace LingGuangV05.Desktop
                     if (_pulseNodes.Contains(node.id)) tint = Color.Lerp(tint, pulseTint, .65f * fade);
                     cell.graphic.color = node.id == _selectedNode ? new Color32(245, 203, 112, 255) : tint;
                     cell.text.color = node.id == _selectedNode ? new Color32(12, 24, 38, 255) : new Color32(234, 242, 250, 255);
-                    cell.text.text = node.kind == NodeKind.Input ? GameText.T("输入", "Input") : node.kind == NodeKind.Yes ? GameText.T("是", "Yes") : node.kind == NodeKind.No ? GameText.T("否", "No") : "N" + node.id;
+                    cell.text.text = node.kind == NodeKind.Input ? Lang.T("输入") : node.kind == NodeKind.Yes ? GameText.T("是", "Yes") : node.kind == NodeKind.No ? GameText.T("否", "No") : "N" + node.id;
                 }
             }
             _segments.Clear();
@@ -532,9 +532,9 @@ namespace LingGuangV05.Desktop
                 _segments.Add(new BoardEdgesGraphic.Segment { from = from + pivot, to = to + pivot, weight = (float)(edge.weight / sim.Config.maximumWeight), tint = tint });
             }
             _edges.SetSegments(_segments);
-            Text("BoardStats", GameText.T("节点 ", "Nodes ") + sim.S.nodes.Count + GameText.T(" · 连接 ", " · Edges ") + sim.S.edges.Count + GameText.T("\n心跳 ", "\nHeartbeats ") + Decimal(sim.HeartbeatsPerSecond) + GameText.T(" / 秒\n扇出 ", " / sec\nFan-out ") + sim.FanOutCount + GameText.T(" · 汇流 ", " · Convergence ") + sim.ConvergeCount + GameText.T("\n显存 ", "\nVRAM ") + Whole(sim.MemoryUsed) + "/" + Whole(sim.MemoryCapacity) + GameText.T(" MB\n瓶颈：", " MB\nBottleneck: ") + GameText.Source(sim.Bottleneck));
+            Text("BoardStats", Lang.T("节点 ") + sim.S.nodes.Count + Lang.T(" · 连接 ") + sim.S.edges.Count + Lang.T("\n心跳 ") + Decimal(sim.HeartbeatsPerSecond) + Lang.T(" / 秒\n扇出 ") + sim.FanOutCount + Lang.T(" · 汇流 ") + sim.ConvergeCount + Lang.T("\n显存 ") + Whole(sim.MemoryUsed) + "/" + Whole(sim.MemoryCapacity) + Lang.T(" MB\n瓶颈：") + GameText.Source(sim.Bottleneck));
             NodeState selected = _selectedNode < 0 ? null : sim.S.nodes.Find(node => node.id == _selectedNode);
-            Text("BoardSelection", GameText.T("当前模式：", "Mode: ") + (_boardMode == "connect" ? GameText.T("连接", "Connect") : _boardMode == "place" ? GameText.T("放置", "Place") : GameText.T("移除", "Remove")) + "\n" + (selected == null ? GameText.T("选择节点开始编辑。\n线宽表示权重，紫色表示纠错。", "Select a node to edit.\nLine width shows weight; purple marks corrections.") : GameText.T("起点 #", "Source #") + selected.id + GameText.T("\n电荷 ", "\nCharge ") + Decimal(selected.charge) + GameText.T(" · 疲劳 ", " · Fatigue ") + Decimal(selected.fatigue)));
+            Text("BoardSelection", Lang.T("当前模式：") + (_boardMode == "connect" ? Lang.T("连接") : _boardMode == "place" ? Lang.T("放置") : Lang.T("移除")) + "\n" + (selected == null ? Lang.T("选择节点开始编辑。\n线宽表示权重，紫色表示纠错。") : Lang.T("起点 #") + selected.id + Lang.T("\n电荷 ") + Decimal(selected.charge) + Lang.T(" · 疲劳 ") + Decimal(selected.fatigue)));
         }
 
         private sealed class Cell { public int q, r; public RectTransform rect; public HexCellGraphic graphic; public TMP_Text text; }

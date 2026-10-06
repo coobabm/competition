@@ -3,6 +3,7 @@ using LingGuangV05.Runtime;
 using Michsky.DreamOS;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>Formats the time of an existing reminder; never changes its title, schedule or saved data.</summary>
@@ -36,7 +37,7 @@ namespace LingGuangV05.Desktop
             {
                 if (scheduled == null || scheduled.eventID != item.reminderID) continue;
                 bool morning = scheduled.meridiemFormat == DateAndTimeManager.DefaultShortTime.AM;
-                string suffix = morning ? GameText.T("上午", "AM") : GameText.T("下午", "PM");
+                string suffix = morning ? Lang.T("上午") : Lang.T("下午");
                 item.SetTime(scheduled.eventHour.ToString(CultureInfo.InvariantCulture) + ":" +
                     scheduled.eventMinute.ToString("00", CultureInfo.InvariantCulture) + " " + suffix);
                 return;
