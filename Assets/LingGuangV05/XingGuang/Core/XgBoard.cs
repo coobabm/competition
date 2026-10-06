@@ -103,6 +103,12 @@ namespace LingGuangV05.XingGuang
         /// (an S-curve squashes it again), and the same open path lets a high rate blow the gradient up (clip it).
         /// </summary>
         public bool identityInit;
+        /// <summary>
+        /// 多头注意力 (the Transformer): several heads look at once, one by content and one by place, so a word reads as
+        /// itself wherever it stands and the opening word is still known as the opening. Single-head attention with
+        /// position tags (stage 5) only has the place-bound view.
+        /// </summary>
+        public bool multiHead;
         /// <summary>特征工程 (the pre-deep-learning road): hand-made features, read per region (see <see cref="XgBoard.Elements"/>).</summary>
         public bool features;
         /// <summary>偏置: every card also lights a constant element, so the board can shift its threshold.</summary>
@@ -281,6 +287,11 @@ namespace LingGuangV05.XingGuang
                         // the output word lines itself up with the source word in the same place (see Reach). One
                         // sentence: position tags tell the first 春 from a later one.
                         if (lengths.Count > 1) e.id = f.name + (f.seq > 0 ? "→" : "");
+                        else if (k.multiHead)
+                        {
+                            e.id = f.name;
+                            if (k.position && f.x == 0) list.Add(new Element { id = "^" + f.name, act = 1, x = f.x, y = f.y, seq = f.seq, back = fromEnd, positioned = true });
+                        }
                         else e.id = k.position ? f.name + "@-" + fromEnd : f.name;
                         break;
                     case XgWiring.EncoderDecoder:
@@ -718,6 +729,37 @@ namespace LingGuangV05.XingGuang
             foreach (var c in S.concepts.ToArray()) if (!c.seed && !c.pinned && (region == null || c.region == region)) Remove(c);
             S.links.RemoveAll(l => !byId.ContainsKey(l.a) || !byId.ContainsKey(l.b));
             links.Clear(); foreach (var l in S.links) links[Pair(l.a, l.b)] = l;
+        }
+
+        /// <summary>
+        /// 迁移学习: the region's raw concepts (layer 1: strokes, words) are carried into a new wiring under the names that
+        /// wiring gives them; concepts that end up with the same name merge (the stronger weight stays). Combinations
+        /// above them are cleared and learnt again. Returns how many raw concepts were carried.
+        /// </summary>
+        public int CarryOver(string region, Func<string, string> rename)
+        {
+            var kept = new Dictionary<string, XgConcept>();
+            var merged = new List<XgConcept>(); // dropped: duplicates after renaming, and every combination above
+            foreach (var c in S.concepts)
+            {
+                if (c.region != region || c.seed || c.pinned) continue;
+                if (c.layer != 1) { merged.Add(c); continue; }
+                string key = rename(c.key);
+                if (string.IsNullOrEmpty(key)) continue;
+                if (kept.TryGetValue(key, out var first))
+                {
+                    if (Math.Abs(c.w) > Math.Abs(first.w)) first.w = c.w;
+                    first.s = Math.Max(first.s, c.s);
+                    merged.Add(c);
+                    continue;
+                }
+                c.key = key; c.alt = ""; kept[key] = c;
+            }
+            foreach (var c in merged) S.concepts.Remove(c);
+            Rebuild();
+            S.links.RemoveAll(l => !byId.ContainsKey(l.a) || !byId.ContainsKey(l.b));
+            links.Clear(); foreach (var l in S.links) links[Pair(l.a, l.b)] = l;
+            return kept.Count;
         }
 
         /// <summary>A copy of a region's learnt concepts (a checkpoint's weights; the "？" seed and pinned rules stay out).</summary>

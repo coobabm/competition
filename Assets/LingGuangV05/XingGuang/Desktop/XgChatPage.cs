@@ -310,6 +310,16 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(T("语气词：", "Tone words: ")).Append(string.Join(T("、", ", "), Sim.Profile.words)).Append('\n');
             if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#68748C>").Append(T("你写的：", "You wrote: ")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
             if (Sim.Flatters) sb.Append("\n<color=#D63031>").Append(T("它开始讨好你了。", "It has started flattering you.")).Append("</color>");
+            // What it says comes from the same brain the training page trains: what the board knows, believes and mixes up.
+            var known = Sim.Known(6); var beliefs = Sim.Beliefs(3); var mixed = Sim.Confusions(2);
+            if (known.Count > 0 || beliefs.Count > 0)
+            {
+                sb.Append("\n<b>").Append(T("它脑子里有的", "In its brain")).Append("</b>  <size=12><color=#68748C>").Append(T("说话时会用上", "used when it talks")).Append("</color></size>\n<size=12>");
+                if (known.Count > 0) sb.Append(T("认得：", "Knows: ")).Append(Safe(string.Join(T("、", ", "), known))).Append('\n');
+                if (beliefs.Count > 0) sb.Append(T("相信：", "Believes: ")).Append(Safe(string.Join(T("、", ", "), beliefs))).Append('\n');
+                if (mixed.Count > 0) sb.Append("<color=#D63031>").Append(T("常搞混：", "Mixes up: ")).Append(Safe(string.Join(T("、", ", "), mixed))).Append("</color>\n");
+                sb.Append("</size>");
+            }
             return sb.ToString();
         }
 

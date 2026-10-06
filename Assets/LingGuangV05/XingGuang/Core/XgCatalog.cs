@@ -411,6 +411,9 @@ namespace LingGuangV05.XingGuang
             Add(Simple("layernorm", XgNodeKind.Label, "transformer", 0, "LayerNorm", "LayerNorm", "2016 年提出：每个字按自己的各项特征归一化，不依赖整批数据（BatchNorm 是按一批样本）。", "Proposed in 2016: each word is normalised across its own features, without the batch (BatchNorm uses a batch of samples)."), 6, "research");
             Add(Simple("residual", XgNodeKind.Label, "transformer", 0, "残差连接", "Residual connections", "继承 ResNet：每层都留一条捷径。", "Inherited from ResNet: a shortcut around every layer."), 6, "research");
             R("warmup", "transformer", 20000, 6);
+            // Pre-training scale (about 100M parameters): the reading region grows to width 1024 and 8–12 layers.
+            W("sequence", 6, "s.w5", 36000, 6, "sequence");
+            D("sequence", 8, "s.d6", 8000, 6, "sequence"); D("sequence", 12, "s.d8", 16000, 6, "sequence");
             // Side research of stages 4–6 (design v1.1 §11.2): no walls, only a little speed.
             R("earlystop", "lrschedule", 2500, 4); R("wordvec", "rnn", 3500, 4);
             R("beamsearch", "attention", 7000, 5); R("subword", "attention", 9000, 5);
@@ -421,7 +424,7 @@ namespace LingGuangV05.XingGuang
             for (int i = 1; i < AbilityNames.Length; i++)
                 Add(N("ab." + i, "atlas", null, XgNodeKind.Ability, null, i, 0, 0, 0, AbilityNames[i], AbilityNamesEn[i], AbilityNotes[i], AbilityNotesEn[i]), i, "atlas");
             S("secret.6", 6, "transformer", 30000, "秘籍 · 预训练", "Secret · pre-training");
-            Add(Simple("datacenter", XgNodeKind.Label, "transformer", 60000, "机房", "Server room", "预训练一开，一台机箱的 3500W 就跳闸。机房把整排机柜接上专线。", "Pre-training trips one case's 3500 W breaker. A server room puts racks on a dedicated line."), 6, "research");
+            Add(Simple("datacenter", XgNodeKind.Label, "transformer", 60000, "租机房（IDC 机柜）", "Rent a server room (IDC rack)", "预训练一开，一台机箱的 3500W 就跳闸。在 IDC 租一个机柜，八张卡接专线：这里付押金和首月租金；预训练跑着的时候，按时长另付租金和电费（¥" + XgSim.DatacenterRent + "/秒），钱不够就断电。", "Pre-training trips one case's 3500 W breaker. Rent a rack in a data centre, eight cards on a dedicated line: this pays the deposit and the first month; while pre-training runs, rent and power cost ¥" + XgSim.DatacenterRent + "/s more, and it powers off when the money runs out."), 6, "research");
             // Automation starts at crontab (auto2); run.sh (auto1) is retired.
             for (int i = 1; i < AutoNames.Length; i++)
                 Add(N("auto" + (i + 1), "research", i == 1 ? "perceptron" : "auto" + i, XgNodeKind.Auto, null, i + 1, AutoCosts[i], 0, 0, AutoNames[i], AutoNamesEn[i], AutoNotes[i], AutoNotesEn[i]), i + 1, "auto");
@@ -550,9 +553,9 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "memetag", client = "斗图网", clientEn = "A meme site", job = "表情包自动打标签", jobEn = "Meme auto-tagging", dataset = "meme", threshold = .85, income = .6, signBonus = 120 },
             new XgContract { id = "captcha", client = "某购票网站", clientEn = "A ticketing site", job = "验证码难度测评", jobEn = "Captcha difficulty testing", dataset = "cifar", threshold = .7, income = 2, signBonus = 450 },
             new XgContract { id = "goclub", client = "县围棋协会", clientEn = "County Go club", job = "死活题批改", jobEn = "Life-and-death marking", dataset = "go", threshold = .9, income = 4, signBonus = 900 },
-            new XgContract { id = "parking", client = "小区停车场", clientEn = "Estate car park", job = "车辆识别抬杆", jobEn = "Vehicle recognition gate", dataset = "cifar", threshold = .8, income = 3, signBonus = 600 },
+            new XgContract { id = "parking", client = "小区停车场", clientEn = "Estate car park", job = "车牌识别抬杆", jobEn = "Number-plate gate", dataset = "mnist", threshold = .99, income = 1.5, signBonus = 400 },
             new XgContract { id = "taobao", client = "淘宝卖家联盟", clientEn = "Taobao seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 11, signBonus = 2500 },
-            new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "人脸考勤", jobEn = "Face clock-in", dataset = "imagenet", threshold = .9, income = 35, signBonus = 8000 },
+            new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "园区监控识别", jobEn = "Park camera recognition", dataset = "imagenet", threshold = .9, income = 35, signBonus = 8000 },
 
             new XgContract { id = "acrostic", client = "公众号「每日一诗」", clientEn = "WeChat account Daily Poem", job = "藏头诗生成", jobEn = "Acrostic poems", dataset = "poems", threshold = .35, income = .5, signBonus = 80 },
             new XgContract { id = "homework", client = "家教网站", clientEn = "Tutoring site", job = "作业是非题自动批改", jobEn = "Homework auto-marking", dataset = "logic", threshold = .75, income = 1.5, signBonus = 300 },
@@ -589,8 +592,8 @@ namespace LingGuangV05.XingGuang
                 effect = "旋钮：人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。不用换结构也能过墙，但人工整理很费时间：训练量减半。",
                 effectEn = "Knob: people make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. Passes walls without a new structure, but by hand: half the cards per epoch." },
             new XgResearch { id = "irnn", kind = XgResearchKind.ManualPay, name = "单位初始化", nameEn = "Identity initialisation", cost = 1200,
-                effect = "朴素 RNN 配 ReLU 时，回环一开始就是「原样转交」：记忆不再一个字一个字地漏掉（Le、Jaitly、Hinton 2015，IRNN）。误差也原样回传，学习率一大就爆，配梯度裁剪更稳。",
-                effectEn = "With ReLU, a vanilla RNN's loop starts as 'pass it on unchanged': memory no longer leaks word by word (Le, Jaitly, Hinton 2015, IRNN). The error comes back unchanged too: a high rate blows it up, so clip the gradients." },
+                effect = "（2015 年的办法，这里提前用上。）朴素 RNN 配 ReLU 时，回环一开始就是「原样转交」：记忆不再一个字一个字地漏掉（Le、Jaitly、Hinton 2015，IRNN）。误差也原样回传，学习率一大就爆，配梯度裁剪更稳。",
+                effectEn = "(A 2015 method, used early here.) With ReLU, a vanilla RNN's loop starts as 'pass it on unchanged': memory no longer leaks word by word (Le, Jaitly, Hinton 2015, IRNN). The error comes back unchanged too: a high rate blows it up, so clip the gradients." },
             new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "旋钮：不靠循环也知道字的先后顺序", effectEn = "Knob: word order without recurrence" },
             new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "旋钮：换设置以后前 60 张卡的学习率从很小慢慢升上去，开头误差最大的时候不炸。深网络和 Transformer 尤其需要", effectEn = "Knob: after a change the rate climbs from almost nothing over the first 60 cards, so the large early errors do not tear it. Deep nets and Transformers need it most" },
             new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "坡度是 1，误差几乎原样往下传，深网络练得动。2010 年前后才流行开（AlexNet 2012 靠它一战成名）。训练速度 ×1.3", effectEn = "Its slope is 1, so the error comes down almost whole and deep nets train. Popular only from about 2010 (AlexNet 2012 made its name). Training ×1.3" },
@@ -615,7 +618,7 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "cudnn", kind = XgResearchKind.CuDnn, name = "cuDNN 加速", nameEn = "cuDNN kernels", cost = 250,
                 effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3" },
             new XgResearch { id = "transfer", kind = XgResearchKind.Transfer, name = "迁移学习", nameEn = "Transfer learning", cost = 400,
-                effect = "同一个网络换数据集时，接着用已经学到的底层特征（笔画、边角、常用字）。换架构不行：结构变了，权重对不上", effectEn = "When the same network moves to a new dataset it keeps the low-level features it learnt (strokes, corners, common words). Not across architectures: a new structure, weights that no longer fit" },
+                effect = "底层学到的东西（笔画、边角、常用字词）可以带走：换结构时，这些概念换个接法接着用，上面的组合重新学。就像练好的词向量，换什么模型都能用。换数据集本来就在同一颗脑子里，不用迁移。", effectEn = "What the bottom learnt (strokes, corners, common words) can be taken along: on a change of structure those concepts carry into the new wiring and only the combinations above are learnt again, the way trained word vectors work in any model. A new dataset is already in the same brain and needs no transfer." },
         };
 
         /// <summary>Training unlocks once the run's dataset has this many samples.</summary>

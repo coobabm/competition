@@ -360,6 +360,7 @@ namespace LingGuangV05.XingGuang
             ("ResNet-50（2015）", "ResNet-50 (2015)", 25600),
             ("AlexNet（2012）", "AlexNet (2012)", 61000),
             ("VGG-16（2014）", "VGG-16 (2014)", 138000),
+            ("谷歌翻译 GNMT（2016）", "Google's GNMT (2016)", 278000),
         };
 
         /// <summary>
@@ -439,6 +440,26 @@ namespace LingGuangV05.XingGuang
             if (depth || width) Reshape(run);
         }
 
+        /// <summary>
+        /// 迁移学习 on the board: the run's region keeps its raw concepts under the new wiring's names (the place a stroke
+        /// or word sat is dropped). A wiring that binds every position (fully connected, or one head with position
+        /// tags) has no place-free names, so nothing carries over into it.
+        /// </summary>
+        int CarryConcepts(XgRun run)
+        {
+            var k = Knobs(run);
+            bool sequence = RegionOf(run.dataset) == "sequence";
+            bool bound = k.wiring == XgWiring.Full || k.wiring == XgWiring.AnyToAny && k.position && !k.multiHead || k.wiring == XgWiring.LocalShared && sequence && k.position;
+            if (bound) { Board.Reinitialise(RegionOf(run.dataset)); return 0; }
+            return Board.CarryOver(RegionOf(run.dataset), key =>
+            {
+                if (key.IndexOf('+') >= 0) return null;
+                int at = key.IndexOf('@');
+                string name = at >= 0 ? key.Substring(0, at) : key;
+                return name.StartsWith("^", StringComparison.Ordinal) && k.wiring != XgWiring.Recurrent && k.wiring != XgWiring.GatedRecurrent ? null : name;
+            });
+        }
+
         public bool SetArch(XgTrack track, string id)
         {
             if (Run(track).epochActive) return false;
@@ -448,8 +469,12 @@ namespace LingGuangV05.XingGuang
             run.arch = id;
             Restart(run);
             string region = RegionOf(run.dataset);
+            // A new structure is a new model: the region starts over, unless transfer learning carries the bottom across.
+            int carried = 0;
+            if (UseBoard) { if (Has("transfer")) carried = CarryConcepts(run); else Board.Reinitialise(region); }
             Say(T(RegionName(region, false) + "换成 " + a.name + " 的接法", "The " + RegionName(region, true).ToLowerInvariant() + " region now wired as " + a.nameEn) + (UseBoard
-                ? T("：线路变了，原来学到的大多对不上，基本是重新学。", ": the wiring changed, so most of what it learnt no longer fits; it largely starts over.")
+                ? (carried > 0 ? T("：迁移学习把 " + carried + " 个底层概念（笔画、字词）带了过来，上面的组合重新学。", ": transfer learning carried " + carried + " low-level concepts (strokes, words) across; the combinations above are learnt again.")
+                    : T("：换了新线路，这个区从头学。", ": a new wiring, so this region starts over."))
                 : Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
             return true;
         }
@@ -1036,8 +1061,17 @@ namespace LingGuangV05.XingGuang
             if (!Signed(c.id)) return 0;
             double acc = ContractAcc(c);
             if (acc < c.threshold) return 0;
-            return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * (Winter ? .5 : 1);
+            return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * (Winter ? .5 : 1) * DriftPay(c);
         }
+
+        /// <summary>Points of 新题型 drift at which a contract's pay halves (the floor).</summary>
+        public const double DriftHalfPay = 15;
+
+        /// <summary>
+        /// 新题型: the deployed checkpoint misses this month's new meme, so the client's results got worse and the pay
+        /// drops with the drift (down to half at <see cref="DriftHalfPay"/> points). Retraining the desk wins it back.
+        /// </summary>
+        public double DriftPay(XgContract c) => Math.Max(.5, 1 - MemeDrift(c.dataset) / (2 * DriftHalfPay));
 
         public double IncomePerSecond
         {

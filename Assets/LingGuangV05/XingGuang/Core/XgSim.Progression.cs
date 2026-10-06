@@ -228,7 +228,7 @@ namespace LingGuangV05.XingGuang
             {
                 var wall = WallOfSecret(node.id);
                 if (wall != null) Say(T("秘籍：", "Secret: ") + T(wall.golden, wall.goldenEn) + T("。", ". ") + T(wall.why, wall.whyEn));
-                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1.5M 以上，文本 2 万条以上，学习率预热、位置标记都开，再上「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。", "Secret: pre-training needs scale — a Transformer on the sequence line, 1.5M+ parameters, 20,000+ text samples, warm-up and positions on, and the server room. The loss falls smoothly with parameters and data; every doubling lowers it a step."));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1 亿左右（宽 1024、8 层以上），文本 2 万条以上，学习率预热、位置标记都开，再租「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。", "Secret: pre-training needs scale — a Transformer on the sequence line, about 100M parameters (width 1024, 8+ layers), 20,000+ text samples, warm-up and positions on, and a rented server room. The loss falls smoothly with parameters and data; every doubling lowers it a step."));
             }
             RefreshStages();
         }

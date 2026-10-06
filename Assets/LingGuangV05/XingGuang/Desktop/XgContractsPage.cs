@@ -187,6 +187,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool signed = Sim.Signed(c.id), can = Sim.CanSign(c);
                 text.text = "<b>" + T(c.client, c.clientEn) + "</b> · " + T(c.job, c.jobEn) + "\n<size=13><color=#68748C>" + T(d.name, d.nameEn) + " ≥ " + XgSim.Pct(c.threshold)
                     + (c.realtime ? T(" · 实时：只认不用循环的模型", " · realtime: models without a loop only") : "")
+                    + (Sim.DriftPay(c) < 1 - 1e-9 ? "  <color=#D63031>" + T("新题型：收入 −", "new meme: pay −") + XgSim.Pct(1 - Sim.DriftPay(c)) + T("，回炉训练能补回来", "; retrain the desk to win it back") + "</color>" : "")
                     + T("  当前 ", "  now ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>\n<color=#E86E14>¥" + Money(c.income) + T("/秒起", "/s base") + "</color>"
                     + (signed ? "  <color=#2F9E44>" + T("在跑 ¥", "earning ¥") + Money(Sim.ContractIncome(c)) + T("/秒", "/s") + "</color>" : "  <size=13><color=#68748C>" + T("首付 ¥", "advance ¥") + Money(c.signBonus) + "</color></size>");
                 bool target = dragging != null && dragging == c.dataset && can;

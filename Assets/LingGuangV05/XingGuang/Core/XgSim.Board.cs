@@ -108,6 +108,7 @@ namespace LingGuangV05.XingGuang
                 batchNorm = BatchNormOwned && !run.batchNormOff,
                 dropout = Has("dropout"),
                 identityInit = Has("irnn"),
+                multiHead = arch == "transformer",
                 steadiness = OptimizerSteadiness,
                 bias = Has("bias"),
                 lr = RateValues[Math.Max(0, Math.Min(RateValues.Length - 1, run.lr))],

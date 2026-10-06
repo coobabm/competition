@@ -343,7 +343,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append(T("进度 ", "Progress ")).Append(N(Sim.S.pretrain * 100, "0")).Append("%   loss ").Append(N(Sim.PretrainLoss, "0.00"));
             if (Sim.S.pretrainStalled && !Sim.S.abilities) sb.Append("  <color=#D63031>").Append(T("loss 停着不动", "loss is flat")).Append("</color>");
             sb.Append('\n').Append(Curve()).Append('\n');
-            if (!Sim.Has("datacenter")) sb.Append("<size=12><color=#68748C>").Append(T("3500W 一台机箱扛不住预训练：科技里有「机房」。", "One 3500 W case cannot run pre-training: the tech tree has a server room.")).Append("</color></size>\n");
+            if (!Sim.Has("datacenter")) sb.Append("<size=12><color=#68748C>").Append(T("3500W 一台机箱扛不住预训练：科技里能租「机房」（IDC 机柜，跑的时候按秒付租金电费 ¥" + XgSim.DatacenterRent + "）。", "One 3500 W case cannot run pre-training: rent a server room in the tree (an IDC rack; ¥" + XgSim.DatacenterRent + "/s rent and power while it runs).")).Append("</color></size>\n");
             sb.Append("\n<b>").Append(T("6.3 能力表", "6.3 Abilities")).Append("</b>\n");
             for (int i = 0; i < XgSim.Abilities.Length; i++)
                 sb.Append(Sim.S.abilities ? "<color=#E08A00>■</color> " : "<color=#C9D2E3>■</color> ").Append(T(XgSim.Abilities[i], XgSim.AbilitiesEn[i])).Append(i % 3 == 2 ? "\n" : "   ");

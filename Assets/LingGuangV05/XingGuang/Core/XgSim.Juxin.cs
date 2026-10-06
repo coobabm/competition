@@ -140,7 +140,7 @@ namespace LingGuangV05.XingGuang
             JxC("goclub", "县围棋协会", "County Go Club", "围棋协会 · 陈老师", "Teacher Chen (Go club)"),
             JxC("parking", "幸福里物业", "Happy Lane Property", "物业 · 赵经理", "Manager Zhao (property)"),
             JxC("taobao", "淘宝卖家联盟", "Taobao Seller Alliance", "卖家联盟 · 阿芳", "Afang, seller alliance"),
-            JxC("faceclock", "工业园区管委会", "Industrial Park Office", "园区人事 · 黄姐", "Sister Huang, park HR"),
+            JxC("faceclock", "工业园区管委会", "Industrial Park Office", "园区安保 · 黄姐", "Sister Huang, park security"),
             JxC("acrostic", "每日一诗", "Daily Poem", "每日一诗 · 小编", "Daily Poem editor"),
             JxC("homework", "家教网", "Tutor Net", "家教网 · 孙老师", "Teacher Sun (Tutor Net)"),
             JxC("civilexam", "考公培训班", "Civil Exam Prep", "培训班 · 李教务", "Registrar Li (exam prep)"),

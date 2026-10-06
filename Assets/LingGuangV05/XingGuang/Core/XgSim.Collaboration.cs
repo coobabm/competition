@@ -30,7 +30,7 @@ namespace LingGuangV05.XingGuang
             LabelNode("label.raise", null, "加薪", "Pay raise", "手动标注报酬 ×1 → ×30，每级至少 +0.5；与标注台商店共用。", "Hand pay ×1 to ×30, at least +0.5 per level; shared with the labelling shop.", 10, 17, 0),
             LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.3 题/秒；需任一 60% 检查点。", "Each global level adds 0.3 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
             LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 20，满时自动暂停。", "Route by confidence; automation pauses when the 20-card review inbox is full.", 300, 1, 260),
-            LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：文字题用本地模型；离线明确回退检查点。", "Stage 4: judge text locally; offline predictions clearly use checkpoints.", 1200, 1, 390),
+            LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
             LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 800, 1, 520),
             LabelNode("label.audit", "label.coop", "抽检", "Quality audit", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
             LabelNode("label.parallel", "label.brain", "多开推理", "Parallel inference", "本地推理并发 1 → 4，保留聊天优先；实际速度取决于本机。", "Local concurrency 1 to 4, with chat priority; measured speed depends on this computer.", 3000, 1, 780),

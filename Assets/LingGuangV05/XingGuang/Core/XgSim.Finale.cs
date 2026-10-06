@@ -44,6 +44,8 @@ namespace LingGuangV05.XingGuang
     {
         public const double PretrainWork = 900, PretrainPlateau = .6;
         public const int AlignCards = 12, MaxRules = 5, ExamQuestions = 6;
+        /// <summary>Rent and power of the IDC rack per game second while pre-training runs.</summary>
+        public const int DatacenterRent = 25;
         public const int DelegateTurns = 30;
         public const double DelegateOpinion = 60;
         /// <summary>Scale for pre-training: the sequence run's width × layers, as set on the training page.</summary>
@@ -59,7 +61,11 @@ namespace LingGuangV05.XingGuang
         // ───────────── 6.2 pre-training ─────────────
 
         /// <summary>Parameters (thousands) and text samples at which pre-training reaches the abilities.</summary>
-        public const double PretrainParamsK = 1500, PretrainSamples = 20000;
+        /// <summary>
+        /// About 100 million parameters: the size real models first wrote coherently (GPT-2's smallest is 124M, 2019;
+        /// 2016's GNMT had about 278M). On one 2016 card that means a server room and a long wait.
+        /// </summary>
+        public const double PretrainParamsK = 100000, PretrainSamples = 20000;
 
         /// <summary>
         /// How far pre-training can get with the sequence model as set (scaling laws, Kaplan 2020 / Hoffmann 2022): the
@@ -89,7 +95,7 @@ namespace LingGuangV05.XingGuang
             var run = S.sequence;
             if (run.arch != "transformer") return T("循环网络规模一大就不长进了：换 Transformer。", "Loops stop improving with scale: switch to the Transformer.");
             double n = ParamsK(run), d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
-            if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0.0") + "M（加宽、加层）。", "Too small: " + F(n / 1000, "0.0") + "M parameters of " + F(PretrainParamsK / 1000, "0.0") + "M (wider, deeper).");
+            if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0") + "M 左右才开始像样地说话（加宽到 1024、加到 8 层以上）。", "Too small: " + F(n / 1000, "0.0") + "M parameters; it starts to talk properly around " + F(PretrainParamsK / 1000, "0") + "M (width 1024, 8+ layers).");
             if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条。它要读的就是你攒下的 2016 年中文网：贴吧、新闻、弹幕、订单日志。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + ". What it reads is the 2016 Chinese web you gathered: forums, news, comments, contract logs.");
             if (!run.position) return T("没开位置标记：它读到的只是一袋字。", "No position tags: it reads a bag of words.");
             if (!run.warmup) return T("没开预热：大模型开头一炸，停在更高的地方。", "No warm-up: the big model tears early and settles higher.");
@@ -112,7 +118,7 @@ namespace LingGuangV05.XingGuang
             if (!Has("datacenter"))
             {
                 // §7 6.2: one case at 3500 W cannot feed it.
-                Say(T("跳闸了：预训练一开，3500W 的机箱扛不住。得上「机房」。", "The breaker tripped: one 3500 W case cannot run pre-training. You need the server room."));
+                Say(T("跳闸了：预训练一开，3500W 的机箱扛不住。得去 IDC 租「机房」。", "The breaker tripped: one 3500 W case cannot run pre-training. Rent a server room in a data centre."));
                 S.pretrainStalled = true;
                 return false;
             }
@@ -131,6 +137,13 @@ namespace LingGuangV05.XingGuang
             if (S.pretrain >= cap - 1e-9)
             {
                 if (!S.pretrainStalled) { S.pretrainStalled = true; Say(T("loss 停着不动了。", "The loss has stopped moving.") + PretrainLimit()); }
+                return;
+            }
+            // The rented rack bills by the hour: rent and power while pre-training runs.
+            if (!host.Spend(DatacenterRent * dt))
+            {
+                S.pretrainRunning = false;
+                Say(T("机房的租金和电费交不上，机柜断电了，预训练停在 " + Pct(S.pretrain) + "。", "Rent and power for the rack went unpaid; it powered off and pre-training stopped at " + Pct(S.pretrain) + "."));
                 return;
             }
             double work = host.Compute * dt;
