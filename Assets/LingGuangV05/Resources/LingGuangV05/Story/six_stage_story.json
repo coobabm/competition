@@ -967,6 +967,34 @@
           "key": "s5_garble_notice"
         }
       ]
+    },
+    {
+      "id": "s6_one_brain",
+      "on": "lg.month:6",
+      "priority": 69,
+      "steps": [
+        {
+          "op": "think",
+          "key": "s6_one_brain_think1"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_one_brain_say"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_one_brain"
+        },
+        {
+          "op": "think",
+          "key": "s6_one_brain_think2"
+        },
+        {
+          "op": "think",
+          "key": "s6_one_brain_think3"
+        }
+      ]
     }
   ]
 }

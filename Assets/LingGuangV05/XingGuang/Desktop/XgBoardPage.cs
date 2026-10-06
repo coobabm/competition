@@ -68,12 +68,20 @@ namespace LingGuangV05.Desktop.XingGuang
             var k = Sim.Knobs(Sim.Selected);
             header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#68748C>"
                 + Lang.T("已训练 ") + N(board.S.cards, "0") + Lang.T(" 张卡 · 每个板块 ") + k.Cells
-                + Lang.T(" 格 · 叠格 ") + board.S.superposed + "</color></size>";
+                + Lang.T(" 格 · 叠格 ") + board.S.superposed + "</color></size>"
+                + (OneBrain() ? "  <size=13><color=#E0A800>" + Lang.T("整颗脑子一种接法，同时亮着") + "</color></size>" : "");
             int seen = Sim.S.phenomena != null ? Sim.S.phenomena.seen.Count : 0;
             if (board.S.cards == shownCards && seen == shownPhenomena) return;
             shownCards = board.S.cards; shownPhenomena = seen;
             for (int i = 0; i < 4; i++) DrawRegion(regions[i], Regions[i], RegionTitle(Regions[i]), board);
             DrawAtlas();
+        }
+
+        /// <summary>The seeing and reading regions wired the same way (the Transformer of stage 6): one brain lit at once.</summary>
+        bool OneBrain()
+        {
+            var seeing = Sim.RegionWiring("vision"); var reading = Sim.RegionWiring("sequence");
+            return Sim.S.stage >= 6 && seeing != null && reading != null && seeing.id == "transformer" && reading.id == "transformer";
         }
 
         /// <summary>灵光's one brain in regions like a cortex: the region, the part of a human brain it plays, and how it is wired now.</summary>
