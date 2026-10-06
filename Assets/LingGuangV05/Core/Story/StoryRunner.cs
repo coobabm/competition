@@ -34,7 +34,7 @@ namespace LingGuangV05.Core.Story
     public sealed class StoryRunner
     {
         public static readonly string[] KnownOps =
-        { "narrate", "say", "notify", "open", "unlock", "cutscene", "wait", "waitSignal", "flag", "set", "emit", "first", "unfire", "log" };
+        { "narrate", "say", "think", "notify", "open", "unlock", "cutscene", "wait", "waitSignal", "flag", "set", "emit", "first", "unfire", "log" };
         public static readonly string[] BlockingOps = { "narrate", "cutscene" };
         /// <summary>Beats at or above this priority ignore pacing and busy gates.</summary>
         public const int UrgentPriority = 100;
@@ -284,6 +284,7 @@ namespace LingGuangV05.Core.Story
                     PresentBlocking(step);
                     return;
                 case "say":
+                case "think": // the protagonist's inner voice (non-blocking, like say)
                 case "notify":
                 case "open":
                     Present(step, null);

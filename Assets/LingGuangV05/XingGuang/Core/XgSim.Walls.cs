@@ -226,6 +226,7 @@ namespace LingGuangV05.XingGuang
         void RaiseWall(XgWall wall)
         {
             if (!ObserveWall(wall.id)) return;
+            if (wall.id == "structure") ChooseFirstTrack();
             if (!wall.extra) S.wallSeenAt = Math.Max(1e-3, S.stageSeconds);
             Say(T("撞墙了：") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。"));
             if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 和 Papert 在《感知机》里证明单层学不会异或；再加上 1973 年英国的莱特希尔报告，经费断崖。订单收入减半。"));
@@ -376,7 +377,7 @@ namespace LingGuangV05.XingGuang
             switch (from)
             {
                 case 1: BreakthroughDone?.Invoke("bt.hidden"); break;
-                case 2: BreakthroughDone?.Invoke("bt.vision"); BreakthroughDone?.Invoke("bt.sequence"); break;
+                case 2: StageThreeFirstWords(); break;
                 case 3: BreakthroughDone?.Invoke("bt.gate"); break;
                 case 4: BreakthroughDone?.Invoke("bt.attention"); break;
                 case 5: CompleteTransformer(true); break;

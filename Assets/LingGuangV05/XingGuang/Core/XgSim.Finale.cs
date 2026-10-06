@@ -348,8 +348,8 @@ namespace LingGuangV05.XingGuang
             get
             {
                 if (S.stage < 5) return 0;
-                double acc = Math.Max(BestAcc("translate"), BestAcc("parallel"));
-                int n = 0; foreach (var t in new[] { .55, .7, .8, .9 }) if (acc >= t) n++;
+                double acc = BestAcc("translate");
+                int n = 0; foreach (var t in GarbleThresholds) if (acc >= t) n++;
                 return S.stage >= 6 ? 4 : n;
             }
         }

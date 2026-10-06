@@ -171,6 +171,7 @@ namespace LingGuangV05.Desktop.Story
                 case "narrate": Narrate(command.Text, done); break;
                 case "cutscene": PlayCutscene(command, done); break;
                 case "say": Say(command.Arg("who", LaoZhou), command.Text, (float)command.DelaySeconds, command.BeatId); break;
+                case "think": InnerVoice.Say(command.Text, command.Text); break;
                 case "notify":
                     string app = command.Arg("app"), tab = command.Arg("tab");
                     ShowToast(command.Text, app == null ? (Action)null : () => OpenApp(app, tab));

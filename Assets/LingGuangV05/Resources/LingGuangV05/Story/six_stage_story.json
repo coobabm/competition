@@ -517,6 +517,28 @@
         {
           "op": "waitSignal",
           "ev": "story.delivered:specialty_motivation"
+        },
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "s2_choice_ask"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:specialty_motivation"
+        },
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "s2_choice_pick"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:specialty_motivation"
+        },
+        {
+          "op": "think",
+          "key": "s2_choice_think"
         }
       ]
     },
@@ -649,6 +671,300 @@
           "name": "Title",
           "key": "migration_era_5",
           "subKey": "migration_era_5_sub"
+        }
+      ]
+    },
+    {
+      "id": "s2_name",
+      "on": "state",
+      "priority": 40,
+      "when": [
+        "labStage == 2",
+        "labStageEpochs >= 8"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "s2_name_quiz"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s2_name"
+        },
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "s2_name_pick"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s2_name"
+        },
+        {
+          "op": "think",
+          "key": "s2_name_think"
+        }
+      ]
+    },
+    {
+      "id": "s2_moved",
+      "on": "lg.wall:structure",
+      "priority": 67,
+      "steps": [
+        {
+          "op": "say",
+          "who": "netbar",
+          "key": "s2_moved"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s2_moved"
+        },
+        {
+          "op": "think",
+          "key": "s2_moved_think"
+        }
+      ]
+    },
+    {
+      "id": "s4_first_day",
+      "on": "state",
+      "priority": 55,
+      "when": [
+        "labStage >= 4",
+        "labChatTurns >= 3"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_day_1"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_first_day"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_day_2"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_first_day"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_day_3"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_first_day"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_day_4"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_first_day"
+        },
+        {
+          "op": "think",
+          "key": "s4_day_think"
+        },
+        {
+          "op": "think",
+          "key": "s4_day_think2"
+        }
+      ]
+    },
+    {
+      "id": "s4_wish",
+      "on": "state",
+      "priority": 54,
+      "when": [
+        "labStage >= 4",
+        "labChatTurns >= 8"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_wish_1"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_wish"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_wish_2"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_wish"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s4_wish_3"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s4_wish"
+        },
+        {
+          "op": "think",
+          "key": "s4_wish_think"
+        }
+      ]
+    },
+    {
+      "id": "s5_garble_1",
+      "on": "state",
+      "priority": 57,
+      "when": [
+        "labStage >= 5",
+        "labGarble >= 1"
+      ],
+      "steps": [
+        {
+          "op": "think",
+          "key": "s5_garble_stop"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_1"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_1"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_line1"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_1"
+        },
+        {
+          "op": "notify",
+          "key": "s5_garble_notice"
+        }
+      ]
+    },
+    {
+      "id": "s5_garble_2",
+      "on": "state",
+      "priority": 56,
+      "when": [
+        "labStage >= 5",
+        "labGarble >= 2"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_2"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_2"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_line2"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_2"
+        },
+        {
+          "op": "notify",
+          "key": "s5_garble_notice"
+        }
+      ]
+    },
+    {
+      "id": "s5_garble_3",
+      "on": "state",
+      "priority": 55,
+      "when": [
+        "labStage >= 5",
+        "labGarble >= 3"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_3"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_3"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_line3"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_3"
+        },
+        {
+          "op": "think",
+          "key": "s5_garble_think3"
+        },
+        {
+          "op": "notify",
+          "key": "s5_garble_notice"
+        }
+      ]
+    },
+    {
+      "id": "s5_garble_4",
+      "on": "state",
+      "priority": 54,
+      "when": [
+        "labStage >= 5",
+        "labGarble >= 4"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_4"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_4"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s5_garble_line4"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s5_garble_4"
+        },
+        {
+          "op": "think",
+          "key": "s5_garble_think4"
+        },
+        {
+          "op": "notify",
+          "key": "s5_garble_notice"
         }
       ]
     }

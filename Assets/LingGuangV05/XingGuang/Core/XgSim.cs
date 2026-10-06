@@ -710,6 +710,7 @@ namespace LingGuangV05.XingGuang
             run.steps += gained;
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
+            ReleaseFirstWords(run);
             host.Train(DurationFor(run));
             S.trainedSeconds += DurationFor(run);
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = gained };
