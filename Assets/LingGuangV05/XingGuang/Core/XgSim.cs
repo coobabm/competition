@@ -474,9 +474,9 @@ namespace LingGuangV05.XingGuang
             // A new structure is a new model: the region starts over, unless transfer learning carries the bottom across.
             int carried = 0;
             if (UseBoard) { if (Has("transfer")) carried = CarryConcepts(run); else Board.Reinitialise(region); }
-            Say(T(RegionName(region, false) + "换成 " + a.name + " 的接法", "The " + RegionName(region, true).ToLowerInvariant() + " region now wired as " + a.nameEn) + (UseBoard
+            Say(T(RegionName(region, false) + "切换为 " + a.name + " 拓扑", "The " + RegionName(region, true).ToLowerInvariant() + " region now wired as " + a.nameEn) + (UseBoard
                 ? (carried > 0 ? T("：迁移学习把 " + carried + " 个底层概念（笔画、字词）带了过来，上面的组合重新学。", ": transfer learning carried " + carried + " low-level concepts (strokes, words) across; the combinations above are learnt again.")
-                    : T("：换了新线路，这个区从头学。"))
+                    : T("：拓扑重写，这个区从头学。"))
                 : Has("transfer") ? T("（迁移学习保留 60%）") : T("，从头训练")));
             return true;
         }

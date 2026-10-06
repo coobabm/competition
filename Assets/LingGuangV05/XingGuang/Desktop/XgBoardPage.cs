@@ -69,7 +69,7 @@ namespace LingGuangV05.Desktop.XingGuang
             header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#68748C>"
                 + Lang.T("已训练 ") + N(board.S.cards, "0") + Lang.T(" 张卡 · 每个板块 ") + k.Cells
                 + Lang.T(" 格 · 叠格 ") + board.S.superposed + "</color></size>"
-                + (OneBrain() ? "  <size=13><color=#E0A800>" + Lang.T("整颗脑子一种接法，同时亮着") + "</color></size>" : "");
+                + (OneBrain() ? "  <size=13><color=#E0A800>" + Lang.T("全皮层统一拓扑 · 同步点亮") + "</color></size>" : "");
             int seen = Sim.S.phenomena != null ? Sim.S.phenomena.seen.Count : 0;
             if (board.S.cards == shownCards && seen == shownPhenomena) return;
             shownCards = board.S.cards; shownPhenomena = seen;
@@ -89,7 +89,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var wired = Sim.RegionWiring(region);
             return T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + " <size=11><color=#68748C>" + T(XgSim.RegionLikeness(region, false), XgSim.RegionLikeness(region, true))
-                + (wired != null ? Lang.T(" · 接法 ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
+                + (wired != null ? Lang.T(" · 拓扑 ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
         }
 
         void DrawRegion(RegionView view, string region, string name, XgBoard board)

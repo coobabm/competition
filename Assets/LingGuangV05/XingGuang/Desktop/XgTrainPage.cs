@@ -134,7 +134,7 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
             UiTip.Add(train.rt, "训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（下面写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (see the passes below).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
             UiTip.Add(autoTrain.rt, "自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).");
-            UiTip.Add(summary.rt, "这个区现在的接法（结构）。点一下在科技里找到它。", "How this region is wired now (the structure). Click to find it in Research.");
+            UiTip.Add(summary.rt, "这个区当前的连接拓扑（结构）。点一下在科技里找到它。", "How this region is wired now (the structure). Click to find it in Research.");
         }
 
         void BuildCard()
@@ -376,7 +376,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (a == null) return n != null ? T(n.note, n.noteEn) : "";
             string region = a.shared ? Sim.RegionOfTrack(Track) : a.track == XgTrack.Vision ? "vision" : "sequence";
             return "<b>" + T(a.name, a.nameEn) + "</b>  " + a.year + "\n"
-                + T("让灵光的" + XgSim.RegionName(region, false) + "这样接线：", "Wire 灵光's " + XgSim.RegionName(region, true).ToLowerInvariant() + " region like this: ") + T(a.wire, a.wireEn)
+                + T("灵光" + XgSim.RegionName(region, false) + "的连接拓扑：", "Topology of 灵光's " + XgSim.RegionName(region, true).ToLowerInvariant() + " region: ") + (a.topo.Length > 0 ? "<b>【" + a.topo + "】</b>" : "") + T(a.wire, a.wireEn)
                 + (string.IsNullOrEmpty(a.note) ? "" : "\n<color=#68748C>" + Lang.T("历史上：") + T(a.note, a.noteEn) + "</color>");
         }
 
@@ -386,7 +386,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim.S.wiringVoiced) return;
             Sim.S.wiringVoiced = true;
             LingGuangV05.Desktop.Story.InnerVoice.Say("等等……论文里这些网络，不是别的 AI。", "Wait… these networks from the papers aren't other AIs.", 2.4f);
-            LingGuangV05.Desktop.Story.InnerVoice.Say("是给它的脑子换一种接线。像人的大脑皮层，看图的、读字的、想事的，各管一块。", "They're ways of wiring its brain. Like a human cortex: seeing, reading, thinking, each has its own patch.", 3.2f);
+            LingGuangV05.Desktop.Story.InnerVoice.Say("是给它的脑子重写连接拓扑。像人的大脑皮层，看图的、读字的、想事的，各管一块。", "They're ways of wiring its brain. Like a human cortex: seeing, reading, thinking, each has its own patch.", 3.2f);
             LingGuangV05.Desktop.Story.InnerVoice.Say("……难怪机箱风扇一下子狂转。整颗脑子一亮，整张显卡都是它的。", "…No wonder the case fans just roared. When the whole brain lights up, the whole card is its.", 3f);
         }
 
@@ -713,7 +713,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 trackTabs[i].Set(names[i] + (Sim.Runs[i].running ? " ●" : ""), open, on ? XgPalette.Accent : XgPalette.Button, on ? Color.white : XgPalette.Ink);
             }
             string region = XgSim.RegionOf(run.dataset);
-            summary.Set(T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + Lang.T("接法 ") + T(a.name, a.nameEn) + " · " + T(d.name, d.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + Lang.T(" · 学习率 ") + Sim.RateLabel(run.lr) + "  <color=#3B5BDB>" + Lang.T("科技 →") + "</color>", true, Color.clear);
+            summary.Set(T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + Lang.T("拓扑 ") + T(a.name, a.nameEn) + " · " + T(d.name, d.nameEn) + " · " + run.depth + T(" 层 · 宽 ", " layers · width ") + XgCatalog.Widths[run.width] + Lang.T(" · 学习率 ") + Sim.RateLabel(run.lr) + "  <color=#3B5BDB>" + Lang.T("科技 →") + "</color>", true, Color.clear);
 
             double best = Sim.BestAcc(d.id), bestScore = Sim.BestScore(d.id);
             int grade = XgSim.Grade(bestScore);

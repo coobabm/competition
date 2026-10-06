@@ -1280,7 +1280,7 @@
       "floors": [
         {
           "author": "chigua",
-          "text": "13年吧里有个神帖，楼主说要做一个像人脑一样分区的 AI：看图一块、读字一块、推理一块（他说那块就像前额叶），每块用不同的接法，但整颗脑子共用一套概念，一起学。\n后来原帖没了，楼主的号也注销了。有人存过截图吗？",
+          "text": "13年吧里有个神帖，楼主说要做一个像人脑一样分区的 AI：看图一块、读字一块、推理一块（他说那块就像前额叶），每块用不同的连接拓扑，但整颗脑子共用一套概念，一起学。\n后来原帖没了，楼主的号也注销了。有人存过截图吗？",
           "textEn": "Back in 2013 there was a legendary thread here. The OP wanted an AI partitioned like a human brain: one patch for seeing, one for reading, one for reasoning (he said that one was like the prefrontal cortex), each wired differently but the whole brain sharing one set of concepts and learning together.\nThe thread is gone and the account deleted. Anyone keep a screenshot?"
         },
         {
@@ -1290,7 +1290,7 @@
         },
         {
           "author": "liandan",
-          "text": "思路不算新，大脑皮层分区谁都知道。难的是让几种接法共用一套概念还一起学。我们实验室试过把两个网络拼一起，互相干扰，学了这个忘那个。",
+          "text": "思路不算新，大脑皮层分区谁都知道。难的是让几种拓扑共用一套概念还一起学。我们实验室试过把两个网络拼一起，互相干扰，学了这个忘那个。",
           "textEn": "The idea isn't new; everyone knows the cortex has areas. The hard part is several wirings sharing one set of concepts and learning together. Our lab tried gluing two networks together: they interfered, learning one thing wiped the other."
         },
         {
@@ -1315,7 +1315,7 @@
         },
         {
           "author": "chigua",
-          "text": "截图找到了，只拍到半句：「接法可以换，脑子只要一颗。」",
+          "text": "截图找到了，只拍到半句：「拓扑可以重写，皮层只要一颗。」",
           "textEn": "Found a screenshot, only half a line: 'the wiring can change; it needs only one brain.'"
         },
         {

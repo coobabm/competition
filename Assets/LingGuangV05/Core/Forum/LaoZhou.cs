@@ -45,7 +45,7 @@ namespace LingGuangV05.Core.Forum
             if (Has(q, "7楼", "七楼", "7 楼", "第7", "第七", "长数字", "一串数字", "那串", "floor 7", "number")) return f.stage >= 3 && Has(q, "被发", "我也", "404") ? "404" : "floor7";
             if (Has(q, "被发", "404", "我也被")) return "404";
             if (Has(q, "周而复始_", "研一", "另一个你", "另一个号", "小号", "长得像", "像你", "zhou_", "other account")) return "zhounow";
-            if (Has(q, "大脑皮层", "人造大脑", "传说帖", "13年", "13 年", "一颗脑子", "接法可以换", "cortex")) return "cortex";
+            if (Has(q, "大脑皮层", "人造大脑", "传说帖", "13年", "13 年", "一颗脑子", "接法可以换", "拓扑可以重写", "皮层只要一颗", "cortex")) return "cortex";
             if (Has(q, "master", "大师")) return "master";
             if (f.finale && Has(q, "规则", "写不写", "钉", "底层", "rule")) return "rule";
             if (Has(q, "关机")) return "shutdown";

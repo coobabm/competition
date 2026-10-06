@@ -419,11 +419,11 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "label": return Lang.T("标注台：亲手给数据打标签。\n答对赚钱，也给模型攒训练数据。逻辑题最值钱。");
-                case "train": return Lang.T("训练：选数据集，再选这个区的接法（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
+                case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
                 case "tree": return Lang.T("科技：花钱解锁新结构、更深更宽的网络、数据包和自动化。\n按住节点 0.6 秒购买。");
                 case "contracts": return Lang.T("订单：模型准确率达到要求就能签约，之后每秒自动给钱。");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
-                case "board": return Lang.T("大脑：灵光只有这一颗脑子，分成几个区，像人的大脑皮层：看图区像视觉皮层，读字区像语言区，推理区像前额叶。\n训练页选的 LeNet、LSTM、Transformer 不是别的 AI，是给某个区换一种接线；两条训练线练的是这颗脑子的两个区。\n它记概念，不记数字，学得省；可整颗脑子一起亮，跑起来极吃显卡。");
+                case "board": return Lang.T("大脑：灵光只有这一颗脑子，分成几个区，像人的大脑皮层：看图区像视觉皮层，读字区像语言区，推理区像前额叶。\n训练页选的 LeNet、LSTM、Transformer 不是别的 AI，是给某个区重写连接拓扑；两条训练线练的是这颗脑子的两个区。\n它记概念，不记数字，学得省；可整颗脑子一起亮，跑起来极吃显卡。");
                 case "wall": return Lang.T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。\n训练图式：网络卡在哪一层、第几轮开始出问题。");
                 case "cards": return Lang.T("成就：收集来的闪卡。稀有度越高，卡面越闪：银箔、金箔、镭射、星河，还有转动才看得见的光栅卡。\n有些卡藏在工作以外的地方。");
                 case "chat": return Lang.T("对话：和它说话。阶段越高，它会说的越多。");
