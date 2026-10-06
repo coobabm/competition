@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -65,9 +66,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (header == null || Sim == null) return;
             var board = Sim.Board;
             var k = Sim.Knobs(Sim.Selected);
-            header.text = T("大脑 · 概念盘", "Brain · concept board") + "  <size=13><color=#68748C>"
-                + T("已训练 ", "Trained ") + N(board.S.cards, "0") + T(" 张卡 · 每个板块 ", " cards · cells per region ") + k.Cells
-                + T(" 格 · 叠格 ", " · superposed ") + board.S.superposed + "</color></size>";
+            header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#68748C>"
+                + Lang.T("已训练 ") + N(board.S.cards, "0") + Lang.T(" 张卡 · 每个板块 ") + k.Cells
+                + Lang.T(" 格 · 叠格 ") + board.S.superposed + "</color></size>";
             int seen = Sim.S.phenomena != null ? Sim.S.phenomena.seen.Count : 0;
             if (board.S.cards == shownCards && seen == shownPhenomena) return;
             shownCards = board.S.cards; shownPhenomena = seen;
@@ -80,14 +81,14 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var wired = Sim.RegionWiring(region);
             return T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + " <size=11><color=#68748C>" + T(XgSim.RegionLikeness(region, false), XgSim.RegionLikeness(region, true))
-                + (wired != null ? T(" · 接法 ", " · wired as ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
+                + (wired != null ? Lang.T(" · 接法 ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
         }
 
         void DrawRegion(RegionView view, string region, string name, XgBoard board)
         {
             var concepts = new List<XgConcept>(board.Concepts(region));
             concepts.Sort((a, b) => b.layer != a.layer ? b.layer.CompareTo(a.layer) : (Math.Abs(b.w) * b.s).CompareTo(Math.Abs(a.w) * a.s));
-            view.title.text = name + "  <size=12><color=#68748C>" + concepts.Count + T(" 个概念 · 最高 ", " concepts · top layer ") + board.MaxLayer(region) + T(" 层", "") + "</color></size>";
+            view.title.text = name + "  <size=12><color=#68748C>" + concepts.Count + Lang.T(" 个概念 · 最高 ") + board.MaxLayer(region) + T(" 层", "") + "</color></size>";
             int count = Math.Min(CellsShown, concepts.Count);
             var size = view.grid.rect.size;
             float cell = Mathf.Max(6, Mathf.Min(size.x / Columns, size.y / Math.Max(1, (CellsShown + Columns - 1) / Columns)) - 2);
@@ -114,23 +115,23 @@ namespace LingGuangV05.Desktop.XingGuang
                 view.rims[i].enabled = c.alt.Length > 0 || c.seed;
                 view.rims[i].effectColor = c.seed ? new Color32(140, 90, 0, 255) : new Color32(150, 80, 220, 255);
             }
-            var sb = new StringBuilder(T("认得最牢的：", "Strongest: "));
+            var sb = new StringBuilder(Lang.T("认得最牢的："));
             var strongest = new List<XgConcept>(concepts);
             strongest.Sort((a, b) => (Math.Abs(b.w) * b.s).CompareTo(Math.Abs(a.w) * a.s));
             for (int i = 0; i < Math.Min(6, strongest.Count); i++)
             {
                 var c = strongest[i];
-                sb.Append(i == 0 ? "" : T("、", ", ")).Append(c.seed ? "？" : c.key.Replace("+", "·"))
+                sb.Append(i == 0 ? "" : Lang.T("、")).Append(c.seed ? "？" : c.key.Replace("+", "·"))
                   .Append(c.w >= 0 ? "→" + T("是", "yes") : "→" + T("否", "no"));
-                if (c.alt.Length > 0) sb.Append(T("（和 ", " (mixed with ")).Append(c.alt.Replace("+", "·")).Append(T(" 混在一格）", ")"));
+                if (c.alt.Length > 0) sb.Append(Lang.T("（和 ")).Append(c.alt.Replace("+", "·")).Append(Lang.T(" 混在一格）"));
             }
-            if (strongest.Count == 0) sb.Append(T("还是空的", "nothing yet"));
+            if (strongest.Count == 0) sb.Append(Lang.T("还是空的"));
             view.known.text = sb.ToString();
         }
 
         void DrawAtlas()
         {
-            var sb = new StringBuilder("<b>" + T("现象图鉴", "Phenomena") + "</b>\n");
+            var sb = new StringBuilder("<b>" + Lang.T("现象图鉴") + "</b>\n");
             int seen = 0;
             foreach (var p in XgPhenomena.All)
             {

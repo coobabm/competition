@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Games
 {
     /// <summary>
@@ -25,13 +26,13 @@ namespace LingGuangV05.Desktop.Games
         int wins, losses;
 
         public override string Id => "go";
-        public override string Title => T("围棋", "Go");
+        public override string Title => Lang.T("围棋");
         public override string Blurb => AiPlays
             ? T("9 路小棋盘。现在执白的是" + AiName + "：它从「围棋局面」里学会了数气，越练越稳。", "A small 9 × 9 board. White is now " + AiName + ": it learned to count liberties from the Go positions it labelled, and steadies as it trains.")
-            : T("9 路小棋盘，和电脑的围棋程序下。今年 3 月 AlphaGo 4:1 赢了李世石，可这个程序还只会数气。", "A small 9 × 9 board against the computer's Go program. In March AlphaGo beat Lee Sedol 4–1; this program can only count liberties.");
+            : Lang.T("9 路小棋盘，和电脑的围棋程序下。今年 3 月 AlphaGo 4:1 赢了李世石，可这个程序还只会数气。");
 
         /// <summary>The white player: the built-in program until stage 4, then the lab's AI.</summary>
-        string Opponent => AiPlays ? AiName : T("电脑", "The computer");
+        string Opponent => AiPlays ? AiName : Lang.T("电脑");
         public override string Glyph => "◉";
         public override Color Accent => new Color32(70, 110, 90, 255);
 
@@ -92,7 +93,7 @@ namespace LingGuangV05.Desktop.Games
         void Pass()
         {
             if (!HumanTurn || !game.Pass()) return;
-            log.Add(T("停", "pass"));
+            log.Add(Lang.T("停"));
             Moved(game.Moves);
             if (!game.Ended) aiAt = Time.unscaledTime + .5f;
             Finish();
@@ -117,7 +118,7 @@ namespace LingGuangV05.Desktop.Games
                         : InAtari(x, y) ? XgMoveSituation.Threat : XgMoveSituation.Quiet;
                     Comment(situation, game.Moves);
                 }
-                else { game.Pass(); log.Add(T("停", "pass")); }
+                else { game.Pass(); log.Add(Lang.T("停")); }
                 Moved(game.Moves);
             }
             Finish();
@@ -163,16 +164,16 @@ namespace LingGuangV05.Desktop.Games
             if (game.Ended)
             {
                 game.Score(out double b, out double w);
-                state = (game.Winner == GoGame.Black ? T("你赢了。", "You win.") : Opponent + T("赢了。", " wins.")) + "\n" + T("黑 ", "Black ") + b.ToString("0.#") + T(" · 白 ", " · White ") + w.ToString("0.#") + T("（含贴目 6.5）", " (6.5 komi)");
+                state = (game.Winner == GoGame.Black ? Lang.T("你赢了。") : Opponent + Lang.T("赢了。")) + "\n" + Lang.T("黑 ") + b.ToString("0.#") + Lang.T(" · 白 ") + w.ToString("0.#") + Lang.T("（含贴目 6.5）");
             }
-            else if (aiAt >= 0) state = Opponent + T("在想……", " is thinking…");
-            else state = game.LastX < 0 && game.Moves > 0 ? Opponent + T("停了一手。你也停一手，就结束数子。", " passed. Pass too to end and count.") : T("你执黑，先手。", "You play black and move first.");
-            string opponent = T("对手：", "Opponent: ") + (AiPlays ? AiName + T(" · 下对 ", " · plays it right ") + Mathf.RoundToInt((float)Skill * 100) + "%" : T("电脑的围棋程序", "the computer's Go program"));
-            status.text = "<b><size=26>" + Title + "</size></b>\n" + opponent + "\n\n" + state + "\n\n" + T("提子 ", "Captured ") + game.Captures(GoGame.Black) + T(" · 被提 ", " · lost ") + game.Captures(GoGame.White) +
-                "\n" + T("胜 ", "Won ") + wins + T(" · 负 ", " · lost ") + losses + LabLines() + "\n\n<size=15><color=#4A6656>" +
-                T("把对方棋子的「气」（相邻空点）全部堵上就能提走。双方都停一手时结束，按地盘和棋子数子。", "Fill every liberty (empty neighbour) of a group to capture it. When both sides pass, the game ends and area is counted.") + "</color></size>";
-            pass.text = T("停一手", "Pass");
-            again.text = T("再来一局", "New game");
+            else if (aiAt >= 0) state = Opponent + Lang.T("在想……");
+            else state = game.LastX < 0 && game.Moves > 0 ? Opponent + Lang.T("停了一手。你也停一手，就结束数子。") : Lang.T("你执黑，先手。");
+            string opponent = Lang.T("对手：") + (AiPlays ? AiName + Lang.T(" · 下对 ") + Mathf.RoundToInt((float)Skill * 100) + "%" : Lang.T("电脑的围棋程序"));
+            status.text = "<b><size=26>" + Title + "</size></b>\n" + opponent + "\n\n" + state + "\n\n" + Lang.T("提子 ") + game.Captures(GoGame.Black) + Lang.T(" · 被提 ") + game.Captures(GoGame.White) +
+                "\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + LabLines() + "\n\n<size=15><color=#4A6656>" +
+                Lang.T("把对方棋子的「气」（相邻空点）全部堵上就能提走。双方都停一手时结束，按地盘和棋子数子。") + "</color></size>";
+            pass.text = Lang.T("停一手");
+            again.text = Lang.T("再来一局");
         }
     }
 }

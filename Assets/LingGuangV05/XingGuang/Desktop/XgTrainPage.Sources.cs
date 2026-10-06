@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -58,14 +59,14 @@ namespace LingGuangV05.Desktop.XingGuang
             var d = XgCatalog.Dataset(run.dataset);
             string name = d != null ? T(d.name, d.nameEn) : run.dataset;
             sourceTitle.text = "<b>" + T("「" + name + "」用哪些数据训练", "What " + name + " trains on") + "</b>"
-                + (packs.Count > 0 ? T("（点数据包开关）", " (click a pack to switch it)") : "") + "\n" + XgDataUi.AlwaysOnLine(Sim, run.dataset);
+                + (packs.Count > 0 ? Lang.T("（点数据包开关）") : "") + "\n" + XgDataUi.AlwaysOnLine(Sim, run.dataset);
             for (int i = 0; i < sourceBtns.Count; i++)
             {
                 var o = Sim.Offer(sourceIds[i]);
                 if (o == null) continue;
                 bool can = Sim.PackSwitchBlocker(o.id, out _) == null;
                 string text = (o.included ? "■ " : "□ ") + XgDataUi.SourceLine(o)
-                    + (o.included ? "" : "  " + Hex(XgPalette.Bad) + T("训练不用", "left out") + "</color>");
+                    + (o.included ? "" : "  " + Hex(XgPalette.Bad) + Lang.T("训练不用") + "</color>");
                 sourceBtns[i].Set(text, can, o.included ? XgPalette.AccentSoft : XgPalette.Button, o.included ? XgPalette.Accent : XgPalette.Ink);
             }
             dataBox.sizeDelta = new Vector2(0, top + SourceTitle + sourceBtns.Count * SourceRow);
@@ -85,8 +86,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var o = Sim.Offer(offerId);
             if (o == null) return "";
             string tip = XgDataUi.OfferTip(Sim, o) + "\n\n" + (o.included
-                ? T("现在训练会用上它。点一下关掉：包还在，只是不再算进样本和噪声。", "Training uses it now. Click to leave it out: you keep the pack, it just stops counting toward samples and noise.")
-                : T("现在训练不用它。点一下重新用上。", "Training leaves it out now. Click to use it again."));
+                ? Lang.T("现在训练会用上它。点一下关掉：包还在，只是不再算进样本和噪声。")
+                : Lang.T("现在训练不用它。点一下重新用上。"));
             string why = Sim.PackSwitchBlocker(offerId, out string whyEn);
             return why == null ? tip : tip + "\n<color=#D63031>" + T(why, whyEn) + "</color>";
         }

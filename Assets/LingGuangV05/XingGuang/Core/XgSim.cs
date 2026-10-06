@@ -165,6 +165,8 @@ namespace LingGuangV05.XingGuang
         public static string TreeOf(XgTrack track) { return track == XgTrack.Vision ? "vision" : "sequence"; }
 
         string T(string zh, string en) { return English ? en : zh; }
+        /// <summary>Chinese source text; the English comes from the table in Core/Lang.En.cs (a line it lacks stays Chinese).</summary>
+        string T(string zh) { return English ? LingGuangV05.Core.Lang.En(zh) : zh; }
         static string F(double v, string format) { return v.ToString(format, CultureInfo.InvariantCulture); }
         public static string Pct(double v) { return F(v * 100, v >= .995 ? "0.00" : "0.0") + "%"; }
 
@@ -192,28 +194,28 @@ namespace LingGuangV05.XingGuang
 
         public string Why(XgNode n, IXgHost host)
         {
-            if (n == null) return T("未知节点", "Unknown node");
+            if (n == null) return T("未知节点");
             if (n.tree == "label") return WhyLabelNode(n, host);
-            if (IsAtlas(n)) return AtlasLit(n) ? T("已点亮", "Lit") : n.kind == XgNodeKind.Ability ? T("它学会时自动点亮", "Lights when it learns this") : T("第一次发生时自动点亮", "Lights the first time it happens");
+            if (IsAtlas(n)) return AtlasLit(n) ? T("已点亮") : n.kind == XgNodeKind.Ability ? T("它学会时自动点亮") : T("第一次发生时自动点亮");
             switch (Status(n, host))
             {
-                case NodeStatus.Owned: return T("已拥有", "Owned");
+                case NodeStatus.Owned: return T("已拥有");
                 case NodeStatus.Locked:
-                    if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次", "Finish the active epoch first");
+                    if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次");
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
                     var missing = new List<string>();
                     if (n.parent != null && !Has(n.parent)) missing.Add(NodeName(XgCatalog.Node(n.parent)));
                     foreach (var need in n.needs) if (!Has(need)) missing.Add(NodeName(XgCatalog.Node(need)));
-                    return T("先解锁 ", "Unlock first: ") + string.Join(T("、", ", "), missing);
-                case NodeStatus.TooExpensive: return T("经费不足 ¥", "Need ¥") + F(NodeCost(n), "0");
-                default: return T("按住购买 ¥", "Hold to buy ¥") + F(NodeCost(n), "0");
+                    return T("先解锁 ") + string.Join(T("、"), missing);
+                case NodeStatus.TooExpensive: return T("经费不足 ¥") + F(NodeCost(n), "0");
+                default: return T("按住购买 ¥") + F(NodeCost(n), "0");
             }
         }
 
-        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？", "???") : T(n.name, n.nameEn); }
+        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : T(n.name, n.nameEn); }
         /// <summary>The node's description; a hint instead while it is still a mystery.</summary>
-        public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……", "Maybe there is an easier way…") : T(n.note, n.noteEn); }
+        public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……") : T(n.note, n.noteEn); }
         /// <summary>Shown as 「？？？」 with no price: 自动答题 before the protagonist has the idea.</summary>
         public bool NodeMystery(XgNode n) { return n != null && n.id == "label.auto" && AutoLabelHidden; }
 
@@ -224,10 +226,10 @@ namespace LingGuangV05.XingGuang
             if (n.tree == "label") return BuyLabelNode(n, host);
             if (Status(n, host) != NodeStatus.Buyable) { Say(Why(n, host)); return false; }
             double price = NodeCost(n);
-            if (!host.Spend(price)) { Say(T("经费不足 ¥", "Need ¥") + F(NodeCost(n), "0")); return false; }
+            if (!host.Spend(price)) { Say(T("经费不足 ¥") + F(NodeCost(n), "0")); return false; }
             S.totalSpent += price;
             if (n.kind != XgNodeKind.Project) S.unlocked.Add(n.id);
-            Say(T("解锁 ", "Unlocked ") + NodeName(n));
+            Say(T("解锁 ") + NodeName(n));
             switch (n.kind)
             {
                 case XgNodeKind.Dataset:
@@ -474,8 +476,8 @@ namespace LingGuangV05.XingGuang
             if (UseBoard) { if (Has("transfer")) carried = CarryConcepts(run); else Board.Reinitialise(region); }
             Say(T(RegionName(region, false) + "换成 " + a.name + " 的接法", "The " + RegionName(region, true).ToLowerInvariant() + " region now wired as " + a.nameEn) + (UseBoard
                 ? (carried > 0 ? T("：迁移学习把 " + carried + " 个底层概念（笔画、字词）带了过来，上面的组合重新学。", ": transfer learning carried " + carried + " low-level concepts (strokes, words) across; the combinations above are learnt again.")
-                    : T("：换了新线路，这个区从头学。", ": a new wiring, so this region starts over."))
-                : Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
+                    : T("：换了新线路，这个区从头学。"))
+                : Has("transfer") ? T("（迁移学习保留 60%）") : T("，从头训练")));
             return true;
         }
 
@@ -510,7 +512,7 @@ namespace LingGuangV05.XingGuang
         public bool SetLr(XgTrack track, int index)
         {
             if (Run(track).epochActive) return false;
-            if (!HasLrKnob(track)) { Say(T("先在科技买「学习率旋钮」", "Buy the learning-rate knob in the tech tree first")); return false; }
+            if (!HasLrKnob(track)) { Say(T("先在科技买「学习率旋钮」")); return false; }
             var run = Run(track);
             run.lr = Math.Max(0, Math.Min(XgCatalog.LearningRates.Length - 1, index));
             run.autoLr = false;
@@ -643,11 +645,11 @@ namespace LingGuangV05.XingGuang
 
         public string Blocker(XgRun run, IXgHost host)
         {
-            if (host == null) return T("设备未就绪", "Hardware unavailable");
+            if (host == null) return T("设备未就绪");
             if (host.Blocker != null) return host.Blocker;
-            if (ProjectActive) return T("研发占用显卡", "Research project is using the GPU");
-            if (VramNeedMB(run) > Vram(host)) return T("显存不足：模型要 ", "Out of VRAM: model needs ") + F(VramNeedMB(run), "0") + " MB";
-            if (host.Compute <= 0) return T("没有算力", "No compute");
+            if (ProjectActive) return T("研发占用显卡");
+            if (VramNeedMB(run) > Vram(host)) return T("显存不足：模型要 ") + F(VramNeedMB(run), "0") + " MB";
+            if (host.Compute <= 0) return T("没有算力");
             return null;
         }
 
@@ -682,7 +684,7 @@ namespace LingGuangV05.XingGuang
             LastEpochWasHand = hand;
             if (!TrainingUnlocked(track))
             {
-                if (hand) Say(T("样本不够：先在标注台标 ", "Not enough data: label ") + XgCatalog.SamplesToTrain + T(" 条", " samples first"));
+                if (hand) Say(T("样本不够：先在标注台标 ") + XgCatalog.SamplesToTrain + T(" 条", " samples first"));
                 return null;
             }
             var run = Run(track);
@@ -830,7 +832,7 @@ namespace LingGuangV05.XingGuang
         {
             if (Run(track).epochActive) return null;
             var run = Run(track);
-            if (run.epoch <= 0 && !record) { Say(T("还没训练过，没什么可存的", "Nothing trained yet")); return null; }
+            if (run.epoch <= 0 && !record) { Say(T("还没训练过，没什么可存的")); return null; }
             Evaluate(run);
             var e = new XgModelEntry
             {
@@ -899,7 +901,7 @@ namespace LingGuangV05.XingGuang
         {
             var m = Model(id);
             if (m == null) return false;
-            if (IsDeployed(m)) { Say(T("这个模型正在部署，删不了", "This model is deployed")); return false; }
+            if (IsDeployed(m)) { Say(T("这个模型正在部署，删不了")); return false; }
             S.models.Remove(m);
             return true;
         }
@@ -907,13 +909,13 @@ namespace LingGuangV05.XingGuang
         /// <summary>Why a saved model cannot be loaded into training right now, or null.</summary>
         public string CannotLoad(XgModelEntry m)
         {
-            if (m == null) return T("模型不存在", "Model missing");
-            if (Run((XgTrack)m.track).epochActive) return T("先完成当前训练轮次", "Finish the active epoch first");
+            if (m == null) return T("模型不存在");
+            if (Run((XgTrack)m.track).epochActive) return T("先完成当前训练轮次");
             var track = (XgTrack)m.track;
-            if (!Has(m.arch)) return T("架构还没解锁", "Architecture locked");
-            if (!DatasetAvailable(m.dataset)) return T("数据集不可用", "Dataset unavailable");
+            if (!Has(m.arch)) return T("架构还没解锁");
+            if (!DatasetAvailable(m.dataset)) return T("数据集不可用");
             if (m.depth > DepthCap(track)) return T("层数超过科技上限 " + DepthCap(track), "Depth above the cap " + DepthCap(track));
-            if (m.width > WidthCap(track)) return T("宽度超过科技上限", "Width above the cap");
+            if (m.width > WidthCap(track)) return T("宽度超过科技上限");
             return null;
         }
 
@@ -945,7 +947,7 @@ namespace LingGuangV05.XingGuang
             SelectedTrack = (XgTrack)m.track;
             Say(UseBoard && !m.HasWeights
                 ? T("已加载 " + m.name + " 的设置：这个旧检查点没留权重" + (reshaped ? "，网络从头开始。" : "，接着现在的大脑练。"), "Loaded the settings of " + m.name + ": this old checkpoint kept no weights" + (reshaped ? ", so the network starts over." : "; training continues from the current brain."))
-                : T("已加载 ", "Loaded ") + m.name);
+                : T("已加载 ") + m.name);
             return true;
         }
 
@@ -953,10 +955,10 @@ namespace LingGuangV05.XingGuang
         public string StaleHint(XgRun run)
         {
             var d = XgCatalog.Dataset(run.dataset);
-            if (Hazard(run) > 0 && S.nanEvents > 0) return T("学习率太大，老在炸。调小一档。", "The rate keeps blowing up. Turn it down a notch.");
+            if (Hazard(run) > 0 && S.nanEvents > 0) return T("学习率太大，老在炸。调小一档。");
             if (Samples(d.id) < d.need) return T("数据不够了：去标注台多标点「" + d.name + "」，或在科技买完整包。", "Data is the limit: label more " + d.nameEn + " or buy the full pack.");
-            if (run.depth < DepthCap((XgTrack)run.track) || run.width < WidthCap((XgTrack)run.track)) return T("模型到顶了：在训练页把层数或宽度调大。", "The model has peaked: raise its depth or width on the training page.");
-            return T("模型到顶了：去科技加层、加宽或换架构。", "The model has peaked: add layers, width or a new architecture in the tech tree.");
+            if (run.depth < DepthCap((XgTrack)run.track) || run.width < WidthCap((XgTrack)run.track)) return T("模型到顶了：在训练页把层数或宽度调大。");
+            return T("模型到顶了：去科技加层、加宽或换架构。");
         }
 
         /// <summary>
@@ -978,8 +980,8 @@ namespace LingGuangV05.XingGuang
                 if (key > bestKey) { bestKey = key; best = d; }
             }
             if (best == null || best.id == run.dataset) return;
-            string why = MemeDrift(best.id) > 0 ? T("（新题型拖了分，先回炉）", " (a new meme dragged it down: retrain first)")
-                : ContractGap(best.id) > 0 && ContractGap(best.id) <= AutoContractReach ? T("（离签约线只差一点）", " (just short of a contract's bar)") : "";
+            string why = MemeDrift(best.id) > 0 ? T("（新题型拖了分，先回炉）")
+                : ContractGap(best.id) > 0 && ContractGap(best.id) <= AutoContractReach ? T("（离签约线只差一点）") : "";
             SetDataset((XgTrack)run.track, best.id);
             Say(T("AutoML：换到「" + XgCatalog.Dataset(best.id).name + "」" + why, "AutoML: switched to " + XgCatalog.Dataset(best.id).nameEn + why));
         }
@@ -1052,7 +1054,7 @@ namespace LingGuangV05.XingGuang
             S.contracts.Add(c.id);
             host.Earn(c.signBonus);
             S.totalIncome += c.signBonus;
-            Say(T("签约 ", "Signed ") + T(c.client, c.clientEn) + T("：", ": ") + T(c.job, c.jobEn) + T("，首付 ¥", ", advance ¥") + F(c.signBonus, "0"));
+            Say(T("签约 ") + T(c.client, c.clientEn) + T("：", ": ") + T(c.job, c.jobEn) + T("，首付 ¥") + F(c.signBonus, "0"));
             return true;
         }
 
@@ -1178,7 +1180,7 @@ namespace LingGuangV05.XingGuang
             {
                 if (DeskOpen(d.id) || !DeskCondition(d)) continue;
                 S.desksOpen.Add(d.id);
-                Say(T("新标注桌开放：", "New labelling desk: ") + T(d.name, d.nameEn));
+                Say(T("新标注桌开放：") + T(d.name, d.nameEn));
                 DeskOpened?.Invoke(d);
             }
         }
@@ -1281,8 +1283,8 @@ namespace LingGuangV05.XingGuang
                 S.payRaise++;
                 bought++;
             }
-            if (bought == 0) Say(S.payRaise >= XgCatalog.RaiseMax ? T("已经是最高薪了", "Top pay already") : T("经费不足 ¥", "Need ¥") + F(NextRaiseCost, "0"));
-            else Say(T("加薪！", "Raise! ") + XgCatalog.RaiseTitle(S.payRaise, English) + T("，人工标注 ×", ", hand labelling ×") + F(RaiseMultiplier, "0.0#"));
+            if (bought == 0) Say(S.payRaise >= XgCatalog.RaiseMax ? T("已经是最高薪了") : T("经费不足 ¥") + F(NextRaiseCost, "0"));
+            else Say(T("加薪！") + XgCatalog.RaiseTitle(S.payRaise, English) + T("，人工标注 ×") + F(RaiseMultiplier, "0.0#"));
             return bought;
         }
 
@@ -1437,7 +1439,7 @@ namespace LingGuangV05.XingGuang
             if (duelLeft > 0) return;
             double bonus = duelOk ? 3 * XgCatalog.Dataset("meme").rewardBase : 0;
             if (bonus > 0 && host != null) { host.Earn(bonus); S.totalIncome += bonus; }
-            Say(duelOk ? T("斗图赢了！+¥", "Meme battle won! +¥") + F(bonus, "0") : T("斗图输了。阿杰：「就这？」", "Meme battle lost. 阿杰: \"That's it?\""));
+            Say(duelOk ? T("斗图赢了！+¥") + F(bonus, "0") : T("斗图输了。阿杰：「就这？」"));
             DuelDone?.Invoke(duelOk, bonus);
         }
 

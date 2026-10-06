@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -56,7 +57,7 @@ namespace LingGuangV05.Desktop.XingGuang
             timelineAxis = ui.Text(Rect("Axis", time, Vector2.zero, new Vector2(1, 0), new Vector2(44, 2), new Vector2(-10, 20)), "", 11, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
             ui.Text(Rect("Top", timeline.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(-42, -9), new Vector2(-4, 9)), "100%", 11, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
             ui.Text(Rect("Coin", timeline.rectTransform, new Vector2(0, .18f), new Vector2(0, .18f), new Vector2(-42, -9), new Vector2(-4, 9)), "50%", 11, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
-            ui.Text(Rect("Cells", timeline.rectTransform, new Vector2(0, 0), new Vector2(0, 0), new Vector2(-42, 0), new Vector2(-4, 14)), T("格子", "cells"), 10, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
+            ui.Text(Rect("Cells", timeline.rectTransform, new Vector2(0, 0), new Vector2(0, 0), new Vector2(-42, 0), new Vector2(-4, 14)), Lang.T("格子"), 10, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
             sinceLabel = ui.Text(Rect("Since", timeline.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(4, -20), new Vector2(150, 0)), "", 12, XgNetworkGraphic.SickEdge, TextAlignmentOptions.MidlineLeft);
             sinceLabel.fontStyle = FontStyles.Bold;
 
@@ -75,7 +76,7 @@ namespace LingGuangV05.Desktop.XingGuang
             graphView.gameObject.SetActive(graph);
             diagnosisTab.Show(wall != null); graphTab.Show(wall != null);
             diagnosisTab.Set(T("诊断", "Diagnosis"), true, graph ? XgPalette.Button : XgPalette.Accent, graph ? XgPalette.Ink : Color.white);
-            graphTab.Set(T("训练图式", "Training map"), true, graph ? XgPalette.Accent : XgPalette.Button, graph ? Color.white : XgPalette.Ink);
+            graphTab.Set(Lang.T("训练图式"), true, graph ? XgPalette.Accent : XgPalette.Button, graph ? Color.white : XgPalette.Ink);
             if (!graph) return false;
             XgWallCheck check = null;
             var run = wall != null ? RunOf(wall, out check) : Sim.Selected;
@@ -87,7 +88,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var d = XgCatalog.Dataset(run.dataset);
             string name = d != null ? T(d.name, d.nameEn) : run.dataset;
-            header.text = (wall != null ? T("墙 · ", "Wall · ") + T(wall.name, wall.nameEn) + "  " : "") + "<size=13><color=#68748C>" + T("训练图式 · ", "Training map · ") + name + "</color></size>";
+            header.text = (wall != null ? Lang.T("墙 · ") + T(wall.name, wall.nameEn) + "  " : "") + "<size=13><color=#68748C>" + Lang.T("训练图式 · ") + name + "</color></size>";
 
             var h = Sim.NetworkHealth(run);
             verdict = Sim.Verdict(run);
@@ -97,17 +98,17 @@ namespace LingGuangV05.Desktop.XingGuang
             verdictText.text = (bad ? "✖ " : verdict.id == "untrained" ? "" : "✔ ") + T(verdict.headline, verdict.headlineEn)
                 + (verdict.since >= 0 ? "  <size=70%><color=#68748C>" + T("第 " + verdict.since + " 轮起", "since epoch " + verdict.since) + "</color></size>" : "");
             var remedies = new StringBuilder();
-            if (verdict.structure.Length > 0) remedies.Append("<b>").Append(T("换结构：", "Structure: ")).Append("</b>").Append(T(verdict.structure, verdict.structureEn));
-            if (verdict.method.Length > 0) remedies.Append(remedies.Length > 0 ? "      " : "").Append("<b>").Append(T("换练法：", "Method: ")).Append("</b>").Append(T(verdict.method, verdict.methodEn));
-            remedyText.text = remedies.Length > 0 ? remedies.ToString() : bad ? "" : T("继续训练就好。", "Keep training.");
+            if (verdict.structure.Length > 0) remedies.Append("<b>").Append(Lang.T("换结构：")).Append("</b>").Append(T(verdict.structure, verdict.structureEn));
+            if (verdict.method.Length > 0) remedies.Append(remedies.Length > 0 ? "      " : "").Append("<b>").Append(Lang.T("换练法：")).Append("</b>").Append(T(verdict.method, verdict.methodEn));
+            remedyText.text = remedies.Length > 0 ? remedies.ToString() : bad ? "" : Lang.T("继续训练就好。");
             network.SetData(h, bad ? verdict.layer : 0, bad && verdict.layer == 0 && verdict.id == "cells");
-            networkTitle.text = "<b>" + T("网络结构", "Network") + "</b>  <size=12><color=#68748C>" + Sim.TraceSettings(run) + "</color></size>";
+            networkTitle.text = "<b>" + Lang.T("网络结构") + "</b>  <size=12><color=#68748C>" + Sim.TraceSettings(run) + "</color></size>";
             var note = new StringBuilder();
-            note.Append(h.full ? "<color=#D63031>" : "").Append(T("格子 ", "Cells ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? T("（满了：权重最小的让位）", " (full: the weakest weights give way)") + "</color>" : "");
-            if (h.evicted > 0) note.Append(T("  上一轮挤掉 ", "  last epoch squeezed out ")).Append(h.evicted).Append(T(" 个", ""));
-            if (h.memory10 < 1) note.Append(h.memory10 < .2 ? "  <color=#D63031>" : "  <color=#F07820>").Append(T("回环记忆：隔 10 个字还剩 ", "loop memory: 10 words back keeps ")).Append(N(h.memory10 * 100, "0")).Append("%</color>");
-            note.Append(T("    块越厚 = 这一层占的格子越多    上方的带子 = 原样转交到输出的票（越窄留下越少，越红改写越多）    ", "    thicker box = more cells on that layer    ribbon = votes passed on unchanged to the answer (narrower = less kept, redder = more rewritten)    "));
-            note.Append("<color=#D63031>").Append(T("红 = 卡在这一层", "red = stuck here")).Append("</color>");
+            note.Append(h.full ? "<color=#D63031>" : "").Append(Lang.T("格子 ")).Append(h.cells).Append(" / ").Append(h.cap).Append(h.full ? Lang.T("（满了：权重最小的让位）") + "</color>" : "");
+            if (h.evicted > 0) note.Append(Lang.T("  上一轮挤掉 ")).Append(h.evicted).Append(Lang.T(" 个"));
+            if (h.memory10 < 1) note.Append(h.memory10 < .2 ? "  <color=#D63031>" : "  <color=#F07820>").Append(Lang.T("回环记忆：隔 10 个字还剩 ")).Append(N(h.memory10 * 100, "0")).Append("%</color>");
+            note.Append(Lang.T("    块越厚 = 这一层占的格子越多    上方的带子 = 原样转交到输出的票（越窄留下越少，越红改写越多）    "));
+            note.Append("<color=#D63031>").Append(Lang.T("红 = 卡在这一层")).Append("</color>");
             networkNote.text = note.ToString();
             PlaceBoxLabels(h, name);
 
@@ -125,14 +126,14 @@ namespace LingGuangV05.Desktop.XingGuang
                 sinceLabel.text = T("← 第 " + verdict.since + " 轮起出问题", "← trouble from epoch " + verdict.since);
                 if (flip) sinceLabel.text = T("第 " + verdict.since + " 轮起出问题 →", "trouble from epoch " + verdict.since + " →");
             }
-            timelineTitle.text = "<b>" + T("训练时间线", "Timeline") + "</b>  <size=11>" + Hex(XgChartGraphic.ValColor) + T("— 考试", "— exam") + "</color>  "
-                + Hex(XgChartGraphic.TrainColor) + T("— 训练", "— training") + "</color>  " + Hex(XgChartGraphic.BestColor) + T("- - 及格线 ", "- - target ") + XgSim.Pct(goal) + "</color>  "
-                + Hex(XgNetworkGraphic.SickEdge) + T("| 出问题", "| problem") + "</color></size>";
-            timelineAxis.text = trace == null || trace.points.Count == 0 ? T("还没在这个数据集上训练过。", "Not trained on this dataset yet.")
-                : T("第 ", "epoch ") + timeline.FromEpoch + T(" 轮", "") + new string(' ', 12) + T("→ 第 ", "→ epoch ") + timeline.ToEpoch + T(" 轮", "");
+            timelineTitle.text = "<b>" + Lang.T("训练时间线") + "</b>  <size=11>" + Hex(XgChartGraphic.ValColor) + Lang.T("— 考试") + "</color>  "
+                + Hex(XgChartGraphic.TrainColor) + Lang.T("— 训练") + "</color>  " + Hex(XgChartGraphic.BestColor) + Lang.T("- - 及格线 ") + XgSim.Pct(goal) + "</color>  "
+                + Hex(XgNetworkGraphic.SickEdge) + Lang.T("| 出问题") + "</color></size>";
+            timelineAxis.text = trace == null || trace.points.Count == 0 ? Lang.T("还没在这个数据集上训练过。")
+                : T("第 ", "epoch ") + timeline.FromEpoch + T(" 轮", "") + new string(' ', 12) + Lang.T("→ 第 ") + timeline.ToEpoch + T(" 轮", "");
 
-            var sb = new StringBuilder("<b>" + T("出了什么事", "What happened") + "</b>  <size=11><color=#68748C>" + T("最新在上", "newest first") + "</color></size>\n");
-            if (trace == null || trace.events.Count == 0) sb.Append("\n").Append(T("还没发现问题。训练几轮再来看。", "Nothing noticed yet. Train a few epochs and look again."));
+            var sb = new StringBuilder("<b>" + Lang.T("出了什么事") + "</b>  <size=11><color=#68748C>" + Lang.T("最新在上") + "</color></size>\n");
+            if (trace == null || trace.events.Count == 0) sb.Append("\n").Append(Lang.T("还没发现问题。训练几轮再来看。"));
             else
             {
                 int shown = 0;
@@ -170,16 +171,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 boxNotes[n].rectTransform.anchorMin = boxNotes[n].rectTransform.anchorMax = above;
                 boxLabels[n].gameObject.SetActive(true);
                 string problemText = "";
-                if (b.input) boxLabels[n].text = T("输入", "Input") + "\n" + datasetName + (h.features ? T("（人工特征）", " (hand-made)") : "");
-                else if (b.output) boxLabels[n].text = T("是 / 否", "Yes / no");
-                else if (b.bottleneck) boxLabels[n].text = T("瓶颈\n只留 ", "Bottleneck\nkeeps ") + XgBoard.BottleneckTokens + T(" 个字", " tokens");
+                if (b.input) boxLabels[n].text = Lang.T("输入") + "\n" + datasetName + (h.features ? Lang.T("（人工特征）") : "");
+                else if (b.output) boxLabels[n].text = Lang.T("是 / 否");
+                else if (b.bottleneck) boxLabels[n].text = Lang.T("瓶颈\n只留 ") + XgBoard.BottleneckTokens + Lang.T(" 个字");
                 else
                 {
                     var layer = h.layers[b.layer - 1];
-                    boxLabels[n].text = T("第 " + layer.layer + " 层", "Layer " + layer.layer) + "\n" + layer.concepts + T(" 个概念", " concepts")
-                        + (layer.layer < h.depth ? "\n" + T("原样到输出 ", "arrives unchanged ") + N(layer.relay * 100, "0") + "%" : "");
+                    boxLabels[n].text = T("第 " + layer.layer + " 层", "Layer " + layer.layer) + "\n" + layer.concepts + Lang.T(" 个概念")
+                        + (layer.layer < h.depth ? "\n" + Lang.T("原样到输出 ") + N(layer.relay * 100, "0") + "%" : "");
                     // Only the layer the verdict points at gets words; the rest stay quiet.
-                    problemText = verdict != null && verdict.problem && verdict.layer == layer.layer ? T("▼ 卡在这里", "▼ stuck here") + "\n" + (verdict.id == "memory" ? T("隔 10 个字只剩 ", "10 words back: ") + N(h.memory10 * 100, "0") + "%" : LayerProblem(layer)) : "";
+                    problemText = verdict != null && verdict.problem && verdict.layer == layer.layer ? Lang.T("▼ 卡在这里") + "\n" + (verdict.id == "memory" ? Lang.T("隔 10 个字只剩 ") + N(h.memory10 * 100, "0") + "%" : LayerProblem(layer)) : "";
                 }
                 boxNotes[n].text = problemText;
                 boxNotes[n].gameObject.SetActive(problemText.Length > 0);
@@ -192,10 +193,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (layer.problem)
             {
-                case "step": return T("阶跃没有坡度\n误差传不下来", "A step has no slope:\nno error gets here");
-                case "relay": return T("原样到输出只剩 ", "Only ") + N(layer.relay * 100, "0") + "%" + T("\n被上面的层改写了", " arrives unchanged\nrewritten on the way");
-                case "signal": return T("误差只剩 ", "Only ") + N(layer.signal * 100, layer.signal < .01 ? "0.0" : "0") + "%" + T("\n几乎学不动", " of the error\nbarely learns");
-                case "nomerge": return T("一个组合\n都没长出来", "No combined\nconcept yet");
+                case "step": return Lang.T("阶跃没有坡度\n误差传不下来");
+                case "relay": return Lang.T("原样到输出只剩 ") + N(layer.relay * 100, "0") + "%" + Lang.T("\n被上面的层改写了");
+                case "signal": return Lang.T("误差只剩 ") + N(layer.signal * 100, layer.signal < .01 ? "0.0" : "0") + "%" + Lang.T("\n几乎学不动");
+                case "nomerge": return Lang.T("一个组合\n都没长出来");
                 default: return "";
             }
         }

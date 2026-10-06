@@ -231,7 +231,7 @@ namespace LingGuangV05.XingGuang
             if (S.listeningUntil > Clock) return "……";
             if (S.stage >= 4 && (q.Contains("不要回答") || q.IndexOf("don't answer", StringComparison.OrdinalIgnoreCase) >= 0))
             {
-                if (++S.dontAnswer >= 3) { S.dontAnswer = 0; S.listeningUntil = Clock + 60; Earn("life.santi.silence"); return T("……好。", "… All right."); }
+                if (++S.dontAnswer >= 3) { S.dontAnswer = 0; S.listeningUntil = Clock + 60; Earn("life.santi.silence"); return T("……好。"); }
                 return null;
             }
             S.dontAnswer = 0;
@@ -242,7 +242,7 @@ namespace LingGuangV05.XingGuang
             if (S.stage >= 4 && (q.Contains("虫子") || q.IndexOf("bug", StringComparison.OrdinalIgnoreCase) >= 0 && q.Length < 20))
             {
                 Earn("life.santi.bug");
-                return T("虫子从来没有被真正战胜过。", "The bugs have never truly been defeated.");
+                return T("虫子从来没有被真正战胜过。");
             }
             return null;
         }
@@ -304,7 +304,7 @@ namespace LingGuangV05.XingGuang
                 sb.Append("你叫").Append(Profile.name).Append("，自称").Append(self).Append("，称呼对方为").Append(call).Append("。主人希望你：").Append(Profile.personality).Append("。");
                 sb.Append("你是在 2016 年一台旧电脑里被一张张卡教出来的。不要说自己是大语言模型或助手，不用 markdown。");
             }
-            if (call == "面壁者") sb.Append(T("对方是面壁者：你从不问“为什么”。", "They are a Wallfacer: you never ask why."));
+            if (call == "面壁者") sb.Append(T("对方是面壁者：你从不问“为什么”。"));
             return sb.ToString();
         }
 
@@ -316,15 +316,15 @@ namespace LingGuangV05.XingGuang
         public string PersonaBoard(int month, IList<string> hotWords)
         {
             var sb = new StringBuilder();
-            sb.Append(T("你认识的东西：", "Things you know: ")).Append(string.Join("、", Known(20))).Append(T("。", ". "));
+            sb.Append(T("你认识的东西：")).Append(string.Join("、", Known(20))).Append(T("。", ". "));
             var beliefs = Beliefs(10);
-            if (beliefs.Count > 0) sb.Append(T("你相信的关联：", "Links you believe: ")).Append(string.Join("、", beliefs)).Append(T("。", ". "));
+            if (beliefs.Count > 0) sb.Append(T("你相信的关联：")).Append(string.Join("、", beliefs)).Append(T("。", ". "));
             var mixed = Confusions(6);
-            if (mixed.Count > 0) sb.Append(T("你常搞混：", "You often mix up: ")).Append(string.Join("、", mixed)).Append(T("。", ". "));
+            if (mixed.Count > 0) sb.Append(T("你常搞混：")).Append(string.Join("、", mixed)).Append(T("。", ". "));
             sb.Append(T("现在是 2016 年" + month + "月，你只知道 2016 年" + month + "月以前的事。", "It is " + new DateTime(2016, Math.Max(1, Math.Min(12, month)), 1).ToString("MMMM", CultureInfo.InvariantCulture) + " 2016; you only know things before then. "));
             var words = new List<string>();
             if (hotWords != null) foreach (var w in hotWords) if (words.Count < 5 && Knows(w)) words.Add(w);
-            if (words.Count > 0) sb.Append(T("近期热词：", "Recent slang: ")).Append(string.Join("、", words)).Append(T("。", ". "));
+            if (words.Count > 0) sb.Append(T("近期热词：")).Append(string.Join("、", words)).Append(T("。", ". "));
             return sb.ToString();
         }
 
@@ -336,10 +336,10 @@ namespace LingGuangV05.XingGuang
         public string PersonaTone()
         {
             var sb = new StringBuilder();
-            sb.Append(T("你实际的倾向：", "Your actual leanings: "));
+            sb.Append(T("你实际的倾向："));
             for (int axis = 0; axis < 3; axis++) sb.Append(T(AxisNames[axis], AxisNamesEn[axis])).Append(ActualAxis(axis).ToString("0", CultureInfo.InvariantCulture)).Append(axis < 2 ? "、" : "。");
-            foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「", "Tone word \"")).Append(w).Append(T("」强度 ", "\" strength ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }
-            sb.Append(T("说话尽量用这种语气：", "Lean on this tone: ")).Append(StrongestTone().Length > 0 ? StrongestTone() : T("平静", "calm")).Append(T("。", "."));
+            foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「")).Append(w).Append(T("」强度 ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }
+            sb.Append(T("说话尽量用这种语气：")).Append(StrongestTone().Length > 0 ? StrongestTone() : T("平静")).Append(T("。", "."));
             return sb.ToString();
         }
 
@@ -475,12 +475,12 @@ namespace LingGuangV05.XingGuang
         {
             switch (SpeechStage)
             {
-                case 1: return T("只允许回答一个字：是，或者否。", "Answer with one word only: yes or no.");
-                case 2: return T("只能从这几个里选一个回答：", "Answer with exactly one of: ") + string.Join(T("、", ", "), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
-                case 3: return T("只说一个词，不加标点。", "Say one word only, no punctuation.");
-                case 4: return T("一句短句，不超过二十个字。只记得最近几轮。", "One short sentence, under twenty words. You only remember the last few turns.");
-                case 5: return T("一到两句。可以提起你记得的事。", "One or two sentences. You may bring up things you remember.");
-                default: return T("说话流畅，一到三句。", "Speak fluently, one to three sentences.");
+                case 1: return T("只允许回答一个字：是，或者否。");
+                case 2: return T("只能从这几个里选一个回答：") + string.Join(T("、"), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
+                case 3: return T("只说一个词，不加标点。");
+                case 4: return T("一句短句，不超过二十个字。只记得最近几轮。");
+                case 5: return T("一到两句。可以提起你记得的事。");
+                default: return T("说话流畅，一到三句。");
             }
         }
 
@@ -496,21 +496,20 @@ namespace LingGuangV05.XingGuang
             var sb = new StringBuilder();
             if (stage == 3)
             {
-                if (recent.Count > 0) sb.Append(T("你最近说过的词：", "Words you said lately: ")).Append(string.Join(T("、", ", "), recent)).Append(T("。", ". "));
-                sb.Append(T("这次换一个别的词，最好跟对方刚说的话有关。", "Pick a different word this time, ideally one tied to what they just said."));
+                if (recent.Count > 0) sb.Append(T("你最近说过的词：")).Append(string.Join(T("、"), recent)).Append(T("。", ". "));
+                sb.Append(T("这次换一个别的词，最好跟对方刚说的话有关。"));
                 return sb.ToString();
             }
             if (recent.Count > 0)
             {
-                sb.Append(T("你最近说过：", "You said lately: "));
-                foreach (var r in recent) sb.Append(T("「", "\"")).Append(r).Append(T("」", "\" "));
-                sb.Append(T("不要重复这些话，也不要每句都用同样的开头或称呼。", "Do not repeat these, and do not open every line the same way or with their name. "));
+                sb.Append(T("你最近说过："));
+                foreach (var r in recent) sb.Append(T("「")).Append(r).Append(T("」", "\" "));
+                sb.Append(T("不要重复这些话，也不要每句都用同样的开头或称呼。"));
             }
-            sb.Append(T("像真人聊天：长短随意，有时只回几个字；有时反问一句；有时接着之前聊过的话；带着自己的情绪。",
-                "Talk like a person: vary the length, sometimes just a few words; sometimes ask something back; sometimes pick up something said earlier; let your mood show."));
+            sb.Append(T("像真人聊天：长短随意，有时只回几个字；有时反问一句；有时接着之前聊过的话；带着自己的情绪。"));
             int rated = LastRating();
-            if (rated < 0) sb.Append(T("对方刚踩了你上一句，你有点在意。", " They just gave your last line a thumbs-down, and you mind a little."));
-            else if (rated > 0) sb.Append(T("对方刚赞了你上一句，你挺高兴。", " They just liked your last line, and you are pleased."));
+            if (rated < 0) sb.Append(T("对方刚踩了你上一句，你有点在意。"));
+            else if (rated > 0) sb.Append(T("对方刚赞了你上一句，你挺高兴。"));
             return sb.ToString();
         }
 
@@ -673,7 +672,7 @@ namespace LingGuangV05.XingGuang
             string line;
             if (freshReact.Count > 0 && (freshSmall.Count == 0 || rng.NextDouble() < .75)) line = freshReact[rng.Next(freshReact.Count)];
             else if (freshSmall.Count > 0) line = freshSmall[rng.Next(freshSmall.Count)];
-            else line = T("嗯……", "Hm…") + (Fill("{w}", fill) ?? "");
+            else line = T("嗯……") + (Fill("{w}", fill) ?? "");
             // A touch must not turn a fresh line back into one it just said.
             string touched = Humanize(line, stage, rng, freshSmall, fill);
             foreach (var r in recent) if (XgSpeechPolicy.Similar(touched, r)) return line;

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -51,11 +52,11 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var r in offers) RefreshOffer(r);
             foreach (var w in workers) RefreshWorker(w);
             if (slaTitleText != null)
-                slaTitleText.text = "<b>" + T("甲方高价单", "High-paying client contracts") + "</b>  <size=13><color=#68748C>"
+                slaTitleText.text = "<b>" + Lang.T("甲方高价单") + "</b>  <size=13><color=#68748C>"
                     + T("信用分 " + N(Sim.Credit, "0") + "（需 ≥ " + N(XgSim.SlaMinCredit, "0") + "）· 一次一单 · 一半收入押作尾款 · 被举报即违约",
                         "Credit " + N(Sim.Credit, "0") + " (needs " + N(XgSim.SlaMinCredit, "0") + ") · one at a time · half the income held as the balance · a report breaks the contract") + "</color></size>";
             if (scTitleText != null)
-                scTitleText.text = "<b>" + T("转包 · 网吧兄弟帮你标", "Subcontract · netbar friends label for you") + "</b>  <size=13><color=#68748C>"
+                scTitleText.text = "<b>" + Lang.T("转包 · 网吧兄弟帮你标") + "</b>  <size=13><color=#68748C>"
                     + T("工资合计 ¥" + N(Sim.WagesPerMinute, "0") + "/分钟 · 他们的错算在你的账号上", "Wages ¥" + N(Sim.WagesPerMinute, "0") + "/min in total · their mistakes count against your account") + "</color></size>";
             return height;
         }
@@ -124,8 +125,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         string ButtonTip(XgSlaOffer o)
         {
-            if (Sim.S.slaId == o.id) return T("正在履约：注意这张桌的抽检。新题型、阿杰的脚本都会拉低合格率。", "In progress: watch this desk's spot checks. New meme cards and a sloppy subcontractor both drag the pass rate down.");
-            return Sim.CanSignSla(o, out string why) ? T("签约：需要信用分 ≥ 85、检查点达到门槛，一次只能接一单。", "Sign: needs credit 85+, a checkpoint over the bar, and no other high-paying contract running.") : why;
+            if (Sim.S.slaId == o.id) return Lang.T("正在履约：注意这张桌的抽检。新题型、阿杰的脚本都会拉低合格率。");
+            return Sim.CanSignSla(o, out string why) ? Lang.T("签约：需要信用分 ≥ 85、检查点达到门槛，一次只能接一单。") : why;
         }
 
         void RefreshOffer(OfferRow r)
@@ -135,14 +136,14 @@ namespace LingGuangV05.Desktop.XingGuang
             bool active = Sim.S.slaId == o.id;
             double best = Sim.BestAcc(o.dataset);
             string head = "<b>" + T(o.client, o.clientEn) + "</b> · " + T(o.job, o.jobEn) + "  <size=12><color=#68748C>" + T(d.name, d.nameEn) + " ≥ " + XgSim.Pct(o.Threshold)
-                + T("  当前 ", "  now ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>";
+                + Lang.T("  当前 ") + (best > 0 ? XgSim.Pct(best) : "—") + "</color></size>";
             if (!active)
             {
-                r.text.text = head + "\n<color=#E86E14>¥" + Money(o.Income) + T("/秒起（普通单 ×2）", "/s base (2× a normal contract)") + "</color><size=13><color=#68748C> · "
-                    + N(o.duration / 60, "0") + T(" 分钟 · 抽检合格率 ≥ 95% · 一半押作尾款", " min · spot-check pass rate ≥ 95% · half held as the balance") + "</color></size>";
+                r.text.text = head + "\n<color=#E86E14>¥" + Money(o.Income) + Lang.T("/秒起（普通单 ×2）") + "</color><size=13><color=#68748C> · "
+                    + N(o.duration / 60, "0") + Lang.T(" 分钟 · 抽检合格率 ≥ 95% · 一半押作尾款") + "</color></size>";
                 bool can = Sim.CanSignSla(o, out string why);
                 double cooldown = Sim.SlaCooldown(o.id);
-                string label = can ? T("签约", "Sign") : cooldown > 0 ? T("下单 ", "Next ") + XgSim.FreezeClock(cooldown) : Sim.SlaActive ? T("一次一单", "One at a time") : Sim.Credit + 1e-9 < XgSim.SlaMinCredit ? T("信用不足", "Low credit") : T("未达标", "Not eligible");
+                string label = can ? Lang.T("签约") : cooldown > 0 ? Lang.T("下单 ") + XgSim.FreezeClock(cooldown) : Sim.SlaActive ? Lang.T("一次一单") : Sim.Credit + 1e-9 < XgSim.SlaMinCredit ? Lang.T("信用不足") : Lang.T("未达标");
                 r.btn.Set(label, can, can ? XgPalette.Accent : (Color?)null, can ? Color.white : (Color?)null);
                 r.bg.color = new Color32(247, 249, 253, 255);
                 r.bar.parent.gameObject.SetActive(false);
@@ -150,12 +151,12 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             double rate = Sim.SlaPassRate;
             bool judged = Sim.SlaJudged, failing = judged && rate + 1e-9 < XgSim.SlaClause;
-            string clause = Sim.SlaChecks == 0 ? T("还没有抽检", "no spot checks yet")
-                : T("条款合格率 ", "clause pass rate ") + (failing ? "<color=#D63031>" : "<color=#2F9E44>") + XgSim.Pct(rate) + "</color>" + T("（" + Sim.SlaChecks + " 条抽检", " (" + Sim.SlaChecks + " checks")
-                  + (judged ? T("）", ")") : T("，满 " + XgSim.SlaMinChecks + " 条才算数）", "; counts from " + XgSim.SlaMinChecks + ")"));
-            r.text.text = head + "\n<color=#2F9E44><b>" + T("履约中", "In progress") + "</b></color> " + T("剩 ", "") + XgSim.FreezeClock(Sim.SlaSecondsLeft) + T("", " left")
-                + " · <color=#E86E14>¥" + Money(Sim.SlaIncome) + T("/秒", "/s") + "</color> · " + T("尾款 ¥", "balance ¥") + Money(Sim.SlaHeld) + "\n<size=13>" + clause + "</size>";
-            r.btn.Set(T("履约中", "In progress"), false);
+            string clause = Sim.SlaChecks == 0 ? Lang.T("还没有抽检")
+                : Lang.T("条款合格率 ") + (failing ? "<color=#D63031>" : "<color=#2F9E44>") + XgSim.Pct(rate) + "</color>" + T("（" + Sim.SlaChecks + " 条抽检", " (" + Sim.SlaChecks + " checks")
+                  + (judged ? Lang.T("）") : T("，满 " + XgSim.SlaMinChecks + " 条才算数）", "; counts from " + XgSim.SlaMinChecks + ")"));
+            r.text.text = head + "\n<color=#2F9E44><b>" + Lang.T("履约中") + "</b></color> " + Lang.T("剩 ") + XgSim.FreezeClock(Sim.SlaSecondsLeft) + T("", " left")
+                + " · <color=#E86E14>¥" + Money(Sim.SlaIncome) + T("/秒", "/s") + "</color> · " + Lang.T("尾款 ¥") + Money(Sim.SlaHeld) + "\n<size=13>" + clause + "</size>";
+            r.btn.Set(Lang.T("履约中"), false);
             r.bg.color = failing ? new Color32(253, 240, 240, 255) : new Color32(240, 250, 242, 255);
             r.bar.parent.gameObject.SetActive(true);
             SetBar(r.bar, (float)(1 - Sim.SlaSecondsLeft / o.duration));
@@ -173,7 +174,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             view.Juice.Play(XgJuice.Sfx.Id.Stamp);
-            view.Juice.Float(view.Juice.At(r.row) + new Vector2(0, 30), T("接单！尾款押一半", "Signed! Half held as the balance"), XgPalette.Good, 22);
+            view.Juice.Float(view.Juice.At(r.row) + new Vector2(0, 30), Lang.T("接单！尾款押一半"), XgPalette.Good, 22);
             view.Refresh(true);
         }
 
@@ -202,11 +203,11 @@ namespace LingGuangV05.Desktop.XingGuang
             return w;
         }
 
-        static string Initial(XgWorkerInfo info) => info.id == "ajie" ? T("杰", "A") : info.id == "xiaogang" ? T("刚", "X") : T("老", "B");
+        static string Initial(XgWorkerInfo info) => info.id == "ajie" ? Lang.T("杰") : info.id == "xiaogang" ? Lang.T("刚") : Lang.T("老");
 
         string HireTip(XgWorkerInfo info)
         {
-            if (Sim.Hired(info.id)) return T("辞退：工资停在这一分钟，已付的不退。", "Let go: wages stop; the minute already paid is not refunded.");
+            if (Sim.Hired(info.id)) return Lang.T("辞退：工资停在这一分钟，已付的不退。");
             return Sim.CanHire(info.id, Host, out string why) ? T("雇用：先付第一分钟 ¥" + N(info.wage, "0") + "，之后每分钟 ¥" + N(info.wage, "0") + "。", "Hire: pay the first minute (¥" + N(info.wage, "0") + ") now, then ¥" + N(info.wage, "0") + " every minute.") : why;
         }
 
@@ -214,9 +215,9 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (info.id)
             {
-                case "ajie": return T("阿杰：便宜、手快，偶尔走神。正确率约 85%，比平台的举报线还低一截，别让他一个人扛一张桌太久。", "Ajie: cheap and quick, a little careless. About 85% right, which is below the platform's report line; don't leave him alone on a desk for long.");
-                case "xiaogang": return T("小刚：慢，但几乎不出错（约 97%）。", "Xiaogang: slow, but hardly ever wrong (about 97%).");
-                default: return T("网吧老板：只上夜班（22:00–06:00），天一亮就回去睡觉。正确率约 93%。", "The netbar boss: night shift only (22:00–06:00), off to bed at sunrise. About 93% right.");
+                case "ajie": return Lang.T("阿杰：便宜、手快，偶尔走神。正确率约 85%，比平台的举报线还低一截，别让他一个人扛一张桌太久。");
+                case "xiaogang": return Lang.T("小刚：慢，但几乎不出错（约 97%）。");
+                default: return Lang.T("网吧老板：只上夜班（22:00–06:00），天一亮就回去睡觉。正确率约 93%。");
             }
         }
 
@@ -230,18 +231,18 @@ namespace LingGuangV05.Desktop.XingGuang
             var deskInfo = XgCatalog.Desk(desk);
             double interval = Sim.WorkerInterval(info.id);
             string idle = hired ? Sim.WorkerIdleReason(info.id) : null;
-            string status = !hired ? (info.nightOnly && !Sim.NightShift ? "<color=#68748C>" + T("白天在睡觉", "Asleep (day)") + "</color>" : "<color=#68748C>" + T("在网吧坐着", "At the netbar") + "</color>")
-                : idle != null ? "<color=#B36A00>" + idle + "</color>" : "<color=#2F9E44>" + T("在干活", "Working") + "</color>";
-            w.text.text = "<b>" + T(info.name, info.nameEn) + "</b>  <color=#E86E14>¥" + N(info.wage, "0") + T("/分钟", "/min") + "</color> · " + N(interval, "0.#") + T(" 秒/条", " s/card")
-                + (info.nightOnly ? T(" · 仅夜班", " · nights only") : "") + "  " + status
+            string status = !hired ? (info.nightOnly && !Sim.NightShift ? "<color=#68748C>" + Lang.T("白天在睡觉") + "</color>" : "<color=#68748C>" + Lang.T("在网吧坐着") + "</color>")
+                : idle != null ? "<color=#B36A00>" + idle + "</color>" : "<color=#2F9E44>" + Lang.T("在干活") + "</color>";
+            w.text.text = "<b>" + T(info.name, info.nameEn) + "</b>  <color=#E86E14>¥" + N(info.wage, "0") + Lang.T("/分钟") + "</color> · " + N(interval, "0.#") + Lang.T(" 秒/条")
+                + (info.nightOnly ? Lang.T(" · 仅夜班") : "") + "  " + status
                 + "\n<size=12><color=#68748C>" + T("今日 " + st.labelsToday + " 条 · 平台抓到错 " + st.errorsSeen + " 条 · 已付工资 ¥" + N(st.wagesPaid, "0"),
                     "Today " + st.labelsToday + " · errors caught by the platform " + st.errorsSeen + " · wages paid ¥" + N(st.wagesPaid, "0")) + "</color></size>";
             w.desk.Set((deskInfo != null ? T(deskInfo.name, deskInfo.nameEn) : "—") + " ›", Sim.OpenDesks().Count > 1);
-            if (hired) w.hire.Set(T("辞退", "Let go"), true, XgPalette.Button, XgPalette.Bad);
+            if (hired) w.hire.Set(Lang.T("辞退"), true, XgPalette.Button, XgPalette.Bad);
             else
             {
                 bool can = Sim.CanHire(info.id, Host, out _);
-                w.hire.Set(T("雇用", "Hire"), can, can ? XgPalette.Accent : (Color?)null, can ? Color.white : (Color?)null);
+                w.hire.Set(Lang.T("雇用"), can, can ? XgPalette.Accent : (Color?)null, can ? Color.white : (Color?)null);
             }
             w.bg.color = hired ? (idle != null ? new Color32(255, 247, 230, 255) : new Color32(240, 250, 242, 255)) : new Color32(247, 249, 253, 255);
         }
@@ -249,7 +250,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Toggle(WorkerRow w)
         {
             if (Sim.Hired(w.info.id)) { Sim.Fire(w.info.id, Host); view.Juice.Play(XgJuice.Sfx.Id.Thud); }
-            else if (Sim.Hire(w.info.id, Host)) { view.Juice.Play(XgJuice.Sfx.Id.Coin, 1, .7f); view.Juice.Float(view.Juice.At(w.row), T("−¥", "−¥") + N(w.info.wage, "0") + T(" 第一分钟", " first minute"), XgPalette.Money, 20); }
+            else if (Sim.Hire(w.info.id, Host)) { view.Juice.Play(XgJuice.Sfx.Id.Coin, 1, .7f); view.Juice.Float(view.Juice.At(w.row), Lang.T("−¥") + N(w.info.wage, "0") + Lang.T(" 第一分钟"), XgPalette.Money, 20); }
             else
             {
                 Sim.CanHire(w.info.id, Host, out string why);

@@ -168,13 +168,13 @@ namespace LingGuangV05.XingGuang
             switch (StatusLabelNode(node, host))
             {
                 case NodeStatus.Owned: return T("已满级", "Maxed");
-                case NodeStatus.Buyable: return T("可购买", "Available");
-                case NodeStatus.TooExpensive: return T("经费不足", "Insufficient funds");
+                case NodeStatus.Buyable: return T("可购买");
+                case NodeStatus.TooExpensive: return T("经费不足");
                 default:
                     if (node.id == "label.auto") { CanBuyGlobalAuto(out string why); return why; }
-                    if (node.id == "label.brain" && S.stage < 4) return T("需要第四阶段", "Requires stage 4");
-                    if (node.id == CaptchaAutofillNode && Has(node.parent) && !CaptchaAutofillReady) return T("需要第三阶段，且手写数字检查点 ≥ 95%", "Requires stage 3 and a digits checkpoint of 95% or more");
-                    return T("先解锁前置技能", "Unlock the prerequisite first");
+                    if (node.id == "label.brain" && S.stage < 4) return T("需要第四阶段");
+                    if (node.id == CaptchaAutofillNode && Has(node.parent) && !CaptchaAutofillReady) return T("需要第三阶段，且手写数字检查点 ≥ 95%");
+                    return T("先解锁前置技能");
             }
         }
         public bool BuyLabelNode(XgNode node, IXgHost host)
@@ -195,19 +195,19 @@ namespace LingGuangV05.XingGuang
         {
             why = null;
             // Hidden until the protagonist has the idea themselves (XgSim.Epiphany.cs).
-            if (AutoLabelHidden) { why = T("也许有更省力的办法……", "Maybe there is an easier way…"); return false; }
+            if (AutoLabelHidden) { why = T("也许有更省力的办法……"); return false; }
             if (GlobalAutoLevel >= XgCatalog.AutoMaxLevel) { why = T("已满级", "Maxed"); return false; }
             foreach (var best in S.best)
                 if (best.acc >= XgCatalog.AutoMinAccuracy && DeskOpen(best.dataset)) return true;
-            why = T("先评估任一准确率 ≥ 60% 的检查点", "Assess any checkpoint with at least 60% accuracy first"); return false;
+            why = T("先评估任一准确率 ≥ 60% 的检查点"); return false;
         }
         public bool BuyGlobalAuto(IXgHost host)
         {
             if (!CanBuyGlobalAuto(out string why)) { Say(why); return false; }
             double cost = XgCatalog.AutoCost(GlobalAutoLevel);
-            if (host == null || !host.Spend(cost)) { Say(T("经费不足", "Insufficient funds")); return false; }
+            if (host == null || !host.Spend(cost)) { Say(T("经费不足")); return false; }
             S.totalSpent += cost; S.autoLevel++;
-            if (S.autoLevel == 1) Say(T("全局自动标注已启动；没有检查点的桌仍由你负责。", "Global auto labelling is on; desks without a checkpoint still need you."));
+            if (S.autoLevel == 1) Say(T("全局自动标注已启动；没有检查点的桌仍由你负责。"));
             return true;
         }
         /// <summary>

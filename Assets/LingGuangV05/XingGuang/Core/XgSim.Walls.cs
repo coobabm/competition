@@ -227,8 +227,8 @@ namespace LingGuangV05.XingGuang
         {
             if (!ObserveWall(wall.id)) return;
             if (!wall.extra) S.wallSeenAt = Math.Max(1e-3, S.stageSeconds);
-            Say(T("撞墙了：", "A wall: ") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。", ". Its dataset is now on the training page."));
-            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 和 Papert 在《感知机》里证明单层学不会异或；再加上 1973 年英国的莱特希尔报告，经费断崖。订单收入减半。", "AI winter: in 1969 Minsky and Papert's 'Perceptrons' showed one layer cannot learn XOR; with Britain's 1973 Lighthill report, funding collapsed. Contracts pay half."));
+            Say(T("撞墙了：") + T(wall.name, wall.nameEn) + T("。训练页可以选它的数据集。"));
+            if (wall.id == "combo") Say(T("AI 寒冬：1969 年 Minsky 和 Papert 在《感知机》里证明单层学不会异或；再加上 1973 年英国的莱特希尔报告，经费断崖。订单收入减半。"));
         }
 
         // ───────────── passing ─────────────
@@ -276,7 +276,7 @@ namespace LingGuangV05.XingGuang
                     // The other roads: a plain loop that keeps its memory (IRNN), a convolution that reads in parallel.
                     if (wall.id == "length" && k.IdentityLoop) Earn("road.identity");
                     if (wall.id == "parallel" && k.wiring == XgWiring.LocalShared) Earn("road.conv");
-                    Say(T("达标：", "Passed: ") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
+                    Say(T("达标：") + T(XgCatalog.Dataset(run.dataset).name, XgCatalog.Dataset(run.dataset).nameEn) + " " + Pct(acc));
                 }
                 if (WallPassed(wall)) PassWall(wall, host);
             }
@@ -335,11 +335,11 @@ namespace LingGuangV05.XingGuang
             bool slow = route == RouteFeatures;
             switch (stage)
             {
-                case 1: return T("是！", "Yes!");
-                case 2: return slow ? T("是……是！", "Ye… yes!") : T("是！是！", "Yes! Yes!");
-                case 3: return slow ? T("笨办法？", "Slow way?") : T("厉害", "Wow");
+                case 1: return T("是！");
+                case 2: return slow ? T("是……是！") : T("是！是！");
+                case 3: return slow ? T("笨办法？") : T("厉害");
                 default:
-                    return slow ? T("……原来笨办法也行。", "…so the slow way works too.")
+                    return slow ? T("……原来笨办法也行。")
                                 : T(call + "自己想出来的？" + self + "都没想到。", "You worked it out yourself? " + self + " never thought of it.");
             }
         }
@@ -354,8 +354,8 @@ namespace LingGuangV05.XingGuang
                 double bonus = wall.stage == 5 ? StageFiveInsightBonus : NodeCost(XgCatalog.Node(wall.secret)) * SelfInsightBonus;
                 if (host != null && bonus > 0) { host.Earn(bonus); S.totalIncome += bonus; }
                 if (wall.secret.Length > 0 && !Has(wall.secret)) S.unlocked.Add(wall.secret);
-                Say((route == RouteFeatures ? T("自悟！没买秘籍，也没换结构，靠特征工程硬是练过去了。自悟奖金 ¥", "Worked it out! No secret and no new structure: hand-made features got it through. Insight bonus ¥")
-                    : T("自悟！没买秘籍就找到了过墙的办法，自悟奖金 ¥", "Worked it out! A way past the wall found without the secret: insight bonus ¥")) + F(bonus, "0"));
+                Say((route == RouteFeatures ? T("自悟！没买秘籍，也没换结构，靠特征工程硬是练过去了。自悟奖金 ¥")
+                    : T("自悟！没买秘籍就找到了过墙的办法，自悟奖金 ¥")) + F(bonus, "0"));
                 InsightReached?.Invoke(wall.stage, route, InsightLine(wall.stage, route));
             }
             if (wall.extra) { BreakthroughDone?.Invoke("bt.residual"); return; }
@@ -372,7 +372,7 @@ namespace LingGuangV05.XingGuang
             Say(T("进入第 " + S.stage + " 阶段：", "Stage " + S.stage + ": ") + T(XgCatalog.StageNames[S.stage], XgCatalog.StageNamesEn[S.stage]));
             // Training and talking are one brain: a region that learnt something new lets it say a little more.
             var ability = XgCatalog.Node("ab." + S.stage);
-            if (ability != null) Say(T("它的脑子又连通了一层：", "Its brain has wired up one layer more: ") + T(ability.note, ability.noteEn));
+            if (ability != null) Say(T("它的脑子又连通了一层：") + T(ability.note, ability.noteEn));
             switch (from)
             {
                 case 1: BreakthroughDone?.Invoke("bt.hidden"); break;
@@ -394,19 +394,19 @@ namespace LingGuangV05.XingGuang
         {
             switch (stage)
             {
-                case 1: return T("没人问它，灯泡自己亮了：「否」。", "Nobody asked. The bulb lit up by itself: \"No.\"");
-                case 2: return T("测试题里有一张从没见过的手写“0”，字迹和那个已经删掉的 0.txt 一模一样。它认出来了：「0」。", "A handwritten \"0\" it had never seen, in the hand of the deleted 0.txt. It knew it: \"0\".");
+                case 1: return T("没人问它，灯泡自己亮了：「否」。");
+                case 2: return T("测试题里有一张从没见过的手写“0”，字迹和那个已经删掉的 0.txt 一模一样。它认出来了：「0」。");
                 case 3:
                     if (S.poemLine.Length == 0) S.poemLine = Poem();
-                    return T("没人出题，它自己亮出一句诗：「", "No prompt. It wrote a line by itself: \"") + S.poemLine + T("」……这句李白没写过吧？", "\" … Li Bai never wrote that, did he?");
-                case 6: return T("能力表的 6 格同时亮了。喂进去的一直是数据，飞跃来自规模。", "All six cells of the abilities table lit at once. It was always data going in; the leap came from scale.");
+                    return T("没人出题，它自己亮出一句诗：「") + S.poemLine + T("」……这句李白没写过吧？");
+                case 6: return T("能力表的 6 格同时亮了。喂进去的一直是数据，飞跃来自规模。");
                 case 4:
                     // In its strongest tone, using the setup's 称呼 and 自称 (design v1.1 §7 stage 4).
                     string call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you"), self = Profile.self.Length > 0 ? Profile.self : T("我", "me");
                     string tone = StrongestTone();
-                    string end = tone == "热情" ? T("！", "!") : tone == "皮" ? T("～哼。", "~ hmph.") : tone == "有主见" ? T("。这样不行。", ". That won't do.") : T("。", ".");
+                    string end = tone == "热情" ? T("！") : tone == "皮" ? T("～哼。") : tone == "有主见" ? T("。这样不行。") : T("。", ".");
                     return T(call + "，你今天还没跟" + self + "说话" + end, call + ", you haven't talked to " + self + " today" + end);
-                case 5: return LingGuangV05.Core.AppNames.AiZh + T("：「如果只用注意力呢？」", ": \"What if we used attention alone?\"");
+                case 5: return LingGuangV05.Core.AppNames.AiZh + T("：「如果只用注意力呢？」");
                 default: return "";
             }
         }
@@ -416,7 +416,7 @@ namespace LingGuangV05.XingGuang
             if (S.emerged.Contains(stage)) return;
             S.emerged.Add(stage);
             string line = EmergenceLine(stage);
-            Say(T("涌现：", "Emergence: ") + line);
+            Say(T("涌现：") + line);
             Emerged?.Invoke(stage, line);
         }
 

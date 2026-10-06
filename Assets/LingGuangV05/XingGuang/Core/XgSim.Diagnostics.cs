@@ -182,15 +182,15 @@ namespace LingGuangV05.XingGuang
             string Arch(string id) { var a = XgCatalog.Arch(id); return a == null ? id : T(a.name, a.nameEn); }
             string[] acts = { T("阶跃", "step"), T("S 形", "S-curve"), "ReLU" };
             int actBefore = f.act >= 0 && ActivationOwned(f.act) ? f.act : BestActivation, actNow = EffectiveActivation(run);
-            if (f.arch != run.arch) list.Add(T("架构 ", "Architecture ") + Arch(f.arch) + " → " + Arch(run.arch));
-            if (actBefore != actNow) list.Add(T("激活 ", "Activation ") + acts[actBefore] + " → " + acts[actNow]);
-            if (f.depth != run.depth) list.Add(T("层数 ", "Layers ") + f.depth + " → " + run.depth);
-            if (f.width != run.width) list.Add(T("宽度 ", "Width ") + XgCatalog.Widths[f.width] + " → " + XgCatalog.Widths[run.width]);
+            if (f.arch != run.arch) list.Add(T("架构 ") + Arch(f.arch) + " → " + Arch(run.arch));
+            if (actBefore != actNow) list.Add(T("激活 ") + acts[actBefore] + " → " + acts[actNow]);
+            if (f.depth != run.depth) list.Add(T("层数 ") + f.depth + " → " + run.depth);
+            if (f.width != run.width) list.Add(T("宽度 ") + XgCatalog.Widths[f.width] + " → " + XgCatalog.Widths[run.width]);
             if (f.lr != run.lr) list.Add(T("学习率 ", "Rate ") + RateLabel(f.lr) + " → " + RateLabel(run.lr));
-            if (f.clip != run.clip) list.Add(T("梯度裁剪 ", "Clipping ") + (run.clip ? T("开", "on") : T("关", "off")));
-            if (f.skip != run.skip) list.Add(T("跨层直连 ", "Skip links ") + (run.skip ? T("开", "on") : T("关", "off")));
-            if (f.position != run.position) list.Add(T("位置标记 ", "Positions ") + (run.position ? T("开", "on") : T("关", "off")));
-            if (f.attnOnly != run.attnOnly) list.Add(T("只用注意力 ", "Attention only ") + (run.attnOnly ? T("开", "on") : T("关", "off")));
+            if (f.clip != run.clip) list.Add(T("梯度裁剪 ") + (run.clip ? T("开") : T("关")));
+            if (f.skip != run.skip) list.Add(T("跨层直连 ") + (run.skip ? T("开") : T("关")));
+            if (f.position != run.position) list.Add(T("位置标记 ") + (run.position ? T("开") : T("关")));
+            if (f.attnOnly != run.attnOnly) list.Add(T("只用注意力 ") + (run.attnOnly ? T("开") : T("关")));
             return list;
         }
 
@@ -225,7 +225,7 @@ namespace LingGuangV05.XingGuang
         {
             if (track != XgTrack.Vision && track != XgTrack.Sequence) throw new ArgumentOutOfRangeException(nameof(track));
             var run = Run(track);
-            if (run.epochActive || run.running) throw new InvalidOperationException(T("先停止自动训练，等本轮结束。", "Stop auto-training and wait for this epoch to finish."));
+            if (run.epochActive || run.running) throw new InvalidOperationException(T("先停止自动训练，等本轮结束。"));
             var original = Snapshot(run);
             original.act = EffectiveActivation(run);
             var draft = new XgTrialDraft
@@ -360,7 +360,7 @@ namespace LingGuangV05.XingGuang
         public bool TryApplyTrial(XgTrialDraft draft, IXgHost host, out string reason)
         {
             reason = "";
-            if (!IsTrialCurrent(draft)) { reason = T("结果已过期，请停止训练并重新试训。", "Result expired. Stop training and start a new trial."); return false; }
+            if (!IsTrialCurrent(draft)) { reason = T("结果已过期，请停止训练并重新试训。"); return false; }
             var p = draft.proposal; var run = Run(draft.track);
             if (p == null || !ArchitectureFits(XgCatalog.Arch(p.arch), draft.track) || !Has(p.arch)
                 || p.act < 0 || p.act > 2 || !ActivationOwned(p.act)
@@ -369,13 +369,13 @@ namespace LingGuangV05.XingGuang
                 || p.lr < 0 || p.lr >= RateValues.Length || p.lr != run.lr && !HasLrKnob(draft.track)
                 || p.clip && !ClipOwned || p.skip && !SkipOwned || p.position && !PositionOwned
                 || p.warmup && !WarmupOwned || p.attnOnly && !AttentionOnlyOwned)
-            { reason = T("方案包含未解锁或超出上限的参数。", "The proposal contains locked or out-of-range settings."); return false; }
+            { reason = T("方案包含未解锁或超出上限的参数。"); return false; }
             // Like SetDepth/SetWidth, only a shape that needs more memory than the live one is checked against VRAM,
             // so a smaller or unchanged shape still applies on a host that lost cards since it last trained.
             var shape = new XgRun { arch = p.arch, depth = p.depth, width = p.width };
             double need = VramNeedMB(shape);
             if (host == null || double.IsNaN(Vram(host)) || need > Vram(host) && need > VramNeedMB(run))
-            { reason = T("显存不足，正式设置未改变。", "Insufficient VRAM. Live settings are unchanged."); return false; }
+            { reason = T("显存不足，正式设置未改变。"); return false; }
             bool archChanged = run.arch != p.arch, depthChanged = run.depth != p.depth, widthChanged = run.width != p.width;
             bool lrChanged = run.lr != p.lr;
             // An untouched activation keeps the run's automatic choice (act = -1), so a later ReLU purchase still upgrades it.

@@ -131,12 +131,12 @@ namespace LingGuangV05.XingGuang
             var k = Knobs(run);
             var a = XgCatalog.Arch(run.arch);
             string act = k.activation == XgActivation.Step ? T("阶跃", "step") : k.activation == XgActivation.Sigmoid ? T("S 形", "S-curve") : "ReLU";
-            var parts = new List<string> { a != null ? T(a.name, a.nameEn) : run.arch, k.depth + T(" 层", " layers"), T("宽 ", "width ") + k.width, act, T("学习率 ", "rate ") + k.lr };
-            if (k.features) parts.Add(T("特征工程", "features"));
-            if (k.clip) parts.Add(T("裁剪", "clip"));
-            if (k.skip) parts.Add(T("直连", "skip"));
-            if (k.position) parts.Add(T("位置", "positions"));
-            if (k.warmup) parts.Add(T("预热", "warm-up"));
+            var parts = new List<string> { a != null ? T(a.name, a.nameEn) : run.arch, k.depth + T(" 层", " layers"), T("宽 ") + k.width, act, T("学习率 ", "rate ") + k.lr };
+            if (k.features) parts.Add(T("特征工程"));
+            if (k.clip) parts.Add(T("裁剪"));
+            if (k.skip) parts.Add(T("直连"));
+            if (k.position) parts.Add(T("位置"));
+            if (k.warmup) parts.Add(T("预热"));
             if (k.batchNorm) parts.Add("BN");
             return string.Join(" · ", parts);
         }

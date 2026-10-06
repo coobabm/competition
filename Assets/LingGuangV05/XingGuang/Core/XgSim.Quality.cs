@@ -101,7 +101,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Credit-tier multiplier on automatic income (1 while the platform is not active).</summary>
         public double QualityPayMultiplier => QualityActive ? PayMultiplierOf(CreditTier) : 1;
 
-        public string CreditTierName(XgCreditTier tier) => tier == XgCreditTier.Gold ? T("金牌", "Gold") : tier == XgCreditTier.Normal ? T("普通", "Standard") : T("重点关注", "Under watch");
+        public string CreditTierName(XgCreditTier tier) => tier == XgCreditTier.Gold ? T("金牌") : tier == XgCreditTier.Normal ? T("普通") : T("重点关注");
         public static string ReportReasonText(XgReportReason reason, bool english)
         {
             switch (reason)
@@ -242,7 +242,7 @@ namespace LingGuangV05.XingGuang
             S.qcFrozen = Math.Max(0, S.qcFrozen - dt);
             if (S.qcFrozen > 0) return;
             S.qcAppealed = false;
-            Say(T("摆渡众包：账号已解冻，自动标注恢复。", "Bodu Crowdsourcing: the account is unfrozen; auto labelling resumes."));
+            Say(T("摆渡众包：账号已解冻，自动标注恢复。"));
             QualityUnfrozen?.Invoke(false);
         }
 
@@ -258,9 +258,9 @@ namespace LingGuangV05.XingGuang
         public bool CanAppeal(IXgHost host, out string why)
         {
             why = null;
-            if (!QualityFrozen) { why = T("账号没有被冻结", "The account is not frozen"); return false; }
-            if (S.qcAppealed) { why = T("这次冻结已经申诉过了", "This freeze was already appealed"); return false; }
-            if (host == null || !FiniteCollaboration(host.Money) || host.Money + 1e-9 < AppealCost(host)) { why = T("经费不足", "Insufficient funds"); return false; }
+            if (!QualityFrozen) { why = T("账号没有被冻结"); return false; }
+            if (S.qcAppealed) { why = T("这次冻结已经申诉过了"); return false; }
+            if (host == null || !FiniteCollaboration(host.Money) || host.Money + 1e-9 < AppealCost(host)) { why = T("经费不足"); return false; }
             return true;
         }
         /// <summary>Pays the appeal fee and lifts the freeze now. Once per freeze; credit is unchanged.</summary>
@@ -268,11 +268,11 @@ namespace LingGuangV05.XingGuang
         {
             if (!CanAppeal(host, out string why)) { if (QualityFrozen) Say(why); return false; }
             double cost = AppealCost(host);
-            if (!host.Spend(cost)) { Say(T("经费不足", "Insufficient funds")); return false; }
+            if (!host.Spend(cost)) { Say(T("经费不足")); return false; }
             S.totalSpent += cost;
             S.qcAppealed = true;
             S.qcFrozen = 0;
-            Say(T("摆渡众包：申诉通过，账号解冻。信用分不变。", "Bodu Crowdsourcing: appeal accepted, account unfrozen. Credit unchanged."));
+            Say(T("摆渡众包：申诉通过，账号解冻。信用分不变。"));
             QualityUnfrozen?.Invoke(true);
             return true;
         }

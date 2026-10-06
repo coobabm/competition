@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using AppNames = LingGuangV05.Core.AppNames;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Mail
 {
     /// <summary>
@@ -82,7 +83,7 @@ namespace LingGuangV05.Desktop.Mail
                 if (label.name != "ChapterOneTitle" && label.name != "Status") continue;
                 var localized = label.GetComponent<DesktopLocalizedText>();
                 if (localized != null) Destroy(localized);
-                label.text = label.name == "Status" ? GameText.T("收件箱 · 本地邮件", "Inbox · local mail") : GameText.T("邮件  —  收件箱", "Mail  —  Inbox");
+                label.text = label.name == "Status" ? Lang.T("收件箱 · 本地邮件") : Lang.T("邮件  —  收件箱");
             }
             var view = content.gameObject.AddComponent<MailInboxView>();
             view.window = new WindowManagerRef { w = binding.Window };
@@ -159,7 +160,7 @@ namespace LingGuangV05.Desktop.Mail
             if (current != null && current.endingOnly && !rejectionShown) current = mails[1];
             int unread = 0; foreach (var m in mails) if (!m.read && (!m.endingOnly || rejectionShown)) unread++;
             var folder = root.Find("List/Folder");
-            if (folder != null) folder.GetComponent<TMP_Text>().text = GameText.T("收件箱", "Inbox") + (unread > 0 ? "  <size=14><color=#2176D2>" + unread + GameText.T(" 封未读", " unread") + "</color></size>" : "");
+            if (folder != null) folder.GetComponent<TMP_Text>().text = Lang.T("收件箱") + (unread > 0 ? "  <size=14><color=#2176D2>" + unread + Lang.T(" 封未读") + "</color></size>" : "");
             int visibleIndex = 0;
             foreach (var (m, row) in rows)
             {
@@ -171,7 +172,7 @@ namespace LingGuangV05.Desktop.Mail
                 visibleIndex++;
                 row.GetComponent<Image>().color = m == current ? Selected : new Color(0, 0, 0, 0);
                 var from = row.Find("From").GetComponent<TMP_Text>();
-                from.text = GameText.T(m.from, m.fromEn) + (m.spam ? GameText.T("  <size=11><color=#C0392B>[疑似垃圾]</color></size>", "  <size=11><color=#C0392B>[likely spam]</color></size>") : "");
+                from.text = GameText.T(m.from, m.fromEn) + (m.spam ? Lang.T("  <size=11><color=#C0392B>[疑似垃圾]</color></size>") : "");
                 from.fontStyle = m.read ? FontStyles.Normal : FontStyles.Bold;
                 row.Find("Subject").GetComponent<TMP_Text>().text = GameText.T(m.subject, m.subjectEn);
                 row.Find("Unread").gameObject.SetActive(!m.read);
@@ -180,7 +181,7 @@ namespace LingGuangV05.Desktop.Mail
             {
                 current.read = true;
                 subject.text = GameText.T(current.subject, current.subjectEn);
-                meta.text = GameText.T("发件人：", "From: ") + GameText.T(current.from, current.fromEn) + "    " + current.date;
+                meta.text = Lang.T("发件人：") + GameText.T(current.from, current.fromEn) + "    " + current.date;
                 body.text = GameText.T(current.body, current.bodyEn);
             }
         }

@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -70,16 +71,16 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             bool fresh = run.mistakeDataset == run.dataset;
             int wrong = fresh ? run.mistakeCount : 0;
-            mapTab.Set(T("训练图式", "Training map"), true, showMistakes ? XgPalette.Button : XgPalette.Accent, showMistakes ? XgPalette.Ink : Color.white);
-            mistakesTab.Set(T("错题 ", "Mistakes ") + wrong, true, showMistakes ? XgPalette.Accent : XgPalette.Button, showMistakes ? Color.white : XgPalette.Ink);
+            mapTab.Set(Lang.T("训练图式"), true, showMistakes ? XgPalette.Button : XgPalette.Accent, showMistakes ? XgPalette.Ink : Color.white);
+            mistakesTab.Set(Lang.T("错题 ") + wrong, true, showMistakes ? XgPalette.Accent : XgPalette.Button, showMistakes ? Color.white : XgPalette.Ink);
             mistakesArea.gameObject.SetActive(showMistakes);
             diagnostic.gameObject.SetActive(!showMistakes);
             if (!showMistakes) return false;
             foreach (var p in previousDiagnostics) p.gameObject.SetActive(false);
 
-            diagnosticTitle.text = T("错题 · 上一轮考试", "Mistakes · last exam");
+            diagnosticTitle.text = Lang.T("错题 · 上一轮考试");
             var shown = Sim.ShownMistakes(run, mistakeTiles.Count);
-            mistakesEmpty.text = shown.Count > 0 ? "" : fresh && run.examCount > 0 ? T("上一轮考试全答对了。", "The last exam had no mistakes.") : T("练一轮，这里会摆出考错的题。", "Train an epoch: the wrong exam cards show here.");
+            mistakesEmpty.text = shown.Count > 0 ? "" : fresh && run.examCount > 0 ? Lang.T("上一轮考试全答对了。") : Lang.T("练一轮，这里会摆出考错的题。");
             for (int i = 0; i < mistakeTiles.Count; i++)
             {
                 var t = mistakeTiles[i];

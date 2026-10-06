@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.YY
 {
     /// <summary>
@@ -95,7 +96,7 @@ namespace LingGuangV05.Desktop.YY
                 var localized = label.GetComponent<DesktopLocalizedText>();
                 if (localized != null) Destroy(localized);
                 if (label.name == "Aero Window Title") label.text = "YY";
-                else if (label.name == "Status") label.text = GameText.T("YY 2016 · 消息只保存在本机", "YY 2016 · messages stay on this computer");
+                else if (label.name == "Status") label.text = Lang.T("YY 2016 · 消息只保存在本机");
                 if (font != null) label.font = font;
             }
             var view = content.gameObject.GetComponent<YYChatView>() ?? content.gameObject.AddComponent<YYChatView>();
@@ -279,7 +280,7 @@ namespace LingGuangV05.Desktop.YY
         {
             if (!built || !IsOpen) return;
             hub.MarkSeen(); // Also runs after the opening/minimize animation becomes visible.
-            if (typing != null) typing.text = hub.IsTyping(hub.S.selected) ? GameText.T("对方正在输入…", "typing…") : "";
+            if (typing != null) typing.text = hub.IsTyping(hub.S.selected) ? Lang.T("对方正在输入…") : "";
             foreach (var f in liveFiles) UpdateFile(f.message, f.fill, f.status, f.width);
             if (dirty && Time.unscaledTime >= nextBuild) Rebuild();
         }
@@ -291,16 +292,16 @@ namespace LingGuangV05.Desktop.YY
             if (IsOpen) hub.MarkSeen();
             meName.text = GameText.T("我", "Me");
             var meStatus = root.Find("Side/Profile/MeStatus") ?? FindDeep(root, "MeStatus");
-            if (meStatus != null) meStatus.GetComponent<TMP_Text>().text = GameText.T("● 在线  ·  今天也要好好学习", "● Online  ·  study hard today");
+            if (meStatus != null) meStatus.GetComponent<TMP_Text>().text = Lang.T("● 在线  ·  今天也要好好学习");
             DrawLevel();
-            var hint = FindDeep(root, "SearchHint"); if (hint != null) hint.GetComponent<TMP_Text>().text = GameText.T("搜索：联系人、群", "Search contacts, groups");
-            var enter = FindDeep(root, "EnterHint"); if (enter != null) enter.GetComponent<TMP_Text>().text = GameText.T("Enter 发送  ·  只是本地预设回复，不连网", "Enter to send · local preset replies, offline");
+            var hint = FindDeep(root, "SearchHint"); if (hint != null) hint.GetComponent<TMP_Text>().text = Lang.T("搜索：联系人、群");
+            var enter = FindDeep(root, "EnterHint"); if (enter != null) enter.GetComponent<TMP_Text>().text = Lang.T("Enter 发送  ·  只是本地预设回复，不连网");
             SetButton("Send", GameText.T("发送(S)", "Send"));
-            SetButton("Close", GameText.T("关闭(C)", "Close"));
+            SetButton("Close", Lang.T("关闭(C)"));
             string[] tools = { "Emoji", "File", "Shot", "Shake", "History" };
-            string[] toolText = { GameText.T("☺ 表情", "☺ Emoji"), GameText.T("▤ 文件", "▤ File"), GameText.T("✂ 截图", "✂ Snip"), GameText.T("〰 抖一抖", "〰 Nudge"), GameText.T("◷ 记录", "◷ History") };
+            string[] toolText = { Lang.T("☺ 表情"), Lang.T("▤ 文件"), Lang.T("✂ 截图"), Lang.T("〰 抖一抖"), Lang.T("◷ 记录") };
             for (int i = 0; i < tools.Length; i++) SetButton("Tool" + tools[i], toolText[i]);
-            if (input.placeholder is TMP_Text ph) ph.text = GameText.T("说点什么……", "Say something…");
+            if (input.placeholder is TMP_Text ph) ph.text = Lang.T("说点什么……");
             RebuildChoices();
 
             // sessions, sorted by latest message
@@ -317,7 +318,7 @@ namespace LingGuangV05.Desktop.YY
                 row.GetComponent<Image>().color = on ? C.Selected : new Color(0, 0, 0, 0);
                 var conv = hub.Conversation(c.id);
                 var last = conv.messages.Count > 0 ? conv.messages[conv.messages.Count - 1] : null;
-                row.Find("Name").GetComponent<TMP_Text>().text = GameText.T(c.name, c.nameEn) + (c.group ? "" : c.online ? "" : GameText.T("  <size=12><color=#9AA4B2>[离线]</color></size>", "  <size=12><color=#9AA4B2>[offline]</color></size>"));
+                row.Find("Name").GetComponent<TMP_Text>().text = GameText.T(c.name, c.nameEn) + (c.group ? "" : c.online ? "" : Lang.T("  <size=12><color=#9AA4B2>[离线]</color></size>"));
                 row.Find("Name").GetComponent<TMP_Text>().richText = true;
                 var previewLabel = row.Find("Preview").GetComponent<TMP_Text>();
                 YYFaceRenderer.Prepare(previewLabel);
@@ -337,7 +338,7 @@ namespace LingGuangV05.Desktop.YY
                 for (int i = peerAvatar.childCount - 1; i >= 0; i--) Destroy(peerAvatar.GetChild(i).gameObject);
                 Avatar(peerAvatar, SpriteFor(contact), Initial(contact), contact.color, Vector2.zero, 40, !contact.online && !contact.group);
             }
-            peerSign.text = (contact.group ? GameText.T("群 · ", "Group · ") : contact.online ? GameText.T("<color=#4CAF50>●</color> 在线 · ", "<color=#4CAF50>●</color> Online · ") : GameText.T("○ 离线 · ", "○ Offline · ")) + GameText.T(contact.signature, contact.signatureEn);
+            peerSign.text = (contact.group ? Lang.T("群 · ") : contact.online ? Lang.T("<color=#4CAF50>●</color> 在线 · ") : Lang.T("○ 离线 · ")) + GameText.T(contact.signature, contact.signatureEn);
             if (contact.id == YYChatHub.GirlfriendId && hub.Girlfriend != null) peerSign.text = hub.Girlfriend.StatusLine();
             peerSign.richText = true;
 
@@ -444,7 +445,7 @@ namespace LingGuangV05.Desktop.YY
             Fill(track, new Color32(229, 234, 240, 255));
             var fill = Rect("Fill", track, Vector2.zero, new Vector2(0, 1), Vector2.zero, Vector2.zero);
             Fill(fill, C.Mine);
-            string label = m.fileState == YYFileState.Done ? GameText.T("打开", "Open") : m.fileState == YYFileState.Receiving ? GameText.T("接收中…", "Receiving…") : GameText.T("接收", "Receive");
+            string label = m.fileState == YYFileState.Done ? Lang.T("打开") : m.fileState == YYFileState.Receiving ? Lang.T("接收中…") : Lang.T("接收");
             var button = FlatButton(card, label, () => { hub.AcceptFile(m); dirty = true; }, 14, Color.white, C.Mine);
             Place((RectTransform)button.transform, new Vector2(1, 0), new Vector2(-96, 10), new Vector2(-14, 38));
             button.interactable = m.fileState != YYFileState.Receiving;
@@ -462,9 +463,9 @@ namespace LingGuangV05.Desktop.YY
             if (m.fileState == YYFileState.Done) t = 1;
             fill.offsetMax = new Vector2(width * t, 0);
             string size = m.sizeMB.ToString("0.0") + " MB";
-            status.text = m.fileState == YYFileState.Done ? size + GameText.T(" · 已接收，在桌面上", " · received, on your desktop")
+            status.text = m.fileState == YYFileState.Done ? size + Lang.T(" · 已接收，在桌面上")
                 : m.fileState == YYFileState.Receiving ? m.received.ToString("0.0") + " / " + size + " · " + YYChatHub.TransferMBps.ToString("0.0") + " MB/s"
-                : size + GameText.T(" · 对方给你发送了文件", " · sent you a file");
+                : size + Lang.T(" · 对方给你发送了文件");
         }
 
         // ───────────── actions ─────────────
@@ -486,7 +487,7 @@ namespace LingGuangV05.Desktop.YY
             if (id == "Shake") { StartCoroutine(Shake()); return; }
             if (id == "History") { scroll.verticalNormalizedPosition = 1; stickBottom = false; return; }
             var conv = hub.Conversation(hub.S.selected);
-            conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = GameText.T("本地版 YY 暂不支持这个功能。", "This local YY build does not support that."), gameSeconds = hub.runtime.Sim.S.gameSeconds });
+            conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = Lang.T("本地版 YY 暂不支持这个功能。"), gameSeconds = hub.runtime.Sim.S.gameSeconds });
             dirty = true;
         }
 

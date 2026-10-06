@@ -1,6 +1,7 @@
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Tieba;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Bodu
 {
     /// <summary>
@@ -23,11 +24,11 @@ namespace LingGuangV05.Desktop.Bodu
         void Santi()
         {
             TiebaHub.Lab()?.EarnSecret("life.santi.login");
-            Line("<b>" + T("三体", "Three Body") + "</b>", 26, Ink);
-            Line(T("需要 V 装备与邀请码。", "Requires a V-suit and an invitation code."), 18, Muted);
-            Line("<color=#1A0DAB><u>" + T("【输入邀请码】", "[Enter invitation code]") + "</u></color>", 18, Ink, SantiCode);
-            if (santiTries == 1) Line("<color=#C00000>" + T("邀请码无效。本游戏只对有缘人开放。", "Invalid invitation code. This game is only open to those it was meant for.") + "</color>", 17, Ink);
-            else if (santiTries >= 2) Line("<color=#C00000>" + T("邀请码无效。……你很执着。", "Invalid invitation code. …You are persistent.") + "</color>", 17, Ink);
+            Line("<b>" + Lang.T("三体") + "</b>", 26, Ink);
+            Line(Lang.T("需要 V 装备与邀请码。"), 18, Muted);
+            Line("<color=#1A0DAB><u>" + Lang.T("【输入邀请码】") + "</u></color>", 18, Ink, SantiCode);
+            if (santiTries == 1) Line("<color=#C00000>" + Lang.T("邀请码无效。本游戏只对有缘人开放。") + "</color>", 17, Ink);
+            else if (santiTries >= 2) Line("<color=#C00000>" + Lang.T("邀请码无效。……你很执着。") + "</color>", 17, Ink);
         }
 
         void SantiCode()
@@ -38,7 +39,7 @@ namespace LingGuangV05.Desktop.Bodu
                 TiebaHub.Lab()?.EarnSecret("life.santi.code");
                 santiTries = 0;
                 page = "santi.game";
-                if (santiCiv == 0) SantiNewCivilisation(T("……进来吧。", "…Come in."), "…Come in.");
+                if (santiCiv == 0) SantiNewCivilisation(Lang.T("……进来吧。"), "…Come in.");
             }
             signature = "";
         }
@@ -57,20 +58,20 @@ namespace LingGuangV05.Desktop.Bodu
 
         void SantiGame()
         {
-            Line("<b>" + T("三体", "Three Body") + "</b>  <size=15><color=#787878>" + T("第 " + santiCiv + " 号文明 · " + (santiEras > 0 ? SantiAges[santiEras - 1] : "石器时代"), "Civilisation #" + santiCiv + " · " + (santiEras > 0 ? SantiAgesEn[santiEras - 1] : "the Stone Age")) + "</color></size>", 24, Ink);
+            Line("<b>" + Lang.T("三体") + "</b>  <size=15><color=#787878>" + T("第 " + santiCiv + " 号文明 · " + (santiEras > 0 ? SantiAges[santiEras - 1] : "石器时代"), "Civilisation #" + santiCiv + " · " + (santiEras > 0 ? SantiAgesEn[santiEras - 1] : "the Stone Age")) + "</color></size>", 24, Ink);
             if (santiNote.Length > 0) Line(GameText.IsEnglish ? santiNoteEn : santiNote, 17, Ink);
             if (santiOver)
             {
-                Line("<color=#1A0DAB><u>" + T("【重新开始】", "[Start again]") + "</u></color>", 18, Ink, () => { SantiNewCivilisation(T("文明的种子仍在，它将重新启动……", "The seed of civilisation remains; it will start again…"), "The seed of civilisation remains; it will start again…"); signature = ""; });
-                Line("<color=#1A0DAB><u>" + T("【退出游戏】", "[Leave the game]") + "</u></color>", 16, Ink, () => { page = "santi"; signature = ""; });
+                Line("<color=#1A0DAB><u>" + Lang.T("【重新开始】") + "</u></color>", 18, Ink, () => { SantiNewCivilisation(Lang.T("文明的种子仍在，它将重新启动……"), "The seed of civilisation remains; it will start again…"); signature = ""; });
+                Line("<color=#1A0DAB><u>" + Lang.T("【退出游戏】") + "</u></color>", 16, Ink, () => { page = "santi"; signature = ""; });
                 return;
             }
             string[] sky = { "太阳升起来了，大小和昨天一样。", "天边出现了两颗飞星。", "天色昏暗，什么也看不清。" };
             string[] skyEn = { "The sun is rising, the same size as yesterday.", "Two flying stars appear on the horizon.", "The sky is dim; nothing can be seen." };
-            Line("<color=#787878>" + T("天象：", "The sky: ") + "</color>" + T(sky[santiClue], skyEn[santiClue]), 18, Ink);
-            Line("<color=#1A0DAB><u>" + T("【浸泡】", "[Soak]") + "</u></color>  <size=14><color=#787878>" + T("相信是恒纪元：复活，劳作", "trust it is a stable era: revive and work") + "</color></size>", 18, Ink, () => SantiChoose(true));
-            Line("<color=#1A0DAB><u>" + T("【脱水】", "[Dehydrate]") + "</u></color>  <size=14><color=#787878>" + T("相信是乱纪元：脱水，存进仓库", "trust it is a chaotic era: dry out and wait in the store") + "</color></size>", 18, Ink, () => SantiChoose(false));
-            Line("<color=#1A0DAB><u>" + T("【退出游戏】", "[Leave the game]") + "</u></color>", 16, Ink, () => { page = "santi"; signature = ""; });
+            Line("<color=#787878>" + Lang.T("天象：") + "</color>" + T(sky[santiClue], skyEn[santiClue]), 18, Ink);
+            Line("<color=#1A0DAB><u>" + Lang.T("【浸泡】") + "</u></color>  <size=14><color=#787878>" + Lang.T("相信是恒纪元：复活，劳作") + "</color></size>", 18, Ink, () => SantiChoose(true));
+            Line("<color=#1A0DAB><u>" + Lang.T("【脱水】") + "</u></color>  <size=14><color=#787878>" + Lang.T("相信是乱纪元：脱水，存进仓库") + "</color></size>", 18, Ink, () => SantiChoose(false));
+            Line("<color=#1A0DAB><u>" + Lang.T("【退出游戏】") + "</u></color>", 16, Ink, () => { page = "santi"; signature = ""; });
         }
 
         void SantiChoose(bool soak)

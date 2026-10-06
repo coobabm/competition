@@ -355,7 +355,7 @@ namespace LingGuangV05.XingGuang
             string name = d != null ? T(d.name, d.nameEn) : o.datasetId;
             Say(on ? T("「" + name + "」训练重新用上：", name + " trains on it again: ") + T(o.name, o.nameEn)
                    : T("「" + name + "」训练不再用：", name + " no longer trains on: ") + T(o.name, o.nameEn)
-                     + (Samples(o.datasetId) < XgCatalog.SamplesToTrain ? T("（剩下的样本不够训练了，先去标注台标）", " (too few samples left to train; label some first)") : ""));
+                     + (Samples(o.datasetId) < XgCatalog.SamplesToTrain ? T("（剩下的样本不够训练了，先去标注台标）") : ""));
             foreach (var run in Runs) if (run.dataset == o.datasetId) Evaluate(run);
             return true;
         }
@@ -540,7 +540,7 @@ namespace LingGuangV05.XingGuang
                 DataOfferBought?.Invoke(Offer(def.id));
                 return true;
             }
-            if (!host.Spend(def.price)) { Say(T("经费不足 ¥", "Need ¥") + F(def.price, "0")); return false; }
+            if (!host.Spend(def.price)) { Say(T("经费不足 ¥") + F(def.price, "0")); return false; }
             S.totalSpent += def.price;
             S.dataOffers.Add(def.id);
             if (def.source == XgDataSource.Story)
@@ -560,7 +560,7 @@ namespace LingGuangV05.XingGuang
                     S.downloads.Add(new XgScore { key = def.id, value = def.downloadSec, count = (int)Math.Ceiling(def.downloadSec) });
                     Say(T("迅雷：《" + def.name + "》只有 3 个资源，预计 " + F(def.downloadSec, "0") + " 秒下完。", "Thunder: " + def.nameEn + " has 3 sources, about " + F(def.downloadSec, "0") + " s left."));
                 }
-                else Say(T("淘货到手：", "Bought on Taohuo: ") + T(def.name, def.nameEn));
+                else Say(T("淘货到手：") + T(def.name, def.nameEn));
                 CheckDesks();
             }
             foreach (var run in Runs) if (run.dataset == def.datasetId) Evaluate(run);
@@ -589,10 +589,10 @@ namespace LingGuangV05.XingGuang
             if (!Downloading(key)) return false;
             if (def.source == XgDataSource.Public) return Accelerate(def.datasetId, host);
             double cost = AccelerateOfferCost(offerId);
-            if (!host.Spend(cost)) { Say(T("经费不足 ¥", "Need ¥") + F(cost, "0")); return false; }
+            if (!host.Spend(cost)) { Say(T("经费不足 ¥") + F(cost, "0")); return false; }
             S.totalSpent += cost;
             S.downloads.RemoveAll(d => d.key == key);
-            Say(T("开通了一天超级会员，下完了。", "Bought a day of super membership; the download finished."));
+            Say(T("开通了一天超级会员，下完了。"));
             foreach (var run in Runs) if (run.dataset == def.datasetId) Evaluate(run);
             return true;
         }
@@ -615,7 +615,7 @@ namespace LingGuangV05.XingGuang
         {
             var def = DataOfferDef(dataset + ".crowd");
             if (def == null) return false;
-            if (!on) { bool was = S.crowdOn.Remove(dataset); if (was) Say(T("撤下了众包任务：", "Crowd task withdrawn: ") + T(XgCatalog.Dataset(dataset).name, XgCatalog.Dataset(dataset).nameEn)); return was; }
+            if (!on) { bool was = S.crowdOn.Remove(dataset); if (was) Say(T("撤下了众包任务：") + T(XgCatalog.Dataset(dataset).name, XgCatalog.Dataset(dataset).nameEn)); return was; }
             var why = OfferBlocker(def, out string whyEn);
             if (why != null) { Say(T(why, whyEn)); return false; }
             S.crowdOn.Add(dataset);
@@ -636,7 +636,7 @@ namespace LingGuangV05.XingGuang
                 double rows = o.samples * dt, cost = rows * o.price;
                 if (!host.Spend(cost))
                 {
-                    Say(T("经费见底，众包任务自动下架：", "Out of money; the crowd task was taken down: ") + T(XgCatalog.Dataset(o.datasetId).name, XgCatalog.Dataset(o.datasetId).nameEn));
+                    Say(T("经费见底，众包任务自动下架：") + T(XgCatalog.Dataset(o.datasetId).name, XgCatalog.Dataset(o.datasetId).nameEn));
                     S.crowdOn.RemoveAt(i);
                     continue;
                 }
@@ -661,7 +661,7 @@ namespace LingGuangV05.XingGuang
                 if (!o.available) { if (o.lockedReasonEn == "Already have this data") S.storyOffered.Add(id); continue; }
                 S.storyOffered.Add(id);
                 var line = StoryLines(id);
-                Say(T("老周：", "老周: ") + T(line[0], line[1]));
+                Say(T("老周：") + T(line[0], line[1]));
                 StoryDataOffered?.Invoke(o, line[0], line[1]);
             }
         }

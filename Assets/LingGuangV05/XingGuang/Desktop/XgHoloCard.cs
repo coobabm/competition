@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Finish of a rarity: 普通 silver, 稀有 gold, 史诗 holographic, 传说 cosmos, 隐藏传说 lenticular.</summary>
         public static int Finish(int rarity) => Mathf.Clamp(rarity, Silver, Lenticular);
 
-        public static string FinishName(int rarity) => new[] { T("银箔", "Silver foil"), T("金箔", "Gold foil"), T("镭射", "Holographic"), T("星河", "Cosmos"), T("光栅", "Lenticular") }[Finish(rarity)];
+        public static string FinishName(int rarity) => new[] { Lang.T("银箔"), Lang.T("金箔"), Lang.T("镭射"), Lang.T("星河"), Lang.T("光栅") }[Finish(rarity)];
 
         /// <summary>The frame around the art: the metal of the finish.</summary>
         public static Color Frame(int rarity)
@@ -300,7 +301,7 @@ namespace LingGuangV05.Desktop.XingGuang
             frame.color = frameColor;
             foreach (var m in new[] { artMat, tintMat, shineMat }) XgCardArt.Style(m, f.category, f.rarity);
             title.text = T(f.title, f.titleEn);
-            serial.text = f.serial == "附卡" ? T("附卡", "Extra") : f.serial;
+            serial.text = f.serial == "附卡" ? Lang.T("附卡") : f.serial;
             glyph.text = f.glyph; glyph2.text = lenticular ? f.glyph2 : "";
             glyph2.alpha = 0; glyph.alpha = 1;
             string stars = new string('★', Mathf.Clamp(f.rarity + 1, 1, 5));
@@ -308,9 +309,9 @@ namespace LingGuangV05.Desktop.XingGuang
             headline.text = T(f.headline, f.headlineEn);
             body.text = T(f.body, f.bodyEn);
             stamp.text = T(f.stamp, f.stampEn);
-            hint.text = lenticular ? T("左右转动卡片，看它的另一面 · 点空白处收下", "Turn the card left and right to see its other side · click outside to keep it")
-                : quiet ? T("移动鼠标转动卡片 · 点空白处放回卡册", "Move the pointer to tilt the card · click outside to put it back")
-                : T("移动鼠标转动卡片 · 点空白处收下", "Move the pointer to tilt the card · click outside to keep it");
+            hint.text = lenticular ? Lang.T("左右转动卡片，看它的另一面 · 点空白处收下")
+                : quiet ? Lang.T("移动鼠标转动卡片 · 点空白处放回卡册")
+                : Lang.T("移动鼠标转动卡片 · 点空白处收下");
         }
 
         void Update()

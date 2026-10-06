@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -150,7 +151,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 lastTrial = Sim.Trial(draft); trialFor = draft.dataset; trialError = ""; confirmDepth = false; expanded = false;
                 Fx.Play(XgJuice.Sfx.Id.Stamp);
             }
-            catch (ArgumentException) { trialError = T("方案参数无效，请取消后重新调整。", "Invalid proposal. Cancel and adjust again."); }
+            catch (ArgumentException) { trialError = Lang.T("方案参数无效，请取消后重新调整。"); }
             Refresh();
         }
 
@@ -162,7 +163,7 @@ namespace LingGuangV05.Desktop.XingGuang
             { confirmDepth = true; applyInputReleased = false; applyReadyAt = Time.unscaledTime + .5f; Refresh(); return; }
             if (confirmDepth && !DepthApplyReady()) return;
             if (Sim.TryApplyTrial(draft, Host, out var reason))
-            { CancelDraft(); trialError = T("方案已应用；尚未开始正式训练。", "Applied. Real training has not started."); Fx.Play(XgJuice.Sfx.Id.Stamp); }
+            { CancelDraft(); trialError = Lang.T("方案已应用；尚未开始正式训练。"); Fx.Play(XgJuice.Sfx.Id.Stamp); }
             else { trialError = reason; confirmDepth = false; }
             Refresh();
         }
@@ -216,10 +217,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             bool deferred = run.formal != null && run.formal.set;
             string effect = deferred && draft.proposal.depth == run.formal.depth
-                ? T("恢复已训练的层数，不会重置成果。", "Restores the trained depth without resetting learned concepts.")
-                : deferred ? T("下一轮正式训练将重置该板块的学习成果（保留种子）。", "The next real epoch resets this region's learned concepts (seeds survive).")
-                : T("应用后立即重建该板块，学习成果会重置（保留种子）。", "Applying immediately rebuilds this region, resetting learned concepts (seeds survive).");
-            return effect + T("再次点「确认应用」，或取消。", " Confirm again, or cancel.");
+                ? Lang.T("恢复已训练的层数，不会重置成果。")
+                : deferred ? Lang.T("下一轮正式训练将重置该板块的学习成果（保留种子）。")
+                : Lang.T("应用后立即重建该板块，学习成果会重置（保留种子）。");
+            return effect + Lang.T("再次点「确认应用」，或取消。");
         }
 
         void RefreshDraft(XgRun run)
@@ -232,14 +233,14 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             bool current = currentDraft && !busy;
             if (!current) confirmDepth = false;
-            editButton.Set(run.running ? T("停止自动训练", "Stop auto") : draft != null && !current ? T("重新调整", "New draft") : expanded ? T("收起方案", "Fold") : T("调整方案", "Adjust"), run.running || !run.epochActive);
-            trialButton.Set(T("试训（免费）", "Trial (free)"), !busy, XgPalette.AccentSoft, XgPalette.Accent);
-            applyButton.Set(confirmDepth ? T("确认应用", "Confirm") : T("应用方案", "Apply"), current && lastTrial != null && (!confirmDepth || DepthApplyReady()));
+            editButton.Set(run.running ? Lang.T("停止自动训练") : draft != null && !current ? Lang.T("重新调整") : expanded ? Lang.T("收起方案") : Lang.T("调整方案"), run.running || !run.epochActive);
+            trialButton.Set(Lang.T("试训（免费）"), !busy, XgPalette.AccentSoft, XgPalette.Accent);
+            applyButton.Set(confirmDepth ? Lang.T("确认应用") : Lang.T("应用方案"), current && lastTrial != null && (!confirmDepth || DepthApplyReady()));
             cancelButton.Set(T("取消", "Cancel"), draft != null);
-            trialStatus.text = busy ? T("先停止自动训练，等本轮结束；这里只停止当前线路。", "Stop auto-training and wait for this epoch; only this track is stopped.")
-                : draft != null && !current ? T("结果已过期，请重新试训。模型、数据或正式设置已变化；旧方案不可应用。", "Result expired. Model, data or live settings changed. Start a new trial before applying.")
+            trialStatus.text = busy ? Lang.T("先停止自动训练，等本轮结束；这里只停止当前线路。")
+                : draft != null && !current ? Lang.T("结果已过期，请重新试训。模型、数据或正式设置已变化；旧方案不可应用。")
                 : confirmDepth ? DepthApplyWarning(run)
-                : trialError.Length > 0 ? trialError : T("草稿不改正式设置。点参数循环选择，试训只训练副本；取消不丢任何成果。", "Draft only. Click a parameter to cycle; trials train copies. Cancel loses no progress.");
+                : trialError.Length > 0 ? trialError : Lang.T("草稿不改正式设置。点参数循环选择，试训只训练副本；取消不丢任何成果。");
             trialStatus.color = confirmDepth || draft != null && !current || trialError.Length > 0 ? XgPalette.Bad : XgPalette.Muted;
             bool show = draft != null && expanded;
             proposalPanel.gameObject.SetActive(show);
@@ -248,15 +249,15 @@ namespace LingGuangV05.Desktop.XingGuang
             trialText.rectTransform.offsetMax = new Vector2(-6, show ? -290 : 0);
             if (!show) return;
             var p = draft.proposal; var arch = XgCatalog.Arch(p.arch);
-            string On(bool on) => on ? T("开", "on") : T("关", "off");
-            string[] names = { T("架构：", "Architecture: ") + T(arch.name, arch.nameEn), T("层数：", "Depth: ") + p.depth,
-                T("宽度：", "Width: ") + XgCatalog.Widths[p.width], T("学习率：", "Rate: ") + Sim.RateLabel(p.lr),
-                T("激活：", "Activation: ") + new[] { T("阶跃", "Step"), T("S 形", "Sigmoid"), "ReLU" }[p.act],
-                T("梯度裁剪：", "Clipping: ") + On(p.clip), T("跨层直连：", "Skip: ") + On(p.skip),
-                T("位置标记：", "Position: ") + On(p.position), T("预热：", "Warm-up: ") + On(p.warmup), T("只用注意力：", "Attention only: ") + On(p.attnOnly) };
+            string On(bool on) => on ? Lang.T("开") : Lang.T("关");
+            string[] names = { Lang.T("架构：") + T(arch.name, arch.nameEn), Lang.T("层数：") + p.depth,
+                Lang.T("宽度：") + XgCatalog.Widths[p.width], Lang.T("学习率：") + Sim.RateLabel(p.lr),
+                Lang.T("激活：") + new[] { T("阶跃", "Step"), T("S 形", "Sigmoid"), "ReLU" }[p.act],
+                Lang.T("梯度裁剪：") + On(p.clip), Lang.T("跨层直连：") + On(p.skip),
+                Lang.T("位置标记：") + On(p.position), Lang.T("预热：") + On(p.warmup), Lang.T("只用注意力：") + On(p.attnOnly) };
             bool[] owned = { true, Sim.DepthCap(draft.track) > 1, Sim.WidthCap(draft.track) > 0, Sim.HasLrKnob(draft.track), true,
                 Sim.ClipOwned, Sim.SkipOwned, Sim.PositionOwned, Sim.WarmupOwned, Sim.AttentionOnlyOwned };
-            for (int i = 0; i < names.Length; i++) proposalButtons[i].Set(names[i] + (owned[i] ? "  ›" : T("（未解锁）", " (locked)")), current && owned[i]);
+            for (int i = 0; i < names.Length; i++) proposalButtons[i].Set(names[i] + (owned[i] ? "  ›" : Lang.T("（未解锁）")), current && owned[i]);
         }
 
         static string Bar(double rate)
@@ -272,14 +273,14 @@ namespace LingGuangV05.Desktop.XingGuang
             if (ShowGraph(wall)) return;
             if (wall == null)
             {
-                header.text = T("现在没有墙", "No wall right now"); exam.text = diagnosis.text = mistakes.text = trialText.text = hints.text = footer.text = "";
+                header.text = Lang.T("现在没有墙"); exam.text = diagnosis.text = mistakes.text = trialText.text = hints.text = footer.text = "";
                 trialPanel.gameObject.SetActive(false); hintButton.Show(false); return;
             }
             var run = RunOf(wall, out var check);
             if (draft != null && (draft.track != (XgTrack)run.track || draft.dataset != run.dataset)) CancelDraft();
             var k = Sim.Knobs(run);
             var data = XgCatalog.Dataset(run.dataset);
-            header.text = T("墙 · ", "Wall · ") + T(wall.name, wall.nameEn) + "  <size=13><color=#68748C>" + T("第 " + wall.stage + " 阶段", "stage " + wall.stage) + "</color></size>";
+            header.text = Lang.T("墙 · ") + T(wall.name, wall.nameEn) + "  <size=13><color=#68748C>" + T("第 " + wall.stage + " 阶段", "stage " + wall.stage) + "</color></size>";
 
             var sb = new StringBuilder();
             foreach (var c in wall.checks)
@@ -287,33 +288,33 @@ namespace LingGuangV05.Desktop.XingGuang
                 var d = XgCatalog.Dataset(c.dataset);
                 bool done = Sim.WallCheckPassed(wall, c);
                 double acc = d != null ? Sim.ExamAccuracy(c, Sim.Run(d.track)) : 0;
-                sb.Append(done ? "<color=#2F9E44>✓ " : "○ ").Append(T("考核", "Exam")).Append(" · ").Append(d != null ? T(d.name, d.nameEn) : c.dataset)
-                  .Append(c.minDistance > 0 ? T("（没见过的远距离题）", " (unseen far clues)") : T("（没见过的变体）", " (unseen variants)"))
+                sb.Append(done ? "<color=#2F9E44>✓ " : "○ ").Append(Lang.T("考核")).Append(" · ").Append(d != null ? T(d.name, d.nameEn) : c.dataset)
+                  .Append(c.minDistance > 0 ? Lang.T("（没见过的远距离题）") : Lang.T("（没见过的变体）"))
                   .Append("  ").Append(XgSim.Pct(acc)).Append(" / ").Append(XgSim.Pct(c.target)).Append(done ? "</color>" : "").Append("    ");
             }
             exam.text = sb.ToString();
 
             if (check != null && run.dataset != check.dataset && check.dataset != "*vision")
             {
-                diagnosis.text = T("训练页现在练的是「", "The training page is on \"") + (data != null ? T(data.name, data.nameEn) : run.dataset)
-                    + T("」。把数据集换成「", "\". Switch the dataset to \"") + T(XgCatalog.Dataset(check.dataset).name, XgCatalog.Dataset(check.dataset).nameEn) + T("」再诊断。", "\" to diagnose it.");
+                diagnosis.text = Lang.T("训练页现在练的是「") + (data != null ? T(data.name, data.nameEn) : run.dataset)
+                    + Lang.T("」。把数据集换成「") + T(XgCatalog.Dataset(check.dataset).name, XgCatalog.Dataset(check.dataset).nameEn) + Lang.T("」再诊断。");
                 mistakes.text = ""; trialText.text = ""; trialPanel.gameObject.SetActive(false);
             }
             else
             {
                 var dg = Sim.Diagnose(run.dataset, k);
-                var d = new StringBuilder("<b>" + T("诊断", "Diagnosis") + "</b>  <size=12><color=#68748C>" + T("诊断题 ", "") + Sim.TestSet(run.dataset).Count + T(" 道，不参与训练 · 当前设置", " diagnostic cards, never trained on · current settings") + "</color></size>\n\n");
+                var d = new StringBuilder("<b>" + T("诊断", "Diagnosis") + "</b>  <size=12><color=#68748C>" + Lang.T("诊断题 ") + Sim.TestSet(run.dataset).Count + Lang.T(" 道，不参与训练 · 当前设置") + "</color></size>\n\n");
                 foreach (var g in dg.groups)
                     d.Append(T(g.name, g.nameEn).PadRight(10)).Append("  ").Append(Bar(g.Rate)).Append("  ").Append(g.right).Append(" / ").Append(g.total).Append("\n");
                 d.Append("\n<color=#D63031>").Append(T(dg.mainError, dg.mainErrorEn)).Append("</color>");
                 diagnosis.text = d.ToString();
 
-                var m = new StringBuilder("<b>" + T("错题样本", "Wrong answers") + "</b>\n");
-                if (dg.mistakes.Count == 0) m.Append(T("诊断题全答对了。", "No mistakes on the diagnostic cards."));
+                var m = new StringBuilder("<b>" + Lang.T("错题样本") + "</b>\n");
+                if (dg.mistakes.Count == 0) m.Append(Lang.T("诊断题全答对了。"));
                 foreach (var x in dg.mistakes)
-                    m.Append("\n").Append(x.text).Append("\n<size=11><color=#68748C>").Append(T("模型：", "Model: ")).Append(x.answer ? T("是", "yes") : T("否", "no"))
-                     .Append(T(" · 正确：", " · right: ")).Append(x.truth ? T("是", "yes") : T("否", "no"))
-                     .Append(x.distance >= 0 ? T(" · 条件离问题 ", " · clue ") + x.distance + T(" 字", " characters away") : "").Append("</color></size>\n");
+                    m.Append("\n").Append(x.text).Append("\n<size=11><color=#68748C>").Append(Lang.T("模型：")).Append(x.answer ? T("是", "yes") : T("否", "no"))
+                     .Append(Lang.T(" · 正确：")).Append(x.truth ? T("是", "yes") : T("否", "no"))
+                     .Append(x.distance >= 0 ? Lang.T(" · 条件离问题 ") + x.distance + Lang.T(" 字") : "").Append("</color></size>\n");
                 mistakes.text = m.ToString();
                 trialPanel.gameObject.SetActive(true);
                 RefreshDraft(run);
@@ -321,32 +322,32 @@ namespace LingGuangV05.Desktop.XingGuang
             }
 
             int level = Sim.HintLevel(wall.id), max = XgSim.Hints.TryGetValue(wall.id, out var all) ? all.Length / 2 : 0;
-            var h = new StringBuilder("<b>" + T("提示", "Hints") + "</b>  <size=12><color=#68748C>" + level + " / " + max + "</color></size>\n");
+            var h = new StringBuilder("<b>" + Lang.T("提示") + "</b>  <size=12><color=#68748C>" + level + " / " + max + "</color></size>\n");
             for (int i = 1; i <= level; i++) h.Append(i).Append(". ").Append(Sim.HintText(wall.id, i)).Append("\n");
-            if (level == 0) h.Append(T("先看左边的诊断和错题，自己猜猜问题在哪。", "Read the diagnosis and the wrong answers first; guess where the problem is."));
+            if (level == 0) h.Append(Lang.T("先看左边的诊断和错题，自己猜猜问题在哪。"));
             hints.text = h.ToString();
             hintButton.Show(max > 0);
-            hintButton.Set(level < max ? T("下一条提示", "Next hint") : T("提示已全部给出", "All hints shown"), level < max);
-            footer.text = (wall.secret.Length > 0 ? (Sim.Has(wall.secret) ? T("已看过参考解法（秘籍）", "Reference seen (secret)") : T("参考解法在科技的秘籍里", "The reference is the secret in the tree")) : "")
-                + "\n" + T("没看参考解法就过墙 = 自悟", "Pass without the reference = insight");
+            hintButton.Set(level < max ? Lang.T("下一条提示") : Lang.T("提示已全部给出"), level < max);
+            footer.text = (wall.secret.Length > 0 ? (Sim.Has(wall.secret) ? Lang.T("已看过参考解法（秘籍）") : Lang.T("参考解法在科技的秘籍里")) : "")
+                + "\n" + Lang.T("没看参考解法就过墙 = 自悟");
         }
 
         string TrialText(XgRun run)
         {
-            if (draft != null && !currentDraft) return T("结果已过期，请重新试训。旧对比不代表当前模型。", "Result expired. The old comparison no longer represents the current model.");
+            if (draft != null && !currentDraft) return Lang.T("结果已过期，请重新试训。旧对比不代表当前模型。");
             if (lastTrial == null || trialFor != run.dataset)
-                return T("在本页展开「调整方案」，编辑草稿后试训：两个副本从同一个冻结快照出发，用同样的 ", "Expand Adjust here, edit the draft, then run a trial: two copies start from the same frozen snapshot, see the same ")
-                    + XgSim.TrialCards + T(" 张训练卡，在同一套诊断题上比较。", " training cards and are compared on the same diagnostic cards.");
+                return Lang.T("在本页展开「调整方案」，编辑草稿后试训：两个副本从同一个冻结快照出发，用同样的 ")
+                    + XgSim.TrialCards + Lang.T(" 张训练卡，在同一套诊断题上比较。");
             var t = lastTrial;
             var sb = new StringBuilder();
-            if (t.sameSettings) sb.Append(T("设置没变：这是“照现在这样继续练 ", "Settings unchanged: what ")).Append(t.cards).Append(T(" 张卡”的预测。", " more cards would do.")).Append("\n\n");
+            if (t.sameSettings) sb.Append(Lang.T("设置没变：这是“照现在这样继续练 ")).Append(t.cards).Append(Lang.T(" 张卡”的预测。")).Append("\n\n");
             else
             {
-                sb.Append(T("本次改动：", "Changes: ")).Append(string.Join(T("；", "; "), t.changes)).Append("\n");
-                if (t.changes.Count > 1) sb.Append("<color=#C88A00>").Append(T("一次改了 ", "")).Append(t.changes.Count).Append(T(" 项，无法确定是哪项带来的变化。", " changes at once: you cannot tell which one made the difference.")).Append("</color>\n");
+                sb.Append(Lang.T("本次改动：")).Append(string.Join(Lang.T("；"), t.changes)).Append("\n");
+                if (t.changes.Count > 1) sb.Append("<color=#C88A00>").Append(Lang.T("一次改了 ")).Append(t.changes.Count).Append(Lang.T(" 项，无法确定是哪项带来的变化。")).Append("</color>\n");
                 sb.Append("\n");
             }
-            sb.Append(T("组别", "Group").PadRight(12)).Append(T("现在", "Now")).Append("    ").Append(T("原设置", "Before")).Append("    ").Append(t.sameSettings ? "" : T("新设置", "After")).Append("\n");
+            sb.Append(Lang.T("组别").PadRight(12)).Append(Lang.T("现在")).Append("    ").Append(Lang.T("原设置")).Append("    ").Append(t.sameSettings ? "" : Lang.T("新设置")).Append("\n");
             foreach (var g in t.now.groups)
             {
                 var b = t.baseline.Group(g.id); var p = t.proposal.Group(g.id);
@@ -359,7 +360,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 sb.Append("\n");
             }
-            sb.Append("\n<size=11><color=#68748C>").Append(T("试训只是预测：正式训练仍要投入相应的时间和电费，成绩才属于你的模型。", "A trial is only a forecast: real training still costs its time and power before the result belongs to your model.")).Append("</color></size>");
+            sb.Append("\n<size=11><color=#68748C>").Append(Lang.T("试训只是预测：正式训练仍要投入相应的时间和电费，成绩才属于你的模型。")).Append("</color></size>");
             return sb.ToString();
         }
     }

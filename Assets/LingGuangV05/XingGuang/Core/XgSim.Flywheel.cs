@@ -65,8 +65,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Why the model cannot label this dataset's logs (null when it can).</summary>
         public string LogAutoBlocker(string dataset)
         {
-            if (XgCatalog.Dataset(dataset) == null) return T("未知数据集", "Unknown dataset");
-            if (BestAcc(dataset) <= 0) return T("先训练出一个检查点", "Train a checkpoint first");
+            if (XgCatalog.Dataset(dataset) == null) return T("未知数据集");
+            if (BestAcc(dataset) <= 0) return T("先训练出一个检查点");
             return null;
         }
 
@@ -125,7 +125,7 @@ namespace LingGuangV05.XingGuang
                 double before = Logs(c.dataset);
                 double add = Math.Min(rate * dt, Math.Max(0, LogPileCap - before));
                 if (add <= 0) continue;
-                if (S.logsTotal <= 0) Say(T("订单开始回传用户日志：没标注过的真实数据，里面有用户的聊天记录。", "Contracts start sending back user logs: real, unlabelled data, with users' chats in it."));
+                if (S.logsTotal <= 0) Say(T("订单开始回传用户日志：没标注过的真实数据，里面有用户的聊天记录。"));
                 SetCount(S.logs, c.dataset, before + add);
                 S.logsTotal += add;
             }

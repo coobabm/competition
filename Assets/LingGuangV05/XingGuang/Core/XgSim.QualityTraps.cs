@@ -105,7 +105,7 @@ namespace LingGuangV05.XingGuang
             S.qcTrapFails++;
             if (S.qcTrapRevealed) return;
             S.qcTrapRevealed = true;
-            Say(T("摆渡众包：抽检里有一条是平台预置的金标题，答案早就知道。", "Bodu Crowdsourcing: one of the checked labels was a known-answer trap item; the platform knew the answer all along."));
+            Say(T("摆渡众包：抽检里有一条是平台预置的金标题，答案早就知道。"));
         }
     }
 }

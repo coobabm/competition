@@ -856,9 +856,9 @@ namespace LingGuangV05.XingGuang
             var sb = new StringBuilder(PersonaPrompt(month, hot));
             string owner = Profile.callMe.Length > 0 ? Profile.callMe : T("主人", "your owner");
             sb.Append('\n').Append(T("现在你在巨信上替" + owner + "回消息，对方以为是" + owner + "本人在回。", "You are answering Juxin messages for " + owner + "; the other person thinks it is " + owner + " writing."));
-            sb.Append(T("发消息的是：", " The sender is: ")).Append(JuxinName(thread, English)).Append(T("，", ", ")).Append(Relation(thread)).Append(T("。", ". "));
+            sb.Append(T("发消息的是：")).Append(JuxinName(thread, English)).Append(T("，")).Append(Relation(thread)).Append(T("。", ". "));
             sb.Append(T("对方不是" + owner + "，不要用「" + owner + "」称呼对方，也不要说你是程序。", "They are not " + owner + ": do not call them that, and never say you are a program. "));
-            sb.Append(T("像真人发巨信一样，一两句，口语。", "Write like a person texting: one or two casual sentences. "));
+            sb.Append(T("像真人发巨信一样，一两句，口语。"));
             sb.Append('\n').Append(EraLexicon.PromptRule(English)).Append('\n').Append(StageRule(incoming));
             if (English) sb.Append(" Reply in English.");
             return sb.ToString();
@@ -876,10 +876,10 @@ namespace LingGuangV05.XingGuang
             }
             switch (thread)
             {
-                case JxAjie: return T("主人的朋友阿杰，十九岁网管，懂显卡，爱吹牛", "a friend, Ajie, a 19-year-old café admin who knows GPUs and likes to brag");
-                case JxXiaogang: return T("主人的朋友小刚，高中生，沉迷英雄联盟，嘴贫", "a friend, Xiaogang, a high-schooler hooked on League of Legends");
-                case JxCousin: return T("主人的表姐，在省城做会计，也开微商小店，爱唠叨", "the owner's cousin, an accountant who also runs a small online shop and fusses");
-                case JxFamily: return T("家族群，长辈们爱转养生文章，要有礼貌", "the family group, where elders forward health articles; be polite");
+                case JxAjie: return T("主人的朋友阿杰，十九岁网管，懂显卡，爱吹牛");
+                case JxXiaogang: return T("主人的朋友小刚，高中生，沉迷英雄联盟，嘴贫");
+                case JxCousin: return T("主人的表姐，在省城做会计，也开微商小店，爱唠叨");
+                case JxFamily: return T("家族群，长辈们爱转养生文章，要有礼貌");
             }
             return "";
         }
@@ -977,7 +977,7 @@ namespace LingGuangV05.XingGuang
             string self = Profile.self.Length > 0 ? Profile.self : T("我", "I");
             bool group = JuxinIsGroup(thread);
             bool client = ClientOfThread(thread) != null || thread == JxCousin && Signed("crossborder");
-            string meme = Today >= 20161001 ? T("蓝瘦，香菇。", "So sad, want to cry.") : T("洪荒之力已经用完了。", "My primordial power is all used up.");
+            string meme = Today >= 20161001 ? T("蓝瘦，香菇。") : T("洪荒之力已经用完了。");
             var options = new List<string[]>();
             if (group)
             {

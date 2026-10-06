@@ -93,7 +93,7 @@ namespace LingGuangV05.Desktop.Juxin
             string title = T(message.titleZh, message.titleEn);
             string body = (who.Length > 0 ? who + ": " : "") + (title.Length > 0 ? title + "\n" : "") + T(message.zh, message.en);
             bool visible = bound.JuxinShowing == thread.id && view != null && view.isActiveAndEnabled && DesktopNotifications.IsWindowVisible(view);
-            DesktopNotifications.Notify(runtime, T("巨信", "Juxin"), sender, body, visible,
+            DesktopNotifications.Notify(runtime, Lang.T("巨信"), sender, body, visible,
                 () => { if (view != null) view.Open(thread.id); });
         }
 
@@ -106,8 +106,7 @@ namespace LingGuangV05.Desktop.Juxin
             if (!bound.JuxinOpen) return;
             var yy = YYChatHub.Instance;
             if (yy != null && yy.S != null && yy.Conversation(XgMarketRelay.Group) != null && bound.JuxinTakeOnce("intro.yy"))
-                yy.Receive(XgMarketRelay.Group, "[" + T("阿杰", "Ajie") + "] " + T("都九月了还只用 YY？下个巨信，现在甲方都在上面。我把你拉进来了。",
-                    "It's September and you're still only on YY? Get Juxin, all the clients are on it now. I've added you."));
+                yy.Receive(XgMarketRelay.Group, "[" + Lang.T("阿杰") + "] " + Lang.T("都九月了还只用 YY？下个巨信，现在甲方都在上面。我把你拉进来了。"));
             if (bound.JuxinTakeOnce("intro.voice"))
                 InnerVoice.Say("桌面上多了个绿色的图标……巨信？", "A new green icon on the desktop... Juxin?", 3.2f);
             if (bound.JuxinCanAutoReply && bound.JuxinTakeOnce("intro.auto"))
@@ -134,7 +133,7 @@ namespace LingGuangV05.Desktop.Juxin
             var messages = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("system", job.system),
-                new KeyValuePair<string, string>("user", job.incoming.Length > 0 ? job.incoming : T("在吗？", "You there?")),
+                new KeyValuePair<string, string>("user", job.incoming.Length > 0 ? job.incoming : Lang.T("在吗？")),
             };
             var sampling = XgSpeechPolicy.Sampling(sim.S.stage);
             llm.Chat(messages, job.tokens, job.temperature, reply =>

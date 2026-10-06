@@ -292,7 +292,7 @@ namespace LingGuangV05.XingGuang
             {
                 tracePhenomena.Add(id);
                 var p = XgPhenomena.Get(id);
-                Say(T("现象：", "Phenomenon: ") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
+                Say(T("现象：") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
                 PhenomenonFound?.Invoke(p);
             }
             // Datasets left alone fade (catastrophic forgetting) — checked against their own test sets.
@@ -302,7 +302,7 @@ namespace LingGuangV05.XingGuang
                 long idle = Board.S.cards - (long)other.value;
                 if (idle < 500) continue;
                 var po = new XgObservation { dataset = other.key, region = o.region, knobs = o.knobs, train = .5, test = Board.Accuracy(TestSet(other.key), o.knobs), cards = (long)Count(S.boardCards, other.key).value, idle = idle };
-                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board)) { var p = XgPhenomena.Get(id); Say(T("现象：", "Phenomenon: ") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
+                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board)) { var p = XgPhenomena.Get(id); Say(T("现象：") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
             }
         }
 

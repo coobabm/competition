@@ -146,7 +146,7 @@ namespace LingGuangV05.Desktop.Taohuo
         protected bool Run(Func<ChapterOneSim, bool> command, string okEn)
         {
             var sim = Sim;
-            if (sim == null) { Say(T("电脑还没准备好。", "The computer is not ready.")); return false; }
+            if (sim == null) { Say(Lang.T("电脑还没准备好。")); return false; }
             bool ok = command(sim);
             Say(!GameText.IsEnglish ? sim.LastMessage : ok ? okEn : "Not possible: " + Reason(sim));
             if (ok) Dirty();
@@ -197,7 +197,7 @@ namespace LingGuangV05.Desktop.Taohuo
 
         protected static string Stats(GpuModel g)
         {
-            return T("算力 ×", "Compute ×") + g.compute.ToString("0.##", CultureInfo.InvariantCulture) + "  ·  " + T("显存 ", "VRAM ") + (g.vramMB / 1024).ToString("0.#", CultureInfo.InvariantCulture) + "G  ·  " + g.watts.ToString("0") + "W";
+            return Lang.T("算力 ×") + g.compute.ToString("0.##", CultureInfo.InvariantCulture) + "  ·  " + Lang.T("显存 ") + (g.vramMB / 1024).ToString("0.#", CultureInfo.InvariantCulture) + "G  ·  " + g.watts.ToString("0") + "W";
         }
 
         /// <summary>The rig in one block: cards, slots, compute, VRAM and power.</summary>
@@ -215,14 +215,14 @@ namespace LingGuangV05.Desktop.Taohuo
                 if (counts[id] > 1) sb.Append(" ×").Append(counts[id]);
                 sb.Append('\n');
             }
-            if (sim.S.nvme) sb.Append("· ").Append(T("三星 950 Pro NVMe", "Samsung 950 Pro NVMe")).Append('\n');
+            if (sim.S.nvme) sb.Append("· ").Append(Lang.T("三星 950 Pro NVMe")).Append('\n');
             sb.Append('\n');
-            sb.Append(T("插槽 ", "Slots ")).Append(sim.S.gpuCount).Append(" / ").Append(sim.Slots).Append(T("（机箱 ", " (cases ")).Append(sim.S.caseCount).Append(T("）\n", ")\n"));
-            sb.Append(T("算力 ×", "Compute ×")).Append(sim.CardCompute.ToString("0.##", CultureInfo.InvariantCulture)).Append('\n');
-            sb.Append(T("显存 ", "VRAM ")).Append((sim.MemoryCapacity / 1024).ToString("0.#", CultureInfo.InvariantCulture)).Append("G\n");
-            sb.Append(T("功耗 ", "Load ")).Append(sim.LoadWatts.ToString("0")).Append(" / ").Append(sim.Config.powerLimitWatts.ToString("0")).Append("W");
-            if (sim.S.breakerTripped) sb.Append(T("  <color=#D03030>已跳闸</color>", "  <color=#D03030>tripped</color>"));
-            sb.Append('\n').Append(T("温度 ", "Temperature ")).Append(sim.S.temperature.ToString("0")).Append("°C");
+            sb.Append(Lang.T("插槽 ")).Append(sim.S.gpuCount).Append(" / ").Append(sim.Slots).Append(Lang.T("（机箱 ")).Append(sim.S.caseCount).Append(Lang.T("）\n"));
+            sb.Append(Lang.T("算力 ×")).Append(sim.CardCompute.ToString("0.##", CultureInfo.InvariantCulture)).Append('\n');
+            sb.Append(Lang.T("显存 ")).Append((sim.MemoryCapacity / 1024).ToString("0.#", CultureInfo.InvariantCulture)).Append("G\n");
+            sb.Append(Lang.T("功耗 ")).Append(sim.LoadWatts.ToString("0")).Append(" / ").Append(sim.Config.powerLimitWatts.ToString("0")).Append("W");
+            if (sim.S.breakerTripped) sb.Append(Lang.T("  <color=#D03030>已跳闸</color>"));
+            sb.Append('\n').Append(Lang.T("温度 ")).Append(sim.S.temperature.ToString("0")).Append("°C");
             return sb.ToString();
         }
 

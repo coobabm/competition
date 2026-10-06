@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -219,7 +220,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 float width = i >= 3 ? 34 : i == 0 ? 86 : 72;
                 PlaceTopRight(toolbar[i], right + width, 8, width, 30); right += width + 4;
             }
-            UiTip.Add(toolbar[0].rt, () => Sim != null && Sim.AutoLabelHidden ? T("跳到标注技能（加薪）。", "Jump to the labelling skills (pay raise).") : T("跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (pay raise, auto-answer)."));
+            UiTip.Add(toolbar[0].rt, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("跳到标注技能（加薪）。") : Lang.T("跳到标注技能（加薪、自动答题）。"));
             UiTip.Add(toolbar[1].rt, "跳到当前阶段的最前沿。", "Jump to the current stage's frontier.");
             UiTip.Add(toolbar[2].rt, "依次跳到现在买得起的节点。", "Cycle through the nodes you can afford now.");
             UiTip.Add(toolbar[3].rt, "缩小。", "Zoom out.");
@@ -234,7 +235,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(eraCard, XgPalette.Hud);
             eraTitle = ui.Text(Strip("EraTitle", eraCard, 16, 36, 20, 20), "", 24, XgPalette.Gold, TextAlignmentOptions.Center);
             eraBody = ui.Text(Strip("EraDescription", eraCard, 60, 76, 24, 24), "", 16, Color.white, TextAlignmentOptions.Center);
-            var dismiss = ui.Button(eraCard, T("继续", "Continue"), () => { eraRemaining = 0; eraCard.gameObject.SetActive(false); }, 14);
+            var dismiss = ui.Button(eraCard, Lang.T("继续"), () => { eraRemaining = 0; eraCard.gameObject.SetActive(false); }, 14);
             PlaceTopRight(dismiss, 105, 142, 85, 28);
             eraCard.gameObject.SetActive(false);
             built = true;
@@ -274,7 +275,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     int i = pair.Key;
                     pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#68748C>" + XgCatalog.StageYears[i] + "</color></size>" : "");
-                    miniButtons[i].Set(i == 0 ? T("标注", "Labels") : i.ToString(), true, i == stage ? XgPalette.AccentSoft : XgPalette.Button);
+                    miniButtons[i].Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgPalette.AccentSoft : XgPalette.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
                 foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "AutomationLane", "AtlasLane" })
@@ -284,7 +285,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     {
                         lane.gameObject.SetActive(visible);
                         var label = lane.GetComponent<TMP_Text>();
-                        label.text = prefix == "TrunkLane" ? T("主干", "Core") : prefix == "VisionLane" ? T("视觉", "Vision") : prefix == "SequenceLane" ? T("序列", "Sequence") : prefix == "ResearchLane" ? T("研究", "Research") : prefix == "AtlasLane" ? T("图鉴 · 现象与能力", "Atlas · phenomena and abilities") : T("自动化", "Automation");
+                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : prefix == "AtlasLane" ? Lang.T("图鉴 · 现象与能力") : Lang.T("自动化");
                     }
                 }
             }
@@ -355,7 +356,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (index == 3) { Pan.ZoomBy(1 / 1.25f); return; }
             if (index == 4) { Pan.ZoomBy(1.25f); return; }
             var buyable = nodes.FindAll(n => n.gameObject.activeSelf && Sim.Status(n.node, Host) == XgSim.NodeStatus.Buyable);
-            if (buyable.Count == 0) { view.ShowToast(T("现在没有买得起的节点", "Nothing affordable right now"), 2); return; }
+            if (buyable.Count == 0) { view.ShowToast(Lang.T("现在没有买得起的节点"), 2); return; }
             int at = selected != null ? buyable.IndexOf(selected) : -1;
             var next = buyable[(at + 1) % buyable.Count]; Hover(next); Focus(next); Fx.Knock((RectTransform)next.transform, .2f);
         }
@@ -457,7 +458,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 default: return;
             }
             SyncRevealedContent(true);
-            eraTitle.text = year + " · " + T("时代卡", "Era card"); eraBody.text = T(zh, en);
+            eraTitle.text = year + " · " + Lang.T("时代卡"); eraBody.text = T(zh, en);
             eraCard.gameObject.SetActive(true); eraCard.SetAsLastSibling(); eraRemaining = 8;
             FocusFrontier();
             if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgPalette.Gold, 500, .8f, 16); }
@@ -541,9 +542,9 @@ namespace LingGuangV05.Desktop.XingGuang
             SyncRevealedContent(true);
             int buyable = 0;
             foreach (var node in nodes) if (node.gameObject.activeSelf && Sim.Status(node.node, Host) == XgSim.NodeStatus.Buyable) buyable++;
-            header.text = "<b>" + T("科技", "Tech") + "</b>  <color=#E86E14>¥ " + Money(Host.Money) + "</color>";
-            toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
-            toolbar[2].Set(T("可买 ", "Buy ") + buyable, true, buyable > 0 ? XgPalette.AccentSoft : XgPalette.Button);
+            header.text = "<b>" + Lang.T("科技") + "</b>  <color=#E86E14>¥ " + Money(Host.Money) + "</color>";
+            toolbar[0].Set(Lang.T("⓪ 标注"), true); toolbar[1].Set(Lang.T("前沿"), true);
+            toolbar[2].Set(Lang.T("可买 ") + buyable, true, buyable > 0 ? XgPalette.AccentSoft : XgPalette.Button);
             var edges = new List<XgLinksGraphic.Link>();
             foreach (var item in nodes)
             {
@@ -553,7 +554,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (XgSim.IsAtlas(node))
                 {
                     bool lit = status == XgSim.NodeStatus.Owned;
-                    item.label.text = lit || node.kind == XgNodeKind.Ability ? Sim.NodeName(node) : T("？？？", "???");
+                    item.label.text = lit || node.kind == XgNodeKind.Ability ? Sim.NodeName(node) : Lang.T("？？？");
                     item.label.color = lit && node.kind == XgNodeKind.Ability ? Color.white : lit ? XgPalette.Ink : XgPalette.Muted;
                     item.cost.text = lit ? "<color=#2F9E44>✓</color>" : "";
                     continue;
@@ -561,7 +562,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool mystery = Sim.NodeMystery(node);
                 item.label.text = Sim.NodeName(node) + (node.maxLevel > 1 && !mystery ? "  <size=70%><color=#" + (status == XgSim.NodeStatus.Owned ? "FFFFFFCC" : "68748C") + ">" + level + "/" + node.maxLevel + "</color></size>" : "");
                 item.label.color = status == XgSim.NodeStatus.Owned ? Color.white : XgPalette.Ink;
-                item.cost.text = status == XgSim.NodeStatus.Owned ? "<color=#2F9E44>✓</color>" : mystery ? "" : ProjectNodeRunning(node) ? T("研发中", "Researching") : cost > 0 && !double.IsInfinity(cost) ? "¥" + Money(cost) : "";
+                item.cost.text = status == XgSim.NodeStatus.Owned ? "<color=#2F9E44>✓</color>" : mystery ? "" : ProjectNodeRunning(node) ? Lang.T("研发中") : cost > 0 && !double.IsInfinity(cost) ? "¥" + Money(cost) : "";
                 AddEdge(node.parent, node, false);
                 foreach (string need in node.needs) AddEdge(need, node, true);
             }
@@ -590,25 +591,25 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshInfo()
         {
             if (infoTitle == null) return;
-            if (selected == null) { infoTitle.text = T("沿着前沿探索", "Explore the frontier"); infoCost.text = ""; infoBody.text = T("只显示你已经发现的技术。\n\n拖动平移 · 滚轮上下\nShift + 滚轮左右 · −/+ 缩放\n按住节点 0.6 秒购买。", "Only discovered technology appears.\n\nDrag to pan · wheel scrolls up and down\nShift + wheel scrolls sideways · −/+ zoom\nHold a node for 0.6 s to buy."); return; }
+            if (selected == null) { infoTitle.text = Lang.T("沿着前沿探索"); infoCost.text = ""; infoBody.text = Lang.T("只显示你已经发现的技术。\n\n拖动平移 · 滚轮上下\nShift + 滚轮左右 · −/+ 缩放\n按住节点 0.6 秒购买。"); return; }
             var node = selected.node; var status = Sim.Status(node, Host); double cost = Sim.NodeCost(node);
             if (XgSim.IsAtlas(node))
             {
                 bool lit = status == XgSim.NodeStatus.Owned, ability = node.kind == XgNodeKind.Ability;
-                infoTitle.text = lit || ability ? Sim.NodeName(node) : T("？？？", "???");
-                infoCost.text = lit ? T("已点亮", "Lit") : T("未发现", "Not yet seen");
+                infoTitle.text = lit || ability ? Sim.NodeName(node) : Lang.T("？？？");
+                infoCost.text = lit ? Lang.T("已点亮") : Lang.T("未发现");
                 infoBody.text = lit || ability ? T(node.note, node.noteEn) + "\n\n<color=#68748C>" + Sim.Why(node, Host) + "</color>"
-                    : T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。", "It has not happened yet. When the rules stack up it will appear by itself, and the first time it does it goes into the atlas.");
+                    : Lang.T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。");
                 return;
             }
             if (Sim.NodeMystery(node))
             {
                 // 自动答题 before the protagonist has the idea: no name, no price, only a hint (XgSim.Epiphany.cs).
-                infoTitle.text = Sim.NodeName(node); infoCost.text = T("未发现", "Not yet seen"); infoBody.text = Sim.NodeNote(node);
+                infoTitle.text = Sim.NodeName(node); infoCost.text = Lang.T("未发现"); infoBody.text = Sim.NodeNote(node);
                 return;
             }
             infoTitle.text = Sim.NodeName(node);
-            infoCost.text = status == XgSim.NodeStatus.Owned ? T("已拥有", "Owned") : double.IsInfinity(cost) ? T("已满级", "Maxed") : "¥ " + Money(cost);
+            infoCost.text = status == XgSim.NodeStatus.Owned ? Lang.T("已拥有") : double.IsInfinity(cost) ? T("已满级", "Maxed") : "¥ " + Money(cost);
             var text = new System.Text.StringBuilder(Sim.NodeNote(node)).Append("\n\n");
             void Condition(bool ok, string zh, string en) => text.Append(ok ? "<color=#2F9E44>✓ " : "<color=#A44A24>○ ").Append(T(zh, en)).Append("</color>\n");
             if (node.parent != null) Condition(Sim.Has(node.parent) || node.parent == "label.raise" && Sim.RaiseLevel > 0 || node.parent == "label.auto" && Sim.GlobalAutoLevel > 0, Sim.NodeName(XgCatalog.Node(node.parent)), Sim.NodeName(XgCatalog.Node(node.parent)));
@@ -619,13 +620,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 var wall = XgSim.WallOfSecret(node.id);
                 if (wall != null)
                 {
-                    text.Append(T("墙：", "Wall: ")).Append(T(wall.name, wall.nameEn)).Append("\n");
+                    text.Append(Lang.T("墙：")).Append(T(wall.name, wall.nameEn)).Append("\n");
                     if (Sim.Has(node.id))
                     {
                         text.Append("<b>").Append(T(wall.golden, wall.goldenEn)).Append("</b>\n").Append(T(wall.why, wall.whyEn)).Append("\n");
-                        if (Sim.S.insights.Contains(wall.id)) text.Append("<color=#C88A00>").Append(T("★ 已自悟", "★ Worked out yourself")).Append("</color>\n");
+                        if (Sim.S.insights.Contains(wall.id)) text.Append("<color=#C88A00>").Append(Lang.T("★ 已自悟")).Append("</color>\n");
                     }
-                    else text.Append(T("黄金参数：？？？（买下才写明）", "Golden settings: ??? (revealed when bought)")).Append("\n");
+                    else text.Append(Lang.T("黄金参数：？？？（买下才写明）")).Append("\n");
                     foreach (var group in wall.needs)
                     {
                         bool met = false; foreach (var id in group) met |= Sim.Has(id);
@@ -636,7 +637,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (status != XgSim.NodeStatus.Owned)
             {
                 Condition(Host.Money + 1e-9 >= cost, "经费 ¥" + Money(cost), "Funds ¥" + Money(cost));
-                text.Append("\n").Append(status == XgSim.NodeStatus.Buyable ? T("按住节点 0.6 秒购买", "Hold the node 0.6 s to buy") : Sim.Why(node, Host));
+                text.Append("\n").Append(status == XgSim.NodeStatus.Buyable ? Lang.T("按住节点 0.6 秒购买") : Sim.Why(node, Host));
             }
             infoBody.text = text.ToString();
         }

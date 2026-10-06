@@ -111,10 +111,10 @@ namespace LingGuangV05.XingGuang
         {
             if (!Downloading(dataset)) return false;
             double cost = AccelerateCost(dataset);
-            if (!host.Spend(cost)) { Say(T("经费不足 ¥", "Need ¥") + F(cost, "0")); return false; }
+            if (!host.Spend(cost)) { Say(T("经费不足 ¥") + F(cost, "0")); return false; }
             S.totalSpent += cost;
             S.downloads.RemoveAll(d => d.key == dataset);
-            Say(T("开通了一天超级会员，下完了。", "Bought a day of super membership; the download finished."));
+            Say(T("开通了一天超级会员，下完了。"));
             return true;
         }
 
@@ -127,7 +127,7 @@ namespace LingGuangV05.XingGuang
                 string key = S.downloads[i].key;
                 S.downloads.RemoveAt(i);
                 // Keys are dataset ids (public packs) or offer ids (junk / story packs, XgSim.DataSources.cs).
-                if (XgCatalog.Dataset(key) != null || DataOfferDef(key) != null) Say(T("下载完成：", "Download finished: ") + DownloadName(key));
+                if (XgCatalog.Dataset(key) != null || DataOfferDef(key) != null) Say(T("下载完成：") + DownloadName(key));
             }
         }
 
@@ -170,7 +170,7 @@ namespace LingGuangV05.XingGuang
             var a = Achievement(id);
             if (a == null) return;
             S.achievements.Add(id);
-            Say(T("获得卡片：", "New card: ") + T(a.name, a.nameEn) + T("（" + RarityName(a.rarity, false) + "）", " (" + RarityName(a.rarity, true) + ")"));
+            Say(T("获得卡片：") + T(a.name, a.nameEn) + T("（" + RarityName(a.rarity, false) + "）", " (" + RarityName(a.rarity, true) + ")"));
             AchievementEarned?.Invoke(a);
         }
 

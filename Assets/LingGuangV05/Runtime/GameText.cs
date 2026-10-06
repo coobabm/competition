@@ -21,6 +21,10 @@ namespace LingGuangV05.Runtime
         public static bool IsEnglish => LanguageId == English;
         public static string Normalize(string value) => value == English ? English : Chinese;
         public static string T(string zh, string en) => IsEnglish ? en : zh;
+        /// <summary>Chinese source text; the English comes from <see cref="LingGuangV05.Core.Lang"/>'s table.</summary>
+        public static string T(string zh) => IsEnglish ? LingGuangV05.Core.Lang.En(zh) : zh;
+
+        static GameText() { LingGuangV05.Core.Lang.IsEnglish = () => IsEnglish; }
         public static string F(string zh, string en, params object[] args) =>
             string.Format(CultureInfo.InvariantCulture, T(zh, en), args);
 
@@ -28,6 +32,7 @@ namespace LingGuangV05.Runtime
         {
             if (getLocale == null) throw new ArgumentNullException(nameof(getLocale));
             var prior = provider; provider = getLocale;
+            LingGuangV05.Core.Lang.IsEnglish = () => IsEnglish;
             return new Binding(prior, getLocale);
         }
         public static void PublishChanged() => Changed?.Invoke();

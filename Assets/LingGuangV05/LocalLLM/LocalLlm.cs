@@ -15,6 +15,7 @@ using Debug = UnityEngine.Debug;
 using AppNames = LingGuangV05.Core.AppNames;
 #if UNITY_EDITOR
 using UnityEditor;
+using LingGuangV05.Core;
 #endif
 
 namespace LingGuangV05.Desktop.LLM
@@ -155,7 +156,7 @@ namespace LingGuangV05.Desktop.LLM
         IEnumerator Boot(bool probeExisting = true)
         {
             State = Status.Starting;
-            Detail = GameText.T("正在唤醒本地模型…", "Waking the local model…");
+            Detail = Lang.T("正在唤醒本地模型…");
             SlowMode = false; routed = false;
             for (int i = 0; i < warmedHash.Length; i++) { warmedHash[i] = 0; warmedAt[i] = float.NegativeInfinity; }
             // A server from an earlier play session may still be up: reuse it.
@@ -175,8 +176,8 @@ namespace LingGuangV05.Desktop.LLM
             }
 
             string model = FindModel(), exe = FindServer();
-            if (model == null) { Fail(GameText.T("没找到模型文件（.gguf）。放到 StreamingAssets/LingGuang/Models 或项目根目录 Models/。", "No .gguf model found (StreamingAssets/LingGuang/Models or <project>/Models).")); yield break; }
-            if (exe == null) { Fail(GameText.T("没找到 llama-server。", "llama-server not found.")); yield break; }
+            if (model == null) { Fail(Lang.T("没找到模型文件（.gguf）。放到 StreamingAssets/LingGuang/Models 或项目根目录 Models/。")); yield break; }
+            if (exe == null) { Fail(Lang.T("没找到 llama-server。")); yield break; }
             ModelName = Path.GetFileNameWithoutExtension(model);
             // Unity does not promise to keep the executable bit when it copies StreamingAssets into a build.
             if (Application.platform != RuntimePlatform.WindowsPlayer && Application.platform != RuntimePlatform.WindowsEditor)
@@ -214,18 +215,18 @@ namespace LingGuangV05.Desktop.LLM
                         (Detail.Length > 0 ? " · " + Detail : ""));
                     yield break;
                 }
-                if (!exited) { Fail(GameText.T("本地模型启动超时。", "Local model start timed out.")); yield break; }
+                if (!exited) { Fail(Lang.T("本地模型启动超时。")); yield break; }
                 string tail = OutputTail();
                 if (!LlmScheduling.Fallback(mode, out var next))
                 {
                     Debug.LogWarning("[灵光] llama-server 启动后退出（" + mode + "）：\n" + tail);
-                    Fail(GameText.T("llama-server 启动后退出了。", "llama-server exited during startup."));
+                    Fail(Lang.T("llama-server 启动后退出了。"));
                     yield break;
                 }
                 Debug.LogWarning("[灵光] llama-server 以 " + mode + " 启动失败，改用 " + next + " 重试：\n" + tail);
                 StopServer();
                 mode = next;
-                Detail = GameText.T("显存不够，换一种方式启动本地模型…", "Not enough video memory, trying another way to start the local model…");
+                Detail = Lang.T("显存不够，换一种方式启动本地模型…");
             }
         }
 
@@ -589,7 +590,7 @@ namespace LingGuangV05.Desktop.LLM
             if (editorQaInstance || Time.realtimeSinceStartup - lastAutoRestartAt < AutoRestartWindow)
             {
                 Debug.LogWarning("[灵光] 本地模型进程退出：\n" + tail);
-                Fail(GameText.T("本地服务已退出。", "Local server exited."));
+                Fail(Lang.T("本地服务已退出。"));
                 return;
             }
             lastAutoRestartAt = Time.realtimeSinceStartup;
@@ -604,7 +605,7 @@ namespace LingGuangV05.Desktop.LLM
         {
             changingSlots = true;
             State = Status.Starting;
-            Detail = GameText.T("正在调整本地推理并发…", "Reconfiguring local inference slots…");
+            Detail = Lang.T("正在调整本地推理并发…");
             if (!StopServer()) { State = Status.Failed; Detail = "Owned local process did not exit; refusing to start another."; changingSlots = false; yield break; }
             yield return null;
             yield return Boot(false);

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -200,13 +201,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (run == null) return;
             var lesson = run.lesson;
             bool xor = lesson != XgTinyLesson.Zero;
-            title.text = lesson == XgTinyLesson.XorPerceptron ? T("真训练 · 异或 · 单层感知机", "Real training · XOR · one-layer perceptron")
-                : lesson == XgTinyLesson.XorMlp ? T("真训练 · 异或 · 两层 + S 形", "Real training · XOR · two layers + S-curve")
-                : T("真训练 · 认出「0」", "Real training · spotting a \"0\"");
-            skip.Set(run.Done ? T("关闭", "Close") : T("跳过", "Skip"), true);
-            inputsLabel.text = xor ? T("输入（4 张图）", "Inputs (4 pictures)") : T("没训练过的图", "Unseen pictures");
-            weightsLabel.text = run.net.IsPerceptron ? T("权重（1 个单元）", "Weights (1 unit)") : T("隐藏层权重（" + run.net.Units + " 个单元）", "Hidden weights (" + run.net.Units + " units)");
-            curveLabel.text = T("误差", "Error") + (lesson == XgTinyLesson.XorMlp ? "  <color=#9AA3B5>" + T("灰：单层感知机", "grey: one layer") + "</color>  <color=#E8900C>" + T("金：两层", "gold: two layers") + "</color>" : "");
+            title.text = lesson == XgTinyLesson.XorPerceptron ? Lang.T("真训练 · 异或 · 单层感知机")
+                : lesson == XgTinyLesson.XorMlp ? Lang.T("真训练 · 异或 · 两层 + S 形")
+                : Lang.T("真训练 · 认出「0」");
+            skip.Set(run.Done ? Lang.T("关闭") : Lang.T("跳过"), true);
+            inputsLabel.text = xor ? Lang.T("输入（4 张图）") : Lang.T("没训练过的图");
+            weightsLabel.text = run.net.IsPerceptron ? Lang.T("权重（1 个单元）") : T("隐藏层权重（" + run.net.Units + " 个单元）", "Hidden weights (" + run.net.Units + " units)");
+            curveLabel.text = Lang.T("误差") + (lesson == XgTinyLesson.XorMlp ? "  <color=#9AA3B5>" + Lang.T("灰：单层感知机") + "</color>  <color=#E8900C>" + Lang.T("金：两层") + "</color>" : "");
 
             var set = xor ? run.train : run.test;
             for (int i = 0; i < Tiles && i < set.Count; i++)
@@ -218,8 +219,8 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < run.net.Units && i < Units; i++) weights[i].Values = run.net.UnitWeights(i);
 
             float loss = run.loss.Count > 0 ? run.loss[run.loss.Count - 1] : 0;
-            status.text = T("第 ", "Pass ") + run.Epoch + "/" + run.epochs + T(" 轮", "") + T(" · 误差 ", " · error ") + N(loss, "0.000")
-                + T(" · 答错 ", " · wrong ") + N(run.TrainError * 100, "0") + "%";
+            status.text = T("第 ", "Pass ") + run.Epoch + "/" + run.epochs + T(" 轮", "") + Lang.T(" · 误差 ") + N(loss, "0.000")
+                + Lang.T(" · 答错 ") + N(run.TrainError * 100, "0") + "%";
             caption.text = Caption();
             footer.text = T("只有这一段是真训练：" + run.Parameters + " 个参数，算了 " + N(run.Milliseconds, "0.0") + " 毫秒。后面的阶段太大，游戏里改用模拟。",
                 "Only this part is real training: " + run.Parameters + " parameters, " + N(run.Milliseconds, "0.0") + " ms of computing. Later stages are too big, so the game simulates them.");
@@ -231,14 +232,13 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 case XgTinyLesson.XorPerceptron:
                     return run.Done
-                        ? T("误差在 25% 到 75% 之间来回跳，就是降不到 0：单层只能画一条直线，而异或的两个「是」在对角上，一条线分不开。",
-                            "The error jumps between 25% and 75% and never reaches 0: one layer draws one straight line, and XOR's two \"yes\" pictures sit on opposite corners.")
-                        : T("一个单层感知机正在学这 4 张图：左边亮、右边亮，只亮一边才算「是」。", "A one-layer perceptron is learning these 4 pictures: left lit, right lit, \"yes\" only when exactly one side is lit.");
+                        ? Lang.T("误差在 25% 到 75% 之间来回跳，就是降不到 0：单层只能画一条直线，而异或的两个「是」在对角上，一条线分不开。")
+                        : Lang.T("一个单层感知机正在学这 4 张图：左边亮、右边亮，只亮一边才算「是」。");
                 case XgTinyLesson.XorMlp:
                     return run.Done
                         ? T("同样 4 张图，加一层、换成有坡度的 S 形：误差一路掉到 " + N(run.loss[run.loss.Count - 1], "0.00") + "，4 张全对。这就是反向传播。",
                             "The same 4 pictures with a second layer and a sloped S-curve: the error falls to " + N(run.loss[run.loss.Count - 1], "0.00") + " and all 4 are right. That is backpropagation.")
-                        : T("两层网络在学同一道异或。误差从下层一路传回来，每个单元学一条线，合起来就分开了。", "A two-layer net on the same XOR. The error flows back through the layers; each unit learns a line, and together they split it.");
+                        : Lang.T("两层网络在学同一道异或。误差从下层一路传回来，每个单元学一条线，合起来就分开了。");
                 default:
                     if (!run.Done) return T("它在学「这是 0 吗？」：" + run.train.Count + " 张手写的 8×8 数字，一半是 0。", "It is learning \"is this a 0?\": " + run.train.Count + " hand-drawn 8×8 digits, half of them zeros.");
                     var zero = XgTinyData.TheZero();

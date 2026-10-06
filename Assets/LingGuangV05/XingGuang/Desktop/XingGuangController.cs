@@ -303,7 +303,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void ApplyShellText()
         {
             if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
-            if (status != null) status.text = GameText.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续", "GPUs, power bill and ¥ are shared with the house · training continues when closed");
+            if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);
         }
     }

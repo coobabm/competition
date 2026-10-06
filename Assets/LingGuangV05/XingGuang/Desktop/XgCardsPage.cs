@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -133,10 +134,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim == null) return "";
             string rarity = XgSim.RarityName(a.rarity, En) + " · " + XgCardArt.FinishName(a.rarity);
-            if (Sim.HasAchievement(a.id)) return T(a.name, a.nameEn) + "（" + rarity + "）\n" + T(a.note, a.noteEn) + T("\n点击取出来看。", "\nClick to take it out.");
+            if (Sim.HasAchievement(a.id)) return T(a.name, a.nameEn) + "（" + rarity + "）\n" + T(a.note, a.noteEn) + Lang.T("\n点击取出来看。");
             if (a.hidden)
-                return T("隐藏成就（" + rarity + "）\n", "Hidden (" + rarity + ")\n") + (string.IsNullOrEmpty(a.hint) ? T("没有人知道怎么拿到它。", "Nobody knows how to get this one.") : T(a.hint, a.hintEn));
-            return T(a.name, a.nameEn) + "（" + rarity + "）\n" + T("还没拿到：", "Not yet: ") + T(a.note, a.noteEn);
+                return T("隐藏成就（" + rarity + "）\n", "Hidden (" + rarity + ")\n") + (string.IsNullOrEmpty(a.hint) ? Lang.T("没有人知道怎么拿到它。") : T(a.hint, a.hintEn));
+            return T(a.name, a.nameEn) + "（" + rarity + "）\n" + Lang.T("还没拿到：") + T(a.note, a.noteEn);
         }
 
         void Open(Thumb t)
@@ -165,8 +166,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (Sim.HasAchievement(a.id)) ownedByRarity[r]++;
                 if (a.hidden) { hiddenTotal++; if (Sim.HasAchievement(a.id)) hiddenOwned++; }
             }
-            header.text = T("成就卡册", "Card album") + "   <size=15><color=#" + ColorUtility.ToHtmlStringRGB(XgPalette.Muted) + ">" + T("已收集 ", "Collected ") + owned + " / " + total
-                + T(" · 隐藏 ", " · hidden ") + hiddenOwned + " / " + hiddenTotal + "</color></size>";
+            header.text = Lang.T("成就卡册") + "   <size=15><color=#" + ColorUtility.ToHtmlStringRGB(XgPalette.Muted) + ">" + Lang.T("已收集 ") + owned + " / " + total
+                + Lang.T(" · 隐藏 ") + hiddenOwned + " / " + hiddenTotal + "</color></size>";
             SetBar(progress, total > 0 ? owned / (float)total : 0);
             var parts = new List<string>();
             for (int r = 0; r < 5; r++)

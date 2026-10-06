@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
@@ -117,19 +118,19 @@ namespace LingGuangV05.Desktop.Story
 
         static (Color bar, Color barLight, string mark, string button) Theme(string who)
         {
-            if (who.StartsWith("YY")) return (new Color32(33, 144, 197, 255), new Color32(78, 185, 226, 255), "YY", T("确定", "OK"));
-            if (who.Contains("巨信") || who.Contains("Juxin")) return (new Color32(26, 173, 25, 255), new Color32(71, 197, 79, 255), T("信", "J"), T("确定", "OK"));
-            if (who.Contains("贴吧") || who.Contains("Tieba")) return (new Color32(44, 100, 204, 255), new Color32(88, 145, 239, 255), T("贴", "T"), T("确定", "OK"));
-            if (who.Contains("360")) return (new Color32(36, 160, 62, 255), new Color32(76, 196, 96, 255), "360", T("知道了", "OK"));
-            if (who.Contains("迅雷") || who.Contains("Thunder")) return (new Color32(26, 110, 205, 255), new Color32(70, 150, 235, 255), T("迅", "T"), T("知道了", "OK"));
-            if (who.Contains("Windows")) return (new Color32(0, 90, 170, 255), new Color32(30, 125, 210, 255), "⊞", T("以后再说", "Later"));
+            if (who.StartsWith("YY")) return (new Color32(33, 144, 197, 255), new Color32(78, 185, 226, 255), "YY", Lang.T("确定"));
+            if (who.Contains("巨信") || who.Contains("Juxin")) return (new Color32(26, 173, 25, 255), new Color32(71, 197, 79, 255), Lang.T("信"), Lang.T("确定"));
+            if (who.Contains("贴吧") || who.Contains("Tieba")) return (new Color32(44, 100, 204, 255), new Color32(88, 145, 239, 255), Lang.T("贴"), Lang.T("确定"));
+            if (who.Contains("360")) return (new Color32(36, 160, 62, 255), new Color32(76, 196, 96, 255), "360", Lang.T("知道了"));
+            if (who.Contains("迅雷") || who.Contains("Thunder")) return (new Color32(26, 110, 205, 255), new Color32(70, 150, 235, 255), Lang.T("迅"), Lang.T("知道了"));
+            if (who.Contains("Windows")) return (new Color32(0, 90, 170, 255), new Color32(30, 125, 210, 255), "⊞", Lang.T("以后再说"));
             // 摆渡众包 (the crowd-labelling platform) wears the search giant's deep blue.
-            if (who.Contains("摆渡众包") || who.Contains("Bodu Crowd")) return (new Color32(41, 50, 225, 255), new Color32(78, 110, 242, 255), T("众", "BC"), T("查看详情", "Details"));
-            if (who.Contains("摆渡云") || who.Contains("Bodu Cloud")) return (new Color32(45, 127, 224, 255), new Color32(95, 165, 245, 255), T("云", "☁"), T("开通会员", "Go premium"));
-            if (who.Contains("淘货") || who.Contains("Taohuo")) return (new Color32(255, 80, 0, 255), new Color32(255, 130, 60, 255), T("淘", "T"), T("去看看", "Take a look"));
-            if (who.Contains("喵鱼") || who.Contains("Miaoyu")) return (new Color32(230, 180, 0, 255), new Color32(255, 214, 60, 255), T("喵", "M"), T("去看看", "Take a look"));
-            if (who.Contains("鲁大师") || who.Contains("Master Lu")) return (new Color32(232, 120, 20, 255), new Color32(250, 160, 60, 255), T("鲁", "Lu"), T("查看详情", "Details"));
-            return (new Color32(70, 100, 140, 255), new Color32(110, 140, 180, 255), "i", T("确定", "OK"));
+            if (who.Contains("摆渡众包") || who.Contains("Bodu Crowd")) return (new Color32(41, 50, 225, 255), new Color32(78, 110, 242, 255), T("众", "BC"), Lang.T("查看详情"));
+            if (who.Contains("摆渡云") || who.Contains("Bodu Cloud")) return (new Color32(45, 127, 224, 255), new Color32(95, 165, 245, 255), Lang.T("云"), Lang.T("开通会员"));
+            if (who.Contains("淘货") || who.Contains("Taohuo")) return (new Color32(255, 80, 0, 255), new Color32(255, 130, 60, 255), Lang.T("淘"), Lang.T("去看看"));
+            if (who.Contains("喵鱼") || who.Contains("Miaoyu")) return (new Color32(230, 180, 0, 255), new Color32(255, 214, 60, 255), Lang.T("喵"), Lang.T("去看看"));
+            if (who.Contains("鲁大师") || who.Contains("Master Lu")) return (new Color32(232, 120, 20, 255), new Color32(250, 160, 60, 255), Lang.T("鲁"), Lang.T("查看详情"));
+            return (new Color32(70, 100, 140, 255), new Color32(110, 140, 180, 255), "i", Lang.T("确定"));
         }
 
         RectTransform Build(string who, string text, System.Action close, System.Action open, bool canOpen, out Hover hover)
@@ -176,12 +177,12 @@ namespace LingGuangV05.Desktop.Story
 
             // Footer: greyed opt-out on the left, the action button on the right.
             PrologueDesk.Fill(PrologueDesk.Rect("Rule", inner, Vector2.zero, new Vector2(1, 0), new Vector2(10, 44), new Vector2(-10, 45)), new Color32(228, 230, 234, 255), false);
-            desk.Text(PrologueDesk.Rect("Mute", inner, Vector2.zero, new Vector2(.6f, 0), new Vector2(14, 8), new Vector2(0, 40)), "☐ " + T("今日不再提醒", "Don't remind me today"), 12, new Color32(150, 150, 150, 255), TextAlignmentOptions.MidlineLeft);
+            desk.Text(PrologueDesk.Rect("Mute", inner, Vector2.zero, new Vector2(.6f, 0), new Vector2(14, 8), new Vector2(0, 40)), "☐ " + Lang.T("今日不再提醒"), 12, new Color32(150, 150, 150, 255), TextAlignmentOptions.MidlineLeft);
             var ok = PrologueDesk.Rect("Action", inner, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-104, 9), new Vector2(-12, 37));
             var okImg = PrologueDesk.Fill(ok, theme.bar);
             var okButton = ok.gameObject.AddComponent<Button>(); okButton.targetGraphic = okImg;
             okButton.onClick.AddListener(() => open());
-            desk.Text(PrologueDesk.Rect("Label", ok, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), canOpen ? T("查看", "View") : theme.button, 14, Color.white, TextAlignmentOptions.Center);
+            desk.Text(PrologueDesk.Rect("Label", ok, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), canOpen ? Lang.T("查看") : theme.button, 14, Color.white, TextAlignmentOptions.Center);
             box.anchoredPosition = new Vector2(0, -Height);
             return box;
         }

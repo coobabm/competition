@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.YY
 {
     public sealed partial class YYGirlfriend
@@ -69,7 +70,7 @@ namespace LingGuangV05.Desktop.YY
             aiButton.gameObject.SetActive(ai);
             if (!hers && panel.gameObject.activeSelf) panel.gameObject.SetActive(false);
             if (!hers) return;
-            packetLabel.text = GameText.T("￥ 红包", "￥ Red packet");
+            packetLabel.text = Lang.T("￥ 红包");
             if (ai)
             {
                 bool on = gf.G.aiAuto;
@@ -98,7 +99,7 @@ namespace LingGuangV05.Desktop.YY
                 if (gf != null && gf.G != null) gf.SetStandIn(!gf.G.aiAuto);
             });
             Place((RectTransform)aiButton.transform, new Vector2(1, .5f), new Vector2(-330, -13), new Vector2(-108, 13));
-            UiTip.Add(aiButton, () => GameText.T("开着的时候，她的消息由 AI 用它自己的语气替你回。她可能会发现。", "While on, the AI answers her messages for you in its own voice. She may notice."));
+            UiTip.Add(aiButton, () => Lang.T("开着的时候，她的消息由 AI 用它自己的语气替你回。她可能会发现。"));
 
             panel = Rect("GfPacketPanel", conversation, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-372, 174), new Vector2(-12, 290));
             var bg = panel.gameObject.AddComponent<YYRoundRect>(); bg.radius = 8; bg.color = new Color32(255, 247, 240, 255); bg.border = 1; bg.borderColor = new Color32(243, 90, 58, 255);

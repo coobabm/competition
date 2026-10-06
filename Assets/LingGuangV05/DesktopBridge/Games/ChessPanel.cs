@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Games
 {
     /// <summary>
@@ -37,13 +38,13 @@ namespace LingGuangV05.Desktop.Games
         static readonly Color LastLight = new Color32(246, 246, 130, 255), LastDark = new Color32(186, 202, 68, 255), Pick = new Color32(130, 170, 230, 255);
 
         public override string Id => "chess";
-        public override string Title => T("国际象棋", "Chess");
+        public override string Title => Lang.T("国际象棋");
         public override string Blurb => AiPlays
             ? T("和" + AiName + "下国际象棋。它一边下一边解说；角落里还留着深蓝那行字。", "Chess against " + AiName + ". It comments as it plays; Deep Blue's line is still in the corner.")
-            : T("和电脑下国际象棋。它是 1997 年「深蓝」那一套：不学习，只往后硬算几步。", "Chess against the computer. It is Deep Blue's 1997 recipe: no learning, it just searches a few moves ahead.");
+            : Lang.T("和电脑下国际象棋。它是 1997 年「深蓝」那一套：不学习，只往后硬算几步。");
 
         /// <summary>The black player: the built-in Deep Blue-style program until stage 6, then the lab's AI.</summary>
-        string Opponent => AiPlays ? AiName : T("电脑", "The computer");
+        string Opponent => AiPlays ? AiName : Lang.T("电脑");
 
         int Depth => AiPlays ? XgGames.ChessDepth(Stage, Lab.GameAccuracy(Id)) : 3;
         public override string Glyph => "王";
@@ -182,8 +183,8 @@ namespace LingGuangV05.Desktop.Games
         {
             switch (char.ToLowerInvariant(p))
             {
-                case 'k': return T("王", "K"); case 'q': return T("后", "Q"); case 'r': return T("车", "R");
-                case 'b': return T("象", "B"); case 'n': return T("马", "N"); case 'p': return T("兵", "P");
+                case 'k': return Lang.T("王"); case 'q': return Lang.T("后"); case 'r': return Lang.T("车");
+                case 'b': return Lang.T("象"); case 'n': return Lang.T("马"); case 'p': return Lang.T("兵");
                 default: return "";
             }
         }
@@ -208,13 +209,13 @@ namespace LingGuangV05.Desktop.Games
                 }
             string state;
             if (game.Result != ChessGame.Ongoing)
-                state = (game.Result == ChessGame.WhiteWins ? T("你赢了：", "You win: ") : game.Result == ChessGame.BlackWins ? Opponent + T("赢了：", " wins: ") : T("和棋：", "Draw: ")) + T(game.ResultReason, game.ResultReasonEnglish) + "。";
-            else if (aiAt >= 0) state = Opponent + T("在算……", " is calculating…");
-            else state = (game.InCheck ? T("将军！", "Check! ") : "") + T("你执白，先走。点棋子，再点亮着的格子。", "You play white. Click a piece, then a marked square.");
-            string opponent = T("对手：", "Opponent: ") + (AiPlays ? AiName + T(" · 往后算 ", " · looks ") + Depth + T(" 步", " plies ahead") : T("深蓝式程序 · 往后算 3 步", "a Deep Blue-style program · 3 plies ahead"));
-            status.text = "<b><size=26>" + Title + "</size></b>\n" + opponent + "\n\n" + state + "\n\n" + T("胜 ", "Won ") + wins + T(" · 负 ", " · lost ") + losses + T(" · 和 ", " · drawn ") + draws + LabLines() +
-                "\n\n<size=15><color=#4A5670>" + T("它不会学习，每一步都把后面几步全算一遍，按子力打分。1997 年深蓝就是这样赢了卡斯帕罗夫，只是算得深得多。", "It never learns: every move it searches the next few moves and scores the material. Deep Blue beat Kasparov this way in 1997, only far deeper.") + "</color></size>";
-            again.text = T("再来一局", "New game");
+                state = (game.Result == ChessGame.WhiteWins ? Lang.T("你赢了：") : game.Result == ChessGame.BlackWins ? Opponent + Lang.T("赢了：") : Lang.T("和棋：")) + T(game.ResultReason, game.ResultReasonEnglish) + "。";
+            else if (aiAt >= 0) state = Opponent + Lang.T("在算……");
+            else state = (game.InCheck ? Lang.T("将军！") : "") + Lang.T("你执白，先走。点棋子，再点亮着的格子。");
+            string opponent = Lang.T("对手：") + (AiPlays ? AiName + Lang.T(" · 往后算 ") + Depth + T(" 步", " plies ahead") : Lang.T("深蓝式程序 · 往后算 3 步"));
+            status.text = "<b><size=26>" + Title + "</size></b>\n" + opponent + "\n\n" + state + "\n\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + Lang.T(" · 和 ") + draws + LabLines() +
+                "\n\n<size=15><color=#4A5670>" + Lang.T("它不会学习，每一步都把后面几步全算一遍，按子力打分。1997 年深蓝就是这样赢了卡斯帕罗夫，只是算得深得多。") + "</color></size>";
+            again.text = Lang.T("再来一局");
         }
     }
 }
