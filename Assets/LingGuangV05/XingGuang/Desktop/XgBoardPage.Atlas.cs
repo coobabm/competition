@@ -39,7 +39,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 int col = i % TopologyColumns, row = i / TopologyColumns;
                 var tile = new TopologyTile { id = archs[i].id };
                 tile.root = Rect(tile.id, topologyView, new Vector2(col / (float)TopologyColumns, 1 - (row + 1f) / rows), new Vector2((col + 1f) / TopologyColumns, 1 - row / (float)rows), new Vector2(3, 3), new Vector2(-3, -3));
-                Panel(tile.root, XgPalette.Page);
+                Panel(tile.root, XgCortexGraphic.N.BgBottom);
                 var glyph = Rect("Glyph", tile.root, new Vector2(0, .47f), Vector2.one, new Vector2(4, 0), new Vector2(-4, -4));
                 tile.glyph = glyph.gameObject.AddComponent<XgCortexGraphic>();
                 tile.glyph.raycastTarget = false;
@@ -47,10 +47,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 tile.glyph.Font = ui.font;
                 tile.glyph.Tokens = new[] { "这", "本", "书", "我", "看", "过" };
                 tile.glyph.Source = new[] { "那", "只", "猫", "坐", "在", "垫" };
-                tile.name = ui.Text(Rect("Name", tile.root, new Vector2(0, .35f), new Vector2(1, .47f), new Vector2(8, 0), new Vector2(-8, 0)), "", 14, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
-                tile.topo = ui.Text(Rect("Topo", tile.root, new Vector2(0, .25f), new Vector2(1, .35f), new Vector2(8, 0), new Vector2(-8, 0)), "", 12, XgPalette.Accent, TextAlignmentOptions.MidlineLeft);
+                tile.name = ui.Text(Rect("Name", tile.root, new Vector2(0, .35f), new Vector2(1, .47f), new Vector2(8, 0), new Vector2(-8, 0)), "", 14, XgCortexGraphic.N.Text, TextAlignmentOptions.MidlineLeft);
+                tile.topo = ui.Text(Rect("Topo", tile.root, new Vector2(0, .25f), new Vector2(1, .35f), new Vector2(8, 0), new Vector2(-8, 0)), "", 12, new Color32(143, 179, 255, 255), TextAlignmentOptions.MidlineLeft);
                 tile.topo.enableAutoSizing = true; tile.topo.fontSizeMin = 8; tile.topo.fontSizeMax = 12;
-                tile.wire = ui.Text(Rect("Wire", tile.root, Vector2.zero, new Vector2(1, .25f), new Vector2(8, 4), new Vector2(-8, 0)), "", 11, XgPalette.Muted, TextAlignmentOptions.TopLeft);
+                tile.wire = ui.Text(Rect("Wire", tile.root, Vector2.zero, new Vector2(1, .25f), new Vector2(8, 4), new Vector2(-8, 0)), "", 11, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft);
                 tile.wire.enableAutoSizing = true; tile.wire.fontSizeMin = 7; tile.wire.fontSizeMax = 11;
                 string id = tile.id;
                 UiTip.Add(tile.root, () => TopologyTip(id));
@@ -85,17 +85,17 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (tile.glyph.gameObject.activeSelf != tile.open) tile.glyph.gameObject.SetActive(tile.open);
                 if (tile.open)
                 {
-                    tile.name.text = T(a.name, a.nameEn) + "  <size=11><color=#68748C>" + a.year + "</color></size>";
+                    tile.name.text = T(a.name, a.nameEn) + "  <size=11><color=#8494C8>" + a.year + "</color></size>";
                     tile.topo.text = "【" + Lang.T(a.topo) + "】";
                     tile.wire.text = T(a.wire, a.wireEn);
-                    tile.name.color = XgPalette.Ink;
+                    tile.name.color = XgCortexGraphic.N.Text;
                 }
                 else
                 {
                     tile.name.text = "？？？  <size=11>" + a.year + "</size>";
                     tile.topo.text = "";
                     tile.wire.text = Lang.T("在「科技」里解锁");
-                    tile.name.color = XgPalette.Muted;
+                    tile.name.color = new Color32(90, 104, 150, 255);
                 }
             }
             header.text = Lang.T("大脑 · 接法图鉴") + "  <size=13><color=#68748C>" + Lang.T("已解锁 ") + open + " / " + topologyTiles.Count

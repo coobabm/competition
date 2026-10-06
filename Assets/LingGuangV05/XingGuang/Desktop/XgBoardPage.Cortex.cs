@@ -80,7 +80,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             cortexView = Rect("Cortex", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var map = Rect("Map", cortexView, Vector2.zero, new Vector2(.72f, 1), new Vector2(12, 12), new Vector2(-6, -52));
-            Panel(map, new Color32(250, 251, 254, 255)).raycastTarget = false;
+            Panel(map, XgCortexGraphic.N.BgBottom).raycastTarget = false;
             var brain = Rect("Brain", map, Vector2.zero, Vector2.one, new Vector2(6, 46), new Vector2(-6, -4));
             cortex = brain.gameObject.AddComponent<XgCortexGraphic>();
             cortex.raycastTarget = false;
@@ -90,10 +90,10 @@ namespace LingGuangV05.Desktop.XingGuang
             cortex.Source = new[] { "那", "只", "猫", "坐", "在", "垫" };
 
             var gpu = Rect("Gpu", map, Vector2.zero, new Vector2(1, 0), new Vector2(14, 10), new Vector2(-14, 42));
-            gpuLabel = ui.Text(Rect("Label", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            gpuLabel = ui.Text(Rect("Label", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineLeft);
             gpuValue = ui.Text(Rect("Value", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgPalette.Accent, TextAlignmentOptions.MidlineRight);
             var bar = Rect("Bar", gpu, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 14));
-            gpuFill = Bar(bar, "Fill", XgPalette.Button, XgPalette.Accent);
+            gpuFill = Bar(bar, "Fill", new Color32(28, 38, 78, 255), XgCortexGraphic.N.Accent);
             gpuFillImage = gpuFill.GetComponent<Image>();
             UiTip.Add(gpu, () => Lang.T("显卡有多忙。训练一轮时，正在练的那个区整片亮起来，显卡就被它占满一截；到了第六阶段整颗脑子一起亮，一台机器扛不住。"));
 
@@ -291,15 +291,17 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             gpuLoad = Mathf.Lerp(gpuLoad, Mathf.Clamp01(target), Mathf.Clamp01(dt * 4));
             SetBar(gpuFill, gpuLoad);
-            Color col = pre ? XgPalette.Bad : busy != null ? XgPalette.Accent : XgPalette.Muted;
-            if (pre && !Sim.S.reduceFx) col = Color.Lerp(XgPalette.Bad, new Color32(255, 120, 120, 255), .5f + .5f * Mathf.Sin(t * 6));
+            var idle = new Color32(90, 104, 150, 255);
+            Color col = pre ? XgCortexGraphic.N.Bad : busy != null ? XgCortexGraphic.N.Accent : (Color)idle;
+            if (pre && !Sim.S.reduceFx) col = Color.Lerp(XgCortexGraphic.N.Bad, new Color32(255, 170, 120, 255), .5f + .5f * Mathf.Sin(t * 6));
+            else if (busy != null && !Sim.S.reduceFx) col = Color.Lerp(XgCortexGraphic.N.Accent, XgCortexGraphic.N.Teal, .5f + .5f * Mathf.Sin(t * 2.5f));
             gpuFillImage.color = col;
             string label = pre ? Lang.T("GPU 负载 · 预训练中 · 机房租金 ¥") + XgSim.DatacenterRent + Lang.T("/秒")
                          : busy != null ? Lang.T("GPU 负载 · 训练中 · ") + region
                          : Lang.T("GPU 负载 · 空闲");
             if (gpuLabel.text != label) gpuLabel.text = label;
             gpuValue.text = N(gpuLoad * 100, "0") + "%";
-            gpuValue.color = pre ? XgPalette.Bad : busy != null ? XgPalette.Accent : XgPalette.Muted;
+            gpuValue.color = pre ? XgCortexGraphic.N.Bad : busy != null ? XgCortexGraphic.N.Accent : XgCortexGraphic.N.TextMuted;
         }
 
         // ---------------------------------------------------------------- the first look
