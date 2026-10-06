@@ -13,9 +13,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Debug = UnityEngine.Debug;
 using AppNames = LingGuangV05.Core.AppNames;
+using LingGuangV05.Core;
 #if UNITY_EDITOR
 using UnityEditor;
-using LingGuangV05.Core;
 #endif
 
 namespace LingGuangV05.Desktop.LLM

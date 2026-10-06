@@ -11,11 +11,12 @@ using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// 大脑: the concept board (design v1.1 §4). Four regions of cells, coloured by what each concept leans toward
+    /// 大脑: three views, switched at the top right: the concept board (here), the 皮层拓扑 map (XgBoardPage.Cortex)
+    /// and the 接法图鉴 of topologies (XgBoardPage.Atlas). The concept board (design v1.1 §4): Four regions of cells, coloured by what each concept leans toward
     /// (是 green, 否 red), brighter when stronger; superposed cells get a purple rim, the SI's seed is gold. The right
     /// column is the 图鉴 of phenomena seen so far.
     /// </summary>
-    public sealed class XgBoardPage : XgPage
+    public sealed partial class XgBoardPage : XgPage
     {
         public const int CellsShown = 160;
         public const int Columns = 16;
@@ -38,8 +39,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var card = ui.Card(area, "board", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root = card;
-            header = ui.Text(Strip("Header", card, 8, 40, 16, 16), "", 16, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
-            var left = Rect("Regions", card, Vector2.zero, new Vector2(.7f, 1), new Vector2(12, 12), new Vector2(-6, -52));
+            header = ui.Text(Strip("Header", card, 8, 40, 16, 330), "", 16, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            header.enableAutoSizing = true; header.fontSizeMin = 11; header.fontSizeMax = 16;
+            conceptView = Rect("Concepts", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var left = Rect("Regions", conceptView, Vector2.zero, new Vector2(.7f, 1), new Vector2(12, 12), new Vector2(-6, -52));
             for (int i = 0; i < 4; i++)
             {
                 float x0 = (i % 2) * .5f, y1 = 1 - (i / 2) * .5f;
@@ -53,17 +56,29 @@ namespace LingGuangV05.Desktop.XingGuang
                 view.known.enableAutoSizing = true; view.known.fontSizeMin = 9; view.known.fontSizeMax = 12;
                 regions[i] = view;
             }
-            var right = Rect("Atlas", card, new Vector2(.7f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -52));
+            var right = Rect("Atlas", conceptView, new Vector2(.7f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -52));
             Panel(right, XgPalette.Page);
             atlas = ui.Text(Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), "", 13, XgPalette.Ink, TextAlignmentOptions.TopLeft);
             atlas.enableAutoSizing = true; atlas.fontSizeMin = 9; atlas.fontSizeMax = 13;
+            BuildCortex(card);
+            BuildTopologies(card);
+            BuildModeTabs(card);
         }
 
-        public override void Shown() { shownCards = -1; Refresh(); }
+        public override void Shown() { shownCards = -1; Refresh(); if (mode == Mode.Cortex) VoiceCortex(); }
+
+        public override void Tick(float dt)
+        {
+            if (mode == Mode.Cortex) TickCortex(dt);
+            else if (mode == Mode.Atlas) TickTopologies(dt);
+        }
 
         public override void Refresh()
         {
             if (header == null || Sim == null) return;
+            RefreshModeTabs();
+            if (mode == Mode.Cortex) { RefreshCortex(); return; }
+            if (mode == Mode.Atlas) { RefreshTopologies(); return; }
             var board = Sim.Board;
             var k = Sim.Knobs(Sim.Selected);
             header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#68748C>"

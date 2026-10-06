@@ -1,9 +1,15 @@
+using System.Collections.Generic;
+
 namespace LingGuangV05.XingGuang
 {
     public sealed partial class XgState
     {
         /// <summary>The protagonist has worked out that a "network" is a way of wiring 灵光's one brain (said once).</summary>
         public bool wiringVoiced;
+        /// <summary>The topology each region was last wired with (same order as <see cref="XgSim.BrainRegions"/>; "" = never).</summary>
+        public List<string> regionWire = new List<string>();
+        /// <summary>The protagonist has seen the cortex topology map once (the shock is said once).</summary>
+        public bool cortexSeen;
     }
 
     /// <summary>
@@ -46,6 +52,34 @@ namespace LingGuangV05.XingGuang
         {
             foreach (var run in Runs) if (RegionOf(run.dataset) == region) return XgCatalog.Arch(run.arch);
             return null;
+        }
+
+        /// <summary>The architecture a region is wired with now, or the one it was last wired with (it keeps its wiring when no run trains it).</summary>
+        public XgArch RegionWiringOrLast(string region)
+        {
+            var now = RegionWiring(region);
+            if (now != null) return now;
+            int i = System.Array.IndexOf(BrainRegions, region);
+            return i >= 0 && S.regionWire != null && i < S.regionWire.Count && S.regionWire[i].Length > 0 ? XgCatalog.Arch(S.regionWire[i]) : null;
+        }
+
+        /// <summary>Every step: remember how each trained region is wired.</summary>
+        void NoteRegionWiring()
+        {
+            if (S.regionWire == null) S.regionWire = new List<string>();
+            while (S.regionWire.Count < BrainRegions.Length) S.regionWire.Add("");
+            foreach (var run in Runs)
+            {
+                int i = System.Array.IndexOf(BrainRegions, RegionOf(run.dataset));
+                if (i >= 0 && run.arch.Length > 0) S.regionWire[i] = run.arch;
+            }
+        }
+
+        /// <summary>A run of this region is in the middle of an epoch.</summary>
+        public bool RegionTraining(string region)
+        {
+            foreach (var run in Runs) if (run.epochActive && RegionOf(run.dataset) == region) return true;
+            return false;
         }
 
         /// <summary>The region a track's current dataset trains.</summary>

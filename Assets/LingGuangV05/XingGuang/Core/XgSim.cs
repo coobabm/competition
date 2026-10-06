@@ -1489,6 +1489,7 @@ namespace LingGuangV05.XingGuang
         {
             TickProject(dt, host);
             TickEpochs(dt, host);
+            NoteRegionWiring();
             TickWalls(dt);
             if (S.stage >= 6) TickFinale(dt, host);
             TickCollection();
