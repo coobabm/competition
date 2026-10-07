@@ -20,7 +20,7 @@ namespace LingGuangV05.XingGuang
         public double qcCaptchaCooldown, qcAutoPause;
         /// <summary>Seconds until 验证码代填 submits the answer (negative = not scheduled).</summary>
         public double qcAutofillIn = -1;
-        /// <summary>Failed captchas in a row, captchas asked, autofilled answers, autofills flagged as too regular.</summary>
+        /// <summary>Failed captchas in a row, captchas asked, autofilled answers, repeated high-speed autofills flagged.</summary>
         public int qcCaptchaFails, qcCaptchaTotal, qcAutofills, qcAutofillFlags;
     }
 
@@ -29,7 +29,8 @@ namespace LingGuangV05.XingGuang
     /// rate is above 1.5 labels per second a suspicion meter fills; when it is full the platform asks for a
     /// four-digit handwritten captcha (at most one every six minutes). Automatic labelling waits until it is
     /// answered. A wrong or late answer pauses automatic labelling for two minutes; three in a row get the account
-    /// reported as a suspected bot. 验证码代填 lets the AI answer instead, a little too regularly.
+    /// reported as a suspected bot. 验证码代填 lets the AI answer instead; only repeated use at a high submission rate
+    /// may draw a platform flag, so its first successes are not punished.
     /// </summary>
     public sealed partial class XgSim
     {
@@ -38,6 +39,7 @@ namespace LingGuangV05.XingGuang
         public const double CaptchaGap = 360, CaptchaTimeout = 30, CaptchaPause = 120;
         public const double CaptchaCreditPass = 1, CaptchaCreditFail = 3;
         public const double AutofillMinDelay = 3, AutofillMaxDelay = 6, AutofillFlagChance = .08, AutofillFlagCredit = 10;
+        public const int AutofillGracePasses = 3;
         public const string CaptchaAutofillNode = "label.captcha";
 
         /// <summary>Tests may pin the roll that decides whether an autofilled captcha is flagged (negative = random).</summary>
@@ -48,7 +50,7 @@ namespace LingGuangV05.XingGuang
         public event Action<bool> CaptchaSolved;
         /// <summary>A captcha was answered wrong or timed out: (timed out, failures in a row).</summary>
         public event Action<bool, int> CaptchaFailed;
-        /// <summary>The platform noticed that autofilled captchas are answered too regularly.</summary>
+        /// <summary>The platform flagged repeated autofilling while submissions remain above the speed limit.</summary>
         public event Action CaptchaFlagged;
 
         public bool CaptchaPending => QualityActive && S.qcCaptcha;
@@ -125,7 +127,7 @@ namespace LingGuangV05.XingGuang
             if (S.qcAutoPause > 0)
             {
                 S.qcAutoPause = Math.Max(0, S.qcAutoPause - dt);
-                if (S.qcAutoPause <= 0) Say(T("摆渡众包：自动标注恢复提交。", "Bodu Crowdsourcing: automatic labels may be submitted again."));
+                if (S.qcAutoPause <= 0) Say(T("摆渡众包：自动标注恢复提交。"));
             }
             if (S.qcCaptcha)
             {
@@ -157,7 +159,7 @@ namespace LingGuangV05.XingGuang
             S.qcSuspicion = 0;
             S.qcCaptchaTotal++;
             S.qcAutofillIn = Has(CaptchaAutofillNode) ? AutofillMinDelay + (AutofillMaxDelay - AutofillMinDelay) * QualityRoll() : -1;
-            Say(T("摆渡众包：检测到操作过快，请完成人机验证（30 秒内），自动标注暂停。", "Bodu Crowdsourcing: unusually fast activity. Please complete the captcha within 30 s; automatic labelling is paused."));
+            Say(T("摆渡众包：检测到操作过快，请完成人机验证（30 秒内），自动标注暂停。"));
             CaptchaRequired?.Invoke();
         }
 
@@ -178,15 +180,15 @@ namespace LingGuangV05.XingGuang
             S.qcCaptchaFails = 0;
             AddCredit(CaptchaCreditPass);
             if (autofilled) S.qcAutofills++;
-            Say(autofilled ? T("验证码代填：已提交，自动标注继续。", "Captcha autofill: submitted; automatic labelling continues.")
-                : T("摆渡众包：验证通过，信用 +1。", "Bodu Crowdsourcing: captcha passed, credit +1."));
+            Say(autofilled ? T("验证码代填：已提交，自动标注继续。")
+                : T("摆渡众包：验证通过，信用 +1。"));
             CaptchaSolved?.Invoke(autofilled);
-            if (!autofilled) return;
+            if (!autofilled || S.qcAutofills <= AutofillGracePasses || LabelRate <= SpeedLimit + 1e-9) return;
             double roll = ForcedAutofillRoll >= 0 ? ForcedAutofillRoll : QualityRoll();
             if (roll >= AutofillFlagChance) return;
             S.qcAutofillFlags++;
             AddCredit(-AutofillFlagCredit);
-            Say(T("摆渡众包：答题时间过于规律，信用 −" + F(AutofillFlagCredit, "0") + "。", "Bodu Crowdsourcing: answer timing is too regular. Credit −" + F(AutofillFlagCredit, "0") + "."));
+            Say(T("摆渡众包：多次代填后仍持续高速提交，触发自动化异常抽查，信用 −" + F(AutofillFlagCredit, "0") + "。放慢提交速度可降低风险。", "Bodu Crowdsourcing: submissions stayed above the speed limit after repeated autofills, triggering an automation review. Credit −" + F(AutofillFlagCredit, "0") + ". Slow down submissions to reduce the risk."));
             CaptchaFlagged?.Invoke();
         }
 
@@ -197,8 +199,8 @@ namespace LingGuangV05.XingGuang
             AddCredit(-CaptchaCreditFail);
             S.qcAutoPause = CaptchaPause;
             int inARow = S.qcCaptchaFails;
-            Say(timeout ? T("摆渡众包：验证超时，自动标注暂停 2 分钟，信用 −3。", "Bodu Crowdsourcing: captcha timed out. Automatic labelling paused for 2 min, credit −3.")
-                : T("摆渡众包：验证码错误，自动标注暂停 2 分钟，信用 −3。", "Bodu Crowdsourcing: wrong captcha. Automatic labelling paused for 2 min, credit −3."));
+            Say(timeout ? T("摆渡众包：验证超时，自动标注暂停 2 分钟，信用 −3。")
+                : T("摆渡众包：验证码错误，自动标注暂停 2 分钟，信用 −3。"));
             CaptchaFailed?.Invoke(timeout, inARow);
             if (inARow < CaptchaFailsToReport) return;
             S.qcCaptchaFails = 0;

@@ -62,6 +62,12 @@ namespace LingGuangV05.XingGuang
         /// <summary>Starred models are never cleaned up.</summary>
         public bool starred;
         public List<float> curve = new List<float>();
+        /// <summary>
+        /// The weights: a copy of the brain's region as it was (the newest checkpoints and the starred ones keep them;
+        /// older ones keep only their settings to keep the save small).
+        /// </summary>
+        public List<XgConcept> weights = new List<XgConcept>();
+        public bool HasWeights => weights != null && weights.Count > 0;
     }
 
     [Serializable]
@@ -97,7 +103,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>Outcome of one hand answer, for the feedback flash.</summary>
-    public partial struct XgAnswer { public bool correct, truth, gold, trick, timeout, accepted, queued, corrected; public double pay; public int combo, samples; public long cardId; }
+    public partial struct XgAnswer { public bool correct, truth, gold, trick, timeout, accepted, queued, corrected, bounty; public double pay; public int combo, samples; public long cardId; }
 
     /// <summary>One press of 训练一轮.</summary>
     public sealed class XgEpoch
@@ -105,6 +111,11 @@ namespace LingGuangV05.XingGuang
         public int track, epoch;
         public bool hand, diverged;
         public double steps, trainAcc, valAcc;
+        /// <summary>The round went down instead of up (训练不再需要调参数: a drop), and why.</summary>
+        public bool dropped;
+        public string dropReason = "", dropReasonEn = "";
+        /// <summary>What the round changed in accuracy (negative after a drop, 0 on a plateau).</summary>
+        public double gain;
         /// <summary>Set when this epoch triggered an assessment.</summary>
         public XgAssessment assessment;
     }

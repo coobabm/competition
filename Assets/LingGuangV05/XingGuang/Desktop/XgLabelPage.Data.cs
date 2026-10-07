@@ -3,6 +3,7 @@ using LingGuangV05.XingGuang;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -59,24 +60,24 @@ namespace LingGuangV05.Desktop.XingGuang
             if (o == null) { sourceSwitch.Show(false); return false; }
             int index = list.FindIndex(x => x.id == o.id) + 1;
             sourceSwitch.Show(list.Count > 1);
-            sourceSwitch.Set("⇄ " + T("来源 ", "Source ") + index + "/" + list.Count, true);
+            sourceSwitch.Set("⇄ " + Lang.T("来源 ") + index + "/" + list.Count, true);
             pack.SetGlyph(XgDataUi.Glyph(o.source));
 
-            string title = (o.source == XgDataSource.Public ? T("完整数据包", "Full data pack") : o.Name(En));
+            string title = (o.source == XgDataSource.Public ? Lang.T("完整数据包") : o.Name(En));
             string line = XgDataUi.SourceLine(o);
             if (!o.owned && !o.available) line = "<color=#D63031>" + T(o.lockedReason, o.lockedReasonEn) + "</color>  <size=11><color=#68748C>" + line + "</color></size>";
-            if (o.source == XgDataSource.Crowd && o.owned) line += T(" · 每秒 −¥", " · −¥") + N(o.samples * o.price, "0.00") + T("", "/s");
+            if (o.source == XgDataSource.Crowd && o.owned) line += Lang.T(" · 每秒 −¥") + N(o.samples * o.price, "0.00") + T("", "/s");
 
             string price; bool affordable; float toPrice, fill;
             if (o.downloading)
             {
                 double speed = Sim.AccelerateOfferCost(o.id);
-                price = T("加速 ¥", "Speed ¥") + Money(speed);
+                price = Lang.T("加速 ¥") + Money(speed);
                 affordable = Host.Money >= speed; toPrice = (float)o.downloadProgress; fill = (float)o.downloadProgress;
             }
             else if (o.source == XgDataSource.Crowd)
             {
-                price = o.owned ? T("撤包", "Withdraw") : T("发包", "Post");
+                price = o.owned ? Lang.T("撤包") : Lang.T("发包");
                 affordable = o.owned || o.available; toPrice = o.owned ? 1 : 0; fill = o.owned ? 1 : 0;
             }
             else if (o.owned) { price = "✓"; affordable = false; toPrice = 1; fill = 1; }
@@ -86,7 +87,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 affordable = o.available && Host.Money + 1e-9 >= o.price;
                 toPrice = o.price > 0 ? (float)(Host.Money / o.price) : 1; fill = 0;
             }
-            pack.Set(title, o.owned ? (o.source == XgDataSource.Crowd ? T("进行中", "Live") : T("已拥有", "Owned")) : o.SourceLabel(En), line, price, affordable, toPrice, fill);
+            pack.Set(title, o.owned ? (o.source == XgDataSource.Crowd ? Lang.T("进行中") : Lang.T("已拥有")) : o.SourceLabel(En), line, price, affordable, toPrice, fill);
             return true;
         }
 
@@ -94,7 +95,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim == null) return "";
             var o = PickedSource(Desk);
-            return o != null ? XgDataUi.OfferTip(Sim, o) : T("完整数据包：一次买下整套数据，不用手标就能训练。", "Full data pack: buy the whole dataset at once and train without labelling.");
+            return o != null ? XgDataUi.OfferTip(Sim, o) : Lang.T("完整数据包：一次买下整套数据，不用手标就能训练。");
         }
 
         /// <summary>Handles the row's button for downloads and non-public sources; false lets the tree buy the public pack.</summary>
@@ -104,7 +105,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (o == null) return false;
             if (o.downloading)
             {
-                if (Sim.AccelerateOffer(o.id, Host)) { pack.Celebrate(Fx, T("下完了", "Downloaded"), XgPalette.Accent, 1); view.Refresh(true); }
+                if (Sim.AccelerateOffer(o.id, Host)) { pack.Celebrate(Fx, Lang.T("下完了"), XgPalette.Accent, 1); host.Refresh(true); }
                 else pack.Deny(Fx);
                 return true;
             }
@@ -113,7 +114,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!ok) { pack.Deny(Fx); return true; }
             if (o.source != XgDataSource.Crowd || !o.owned) pack.Celebrate(Fx, o.SourceLabel(En), new Color32(18, 150, 140, 255), 1);
             else Fx.Play(XgJuice.Sfx.Id.Click);
-            view.Refresh(true);
+            host.Refresh(true);
             return true;
         }
     }

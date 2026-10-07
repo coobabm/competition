@@ -5,7 +5,7 @@ using System.Globalization;
 namespace LingGuangV05.XingGuang
 {
     /// <summary>What a step is about. The sticky note only treats <see cref="Side"/> differently (never the main line).</summary>
-    public enum XgGuideKind { Blocker, Setup, Main, Wall, Finale, Boost, Side, Done }
+    public enum XgGuideKind { Blocker, Setup, Main, Ability, Finale, Boost, Side, Done }
 
     /// <summary>
     /// One line of the to-do note: what to do, why, where it happens and how far along it is. The place is a plain
@@ -18,7 +18,7 @@ namespace LingGuangV05.XingGuang
         public string id = "", zh = "", en = "", whyZh = "", whyEn = "";
         public XgGuideKind kind;
         public string app = XgGuide.Lab, tab = "", target = "", arg = "";
-        /// <summary>Escalation level for steps that get more direct over time (the wall hint).</summary>
+        /// <summary>Escalation level for steps that get more direct over time.</summary>
         public int level;
         /// <summary>Progress towards the goal (goal 0 = none). Money progress is shown with ¥.</summary>
         public double current, goal;
@@ -56,16 +56,15 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// The objective engine behind the desktop's to-do note: a pure reading of the game state into an ordered list
     /// of steps. Blockers come first (no power, no card, a model too big for the card), then getting the loop going
-    /// (label, train, assess), then the stage's goal (sign what can be signed, push to the wall, get past it, or the
-    /// finale's chores), then cheap boosts. At most one optional side task is added, and only as the third line.
-    /// It changes nothing and never names a wall's golden setting: the wall hint escalates from the diagnosis page
-    /// to the forum to the secret card as minutes pass.
+    /// (label, train, assess), then the stage's goal (sign what can be signed, fill the shorter bar towards the next
+    /// ability, or the finale's chores), then cheap boosts. At most one optional side task is added, and only as the
+    /// third line. It changes nothing.
     /// </summary>
     public static class XgGuide
     {
         public const string Lab = "lingguang", Home = "home", Shop = "xunbao", Tieba = "tieba", Bodu = "bodu", YY = "yy", Games = "games";
-        /// <summary>Seconds after the wall shows before the hint moves on: to 周而复始, to the forum post, to the secret.</summary>
-        public const double ForumAfter = 240, NewbieAfter = 420, SecretAfter = 600;
+        /// <summary>摆渡众包: the 标注台 ("label") and 企业订单 ("contracts") pages moved there from the lab.</summary>
+        public const string Crowd = "zhongbao";
         /// <summary>A node counts as cheap when it costs at most this share of the wallet; a raise at most the second.</summary>
         public const double CheapNodeShare = .5, CheapRaiseShare = .25;
 
@@ -96,11 +95,9 @@ namespace LingGuangV05.XingGuang
             Contracts(sim, list);
             if (trainable)
             {
-                // A run stuck at chance gets a concrete knob to change (XgChanceHint.cs).
+                // A model that stopped improving gets the plain reason and where to fix it (XgChanceHint.cs).
                 XgChanceHint.Add(sim, list);
-                var wall = sim.ActiveWall;
-                if (wall != null) Wall(sim, wall, wallet, house, list);
-                else Practice(sim, list);
+                NextAbility(sim, list);
             }
             CheapNode(sim, wallet, list);
             Raise(sim, money, list);
@@ -134,21 +131,21 @@ namespace LingGuangV05.XingGuang
                 list.Add(Step("qc.frozen", XgGuideKind.Blocker, "账号被举报：等 " + clock + " 或去标注台申诉", "Account reported: wait " + clock + " or appeal on the labelling page",
                     "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。",
                     "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit.",
-                    Lab, "label", "name:QcAppeal", ""));
+                    Crowd, "label", "name:QcAppeal", ""));
             }
             if (house.appInstalled && sim.CaptchaPending)
             {
                 string clock = XgSim.FreezeClock(sim.CaptchaSecondsLeft);
                 list.Add(Step("qc.captcha", XgGuideKind.Blocker, "摆渡众包要人机验证：去标注台输入验证码（" + clock + "）", "Bodu Crowdsourcing wants a captcha: enter it on the labelling page (" + clock + ")",
                     "标得太快，平台怀疑是机器。答错或超时会暂停自动标注两分钟。", "Labelling this fast looks like a machine. A wrong or late answer pauses auto labelling for two minutes.",
-                    Lab, "label", "name:QcCaptcha", ""));
+                    Crowd, "label", "name:QcCaptcha", ""));
             }
             if (house.vramMB > 0 && house.appInstalled && sim.S.stage < 6)
             {
                 var track = TrainableTrack(sim);
                 if (sim.TrainingUnlocked(track) && XgSim.VramNeedMB(sim.Run(track)) > sim.Vram(new Wallet { vram = house.vramMB }))
-                    list.Add(Step("vram", XgGuideKind.Blocker, "模型太大放不下：把宽度或层数调小", "The model does not fit: lower the width or layers",
-                        "显存不够，这一轮根本跑不起来。", "Not enough VRAM; the epoch cannot even start.", Lab, "train", "name:Width", TrackArg(track)));
+                    list.Add(Step("vram", XgGuideKind.Blocker, "显存装不下最小的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Even the smallest model does not fit: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                        "模型是自动配置的，显卡装得下多大就用多大；现在连最小的都放不下。", "The model sizes itself to the card; right now not even the smallest fits.", Shop, "shop", "name:BuyGpu", ""));
             }
         }
 
@@ -161,7 +158,7 @@ namespace LingGuangV05.XingGuang
             string line = Math.Round(XgSim.QcReportRate * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
             list.Add(Step("qc.rate", XgGuideKind.Main, "抽检合格率偏低：调高「拿不准才问我」阈值，或先把模型练好", "Spot-check pass rate is low: raise the 'Ask when unsure' threshold, or train a better model first",
                 "摆渡众包近期合格率 " + pass + "；错误率到 " + line + " 账号会被举报冻结。", "Bodu Crowdsourcing's recent pass rate is " + pass + "; at a " + line + " error rate the account is reported and frozen.",
-                Lab, coop ? "label" : "tree", coop ? "name:ThresholdSlider" : "node:label.coop", ""));
+                coop ? Crowd : Lab, coop ? "label" : "tree", coop ? "name:ThresholdSlider" : "node:label.coop", ""));
         }
 
         // ───────────── getting the loop going ─────────────
@@ -174,7 +171,7 @@ namespace LingGuangV05.XingGuang
             int need = Math.Max(1, XgCatalog.SamplesToTrain - (int)Math.Floor(have));
             var s = Step("label." + desk.id, XgGuideKind.Setup, "去标注台标 " + need + " 条「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
                 "攒够 " + XgCatalog.SamplesToTrain + " 条数据才能开始训练。答对还有钱拿。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
-                Lab, "label", "label:是|Yes", desk.id);
+                Crowd, "label", "label:是|Yes", desk.id);
             s.current = have; s.goal = XgCatalog.SamplesToTrain;
             list.Add(s);
         }
@@ -219,123 +216,41 @@ namespace LingGuangV05.XingGuang
             XgContract best = null;
             foreach (var c in XgCatalog.Contracts) if (sim.CanSign(c) && (best == null || c.signBonus > best.signBonus)) best = c;
             if (best == null) return;
-            list.Add(Step("contract." + best.id, XgGuideKind.Main, "去订单签「" + best.job + "」", "Sign '" + best.jobEn + "' in Contracts",
-                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Lab, "contracts", "contract:" + best.id, ""));
+            list.Add(Step("contract." + best.id, XgGuideKind.Main, "去摆渡众包签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
+                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Crowd, "contracts", "contract:" + best.id, ""));
         }
 
-        static void Practice(XgSim sim, List<XgGuideStep> list)
+        /// <summary>
+        /// The main line (参数量与数据量主线): the next ability and the shorter of its two bars. Parameters only count
+        /// once a model of that size is assessed at grade C, so a big enough model is trained on; a small one grows.
+        /// </summary>
+        static void NextAbility(XgSim sim, List<XgGuideStep> list)
         {
-            var wall = XgSim.WallFor(sim.S.stage);
-            if (wall == null) return;
-            int goal = sim.PracticeStrict ? XgSim.PracticeFor(sim.S.stage) : XgSim.WallPracticeEpochs;
+            int next = sim.NextAbility;
+            if (next == 0) return;
+            string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            double p = sim.TrainedParamsK, pNeed = sim.ParamsThreshold(next), d = sim.TrainedSamples, dNeed = sim.SamplesThreshold(next);
+            bool paramsShort = p + 1e-9 < pNeed, dataShort = d + 1e-9 < dNeed;
+            if (!paramsShort && !dataShort) return;
             var track = TrainableTrack(sim);
-            if (sim.S.stageEpochs < goal)
+            if (paramsShort && (!dataShort || p / pNeed <= d / dNeed))
             {
-                var s = Step("practice." + sim.S.stage, XgGuideKind.Main, "继续训练，直到成绩不再上涨", "Keep training until the score stops rising",
-                    "多练一阵，就能看见它卡在哪。", "Train for a while and you will see where it gets stuck.", Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(track));
-                s.current = sim.S.stageEpochs; s.goal = goal;
-                list.Add(s);
+                string have = XgSim.ParamsText(p), need = XgSim.ParamsText(pNeed);
+                if (XgSim.ParamsK(sim.Run(track)) + 1e-9 >= pNeed)
+                    list.Add(Step("ability.train", XgGuideKind.Ability, "把这个大模型练到 C 级：参数 " + have + " / " + need, "Train this big model to grade C: parameters " + have + " / " + need,
+                        "「" + name + "」要练过的参数够数。评估到 C 级，这个模型的参数才算数。", "'" + nameEn + "' needs enough trained parameters. They count once this model is assessed at grade C.",
+                        Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(track)));
+                else
+                    list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + have + " / " + need, "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + have + " / " + need,
+                        "下一项能力「" + name + "」要更大的模型。买到宽度和层数，或者参数更多的结构，模型自己就会长大。", "The next ability, '" + nameEn + "', needs a bigger model. Buy width and layers, or a bigger structure, and the model grows by itself.",
+                        Lab, "tree", "", ""));
+                return;
             }
-            // Stage one's wall also waits for a first grade on either track.
-            if (sim.S.stage == 1 && sim.TrackGrade(XgTrack.Vision) < 1 && sim.TrackGrade(XgTrack.Sequence) < 1)
-            {
-                double best = 0;
-                foreach (var b in sim.S.best) if (!sim.IsWallDataset(b.dataset)) best = Math.Max(best, XgSim.Score(b.dataset, b.acc));
-                var s = Step("grade." + sim.S.stage, XgGuideKind.Main, "把一项成绩练到 C 级", "Get one score up to grade C",
-                    "评估分数过 " + XgCatalog.GradeScore[1] + " 就是 C。", "An assessment of " + XgCatalog.GradeScore[1] + " or more is a C.", Lab, "train", "label:评估|Assess", TrackArg(track));
-                s.current = best; s.goal = XgCatalog.GradeScore[1];
-                list.Add(s);
-            }
-        }
-
-        /// <summary>The forum post that talks about the same wall (the desktop falls back to the forum's front page).</summary>
-        public static string WallThread(string wallId)
-        {
-            switch (wallId)
-            {
-                case "length": return "tip_memory";
-                case "translation": return "tip_translate";
-                case "degrade": return "tip_deep";
-                case "parallel": return "tip_attention";
-                default: return "tip_wall";
-            }
-        }
-
-        static void Wall(XgSim sim, XgWall wall, Wallet wallet, XgGuideHouse house, List<XgGuideStep> list)
-        {
-            double since = sim.S.wallSeenAt > 0 ? Math.Max(0, sim.S.stageSeconds - sim.S.wallSeenAt) : 0;
-            var secret = wall.secret.Length > 0 && !sim.Has(wall.secret) ? XgCatalog.Node(wall.secret) : null;
-            int level = since >= SecretAfter && secret != null ? 3 : since >= NewbieAfter ? 2 : since >= ForumAfter ? (house.zhouAvailable ? 1 : 2) : 0;
-            string name = wall.name, nameEn = wall.nameEn;
-            XgGuideStep hint;
-            switch (level)
-            {
-                case 0:
-                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "撞墙了（" + name + "）：看看「诊断」页错在哪", "A wall (" + nameEn + "): see what goes wrong on the Diagnose page",
-                        "再练也不涨了。错题的规律就是线索。", "More training no longer helps. The pattern of mistakes is the clue.", Lab, "wall", "name:Diagnosis", "");
-                    break;
-                case 1:
-                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "问问贴吧的周而复始", "Ask 周而复始 on the forum",
-                        "他只回答问题，把你看到的错误讲给他听。", "He only answers questions: tell him what goes wrong.", Tieba, "chat", "", "laozhou");
-                    break;
-                case 2:
-                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "看看摆渡贴吧的新手帖", "Read the beginners' posts on the forum",
-                        "论坛里有人撞过同一堵墙。", "Someone on the forum hit the same wall.", Tieba, "thread", "", WallThread(wall.id));
-                    break;
-                default:
-                    hint = Step("wall." + wall.id, XgGuideKind.Wall, "实在卡住：技能树买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "' in the skill tree",
-                        "秘籍写明了配法。自己配出来有奖金，买了就没有了。", "The secret spells it out. Working it out yourself pays a bonus; buying gives that up.",
-                        Lab, "tree", "node:" + secret.id, "");
-                    double cost = sim.NodeCost(secret);
-                    if (wallet.money + 1e-9 < cost) { hint.current = wallet.money; hint.goal = cost; hint.money = true; }
-                    break;
-            }
-            hint.level = level;
-            list.Add(hint);
-
-            // The wall's own data has to be on the training page to pass it.
-            foreach (var check in wall.checks)
-            {
-                if (sim.WallCheckPassed(wall, check) || check.dataset.StartsWith("*", StringComparison.Ordinal)) continue;
-                var d = XgCatalog.Dataset(check.dataset);
-                if (d == null || sim.Run(d.track).dataset == d.id) continue;
-                list.Add(Step("wall.data." + d.id, XgGuideKind.Wall, "训练页换成「" + d.name + "」来练", "Switch the training page to " + d.nameEn,
-                    "这堵墙只认这份数据上的成绩。", "This wall only counts results on this data.", Lab, "train", "label:" + d.name + "|" + d.nameEn, TrackArg(d.track)));
-                break;
-            }
-
-            // The knobs the wall needs: buy what the wallet covers, name the rest without any setting.
-            var missing = new List<string>(); var missingEn = new List<string>();
-            string firstMissing = null;
-            foreach (var group in wall.needs)
-            {
-                bool met = false;
-                foreach (var id in group) if (sim.Has(id)) { met = true; break; }
-                if (met) continue;
-                XgNode buy = null;
-                foreach (var id in group) { var n = XgCatalog.Node(id); if (n != null && sim.Status(n, wallet) == XgSim.NodeStatus.Buyable) { buy = n; break; } }
-                if (buy != null)
-                {
-                    list.Add(Step("need." + buy.id, XgGuideKind.Wall, "技能树买「" + KnobName(buy, false) + "」", "Buy '" + KnobName(buy, true) + "' in the skill tree",
-                        "过这堵墙要用到它。", "Passing this wall needs it.", Lab, "tree", "node:" + buy.id, ""));
-                    continue;
-                }
-                var first = XgCatalog.Node(group[0]);
-                if (first == null) continue;
-                if (firstMissing == null) firstMissing = first.id;
-                missing.Add(KnobName(first, false)); missingEn.Add(KnobName(first, true));
-            }
-            if (missing.Count > 0)
-                list.Add(Step("needs." + wall.id, XgGuideKind.Wall, "准备好需要的旋钮：" + string.Join("、", missing), "Get the knobs it needs: " + string.Join(", ", missingEn),
-                    "技能树里还没解锁，或者钱还不够。", "Not unlocked in the skill tree yet, or not affordable yet.", Lab, "tree", "node:" + firstMissing, ""));
-        }
-
-        /// <summary>A node's name without numbers for layer and width caps (those numbers are part of golden settings).</summary>
-        static string KnobName(XgNode n, bool english)
-        {
-            if (n.kind == XgNodeKind.Depth) return english ? "more layers" : "更多层数";
-            if (n.kind == XgNodeKind.Width) return english ? "a wider layer" : "更宽的层";
-            return english ? n.nameEn : n.name;
+            var s = Step("ability.data", XgGuideKind.Ability, "攒数据：样本", "Gather data: samples",
+                "下一项能力「" + name + "」要更多数据。标注台答题，或在科技买数据包。", "The next ability, '" + nameEn + "', needs more data. Label on the desk, or buy data packs in the tech tree.",
+                Lab, "tree", "", "");
+            s.current = d; s.goal = dNeed;
+            list.Add(s);
         }
 
         // ───────────── stage six and the ending ─────────────
@@ -359,11 +274,11 @@ namespace LingGuangV05.XingGuang
             if (!s.abilities)
             {
                 bool dc = sim.Has("datacenter");
-                bool plateau = s.pretrain >= XgSim.PretrainPlateau - 1e-9 && !sim.PretrainScaleReady;
+                bool plateau = s.pretrain >= sim.PretrainCap - 1e-9 && !sim.PretrainScaleReady;
                 if (!dc && s.pretrainStalled)
                 {
                     var node = XgCatalog.Node("datacenter");
-                    var step = Step("final.datacenter", XgGuideKind.Finale, "技能树买「" + node.name + "」", "Buy the '" + node.nameEn + "' in the skill tree",
+                    var step = Step("final.datacenter", XgGuideKind.Finale, "科技买「" + node.name + "」", "Buy the '" + node.nameEn + "' in the tech tree",
                         "一台机箱扛不住预训练，一开就跳闸。", "One case cannot run pre-training; it trips the breaker.", Lab, "tree", "node:datacenter", "");
                     double cost = sim.NodeCost(node);
                     if (wallet.money + 1e-9 < cost) { step.current = wallet.money; step.goal = cost; step.money = true; }
@@ -371,21 +286,21 @@ namespace LingGuangV05.XingGuang
                 }
                 else if (dc && plateau)
                 {
-                    list.Add(Step("final.scale", XgGuideKind.Finale, "loss 不动了：序列线开得更宽更深，打开预热和位置标记", "The loss is flat: make the sequence model wider and deeper, turn on warm-up and positions",
-                        "预训练要规模，不是要更久。", "Pre-training needs scale, not more time.", Lab, "train", "name:Width", "sequence"));
+                    list.Add(Step("final.scale", XgGuideKind.Finale, "loss 不动了：" + sim.PretrainLimit(), "The loss is flat: " + sim.PretrainLimit(),
+                        "预训练要规模（参数和数据），不是要更久：每加一倍，loss 就低一截。", "Pre-training needs scale (parameters and data), not more time: every doubling lowers the loss a step.", Lab, "tree", "", ""));
                     foreach (var id in new[] { "warmup", "position" })
                     {
                         var n = XgCatalog.Node(id);
                         if (n == null || sim.Has(id)) continue;
-                        list.Add(Step("need." + id, XgGuideKind.Finale, "技能树买「" + n.name + "」", "Buy '" + n.nameEn + "' in the skill tree",
-                            "预训练要用到这个旋钮。", "Pre-training needs this knob.", Lab, "tree", "node:" + id, ""));
+                        list.Add(Step("need." + id, XgGuideKind.Finale, "科技买「" + n.name + "」", "Buy '" + n.nameEn + "' in the tech tree",
+                            "预训练要用到这个技巧，买到就自动开。", "Pre-training needs this technique; it switches on once bought.", Lab, "tree", "node:" + id, ""));
                     }
                     var secret = XgCatalog.Node("secret.6");
                     if (secret != null && !sim.Has(secret.id) && sim.NodeVisible(secret))
-                        list.Add(Step("final.secret", XgGuideKind.Finale, "实在卡住：技能树买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "'",
+                        list.Add(Step("final.secret", XgGuideKind.Finale, "实在卡住：科技买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "'",
                             "自己跑通能拿奖金，买了就没有了。", "Working it out yourself pays a bonus; buying it gives that up.", Lab, "tree", "node:secret.6", ""));
                     if (!s.pretrainRunning)
-                        list.Add(Step("final.pretrain", XgGuideKind.Finale, "调好后回终章页继续预训练", "Then resume pre-training on the Finale page",
+                        list.Add(Step("final.pretrain", XgGuideKind.Finale, "买齐后回终章页继续预训练", "Then resume pre-training on the Finale page",
                             "规模上去了，loss 才会接着降。", "With scale the loss keeps falling.", Lab, "final", "label:开始预训练|Start pre-training", ""));
                 }
                 else if (s.pretrainRunning)
@@ -440,8 +355,7 @@ namespace LingGuangV05.XingGuang
                 if (best == null || cost < sim.NodeCost(best)) best = n;
             }
             if (best == null) return;
-            bool wallStands = sim.ActiveWall != null;
-            list.Add(Step("node." + best.id, XgGuideKind.Boost, "技能树买「" + (wallStands ? KnobName(best, false) : best.name) + "」", "Buy '" + (wallStands ? KnobName(best, true) : best.nameEn) + "' in the skill tree",
+            list.Add(Step("node." + best.id, XgGuideKind.Boost, "科技买「" + best.name + "」", "Buy '" + best.nameEn + "' in the tech tree",
                 "不贵，买得起。", "Cheap, and you can afford it.", Lab, "tree", "node:" + best.id, ""));
         }
 
@@ -449,7 +363,7 @@ namespace LingGuangV05.XingGuang
         {
             if (sim.RaiseLevel >= XgCatalog.RaiseMax || sim.NextRaiseCost > money * CheapRaiseShare) return;
             list.Add(Step("raise", XgGuideKind.Boost, "标注台给自己加薪", "Give yourself a raise on the labelling page",
-                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Lab, "label", "name:Row薪", ""));
+                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Crowd, "label", "name:Row薪", ""));
         }
 
         /// <summary>Never empty. One optional side task goes on the third line, and only when two real steps sit above it.</summary>

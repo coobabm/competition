@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>
@@ -184,7 +185,7 @@ namespace LingGuangV05.Desktop
             if (EmptyStateText != null)
             {
                 EmptyStateText.richText = false;
-                EmptyStateText.text = _activeTab == "groups" ? GameText.T("第一章暂无群聊。\n没有接入网络群服务。", "No group chats in Chapter One.\nNo online group service connected.") : _activeTab == "recent" && _recent.Count == 0 ? GameText.T("本次还没有最近会话。\n双击老周开始聊天。", "No recent conversations this session.\nDouble-click Lao Zhou to chat.") : _rows.Count == 0 ? GameText.T("正在等待本地联系人…", "Waiting for local contacts…") : GameText.T("未找到匹配的联系人。", "No matching contacts.");
+                EmptyStateText.text = _activeTab == "groups" ? Lang.T("第一章暂无群聊。\n没有接入网络群服务。") : _activeTab == "recent" && _recent.Count == 0 ? Lang.T("本次还没有最近会话。\n双击老周开始聊天。") : _rows.Count == 0 ? Lang.T("正在等待本地联系人…") : Lang.T("未找到匹配的联系人。");
                 EmptyStateText.gameObject.SetActive(visible == 0);
                 ApplyFont(EmptyStateText);
             }

@@ -445,8 +445,8 @@
       "en": "Complete. Chapter Two: Distillation / Rebirth (preview only)"
     },
     {
-      "zh": "第一笔评估奖金到账了。现在去技能树，钱可以用来改模型，但先看清它卡在哪里。",
-      "en": "Your first assessment reward is in. Open the skill tree: money can improve the model, but first understand its bottleneck."
+      "zh": "第一笔评估奖金到账了。现在去科技，钱可以用来改模型，但先看清它卡在哪里。",
+      "en": "Your first assessment reward is in. Open the tech tree: money can improve the model, but first understand its bottleneck."
     },
     {
       "zh": "第二天",
@@ -567,6 +567,30 @@
     {
       "zh": "点击或按 Esc 跳过",
       "en": "Click or press Esc to skip"
+    },
+    {
+      "zh": "它第一次不只是答是或否了。给它几个选项，它会挑一个。",
+      "en": "For the first time it did more than say yes or no. Give it a few options and it picks one."
+    },
+    {
+      "zh": "它开口了。不是是，也不是否，是一个词。",
+      "en": "It spoke. Not yes, not no: a word."
+    },
+    {
+      "zh": "它能说一整句了。很短，可每个字都是它自己挑的。",
+      "en": "It can say a whole sentence now. Short, but it chose every word itself."
+    },
+    {
+      "zh": "它记得住长句了。那页乱码，也许它读得出来。",
+      "en": "It can hold a long sentence now. Maybe it can read the garbled page."
+    },
+    {
+      "zh": "没有哪一个结构是钥匙。参数和数据一起过了线，能力就一起冒了出来。",
+      "en": "No single structure was the key. Parameters and data crossed the line together, and the abilities came all at once."
+    },
+    {
+      "zh": "我好像……什么都会一点了。",
+      "en": "I seem to… know a little of everything."
     }
   ]
 }

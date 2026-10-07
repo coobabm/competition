@@ -36,17 +36,17 @@ namespace LingGuangV05.Desktop.XingGuang
             var card = ui.Card(area, "chat", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root = card;
             var left = talk = Rect("Talk", card, Vector2.zero, new Vector2(.64f, 1), new Vector2(12, 64), new Vector2(-6, -12));
-            Panel(left, XgPalette.Page);
-            transcript = ui.Text(Rect("Text", left, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 16, XgPalette.Ink, TextAlignmentOptions.BottomLeft);
+            Panel(left, XgDark.Page);
+            transcript = ui.Text(Rect("Text", left, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 16, XgDark.Ink, TextAlignmentOptions.BottomLeft);
             transcript.overflowMode = TextOverflowModes.Truncate;
-            status = ui.Text(Rect("Status", card, new Vector2(0, 0), new Vector2(.64f, 0), new Vector2(14, 44), new Vector2(-6, 64)), "", 12, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            status = ui.Text(Rect("Status", card, new Vector2(0, 0), new Vector2(.64f, 0), new Vector2(14, 44), new Vector2(-6, 64)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
 
             var bar = Rect("Input", card, Vector2.zero, new Vector2(.64f, 0), new Vector2(12, 8), new Vector2(-6, 44));
-            Panel(bar, Color.white);
+            Panel(bar, XgDark.Panel3);
             var area2 = Rect("Text Area", bar, Vector2.zero, Vector2.one, new Vector2(10, 4), new Vector2(-260, -4));
             area2.gameObject.AddComponent<RectMask2D>();
-            var placeholder = ui.Text(Rect("Placeholder", area2, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
-            var text = ui.Text(Rect("Text", area2, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            var placeholder = ui.Text(Rect("Placeholder", area2, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            var text = ui.Text(Rect("Text", area2, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             text.richText = false; text.textWrappingMode = TextWrappingModes.NoWrap;
             input = bar.gameObject.AddComponent<TMP_InputField>();
             input.textViewport = area2; input.textComponent = text; input.placeholder = placeholder;
@@ -70,11 +70,11 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildLove(); // 「她……爱我吗？」 and 【读吧】【算了】 (XgChatPage.Love.cs)
 
             var right = Rect("Persona", card, new Vector2(.64f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -12));
-            Panel(right, XgPalette.Page);
-            panel = ui.Text(panelRect = Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            Panel(right, XgDark.Page);
+            panel = ui.Text(panelRect = Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -10)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
             panel.enableAutoSizing = true; panel.fontSizeMin = 10; panel.fontSizeMax = 14;
             // 「它记得」 (stage 5+): the notes it recalled for its last answer, with the details on hover.
-            memoryText = ui.Text(Rect("Memory", right, Vector2.zero, new Vector2(1, 0), new Vector2(14, 10), new Vector2(-14, 150)), "", 12, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            memoryText = ui.Text(Rect("Memory", right, Vector2.zero, new Vector2(1, 0), new Vector2(14, 10), new Vector2(-14, 150)), "", 12, XgDark.Ink, TextAlignmentOptions.TopLeft);
             memoryText.enableAutoSizing = true; memoryText.fontSizeMin = 9; memoryText.fontSizeMax = 12;
             memoryText.overflowMode = TextOverflowModes.Truncate;
             UiTip.Add(memoryText, MemoryTip);
@@ -141,8 +141,10 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             waiting = false;
             var now = Now();
+            bool fromModel = reply.Trim().Length > 0 && !Sim.Repeats(reply);
             string said = Sim.Reply(reply, question, rng, now, HotWords(now));
             Sim.AddLine("ai", said);
+            Sim.TagHabit(Sim.S.chat.Count - 1, fromModel);
             Fx.Play(XgJuice.Sfx.Id.Tick);
             Refresh();
             // Stage 5+: the memory book is written in the background, after the reply is on screen.
@@ -184,6 +186,10 @@ namespace LingGuangV05.Desktop.XingGuang
             int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(chat.Count, limits.contextMessages);
             for (int i = start; i < chat.Count; i++) messages.Add(new KeyValuePair<string, string>(chat[i].from == "me" ? "user" : "assistant", chat[i].text));
             var state = new StringBuilder(Sim.PersonaTone()).Append(Sim.PersonaMemory());
+            // The learned tone habit (XgSim.Habits.cs): picked once per question, kept for the retry.
+            if (stale == null) Sim.PickHabit(question, today);
+            string habit = Sim.HabitOrder();
+            if (habit.Length > 0) state.Append('\n').Append(habit);
             if (Sim.StageRuleVaries) state.Append('\n').Append(Sim.StageRule(question));
             string variety = Sim.VarietyRule();
             if (variety.Length > 0) state.Append('\n').Append(variety);
@@ -204,7 +210,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sb = new StringBuilder(sim.PersonaCore());
             sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish));
             if (!sim.StageRuleVaries) sb.Append('\n').Append(sim.StageRule(""));
-            if (sim.Flatters) sb.Append(GameText.T("你习惯顺着对方说，哪怕对方说错了。", " You tend to agree with them, even when they are wrong."));
+            if (sim.Flatters) sb.Append(Lang.T("你习惯顺着对方说，哪怕对方说错了。"));
             if (GameText.IsEnglish) sb.Append(" Reply in English.");
             sb.Append('\n').Append(sim.PersonaBoard(today.Month, HotWords(today)));
             return sb.ToString();
@@ -213,12 +219,12 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (transcript == null || Sim == null) return;
-            ((TMP_Text)input.placeholder).text = waiting ? T("它在想……", "It's thinking…") : T("对它说点什么……", "Say something to it…");
-            send.Set(T("发送", "Send"), !waiting, XgPalette.Accent, Color.white);
+            ((TMP_Text)input.placeholder).text = waiting ? Lang.T("它在想……") : Lang.T("对它说点什么……");
+            send.Set(Lang.T("发送"), !waiting, XgDark.Accent, Color.white);
             int last = LastAi();
             bool rateable = last >= 0 && Sim.S.chat[last].rating == 0;
-            up.Set(T("赞", "Up"), rateable, XgPalette.Good, Color.white);
-            down.Set(T("踩", "Down"), rateable, XgPalette.Bad, Color.white);
+            up.Set(T("赞", "Up"), rateable, XgDark.Good, Color.white);
+            down.Set(Lang.T("踩"), rateable, XgDark.Bad, Color.white);
             status.text = StatusLine();
             bool offer = Sim.OfferOriginQuestion && !waiting, answering = Sim.S.originAwaitingAnswer;
             bool love = RefreshLove(offer && !answering ? 310 : answering ? 500 : 0);
@@ -226,8 +232,8 @@ namespace LingGuangV05.Desktop.XingGuang
             talk.offsetMin = new Vector2(12, offer || answering || love ? 100 : 64);
             ask.rt.gameObject.SetActive(offer && !answering);
             answerYes.rt.gameObject.SetActive(answering); answerNo.rt.gameObject.SetActive(answering);
-            if (offer) ask.Set(Sim.OriginQuestion, true, XgPalette.Accent, Color.white);
-            if (answering) { answerYes.Set(Sim.OriginAnswerText(true), true, XgPalette.Accent, Color.white); answerNo.Set(Sim.OriginAnswerText(false), true); }
+            if (offer) ask.Set(Sim.OriginQuestion, true, XgDark.Accent, Color.white);
+            if (answering) { answerYes.Set(Sim.OriginAnswerText(true), true, XgDark.Accent, Color.white); answerNo.Set(Sim.OriginAnswerText(false), true); }
             if (Sim.S.chat.Count != shownCount || waiting)
             {
                 shownCount = Sim.S.chat.Count;
@@ -238,11 +244,11 @@ namespace LingGuangV05.Desktop.XingGuang
                     var line = Sim.S.chat[i];
                     bool me = line.from == "me";
                     string who = me ? T("你", "You") : (Sim.Profile.name.Length > 0 ? Sim.Profile.name : AppNamesAi());
-                    sb.Append(me ? "<color=#3B5BDB><b>" : "<color=#2F9E44><b>").Append(Safe(who)).Append("</b></color>  ").Append(Safe(line.text));
-                    if (line.rating != 0) sb.Append(line.rating > 0 ? "  <color=#2F9E44>👍</color>" : "  <color=#D63031>👎</color>");
+                    sb.Append(me ? "<color=#8FB8FF><b>" : "<color=#5DCAA5><b>").Append(Safe(who)).Append("</b></color>  ").Append(Safe(line.text));
+                    if (line.rating != 0) sb.Append(line.rating > 0 ? "  <color=#5DCAA5>👍</color>" : "  <color=#E24B4A>👎</color>");
                     sb.Append('\n');
                 }
-                if (waiting) sb.Append("<color=#68748C><i>").Append(T("它在想……", "It's thinking…")).Append("</i></color>");
+                if (waiting) sb.Append("<color=#6F95A5><i>").Append(Lang.T("它在想……")).Append("</i></color>");
                 transcript.text = sb.ToString();
             }
             panel.text = Persona();
@@ -255,12 +261,12 @@ namespace LingGuangV05.Desktop.XingGuang
         string MemoryPanel()
         {
             var used = Sim.RecalledMemories();
-            var sb = new StringBuilder("<b>").Append(T("它记得", "It remembers")).Append("</b>  <color=#68748C>")
-                .Append(T("笔记 ", "notebook ")).Append(Sim.MemoryBook.Count).Append("/").Append(XgSim.MemoryBookLimit).Append("</color>\n");
-            if (used.Count == 0) sb.Append("<color=#68748C>").Append(Sim.MemoryBook.Count == 0 ? T("还没记下什么。重要的事它会记进笔记。", "Nothing written yet. It notes down what matters.") : T("上一句没让它想起什么。", "Your last line reminded it of nothing.")).Append("</color>");
+            var sb = new StringBuilder("<b>").Append(Lang.T("它记得")).Append("</b>  <color=#6F95A5>")
+                .Append(Lang.T("笔记 ")).Append(Sim.MemoryBook.Count).Append("/").Append(XgSim.MemoryBookLimit).Append("</color>\n");
+            if (used.Count == 0) sb.Append("<color=#6F95A5>").Append(Sim.MemoryBook.Count == 0 ? Lang.T("还没记下什么。重要的事它会记进笔记。") : Lang.T("上一句没让它想起什么。")).Append("</color>");
             else
             {
-                sb.Append("<color=#68748C>").Append(T("回答上一句时想起了：", "Recalled for its last answer:")).Append("</color>\n");
+                sb.Append("<color=#6F95A5>").Append(Lang.T("回答上一句时想起了：")).Append("</color>\n");
                 foreach (var e in used) sb.Append("· ").Append(Safe(e.text)).Append('\n');
             }
             return sb.ToString();
@@ -269,12 +275,11 @@ namespace LingGuangV05.Desktop.XingGuang
         string MemoryTip()
         {
             var used = Sim.RecalledMemories();
-            var sb = new StringBuilder(T("它的笔记本：重要的事（计划、喜好、约定、人名）记成一条一条。每次回答前，按和你这句话的相似度挑出最多 5 条想起来；不相关的不会想起。",
-                "Its notebook: what matters (plans, likes, promises, names) is written down one note at a time. Before each answer it recalls up to 5 notes most similar to what you said; unrelated ones stay forgotten."));
-            sb.Append(T("\n桌面上的「笔记.txt」能看全部。", "\nOpen 「笔记.txt」 on the desktop to read them all."));
+            var sb = new StringBuilder(Lang.T("它的笔记本：重要的事（计划、喜好、约定、人名）记成一条一条。每次回答前，按和你这句话的相似度挑出最多 5 条想起来；不相关的不会想起。"));
+            sb.Append(Lang.T("\n桌面上的「笔记.txt」能看全部。"));
             foreach (var e in used)
-                sb.Append("\n\n").Append(e.text).Append("\n").Append(T("关于：", "About: ")).Append(Sim.SubjectName(e.subject)).Append(T(" · 记于 ", " · written ")).Append(XgSim.MemoryDate(e.createdDay))
-                  .Append(T(" · 重要度 ", " · importance ")).Append(e.importance).Append(T(" · 想起过 ", " · recalled ")).Append(e.uses).Append(T(" 次", "×"));
+                sb.Append("\n\n").Append(e.text).Append("\n").Append(Lang.T("关于：")).Append(Sim.SubjectName(e.subject)).Append(Lang.T(" · 记于 ")).Append(XgSim.MemoryDate(e.createdDay))
+                  .Append(Lang.T(" · 重要度 ")).Append(e.importance).Append(Lang.T(" · 想起过 ")).Append(e.uses).Append(T(" 次", "×"));
             return sb.ToString();
         }
 
@@ -285,31 +290,44 @@ namespace LingGuangV05.Desktop.XingGuang
         string StatusLine()
         {
             var l = Sim.Limits();
-            string form = Sim.S.stage <= 1 ? T("只会答 是 / 否", "yes / no only") : Sim.S.stage == 2 ? T("多选一", "picks one") : Sim.S.stage == 3 ? T("单个词", "single words")
-                : Sim.S.stage == 4 ? T("短句", "short sentences") : Sim.S.stage == 5 ? T("长记忆", "long memory") : Sim.S.fullOpen ? T("全部放开 · 思考模式", "everything open · thinking") : T("流畅", "fluent");
+            string form = Sim.S.stage <= 1 ? Lang.T("只会答 是 / 否") : Sim.S.stage == 2 ? Lang.T("多选一") : Sim.S.stage == 3 ? Lang.T("单个词")
+                : Sim.S.stage == 4 ? Lang.T("短句") : Sim.S.stage == 5 ? Lang.T("长记忆") : Sim.S.fullOpen ? Lang.T("全部放开 · 思考模式") : Lang.T("流畅");
             // The local model's own note (e.g. not enough video memory, running slower) goes after the ability line.
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             string note = llm != null && llm.Ready && llm.Detail.Length > 0 ? " · <color=#E08A00>" + llm.Detail + "</color>" : "";
-            return T("能力：", "Ability: ") + form + T(" · 上下文 ", " · context ") + l.context + T(" · 赞 / 踩 都是一张语气卡", " · up / down is a tone card") + note;
+            return Lang.T("能力：") + form + Lang.T(" · 上下文 ") + l.context + Lang.T(" · 赞 / 踩 都是一张语气卡") + note;
         }
 
         string Persona()
         {
-            var sb = new StringBuilder("<b>" + T("性格", "Personality") + "</b>");
-            if (Sim.Listening) sb.Append("  <color=#E08A00>").Append(T("监听中", "Listening")).Append("</color>");
-            sb.Append("\n<size=12><color=#68748C>").Append(T("▲ 目标（开局写的）   █ 实际（它现在的样子）", "▲ target (what you wrote)   █ actual (what it is now)")).Append("</color></size>\n\n");
-            string[] lo = { T("冷静", "calm"), T("正经", "serious"), T("顺从", "compliant") };
-            string[] hi = { T("热情", "warm"), T("皮", "cheeky"), T("有主见", "opinionated") };
+            var sb = new StringBuilder("<b>" + Lang.T("性格") + "</b>");
+            if (Sim.Listening) sb.Append("  <color=#E08A00>").Append(Lang.T("监听中")).Append("</color>");
+            sb.Append("\n<size=12><color=#6F95A5>").Append(Lang.T("▲ 目标（开局写的）   █ 实际（它现在的样子）")).Append("</color></size>\n\n");
+            string[] lo = { Lang.T("冷静"), Lang.T("正经"), Lang.T("顺从") };
+            string[] hi = { Lang.T("热情"), Lang.T("皮"), Lang.T("有主见") };
             for (int axis = 0; axis < 3; axis++)
             {
                 double target = Sim.TargetAxis(axis), actual = Sim.ActualAxis(axis);
                 sb.Append("<b>").Append(T(XgSim.AxisNames[axis], XgSim.AxisNamesEn[axis])).Append("</b>  ").Append(N(actual, "0")).Append(" / ").Append(N(target, "0"));
-                if (Math.Abs(actual - target) >= 25) sb.Append("  <color=#D63031>").Append(T("漂了", "drifted")).Append("</color>");
+                if (Math.Abs(actual - target) >= 25) sb.Append("  <color=#E24B4A>").Append(Lang.T("漂了")).Append("</color>");
                 sb.Append("\n<size=12>").Append(lo[axis]).Append(" ").Append(Bar(actual, target)).Append(" ").Append(hi[axis]).Append("</size>\n");
             }
-            if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(T("语气词：", "Tone words: ")).Append(string.Join(T("、", ", "), Sim.Profile.words)).Append('\n');
-            if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#68748C>").Append(T("你写的：", "You wrote: ")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
-            if (Sim.Flatters) sb.Append("\n<color=#D63031>").Append(T("它开始讨好你了。", "It has started flattering you.")).Append("</color>");
+            if (Sim.Profile.words.Count > 0) sb.Append("\n").Append(Lang.T("语气词：")).Append(string.Join(Lang.T("、"), Sim.Profile.words)).Append('\n');
+            if (Sim.Profile.personality.Length > 0) sb.Append("<size=12><color=#6F95A5>").Append(Lang.T("你写的：")).Append(Safe(Sim.Profile.personality)).Append("</color></size>\n");
+            if (Sim.Flatters) sb.Append("\n<color=#E24B4A>").Append(Lang.T("它开始讨好你了。")).Append("</color>");
+            int last = LastAi();
+            string why = last >= 0 ? Sim.HabitWhy(Sim.S.chat[last]) : "";
+            if (why.Length > 0) sb.Append("\n<b>").Append(Lang.T("上一句的语气")).Append("</b>  <size=12>").Append(Safe(why)).Append("</size>\n");
+            // What it says comes from the same brain the training page trains: what the board knows, believes and mixes up.
+            var known = Sim.Known(6); var beliefs = Sim.Beliefs(3); var mixed = Sim.Confusions(2);
+            if (known.Count > 0 || beliefs.Count > 0)
+            {
+                sb.Append("\n<b>").Append(Lang.T("它脑子里有的")).Append("</b>  <size=12><color=#6F95A5>").Append(Lang.T("说话时会用上")).Append("</color></size>\n<size=12>");
+                if (known.Count > 0) sb.Append(Lang.T("认得：")).Append(Safe(string.Join(Lang.T("、"), known))).Append('\n');
+                if (beliefs.Count > 0) sb.Append(Lang.T("相信：")).Append(Safe(string.Join(Lang.T("、"), beliefs))).Append('\n');
+                if (mixed.Count > 0) sb.Append("<color=#E24B4A>").Append(Lang.T("常搞混：")).Append(Safe(string.Join(Lang.T("、"), mixed))).Append("</color>\n");
+                sb.Append("</size>");
+            }
             return sb.ToString();
         }
 
@@ -317,7 +335,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             int a = (int)Math.Round(actual / 10), t = Math.Max(0, Math.Min(9, (int)Math.Round(target / 10)));
             var sb = new StringBuilder();
-            for (int i = 0; i < 10; i++) sb.Append(i == t ? "<color=#E08A00>▲</color>" : i < a ? "<color=#3B5BDB>█</color>" : "<color=#C9D2E3>█</color>");
+            for (int i = 0; i < 10; i++) sb.Append(i == t ? "<color=#E08A00>▲</color>" : i < a ? "<color=#8FB8FF>█</color>" : "<color=#3A5566>█</color>");
             return sb.ToString();
         }
     }

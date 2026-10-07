@@ -34,15 +34,83 @@ namespace LingGuangV05.Desktop.XingGuang
         public static readonly Color[] Tiers = { Color.white, new Color32(120, 230, 150, 255), new Color32(255, 180, 80, 255), new Color32(255, 90, 90, 255), new Color32(255, 214, 60, 255) };
     }
 
+    /// <summary>
+    /// The dark scanner palette of 灵光.exe (the approved redesign, lingguang-redesign/index.html), with the same names as
+    /// <see cref="XgPalette"/> so a 灵光 page reads XgDark.Ink where a 摆渡众包 page reads XgPalette.Ink. 摆渡众包 keeps
+    /// the light palette. The extra names (Panel, Dim, Params, Data, …) are the mockup's own colours.
+    /// </summary>
+    public static class XgDark
+    {
+        public static readonly Color Page = new Color32(7, 12, 18, 255);
+        public static readonly Color Card = new Color32(14, 24, 35, 255);
+        public static readonly Color Line = new Color32(40, 71, 90, 255);
+        public static readonly Color Hud = new Color32(11, 19, 28, 255);
+        public static readonly Color HudChip = new Color32(18, 33, 48, 255);
+        public static readonly Color Ink = new Color32(214, 238, 245, 255);
+        public static readonly Color Muted = new Color32(111, 149, 165, 255);
+        public static readonly Color Accent = new Color32(42, 138, 112, 255);
+        public static readonly Color AccentSoft = new Color32(15, 42, 42, 255);
+        public static readonly Color Money = new Color32(250, 199, 117, 255);
+        public static readonly Color Good = new Color32(93, 202, 165, 255);
+        public static readonly Color Bad = new Color32(226, 75, 74, 255);
+        public static readonly Color Button = new Color32(18, 33, 48, 255);
+        public static readonly Color Disabled = new Color32(13, 21, 30, 255);
+        public static readonly Color Star = new Color32(255, 214, 102, 255);
+        public static readonly Color Gold = new Color32(255, 190, 40, 255);
+        public static readonly Color Paper = new Color32(18, 30, 42, 255);
+        public static readonly Color[] Grades = { new Color32(111, 149, 165, 255), new Color32(93, 202, 165, 255), new Color32(93, 168, 232, 255), new Color32(169, 155, 242, 255), new Color32(250, 199, 117, 255) };
+        public static readonly Color[] Tiers = XgPalette.Tiers;
+
+        // The mockup's own names.
+        /// <summary>The title bar and the window frame.</summary>
+        public static readonly Color Frame = new Color32(5, 9, 14, 255);
+        /// <summary>Top bar, nav and status bar.</summary>
+        public static readonly Color Panel = new Color32(11, 19, 28, 255);
+        /// <summary>Raised cells and hovered rows.</summary>
+        public static readonly Color Panel3 = new Color32(18, 33, 48, 255);
+        /// <summary>Hairlines between rows.</summary>
+        public static readonly Color Hairline = new Color32(27, 45, 59, 255);
+        /// <summary>Group labels, dates, the quietest text.</summary>
+        public static readonly Color Dim = new Color32(58, 85, 102, 255);
+        /// <summary>The grid lines of the page background.</summary>
+        public static readonly Color Grid = new Color32(12, 24, 34, 255);
+        /// <summary>The bar tracks.</summary>
+        public static readonly Color Track = new Color32(21, 38, 47, 255);
+        /// <summary>Trained parameters (purple) and samples (blue): the two bars of the main line.</summary>
+        public static readonly Color Params = new Color32(169, 155, 242, 255);
+        public static readonly Color Data = new Color32(93, 168, 232, 255);
+        public static readonly Color Hot = new Color32(239, 159, 39, 255);
+        public static readonly Color Link = new Color32(143, 184, 255, 255);
+        /// <summary>A learned cell or the selected nav row (dark teal under the green rim).</summary>
+        public static readonly Color OnFill = new Color32(15, 42, 42, 255);
+    }
+
+    /// <summary>
+    /// A 1-pixel rim around a dark button that lights green under the pointer (dark buttons cannot be tinted lighter by
+    /// the Button's colour multiplier).
+    /// </summary>
+    public sealed class XgHoverRim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        public Outline rim;
+        public Color rest = XgDark.Line, hot = XgDark.Good;
+        bool over;
+        public void OnPointerEnter(PointerEventData e) { over = true; Apply(); }
+        public void OnPointerExit(PointerEventData e) { over = false; Apply(); }
+        void OnDisable() { over = false; Apply(); }
+        public void Apply() { if (rim != null) rim.effectColor = over ? hot : rest; }
+    }
+
     public sealed class XgBtn
     {
         public Button button; public Image image; public TMP_Text label; public RectTransform rt;
+        /// <summary>Drawn by a dark (灵光) kit: the defaults come from <see cref="XgDark"/>.</summary>
+        public bool dark;
         public void Set(string text, bool interactable, Color? fill = null, Color? ink = null)
         {
             if (label.text != text) label.text = text;
             button.interactable = interactable;
-            image.color = interactable ? (fill ?? XgPalette.Button) : XgPalette.Disabled;
-            label.color = interactable ? (ink ?? XgPalette.Ink) : XgPalette.Muted;
+            image.color = interactable ? (fill ?? (dark ? XgDark.Button : XgPalette.Button)) : dark ? XgDark.Disabled : XgPalette.Disabled;
+            label.color = interactable ? (ink ?? (dark ? XgDark.Ink : XgPalette.Ink)) : dark ? XgDark.Dim : XgPalette.Muted;
         }
         public void Show(bool on) { if (button.gameObject.activeSelf != on) button.gameObject.SetActive(on); }
     }
@@ -63,7 +131,9 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public readonly TMP_FontAsset font;
         public readonly WindowManager window;
-        public XgUi(TMP_FontAsset font, WindowManager window) { this.font = font; this.window = window; }
+        /// <summary>The 灵光.exe kit: cards and buttons in <see cref="XgDark"/>. 摆渡众包's kit stays light.</summary>
+        public readonly bool dark;
+        public XgUi(TMP_FontAsset font, WindowManager window, bool dark = false) { this.font = font; this.window = window; this.dark = dark; }
 
         public static bool En => GameText.IsEnglish;
         public static string T(string zh, string en) => GameText.T(zh, en);
@@ -97,9 +167,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public RectTransform Card(RectTransform parent, string name, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
         {
             var border = Rect(name, parent, min, max, offMin, offMax);
-            Panel(border, XgPalette.Line);
+            Panel(border, dark ? XgDark.Line : XgPalette.Line);
             var inner = Rect("Inner", border, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1));
-            Panel(inner, XgPalette.Card).raycastTarget = false;
+            Panel(inner, dark ? XgDark.Card : XgPalette.Card).raycastTarget = false;
             return border;
         }
 
@@ -118,7 +188,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgBtn Button(Transform parent, string label, UnityAction onClick, float size)
         {
             var rt = Rect("Button", parent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-            var img = Panel(rt, XgPalette.Button);
+            var img = Panel(rt, dark ? XgDark.Button : XgPalette.Button);
             var button = rt.gameObject.AddComponent<Button>();
             button.targetGraphic = img;
             var colors = button.colors;
@@ -127,9 +197,17 @@ namespace LingGuangV05.Desktop.XingGuang
             button.colors = colors;
             if (onClick != null) button.onClick.AddListener(onClick);
             if (window != null) rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = window;
-            var text = Text(Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(6, 0), new Vector2(-6, 0)), label, size, XgPalette.Ink, TextAlignmentOptions.Center);
+            if (dark)
+            {
+                // The mockup's .btn: a hairline rim that turns green under the pointer.
+                var rim = rt.gameObject.AddComponent<Outline>();
+                rim.effectDistance = new Vector2(1, -1);
+                var hover = rt.gameObject.AddComponent<XgHoverRim>();
+                hover.rim = rim; hover.Apply();
+            }
+            var text = Text(Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(6, 0), new Vector2(-6, 0)), label, size, dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.Center);
             text.textWrappingMode = TextWrappingModes.NoWrap;
-            return new XgBtn { button = button, image = img, label = text, rt = rt };
+            return new XgBtn { button = button, image = img, label = text, rt = rt, dark = dark };
         }
 
         public static void Place(XgBtn b, RectTransform at) { Copy(at, b.rt); UnityEngine.Object.Destroy(at.gameObject); }

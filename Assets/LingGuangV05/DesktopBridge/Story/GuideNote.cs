@@ -6,6 +6,7 @@ using LingGuangV05.Core.Forum;
 using LingGuangV05.Desktop.Bodu;
 using LingGuangV05.Desktop.Tieba;
 using LingGuangV05.Desktop.XingGuang;
+using LingGuangV05.Desktop.Zhongbao;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
 using Michsky.DreamOS;
@@ -168,7 +169,7 @@ namespace LingGuangV05.Desktop.Story
             foldButton.colors = Tint(0, .18f, .3f);
             foldButton.onClick.AddListener(() => { collapsed = !collapsed; Layout(); });
             foldLabel = d.Text(PrologueDesk.Rect("Label", fold, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "–", 18, Soft, TextAlignmentOptions.Center);
-            UiTip.Add(fold, () => collapsed ? GameText.T("展开便笺", "Unfold the note") : GameText.T("收起便笺", "Fold the note"));
+            UiTip.Add(fold, () => collapsed ? Lang.T("展开便笺") : Lang.T("收起便笺"));
 
             for (int i = 0; i < rows.Length; i++)
             {
@@ -238,9 +239,9 @@ namespace LingGuangV05.Desktop.Story
             string date = GameText.IsEnglish ? now.ToString("MMM d", System.Globalization.CultureInfo.InvariantCulture) : now.Month + "月" + now.Day + "日";
             // 女友系统 §7: the note never hints at her feelings, only names the day.
             var holiday = LingGuangV05.Core.Girlfriend.GirlfriendRules.HolidayOn(now);
-            if (holiday != null && holiday.wish.Length > 0) date += holiday.key == "birthday" ? GameText.T(" · 今天晴雯生日", " · Qingwen's birthday today") : GameText.T(" · 今天" + holiday.zh, " · " + holiday.en + " today");
+            if (holiday != null && holiday.wish.Length > 0) date += holiday.key == "birthday" ? Lang.T(" · 今天晴雯生日") : GameText.T(" · 今天" + holiday.zh, " · " + holiday.en + " today");
             var first = shown.Count > 0 ? shown[0] : null;
-            title.text = collapsed && first != null ? GameText.T("待办：", "To do: ") + first.Text(GameText.IsEnglish) : GameText.T("待办 · ", "To do · ") + date;
+            title.text = collapsed && first != null ? Lang.T("待办：") + first.Text(GameText.IsEnglish) : Lang.T("待办 · ") + date;
             foldLabel.text = collapsed ? "+" : "–";
             float y = TitleHeight + 6;
             for (int i = 0; i < rows.Length; i++)
@@ -296,6 +297,7 @@ namespace LingGuangV05.Desktop.Story
             switch (step.app)
             {
                 case XgGuide.Lab: StartCoroutine(GoLab(step)); break;
+                case XgGuide.Crowd: StartCoroutine(GoCrowd(step)); break;
                 case XgGuide.Home: case XgGuide.Shop: case XgGuide.YY: StartCoroutine(GoApp(step)); break;
                 case XgGuide.Tieba: GoTieba(step); break;
                 case XgGuide.Bodu:
@@ -327,6 +329,23 @@ namespace LingGuangV05.Desktop.Story
             if (c.View != null) XgGuideHighlight.Show(c.View, step.tab, step.target);
         }
 
+        /// <summary>摆渡众包's 标注台 and 企业订单 (moved out of the lab): open it on the page, then ring the control.</summary>
+        IEnumerator GoCrowd(XgGuideStep step)
+        {
+            var c = Lab();
+            if (c != null && c.Sim != null && step.tab == "label" && step.arg.Length > 0) c.Sim.SelectDesk(step.arg);
+            if (router == null || !router.Open(XgGuide.Crowd, string.IsNullOrEmpty(step.tab) ? null : step.tab)) yield break;
+            var crowd = ZhongbaoView.Instance;
+            for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime)
+            {
+                if (crowd != null && crowd.Visible && (string.IsNullOrEmpty(step.tab) || crowd.Tab == step.tab)) break;
+                yield return null;
+            }
+            // Pages build some rows on refresh; give them a frame or two.
+            yield return null; yield return null;
+            if (crowd != null) crowd.Highlight(step.tab, step.target);
+        }
+
         IEnumerator GoApp(XgGuideStep step)
         {
             if (router == null) yield break;
@@ -346,7 +365,7 @@ namespace LingGuangV05.Desktop.Story
             if (where == "chat" && hub.S != null && !hub.CanMessage(what)) { where = "home"; what = ""; }
             if (where == "thread")
             {
-                // The wall's own post may not be dated yet: fall back to the general ones, then the front page.
+                // The step's own post may not be dated yet: fall back to the general ones, then the front page.
                 var context = hub.Context();
                 what = null;
                 foreach (var id in new[] { step.arg, "tip_wall", "tip_data" })

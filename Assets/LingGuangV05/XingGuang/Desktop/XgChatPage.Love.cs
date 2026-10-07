@@ -30,13 +30,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (offer)
             {
                 loveAsk.rt.offsetMin = new Vector2(x, 0); loveAsk.rt.offsetMax = new Vector2(x + 220, 0);
-                loveAsk.Set(Sim.LoveQuestion, true, XgPalette.Accent, Color.white);
+                loveAsk.Set(Sim.LoveQuestion, true, XgDark.Accent, Color.white);
             }
             if (consent)
             {
                 loveRead.rt.offsetMin = new Vector2(x, 0); loveRead.rt.offsetMax = new Vector2(x + 130, 0);
                 loveSkip.rt.offsetMin = new Vector2(x + 140, 0); loveSkip.rt.offsetMax = new Vector2(x + 270, 0);
-                loveRead.Set("【" + Sim.LoveConsentText(true) + "】", true, XgPalette.Accent, Color.white);
+                loveRead.Set("【" + Sim.LoveConsentText(true) + "】", true, XgDark.Accent, Color.white);
                 loveSkip.Set("【" + Sim.LoveConsentText(false) + "】", true);
             }
             return offer || consent;
@@ -45,8 +45,16 @@ namespace LingGuangV05.Desktop.XingGuang
         void AskLove()
         {
             if (waiting || !Sim.OfferLoveQuestion) return;
+            bool early = Sim.S.stage < LingGuangV05.XingGuang.XgSim.LoveStage, first = early && Sim.S.loveEarlyAsked == 0;
+            string word = Sim.EarlyLoveAnswer;
             input.text = Sim.LoveQuestion;
             Send();
+            if (!first) return;
+            // The first time it answers with one word it cannot possibly know. He knows it, and still feels something.
+            bool yes = word == T("是。", "Yes.");
+            LingGuangV05.Desktop.Story.InnerVoice.Say("……它连她是谁都不知道。", "…It doesn't even know who she is.", 2.4f);
+            if (yes) LingGuangV05.Desktop.Story.InnerVoice.Say("……可我居然有点高兴。", "…And yet I'm a little happy.", 2.4f);
+            else LingGuangV05.Desktop.Story.InnerVoice.Say("……它就会这两个字。别当真。", "…Those are the only two words it knows. Don't take it seriously.", 2.6f);
         }
 
         void AnswerLove(bool read)

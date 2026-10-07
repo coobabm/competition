@@ -22,12 +22,13 @@ namespace LingGuangV05.Desktop.LLM
             "回复要像真人打字：口语、简短，一般 1 到 3 句；不用 markdown、不用列表、不加引号、不写动作描写；不要说自己是 AI 或模型。";
 
         const string Rules =
-            AppNames.AppZh + "的玩法（给建议时以此为准）：在" + AppNames.AppZh + "的「标注台」看题点「是」或「否」，答对给钱、多一条样本，答错不给钱、连击清零、那条作废；" +
-            "标注台有手写数字、唐诗、逻辑题，后来还有弹幕、垃圾短信、标题党、刷单评论、验证码、表情包、中式英语、围棋；" +
-            "某条线够 12 条样本就能训练：在「训练」页按「训练一轮」，按一下一轮，每 4 轮评估一次打分（0 到 1000，D C B A S），刷新纪录才给钱、自动存成检查点；" +
-            "连击是标注和训练共用的，答错、太慢、NaN 都会清零，连击越高钱和训练越多；钱拿去「技能树」买层数、宽度、学习率旋钮、数据包、新架构和自动化，每个阶段的必修节点买齐、看懂瓶颈才能突破到下一阶段；" +
-            "学习率太大会 loss = NaN、退回一半进度；新显卡在「淘货」买，旧卡在「喵鱼」卖，电费在「家庭」交。" +
-            "开局是感知机，只有数字与垃圾短信两桌；其它桌买对应包才出现。科技树按阶段横向展开，先观察实际瓶颈，再听说明和购买突破。不要叫玩家点击尚未出现的页签或桌。";
+            AppNames.AppZh + "的玩法（给建议时以此为准）：在「摆渡众包」的「标注台」看题点「是」或「否」，答对给钱、多一条样本，答错不给钱、连击清零、那条作废；" +
+            "标注台有算术、手写数字、唐诗、逻辑题，后来还有弹幕、垃圾短信、标题党、刷单评论、验证码、表情包、围棋；" +
+            "某条线够 12 条样本就能训练：在「训练」页按「训练一轮」，按一下一轮，每轮练完自动考一次打分（0 到 1000，D C B A S），刷新纪录才给钱、自动存成检查点；" +
+            "连击是标注和训练共用的，答错、太慢都会清零，连击越高钱和训练越多；钱拿去「科技」买层数、宽度、数据包和自动化，「道具」买新结构和技巧；" +
+            "训练不用调参数：模型自动用最好的结构、显卡装得下的最大尺寸、买到的技巧全开；参数量和样本够就一直涨，不够就涨不动；偶尔会退步一点（数据太少、太脏、刚涨一大截时更容易），学会的能力不会丢；" +
+            "新显卡在「淘货」买，旧卡在「喵鱼」卖，电费在「家庭」交；签订单在「摆渡众包」的「企业订单」。" +
+            "开局是感知机，有算术、逻辑题、垃圾短信三桌（算术最简单，逻辑题最值钱）；其它桌买对应包才出现。科技按阶段横向展开，先观察实际瓶颈，再听说明和购买突破。不要叫玩家点击尚未出现的页签或桌。";
 
         public static int MaxTokens(string contact, XgSim lab)
         {
@@ -185,7 +186,7 @@ namespace LingGuangV05.Desktop.LLM
         static string LingGuangFacts(XgSim lab)
         {
             if (lab == null) return "";
-            return "你学过的东西：手写数字 " + N(lab.Samples("mnist")) + " 条，唐诗 " + N(lab.Samples("poems")) + " 条，逻辑题 " + N(lab.Samples("logic")) + " 题；现在是第 " + lab.S.stage + " 阶段。";
+            return "你学过的东西：算术 " + N(lab.Samples("arith")) + " 题，手写数字 " + N(lab.Samples("mnist")) + " 条，唐诗 " + N(lab.Samples("poems")) + " 条，逻辑题 " + N(lab.Samples("logic")) + " 题；现在是第 " + lab.S.stage + " 阶段。";
         }
 
         /// <summary>灵光's identity and its stage's speech rules.</summary>
@@ -218,7 +219,7 @@ namespace LingGuangV05.Desktop.LLM
             {
                 sb.Append("；当前技术阶段 ").Append(lab.S.stage).Append("；当前已开放标注桌：");
                 foreach (var desk in lab.OpenDesks()) sb.Append(desk.name).Append("、");
-                sb.Append("；标注样本：数字 ").Append(N(lab.Samples("mnist"))).Append("、唐诗 ").Append(N(lab.Samples("poems"))).Append("、逻辑题 ").Append(N(lab.Samples("logic")))
+                sb.Append("；标注样本：算术 ").Append(N(lab.Samples("arith"))).Append("、数字 ").Append(N(lab.Samples("mnist"))).Append("、唐诗 ").Append(N(lab.Samples("poems"))).Append("、逻辑题 ").Append(N(lab.Samples("logic")))
                   .Append("（逻辑题难度 ").Append(lab.LogicLevel).Append("/5）");
                 foreach (var run in lab.Runs)
                 {
@@ -228,8 +229,8 @@ namespace LingGuangV05.Desktop.LLM
                       .Append("，最佳 ").Append(lab.BestAcc(d.id) > 0 ? XgCatalog.GradeNames[XgSim.Grade(lab.BestScore(d.id))] + " " + lab.BestScore(d.id).ToString("0") + " 分（" + Pct(lab.BestAcc(d.id)) + "）" : "还没评估");
                 }
                 sb.Append("；订单 ").Append(lab.S.contracts.Count).Append(" 个，每秒 ¥").Append(lab.IncomePerSecond.ToString("0.0", CultureInfo.InvariantCulture))
-                  .Append("；炸过 NaN ").Append(lab.S.nanEvents).Append(" 次")
-                  .Append("；最高连击 ").Append(lab.S.bestCombo).Append("；技能树自动化 ").Append(lab.AutoTrainLevel).Append(" 级");
+                  .Append("；训练退步过 ").Append(lab.S.drops).Append(" 次")
+                  .Append("；最高连击 ").Append(lab.S.bestCombo).Append("；科技自动化 ").Append(lab.AutoTrainLevel).Append(" 级");
             }
             return sb.ToString();
         }

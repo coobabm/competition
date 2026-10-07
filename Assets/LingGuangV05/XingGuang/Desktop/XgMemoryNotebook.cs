@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -62,23 +63,23 @@ namespace LingGuangV05.Desktop.XingGuang
             if (window != null && body != null && shownRevision != bound.S.memoryRevision) Fill();
         }
 
-        static string Label() => T("笔记.txt", "notes.txt");
+        static string Label() => Lang.T("笔记.txt");
 
         void MakeIcon(PrologueDesk desk)
         {
             english = GameText.IsEnglish;
             icon = desk.notepadIcon != null ? desk.Icon("Memory Notebook", Label(), desk.notepadIcon) : desk.Icon("Memory Notebook", Label(), null, desk.DrawBlankFile);
             icon.GetComponent<PrologueClick>().Open = () => Open(desk);
-            UiTip.Add(icon, () => T("它自己记的笔记：你们聊过的重要的事。只读。", "Its own notes: the important things you talked about. Read-only."));
+            UiTip.Add(icon, () => Lang.T("它自己记的笔记：你们聊过的重要的事。只读。"));
         }
 
         void Open(PrologueDesk desk)
         {
             if (window != null) { window.SetAsLastSibling(); return; }
-            var client = desk.Window("Memory Notebook Window", Label() + T(" - 记事本（只读）", " - Notepad (read-only)"), new Vector2(-60, 40), new Vector2(720, 460), out window, () => { window = null; body = null; });
+            var client = desk.Window("Memory Notebook Window", Label() + Lang.T(" - 记事本（只读）"), new Vector2(-60, 40), new Vector2(720, 460), out window, () => { window = null; body = null; });
             var menu = PrologueDesk.Rect("Menu", client, new Vector2(0, 1), Vector2.one, new Vector2(0, -30), Vector2.zero);
             PrologueDesk.Fill(menu, new Color32(245, 246, 248, 255));
-            desk.Text(PrologueDesk.Rect("Items", menu, Vector2.zero, Vector2.one, new Vector2(10, 0), Vector2.zero), T("文件(F)  编辑(E)  格式(O)  查看(V)  帮助(H)", "File  Edit  Format  View  Help"), 15, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+            desk.Text(PrologueDesk.Rect("Items", menu, Vector2.zero, Vector2.one, new Vector2(10, 0), Vector2.zero), Lang.T("文件(F)  编辑(E)  格式(O)  查看(V)  帮助(H)"), 15, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
 
             var viewport = PrologueDesk.Rect("Viewport", client, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -38));
             PrologueDesk.Fill(viewport, Color.white);

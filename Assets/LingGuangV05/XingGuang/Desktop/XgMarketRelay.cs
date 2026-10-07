@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using LingGuangV05.Core;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.YY;
@@ -10,7 +9,7 @@ using UnityEngine;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// Carries the lab's market events to the desktop: 摆渡众包 tray popups for 新题型 and 甲方高价单, the 网吧 friends'
+    /// Carries the lab's market events to the desktop: 摆渡众包 tray popups for 新题型, the 网吧 friends'
     /// lines into the YY group (from the lab's persistent outbox, one every couple of seconds, only once YY is up),
     /// and the desktop clock's time of day into the lab (the 网吧 boss works nights). Attaches itself next to the
     /// 灵光 controller at scene load, so neither the controller nor the scene needs editing. Presentation only.
@@ -34,8 +33,6 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static string T(string zh, string en) => GameText.T(zh, en);
         static string Who => T("摆渡众包", "Bodu Crowdsourcing");
-        static string Yuan(double v) => "¥" + v.ToString(v >= 10 ? "0" : "0.##", CultureInfo.InvariantCulture);
-        static string Pct(double v) => (v * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
         static void Popup(string text, float seconds) { PrologueDirector.Desk?.Popup(Who, text, seconds); }
 
         void Update()
@@ -54,14 +51,12 @@ namespace LingGuangV05.Desktop.XingGuang
             Unsubscribe();
             bound = sim;
             bound.MemeDrifted += OnDrifted;
-            bound.SlaSettled += OnSettled;
         }
 
         void Unsubscribe()
         {
             if (bound == null) return;
             bound.MemeDrifted -= OnDrifted;
-            bound.SlaSettled -= OnSettled;
         }
 
         void OnDestroy() { Unsubscribe(); }
@@ -87,32 +82,6 @@ namespace LingGuangV05.Desktop.XingGuang
             int month = notice.month % 100;
             Popup(T(string.Join("、", zh) + "题库更新：" + month + " 月新梗「" + notice.meme + "」\n检查点在这些桌上的准确率 −15%，手标或重新训练能追回来。",
                 string.Join(", ", en) + ": question bank updated with month " + month + "'s new meme, " + notice.meme + " (" + notice.memeEn + ").\nYour checkpoint loses 15 points there until you hand-label or retrain."), 9);
-        }
-
-        void OnSettled(XgSlaResult r)
-        {
-            var offer = XgSim.SlaOffer(r.id);
-            if (offer == null) return;
-            string client = T(offer.client, offer.clientEn);
-            switch (r.outcome)
-            {
-                case XgSlaOutcome.FiveStar:
-                    Popup(client + T("：五星好评 ★★★★★\n抽检合格率 " + Pct(r.PassRate) + "，尾款 " + Yuan(r.paid) + " 已结清。",
-                        ": five stars ★★★★★\nSpot-check pass rate " + Pct(r.PassRate) + "; the " + Yuan(r.paid) + " balance is paid."), 9);
-                    break;
-                case XgSlaOutcome.Docked:
-                    Popup(client + T("：质量不达标，扣尾款\n抽检合格率 " + Pct(r.PassRate) + " < 95%，尾款只付一半：" + Yuan(r.paid) + "。",
-                        ": quality below the clause, balance docked\nPass rate " + Pct(r.PassRate) + " < 95%; only half the balance is paid: " + Yuan(r.paid) + "."), 9);
-                    break;
-                case XgSlaOutcome.Unjudged:
-                    Popup(client + T("：验收通过\n抽检不足 " + XgSim.SlaMinChecks + " 条，尾款 " + Yuan(r.paid) + " 全额结清。",
-                        ": accepted\nFewer than " + XgSim.SlaMinChecks + " spot checks; the " + Yuan(r.paid) + " balance is paid in full."), 8);
-                    break;
-                default:
-                    Popup(client + T("：账号被举报，合作终止\n尾款 " + Yuan(r.forfeited) + " 作废，信用分再 −" + XgSim.SlaCancelCredit.ToString("0", CultureInfo.InvariantCulture) + "。",
-                        ": your account was reported, contract cancelled\nThe " + Yuan(r.forfeited) + " balance is forfeited and credit drops another " + XgSim.SlaCancelCredit.ToString("0", CultureInfo.InvariantCulture) + "."), 10);
-                    break;
-            }
         }
     }
 }

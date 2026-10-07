@@ -1,14 +1,29 @@
 {
   "entry_scene": "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
+  "scenes": [
+    "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
+    "Assets/LingGuangV05/Scenes/Main.unity"
+  ],
   "unity": "6000.4.5f1",
-  "captured_local_date": "2026-10-05",
+  "captured_local_time": "2026-10-07T23:00:44+09:00",
+  "source_branch": "lingguang-v05",
+  "source_head": "88a2fae187d2c8ec4fd4afb67da876bde1759331",
+  "source_includes_uncommitted_changes": true,
+  "source_git_status_sha256": "1aaad6238a40279f0d992885b3522c22338b0c987e5fe420d0c375cca4b597f8",
+  "base_public_commit": "e12cee2106e486659814c971ed4d2a672ab4672b",
   "model_weights_included": false,
   "only_scene": false,
   "compile_checks": [
     {
       "mode": "player",
+      "assembly": "Assembly-CSharp-firstpass",
+      "sources": 1,
+      "exit_code": 0
+    },
+    {
+      "mode": "player",
       "assembly": "LingGuangV05.Core",
-      "sources": 46,
+      "sources": 49,
       "exit_code": 0
     },
     {
@@ -26,205 +41,61 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 47,
+      "sources": 68,
       "exit_code": 0
     },
     {
       "mode": "player",
       "assembly": "Assembly-CSharp",
-      "sources": 356,
+      "sources": 391,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "Assembly-CSharp-firstpass",
+      "sources": 1,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "LingGuangV05.Core",
+      "sources": 49,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "LingGuangV05.Runtime",
+      "sources": 8,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "LingGuangV05.UI",
+      "sources": 3,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "LingGuangV05.XingGuang.Core",
+      "sources": 68,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "Assembly-CSharp",
+      "sources": 391,
       "exit_code": 0
     }
   ],
+  "native_import_validation": {
+    "compilation_failed": false,
+    "menu_missing_scripts": 0,
+    "menu_references_complete": true,
+    "build_scene_count": 2
+  },
   "source_drift_after_copy": [],
-  "preexisting_unresolved_guid_count": 21,
+  "preexisting_unresolved_guid_count": 10,
   "preexisting_unresolved_references": [
-    {
-      "path": "Assets/Settings/DefaultVolumeProfile.asset",
-      "line": 78,
-      "guid": "60f3b30c03e6ba64d9a27dc9dba8f28d",
-      "context": "m_Script: {fileID: 11500000, guid: 60f3b30c03e6ba64d9a27dc9dba8f28d, type: 3}"
-    },
-    {
-      "path": "Assets/Settings/DefaultVolumeProfile.asset",
-      "line": 119,
-      "guid": "0fd9ee276a1023e439cf7a9c393195fa",
-      "context": "m_Script: {fileID: 11500000, guid: 0fd9ee276a1023e439cf7a9c393195fa, type: 3}"
-    },
-    {
-      "path": "Assets/Settings/DefaultVolumeProfile.asset",
-      "line": 264,
-      "guid": "5a00a63fdd6bd2a45ab1f2d869305ffd",
-      "context": "m_Script: {fileID: 11500000, guid: 5a00a63fdd6bd2a45ab1f2d869305ffd, type: 3}"
-    },
-    {
-      "path": "Assets/Settings/DefaultVolumeProfile.asset",
-      "line": 836,
-      "guid": "74955a4b0b4243bc87231e8b59ed9140",
-      "context": "m_Script: {fileID: 11500000, guid: 74955a4b0b4243bc87231e8b59ed9140, type: 3}"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 22,
-      "guid": "e5c6678ed2aaa91408dd3df699057aae",
-      "context": "probeVolumeDebugShader: {fileID: 4800000, guid: e5c6678ed2aaa91408dd3df699057aae,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 24,
-      "guid": "03cfc4915c15d504a9ed85ecc404e607",
-      "context": "probeVolumeFragmentationDebugShader: {fileID: 4800000, guid: 03cfc4915c15d504a9ed85ecc404e607,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 26,
-      "guid": "53a11f4ebaebf4049b3638ef78dc9664",
-      "context": "probeVolumeOffsetDebugShader: {fileID: 4800000, guid: 53a11f4ebaebf4049b3638ef78dc9664,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 28,
-      "guid": "8f96cd657dc40064aa21efcc7e50a2e7",
-      "context": "probeVolumeSamplingDebugShader: {fileID: 4800000, guid: 8f96cd657dc40064aa21efcc7e50a2e7,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 30,
-      "guid": "57d7c4c16e2765b47a4d2069b311bffe",
-      "context": "probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 32,
-      "guid": "24ec0e140fb444a44ab96ee80844e18e",
-      "context": "probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e,"
-    },
-    {
-      "path": "Assets/Settings/PC_Renderer.asset",
-      "line": 34,
-      "guid": "b9a23f869c4fd45f19c5ada54dd82176",
-      "context": "probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176,"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
-      "line": 108,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
-      "line": 148,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
-      "line": 287,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
-      "line": 133,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
-      "line": 242,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
-      "line": 318,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 115,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 152,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 178,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 185,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 238,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
-      "line": 275,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Video Player/MiniPlayer.controller",
-      "line": 23,
-      "guid": "ae230ba6c4dabd542adb8689a3573050",
-      "context": "m_Motion: {fileID: 7400000, guid: ae230ba6c4dabd542adb8689a3573050, type: 2}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Video Player/MiniPlayer.controller",
-      "line": 123,
-      "guid": "0ea2c371d70bf484d82339eb56925a09",
-      "context": "m_Motion: {fileID: 7400000, guid: 0ea2c371d70bf484d82339eb56925a09, type: 2}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 64,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 101,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 113,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 120,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 191,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
-      "line": 228,
-      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
-      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
-    },
     {
       "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_In.anim",
       "line": 55,
@@ -257,6 +128,42 @@
     },
     {
       "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_In.anim",
+      "line": 210,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
+      "line": 55,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
+      "line": 92,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
+      "line": 104,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
+      "line": 111,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
+      "line": 173,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
       "line": 210,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
@@ -298,38 +205,122 @@
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 55,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 64,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 92,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 101,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 104,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 113,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 111,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 120,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 173,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 191,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/RepeatButton_Out.anim",
-      "line": 210,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Music Player/ShuffleButton_Out.anim",
+      "line": 228,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Video Player/MiniPlayer.controller",
+      "line": 23,
+      "guid": "ae230ba6c4dabd542adb8689a3573050",
+      "context": "m_Motion: {fileID: 7400000, guid: ae230ba6c4dabd542adb8689a3573050, type: 2}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Video Player/MiniPlayer.controller",
+      "line": 123,
+      "guid": "0ea2c371d70bf484d82339eb56925a09",
+      "context": "m_Motion: {fileID: 7400000, guid: 0ea2c371d70bf484d82339eb56925a09, type: 2}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 115,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 152,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 178,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 185,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 238,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Apps/Web Browser/SetFavorite_In.anim",
+      "line": 275,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
+      "line": 133,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
+      "line": 242,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Done.anim",
+      "line": 318,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
+      "line": 108,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
+      "line": 148,
+      "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
+      "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/Setup Screen/StepIndicator_Normal.anim",
+      "line": 287,
       "guid": "f5f67c52d1564df4a8936ccd202a3bd8",
       "context": "script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}"
     },
@@ -352,74 +343,20 @@
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 232,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
+      "line": 90,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 260,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
+      "line": 109,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 288,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 316,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 356,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 363,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 370,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 377,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 622,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 650,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 678,
-      "guid": "f70555f144d8491a825f0804e09c671c",
-      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
-    },
-    {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
-      "line": 706,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
+      "line": 171,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
@@ -496,20 +433,74 @@
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
-      "line": 90,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 232,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
-      "line": 109,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 260,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
     {
-      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Spinners/DefaultSpinner_Loop.anim",
-      "line": 171,
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 288,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 316,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 356,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 363,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 370,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 377,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 622,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 650,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 678,
+      "guid": "f70555f144d8491a825f0804e09c671c",
+      "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Animations/UI Elements/Switch/Switch_On.anim",
+      "line": 706,
       "guid": "f70555f144d8491a825f0804e09c671c",
       "context": "script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}"
     },
@@ -610,6 +601,54 @@
       "context": "buttonIcon: {fileID: 21300000, guid: cc010ceae7dba4e42a741e28ab7337a3, type: 3}"
     },
     {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/3D Test_aa4114bab024e894ab515f896d1dd1e1.prefab",
+      "line": 2750,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/3D Test_aa4114bab024e894ab515f896d1dd1e1.prefab",
+      "line": 2754,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Empty Game_83939a826680698459bd7c936e0f1f73.prefab",
+      "line": 1205,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Empty Game_83939a826680698459bd7c936e0f1f73.prefab",
+      "line": 1209,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Favorite Item_d029374c57f595c468b1c22ff9373312_f39167fb3874a4e3189a517e65cc2a36.prefab",
+      "line": 1913,
+      "guid": "c26a820b2129e2f4eb122efd27df5339",
+      "context": "rippleShape: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Network Preset_fb9a1585247aef94dbd0a1511c03b350_92961b8422ad84e48a897f052113e230.prefab",
+      "line": 1083,
+      "guid": "c26a820b2129e2f4eb122efd27df5339",
+      "context": "rippleShape: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Tic-Tac-Toe_df08a7c0e1f5dd34db290f040e6e9e18.prefab",
+      "line": 11489,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Prefabs/Tic-Tac-Toe_df08a7c0e1f5dd34db290f040e6e9e18.prefab",
+      "line": 11493,
+      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
+      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
+    },
+    {
       "path": "Assets/LingGuangV05/Scenes/Main.unity",
       "line": 295894,
       "guid": "c26a820b2129e2f4eb122efd27df5339",
@@ -628,83 +667,14 @@
       "context": "rippleShape: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}"
     },
     {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Empty Game_83939a826680698459bd7c936e0f1f73.prefab",
-      "line": 1205,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Empty Game_83939a826680698459bd7c936e0f1f73.prefab",
-      "line": 1209,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Tic-Tac-Toe_df08a7c0e1f5dd34db290f040e6e9e18.prefab",
-      "line": 11489,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Tic-Tac-Toe_df08a7c0e1f5dd34db290f040e6e9e18.prefab",
-      "line": 11493,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Network Preset_fb9a1585247aef94dbd0a1511c03b350_92961b8422ad84e48a897f052113e230.prefab",
-      "line": 1083,
-      "guid": "c26a820b2129e2f4eb122efd27df5339",
-      "context": "rippleShape: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/3D Test_aa4114bab024e894ab515f896d1dd1e1.prefab",
-      "line": 2750,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478371225528, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/3D Test_aa4114bab024e894ab515f896d1dd1e1.prefab",
-      "line": 2754,
-      "guid": "699fe9df6534e5d428309f4fe3e1e7e6",
-      "context": "objectReference: {fileID: 9167946478795696276, guid: 699fe9df6534e5d428309f4fe3e1e7e6, type: 3}"
-    },
-    {
-      "path": "Assets/LingGuangV05/Localization/Prefabs/Favorite Item_d029374c57f595c468b1c22ff9373312_f39167fb3874a4e3189a517e65cc2a36.prefab",
-      "line": 1913,
-      "guid": "c26a820b2129e2f4eb122efd27df5339",
-      "context": "rippleShape: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}"
-    },
-    {
       "path": "Assets/TextMesh Pro/Resources/TMP Settings.asset",
       "line": 39,
       "guid": "c41005c129ba4d66911b75229fd70b45",
       "context": "m_defaultSpriteAsset: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45,"
     }
   ],
+  "new_unresolved_guids": [],
   "fresh_unity_import_play_verified": false,
-  "secret_pattern_findings": [],
-  "captured_local_time": "2026-10-05T17:33:59+09:00",
-  "base_commit": "587431341a6edfbf1baf6d35edf354709a93bb6b",
-  "source_scope": "Saved Main scene and runtime dependencies; local model weights, inference binaries, personal saves and development tools excluded.",
-  "scenes": [
-    "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
-    "Assets/LingGuangV05/Scenes/Main.unity"
-  ],
-  "main_scene_preserved": true,
-  "computer_menu": {
-    "source_project": "/Users/kk/competition",
-    "source_commit": "88a2fae187d2c8ec4fd4afb67da876bde1759331",
-    "captured_local_time": "2026-10-06T16:08:15+09:00",
-    "dependency_files": 420,
-    "native_import_verified": true,
-    "missing_scripts": 0,
-    "controller_references_complete": true,
-    "build_scene_order": [
-      "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
-      "Assets/LingGuangV05/Scenes/Main.unity"
-    ],
-    "startup_hook_changes": "Visibility changed to internal; no existing game rules were modified.",
-    "play_mode_transition_verified": false
-  }
+  "play_mode_flow_verified": false,
+  "secret_pattern_findings": []
 }

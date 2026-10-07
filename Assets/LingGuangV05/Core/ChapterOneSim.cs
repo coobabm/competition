@@ -49,7 +49,17 @@ namespace LingGuangV05.Core
         public int ConvergeCount { get { return convergeCount; } }
         public double MemoryUsed { get { return S.nodes.Count * Config.nodeMemory + S.edges.Count * Config.edgeMemory; } }
         public double MemoryCapacity { get { return CardVram; } }
-        private double RequestedWatts { get { return CardWatts + S.caseCount * Config.caseWatts; } }
+        private double RequestedWatts { get { return Math.Max(0, CardWatts - UnpluggedWatts) + S.caseCount * Config.caseWatts; } }
+        /// <summary>
+        /// Watts of owned cards unplugged on 灵光's 接线 page: the house neither draws nor bills them. Set by the lab every
+        /// frame from its own saved wiring; not part of GameState.
+        /// </summary>
+        public double UnpluggedWatts { get { return unpluggedWatts; } set { unpluggedWatts = Finite(value) ? Math.Max(0, value) : 0; } }
+        private double unpluggedWatts;
+        /// <summary>What the house PSU carries with every owned card plugged in (cards, drive and cases).</summary>
+        public double HouseWatts { get { return CardWatts + S.caseCount * Config.caseWatts; } }
+        /// <summary>A load the household does not see by itself went over the limit (pre-training on the house PSU).</summary>
+        public void TripBreakerNow() { if (S.breakerTripped) return; TripBreaker(); LastMessage = "跳闸了：负载超过 " + Config.powerLimitWatts.ToString("0") + "W。"; Notify(); }
         private bool Powered { get { return !S.breakerTripped && !S.unpaidPower && S.gpuCount > 0 && RequestedWatts <= Config.powerLimitWatts; } }
         public double PowerWatts { get { return Powered ? RequestedWatts : 0; } }
         public double HeartbeatsPerSecond

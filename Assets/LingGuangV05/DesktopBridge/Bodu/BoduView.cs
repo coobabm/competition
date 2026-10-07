@@ -22,9 +22,10 @@ namespace LingGuangV05.Desktop.Bodu
     /// shop's new arrivals; search over news and forum threads. Searching the long number opens the garbled page
     /// the SI typed in the prologue: at stage 5 it decodes line by line with the translation accuracy, a faint
     /// countdown runs to New Year's Eve, and after the final test the AI reads the SI's letter from it. 「三体」 is a
-    /// login page that never lets anyone in. Lives in the desktop's spare native Widget Library window.
+    /// login page that lets in only those who keep trying (BoduView.Santi.cs). Lives in the desktop's spare native
+    /// Widget Library window.
     /// </summary>
-    public sealed class BoduView : MonoBehaviour
+    public sealed partial class BoduView : MonoBehaviour
     {
         public const string NativeWindow = "Widget Library";
         static readonly Color Blue = new Color32(51, 102, 204, 255), Ink = new Color32(34, 34, 34, 255), Muted = new Color32(120, 120, 120, 255), Link = new Color32(26, 13, 171, 255);
@@ -62,7 +63,7 @@ namespace LingGuangV05.Desktop.Bodu
         void Rename()
         {
             if (window == null) return;
-            string name = T("摆渡", "Bodu");
+            string name = Lang.T("摆渡");
             foreach (var title in window.GetComponentsInChildren<TMP_Text>(true)) if (title.name == "Aero Window Title") title.text = name;
             var icon = GameObject.Find("Desktop List/" + NativeWindow);
             var tex = Resources.Load<Texture2D>("LingGuangV05/Forum/bodu_icon");
@@ -191,16 +192,18 @@ namespace LingGuangV05.Desktop.Bodu
 
         void Redraw(GameState s, XgSim lab)
         {
-            var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>(); if (logo != null) logo.text = T("摆渡", "Bodu");
-            var goText = root.GetComponentsInChildren<TMP_Text>(true); foreach (var t in goText) if (t.name == "GoText") t.text = T("摆渡一下", "Search");
-            ((TMP_Text)search.placeholder).text = T("搜点什么……", "Search…");
+            var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>(); if (logo != null) logo.text = Lang.T("摆渡");
+            var goText = root.GetComponentsInChildren<TMP_Text>(true); foreach (var t in goText) if (t.name == "GoText") t.text = Lang.T("摆渡一下");
+            ((TMP_Text)search.placeholder).text = Lang.T("搜点什么……");
             newsRows.Clear();
             for (int i = body.childCount - 1; i >= 0; i--) Destroy(body.GetChild(i).gameObject);
             NewScroll();
             var today = s != null ? GameCalendar.Now(s).Date : GameCalendar.Start.Date;
             if (page == "home") Home(today);
+            else if (page == "artwork") ArtworkCredits();
             else if (page == "number") Number(today, lab);
             else if (page == "santi") Santi();
+            else if (page == "santi.game") SantiGame();
             else Results(today, lab);
         }
 
@@ -231,20 +234,6 @@ namespace LingGuangV05.Desktop.Bodu
 
         static string Date(DateTime d) => GameText.IsEnglish ? d.ToString("MMM d", CultureInfo.InvariantCulture) : d.Month + "-" + d.Day;
 
-        static string NewsArt(string text)
-        {
-            string s = (text ?? "").ToLowerInvariant();
-            if (s.Contains("alphago") || s.Contains("围棋")) return "go";
-            if (s.Contains("显卡") || s.Contains("gtx") || s.Contains("radeon")) return "gpu";
-            if (s.Contains("手机") || s.Contains("iphone") || s.Contains("note 7")) return "phone";
-            if (s.Contains("电影") || s.Contains("你的名字") || s.Contains("cinema")) return "cinema";
-            if (s.Contains("购物") || s.Contains("双11") || s.Contains("双 11")) return "shopping";
-            if (s.Contains("人工智能") || s.Contains("机器人") || s.Contains("deepmind")) return "ai";
-            if (s.Contains("航天") || s.Contains("天宫") || s.Contains("太空")) return "space";
-            if (s.Contains("游戏") || s.Contains("守望") || s.Contains("skt")) return "esports";
-            return "news";
-        }
-
         void NewsRow(string text, string key)
         {
             if (DesktopArt.Picture(key) == null) { Line(text, 18, Ink); return; }
@@ -255,25 +244,26 @@ namespace LingGuangV05.Desktop.Bodu
             newsRows.Add((label, layout, -1));
             var picture = PrologueDesk.Rect("Illustration", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -68), new Vector2(108, 0));
             DesktopArt.Paint(picture, key);
-            Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -87), new Vector2(108, -69)), T("配图", "Illustration"), 11, Muted, TextAlignmentOptions.Center);
+            Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -87), new Vector2(108, -69)), T("资料图", "Reference"), 11, Muted, TextAlignmentOptions.Center);
         }
 
         void Home(DateTime today)
         {
-            if (DesktopArt.Picture("news") != null)
+            Line(T("<u>配图来源与说明</u>", "<u>Image credits and notes</u>"), 13, Muted, () => { page = "artwork"; signature = ""; });
+            if (DesktopArt.Picture("news_banner") != null)
             {
                 var banner = PrologueDesk.Rect("NewsBanner", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
                 banner.gameObject.AddComponent<LayoutElement>().preferredHeight = 84;
                 var art = PrologueDesk.Rect("Illustration", banner, new Vector2(0, 0), new Vector2(0, 1), Vector2.zero, new Vector2(136, 0));
-                DesktopArt.Paint(art, "news");
-                Text(PrologueDesk.Rect("Caption", banner, Vector2.zero, Vector2.one, new Vector2(156, 0), Vector2.zero), T("看见世界的每一天\n<size=12>配图 · 非新闻现场照片</size>", "A window on every day\n<size=12>Illustration · not an event photograph</size>"), 21, Blue, TextAlignmentOptions.MidlineLeft);
+                DesktopArt.Paint(art, "news_banner");
+                Text(PrologueDesk.Rect("Caption", banner, Vector2.zero, Vector2.one, new Vector2(156, 0), Vector2.zero), Lang.T("看见世界的每一天\n<size=12>配图 · 非新闻现场照片</size>"), 21, Blue, TextAlignmentOptions.MidlineLeft);
             }
-            Line("<b>" + T("摆渡新闻", "Bodu News") + "</b>  <size=14><color=#787878>" + today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture) + "</color></size>", 22, Ink);
+            Line("<b>" + Lang.T("摆渡新闻") + "</b>  <size=14><color=#787878>" + today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture) + "</color></size>", 22, Ink);
             int n = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
             {
                 if (n++ >= 10) break;
-                NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", NewsArt(e.title + " " + e.text));
+                NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", "news_" + e.id);
             }
             var shop = EraContent.Events.Visible(EraEvents.Taobao, today);
             if (shop.Count > 0)
@@ -282,6 +272,15 @@ namespace LingGuangV05.Desktop.Bodu
                 for (int i = 0; i < Math.Min(5, shop.Count); i++)
                     Line(EraContent.Title(shop[i]) + "  <color=#E06000>¥" + shop[i].price.ToString("0", CultureInfo.InvariantCulture) + "</color>  <size=13><color=#787878>" + EraContent.Text(shop[i]) + T("（在「" + AppNames.ShopZh + "」下单）", " (order on " + AppNames.ShopEn + ")") + "</color></size>", 16, Ink);
             }
+        }
+
+        void ArtworkCredits()
+        {
+            Line(T("<u>返回新闻</u>", "<u>Back to news</u>"), 16, Blue, () => { page = "home"; signature = ""; });
+            var credits = Resources.Load<TextAsset>("LingGuangV05/Media/PHOTO_CREDITS");
+            string text = credits != null ? credits.text : T("来源文件暂不可用。", "Credits are not available.");
+            foreach (string entry in text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries))
+                Line(entry, 13, Ink).richText = false;
         }
 
         static string Digits(string q) { var sb = new StringBuilder(); foreach (char c in q) if (char.IsDigit(c)) sb.Append(c); return sb.ToString(); }
@@ -296,11 +295,11 @@ namespace LingGuangV05.Desktop.Bodu
             }
             if (query.Contains("三体") || query.IndexOf("three-body", StringComparison.OrdinalIgnoreCase) >= 0 || query.IndexOf("three body", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                Line("<color=#1A0DAB><u>" + T("三体 · 游戏登录", "Three Body · game login") + "</u></color>\n<size=13><color=#787878>" + T("需要 V 装备与邀请码。", "Requires a V-suit and an invitation code.") + "</color></size>", 18, Ink, () => { page = "santi"; signature = ""; });
+                Line("<color=#1A0DAB><u>" + Lang.T("三体 · 游戏登录") + "</u></color>\n<size=13><color=#787878>" + Lang.T("需要 V 装备与邀请码。") + "</color></size>", 18, Ink, () => { page = "santi"; signature = ""; });
             }
             int found = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
-                if (Matches(EraContent.Title(e) + EraContent.Text(e)) && found++ < 10) NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>\n<size=12><color=#787878>" + T("摆渡新闻", "Bodu News") + " · " + Date(e.date) + "</color></size>", NewsArt(e.title + " " + e.text));
+                if (Matches(EraContent.Title(e) + EraContent.Text(e)) && found++ < 10) NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>\n<size=12><color=#787878>" + Lang.T("摆渡新闻") + " · " + Date(e.date) + "</color></size>", "news_" + e.id);
             var hub = TiebaHub.Instance;
             if (hub != null)
                 foreach (var t in hub.Library.Threads)
@@ -314,13 +313,6 @@ namespace LingGuangV05.Desktop.Bodu
 
         bool Matches(string text) => query.Length > 0 && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 
-        void Santi()
-        {
-            Line("<b>" + T("三体", "Three Body") + "</b>", 26, Ink);
-            Line(T("需要 V 装备与邀请码。", "Requires a V-suit and an invitation code."), 18, Muted);
-            Line("<color=#1A0DAB><u>" + T("【输入邀请码】", "[Enter invitation code]") + "</u></color>", 18, Ink, () => Line("<color=#C00000>" + T("邀请码无效。本游戏只对有缘人开放。", "Invalid invitation code. This game is only open to those it was meant for.") + "</color>", 17, Ink));
-        }
-
         /// <summary>The page behind the long number (the prologue's garbled page).</summary>
         void Number(DateTime today, XgSim lab)
         {
@@ -330,7 +322,7 @@ namespace LingGuangV05.Desktop.Bodu
             for (int line = 0; line < 8; line++) { for (int i = 0; i < 26 + rng.Next(14); i++) garble.Append(pool[rng.Next(pool.Length)]); garble.Append('\n'); }
             if (dead)
             {
-                Line("<size=60><b>404</b></size>\n" + T("页面不存在。", "Page not found."), 18, Muted);
+                Line("<size=60><b>404</b></size>\n" + Lang.T("页面不存在。"), 18, Muted);
                 return;
             }
             Line("<color=#909090>" + garble + "</color>", 16, Muted);
@@ -338,7 +330,7 @@ namespace LingGuangV05.Desktop.Bodu
             {
                 // §8 E-2: it reads the rest out loud, one line at a time.
                 var lines = lab.LetterLines();
-                var sb = new StringBuilder("<b>" + T("它读给你听：", "It reads it to you:") + "</b>\n");
+                var sb = new StringBuilder("<b>" + Lang.T("它读给你听：") + "</b>\n");
                 for (int i = 0; i < Math.Min(letterShown, lines.Count); i++) sb.Append(lines[i]).Append('\n');
                 if (lab.S.ending.Length > 0 && letterShown > lines.Count) sb.Append("\n<b>").Append(lab.LetterLastLine()).Append("</b>");
                 Line(sb.ToString(), 18, Ink);
@@ -346,13 +338,13 @@ namespace LingGuangV05.Desktop.Bodu
             }
             else if (lab != null && lab.LetterReady)
             {
-                Line("<color=#1A0DAB><u>" + T("【让它读】", "[Let it read]") + "</u></color>", 18, Ink, () => { if (lab.ReadLetter()) { letterShown = 0; nextLetterLine = 0; signature = ""; } });
+                Line("<color=#1A0DAB><u>" + Lang.T("【让它读】") + "</u></color>", 18, Ink, () => { if (lab.ReadLetter()) { letterShown = 0; nextLetterLine = 0; signature = ""; } });
             }
             else if (lab != null && lab.GarbleLinesRead > 0)
             {
-                var sb = new StringBuilder("<b>" + T("它试着翻译了一下：", "It tried to translate it:") + "</b>\n");
+                var sb = new StringBuilder("<b>" + Lang.T("它试着翻译了一下：") + "</b>\n");
                 for (int i = 0; i < lab.GarbleLinesRead; i++) sb.Append(lab.GarbleLine(i)).Append('\n');
-                if (lab.GarbleLinesRead < 4) sb.Append("<color=#909090>").Append(T("（剩下的还读不出来。翻译再准一点。）", "(It can't read the rest yet. Translation needs to be better.)")).Append("</color>");
+                if (lab.GarbleLinesRead < 4) sb.Append("<color=#909090>").Append(Lang.T("（剩下的还读不出来。翻译再准一点。）")).Append("</color>");
                 Line(sb.ToString(), 17, Ink);
             }
             // §10.2 #7: a faint countdown, one less every day, zero on New Year's Eve.

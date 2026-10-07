@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -62,6 +63,16 @@ namespace LingGuangV05.Desktop.XingGuang
             zoomAnchor = viewport.rect.center;
             float from = targetZoom > 0 ? targetZoom : content.localScale.x;
             targetZoom = Mathf.Clamp(from * factor, minZoom, maxZoom);
+        }
+
+        /// <summary>Explicit fit/reset without leaving an old zoom or inertia animation running.</summary>
+        public void SetView(float zoom, Vector2 position)
+        {
+            if (content == null || viewport == null) return;
+            targetZoom = -1; velocity = Vector2.zero; glide = null; Dragging = false;
+            content.localScale = Vector3.one * Mathf.Clamp(zoom, minZoom, maxZoom);
+            content.anchoredPosition = position;
+            Clamp();
         }
 
         /// <summary>Stage overview: fit every lane vertically, keep its header below the top edge, and glide only horizontally.</summary>
@@ -174,16 +185,22 @@ namespace LingGuangV05.Desktop.XingGuang
         public int VisibleNodeCount { get { int count = 0; foreach (var n in nodes) if (n.gameObject.activeSelf) count++; return count; } }
         public bool IsNodeShown(string id) => nodes.Exists(n => n.node.id == id && n.gameObject.activeSelf);
 
-        static Color LaneColor(string lane) => lane == "vision" ? XgPalette.Accent : lane == "sequence" ? new Color32(18, 135, 125, 255)
-            : lane == "label" ? XgPalette.Money : lane == "trunk" ? new Color32(90, 70, 170, 255) : lane == "atlas" ? new Color32(20, 140, 160, 255) : new Color32(130, 80, 210, 255);
+        static Color LaneColor(string lane) => lane == "vision" ? XgDark.Accent : lane == "sequence" ? new Color32(18, 135, 125, 255)
+            : lane == "label" ? new Color32(200, 120, 30, 255) : lane == "trunk" ? new Color32(90, 70, 170, 255) : lane == "atlas" ? new Color32(20, 140, 160, 255) : new Color32(130, 80, 210, 255);
         static Vector2 Pos(XgNode n) => new Vector2(n.x, -(70 + n.y));
 
         public override void Build(RectTransform area)
         {
             root = ui.Card(area, "tree", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            header = ui.Text(Strip("Header", root, 8, 30, 16, 560), "", 18, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            // 科技 is a section of 道具 (the redesign): the way back sits before the title.
+            var back = ui.Button(root, T("← 道具", "← Items"), () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab("items"); }, 13);
+            PlaceTopLeft(back, 12, 8, 84, 30);
+            back.rt.gameObject.name = "BackToItems";
+            back.Set(T("← 道具", "← Items"), true, null, XgDark.Link);
+            header = ui.Text(Strip("Header", root, 8, 30, 106, 560), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             viewport = Rect("Viewport", root, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-300, -88));
-            Panel(viewport, new Color32(246, 248, 252, 255));
+            viewport.gameObject.AddComponent<CanvasRenderer>();
+            var grid = viewport.gameObject.AddComponent<XgGridGraphic>(); grid.color = XgDark.Page;
             viewport.gameObject.AddComponent<UnityEngine.UI.RectMask2D>();
             content = Rect("Content", viewport, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, Vector2.zero);
             content.pivot = new Vector2(0, 1);
@@ -191,12 +208,20 @@ namespace LingGuangV05.Desktop.XingGuang
             content.localScale = Vector3.one * .9f;
             Panel(content, Color.clear).raycastTarget = true;
             Pan = viewport.gameObject.AddComponent<XgPan>(); Pan.content = content; Pan.viewport = viewport;
+            // Lane bands as alternating stripes behind everything, so each row of the tree reads as one track.
+            int band = 0;
+            foreach (var lane in XgCatalog.Lanes)
+            {
+                float top = 70 + XgCatalog.LaneTop(lane) - 44, height = XgCatalog.LaneHeight(lane) + 48;
+                var stripe = Rect("LaneBand " + lane, content, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -top - height), new Vector2(0, -top));
+                Panel(stripe, band++ % 2 == 0 ? new Color32(11, 19, 28, 200) : new Color32(0, 0, 0, 0)).raycastTarget = false;
+            }
             var linkRt = Rect("Links", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             linkRt.pivot = new Vector2(0, 1);
             links = linkRt.gameObject.AddComponent<XgLinksGraphic>(); links.raycastTarget = false;
             frontierWall = XgUi.TopLeft("UnexploredBoundary", content, 0, 60, 10, XgCatalog.TreeHeight);
             frontierWall.pivot = new Vector2(.5f, 1);
-            Panel(frontierWall, new Color32(135, 145, 165, 180)).raycastTarget = false;
+            Panel(frontierWall, new Color32(58, 85, 102, 180)).raycastTarget = false;
             miniMap = Strip("DiscoveredStages", root, 48, 28, 16, 310);
             string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+" };
             string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+" };
@@ -211,22 +236,22 @@ namespace LingGuangV05.Desktop.XingGuang
                 float width = i >= 3 ? 34 : i == 0 ? 86 : 72;
                 PlaceTopRight(toolbar[i], right + width, 8, width, 30); right += width + 4;
             }
-            UiTip.Add(toolbar[0].rt, () => Sim != null && Sim.AutoLabelHidden ? T("跳到标注技能（加薪）。", "Jump to the labelling skills (pay raise).") : T("跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (pay raise, auto-answer)."));
+            UiTip.Add(toolbar[0].rt, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("跳到标注技能（加薪）。") : Lang.T("跳到标注技能（加薪、自动答题）。"));
             UiTip.Add(toolbar[1].rt, "跳到当前阶段的最前沿。", "Jump to the current stage's frontier.");
             UiTip.Add(toolbar[2].rt, "依次跳到现在买得起的节点。", "Cycle through the nodes you can afford now.");
             UiTip.Add(toolbar[3].rt, "缩小。", "Zoom out.");
             UiTip.Add(toolbar[4].rt, "放大。", "Zoom in.");
             var info = Rect("Info", root, new Vector2(1, 0), Vector2.one, new Vector2(-296, 8), new Vector2(-8, -44));
-            Panel(info, new Color32(247, 249, 253, 255));
-            infoTitle = ui.Text(Strip("Title", info, 12, 50, 14, 14), "", 22, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            Panel(info, XgDark.Panel);
+            infoTitle = ui.Text(Strip("Title", info, 12, 50, 14, 14), "", 22, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             infoTitle.fontStyle = FontStyles.Bold;
-            infoCost = ui.Text(Strip("Cost", info, 66, 26, 14, 14), "", 19, XgPalette.Money, TextAlignmentOptions.MidlineLeft);
-            infoBody = ui.Text(Rect("Body", info, Vector2.zero, Vector2.one, new Vector2(14, 14), new Vector2(-14, -102)), "", 16, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            infoCost = ui.Text(Strip("Cost", info, 66, 26, 14, 14), "", 19, XgDark.Money, TextAlignmentOptions.MidlineLeft);
+            infoBody = ui.Text(Rect("Body", info, Vector2.zero, Vector2.one, new Vector2(14, 14), new Vector2(-14, -102)), "", 16, XgDark.Ink, TextAlignmentOptions.TopLeft);
             eraCard = Rect("EraCard", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-240, -92), new Vector2(240, 92));
-            Panel(eraCard, XgPalette.Hud);
-            eraTitle = ui.Text(Strip("EraTitle", eraCard, 16, 36, 20, 20), "", 24, XgPalette.Gold, TextAlignmentOptions.Center);
+            Panel(eraCard, XgDark.Hud);
+            eraTitle = ui.Text(Strip("EraTitle", eraCard, 16, 36, 20, 20), "", 24, XgDark.Gold, TextAlignmentOptions.Center);
             eraBody = ui.Text(Strip("EraDescription", eraCard, 60, 76, 24, 24), "", 16, Color.white, TextAlignmentOptions.Center);
-            var dismiss = ui.Button(eraCard, T("继续", "Continue"), () => { eraRemaining = 0; eraCard.gameObject.SetActive(false); }, 14);
+            var dismiss = ui.Button(eraCard, Lang.T("继续"), () => { eraRemaining = 0; eraCard.gameObject.SetActive(false); }, 14);
             PlaceTopRight(dismiss, 105, 142, 85, 28);
             eraCard.gameObject.SetActive(false);
             built = true;
@@ -242,7 +267,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (!stageTitles.ContainsKey(i))
                 {
-                    var title = ui.Text(XgUi.TopLeft("StageHeader" + i, content, i * XgCatalog.StageWidth + 24, 12, XgCatalog.StageWidth - 40, 36), "", 21, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+                    var title = ui.Text(XgUi.TopLeft("StageHeader" + i, content, i * XgCatalog.StageWidth + 24, 12, XgCatalog.StageWidth - 40, 36), "", 21, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
                     title.fontStyle = FontStyles.Bold; stageTitles.Add(i, title);
                     int column = i;
                     var button = ui.Button(miniMap, "", () => FocusStage(column), 13);
@@ -254,6 +279,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         LaneTitle("VisionLane" + i, i, "视觉", "Vision", "vision");
                         LaneTitle("SequenceLane" + i, i, "序列", "Sequence", "sequence");
                     }
+                    if (i >= 1) LaneTitle("TrunkLane" + i, i, "主干", "Core", "trunk");
                     if (i >= 1) { LaneTitle("ResearchLane" + i, i, "研究", "Research", "research"); LaneTitle("AutomationLane" + i, i, "自动化", "Automation", "auto"); LaneTitle("AtlasLane" + i, i, "图鉴 · 现象与能力", "Atlas · phenomena and abilities", "atlas"); }
                 }
             }
@@ -264,18 +290,18 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (visible)
                 {
                     int i = pair.Key;
-                    pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#68748C>" + XgCatalog.StageYears[i] + "</color></size>" : "");
-                    miniButtons[i].Set(i == 0 ? T("标注", "Labels") : i.ToString(), true, i == stage ? XgPalette.AccentSoft : XgPalette.Button);
+                    pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.StageYears[i] + "</color></size>" : "");
+                    miniButtons[i].Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgDark.AccentSoft : XgDark.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
-                foreach (string prefix in new[] { "VisionLane", "SequenceLane", "ResearchLane", "AutomationLane", "AtlasLane" })
+                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "AutomationLane", "AtlasLane" })
                 {
                     var lane = content.Find(prefix + pair.Key);
                     if (lane != null)
                     {
                         lane.gameObject.SetActive(visible);
                         var label = lane.GetComponent<TMP_Text>();
-                        label.text = prefix == "VisionLane" ? T("视觉", "Vision") : prefix == "SequenceLane" ? T("序列", "Sequence") : prefix == "ResearchLane" ? T("研究", "Research") : prefix == "AtlasLane" ? T("图鉴 · 现象与能力", "Atlas · phenomena and abilities") : T("自动化", "Automation");
+                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : prefix == "AtlasLane" ? Lang.T("图鉴 · 现象与能力") : Lang.T("自动化");
                     }
                 }
             }
@@ -326,13 +352,13 @@ namespace LingGuangV05.Desktop.XingGuang
             // Names are the point of the tree: large, bold, two lines at most, shrinking only for long English names.
             var labelRect = hex ? Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(12, 30), new Vector2(-12, -30))
                                 : Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(10, node.maxLevel > 1 ? 15 : 9), new Vector2(-10, node.maxLevel > 1 ? -5 : -7));
-            item.label = ui.Text(labelRect, "", 19, XgPalette.Ink, TextAlignmentOptions.Center);
+            item.label = ui.Text(labelRect, "", 19, XgDark.Ink, TextAlignmentOptions.Center);
             item.label.fontStyle = FontStyles.Bold;
             item.label.enableAutoSizing = true; item.label.fontSizeMin = hex ? 12 : 13; item.label.fontSizeMax = hex ? 17 : 19;
             item.label.lineSpacing = -8;
             // Levelled nodes keep name and level on one line above their pips; shrink rather than wrap.
             if (node.maxLevel > 1) item.label.textWrappingMode = TextWrappingModes.NoWrap;
-            item.cost = ui.Text(Rect("Cost", rt, new Vector2(0, 0), new Vector2(1, 0), new Vector2(-10, -19), new Vector2(10, 1)), "", 15, XgPalette.Money, TextAlignmentOptions.Center);
+            item.cost = ui.Text(Rect("Cost", rt, new Vector2(0, 0), new Vector2(1, 0), new Vector2(-10, -19), new Vector2(10, 1)), "", 15, XgDark.Money, TextAlignmentOptions.Center);
             item.cost.fontStyle = FontStyles.Bold;
             item.cost.raycastTarget = false;
             return item;
@@ -346,7 +372,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (index == 3) { Pan.ZoomBy(1 / 1.25f); return; }
             if (index == 4) { Pan.ZoomBy(1.25f); return; }
             var buyable = nodes.FindAll(n => n.gameObject.activeSelf && Sim.Status(n.node, Host) == XgSim.NodeStatus.Buyable);
-            if (buyable.Count == 0) { view.ShowToast(T("现在没有买得起的节点", "Nothing affordable right now"), 2); return; }
+            if (buyable.Count == 0) { view.ShowToast(Lang.T("现在没有买得起的节点"), 2); return; }
             int at = selected != null ? buyable.IndexOf(selected) : -1;
             var next = buyable[(at + 1) % buyable.Count]; Hover(next); Focus(next); Fx.Knock((RectTransform)next.transform, .2f);
         }
@@ -372,16 +398,20 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         public override void Shown() { SyncRevealedContent(false); FocusFrontier(); }
         void Focus(XgNodeView node) => Pan.GlideTo(((RectTransform)node.transform).anchoredPosition);
-        public void Hover(XgNodeView node) { if (!node.gameObject.activeSelf) return; selected = node; RefreshInfo(); }
-        /// <summary>Shows a self-insight card (wall id); set by the card overlay.</summary>
+        public void Hover(XgNodeView node)
+        {
+            if (!node.gameObject.activeSelf) return;
+            bool changed = selected != node; selected = node;
+            // The selected node's prerequisites in other lanes are drawn: rebuild the links at once.
+            if (changed) Refresh(); else RefreshInfo();
+        }
+        /// <summary>Shows a self-insight card ("pretrain"); set by the card overlay.</summary>
         public static Action<string> OpenInsightCard;
 
         string InsightOf(XgNode n)
         {
             if (n == null || n.kind != XgNodeKind.Secret) return null;
-            if (n.id == "secret.6") return Sim.S.insights.Contains("pretrain") ? "pretrain" : null;
-            var wall = XgSim.WallOfSecret(n.id);
-            return wall != null && Sim.S.insights.Contains(wall.id) ? wall.id : null;
+            return n.id == "secret.6" && Sim.S.insights.Contains("pretrain") ? "pretrain" : null;
         }
 
         public void Press(XgNodeView node)
@@ -400,14 +430,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (node == null) return false;
             purchaseCosts[node.id] = Sim.NodeCost(node);
             if (!Sim.BuyNode(node.id, Host)) { purchaseCosts.Remove(node.id); Fx.Play(XgJuice.Sfx.Id.Thud); return false; }
-            Fx.Knock(from, .2f); Fx.Shockwave(Fx.At(from), XgPalette.Gold, 160, .35f, 8); Fx.Burst(Fx.At(from), 24, XgPalette.Gold, XgJuice.Shape.Yen, 300); return true;
+            Fx.Knock(from, .2f); Fx.Shockwave(Fx.At(from), XgDark.Gold, 160, .35f, 8); Fx.Burst(Fx.At(from), 24, XgDark.Gold, XgJuice.Shape.Yen, 300); return true;
         }
 
         public void OnBought(XgNode node)
         {
             double paid = purchaseCosts.TryGetValue(node.id, out var actual) ? actual : node.cost;
             purchaseCosts.Remove(node.id);
-            if ((node.id == "bt.vision" && Sim.S.firstSpecialty == "sequence") || (node.id == "bt.sequence" && Sim.S.firstSpecialty == "vision")) paid = node.cost * 3;
             SyncRevealedContent(true);
             Fx.Play(XgJuice.Sfx.Id.Unlock);
             var item = nodes.Find(n => n.node.id == node.id);
@@ -415,37 +444,52 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var rt = (RectTransform)item.transform; var at = Fx.At(rt);
                 Fx.Knock(rt, .3f, Vector2.zero, .4f); Fx.Shockwave(at, LaneColor(node.lane), 200, .4f, 10);
-                Fx.Burst(at, 24, XgPalette.Gold, XgJuice.Shape.Yen, 320); Fx.Float(at + new Vector2(0, 60), "-¥" + Money(paid), XgPalette.Money, 24);
+                Fx.Burst(at, 24, XgDark.Gold, XgJuice.Shape.Yen, 320); Fx.Float(at + new Vector2(0, 60), "-¥" + Money(paid), XgDark.Money, 24);
                 Fx.Flash(Color.white, .08f, .3f); Fx.HitStop(80);
-                if (node.kind == XgNodeKind.Breakthrough)
+                if (IsEraItem(node.id))
                 {
-                    for (int y = -120; y <= 120; y += 60) Fx.Crumble(at + new Vector2(0, y), Fx.Reduced ? 2 : 8, XgPalette.Muted);
+                    for (int y = -120; y <= 120; y += 60) Fx.Crumble(at + new Vector2(0, y), Fx.Reduced ? 2 : 8, XgDark.Muted);
                     OnBreakthrough(node.id);
                 }
             }
             RefreshInfo();
         }
 
+        /// <summary>An architecture item's mark on its card: the ability it lowers and by how much (③×0.7).</summary>
+        static string ItemTag(XgNode node)
+        {
+            var discounts = XgSim.DiscountsOf(node.id);
+            if (discounts.Count == 0) return "";
+            var sb = new System.Text.StringBuilder(" <size=80%><color=#C88A00>");
+            foreach (var d in discounts)
+                sb.Append("①②③④⑤⑥"[Mathf.Clamp(d.ability - 1, 0, 5)]).Append("×").Append(N(Math.Min(d.paramsFactor, d.samplesFactor), "0.0#"));
+            return sb.Append("</color></size>").ToString();
+        }
+
+        /// <summary>The architecture items that turn the tree to their year (they were breakthroughs before the items).</summary>
+        static bool IsEraItem(string id) => id == "mlp" || id == "lenet" || id == "rnn" || id == "lstm" || id == "resnet" || id == "seq2seq" || id == "attention" || id == "caption" || id == "transformer";
+
         public void OnBreakthrough(string id)
         {
             int year; string zh, en;
             switch (id)
             {
-                case "bt.hidden": year = 1986; zh = "反向传播 · 错误可以一层一层往回传"; en = "Backpropagation · errors can travel backward through layers"; break;
-                case "bt.vision": year = 1998; zh = "卷积网络 · 先看局部，再看整体"; en = "Convolution · local structure before the whole"; break;
-                case "bt.sequence": year = 1990; zh = "循环网络 · 前一个词影响后一个词"; en = "Recurrent networks · the previous word affects the next"; break;
-                case "bt.gate": year = 1997; zh = "LSTM · 学会该忘什么，才能记住该记的"; en = "LSTM · learning what to forget lets us remember"; break;
-                case "bt.residual": year = 2015; zh = "ResNet · 让信息原样穿过深层网络"; en = "ResNet · let information pass through deep layers"; break;
-                case "bt.attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
-                case "bt.spatial": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
+                case "mlp": year = 1986; zh = "反向传播 · 错误可以一层一层往回传"; en = "Backpropagation · errors can travel backward through layers"; break;
+                case "lenet": year = 1989; zh = "卷积网络 · 先看局部，再看整体（LeCun 1989；LeNet-5 是 1998）"; en = "Convolution · local structure before the whole (LeCun 1989; LeNet-5 in 1998)"; break;
+                case "rnn": year = 1990; zh = "循环网络 · 前一个词影响后一个词"; en = "Recurrent networks · the previous word affects the next"; break;
+                case "lstm": year = 1997; zh = "LSTM · 用门守住记忆（「遗忘门」是 1999–2000 年加上的）"; en = "LSTM · gates guard the memory (the forget gate came in 1999–2000)"; break;
+                case "resnet": year = 2015; zh = "ResNet · 让信息原样穿过深层网络"; en = "ResNet · let information pass through deep layers"; break;
+                case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;
+                case "attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
+                case "caption": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
                 case "transformer": year = 2017; zh = "Transformer · 只要注意力\n这是游戏中的提前突破；年份是真实历史。"; en = "Transformer · attention is all we need\nA fictional early discovery; the date is historical."; break;
                 default: return;
             }
             SyncRevealedContent(true);
-            eraTitle.text = year + " · " + T("时代卡", "Era card"); eraBody.text = T(zh, en);
+            eraTitle.text = year + " · " + Lang.T("时代卡"); eraBody.text = T(zh, en);
             eraCard.gameObject.SetActive(true); eraCard.SetAsLastSibling(); eraRemaining = 8;
             FocusFrontier();
-            if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgPalette.Gold, 500, .8f, 16); }
+            if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgDark.Gold, 500, .8f, 16); }
         }
 
         public override void Tick(float dt)
@@ -481,9 +525,12 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (progress >= 1) entrances.Remove(node);
                 }
             }
-            float pulse = .5f + .5f * Mathf.Sin(Time.unscaledTime * 5);
-            foreach (var node in nodes) if (node.gameObject.activeSelf) Paint(node, pulse);
+            // Painted once per frame from here only, with a steady glow: nothing breathes or blinks (Refresh used to repaint
+            // at a fixed glow every 0.2 s against this frame's pulse, which made buyable nodes flicker).
+            foreach (var node in nodes) if (node.gameObject.activeSelf) Paint(node, SteadyGlow);
         }
+
+        const float SteadyGlow = .6f;
 
         void Paint(XgNodeView node, float pulse)
         {
@@ -492,7 +539,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 // Worked out alone: the secret card turns gold (design v1.1 §5.3).
                 node.graphic.Dashed = false; node.graphic.SetShape(false, 0, 1);
-                node.graphic.Set(new Color32(255, 236, 170, 255), XgPalette.Gold, 5, XgPalette.Gold, .45f + .25f * pulse, 0);
+                node.graphic.Set(new Color32(255, 236, 170, 255), XgDark.Gold, 5, XgDark.Gold, .45f + .25f * pulse, 0);
                 return;
             }
             if (XgSim.IsAtlas(node.node))
@@ -501,9 +548,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool lit = status == XgSim.NodeStatus.Owned, ability = node.node.kind == XgNodeKind.Ability;
                 node.graphic.Dashed = !ability || !lit;
                 node.graphic.SetShape(false, 0, 1);
-                if (!lit) node.graphic.Set(new Color32(244, 246, 249, 255), new Color32(170, 180, 196, 255), 3, Color.clear, 0, 0);
-                else if (ability) node.graphic.Set(XgPalette.Gold, new Color32(200, 140, 20, 255), 4, XgPalette.Gold, hover ? .6f : .25f, 0);
-                else node.graphic.Set(new Color32(232, 248, 250, 255), color, 4, color, hover ? .5f : 0, 0);
+                if (!lit) node.graphic.Set(new Color32(13, 21, 30, 255), new Color32(58, 85, 102, 255), 3, Color.clear, 0, 0);
+                else if (ability) node.graphic.Set(XgDark.Gold, new Color32(200, 140, 20, 255), 4, XgDark.Gold, hover ? .6f : .25f, 0);
+                else node.graphic.Set(new Color32(14, 40, 44, 255), color, 4, color, hover ? .5f : 0, 0);
                 return;
             }
             node.graphic.SetShape(node.node.kind == XgNodeKind.Breakthrough || node.node.kind == XgNodeKind.Project,
@@ -511,9 +558,9 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (status)
             {
                 case XgSim.NodeStatus.Owned: node.graphic.Set(color, Color.Lerp(color, Color.black, .25f), 4, color, hover ? .6f : 0, 0); break;
-                case XgSim.NodeStatus.Buyable: node.graphic.Set(Color.white, XgPalette.Gold, 6, XgPalette.Gold, .5f + .5f * pulse + node.charge, node.charge); break;
-                case XgSim.NodeStatus.TooExpensive: node.graphic.Set(Color.white, Color.Lerp(color, Color.white, .45f), 4, color, hover ? .4f : 0, 0); break;
-                default: node.graphic.Set(new Color32(236, 238, 243, 255), new Color32(180, 188, 205, 255), 3, Color.clear, 0, 0); break;
+                case XgSim.NodeStatus.Buyable: node.graphic.Set(XgDark.Card, XgDark.Gold, 6, XgDark.Gold, .5f + .5f * pulse + node.charge, node.charge); break;
+                case XgSim.NodeStatus.TooExpensive: node.graphic.Set(XgDark.Card, Color.Lerp(color, XgDark.Card, .3f), 4, color, hover ? .4f : 0, 0); break;
+                default: node.graphic.Set(new Color32(13, 21, 30, 255), new Color32(40, 60, 75, 255), 3, Color.clear, 0, 0); break;
             }
         }
 
@@ -523,9 +570,9 @@ namespace LingGuangV05.Desktop.XingGuang
             SyncRevealedContent(true);
             int buyable = 0;
             foreach (var node in nodes) if (node.gameObject.activeSelf && Sim.Status(node.node, Host) == XgSim.NodeStatus.Buyable) buyable++;
-            header.text = "<b>" + T("技能树", "Skill tree") + "</b>  <color=#E86E14>¥ " + Money(Host.Money) + "</color>";
-            toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
-            toolbar[2].Set(T("可买 ", "Buy ") + buyable, true, buyable > 0 ? XgPalette.AccentSoft : XgPalette.Button);
+            header.text = "<b>" + Lang.T("科技") + "</b>  <color=#FAC775>¥ " + Money(Host.Money) + "</color>";
+            toolbar[0].Set(Lang.T("⓪ 标注"), true); toolbar[1].Set(Lang.T("前沿"), true);
+            toolbar[2].Set(Lang.T("可买 ") + buyable, true, buyable > 0 ? XgDark.AccentSoft : XgDark.Button);
             var edges = new List<XgLinksGraphic.Link>();
             foreach (var item in nodes)
             {
@@ -535,83 +582,80 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (XgSim.IsAtlas(node))
                 {
                     bool lit = status == XgSim.NodeStatus.Owned;
-                    item.label.text = lit || node.kind == XgNodeKind.Ability ? Sim.NodeName(node) : T("？？？", "???");
-                    item.label.color = lit && node.kind == XgNodeKind.Ability ? Color.white : lit ? XgPalette.Ink : XgPalette.Muted;
-                    item.cost.text = lit ? "<color=#2F9E44>✓</color>" : "";
-                    Paint(item, .5f);
+                    item.label.text = lit || node.kind == XgNodeKind.Ability ? Sim.NodeName(node) : Lang.T("？？？");
+                    item.label.color = lit && node.kind == XgNodeKind.Ability ? Color.white : lit ? XgDark.Ink : XgDark.Muted;
+                    item.cost.text = lit ? "<color=#5DCAA5>✓</color>" : "";
                     continue;
                 }
                 bool mystery = Sim.NodeMystery(node);
                 item.label.text = Sim.NodeName(node) + (node.maxLevel > 1 && !mystery ? "  <size=70%><color=#" + (status == XgSim.NodeStatus.Owned ? "FFFFFFCC" : "68748C") + ">" + level + "/" + node.maxLevel + "</color></size>" : "");
-                item.label.color = status == XgSim.NodeStatus.Owned ? Color.white : XgPalette.Ink;
-                item.cost.text = status == XgSim.NodeStatus.Owned ? "<color=#2F9E44>✓</color>" : mystery ? "" : ProjectNodeRunning(node) ? T("研发中", "Researching") : cost > 0 && !double.IsInfinity(cost) ? "¥" + Money(cost) : "";
+                item.label.color = status == XgSim.NodeStatus.Owned ? Color.white : XgDark.Ink;
+                item.cost.text = (status == XgSim.NodeStatus.Owned ? "<color=#5DCAA5>✓</color>" : mystery ? "" : cost > 0 && !double.IsInfinity(cost) ? "¥" + Money(cost) : "") + ItemTag(node);
                 AddEdge(node.parent, node, false);
                 foreach (string need in node.needs) AddEdge(need, node, true);
-                Paint(item, .5f);
             }
             links.SetLinks(edges); RefreshInfo();
             void AddEdge(string parentId, XgNode node, bool dashed)
             {
                 var parent = XgCatalog.Node(parentId);
                 if (parent == null || !Sim.NodeVisible(parent)) return;
+                // Only links inside a lane are always drawn; a prerequisite in another lane shows while either end is selected.
+                bool crossLane = XgCatalog.Band(parent.lane) != XgCatalog.Band(node.lane);
+                bool focus = selected != null && (selected.node == node || selected.node == parent);
+                if (crossLane && !focus) return;
                 var start = Pos(parent); var end = Pos(node);
                 bool forward = end.x > start.x;
                 float from = HalfWidth(parent), to = HalfWidth(node);
-                edges.Add(new XgLinksGraphic.Link { a = start + new Vector2(forward ? from : -from, 0), b = end + new Vector2(forward ? -to : to, 0), color = Sim.Has(node.id) ? LaneColor(node.lane) : new Color32(170, 180, 200, 210), width = Sim.Has(node.id) ? 4 : 2, dashed = dashed });
+                var a = start + new Vector2(forward ? from : -from, 0); var b = end + new Vector2(forward ? -to : to, 0);
+                // Links into another stage turn in that stage's left gutter, so a fan from one parent shares one bus;
+                // links within a stage turn just left of the child.
+                float? turn = !forward ? (float?)null : parent.stage != node.stage ? node.stage * XgCatalog.StageWidth + 40 : b.x - 16;
+                Color color = focus ? XgDark.Gold : Sim.Has(node.id) ? LaneColor(node.lane) : new Color32(58, 85, 102, 210);
+                edges.Add(new XgLinksGraphic.Link { a = a, b = b, color = color, width = focus ? 4 : Sim.Has(node.id) ? 4 : 2, dashed = dashed, turnX = turn });
             }
         }
 
-        bool ProjectNodeRunning(XgNode node) => node.id == "project.transformer" && Sim.ProjectActive;
         void RefreshInfo()
         {
             if (infoTitle == null) return;
-            if (selected == null) { infoTitle.text = T("沿着前沿探索", "Explore the frontier"); infoCost.text = ""; infoBody.text = T("只显示你已经发现的技术。\n\n拖动平移 · 滚轮上下\nShift + 滚轮左右 · −/+ 缩放\n按住节点 0.6 秒购买。", "Only discovered technology appears.\n\nDrag to pan · wheel scrolls up and down\nShift + wheel scrolls sideways · −/+ zoom\nHold a node for 0.6 s to buy."); return; }
+            if (selected == null) { infoTitle.text = Lang.T("沿着前沿探索"); infoCost.text = ""; infoBody.text = Lang.T("只显示你已经发现的技术。\n\n拖动平移 · 滚轮上下\nShift + 滚轮左右 · −/+ 缩放\n按住节点 0.6 秒购买。"); return; }
             var node = selected.node; var status = Sim.Status(node, Host); double cost = Sim.NodeCost(node);
             if (XgSim.IsAtlas(node))
             {
                 bool lit = status == XgSim.NodeStatus.Owned, ability = node.kind == XgNodeKind.Ability;
-                infoTitle.text = lit || ability ? Sim.NodeName(node) : T("？？？", "???");
-                infoCost.text = lit ? T("已点亮", "Lit") : T("未发现", "Not yet seen");
-                infoBody.text = lit || ability ? T(node.note, node.noteEn) + "\n\n<color=#68748C>" + Sim.Why(node, Host) + "</color>"
-                    : T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。", "It has not happened yet. When the rules stack up it will appear by itself, and the first time it does it goes into the atlas.");
+                infoTitle.text = lit || ability ? Sim.NodeName(node) : Lang.T("？？？");
+                infoCost.text = lit ? Lang.T("已点亮") : Lang.T("未发现");
+                infoBody.text = lit || ability ? T(node.note, node.noteEn) + "\n\n<color=#6F95A5>" + Sim.Why(node, Host) + "</color>"
+                    : Lang.T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。");
                 return;
             }
             if (Sim.NodeMystery(node))
             {
                 // 自动答题 before the protagonist has the idea: no name, no price, only a hint (XgSim.Epiphany.cs).
-                infoTitle.text = Sim.NodeName(node); infoCost.text = T("未发现", "Not yet seen"); infoBody.text = Sim.NodeNote(node);
+                infoTitle.text = Sim.NodeName(node); infoCost.text = Lang.T("未发现"); infoBody.text = Sim.NodeNote(node);
                 return;
             }
             infoTitle.text = Sim.NodeName(node);
-            infoCost.text = status == XgSim.NodeStatus.Owned ? T("已拥有", "Owned") : double.IsInfinity(cost) ? T("已满级", "Maxed") : "¥ " + Money(cost);
+            infoCost.text = status == XgSim.NodeStatus.Owned ? Lang.T("已拥有") : double.IsInfinity(cost) ? T("已满级", "Maxed") : "¥ " + Money(cost);
             var text = new System.Text.StringBuilder(Sim.NodeNote(node)).Append("\n\n");
-            void Condition(bool ok, string zh, string en) => text.Append(ok ? "<color=#2F9E44>✓ " : "<color=#A44A24>○ ").Append(T(zh, en)).Append("</color>\n");
+            void Condition(bool ok, string zh, string en) => text.Append(ok ? "<color=#5DCAA5>✓ " : "<color=#E07B4F>○ ").Append(T(zh, en)).Append("</color>\n");
             if (node.parent != null) Condition(Sim.Has(node.parent) || node.parent == "label.raise" && Sim.RaiseLevel > 0 || node.parent == "label.auto" && Sim.GlobalAutoLevel > 0, Sim.NodeName(XgCatalog.Node(node.parent)), Sim.NodeName(XgCatalog.Node(node.parent)));
             foreach (string need in node.needs) Condition(Sim.Has(need), Sim.NodeName(XgCatalog.Node(need)), Sim.NodeName(XgCatalog.Node(need)));
             if (node.id == "caption") Condition(Sim.S.stage >= 5, "第五阶段", "Stage five");
-            if (node.kind == XgNodeKind.Secret)
+            if (node.id == "transformer") Condition(Sim.TransformerIdeaReached, "它自己问出「如果只用注意力呢？」", "It asked: what if only attention?");
+            // An architecture item: which ability's thresholds it lowers (参数量与数据量主线 §6).
+            foreach (var d in XgSim.DiscountsOf(node.id))
             {
-                var wall = XgSim.WallOfSecret(node.id);
-                if (wall != null)
-                {
-                    text.Append(T("墙：", "Wall: ")).Append(T(wall.name, wall.nameEn)).Append("\n");
-                    if (Sim.Has(node.id))
-                    {
-                        text.Append("<b>").Append(T(wall.golden, wall.goldenEn)).Append("</b>\n").Append(T(wall.why, wall.whyEn)).Append("\n");
-                        if (Sim.S.insights.Contains(wall.id)) text.Append("<color=#C88A00>").Append(T("★ 已自悟", "★ Worked out yourself")).Append("</color>\n");
-                    }
-                    else text.Append(T("黄金参数：？？？（买下才写明）", "Golden settings: ??? (revealed when bought)")).Append("\n");
-                    foreach (var group in wall.needs)
-                    {
-                        bool met = false; foreach (var id in group) met |= Sim.Has(id);
-                        Condition(met, "要用到 · " + Sim.RequirementName(group), "Needs · " + Sim.RequirementName(group));
-                    }
-                }
+                string ability = XgSim.AbilityName(d.ability, Sim.English);
+                text.Append("<color=#C88A00>").Append(T("道具 · 能力「" + ability + "」", "Item · ability '" + ability + "'"));
+                if (d.paramsFactor < 1) text.Append(T(" 参数门槛 ×", " parameters ×")).Append(N(d.paramsFactor, "0.0#"));
+                if (d.samplesFactor < 1) text.Append(T(" 数据门槛 ×", " data ×")).Append(N(d.samplesFactor, "0.0#"));
+                text.Append("</color>\n");
             }
             if (status != XgSim.NodeStatus.Owned)
             {
                 Condition(Host.Money + 1e-9 >= cost, "经费 ¥" + Money(cost), "Funds ¥" + Money(cost));
-                text.Append("\n").Append(status == XgSim.NodeStatus.Buyable ? T("按住节点 0.6 秒购买", "Hold the node 0.6 s to buy") : Sim.Why(node, Host));
+                text.Append("\n").Append(status == XgSim.NodeStatus.Buyable ? Lang.T("按住节点 0.6 秒购买") : Sim.Why(node, Host));
             }
             infoBody.text = text.ToString();
         }

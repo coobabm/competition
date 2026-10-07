@@ -23,12 +23,16 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XingGuangController : MonoBehaviour, IDesktopAppView
     {
         public const string AppId = "lingguang";
+        /// <summary>摆渡众包 (DesktopBridge/Zhongbao): it hosts the 标注台 and 订单 pages against this controller's Sim.</summary>
+        public const string CrowdAppId = "zhongbao";
 
         public ChapterOneRuntime runtime;
         public XgSim Sim { get; private set; }
         public XingGuangHost Host { get; private set; }
         public WindowManager Window { get; private set; }
         public XingGuangView View { get; private set; }
+        /// <summary>The font the lab pages are drawn with (摆渡众包 uses it too, so its pages look the same).</summary>
+        public TMP_FontAsset Font => font;
 
         /// <summary>What the lab did while the game was closed, shown once as a 欢迎回来 card.</summary>
         public sealed class OfflineReport { public double seconds, income, labels; public int epochs, records; }
@@ -41,6 +45,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float sinceSave;
         ChapterOneSim linked;
         TMP_Text title, status;
+        XgWindowChrome chrome;
         TMP_FontAsset font;
         RectTransform content;
         readonly HashSet<string> raised = new HashSet<string>();
@@ -62,7 +67,7 @@ namespace LingGuangV05.Desktop.XingGuang
             runtime.EnsureInitialized();
             Host = new XingGuangHost(runtime);
             BindSave(runtime.Sim);
-            if (runtime.OfflineSeconds > 0) CatchUp(runtime.OfflineSeconds);
+            // No offline progress: the lab only works while the game runs.
             runtime.Changed += OnRuntimeChanged;
             runtime.Saving += WriteToSave;
             GameText.Changed += ApplyShellText;
@@ -96,19 +101,6 @@ namespace LingGuangV05.Desktop.XingGuang
             if (View != null) View.Bind(this);
         }
 
-        /// <summary>Run the time away and remember the gains for the welcome-back card.</summary>
-        void CatchUp(double seconds)
-        {
-            double income = Sim.S.totalIncome, labels = Sim.TotalLabels;
-            int epochs = Sim.S.epochs, records = Sim.S.records;
-            bool previous = Sim.OfflineSimulation;
-            Sim.OfflineSimulation = true;
-            try { Sim.Tick(seconds, Host); }
-            finally { Sim.OfflineSimulation = previous; }
-            var report = new OfflineReport { seconds = seconds, income = Sim.S.totalIncome - income, labels = Sim.TotalLabels - labels, epochs = Sim.S.epochs - epochs, records = Sim.S.records - records };
-            if (seconds >= 60 && (report.income >= .5 || report.epochs > 0 || report.labels > 0)) Offline = report;
-        }
-
         void WriteToSave()
         {
             if (Sim == null || runtime == null || runtime.Sim == null || runtime.Sim != linked) return;
@@ -125,7 +117,6 @@ namespace LingGuangV05.Desktop.XingGuang
             if (runtime.Sim != linked)
             {
                 BindSave(runtime.Sim);
-                if (runtime.OfflineSeconds > 0 && !runtime.TestMode) CatchUp(runtime.OfflineSeconds);
             }
         }
 
@@ -216,6 +207,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (router != null) router.Open(AppId);
         }
 
+        /// <summary>Opens 摆渡众包 on a page (label, contracts, subcontract, ledger, credit; null keeps the current one).</summary>
+        public bool OpenCrowd(string page)
+        {
+            var router = runtime != null ? runtime.GetComponent<ChapterOneDesktopRouter>() ?? FindAnyObjectByType<ChapterOneDesktopRouter>() : null;
+            return router != null && router.Open(CrowdAppId, page);
+        }
+
         // ───────────── IDesktopAppView ─────────────
 
         public bool EnsureReady()
@@ -272,6 +270,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 var localized = label.GetComponent<DesktopLocalizedText>();
                 if (localized != null) Destroy(localized);
             }
+            // The dark caption of the redesign, on this window only (other apps keep their Aero bars).
+            chrome = XgWindowChrome.Apply(Window);
             binding.UseCustomView(this);
         }
 
@@ -316,8 +316,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ApplyShellText()
         {
-            if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
-            if (status != null) status.text = GameText.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续", "GPUs, power bill and ¥ are shared with the house · training continues when closed");
+            if (chrome != null) chrome.SetTitle(GameText.T(AppNames.ExeZh, AppNames.ExeEn), GameText.T("深度学习工作站", "deep learning workstation"));
+            else if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
+            if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);
         }
     }

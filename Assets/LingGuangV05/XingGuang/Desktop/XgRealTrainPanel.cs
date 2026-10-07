@@ -5,14 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
     /// The one real training in the game (design v1.1 §11.8.1, §13): a small live panel in the corner of 灵光.exe
     /// that trains a real perceptron or MLP (XgTinyRun) on 8×8 pictures while the player watches the error curve,
     /// the input pictures with the net's answers, and each unit's 64 weights as a tiny grid.
-    /// Three moments: the XOR wall rises (a perceptron that cannot get there), stage one is passed (two layers with
-    /// an S-curve that can), and the stage-two emergence (it learns "is it a 0?" and knows the 0 of 0.txt).
+    /// Three moments: when stage one ends, a perceptron that cannot learn XOR and then two layers with an S-curve that
+    /// can; and the stage-two emergence (it learns "is it a 0?" and knows the 0 of 0.txt).
     /// It never blocks: it waits behind the insight card, never takes the whole window, closes by itself shortly
     /// after the run ends, and 「跳过」 closes it at once.
     /// </summary>
@@ -54,13 +55,13 @@ namespace LingGuangV05.Desktop.XingGuang
         void Build(RectTransform root)
         {
             panel = Rect("Real Training", root, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-W - 16, 60), new Vector2(-16, 60 + H));
-            Panel(panel, XgPalette.Line);
+            Panel(panel, XgDark.Line);
             var inner = Rect("Inner", panel, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1));
-            Panel(inner, XgPalette.Card);
+            Panel(inner, XgDark.Card);
             group = panel.gameObject.AddComponent<CanvasGroup>();
 
             var head = Rect("Header", inner, new Vector2(0, 1), Vector2.one, new Vector2(0, -32), Vector2.zero);
-            Panel(head, XgPalette.Hud).raycastTarget = false;
+            Panel(head, XgDark.Hud).raycastTarget = false;
             title = ui.Text(Rect("Title", head, Vector2.zero, Vector2.one, new Vector2(12, 0), new Vector2(-96, 0)), "", 15, Color.white, TextAlignmentOptions.MidlineLeft);
             title.fontStyle = FontStyles.Bold;
             skip = ui.Button(head, "", Skip, 13);
@@ -70,30 +71,30 @@ namespace LingGuangV05.Desktop.XingGuang
 
             // Inputs: 8×8 pictures with the net's current answer.
             var left = Rect("Inputs", inner, new Vector2(0, 0), new Vector2(0, 1), new Vector2(10, 58), new Vector2(150, -38));
-            inputsLabel = ui.Text(Rect("Label", left, new Vector2(0, 1), Vector2.one, new Vector2(0, -16), Vector2.zero), "", 11, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            inputsLabel = ui.Text(Rect("Label", left, new Vector2(0, 1), Vector2.one, new Vector2(0, -16), Vector2.zero), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             for (int i = 0; i < Tiles; i++)
             {
                 int col = i % 2, row = i / 2;
                 var t = Rect("Picture" + i, left, new Vector2(0, 1), new Vector2(0, 1), new Vector2(col * 70, -20 - (row + 1) * 54), new Vector2(col * 70 + 46, -20 - row * 54 - 8));
                 tiles[i] = t.gameObject.AddComponent<XgTinyPixels>();
-                marks[i] = ui.Text(Rect("Answer", left, new Vector2(0, 1), new Vector2(0, 1), new Vector2(col * 70 + 48, -20 - (row + 1) * 54), new Vector2(col * 70 + 70, -20 - row * 54 - 8)), "", 12, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+                marks[i] = ui.Text(Rect("Answer", left, new Vector2(0, 1), new Vector2(0, 1), new Vector2(col * 70 + 48, -20 - (row + 1) * 54), new Vector2(col * 70 + 70, -20 - row * 54 - 8)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             }
             UiTip.Add(left, "输入：8×8 的小图，每格一个数（白 0，黑 1）。旁边是它现在的回答：✓ 对，✗ 错。", "Inputs: 8×8 pictures, one number per square (white 0, black 1). Next to each is its current answer: ✓ right, ✗ wrong.");
             Panel(left, new Color(1, 1, 1, .01f));
 
             // The error curve.
             var mid = Rect("Curve", inner, new Vector2(0, 0), new Vector2(0, 1), new Vector2(160, 78), new Vector2(424, -38));
-            Panel(mid, new Color32(250, 251, 254, 255));
-            curveLabel = ui.Text(Rect("Label", mid, new Vector2(0, 1), Vector2.one, new Vector2(6, -16), new Vector2(-6, 0)), "", 11, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            Panel(mid, new Color32(6, 11, 16, 255));
+            curveLabel = ui.Text(Rect("Label", mid, new Vector2(0, 1), Vector2.one, new Vector2(6, -16), new Vector2(-6, 0)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             curve = Rect("Line", mid, Vector2.zero, Vector2.one, new Vector2(6, 6), new Vector2(-6, -18)).gameObject.AddComponent<XgTinyCurve>();
             curve.raycastTarget = false;
             UiTip.Add(mid, "误差：每张图「它的回答」和「正确答案」差多少，平方后取平均。0 就是全对。\n这条线是真的：每一点都是刚刚在你的 CPU 上算出来的。",
                 "Error: how far each answer is from the right one, squared and averaged. 0 means all right.\nThis line is real: every point was just computed on your CPU.");
-            status = ui.Text(Rect("Status", inner, new Vector2(0, 0), new Vector2(0, 0), new Vector2(160, 58), new Vector2(424, 76)), "", 11, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            status = ui.Text(Rect("Status", inner, new Vector2(0, 0), new Vector2(0, 0), new Vector2(160, 58), new Vector2(424, 76)), "", 11, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
 
             // Weights: what each unit looks for, as an 8×8 grid.
             var right = Rect("Weights", inner, new Vector2(0, 0), new Vector2(0, 1), new Vector2(434, 58), new Vector2(592, -38));
-            weightsLabel = ui.Text(Rect("Label", right, new Vector2(0, 1), Vector2.one, new Vector2(0, -16), Vector2.zero), "", 11, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            weightsLabel = ui.Text(Rect("Label", right, new Vector2(0, 1), Vector2.one, new Vector2(0, -16), Vector2.zero), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             for (int i = 0; i < Units; i++)
             {
                 int col = i % 2, row = i / 2;
@@ -105,9 +106,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 "Weights: each unit gives each of the 64 squares a share. Blue = ink here says \"yes\", red = says \"no\"; darker weighs more.");
             Panel(right, new Color(1, 1, 1, .01f));
 
-            caption = ui.Text(Rect("Caption", inner, Vector2.zero, new Vector2(1, 0), new Vector2(12, 24), new Vector2(-12, 56)), "", 13, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            caption = ui.Text(Rect("Caption", inner, Vector2.zero, new Vector2(1, 0), new Vector2(12, 24), new Vector2(-12, 56)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);
             caption.enableAutoSizing = true; caption.fontSizeMin = 10; caption.fontSizeMax = 13;
-            footer = ui.Text(Rect("Footer", inner, Vector2.zero, new Vector2(1, 0), new Vector2(12, 4), new Vector2(-12, 22)), "", 11, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            footer = ui.Text(Rect("Footer", inner, Vector2.zero, new Vector2(1, 0), new Vector2(12, 4), new Vector2(-12, 22)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             footer.enableAutoSizing = true; footer.fontSizeMin = 9; footer.fontSizeMax = 11;
             panel.gameObject.SetActive(false);
         }
@@ -117,12 +118,11 @@ namespace LingGuangV05.Desktop.XingGuang
         void Unbind()
         {
             if (bound == null) return;
-            bound.WallObserved -= OnWall; bound.StageAdvanced -= OnStageAdvanced; bound.Emerged -= OnEmerged;
+            bound.StageAdvanced -= OnStageAdvanced; bound.Emerged -= OnEmerged;
             bound = null;
         }
 
-        void OnWall(string id) { if (id == "combo") Show(XgTinyLesson.XorPerceptron); }
-        void OnStageAdvanced(int from) { if (from == 1) Show(XgTinyLesson.XorMlp); }
+        void OnStageAdvanced(int from) { if (from == 1) { Show(XgTinyLesson.XorPerceptron); Show(XgTinyLesson.XorMlp); } }
         void OnEmerged(int stage, string line) { if (stage == 2) Show(XgTinyLesson.Zero); }
 
         void Skip() { if (Showing && closeAt < 0) closeAt = Time.unscaledTime; }
@@ -167,7 +167,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 Unbind();
                 bound = sim;
-                if (bound != null) { bound.WallObserved += OnWall; bound.StageAdvanced += OnStageAdvanced; bound.Emerged += OnEmerged; }
+                if (bound != null) { bound.StageAdvanced += OnStageAdvanced; bound.Emerged += OnEmerged; }
             }
             if (!Showing)
             {
@@ -200,26 +200,26 @@ namespace LingGuangV05.Desktop.XingGuang
             if (run == null) return;
             var lesson = run.lesson;
             bool xor = lesson != XgTinyLesson.Zero;
-            title.text = lesson == XgTinyLesson.XorPerceptron ? T("真训练 · 异或 · 单层感知机", "Real training · XOR · one-layer perceptron")
-                : lesson == XgTinyLesson.XorMlp ? T("真训练 · 异或 · 两层 + S 形", "Real training · XOR · two layers + S-curve")
-                : T("真训练 · 认出「0」", "Real training · spotting a \"0\"");
-            skip.Set(run.Done ? T("关闭", "Close") : T("跳过", "Skip"), true);
-            inputsLabel.text = xor ? T("输入（4 张图）", "Inputs (4 pictures)") : T("没训练过的图", "Unseen pictures");
-            weightsLabel.text = run.net.IsPerceptron ? T("权重（1 个单元）", "Weights (1 unit)") : T("隐藏层权重（" + run.net.Units + " 个单元）", "Hidden weights (" + run.net.Units + " units)");
-            curveLabel.text = T("误差", "Error") + (lesson == XgTinyLesson.XorMlp ? "  <color=#9AA3B5>" + T("灰：单层感知机", "grey: one layer") + "</color>  <color=#E8900C>" + T("金：两层", "gold: two layers") + "</color>" : "");
+            title.text = lesson == XgTinyLesson.XorPerceptron ? Lang.T("真训练 · 异或 · 单层感知机")
+                : lesson == XgTinyLesson.XorMlp ? Lang.T("真训练 · 异或 · 两层 + S 形")
+                : Lang.T("真训练 · 认出「0」");
+            skip.Set(run.Done ? Lang.T("关闭") : Lang.T("跳过"), true);
+            inputsLabel.text = xor ? Lang.T("输入（4 张图）") : Lang.T("没训练过的图");
+            weightsLabel.text = run.net.IsPerceptron ? Lang.T("权重（1 个单元）") : T("隐藏层权重（" + run.net.Units + " 个单元）", "Hidden weights (" + run.net.Units + " units)");
+            curveLabel.text = Lang.T("误差") + (lesson == XgTinyLesson.XorMlp ? "  <color=#58798A>" + Lang.T("灰：单层感知机") + "</color>  <color=#E8900C>" + Lang.T("金：两层") + "</color>" : "");
 
             var set = xor ? run.train : run.test;
             for (int i = 0; i < Tiles && i < set.Count; i++)
             {
                 var s = set[i];
                 bool yes = run.net.Predict(s.pixels), right = yes == s.label;
-                marks[i].text = (yes ? T("是", "yes") : T("否", "no")) + (right ? " <color=#2F9E44>✓</color>" : " <color=#D63031>✗</color>");
+                marks[i].text = (yes ? T("是", "yes") : T("否", "no")) + (right ? " <color=#5DCAA5>✓</color>" : " <color=#E24B4A>✗</color>");
             }
             for (int i = 0; i < run.net.Units && i < Units; i++) weights[i].Values = run.net.UnitWeights(i);
 
             float loss = run.loss.Count > 0 ? run.loss[run.loss.Count - 1] : 0;
-            status.text = T("第 ", "Pass ") + run.Epoch + "/" + run.epochs + T(" 轮", "") + T(" · 误差 ", " · error ") + N(loss, "0.000")
-                + T(" · 答错 ", " · wrong ") + N(run.TrainError * 100, "0") + "%";
+            status.text = T("第 ", "Pass ") + run.Epoch + "/" + run.epochs + T(" 轮", "") + Lang.T(" · 误差 ") + N(loss, "0.000")
+                + Lang.T(" · 答错 ") + N(run.TrainError * 100, "0") + "%";
             caption.text = Caption();
             footer.text = T("只有这一段是真训练：" + run.Parameters + " 个参数，算了 " + N(run.Milliseconds, "0.0") + " 毫秒。后面的阶段太大，游戏里改用模拟。",
                 "Only this part is real training: " + run.Parameters + " parameters, " + N(run.Milliseconds, "0.0") + " ms of computing. Later stages are too big, so the game simulates them.");
@@ -231,20 +231,19 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 case XgTinyLesson.XorPerceptron:
                     return run.Done
-                        ? T("误差在 25% 到 75% 之间来回跳，就是降不到 0：单层只能画一条直线，而异或的两个「是」在对角上，一条线分不开。",
-                            "The error jumps between 25% and 75% and never reaches 0: one layer draws one straight line, and XOR's two \"yes\" pictures sit on opposite corners.")
-                        : T("一个单层感知机正在学这 4 张图：左边亮、右边亮，只亮一边才算「是」。", "A one-layer perceptron is learning these 4 pictures: left lit, right lit, \"yes\" only when exactly one side is lit.");
+                        ? Lang.T("误差在 25% 到 75% 之间来回跳，就是降不到 0：单层只能画一条直线，而异或的两个「是」在对角上，一条线分不开。")
+                        : Lang.T("一个单层感知机正在学这 4 张图：左边亮、右边亮，只亮一边才算「是」。");
                 case XgTinyLesson.XorMlp:
                     return run.Done
                         ? T("同样 4 张图，加一层、换成有坡度的 S 形：误差一路掉到 " + N(run.loss[run.loss.Count - 1], "0.00") + "，4 张全对。这就是反向传播。",
                             "The same 4 pictures with a second layer and a sloped S-curve: the error falls to " + N(run.loss[run.loss.Count - 1], "0.00") + " and all 4 are right. That is backpropagation.")
-                        : T("两层网络在学同一道异或。误差从下层一路传回来，每个单元学一条线，合起来就分开了。", "A two-layer net on the same XOR. The error flows back through the layers; each unit learns a line, and together they split it.");
+                        : Lang.T("两层网络在学同一道异或。误差从下层一路传回来，每个单元学一条线，合起来就分开了。");
                 default:
                     if (!run.Done) return T("它在学「这是 0 吗？」：" + run.train.Count + " 张手写的 8×8 数字，一半是 0。", "It is learning \"is this a 0?\": " + run.train.Count + " hand-drawn 8×8 digits, half of them zeros.");
                     var zero = XgTinyData.TheZero();
                     tiles[0].Values = zero.pixels; tiles[0].Highlight = true;
                     double p = run.net.Forward(zero.pixels);
-                    marks[0].text = p > .5 ? "<color=#2F9E44>「0」</color>" : T("否", "no");
+                    marks[0].text = p > .5 ? "<color=#5DCAA5>「0」</color>" : T("否", "no");
                     return p > .5
                         ? T("最后一张它从没见过：字迹和那个删掉的 0.txt 一样。它答：「0」（" + N(p * 100, "0") + "%）。没见过的 " + run.test.Count + " 张里答对 " + N((1 - run.TestError) * 100, "0") + "%。",
                             "The last picture is one it never saw, in the hand of the deleted 0.txt. It answers \"0\" (" + N(p * 100, "0") + "%). Right on " + N((1 - run.TestError) * 100, "0") + "% of " + run.test.Count + " unseen pictures.")
@@ -272,7 +271,7 @@ namespace LingGuangV05.Desktop.XingGuang
             float side = Mathf.Min(r.width, r.height);
             if (side < 8) return;
             var o = new Vector2(r.center.x - side / 2, r.center.y - side / 2);
-            XgDraw.Box(vh, o - Vector2.one * (highlight ? 3 : 1), o + Vector2.one * (side + (highlight ? 3 : 1)), highlight ? XgPalette.Gold : Frame);
+            XgDraw.Box(vh, o - Vector2.one * (highlight ? 3 : 1), o + Vector2.one * (side + (highlight ? 3 : 1)), highlight ? XgDark.Gold : Frame);
             XgDraw.Box(vh, o, o + Vector2.one * side, Paper);
             if (values == null) return;
             int n = XgTinyData.Side;

@@ -16,6 +16,7 @@ namespace LingGuangV05.XingGuang
         public int progressionVersion;
         public int stage = 1, stageVision = 1, stageSequence = 1;
         public string firstSpecialty = "";
+        /// <summary>Walls of older saves (design v1.1; removed by 参数量与数据量主线). Still read by the migration, never written.</summary>
         public List<string> walls = new List<string>();
         public List<string> explainedWalls = new List<string>();
         public List<string> migratedBeats = new List<string>();
@@ -24,6 +25,8 @@ namespace LingGuangV05.XingGuang
         public int comboObservations, spatialObservations, orderObservations, memoryObservations;
         public bool visionCompressionObserved, sequenceCompressionObserved, uncertaintyObserved;
         public bool chapterComplete, endingRegret;
+        /// <summary>How older saves passed their walls ("mnist#structure=features"). Read only.</summary>
+        public List<string> wallRoutes = new List<string>();
     }
 
     public sealed partial class XgCard
@@ -34,7 +37,7 @@ namespace LingGuangV05.XingGuang
         public string attentionWord = "", attentionContext = "", explanation = "", explanationEn = "";
         public int attentionRegion = -1;
         public string captionTextEn = "";
-        /// <summary>Frozen, explicitly simulated checkpoint prediction for the first XOR wall. Reading is not displaying.</summary>
+        /// <summary>Frozen, explicitly simulated checkpoint prediction for a stage-one combination card. Reading is not displaying.</summary>
         public bool comboPredictionReady, comboPredictionShown, comboPredictedYes;
         public double comboPredictionAccuracy;
         public int comboCheckpointId;

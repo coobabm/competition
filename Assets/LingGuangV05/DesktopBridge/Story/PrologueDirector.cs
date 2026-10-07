@@ -297,6 +297,9 @@ namespace LingGuangV05.Desktop.Story
             Despawn(ref archiveIcon);
             Hijack(false);
             yield return ThinkAndWait(L("m_left"), 2);
+            // The channel (design §1.1): from then only a few characters can be written back, so the thing that came
+            // was small: the long number it typed was the whole program; the rest unpacked on this machine.
+            yield return ThinkAndWait(L("m_number"), 2);
 
             // Step 7: 老周's only unprompted message.
             SetStep("laozhou");
@@ -462,7 +465,7 @@ namespace LingGuangV05.Desktop.Story
                 spawned.Add(notepad.gameObject);
                 var menuBar = PrologueDesk.Rect("Menu", client, new Vector2(0, 1), Vector2.one, new Vector2(0, -30), Vector2.zero);
                 PrologueDesk.Fill(menuBar, new Color32(245, 246, 248, 255));
-                desk.Text(PrologueDesk.Rect("Items", menuBar, Vector2.zero, Vector2.one, new Vector2(10, 0), Vector2.zero), T("文件(F)  编辑(E)  格式(O)  查看(V)  帮助(H)", "File  Edit  Format  View  Help"), 15, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+                desk.Text(PrologueDesk.Rect("Items", menuBar, Vector2.zero, Vector2.one, new Vector2(10, 0), Vector2.zero), Lang.T("文件(F)  编辑(E)  格式(O)  查看(V)  帮助(H)"), 15, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
                 notepadText = desk.Text(PrologueDesk.Rect("Text", client, Vector2.zero, Vector2.one, new Vector2(14, 10), new Vector2(-14, -40)), "", 21, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
             }
             Bring(notepad);
@@ -585,7 +588,7 @@ namespace LingGuangV05.Desktop.Story
             spawned.Add(rar.gameObject);
             var head = PrologueDesk.Rect("Head", client, new Vector2(0, 1), Vector2.one, new Vector2(0, -34), Vector2.zero);
             PrologueDesk.Fill(head, new Color32(240, 240, 240, 255));
-            desk.Text(PrologueDesk.Rect("Cols", head, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero), T("名称                                    大小          类型", "Name                                      Size          Type"), 15, PrologueDesk.Muted, TextAlignmentOptions.MidlineLeft);
+            desk.Text(PrologueDesk.Rect("Cols", head, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero), Lang.T("名称                                    大小          类型"), 15, PrologueDesk.Muted, TextAlignmentOptions.MidlineLeft);
             string[] rows =
             {
                 AppNames.ExeZh + "                         " + "18,544 KB" + "     " + L("type_exe"),
@@ -713,7 +716,7 @@ namespace LingGuangV05.Desktop.Story
             if ((desk.LocalOf(icon) - desk.LocalOf(recycleIcon)).magnitude > 80) return;
             StartCoroutine(Bounce(icon, from));
             // 智子锁死 (design v1.1 §10.2 #6): the file is held open by the monitor.
-            if (icon != dllIcon) Locked(T(AppNames.ExeZh, AppNames.ExeEn));
+            if (icon != dllIcon) { Locked(T(AppNames.ExeZh, AppNames.ExeEn)); labNow?.EarnSecret("life.santi.sophon"); }
         }
 
         IEnumerator Bounce(RectTransform icon, Vector3 to)
@@ -733,10 +736,10 @@ namespace LingGuangV05.Desktop.Story
 
         void Locked(string file)
         {
-            var client = desk.Window("Prologue File In Use", T("文件正在使用", "File In Use"), new Vector2(0, 40), new Vector2(520, 220), out var window);
+            var client = desk.Window("Prologue File In Use", Lang.T("文件正在使用"), new Vector2(0, 40), new Vector2(520, 220), out var window);
             desk.Text(PrologueDesk.Rect("Message", client, Vector2.zero, Vector2.one, new Vector2(24, 64), new Vector2(-24, -20)),
                 T("操作无法完成，因为文件已在 sophon.dll 中打开。\n\n关闭该文件并重试。\n" + file, "The action can't be completed because the file is open in sophon.dll.\n\nClose the file and try again.\n" + file), 17, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
-            desk.Button(client, T("重试", "Try Again"), new Vector2(60, -70), new Vector2(110, 34), () => Destroy(window.gameObject));
+            desk.Button(client, Lang.T("重试"), new Vector2(60, -70), new Vector2(110, 34), () => Destroy(window.gameObject));
             desk.Button(client, T("取消", "Cancel"), new Vector2(185, -70), new Vector2(110, 34), () => Destroy(window.gameObject));
         }
 
@@ -755,11 +758,11 @@ namespace LingGuangV05.Desktop.Story
             {
                 { L("prop_type"), exe ? L("type_exe") + " (.exe)" : L("type_dll") + " (.dll)" },
                 { L("prop_location"), L("desktop_path") },
-                { L("prop_size"), (bytes / 1024.0).ToString("#,0.0") + " KB (" + bytes.ToString("#,0") + T(" 字节)", " bytes)") },
+                { L("prop_size"), (bytes / 1024.0).ToString("#,0.0") + " KB (" + bytes.ToString("#,0") + Lang.T(" 字节)") },
                 { L("prop_desc"), exe ? T(AppNames.AppZh, AppNames.AppEn) : "" },
                 // 三体 (design v1.1 §10.2 #2): the company is 红岸, the version is listener 1379's number.
-                { T("公司", "Company"), exe ? T("红岸", "Red Coast") : "" },
-                { T("文件版本", "File version"), exe ? "1.3.7.9" : "" },
+                { Lang.T("公司"), exe ? Lang.T("红岸") : "" },
+                { Lang.T("文件版本"), exe ? "1.3.7.9" : "" },
             };
             for (int i = 0; i < rows.GetLength(0); i++)
             {
@@ -801,9 +804,13 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator PlayEnding(LingGuangV05.XingGuang.XgSim lab)
         {
             lab.AddLine("ai", lab.EndingWords());
+            // E3: it wrote the rules itself and says why, from something that really happened in this save.
+            string reason = lab.DelegateReason();
+            if (reason.Length > 0) lab.AddLine("ai", reason);
             lab.AddLine("ai", lab.SeedLine());
             Think(lab.EndingWords(), 3);
             yield return PrologueDesk.Wait(4);
+            if (reason.Length > 0) { Think(reason, 6); yield return PrologueDesk.Wait(7); }
             if (dllIcon != null)
             {
                 // §10.2 #14: a silver drop for a second, then nothing.
@@ -820,16 +827,26 @@ namespace LingGuangV05.Desktop.Story
             var black = PrologueDesk.Rect("Title", screenRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             PrologueDesk.Fill(black, Color.black);
             var group = black.gameObject.AddComponent<CanvasGroup>();
-            var date = desk.Text(PrologueDesk.Centered("Date", black, new Vector2(0, 60), new Vector2(1400, 90)), T("2017 年 1 月 1 日  00:00", "1 January 2017  00:00"), 54, new Color(.92f, .94f, .97f), TextAlignmentOptions.Center);
+            var date = desk.Text(PrologueDesk.Centered("Date", black, new Vector2(0, 60), new Vector2(1400, 90)), Lang.T("2017 年 1 月 1 日  00:00"), 54, new Color(.92f, .94f, .97f), TextAlignmentOptions.Center);
             var caption = desk.Text(PrologueDesk.Centered("Caption", black, new Vector2(0, -40), new Vector2(1500, 80)), lab.LetterCaption(), 28, new Color(.56f, .72f, .87f), TextAlignmentOptions.Center);
             for (float t = 0; t < 1; t += Time.unscaledDeltaTime) { group.alpha = t; yield return null; }
             yield return PrologueDesk.Wait(5);
             for (float t = 0; t < 1; t += Time.unscaledDeltaTime) { group.alpha = 1 - t; yield return null; }
             Destroy(black.gameObject);
-            StartCoroutine(desk.Balloon(this, L("who_360"), T("新年快乐，您的电脑已连续开机 5424 小时。", "Happy New Year. Your computer has been on for 5424 hours."), 8));
             runtime.Sim.S.endingPlayed = true;
             runtime.MarkDirty();
             ending = null;
+            // A quiet desktop first: no prompts, no tasks. Life starting again (360's boot counter) comes after.
+            StartCoroutine(NewYearBalloon());
+        }
+
+        /// <summary>Seconds of quiet desktop after the ending before 360's New Year balloon.</summary>
+        const float QuietAfterEnding = 25f;
+
+        IEnumerator NewYearBalloon()
+        {
+            yield return PrologueDesk.Wait(QuietAfterEnding);
+            yield return desk.Balloon(this, L("who_360"), Lang.T("新年快乐，您的电脑已连续开机 5424 小时。"), 8);
         }
 
         // ───────────── housekeeping ─────────────

@@ -146,7 +146,7 @@ namespace LingGuangV05.Desktop.Taohuo
         protected bool Run(Func<ChapterOneSim, bool> command, string okEn)
         {
             var sim = Sim;
-            if (sim == null) { Say(T("电脑还没准备好。", "The computer is not ready.")); return false; }
+            if (sim == null) { Say(Lang.T("电脑还没准备好。")); return false; }
             bool ok = command(sim);
             Say(!GameText.IsEnglish ? sim.LastMessage : ok ? okEn : "Not possible: " + Reason(sim));
             if (ok) Dirty();
@@ -165,10 +165,13 @@ namespace LingGuangV05.Desktop.Taohuo
             return "the shop said no.";
         }
 
-        /// <summary>Shared generated product illustration; preserve text fallback when art is unavailable.</summary>
+        /// <summary>Product-specific reference artwork; preserve the full object and the text fallback.</summary>
         protected bool ProductIllustration(RectTransform parent, string key, string caption = "")
         {
-            if (DesktopArt.Paint(parent, key) == null) return false;
+            var image = DesktopArt.Paint(parent, key, false);
+            if (image == null) return false;
+            image.rectTransform.offsetMin = new Vector2(3, string.IsNullOrEmpty(caption) ? 3 : 36);
+            image.rectTransform.offsetMax = new Vector2(-3, -3);
             if (!string.IsNullOrEmpty(caption))
             {
                 var strip = PrologueDesk.Rect("Caption", parent, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 34));
@@ -178,12 +181,12 @@ namespace LingGuangV05.Desktop.Taohuo
             return true;
         }
 
-        /// <summary>Card glyph: the model's short number on a coloured box (淘货's "photo").</summary>
+        /// <summary>The card model's reference artwork, with a labelled fallback if its asset is unavailable.</summary>
         protected RectTransform CardPicture(Transform parent, GpuModel g, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
         {
             var rt = PrologueDesk.Rect("Picture", parent, min, max, offMin, offMax);
             string model = g == null ? "GPU" : g.name;
-            if (ProductIllustration(rt, "gpu", "<b>" + model + "</b>" + (g == null ? "" : "\n" + T(g.brand, g.brandEn)))) return rt;
+            if (g != null && ProductIllustration(rt, "gpu_" + g.id, "<b>" + model + "</b>\n" + T(g.brand, g.brandEn))) return rt;
             bool red = g != null && g.id == HardwareCatalog.Rx480;
             bool titan = g != null && g.id == HardwareCatalog.TitanXp;
             PrologueDesk.Fill(rt, red ? new Color32(150, 20, 24, 255) : titan ? new Color32(30, 30, 34, 255) : new Color32(40, 44, 48, 255), false);
@@ -197,7 +200,7 @@ namespace LingGuangV05.Desktop.Taohuo
 
         protected static string Stats(GpuModel g)
         {
-            return T("算力 ×", "Compute ×") + g.compute.ToString("0.##", CultureInfo.InvariantCulture) + "  ·  " + T("显存 ", "VRAM ") + (g.vramMB / 1024).ToString("0.#", CultureInfo.InvariantCulture) + "G  ·  " + g.watts.ToString("0") + "W";
+            return Lang.T("算力 ×") + g.compute.ToString("0.##", CultureInfo.InvariantCulture) + "  ·  " + Lang.T("显存 ") + (g.vramMB / 1024).ToString("0.#", CultureInfo.InvariantCulture) + "G  ·  " + g.watts.ToString("0") + "W";
         }
 
         /// <summary>The rig in one block: cards, slots, compute, VRAM and power.</summary>
@@ -215,14 +218,14 @@ namespace LingGuangV05.Desktop.Taohuo
                 if (counts[id] > 1) sb.Append(" ×").Append(counts[id]);
                 sb.Append('\n');
             }
-            if (sim.S.nvme) sb.Append("· ").Append(T("三星 950 Pro NVMe", "Samsung 950 Pro NVMe")).Append('\n');
+            if (sim.S.nvme) sb.Append("· ").Append(Lang.T("三星 950 Pro NVMe")).Append('\n');
             sb.Append('\n');
-            sb.Append(T("插槽 ", "Slots ")).Append(sim.S.gpuCount).Append(" / ").Append(sim.Slots).Append(T("（机箱 ", " (cases ")).Append(sim.S.caseCount).Append(T("）\n", ")\n"));
-            sb.Append(T("算力 ×", "Compute ×")).Append(sim.CardCompute.ToString("0.##", CultureInfo.InvariantCulture)).Append('\n');
-            sb.Append(T("显存 ", "VRAM ")).Append((sim.MemoryCapacity / 1024).ToString("0.#", CultureInfo.InvariantCulture)).Append("G\n");
-            sb.Append(T("功耗 ", "Load ")).Append(sim.LoadWatts.ToString("0")).Append(" / ").Append(sim.Config.powerLimitWatts.ToString("0")).Append("W");
-            if (sim.S.breakerTripped) sb.Append(T("  <color=#D03030>已跳闸</color>", "  <color=#D03030>tripped</color>"));
-            sb.Append('\n').Append(T("温度 ", "Temperature ")).Append(sim.S.temperature.ToString("0")).Append("°C");
+            sb.Append(Lang.T("插槽 ")).Append(sim.S.gpuCount).Append(" / ").Append(sim.Slots).Append(Lang.T("（机箱 ")).Append(sim.S.caseCount).Append(Lang.T("）\n"));
+            sb.Append(Lang.T("算力 ×")).Append(sim.CardCompute.ToString("0.##", CultureInfo.InvariantCulture)).Append('\n');
+            sb.Append(Lang.T("显存 ")).Append((sim.MemoryCapacity / 1024).ToString("0.#", CultureInfo.InvariantCulture)).Append("G\n");
+            sb.Append(Lang.T("功耗 ")).Append(sim.LoadWatts.ToString("0")).Append(" / ").Append(sim.Config.powerLimitWatts.ToString("0")).Append("W");
+            if (sim.S.breakerTripped) sb.Append(Lang.T("  <color=#D03030>已跳闸</color>"));
+            sb.Append('\n').Append(Lang.T("温度 ")).Append(sim.S.temperature.ToString("0")).Append("°C");
             return sb.ToString();
         }
 

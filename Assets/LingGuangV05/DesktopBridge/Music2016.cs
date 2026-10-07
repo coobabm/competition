@@ -8,6 +8,7 @@ using Michsky.DreamOS;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop
 {
     /// <summary>
@@ -63,7 +64,7 @@ namespace LingGuangV05.Desktop
 
             var playlist = ScriptableObject.CreateInstance<MusicPlayerPlaylist>();
             playlist.hideFlags = HideFlags.DontSave;
-            playlist.playlistName = GameText.T("2016 热歌", "2016 hits");
+            playlist.playlistName = Lang.T("2016 热歌");
             var fallbackCover = manager.libraryPlaylist != null ? manager.libraryPlaylist.coverImage : null;
             playlist.coverImage = fallbackCover;
             foreach (var file in Directory.GetFiles(Folder))
@@ -84,7 +85,7 @@ namespace LingGuangV05.Desktop
                     {
                         musicTitle = hit != null ? hit.title : title,
                         artistTitle = hit != null ? hit.artist : artist,
-                        albumTitle = hit != null ? hit.album + " · " + hit.year : GameText.T("本地音乐", "Local music"),
+                        albumTitle = hit != null ? hit.album + " · " + hit.year : Lang.T("本地音乐"),
                         musicClip = clip,
                         musicCover = fallbackCover,
                         excludeFromLibrary = true,

@@ -71,7 +71,7 @@ namespace LingGuangV05.Desktop.Miaoyu
         {
             if (window == null) return;
             Rebrand(window, new[] { "Commander", "文件管理器", "喵鱼", "Miaoyu" }, T(AppNames.UsedZh, AppNames.UsedEn), Icon(),
-                T("闲置变现，喵～ 交易只在这台电脑里模拟", "Turn spare stuff into cash, meow~ simulated on this computer"),
+                Lang.T("闲置变现，喵～ 交易只在这台电脑里模拟"),
                 GameObject.Find("Desktop List/" + NativeWindow));
             signature = "";
         }
@@ -170,9 +170,9 @@ namespace LingGuangV05.Desktop.Miaoyu
             string cards = sim != null ? string.Join(",", sim.Cards) + "|" + sim.S.caseCount + "|" + sim.S.cafeBoxes : "";
             string now = tab + "|" + today.ToString("MMdd") + "|" + open + "|" + GameText.IsEnglish + "|" + cards + "|" + version;
             if (now != signature) { signature = now; Redraw(sim, today, open); }
-            wallet.text = sim == null ? "" : T("钱包 ", "Wallet ") + "<b>" + Money(sim.S.money) + "</b>";
+            wallet.text = sim == null ? "" : Lang.T("钱包 ") + "<b>" + Money(sim.S.money) + "</b>";
             rig.text = RigSummary(sim);
-            if (!StatusBusy) status.text = T("喵鱼提醒：交易请走平台，谨防「先付定金」。", "Miaoyu reminds you: pay through the platform, beware of 'deposit first'.");
+            if (!StatusBusy) status.text = Lang.T("喵鱼提醒：交易请走平台，谨防「先付定金」。");
             foreach (var b in buyButtons)
             {
                 var st = b.state();
@@ -184,17 +184,16 @@ namespace LingGuangV05.Desktop.Miaoyu
         void Redraw(ChapterOneSim sim, DateTime today, bool open)
         {
             var logo = root.Find("Top/Logo")?.GetComponent<TMP_Text>(); if (logo != null) logo.text = "<b>" + T(AppNames.UsedZh, AppNames.UsedEn) + "</b>";
-            var slogan = root.Find("Top/Slogan")?.GetComponent<TMP_Text>(); if (slogan != null) slogan.text = T("闲置变现，喵～", "Turn spare stuff into cash, meow~");
+            var slogan = root.Find("Top/Slogan")?.GetComponent<TMP_Text>(); if (slogan != null) slogan.text = Lang.T("闲置变现，喵～");
             var rigTitle = root.Find("Body/Side/RigTitle")?.GetComponent<TMP_Text>(); if (rigTitle != null) rigTitle.text = "<b>" + T("我的电脑", "My computer") + "</b>";
             foreach (var kv in tabs)
             {
-                kv.Value.label.text = kv.Key == "sell" ? T("卖闲置", "Sell") : kv.Key == "used" ? T("淘二手", "Buy used") : T("网吧清仓", "Net cafe sale");
+                kv.Value.label.text = kv.Key == "sell" ? Lang.T("卖闲置") : kv.Key == "used" ? Lang.T("淘二手") : Lang.T("网吧清仓");
                 kv.Value.label.fontStyle = kv.Key == tab ? FontStyles.Bold : FontStyles.Normal;
                 kv.Value.fill.color = kv.Key == tab ? YellowSoft : Color.white;
             }
             closed.gameObject.SetActive(!open);
-            closedText.text = T("<size=34><b>喵鱼正在审核你的芝麻信用……</b></size>\n\n第三阶段开放：卖旧显卡回血，收别人的二手卡，\n10 月还有网吧倒闭清仓的整机，凑个小集群。",
-                "<size=34><b>Miaoyu is checking your credit score…</b></size>\n\nOpens at stage 3: sell old cards for cash, buy other people's used cards,\nand in October a closing net cafe sells its PCs for a small cluster.");
+            closedText.text = Lang.T("<size=34><b>喵鱼正在审核你的芝麻信用……</b></size>\n\n第三阶段开放：卖旧显卡回血，收别人的二手卡，\n10 月还有网吧倒闭清仓的整机，凑个小集群。");
             buyButtons.Clear();
             Clear(list);
             if (!open || sim == null) return;
@@ -221,12 +220,12 @@ namespace LingGuangV05.Desktop.Miaoyu
                 CardPicture(row, g, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -118), new Vector2(118, -14));
                 double value = HardwareCatalog.UsedPrice(g, today);
                 var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(134, 10), new Vector2(-190, -12));
-                Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -28), Vector2.zero, "<b>" + T(g.name, g.nameEn) + "</b>" + (sim.S.cafeBoxes > 0 && g.id == HardwareCatalog.Gtx970 ? T("（网吧机里那张）", " (from a net cafe PC)") : ""), 19, Ink);
+                Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -28), Vector2.zero, "<b>" + T(g.name, g.nameEn) + "</b>" + (sim.S.cafeBoxes > 0 && g.id == HardwareCatalog.Gtx970 ? Lang.T("（网吧机里那张）") : ""), 19, Ink);
                 Label(mid, "Desc", new Vector2(0, 1), Vector2.one, new Vector2(0, -54), new Vector2(0, -30), T(Description, DescriptionEn), 15, new Color32(90, 90, 90, 255));
-                Label(mid, "Stats", new Vector2(0, 1), Vector2.one, new Vector2(0, -80), new Vector2(0, -56), Stats(g) + "   " + T("新卡上市越多越不值钱", "Every newer card lowers the price"), 14, Muted);
+                Label(mid, "Stats", new Vector2(0, 1), Vector2.one, new Vector2(0, -80), new Vector2(0, -56), Stats(g) + "   " + Lang.T("新卡上市越多越不值钱"), 14, Muted);
                 var right = PrologueDesk.Rect("Right", row, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-176, -118), new Vector2(-14, -12));
                 Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(value) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
-                Label(right, "Hint", new Vector2(0, 1), Vector2.one, new Vector2(0, -62), new Vector2(0, -40), T("今日估价", "Today's value"), 13, Muted, TextAlignmentOptions.TopRight);
+                Label(right, "Hint", new Vector2(0, 1), Vector2.one, new Vector2(0, -62), new Vector2(0, -40), Lang.T("今日估价"), 13, Muted, TextAlignmentOptions.TopRight);
                 if (post == null)
                 {
                     var b = Btn(right, "Post", Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(0, 42), Accent, "", 17, Ink, () => PostCard(index), out var label);
@@ -234,8 +233,8 @@ namespace LingGuangV05.Desktop.Miaoyu
                     {
                         var s = Sim;
                         if (s == null || index >= s.Cards.Count) return (false, "—");
-                        if (s.S.gpuCount <= 1) return (false, T("最后一张", "Last card"));
-                        return (true, T("发布闲置", "List it"));
+                        if (s.S.gpuCount <= 1) return (false, Lang.T("最后一张"));
+                        return (true, Lang.T("发布闲置"));
                     }));
                     UiTip.Add(b, "挂出去等买家。至少留一张卡。", "List it and wait for a buyer. Keep at least one card.");
                 }
@@ -244,7 +243,7 @@ namespace LingGuangV05.Desktop.Miaoyu
             if (sim.Cards.Count <= 1)
             {
                 var note = Row(list, "Note", 44, new Color(0, 0, 0, 0));
-                Label(note, "Text", Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0), T("只有一张卡可卖不了：先在淘货买张新的，再把旧的挂上来。", "One card can't be sold: buy a new one on Taohuo first, then list the old one."), 15, Muted, TextAlignmentOptions.MidlineLeft);
+                Label(note, "Text", Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0), Lang.T("只有一张卡可卖不了：先在淘货买张新的，再把旧的挂上来。"), 15, Muted, TextAlignmentOptions.MidlineLeft);
             }
         }
 
@@ -255,21 +254,21 @@ namespace LingGuangV05.Desktop.Miaoyu
             string head = T("浏览 " + post.views + " · 想要 " + post.wants + "   ", post.views + " views · " + post.wants + " want it   ");
             if (post.buyer == null)
             {
-                Label(chat, "Wait", Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0), head + (post.reply.Length > 0 ? "<color=#8C8C8C>" + T(post.reply, post.replyEn) + "</color>  " : "") + T("等买家……", "Waiting for a buyer…"), 15, Ink, TextAlignmentOptions.MidlineLeft);
+                Label(chat, "Wait", Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0), head + (post.reply.Length > 0 ? "<color=#8C8C8C>" + T(post.reply, post.replyEn) + "</color>  " : "") + Lang.T("等买家……"), 15, Ink, TextAlignmentOptions.MidlineLeft);
                 return;
             }
             var bu = post.buyer;
             Label(chat, "Line", Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-330, 0), head + "<b>" + T(bu.nick, bu.nickEn) + "</b>：" + T(bu.line, bu.lineEn), 15, Ink, TextAlignmentOptions.MidlineLeft);
             double offer = Math.Min(bu.offer, value);
-            Btn(chat, "Deal", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-322, -16), new Vector2(-170, 16), Accent, T("卖给他 ", "Sell for ") + Money(offer), 15, Ink, () => Accept(index), out _);
-            Btn(chat, "Firm", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-162, -16), new Vector2(-10, 16), Color.white, T("不议价", "Price is firm"), 15, Ink, () => Decline(index), out _);
+            Btn(chat, "Deal", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-322, -16), new Vector2(-170, 16), Accent, Lang.T("卖给他 ") + Money(offer), 15, Ink, () => Accept(index), out _);
+            Btn(chat, "Firm", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-162, -16), new Vector2(-10, 16), Color.white, Lang.T("不议价"), 15, Ink, () => Decline(index), out _);
         }
 
         void PostCard(int index)
         {
             var sim = Sim;
             if (sim == null || index >= sim.Cards.Count) return;
-            if (sim.S.gpuCount <= 1) { Say(T("至少留一张卡，不然它就停了。", "Keep at least one card, or it stops.")); return; }
+            if (sim.S.gpuCount <= 1) { Say(Lang.T("至少留一张卡，不然它就停了。")); return; }
             postings[index] = new Posting { model = sim.Cards[index], nextBuyerAt = Time.unscaledTime + 2.5f + (float)rng.NextDouble() * 3, views = 1 + rng.Next(5) };
             Say(T("已发布：「" + Description + "」", "Listed: \"" + DescriptionEn + "\""));
             version++;
@@ -388,9 +387,9 @@ namespace LingGuangV05.Desktop.Miaoyu
                 {
                     var s = Sim;
                     if (s == null) return (false, "—");
-                    if (!s.SlotFree) return (false, T("插槽已满", "Slots full"));
-                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPrice(g, Today)) return (false, T("钱不够", "Not enough ¥"));
-                    return (true, T("我想要", "I want it"));
+                    if (!s.SlotFree) return (false, Lang.T("插槽已满"));
+                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPrice(g, Today)) return (false, Lang.T("钱不够"));
+                    return (true, Lang.T("我想要"));
                 }));
                 UiTip.Add(b, "便宜，但算力也低。占一个插槽。", "Cheap, but slow. Takes a slot.");
             }
@@ -405,30 +404,30 @@ namespace LingGuangV05.Desktop.Miaoyu
             var row = Row(list, "Cafe", 190, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -134), new Vector2(134, -14));
             PrologueDesk.Fill(pic, new Color32(20, 20, 24, 255), false);
-            if (!ProductIllustration(pic, "esports", T("网吧清仓 · 配图", "Net café · illustration")))
-                Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + T("网吧", "NET\nCAFE") + "</b>\n<size=14>×" + HardwareCatalog.CafeBoxLimit + "</size>", 26, new Color32(255, 90, 90, 255), TextAlignmentOptions.Center);
+            if (!ProductIllustration(pic, "product_cafebox", Lang.T("网吧清仓 · 配图")))
+                Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + Lang.T("网吧") + "</b>\n<size=14>×" + HardwareCatalog.CafeBoxLimit + "</size>", 26, new Color32(255, 90, 90, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(150, 10), new Vector2(-190, -12));
-            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -52), Vector2.zero, T("<b>【网吧倒闭清仓】E5-2670 + X79 寨板 + 16G + GTX 970 整机，共 8 台</b>", "<b>[Net cafe closing down] E5-2670 + X79 knock-off board + 16 GB + GTX 970 PCs, 8 in total</b>"), 18, Ink);
-            Label(mid, "Desc", new Vector2(0, 1), Vector2.one, new Vector2(0, -78), new Vector2(0, -54), T(Description, DescriptionEn) + T("（键盘有点油）", " (keyboards a bit greasy)"), 15, new Color32(90, 90, 90, 255));
+            Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -52), Vector2.zero, Lang.T("<b>【网吧倒闭清仓】E5-2670 + X79 寨板 + 16G + GTX 970 整机，共 8 台</b>"), 18, Ink);
+            Label(mid, "Desc", new Vector2(0, 1), Vector2.one, new Vector2(0, -78), new Vector2(0, -54), T(Description, DescriptionEn) + Lang.T("（键盘有点油）"), 15, new Color32(90, 90, 90, 255));
             int left = HardwareCatalog.CafeBoxLimit - sim.S.cafeBoxes;
             Label(mid, "Stats", new Vector2(0, 0), Vector2.one, Vector2.zero, new Vector2(0, -82),
                 T("每台自带机箱（2 个插槽）和一张 970：算力 ×" + g.compute.ToString("0.###") + "，功耗 " + g.watts.ToString("0") + "W + 机箱。\n8 台全收是个小集群：×" + (HardwareCatalog.CafeBoxLimit * g.compute).ToString("0.#") + "。已收 " + sim.S.cafeBoxes + " 台，剩 " + left + " 台。",
                   "Each has its own case (2 slots) and a 970: compute ×" + g.compute.ToString("0.###", CultureInfo.InvariantCulture) + ", " + g.watts.ToString("0") + " W plus the case.\nAll eight make a small cluster: ×" + (HardwareCatalog.CafeBoxLimit * g.compute).ToString("0.#", CultureInfo.InvariantCulture) + ". Bought " + sim.S.cafeBoxes + ", " + left + " left.")
-                + (open ? "" : "\n<color=#D03030>" + T("老板：月底关门，10 月 1 号来拉货。", "Owner: we close at the end of the month, come on 1 October.") + "</color>"), 15, Ink);
+                + (open ? "" : "\n<color=#D03030>" + Lang.T("老板：月底关门，10 月 1 号来拉货。") + "</color>"), 15, Ink);
             var right = PrologueDesk.Rect("Right", row, new Vector2(1, 0), Vector2.one, new Vector2(-176, 12), new Vector2(-14, -12));
             Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(HardwareCatalog.CafeBoxPrice) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
-            Label(right, "Each", new Vector2(0, 1), Vector2.one, new Vector2(0, -62), new Vector2(0, -40), T("一台", "each"), 13, Muted, TextAlignmentOptions.TopRight);
+            Label(right, "Each", new Vector2(0, 1), Vector2.one, new Vector2(0, -62), new Vector2(0, -40), Lang.T("一台"), 13, Muted, TextAlignmentOptions.TopRight);
             var b = Btn(right, "Buy", Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(0, 42), Accent, "", 17, Ink,
                 () => Run(s => s.BuyCafeBox(Today), "A net cafe PC is connected. Cluster compute ×" + (((Sim != null ? Sim.S.cafeBoxes : 0) + 1) * g.compute).ToString("0.##", CultureInfo.InvariantCulture) + "."), out var label);
             buyButtons.Add((b, label, () =>
             {
                 var s = Sim;
                 if (s == null) return (false, "—");
-                if (Today.Date < HardwareCatalog.CafeRelease) return (false, T("10 月清仓", "October"));
-                if (s.S.cafeBoxes >= HardwareCatalog.CafeBoxLimit) return (false, T("已收完", "All yours"));
-                if (s.S.caseCount >= s.Config.maxCases) return (false, T("放不下了", "No room"));
-                if (s.S.money + 1e-9 < HardwareCatalog.CafeBoxPrice) return (false, T("钱不够", "Not enough ¥"));
-                return (true, T("来一台", "Take one"));
+                if (Today.Date < HardwareCatalog.CafeRelease) return (false, Lang.T("10 月清仓"));
+                if (s.S.cafeBoxes >= HardwareCatalog.CafeBoxLimit) return (false, Lang.T("已收完"));
+                if (s.S.caseCount >= s.Config.maxCases) return (false, Lang.T("放不下了"));
+                if (s.S.money + 1e-9 < HardwareCatalog.CafeBoxPrice) return (false, Lang.T("钱不够"));
+                return (true, Lang.T("来一台"));
             }));
             UiTip.Add(b, "一台 = 一个机箱 + 一张 970。插槽和电表也算上。", "One = a case and a 970. It counts towards slots and the power meter.");
         }

@@ -151,7 +151,7 @@ namespace LingGuangV05.Desktop.Tieba
             conv.messages.Add(new ForumMessage { from = id, text = text, gameSeconds = Now });
             if (!seen) conv.unread++;
             if (id != ForumLibrary.Me)
-                DesktopNotifications.Notify(runtime, GameText.T("贴吧私信", "Tieba DM"),
+                DesktopNotifications.Notify(runtime, Lang.T("贴吧私信"),
                     id == ForumLibrary.ZhouNow ? "周而复始_" : id == ForumLibrary.LaoZhou ? "周而复始" : id,
                     text, seen || IsShowing(id), () => { if (View != null) View.Open("chat", id); });
             Touch();
@@ -160,6 +160,16 @@ namespace LingGuangV05.Desktop.Tieba
         public void Offer(string id, string[] choices) { ChoicesFor = id; Choices = choices; Changed?.Invoke(); }
         public void Script(string id, Func<string, bool> handler) { scriptFor = id; script = handler; }
         public void EndScript() { scriptFor = null; script = null; Choices = null; ChoicesFor = null; Changed?.Invoke(); }
+
+        /// <summary>An explicit player-submitted scene request, without an unrelated automatic model reply.</summary>
+        public bool SendAuthoredChoice(string id, string text)
+        {
+            text = NativeLaoZhouReplies.NormalizeInput(text);
+            if (S == null || text.Length == 0 || !CanMessage(id)) return false;
+            S.Conversation(id).messages.Add(new ForumMessage { from = ForumLibrary.Me, text = text, gameSeconds = Now });
+            if (id == ForumLibrary.ZhouNow) S.metZhouNow = true;
+            Touch(); return true;
+        }
 
         public void Send(string id, string text)
         {
@@ -197,7 +207,7 @@ namespace LingGuangV05.Desktop.Tieba
                 {
                     if (!ReferenceEquals(S, state)) return;
                     inFlight.Remove(id); pending.Remove(id);
-                    if (awayFor.Remove(id)) text = GameText.T("刚才网不好。", "Connection was bad just now. ") + text;
+                    if (awayFor.Remove(id)) text = Lang.T("刚才网不好。") + text;
                     Receive(id, text, IsShowing(id));
                 });
             }
@@ -215,7 +225,7 @@ namespace LingGuangV05.Desktop.Tieba
             S.endingHandled = true;
             bool shutdown = lab.S.ending == "E1" || lab.S.ending == "E3-1";
             if (shutdown) S.zhouGone = true;
-            else Receive(ForumLibrary.LaoZhou, S.metZhouNow ? GameText.T("替我跟年轻的我说声加油。", "Tell the young me to keep going.") : GameText.T("保重。", "Take care."));
+            else Receive(ForumLibrary.LaoZhou, S.metZhouNow ? Lang.T("替我跟年轻的我说声加油。") : Lang.T("保重。"));
             Touch();
         }
 
@@ -288,8 +298,13 @@ namespace LingGuangV05.Desktop.Tieba
             if (lab != null)
             {
                 f.stage = lab.S.stage; f.nanCount = lab.S.nanEvents;
-                var wall = lab.ActiveWall;
-                if (wall != null && !wall.extra) { f.wall = wall.id; f.wallName = GameText.T(wall.name, wall.nameEn); }
+                int next = lab.NextAbility;
+                if (next > 0)
+                {
+                    f.nextAbility = XgSim.AbilityName(next, GameText.IsEnglish);
+                    double p = lab.ParamsProgress(next), d = lab.SamplesProgress(next);
+                    f.shortOf = p < 1 && p <= d ? "params" : d < 1 ? "data" : "";
+                }
                 f.emergedThisStage = lab.HasEmerged(lab.S.stage);
                 f.finale = lab.S.fullOpen;
                 if (lab.S.phenomena != null && lab.S.phenomena.seen.Count > 0)

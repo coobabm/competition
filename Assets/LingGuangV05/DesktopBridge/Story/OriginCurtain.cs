@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using Michsky.DreamOS;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
@@ -25,7 +26,7 @@ namespace LingGuangV05.Desktop.Story
     public sealed class OriginCurtain : MonoBehaviour
     {
         const string VideoPath = "LingGuangV05/Video/evolution.mp4";
-        const float ReplyToVideo = 1.8f, HintAfterEnding = 3f;
+        const float ReplyToVideo = 1.8f, HintAfterEnding = 60f;
 
         StoryDesktopPresenter presenter;
         ChapterOneRuntime runtime;
@@ -112,7 +113,7 @@ namespace LingGuangV05.Desktop.Story
 
         void MakeFileIcon(PrologueDesk desk)
         {
-            fileIcon = desk.Icon("Origin Video File", T("我从哪儿来.mp4", "Where I come from.mp4"), null, DrawFilm);
+            fileIcon = desk.Icon("Origin Video File", Lang.T("我从哪儿来.mp4"), null, DrawFilm);
             fileIcon.GetComponent<PrologueClick>().Open = () => { if (!watching) Play(); };
         }
 
@@ -149,8 +150,8 @@ namespace LingGuangV05.Desktop.Story
             foreach (var item in native.videoItems)
                 if (item != null && item.preset != null) item.preset.gameObject.SetActive(false);
             url = Path.Combine(Application.streamingAssetsPath, VideoPath);
-            var cover = native.videoItems.Count > 0 && native.videoItems[0] != null ? native.videoItems[0].cover : null;
-            native.CreateVideo(cover, T("我从哪儿来", "Where I come from"), T("灵光 · 2:41", "LingGuang · 2:41"), url);
+            var cover = LingGuangV05.Desktop.Media.DesktopMedia.Picture("origin_video");
+            native.CreateVideo(cover, Lang.T("我从哪儿来"), Lang.T("灵光 · 2:41"), url);
             native.videoPlayer.loopPointReached += OnNativeEnded;
             // The window's own video gets the English line and a 全屏 button.
             var screen = FindVideoImage();
@@ -160,7 +161,7 @@ namespace LingGuangV05.Desktop.Story
                 var desk = PrologueDirector.Desk;
                 if (desk != null)
                 {
-                    var b = desk.Button(screen, T("全屏", "Full screen"), Vector2.zero, new Vector2(110, 34), () => SetFullscreen(true), new Color32(40, 44, 52, 230));
+                    var b = desk.Button(screen, Lang.T("全屏"), Vector2.zero, new Vector2(110, 34), () => SetFullscreen(true), new Color32(40, 44, 52, 230));
                     fullscreenButton = (RectTransform)b.transform;
                     fullscreenButton.anchorMin = fullscreenButton.anchorMax = new Vector2(1, 1);
                     fullscreenButton.anchoredPosition = new Vector2(-70, -26);
@@ -176,7 +177,7 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>The window's names say 暴风影音; the native localisation may write them back, so this repeats.</summary>
         void Retitle()
         {
-            string name = T("暴风影音", "Baofeng Player");
+            string name = Lang.T("暴风影音");
             foreach (var t in titles) if (t != null && t.text != name) t.text = name;
         }
 
@@ -203,7 +204,7 @@ namespace LingGuangV05.Desktop.Story
             if (desk == null) return;
             if (!FindNative())
             {
-                desk.Popup(T("暴风影音", "Baofeng Player"), T("播放器没找到。", "The player is missing."), 5);
+                desk.Popup(Lang.T("暴风影音"), Lang.T("播放器没找到。"), 5);
                 Finished();
                 return;
             }
@@ -211,7 +212,7 @@ namespace LingGuangV05.Desktop.Story
             if (!url.Contains("://") && !File.Exists(url))
             {
                 Debug.LogWarning("OriginCurtain: missing " + url);
-                desk.Popup(T("暴风影音", "Baofeng Player"), T("找不到文件：我从哪儿来.mp4", "File not found: Where I come from.mp4"), 5);
+                desk.Popup(Lang.T("暴风影音"), Lang.T("找不到文件：我从哪儿来.mp4"), 5);
                 Finished();
                 return;
             }
@@ -262,7 +263,7 @@ namespace LingGuangV05.Desktop.Story
                 else if (keyboard.spaceKey.wasPressedThisFrame) { if (p.isPlaying) native.Pause(); else native.Play(); }
             }
             if (Time.unscaledTime >= nextRetitle) { nextRetitle = Time.unscaledTime + .5f; Retitle(); }
-            if (overlayClock != null) overlayClock.text = Clock(p.time) + " / " + Clock(p.length > 0 ? p.length : 161) + T("    Esc 退出全屏", "    Esc: leave full screen");
+            if (overlayClock != null) overlayClock.text = Clock(p.time) + " / " + Clock(p.length > 0 ? p.length : 161) + Lang.T("    Esc 退出全屏");
             string line = GameText.IsEnglish ? EnglishAt(p.time) : null;
             Show(overlayBand, overlaySubtitle, line);
             Show(windowBand, windowSubtitle, line);

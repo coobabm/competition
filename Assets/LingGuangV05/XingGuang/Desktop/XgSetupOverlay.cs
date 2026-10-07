@@ -34,36 +34,37 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             view = owner; ui = kit; font = fontAsset;
             root = Rect("Setup", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Panel(root, new Color(.05f, .07f, .15f, .92f));
+            Panel(root, new Color32(3, 6, 10, 238));
 
             form = Rect("Form", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-330, -260), new Vector2(330, 260));
-            Panel(form, Color.white);
-            title = ui.Text(Strip("Title", form, 14, 40, 24, 24), "", 26, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            Panel(form, XgDark.Line);
+            Panel(Rect("Inner", form, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), XgDark.Card).raycastTarget = false;
+            title = ui.Text(Strip("Title", form, 14, 40, 24, 24), "", 26, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             title.fontStyle = FontStyles.Bold;
             float y = 66;
-            labels.Add(ui.Text(Strip("NameLabel", form, y, 24, 24, 24), "", 16, XgPalette.Muted, TextAlignmentOptions.MidlineLeft));
+            labels.Add(ui.Text(Strip("NameLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             name = Input(Strip("Name", form, y + 26, 38, 24, 24), 16, false);
             y += 76;
-            labels.Add(ui.Text(Strip("SelfLabel", form, y, 24, 24, 24), "", 16, XgPalette.Muted, TextAlignmentOptions.MidlineLeft));
+            labels.Add(ui.Text(Strip("SelfLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             selfCustom = Chips(form, y + 26, PrologueProfile.SelfChoices, selfChips, v => self = v);
             y += 76;
-            labels.Add(ui.Text(Strip("CallLabel", form, y, 24, 24, 24), "", 16, XgPalette.Muted, TextAlignmentOptions.MidlineLeft));
+            labels.Add(ui.Text(Strip("CallLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             callCustom = Chips(form, y + 26, PrologueProfile.CallChoices, callChips, v => call = v);
             y += 76;
-            labels.Add(ui.Text(Strip("MoodLabel", form, y, 24, 24, 24), "", 16, XgPalette.Muted, TextAlignmentOptions.MidlineLeft));
+            labels.Add(ui.Text(Strip("MoodLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             mood = Input(Strip("Mood", form, y + 26, 38, 24, 24), 60, false);
-            error = ui.Text(Rect("Error", form, Vector2.zero, new Vector2(1, 0), new Vector2(24, 18), new Vector2(-220, 62)), "", 14, XgPalette.Bad, TextAlignmentOptions.MidlineLeft);
+            error = ui.Text(Rect("Error", form, Vector2.zero, new Vector2(1, 0), new Vector2(24, 18), new Vector2(-220, 62)), "", 14, XgDark.Bad, TextAlignmentOptions.MidlineLeft);
             done = ui.Button(form, "", Submit, 18);
             done.rt.anchorMin = done.rt.anchorMax = new Vector2(1, 0); done.rt.offsetMin = new Vector2(-204, 18); done.rt.offsetMax = new Vector2(-24, 62);
 
             home = Rect("Home", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Panel(home, XgPalette.Page);
-            bulb = ui.Text(Rect("Bulb", home, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-120, -20), new Vector2(120, 220)), "●", 200, new Color32(200, 204, 214, 255), TextAlignmentOptions.Center);
+            Panel(home, XgDark.Page);
+            bulb = ui.Text(Rect("Bulb", home, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-120, -20), new Vector2(120, 220)), "●", 200, new Color32(40, 60, 72, 255), TextAlignmentOptions.Center);
             yes = ui.Button(home, "", () => Answer(true), 26);
             yes.rt.anchorMin = yes.rt.anchorMax = new Vector2(.5f, .5f); yes.rt.offsetMin = new Vector2(-170, -110); yes.rt.offsetMax = new Vector2(-20, -40);
             no = ui.Button(home, "", () => Answer(false), 26);
             no.rt.anchorMin = no.rt.anchorMax = new Vector2(.5f, .5f); no.rt.offsetMin = new Vector2(20, -110); no.rt.offsetMax = new Vector2(170, -40);
-            homeLine = ui.Text(Rect("Line", home, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-300, -170), new Vector2(300, -130)), "", 16, XgPalette.Muted, TextAlignmentOptions.Center);
+            homeLine = ui.Text(Rect("Line", home, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-300, -170), new Vector2(300, -130)), "", 16, XgDark.Muted, TextAlignmentOptions.Center);
             root.gameObject.SetActive(false);
         }
 
@@ -71,11 +72,11 @@ namespace LingGuangV05.Desktop.XingGuang
 
         TMP_InputField Input(RectTransform box, int limit, bool small)
         {
-            Panel(box, XgPalette.Button);
+            Panel(box, XgDark.Button);
             var area = Rect("Text Area", box, Vector2.zero, Vector2.one, new Vector2(10, 4), new Vector2(-10, -4));
             area.gameObject.AddComponent<RectMask2D>();
-            var placeholder = ui.Text(Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", small ? 14 : 17, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
-            var text = ui.Text(Rect("Text", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", small ? 14 : 17, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            var placeholder = ui.Text(Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", small ? 14 : 17, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            var text = ui.Text(Rect("Text", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", small ? 14 : 17, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             text.richText = false; text.textWrappingMode = TextWrappingModes.NoWrap;
             var field = box.gameObject.AddComponent<TMP_InputField>();
             field.textViewport = area; field.textComponent = text; field.placeholder = placeholder;
@@ -106,8 +107,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Paint()
         {
-            foreach (var (v, b) in selfChips) b.Set(Shown(v, true), true, v == self ? XgPalette.Accent : (Color?)null, v == self ? Color.white : (Color?)null);
-            foreach (var (v, b) in callChips) b.Set(Shown(v, false), true, v == call ? XgPalette.Accent : (Color?)null, v == call ? Color.white : (Color?)null);
+            foreach (var (v, b) in selfChips) b.Set(Shown(v, true), true, v == self ? XgDark.Accent : (Color?)null, v == self ? Color.white : (Color?)null);
+            foreach (var (v, b) in callChips) b.Set(Shown(v, false), true, v == call ? XgDark.Accent : (Color?)null, v == call ? Color.white : (Color?)null);
         }
 
         static string Shown(string value, bool selfRow)
@@ -135,9 +136,9 @@ namespace LingGuangV05.Desktop.XingGuang
             ((TMP_Text)mood.placeholder).text = L("setup_mood_hint");
             ((TMP_Text)selfCustom.placeholder).text = L("setup_custom");
             ((TMP_Text)callCustom.placeholder).text = L("setup_custom");
-            done.Set(reading ? L("setup_reading") : L("setup_done"), !reading, XgPalette.Accent, Color.white);
-            yes.Set(L("yes"), true, XgPalette.Card, XgPalette.Ink);
-            no.Set(L("no"), true, XgPalette.Card, XgPalette.Ink);
+            done.Set(reading ? L("setup_reading") : L("setup_done"), !reading, XgDark.Accent, Color.white);
+            yes.Set(L("yes"), true, XgDark.Card, XgDark.Ink);
+            no.Set(L("no"), true, XgDark.Card, XgDark.Ink);
             if (homePending) homeLine.text = runtime.Sim.S.aiName + T("：", ": ") + L("no_intelligence");
             Paint();
         }
@@ -178,7 +179,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Refresh(runtime);
         }
 
-        /// <summary>The first 是 / 否: the bulb lights for a moment, then the lab opens on the labelling desk.</summary>
+        /// <summary>The first 是 / 否: the bulb lights for a moment, then 摆渡众包 opens on the labelling desk.</summary>
         void Answer(bool answer)
         {
             view.StartCoroutine(Light(answer));
@@ -186,12 +187,14 @@ namespace LingGuangV05.Desktop.XingGuang
 
         IEnumerator Light(bool answer)
         {
-            bulb.color = XgPalette.Gold;
+            bulb.color = XgDark.Gold;
             view.Juice.Play(answer ? XgJuice.Sfx.Id.Ding : XgJuice.Sfx.Id.Click);
             for (float t = 0; t < .8f; t += Time.unscaledDeltaTime) yield return null;
             homePending = false;
             Refresh(view.Controller.runtime);
-            view.ShowTab("label");
+            // 灵光 lands on 概览 behind 摆渡众包, so closing the crowd window shows the overview first.
+            view.ShowTab("home");
+            view.Controller.OpenCrowd("label");
         }
     }
 }

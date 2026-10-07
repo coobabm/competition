@@ -170,7 +170,7 @@ namespace LingGuangV05.Core.Girlfriend
                 else if (lived || p.key == "movie" && HasTickets(s, ended)) { p.state = 2; AddAffection(s, -8); AddMood(s, -1); StartFight(s, now, events); }
                 else p.state = 3;
             }
-            if (s.asking == "qixi" || s.asking == "movie") { if (now.day - s.askDay > 2) s.asking = ""; }
+            if (s.asking == "qixi" || s.asking == "movie" || s.asking == "weekend") { if (now.day - s.askDay > 2) s.asking = ""; }
             s.today = now.day;
             s.dayGame = 0;
             if (s.asleepDay >= 0 && s.asleepDay < now.day) s.asleepDay = -1;
@@ -313,6 +313,16 @@ namespace LingGuangV05.Core.Girlfriend
                         turn.promised = s.asking;
                     }
                     else { turn.declined = s.asking; AddMood(s, -1); }
+                    s.asking = "";
+                    break;
+                case "weekend":
+                    if (Affirmative(text))
+                    {
+                        Remember(s, "周末", "他答应这周末来看她");
+                        AddAffection(s, 3); AddMood(s, 1);
+                        turn.promised = "weekend";
+                    }
+                    else { turn.declined = "weekend"; AddMood(s, -1); }
                     s.asking = "";
                     break;
                 case "money":

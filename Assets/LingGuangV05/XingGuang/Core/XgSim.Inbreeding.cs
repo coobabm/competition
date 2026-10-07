@@ -16,8 +16,8 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// 近亲繁殖: wrong automatic labels that nobody caught become dataset noise. Up to a tenth of the samples the
-    /// model shrugs it off; beyond that every extra share of noise caps validation accuracy (half of the share above
-    /// 10%), because it is learning its own mistakes back. Two cures: discard noisy rows (抽检's CleanNoise) or send
+    /// model shrugs it off; beyond that every extra share of noise lowers the ceiling of its accuracy (half of the
+    /// share above 10%), because it is learning its own mistakes back. Two cures: discard noisy rows (抽检's CleanNoise) or send
     /// old rows back to a human (<see cref="RecheckNoise"/>), where each right hand answer removes one noisy row.
     /// </summary>
     public sealed partial class XgSim
@@ -38,19 +38,17 @@ namespace LingGuangV05.XingGuang
         /// <summary>How much validation accuracy the noise costs now: 0.5 × the share above 10%.</summary>
         public double InbreedingPenaltyFor(string dataset) => Math.Max(0, NoiseShare(dataset) - InbreedingFreeShare) * InbreedingSlope;
 
+        /// <summary>
+        /// Names the drag of 近亲繁殖 on this run. The penalty itself is already in the model's ceiling
+        /// (<see cref="CeilingAcc"/>), so the stored accuracy is never cut twice.
+        /// </summary>
         void ApplyInbreeding(XgRun run)
         {
             if (run == null) return;
             run.inbreedingPenalty = 0;
             double penalty = InbreedingPenaltyFor(run.dataset);
             if (penalty <= 0 || !FiniteCollaboration(run.valAcc)) return;
-            var d = XgCatalog.Dataset(run.dataset);
-            // Never below a coin toss on this dataset.
-            double floor = Math.Min(run.valAcc, d != null ? 1 - d.chanceError : .5);
-            double capped = Math.Max(floor, run.valAcc - penalty);
-            if (run.valAcc - capped <= 1e-9) return;
-            run.inbreedingPenalty = run.valAcc - capped;
-            run.valAcc = capped;
+            run.inbreedingPenalty = penalty;
             Observe(InbreedingId);
         }
 

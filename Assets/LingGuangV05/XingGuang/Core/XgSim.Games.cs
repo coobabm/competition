@@ -60,9 +60,11 @@ namespace LingGuangV05.XingGuang
         public static (string zh, string en) Name(string game) =>
             game == Gomoku ? ("五子棋", "gomoku") : game == Go ? ("围棋", "Go") : game == Chess ? ("国际象棋", "chess") : ("棋", "the game");
 
-        /// <summary>Datasets a game feeds, best fit first: board positions for gomoku and go, reasoning for chess.</summary>
-        public static string[] Datasets(string game) =>
-            game == Chess ? new[] { "logic" } : game == Go ? new[] { "go" } : new[] { "go", "mnist" };
+        /// <summary>
+        /// Datasets a game feeds: board positions only (go, and gomoku as a weaker stand-in on the same grid). Chess
+        /// positions have nothing to do with any task here, so chess feeds nothing: training data has to match the task.
+        /// </summary>
+        public static string[] Datasets(string game) => game == Chess ? new string[0] : new[] { "go" };
 
         /// <summary>Samples for a finished game: a base per game, a little more for a long game, a bonus when you won (a pattern it had not seen).</summary>
         public static int SamplesFor(string game, XgGameOutcome outcome, int moves)
@@ -370,13 +372,13 @@ namespace LingGuangV05.XingGuang
         {
             var list = XgGames.Datasets(game);
             foreach (var id in list) if (DatasetAvailable(id)) return id;
-            return list[0];
+            return list.Length > 0 ? list[0] : "";
         }
 
         /// <summary>A game in progress reached <paramref name="plies"/> moves; every few moves add samples. Returns the samples added.</summary>
         public int GameMove(string game, int plies)
         {
-            int n = XgGames.MoveSamples(plies);
+            int n = GameDataset(game).Length > 0 ? XgGames.MoveSamples(plies) : 0;
             if (n > 0) { AddGameSamples(GameDataset(game), n); GameRecord(game).samples += n; }
             return n;
         }
@@ -390,7 +392,10 @@ namespace LingGuangV05.XingGuang
             if (outcome == XgGameOutcome.PlayerWon) r.playerWins++;
             else if (outcome == XgGameOutcome.PlayerLost) r.playerLosses++;
             else r.draws++;
-            int n = XgGames.SamplesFor(game, outcome, moves);
+            // Against its own model (once it plays the game): beating it, or being beaten by it.
+            if (AiPlays(game) && outcome == XgGameOutcome.PlayerWon) Earn("life.game.won");
+            if (AiPlays(game) && outcome == XgGameOutcome.PlayerLost) Earn("life.game.lost");
+            int n = GameDataset(game).Length > 0 ? XgGames.SamplesFor(game, outcome, moves) : 0;
             AddGameSamples(GameDataset(game), n);
             r.samples += n;
             return n;
@@ -411,7 +416,7 @@ namespace LingGuangV05.XingGuang
         public double TrackAccuracy(XgTrack track)
         {
             double best = 0;
-            foreach (var d in XgCatalog.DatasetsFor(track)) best = Math.Max(best, BestAcc(d.id));
+            foreach (var d in XgCatalog.DatasetsFor(track)) best = Math.Max(best, BrainModelAccuracy(d.id));
             return best;
         }
 
@@ -419,7 +424,7 @@ namespace LingGuangV05.XingGuang
         public double GameAccuracy(string game)
         {
             if (game == XgGames.Chess) return TrackAccuracy(XgTrack.Sequence);
-            if (game == XgGames.Go) return Math.Max(BestAcc("go"), .8 * TrackAccuracy(XgTrack.Vision));
+            if (game == XgGames.Go) return Math.Max(BrainModelAccuracy("go"), .8 * TrackAccuracy(XgTrack.Vision));
             return TrackAccuracy(XgTrack.Vision);
         }
 

@@ -4,7 +4,10 @@ namespace LingGuangV05.XingGuang
 {
     public static class XgStoryMilestones
     {
+        /// <summary>The story's milestone names (they kept the old breakthrough ids when those became items).</summary>
         public static readonly string[] Nodes = { "bt.hidden", "bt.vision", "bt.sequence", "bt.gate", "bt.residual", "bt.attention", "bt.spatial" };
+        /// <summary>The item whose purchase reaches a milestone that no stage reaches ("" = a stage does).</summary>
+        static readonly string[] Items = { "", "", "", "", "resnet", "", "caption" };
         public static readonly string[] Beats = { "bt_hidden", "bt_specialty_vision", "bt_specialty_sequence", "bt_gate", "bt_residual", "bt_attention", "bt_spatial" };
         /// <summary>The stage each milestone belongs to: its story beat plays once the player has left that stage (design v1.1).</summary>
         static readonly int[] ReachedAt = { 2, 3, 3, 4, 0, 5, 0 };
@@ -13,7 +16,9 @@ namespace LingGuangV05.XingGuang
         {
             for (int i = 0; i < Nodes.Length; i++)
             {
-                bool reached = ReachedAt[i] > 0 ? state.stage >= ReachedAt[i] : state.unlocked.Contains(Nodes[i]);
+                bool reached = ReachedAt[i] > 0 ? state.stage >= ReachedAt[i] : state.unlocked.Contains(Items[i]) || state.unlocked.Contains(Nodes[i]);
+                // The second of stage 3's first words waits until that track trains (XgSim.StoryBeats.cs).
+                if (Nodes[i] == state.firstWordsHeld) continue;
                 if (reached && !state.migratedBeats.Contains(Beats[i]) && !fired(Beats[i])) yield return Nodes[i];
             }
         }
@@ -24,7 +29,5 @@ namespace LingGuangV05.XingGuang
             if (state.migratedBeats.Contains("bt_gate") || state.migratedBeats.Contains("bt_residual")) yield return 4;
             if (state.migratedBeats.Contains("bt_attention") || state.migratedBeats.Contains("bt_spatial")) yield return 5;
         }
-        public static bool WallMayOpen(XgState state, string wall, bool messageDelivered)
-        { return messageDelivered && state.walls.Contains(wall); }
     }
 }

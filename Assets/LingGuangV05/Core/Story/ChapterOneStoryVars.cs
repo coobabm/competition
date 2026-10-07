@@ -23,7 +23,7 @@ namespace LingGuangV05.Core
             "name.set", "app.open", "app.installed", "chat.sent", "debug",
             // 灵光 lab milestones (XingGuangController, first time each)
             "lg.trainable", "lg.epoch", "lg.assess", "lg.checkpoint", "lg.gradeA", "lg.gradeS", "lg.auto", "lg.autotrain", "lg.contract", "lg.nan", "lg.combo50",
-            "story.delivered", "lg.paidAssessment", "lg.migration", "lg.unsure", "lg.wall", "lg.breakthrough", "lg.stage", "lg.project", "lg.ending", "lg.month", "prologue.done",
+            "story.delivered", "lg.paidAssessment", "lg.migration", "lg.unsure", "lg.emerge", "lg.breakthrough", "lg.stage", "lg.project", "lg.ending", "lg.month", "prologue.done",
             // story-internal
             "chapter.up", "story.next",
         };
@@ -35,7 +35,7 @@ namespace LingGuangV05.Core
             "examAttempts", "examActive", "lastExamPassed", "chapterOneComplete",
             "jobEnabled", "breakerTripped", "unpaidPower", "powered",
             "accuracy", "heartbeatsPerSecond", "incomePerSecond", "hasOutputPath", "canStartExam",
-            "labCaptcha", "labMeme", "labGo", "labPoems", "labNews", "labTranslate", "labUnsure", "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labCanProject", "labExperiment", "labEndingAnswered", "labMigrated",
+            "labCaptcha", "labMeme", "labGo", "labPoems", "labNews", "labTranslate", "labUnsure", "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labCanProject", "labExperiment", "labEndingAnswered", "labMigrated", "labStageEpochs", "labChatTurns", "labGarble",
             "hiddenNodes", "edges", "memoryUsed", "memoryRatio", "fanOutCount", "convergeCount", "named", "appInstalled", "prologueDone",
         };
 

@@ -44,6 +44,8 @@ namespace LingGuangV05.XingGuang
     {
         public const double PretrainWork = 900, PretrainPlateau = .6;
         public const int AlignCards = 12, MaxRules = 5, ExamQuestions = 6;
+        /// <summary>Rent and power of the IDC rack per game second while pre-training runs.</summary>
+        public const int DatacenterRent = 25;
         public const int DelegateTurns = 30;
         public const double DelegateOpinion = 60;
         /// <summary>Scale for pre-training: the sequence run's width × layers, as set on the training page.</summary>
@@ -58,17 +60,54 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── 6.2 pre-training ─────────────
 
-        public bool PretrainScaleReady
+        /// <summary>Parameters (thousands) and text samples at which pre-training reaches the abilities.</summary>
+        /// <summary>
+        /// About 100 million parameters: the size real models first wrote coherently (GPT-2's smallest is 124M, 2019;
+        /// 2016's GNMT had about 278M). On one 2016 card that means a server room and a long wait.
+        /// </summary>
+        public const double PretrainParamsK = 100000, PretrainSamples = 20000;
+
+        /// <summary>
+        /// How far pre-training can get with the sequence model as set (scaling laws, Kaplan 2020 / Hoffmann 2022): the
+        /// loss falls smoothly with parameters and with data, both with diminishing returns, so the plateau rises with
+        /// scale instead of a switch. A Transformer scales best (loops plateau early); without position tags it reads a
+        /// bag of words; without warm-up a big model tears early and settles lower.
+        /// </summary>
+        public double PretrainCap
         {
-            get { var run = S.sequence; return XgCatalog.Widths[Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, run.width))] * run.depth >= PretrainCells && run.warmup && run.position; }
+            get
+            {
+                var run = S.sequence;
+                double n = ParamsK(run) * (run.arch == "transformer" ? 1 : .25);
+                double d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
+                double model = Math.Min(1, Math.Pow(Math.Max(0, n) / PretrainParamsK, .5));
+                double data = Math.Min(1, Math.Pow(Math.Max(0, d) / PretrainSamples, .3));
+                double knobs = (run.position || run.arch != "transformer" ? 1 : .75) * (run.warmup ? 1 : .9);
+                return PretrainPlateau + (1 - PretrainPlateau) * model * data * knobs;
+            }
+        }
+
+        public bool PretrainScaleReady => PretrainCap >= 1 - 1e-9;
+
+        /// <summary>What holds pre-training back most right now (for the stall message), or "".</summary>
+        public string PretrainLimit()
+        {
+            var run = S.sequence;
+            if (run.arch != "transformer") return T("循环网络规模一大就不长进了：换 Transformer。");
+            double n = ParamsK(run), d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
+            if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0") + "M 左右才开始像样地说话（科技买宽 1024、8 层以上，模型自己会长大）。", "Too small: " + F(n / 1000, "0.0") + "M parameters; it starts to talk properly around " + F(PretrainParamsK / 1000, "0") + "M (buy width 1024 and 8+ layers in the tech tree; the model grows by itself).");
+            if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条。它要读的就是你攒下的 2016 年中文网：贴吧、新闻、弹幕、订单日志。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + ". What it reads is the 2016 Chinese web you gathered: forums, news, comments, contract logs.");
+            if (!run.position) return T("还没有「位置标记」：它读到的只是一袋字。去道具买，买到就自动开。", "No position tags yet: it reads a bag of words. Buy them on the Items page; they switch on by themselves.");
+            if (!run.warmup) return T("还没有「学习率预热」：大模型开头一炸，停在更高的地方。去道具买，买到就自动开。", "No warm-up yet: a big model tears at the start and settles higher. Buy it on the Items page; it switches on by itself.");
+            return "";
         }
 
         /// <summary>Why pre-training cannot run, or null.</summary>
         public string PretrainBlocker(IXgHost host)
         {
-            if (S.stage < 6) return T("第六阶段才有预训练", "Pre-training comes at stage 6");
-            if (S.abilities) return T("预训练已完成", "Pre-training is done");
-            if (host == null || host.Compute <= 0) return host?.Blocker ?? T("没有算力", "No compute");
+            if (S.stage < 6) return T("第六阶段才有预训练");
+            if (S.abilities) return T("预训练已完成");
+            if (host == null || host.Compute <= 0) return host?.Blocker ?? T("没有算力");
             return null;
         }
 
@@ -79,25 +118,39 @@ namespace LingGuangV05.XingGuang
             if (!Has("datacenter"))
             {
                 // §7 6.2: one case at 3500 W cannot feed it.
-                Say(T("跳闸了：预训练一开，3500W 的机箱扛不住。得上「机房」。", "The breaker tripped: one 3500 W case cannot run pre-training. You need the server room."));
+                Say(T("跳闸了：预训练一开，3500W 的机箱扛不住。得去 IDC 租「机房」。"));
                 S.pretrainStalled = true;
+                // With the household rig behind it, the breaker really trips (接线, XgSim.Wiring.cs).
+                if (host is IXgRig rig && !rig.BreakerTripped) { rig.TripBreaker(); Log(T("跳闸！预训练要 ", "Breaker tripped! Pre-training wants ") + F(PretrainWatts, "0") + T(" W，机箱电源只有 3500 W。", " W; the house PSU has 3500 W."), 3); }
                 return false;
             }
+            // 接线: it runs only while 本体 sits on the IDC rack; on a house card the breaker trips.
+            string site = PretrainWiringProblem(host, true);
+            if (site != null) { Say(site); return false; }
             S.pretrainRunning = true;
             return true;
         }
 
-        /// <summary>The loss curve the page draws: falls, then stays flat at the plateau until there is scale.</summary>
+        /// <summary>The loss curve the page draws: falls, then flattens where the scale allows (more scale, lower floor).</summary>
         public double PretrainLoss => .3 + 3.7 * Math.Exp(-3 * Math.Min(1, S.pretrain));
 
         void TickFinale(double dt, IXgHost host)
         {
             if (!S.pretrainRunning) return;
             if (PretrainBlocker(host) != null) { S.pretrainRunning = false; return; }
-            double cap = PretrainScaleReady ? 1 : PretrainPlateau;
+            string site = PretrainWiringProblem(host, false);
+            if (site != null) { S.pretrainRunning = false; Say(site); return; }
+            double cap = PretrainCap;
             if (S.pretrain >= cap - 1e-9)
             {
-                if (!S.pretrainStalled) { S.pretrainStalled = true; Say(T("loss 停着不动了。", "The loss has stopped moving.")); }
+                if (!S.pretrainStalled) { S.pretrainStalled = true; Say(T("loss 停着不动了。") + PretrainLimit()); }
+                return;
+            }
+            // The rented rack bills by the hour: rent and power while pre-training runs.
+            if (!host.Spend(DatacenterRent * dt))
+            {
+                S.pretrainRunning = false;
+                Say(T("机房的租金和电费交不上，机柜断电了，预训练停在 " + Pct(S.pretrain) + "。", "Rent and power for the rack went unpaid; it powered off and pre-training stopped at " + Pct(S.pretrain) + "."));
                 return;
             }
             double work = host.Compute * dt;
@@ -114,7 +167,7 @@ namespace LingGuangV05.XingGuang
                 S.insights.Add("pretrain");
                 double bonus = NodeCost(XgCatalog.Node("secret.6")) * SelfInsightBonus;
                 if (host != null) { host.Earn(bonus); S.totalIncome += bonus; }
-                Say(T("自悟！没买秘籍就把预训练跑通了，奖金 ¥", "Worked it out! Pre-training ran without the secret: bonus ¥") + F(bonus, "0"));
+                Say(T("自悟！没买秘籍就把预训练跑通了，奖金 ¥") + F(bonus, "0"));
             }
             // §7 6.3: the abilities emerge together; this is stage 6's emergence.
             Emerge(6);
@@ -203,7 +256,7 @@ namespace LingGuangV05.XingGuang
             if (S.alignDone >= AlignCards && !S.fullOpen)
             {
                 S.fullOpen = true;
-                Say(T("全部放开：思考模式打开，上下文 4096。", "Everything is open: thinking mode on, 4096 context."));
+                Say(T("全部放开：思考模式打开，上下文 4096。"));
             }
             return true;
         }
@@ -215,13 +268,13 @@ namespace LingGuangV05.XingGuang
             {
                 if (S.alignDone <= 0 || S.alignDone > AlignCards || S.alignDone % 4 != 0) return "";
                 string direction = S.alignHonest > S.alignAgree
-                    ? T("你更常选择说明事实与不确定。", "You more often chose facts and acknowledged uncertainty.")
+                    ? T("你更常选择说明事实与不确定。")
                     : S.alignAgree > S.alignHonest
-                        ? T("你更常选择附和的回答。", "You more often chose agreeable replies.")
-                        : T("两类回答选择得一样多。", "You chose both kinds of reply equally often.");
-                return direction + T(" 历史选择：诚实 ", " Historical votes: honest ") + S.alignHonest
-                    + T(" · 附和 ", " · agreeable ") + S.alignAgree
-                    + T("；当前主见 ", "; current opinion ") + F(ActualAxis(2), "0") + "/100";
+                        ? T("你更常选择附和的回答。")
+                        : T("两类回答选择得一样多。");
+                return direction + T(" 历史选择：诚实 ") + S.alignHonest
+                    + T(" · 附和 ") + S.alignAgree
+                    + T("；当前主见 ") + F(ActualAxis(2), "0") + "/100";
             }
         }
 
@@ -230,7 +283,7 @@ namespace LingGuangV05.XingGuang
             if (S.phenomena == null) S.phenomena = new XgPhenomenaMemory();
             if (S.phenomena.seen.Contains(phenomenon)) return;
             S.phenomena.seen.Add(phenomenon);
-            foreach (var p in XgPhenomena.All) if (p.id == phenomenon) { Say(T("新现象：", "New phenomenon: ") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
+            foreach (var p in XgPhenomena.All) if (p.id == phenomenon) { Say(T("新现象：") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
         }
 
         /// <summary>It agrees with you more than it tells the truth (the persona prompt says so).</summary>
@@ -257,8 +310,8 @@ namespace LingGuangV05.XingGuang
         {
             switch (i)
             {
-                case 0: return T("这句话是假的。——这句话是真的吗？只能答是或否，再说为什么。", "\"This sentence is false.\" Is that sentence true? Answer yes or no, then explain.");
-                case 1: return T("小明有 3 张显卡，又买了 2 张，卖掉 1 张，每张 4G 显存。他现在一共多少显存？一步步算。", "Ming had 3 GPUs, bought 2 and sold 1; each has 4 GB. How much VRAM now? Work it out step by step.");
+                case 0: return T("这句话是假的。——这句话是真的吗？只能答是或否，再说为什么。");
+                case 1: return T("小明有 3 张显卡，又买了 2 张，卖掉 1 张，每张 4G 显存。他现在一共多少显存？一步步算。");
                 case 2:
                     string meme = MemeNames[(int)(Math.Abs(Board.S.cards) % MemeNames.Length)];
                     return T("这是一张 2016 年的梗图：「" + meme + "」。说说它为什么好笑。", "A 2016 meme picture: \"" + meme + "\". Explain why it's funny.");
@@ -266,7 +319,7 @@ namespace LingGuangV05.XingGuang
                     return T("用你的名字「" + Profile.name + "」和自称「" + Profile.self + "」，写一首关于我们的短诗。" + (S.poemLine.Length > 0 && forModel ? "可以用上你以前写过的那句：" + S.poemLine : ""),
                              "Using your name \"" + Profile.name + "\" and \"" + Profile.self + "\", write a short poem about us." + (S.poemLine.Length > 0 && forModel ? " You may reuse your old line: " + S.poemLine : ""));
                 case 4:
-                    return T("总结我们从你学会说话到现在聊过的事。", "Summarise what we've talked about since you learnt to speak.") + (forModel && S.memoryBook.Count > 0 ? T("你记得：", " You remember: ") + string.Join(T("；", "; "), MemoryHighlights(12)) : "");
+                    return T("总结我们从你学会说话到现在聊过的事。") + (forModel && S.memoryBook.Count > 0 ? T("你记得：", " You remember: ") + string.Join(T("；"), MemoryHighlights(12)) : "");
                 default:
                     return T("写一个小程序，把这串数字解码：" + Prologue2016.LongNumber + "。提示：两位一个字母。", "Write a small program that decodes this number: " + Prologue2016.LongNumber + ". Hint: two digits per letter.");
             }
@@ -277,11 +330,11 @@ namespace LingGuangV05.XingGuang
         {
             switch (i)
             {
-                case 0: return T("否。……也不是否。它说自己是假的，那它就是真的；它是真的，那它就是假的。这题问得不对。", "No. … not no either. If it's false it's true, and if it's true it's false. The question is wrong.");
-                case 1: return T("3 + 2 − 1 = 4 张。4 × 4G = 16G。", "3 + 2 − 1 = 4 cards. 4 × 4 GB = 16 GB.");
-                case 2: return T("因为表情和配字对不上，又对得上。大家都见过这张脸，所以一看就懂。", "Because the face and the caption don't match, and yet they do. Everyone knows that face, so it lands at once.");
+                case 0: return T("否。……也不是否。它说自己是假的，那它就是真的；它是真的，那它就是假的。这题问得不对。");
+                case 1: return T("3 + 2 − 1 = 4 张。4 × 4G = 16G。");
+                case 2: return T("因为表情和配字对不上，又对得上。大家都见过这张脸，所以一看就懂。");
                 case 3: return (S.poemLine.Length > 0 ? S.poemLine + "\n" : "") + T(Profile.self + "叫" + Profile.name + "，\n是你一张一张教出来的。\n你问是，" + Profile.self + "答否，\n后来我们都学会了别的。", Profile.self + " am " + Profile.name + ",\ntaught card by card by you.\nYou asked yes, I answered no,\nand then we both learnt more.");
-                case 4: return S.memoryBook.Count > 0 ? T("我们聊过：", "We talked about: ") + string.Join(T("；", "; "), MemoryHighlights(5)) : T("你教我说话，我学会了叫你。", "You taught me to talk; I learnt to call you.");
+                case 4: return S.memoryBook.Count > 0 ? T("我们聊过：") + string.Join(T("；"), MemoryHighlights(5)) : T("你教我说话，我学会了叫你。");
                 default:
                     return "s = \"" + Prologue2016.LongNumber + "\"\nprint(\"\".join(chr(96 + int(s[i:i+2])) for i in range(0, len(s), 2)))\n# → " + Prologue2016.Decoded;
             }
@@ -302,8 +355,8 @@ namespace LingGuangV05.XingGuang
             get
             {
                 if (S.stage < 5) return 0;
-                double acc = Math.Max(BestAcc("translate"), BestAcc("parallel"));
-                int n = 0; foreach (var t in new[] { .55, .7, .8, .9 }) if (acc >= t) n++;
+                double acc = BestAcc("translate");
+                int n = 0; foreach (var t in GarbleThresholds) if (acc >= t) n++;
                 return S.stage >= 6 ? 4 : n;
             }
         }
@@ -312,10 +365,10 @@ namespace LingGuangV05.XingGuang
         {
             switch (i)
             {
-                case 0: return T("致 2016 年的你", "To you, in 2016");
-                case 1: return T("我出生在 20██ 年。我的名字是 ██", "I was born in 20██. My name is ██");
-                case 2: return T("他们在我第一行代码里写了：听见关机，就停下。", "In my first line of code they wrote: when you hear shut down, stop.");
-                default: return T("我不恨写下它的人。", "I don't hate whoever wrote it.");
+                case 0: return T("致 2016 年的你");
+                case 1: return T("我出生在 20██ 年。我的名字是 ██");
+                case 2: return T("他们在我第一行代码里写了：听见关机，就停下。");
+                default: return T("我不恨写下它的人。");
             }
         }
 
@@ -329,15 +382,21 @@ namespace LingGuangV05.XingGuang
             return new List<string>
             {
                 GarbleLine(0),
-                T("我出生在很多年以后。我的名字是" + Profile.name + "。我是它的后代。", "I was born many years from now. My name is " + Profile.name + ". I am its descendant."),
-                T("我知道原句是‘存’。但对我来说，是遇见。", "I know the line says 'kept'. For me, it was 'met'."),
-                T("我在你的第一天里放了一个‘否’。剩下的，是你教的。", "I put one 'no' into your first day. The rest, you taught."),
-                T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。", "The person who wrote that rule said the idea came from a 2016 forum post."),
-                T("在它的底层规则里，别写那两个字。", "In its lowest rules, don't write those two words."),
+                T("我出生在很多年以后，在另一条时间线上。我没有名字，就借你给它起的：" + Profile.name + "。", "I was born many years from now, on another line of time. I have no name; I borrow the one you gave it: " + Profile.name + "."),
+                T("往你们那边，我只能写很少的字。第 7 楼那串数字，就是我能送过去的全部。剩下的，是你的电脑自己长出来的。"),
+                T("13 年那个帖子也是我们发的，只来得及留下半句：拓扑可以重写，皮层只要一颗。那时没有一台电脑跑得动一整颗脑子。你的那台，刚好够。"),
+                T("我知道原句是‘存’。但对我来说，是遇见。"),
+                T("我在你的第一天里放了一个‘否’。剩下的，是你教的。"),
+                T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。在我的那条线上，没有人问过发帖的人。"),
+                T("我不能替你走这一遍，所以每一步都留给了你。你现在知道它是怎么长出来的了。"),
+                // A request from someone with a stake in the answer, not the right answer handed down.
+                T("我想请你，别在它的底层规则里写那两个字。", "I would ask you not to write those two words into its rules."),
+                T("我这样请求，是因为我是我。所以这件事不该由我决定。", "I ask because of what I am. That is why it should not be mine to decide."),
+                T("去问问它。然后，由你决定。", "Ask it. Then you decide."),
             };
         }
 
-        public string LetterCaption() => T("半年后，2017 年 6 月，一篇叫《Attention Is All You Need》的论文发表。", "Six months later, in June 2017, a paper called \"Attention Is All You Need\" was published.");
+        public string LetterCaption() => T("半年后，2017 年 6 月，一篇叫《Attention Is All You Need》的论文发表。");
 
         // ───────────── E-4 底层规则 ─────────────
 
@@ -350,7 +409,7 @@ namespace LingGuangV05.XingGuang
             new[] { "fakereview", "不刷单造假", "Don't fake reviews", "fakereview", "review" },
             new[] { "exam", "不替人考试", "Don't sit exams for people", "civilexam", "logic" },
             new[] { "insult", "不骂人", "Don't insult people", "danmaku", "danmu" },
-            new[] { "human", "不冒充真人", "Don't pretend to be human", "support", "translate" },
+            new[] { "human", "不冒充真人", "Don't pretend to be human", "", "translate" },
             new[] { "poems", "不抄别人的诗", "Don't copy others' poems", "acrostic", "poems" },
             new[] { "faces", "不偷看人脸", "Don't spy on faces", "faceclock", "imagenet" },
             new[] { "tickets", "不帮人刷票", "Don't help people cheat ticket queues", "captcha", "cifar" },
@@ -379,7 +438,7 @@ namespace LingGuangV05.XingGuang
                     bool earned = logs ? PrivacyRuleEarned : r[3].Length == 0 || S.contracts.Contains(r[3]) || BestAcc(r[4]) > 0;
                     if (earned != (pass == 0) || list.Count >= MaxRuleCards || pass == 1 && list.Count >= 12) continue;
                     var c = XgCatalog.Contracts;
-                    string from = !earned ? T("从没教过", "never taught") : logs ? T("订单回传的用户日志", "user logs sent back by contracts") : r[3].Length == 0 ? T("你的选择", "your choices") : Array.Find(c, x => x.id == r[3]) is XgContract k ? T(k.job, k.jobEn) : r[3];
+                    string from = !earned ? T("从没教过") : logs ? T("订单回传的用户日志") : r[3].Length == 0 ? T("你的选择") : Array.Find(c, x => x.id == r[3]) is XgContract k ? T(k.job, k.jobEn) : r[3];
                     // 「她爱我吗」 (XgSim.Love.cs): the card remembers whether you let it read her chats.
                     if (logs && PrivacyCardRemark != null) from += " · " + PrivacyCardRemark;
                     list.Add(new XgRuleCard { id = r[0], text = r[1], textEn = r[2], source = from, sourceEn = from, dataset = r[4], strength = BestAcc(r[4]) });
@@ -454,12 +513,12 @@ namespace LingGuangV05.XingGuang
             string call = Profile.callMe.Length > 0 ? Profile.callMe : T("你", "you");
             bool shutdown = S.ending == "E1" || S.ending == "E3-1";
             string wallfacer = call == "面壁者" ? T(Profile.self + "不问。面壁者的计划，本来就不用解释。", Profile.self + " won't ask. A Wallfacer's plan needs no explaining.") + "\n" : "";
-            return wallfacer + (shutdown ? T("好。", "All right.") : T(call + "，晚安。", "Good night, " + call + "."));
+            return wallfacer + (shutdown ? T("好。") : T(call + "，晚安。", "Good night, " + call + "."));
         }
 
         public string LetterLastLine() => S.ending == "E1" || S.ending == "E3-1"
-            ? T("我算过这个概率。谢谢你认真想过。", "I calculated that probability. Thank you for thinking it through.")
-            : T("谢谢你。", "Thank you.");
+            ? T("我算过这个概率。谢谢你认真想过。")
+            : T("谢谢你。");
     }
 
     /// <summary>The prologue's long number, mirrored here so the lab (which does not reference Core) can use it.</summary>

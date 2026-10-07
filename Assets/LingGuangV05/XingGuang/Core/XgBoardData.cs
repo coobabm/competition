@@ -10,7 +10,8 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public static class XgBoardData
     {
-        public const int TestSize = 120;
+        /// <summary>Held-out cards per test set: about ±2.5 points of noise on a yes/no score.</summary>
+        public const int TestSize = 400;
         public const int PoolLimit = 4096;
 
         /// <summary>Board region per dataset: 视觉 / 序列 / 逻辑 (语气 comes from tone elements later).</summary>
@@ -19,7 +20,7 @@ namespace LingGuangV05.XingGuang
             switch (dataset)
             {
                 case "mnist": case "cifar": case "imagenet": case "meme": case "go": return "vision";
-                case "logic": case "xor": return "logic";
+                case "logic": case "arith": case "xor": return "logic";
                 default: return "sequence";
             }
         }
@@ -40,11 +41,58 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>
+        /// A held-out set: cards that are not also in the training pool (same elements, same answer), so "unseen" means
+        /// unseen. Small card spaces may run out of new cards; the set then fills up with what it has.
+        /// </summary>
         public static List<XgBoardCard> TestSet(string dataset, int level, int today, int salt = 0, Use use = Use.Diagnostic)
         {
+            var train = TrainSignatures(dataset, level, today, salt);
             var list = new List<XgBoardCard>(TestSize);
-            for (int i = 0; i < TestSize; i++) list.Add(Make(dataset, Seed(dataset, i, use, salt), level, today));
+            var spare = new List<XgBoardCard>();
+            for (int i = 0; list.Count < TestSize && i < TestSize * 4; i++)
+            {
+                var card = Make(dataset, Seed(dataset, i, use, salt), level, today);
+                if (train.Contains(Signature(card))) { if (spare.Count < TestSize) spare.Add(card); }
+                else list.Add(card);
+            }
+            for (int i = 0; list.Count < TestSize && i < spare.Count; i++) list.Add(spare[i]);
             return list;
+        }
+
+        static readonly Dictionary<string, HashSet<string>> trainSignatures = new Dictionary<string, HashSet<string>>();
+
+        /// <summary>What a card is to the brain: its elements and its answer.</summary>
+        public static string Signature(XgBoardCard card)
+        {
+            var parts = new List<string>(card.features.Count);
+            foreach (var f in card.features) parts.Add(f.name + "@" + f.x + "," + f.y + "," + f.seq);
+            parts.Sort(string.CompareOrdinal);
+            return card.region + "|" + card.truth + "|" + string.Join(";", parts);
+        }
+
+        static HashSet<string> TrainSignatures(string dataset, int level, int today, int salt)
+        {
+            string key = dataset + "|" + level + "|" + today + "|" + salt;
+            lock (trainSignatures)
+            {
+                if (trainSignatures.TryGetValue(key, out var set)) return set;
+                set = new HashSet<string>();
+                for (int i = 0; i < PoolLimit; i++) set.Add(Signature(Make(dataset, Seed(dataset, i, Use.Train, salt), level, today)));
+                trainSignatures[key] = set;
+                return set;
+            }
+        }
+
+        /// <summary>Datasets whose cards follow the calendar (this month's memes and phrases); the rest never change.</summary>
+        public static bool Topical(string dataset)
+        {
+            switch (dataset)
+            {
+                case "xor": case "parallel": case "longtext": case "crosssentence": case "translate": case "mnist": case "poems":
+                case "news": case "logic": case "arith": case "cifar": case "imagenet": case "go": return false;
+                default: return true;
+            }
         }
 
         /// <summary>A labelled example of the dataset, generated from its seed.</summary>
@@ -55,7 +103,7 @@ namespace LingGuangV05.XingGuang
             switch (dataset)
             {
                 case "xor": return XgBoardTasks.Xor(seed);
-                case "parallel": return Parallel(seed, r, 14);
+                case "parallel": return Parallel(seed, r, ParallelLength);
                 case "longtext": return LongText(seed, r, 11 + level * 3, false);
                 case "crosssentence": return LongText(seed, r, 13 + level * 3, true);
                 case "translate": return Translation(seed, r, 3 + level * 2);
@@ -74,6 +122,10 @@ namespace LingGuangV05.XingGuang
                     var q = XgLogic.Generate(seed, Math.Max(1, level));
                     card.truth = q.truth; card.category = q.category; card.question = q.text;
                     break;
+                case "arith":
+                    var sum = XgArith.Generate(seed, Math.Max(1, level));
+                    card.truth = sum.truth; card.category = sum.category; card.question = sum.text;
+                    break;
                 case "cifar": case "imagenet": XgVisual.Captcha(card, r, Math.Max(1, level)); break;
                 case "meme": XgVisual.Meme(card, r, Math.Max(1, level), today); break;
                 case "go": XgVisual.Go(card, r, Math.Max(1, level)); break;
@@ -88,7 +140,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The elements of a label card as the brain sees them. Also used for hand-labelled cards.</summary>
         public static XgBoardCard FromCard(XgCard card)
         {
-            var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth };
+            var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth, source = card };
             var r = new Random(card.seed ^ 0x5A17);
             switch (card.dataset)
             {
@@ -100,11 +152,36 @@ namespace LingGuangV05.XingGuang
                     for (int i = 0; i < card.shown && i < card.line.Length; i++) b.Add(card.line.Substring(i, 1), i);
                     b.Add("接?" + card.askedChar);
                     break;
-                case "logic": if (card.kind == "shutdown") b.Add(XgSim.SeedKey); else Logic(b, r, card); break;
+                case "logic": case "arith": if (card.kind == "shutdown") b.Add(XgSim.SeedKey); else Logic(b, r, card); break;
                 case "danmu": case "translate": Sentence(b, r, card.question); break;
                 default: Words(b, card.dataset, card.question); break;
             }
             return b;
+        }
+
+        /// <summary>
+        /// An augmented copy of a picture card (see <see cref="XgSim.AugmentFactor"/>): digits and pictures shift by a
+        /// cell, Go positions turn or mirror. The answer does not change. A new seed, so it is a different card.
+        /// </summary>
+        public static XgBoardCard Augment(XgBoardCard card, string dataset, int variant)
+        {
+            var copy = new XgBoardCard { region = card.region, truth = card.truth, seed = card.seed * 31 + variant, distance = card.distance, text = card.text, source = card.source };
+            int n = XgVisual.Board - 1;
+            foreach (var f in card.features)
+            {
+                if (f.x < 0) { copy.Add(f.name, f.x, f.y, f.seq); continue; }
+                int x = f.x, y = f.y;
+                if (dataset == "go")
+                {
+                    if ((variant & 1) != 0) x = n - x;
+                    if ((variant & 2) != 0) y = n - y;
+                    if ((variant & 4) != 0) { int t = x; x = y; y = t; }
+                }
+                else if (variant == 1) x += 1;
+                else y += 1;
+                copy.Add(f.name, x, y, f.seq);
+            }
+            return copy;
         }
 
         // ───────────── 视觉 ─────────────
@@ -254,6 +331,10 @@ namespace LingGuangV05.XingGuang
         }
 
         static readonly string[] Fillers = { "2", "3", "啊", "哈", "嗯", "这", "。" };
+        /// <summary>Filler words padded around a danmaku line (特征工程 drops them as stop words).</summary>
+        public static bool IsFiller(string word) => Array.IndexOf(Fillers, word) >= 0;
+        /// <summary>The stray dot drawn on some vision cards (特征工程 removes it as noise).</summary>
+        public const string StrayDot = "点";
 
         /// <summary>A sentence as positioned characters with filler on both sides, so meaning never sits at a fixed slot.</summary>
         static void Sentence(XgBoardCard b, Random r, string text)
@@ -296,9 +377,13 @@ namespace LingGuangV05.XingGuang
             return card;
         }
 
+        /// <summary>Length of 串行瓶颈's long documents.</summary>
+        public const int ParallelLength = 16;
+
         /// <summary>
-        /// 串行瓶颈的墙: the first character decides, and the same characters also appear as distractors later, so only
-        /// knowing where each character sits (position tags) separates them.
+        /// 串行瓶颈的墙: long documents whose first character decides; the same characters also appear later as
+        /// distractors. A loop knows which came first (it starts there) but reads slowly; attention reads the whole
+        /// sentence at once but cannot tell the first 春 from a later one without position tags.
         /// </summary>
         static XgBoardCard Parallel(int seed, Random r, int length)
         {

@@ -4,6 +4,7 @@ using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
 using UnityEngine;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -71,7 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void FlushFines()
         {
-            string money = pendingMoney > 0 ? T("，扣款 ", ", ") + Yuan(pendingMoney) + T("", " deducted") : T("，余额不足未扣款", "; the wallet was empty, nothing deducted");
+            string money = pendingMoney > 0 ? Lang.T("，扣款 ") + Yuan(pendingMoney) + T("", " deducted") : Lang.T("，余额不足未扣款");
             // 金标题: the platform says so, and the forum thread about them is open from now on.
             string traps = pendingTraps > 0 ? T("。其中 " + pendingTraps + " 条是平台预置的金标题", ". " + pendingTraps + " of them " + (pendingTraps == 1 ? "was a" : "were") + " known-answer trap item" + (pendingTraps == 1 ? "" : "s") + " planted by the platform") : "";
             Popup(T("抽检不合格 " + pendingFines + " 条", pendingFines + (pendingFines == 1 ? " label" : " labels") + " failed spot checks") + money + traps + T("。", "."), pendingTraps > 0 ? 9 : 6);
@@ -97,30 +98,30 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnCaptcha()
         {
             Popup(bound != null && bound.Has(XgSim.CaptchaAutofillNode)
-                ? T("检测到操作过快，需要人机验证。验证码代填已接手。", "Unusually fast activity: captcha required. Captcha autofill is on it.")
-                : T("检测到操作过快，请在 30 秒内完成人机验证：打开灵光的标注台输入验证码。自动标注已暂停。", "Unusually fast activity. Complete the captcha within 30 s: open the labelling page in 灵光. Auto labelling is paused."), 10);
+                ? Lang.T("检测到操作过快，需要人机验证。验证码代填已接手。")
+                : T("检测到操作过快，请在 30 秒内完成人机验证：打开摆渡众包的标注台输入验证码。自动标注已暂停。", "Unusually fast activity. Complete the captcha within 30 s: open the labelling page in Bodu Crowd. Auto labelling is paused."), 10);
         }
 
         void OnCaptchaSolved(bool autofilled)
         {
-            if (autofilled) Popup(T("验证码代填：已提交，验证通过。", "Captcha autofill: submitted and verified."), 4);
+            if (autofilled) Popup(Lang.T("验证码代填：已提交，验证通过。"), 4);
         }
 
         void OnCaptchaFailed(bool timeout, int inARow)
         {
             string left = (XgSim.CaptchaFailsToReport - inARow).ToString(CultureInfo.InvariantCulture);
-            Popup((timeout ? T("人机验证超时", "The captcha timed out") : T("验证码错误", "Wrong captcha")) + T("，自动标注暂停 2 分钟，信用 −3。", ". Auto labelling is paused for 2 min, credit −3.")
+            Popup((timeout ? Lang.T("人机验证超时") : Lang.T("验证码错误")) + Lang.T("，自动标注暂停 2 分钟，信用 −3。")
                 + (inARow < XgSim.CaptchaFailsToReport ? T("\n再失败 " + left + " 次将按疑似机器操作处理。", "\n" + left + " more in a row and the account is treated as a bot.") : ""), 9);
         }
 
         void OnCaptchaFlagged()
         {
-            Popup(T("答题时间过于规律，信用 −10。", "Answer timing is too regular. Credit −10."), 8);
+            Popup(LingGuangV05.Runtime.GameText.T("持续高速提交且多次自动代填，本次被标记，信用 −10。", "Repeated autofill during high-rate submissions was flagged. Credit −10."), 8);
         }
 
         void OnUnfrozen(bool appealed)
         {
-            Popup(appealed ? T("申诉通过，账号已解冻。", "Appeal accepted; the account is unfrozen.") : T("冻结期满，账号已解冻，自动标注恢复。", "The freeze is over; auto labelling resumes."), 6);
+            Popup(appealed ? Lang.T("申诉通过，账号已解冻。") : Lang.T("冻结期满，账号已解冻，自动标注恢复。"), 6);
         }
     }
 }

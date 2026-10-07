@@ -9,10 +9,10 @@ namespace LingGuangV05.Desktop.XingGuang
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class XgChartGraphic : MaskableGraphic
     {
-        public static readonly Color TrainColor = new Color32(59, 91, 219, 255);
-        public static readonly Color ValColor = new Color32(240, 120, 32, 255);
-        public static readonly Color BestColor = new Color32(47, 158, 68, 255);
-        static readonly Color Grid = new Color32(214, 222, 235, 255);
+        public static readonly Color TrainColor = new Color32(93, 202, 165, 255);
+        public static readonly Color ValColor = new Color32(239, 159, 39, 255);
+        public static readonly Color BestColor = new Color32(169, 155, 242, 255);
+        static readonly Color Grid = new Color32(27, 45, 59, 255);
 
         readonly List<float> train = new List<float>(), val = new List<float>();
         float best;

@@ -7,7 +7,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// 灵光: an incremental game about training CNNs and RNNs. Pure rules, no Unity.
     /// Loop: label yes/no cards (¥ + samples) → press 训练一轮 (one epoch) → every few epochs an assessment scores the
-    /// model 0–1000 and pays for new records → spend ¥ in the skill tree (architectures, layers, width, rates, data,
+    /// model 0–1000 and pays for new records → spend ¥ in the tech tree (architectures, layers, width, rates, data,
     /// research, automation). One combo counter spans labelling and training; only hand actions build it.
     ///
     /// The curve is a stylised scaling law:
@@ -24,6 +24,8 @@ namespace LingGuangV05.XingGuang
         public const double EpochSeconds = .6;
         /// <summary>Automatic epochs are half as strong as a hand press.</summary>
         public const double AutoEpochFactor = .5;
+        /// <summary>A new record must beat the old one by this much on yes/no cards (about one standard error of the test set).</summary>
+        public const double RecordMargin = .02;
         /// <summary>Seconds a training press keeps the combo alive.</summary>
         public const double EpochComboWindow = 1.5;
         /// <summary>Chance of a 前方高能 card (tests set 0 for exact pay).</summary>
@@ -51,7 +53,10 @@ namespace LingGuangV05.XingGuang
         public event Action<XgModelEntry> ModelSaved;
 
         public event Action<string> Message;
+        /// <summary>Training tore into NaN. Never raised since the model configures its own rate (drops replaced it); kept for the view's subscription.</summary>
+#pragma warning disable CS0067
         public event Action<int> Diverged;
+#pragma warning restore CS0067
         public event Action<XgEpoch> EpochDone;
         public event Action<XgAssessment> Assessed;
         public event Action<XgNode> NodeBought;
@@ -70,6 +75,7 @@ namespace LingGuangV05.XingGuang
             S = state ?? new XgState();
             // Data sources first: everything below evaluates runs, which reads samples (XgSim.DataSources.cs).
             RepairDataSources();
+            RepairTraces();
             RepairFlywheel();
             PrepareProgression(state == null);
             Repair();
@@ -80,6 +86,7 @@ namespace LingGuangV05.XingGuang
             RepairAfterthoughts();
             RepairAlignment();
             RepairMemoryBook();
+            RepairWiring();
             EnsureSeed();
         }
 
@@ -97,6 +104,11 @@ namespace LingGuangV05.XingGuang
             if (S.autoLevels == null) S.autoLevels = new List<XgLabelCount>();
             if (S.autoTimers == null) S.autoTimers = new List<XgLabelCount>();
             if (S.contracts == null) S.contracts = new List<string>();
+            // Retired work cannot remain active through saved selections, cards or signed orders.
+            S.contracts.RemoveAll(id => XgCatalog.Contract(id) == null);
+            S.desksOpen.RemoveAll(id => XgCatalog.Desk(id) == null);
+            S.cards.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
+            S.autoTimers.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
             if (S.best == null) S.best = new List<XgBest>();
             if (S.grades == null) S.grades = new List<string>();
             if (S.models == null) S.models = new List<XgModelEntry>();
@@ -129,12 +141,14 @@ namespace LingGuangV05.XingGuang
                 S.desk = XgCatalog.Desks[Math.Max(0, Math.Min(2, S.labelTrack))].id;
             S.visionCard = S.sequenceCard = S.logicCard = null;
             foreach (var d in XgCatalog.Desks) if (d.unlock == XgDeskUnlock.Start && !S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
-            if (!S.desksOpen.Contains(S.desk)) S.desk = "mnist";
+            if (!DeskOpen(S.desk)) S.desk = "logic";
             S.selected = S.selected == 1 ? 1 : 0;
             S.combo = Math.Max(0, S.combo);
             // The first version sold a one-off ×2 raise as a research node; it maps to raise level 5 (×2).
             if (S.unlocked.Remove("manual_pay")) S.payRaise = Math.Max(S.payRaise, 5);
             S.payRaise = Math.Max(0, Math.Min(XgCatalog.RaiseMax, S.payRaise));
+            // Training without knobs: a knob-era save keeps every accuracy it had (XgSim.AutoModel.cs).
+            if (S.trainingVersion < TrainingSchemaAuto) MigrateToAutoTraining();
             foreach (var run in Runs)
             {
                 // Unfinished UI actions have no settlement and do not survive a save reload.
@@ -147,7 +161,8 @@ namespace LingGuangV05.XingGuang
                 run.depth = Math.Max(1, Math.Min(DepthCap(track), run.depth));
                 run.width = Math.Max(0, Math.Min(WidthCap(track), run.width));
                 run.lr = Math.Max(0, Math.Min(XgCatalog.LearningRates.Length - 1, run.lr));
-                if (!HasLrKnob(track) && !Scheduled(run)) run.lr = DefaultLr(track);
+                if (run.accs == null) run.accs = new List<XgScore>();
+                run.accs.RemoveAll(x => x == null || XgCatalog.Dataset(x.key) == null || XgCatalog.Dataset(x.key).track != track);
                 if (double.IsNaN(run.steps) || run.steps < 0) run.steps = 0;
                 if (run.histTrain == null) run.histTrain = new List<float>();
                 if (run.histVal == null) run.histVal = new List<float>();
@@ -162,10 +177,12 @@ namespace LingGuangV05.XingGuang
         public static string TreeOf(XgTrack track) { return track == XgTrack.Vision ? "vision" : "sequence"; }
 
         string T(string zh, string en) { return English ? en : zh; }
+        /// <summary>Chinese source text; the English comes from the table in Core/Lang.En.cs (a line it lacks stays Chinese).</summary>
+        string T(string zh) { return English ? LingGuangV05.Core.Lang.En(zh) : zh; }
         static string F(double v, string format) { return v.ToString(format, CultureInfo.InvariantCulture); }
         public static string Pct(double v) { return F(v * 100, v >= .995 ? "0.00" : "0.0") + "%"; }
 
-        // ───────────── skill tree ─────────────
+        // ───────────── tech tree ─────────────
 
         public bool Has(string id) { return S.unlocked.Contains(id); }
         /// <summary>Some pack of this dataset is in: the public pack, or a junk / story pack (XgSim.DataSources.cs).</summary>
@@ -189,28 +206,28 @@ namespace LingGuangV05.XingGuang
 
         public string Why(XgNode n, IXgHost host)
         {
-            if (n == null) return T("未知节点", "Unknown node");
+            if (n == null) return T("未知节点");
             if (n.tree == "label") return WhyLabelNode(n, host);
-            if (IsAtlas(n)) return AtlasLit(n) ? T("已点亮", "Lit") : n.kind == XgNodeKind.Ability ? T("它学会时自动点亮", "Lights when it learns this") : T("第一次发生时自动点亮", "Lights the first time it happens");
+            if (IsAtlas(n)) return AtlasLit(n) ? T("已点亮") : n.kind == XgNodeKind.Ability ? T("它学会时自动点亮") : T("第一次发生时自动点亮");
             switch (Status(n, host))
             {
-                case NodeStatus.Owned: return T("已拥有", "Owned");
+                case NodeStatus.Owned: return T("已拥有");
                 case NodeStatus.Locked:
-                    if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次", "Finish the active epoch first");
+                    if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次");
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
                     var missing = new List<string>();
                     if (n.parent != null && !Has(n.parent)) missing.Add(NodeName(XgCatalog.Node(n.parent)));
                     foreach (var need in n.needs) if (!Has(need)) missing.Add(NodeName(XgCatalog.Node(need)));
-                    return T("先解锁 ", "Unlock first: ") + string.Join(T("、", ", "), missing);
-                case NodeStatus.TooExpensive: return T("经费不足 ¥", "Need ¥") + F(NodeCost(n), "0");
-                default: return T("按住购买 ¥", "Hold to buy ¥") + F(NodeCost(n), "0");
+                    return T("先解锁 ") + string.Join(T("、"), missing);
+                case NodeStatus.TooExpensive: return T("经费不足 ¥") + F(NodeCost(n), "0");
+                default: return T("按住购买 ¥") + F(NodeCost(n), "0");
             }
         }
 
-        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？", "???") : T(n.name, n.nameEn); }
+        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : T(n.name, n.nameEn); }
         /// <summary>The node's description; a hint instead while it is still a mystery.</summary>
-        public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……", "Maybe there is an easier way…") : T(n.note, n.noteEn); }
+        public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……") : T(n.note, n.noteEn); }
         /// <summary>Shown as 「？？？」 with no price: 自动答题 before the protagonist has the idea.</summary>
         public bool NodeMystery(XgNode n) { return n != null && n.id == "label.auto" && AutoLabelHidden; }
 
@@ -221,34 +238,23 @@ namespace LingGuangV05.XingGuang
             if (n.tree == "label") return BuyLabelNode(n, host);
             if (Status(n, host) != NodeStatus.Buyable) { Say(Why(n, host)); return false; }
             double price = NodeCost(n);
-            if (!host.Spend(price)) { Say(T("经费不足 ¥", "Need ¥") + F(NodeCost(n), "0")); return false; }
+            if (!host.Spend(price)) { Say(T("经费不足 ¥") + F(NodeCost(n), "0")); return false; }
             S.totalSpent += price;
             if (n.kind != XgNodeKind.Project) S.unlocked.Add(n.id);
-            Say(T("解锁 ", "Unlocked ") + NodeName(n));
+            Say(T("解锁 ") + NodeName(n));
             switch (n.kind)
             {
                 case XgNodeKind.Dataset:
                     if (!S.owned.Contains(n.target)) S.owned.Add(n.target);
                     StartDownload(n.target);
                     break;
-                case XgNodeKind.Arch:
-                    var a = XgCatalog.Arch(n.target);
-                    SetArch(a.track, a.id);
-                    break;
-                case XgNodeKind.Depth:
-                    var dt = n.tree == "vision" ? XgTrack.Vision : XgTrack.Sequence;
-                    if (VramNeedMB(Shape(Run(dt), n.value, Run(dt).width)) <= Vram(host)) SetDepth(dt, n.value, host);
-                    break;
-                case XgNodeKind.Width:
-                    var wt = n.tree == "vision" ? XgTrack.Vision : XgTrack.Sequence;
-                    if (VramNeedMB(Shape(Run(wt), Run(wt).depth, n.value)) <= Vram(host)) SetWidth(wt, n.value, host);
-                    break;
                 case XgNodeKind.Auto:
                     if (n.value == 2 || n.value == 5) foreach (var run in Runs) run.running = true;
                     break;
             }
-            ApplyKnobNode(n);
             ApplyProgressionNode(n);
+            // A new structure, width, depth or technique: the models reconfigure themselves (XgSim.AutoModel.cs).
+            AutoConfigureAll(host);
             foreach (var run in Runs) Evaluate(run);
             CheckDesks();
             NodeBought?.Invoke(n);
@@ -274,16 +280,22 @@ namespace LingGuangV05.XingGuang
         public bool HasLrKnob(XgTrack track) { return Has("shared.lr") || Has("v.lr") || Has("s.lr"); }
         public static int DefaultLr(XgTrack track) { return 2; }
 
-        /// <summary>0 = hand only … 5 = AutoML. Each automation node needs the one before.</summary>
+        /// <summary>
+        /// 0 = hand only, 2 = crontab … 5 = AutoML. Each automation node needs the one before; the chain starts at
+        /// crontab (auto2): the old run.sh (auto1, hold to repeat) is gone, so level 1 no longer exists.
+        /// </summary>
         public int AutoTrainLevel
         {
-            get { int level = 0; for (int i = 1; i <= 5; i++) if (Has("auto" + i)) level = i; else break; return level; }
+            get { int level = 0; for (int i = 2; i <= 5; i++) if (Has("auto" + i)) level = i; else break; return level; }
         }
 
         /// <summary>Seconds between automatic epochs at this automation level.</summary>
         public static double AutoInterval(int level) { return level >= 5 ? 1 : level == 4 ? 1.5 : level == 3 ? 2 : 3; }
 
-        public int EvalEvery { get { return AutoTrainLevel >= 4 ? 1 : 4; } }
+        /// <summary>Every epoch ends with an exam on unseen cards (a record saves the checkpoint and pays).</summary>
+        public int EvalEvery => 1;
+        /// <summary>Epochs in a row without a record before the hint, AutoML's dataset switch, and early stopping.</summary>
+        public const int StaleHintEpochs = 12, AutoSwitchEpochs = 8, EarlyStopEpochs = 12;
 
         public XgResearch Optimizer
         {
@@ -296,9 +308,25 @@ namespace LingGuangV05.XingGuang
             }
         }
         public string OptimizerName { get { var o = Optimizer; return o == null ? "SGD" : T(o.name, o.nameEn); } }
+
+        /// <summary>
+        /// The number a rate button shows. Adaptive optimisers (RMSProp, Adam) divide each step by the gradient's own
+        /// size, so the same step needs a far smaller number: Adam's usual 0.001 is SGD's 0.1. The board trains on the
+        /// step size (<see cref="RateValues"/>); only the label follows the optimiser.
+        /// </summary>
+        public double RateDisplayScale { get { var o = Optimizer; return o != null && (o.id == "adam" || o.id == "rmsprop") ? .01 : 1; } }
+
+        public string RateLabel(int index)
+        {
+            int i = Math.Max(0, Math.Min(RateValues.Length - 1, index));
+            return (RateValues[i] * RateDisplayScale).ToString("0.#####", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>How much more an optimiser tolerates a big step before it tears (adaptive steps are a little steadier).</summary>
+        public double OptimizerSteadiness { get { var o = Optimizer; return o == null ? 1 : o.id == "adam" ? 1.25 : o.id == "rmsprop" ? 1.15 : 1; } }
         double OptSpeed { get { var o = Optimizer; return o == null ? 1 : o.speed; } }
         public double Stability { get { var o = Optimizer; return (o == null ? 1 : o.stability) * (Has("batchnorm") ? 1.5 : 1); } }
-        double SpeedResearch { get { return (Has("batchnorm") ? 1.2 : 1) * (Has("cudnn") ? 1.5 : 1) * FeelSpeed; } }
+        double SpeedResearch { get { return (Has("batchnorm") ? 1.2 : 1) * (Has("cudnn") ? 1.3 : 1) * FeelSpeed; } }
 
         // ───────────── model shape ─────────────
 
@@ -309,8 +337,18 @@ namespace LingGuangV05.XingGuang
             return run.depth * w * w * (a == null ? 1 : a.paramFactor) / 1000.0;
         }
 
-        /// <summary>Weights, gradients and optimizer state plus activations.</summary>
-        public static double VramNeedMB(XgRun run) { return 40 + ParamsK(run) * .6; }
+        /// <summary>
+        /// Training memory on one card: the framework and CUDA context (~300 MB), 16 bytes per parameter (float32
+        /// weights, gradients and two Adam moments) and the activations kept for the backward pass (batch 32; feature
+        /// maps make convolutions the hungriest).
+        /// </summary>
+        public static double VramNeedMB(XgRun run)
+        {
+            var a = XgCatalog.Arch(run.arch);
+            double w = XgCatalog.Widths[Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, run.width))];
+            double perUnit = a != null && a.track == XgTrack.Vision && run.arch != "caption" ? .12 : .02;
+            return 300 + ParamsK(run) * .016 + Math.Max(1, run.depth) * w * perUnit;
+        }
 
         /// <summary>Parameter count (in thousands) of a run with another depth or width, for previews.</summary>
         public static double ParamsKWith(XgRun run, int depth, int width)
@@ -325,6 +363,7 @@ namespace LingGuangV05.XingGuang
             ("ResNet-50（2015）", "ResNet-50 (2015)", 25600),
             ("AlexNet（2012）", "AlexNet (2012)", 61000),
             ("VGG-16（2014）", "VGG-16 (2014)", 138000),
+            ("谷歌翻译 GNMT（2016）", "Google's GNMT (2016)", 278000),
         };
 
         /// <summary>
@@ -352,68 +391,27 @@ namespace LingGuangV05.XingGuang
             return a.maxDepth + (Has("batchnorm") ? 6 : 0);
         }
 
-        /// <summary>Choose the number of layers up to the cap bought in the tree. Free; growing keeps most progress.</summary>
-        public bool SetDepth(XgTrack track, int depth, IXgHost host)
-        {
-            if (Run(track).epochActive) return false;
-            var run = Run(track);
-            depth = Math.Max(1, Math.Min(DepthCap(track), depth));
-            if (depth == run.depth) return false;
-            if (depth > run.depth && host != null && VramNeedMB(Shape(run, depth, run.width)) > Vram(host)) { Say(T("显存不足：去「" + LingGuangV05.Core.AppNames.ShopZh + "」加显卡", "Not enough VRAM: buy a card on " + LingGuangV05.Core.AppNames.ShopEn)); return false; }
-            run.depth = depth;
-            // A new depth reinitialises the network (design v1.1 阶段 1: the "？" cell survives), but only when the
-            // model really trains with it: until then the knob is a proposal that 试训 can compare for free.
-            if (!ShapeDeferred(run)) { ReinitialiseBoard(run); Reshape(run); }
-            else if (run.depth == run.formal.depth) Say(T("改回 " + depth + " 层：正式模型原样不动。", "Back to " + depth + " layers: the real model is untouched."));
-            else Say(T("层数改了：下一轮正式训练会重建网络。想先比较，用「试训」；改回 " + run.formal.depth + " 层就什么都不丢。",
-                       "Layers changed: the next real epoch rebuilds the network. Compare first with a trial; set it back to " + run.formal.depth + " and nothing is lost."));
-            if (run.depth > MaxDepth(run)) Say(T("超过 " + MaxDepth(run) + " 层：梯度消失，深层学不动", "Past " + MaxDepth(run) + " layers gradients vanish"));
-            return true;
-        }
-
-        public bool SetWidth(XgTrack track, int width, IXgHost host)
-        {
-            if (Run(track).epochActive) return false;
-            var run = Run(track);
-            width = Math.Max(0, Math.Min(WidthCap(track), width));
-            if (width == run.width) return false;
-            if (width > run.width && host != null && VramNeedMB(Shape(run, run.depth, width)) > Vram(host)) { Say(T("显存不足：去「" + LingGuangV05.Core.AppNames.ShopZh + "」加显卡", "Not enough VRAM: buy a card on " + LingGuangV05.Core.AppNames.ShopEn)); return false; }
-            run.width = width;
-            if (!ShapeDeferred(run)) Reshape(run);
-            return true;
-        }
-
         static XgRun Shape(XgRun run, int depth, int width)
         { return new XgRun { track = run.track, arch = run.arch, dataset = run.dataset, depth = depth, width = width, lr = run.lr }; }
 
-        /// <summary>Net2Net-style growth keeps most of the progress.</summary>
-        void Reshape(XgRun run) { run.steps *= Has("transfer") ? .9 : .7; Evaluate(run); }
-
         /// <summary>
-        /// A model that has trained for real keeps its network until the next real epoch, so a shape change can be
-        /// tried, compared and undone without touching it. A model that never trained has nothing to keep.
+        /// 迁移学习 on the board: the run's region keeps its raw concepts under the new wiring's names (the place a stroke
+        /// or word sat is dropped). A wiring that binds every position (fully connected, or one head with position
+        /// tags) has no place-free names, so nothing carries over into it.
         /// </summary>
-        static bool ShapeDeferred(XgRun run) => run.formal != null && run.formal.set;
-
-        /// <summary>Applies a deferred depth or width change at the start of a real epoch.</summary>
-        void ApplyShapeChange(XgRun run)
+        int CarryConcepts(XgRun run)
         {
-            if (!ShapeDeferred(run)) return;
-            bool depth = run.formal.depth != run.depth, width = run.formal.width != run.width;
-            if (depth) ReinitialiseBoard(run);
-            if (depth || width) Reshape(run);
-        }
-
-        public bool SetArch(XgTrack track, string id)
-        {
-            if (Run(track).epochActive) return false;
-            var a = XgCatalog.Arch(id);
-            var run = Run(track);
-            if (!ArchitectureFits(a, track) || !Has(id) || run.arch == id) return false;
-            run.arch = id;
-            Restart(run);
-            Say(T("换成 ", "Switched to ") + T(a.name, a.nameEn) + (Has("transfer") ? T("（迁移学习保留 60%）", " (transfer keeps 60%)") : T("，从头训练", ", training from scratch")));
-            return true;
+            var k = Knobs(run);
+            bool sequence = RegionOf(run.dataset) == "sequence";
+            bool bound = k.wiring == XgWiring.Full || k.wiring == XgWiring.AnyToAny && k.position && !k.multiHead || k.wiring == XgWiring.LocalShared && sequence && k.position;
+            if (bound) { Board.Reinitialise(RegionOf(run.dataset)); return 0; }
+            return Board.CarryOver(RegionOf(run.dataset), key =>
+            {
+                if (key.IndexOf('+') >= 0) return null;
+                int at = key.IndexOf('@');
+                string name = at >= 0 ? key.Substring(0, at) : key;
+                return name.StartsWith("^", StringComparison.Ordinal) && k.wiring != XgWiring.Recurrent && k.wiring != XgWiring.GatedRecurrent ? null : name;
+            });
         }
 
         /// <summary>Bought datasets, and hand-labelled ones whose desk is open (mnist / poems / logic from the start).</summary>
@@ -421,46 +419,35 @@ namespace LingGuangV05.XingGuang
         {
             var d = XgCatalog.Dataset(id);
             if (d == null) return false;
-            if (Owns(id) || WallDatasetOpen(id)) return true;
+            if (Owns(id)) return true;
+            // Free milestone desks migrated to a pack unlock, not pack ownership. Preserve their existing
+            // training access without restoring paid tasks or inventing the full pack's sample count.
+            if ((id == "translate" || id == "crosssentence") && Has(id + ".pack") && !Downloading(id)) return true;
             return d.handLabel && (XgCatalog.Desk(id) == null || DeskOpen(id));
         }
 
+        /// <summary>
+        /// Which dataset a track trains on (the one choice left on the training page). The model keeps its accuracy on
+        /// every dataset it has trained; switching back finds it where it was.
+        /// </summary>
         public bool SetDataset(XgTrack track, string id)
         {
             if (Run(track).epochActive) return false;
             var d = XgCatalog.Dataset(id);
             var run = Run(track);
             if (d == null || d.track != track || !DatasetAvailable(id) || run.dataset == id) return false;
+            Remember(run);
             run.dataset = id;
-            Restart(run);
-            return true;
-        }
-
-        void Restart(XgRun run)
-        {
-            run.steps = Has("transfer") ? run.steps * .6 : 0;
+            run.valAcc = StoredAcc(run, id);
+            run.lastGain = 0;
             run.sinceEval = 0; run.staleEvals = 0;
             run.histTrain.Clear(); run.histVal.Clear();
             Evaluate(run);
-        }
-
-        public bool SetLr(XgTrack track, int index)
-        {
-            if (Run(track).epochActive) return false;
-            if (!HasLrKnob(track)) { Say(T("先在技能树买「学习率旋钮」", "Buy the learning-rate knob in the skill tree first")); return false; }
-            var run = Run(track);
-            run.lr = Math.Max(0, Math.Min(XgCatalog.LearningRates.Length - 1, index));
-            run.autoLr = false;
-            Evaluate(run);
             return true;
         }
 
-        public void SetAutoLr(XgTrack track, bool on) { Run(track).autoLr = on; }
-
         /// <summary>Automatic training on this track (needs the crontab node).</summary>
         public void SetAutoTrain(XgTrack track, bool on) { Run(track).running = on && AutoTrainLevel >= 2; }
-
-        bool Scheduled(XgRun run) { return run.autoLr && (Has("lrschedule") || AutoTrainLevel >= 5); }
 
         // ───────────── the curve ─────────────
 
@@ -492,7 +479,7 @@ namespace LingGuangV05.XingGuang
         public double SamplesEffective(XgRun run)
         {
             var d = XgCatalog.Dataset(run.dataset);
-            return EffectiveLabelSamples(d.id) * (d.track == XgTrack.Vision && Has("augment") ? 3 : 1);
+            return EffectiveLabelSamples(d.id) * AugmentFactor(d.id);
         }
 
         public double OverfitScale(XgRun run)
@@ -504,14 +491,25 @@ namespace LingGuangV05.XingGuang
             return (d.chanceError - d.floorError) * .0015 * Math.Pow(ratio, .8) * (Has("dropout") ? .5 : 1);
         }
 
+        /// <summary>
+        /// Refreshes what follows from the stored accuracy: the ceiling the model can reach now, the training accuracy
+        /// (the gap to it widens when the model is big for its data, as in <see cref="OverfitScale"/>) and 近亲繁殖.
+        /// The accuracy itself only moves by training (<see cref="StepAccuracy"/>) or a change of model.
+        /// </summary>
         public void Evaluate(XgRun run)
         {
-            if (UseBoard) EvaluateBoard(run);
-            else LegacyEvaluate(run);
+            var d = XgCatalog.Dataset(run.dataset);
+            if (d == null) return;
+            double chance = 1 - d.chanceError, top = 1 - d.floorError;
+            if (!Finite(run.valAcc)) run.valAcc = chance;
+            run.valAcc = Math.Max(chance, Math.Min(top, run.valAcc));
+            run.ceiling = CeilingAcc(run);
+            double progress = run.ceiling > chance ? Math.Min(1, (run.valAcc - chance) / (run.ceiling - chance)) : 1;
+            run.trainAcc = Math.Min(top, run.valAcc + Math.Min(.2, OverfitScale(run) * Math.Log(1 + 4 * progress)));
             ApplyInbreeding(run); // 近亲繁殖: uncaught wrong automatic labels cap what the data can teach (XgSim.Inbreeding.cs)
         }
 
-        /// <summary>The old closed-form curve. Still drives <see cref="PeakAccuracy"/> hints and the balance bot.</summary>
+        /// <summary>The old closed-form curve over steps (tests of the scaling law; training now moves the stored accuracy).</summary>
         public void LegacyEvaluate(XgRun run)
         {
             var d = XgCatalog.Dataset(run.dataset);
@@ -551,6 +549,14 @@ namespace LingGuangV05.XingGuang
 
         public int SafeLr(XgRun run)
         {
+            if (UseBoard)
+            {
+                // The largest step that cannot tear even on a confidently wrong card (|error| = 2).
+                var k = Knobs(run);
+                for (int i = 0; i < RateValues.Length; i++)
+                    if (RateValues[i] * 2 <= k.TearAt + 1e-9) return i;
+                return RateValues.Length - 1;
+            }
             var a = XgCatalog.Arch(run.arch);
             double instability = a.instability * (Has("gradclip") ? .2 : 1);
             for (int i = 0; i < XgCatalog.LearningRates.Length; i++)
@@ -558,25 +564,20 @@ namespace LingGuangV05.XingGuang
             return XgCatalog.LearningRates.Length - 1;
         }
 
-        void Schedule(XgRun run)
-        {
-            if (!Scheduled(run)) return;
-            double progress = run.steps / Tau(run);
-            int lr = SafeLr(run);
-            if (progress > 3) lr = Math.Max(lr, 3);
-            if (progress > 10) lr = 4;
-            if (lr != run.lr) { run.lr = lr; Evaluate(run); }
-        }
-
         // ───────────── training: one epoch per press ─────────────
 
         public string Blocker(XgRun run, IXgHost host)
         {
-            if (host == null) return T("设备未就绪", "Hardware unavailable");
+            if (host == null) return T("设备未就绪");
             if (host.Blocker != null) return host.Blocker;
-            if (ProjectActive) return T("研发占用显卡", "Research project is using the GPU");
-            if (VramNeedMB(run) > Vram(host)) return T("显存不足：模型要 ", "Out of VRAM: model needs ") + F(VramNeedMB(run), "0") + " MB";
-            if (host.Compute <= 0) return T("没有算力", "No compute");
+            if (ProjectActive) return T("研发占用显卡");
+            if (VramNeedMB(run) > TrainVram(run, host))
+                return VramNeedMB(run) <= AutoVram(run, host, ParamsK(run)) + 1e-6
+                    ? T("显卡正被另一条线占着：等它这一轮练完", "The card is busy with the other line: this round waits its turn")
+                    : T("显存不足：模型要 ") + F(VramNeedMB(run), "0") + " MB";
+            if (host.Compute <= 0) return T("没有算力");
+            string wired = TrainWiringBlocker(run);
+            if (wired != null) return wired;
             return null;
         }
 
@@ -601,8 +602,21 @@ namespace LingGuangV05.XingGuang
         public double ComboMultiplier { get { return Math.Min(2, 1 + .05 * S.combo); } }
 
         /// <summary>
-        /// One epoch. Hand presses build the combo and train ×(combo multiplier); automatic ones train at half strength.
-        /// Bills 0.6 GPU-seconds of power, may diverge (NaN), and every <see cref="EvalEvery"/> epochs runs an assessment.
+        /// Why a round cannot start. Like <see cref="Blocker"/>, except that the other line's running epoch is no reason:
+        /// the round starts and waits for the card (<see cref="TickEpochs"/>).
+        /// </summary>
+        public string StartBlocker(XgRun run, IXgHost host)
+        {
+            string blocked = Blocker(run, host);
+            if (blocked == null || host == null || host.Blocker != null || ProjectActive || host.Compute <= 0 || TrainWiringBlocker(run) != null) return blocked;
+            return VramNeedMB(run) <= AutoVram(run, host, ParamsK(run)) + 1e-6 ? null : blocked;
+        }
+
+        /// <summary>
+        /// One round. The model configures itself first (XgSim.AutoModel.cs). Hand presses build the combo and feed
+        /// ×(combo multiplier) cards; automatic ones half. The brain learns from the cards; the accuracy moves towards
+        /// the model's ceiling, or goes down a little (<see cref="StepAccuracy"/>). Bills the GPU time, and every
+        /// <see cref="EvalEvery"/> rounds runs an assessment.
         /// </summary>
         public XgEpoch TrainEpoch(XgTrack track, IXgHost host, bool hand = true)
         {
@@ -611,40 +625,30 @@ namespace LingGuangV05.XingGuang
             LastEpochWasHand = hand;
             if (!TrainingUnlocked(track))
             {
-                if (hand) Say(T("样本不够：先在标注台标 ", "Not enough data: label ") + XgCatalog.SamplesToTrain + T(" 条", " samples first"));
+                if (hand) Say(T("样本不够：先在标注台标 ") + XgCatalog.SamplesToTrain + T(" 条", " samples first"));
                 return null;
             }
             var run = Run(track);
             EnsureData(run);
+            AutoConfigure(run, host);
             string blocker = Blocker(run, host);
             if (blocker != null) { if (hand) Say(blocker); return null; }
             if (hand) { Hit(EpochComboWindow, 1); S.clicks++; }
-            ApplyShapeChange(run);
-            Schedule(run);
-            double gained;
-            bool torn;
-            if (UseBoard)
-            {
-                int cards = CardsPerEpoch(run, host.Compute, hand);
-                torn = TrainBoard(run, cards);
-                gained = cards;
-            }
-            else
-            {
-                gained = StepsPerSecond(run, Math.Max(.5, host.Compute)) * EpochSeconds * (hand ? ComboMultiplier : AutoEpochFactor);
-                torn = false;
-            }
-            run.steps += gained;
+            int cards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            // The brain itself learns from the cards (the 大脑 page, the phenomena); the score follows the scaling law.
+            if (UseBoard) TrainBoard(run, cards);
+            run.steps += cards;
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
+            ReleaseFirstWords(run);
             host.Train(DurationFor(run));
             S.trainedSeconds += DurationFor(run);
-            var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = gained };
-            if (UseBoard ? torn : run.steps > Tau(run) * .5 && Roll() < Hazard(run) * EpochSeconds) { Diverge(run); e.diverged = true; }
+            var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards };
+            StepAccuracy(run, cards, e);
+            run.shapeRounds++;
             Evaluate(run);
-            if (UseBoard) ObservePhenomena(run);
+            if (UseBoard) { ObservePhenomena(run); RecordTrace(run, false, cards); WatchCure(run); }
             S.stageEpochs++;
-            if (UseBoard) { CheckWallAppears(); CheckWallPass(run, host); }
             Push(run.histTrain, (float)run.trainAcc);
             Push(run.histVal, (float)run.valAcc);
             e.trainAcc = run.trainAcc; e.valAcc = run.valAcc;
@@ -656,16 +660,6 @@ namespace LingGuangV05.XingGuang
         }
 
         static void Push(List<float> list, float v) { list.Add(v); if (list.Count > HistoryLength) list.RemoveAt(0); }
-
-        void Diverge(XgRun run)
-        {
-            run.steps *= .5;
-            if (UseBoard) Board.Shake(RegionOf(run.dataset), .5);
-            S.nanEvents++;
-            BreakCombo();
-            Say(T("loss = NaN！学习率 " + XgCatalog.LearningRates[run.lr] + " 太大，训练发散，退回一半进度", "loss = NaN! Rate " + XgCatalog.LearningRates[run.lr] + " is too high; training diverged and lost half its progress"));
-            Diverged?.Invoke(run.track);
-        }
 
         // ───────────── assessment ─────────────
 
@@ -703,7 +697,15 @@ namespace LingGuangV05.XingGuang
             a.score = Score(d.id, run.valAcc);
             a.previousBest = BestScore(d.id);
             a.grade = Grade(a.score);
-            a.record = run.valAcc > BestAcc(d.id) + 1e-4;
+            // A record has to beat the last one by more than the test set's own noise (about one standard error).
+            // A model that reads the whole sentence at once also counts for realtime jobs (直播实时字幕).
+            if (!SerialWiring(Knobs(run)) && run.valAcc > ParallelAcc(d.id))
+            {
+                if (S.parallelBest == null) S.parallelBest = new List<XgScore>();
+                Count(S.parallelBest, d.id).value = run.valAcc;
+            }
+            a.record = run.valAcc > BestAcc(d.id) + 1e-4
+                && (!UseBoard || BestAcc(d.id) <= 0 || BinaryAccuracy(d.id, run.valAcc) >= BinaryAccuracy(d.id, BestAcc(d.id)) + RecordMargin - 1e-9);
             if (a.record)
             {
                 a.reward = Math.Max(0, a.score - a.previousBest) * d.rewardBase * RewardPerPoint;
@@ -729,17 +731,20 @@ namespace LingGuangV05.XingGuang
             if (!a.record)
             {
                 run.staleEvals++;
-                if (run.staleEvals == 3) Say(StaleHint(run));
-                if (AutoTrainLevel >= 5 && run.staleEvals >= 2) AutoSwitchData(run);
-                else if (!hand && AutoTrainLevel == 4 && run.staleEvals >= 3)
+                if (run.staleEvals == StaleHintEpochs) Say(StaleHint(run));
+                if (AutoTrainLevel >= 5 && run.staleEvals >= AutoSwitchEpochs) AutoSwitchData(run);
+                else if (!hand && AutoTrainLevel == 4 && run.staleEvals >= EarlyStopEpochs)
                 {
                     run.running = false;
-                    Say(T("早停：连续三次评估未刷新纪录，已保留最佳检查点。", "Early stop: three assessments without a record; the best checkpoint is preserved."));
+                    Say(T("早停：连续 " + EarlyStopEpochs + " 轮没有刷新纪录，已保留最佳检查点。", "Early stop: " + EarlyStopEpochs + " epochs without a record; the best checkpoint is preserved."));
                 }
             }
             run.lastScore = a.score;
             run.sinceEval = 0;
             S.assessments++;
+            // 参数量与数据量主线: a model graded C or better counts towards the trained parameters.
+            NoteTrainedParams(run, a);
+            CheckAbilities();
             Assessed?.Invoke(a);
             return a;
         }
@@ -751,7 +756,7 @@ namespace LingGuangV05.XingGuang
         {
             if (Run(track).epochActive) return null;
             var run = Run(track);
-            if (run.epoch <= 0 && !record) { Say(T("还没训练过，没什么可存的", "Nothing trained yet")); return null; }
+            if (run.epoch <= 0 && !record) { Say(T("还没训练过，没什么可存的")); return null; }
             Evaluate(run);
             var e = new XgModelEntry
             {
@@ -764,8 +769,10 @@ namespace LingGuangV05.XingGuang
             int n = run.histVal.Count, step = Math.Max(1, (int)Math.Ceiling(n / 32.0));
             for (int i = 0; i < n; i += step) e.curve.Add(run.histVal[i]);
             if (n > 0 && (n - 1) % step != 0) e.curve.Add(run.histVal[n - 1]);
+            if (UseBoard) e.weights = Board.SnapshotRegion(RegionOf(run.dataset));
             S.models.Add(e);
-            CleanModels();
+            CleanModels(e.id);
+            TrimSnapshots();
             ModelSaved?.Invoke(e);
             return e;
         }
@@ -784,16 +791,31 @@ namespace LingGuangV05.XingGuang
 
         public XgModelEntry Model(int id) { foreach (var m in S.models) if (m.id == id) return m; return null; }
 
+        /// <summary>Checkpoints that keep their weights besides the starred ones (the newest first).</summary>
+        public const int SnapshotsKept = 6;
+
+        /// <summary>Older unstarred checkpoints drop their weights and keep only their settings (a small save).</summary>
+        void TrimSnapshots()
+        {
+            int kept = 0;
+            for (int i = S.models.Count - 1; i >= 0; i--)
+            {
+                var m = S.models[i];
+                if (!m.HasWeights || m.starred || IsBrainInstalled(m.id)) continue;
+                if (++kept > SnapshotsKept) m.weights = new List<XgConcept>();
+            }
+        }
+
         /// <summary>The repository entry behind a dataset's deployed checkpoint.</summary>
         public bool IsDeployed(XgModelEntry e) { var b = Best(e.dataset); return b != null && b.modelId == e.id; }
 
-        void CleanModels()
+        void CleanModels(int justSaved)
         {
             int extra = S.models.Count - MaxModels;
             for (int i = 0; i < S.models.Count && extra > 0;)
             {
                 var m = S.models[i];
-                if (!m.starred && !IsDeployed(m)) { S.models.RemoveAt(i); extra--; } else i++;
+                if (m.id != justSaved && !m.starred && !IsDeployed(m) && !IsBrainInstalled(m.id)) { S.models.RemoveAt(i); extra--; } else i++;
             }
         }
 
@@ -803,7 +825,8 @@ namespace LingGuangV05.XingGuang
         {
             var m = Model(id);
             if (m == null) return false;
-            if (IsDeployed(m)) { Say(T("这个模型正在部署，删不了", "This model is deployed")); return false; }
+            if (IsDeployed(m)) { Say(T("这个模型正在部署，删不了")); return false; }
+            if (IsBrainInstalled(id)) { Say(T("这个模型已装入大脑，先拆下再删除。", "This model is installed in the brain; remove it before deleting.")); return false; }
             S.models.Remove(m);
             return true;
         }
@@ -811,17 +834,24 @@ namespace LingGuangV05.XingGuang
         /// <summary>Why a saved model cannot be loaded into training right now, or null.</summary>
         public string CannotLoad(XgModelEntry m)
         {
-            if (m == null) return T("模型不存在", "Model missing");
-            if (Run((XgTrack)m.track).epochActive) return T("先完成当前训练轮次", "Finish the active epoch first");
-            var track = (XgTrack)m.track;
-            if (!Has(m.arch)) return T("架构还没解锁", "Architecture locked");
-            if (!DatasetAvailable(m.dataset)) return T("数据集不可用", "Dataset unavailable");
-            if (m.depth > DepthCap(track)) return T("层数超过技能树上限 " + DepthCap(track), "Depth above the cap " + DepthCap(track));
-            if (m.width > WidthCap(track)) return T("宽度超过技能树上限", "Width above the cap");
+            if (m == null) return T("模型不存在");
+            if (Run((XgTrack)m.track).epochActive) return T("先完成当前训练轮次");
+            if (!DatasetAvailable(m.dataset)) return T("数据集不可用");
+            // The training line configures itself: only a checkpoint of the structure it runs now carries on.
+            var run = Run((XgTrack)m.track);
+            if (m.arch != run.arch)
+            {
+                var now = XgCatalog.Arch(run.arch);
+                return T("结构不同：训练线现在自动用 " + (now != null ? now.name : run.arch), "Another structure: the training line now runs " + (now != null ? now.nameEn : run.arch));
+            }
             return null;
         }
 
-        /// <summary>Continue training from a saved model: shape, rate and progress come back; the curve restarts.</summary>
+        /// <summary>
+        /// Continue training from a saved model of the current structure: its dataset, its weights (when the checkpoint
+        /// kept them) and its accuracy come back; a checkpoint of a smaller size grows into the current model and keeps
+        /// most of its progress. The curve restarts.
+        /// </summary>
         public bool LoadModel(int id)
         {
             var m = Model(id);
@@ -829,34 +859,104 @@ namespace LingGuangV05.XingGuang
             string why = CannotLoad(m);
             if (why != null) { Say(why); return false; }
             var run = Run((XgTrack)m.track);
-            run.arch = m.arch; run.dataset = m.dataset; run.depth = m.depth; run.width = m.width;
-            if (HasLrKnob((XgTrack)m.track)) run.lr = m.lr;
-            run.steps = m.steps; run.epoch = m.epoch; run.sinceEval = 0; run.staleEvals = 0;
+            bool reshaped = run.depth != m.depth || run.width != m.width;
+            Remember(run);
+            run.dataset = m.dataset;
+            var d = XgCatalog.Dataset(m.dataset);
+            double chance = d == null ? 0 : 1 - d.chanceError;
+            run.valAcc = reshaped ? chance + Math.Max(0, m.acc - chance) * (Has("transfer") ? GrowKeepTransfer : GrowKeep) : m.acc;
+            Remember(run);
+            run.epoch = m.epoch; run.sinceEval = 0; run.staleEvals = 0; run.lastGain = 0;
+            if (reshaped) run.shapeRounds = 0;
             run.histTrain.Clear(); run.histVal.Clear();
+            if (UseBoard)
+            {
+                if (m.HasWeights) Board.RestoreRegion(RegionOf(m.dataset), m.weights);
+                else if (run.depth != m.depth) ReinitialiseBoard(run);
+            }
             Evaluate(run);
             Push(run.histTrain, (float)run.trainAcc); Push(run.histVal, (float)run.valAcc);
             SelectedTrack = (XgTrack)m.track;
-            Say(T("已加载 ", "Loaded ") + m.name);
+            Say(T("已加载 ") + m.name + (reshaped ? T("：长成现在的大小，保留大部分进度。", ": grown to the current size, keeping most of its progress.") : ""));
             return true;
         }
 
-        /// <summary>Three assessments without a record: say what is holding the model back.</summary>
+        /// <summary>Several assessments without a record: say what is holding the model back.</summary>
         public string StaleHint(XgRun run)
         {
-            var d = XgCatalog.Dataset(run.dataset);
-            if (Hazard(run) > 0 && S.nanEvents > 0) return T("学习率太大，老在炸。调小一档。", "The rate keeps blowing up. Turn it down a notch.");
-            if (Samples(d.id) < d.need) return T("数据不够了：去标注台多标点「" + d.name + "」，或在技能树买完整包。", "Data is the limit: label more " + d.nameEn + " or buy the full pack.");
-            if (run.depth < DepthCap((XgTrack)run.track) || run.width < WidthCap((XgTrack)run.track)) return T("模型到顶了：在训练页把层数或宽度调大。", "The model has peaked: raise its depth or width on the training page.");
-            return T("模型到顶了：去技能树加层、加宽或换架构。", "The model has peaked: add layers, width or a new architecture in the skill tree.");
+            string plateau = PlateauText(run, out _);
+            if (plateau.Length > 0) return plateau;
+            var r = DropRisk(run);
+            if (r.level >= 1) return DropRiskText(run) + T("。", ".");
+            return T("还在涨，只是慢：多练几轮，或者攒连击。", "Still improving, only slowly: train more rounds, or build the combo.");
         }
 
+        /// <summary>
+        /// AutoML's next dataset once the current one stops setting records: first a desk this month's new meme has
+        /// dragged down (新题型; every epoch there wins a point back), then a contract almost within reach (its bar
+        /// within <see cref="AutoContractReach"/>), then the dataset with the most samples still short of 950.
+        /// </summary>
         void AutoSwitchData(XgRun run)
         {
-            XgDataset best = null;
+            XgDataset best = null; double bestKey = double.NegativeInfinity;
             foreach (var d in XgCatalog.DatasetsFor((XgTrack)run.track))
-                if (DatasetAvailable(d.id) && Samples(d.id) >= XgCatalog.SamplesToTrain && BestScore(d.id) < 950 && (best == null || Samples(d.id) > Samples(best.id))) best = d;
-            if (best != null && best.id != run.dataset) SetDataset((XgTrack)run.track, best.id);
+            {
+                if (!DatasetAvailable(d.id) || Samples(d.id) < XgCatalog.SamplesToTrain) continue;
+                double drift = MemeDrift(d.id), gap = ContractGap(d.id), key;
+                if (drift > 0) key = 3e9 + drift;
+                else if (gap > 0 && gap <= AutoContractReach) key = 2e9 - gap * 1e6;
+                else if (BestScore(d.id) < 950) key = Samples(d.id);
+                else continue;
+                if (key > bestKey) { bestKey = key; best = d; }
+            }
+            if (best == null || best.id == run.dataset) return;
+            string why = MemeDrift(best.id) > 0 ? T("（新题型拖了分，先回炉）")
+                : ContractGap(best.id) > 0 && ContractGap(best.id) <= AutoContractReach ? T("（离签约线只差一点）") : "";
+            SetDataset((XgTrack)run.track, best.id);
+            Say(T("AutoML：换到「" + XgCatalog.Dataset(best.id).name + "」" + why, "AutoML: switched to " + XgCatalog.Dataset(best.id).nameEn + why));
         }
+
+        /// <summary>A contract counts as within reach for AutoML when its bar is this close above the best checkpoint.</summary>
+        public const double AutoContractReach = .08;
+
+        /// <summary>How far the best checkpoint is below the nearest unsigned contract's bar on this dataset (0 = none open).</summary>
+        public double ContractGap(string dataset)
+        {
+            double gap = 0;
+            foreach (var c in XgCatalog.Contracts)
+            {
+                if (c.dataset != dataset || Signed(c.id)) continue;
+                double g = c.threshold - ContractAcc(c);
+                if (g > 1e-9 && (gap <= 0 || g < gap)) gap = g;
+            }
+            return gap;
+        }
+
+        /// <summary>
+        /// AutoML runs the data flywheel too: the model labels a dataset's user logs itself once it answers at least
+        /// <see cref="AutoLogAccuracy"/> right (few enough of its own mistakes get in), and stops before the noise
+        /// reaches the 近亲繁殖 line.
+        /// </summary>
+        void AutoFlywheel()
+        {
+            foreach (var l in S.logs)
+            {
+                if (l.count <= 0 || XgCatalog.Dataset(l.dataset) == null) continue;
+                bool on = LogAutoOn(l.dataset);
+                bool clean = NoiseShare(l.dataset) < InbreedingFreeShare * .8;
+                if (!on && clean && LogAutoBlocker(l.dataset) == null && 1 - LogAutoNoise(l.dataset) >= AutoLogAccuracy)
+                {
+                    if (SetLogAuto(l.dataset, true)) Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」的用户日志交给模型自己标。", "AutoML: the model now labels the user logs of " + XgCatalog.Dataset(l.dataset).nameEn + "."));
+                }
+                else if (on && !clean)
+                {
+                    SetLogAuto(l.dataset, false);
+                    Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」自己标的错快到一成了，先停下，免得近亲繁殖。", "AutoML: own labelling mistakes on " + XgCatalog.Dataset(l.dataset).nameEn + " near a tenth; stopped before inbreeding."));
+                }
+            }
+        }
+
+        public const double AutoLogAccuracy = .9;
 
         // ───────────── checkpoints, contracts ─────────────
 
@@ -869,7 +969,13 @@ namespace LingGuangV05.XingGuang
 
         public bool Signed(string contractId) { return S.contracts.Contains(contractId); }
 
-        public bool CanSign(XgContract c) { return !Signed(c.id) && BestAcc(c.dataset) + 1e-9 >= c.threshold; }
+        public bool CanSign(XgContract c) { return !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+
+        /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
+        public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
+
+        /// <summary>Best validation accuracy a model that reads the whole sentence at once (no loop) reached on this dataset.</summary>
+        public double ParallelAcc(string dataset) { if (S.parallelBest != null) foreach (var x in S.parallelBest) if (x.key == dataset) return x.value; return 0; }
 
         public bool Sign(string contractId, IXgHost host)
         {
@@ -878,17 +984,26 @@ namespace LingGuangV05.XingGuang
             S.contracts.Add(c.id);
             host.Earn(c.signBonus);
             S.totalIncome += c.signBonus;
-            Say(T("签约 ", "Signed ") + T(c.client, c.clientEn) + T("：", ": ") + T(c.job, c.jobEn) + T("，首付 ¥", ", advance ¥") + F(c.signBonus, "0"));
+            Say(T("签约 ") + T(c.client, c.clientEn) + T("：", ": ") + T(c.job, c.jobEn) + T("，首付 ¥") + F(c.signBonus, "0"));
             return true;
         }
 
         public double ContractIncome(XgContract c)
         {
             if (!Signed(c.id)) return 0;
-            double acc = BestAcc(c.dataset);
+            double acc = ContractAcc(c);
             if (acc < c.threshold) return 0;
-            return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * (Winter ? .5 : 1);
+            return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * DriftPay(c) * WireSpeed("contract:" + c.id);
         }
+
+        /// <summary>Points of 新题型 drift at which a contract's pay halves (the floor).</summary>
+        public const double DriftHalfPay = 15;
+
+        /// <summary>
+        /// 新题型: the deployed checkpoint misses this month's new meme, so the client's results got worse and the pay
+        /// drops with the drift (down to half at <see cref="DriftHalfPay"/> points). Retraining the desk wins it back.
+        /// </summary>
+        public double DriftPay(XgContract c) => Math.Max(.5, 1 - MemeDrift(c.dataset) / (2 * DriftHalfPay));
 
         public double IncomePerSecond
         {
@@ -963,12 +1078,10 @@ namespace LingGuangV05.XingGuang
         {
             var d = XgCatalog.Dataset(datasetId);
             // Packs (public, junk, story), crowd rows and model-labelled logs (XgSim.DataSources.cs, XgSim.Flywheel.cs).
-            double n = (d != null ? PackSamples(datasetId) + ExtraSamples(datasetId) : 0) + Labels(datasetId);
-            // A standing wall brings its own dataset: no labelling needed to train on it.
-            return WallDatasetOpen(datasetId) ? Math.Max(n, WallPoolSize) : n;
+            return (d != null ? PackSamples(datasetId) + ExtraSamples(datasetId) : 0) + Labels(datasetId);
         }
 
-        public bool DeskOpen(string id) { return S.desksOpen.Contains(id); }
+        public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && S.desksOpen.Contains(id); }
 
         public List<XgDesk> OpenDesks()
         {
@@ -982,11 +1095,34 @@ namespace LingGuangV05.XingGuang
             return desk != null && ProgressionDeskAvailable(desk.id);
         }
 
+        /// <summary>
+        /// How a locked desk opens, under the current rules: digits and danmaku open by themselves with the second
+        /// ability; the rest with their data pack in the tech tree, some of which also need an item first.
+        /// </summary>
         public string DeskConditionText(XgDesk desk)
         {
             if (desk == null || ProgressionDeskAvailable(desk.id)) return "";
+            if ((desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
+                return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
             var pack = XgCatalog.Node(desk.id + ".pack");
-            return pack == null ? "" : T("第 " + pack.stage + " 阶段在技能树买「" + pack.name + "」后开放", "Opens with " + pack.nameEn + " in the skill tree (stage " + pack.stage + ")");
+            if (pack == null) return "";
+            string zh = "在科技买「" + pack.name + "」数据包（¥" + F(NodeCost(pack), "0") + "）";
+            string en = "buy the " + pack.nameEn + " data pack in the tech tree (¥" + F(NodeCost(pack), "0") + ")";
+            var items = new List<XgNode>();
+            if (pack.parent != null && !Has(pack.parent)) items.Add(XgCatalog.Node(pack.parent));
+            foreach (var need in pack.needs) if (!Has(need)) items.Add(XgCatalog.Node(need));
+            foreach (var item in items)
+            {
+                if (item == null) continue;
+                zh += "，还要先有「" + item.name + "」";
+                en += ", which needs " + item.nameEn + " first";
+            }
+            if (pack.stage > S.stage)
+            {
+                string ability = AbilityName(pack.stage, false), abilityEn = AbilityName(pack.stage, true);
+                return T("学会「" + ability + "」后，" + zh + "。", "Once it learns '" + abilityEn + "': " + en + ".");
+            }
+            return T(zh + "。", char.ToUpperInvariant(en[0]) + en.Substring(1) + ".");
         }
 
         void CheckDesks()
@@ -995,7 +1131,7 @@ namespace LingGuangV05.XingGuang
             {
                 if (DeskOpen(d.id) || !DeskCondition(d)) continue;
                 S.desksOpen.Add(d.id);
-                Say(T("新标注桌开放：", "New labelling desk: ") + T(d.name, d.nameEn));
+                Say(T("新标注桌开放：") + T(d.name, d.nameEn));
                 DeskOpened?.Invoke(d);
             }
         }
@@ -1020,7 +1156,7 @@ namespace LingGuangV05.XingGuang
             switch (desk.kind)
             {
                 case XgDeskKind.Poem: return !string.IsNullOrEmpty(c.line);
-                case XgDeskKind.Logic: case XgDeskKind.Text: return !string.IsNullOrEmpty(c.question);
+                case XgDeskKind.Logic: case XgDeskKind.Arith: case XgDeskKind.Text: return !string.IsNullOrEmpty(c.question);
                 case XgDeskKind.Go: return c.line != null && c.line.Length == XgVisual.Board * XgVisual.Board;
                 default: return true;
             }
@@ -1041,6 +1177,7 @@ namespace LingGuangV05.XingGuang
             switch (d.kind)
             {
                 case XgDeskKind.Logic: return XgLogic.MaxLevel;
+                case XgDeskKind.Arith: return XgArith.MaxLevel;
                 case XgDeskKind.Text: return XgMemes.MaxLevel;
                 case XgDeskKind.Captcha: return XgVisual.CaptchaMaxLevel;
                 case XgDeskKind.Meme: return XgVisual.MemeMaxLevel;
@@ -1098,8 +1235,8 @@ namespace LingGuangV05.XingGuang
                 S.payRaise++;
                 bought++;
             }
-            if (bought == 0) Say(S.payRaise >= XgCatalog.RaiseMax ? T("已经是最高薪了", "Top pay already") : T("经费不足 ¥", "Need ¥") + F(NextRaiseCost, "0"));
-            else Say(T("加薪！", "Raise! ") + XgCatalog.RaiseTitle(S.payRaise, English) + T("，人工标注 ×", ", hand labelling ×") + F(RaiseMultiplier, "0.0#"));
+            if (bought == 0) Say(S.payRaise >= XgCatalog.RaiseMax ? T("已经是最高薪了") : T("经费不足 ¥") + F(NextRaiseCost, "0"));
+            else Say(T("加薪！") + XgCatalog.RaiseTitle(S.payRaise, English) + T("，人工标注 ×") + F(RaiseMultiplier, "0"));
             return bought;
         }
 
@@ -1122,6 +1259,14 @@ namespace LingGuangV05.XingGuang
         {
             var info = XgCatalog.Desk(desk);
             var d = XgCatalog.Dataset(desk);
+            // These are internal teaching examples, not crowd tasks. All paid submission paths require a desk.
+            if (info == null && (desk == "translate" || desk == "crosssentence"))
+            {
+                var example = new XgCard { track = (int)d.track, dataset = desk, seed = (int)(Roll() * int.MaxValue), level = 1, roll = Roll() };
+                DecorateProgressionCard(example);
+                EnsureCardId(example);
+                return example;
+            }
             var card = new XgCard { track = (int)d.track, dataset = desk, truth = Roll() < .5, seed = (int)(Roll() * int.MaxValue) };
             var r = new Random(card.seed);
             int level = LevelOf(desk);
@@ -1152,6 +1297,12 @@ namespace LingGuangV05.XingGuang
                     card.question = q.text; card.questionEn = q.textEn; card.why = q.why; card.whyEn = q.whyEn;
                     card.category = q.category; card.categoryEn = q.categoryEn;
                     break;
+                case XgDeskKind.Arith:
+                    var sum = XgArith.Generate(card.seed, level);
+                    card.truth = sum.truth; card.level = sum.level;
+                    card.question = sum.text; card.questionEn = sum.textEn; card.why = sum.why; card.whyEn = sum.whyEn;
+                    card.category = sum.category; card.categoryEn = sum.categoryEn;
+                    break;
                 case XgDeskKind.Text:
                     var p = XgMemes.Pick(desk, r, level, Today, Topic);
                     if (p == null) break; // Progression-only text desks are filled by DecorateProgressionCard.
@@ -1166,7 +1317,8 @@ namespace LingGuangV05.XingGuang
             }
             bool slow = info.kind == XgDeskKind.Logic || info.kind == XgDeskKind.Go || info.kind == XgDeskKind.Text;
             if (duelLeft > 0 && desk == "meme") card.timeLimit = 2.5;
-            else if (Roll() < GoldChance) { card.gold = true; card.timeLimit = slow ? 8 : 3; }
+            else if (Roll() < GoldChance) { card.gold = true; card.timeLimit = slow ? 8 : info.kind == XgDeskKind.Arith ? 5 : 3; }
+            if (info.kind == XgDeskKind.Logic) MaybeBounty(card, info);
             card.roll = Roll();
             DecorateProgressionCard(card);
             MaybeShutdownCard(card);
@@ -1200,28 +1352,37 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public XgAnswer Answer(string desk, bool yes, IXgHost host)
         {
+            var info = XgCatalog.Desk(desk);
+            if (info == null || host == null) return default;
             var card = Card(desk);
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
-            var info = XgCatalog.Desk(desk);
             bool timeout = card.timeLimit > 0 && card.age > card.timeLimit;
             // The SI's planted question has no right answer: whatever you choose is what the "？" cell learns.
             bool shutdown = card.kind == "shutdown";
             if (shutdown) { card.truth = yes; S.shutdownCards++; S.shutdownLean += yes ? 1 : -1; }
-            var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout };
+            var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
             if (result.correct)
             {
                 Hit(info.comboWindow, card.trick ? 2 : 1);
-                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1);
+                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
                 QualityHandCorrect();
                 MemeDriftLabelled(desk);
-                AddLabel(desk);
-                result.samples = 1 + (int)HandLabelLog(desk);
-                TeachBoard(card, card.truth);
+                if (card.law)
+                {
+                    // Paid outside work: a law firm's question is no training data for this lab's tasks.
+                    result.samples = 0;
+                }
+                else
+                {
+                    AddLabel(desk);
+                    result.samples = 1 + (int)HandLabelLog(desk);
+                    TeachBoard(card, card.truth);
+                }
             }
             else { BreakCombo(); S.handWrong++; }
             result.combo = S.combo;
@@ -1245,7 +1406,7 @@ namespace LingGuangV05.XingGuang
             if (duelLeft > 0) return;
             double bonus = duelOk ? 3 * XgCatalog.Dataset("meme").rewardBase : 0;
             if (bonus > 0 && host != null) { host.Earn(bonus); S.totalIncome += bonus; }
-            Say(duelOk ? T("斗图赢了！+¥", "Meme battle won! +¥") + F(bonus, "0") : T("斗图输了。阿杰：「就这？」", "Meme battle lost. 阿杰: \"That's it?\""));
+            Say(duelOk ? T("斗图赢了！+¥") + F(bonus, "0") : T("斗图输了。阿杰：「就这？」"));
             DuelDone?.Invoke(duelOk, bonus);
         }
 
@@ -1292,9 +1453,14 @@ namespace LingGuangV05.XingGuang
 
         void Step(double dt, IXgHost host)
         {
+            // 接线 first: every job below reads its speed from this tick's wiring (XgSim.Wiring.cs).
+            TickWiring(dt, host);
+            // Training without knobs: between rounds the models follow what is owned and what fits (XgSim.AutoModel.cs).
+            AutoConfigureAll(host);
             TickProject(dt, host);
             TickEpochs(dt, host);
-            TickWalls(dt);
+            NoteRegionWiring();
+            TickStages(dt);
             if (S.stage >= 6) TickFinale(dt, host);
             TickCollection();
             TickDownloads(dt);
@@ -1325,7 +1491,8 @@ namespace LingGuangV05.XingGuang
             TickMarket(dt, host);
             double income = IncomePerSecond * dt;
             if (income > 0) { host.Earn(income); S.totalIncome += income; }
-            if (level >= 5) foreach (var c in XgCatalog.Contracts) if (CanSign(c)) Sign(c.id, host);
+            if (level >= 5) { foreach (var c in XgCatalog.Contracts) if (CanSign(c)) Sign(c.id, host); AutoFlywheel(); }
+            CheckAbilities();
             CheckDesks();
         }
 

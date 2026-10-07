@@ -273,7 +273,7 @@ namespace LingGuangV05.Desktop.Story
                 yield return PrologueDesk.Wait(.3f);
                 // 10.0 The signature.
                 devices.Preview.text = "";
-                yield return TypeOut(devices.Preview, T("是。否。……", "Yes. No. …"), .14f);
+                yield return TypeOut(devices.Preview, Lang.T("是。否。……"), .14f);
             }
             yield return PrologueDesk.Wait(.6f);
 
@@ -371,7 +371,7 @@ namespace LingGuangV05.Desktop.Story
             if (delivered < 1) Unlock();
             // The playing scene already shows these bubbles and dings. Quiet fallback still needs normal notifications.
             if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener, !Playing); }
-            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, T("……是。", "…yes."), !Playing); }
+            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, Lang.T("……是。"), !Playing); }
         }
 
         void OpenYY(string contact)
@@ -405,7 +405,7 @@ namespace LingGuangV05.Desktop.Story
             Color green = new Color32(46, 160, 67, 255);
             var area = desk.windows.rect.size;
             Vector2 at = new Vector2(area.x / 2 - 280, -area.y / 2 + 200);
-            var client = desk.Window(Prefix + "360", T("360安全卫士 · 隐私保护", "360 Safeguard · Privacy"), at, new Vector2(500, 250), out popup);
+            var client = desk.Window(Prefix + "360", Lang.T("360安全卫士 · 隐私保护"), at, new Vector2(500, 250), out popup);
             PrologueDesk.Fill(popup, green);
             var bar = popup.Find("Title") as RectTransform;
             PrologueDesk.Fill(bar, green);
@@ -417,13 +417,13 @@ namespace LingGuangV05.Desktop.Story
             PrologueDesk.Fill(shield, new Color32(240, 150, 30, 255), false);
             desk.Text(PrologueDesk.Rect("Mark", shield, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "!", 38, Color.white, TextAlignmentOptions.Center);
             desk.Text(PrologueDesk.Centered("Head", client, new Vector2(45, 72), new Vector2(380, 32)),
-                "<b>" + T("检测到程序正在读取：", "A program is reading:") + "</b>", 19, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+                "<b>" + Lang.T("检测到程序正在读取：") + "</b>", 19, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
             string path = "…\\YY Files\\" + YYNumber + "\\msg.db";
             desk.Text(PrologueDesk.Centered("Body", client, new Vector2(45, 12), new Vector2(380, 80)),
-                path + "\n" + T("程序：", "Program: ") + AppNames.Exe(GameText.IsEnglish) + T("　　风险：隐私文件", "   Risk: private file"), 15, PrologueDesk.Muted, TextAlignmentOptions.TopLeft);
-            var allow = desk.Button(client, T("允许", "Allow"), new Vector2(80, -72), new Vector2(110, 36), null, green);
+                path + "\n" + Lang.T("程序：") + AppNames.Exe(GameText.IsEnglish) + Lang.T("　　风险：隐私文件"), 15, PrologueDesk.Muted, TextAlignmentOptions.TopLeft);
+            var allow = desk.Button(client, Lang.T("允许"), new Vector2(80, -72), new Vector2(110, 36), null, green);
             allow.GetComponentInChildren<TMP_Text>().color = Color.white;
-            desk.Button(client, T("阻止", "Block"), new Vector2(205, -72), new Vector2(110, 36), null);
+            desk.Button(client, Lang.T("阻止"), new Vector2(205, -72), new Vector2(110, 36), null);
             if (desk.Cursor != null) desk.Cursor.SetAsLastSibling();
             Play(XgJuice.Sfx.Id.Buzz, .35f);
             return allow;
@@ -451,7 +451,7 @@ namespace LingGuangV05.Desktop.Story
                 float k = Mathf.Clamp01(t / seconds);
                 float eased = 1 - (1 - k) * (1 - k);
                 int n = Mathf.RoundToInt(total * eased);
-                label.text = exe + T("　读取聊天记录 ", "  reading chat history: ") + n.ToString("N0", CultureInfo.InvariantCulture) + T(" 条", " messages");
+                label.text = exe + Lang.T("　读取聊天记录 ") + n.ToString("N0", CultureInfo.InvariantCulture) + T(" 条", " messages");
                 fill.anchorMax = new Vector2(eased, 0);
                 if (Time.frameCount % 4 == 0) Play(XgJuice.Sfx.Id.Tick, .12f);
                 if (k >= 1) yield break;
@@ -557,7 +557,7 @@ namespace LingGuangV05.Desktop.Story
             var t = PrologueDesk.Rect("Text", box, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<TextMeshProUGUI>();
             t.font = PrologueDesk.CjkFont(); t.fontSize = 22; t.color = new Color(1, 1, 1, .9f);
             t.alignment = TextAlignmentOptions.Center; t.raycastTarget = false;
-            t.text = T("跳过 ›  Esc / 点击", "Skip ›  Esc / click");
+            t.text = Lang.T("跳过 ›  Esc / 点击");
         }
 
         void Play(XgJuice.Sfx.Id id, float volume)

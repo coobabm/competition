@@ -38,8 +38,6 @@ namespace LingGuangV05.XingGuang
             { "first.captcha", new[] { "验证码？|……歪歪扭扭的数字。它第一天学的就是这个。", "A captcha?|...Wobbly handwritten digits. The first thing it ever learned." } },
             { "first.flagged", new[] { "「答题时间过于规律」。|人哪有这么准时。", "\"Answer timing too regular.\"|No person is that punctual." } },
             { "first.drift", new[] { "「{0}」？它没见过这个词。|……我也是今天才见到。", "\"{0}\"? It has never seen that word.|...Neither had I, until today." } },
-            { "first.fivestar", new[] { "五星好评。|甲方不知道，替他们标数据的是一台家里的电脑。", "Five stars.|The client has no idea a home PC labelled their data." } },
-            { "first.docked", new[] { "尾款扣了一半。|差一点点就是差。", "Half the balance docked.|Almost is not enough." } },
             { "first.hire", new[] { "{0}也来挣这个钱了。|……现在我成了包工头。", "{0} is in on it now too.|...So now I'm the foreman." } },
             { "first.bot", new[] { "「疑似机器操作」。|……也没说错。", "\"Suspected bot.\"|...They're not wrong." } },
         };
@@ -82,7 +80,7 @@ namespace LingGuangV05.XingGuang
             if (S.stage < 5 || S.autoCorrect < ReflectionLabels || AfterthoughtSaid(ReflectionKey)) return null;
             if (S.afterthoughts == null) S.afterthoughts = new List<string>();
             S.afterthoughts.Add(ReflectionKey);
-            string line = T("我标的那些，是在教谁？", "The cards I label. Who are they teaching?");
+            string line = T("我标的那些，是在教谁？");
             AddLine("ai", line);
             return line;
         }

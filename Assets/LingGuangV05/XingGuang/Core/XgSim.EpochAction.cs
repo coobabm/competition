@@ -15,7 +15,8 @@ namespace LingGuangV05.XingGuang
             var run = Run(track);
             if (run.epochActive || !TrainingUnlocked(track)) return false;
             EnsureData(run);
-            string blocked = Blocker(run, host);
+            AutoConfigure(run, host);
+            string blocked = StartBlocker(run, host);
             if (blocked != null) { if (hand) Say(blocked); return false; }
             run.epochActive = true;
             run.epochHand = hand;
@@ -27,16 +28,26 @@ namespace LingGuangV05.XingGuang
 
         void TickEpochs(double dt, IXgHost host)
         {
+            // Snapshot this slice before either epoch can finish and release its reservation.
+            double visionProgress = S.vision.epochActive && Blocker(S.vision, host) == null ? TrainingProgressFactor(S.vision) : 0;
+            double sequenceProgress = S.sequence.epochActive && Blocker(S.sequence, host) == null ? TrainingProgressFactor(S.sequence) : 0;
+            double visionLearning = TrainingFactor(wiringView, XgTrack.Vision, false);
+            double sequenceLearning = TrainingFactor(wiringView, XgTrack.Sequence, false);
             foreach (var run in Runs)
             {
-                if (!run.epochActive || host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || VramNeedMB(run) > Vram(host)) continue;
-                run.epochProgress = Math.Min(1, run.epochProgress + dt / Math.Max(.01, run.epochDuration));
+                double progressFactor = run.track == (int)XgTrack.Vision ? visionProgress : sequenceProgress;
+                if (!run.epochActive || progressFactor <= 0 || Blocker(run, host) != null) continue;
+                run.epochProgress = Math.Min(1, run.epochProgress + dt * progressFactor / Math.Max(.01, run.epochDuration));
                 if (run.epochProgress < 1 - 1e-8) continue;
                 bool hand = run.epochHand;
+                double learningFactor = run.track == (int)XgTrack.Vision ? visionLearning : sequenceLearning;
                 run.epochActive = false;
                 run.epochProgress = 0;
                 LastEpochWasHand = hand;
-                TrainEpoch((XgTrack)run.track, host, hand);
+                var previousLearning = timedEpochLearning;
+                timedEpochLearning = (run.track, learningFactor);
+                try { TrainEpoch((XgTrack)run.track, host, hand); }
+                finally { timedEpochLearning = previousLearning; }
             }
         }
     }

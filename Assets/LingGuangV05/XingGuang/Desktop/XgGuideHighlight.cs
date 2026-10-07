@@ -18,8 +18,11 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XgGuideHighlight : MonoBehaviour
     {
         public const float DefaultSeconds = 4f;
-        /// <summary>The lab's nav order (XingGuangView.BuildNav): the first buttons under "Nav" are these tabs.</summary>
-        public static readonly string[] TabIds = { "label", "train", "tree", "contracts", "repo", "board", "wall", "chat", "final" };
+        /// <summary>
+        /// The lab's nav order (XingGuangView.BuildNav): the rows under "Nav" are named "Tab id". The 标注台 and
+        /// 订单 pages live in 摆渡众包 (ZhongbaoView.Highlight finds targets there).
+        /// </summary>
+        public static readonly string[] TabIds = XingGuangView.NavIds;
         static readonly Color Gold = new Color32(255, 190, 40, 255);
         const float Pad = 6, Fade = .35f;
 
@@ -68,16 +71,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var nav = Root(view)?.Find("Nav");
             if (nav == null || string.IsNullOrEmpty(tab)) return null;
-            var named = nav.Find("Tab " + tab) as RectTransform;
-            if (named != null) return named;
-            int index = 0;
-            foreach (Transform child in nav)
-            {
-                if (child.GetComponent<Button>() == null) continue;
-                if (index >= TabIds.Length) break;
-                if (!child.name.StartsWith("Tab ", StringComparison.Ordinal)) child.name = "Tab " + TabIds[index];
-                index++;
-            }
+            // The nav rows are built named "Tab id"; 科技 (tree) is a section of the 道具 page.
+            if (tab == "tree") tab = "items";
             return nav.Find("Tab " + tab) as RectTransform;
         }
 
@@ -86,20 +81,23 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>
         /// A control on a lab page. Locators: "" = the tab button, "name:Foo", "label:是|Yes", "node:id" (also
-        /// scrolls the skill tree to it), "contract:id", "chip:n" (the HUD chips).
+        /// scrolls the tech tree to it), "contract:id", "chip:n" (the HUD chips).
         /// </summary>
         public static RectTransform Find(XingGuangView view, string tab, string target)
         {
             if (view == null) return null;
             target = target ?? "";
             if (target.Length == 0) return TabButton(view, tab);
-            if (target.StartsWith("chip:", StringComparison.Ordinal)) return Root(view)?.Find("Hud/Chip" + target.Substring(5)) as RectTransform;
+            if (target.StartsWith("chip:", StringComparison.Ordinal)) return FindIn(Root(view)?.Find("Hud"), "name:Chip" + target.Substring(5));
             var page = Page(view, tab);
             if (page == null || !page.gameObject.activeInHierarchy) return null;
             if (target.StartsWith("node:", StringComparison.Ordinal))
             {
                 string id = target.Substring(5);
                 if (view.Tree != null) view.Tree.FocusNode(id);
+                // The 科技 page draws a ladder (depth, width, automation) as one square: it covers each step's id.
+                foreach (var square in page.GetComponentsInChildren<XgTechNodeView>(false))
+                    if (square.Covers(id)) return (RectTransform)square.transform;
                 foreach (var node in page.GetComponentsInChildren<XgNodeView>(false))
                     if (node.node != null && node.node.id == id) return (RectTransform)node.transform;
                 return null;

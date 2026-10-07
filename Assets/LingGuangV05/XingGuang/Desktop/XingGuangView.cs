@@ -7,18 +7,44 @@ using UnityEngine.UI;
 using AppNames = LingGuangV05.Core.AppNames;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
-    /// <summary>A page of 灵光.exe. Pages build their own layout and react to the sim through the view.</summary>
+    /// <summary>
+    /// The window a lab page lives in: 灵光.exe (<see cref="XingGuangView"/>) or 摆渡众包 (ZhongbaoView). Both run on
+    /// the same <see cref="XingGuangController.Sim"/>; the host owns the HUD, the toasts and the effect layer.
+    /// </summary>
+    public interface IXgPageHost
+    {
+        XingGuangController Controller { get; }
+        XgSim Sim { get; }
+        IXgHost Host { get; }
+        XgJuice Juice { get; }
+        /// <summary>Shop buy amount: 1, 10 or int.MaxValue (as many as affordable).</summary>
+        int BuyAmount { get; set; }
+        bool Visible { get; }
+        string Tab { get; }
+        RectTransform ComboChip { get; }
+        void Refresh(bool force);
+        void ShowToast(string text, float seconds);
+        /// <summary>Shows a page of this window, or opens the window that has it.</summary>
+        void ShowTab(string id);
+        /// <summary>Buys a tech-tree node (the public data packs on the labelling page) with the purchase effects.</summary>
+        bool BuyNode(XgNode node, RectTransform from);
+    }
+
+    /// <summary>A page of 灵光.exe or 摆渡众包. Pages build their own layout and react to the sim through their host.</summary>
     public abstract class XgPage
     {
-        protected XingGuangView view;
+        protected IXgPageHost host;
+        /// <summary>The 灵光.exe window; null for pages hosted by 摆渡众包.</summary>
+        protected XingGuangView view => host as XingGuangView;
         protected XgUi ui;
         public RectTransform root;
-        protected XgSim Sim => view.Sim;
-        protected IXgHost Host => view.Host;
-        protected XgJuice Fx => view.Juice;
-        public void Init(XingGuangView owner, XgUi kit) { view = owner; ui = kit; }
+        protected XgSim Sim => host.Sim;
+        protected IXgHost Host => host.Host;
+        protected XgJuice Fx => host.Juice;
+        public void Init(IXgPageHost owner, XgUi kit) { host = owner; ui = kit; }
         public abstract void Build(RectTransform area);
         public abstract void Refresh();
         public virtual void Tick(float dt) { }
@@ -26,25 +52,27 @@ namespace LingGuangV05.Desktop.XingGuang
     }
 
     /// <summary>
-    /// 灵光.exe content, built in code inside the 灵光.exe window: HUD (with the combo), nav, four pages
-    /// (标注台, 训练, 技能树, 订单), toasts and the effect layer. Presentation only; rules live in XgSim.
+    /// 灵光.exe content, built in code inside the 灵光.exe window, in the dark scanner style of the approved redesign
+    /// (Documentation/LingGuang-Incremental/lingguang-redesign/index.html): the top bar (the AI, the two bars of the main
+    /// line, ¥, income, power and the clock; XingGuangView.Frame.cs), the grouped nav, the pages over a grid, toasts and
+    /// the effect layer. 概览 is the landing page. The 标注台 and 订单 pages, and the combo, live in 摆渡众包; asking this
+    /// window for them opens that app instead. Presentation only; rules live in XgSim.
     /// </summary>
-    public sealed class XingGuangView : MonoBehaviour
+    public sealed partial class XingGuangView : MonoBehaviour, IXgPageHost
     {
         /// <summary>Kept for the controller (window background).</summary>
-        public static class Palette { public static readonly Color Page = XgPalette.Page; }
+        public static class Palette { public static readonly Color Page = XgDark.Page; }
+
+        /// <summary>The top bar's height and the nav's width (the mockup's grid rows and columns).</summary>
+        public const float TopBarHeight = 52, NavWidth = 148;
 
         XingGuangController controller;
         XgUi ui;
-        RectTransform root, comboChip, comboFill;
-        TMP_Text appName, hudMoney, hudIncome, hudCompute, hudStage, comboNumber, comboTier, toast;
-        XgGlow comboGlow;
-        readonly List<(string id, XgBtn btn)> tabs = new List<(string, XgBtn)>();
+        RectTransform root;
+        TMP_Text toast;
         readonly Dictionary<string, XgPage> pages = new Dictionary<string, XgPage>();
-        XgBtn soundToggle, fxToggle;
-        string tab = "label";
-        float refreshTimer, toastTimer, comboShownWindow = 1, comboSparkTimer;
-        int comboShown;
+        string tab = "home";
+        float refreshTimer, toastTimer;
         double shownMoney = -1;
         RectTransform welcome;
         XgSim boundSim;
@@ -56,56 +84,91 @@ namespace LingGuangV05.Desktop.XingGuang
         public IXgHost Host => controller.Host;
         public XgJuice Juice { get; private set; }
         /// <summary>Shop buy amount: 1, 10 or int.MaxValue (as many as affordable).</summary>
-        public int BuyAmount = 1;
-        public XgLabelPage Label { get; private set; }
+        public int BuyAmount { get; set; } = 1;
+        public XgHomePage Home { get; private set; }
         public XgTrainPage Train { get; private set; }
-        public XgTreePage Tree { get; private set; }
-        public XgContractsPage Contracts { get; private set; }
+        public XgDataPage Data { get; private set; }
+        public XgItemsPage Items { get; private set; }
+        public XgTechTreePage Tree { get; private set; }
         public XgRepoPage Repo { get; private set; }
-        public XgBoardPage Board { get; private set; }
-        public XgWallPage Wall { get; private set; }
         public XgChatPage Chat { get; private set; }
+        public XgAbilitiesPage Abilities { get; private set; }
         public XgFinalePage Finale { get; private set; }
+        public XgCardsPage Cards { get; private set; }
+        public XgWiringPage Wiring { get; private set; }
+        /// <summary>The big card overlay (earned cards flip in; the album opens them).</summary>
+        public XgHoloCard Holo { get; private set; }
         public bool Visible => controller != null && controller.Window != null && controller.Window.isOn && isActiveAndEnabled;
         public string Tab => tab;
-        public RectTransform ComboChip => comboChip;
+        /// <summary>The combo lives in 摆渡众包; effects aimed at it here land on the main-line bars.</summary>
+        public RectTransform ComboChip => barsRect;
 
         public void Build(XingGuangController owner, RectTransform content, TMP_FontAsset fontAsset)
         {
             controller = owner;
-            ui = new XgUi(fontAsset, owner.Window);
+            ui = new XgUi(fontAsset, owner.Window, true);
             root = Rect("XingGuang", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             // Laid out at the normal window size; maximising scales every control up with the window.
             UiFitScale.Attach(root, owner.Window, new Vector2(1236, 693));
-            Panel(root, XgPalette.Page);
+            Panel(root, XgDark.Page);
             Juice = gameObject.AddComponent<XgJuice>();
-            BuildHud();
+            // The scanner grid under the pages (the mockup's .page background).
+            var grid = Rect("Grid", root, Vector2.zero, Vector2.one, new Vector2(NavWidth, 0), new Vector2(0, -TopBarHeight));
+            grid.gameObject.AddComponent<CanvasRenderer>();
+            var lines = grid.gameObject.AddComponent<XgGridGraphic>();
+            lines.color = XgDark.Page; lines.raycastTarget = false;
+            BuildTopBar();
             BuildNav();
-            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(150, 12), new Vector2(-12, -70));
-            Label = Add("label", new XgLabelPage(), area);
+            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavWidth + 12, 12), new Vector2(-12, -TopBarHeight - 12));
+            Home = Add("home", new XgHomePage(), area);
             Train = Add("train", new XgTrainPage(), area);
-            Tree = Add("tree", new XgTreePage(), area);
-            Contracts = Add("contracts", new XgContractsPage(), area);
+            Data = Add("data", new XgDataPage(), area);
+            Items = Add("items", new XgItemsPage(), area);
+            Tree = Add("tree", new XgTechTreePage(), area);
             Repo = Add("repo", new XgRepoPage(), area);
-            Board = Add("board", new XgBoardPage(), area);
-            Wall = Add("wall", new XgWallPage(), area);
+            Wiring = Add("wiring", new XgWiringPage(), area);
+            Abilities = Add("abilities", new XgAbilitiesPage(), area);
+            Cards = Add("cards", new XgCardsPage(), area);
             Chat = Add("chat", new XgChatPage(), area);
             Finale = Add("final", new XgFinalePage(), area);
             Repo.SeenUpTo = owner.Sim.S.nextModelId - 1;
-            var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330, 16), new Vector2(330, 52));
-            Panel(toastBox, new Color(.1f, .12f, .2f, .9f)).raycastTarget = false;
-            toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 17, Color.white, TextAlignmentOptions.Center);
+            var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330 + NavWidth / 2, 16), new Vector2(330 + NavWidth / 2, 52));
+            Panel(toastBox, new Color32(14, 24, 35, 240)).raycastTarget = false;
+            var rim = toastBox.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Good; rim.effectDistance = new Vector2(1, -1);
+            toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 16, XgDark.Ink, TextAlignmentOptions.Center);
             toastBox.gameObject.SetActive(false);
             font = fontAsset;
             setup = new XgSetupOverlay(this, ui, fontAsset, root);
             Juice.Init(root, root, fontAsset);
             Juice.Visible = () => Visible;
             // Self-insight cards (闪卡) over the whole window.
-            XgHoloCard.Install(this, root, fontAsset);
-            // The one real training (XOR wall, stage-one breakthrough, recognising 0) in a corner panel.
+            Holo = XgHoloCard.Install(this, root, fontAsset);
+            // The one real training (XOR on a perceptron, stage one ending, recognising 0) in a corner panel.
             XgRealTrainPanel.Install(this, root, fontAsset);
+            // An ability that emerges plays over the whole window (参数量与数据量主线).
+            XgEmergenceCutscene.Install(this, root, fontAsset);
             Bind(owner);
-            ShowTab(tab);
+            ShowTab(FeatureOpen(tab) ? tab : FirstOpenTab());
+        }
+
+        /// <summary>Whether a page is open now. The new pages (概览, 数据, 道具, 能力) follow the features they show.</summary>
+        public bool FeatureOpen(string id)
+        {
+            if (controller == null || controller.Sim == null) return false;
+            switch (id)
+            {
+                case "home": case "abilities": return true;
+                case "data": return controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0;
+                case "items": return controller.FeatureVisible("tree");
+                default: return controller.FeatureVisible(id);
+            }
+        }
+
+        /// <summary>The page shown when the current one is closed: 概览 (always open).</summary>
+        string FirstOpenTab()
+        {
+            foreach (var id in NavIds) if (FeatureOpen(id)) return id;
+            return "home";
         }
 
         T Add<T>(string id, T page, RectTransform area) where T : XgPage
@@ -131,14 +194,13 @@ namespace LingGuangV05.Desktop.XingGuang
             boundSim.StageAdvanced += OnStageAdvanced;
             boundSim.Assessed += OnAssessed;
             boundSim.NodeBought += OnNodeBought;
-            boundSim.ComboTier += OnComboTier;
-            boundSim.ComboBroken += OnComboBroken;
             boundSim.DeskOpened += OnDeskOpened;
-            boundSim.CardTimedOut += OnCardTimedOut;
-            boundSim.DuelDone += OnDuelDone;
             boundSim.ModelSaved += OnModelSaved;
+            boundSim.WiringLogged += OnWiringLogged;
             Juice.Reduced = Sim.S.reduceFx;
             Juice.Muted = Sim.S.mute;
+            SeedFeed();
+            chatSeenAt = LastAiLineAt();
             Refresh(true);
         }
 
@@ -146,19 +208,77 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             sim.EpochStarted -= OnEpochStarted; sim.BreakthroughDone -= OnBreakthrough; sim.Emerged -= OnEmerged; sim.StageAdvanced -= OnStageAdvanced;
             sim.Message -= OnMessage; sim.Diverged -= OnDiverged; sim.EpochDone -= OnEpoch; sim.Assessed -= OnAssessed;
-            sim.NodeBought -= OnNodeBought; sim.ComboTier -= OnComboTier; sim.ComboBroken -= OnComboBroken; sim.DeskOpened -= OnDeskOpened;
-            sim.CardTimedOut -= OnCardTimedOut; sim.DuelDone -= OnDuelDone; sim.ModelSaved -= OnModelSaved;
+            sim.NodeBought -= OnNodeBought; sim.DeskOpened -= OnDeskOpened; sim.ModelSaved -= OnModelSaved; sim.WiringLogged -= OnWiringLogged;
         }
 
         void OnDestroy() { if (boundSim != null) Unsubscribe(boundSim); }
 
+        // ───────────── the recent-events feed (概览) ─────────────
+
+        /// <summary>One line of the 概览 feed: the game time it arrived ("" for lines from before this session) and the text.</summary>
+        public struct FeedLine { public string at, text; public int tone; }
+
+        const int FeedLength = 30;
+        readonly List<FeedLine> feed = new List<FeedLine>();
+        /// <summary>Newest first: the sim's notices (the same lines as the toasts) and the 接线 log's warnings and voices.</summary>
+        public IReadOnlyList<FeedLine> Feed => feed;
+
+        void SeedFeed()
+        {
+            feed.Clear();
+            var log = Sim.S.log;
+            if (log == null) return;
+            for (int i = log.Count - 1; i >= 0 && feed.Count < FeedLength; i--) feed.Add(new FeedLine { at = "", text = log[i] });
+        }
+
+        void AddFeed(string text, int tone)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            if (feed.Count > 0 && feed[0].text == text) return;
+            feed.Insert(0, new FeedLine { at = ClockText(), text = text, tone = tone });
+            if (feed.Count > FeedLength) feed.RemoveAt(feed.Count - 1);
+        }
+
+        /// <summary>The game clock as the feed and the top bar show it (HH:mm).</summary>
+        public string ClockText()
+        {
+            var rt = controller != null ? controller.runtime : null;
+            return rt != null && rt.Sim != null ? GameCalendar.Now(rt.Sim.S).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) : "";
+        }
+
+        void OnWiringLogged(XgWLog l) { if (l != null && l.tone >= 3) AddFeed(l.text, l.tone); }
+
+        // ───────────── unread chat ─────────────
+
+        double chatSeenAt;
+
+        double LastAiLineAt()
+        {
+            var chat = Sim.S.chat;
+            for (int i = chat.Count - 1; i >= 0; i--) if (chat[i].from == "ai") return chat[i].at;
+            return 0;
+        }
+
+        /// <summary>Its lines since the 对话 page was last on screen.</summary>
+        public int UnreadChat
+        {
+            get
+            {
+                if (Sim == null) return 0;
+                int n = 0;
+                var chat = Sim.S.chat;
+                for (int i = chat.Count - 1; i >= 0; i--) { if (chat[i].from != "ai") continue; if (chat[i].at <= chatSeenAt) break; n++; }
+                return n;
+            }
+        }
+
         // ───────────── events → feel ─────────────
 
-        void OnMessage(string text) { ShowToast(text, 3.5f); }
+        void OnMessage(string text) { AddFeed(text, 0); ShowToast(text, 3.5f); }
 
         void OnDiverged(int track)
         {
-            Juice.Flash(XgPalette.Bad, .25f, .55f);
+            Juice.Flash(XgDark.Bad, .25f, .55f);
             if (Sim.LastEpochWasHand) { Juice.Shake(12, .4f); Juice.HitStop(200); }
             Juice.Play(XgJuice.Sfx.Id.Buzz);
             Train.Glitch();
@@ -171,14 +291,14 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             Juice.Flash(new Color32(255, 240, 200, 255), .25f, .9f);
             Juice.Play(XgJuice.Sfx.Id.Fanfare, .8f);
-            Juice.Float(Juice.At(root), line, XgPalette.Gold, 22, 90, 3.5f, 1.1f);
+            Juice.Float(Juice.At(root), line, XgDark.Gold, 22, 90, 3.5f, 1.1f);
             Refresh(true);
         }
 
         void OnStageAdvanced(int from)
         {
             Juice.Flash(Color.white, .2f, .8f);
-            Juice.Burst(Juice.At((RectTransform)hudStage.transform.parent), 40, XgPalette.Gold, XgJuice.Shape.Confetti, 420);
+            Juice.Burst(Juice.At(barsRect), 40, XgDark.Gold, XgJuice.Shape.Confetti, 420);
             Juice.Play(XgJuice.Sfx.Id.Fanfare);
             Refresh(true);
         }
@@ -187,47 +307,20 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnAssessed(XgAssessment a) { Train.OnAssessed(a); }
         void OnNodeBought(XgNode n)
         {
-            var target = Tree.NodeTarget(n.id);
-            if (target != null && tab == "tree") Juice.TransferCoins(Juice.At((RectTransform)hudMoney.transform.parent), Juice.At(target));
+            var target = tab == "tree" ? Tree.NodeTarget(n.id) : tab == "items" ? Items.NodeTarget(n.id) : null;
+            if (target != null) Juice.TransferCoins(Juice.At(moneyRect), Juice.At(target));
             Tree.OnBought(n); Refresh(true);
         }
-        void OnDeskOpened(XgDesk d) { Juice.Play(XgJuice.Sfx.Id.Unlock); Label.RebuildTabs(); }
-        void OnCardTimedOut(string desk) { Label.OnTimeout(); }
-
-        void OnDuelDone(bool won, double bonus)
-        {
-            if (!won) { Juice.Play(XgJuice.Sfx.Id.Thud); return; }
-            Juice.Play(XgJuice.Sfx.Id.Fanfare);
-            Juice.Burst(Juice.At(Label.Paper), 30, Color.white, XgJuice.Shape.Confetti, 420);
-            Juice.Float(Juice.At(Label.Paper, new Vector2(0, 40)), T("斗图胜利 +¥", "Battle won +¥") + N(bonus, "0"), XgPalette.Gold, 30);
-        }
+        // The desk tabs, card timeouts and 斗图 results belong to the 标注台, which 摆渡众包 hosts (ZhongbaoView).
+        void OnDeskOpened(XgDesk d) { Juice.Play(XgJuice.Sfx.Id.Unlock); }
 
         void OnModelSaved(XgModelEntry m)
         {
-            var tabRt = tabs.Find(x => x.id == "repo").btn?.rt;
-            if (tabRt == null) return;
+            var tabRt = NavButton("repo");
+            if (tabRt == null || !tabRt.gameObject.activeInHierarchy) return;
             Juice.Knock(tabRt, .12f);
-            if (!m.record) Juice.Float(Juice.At(tabRt, new Vector2(60, 0)), T("已存入仓库", "Saved"), XgPalette.Accent, 18);
+            if (!m.record) Juice.Float(Juice.At(tabRt, new Vector2(60, 0)), Lang.T("已存入仓库"), XgDark.Good, 18);
             Juice.Play(XgJuice.Sfx.Id.Tick, .7f, .4f);
-        }
-
-        void OnComboTier(int tier)
-        {
-            string name = T(XgCatalog.ComboTierNames[tier], XgCatalog.ComboTierNamesEn[tier]);
-            Juice.Flash(Color.white, .12f, .55f);
-            Juice.Shake(6, .3f);
-            Juice.Knock(comboChip, .25f, Vector2.zero, .35f);
-            Juice.Float(Juice.At(comboChip, new Vector2(-40, -50)), name + "！", XgPalette.Tiers[tier + 1], 30 + tier * 4, 70, 1.1f, 1.6f);
-            Juice.Burst(Juice.At(comboChip), 16 + tier * 10, XgPalette.Tiers[tier + 1], tier >= 3 ? XgJuice.Shape.Star : XgJuice.Shape.Spark, 300);
-            Juice.Play(XgJuice.Sfx.Id.Tier, 1 + tier * .15f);
-            if (tier >= 3) Juice.HitStop(120);
-        }
-
-        void OnComboBroken(int was)
-        {
-            Juice.Crumble(Juice.At(comboChip), Mathf.Min(30, 6 + was / 2), XgPalette.Tiers[Mathf.Min(4, XgSim.TierOf(was) + 1)]);
-            Juice.Play(XgJuice.Sfx.Id.Break);
-            if (was >= 10) Juice.Float(Juice.At(comboChip, new Vector2(-30, -46)), T("连击中断 ×", "Combo lost ×") + was, XgPalette.Bad, 20);
         }
 
         public void ShowToast(string text, float seconds)
@@ -249,23 +342,10 @@ namespace LingGuangV05.Desktop.XingGuang
             float dt = Time.unscaledDeltaTime;
             if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) toast.transform.parent.gameObject.SetActive(false); }
             foreach (var p in pages.Values) if (p.root.gameObject.activeSelf) p.Tick(dt);
-            UpdateCombo();
-            UpdateMoney(dt);
+            TickTopBar(dt);
             if (controller.Offline != null && welcome == null) ShowWelcome(controller.Offline);
             refreshTimer -= dt;
             if (refreshTimer <= 0) Refresh(false);
-        }
-
-        /// <summary>The wallet counts up towards its real value instead of jumping.</summary>
-        void UpdateMoney(float dt)
-        {
-            double money = Host.Money;
-            if (shownMoney < 0 || Math.Abs(money - shownMoney) > Math.Max(1e5, money * 2)) shownMoney = money;
-            double before = shownMoney;
-            shownMoney += (money - shownMoney) * (1 - Math.Exp(-10 * dt));
-            if (Math.Abs(money - shownMoney) < .005) shownMoney = money;
-            hudMoney.text = "¥ " + Money(shownMoney);
-            hudMoney.color = money > before + .004 ? new Color32(255, 220, 120, 255) : (Color)XgPalette.Money;
         }
 
         /// <summary>Lab income per second: contracts plus auto-answer on every desk.</summary>
@@ -277,158 +357,54 @@ namespace LingGuangV05.Desktop.XingGuang
         void ShowWelcome(XingGuangController.OfflineReport r)
         {
             welcome = Rect("Welcome", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Panel(welcome, new Color(.05f, .07f, .15f, .55f));
-            var card = Rect("Card", welcome, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-230, -140), new Vector2(230, 140));
-            Panel(card, Color.white);
-            var head = Rect("Head", card, new Vector2(0, 1), Vector2.one, new Vector2(0, -56), Vector2.zero);
-            Panel(head, XgPalette.Hud);
-            ui.Text(Rect("Title", head, Vector2.zero, Vector2.one, new Vector2(18, 0), new Vector2(-18, 0)), T("欢迎回来", "Welcome back"), 24, Color.white, TextAlignmentOptions.MidlineLeft).fontStyle = FontStyles.Bold;
+            Panel(welcome, new Color(0, 0, 0, .6f));
+            var card = ui.Card(welcome, "Card", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-230, -140), new Vector2(230, 140));
+            ui.Text(Strip("Title", card, 14, 34, 20, 20), Lang.T("欢迎回来"), 22, XgDark.Good, TextAlignmentOptions.MidlineLeft);
             var t = TimeSpan.FromSeconds(Math.Min(r.seconds, 86400));
             string away = t.TotalHours >= 1 ? T((int)t.TotalHours + " 小时 " + t.Minutes + " 分", (int)t.TotalHours + " h " + t.Minutes + " min") : T(t.Minutes + " 分钟", t.Minutes + " min");
             var body = new System.Text.StringBuilder();
-            body.Append(T("你离开了 ", "You were away ")).Append(away).Append(r.seconds > 86400 ? T("（最多算 24 小时）", " (24 h max)") : "").Append(T("。" + AppNames.AiZh + "没闲着：", ". " + AppNames.AiEn + " kept working:")).Append("\n\n");
-            body.Append("<size=30><color=#E86E14><b>+¥").Append(Money(r.income)).Append("</b></color></size>\n");
-            if (r.labels > 0) body.Append(T("自动答题标了 ", "Auto-answer labelled ")).Append(N(r.labels, "0")).Append(T(" 条", "")).Append("  ");
-            if (r.epochs > 0) body.Append(T("后台训练 ", "Trained ")).Append(r.epochs).Append(T(" 轮", " epochs")).Append("  ");
-            if (r.records > 0) body.Append(T("刷新纪录 ", "Records ")).Append(r.records).Append(T(" 次", ""));
-            ui.Text(Rect("Body", card, Vector2.zero, Vector2.one, new Vector2(20, 64), new Vector2(-20, -66)), body.ToString(), 16, XgPalette.Ink, TextAlignmentOptions.TopLeft);
-            var ok = ui.Button(card, T("收下", "Collect"), () =>
+            body.Append(Lang.T("你离开了 ")).Append(away).Append(r.seconds > 86400 ? Lang.T("（最多算 24 小时）") : "").Append(T("。" + AppNames.AiZh + "没闲着：", ". " + AppNames.AiEn + " kept working:")).Append("\n\n");
+            body.Append("<size=30><color=#FAC775><b>+¥").Append(Money(r.income)).Append("</b></color></size>\n");
+            if (r.labels > 0) body.Append(Lang.T("自动答题标了 ")).Append(N(r.labels, "0")).Append(T(" 条", "")).Append("  ");
+            if (r.epochs > 0) body.Append(Lang.T("后台训练 ")).Append(r.epochs).Append(T(" 轮", " epochs")).Append("  ");
+            if (r.records > 0) body.Append(Lang.T("刷新纪录 ")).Append(r.records).Append(T(" 次", ""));
+            ui.Text(Rect("Body", card, Vector2.zero, Vector2.one, new Vector2(20, 64), new Vector2(-20, -54)), body.ToString(), 16, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            var ok = ui.Button(card, Lang.T("收下"), () =>
             {
-                Juice.Burst(Juice.At((RectTransform)hudMoney.transform.parent), 30, XgPalette.Gold, XgJuice.Shape.Yen, 320);
-                Juice.Knock((RectTransform)hudMoney.transform.parent, .2f);
+                Juice.Burst(Juice.At(moneyRect), 30, XgDark.Gold, XgJuice.Shape.Yen, 320);
+                Juice.Knock(moneyRect, .2f);
                 Juice.Play(XgJuice.Sfx.Id.Coin); Juice.Play(XgJuice.Sfx.Id.Fanfare, 1, .6f);
                 controller.Offline = null;
                 Destroy(welcome.gameObject); welcome = null;
             }, 18);
-            ok.rt.anchorMin = ok.rt.anchorMax = new Vector2(.5f, 0); ok.rt.offsetMin = new Vector2(-90, 14); ok.rt.offsetMax = new Vector2(90, 58);
-            ok.Set(T("收下", "Collect"), true, XgPalette.Good, Color.white);
+            ok.rt.anchorMin = ok.rt.anchorMax = new Vector2(.5f, 0); ok.rt.offsetMin = new Vector2(-90, 14); ok.rt.offsetMax = new Vector2(90, 54);
+            ok.Set(Lang.T("收下"), true, XgDark.AccentSoft, XgDark.Good);
             welcome.SetAsLastSibling();
             Juice.BringToFront();
             Juice.Knock(card, .1f, Vector2.zero, .35f);
             Juice.Play(XgJuice.Sfx.Id.Whoosh);
         }
 
-        void UpdateCombo()
-        {
-            int combo = Sim.S.combo;
-            int tier = XgSim.TierOf(combo);
-            if (combo >= 100 && Visible)
-            {
-                comboSparkTimer += Time.unscaledDeltaTime;
-                if (comboSparkTimer >= .4f) { comboSparkTimer = 0; Juice.Burst(Juice.At(comboChip), 2, XgPalette.Gold, XgJuice.Shape.Star, 70, 100, .8f); }
-            }
-            else comboSparkTimer = 0;
-            if (combo != comboShown)
-            {
-                if (combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); }
-                comboShown = combo;
-                comboNumber.text = combo > 0 ? "×" + combo : "×0";
-                comboTier.text = tier >= 0 ? T(XgCatalog.ComboTierNames[tier], XgCatalog.ComboTierNamesEn[tier]) : (Sim.S.bestCombo > 0 ? T("最高 ×", "best ×") + Sim.S.bestCombo : T("连击", "combo"));
-            }
-            var color = XgPalette.Tiers[tier + 1];
-            if (tier >= 3) color = Color.Lerp(color, Color.white, .5f + .5f * Mathf.Sin(Time.unscaledTime * 10));
-            comboNumber.color = combo > 0 ? color : new Color(1, 1, 1, .45f);
-            comboTier.color = combo > 0 ? color : new Color(1, 1, 1, .45f);
-            SetBar(comboFill, combo > 0 ? (float)(Sim.S.comboTimer / Math.Max(.1, comboShownWindow)) : 0);
-            comboGlow.on = tier >= 0;
-            comboGlow.color = XgPalette.Tiers[tier + 1] * new Color(1, 1, 1, .6f);
-        }
-
-        // ───────────── layout ─────────────
-
-        void BuildHud()
-        {
-            var hud = Rect("Hud", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -58), Vector2.zero);
-            Panel(hud, XgPalette.Hud);
-            var logo = Rect("Logo", hud, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -20), new Vector2(54, 20));
-            logo.gameObject.AddComponent<XgIconGraphic>().raycastTarget = false;
-            appName = ui.Text(Rect("AppName", hud, new Vector2(0, 0), new Vector2(0, 1), new Vector2(62, 0), new Vector2(300, 0)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft);
-            appName.fontStyle = FontStyles.Bold;
-            hudMoney = Chip(hud, 0, 170, XgPalette.Money);
-            hudIncome = Chip(hud, 1, 170, new Color32(255, 196, 140, 255));
-            hudCompute = Chip(hud, 2, 210, new Color32(160, 186, 255, 255));
-            hudStage = Chip(hud, 3, 170, XgPalette.Star);
-            // Combo chip: number, tier name and the window bar.
-            comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-12 - 170, -25), new Vector2(-12, 25));
-            comboGlow = Glow(comboChip, XgPalette.Gold, 5);
-            Panel(comboChip, new Color32(60, 30, 90, 255));
-            comboNumber = ui.Text(Rect("Number", comboChip, Vector2.zero, new Vector2(.55f, 1), new Vector2(8, 4), new Vector2(0, 0)), "×0", 30, Color.white, TextAlignmentOptions.MidlineLeft);
-            comboNumber.fontStyle = FontStyles.Bold;
-            comboTier = ui.Text(Rect("Tier", comboChip, new Vector2(.5f, 0), Vector2.one, new Vector2(0, 6), new Vector2(-8, 0)), "", 15, Color.white, TextAlignmentOptions.MidlineRight);
-            var bar = Rect("Window", comboChip, Vector2.zero, new Vector2(1, 0), new Vector2(6, 4), new Vector2(-6, 8));
-            comboFill = Bar(bar, "Fill", new Color(1, 1, 1, .12f), XgPalette.Gold);
-            // Hover help for newcomers.
-            UiTip.Add(hudStage.transform.parent, "实验室现在的阶段（共 6 个，每个约一个月）。\n练得够多就会「撞墙」：再练也不涨。\n用对新结构过了墙，才进入下一阶段。", "The lab's stage (6 in all, about a month each).\nTrain enough and you hit a wall: more training stops helping.\nPass it with the right new structure to reach the next stage.");
-            UiTip.Add(hudCompute.transform.parent, "算力：每轮训练跑多快，显卡越多越快。\n显存：能放下多大的模型。层数、宽度开太大会超显存，就训不起来。", "GPU: how fast each epoch runs; more cards are faster.\nVRAM: how big a model fits. Too many layers or too much width will not fit and cannot train.");
-            UiTip.Add(hudIncome.transform.parent, () => controller != null && controller.Sim != null && controller.Sim.AutoLabelHidden
-                ? T("每秒自动进账 = 已签订单。\n去「订单」页：模型准确率够了就能签。", "Money per second = signed contracts.\nOpen Contracts: once a model is accurate enough you can sign.")
-                : T("每秒自动进账 = 已签订单 + 自动答题。\n去「订单」页：模型准确率够了就能签。", "Money per second = signed contracts + auto-answering.\nOpen Contracts: once a model is accurate enough you can sign."));
-            UiTip.Add(hudMoney.transform.parent, "经费。手动标注、订单、评级奖励会加钱；电费、显卡、技能树会花钱。", "Funds. Labelling, contracts and grade rewards add money; power, cards and the skill tree cost money.");
-            UiTip.Add(comboChip, "连击：连续答对、连续手动训练都会叠加。\n连击越高，标注报酬和手动训练效果越高。\n答错、超时或停太久会清零。", "Combo: builds with every right answer and every hand-pressed epoch.\nHigher combo pays more for labels and trains faster by hand.\nA wrong answer, a timeout or a long pause resets it.");
-        }
-
-        float chipX = 12 + 170 + 8;
-
-        TMP_Text Chip(RectTransform hud, int index, float w, Color ink)
-        {
-            if (index == 0) chipX = 12 + 170 + 8;
-            float x1 = -chipX;
-            chipX += w + 8;
-            var r = Rect("Chip" + index, hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(x1 - w, -21), new Vector2(x1, 21));
-            Panel(r, XgPalette.HudChip);
-            return ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-8, 0)), "", 16, ink, TextAlignmentOptions.MidlineLeft);
-        }
-
-        void BuildNav()
-        {
-            var nav = Rect("Nav", root, Vector2.zero, new Vector2(0, 1), new Vector2(12, 12), new Vector2(138, -70));
-            Panel(nav, XgPalette.Card);
-            string[] ids = { "label", "train", "tree", "contracts", "repo", "board", "wall", "chat", "final" };
-            for (int i = 0; i < ids.Length; i++)
-            {
-                string id = ids[i];
-                var b = ui.Button(nav, "", () => { ShowTab(id); Juice.Play(XgJuice.Sfx.Id.Click); }, 17);
-                b.rt.anchorMin = new Vector2(0, 1); b.rt.anchorMax = new Vector2(1, 1);
-                b.rt.offsetMin = new Vector2(8, -8 - (i + 1) * 58); b.rt.offsetMax = new Vector2(-8, -8 - i * 58 - 6);
-                tabs.Add((id, b));
-                UiTip.Add(b.rt, () => TabHelp(id));
-            }
-            soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; Refresh(true); }, 14);
-            PlaceBottom(soundToggle, 48, 32, 8, 8);
-            fxToggle = ui.Button(nav, "", () => { Sim.S.reduceFx = !Sim.S.reduceFx; Juice.Reduced = Sim.S.reduceFx; Refresh(true); }, 14);
-            PlaceBottom(fxToggle, 10, 32, 8, 8);
-            UiTip.Add(soundToggle.rt, "打开或关闭音效。", "Turn sound effects on or off.");
-            UiTip.Add(fxToggle.rt, "减少闪光、震动和粒子特效。", "Fewer flashes, shakes and particles.");
-        }
-
-        static string TabHelp(string id)
-        {
-            switch (id)
-            {
-                case "label": return T("标注台：亲手给数据打标签。\n答对赚钱，也给模型攒训练数据。逻辑题最值钱。", "Labelling: tag data by hand.\nRight answers earn money and give the model training data. Logic pays best.");
-                case "train": return T("训练：选数据集和结构，按「训练一轮」让它学。\n隔几轮按「评估」看成绩；成绩好才能签订单。", "Train: pick a dataset and structure, press Train epoch.\nEvaluate every few epochs; good scores unlock contracts.");
-                case "tree": return T("技能树：花钱解锁新结构、更深更宽的网络、数据包和自动化。\n按住节点 0.6 秒购买。", "Skill tree: buy new structures, deeper and wider nets, data packs and automation.\nHold a node for 0.6 s to buy.");
-                case "contracts": return T("订单：模型准确率达到要求就能签约，之后每秒自动给钱。", "Contracts: sign once a model reaches the required accuracy; they pay every second.");
-                case "repo": return T("模型仓库：每次刷新纪录都存一个检查点。", "Models: a checkpoint is saved for every record.");
-                case "board": return T("大脑：它学到的概念，以及它以为的联系（有些是错的）。", "Brain: the concepts it has learned and the links it believes (some are wrong).");
-                case "wall": return T("诊断：看它错在哪。错误的规律，就是该换什么结构的线索。", "Diagnose: see where it goes wrong. The pattern of mistakes tells you what structure to try.");
-                case "chat": return T("对话：和它说话。阶段越高，它会说的越多。", "Talk: chat with it. The higher the stage, the more it can say.");
-                default: return T("终章。", "Finale.");
-            }
-        }
+        public bool BuyNode(XgNode node, RectTransform from) => Tree != null && Tree.Buy(node, from);
 
         /// <summary>Window opened (from the icon, taskbar or a story notification); tab is optional.</summary>
         public void Open(string tabId)
         {
             if (tabId == "vision" || tabId == "sequence") { Sim.SelectedTrack = tabId == "vision" ? XgTrack.Vision : XgTrack.Sequence; tabId = "train"; }
             if (tabId == "research") tabId = "tree";
+            if (IsCrowdPage(tabId)) { Refresh(true); controller.OpenCrowd(tabId); return; }
             if (!string.IsNullOrEmpty(tabId) && pages.ContainsKey(tabId)) ShowTab(tabId);
             else Refresh(true);
         }
 
+        /// <summary>Pages that moved to 摆渡众包; asking 灵光 for them opens that app on the page.</summary>
+        public static bool IsCrowdPage(string id) => id == "label" || id == "contracts";
+
         public void ShowTab(string id)
         {
-            if (!pages.ContainsKey(id) || !controller.FeatureVisible(id)) return;
+            if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
+            // 科技 is a section of 道具: it opens with the 道具 page.
+            if (!pages.ContainsKey(id) || !FeatureOpen(id == "tree" ? "items" : id)) return;
             tab = id;
             foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == id);
             pages[id].Shown();
@@ -441,38 +417,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (controller == null || Sim == null || root == null) return;
             refreshTimer = .2f;
             if (!force && !Visible) return;
-            appName.text = T(AppNames.AppZh + " · 深度学习工作站", AppNames.AppEn + " · DL workstation");
-            if (shownMoney < 0) hudMoney.text = "¥ " + Money(Host.Money);
-            hudIncome.text = T("收入 ", "Income ") + "¥" + Money(IncomeRate) + T("/秒", "/s");
-            double vramUse = Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
-            hudCompute.text = T("算力 ", "GPU ") + N(Host.Compute, "0.0") + T(" · 显存 ", " · VRAM ") + N(vramUse / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G";
-            hudStage.text = T("阶段 ", "Stage ") + Sim.S.stage + "/6" + (Sim.Winter ? T(" · 寒冬", " · winter") : "");
-            string[] names = { T("标注台", "Labelling"), T("训练", "Train"), T("技能树", "Skill tree"), T("订单", "Contracts"), T("模型仓库", "Models"), T("大脑", "Brain"), T("诊断", "Diagnose"), T("对话", "Talk"), T("终章", "Finale") };
-            bool trainable = Sim.TrainingUnlocked(XgTrack.Vision) || Sim.TrainingUnlocked(XgTrack.Sequence);
-            bool[] open = { controller.FeatureVisible("label"), controller.FeatureVisible("train"), controller.FeatureVisible("tree"), controller.FeatureVisible("contracts"), controller.FeatureVisible("repo"), controller.FeatureVisible("board"), controller.FeatureVisible("wall"), controller.FeatureVisible("chat"), controller.FeatureVisible("final") };
-            int current = tabs.FindIndex(x => x.id == tab);
-            if (current >= 0 && !open[current]) { tab = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
-            int buyable = 0; foreach (var n in XgCatalog.Nodes) if (Sim.Status(n, Host) == XgSim.NodeStatus.Buyable) buyable++;
-            bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
-            int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0);
-            string[] badges = { raiseReady ? "加薪" : "", "", buyable > 0 ? buyable.ToString() : "", "", fresh > 0 && tab != "repo" ? "+" + fresh : "", "", Sim.ActiveWall != null && tab != "wall" ? "!" : "", "", Sim.EndingOpen && tab != "final" ? "!" : "" };
-            int visibleRow = 0;
-            for (int i = 0; i < tabs.Count; i++)
-            {
-                tabs[i].btn.rt.gameObject.SetActive(open[i]);
-                if (!open[i]) continue;
-                tabs[i].btn.rt.offsetMin = new Vector2(8, -8 - (visibleRow + 1) * 58);
-                tabs[i].btn.rt.offsetMax = new Vector2(-8, -8 - visibleRow * 58 - 6);
-                visibleRow++;
-                bool on = tabs[i].id == tab;
-                string badge = badges[i].Length > 0 ? "  <size=13><color=#" + (on ? "FFE08A" : "E08A00") + ">" + (i == 0 ? T(badges[i], "raise") : badges[i]) + "</color></size>" : "";
-                tabs[i].btn.Set(names[i] + badge, open[i], on ? XgPalette.Accent : XgPalette.Button, on ? Color.white : XgPalette.Ink);
-            }
-            soundToggle.Set(Sim.S.mute ? T("音效：关", "Sound: off") : T("音效：开", "Sound: on"), true);
-            fxToggle.Set(Sim.S.reduceFx ? T("减少特效：开", "Less FX: on") : T("减少特效：关", "Less FX: off"), true);
+            if (tab == "chat") chatSeenAt = LastAiLineAt();
+            if (!FeatureOpen(tab == "tree" ? "items" : tab)) { tab = FirstOpenTab(); foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
+            RefreshTopBar();
+            RefreshNav();
             if (pages.TryGetValue(tab, out var page)) page.Refresh();
             setup?.Refresh(controller.runtime);
         }
-
     }
 }

@@ -186,10 +186,49 @@ namespace LingGuangV05.Desktop.XingGuang
             var s = Stats(false);
             sim.LoveDataReady = s != null && s.EnoughHistory;
             if (hintQueued) { if (!InnerVoice.Busy) hintQueued = false; return; }
+            if (!sim.S.loveOffered && sim.S.stage < XgSim.LoveStage) { CheckEarly(sim); return; }
             if (sim.S.loveOffered || sim.S.stage < XgSim.LoveStage || !sim.LoveDataReady) return;
             if (!TryHub(out _, out var gf, out _) || !GirlfriendRules.RecentColdSignal(gf, runtime.Sim.S.gameSeconds)) return;
             if (!CanPlay() || InnerVoice.Busy || Held()) return;
             Wonder(sim, s, gf);
+        }
+
+        /// <summary>Seconds after her latest message in which the early idea can come (it follows something she just said).</summary>
+        const double EarlyWonderWindow = 20;
+
+        /// <summary>
+        /// Before stage 5: right after she says something, once she has sent a few messages, he has the sudden idea of
+        /// asking the AI. It can only answer 是 or 否, which is exactly why the idea is tempting.
+        /// </summary>
+        void CheckEarly(XgSim sim)
+        {
+            if (sim.Profile.name.Length == 0 || !TryHub(out _, out var gf, out var conv) || !gf.started || gf.herMessages < 3) return;
+            double now = runtime.Sim.S.gameSeconds;
+            if (gf.herLastGame <= 0 || now - gf.herLastGame > EarlyWonderWindow) return;
+            if (!CanPlay() || InnerVoice.Busy || Held()) return;
+            string said = null;
+            for (int i = conv.messages.Count - 1; i >= 0 && said == null; i--)
+            {
+                var m = conv.messages[i];
+                if (m != null && m.from == YYChatHub.GirlfriendId && m.kind == YYKind.Text && !string.IsNullOrEmpty(m.text)) said = m.text.Trim();
+            }
+            if (string.IsNullOrEmpty(said)) return;
+            if (said.Length > 16) said = said.Substring(0, 16) + "……";
+            hintQueued = true;
+            string ai = AiName(sim);
+            InnerVoice.Say("她说：『" + said + "』", "She said: \"" + said + "\"", 2.2f);
+            InnerVoice.Say("……她到底什么意思。", "…What does she actually mean.", 2f);
+            InnerVoice.Say(ai + " 只会答是或否。", ai + " can only answer yes or no.", 2.2f);
+            InnerVoice.Say("……正好。爱，或者不爱。", "…Fine. Love, or not.", 2.2f);
+            InnerVoice.Say("问问它？", "Ask it?", 2f, () =>
+            {
+                if (!ReferenceEquals(sim, bound) || !sim.OfferLoveHint()) return;
+                var view = lab != null ? lab.View : null;
+                if (view == null || !view.Visible) return;
+                view.Refresh(true);
+                var tab = XgGuideHighlight.TabButton(view, "chat");
+                if (tab != null) XgGuideHighlight.Pulse(tab, 5f);
+            });
         }
 
         /// <summary>§6.2: the inner voice reads her cold reply (or her new signature) and thinks of asking it.</summary>
@@ -272,7 +311,7 @@ namespace LingGuangV05.Desktop.XingGuang
             r.conclusion = bound.LoveConclusionLine(tier, r.hesitant, late, delay, sign);
             r.limit = bound.LoveLimitLine(tier, r.hesitant);
             r.prompt = bound.LoveVerdictPrompt(r.yes, s.ReplyTrendText(en), s.GoodnightText(en), s.ColdText(en, sign), Memories(gf, en));
-            r.girl = T("晴雯ˇ", "Qingwenˇ");
+            r.girl = Lang.T("晴雯ˇ");
             r.ai = AiName(bound);
             // The concept board's four weights (0..1, shown as a pull left or right; never as a number).
             r.warm = new[] { .1f, .3f, .55f, .75f, .92f }[Mathf.Clamp(tier, 0, 4)];
@@ -401,7 +440,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var size = desk.layer.rect.size;
             float k = Mathf.Min(size.x / 1600f, size.y / 900f) * .96f;
             frame.localScale = Vector3.one * (k > 0 ? k : 1);
-            var hint = Label(PrologueDesk.Rect("Skip", stage, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-360, 12), new Vector2(-18, 40)), T("点击或 Esc 跳过", "Click or Esc to skip"), 14, Faint, TextAlignmentOptions.MidlineRight);
+            var hint = Label(PrologueDesk.Rect("Skip", stage, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-360, 12), new Vector2(-18, 40)), Lang.T("点击或 Esc 跳过"), 14, Faint, TextAlignmentOptions.MidlineRight);
             hint.name = "Skip Hint";
             StartCoroutine(FadeIn(stageGroup));
         }
@@ -456,7 +495,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             yield return PrologueDesk.Wait(.35f);
             canSkip = true;
-            var title = Label(At("Title", frame, 0, 410, 1400, 50), r.ai + T(" 在读你和她的聊天记录", " is reading your chats with her"), 26, Soft, TextAlignmentOptions.Center);
+            var title = Label(At("Title", frame, 0, 410, 1400, 50), r.ai + Lang.T(" 在读你和她的聊天记录"), 26, Soft, TextAlignmentOptions.Center);
             var counter = Label(At("Counter", frame, 0, 350, 1200, 70), "", 46, Color.white, TextAlignmentOptions.Center);
             counter.fontStyle = FontStyles.Bold;
             yield return Stream(r, counter);
@@ -559,10 +598,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (p.kind)
             {
-                case LovePickKind.Longest: return T("她最长的一条", "Her longest");
-                case LovePickKind.Latest: return T("她最晚的一条", "Her latest at night");
+                case LovePickKind.Longest: return Lang.T("她最长的一条");
+                case LovePickKind.Latest: return Lang.T("她最晚的一条");
                 case LovePickKind.Cold: return T("她最近的『" + Cut(p.message.text, 4) + "』", "Her latest \"" + Cut(p.message.text, 8) + "\"");
-                default: return T("你没回应的那件事", "The thing you never answered");
+                default: return Lang.T("你没回应的那件事");
             }
         }
 
@@ -573,7 +612,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sec = Section("Attention");
             var query = At("Query", sec, -600, -20, 190, 190);
             var qi = Box(query, new Color(1f, .75f, .16f, .14f)); qi.sprite = PrologueDesk.Circle();
-            Label(PrologueDesk.Rect("Text", query, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), r.full ? T("她……爱我吗？", "Does she… love me?") : "", 20, XgPalette.Gold, TextAlignmentOptions.Center);
+            Label(PrologueDesk.Rect("Text", query, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), r.full ? Lang.T("她……爱我吗？") : "", 20, XgPalette.Gold, TextAlignmentOptions.Center);
             // Nine rows: the picks at 1, 3, 5, 7; real lines of hers, dimmed, in between.
             var picks = s.picks;
             int[] slots = { 1, 3, 5, 7 };
@@ -638,9 +677,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var delays = s.Series(w => w.herReplyDelay);
             double maxDelay = 60; foreach (var v in delays) maxDelay = Math.Max(maxDelay, v);
             var known = delays.FindAll(v => v >= 0);
-            string foot1 = known.Count == 0 ? T("没有可算的回复", "No replies to measure")
+            string foot1 = known.Count == 0 ? Lang.T("没有可算的回复")
                 : known.Count == 1 ? LoveStats.Duration(known[0], en) : LoveStats.Duration(known[0], en) + " → " + LoveStats.Duration(known[known.Count - 1], en);
-            var bars1 = Chart(sec, -530, T("她的平均回复时间 · 按周", "Her average reply time · by week"), foot1);
+            var bars1 = Chart(sec, -530, Lang.T("她的平均回复时间 · 按周"), foot1);
             var grow = new List<(RectTransform bar, float height)>();
             for (int i = 0; i < weeks.Count; i++)
             {
@@ -653,7 +692,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // 2. Who said goodnight first.
             int maxNight = 1; foreach (var w in weeks) maxNight = Math.Max(maxNight, Math.Max(w.herGoodnightFirst, w.myGoodnightFirst));
             int her = 0, me = 0; foreach (var w in weeks) { her += w.herGoodnightFirst; me += w.myGoodnightFirst; }
-            var bars2 = Chart(sec, 0, T("谁先说晚安 · 按周", "Who said goodnight first · by week"),
+            var bars2 = Chart(sec, 0, Lang.T("谁先说晚安 · 按周"),
                 T("她 " + her + " 晚 · 你 " + me + " 晚", "her " + her + " nights · you " + me));
             grow.Clear();
             for (int i = 0; i < weeks.Count; i++)
@@ -670,7 +709,7 @@ namespace LingGuangV05.Desktop.XingGuang
             int trend = LoveStats.Trend(lengths);
             string arrow = trend > 0 ? "↑" : trend < 0 ? "↓" : "→";
             double lastLen = lengths.Count > 0 ? lengths[lengths.Count - 1] : 0, lastEmoji = emoji.Count > 0 ? emoji[emoji.Count - 1] : 0;
-            var bars3 = Chart(sec, 530, T("她的消息长度 / 表情 · 按周", "Her message length / emoji · by week"),
+            var bars3 = Chart(sec, 530, Lang.T("她的消息长度 / 表情 · 按周"),
                 T("最近一周 平均 " + lastLen.ToString("0.#", CultureInfo.InvariantCulture) + " 字 " + arrow + " · 表情 " + lastEmoji.ToString("0.#", CultureInfo.InvariantCulture),
                   "last week " + lastLen.ToString("0.#", CultureInfo.InvariantCulture) + " chars " + arrow + " · emoji " + lastEmoji.ToString("0.#", CultureInfo.InvariantCulture)));
             grow.Clear();
@@ -738,11 +777,11 @@ namespace LingGuangV05.Desktop.XingGuang
         IEnumerator Brain(Reading r)
         {
             var sec = Section("Brain");
-            Label(At("Board", sec, 0, 250, 600, 40), T("概念盘", "Concept board"), 20, Soft, TextAlignmentOptions.Center);
+            Label(At("Board", sec, 0, 250, 600, 40), Lang.T("概念盘"), 20, Soft, TextAlignmentOptions.Center);
             var center = At("Center", sec, 0, -20, 120, 120);
             var ci = Box(center, new Color(1, 1, 1, .1f)); ci.sprite = PrologueDesk.Circle();
             Label(PrologueDesk.Rect("Q", center, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "？", 54, Color.white, TextAlignmentOptions.Center);
-            string[] names = { T("语气:暖", "tone:warm"), T("语气:冷", "tone:cold"), T("主动", "reaches out"), T("记得", "remembers") };
+            string[] names = { Lang.T("语气:暖"), Lang.T("语气:冷"), Lang.T("主动"), Lang.T("记得") };
             float[] targets = { r.warm, r.cold, r.initiative, r.remember };
             Vector2[] at = { new Vector2(-450, 110), new Vector2(450, 110), new Vector2(-450, -150), new Vector2(450, -150) };
             Color[] colors = { XgPalette.Gold, new Color32(120, 160, 230, 255), Her, XgPalette.Good };

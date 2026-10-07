@@ -5,22 +5,18 @@ namespace LingGuangV05.XingGuang
 {
     public sealed partial class XgSim
     {
-        public const int ProgressionSchema = ProgressionSchemaWalls;
-        public const int ComboWallObservations = 20;
+        public const int ProgressionSchema = ProgressionSchemaAbilities;
         public const double ProjectGpuSeconds = 600;
-        public event Action<string> WallObserved;
+        /// <summary>A story milestone of the stages ("bt.hidden", "bt.vision", … and "transformer"; the names are the story's).</summary>
         public event Action<string> BreakthroughDone;
         public event Action<int> ProjectExperiment;
         public event Action<bool> ChapterFinished;
 
         public int ProgressionDepthCap(XgTrack track) => StageFor(track) == 1 ? 1 : StageFor(track) == 2 ? 1 : track == XgTrack.Vision ? 2 : 1;
-        public bool ExplainWall(string id) => MarkWallExplained(id);
         public int StageFor(XgTrack track) => track == XgTrack.Vision ? S.stageVision : S.stageSequence;
         public bool ProjectActive => S.project != null && S.project.started && !S.project.completed;
         public bool ProjectAwaitingAnswer => ProjectActive && S.project.awaitingAnswer;
         public bool EndingAvailable => S.project != null && S.project.completed && !S.chapterComplete;
-        public bool WallSeen(string id) => S.walls.Contains(id);
-        public bool WallExplained(string id) => S.explainedWalls.Contains(id);
         public static bool ArchitectureFits(XgArch arch, XgTrack track) => arch != null && (arch.shared || arch.track == track);
 
         void PrepareProgression(bool newGame)
@@ -34,15 +30,17 @@ namespace LingGuangV05.XingGuang
             if (S.vision == null) S.vision = new XgRun { track = 0 };
             if (S.sequence == null) S.sequence = new XgRun { track = 1 };
             if (S.desksOpen == null) S.desksOpen = new List<string>();
+            if (S.abilitiesEmerged == null) S.abilitiesEmerged = new List<int>();
             if (newGame)
             {
                 S.unlocked.Clear(); S.unlocked.Add("perceptron");
                 S.vision.arch = S.sequence.arch = "perceptron";
                 S.vision.depth = S.sequence.depth = 1;
                 S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
-                S.desksOpen.Clear(); S.desksOpen.Add("logic"); S.desksOpen.Add("spam");
-                S.desk = "logic";
+                S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam");
+                S.desk = "arith"; // the easy desk first; logic pays more once the player is ready
                 S.stage = S.stageVision = S.stageSequence = 1;
+                S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
                 S.firstSpecialty = "";
             }
             else if (S.progressionVersion < 1)
@@ -50,20 +48,16 @@ namespace LingGuangV05.XingGuang
                 Grant("perceptron");
                 bool vision = Has("lenet") || Has("alexnet") || Has("vgg") || Has("googlenet") || Has("resnet");
                 bool sequence = Has("rnn") || Has("lstm") || Has("gru") || Has("seq2seq") || Has("attention");
-                if (vision || sequence)
-                {
-                    Grant("bt.hidden"); Grant("mlp"); MigrateBeat("wall_combo"); MigrateBeat("bt_hidden");
-                    ExplainMigratedWall("combo"); ExplainMigratedWall("structure");
-                }
+                if (vision || sequence) { Grant("bt.hidden"); Grant("mlp"); MigrateBeat("wall_combo"); MigrateBeat("bt_hidden"); }
                 if (vision) { Grant("bt.vision"); Grant("lenet"); MigrateBeat("bt_specialty_vision"); }
                 if (sequence) { Grant("bt.sequence"); Grant("rnn"); MigrateBeat("bt_specialty_sequence"); }
                 if (vision || sequence) { S.firstSpecialty = vision ? "vision" : "sequence"; }
                 if (Has("lstm") || Has("gru") || Has("seq2seq") || Has("attention"))
-                { Grant("bt.gate"); Grant("lstm"); ExplainMigratedWall("length"); MigrateBeat("wall_length"); MigrateBeat("bt_gate"); MigrateBeat("ll_remember"); MigrateBeat("lz_tay"); }
+                { Grant("bt.gate"); Grant("lstm"); MigrateBeat("wall_length"); MigrateBeat("bt_gate"); MigrateBeat("ll_remember"); MigrateBeat("lz_tay"); }
                 if (Has("resnet"))
-                { Grant("bt.residual"); ExplainMigratedWall("degrade"); MigrateBeat("wall_degrade"); MigrateBeat("bt_residual"); MigrateBeat("ll_remember"); MigrateBeat("lz_tay"); }
+                { Grant("bt.residual"); MigrateBeat("wall_degrade"); MigrateBeat("bt_residual"); MigrateBeat("ll_remember"); MigrateBeat("lz_tay"); }
                 if (Has("attention"))
-                { Grant("bt.attention"); Grant("seq2seq"); ExplainMigratedWall("translation"); MigrateBeat("wall_translation"); MigrateBeat("bt_attention"); MigrateBeat("ll_underline"); }
+                { Grant("bt.attention"); Grant("seq2seq"); MigrateBeat("wall_translation"); MigrateBeat("bt_attention"); MigrateBeat("ll_underline"); }
                 if (Has("caption")) { Grant("bt.spatial"); Grant("resnet"); Grant("bt.residual"); }
                 if (Has("v.lr") || Has("s.lr")) Grant("shared.lr");
                 // Old milestone desks remain usable without re-buying a formerly free desk.
@@ -73,9 +67,11 @@ namespace LingGuangV05.XingGuang
             }
             if (!newGame && S.progressionVersion < ProgressionSchemaWalls)
             {
-                // Design v1.1: one stage for both tracks, moved on by walls. Keep the furthest stage an old save reached.
+                // Design v1.1: one stage for both tracks. Keep the furthest stage an old save reached.
                 S.stage = Math.Max(S.stage, Math.Max(S.stageVision, Math.Max(S.stageSequence, LegacyStage())));
             }
+            // 参数量与数据量主线: the stage is the number of abilities; an old save keeps every stage it reached.
+            if (!newGame && S.progressionVersion < ProgressionSchemaAbilities) MigrateToAbilities();
             S.progressionVersion = ProgressionSchema;
             RefreshStages();
         }
@@ -103,25 +99,20 @@ namespace LingGuangV05.XingGuang
             }
             else if (S.project.started && S.project.gpuSeconds >= (S.project.experiments + 1) * 200)
                 S.project.awaitingAnswer = true;
-            if (S.comboFailureVersion < 1)
-            {
-                // Earlier builds counted hand answers. Do not carry unverified partial progress into the strict rule,
-                // but grandfather a wall already completed in an old save instead of revoking a purchased chapter gate.
-                if (S.stage == 1 && !WallSeen("combo")) S.comboObservations = 0;
-                S.comboFailureVersion = 1;
-            }
-            S.comboObservations = Math.Max(0, Math.Min(ComboWallObservations, S.comboObservations));
         }
 
         static bool Finite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
         void Grant(string id) { if (!S.unlocked.Contains(id)) S.unlocked.Add(id); }
         void MigrateBeat(string id) { if (!S.migratedBeats.Contains(id)) S.migratedBeats.Add(id); }
-        void ExplainMigratedWall(string id) { if (!WallSeen(id)) S.walls.Add(id); if (!WallExplained(id)) S.explainedWalls.Add(id); }
-        /// <summary>One stage for both tracks (design v1.1); only passing a wall moves it.</summary>
+        /// <summary>
+        /// One stage for both tracks, derived from the abilities that have emerged. A stage set from outside (a test,
+        /// a debug jump, an older save) counts the abilities up to it as emerged, so the two never disagree.
+        /// </summary>
         void RefreshStages()
         {
-            if (Has("transformer")) S.stage = 6;
-            S.stage = Math.Max(1, Math.Min(6, S.stage));
+            S.stage = Math.Max(1, Math.Min(AbilityCount, S.stage));
+            GrantAbilitiesUpTo(S.stage);
+            S.stage = AbilitiesCount;
             S.stageVision = S.stageSequence = S.stage;
         }
 
@@ -143,39 +134,30 @@ namespace LingGuangV05.XingGuang
             return node.cost;
         }
 
-        string RequiredWall(XgNode node)
-        {
-            switch (node.id)
-            {
-                case "bt.hidden": return "combo";
-                case "bt.vision": case "bt.sequence": return "structure";
-                case "bt.gate": return "length";
-                case "bt.residual": return "degrade";
-                case "bt.attention": case "bt.spatial": return "translation";
-                case "project.transformer": return "parallel";
-                default: return null;
-            }
-        }
-
         public bool NodeVisible(XgNode node)
         {
             if (node == null) return false;
             if (Has(node.id)) return true;
             if (node.tree == "label") return node.id != "label.brain" && node.id != "label.parallel" || S.stage >= 4;
-            if (node.kind == XgNodeKind.Project) return false;
+            if (node.kind == XgNodeKind.Project || node.kind == XgNodeKind.Breakthrough) return false;
             if (node.id == "secret.6") return S.stage >= 6 && S.pretrainStalled;
-            if (node.kind == XgNodeKind.Secret) { var wall = WallOfSecret(node.id); return wall != null && WallSeen(wall.id); }
+            if (node.kind == XgNodeKind.Secret) return false;
             return node.stage <= S.stage;
         }
 
+        /// <summary>The Transformer item waits until it has asked 「如果只用注意力呢？」 (stage 5's emergence moment).</summary>
+        public bool TransformerIdeaReached => HasEmerged(5) || S.stage >= 6;
+
         public string ProgressionBlocker(XgNode node)
         {
-            if (node == null) return T("未知节点", "Unknown node");
+            if (node == null) return T("未知节点");
             if (Has(node.id)) return null;
-            if (!NodeVisible(node)) return node.kind == XgNodeKind.Secret ? T("撞墙之后才会出现", "Appears once the wall stands") : T("还没到这一阶段", "Not at this stage yet");
-            if (node.id == "transformer" || node.id == "multihead" || node.id == "layernorm" || node.id == "residual")
-                return T("阶段 5 过墙后获得", "Earned by passing stage five's wall");
-            if (node.id == "caption" && S.stage < 5) return T("需要第五阶段", "Requires stage five");
+            if (!NodeVisible(node)) return T("还没到这一阶段");
+            if (node.id == "transformer" && !TransformerIdeaReached)
+                return T("它还没想到：阶段 5 用注意力练一阵", "It has not thought of it yet: train with attention for a while in stage 5");
+            if (node.id == "multihead" || node.id == "layernorm" || node.id == "residual")
+                return T("随 Transformer 一起来", "Comes with the Transformer");
+            if (node.id == "caption" && S.stage < 5) return T("需要第五阶段");
             return null;
         }
 
@@ -189,10 +171,10 @@ namespace LingGuangV05.XingGuang
                 for (int i = 0; i < group.Length; i++)
                 {
                     var tree = XgCatalog.Node(group[i]).tree;
-                    if (tree == "vision") names[i] = T("视觉 ", "Vision ") + names[i];
-                    else if (tree == "sequence" || tree == "trunk") names[i] = T("序列 ", "Sequence ") + names[i];
+                    if (tree == "vision") names[i] = T("视觉 ") + names[i];
+                    else if (tree == "sequence" || tree == "trunk") names[i] = T("序列 ") + names[i];
                 }
-            return string.Join(T(" 或 ", " or "), names);
+            return string.Join(T(" 或 "), names);
         }
 
         public int TrackGrade(XgTrack track)
@@ -206,51 +188,46 @@ namespace LingGuangV05.XingGuang
             return grade;
         }
 
-        public bool Breakthrough(string id, IXgHost host)
-        {
-            var node = XgCatalog.Node(id);
-            return node != null && node.kind == XgNodeKind.Breakthrough && BuyNode(id, host);
-        }
-
+        /// <summary>
+        /// An architecture item bought (参数量与数据量主线 §6: the old breakthroughs are items now). A specialty remembers
+        /// which came first; the Transformer brings its research outputs. The models switch to a better structure by
+        /// themselves (<see cref="AutoConfigureAll"/>).
+        /// </summary>
         void ApplyProgressionNode(XgNode node)
         {
             switch (node.id)
             {
-                case "bt.hidden":
-                    Grant("mlp"); S.vision.arch = S.sequence.arch = "mlp"; S.vision.depth = S.sequence.depth = 1; break;
-                case "bt.vision": Grant("lenet"); S.vision.arch = "lenet"; if (S.firstSpecialty == "") S.firstSpecialty = "vision"; break;
-                case "bt.sequence": Grant("rnn"); S.sequence.arch = "rnn"; if (S.firstSpecialty == "") S.firstSpecialty = "sequence"; break;
-                case "bt.gate": Grant("lstm"); S.sequence.arch = "lstm"; break;
-                case "bt.residual": Grant("resnet"); S.vision.arch = "resnet"; break;
-                case "bt.attention": Grant("seq2seq"); S.sequence.arch = "seq2seq"; break;
+                case "lenet": if (S.firstSpecialty == "") S.firstSpecialty = "vision"; break;
+                case "rnn": if (S.firstSpecialty == "") S.firstSpecialty = "sequence"; break;
+                case "resnet": BreakthroughDone?.Invoke("bt.residual"); break;
+                case "transformer": Grant("multihead"); Grant("layernorm"); Grant("residual"); break;
             }
             if (node.kind == XgNodeKind.Secret)
             {
-                var wall = WallOfSecret(node.id);
-                if (wall != null) Say(T("秘籍：", "Secret: ") + T(wall.golden, wall.goldenEn) + T("。", ". ") + T(wall.why, wall.whyEn));
-                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线宽度 × 层数 ≥ 1024、学习率预热、位置标记都开，再上「机房」。喂进去的始终是数据，飞跃来自规模。", "Secret: pre-training needs scale — sequence width × layers ≥ 1024, warm-up and positions on, and the server room. It is always data going in; the leap comes from scale."));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1 亿左右（买宽 1024、8 层以上），文本 2 万条以上，买齐学习率预热和位置标记，再租「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。", "Secret: pre-training needs scale — a Transformer on the reading line, about 100 million parameters (buy width 1024 and 8+ layers), 20,000+ text samples, warm-up and position tags bought, then rent the server room. The loss falls smoothly with parameters and data, a step lower every doubling."));
             }
             RefreshStages();
         }
 
-        public bool MarkWallExplained(string id)
+        /// <summary>
+        /// The chance the model answers one yes/no card right, from its score on the dataset's own measure (top-5,
+        /// next-character accuracy…): the inverse of <see cref="Scale"/>. A model at chance on a hard measure still
+        /// gets half the yes/no cards.
+        /// </summary>
+        public static double BinaryAccuracy(string dataset, double metric)
         {
-            if (!WallSeen(id) || WallExplained(id)) return false;
-            S.explainedWalls.Add(id);
-            return true;
-        }
-
-        public bool ObserveWall(string id)
-        {
-            if (id != "combo" && id != "structure" && id != "length" && id != "degrade" && id != "translation" && id != "parallel") return false;
-            if (WallSeen(id)) return false;
-            S.walls.Add(id); WallObserved?.Invoke(id); return true;
+            var d = XgCatalog.Dataset(dataset);
+            if (d == null || d.chanceError - d.floorError <= 1e-9) return Math.Max(0, Math.Min(1, metric));
+            double q = (metric - (1 - d.chanceError)) / (d.chanceError - d.floorError);
+            return .5 + .5 * Math.Max(0, Math.Min(1, q));
         }
 
         public double CardAccuracy(XgRun run, XgCard card, double accuracy)
         {
             if (run == null || card == null) return 0;
             accuracy = Finite(accuracy) ? Math.Max(0, Math.Min(1, accuracy)) : 0;
+            // The score is on the dataset's own measure; a card is one yes/no question.
+            if (UseBoard) accuracy = BinaryAccuracy(card.dataset, accuracy);
             if (run.arch == "perceptron" && card.kind == "combo") accuracy = Math.Min(.55, accuracy);
             if (run.arch == "mlp" && (card.kind == "spatial" || card.kind == "order")) accuracy = Math.Min(.6, accuracy);
             if (card.distance > 0)
@@ -265,24 +242,31 @@ namespace LingGuangV05.XingGuang
             return Math.Max(0, Math.Min(1, accuracy));
         }
 
-        void ApplyProgressionAccuracy(XgRun run)
+        void ApplyProgressionAccuracy(XgRun run) => run.valAcc = ProgressionAccuracy(run, run.valAcc);
+
+        /// <summary>
+        /// The research bonuses and the architecture limits on an accuracy: a perceptron cannot combine two logic
+        /// conditions (unless people make the features for it), an MLP binds every pixel to its place, a plain loop
+        /// forgets a long sentence, only attention keeps the second half of a translation.
+        /// </summary>
+        double ProgressionAccuracy(XgRun run, double acc)
         {
-            double acc = run.valAcc + (Has("bias") ? .02 : 0) + (Has("step") ? .01 : 0) + (Has("sigmoid") ? .01 : 0);
-            if (run.arch == "perceptron" && run.dataset == "logic") acc = Math.Min(acc, .55);
+            acc += (Has("bias") ? .02 : 0) + (Has("step") ? .01 : 0) + (Has("sigmoid") ? .01 : 0);
+            if (run.arch == "perceptron" && run.dataset == "logic" && !FeaturesOwned) acc = Math.Min(acc, .55);
             if (run.arch == "mlp" && (run.dataset == "cifar" || run.dataset == "poems")) acc = Math.Min(acc, .6);
             if (run.arch == "vgg" && run.depth > 12) acc -= (run.depth - 12) * .03;
             if ((run.dataset == "longtext" || run.dataset == "crosssentence") && run.arch == "rnn") acc *= Math.Pow(.9, 10);
             else if ((run.dataset == "longtext" || run.dataset == "crosssentence") && (run.arch == "lstm" || run.arch == "gru")) acc *= Math.Pow(.98, 10);
             if (run.dataset == "translate" && run.arch != "attention" && run.arch != "transformer") acc *= .75; // second half loses half accuracy.
             if (run.arch == "transformer" && XgCatalog.Dataset(run.dataset).track == XgTrack.Sequence) acc += .06;
-            run.valAcc = Math.Max(0, Math.Min(1 - XgCatalog.Dataset(run.dataset).floorError, acc));
+            return Math.Max(0, Math.Min(1 - XgCatalog.Dataset(run.dataset).floorError, acc));
         }
 
         public double ProgressionSpeed(XgRun run) =>
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
-        /// <summary>Stage one opens logic and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
-        public bool ProgressionDeskAvailable(string id) => id == "logic" || id == "spam" || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id);
+        /// <summary>Stage one opens arithmetic, logic and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (id == "arith" || id == "logic" || id == "spam" || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
 
         void ObserveProgression(XgRun run)
         {
@@ -294,30 +278,11 @@ namespace LingGuangV05.XingGuang
         {
             if (card == null || card.progressionObserved) return;
             card.progressionObserved = true;
+            // A wrong checkpoint prediction the player saw on a combination card (the stage-one story still counts them).
             if (card.kind == "combo" && S.stage == 1 && card.comboPredictionReady && card.comboPredictionShown &&
                 card.comboPredictedYes != card.truth && ComboCheckpointAvailable(card) &&
                 (!card.hasJudgment || card.judgeSource == "checkpoint"))
-            {
-                S.comboObservations = Math.Min(ComboWallObservations, S.comboObservations + 1);
-                if (S.comboObservations >= ComboWallObservations) ObserveWall("combo");
-            }
-            if (!card.bottleneckPreview) return;
-            if (S.stage == 2)
-            {
-                if (card.kind == "spatial") S.spatialObservations++;
-                if (card.kind == "order") S.orderObservations++;
-                if (S.spatialObservations > 0 && S.orderObservations > 0) ObserveWall("structure");
-            }
-            if (card.kind == "long" && S.stageSequence == 3)
-            { S.memoryObservations++; ObserveWall("length"); }
-            if (card.kind == "translation")
-            {
-                var track = XgCatalog.Dataset(card.dataset).track;
-                if (StageFor(track) != 4) return;
-                if (track == XgTrack.Vision) S.visionCompressionObserved = true;
-                else S.sequenceCompressionObserved = true;
-                ObserveWall("translation");
-            }
+                S.comboObservations++;
         }
 
         bool ComboCheckpointAvailable(XgCard card)
@@ -608,7 +573,7 @@ namespace LingGuangV05.XingGuang
             if (!yes)
             {
                 S.project.gpuSeconds = S.project.experiments * ProjectGpuSeconds / 3; S.project.retries++;
-                Say(T("否。……好。那我再想想。", "No. … all right. Let me think again."));
+                Say(T("否。……好。那我再想想。"));
                 return true;
             }
             S.project.experiments++;
@@ -621,11 +586,11 @@ namespace LingGuangV05.XingGuang
             bool first = !Has("transformer");
             // Stage 6 and the ending (design v1.1 §7–8) follow; the old research project is not completed here any more.
             S.project.awaitingAnswer = false;
-            Grant("project.transformer"); Grant("transformer"); Grant("multihead"); Grant("position");
+            Grant("transformer"); Grant("multihead"); Grant("position");
             Grant("layernorm"); Grant("residual"); Grant("warmup");
             S.vision.arch = S.sequence.arch = "transformer"; RefreshStages();
             foreach (var run in Runs) Evaluate(run);
-            if (announce && first) { Say(T("只要注意力。", "Attention is all we need.")); BreakthroughDone?.Invoke("transformer"); }
+            if (announce && first) { Say(T("只要注意力。")); BreakthroughDone?.Invoke("transformer"); }
         }
 
         public bool EndingAnswer(bool regret)

@@ -7,7 +7,7 @@ using LingGuangV05.Core.Era;
 namespace LingGuangV05.Core.Forum
 {
     /// <summary>
-    /// What sophon.dll lets 老周 see before he answers (design v1.1 §9): stage, the wall in the way, the latest
+    /// What sophon.dll lets 老周 see before he answers (design v1.1 §9): stage, the next ability and its shorter bar, the latest
     /// phenomenon, money, cards, heat, NaNs. Filled by the desktop from the save and the lab; never contains the
     /// golden settings, so neither the model nor the fallback can give them away.
     /// </summary>
@@ -15,8 +15,8 @@ namespace LingGuangV05.Core.Forum
     {
         public int stage = 1;
         public DateTime today = GameCalendar.Start.Date;
-        /// <summary>Id of the standing wall ("" if none): combo, structure, length, degrade, translation, parallel.</summary>
-        public string wall = "", wallName = "";
+        /// <summary>The next ability's name ("" once all six have emerged) and the shorter of its two bars: "params", "data" or "".</summary>
+        public string nextAbility = "", shortOf = "";
         public string phenomenon = "";
         public string aiName = "", callMe = "";
         public double money, temperature, bestAccuracy;
@@ -45,6 +45,7 @@ namespace LingGuangV05.Core.Forum
             if (Has(q, "7楼", "七楼", "7 楼", "第7", "第七", "长数字", "一串数字", "那串", "floor 7", "number")) return f.stage >= 3 && Has(q, "被发", "我也", "404") ? "404" : "floor7";
             if (Has(q, "被发", "404", "我也被")) return "404";
             if (Has(q, "周而复始_", "研一", "另一个你", "另一个号", "小号", "长得像", "像你", "zhou_", "other account")) return "zhounow";
+            if (Has(q, "大脑皮层", "人造大脑", "传说帖", "13年", "13 年", "一颗脑子", "接法可以换", "拓扑可以重写", "皮层只要一颗", "cortex")) return "cortex";
             if (Has(q, "master", "大师")) return "master";
             if (f.finale && Has(q, "规则", "写不写", "钉", "底层", "rule")) return "rule";
             if (Has(q, "关机")) return "shutdown";
@@ -54,8 +55,9 @@ namespace LingGuangV05.Core.Forum
             if (Has(q, "背答案", "过拟合", "只认得做过", "做过的题", "overfit", "memor")) return "overfit";
             if (Has(q, "显卡", "1080", "1070", "1060", "980", "970", "titan", "a卡", "a 卡", "rx", "显存", "gpu", "买哪", "喵鱼")) return "gpu";
             if (Has(q, "电费", "跳闸", "欠费", "温度", "烫", "降频", "power", "bill", "hot")) return "power";
-            if (Has(q, "卡住", "卡在", "怎么办", "过不去", "撞墙", "瓶颈", "下一步", "stuck", "wall", "what next", "50%", "异或", "xor", "加层", "长句", "翻译", "越深", "并行", "串行"))
-                return f.wall.Length > 0 ? "wall:" + f.wall : "stuck";
+            if (Has(q, "卡住", "卡在", "怎么办", "过不去", "撞墙", "瓶颈", "下一步", "stuck", "wall", "what next", "50%", "异或", "xor", "加层", "加宽", "长句", "翻译", "越深", "并行", "串行",
+                "参数", "数据", "样本", "涌现", "能力", "parameter", "data", "sample", "emerge", "abilit"))
+                return f.shortOf.Length > 0 ? "short:" + f.shortOf : "stuck";
             if (Has(q, "在吗", "在不在", "你好", "hello", "hi", "老周")) return "hello";
             return "other";
         }
@@ -69,15 +71,19 @@ namespace LingGuangV05.Core.Forum
             switch (topic)
             {
                 case "identity":
-                    return again ? T("就是个显卡吧老哥哈。你好好练你的模型。", "Just a guy from the GPU forum. Go train your model.")
+                    return again ? T("就是个显卡吧老哥哈。我这边网……很慢，一个字一个字的，别让我多打字。你好好练你的模型。", "Just a guy from the GPU forum. My connection is… slow, one character at a time, so don't make me type much. Go train your model.")
                                  : T("猜的。你这种情况我见多了。", "A guess. I've seen plenty of cases like yours.");
                 case "floor7":
                     return f.stage <= 1 ? T("那楼？顺手贴的，别管它哈。", "That floor? Pasted it on a whim, never mind.")
+                                        : f.stage >= 3 ? T("一串数字而已。……有时候一串数字，比一整篇帖子装得还多。", "Just a number. … Sometimes a number holds more than a whole post.")
                                         : T("啥楼？我回过的帖多了去了。", "What floor? I've replied to a million threads.");
                 case "404":
                     return f.stage >= 3 ? T("不是我们。……我是说，不是我。", "It wasn't us. … I mean, it wasn't me.") : T("没见过哈。", "Never seen it.");
                 case "zhounow":
                     return f.stage >= 4 ? T("……挺像的哈。别去打扰他。", "… Looks a lot like me, huh. Don't bother him.") : T("谁？不认识。", "Who? Don't know him.");
+                case "cortex":
+                    // 贴吧传说帖「人造大脑皮层」: the half line in the screenshot came from his side; he never says so.
+                    return again ? "显卡够了，就会有人做出来。你那台，不就挺够的哈。" : "……那帖子我也看过哈。";
                 case "master":
                     return f.stage >= 6 && f.today >= new DateTime(2016, 12, 29) ? T("开始了。", "It's begun.") : T("下棋的那个？没关注哈。", "The Go thing? Haven't followed it.");
                 case "shutdown":
@@ -110,35 +116,13 @@ namespace LingGuangV05.Core.Forum
                 case "other":
                     return T("这个我也说不好哈。你问具体点：卡在哪、准确率多少。", "Hard to say. Be specific: where you're stuck, what the accuracy is.");
             }
-            if (topic.StartsWith("wall:", StringComparison.Ordinal)) return Wall(topic.Substring(5), again, english);
+            if (topic == "short:params")
+                return again ? T("加宽比加层来得快，宽度翻倍参数就翻四倍。光买不练不算，得练到 C 级哈。", "Wider grows faster than deeper: double the width and the parameters go ×4. Buying alone doesn't count; train it to a C.")
+                             : T("模型小了。参数多一个量级，能做的事就不一样了。", "Your model's small. An order of magnitude more parameters and it can do different things.");
+            if (topic == "short:data")
+                return again ? T("数据要多，也要干净。杂包便宜，可标错的会把它往反方向拉哈。", "Data needs to be plentiful and clean. Junk packs are cheap, but wrong labels pull it the other way.")
+                             : T("喂得太少。多标点，或者买个数据包。", "You're not feeding it enough. Label more, or buy a data pack.");
             return T("嗯。", "Mm.");
-        }
-
-        /// <summary>Per-wall help: a direction first, the idea on a repeat. Never a number (those are in the secrets).</summary>
-        static string Wall(string wall, bool again, bool english)
-        {
-            string T(string zh, string en) => english ? en : zh;
-            switch (wall)
-            {
-                case "combo":
-                    return again ? T("再加一层，中间那层才合得出组合。激活别用阶跃，阶跃不给梯度，啥也合不出来哈。", "Add a layer; only a middle layer can form combinations. And not the step activation — no gradient, nothing combines.")
-                                 : T("单层只能画一条直线。异或，你一条线分得开吗？", "One layer can only draw one straight line. XOR — can you split it with one line?");
-                case "structure":
-                    return again ? T("看图的，邻近的格子共享一套；读句子的，一个字一个字往后传。两张桌各配各的哈。", "For pictures, neighbouring cells share one set; for sentences, pass it along word by word. Each desk gets its own.")
-                                 : T("信号一层层乘下去就没了。不是每个格子都得连每个格子。", "The signal fades as it's multiplied layer by layer. Not every cell has to connect to every cell.");
-                case "length":
-                    return again ? T("给它一个能长期带着信息走的门，学会什么该留下、什么该忘。别一下子改一堆，先在诊断页试训对比远距离那行。", "Give it a gate that can carry things for long, so it learns what to keep and what to forget. Don't change everything at once: trial it on the diagnosis page and compare the far row.")
-                                 : T("前半句传到后半句就丢了。你看看错的都是离得远的吧？", "The first half gets lost before the second half. Aren't the misses all the far ones?");
-                case "degrade":
-                    return again ? T("给信息留一条直接通过的路，绕过中间那些层哈。", "Leave the information a straight path that skips the middle layers.")
-                                 : T("层数加上去，分数反而掉。信息走不到底。", "More layers, lower score. The information doesn't reach the bottom.");
-                case "translation":
-                    return again ? T("先整句读完，再一个词一个词往外说……要说哪个词，就回头看原句相关的那几个。", "Read the whole sentence first, then speak word by word… and for each word, look back at the parts that matter.")
-                                 : T("整句挤进一个固定长度的表示，句子长了就丢细节。", "Squeeze a whole sentence into a fixed-size summary and long ones lose detail.");
-                case "parallel":
-                    return T("这得你自己想。", "This one you have to figure out yourself.");
-            }
-            return T("先看它错在哪，再改。", "See where it's wrong first, then change things.");
         }
 
         static string Gpu(LaoZhouFacts f, bool again, bool english)
@@ -170,7 +154,8 @@ namespace LingGuangV05.Core.Forum
             sb.Append(EraLexicon.PromptRule(english)).Append('\n');
             sb.Append(english ? "What you can see of the player's game (do not quote it as a list): " : "你能看到的对方游戏状态（不要原样念出来）：");
             sb.Append(english ? "stage " : "阶段 ").Append(f.stage).Append("; ");
-            if (f.wall.Length > 0) sb.Append(english ? "stuck at the wall: " : "正卡在墙：").Append(f.wallName).Append("; ");
+            if (f.nextAbility.Length > 0) sb.Append(english ? "next ability: " : "下一项能力：").Append(f.nextAbility)
+                .Append(f.shortOf == "params" ? (english ? " (short of trained parameters)" : "（差的是练过的参数量）") : f.shortOf == "data" ? (english ? " (short of data)" : "（差的是数据量）") : "").Append("; ");
             if (f.phenomenon.Length > 0) sb.Append(english ? "latest phenomenon: " : "最近出现的现象：").Append(f.phenomenon).Append("; ");
             sb.Append(english ? "money ¥" : "钱 ¥").Append(f.money.ToString("0", CultureInfo.InvariantCulture)).Append("; ");
             sb.Append(english ? "GPUs " : "显卡 ").Append(f.gpus).Append(english ? ", temperature " : " 张，温度 ").Append(f.temperature.ToString("0", CultureInfo.InvariantCulture)).Append("°C; ");

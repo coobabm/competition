@@ -60,6 +60,7 @@ namespace LingGuangV05.Desktop.YY
         double aiDueGame = -1;
         float nextIdleCheck;
         string lastStatus = "", lastSignature = "";
+        float nextCardCheck;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         internal static void Attach()
@@ -109,7 +110,24 @@ namespace LingGuangV05.Desktop.YY
                 else if (outbox.Count == 0 && replyPending && now.game >= replyAtGame && act.Present) Reply(g, now, act);
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
+            GuaranteeRefusal(g);
             StandIn(g, now);
+            if (Time.unscaledTime >= nextCardCheck) { nextCardCheck = Time.unscaledTime + 1; LifeCards(g); }
+        }
+
+        /// <summary>The hidden 下班以后 cards she gives (XgSim.Cards.cs), read off her state once a second.</summary>
+        void LifeCards(GirlfriendState g)
+        {
+            var lab = Lab;
+            if (lab == null || g == null || !g.started) return;
+            if (g.totalMessages > g.herMessages) lab.EarnSecret("life.gf.chat");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagFought)) lab.EarnSecret("life.gf.fight");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagMadeUp)) lab.EarnSecret("life.gf.makeup");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagCaughtAi)) lab.EarnSecret("life.gf.caught");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagIphone)) lab.EarnSecret("life.gf.iphone");
+            if (GirlfriendRules.Has(g, GirlfriendRules.FlagNewYear)) lab.EarnSecret("life.gf.newyear");
+            if (GirlfriendRules.Tier(g) == GirlfriendTier.Sweet) lab.EarnSecret("life.gf.sweet");
+            foreach (var key in g.done) if (key.StartsWith("forgot:", StringComparison.Ordinal)) { lab.EarnSecret("life.gf.forgot"); break; }
         }
 
         void Rebind(GirlfriendState g)
@@ -236,7 +254,7 @@ namespace LingGuangV05.Desktop.YY
                     bool asks = o.asksMoney;
                     after = () =>
                     {
-                        System(T("晴雯ˇ 领取了你的红包。", "Qingwenˇ opened your red packet."));
+                        System(Lang.T("晴雯ˇ 领取了你的红包。"));
                         if (asks) hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh);
                     };
                 }
@@ -246,7 +264,7 @@ namespace LingGuangV05.Desktop.YY
             else if (turn.answered == "ai" || turn.answered == "work") { scripted = GirlfriendRules.MoneyReply(turn.answered); ruled = true; }
             else if (turn.answered == "admit" || turn.answered == "deny") { scripted = GirlfriendRules.CaughtReply(g, turn.answered); ruled = true; }
             else if (turn.wished != null && turn.wished.thanks.Length > 0) situation = T("他刚刚祝你" + turn.wished.zh + "快乐。", "He just wished you a happy " + turn.wished.en + ".");
-            else if (turn.promised.Length > 0) situation = T("他答应了：" + (turn.promised == "qixi" ? "七夕那天视频。" : "12 月 2 日一起看《你的名字。》。"), "He said yes: " + (turn.promised == "qixi" ? "a video call on Qixi." : "watching Your Name together on 2 December."));
+            else if (turn.promised.Length > 0) situation = T("他答应了：" + (turn.promised == "qixi" ? "七夕那天视频。" : turn.promised == "weekend" ? "这周末来看你。" : "12 月 2 日一起看《你的名字。》。"), "He said yes: " + (turn.promised == "qixi" ? "a video call on Qixi." : turn.promised == "weekend" ? "coming to see you this weekend." : "watching Your Name together on 2 December."));
 
             // Several quick lines get one answer: keep the earliest answer time.
             if (!replyPending)
@@ -303,7 +321,7 @@ namespace LingGuangV05.Desktop.YY
             if (b.proactive || !GirlfriendRules.Hesitates(g)) return;
             b.hesitate = true;
             b.lines.Clear();
-            b.lines.Add(T("嗯", "Mm"));
+            b.lines.Add(Lang.T("嗯"));
         }
 
         /// <summary>Asks the local model for her words; falls back to <paramref name="fallback"/> or the line library.</summary>
@@ -462,7 +480,7 @@ namespace LingGuangV05.Desktop.YY
         void Shake(bool first)
         {
             if (first) Voice("first.shake");
-            System(T("晴雯ˇ 给你发送了一个窗口抖动。", "Qingwenˇ sent you a nudge."));
+            System(Lang.T("晴雯ˇ 给你发送了一个窗口抖动。"));
             QueueLines(new[] { "人呢[疑问]", "Hello?? [疑问]" }, true);
             var router = hub.router;
             if (router == null) return;
@@ -501,12 +519,13 @@ namespace LingGuangV05.Desktop.YY
         {
             problem = "";
             var g = G;
-            if (g == null || !g.started || runtime == null || runtime.Sim == null) { problem = T("现在发不了。", "Can't send now."); return false; }
+            if (g == null || !g.started || runtime == null || runtime.Sim == null) { problem = Lang.T("现在发不了。"); return false; }
             if (amount <= 0) return false;
-            if (runtime.Sim.S.money + 1e-9 < amount) { problem = T("余额不足。", "Not enough money."); return false; }
+            if (runtime.Sim.S.money + 1e-9 < amount) { problem = Lang.T("余额不足。"); return false; }
             runtime.Sim.S.money -= amount;
             runtime.MarkDirty();
             nextPacketAmount = amount;
+            if (GirlfriendRules.IsLucky(amount)) Lab?.EarnSecret("life.gf.packet");
             hub.Send(YYChatHub.GirlfriendId, GirlfriendRules.PacketText(amount, English));
             return true;
         }
@@ -521,17 +540,17 @@ namespace LingGuangV05.Desktop.YY
             message = "";
             var g = G;
             var gift = GirlfriendRules.Gift(giftId);
-            if (g == null || !g.started || gift == null || runtime == null || runtime.Sim == null) { message = T("亲，现在下不了单哦。", "Dear, ordering isn't possible right now."); return false; }
+            if (g == null || !g.started || gift == null || runtime == null || runtime.Sim == null) { message = Lang.T("亲，现在下不了单哦。"); return false; }
             var now = Now;
-            if (!GirlfriendRules.OnSale(gift, now.clock)) { message = T("亲，还没上架哦～", "Dear, not on sale yet~"); return false; }
-            if (GirlfriendRules.SoldOut(g, gift, now.day, now.clock)) { message = T("亲，今天已售罄，明天再来抢～", "Dear, sold out today. Try again tomorrow~"); return false; }
-            if (runtime.Sim.S.money + 1e-9 < gift.price) { message = T("亲，余额不足哦。", "Dear, not enough money."); return false; }
+            if (!GirlfriendRules.OnSale(gift, now.clock)) { message = Lang.T("亲，还没上架哦～"); return false; }
+            if (GirlfriendRules.SoldOut(g, gift, now.day, now.clock)) { message = Lang.T("亲，今天已售罄，明天再来抢～"); return false; }
+            if (runtime.Sim.S.money + 1e-9 < gift.price) { message = Lang.T("亲，余额不足哦。"); return false; }
             runtime.Sim.S.money -= gift.price;
             var o = GirlfriendRules.Order(g, now, giftId);
             runtime.MarkDirty();
             var arrive = GameCalendar.DateOf(o.arriveDay);
             message = gift.id == GirlfriendRules.GiftMilkTea
-                ? T("下单成功！骑手已接单，预计 30 分钟送到她宿舍楼下。", "Ordered! A rider took it; it reaches her dorm in about 30 minutes.")
+                ? Lang.T("下单成功！骑手已接单，预计 30 分钟送到她宿舍楼下。")
                 : T("下单成功！包邮，预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达。", "Ordered! Free shipping, arriving " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture) + ".");
             return true;
         }
@@ -541,9 +560,9 @@ namespace LingGuangV05.Desktop.YY
             if (a.refused)
             {
                 runtime.Sim.S.money += a.order.price;
-                PrologueDirector.Desk?.Popup(T("淘货", "Taohuo"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
+                PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
             }
-            else PrologueDirector.Desk?.Popup(T("淘货", "Taohuo"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
+            else PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
             runtime.MarkDirty();
             var events = a.events;
             QueueLines(a.lines, true, () => { foreach (var e in events) Queue(e, true, e.key == "money" ? (Action)(() => hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh)) : null); });
@@ -568,7 +587,7 @@ namespace LingGuangV05.Desktop.YY
                 }
             }
             var s = runtime.Sim.S;
-            if (s.newYearAt > 0 && s.gameSeconds - s.newYearAt >= 12 && !g.done.Contains("epilogue"))
+            if (s.newYearAt > 0 && s.gameSeconds - s.newYearAt >= EpilogueAfterNewYear && !g.done.Contains("epilogue"))
             {
                 g.done.Add("epilogue");
                 var line = GirlfriendRules.EpilogueLine(g);
@@ -579,8 +598,14 @@ namespace LingGuangV05.Desktop.YY
 
         // ───────────── 让 灵光 代我回 (design §4.5) ─────────────
 
-        /// <summary>The switch shows from stage 5 until the AI refuses (stage 6).</summary>
-        public bool StandInAvailable => Stage >= 5 && G != null && !GirlfriendRules.Has(G, GirlfriendRules.FlagAiRefused);
+        /// <summary>The switch shows from stage 5. Ordinary messages it answers; her questions (a promise, a feeling) it hands back.</summary>
+        public bool StandInAvailable => Stage >= 5 && G != null;
+
+        /// <summary>Seconds after New Year's midnight before her epilogue line: after the quiet desktop and 360's balloon.</summary>
+        const double EpilogueAfterNewYear = 40;
+
+        /// <summary>Which of her questions (asking + day) the AI has already handed back, so it says so once.</summary>
+        string refusedAsk = "";
         public string AiName => GirlfriendPrompt.AiName(Lab, English);
 
         public void SetStandIn(bool on)
@@ -595,16 +620,26 @@ namespace LingGuangV05.Desktop.YY
         void StandIn(GirlfriendState g, GfNow now)
         {
             if (!g.aiAuto || aiInFlight || aiDueGame < 0 || now.game < aiDueGame || !g.awaitingReply || typing != null || outbox.Count > 0 || generating) return;
+            // 接线: with 本体 unplugged from its card it cannot type; her questions are still handed back below.
+            if (g.asking.Length == 0 && Lab != null && !Lab.LifeJobLive(XgSim.LifeQingwen)) return;
             if (hub.ChoicesFor == YYChatHub.GirlfriendId && hub.Choices != null) return; // a question only he can answer
             aiDueGame = -1;
             var lab = Lab;
             if (lab == null) return;
-            if (lab.S.stage >= 6)
+            // Her question (come or not, the movie, where the money came from, was that the AI): only he can answer it.
+            // The first time it stops mid-reply and says why; after that it just hands the question back.
+            if (g.asking.Length > 0)
             {
-                g.aiAuto = false;
-                GirlfriendRules.Mark(g, GirlfriendRules.FlagAiRefused);
-                System(AiName + T("：" + GirlfriendRules.AiRefusalZh, ": " + GirlfriendRules.AiRefusalEn));
-                InnerVoice.Say("……它不肯回。", "…It won't answer her.");
+                string ask = g.asking + "@" + g.askDay;
+                if (refusedAsk == ask) return;
+                refusedAsk = ask;
+                if (!GirlfriendRules.Has(g, GirlfriendRules.FlagAiRefused))
+                {
+                    GirlfriendRules.Mark(g, GirlfriendRules.FlagAiRefused);
+                    runtime.MarkDirty();
+                    StartCoroutine(RefusalScene(g.asking));
+                }
+                else System(AiName + T("：这句要你自己回。", ": This one you answer yourself."));
                 return;
             }
             var llm = LocalLlm.Instance;
@@ -622,6 +657,39 @@ namespace LingGuangV05.Desktop.YY
                 }, false, XgSpeechPolicy.Sampling(XgSpeechPolicy.Stage(lab.S.stage)), LingGuangV05.Core.Chat.LlmSeat.LingGuang);
             }
             else PostStandIn(g, GirlfriendPrompt.OfflineStandIn(g.aiReplies, English));
+        }
+
+        /// <summary>
+        /// 「她问的是你，不是我。」 The AI was answering for him; at her question it stops halfway, and the line is not a
+        /// lecture but the limit of standing in: it has read the chats, and still the decision is his.
+        /// </summary>
+        System.Collections.IEnumerator RefusalScene(string asking)
+        {
+            System(AiName + T("：这句我不能替你答。", ": I can't answer this one for you."));
+            yield return new WaitForSecondsRealtime(1.6f);
+            InnerVoice.Say("你不是看过我们的聊天吗？", "Haven't you read all our chats?", 2.4f);
+            yield return new WaitForSecondsRealtime(2.8f);
+            string decide = asking != "weekend" && asking != "movie" && asking != "qixi"
+                ? T("看过。可是怎么跟她说，要你决定。", "I have. But what you tell her is your decision.")
+                : T("看过。可是去不去，要你决定。", "I have. But whether you go is your decision.");
+            System(AiName + "：" + decide);
+            yield return new WaitForSecondsRealtime(2f);
+            System(AiName + T("：" + GirlfriendRules.AiRefusalZh, ": " + GirlfriendRules.AiRefusalEn));
+        }
+
+        /// <summary>
+        /// The scene must not depend on the player having tried the switch: when her weekend question arrives and the AI has
+        /// never handed one back, he lets it reply this once (the inner voice says so), and it stops at her question.
+        /// </summary>
+        void GuaranteeRefusal(GirlfriendState g)
+        {
+            if (Stage >= 5 && GirlfriendRules.Mark(g, GirlfriendRules.FlagStandInOffered)) runtime.MarkDirty();
+            if (g.asking != "weekend" || g.aiAuto || Stage < 5 || GirlfriendRules.Has(g, GirlfriendRules.FlagAiRefused)) return;
+            g.aiAuto = true;
+            aiDueGame = Now.game + 6;
+            InnerVoice.Say("……周末。", "…The weekend.", 1.6f);
+            InnerVoice.Say("让它替我回吧。", "Let it answer for me.", 2.2f);
+            runtime.MarkDirty();
         }
 
         void PostStandIn(GirlfriendState g, string text)

@@ -2,6 +2,7 @@ using LingGuangV05.XingGuang;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
 
+using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
@@ -27,7 +28,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string dataset = run.dataset;
             noiseText.text = XgDataUi.NoiseLine(Sim, dataset);
             double flips = Sim.BoardFlipRate(dataset);
-            noiseText.color = flips >= .01 ? XgPalette.Bad : Sim.NoiseRatio(dataset) > 0 ? XgPalette.Ink : XgPalette.Muted;
+            noiseText.color = flips >= .01 ? XgDark.Bad : Sim.NoiseRatio(dataset) > 0 ? XgDark.Ink : XgDark.Muted;
 
             string logs = XgDataUi.LogLine(Sim, dataset);
             bool show = logs.Length > 0 || Sim.LogAutoOn(dataset);
@@ -36,8 +37,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!show) return;
             bool on = Sim.LogAutoOn(dataset);
             bool can = on || Sim.LogAutoBlocker(dataset) == null;
-            logAuto.Set((on ? "■ " : "□ ") + T("模型标日志 ", "Model labels logs ") + "<size=9>" + XgUi.Samples(Sim.Logs(dataset)) + "</size>", can,
-                on ? XgPalette.AccentSoft : XgPalette.Button, on ? XgPalette.Accent : XgPalette.Ink);
+            logAuto.Set((on ? "■ " : "□ ") + Lang.T("模型标日志 ") + "<size=9>" + XgUi.Samples(Sim.Logs(dataset)) + "</size>", can,
+                on ? XgDark.AccentSoft : XgDark.Button, on ? XgDark.Accent : XgDark.Ink);
         }
 
         void ToggleLogAuto()
@@ -54,8 +55,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var download = XgDataUi.ActiveDownload(Sim, dataset);
             if (download != null) return XgDataUi.OfferTip(Sim, download);
-            return T("装上完整数据包：一次补齐整套样本。", "Install the full data pack: all samples at once.") + "\n" + XgDataUi.SourcesSummary(Sim, dataset)
-                + "\n<size=12><color=#68748C>" + T("杂包在「淘货」买，众包在标注台发。", "Junk packs are sold on Taohuo; crowd tasks are posted from the label desk.") + "</color></size>";
+            return Lang.T("装上完整数据包：一次补齐整套样本。") + "\n" + XgDataUi.SourcesSummary(Sim, dataset)
+                + "\n<size=12><color=#6F95A5>" + Lang.T("杂包在「淘货」买，众包在标注台发。") + "</color></size>";
         }
     }
 }
