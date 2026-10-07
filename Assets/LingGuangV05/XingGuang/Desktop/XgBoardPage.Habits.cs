@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void BuildHabits(RectTransform card)
         {
             habitTab = ModeTab(card, 512, Mode.Habits);
-            UiTip.Add(habitTab.rt, () => Lang.T("语气习惯：对话页每次 赞 / 踩，都会改这里的数。它按这张表决定下一句用什么语气。"));
+            UiTip.Add(habitTab.rt, () => T("语气习惯：在 YY 里每次给它的回复 赞 / 踩，都会改这里的数。它按这张表决定下一句用什么语气。", "Tone habits: every up or down you give its replies in YY changes these numbers. It picks the tone of its next line from this table."));
 
             habitView = Rect("Habits", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var left = Rect("Map", habitView, Vector2.zero, new Vector2(.72f, 1), new Vector2(12, 12), new Vector2(-6, -52));
@@ -94,7 +94,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append("</color></size>\n\n");
             sb.Append(Lang.T("选过语气 ")).Append(Sim.HabitPicks).Append(Lang.T(" 次\n"));
             sb.Append(Lang.T("被你评过 ")).Append(Sim.HabitRatings).Append(Lang.T(" 次\n"));
-            if (Sim.HabitRatings == 0) sb.Append("\n<color=#E08A00>").Append(Lang.T("还是空的。去对话页赞 / 踩它的回复。")).Append("</color>");
+            if (Sim.HabitRatings == 0) sb.Append("\n<color=#E08A00>").Append(T("还是空的。去 YY 给它的回复点 赞 / 踩。", "Still empty. Rate its replies up or down in YY.")).Append("</color>");
             return sb.ToString();
         }
     }

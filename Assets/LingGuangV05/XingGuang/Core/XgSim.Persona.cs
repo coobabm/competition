@@ -13,7 +13,7 @@ namespace LingGuangV05.XingGuang
         public List<string> words = new List<string>();
     }
 
-    /// <summary>One line of the 对话 page. <see cref="rating"/>: 1 赞, -1 踩, 0 not rated.</summary>
+    /// <summary>One line of its chat log (shown in YY since the 对话 page went). <see cref="rating"/>: 1 赞, -1 踩, 0 not rated.</summary>
     [Serializable]
     public sealed class XgChatLine
     {
@@ -256,10 +256,15 @@ namespace LingGuangV05.XingGuang
         /// <summary>The fixed first line when it can first talk (stage 4): 「{称呼}……{自称}是{名字}？」</summary>
         public string FirstWords() => T(Profile.callMe + "……" + Profile.self + "是" + Profile.name + "？", Profile.callMe + "… " + Profile.self + " am " + Profile.name + "?");
 
+        /// <summary>A line joined its chat log (the desktop shows it in its YY conversation, XgYyTalk).</summary>
+        public event Action<XgChatLine> LineAdded;
+
         public void AddLine(string from, string text)
         {
-            S.chat.Add(new XgChatLine { from = from, text = text ?? "", at = Clock });
+            var line = new XgChatLine { from = from, text = text ?? "", at = Clock };
+            S.chat.Add(line);
             if (S.chat.Count > ChatLimit) S.chat.RemoveRange(0, S.chat.Count - ChatLimit);
+            LineAdded?.Invoke(line);
             if (from != "me") return;
             S.chatTurns++; S.lastChatAt = Clock;
             // The way it is addressed grows on the tone board (stage 4's emergence reads it).

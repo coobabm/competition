@@ -16,7 +16,9 @@ using UnityEngine.UI;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
-    /// Stage 3: how the AI gets into YY (design 女友系统与YY里的AI §5). About 14 s, skippable with Esc (or a click once
+    /// How the AI gets into YY (design 女友系统与YY里的AI §5), shortly after its setup at stage 1: once the setup and its
+    /// first 是 / 否 are done and the desktop has been quiet for a moment. It can only say 是 / 否 then (its stage's
+    /// speech limits hold in YY too); its first words of its own come at ability 3. About 14 s, skippable with Esc (or a click once
     /// 360 has been answered):
     ///   0.0  YY comes to the front; 「我的设备」 unfolds and 「我的电脑」 blinks (disk chatter).
     ///   1.5  360 asks about a program reading …\YY Files\{号}\msg.db; the mouse is taken and presses 「允许」.
@@ -26,7 +28,8 @@ namespace LingGuangV05.Desktop.Story
     ///   8.0  「我的电脑」 is deleted letter by letter and retyped as the AI's name; the avatar becomes the 8×8 「0」.
     ///  10.0  The signature types 「是。否。……」.
     ///  11.5  The chat opens on the AI, 「对方正在输入…」 for about 3 s.
-    ///  14.0  Its first message is the player's favourite opening line (normally 「在吗」), then 「……是。」.
+    ///  14.0  Its first message is the player's favourite opening line (normally 「在吗」), then 「……是。」. It only
+    ///        copies the opener; 「……是。」 is all it can say of its own yet.
     ///        Inner voice 「……它跟谁学的这个。」「哦，跟我。」
     /// Afterwards the AI is the ordinary YY contact (<see cref="YYChatHub.LingGuangId"/>). The save flag
     /// (YYState.lingguangUnlocked) is set when the chat opens, so a save that already has it never replays this, and a
@@ -40,9 +43,13 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>The player's YY number, as it appears in YY's local folder.</summary>
         public const string YYNumber = "50837216";
         const string Prefix = "AiJoinsYy ";
-        /// <summary>Wait after the hub says it is due, the wait after which it plays anyway, and after which the AI
-        /// joins without the scene (something keeps blocking it).</summary>
-        const float SettleSeconds = 1.5f, ForceAfter = 45f, JoinWithoutScene = 240f;
+        /// <summary>Wait after the hub says it is due (it is due as soon as the setup is saved, so this leaves the player a
+        /// moment with the first 是 / 否 and the labelling desk), the wait after which it plays anyway, and after which the
+        /// AI joins without the scene (something keeps blocking it).</summary>
+        const float SettleSeconds = 20f, ForceAfter = 90f, JoinWithoutScene = 240f;
+        /// <summary>A quiet moment: no mouse press for this long.</summary>
+        const float QuietSeconds = 2.5f;
+        float lastPress = -100;
         /// <summary>Hard limit for the blocked part; the mouse always comes back by then.</summary>
         const float BlockLimit = 30f;
 
@@ -136,6 +143,8 @@ namespace LingGuangV05.Desktop.Story
         void Update()
         {
             if (unblockPending) FinishUnblock();
+            var pointer = Mouse.current;
+            if (pointer != null && (pointer.leftButton.isPressed || pointer.rightButton.isPressed)) lastPress = Time.unscaledTime;
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (router == null) router = FindAnyObjectByType<ChapterOneDesktopRouter>(FindObjectsInactive.Include);
             var chat = YYChatHub.Instance;
@@ -172,10 +181,11 @@ namespace LingGuangV05.Desktop.Story
             var lab = FindAnyObjectByType<XingGuangController>();
             var holo = lab != null && lab.View != null ? lab.View.GetComponent<XgHoloCard>() : null;
             if (holo != null && holo.Showing) return false;
+            // Its setup (naming it, then the first 是 / 否) comes first.
+            if (lab != null && lab.View != null && lab.View.SetupShowing) return false;
             if (impatient) return true;
-            if (InnerVoice.Busy) return false;
-            var mouse = Mouse.current;
-            return mouse == null || !mouse.leftButton.isPressed && !mouse.rightButton.isPressed;
+            if (InnerVoice.Busy || LoveQuestionCutscene.Playing) return false;
+            return Time.unscaledTime - lastPress >= QuietSeconds;
         }
 
         static bool EscPressed() { var k = Keyboard.current; return k != null && k.escapeKey.wasPressedThisFrame; }

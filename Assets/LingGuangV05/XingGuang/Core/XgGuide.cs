@@ -63,6 +63,8 @@ namespace LingGuangV05.XingGuang
     public static class XgGuide
     {
         public const string Lab = "lingguang", Home = "home", Shop = "xunbao", Tieba = "tieba", Bodu = "bodu", YY = "yy", Games = "games";
+        /// <summary>Its YY conversation (YYChatHub.LingGuangId, used as the YY tab): the chat with it moved there from the lab.</summary>
+        public const string YYChat = "lingguang";
         /// <summary>摆渡众包: the 标注台 ("label") and 企业订单 ("contracts") pages moved there from the lab.</summary>
         public const string Crowd = "zhongbao";
         /// <summary>A node counts as cheap when it costs at most this share of the wallet; a raise at most the second.</summary>
@@ -264,7 +266,7 @@ namespace LingGuangV05.XingGuang
                 if (sim.OfferOriginQuestion)
                 {
                     list.Add(Step("origin.ask", XgGuideKind.Done, "问问它：你是怎么被训练出来的？", "Ask it: how were you trained?",
-                        "半年，从「是。否。」到今天。", "Half a year, from \"yes. no.\" to now.", Lab, "chat", "label:" + sim.OriginQuestion, ""));
+                        "半年，从「是。否。」到今天。", "Half a year, from \"yes. no.\" to now.", YY, YYChat, "label:" + sim.OriginQuestion, ""));
                     return;
                 }
                 list.Add(Step("done", XgGuideKind.Done, "都做完了。早点睡。", "All done. Get some sleep.",

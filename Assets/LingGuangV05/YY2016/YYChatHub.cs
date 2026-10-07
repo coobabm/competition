@@ -29,6 +29,8 @@ namespace LingGuangV05.Desktop.YY
         public double received;
         /// <summary>A 斗图 sticker id (YYStickers) when this text message is a sticker; empty otherwise. Old saves load with "".</summary>
         public string sticker = "";
+        /// <summary>灵光's replies: 1 赞, -1 踩, 0 not rated (the lab keeps the tone card; this is what YY shows).</summary>
+        public int rating;
         /// <summary>The lab's AI wrote this line in the player's name (「让 灵光 代我回」 in 林晴雯's chat).</summary>
         public bool byAi;
     }
@@ -70,6 +72,26 @@ namespace LingGuangV05.Desktop.YY
     }
 
     /// <summary>
+    /// The lab's side of the 灵光 conversation (XgYyTalk). The 对话 page moved into YY: the AI's replies, its suggested
+    /// questions and the 赞 / 踩 on its replies come from the lab, which keeps one chat log for both.
+    /// </summary>
+    public interface ILingGuangTalk
+    {
+        /// <summary>The player's line, already in the conversation. True when the lab answers it (nobody else does).</summary>
+        bool Heard(YYMessage line);
+        /// <summary>A reply is on the way (YY shows 「对方正在输入…」).</summary>
+        bool Thinking { get; }
+        /// <summary>Whether this message can get a 赞 / 踩 now (only its latest reply, once).</summary>
+        bool CanRate(YYMessage message);
+        void Rate(YYMessage message, bool up);
+        /// <summary>The header's 「它记得」 line (empty when there is nothing to show) and its hover note.</summary>
+        string MemoryLine();
+        string MemoryTip();
+        /// <summary>The hover note on its name: how it can talk now, its personality and what its brain holds.</summary>
+        string PersonaTip();
+    }
+
+    /// <summary>
     /// YY (2016) chat service: conversations, persistence, 老周's file transfer of 灵光.exe and his local help replies.
     /// Story `say` lines arrive through <see cref="Receive"/>; the player's messages raise runtime signal chat.sent.
     /// </summary>
@@ -103,7 +125,10 @@ namespace LingGuangV05.Desktop.YY
         public event Action Changed;
         /// <summary>The view registers itself so the hub knows what the player can see.</summary>
         public YYChatView View { get; set; }
-        public bool IsTyping(string id) => pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown);
+        public bool IsTyping(string id) => pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown)
+            || (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Thinking);
+        /// <summary>The lab answers in 灵光's conversation (XgYyTalk registers itself); without it the generic replies below run.</summary>
+        public ILingGuangTalk LingGuangTalk { get; set; }
         /// <summary>A cutscene (AiJoinsYy) shows 「对方正在输入…」 for this contact without a reply on the way.</summary>
         public string TypingShown { get; set; }
         /// <summary>林晴雯's 「对方正在输入…」, driven by YYGirlfriend (it comes and goes on its own).</summary>
@@ -112,7 +137,7 @@ namespace LingGuangV05.Desktop.YY
         public YYGirlfriend Girlfriend { get; set; }
         /// <summary>
         /// Since the prologue (design v1.1) 老周 is a forum friend (§9): only saves from before it still chat with him here.
-        /// The AI is a contact once it has joined YY at stage 3 (AiJoinsYy, design 女友系统与YY里的AI §5).
+        /// The AI is a contact once it has joined YY, shortly after its setup at stage 1 (AiJoinsYy, design 女友系统与YY里的AI §5).
         /// </summary>
         public bool IsVisible(YYContact c) => c != null && (!c.hidden || (c.id == LingGuangId && S.lingguangUnlocked))
             && !(c.id == LaoZhou && runtime != null && runtime.Sim != null && runtime.Sim.S.prologue != 0);
@@ -156,7 +181,7 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
-            pending.Clear(); inFlight.Clear();
+            pending.Clear(); inFlight.Clear(); standing.Clear();
             Changed?.Invoke();
         }
 
@@ -245,12 +270,14 @@ namespace LingGuangV05.Desktop.YY
             if (text.Length > 300) text = text.Substring(0, 300);
             var conv = Conversation(id);
             if (conv == null) return;
-            conv.messages.Add(new YYMessage { from = Me, text = text, gameSeconds = Now });
+            var line = new YYMessage { from = Me, text = text, gameSeconds = Now };
+            conv.messages.Add(line);
             Touch();
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
             if (AnswerQuiz(id, text)) return;
+            if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
@@ -267,6 +294,30 @@ namespace LingGuangV05.Desktop.YY
         string scriptFor;
 
         public void Offer(string id, string[] choices) { ChoicesFor = id; Choices = choices; Changed?.Invoke(); }
+
+        readonly Dictionary<string, string[]> standing = new Dictionary<string, string[]>();
+
+        /// <summary>
+        /// Choices a conversation keeps offering by itself (灵光's suggested questions, XgYyTalk), shown there whenever
+        /// no scene's choices (<see cref="Offer"/>) are up for it. Null or empty takes them away.
+        /// </summary>
+        public void Stand(string id, string[] choices)
+        {
+            if (id == null) return;
+            standing.TryGetValue(id, out var old);
+            bool none = choices == null || choices.Length == 0;
+            if (none ? old == null : old != null && string.Join("\n", old) == string.Join("\n", choices)) return;
+            if (none) standing.Remove(id); else standing[id] = (string[])choices.Clone();
+            Changed?.Invoke();
+        }
+
+        /// <summary>The choices shown in a conversation: a scene's first, else the conversation's standing ones.</summary>
+        public string[] ChoicesOf(string id)
+        {
+            if (id == null) return null;
+            if (ChoicesFor == id && Choices != null) return Choices;
+            return standing.TryGetValue(id, out var c) ? c : null;
+        }
 
         /// <summary>The player's next lines to <paramref name="id"/> go to <paramref name="handler"/>; when it returns true, nobody answers on their own.</summary>
         public void Script(string id, Func<string, bool> handler) { scriptFor = id; script = handler; }
@@ -454,7 +505,8 @@ namespace LingGuangV05.Desktop.YY
         {
             if (S.lingguangUnlocked || !AppInstalled) return;
             var lab = FindLab();
-            if (lab == null || lab.S.stage < 3) return;
+            // It joins right after its setup (named, stage 1). It can only say 是 / 否 then; it talks properly from ability 3.
+            if (lab == null || lab.S.stage < 1 || runtime.Sim.InPrologue) return;
             if (JoinCutscene != null && JoinCutscene(this)) return;
             S.lingguangUnlocked = true;
             var conv = Conversation(LingGuangId);

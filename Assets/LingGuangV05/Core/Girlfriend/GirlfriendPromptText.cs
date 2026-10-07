@@ -25,7 +25,11 @@ namespace LingGuangV05.Core.Girlfriend
     {
         public const int MaxTokens = 120;
         public const float Temperature = .8f;
-        public const float RepeatPenalty = 1.1f, PresencePenalty = .3f;
+        /// <summary>
+        /// Penalties against reusing words already in the window: on the 4B model with a 15-line script, .6 / .3
+        /// (from .3 / 0) stopped 「想你」 in nearly every answer and kept the JSON intact.
+        /// </summary>
+        public const float RepeatPenalty = 1.1f, PresencePenalty = .6f, FrequencyPenalty = .3f;
         /// <summary>Recent chat lines sent with the prompt (design §4.4: about 1,200 tokens in all).</summary>
         public const int HistoryLines = 12;
 
@@ -124,24 +128,90 @@ namespace LingGuangV05.Core.Girlfriend
             var sb = new StringBuilder();
             if (english)
             {
-                sb.Append("It is ").Append(c.ToString("d MMMM yyyy, HH:mm", CultureInfo.InvariantCulture)).Append(".\n");
+                sb.Append("It is ").Append(c.ToString("d MMMM yyyy, HH:mm", CultureInfo.InvariantCulture)).Append(" (").Append(DayPart(c.Hour, true)).Append(").\n");
                 sb.Append("Right now: ").Append(a.en).Append(".\n");
                 sb.Append("Your mood lately: ").Append(MoodText(s, true)).Append('\n');
                 sb.Append("Things you remember:\n").Append(Memories(s, true, latest));
                 sb.Append("Your plans together: ").Append(Promises(s, true)).Append('\n');
+                string life = LifeNow(s, now, true);
+                if (life.Length > 0) sb.Append("Going on in your life these days: ").Append(life).Append('\n');
             }
             else
             {
-                sb.Append("现在是 2016 年").Append(c.Month).Append("月").Append(c.Day).Append("日 ").Append(c.ToString("HH:mm", CultureInfo.InvariantCulture)).Append("。\n");
+                sb.Append("现在是 2016 年").Append(c.Month).Append("月").Append(c.Day).Append("日 ").Append(c.ToString("HH:mm", CultureInfo.InvariantCulture)).Append("（").Append(DayPart(c.Hour, false)).Append("）。\n");
                 sb.Append("此刻：").Append(a.zh).Append("。\n");
                 sb.Append("你最近的心情：").Append(MoodText(s, false)).Append('\n');
                 sb.Append("你记得的事：\n").Append(Memories(s, false, latest));
                 sb.Append("你们的约定：").Append(Promises(s, false)).Append('\n');
+                string life = LifeNow(s, now, false);
+                if (life.Length > 0) sb.Append("你这几天的生活：").Append(life).Append('\n');
             }
             string special = Special(s, now, english);
             if (special.Length > 0) sb.Append(special).Append('\n');
             if (!string.IsNullOrEmpty(situation)) sb.Append(situation).Append('\n');
             return sb.ToString().TrimEnd('\n');
+        }
+
+        /// <summary>
+        /// The part of the day in words, so the small model does not read 03:00 as morning: 凌晨 is the middle of
+        /// the night, not 早上.
+        /// </summary>
+        public static string DayPart(int hour, bool english)
+        {
+            if (hour < 5) return english ? "the middle of the night, not morning" : "凌晨，半夜，不是早上";
+            if (hour < 8) return english ? "early morning" : "清早";
+            if (hour < 11) return english ? "morning" : "上午";
+            if (hour < 13) return english ? "around noon" : "中午";
+            if (hour < 17) return english ? "afternoon" : "下午";
+            if (hour < 19) return english ? "early evening" : "傍晚";
+            if (hour < 23) return english ? "evening" : "晚上";
+            return english ? "late at night" : "深夜";
+        }
+
+        /// <summary>
+        /// The dated things in her life that are going on today (GirlfriendRules.Life: her exams, the cat, the
+        /// lipstick…), so the model has her own news to talk about. Questions she asks him and the AI worry are left
+        /// to the rules; at most two, the latest first.
+        /// </summary>
+        public static string LifeNow(GirlfriendState s, GfNow now, bool english)
+        {
+            var parts = new List<string>();
+            var day = now.clock.Date;
+            for (int i = GirlfriendRules.Life.Length - 1; i >= 0 && parts.Count < 2; i--)
+            {
+                var l = GirlfriendRules.Life[i];
+                if (l.key == "firstNight" || l.asks.Length > 0 || l.needsFlag.Length > 0 || l.lines.Length < 2) continue;
+                if (day < l.from || day > l.to) continue;
+                parts.Add(english ? l.lines[1] : l.lines[0]);
+            }
+            return string.Join(english ? "; " : "；", parts);
+        }
+
+        /// <summary>
+        /// A short per-turn note for the state block that keeps her answers from settling into one shape: answer his
+        /// question first, or (rotating with the message count) follow up on what he said, mention a small thing of
+        /// her own, keep it to one or two messages, or just react. Always: do not echo her own last lines or end every
+        /// answer on 想你. A message she starts herself gets only the last part.
+        /// </summary>
+        public static string Nudge(GirlfriendState s, string latest, bool english, bool proactive)
+        {
+            string always = english
+                ? "Do not reuse the words of your last few messages, and do not say you miss him every time."
+                : "别重复你前面几条的说法，也别每次都说想他。";
+            if (proactive) return always;
+            string turn;
+            if (GirlfriendLines.IsQuestion(latest)) turn = english ? "He asked you something: answer it first, in your own words." : "他问了你问题：先正面回答，再说别的。";
+            else
+            {
+                switch (((s != null ? s.totalMessages : 0) % 4 + 4) % 4)
+                {
+                    case 0: turn = english ? "This time pick up on what he said and ask about one detail." : "这次接着他说的内容，追问一个细节。"; break;
+                    case 1: turn = english ? "This time you may mention one small thing from your day." : "这次可以顺便说一件你今天的小事。"; break;
+                    case 2: turn = english ? "This time keep it short: one or two messages." : "这次简短点，一两条就够。"; break;
+                    default: turn = english ? "This time just react to what he said; no question." : "这次直接说你的反应，不用反问。"; break;
+                }
+            }
+            return turn + (english ? " " : "") + always;
         }
 
         static readonly IMemoryScorer MemoryScorer = new Bm25Scorer();
@@ -204,23 +274,29 @@ namespace LingGuangV05.Core.Girlfriend
             return sb.ToString().Trim();
         }
 
-        /// <summary>Few-shot turns (design §4.3, rewritten per §10: spaces instead of commas). The one closest to her tier goes last.</summary>
+        /// <summary>
+        /// Few-shot turns (design §4.3, rewritten per §10: spaces instead of commas). The one closest to her tier goes
+        /// last. Their content is everyday and invents no facts (no dated exam, no purchase), because a 4B model
+        /// takes example turns for things that were really said and brings them up again.
+        /// </summary>
         public static List<KeyValuePair<string, string>> FewShots(GirlfriendTier tier, bool english)
         {
             var shots = english
                 ? new List<string[]>
                 {
                     new[] { "what are you doing", "{\"msgs\":[\"just washed my hair\",\"you? on the computer again?\"],\"delta\":0,\"remember\":\"\"}", "normal" },
-                    new[] { "going to the county town tomorrow to buy a graphics card", "{\"msgs\":[\"another card\",\"you love that computer more than me\"],\"delta\":0,\"remember\":\"he is going to town tomorrow to buy a graphics card\"}", "normal" },
+                    new[] { "spent the whole afternoon at the internet cafe", "{\"msgs\":[\"the internet cafe again\",\"do you love that place more than me [白眼]\"],\"delta\":0,\"remember\":\"he spent the afternoon at the internet cafe\"}", "normal" },
+                    new[] { "hahaha", "{\"msgs\":[\"what are you laughing at, silly\"],\"delta\":0,\"remember\":\"\"}", "normal" },
                     new[] { "was so busy today didn't get to reply", "{\"msgs\":[\"oh\",\"busy with what\"],\"delta\":-1,\"remember\":\"\"}", "distant" },
-                    new[] { "your probability exam is next wednesday right good luck", "{\"msgs\":[\"you remembered!!\",\"dummy I'll do my best [微笑]\"],\"delta\":2,\"remember\":\"\"}", "warm" },
+                    new[] { "your exam is tomorrow right good luck", "{\"msgs\":[\"you remembered!!\",\"dummy I'll do my best [微笑]\"],\"delta\":2,\"remember\":\"\"}", "warm" },
                 }
                 : new List<string[]>
                 {
                     new[] { "在干嘛", "{\"msgs\":[\"刚洗完头\",\"你呢 又在弄电脑？\"],\"delta\":0,\"remember\":\"\"}", "normal" },
-                    new[] { "明天我去县城买显卡", "{\"msgs\":[\"又买显卡\",\"你那电脑比我还亲\"],\"delta\":0,\"remember\":\"他明天去县城买显卡\"}", "normal" },
+                    new[] { "下午一直在网吧", "{\"msgs\":[\"又去网吧\",\"网吧比我还亲是吧[白眼]\"],\"delta\":0,\"remember\":\"他下午一直在网吧\"}", "normal" },
+                    new[] { "哈哈哈", "{\"msgs\":[\"笑什么 傻乎乎的\"],\"delta\":0,\"remember\":\"\"}", "normal" },
                     new[] { "今天太忙了没顾上回你", "{\"msgs\":[\"哦\",\"忙什么\"],\"delta\":-1,\"remember\":\"\"}", "distant" },
-                    new[] { "下周三你考概率论吧 加油", "{\"msgs\":[\"你居然记得！！\",\"笨蛋 我会加油的[微笑]\"],\"delta\":2,\"remember\":\"\"}", "warm" },
+                    new[] { "你明天考试吧 加油", "{\"msgs\":[\"你居然记得！！\",\"笨蛋 我会加油的[微笑]\"],\"delta\":2,\"remember\":\"\"}", "warm" },
                 };
             string want = tier <= GirlfriendTier.Distant ? "distant" : tier >= GirlfriendTier.Warm ? "warm" : "normal";
             int at = shots.FindIndex(x => x[2] == want);
@@ -228,6 +304,21 @@ namespace LingGuangV05.Core.Girlfriend
             var list = new List<KeyValuePair<string, string>>();
             foreach (var x in shots) { list.Add(new KeyValuePair<string, string>("user", x[0])); list.Add(new KeyValuePair<string, string>("assistant", x[1])); }
             return list;
+        }
+
+        /// <summary>
+        /// The few-shots as a block for the end of the system message, labelled as examples of how she writes and
+        /// not as things that happened, so the model copies the voice and the format but not the content.
+        /// </summary>
+        public static string Examples(GirlfriendTier tier, bool english)
+        {
+            var sb = new StringBuilder(english
+                ? "Examples of how you write (only the voice and the format; none of this was really said, never bring it up):\n"
+                : "说话方式的例子（只学语气和格式，这些不是你们真的聊过的内容，不要提起，也不要照抄）：\n");
+            var shots = FewShots(tier, english);
+            for (int i = 0; i + 1 < shots.Count; i += 2)
+                sb.Append(english ? "He: " : "他：").Append(shots[i].Value).Append('\n').Append(english ? "You: " : "你：").Append(shots[i + 1].Value).Append('\n');
+            return sb.ToString().TrimEnd('\n');
         }
 
         /// <summary>The GBNF grammar (design §4.4 draft, §10): 1–3 messages, faces only from the whitelist, delta −2…2.</summary>
@@ -339,12 +430,15 @@ namespace LingGuangV05.Core.Girlfriend
         }
 
         /// <summary>Swear words the small model sometimes reaches for, and what she would say instead (she keeps it PG).</summary>
-        static readonly (string, string)[] Rude = { ("傻逼", "笨蛋"), ("傻B", "笨蛋"), ("煞笔", "笨蛋"), ("卧槽", "天哪"), ("我操", "天哪"), ("他妈的", ""), ("妈的", ""), ("滚", "走开"), ("fuck", "gosh"), ("shit", "ugh") };
+        static readonly (string, string)[] Rude = { ("傻逼", "笨蛋"), ("傻B", "笨蛋"), ("煞笔", "笨蛋"), ("卧槽", "天哪"), ("我操", "天哪"), ("特么", ""), ("尼玛", ""), ("他妈的", ""), ("妈的", ""), ("滚", "走开"), ("fuck", "gosh"), ("shit", "ugh") };
 
-        /// <summary>One bubble as she would type it: no invented faces, no stage directions, no 2016-impossible slang, no trailing full stop.</summary>
+        static readonly System.Text.RegularExpressions.Regex Markup = new System.Text.RegularExpressions.Regex("<[^<>]{0,24}>");
+
+        /// <summary>One bubble as she would type it: no markup, no invented faces, no stage directions, no 2016-impossible slang, no trailing full stop.</summary>
         public static string CleanBubble(string text)
         {
-            text = (text ?? "").Replace('\n', ' ').Trim();
+            // The grammar lets any character through; an HTML or rich-text tag (「<br>」) is not something she types.
+            text = Markup.Replace((text ?? "").Replace('\n', ' '), " ").Replace("<", "").Replace(">", "").Trim();
             text = YYFaces.StripUnknown(text);
             text = Era.EraLexicon.Scrub(text) ?? "";
             // Brackets with actions or thoughts in them: （笑） (sighs).
@@ -358,8 +452,12 @@ namespace LingGuangV05.Core.Girlfriend
             foreach (var w in Rude) { int at; while ((at = text.IndexOf(w.Item1, StringComparison.OrdinalIgnoreCase)) >= 0) text = text.Substring(0, at) + w.Item2 + text.Substring(at + w.Item1.Length); }
             while (text.EndsWith("。", StringComparison.Ordinal) || (text.EndsWith(".", StringComparison.Ordinal) && !text.EndsWith("..", StringComparison.Ordinal))) text = text.Substring(0, text.Length - 1).TrimEnd();
             text = text.Replace("。", " ").Replace("  ", " ").Trim().TrimEnd('，', ',', '、').TrimEnd();
+            text = text.TrimStart('，', ',', '、', '：', ':', ';', '；', '.', ' ').TrimStart();
             if (text.Length > 40) text = text.Substring(0, 40);
-            return text;
+            // Nothing but punctuation left (a stray ":" bubble): nothing to send.
+            bool said = text.IndexOf('[') >= 0;
+            foreach (char c in text) if (char.IsLetterOrDigit(c)) { said = true; break; }
+            return said ? text : "";
         }
     }
 }

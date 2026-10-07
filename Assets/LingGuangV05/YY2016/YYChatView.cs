@@ -44,7 +44,7 @@ namespace LingGuangV05.Desktop.YY
         string peerAvatarId = "";
         string shownChoices = "";
         ScrollRect scroll;
-        TMP_Text peerName, peerSign, typing, meName;
+        TMP_Text peerName, peerSign, typing, meName, memoryLine;
         TMP_InputField input;
         readonly List<RectTransform> contactRows = new List<RectTransform>();
         string lastSignature = "";
@@ -186,6 +186,11 @@ namespace LingGuangV05.Desktop.YY
             peerName.overflowMode = TextOverflowModes.Overflow; peerName.textWrappingMode = TextWrappingModes.NoWrap;
             peerSign = Text(Rect("Sign", header, Vector2.zero, new Vector2(1, 0), new Vector2(66, 4), new Vector2(-180, 24)), "", 13, C.Muted, TextAlignmentOptions.MidlineLeft);
             typing = Text(Rect("Typing", header, new Vector2(1, 0), Vector2.one, new Vector2(-176, 0), new Vector2(-16, 0)), "", 13, C.Muted, TextAlignmentOptions.MidlineRight);
+            // 灵光 only: 「它记得」 (stage 5+) at the bottom right, its persona on its name; both explain themselves on hover.
+            memoryLine = Text(Rect("Memory", header, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-250, 3), new Vector2(-16, 20)), "", 12, C.Muted, TextAlignmentOptions.MidlineRight);
+            memoryLine.textWrappingMode = TextWrappingModes.NoWrap;
+            UiTip.Add(memoryLine, () => LingGuangShown ? hub.LingGuangTalk.MemoryTip() : "");
+            UiTip.Add(peerName, () => LingGuangShown ? hub.LingGuangTalk.PersonaTip() : "");
 
             float bottom = BottomHeight + InputHeight + ToolHeight;
             messageArea = Rect("Messages", main, Vector2.zero, Vector2.one, new Vector2(0, bottom), new Vector2(0, -HeaderHeight));
@@ -342,9 +347,12 @@ namespace LingGuangV05.Desktop.YY
             peerSign.text = (contact.group ? Lang.T("群 · ") : contact.online ? Lang.T("<color=#4CAF50>●</color> 在线 · ") : Lang.T("○ 离线 · ")) + GameText.T(contact.signature, contact.signatureEn);
             if (contact.id == YYChatHub.GirlfriendId && hub.Girlfriend != null) peerSign.text = hub.Girlfriend.StatusLine();
             peerSign.richText = true;
+            string remembers = contact.id == YYChatHub.LingGuangId && hub.LingGuangTalk != null ? hub.LingGuangTalk.MemoryLine() : "";
+            memoryLine.text = remembers;
+            memoryLine.gameObject.SetActive(remembers.Length > 0);
 
             var current = hub.Conversation(contact.id);
-            string signature = contact.id + ":" + current.messages.Count + ":" + FileStates(current) + ":" + GameText.LanguageId + ":" + Mathf.RoundToInt(messageArea.rect.width);
+            string signature = contact.id + ":" + current.messages.Count + ":" + FileStates(current) + ":" + GameText.LanguageId + ":" + Mathf.RoundToInt(messageArea.rect.width) + RatingStamp(contact.id, current);
             if (signature != lastSignature) { lastSignature = signature; BuildMessages(current); }
         }
 
@@ -428,7 +436,46 @@ namespace LingGuangV05.Desktop.YY
             bubble.SetSiblingIndex(probe.transform.GetSiblingIndex());
             var rt = probe.rectTransform;
             rt.offsetMin = new Vector2(left + padX, -y - nameH - padY - th); rt.offsetMax = new Vector2(left + padX + tw, -y - nameH - padY);
+            if (!mine && m.from == YYChatHub.LingGuangId) Rating(m, left + bw + 8, -y - nameH - bh);
             return Mathf.Max(avatar, bh + nameH);
+        }
+
+        // ───────────── 灵光: 赞 / 踩 and its notes ─────────────
+
+        bool LingGuangShown => hub != null && hub.S != null && hub.S.selected == YYChatHub.LingGuangId && hub.LingGuangTalk != null;
+
+        /// <summary>Redraws 灵光's messages when a rating is given or its latest reply becomes rateable.</summary>
+        string RatingStamp(string id, YYConversation conv)
+        {
+            if (id != YYChatHub.LingGuangId || hub.LingGuangTalk == null) return "";
+            int rated = 0; bool open = false;
+            foreach (var m in conv.messages) { if (m.rating != 0) rated++; else if (m.from == id && !open && hub.LingGuangTalk.CanRate(m)) open = true; }
+            return ":r" + rated + (open ? "+" : "");
+        }
+
+        /// <summary>赞 / 踩 beside 灵光's latest reply (each is a tone card in the lab), or what was given before.</summary>
+        void Rating(YYMessage m, float x, float bottom)
+        {
+            var talk = hub.LingGuangTalk;
+            if (m.rating != 0)
+            {
+                Text(Rect("Rated", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(x, bottom), new Vector2(x + 90, bottom + 20)),
+                    m.rating > 0 ? GameText.T("已赞", "Rated up") : GameText.T("已踩", "Rated down"), 12, m.rating > 0 ? C.Online : C.Badge, TextAlignmentOptions.BottomLeft);
+                return;
+            }
+            if (talk == null || !talk.CanRate(m)) return;
+            float w = GameText.IsEnglish ? 52 : 36;
+            for (int i = 0; i < 2; i++)
+            {
+                bool up = i == 0;
+                var b = FlatButton(scrollContent, up ? GameText.T("赞", "Up") : GameText.T("踩", "Down"), () => { talk.Rate(m, up); lastSignature = ""; dirty = true; }, 13, up ? C.Online : C.Badge, Color.white);
+                var r = (RectTransform)b.transform;
+                r.anchorMin = r.anchorMax = new Vector2(0, 1);
+                r.offsetMin = new Vector2(x + i * (w + 6), bottom); r.offsetMax = new Vector2(x + i * (w + 6) + w, bottom + 24);
+                b.name = up ? "RateUp" : "RateDown";
+                var face = b.GetComponent<YYRoundRect>(); face.border = 1; face.borderColor = C.Line;
+                UiTip.Add(r, () => GameText.T("给它这句回复打分：每一下都是一张语气卡，它的语气习惯也跟着学。", "Rate this reply: each one is a tone card, and its tone habits learn from it too."));
+            }
         }
 
         // Exact sender + prewritten-phrase whitelist. byAi only excludes the AI speaking for the player;
@@ -658,18 +705,20 @@ namespace LingGuangV05.Desktop.YY
         void RebuildChoices()
         {
             if (choiceStrip == null) return;
-            bool on = hub.Choices != null && hub.ChoicesFor == hub.S.selected;
-            string signature = on ? string.Join("|", hub.Choices) : "";
+            string target = hub.S.selected;
+            var choices = hub.ChoicesOf(target);
+            bool on = choices != null && choices.Length > 0;
+            string signature = on ? target + ":" + string.Join("|", choices) : "";
             choiceStrip.gameObject.SetActive(on);
             if (signature == shownChoices) return;
             shownChoices = signature;
             for (int i = choiceStrip.childCount - 1; i >= 0; i--) Destroy(choiceStrip.GetChild(i).gameObject);
             if (!on) return;
             float x = 10;
-            foreach (var choice in hub.Choices)
+            foreach (var choice in choices)
             {
                 string text = choice;
-                var b = FlatButton(choiceStrip, text, () => { hub.Send(hub.ChoicesFor, text); stickBottom = true; dirty = true; }, 14, Color.white, C.Mine);
+                var b = FlatButton(choiceStrip, text, () => { hub.Send(target, text); stickBottom = true; dirty = true; }, 14, Color.white, C.Mine);
                 var rt = (RectTransform)b.transform;
                 float width = 28 + text.Length * (GameText.IsEnglish ? 7.5f : 15f);
                 rt.anchorMin = rt.anchorMax = new Vector2(0, .5f);

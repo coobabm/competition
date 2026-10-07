@@ -62,7 +62,10 @@ namespace LingGuangV05.Desktop.XingGuang
             sayText = ui.Text(Rect("Text", say, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -30)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
             sayText.lineSpacing = 12; sayText.overflowMode = TextOverflowModes.Ellipsis;
             var toChat = say.gameObject.AddComponent<Button>(); toChat.transition = Selectable.Transition.None; toChat.targetGraphic = say.GetComponent<Image>();
-            toChat.onClick.AddListener(() => { view.ShowTab("chat"); Fx.Play(XgJuice.Sfx.Id.Click); });
+            // Talking to it happens in YY, which it joins right after its setup; until then the card is all there is.
+            toChat.onClick.AddListener(() => { if (XgYyTalk.Open()) Fx.Play(XgJuice.Sfx.Id.Click); });
+            UiTip.Add(say, () => XgYyTalk.InYY ? T("它最近说的话。点一下去 YY 和它聊。", "What it said last. Click to talk to it on YY.")
+                : T("它最近说的话。它很快会进 YY，到时候在那儿和它聊。", "What it said last. It joins YY soon; you talk to it there."));
 
             // ── right: next ability, strip, actions, feed
             var right = Rect("Right", root, Vector2.zero, Vector2.one, new Vector2(LeftWidth + 14, 0), Vector2.zero);
@@ -264,7 +267,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             double ago = Math.Max(0, Sim.Clock - last.at);
             string when = ago < 120 ? T("刚才", "just now") : ago < 3600 ? T(N(ago / 60, "0") + " 分钟前", N(ago / 60, "0") + " min ago") : T(N(ago / 3600, "0") + " 小时前", N(ago / 3600, "0") + " h ago");
-            sayWho.text = name + " · " + when;
+            sayWho.text = name + " · " + when + (XgYyTalk.InYY ? T("  ·  YY 里回它 ↗", "  ·  reply on YY ↗") : "");
             sayText.text = last.text;
         }
 

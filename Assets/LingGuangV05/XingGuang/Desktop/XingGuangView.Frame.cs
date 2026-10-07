@@ -16,7 +16,8 @@ namespace LingGuangV05.Desktop.XingGuang
     /// The frame of 灵光.exe (lingguang-redesign/index.html): the 52-pixel top bar and the grouped left nav.
     /// Top bar: the AI (a breathing orb, its name, 「能力 n/6 · 当前能力」), the two bars of the main line toward the next
     /// ability (trained parameters P and samples D against the thresholds after the items owned) and ¥, income per
-    /// second, house power and the game clock. Nav: 它 / 养成 / 调度 / 收藏, the locked 终章 row and the 摆渡众包 link.
+    /// second, house power and the game clock. Nav: 它 (概览) / 养成 (训练, 数据, 道具, 科技) / 调度 / 收藏, the locked 终章
+    /// row and the 摆渡众包 link. Talking to it is in YY (XgYyTalk), not in this window.
     /// </summary>
     public sealed partial class XingGuangView
     {
@@ -169,13 +170,13 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── nav ─────────────
 
-        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it). 科技 (tree) is a section of 道具.</summary>
-        public static readonly string[] NavIds = { "home", "chat", "train", "data", "items", "wiring", "repo", "abilities", "cards", "final" };
+        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it).</summary>
+        public static readonly string[] NavIds = { "home", "train", "data", "items", "tree", "wiring", "repo", "abilities", "cards", "final" };
 
         static readonly (string zh, string en, string[] ids)[] NavGroups =
         {
-            ("它", "IT", new[] { "home", "chat" }),
-            ("养成", "RAISE", new[] { "train", "data", "items" }),
+            ("它", "IT", new[] { "home" }),
+            ("养成", "RAISE", new[] { "train", "data", "items", "tree" }),
             ("调度", "RUN", new[] { "wiring", "repo" }),
             ("收藏", "KEEP", new[] { "abilities", "cards", "final" }),
         };
@@ -265,10 +266,9 @@ namespace LingGuangV05.Desktop.XingGuang
             return row;
         }
 
-        /// <summary>The nav row of a page (the guide rings it); 科技 answers with 道具.</summary>
+        /// <summary>The nav row of a page (the guide rings it).</summary>
         public RectTransform NavButton(string id)
         {
-            if (id == "tree") id = "items";
             return id != null && navRows.TryGetValue(id, out var row) ? row.rt : null;
         }
 
@@ -277,10 +277,10 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "home": return T("概览", "Overview");
-                case "chat": return Lang.T("对话");
                 case "train": return Lang.T("训练");
                 case "data": return T("数据", "Data");
                 case "items": return T("道具", "Items");
+                case "tree": return T("科技", "Tech");
                 case "wiring": return T("接线", "Wiring");
                 case "repo": return T("模型仓库", "Models");
                 case "abilities": return T("能力", "Abilities");
@@ -296,12 +296,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "home": return T("概览：它现在会什么、下一项能力还差多少，和最近发生的事。", "Overview: what it can do now, how far the next ability is, and what just happened.");
                 case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
-                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技树」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are in the tech tree.");
+                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
+                case "tree": return T("科技：加宽、加深的上限，数据包，自动化（crontab、守护进程），研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech: width and depth caps, data packs, automation (crontab, daemon), research, the server room and the pre-training secret. Hold a node 0.6 s to buy.");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
                 case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练、预训练和替你回消息都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training, pre-training and replies all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");
                 case "cards": return Lang.T("成就：收集来的闪卡。稀有度越高，卡面越闪：银箔、金箔、镭射、星河，还有转动才看得见的光栅卡。\n有些卡藏在工作以外的地方。");
-                case "chat": return Lang.T("对话：和它说话。阶段越高，它会说的越多。");
                 default: return T("终章：第六项能力「全部放开」以后打开。", "Finale: opens with the sixth ability, 'Everything'.");
             }
         }
@@ -310,8 +310,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
-                case "chat": { int n = tab == "chat" ? 0 : UnreadChat; return n > 0 ? n.ToString() : ""; }
                 case "items": { int n = Items != null ? Items.BuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
+                case "tree": { int n = Items != null ? Items.TreeBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
                 case "repo": { int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0); return fresh > 0 && tab != "repo" ? "+" + fresh : ""; }
                 case "wiring": return (Sim.AjiePending || Sim.Wiring.tripped) && tab != "wiring" ? "!" : "";
                 case "cards": { int n = Sim.NewCards(); return n > 0 ? "+" + n : ""; }
@@ -361,7 +361,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void PaintNavRow(NavRow row)
         {
-            bool on = row.id == tab || row.id == "items" && tab == "tree";
+            bool on = row.id == tab;
             bool open = row.button.interactable;
             row.back.color = on ? XgDark.OnFill : row.hover && open ? new Color32(14, 28, 36, 255) : (Color)new Color32(0, 0, 0, 0);
             row.accent.enabled = on;

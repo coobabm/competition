@@ -89,6 +89,16 @@ namespace LingGuangV05.Desktop.XingGuang
             return n;
         }
 
+        /// <summary>Tech-tree nodes (not items) that can be bought now: the 科技树 link and the 科技 nav row show it.</summary>
+        public int TreeBuyableCount()
+        {
+            int n = 0;
+            if (Sim == null) return 0;
+            foreach (var node in XgCatalog.Nodes)
+                if (!XgItems.IsItem(node.id) && !XgSim.IsAtlas(node) && Sim.NodeVisible(node) && Sim.Status(node, Host) == XgSim.NodeStatus.Buyable) n++;
+            return n;
+        }
+
         /// <summary>The card of an item (coins fly to it when it is bought here).</summary>
         public RectTransform NodeTarget(string id)
         {
@@ -108,9 +118,7 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var c in cards) if (Sim.Has(c.node.id)) owned++;
             header.text = T("道具 · 结构和技巧", "ITEMS · structures and techniques") + "  <color=#3A5566>" + owned + "/" + cards.Count + "</color>";
             motto.text = T("不买也能通关，只是更慢、更贵", "You can finish without them; it is slower and dearer");
-            int treeBuyable = 0;
-            foreach (var n in XgCatalog.Nodes)
-                if (!XgItems.IsItem(n.id) && !XgSim.IsAtlas(n) && Sim.NodeVisible(n) && Sim.Status(n, Host) == XgSim.NodeStatus.Buyable) treeBuyable++;
+            int treeBuyable = TreeBuyableCount();
             treeLink.Set(T("科技树 · 加宽 加深 自动化 ↗", "Tech tree · width, depth, automation ↗") + (treeBuyable > 0 ? "  <color=#FAC775>" + treeBuyable + "</color>" : ""), true, null, XgDark.Link);
             foreach (var c in cards) RefreshCard(c);
         }

@@ -71,8 +71,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var nav = Root(view)?.Find("Nav");
             if (nav == null || string.IsNullOrEmpty(tab)) return null;
-            // The nav rows are built named "Tab id"; 科技 (tree) is a section of the 道具 page.
-            if (tab == "tree") tab = "items";
+            // The nav rows are built named "Tab id".
             return nav.Find("Tab " + tab) as RectTransform;
         }
 

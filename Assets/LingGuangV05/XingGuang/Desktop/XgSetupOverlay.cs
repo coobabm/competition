@@ -120,6 +120,9 @@ namespace LingGuangV05.Desktop.XingGuang
             return i >= 0 ? en[i] : value;
         }
 
+        /// <summary>The setup form or its first 是 / 否 is on screen.</summary>
+        public bool Showing => root != null && root.gameObject.activeSelf;
+
         /// <summary>Shown while the prologue waits for its setup, and once afterwards for the home page.</summary>
         public void Refresh(ChapterOneRuntime runtime)
         {

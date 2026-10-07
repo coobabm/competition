@@ -58,13 +58,13 @@ namespace LingGuangV05.XingGuang
         /// <summary>What each ability opens (the ability table), index = ability.</summary>
         public static readonly string[] AbilityUnlocks =
         {
-            "", "逻辑桌、垃圾短信；摆渡众包手标", "手写数字桌、第一批企业订单、模型仓库", "验证码、表情包桌；它第一次说话；进 YY",
+            "", "逻辑桌、垃圾短信；摆渡众包手标", "手写数字桌、第一批企业订单、模型仓库", "验证码、表情包桌；它在 YY 里说出第一句话",
             "弹幕、标题党、刷单评论；它记住你说过的话", "翻译订单、直播字幕；乱码逐行读出；晴雯代回", "预训练，然后终章",
         };
         public static readonly string[] AbilityUnlocksEn =
         {
             "", "Logic and SMS spam desks; hand labelling on Bodu Crowd", "Digit desk, the first company orders, the model repository",
-            "Captcha and meme desks; its first words; it joins YY", "Danmaku, clickbait and fake-review desks; it remembers what you said",
+            "Captcha and meme desks; its first words in YY", "Danmaku, clickbait and fake-review desks; it remembers what you said",
             "Translation and live-caption orders; the garbled page, line by line; it answers Qingwen for you", "Pre-training, then the finale",
         };
 

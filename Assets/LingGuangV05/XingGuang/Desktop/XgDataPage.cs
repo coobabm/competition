@@ -19,13 +19,20 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed class XgDataPage : XgPage
     {
-        const float RowHeight = 42, OfferHeight = 32;
+        // Laid out at the normal 灵光 window (1236×693, so about 1064 wide here): a dataset is a two-line card, each of its
+        // sources a two-line row under it (source tag, pack name, then samples · wrong labels · download), with the
+        // training switch and the buy button in fixed columns on the right. Nothing is smaller than 13 px.
+        const float RowHeight = 54, OfferHeight = 48, GroupGap = 10, Indent = 46, BarWidth = 8;
+        // Dataset columns, from the row's left edge.
+        const float NameX = 46, SamplesX0 = 470, SamplesX1 = 600, QualityX = 632, QualityBar = 96;
+        // Offer columns: the tag, then the text up to the two buttons on the right.
+        const float TagWidth = 92, UseWidth = 116, BuyWidth = 148, ButtonGap = 8;
 
         sealed class DatasetRow
         {
             public string id;
             public RectTransform rt;
-            public TMP_Text index, name, samples, quality;
+            public TMP_Text index, name, note, samples, quality;
             public RectTransform qualityFill;
             public Image qualityImage;
             public XgBtn label;
@@ -35,7 +42,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             public string id;
             public RectTransform rt;
-            public TMP_Text source, line;
+            public Image tag;
+            public TMP_Text source, name, line;
             public XgBtn buy, use;
         }
 
@@ -57,33 +65,52 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Build(RectTransform area)
         {
             root = Rect("data", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            header = ui.Text(Strip("Header", root, 0, 22, 2, 420), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            header = ui.Text(Strip("Header", root, 0, 24, 2, 460), "", 14, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             header.textWrappingMode = TextWrappingModes.NoWrap; header.characterSpacing = 2;
-            from = ui.Text(Rect("From", root, new Vector2(1, 1), Vector2.one, new Vector2(-420, -22), new Vector2(-2, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
+            from = ui.Text(Rect("From", root, new Vector2(1, 1), Vector2.one, new Vector2(-460, -24), new Vector2(-2, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             from.textWrappingMode = TextWrappingModes.NoWrap;
 
-            var heads = Strip("Columns", root, 28, 24, 0, 0);
+            var heads = Strip("Columns", root, 30, 26, 0, BarWidth + 6);
             Panel(Rect("Rule", heads, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 1)), XgDark.Line).raycastTarget = false;
-            Head(heads, T("数据集", "Dataset"), 46, 420, TextAlignmentOptions.MidlineLeft);
-            Head(heads, T("样本", "Samples"), 430, 560, TextAlignmentOptions.MidlineRight);
-            Head(heads, T("质量", "Quality"), 590, 760, TextAlignmentOptions.MidlineLeft);
+            Head(heads, T("数据集 · 来源", "Dataset · sources"), NameX, SamplesX0 - 10, TextAlignmentOptions.MidlineLeft);
+            Head(heads, T("样本", "Samples"), SamplesX0, SamplesX1, TextAlignmentOptions.MidlineRight);
+            Head(heads, T("质量", "Quality"), QualityX, QualityX + 200, TextAlignmentOptions.MidlineLeft);
+            var right = ui.Text(Rect("Head", heads, new Vector2(1, 0), Vector2.one, new Vector2(-UseWidth - BuyWidth - ButtonGap - 10, 0), new Vector2(-10, 0)), T("训练开关 · 购买", "In training · buy"), 13, XgDark.Muted, TextAlignmentOptions.MidlineRight);
+            right.textWrappingMode = TextWrappingModes.NoWrap;
 
-            list = Rect("List", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -54));
+            list = Rect("List", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -60));
             list.gameObject.AddComponent<RectMask2D>();
             Panel(list, new Color(0, 0, 0, 0));
-            content = Rect("Content", list, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            // The rows leave room for the scroll bar on the right.
+            content = Rect("Content", list, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, new Vector2(-BarWidth - 6, 0));
             content.pivot = new Vector2(.5f, 1);
             scroll = list.gameObject.AddComponent<ScrollRect>();
             scroll.content = content; scroll.viewport = list; scroll.horizontal = false; scroll.vertical = true;
-            scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 30; scroll.inertia = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 40; scroll.inertia = false;
+            scroll.verticalScrollbar = ScrollBar(list);
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             crawler = new XgCrawlerPanel(host, ui, root, () => host.Refresh(true));
+        }
+
+        /// <summary>A slim bar on the list's right edge, shown only when the list is longer than the page.</summary>
+        static Scrollbar ScrollBar(RectTransform list)
+        {
+            var track = Rect("Scrollbar", list, new Vector2(1, 0), Vector2.one, new Vector2(-BarWidth, 0), Vector2.zero);
+            Panel(track, XgDark.Hairline);
+            var area = Rect("Sliding Area", track, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var handle = Rect("Handle", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var face = Panel(handle, XgDark.Line);
+            var bar = track.gameObject.AddComponent<Scrollbar>();
+            bar.handleRect = handle; bar.targetGraphic = face; bar.direction = Scrollbar.Direction.BottomToTop;
+            var colors = bar.colors; colors.highlightedColor = new Color(1.25f, 1.25f, 1.25f); colors.pressedColor = new Color(1.4f, 1.4f, 1.4f); bar.colors = colors;
+            return bar;
         }
 
         public override void Tick(float dt) { crawler?.Tick(dt); }
 
         void Head(RectTransform parent, string text, float x0, float x1, TextAlignmentOptions align)
         {
-            var t = ui.Text(Rect("Head", parent, Vector2.zero, new Vector2(0, 1), new Vector2(x0, 0), new Vector2(x1, 0)), text, 12, XgDark.Muted, align);
+            var t = ui.Text(Rect("Head", parent, Vector2.zero, new Vector2(0, 1), new Vector2(x0, 0), new Vector2(x1, 0)), text, 13, XgDark.Muted, align);
             t.textWrappingMode = TextWrappingModes.NoWrap;
         }
 
@@ -135,12 +162,16 @@ namespace LingGuangV05.Desktop.XingGuang
             int index = 0;
             foreach (var (ds, offers) in shown)
             {
+                float top = y;
                 datasetRows.Add(MakeDataset(ds, ++index, y));
                 y += RowHeight;
                 foreach (var o in offers) { offerRows.Add(MakeOffer(o, y)); y += OfferHeight; }
-                y += 6;
+                // A thin rail down the left ties the sources to their dataset.
+                if (offers.Count > 0)
+                    Panel(Rect("Rail " + ds.id, content, new Vector2(0, 1), new Vector2(0, 1), new Vector2(Indent - 18, -(y - OfferHeight / 2)), new Vector2(Indent - 16, -(top + RowHeight))), XgDark.Line).raycastTarget = false;
+                y += GroupGap;
             }
-            content.sizeDelta = new Vector2(0, y);
+            content.sizeDelta = new Vector2(content.sizeDelta.x, y);
         }
 
         DatasetRow MakeDataset(XgDataset ds, int index, float y)
@@ -149,20 +180,22 @@ namespace LingGuangV05.Desktop.XingGuang
             r.rt = Strip("Dataset " + ds.id, content, y, RowHeight, 0, 0);
             Panel(r.rt, XgDark.Card).raycastTarget = false;
             Panel(Rect("Rule", r.rt, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 1)), XgDark.Hairline).raycastTarget = false;
-            r.index = ui.Text(Rect("Index", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(40, 0)), index.ToString(), 13, XgDark.Dim, TextAlignmentOptions.MidlineLeft);
-            r.name = ui.Text(Rect("Name", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(46, 0), new Vector2(420, 0)), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            r.index = ui.Text(Rect("Index", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(40, 0)), index.ToString(), 14, XgDark.Dim, TextAlignmentOptions.MidlineLeft);
+            r.name = ui.Text(Rect("Name", r.rt, new Vector2(0, .5f), new Vector2(0, 1), new Vector2(NameX, -2), new Vector2(SamplesX0 - 10, -6)), "", 16, XgDark.Ink, TextAlignmentOptions.BottomLeft);
             r.name.textWrappingMode = TextWrappingModes.NoWrap; r.name.overflowMode = TextOverflowModes.Ellipsis;
-            r.samples = ui.Text(Rect("Samples", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(430, 0), new Vector2(560, 0)), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineRight);
+            r.note = ui.Text(Rect("Note", r.rt, Vector2.zero, new Vector2(0, .5f), new Vector2(NameX, 6), new Vector2(SamplesX0 - 10, -1)), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
+            r.note.textWrappingMode = TextWrappingModes.NoWrap; r.note.overflowMode = TextOverflowModes.Ellipsis;
+            r.samples = ui.Text(Rect("Samples", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(SamplesX0, 0), new Vector2(SamplesX1, 0)), "", 16, XgDark.Ink, TextAlignmentOptions.MidlineRight);
             r.samples.textWrappingMode = TextWrappingModes.NoWrap;
-            var track = Rect("Quality", r.rt, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(590, -4), new Vector2(690, 4));
+            var track = Rect("Quality", r.rt, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(QualityX, -4), new Vector2(QualityX + QualityBar, 4));
             r.qualityFill = Bar(track, "Fill", XgDark.Track, XgDark.Data);
             r.qualityImage = r.qualityFill.GetComponent<Image>();
-            r.quality = ui.Text(Rect("QualityText", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(698, 0), new Vector2(760, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            r.quality = ui.Text(Rect("QualityText", r.rt, Vector2.zero, new Vector2(0, 1), new Vector2(QualityX + QualityBar + 8, 0), new Vector2(QualityX + QualityBar + 64, 0)), "", 14, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             r.quality.textWrappingMode = TextWrappingModes.NoWrap;
             string id = ds.id;
-            r.label = ui.Button(r.rt, "", () => GoLabel(id), 13);
+            r.label = ui.Button(r.rt, "", () => GoLabel(id), 14);
             r.label.rt.anchorMin = r.label.rt.anchorMax = new Vector2(1, .5f);
-            r.label.rt.offsetMin = new Vector2(-104, -14); r.label.rt.offsetMax = new Vector2(-10, 14);
+            r.label.rt.offsetMin = new Vector2(-BuyWidth - 10, -15); r.label.rt.offsetMax = new Vector2(-10, 15);
             UiTip.Add(r.rt, () => DatasetTip(id));
             return r;
         }
@@ -170,18 +203,26 @@ namespace LingGuangV05.Desktop.XingGuang
         OfferRow MakeOffer(XgDataOffer o, float y)
         {
             var r = new OfferRow { id = o.id };
-            r.rt = Strip("Offer " + o.id, content, y, OfferHeight, 46, 0);
-            r.source = ui.Text(Rect("Source", r.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(72, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            r.source.textWrappingMode = TextWrappingModes.NoWrap;
-            r.line = ui.Text(Rect("Line", r.rt, Vector2.zero, Vector2.one, new Vector2(76, 0), new Vector2(-226, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            r.rt = Strip("Offer " + o.id, content, y, OfferHeight, Indent, 0);
+            Panel(r.rt, new Color(0, 0, 0, 0));
+            Panel(Rect("Rule", r.rt, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 1)), XgDark.Hairline).raycastTarget = false;
+            // The source as a tag: 公开 / 淘货杂包 / 众包 / 剧情 / 爬虫, in its colour.
+            var tag = Rect("Tag", r.rt, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(0, -12), new Vector2(TagWidth, 12));
+            r.tag = Panel(tag, XgDark.Panel3); r.tag.raycastTarget = false;
+            r.source = ui.Text(Rect("Source", tag, Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.Center);
+            r.source.textWrappingMode = TextWrappingModes.NoWrap; r.source.overflowMode = TextOverflowModes.Ellipsis;
+            float textRight = UseWidth + BuyWidth + ButtonGap + 20;
+            r.name = ui.Text(Rect("Name", r.rt, new Vector2(0, .5f), Vector2.one, new Vector2(TagWidth + 12, 0), new Vector2(-textRight, -4)), "", 15, XgDark.Ink, TextAlignmentOptions.BottomLeft);
+            r.name.textWrappingMode = TextWrappingModes.NoWrap; r.name.overflowMode = TextOverflowModes.Ellipsis;
+            r.line = ui.Text(Rect("Line", r.rt, Vector2.zero, new Vector2(1, .5f), new Vector2(TagWidth + 12, 4), new Vector2(-textRight, -1)), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
             r.line.textWrappingMode = TextWrappingModes.NoWrap; r.line.overflowMode = TextOverflowModes.Ellipsis;
             string id = o.id;
-            r.use = ui.Button(r.rt, "", () => ToggleUse(id), 12);
+            r.use = ui.Button(r.rt, "", () => ToggleUse(id), 13);
             r.use.rt.anchorMin = r.use.rt.anchorMax = new Vector2(1, .5f);
-            r.use.rt.offsetMin = new Vector2(-218, -12); r.use.rt.offsetMax = new Vector2(-120, 12);
-            r.buy = ui.Button(r.rt, "", () => Buy(id, r.buy.rt), 13);
+            r.use.rt.offsetMin = new Vector2(-BuyWidth - ButtonGap - UseWidth - 10, -14); r.use.rt.offsetMax = new Vector2(-BuyWidth - ButtonGap - 10, 14);
+            r.buy = ui.Button(r.rt, "", () => Buy(id, r.buy.rt), 14);
             r.buy.rt.anchorMin = r.buy.rt.anchorMax = new Vector2(1, .5f);
-            r.buy.rt.offsetMin = new Vector2(-114, -12); r.buy.rt.offsetMax = new Vector2(-10, 12);
+            r.buy.rt.offsetMin = new Vector2(-BuyWidth - 10, -14); r.buy.rt.offsetMax = new Vector2(-10, 14);
             UiTip.Add(r.rt, () => { var live = Sim.Offer(id); return live != null ? XgDataUi.OfferTip(Sim, live) : ""; });
             return r;
         }
@@ -200,25 +241,39 @@ namespace LingGuangV05.Desktop.XingGuang
             if (ds.dataWeight < 1) note.Append(note.Length > 0 ? " · " : "").Append(T("计入总样本 ×", "counts ×")).Append(N(ds.dataWeight, "0.##"));
             var download = XgDataUi.ActiveDownload(Sim, r.id);
             if (download != null) note.Append(note.Length > 0 ? " · " : "").Append(T("下载中 ", "downloading ")).Append(N(download.downloadProgress * 100, "0")).Append('%');
-            r.name.text = T(ds.name, ds.nameEn) + (note.Length > 0 ? "  <size=12><color=#6F95A5>· " + note + "</color></size>" : "");
+            r.name.text = T(ds.name, ds.nameEn);
+            if (note.Length == 0)
+            {
+                // Nothing to warn about: where its samples came from instead.
+                double extra = Sim.ExtraSamples(r.id);
+                note.Append(T("亲手标 ", "by hand ")).Append(Samples(Sim.Labels(r.id)));
+                if (extra >= 1) note.Append(" · ").Append(T("众包 / 日志 ", "crowd / logs ")).Append(Samples(extra));
+            }
+            r.note.text = note.ToString();
             r.samples.text = XgSim.SamplesText(Sim.Samples(r.id));
             // Quality: the share of rows labelled right, less a meme drift's lost points.
             float q = Mathf.Clamp01((float)(1 - noise - Sim.MemeDriftPenalty(r.id)));
             SetBar(r.qualityFill, q);
             r.qualityImage.color = q >= .9f ? XgDark.Data : XgDark.Hot;
             r.quality.text = N(q * 100, "0") + "%";
+            r.quality.color = q >= .9f ? XgDark.Muted : XgDark.Hot;
             bool desk = XgCatalog.Desk(r.id) != null;
             r.label.Show(desk);
-            if (desk) r.label.Set(T("去做题", "Label"), Sim.DeskOpen(r.id), null, XgDark.Link);
+            if (desk) r.label.Set(T("去做题 ↗", "Label ↗"), Sim.DeskOpen(r.id), null, XgDark.Link);
         }
 
         void RefreshOffer(OfferRow r)
         {
             var o = Sim.Offer(r.id);
             if (o == null) return;
-            r.source.text = "[" + o.SourceLabel(Sim.English) + "]";
-            r.source.color = o.source == XgDataSource.Junk ? XgDark.Hot : o.source == XgDataSource.Crowd ? XgDark.Link : o.source == XgDataSource.Story ? XgDark.Params : o.source == XgDataSource.Crawl ? XgDark.Good : XgDark.Data;
-            string line = "<color=#D6EEF5>" + o.Name(Sim.English) + "</color>  " + XgDataUi.SourceLine(o);
+            r.source.text = o.SourceLabel(Sim.English);
+            var tint = o.source == XgDataSource.Junk ? XgDark.Hot : o.source == XgDataSource.Crowd ? XgDark.Link : o.source == XgDataSource.Story ? XgDark.Params : o.source == XgDataSource.Crawl ? XgDark.Good : XgDark.Data;
+            r.source.color = tint;
+            r.tag.color = Color.Lerp(XgDark.Panel3, tint, .16f);
+            r.name.text = o.Name(Sim.English) + (o.isNew && !o.owned ? "  <color=#FAC775>" + T("新", "new") + "</color>" : "");
+            // The detail line: SourceLine without its source label, which the tag already shows.
+            string line = XgDataUi.SourceLine(o), prefix = o.SourceLabel(Sim.English) + " · ";
+            if (line.StartsWith(prefix, StringComparison.Ordinal)) line = line.Substring(prefix.Length);
             if (!o.owned && !o.available && o.lockedReason.Length > 0) line += "  <color=#E07B4F>" + T(o.lockedReason, o.lockedReasonEn) + "</color>";
             r.line.text = line;
             // Buy / speed up / post or withdraw / owned.

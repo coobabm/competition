@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>
     /// 「她爱我吗」 (design 女友系统与YY里的AI §6). Stage 5 on, once the chat with 林晴雯 is long enough (≥ 60 lines over
     /// ≥ 7 days, <see cref="LoveStats"/>) and she sent a cold signal in the last 48 hours, the inner voice wonders and
-    /// the 对话 page offers 「她……爱我吗？」 (XgChatPage.Love.cs). It asks to read the chats first (【读吧】【算了】,
+    /// its YY conversation offers 「她……爱我吗？」 as a choice (XgYyTalk). It asks to read the chats first (【读吧】【算了】,
     /// XgSim.Love.cs); then this plays, over the whole desktop, with every number taken from the save:
     /// ① her lines stream in like tokens under 「N 条 · D 天」; ② attention links light four real messages with their
     /// timestamps; ③ three mini charts (her reply delay, who said goodnight first, her length and emoji, by week);
@@ -198,11 +198,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>
         /// Before stage 5: right after she says something, once she has sent a few messages, he has the sudden idea of
-        /// asking the AI. It can only answer 是 or 否, which is exactly why the idea is tempting.
+        /// asking the AI. It can only answer 是 or 否, which is exactly why the idea is tempting. The question is asked in
+        /// YY, so this waits until the AI has joined YY (right after its setup).
         /// </summary>
         void CheckEarly(XgSim sim)
         {
-            if (sim.Profile.name.Length == 0 || !TryHub(out _, out var gf, out var conv) || !gf.started || gf.herMessages < 3) return;
+            if (sim.Profile.name.Length == 0 || !XgYyTalk.InYY || !TryHub(out _, out var gf, out var conv) || !gf.started || gf.herMessages < 3) return;
             double now = runtime.Sim.S.gameSeconds;
             if (gf.herLastGame <= 0 || now - gf.herLastGame > EarlyWonderWindow) return;
             if (!CanPlay() || InnerVoice.Busy || Held()) return;
@@ -223,11 +224,7 @@ namespace LingGuangV05.Desktop.XingGuang
             InnerVoice.Say("问问它？", "Ask it?", 2f, () =>
             {
                 if (!ReferenceEquals(sim, bound) || !sim.OfferLoveHint()) return;
-                var view = lab != null ? lab.View : null;
-                if (view == null || !view.Visible) return;
-                view.Refresh(true);
-                var tab = XgGuideHighlight.TabButton(view, "chat");
-                if (tab != null) XgGuideHighlight.Pulse(tab, 5f);
+                XgYyTalk.Point();
             });
         }
 
@@ -252,11 +249,7 @@ namespace LingGuangV05.Desktop.XingGuang
             InnerVoice.Say("……要不，问问它？", "…Maybe I should ask it?", 2.4f, () =>
             {
                 if (!ReferenceEquals(sim, bound) || !sim.OfferLoveHint()) return;
-                var view = lab != null ? lab.View : null;
-                if (view == null || !view.Visible) return;
-                view.Refresh(true);
-                var tab = XgGuideHighlight.TabButton(view, "chat");
-                if (tab != null) XgGuideHighlight.Pulse(tab, 5f);
+                XgYyTalk.Point();
             });
         }
 
@@ -897,7 +890,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>
         /// QA: fills her chat with <paramref name="lines"/> lines over 12 calendar days ending in a cold 「哦」, sets her
         /// affection, marks a cold signal now and lifts the lab to stage 5 if it is lower. The trigger then fires on
-        /// its own within a second or two (inner voice, then the chip on the 对话 page).
+        /// its own within a second or two (inner voice, then the choice in its YY conversation).
         /// Call from the editor console in Play mode, e.g. through unityMCP execute_code:
         /// <c>LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.QaSeed(48);</c>
         /// </summary>

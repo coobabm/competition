@@ -123,7 +123,7 @@ namespace LingGuangV05.Desktop.Story
             OriginCurtain.Install(this);
             // The protagonist's own idea that the model could label for them: thoughts, then the forum cutscene.
             AutoLabelEpiphany.Install(this);
-            // Stage 3: the AI reads YY's chat history and joins YY as a contact (design 女友系统与YY里的AI §5).
+            // Right after its setup (stage 1): the AI reads YY's chat history and joins YY as a contact (design 女友系统与YY里的AI §5).
             AiJoinsYy.Install(this);
             // Stage 5: 「她……爱我吗？」, the AI reads the chats with her and answers 是 or 否 (女友系统 §6).
             LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Install(this);

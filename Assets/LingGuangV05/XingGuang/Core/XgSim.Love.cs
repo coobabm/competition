@@ -6,7 +6,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>「她爱我吗」 (女友系统 §6): what the lab remembers about the question. Saved with the lab.</summary>
     public sealed partial class XgState
     {
-        /// <summary>The inner voice wondered and the 对话 page offers 「她……爱我吗？」 from now on.</summary>
+        /// <summary>The inner voice wondered and its YY conversation offers 「她……爱我吗？」 from now on.</summary>
         public bool loveOffered;
         /// <summary>0 never asked, 1 you let it read the chat (ever), -1 you said 【算了】 and never let it.</summary>
         public int loveConsent;
@@ -46,7 +46,7 @@ namespace LingGuangV05.XingGuang
         public bool LoveCoolingDown => S.loveAskedDay > 0 && LoveToday - (S.loveAskedDay - 1) < LoveCooldownDays;
 
         /// <summary>
-        /// The chip on the 对话 page: offered, not waiting for consent or a verdict, and not cooling down. Before stage 5
+        /// The suggested question in its YY conversation: offered, not waiting for consent or a verdict, and not cooling down. Before stage 5
         /// it can be asked too; the answer is then just 是 or 否 (see <see cref="LoveReply"/>).
         /// </summary>
         public bool OfferLoveQuestion => S.loveOffered && !S.loveAwaitingConsent && !LoveVerdictPending && (S.stage < LoveStage || !LoveCoolingDown);

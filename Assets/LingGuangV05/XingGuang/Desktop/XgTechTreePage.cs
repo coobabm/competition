@@ -101,12 +101,8 @@ namespace LingGuangV05.Desktop.XingGuang
             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
             skin = XgTechTreeSkin.Load();
             root = ui.Card(area, "tree", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            // 科技 is a section of 道具: the way back sits before the title.
-            var back = ui.Button(root, T("← 道具", "← Items"), () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab("items"); }, 13);
-            PlaceTopLeft(back, 12, 8, 84, 30);
-            back.rt.gameObject.name = "BackToItems";
-            back.Set(T("← 道具", "← Items"), true, null, XgDark.Link);
-            header = ui.Text(Strip("Header", root, 8, 30, 106, 520), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            // 科技 has its own nav row (养成), so the page needs no way back to 道具.
+            header = ui.Text(Strip("Header", root, 8, 30, 16, 520), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             viewport = Rect("Viewport", root, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -78));
             viewport.gameObject.AddComponent<CanvasRenderer>();
             var grid = viewport.gameObject.AddComponent<XgGridGraphic>(); grid.color = XgDark.Page;

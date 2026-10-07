@@ -9,7 +9,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>
     /// Turns the crowd-labelling firsts (the model's first money, the first fine, report, 金标题, captcha, new meme,
     /// SLA result, hiring 阿杰) into the protagonist's inner voice, once per save, and lets the AI ask its stage-5
-    /// question in the 对话 log. Attaches itself next to the 灵光 controller at scene load. Presentation only: the
+    /// question in its chat log (shown in YY, XgYyTalk). Attaches itself next to the 灵光 controller at scene load. Presentation only: the
     /// lines and the once-only bookkeeping live in <see cref="XgSim.TakeAfterthought"/>.
     /// </summary>
     public sealed class XgAfterthoughtRelay : MonoBehaviour
@@ -38,8 +38,9 @@ namespace LingGuangV05.Desktop.XingGuang
             sincePoll += Time.unscaledDeltaTime;
             if (sincePoll < ReflectionPoll || bound.OfflineSimulation) return;
             sincePoll = 0;
-            if (bound.TakeReflectionLine() != null)
-                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, Lang.T("对话页有一条新消息。"), 5f);
+            // In YY the line arrives as a YY message with its own notification; without YY it waits on 概览.
+            if (bound.TakeReflectionLine() != null && !XgYyTalk.InYY)
+                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f);
         }
 
         void Rebind(XgSim sim)

@@ -9,39 +9,40 @@ using AppNames = LingGuangV05.Core.AppNames;
 namespace LingGuangV05.Desktop.LLM
 {
     /// <summary>
-    /// The request for 林晴雯's reply (design §4): her system prompt (GirlfriendPromptText), the few-shots, the last
+    /// The request for 林晴雯's reply (design §4): her system prompt (GirlfriendPromptText) with the few-shots, the last
     /// 12 chat lines (her bubbles regrouped into the JSON she answers in), and the sampler of §4.4 with the GBNF
     /// grammar. Also the prompt for 「让 灵光 代我回」, which answers her in the lab AI's own persona.
     /// </summary>
     public static class GirlfriendPrompt
     {
-        /// <summary>§4.4: temperature .8, repeat 1.1, presence .3, DRY on, the grammar.</summary>
+        /// <summary>§4.4: temperature .8, repeat 1.1, presence and frequency penalties against reused words, DRY on, the grammar.</summary>
         public static XgSampling Sampling()
         {
             return new XgSampling
             {
                 grammar = GirlfriendPromptText.Grammar(), topP = .9f, topK = 40,
-                presencePenalty = GirlfriendPromptText.PresencePenalty, frequencyPenalty = 0, repeatPenalty = GirlfriendPromptText.RepeatPenalty,
+                presencePenalty = GirlfriendPromptText.PresencePenalty, frequencyPenalty = GirlfriendPromptText.FrequencyPenalty, repeatPenalty = GirlfriendPromptText.RepeatPenalty,
                 repeatLastN = 256, dryMultiplier = .6f,
             };
         }
 
         /// <summary>
-        /// The cached start of every request for her (LlmPromptLayout): the stable system prompt and the few-shots.
-        /// LlmWarmup sends exactly this ahead of time.
+        /// The cached start of every request for her (LlmPromptLayout): the stable system prompt with the few-shots as
+        /// labelled examples at its end (as chat turns the small model took them for real history and repeated their
+        /// content). LlmWarmup sends exactly this ahead of time.
         /// </summary>
         public static List<KeyValuePair<string, string>> Prefix(GirlfriendState s, GfNow now, bool english)
         {
-            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", GirlfriendPromptText.Stable(s, now, english)) };
-            list.AddRange(GirlfriendPromptText.FewShots(GirlfriendRules.Tier(s), english));
-            return list;
+            string system = GirlfriendPromptText.Stable(s, now, english) + "\n\n" + GirlfriendPromptText.Examples(GirlfriendRules.Tier(s), english);
+            return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", system) };
         }
 
         /// <summary>
         /// Stable system prompt, few-shots and recent history; the per-message state (clock, mood, memories, plans,
-        /// situation) goes in front of his latest line. A proactive message ends on a nudge instead of his line.
+        /// her life these days, situation, this turn's note and a retry's <paramref name="hint"/>) goes in front of
+        /// his latest line. A proactive message ends on a nudge instead of his line.
         /// </summary>
-        public static List<KeyValuePair<string, string>> Messages(YYConversation conv, GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, bool proactive)
+        public static List<KeyValuePair<string, string>> Messages(YYConversation conv, GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, bool proactive, string hint = null)
         {
             // His latest line picks which of her memories she is reminded of.
             string latest = null;
@@ -67,7 +68,9 @@ namespace LingGuangV05.Desktop.LLM
             if (list.Count > first && list[first].Key == "assistant") list.RemoveAt(first);
             if (proactive || list[list.Count - 1].Key != "user")
                 list.Add(new KeyValuePair<string, string>("user", english ? "(He has not said anything. You message him first.)" : "（他没说话。你主动发一条消息。）"));
-            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, GirlfriendPromptText.State(s, now, a, english, situation, latest), english, english ? "[His message]" : "【他发来的】");
+            string state = GirlfriendPromptText.State(s, now, a, english, situation, latest) + "\n" + GirlfriendPromptText.Nudge(s, latest, english, proactive);
+            if (!string.IsNullOrEmpty(hint)) state += "\n" + hint;
+            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state, english, english ? "[His message]" : "【他发来的】");
             return list;
         }
 

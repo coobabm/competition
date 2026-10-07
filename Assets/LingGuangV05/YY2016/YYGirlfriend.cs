@@ -49,7 +49,7 @@ namespace LingGuangV05.Desktop.YY
         int typingLine, phase;
         float phaseUntil;
         bool generating, replyPending;
-        double replyAtGame;
+        double replyAtGame, askAtGame, holdUntilGame;
         GfTurn pendingTurn;
         string pendingSituation = "";
         string[] pendingScripted;
@@ -106,8 +106,8 @@ namespace LingGuangV05.Desktop.YY
             StepTyping(g);
             if (typing == null && !generating)
             {
-                if (outbox.Count > 0 && act.Present) StartBatch(outbox.Dequeue());
-                else if (outbox.Count == 0 && replyPending && now.game >= replyAtGame && act.Present) Reply(g, now, act);
+                if (outbox.Count > 0 && act.Present && now.game >= holdUntilGame) StartBatch(outbox.Dequeue());
+                else if (outbox.Count == 0 && replyPending && now.game >= askAtGame && act.Present && !WaitForModel(now)) Reply(g, now, act);
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
             GuaranteeRefusal(g);
@@ -133,7 +133,7 @@ namespace LingGuangV05.Desktop.YY
         void Rebind(GirlfriendState g)
         {
             bound = g;
-            outbox.Clear(); typing = null; generating = false; replyPending = false; pendingTurn = null; pendingScripted = null; pendingAfter = null;
+            outbox.Clear(); typing = null; generating = false; replyPending = false; pendingTurn = null; pendingScripted = null; pendingAfter = null; holdUntilGame = 0;
             caughtPending = false; aiInFlight = false; aiDueGame = -1;
             hub.GirlfriendTyping = false;
         }
@@ -270,6 +270,8 @@ namespace LingGuangV05.Desktop.YY
             if (!replyPending)
             {
                 replyAtGame = now.game + GirlfriendRules.ReplyDelay(g, GirlfriendRules.Schedule(g, now));
+                // Her words are asked for a little early, so the model's time is spent inside her delay.
+                askAtGame = GirlfriendReplyPolicy.AskAt(now.game, replyAtGame);
                 replyPending = true;
                 pendingAfter = null;
             }
@@ -287,10 +289,21 @@ namespace LingGuangV05.Desktop.YY
             for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == YYChatHub.Me) { conv.messages[i].byAi = true; break; }
         }
 
-        /// <summary>Time to answer him: a discovered AI reply, a scripted outcome, or the model (offline: the line library).</summary>
+        /// <summary>The model is still booting and her reply is not long overdue: wait for it rather than go offline.</summary>
+        bool WaitForModel(GfNow now)
+        {
+            var llm = LocalLlm.Instance;
+            return llm != null && GirlfriendReplyPolicy.WaitForBoot(llm.State == LocalLlm.Status.Starting, now.game, replyAtGame);
+        }
+
+        /// <summary>
+        /// Time to answer him: a discovered AI reply, a scripted outcome, or the model (offline: the line library).
+        /// Called a little before the reply is due; what it queues is held until <see cref="replyAtGame"/>.
+        /// </summary>
         void Reply(GirlfriendState g, GfNow now, GfActivity act)
         {
             replyPending = false;
+            holdUntilGame = replyAtGame;
             var turn = pendingTurn; var situation = pendingSituation; var scripted = pendingScripted; var after = pendingAfter; bool ruled = pendingRuleDecided;
             pendingTurn = null; pendingSituation = ""; pendingScripted = null; pendingAfter = null; pendingRuleDecided = false;
             if (caughtPending)
@@ -324,30 +337,62 @@ namespace LingGuangV05.Desktop.YY
             b.lines.Add(Lang.T("嗯"));
         }
 
-        /// <summary>Asks the local model for her words; falls back to <paramref name="fallback"/> or the line library.</summary>
+        /// <summary>
+        /// Asks the local model for her words; falls back to <paramref name="fallback"/> or the line library only when
+        /// the model is not running, the request fails or times out, or a retry was also unusable
+        /// (GirlfriendReplyPolicy). A busy server is no reason: the request waits on her own seat.
+        /// </summary>
         void Generate(GirlfriendState g, GfNow now, GfActivity act, string situation, GfTurn turn, bool ruled, bool proactive, string[] fallback, Action after, string topic = "")
         {
             var llm = LocalLlm.Instance;
-            var conv = Conv;
-            bool english = English;
-            if (llm == null || !llm.Ready || llm.ChatBusy && llm.ActiveChats > 1)
+            if (llm == null || !GirlfriendReplyPolicy.AskModel(llm.Ready))
             {
+                LogReply(proactive, "offline:notready");
                 Offline(g, now, proactive, fallback, after, topic);
                 return;
             }
             generating = true;
+            Ask(llm, g, act, situation, turn, ruled, proactive, fallback, after, topic, 0, null);
+        }
+
+        /// <summary>
+        /// One request on her own seat: a reply to him in the visible lane, a message she starts herself in the
+        /// background lane. Broken JSON or a repeat is asked once more, hotter and with a 「换个说法」 hint in the state
+        /// block; a second failure, no answer at all or the request's timeout fall back to the library.
+        /// </summary>
+        void Ask(LocalLlm llm, GirlfriendState g, GfActivity act, string situation, GfTurn turn, bool ruled, bool proactive, string[] fallback, Action after, string topic, int attempt, string hint)
+        {
             var expected = g;
-            var messages = GirlfriendPrompt.Messages(conv, g, now, act, english, situation, proactive);
-            llm.Chat(messages, GirlfriendPromptText.MaxTokens, GirlfriendPromptText.Temperature, raw =>
+            bool english = English;
+            var messages = GirlfriendPrompt.Messages(Conv, g, Now, act, english, situation, proactive, hint);
+            llm.Chat(messages, GirlfriendPromptText.MaxTokens, GirlfriendReplyPolicy.Temperature(attempt), raw =>
             {
                 if (!ReferenceEquals(G, expected)) return;
+                var r = raw != null ? GirlfriendPromptText.Parse(raw) : null;
+                var repeated = r != null ? Repeated(r.msgs) : null;
+                var verdict = GirlfriendReplyPolicy.Judge(raw != null, r, repeated != null && repeated.Count > 0, attempt);
+                if (verdict == GfReplyVerdict.Retry)
+                {
+                    var current = LocalLlm.Instance;
+                    if (current != null && current.Ready)
+                    {
+                        Ask(current, g, act, situation, turn, ruled, proactive, fallback, after, topic, attempt + 1, GirlfriendReplyPolicy.RetryHint(english, r == null, repeated));
+                        return;
+                    }
+                    verdict = GfReplyVerdict.Fallback;
+                }
                 generating = false;
-                var r = GirlfriendPromptText.Parse(raw);
-                if (r == null || Repeats(g, r.msgs)) { Offline(g, Now, proactive, fallback, after, topic); return; }
+                if (verdict == GfReplyVerdict.Fallback)
+                {
+                    LogReply(proactive, raw == null ? "offline:failed" : r == null ? "offline:parse" : "offline:repeat");
+                    Offline(g, Now, proactive, fallback, after, topic);
+                    return;
+                }
+                LogReply(proactive, attempt > 0 ? "model:retry" : "model");
                 if (turn != null && !ruled) GirlfriendRules.ApplyModelDelta(g, turn, r.delta);
                 if (turn != null)
                 {
-                    GirlfriendRules.RememberHim(g, r.remember);
+                    if (WorthRemembering(g, r.remember)) GirlfriendRules.RememberHim(g, r.remember);
                     // A quarrel starting or ending on this line (ApplyModelDelta) is a first-time thought.
                     foreach (var e in turn.events) if (e.kind == GfEventKind.Voice) Voice(e.key);
                     turn.events.Clear();
@@ -361,30 +406,71 @@ namespace LingGuangV05.Desktop.YY
             }, false, GirlfriendPrompt.Sampling(), LingGuangV05.Core.Chat.LlmSeat.Girlfriend, proactive ? LingGuangV05.Core.Chat.LlmLane.Background : LingGuangV05.Core.Chat.LlmLane.Visible);
         }
 
+        /// <summary>Where each of her generated replies came from, newest last ("r:" a reply, "p:" her own message). Play QA reads it; not saved.</summary>
+        public readonly List<string> ReplyLog = new List<string>();
+
+        void LogReply(bool proactive, string source)
+        {
+            ReplyLog.Add((proactive ? "p:" : "r:") + source);
+            if (ReplyLog.Count > 200) ReplyLog.RemoveAt(0);
+        }
+
         void Offline(GirlfriendState g, GfNow now, bool proactive, string[] fallback, Action after, string topic)
         {
             generating = false;
             if (fallback != null) { if (proactive) QueueLines(fallback, true, after); else QueueReply(g, fallback, after); return; }
             var b = new Batch { proactive = proactive, after = after };
-            b.lines.AddRange(topic.Length > 0 ? GirlfriendLines.Topic(topic, English) : GirlfriendLines.Pick(g, now.clock, English, XgSpeechPolicy.Similar));
+            b.lines.AddRange(topic.Length > 0
+                ? GirlfriendLines.Topic(topic, English, g, XgSpeechPolicy.Similar)
+                : GirlfriendLines.Pick(g, now.clock, English, XgSpeechPolicy.Similar, proactive ? null : LatestFromHim()));
             Hesitation(g, b);
             outbox.Enqueue(b);
         }
 
-        /// <summary>A model line like one of her last few reads like a bot: use the library instead.</summary>
-        bool Repeats(GirlfriendState g, List<string> msgs)
+        /// <summary>
+        /// The model's 「remember」 is kept only when it is new: not like a memory she already has (it tends to write
+        /// the same plan down every turn), and not a non-event (「他没提…」) or plain affection, which crowded out the
+        /// eight memory slots of her prompt and made her circle back to the same topic.
+        /// </summary>
+        static bool WorthRemembering(GirlfriendState g, string remember)
+        {
+            remember = (remember ?? "").Trim();
+            if (remember.Length < 2) return false;
+            foreach (var w in new[] { "没提", "没说", "没有提", "想我", "想你", "didn't mention", "did not mention", "misses me", "miss you" })
+                if (remember.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0) return false;
+            string bare = remember.StartsWith("他", StringComparison.Ordinal) ? remember.Substring(1) : remember;
+            foreach (var m in g.memories)
+            {
+                string old = m.StartsWith("他说：", StringComparison.Ordinal) || m.StartsWith("她说：", StringComparison.Ordinal) ? m.Substring(3) : m;
+                if (old.StartsWith("他", StringComparison.Ordinal)) old = old.Substring(1);
+                if (XgSpeechPolicy.Similar(bare, old)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>His latest line in her chat (the offline library answers its kind), or null.</summary>
+        string LatestFromHim()
         {
             var conv = Conv;
-            if (conv == null || msgs.Count == 0) return false;
+            if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == YYChatHub.Me && conv.messages[i].kind == YYKind.Text) return conv.messages[i].text;
+            return null;
+        }
+
+        /// <summary>Her new lines that are like one of her last five (a model line like that reads like a bot); empty when none.</summary>
+        List<string> Repeated(List<string> msgs)
+        {
+            var found = new List<string>();
+            var conv = Conv;
+            if (conv == null || msgs.Count == 0) return found;
             int seen = 0;
             for (int i = conv.messages.Count - 1; i >= 0 && seen < 5; i--)
             {
                 var m = conv.messages[i];
                 if (m.from != YYChatHub.GirlfriendId || m.kind != YYKind.Text) continue;
                 seen++;
-                foreach (var line in msgs) if (line.Length >= 3 && XgSpeechPolicy.Similar(line, m.text)) return true;
+                foreach (var line in msgs) if (line.Length >= 3 && XgSpeechPolicy.Similar(line, m.text) && !found.Contains(line)) found.Add(line);
             }
-            return false;
+            return found;
         }
 
         // ───────────── typing it out (design §3) ─────────────

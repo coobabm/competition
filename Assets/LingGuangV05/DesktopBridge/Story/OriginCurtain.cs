@@ -16,7 +16,7 @@ using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
-    /// The curtain call after the ending: the inner voice wonders how it got here, the 对话 page offers
+    /// The curtain call after the ending: the inner voice wonders how it got here, its YY conversation offers
     /// 「你是怎么被训练出来的？」, it answers 「好，我来给你解释」, and the desktop's own video player (restyled as 2016's
     /// 暴风影音) plays the evolution video (StreamingAssets/LingGuangV05/Video/evolution.mp4) full screen; Esc drops
     /// to the normal window, 全屏 goes back. The video has Chinese captions burned in; in English an English line
@@ -329,8 +329,8 @@ namespace LingGuangV05.Desktop.Story
         {
             if (bound != null && bound.OriginVideoFinished())
             {
-                // It asks back on the 对话 page; open it so the question is not missed.
-                if (lab != null) { lab.Open(); lab.View?.Open("chat"); lab.View?.Refresh(true); }
+                // It asks back in its YY conversation; open it so the question is not missed (概览 if it is not in YY).
+                if (!XgYyTalk.Open() && lab != null) { lab.Open(); lab.View?.Open("home"); lab.View?.Refresh(true); }
             }
         }
     }

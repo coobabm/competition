@@ -26,10 +26,10 @@ namespace LingGuangV05.Desktop.LLM
             switch (seat)
             {
                 case LlmSeat.LingGuang:
-                    // The 对话 page's system message (its requests then add history and the per-turn state).
+                    // The YY chat's system message (XgYyTalk; its requests then add history and the per-turn state).
                     if (lab == null) lab = Object.FindAnyObjectByType<XingGuangController>();
                     if (lab == null || lab.Sim == null) return null;
-                    return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", XgChatPage.StableSystem(lab.Sim, GameCalendar.Now(runtime.Sim.S))) };
+                    return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", XgYyTalk.StableSystem(lab.Sim, GameCalendar.Now(runtime.Sim.S))) };
                 case LlmSeat.Girlfriend:
                     var girl = YYGirlfriend.Instance != null ? YYGirlfriend.Instance.G : null;
                     if (girl == null || !girl.started) return null;

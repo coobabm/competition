@@ -112,7 +112,9 @@ namespace LingGuangV05.Core.Girlfriend
             }
             if (summer)
             {
-                if (h >= 6 && h < 10) { a.presence = GfPresence.Away; a.zh = "还在睡懒觉"; a.en = "still sleeping in"; }
+                // Before six she is still up in bed, not just out of it.
+                if (h < 6) { a.presence = GfPresence.Wifi; a.zh = "暑假在老家，半夜躺在床上玩手机"; a.en = "home for the summer, in bed on your phone after midnight"; }
+                else if (h >= 6 && h < 10) { a.presence = GfPresence.Away; a.zh = "还在睡懒觉"; a.en = "still sleeping in"; }
                 else if (h < 12) { a.presence = GfPresence.Wifi; a.zh = "暑假在老家，刚起床"; a.en = "home for the summer, just got up"; }
                 else if (h < 14) { a.presence = GfPresence.Away; a.zh = "在吃午饭"; a.en = "having lunch"; }
                 else if (h < 18) { a.presence = GfPresence.Wifi; a.zh = "暑假在老家，下午在追剧"; a.en = "home for the summer, watching dramas all afternoon"; }

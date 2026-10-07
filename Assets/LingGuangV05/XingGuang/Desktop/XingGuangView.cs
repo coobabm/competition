@@ -56,7 +56,8 @@ namespace LingGuangV05.Desktop.XingGuang
     /// (Documentation/LingGuang-Incremental/lingguang-redesign/index.html): the top bar (the AI, the two bars of the main
     /// line, ¥, income, power and the clock; XingGuangView.Frame.cs), the grouped nav, the pages over a grid, toasts and
     /// the effect layer. 概览 is the landing page. The 标注台 and 订单 pages, and the combo, live in 摆渡众包; asking this
-    /// window for them opens that app instead. Presentation only; rules live in XgSim.
+    /// window for them opens that app instead. Talking to it happens in YY once it has joined (XgYyTalk); there is no
+    /// 对话 page. Presentation only; rules live in XgSim.
     /// </summary>
     public sealed partial class XingGuangView : MonoBehaviour, IXgPageHost
     {
@@ -91,7 +92,6 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgItemsPage Items { get; private set; }
         public XgTechTreePage Tree { get; private set; }
         public XgRepoPage Repo { get; private set; }
-        public XgChatPage Chat { get; private set; }
         public XgAbilitiesPage Abilities { get; private set; }
         public XgFinalePage Finale { get; private set; }
         public XgCardsPage Cards { get; private set; }
@@ -129,7 +129,6 @@ namespace LingGuangV05.Desktop.XingGuang
             Wiring = Add("wiring", new XgWiringPage(), area);
             Abilities = Add("abilities", new XgAbilitiesPage(), area);
             Cards = Add("cards", new XgCardsPage(), area);
-            Chat = Add("chat", new XgChatPage(), area);
             Finale = Add("final", new XgFinalePage(), area);
             Repo.SeenUpTo = owner.Sim.S.nextModelId - 1;
             var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330 + NavWidth / 2, 16), new Vector2(330 + NavWidth / 2, 52));
@@ -200,7 +199,6 @@ namespace LingGuangV05.Desktop.XingGuang
             Juice.Reduced = Sim.S.reduceFx;
             Juice.Muted = Sim.S.mute;
             SeedFeed();
-            chatSeenAt = LastAiLineAt();
             Refresh(true);
         }
 
@@ -247,30 +245,6 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         void OnWiringLogged(XgWLog l) { if (l != null && l.tone >= 3) AddFeed(l.text, l.tone); }
-
-        // ───────────── unread chat ─────────────
-
-        double chatSeenAt;
-
-        double LastAiLineAt()
-        {
-            var chat = Sim.S.chat;
-            for (int i = chat.Count - 1; i >= 0; i--) if (chat[i].from == "ai") return chat[i].at;
-            return 0;
-        }
-
-        /// <summary>Its lines since the 对话 page was last on screen.</summary>
-        public int UnreadChat
-        {
-            get
-            {
-                if (Sim == null) return 0;
-                int n = 0;
-                var chat = Sim.S.chat;
-                for (int i = chat.Count - 1; i >= 0; i--) { if (chat[i].from != "ai") continue; if (chat[i].at <= chatSeenAt) break; n++; }
-                return n;
-            }
-        }
 
         // ───────────── events → feel ─────────────
 
@@ -387,6 +361,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public bool BuyNode(XgNode node, RectTransform from) => Tree != null && Tree.Buy(node, from);
 
+        /// <summary>The setup (naming it, then its first 是 / 否) is still on screen; the YY join scene waits for it.</summary>
+        public bool SetupShowing => setup != null && setup.Showing;
+
         /// <summary>Window opened (from the icon, taskbar or a story notification); tab is optional.</summary>
         public void Open(string tabId)
         {
@@ -403,8 +380,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void ShowTab(string id)
         {
             if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
-            // 科技 is a section of 道具: it opens with the 道具 page.
-            if (!pages.ContainsKey(id) || !FeatureOpen(id == "tree" ? "items" : id)) return;
+            if (!pages.ContainsKey(id) || !FeatureOpen(id)) return;
             tab = id;
             foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == id);
             pages[id].Shown();
@@ -417,8 +393,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (controller == null || Sim == null || root == null) return;
             refreshTimer = .2f;
             if (!force && !Visible) return;
-            if (tab == "chat") chatSeenAt = LastAiLineAt();
-            if (!FeatureOpen(tab == "tree" ? "items" : tab)) { tab = FirstOpenTab(); foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
+            if (!FeatureOpen(tab)) { tab = FirstOpenTab(); foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
             RefreshTopBar();
             RefreshNav();
             if (pages.TryGetValue(tab, out var page)) page.Refresh();
