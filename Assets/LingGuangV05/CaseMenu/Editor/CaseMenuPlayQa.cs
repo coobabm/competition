@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using HongmengOS.Aero2010;
 using LingGuangV05.Desktop;
-using LingGuangV05.Desktop.Juxin;
 using LingGuangV05.Desktop.LLM;
 using LingGuangV05.Desktop.Mail;
 using LingGuangV05.Desktop.Story;
@@ -267,12 +266,19 @@ namespace LingGuangV05.CaseMenu.Editor
             runtimeFlagsCaptured = true;
             runtime.useDiskSave = false; runtime.tickEnabled = false;
             Require("Main entry remains safe to call twice", MainSceneEntry.EnsureInitialized() && MainSceneEntry.EnsureInitialized());
-            Require("Nine gameplay services are present", runtime.GetComponent<StoryDirector>() != null
+            Require("Eight gameplay services are present", runtime.GetComponent<StoryDirector>() != null
                 && runtime.GetComponent<XingGuangController>() != null && runtime.GetComponent<YYChatHub>() != null
                 && runtime.GetComponent<YYGirlfriend>() != null && Count<MailInboxView>() == 1
-                && runtime.GetComponent<JuxinHub>() != null && runtime.GetComponent<XgMarketRelay>() != null
+                && runtime.GetComponent<XgMarketRelay>() != null
                 && runtime.GetComponent<XgAfterthoughtRelay>() != null && runtime.GetComponent<LocalLlm>() != null);
             Require("YY and Mail views are not duplicated", Count<YYChatView>() == 1 && Count<MailInboxView>() == 1);
+            var retiredWindows = Object.FindObjectsByType<WindowManager>(FindObjectsInactive.Include)
+                .Where(w => w.gameObject.scene == runtime.gameObject.scene && w.name == "Photo Gallery").ToArray();
+            Require("Retired native app has no window, taskbar or start-menu launch entry",
+                retiredWindows.All(w => !w.isOn && !w.gameObject.activeSelf && (w.taskbarButton == null || !w.taskbarButton.gameObject.activeSelf))
+                && Object.FindObjectsByType<AeroStartMenu>(FindObjectsInactive.Include)
+                    .Where(m => m.gameObject.scene == runtime.gameObject.scene)
+                    .All(m => m.programs == null || m.programs.All(p => p.window == null || !retiredWindows.Contains(p.window))));
             Require("One active EventSystem and AudioListener across both loaded scenes",
                 Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Exclude).Count(e => e.isActiveAndEnabled) == 1
                 && Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude).Count(a => a.isActiveAndEnabled) == 1);

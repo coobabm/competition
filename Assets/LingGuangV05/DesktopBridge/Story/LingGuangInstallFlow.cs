@@ -70,7 +70,9 @@ namespace LingGuangV05.Desktop.Story
         private void Reconcile(bool installed)
         {
             if (browser == null) { reconciled = true; return; }
-            if (!installed && DreamOSDataManager.ReadIntData(DreamOSDataManager.DataCategory.Network, FileName + "_DownloadState") != 0)
+            string downloadKey = FileName + "_DownloadState";
+            if (!installed && DreamOSDataManager.ContainsJsonKey(DreamOSDataManager.DataCategory.Network, downloadKey)
+                && DreamOSDataManager.ReadIntData(DreamOSDataManager.DataCategory.Network, downloadKey) != 0)
             {
                 browser.DeleteDownloadedFile(FileName);
                 for (int i = browser.activeDownloads.Count - 1; i >= 0; i--)

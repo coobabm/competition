@@ -76,7 +76,7 @@ namespace LingGuangV05.Desktop.Games
             float roll = UnityEngine.Random.value;
             if (Play(kind, lab, c, roll, log)) return;
             // The desktop piece it wanted is not there (no taskbar button, no recycle bin): say it in a popup instead.
-            desk.Popup(Who(lab), T(lab.S.stage <= 2 ? XgGames.YesNo(outcome) : lab.S.stage == 3 ? XgGames.Word(outcome, c.aiPlayed, roll) : XgGames.Sentence(c, roll)), 5);
+            desk.StoryPopup(Who(lab), T(lab.S.stage <= 2 ? XgGames.YesNo(outcome) : lab.S.stage == 3 ? XgGames.Word(outcome, c.aiPlayed, roll) : XgGames.Sentence(c, roll)), 5);
         }
 
         bool Play(XgReaction kind, XgSim lab, XgGameContext c, float roll, IList<string> log)
@@ -87,10 +87,10 @@ namespace LingGuangV05.Desktop.Games
                 case XgReaction.Blink:
                     return Blink(4);
                 case XgReaction.YesNo:
-                    desk.Popup(who, T(XgGames.YesNo(c.outcome)), 4);
+                    desk.StoryPopup(who, T(XgGames.YesNo(c.outcome)), 4);
                     return true;
                 case XgReaction.WordPopup:
-                    desk.Popup(who, T(XgGames.Word(c.outcome, c.aiPlayed, roll)), 4);
+                    desk.StoryPopup(who, T(XgGames.Word(c.outcome, c.aiPlayed, roll)), 4);
                     return true;
                 case XgReaction.WordIcon:
                     return WordIcon(T(XgGames.Word(c.outcome, c.aiPlayed, roll)));
@@ -99,7 +99,7 @@ namespace LingGuangV05.Desktop.Games
                     Blink(2.5f);
                     return true;
                 case XgReaction.SentencePopup:
-                    desk.Popup(who, T(XgGames.Sentence(c, roll)), 6);
+                    desk.StoryPopup(who, T(XgGames.Sentence(c, roll)), 6);
                     return true;
                 case XgReaction.ReviewNote:
                     return Review(XgGames.Review(c, roll));
@@ -112,18 +112,18 @@ namespace LingGuangV05.Desktop.Games
                 case XgReaction.TitleTease:
                     tease = XgGames.Title(c, roll);
                     teaseUntil = Time.unscaledTime + TeaseSeconds;
-                    if (c.game != XgGames.Gomoku) desk.Popup(who, T("五子棋那边，" + c.self + "留了句话。", c.self + " left a note on the gomoku page."), 5);
+                    if (c.game != XgGames.Gomoku) desk.StoryPopup(who, T("五子棋那边，" + c.self + "留了句话。", c.self + " left a note on the gomoku page."), 5);
                     return true;
                 case XgReaction.Taunt:
                 {
                     string line = T(XgGames.Taunt(c, roll));
                     lab.AddLine("ai", line);
-                    desk.Popup(who, line, 7);
+                    desk.StoryPopup(who, line, 7);
                     return true;
                 }
                 case XgReaction.RecycleBin:
                     if (!RenameRecycleBin(T(XgGames.RecycleName(c)))) return false;
-                    desk.Popup(who, Lang.T("看看回收站。"), 5);
+                    desk.StoryPopup(who, Lang.T("看看回收站。"), 5);
                     return true;
                 default:
                     return false;
@@ -218,7 +218,7 @@ namespace LingGuangV05.Desktop.Games
                 icon.GetComponent<PrologueClick>().Open = () => OpenRecord(day, file);
                 recordIcons[day] = icon;
             }
-            desk.Popup(who, Lang.T("棋谱存到桌面了：") + file, 6);
+            desk.StoryPopup(who, Lang.T("棋谱存到桌面了：") + file, 6);
             return true;
         }
 

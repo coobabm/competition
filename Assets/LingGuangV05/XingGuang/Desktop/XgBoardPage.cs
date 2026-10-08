@@ -11,7 +11,7 @@ using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// 大脑: three views, switched at the top right: the concept board (here), the 皮层拓扑 map (XgBoardPage.Cortex)
+    /// 大脑: card assembly, the concept board (here), the 皮层拓扑 map (XgBoardPage.Cortex)
     /// and the 接法图鉴 of topologies (XgBoardPage.Atlas). The concept board (design v1.1 §4): Four regions of cells, coloured by what each concept leans toward
     /// (是 green, 否 red), brighter when stronger; superposed cells get a purple rim, the SI's seed is gold. The right
     /// column is the 图鉴 of phenomena seen so far.
@@ -39,49 +39,56 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var card = ui.Card(area, "board", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root = card;
-            header = ui.Text(Strip("Header", card, 8, 40, 16, 330), "", 16, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
-            header.enableAutoSizing = true; header.fontSizeMin = 11; header.fontSizeMax = 16;
+            header = ui.Text(Strip("Header", card, 9, 36, 18, 620), "", 17, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            header.enableAutoSizing = true; header.fontSizeMin = 12; header.fontSizeMax = 17;
+            header.overflowMode = TextOverflowModes.Ellipsis;
             conceptView = Rect("Concepts", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var left = Rect("Regions", conceptView, Vector2.zero, new Vector2(.7f, 1), new Vector2(12, 12), new Vector2(-6, -52));
             for (int i = 0; i < 4; i++)
             {
                 float x0 = (i % 2) * .5f, y1 = 1 - (i / 2) * .5f;
                 var box = Rect(Regions[i], left, new Vector2(x0, y1 - .5f), new Vector2(x0 + .5f, y1), new Vector2(4, 4), new Vector2(-4, -4));
-                Panel(box, XgPalette.Page);
+                Panel(box, XgDark.Page);
                 var view = new RegionView();
-                view.title = ui.Text(Strip("Title", box, 4, 22, 10, 10), "", 14, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+                view.title = ui.Text(Strip("Title", box, 4, 22, 10, 10), "", 14, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
                 view.title.fontStyle = FontStyles.Bold;
                 view.grid = Rect("Grid", box, new Vector2(0, .34f), Vector2.one, new Vector2(10, 0), new Vector2(-10, -30));
-                view.known = ui.Text(Rect("Known", box, Vector2.zero, new Vector2(1, .34f), new Vector2(10, 6), new Vector2(-10, -2)), "", 12, XgPalette.Muted, TextAlignmentOptions.TopLeft);
+                view.known = ui.Text(Rect("Known", box, Vector2.zero, new Vector2(1, .34f), new Vector2(10, 6), new Vector2(-10, -2)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
                 view.known.enableAutoSizing = true; view.known.fontSizeMin = 9; view.known.fontSizeMax = 12;
                 regions[i] = view;
             }
             var right = Rect("Atlas", conceptView, new Vector2(.7f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -52));
-            Panel(right, XgPalette.Page);
-            atlas = ui.Text(Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), "", 13, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            Panel(right, XgDark.Page);
+            atlas = ui.Text(Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);
             atlas.enableAutoSizing = true; atlas.fontSizeMin = 9; atlas.fontSizeMax = 13;
             BuildCortex(card);
             BuildTopologies(card);
+            BuildAssembly(card);
             BuildModeTabs(card);
+            BuildHabits(card);
         }
 
         public override void Shown() { shownCards = -1; Refresh(); if (mode == Mode.Cortex) VoiceCortex(); }
 
         public override void Tick(float dt)
         {
-            if (mode == Mode.Cortex) TickCortex(dt);
+            if (mode == Mode.Assembly) TickAssembly(dt);
+            else if (mode == Mode.Cortex) TickCortex(dt);
             else if (mode == Mode.Atlas) TickTopologies(dt);
         }
 
         public override void Refresh()
         {
             if (header == null || Sim == null) return;
+            if (mode == Mode.Habits && !HabitsOpen) mode = Mode.Concepts;
             RefreshModeTabs();
+            if (mode == Mode.Assembly) { RefreshAssembly(); return; }
             if (mode == Mode.Cortex) { RefreshCortex(); return; }
             if (mode == Mode.Atlas) { RefreshTopologies(); return; }
+            if (mode == Mode.Habits) { RefreshHabits(); return; }
             var board = Sim.Board;
             var k = Sim.Knobs(Sim.Selected);
-            header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#68748C>"
+            header.text = Lang.T("大脑 · 概念盘") + "  <size=13><color=#6F95A5>"
                 + Lang.T("已训练 ") + N(board.S.cards, "0") + Lang.T(" 张卡 · 每个板块 ") + k.Cells
                 + Lang.T(" 格 · 叠格 ") + board.S.superposed + "</color></size>"
                 + (OneBrain() ? "  <size=13><color=#E0A800>" + Lang.T("全皮层统一拓扑 · 同步点亮") + "</color></size>" : "");
@@ -103,7 +110,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string RegionTitle(string region)
         {
             var wired = Sim.RegionWiring(region);
-            return T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + " <size=11><color=#68748C>" + T(XgSim.RegionLikeness(region, false), XgSim.RegionLikeness(region, true))
+            return T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + " <size=11><color=#6F95A5>" + T(XgSim.RegionLikeness(region, false), XgSim.RegionLikeness(region, true))
                 + (wired != null ? Lang.T(" · 拓扑 ") + T(wired.name, wired.nameEn) : "") + "</color></size>";
         }
 
@@ -111,7 +118,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var concepts = new List<XgConcept>(board.Concepts(region));
             concepts.Sort((a, b) => b.layer != a.layer ? b.layer.CompareTo(a.layer) : (Math.Abs(b.w) * b.s).CompareTo(Math.Abs(a.w) * a.s));
-            view.title.text = name + "  <size=12><color=#68748C>" + concepts.Count + Lang.T(" 个概念 · 最高 ") + board.MaxLayer(region) + T(" 层", "") + "</color></size>";
+            view.title.text = name + "  <size=12><color=#6F95A5>" + concepts.Count + Lang.T(" 个概念 · 最高 ") + board.MaxLayer(region) + T(" 层", "") + "</color></size>";
             int count = Math.Min(CellsShown, concepts.Count);
             var size = view.grid.rect.size;
             float cell = Mathf.Max(6, Mathf.Min(size.x / Columns, size.y / Math.Max(1, (CellsShown + Columns - 1) / Columns)) - 2);
@@ -133,8 +140,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 rt.offsetMin = new Vector2(col * (cell + 2), -(row + 1) * (cell + 2));
                 rt.offsetMax = new Vector2(col * (cell + 2) + cell, -row * (cell + 2) - 2);
                 float strength = Mathf.Clamp01((float)(Math.Abs(c.w) / 2));
-                var lean = c.w >= 0 ? XgPalette.Good : XgPalette.Bad;
-                view.cells[i].color = c.seed ? XgPalette.Gold : Color.Lerp(XgPalette.Line, lean, .25f + .75f * strength);
+                var lean = c.w >= 0 ? XgDark.Good : XgDark.Bad;
+                view.cells[i].color = c.seed ? XgDark.Gold : Color.Lerp(XgDark.Line, lean, .25f + .75f * strength);
                 view.rims[i].enabled = c.alt.Length > 0 || c.seed;
                 view.rims[i].effectColor = c.seed ? new Color32(140, 90, 0, 255) : new Color32(150, 80, 220, 255);
             }
@@ -160,10 +167,10 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 bool on = Sim.PhenomenonSeen(p.id);
                 if (on) seen++;
-                sb.Append("\n").Append(on ? "<color=#2F9E44>● </color><b>" + T(p.name, p.nameEn) + "</b>\n<size=11><color=#68748C>" + T(p.why, p.whyEn) + "</color></size>\n"
-                                          : "<color=#B4BCCD>○ ？？？</color>  <size=11><color=#B4BCCD>" + T("阶段 ", "stage ") + p.stage + "</color></size>\n");
+                sb.Append("\n").Append(on ? "<color=#5DCAA5>● </color><b>" + T(p.name, p.nameEn) + "</b>\n<size=11><color=#6F95A5>" + T(p.why, p.whyEn) + "</color></size>\n"
+                                          : "<color=#4A6578>○ ？？？</color>  <size=11><color=#4A6578>" + T("阶段 ", "stage ") + p.stage + "</color></size>\n");
             }
-            sb.Insert(sb.ToString().IndexOf('\n'), "  <size=12><color=#68748C>" + seen + "/" + XgPhenomena.All.Length + "</color></size>");
+            sb.Insert(sb.ToString().IndexOf('\n'), "  <size=12><color=#6F95A5>" + seen + "/" + XgPhenomena.All.Length + "</color></size>");
             atlas.text = sb.ToString();
         }
     }

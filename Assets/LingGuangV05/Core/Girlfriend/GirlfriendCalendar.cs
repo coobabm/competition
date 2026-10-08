@@ -129,6 +129,8 @@ namespace LingGuangV05.Core.Girlfriend
                 memoryKey = "你的名字", memoryZh = "她想 12 月 2 日一起看《你的名字。》", memoryEn = "she wants to watch Your Name together on 2 December" },
             new GfLife { key = "cet", from = new DateTime(2016, 12, 5), to = new DateTime(2016, 12, 16), lines = new[] { "17 号考六级 我单词还没背完", "CET-6 on the 17th and I haven't finished my vocab", "你都不监督我[委屈]", "You never check on me [委屈]" },
                 memoryKey = "六级", memoryZh = "她 12 月 17 日考六级", memoryEn = "she sits the CET-6 English exam on 17 December" },
+            // Stage 5+: the question the AI will not answer for him (YYGirlfriend.RefusalScene). Sent even when she is cold.
+            new GfLife { key = "weekendAsk", from = new DateTime(2016, 10, 8), to = new DateTime(2016, 12, 29), lines = new[] { "你上次说国庆以后来看我", "You said you'd come and see me after National Day", "周末你到底来不来？", "Are you coming this weekend or not?" }, asks = "weekend", needsFlag = FlagStandInOffered },
             new GfLife { key = "aiWorry", from = new DateTime(2016, 5, 24), to = new DateTime(2016, 12, 31), lines = new[] { "你那个 AI", "That AI of yours", "它会不会比我还懂你", "Does it understand you better than I do?" }, needsFlag = FlagKnowsAi },
         };
 

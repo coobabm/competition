@@ -204,20 +204,6 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void WorkerChecksCountForTheSlaClause()
-        {
-            var host = new Host(); var sim = Open(host, checkChance: 1);
-            sim.S.qcCredit = 95;
-            sim.S.desksOpen.Add("danmu");
-            sim.S.best.Add(new XgBest { dataset = "danmu", acc = .95, arch = "rnn" });
-            Assert.IsTrue(sim.SignSla("sla.danmu"));
-            sim.AssignWorkerDesk("xiaogang", "danmu");
-            sim.Hire("xiaogang", host);
-            sim.Tick(60, host);
-            Assert.AreEqual(10, sim.SlaChecks);
-        }
-
-        [Test]
         public void AjieSwitchesToAClickScriptAfterTwentyMinutesWithAHintThreeMinutesBefore()
         {
             var host = new Host(); var sim = Open(host, checkChance: 0);

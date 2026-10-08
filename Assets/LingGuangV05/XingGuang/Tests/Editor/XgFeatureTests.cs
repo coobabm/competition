@@ -21,12 +21,13 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8 }); Assert.That(sim.FeatureVisible("repo"), Is.True);
             Assert.That(sim.FeatureVisible("contracts"), Is.True);
         }
-        [Test] public void WallsWaitForActualDeliveryAndUnfinishedBreakthroughsResume()
+        [Test] public void UnfinishedStageMilestonesResume()
         {
-            var state = new XgState(); state.walls.Add("combo"); state.stage = 2;
-            Assert.That(XgStoryMilestones.WallMayOpen(state, "combo", false), Is.False);
-            Assert.That(XgStoryMilestones.WallMayOpen(state, "combo", true), Is.True);
+            var state = new XgState(); state.stage = 2;
             Assert.That(XgStoryMilestones.Pending(state, beat => false), Does.Contain("bt.hidden"));
+            Assert.That(XgStoryMilestones.Pending(state, beat => false), Does.Not.Contain("bt.residual"), "ResNet is an item, not a stage");
+            state.unlocked.Add("resnet");
+            Assert.That(XgStoryMilestones.Pending(state, beat => false), Does.Contain("bt.residual"), "buying the item reaches its milestone");
             Assert.That(XgStoryMilestones.Pending(state, beat => beat == "bt_hidden"), Does.Not.Contain("bt.hidden"));
             state.migratedBeats.Add("bt_hidden");
             Assert.That(XgStoryMilestones.Pending(state, beat => false), Does.Not.Contain("bt.hidden"));

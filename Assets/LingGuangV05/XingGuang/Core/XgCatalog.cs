@@ -49,6 +49,11 @@ namespace LingGuangV05.XingGuang
         public double need = 1000;
         /// <summary>Multiplies record rewards and grade bonuses on this dataset (harder data pays more).</summary>
         public double rewardBase = 1;
+        /// <summary>
+        /// Share of each sample that counts toward the main line's data bar D (<see cref="XgSim.TrainedSamples"/>). The easy
+        /// 算术 desk counts half, so its quick cards do not fill the bar; its own model still trains on every sample.
+        /// </summary>
+        public double dataWeight = 1;
     }
 
     public sealed class XgContract
@@ -62,7 +67,7 @@ namespace LingGuangV05.XingGuang
         public bool realtime;
     }
 
-    public enum XgResearchKind { Optimizer, Dropout, Augment, GradClip, AutoCheckpoint, LrSchedule, BatchNorm, CuDnn, Transfer, ManualPay, Feel }
+    public enum XgResearchKind { Optimizer, Dropout, Augment, GradClip, AutoCheckpoint, LrSchedule, BatchNorm, CuDnn, Transfer, ManualPay, Feel, Cooler }
 
     /// <summary>Phenomenon and Ability nodes are never bought: the 图鉴 lights them when they happen (design v1.1 §11.2).</summary>
     public enum XgNodeKind { Arch, Depth, Width, LrKnob, Dataset, Research, Auto, Breakthrough, Project, Label, Secret, Phenomenon, Ability }
@@ -88,7 +93,7 @@ namespace LingGuangV05.XingGuang
         public string lane = "trunk";
     }
 
-    public enum XgDeskKind { Digit, Poem, Logic, Text, Captcha, Meme, Go }
+    public enum XgDeskKind { Digit, Poem, Logic, Text, Captcha, Meme, Go, Arith }
     public enum XgDeskUnlock { Start, FirstEpoch, Specialty, Lstm, Seq2Seq, Labels500 }
 
     /// <summary>A 标注台 desk. Its id is the dataset its correct labels feed.</summary>
@@ -101,6 +106,11 @@ namespace LingGuangV05.XingGuang
         public double comboWindow = 3;
         /// <summary>Pay factor per card: cards that take thought (logic, reading) pay more than quick visual ones.</summary>
         public double pay = 1;
+        /// <summary>
+        /// A wrong pick on this desk costs money: this fraction of what a right answer pays (before the combo bonus, so
+        /// it scales with the raise multiplier and not with the combo). 0 = a mistake only breaks the combo.
+        /// </summary>
+        public double fine;
     }
 
     public sealed class XgResearch
@@ -165,7 +175,7 @@ namespace LingGuangV05.XingGuang
                 price = 2500, samples = 80000, chanceError = .5, floorError = .02, scale = 4, complexity = 2, handLabel = true, need = 1200, needSpan = 60,
                 rewardBase = 6, note = "句首的决定性信息隔着干扰句。", noteEn = "Decisive information separated by distractors." },
             new XgDataset { id = "crosssentence", name = "跨句理解", nameEn = "Cross-sentence context", metric = "关联准确率", metricEn = "reference accuracy", track = XgTrack.Sequence,
-                price = 2500, samples = 80000, chanceError = .5, floorError = .02, scale = 5, complexity = 2, handLabel = true, need = 1500, needSpan = 80,
+                price = 2500, samples = 80000, chanceError = .5, floorError = .02, scale = 5, complexity = 2, need = 1500, needSpan = 80,
                 rewardBase = 7, note = "一句话的意思藏在上一句。", noteEn = "A sentence gets its meaning from the previous one." },
             new XgDataset { id = "mnist", name = "MNIST 手写数字", nameEn = "MNIST digits", metric = "准确率", metricEn = "accuracy", track = XgTrack.Vision,
                 price = 300, samples = 60000, chanceError = .9, floorError = .002, scale = .5, complexity = 1, handLabel = true, need = 850,
@@ -195,15 +205,25 @@ namespace LingGuangV05.XingGuang
             new XgDataset { id = "logic", name = "逻辑是非题", nameEn = "Yes/no logic", metric = "是非题准确率", metricEn = "yes/no accuracy", track = XgTrack.Sequence,
                 price = 500, samples = 100000, chanceError = .5, floorError = .03, scale = 4, complexity = 3, needSpan = 40, handLabel = true, need = 1500,
                 rewardBase = 8,
-                note = "无限生成：算术、数列、条件推理、三段论、真话假话……标得越多题越难。完整包是十万道行测判断题。", noteEn = "Endless: arithmetic, sequences, if–then, syllogisms, liars… harder as you label more. The pack is 100k exam questions." },
+                note = "无限生成：比较、否定、条件推理、三段论、真话假话……标得越多题越难。完整包是十万道行测判断题。", noteEn = "Endless: ordering, negation, if–then, syllogisms, liars… harder as you label more. The pack is 100k exam questions." },
+            new XgDataset { id = "arith", name = "算术是非题", nameEn = "Yes/no arithmetic", metric = "算术判断准确率", metricEn = "arithmetic accuracy", track = XgTrack.Sequence,
+                price = 2500, samples = 20000, chanceError = .5, floorError = .02, scale = .3, complexity = 1.2, needSpan = 20, handLabel = true, need = 700,
+                rewardBase = 2, dataWeight = .5,
+                note = "无限生成：加减乘除、混合运算、百分数、分数……标得越多题越难。题简单，每条只算半条总样本。完整包是两万道小学口算题。",
+                noteEn = "Endless: sums, order of operations, percentages, fractions… harder as you label more. Easy, so each sample counts half toward the total. The pack is 20k primary-school drill questions." },
+            new XgDataset { id = "sense", name = "常识判断", nameEn = "Common sense", metric = "常识是非准确率", metricEn = "common-sense accuracy", track = XgTrack.Sequence,
+                price = 300, samples = 12000, chanceError = .5, floorError = .02, scale = .3, complexity = 1.1, needSpan = 12, handLabel = true, need = 700,
+                rewardBase = 2,
+                note = "「太阳从东边升起。」是，「鱼会爬树。」否。每条是一句人人都知道的话，标得越多，它越分得清是和否。（它回答「是」「否」时，靠的就是这点本事。）",
+                noteEn = "\"The sun rises in the east.\" Yes. \"Fish climb trees.\" No. Plain things everybody knows: the more you label, the better it tells yes from no. (That is the skill behind its own yes and no.)" },
             new XgDataset { id = "news", name = "人民日报语料", nameEn = "People's Daily corpus", metric = "下一字准确率", metricEn = "next-char accuracy", track = XgTrack.Sequence,
                 price = 800, samples = 5000000, chanceError = .999, floorError = .3, scale = 60, complexity = 4, needSpan = 60, need = 1080000,
                 rewardBase = 10,
                 note = "二十年新闻，五百万句。", noteEn = "Twenty years of news, five million sentences." },
             new XgDataset { id = "translate", name = "中英平行语料", nameEn = "Chinese–English pairs", metric = "翻译准确率", metricEn = "translation accuracy", track = XgTrack.Sequence,
                 price = 5000, samples = 2000000, chanceError = 1, floorError = .25, scale = 6000, complexity = 9, needSpan = 50, needSeq2Seq = true, need = 430000,
-                rewardBase = 50, handLabel = true,
-                note = "两百万对中英句子。没有编码器-解码器做不了。「中式英语」桌也往这里攒。", noteEn = "Two million sentence pairs. Needs an encoder–decoder. The Chinglish desk feeds it too." },
+                rewardBase = 50,
+                note = "两百万对中英句子。没有编码器-解码器做不了。", noteEn = "Two million sentence pairs. Needs an encoder–decoder." },
             new XgDataset { id = "xor", name = "异或", nameEn = "XOR", metric = "准确率", metricEn = "accuracy", track = XgTrack.Sequence,
                 price = 0, samples = 600, chanceError = .5, floorError = .02, scale = .2, complexity = 1, need = 200, rewardBase = 0,
                 note = "恰好一个为真。单层感知机只能画一条直线。", noteEn = "Exactly one is true. One layer draws one straight line." },
@@ -233,17 +253,17 @@ namespace LingGuangV05.XingGuang
         public static readonly XgDesk[] Desks =
         {
             new XgDesk { id = "longtext", name = "长句", nameEn = "Long sentences", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Lstm, comboWindow = 12 },
-            new XgDesk { id = "crosssentence", name = "跨句", nameEn = "Cross-sentence", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Lstm, comboWindow = 12 },
             new XgDesk { id = "mnist", name = "手写数字", nameEn = "Digits", kind = XgDeskKind.Digit, unlock = XgDeskUnlock.Specialty, comboWindow = 3 },
             new XgDesk { id = "poems", name = "唐诗下一字", nameEn = "Next character", kind = XgDeskKind.Poem, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
-            new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 2.5 },
+            new XgDesk { id = "sense", name = "常识判断", nameEn = "Common sense", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1 },
+            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1, fine = ArithFine },
+            new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 3.2 },
             new XgDesk { id = "danmu", name = "弹幕情绪", nameEn = "Danmaku", kind = XgDeskKind.Text, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 5, pay = 1.4 },
             new XgDesk { id = "spam", name = "垃圾短信", nameEn = "SMS spam", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1.4 },
             new XgDesk { id = "meme", name = "表情包", nameEn = "Meme faces", kind = XgDeskKind.Meme, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
             new XgDesk { id = "headline", name = "标题党", nameEn = "Clickbait", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Specialty, comboWindow = 6 },
             new XgDesk { id = "review", name = "刷单评论", nameEn = "Fake reviews", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Lstm, comboWindow = 7 },
             new XgDesk { id = "cifar", name = "验证码", nameEn = "Captcha", kind = XgDeskKind.Captcha, unlock = XgDeskUnlock.Lstm, comboWindow = 4 },
-            new XgDesk { id = "translate", name = "中式英语", nameEn = "Chinglish", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Seq2Seq, comboWindow = 6 },
             new XgDesk { id = "go", name = "围棋气数", nameEn = "Go liberties", kind = XgDeskKind.Go, unlock = XgDeskUnlock.Labels500, comboWindow = 9 },
         };
 
@@ -317,14 +337,24 @@ namespace LingGuangV05.XingGuang
         /// <summary>The years each stage's ideas come from (a range where the stage spans several papers).</summary>
         public static readonly string[] StageYears = { "", "1958", "1986", "1989–2014", "1997–2015", "2014–2015", "2017" };
 
+        /// <summary>
+        /// Price factor of each stage's nodes. Training without knobs (2026-10-07) made stages 2–3 dearer (×2, ×2.2) and
+        /// stage 4 cheaper; with rent and bills (经济压力与破产, 2026-10-08) stages 2–3 come down to ×1.6 and ×1.4 so the
+        /// cheap squares that reach abilities 3–5 stay affordable while the rent is paid.
+        /// </summary>
+        public static readonly double[] StagePrice = { 1, 1, 1.6, 1.4, .7, 1, 1 };
+
         static XgNode[] BuildNodes()
         {
             var list = new List<XgNode>();
-            void Add(XgNode n, int stage, string lane) { n.stage = stage; n.lane = lane; list.Add(n); }
+            void Add(XgNode n, int stage, string lane)
+            {
+                n.stage = stage; n.lane = lane;
+                if (lane != "label" && lane != "atlas" && stage >= 0 && stage < StagePrice.Length) n.cost = Math.Round(n.cost * StagePrice[stage]);
+                list.Add(n);
+            }
             XgNode Simple(string id, XgNodeKind kind, string parent, double cost, string zh, string en, string note, string noteEn)
                 => N(id, "trunk", parent, kind, id, 0, cost, 0, 0, zh, en, note, noteEn);
-            void Break(string id, int stage, string lane, string parent, double price, string zh, string en)
-                => Add(Simple(id, XgNodeKind.Breakthrough, parent, price, zh, en, "先观察瓶颈，再满足右侧突破条件。", "Observe the bottleneck, then meet the breakthrough conditions."), stage, lane);
             void A(string id, int stage, string lane, string parent, double cost)
                 => Add(ArchNode(lane == "vision" ? "vision" : lane == "sequence" ? "sequence" : "trunk", id, parent, cost, 0, 0), stage, lane);
             void D(string tree, int depth, string parent, double cost, int stage, string lane)
@@ -337,85 +367,81 @@ namespace LingGuangV05.XingGuang
                 => Add(ResearchNode(id, parent, cost, 0, 0), stage, "research");
 
             void S(string id, int stage, string parent, double price, string zh, string en)
-                => Add(Simple(id, XgNodeKind.Secret, parent, price, zh, en, "秘籍：写明这一阶段墙的黄金参数。自己配出来能拿 1.5 倍奖金。", "Secret: the golden settings for this stage's wall. Finding them yourself pays 1.5× its price."), stage, "trunk");
+                => Add(Simple(id, XgNodeKind.Secret, parent, price, zh, en, "秘籍：写明预训练的配法。自己跑通能拿 1.5 倍奖金。", "Secret: how to set up pre-training. Getting it through yourself pays 1.5× its price."), stage, "trunk");
 
-            // ── 阶段 1 · 感知机：墙「异或」，换结构 = 隐藏层 + S 形 + 学习率 0.1–0.5；换练法 = 特征工程（把两个条件拼成一个）
+            // Architectures are items (参数量与数据量主线 §6): bought at a price, each lowers one ability's thresholds
+            // (XgSim.AbilityDiscounts). The old breakthroughs (bt.*) are folded into them: their price is the item's.
+
+            // ── 阶段 1 · 感知机 → 多层感知机
             A("perceptron", 1, "trunk", null, 0);
             R("weights", "perceptron", 15, 1); R("learnrule", "weights", 40, 1); R("step", "perceptron", 30, 1);
             R("bias", "perceptron", 20, 1);
             // The pre-network road: people hand-make the features (练法 instead of 结构; XgBoard.Engineered).
             R("features", "bias", 60, 1);
-            Add(Simple("shared.lr", XgNodeKind.LrKnob, "perceptron", 60, "学习率旋钮", "Learning-rate knob", "两条线共用一个学习率权限。", "One learning-rate unlock for both tracks."), 1, "trunk");
+            Add(Simple("shared.lr", XgNodeKind.LrKnob, "perceptron", 60, "学习率搜索", "Learning-rate search", "自动试几个学习率，挑最好的那个：两条线的上限都高一点。", "Tries a few rates and keeps the best: both lines reach a little higher."), 1, "trunk");
             P("spam", "perceptron", 300, 1, "sequence");
-            Break("bt.hidden", 1, "trunk", "perceptron", 150, "隐藏层", "Hidden layers");
-            A("mlp", 1, "trunk", "bt.hidden", 0);
+            A("mlp", 1, "trunk", "perceptron", 150);
             D("trunk", 2, "mlp", 80, 1, "trunk");
             R("sigmoid", "mlp", 120, 1);
-            S("secret.1", 1, "perceptron", 200, "秘籍 · 异或", "Secret · XOR");
+            // The scale ladder (参数量与数据量主线): each stage sells the widths and depths that reach the next ability.
+            W("trunk", 1, "mlp", 150, 1, "trunk");
+            W("trunk", 2, "s.w1", 450, 1, "trunk");
 
-            // ── 阶段 2 · 多层感知机：墙「看不懂整张图」，换结构 = 手写桌局部共享 + 弹幕桌回环；换练法 = 特征工程（去噪居中、按字词读）
+            // ── 阶段 2 · 多层感知机 → 卷积、循环
             D("trunk", 3, "s.d2", 100, 2, "trunk");
-            W("trunk", 1, "mlp", 150, 2, "trunk");
-            W("trunk", 2, "s.w1", 450, 2, "trunk");
             R("momentum", "mlp", 200, 2);
-            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2); R("cudnn", "mlp", 600, 2);
-            P("mnist", "mlp", 300, 2, "vision"); P("danmu", "mlp", 300, 2, "sequence"); P("headline", "mlp", 450, 2, "sequence"); P("logic", "mlp", 500, 2, "sequence");
-            Break("bt.vision", 2, "vision", "mlp", 500, "卷积", "Convolution");
-            Break("bt.sequence", 2, "sequence", "mlp", 500, "循环", "Recurrence");
-            A("lenet", 2, "vision", "bt.vision", 0);
-            A("rnn", 2, "sequence", "bt.sequence", 0);
-            S("secret.2", 2, "mlp", 800, "秘籍 · 看不懂整张图", "Secret · can't see the whole picture");
+            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2); R("cudnn", "mlp", 600, 2); R("cooler", "mlp", 125, 2);
+            P("mnist", "mlp", 2000, 2, "vision"); P("danmu", "mlp", 1500, 2, "sequence"); P("headline", "mlp", 1500, 2, "sequence"); P("logic", "mlp", 3000, 2, "sequence");
+            // The 算术 pack waits for stage 2: at stage 1 its samples would fill the first data bar on their own.
+            P("arith", "mlp", 2500, 2, "sequence");
+            A("lenet", 2, "vision", "mlp", 3000);
+            A("rnn", 2, "sequence", "mlp", 3000);
+            D("vision", 3, "lenet", 80, 2, "vision"); D("vision", 4, "v.d3", 100, 2, "vision");
+            W("vision", 1, "lenet", 1000, 2, "vision"); W("vision", 2, "v.w1", 3000, 2, "vision"); W("vision", 3, "v.w2", 12000, 2, "vision");
+            W("sequence", 3, "s.w2", 12000, 2, "sequence");
 
-            // ── 阶段 3 · CNN + RNN：墙「长句失忆」，黄金参数 = 门控回环 + 梯度裁剪 + 学习率 ≤ 0.01
-            A("alexnet", 3, "vision", "lenet", 500);
+            // ── 阶段 3 · CNN + RNN → 门控记忆
+            A("alexnet", 3, "vision", "lenet", 3000);
             A("vgg", 3, "vision", "alexnet", 2000); A("googlenet", 3, "vision", "vgg", 6000);
-            D("vision", 3, "lenet", 80, 3, "vision"); D("vision", 4, "v.d3", 100, 3, "vision");
-            D("vision", 5, "v.d4", 120, 3, "vision"); D("vision", 6, "v.d5", 180, 3, "vision"); D("vision", 8, "v.d6", 260, 3, "vision");
-            D("vision", 12, "v.d8", 600, 3, "vision"); D("vision", 16, "v.d12", 1200, 3, "vision");
-            W("vision", 1, "lenet", 150, 3, "vision"); W("vision", 2, "v.w1", 450, 3, "vision");
-            W("vision", 3, "v.w2", 1350, 3, "vision"); W("vision", 4, "v.w3", 4050, 3, "vision"); W("vision", 5, "v.w4", 12000, 3, "vision");
-            P("cifar", "lenet", 600, 3, "vision"); P("meme", "lenet", 700, 3, "vision");
-            P("poems", "rnn", 300, 3, "sequence"); P("news", "rnn", 800, 3, "sequence");
+            D("vision", 5, "v.d4", 800, 3, "vision"); D("vision", 6, "v.d5", 1500, 3, "vision"); D("vision", 8, "v.d6", 1500, 3, "vision");
+            W("vision", 4, "v.w3", 6000, 3, "vision");
+            D("sequence", 4, "s.d3", 1500, 3, "sequence"); W("sequence", 4, "s.w3", 8000, 3, "sequence");
+            P("cifar", "lenet", 2000, 3, "vision"); P("meme", "lenet", 1500, 3, "vision");
+            P("poems", "rnn", 2000, 3, "sequence");
             R("relu", "lenet", 200, 3); R("gradclip", "rnn", 150, 3); R("irnn", "gradclip", 1200, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
-            Break("bt.gate", 3, "sequence", "rnn", 4000, "门控记忆", "Gated memory");
-            A("lstm", 3, "sequence", "bt.gate", 0); A("gru", 3, "sequence", "lstm", 1500);
+            A("lstm", 3, "sequence", "rnn", 4000); A("gru", 3, "sequence", "lstm", 1500);
             P("longtext", "lstm", 2500, 3, "sequence");
-            W("sequence", 3, "s.w2", 1350, 3, "sequence");
-            S("secret.3", 3, "rnn", 3000, "秘籍 · 长句失忆", "Secret · long-sentence amnesia");
 
-            // ── 阶段 4 · LSTM + ResNet：墙「翻译不了」，黄金参数 = 编码器-解码器 + 宽 ≥ 256；附加秘籍「越深越差」= 跨层直连
-            W("sequence", 4, "s.w3", 4050, 4, "sequence");
+            // ── 阶段 4 · LSTM + ResNet → 编码器-解码器
+            D("vision", 12, "v.d8", 5000, 4, "vision"); D("vision", 16, "v.d12", 12000, 4, "vision"); W("vision", 5, "v.w4", 30000, 4, "vision");
+            D("sequence", 6, "s.d4", 8000, 4, "sequence"); W("sequence", 5, "s.w4", 30000, 4, "sequence");
             P("crosssentence", "lstm", 2500, 4, "sequence"); P("review", "lstm", 1000, 4, "sequence");
             A("textcnn", 4, "sequence", "rnn", 2500);
-            Break("bt.residual", 4, "vision", "lenet", 4000, "残差连接", "Residual connections");
-            A("resnet", 4, "vision", "bt.residual", 0); D("vision", 32, "v.d16", 4000, 4, "vision"); W("vision", 6, "v.w5", 36000, 4, "vision");
-            P("go", "resnet", 2500, 4, "vision"); P("imagenet", "resnet", 4000, 4, "vision");
+            A("resnet", 4, "vision", "lenet", 15000);
+            P("go", "resnet", 5000, 4, "vision"); P("imagenet", "resnet", 15000, 4, "vision");
             R("batchnorm", "dropout", 3000, 4); R("adam", "rmsprop", 5000, 4); R("lrschedule", "momentum", 1500, 4);
-            Break("bt.attention", 4, "sequence", "lstm", 15000, "编码器-解码器", "Encoder–decoder");
-            A("seq2seq", 4, "sequence", "bt.attention", 0);
-            S("secret.4", 4, "lstm", 8000, "秘籍 · 翻译不了", "Secret · cannot translate");
-            S("secret.deep", 4, "lenet", 2000, "秘籍 · 越深越差", "Secret · deeper is worse");
+            A("seq2seq", 4, "sequence", "lstm", 15000);
+            A("attention", 4, "sequence", "seq2seq", 15000);
 
-            // ── 阶段 5 · Seq2Seq + 注意力：墙「串行瓶颈」，黄金参数 = 只用注意力 + 位置标记（不卖秘籍，由涌现说出来）
-            A("attention", 5, "sequence", "seq2seq", 15000);
+            // ── 阶段 5 · Seq2Seq + 注意力 → Transformer（它自己问出「如果只用注意力呢？」之后才能买）
             R("position", "attention", 6000, 5);
-            D("sequence", 4, "s.d3", 800, 5, "sequence"); D("sequence", 6, "s.d4", 3000, 5, "sequence");
-            W("sequence", 5, "s.w4", 12000, 5, "sequence");
-            P("translate", "attention", 5000, 5, "sequence");
-            Break("bt.spatial", 5, "vision", "resnet", 15000, "空间注意力", "Spatial attention");
-            A("caption", 5, "vision", "bt.spatial", 20000); list[list.Count - 1].needs = new[] { "attention" };
+            D("vision", 32, "v.d16", 8000, 5, "vision"); W("vision", 6, "v.w5", 70000, 5, "vision");
+            D("sequence", 8, "s.d6", 8000, 5, "sequence"); W("sequence", 6, "s.w5", 50000, 5, "sequence");
+            P("translate", "attention", 30000, 5, "sequence"); P("news", "rnn", 40000, 5, "sequence");
+            A("caption", 5, "vision", "resnet", 20000); list[list.Count - 1].needs = new[] { "attention" };
             R("transfer", "lrschedule", 12000, 5);
+            // Not bought, the Transformer comes free with the sixth ability; bought, it lowers that ability's thresholds.
+            A("transformer", 5, "trunk", "attention", 30000);
 
-            // ── 阶段 6 · Transformer：阶段 5 过墙后免费获得
-            Add(Simple("project.transformer", XgNodeKind.Project, "attention", 0, "只要注意力", "Attention is all we need", "阶段 5 的涌现。", "Stage five's emergence."), 6, "trunk");
-            A("transformer", 6, "trunk", "project.transformer", 0);
+            // ── 阶段 6 · 全部放开：预训练
             Add(Simple("multihead", XgNodeKind.Label, "transformer", 0, "多头注意力", "Multi-head attention", "研发产出，不另收费。", "Research output; no additional charge."), 6, "research");
             Add(Simple("layernorm", XgNodeKind.Label, "transformer", 0, "LayerNorm", "LayerNorm", "2016 年提出：每个字按自己的各项特征归一化，不依赖整批数据（BatchNorm 是按一批样本）。", "Proposed in 2016: each word is normalised across its own features, without the batch (BatchNorm uses a batch of samples)."), 6, "research");
             Add(Simple("residual", XgNodeKind.Label, "transformer", 0, "残差连接", "Residual connections", "继承 ResNet：每层都留一条捷径。", "Inherited from ResNet: a shortcut around every layer."), 6, "research");
             R("warmup", "transformer", 20000, 6);
-            // Pre-training scale (about 100M parameters): the reading region grows to width 1024 and 8–12 layers.
-            W("sequence", 6, "s.w5", 36000, 6, "sequence");
-            D("sequence", 8, "s.d6", 8000, 6, "sequence"); D("sequence", 12, "s.d8", 16000, 6, "sequence");
+            // Pascal's half precision (2016): one of the multipliers pre-training's effective scale stacks (XgSim.ScaleItems).
+            R("fp16", "transformer", 30000, 6);
+            // Pre-training scale (about 100M parameters): the reading region at width 1024 and 8–12 layers.
+            D("sequence", 12, "s.d8", 10000, 6, "sequence");
             // Side research of stages 4–6 (design v1.1 §11.2): no walls, only a little speed.
             R("earlystop", "lrschedule", 2500, 4); R("wordvec", "rnn", 3500, 4);
             R("beamsearch", "attention", 7000, 5); R("subword", "attention", 9000, 5);
@@ -520,11 +546,12 @@ namespace LingGuangV05.XingGuang
         static readonly double[] AutoCosts = { 250, 900, 3000, 5000, 20000 };
 
         /// <summary>
-        /// 加薪: hand-labelling pay multiplier per raise level (×1 → ×30 over 17 raises; every raise adds at least ×0.5,
-        /// so each promotion is felt at the desk). Applies to hand answers and chat questions, never to auto-answer.
+        /// 加薪: hand-labelling pay multiplier per raise level. Whole numbers only: the first raise doubles the pay and
+        /// every later one adds ×2 (×1 → ×2 → ×4 → ×6 … → ×34 over 17 raises), so each promotion reads cleanly at the
+        /// desk. Applies to hand answers and chat questions, never to auto-answer.
         /// Costs grow ×1.7 per level from ¥10.
         /// </summary>
-        public static readonly double[] RaiseMultipliers = { 1, 1.5, 2, 2.6, 3.3, 4, 5, 6, 7.5, 9, 11, 13, 15.5, 18, 21, 24, 27, 30 };
+        public static readonly double[] RaiseMultipliers = { 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         public static int RaiseMax { get { return RaiseMultipliers.Length - 1; } }
         public static double RaiseCost(int level) { return Math.Round(10 * Math.Pow(1.7, level)); }
         static readonly string[] RaiseTitlesZh = { "实习标注员", "标注员", "熟练标注员", "资深标注员", "标注组长", "质检主管", "项目经理", "标注总监", "合伙人", "首席标注官" };
@@ -554,8 +581,6 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "zipcode", client = "区邮政局", clientEn = "District post office", job = "邮政编码分拣", jobEn = "Postcode sorting", dataset = "mnist", threshold = .99, income = 1, signBonus = 200 },
             new XgContract { id = "memetag", client = "斗图网", clientEn = "A meme site", job = "表情包自动打标签", jobEn = "Meme auto-tagging", dataset = "meme", threshold = .85, income = .6, signBonus = 120 },
             new XgContract { id = "captcha", client = "某购票网站", clientEn = "A ticketing site", job = "验证码难度测评", jobEn = "Captcha difficulty testing", dataset = "cifar", threshold = .7, income = 2, signBonus = 450 },
-            new XgContract { id = "goclub", client = "县围棋协会", clientEn = "County Go club", job = "死活题批改", jobEn = "Life-and-death marking", dataset = "go", threshold = .9, income = 4, signBonus = 900 },
-            new XgContract { id = "parking", client = "小区停车场", clientEn = "Estate car park", job = "车牌识别抬杆", jobEn = "Number-plate gate", dataset = "mnist", threshold = .99, income = 1.5, signBonus = 400 },
             new XgContract { id = "taobao", client = "淘宝卖家联盟", clientEn = "Taobao seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 11, signBonus = 2500 },
             new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "园区监控识别", jobEn = "Park camera recognition", dataset = "imagenet", threshold = .9, income = 35, signBonus = 8000 },
 
@@ -567,7 +592,6 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "clickbait", client = "某浏览器资讯频道", clientEn = "A browser news feed", job = "标题党降权", jobEn = "Clickbait demotion", dataset = "headline", threshold = .85, income = 2, signBonus = 400 },
             new XgContract { id = "fakereview", client = "电商平台风控部", clientEn = "Marketplace risk team", job = "刷单评论识别", jobEn = "Fake-review detection", dataset = "review", threshold = .85, income = 3.5, signBonus = 800 },
             new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },
-            new XgContract { id = "support", client = "网店客服外包", clientEn = "Shop support outsourcer", job = "自动客服回复", jobEn = "Auto support replies", dataset = "news", threshold = .58, income = 6, signBonus = 1200 },
             new XgContract { id = "crossborder", client = "表姐的微商小店", clientEn = "Cousin’s online shop", job = "商品描述翻译", jobEn = "Listing translation", dataset = "translate", threshold = .45, income = 18, signBonus = 4000 },
             new XgContract { id = "webnovel", client = "网文平台", clientEn = "A web-novel site", job = "连载吃书检测", jobEn = "Plot-hole detection", dataset = "longtext", threshold = .9, income = 9, signBonus = 2000 },
             new XgContract { id = "lawfirm", client = "律师事务所", clientEn = "A law firm", job = "合同前后条款核对", jobEn = "Cross-clause contract checks", dataset = "crosssentence", threshold = .9, income = 20, signBonus = 5000 },
@@ -591,34 +615,38 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "backprop", kind = XgResearchKind.ManualPay, name = "小批量训练", nameEn = "Mini-batch training", cost = 200, effect = "一次算一小批卡的平均梯度，又快又稳（反向传播本身在「隐藏层」突破里就有了）。训练速度 ×1.2", effectEn = "Average the gradient over a small batch at a time, faster and steadier (backpropagation itself came with the hidden-layer breakthrough). Training ×1.2" },
             new XgResearch { id = "chainrule", kind = XgResearchKind.ManualPay, name = "自动求导", nameEn = "Automatic differentiation", cost = 250, effect = "框架按链式法则自动算出每层的梯度（Theano、TensorFlow），不用再手推。训练速度 ×1.1", effectEn = "The framework works out every layer's gradient by the chain rule (Theano, TensorFlow), no more deriving by hand. Training ×1.1" },
             new XgResearch { id = "features", kind = XgResearchKind.ManualPay, name = "特征工程", nameEn = "Feature engineering", cost = 60,
-                effect = "旋钮：人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。不用换结构也能过墙，但人工整理很费时间：训练量减半。",
-                effectEn = "Knob: people make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. Passes walls without a new structure, but by hand: half the cards per epoch." },
+                effect = "人替它做特征——逻辑题把两个条件拼成一个，图片去掉噪点再居中，句子去掉语气词、按字和两字词读。感知机靠它也能学会逻辑题；人工整理很费时间，用上时训练量减半。有了多层网络就不再用它。",
+                effectEn = "People make the features — logic pairs two conditions into one, pictures lose the stray dot and are centred, sentences drop fillers and are read as words and word pairs. With it a perceptron learns the logic desk; by hand it is slow, half the cards per epoch. Networks with layers no longer use it." },
             new XgResearch { id = "irnn", kind = XgResearchKind.ManualPay, name = "单位初始化", nameEn = "Identity initialisation", cost = 1200,
                 effect = "（2015 年的办法，这里提前用上。）朴素 RNN 配 ReLU 时，回环一开始就是「原样转交」：记忆不再一个字一个字地漏掉（Le、Jaitly、Hinton 2015，IRNN）。误差也原样回传，学习率一大就爆，配梯度裁剪更稳。",
                 effectEn = "(A 2015 method, used early here.) With ReLU, a vanilla RNN's loop starts as 'pass it on unchanged': memory no longer leaks word by word (Le, Jaitly, Hinton 2015, IRNN). The error comes back unchanged too: a high rate blows it up, so clip the gradients." },
-            new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "旋钮：不靠循环也知道字的先后顺序", effectEn = "Knob: word order without recurrence" },
-            new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "旋钮：换设置以后前 60 张卡的学习率从很小慢慢升上去，开头误差最大的时候不炸。深网络和 Transformer 尤其需要", effectEn = "Knob: after a change the rate climbs from almost nothing over the first 60 cards, so the large early errors do not tear it. Deep nets and Transformers need it most" },
+            new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "不靠循环也知道字的先后顺序；买到就自动开，预训练要用", effectEn = "Word order without recurrence; on once bought, and pre-training needs it" },
+            new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "换了模型以后，前 60 张卡的学习率从很小慢慢升上去：大涨一截之后不容易回落。买到就自动开，预训练要用", effectEn = "After the model changes, the rate climbs from almost nothing over the first 60 cards: after a big jump it falls back less often. On once bought; pre-training needs it" },
+            new XgResearch { id = "fp16", kind = XgResearchKind.ManualPay, name = "混合精度", nameEn = "Mixed precision", cost = 30000,
+                effect = "权重留一份 32 位，算的时候用 16 位半精度：显存省一半，今年新出的 Pascal 卡算得更快。预训练的有效规模 ×2", effectEn = "Keep a 32-bit copy of the weights and compute in 16-bit half precision: half the memory, and this year's Pascal cards run it faster. Pre-training's effective scale ×2" },
             new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "坡度是 1，误差几乎原样往下传，深网络练得动。2010 年前后才流行开（AlexNet 2012 靠它一战成名）。训练速度 ×1.3", effectEn = "Its slope is 1, so the error comes down almost whole and deep nets train. Popular only from about 2010 (AlexNet 2012 made its name). Training ×1.3" },
             new XgResearch { id = "momentum", kind = XgResearchKind.Optimizer, name = "动量 SGD", nameEn = "Momentum SGD", cost = 3, speed = 1.3, stability = 1.4,
                 effect = "训练速度 ×1.3：每一步顺着上一步的方向冲", effectEn = "Training ×1.3: each step keeps some of the last one's direction" },
             new XgResearch { id = "gradclip", kind = XgResearchKind.GradClip, name = "梯度裁剪", nameEn = "Gradient clipping", cost = 5,
-                effect = "旋钮：给每一步的大小封顶。循环网络梯度爆炸时尤其要开；能扛的学习率翻倍，但再大照样炸", effectEn = "Knob: caps the size of each step. A must for loops whose gradients explode; tolerates twice the rate, but not any rate" },
+                effect = "给每一步的大小封顶：循环网络不再炸，大涨之后也少回落一些。买到就自动开", effectEn = "Caps the size of each step: loops no longer blow up, and big jumps fall back less. On once bought" },
             new XgResearch { id = "dropout", kind = XgResearchKind.Dropout, name = "Dropout", nameEn = "Dropout", cost = 10,
-                effect = "每张训练卡随机让两成概念不参与；组合要在不同的卡上一起出现才长得出来，单张卡的巧合记不住。练得慢一点，练过和没见过的差距变小", effectEn = "Each training card leaves a fifth of the concepts out, and combinations only grow from pairs seen together on different cards, so one card's coincidences are not memorised. Slower, but a smaller gap between trained and unseen cards" },
+                effect = "每张训练卡随机让两成概念不参与；组合要在不同的卡上一起出现才长得出来，单张卡的巧合记不住。数据少时「背答案」引起的退步减半", effectEn = "Each training card leaves a fifth of the concepts out, and combinations only grow from pairs seen together on different cards, so one card's coincidences are not memorised. Halves the drops that come from memorising scarce data" },
             new XgResearch { id = "augment", kind = XgResearchKind.Augment, name = "数据增强", nameEn = "Data augmentation", cost = 25,
                 effect = "图像按各自合理的方式扩充：手写数字平移 ×2（不能翻转：6 翻过来就不是 6），图片平移裁剪 ×3，围棋 8 种对称 ×8。文字不扩充", effectEn = "Pictures grow the way each kind allows: digits shift ×2 (no flips: a flipped 6 is not a 6), pictures shift and crop ×3, Go has 8 symmetries ×8. Text is not augmented" },
             new XgResearch { id = "dataclean", kind = XgResearchKind.Augment, name = "数据清洗", nameEn = "Data cleaning", cost = 800,
                 effect = "淘货杂包和众包的标错减半（去重、对答案、扔掉对不上的）", effectEn = "Halves the wrong labels in junk packs and crowd rows (dedupe, cross-check, drop what disagrees)" },
             new XgResearch { id = "rmsprop", kind = XgResearchKind.Optimizer, name = "RMSProp", nameEn = "RMSProp", cost = 30, speed = 1.6, stability = 2,
-                effect = "训练速度 ×1.6。按梯度自己的大小调步长：同样的步子，学习率数字要小一百倍（常用 0.001）", effectEn = "Training ×1.6. Scales each step by the gradient's own size: the same step needs a rate a hundred times smaller (0.001 is usual)" },
+                effect = "训练速度 ×1.6。按梯度自己的大小调步长，更稳", effectEn = "Training ×1.6. Scales each step by the gradient's own size, steadier" },
             new XgResearch { id = "lrschedule", kind = XgResearchKind.LrSchedule, name = "学习率衰减", nameEn = "LR schedule", cost = 50,
-                effect = "自动调学习率：先快后细", effectEn = "Tunes the rate for you: fast first, fine later" },
+                effect = "学习率先快后细：每个模型的上限都高一截", effectEn = "The rate goes fast first, fine later: every model reaches a little higher" },
             new XgResearch { id = "batchnorm", kind = XgResearchKind.BatchNorm, name = "BatchNorm", nameEn = "BatchNorm", cost = 90,
-                effect = "层数上限 +6，速度 ×1.2，能用更大的学习率；20 层左右的普通网络也练得动", effectEn = "Depth limit +6, speed ×1.2, takes larger rates; plain nets of about 20 layers train" },
+                effect = "层数上限 +6，速度 ×1.2，训练更稳：退步少两成；20 层左右的普通网络也练得动", effectEn = "Depth limit +6, speed ×1.2, steadier training: a fifth fewer drops; plain nets of about 20 layers train" },
             new XgResearch { id = "adam", kind = XgResearchKind.Optimizer, name = "Adam", nameEn = "Adam", cost = 150, speed = 2, stability = 3,
-                effect = "训练速度 ×2，比 SGD 稍稳。按梯度自己的大小调步长：学习率数字要小一百倍（常用 0.001）", effectEn = "Training ×2, a little steadier than SGD. Scales each step by the gradient's own size: rates a hundred times smaller (0.001 is usual)" },
+                effect = "训练速度 ×2，比 SGD 稍稳。按梯度自己的大小调步长", effectEn = "Training ×2, a little steadier than SGD. Scales each step by the gradient's own size" },
             new XgResearch { id = "cudnn", kind = XgResearchKind.CuDnn, name = "cuDNN 加速", nameEn = "cuDNN kernels", cost = 250,
-                effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3" },
+                effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3，电费少 30%", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3, and 30% less electricity" },
+            new XgResearch { id = "cooler", kind = XgResearchKind.Cooler, name = "九州风神", nameEn = "Tower cooler", cost = 125,
+                effect = "塔式散热器（2016 年装机的标配）：连着练太久，显卡烧坏的概率减半。要有两张卡才会烧", effectEn = "A tower heatsink (standard in 2016 builds): training non-stop burns a card out half as often. A card only burns out when you own two" },
             new XgResearch { id = "transfer", kind = XgResearchKind.Transfer, name = "迁移学习", nameEn = "Transfer learning", cost = 400,
                 effect = "底层学到的东西（笔画、边角、常用字词）可以带走：换结构时，这些概念换一种拓扑接着用，上面的组合重新学。就像练好的词向量，换什么模型都能用。换数据集本来就在同一颗脑子里，不用迁移。", effectEn = "What the bottom learnt (strokes, corners, common words) can be taken along: on a change of structure those concepts carry into the new wiring and only the combinations above are learnt again, the way trained word vectors work in any model. A new dataset is already in the same brain and needs no transfer." },
         };
@@ -627,6 +655,13 @@ namespace LingGuangV05.XingGuang
         public const int SamplesToTrain = 12;
         /// <summary>Pay per correct hand label before the combo bonus.</summary>
         public const double LabelPay = .5;
+        /// <summary>
+        /// Hand labelling pays this many times <see cref="LabelPay"/> (every desk). Only hand answers (and the dragged
+        /// spider's, which are hand answers) get it: automatic labels, contracts and the platform's fines keep their rates.
+        /// </summary>
+        public const double HandPayScale = 2.5;
+        /// <summary>The 算术 desk is true/false: a wrong pick costs this fraction of a right answer's base pay.</summary>
+        public const double ArithFine = .5;
         /// <summary>Auto-answering needs a deployed checkpoint at least this good.</summary>
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;

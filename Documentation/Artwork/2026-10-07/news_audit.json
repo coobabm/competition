@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-07",
+  "expected": 47,
+  "actual": 47,
+  "news": 38,
+  "era_posts": 9,
+  "unique_originals": 47,
+  "unique_sha256": 47,
+  "missing": [],
+  "license_counts": {
+    "CC BY 2.0": 7,
+    "CC0": 2,
+    "CC BY-SA 3.0": 4,
+    "CC BY 3.0": 2,
+    "Public domain": 6,
+    "CC BY-SA 3.0 at": 1,
+    "CC BY-SA 2.0": 2,
+    "CC BY-SA 4.0": 20,
+    "CC BY 2.5 ar": 1,
+    "CC BY 4.0": 2
+  },
+  "bytes": 8191415,
+  "author_html_present": 47,
+  "qa_contact_sheets": [
+    "qa/news-01.jpg",
+    "qa/news-02.jpg",
+    "qa/news-03.jpg"
+  ],
+  "unity_verified": false,
+  "qa_contact_sheets_visually_reviewed": true,
+  "additional_fullsize_review": [
+    "era_gtx1080_tieba",
+    "news_tiangong2",
+    "era_escape"
+  ]
+}

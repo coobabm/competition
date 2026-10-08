@@ -161,6 +161,16 @@ namespace LingGuangV05.Desktop.Tieba
         public void Script(string id, Func<string, bool> handler) { scriptFor = id; script = handler; }
         public void EndScript() { scriptFor = null; script = null; Choices = null; ChoicesFor = null; Changed?.Invoke(); }
 
+        /// <summary>An explicit player-submitted scene request, without an unrelated automatic model reply.</summary>
+        public bool SendAuthoredChoice(string id, string text)
+        {
+            text = NativeLaoZhouReplies.NormalizeInput(text);
+            if (S == null || text.Length == 0 || !CanMessage(id)) return false;
+            S.Conversation(id).messages.Add(new ForumMessage { from = ForumLibrary.Me, text = text, gameSeconds = Now });
+            if (id == ForumLibrary.ZhouNow) S.metZhouNow = true;
+            Touch(); return true;
+        }
+
         public void Send(string id, string text)
         {
             text = NativeLaoZhouReplies.NormalizeInput(text);
@@ -288,8 +298,13 @@ namespace LingGuangV05.Desktop.Tieba
             if (lab != null)
             {
                 f.stage = lab.S.stage; f.nanCount = lab.S.nanEvents;
-                var wall = lab.ActiveWall;
-                if (wall != null && !wall.extra) { f.wall = wall.id; f.wallName = GameText.T(wall.name, wall.nameEn); }
+                int next = lab.NextAbility;
+                if (next > 0)
+                {
+                    f.nextAbility = XgSim.AbilityName(next, GameText.IsEnglish);
+                    double p = lab.ParamsProgress(next), d = lab.SamplesProgress(next);
+                    f.shortOf = p < 1 && p <= d ? "params" : d < 1 ? "data" : "";
+                }
                 f.emergedThisStage = lab.HasEmerged(lab.S.stage);
                 f.finale = lab.S.fullOpen;
                 if (lab.S.phenomena != null && lab.S.phenomena.seen.Count > 0)

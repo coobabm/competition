@@ -13,7 +13,7 @@ namespace LingGuangV05.Tests
         public void StageSignalsAndFactsAreRegisteredWithoutDependingOnLabAssembly()
         {
             var vars = new ChapterOneStoryVars(() => new ChapterOneSim());
-            foreach (var signal in new[] { "lg.unsure", "lg.wall:combo", "lg.breakthrough:bt.hidden", "lg.stage:2", "lg.project:1", "lg.ending:no" })
+            foreach (var signal in new[] { "lg.unsure", "lg.emerge:2", "lg.breakthrough:bt.hidden", "lg.stage:2", "lg.project:1", "lg.ending:no" })
                 Assert.That(ChapterOneStoryVars.IsKnownSignal(signal), Is.True, signal);
             foreach (var name in new[] { "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labExperiment", "labEndingAnswered", "labMigrated" })
                 Assert.That(vars.KnownNames.Contains(name), Is.True, name);
@@ -36,10 +36,10 @@ namespace LingGuangV05.Tests
             Assert.That(value, Is.Zero);
         }
         [Test]
-        public void SixStageContentCoversWallsBreakthroughsProjectAndEnding()
+        public void SixStageContentCoversEmergencesBreakthroughsProjectAndEnding()
         {
             var lib = ReadContent();
-            foreach (var id in new[] { "wall_combo", "wall_structure", "wall_length", "wall_degrade", "wall_translation", "wall_parallel", "month_1", "month_2", "month_6", "bt_specialty_vision", "bt_specialty_sequence", "bt_residual", "bt_spatial", "ll_remember", "ll_underline", "ll_proposal", "proj_1", "proj_2", "proj_3", "ending_reject", "ending_card", "ending_title_yes", "ending_title_no" })
+            foreach (var id in new[] { "emerge_2", "emerge_3", "emerge_4", "emerge_5", "emerge_6", "specialty_motivation", "month_1", "month_2", "month_6", "bt_specialty_vision", "bt_specialty_sequence", "bt_residual", "bt_spatial", "ll_remember", "ll_underline", "ll_proposal", "proj_1", "proj_2", "proj_3", "ending_reject", "ending_card", "ending_title_yes", "ending_title_no" })
                 Assert.That(lib.Get(id), Is.Not.Null, id);
         }
 
@@ -57,7 +57,7 @@ namespace LingGuangV05.Tests
         public void NewStoryBeatsDoNotCommitBeforeTheirMessagesAreDelivered()
         {
             var lib = ReadContent();
-            foreach (var id in new[] { "wall_combo", "bt_specialty_vision", "bt_specialty_sequence", "ll_remember", "ll_proposal", "proj_1", "ending_reject", "ending_card", "ending_title_yes", "ending_title_no" })
+            foreach (var id in new[] { "emerge_6", "bt_specialty_vision", "bt_specialty_sequence", "ll_remember", "ll_proposal", "proj_1", "ending_reject", "ending_card", "ending_title_yes", "ending_title_no" })
             {
                 var beat = lib.Get(id);
                 for (int i = 0; i < beat.Steps.Length; i++)
@@ -68,6 +68,25 @@ namespace LingGuangV05.Tests
                         Assert.That(beat.Steps[i + 1].Str("ev"), Is.EqualTo("story.delivered:" + id), id);
                     }
             }
+        }
+
+        [Test]
+        public void EveryAbilityHasItsEmergenceBeatAndNoWallBeatsRemain()
+        {
+            var lib = ReadContent();
+            for (int ability = 2; ability <= 6; ability++)
+            {
+                var beat = lib.Get("emerge_" + ability);
+                Assert.That(beat, Is.Not.Null, "emerge_" + ability);
+                Assert.That(beat.On, Is.EqualTo(new[] { "lg.emerge:" + ability }));
+            }
+            Assert.That(lib.Get("specialty_motivation").On, Is.EqualTo(new[] { "lg.emerge:2" }), "它的第一个选择 comes with the second ability");
+            foreach (var beat in lib.Beats)
+            {
+                Assert.That(beat.Id.StartsWith("wall_", StringComparison.Ordinal), Is.False, beat.Id);
+                foreach (var on in beat.On) Assert.That(on.StartsWith("lg.wall", StringComparison.Ordinal), Is.False, beat.Id);
+            }
+            Assert.That(ChapterOneStoryVars.IsKnownSignal("lg.wall:combo"), Is.False);
         }
 
         static StoryLibrary ReadContent()

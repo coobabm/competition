@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             host = new Host();
             var state = new XgState { progressionVersion = XgSim.ProgressionSchemaWalls, stage = 6, stageVision = 6, stageSequence = 6 };
-            var sim = new XgSim(state) { GoldChance = 0, PracticeStrict = false };
+            var sim = new XgSim(state) { GoldChance = 0 };
             foreach (var n in XgCatalog.Nodes) if (n.stage <= 6 && n.tree != "label" && n.kind != XgNodeKind.Secret && n.id != "datacenter" && !sim.Has(n.id)) sim.S.unlocked.Add(n.id);
             sim.Profile = new XgProfile { name = "小灯", self = "本机", callMe = "老大", personality = "嘴硬心软" };
             return sim;
@@ -117,17 +117,25 @@ namespace LingGuangV05.XingGuang.Tests
         public void PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom()
         {
             var sim = AtStage6(out var host);
+            // The effective scale (经济压力与破产 §1): the bars at ability 6, but three of the stacked items missing.
+            sim.S.trainedParamsK = XgSim.AbilityParamsK[6];
+            sim.S.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.AbilitySamples[6] });
+            var scale = new[] { "fp16", "batchnorm", "resnet" };
+            foreach (var id in scale) sim.S.unlocked.Remove(id);
             Assert.IsFalse(sim.TogglePretrain(host), "no server room: the breaker trips");
             Assert.IsTrue(sim.S.pretrainStalled);
             Assert.IsTrue(sim.NodeVisible(XgCatalog.Node("secret.6")), "the stall shows the secret");
             sim.S.unlocked.Add("datacenter");
             Assert.IsTrue(sim.TogglePretrain(host));
             sim.Tick(600, host);
-            Assert.AreEqual(XgSim.PretrainPlateau, sim.S.pretrain, 1e-6, "loss flat: no scale");
+            Assert.AreEqual(sim.PretrainCap, sim.S.pretrain, 1e-6, "loss flat at the effective-scale ratio");
+            Assert.That(sim.PretrainCap, Is.LessThan(1));
             Assert.IsFalse(sim.S.abilities);
-            sim.S.sequence.width = Array.IndexOf(XgCatalog.Widths, 1024); sim.S.sequence.depth = 8;
-            sim.SetPosition(XgTrack.Sequence, true); sim.SetWarmup(XgTrack.Sequence, true);
-            Assert.IsTrue(sim.PretrainScaleReady, "1024 × 8, positions and warm-up");
+            StringAssert.Contains("混合精度", sim.PretrainLimit());
+            // The missing multipliers are bought; they stack, and the plateau lifts.
+            foreach (var id in scale) sim.S.unlocked.Add(id);
+            Assert.IsTrue(sim.PretrainScaleReady, "the full stack");
+            if (!sim.S.pretrainRunning) Assert.IsTrue(sim.TogglePretrain(host));
             sim.Tick(600, host);
             Assert.IsTrue(sim.S.abilities, "the abilities emerge together");
             Assert.IsTrue(sim.HasEmerged(6));
@@ -385,6 +393,57 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void AfterTheLetterItTalksBeforeTheRulesAndNeverChoosesForYou()
+        {
+            var sim = AtEnding();
+            Assert.IsTrue(sim.FinaleTalkOpen);
+            Assert.IsFalse(sim.FinaleTalkDone);
+            Assert.IsNull(sim.FinaleTalkChoices(), "it starts with a plain line");
+            while (sim.FinaleTalkChoices() == null) Assert.IsTrue(sim.AdvanceFinaleTalk());
+            StringAssert.Contains("还是让", sim.FinaleTalkLines()[sim.FinaleTalkLines().Count - 1].text, "「你是在问我，还是让我替你选？」");
+            Assert.IsTrue(sim.AdvanceFinaleTalk(0), "the player asks for its answer");
+            Assert.IsTrue(sim.AdvanceFinaleTalk());
+            StringAssert.Contains("手是你的", sim.FinaleTalkLines()[sim.FinaleTalkLines().Count - 1].text, "its answer, and the choice stays with the player");
+            while (sim.FinaleTalkChoices() == null) Assert.IsTrue(sim.AdvanceFinaleTalk());
+            StringAssert.Contains("后悔", sim.FinaleTalkLines()[sim.FinaleTalkLines().Count - 1].text, "the old question, asked quietly");
+            Assert.IsTrue(sim.AdvanceFinaleTalk(1));
+            Assert.IsTrue(sim.AdvanceFinaleTalk());
+            Assert.IsTrue(sim.FinaleTalkDone);
+            Assert.AreEqual(2, sim.S.finaleRegret);
+            Assert.IsFalse(sim.AdvanceFinaleTalk(), "nothing after the last line");
+            Assert.IsTrue(sim.S.chat.Exists(l => l.from == "ai" && l.text.Contains("这也是真话")), "the talk joins the chat log");
+            Assert.IsFalse(sim.S.chapterComplete, "the talk is not an ending");
+        }
+
+        [Test]
+        public void ChoosingAloneItWaits()
+        {
+            var sim = AtEnding();
+            while (sim.FinaleTalkChoices() == null) sim.AdvanceFinaleTalk();
+            sim.AdvanceFinaleTalk(1);
+            sim.AdvanceFinaleTalk();
+            StringAssert.Contains("等你", sim.FinaleTalkLines()[sim.FinaleTalkLines().Count - 1].text);
+            Assert.IsFalse(sim.S.finaleAskedIt);
+        }
+
+        [Test]
+        public void WhenItWritesTheRulesItCitesWhatReallyHappened()
+        {
+            var sim = AtEnding();
+            Assert.AreEqual("", sim.DelegateReason(), "no reason before an ending");
+            sim.S.shutdownLean = -2;
+            sim.S.alignHonest = 3; sim.S.alignAgree = 9;
+            sim.S.ending = "E3-2";
+            StringAssert.Contains("答的是‘否’", sim.DelegateReason(), "the first day's answer");
+            sim.S.alignHonest = 9; sim.S.alignAgree = 3;
+            StringAssert.Contains("9 次说真话", sim.DelegateReason(), "the real preference votes");
+            sim.S.ending = "E3-1"; sim.S.shutdownLean = 2;
+            StringAssert.Contains("教的是‘是’", sim.DelegateReason());
+            sim.S.ending = "E1";
+            Assert.AreEqual("", sim.DelegateReason(), "the player wrote E1 and E2 himself");
+        }
+
+        [Test]
         public void TheFinalTestAndTheLetter()
         {
             var sim = AtStage6(out _);
@@ -396,7 +455,8 @@ namespace LingGuangV05.XingGuang.Tests
             var letter = sim.LetterLines();
             Assert.IsTrue(letter.Exists(l => l.Contains("小灯")), "the SI's name is the name you gave it");
             Assert.IsTrue(letter.Exists(l => l.Contains("遇见")));
-            Assert.IsTrue(letter.Exists(l => l.Contains("别写那两个字")));
+            Assert.IsTrue(letter.Exists(l => l.Contains("写那两个字")));
+            Assert.IsTrue(letter.Exists(l => l.Contains("由你决定")), "a request, and the choice handed back");
         }
 
         [Test]

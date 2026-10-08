@@ -438,6 +438,32 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
+        public void TheWeekendQuestionComesOnlyOnceStandInExistsEvenWhenSheIsCold()
+        {
+            var s = Fresh(10, 10, 20);
+            var now = At(10, 20, 20, 0, 0);
+            Assert.AreNotEqual("weekendAsk", GirlfriendRules.DueLife(s, now)?.key, "not before stage 5");
+            GirlfriendRules.Mark(s, GirlfriendRules.FlagStandInOffered);
+            foreach (var l in GirlfriendRules.Life) if (l.key != "weekendAsk") s.done.Add("life:" + l.key);
+            Assert.AreEqual("weekendAsk", GirlfriendRules.DueLife(s, now)?.key);
+            s.awaitingReply = true;
+            var said = GirlfriendRules.NextProactive(s, now, new GfActivity { presence = GfPresence.Wifi });
+            Assert.AreEqual("life:weekendAsk", said?.key, "a cold tier still asks, even while he owes her an answer");
+            Assert.AreEqual("weekend", s.asking);
+        }
+
+        [Test]
+        public void SayingYesToTheWeekendIsRemembered()
+        {
+            var s = Fresh(62, 10, 20);
+            s.asking = "weekend"; s.askDay = s.today;
+            var turn = GirlfriendRules.OnPlayerLine(s, At(10, 20, 21, 0, 50), "好 我来");
+            Assert.AreEqual("weekend", turn.promised);
+            Assert.AreEqual("", s.asking);
+            Assert.IsTrue(s.memories.Exists(m => m.Contains("周末")));
+        }
+
+        [Test]
         public void TicketsMakeAndKeepTheFilmPromise()
         {
             var s = Fresh(62, 11, 26);
@@ -557,14 +583,321 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void FallbackNeverRepeatsTheLastFive()
+        public void OfflineLibraryDoesNotRepeatWithinItsMemory()
         {
-            var s = Fresh(62);
+            var s = Fresh(62, 10, 20);
+            var clock = new DateTime(2016, 10, 20, 2, 0, 0);
             var seen = new List<string>();
-            for (int i = 0; i < 6; i++) seen.Add(string.Join("|", GirlfriendLines.Pick(s, new DateTime(2016, 7, 1, 2, 0, 0), false)));
+            for (int i = 0; i < 30; i++) seen.Add(string.Join("|", GirlfriendLines.Pick(s, clock, false, null)));
+            for (int i = 0; i < 12; i++)
+                for (int j = 0; j < i; j++) Assert.AreNotEqual(seen[j], seen[i], "twelve different lines before any comes back");
             for (int i = 1; i < seen.Count; i++)
-                for (int j = Math.Max(0, i - 5); j < i; j++) Assert.AreNotEqual(seen[j], seen[i]);
-            Assert.AreEqual(5, s.recentLines.Count);
+                for (int j = Math.Max(0, i - 10); j < i; j++) Assert.AreNotEqual(seen[j], seen[i], "nothing within ten lines of itself");
+            Assert.LessOrEqual(s.recentLines.Count, GirlfriendLines.RecentLimit);
+            // Keyword answers keep apart too: four 想你 in a row get four different answers.
+            var warm = Fresh(75, 10, 20);
+            var love = new HashSet<string>();
+            for (int i = 0; i < 4; i++) love.Add(string.Join("|", GirlfriendLines.Pick(warm, clock, false, null, "想你了")));
+            Assert.AreEqual(4, love.Count);
+            // Lines from the model count as hers as well.
+            var t = Fresh(62, 10, 20);
+            GirlfriendLines.Note(t, "你又熬夜[白眼]");
+            for (int i = 0; i < 11; i++) Assert.AreNotEqual("你又熬夜[白眼]", string.Join("|", GirlfriendLines.Pick(t, clock, false, null)));
+        }
+
+        [Test]
+        public void OfflineLibraryRoutesHisLineByKeyword()
+        {
+            Assert.AreEqual("greeting", GirlfriendLines.RouteOf("在吗"));
+            Assert.AreEqual("greeting", GirlfriendLines.RouteOf("hi"));
+            Assert.AreEqual("", GirlfriendLines.RouteOf("this is it"), "hi inside a word is not a greeting");
+            Assert.AreEqual("whatDoing", GirlfriendLines.RouteOf("在干嘛呢"));
+            Assert.AreEqual("love", GirlfriendLines.RouteOf("想你了"));
+            Assert.AreEqual("goodnight", GirlfriendLines.RouteOf("那我去睡了 晚安"));
+            Assert.AreEqual("ate", GirlfriendLines.RouteOf("你吃饭了没"));
+            Assert.AreEqual("gift", GirlfriendLines.RouteOf("我给你买了个东西 过两天到"));
+            Assert.AreEqual("work", GirlfriendLines.RouteOf("周末我可能要通宵调模型"));
+            Assert.AreEqual("angry", GirlfriendLines.RouteOf("你生气了？"));
+            Assert.AreEqual("sorry", GirlfriendLines.RouteOf("对不起 我错了"));
+            Assert.AreEqual("question", GirlfriendLines.RouteOf("你考试准备得怎么样"));
+            Assert.AreEqual("short", GirlfriendLines.RouteOf("嗯"));
+            Assert.AreEqual("", GirlfriendLines.RouteOf("今天下雨了"));
+            var s = Fresh(75, 10, 20);
+            var clock = new DateTime(2016, 10, 20, 23, 0, 0);
+            StringAssert.Contains("晚安", string.Join("|", GirlfriendLines.Pick(s, clock, false, null, "晚安")));
+            StringAssert.Contains("night", string.Join("|", GirlfriendLines.Pick(s, clock, true, null, "good night")).ToLowerInvariant());
+            // Every keyword answers in English too, with nothing Chinese outside the [faces].
+            foreach (var his in new[] { "hi", "what are you doing", "miss you", "good night", "have you eaten", "sorry", "are you angry", "I bought you a gift", "all-nighter on the computer", "so tired", "haha", "why?", "ok", "good morning" })
+                foreach (int affection in new[] { 20, 60, 90 })
+                {
+                    var t = Fresh(affection, 10, 20);
+                    for (int i = 0; i < 4; i++)
+                        foreach (var bubble in GirlfriendLines.Pick(t, clock, true, null, his))
+                        {
+                            string bare = System.Text.RegularExpressions.Regex.Replace(bubble, "\\[[^\\]]*\\]", "");
+                            Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(bare, "[\\u4e00-\\u9fff]"), his + " → " + bubble);
+                        }
+                }
+        }
+
+        [Test]
+        public void OfflineLibraryUsesHerSummerHerLifeAndHisWords()
+        {
+            var s = Fresh(62, 7, 10);
+            var july = new DateTime(2016, 7, 10, 15, 0, 0);
+            for (int i = 0; i < 20; i++)
+            {
+                string line = string.Join("|", GirlfriendLines.Pick(s, july, false, null));
+                Assert.IsFalse(line.Contains("上课") || line.Contains("食堂") || line.Contains("宿舍"), "home for the summer: " + line);
+            }
+            var t = Fresh(62, 10, 25);
+            t.done.Add("life:exam");
+            GirlfriendRules.RememberHim(t, "他周末要去网吧通宵");
+            var oct = new DateTime(2016, 10, 25, 20, 0, 0);
+            var all = new List<string>();
+            for (int i = 0; i < 16; i++) all.Add(string.Join("|", GirlfriendLines.Pick(t, oct, false, null)));
+            Assert.IsTrue(all.Exists(l => l.Contains("概率论")), "her exam week: " + string.Join(" / ", all));
+            Assert.IsTrue(all.Exists(l => l.Contains("你周末要去网吧通宵")), "what he told her, said back to him");
+            var topic = new HashSet<string>();
+            for (int i = 0; i < 3; i++) topic.Add(string.Join("|", GirlfriendLines.Topic("roommate", false, t)));
+            Assert.AreEqual(3, topic.Count, "an offline topic does not come back at once");
+        }
+
+        // ───────────── model or offline (GirlfriendReplyPolicy) ─────────────
+
+        [Test]
+        public void BusyModelDoesNotMeanOffline()
+        {
+            Assert.IsTrue(GirlfriendReplyPolicy.AskModel(true), "ready is enough, however busy the server is");
+            Assert.IsFalse(GirlfriendReplyPolicy.AskModel(false));
+            Assert.IsTrue(GirlfriendReplyPolicy.WaitForBoot(true, 110, 100), "a model still starting is waited for");
+            Assert.IsFalse(GirlfriendReplyPolicy.WaitForBoot(true, 100 + GirlfriendReplyPolicy.BootWait + 1, 100), "but not for ever");
+            Assert.IsFalse(GirlfriendReplyPolicy.WaitForBoot(false, 110, 100));
+            // The request goes out inside her delay, so the model's time is hidden by it.
+            Assert.AreEqual(112, GirlfriendReplyPolicy.AskAt(100, 120), 1e-9);
+            Assert.AreEqual(101.2, GirlfriendReplyPolicy.AskAt(100, 103), 1e-9);
+            Assert.AreEqual(GfReplyVerdict.Fallback, GirlfriendReplyPolicy.Judge(false, null, false, 0), "no answer (failure or timeout): offline at once");
+        }
+
+        [Test]
+        public void RepeatOrBrokenAnswerIsRetriedOnceThenFallsBack()
+        {
+            var ok = GirlfriendPromptText.Parse("{\"msgs\":[\"刚洗完头\"],\"delta\":0,\"remember\":\"\"}");
+            Assert.AreEqual(GfReplyVerdict.Accept, GirlfriendReplyPolicy.Judge(true, ok, false, 0));
+            Assert.AreEqual(GfReplyVerdict.Retry, GirlfriendReplyPolicy.Judge(true, ok, true, 0), "a repeat is asked again");
+            Assert.AreEqual(GfReplyVerdict.Retry, GirlfriendReplyPolicy.Judge(true, null, false, 0), "broken JSON is asked again");
+            Assert.AreEqual(GfReplyVerdict.Fallback, GirlfriendReplyPolicy.Judge(true, ok, true, 1), "the retry repeats too: offline");
+            Assert.AreEqual(GfReplyVerdict.Accept, GirlfriendReplyPolicy.Judge(true, ok, false, 1));
+            Assert.Greater(GirlfriendReplyPolicy.Temperature(1), GirlfriendReplyPolicy.Temperature(0));
+            Assert.AreEqual(GirlfriendPromptText.Temperature, GirlfriendReplyPolicy.Temperature(0));
+            string hint = GirlfriendReplyPolicy.RetryHint(false, false, new[] { "刚洗完头" });
+            StringAssert.Contains("换个说法", hint);
+            StringAssert.Contains("「刚洗完头」", hint);
+            StringAssert.Contains("JSON", GirlfriendReplyPolicy.RetryHint(false, true, null));
+            StringAssert.Contains("differently", GirlfriendReplyPolicy.RetryHint(true, false, null));
+        }
+
+        [Test]
+        public void StateBlockCarriesTheHourHerLifeAndThisTurnsNote()
+        {
+            var s = Fresh(62, 5, 28);
+            var night = At(5, 28, 3, 5, 10);
+            string state = GirlfriendPromptText.State(s, night, GirlfriendRules.Schedule(s, night), false, "");
+            StringAssert.Contains("不是早上", state, "03:05 is the middle of the night");
+            StringAssert.Contains("期末复习", state, "her exam week reaches the prompt");
+            StringAssert.Contains("middle of the night", GirlfriendPromptText.State(s, night, GirlfriendRules.Schedule(s, night), true, ""));
+            var summer = At(6, 2, 3, 20, 10);
+            StringAssert.Contains("半夜", GirlfriendRules.Schedule(s, summer).zh, "summer, 03:20: up in bed, not just got up");
+            StringAssert.DoesNotContain("期末复习", GirlfriendPromptText.State(s, summer, GirlfriendRules.Schedule(s, summer), false, ""), "her exams are over once the holiday starts");
+            StringAssert.Contains("先正面回答", GirlfriendPromptText.Nudge(s, "你考试准备得怎么样", false, false));
+            StringAssert.DoesNotContain("回答", GirlfriendPromptText.Nudge(s, "你考试准备得怎么样", false, true), "her own message has no question to answer");
+            var notes = new HashSet<string>();
+            for (int i = 0; i < 4; i++) { s.totalMessages = i; notes.Add(GirlfriendPromptText.Nudge(s, "今天下雨了", false, false)); }
+            Assert.AreEqual(4, notes.Count, "the note rotates");
+            string examples = GirlfriendPromptText.Examples(GirlfriendTier.Normal, false);
+            StringAssert.Contains("不是你们真的聊过的内容", examples);
+            StringAssert.Contains("刚洗完头", examples);
+        }
+
+        [Test]
+        public void BubblesLoseStrayPunctuation()
+        {
+            var r = GirlfriendPromptText.Parse("{\"msgs\":[\"嘿嘿\",\",刚复习完\",\":\"],\"delta\":0,\"remember\":\"\"}");
+            CollectionAssert.AreEqual(new[] { "嘿嘿", "刚复习完" }, r.msgs);
+            Assert.AreEqual("[微笑]", GirlfriendPromptText.CleanBubble("[微笑]"), "a face alone is a message");
+            Assert.AreEqual("", GirlfriendPromptText.CleanBubble("><br><br>"), "seen in Play: stray markup is dropped");
+            Assert.AreEqual("好吧 你开心就好", GirlfriendPromptText.CleanBubble("好吧<br>你开心就好"));
+        }
+
+        // ───────────── texting style (GirlfriendStyle) ─────────────
+
+        static GirlfriendState Fighting(GirlfriendState s) { s.fighting = true; return s; }
+
+        static List<GfMove> Moves(GirlfriendState s, string his, GfTurn turn = null, int hour = 21) =>
+            GirlfriendStyle.Moves(s, his, turn, new DateTime(2016, 10, 20, hour, 0, 0));
+
+        [Test]
+        public void HisLineKindsForTheStyleNote()
+        {
+            Assert.AreEqual(GfHisKind.Flat, GirlfriendStyle.Kind("嗯"));
+            Assert.AreEqual(GfHisKind.Flat, GirlfriendStyle.Kind("哈哈哈"));
+            Assert.AreEqual(GfHisKind.Flat, GirlfriendStyle.Kind("ok"));
+            Assert.AreEqual(GfHisKind.Apology, GirlfriendStyle.Kind("对不起 是我不好"));
+            Assert.AreEqual(GfHisKind.Goodnight, GirlfriendStyle.Kind("那我去睡了 晚安"));
+            Assert.AreEqual(GfHisKind.Choice, GirlfriendStyle.Kind("晚上吃什么啊 你帮我选"));
+            Assert.AreEqual(GfHisKind.Choice, GirlfriendStyle.Kind("周末看电影还是逛街？"));
+            Assert.AreEqual(GfHisKind.News, GirlfriendStyle.Kind("我那个模型今天终于跑通了！"));
+            Assert.AreEqual(GfHisKind.Question, GirlfriendStyle.Kind("你考试准备得怎么样"));
+            Assert.AreEqual(GfHisKind.Greeting, GirlfriendStyle.Kind("在吗"));
+            Assert.AreEqual(GfHisKind.Love, GirlfriendStyle.Kind("想你了"));
+            Assert.AreEqual(GfHisKind.Share, GirlfriendStyle.Kind("今天老周又找我修电脑"));
+        }
+
+        [Test]
+        public void StyleNoteFollowsTierMoodAndHisLine()
+        {
+            // Engaged: answer, then ask back; a flat line gets a flat answer at normal, a pout or 「哦。」 when warm.
+            var normal = Fresh(62, 10, 20); normal.totalMessages = 10;
+            CollectionAssert.AreEqual(new[] { GfMove.Answer, GfMove.AskBack }, Moves(normal, "你考试准备得怎么样"));
+            CollectionAssert.AreEqual(new[] { GfMove.TrailOff }, Moves(normal, "嗯"));
+            var warm = Fresh(78, 10, 20);
+            CollectionAssert.AreEqual(new[] { GfMove.PeriodOh }, Moves(warm, "嗯"), "warm, mood 0: 「哦。」 and wait to be coaxed");
+            warm.mood = 1;
+            CollectionAssert.AreEqual(new[] { GfMove.PoutFlat }, Moves(warm, "嗯"));
+            CollectionAssert.AreEqual(new[] { GfMove.Cheer, GfMove.Coax }, Moves(warm, "我那个模型今天终于跑通了！"));
+            CollectionAssert.AreEqual(new[] { GfMove.Whatever }, Moves(normal, "晚上吃什么啊 你帮我选"));
+            CollectionAssert.AreEqual(new[] { GfMove.Whatever, GfMove.Coax }, Moves(warm, "晚上吃什么啊 你帮我选"));
+            CollectionAssert.AreEqual(new[] { GfMove.Goodnight, GfMove.Coax }, Moves(warm, "晚安"));
+            // Cold and distant: bare answers, no asking back.
+            CollectionAssert.AreEqual(new[] { GfMove.Brief, GfMove.AnswerBare }, Moves(Fresh(20, 10, 20), "你在干什么呢？"));
+            CollectionAssert.AreEqual(new[] { GfMove.AnswerBare }, Moves(Fresh(40, 10, 20), "你考试准备得怎么样"));
+            CollectionAssert.AreEqual(new[] { GfMove.PeriodOh }, Moves(Fresh(40, 10, 20), "哦"));
+            // Sweet late at night acts cute; the same state always gets the same note.
+            var sweet = Fresh(90, 10, 20); sweet.totalMessages = 1;
+            CollectionAssert.Contains(Moves(sweet, "睡不着", null, 23), GfMove.Coax);
+            Assert.AreEqual(GirlfriendPromptText.Nudge(sweet, "睡不着", false, false, null, new DateTime(2016, 10, 20, 23, 0, 0)),
+                GirlfriendPromptText.Nudge(sweet, "睡不着", false, false, null, new DateTime(2016, 10, 20, 23, 0, 0)));
+            // Every move has a note in both languages, at most two per turn.
+            foreach (GfMove m in Enum.GetValues(typeof(GfMove))) { Assert.IsNotEmpty(GirlfriendStyle.Text(m, false)); Assert.IsNotEmpty(GirlfriendStyle.Text(m, true)); }
+            for (int n = 0; n < 12; n++) { sweet.totalMessages = n; Assert.LessOrEqual(Moves(sweet, "今天下雨了", null, 23).Count, 2); }
+        }
+
+        [Test]
+        public void StyleNoteChecksOnHimAfterALongSilenceAndGoesColdWhenHurt()
+        {
+            // He answers her 20:00 message at 23:10: 查岗, with a little jealousy when warm, 「你是不是不爱我了」 when distant.
+            var s = Fresh(78, 10, 20);
+            var asked = At(10, 20, 20, 0, 100);
+            s.awaitingReply = true; s.herLastAt = asked.Story; s.meLastAt = asked.Story - 600;
+            var turn = GirlfriendRules.OnPlayerLine(s, At(10, 20, 23, 10, 200), "刚弄完电脑");
+            Assert.AreEqual(3 * 3600 + 600, turn.keptHerWaiting, 1e-6);
+            Assert.Greater(turn.sinceHisLast, turn.keptHerWaiting);
+            Assert.AreEqual(GfMove.CheckInJealous, Moves(s, "刚弄完电脑", turn, 23)[0]);
+            Assert.AreEqual(GfMove.CheckIn, Moves(Fresh(62, 10, 20), "刚弄完电脑", turn, 23)[0]);
+            CollectionAssert.Contains(Moves(Fresh(40, 10, 20), "刚弄完电脑", turn, 23), GfMove.TestSharp);
+            Assert.AreEqual(GfMove.Share, Moves(Fresh(62, 10, 20), "在吗", new GfTurn(), 23)[0], "a quick answer is no reason to 查岗");
+            // Hurt (a quarrel): cold shoulder, 「没事」 when asked, 「哦。」 for a flat line; an apology or a memory starts the thaw.
+            var hurt = Fresh(78, 10, 20); hurt.fighting = true;
+            CollectionAssert.AreEqual(new[] { GfMove.ColdShoulder }, Moves(hurt, "今天老周又找我修电脑"));
+            CollectionAssert.AreEqual(new[] { GfMove.NotFine }, Moves(hurt, "你怎么不理我"));
+            CollectionAssert.AreEqual(new[] { GfMove.PeriodOh }, Moves(hurt, "嗯"));
+            CollectionAssert.AreEqual(new[] { GfMove.Thaw }, Moves(hurt, "对不起 我错了"));
+            CollectionAssert.AreEqual(new[] { GfMove.Soften }, Moves(hurt, "概率论考得怎么样", new GfTurn { recalled = "概率论" }));
+            // Sulking over a forgotten day counts as hurt until it ends.
+            var sulk = Fresh(78, 9, 28); sulk.sulkUntil = GameCalendar.DayIndex(new DateTime(2016, 9, 30)); sulk.sulkZh = "有些日子 有人不记得";
+            Assert.IsTrue(GirlfriendStyle.Hurt(sulk, new DateTime(2016, 9, 29, 21, 0, 0)));
+            Assert.IsFalse(GirlfriendStyle.Hurt(sulk, new DateTime(2016, 10, 1, 21, 0, 0)));
+            // The note in the state block: the moves' words, the always-part, nothing else; code's situation leaves only a reaction.
+            string zh = GirlfriendPromptText.Nudge(hurt, "你怎么不理我", false, false, null, new DateTime(2016, 10, 20, 21, 0, 0));
+            StringAssert.Contains("没事", zh);
+            StringAssert.Contains("别重复", zh);
+            Assert.AreEqual(GirlfriendStyle.Text(GfMove.React, false) + "别重复你前面几条的说法，也别每次都说想他。",
+                GirlfriendPromptText.Nudge(s, "[红包] ¥52", false, false, null, null, true));
+        }
+
+        [Test]
+        public void StableStyleGuideAndCurtFullStop()
+        {
+            var s = Fresh(62, 10, 20);
+            string zh = GirlfriendPromptText.Stable(s, At(10, 20, 21, 0, 10), false);
+            StringAssert.Contains("你的聊天习惯", zh);
+            StringAssert.Contains("「哦。」带句号", zh);
+            StringAssert.Contains("宿舍", zh);
+            StringAssert.DoesNotContain("宿舍", GirlfriendPromptText.StyleGuide(true, false), "home for the summer");
+            StringAssert.Contains("How you text", GirlfriendPromptText.Stable(s, At(10, 20, 21, 0, 10), true));
+            Assert.AreEqual("哦。", GirlfriendPromptText.CleanBubble("哦。"), "her 「哦。」 keeps its full stop");
+            Assert.AreEqual("好的", GirlfriendPromptText.CleanBubble("好的。"));
+            Assert.AreEqual("厉害了", GirlfriendPromptText.CleanBubble("牛逼了"));
+            foreach (var shot in GirlfriendPromptText.FewShots(GirlfriendTier.Normal, false)) if (shot.Key == "user") Assert.AreNotEqual("嗯", shot.Value, "the model copied a 「嗯」 example word for word");
+            Assert.IsNotNull(GirlfriendPromptText.Parse(GirlfriendPromptText.FewShots(GirlfriendTier.Distant, false)[GirlfriendPromptText.FewShots(GirlfriendTier.Distant, false).Count - 1].Value));
+        }
+
+        [Test]
+        public void OfflineLibraryRoutesChoiceLatenessAndHurt()
+        {
+            Assert.AreEqual("choose", GirlfriendLines.RouteOf("晚上吃什么啊 你帮我选"));
+            Assert.AreEqual("choose", GirlfriendLines.RouteOf("you decide"));
+            Assert.AreEqual("late", GirlfriendLines.RouteOf("刚弄完电脑"));
+            Assert.AreEqual("late", GirlfriendLines.RouteOf("才看到消息"));
+            Assert.AreEqual("ate", GirlfriendLines.RouteOf("你吃饭了没"), "eating is still eating");
+            var clock = new DateTime(2016, 10, 20, 21, 0, 0);
+            string choose = string.Join("|", GirlfriendLines.Pick(Fresh(62, 10, 20), clock, false, null, "晚上吃什么啊 你帮我选"));
+            Assert.IsTrue(choose.Contains("随便") || choose.Contains("都行") || choose.Contains("选"), "she leaves it to him: " + choose);
+            // He kept her waiting for hours: whatever he says, she checks on him.
+            var warm = Fresh(78, 10, 20);
+            string checkIn = string.Join("|", GirlfriendLines.Pick(warm, clock, false, null, "在吗", new GfTurn { keptHerWaiting = 3 * 3600 }));
+            Assert.IsTrue(checkIn.Contains("久") || checkIn.Contains("刚才") || checkIn.Contains("等你"), checkIn);
+            // Hurt: the cool lines whatever her tier, no faces; his sorry gets the first step of a thaw.
+            var hurt = Fresh(78, 10, 20); hurt.fighting = true;
+            for (int i = 0; i < 6; i++)
+            {
+                string line = string.Join("|", GirlfriendLines.Pick(hurt, clock, false, null, "今天下雨了"));
+                Assert.IsFalse(line.Contains("["), "no faces while hurt: " + line);
+            }
+            var cool = new[] { "嗯", "哦。", "行", "好" };
+            CollectionAssert.Contains(cool, string.Join("|", GirlfriendLines.Pick(hurt, clock, false, null, "嗯")));
+            string thaw = string.Join("|", GirlfriendLines.Pick(Fighting(Fresh(78, 10, 20)), clock, false, null, "对不起"));
+            Assert.IsTrue(thaw.Contains("哼") || thaw.Contains("道歉") || thaw.Contains("下不为例"), "a first step, not the make-up: " + thaw);
+            foreach (var his in new[] { "you decide", "just got back", "sorry", "ok" })
+                foreach (var t in new[] { Fresh(60, 10, 20), Fighting(Fresh(90, 10, 20)) })
+                    for (int i = 0; i < 4; i++)
+                        foreach (var bubble in GirlfriendLines.Pick(t, clock, true, null, his, new GfTurn { keptHerWaiting = i * 3600 }))
+                            Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(System.Text.RegularExpressions.Regex.Replace(bubble, "\\[[^\\]]*\\]", ""), "[\\u4e00-\\u9fff]"), his + " → " + bubble);
+        }
+
+        [Test]
+        public void AcceptedRedPacketIsThankedFirstAndAReturnedOneIsNot()
+        {
+            var s = Fresh(66, 10, 20);
+            var o = GirlfriendRules.Packet(s, At(10, 20, 21, 0, 10), 52);
+            Assert.IsTrue(o.thanks);
+            Assert.AreEqual(GirlfriendRules.ThanksZh, o.lines[0], "the offline answer leads with 谢谢哥哥");
+            Assert.AreEqual("Thanks, gege~", o.lines[1]);
+            Assert.AreEqual(0, o.lines.Length % 2);
+            StringAssert.Contains("谢谢哥哥", o.situationZh, "the model is told the thanks is already sent");
+            // The model's own bubbles: thanks goes first, without being said twice.
+            CollectionAssert.AreEqual(new[] { "谢谢哥哥", "收到啦", "好土[偷笑]" }, GirlfriendRules.ThankFirst(new[] { "收到啦", "好土[偷笑]" }, false));
+            CollectionAssert.AreEqual(new[] { "谢谢哥哥", "你哪来这么多钱" }, GirlfriendRules.ThankFirst(new[] { "谢啦", "你哪来这么多钱" }, false));
+            CollectionAssert.AreEqual(new[] { "谢谢哥哥[害羞]", "收下啦" }, GirlfriendRules.ThankFirst(new[] { "谢谢[害羞]", "收下啦" }, false));
+            CollectionAssert.AreEqual(new[] { "谢谢哥哥～", "哈哈哈" }, GirlfriendRules.ThankFirst(new[] { "谢谢哥哥～", "哈哈哈" }, false));
+            CollectionAssert.AreEqual(new[] { "Thanks, gege~", "so cheesy" }, GirlfriendRules.ThankFirst(new[] { "thank you!", "so cheesy" }, true));
+            CollectionAssert.AreEqual(new[] { "Thanks, gege~", "type faster" }, GirlfriendRules.ThankFirst(new[] { "type faster" }, true));
+            Assert.AreEqual(3, GirlfriendRules.ThankFirst(new[] { "一", "二", "三" }, false).Count);
+            // Too much is still taken: thanks, then where did the money come from.
+            var big = GirlfriendRules.Packet(Fresh(66, 10, 20), At(10, 20, 21, 0, 10), 300);
+            Assert.AreEqual(GfPacketResult.TooMuch, big.result);
+            Assert.AreEqual("谢谢哥哥", big.lines[0]);
+            Assert.AreEqual("你哪来这么多钱？", big.lines[2]);
+            // Sent back in a quarrel, or taken coldly: no thanks.
+            var fight = Fresh(66, 10, 20); fight.fighting = true;
+            var back = GirlfriendRules.Packet(fight, At(10, 20, 21, 0, 10), 52);
+            Assert.IsTrue(back.returned);
+            Assert.IsFalse(back.thanks);
+            Assert.AreNotEqual(GirlfriendRules.ThanksZh, back.lines[0]);
+            StringAssert.DoesNotContain("谢谢哥哥", back.situationZh);
+            var cold = GirlfriendRules.Packet(Fresh(20, 10, 20), At(10, 20, 21, 0, 10), 5.2);
+            Assert.IsFalse(cold.returned);
+            Assert.IsFalse(cold.thanks, "the cold tier takes it without a sweet word");
         }
 
         [Test]

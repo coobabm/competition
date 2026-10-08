@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
         // No reference to XgCatalog here: its static node initialization appends these nodes.
         public static readonly XgNode[] LabelNodes =
         {
-            LabelNode("label.raise", null, "加薪", "Pay raise", "手动标注报酬 ×1 → ×30，每级至少 +0.5；与标注台商店共用。", "Hand pay ×1 to ×30, at least +0.5 per level; shared with the labelling shop.", 10, 17, 0),
+            LabelNode("label.raise", null, "加薪", "Pay raise", "人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。", "Hand pay: ×2, ×4, ×6 … ×34, +2× per raise; shared with the labelling shop.", 10, 17, 0),
             LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.3 题/秒；需任一 60% 检查点。", "Each global level adds 0.3 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
             LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 20，满时自动暂停。", "Route by confidence; automation pauses when the 20-card review inbox is full.", 300, 1, 260),
             LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
@@ -218,7 +218,7 @@ namespace LingGuangV05.XingGuang
         public double CollaborationRate(string desk, IXgHost host)
         {
             if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld || !EligibleDesk(desk)) return 0;
-            return GlobalAutoLevel * XgCatalog.AutoRatePerLevel * Math.Min(1, host.Compute);
+            return GlobalAutoLevel * XgCatalog.AutoRatePerLevel * Math.Min(1, host.Compute) * WireSpeed("label:" + desk);
         }
         public double CollaborationIncome(string desk, IXgHost host)
         {
@@ -227,7 +227,7 @@ namespace LingGuangV05.XingGuang
             return CollaborationRate(desk, host) * correctFraction * PayFor(desk, LevelOf(desk)) * QualityPayMultiplier;
         }
         public static bool IsBrainDesk(string desk)
-        { return desk == "logic" || desk == "danmu" || desk == "spam" || desk == "headline" || desk == "review" || desk == "translate" || desk == "longtext" || desk == "crosssentence" || desk == "poems"; }
+        { return desk == "logic" || desk == "arith" || desk == "sense" || desk == "danmu" || desk == "spam" || desk == "headline" || desk == "review" || desk == "translate" || desk == "longtext" || desk == "crosssentence" || desk == "poems"; }
         bool UsesBrain(string desk) => Has("label.brain") && IsBrainDesk(desk) && BrainOnline && !OfflineSimulation;
 
         public void FillJudgmentBuffer()
@@ -375,7 +375,7 @@ namespace LingGuangV05.XingGuang
         {
             if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld) return false;
             var card = S.prefetch.Find(c => c.id == cardId);
-            if (card == null || !card.hasJudgment || card.awaitingBrain) return false;
+            if (card == null || XgCatalog.Desk(card.dataset) == null || !card.hasJudgment || card.awaitingBrain) return false;
             S.prefetch.Remove(card); // Claim once before any reward or event callback.
             // 题库比对: a trap item the platform already checked once goes to a human instead.
             if (CollaborationEnabled && (card.confidence < S.coopThreshold || TrapRecognized(card)))
@@ -419,7 +419,7 @@ namespace LingGuangV05.XingGuang
         public XgAnswer AnswerQueued(long cardId, bool yes, IXgHost host)
         {
             var card = S.queue.Find(c => c.id == cardId);
-            if (card == null || host == null) return default;
+            if (card == null || host == null || XgCatalog.Desk(card.dataset) == null) return default;
             S.queue.Remove(card);
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
@@ -440,6 +440,7 @@ namespace LingGuangV05.XingGuang
             }
             else { BreakCombo(); S.handWrong++; }
             result.combo = S.combo;
+            NoteDayAnswer(result.correct, result.pay, result.samples);
             CheckDesks();
             return result;
         }

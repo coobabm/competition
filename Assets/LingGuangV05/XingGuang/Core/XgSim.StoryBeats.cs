@@ -36,10 +36,10 @@ namespace LingGuangV05.XingGuang
             return vision > sequence ? "vision" : "sequence";
         }
 
-        /// <summary>阶段 2 的墙出现时，它做出选择（之后不再变）。</summary>
+        /// <summary>Its first choice (它的第一个选择): made once, when the second ability emerges, and never changed.</summary>
         void ChooseFirstTrack() { if (S.firstTrack.Length == 0) S.firstTrack = LeaningTrack(); }
 
-        /// <summary>阶段 2 过墙：先说选中的那条线的第一句话，另一句留到那条线第一次训练。</summary>
+        /// <summary>The third ability: the first words of the chosen track now; the other track's wait for its first epoch.</summary>
         void StageThreeFirstWords()
         {
             ChooseFirstTrack();

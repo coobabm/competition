@@ -18,7 +18,7 @@ namespace LingGuangV05.XingGuang.Tests
             public string Blocker => null;
         }
 
-        /// <summary>A spam model trained well (closed-form curve, so the numbers are exact).</summary>
+        /// <summary>A spam model; its ceiling (the scaling law, so the numbers are exact) carries the noise.</summary>
         static XgSim Trained(double noise, double labels = 100)
         {
             var sim = new XgSim { GoldChance = 0, UseBoard = false };
@@ -51,8 +51,8 @@ namespace LingGuangV05.XingGuang.Tests
             reference.Evaluate(reference.S.sequence);
             Assert.AreEqual(.1, noisy.InbreedingPenaltyFor("spam"), 1e-9, "0.5 × (30% − 10%)");
             Assert.AreEqual(.1, noisy.S.sequence.inbreedingPenalty, 1e-9);
-            Assert.AreEqual(reference.S.sequence.valAcc - .1, noisy.S.sequence.valAcc, 1e-9);
-            Assert.Less(noisy.S.sequence.valAcc, clean.S.sequence.valAcc);
+            Assert.AreEqual(reference.CeilingAcc(reference.S.sequence) - .1, noisy.CeilingAcc(noisy.S.sequence), 1e-9, "the penalty comes off the model's ceiling");
+            Assert.Less(noisy.CeilingAcc(noisy.S.sequence), clean.CeilingAcc(clean.S.sequence));
             Assert.IsTrue(noisy.PhenomenonSeen(XgSim.InbreedingId));
         }
 
@@ -62,6 +62,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Trained(500);
             var d = XgCatalog.Dataset("spam");
             Assert.GreaterOrEqual(sim.S.sequence.valAcc, 1 - d.chanceError - 1e-9);
+            Assert.GreaterOrEqual(sim.CeilingAcc(sim.S.sequence), 1 - d.chanceError - 1e-9);
         }
 
         [Test]
@@ -113,10 +114,10 @@ namespace LingGuangV05.XingGuang.Tests
         public void CleaningNoiseLiftsTheCap()
         {
             var sim = Trained(30); var host = new Host(); sim.S.unlocked.Add("label.audit");
-            double before = sim.S.sequence.valAcc;
+            double before = sim.CeilingAcc(sim.S.sequence);
             Assert.AreEqual(10, sim.CleanNoise("spam", host));
             Assert.AreEqual(.05, sim.InbreedingPenaltyFor("spam"), 1e-9, "20 noisy rows in 100");
-            Assert.Greater(sim.S.sequence.valAcc, before);
+            Assert.Greater(sim.CeilingAcc(sim.S.sequence), before);
         }
 
         [Test]

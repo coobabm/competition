@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f896120182dd854896c2ab7adbc9c27, type: 3}
+  m_Name: Magician_AttackSpeed
+  m_EditorClassIdentifier: 
+  UpgradeName: Swift Cold
+  Icon: {fileID: -1443889011651946179, guid: 79d73c8dc176eaa45a64e80accbe7654, type: 3}
+  CurrencyType: 0
+  UnlockWhenParentMaxed: 0
+  UnlockAtParentLevel: 1
+  ParentUpgrade: {fileID: 11400000, guid: 21ea7c29bbdb65540891636a17a134d9, type: 2}
+  LevelsData:
+  - Description: Increase the Magician <red>Attack Speed</red> by 15%.
+    Cost: 80
+    Effects:
+    - statType: 5
+      operation: 1
+      value: 1.15
+      showOnTooltip: 1
+      tooltipLabel: Attack Speed
+  - Description: Increase the Magician <red>Attack Speed</red> by 30%.
+    Cost: 100
+    Effects:
+    - statType: 5
+      operation: 1
+      value: 1.3
+      showOnTooltip: 1
+      tooltipLabel: Attack Speed

@@ -165,10 +165,13 @@ namespace LingGuangV05.Desktop.Taohuo
             return "the shop said no.";
         }
 
-        /// <summary>Shared generated product illustration; preserve text fallback when art is unavailable.</summary>
+        /// <summary>Product-specific reference artwork; preserve the full object and the text fallback.</summary>
         protected bool ProductIllustration(RectTransform parent, string key, string caption = "")
         {
-            if (DesktopArt.Paint(parent, key) == null) return false;
+            var image = DesktopArt.Paint(parent, key, false);
+            if (image == null) return false;
+            image.rectTransform.offsetMin = new Vector2(3, string.IsNullOrEmpty(caption) ? 3 : 36);
+            image.rectTransform.offsetMax = new Vector2(-3, -3);
             if (!string.IsNullOrEmpty(caption))
             {
                 var strip = PrologueDesk.Rect("Caption", parent, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 34));
@@ -178,12 +181,12 @@ namespace LingGuangV05.Desktop.Taohuo
             return true;
         }
 
-        /// <summary>Card glyph: the model's short number on a coloured box (淘货's "photo").</summary>
+        /// <summary>The card model's reference artwork, with a labelled fallback if its asset is unavailable.</summary>
         protected RectTransform CardPicture(Transform parent, GpuModel g, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
         {
             var rt = PrologueDesk.Rect("Picture", parent, min, max, offMin, offMax);
             string model = g == null ? "GPU" : g.name;
-            if (ProductIllustration(rt, "gpu", "<b>" + model + "</b>" + (g == null ? "" : "\n" + T(g.brand, g.brandEn)))) return rt;
+            if (g != null && ProductIllustration(rt, "gpu_" + g.id, "<b>" + model + "</b>\n" + T(g.brand, g.brandEn))) return rt;
             bool red = g != null && g.id == HardwareCatalog.Rx480;
             bool titan = g != null && g.id == HardwareCatalog.TitanXp;
             PrologueDesk.Fill(rt, red ? new Color32(150, 20, 24, 255) : titan ? new Color32(30, 30, 34, 255) : new Color32(40, 44, 48, 255), false);

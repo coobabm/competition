@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>灵光 · 接线调度</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  --bg:#070C12;--panel:#0B131C;--panel2:#0E1823;--line:#1B2D3B;--line2:#28475A;
+  --ink:#D6EEF5;--mute:#5F8A9A;--dim:#3A5566;
+  --power:#EF9F27;--gpu:#5DA8E8;--model:#A99BF2;--task:#5DCAA5;--bad:#E24B4A;--warn:#FAC775;
+  --mono:"SF Mono",Menlo,Consolas,"PingFang SC",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:12px;overflow:hidden}
+button{font-family:inherit;font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line2);padding:5px 10px;cursor:pointer}
+button:hover{border-color:var(--task)}
+button.hot{border-color:var(--task);color:var(--task)}
+button.danger{border-color:var(--bad);color:#F09595}
+.app{display:grid;grid-template-rows:44px 74px 1fr 34px;height:100vh}
+/* header */
+.hd{display:flex;align-items:center;gap:16px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.logo{color:var(--task);letter-spacing:2px}
+.hd .crumb{color:var(--mute)}
+.hd .sp{flex:1}
+.stage{display:flex;gap:2px}
+.stage button{padding:3px 8px}
+.stage button.on{background:#0F2A2A;border-color:var(--task);color:var(--task)}
+.clock{color:var(--task)}
+/* kpi */
+.kpi{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.k{background:var(--panel);padding:8px 14px}
+.k .l{color:var(--mute);font-size:11px}
+.k .v{font-size:20px;margin:2px 0}
+.k .v small{font-size:12px;color:var(--mute)}
+.seg{display:flex;gap:2px}.seg i{flex:1;height:5px;background:#15262F}
+/* main */
+.main{display:grid;grid-template-columns:230px minmax(0,1fr) 290px;min-height:0}
+.side{background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:10px}
+.right{background:var(--panel);border-left:1px solid var(--line);display:grid;grid-template-rows:auto 1fr;min-height:0}
+.h{color:var(--mute);font-size:11px;letter-spacing:1px;margin:10px 0 6px;display:flex;justify-content:space-between}
+.inv{border:1px solid var(--line2);border-left:3px solid var(--line2);padding:6px 8px;margin-bottom:6px;background:var(--panel2);cursor:pointer;position:relative}
+.inv:hover{border-color:var(--task)}
+.inv .s{color:var(--mute);font-size:11px;margin-top:2px}
+.inv.lock{opacity:.45;cursor:not-allowed}
+.inv.lock:hover{border-color:var(--line2)}
+.inv.used::after{content:"已放置";position:absolute;right:6px;top:6px;color:var(--dim);font-size:10px}
+.inv[data-k=power]{border-left-color:var(--power)}.inv[data-k=gpu]{border-left-color:var(--gpu)}.inv[data-k=model]{border-left-color:var(--model)}.inv[data-k=task]{border-left-color:var(--task)}
+/* canvas */
+.cv{position:relative;overflow:hidden;background:
+  linear-gradient(#0D1A24 1px,transparent 1px) 0 0/24px 24px,
+  linear-gradient(90deg,#0D1A24 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+.cv .lanes{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);pointer-events:none}
+.cv .lanes div{border-right:1px dashed #12212C;padding:8px;color:var(--dim);font-size:11px;letter-spacing:2px}
+.banner{position:absolute;left:12px;top:30px;right:12px;z-index:6;display:none;padding:8px 12px;border:1px solid var(--bad);background:#1A0B0B;color:#F09595}
+.banner button{margin-left:10px}
+svg.layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+svg#wires{z-index:1}svg#fx{z-index:4;pointer-events:none}
+svg#wires path.hit{stroke:transparent;stroke-width:12;fill:none;cursor:pointer;pointer-events:stroke}
+.node{position:absolute;width:var(--nw,176px);z-index:3;background:var(--panel2);border:1px solid var(--line2);border-top:3px solid var(--line2);padding:7px 9px;cursor:grab;user-select:none;transition:background .2s,border-color .2s}
+.node.sel{border-color:var(--ink)}
+.node[data-k=power]{border-top-color:var(--power)}.node[data-k=gpu]{border-top-color:var(--gpu)}.node[data-k=model]{border-top-color:var(--model)}.node[data-k=task]{border-top-color:var(--task)}
+.node .t{display:flex;justify-content:space-between;gap:6px}
+.node .s{color:var(--mute);font-size:11px;margin-top:2px}
+.node .bar{height:4px;background:#15262F;margin-top:6px}.node .bar i{display:block;height:4px}
+.node .st{font-size:10px;margin-top:5px;display:flex;justify-content:space-between}
+.node.off{opacity:.55}
+.node.hit{background:#123A33}
+.node.err{border-color:var(--bad)}
+.port{position:absolute;top:22px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--mute);cursor:crosshair;z-index:5}
+.port.in{left:-7px}.port.out{right:-7px}
+.port.armed{background:var(--task);border-color:var(--task)}
+.tag{font-size:10px;padding:0 4px;border:1px solid}
+.ok{color:var(--task);border-color:var(--task)}.bad{color:#F09595;border-color:var(--bad)}.wait{color:var(--warn);border-color:var(--warn)}.idle{color:var(--mute);border-color:var(--line2)}
+/* right */
+.detail{padding:12px;border-bottom:1px solid var(--line);min-height:240px}
+.detail .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed #12212C}
+.detail .row b{font-weight:400;color:var(--ink)}
+.detail .row span{color:var(--mute)}
+.log{overflow:auto;padding:8px 12px}
+.log div{padding:4px 0;border-bottom:1px dashed #12212C;line-height:1.5}
+.log .tm{color:var(--dim);margin-right:6px}
+.log .e{color:#F09595}.log .w{color:var(--warn)}.log .g{color:var(--task)}.log .q{color:#E6C7F5}
+.log button{margin-top:4px}
+/* footer */
+.ft{display:flex;align-items:center;gap:10px;padding:0 12px;border-top:1px solid var(--line);background:var(--panel);color:var(--mute)}
+.ft .sp{flex:1}
+/* table view */
+.table{position:absolute;inset:0;z-index:7;background:var(--bg);padding:16px;overflow:auto;display:none}
+.table .tr{display:grid;grid-template-columns:40px 1.4fr 2.6fr 90px 90px 90px;gap:8px;padding:8px;border-bottom:1px solid var(--line);align-items:center}
+.table .th{color:var(--mute)}
+#rightBtn{display:none}
+@media (max-width:1200px){
+  .main{grid-template-columns:180px minmax(0,1fr)}
+  .right{position:fixed;right:0;top:118px;bottom:34px;width:290px;z-index:20;transform:translateX(100%);transition:transform .2s;box-shadow:-8px 0 24px #000}
+  body.showRight .right{transform:none}
+  #rightBtn{display:inline-block}
+  .k .l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <span class="logo">灵光 ▸ 接线调度</span>
+    <span class="crumb">灵光.exe / 大脑 / 接线</span>
+    <span class="sp"></span>
+    <span class="crumb">剧情阶段</span>
+    <div class="stage" id="stage"></div>
+    <span class="clock" id="clock">2016-11-03 23:41:00</span>
+  </div>
+  <div class="kpi">
+    <div class="k"><div class="l">电力 W · 机箱电源 3500</div><div class="v" id="kW">0</div><div class="seg" id="sW"></div></div>
+    <div class="k"><div class="l">算力 CU · 已分配 / 在线</div><div class="v" id="kC">0</div><div class="seg" id="sC"></div></div>
+    <div class="k"><div class="l">显存 GB · 已占 / 在线</div><div class="v" id="kV">0</div><div class="seg" id="sV"></div></div>
+    <div class="k"><div class="l">任务 · 在跑 / 已接</div><div class="v" id="kT">0</div><div class="l" id="kTs">—</div></div>
+    <div class="k"><div class="l">净收入 ¥/秒 · 今晚累计</div><div class="v" id="kM">0</div><div class="l" id="kMs">—</div></div>
+  </div>
+  <div class="main">
+    <div class="side" id="side"></div>
+    <div class="cv" id="cv">
+      <div class="lanes"><div>01 电力</div><div>02 显卡</div><div>03 模型</div><div>04 任务</div></div>
+      <div class="banner" id="trip">⚡ 跳闸：机箱功率超过 3500 W，所有显卡掉电。<button id="reset">拔掉几条线后合闸</button></div>
+      <svg class="layer" id="wires"></svg>
+      <div id="nodes"></div>
+      <svg class="layer" id="fx"></svg>
+      <div class="table" id="table"></div>
+    </div>
+    <div class="right">
+      <div class="detail" id="detail"></div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+  <div class="ft">
+    <span>点「输出口」再点「输入口」= 接线 · 点线 = 拔线 · 拖动节点 · Del 删除选中节点</span>
+    <span class="sp"></span>
+    <button id="rightBtn">详情 / 记录</button>
+    <button id="viewBtn">视图：接线图</button>
+    <button id="speedBtn">速度 1×</button>
+    <button id="cutBtn">模拟停电</button>
+    <button id="nightBtn">跳到 00:00 包夜</button>
+  </div>
+</div>
+<script>
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+
+/* ───────────── game data: everything here exists in 灵光 ───────────── */
+const INV=[
+ // power
+ {k:'power',id:'psu',name:'机箱电源',s:'3500 W · 家用 220V',cap:3500,stage:1},
+ {k:'power',id:'cafe',name:'网吧电路（分包）',s:'1200 W · 阿杰的网吧',cap:1200,stage:3,lock:'阶段 3：阿杰网吧开放分包'},
+ {k:'power',id:'idc',name:'IDC 机柜',s:'20000 W · 按秒付租金',cap:20000,stage:6,lock:'阶段 6：科技树租「机房」',rent:.4},
+ // gpus
+ {k:'gpu',id:'g980',name:'GTX 980 Ti',s:'6 GB · 250 W',cu:56,vram:6,w:250,stage:1},
+ {k:'gpu',id:'g960a',name:'网吧 7 号机 GTX 960',s:'2 GB · 租 ¥0.05/秒',cu:24,vram:2,w:120,stage:3,lock:'阶段 3：阿杰的网吧',rent:.05},
+ {k:'gpu',id:'g960b',name:'网吧 8 号机 GTX 960',s:'2 GB · 租 ¥0.05/秒',cu:24,vram:2,w:120,stage:3,lock:'阶段 3：阿杰的网吧',rent:.05},
+ {k:'gpu',id:'g1080',name:'GTX 1080',s:'8 GB · 180 W',cu:88,vram:8,w:180,stage:4,lock:'2016-05-27 上市 · 淘货购买 ¥4999'},
+ // models (from 模型仓库)
+ {k:'model',id:'self',name:'灵光 · 本体',s:'阶段 5 · 对话 / 读写',desk:'*',acc:.9,arch:'Seq2Seq+注意力',vram:3.0,cu:32,stage:3,lock:'阶段 3：它第一次说话'},
+ {k:'model',id:'mn7',name:'手写数字 v7',s:'CNN · 97.2%',desk:'mnist',acc:.972,arch:'LeNet',vram:.6,cu:10,stage:2},
+ {k:'model',id:'cf3',name:'验证码 v3',s:'CNN · 72.1%',desk:'cifar',acc:.721,arch:'AlexNet',vram:1.8,cu:24,stage:3,lock:'阶段 3：CNN'},
+ {k:'model',id:'sp4',name:'垃圾短信 v4',s:'MLP · 91.0%',desk:'spam',acc:.91,arch:'MLP',vram:.3,cu:6,stage:2},
+ {k:'model',id:'dm5',name:'弹幕情绪 v5',s:'RNN · 88.4%',desk:'danmu',acc:.884,arch:'RNN',vram:.8,cu:14,stage:3,lock:'阶段 3：RNN'},
+ {k:'model',id:'tr2',name:'中式英语 v2',s:'LSTM · 78.5%',desk:'translate',acc:.785,arch:'LSTM',vram:2.2,cu:30,stage:4,lock:'阶段 4：LSTM'},
+ // tasks
+ {k:'task',id:'t_spam',g:'标注台',name:'垃圾短信 · 自动代标',desk:'spam',min:.8,pay:.08,rate:3,unit:'条',stage:1,crowd:true},
+ {k:'task',id:'t_danmu',g:'标注台',name:'弹幕情绪 · 自动代标',desk:'danmu',min:.8,pay:.1,rate:3,unit:'条',stage:3,lock:'阶段 3',crowd:true},
+ {k:'task',id:'t_cheque',g:'企业订单',name:'城郊信用社 · 支票金额',desk:'mnist',min:.97,pay:.25,rate:2,unit:'张',stage:2},
+ {k:'task',id:'t_zip',g:'企业订单',name:'区邮政局 · 邮编分拣',desk:'mnist',min:.99,pay:.5,rate:2,unit:'封',stage:2},
+ {k:'task',id:'t_cap',g:'企业订单',name:'某购票网站 · 验证码测评',desk:'cifar',min:.7,pay:1.4,rate:1.4,unit:'张',stage:3,lock:'阶段 3'},
+ {k:'task',id:'t_tr',g:'企业订单',name:'表姐 · 跨境翻译',desk:'translate',min:.75,pay:1.5,rate:.8,unit:'句',stage:4,lock:'阶段 4'},
+ {k:'task',id:'t_live',g:'企业订单',name:'省台 · 直播字幕（实时）',desk:'translate',min:.75,pay:4,rate:1,unit:'句',stage:5,lock:'阶段 5',realtime:true},
+ {k:'task',id:'t_train',g:'训练',name:'回炉训练 · 手写数字',desk:'mnist',min:0,pay:0,rate:2,unit:'轮',stage:2,train:true},
+ {k:'task',id:'t_pre',g:'训练',name:'预训练 · 整个互联网（2016）',desk:'*',min:0,pay:0,rate:.5,unit:'步',stage:6,lock:'阶段 6',extraW:3400},
+ {k:'task',id:'t_ajie',g:'网吧',name:'阿杰 · 收银小票对账',desk:'mnist',min:.95,pay:.15,rate:1.5,unit:'张',stage:3,hidden:true,lock:'跟阿杰说实话以后'},
+ {k:'task',id:'t_yy',g:'生活',name:'YY 网吧群 · 替我聊',desk:'*',min:0,pay:0,rate:.35,unit:'句',stage:3,lock:'阶段 3：它进了 YY'},
+ {k:'task',id:'t_qw',g:'生活',name:'YY · 替我回晴雯',desk:'*',min:0,pay:0,rate:.25,unit:'句',stage:5,lock:'阶段 5'},
+ {k:'task',id:'t_tb',g:'生活',name:'贴吧 · 装机帖回帖',desk:'*',min:0,pay:0,rate:.3,unit:'帖',stage:3,lock:'阶段 3'},
+];
+const KCOL={power:'#EF9F27',gpu:'#5DA8E8',model:'#A99BF2',task:'#5DCAA5'};
+const KNAME={power:'电力',gpu:'显卡',model:'模型',task:'任务'};
+const NEXT={power:'gpu',gpu:'model',model:'task'};
+const PRICE=.0005; // ¥ per W per game second (game time runs fast: one second is a minute on the clock)
+
+let stage=5,speed=1,clockS=23*3600+41*60,total=0,tripped=false,cutUntil=0,night=false;
+// 阿杰, the café owner: what you told him, how much he charges, whether he has taken his machines back
+const ajie={rentedFor:0,asked:0,lies:0,truth:false,mul:1,cutoff:false,pending:false,lastLie:''};
+let nodes=[],edges=[],sel=null,armed=null;
+const stats={};const sparks=[];const next={};const paused={};
+
+/* ───────────── inventory ───────────── */
+function renderSide(){
+  let h='';
+  ['power','gpu','model','task'].forEach(k=>{
+    const items=INV.filter(x=>x.k===k&&(!x.hidden||x.unlocked));
+    h+=`<div class="h"><span>${KNAME[k]}</span><span>${items.filter(x=>x.stage<=stage).length}/${items.length}</span></div>`;
+    let g='';
+    items.forEach(x=>{
+      if(x.g&&x.g!==g){g=x.g;h+=`<div class="h" style="margin:6px 0 4px;color:var(--dim)">· ${g}</div>`;}
+      const locked=x.stage>stage,used=nodes.some(n=>n.id===x.id);
+      const sub=locked?('🔒 '+(x.lock||'阶段 '+x.stage)):x.k==='task'?(x.pay?`¥${x.pay}/${x.unit}`:'不挣钱')+(x.min?` · 需 ${x.desk} ≥${Math.round(x.min*100)}%`:''):x.s;
+      h+=`<div class="inv ${locked?'lock':''} ${used?'used':''}" data-k="${k}" data-id="${x.id}">${x.name}<div class="s">${sub}</div></div>`;
+    });
+  });
+  h+=`<div class="h" style="margin-top:14px">点仓库里的东西 = 放到画布上</div>`;
+  $('side').innerHTML=h;
+  document.querySelectorAll('.inv').forEach(e=>e.onclick=()=>{
+    const x=INV.find(i=>i.id===e.dataset.id);
+    if(x.stage>stage){log(`${x.name} 还没解锁：${x.lock||'阶段 '+x.stage}`,'w');return;}
+    if(nodes.some(n=>n.id===x.id)){select(x.id);return;}
+    addNode(x);
+  });
+}
+function laneX(k){const w=$('cv').clientWidth;return {power:.015,gpu:.265,model:.515,task:.765}[k]*w;}
+function fitNodes(){const w=$('cv').clientWidth;document.documentElement.style.setProperty('--nw',Math.max(120,Math.min(190,w/4-26))+'px');nodes.forEach(n=>{const lane={power:0,gpu:1,model:2,task:3}[n.k];const lw=w/4;if(n.x<lane*lw-20||n.x>(lane+1)*lw)n.x=laneX(n.k);});}
+function addNode(x,y){
+  const same=nodes.filter(n=>n.k===x.k).length;
+  nodes.push(Object.assign({},x,{x:laneX(x.k),y:y??(34+same*112),on:true}));
+  stats[x.id]=stats[x.id]||{ok:0,bad:0};
+  log(`放置 ${KNAME[x.k]}「${x.name}」`);
+  renderAll();select(x.id);
+}
+function removeNode(id){nodes=nodes.filter(n=>n.id!==id);edges=edges.filter(e=>e.a!==id&&e.b!==id);if(sel===id)sel=null;renderAll();}
+
+/* ───────────── simulation: who is alive, who gets what ───────────── */
+function N(id){return nodes.find(n=>n.id===id)}
+function compute(){
+  const r={W:0,cap:0,cuOn:0,cuUse:0,vOn:0,vUse:0,gpu:{},model:{},task:{},income:0,fee:0,running:0,wired:0};
+  const cut=performance.now()<cutUntil;
+  // power sources
+  nodes.filter(n=>n.k==='power').forEach(p=>{r.cap+=p.cap;});
+  // gpus: powered if an edge from a power node and not tripped/cut; the café is offline after 23:30 (宿舍断网 = 网吧线路也断)
+  nodes.filter(n=>n.k==='gpu').forEach(g=>{
+    const src=edges.find(e=>e.b===g.id);const p=src&&N(src.a);
+    let why='';
+    if(!p)why='没接电';else if(cut&&p.id!=='idc')why='停电';else if(tripped&&p.id==='psu')why='跳闸';else if(ajie.cutoff&&p.id==='cafe')why='阿杰收回了';
+    const models=edges.filter(e=>e.a===g.id).map(e=>N(e.b)).filter(Boolean);
+    const vUse=models.reduce((a,m)=>a+m.vram,0),cuNeed=models.reduce((a,m)=>a+m.cu,0);
+    r.gpu[g.id]={on:!why,why,vUse,cuNeed,share:cuNeed>0?Math.min(1,g.cu/cuNeed):1,src:p};
+    if(!why){r.cuOn+=g.cu;r.vOn+=g.vram;r.W+=40+g.w*Math.min(1,cuNeed/g.cu);}
+  });
+  // power per source: breaker
+  const perSrc={};nodes.filter(n=>n.k==='gpu').forEach(g=>{const s=r.gpu[g.id];if(s.on&&s.src){perSrc[s.src.id]=(perSrc[s.src.id]||0)+40+g.w*Math.min(1,s.cuNeed/g.cu);}});
+  r.perSrc=perSrc;
+  // models: hosted on a gpu, vram fits
+  nodes.filter(n=>n.k==='model').forEach(m=>{
+    const host=edges.find(e=>e.b===m.id);const g=host&&N(host.a);const gs=g&&r.gpu[g.id];
+    let why='';
+    if(!g)why='没上卡';else if(!gs.on)why='显卡'+gs.why;else if(gs.vUse>g.vram)why=`显存爆了 ${gs.vUse.toFixed(1)}/${g.vram} GB`;
+    const tasks=edges.filter(e=>e.a===m.id).map(e=>N(e.b)).filter(Boolean);
+    const sp=why?0:gs.share/Math.max(1,tasks.length);
+    r.model[m.id]={on:!why,why,speed:sp,host:g,tasks};
+    if(!why){r.vUse+=m.vram;r.cuUse+=m.cu*gs.share;}
+  });
+  // tasks
+  nodes.filter(n=>n.k==='task').forEach(t=>{
+    const src=edges.find(e=>e.b===t.id);const m=src&&N(src.a);const ms=m&&r.model[m.id];
+    let why='',state='idle';
+    if(!m){why='等待接入';}
+    else{r.wired++;
+      const fit=m.desk==='*'?t.desk==='*':m.desk===t.desk;
+      if(!fit)why=m.desk==='*'?'本体不接标注和订单':'数据不对口：要 '+t.desk;
+      else if(t.min&&m.acc<t.min)why=`准确率不够 ${Math.round(m.acc*100)}% < ${Math.round(t.min*100)}%`;
+      else if(t.realtime&&/RNN|LSTM/.test(m.arch))why='实时：循环网络跟不上';
+      else if(t.id==='t_qw'&&stage>=6&&!paused[t.id])why='';
+      else if(!ms.on)why='模型'+ms.why;
+      if(paused[t.id])why=paused[t.id];
+    }
+    if(m&&!why){state='run';r.running++;}
+    else if(m)state='err';
+    const sp=state==='run'?ms.speed:0;
+    r.task[t.id]={state,why,model:m,speed:sp,rate:t.rate*sp};
+    if(state==='run')r.income+=t.pay*t.rate*sp*(m?m.acc:1);
+  });
+  // pre-training pulls far more power than one card's rating: the house breaker trips, the IDC rack does not
+  nodes.filter(n=>n.k==='task'&&n.extraW).forEach(t=>{const st=r.task[t.id];if(st.state!=='run')return;const g=r.model[st.model.id].host,src=g&&r.gpu[g.id].src;if(src){perSrc[src.id]=(perSrc[src.id]||0)+t.extraW;r.W+=t.extraW;}});
+  // rent
+  if(N('idc')&&edges.some(e=>e.a==='idc'))r.income-=N('idc').rent;
+  r.rent=0;nodes.filter(n=>n.rent&&edges.some(e=>e.a==='cafe'&&e.b===n.id)&&!ajie.cutoff).forEach(g=>{r.rent+=g.rent*ajie.mul*(night?.6:1);});
+  r.fee=(r.perSrc.psu||0)*PRICE;
+  return r;
+}
+
+/* ───────────── rendering ───────────── */
+let R=compute();
+function renderNodes(){
+  const box=$('nodes');box.innerHTML='';
+  nodes.forEach(n=>{
+    const d=document.createElement('div');d.className='node';d.dataset.k=n.k;d.dataset.id=n.id;
+    d.style.left=n.x+'px';d.style.top=n.y+'px';
+    if(sel===n.id)d.classList.add('sel');
+    d.innerHTML=nodeBody(n);
+    if(n.k!=='power'){const p=document.createElement('div');p.className='port in';p.title='输入';p.onclick=e=>{e.stopPropagation();portIn(n);};d.appendChild(p);}
+    if(n.k!=='task'){const p=document.createElement('div');p.className='port out'+(armed===n.id?' armed':'');p.title='输出';p.onclick=e=>{e.stopPropagation();portOut(n);};d.appendChild(p);}
+    drag(d,n);d.onmousedown2=null;
+    d.addEventListener('click',()=>select(n.id));
+    box.appendChild(d);
+  });
+}
+function bar(frac,col){return `<div class="bar"><i style="width:${Math.min(100,frac*100)}%;background:${col}"></i></div>`;}
+function nodeBody(n){
+  if(n.k==='power'){const w=R.perSrc[n.id]||0;const over=w>n.cap;
+    return `<div class="t"><span>${n.name}</span><span class="tag ${over?'bad':w?'ok':'idle'}">${over?'超载':w?'供电':'空闲'}</span></div><div class="s">${n.s}</div>${bar(w/n.cap,over?'#E24B4A':'#EF9F27')}<div class="st"><span>${Math.round(w)} / ${n.cap} W</span><span>${edges.filter(e=>e.a===n.id).length} 张卡</span></div>`;}
+  if(n.k==='gpu'){const g=R.gpu[n.id];
+    return `<div class="t"><span>${n.name}</span><span class="tag ${g.on?(g.cuNeed>n.cu?'wait':'ok'):'bad'}">${g.on?(g.cuNeed>n.cu?'满载':'在线'):g.why}</span></div><div class="s">${n.cu} CU · ${n.vram} GB · ${n.w} W</div>${bar(g.cuNeed/n.cu,g.cuNeed>n.cu?'#FAC775':'#5DA8E8')}<div class="st"><span>算力 ${Math.round(Math.min(g.cuNeed,n.cu))}/${n.cu}</span><span style="color:${g.vUse>n.vram?'#F09595':''}">显存 ${g.vUse.toFixed(1)}/${n.vram}</span></div>`;}
+  if(n.k==='model'){const m=R.model[n.id];const s=stats[n.id];
+    return `<div class="t"><span>${n.name}</span><span class="tag ${m.on?'ok':'bad'}">${m.on?'在线':m.why}</span></div><div class="s">${n.arch} · ${n.desk==='*'?'通用':n.desk} · ${n.vram} GB · ${n.cu} CU</div>${bar(m.speed,'#A99BF2')}<div class="st"><span>准确率 ${Math.round(n.acc*1000)/10}%</span><span>${m.tasks.length} 个任务</span></div>`;}
+  const t=R.task[n.id];const s=stats[n.id];
+  const tag=t.state==='run'?(t.speed<1?`<span class="tag wait">${Math.round(t.speed*100)}% 速</span>`:'<span class="tag ok">RUN</span>'):t.state==='err'?`<span class="tag bad">${t.why.length>8?'出错':t.why}</span>`:'<span class="tag idle">IDLE</span>';
+  return `<div class="t"><span>${n.name}</span>${tag}</div><div class="s">${n.pay?'¥'+n.pay+'/'+n.unit:'不挣钱'}${n.min?' · 需 ≥'+Math.round(n.min*100)+'%':''}</div>${bar(t.speed,'#5DCAA5')}<div class="st"><span>✓ ${s.ok} ${n.unit}</span><span style="color:#F09595">${s.bad?'✗ '+s.bad:''}</span></div>${t.state==='err'&&t.why.length>8?`<div class="s" style="color:#F09595">${t.why}</div>`:''}`;
+}
+function portPos(id,side){const el=document.querySelector(`.node[data-id="${id}"] .port.${side}`);if(!el)return null;const b=$('cv').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:r.left-b.left+r.width/2,y:r.top-b.top+r.height/2};}
+const paths={};
+function renderWires(){
+  const svg=$('wires');svg.innerHTML='';for(const k in paths)delete paths[k];
+  edges.forEach((e,i)=>{
+    const a=portPos(e.a,'out'),b=portPos(e.b,'in');if(!a||!b)return;
+    const A=N(e.a),c=Math.max(40,(b.x-a.x)/2);
+    const d=`M${a.x},${a.y} C${a.x+c},${a.y} ${b.x-c},${b.y} ${b.x},${b.y}`;
+    let live=true;
+    if(A.k==='power')live=R.gpu[e.b]&&R.gpu[e.b].on;
+    else if(A.k==='gpu')live=R.model[e.b]&&R.model[e.b].on;
+    else live=R.task[e.b]&&R.task[e.b].state==='run';
+    const col=KCOL[A.k];
+    const base=document.createElementNS(NS,'path');base.setAttribute('d',d);base.setAttribute('fill','none');base.setAttribute('stroke',live?col:'#4A1B0C');base.setAttribute('stroke-opacity',live?.25:.8);base.setAttribute('stroke-width',5);svg.appendChild(base);
+    const core=document.createElementNS(NS,'path');core.setAttribute('d',d);core.setAttribute('fill','none');core.setAttribute('stroke',live?col:'#A32D2D');core.setAttribute('stroke-width',1.6);if(!live)core.setAttribute('stroke-dasharray','4 4');svg.appendChild(core);
+    const hit=document.createElementNS(NS,'path');hit.setAttribute('d',d);hit.setAttribute('class','hit');hit.onclick=()=>{edges.splice(i,1);log(`拔线：${A.name} → ${N(e.b).name}`);renderAll();};svg.appendChild(hit);
+    paths[e.a+'>'+e.b]={el:core,len:core.getTotalLength(),col,live};
+  });
+}
+function seg(id,frac,col){let h='';for(let i=0;i<24;i++)h+=`<i style="background:${i<Math.round(Math.min(1,frac)*24)?col:''}"></i>`;$(id).innerHTML=h;}
+function renderKpi(){
+  const W=R.W,cap=R.cap||1;
+  $('kW').innerHTML=`${Math.round(W)} <small>/ ${R.cap} W</small>`;seg('sW',W/cap,tripped?'#E24B4A':W/cap>.8?'#FAC775':'#EF9F27');
+  $('kC').innerHTML=`${Math.round(R.cuUse)} <small>/ ${R.cuOn} CU</small>`;seg('sC',R.cuOn?R.cuUse/R.cuOn:0,'#5DA8E8');
+  $('kV').innerHTML=`${R.vUse.toFixed(1)} <small>/ ${R.vOn} GB</small>`;seg('sV',R.vOn?R.vUse/R.vOn:0,'#A99BF2');
+  $('kT').innerHTML=`${R.running} <small>/ ${R.wired}</small>`;$('kTs').textContent=R.wired-R.running?`${R.wired-R.running} 条线有问题`:'全部在跑';
+  const net=R.income-R.fee-R.rent;$('kM').innerHTML=`${net>=0?'+':'−'}${Math.abs(net).toFixed(2)} <small>· ¥${total.toFixed(2)}</small>`;
+  $('kMs').textContent=`产出 ${R.income.toFixed(2)} · 电费 −${R.fee.toFixed(2)}`+(R.rent?` · 网吧 −${R.rent.toFixed(2)}`:'');
+}
+function renderDetail(){
+  const n=N(sel);if(!n){$('detail').innerHTML=`<div class="h">节点详情</div><div style="color:var(--mute);line-height:1.7">点画布上的节点看详情。<br>一条完整的链：电力 → 显卡 → 模型 → 任务。<br>模型要放得进显存；显卡要有电；任务要模型的数据对口、准确率够。</div>`;return;}
+  let rows=[],extra='';
+  if(n.k==='power'){rows=[['额定',n.cap+' W'],['当前',Math.round(R.perSrc[n.id]||0)+' W'],['接了',edges.filter(e=>e.a===n.id).length+' 张卡']];if(n.rent)rows.push(['租金','¥'+n.rent+'/秒']);}
+  if(n.k==='gpu'){const g=R.gpu[n.id];rows=[['算力',n.cu+' CU'],['显存',n.vram+' GB'],['功耗',n.w+' W'],['状态',g.on?'在线':g.why],['上面的模型',edges.filter(e=>e.a===n.id).map(e=>N(e.b).name).join('、')||'—']];
+    if(n.rent){rows.push(['租金',`¥${(n.rent*ajie.mul*(night?.6:1)).toFixed(3)}/秒`+(night?' · 包夜':'')],['你跟阿杰说的',ajie.truth?'在训练 AI':ajie.lastLie||'还没说']);extra=`<div style="color:var(--mute);margin-top:8px;line-height:1.6">租的是阿杰网吧的机器，电费算在租金里。机器一晚上没人坐、风扇狂转，他迟早会过来问。</div>`;}}
+  if(n.k==='model'){const m=R.model[n.id];rows=[['结构',n.arch],['数据',n.desk==='*'?'通用（对话 / 读写）':n.desk],['准确率',Math.round(n.acc*1000)/10+'%'],['显存',n.vram+' GB'],['需要算力',n.cu+' CU'],['跑在',m.host?m.host.name:'—'],['速度',Math.round(m.speed*100)+'% / 任务']];
+    extra=`<div style="color:var(--mute);margin-top:8px;line-height:1.6">同一个模型可以接多项任务，任务越多每项越慢。${n.id==='self'?'<br>本体只接生活类任务。阶段 6 它会在晴雯问你要不要去见她时，自己停下来。':''}</div>`;}
+  if(n.k==='task'){const t=R.task[n.id],s=stats[n.id];rows=[['分组',n.g],['报酬',n.pay?'¥'+n.pay+'/'+n.unit:'不挣钱'],['门槛',n.min?n.desk+' ≥ '+Math.round(n.min*100)+'%':'—'],['接的模型',t.model?t.model.name:'—'],['状态',t.state==='run'?'在跑':t.why||'空闲'],['成功 / 失败',`${s.ok} / ${s.bad}`]];
+    if(n.train)extra=`<div style="color:var(--mute);margin-top:8px;line-height:1.6">训练不挣钱，但每一轮都让模型准确率涨一点。和订单接在同一个模型上，两边各分一半速度。</div>`;
+    if(n.extraW)extra=`<div style="color:var(--mute);margin-top:8px;line-height:1.6">预训练要 ${n.extraW} W 以上。家里 3500 W 的电源扛不住，接到 IDC 机柜的显卡上才行。</div>`;
+    if(n.realtime)extra=`<div style="color:var(--mute);margin-top:8px">实时任务：循环网络一个字一个字算，跟不上直播。</div>`;
+    if(n.crowd)extra=`<div style="color:var(--mute);margin-top:8px;line-height:1.6">摆渡众包会抽检，也会弹人机验证。验证码要你本人点。</div>`;}
+  $('detail').innerHTML=`<div class="h"><span>节点详情 · ${KNAME[n.k]}</span><span>LIVE</span></div><div style="font-size:14px;margin-bottom:8px;color:${KCOL[n.k]}">${n.name}</div>`+rows.map(r=>`<div class="row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')+extra+`<div style="margin-top:10px"><button class="danger" onclick="removeNode('${n.id}')">移除节点</button></div>`;
+}
+function renderAll(){R=compute();renderSide();renderNodes();requestAnimationFrame(()=>{renderWires();});renderKpi();renderDetail();$('trip').style.display=tripped?'block':'none';if(viewTable)renderTable();}
+function refreshLight(){R=compute();document.querySelectorAll('.node').forEach(d=>{const n=N(d.dataset.id);if(!n)return;const keep=[...d.querySelectorAll('.port')];d.innerHTML=nodeBody(n);keep.forEach(p=>d.appendChild(p));});renderKpi();if(sel)renderDetail();renderWires();$('trip').style.display=tripped?'block':'none';if(viewTable)renderTable();}
+
+/* ───────────── wiring ───────────── */
+function portOut(n){armed=armed===n.id?null:n.id;if(armed)log(`选中输出：${n.name} → 再点一个${KNAME[NEXT[n.k]]}的输入口`);renderNodes();requestAnimationFrame(renderWires);}
+function portIn(n){
+  if(!armed)return;const a=N(armed);armed=null;
+  if(NEXT[a.k]!==n.k){log(`接不上：${KNAME[a.k]}只能接${KNAME[NEXT[a.k]]}`,'e');renderAll();return;}
+  edges=edges.filter(e=>e.b!==n.id);// one input per node
+  edges.push({a:a.id,b:n.id});log(`接线：${a.name} → ${n.name}`,'g');
+  if(n.k==='task'&&n.id==='t_qw'&&stage>=6)setTimeout(()=>qingwen(),2500);
+  renderAll();
+}
+function select(id){sel=id;document.querySelectorAll('.node').forEach(d=>d.classList.toggle('sel',d.dataset.id===id));renderDetail();}
+function drag(d,n){let sx,sy,ox,oy,mv=false;
+  d.addEventListener('mousedown',e=>{if(e.target.classList.contains('port'))return;sx=e.clientX;sy=e.clientY;ox=n.x;oy=n.y;mv=false;
+    const m=ev=>{n.x=ox+ev.clientX-sx;n.y=oy+ev.clientY-sy;if(Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy)>3)mv=true;d.style.left=n.x+'px';d.style.top=n.y+'px';renderWires();};
+    const u=()=>{document.removeEventListener('mousemove',m);document.removeEventListener('mouseup',u);};
+    document.addEventListener('mousemove',m);document.addEventListener('mouseup',u);});}
+document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&sel&&document.activeElement===document.body)removeNode(sel);if(e.key==='Escape'){armed=null;renderAll();}});
+
+/* ───────────── log + game events ───────────── */
+function tstr(){const s=Math.floor(clockS)%86400;return [s/3600|0,(s/60|0)%60,s%60].map(v=>String(v).padStart(2,'0')).join(':');}
+function log(msg,cls='',html=''){const d=document.createElement('div');d.innerHTML=`<span class="tm">${tstr()}</span><span class="${cls}">${msg}</span>${html}`;$('log').prepend(d);while($('log').children.length>60)$('log').lastChild.remove();}
+function captcha(tid){if(paused[tid])return;const t=N(tid);paused[tid]='人机验证';
+  log(`摆渡众包：「${t.name}」触发人机验证，自动代标暂停。`,'w',`<div><button onclick="solve('${tid}')">我来输验证码</button></div>`);refreshLight();}
+window.solve=tid=>{delete paused[tid];log('验证通过，继续代标。','g');refreshLight();};
+function spot(tid){const t=N(tid),m=R.task[tid].model;const fine=+(t.pay*40).toFixed(2);total-=fine;
+  log(`摆渡众包抽检：「${t.name}」抽到错题，扣 ¥${fine}，信用 −2。`,'e');}
+function qingwen(){if(!N('t_qw')||!edges.some(e=>e.b==='t_qw'))return;paused['t_qw']='她问的是你';
+  log('晴雯ˇ：周末你到底来不来？','q');
+  setTimeout(()=>log('灵光：这句我不能替你答。','q'),1200);
+  setTimeout(()=>log('灵光：看过你们的聊天。可是去不去，要你决定。','q'),2600);
+  setTimeout(()=>{log('灵光：她问的是你，不是我。','q',`<div><button onclick="answerQw()">我自己回</button></div>`);refreshLight();},4000);}
+window.answerQw=()=>{delete paused['t_qw'];log('你回了她。普通消息它还会帮你回。','g');refreshLight();};
+
+/* ───────────── 阿杰: rent the café's cards and he will ask what you are doing ───────────── */
+function cafeLoad(){let need=0,cap=0;nodes.filter(n=>n.rent).forEach(g=>{const s=R.gpu[g.id];if(s&&s.on){need+=s.cuNeed;cap+=g.cu;}});return cap?need/cap:0;}
+function ajieTick(dt){
+  if(ajie.cutoff||ajie.pending||!R.rent)return;
+  ajie.rentedFor+=dt;
+  const first=ajie.asked===0&&ajie.rentedFor>20;
+  const again=ajie.asked>0&&!ajie.truth&&ajie.lies>0&&ajie.rentedFor>45&&cafeLoad()>.8;
+  if(first||again){ajie.pending=true;ajie.rentedFor=0;ajieAsk(ajie.asked>0);}
+}
+function ajieAsk(suspicious){
+  ajie.asked++;
+  const q=suspicious
+    ?'阿杰：你那两台机器一晚上没人坐，风扇转得跟拖拉机一样。说实话，到底在干啥？'
+    :'阿杰：兄弟，你包的那两台 960 一直满载，屏幕都黑着。你在干啥呢？';
+  log(q,'q',`<div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="ajieAnswer('ai')">在训练一个 AI</button><button onclick="ajieAnswer('mine')">挖矿</button><button onclick="ajieAnswer('game')">挂游戏</button></div>`);
+}
+window.ajieAnswer=a=>{
+  if(!ajie.pending)return;ajie.pending=false;
+  document.querySelectorAll('#log button').forEach(b=>{if(/ajieAnswer/.test(b.getAttribute('onclick')||''))b.disabled=true;});
+  if(a==='ai'){
+    ajie.truth=true;ajie.mul=.8;
+    log('你：在训练一个 AI，教它认字认图。','g');
+    setTimeout(()=>log('阿杰：AI？……能认数字不？我每天收银小票对账对到半夜。帮我对，机器给你打八折。','q'),900);
+    setTimeout(()=>{const t=INV.find(i=>i.id==='t_ajie');t.unlocked=true;log('仓库新增任务「阿杰 · 收银小票对账」。手写数字模型就能接。','g');renderAll();},1900);
+  }else if(a==='mine'){
+    ajie.mul=1.6;ajie.lastLie='挖矿';
+    log('你：挖矿。','w');
+    setTimeout(()=>log('阿杰：挖矿？那电费得另算，一台加一块五一小时。……挖的啥币？算了，别跟我说。','q'),900);
+    setTimeout(()=>{log('网吧租金 ×1.6。','w');refreshLight();},1600);
+  }else{
+    ajie.lies++;ajie.lastLie='挂游戏';
+    log('你：挂游戏，刷副本。','w');
+    if(ajie.lies>=2){
+      setTimeout(()=>log('阿杰：刷副本要两张显卡满载一晚上？你别在我这儿搞什么名堂。机器我收回了。','e'),900);
+      setTimeout(()=>{ajie.cutoff=true;log('网吧电路断开：7 号机、8 号机下线。只能把模型挪回家里的卡上。','e');refreshLight();},1900);
+    }else setTimeout(()=>log('阿杰：……行吧。挂游戏屏幕也得亮着啊。','q'),900);
+  }
+  refreshLight();
+};
+
+/* ───────────── particles: one dot = one item processed ───────────── */
+function spawn(t,ok){const m=R.task[t.id].model;const p=paths[m.id+'>'+t.id];if(!p)return;
+  const fx=$('fx');const col=ok?'#9FE1CB':'#E24B4A';
+  const halo=document.createElementNS(NS,'circle');halo.setAttribute('r',ok?7:5);halo.setAttribute('fill',ok?'#5DCAA5':'#E24B4A');halo.setAttribute('opacity',ok?.22:.18);
+  const dot=document.createElementNS(NS,'circle');dot.setAttribute('r',ok?3:2.4);dot.setAttribute('fill',ok?'#E1F5EE':'#F09595');
+  const tail=[0,1,2,3].map(i=>{const c=document.createElementNS(NS,'circle');c.setAttribute('r',2-i*.4);c.setAttribute('fill',ok?'#5DCAA5':'#E24B4A');c.setAttribute('opacity',.5-i*.11);fx.appendChild(c);return c;});
+  fx.appendChild(halo);fx.appendChild(dot);
+  sparks.push({key:m.id+'>'+t.id,tid:t.id,mid:m.id,ok,u:0,halo,dot,tail,hist:[],die:ok?1:.35+Math.random()*.35});}
+function pulse(key){const p=paths[key];if(!p)return;const fx=$('fx');
+  const dot=document.createElementNS(NS,'circle');dot.setAttribute('r',2.2);dot.setAttribute('fill',p.col);fx.appendChild(dot);
+  sparks.push({key,pulse:true,u:0,dot,halo:dot,tail:[],hist:[]});}
+function arrive(s){const t=N(s.tid);if(!t)return;stats[t.id].ok++;
+  if(t.train){const m=N(s.mid);if(m&&m.acc<.995){const before=m.acc;m.acc=Math.min(.995,m.acc+.0006);m.s=m.arch+' · '+(Math.round(m.acc*1000)/10)+'%';if(before<.99&&m.acc>=.99)log(`${m.name} 练到 99%，邮政局那单够格了。`,'g');}}stats[s.mid]&&stats[s.mid].ok++;total+=t.pay;
+  const d=document.querySelector(`.node[data-id="${t.id}"]`);if(d){d.classList.add('hit');setTimeout(()=>d.classList.remove('hit'),160);}
+  const p=paths[s.key];if(p){const e=p.el.getPointAtLength(p.len);const r=document.createElementNS(NS,'circle');r.setAttribute('cx',e.x);r.setAttribute('cy',e.y);r.setAttribute('fill','none');r.setAttribute('stroke','#9FE1CB');r.setAttribute('stroke-width',1.4);$('fx').appendChild(r);let k=0;(function g(){k++;r.setAttribute('r',3+k*1.3);r.setAttribute('opacity',1-k/14);k<14?requestAnimationFrame(g):r.remove();})();}
+  if(t.crowd&&Math.random()<.012)captcha(t.id);}
+function fail(s){const t=N(s.tid);if(!t)return;stats[t.id].bad++;if(t.crowd&&Math.random()<.08)spot(t.id);}
+
+/* ───────────── main loop ───────────── */
+let last=performance.now(),acc=0,pulseAcc=0;
+function loop(now){const dt=Math.min(.1,(now-last)/1000)*speed;last=now;clockS+=dt*60;
+  $('clock').textContent='2016-11-03 '+tstr();
+  const sod=Math.floor(clockS)%86400;
+  if(!night&&sod<60){night=true;log('00:00 网吧转包夜，租金打六折。','g');refreshLight();}
+  ajieTick(dt);
+  // breaker on the house PSU
+  const psuW=R.perSrc.psu||0;
+  if(!tripped&&N('psu')&&psuW>N('psu').cap){tripped=true;log('⚡ 跳闸！机箱功率 '+Math.round(psuW)+' W > 3500 W。','e');refreshLight();}
+  total+=(-R.fee-R.rent+(N('idc')&&edges.some(e=>e.a==='idc')?-N('idc').rent:0))*dt;
+  // spawn work items
+  nodes.filter(n=>n.k==='task').forEach(t=>{const st=R.task[t.id];if(st.state!=='run')return;
+    next[t.id]=(next[t.id]??Math.random()/st.rate)-dt;
+    if(next[t.id]<=0){next[t.id]=(.6+Math.random()*.8)/Math.max(.05,st.rate);spawn(t,Math.random()<(st.model.acc||.9));}});
+  // energy pulses on power and gpu wires
+  pulseAcc+=dt;if(pulseAcc>.35){pulseAcc=0;edges.forEach(e=>{const A=N(e.a);if(A&&A.k!=='model'&&paths[e.a+'>'+e.b]&&paths[e.a+'>'+e.b].live)pulse(e.a+'>'+e.b);});}
+  for(let i=sparks.length-1;i>=0;i--){const s=sparks[i],p=paths[s.key];
+    const kill=()=>{[s.halo,s.dot,...s.tail].forEach(e=>e&&e.remove());sparks.splice(i,1);};
+    if(!p){kill();continue;}
+    s.u+=dt*(s.pulse?1.6:1.1);const u=Math.min(1,s.u);const pt=p.el.getPointAtLength(u*p.len);
+    s.dot.setAttribute('cx',pt.x);s.dot.setAttribute('cy',pt.y);if(s.halo!==s.dot){s.halo.setAttribute('cx',pt.x);s.halo.setAttribute('cy',pt.y);}
+    s.hist.unshift(pt);s.hist.length=Math.min(s.hist.length,12);s.tail.forEach((c,k)=>{const h=s.hist[(k+1)*3]||s.hist[s.hist.length-1];c.setAttribute('cx',h.x);c.setAttribute('cy',h.y);});
+    if(!s.pulse&&!s.ok&&u>=s.die){const f=1-(u-s.die)/.12;[s.halo,s.dot,...s.tail].forEach(e=>e.style.opacity=Math.max(0,f));if(f<=0){fail(s);kill();}continue;}
+    if(u>=1){if(!s.pulse&&s.ok)arrive(s);kill();}}
+  acc+=dt;if(acc>.5){acc=0;refreshLight();}
+  requestAnimationFrame(loop);}
+
+/* ───────────── controls ───────────── */
+function renderStage(){$('stage').innerHTML=[1,2,3,4,5,6].map(s=>`<button class="${s===stage?'on':''}" onclick="setStage(${s})">${s}</button>`).join('');}
+window.setStage=s=>{stage=s;nodes=nodes.filter(n=>n.stage<=s);edges=edges.filter(e=>N(e.a)&&N(e.b));log(`切到阶段 ${s}：仓库按阶段解锁。`);renderStage();renderAll();};
+$('reset').onclick=()=>{const w=R.perSrc.psu||0;if(w>3500){log(`还是 ${Math.round(w)} W，合不上闸。先拔线。`,'e');return;}tripped=false;log('合闸，显卡重新上电。','g');refreshLight();};
+$('speedBtn').onclick=()=>{speed=speed===1?4:speed===4?16:1;$('speedBtn').textContent=`速度 ${speed}×`;};
+$('cutBtn').onclick=()=>{cutUntil=performance.now()+4000;log('小区停电 4 秒：家里和网吧都断了，只有 IDC 机柜还在跑。','e');refreshLight();setTimeout(()=>{log('来电了。','g');refreshLight();},4100);};
+$('nightBtn').onclick=()=>{clockS=23*3600+59*60+50;night=false;};
+let viewTable=false;
+$('rightBtn').onclick=()=>document.body.classList.toggle('showRight');
+$('viewBtn').onclick=()=>{viewTable=!viewTable;$('table').style.display=viewTable?'block':'none';$('viewBtn').textContent='视图：'+(viewTable?'任务表':'接线图');if(viewTable)renderTable();};
+function chain(t){const m=R.task[t.id].model;if(!m)return '—';const g=R.model[m.id].host;const p=g&&R.gpu[g.id].src;return [p&&p.name,g&&g.name,m.name,t.name].filter(Boolean).join(' → ');}
+function renderTable(){const ts=nodes.filter(n=>n.k==='task');
+  $('table').innerHTML=`<div class="tr th"><span>#</span><span>任务</span><span>整条链</span><span>状态</span><span>成功</span><span>¥</span></div>`+ts.map((t,i)=>{const st=R.task[t.id];return `<div class="tr"><span style="color:var(--dim)">0${i+1}</span><span>${t.name}</span><span style="color:var(--mute)">${chain(t)}</span><span class="${st.state==='run'?'ok':st.state==='err'?'bad':'idle'}" style="border:none">${st.state==='run'?'在跑':st.why||'空闲'}</span><span>${stats[t.id].ok}</span><span>${(stats[t.id].ok*t.pay).toFixed(2)}</span></div>`;}).join('')+`<div style="color:var(--mute);margin-top:12px">同一套数据，按任务看。整条链：电力 → 显卡 → 模型 → 任务。</div>`;}
+
+/* ───────────── starting layout: a stage-5 night ───────────── */
+function boot(){renderStage();
+  const put=(id,y)=>{const x=INV.find(i=>i.id===id);nodes.push(Object.assign({},x,{x:laneX(x.k),y,on:true}));stats[id]={ok:0,bad:0};};
+  put('psu',40);put('cafe',250);
+  put('g980',40);put('g960a',230);put('g960b',370);
+  put('mn7',30);put('sp4',150);put('cf3',270);put('self',400);
+  put('t_cheque',20);put('t_spam',145);put('t_cap',270);put('t_zip',395);put('t_qw',520);
+  edges=[{a:'psu',b:'g980'},{a:'cafe',b:'g960a'},{a:'cafe',b:'g960b'},
+         {a:'g980',b:'mn7'},{a:'g980',b:'sp4'},{a:'g960a',b:'cf3'},{a:'g960b',b:'self'},
+         {a:'mn7',b:'t_cheque'},{a:'sp4',b:'t_spam'},{a:'cf3',b:'t_cap'},{a:'mn7',b:'t_zip'},{a:'self',b:'t_qw'}];
+  fitNodes();sel='mn7';renderAll();
+  log('阶段 5 · 11 月的一个深夜。手写数字 v7 同时接了两单，邮政局那单要 99%，它只有 97.2%。');
+  log('7 号、8 号机是租阿杰网吧的，按秒算钱。灵光本体放在 8 号机上，显存只有 2 GB，本体要 3 GB。','w');
+  requestAnimationFrame(loop);}
+window.addEventListener('resize',()=>{fitNodes();nodes.forEach(n=>n.x=laneX(n.k));renderAll();});
+boot();
+</script>
+</body>
+</html>

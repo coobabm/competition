@@ -56,7 +56,7 @@ namespace LingGuangV05.Desktop.Taohuo
             PrologueDesk.Fill(pic, junk ? new Color32(120, 40, 30, 255) : new Color32(30, 70, 130, 255), false);
             var d = XgCatalog.Dataset(o.datasetId);
             string datasetName = d != null ? T(d.name, d.nameEn) : o.datasetId;
-            if (!ProductIllustration(pic, "data", "<b>" + datasetName + "</b>"))
+            if (!DataPackPreview.Paint(pic, o, font))
                 Label(pic, "Name", Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0), "<b>" + datasetName + "</b>", 18, Color.white, TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(140, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -28), Vector2.zero, "<b>" + o.Name(GameText.IsEnglish) + "</b>", 18, Ink);

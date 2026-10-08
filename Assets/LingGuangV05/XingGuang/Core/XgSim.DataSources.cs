@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LingGuangV05.XingGuang
 {
     /// <summary>Where a batch of data comes from (design v1.1 §11.8.3).</summary>
-    public enum XgDataSource { Hand = 0, Public = 1, Junk = 2, Crowd = 3, Story = 4 }
+    public enum XgDataSource { Hand = 0, Public = 1, Junk = 2, Crowd = 3, Story = 4, Crawl = 5 }
 
     /// <summary>
     /// One way to get data for a dataset (design v1.1 §11.8.3, §11.8.7): the public pack, a cheap junk pack from 淘货,
@@ -20,9 +20,9 @@ namespace LingGuangV05.XingGuang
         public string name = "", nameEn = "";
         public string description = "", descriptionEn = "";
         public XgDataSource source;
-        /// <summary>¥ for the whole pack. Crowd tasks: ¥ per label.</summary>
+        /// <summary>¥ for the whole pack. Crowd tasks: ¥ per label. The crawler: ¥ per run.</summary>
         public double price;
-        /// <summary>Samples in the pack. Crowd tasks: labels per second while the task is posted.</summary>
+        /// <summary>Samples in the pack. Crowd tasks: labels per second while the task is posted. The crawler: most words per run.</summary>
         public double samples;
         /// <summary>Share of wrong labels (0–1) before 数据清洗.</summary>
         public double noise;
@@ -65,6 +65,7 @@ namespace LingGuangV05.XingGuang
                 case XgDataSource.Public: return english ? "Public pack" : "公开包";
                 case XgDataSource.Junk: return english ? "Junk pack" : "淘货杂包";
                 case XgDataSource.Crowd: return english ? "Crowd labelling" : "众包标注";
+                case XgDataSource.Crawl: return english ? "Web crawler" : "网页爬虫";
                 default: return english ? "Story data" : "剧情数据";
             }
         }
@@ -112,7 +113,7 @@ namespace LingGuangV05.XingGuang
         static readonly Dictionary<string, double> PublicNoise = new Dictionary<string, double>
         {
             { "mnist", .002 }, { "cifar", .01 }, { "meme", .02 }, { "go", .005 }, { "imagenet", .015 }, { "poems", .01 },
-            { "logic", .005 }, { "news", .02 }, { "translate", .02 }, { "danmu", .02 }, { "spam", .01 }, { "headline", .02 },
+            { "logic", .005 }, { "arith", .002 }, { "sense", .002 }, { "news", .02 }, { "translate", .02 }, { "danmu", .02 }, { "spam", .01 }, { "headline", .02 },
             { "review", .02 }, { "longtext", 0 }, { "crosssentence", 0 },
         };
 
@@ -214,6 +215,7 @@ namespace LingGuangV05.XingGuang
                     price = CrowdPricePerLabel, samples = CrowdRate, noise = d.track == XgTrack.Vision ? .05 : .08, stage = 2, month = 201607,
                 });
             }
+            list.Add(CrawlOfferDef());
             return list;
         }
 
@@ -255,6 +257,8 @@ namespace LingGuangV05.XingGuang
             {
                 case XgDataSource.Public: return S.owned.Contains(o.datasetId) || Has(o.id);
                 case XgDataSource.Crowd: return S.crowdOn.Contains(o.datasetId);
+                // The crawler is paid per run and never owned; "owned" means a run is going on now.
+                case XgDataSource.Crawl: return CrawlActive;
                 default: return S.dataOffers.Contains(o.id);
             }
         }
@@ -459,7 +463,7 @@ namespace LingGuangV05.XingGuang
             o.downloading = o.owned && o.downloadLeft > 0;
             double total = DownloadTotal(key, def);
             o.downloadProgress = o.downloading ? Math.Max(0, Math.Min(1, 1 - o.downloadLeft / Math.Max(1, total))) : o.owned ? 1 : 0;
-            o.effectiveNoise = def.noise * (Has(DataCleanId) && (def.source == XgDataSource.Junk || def.source == XgDataSource.Crowd) ? CleanNoiseFactor : 1);
+            o.effectiveNoise = def.noise * (Has(DataCleanId) && (def.source == XgDataSource.Junk || def.source == XgDataSource.Crowd || def.source == XgDataSource.Crawl) ? CleanNoiseFactor : 1);
             o.included = !PackSwitchable(def) || PackIncluded(PackSwitchKey(def));
             o.isNew = def.month == CurrentMonth;
             string why = OfferBlocker(def, out string whyEn);
@@ -478,6 +482,7 @@ namespace LingGuangV05.XingGuang
         string OfferBlocker(XgDataOffer o, out string en)
         {
             en = null;
+            if (o.source == XgDataSource.Crawl && CrawlActive) { en = "Already crawling"; return "正在爬"; }
             if (OfferOwned(o.id)) { en = o.source == XgDataSource.Crowd ? "Posted" : "Owned"; return o.source == XgDataSource.Crowd ? "已发包" : "已拥有"; }
             if (o.month > CurrentMonth || o.stage > S.stage) { en = "Not on sale yet"; return "还没上架"; }
             if (o.source == XgDataSource.Public || o.source == XgDataSource.Story)
@@ -531,6 +536,7 @@ namespace LingGuangV05.XingGuang
             var def = DataOfferDef(offerId);
             if (def == null || host == null) return false;
             if (def.source == XgDataSource.Crowd) return SetCrowd(def.datasetId, true);
+            if (def.source == XgDataSource.Crawl) return StartCrawl(host);
             var why = OfferBlocker(def, out string whyEn);
             if (why != null) { Say(T(why, whyEn)); return false; }
             if (def.source == XgDataSource.Public)
@@ -681,6 +687,7 @@ namespace LingGuangV05.XingGuang
             foreach (var list in new[] { S.dataExtra, S.crowdNoise, S.dataCleaned })
                 list.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             S.crowdOn.RemoveAll(id => DataOfferDef(id + ".crowd") == null);
+            RepairCrawl();
         }
     }
 }

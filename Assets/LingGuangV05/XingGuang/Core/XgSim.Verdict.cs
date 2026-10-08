@@ -65,7 +65,7 @@ namespace LingGuangV05.XingGuang
                     Has("relu") ? "激活换成「S 形」或「ReLU」。" : "激活换成「S 形」。", Has("relu") ? "Switch the activation to S-curve or ReLU." : "Switch the activation to S-curve.",
                     "或者只留 1 层，开「特征工程」让人替它组合。", "Or keep one layer and switch on feature engineering so people combine for it.");
             }
-            else if (WallVerdict(v, run, k, p)) { }
+            else if (StructureVerdict(v, run, k, p)) { }
             else if (Overtrained(t, p, out double peak, out int peakEpoch))
             {
                 v.peak = peak; v.peakEpoch = peakEpoch;
@@ -148,43 +148,25 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// The standing wall's own reason, when these settings cannot get through it whatever the number of epochs:
-        /// one layer cannot split XOR, a dense net binds positions, a loop cannot reach the other sentence, a loop
-        /// misses the deadline, attention without positions cannot tell first from later.
+        /// A structural reason these settings cannot learn this data whatever the number of epochs: a dense net binds
+        /// positions (pictures, sentences), a single sequence cannot reach the other sentence of a translation.
         /// </summary>
-        bool WallVerdict(XgVerdict v, XgRun run, XgKnobs k, XgTracePoint p)
+        bool StructureVerdict(XgVerdict v, XgRun run, XgKnobs k, XgTracePoint p)
         {
             if (p.test >= TraceGoal(run)) return false;
-            var wall = ActiveWall;
-            bool serial = SerialWiring(k);
             switch (run.dataset)
             {
-                case "xor" when k.depth == 1 && !k.features:
-                    Set(v, "linear", 1, "单层只能画一条直线：「恰好一个为真」分不开，练多少轮、加多宽都一样。", "One layer draws one straight line: 'exactly one is true' cannot be split, however many epochs or however wide.",
-                        "加一层隐藏层（激活用 S 形）。", "Add a hidden layer (S-curve activation).", "或者开「特征工程」，让人把两个条件拼成一个。", "Or switch on feature engineering so people pair the two conditions.");
-                    return true;
-                case "mnist" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                case "mnist" when k.wiring == XgWiring.Full && !k.features:
                     Set(v, "positions", 1, "全连接把每个位置绑死：同一个数字挪一格，它就当成新东西，练不出通用的笔画。", "A dense net binds every position: the same digit moved by one cell is new to it, so no stroke carries over.",
                         "换「局部共享」（卷积）：同一个笔画在哪儿都认得。", "Switch to local sharing (convolution): a stroke is known anywhere.", "或者开「特征工程」：先把图去噪、挪到同一个位置。", "Or switch on feature engineering: denoise and move every picture to the same place.");
                     return true;
-                case "danmu" when k.wiring == XgWiring.Full && !k.features && wall != null && wall.id == "structure":
+                case "danmu" when k.wiring == XgWiring.Full && !k.features:
                     Set(v, "positions", 1, "全连接把每个字的位置绑死：同一句话挪一个字，它就当成新句子。", "A dense net binds every word to its position: the same sentence moved by one word is new to it.",
                         "换「回环」（循环）：一个字一个字读，在哪儿出现都认得。", "Switch to a loop (recurrence): it reads word by word and knows a word anywhere.", "或者开「特征工程」：去掉语气词，按字和两字词读。", "Or switch on feature engineering: drop fillers and read words and word pairs.");
                     return true;
-                case "translate" when k.wiring != XgWiring.EncoderDecoder && k.wiring != XgWiring.Attention:
+                case "translate" when k.wiring != XgWiring.EncoderDecoder && k.wiring != XgWiring.Attention && k.wiring != XgWiring.AnyToAny:
                     Set(v, "reach", 0, "一条序列只够得着自己相邻的字，够不着另一句：原句和译文对不上。", "A sequence only reaches its own neighbouring words, never the other sentence: source and translation never meet.",
                         "换「编码器-解码器」：先把整句读完，再从头说一遍。", "Switch to an encoder–decoder: read the whole sentence, then say it again.", "", "");
-                    return true;
-                case "parallel" when serial:
-                    Set(v, "deadline", 0, "订单有期限：循环在一句话里只能一个字一个字地算，从头练 " + SprintEpochs + " 轮读不完这批长文档。", "The order has a deadline: a loop computes a sentence one word at a time, and from scratch " + SprintEpochs + " epochs cannot get through these long documents.",
-                        "拿掉循环，「只用注意力」：整句一起算。", "Drop the loop, attention only: the whole sentence at once.",
-                        Has("textcnn") ? "或者换「文字卷积」：卷积也是整句一起算。" : "", Has("textcnn") ? "Or switch to TextCNN: a convolution also computes the whole sentence at once." : "");
-                    return true;
-                case "parallel" when (k.wiring == XgWiring.AnyToAny || k.wiring == XgWiring.LocalShared) && !k.position:
-                    bool conv = k.wiring == XgWiring.LocalShared;
-                    Set(v, "order", 0, (conv ? "卷积" : "只用注意力") + "就分不清先后：句首的「春」和后面又出现的「春」，在它看来是同一个东西。",
-                        (conv ? "A convolution" : "Attention alone") + " cannot tell order: the 春 that opens the sentence and a later 春 look the same to it.",
-                        "打开「位置标记」：给每个字一个位置编号。", "Switch on position tags: number every word's position.", "", "");
                     return true;
             }
             return false;

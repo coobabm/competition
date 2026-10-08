@@ -130,15 +130,9 @@ namespace LingGuangV05.Editor
             Capture("shutdown-choice");
             yield return new WaitForSecondsRealtime(.5f);
             Click(DialogButton("Prologue Shutdown", PrologueContent.L(yes ? "yes" : "no")));
-            if (!yes)
-            {
-                yield return Until(() => director.Step == "laozhou", 90, "No branch extracts files and returns control");
-                Require("Extraction returns input", surface.inputEnabled);
-                yield return Until(() => TiebaHub.Instance?.Choices != null, 15, "LaoZhou reply is offered");
-                // This one narrative response is sent via hub API, not claimed as a physical click.
-                TiebaHub.Instance.Send(LingGuangV05.Core.Forum.ForumLibrary.LaoZhou, PrologueContent.L("lz_pick_later"));
-            }
-            yield return Until(() => director.Step == "setup", 45, "Branch reaches setup without softlock");
+            // 老周's message no longer waits inside the prologue: it comes after the setup, in its opening turn.
+            yield return Until(() => director.Step == "setup", yes ? 45 : 135, "Branch reaches setup without softlock");
+            if (!yes) Require("Extraction returns input", surface.inputEnabled);
             Require("Setup leaves desktop interactive", surface.inputEnabled && runtime.Sim.AppInstalled);
             yield return new WaitForSecondsRealtime(10);
             Require("No subtitle remains at setup", Thought.alpha == 0);

@@ -44,11 +44,11 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var card = ui.Card(area, "cards", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root = card;
-            header = ui.Text(Strip("Header", card, 8, 30, 16, 16), "", 18, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            header = ui.Text(Strip("Header", card, 8, 30, 16, 16), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             header.fontStyle = FontStyles.Bold;
             var bar = Strip("Progress", card, 40, 6, 16, 520);
-            progress = Bar(bar, "Fill", XgPalette.Line, XgPalette.Gold);
-            legend = ui.Text(Rect("Legend", card, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-500, -50), new Vector2(-16, -8)), "", 13, XgPalette.Muted, TextAlignmentOptions.MidlineRight);
+            progress = Bar(bar, "Fill", XgDark.Line, XgDark.Gold);
+            legend = ui.Text(Rect("Legend", card, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-500, -50), new Vector2(-16, -8)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineRight);
 
             viewport = Rect("Viewport", card, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -56));
             Panel(viewport, new Color32(28, 32, 52, 255)); // a dark binder page, so the foil reads
@@ -113,11 +113,11 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(strip, new Color(0, 0, 0, .45f)).raycastTarget = false;
             t.name = ui.Text(Rect("Name", strip, Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0)), "", 12, Color.white, TextAlignmentOptions.Center);
             t.name.enableAutoSizing = true; t.name.fontSizeMin = 9; t.name.fontSizeMax = 12; t.name.textWrappingMode = TextWrappingModes.NoWrap;
-            t.stars = ui.Text(Rect("Stars", owned, new Vector2(0, 1), new Vector2(1, 1), new Vector2(8, -22), new Vector2(-8, -6)), new string('★', Mathf.Clamp(a.rarity + 1, 1, 5)), 10, XgPalette.Star, TextAlignmentOptions.TopLeft);
+            t.stars = ui.Text(Rect("Stars", owned, new Vector2(0, 1), new Vector2(1, 1), new Vector2(8, -22), new Vector2(-8, -6)), new string('★', Mathf.Clamp(a.rarity + 1, 1, 5)), 10, XgDark.Star, TextAlignmentOptions.TopLeft);
             var shine = ShineMat(a.rarity);
             if (shine != null) XgCardArt.Layer(Rect("Shine", owned, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), shine);
             var badge = Rect("New", t.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-44, -20), new Vector2(-4, -4));
-            XgCardArt.Sliced(badge, XgPalette.Bad, 4);
+            XgCardArt.Sliced(badge, XgDark.Bad, 4);
             t.fresh = ui.Text(Rect("Text", badge, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "NEW", 11, Color.white, TextAlignmentOptions.Center);
             t.fresh.fontStyle = FontStyles.Bold;
 
@@ -166,7 +166,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (Sim.HasAchievement(a.id)) ownedByRarity[r]++;
                 if (a.hidden) { hiddenTotal++; if (Sim.HasAchievement(a.id)) hiddenOwned++; }
             }
-            header.text = Lang.T("成就卡册") + "   <size=15><color=#" + ColorUtility.ToHtmlStringRGB(XgPalette.Muted) + ">" + Lang.T("已收集 ") + owned + " / " + total
+            header.text = Lang.T("成就卡册") + "   <size=15><color=#" + ColorUtility.ToHtmlStringRGB(XgDark.Muted) + ">" + Lang.T("已收集 ") + owned + " / " + total
                 + Lang.T(" · 隐藏 ") + hiddenOwned + " / " + hiddenTotal + "</color></size>";
             SetBar(progress, total > 0 ? owned / (float)total : 0);
             var parts = new List<string>();

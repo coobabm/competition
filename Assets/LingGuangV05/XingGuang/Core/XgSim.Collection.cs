@@ -7,7 +7,7 @@ namespace LingGuangV05.XingGuang
     {
         /// <summary>Achievements earned (ids from <see cref="XgSim.Achievements"/>).</summary>
         public List<string> achievements = new List<string>();
-        /// <summary>Self-insight cards already revealed to the player (wall ids, "pretrain").</summary>
+        /// <summary>Self-insight cards already revealed to the player ("pretrain"; older saves also hold wall ids).</summary>
         public List<string> cardsShown = new List<string>();
         /// <summary>Big data packs still downloading: dataset id → seconds left (摆渡云, design v1.1 §3).</summary>
         public List<XgScore> downloads = new List<XgScore>();
@@ -37,12 +37,12 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public sealed partial class XgSim
     {
-        /// <summary>The six stage walls that can be worked out alone, in stage order ("pretrain" is stage 6).</summary>
-        public static readonly string[] InsightWalls = { "combo", "structure", "length", "translation", "parallel", "pretrain" };
-        /// <summary>Every wall that leaves a card when worked out alone: the six stages and the extra 越深越差.</summary>
-        public static readonly string[] CardWalls = { "combo", "structure", "length", "degrade", "translation", "parallel", "pretrain" };
+        /// <summary>Things worked out alone that flip in a self-insight card (pre-training without the secret).</summary>
+        public static readonly string[] InsightCards = { "pretrain" };
+        /// <summary>Prefix of an ability that emerged with none of its architecture discounts ("ability.3"), kept in <see cref="XgState.insights"/>.</summary>
+        public const string ScaleInsight = "ability.";
 
-        /// <summary>The whole album (XgSim.Cards.cs builds it: walls, insights, roads, cures, phenomena, data, fun, endings).</summary>
+        /// <summary>The whole album (XgSim.Cards.cs builds it: abilities, insights, roads, cures, phenomena, data, fun, endings).</summary>
         public static XgAchievement[] Achievements => album ?? (album = BuildAlbum());
         static XgAchievement[] album;
 
@@ -62,7 +62,7 @@ namespace LingGuangV05.XingGuang
         {
             if (n == null) return false;
             if (n.kind == XgNodeKind.Phenomenon) return PhenomenonSeen(n.target);
-            if (n.kind == XgNodeKind.Ability) return n.value < 6 ? S.stage >= n.value : S.abilities;
+            if (n.kind == XgNodeKind.Ability) return HasAbility(n.value);
             return false;
         }
 
@@ -135,20 +135,21 @@ namespace LingGuangV05.XingGuang
         {
             TickCards();
             // Phenomena that are moments of the story rather than one evaluation.
-            if (WallSeen("translation")) Observe("translation");
-            if (WallSeen("parallel")) Observe("serial");
+            // The bottlenecks the abilities grew past: a sequence that cannot reach the other sentence, a loop that reads one word at a time.
+            if (HasAbility(5)) Observe("translation");
+            if (HasEmerged(5)) Observe("serial");
             if (S.abilities) Observe("emergence");
             if (S.stage >= 4 && S.personaSeeded && S.chatTurns >= 3)
                 for (int axis = 0; axis < 3; axis++)
                     if (Math.Abs(ActualAxis(axis) - TargetAxis(axis)) >= 25) { Observe("drift"); break; }
 
             // Self-insight cards and their achievements.
-            foreach (var wall in CardWalls)
+            foreach (var id in InsightCards)
             {
-                if (!S.insights.Contains(wall) || S.cardsShown.Contains(wall)) continue;
-                S.cardsShown.Add(wall);
-                if (Array.IndexOf(InsightWalls, wall) >= 0) Earn("insight." + wall);
-                InsightCard?.Invoke(wall);
+                if (!S.insights.Contains(id) || S.cardsShown.Contains(id)) continue;
+                S.cardsShown.Add(id);
+                Earn("insight." + id);
+                InsightCard?.Invoke(id);
             }
             // 近亲繁殖 leaves a card of its own the first time it holds a score down (XgSim.Inbreeding.cs).
             if (PhenomenonSeen(InbreedingId) && !S.cardsShown.Contains(InbreedingId))
@@ -158,8 +159,8 @@ namespace LingGuangV05.XingGuang
             }
             if (!HasAchievement("lingguang"))
             {
-                bool all = true;
-                foreach (var wall in InsightWalls) if (!S.insights.Contains(wall)) { all = false; break; }
+                bool all = S.insights.Contains("pretrain");
+                for (int i = 2; i <= AbilityCount && all; i++) if (!S.insights.Contains(ScaleInsight + i)) all = false;
                 if (all) Earn("lingguang");
             }
         }
@@ -174,7 +175,7 @@ namespace LingGuangV05.XingGuang
             AchievementEarned?.Invoke(a);
         }
 
-        /// <summary>What a self-insight card shows: the wall, its stage, the golden setting and why it works.</summary>
+        /// <summary>What a self-insight card shows: what was worked out, its stage, the setting and why it works.</summary>
         public static void InsightCardText(string wall, out int stage, out string name, out string nameEn, out string golden, out string goldenEn, out string why, out string whyEn)
         {
             if (wall == InbreedingId)
@@ -195,11 +196,8 @@ namespace LingGuangV05.XingGuang
                 EpiphanyCardText(out name, out nameEn, out golden, out goldenEn, out why, out whyEn);
                 return;
             }
-            var w = WallById(wall);
-            stage = w != null ? w.stage : 0;
-            name = w?.name ?? wall; nameEn = w?.nameEn ?? wall;
-            golden = w?.golden ?? ""; goldenEn = w?.goldenEn ?? "";
-            why = w?.why ?? ""; whyEn = w?.whyEn ?? "";
+            // Wall ids of older saves have no card any more.
+            stage = 0; name = wall; nameEn = wall; golden = goldenEn = why = whyEn = "";
         }
     }
 }

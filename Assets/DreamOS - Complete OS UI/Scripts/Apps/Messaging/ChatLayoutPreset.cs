@@ -31,6 +31,8 @@ namespace Michsky.DreamOS
             individualImage.sprite = personPicture;
             nameText.text = personName;
 
+            // The native manager can refresh a layout while its enclosing chat pane is hidden.
+            if (!isActiveAndEnabled) { return; }
             animator.enabled = true;
             animator.Play("In");
 

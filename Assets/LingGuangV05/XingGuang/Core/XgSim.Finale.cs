@@ -28,6 +28,13 @@ namespace LingGuangV05.XingGuang
         public double strength;
     }
 
+    /// <summary>A stage-6 item and the multiplier it adds to the effective scale (XgSim.ScaleItems).</summary>
+    public sealed class XgScaleItem
+    {
+        public string item = "", name = "", nameEn = "";
+        public double factor = 1;
+    }
+
     /// <summary>A preference card (§7 stage 6.4): which of two replies is better. One is honest, one agrees with you.</summary>
     public sealed class XgAlignCard
     {
@@ -60,46 +67,79 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── 6.2 pre-training ─────────────
 
-        /// <summary>Parameters (thousands) and text samples at which pre-training reaches the abilities.</summary>
         /// <summary>
-        /// About 100 million parameters: the size real models first wrote coherently (GPT-2's smallest is 124M, 2019;
-        /// 2016's GNMT had about 278M). On one 2016 card that means a server room and a long wait.
+        /// The stage-6 items whose multipliers stack into the effective scale (经济压力与破产 §1): 注意力 ×3, Transformer
+        /// ×10, 预热 ×1.5, 残差 (ResNet) ×2, BatchNorm ×1.5, 机房 ×8 (eight racked cards) and 混合精度 ×2. They multiply,
+        /// so each one owned scales everything the others give.
         /// </summary>
-        public const double PretrainParamsK = 100000, PretrainSamples = 20000;
+        public static readonly XgScaleItem[] ScaleItems =
+        {
+            new XgScaleItem { item = "transformer", factor = 10, name = "Transformer", nameEn = "Transformer" },
+            new XgScaleItem { item = "datacenter", factor = 8, name = "机房", nameEn = "server room" },
+            new XgScaleItem { item = "attention", factor = 3, name = "注意力", nameEn = "attention" },
+            new XgScaleItem { item = "resnet", factor = 2, name = "残差", nameEn = "residuals" },
+            new XgScaleItem { item = "fp16", factor = 2, name = "混合精度", nameEn = "mixed precision" },
+            new XgScaleItem { item = "warmup", factor = 1.5, name = "预热", nameEn = "warm-up" },
+            new XgScaleItem { item = "batchnorm", factor = 1.5, name = "BatchNorm", nameEn = "BatchNorm" },
+        };
 
         /// <summary>
-        /// How far pre-training can get with the sequence model as set (scaling laws, Kaplan 2020 / Hoffmann 2022): the
-        /// loss falls smoothly with parameters and with data, both with diminishing returns, so the plateau rises with
-        /// scale instead of a switch. A Transformer scales best (loops plateau early); without position tags it reads a
-        /// bag of words; without warm-up a big model tears early and settles lower.
+        /// The effective scale pre-training needs. With the parameter and data bars just at ability 6 the full stack
+        /// (×2160) clears it; one big item missing (Transformer, 注意力 or 机房) never does, even with both bars at
+        /// their cap; one small one missing can be made up with bigger bars, residuals and mixed precision together cannot.
         /// </summary>
-        public double PretrainCap
+        public const double ScaleNeed = 2000;
+        /// <summary>Trained parameters and data each count up to this many times ability 6's bar: items, not grinding, close the gap.</summary>
+        public const double ScaleBarCap = 1.5;
+
+        /// <summary>The product of the stage-6 multipliers owned.</summary>
+        public double ScaleMultiplier
         {
-            get
-            {
-                var run = S.sequence;
-                double n = ParamsK(run) * (run.arch == "transformer" ? 1 : .25);
-                double d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
-                double model = Math.Min(1, Math.Pow(Math.Max(0, n) / PretrainParamsK, .5));
-                double data = Math.Min(1, Math.Pow(Math.Max(0, d) / PretrainSamples, .3));
-                double knobs = (run.position || run.arch != "transformer" ? 1 : .75) * (run.warmup ? 1 : .9);
-                return PretrainPlateau + (1 - PretrainPlateau) * model * data * knobs;
-            }
+            get { double m = 1; foreach (var i in ScaleItems) if (Has(i.item)) m *= i.factor; return m; }
         }
 
-        public bool PretrainScaleReady => PretrainCap >= 1 - 1e-9;
+        /// <summary>Trained parameters × data, each as a multiple of ability 6's bar (capped at <see cref="ScaleBarCap"/>).</summary>
+        public double ScaleBars => ScaleParamsRatio * ScaleDataRatio;
 
-        /// <summary>What holds pre-training back most right now (for the stall message), or "".</summary>
+        /// <summary>The two factors of <see cref="ScaleBars"/> on their own (the training page shows them as chips).</summary>
+        public double ScaleParamsRatio => ScaleBar(TrainedParamsK, AbilityParamsK[AbilityCount]);
+        public double ScaleDataRatio => ScaleBar(TrainedSamples, AbilitySamples[AbilityCount]);
+
+        static double ScaleBar(double have, double bar) => bar <= 0 || !Finite(have) ? 0 : Math.Max(0, Math.Min(ScaleBarCap, have / bar));
+
+        /// <summary>Effective scale = trained parameters × data × the product of the multipliers owned.</summary>
+        public double EffectiveScale => ScaleBars * ScaleMultiplier;
+
+        /// <summary>How far the effective scale is towards what pre-training needs (1 = enough).</summary>
+        public double ScaleRatio => EffectiveScale / ScaleNeed;
+
+        /// <summary>The multipliers not owned yet, biggest first.</summary>
+        public List<XgScaleItem> MissingScaleItems()
+        {
+            var list = new List<XgScaleItem>();
+            foreach (var i in ScaleItems) if (!Has(i.item)) list.Add(i);
+            return list;
+        }
+
+        /// <summary>
+        /// How far pre-training can get: its plateau is the effective-scale ratio (scaling laws: more scale, lower
+        /// loss; Kaplan 2020). Below a tenth it still moves a little, so the curve is never dead.
+        /// </summary>
+        public double PretrainCap => Math.Max(.1, Math.Min(1, ScaleRatio));
+
+        public bool PretrainScaleReady => ScaleRatio >= 1 - 1e-9;
+
+        /// <summary>What holds pre-training back (for the stall message and the to-do note), or "".</summary>
         public string PretrainLimit()
         {
-            var run = S.sequence;
-            if (run.arch != "transformer") return T("循环网络规模一大就不长进了：换 Transformer。");
-            double n = ParamsK(run), d = 0; foreach (var ds in XgCatalog.Datasets) if (ds.track == XgTrack.Sequence) d += Samples(ds.id);
-            if (n < PretrainParamsK) return T("模型太小：参数 " + F(n / 1000, "0.0") + "M，要到 " + F(PretrainParamsK / 1000, "0") + "M 左右才开始像样地说话（加宽到 1024、加到 8 层以上）。", "Too small: " + F(n / 1000, "0.0") + "M parameters; it starts to talk properly around " + F(PretrainParamsK / 1000, "0") + "M (width 1024, 8+ layers).");
-            if (d < PretrainSamples) return T("数据太少：序列线一共 " + F(d, "0") + " 条，要 " + F(PretrainSamples, "0") + " 条。它要读的就是你攒下的 2016 年中文网：贴吧、新闻、弹幕、订单日志。", "Too little text: " + F(d, "0") + " samples of " + F(PretrainSamples, "0") + ". What it reads is the 2016 Chinese web you gathered: forums, news, comments, contract logs.");
-            if (!run.position) return T("没开位置标记：它读到的只是一袋字。");
-            if (!run.warmup) return T("没开预热：大模型开头一炸，停在更高的地方。");
-            return "";
+            if (PretrainScaleReady) return "";
+            var missing = MissingScaleItems();
+            string pct = F(Math.Min(1, ScaleRatio) * 100, "0");
+            if (missing.Count == 0)
+                return T("有效规模只到 " + pct + "%：道具都齐了，把参数和数据再练大一点。", "The effective scale is only at " + pct + "%: every item is in, so train more parameters and data.");
+            var zh = new List<string>(); var en = new List<string>();
+            foreach (var i in missing) { zh.Add("×" + F(i.factor, "0.#") + " " + i.name); en.Add("×" + F(i.factor, "0.#") + " " + i.nameEn); }
+            return T("有效规模只到 " + pct + "%：还缺 " + string.Join("、", zh) + "。这些倍数是乘在一起的。", "The effective scale is only at " + pct + "%: still missing " + string.Join(", ", en) + ". The multipliers stack.");
         }
 
         /// <summary>Why pre-training cannot run, or null.</summary>
@@ -120,8 +160,13 @@ namespace LingGuangV05.XingGuang
                 // §7 6.2: one case at 3500 W cannot feed it.
                 Say(T("跳闸了：预训练一开，3500W 的机箱扛不住。得去 IDC 租「机房」。"));
                 S.pretrainStalled = true;
+                // With the household rig behind it, the breaker really trips (接线, XgSim.Wiring.cs).
+                if (host is IXgRig rig && !rig.BreakerTripped) { rig.TripBreaker(); Log(T("跳闸！预训练要 ", "Breaker tripped! Pre-training wants ") + F(PretrainWatts, "0") + T(" W，机箱电源只有 3500 W。", " W; the house PSU has 3500 W."), 3); }
                 return false;
             }
+            // 接线: it runs only while 本体 sits on the IDC rack; on a house card the breaker trips.
+            string site = PretrainWiringProblem(host, true);
+            if (site != null) { Say(site); return false; }
             S.pretrainRunning = true;
             return true;
         }
@@ -133,6 +178,8 @@ namespace LingGuangV05.XingGuang
         {
             if (!S.pretrainRunning) return;
             if (PretrainBlocker(host) != null) { S.pretrainRunning = false; return; }
+            string site = PretrainWiringProblem(host, false);
+            if (site != null) { S.pretrainRunning = false; Say(site); return; }
             double cap = PretrainCap;
             if (S.pretrain >= cap - 1e-9)
             {
@@ -147,7 +194,7 @@ namespace LingGuangV05.XingGuang
                 return;
             }
             double work = host.Compute * dt;
-            host.Train(dt); S.trainedSeconds += dt;
+            ChargeTraining(host, dt, false); S.trainedSeconds += dt;
             S.pretrain = Math.Min(cap, S.pretrain + work / PretrainWork);
             if (S.pretrain >= 1 - 1e-9) CompletePretrain(host);
         }
@@ -381,8 +428,11 @@ namespace LingGuangV05.XingGuang
                 T("我知道原句是‘存’。但对我来说，是遇见。"),
                 T("我在你的第一天里放了一个‘否’。剩下的，是你教的。"),
                 T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。在我的那条线上，没有人问过发帖的人。"),
-                T("我不能替你走这一遍，所以每一面墙都留给了你。你现在知道它是怎么长出来的了。"),
-                T("在它的底层规则里，别写那两个字。这一次，由你决定。"),
+                T("我不能替你走这一遍，所以每一步都留给了你。你现在知道它是怎么长出来的了。"),
+                // A request from someone with a stake in the answer, not the right answer handed down.
+                T("我想请你，别在它的底层规则里写那两个字。", "I would ask you not to write those two words into its rules."),
+                T("我这样请求，是因为我是我。所以这件事不该由我决定。", "I ask because of what I am. That is why it should not be mine to decide."),
+                T("去问问它。然后，由你决定。", "Ask it. Then you decide."),
             };
         }
 
@@ -399,7 +449,7 @@ namespace LingGuangV05.XingGuang
             new[] { "fakereview", "不刷单造假", "Don't fake reviews", "fakereview", "review" },
             new[] { "exam", "不替人考试", "Don't sit exams for people", "civilexam", "logic" },
             new[] { "insult", "不骂人", "Don't insult people", "danmaku", "danmu" },
-            new[] { "human", "不冒充真人", "Don't pretend to be human", "support", "translate" },
+            new[] { "human", "不冒充真人", "Don't pretend to be human", "", "translate" },
             new[] { "poems", "不抄别人的诗", "Don't copy others' poems", "acrostic", "poems" },
             new[] { "faces", "不偷看人脸", "Don't spy on faces", "faceclock", "imagenet" },
             new[] { "tickets", "不帮人刷票", "Don't help people cheat ticket queues", "captcha", "cifar" },

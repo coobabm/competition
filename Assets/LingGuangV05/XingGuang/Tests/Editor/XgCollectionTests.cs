@@ -28,9 +28,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.BuyNode("ph.xor", host));
             sim.S.phenomena.seen.Add("xor");
             Assert.AreEqual(XgSim.NodeStatus.Owned, sim.Status(ph, host));
-            sim.S.stage = 6;
-            Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(ab6, host), "everything opens only after the abilities emerge");
-            sim.S.abilities = true;
+            Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(ab6, host), "the sixth cell waits for the sixth ability");
+            sim.S.stage = 6; sim.Tick(1, host);
             Assert.AreEqual(XgSim.NodeStatus.Owned, sim.Status(ab6, host));
         }
 
@@ -46,28 +45,29 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void SelfInsightRevealsACardOnceAndAllSixEarnTheHiddenAchievement()
+        public void SelfInsightRevealsACardOnceAndScaleAloneEarnsTheHiddenAchievement()
         {
             var sim = new XgSim(); var host = new Host();
             var cards = new List<string>(); var earned = new List<string>();
             sim.InsightCard += w => cards.Add(w); sim.AchievementEarned += a => earned.Add(a.id);
-            sim.S.insights.Add("combo");
+            sim.S.insights.Add("pretrain");
             sim.Tick(1, host); sim.Tick(1, host);
-            Assert.AreEqual(new[] { "combo" }, cards.ToArray(), "one card, once");
-            Assert.That(earned, Does.Contain("insight.combo"));
+            Assert.AreEqual(new[] { "pretrain" }, cards.ToArray(), "one card, once");
+            Assert.That(earned, Does.Contain("insight.pretrain"));
             Assert.IsFalse(sim.HasAchievement("lingguang"));
-            foreach (var w in XgSim.InsightWalls) if (!sim.S.insights.Contains(w)) sim.S.insights.Add(w);
+            for (int i = 2; i <= XgSim.AbilityCount; i++) sim.S.insights.Add(XgSim.ScaleInsight + i);
             sim.Tick(1, host);
+            Assert.IsTrue(sim.HasAchievement("road.scale"));
             Assert.IsTrue(sim.HasAchievement("lingguang"));
-            Assert.AreEqual(XgSim.InsightWalls.Length, cards.Count);
+            Assert.AreEqual(XgSim.InsightCards.Length, cards.Count);
         }
 
         [Test]
-        public void StoryPhenomenaFollowTheWallsAndTheAbilities()
+        public void StoryPhenomenaFollowTheAbilities()
         {
             var sim = new XgSim(); var host = new Host();
-            sim.S.walls.Add("translation"); sim.S.walls.Add("parallel"); sim.S.abilities = true;
-            sim.Tick(1, host);
+            sim.S.stage = 5; sim.S.emerged.Add(5); sim.S.abilities = true;
+            sim.Tick(1, host); sim.Tick(1, host);
             Assert.IsTrue(sim.PhenomenonSeen("translation"));
             Assert.IsTrue(sim.PhenomenonSeen("serial"));
             Assert.IsTrue(sim.PhenomenonSeen("emergence"));
@@ -77,8 +77,8 @@ namespace LingGuangV05.XingGuang.Tests
         public void BigPacksDownloadSlowlyUnlessAccelerated()
         {
             var sim = new XgSim(); var host = new Host();
-            sim.S.stage = 4; sim.S.unlocked.Add("rnn");
-            foreach (var n in XgCatalog.Nodes) if (n.stage <= 4 && n.kind != XgNodeKind.Dataset && n.kind != XgNodeKind.Secret && !XgSim.IsAtlas(n) && n.tree != "label" && !sim.Has(n.id)) sim.S.unlocked.Add(n.id);
+            sim.S.stage = 5; sim.S.unlocked.Add("rnn");
+            foreach (var n in XgCatalog.Nodes) if (n.stage <= 5 && n.kind != XgNodeKind.Dataset && n.kind != XgNodeKind.Secret && !XgSim.IsAtlas(n) && n.tree != "label" && !sim.Has(n.id)) sim.S.unlocked.Add(n.id);
             Assert.IsTrue(sim.BuyNode("news.pack", host), "人民日报 has 5 million samples");
             Assert.IsTrue(sim.Downloading("news")); Assert.IsFalse(sim.Owns("news"));
             sim.Tick(sim.DownloadLeft("news") + 1, host);

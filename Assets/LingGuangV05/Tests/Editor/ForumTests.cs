@@ -113,24 +113,24 @@ namespace LingGuangV05.Tests
             Assert.IsEmpty(EraLexicon.Audit(lines));
         }
 
-        static LaoZhouFacts Facts(int stage, string wall = "") => new LaoZhouFacts { stage = stage, wall = wall, wallName = wall, today = GameCalendar.FirstDay(stage).AddDays(10), money = 1200, temperature = 50, gpus = 2 };
+        static LaoZhouFacts Facts(int stage, string shortOf = "") => new LaoZhouFacts { stage = stage, shortOf = shortOf, nextAbility = shortOf.Length > 0 ? "看图说词" : "", today = GameCalendar.FirstDay(stage).AddDays(10), money = 1200, temperature = 50, gpus = 2 };
 
         [Test]
         public void FutureLaoZhouAnswersADirectionFirstAndExplainsOnARepeat()
         {
-            var f = Facts(1, "combo");
+            var f = Facts(2, "params");
             string first = LaoZhouFuture.Reply("卡在 50% 了", f, 1, false);
             string second = LaoZhouFuture.Reply("卡在 50% 了", f, 2, false);
-            StringAssert.Contains("一条直线", first);
+            StringAssert.Contains("模型小了", first);
             Assert.AreNotEqual(first, second);
-            StringAssert.Contains("一层", second);
-            foreach (var wall in new[] { "combo", "structure", "length", "degrade", "translation", "parallel" })
+            StringAssert.Contains("C 级", second);
+            StringAssert.Contains("数据包", LaoZhouFuture.Reply("卡住了怎么办", Facts(3, "data"), 1, false));
+            foreach (var shortOf in new[] { "params", "data", "" })
                 for (int times = 1; times <= 3; times++)
                 {
-                    string reply = LaoZhouFuture.Reply("卡住了怎么办", Facts(3, wall), times, false);
+                    string reply = LaoZhouFuture.Reply("卡住了怎么办", Facts(3, shortOf), times, false);
                     Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(reply, "0\\.\\d|\\d{2,}"), "never a number: " + reply);
                 }
-            StringAssert.Contains("自己想", LaoZhouFuture.Reply("卡住了", Facts(5, "parallel"), 1, false));
         }
 
         [Test]
@@ -152,9 +152,9 @@ namespace LingGuangV05.Tests
         [Test]
         public void ThePromptCarriesTheGameStateButNoGoldenSettings()
         {
-            var f = Facts(3, "length"); f.wallName = "长句失忆"; f.nanCount = 4; f.phenomenon = "梯度消失";
+            var f = Facts(3, "params"); f.nanCount = 4; f.phenomenon = "梯度消失";
             string p = LaoZhouFuture.SystemPrompt(f, false);
-            StringAssert.Contains("长句失忆", p); StringAssert.Contains("梯度消失", p); StringAssert.Contains("NaN 4", p);
+            StringAssert.Contains("看图说词", p); StringAssert.Contains("参数量", p); StringAssert.Contains("梯度消失", p); StringAssert.Contains("NaN 4", p);
             StringAssert.Contains("永远不承认", p); StringAssert.Contains("不要主动", p);
             StringAssert.Contains("真香", p, "the banned-meme rule is part of the prompt");
             Assert.IsFalse(p.Contains("LSTM") || p.Contains("0.01") || p.Contains("裁剪"), "the golden setting is never in what he sees");

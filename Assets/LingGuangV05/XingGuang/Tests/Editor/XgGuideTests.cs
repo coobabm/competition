@@ -19,12 +19,13 @@ namespace LingGuangV05.XingGuang.Tests
         static XgGuideStep First(List<XgGuideStep> steps) => steps.Count > 0 ? steps[0] : null;
         static XgGuideStep Find(List<XgGuideStep> steps, string id) => steps.Find(s => s.id == id);
 
-        /// <summary>A stage-one lab with plenty of spam labels, trained and assessed once.</summary>
+        /// <summary>A stage-one lab with plenty of spam labels, trained and assessed once (so the 科技 page is open).</summary>
         static XgSim Trained()
         {
-            var sim = new XgSim { GoldChance = 0, PracticeStrict = false };
+            var sim = new XgSim { GoldChance = 0 };
             sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 300 });
             sim.S.epochs = 5; sim.S.assessments = 1;
+            sim.S.treeIntroDelivered = true;
             return sim;
         }
 
@@ -36,7 +37,7 @@ namespace LingGuangV05.XingGuang.Tests
             var s = First(steps);
             StringAssert.StartsWith("label.", s.id);
             Assert.AreEqual(XgGuideKind.Setup, s.kind);
-            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("label", s.tab);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab);
             Assert.AreEqual(XgCatalog.SamplesToTrain, s.goal); Assert.AreEqual(0, s.current);
             StringAssert.Contains("（0/12）", s.Text(false));
             StringAssert.Contains("(0/12)", s.Text(true));
@@ -47,7 +48,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AfterLabelsItSuggestsTrainingThenAnAssessment()
         {
-            var sim = new XgSim { GoldChance = 0, PracticeStrict = false }; var host = new Host();
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             sim.SelectDesk("spam");
             for (int i = 0; i < 6; i++) { var c = sim.Card("spam"); sim.Answer("spam", c.truth, host); }
             var half = First(XgGuide.Current(sim, host.money));
@@ -64,7 +65,12 @@ namespace LingGuangV05.XingGuang.Tests
             sim.TrainEpoch(XgTrack.Sequence, host);
             var steps = XgGuide.Current(sim, host.money);
             Assert.IsNull(Find(steps, "train.first"));
-            Assert.AreEqual("assess.first", First(steps).id);
+            // One press trains and assesses; the first record opens the 科技 page, and the road to the next ability follows.
+            Assert.Greater(sim.S.assessments, 0);
+            Assert.IsNull(Find(steps, "assess.first"));
+            Assert.AreEqual("ability.buy", First(steps).id);
+            sim.S.assessments = 0;
+            Assert.AreEqual("assess.first", First(XgGuide.Current(sim, host.money)).id, "an epoch that was not assessed asks for one");
         }
 
         [Test]
@@ -75,7 +81,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .95 });
             var s = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("contract.antifraud", s.id);
-            Assert.AreEqual("contracts", s.tab); Assert.AreEqual("contract:antifraud", s.target);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("contracts", s.tab); Assert.AreEqual("contract:antifraud", s.target);
             StringAssert.Contains("诈骗短信拦截", s.zh);
             sim.S.contracts.Add("antifraud");
             Assert.IsNull(Find(XgGuide.Current(sim, 0), "contract.antifraud"), "a signed contract is done");
@@ -95,88 +101,41 @@ namespace LingGuangV05.XingGuang.Tests
 
             var vram = XgGuide.Current(sim, 0, new XgGuideHouse { vramMB = 1 });
             Assert.AreEqual("vram", vram[0].id, "a model too big for the card blocks training");
-            StringAssert.Contains("宽度", vram[0].zh);
+            StringAssert.Contains("加显卡", vram[0].zh, "no knobs to turn down: the card is what grows");
 
             var noExe = XgGuide.Current(new XgSim(), 0, new XgGuideHouse { appInstalled = false });
-            Assert.AreEqual("install", noExe[0].id); Assert.AreEqual(XgGuide.YY, noExe[0].app);
+            Assert.IsNull(Find(noExe, "install"), "the exe always comes with the prologue now; the old YY install step is gone");
         }
 
         [Test]
-        public void BeforeTheWallItCountsPracticeEpochs()
+        public void TheNextAbilityNamesItsShorterBar()
         {
             var sim = Trained();
-            sim.S.stageEpochs = 7;
-            var steps = XgGuide.Current(sim, 0);
-            var practice = Find(steps, "practice.1");
-            Assert.IsNotNull(practice);
-            Assert.AreEqual(7, practice.current); Assert.AreEqual(XgSim.WallPracticeEpochs, practice.goal);
-            StringAssert.Contains("（7/20）", practice.Text(false));
-            Assert.IsNotNull(Find(steps, "grade.1"), "stage one's wall also waits for a C");
-            int side = steps.FindIndex(s => s.kind == XgGuideKind.Side);
+            var steps = XgGuide.Current(sim, 1000);
+            var main = steps.Find(x => x.kind == XgGuideKind.Ability);
+            Assert.IsNotNull(main, "the main line is the next ability");
+            Assert.AreEqual("ability.buy", main.id, "nothing trained yet: the parameter bar comes first, as a purchase");
+            StringAssert.Contains(XgSim.ParamsText(XgSim.AbilityParamsK[2] * .8), main.whyZh, "the threshold after the MLP's discount");
+            Assert.IsNotEmpty(main.en); Assert.IsNotEmpty(main.whyEn);
+
+            sim.S.trainedParamsK = sim.ParamsThreshold(2);
+            var data = XgGuide.Current(sim, 0).Find(x => x.kind == XgGuideKind.Ability);
+            Assert.AreEqual("ability.pack", data.id, "with the parameters there, the data is what is left");
+            Assert.AreEqual("node:spam.pack", data.target);
+
+            int side = steps.FindIndex(x => x.kind == XgGuideKind.Side);
             Assert.AreEqual(2, side, "side tasks only ever take the third line");
             Assert.AreEqual("side.forum", steps[side].id);
-            Assert.AreEqual(-1, XgGuide.Current(sim, 0, new XgGuideHouse { forumSeen = true, yySeen = true, gamesSeen = true }).FindIndex(s => s.kind == XgGuideKind.Side));
-        }
-
-        [Test]
-        public void WallHintsEscalateOverTimeAndNeverGiveGoldenNumbers()
-        {
-            var sim = new XgSim { GoldChance = 0, PracticeStrict = false }; var host = new Host();
-            sim.S.unlocked.Add("bias");
-            for (int i = 0; i < 40; i++) { var c = sim.Card("spam"); sim.Answer("spam", c.truth, host); }
-            for (int i = 0; i < 40 && !sim.WallSeen("combo"); i++) sim.TrainEpoch(XgTrack.Sequence, host);
-            Assert.IsTrue(sim.WallSeen("combo"));
-            var wall = sim.ActiveWall;
-            Assert.IsNotNull(wall);
-
-            XgGuideStep Hint(double seconds, double money, XgGuideHouse house = null)
-            {
-                sim.S.stageSeconds = sim.S.wallSeenAt + seconds;
-                var steps = XgGuide.Current(sim, money, house);
-                foreach (var s in steps)
-                {
-                    if (s.kind != XgGuideKind.Wall) continue;
-                    foreach (var text in new[] { s.zh, s.en, s.whyZh, s.whyEn })
-                    {
-                        foreach (char ch in text) Assert.IsFalse(char.IsDigit(ch), "no numbers in wall steps: " + text);
-                        StringAssert.DoesNotContain(wall.golden, text); StringAssert.DoesNotContain(wall.goldenEn, text);
-                    }
-                }
-                return Find(steps, "wall.combo");
-            }
-
-            foreach (double money in new[] { 0.0, 1e6 })
-            {
-                var first = Hint(0, money);
-                Assert.AreEqual(0, first.level); Assert.AreEqual("wall", first.tab, "first: the diagnosis page");
-                var forum = Hint(XgGuide.ForumAfter + 1, money);
-                Assert.AreEqual(1, forum.level); Assert.AreEqual(XgGuide.Tieba, forum.app); Assert.AreEqual("laozhou", forum.arg);
-                var post = Hint(XgGuide.NewbieAfter + 1, money);
-                Assert.AreEqual(2, post.level); Assert.AreEqual("thread", post.tab); Assert.AreEqual("tip_wall", post.arg);
-                var secret = Hint(XgGuide.SecretAfter + 1, money);
-                Assert.AreEqual(3, secret.level); Assert.AreEqual("node:secret.1", secret.target);
-                Assert.AreEqual(money < 200, secret.HasProgress, "an unaffordable secret shows how far the wallet is");
-                Assert.AreEqual(2, Hint(XgGuide.ForumAfter + 1, money, new XgGuideHouse { zhouAvailable = false }).level, "no 周而复始: straight to the posts");
-            }
-
-            var steps0 = XgGuide.Current(sim, 0);
-            Assert.IsNotNull(Find(steps0, "wall.data.xor"), "the wall's own data must be on the training page");
-            var needs = Find(steps0, "needs.combo");
-            Assert.IsNotNull(needs, "missing knobs are named");
-            StringAssert.Contains("更多层数", needs.zh, "layer caps are named without their number");
-            Assert.IsTrue(XgGuide.Current(sim, 1e6).Exists(s => s.id.StartsWith("need.", StringComparison.Ordinal)), "affordable knobs become buy steps");
-
-            sim.S.unlocked.Add("secret.1");
-            sim.S.stageSeconds = sim.S.wallSeenAt + XgGuide.SecretAfter + 1;
-            Assert.AreEqual(2, Find(XgGuide.Current(sim, 0), "wall.combo").level, "a bought secret is not suggested again");
+            Assert.AreEqual(-1, XgGuide.Current(sim, 0, new XgGuideHouse { forumSeen = true, yySeen = true, gamesSeen = true }).FindIndex(x => x.kind == XgGuideKind.Side));
         }
 
         [Test]
         public void StageSixWalksThroughPretrainingAlignmentTheTestTheLetterAndTheRules()
         {
             var host = new Host { money = 1e7 };
-            var state = new XgState { progressionVersion = XgSim.ProgressionSchemaWalls, stage = 6, stageVision = 6, stageSequence = 6 };
-            var sim = new XgSim(state) { GoldChance = 0, PracticeStrict = false };
+            var state = new XgState { progressionVersion = XgSim.ProgressionSchema, stage = 6, stageVision = 6, stageSequence = 6 };
+            var sim = new XgSim(state) { GoldChance = 0 };
+            sim.S.treeIntroDelivered = true;
             foreach (var n in XgCatalog.Nodes) if (n.stage <= 6 && n.tree != "label" && n.kind != XgNodeKind.Secret && n.id != "datacenter" && !sim.Has(n.id)) sim.S.unlocked.Add(n.id);
             var s = sim.S;
 
@@ -187,14 +146,23 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(dc.money); Assert.AreEqual(10, dc.current); Assert.AreEqual(sim.NodeCost(XgCatalog.Node("datacenter")), dc.goal);
 
             s.unlocked.Add("datacenter");
+            // The effective scale (XgSim.ScaleItems): every item owned and both bars at ability 6.
+            s.trainedParamsK = XgSim.AbilityParamsK[6];
+            s.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.AbilitySamples[6] });
             Assert.IsTrue(sim.TogglePretrain(host));
             s.pretrain = .3;
             var wait = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("final.wait", wait.id); Assert.AreEqual(30, wait.current); Assert.AreEqual(100, wait.goal);
 
-            s.pretrain = XgSim.PretrainPlateau;
+            // Without mixed precision and BatchNorm the scale falls short and the plateau names what is missing.
+            s.unlocked.Remove("fp16"); s.unlocked.Remove("batchnorm");
             Assert.IsFalse(sim.PretrainScaleReady);
-            Assert.AreEqual("final.scale", First(XgGuide.Current(sim, 0)).id, "the plateau asks for scale");
+            s.pretrain = sim.PretrainCap;
+            var plateau = First(XgGuide.Current(sim, 0));
+            Assert.AreEqual("final.scale", plateau.id, "the plateau asks for scale");
+            StringAssert.Contains("混合精度", plateau.zh);
+            Assert.IsTrue(XgGuide.Current(sim, 0).Exists(x => x.id == "need.fp16"), "and the note offers the missing multiplier");
+            s.unlocked.Add("fp16"); s.unlocked.Add("batchnorm");
 
             s.pretrainRunning = false; s.pretrain = 1; s.abilities = true;
             var align = First(XgGuide.Current(sim, 0));
@@ -216,6 +184,8 @@ namespace LingGuangV05.XingGuang.Tests
             // The curtain call: one question to ask it, then nothing left.
             var ask = XgGuide.Current(sim, 0);
             Assert.AreEqual("origin.ask", ask[0].id);
+            Assert.AreEqual(XgGuide.YY, ask[0].app, "the chat with it lives in YY");
+            Assert.AreEqual(XgGuide.YYChat, ask[0].tab);
             Assert.AreEqual(1, ask.Count);
             sim.Scripted(sim.OriginQuestion);
             var done = XgGuide.Current(sim, 0);
@@ -231,7 +201,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.qcFrozen = 125; sim.S.qcReason = (int)XgReportReason.MonotoneAnswers;
             var s = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("qc.frozen", s.id); Assert.AreEqual(XgGuideKind.Blocker, s.kind);
-            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:QcAppeal", s.target);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:QcAppeal", s.target);
             StringAssert.Contains("2:05", s.zh); StringAssert.Contains("2:05", s.en);
             StringAssert.Contains("疑似脚本", s.whyZh); Assert.IsNotEmpty(s.whyEn);
             var both = XgGuide.Current(sim, 0, new XgGuideHouse { unpaidPower = true });
@@ -251,11 +221,11 @@ namespace LingGuangV05.XingGuang.Tests
             var s = Find(XgGuide.Current(sim, 0), "qc.rate");
             Assert.IsNotNull(s, "3 failures in 20 is on the 15% line");
             Assert.AreEqual(XgGuideKind.Main, s.kind);
-            Assert.AreEqual("tree", s.tab); Assert.AreEqual("node:label.coop", s.target, "without the node, point at the node");
+            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("tree", s.tab); Assert.AreEqual("node:label.coop", s.target, "without the node, point at the node");
             StringAssert.Contains("拿不准才问我", s.zh); StringAssert.Contains("85%", s.whyZh); StringAssert.Contains("20%", s.whyEn);
             sim.S.unlocked.Add("label.coop");
             s = Find(XgGuide.Current(sim, 0), "qc.rate");
-            Assert.AreEqual("label", s.tab); Assert.AreEqual("name:ThresholdSlider", s.target);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:ThresholdSlider", s.target);
             for (int i = 0; i < 2; i++) sim.S.qcChecks.Add(true);
             Assert.IsNull(Find(XgGuide.Current(sim, 0), "qc.rate"), "3 in 22 is under the line");
         }
@@ -268,7 +238,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.qcCaptcha = true; sim.S.qcCaptchaCode = "4821"; sim.S.qcCaptchaLeft = 25;
             var s = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("qc.captcha", s.id); Assert.AreEqual(XgGuideKind.Blocker, s.kind);
-            Assert.AreEqual("label", s.tab); Assert.AreEqual("name:QcCaptcha", s.target);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:QcCaptcha", s.target);
             StringAssert.Contains("0:25", s.zh); StringAssert.Contains("0:25", s.en);
             StringAssert.DoesNotContain("4821", s.zh, "the note never types the captcha for you");
         }
@@ -288,6 +258,196 @@ namespace LingGuangV05.XingGuang.Tests
                         Assert.IsNotEmpty(s.zh, s.id); Assert.IsNotEmpty(s.en, s.id);
                         Assert.IsNotEmpty(s.whyZh, s.id); Assert.IsNotEmpty(s.whyEn, s.id);
                     }
+        }
+
+        // ───────────── the road to the second ability ─────────────
+
+        [Test]
+        public void TheParameterStepNamesTheFourNodesInOrderAndRingsTheNextOne()
+        {
+            var sim = Trained();
+            var plan = XgGuide.ParamsPlan(sim, 2);
+            Assert.IsNotNull(plan);
+            CollectionAssert.AreEqual(new[] { "mlp", "s.d2", "s.w1", "s.w2" }, plan.buy.ConvertAll(n => n.id), "多层感知机 ¥150, 2 层 ¥80, 宽 32 ¥150, 宽 64 ¥450");
+            Assert.AreEqual(830, plan.cost, 1e-9);
+            Assert.GreaterOrEqual(plan.paramsK, plan.threshold);
+
+            var step = Find(XgGuide.Current(sim, 20), "ability.buy");
+            Assert.AreEqual(XgGuide.Lab, step.app); Assert.AreEqual("tree", step.tab); Assert.AreEqual("node:mlp", step.target);
+            StringAssert.StartsWith("科技买「多层感知机」", step.zh);
+            StringAssert.Contains("2 层 → 宽 32 → 宽 64", step.zh);
+            StringAssert.Contains("MLP", step.en);
+            Assert.IsTrue(step.money, "short of money: the price is the progress");
+            Assert.AreEqual(150, step.goal, 1e-9);
+            StringAssert.Contains("标注台", step.whyZh, "and where money comes from");
+
+            foreach (var (bought, next) in new[] { ("mlp", "node:s.d2"), ("s.d2", "node:s.w1"), ("s.w1", "node:s.w2") })
+            {
+                sim.S.unlocked.Add(bought);
+                var s = Find(XgGuide.Current(sim, 1000), "ability.buy");
+                Assert.AreEqual(next, s.target, "after " + bought);
+                StringAssert.DoesNotContain(XgCatalog.Node(bought).name + " →", s.zh, "a bought node leaves the chain");
+            }
+            sim.S.unlocked.Add("s.w2");
+            var steps = XgGuide.Current(sim, 1000);
+            Assert.IsNull(Find(steps, "ability.buy"), "everything is bought");
+            Assert.IsNotNull(steps.Find(x => x.id == "ability.train" || x.id == "ability.assess" || x.id == "ability.card"), "then the model is trained to grade C");
+        }
+
+        [Test]
+        public void TheDataStepNamesTheSmsPackThenTheLabelsThatCountInFull()
+        {
+            var sim = Trained();
+            sim.S.trainedParamsK = sim.ParamsThreshold(2);
+            var steps = XgGuide.Current(sim, 1000);
+            var pack = Find(steps, "ability.pack");
+            Assert.IsNotNull(pack);
+            Assert.AreEqual("node:spam.pack", pack.target); Assert.AreEqual("tree", pack.tab);
+            StringAssert.Contains("「垃圾短信」数据包", pack.zh);
+            StringAssert.DoesNotContain("或在科技买数据包", pack.whyZh);
+
+            // The pack is in: what is left is labels, on the desks that count in full (算术 counts half).
+            sim.S.unlocked.Add("spam.pack"); sim.S.owned.Add("spam");
+            steps = XgGuide.Current(sim, 0);
+            Assert.IsNull(Find(steps, "ability.pack"));
+            var label = Find(steps, "ability.label");
+            Assert.IsNotNull(label);
+            Assert.AreEqual(XgGuide.Crowd, label.app); Assert.AreEqual("label", label.tab);
+            Assert.AreEqual(1, XgCatalog.Dataset(label.arg).dataWeight, 1e-9, "never 算术");
+            int left = (int)Math.Ceiling(sim.SamplesThreshold(2) - sim.TrainedSamples - 1e-9);
+            StringAssert.Contains("再标 " + left + " 条", label.zh);
+            Assert.AreEqual(sim.SamplesThreshold(2), label.goal, 1e-9);
+            StringAssert.Contains("算术", label.whyZh, "the half weight is explained");
+        }
+
+        [Test]
+        public void WhileAnAbilityStepWaitsTheCheapLineNeverSuggestsADetour()
+        {
+            var sim = Trained();
+            var plan = XgGuide.ParamsPlan(sim, 2);
+            foreach (var money in new[] { 40.0, 200, 1000 })
+            {
+                var steps = XgGuide.Current(sim, money);
+                Assert.IsTrue(steps.Exists(x => x.kind == XgGuideKind.Ability));
+                foreach (var s in steps)
+                {
+                    if (!s.id.StartsWith("node.", StringComparison.Ordinal)) continue;
+                    string id = s.id.Substring(5);
+                    bool advances = plan.buy.Exists(n => n.id == id) || XgCatalog.Node(id).kind == XgNodeKind.Dataset;
+                    Assert.IsTrue(advances, s.id + " does not move a bar");
+                }
+                foreach (var detour in new[] { "weights", "bias", "step" })
+                    Assert.IsNull(Find(steps, "node." + detour), detour + " with ¥" + money);
+            }
+        }
+
+        [Test]
+        public void NoTechStepShowsBeforeTheTechPageOpens()
+        {
+            var sim = new XgSim { GoldChance = 0 };
+            sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 12 });
+            sim.S.epochs = 1;
+            Assert.IsFalse(sim.FeatureVisible("tree"));
+            foreach (var money in new[] { 0.0, 100, 1e5 })
+            {
+                var steps = XgGuide.Current(sim, money);
+                Assert.IsNotEmpty(steps);
+                foreach (var s in steps) Assert.IsTrue(XgGuide.TabOpen(sim, s.app, s.tab), s.id + " on " + s.tab);
+                Assert.IsFalse(steps.Exists(x => x.tab == "tree"), "the 科技 page is still closed");
+            }
+        }
+
+        [Test]
+        public void TheFallbackLabelsBeforeTrainingAndTrainsAfter()
+        {
+            var fresh = new XgSim { GoldChance = 0 };
+            var keep = XgGuide.Keep(fresh);
+            Assert.AreEqual(XgGuide.Crowd, keep.app); Assert.AreEqual("label", keep.tab);
+            var trained = XgGuide.Keep(Trained());
+            Assert.AreEqual(XgGuide.Lab, trained.app); Assert.AreEqual("train", trained.tab);
+            Assert.IsNotEmpty(keep.whyEn); Assert.IsNotEmpty(trained.whyEn);
+        }
+
+        [Test]
+        public void ThePrologueAndSetupStepsPointAtTheExeAndTheFirstAnswer()
+        {
+            var exe = XgGuide.OpenExe();
+            Assert.AreEqual(XgGuide.Desktop, exe.app);
+            StringAssert.Contains(LingGuangV05.Core.AppNames.ExeZh, exe.zh); StringAssert.Contains(LingGuangV05.Core.AppNames.ExeEn, exe.en);
+            var first = XgGuide.AnswerFirst();
+            StringAssert.Contains("是", first.zh); Assert.IsNotEmpty(first.en);
+        }
+
+        [Test]
+        public void AutoLabellingIsOnTheNoteOnceItsIdeaHasCome()
+        {
+            var sim = Trained();
+            sim.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
+            Assert.IsTrue(sim.AutoLabelHidden);
+            Assert.IsNull(Find(XgGuide.Current(sim, 1e4), "label.auto"), "not before the idea");
+            sim.S.autoLabelRevealed = true;
+            var s = Find(XgGuide.Current(sim, 0), "label.auto");
+            Assert.IsNotNull(s);
+            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("name:Row自", s.target);
+            Assert.IsTrue(s.money, "its price is shown while short");
+            sim.S.autoLevel = 1;
+            Assert.IsNull(Find(XgGuide.Current(sim, 1e4), "label.auto"), "bought");
+        }
+
+        /// <summary>
+        /// Plays a new game doing only what the note's first line says (and labelling while it waits for money), and
+        /// checks every line on the way: never an empty note, never a blank line, never a closed page. It must reach
+        /// the second ability, and the lines it read must name each step of the road.
+        /// </summary>
+        [Test]
+        public void FollowingOnlyTheNoteReachesTheSecondAbility()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            var read = new List<string>();
+            for (int i = 0; i < 6000 && sim.AbilitiesCount < 2; i++)
+            {
+                sim.Tick(.5, host);
+                var steps = XgGuide.Current(sim, host.money);
+                Assert.IsNotEmpty(steps, "the note is never empty (action " + i + ")");
+                foreach (var s in steps)
+                {
+                    Assert.IsTrue(XgGuide.TabOpen(sim, s.app, s.tab), s.id + " points at a closed page (action " + i + ")");
+                    Assert.IsNotEmpty(s.zh, s.id); Assert.IsNotEmpty(s.en, s.id); Assert.IsNotEmpty(s.whyZh, s.id); Assert.IsNotEmpty(s.whyEn, s.id);
+                    if (!read.Contains(s.zh)) read.Add(s.zh);
+                }
+                Follow(sim, host, steps[0]);
+            }
+            Assert.AreEqual(2, sim.AbilitiesCount, "the note alone leads to 多选一");
+            string all = string.Join("\n", read);
+            StringAssert.Contains("标 12 条", all);
+            StringAssert.Contains("训练一轮", all);
+            StringAssert.Contains("科技买「多层感知机」 → 2 层 → 宽 32 → 宽 64", all);
+            StringAssert.Contains("练到 C 级", all);
+            StringAssert.Contains("科技买「垃圾短信」数据包", all);
+            StringAssert.Contains("再标", all);
+            foreach (var detour in new[] { "weights", "bias", "step" })
+                StringAssert.DoesNotContain("「" + XgCatalog.Node(detour).name + "」", all, "no cheap detour on the way");
+        }
+
+        /// <summary>Does what a step says, the way a player clicking it would; labels when a purchase is not affordable yet.</summary>
+        static void Follow(XgSim sim, Host host, XgGuideStep s)
+        {
+            XgTrack Track() { var t = s.arg == "vision" ? XgTrack.Vision : XgTrack.Sequence; return sim.TrainingUnlocked(t) ? t : 1 - t; }
+            if (s.target.StartsWith("node:", StringComparison.Ordinal)) { if (!sim.BuyNode(s.target.Substring(5), host)) Label(sim, host, ""); return; }
+            if (s.target.StartsWith("contract:", StringComparison.Ordinal)) { sim.Sign(s.target.Substring(9), host); return; }
+            if (s.target.StartsWith("label:训练一轮", StringComparison.Ordinal)) { sim.TrainEpoch(Track(), host); return; }
+            if (s.target.StartsWith("label:评估", StringComparison.Ordinal)) { sim.Assess(Track(), host); return; }
+            if (s.id == "raise") { sim.BuyNode("label.raise", host); return; }
+            if (s.id == "label.auto") { if (!sim.BuyNode("label.auto", host)) Label(sim, host, ""); return; }
+            Label(sim, host, s.arg);
+        }
+
+        static void Label(XgSim sim, Host host, string desk)
+        {
+            if (string.IsNullOrEmpty(desk) || !sim.DeskOpen(desk)) desk = sim.S.desk;
+            if (string.IsNullOrEmpty(desk) || !sim.DeskOpen(desk)) desk = sim.OpenDesks()[0].id;
+            var card = sim.Card(desk);
+            sim.Answer(desk, card.truth, host);
         }
     }
 }

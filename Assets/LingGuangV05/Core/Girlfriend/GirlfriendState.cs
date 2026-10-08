@@ -140,7 +140,7 @@ namespace LingGuangV05.Core.Girlfriend
         public string sulkZh = "", sulkEn = "";
         /// <summary>「让 灵光 代我回」 is switched on in her chat (stage 5; the AI turns it off for good at stage 6).</summary>
         public bool aiAuto;
-        /// <summary>Her last few offline lines, so the fallback library does not repeat itself.</summary>
+        /// <summary>Her last lines, from the model or the library (GirlfriendLines.RecentLimit), so the fallback library does not repeat itself.</summary>
         public List<string> recentLines = new List<string>();
     }
 }

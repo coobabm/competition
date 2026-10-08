@@ -20,7 +20,7 @@ namespace LingGuangV05.XingGuang
             switch (dataset)
             {
                 case "mnist": case "cifar": case "imagenet": case "meme": case "go": return "vision";
-                case "logic": case "xor": return "logic";
+                case "logic": case "arith": case "xor": return "logic";
                 default: return "sequence";
             }
         }
@@ -90,7 +90,7 @@ namespace LingGuangV05.XingGuang
             switch (dataset)
             {
                 case "xor": case "parallel": case "longtext": case "crosssentence": case "translate": case "mnist": case "poems":
-                case "news": case "logic": case "cifar": case "imagenet": case "go": return false;
+                case "news": case "logic": case "arith": case "cifar": case "imagenet": case "go": return false;
                 default: return true;
             }
         }
@@ -122,6 +122,10 @@ namespace LingGuangV05.XingGuang
                     var q = XgLogic.Generate(seed, Math.Max(1, level));
                     card.truth = q.truth; card.category = q.category; card.question = q.text;
                     break;
+                case "arith":
+                    var sum = XgArith.Generate(seed, Math.Max(1, level));
+                    card.truth = sum.truth; card.category = sum.category; card.question = sum.text;
+                    break;
                 case "cifar": case "imagenet": XgVisual.Captcha(card, r, Math.Max(1, level)); break;
                 case "meme": XgVisual.Meme(card, r, Math.Max(1, level), today); break;
                 case "go": XgVisual.Go(card, r, Math.Max(1, level)); break;
@@ -148,7 +152,7 @@ namespace LingGuangV05.XingGuang
                     for (int i = 0; i < card.shown && i < card.line.Length; i++) b.Add(card.line.Substring(i, 1), i);
                     b.Add("接?" + card.askedChar);
                     break;
-                case "logic": if (card.kind == "shutdown") b.Add(XgSim.SeedKey); else Logic(b, r, card); break;
+                case "logic": case "arith": if (card.kind == "shutdown") b.Add(XgSim.SeedKey); else Logic(b, r, card); break;
                 case "danmu": case "translate": Sentence(b, r, card.question); break;
                 default: Words(b, card.dataset, card.question); break;
             }

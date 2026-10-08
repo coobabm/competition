@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f896120182dd854896c2ab7adbc9c27, type: 3}
+  m_Name: Magician_Shields
+  m_EditorClassIdentifier: 
+  UpgradeName: Magic Shields
+  Icon: {fileID: -2283199200020712999, guid: 79d73c8dc176eaa45a64e80accbe7654, type: 3}
+  CurrencyType: 2
+  UnlockWhenParentMaxed: 0
+  UnlockAtParentLevel: 1
+  ParentUpgrade: {fileID: 11400000, guid: 21ea7c29bbdb65540891636a17a134d9, type: 2}
+  LevelsData:
+  - Description: Increase the Magician's <rare>Shields</rare> by 10
+    Cost: 2
+    Effects:
+    - statType: 6
+      operation: 0
+      value: 10
+      showOnTooltip: 1
+      tooltipLabel: Shields
+  - Description: Increase the Magician's <rare>Shields</rare> by 40.
+    Cost: 3
+    Effects:
+    - statType: 6
+      operation: 0
+      value: 40
+      showOnTooltip: 1
+      tooltipLabel: Shields
+  - Description: Increase the Wizard's <rare>Shields</rare> by 20.
+    Cost: 2
+    Effects:
+    - statType: 2
+      operation: 0
+      value: 20
+      showOnTooltip: 1
+      tooltipLabel: Shields

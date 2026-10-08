@@ -65,7 +65,7 @@ namespace LingGuangV05.XingGuang
             P("bottleneck", 5, "定长瓶颈", "Fixed-length bottleneck", "整句压进一格再说出来：短句能翻，长句一翻就乱。", "The whole sentence squeezed into one cell: short ones translate, long ones fall apart."),
             P("serial", 5, "串行瓶颈", "Serial bottleneck", "循环在一句话里只能一个字一个字地算，句子越长越慢；加显卡只能多算几句，快不了一句。", "A loop computes a sentence one word at a time, slower the longer it is; more cards run more sentences, not one faster."),
             P("inbreeding", 2, "近亲繁殖", "Inbreeding", "自动标错又没被抽检发现的题混进了训练数据，它把自己的错当成答案又学了回去。错得越多，成绩越被拖住。", "Wrong automatic labels nobody caught went back into the training data; it learned its own mistakes as answers. The more there are, the harder the score is held down."),
-            P("emergence", 6, "能力涌现", "Emergent abilities", "多个高层概念同时过了阈值，一项能力从完全没有，到突然出现（这个说法 2022 年才流行）。", "Several high-level concepts cross the threshold together; an ability goes from nothing to there (a phrase from 2022)."),
+            P("emergence", 6, "能力突然出现", "Sudden abilities", "多个高层概念同时过了阈值，一项能力从完全没有，到突然出现。", "Several high-level concepts cross the threshold together; an ability goes from nothing to there."),
         };
 
         static XgPhenomenon P(string id, int stage, string name, string en, string why, string whyEn)

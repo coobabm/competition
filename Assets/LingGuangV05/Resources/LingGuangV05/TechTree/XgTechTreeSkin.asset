@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcce3df3ad8764246bc9f64edc0a6b18, type: 3}
+  m_Name: XgTechTreeSkin
+  m_EditorClassIdentifier: Assembly-CSharp::LingGuangV05.Desktop.XingGuang.XgTechTreeSkin
+  fill: {fileID: 7499154508442906066, guid: 2ee0387d01c43974e807df76ae077489, type: 3}
+  frame: {fileID: 2694264440164372620, guid: 60949702898d517479bcbb38fcb6566e, type: 3}
+  ring: {fileID: -2580516046638551275, guid: e616883fc5e43644aa5b19e8eadc0d0f, type: 3}
+  line: {fileID: 7673595411333208751, guid: 9a2261d70942f694390e9c6f9d014ba3, type: 3}

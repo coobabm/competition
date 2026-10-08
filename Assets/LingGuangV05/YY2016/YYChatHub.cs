@@ -29,6 +29,8 @@ namespace LingGuangV05.Desktop.YY
         public double received;
         /// <summary>A 斗图 sticker id (YYStickers) when this text message is a sticker; empty otherwise. Old saves load with "".</summary>
         public string sticker = "";
+        /// <summary>灵光's replies: 1 赞, -1 踩, 0 not rated (the lab keeps the tone card; this is what YY shows).</summary>
+        public int rating;
         /// <summary>The lab's AI wrote this line in the player's name (「让 灵光 代我回」 in 林晴雯's chat).</summary>
         public bool byAi;
     }
@@ -70,6 +72,26 @@ namespace LingGuangV05.Desktop.YY
     }
 
     /// <summary>
+    /// The lab's side of the 灵光 conversation (XgYyTalk). The 对话 page moved into YY: the AI's replies, its suggested
+    /// questions and the 赞 / 踩 on its replies come from the lab, which keeps one chat log for both.
+    /// </summary>
+    public interface ILingGuangTalk
+    {
+        /// <summary>The player's line, already in the conversation. True when the lab answers it (nobody else does).</summary>
+        bool Heard(YYMessage line);
+        /// <summary>A reply is on the way (YY shows 「对方正在输入…」).</summary>
+        bool Thinking { get; }
+        /// <summary>Whether this message can get a 赞 / 踩 now (only its latest reply, once).</summary>
+        bool CanRate(YYMessage message);
+        void Rate(YYMessage message, bool up);
+        /// <summary>The header's 「它记得」 line (empty when there is nothing to show) and its hover note.</summary>
+        string MemoryLine();
+        string MemoryTip();
+        /// <summary>The hover note on its name: how it can talk now, its personality and what its brain holds.</summary>
+        string PersonaTip();
+    }
+
+    /// <summary>
     /// YY (2016) chat service: conversations, persistence, 老周's file transfer of 灵光.exe and his local help replies.
     /// Story `say` lines arrive through <see cref="Receive"/>; the player's messages raise runtime signal chat.sent.
     /// </summary>
@@ -103,7 +125,10 @@ namespace LingGuangV05.Desktop.YY
         public event Action Changed;
         /// <summary>The view registers itself so the hub knows what the player can see.</summary>
         public YYChatView View { get; set; }
-        public bool IsTyping(string id) => pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown);
+        public bool IsTyping(string id) => pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown)
+            || (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Thinking);
+        /// <summary>The lab answers in 灵光's conversation (XgYyTalk registers itself); without it the generic replies below run.</summary>
+        public ILingGuangTalk LingGuangTalk { get; set; }
         /// <summary>A cutscene (AiJoinsYy) shows 「对方正在输入…」 for this contact without a reply on the way.</summary>
         public string TypingShown { get; set; }
         /// <summary>林晴雯's 「对方正在输入…」, driven by YYGirlfriend (it comes and goes on its own).</summary>
@@ -112,7 +137,7 @@ namespace LingGuangV05.Desktop.YY
         public YYGirlfriend Girlfriend { get; set; }
         /// <summary>
         /// Since the prologue (design v1.1) 老周 is a forum friend (§9): only saves from before it still chat with him here.
-        /// The AI is a contact once it has joined YY at stage 3 (AiJoinsYy, design 女友系统与YY里的AI §5).
+        /// The AI is a contact once it has joined YY, shortly after its setup at stage 1 (AiJoinsYy, design 女友系统与YY里的AI §5).
         /// </summary>
         public bool IsVisible(YYContact c) => c != null && (!c.hidden || (c.id == LingGuangId && S.lingguangUnlocked))
             && !(c.id == LaoZhou && runtime != null && runtime.Sim != null && runtime.Sim.S.prologue != 0);
@@ -156,7 +181,7 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
-            pending.Clear(); inFlight.Clear();
+            pending.Clear(); inFlight.Clear(); standing.Clear();
             Changed?.Invoke();
         }
 
@@ -227,6 +252,17 @@ namespace LingGuangV05.Desktop.YY
                 () => { if (router != null) router.Open(AppId, id); });
         }
 
+        /// <summary>Records an explicit player choice from an authored scene; its reply is owned by StoryRunner.</summary>
+        public bool SendAuthoredChoice(string id, string text)
+        {
+            if (S == null) return false;
+            var conv = Conversation(id); text = (text ?? "").Trim();
+            if (conv == null || text.Length == 0) return false;
+            if (text.Length > 1000) text = text.Substring(0, 1000);
+            conv.messages.Add(new YYMessage { from = Me, text = text, gameSeconds = Now });
+            Touch(); return true;
+        }
+
         public void Send(string id, string text)
         {
             text = (text ?? "").Trim();
@@ -234,12 +270,14 @@ namespace LingGuangV05.Desktop.YY
             if (text.Length > 300) text = text.Substring(0, 300);
             var conv = Conversation(id);
             if (conv == null) return;
-            conv.messages.Add(new YYMessage { from = Me, text = text, gameSeconds = Now });
+            var line = new YYMessage { from = Me, text = text, gameSeconds = Now };
+            conv.messages.Add(line);
             Touch();
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
             if (AnswerQuiz(id, text)) return;
+            if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
@@ -256,6 +294,30 @@ namespace LingGuangV05.Desktop.YY
         string scriptFor;
 
         public void Offer(string id, string[] choices) { ChoicesFor = id; Choices = choices; Changed?.Invoke(); }
+
+        readonly Dictionary<string, string[]> standing = new Dictionary<string, string[]>();
+
+        /// <summary>
+        /// Choices a conversation keeps offering by itself (灵光's suggested questions, XgYyTalk), shown there whenever
+        /// no scene's choices (<see cref="Offer"/>) are up for it. Null or empty takes them away.
+        /// </summary>
+        public void Stand(string id, string[] choices)
+        {
+            if (id == null) return;
+            standing.TryGetValue(id, out var old);
+            bool none = choices == null || choices.Length == 0;
+            if (none ? old == null : old != null && string.Join("\n", old) == string.Join("\n", choices)) return;
+            if (none) standing.Remove(id); else standing[id] = (string[])choices.Clone();
+            Changed?.Invoke();
+        }
+
+        /// <summary>The choices shown in a conversation: a scene's first, else the conversation's standing ones.</summary>
+        public string[] ChoicesOf(string id)
+        {
+            if (id == null) return null;
+            if (ChoicesFor == id && Choices != null) return Choices;
+            return standing.TryGetValue(id, out var c) ? c : null;
+        }
 
         /// <summary>The player's next lines to <paramref name="id"/> go to <paramref name="handler"/>; when it returns true, nobody answers on their own.</summary>
         public void Script(string id, Func<string, bool> handler) { scriptFor = id; script = handler; }
@@ -378,31 +440,10 @@ namespace LingGuangV05.Desktop.YY
         // ───────────── questions from chat (labels for 灵光) ─────────────
 
         /// <summary>
-        /// Every 30 spam labels 老周 forwards a suspicious SMS; every 25 danmaku labels 小刚 asks whether a comment is praise.
-        /// Answering in chat labels the card: right answers add a sample and pay like the desk.
+        /// Friends no longer quiz the player in chat: the user ruled out both 「这条短信是不是骗子」 and
+        /// 「这条弹幕算夸还是骂」. A question still open in an old save can be answered (AnswerQuiz); no new one is asked.
         /// </summary>
-        void CheckQuiz()
-        {
-            if (!string.IsNullOrEmpty(S.quizFrom) || !AppInstalled) return;
-            var lab = FindLab();
-            if (lab == null) return;
-            var rng = new System.Random(Environment.TickCount);
-            int spam = (int)(lab.Labels("spam") / 30), danmu = (int)(lab.Labels("danmu") / 25);
-            if (spam > S.quizSpamMarks)
-            {
-                S.quizSpamMarks = spam;
-                var p = XgMemes.Pick("spam", rng, XgMemes.MaxLevel, lab.Today, lab.Topic);
-                // 老周 is not in YY since the prologue; 表姐 forwards the suspicious SMS instead.
-                string from = runtime.Sim.S.prologue != 0 ? "cousin" : LaoZhou;
-                Ask(from, "spam", p, Lang.T("帮我看看这条短信是不是骗子？\n「") + p.text + "」");
-            }
-            else if (danmu > S.quizDanmuMarks)
-            {
-                S.quizDanmuMarks = danmu;
-                var p = XgMemes.Pick("danmu", rng, XgMemes.MaxLevel, lab.Today, lab.Topic);
-                Ask("netbar", "danmu", p, "[小刚] " + Lang.T("这条弹幕算夸还是骂？「") + p.text + Lang.T("」回个「夸」或「骂」"));
-            }
-        }
+        void CheckQuiz() { }
 
         void Ask(string from, string desk, XgPhrase p, string text)
         {
@@ -464,7 +505,8 @@ namespace LingGuangV05.Desktop.YY
         {
             if (S.lingguangUnlocked || !AppInstalled) return;
             var lab = FindLab();
-            if (lab == null || lab.S.stage < 3) return;
+            // It joins right after its setup (named, stage 1). It can only say 是 / 否 then; it talks properly from ability 3.
+            if (lab == null || lab.S.stage < 1 || runtime.Sim.InPrologue) return;
             if (JoinCutscene != null && JoinCutscene(this)) return;
             S.lingguangUnlocked = true;
             var conv = Conversation(LingGuangId);
@@ -611,7 +653,8 @@ namespace LingGuangV05.Desktop.YY
             eraWait = 2;
             var e = EraContent.TakeDue(runtime.Sim.S, LingGuangV05.Core.Era.EraEvents.YY);
             if (e == null) return;
-            Receive(EraGroup, "[" + EraContent.Who(e) + "] " + EraContent.Text(e));
+            // The opening quiet window (OpeningQuiet): the line still lands in the group, without a popup or a sound.
+            Receive(EraGroup, "[" + EraContent.Who(e) + "] " + EraContent.Text(e), OpeningQuiet.Allows(false));
             eraWait = EraChatGap;
         }
 
@@ -655,15 +698,18 @@ namespace LingGuangV05.Desktop.YY
             if (lab == null) return T(AppNames.AppZh + "还在启动，等一下再问。", AppNames.AppEn + " is still starting, ask again in a bit.");
             var v = lab.S.vision;
             double mnist = lab.Samples("mnist"), poems = lab.Samples("poems");
-            if (Has(q, "nan", "发散", "学习率", "爆炸", "lr", "rate"))
-                return T("学习率越大学得越快，但太大会 loss = NaN，退回一半进度。红色的档就是危险档。研究动量、Adam 以后能开更大。你已经炸过 " + lab.S.nanEvents + " 次。",
-                         "Higher rates learn faster but can hit NaN and lose half the progress. Red buttons are risky. Momentum and Adam let you go faster. NaN so far: " + lab.S.nanEvents + ".");
+            if (Has(q, "nan", "发散", "学习率", "爆炸", "调参", "退步", "lr", "rate", "tuning"))
+                return T("现在不用调参数了，学习率它自己挑。参数量和样本够，每轮就往上涨；偶尔会退步一点：数据太少、太脏，或者刚涨了一大截时更容易。道具里的 Dropout、数据增强、BatchNorm、预热都能让它少退。到现在退步过 " + lab.S.drops + " 次，学会的能力不会丢。",
+                         "No more tuning: it picks its own rate. With enough parameters and samples every round goes up; now and then one goes down a little, more often when the data is scarce or dirty, or right after a big jump. Dropout, augmentation, BatchNorm and warm-up on the Items page make that rarer. Drops so far: " + lab.S.drops + "; nothing it learned is lost.");
+            if (Has(q, "算术", "算数", "口算", "加减", "arithmetic", "sums", "math"))
+                return T("算术桌开局就开着，加减乘除、百分数、分数，题是按规则现编的。最简单，报酬也最低，每条只算半条总样本；标对 40 题升一级。现在难度 " + lab.LevelOf("arith") + "，已标 " + lab.Samples("arith").ToString("0") + " 题。",
+                         "The arithmetic desk is open from the start: + − × ÷, percentages, fractions, generated by rules. Easiest and lowest-paid; each sample counts half toward the total. Every 40 right answers raise the level. Level " + lab.LevelOf("arith") + ", " + lab.Samples("arith").ToString("0") + " labelled.");
             if (Has(q, "逻辑", "推理", "是非", "logic", "puzzle"))
                 return T((lab.DeskOpen("logic") ? "逻辑题桌已经开放。" : "逻辑题桌尚未开放，要先完成组合阶段并买对应数据包。") + "题是现编的，永远做不完。标对 40 题升一级，越难给钱越多。答错了会告诉你为什么错。现在难度 " + lab.LogicLevel + "，已标 " + lab.Samples("logic").ToString("0") + " 题。",
                          (lab.DeskOpen("logic") ? "The logic desk is open. " : "Unlock the combination stage and its data pack first. ") + "Logic tasks are freshly generated and never run out. Every 40 right answers raise the level; harder pays more, and wrong answers show why. Level " + lab.LogicLevel + ", " + lab.Samples("logic").ToString("0") + " labelled.");
             if (Has(q, "连击", "combo"))
-                return T("连击是标注和训练共用的：答对 +1，按一轮 +1，刷新纪录 +5。慢了、答错、炸 NaN 都清零。连击越高，钱和训练都越多，最多翻倍。你最高 ×" + lab.S.bestCombo + "。",
-                         "The combo is shared: +1 per right card or epoch, +5 per record. Too slow, a miss or a NaN resets it. Up to ×2 on pay and training. Your best: ×" + lab.S.bestCombo + ".");
+                return T("连击是标注和训练共用的：答对 +1，按一轮 +1，刷新纪录 +5。慢了、答错都清零。连击越高，钱和训练都越多，最多翻倍。你最高 ×" + lab.S.bestCombo + "。",
+                         "The combo is shared: +1 per right card or epoch, +5 per record. Too slow or a miss resets it. Up to ×2 on pay and training. Your best: ×" + lab.S.bestCombo + ".");
             // Before the protagonist has the auto-labelling idea, 老周 only talks about training automation.
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab") && lab.AutoLabelHidden)
                 return T("训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
@@ -672,10 +718,11 @@ namespace LingGuangV05.Desktop.YY
                 return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
                          "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in Research, crontab to AutoML. Level " + lab.AutoTrainLevel + " now.");
             if (Has(q, "技能", "架构", "层", "宽", "tree", "skill", "layer", "alexnet", "lstm"))
-                return Lang.T("「科技」用钱买：层数、宽度、学习率旋钮、数据包、新架构。每个阶段的必修节点买齐、看懂瓶颈，才能突破到下一阶段。按住节点不放就买了。");
+                return T("「科技」用钱买层数、宽度、数据包和自动化；「道具」买新结构和技巧。模型自己配：用最好的结构、装得下的最大尺寸，技巧全开。参数量不够就再练也涨不动，那就去加宽、加深。按住节点不放就买了。",
+                         "The tech tree sells layers, width, data packs and automation; the Items page sells structures and techniques. The model sets itself up: the best structure, the biggest size that fits, every technique on. Short of parameters it stops improving, so widen or deepen. Hold a node to buy it.");
             if (Has(q, "训练", "模型", "准确", "曲线", "过拟合", "检查点", "评估", "train", "model", "overfit", "checkpoint", "assess"))
-                return T("训练页按「训练一轮」，按一下跑一轮。每轮练完自动考一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
-                         "Press Train for one epoch. Every epoch ends with an exam; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
+                return T("训练页按「训练一轮」，按一下跑一轮，不用调参数。每轮练完自动考一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
+                         "Press Train for one epoch; there is nothing to tune. Every epoch ends with an exam; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
             if (Has(q, "显卡", "显存", "gpu", "vram", "寻宝", "淘货", "喵鱼", "机箱", "硬件", "1080"))
                 return T("新卡在「" + AppNames.ShopZh + "」买，旧卡去「" + AppNames.UsedZh + "」卖。" + AppNames.AppZh + "的算力和显存都算你的卡：现在 " + sim.S.gpuCount + " 张，算力 ×" + sim.CardCompute.ToString("0.##") + "，显存 " + (sim.MemoryCapacity / 1024).ToString("0") + " G。模型太大塞不下就得加卡。",
                          "New cards are on " + AppNames.ShopEn + ", old ones sell on " + AppNames.UsedEn + ". " + AppNames.AppEn + "'s compute and VRAM are your cards: " + sim.S.gpuCount + " now, compute ×" + sim.CardCompute.ToString("0.##") + ", " + (sim.MemoryCapacity / 1024).ToString("0") + " GB. Bigger models need more cards.");
@@ -686,12 +733,13 @@ namespace LingGuangV05.Desktop.YY
                 return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，科技前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
                          "Each stage has required nodes. Own them and understand the current bottleneck, then the breakthrough on the frontier opens. You are at stage " + lab.S.stage + ".");
             if (Has(q, "订单", "赚钱", "收入", "钱", "order", "contract", "money", "earn"))
-                return T("一开始只能在标注台手点挣钱。有了检查点就能接「订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
-                         "At first you earn by hand in the labelling desk. With a checkpoint you can take contracts that pay every second. Now ¥" + lab.IncomePerSecond.ToString("0.0") + "/s.");
+                return T("一开始只能在摆渡众包的标注台手点挣钱。有了检查点就能在摆渡众包接「企业订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
+                         "At first you earn by hand at the labelling desk in Bodu Crowd. With a checkpoint you can take its business orders, which pay every second. Now ¥" + lab.IncomePerSecond.ToString("0.0") + "/s.");
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label"))
-                return T("先去" + AppNames.AppZh + "的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局先做数字和垃圾短信，其它桌要买包。你现在数字 " + mnist.ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
-                         "Open the labelling desk in " + AppNames.AppEn + " and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. Start with digits and spam; other desks need packs. Digits " + mnist.ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
-            return Lang.T("我不一定马上回。可以问我：怎么开始、训练、连击、科技、自动化、学习率、显卡、电费、阶段、订单。");
+                return T("先去「摆渡众包」的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局有算术、常识判断、逻辑题和垃圾短信：算术最简单，常识判断专教它分是和否，逻辑题最值钱，其它桌以后开。你现在算术 " + lab.Samples("arith").ToString("0") + " 条，常识判断 " + lab.Samples("sense").ToString("0") + " 条，逻辑题 " + lab.Samples("logic").ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
+                         "Open the labelling desk in Bodu Crowd and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. You start with arithmetic, common sense, logic and spam: arithmetic is easiest, common sense is what teaches it yes from no, logic pays best, the other desks open later. Arithmetic " + lab.Samples("arith").ToString("0") + ", common sense " + lab.Samples("sense").ToString("0") + ", logic " + lab.Samples("logic").ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
+            return T("我不一定马上回。可以问我：怎么开始、算术、逻辑题、训练、连击、科技、自动化、退步、显卡、电费、阶段、订单。",
+                     "I may not answer right away. Ask me about: getting started, arithmetic, logic, training, combo, tech, automation, drops, cards, power, stages, orders.");
         }
 
         static string Best(XgSim lab, string dataset) { double b = lab.BestAcc(dataset); return b > 0 ? P(b) : "—"; }

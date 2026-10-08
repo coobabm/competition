@@ -8,12 +8,14 @@ namespace LingGuangV05.Tests
 {
     public sealed class CoreTests
     {
-        [Test] public void FreshWalletStartsAtZeroButKeepsStarterHardware()
+        [Test] public void FreshWalletStartsWithAFewDaysOfRentAndKeepsStarterHardware()
         {
-            Assert.That(new GameConfig().starterMoney, Is.Zero);
+            // 经济压力与破产: the starting money covers the first days of rent (¥300 a day).
+            Assert.That(new GameConfig().starterMoney, Is.EqualTo(1200));
+            Assert.That(new GameConfig().starterMoney, Is.GreaterThanOrEqualTo(3 * new GameConfig().rentPerDay));
             Assert.That(new GameState().money, Is.Zero);
             var sim = new ChapterOneSim();
-            Assert.That(sim.S.money, Is.Zero);
+            Assert.That(sim.S.money, Is.EqualTo(1200));
             Assert.That(sim.S.gpuCount, Is.EqualTo(1));
             Assert.That(sim.S.caseCount, Is.EqualTo(1));
         }

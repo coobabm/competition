@@ -37,7 +37,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 sourceBtns.Clear(); sourceIds.Clear();
                 if (sourceTitle == null)
                 {
-                    sourceTitle = ui.Text(Strip("TrainingSources", dataBox, top, SourceTitle, 2, 2), "", 12, XgPalette.Muted, TextAlignmentOptions.TopLeft);
+                    sourceTitle = ui.Text(Strip("TrainingSources", dataBox, top, SourceTitle, 2, 2), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
                     sourceTitle.enableAutoSizing = true; sourceTitle.fontSizeMin = 9; sourceTitle.fontSizeMax = 12;
                 }
                 var rt = sourceTitle.rectTransform;
@@ -66,8 +66,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (o == null) continue;
                 bool can = Sim.PackSwitchBlocker(o.id, out _) == null;
                 string text = (o.included ? "■ " : "□ ") + XgDataUi.SourceLine(o)
-                    + (o.included ? "" : "  " + Hex(XgPalette.Bad) + Lang.T("训练不用") + "</color>");
-                sourceBtns[i].Set(text, can, o.included ? XgPalette.AccentSoft : XgPalette.Button, o.included ? XgPalette.Accent : XgPalette.Ink);
+                    + (o.included ? "" : "  " + Hex(XgDark.Bad) + Lang.T("训练不用") + "</color>");
+                sourceBtns[i].Set(text, can, o.included ? XgDark.AccentSoft : XgDark.Button, o.included ? XgDark.Accent : XgDark.Ink);
             }
             dataBox.sizeDelta = new Vector2(0, top + SourceTitle + sourceBtns.Count * SourceRow);
         }
@@ -89,7 +89,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 ? Lang.T("现在训练会用上它。点一下关掉：包还在，只是不再算进样本和噪声。")
                 : Lang.T("现在训练不用它。点一下重新用上。"));
             string why = Sim.PackSwitchBlocker(offerId, out string whyEn);
-            return why == null ? tip : tip + "\n<color=#D63031>" + T(why, whyEn) + "</color>";
+            return why == null ? tip : tip + "\n<color=#E24B4A>" + T(why, whyEn) + "</color>";
         }
     }
 }

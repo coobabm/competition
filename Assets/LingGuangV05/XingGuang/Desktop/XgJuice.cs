@@ -94,7 +94,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Reduced || !Visible()) return;
             hitstop = Mathf.Max(hitstop, ms / 1000f);
-            if (!LocalHitStop && Time.timeScale > 0) { previousTimeScale = Time.timeScale; Time.timeScale = 0; hitstopOwned = true; }
+            // Only in Play mode: an edit-mode page render would leave the global clock at 0 and the next Play starts frozen.
+            if (Application.isPlaying && !LocalHitStop && Time.timeScale > 0) { previousTimeScale = Time.timeScale; Time.timeScale = 0; hitstopOwned = true; }
         }
 
         /// <summary>Scale punch (buttons "pressed in" then overshoot) plus an optional knockback offset.</summary>

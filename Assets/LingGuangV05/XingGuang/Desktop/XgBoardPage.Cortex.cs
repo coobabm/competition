@@ -17,14 +17,14 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed partial class XgBoardPage
     {
-        enum Mode { Concepts, Cortex, Atlas }
+        enum Mode { Assembly, Concepts, Cortex, Atlas, Habits }
 
         /// <summary>The cells a region shows at most (the deepest glyph, VGG, has 49).</summary>
         public const int CortexCells = 60;
 
-        Mode mode = Mode.Cortex;
+        Mode mode = Mode.Assembly;
         RectTransform conceptView, cortexView;
-        XgBtn conceptTab, cortexTab, atlasTab;
+        XgBtn assemblyTab, conceptTab, cortexTab, atlasTab;
         XgCortexGraphic cortex;
         TMP_Text gpuLabel, gpuValue, detail, legend;
         RectTransform gpuFill;
@@ -37,24 +37,28 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildModeTabs(RectTransform card)
         {
+            assemblyTab = ModeTab(card, 412, Mode.Assembly);
             conceptTab = ModeTab(card, 312, Mode.Concepts);
             cortexTab = ModeTab(card, 212, Mode.Cortex);
             atlasTab = ModeTab(card, 112, Mode.Atlas);
+            UiTip.Add(assemblyTab.rt, () => T("把保存的模型拼进灵光的大脑；不同能力共同组成一个灵光。", "Assemble saved models into LingGuang's brain; their different capabilities form one LingGuang."));
             UiTip.Add(conceptTab.rt, () => Lang.T("概念板：每个区记住的概念，一格一个。绿是「是」，红是「否」，越深越确定。"));
-            UiTip.Add(cortexTab.rt, () => Lang.T("皮层拓扑：它的脑子从侧面看。每个区画成它现在的接法，正在训练的区会亮。"));
+            UiTip.Add(cortexTab.rt, () => T("皮层拓扑：查看当前训练连接与共享概念；已接入的模型能力请看「模型拼装」。", "Cortex shows current training connections and shared concepts. Installed model capabilities are in Models."));
             UiTip.Add(atlasTab.rt, () => Lang.T("接法图鉴：解锁过的每一种结构，都是给某个区接线的一种办法。"));
         }
 
         XgBtn ModeTab(RectTransform card, float fromRight, Mode m)
         {
-            var b = ui.Button(card, "", () => SetMode(m), 14);
+            var b = ui.Button(card, "", () => SetMode(m), 13);
             PlaceTopRight(b, fromRight, 13, 96, 30);
+            b.image.sprite = XgCardArt.Rounded(); b.image.type = Image.Type.Sliced; b.image.pixelsPerUnitMultiplier = 2;
             return b;
         }
 
         void SetMode(Mode m)
         {
             if (mode == m) return;
+            CancelAssemblyDrag();
             mode = m;
             Fx.Play(XgJuice.Sfx.Id.Click);
             shownCards = -1;
@@ -64,12 +68,18 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void RefreshModeTabs()
         {
-            conceptTab.Set(Lang.T("概念板"), true, mode == Mode.Concepts ? XgPalette.Accent : XgPalette.Button, mode == Mode.Concepts ? Color.white : XgPalette.Ink);
-            cortexTab.Set(Lang.T("皮层拓扑"), true, mode == Mode.Cortex ? XgPalette.Accent : XgPalette.Button, mode == Mode.Cortex ? Color.white : XgPalette.Ink);
-            atlasTab.Set(Lang.T("接法图鉴"), true, mode == Mode.Atlas ? XgPalette.Accent : XgPalette.Button, mode == Mode.Atlas ? Color.white : XgPalette.Ink);
+            assemblyTab.Set(T("模型拼装", "Models"), true, mode == Mode.Assembly ? AssemblyTeal : XgDark.Button, mode == Mode.Assembly ? Color.white : XgDark.Ink);
+            conceptTab.Set(Lang.T("概念板"), true, mode == Mode.Concepts ? XgDark.Accent : XgDark.Button, mode == Mode.Concepts ? Color.white : XgDark.Ink);
+            cortexTab.Set(Lang.T("皮层拓扑"), true, mode == Mode.Cortex ? XgDark.Accent : XgDark.Button, mode == Mode.Cortex ? Color.white : XgDark.Ink);
+            atlasTab.Set(Lang.T("接法图鉴"), true, mode == Mode.Atlas ? XgDark.Accent : XgDark.Button, mode == Mode.Atlas ? Color.white : XgDark.Ink);
             Show(conceptView, mode == Mode.Concepts);
             Show(cortexView, mode == Mode.Cortex);
             Show(topologyView, mode == Mode.Atlas);
+            Show(assemblyView, mode == Mode.Assembly);
+            // 语气习惯 (XgBoardPage.Habits.cs) appears once it can talk.
+            Show(habitTab.rt, HabitsOpen);
+            if (HabitsOpen) habitTab.Set(Lang.T("语气习惯"), true, mode == Mode.Habits ? XgDark.Accent : XgDark.Button, mode == Mode.Habits ? Color.white : XgDark.Ink);
+            Show(habitView, mode == Mode.Habits);
         }
 
         static void Show(RectTransform rt, bool on) { if (rt != null && rt.gameObject.activeSelf != on) rt.gameObject.SetActive(on); }
@@ -91,15 +101,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
             var gpu = Rect("Gpu", map, Vector2.zero, new Vector2(1, 0), new Vector2(14, 10), new Vector2(-14, 42));
             gpuLabel = ui.Text(Rect("Label", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineLeft);
-            gpuValue = ui.Text(Rect("Value", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgPalette.Accent, TextAlignmentOptions.MidlineRight);
+            gpuValue = ui.Text(Rect("Value", gpu, new Vector2(0, 1), Vector2.one, new Vector2(0, -18), Vector2.zero), "", 13, XgDark.Accent, TextAlignmentOptions.MidlineRight);
             var bar = Rect("Bar", gpu, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 14));
             gpuFill = Bar(bar, "Fill", new Color32(28, 38, 78, 255), XgCortexGraphic.N.Accent);
             gpuFillImage = gpuFill.GetComponent<Image>();
             UiTip.Add(gpu, () => Lang.T("显卡有多忙。训练一轮时，正在练的那个区整片亮起来，显卡就被它占满一截；到了第六阶段整颗脑子一起亮，一台机器扛不住。"));
 
             var side = Rect("Side", cortexView, new Vector2(.72f, 0), Vector2.one, new Vector2(6, 12), new Vector2(-12, -52));
-            Panel(side, XgPalette.Page).raycastTarget = false;
-            ui.Text(Strip("Title", side, 8, 22, 10, 10), Lang.T("各区接线"), 14, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            Panel(side, XgDark.Page).raycastTarget = false;
+            ui.Text(Strip("Title", side, 8, 22, 10, 10), Lang.T("各区接线"), 14, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
@@ -110,12 +120,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.label.textWrappingMode = TextWrappingModes.Normal;
                 row.label.enableAutoSizing = true; row.label.fontSizeMin = 9; row.label.fontSizeMax = 13;
                 row.label.rectTransform.offsetMin = new Vector2(10, 2); row.label.rectTransform.offsetMax = new Vector2(-58, -2);
-                regionStatus[i] = ui.Text(Rect("Status", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-60, 0), new Vector2(-8, 0)), "", 12, XgPalette.Good, TextAlignmentOptions.MidlineRight);
+                regionStatus[i] = ui.Text(Rect("Status", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-60, 0), new Vector2(-8, 0)), "", 12, XgDark.Good, TextAlignmentOptions.MidlineRight);
                 regionRows[i] = row;
             }
-            detail = ui.Text(Rect("Detail", side, Vector2.zero, Vector2.one, new Vector2(12, 96), new Vector2(-12, -36 - 4 * 56 - 10)), "", 13, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            detail = ui.Text(Rect("Detail", side, Vector2.zero, Vector2.one, new Vector2(12, 96), new Vector2(-12, -36 - 4 * 56 - 10)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);
             detail.enableAutoSizing = true; detail.fontSizeMin = 9; detail.fontSizeMax = 13;
-            legend = ui.Text(Rect("Legend", side, Vector2.zero, new Vector2(1, 0), new Vector2(12, 8), new Vector2(-12, 90)), "", 11, XgPalette.Muted, TextAlignmentOptions.BottomLeft);
+            legend = ui.Text(Rect("Legend", side, Vector2.zero, new Vector2(1, 0), new Vector2(12, 8), new Vector2(-12, 90)), "", 11, XgDark.Muted, TextAlignmentOptions.BottomLeft);
             legend.enableAutoSizing = true; legend.fontSizeMin = 8; legend.fontSizeMax = 11.5f;
             cortexView.gameObject.SetActive(false);
         }
@@ -152,7 +162,7 @@ namespace LingGuangV05.Desktop.XingGuang
             cortex.UnifiedTitle = Lang.T("全皮层统一拓扑 · 同步点亮");
             cortex.SetUnified(one, cortexInitialised);
             cortex.UnifiedCells.Clear();
-            header.text = Lang.T("大脑 · 皮层拓扑") + "  <size=13><color=#68748C>" + Lang.T("一颗皮层，四个区。LeNet、LSTM、Transformer 不是别的 AI，是给某个区换的连接拓扑。") + "</color></size>";
+            header.text = Lang.T("大脑 · 皮层拓扑") + "  <size=13><color=#6F95A5>" + T("当前训练连接与共享概念；接入的能力见「模型拼装」。", "Current training connections and shared concepts; installed capabilities are in Models.") + "</color></size>";
             if (selectedRegion < 0) selectedRegion = RegionIndex(Sim.RegionOfTrack(Sim.SelectedTrack));
             int perRegion = (XgCortexGraphic.UnifiedCellCount + 3) / 4;
             for (int i = 0; i < cortex.Regions.Length; i++)
@@ -178,8 +188,8 @@ namespace LingGuangV05.Desktop.XingGuang
             cortex.ToneLow[0] = Lang.T("冷静"); cortex.ToneLow[1] = Lang.T("正经"); cortex.ToneLow[2] = Lang.T("顺从");
             cortex.ToneHigh[0] = Lang.T("热情"); cortex.ToneHigh[1] = Lang.T("皮"); cortex.ToneHigh[2] = Lang.T("有主见");
             RefreshDetail(one);
-            legend.text = "<color=#2F9E44>●</color> " + Lang.T("学成「是」") + "   <color=#D63031>●</color> " + Lang.T("学成「否」")
-                + "\n<color=#8A63D2>●</color> " + Lang.T("叠加态：两种都可能") + "   <color=#FFBE28>●</color> " + Lang.T("种子：还没学")
+            legend.text = "<color=#5DCAA5>●</color> " + Lang.T("学成「是」") + "   <color=#E24B4A>●</color> " + Lang.T("学成「否」")
+                + "\n<color=#A99BF2>●</color> " + Lang.T("叠加态：两种都可能") + "   <color=#FFBE28>●</color> " + Lang.T("种子：还没学")
                 + "\n" + Lang.T("颜色越深越确定。连线是谁能连到谁，金点是正在训练的信号。");
             cortexInitialised = true;
             cortex.Animate();
@@ -225,18 +235,18 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var row = regionRows[i];
             bool on = selectedRegion == i;
-            string name = "<b>" + XgSim.RegionName(r.id, Lang.English) + "</b>  <size=11><color=#68748C>" + XgSim.RegionLikeness(r.id, Lang.English) + "</color></size>";
-            string wire = arch.Length == 0 ? "<color=#9AA3B5>" + Lang.T("未接线") + "</color>" : "<color=#3B5BDB>" + TopologyName(arch).TrimStart('—', ' ') + "</color>";
-            row.Set(name + "\n<size=11>" + wire + "</size>", true, on ? XgPalette.AccentSoft : Color.white, XgPalette.Ink);
+            string name = "<b>" + XgSim.RegionName(r.id, Lang.English) + "</b>  <size=11><color=#6F95A5>" + XgSim.RegionLikeness(r.id, Lang.English) + "</color></size>";
+            string wire = arch.Length == 0 ? "<color=#58798A>" + Lang.T("未接线") + "</color>" : "<color=#8FB8FF>" + TopologyName(arch).TrimStart('—', ' ') + "</color>";
+            row.Set(name + "\n<size=11>" + wire + "</size>", true, on ? XgDark.AccentSoft : Color.white, XgDark.Ink);
             XgRun trained = null;
             foreach (var run in Sim.Runs) if (XgSim.RegionOf(run.dataset) == r.id) trained = run;
             string status;
-            if (r.training) status = "<color=#E86E14>" + Lang.T("训练中") + "</color>";
-            else if (one) status = "<color=#2F9E44>" + Lang.T("同步") + "</color>";
-            else if (trained != null && trained.epoch > 0) status = "<color=#2F9E44>" + XgSim.Pct(trained.valAcc) + "</color>";
-            else if (arch.Length > 0) status = "<color=#9AA3B5>" + Lang.T("没在练") + "</color>";
-            else status = "<color=#9AA3B5>—</color>";
-            if (cortex.Rewriting(i) && r.oldArch.Length > 0 && !one) status = "<color=#D63031>" + Lang.T("拓扑重写") + "</color>";
+            if (r.training) status = "<color=#FAC775>" + Lang.T("训练中") + "</color>";
+            else if (one) status = "<color=#5DCAA5>" + Lang.T("同步") + "</color>";
+            else if (trained != null && trained.epoch > 0) status = "<color=#5DCAA5>" + XgSim.Pct(trained.valAcc) + "</color>";
+            else if (arch.Length > 0) status = "<color=#58798A>" + Lang.T("没在练") + "</color>";
+            else status = "<color=#58798A>—</color>";
+            if (cortex.Rewriting(i) && r.oldArch.Length > 0 && !one) status = "<color=#E24B4A>" + Lang.T("拓扑重写") + "</color>";
             regionStatus[i].text = status;
         }
 
@@ -244,7 +254,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             int i = Mathf.Clamp(selectedRegion, 0, 3);
             var r = cortex.Regions[i];
-            string head = "<b>" + XgSim.RegionName(r.id, Lang.English) + "</b>  <color=#68748C>" + XgSim.RegionLikeness(r.id, Lang.English) + "</color>\n";
+            string head = "<b>" + XgSim.RegionName(r.id, Lang.English) + "</b>  <color=#6F95A5>" + XgSim.RegionLikeness(r.id, Lang.English) + "</color>\n";
             string body;
             if (r.arch.Length == 0)
                 body = r.id == XgSim.ToneRegion ? Lang.T("还没和它聊过天。对话里的每一次赞和踩，会直接写进这个区。")
@@ -254,11 +264,11 @@ namespace LingGuangV05.Desktop.XingGuang
             else
             {
                 var a = XgCatalog.Arch(r.arch);
-                body = "<color=#3B5BDB>" + TopologyName(r.arch) + "</color>\n" + T(a.wire, a.wireEn) + "\n<size=11><color=#68748C>" + T(a.note, a.noteEn) + "</color></size>";
-                if (one) body += "\n\n<color=#9A6A00>" + Lang.T("四个区的边界不再是墙：同一种接法，整颗脑子同一拍亮起来。") + "</color>";
+                body = "<color=#8FB8FF>" + TopologyName(r.arch) + "</color>\n" + T(a.wire, a.wireEn) + "\n<size=11><color=#6F95A5>" + T(a.note, a.noteEn) + "</color></size>";
+                if (one) body += "\n\n<color=#D9A441>" + Lang.T("四个区的边界不再是墙：同一种接法，整颗脑子同一拍亮起来。") + "</color>";
             }
             string remembered = r.empty ? Lang.T("这个区现在是空的。") : Lang.T("这个区记着的概念，最牢的几个画在图上。");
-            detail.text = head + body + "\n\n<size=11><color=#68748C>" + remembered + "</color></size>";
+            detail.text = head + body + "\n\n<size=11><color=#6F95A5>" + remembered + "</color></size>";
         }
 
         // ---------------------------------------------------------------- tick

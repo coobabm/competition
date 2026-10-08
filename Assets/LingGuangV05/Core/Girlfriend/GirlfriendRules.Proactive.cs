@@ -37,6 +37,17 @@ namespace LingGuangV05.Core.Girlfriend
                 s.done.Add("life:firstNight");
                 return Proactive(s, now, GfEvent.Say("life:firstNight", Life[0].lines));
             }
+            // The weekend question is the one the AI will not answer for him: it comes even when she is cold, quiet, or still waiting for his answer.
+            if (s.asking.Length == 0 && !s.done.Contains("life:weekendAsk"))
+            {
+                var weekend = Array.Find(Life, l => l.key == "weekendAsk");
+                if (weekend != null && now.clock.Date >= weekend.from && now.clock.Date <= weekend.to && Has(s, weekend.needsFlag))
+                {
+                    s.done.Add("life:weekendAsk");
+                    s.asking = weekend.asks; s.askDay = now.day;
+                    return Proactive(s, now, GfEvent.Say("life:weekendAsk", weekend.lines));
+                }
+            }
             if (s.awaitingReply)
             {
                 if (s.shookFor != s.herLastGame && s.unansweredRun < 3 && now.game - s.herLastGame >= ShakeAfter(tier) && s.asking.Length == 0)

@@ -16,6 +16,11 @@ namespace LingGuangV05.Core.Girlfriend
         public string situationZh, situationEn;
         /// <summary>She asked 「你哪来这么多钱？」 for the first time: the YY layer offers the two answers.</summary>
         public bool asksMoney;
+        /// <summary>
+        /// She took it gladly enough to thank him first: her answer leads with 「谢谢哥哥」 (<see cref="GirlfriendRules.ThankFirst"/>).
+        /// Not when she sends it back, in the cold tier, or while hurt.
+        /// </summary>
+        public bool thanks;
     }
 
     /// <summary>A 「送她」 item in 淘货 (design §4.6, prices as in 2016).</summary>
@@ -73,6 +78,7 @@ namespace LingGuangV05.Core.Girlfriend
             if (s.packetsDay != now.day) { s.packetsDay = now.day; s.packetsToday = 0; }
             s.packetsToday++;
             var tier = Tier(s);
+            bool hurt = GirlfriendStyle.Hurt(s, now.clock);
             string amt = "¥" + amount.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
             if (s.fighting || (tier == GirlfriendTier.Cold && s.mood <= -2))
             {
@@ -116,7 +122,54 @@ namespace LingGuangV05.Core.Girlfriend
             }
             AddMood(s, o.mood);
             AddAffection(s, o.affection);
+            o.thanks = !o.returned && tier != GirlfriendTier.Cold && !hurt;
+            if (o.thanks)
+            {
+                var lines = new List<string> { ThanksZh, ThanksEn };
+                lines.AddRange(o.lines);
+                o.lines = lines.ToArray();
+                o.situationZh += "你的第一句「" + ThanksZh + "」已经发出去了，接着往下说，别再道谢。";
+                o.situationEn += " Your first message, \"" + ThanksEn + "\", is already sent; go on from there and do not thank him again.";
+            }
             return o;
+        }
+
+        /// <summary>Her first words for a red packet she takes gladly. 哥哥 stays "gege" in English, the affectionate term.</summary>
+        public const string ThanksZh = "谢谢哥哥", ThanksEn = "Thanks, gege~";
+
+        static readonly string[] ThankWords = { "谢谢哥哥", "谢谢", "谢啦", "谢了", "多谢", "thanks", "thank you", "thx", "ty" };
+
+        /// <summary>
+        /// Her bubbles for a packet she took gladly, led by 「谢谢哥哥」: a first bubble that already starts with it is
+        /// kept as her own variant (「谢谢哥哥～」); a first bubble that thanks him some other way loses the thanks so
+        /// it is not said twice (a face left alone joins the lead); otherwise the lead goes in front. At most three.
+        /// </summary>
+        public static List<string> ThankFirst(IList<string> bubbles, bool english)
+        {
+            string lead = english ? ThanksEn : ThanksZh;
+            var list = new List<string>();
+            if (bubbles != null) foreach (var b in bubbles) if (!string.IsNullOrWhiteSpace(b)) list.Add(b.Trim());
+            if (list.Count > 0 && list[0].StartsWith(english ? "Thanks, gege" : ThanksZh, StringComparison.OrdinalIgnoreCase)) return list;
+            if (list.Count > 0)
+            {
+                string first = list[0];
+                foreach (var w in ThankWords)
+                {
+                    if (!first.StartsWith(w, StringComparison.OrdinalIgnoreCase)) continue;
+                    // A whole word only: "ty" must not eat "type".
+                    if (w.Length < first.Length && w[0] < 128 && char.IsLetter(first[w.Length])) continue;
+                    first = first.Substring(w.Length).TrimStart(' ', ',', '，', '!', '！', '~', '～', '啦', '呀', '啊', '你', '哥', '。', '.');
+                    if (english && first.StartsWith("gege", StringComparison.OrdinalIgnoreCase)) first = first.Substring(4).TrimStart(' ', ',', '!', '~', '.');
+                    break;
+                }
+                bool bareFace = first.Length > 0 && Chat.YYFaces.StripFaces(first).Trim().Length == 0;
+                if (bareFace) { lead += first; list.RemoveAt(0); }
+                else if (first.Length == 0) list.RemoveAt(0);
+                else list[0] = first;
+            }
+            list.Insert(0, lead);
+            while (list.Count > 3) list.RemoveAt(list.Count - 1);
+            return list;
         }
 
         /// <summary>

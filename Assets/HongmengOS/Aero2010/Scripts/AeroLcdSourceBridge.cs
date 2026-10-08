@@ -23,7 +23,18 @@ namespace HongmengOS.Aero2010
         private bool raycastersInitialized;
         private bool contextWasOpen;
         private Vector2 contextPosition;
-        private void Start(){RefreshRaycasters();}
+        private void Start()
+        {
+            RefreshRaycasters();
+            var desktop=sourceCanvas!=null?sourceCanvas.transform.Find("Desktop"):null;
+            if(desktop==null)return;
+            var wallpaper=desktop.Find("Wallpaper");
+            var mark=desktop.Find("Aero Edition Mark");
+            if(wallpaper==null||mark==null)return;
+            // Keep desktop decoration above the wallpaper, below application windows.
+            int wallpaperIndex=wallpaper.GetSiblingIndex();
+            mark.SetSiblingIndex(wallpaperIndex+(mark.GetSiblingIndex()>wallpaperIndex?1:0));
+        }
         private void Update()
         {
             // Run before EventSystem.Update: source raycasters must leave its

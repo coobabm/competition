@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// The 成就 album: every achievement is a holographic card to collect. Categories follow how the game is played:
-    /// the walls passed, the walls worked out alone, the slow roads, the cures read off the 训练图式, the phenomena of
+    /// the abilities that emerged, things worked out alone, scale instead of structure, the cures, the phenomena of
     /// the 图鉴, the data, a few funny moments, and the endings. Rarity sets the foil (普通 silver, 稀有 gold, 史诗
     /// pearl, 传说 laser; 「灵光一现」 the prism).
     /// </summary>
@@ -43,7 +43,7 @@ namespace LingGuangV05.XingGuang
         {
             switch (category)
             {
-                case CardWall: return english ? "Breakthroughs" : "突破";
+                case CardWall: return english ? "Abilities" : "能力";
                 case CardInsight: return english ? "Insights" : "自悟";
                 case CardRoad: return english ? "The slow road" : "笨办法";
                 case CardCure: return english ? "Diagnosis" : "对症下药";
@@ -81,30 +81,20 @@ namespace LingGuangV05.XingGuang
         {
             var list = new List<XgAchievement>
             {
-                // 突破: every wall passed, however.
-                Card(CardWall, 1, "wall.combo", "异", "第一道墙", "The first wall", "过了阶段 1 的墙「异或」。", "Passed stage 1's wall, XOR.", "1969 年 Minsky 和 Papert 证明一层学不会异或，神经网络冷了十几年。", "In 1969 Minsky and Papert showed one layer cannot learn XOR; neural nets went cold for over a decade."),
-                Card(CardWall, 1, "wall.structure", "图", "看懂整张图", "The whole picture", "过了阶段 2 的墙「看不懂整张图」。", "Passed stage 2's wall.", "图看邻居，句子看前文：不是每个格子都要连每个格子。", "Pictures look at neighbours, sentences at what came before."),
-                Card(CardWall, 1, "wall.length", "忆", "学会记住", "Learning to remember", "过了阶段 3 的墙「长句失忆」。", "Passed stage 3's wall.", "让它自己决定记住什么、忘掉什么。", "Let it decide what to keep and what to forget."),
-                Card(CardWall, 1, "wall.degrade", "深", "越深越好", "Deeper is better", "过了附加墙「越深越差」。", "Passed the extra wall, deeper is worse.", "给每一层留一条捷径，信号就能原样穿过去。", "Give every layer a shortcut and the signal passes untouched."),
-                Card(CardWall, 1, "wall.translation", "译", "先读完再说", "Read it all first", "过了阶段 4 的墙「翻译不了」。", "Passed stage 4's wall.", "先把整句读完，再从头说一遍。", "Read the whole sentence, then say it again from the start."),
-                Card(CardWall, 1, "wall.parallel", "注", "只要注意力", "Attention only", "过了阶段 5 的墙「串行瓶颈」。", "Passed stage 5's wall.", "拿掉循环，每个字直接看所有字。", "Drop the loop: every word looks at every word."),
+                // 涌现: every ability that emerged (ids of the old wall cards are retired; wall.pretrain is kept).
+                Card(CardWall, 1, "emerge.2", "选", "多选一", "Pick one", "第二项能力：它能在几个选项里挑一个。", "The second ability: it picks one of a few options.", "1969 年 Minsky 和 Papert 证明一层学不会异或；1986 年反向传播让多层网络学会了。", "In 1969 Minsky and Papert showed one layer cannot learn XOR; in 1986 backpropagation let deeper nets learn it."),
+                Card(CardWall, 1, "emerge.3", "看", "看图说词", "Picture to word", "第三项能力：它看图能说出一个词。", "The third ability: it names a picture in one word.", "图看邻居，句子看前文：不是每个格子都要连每个格子。", "Pictures look at neighbours, sentences at what came before."),
+                Card(CardWall, 1, "emerge.4", "句", "短句", "Short sentences", "第四项能力：它会说短句，记得你说过的话。", "The fourth ability: short sentences, and it remembers what you said.", "让它自己决定记住什么、忘掉什么。", "Let it decide what to keep and what to forget."),
+                Card(CardWall, 1, "emerge.5", "译", "长记忆 · 翻译", "Memory · translation", "第五项能力：它能翻译，能读懂乱码。", "The fifth ability: it translates and reads the garbled page.", "先把整句读完，再从头说一遍。", "Read the whole sentence, then say it again from the start."),
+                Card(CardWall, 2, "emerge.6", "全", "全部放开", "Everything", "第六项能力：规模到了，能力一起冒了出来。", "The sixth ability: with scale, everything came at once.", "拿掉循环，每个字直接看所有字。", "Drop the loop: every word looks at every word."),
                 Card(CardWall, 1, "wall.pretrain", "模", "预训练", "Pre-training", "阶段 6 把预训练跑通。", "Ran pre-training through in stage 6.", "规模和稳定，两样都要。", "Scale and stability: you need both."),
 
-                // 自悟: the same walls without the secret (ids kept from the first achievements, for old saves).
-                Card(CardInsight, 2, "insight.combo", "异", "自己想通了异或", "Worked out XOR", "第 1 阶段没买秘籍就过了墙。", "Passed stage 1 without the secret."),
-                Card(CardInsight, 2, "insight.structure", "邻", "看邻居，读前文", "Neighbours and context", "第 2 阶段没买秘籍就过了墙。", "Passed stage 2 without the secret."),
-                Card(CardInsight, 2, "insight.length", "忘", "学会忘记", "Learning to forget", "第 3 阶段没买秘籍就过了墙。", "Passed stage 3 without the secret."),
-                Card(CardInsight, 2, "insight.translation", "译", "先读完再说", "Read it all first", "第 4 阶段没买秘籍就过了墙。", "Passed stage 4 without the secret."),
-                Card(CardInsight, 2, "insight.parallel", "注", "也想到了", "Thought of it too", "第 5 阶段在它开口之前，自己找到了不用循环的读法。", "In stage 5 you found a way to read without loops before it said so."),
+                // 自悟: worked out without help (ids kept from the first achievements, for old saves).
                 Card(CardInsight, 2, "insight.pretrain", "模", "规模和稳定", "Scale and stability", "第 6 阶段没买秘籍就让预训练跑通。", "Got pre-training through in stage 6 without the secret."),
-                Card(CardInsight, 4, "lingguang", "灵", "灵光一现", "A Flash of Insight", "六个阶段全部自悟。", "Worked out all six stages yourself.", "没有秘籍，没有提示，只有一次又一次地试。这张卡只发给你。", "No secrets, no hints, only trying again and again. This card is yours alone.", hidden: true, glyph2: "光"),
+                Card(CardInsight, 4, "lingguang", "灵", "灵光一现", "A Flash of Insight", "每一项能力都没靠结构折扣，预训练也没买秘籍。", "Every ability came without an architecture discount, and pre-training without the secret.", "没有秘籍，没有捷径，只有一次又一次地试。这张卡只发给你。", "No secrets, no shortcuts, only trying again and again. This card is yours alone.", hidden: true, glyph2: "光"),
 
-                // 笨办法: the training-method roads.
-                Card(CardRoad, 1, "road.features", "笨", "笨办法也行", "The slow way works", "不换结构，靠「特征工程」过了一面墙。", "Passed a wall with feature engineering instead of a new structure.", "深度学习之前，人们就是这样替机器想特征的。", "Before deep learning, this is how people thought up features for machines."),
-                Card(CardRoad, 1, "road.batchnorm", "扛", "硬扛", "Toughed it out", "没开跨层直连，靠 BatchNorm 过了「越深越差」。", "Passed deeper-is-worse without skip connections, on BatchNorm.", "2015 年，BatchNorm 先让深网络能练；残差才真正解决。", "In 2015 BatchNorm made deep nets trainable first; residuals truly solved it."),
-                Card(CardRoad, 1, "road.identity", "传", "不用门也记得住", "Memory without gates", "用朴素 RNN + ReLU + 单位初始化过了「长句失忆」。", "Passed long-sentence amnesia with a vanilla RNN, ReLU and identity initialisation.", "2015 年 Hinton 组的 IRNN：让回环默认原样转交，和 LSTM 的记忆格、ResNet 的捷径是同一个想法。", "Hinton's group, 2015: let the loop pass things on unchanged by default, the same idea as LSTM's memory cell and ResNet's shortcut."),
-                Card(CardRoad, 2, "road.conv", "卷", "卷积也能并行", "Convolutions run in parallel too", "用「文字卷积」+ 位置标记过了「串行瓶颈」。", "Passed the serial bottleneck with TextCNN and position tags.", "2016 年 DeepMind 的 ByteNet、2017 年 Facebook 的 ConvS2S：不用循环，也能整句一起翻译。", "DeepMind's ByteNet (2016) and Facebook's ConvS2S (2017): whole sentences translated at once, without loops."),
-                Card(CardRoad, 2, "road.both", "双", "两条路都走过", "Both roads", "既换过结构过墙，也换过练法过墙。", "Passed walls both by a new structure and by a training method."),
+                // 笨办法: scale instead of a better structure.
+                Card(CardRoad, 1, "road.scale", "堆", "笨办法也行", "The slow way works", "一项能力没靠结构折扣，硬是用规模堆了出来。", "An ability came without its architecture discount, on scale alone.", "没有更好的结构，就多花钱、多练几轮：规模能补上不少。", "Without a better structure, spend more and train longer: scale makes up for a lot."),
 
                 // 对症下药: cures read off the 训练图式.
                 Card(CardCure, 1, "cure.first", "药", "对症下药", "The right medicine", "照「训练图式」的结论改了设置，问题解决了。", "Changed the settings by the training map's verdict and the problem went away.", "先看清卡在哪，再动手。", "See where it is stuck first, then act."),
@@ -115,7 +105,7 @@ namespace LingGuangV05.XingGuang
                 Card(CardData, 1, "data.flywheel", "轮", "数据飞轮", "The data flywheel", "订单回传的用户日志攒到 " + LogsForCard + " 条。", "Collected " + LogsForCard + " user logs from contracts.", "用户越多，数据越多，模型越好，用户越多。", "More users, more data, a better model, more users."),
 
                 // 趣事.
-                Card(CardFun, 0, "fun.nan", "炸", "炸炉", "Kaboom", "学习率太大，训练第一次炸成 NaN。", "The rate was too high and training blew up into NaN.", "炼丹嘛，炸几次炉很正常。", "Alchemy: a few explosions are normal."),
+                Card(CardFun, 0, "fun.nan", "炸", "炸炉", "Kaboom", "练着练着，分数第一次往回掉了一截。", "For the first time, a round of training went backwards.", "炼丹嘛，炸几次炉很正常。", "Alchemy: a few explosions are normal."),
                 Card(CardFun, 1, "fun.combo", "连", "手速", "Fast hands", "连击达到 " + ComboCard + "。", "Reached a combo of " + ComboCard + "."),
                 Card(CardFun, 0, "fun.firstcard", "卡", "收藏家", "Collector", "打开成就页，看第一张卡。", "Opened the album to look at a card."),
 
@@ -236,19 +226,12 @@ namespace LingGuangV05.XingGuang
         void TickCards()
         {
             foreach (var p in XgPhenomena.All) if (PhenomenonSeen(p.id)) Earn("ph." + p.id);
-            foreach (var w in CardWalls) if (w != "pretrain" && WallPassedById(w)) Earn("wall." + w);
+            for (int i = 2; i <= AbilityCount; i++) if (HasAbility(i)) Earn("emerge." + i);
             if (S.pretrain >= 1 - 1e-9) Earn("wall.pretrain");
-            string features = null, structure = null;
-            if (S.wallRoutes != null)
-                foreach (var r in S.wallRoutes)
-                {
-                    if (r.EndsWith("=" + RouteFeatures, StringComparison.Ordinal)) features = r; else structure = r;
-                }
-            if (features != null) Earn("road.features");
-            if (features != null && structure != null) Earn("road.both");
+            foreach (var key in S.insights) if (key.StartsWith(ScaleInsight, StringComparison.Ordinal)) { Earn("road.scale"); break; }
             if (S.logsTotal >= LogsForCard) Earn("data.flywheel");
             if (S.bestCombo >= ComboCard) Earn("fun.combo");
-            if (S.nanEvents > 0) Earn("fun.nan");
+            if (S.nanEvents > 0 || S.drops > 0) Earn("fun.nan");
             if (S.curedKinds != null && S.curedKinds.Count > 0) Earn("cure.first");
             if (S.curedKinds != null && S.curedKinds.Count >= CuresForCard) Earn("cure.five");
             if (S.loveVerdicts > 0) Earn("life.love.ask");
@@ -282,8 +265,6 @@ namespace LingGuangV05.XingGuang
             if (host != null && host.Money < 10) Earn("life.casino.broke");
         }
 
-        bool WallPassedById(string id) { var w = WallById(id); return w != null && WallPassed(w); }
-
         /// <summary>
         /// 对症下药: the verdict named a problem; after a settings change the same run is no longer stuck. Called after
         /// every board epoch (XgSim.Trace.cs).
@@ -306,8 +287,8 @@ namespace LingGuangV05.XingGuang
         // ───────────── the face of a card ─────────────
 
         /// <summary>
-        /// The face of any card: album cards by id, and the self-insight cards the walls hand out (wall ids, 近亲繁殖,
-        /// the auto-labelling idea). Serial is the card's place in its category.
+        /// The face of any card: album cards by id, and the self-insight cards (pre-training, 近亲繁殖, the
+        /// auto-labelling idea). Serial is the card's place in its category.
         /// </summary>
         public static XgCardFace CardFace(string id)
         {
@@ -315,7 +296,7 @@ namespace LingGuangV05.XingGuang
             var a = Achievement(id);
             if (a == null)
             {
-                // A self-insight card by wall id (the flip-in after a wall is worked out alone).
+                // A self-insight card by id (the flip-in after something is worked out alone).
                 InsightCardText(id, out int stage, out string name, out string nameEn, out string golden, out string goldenEn, out string why, out string whyEn);
                 face.stage = stage; face.category = CardInsight;
                 face.rarity = id == InbreedingId || id == EpiphanyCardId || id == "degrade" ? 1 : 2;

@@ -382,7 +382,7 @@ namespace LingGuangV05.Desktop.Taohuo
             var row = Row(list, "Case", 150, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -60), new Vector2(146, 60));
             PrologueDesk.Fill(pic, new Color32(30, 30, 30, 255), false);
-            if (!ProductIllustration(pic, "desk", Lang.T("准系统 · 配图")))
+            if (!ProductIllustration(pic, "product_case", Lang.T("准系统 · 配图")))
                 Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>PC</b>", 30, new Color32(120, 220, 255, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, Lang.T("【准系统】游戏悍将机箱 + Z170 主板 + 600W 电源 + 16G 内存（不含显卡）"), 18, Ink);
@@ -412,7 +412,8 @@ namespace LingGuangV05.Desktop.Taohuo
             var row = Row(list, "Nvme", 150, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -60), new Vector2(146, 60));
             PrologueDesk.Fill(pic, new Color32(20, 40, 90, 255), false);
-            Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>950 PRO</b>\n<size=14>NVMe M.2</size>", 22, Color.white, TextAlignmentOptions.Center);
+            if (!ProductIllustration(pic, "product_nvme"))
+                Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>950 PRO</b>\n<size=14>NVMe M.2</size>", 22, Color.white, TextAlignmentOptions.Center);
             bool released = today.Date >= HardwareCatalog.NvmeRelease;
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(162, 10), new Vector2(-200, -10));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -50), Vector2.zero, Lang.T("三星 950 Pro 256G NVMe M.2 固态 读取 2500MB/s"), 18, Ink);

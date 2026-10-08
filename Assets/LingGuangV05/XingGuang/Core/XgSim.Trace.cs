@@ -225,15 +225,8 @@ namespace LingGuangV05.XingGuang
             tracePhenomena.Clear();
         }
 
-        /// <summary>The line the trace measures a plateau against: the standing wall's target on this dataset, else 90%.</summary>
-        public double TraceGoal(XgRun run)
-        {
-            var wall = ActiveWall;
-            if (wall != null)
-                foreach (var c in wall.checks)
-                    if (c.dataset == run.dataset || c.dataset == "*vision" && run.track == 0) return c.target;
-            return .9;
-        }
+        /// <summary>The line the trace measures a plateau against.</summary>
+        public double TraceGoal(XgRun run) => .9;
 
         static void Note(XgTrace t, int epoch, string id, double value, string detail)
         {

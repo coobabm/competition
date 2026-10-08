@@ -9,6 +9,8 @@ namespace LingGuangV05.XingGuang
     public sealed class XgLogicQuestion
     {
         public string category, categoryEn, text, textEn, why, whyEn;
+        /// <summary>The claim as a plain formula ("17 + 5 == 22", "prime(91) == 1"); set by the 算术 desk (XgArith) for its tests.</summary>
+        public string check = "";
         public bool truth;
         public int level;
     }
@@ -16,7 +18,8 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// Endless yes/no logic questions, generated from a seed and a level (1–5). Each generator first picks the answer it
     /// wants (about half yes) and then builds a question with that answer, so the truth is known by construction.
-    /// Puzzle words are made up where real-world knowledge could interfere (syllogisms).
+    /// Puzzle words are made up where real-world knowledge could interfere (syllogisms). Sums, number properties and
+    /// number patterns live on the 算术 desk (<see cref="XgArith"/>); this desk is reasoning only.
     /// </summary>
     public static class XgLogic
     {
@@ -24,11 +27,10 @@ namespace LingGuangV05.XingGuang
 
         delegate XgLogicQuestion Gen(Random r, int level, bool want);
 
-        /// <summary>Kinds by first level and weight. Pure reasoning kinds weigh double so the desk is about logic, not sums.</summary>
+        /// <summary>Kinds by first level and weight.</summary>
         static readonly (int minLevel, int weight, Gen gen)[] Generators =
         {
-            (1, 1, Arithmetic), (1, 1, NumberProperty), (1, 1, Compare), (1, 1, Sequence),
-            (1, 2, Negation), (1, 2, OnlyIf),
+            (1, 2, Compare), (1, 2, Negation), (1, 2, OnlyIf),
             (2, 2, Conditional), (2, 2, Disjunction), (2, 2, Conversion),
             (3, 2, Syllogism), (3, 1, Boolean), (3, 1, Calendar), (3, 2, Contrapositive),
             (4, 2, Knights), (4, 2, Elimination),
@@ -47,72 +49,6 @@ namespace LingGuangV05.XingGuang
             q.level = level;
             return q;
         }
-
-        static string I(long v) => v.ToString(CultureInfo.InvariantCulture);
-
-        // ───────────── arithmetic ─────────────
-
-        static XgLogicQuestion Arithmetic(Random r, int level, bool want)
-        {
-            int max = level <= 1 ? 20 : level == 2 ? 50 : level == 3 ? 200 : 1000;
-            int op = r.Next(level <= 1 ? 2 : 3);
-            long a = r.Next(2, max), b = r.Next(2, op == 2 ? Math.Max(4, max / 8) : max);
-            if (op == 1 && a < b) { long t = a; a = b; b = t; } // no negative results
-            long c = op == 0 ? a + b : op == 1 ? a - b : a * b;
-            string sym = op == 0 ? "+" : op == 1 ? "−" : "×";
-            long shown = c;
-            if (!want)
-            {
-                long delta = r.Next(1, 4) * (op == 2 ? (r.Next(2) == 0 ? 1 : 10) : 1);
-                shown = c + (r.Next(2) == 0 ? delta : -delta);
-            }
-            string expr = I(a) + " " + sym + " " + I(b) + " = " + I(shown);
-            return new XgLogicQuestion
-            {
-                category = "算术", categoryEn = "Arithmetic",
-                text = expr + " 吗？", textEn = "Is " + expr + "?",
-                truth = shown == c, why = "正确结果是 " + I(c) + "。", whyEn = "The result is " + I(c) + "."
-            };
-        }
-
-        // ───────────── number properties ─────────────
-
-        static XgLogicQuestion NumberProperty(Random r, int level, bool want)
-        {
-            int max = level <= 1 ? 50 : level <= 3 ? 200 : 1000;
-            int kind = r.Next(4);
-            Func<int, bool> test;
-            string zh, en, whyYes, whyYesEn;
-            switch (kind)
-            {
-                case 0: test = IsPrime; zh = "是质数"; en = "a prime"; whyYes = "只能被 1 和自己整除。"; whyYesEn = "Only 1 and itself divide it."; break;
-                case 1: test = n => n % 3 == 0; zh = "能被 3 整除"; en = "divisible by 3"; whyYes = "各位数字之和能被 3 整除。"; whyYesEn = "Its digit sum is divisible by 3."; break;
-                case 2: test = n => { int s = (int)Math.Round(Math.Sqrt(n)); return s * s == n; }; zh = "是完全平方数"; en = "a perfect square"; whyYes = "它是某个整数的平方。"; whyYesEn = "It is an integer squared."; break;
-                default: test = n => (n & (n - 1)) == 0; zh = "是 2 的整数次幂"; en = "a power of 2"; whyYes = "它是 2 连乘得到的。"; whyYesEn = "It is 2 multiplied by itself."; break;
-            }
-            int pick = 2;
-            for (int tries = 0; tries < 400; tries++)
-            {
-                pick = r.Next(2, max);
-                if (kind == 2 && want) pick = (int)Math.Pow(r.Next(2, (int)Math.Sqrt(max) + 1), 2);
-                if (kind == 3 && want) pick = 1 << r.Next(1, Math.Max(2, (int)Math.Log(max, 2) + 1));
-                if (test(pick) == want) break;
-            }
-            bool truth = test(pick);
-            string whyNo = kind == 0 ? I(pick) + " = " + I(SmallestFactor(pick)) + " × " + I(pick / SmallestFactor(pick)) + "。"
-                : kind == 1 ? I(pick) + " 除以 3 余 " + I(pick % 3) + "。" : "不是。";
-            string whyNoEn = kind == 0 ? I(pick) + " = " + I(SmallestFactor(pick)) + " × " + I(pick / SmallestFactor(pick)) + "."
-                : kind == 1 ? I(pick) + " leaves remainder " + I(pick % 3) + "." : "It is not.";
-            return new XgLogicQuestion
-            {
-                category = "数的性质", categoryEn = "Numbers",
-                text = I(pick) + " " + zh + "吗？", textEn = "Is " + I(pick) + " " + en + "?",
-                truth = truth, why = truth ? whyYes : whyNo, whyEn = truth ? whyYesEn : whyNoEn
-            };
-        }
-
-        static bool IsPrime(int n) { if (n < 2) return false; for (int d = 2; d * d <= n; d++) if (n % d == 0) return false; return true; }
-        static int SmallestFactor(int n) { for (int d = 2; d * d <= n; d++) if (n % d == 0) return d; return n; }
 
         // ───────────── comparisons (transitivity) ─────────────
 
@@ -153,33 +89,6 @@ namespace LingGuangV05.XingGuang
                 textEn = en + "Is " + ea + " " + (askMore ? rel.moreEn : rel.lessEn) + " than " + eb + "?",
                 truth = truth, why = "按顺序排：" + Join(order, People, "＞") + "（越前越" + rel.more + "）。",
                 whyEn = "Order: " + Join(order, PeopleEn, " > ") + " (first is " + rel.moreEn + ")."
-            };
-        }
-
-        // ───────────── number sequences ─────────────
-
-        static XgLogicQuestion Sequence(Random r, int level, bool want)
-        {
-            int kind = r.Next(Math.Min(5, 2 + level));
-            var terms = new List<long>();
-            string ruleZh, ruleEn;
-            switch (kind)
-            {
-                case 0: { long a = r.Next(1, 20), d = r.Next(2, 9); for (int i = 0; i < 6; i++) terms.Add(a + d * i); ruleZh = "每次加 " + I(d); ruleEn = "add " + I(d) + " each time"; break; }
-                case 1: { long a = r.Next(1, 5), k = r.Next(2, 4); for (int i = 0; i < 6; i++) terms.Add(a * (long)Math.Pow(k, i)); ruleZh = "每次乘 " + I(k); ruleEn = "multiply by " + I(k); break; }
-                case 2: { long s = r.Next(1, 6); for (int i = 0; i < 6; i++) terms.Add((s + i) * (s + i)); ruleZh = "连续整数的平方"; ruleEn = "consecutive squares"; break; }
-                case 3: { long a = r.Next(1, 4), b = r.Next(1, 5); terms.Add(a); terms.Add(b); for (int i = 2; i < 7; i++) terms.Add(terms[i - 1] + terms[i - 2]); ruleZh = "每项是前两项之和"; ruleEn = "each term is the sum of the previous two"; break; }
-                default: { long a = r.Next(1, 10), p = r.Next(2, 6), q = r.Next(1, 4); for (int i = 0; i < 7; i++) terms.Add(i == 0 ? a : terms[i - 1] + (i % 2 == 1 ? p : -q)); ruleZh = "交替加 " + I(p) + "、减 " + I(q); ruleEn = "alternately add " + I(p) + " and subtract " + I(q); break; }
-            }
-            int shownCount = Math.Max(4, terms.Count - 2);
-            long next = terms[shownCount];
-            long asked = want ? next : next + (r.Next(2) == 0 ? 1 : -1) * r.Next(1, 4);
-            string list = string.Join(", ", terms.GetRange(0, shownCount));
-            return new XgLogicQuestion
-            {
-                category = "数列", categoryEn = "Sequence",
-                text = list + ", …… 下一个数是 " + I(asked) + " 吗？", textEn = list + ", … is the next number " + I(asked) + "?",
-                truth = asked == next, why = "规律：" + ruleZh + "，下一个是 " + I(next) + "。", whyEn = "Rule: " + ruleEn + "; next is " + I(next) + "."
             };
         }
 

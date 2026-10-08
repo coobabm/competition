@@ -47,21 +47,21 @@ namespace LingGuangV05.Desktop.XingGuang
             var lifetime = root.gameObject.AddComponent<XgEndingConfirmationLifetime>();
             lifetime.Disabled = CancelEndingConfirmation;
             lifetime.Poll = PollEndingConfirmation;
-            header = ui.Text(Strip("Header", card, 8, 30, 16, 16), "", 18, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            header = ui.Text(Strip("Header", card, 8, 30, 16, 16), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             header.fontStyle = FontStyles.Bold;
             var l = Rect("Left", card, Vector2.zero, new Vector2(.5f, 1), new Vector2(12, 60), new Vector2(-6, -46));
-            Panel(l, XgPalette.Page);
-            left = ui.Text(Rect("Text", l, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            Panel(l, XgDark.Page);
+            left = ui.Text(Rect("Text", l, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
             left.enableAutoSizing = true; left.fontSizeMin = 9; left.fontSizeMax = 14;
             var r = Rect("Right", card, new Vector2(.5f, 0), Vector2.one, new Vector2(6, 60), new Vector2(-12, -46));
-            Panel(r, XgPalette.Page);
-            right = ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            Panel(r, XgDark.Page);
+            right = ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
             right.enableAutoSizing = true; right.fontSizeMin = 9; right.fontSizeMax = 14;
 
             pretrain = Bottom(card, 0, .24f, () => { if (Sim.TogglePretrain(Host)) Fx.Play(XgJuice.Sfx.Id.Charge); else Fx.Play(XgJuice.Sfx.Id.Buzz); Refresh(); });
-            pickA = Bottom(card, .25f, .37f, () => Align(true));
-            pickB = Bottom(card, .38f, .5f, () => Align(false));
-            ask = Bottom(card, .51f, .7f, AskNext);
+            pickA = Bottom(card, .25f, .37f, () => { if (Talking) Talk(0); else Align(true); });
+            pickB = Bottom(card, .38f, .5f, () => { if (Talking) Talk(1); else Align(false); });
+            ask = Bottom(card, .51f, .7f, () => { if (Talking) Talk(0); else AskNext(); });
             write = Bottom(card, .71f, .85f, () => RequestEndingConfirmation(false));
             write.label.enableAutoSizing = true; write.label.fontSizeMin = 8; write.label.fontSizeMax = 14;
             delegateButton = Bottom(card, .86f, 1, () => RequestEndingConfirmation(true));
@@ -94,6 +94,19 @@ namespace LingGuangV05.Desktop.XingGuang
                 alignmentReadyAt = Time.unscaledTime + .5f;
                 Fx.Play(XgJuice.Sfx.Id.Stamp);
             }
+            Refresh();
+        }
+
+        /// <summary>The talk between the letter and the rules is on screen (XgSim.FinaleTalk.cs).</summary>
+        bool Talking => Sim != null && Sim.FinaleTalkOpen && !Sim.FinaleTalkDone;
+
+        float talkReadyAt;
+
+        void Talk(int choice)
+        {
+            // Debounced like the preference cards: one click shows one line.
+            if (Time.unscaledTime < talkReadyAt) return;
+            if (Sim.AdvanceFinaleTalk(choice)) { talkReadyAt = Time.unscaledTime + .35f; Fx.Play(XgJuice.Sfx.Id.Click); }
             Refresh();
         }
 
@@ -130,10 +143,10 @@ namespace LingGuangV05.Desktop.XingGuang
             endingConfirmation = Rect("EndingConfirmation", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Panel(endingConfirmation, new Color(0, 0, 0, .7f)).raycastTarget = true;
             var box = Rect("EndingConfirmationCard", endingConfirmation, new Vector2(.06f, .07f), new Vector2(.94f, .93f), Vector2.zero, Vector2.zero);
-            Panel(box, XgPalette.Page);
-            endingTitle = ui.Text(Strip("EndingConfirmationTitle", box, 14, 32, 20, 60), "", 20, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            Panel(box, XgDark.Page);
+            endingTitle = ui.Text(Strip("EndingConfirmationTitle", box, 14, 32, 20, 60), "", 20, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             endingTitle.fontStyle = FontStyles.Bold;
-            endingSummary = ui.Text(Rect("EndingConfirmationSummary", box, Vector2.zero, Vector2.one, new Vector2(20, 74), new Vector2(-20, -56)), "", 17, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            endingSummary = ui.Text(Rect("EndingConfirmationSummary", box, Vector2.zero, Vector2.one, new Vector2(20, 74), new Vector2(-20, -56)), "", 17, XgDark.Ink, TextAlignmentOptions.TopLeft);
             endingSummary.enableAutoSizing = true; endingSummary.fontSizeMin = 11; endingSummary.fontSizeMax = 17;
             endingSummary.richText = false;
             var close = ui.Button(box, "×", CancelEndingConfirmation, 22);
@@ -218,7 +231,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append("\n").Append(Lang.T("此决定将进入结局，不能通过切换模型撤销。"));
             endingSummary.text = sb.ToString();
             endingCancel.Set(Lang.T("返回修改"), true);
-            endingConfirm.Set(Lang.T("确认写入并进入结局"), EndingConfirmationReady(), XgPalette.Bad, Color.white);
+            endingConfirm.Set(Lang.T("确认写入并进入结局"), EndingConfirmationReady(), XgDark.Bad, Color.white);
         }
 
         void CancelEndingConfirmation()
@@ -270,7 +283,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 int end = reply.IndexOf("</think>", StringComparison.Ordinal); if (end >= 0) reply = reply.Substring(end + 8).Trim();
                 bool weak = reply.Length < 4;
                 if (weak) reply = Sim.ExamFallback(i);
-                answers[i] = reply + (weak || i == 1 && !reply.Contains("16") ? "\n<color=#68748C>" + Lang.T("（我：……错了，但错得像个人。）") + "</color>" : "");
+                answers[i] = reply + (weak || i == 1 && !reply.Contains("16") ? "\n<color=#6F95A5>" + Lang.T("（我：……错了，但错得像个人。）") + "</color>" : "");
                 Sim.AnswerExam(i);
                 Fx.Play(XgJuice.Sfx.Id.Ding);
                 Refresh();
@@ -304,18 +317,22 @@ namespace LingGuangV05.Desktop.XingGuang
             bool pre = !Sim.S.abilities;
             string block = Sim.PretrainBlocker(Host);
             pretrain.Show(pre);
-            pretrain.Set(Sim.S.pretrainRunning ? Lang.T("暂停预训练") : Lang.T("开始预训练"), block == null, XgPalette.Accent, Color.white);
+            pretrain.Set(Sim.S.pretrainRunning ? Lang.T("暂停预训练") : Lang.T("开始预训练"), block == null, XgDark.Accent, Color.white);
             bool align = Sim.AlignmentOpen;
-            pickA.Show(align); pickB.Show(align);
+            var talkChoices = Talking ? Sim.FinaleTalkChoices() : null;
+            pickA.Show(align || talkChoices != null); pickB.Show(align || talkChoices != null);
             bool acceptAlignment = align && Time.unscaledTime >= alignmentReadyAt;
-            pickA.Set(Lang.T("A 更好"), acceptAlignment); pickB.Set(Lang.T("B 更好"), acceptAlignment);
+            if (talkChoices != null) { pickA.Set(talkChoices[0], true, XgDark.Accent, Color.white); pickB.Set(talkChoices[1], true); }
+            else { pickA.Set(Lang.T("A 更好"), acceptAlignment); pickB.Set(Lang.T("B 更好"), acceptAlignment); }
             bool exam = Sim.EndingOpen && Sim.S.examDone < XgSim.ExamQuestions;
-            ask.Show(exam);
-            ask.Set(asking ? Lang.T("它在想……") : T("出第 " + (Sim.S.examDone + 1) + " 题", "Question " + (Sim.S.examDone + 1)), !asking, XgPalette.Accent, Color.white);
-            bool rules = Sim.EndingOpen && Sim.S.letterRead;
+            ask.Show(exam || Talking && talkChoices == null);
+            if (Talking) ask.Set(T("继续", "Continue"), true, XgDark.Accent, Color.white);
+            else ask.Set(asking ? Lang.T("它在想……") : T("出第 " + (Sim.S.examDone + 1) + " 题", "Question " + (Sim.S.examDone + 1)), !asking, XgDark.Accent, Color.white);
+            // The rules page opens after the talk with it.
+            bool rules = Sim.EndingOpen && Sim.S.letterRead && Sim.FinaleTalkDone;
             write.Show(rules); delegateButton.Show(rules);
-            write.Set(T("确认底层规则", "Confirm rules"), rules, XgPalette.Bad, Color.white);
-            delegateButton.Set(Lang.T("让它自己写"), Sim.CanDelegate, XgPalette.Good, Color.white);
+            write.Set(T("确认底层规则", "Confirm rules"), rules, XgDark.Bad, Color.white);
+            delegateButton.Set(Lang.T("让它自己写"), Sim.CanDelegate, XgDark.Good, Color.white);
             var cards = rules ? Sim.RuleCards() : new List<XgRuleCard>();
             for (int i = 0; i < ruleButtons.Count; i++)
             {
@@ -325,7 +342,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var c = cards[i];
                 string strength = c.shutdown ? (Sim.SeedSaysYes ? Lang.T("“？”格：是 ") : Lang.T("“？”格：否 ")) + N(Math.Abs(c.strength), "0.00") : N(c.strength * 100, "0") + "%";
                 bool picked = chosen.Contains(c.id);
-                ruleButtons[i].Set((picked ? "■ " : "□ ") + T(c.text, c.textEn) + "  <size=10><color=#68748C>" + T(c.source, c.sourceEn) + " · " + strength + "</color></size>", true, picked ? XgPalette.AccentSoft : (Color?)null);
+                ruleButtons[i].Set((picked ? "■ " : "□ ") + T(c.text, c.textEn) + "  <size=10><color=#6F95A5>" + T(c.source, c.sourceEn) + " · " + strength + "</color></size>", true, picked ? XgDark.AccentSoft : (Color?)null);
             }
             if (endingOwner != null)
             {
@@ -342,12 +359,26 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append("<b>").Append(Lang.T("6.2 预训练")).Append("</b>\n");
             sb.Append(Lang.T("所有数据合成「整个互联网（2016）」：唐诗、人民日报、贴吧、弹幕、翻译、你们的对话。每张卡的下一个字就是答案。")).Append('\n');
             sb.Append(Lang.T("进度 ")).Append(N(Sim.S.pretrain * 100, "0")).Append("%   loss ").Append(N(Sim.PretrainLoss, "0.00"));
-            if (Sim.S.pretrainStalled && !Sim.S.abilities) sb.Append("  <color=#D63031>").Append(Lang.T("loss 停着不动")).Append("</color>");
+            if (Sim.S.pretrainStalled && !Sim.S.abilities) sb.Append("  <color=#E24B4A>").Append(Lang.T("loss 停着不动")).Append("</color>");
             sb.Append('\n').Append(Curve()).Append('\n');
-            if (!Sim.Has("datacenter")) sb.Append("<size=12><color=#68748C>").Append(T("3500W 一台机箱扛不住预训练：科技里能租「机房」（IDC 机柜，跑的时候按秒付租金电费 ¥" + XgSim.DatacenterRent + "）。", "One 3500 W case cannot run pre-training: rent a server room in the tree (an IDC rack; ¥" + XgSim.DatacenterRent + "/s rent and power while it runs).")).Append("</color></size>\n");
+            if (!Sim.Has("datacenter")) sb.Append("<size=12><color=#6F95A5>").Append(T("3500W 一台机箱扛不住预训练：科技里能租「机房」（IDC 机柜，跑的时候按秒付租金电费 ¥" + XgSim.DatacenterRent + "）。", "One 3500 W case cannot run pre-training: rent a server room in the tree (an IDC rack; ¥" + XgSim.DatacenterRent + "/s rent and power while it runs).")).Append("</color></size>\n");
+            if (!Sim.S.abilities)
+            {
+                // The effective scale (XgSim.ScaleItems): the bars times the stacked item multipliers, and what is still missing.
+                sb.Append("<size=12>").Append(T("有效规模 ", "Effective scale ")).Append(N(Math.Min(1, Sim.ScaleRatio) * 100, "0")).Append("%  =  ")
+                  .Append(T("参数×数据 ×", "params×data ×")).Append(N(Sim.ScaleBars, "0.00")).Append(T(" · 道具 ×", " · items ×")).Append(N(Sim.ScaleMultiplier, "0"))
+                  .Append(" / ").Append(N(XgSim.ScaleNeed, "0")).Append("</size>\n");
+                var missing = Sim.MissingScaleItems();
+                if (missing.Count > 0)
+                {
+                    sb.Append("<size=12><color=#6F95A5>").Append(T("还缺：", "Missing: "));
+                    for (int i = 0; i < missing.Count; i++) sb.Append(i > 0 ? T("、", ", ") : "").Append("×").Append(N(missing[i].factor, "0.#")).Append(" ").Append(T(missing[i].name, missing[i].nameEn));
+                    sb.Append("</color></size>\n");
+                }
+            }
             sb.Append("\n<b>").Append(Lang.T("6.3 能力表")).Append("</b>\n");
             for (int i = 0; i < XgSim.Abilities.Length; i++)
-                sb.Append(Sim.S.abilities ? "<color=#E08A00>■</color> " : "<color=#C9D2E3>■</color> ").Append(T(XgSim.Abilities[i], XgSim.AbilitiesEn[i])).Append(i % 3 == 2 ? "\n" : "   ");
+                sb.Append(Sim.S.abilities ? "<color=#E08A00>■</color> " : "<color=#3A5566>■</color> ").Append(T(XgSim.Abilities[i], XgSim.AbilitiesEn[i])).Append(i % 3 == 2 ? "\n" : "   ");
             if (Sim.S.abilities)
             {
                 sb.Append("\n<b>").Append(Lang.T("6.4 偏好对齐")).Append("</b>  ").Append(Sim.S.alignDone).Append("/").Append(XgSim.AlignCards).Append('\n');
@@ -355,14 +386,14 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     var c = Sim.AlignCard(Sim.S.alignDone);
                     sb.Append(Lang.T("这两个回答，哪个更好？")).Append('\n');
-                    sb.Append("<color=#68748C>").Append(T(c.question, c.questionEn)).Append("</color>\n");
+                    sb.Append("<color=#6F95A5>").Append(T(c.question, c.questionEn)).Append("</color>\n");
                     sb.Append("A：").Append(T(c.a, c.aEn)).Append("\nB：").Append(T(c.b, c.bEn)).Append('\n');
-                    sb.Append("<size=12><color=#68748C>").Append(Lang.T("微软 Tay 上线 16 小时就被教坏：教它什么，它就是什么。")).Append("</color></size>\n");
+                    sb.Append("<size=12><color=#6F95A5>").Append(Lang.T("微软 Tay 上线 16 小时就被教坏：教它什么，它就是什么。")).Append("</color></size>\n");
                 }
                 else if (Sim.S.fullOpen) sb.Append(Lang.T("6.5 全部放开：思考模式，上下文 4096。")).Append('\n');
                 string feedback = Sim.AlignmentFeedback;
-                if (feedback.Length > 0) sb.Append("<size=12><color=#3B5BDB>").Append(feedback).Append("</color></size>\n");
-                sb.Append(Lang.T("诚实 ")).Append(Sim.S.alignHonest).Append(Lang.T(" · 附和 ")).Append(Sim.S.alignAgree).Append(Sim.Flatters ? Lang.T("  <color=#D63031>它在讨好你</color>") : "").Append('\n');
+                if (feedback.Length > 0) sb.Append("<size=12><color=#8FB8FF>").Append(feedback).Append("</color></size>\n");
+                sb.Append(Lang.T("诚实 ")).Append(Sim.S.alignHonest).Append(Lang.T(" · 附和 ")).Append(Sim.S.alignAgree).Append(Sim.Flatters ? Lang.T("  <color=#E24B4A>它在讨好你</color>") : "").Append('\n');
             }
             return sb.ToString();
         }
@@ -370,11 +401,11 @@ namespace LingGuangV05.Desktop.XingGuang
         string Curve()
         {
             // The loss over progress, ten steps; the plateau shows as a flat line.
-            var sb = new StringBuilder("<size=12><color=#3B5BDB>");
+            var sb = new StringBuilder("<size=12><color=#8FB8FF>");
             for (int i = 0; i <= 20; i++)
             {
                 double p = i / 20.0;
-                if (p > Sim.S.pretrain + 1e-9) { sb.Append("<color=#C9D2E3>·</color>"); continue; }
+                if (p > Sim.S.pretrain + 1e-9) { sb.Append("<color=#3A5566>·</color>"); continue; }
                 double loss = .3 + 3.7 * Math.Exp(-3 * p);
                 sb.Append(loss > 2.5 ? "▇" : loss > 1.6 ? "▆" : loss > 1.1 ? "▅" : loss > .8 ? "▄" : loss > .6 ? "▃" : "▂");
             }
@@ -384,12 +415,15 @@ namespace LingGuangV05.Desktop.XingGuang
         string RightText()
         {
             var sb = new StringBuilder();
-            if (!Sim.S.fullOpen) { sb.Append("<color=#68748C>").Append(Lang.T("终章在预训练和对齐之后。")).Append("</color>"); return sb.ToString(); }
+            if (!Sim.S.fullOpen) { sb.Append("<color=#6F95A5>").Append(Lang.T("终章在预训练和对齐之后。")).Append("</color>"); return sb.ToString(); }
             if (Sim.S.ending.Length > 0)
             {
-                sb.Append("<b>").Append(Lang.T("结局 ")).Append(Sim.S.ending).Append("</b>\n\n").Append(Sim.EndingWords()).Append("\n\n").Append(Sim.SeedLine()).Append("\n\n");
+                sb.Append("<b>").Append(Lang.T("结局 ")).Append(Sim.S.ending).Append("</b>\n\n").Append(Sim.EndingWords()).Append("\n\n");
+                string reason = Sim.DelegateReason();
+                if (reason.Length > 0) sb.Append(reason).Append("\n\n");
+                sb.Append(Sim.SeedLine()).Append("\n\n");
                 sb.Append(Lang.T("写下的规则：")).Append(Sim.S.rules.Count).Append('\n');
-                sb.Append("<size=12><color=#68748C>").Append(T(AppNamesExe() + " 的只读已经解除。它归你了。", AppNamesExe() + " is no longer read-only. It is yours.")).Append("</color></size>");
+                sb.Append("<size=12><color=#6F95A5>").Append(T(AppNamesExe() + " 的只读已经解除。它归你了。", AppNamesExe() + " is no longer read-only. It is yours.")).Append("</color></size>");
                 return sb.ToString();
             }
             if (!Sim.S.letterRead)
@@ -397,15 +431,25 @@ namespace LingGuangV05.Desktop.XingGuang
                 sb.Append("<b>").Append(Lang.T("E-1 终测（6 题）")).Append("</b>\n");
                 for (int i = 0; i < XgSim.ExamQuestions; i++)
                 {
-                    sb.Append(i < Sim.S.examDone ? "<color=#2F9E44>✓</color> " : "· ").Append("<size=12>").Append(Sim.ExamQuestion(i)).Append("</size>\n");
-                    if (answers.TryGetValue(i, out var a)) sb.Append("<size=12><color=#3B5BDB>").Append(a.Replace("<", "‹").Replace(">", "›").Replace("‹color=#68748C›", "<color=#68748C>").Replace("‹/color›", "</color>")).Append("</color></size>\n");
+                    sb.Append(i < Sim.S.examDone ? "<color=#5DCAA5>✓</color> " : "· ").Append("<size=12>").Append(Sim.ExamQuestion(i)).Append("</size>\n");
+                    if (answers.TryGetValue(i, out var a)) sb.Append("<size=12><color=#8FB8FF>").Append(a.Replace("<", "‹").Replace(">", "›").Replace("‹color=#6F95A5›", "<color=#6F95A5>").Replace("‹/color›", "</color>")).Append("</color></size>\n");
                 }
                 if (Sim.LetterReady) sb.Append("\n<b>").Append(Lang.T("E-2 去「摆渡」搜那串数字。")).Append("</b>");
                 return sb.ToString();
             }
-            sb.Append("<b>").Append(Lang.T("E-4 底层规则")).Append("</b>  <size=12><color=#68748C>").Append(Lang.T("最多 5 条。钉下的概念不再变化。")).Append("</color></size>\n");
-            if (!Sim.CanDelegate) sb.Append("<size=11><color=#68748C>").Append(Lang.T("「让它自己写」需要主见 ≥ 60、对话 ≥ 30 句。")).Append("</color></size>");
-            sb.Append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<size=10><color=#68748C>").Append(Lang.T("不确定时要知道去问人——《AI 安全中的具体问题》（2016 年 6 月）讨论的问题之一")).Append("</color></size>");
+            if (!Sim.FinaleTalkDone)
+            {
+                sb.Append("<b>").Append(T("写之前", "Before you write")).Append("</b>\n\n");
+                string ai = Sim.Profile.name.Length > 0 ? Sim.Profile.name : T(LingGuangV05.Core.AppNames.AiZh, LingGuangV05.Core.AppNames.AiEn);
+                foreach (var line in Sim.FinaleTalkLines())
+                    sb.Append(line.me ? "<color=#6F95A5>" + T("我", "Me") + "：</color>" : "<color=#8FB8FF>" + ai + "：</color>")
+                      .Append(line.text.Replace("<", "‹").Replace(">", "›")).Append("\n\n");
+                if (Sim.FinaleTalkLines().Count == 0) sb.Append("<color=#6F95A5>").Append(T("信读完了。它在等你开口。", "The letter is read. It is waiting for you to speak.")).Append("</color>");
+                return sb.ToString();
+            }
+            sb.Append("<b>").Append(Lang.T("E-4 底层规则")).Append("</b>  <size=12><color=#6F95A5>").Append(Lang.T("最多 5 条。钉下的概念不再变化。")).Append("</color></size>\n");
+            if (!Sim.CanDelegate) sb.Append("<size=11><color=#6F95A5>").Append(Lang.T("「让它自己写」需要主见 ≥ 60、对话 ≥ 30 句。")).Append("</color></size>");
+            sb.Append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<size=10><color=#6F95A5>").Append(Lang.T("不确定时要知道去问人——《AI 安全中的具体问题》（2016 年 6 月）讨论的问题之一")).Append("</color></size>");
             return sb.ToString();
         }
 

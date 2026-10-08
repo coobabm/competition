@@ -32,9 +32,14 @@ namespace LingGuangV05.Desktop.Story
         RectTransform area;
         public bool IsBusy => running != null || queue.Count > 0;
 
-        public void Enqueue(string who, string text, float seconds)
+        /// <summary>
+        /// Queues a tray popup. <paramref name="story"/> marks a story moment; anything else is ambient chatter, which
+        /// the opening quiet window drops (OpeningQuiet, the one place that decides).
+        /// </summary>
+        public void Enqueue(string who, string text, float seconds, bool story = false)
         {
             if (string.IsNullOrEmpty(text)) return;
+            if (!OpeningQuiet.Allows(story)) return;
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds) });
             if (running == null) running = StartCoroutine(Run());
         }
@@ -119,7 +124,6 @@ namespace LingGuangV05.Desktop.Story
         static (Color bar, Color barLight, string mark, string button) Theme(string who)
         {
             if (who.StartsWith("YY")) return (new Color32(33, 144, 197, 255), new Color32(78, 185, 226, 255), "YY", Lang.T("确定"));
-            if (who.Contains("巨信") || who.Contains("Juxin")) return (new Color32(26, 173, 25, 255), new Color32(71, 197, 79, 255), Lang.T("信"), Lang.T("确定"));
             if (who.Contains("贴吧") || who.Contains("Tieba")) return (new Color32(44, 100, 204, 255), new Color32(88, 145, 239, 255), Lang.T("贴"), Lang.T("确定"));
             if (who.Contains("360")) return (new Color32(36, 160, 62, 255), new Color32(76, 196, 96, 255), "360", Lang.T("知道了"));
             if (who.Contains("迅雷") || who.Contains("Thunder")) return (new Color32(26, 110, 205, 255), new Color32(70, 150, 235, 255), Lang.T("迅"), Lang.T("知道了"));

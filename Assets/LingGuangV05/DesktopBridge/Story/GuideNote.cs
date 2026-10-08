@@ -6,6 +6,7 @@ using LingGuangV05.Core.Forum;
 using LingGuangV05.Desktop.Bodu;
 using LingGuangV05.Desktop.Tieba;
 using LingGuangV05.Desktop.XingGuang;
+using LingGuangV05.Desktop.Zhongbao;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
 using Michsky.DreamOS;
@@ -23,7 +24,8 @@ namespace LingGuangV05.Desktop.Story
     /// moment, then slides away and the next one fades in. Clicking the current task opens the place it is about
     /// (a lab tab, the forum, 摆渡, YY, the home or shop app) and rings the control in gold for a few seconds;
     /// hovering any task tells why. "–" folds it to a slim strip for the rest of the session, and the title bar
-    /// drags it. It never shows during the prologue or a cutscene.
+    /// drags it. It never shows during a cutscene, nor during the prologue until its last step, when the one thing
+    /// left to do is open the exe it left behind (and the note says so).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class GuideNote : MonoBehaviour
@@ -85,10 +87,23 @@ namespace LingGuangV05.Desktop.Story
             return lab;
         }
 
+        PrologueDirector prologue;
+
+        /// <summary>The prologue is waiting for its setup and the exe is not open: the note's one line says to open it.</summary>
+        bool WaitingForExe()
+        {
+            if (runtime == null || runtime.Sim == null || runtime.TestMode || !runtime.Sim.InPrologue || router == null) return false;
+            if (prologue == null && host != null) prologue = host.GetComponent<PrologueDirector>();
+            if (prologue == null || prologue.Step != "setup") return false;
+            var exe = router.Get(LingGuangInstallFlow.AppId);
+            return exe != null && exe.Window != null && !exe.Window.isOn;
+        }
+
         void Update()
         {
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
-            bool ready = runtime != null && runtime.Sim != null && !runtime.TestMode && !runtime.Sim.InPrologue && !CutscenePlaying
+            bool exe = WaitingForExe();
+            bool ready = runtime != null && runtime.Sim != null && !runtime.TestMode && (!runtime.Sim.InPrologue || exe) && !CutscenePlaying
                 && Lab() != null && lab.Sim != null && PrologueDirector.Desk != null;
             if (ready && note == null) Build(PrologueDirector.Desk);
             if (note == null) return;
@@ -96,7 +111,10 @@ namespace LingGuangV05.Desktop.Story
             if (!ready || Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + RefreshEvery;
             NoteSeenPlaces();
-            var steps = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House());
+            List<XgGuideStep> steps;
+            if (exe) steps = new List<XgGuideStep> { XgGuide.OpenExe() };
+            else if (lab.View != null && lab.View.SetupShowing) steps = new List<XgGuideStep> { XgGuide.AnswerFirst() };
+            else steps = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House());
             if (busy) { pending = steps; return; }
             Apply(steps);
         }
@@ -110,7 +128,7 @@ namespace LingGuangV05.Desktop.Story
             return new XgGuideHouse
             {
                 appInstalled = sim.AppInstalled,
-                unpaidPower = s.unpaidPower, breakerTripped = s.breakerTripped, billDue = s.billDue,
+                unpaidPower = s.unpaidPower, breakerTripped = s.breakerTripped, billDue = s.billDue, landlordCut = s.landlordCut,
                 noGpu = s.gpuCount <= 0,
                 overloaded = s.gpuCount * config.gpuWatts + s.caseCount * config.caseWatts > config.powerLimitWatts,
                 vramMB = lab.Host != null ? lab.Host.VramMB : 0,
@@ -296,11 +314,16 @@ namespace LingGuangV05.Desktop.Story
             switch (step.app)
             {
                 case XgGuide.Lab: StartCoroutine(GoLab(step)); break;
+                case XgGuide.Crowd: StartCoroutine(GoCrowd(step)); break;
                 case XgGuide.Home: case XgGuide.Shop: case XgGuide.YY: StartCoroutine(GoApp(step)); break;
                 case XgGuide.Tieba: GoTieba(step); break;
                 case XgGuide.Bodu:
                     var bodu = FindAnyObjectByType<BoduView>(FindObjectsInactive.Include);
                     if (bodu != null) bodu.Open(step.arg);
+                    break;
+                case XgGuide.Desktop:
+                    // The exe the prologue left on the desktop: open it, and ring its icon.
+                    if (router != null) router.Open(LingGuangInstallFlow.AppId);
                     break;
                 case XgGuide.Games:
                     if (!windowsLooked) NoteSeenPlaces();
@@ -327,6 +350,23 @@ namespace LingGuangV05.Desktop.Story
             if (c.View != null) XgGuideHighlight.Show(c.View, step.tab, step.target);
         }
 
+        /// <summary>摆渡众包's 标注台 and 企业订单 (moved out of the lab): open it on the page, then ring the control.</summary>
+        IEnumerator GoCrowd(XgGuideStep step)
+        {
+            var c = Lab();
+            if (c != null && c.Sim != null && step.tab == "label" && step.arg.Length > 0) c.Sim.SelectDesk(step.arg);
+            if (router == null || !router.Open(XgGuide.Crowd, string.IsNullOrEmpty(step.tab) ? null : step.tab)) yield break;
+            var crowd = ZhongbaoView.Instance;
+            for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime)
+            {
+                if (crowd != null && crowd.Visible && (string.IsNullOrEmpty(step.tab) || crowd.Tab == step.tab)) break;
+                yield return null;
+            }
+            // Pages build some rows on refresh; give them a frame or two.
+            yield return null; yield return null;
+            if (crowd != null) crowd.Highlight(step.tab, step.target);
+        }
+
         IEnumerator GoApp(XgGuideStep step)
         {
             if (router == null) yield break;
@@ -346,7 +386,7 @@ namespace LingGuangV05.Desktop.Story
             if (where == "chat" && hub.S != null && !hub.CanMessage(what)) { where = "home"; what = ""; }
             if (where == "thread")
             {
-                // The wall's own post may not be dated yet: fall back to the general ones, then the front page.
+                // The step's own post may not be dated yet: fall back to the general ones, then the front page.
                 var context = hub.Context();
                 what = null;
                 foreach (var id in new[] { step.arg, "tip_wall", "tip_data" })

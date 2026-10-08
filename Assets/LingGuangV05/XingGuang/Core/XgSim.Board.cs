@@ -17,8 +17,8 @@ namespace LingGuangV05.XingGuang
 
     public sealed partial class XgRun
     {
-        /// <summary>Training-page knobs that the board reads (design v1.1 §4.3). act: 0 step, 1 S-curve, 2 ReLU;
-        /// -1 (also older saves) = the best activation owned.</summary>
+        /// <summary>The rule parameters the board reads (design v1.1 §4.3), set automatically from what is owned
+        /// (XgSim.AutoModel.cs). act: 0 step, 1 S-curve, 2 ReLU; -1 = the best activation owned.</summary>
         public int act = -1;
         public bool clip, skip, position, warmup;
         /// <summary>BatchNorm switched off (owned BatchNorm is on by default; older saves read false = on).</summary>
@@ -77,7 +77,7 @@ namespace LingGuangV05.XingGuang
 
         public bool ActivationOwned(int act) => act == 0 || act == 1 && Has("sigmoid") || act == 2 && Has("relu");
         public int BestActivation => Has("relu") ? 2 : Has("sigmoid") ? 1 : 0;
-        /// <summary>The player's choice if still owned, otherwise the best activation bought.</summary>
+        /// <summary>The run's activation if still owned, otherwise the best activation bought.</summary>
         public int EffectiveActivation(XgRun run) => run.act >= 0 && ActivationOwned(run.act) ? run.act : BestActivation;
         public bool ClipOwned => Has("gradclip");
         public bool SkipOwned => Has("resnet") || Has("transformer");
@@ -88,8 +88,9 @@ namespace LingGuangV05.XingGuang
         /// <summary>Hand-made features take people's time: an epoch with them on feeds this share of the cards.</summary>
         public const double FeaturesCardFactor = .5;
         public bool AttentionOnlyOwned => Has("attention");
+        public bool BatchNormOwned => Has("batchnorm");
 
-        /// <summary>The rule parameters this run trains with. Knobs the player has not bought stay off.</summary>
+        /// <summary>The rule parameters this run trains with: everything owned is on, nothing else.</summary>
         public XgKnobs Knobs(XgRun run)
         {
             int act = EffectiveActivation(run);
@@ -115,43 +116,12 @@ namespace LingGuangV05.XingGuang
             };
         }
 
-        public bool SetActivation(XgTrack track, int act)
-        {
-            var run = Run(track);
-            if (run.epochActive || !ActivationOwned(act) || EffectiveActivation(run) == act && run.act >= 0) return false;
-            run.act = act; Evaluate(run); return true;
-        }
-
-        public bool SetClip(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !ClipOwned) return false; run.clip = on; return true; }
-        public bool SetSkip(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !SkipOwned) return false; run.skip = on; Evaluate(run); return true; }
-        public bool SetPosition(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !PositionOwned) return false; run.position = on; Evaluate(run); return true; }
-        public bool SetAttentionOnly(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !AttentionOnlyOwned) return false; run.attnOnly = on; Evaluate(run); return true; }
-        public bool SetWarmup(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !WarmupOwned) return false; run.warmup = on; return true; }
-        public bool SetBatchNorm(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !BatchNormOwned) return false; run.batchNormOff = !on; Evaluate(run); return true; }
-        public bool BatchNormOwned => Has("batchnorm");
-        public bool SetFeatures(XgTrack track, bool on) { var run = Run(track); if (run.epochActive || !FeaturesOwned) return false; run.features = on; Evaluate(run); return true; }
-
-        /// <summary>Buying a knob switches it on for both tracks, the way a new architecture is switched to.</summary>
-        void ApplyKnobNode(XgNode node)
-        {
-            foreach (var run in Runs)
-            {
-                if (node.id == "sigmoid" || node.id == "relu") run.act = -1;
-                if (node.id == "gradclip") run.clip = true;
-            }
-        }
-
         // ───────────── data ─────────────
 
         public static string RegionOf(string dataset) => XgBoardData.Region(dataset);
 
-        /// <summary>Card difficulty on the board: a standing wall is always tested at its own fixed level (1).</summary>
-        public int BoardLevel(string dataset)
-        {
-            var wall = ActiveWall;
-            if (wall != null) foreach (var c in wall.checks) if (c.dataset == dataset && !WallCheckPassed(wall, c)) return 1;
-            return Math.Max(1, LevelOf(dataset));
-        }
+        /// <summary>Card difficulty on the board: the desk's own level.</summary>
+        public int BoardLevel(string dataset) => Math.Max(1, LevelOf(dataset));
 
         public List<XgBoardCard> TestSet(string dataset)
         {
@@ -237,19 +207,10 @@ namespace LingGuangV05.XingGuang
             return d == null ? boardAccuracy : (1 - d.chanceError) + (d.chanceError - d.floorError) * q;
         }
 
-        void EvaluateBoard(XgRun run)
-        {
-            var test = TestSet(run.dataset);
-            double acc = ExamWithMistakes(run, test, Knobs(run));
-            run.valAcc = Scale(run.dataset, acc);
-            run.trainAcc = Scale(run.dataset, run.boardTrain < 0 ? acc : run.boardTrain);
-        }
-
         /// <summary>Feeds one epoch of cards through the six rules. Returns true when the rate tore the board (NaN).</summary>
         bool TrainBoard(XgRun run, int cards)
         {
             var k = Knobs(run);
-            RememberFormalKnobs(run);
             int right = 0, torn = 0;
             // Warm-up: after a change of settings the rate climbs from almost nothing over the first cards, when the
             // errors are largest.
@@ -333,8 +294,6 @@ namespace LingGuangV05.XingGuang
         {
             if (!UseBoard) return;
             Board.Reinitialise(RegionOf(run.dataset));
-            // Stage 1: the reset clears what you built; only the read-only "？" cell is left, and it lights up.
-            if (Winter && !HasEmerged(1)) Emerge(1);
         }
     }
 }

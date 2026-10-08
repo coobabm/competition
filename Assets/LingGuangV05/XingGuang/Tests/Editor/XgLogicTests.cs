@@ -42,18 +42,18 @@ namespace LingGuangV05.XingGuang.Tests
             var low = new HashSet<string>(); var high = new HashSet<string>();
             for (int seed = 0; seed < 2000; seed++) { low.Add(XgLogic.Generate(seed, 1).category); high.Add(XgLogic.Generate(seed, 5).category); }
             Assert.IsFalse(low.Contains("真话假话") || low.Contains("三段论") || low.Contains("条件推理"));
-            Assert.That(high, Is.SupersetOf(new[] { "算术", "数列", "条件推理", "三段论", "真假运算", "日历", "真话假话", "比较", "数的性质",
+            Assert.That(high, Is.SupersetOf(new[] { "条件推理", "三段论", "真假运算", "日历", "真话假话", "比较",
                 "否定", "必要条件", "或者推理", "换位推理", "逆否命题", "排除推理" }));
             Assert.That(low, Is.SupersetOf(new[] { "否定", "必要条件" }), "pure reasoning starts at level 1");
         }
 
         [Test]
-        public void ReasoningKindsOutweighArithmeticAtTheFirstLevel()
+        public void SumsLiveOnTheArithmeticDeskNotHere()
         {
-            int reasoning = 0, n = 3000;
-            var kinds = new HashSet<string> { "否定", "必要条件", "比较" };
-            for (int seed = 0; seed < n; seed++) if (kinds.Contains(XgLogic.Generate(seed, 1).category)) reasoning++;
-            Assert.Greater(reasoning, n / 2, "the logic desk is mostly logic, not sums");
+            var sums = new HashSet<string> { "算术", "数的性质", "数列" };
+            for (int level = 1; level <= XgLogic.MaxLevel; level++)
+                for (int seed = 0; seed < 2000; seed++)
+                    Assert.IsFalse(sums.Contains(XgLogic.Generate(seed, level).category), "the logic desk is reasoning only (level " + level + ")");
         }
 
         [Test]
@@ -85,25 +85,6 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var a = XgLogic.Generate(12345, 4); var b = XgLogic.Generate(12345, 4);
             Assert.AreEqual(a.text, b.text); Assert.AreEqual(a.truth, b.truth);
-        }
-
-        [Test]
-        public void ArithmeticAnswersCheckIndependently()
-        {
-            var pattern = new Regex(@"^(-?\d+) ([+−×]) (-?\d+) = (-?\d+) 吗？$");
-            int checkedCount = 0;
-            for (int seed = 0; seed < 4000; seed++)
-            {
-                var q = XgLogic.Generate(seed, 3);
-                if (q.category != "算术") continue;
-                var m = pattern.Match(q.text);
-                Assert.IsTrue(m.Success, q.text);
-                long a = long.Parse(m.Groups[1].Value), b = long.Parse(m.Groups[3].Value), c = long.Parse(m.Groups[4].Value);
-                long real = m.Groups[2].Value == "+" ? a + b : m.Groups[2].Value == "−" ? a - b : a * b;
-                Assert.AreEqual(real == c, q.truth, q.text);
-                checkedCount++;
-            }
-            Assert.Greater(checkedCount, 100);
         }
 
         [Test]

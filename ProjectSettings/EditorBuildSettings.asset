@@ -7,7 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity
-    guid: 00000000000000000000000000000000
+    guid: 28f674d11bb7741de9e79c622b7044b2
   - enabled: 1
     path: Assets/LingGuangV05/Scenes/Main.unity
     guid: 92f30303240d44d4589e5a9f6b122482

@@ -404,7 +404,7 @@ namespace LingGuangV05.Desktop.Miaoyu
             var row = Row(list, "Cafe", 190, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -134), new Vector2(134, -14));
             PrologueDesk.Fill(pic, new Color32(20, 20, 24, 255), false);
-            if (!ProductIllustration(pic, "esports", Lang.T("网吧清仓 · 配图")))
+            if (!ProductIllustration(pic, "product_cafebox", Lang.T("网吧清仓 · 配图")))
                 Label(pic, "Name", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, "<b>" + Lang.T("网吧") + "</b>\n<size=14>×" + HardwareCatalog.CafeBoxLimit + "</size>", 26, new Color32(255, 90, 90, 255), TextAlignmentOptions.Center);
             var mid = PrologueDesk.Rect("Mid", row, Vector2.zero, Vector2.one, new Vector2(150, 10), new Vector2(-190, -12));
             Label(mid, "Title", new Vector2(0, 1), Vector2.one, new Vector2(0, -52), Vector2.zero, Lang.T("<b>【网吧倒闭清仓】E5-2670 + X79 寨板 + 16G + GTX 970 整机，共 8 台</b>"), 18, Ink);

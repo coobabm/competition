@@ -1,0 +1,13 @@
+{
+  "photo_files": 137,
+  "required_photo_keys_checked": 137,
+  "missing_required_photo_keys": [],
+  "image_metadata_requiring_review": [],
+  "native_data_previews": 28,
+  "scene_file_modified": false,
+  "avatars_checked": 31,
+  "data_preview_sampling_probe_checks": 31,
+  "data_preview_sampling_probe_passed": true,
+  "final_unity_tests_verified": false,
+  "blocked_reason": "Mac locked; final import, 9 focused Unity tests and native data/GPU UI verification await unlock"
+}

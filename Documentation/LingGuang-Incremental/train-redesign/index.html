@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>灵光.exe · 训练页重新设计</title>
+<!--
+  Mockup of the 训练 page with usable items.
+  Left: the curve, the train button (each round shows its electricity), and a quick bar of consumables (keys 1–6).
+  Right: the equipped items as a multiplier chain, the effective scale against the stage-6 bar, and today's bills.
+  Passive items (structures, techniques, compute) are on as soon as they are owned. Consumables only act when used.
+  The stage switch at the bottom-right of the window toggles an early run (stage 2) and a stage-6 run.
+-->
+<style>
+:root{
+  --bg:#070C12;--panel:#0B131C;--panel2:#0E1823;--panel3:#122130;--line:#1B2D3B;--line2:#28475A;
+  --ink:#D6EEF5;--mute:#6F95A5;--dim:#3A5566;
+  --p:#A99BF2;--d:#5DA8E8;--ok:#5DCAA5;--money:#FAC775;--bad:#E24B4A;--hot:#EF9F27;--cool:#7FD3FF;
+  --mono:"SF Mono",Menlo,Consolas,"PingFang SC",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#1E4D8C;font-family:var(--mono);color:var(--ink);font-size:12px;min-height:100vh}
+.win{width:1236px;height:693px;background:var(--bg);border:1px solid var(--line2);position:absolute;left:50%;top:50%;transform-origin:center center;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 52px 1fr 22px;overflow:hidden}
+.title{background:#05090E;color:var(--mute);display:flex;align-items:center;padding:0 0 0 10px;gap:8px;border-bottom:1px solid var(--line);user-select:none}
+.title .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.title .sp{flex:1}.title i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:28px;font-style:normal}
+.top{display:grid;grid-template-columns:220px 1fr auto;align-items:center;gap:14px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E1F5EE,#5DCAA5 40%,#0F3D33 75%);box-shadow:0 0 14px #5DCAA588;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 22px #5DCAA5cc}}
+.brand b{font-weight:500;font-size:14px}.brand small{display:block;color:var(--mute);font-size:11px}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar .l{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);white-space:nowrap}
+.bar .l b{color:var(--ink);font-weight:400}
+.track{height:8px;background:#15262F;margin-top:3px;position:relative;overflow:hidden}
+.track i{display:block;height:100%;transition:width .3s}
+.stats{display:flex;gap:16px;white-space:nowrap}
+.stats div{text-align:right}.stats small{display:block;color:var(--mute);font-size:10px}
+.stats .neg{color:var(--bad)}
+.body{display:grid;grid-template-columns:148px 1fr;min-height:0}
+.nav{background:var(--panel);border-right:1px solid var(--line);padding:8px 0}
+.grp{color:var(--dim);font-size:10px;letter-spacing:2px;padding:10px 14px 4px}
+.nav a{display:flex;justify-content:space-between;padding:7px 14px;color:var(--mute);border-left:3px solid transparent}
+.nav a.on{color:var(--ink);background:#0F2A2A;border-left-color:var(--ok)}
+.nav a .b{font-size:10px;color:var(--money)}
+.page{padding:12px;min-height:0;display:grid;grid-template-columns:1fr 410px;gap:12px;background:
+  linear-gradient(#0C1822 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#0C1822 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+.status{background:var(--panel);border-top:1px solid var(--line);color:var(--dim);font-size:11px;display:flex;align-items:center;padding:0 10px;gap:16px}
+.status .sp{flex:1}
+.status .sw{color:#8FB8FF;cursor:pointer;border:1px solid var(--line2);padding:0 8px}
+.status .sw.on{color:var(--ink);border-color:var(--ok)}
+.card{background:var(--panel2);border:1px solid var(--line2);padding:10px 12px;position:relative}
+.h{color:var(--mute);font-size:11px;letter-spacing:1px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.h b{color:var(--ink);font-weight:400;letter-spacing:0}
+.tag{font-size:10px;padding:0 5px;border:1px solid;display:inline-block;letter-spacing:0}
+.t-ok{color:var(--ok);border-color:var(--ok)}.t-p{color:var(--p);border-color:var(--p)}.t-m{color:var(--money);border-color:var(--money)}.t-bad{color:var(--bad);border-color:var(--bad)}.t-off{color:var(--dim);border-color:var(--line2)}
+
+/* left column */
+.col{display:flex;flex-direction:column;gap:10px;min-height:0}
+.tabs{display:flex;gap:6px;align-items:center}
+.tab{border:1px solid var(--line2);padding:5px 14px;color:var(--mute);cursor:pointer;background:var(--panel2)}
+.tab.on{color:#fff;background:#14473D;border-color:var(--ok)}
+.tabs .model{margin-left:auto;color:var(--mute)}
+.tabs .model b{color:var(--ink);font-weight:400}
+.curve{flex:1;min-height:0;display:flex;flex-direction:column}
+.nums{display:flex;gap:18px;font-size:12px;margin-bottom:6px}
+.nums span{color:var(--mute)}.nums b{font-weight:400}
+.chart{flex:1;min-height:0;position:relative;background:#060B10;border:1px solid var(--line)}
+.chart canvas{position:absolute;inset:0;width:100%;height:100%}
+.float{position:absolute;pointer-events:none;font-size:13px;white-space:nowrap;animation:up 1.2s ease-out forwards}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-36px)}}
+
+.trainrow{display:grid;grid-template-columns:260px 1fr 92px;gap:10px;align-items:stretch}
+.go{position:relative;border:1px solid var(--ok);background:linear-gradient(#17594B,#0F3D33);color:#fff;cursor:pointer;padding:8px 12px;text-align:left;user-select:none;overflow:hidden}
+.go:hover{filter:brightness(1.15)}
+.go:active{transform:translateY(1px)}
+.go.off{filter:grayscale(.8) brightness(.6);cursor:not-allowed}
+.go b{display:block;font-size:20px;font-weight:600;letter-spacing:2px}
+.go small{display:block;color:#CDEFE4;font-size:11px;margin-top:3px}
+.go .bill{position:absolute;right:10px;top:9px;color:var(--money);font-size:12px}
+.go .fill{position:absolute;left:0;bottom:0;height:3px;background:var(--ok);width:0}
+.mid{display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.epoch{display:grid;grid-template-columns:repeat(16,1fr);gap:2px;height:10px}
+.epoch i{background:#15262F}.epoch i.on{background:var(--ok)}
+.risk{font-size:12px}
+.buffs{display:flex;gap:6px;flex-wrap:wrap;min-height:20px}
+.buff{font-size:11px;border:1px solid;padding:1px 6px;display:flex;gap:6px;align-items:center}
+.buff i{font-style:normal;opacity:.8}
+.auto{border:1px solid var(--line2);background:var(--panel3);color:var(--mute);cursor:pointer;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.auto.on{color:var(--ok);border-color:var(--ok);background:#0F2A2A}
+
+/* quick bar: consumables */
+.qb{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.slot{position:relative;border:1px solid var(--line2);background:var(--panel3);height:74px;padding:6px 7px;cursor:pointer;overflow:hidden;user-select:none}
+.slot:hover{border-color:var(--cool)}
+.slot .k{position:absolute;left:5px;top:3px;color:var(--dim);font-size:10px}
+.slot .n{position:absolute;right:6px;top:3px;font-size:11px;color:var(--ink)}
+.slot .ic{font-size:22px;text-align:center;margin-top:6px;line-height:26px}
+.slot .nm{text-align:center;font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .cd{position:absolute;inset:0;background:#000a;transform-origin:bottom;pointer-events:none}
+.slot.empty{opacity:.45}
+.slot.empty .n{color:var(--bad)}
+.slot.ready{border-color:var(--cool);box-shadow:inset 0 0 12px #7FD3FF33}
+.slot.flash{animation:fl .35s}
+@keyframes fl{0%{background:#7FD3FF55}100%{background:var(--panel3)}}
+.slot .buy{position:absolute;left:0;right:0;bottom:0;text-align:center;font-size:10px;color:var(--money);background:#0009;padding:1px 0;display:none}
+.slot.empty .buy{display:block}
+
+/* right column */
+.scale .big{font-size:24px;margin:2px 0 2px;display:flex;align-items:baseline;gap:8px}
+.scale .big small{font-size:12px;color:var(--mute)}
+.formula{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;margin:6px 0}
+.formula .x{color:var(--dim)}
+.formula .f{border:1px solid var(--line2);padding:1px 6px}
+.formula .f.p{color:var(--p);border-color:#4B4380}.formula .f.d{color:var(--d);border-color:#2F5677}.formula .f.m{color:var(--money);border-color:#6E5A2E}
+.logbar{height:14px;background:#15262F;position:relative;margin-top:6px}
+.logbar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--money));transition:width .4s}
+.logbar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff}
+.logbar span{position:absolute;top:16px;font-size:10px;color:var(--mute);transform:translateX(-50%)}
+.verdict{margin-top:20px;font-size:12px}
+.gear{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.g{border:1px solid var(--line2);background:var(--panel3);padding:5px 6px;height:60px;position:relative;cursor:default}
+.g .gn{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g .gm{font-size:16px;color:var(--money);margin-top:3px}
+.g .gs{font-size:10px;color:var(--mute);position:absolute;left:6px;bottom:4px}
+.g.own{border-color:#2E6B58;background:#0F2420}
+.g.own .gs{color:var(--ok)}
+.g.miss{border-style:dashed;opacity:.85}
+.g.miss .gm{color:var(--dim)}
+.g.miss .gs{color:var(--money);cursor:pointer}
+.g.miss:hover{border-color:var(--money)}
+.g.locked{opacity:.35}
+.g.pulse{animation:pl .6s}
+@keyframes pl{0%{box-shadow:0 0 0 0 #FAC775aa}100%{box-shadow:0 0 0 10px #FAC77500}}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:3px 10px;font-size:12px}
+.ledger span{color:var(--mute)}
+.ledger .neg{color:var(--bad)}
+.ledger .warn{grid-column:1/-1;color:var(--hot);margin-top:3px}
+.tip{position:fixed;z-index:9;max-width:280px;background:#0B1720;border:1px solid var(--line2);padding:8px 10px;line-height:1.6;pointer-events:none;display:none;font-size:12px}
+.tip b{color:var(--ink);font-weight:500}.tip small{color:var(--mute)}
+.new{color:var(--hot);font-size:10px}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="title"><span class="dot"></span>灵光.exe — 实验室<span class="sp"></span><i>—</i><i>□</i><i>✕</i></div>
+  <div class="top">
+    <div class="brand"><div class="av"></div><div><b>灵光</b><small id="stageName">阶段 2 · 认得出字</small></div></div>
+    <div class="bars">
+      <div class="bar"><div class="l"><span>参数量</span><b id="pTxt"></b></div><div class="track"><i id="pBar" style="background:var(--p)"></i></div></div>
+      <div class="bar"><div class="l"><span>数据量</span><b id="dTxt"></b></div><div class="track"><i id="dBar" style="background:var(--d)"></i></div></div>
+    </div>
+    <div class="stats">
+      <div><small>余额</small><b id="money"></b></div>
+      <div><small>房租</small><b id="rentIn"></b></div>
+      <div><small>显卡</small><b id="gpu">980 Ti · 62°C</b></div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="nav">
+      <div class="grp">实验室</div>
+      <a>概览</a><a>标注</a><a class="on">训练</a><a>数据</a>
+      <div class="grp">养成</div>
+      <a>道具 <span class="b" id="navBuy">2</span></a><a>能力</a><a>科技</a><a>接线</a>
+      <div class="grp">外面</div>
+      <a>订单</a><a>模型仓库</a>
+    </div>
+
+    <div class="page">
+      <!-- left: train -->
+      <div class="col">
+        <div class="tabs">
+          <span class="tab on">视觉</span><span class="tab">文字 / 序列</span>
+          <span class="model" id="modelLine"></span>
+        </div>
+
+        <div class="card curve">
+          <div class="nums" id="nums"></div>
+          <div class="chart" id="chartBox"><canvas id="chart"></canvas></div>
+        </div>
+
+        <div class="trainrow">
+          <div class="go" id="go">
+            <span class="bill" id="bill"></span>
+            <b>训练一轮</b>
+            <small id="goSub"></small>
+            <div class="fill" id="goFill"></div>
+          </div>
+          <div class="mid">
+            <div class="epoch" id="epoch"></div>
+            <div class="risk" id="risk"></div>
+            <div class="buffs" id="buffs"></div>
+          </div>
+          <div class="auto" id="auto"><div>自动训练</div><div id="autoState">关</div></div>
+        </div>
+
+        <div class="card" style="padding:8px 10px 10px">
+          <div class="h"><span>消耗品 · 点一下用掉 · 键盘 1–6</span><span class="new">新机制</span></div>
+          <div class="qb" id="qb"></div>
+        </div>
+      </div>
+
+      <!-- right: items and money -->
+      <div class="col">
+        <div class="card scale">
+          <div class="h"><span id="scaleTitle">有效规模</span><span id="scaleTag"></span></div>
+          <div class="big"><span id="scaleV"></span><small id="scaleNeed"></small></div>
+          <div class="formula" id="formula"></div>
+          <div class="logbar"><i id="logFill"></i><em id="logMark"></em><span id="logLbl"></span></div>
+          <div class="verdict" id="verdict"></div>
+        </div>
+
+        <div class="card" style="flex:1;min-height:0">
+          <div class="h"><span>装备 · 买到就一直生效</span><b id="gearCount"></b></div>
+          <div class="gear" id="gear"></div>
+        </div>
+
+        <div class="card">
+          <div class="h"><span>今天的账</span><b id="day">6月14日</b></div>
+          <div class="ledger" id="ledger"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="status">
+    <span>● 显卡在线</span><span id="wattage">训练负载 125 W</span><span id="kwh">本月 0 度 · 第一档</span>
+    <span class="sp"></span>
+    <span>预览：</span><span class="sw on" data-s="2">阶段 2</span><span class="sw" data-s="6">阶段 6</span>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// ───────────── data ─────────────
+// Consumables: bought on the Items page in stacks, used here. Each has charges, a cooldown and an effect.
+const CONS = [
+  {id:'offpeak', ic:'🌙', name:'谷电时段', price:30, pack:3, cd:0, dur:0, rounds:10,
+   tip:'接下来 10 轮按谷电价算，电费减半。<br><small>2016 年各地已有峰谷电价：夜里 23 点到早上 7 点便宜一半。</small>'},
+  {id:'paste', ic:'🧊', name:'重涂硅脂', price:25, pack:2, cd:20, dur:120,
+   tip:'120 秒内显卡不会烧。连续训练久了再用。<br><small>旧硅脂干了，显卡核心温度会高十几度。</small>'},
+  {id:'redbull', ic:'🥫', name:'红牛', price:6, pack:6, cd:15, dur:60,
+   tip:'60 秒内连击不掉，连击加成 +50%。<br><small>手按才有连击。主角喝，不是灵光喝。</small>'},
+  {id:'ckpt', ic:'💾', name:'检查点回滚', price:40, pack:2, cd:0, dur:0, guard:1,
+   tip:'下一次「退步」自动撤销，回到上一轮的成绩。<br><small>训练前存一份 checkpoint，坏了就读回去。</small>'},
+  {id:'sgdr', ic:'🔁', name:'学习率重启', price:80, pack:1, cd:60, dur:0, rounds:5,
+   tip:'到了上限、涨不动时用：接下来 5 轮上限 +8%。<br><small>SGDR，2016 年 8 月的新论文：把学习率调回去重新冲一次。</small>'},
+  {id:'clean', ic:'🧹', name:'清洗脚本', price:50, pack:1, cd:30, dur:0,
+   tip:'去掉 50 条脏标注。脏数据少了，退步就少。<br><small>写个脚本把前后不一致的标注挑出来。</small>'},
+];
+// Equipment: owned items from the Items page. Multipliers only count toward stage 6's effective scale.
+const GEAR = [
+  {id:'cnn',   name:'CNN 卷积',   m:1,   price:0,     own:true,  st:2, note:'看图区的结构。阶段 2 起就有。'},
+  {id:'dropout',name:'Dropout',   m:1,   price:800,   own:true,  st:2, note:'退步少一些。'},
+  {id:'augment',name:'数据增强',   m:1,   price:1200,  own:false, st:2, note:'退步少一些，样本算多一点。'},
+  {id:'cudnn', name:'cuDNN',     m:1,   price:2000,  own:false, st:3, note:'每轮快 30%，电费少 30%。'},
+  {id:'trans', name:'Transformer',m:10,  price:0,     own:false, st:6, note:'剧情送。把读字区整个换掉。', story:true},
+  {id:'attn',  name:'注意力',     m:3,   price:24000, own:false, st:6, note:'先看哪里，再看内容。'},
+  {id:'room',  name:'机房',       m:8,   price:60000, own:false, st:6, note:'租整间机房：算力 ×8。'},
+  {id:'res',   name:'残差',       m:2,   price:12000, own:false, st:6, note:'跨层直连，深了也练得动。'},
+  {id:'fp16',  name:'混合精度',   m:2,   price:30000, own:false, st:6, note:'半精度：显存省一半，模型能大一倍。'},
+  {id:'warm',  name:'预热',       m:1.5, price:0,     own:false, st:6, note:'剧情送。开头学习率慢慢升。', story:true},
+  {id:'bn',    name:'BatchNorm', m:1.5, price:9000,  own:false, st:6, note:'每层先归一化，练得稳。'},
+  {id:'cool',  name:'九州风神',   m:1,   price:180,   own:false, st:2, note:'塔式散热：烧卡概率减半。', isNew:true},
+];
+
+const NEED = 2000;            // stage 6: the multiplier product pre-training needs
+const S = {stage:2, money:1180, rent:300, rentT:118, epoch:14, combo:0, comboT:0, val:.62, ceil:.86, best:.62,
+  kwh:38, elecToday:22.4, rentToday:0, auto:false, busy:false, hist:[], noise:120,
+  inv:{offpeak:2, paste:1, redbull:4, ckpt:1, sgdr:0, clean:1},
+  cd:{}, buffs:{}, sgdrLeft:0, offLeft:0, guard:0, hot:0, P:4.2, D:9.8};
+
+function setStage(n){
+  S.stage=n;
+  document.querySelectorAll('.sw').forEach(e=>e.classList.toggle('on', +e.dataset.s===n));
+  if(n===6){
+    Object.assign(S,{money:41200,rent:350,epoch:212,val:.71,ceil:.74,best:.71,kwh:312,elecToday:186,P:310,D:520,noise:40});
+    S.inv={offpeak:3, paste:2, redbull:6, ckpt:2, sgdr:1, clean:0};
+    GEAR.forEach(g=>{ if(['trans','warm','res','cudnn','augment'].includes(g.id)) g.own=true; });
+  } else {
+    Object.assign(S,{money:1180,rent:300,epoch:14,val:.62,ceil:.86,best:.62,kwh:38,elecToday:22.4,P:4.2,D:9.8,noise:120});
+    S.inv={offpeak:2, paste:1, redbull:4, ckpt:1, sgdr:0, clean:1};
+    GEAR.forEach(g=>g.own=['cnn','dropout'].includes(g.id));
+  }
+  S.hist=[]; S.cd={}; S.buffs={}; S.guard=0; S.sgdrLeft=0; S.offLeft=0; S.hot=0; S.combo=0;
+  const pts=Math.min(S.epoch,40); let v=.2; for(let i=0;i<pts;i++){ v+= (S.val-v)*.14; S.hist.push(i%9===5? v-.02 : v); }
+  S.hist[S.hist.length-1]=S.val;
+  render();
+}
+
+// ───────────── rules (mockup only) ─────────────
+const has = id => GEAR.find(g=>g.id===id).own;
+const mult = () => GEAR.filter(g=>g.own && g.st===6).reduce((a,g)=>a*g.m,1);
+function roundBill(){
+  let base = S.stage===6 ? (has('room')? 38 : 18) : 1.6;
+  if(has('cudnn')) base*=.7;
+  if(S.kwh>400) base*=1.5; else if(S.kwh>240) base*=1.1;
+  if(S.offLeft>0) base*=.5;
+  return base;
+}
+function dropChance(){
+  let c = .12 + S.noise/2000;
+  if(has('dropout')) c-=.03; if(has('augment')) c-=.03; if(has('bn')) c-=.02;
+  return Math.max(.02,c);
+}
+function burnChance(){ if(S.buffs.paste) return 0; let c = S.hot>8 ? .03 : 0; if(has('cool')) c/=2; return c; }
+function ceiling(){ return S.ceil * (S.sgdrLeft>0 ? 1.08 : 1); }
+
+function train(){
+  if(S.busy) return;
+  const bill = roundBill();
+  if(S.money < bill){ flash('#go','钱不够交电费','var(--bad)'); return; }
+  S.busy=true; S.money-=bill; S.elecToday+=bill; S.kwh+= S.stage===6? 2.4 : .4;
+  const fill=$('#goFill'); fill.style.transition='none'; fill.style.width='0';
+  requestAnimationFrame(()=>{ fill.style.transition='width .6s linear'; fill.style.width='100%'; });
+  floatAt('#go', '−¥'+bill.toFixed(1)+' 电费', 'var(--money)', 160, -6);
+  setTimeout(()=>{
+    S.busy=false; S.epoch++; S.hot++;
+    if(S.offLeft>0) S.offLeft--;
+    if(S.sgdrLeft>0) S.sgdrLeft--;
+    if(!S.buffs.redbull){ S.combo = S.comboT>0 ? S.combo+1 : 1; } else S.combo++;
+    S.comboT=3;
+    let gain = (ceiling()-S.val)*.16*(1+Math.min(S.combo,20)*.03*(S.buffs.redbull?1.5:1));
+    let dropped=false;
+    if(Math.random()<dropChance()){
+      if(S.guard>0){ S.guard--; floatAt('#chartBox','退步被回滚 · 💾','var(--cool)'); }
+      else { gain = -0.02 - Math.random()*.02; dropped=true; }
+    }
+    S.val = Math.max(.1, Math.min(ceiling(), S.val+gain));
+    S.best = Math.max(S.best,S.val);
+    S.hist.push(S.val); if(S.hist.length>80) S.hist.shift();
+    if(dropped) floatAt('#chartBox','退步 '+Math.round(gain*1000)+' 分 · 数据太脏','var(--bad)');
+    else floatAt('#chartBox','+'+Math.round(gain*1000)+' 分','var(--ok)');
+    if(Math.random()<burnChance()){ const fee=S.stage===6?900:420; S.money-=fee; floatAt('#gpu','显卡烧了 −¥'+fee,'var(--bad)',0,20); }
+    if(S.stage===6){ S.P*=1.01; S.D*=1.004; }
+    render();
+    if(S.auto) setTimeout(train, 900);
+  },600);
+  render();
+}
+
+function use(i){
+  const c=CONS[i];
+  if((S.inv[c.id]||0)<=0){ flash('.slot[data-i="'+i+'"]','没了 · 去道具页买','var(--money)'); return; }
+  if((S.cd[c.id]||0)>0) return;
+  S.inv[c.id]--; S.cd[c.id]=c.cd; S.cdMax=S.cdMax||{}; S.cdMax[c.id]=c.cd;
+  if(c.id==='offpeak') S.offLeft+=c.rounds;
+  if(c.id==='paste'){ S.buffs.paste=c.dur; S.hot=0; }
+  if(c.id==='redbull') S.buffs.redbull=c.dur;
+  if(c.id==='ckpt') S.guard++;
+  if(c.id==='sgdr') S.sgdrLeft+=c.rounds;
+  if(c.id==='clean') S.noise=Math.max(0,S.noise-50);
+  const el=$('.slot[data-i="'+i+'"]'); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  floatAt('.slot[data-i="'+i+'"]', c.name, 'var(--cool)', 10, -10);
+  render();
+}
+
+function buyGear(id){
+  const g=GEAR.find(x=>x.id===id);
+  if(g.own || g.story) return;
+  if(S.money < g.price){ flash('#money','还差 ¥'+(g.price-S.money).toFixed(0),'var(--bad)'); return; }
+  S.money-=g.price; g.own=true;
+  render();
+  const el=$('.g[data-id="'+id+'"]'); el.classList.add('pulse');
+  if(g.st===6) floatAt('#scaleV','×'+g.m,'var(--money)',40,0);
+}
+
+// ───────────── view ─────────────
+const $=s=>document.querySelector(s);
+function fmtP(k){ return k>=1000 ? (k/1000).toFixed(k>=10000?0:1)+'B' : k.toFixed(k<10?1:0)+'M'; }
+function fmtD(k){ return k>=1000 ? (k/1000).toFixed(1)+'M' : k.toFixed(k<10?1:0)+'K'; }
+function money(v){ return (v<0?'−':'')+'¥'+Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:0}); }
+
+function render(){
+  const six = S.stage===6;
+  $('#stageName').textContent = six ? '阶段 6 · 全部放开' : '阶段 2 · 认得出字';
+  const pNeed = six? 320 : 6, dNeed = six? 600 : 12.5;
+  $('#pTxt').textContent = fmtP(S.P)+' / '+fmtP(pNeed); $('#pBar').style.width=Math.min(100,S.P/pNeed*100)+'%';
+  $('#dTxt').textContent = fmtD(S.D)+' / '+fmtD(dNeed); $('#dBar').style.width=Math.min(100,S.D/dNeed*100)+'%';
+  $('#money').textContent = money(S.money); $('#money').className = S.money<0?'neg':'';
+  $('#rentIn').textContent = '¥'+S.rent+' · '+Math.floor(S.rentT/60)+':'+String(Math.floor(S.rentT%60)).padStart(2,'0');
+  $('#gpu').textContent = (six? (has('room')?'机房 ×8':'网吧集群') : '980 Ti') + ' · ' + (S.buffs.paste? 58 : 62+Math.min(S.hot,12)*2)+'°C';
+  $('#gpu').style.color = S.hot>8 && !S.buffs.paste ? 'var(--hot)' : '';
+  $('#modelLine').innerHTML = (six? 'Transformer':'CNN')+' · <b>'+fmtP(six?S.P:4.2)+'</b> 参数 · 显存 '+(six? (has('fp16')?'5.1/6G':'10.2/6G <span style="color:var(--bad)">超了</span>'):'0.4/6G');
+
+  // numbers and chart
+  const grade = v => v>.85?'S':v>.78?'A':v>.7?'B':v>.6?'C':'D';
+  $('#nums').innerHTML = `<span>验证</span><b style="color:var(--ok)">${(S.val*100).toFixed(1)}%</b>
+    <span>最佳</span><b>${grade(S.best)} ${Math.round(S.best*1000)}</b>
+    <span>上限</span><b style="color:${S.sgdrLeft?'var(--cool)':'var(--mute)'}">${Math.round(ceiling()*1000)}${S.sgdrLeft?' ↑重启中':''}</b>
+    <span>第</span><b>${S.epoch}</b><span>轮</span>`;
+  drawChart();
+
+  // train button
+  const bill=roundBill();
+  $('#bill').innerHTML = '电费 ¥'+bill.toFixed(1)+(S.offLeft? ' <span style="color:var(--cool)">谷电</span>':'');
+  $('#goSub').textContent = (S.combo>1? '连击 ×'+(1+Math.min(S.combo,20)*.03*(S.buffs.redbull?1.5:1)).toFixed(2)+' · ':'') + '0.6 秒一轮 · 按住连发';
+  $('#go').classList.toggle('off', S.busy);
+  $('#epoch').innerHTML = Array.from({length:16},(_,i)=>`<i class="${i < S.epoch%16 ? 'on':''}"></i>`).join('');
+  const dc=dropChance(), lvl = dc>.15?2:dc>.08?1:0;
+  $('#risk').innerHTML = `<span style="color:${['var(--mute)','var(--money)','var(--bad)'][lvl]}">下一轮退步：${['低','中','高'][lvl]} ${Math.round(dc*100)}%</span>`
+    + `<span style="color:var(--dim)"> · 脏标注 ${S.noise} 条</span>`
+    + (burnChance()>0? `<span style="color:var(--hot)"> · 显卡太热，可能烧卡</span>`:'');
+  const b=[];
+  if(S.offLeft) b.push(['🌙 谷电', S.offLeft+' 轮','var(--cool)']);
+  if(S.buffs.paste) b.push(['🧊 不烧卡', Math.ceil(S.buffs.paste)+'s','var(--cool)']);
+  if(S.buffs.redbull) b.push(['🥫 连击不掉', Math.ceil(S.buffs.redbull)+'s','var(--money)']);
+  if(S.guard) b.push(['💾 回滚', '×'+S.guard,'var(--cool)']);
+  if(S.sgdrLeft) b.push(['🔁 上限 +8%', S.sgdrLeft+' 轮','var(--p)']);
+  $('#buffs').innerHTML = b.map(x=>`<span class="buff" style="color:${x[2]};border-color:${x[2]}">${x[0]}<i>${x[1]}</i></span>`).join('') || '<span style="color:var(--dim);font-size:11px">没有生效中的消耗品</span>';
+  $('#auto').classList.toggle('on',S.auto); $('#autoState').textContent=S.auto?'开':'关';
+
+  // quick bar
+  if(!$('#qb').children.length){
+    $('#qb').innerHTML = CONS.map((c,i)=>`<div class="slot" data-i="${i}"><span class="k">${i+1}</span><span class="n"></span>
+      <div class="ic">${c.ic}</div><div class="nm">${c.name}</div><div class="cd"></div><div class="buy">¥${c.price} / ${c.pack} 个</div></div>`).join('');
+    document.querySelectorAll('.slot').forEach(el=>{
+      const c=CONS[+el.dataset.i];
+      el.onclick=()=>use(+el.dataset.i);
+      tipOn(el, ()=>`<b>${c.ic} ${c.name}</b><br>${c.tip}<br><small>道具页 ¥${c.price} 一份 ${c.pack} 个${c.cd?' · 冷却 '+c.cd+' 秒':''}</small>`);
+    });
+  }
+  CONS.forEach((c,i)=>{
+    const el=$('.slot[data-i="'+i+'"]'), n=S.inv[c.id]||0, cd=(S.cd[c.id]||0), max=(S.cdMax&&S.cdMax[c.id])||1;
+    el.classList.toggle('empty',n<=0); el.classList.toggle('ready',n>0&&cd<=0);
+    el.querySelector('.n').textContent='×'+n;
+    el.querySelector('.cd').style.transform='scaleY('+(cd>0?cd/max:0)+')';
+  });
+
+  // effective scale
+  const m=mult();
+  if(six){
+    const pr=Math.min(S.P/320,1.5), dr=Math.min(S.D/600,1.5), eff=pr*dr*m;
+    $('#scaleTitle').textContent='有效规模 · 预训练要 ×'+NEED;
+    $('#scaleV').textContent='×'+Math.round(eff).toLocaleString();
+    $('#scaleNeed').textContent='/ ×'+NEED;
+    $('#scaleTag').innerHTML = eff>=NEED? '<span class="tag t-ok">够了 · 可以预训练</span>' : '<span class="tag t-bad">不够 · 预训练会卡在 '+Math.max(10,Math.round(eff/NEED*100))+'%</span>';
+    $('#formula').innerHTML = `<span class="f p">参数 ${pr.toFixed(2)}</span><span class="x">×</span><span class="f d">数据 ${dr.toFixed(2)}</span>`
+      + GEAR.filter(g=>g.st===6).map(g=>`<span class="x">×</span><span class="f ${g.own?'m':''}" style="${g.own?'':'color:var(--dim);border-style:dashed'}">${g.name} ${g.m}</span>`).join('');
+    const lg=v=>Math.log10(Math.max(1,v))/Math.log10(5000)*100;
+    $('#logFill').style.width=Math.min(100,lg(eff))+'%';
+    $('#logMark').style.left=lg(NEED)+'%'; $('#logMark').style.display='';
+    $('#logLbl').style.left=lg(NEED)+'%'; $('#logLbl').textContent='×'+NEED;
+    const miss=GEAR.filter(g=>g.st===6 && !g.own).sort((a,b)=>b.m-a.m);
+    $('#verdict').innerHTML = miss.length? '还缺：'+miss.map(g=>`<span style="color:var(--money)">${g.name} ×${g.m}</span>`).join('、')
+      + `<br><span style="color:var(--mute)">倍率是乘起来的：缺一个大的（×3 以上），参数和数据堆满也过不了。</span>` : '<span style="color:var(--ok)">全套到齐。</span>';
+  } else {
+    $('#scaleTitle').textContent='下一项能力 · 能力 2「认得出字」';
+    $('#scaleV').textContent='参数 '+fmtP(S.P)+' · 样本 '+fmtD(S.D);
+    $('#scaleNeed').textContent='';
+    $('#scaleTag').innerHTML='';
+    $('#formula').innerHTML=`<span class="f p">参数 ${fmtP(S.P)} / 6M</span><span class="f d">样本 ${fmtD(S.D)} / 12.5K</span>`;
+    $('#logFill').style.width=Math.min(100,Math.min(S.P/6,S.D/12.5)*100)+'%';
+    $('#logMark').style.display='none'; $('#logLbl').textContent='';
+    $('#verdict').innerHTML='<span style="color:var(--mute)">阶段 1–5 不靠道具。灰色的格子是阶段 6 才用得上的倍率道具，现在先看看。</span>';
+  }
+
+  // gear
+  const shown = GEAR;
+  $('#gearCount').textContent = shown.filter(g=>g.own).length+'/'+shown.length;
+  const gkey=S.stage+':'+shown.map(g=>g.own?1:0).join('');
+  if($('#gear').dataset.key!==gkey){
+    $('#gear').dataset.key=gkey;
+    $('#gear').innerHTML = shown.map(g=>{
+      const locked = g.st > S.stage;
+      const cls = g.own?'own': locked?'locked':'miss';
+      const ms = g.st===6 ? '×'+g.m : '';
+      const state = g.own? '已装备' : locked? '阶段 '+g.st : g.story? '剧情送' : '¥'+g.price.toLocaleString();
+      return `<div class="g ${cls}" data-id="${g.id}"><div class="gn">${g.name}${g.isNew?' <span class="new">新</span>':''}</div><div class="gm">${ms||'<span style="font-size:11px;color:var(--mute)">技巧</span>'}</div><div class="gs">${state}</div></div>`;
+    }).join('');
+    document.querySelectorAll('.g').forEach(el=>{
+      const g=GEAR.find(x=>x.id===el.dataset.id);
+      el.onclick=()=>{ if(el.classList.contains('miss')) buyGear(g.id); };
+      tipOn(el, ()=>`<b>${g.name}</b>${g.st===6?' · 有效规模 ×'+g.m:''}<br>${g.note}<br><small>${g.own?'已拥有：一直生效，不用点。':g.st>S.stage?'阶段 '+g.st+' 才能买。':g.story?'剧情里会拿到。':'点一下买：¥'+g.price.toLocaleString()}</small>`);
+    });
+  }
+
+  // ledger
+  const day = six? '11月20日':'6月14日';
+  $('#day').textContent=day;
+  const tier = S.kwh>400?'第三档 ×1.5':S.kwh>240?'第二档 ×1.1':'第一档';
+  $('#ledger').innerHTML = `<span>训练电费（今天）</span><b class="neg">−¥${S.elecToday.toFixed(1)}</b>
+    <span>房租（${Math.floor(S.rentT/60)}:${String(Math.floor(S.rentT%60)).padStart(2,'0')} 后扣）</span><b class="neg">−¥${S.rent}</b>
+    <span>本月用电 ${S.kwh.toFixed(0)} 度 · ${tier}</span><b style="color:var(--mute)">${S.kwh>240?'贵了':'—'}</b>
+    ${S.money < S.rent ? `<span class="warn">⚠ 余额不够交下一天房租。去标注台挣点，或者少练几轮。</span>`:''}`;
+  $('#kwh').textContent='本月 '+S.kwh.toFixed(0)+' 度 · '+tier;
+  $('#wattage').textContent='训练负载 '+(six?(has('room')?'4,800':'1,250'):125)+' W';
+}
+
+function drawChart(){
+  const cv=$('#chart'), box={width:cv.offsetWidth,height:cv.offsetHeight}, dpr=2;
+  cv.width=box.width*dpr; cv.height=box.height*dpr;
+  const g=cv.getContext('2d'); g.scale(dpr,dpr);
+  const W=box.width, H=box.height, pad=26;
+  g.strokeStyle='#122130'; g.lineWidth=1;
+  for(let i=1;i<4;i++){ g.beginPath(); g.moveTo(pad,H*i/4); g.lineTo(W-6,H*i/4); g.stroke(); }
+  const y=v=>H-8-(v-.1)/(.95-.1)*(H-20);
+  // ceiling
+  g.setLineDash([5,4]); g.strokeStyle=S.sgdrLeft?'#7FD3FF':'#58798A'; g.beginPath(); g.moveTo(pad,y(ceiling())); g.lineTo(W-6,y(ceiling())); g.stroke(); g.setLineDash([]);
+  g.fillStyle=S.sgdrLeft?'#7FD3FF':'#58798A'; g.font='11px Menlo'; g.fillText('上限', W-36, y(ceiling())-4);
+  // curve
+  const n=S.hist.length, dx=(W-pad-10)/Math.max(30,n-1);
+  const grd=g.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#5DCAA544'); grd.addColorStop(1,'#5DCAA500');
+  g.beginPath(); S.hist.forEach((v,i)=>{ const X=pad+i*dx; i?g.lineTo(X,y(v)):g.moveTo(X,y(v)); });
+  g.lineTo(pad+(n-1)*dx,H); g.lineTo(pad,H); g.fillStyle=grd; g.fill();
+  g.beginPath(); S.hist.forEach((v,i)=>{ const X=pad+i*dx; i?g.lineTo(X,y(v)):g.moveTo(X,y(v)); });
+  g.strokeStyle='#5DCAA5'; g.lineWidth=2; g.stroke();
+  // drops in red
+  for(let i=1;i<n;i++) if(S.hist[i]<S.hist[i-1]-.005){ g.fillStyle='#E24B4A'; g.beginPath(); g.arc(pad+i*dx,y(S.hist[i]),3,0,7); g.fill(); }
+  g.fillStyle='#3A5566'; g.fillText('验证准确率 · 红点是退步', pad, 14);
+}
+
+// ───────────── helpers ─────────────
+function floatAt(sel,text,color,dx=0,dy=0){
+  const el=$(sel); if(!el) return; const r=el.getBoundingClientRect(), w=$('#win').getBoundingClientRect(), k=w.width/1236;
+  const f=document.createElement('div'); f.className='float'; f.textContent=text; f.style.color=color;
+  f.style.left=((r.left-w.left)/k+20+dx)+'px'; f.style.top=((r.top-w.top)/k+10+dy)+'px';
+  $('#win').appendChild(f); setTimeout(()=>f.remove(),1200);
+}
+function flash(sel,text,color){ floatAt(sel,text,color); }
+const tip=$('#tip');
+function tipOn(el,fn){
+  el.onmouseenter=e=>{ tip.innerHTML=fn(); tip.style.display='block'; };
+  el.onmousemove=e=>{ tip.style.left=Math.min(innerWidth-300,e.clientX+14)+'px'; tip.style.top=(e.clientY+14)+'px'; };
+  el.onmouseleave=()=>tip.style.display='none';
+}
+
+$('#go').onclick=train;
+$('#auto').onclick=()=>{ S.auto=!S.auto; render(); if(S.auto) train(); };
+document.querySelectorAll('.sw').forEach(e=>e.onclick=()=>setStage(+e.dataset.s));
+addEventListener('keydown',e=>{ if(e.key>='1'&&e.key<='6') use(+e.key-1); if(e.key===' '){ e.preventDefault(); train(); } });
+
+// clock: cooldowns, buffs, combo decay, rent countdown
+setInterval(()=>{
+  const dt=.25;
+  for(const k in S.cd) S.cd[k]=Math.max(0,S.cd[k]-dt);
+  for(const k in S.buffs){ S.buffs[k]-=dt; if(S.buffs[k]<=0) delete S.buffs[k]; }
+  if(S.comboT>0){ S.comboT-=dt; if(S.comboT<=0 && !S.buffs.redbull) S.combo=0; }
+  S.rentT-=dt; if(S.rentT<=0){ S.rentT=120; S.money-=S.rent; S.elecToday=0; floatAt('#money','房租 −¥'+S.rent,'var(--bad)',0,20); }
+  if(!S.busy) S.hot=Math.max(0,S.hot-dt*.2);
+  render();
+},250);
+
+function fit(){ const k=Math.min(innerWidth/1260, innerHeight/715, 1.4); $('#win').style.transform=`translate(-50%,-50%) scale(${k})`; }
+addEventListener('resize',()=>{ fit(); drawChart(); }); fit();
+setStage(2);
+</script>
+</body>
+</html>

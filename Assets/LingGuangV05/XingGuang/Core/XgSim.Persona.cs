@@ -13,13 +13,16 @@ namespace LingGuangV05.XingGuang
         public List<string> words = new List<string>();
     }
 
-    /// <summary>One line of the 对话 page. <see cref="rating"/>: 1 赞, -1 踩, 0 not rated.</summary>
+    /// <summary>One line of its chat log (shown in YY since the 对话 page went). <see cref="rating"/>: 1 赞, -1 踩, 0 not rated.</summary>
     [Serializable]
     public sealed class XgChatLine
     {
         public string from = "", text = "";
         public double at;
         public int rating;
+        /// <summary>The habit tone it was told to use (XgSim.Habits.cs): action + 1, 0 none; <see cref="ctx"/> the situation bits.</summary>
+        public int tone, ctx;
+        public bool explored;
     }
 
     /// <summary>Stage gating of its speech (design v1.1 §11.5).</summary>
@@ -139,6 +142,7 @@ namespace LingGuangV05.XingGuang
             // A reply with no clear tone still says something about warmth: a plain answer is calm.
             if (elements.Count == 0) elements.Add(Low[0]);
             foreach (var e in elements) ToneCard(e, up);
+            LearnHabit(S.chat[index], up);
             return true;
         }
 
@@ -158,10 +162,11 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        double BestOf(params string[] datasets) { double best = 0; foreach (var d in datasets) best = Math.Max(best, BestAcc(d)); return best; }
+        double BestOf(params string[] datasets) { double best = 0; foreach (var d in datasets) best = Math.Max(best, BrainModelAccuracy(d)); return best; }
 
         /// <summary>
-        /// Brain gating (§11.5): at stage 1 the yes/no is flipped with probability 1 − logic accuracy, and at stage 2 the
+        /// Brain gating (§11.5): at stage 1 the yes/no is flipped with probability 1 − the yes/no accuracy
+        /// (<see cref="YesNoAccuracy"/>: the best of 常识判断, 逻辑题, 垃圾短信 and 异或, at least a coin toss), and at stage 2 the
         /// picked option (<see cref="XgSpeechPolicy.Options"/>) is swapped for another with that probability; at stages
         /// 3–4 the words are shuffled with probability 1 − semantic accuracy.
         /// </summary>
@@ -171,17 +176,19 @@ namespace LingGuangV05.XingGuang
             int stage = Math.Max(1, Math.Min(6, S.stage));
             if (stage == 1)
             {
-                double logic = Math.Max(.5, BestOf("logic", "spam", "xor"));
+                double logic = YesNoAccuracy;
                 bool yes = reply.StartsWith("是", StringComparison.Ordinal) || reply.StartsWith("yes", StringComparison.OrdinalIgnoreCase);
-                if (rng.NextDouble() > logic) yes = !yes;
+                // Learned (80% or better): it never guesses wrong, and a statement it was taught gets the taught answer.
+                if (logic >= SenseVoiceLearned) { bool? taught = TaughtAnswer(question); if (taught.HasValue) yes = taught.Value; }
+                else if (rng.NextDouble() > logic) yes = !yes;
                 return XgSpeechPolicy.Constrain(yes ? (English ? "Yes." : "是。") : (English ? "No." : "否。"), stage, English);
             }
             if (stage == 2)
             {
-                double logic = Math.Max(.5, BestOf("logic", "spam", "xor"));
+                double logic = YesNoAccuracy;
                 var options = XgSpeechPolicy.Options(question, 2, English);
                 string picked = XgSpeechPolicy.Choose(reply, options, English);
-                if (rng.NextDouble() > logic)
+                if (logic < SenseVoiceLearned && rng.NextDouble() > logic)
                 {
                     // The wrong answer: any other option.
                     var others = new List<string>();
@@ -252,10 +259,15 @@ namespace LingGuangV05.XingGuang
         /// <summary>The fixed first line when it can first talk (stage 4): 「{称呼}……{自称}是{名字}？」</summary>
         public string FirstWords() => T(Profile.callMe + "……" + Profile.self + "是" + Profile.name + "？", Profile.callMe + "… " + Profile.self + " am " + Profile.name + "?");
 
+        /// <summary>A line joined its chat log (the desktop shows it in its YY conversation, XgYyTalk).</summary>
+        public event Action<XgChatLine> LineAdded;
+
         public void AddLine(string from, string text)
         {
-            S.chat.Add(new XgChatLine { from = from, text = text ?? "", at = Clock });
+            var line = new XgChatLine { from = from, text = text ?? "", at = Clock };
+            S.chat.Add(line);
             if (S.chat.Count > ChatLimit) S.chat.RemoveRange(0, S.chat.Count - ChatLimit);
+            LineAdded?.Invoke(line);
             if (from != "me") return;
             S.chatTurns++; S.lastChatAt = Clock;
             // The way it is addressed grows on the tone board (stage 4's emergence reads it).
@@ -325,6 +337,7 @@ namespace LingGuangV05.XingGuang
             var words = new List<string>();
             if (hotWords != null) foreach (var w in hotWords) if (words.Count < 5 && Knows(w)) words.Add(w);
             if (words.Count > 0) sb.Append(T("近期热词：")).Append(string.Join("、", words)).Append(T("。", ". "));
+            sb.Append(BrainModuleSummary());
             return sb.ToString();
         }
 

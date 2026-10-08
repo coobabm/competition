@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
         TMP_Text label;
         long cardId = -1;
         XgSim owner;
-        bool guess, english, on;
+        bool guess, english, on, trueFalse;
         float age;
 
         /// <summary>The ghost on this paper, made on first use.</summary>
@@ -48,6 +48,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (card.id == cardId && sim == owner) return;
             cardId = card.id; owner = sim;
             on = sim.GhostGuess(desk, out guess, out _);
+            trueFalse = XgCatalog.Desk(desk)?.kind == XgDeskKind.Arith; // the 算术 desk answers 对 / 错
             age = 0;
             english = GameText.IsEnglish;
             label.text = Text();
@@ -57,7 +58,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Hide() { on = false; cardId = -1; owner = null; if (label != null) Paint(0); }
 
-        string Text() => GameText.T("它：" + (guess ? "是" : "否"), "It: " + (guess ? "yes" : "no"));
+        string Text() => GameText.T("它：" + (trueFalse ? (guess ? "对" : "错") : (guess ? "是" : "否")), "It: " + (trueFalse ? (guess ? "true" : "false") : (guess ? "yes" : "no")));
 
         void Paint(float alpha) { var c = label.color; c.a = alpha; label.color = c; }
 

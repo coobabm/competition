@@ -41,7 +41,6 @@ namespace LingGuangV05.EditorTools
                     if (!sim.S.unlocked.Contains(n.id)) sim.S.unlocked.Add(n.id);
                     if (n.kind == XgNodeKind.Dataset && !sim.S.owned.Contains(n.target)) sim.S.owned.Add(n.target);
                 }
-                foreach(var wall in new[]{"combo","structure","length","degrade","translation","parallel"}) { sim.S.walls.Add(wall);sim.S.explainedWalls.Add(wall); }
                 sim.S.trainingIntroDelivered=sim.S.treeIntroDelivered=true;
                 sim.S.vision.arch=stage==1?"perceptron":stage==2?"mlp":stage==3?"vgg":stage==4?"resnet":stage==5?"caption":"transformer";
                 sim.S.sequence.arch=stage==1?"perceptron":stage==2?"mlp":stage==3?"rnn":stage==4?"lstm":stage==5?"attention":"transformer";

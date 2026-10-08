@@ -105,7 +105,7 @@ namespace LingGuangV05.Desktop.Casino
             if (controller == null || controller.Sim == null || controller.runtime == null || controller.runtime.Sim == null) return;
             var sim = controller.Sim;
             if (!ReferenceEquals(sim, bound)) { bound = sim; if (ad != null) Destroy(ad.gameObject); ad = null; }
-            bool held = Held() || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
+            bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
             sim.AdvanceCasinoAd(Mathf.Min(Time.unscaledDeltaTime, 2), held);
             bool show = !held && sim.S.stage >= 3 && !sim.S.chapterComplete && sim.Casino.adVisible;
             if (!show) { if (ad != null) ad.gameObject.SetActive(false); return; }

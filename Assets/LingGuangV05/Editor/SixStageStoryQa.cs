@@ -31,7 +31,7 @@ namespace LingGuangV05.EditorTools
         public sealed class Report
         {
             public bool success, restored, storyActive, testModeDisabled;
-            public bool queuedWallStayedLocked, deliveredWallUnlocked, eraRecovered;
+            public bool abilityBeatStarted, eraRecovered;
             public bool reboundClearedQueue, reboundClearedOverlay, staleChatDiscarded, newSaveTreeStayedHidden;
             public int passed;
             public string error = "", restoreError = "";
@@ -96,29 +96,23 @@ namespace LingGuangV05.EditorTools
                 report.storyActive = director.Active;
                 Check(report, director.Active, "real StoryDirector remains Active with TestMode=false");
 
-                // R1: finishing the beat is not enough; keep the actual presenter's queued speech delayed.
+                // R1: an ability that emerges from the two bars raises its own beat (lg.emerge:2) through the real bridge.
                 var lab = controller.Sim;
-                lab.ObserveWall("combo");
+                FillBarsForAbilityTwo(lab);
+                lab.Tick(1, new MemoryHost());
+                Require(lab.HasAbility(2) && lab.S.stage == 2, "Full bars must emerge the second ability and move the stage.");
                 director.Runner.Tick(0);
-                Require(QueueCount(presenter) > 0, "The real wall beat must enqueue a say command.");
-                Set(presenter, "chatDueAt", Time.unscaledTime + 30f);
-                director.Runner.Tick(1.1);
-                Invoke(presenter, "UpdateChat");
-                report.queuedWallStayedLocked = !lab.WallExplained("combo") && !lab.NodeVisible(XgCatalog.Node("bt.hidden"));
-                Check(report, report.queuedWallStayedLocked, "queued wall speech does not reveal the breakthrough before actual delivery");
-                int beforeMessages = yy.Conversation(YYChatHub.LaoZhou).messages.Count;
-                Set(presenter, "chatDueAt", Time.unscaledTime - 1f);
-                Invoke(presenter, "UpdateChat");
-                report.deliveredWallUnlocked = lab.WallExplained("combo") && lab.NodeVisible(XgCatalog.Node("bt.hidden")) &&
-                    yy.Conversation(YYChatHub.LaoZhou).messages.Count == beforeMessages + 1 && runtime.Sim.S.story.GetFlag("delivered.wall_combo") > 0;
-                Check(report, report.deliveredWallUnlocked, "actual UpdateChat -> YY.Receive -> story.delivered opens the wall");
+                var current = director.Runner.Current;
+                report.abilityBeatStarted = runtime.Sim.S.story.HasFired("emerge_2") || current != null && (current.Id == "emerge_2" || current.Id == "specialty_motivation" || current.Id == "bt_hidden" || current.Id == "month_2");
+                Check(report, report.abilityBeatStarted, "an emerged ability reaches the story as its own beat");
 
-                // R2: this is a serialized purchase whose era card was never marked fired. Rebind real
+                // R2: this is a serialized save whose era card was never marked fired. Rebind real
                 // components, let recovery emit the signal, and let the actual presenter start the Title card.
                 var purchased = new XgSim();
-                purchased.ObserveWall("combo"); purchased.ExplainWall("combo");
-                purchased.S.best.Add(new XgBest { dataset = "mnist", acc = .8, arch = "perceptron" });
-                Require(purchased.BuyNode("bt.hidden", new MemoryHost()), "The fixture buys the real breakthrough, not just a fabricated event.");
+                Require(purchased.BuyNode("mlp", new MemoryHost()), "The fixture buys the real MLP item, not just a fabricated event.");
+                FillBarsForAbilityTwo(purchased);
+                purchased.Tick(1, new MemoryHost());
+                Require(purchased.S.stage == 2, "The fixture reaches stage two through the bars.");
                 var recoveredSave = new ChapterOneSim();
                 recoveredSave.S.labState = JsonUtility.ToJson(purchased.S);
                 BindMemorySave(runtime, controller, director, bridge, recoveredSave);
@@ -128,9 +122,9 @@ namespace LingGuangV05.EditorTools
                 bool hasEraText = false;
                 foreach (var label in cutsceneRoot.GetComponentsInChildren<TMP_Text>(true))
                     if ((label.text ?? "").Contains("1986")) hasEraText = true;
-                report.eraRecovered = controller.Sim.Has("bt.hidden") && director.Runner.Current != null &&
+                report.eraRecovered = controller.Sim.Has("mlp") && director.Runner.Current != null &&
                     director.Runner.Current.Id == "bt_hidden" && director.Runner.IsWaitingForOutput && presenter.CutscenePlaying && hasEraText;
-                Check(report, report.eraRecovered, "purchased, unfinished breakthrough rebind restores real era Title coroutine and 1986 text");
+                Check(report, report.eraRecovered, "a reached, unfinished era rebind restores real era Title coroutine and 1986 text");
 
                 // R3: capture an actual old pending entry, rebind to a fresh memory save (which must clear
                 // pending output), then reinsert that stale entry to exercise the dequeue identity guard too.
@@ -205,6 +199,13 @@ namespace LingGuangV05.EditorTools
             Set(presenter, "cutsceneRoot", rect); Set(presenter, "cutsceneGroup", group); Set(presenter, "cutsceneBackdrop", cutscene.GetComponent<UnityEngine.UI.Image>());
             // Reuse an already loaded font; never import TMP assets or allocate a persistent font asset.
             Set(presenter, "font", TMP_Settings.defaultFontAsset);
+        }
+
+        /// <summary>Gives a lab exactly the trained parameters and samples the second ability asks for.</summary>
+        static void FillBarsForAbilityTwo(XgSim lab)
+        {
+            lab.S.trainedParamsK = lab.ParamsThreshold(2);
+            lab.S.labels.Add(new XgLabelCount { dataset = "logic", count = lab.SamplesThreshold(2) + 1 });
         }
 
         sealed class MemoryHost : IXgHost

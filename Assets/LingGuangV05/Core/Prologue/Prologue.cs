@@ -38,9 +38,9 @@ namespace LingGuangV05.Core
         public static readonly string[] Keys =
         {
             "title", "title_sub", "boot", "who_360", "bubble_boot", "virus_title", "virus_head", "virus_body", "m_virus", "m_dodge_1", "m_dodge_2", "m_dodge_3",
-            "virus_ignored", "m_ignored", "m_txt", "browser", "downloading", "m_hijack", "bubble_safe", "m_grab",
+            "virus_ignored", "m_ignored", "m_txt", "m_txt_again", "browser", "downloading", "m_hijack", "bubble_safe", "m_grab",
             "dialog_title", "dialog_shutdown", "yes", "no", "notepad", "txt_bios", "m_who", "shutting_down", "m_reboot", "m_reboot_exe", "rename", "open", "delete", "properties",
-            "rar_trial_title", "rar_trial", "buy", "close", "extract", "txt_poem", "m_poem", "m_left",
+            "rar_trial_title", "rar_trial", "buy", "close", "extract", "txt_poem", "m_poem", "m_left", "m_open_exe",
             "lz_first", "lz_pick_odd", "lz_pick_yes", "lz_pick_later", "lz_odd_1", "lz_odd_2", "lz_yes_1", "lz_later_1", "lz_game_2",
             "recycle", "recycle_empty", "readonly", "hidden", "prop_type", "prop_size", "prop_desc", "prop_location", "desktop_path",
             "type_exe", "type_dll", "type_txt", "ok", "setup_title", "setup_name", "setup_self", "setup_call", "setup_mood", "setup_mood_hint",

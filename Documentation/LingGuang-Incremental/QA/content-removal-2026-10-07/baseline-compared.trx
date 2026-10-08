@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="71caf60c-2303-4f91-a3ca-f91ddfe78cb2" name="@Mac 2026-10-07 02:17:42" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T02:17:43.1310950+09:00" queuing="2026-10-07T02:17:43.1310950+09:00" start="2026-10-07T02:17:40.9002220+09:00" finish="2026-10-07T02:18:05.3427030+09:00" />
+  <TestSettings name="default" id="f792a2fa-4352-4008-9c9b-3f6024b02138">
+    <Deployment runDeploymentRoot="_Mac_2026-10-07_02_17_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0b657b4c-9c88-479b-a14f-d2f09350b6c0" testId="fa967172-474a-15f1-16d3-9af92868a25f" testName="DriftLowersCheckpointAccuracyByFifteenPointsForAutoAndGhost" computerName="Mac" duration="00:00:00.0129440" startTime="2026-10-07T02:17:49.3399550+09:00" endTime="2026-10-07T02:17:49.3528990+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b657b4c-9c88-479b-a14f-d2f09350b6c0">
+      <Output>
+        <ErrorInfo>
+          <Message>  other desks keep their accuracy
+  Expected: 0.90000000000000002d +/- 1.0000000000000001E-09d
+  But was:  0.92553191489361708d
+  Off by:   -0.025531914893617058d
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgMarketTests.DriftLowersCheckpointAccuracyByFifteenPointsForAutoAndGhost() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgMarketTests.cs:line 124
+
+1)    at LingGuangV05.XingGuang.Tests.XgMarketTests.DriftLowersCheckpointAccuracyByFifteenPointsForAutoAndGhost() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgMarketTests.cs:line 124
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="39fa4e3d-41b0-4d45-8b39-e5d1249e6802" testId="b8b2c1ba-90b4-9b39-41c4-8c447b60a1f1" testName="StageFiveReadsTheGarbleLineByLine" computerName="Mac" duration="00:00:00.0124499" startTime="2026-10-07T02:17:49.2411070+09:00" endTime="2026-10-07T02:17:49.2535560+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39fa4e3d-41b0-4d45-8b39-e5d1249e6802">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 2
+  But was:  4
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgFinaleTests.StageFiveReadsTheGarbleLineByLine() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs:line 503
+
+1)    at LingGuangV05.XingGuang.Tests.XgFinaleTests.StageFiveReadsTheGarbleLineByLine() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs:line 503
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7dfcda36-2e14-4aa4-ba60-e755bcc8e244" testId="eeeb8fe9-7010-6b77-b19a-f1e6e417c776" testName="AfterLabelsItSuggestsTrainingThenAnAssessment" computerName="Mac" duration="00:00:00.0334750" startTime="2026-10-07T02:17:49.2537400+09:00" endTime="2026-10-07T02:17:49.2872140+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dfcda36-2e14-4aa4-ba60-e755bcc8e244">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected string length 12 but was 10. Strings differ at index 0.
+  Expected: "assess.first"
+  But was:  "practice.1"
+  -----------^
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgGuideTests.AfterLabelsItSuggestsTrainingThenAnAssessment() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs:line 67
+
+1)    at LingGuangV05.XingGuang.Tests.XgGuideTests.AfterLabelsItSuggestsTrainingThenAnAssessment() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs:line 67
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5e21ca84-6f4b-43a1-afb5-f7590521b403" testId="5dd2a69f-9c91-37e4-588f-ca73088a79a4" testName="EachStagesWallPassesWithItsGoldenSetting(5)" computerName="Mac" duration="00:00:00.7758420" startTime="2026-10-07T02:18:04.5344630+09:00" endTime="2026-10-07T02:18:05.3103100+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e21ca84-6f4b-43a1-afb5-f7590521b403" />
+    <UnitTestResult executionId="525af000-6e82-4e77-9483-c90af8ea7260" testId="be3550a7-7c12-2404-33f3-7f1b2d4f6057" testName="LogicDeskGetsHarderAndPaysMore" computerName="Mac" duration="00:00:00.0181050" startTime="2026-10-07T02:17:49.3217450+09:00" endTime="2026-10-07T02:17:49.3398500+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="525af000-6e82-4e77-9483-c90af8ea7260">
+      <Output>
+        <ErrorInfo>
+          <Message>  one level per 40 labels
+  Expected: 3
+  But was:  2
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgLogicTests.LogicDeskGetsHarderAndPaysMore() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs:line 142
+
+1)    at LingGuangV05.XingGuang.Tests.XgLogicTests.LogicDeskGetsHarderAndPaysMore() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs:line 142
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7587ffcc-ed55-483a-be50-b9da011babbd" testId="6d525319-a763-f858-2890-e1c2cb2cfb1a" testName="VanishingMemorisationAndAmnesiaAreDetected" computerName="Mac" duration="00:00:00.0538800" startTime="2026-10-07T02:17:49.3573120+09:00" endTime="2026-10-07T02:17:49.4111920+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7587ffcc-ed55-483a-be50-b9da011babbd">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: some item equal to "memorize"
+  But was:  &lt;empty&gt;
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgPhenomenaTests.VanishingMemorisationAndAmnesiaAreDetected() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs:line 149
+
+1)    at LingGuangV05.XingGuang.Tests.XgPhenomenaTests.VanishingMemorisationAndAmnesiaAreDetected() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs:line 149
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="09f4cedb-a5e6-4db8-b901-c0ca72be5019" testId="2b56525c-e0d9-7166-413a-c0176e9e421b" testName="ThePlaytestLeNetThatStaysAtChanceIsToldToWiden" computerName="Mac" duration="00:00:00.1576860" startTime="2026-10-07T02:17:41.9685940+09:00" endTime="2026-10-07T02:17:42.1262800+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09f4cedb-a5e6-4db8-b901-c0ca72be5019">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: not null
+  But was:  null
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgChanceHintTests.ThePlaytestLeNetThatStaysAtChanceIsToldToWiden() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgChanceHintTests.cs:line 53
+
+1)    at LingGuangV05.XingGuang.Tests.XgChanceHintTests.ThePlaytestLeNetThatStaysAtChanceIsToldToWiden() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgChanceHintTests.cs:line 53
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="02c2abd8-fb61-4d96-81c2-a1df3caa756d" testId="4bbee6c9-668f-af16-b080-1eafef58bdae" testName="TheModelLabelsLogsAsWellAsItIsRight" computerName="Mac" duration="00:00:00.0176839" startTime="2026-10-07T02:17:42.1283590+09:00" endTime="2026-10-07T02:17:42.1460430+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02c2abd8-fb61-4d96-81c2-a1df3caa756d">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 0.10000000000000001d +/- 1.0000000000000001E-09d
+  But was:  0.065217391304347894d
+  Off by:   0.034782608695652112d
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDataEconomyTests.TheModelLabelsLogsAsWellAsItIsRight() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDataEconomyTests.cs:line 383
+
+1)    at LingGuangV05.XingGuang.Tests.XgDataEconomyTests.TheModelLabelsLogsAsWellAsItIsRight() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDataEconomyTests.cs:line 383
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8147eb88-b435-4665-8f90-fe72577de166" testId="ba65a41f-0bcc-6ff8-6007-ebfa98dd5d25" testName="TinyRateIsSlowAndHugeRateTears" computerName="Mac" duration="00:00:00.0309540" startTime="2026-10-07T02:17:41.7286400+09:00" endTime="2026-10-07T02:17:41.7595570+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8147eb88-b435-4665-8f90-fe72577de166">
+      <Output>
+        <ErrorInfo>
+          <Message>  gradient clipping prevents NaN
+  Expected: 0
+  But was:  1
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgBoardTests.TinyRateIsSlowAndHugeRateTears() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs:line 51
+
+1)    at LingGuangV05.XingGuang.Tests.XgBoardTests.TinyRateIsSlowAndHugeRateTears() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardTests.cs:line 51
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6395bcfb-6a25-4367-8217-a2f9b4bc07ab" testId="753f8e21-821b-a679-abd7-ad8b9f0fa44f" testName="EachStagesWallPassesWithItsGoldenSetting(4)" computerName="Mac" duration="00:00:00.3759469" startTime="2026-10-07T02:18:04.1584860+09:00" endTime="2026-10-07T02:18:04.5344350+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6395bcfb-6a25-4367-8217-a2f9b4bc07ab" />
+    <UnitTestResult executionId="1680c7bc-99e4-4374-98de-b5975f228fe5" testId="db74e33f-3cbe-e548-9bf2-d6729f71f241" testName="StepActivationOnTwoLayersIsNamed" computerName="Mac" duration="00:00:00.2071990" startTime="2026-10-07T02:17:41.7613590+09:00" endTime="2026-10-07T02:17:41.9685590+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1680c7bc-99e4-4374-98de-b5975f228fe5">
+      <Output>
+        <ErrorInfo>
+          <Message>  the best activation owned
+  Expected string length 15 but was 17. Strings differ at index 6.
+  Expected: "label:ReLU|ReLU"
+  But was:  "label:S 形|S-curve"
+  -----------------^
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgChanceHintTests.StepActivationOnTwoLayersIsNamed() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgChanceHintTests.cs:line 76
+
+1)    at LingGuangV05.XingGuang.Tests.XgChanceHintTests.StepActivationOnTwoLayersIsNamed() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgChanceHintTests.cs:line 76
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="191222d0-aac9-4f32-aa6a-dbe8a41ad244" testId="63a99f1e-8374-c8de-2db0-631bc453cb15" testName="APlainLoopShowsTheDistanceProblem" computerName="Mac" duration="00:00:02.0986010" startTime="2026-10-07T02:17:42.1461650+09:00" endTime="2026-10-07T02:17:44.2447800+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="191222d0-aac9-4f32-aa6a-dbe8a41ad244">
+      <Output>
+        <ErrorInfo>
+          <Message>  near 1 far 0.8561151079136691
+  Expected: less than 0.84999999999999998d
+  But was:  0.85611510791366907d
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.APlainLoopShowsTheDistanceProblem() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 324
+
+1)    at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.APlainLoopShowsTheDistanceProblem() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 324
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="741e5702-3bb6-4bb8-866a-5509ee50dd42" testId="be2371c5-f54a-db09-0b12-f9a1f44d6937" testName="TheExamIsIndependentFarAndUnseen" computerName="Mac" duration="00:00:01.5729169" startTime="2026-10-07T02:17:45.8254630+09:00" endTime="2026-10-07T02:17:47.3983910+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="741e5702-3bb6-4bb8-866a-5509ee50dd42">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 400
+  But was:  120
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.TheExamIsIndependentFarAndUnseen() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 368
+
+1)    at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.TheExamIsIndependentFarAndUnseen() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 368
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="25043da8-377e-4355-8f16-1eae57e031b0" testId="93878556-a095-bd3d-82e4-cf6c6e5ae88e" testName="PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom" computerName="Mac" duration="00:00:00.0766740" startTime="2026-10-07T02:17:49.1644060+09:00" endTime="2026-10-07T02:17:49.2410800+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25043da8-377e-4355-8f16-1eae57e031b0">
+      <Output>
+        <ErrorInfo>
+          <Message>  1024 × 8, positions and warm-up
+  Expected: True
+  But was:  False
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgFinaleTests.PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs:line 130
+
+1)    at LingGuangV05.XingGuang.Tests.XgFinaleTests.PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgFinaleTests.cs:line 130
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c5e4d546-e415-4991-b30f-f01a9fbb9580" testId="0c376cbd-d9a0-6a89-ec4f-2917ef8449ca" testName="TrialsAreFairAndChangeNothingReal" computerName="Mac" duration="00:00:01.7649130" startTime="2026-10-07T02:17:47.3984170+09:00" endTime="2026-10-07T02:17:49.1633420+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5e4d546-e415-4991-b30f-f01a9fbb9580">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 193
+  But was:  1
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.TrialsAreFairAndChangeNothingReal() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 345
+
+1)    at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.TrialsAreFairAndChangeNothingReal() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 345
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a3b8bd55-4143-4b1d-9c64-f2bfe9e9288a" testId="36aff68a-6413-bdbe-d635-53734d51bf59" testName="AMetContractSendsBackLogsSlowlyBeforeStageFive" computerName="Mac" duration="00:00:00.0019040" startTime="2026-10-07T02:17:42.1264160+09:00" endTime="2026-10-07T02:17:42.1283210+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3b8bd55-4143-4b1d-9c64-f2bfe9e9288a">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 1.5d +/- 1.0000000000000001E-09d
+  But was:  6.0d
+  Off by:   -4.5d
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDataEconomyTests.AMetContractSendsBackLogsSlowlyBeforeStageFive() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDataEconomyTests.cs:line 344
+
+1)    at LingGuangV05.XingGuang.Tests.XgDataEconomyTests.AMetContractSendsBackLogsSlowlyBeforeStageFive() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDataEconomyTests.cs:line 344
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="46cd1a8a-f17f-4b91-a1e3-78fbb51f6e09" testId="0ceb7bfc-4c87-e48e-b259-533e449117e0" testName="EachStagesWallPassesWithItsGoldenSetting(3)" computerName="Mac" duration="00:00:00.4941060" startTime="2026-10-07T02:18:03.6643460+09:00" endTime="2026-10-07T02:18:04.1584550+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="46cd1a8a-f17f-4b91-a1e3-78fbb51f6e09" />
+    <UnitTestResult executionId="e346152b-855f-44e5-b010-3b221052189b" testId="ac7147a9-aca2-d641-7ca8-081379069609" testName="PassingIsJudgedByBehaviourNotByTheReferenceSetting" computerName="Mac" duration="00:00:01.5806070" startTime="2026-10-07T02:17:44.2448160+09:00" endTime="2026-10-07T02:17:45.8254340+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e346152b-855f-44e5-b010-3b221052189b">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: False
+  But was:  True
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.PassingIsJudgedByBehaviourNotByTheReferenceSetting() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 383
+
+1)    at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.PassingIsJudgedByBehaviourNotByTheReferenceSetting() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgDiagnosticsTests.cs:line 383
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="21436589-e1b5-4634-b869-1b8fda244224" testId="726df128-b800-80cb-db30-59399ab1d5f1" testName="EachStagesWallPassesWithItsGoldenSetting(2)" computerName="Mac" duration="00:00:14.2528670" startTime="2026-10-07T02:17:49.4113450+09:00" endTime="2026-10-07T02:18:03.6643090+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21436589-e1b5-4634-b869-1b8fda244224">
+      <Output>
+        <ErrorInfo>
+          <Message>  structure after golden training
+  Expected: 3
+  But was:  2
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgProgressionTests.EachStagesWallPassesWithItsGoldenSetting(Int32 stage) in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgProgressionTests.cs:line 149
+
+1)    at LingGuangV05.XingGuang.Tests.XgProgressionTests.EachStagesWallPassesWithItsGoldenSetting(Int32 stage) in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgProgressionTests.cs:line 149
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="86356f7f-3d70-4df6-b213-b0d48ca341cf" testId="8c7aef4b-69a6-962f-55ed-ec9e90937459" testName="TheScaleNamesTheNearestFamousModel" computerName="Mac" duration="00:00:00.0042790" startTime="2026-10-07T02:17:49.3529840+09:00" endTime="2026-10-07T02:17:49.3572630+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86356f7f-3d70-4df6-b213-b0d48ca341cf">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: String containing "VGG-16"
+  But was:  "about 1.8× Google's GNMT (2016)"
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgParamScaleTests.TheScaleNamesTheNearestFamousModel() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgParamScaleTests.cs:line 23
+
+1)    at LingGuangV05.XingGuang.Tests.XgParamScaleTests.TheScaleNamesTheNearestFamousModel() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgParamScaleTests.cs:line 23
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7a4b2beb-2106-4c3c-a8bb-d0b5b7ef8396" testId="3463202f-10c5-f22e-d01a-60d3f156df7e" testName="GlobalAutoKeepsEachDesksCheckpointAndSamplesSeparate" computerName="Mac" duration="00:00:00.0343790" startTime="2026-10-07T02:17:49.2873380+09:00" endTime="2026-10-07T02:17:49.3217170+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a4b2beb-2106-4c3c-a8bb-d0b5b7ef8396">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: greater than 15.0d
+  But was:  13.0d
+</Message>
+          <StackTrace>   at LingGuangV05.XingGuang.Tests.XgLogicTests.GlobalAutoKeepsEachDesksCheckpointAndSamplesSeparate() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs:line 163
+
+1)    at LingGuangV05.XingGuang.Tests.XgLogicTests.GlobalAutoKeepsEachDesksCheckpointAndSamplesSeparate() in /private/tmp/lingguang-retired-baseline/Assets/LingGuangV05/XingGuang/Tests/Editor/XgLogicTests.cs:line 163
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="VanishingMemorisationAndAmnesiaAreDetected" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6d525319-a763-f858-2890-e1c2cb2cfb1a">
+      <Execution id="7587ffcc-ed55-483a-be50-b9da011babbd" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgPhenomenaTests" name="VanishingMemorisationAndAmnesiaAreDetected" />
+    </UnitTest>
+    <UnitTest name="PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="93878556-a095-bd3d-82e4-cf6c6e5ae88e">
+      <Execution id="25043da8-377e-4355-8f16-1eae57e031b0" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgFinaleTests" name="PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom" />
+    </UnitTest>
+    <UnitTest name="PassingIsJudgedByBehaviourNotByTheReferenceSetting" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="ac7147a9-aca2-d641-7ca8-081379069609">
+      <Execution id="e346152b-855f-44e5-b010-3b221052189b" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDiagnosticsTests" name="PassingIsJudgedByBehaviourNotByTheReferenceSetting" />
+    </UnitTest>
+    <UnitTest name="TheModelLabelsLogsAsWellAsItIsRight" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="4bbee6c9-668f-af16-b080-1eafef58bdae">
+      <Execution id="02c2abd8-fb61-4d96-81c2-a1df3caa756d" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDataEconomyTests" name="TheModelLabelsLogsAsWellAsItIsRight" />
+    </UnitTest>
+    <UnitTest name="TrialsAreFairAndChangeNothingReal" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0c376cbd-d9a0-6a89-ec4f-2917ef8449ca">
+      <Execution id="c5e4d546-e415-4991-b30f-f01a9fbb9580" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDiagnosticsTests" name="TrialsAreFairAndChangeNothingReal" />
+    </UnitTest>
+    <UnitTest name="AMetContractSendsBackLogsSlowlyBeforeStageFive" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="36aff68a-6413-bdbe-d635-53734d51bf59">
+      <Execution id="a3b8bd55-4143-4b1d-9c64-f2bfe9e9288a" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDataEconomyTests" name="AMetContractSendsBackLogsSlowlyBeforeStageFive" />
+    </UnitTest>
+    <UnitTest name="TheExamIsIndependentFarAndUnseen" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="be2371c5-f54a-db09-0b12-f9a1f44d6937">
+      <Execution id="741e5702-3bb6-4bb8-866a-5509ee50dd42" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDiagnosticsTests" name="TheExamIsIndependentFarAndUnseen" />
+    </UnitTest>
+    <UnitTest name="GlobalAutoKeepsEachDesksCheckpointAndSamplesSeparate" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="3463202f-10c5-f22e-d01a-60d3f156df7e">
+      <Execution id="7a4b2beb-2106-4c3c-a8bb-d0b5b7ef8396" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgLogicTests" name="GlobalAutoKeepsEachDesksCheckpointAndSamplesSeparate" />
+    </UnitTest>
+    <UnitTest name="ThePlaytestLeNetThatStaysAtChanceIsToldToWiden" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2b56525c-e0d9-7166-413a-c0176e9e421b">
+      <Execution id="09f4cedb-a5e6-4db8-b901-c0ca72be5019" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgChanceHintTests" name="ThePlaytestLeNetThatStaysAtChanceIsToldToWiden" />
+    </UnitTest>
+    <UnitTest name="AfterLabelsItSuggestsTrainingThenAnAssessment" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="eeeb8fe9-7010-6b77-b19a-f1e6e417c776">
+      <Execution id="7dfcda36-2e14-4aa4-ba60-e755bcc8e244" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGuideTests" name="AfterLabelsItSuggestsTrainingThenAnAssessment" />
+    </UnitTest>
+    <UnitTest name="StageFiveReadsTheGarbleLineByLine" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="b8b2c1ba-90b4-9b39-41c4-8c447b60a1f1">
+      <Execution id="39fa4e3d-41b0-4d45-8b39-e5d1249e6802" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgFinaleTests" name="StageFiveReadsTheGarbleLineByLine" />
+    </UnitTest>
+    <UnitTest name="StepActivationOnTwoLayersIsNamed" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="db74e33f-3cbe-e548-9bf2-d6729f71f241">
+      <Execution id="1680c7bc-99e4-4374-98de-b5975f228fe5" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgChanceHintTests" name="StepActivationOnTwoLayersIsNamed" />
+    </UnitTest>
+    <UnitTest name="EachStagesWallPassesWithItsGoldenSetting(2)" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="726df128-b800-80cb-db30-59399ab1d5f1">
+      <Execution id="21436589-e1b5-4634-b869-1b8fda244224" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgProgressionTests" name="EachStagesWallPassesWithItsGoldenSetting(2)" />
+    </UnitTest>
+    <UnitTest name="TheScaleNamesTheNearestFamousModel" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="8c7aef4b-69a6-962f-55ed-ec9e90937459">
+      <Execution id="86356f7f-3d70-4df6-b213-b0d48ca341cf" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgParamScaleTests" name="TheScaleNamesTheNearestFamousModel" />
+    </UnitTest>
+    <UnitTest name="DriftLowersCheckpointAccuracyByFifteenPointsForAutoAndGhost" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="fa967172-474a-15f1-16d3-9af92868a25f">
+      <Execution id="0b657b4c-9c88-479b-a14f-d2f09350b6c0" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgMarketTests" name="DriftLowersCheckpointAccuracyByFifteenPointsForAutoAndGhost" />
+    </UnitTest>
+    <UnitTest name="EachStagesWallPassesWithItsGoldenSetting(4)" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="753f8e21-821b-a679-abd7-ad8b9f0fa44f">
+      <Execution id="6395bcfb-6a25-4367-8217-a2f9b4bc07ab" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgProgressionTests" name="EachStagesWallPassesWithItsGoldenSetting(4)" />
+    </UnitTest>
+    <UnitTest name="APlainLoopShowsTheDistanceProblem" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="63a99f1e-8374-c8de-2db0-631bc453cb15">
+      <Execution id="191222d0-aac9-4f32-aa6a-dbe8a41ad244" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgDiagnosticsTests" name="APlainLoopShowsTheDistanceProblem" />
+    </UnitTest>
+    <UnitTest name="EachStagesWallPassesWithItsGoldenSetting(3)" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0ceb7bfc-4c87-e48e-b259-533e449117e0">
+      <Execution id="46cd1a8a-f17f-4b91-a1e3-78fbb51f6e09" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgProgressionTests" name="EachStagesWallPassesWithItsGoldenSetting(3)" />
+    </UnitTest>
+    <UnitTest name="TinyRateIsSlowAndHugeRateTears" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="ba65a41f-0bcc-6ff8-6007-ebfa98dd5d25">
+      <Execution id="8147eb88-b435-4665-8f90-fe72577de166" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBoardTests" name="TinyRateIsSlowAndHugeRateTears" />
+    </UnitTest>
+    <UnitTest name="EachStagesWallPassesWithItsGoldenSetting(5)" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="5dd2a69f-9c91-37e4-588f-ca73088a79a4">
+      <Execution id="5e21ca84-6f4b-43a1-afb5-f7590521b403" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgProgressionTests" name="EachStagesWallPassesWithItsGoldenSetting(5)" />
+    </UnitTest>
+    <UnitTest name="LogicDeskGetsHarderAndPaysMore" storage="/private/tmp/lingguang-retired-baseline/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="be3550a7-7c12-2404-33f3-7f1b2d4f6057">
+      <Execution id="525af000-6e82-4e77-9483-c90af8ea7260" />
+      <TestMethod codeBase="/private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgLogicTests" name="LogicDeskGetsHarderAndPaysMore" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fa967172-474a-15f1-16d3-9af92868a25f" executionId="0b657b4c-9c88-479b-a14f-d2f09350b6c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8b2c1ba-90b4-9b39-41c4-8c447b60a1f1" executionId="39fa4e3d-41b0-4d45-8b39-e5d1249e6802" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eeeb8fe9-7010-6b77-b19a-f1e6e417c776" executionId="7dfcda36-2e14-4aa4-ba60-e755bcc8e244" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5dd2a69f-9c91-37e4-588f-ca73088a79a4" executionId="5e21ca84-6f4b-43a1-afb5-f7590521b403" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be3550a7-7c12-2404-33f3-7f1b2d4f6057" executionId="525af000-6e82-4e77-9483-c90af8ea7260" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6d525319-a763-f858-2890-e1c2cb2cfb1a" executionId="7587ffcc-ed55-483a-be50-b9da011babbd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b56525c-e0d9-7166-413a-c0176e9e421b" executionId="09f4cedb-a5e6-4db8-b901-c0ca72be5019" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4bbee6c9-668f-af16-b080-1eafef58bdae" executionId="02c2abd8-fb61-4d96-81c2-a1df3caa756d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba65a41f-0bcc-6ff8-6007-ebfa98dd5d25" executionId="8147eb88-b435-4665-8f90-fe72577de166" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="753f8e21-821b-a679-abd7-ad8b9f0fa44f" executionId="6395bcfb-6a25-4367-8217-a2f9b4bc07ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db74e33f-3cbe-e548-9bf2-d6729f71f241" executionId="1680c7bc-99e4-4374-98de-b5975f228fe5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63a99f1e-8374-c8de-2db0-631bc453cb15" executionId="191222d0-aac9-4f32-aa6a-dbe8a41ad244" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be2371c5-f54a-db09-0b12-f9a1f44d6937" executionId="741e5702-3bb6-4bb8-866a-5509ee50dd42" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93878556-a095-bd3d-82e4-cf6c6e5ae88e" executionId="25043da8-377e-4355-8f16-1eae57e031b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c376cbd-d9a0-6a89-ec4f-2917ef8449ca" executionId="c5e4d546-e415-4991-b30f-f01a9fbb9580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="36aff68a-6413-bdbe-d635-53734d51bf59" executionId="a3b8bd55-4143-4b1d-9c64-f2bfe9e9288a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0ceb7bfc-4c87-e48e-b259-533e449117e0" executionId="46cd1a8a-f17f-4b91-a1e3-78fbb51f6e09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac7147a9-aca2-d641-7ca8-081379069609" executionId="e346152b-855f-44e5-b010-3b221052189b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="726df128-b800-80cb-db30-59399ab1d5f1" executionId="21436589-e1b5-4634-b869-1b8fda244224" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c7aef4b-69a6-962f-55ed-ec9e90937459" executionId="86356f7f-3d70-4df6-b213-b0d48ca341cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3463202f-10c5-f22e-d01a-60d3f156df7e" executionId="7a4b2beb-2106-4c3c-a8bb-d0b5b7ef8396" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="21" executed="21" passed="3" failed="18" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started
+Running selected tests in /private/tmp/lingguang-retired-baseline/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll
+   NUnit3TestExecutor discovered 21 of 21 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.6.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

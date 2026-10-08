@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="11922436-a19e-40e8-82c5-5d3c541662ad" name="@Mac 2026-10-07 02:24:11" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T02:24:11.5633500+09:00" queuing="2026-10-07T02:24:11.5633500+09:00" start="2026-10-07T02:24:10.2216550+09:00" finish="2026-10-07T02:24:11.8347880+09:00" />
+  <TestSettings name="default" id="0fced7cc-7009-4d71-b7be-532052cdc5a7">
+    <Deployment runDeploymentRoot="_Mac_2026-10-07_02_24_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7c2069e0-aa3c-4c01-b073-53d42baf3af7" testId="9021852f-8bd8-e0ae-def2-ea19ac11fe03" testName="AttentionExamplesAreExplicitTeachingIllustrations" computerName="Mac" duration="00:00:00.0199380" startTime="2026-10-07T02:24:11.2530510+09:00" endTime="2026-10-07T02:24:11.2729890+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c2069e0-aa3c-4c01-b073-53d42baf3af7" />
+    <UnitTestResult executionId="24bca84b-e142-43d6-801b-435404ed7c4d" testId="0698460d-0add-a6cf-00c3-310a103c29e9" testName="InvalidLegacyEscrowCannotChangeTheWallet(double.PositiveInfinity)" computerName="Mac" duration="00:00:00.0166530" startTime="2026-10-07T02:24:11.3140200+09:00" endTime="2026-10-07T02:24:11.3306720+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24bca84b-e142-43d6-801b-435404ed7c4d" />
+    <UnitTestResult executionId="de01133f-f27d-47a7-9b8c-df6dd784cee6" testId="bec607e0-f451-885b-a869-84218ab66179" testName="RemovedAppNeverReturnsToTheWiringGraph(0)" computerName="Mac" duration="00:00:00.0156250" startTime="2026-10-07T02:24:11.1870070+09:00" endTime="2026-10-07T02:24:11.2026320+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de01133f-f27d-47a7-9b8c-df6dd784cee6" />
+    <UnitTestResult executionId="09f36a74-1771-47f3-9077-8a08f6d7bd1b" testId="c2c7e12a-31b2-94a1-343a-60c47c9a300a" testName="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0181270" startTime="2026-10-07T02:24:11.7428300+09:00" endTime="2026-10-07T02:24:11.7609570+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09f36a74-1771-47f3-9077-8a08f6d7bd1b" />
+    <UnitTestResult executionId="0f43f560-8efe-4a3f-8a7a-cdcffe38b258" testId="18dda59d-40b9-4e4a-ee9e-b57a81432f22" testName="RemovedAppNeverReturnsToTheWiringGraph(6)" computerName="Mac" duration="00:00:00.0145190" startTime="2026-10-07T02:24:11.2361370+09:00" endTime="2026-10-07T02:24:11.2506550+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f43f560-8efe-4a3f-8a7a-cdcffe38b258" />
+    <UnitTestResult executionId="249f9f27-599a-4423-8d38-c330e337f283" testId="25ccee6f-e47b-2afc-f0a8-4137ffa8d216" testName="DeletedAppCannotBeReconnectedAndDoesNotToggleYyJobs" computerName="Mac" duration="00:00:00.1116690" startTime="2026-10-07T02:24:10.9994940+09:00" endTime="2026-10-07T02:24:11.1111250+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="249f9f27-599a-4423-8d38-c330e337f283" />
+    <UnitTestResult executionId="d9bb95a3-3778-4da0-ad96-d108b77921df" testId="d770972e-e147-fb18-f362-26880fa5c49a" testName="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0196830" startTime="2026-10-07T02:24:11.7609890+09:00" endTime="2026-10-07T02:24:11.7806710+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9bb95a3-3778-4da0-ad96-d108b77921df" />
+    <UnitTestResult executionId="ae14d1fa-16a5-43e2-99b7-8abdfa705999" testId="0bd89db7-c226-43b8-bbc5-5ecb8c1340e5" testName="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0180010" startTime="2026-10-07T02:24:11.6128830+09:00" endTime="2026-10-07T02:24:11.6308850+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae14d1fa-16a5-43e2-99b7-8abdfa705999" />
+    <UnitTestResult executionId="ded90aeb-b1a7-4274-ab68-5381239cafe1" testId="eedcd8e4-fc07-3fc3-0d9e-11f70d80e032" testName="BrokenSaveIsRepaired" computerName="Mac" duration="00:00:00.0162250" startTime="2026-10-07T02:24:11.7808770+09:00" endTime="2026-10-07T02:24:11.7971020+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ded90aeb-b1a7-4274-ab68-5381239cafe1" />
+    <UnitTestResult executionId="fd562d1e-2855-461c-a7ad-c52e3f3a6723" testId="131a01ac-df7b-75d3-c0f8-0435364d5dbf" testName="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0174810" startTime="2026-10-07T02:24:11.7252710+09:00" endTime="2026-10-07T02:24:11.7427520+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd562d1e-2855-461c-a7ad-c52e3f3a6723" />
+    <UnitTestResult executionId="56fb5cbb-1b2c-4525-bc13-13ce663c01e3" testId="44c45cb2-b96f-9d0e-d45c-6c6f8042c8a9" testName="InvalidLegacyEscrowCannotChangeTheWallet(double.NaN)" computerName="Mac" duration="00:00:00.0171750" startTime="2026-10-07T02:24:11.2968250+09:00" endTime="2026-10-07T02:24:11.3140000+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56fb5cbb-1b2c-4525-bc13-13ce663c01e3" />
+    <UnitTestResult executionId="ff57c705-3c33-4716-bb67-b6adb3de7d50" testId="6520d0b3-c32d-318c-2b3e-e229035977ac" testName="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(4,&quot;translation&quot;,&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0180410" startTime="2026-10-07T02:24:11.5368130+09:00" endTime="2026-10-07T02:24:11.5548540+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ff57c705-3c33-4716-bb67-b6adb3de7d50" />
+    <UnitTestResult executionId="282fa6af-b5c2-48dc-86f9-0caeead5aade" testId="c5dd42c7-60af-6c78-a3d6-f2b6c9853ac1" testName="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0145210" startTime="2026-10-07T02:24:11.5222280+09:00" endTime="2026-10-07T02:24:11.5367490+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="282fa6af-b5c2-48dc-86f9-0caeead5aade" />
+    <UnitTestResult executionId="89609717-e83b-4f08-b15f-3c4912bf93cc" testId="2c6972fb-c650-4b0d-a069-522d0f8d2314" testName="RetiredHighPriceOrdersHaveNoCatalogOrSigningApi" computerName="Mac" duration="00:00:00.0001880" startTime="2026-10-07T02:24:11.3611830+09:00" endTime="2026-10-07T02:24:11.3613710+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89609717-e83b-4f08-b15f-3c4912bf93cc" />
+    <UnitTestResult executionId="7bec218d-5bf1-4e38-8c81-9c04e5c430c5" testId="a52865ae-2324-e6fb-65a9-7b6ebc7f19b6" testName="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,0)" computerName="Mac" duration="00:00:00.0347760" startTime="2026-10-07T02:24:11.4343250+09:00" endTime="2026-10-07T02:24:11.4691010+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bec218d-5bf1-4e38-8c81-9c04e5c430c5" />
+    <UnitTestResult executionId="357ccb24-c1eb-4b84-bdb3-af3538fd7b3a" testId="f423252a-777e-eb82-aa1c-142e8aeeef5c" testName="InvalidLegacyEscrowCannotChangeTheWallet(-5)" computerName="Mac" duration="00:00:00.0236220" startTime="2026-10-07T02:24:11.2731690+09:00" endTime="2026-10-07T02:24:11.2967910+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="357ccb24-c1eb-4b84-bdb3-af3538fd7b3a" />
+    <UnitTestResult executionId="69b67e35-3f3f-4105-825d-879856d242ed" testId="efef93fc-3dd5-af95-67ad-cedfcd9d3441" testName="HumanRuleDoesNotDisplayARetiredContractId" computerName="Mac" duration="00:00:00.0177850" startTime="2026-10-07T02:24:11.4866870+09:00" endTime="2026-10-07T02:24:11.5044720+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69b67e35-3f3f-4105-825d-879856d242ed" />
+    <UnitTestResult executionId="3dfd5dbd-d4a3-4c8d-bd2e-6068b1bebd70" testId="fea6cf33-8009-e211-1923-bc3358489600" testName="RemovedAppNeverReturnsToTheWiringGraph(4)" computerName="Mac" duration="00:00:00.0149530" startTime="2026-10-07T02:24:11.2026660+09:00" endTime="2026-10-07T02:24:11.2176190+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3dfd5dbd-d4a3-4c8d-bd2e-6068b1bebd70" />
+    <UnitTestResult executionId="6afbf976-5444-4513-8f67-8bea4b065537" testId="f96863af-610d-2ef9-ba01-fb0f8e735ce8" testName="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;support&quot;,&quot;news&quot;)" computerName="Mac" duration="00:00:00.0142850" startTime="2026-10-07T02:24:11.6616000+09:00" endTime="2026-10-07T02:24:11.6758850+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6afbf976-5444-4513-8f67-8bea4b065537" />
+    <UnitTestResult executionId="bc658344-3a66-4279-a887-ea5b408ce193" testId="b9b48091-1c3a-3d45-9d80-9aebe58548b1" testName="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0189640" startTime="2026-10-07T02:24:11.5938960+09:00" endTime="2026-10-07T02:24:11.6128590+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc658344-3a66-4279-a887-ea5b408ce193" />
+    <UnitTestResult executionId="66deb09a-73e0-44cc-8cf0-08211cf6ae04" testId="0ab45a4b-668c-6e3e-d984-5c249b36f83d" testName="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;parking&quot;,&quot;mnist&quot;)" computerName="Mac" duration="00:00:00.0147870" startTime="2026-10-07T02:24:11.6467940+09:00" endTime="2026-10-07T02:24:11.6615810+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66deb09a-73e0-44cc-8cf0-08211cf6ae04" />
+    <UnitTestResult executionId="882da6ec-c21c-459c-9f39-477f49eede28" testId="048c5fa5-27c7-ab34-7c40-287057fc0b4b" testName="LegacyEarnedEscrowIsReleasedOnceAcrossReloads" computerName="Mac" duration="00:00:00.0304310" startTime="2026-10-07T02:24:11.3307160+09:00" endTime="2026-10-07T02:24:11.3611460+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="882da6ec-c21c-459c-9f39-477f49eede28" />
+    <UnitTestResult executionId="19c596b8-6cc7-4cd1-a98b-e41c38ed11ff" testId="678b8d93-8a97-6fb8-34b9-5b17e602528d" testName="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0149150" startTime="2026-10-07T02:24:11.6943300+09:00" endTime="2026-10-07T02:24:11.7092450+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19c596b8-6cc7-4cd1-a98b-e41c38ed11ff" />
+    <UnitTestResult executionId="165df4b0-55bf-4cb5-9f55-51bac16673a4" testId="356ae286-5011-e2ca-742c-85322d40374b" testName="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0159290" startTime="2026-10-07T02:24:11.7093200+09:00" endTime="2026-10-07T02:24:11.7252490+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="165df4b0-55bf-4cb5-9f55-51bac16673a4" />
+    <UnitTestResult executionId="c33c7e4b-12f1-4262-b419-6c09b48b5259" testId="acc59d18-4602-9395-9967-ee4711792dbe" testName="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,0)" computerName="Mac" duration="00:00:00.0545570" startTime="2026-10-07T02:24:11.3614720+09:00" endTime="2026-10-07T02:24:11.4160290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c33c7e4b-12f1-4262-b419-6c09b48b5259" />
+    <UnitTestResult executionId="8b0792fb-7da2-4551-822d-880709e7adf6" testId="44333cf8-ad95-7ab7-d248-f040e918a977" testName="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0183430" startTime="2026-10-07T02:24:11.6759610+09:00" endTime="2026-10-07T02:24:11.6943030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b0792fb-7da2-4551-822d-880709e7adf6" />
+    <UnitTestResult executionId="6307ecd7-aa17-4147-ab28-a28bd4c3a385" testId="412208d9-0c5e-6c21-7552-826c369cd091" testName="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(5,&quot;parallel&quot;,&quot;parallel&quot;)" computerName="Mac" duration="00:00:00.0389390" startTime="2026-10-07T02:24:11.5548790+09:00" endTime="2026-10-07T02:24:11.5938180+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6307ecd7-aa17-4147-ab28-a28bd4c3a385" />
+    <UnitTestResult executionId="78d04e2b-e26e-4790-8b9d-1a72847d8ef4" testId="a4cc715b-50b2-6a43-1f77-e8230e2bcbbb" testName="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,2)" computerName="Mac" duration="00:00:00.0182320" startTime="2026-10-07T02:24:11.4160650+09:00" endTime="2026-10-07T02:24:11.4342960+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78d04e2b-e26e-4790-8b9d-1a72847d8ef4" />
+    <UnitTestResult executionId="865ec147-9860-4c3e-849a-b8d58a56b68e" testId="767254a6-7122-cdf1-248b-4f75ac5d0710" testName="RemovedServiceCannotBeTickedOrSerializedIntoNewSaves" computerName="Mac" duration="00:00:00.0009750" startTime="2026-10-07T02:24:11.2516120+09:00" endTime="2026-10-07T02:24:11.2525870+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="865ec147-9860-4c3e-849a-b8d58a56b68e" />
+    <UnitTestResult executionId="5bc94303-9395-48c3-b5d8-db2922c82409" testId="063eeef4-0562-bd11-b44d-dbe6ff9bff8e" testName="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;goclub&quot;,&quot;go&quot;)" computerName="Mac" duration="00:00:00.0158030" startTime="2026-10-07T02:24:11.6309700+09:00" endTime="2026-10-07T02:24:11.6467720+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bc94303-9395-48c3-b5d8-db2922c82409" />
+    <UnitTestResult executionId="35a9715a-d1b3-434c-a0dd-c71e6c1b49ae" testId="4b43d6ed-b657-202c-71ad-1f4e4474cd80" testName="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;translate&quot;)" computerName="Mac" duration="00:00:00.0176459" startTime="2026-10-07T02:24:11.5045480+09:00" endTime="2026-10-07T02:24:11.5221940+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35a9715a-d1b3-434c-a0dd-c71e6c1b49ae" />
+    <UnitTestResult executionId="d4662f24-63ce-46bf-a6ec-9432fa663b3d" testId="f95b7d6f-b43e-fa47-4cd6-d00d504f240c" testName="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,2)" computerName="Mac" duration="00:00:00.0174980" startTime="2026-10-07T02:24:11.4691410+09:00" endTime="2026-10-07T02:24:11.4866390+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4662f24-63ce-46bf-a6ec-9432fa663b3d" />
+    <UnitTestResult executionId="8c1c33f4-8f29-4d55-addc-fa04ac989b18" testId="1a690559-6ce5-8b95-2775-f7c9ed55ec7e" testName="RemovedAppNeverReturnsToTheWiringGraph(5)" computerName="Mac" duration="00:00:00.0184600" startTime="2026-10-07T02:24:11.2176520+09:00" endTime="2026-10-07T02:24:11.2361110+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c1c33f4-8f29-4d55-addc-fa04ac989b18" />
+    <UnitTestResult executionId="696cc870-e47f-45b2-b24b-55955581075e" testId="88e07368-da13-9a3b-7a54-979e2fd9e8de" testName="LoadingOldWiringDiscardsOnlyTheRemovedAppTask" computerName="Mac" duration="00:00:00.0748910" startTime="2026-10-07T02:24:11.1120300+09:00" endTime="2026-10-07T02:24:11.1869210+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="696cc870-e47f-45b2-b24b-55955581075e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AttentionExamplesAreExplicitTeachingIllustrations" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="9021852f-8bd8-e0ae-def2-ea19ac11fe03">
+      <Execution id="7c2069e0-aa3c-4c01-b073-53d42baf3af7" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgProgressionTests" name="AttentionExamplesAreExplicitTeachingIllustrations" />
+    </UnitTest>
+    <UnitTest name="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="678b8d93-8a97-6fb8-34b9-5b17e602528d">
+      <Execution id="19c596b8-6cc7-4cd1-a98b-e41c38ed11ff" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;support&quot;,&quot;news&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="f96863af-610d-2ef9-ba01-fb0f8e735ce8">
+      <Execution id="6afbf976-5444-4513-8f67-8bea4b065537" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;support&quot;,&quot;news&quot;)" />
+    </UnitTest>
+    <UnitTest name="HumanRuleDoesNotDisplayARetiredContractId" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="efef93fc-3dd5-af95-67ad-cedfcd9d3441">
+      <Execution id="69b67e35-3f3f-4105-825d-879856d242ed" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="HumanRuleDoesNotDisplayARetiredContractId" />
+    </UnitTest>
+    <UnitTest name="InvalidLegacyEscrowCannotChangeTheWallet(double.NaN)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="44c45cb2-b96f-9d0e-d45c-6c6f8042c8a9">
+      <Execution id="56fb5cbb-1b2c-4525-bc13-13ce663c01e3" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredSlaTests" name="InvalidLegacyEscrowCannotChangeTheWallet(double.NaN)" />
+    </UnitTest>
+    <UnitTest name="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="44333cf8-ad95-7ab7-d248-f040e918a977">
+      <Execution id="8b0792fb-7da2-4551-822d-880709e7adf6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredCrowdTasksCannotBeOpenedPostedOrSelected(&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredHighPriceOrdersHaveNoCatalogOrSigningApi" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2c6972fb-c650-4b0d-a069-522d0f8d2314">
+      <Execution id="89609717-e83b-4f08-b15f-3c4912bf93cc" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredSlaTests" name="RetiredHighPriceOrdersHaveNoCatalogOrSigningApi" />
+    </UnitTest>
+    <UnitTest name="RemovedServiceCannotBeTickedOrSerializedIntoNewSaves" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="767254a6-7122-cdf1-248b-4f75ac5d0710">
+      <Execution id="865ec147-9860-4c3e-849a-b8d58a56b68e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="RemovedServiceCannotBeTickedOrSerializedIntoNewSaves" />
+    </UnitTest>
+    <UnitTest name="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="c5dd42c7-60af-6c78-a3d6-f2b6c9853ac1">
+      <Execution id="282fa6af-b5c2-48dc-86f9-0caeead5aade" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;goclub&quot;,&quot;go&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="063eeef4-0562-bd11-b44d-dbe6ff9bff8e">
+      <Execution id="5bc94303-9395-48c3-b5d8-db2922c82409" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;goclub&quot;,&quot;go&quot;)" />
+    </UnitTest>
+    <UnitTest name="InvalidLegacyEscrowCannotChangeTheWallet(double.PositiveInfinity)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0698460d-0add-a6cf-00c3-310a103c29e9">
+      <Execution id="24bca84b-e142-43d6-801b-435404ed7c4d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredSlaTests" name="InvalidLegacyEscrowCannotChangeTheWallet(double.PositiveInfinity)" />
+    </UnitTest>
+    <UnitTest name="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(4,&quot;translation&quot;,&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6520d0b3-c32d-318c-2b3e-e229035977ac">
+      <Execution id="ff57c705-3c33-4716-bb67-b6adb3de7d50" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(4,&quot;translation&quot;,&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d770972e-e147-fb18-f362-26880fa5c49a">
+      <Execution id="d9bb95a3-3778-4da0-ad96-d108b77921df" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="RemovedAppNeverReturnsToTheWiringGraph(6)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="18dda59d-40b9-4e4a-ee9e-b57a81432f22">
+      <Execution id="0f43f560-8efe-4a3f-8a7a-cdcffe38b258" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="RemovedAppNeverReturnsToTheWiringGraph(6)" />
+    </UnitTest>
+    <UnitTest name="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="356ae286-5011-e2ca-742c-85322d40374b">
+      <Execution id="165df4b0-55bf-4cb5-9f55-51bac16673a4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="131a01ac-df7b-75d3-c0f8-0435364d5dbf">
+      <Execution id="fd562d1e-2855-461c-a7ad-c52e3f3a6723" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="RemovedAppNeverReturnsToTheWiringGraph(5)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="1a690559-6ce5-8b95-2775-f7c9ed55ec7e">
+      <Execution id="8c1c33f4-8f29-4d55-addc-fa04ac989b18" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="RemovedAppNeverReturnsToTheWiringGraph(5)" />
+    </UnitTest>
+    <UnitTest name="LoadingOldWiringDiscardsOnlyTheRemovedAppTask" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="88e07368-da13-9a3b-7a54-979e2fd9e8de">
+      <Execution id="696cc870-e47f-45b2-b24b-55955581075e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="LoadingOldWiringDiscardsOnlyTheRemovedAppTask" />
+    </UnitTest>
+    <UnitTest name="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(5,&quot;parallel&quot;,&quot;parallel&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="412208d9-0c5e-6c21-7552-826c369cd091">
+      <Execution id="6307ecd7-aa17-4147-ab28-a28bd4c3a385" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="ProgressionWallsStillSupplyTrainingWithoutCrowdTasks(5,&quot;parallel&quot;,&quot;parallel&quot;)" />
+    </UnitTest>
+    <UnitTest name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;parking&quot;,&quot;mnist&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0ab45a4b-668c-6e3e-d984-5c249b36f83d">
+      <Execution id="66deb09a-73e0-44cc-8cf0-08211cf6ae04" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredContractsCannotBeSignedOrEarnAfterReload(&quot;parking&quot;,&quot;mnist&quot;)" />
+    </UnitTest>
+    <UnitTest name="BrokenSaveIsRepaired" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="eedcd8e4-fc07-3fc3-0d9e-11f70d80e032">
+      <Execution id="ded90aeb-b1a7-4274-ab68-5381239cafe1" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XingGuangTests" name="BrokenSaveIsRepaired" />
+    </UnitTest>
+    <UnitTest name="RemovedAppNeverReturnsToTheWiringGraph(4)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="fea6cf33-8009-e211-1923-bc3358489600">
+      <Execution id="3dfd5dbd-d4a3-4c8d-bd2e-6068b1bebd70" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="RemovedAppNeverReturnsToTheWiringGraph(4)" />
+    </UnitTest>
+    <UnitTest name="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0bd89db7-c226-43b8-bbc5-5ecb8c1340e5">
+      <Execution id="ae14d1fa-16a5-43e2-99b7-8abdfa705999" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="b9b48091-1c3a-3d45-9d80-9aebe58548b1">
+      <Execution id="bc658344-3a66-4279-a887-ea5b408ce193" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="4b43d6ed-b657-202c-71ad-1f4e4474cd80">
+      <Execution id="35a9715a-d1b3-434c-a0dd-c71e6c1b49ae" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,0)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="a52865ae-2324-e6fb-65a9-7b6ebc7f19b6">
+      <Execution id="7bec218d-5bf1-4e38-8c81-9c04e5c430c5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,0)" />
+    </UnitTest>
+    <UnitTest name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,0)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="acc59d18-4602-9395-9967-ee4711792dbe">
+      <Execution id="c33c7e4b-12f1-4262-b419-6c09b48b5259" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,0)" />
+    </UnitTest>
+    <UnitTest name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,2)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="a4cc715b-50b2-6a43-1f77-e8230e2bcbbb">
+      <Execution id="78d04e2b-e26e-4790-8b9d-1a72847d8ef4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;crosssentence&quot;,2)" />
+    </UnitTest>
+    <UnitTest name="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;translate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="c2c7e12a-31b2-94a1-343a-60c47c9a300a">
+      <Execution id="09f36a74-1771-47f3-9077-8a08f6d7bd1b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(&quot;translate&quot;)" />
+    </UnitTest>
+    <UnitTest name="LegacyEarnedEscrowIsReleasedOnceAcrossReloads" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="048c5fa5-27c7-ab34-7c40-287057fc0b4b">
+      <Execution id="882da6ec-c21c-459c-9f39-477f49eede28" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredSlaTests" name="LegacyEarnedEscrowIsReleasedOnceAcrossReloads" />
+    </UnitTest>
+    <UnitTest name="DeletedAppCannotBeReconnectedAndDoesNotToggleYyJobs" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="25ccee6f-e47b-2afc-f0a8-4137ffa8d216">
+      <Execution id="249f9f27-599a-4423-8d38-c330e337f283" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="DeletedAppCannotBeReconnectedAndDoesNotToggleYyJobs" />
+    </UnitTest>
+    <UnitTest name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,2)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="f95b7d6f-b43e-fa47-4cd6-d00d504f240c">
+      <Execution id="d4662f24-63ce-46bf-a6ec-9432fa663b3d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredTaskTests" name="FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(&quot;translate&quot;,2)" />
+    </UnitTest>
+    <UnitTest name="InvalidLegacyEscrowCannotChangeTheWallet(-5)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="f423252a-777e-eb82-aa1c-142e8aeeef5c">
+      <Execution id="357ccb24-c1eb-4b84-bdb3-af3538fd7b3a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgRetiredSlaTests" name="InvalidLegacyEscrowCannotChangeTheWallet(-5)" />
+    </UnitTest>
+    <UnitTest name="RemovedAppNeverReturnsToTheWiringGraph(0)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="bec607e0-f451-885b-a869-84218ab66179">
+      <Execution id="de01133f-f27d-47a7-9b8c-df6dd784cee6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgJuxinTests" name="RemovedAppNeverReturnsToTheWiringGraph(0)" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9021852f-8bd8-e0ae-def2-ea19ac11fe03" executionId="7c2069e0-aa3c-4c01-b073-53d42baf3af7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0698460d-0add-a6cf-00c3-310a103c29e9" executionId="24bca84b-e142-43d6-801b-435404ed7c4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bec607e0-f451-885b-a869-84218ab66179" executionId="de01133f-f27d-47a7-9b8c-df6dd784cee6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2c7e12a-31b2-94a1-343a-60c47c9a300a" executionId="09f36a74-1771-47f3-9077-8a08f6d7bd1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18dda59d-40b9-4e4a-ee9e-b57a81432f22" executionId="0f43f560-8efe-4a3f-8a7a-cdcffe38b258" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25ccee6f-e47b-2afc-f0a8-4137ffa8d216" executionId="249f9f27-599a-4423-8d38-c330e337f283" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d770972e-e147-fb18-f362-26880fa5c49a" executionId="d9bb95a3-3778-4da0-ad96-d108b77921df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bd89db7-c226-43b8-bbc5-5ecb8c1340e5" executionId="ae14d1fa-16a5-43e2-99b7-8abdfa705999" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eedcd8e4-fc07-3fc3-0d9e-11f70d80e032" executionId="ded90aeb-b1a7-4274-ab68-5381239cafe1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="131a01ac-df7b-75d3-c0f8-0435364d5dbf" executionId="fd562d1e-2855-461c-a7ad-c52e3f3a6723" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44c45cb2-b96f-9d0e-d45c-6c6f8042c8a9" executionId="56fb5cbb-1b2c-4525-bc13-13ce663c01e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6520d0b3-c32d-318c-2b3e-e229035977ac" executionId="ff57c705-3c33-4716-bb67-b6adb3de7d50" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c5dd42c7-60af-6c78-a3d6-f2b6c9853ac1" executionId="282fa6af-b5c2-48dc-86f9-0caeead5aade" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c6972fb-c650-4b0d-a069-522d0f8d2314" executionId="89609717-e83b-4f08-b15f-3c4912bf93cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a52865ae-2324-e6fb-65a9-7b6ebc7f19b6" executionId="7bec218d-5bf1-4e38-8c81-9c04e5c430c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f423252a-777e-eb82-aa1c-142e8aeeef5c" executionId="357ccb24-c1eb-4b84-bdb3-af3538fd7b3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efef93fc-3dd5-af95-67ad-cedfcd9d3441" executionId="69b67e35-3f3f-4105-825d-879856d242ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fea6cf33-8009-e211-1923-bc3358489600" executionId="3dfd5dbd-d4a3-4c8d-bd2e-6068b1bebd70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f96863af-610d-2ef9-ba01-fb0f8e735ce8" executionId="6afbf976-5444-4513-8f67-8bea4b065537" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9b48091-1c3a-3d45-9d80-9aebe58548b1" executionId="bc658344-3a66-4279-a887-ea5b408ce193" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0ab45a4b-668c-6e3e-d984-5c249b36f83d" executionId="66deb09a-73e0-44cc-8cf0-08211cf6ae04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="048c5fa5-27c7-ab34-7c40-287057fc0b4b" executionId="882da6ec-c21c-459c-9f39-477f49eede28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="678b8d93-8a97-6fb8-34b9-5b17e602528d" executionId="19c596b8-6cc7-4cd1-a98b-e41c38ed11ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="356ae286-5011-e2ca-742c-85322d40374b" executionId="165df4b0-55bf-4cb5-9f55-51bac16673a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="acc59d18-4602-9395-9967-ee4711792dbe" executionId="c33c7e4b-12f1-4262-b419-6c09b48b5259" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44333cf8-ad95-7ab7-d248-f040e918a977" executionId="8b0792fb-7da2-4551-822d-880709e7adf6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="412208d9-0c5e-6c21-7552-826c369cd091" executionId="6307ecd7-aa17-4147-ab28-a28bd4c3a385" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4cc715b-50b2-6a43-1f77-e8230e2bcbbb" executionId="78d04e2b-e26e-4790-8b9d-1a72847d8ef4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="767254a6-7122-cdf1-248b-4f75ac5d0710" executionId="865ec147-9860-4c3e-849a-b8d58a56b68e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="063eeef4-0562-bd11-b44d-dbe6ff9bff8e" executionId="5bc94303-9395-48c3-b5d8-db2922c82409" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b43d6ed-b657-202c-71ad-1f4e4474cd80" executionId="35a9715a-d1b3-434c-a0dd-c71e6c1b49ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f95b7d6f-b43e-fa47-4cd6-d00d504f240c" executionId="d4662f24-63ce-46bf-a6ec-9432fa663b3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a690559-6ce5-8b95-2775-f7c9ed55ec7e" executionId="8c1c33f4-8f29-4d55-addc-fa04ac989b18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88e07368-da13-9a3b-7a54-979e2fd9e8de" executionId="696cc870-e47f-45b2-b24b-55955581075e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="34" executed="34" passed="34" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started
+Running selected tests in /Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll
+   NUnit3TestExecutor discovered 34 of 34 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.6.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -51,7 +51,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.TrainingUnlocked(XgTrack.Vision));
             Assert.IsNull(sim.TrainEpoch(XgTrack.Vision, host), "no data, no training");
             Assert.IsFalse(sim.ContractsUnlocked);
-            CollectionAssert.AreEquivalent(new[] { "logic", "spam" }, sim.S.desksOpen);
+            CollectionAssert.AreEquivalent(new[] { "arith", "logic", "spam", "sense" }, sim.S.desksOpen);
             sim.Tick(60, host);
             Assert.AreEqual(1000, host.money, 1e-9, "an idle lab neither earns nor bills");
             Assert.AreEqual(0, host.trained, 1e-9);
@@ -73,13 +73,16 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AboutSixteenPressesConvergeLeNetOnMnist()
+        public void AFewDozenPressesBringLeNetCloseToItsCeiling()
         {
-            var sim = WithPack("mnist"); sim.UseBoard = false; /* legacy curve */ var host = new Host();
-            double peak = sim.PeakAccuracy(sim.S.vision, sim.S.vision.lr);
+            var sim = WithPack("mnist"); var host = new Host();
+            foreach (var id in new[] { "v.w1", "v.w2", "v.w3", "v.d3" }) sim.S.unlocked.Add(id);
+            sim.AutoConfigure(sim.S.vision, host);
+            Assert.That(XgSim.Score("mnist", sim.CeilingAcc(sim.S.vision)), Is.GreaterThan(600), "a model big enough for the digits");
             int presses = 0;
-            while (sim.S.vision.valAcc < peak - .01 && presses < 100) { sim.TrainEpoch(XgTrack.Vision, host); presses++; }
-            Assert.That(presses, Is.InRange(8, 30));
+            do { sim.TrainEpoch(XgTrack.Vision, host); presses++; }
+            while (sim.HeadroomPoints(sim.S.vision) > 50 && presses < 200);
+            Assert.That(presses, Is.InRange(5, 100));
         }
 
         [Test]
@@ -137,8 +140,8 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void GradeBonusesArePaidOnce()
         {
-            var sim = WithPack("mnist"); sim.UseBoard = false; /* legacy curve */ var host = new Host { money = 0 };
-            sim.S.vision.steps = 1e6; sim.S.vision.depth = 1;
+            var sim = WithPack("mnist"); var host = new Host { money = 0 };
+            sim.S.vision.valAcc = .95;
             sim.Evaluate(sim.S.vision);
             var a = sim.Assess(XgTrack.Vision, host);
             Assert.GreaterOrEqual(a.grade, 1);
@@ -156,8 +159,8 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = WithPack("mnist"); sim.UseBoard = false; /* legacy curve */
             var run = new XgRun { track = 0, arch = "vgg", dataset = "mnist", depth = 14, width = 5, lr = 3 };
             double tau = sim.Tau(run);
-            run.steps = 6 * tau; sim.Evaluate(run); double peakish = run.valAcc;
-            run.steps = 400 * tau; sim.Evaluate(run);
+            run.steps = 6 * tau; sim.LegacyEvaluate(run); double peakish = run.valAcc;
+            run.steps = 400 * tau; sim.LegacyEvaluate(run);
             Assert.Less(run.valAcc, peakish - .01, "a huge model on small data overfits");
             Assert.Greater(run.trainAcc, run.valAcc);
         }
@@ -207,21 +210,6 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(75, host.money, 1e-6, "¥1.5/s at exactly the threshold");
         }
 
-        [Test]
-        public void HighRateWithoutOptimizerDiverges()
-        {
-            var sim = WithPack("mnist"); sim.UseBoard = false; /* legacy curve */ var host = new Host { compute = 4 };
-            Assert.IsFalse(sim.SetLr(XgTrack.Vision, 0), "the knob is a skill-tree node");
-            sim.S.unlocked.Add("v.lr");
-            Assert.IsTrue(sim.SetLr(XgTrack.Vision, 0));
-            Assert.Greater(sim.Hazard(sim.S.vision), 0);
-            for (int i = 0; i < 2000 && sim.S.nanEvents == 0; i++) sim.TrainEpoch(XgTrack.Vision, host);
-            Assert.Greater(sim.S.nanEvents, 0);
-            Assert.AreEqual(0, sim.S.combo, "NaN breaks the combo");
-            sim.S.unlocked.Add("adam");
-            Assert.AreEqual(0, sim.Hazard(sim.S.vision), 1e-9, "Adam is stable at 0.1 on a CNN");
-        }
-
         // ───────────── skill tree ─────────────
 
         // ───────────── 模型仓库 ─────────────
@@ -242,22 +230,18 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void LoadingAModelRestoresShapeAndProgress()
+        public void LoadingAModelRestoresItsDataAndProgress()
         {
             var sim = WithPack("mnist"); var host = new Host();
-            sim.S.unlocked.Add("v.d3");
-            sim.SetDepth(XgTrack.Vision, 3, host);
             for (int i = 0; i < 6; i++) sim.TrainEpoch(XgTrack.Vision, host);
             var saved = sim.SaveModel(XgTrack.Vision);
             double acc = sim.S.vision.valAcc;
             for (int i = 0; i < 20; i++) sim.TrainEpoch(XgTrack.Vision, host);
-            sim.SetDepth(XgTrack.Vision, 1, host);
             Assert.IsTrue(sim.LoadModel(saved.id));
-            Assert.AreEqual(3, sim.S.vision.depth);
             Assert.AreEqual(saved.epoch, sim.S.vision.epoch);
-            Assert.AreEqual(acc, sim.S.vision.valAcc, 1e-9);
-            sim.S.unlocked.Remove("v.d3");
-            Assert.IsNotNull(sim.CannotLoad(saved), "a model deeper than the cap cannot be loaded");
+            Assert.AreEqual(acc, sim.S.vision.valAcc, 1e-9, "same shape: its accuracy comes back as it was");
+            sim.S.vision.arch = "perceptron";
+            Assert.IsNotNull(sim.CannotLoad(saved), "a checkpoint of another structure cannot be loaded into the automatic model");
         }
 
         [Test]
@@ -304,13 +288,13 @@ namespace LingGuangV05.XingGuang.Tests
         // ───────────── 加薪 ─────────────
 
         [Test]
-        public void RaiseLadderGoesFromOneToThirtyTimes()
+        public void RaiseLadderAddsTwoWholeTimesPerRaise()
         {
             Assert.AreEqual(1, XgCatalog.RaiseMultipliers[0]);
-            Assert.AreEqual(30, XgCatalog.RaiseMultipliers[XgCatalog.RaiseMax]);
+            Assert.AreEqual(34, XgCatalog.RaiseMultipliers[XgCatalog.RaiseMax]);
             for (int i = 1; i <= XgCatalog.RaiseMax; i++)
             {
-                Assert.GreaterOrEqual(XgCatalog.RaiseMultipliers[i] - XgCatalog.RaiseMultipliers[i - 1], .5 - 1e-9, "every raise adds at least ×0.5");
+                Assert.AreEqual(2 * i, XgCatalog.RaiseMultipliers[i], 1e-9, "×2, ×4, ×6 …: every raise adds exactly ×2");
                 Assert.Greater(XgCatalog.RaiseCost(i), XgCatalog.RaiseCost(i - 1));
             }
             Assert.AreEqual(10, XgCatalog.RaiseCost(0));
@@ -326,12 +310,12 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < 15; i++) sim.Answer("mnist", sim.Card("mnist").truth, host);
             Assert.GreaterOrEqual(host.money, 10);
             Assert.AreEqual(1, sim.BuyRaise(host));
-            Assert.AreEqual(1.5, sim.RaiseMultiplier, 1e-9);
+            Assert.AreEqual(2, sim.RaiseMultiplier, 1e-9);
             Assert.AreEqual(0, sim.S.epochs);
         }
 
         [Test]
-        public void RaisesStackUpToThirtyAndStop()
+        public void RaisesStackUpToThirtyFourAndStop()
         {
             var sim = new XgSim(); var host = new Host { money = 1e9 };
             double cost = sim.RaiseCostFor(3, out int levels);
@@ -340,7 +324,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(3, sim.BuyRaise(host, 3));
             Assert.AreEqual(1e9 - cost, host.money, 1e-6);
             Assert.AreEqual(XgCatalog.RaiseMax - 3, sim.BuyRaise(host, 100));
-            Assert.AreEqual(30, sim.RaiseMultiplier, 1e-9);
+            Assert.AreEqual(34, sim.RaiseMultiplier, 1e-9);
             Assert.AreEqual(0, sim.BuyRaise(host));
             Assert.IsTrue(double.IsPositiveInfinity(sim.NextRaiseCost));
         }
@@ -362,7 +346,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
             sim.S.payRaise = 10;
             var card = sim.Card(desk); card.gold = gold; card.level = 3;
-            double expected = sim.PayFor(desk, card.level) * XgCatalog.RaiseMultipliers[10] * 1.05 * (gold ? 3 : 1);
+            double expected = sim.PayFor(desk, card.level) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[10] * 1.05 * (gold ? 3 : 1);
             var result = sim.Answer(desk, card.truth, host);
             Assert.AreEqual(expected, result.pay, 1e-9);
             Assert.AreEqual(1, sim.Samples(desk));
@@ -376,7 +360,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host { money = 1000 };
             sim.BuyRaise(host, 3);
             var restored = new XgSim(new XgState { payRaise = sim.S.payRaise });
-            Assert.AreEqual(restored.PayFor("logic", 1) * XgCatalog.RaiseMultipliers[3], restored.ChatLabel("logic", true, host), 1e-9);
+            Assert.AreEqual(restored.PayFor("logic", 1) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[3], restored.ChatLabel("logic", true, host), 1e-9);
             var old = new XgState(); old.unlocked.Add("manual_pay");
             var migrated = new XgSim(old);
             Assert.AreEqual(XgCatalog.RaiseMultipliers[5], migrated.RaiseMultiplier, 1e-9, "the old one-off ×2 node becomes raise level 5");
@@ -405,42 +389,28 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void NodesNeedTheirParentAndMoney()
         {
-            var sim = LegacyStageThree(); var host = new Host { money = 100 };
+            var sim = LegacyStageThree(); var host = new Host { money = XgCatalog.Node("v.d3").cost + 20 };
             var d4 = XgCatalog.Node("v.d4");
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(d4, host));
             Assert.IsTrue(sim.BuyNode("v.d3", host));
             Assert.AreEqual(20, host.money, 1e-9);
             Assert.AreEqual(3, sim.S.vision.depth, "buying a layer node grows the model");
             Assert.AreEqual(XgSim.NodeStatus.TooExpensive, sim.Status(d4, host));
-            host.money = 1000;
+            host.money = XgCatalog.Node("alexnet").cost + 100;
             Assert.IsTrue(sim.BuyNode("alexnet", host), "architectures no longer wait for papers");
             Assert.AreEqual("alexnet", sim.S.vision.arch, "a new architecture is switched to");
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(XgCatalog.Node("v.d6"), host), "needs v.d5 too");
         }
 
         [Test]
-        public void DepthAndWidthAreFreeUpToTheirCaps()
-        {
-            var sim = LegacyStageThree(); var host = new Host { money = 0 };
-            Assert.AreEqual(2, sim.DepthCap(XgTrack.Vision));
-            Assert.IsFalse(sim.SetDepth(XgTrack.Vision, 5, host), "already at cap 2");
-            Assert.IsTrue(sim.SetDepth(XgTrack.Vision, 1, host));
-            sim.S.unlocked.Add("v.d3"); sim.S.unlocked.Add("v.w1");
-            Assert.IsTrue(sim.SetDepth(XgTrack.Vision, 9, host));
-            Assert.AreEqual(3, sim.S.vision.depth);
-            Assert.IsTrue(sim.SetWidth(XgTrack.Vision, 6, host));
-            Assert.AreEqual(1, sim.S.vision.width);
-            Assert.AreEqual(0, host.money, 1e-9);
-        }
-
-        [Test]
         public void VramLimitsModelSize()
         {
-            var sim = new XgSim(); var host = new Host { money = 1e9, vram = 100 };
+            var sim = new XgSim(); var host = new Host { money = 1e9, vram = 400 };
             foreach (var n in XgCatalog.Nodes) if (n.kind == XgNodeKind.Width && n.tree == "vision") sim.S.unlocked.Add(n.id);
-            for (int w = 1; w < XgCatalog.Widths.Length; w++) sim.SetWidth(XgTrack.Vision, w, host);
-            Assert.Greater(sim.S.vision.width, 0);
-            Assert.LessOrEqual(XgSim.VramNeedMB(sim.S.vision), 100);
+            sim.AutoConfigure(sim.S.vision, host);
+            Assert.Greater(sim.S.vision.width, 0, "it grows as far as the card allows");
+            Assert.Less(sim.S.vision.width, sim.WidthCap(XgTrack.Vision), "but no further");
+            Assert.LessOrEqual(XgSim.VramNeedMB(sim.S.vision), 400);
         }
 
         [Test]
@@ -495,7 +465,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.Has("lenet") || sim.Has("rnn"), "a corrupt empty unlock list cannot invent specialties");
             Assert.IsFalse(sim.Owns("mnist"), "packs are bought, never granted");
             Assert.AreEqual(2, sim.AutoLevel("mnist"), "old auto-answer levels migrate");
-            Assert.AreEqual("mnist", sim.S.desk);
+            Assert.AreEqual("logic", sim.S.desk, "repair falls back to an available starter desk, not a locked digit desk");
+            Assert.IsTrue(sim.DeskOpen(sim.S.desk));
         }
 
         // ───────────── labelling and combo ─────────────
@@ -506,7 +477,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
             var r = sim.Answer("mnist", sim.Card("mnist").truth, host);
             Assert.IsTrue(r.correct);
-            Assert.AreEqual(XgCatalog.LabelPay * 1.05, host.money, 1e-9, "first combo step");
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 1.05, host.money, 1e-9, "first combo step");
             Assert.AreEqual(1, sim.Samples("mnist"), 1e-9);
             Assert.AreEqual(1, sim.S.combo);
         }
@@ -613,7 +584,7 @@ namespace LingGuangV05.XingGuang.Tests
             var card = sim.Card("mnist");
             Assert.IsTrue(card.gold);
             sim.Answer("mnist", card.truth, host);
-            Assert.AreEqual(XgCatalog.LabelPay * 1.05 * 3, host.money, 1e-9);
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 1.05 * 3, host.money, 1e-9);
             sim.S.desk = "mnist"; sim.WindowOpen = true;
             int timeouts = 0; sim.CardTimedOut += _ => timeouts++;
             Label(sim, "mnist", 3, host);

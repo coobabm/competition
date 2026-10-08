@@ -7,39 +7,59 @@ namespace LingGuangV05.XingGuang.Tests
     /// <summary>Design v1.1 §11.7 (the month follows the lab's progress) and §14.2 (hot words by month and destination).</summary>
     public sealed class XgEraTests
     {
-        [Test]
-        public void TheMonthFillsWithPracticeAndRunsOutAfterTheWall()
+        sealed class Host : IXgHost
         {
-            var sim = new XgSim(new XgState { progressionVersion = XgSim.ProgressionSchemaWalls, stage = 1, stageVision = 1, stageSequence = 1 }) { PracticeStrict = true };
-            Assert.AreEqual(0, sim.MonthProgress, 1e-9, "a fresh stage is the first of the month");
-            sim.S.stageEpochs = XgSim.PracticeFor(1) / 2; sim.S.stageSeconds = XgSim.MinutesFor(1) * 60;
-            Assert.AreEqual(.5 * XgSim.WallMonthShare, sim.MonthProgress, 1e-9, "practice is half done");
-            sim.S.stageEpochs = XgSim.PracticeFor(1); sim.S.stageSeconds = XgSim.MinutesFor(1) * 30;
-            Assert.AreEqual(.5 * XgSim.WallMonthShare, sim.MonthProgress, 1e-9, "the slower of epochs and minutes decides");
-            sim.S.stageSeconds = XgSim.MinutesFor(1) * 600;
-            Assert.AreEqual(XgSim.WallMonthShare, sim.MonthProgress, 1e-9, "the date waits at the wall's day until the wall shows");
+            public double Compute => 1;
+            public double VramMB => 100000;
+            public double Money => 1000000;
+            public bool Spend(double amount) => true;
+            public void Earn(double amount) { }
+            public void Train(double seconds) { }
+            public string Blocker => null;
+        }
 
-            sim.S.walls.Add("combo"); sim.S.wallSeenAt = sim.S.stageSeconds;
-            Assert.AreEqual(XgSim.WallMonthShare, sim.MonthProgress, 1e-9, "the wall shows near the end of the month");
-            sim.S.stageSeconds += XgSim.AfterWallSeconds / 2;
-            Assert.AreEqual(XgSim.WallMonthShare + (1 - XgSim.WallMonthShare) / 2, sim.MonthProgress, 1e-9);
-            sim.S.stageSeconds += XgSim.AfterWallSeconds * 10;
-            Assert.AreEqual(1, sim.MonthProgress, 1e-9, "the last day of the month, no further");
+        static void SetLabels(XgSim sim, string dataset, double count)
+        {
+            sim.S.labels.RemoveAll(l => l.dataset == dataset);
+            sim.S.labels.Add(new XgLabelCount { dataset = dataset, count = count });
         }
 
         [Test]
-        public void PassingTheWallStartsTheNextMonthWhateverTheDate()
+        public void TheMonthFollowsTheSlowerBarAndNeverRunsBack()
         {
-            var sim = new XgSim(new XgState { progressionVersion = XgSim.ProgressionSchemaWalls, stage = 3, stageVision = 3, stageSequence = 3 }) { PracticeStrict = true };
-            sim.S.stageSeconds = 30; sim.S.walls.Add("length"); sim.S.wallSeenAt = 30;
-            Assert.AreEqual(XgSim.WallMonthShare, sim.MonthProgress, 1e-9);
+            var sim = new XgSim();
+            Assert.AreEqual(0, sim.MonthProgress, 1e-9, "a fresh stage is the first of the month");
+            double p = sim.ParamsThreshold(2), d = sim.SamplesThreshold(2);
+            sim.S.trainedParamsK = p * .5; SetLabels(sim, "logic", d);
+            Assert.AreEqual(.5, sim.MonthProgress, 1e-9, "parameters are the slower bar");
+            sim.S.trainedParamsK = p; SetLabels(sim, "logic", d * .3);
+            Assert.AreEqual(.5, sim.MonthProgress, 1e-9, "losing data never takes the date back");
+            SetLabels(sim, "logic", d * .8);
+            Assert.AreEqual(.8, sim.MonthProgress, 1e-9, "now the data is the slower bar");
+            SetLabels(sim, "logic", d * .999);
+            Assert.That(sim.MonthProgress, Is.LessThan(1), "the last day waits for the ability itself");
+        }
+
+        [Test]
+        public void AnAbilityStartsTheNextMonthWhateverTheDate()
+        {
+            var sim = new XgSim(new XgState { progressionVersion = XgSim.ProgressionSchema, stage = 3, stageVision = 3, stageSequence = 3 });
+            SetLabels(sim, "poems", sim.SamplesThreshold(4));
+            sim.S.trainedParamsK = sim.ParamsThreshold(4) * .4;
+            Assert.AreEqual(.4, sim.MonthProgress, 1e-9);
             int advanced = 0;
             sim.StageAdvanced += from => advanced = from;
-            typeof(XgSim).GetMethod("AdvanceStage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(sim, new object[] { 3 });
+            sim.S.trainedParamsK = sim.ParamsThreshold(4);
+            sim.Tick(1, new Host());
             Assert.AreEqual(3, advanced);
             Assert.AreEqual(4, sim.S.stage);
-            Assert.AreEqual(0, sim.S.wallSeenAt);
-            Assert.AreEqual(0, sim.MonthProgress, 1e-9, "the calendar never makes a player wait for the month to end");
+            // A new stage is a new month (GameCalendar.DayFor(4, p) is past every day of stage 3's month for any p).
+            Assert.That(sim.MonthProgress, Is.InRange(0, 1));
+            // Rent is paid per calendar day (经济压力与破产): a new month opens on its first day, its bars counted from where they stood.
+            Assert.AreEqual(0, sim.MonthProgress, 1e-9, "the month starts on its first day");
+            sim.S.trainedParamsK = sim.S.stageStartParamsK + (sim.ParamsThreshold(5) - sim.S.stageStartParamsK) * .5;
+            SetLabels(sim, "poems", sim.SamplesThreshold(5));
+            Assert.AreEqual(.5, sim.MonthProgress, 1e-9, "half the way from the stage's start to the fifth ability");
         }
 
         [Test]

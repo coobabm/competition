@@ -69,6 +69,7 @@ namespace HongmengOS.Aero2010.Editor
     Fixed(item.Find("Normal/Background").GetComponent<Image>(),Color.clear);Fixed(item.Find("Highlighted/Background").GetComponent<Image>(),new Color(.68f,.88f,1,.23f));
    }
    var version=Text("Aero Edition Mark",d,"hongmengos\n2010 • Aero Desktop",22,new Color(1,1,1,.7f));version.alignment=TextAlignmentOptions.BottomRight;version.rectTransform.anchorMin=version.rectTransform.anchorMax=new Vector2(1,0);version.rectTransform.pivot=new Vector2(1,0);version.rectTransform.anchoredPosition=new Vector2(-28,72);version.rectTransform.sizeDelta=new Vector2(300,70);
+   version.transform.SetSiblingIndex(wallpaper.GetSiblingIndex()+1);
   }
   static void Window(WindowManager w)
   {

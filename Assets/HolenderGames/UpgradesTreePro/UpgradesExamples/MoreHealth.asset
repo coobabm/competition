@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f896120182dd854896c2ab7adbc9c27, type: 3}
+  m_Name: MoreHealth
+  m_EditorClassIdentifier: 
+  UpgradeName: Massive HP
+  Icon: {fileID: -2652327829572825525, guid: 79d73c8dc176eaa45a64e80accbe7654, type: 3}
+  CurrencyType: 1
+  UnlockWhenParentMaxed: 0
+  UnlockAtParentLevel: 1
+  ParentUpgrade: {fileID: 11400000, guid: 4d13fdade9b4e954ba56e73378f9d41a, type: 2}
+  LevelsData:
+  - Description: Increase the Wizard's <green>Health</green> by 10%
+    Cost: 5
+    Effects:
+    - statType: 3
+      operation: 1
+      value: 1.1
+      showOnTooltip: 1
+      tooltipLabel: HP
+  - Description: Increase the Wizard's <green>Health</green> by 20%
+    Cost: 10
+    Effects:
+    - statType: 3
+      operation: 1
+      value: 1.2
+      showOnTooltip: 1
+      tooltipLabel: HP
+  - Description: Increase the Wizard's <green>Health</green> by 20%
+    Cost: 10
+    Effects:
+    - statType: 3
+      operation: 1
+      value: 1.2
+      showOnTooltip: 1
+      tooltipLabel: HP

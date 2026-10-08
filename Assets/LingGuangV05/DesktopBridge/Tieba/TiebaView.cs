@@ -311,8 +311,6 @@ namespace LingGuangV05.Desktop.Tieba
             Text(PrologueDesk.Rect("Caption", row, Vector2.zero, new Vector2(1, 0), new Vector2(108, 0), new Vector2(0, 18)), Lang.T("配图"), 11, Muted, TextAlignmentOptions.MidlineLeft);
         }
 
-        static string BoardArt(string id) => id == "gpu" ? "gpu" : id == "ai" ? "ai" : id == "santi" ? "space" : "esports";
-
         string Name(string user)
         {
             if (user == ForumLibrary.LaoZhou && hub.S != null && hub.S.zhouGone) return Lang.T("该用户已注销");
@@ -325,7 +323,7 @@ namespace LingGuangV05.Desktop.Tieba
             var card = Card();
             int floors = 0; foreach (var f in t.floors) if (ForumLibrary.View(f, c) != FloorView.Hidden) floors++;
             var board = hub.Library.Boards.Find(b => b.id == t.board);
-            TopicLine(card, BoardArt(t.board), "<b>" + T(t.title, t.titleEn) + "</b>", () => Go("thread", t.id));
+            TopicLine(card, "thread_" + t.id, "<b>" + T(t.title, t.titleEn) + "</b>", () => Go("thread", t.id));
             AuthorLine(card, t.author, (showBoard && board != null ? T(board.name, board.nameEn) + "  ·  " : "") + Name(t.author) + "  ·  " + Date(t.date) + "  ·  " + Lang.T("回复 ") + Math.Max(0, floors - 1), 14, Muted);
         }
 
@@ -338,7 +336,7 @@ namespace LingGuangV05.Desktop.Tieba
                 if (n++ >= 6) break;
                 var ev = e;
                 var card = Card();
-                TopicLine(card, "news", "<b>" + EraContent.Title(ev) + "</b>", () => Go("era", ev.id));
+                TopicLine(card, "era_" + ev.id, "<b>" + EraContent.Title(ev) + "</b>", () => Go("era", ev.id));
                 Line(card, Date(ev.date) + "  ·  " + EraContent.Text(ev), 14, Muted);
             }
             var recent = new List<ForumThread>();
@@ -400,7 +398,7 @@ namespace LingGuangV05.Desktop.Tieba
             Line(Card(new Color32(232, 240, 255, 255)), "<b><size=22>" + EraContent.Title(e) + "</size></b>", 20, Ink);
             var card = Card();
             AuthorLine(card, "chigua", "<b>" + Name("chigua") + "</b>  <color=#E08A00>Lv.3</color>  <color=#3878E6>" + Lang.T("楼主") + "</color>", 16, Link);
-            TopicLine(card, "news", EraContent.Title(e));
+            TopicLine(card, "era_" + e.id, EraContent.Title(e));
             Line(card, EraContent.Text(e), 18, Ink);
             var reply = Card();
             AuthorLine(reply, "xiaobai", "<b>" + Name("xiaobai") + "</b>  <color=#E08A00>Lv.2</color>", 16, Link);

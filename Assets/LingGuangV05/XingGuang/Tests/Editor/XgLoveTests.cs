@@ -28,14 +28,19 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void BeforeStageFiveItCannotReadThatMuch()
+        public void BeforeStageFiveItOnlyAnswersYesOrNo()
         {
             var sim = Ready(); int asked = 0; sim.LoveVerdictRequested += _ => asked++;
-            sim.S.stage = 1; Assert.AreEqual("……", sim.Scripted("她爱我吗"));
-            sim.S.stage = 3; Assert.AreEqual("太长。", sim.Scripted("她爱我吗"));
-            sim.S.stage = 4; StringAssert.Contains("读不了", sim.Scripted("她爱我吗"));
-            Assert.AreEqual(0, asked);
+            for (int stage = 1; stage <= 4; stage++)
+            {
+                sim.S.stage = stage;
+                string reply = sim.Scripted("她爱我吗");
+                Assert.IsTrue(reply == "是。" || reply == "否。", "stage " + stage + ": " + reply);
+                Assert.AreEqual(sim.EarlyLoveAnswer, reply, "the same lean as the 「？」 cell");
+            }
+            Assert.AreEqual(0, asked, "it never reads her chats before stage 5");
             Assert.IsFalse(sim.S.loveAwaitingConsent);
+            Assert.IsTrue(sim.OfferLoveQuestion, "asked once, the chip stays");
         }
 
         [Test]
@@ -54,8 +59,23 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.OfferLoveHint());
             Assert.IsFalse(sim.OfferLoveHint(), "once");
             Assert.IsTrue(sim.OfferLoveQuestion);
-            sim.S.stage = 4;
-            Assert.IsFalse(sim.OfferLoveQuestion, "not below stage 5");
+            sim.S.stage = 1;
+            Assert.IsTrue(sim.OfferLoveQuestion, "it can be asked from stage 1; the answer is just 是 or 否");
+        }
+
+        [Test]
+        public void EveryLineOfTheChatLogIsAnnouncedForYY()
+        {
+            // YY shows the chat with it (XgYyTalk): the consent answer, its reply and the verdict lines all reach it.
+            var sim = Ready(); sim.OfferLoveHint();
+            var seen = new System.Collections.Generic.List<string>();
+            sim.LineAdded += l => seen.Add(l.from + ":" + l.text);
+            sim.Scripted(sim.LoveQuestion);
+            sim.AnswerLoveConsent(false);
+            CollectionAssert.AreEqual(new[] { "me:算了", "ai:好。" }, seen);
+            sim.PostLoveVerdict(true, "是。", "这个数会变。");
+            Assert.AreEqual("ai:这个数会变。", seen[seen.Count - 1]);
+            Assert.AreEqual(4, seen.Count);
         }
 
         [Test]

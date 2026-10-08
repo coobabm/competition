@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f896120182dd854896c2ab7adbc9c27, type: 3}
+  m_Name: Wizard_Damage
+  m_EditorClassIdentifier: 
+  UpgradeName: Strong Fireball
+  Icon: {fileID: 7043154560315042046, guid: 79d73c8dc176eaa45a64e80accbe7654, type: 3}
+  CurrencyType: 0
+  UnlockWhenParentMaxed: 1
+  UnlockAtParentLevel: 1
+  ParentUpgrade: {fileID: 0}
+  LevelsData:
+  - Description: Increase the Wizard's Fireball <red>Damage</red> by 20%.
+    Cost: 50
+    Effects:
+    - statType: 0
+      operation: 1
+      value: 1.2
+      showOnTooltip: 1
+      tooltipLabel: Damage
+  - Description: Increase the Wizard's Fireball <red>Damage</red> by 30%.
+    Cost: 50
+    Effects:
+    - statType: 0
+      operation: 1
+      value: 1.3
+      showOnTooltip: 1
+      tooltipLabel: Damage
+  - Description: Increase the Wizard's Fireball <red>Damage</red> by 30%.
+    Cost: 50
+    Effects:
+    - statType: 0
+      operation: 1
+      value: 1.3
+      showOnTooltip: 1
+      tooltipLabel: Damage

@@ -40,7 +40,7 @@ namespace LingGuangV05.Desktop.Story
                 var icon = PrologueDesk.Rect(app.name, row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(x, -12), new Vector2(x + 24, 12));
                 var img = PrologueDesk.Fill(icon, app.color);
                 var b = icon.gameObject.AddComponent<Button>(); b.targetGraphic = img;
-                b.onClick.AddListener(() => PrologueDirector.Desk?.Popup(T(app.name, app.nameEn), app.say(), 6));
+                b.onClick.AddListener(() => PrologueDirector.Desk?.StoryPopup(T(app.name, app.nameEn), app.say(), 6));
                 var t = PrologueDesk.Rect("Mark", icon, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<TextMeshProUGUI>();
                 t.font = PrologueDesk.CjkFont(); t.text = "<b>" + app.mark + "</b>"; t.fontSize = 15; t.color = Color.white; t.alignment = TextAlignmentOptions.Center; t.raycastTarget = false;
                 UiTip.Add(icon, app.name, app.nameEn);

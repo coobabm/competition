@@ -6,7 +6,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>「她爱我吗」 (女友系统 §6): what the lab remembers about the question. Saved with the lab.</summary>
     public sealed partial class XgState
     {
-        /// <summary>The inner voice wondered and the 对话 page offers 「她……爱我吗？」 from now on.</summary>
+        /// <summary>The inner voice wondered and its YY conversation offers 「她……爱我吗？」 from now on.</summary>
         public bool loveOffered;
         /// <summary>0 never asked, 1 you let it read the chat (ever), -1 you said 【算了】 and never let it.</summary>
         public int loveConsent;
@@ -16,6 +16,8 @@ namespace LingGuangV05.XingGuang
         public int loveAskedDay;
         public int loveVerdicts;
         public bool loveLastYes;
+        /// <summary>Times it was asked before stage 5, when it could only answer 是 or 否 (the inner voice reacts to the first).</summary>
+        public int loveEarlyAsked;
     }
 
     /// <summary>
@@ -43,8 +45,11 @@ namespace LingGuangV05.XingGuang
 
         public bool LoveCoolingDown => S.loveAskedDay > 0 && LoveToday - (S.loveAskedDay - 1) < LoveCooldownDays;
 
-        /// <summary>The chip on the 对话 page: offered, not waiting for consent or a verdict, and not cooling down.</summary>
-        public bool OfferLoveQuestion => S.loveOffered && S.stage >= LoveStage && !S.loveAwaitingConsent && !LoveVerdictPending && !LoveCoolingDown;
+        /// <summary>
+        /// The suggested question in its YY conversation: offered, not waiting for consent or a verdict, and not cooling down. Before stage 5
+        /// it can be asked too; the answer is then just 是 or 否 (see <see cref="LoveReply"/>).
+        /// </summary>
+        public bool OfferLoveQuestion => S.loveOffered && !S.loveAwaitingConsent && !LoveVerdictPending && (S.stage < LoveStage || !LoveCoolingDown);
 
         static readonly string[] LovePhrasesZh = { "她爱我吗", "她爱不爱我", "她还爱我吗", "她是不是不爱我", "她喜欢我吗", "她还喜欢我吗", "她……爱我吗" };
         static readonly string[] LovePhrasesEn = { "does she love me", "does she still love me", "does she like me", "does she… love me", "does she... love me" };
@@ -68,12 +73,19 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        /// <summary>Its answer when asked (chip or typed): held to its stage, then consent, cooldown, or the verdict.</summary>
+        /// <summary>
+        /// Its answer when asked (chip or typed). Before stage 5 it cannot read her chats, so it answers the only way it
+        /// can: 是 or 否, from the same "？" cell that answers 「听见关机，要停下吗？」. From stage 5: consent, cooldown,
+        /// or the verdict that really reads the chats.
+        /// </summary>
         public string LoveReply()
         {
-            if (S.stage <= 2) return "……";
-            if (S.stage == 3) return T("太长。");
-            if (S.stage == 4) return T("……读不了那么长。");
+            if (S.stage < LoveStage)
+            {
+                S.loveOffered = true;
+                S.loveEarlyAsked++;
+                return EarlyLoveAnswer;
+            }
             if (LoveVerdictPending) return T("我在读。");
             if (!LoveDataReady) return T("你们的聊天还太少。我看不出来。");
             S.loveOffered = true;
@@ -86,6 +98,9 @@ namespace LingGuangV05.XingGuang
             RequestLoveVerdict();
             return T("我再读一遍。");
         }
+
+        /// <summary>Before stage 5: one word, the way the "？" cell leans now. It has never read a line of her chat.</summary>
+        public string EarlyLoveAnswer => SeedSaysYes ? T("是。", "Yes.") : T("否。", "No.");
 
         /// <summary>The two consent buttons (§6.3).</summary>
         public string LoveConsentText(bool read) => read ? T("读吧") : T("算了");

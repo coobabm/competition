@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace LingGuangV05.Tests
 {
-    /// <summary>The chat-history statistics behind the stage-3 cutscene in which the AI reads YY's msg.db.</summary>
+    /// <summary>The chat-history statistics behind the cutscene (right after the setup) in which the AI reads YY's msg.db.</summary>
     public sealed class ChatHistoryStatsTests
     {
         static ChatLine Me(string text, double t) => new ChatLine(true, text, t);

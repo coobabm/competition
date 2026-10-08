@@ -205,6 +205,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void AFlaggedAutofillCostsTenCreditButNoFreeze()
         {
             var sim = Ready(); var host = new Host(); sim.S.unlocked.Add(XgSim.CaptchaAutofillNode);
+            sim.S.qcAutofills = 3;
             int flagged = 0; sim.CaptchaFlagged += () => flagged++;
             sim.ForcedAutofillRoll = .05;
             Require(sim, host);
@@ -216,8 +217,50 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.QualityFrozen); Assert.IsFalse(sim.AutomationHeld);
         }
 
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void TheFirstThreeSuccessfulAutofillsAreNotPenalized(int previousAutofills)
+        {
+            var sim = Ready(); var host = new Host(); sim.S.unlocked.Add(XgSim.CaptchaAutofillNode);
+            sim.S.qcAutofills = previousAutofills;
+            sim.ForcedAutofillRoll = 0;
+            int flagged = 0; sim.CaptchaFlagged += () => flagged++;
+            Require(sim, host);
+            double credit = sim.Credit;
+            sim.TickCollaboration(6.5, host);
+
+            Assert.IsFalse(sim.CaptchaPending);
+            Assert.IsFalse(sim.AutomationHeld);
+            Assert.AreEqual(previousAutofills + 1, sim.S.qcAutofills);
+            Assert.AreEqual(credit + XgSim.CaptchaCreditPass, sim.Credit, 1e-9);
+            Assert.AreEqual(0, flagged);
+            Assert.AreEqual(0, sim.S.qcAutofillFlags);
+        }
+
+        [TestCase(0)]
+        [TestCase(1.5)]
+        public void RepeatedAutofillNeedsCurrentHighSpeedBeforeItCanBeFlagged(double labelsPerSecond)
+        {
+            var sim = Ready(); var host = new Host(); sim.S.unlocked.Add(XgSim.CaptchaAutofillNode);
+            sim.S.qcAutofills = 20;
+            sim.ForcedAutofillRoll = 0;
+            int flagged = 0; sim.CaptchaFlagged += () => flagged++;
+            Require(sim, host);
+            for (int i = 0; i < XgSim.SpeedWindow; i++) sim.S.qcSpeed[i] = labelsPerSecond;
+            sim.S.qcAutofillIn = 0;
+            double credit = sim.Credit;
+            sim.TickCollaboration(.01, host);
+
+            Assert.IsFalse(sim.CaptchaPending);
+            Assert.AreEqual(labelsPerSecond, sim.LabelRate, 1e-9);
+            Assert.AreEqual(credit + XgSim.CaptchaCreditPass, sim.Credit, 1e-9);
+            Assert.AreEqual(0, flagged);
+            Assert.AreEqual(0, sim.S.qcAutofillFlags);
+        }
+
         [Test]
-        public void AboutEightPercentOfAutofillsAreFlagged()
+        public void AboutEightPercentOfRepeatedHighSpeedAutofillsAreFlagged()
         {
             var sim = Ready(); var host = new Host(); sim.S.unlocked.Add(XgSim.CaptchaAutofillNode);
             for (int i = 0; i < 2000; i++) { sim.S.qcCredit = 80; Require(sim, host); sim.TickCollaboration(6.5, host); }

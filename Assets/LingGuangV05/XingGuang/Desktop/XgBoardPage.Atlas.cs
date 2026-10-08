@@ -98,7 +98,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     tile.name.color = new Color32(90, 104, 150, 255);
                 }
             }
-            header.text = Lang.T("大脑 · 接法图鉴") + "  <size=13><color=#68748C>" + Lang.T("已解锁 ") + open + " / " + topologyTiles.Count
+            header.text = Lang.T("大脑 · 接法图鉴") + "  <size=13><color=#6F95A5>" + Lang.T("已解锁 ") + open + " / " + topologyTiles.Count
                 + Lang.T(" · 每一种都是给某个区接线的办法") + "</color></size>";
         }
 

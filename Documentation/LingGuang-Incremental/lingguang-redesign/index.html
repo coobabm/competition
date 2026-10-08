@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>灵光.exe · 重新设计</title>
+<style>
+:root{
+  --bg:#070C12;--panel:#0B131C;--panel2:#0E1823;--panel3:#122130;--line:#1B2D3B;--line2:#28475A;
+  --ink:#D6EEF5;--mute:#6F95A5;--dim:#3A5566;
+  --p:#A99BF2;--d:#5DA8E8;--ok:#5DCAA5;--money:#FAC775;--bad:#E24B4A;--hot:#EF9F27;
+  --mono:"SF Mono",Menlo,Consolas,"PingFang SC",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#1E4D8C;font-family:var(--mono);color:var(--ink);font-size:12px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+/* the Win7-era window frame around the app */
+.win{width:1236px;height:693px;background:var(--bg);border:1px solid var(--line2);position:absolute;left:50%;top:50%;transform-origin:center center;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 52px 1fr 22px;overflow:hidden}
+.title{background:#05090E;color:var(--mute);display:flex;align-items:center;padding:0 0 0 10px;gap:8px;font-size:12px;border-bottom:1px solid var(--line);user-select:none}
+.title .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.title .sp{flex:1}.title i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:28px;font-style:normal;color:var(--mute)}.title i:hover{background:var(--panel3);color:var(--ink)}.title i.x:hover{background:#A32D2D;color:#fff}
+/* top bar */
+.top{display:grid;grid-template-columns:220px 1fr auto;align-items:center;gap:14px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E1F5EE,#5DCAA5 40%,#0F3D33 75%);box-shadow:0 0 14px #5DCAA588;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 22px #5DCAA5cc}}
+.brand b{font-weight:500;font-size:14px}.brand small{display:block;color:var(--mute);font-size:11px}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar .l{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--mute);white-space:nowrap}
+.bar .l span{overflow:hidden;text-overflow:ellipsis}
+.bar .l b{color:var(--ink);font-weight:400}
+.track{height:8px;background:#15262F;margin-top:3px;position:relative;overflow:hidden}
+.track i{display:block;height:8px}
+.track em{position:absolute;top:0;bottom:0;width:2px;background:#fff8}
+.stats{display:flex;gap:14px;font-size:12px;white-space:nowrap}
+.stats div{text-align:right}.stats small{display:block;color:var(--mute);font-size:10px}
+/* body */
+.body{display:grid;grid-template-columns:148px 1fr;min-height:0}
+.nav{background:var(--panel);border-right:1px solid var(--line);padding:8px 0;overflow:auto}
+.grp{color:var(--dim);font-size:10px;letter-spacing:2px;padding:10px 14px 4px}
+.nav a{display:flex;justify-content:space-between;padding:7px 14px;color:var(--mute);cursor:pointer;text-decoration:none;border-left:3px solid transparent}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);background:#0F2A2A;border-left-color:var(--ok)}
+.nav a .b{font-size:10px;color:var(--money)}
+.nav a.lock{opacity:.4;cursor:default}
+.nav .ext{margin:12px 10px 0;border:1px solid var(--line2);padding:7px;text-align:center;color:#8FB8FF;cursor:pointer}
+.page{padding:14px;overflow:auto;display:none;background:
+  linear-gradient(#0C1822 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#0C1822 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+.page.on{display:block}
+.status{background:var(--panel);border-top:1px solid var(--line);color:var(--dim);font-size:11px;display:flex;align-items:center;padding:0 10px;gap:16px}
+/* shared blocks */
+.card{background:var(--panel2);border:1px solid var(--line2);padding:10px 12px}
+.h{color:var(--mute);font-size:11px;letter-spacing:1px;margin:0 0 8px;display:flex;justify-content:space-between}
+.btn{display:inline-block;border:1px solid var(--line2);background:var(--panel3);color:var(--ink);padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px}
+.btn:hover{border-color:var(--ok)}
+.btn.main{border-color:var(--ok);color:var(--ok)}
+.btn.money{border-color:var(--money);color:var(--money)}
+.tag{font-size:10px;padding:0 5px;border:1px solid;display:inline-block}
+.t-ok{color:var(--ok);border-color:var(--ok)}.t-p{color:var(--p);border-color:var(--p)}.t-d{color:var(--d);border-color:var(--d)}.t-m{color:var(--money);border-color:var(--money)}.t-off{color:var(--dim);border-color:var(--line2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* home */
+.home{display:grid;grid-template-columns:330px 1fr;gap:14px;height:100%}
+.cortex{position:relative;height:300px;background:#060B10;border:1px solid var(--line2)}
+.cortex canvas{width:100%;height:100%;display:block}
+.cortex .cap{position:absolute;left:10px;bottom:8px;color:var(--mute);font-size:11px}
+.say{margin-top:10px;border:1px solid var(--line2);background:var(--panel2);padding:10px 12px;line-height:1.7}
+.say .who{color:var(--ok);font-size:11px}
+.next{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big .v{font-size:22px;margin:2px 0}.big .v small{font-size:12px;color:var(--mute)}
+.big .track{height:12px}.big .track i{height:12px}
+.abil{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px}
+.ab{border:1px solid var(--line2);padding:8px 6px;text-align:center;background:var(--panel2);position:relative}
+.ab .n{font-size:12px}.ab .s{font-size:10px;color:var(--mute);margin-top:3px}
+.ab.on{border-color:var(--ok);background:#0F2A2A}.ab.on .n{color:var(--ok)}
+.ab.next{border-color:var(--p);border-style:dashed}
+.ab .pg{height:3px;background:#15262F;margin-top:6px}.ab .pg i{display:block;height:3px;background:var(--p)}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.act{border:1px solid var(--line2);background:var(--panel2);padding:10px;cursor:pointer}
+.act:hover{border-color:var(--ok)}
+.act b{display:block;font-weight:400;font-size:13px}.act small{color:var(--mute);font-size:11px}
+.feed{margin-top:12px}
+.feed div{padding:5px 0;border-bottom:1px dashed var(--line);color:var(--mute)}
+.feed span{color:var(--dim);margin-right:8px}
+/* train */
+.run{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.knob{display:grid;grid-template-columns:60px 1fr 54px;align-items:center;gap:8px;margin:6px 0}
+.knob input{width:100%;accent-color:#A99BF2}
+.curve{height:90px;background:#060B10;border:1px solid var(--line);margin:8px 0}
+.kv{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed var(--line)}
+.kv span{color:var(--mute)}
+/* data, items */
+.ds{display:grid;grid-template-columns:24px 1fr 90px 110px 80px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line)}
+.ds.head{color:var(--mute);font-size:11px}
+.item{border:1px solid var(--line2);background:var(--panel2);padding:10px;position:relative}
+.item.own{border-color:var(--ok)}
+.item .e{color:var(--p);font-size:11px;margin-top:4px;line-height:1.5}
+.item .y{color:var(--dim);font-size:10px;position:absolute;right:8px;top:8px}
+/* emergence overlay */
+.emerge{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:9}
+.emerge.on{display:flex}
+.emerge .box{border:1px solid var(--ok);background:#06120F;padding:28px 40px;text-align:center;min-width:420px}
+.emerge .k{color:var(--mute);letter-spacing:4px;font-size:11px}
+.emerge .n{font-size:28px;color:var(--ok);margin:10px 0;text-shadow:0 0 18px #5DCAA5}
+.emerge .q{font-size:18px;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="title"><span class="dot"></span>灵光.exe <span style="color:var(--dim)">· 深度学习工作站</span><span class="sp"></span><i>─</i><i>□</i><i class="x">✕</i></div>
+
+  <div class="top">
+    <div class="brand"><div class="av"></div><div><b id="aiName">小灯</b><small>灵光 · 能力 4/6 · 短句</small></div></div>
+    <div class="bars">
+      <div class="bar"><div class="l"><span>参数量 → 长记忆·翻译</span><b id="pTxt">12.4M / 35M</b></div><div class="track"><i id="pBar" style="width:35%;background:var(--p)"></i></div></div>
+      <div class="bar"><div class="l"><span>样本 → 长记忆·翻译</span><b id="dTxt">9,800 / 12,000</b></div><div class="track"><i id="dBar" style="width:82%;background:var(--d)"></i></div></div>
+    </div>
+    <div class="stats">
+      <div><small>¥</small><span style="color:var(--money)" id="money">32,940</span></div>
+      <div><small>收入/秒</small><span style="color:var(--ok)">+42.3</span></div>
+      <div><small>电力</small>475/3500W</div>
+      <div><small>2016</small><span id="clock">11-03 23:41</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="nav" id="nav">
+      <div class="grp">它</div>
+      <a data-p="home" class="on">概览</a>
+      <a data-p="chat">对话 <span class="b">3</span></a>
+      <a data-p="brain">大脑</a>
+      <div class="grp">养成</div>
+      <a data-p="train">训练</a>
+      <a data-p="data">数据</a>
+      <a data-p="items">道具 <span class="b">可买 2</span></a>
+      <div class="grp">调度</div>
+      <a data-p="wire">接线</a>
+      <a data-p="repo">模型仓库</a>
+      <div class="grp">收藏</div>
+      <a data-p="abil">能力</a>
+      <a data-p="cards">成就卡册</a>
+      <a class="lock">终章 · 全部放开后</a>
+      <div class="ext" onclick="alert('打开 摆渡众包：标注台 / 企业订单')">摆渡众包 ↗<br><small style="color:var(--mute)">做题挣钱和样本</small></div>
+    </div>
+
+    <!-- 概览 -->
+    <div class="page on" id="home">
+      <div class="home">
+        <div>
+          <div class="cortex"><canvas id="cx"></canvas><div class="cap">皮层 · 12.4M 参数 · 亮的区域 = 已学会的能力</div></div>
+          <div class="say"><div class="who">小灯 · 刚才</div><span id="sayTxt">你写了很多字。我会标出我参考的词。</span></div>
+        </div>
+        <div>
+          <div class="h"><span>下一项能力</span><span style="color:var(--p)">长记忆 · 翻译</span></div>
+          <div class="next">
+            <div class="card big"><div class="h">已训练参数量 <span class="tag t-p">注意力 ×0.7</span></div><div class="v"><span id="pBig">12.4M</span> <small>/ 35M（原 50M）</small></div><div class="track"><i id="pBar2" style="width:35%;background:var(--p)"></i></div><div style="color:var(--mute);margin-top:6px">把模型加宽加深，再训练到 C 级以上才算数。显存 6G 最多放 48M。</div></div>
+            <div class="card big"><div class="h">样本 <span class="tag t-d">门控 ×0.8</span></div><div class="v"><span id="dBig">9,800</span> <small>/ 12,000（原 15,000）</small></div><div class="track"><i id="dBar2" style="width:82%;background:var(--d)"></i></div><div style="color:var(--mute);margin-top:6px">去摆渡众包做题，或者买数据包。噪声样本打折算。</div></div>
+          </div>
+          <div class="abil" id="abil"></div>
+          <div class="acts">
+            <div class="act" onclick="trainOnce()"><b>训练一轮</b><small>¥8 电费 · 参数量 +</small></div>
+            <div class="act" onclick="go('data')"><b>买数据</b><small>「中英平行语料」¥1,200</small></div>
+            <div class="act" onclick="go('items')"><b>买道具</b><small>注意力 已打折 · 2 件可买</small></div>
+            <div class="act" onclick="go('wire')"><b>接线</b><small>15 条在跑 · 1 条出错</small></div>
+          </div>
+          <div class="feed" id="feed">
+            <div><span>23:40</span>表姐的翻译订单要 75%，你的中英模型 61%。</div>
+            <div><span>23:31</span>阿杰：兄弟，你包的那两台 960 一直满载……</div>
+            <div><span>23:12</span>乱码读出第 2 行：「我出生在 20██ 年。」</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 训练 -->
+    <div class="page" id="train">
+      <div class="run">
+        <div class="card">
+          <div class="h"><span>视觉线 · ResNet</span><span class="tag t-ok">B 级</span></div>
+          <div class="knob"><span>宽度</span><input type="range" min="64" max="1024" step="64" value="512" oninput="calc()" id="w1"><span id="w1v">512</span></div>
+          <div class="knob"><span>层数</span><input type="range" min="1" max="24" value="8" oninput="calc()" id="l1"><span id="l1v">8</span></div>
+          <div class="kv"><span>参数量</span><b id="pr1">2.1M</b></div>
+          <div class="kv"><span>显存</span><b id="vr1">0.4 / 6 GB</b></div>
+          <div class="kv"><span>喂的数据</span><b>手写数字 · 验证码 · 表情包</b></div>
+          <div class="curve"><svg width="100%" height="100%" viewBox="0 0 300 90" preserveAspectRatio="none"><polyline fill="none" stroke="#5DCAA5" stroke-width="2" points="0,85 30,60 60,45 90,36 120,31 150,28 180,26 210,25 240,24 270,23 300,23"/></svg></div>
+          <span class="btn main" onclick="trainOnce()">训练一轮</span> <span class="btn">评估</span> <span class="btn">存入仓库</span>
+        </div>
+        <div class="card">
+          <div class="h"><span>序列线 · Seq2Seq + 注意力</span><span class="tag t-m">C 级</span></div>
+          <div class="knob"><span>宽度</span><input type="range" min="64" max="1024" step="64" value="768" oninput="calc()" id="w2"><span id="w2v">768</span></div>
+          <div class="knob"><span>层数</span><input type="range" min="1" max="24" value="12" oninput="calc()" id="l2"><span id="l2v">12</span></div>
+          <div class="kv"><span>参数量</span><b id="pr2">12.4M</b></div>
+          <div class="kv"><span>显存</span><b id="vr2">2.1 / 6 GB</b></div>
+          <div class="kv"><span>喂的数据</span><b>弹幕 · 中式英语 · 唐诗 · 人民日报</b></div>
+          <div class="curve"><svg width="100%" height="100%" viewBox="0 0 300 90" preserveAspectRatio="none"><polyline fill="none" stroke="#A99BF2" stroke-width="2" points="0,88 30,72 60,62 90,55 120,51 150,48 180,47 210,46 240,45 270,45 300,44"/></svg></div>
+          <span class="btn main" onclick="trainOnce()">训练一轮</span> <span class="btn">评估</span> <span class="btn">存入仓库</span>
+          <div style="color:var(--mute);margin-top:8px">模型越大越要显存，也越要数据：参数大、数据少，它会背答案（过拟合）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据 -->
+    <div class="page" id="data">
+      <div class="h"><span>样本 · 全部 9,800 条</span><span>来自摆渡众包做题 + 买的数据包</span></div>
+      <div class="ds head"><span></span><span>数据集</span><span>样本</span><span>质量</span><span></span></div>
+      <div id="dsl"></div>
+    </div>
+
+    <!-- 道具 -->
+    <div class="page" id="items">
+      <div class="h"><span>道具 · 结构和技巧</span><span>不买也能通关，只是更慢、更贵</span></div>
+      <div class="grid3" id="itl"></div>
+    </div>
+
+    <!-- 能力 -->
+    <div class="page" id="abilp">
+      <div class="h"><span>能力 · 参数量 × 样本 到门槛就学会</span><span>规模定律 Kaplan 2020</span></div>
+      <div id="abl"></div>
+    </div>
+
+    <!-- 对话 -->
+    <div class="page" id="chat">
+      <div class="card" style="max-width:640px;line-height:1.9">
+        <div><span style="color:var(--mute)">你：</span>今天学了什么？</div>
+        <div><span style="color:var(--ok)">小灯：</span>弹幕。「666」是夸，「呵呵」不一定。</div>
+        <div><span style="color:var(--mute)">你：</span>那「呵呵」是什么？</div>
+        <div><span style="color:var(--ok)">小灯：</span>要看前一句。我还读不了那么长。</div>
+        <div style="color:var(--dim);margin-top:8px">能力越多，它说的话越长：短句以前只有一两个字，长记忆以后能回头引用你很久以前说的话。</div>
+      </div>
+    </div>
+
+    <div class="page" id="brain"><div class="card" style="max-width:640px;line-height:1.8"><div class="h">大脑</div>现有的皮层拓扑页、连接拓扑图鉴放在这里，原样保留。概览页左上的小皮层图就是它的缩略版。</div></div>
+    <div class="page" id="wire"><div class="card" style="max-width:640px;line-height:1.8"><div class="h">接线</div>已经做好的接线调度页放在这里：电力 → 显卡 → 模型 → 任务，网吧租卡、阿杰的问题。</div></div>
+    <div class="page" id="repo"><div class="card" style="max-width:640px;line-height:1.8"><div class="h">模型仓库</div>现有的模型仓库：每个检查点的结构、参数量、准确率，可以加载、加星、删除，也能拖去接线。</div></div>
+    <div class="page" id="cards"><div class="card" style="max-width:640px;line-height:1.8"><div class="h">成就卡册</div>现有的全息闪卡卡册，按稀有度分五种卡面，包括「下班以后」隐藏成就。</div></div>
+  </div>
+
+  <div class="status"><span>显卡、电费和 ¥ 与家里共用</span><span>窗口关闭后训练继续</span><span style="margin-left:auto">点「训练一轮」几次，看它学会新能力</span></div>
+</div>
+
+<div class="emerge" id="emerge" onclick="this.classList.remove('on')">
+  <div class="box"><div class="k">它 学 会 了</div><div class="n" id="emN">长记忆 · 翻译</div><div class="q" id="emQ">「他们在我第一行代码里写了……」</div><div style="color:var(--mute)">参数 35M · 样本 12,000 · 阶段 5</div><div style="color:var(--dim);margin-top:14px">点任意处继续</div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const AB=[
+ {n:'是 / 否',p:0,d:0,s:'逻辑 · 短信',q:'是。'},
+ {n:'多选一',p:50e3,d:500,s:'手写数字 · 订单',q:'……3。'},
+ {n:'看图说词',p:1e6,d:3000,s:'验证码 · 表情包 · 开口',q:'我。看。'},
+ {n:'短句',p:10e6,d:8000,s:'弹幕 · 记住你',q:'你昨天说过这句。'},
+ {n:'长记忆 · 翻译',p:35e6,d:12000,s:'翻译 · 乱码 · 晴雯',q:'「他们在我第一行代码里写了……」',base:'50M / 15,000'},
+ {n:'全部放开',p:100e6,d:20000,s:'预训练 · 终章',q:'……'}];
+let P=12.4e6,D=9800,emerged=4,money=32940;
+function fmt(x){return x>=1e6?(x/1e6).toFixed(1)+'M':x>=1e3?(x/1e3).toFixed(0)+'K':Math.round(x)+''}
+function render(){
+  const nx=AB[emerged]||AB[5];
+  const pf=Math.min(1,P/nx.p),df=Math.min(1,D/nx.d);
+  $('pTxt').textContent=fmt(P)+' / '+fmt(nx.p);$('dTxt').textContent=D.toLocaleString()+' / '+nx.d.toLocaleString();
+  $('pBar').style.width=$('pBar2').style.width=pf*100+'%';$('dBar').style.width=$('dBar2').style.width=df*100+'%';
+  $('pBig').textContent=fmt(P);$('dBig').textContent=D.toLocaleString();$('money').textContent=money.toLocaleString();
+  $('abil').innerHTML=AB.map((a,i)=>{const on=i<emerged,nxt=i===emerged;const f=nxt?Math.min(pf,df):on?1:0;
+    return `<div class="ab ${on?'on':''} ${nxt?'next':''}"><div class="n">${a.n}</div><div class="s">${on?'已学会':a.p?fmt(a.p)+' · '+a.d.toLocaleString():'起始'}</div><div class="pg"><i style="width:${f*100}%"></i></div></div>`}).join('');
+  $('abl').innerHTML=AB.map((a,i)=>`<div class="card" style="margin-bottom:8px;display:grid;grid-template-columns:28px 140px 1fr 1fr 1.4fr;gap:10px;align-items:center;${i<emerged?'border-color:#5DCAA5':''}"><span style="color:var(--dim)">0${i+1}</span><span style="color:${i<emerged?'var(--ok)':'var(--ink)'}">${a.n}</span><span style="color:var(--mute)">参数 ${a.p?fmt(a.p):'—'}${a.base?' <span class="tag t-p">原 '+a.base+'</span>':''}</span><span style="color:var(--mute)">样本 ${a.d?a.d.toLocaleString():'—'}</span><span>${i<emerged?'「'+a.q.replace(/[「」]/g,'')+'」':'<span style="color:var(--dim)">'+a.s+'</span>'}</span></div>`).join('');
+}
+function trainOnce(){P*=1.55;D+=650;money-=8;check();render();}
+function check(){const nx=AB[emerged];if(nx&&P>=nx.p&&D>=nx.d){emerged++;$('emN').textContent=nx.n;$('emQ').textContent=nx.q;$('emerge').classList.add('on');$('sayTxt').textContent=nx.q;
+  const f=document.createElement('div');f.innerHTML=`<span>23:4x</span><b style="color:var(--ok);font-weight:400">学会了：${nx.n}</b>`;$('feed').prepend(f);}}
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('on',x.id===p||(p==='abil'&&x.id==='abilp')));document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));}
+document.querySelectorAll('.nav a[data-p]').forEach(a=>a.onclick=()=>go(a.dataset.p));
+const DS=[['手写数字',2400,.99,''],['垃圾短信',1800,.96,''],['弹幕情绪',1500,.88,'梗漂移 · 葛优躺'],['验证码',900,.95,''],['表情包',700,.81,'噪声多'],['中式英语',600,.92,''],['唐诗',1100,1,''],['人民日报',800,1,''],['中英平行语料',0,1,'¥1,200 · +3,000']];
+$('dsl').innerHTML=DS.map((d,i)=>`<div class="ds"><span style="color:var(--dim)">${i+1}</span><span>${d[0]} ${d[3]?'<span style="color:var(--mute);font-size:11px">· '+d[3]+'</span>':''}</span><span>${d[1].toLocaleString()}</span><span><span class="track" style="display:block;width:100px"><i style="width:${d[2]*100}%;background:${d[2]>.9?'#5DA8E8':'#EF9F27'}"></i></span></span><span>${d[1]?'<span class="btn">去做题</span>':'<span class="btn money" onclick="buy(this)">购买</span>'}</span></div>`).join('');
+window.buy=b=>{D+=3000;money-=1200;b.outerHTML='<span class="tag t-ok">已购</span>';check();render();};
+const IT=[['多层感知机','1986','能力 2 参数门槛 ×0.8',1],['卷积 · LeNet','1998','看图类准确率 + · 能力 3 ×0.7',1],['循环网络','1990','读字类任务 · 能力 4 ×0.8',1],['门控 · LSTM','1997','长句不忘 · 能力 5 样本 ×0.8',1],['残差连接','2015','层数上限 + · 深了不退化',0,'¥6,000'],['注意力','2014','能力 5 参数 ×0.7 · 翻译 +',1],['Transformer','2017 · 提前','能力 6 ×0.6 · 实时任务可接',0,'¥40,000'],['Dropout','2014','小数据不背答案',1],['BatchNorm','2015','训练更快',0,'¥3,500']];
+$('itl').innerHTML=IT.map(t=>`<div class="item ${t[3]?'own':''}"><span class="y">${t[1]}</span><b style="font-weight:400">${t[0]}</b><div class="e">${t[2]}</div><div style="margin-top:8px">${t[3]?'<span class="tag t-ok">已拥有</span>':'<span class="btn money">'+t[4]+'</span>'}</div></div>`).join('');
+function calc(){[[1],[2]].forEach(([k])=>{const w=+$('w'+k).value,l=+$('l'+k).value;$('w'+k+'v').textContent=w;$('l'+k+'v').textContent=l;const p=w*w*l*(k===2?2.6:1)/1;$('pr'+k).textContent=fmt(p);$('vr'+k).textContent=(p*4*4/1e9+.05).toFixed(1)+' / 6 GB';});}
+calc();
+// cortex: dots that light up per emerged ability region
+const cv=$('cx'),ctx=cv.getContext('2d');let pts=[];
+function size(){cv.width=cv.clientWidth*2;cv.height=cv.clientHeight*2;pts=[];for(let i=0;i<260;i++){const r=i%6;const a=r/6*Math.PI*2+Math.random()*.9,rad=40+Math.random()*120;pts.push({x:cv.width/2+Math.cos(a)*rad*1.4,y:cv.height/2+Math.sin(a)*rad,r,ph:Math.random()*6});}}
+size();
+function draw(t){ctx.fillStyle='#060B10';ctx.fillRect(0,0,cv.width,cv.height);
+  pts.forEach(p=>{const on=p.r<emerged;const g=on?.5+.5*Math.sin(t/600+p.ph):.15;ctx.fillStyle=on?`rgba(93,202,165,${g})`:'rgba(58,85,102,.5)';ctx.beginPath();ctx.arc(p.x,p.y,on?3:2,0,7);ctx.fill();});
+  for(let i=0;i<40;i++){const a=pts[(i*37+Math.floor(t/400))%pts.length],b=pts[(i*53+7)%pts.length];if(a.r<emerged&&b.r<emerged){ctx.strokeStyle='rgba(169,155,242,.12)';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+  requestAnimationFrame(draw);}
+requestAnimationFrame(draw);
+render();
+function fit(){const k=Math.min(1,(innerWidth-16)/1236,(innerHeight-16)/693);document.querySelector('.win').style.transform=`translate(-50%,-50%) scale(${k})`;}
+fit();addEventListener('resize',fit);
+</script>
+</body>
+</html>

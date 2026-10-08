@@ -25,7 +25,7 @@ namespace LingGuangV05.Desktop.XingGuang
         static string T(string zh, string en) => GameText.T(zh, en);
         static string Who => T("摆渡众包", "Bodu Crowdsourcing");
         static string Yuan(double v) => "¥" + v.ToString(v >= 10 ? "0" : "0.##", CultureInfo.InvariantCulture);
-        static void Popup(string text, float seconds) { PrologueDirector.Desk?.Popup(Who, text, seconds); }
+        static void Popup(string text, float seconds) { PrologueDirector.Desk?.StoryPopup(Who, text, seconds); }
 
         public void Bind(XingGuangController owner) { controller = owner; }
 
@@ -99,7 +99,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             Popup(bound != null && bound.Has(XgSim.CaptchaAutofillNode)
                 ? Lang.T("检测到操作过快，需要人机验证。验证码代填已接手。")
-                : Lang.T("检测到操作过快，请在 30 秒内完成人机验证：打开灵光的标注台输入验证码。自动标注已暂停。"), 10);
+                : T("检测到操作过快，请在 30 秒内完成人机验证：打开摆渡众包的标注台输入验证码。自动标注已暂停。", "Unusually fast activity. Complete the captcha within 30 s: open the labelling page in Bodu Crowd. Auto labelling is paused."), 10);
         }
 
         void OnCaptchaSolved(bool autofilled)
@@ -116,7 +116,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnCaptchaFlagged()
         {
-            Popup(Lang.T("答题时间过于规律，信用 −10。"), 8);
+            Popup(LingGuangV05.Runtime.GameText.T("持续高速提交且多次自动代填，本次被标记，信用 −10。", "Repeated autofill during high-rate submissions was flagged. Credit −10."), 8);
         }
 
         void OnUnfrozen(bool appealed)

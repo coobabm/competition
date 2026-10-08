@@ -21,6 +21,18 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
+        public void GirlfriendIsServedWhileTheOthersAreBusy()
+        {
+            // 灵光 in YY and the 网吧 group both talking: her reply still gets her own slot at once.
+            Assert.AreEqual(1, LlmScheduling.PickSlot(LlmSeat.Girlfriend, LlmLane.Visible, 3, true, 2, Busy(0, 2)));
+            // Her own slot taken (her previous request): she waits in the queue; nothing sends her offline.
+            Assert.AreEqual(LlmScheduling.Wait, LlmScheduling.PickSlot(LlmSeat.Girlfriend, LlmLane.Visible, 3, true, 3, Busy(0, 1, 2)));
+            Assert.IsTrue(GirlfriendReplyPolicy.AskModel(true));
+            // The visible budget outlasts the part of her delay that hides the model's time.
+            Assert.Greater(LlmScheduling.Timeout(LlmLane.Visible, false), GirlfriendReplyPolicy.MaxLead);
+        }
+
+        [Test]
         public void BackgroundUsesTheSlotsPastTheCharacters()
         {
             Assert.AreEqual(2, LlmScheduling.PickSlot(LlmSeat.Others, LlmLane.Background, 3, true, 0, Busy()));

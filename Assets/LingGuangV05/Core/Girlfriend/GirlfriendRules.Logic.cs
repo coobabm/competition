@@ -39,6 +39,14 @@ namespace LingGuangV05.Core.Girlfriend
         /// <summary>"work" or "ai" when he answered 「你哪来的钱」; "admit" or "deny" when he answered being caught.</summary>
         public string answered = "";
         public int moodBefore, affectionBefore;
+        /// <summary>
+        /// Story seconds since his previous line in her chat (0 for his first), and how long her own last message
+        /// had been waiting for him (0 when he owed her nothing). Only her texting style reads these
+        /// (GirlfriendStyle: 查岗 after a long silence); no rule does.
+        /// </summary>
+        public double sinceHisLast, keptHerWaiting;
+        /// <summary>His line came with a red packet she took gladly: her answer leads with 「谢谢哥哥」 (GirlfriendRules.ThankFirst).</summary>
+        public bool thanks;
         public readonly List<GfEvent> events = new List<GfEvent>();
     }
 
@@ -170,7 +178,7 @@ namespace LingGuangV05.Core.Girlfriend
                 else if (lived || p.key == "movie" && HasTickets(s, ended)) { p.state = 2; AddAffection(s, -8); AddMood(s, -1); StartFight(s, now, events); }
                 else p.state = 3;
             }
-            if (s.asking == "qixi" || s.asking == "movie") { if (now.day - s.askDay > 2) s.asking = ""; }
+            if (s.asking == "qixi" || s.asking == "movie" || s.asking == "weekend") { if (now.day - s.askDay > 2) s.asking = ""; }
             s.today = now.day;
             s.dayGame = 0;
             if (s.asleepDay >= 0 && s.asleepDay < now.day) s.asleepDay = -1;
@@ -276,6 +284,8 @@ namespace LingGuangV05.Core.Girlfriend
             s.linesToday++;
             turn.greetingOnly = IsGreeting(text);
             turn.apology = AnyIn(text, Apologies);
+            turn.sinceHisLast = s.meLastAt > 0 ? Math.Max(0, now.Story - s.meLastAt) : 0;
+            turn.keptHerWaiting = s.awaitingReply ? Math.Max(0, now.Story - s.herLastAt) : 0;
 
             if (s.awaitingReply && now.Story - s.herLastAt <= 5 * 60) { turn.quick = true; AddMood(s, 1); }
             if (!s.awaitingReply && (s.lastAnyAt <= 0 || now.Story - s.lastAnyAt >= 3 * Hour))
@@ -313,6 +323,16 @@ namespace LingGuangV05.Core.Girlfriend
                         turn.promised = s.asking;
                     }
                     else { turn.declined = s.asking; AddMood(s, -1); }
+                    s.asking = "";
+                    break;
+                case "weekend":
+                    if (Affirmative(text))
+                    {
+                        Remember(s, "周末", "他答应这周末来看她");
+                        AddAffection(s, 3); AddMood(s, 1);
+                        turn.promised = "weekend";
+                    }
+                    else { turn.declined = "weekend"; AddMood(s, -1); }
                     s.asking = "";
                     break;
                 case "money":

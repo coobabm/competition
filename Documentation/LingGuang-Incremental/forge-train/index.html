@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>灵光.exe · 纯 AI 训练（敲锤子）</title>
+<!--
+  Playable prototype: no labelling, pure AI training played like a blacksmith upgrade game.
+  Each strike is one training round on the anvil. The outcome is pure chance: success multiplies the
+  parameters (exponential); failure can do nothing, drop a level, or blow up (NaN).
+  Money changes the odds two ways: 知识 (permanent, levelled, bought once per level) and 道具 (consumables
+  armed for the next strike). Space = strike, 1–5 = arm items.
+  All numbers are placeholders for feel.
+-->
+<style>
+:root{
+  --bg:#070C12;--panel:#0B131C;--panel2:#0E1823;--panel3:#122130;--line:#1B2D3B;--line2:#28475A;
+  --ink:#D6EEF5;--mute:#6F95A5;--dim:#3A5566;
+  --p:#A99BF2;--ok:#5DCAA5;--money:#FAC775;--bad:#E24B4A;--hot:#EF9F27;--cool:#7FD3FF;
+  --mono:"SF Mono",Menlo,Consolas,"PingFang SC",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#1E4D8C;font-family:var(--mono);color:var(--ink);font-size:12px;min-height:100vh}
+.win{width:1236px;height:693px;background:var(--bg);border:1px solid var(--line2);position:absolute;left:50%;top:50%;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 1fr 22px;overflow:hidden}
+.title{background:#05090E;color:var(--mute);display:flex;align-items:center;padding:0 0 0 10px;gap:8px;border-bottom:1px solid var(--line);user-select:none}
+.title .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.title .sp{flex:1}.title i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:28px;font-style:normal}
+.main{display:grid;grid-template-columns:1fr 380px;gap:12px;padding:12px;min-height:0;background:
+  linear-gradient(#0C1822 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#0C1822 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+.status{background:var(--panel);border-top:1px solid var(--line);color:var(--dim);font-size:11px;display:flex;align-items:center;padding:0 10px;gap:16px}
+.status .sp{flex:1}
+.card{background:var(--panel2);border:1px solid var(--line2);padding:10px 12px;position:relative}
+.h{color:var(--mute);font-size:11px;letter-spacing:1px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.h b{color:var(--ink);font-weight:400;letter-spacing:0}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0}
+
+/* anvil */
+.anvil{flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#10202C,#060B10 70%);border:1px solid var(--line2)}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.lvl{position:absolute;left:18px;top:14px;font-size:54px;font-weight:700;letter-spacing:-2px;text-shadow:0 0 18px currentColor;transition:color .3s}
+.lvl small{font-size:13px;letter-spacing:0;color:var(--mute);display:block;font-weight:400;text-shadow:none;margin-top:-4px}
+.params{position:absolute;right:18px;top:16px;text-align:right}
+.params b{font-size:30px;font-weight:600;color:var(--p);text-shadow:0 0 14px #A99BF288}
+.params small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.core{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);transition:width .4s,height .4s}
+.core canvas{width:100%;height:100%}
+.verdict{position:absolute;left:0;right:0;top:30%;text-align:center;font-size:38px;font-weight:700;pointer-events:none;opacity:0;letter-spacing:4px}
+.verdict small{display:block;font-size:14px;letter-spacing:1px;font-weight:400;margin-top:4px}
+.verdict.show{animation:pop 1.3s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:scale(1.6)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+.odds{position:absolute;left:18px;right:18px;bottom:14px}
+.oddbar{display:flex;height:14px;border:1px solid var(--line2);overflow:hidden}
+.oddbar i{display:block;height:100%;transition:width .25s}
+.oddtxt{display:flex;gap:16px;margin-top:5px;font-size:12px}
+.oddtxt span{display:flex;gap:5px;align-items:center}
+.oddtxt em{width:9px;height:9px;display:inline-block}
+.next{position:absolute;left:18px;bottom:58px;color:var(--mute);font-size:12px}
+.next b{color:var(--ok);font-weight:400}
+.msbox{position:absolute;left:18px;top:96px;width:250px;background:#070C12cc;border:1px solid var(--line);padding:6px 8px}
+.hist{position:absolute;right:18px;top:78px;width:300px;text-align:right;font-size:11px;line-height:1.7}
+.hist .dots{justify-content:flex-end}.hist #rate{color:var(--mute);font-weight:400;font-size:11px}
+.hist #log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shake{animation:sh .35s}
+@keyframes sh{20%{transform:translate(-8px,3px)}40%{transform:translate(7px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(3px,-1px)}}
+.flashR{animation:fr .5s}
+@keyframes fr{0%{box-shadow:inset 0 0 120px #E24B4Aaa}100%{box-shadow:inset 0 0 0 #E24B4A00}}
+
+/* strike */
+.strike{display:grid;grid-template-columns:1fr 210px;gap:10px;align-items:stretch}
+.why{background:var(--panel2);border:1px solid var(--line2);padding:8px 12px;font-size:12px;line-height:1.75}
+.why .eq{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.why .eq span{border:1px solid var(--line2);padding:0 6px}
+.why .eq .k{color:var(--p);border-color:#4B4380}.why .eq .i{color:var(--cool);border-color:#2F5677}.why .eq .b{color:var(--mute)}.why .eq .neg{color:var(--bad);border-color:#6B2A2A}
+.why .eq .r{font-size:15px;color:var(--ok);border:none;font-weight:600}
+.why .sub{color:var(--dim);font-size:11px}
+.know{display:grid;grid-template-columns:1fr;gap:4px}
+.kn{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line2);background:var(--panel3);padding:2px 8px}
+.kn .nm{font-size:12px}.kn .nm small{display:block;color:var(--mute);font-size:10px}
+.pips{display:flex;gap:2px}.pips i{width:8px;height:8px;background:#15262F;border:1px solid var(--line2)}.pips i.on{background:var(--p);border-color:var(--p)}
+.kn .buy{border:1px solid var(--p);color:var(--p);padding:2px 7px;font-size:11px;cursor:pointer;background:transparent;font-family:inherit;min-width:64px}
+.kn .buy:hover{background:#A99BF222}.kn .buy:disabled{border-color:var(--line2);color:var(--dim);cursor:default;background:transparent}
+.kn.max{border-color:#4B4380}
+.timing{position:relative;height:64px;background:var(--panel3);border:1px solid var(--line2);overflow:hidden;cursor:pointer}
+.zone{position:absolute;top:0;bottom:0}
+.zone.miss{background:#2A1416}
+.zone.good{background:#2E2A12}
+.zone.perfect{background:#12392E}
+.zlabel{position:absolute;top:4px;font-size:10px;color:#fff8;transform:translateX(-50%)}
+.needle{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:#fff;box-shadow:0 0 10px #fff}
+.timing .tip{position:absolute;left:10px;bottom:5px;font-size:11px;color:var(--mute)}
+.hit{position:absolute;top:24px;font-size:14px;font-weight:700;transform:translateX(-50%);animation:up 1s forwards;pointer-events:none}
+@keyframes up{to{opacity:0;transform:translate(-50%,-26px)}}
+.hammer{border:1px solid var(--hot);background:linear-gradient(#5A3412,#2F1B0B);color:#fff;cursor:pointer;text-align:center;user-select:none;display:flex;flex-direction:column;justify-content:center}
+.hammer:hover{filter:brightness(1.2)}
+.hammer b{font-size:19px;letter-spacing:2px}
+.hammer small{color:#F6D7B0;font-size:11px;margin-top:3px}
+.hammer.off{filter:grayscale(1) brightness(.5);cursor:not-allowed}
+
+/* right */
+.money{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.money div small{display:block;color:var(--mute);font-size:10px}
+.money div b{font-size:16px;font-weight:500}
+.items{display:grid;grid-template-columns:1fr;gap:6px}
+.it{display:grid;grid-template-columns:28px 1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line2);background:var(--panel3);padding:3px 8px;cursor:pointer;user-select:none}
+.it .ic{font-size:17px;text-align:center}
+.it .nm{font-size:12px}.it .nm small{display:block;color:var(--mute);font-size:10px;margin-top:1px}
+.it .ct{font-size:12px;color:var(--ink);min-width:26px;text-align:right}
+.it .buy{border:1px solid var(--money);color:var(--money);padding:2px 7px;font-size:11px;cursor:pointer;background:transparent;font-family:inherit}
+.it .buy:hover{background:#FAC77522}
+.it.armed{border-color:var(--ok);background:#0F2A2A;box-shadow:inset 3px 0 0 var(--ok)}
+.it.none{opacity:.6}
+.it .k{color:var(--dim);font-size:10px}
+.ladder{display:flex;flex-direction:column;gap:3px}
+.ms{display:grid;grid-template-columns:60px 1fr 56px;gap:8px;align-items:center;font-size:11px;color:var(--mute)}
+.ms .bar{height:6px;background:#15262F}.ms .bar i{display:block;height:100%;background:var(--p)}
+.ms.done{color:var(--ok)}.ms.done .bar i{background:var(--ok)}
+.log{flex:1;min-height:0;overflow:hidden;font-size:11px;line-height:1.7}
+.log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
+.dots i{width:10px;height:10px;display:block}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="title"><span class="dot"></span>灵光.exe — 纯 AI 训练 · 不用再标注了<span class="sp"></span><i>—</i><i>□</i><i>✕</i></div>
+  <div class="main">
+    <div class="col">
+      <div class="anvil" id="anvil">
+        <canvas id="fx"></canvas>
+        <div class="lvl" id="lvl">+0<small>训练强化等级</small></div>
+        <div class="params"><b id="pTxt">1M</b><small id="pSub">参数 · 像 LeNet</small></div>
+        <div class="core" id="core"><canvas id="coreCv" width="400" height="400"></canvas></div>
+        <div class="verdict" id="verdict"></div>
+        <div class="msbox"><div class="h"><span>参数量里程碑</span><b id="msN"></b></div><div class="ladder" id="ladder"></div></div>
+        <div class="next" id="next"></div>
+        <div class="hist"><div class="dots" id="dots"></div><b id="rate"></b><div id="log"></div></div>
+        <div class="odds">
+          <div class="oddbar" id="oddbar"></div>
+          <div class="oddtxt" id="oddtxt"></div>
+        </div>
+      </div>
+      <div class="strike">
+        <div class="why" id="why"></div>
+        <div class="hammer" id="hammer"><b>🔨 敲一锤</b><small id="hamSub">训练一轮 · 电费 ¥2</small></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="money">
+          <div><small>余额</small><b id="mMoney" style="color:var(--money)">¥800</b></div>
+          <div><small>模型接单收入</small><b id="mInc">+¥2/秒</b></div>
+          <div><small>房租</small><b id="mRent">¥300 · 2:00</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="h"><span>道具 · 点一下装上，下一锤用掉 · 键 1–5</span><b id="armedN"></b></div>
+        <div class="items" id="items"></div>
+      </div>
+      <div class="card">
+        <div class="h"><span>知识 · 花钱学，永久生效</span><b id="knowN"></b></div>
+        <div class="know" id="know"></div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="status"><span>● 显卡在线 · 980 Ti</span><span id="stSafe">安全点：+0</span><span class="sp"></span><span>空格 = 敲 · 1–5 = 道具 · 结果全看概率</span></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+// ───────────── rules (placeholders for feel) ─────────────
+const MAXL=20;
+const ITEMS=[
+  {id:'luck',  ic:'🍀', name:'玄学调参',   note:'成功率 +15%',              price:120, n:2},
+  {id:'clip',  ic:'🧯', name:'梯度裁剪',   note:'失败不掉级',               price:200, n:1},
+  {id:'ckpt',  ic:'💾', name:'检查点',     note:'炸了也不丢等级',            price:400, n:1},
+  {id:'fp16',  ic:'⚡', name:'混合精度',   note:'这一锤成功时倍率 ×1.5',      price:300, n:1},
+  {id:'hot',   ic:'🔥', name:'加大学习率', note:'倍率 ×2，但成功率 −20%',     price:0,   n:Infinity},
+];
+// Knowledge: permanent, levelled. Each level costs more. Papers of the time (2016) or just before.
+const KNOW=[
+  {id:'bp',   name:'读懂反向传播',     yr:1986, note:lv=>'成功率 +3% / 级',          max:5, cost:l=>150*Math.pow(2,l)},
+  {id:'xav',  name:'Xavier 初始化',    yr:2010, note:lv=>'爆炸 −20% / 级',          max:3, cost:l=>300*Math.pow(2.2,l)},
+  {id:'reg',  name:'正则化',           yr:2014, note:lv=>'掉级 −20% / 级',          max:3, cost:l=>250*Math.pow(2.2,l)},
+  {id:'adam', name:'Adam 优化器',      yr:2014, note:lv=>'「没涨」的一半变成功 · 每级 +10%', max:3, cost:l=>400*Math.pow(2.4,l)},
+  {id:'scale',name:'加宽加深的直觉',   yr:2016, note:lv=>'成功倍率 +0.25 / 级',      max:4, cost:l=>600*Math.pow(2.5,l)},
+  {id:'save', name:'勤存档',           yr:0,    note:lv=>'安全点 每 5 级 → 每 4 / 3 级', max:2, cost:l=>500*Math.pow(3,l)},
+];
+const MS=[ // ability milestones by parameter count (M)
+  {n:'认得出字',m:6},{n:'看懂图片',m:60},{n:'读懂句子',m:600},{n:'会写诗',m:6000},{n:'能聊天',m:60000},{n:'全部放开',m:175000},
+];
+const S={know:{bp:0,xav:0,reg:0,adam:0,scale:0,save:0}, L:0, P:1, money:800, armed:new Set(), inv:{luck:2,clip:1,ckpt:1,fp16:1,hot:Infinity}, safe:0, hist:[], log:[], busy:false, rentT:120, best:0};
+
+const baseRate = L => Math.max(.22, .97 - L*.045);
+const gain = () => 2 + S.know.scale*.25; // each success multiplies the parameters
+const strikeCost = L => Math.round(2 + Math.pow(L,1.7)*1.2);
+const income = () => 1.2 + Math.log10(S.P+1)*1.6 + S.L*.6;
+// The odds of the next strike and where they come from (base, knowledge, items).
+function odds(){
+  const base=baseRate(S.L), kn=S.know.bp*.03, it=(S.armed.has('luck')?.15:0)-(S.armed.has('hot')?.20:0);
+  let p=Math.min(.98, Math.max(.05, base+kn+it));
+  const f=1-p;
+  let drop = S.L>=5 ? f*.45 : 0, boom = S.L>=10 ? f*Math.min(.6, .2+(S.L-10)*.05) : 0;
+  drop *= Math.max(0,1-S.know.reg*.2); boom *= Math.max(0,1-S.know.xav*.2);
+  if(S.armed.has('clip')) drop = 0;
+  if(S.armed.has('ckpt')) boom = 0;
+  let stay=Math.max(0,f-drop-boom);
+  const conv=stay*S.know.adam*.1*1.5; p+=conv; stay-=conv; // Adam turns part of "no gain" into progress
+  return {p, stay, drop, boom, base, kn:kn+conv, it};
+}
+const safeEvery=()=>[5,4,3][S.know.save];
+function mult(){ let m=gain(); if(S.armed.has('fp16')) m*=1.5; if(S.armed.has('hot')) m*=2; return m; }
+
+// ───────────── strike ─────────────
+function strike(){
+  if(S.busy) return;
+  const cost=strikeCost(S.L);
+  if(S.money<cost){ verdict('电费不够','var(--bad)','先让模型接单挣点'); return; }
+  if(S.L>=MAXL){ verdict('满级','var(--money)','+'+MAXL); return; }
+  S.busy=true; S.money-=cost;
+  const o=odds(), m=mult(), r=Math.random();
+  // the hammer falls
+  sparks(14,'#FFD27A',1); bump();
+  setTimeout(()=>{
+    let res;
+    if(r<o.p){ S.L++; S.P*=m; res='up'; }
+    else if(r<o.p+o.stay){ res='stay'; }
+    else if(r<o.p+o.stay+o.drop){ S.L--; S.P/=gain(); res='drop'; }
+    else { res='boom'; S.L=S.safe; S.P=S.safeP||1; }
+    // armed items are used up (加大学习率 is free and stays armed)
+    for(const id of [...S.armed]){ if(id!=='hot'){ S.inv[id]--; if(S.inv[id]<=0) S.armed.delete(id); } }
+    if(S.L>=safeEvery() && S.L%safeEvery()===0 && S.L>S.safe){ S.safe=S.L; S.safeP=S.P; }
+    S.best=Math.max(S.best,S.L);
+    S.hist.push(res); if(S.hist.length>30) S.hist.shift();
+    const msg={up:`+${S.L-1} → +${S.L} · ×${+m.toFixed(2)} 参数`, stay:`+${S.L} 没涨 · loss 平了`, drop:`掉到 +${S.L} · loss 回弹`, boom:`炸了 → 回到 +${S.L}（安全点）`}[res];
+    S.log.unshift(`<span style="color:${{up:'var(--ok)',stay:'var(--mute)',drop:'var(--hot)',boom:'var(--bad)'}[res]}">${msg}</span> <span style="color:var(--dim)">· 成功率 ${Math.round(o.p*100)}% · −¥${cost}</span>`); S.log.length=Math.min(S.log.length,6);
+    if(res==='up'){ verdict('成功','var(--ok)','参数 ×'+(+m.toFixed(2))+' → '+fmtP(S.P)); sparks(60,'#5DCAA5',2.2); sparks(30,'#A99BF2',1.6); milestone(); }
+    if(res==='stay') verdict('没涨','var(--mute)','这一轮白练了');
+    if(res==='drop'){ verdict('掉级','var(--hot)','loss 回弹了一截'); $('#anvil').classList.add('shake'); }
+    if(res==='boom'){ verdict('梯度爆炸','var(--bad)','loss = NaN · 回到安全点 +'+S.L); $('#anvil').classList.add('shake','flashR'); sparks(120,'#E24B4A',3.4); }
+    setTimeout(()=>$('#anvil').classList.remove('shake','flashR'),500);
+    S.busy=false; render();
+  },260);
+  render();
+}
+let shownMs=0;
+function milestone(){ const k=MS.filter(x=>S.P>=x.m).length; if(k>shownMs){ shownMs=k; setTimeout(()=>verdict('学会了「'+MS[k-1].n+'」','var(--p)',fmtP(MS[k-1].m)+' 参数'),900); } }
+
+// ───────────── view ─────────────
+function fmtP(m){ if(m>=1000) return (m/1000).toFixed(m>=10000?0:1).replace(/\.0$/,'')+'B'; return (m>=10?m.toFixed(0):m.toFixed(1)).replace(/\.0$/,'')+'M'; }
+const LCOL=['#D6EEF5','#5DCAA5','#7FD3FF','#A99BF2','#FAC775','#EF9F27','#E24B4A'];
+const lcol=()=>LCOL[Math.min(LCOL.length-1,Math.floor(S.L/3))];
+function like(m){ return m<5?'像 LeNet':m<70?'像 AlexNet':m<700?'像 VGG':m<7000?'像 GPT-1 的十倍':m<100000?'像 GPT-2 的几十倍':'像 GPT-3'; }
+function render(){
+  $('#lvl').innerHTML=`+${S.L}<small>训练强化等级 · 最高 +${S.best}</small>`; $('#lvl').style.color=lcol();
+  $('#pTxt').textContent=fmtP(S.P); $('#pSub').textContent='参数 · '+like(S.P);
+  const o=odds(0), m=mult();
+  $('#next').innerHTML=`下一锤成功：<b>${fmtP(S.P)} → ${fmtP(S.P*m)}</b>（×${+m.toFixed(2)}）`;
+  $('#oddbar').innerHTML=`<i style="width:${o.p*100}%;background:var(--ok)"></i><i style="width:${o.stay*100}%;background:#3A5566"></i><i style="width:${o.drop*100}%;background:var(--hot)"></i><i style="width:${o.boom*100}%;background:var(--bad)"></i>`;
+  $('#oddtxt').innerHTML=[['成功',o.p,'var(--ok)'],['没涨',o.stay,'#3A5566'],['掉级',o.drop,'var(--hot)'],['爆炸',o.boom,'var(--bad)']]
+    .map(([n,v,c])=>`<span><em style="background:${c}"></em>${n} ${Math.round(v*100)}%</span>`).join('');
+  const pc=v=>(v>=0?'+':'−')+Math.abs(Math.round(v*100))+'%';
+  $('#why').innerHTML=`<div class="eq">成功率 = <span class="b">+${S.L} 基础 ${Math.round(o.base*100)}%</span>`
+    +`<span class="k">知识 ${pc(o.kn)}</span><span class="${o.it<0?'neg':'i'}">道具 ${pc(o.it)}</span>`
+    +`= <span class="r">${Math.round(o.p*100)}%</span></div>`
+    +`<div class="sub">掉级、爆炸也能用知识和道具压下去 · 等级越高基础越低（最低 22%）</div>`;
+  const cost=strikeCost(S.L);
+  $('#hamSub').textContent='训练一轮 · 电费 ¥'+cost; $('#hammer').classList.toggle('off',S.busy||S.money<cost);
+  $('#mMoney').textContent='¥'+Math.floor(S.money).toLocaleString(); $('#mInc').textContent='+¥'+income().toFixed(1)+'/秒';
+  $('#mRent').textContent='¥300 · '+Math.floor(S.rentT/60)+':'+String(Math.floor(S.rentT%60)).padStart(2,'0');
+  $('#stSafe').textContent='安全点：+'+S.safe+'（每 '+safeEvery()+' 级自动存一次，炸了回到这里）';
+  // items
+  if(!$('#items').children.length){
+    $('#items').innerHTML=ITEMS.map((it,i)=>`<div class="it" data-id="${it.id}"><div class="ic">${it.ic}</div><div class="nm">${it.name} <span class="k">${i+1}</span><small>${it.note}</small></div><span class="ct"></span>${it.price?`<button class="buy">¥${it.price}</button>`:'<span class="k">免费</span>'}</div>`).join('');
+    document.querySelectorAll('.it').forEach((el,i)=>{ el.onclick=e=>{ if(e.target.classList.contains('buy')) return; arm(i); };
+      const b=el.querySelector('.buy'); if(b) b.onclick=()=>buy(i); });
+  }
+  ITEMS.forEach((it,i)=>{ const el=document.querySelectorAll('.it')[i], n=S.inv[it.id];
+    el.querySelector('.ct').textContent= n===Infinity?'':'×'+n; el.classList.toggle('armed',S.armed.has(it.id)); el.classList.toggle('none',n<=0); });
+  $('#armedN').textContent=S.armed.size?'已装 '+S.armed.size:'';
+  // milestones
+  $('#ladder').innerHTML=MS.map(x=>{ const d=S.P>=x.m, f=Math.min(1,Math.log10(S.P+1)/Math.log10(x.m+1));
+    return `<div class="ms ${d?'done':''}"><span>${x.n}</span><div class="bar"><i style="width:${f*100}%"></i></div><span style="text-align:right">${fmtP(x.m)}</span></div>`; }).join('');
+  if(!$('#know').children.length){
+    $('#know').innerHTML=KNOW.map((k,i)=>`<div class="kn" data-i="${i}"><div class="nm">${k.name}${k.yr?' <span style="color:var(--dim);font-size:10px">'+k.yr+'</span>':''}<small>${k.note()}</small></div><div class="pips"></div><button class="buy"></button></div>`).join('');
+    document.querySelectorAll('.kn').forEach(el=>el.querySelector('.buy').onclick=()=>learn(+el.dataset.i));
+  }
+  KNOW.forEach((k,i)=>{ const el=document.querySelectorAll('.kn')[i], lv=S.know[k.id], mx=lv>=k.max, c=Math.round(k.cost(lv));
+    el.querySelector('.pips').innerHTML=Array.from({length:k.max},(_,j)=>`<i class="${j<lv?'on':''}"></i>`).join('');
+    const b=el.querySelector('.buy'); b.textContent=mx?'学完了':'学 ¥'+c.toLocaleString(); b.disabled=mx||S.money<c; el.classList.toggle('max',mx); });
+  $('#knowN').textContent=KNOW.reduce((a,k)=>a+S.know[k.id],0)+'/'+KNOW.reduce((a,k)=>a+k.max,0);
+  $('#msN').textContent=MS.filter(x=>S.P>=x.m).length+'/'+MS.length;
+  const cols={up:'var(--ok)',stay:'#3A5566',drop:'var(--hot)',boom:'var(--bad)'};
+  $('#dots').innerHTML=S.hist.map(h=>`<i style="background:${cols[h]}"></i>`).join('');
+  const ups=S.hist.filter(h=>h==='up').length; $('#rate').textContent=S.hist.length?'成功 '+Math.round(ups/S.hist.length*100)+'%':'';
+  $('#log').innerHTML=S.log.map(l=>`<div>${l}</div>`).join('');
+  const sz=120+S.L*9; $('#core').style.width=sz+'px'; $('#core').style.height=sz+'px';
+}
+function learn(i){ const k=KNOW[i], lv=S.know[k.id]; if(lv>=k.max) return; const c=k.cost(lv); if(S.money<c) return; S.money-=c; S.know[k.id]++; verdict('学会了','var(--p)',k.name+' Lv.'+S.know[k.id]); render(); }
+function arm(i){ const it=ITEMS[i]; if(S.inv[it.id]<=0){ buy(i); return; } S.armed.has(it.id)?S.armed.delete(it.id):S.armed.add(it.id); render(); }
+function buy(i){ const it=ITEMS[i]; if(!it.price) return; if(S.money<it.price){ verdict('钱不够','var(--bad)',it.name+' ¥'+it.price); return; } S.money-=it.price; S.inv[it.id]++; render(); }
+function verdict(t,c,sub){ const v=$('#verdict'); v.innerHTML=t+(sub?`<small>${sub}</small>`:''); v.style.color=c; v.classList.remove('show'); void v.offsetWidth; v.classList.add('show'); }
+
+// ───────────── visuals: the glowing core and sparks ─────────────
+const cc=$('#coreCv').getContext('2d'); let bumpT=0;
+function bump(){ bumpT=1; }
+function drawCore(t){
+  const g=cc, W=400, c=W/2; g.clearRect(0,0,W,W);
+  const col=lcol(), rings=3+Math.floor(S.L/2), pulse=1+Math.sin(t/400)*.03+bumpT*.12;
+  const grd=g.createRadialGradient(c,c,4,c,c,c*.9); grd.addColorStop(0,col); grd.addColorStop(.35,col+'55'); grd.addColorStop(1,'#00000000');
+  g.fillStyle=grd; g.beginPath(); g.arc(c,c,c*.9*pulse,0,7); g.fill();
+  for(let i=0;i<rings;i++){
+    const r=c*(.25+i*.65/rings)*pulse, n=6+i*3;
+    g.strokeStyle=col+'66'; g.lineWidth=1; g.beginPath(); g.arc(c,c,r,0,7); g.stroke();
+    for(let k=0;k<n;k++){ const a=k/n*6.283+t/(1800+i*500)*(i%2?1:-1); g.fillStyle=col; g.beginPath(); g.arc(c+Math.cos(a)*r,c+Math.sin(a)*r,2+S.L*.08,0,7); g.fill(); }
+  }
+  g.fillStyle='#fff'; g.beginPath(); g.arc(c,c,10+S.L,0,7); g.fill();
+  bumpT=Math.max(0,bumpT-.06);
+}
+const fx=$('#fx'), fg=fx.getContext('2d'); let P=[];
+function sizeFx(){ fx.width=fx.offsetWidth; fx.height=fx.offsetHeight; }
+function sparks(n,col,pow){ const cx=fx.width/2, cy=fx.height*.54; for(let i=0;i<n;i++){ const a=Math.random()*6.283, v=(2+Math.random()*5)*pow; P.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,l:1,c:col}); } }
+function loop(t){
+  drawCore(t);
+  fg.clearRect(0,0,fx.width,fx.height);
+  P=P.filter(p=>p.l>0); for(const p of P){ p.x+=p.vx; p.y+=p.vy; p.vy+=.18; p.l-=.022; fg.globalAlpha=Math.max(0,p.l); fg.fillStyle=p.c; fg.fillRect(p.x,p.y,3,3); } fg.globalAlpha=1;
+  requestAnimationFrame(loop);
+}
+
+$('#hammer').onclick=strike;
+addEventListener('keydown',e=>{ if(e.key===' '){ e.preventDefault(); strike(); } if(e.key>='1'&&e.key<='5') arm(+e.key-1); });
+setInterval(()=>{ S.money+=income()*.25; S.rentT-=.25; if(S.rentT<=0){ S.rentT=120; S.money-=300; verdict('房租 −¥300','var(--money)'); } render(); },250);
+function fit(){ const k=Math.min(innerWidth/1260, innerHeight/715, 1.4); $('#win').style.transform=`translate(-50%,-50%) scale(${k})`; sizeFx(); }
+addEventListener('resize',fit); fit(); render(); requestAnimationFrame(loop);
+</script>
+</body>
+</html>

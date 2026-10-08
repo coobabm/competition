@@ -1,0 +1,498 @@
+{
+  "comment": "2016 时代优势社会线：已发生的工作才有回响；交付、回复、检验均等待玩家主动确认。",
+  "beats": [
+    {
+      "id": "era_skeptic",
+      "on": "state",
+      "once": true,
+      "priority": 33,
+      "when": [
+        "labStage == 2",
+        "ext.era.autoCorrect >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_skeptic_aj",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_skeptic"
+        },
+        {
+          "op": "say",
+          "key": "era_skeptic_xg",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_skeptic"
+        },
+        {
+          "op": "think",
+          "key": "era_skeptic_think"
+        }
+      ]
+    },
+    {
+      "id": "era_first_rescue",
+      "on": "state",
+      "once": true,
+      "priority": 34,
+      "when": [
+        "labStage >= 2",
+        "labStage <= 3",
+        "ext.era.autoCorrect >= 12",
+        "fired.era_skeptic >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_rescue_aj",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_first_rescue"
+        },
+        {
+          "op": "think",
+          "key": "era_rescue_receipt"
+        },
+        {
+          "op": "say",
+          "key": "era_rescue_xg",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_first_rescue"
+        },
+        {
+          "op": "think",
+          "key": "era_rescue_think"
+        }
+      ]
+    },
+    {
+      "id": "era_small_team",
+      "on": "state",
+      "once": true,
+      "priority": 33,
+      "when": [
+        "labStage >= 3",
+        "labStage <= 4",
+        "ext.era.activeJobs >= 3",
+        "ext.era.autoCorrect >= 40",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_team_aj",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_small_team"
+        },
+        {
+          "op": "think",
+          "key": "era_team_receipt"
+        },
+        {
+          "op": "say",
+          "key": "era_team_xg",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_small_team"
+        },
+        {
+          "op": "think",
+          "key": "era_team_think"
+        }
+      ]
+    },
+    {
+      "id": "era_changed_question",
+      "on": "state",
+      "once": true,
+      "priority": 36,
+      "when": [
+        "labStage >= 4",
+        "flag.era.challenge.passed >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_changed_xg",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_changed_question"
+        },
+        {
+          "op": "say",
+          "key": "era_changed_aj",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_changed_question"
+        },
+        {
+          "op": "think",
+          "key": "era_changed_think"
+        },
+        {
+          "op": "say",
+          "key": "era_changed_ask",
+          "who": "netbar"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_changed_question"
+        }
+      ]
+    },
+    {
+      "id": "era_delivery_brief",
+      "on": "state",
+      "once": true,
+      "priority": 36,
+      "when": [
+        "labSequenceStage >= 5",
+        "ext.era.translateReady >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1",
+        "fired.cousin_translation_order >= 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_delivery_request",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_delivery_brief"
+        },
+        {
+          "op": "say",
+          "key": "era_delivery_boundary",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_delivery_brief"
+        },
+        {
+          "op": "think",
+          "key": "era_delivery_action"
+        }
+      ]
+    },
+    {
+      "id": "era_delivery_ready",
+      "on": "state",
+      "once": true,
+      "priority": 37,
+      "when": [
+        "flag.era.batch.ready >= 1",
+        "fired.era_delivery_brief >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_delivery_ready_ai",
+          "who": "lingguang"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_delivery_ready"
+        },
+        {
+          "op": "think",
+          "key": "era_delivery_receipt"
+        },
+        {
+          "op": "think",
+          "key": "era_delivery_ready_think"
+        }
+      ]
+    },
+    {
+      "id": "era_delivery_confirmed",
+      "on": "state",
+      "once": true,
+      "priority": 38,
+      "when": [
+        "flag.era.batch.delivered >= 1",
+        "fired.era_delivery_ready >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_delivery_surprise",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_delivery_confirmed"
+        },
+        {
+          "op": "say",
+          "key": "era_delivery_people",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_delivery_confirmed"
+        },
+        {
+          "op": "think",
+          "key": "era_delivery_reply_prompt"
+        }
+      ]
+    },
+    {
+      "id": "era_identity_reply",
+      "on": "state",
+      "once": true,
+      "priority": 38,
+      "when": [
+        "flag.era.identity.reply >= 1",
+        "fired.era_delivery_confirmed >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "think",
+          "key": "era_identity_sent"
+        },
+        {
+          "op": "say",
+          "key": "era_identity_cousin",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_identity_reply"
+        },
+        {
+          "op": "think",
+          "key": "era_identity_room"
+        }
+      ]
+    },
+    {
+      "id": "era_context_brief",
+      "on": "state",
+      "once": true,
+      "priority": 35,
+      "when": [
+        "fired.era_identity_reply >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_context_constraint",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_context_brief"
+        },
+        {
+          "op": "say",
+          "key": "era_context_request",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_context_brief"
+        },
+        {
+          "op": "think",
+          "key": "era_context_think"
+        },
+        {
+          "op": "think",
+          "key": "era_context_action"
+        }
+      ]
+    },
+    {
+      "id": "era_context_sent",
+      "on": "state",
+      "once": true,
+      "priority": 36,
+      "when": [
+        "flag.era.context.choice >= 1",
+        "fired.era_context_brief >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "think",
+          "key": "era_context_outcome"
+        },
+        {
+          "op": "think",
+          "key": "era_context_ownership"
+        }
+      ]
+    },
+    {
+      "id": "era_expert_invite",
+      "on": "state",
+      "once": true,
+      "priority": 38,
+      "when": [
+        "flag.era.expert.requested >= 1",
+        "labStage >= 5",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_expert_intro",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_invite"
+        },
+        {
+          "op": "say",
+          "key": "era_expert_boundary",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_invite"
+        },
+        {
+          "op": "say",
+          "key": "era_expert_request",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_invite"
+        }
+      ]
+    },
+    {
+      "id": "era_expert_result",
+      "on": "state",
+      "once": true,
+      "priority": 39,
+      "when": [
+        "flag.era.expert.passed >= 1",
+        "fired.era_expert_invite >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "think",
+          "key": "era_expert_receipt"
+        },
+        {
+          "op": "say",
+          "key": "era_expert_check",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_result"
+        },
+        {
+          "op": "say",
+          "key": "era_expert_pause",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_result"
+        },
+        {
+          "op": "say",
+          "key": "era_expert_name",
+          "who": "zhou_now"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_expert_result"
+        },
+        {
+          "op": "think",
+          "key": "era_expert_think"
+        }
+      ]
+    },
+    {
+      "id": "era_choose_work",
+      "on": "state",
+      "once": true,
+      "priority": 130,
+      "when": [
+        "labStage >= 6",
+        "flag.era.batch.delivered >= 1",
+        "flag.era.expert.passed >= 1",
+        "fired.era_expert_result >= 1",
+        "labEndingAnswered < 1",
+        "ext.era.finished < 1"
+      ],
+      "steps": [
+        {
+          "op": "say",
+          "key": "era_choose_cousin",
+          "who": "cousin"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_choose_work"
+        },
+        {
+          "op": "think",
+          "key": "era_choose_think1"
+        },
+        {
+          "op": "say",
+          "key": "era_choose_ai",
+          "who": "lingguang"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:era_choose_work"
+        },
+        {
+          "op": "think",
+          "key": "era_choose_think2"
+        }
+      ]
+    }
+  ]
+}

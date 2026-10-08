@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -89,7 +90,8 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.That(o.source == XgDataSource.Public || o.source == XgDataSource.Junk, o.id);
                 Assert.That(o.month, Is.LessThanOrEqualTo(sim.CurrentMonth), o.id);
             }
-            sim.S.stage = 3;
+            // The newspaper corpus is stage five's data now (参数量与数据量主线), and so is its junk twin.
+            sim.S.stage = 5;
             ids = sim.ShopDataOffers().Select(o => o.id).ToList();
             CollectionAssert.Contains(ids, "news.junk");
             Assert.IsTrue(sim.Offer("news.junk").isNew == (sim.CurrentMonth == 201608));
@@ -115,9 +117,11 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = AtStage(2, "mlp"); var host = new Host();
             XgDataOffer bought = null; sim.DataOfferBought += o => bought = o;
+            double price = sim.Offer("mnist.junk").price;
+            Assert.AreEqual(Math.Round(XgCatalog.Node("mnist.pack").cost * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
             Assert.IsTrue(sim.BuyDataOffer("mnist.junk", host));
             Assert.IsNotNull(bought);
-            Assert.AreEqual(100000 - 90, host.money, 1e-9);
+            Assert.AreEqual(100000 - price, host.money, 1e-9);
             var o = sim.Offer("mnist.junk");
             Assert.IsTrue(o.owned && o.downloading);
             Assert.AreEqual(0, o.downloadProgress, 1e-9);

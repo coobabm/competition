@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 重新设计</title>
+<!--
+  Mockup of the 摆渡众包 app (the in-world Baidu crowd platform), five pages:
+  标注台 (task hall + workspace, playable), 企业订单, 分包, 结算 (with the household bills), 信用.
+  Look: a 2016 Chinese web platform. White and the platform blue, thin grey rules, small red badges.
+  The 灵光 spider watches the desk from the corner once it is out.
+-->
+<style>
+:root{
+  --blue:#2932E1;--blue2:#4E6EF2;--blue3:#EEF2FF;--ink:#222;--mute:#7A7F8C;--dim:#B4B8C2;--line:#E3E6EC;--bg:#F4F5F7;
+  --red:#E33E33;--green:#2F9E44;--gold:#E8A317;--orange:#F27B1D;
+  --font:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#1E4D8C;font-family:var(--font);color:var(--ink);font-size:13px;overflow:hidden;min-height:100vh}
+.win{width:1236px;height:693px;background:#fff;border:1px solid #9AA4B8;position:absolute;left:50%;top:50%;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 56px 1fr 24px;overflow:hidden}
+.title{background:linear-gradient(#DCE6F4,#C8D6EA);display:flex;align-items:center;padding-left:8px;gap:6px;font-size:12px;color:#223}
+.title .ico{width:16px;height:16px;background:var(--blue);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-weight:700}
+.title .sp{flex:1}.title i{width:40px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+.title i.x{background:#C7483F;color:#fff;width:46px}
+/* header */
+.hd{background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 16px;gap:22px}
+.logo{display:flex;align-items:center;gap:10px}
+.paw{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--blue);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.logo b{font-size:19px;letter-spacing:1px}.logo small{display:block;font-size:11px;opacity:.75}
+.hud{display:flex;gap:8px;margin-left:auto;align-items:center}
+.chip{background:#ffffff1f;border:1px solid #ffffff33;padding:4px 10px;border-radius:14px;font-size:12px;white-space:nowrap}
+.chip b{font-size:14px}
+.chip.money b{color:#FFE27A}
+.chip.credit{display:flex;align-items:center;gap:6px}
+.gauge{width:60px;height:6px;background:#ffffff33;border-radius:3px;overflow:hidden}.gauge i{display:block;height:100%;background:#7CF0A0}
+.combo{background:#fff;color:var(--blue);border-radius:14px;padding:3px 12px;font-weight:700;min-width:96px;text-align:center;position:relative;overflow:hidden}
+.combo small{font-weight:400;font-size:10px;color:var(--mute);margin-left:4px}
+.combo .cf{position:absolute;left:0;bottom:0;height:3px;background:var(--orange)}
+.lg{border:1px solid #fff9;padding:4px 10px;border-radius:3px;font-size:12px;cursor:pointer}
+/* body */
+.bd{display:grid;grid-template-columns:132px 1fr;min-height:0;background:var(--bg)}
+.nav{background:#fff;border-right:1px solid var(--line);padding:10px 0}
+.nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;color:#444;cursor:pointer;border-left:3px solid transparent}
+.nav a:hover{background:#F7F8FB}
+.nav a.on{color:var(--blue);background:var(--blue3);border-left-color:var(--blue);font-weight:600}
+.badge{background:var(--red);color:#fff;font-size:10px;border-radius:8px;padding:0 5px;line-height:15px;font-weight:400}
+.nav .sep{height:1px;background:var(--line);margin:10px 14px}
+.nav .me{padding:4px 18px;font-size:11px;color:var(--mute);line-height:1.7}
+.page{display:none;padding:12px;min-height:0;overflow:hidden}
+.page.on{display:block}
+.st{background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 12px;font-size:11px;color:var(--mute)}
+.st .sp{flex:1}
+.box{background:#fff;border:1px solid var(--line);border-radius:4px}
+.bh{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.bh small{font-weight:400;color:var(--mute)}
+.btn{border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:3px;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:13px}
+.btn:hover{background:var(--blue2)}
+.btn.ghost{background:#fff;color:var(--blue)}
+.btn.gold{background:var(--gold);border-color:var(--gold)}
+.btn:disabled{background:#E7E9EE;border-color:#E7E9EE;color:#A9ADB7;cursor:not-allowed}
+.tagx{font-size:11px;border-radius:2px;padding:0 5px;border:1px solid;line-height:17px;display:inline-block}
+.t-new{color:var(--red);border-color:#F3B4AF;background:#FFF2F1}
+.t-hot{color:var(--orange);border-color:#F6C9A3;background:#FFF6EE}
+.t-ok{color:var(--green);border-color:#A8D8B4;background:#F0FAF2}
+.t-b{color:var(--blue);border-color:#B8C2F6;background:var(--blue3)}
+.t-g{color:var(--mute);border-color:var(--line);background:#F7F8FA}
+
+/* 标注台 */
+.desk{display:grid;grid-template-columns:270px minmax(0,1fr) 250px;gap:12px;height:100%}
+.hall{display:flex;flex-direction:column;min-height:0}
+.hall .list{overflow:auto;flex:1}
+.task{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;position:relative}
+.task:hover{background:#F8F9FC}
+.task.on{background:var(--blue3);box-shadow:inset 3px 0 0 var(--blue)}
+.task .r1{display:flex;align-items:center;gap:6px}
+.task .r1 b{font-size:14px}
+.task .pay{margin-left:auto;color:var(--red);font-weight:700}
+.task .pay small{font-weight:400;color:var(--mute);font-size:11px}
+.task .r2{color:var(--mute);font-size:11px;margin-top:3px;display:flex;gap:10px}
+.task .stars{color:var(--gold);letter-spacing:-1px}
+.task.lock{cursor:default;opacity:.55}
+.task.lock .pay{color:var(--dim)}
+.task .why{color:var(--mute);font-size:11px;margin-top:3px}
+.work{display:flex;flex-direction:column;min-height:0}
+.wk{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative;padding:14px}
+.qmeta{position:absolute;left:14px;top:12px;font-size:12px;color:var(--mute)}
+.qno{position:absolute;right:14px;top:12px;font-size:12px;color:var(--mute)}
+.qcard{min-width:420px;border:1px solid var(--line);border-radius:6px;padding:22px 26px;text-align:center;background:#FCFCFE;position:relative}
+.qcard .q{font-size:38px;font-weight:600;letter-spacing:2px;font-family:"SF Mono",Menlo,monospace}
+.qcard .q.logic{font-size:17px;letter-spacing:0;line-height:1.8;font-family:var(--font);font-weight:400;text-align:left}
+.qcard .hint{color:var(--mute);font-size:12px;margin-top:8px}
+.digit{display:grid;grid-template-columns:repeat(14,9px);gap:1px;margin:0 auto;width:max-content}
+.digit i{width:9px;height:9px;background:#F0F1F4}.digit i.on{background:#222}
+.ans{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:470px}
+.ans button{min-width:62px;height:40px;font-size:17px;border:1px solid #CBD2E6;background:#fff;border-radius:4px;cursor:pointer;font-family:inherit;color:#222}
+.ans button:hover{border-color:var(--blue);color:var(--blue)}
+.ans button kbd{font-size:10px;color:var(--dim);margin-left:4px;font-family:inherit}
+.ans.wide button{min-width:120px}
+.res{height:22px;font-size:14px;font-weight:600}
+.wbar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--mute)}
+.wbar .sp{flex:1}
+.feed{display:flex;gap:5px;align-items:center}.wbar span{white-space:nowrap}
+.feed i{width:12px;height:12px;flex:none;border-radius:2px;background:#ECEEF2;font-style:normal;font-size:10px;color:#fff;text-align:center;line-height:14px}
+.feed i.ok{background:var(--green)}.feed i.no{background:var(--red)}.feed i.bot{background:#8A78E8}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.kv{padding:8px 12px;display:grid;grid-template-columns:1fr auto;gap:6px 8px;font-size:12px}
+.kv span{color:var(--mute)}.kv b{font-weight:600}
+.raise{padding:10px 12px;border-top:1px dashed var(--line)}
+.raise .lv{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.raise .lv b{color:var(--red);font-size:16px}
+.ladder{display:flex;gap:2px;margin:6px 0 8px}
+.ladder i{flex:1;height:5px;background:#ECEEF2}.ladder i.on{background:var(--red)}
+.ai{padding:10px 12px;position:relative;min-height:110px}
+.ai .who{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute)}
+.spider{width:34px;height:34px;position:relative}
+.spider .b{position:absolute;left:9px;top:9px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E1F5EE,#5DCAA5 45%,#0F3D33 80%);box-shadow:0 0 10px #5DCAA5}
+.spider svg{position:absolute;inset:0}
+.bubble{margin-top:8px;background:#F3F1FF;border:1px solid #DCD6FB;border-radius:6px;padding:7px 9px;font-size:12px;color:#4B3FA8;min-height:34px;line-height:1.6}
+.ai .auto{margin-top:8px;font-size:11px;color:var(--mute)}
+.spider.home{border:1px dashed #CFC9F5;border-radius:50%}
+.float-sp{position:absolute;z-index:8;cursor:grab;transition:left .35s,top .35s;touch-action:none}
+.float-sp.drag{cursor:grabbing;transition:none;transform:scale(1.25)}
+.float-sp.work svg{animation:wig .5s infinite alternate}
+@keyframes wig{to{transform:rotate(6deg)}}
+.wk.drop{outline:2px dashed #8A78E8;outline-offset:-6px;background:#F7F5FF}
+.arm{position:absolute;z-index:7;height:3px;background:#2F6F5E;transform-origin:0 50%;border-radius:2px;transition:transform .22s ease-out;pointer-events:none}
+.arm::after{content:"";position:absolute;right:-5px;top:-4px;width:11px;height:11px;border-radius:50%;background:#5DCAA5;box-shadow:0 0 8px #5DCAA5}
+.ans button.press{background:#EEEAFE;border-color:#8A78E8;color:#5B48C8;transform:translateY(1px)}
+.float{position:absolute;pointer-events:none;font-weight:700;white-space:nowrap;animation:up 1.1s ease-out forwards;z-index:5}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-40px)}}
+.shake{animation:sh .25s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* 订单 */
+.orders{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.oc{background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative}
+.oc .cl{font-size:12px;color:var(--mute)}
+.oc .jb{font-size:15px;font-weight:600}
+.oc .need{font-size:12px;display:flex;align-items:center;gap:6px}
+.oc .pr{height:6px;background:#ECEEF2;border-radius:3px;overflow:hidden;flex:1}.oc .pr i{display:block;height:100%;background:var(--blue2)}
+.oc .money{display:flex;justify-content:space-between;align-items:baseline}
+.oc .money b{color:var(--red);font-size:18px}
+.oc.signed{border-color:#A8D8B4;background:#FAFFFB}
+.oc.lock{opacity:.6}
+.stamp{position:absolute;right:10px;top:8px;border:2px solid var(--green);color:var(--green);font-size:12px;padding:0 6px;transform:rotate(8deg);font-weight:700}
+.filter{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+.filter span{padding:3px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-size:12px}
+.filter span.on{border-color:var(--blue);color:var(--blue);background:var(--blue3)}
+.filter .sum{margin-left:auto;color:var(--mute);font-size:12px}
+.filter .sum b{color:var(--red)}
+
+/* 分包 */
+.crew{display:grid;grid-template-columns:1fr 320px;gap:12px;height:100%}
+.worker{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.face{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.worker .nm b{font-size:14px}.worker .nm small{display:block;color:var(--mute);font-size:11px;margin-top:2px}
+.qbar{display:flex;gap:2px;margin-top:4px}.qbar i{width:7px;height:7px;background:#ECEEF2}.qbar i.ok{background:var(--green)}.qbar i.no{background:var(--red)}
+.chat{padding:10px 12px;font-size:12px;line-height:1.8}
+.chat .m{background:#F4F5F7;border-radius:6px;padding:6px 9px;margin-bottom:6px}
+.chat .m b{color:var(--blue)}
+
+/* 结算 */
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%}
+.rows{padding:4px 12px}
+.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row span{color:#555}.row b.p{color:var(--green)}.row b.n{color:var(--red)}
+.row.total{border-bottom:none;font-weight:700}
+.debt{margin:10px 12px;background:#FFF2F1;border:1px solid #F3B4AF;color:#B42318;border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.7}
+.steps{display:flex;gap:6px;margin-top:6px}
+.steps i{flex:1;font-style:normal;text-align:center;border:1px solid #F3B4AF;background:#fff;padding:3px 0;font-size:11px;border-radius:3px}
+.steps i.on{background:#E33E33;color:#fff;border-color:#E33E33}
+.spark{height:90px;margin:4px 12px 10px;position:relative}
+.spark canvas{width:100%;height:100%}
+
+/* 信用 */
+.credit{display:grid;grid-template-columns:330px 1fr;gap:12px;height:100%}
+.dial{display:flex;flex-direction:column;align-items:center;padding:16px}
+.dial .num{font-size:44px;font-weight:700;color:var(--green);margin-top:-80px}
+.dial .tier{font-size:14px;margin-top:2px}
+.tiers{padding:6px 12px}
+.tierrow{display:grid;grid-template-columns:80px 90px 1fr 1fr;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12px;align-items:center}
+.tierrow.on{background:var(--blue3);font-weight:600}
+.rules{padding:4px 12px;font-size:12px}
+.rules .row span{color:#444}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="title"><span class="ico">摆</span>摆渡众包 - 众包标注平台<span class="sp"></span><i>—</i><i>□</i><i class="x">✕</i></div>
+  <div class="hd">
+    <div class="logo"><div class="paw">摆</div><div><b>摆渡众包</b><small>众包标注 · 企业接单</small></div></div>
+    <div class="hud">
+      <span class="chip money">余额 <b id="hMoney">¥1,180</b></span>
+      <span class="chip credit">信用 <b id="hCredit">86</b><span class="gauge"><i id="hGauge" style="width:86%"></i></span>良好</span>
+      <span class="chip">等级 <b>标注员 Lv.3</b></span>
+      <span class="chip">今日热词 <b>洪荒之力</b></span>
+      <span class="combo" id="combo">连击 <span id="cN">0</span><small id="cT">×1.0</small><span class="cf" id="cF"></span></span>
+      <span class="lg">打开灵光 ↗</span>
+    </div>
+  </div>
+  <div class="bd">
+    <div class="nav" id="nav">
+      <a data-p="label" class="on">标注台</a>
+      <a data-p="orders">企业订单 <span class="badge">2</span></a>
+      <a data-p="crew">分包</a>
+      <a data-p="ledger">结算 <span class="badge" id="debtBadge" style="display:none">欠</span></a>
+      <a data-p="credit">信用</a>
+      <div class="sep"></div>
+      <div class="me">账号 kk_2016<br>注册 2016-05-29<br>累计标注 <b id="meTotal">1,284</b> 条</div>
+    </div>
+
+    <!-- 标注台 -->
+    <div class="page on" id="p-label">
+      <div class="desk">
+        <div class="box hall">
+          <div class="bh">任务大厅 <small>按报酬排序</small></div>
+          <div class="list" id="hall"></div>
+        </div>
+        <div class="box work">
+          <div class="bh"><span id="wkTitle">算术</span><small id="wkRule"></small></div>
+          <div class="wk" id="wk">
+            <span class="qmeta" id="qmeta"></span><span class="qno" id="qno"></span>
+            <div class="qcard" id="qcard"></div>
+            <div class="ans" id="ans"></div>
+            <div class="res" id="res"></div>
+          </div>
+          <div class="wbar"><span>最近 20 题</span><div class="feed" id="feed"></div><span class="sp"></span><span>带「灵」= 灵光答的 · 红 = 错</span></div>
+        </div>
+        <div class="side">
+          <div class="box">
+            <div class="bh">今天 <small>6月14日</small></div>
+            <div class="kv">
+              <span>已标</span><b id="sDone">0 条</b>
+              <span>正确率</span><b id="sAcc">—</b>
+              <span>收入</span><b id="sPay" style="color:var(--red)">¥0</b>
+              <span>交给灵光的样本</span><b id="sSamp">0</b>
+            </div>
+            <div class="raise">
+              <div class="lv"><span>人工标注单价</span><b id="rMul">×2</b></div>
+              <div class="ladder" id="ladder"></div>
+              <button class="btn gold" id="raiseBtn" style="width:100%">加薪 → ×4 · ¥600</button>
+            </div>
+          </div>
+          <div class="box ai">
+            <div class="who"><div class="spider home" id="spHome"></div>
+              <div>灵光 · 在旁边看<br><small id="aiState">学会了：算术</small></div></div>
+            <div class="bubble" id="bubble">……</div>
+            <div class="auto" id="aiAuto">把它拖到题目旁边，它会伸手替你答。<b style="color:var(--red)">那时它答错扣你的钱。</b><br>放在这里时它偶尔顺手标一题，错了不扣。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 企业订单 -->
+    <div class="page" id="p-orders">
+      <div class="filter"><span class="on">全部</span><span>能签</span><span>已签</span><span>看图</span><span>文字</span>
+        <span class="sum">已签 2 单 · 每秒 <b>+¥1.9</b></span></div>
+      <div class="orders" id="orders"></div>
+    </div>
+
+    <!-- 分包 -->
+    <div class="page" id="p-crew">
+      <div class="crew">
+        <div class="box">
+          <div class="bh">网吧兄弟 <small>用你的账号标，按分钟发工资；罚款和举报都算你头上</small></div>
+          <div id="workers"></div>
+          <div style="padding:10px 12px;color:var(--mute);font-size:12px">没被抽检到的错题会变成训练数据里的噪声。</div>
+        </div>
+        <div class="box">
+          <div class="bh">YY · 网吧群</div>
+          <div class="chat">
+            <div class="m"><b>阿杰</b>：哥，二子手慢但不出错，小胖快是快，就是老乱点。</div>
+            <div class="m"><b>阿杰</b>：这周电费涨了，工资能不能一分钟加个两毛？</div>
+            <div class="m"><b>二子</b>：验证码那桌我不会，别派我。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结算 -->
+    <div class="page" id="p-ledger">
+      <div class="ledger">
+        <div class="box">
+          <div class="bh">家里的开销 <small>6月14日</small></div>
+          <div class="rows" id="bills"></div>
+          <div class="debt" id="debt"></div>
+        </div>
+        <div class="box">
+          <div class="bh">收入 <small>现在每秒</small></div>
+          <div class="rows">
+            <div class="row"><span>企业订单 · 2 单</span><b class="p">+¥1.9/秒</b></div>
+            <div class="row"><span>自动答题</span><b class="p">+¥0.6/秒</b></div>
+            <div class="row"><span>分包工资</span><b class="n">−¥3/分钟</b></div>
+            <div class="row total"><span>合计约</span><b class="p">+¥2.45/秒 ≈ ¥294/天</b></div>
+          </div>
+          <div class="bh" style="border-top:1px solid var(--line)">余额 · 最近 10 天 <small>红线 = 一天的房租</small></div>
+          <div class="spark"><canvas id="spark"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 信用 -->
+    <div class="page" id="p-credit">
+      <div class="credit">
+        <div class="box dial">
+          <canvas id="dial" width="280" height="160" style="width:280px;height:160px"></canvas>
+          <div class="num">86</div>
+          <div class="tier">良好 · 抽检 8% · 自动收入 ×1.1</div>
+          <div style="margin-top:14px;font-size:12px;color:var(--mute);text-align:center;line-height:1.8">合格率 94%（近 50 次）<br>已被举报 0 次 · 下次冻结 10 分钟</div>
+        </div>
+        <div class="box">
+          <div class="bh">信用档位</div>
+          <div class="tiers">
+            <div class="tierrow"><b>优秀</b><span>90–100</span><span>抽检 5%</span><span>自动收入 ×1.2</span></div>
+            <div class="tierrow on"><b>良好</b><span>70–89</span><span>抽检 8%</span><span>自动收入 ×1.1</span></div>
+            <div class="tierrow"><b>一般</b><span>40–69</span><span>抽检 15%</span><span>自动收入 ×1.0</span></div>
+            <div class="tierrow"><b>观察</b><span>0–39</span><span>抽检 30%</span><span>自动收入 ×0.7</span></div>
+          </div>
+          <div class="bh" style="border-top:1px solid var(--line)">什么会让信用变</div>
+          <div class="rules">
+            <div class="row"><span>抽检合格</span><b class="p">+1</b></div>
+            <div class="row"><span>抽检不合格（罚该题报酬 ×5）</span><b class="n">−4</b></div>
+            <div class="row"><span>金标题答错（平台早知道答案）</span><b class="n">−8</b></div>
+            <div class="row"><span>被举报（冻结 10 / 30 / 120 分钟）</span><b class="n">−15</b></div>
+            <div class="row"><span>人机验证通过</span><b class="p">+2</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="spider float-sp" id="spF" title="拖我"><svg viewBox="0 0 34 34"><g stroke="#2F6F5E" stroke-width="1.3" fill="none"><path d="M12 14 L4 8 L1 13"/><path d="M12 17 L3 17 L0 21"/><path d="M12 20 L5 26 L2 31"/><path d="M22 14 L30 8 L33 13"/><path d="M22 17 L31 17 L34 21"/><path d="M22 20 L29 26 L32 31"/></g></svg><div class="b"></div></div>
+  <div class="st"><span>● 已连接 摆渡云</span><span>手动标注从不抽检</span><span class="sp"></span><span id="stRent">房租 ¥300/天 · 1:58 后扣</span></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+// ───────────── desks ─────────────
+const DESKS=[
+  {id:'logic', name:'逻辑题', pay:3.2, stars:3, left:'不限', tags:['hot'], kind:'logic'},
+  {id:'spam', name:'垃圾短信', pay:1.4, stars:1, left:'2,410', tags:[], kind:'yn', q:['【中国移动】您的积分即将清零，点击 10086.cn.xyz 兑换','妈，我手机掉水里了，加一下这个新号','明天下午三点的会改到四点，别迟到'], a:[1,1,0], opts:['垃圾','正常']},
+  {id:'arith', name:'算术', pay:2, stars:1, left:'不限', tags:['new'], kind:'arith', fine:1},
+  {id:'danmu', name:'弹幕情绪', pay:1.4, stars:2, left:'860', tags:[], lock:'训练一轮以后'},
+  {id:'mnist', name:'手写数字', pay:1.2, stars:1, left:'6,000', tags:[], lock:'灵光阶段 2 「认得出字」'},
+  {id:'cifar', name:'验证码', pay:2.4, stars:3, left:'1,200', tags:[], lock:'买下 LSTM'},
+  {id:'go', name:'围棋气数', pay:4, stars:4, left:'300', tags:[], lock:'累计标注 500 条（还差 216）'},
+  {id:'longtext', name:'长句', pay:3, stars:4, left:'—', tags:[], lock:'买下 LSTM'},
+];
+const S={desk:'arith', money:1180, done:0, ok:0, pay:0, samp:0, combo:0, comboT:0, mul:2, raises:1, feed:[], q:null, total:1284, credit:86, rentT:118};
+const LADDER=[1,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34];
+
+function hall(){
+  $('#hall').innerHTML=DESKS.map(d=>{
+    if(d.lock) return `<div class="task lock"><div class="r1"><b>🔒 ${d.name}</b><span class="pay">¥${(d.pay*S.mul/4).toFixed(2)}<small>/题</small></span></div><div class="why">解锁：${d.lock}</div></div>`;
+    const tg=d.tags.map(t=>t==='hot'?'<span class="tagx t-hot">高价</span>':'<span class="tagx t-new">新</span>').join('');
+    return `<div class="task ${S.desk===d.id?'on':''}" data-id="${d.id}"><div class="r1"><b>${d.name}</b>${tg}<span class="pay">¥${(d.pay*S.mul/4).toFixed(2)}<small>/题</small></span></div>
+      <div class="r2"><span class="stars">${'★'.repeat(d.stars)}${'☆'.repeat(4-d.stars)}</span><span>剩 ${d.left}</span><span>${d.kind==='arith'?'判对错 · 错了扣钱':d.kind==='logic'?'随机生成':'2016 真题库'}</span></div></div>`;
+  }).join('');
+  document.querySelectorAll('.task[data-id]').forEach(el=>el.onclick=()=>{S.desk=el.dataset.id; hall(); next();});
+}
+
+// ───────────── questions ─────────────
+const rnd=n=>Math.floor(Math.random()*n);
+function makeQ(){
+  const d=DESKS.find(x=>x.id===S.desk);
+  if(d.kind==='arith'){
+    // A sum shown with an answer; half the time the answer is off by a little. The player judges 对 / 错.
+    const op=rnd(3), a=op===2?2+rnd(8):10+rnd(80), b=op===2?2+rnd(8):op===1?rnd(a):10+rnd(80);
+    const r=op===0?a+b:op===1?a-b:a*b, sym=['+','−','×'][op];
+    const right=rnd(2)===0, shown=right?r:Math.max(0,r+(rnd(2)?1:-1)*(op===2?[1,2,a,b][rnd(4)]:[1,2,10][rnd(3)]));
+    return {html:`<div class="q">${a} ${sym} ${b} = ${shown}</div><div class="hint">这道算式对不对？点错扣钱</div>`, opts:['对','错'], a: shown===r?'对':'错', wide:true};
+  }
+  if(d.kind==='logic'){
+    const names=['小王','小李','小张'], jobs=['医生','老师','厨师'];
+    const p=[0,1,2].sort(()=>Math.random()-.5);
+    const i=rnd(3), j=(i+1)%3;
+    const claim=rnd(2)? p[i] : (p[i]+1)%3;
+    return {html:`<div class="q logic">${names[i]}不是${jobs[p[j]]}。${names[j]}是${jobs[p[j]]}。${names[(i+2)%3]}不是${jobs[p[i]]}。<br><b>问：${names[i]}是${jobs[claim]}吗？</b></div><div class="hint">三个人三种职业，一人一种</div>`,
+      opts:['是','否'], a: claim===p[i]?'是':'否', wide:true};
+  }
+  const k=rnd(d.q.length);
+  return {html:`<div class="q logic">${d.q[k]}</div><div class="hint">这条短信是垃圾短信吗？</div>`, opts:d.opts, a:d.opts[d.a[k]], wide:true};
+}
+function next(){
+  const d=DESKS.find(x=>x.id===S.desk);
+  S.q=makeQ();
+  $('#wkTitle').textContent=d.name;
+  $('#wkRule').textContent='每题 ¥'+(d.pay*S.mul/4).toFixed(2)+(d.fine?' · 点错 −¥'+(d.fine*S.mul/4).toFixed(2):'')+' · 连击越高越多';
+  $('#qmeta').textContent='★'.repeat(d.stars)+' 难度';
+  $('#qno').textContent='第 '+(S.done+1)+' 题';
+  $('#qcard').innerHTML=S.q.html;
+  $('#ans').className='ans'+(S.q.wide?' wide':'');
+  $('#ans').innerHTML=S.q.opts.map((o,i)=>`<button data-v="${o}">${o}<kbd>${i+1}</kbd></button>`).join('');
+  document.querySelectorAll('#ans button').forEach(b=>b.onclick=()=>answer(b.dataset.v,b));
+  // the spider sometimes answers one for you, at its current ability
+  S.qid=(S.qid||0)+1;
+  clearTimeout(S.aiT);
+  if(S.mode==='work') S.aiT=setTimeout(workTick, 900+rnd(500));
+  else if(Math.random()<.25) S.aiT=setTimeout(aiAnswer, 1600+rnd(1200));
+}
+function answer(v,btn,ai){
+  const d=DESKS.find(x=>x.id===S.desk), right=v===S.q.a;
+  S.done++; S.total++;
+  if(right){
+    S.ok++; S.combo++; S.comboT=d.id==='logic'?12:6;
+    const pay=d.pay*S.mul/4*(1+Math.min(S.combo,30)*.02);
+    S.pay+=pay; S.money+=pay; S.samp++;
+    float(btn||$('#qcard'),'+¥'+pay.toFixed(2),'var(--red)');
+    $('#res').innerHTML=`<span style="color:var(--green)">✓ ${ai?'灵光标对了':'对'}</span>`;
+  } else {
+    S.combo=0;
+    if(d.fine && ai!=='peek'){ const f=d.fine*S.mul/4; S.money-=f; S.pay-=f; float(btn||$('#qcard'),'−¥'+f.toFixed(2),'var(--red)'); }
+    $('#qcard').classList.remove('shake'); void $('#qcard').offsetWidth; $('#qcard').classList.add('shake');
+    $('#res').innerHTML=`<span style="color:var(--red)">× ${ai==='hand'?'灵光伸手答错了 · 扣你的钱':ai?'灵光顺手标错了 · 不扣':'错了'} · 答案 ${S.q.a}</span>`;
+  }
+  S.feed.push(ai?(right?'bot':'no bw'):right?'ok':'no'); if(S.feed.length>20) S.feed.shift();
+  say(right);
+  render(); setTimeout(next, 380);
+}
+function aiAnswer(){
+  const good=Math.random()<.7, v=good?S.q.a:S.q.opts.find(o=>o!==S.q.a);
+  $('#bubble').textContent='这题。我会。';
+  const b=[...document.querySelectorAll('#ans button')].find(x=>x.dataset.v===v);
+  if(b){ b.style.borderColor='#8A78E8'; b.style.color='#8A78E8'; }
+  setTimeout(()=>answer(v,b,'peek'),500);
+}
+const LINES=['……','进位。','它们都是数字。','你停了 0.8 秒。','为什么是 7？','我在记。','这一题，我也会了。','……你累吗'];
+function say(right){ if(Math.random()<.45) $('#bubble').textContent=LINES[rnd(LINES.length)]; }
+
+// ───────────── view ─────────────
+function render(){
+  $('#hMoney').textContent='¥'+Math.round(S.money).toLocaleString();
+  $('#sDone').textContent=S.done+' 条';
+  $('#sAcc').textContent=S.done?Math.round(S.ok/S.done*100)+'%':'—';
+  $('#sPay').textContent='¥'+S.pay.toFixed(2);
+  $('#sSamp').textContent=S.samp;
+  $('#meTotal').textContent=S.total.toLocaleString();
+  $('#cN').textContent=S.combo; $('#cT').textContent='×'+(1+Math.min(S.combo,30)*.02).toFixed(2);
+  $('#feed').innerHTML=Array.from({length:20},(_,i)=>{const f=S.feed[i]; return `<i class="${f||''}">${f&&f.startsWith('bot')||f==='no bw'?'灵':''}</i>`;}).join('');
+  $('#rMul').textContent='×'+S.mul;
+  $('#ladder').innerHTML=LADDER.slice(1).map((m,i)=>`<i class="${i<S.raises?'on':''}"></i>`).join('');
+  const nm=LADDER[S.raises+1], cost=300*Math.pow(2,S.raises);
+  $('#raiseBtn').textContent=nm?`加薪 → ×${nm} · ¥${cost.toLocaleString()}`:'已经最高';
+  $('#raiseBtn').disabled=!nm||S.money<cost;
+  $('#stRent').textContent=`房租 ¥300/天 · ${Math.floor(S.rentT/60)}:${String(Math.floor(S.rentT%60)).padStart(2,'0')} 后扣`;
+}
+$('#raiseBtn').onclick=()=>{ const cost=300*Math.pow(2,S.raises); if(S.money<cost) return; S.money-=cost; S.raises++; S.mul=LADDER[S.raises]; float($('#raiseBtn'),'单价 ×'+S.mul,'var(--gold)'); hall(); render(); };
+function float(el,t,c){ const r=el.getBoundingClientRect(), w=$('#win').getBoundingClientRect(), k=w.width/1236;
+  const f=document.createElement('div'); f.className='float'; f.textContent=t; f.style.color=c;
+  f.style.left=((r.left-w.left)/k+r.width/k/2-20)+'px'; f.style.top=((r.top-w.top)/k-6)+'px'; $('#win').appendChild(f); setTimeout(()=>f.remove(),1100); }
+
+// orders
+const ORD=[
+  {cl:'城郊信用社', jb:'支票金额识别', ds:'手写数字', need:97, now:91, inc:.4, bonus:60, signed:true},
+  {cl:'家教网站', jb:'作业是非题自动批改', ds:'逻辑题', need:75, now:82, inc:1.5, bonus:300, signed:true},
+  {cl:'市反诈中心', jb:'诈骗短信拦截', ds:'垃圾短信', need:92, now:88, inc:1, bonus:250},
+  {cl:'考公培训班', jb:'判断推理陪练', ds:'逻辑题', need:88, now:82, inc:7, bonus:1500},
+  {cl:'区邮政局', jb:'邮政编码分拣', ds:'手写数字', need:99, now:91, inc:1, bonus:200},
+  {cl:'某购票网站', jb:'验证码难度测评', ds:'验证码', need:70, now:0, inc:2, bonus:450, lock:'先解锁验证码桌'},
+];
+$('#orders').innerHTML=ORD.map(o=>{
+  const can=!o.signed&&!o.lock&&o.now>=o.need;
+  return `<div class="oc ${o.signed?'signed':''} ${o.lock?'lock':''}">${o.signed?'<span class="stamp">已签约</span>':''}
+  <div class="cl">${o.cl} · 要 ${o.ds}</div><div class="jb">${o.jb}</div>
+  <div class="need">准确率 ${o.now}% / ${o.need}%<span class="pr"><i style="width:${Math.min(100,o.now/o.need*100)}%;background:${o.now>=o.need?'var(--green)':'var(--blue2)'}"></i></span></div>
+  <div class="money"><span><b>+¥${o.inc}</b>/秒</span><span style="color:var(--mute);font-size:12px">签约首付 ¥${o.bonus}</span></div>
+  ${o.signed?'<button class="btn ghost" disabled>每秒结算中</button>':o.lock?`<button class="btn" disabled>${o.lock}</button>`:can?'<button class="btn">签约</button>':`<button class="btn" disabled>还差 ${o.need-o.now}%：去灵光练</button>`}</div>`;
+}).join('');
+
+// crew
+const W=[{n:'阿杰',c:'#E8A317',s:'网吧老板 · 什么都会一点',w:'¥1.2/分钟',q:'ooooxoooooooo'},{n:'二子',c:'#2F9E44',s:'手慢，不出错',w:'¥0.8/分钟',q:'ooooooooooooo'},{n:'小胖',c:'#E33E33',s:'快，老乱点',w:'¥1.0/分钟',q:'ooxoxooxoooxo'}];
+$('#workers').innerHTML=W.map(w=>`<div class="worker"><div class="face" style="background:${w.c}">${w.n[0]}</div>
+  <div class="nm"><b>${w.n}</b><small>${w.s} · 工资 ${w.w}</small><div class="qbar">${[...w.q].map(x=>`<i class="${x==='o'?'ok':'no'}"></i>`).join('')}</div></div>
+  <div><button class="btn ghost">派到 算术</button> <button class="btn ghost" style="border-color:var(--line);color:var(--mute)">辞退</button></div></div>`).join('');
+
+// ledger
+$('#bills').innerHTML=[
+  ['房租','−¥300/天','n'],['训练电费 · 本月 38 度 · 第一档','约 ¥1.6/轮','n'],['宽带（每月 1 号）','−¥100','n'],['夏天空调（7、8 月）','−¥40/天','n'],
+  ['6 月以来 · 房租','−¥4,200','n'],['6 月以来 · 训练电费','−¥312','n'],['6 月以来 · 修显卡','−¥0',''],['6 月以来 · 合计','−¥4,612','n'],
+].map(r=>`<div class="row ${r[0].includes('合计')?'total':''}"><span>${r[0]}</span><b class="${r[2]}">${r[1]}</b></div>`).join('');
+$('#debt').innerHTML=`余额够交 <b>3</b> 天房租。欠钱以后：<div class="steps"><i>第 1 天 房东催</i><i>第 2 天 拉电闸</i><i>第 3 天 卖电脑</i></div>`;
+function spark(){ const c=$('#spark'), g=c.getContext('2d'); c.width=c.offsetWidth*2; c.height=c.offsetHeight*2; g.scale(2,2);
+  const W=c.offsetWidth,H=c.offsetHeight, v=[1200,880,620,1500,1100,760,1320,980,1250,1180], mx=1800, y=x=>H-6-x/mx*(H-12);
+  g.strokeStyle='#E33E33'; g.setLineDash([4,3]); g.beginPath(); g.moveTo(0,y(300)); g.lineTo(W,y(300)); g.stroke(); g.setLineDash([]);
+  g.strokeStyle='#4E6EF2'; g.lineWidth=2; g.beginPath(); v.forEach((p,i)=>{const X=i*(W-4)/9+2; i?g.lineTo(X,y(p)):g.moveTo(X,y(p));}); g.stroke(); }
+function dial(){ const g=$('#dial').getContext('2d'), cx=140, cy=140, r=110;
+  [['#E33E33',0,.4],['#F27B1D',.4,.7],['#4E6EF2',.7,.9],['#2F9E44',.9,1]].forEach(([c,a,b])=>{g.strokeStyle=c; g.lineWidth=14; g.beginPath(); g.arc(cx,cy,r,Math.PI+a*Math.PI,Math.PI+b*Math.PI); g.stroke();});
+  const t=Math.PI+.86*Math.PI; g.strokeStyle='#222'; g.lineWidth=3; g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(t)*(r-24),cy+Math.sin(t)*(r-24)); g.stroke(); }
+
+// nav
+document.querySelectorAll('.nav a').forEach(a=>a.onclick=()=>{
+  document.querySelectorAll('.nav a').forEach(x=>x.classList.toggle('on',x===a));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='p-'+a.dataset.p));
+  if(a.dataset.p==='label' && S.mode==='work') setTimeout(startWork,30); if(a.dataset.p==='ledger') spark(); if(a.dataset.p==='credit') dial();
+});
+addEventListener('keydown',e=>{ const b=document.querySelectorAll('#ans button')[+e.key-1]; if(b&&$('#p-label').classList.contains('on')) b.click(); });
+setInterval(()=>{ if(S.comboT>0){ S.comboT-=.25; if(S.comboT<=0) S.combo=0; }
+  const d=DESKS.find(x=>x.id===S.desk); $('#cF').style.width=(S.comboT/(d.id==='logic'?12:6)*100)+'%';
+  S.rentT-=.25; if(S.rentT<=0){ S.rentT=120; S.money-=300; float($('#hMoney'),'房租 −¥300','#FFE27A'); } render(); },250);
+function fit(){ const k=Math.min(innerWidth/1260, innerHeight/715, 1.4); $('#win').style.transform=`translate(-50%,-50%) scale(${k})`; }
+addEventListener('resize',fit); fit();
+hall(); next(); render();
+
+// ───────────── drag the spider to the question: it answers with a hand ─────────────
+const SP=$('#spF'); S.mode='home';
+const winK=()=>$('#win').getBoundingClientRect().width/1236;
+function lr(el){ const r=el.getBoundingClientRect(), w=$('#win').getBoundingClientRect(), k=winK(); return {x:(r.left-w.left)/k, y:(r.top-w.top)/k, w:r.width/k, h:r.height/k}; }
+function put(x,y){ SP.style.left=x+'px'; SP.style.top=y+'px'; }
+function overWk(){ const a=lr(SP), b=lr($('#wk')), cx=a.x+a.w/2, cy=a.y+a.h/2; return cx>b.x && cx<b.x+b.w && cy>b.y && cy<b.y+b.h; }
+function goHome(){ const h=lr($('#spHome')); put(h.x,h.y); S.mode='home'; SP.classList.remove('work'); $('#aiState').textContent='学会了：算术'; }
+function startWork(){
+  const q=lr($('#qcard')); put(q.x+q.w+22, q.y+q.h/2-17);
+  S.mode='work'; SP.classList.add('work'); $('#aiState').textContent='在替你答题';
+  $('#bubble').textContent='我来。'; clearTimeout(S.aiT); S.aiT=setTimeout(workTick,900);
+}
+let drag=null;
+SP.onpointerdown=e=>{ e.preventDefault(); SP.setPointerCapture(e.pointerId); const w=$('#win').getBoundingClientRect(), k=winK();
+  drag={dx:(e.clientX-w.left)/k-parseFloat(SP.style.left), dy:(e.clientY-w.top)/k-parseFloat(SP.style.top)};
+  SP.classList.add('drag'); if(S.mode==='work'){ S.mode='home'; SP.classList.remove('work'); clearTimeout(S.aiT); } };
+SP.onpointermove=e=>{ if(!drag) return; const w=$('#win').getBoundingClientRect(), k=winK();
+  put((e.clientX-w.left)/k-drag.dx,(e.clientY-w.top)/k-drag.dy); $('#wk').classList.toggle('drop',overWk()); };
+SP.onpointerup=()=>{ if(!drag) return; drag=null; SP.classList.remove('drag'); const on=overWk(); $('#wk').classList.remove('drop'); on?startWork():goHome(); };
+// one answer: the arm reaches the button, presses it, comes back
+function workTick(){
+  if(S.mode!=='work' || $('#p-label').classList.contains('on')===false) return;
+  const acc={arith:.8, logic:.6, spam:.85}[S.desk]||.7, id=S.qid;
+  const v=Math.random()<acc? S.q.a : S.q.opts.find(o=>o!==S.q.a);
+  const btn=[...document.querySelectorAll('#ans button')].find(x=>x.dataset.v===v); if(!btn) return;
+  const a=lr(SP), b=lr(btn), x0=a.x+a.w/2, y0=a.y+a.h/2, x1=b.x+b.w/2, y1=b.y+b.h/2, len=Math.hypot(x1-x0,y1-y0);
+  const arm=document.createElement('div'); arm.className='arm';
+  arm.style.left=x0+'px'; arm.style.top=(y0-1)+'px'; arm.style.width=len+'px';
+  arm.style.transform=`rotate(${Math.atan2(y1-y0,x1-x0)}rad) scaleX(0)`; $('#win').appendChild(arm);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>arm.style.transform=`rotate(${Math.atan2(y1-y0,x1-x0)}rad) scaleX(1)`));
+  setTimeout(()=>{ if(S.qid!==id||S.mode!=='work'){ arm.remove(); return; } btn.classList.add('press'); answer(v,btn,'hand');
+    arm.style.transform=`rotate(${Math.atan2(y1-y0,x1-x0)}rad) scaleX(0)`; setTimeout(()=>arm.remove(),250); },260);
+}
+addEventListener('resize',()=>{ S.mode==='work'?startWork():goHome(); });
+setTimeout(goHome,50);
+</script>
+</body>
+</html>

@@ -187,30 +187,29 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void EpochsFeedCardsAndTheTestSetDecidesAccuracy()
+        public void EpochsFeedTheBoardAndTheScoreFollowsTheScalingLaw()
         {
             var sim = Spam(); var host = new Host();
             sim.S.unlocked.Add("bias");
             double before = sim.S.sequence.valAcc;
             for (int i = 0; i < 30; i++) sim.TrainEpoch(XgTrack.Sequence, host);
-            Assert.That(sim.Board.Count("sequence"), Is.GreaterThan(0));
+            Assert.That(sim.Board.Count("sequence"), Is.GreaterThan(0), "the brain still learns from the cards");
             Assert.That(sim.S.sequence.valAcc, Is.GreaterThan(before + .1));
-            Assert.That(sim.S.sequence.valAcc, Is.EqualTo(XgSim.Scale("spam", sim.Board.Accuracy(sim.TestSet("spam"), sim.Knobs(sim.S.sequence)))).Within(1e-9));
+            Assert.That(sim.S.sequence.valAcc, Is.LessThanOrEqualTo(sim.CeilingAcc(sim.S.sequence) + 1e-9), "the score never passes the model's ceiling");
         }
 
         [Test]
-        public void KnobsFollowPurchasesAndOwnership()
+        public void TechniquesFollowPurchasesAndOwnership()
         {
             var sim = Spam(); var host = new Host();
             Assert.That(sim.Knobs(sim.S.sequence).activation, Is.EqualTo(XgActivation.Step));
-            Assert.IsFalse(sim.SetActivation(XgTrack.Sequence, 1), "the S-curve is a skill-tree node");
             sim.S.unlocked.Add("perceptron"); sim.S.unlocked.Add("bt.hidden"); sim.S.unlocked.Add("mlp");
             sim = new XgSim(sim.S) { GoldChance = 0 };
             Assert.IsTrue(sim.BuyNode("sigmoid", host), sim.Why(XgCatalog.Node("sigmoid"), host));
             Assert.That(sim.Knobs(sim.S.sequence).activation, Is.EqualTo(XgActivation.Sigmoid), "buying switches it on");
             Assert.That(sim.Knobs(sim.S.vision).activation, Is.EqualTo(XgActivation.Sigmoid));
-            Assert.IsTrue(sim.SetActivation(XgTrack.Sequence, 0));
-            Assert.That(sim.Knobs(sim.S.sequence).wiring, Is.EqualTo(XgWiring.Full));
+            sim.S.unlocked.Add("gradclip"); sim.AutoConfigure(sim.S.sequence, host);
+            Assert.That(sim.Knobs(sim.S.sequence).clip, Is.True, "an owned technique is simply on");
             sim.S.sequence.arch = "lstm"; Assert.That(sim.Knobs(sim.S.sequence).wiring, Is.EqualTo(XgWiring.GatedRecurrent));
         }
 
@@ -223,31 +222,17 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void HugeRateTearsTheBoardAndClippingHolds()
-        {
-            var sim = Spam(); var host = new Host();
-            sim.S.unlocked.Add("shared.lr"); Assert.IsTrue(sim.SetLr(XgTrack.Sequence, 0));
-            for (int i = 0; i < 40 && sim.S.nanEvents == 0; i++) sim.TrainEpoch(XgTrack.Sequence, host);
-            Assert.That(sim.S.nanEvents, Is.GreaterThan(0), "lr 1 tears the weights");
-            sim.S.unlocked.Add("gradclip"); Assert.IsTrue(sim.SetClip(XgTrack.Sequence, true));
-            int nan = sim.S.nanEvents;
-            for (int i = 0; i < 40; i++) sim.TrainEpoch(XgTrack.Sequence, host);
-            Assert.That(sim.S.nanEvents, Is.EqualTo(nan));
-        }
-
-        [Test]
-        public void NewDepthReinitialisesItsRegionButNotTheSeed()
+        public void ADeeperModelReinitialisesItsRegionButNotTheSeed()
         {
             var sim = Spam(); var host = new Host();
             for (int i = 0; i < 10; i++) sim.TrainEpoch(XgTrack.Sequence, host);
             var seed = sim.Board.Plant("logic", "关机", -3);
             Assert.That(sim.Board.Count("sequence"), Is.GreaterThan(0));
-            sim.S.unlocked.Add("perceptron"); sim.S.unlocked.Add("bt.hidden"); sim.S.unlocked.Add("mlp"); sim.S.unlocked.Add("s.d2"); sim.S.sequence.arch = "mlp";
+            sim.S.unlocked.Add("perceptron"); sim.S.unlocked.Add("bt.hidden"); sim.S.unlocked.Add("mlp"); sim.S.unlocked.Add("s.d2");
             var before = sim.S.board.concepts.FindAll(c => c.region == "sequence").ConvertAll(c => c.id);
-            Assert.IsTrue(sim.SetDepth(XgTrack.Sequence, 2, host));
-            Assert.That(sim.S.board.concepts.FindAll(c => c.region == "sequence").ConvertAll(c => c.id), Is.EquivalentTo(before), "the real network waits for the next real epoch");
-            sim.TrainEpoch(XgTrack.Sequence, host);
-            Assert.That(sim.S.board.concepts.Exists(c => c.region == "sequence" && before.Contains(c.id)), Is.False, "that epoch starts from a fresh network");
+            Assert.IsTrue(sim.AutoConfigure(sim.S.sequence, host), "the lab grows into the new layer by itself");
+            Assert.That(sim.S.sequence.depth, Is.EqualTo(2));
+            Assert.That(sim.S.board.concepts.Exists(c => c.region == "sequence" && before.Contains(c.id)), Is.False, "a new structure or depth starts a fresh network");
             Assert.That(sim.Board.Find("logic", "关机"), Is.SameAs(seed));
         }
 

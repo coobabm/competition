@@ -108,5 +108,35 @@ namespace LingGuangV05.Tests
             Assert.IsFalse(sim.CompletePrologue(p), "only once");
             Assert.AreEqual(0, new GameState().prologue, "older saves load as done");
         }
+
+        [Test]
+        public void ThePlayerProfileRemembersTheSetupAndIsReadBackFromAFinishedSave()
+        {
+            var p = PrologueProfile.Read("嘴硬心软，爱吐槽");
+            p.name = "小灯"; p.self = "本机"; p.callMe = "老大";
+            var profile = PlayerProfile.FromSetup(p);
+            Assert.IsTrue(PlayerProfile.IsUsable(profile));
+            Assert.IsTrue(profile.openingFinished);
+            Assert.IsNull(PlayerProfile.FromSetup(new PrologueProfile()), "an unfinished setup is not a profile");
+            Assert.IsFalse(PlayerProfile.IsUsable(new PlayerProfile()), "nothing finished, nothing to skip");
+
+            // Ending a new game's prologue with the remembered setup gives the same game as typing it in.
+            var typed = new ChapterOneSim(); Assert.IsTrue(typed.CompletePrologue(p));
+            var skipped = new ChapterOneSim(); Assert.IsTrue(skipped.CompletePrologue(profile.CopyOfSetup()));
+            Assert.AreEqual(typed.S.aiName, skipped.S.aiName); Assert.AreEqual(typed.S.aiSelf, skipped.S.aiSelf); Assert.AreEqual(typed.S.aiCallMe, skipped.S.aiCallMe);
+            Assert.AreEqual(typed.S.personality, skipped.S.personality); Assert.AreEqual(typed.S.targetWarmth, skipped.S.targetWarmth);
+            CollectionAssert.AreEqual(typed.S.toneWords, skipped.S.toneWords);
+            Assert.AreEqual(2, skipped.S.prologue); Assert.IsTrue(skipped.AppInstalled);
+
+            // An older save proves it; one still in the prologue, from before it existed, or without a setup does not.
+            var fromSave = PlayerProfile.FromState(typed.S);
+            Assert.IsTrue(PlayerProfile.IsUsable(fromSave));
+            Assert.AreEqual("小灯", fromSave.setup.name); Assert.AreEqual("老大", fromSave.setup.callMe); Assert.AreEqual("save", fromSave.source);
+            Assert.IsNull(PlayerProfile.FromState(new ChapterOneSim().S), "still in the prologue");
+            Assert.IsNull(PlayerProfile.FromState(new GameState()), "a save from before the prologue has no setup");
+            var empty = new ChapterOneSim().S; empty.prologue = 2;
+            Assert.IsNull(PlayerProfile.FromState(empty), "done but never set up");
+            Assert.IsNull(PlayerProfile.FromState(null));
+        }
     }
 }

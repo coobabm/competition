@@ -1,0 +1,225 @@
+{
+  "verified_at": "2026-10-07",
+  "kind": "pure-dotnet source-extracted production sampling and visible-signature probe",
+  "ui_verified": false,
+  "offer_count": 28,
+  "chinese_unique": 28,
+  "english_unique": 28,
+  "call_order_independent": true,
+  "concurrent_cold_access": true,
+  "failed_initialization_atomic": true,
+  "translations": {
+    "translate.junk": {
+      "zh": "原文：他坐在河边的 bank 上，看着小船。\n翻译 bank 时，灵光关注的是“小船”。它看对了吗？",
+      "en": "Source: He sat on the river bank watching boats.\nFor “bank”, LingGuang focused on “boats”. Did it focus on the right clue?"
+    },
+    "translate.pack": {
+      "zh": "原文：他坐在河边的 bank 上，看着小船。\n翻译 bank 时，灵光关注的是“河”。它看对了吗？",
+      "en": "Source: He sat on the river bank watching boats.\nFor “bank”, LingGuang focused on “river”. Did it focus on the right clue?"
+    }
+  },
+  "items": [
+    {
+      "offer_id": "cifar.junk",
+      "base_seed": 1731405555,
+      "selected_card_seed": 225790201,
+      "visible_zh": "captcha|5|225790201|1|-1",
+      "visible_en": "captcha|5|225790201|1|-1"
+    },
+    {
+      "offer_id": "cifar.pack",
+      "base_seed": 844507922,
+      "selected_card_seed": 548085827,
+      "visible_zh": "captcha|4|548085827|1|-1",
+      "visible_en": "captcha|4|548085827|1|-1"
+    },
+    {
+      "offer_id": "crosssentence.pack",
+      "base_seed": 111970212,
+      "selected_card_seed": 13909278,
+      "visible_zh": "text|第一句：“显卡又烧了。”\n\n第二句：“你可真会折腾。”",
+      "visible_en": "text|First: “The GPU burned out again.”\n\nSecond: “You really know how to break hardware.”"
+    },
+    {
+      "offer_id": "danmu.junk",
+      "base_seed": 1107127931,
+      "selected_card_seed": 2108978739,
+      "visible_zh": "text|为了部落！",
+      "visible_en": "text|为了部落！"
+    },
+    {
+      "offer_id": "danmu.pack",
+      "base_seed": 220230298,
+      "selected_card_seed": 755597729,
+      "visible_zh": "text|友谊的小船说翻就翻，up 主你变了",
+      "visible_en": "text|友谊的小船说翻就翻，up 主你变了"
+    },
+    {
+      "offer_id": "go.junk",
+      "base_seed": 1772743452,
+      "selected_card_seed": 1172325871,
+      "visible_zh": "go|........W.WWB......BBW.....BWW.........W...................W..................B..|20|-1",
+      "visible_en": "go|........W.WWB......BBW.....BWW.........W...................W..................B..|20|-1"
+    },
+    {
+      "offer_id": "go.pack",
+      "base_seed": 885845819,
+      "selected_card_seed": 152477138,
+      "visible_zh": "go|......................W......B.......................W......W.......WBW...W.WW...|69|-1",
+      "visible_en": "go|......................W......B.......................W......W.......WBW...W.WW...|69|-1"
+    },
+    {
+      "offer_id": "headline.junk",
+      "base_seed": 558548616,
+      "selected_card_seed": 1376196552,
+      "visible_zh": "text|支付宝集五福活动结束，敬业福最难集",
+      "visible_en": "text|支付宝集五福活动结束，敬业福最难集"
+    },
+    {
+      "offer_id": "headline.pack",
+      "base_seed": 1819134631,
+      "selected_card_seed": 1012194673,
+      "visible_zh": "text|《太阳的后裔》今晚大结局",
+      "visible_en": "text|《太阳的后裔》今晚大结局"
+    },
+    {
+      "offer_id": "imagenet.junk",
+      "base_seed": 1831164214,
+      "selected_card_seed": 1831164214,
+      "visible_zh": "captcha|6|1831164214|1|-1",
+      "visible_en": "captcha|6|1831164214|1|-1"
+    },
+    {
+      "offer_id": "imagenet.pack",
+      "base_seed": 944266581,
+      "selected_card_seed": 944266581,
+      "visible_zh": "captcha|0|944266581|1|-1",
+      "visible_en": "captcha|0|944266581|1|-1"
+    },
+    {
+      "offer_id": "logic.junk",
+      "base_seed": 439832336,
+      "selected_card_seed": 230173125,
+      "visible_zh": "text|只有答对，才能拿到报酬。已知没拿到报酬。能确定这题答错了吗？",
+      "visible_en": "text|You get paid only if the answer is right. We know it was not paid. Can we be sure the answer was wrong?"
+    },
+    {
+      "offer_id": "logic.pack",
+      "base_seed": 1700418351,
+      "selected_card_seed": 1410911406,
+      "visible_zh": "text|17 + 3 = 20 吗？",
+      "visible_en": "text|Is 17 + 3 = 20?"
+    },
+    {
+      "offer_id": "longtext.pack",
+      "base_seed": 217206188,
+      "selected_card_seed": 1464372761,
+      "visible_zh": "text|老周交代：红色便签必须关机，蓝色便签必须保持开机。当前电脑贴着红色便签。\n厨房里留着一碗面。\n走廊尽头的灯还亮着。\n窗外刚下过雨。\n楼下有人在搬椅子。\n桌上的水已经凉了。\n墙上的钟慢了两分钟。\n附近的书店今天关门。\n门口停着一辆自行车。\n\n",
+      "visible_en": "text|Lao Zhou's rule: a red note means shut down; a blue note means keep the computer on. This computer has a red note.\nA bowl of noodles is in the kitchen.\nThe light at the end of the hall is still on.\nIt has just rained outside.\nSomeone downstairs is moving chairs.\nThe water on the desk has gone cold.\nThe wall clock is two minutes slow.\nThe nearby bookshop is closed today.\nA bicycle is parked outside.\n\n"
+    },
+    {
+      "offer_id": "meme.junk",
+      "base_seed": 1005172388,
+      "selected_card_seed": 1030877842,
+      "visible_zh": "face|0|1030877842|哈哈哈哈哈哈哈",
+      "visible_en": "face|0|1030877842|哈哈哈哈哈哈哈"
+    },
+    {
+      "offer_id": "meme.pack",
+      "base_seed": 118274755,
+      "selected_card_seed": 961484139,
+      "visible_zh": "face|3|961484139|这届人民不行？",
+      "visible_en": "face|3|961484139|这届人民不行？"
+    },
+    {
+      "offer_id": "mnist.junk",
+      "base_seed": 431881163,
+      "selected_card_seed": 405865609,
+      "visible_zh": "digit|6|405865609|1|6",
+      "visible_en": "digit|6|405865609|1|6"
+    },
+    {
+      "offer_id": "mnist.pack",
+      "base_seed": 1692467178,
+      "selected_card_seed": 670461792,
+      "visible_zh": "digit|8|670461792|1|8",
+      "visible_en": "digit|8|670461792|1|8"
+    },
+    {
+      "offer_id": "news.junk",
+      "base_seed": 1489567127,
+      "selected_card_seed": 1489567127,
+      "visible_zh": "text|疑是地＿\n\n下一字：上",
+      "visible_en": "text|疑是地＿\n\nNext: 上"
+    },
+    {
+      "offer_id": "news.pack",
+      "base_seed": 602669494,
+      "selected_card_seed": 602669494,
+      "visible_zh": "text|天涯＿\n\n下一字：共",
+      "visible_en": "text|天涯＿\n\nNext: 共"
+    },
+    {
+      "offer_id": "poems.junk",
+      "base_seed": 396615742,
+      "selected_card_seed": 527426848,
+      "visible_zh": "text|处处闻啼＿\n\n下一字：鸟",
+      "visible_en": "text|处处闻啼＿\n\nNext: 鸟"
+    },
+    {
+      "offer_id": "poems.pack",
+      "base_seed": 1657201757,
+      "selected_card_seed": 1640029839,
+      "visible_zh": "text|两岸猿声啼＿\n\n下一字：不",
+      "visible_en": "text|两岸猿声啼＿\n\nNext: 不"
+    },
+    {
+      "offer_id": "review.junk",
+      "base_seed": 973340172,
+      "selected_card_seed": 951299111,
+      "visible_zh": "text|表姐推荐的，用了一个月，键盘 F 键有点松",
+      "visible_en": "text|表姐推荐的，用了一个月，键盘 F 键有点松"
+    },
+    {
+      "offer_id": "review.pack",
+      "base_seed": 86442539,
+      "selected_card_seed": 453056232,
+      "visible_zh": "text|好评好评好评，老板人很好，下次还来",
+      "visible_en": "text|好评好评好评，老板人很好，下次还来"
+    },
+    {
+      "offer_id": "spam.junk",
+      "base_seed": 1404645805,
+      "selected_card_seed": 1910651071,
+      "visible_zh": "text|【招商银行】您尾号 0529 的卡消费 45.00 元",
+      "visible_en": "text|【招商银行】您尾号 0529 的卡消费 45.00 元"
+    },
+    {
+      "offer_id": "spam.pack",
+      "base_seed": 517748172,
+      "selected_card_seed": 742163369,
+      "visible_zh": "text|表姐：周末回家吃饭不？",
+      "visible_en": "text|表姐：周末回家吃饭不？"
+    },
+    {
+      "offer_id": "translate.junk",
+      "base_seed": 1745658496,
+      "selected_card_seed": 219937065,
+      "visible_zh": "text|原文：他坐在河边的 bank 上，看着小船。\n翻译 bank 时，灵光关注的是“小船”。它看对了吗？",
+      "visible_en": "text|Source: He sat on the river bank watching boats.\nFor “bank”, LingGuang focused on “boats”. Did it focus on the right clue?"
+    },
+    {
+      "offer_id": "translate.pack",
+      "base_seed": 858760863,
+      "selected_card_seed": 107666394,
+      "visible_zh": "text|原文：他坐在河边的 bank 上，看着小船。\n翻译 bank 时，灵光关注的是“河”。它看对了吗？",
+      "visible_en": "text|Source: He sat on the river bank watching boats.\nFor “bank”, LingGuang focused on “river”. Did it focus on the right clue?"
+    }
+  ],
+  "source_extraction": {
+    "source_file": "/Users/kk/competition/Assets/LingGuangV05/DesktopBridge/Taohuo/DataPackPreview.cs",
+    "source_sha256": "b4b2b0261fc6ab0fb3d8af354fa7deaa462d7d3edce296c883c2b9c9a0e6e9f1",
+    "method_source": "Exact production sampling, visible-signature and Body(bool) methods; Paint/TMP/UI and JsonUtility serialization excluded. Existing XgLabelPreviewGraphic.Valid copied verbatim.",
+    "ui_verified": false
+  }
+}

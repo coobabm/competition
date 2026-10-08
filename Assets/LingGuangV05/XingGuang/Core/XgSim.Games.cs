@@ -416,7 +416,7 @@ namespace LingGuangV05.XingGuang
         public double TrackAccuracy(XgTrack track)
         {
             double best = 0;
-            foreach (var d in XgCatalog.DatasetsFor(track)) best = Math.Max(best, BestAcc(d.id));
+            foreach (var d in XgCatalog.DatasetsFor(track)) best = Math.Max(best, BrainModelAccuracy(d.id));
             return best;
         }
 
@@ -424,7 +424,7 @@ namespace LingGuangV05.XingGuang
         public double GameAccuracy(string game)
         {
             if (game == XgGames.Chess) return TrackAccuracy(XgTrack.Sequence);
-            if (game == XgGames.Go) return Math.Max(BestAcc("go"), .8 * TrackAccuracy(XgTrack.Vision));
+            if (game == XgGames.Go) return Math.Max(BrainModelAccuracy("go"), .8 * TrackAccuracy(XgTrack.Vision));
             return TrackAccuracy(XgTrack.Vision);
         }
 

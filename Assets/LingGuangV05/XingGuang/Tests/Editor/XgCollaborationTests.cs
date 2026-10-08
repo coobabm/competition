@@ -191,10 +191,10 @@ namespace LingGuangV05.XingGuang.Tests
             sim.PlatformChecks = false; // a spot-checked wrong label never becomes noise; see XgQualityTests
             sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 100 });
             sim.S.sequence.dataset = "spam"; sim.S.sequence.steps = 10000;
-            sim.Evaluate(sim.S.sequence); double before = sim.S.sequence.valAcc;
+            sim.Evaluate(sim.S.sequence); double before = sim.CeilingAcc(sim.S.sequence);
             for (int i = 0; i < 20; i++) { var c = Judged(sim, false, .98); sim.Route(c.id, host); }
             Assert.AreEqual(20, sim.Noise("spam")); Assert.AreEqual(60, sim.EffectiveLabelSamples("spam"));
-            Assert.Less(sim.S.sequence.valAcc, before);
+            Assert.Less(sim.CeilingAcc(sim.S.sequence), before, "noise lowers what the model can reach");
             Assert.AreEqual(100, sim.Labels("spam"), "Noise is not a good sample");
         }
         [Test]
@@ -229,7 +229,7 @@ namespace LingGuangV05.XingGuang.Tests
             var result = sim.AnswerQueued(c.id, c.truth, host);
             Assert.IsTrue(result.accepted && result.queued && result.corrected && result.correct);
             Assert.AreEqual(2, result.combo); Assert.AreEqual(2, result.samples); Assert.AreEqual(2, sim.Labels("spam"));
-            Assert.AreEqual(sim.PayFor("spam", c.level) * XgCatalog.RaiseMultipliers[5] * 1.1 * 1.5, result.pay, 1e-9);
+            Assert.AreEqual(sim.PayFor("spam", c.level) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[5] * 1.1 * 1.5, result.pay, 1e-9);
             double money = host.money;
             Assert.IsFalse(sim.AnswerQueued(c.id, c.truth, host).accepted); Assert.AreEqual(money, host.money);
         }
@@ -408,7 +408,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Noisy(); var host = new Host(); sim.S.combo = 7;
             double money = host.money, income = sim.S.totalIncome, samples = sim.Samples("spam"), labels = sim.Labels("spam");
-            double steps = sim.S.sequence.steps, score = sim.S.sequence.valAcc, best = sim.BestAcc("spam"), trainedSeconds = sim.S.trainedSeconds;
+            double steps = sim.S.sequence.steps, score = sim.CeilingAcc(sim.S.sequence), best = sim.BestAcc("spam"), trainedSeconds = sim.S.trainedSeconds;
             int models = sim.S.models.Count, epochs = sim.S.epochs;
             Assert.AreEqual(10, Clean(sim, "spam", host));
             Assert.AreEqual(2, sim.Noise("spam")); Assert.AreEqual(money - 20, host.money, 1e-9);
@@ -418,7 +418,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(income, sim.S.totalIncome); Assert.AreEqual(best, sim.BestAcc("spam"));
             Assert.AreEqual(models, sim.S.models.Count); Assert.AreEqual(epochs, sim.S.epochs);
             Assert.AreEqual(steps, sim.S.sequence.steps); Assert.AreEqual(trainedSeconds, sim.S.trainedSeconds); Assert.AreEqual(7, sim.S.combo);
-            Assert.Greater(sim.S.sequence.valAcc, score, "Only current simulated evaluation benefits from discarding noisy rows");
+            Assert.Greater(sim.CeilingAcc(sim.S.sequence), score, "Only the model's ceiling benefits from discarding noisy rows");
         }
         [Test]
         public void CleaningNoiseCapsAtTenAndAnEmptyRepeatDoesNotChargeAgain()

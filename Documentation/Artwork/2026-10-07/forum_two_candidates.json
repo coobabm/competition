@@ -1,0 +1,58 @@
+[
+  {
+    "title": "File:330-PSA-80-60 (USN 710739) (20897323365).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/1/1a/330-PSA-80-60_%28USN_710739%29_%2820897323365%29.jpg",
+    "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/330-PSA-80-60_%28USN_710739%29_%2820897323365%29.jpg/500px-330-PSA-80-60_%28USN_710739%29_%2820897323365%29.jpg",
+    "author": "National Museum of the U.S. Navy",
+    "license": "Public domain",
+    "license_url": "",
+    "description": "330-PSA-80-60 (USN 710739):  Experimental Machine Able To Identify Letters of Alphabet Announced By Navy.   This photo shows the Mark I Perceptron, an experimental machine which can be trained to automatically identify objects or patterns, such as letters of the alphabet.  Originated by Dr. Frank Rosenblatt, a psychologist who is in charge of the program at Cornell Aeronautical Laboratory, Buffalo, New York, Mark I is an electromechanical device consisting basically of a “sensory unit” of photocells which contain the machine’s memory, and response units which visually display the machine’s pattern recognition response.  The machine is generally trained by placing the test patterns, which could be letters of the alphabet of a single-type face, in the view field of the perceptron’s photoelectric cell “eye.”  When the machine incorrectly identifies a pattern or letter, the trainer forces it to respond correctly by means of an electrical control.  When the training is completed the letters of the particular type face can then be shown to the machine’s eye, and it will correctly identify the letters without error.  When the recognition problem has been complicated by adding letters of a different type face, the machine has been correct 85 percent of the time.  The perceptron has particular potential use in the processing of non-numerical information for the solution of scientific, engineering, and military problems.  The perceptron research program is sponsored by the Office of Naval Research with the assistance from Rome Air Development Center, Rome, New York, of the Air Research and Development Command.    Photograph released June 24, 1960.  (8/25/2015).",
+    "date": "2015-08-25 10:52",
+    "width": 2836,
+    "height": 2220,
+    "index": 0
+  },
+  {
+    "title": "File:Cubieboard HADOOP cluster.JPG",
+    "source": "https://commons.wikimedia.org/wiki/File:Cubieboard_HADOOP_cluster.JPG",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/2/27/Cubieboard_HADOOP_cluster.JPG",
+    "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Cubieboard_HADOOP_cluster.JPG/500px-Cubieboard_HADOOP_cluster.JPG",
+    "author": "Cubie Team",
+    "license": "Public domain",
+    "license_url": "",
+    "description": "A Hadoop computer cluster of Cubieboards on Lubuntu operating system, More information here",
+    "date": "2013-08-01 11:38:43",
+    "width": 5184,
+    "height": 3456,
+    "index": 0
+  },
+  {
+    "title": "File:Mark I Perceptron, Figure 2 of operator's manual.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/1/13/Mark_I_Perceptron%2C_Figure_2_of_operator%27s_manual.png",
+    "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Mark_I_Perceptron%2C_Figure_2_of_operator%27s_manual.png/500px-Mark_I_Perceptron%2C_Figure_2_of_operator%27s_manual.png",
+    "author": "John C. Hay, Albert E. Murray",
+    "license": "Public domain",
+    "license_url": "",
+    "description": "Mark I Perceptron, Figure 2 of operator's manual\nhttps://apps.dtic.mil/sti/tr/pdf/AD0236965.pdf\nMARK I PERCEPTRON OPERATORS' MANUAL\n(Project PARA)\n15 February 1960\n\nContract No. Nonr-2381(00)",
+    "date": "1960-02-15",
+    "width": 1166,
+    "height": 945,
+    "index": 0
+  },
+  {
+    "title": "File:Nec-cluster.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Nec-cluster.jpg",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Nec-cluster.jpg",
+    "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Nec-cluster.jpg/500px-Nec-cluster.jpg",
+    "author": "Hindermath",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "The new Nehalem cluster",
+    "date": "",
+    "width": 1010,
+    "height": 1128,
+    "index": 0
+  }
+]

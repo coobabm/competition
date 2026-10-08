@@ -101,7 +101,18 @@ namespace LingGuangV05.Desktop
                 if (item.control.placeholder is TMP_Text placeholder) { placeholder.richText = false; ApplyNativeFont(placeholder); }
             }
             foreach (NativeAppImage item in bindings.images)
-                if (item != null && item.control != null && !string.IsNullOrEmpty(item.id)) _controls[item.id] = item.control.rectTransform;
+            {
+                if (item == null || item.control == null || string.IsNullOrEmpty(item.id)) continue;
+                _controls[item.id] = item.control.rectTransform;
+                if (profileId != "home") continue;
+                string picture = item.id == "MeterArt" ? "home_power" : item.id == "IncomeMeterIllustration" ? "home_jobs" : null;
+                if (picture == null) continue;
+                var sprite = Media.DesktopMedia.Picture(picture);
+                if (sprite == null) continue;
+                item.control.sprite = sprite;
+                item.control.preserveAspect = true;
+                item.control.raycastTarget = false;
+            }
             string[] allowed = TabsFor(profileId);
             foreach (NativeAppPage page in bindings.pages)
             {

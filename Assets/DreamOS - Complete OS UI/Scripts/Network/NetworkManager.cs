@@ -125,10 +125,15 @@ namespace Michsky.DreamOS
 
         public void UpdateIndicators(bool checkForConnection = false)
         {
+            bool hasNetwork = currentNetworkIndex >= 0 && currentNetworkIndex < networkItems.Count;
+            if (!hasNetwork) { isConnected = false; }
+            Sprite signal = hasNetwork
+                ? GetSignalPowerSprite(networkItems[currentNetworkIndex].signalPower, checkForConnection)
+                : signalDisconnected;
             foreach (Image img in networkIndicators) 
             {
                 if (img == null) { continue; }
-                img.sprite = GetSignalPowerSprite(networkItems[currentNetworkIndex].signalPower, checkForConnection);
+                img.sprite = signal;
             }
         }
 

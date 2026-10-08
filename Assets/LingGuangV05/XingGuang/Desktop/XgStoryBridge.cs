@@ -14,10 +14,17 @@ namespace LingGuangV05.Desktop.XingGuang
         StoryDirector director;
         XgSim bound;
         StoryRunner runner;
+        XgEraAdvantageBridge era;
         readonly HashSet<string> relayed = new HashSet<string>();
         bool migrationApplied;
 
-        public void Bind(XingGuangController owner) { controller = owner; }
+        public void Bind(XingGuangController owner)
+        {
+            controller = owner;
+            era = GetComponent<XgEraAdvantageBridge>();
+            if (era == null) era = gameObject.AddComponent<XgEraAdvantageBridge>();
+            era.Bind(owner);
+        }
         void Update()
         {
             if (controller == null || controller.Sim == null || controller.runtime == null) return;
@@ -41,7 +48,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Rebind(XgSim sim)
         {
             Unsubscribe(); bound = sim; relayed.Clear(); migrationApplied = false;
-            bound.WallObserved += OnWall;
+            bound.AbilityEmerged += OnAbility;
             bound.BreakthroughDone += OnBreakthrough;
             bound.ProjectExperiment += OnExperiment;
             bound.ChapterFinished += OnEnding;
@@ -54,7 +61,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (bound != null)
             {
-                bound.WallObserved -= OnWall; bound.BreakthroughDone -= OnBreakthrough;
+                bound.AbilityEmerged -= OnAbility; bound.BreakthroughDone -= OnBreakthrough;
                 bound.ProjectExperiment -= OnExperiment; bound.ChapterFinished -= OnEnding; bound.Assessed -= OnAssessed; bound.Emerged -= OnEmerged;
                 bound.StageAdvanced -= OnStageAdvanced;
             }
@@ -71,7 +78,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (director == null || !director.Active) return;
             if (relayed.Add(signal + ":" + arg)) controller.runtime.RaiseSignal(signal, arg);
         }
-        void OnWall(string wall) { EmitOnce("lg.wall", wall); }
+        /// <summary>An ability emerged (参数量与数据量主线): its beat lg.emerge:N, after the stage's own milestones.</summary>
+        void OnAbility(int ability) { EmitOnce("lg.emerge", ability.ToString()); controller.runtime.MarkDirty(); }
         void OnBreakthrough(string id)
         {
             // Old saves still finish the old research project; since design v1.1 stage 6 and the finale follow instead.
@@ -80,7 +88,8 @@ namespace LingGuangV05.Desktop.XingGuang
             EmitOnce("lg.stage", bound.S.stage.ToString());
             controller.runtime.MarkDirty();
         }
-        void OnEmerged(int stage, string line) { EmitOnce("lg.emerge", stage.ToString()); controller.runtime.MarkDirty(); }
+        /// <summary>An emergence moment of a stage (design v1.1 §5.4): the lab shows its line; the story beats follow the abilities.</summary>
+        void OnEmerged(int stage, string line) { controller.runtime.MarkDirty(); }
         /// <summary>The calendar turns to the new stage's month (month beats outrank the breakthrough lines raised in the same frame).</summary>
         void OnStageAdvanced(int from) { EmitOnce("lg.month", (from + 1).ToString()); }
         void OnExperiment(int index)
@@ -99,14 +108,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (bound != null && signal == "breaker.tripped" && controller.runtime.Sim.S.pcieBurned) bound.EarnSecret("life.hw.burn");
             if (signal != "story.delivered" || string.IsNullOrEmpty(arg) || bound == null) return;
             bound.MarkIntroDelivered(arg);
-            if (arg.StartsWith("wall_", StringComparison.Ordinal)) bound.MarkWallExplained(arg.Substring(5));
             controller.runtime.Sim.S.story.SetFlag("delivered." + arg, 1);
             controller.runtime.MarkDirty();
         }
         void OnBeatFinished(StoryBeat beat)
         {
             if (bound == null || beat == null) return;
-            if (beat.Id.StartsWith("wall_", StringComparison.Ordinal) && XgStoryMilestones.WallMayOpen(bound.S, beat.Id.Substring(5), controller.runtime.Sim.S.story.GetFlag("delivered." + beat.Id) > 0)) bound.MarkWallExplained(beat.Id.Substring(5));
             controller.runtime.MarkDirty();
         }
         void ApplyMigration()
@@ -124,18 +131,15 @@ namespace LingGuangV05.Desktop.XingGuang
             // A queued-but-undelivered introductory line must be replayable after quitting.
             if (!bound.S.trainingIntroDelivered) story.Unfire("lz_trainable");
             if (!bound.S.treeIntroDelivered) story.Unfire("lz_tree");
-            foreach (string wall in bound.S.walls)
-                if (!bound.WallExplained(wall) && story.GetFlag("delivered.wall_" + wall) <= 0) story.Unfire("wall_" + wall);
         }
         void RecoverPendingSignals()
         {
             var story = controller.runtime.Sim.S.story;
-            foreach (string wall in bound.S.walls)
-                if (!bound.WallExplained(wall))
-                {
-                    if (story.GetFlag("delivered.wall_" + wall) > 0) bound.MarkWallExplained(wall);
-                    else EmitOnce("lg.wall", wall);
-                }
+            // An emergence whose beat was cut short by a quit plays again (migrated saves mark theirs as played).
+            for (int ability = 2; ability <= bound.AbilitiesCount; ability++)
+                if (!story.HasFired("emerge_" + ability) && !bound.S.migratedBeats.Contains("emerge_" + ability)) EmitOnce("lg.emerge", ability.ToString());
+            // 它的第一个选择 rides on the second ability; a migrated stage-2 save that never saw it gets it now.
+            if (bound.AbilitiesCount >= 2 && !story.HasFired("specialty_motivation") && !bound.S.migratedBeats.Contains("specialty_motivation")) EmitOnce("lg.emerge", "2");
             foreach (int stage in XgStoryMilestones.MigrationStages(bound.S))
                 if (!story.HasFired("migration_era_" + stage)) EmitOnce("lg.migration", stage.ToString());
             if (bound.S.uncertaintyObserved && !story.HasFired("ll_unsure")) EmitOnce("lg.unsure");
@@ -148,10 +152,14 @@ namespace LingGuangV05.Desktop.XingGuang
             if (bound.EndingAvailable && !story.HasFired("ending_reject")) EmitOnce("lg.project", "completed");
             if (bound.EndingAvailable && story.HasFired("ending_reject") && story.GetFlag("delivered.ending_card") <= 0)
             { story.Unfire("ending_card"); EmitOnce("story.next", "ending_card"); }
-            if (bound.S.chapterComplete && story.GetFlag("chapter_one_ending_shown") <= 0) EmitOnce("lg.ending", bound.S.endingRegret ? "yes" : "no");
+            // Only the legacy 「你后悔教我吗」 ending has these title cards. The rules endings (S.ending set) close in
+            // PrologueDirector.PlayEnding; emitting here too would play two endings at once.
+            if (bound.S.chapterComplete && bound.S.ending.Length == 0 && story.GetFlag("chapter_one_ending_shown") <= 0) EmitOnce("lg.ending", bound.S.endingRegret ? "yes" : "no");
         }
         string ReadText(string name)
         {
+            string social = era != null ? era.ReadText(name) : null;
+            if (social != null) return social;
             if (name.StartsWith("migration", StringComparison.Ordinal) && name.Length == 10)
             {
                 int stage;
@@ -219,7 +227,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "labGo": return sim.DeskOpen("go") ? 1 : 0;
                 case "labPoems": return sim.DeskOpen("poems") ? 1 : 0;
                 case "labNews": return sim.DatasetAvailable("news") ? 1 : 0;
-                case "labTranslate": return sim.DeskOpen("translate") ? 1 : 0;
+                case "labTranslate": return sim.DatasetAvailable("translate") ? 1 : 0;
                 case "labUnsure": return sim.S.uncertaintyObserved ? 1 : 0;
                 case "labStage": return sim.S.stage;
                 case "labVisionStage": return sim.S.stageVision;

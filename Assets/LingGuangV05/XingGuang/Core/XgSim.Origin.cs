@@ -26,13 +26,13 @@ namespace LingGuangV05.XingGuang
         /// <summary>The desktop should play the origin video now.</summary>
         public event Action OriginVideoRequested;
 
-        /// <summary>The question the 对话 page offers after the ending.</summary>
+        /// <summary>The question its YY conversation offers after the ending.</summary>
         public string OriginQuestion => T("你是怎么被训练出来的？");
 
         /// <summary>The whole story is over: the curtain call can play.</summary>
         public bool OriginReady => S.chapterComplete && !string.IsNullOrEmpty(S.ending);
 
-        /// <summary>Offer the suggested question on the 对话 page (after the ending, until it has been explained once).</summary>
+        /// <summary>Offer the suggested question in its YY conversation (after the ending, until it has been explained once).</summary>
         public bool OfferOriginQuestion => OriginReady && !S.originExplained;
 
         static readonly string[] OriginPhrasesZh = { "怎么被训练", "怎么训练出来", "怎么训练的", "怎么来的", "从哪来", "从哪儿来", "从哪里来", "怎么学会", "你的来历", "怎么长大", "怎么变成" };

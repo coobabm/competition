@@ -4,7 +4,7 @@ static class P { static void Main() {
   foreach (var d in XgCatalog.Desks) if (!sim.S.desksOpen.Contains(d.id)) sim.S.desksOpen.Add(d.id);
   var sb = new StringBuilder("[");
   bool first = true;
-  foreach (var desk in new[] { "logic", "danmu", "spam", "headline", "review", "translate" }) {
+  foreach (var desk in new[] { "logic", "danmu", "spam", "headline", "review" }) {
     sim.S.labels.Add(new XgLabelCount { dataset = desk, count = desk == "logic" ? 120 : 70 });
     for (int i = 0; i < 25; i++) {
       var c = sim.Card(desk);
