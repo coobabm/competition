@@ -67,7 +67,7 @@ namespace LingGuangV05.XingGuang
         public bool realtime;
     }
 
-    public enum XgResearchKind { Optimizer, Dropout, Augment, GradClip, AutoCheckpoint, LrSchedule, BatchNorm, CuDnn, Transfer, ManualPay, Feel }
+    public enum XgResearchKind { Optimizer, Dropout, Augment, GradClip, AutoCheckpoint, LrSchedule, BatchNorm, CuDnn, Transfer, ManualPay, Feel, Cooler }
 
     /// <summary>Phenomenon and Ability nodes are never bought: the 图鉴 lights them when they happen (design v1.1 §11.2).</summary>
     public enum XgNodeKind { Arch, Depth, Width, LrKnob, Dataset, Research, Auto, Breakthrough, Project, Label, Secret, Phenomenon, Ability }
@@ -106,6 +106,11 @@ namespace LingGuangV05.XingGuang
         public double comboWindow = 3;
         /// <summary>Pay factor per card: cards that take thought (logic, reading) pay more than quick visual ones.</summary>
         public double pay = 1;
+        /// <summary>
+        /// A wrong pick on this desk costs money: this fraction of what a right answer pays (before the combo bonus, so
+        /// it scales with the raise multiplier and not with the combo). 0 = a mistake only breaks the combo.
+        /// </summary>
+        public double fine;
     }
 
     public sealed class XgResearch
@@ -245,7 +250,7 @@ namespace LingGuangV05.XingGuang
             new XgDesk { id = "longtext", name = "长句", nameEn = "Long sentences", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Lstm, comboWindow = 12 },
             new XgDesk { id = "mnist", name = "手写数字", nameEn = "Digits", kind = XgDeskKind.Digit, unlock = XgDeskUnlock.Specialty, comboWindow = 3 },
             new XgDesk { id = "poems", name = "唐诗下一字", nameEn = "Next character", kind = XgDeskKind.Poem, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
-            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1 },
+            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1, fine = ArithFine },
             new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 3.2 },
             new XgDesk { id = "danmu", name = "弹幕情绪", nameEn = "Danmaku", kind = XgDeskKind.Text, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 5, pay = 1.4 },
             new XgDesk { id = "spam", name = "垃圾短信", nameEn = "SMS spam", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1.4 },
@@ -327,11 +332,11 @@ namespace LingGuangV05.XingGuang
         public static readonly string[] StageYears = { "", "1958", "1986", "1989–2014", "1997–2015", "2014–2015", "2017" };
 
         /// <summary>
-        /// Price factor of each stage's nodes (training without knobs, 2026-10-07): with the model configuring itself
-        /// and the doubled raise ladder, money arrived faster than the stages; the balance bot keeps the pacing targets
-        /// (abilities 2–6 at about 6, 16, 30, 48 and 63 minutes) with stages 2–3 dearer and stage 4 cheaper.
+        /// Price factor of each stage's nodes. Training without knobs (2026-10-07) made stages 2–3 dearer (×2, ×2.2) and
+        /// stage 4 cheaper; with rent and bills (经济压力与破产, 2026-10-08) stages 2–3 come down to ×1.6 and ×1.4 so the
+        /// cheap squares that reach abilities 3–5 stay affordable while the rent is paid.
         /// </summary>
-        public static readonly double[] StagePrice = { 1, 1, 2, 2.2, .7, 1, 1 };
+        public static readonly double[] StagePrice = { 1, 1, 1.6, 1.4, .7, 1, 1 };
 
         static XgNode[] BuildNodes()
         {
@@ -379,7 +384,7 @@ namespace LingGuangV05.XingGuang
             // ── 阶段 2 · 多层感知机 → 卷积、循环
             D("trunk", 3, "s.d2", 100, 2, "trunk");
             R("momentum", "mlp", 200, 2);
-            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2); R("cudnn", "mlp", 600, 2);
+            R("backprop", "mlp", 200, 2); R("chainrule", "backprop", 250, 2); R("cudnn", "mlp", 600, 2); R("cooler", "mlp", 125, 2);
             P("mnist", "mlp", 2000, 2, "vision"); P("danmu", "mlp", 1500, 2, "sequence"); P("headline", "mlp", 1500, 2, "sequence"); P("logic", "mlp", 3000, 2, "sequence");
             // The 算术 pack waits for stage 2: at stage 1 its samples would fill the first data bar on their own.
             P("arith", "mlp", 2500, 2, "sequence");
@@ -427,6 +432,8 @@ namespace LingGuangV05.XingGuang
             Add(Simple("layernorm", XgNodeKind.Label, "transformer", 0, "LayerNorm", "LayerNorm", "2016 年提出：每个字按自己的各项特征归一化，不依赖整批数据（BatchNorm 是按一批样本）。", "Proposed in 2016: each word is normalised across its own features, without the batch (BatchNorm uses a batch of samples)."), 6, "research");
             Add(Simple("residual", XgNodeKind.Label, "transformer", 0, "残差连接", "Residual connections", "继承 ResNet：每层都留一条捷径。", "Inherited from ResNet: a shortcut around every layer."), 6, "research");
             R("warmup", "transformer", 20000, 6);
+            // Pascal's half precision (2016): one of the multipliers pre-training's effective scale stacks (XgSim.ScaleItems).
+            R("fp16", "transformer", 30000, 6);
             // Pre-training scale (about 100M parameters): the reading region at width 1024 and 8–12 layers.
             D("sequence", 12, "s.d8", 10000, 6, "sequence");
             // Side research of stages 4–6 (design v1.1 §11.2): no walls, only a little speed.
@@ -439,7 +446,7 @@ namespace LingGuangV05.XingGuang
             for (int i = 1; i < AbilityNames.Length; i++)
                 Add(N("ab." + i, "atlas", null, XgNodeKind.Ability, null, i, 0, 0, 0, AbilityNames[i], AbilityNamesEn[i], AbilityNotes[i], AbilityNotesEn[i]), i, "atlas");
             S("secret.6", 6, "transformer", 30000, "秘籍 · 预训练", "Secret · pre-training");
-            Add(Simple("datacenter", XgNodeKind.Label, "transformer", 40000, "租机房（IDC 机柜）", "Rent a server room (IDC rack)", "预训练一开，一台机箱的 3500W 就跳闸。在 IDC 租一个机柜，八张卡接专线：这里付押金和首月租金；预训练跑着的时候，按时长另付租金和电费（¥" + XgSim.DatacenterRent + "/秒），钱不够就断电。", "Pre-training trips one case's 3500 W breaker. Rent a rack in a data centre, eight cards on a dedicated line: this pays the deposit and the first month; while pre-training runs, rent and power cost ¥" + XgSim.DatacenterRent + "/s more, and it powers off when the money runs out."), 6, "research");
+            Add(Simple("datacenter", XgNodeKind.Label, "transformer", 60000, "租机房（IDC 机柜）", "Rent a server room (IDC rack)", "预训练一开，一台机箱的 3500W 就跳闸。在 IDC 租一个机柜，八张卡接专线：这里付押金和首月租金；预训练跑着的时候，按时长另付租金和电费（¥" + XgSim.DatacenterRent + "/秒），钱不够就断电。", "Pre-training trips one case's 3500 W breaker. Rent a rack in a data centre, eight cards on a dedicated line: this pays the deposit and the first month; while pre-training runs, rent and power cost ¥" + XgSim.DatacenterRent + "/s more, and it powers off when the money runs out."), 6, "research");
             // Automation starts at crontab (auto2); run.sh (auto1) is retired.
             for (int i = 1; i < AutoNames.Length; i++)
                 Add(N("auto" + (i + 1), "research", i == 1 ? "perceptron" : "auto" + i, XgNodeKind.Auto, null, i + 1, AutoCosts[i], 0, 0, AutoNames[i], AutoNamesEn[i], AutoNotes[i], AutoNotesEn[i]), i + 1, "auto");
@@ -609,6 +616,8 @@ namespace LingGuangV05.XingGuang
                 effectEn = "(A 2015 method, used early here.) With ReLU, a vanilla RNN's loop starts as 'pass it on unchanged': memory no longer leaks word by word (Le, Jaitly, Hinton 2015, IRNN). The error comes back unchanged too: a high rate blows it up, so clip the gradients." },
             new XgResearch { id = "position", kind = XgResearchKind.ManualPay, name = "位置标记", nameEn = "Position tags", cost = 6000, effect = "不靠循环也知道字的先后顺序；买到就自动开，预训练要用", effectEn = "Word order without recurrence; on once bought, and pre-training needs it" },
             new XgResearch { id = "warmup", kind = XgResearchKind.ManualPay, name = "学习率预热", nameEn = "Learning-rate warm-up", cost = 20000, effect = "换了模型以后，前 60 张卡的学习率从很小慢慢升上去：大涨一截之后不容易回落。买到就自动开，预训练要用", effectEn = "After the model changes, the rate climbs from almost nothing over the first 60 cards: after a big jump it falls back less often. On once bought; pre-training needs it" },
+            new XgResearch { id = "fp16", kind = XgResearchKind.ManualPay, name = "混合精度", nameEn = "Mixed precision", cost = 30000,
+                effect = "权重留一份 32 位，算的时候用 16 位半精度：显存省一半，今年新出的 Pascal 卡算得更快。预训练的有效规模 ×2", effectEn = "Keep a 32-bit copy of the weights and compute in 16-bit half precision: half the memory, and this year's Pascal cards run it faster. Pre-training's effective scale ×2" },
             new XgResearch { id = "relu", kind = XgResearchKind.ManualPay, name = "ReLU", nameEn = "ReLU", cost = 200, effect = "坡度是 1，误差几乎原样往下传，深网络练得动。2010 年前后才流行开（AlexNet 2012 靠它一战成名）。训练速度 ×1.3", effectEn = "Its slope is 1, so the error comes down almost whole and deep nets train. Popular only from about 2010 (AlexNet 2012 made its name). Training ×1.3" },
             new XgResearch { id = "momentum", kind = XgResearchKind.Optimizer, name = "动量 SGD", nameEn = "Momentum SGD", cost = 3, speed = 1.3, stability = 1.4,
                 effect = "训练速度 ×1.3：每一步顺着上一步的方向冲", effectEn = "Training ×1.3: each step keeps some of the last one's direction" },
@@ -629,7 +638,9 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "adam", kind = XgResearchKind.Optimizer, name = "Adam", nameEn = "Adam", cost = 150, speed = 2, stability = 3,
                 effect = "训练速度 ×2，比 SGD 稍稳。按梯度自己的大小调步长", effectEn = "Training ×2, a little steadier than SGD. Scales each step by the gradient's own size" },
             new XgResearch { id = "cudnn", kind = XgResearchKind.CuDnn, name = "cuDNN 加速", nameEn = "cuDNN kernels", cost = 250,
-                effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3" },
+                effect = "装上 NVIDIA 的深度学习加速库（2014 年就有，2016 年的框架都用它）：卷积和循环快一截。所有训练 ×1.3，电费少 30%", effectEn = "Install NVIDIA's deep-learning library (around since 2014; every 2016 framework uses it): convolutions and loops get faster. All training ×1.3, and 30% less electricity" },
+            new XgResearch { id = "cooler", kind = XgResearchKind.Cooler, name = "九州风神", nameEn = "Tower cooler", cost = 125,
+                effect = "塔式散热器（2016 年装机的标配）：连着练太久，显卡烧坏的概率减半。要有两张卡才会烧", effectEn = "A tower heatsink (standard in 2016 builds): training non-stop burns a card out half as often. A card only burns out when you own two" },
             new XgResearch { id = "transfer", kind = XgResearchKind.Transfer, name = "迁移学习", nameEn = "Transfer learning", cost = 400,
                 effect = "底层学到的东西（笔画、边角、常用字词）可以带走：换结构时，这些概念换一种拓扑接着用，上面的组合重新学。就像练好的词向量，换什么模型都能用。换数据集本来就在同一颗脑子里，不用迁移。", effectEn = "What the bottom learnt (strokes, corners, common words) can be taken along: on a change of structure those concepts carry into the new wiring and only the combinations above are learnt again, the way trained word vectors work in any model. A new dataset is already in the same brain and needs no transfer." },
         };
@@ -638,6 +649,13 @@ namespace LingGuangV05.XingGuang
         public const int SamplesToTrain = 12;
         /// <summary>Pay per correct hand label before the combo bonus.</summary>
         public const double LabelPay = .5;
+        /// <summary>
+        /// Hand labelling pays this many times <see cref="LabelPay"/> (every desk). Only hand answers (and the dragged
+        /// spider's, which are hand answers) get it: automatic labels, contracts and the platform's fines keep their rates.
+        /// </summary>
+        public const double HandPayScale = 2.5;
+        /// <summary>The 算术 desk is true/false: a wrong pick costs this fraction of a right answer's base pay.</summary>
+        public const double ArithFine = .5;
         /// <summary>Auto-answering needs a deployed checkpoint at least this good.</summary>
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;

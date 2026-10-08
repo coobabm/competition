@@ -8,6 +8,10 @@ namespace LingGuangV05.XingGuang
         public bool spiderIntroDone;
         /// <summary>Cards the spider answered at the 标注台 by pressing 是 / 否 itself.</summary>
         public int spiderAnswers;
+        /// <summary>Cards answered by the spider while the player had dragged it onto the question (a hand answer: it can cost money).</summary>
+        public int spiderDragAnswers;
+        /// <summary>Money lost to wrong picks on fined desks (the 算术 desk), by the player or by the dragged spider.</summary>
+        public double handFines;
     }
 
     /// <summary>What happened when the spider pressed a button on the labelling card.</summary>
@@ -93,16 +97,66 @@ namespace LingGuangV05.XingGuang
                 }
             }
             S.spiderAnswers++;
-            Say(T("它替你按了「" + (guess ? "是" : "否") + "」", "It pressed \"" + (guess ? "Yes" : "No") + "\" for you")
+            NoteDayAnswer(correct, result.pay - result.fine, correct ? 1 : 0);
+            bool trueFalse = XgCatalog.Desk(desk)?.kind == XgDeskKind.Arith; // 算术 is answered 对 / 错
+            Say(T("它替你按了「" + (trueFalse ? (guess ? "对" : "错") : (guess ? "是" : "否")) + "」", "It pressed \"" + (trueFalse ? (guess ? "True" : "False") : (guess ? "Yes" : "No")) + "\" for you")
                 + (correct ? "" : T("（按错了）", " (wrong)")));
             NewCard(desk);
             CheckDesks();
             return result;
         }
 
+        /// <summary>Why the dragged spider cannot press the current card (null when it can). Same rules as its random help.</summary>
+        public string SpiderDragBlocker(string desk, IXgHost host) => SpiderAnswerBlocker(desk, host);
+
+        /// <summary>
+        /// What the dragged spider would press for the current card: the deployed checkpoint's own guess, so it is
+        /// right exactly as often as the checkpoint is. False when it cannot (see <see cref="SpiderDragBlocker"/>).
+        /// </summary>
+        public bool SpiderDragPeek(string desk, IXgHost host, out bool yes)
+        {
+            yes = false;
+            if (SpiderDragBlocker(desk, host) != null) return false;
+            return Suggestion(desk, out yes, out _);
+        }
+
+        /// <summary>
+        /// The player dragged the spider onto the question and it presses the answer itself, again and again. This is a
+        /// HAND answer (<see cref="Answer"/>) given with the checkpoint's guess (<see cref="SpiderDragPeek"/>), and only
+        /// on desks the checkpoint may answer (60% or better): a right one pays the hand pay with the combo, a wrong one
+        /// breaks the combo and, on a fined desk, costs the same fine a player's mistake does. The random help of the
+        /// perched spider (<see cref="SpiderAnswer"/>) is different: it settles like an automatic label and never costs
+        /// money.
+        /// </summary>
+        public XgSpiderAnswer SpiderDragAnswer(string desk, IXgHost host)
+            => SpiderDragPeek(desk, host, out bool yes) ? SpiderDragPress(desk, host, yes) : default;
+
+        /// <summary>Presses <paramref name="yes"/> for the dragged spider (the caller peeked it a moment ago for the reaching animation).</summary>
+        public XgSpiderAnswer SpiderDragPress(string desk, IXgHost host, bool yes)
+        {
+            if (SpiderDragBlocker(desk, host) != null) return default;
+            var card = Card(desk);
+            var a = Answer(desk, yes, host);
+            S.spiderAnswers++; S.spiderDragAnswers++;
+            return new XgSpiderAnswer { accepted = true, yes = yes, correct = a.correct, pay = a.pay, fine = a.fine, cardId = card.id };
+        }
+
         void RepairSpider()
         {
             if (S.spiderAnswers < 0) S.spiderAnswers = 0;
+            if (S.spiderDragAnswers < 0) S.spiderDragAnswers = 0;
+            if (!(S.handFines >= 0) || double.IsInfinity(S.handFines)) S.handFines = 0;
+        }
+
+        /// <summary>Takes the fine of a wrong pick from the wallet (never below zero, like the platform's own fines). Returns what was taken.</summary>
+        double ChargeHandFine(string desk, int level, IXgHost host)
+        {
+            double due = HandFineFor(desk, level);
+            if (!(due > 0) || host == null) return 0;
+            double money = FiniteCollaboration(host.Money) ? Math.Max(0, host.Money) : 0;
+            double fine = Math.Min(due, money);
+            if (fine > 0 && host.Spend(fine)) { S.totalSpent += fine; S.handFines += fine; return fine; }
+            return 0;
         }
     }
 }

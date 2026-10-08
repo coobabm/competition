@@ -116,6 +116,33 @@ namespace LingGuangV05.Runtime.Persistence
             }
         }
 
+        /// <summary>
+        /// 重新开始 after the failure ending: copies the save and its backup, as they are, next to them with a timestamp
+        /// (chapter-one.sav.gameover-20161201T014700). Nothing is moved or deleted; the primary stays where it is.
+        /// </summary>
+        public bool CopyForRestart(out string message, DateTime? now = null)
+        {
+            lock (gate)
+            {
+                try
+                {
+                    string stamp = ".gameover-" + (now ?? DateTime.UtcNow).ToString("yyyyMMddTHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+                    foreach (string file in new[] { SavePath, SavePath + ".bak" })
+                    {
+                        if (!File.Exists(file)) continue;
+                        string target = file + stamp;
+                        // Two restarts in the same second keep both copies.
+                        for (int i = 2; File.Exists(target); i++) target = file + stamp + "-" + i;
+                        File.Copy(file, target, false);
+                    }
+                    message = "旧存档已另存一份带时间的备份。";
+                    return true;
+                }
+                catch (Exception error) when (error is IOException || error is UnauthorizedAccessException)
+                { message = "无法备份旧存档，没有重新开始：" + error.Message; return false; }
+            }
+        }
+
         static SaveLoadResult Read(string path)
         {
             if (!File.Exists(path)) return new SaveLoadResult();

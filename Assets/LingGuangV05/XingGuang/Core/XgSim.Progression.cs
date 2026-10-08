@@ -204,7 +204,7 @@ namespace LingGuangV05.XingGuang
             }
             if (node.kind == XgNodeKind.Secret)
             {
-                if (node.id == "secret.6") Say(T("秘籍：预训练要规模——序列线用 Transformer，参数到 1 亿左右（买宽 1024、8 层以上），文本 2 万条以上，买齐学习率预热和位置标记，再租「机房」。loss 随参数和数据平滑下降，规模每翻一倍就低一截。", "Secret: pre-training needs scale — a Transformer on the reading line, about 100 million parameters (buy width 1024 and 8+ layers), 20,000+ text samples, warm-up and position tags bought, then rent the server room. The loss falls smoothly with parameters and data, a step lower every doubling."));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要的是有效规模＝参数 × 数据 × 道具倍数，倍数乘在一起：Transformer ×10、机房 ×8、注意力 ×3、残差 ×2、混合精度 ×2、预热 ×1.5、BatchNorm ×1.5。三件大的一样都不能少，小的最多缺一件；参数和数据只算到第六项能力门槛的 1.5 倍。", "Secret: pre-training needs effective scale = parameters × data × item multipliers, and the multipliers stack: Transformer ×10, server room ×8, attention ×3, residuals ×2, mixed precision ×2, warm-up ×1.5, BatchNorm ×1.5. None of the three big ones can be missing, and at most one small one; parameters and data count only up to 1.5 times the sixth ability's bar."));
             }
             RefreshStages();
         }
@@ -558,7 +558,7 @@ namespace LingGuangV05.XingGuang
             double stop = (S.project.experiments + 1) * ProjectGpuSeconds / 3;
             double work = Math.Min(dt, Math.Max(0, stop - S.project.gpuSeconds));
             if (work <= 0) return;
-            S.project.gpuSeconds += work; host.Train(work); S.trainedSeconds += work;
+            S.project.gpuSeconds += work; ChargeTraining(host, work, false); S.trainedSeconds += work;
             if (S.project.gpuSeconds + 1e-8 >= stop)
             {
                 S.project.gpuSeconds = stop; S.project.awaitingAnswer = true;

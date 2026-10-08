@@ -5,19 +5,25 @@
     "Assets/LingGuangV05/Scenes/Main.unity"
   ],
   "unity": "6000.4.5f1",
-  "captured_local_time": "2026-10-08T03:42:02.880278+09:00",
+  "captured_local_time": "2026-10-08T21:15:08+09:00",
   "source_branch": "lingguang-v05",
   "source_head": "88a2fae187d2c8ec4fd4afb67da876bde1759331",
   "source_includes_uncommitted_changes": true,
-  "source_git_status_sha256": "3c384573ad7d4cfb8d0338367097a00905723d0714e77f1aefe3d9bd840d9d71",
-  "base_public_commit": "1521c911e79339f84064c36955d65b3e92b0f09a",
+  "source_git_status_sha256": "37ca287e8eaa117b3169a4fee9bc76844cf785506002c3c5a00be1f87a0432e4",
+  "base_public_commit": "46bc37ea1acd92659ecbeaccdfc58360b3c0b94f",
   "model_weights_included": false,
   "only_scene": false,
   "compile_checks": [
     {
       "mode": "player",
+      "assembly": "Assembly-CSharp-firstpass",
+      "sources": 1,
+      "exit_code": 0
+    },
+    {
+      "mode": "player",
       "assembly": "LingGuangV05.Core",
-      "sources": 50,
+      "sources": 52,
       "exit_code": 0
     },
     {
@@ -35,25 +41,25 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 68,
-      "exit_code": 0
-    },
-    {
-      "mode": "player",
-      "assembly": "Assembly-CSharp-firstpass",
-      "sources": 1,
+      "sources": 71,
       "exit_code": 0
     },
     {
       "mode": "player",
       "assembly": "Assembly-CSharp",
-      "sources": 390,
+      "sources": 400,
+      "exit_code": 0
+    },
+    {
+      "mode": "editor",
+      "assembly": "Assembly-CSharp-firstpass",
+      "sources": 1,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "LingGuangV05.Core",
-      "sources": 50,
+      "sources": 52,
       "exit_code": 0
     },
     {
@@ -71,26 +77,19 @@
     {
       "mode": "editor",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 68,
-      "exit_code": 0
-    },
-    {
-      "mode": "editor",
-      "assembly": "Assembly-CSharp-firstpass",
-      "sources": 1,
+      "sources": 71,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "Assembly-CSharp",
-      "sources": 390,
+      "sources": 400,
       "exit_code": 0
     }
   ],
   "native_import_validation": {
     "compilation_failed": false,
     "menu_missing_scripts": 0,
-    "main_missing_scripts": 0,
     "menu_references_complete": true,
     "build_scene_count": 2
   },
@@ -677,35 +676,5 @@
   "new_unresolved_guids": [],
   "fresh_unity_import_play_verified": false,
   "play_mode_flow_verified": false,
-  "secret_pattern_findings": [],
-  "validated_local_time": "2026-10-08T03:48:51.461469+09:00",
-  "native_import_verified": true,
-  "added_runtime_files": [
-    "Assets/LingGuangV05/Core/Girlfriend/GirlfriendReplyPolicy.cs",
-    "Assets/LingGuangV05/Core/Girlfriend/GirlfriendReplyPolicy.cs.meta",
-    "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
-    "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs.meta"
-  ],
-  "removed_runtime_files": [
-    "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.Love.cs",
-    "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.Love.cs.meta",
-    "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.cs",
-    "Assets/LingGuangV05/XingGuang/Desktop/XgChatPage.cs.meta"
-  ],
-  "expanded_guid_scan_includes_meta_and_project_settings": true,
-  "expanded_preexisting_unresolved_guid_count": 43,
-  "static_findings_pending_play": [
-    {
-      "severity": "P1-candidate",
-      "status": "unverified-runtime",
-      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
-      "description": "XgYyTalk.Attach only uses AfterSceneLoad, but ComputerCaseMenu additive Main entry explicit initialization lacks this Attach call. Main entry may lack the YY conversation bridge. Source synchronized unchanged; actual entry-path play validation delegated to root."
-    }
-  ],
-  "preserved_public_configs": {
-    "Packages/manifest.json": "1ddf6789ff2265bd66728c166741f28dd482bbca3b4d457b90a5e41697b2a5ae",
-    "ProjectSettings/EditorBuildSettings.asset": "34c853c2a5edbd629177ea744af31b9003a45262495862878dbd72b53d121c9c",
-    "Packages/packages-lock.json": "6fe1eab249e1bf757e5100da423ba3387224aec03c239eba60e2b6ef4135fad0"
-  },
-  "source_file_count": 3830
+  "secret_pattern_findings": []
 }

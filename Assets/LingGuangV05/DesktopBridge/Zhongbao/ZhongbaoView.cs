@@ -31,7 +31,13 @@ namespace LingGuangV05.Desktop.Zhongbao
         /// <summary>The window as big as the other app windows (the calculator is a small one).</summary>
         static readonly Vector2 WindowSizeDelta = new Vector2(-640, -200);
         public static readonly Color Blue = new Color32(41, 50, 225, 255);
-        static readonly Color HudBlue = new Color32(30, 38, 160, 255), ChipBlue = new Color32(52, 62, 196, 255);
+        /// <summary>Header chips: the white-on-blue glass of the mockup (a faint white fill with a fainter rim).</summary>
+        static readonly Color ChipFill = new Color32(67, 75, 229, 255), ChipRim = new Color32(110, 117, 236, 255);
+        static readonly Color ChipInk = new Color32(240, 242, 255, 255), ChipDim = new Color32(190, 198, 255, 255), HudMoneyInk = new Color32(255, 226, 122, 255);
+        /// <summary>The combo's tier colours on its white pill (index = tier + 1); the dark-header ones in XgPalette.Tiers would vanish on white.</summary>
+        static readonly Color[] ComboInk = { ZhongbaoSkin.Blue, new Color32(47, 158, 68, 255), new Color32(242, 123, 29, 255), new Color32(227, 62, 51, 255), new Color32(214, 140, 0, 255) };
+        /// <summary>The design root's insets (header 58, nav 132, status 24 plus a 12 margin): the area every page is built into.</summary>
+        const float HeaderH = 58, NavW = 132, StatusH = 24;
 
         public static ZhongbaoView Instance { get; private set; }
 
@@ -41,15 +47,16 @@ namespace LingGuangV05.Desktop.Zhongbao
         bool branded, applied;
         XgUi ui;
         TMP_FontAsset font;
-        RectTransform root, comboChip, comboFill, gate;
-        TMP_Text appName, subtitle, hudMoney, hudCredit, hudLevel, hudTopic, comboNumber, comboTier, toast, gateText;
+        RectTransform root, comboChip, comboFill, gate, creditFill;
+        TMP_Text appName, subtitle, hudMoney, hudCredit, hudCreditTier, hudLevel, hudTopic, comboNumber, comboMult, comboTier, toast, gateText, accountText, statusLeft, statusMid, statusRight;
         XgGlow comboGlow;
         XgBtn lingguangLink, gateButton;
-        readonly List<(string id, XgBtn btn)> tabs = new List<(string, XgBtn)>();
+        sealed class NavTab { public string id; public XgBtn btn; public Image bar; public TMP_Text badge; }
+        readonly List<NavTab> tabs = new List<NavTab>();
         readonly Dictionary<string, XgPage> pages = new Dictionary<string, XgPage>();
         string page = "label";
         float refreshTimer, toastTimer, comboShownWindow = 1, comboSparkTimer;
-        int comboShown;
+        int comboShown = -1;
         double shownMoney = -1;
         XgSim bound;
 
@@ -90,7 +97,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (Instance == this) Instance = null;
         }
 
-        void OnLanguage() { if (branded) Brand(); Refresh(true); }
+        void OnLanguage() { comboShown = -1; if (branded) Brand(); Refresh(true); }
 
         /// <summary>Called by the hub every frame: shows or hides the app and follows a reloaded lab.</summary>
         public void Tick(bool unlocked)
@@ -178,7 +185,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             RectTransform rt = null;
             if (!string.IsNullOrEmpty(target) && pages.TryGetValue(tab ?? "", out var p) && p.root.gameObject.activeInHierarchy)
                 rt = XgGuideHighlight.FindIn(p.root, target.StartsWith("contract:", StringComparison.Ordinal) ? "name:Row" + target.Substring(9) : target);
-            if (rt == null) rt = tabs.Find(x => x.id == tab).btn?.rt;
+            if (rt == null) rt = tabs.Find(x => x.id == tab)?.btn?.rt;
             return XgGuideHighlight.Pulse(rt) != null;
         }
 
@@ -345,18 +352,20 @@ namespace LingGuangV05.Desktop.Zhongbao
             ui = new XgUi(font, window);
             root = Rect("Zhongbao", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             UiFitScale.Attach(root, window, Design);
-            Panel(root, XgPalette.Page);
+            Panel(root, ZhongbaoSkin.Page);
             root.gameObject.AddComponent<ChapterOneWindowFocus>().Window = window;
             Juice = gameObject.GetComponent<XgJuice>() ?? gameObject.AddComponent<XgJuice>();
             BuildHud();
             BuildNav();
-            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(150, 12), new Vector2(-12, -70));
+            BuildStatus();
+            // The pages' area: right of the nav, under the header, above the status strip, with a 12 margin (the contract the pages are built to).
+            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavW + 12, StatusH + 12), new Vector2(-12, -(HeaderH + 12)));
             Label = Add("label", new XgLabelPage(), area);
             Contracts = Add("contracts", new XgContractsPage(), area);
             Add("subcontract", new ZhongbaoSubcontractPage(), area);
             Add("ledger", new ZhongbaoLedgerPage(hub), area);
             Add("credit", new ZhongbaoCreditPage(), area);
-            var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330, 16), new Vector2(330, 52));
+            var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330, StatusH + 14), new Vector2(330, StatusH + 50));
             Panel(toastBox, new Color(.1f, .12f, .2f, .9f)).raycastTarget = false;
             toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 17, Color.white, TextAlignmentOptions.Center);
             toastBox.gameObject.SetActive(false);
@@ -376,43 +385,77 @@ namespace LingGuangV05.Desktop.Zhongbao
             return p;
         }
 
-        TMP_Text Chip(RectTransform hud, ref float x, float w, Color ink, string name)
+        /// <summary>A header chip (faint glass on the platform blue), right-aligned: <paramref name="x"/> is the gap already used from the right edge and grows by the chip's width.</summary>
+        RectTransform ChipBox(RectTransform hud, ref float x, float w, string name, float h = 26)
         {
-            var r = Rect(name, hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - w, -21), new Vector2(-x, 21));
+            var r = Rect(name, hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - w, -h / 2), new Vector2(-x, h / 2));
             x += w + 8;
-            Panel(r, ChipBlue);
-            var t = ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-8, 0)), "", 15, ink, TextAlignmentOptions.MidlineLeft);
+            Panel(r, ChipRim);
+            Panel(Rect("Inner", r, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), ChipFill).raycastTarget = false;
+            return r;
+        }
+
+        TMP_Text Chip(RectTransform hud, ref float x, float w, string name)
+        {
+            var r = ChipBox(hud, ref x, w, name);
+            var t = ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-8, 0)), "", 13, ChipInk, TextAlignmentOptions.MidlineLeft);
             t.textWrappingMode = TextWrappingModes.NoWrap; t.overflowMode = TextOverflowModes.Ellipsis;
-            t.enableAutoSizing = true; t.fontSizeMin = 11; t.fontSizeMax = 15;
+            t.enableAutoSizing = true; t.fontSizeMin = 10; t.fontSizeMax = 13;
             return t;
         }
 
         void BuildHud()
         {
-            var hud = Rect("Hud", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -58), Vector2.zero);
-            Panel(hud, HudBlue);
-            var logo = Rect("Logo", hud, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -20), new Vector2(54, 20));
-            var logoImage = Panel(logo, Color.white); logoImage.sprite = AppIcon(); logoImage.raycastTarget = false;
-            appName = ui.Text(Rect("AppName", hud, new Vector2(0, .45f), new Vector2(0, 1), new Vector2(62, 0), new Vector2(300, -4)), "", 20, Color.white, TextAlignmentOptions.BottomLeft);
-            appName.fontStyle = FontStyles.Bold;
-            subtitle = ui.Text(Rect("Subtitle", hud, Vector2.zero, new Vector2(0, .45f), new Vector2(62, 4), new Vector2(300, 0)), "", 13, new Color32(190, 198, 255, 255), TextAlignmentOptions.TopLeft);
-            float x = 12;
-            // The shared combo, as on 灵光's HUD: number, tier name and the window bar.
-            comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 170, -25), new Vector2(-x, 25));
-            x += 170 + 8;
+            var hud = Rect("Hud", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -HeaderH), Vector2.zero);
+            Panel(hud, ZhongbaoSkin.Blue);
+            // Logo: a white square with the character 摆 in the platform blue.
+            var logo = Rect("Logo", hud, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(16, -17), new Vector2(50, 17));
+            Panel(logo, Color.white).raycastTarget = false;
+            var mark = ui.Text(Rect("Mark", logo, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "摆", 21, ZhongbaoSkin.Blue, TextAlignmentOptions.Center);
+            mark.fontStyle = FontStyles.Bold; mark.textWrappingMode = TextWrappingModes.NoWrap;
+            appName = ui.Text(Rect("AppName", hud, new Vector2(0, .45f), new Vector2(0, 1), new Vector2(60, 0), new Vector2(300, -5)), "", 20, Color.white, TextAlignmentOptions.BottomLeft);
+            appName.fontStyle = FontStyles.Bold; appName.characterSpacing = 2; appName.textWrappingMode = TextWrappingModes.NoWrap;
+            subtitle = ui.Text(Rect("Subtitle", hud, Vector2.zero, new Vector2(0, .45f), new Vector2(60, 6), new Vector2(300, 0)), "", 11, new Color(1, 1, 1, .75f), TextAlignmentOptions.TopLeft);
+            subtitle.textWrappingMode = TextWrappingModes.NoWrap;
+            float x = 16;
+
+            // 打开灵光 ↗: an outlined link (a pale rim around a header-blue button).
+            var linkRim = Rect("LingGuangLinkRim", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 104, -14), new Vector2(-x, 14));
+            Panel(linkRim, new Color(1, 1, 1, .6f)).raycastTarget = false;
+            x += 104 + 10;
+            lingguangLink = ui.Button(linkRim, "", () => { Juice.Play(XgJuice.Sfx.Id.Click); ShowTab("train"); }, 13);
+            lingguangLink.rt.gameObject.name = "LingGuangLink";
+            lingguangLink.rt.anchorMin = Vector2.zero; lingguangLink.rt.anchorMax = Vector2.one; lingguangLink.rt.offsetMin = new Vector2(1, 1); lingguangLink.rt.offsetMax = new Vector2(-1, -1);
+            UiTip.Add(lingguangLink.rt, "去灵光.exe 训练模型：检查点在那里练出来，签订单、开自动答题都靠它。", "Train the model in LingGuang.exe: checkpoints come from there, and orders and auto-answer need them.");
+
+            // The shared combo, as on 灵光's HUD: a white pill with the number, the multiplier, the tier name and the decay bar.
+            comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 184, -16), new Vector2(-x, 16));
+            x += 184 + 8;
             comboGlow = Glow(comboChip, XgPalette.Gold, 5);
-            Panel(comboChip, new Color32(60, 30, 90, 255));
-            comboNumber = ui.Text(Rect("Number", comboChip, Vector2.zero, new Vector2(.55f, 1), new Vector2(8, 4), new Vector2(0, 0)), "×0", 30, Color.white, TextAlignmentOptions.MidlineLeft);
-            comboNumber.fontStyle = FontStyles.Bold;
-            comboTier = ui.Text(Rect("Tier", comboChip, new Vector2(.5f, 0), Vector2.one, new Vector2(0, 6), new Vector2(-8, 0)), "", 15, Color.white, TextAlignmentOptions.MidlineRight);
-            var bar = Rect("Window", comboChip, Vector2.zero, new Vector2(1, 0), new Vector2(6, 4), new Vector2(-6, 8));
-            comboFill = Bar(bar, "Fill", new Color(1, 1, 1, .12f), XgPalette.Gold);
-            hudTopic = Chip(hud, ref x, 200, new Color32(255, 214, 160, 255), "Topic");
-            hudLevel = Chip(hud, ref x, 190, XgPalette.Star, "Level");
-            hudCredit = Chip(hud, ref x, 150, new Color32(200, 230, 255, 255), "Credit");
-            hudMoney = Chip(hud, ref x, 160, XgPalette.Money, "Money");
+            Panel(comboChip, Color.white);
+            comboNumber = ui.Text(Rect("Number", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(10, 3), new Vector2(84, 0)), "", 16, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineLeft);
+            comboNumber.fontStyle = FontStyles.Bold; comboNumber.textWrappingMode = TextWrappingModes.NoWrap;
+            comboMult = ui.Text(Rect("Mult", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(84, 3), new Vector2(128, 0)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            comboMult.textWrappingMode = TextWrappingModes.NoWrap;
+            comboTier = ui.Text(Rect("Tier", comboChip, new Vector2(0, 0), Vector2.one, new Vector2(128, 3), new Vector2(-8, 0)), "", 13, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineRight);
+            comboTier.fontStyle = FontStyles.Bold; comboTier.textWrappingMode = TextWrappingModes.NoWrap;
+            comboTier.enableAutoSizing = true; comboTier.fontSizeMin = 9; comboTier.fontSizeMax = 13;
+            var bar = Rect("Window", comboChip, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 3));
+            comboFill = Bar(bar, "Fill", new Color(0, 0, 0, 0), ZhongbaoSkin.Orange);
+
+            hudTopic = Chip(hud, ref x, 150, "Topic");
+            hudLevel = Chip(hud, ref x, 150, "Level");
+            // 信用: label and score, a small gauge, the tier word.
+            var creditBox = ChipBox(hud, ref x, 190, "Credit");
+            hudCredit = ui.Text(Rect("Text", creditBox, new Vector2(0, 0), new Vector2(0, 1), new Vector2(10, 0), new Vector2(70, 0)), "", 13, ChipInk, TextAlignmentOptions.MidlineLeft);
+            hudCredit.textWrappingMode = TextWrappingModes.NoWrap;
+            var gauge = Rect("Gauge", creditBox, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(72, -3), new Vector2(126, 3));
+            creditFill = Bar(gauge, "Fill", new Color(1, 1, 1, .22f), new Color32(124, 240, 160, 255));
+            hudCreditTier = ui.Text(Rect("Tier", creditBox, Vector2.zero, Vector2.one, new Vector2(132, 0), new Vector2(-6, 0)), "", 12, ChipDim, TextAlignmentOptions.MidlineLeft);
+            hudCreditTier.textWrappingMode = TextWrappingModes.NoWrap; hudCreditTier.enableAutoSizing = true; hudCreditTier.fontSizeMin = 9; hudCreditTier.fontSizeMax = 12;
+            hudMoney = Chip(hud, ref x, 130, "Money");
             UiTip.Add(hudMoney.transform.parent, "余额：和家里共用的钱包。标注、订单进账；罚款、工资、电费花钱。", "Balance: the wallet shared with home. Labelling and orders pay in; fines, wages and power take out.");
-            UiTip.Add(hudCredit.transform.parent, () => Sim == null ? "" : Sim.QualityActive
+            UiTip.Add(creditBox, () => Sim == null ? "" : Sim.QualityActive
                 ? T("信用分 " + N(Sim.Credit, "0.#") + "（" + Sim.CreditTierName(Sim.CreditTier) + "）：决定抽检率和自动收入倍率。详情见「信用」页。", "Credit " + N(Sim.Credit, "0.#") + " (" + Sim.CreditTierName(Sim.CreditTier) + "): it sets the spot-check rate and the auto-income multiplier. See the Credit page.")
                 : T("买下自动答题以后，平台才开始抽检、算信用。", "The platform starts spot-checking and scoring credit once you buy auto-answer."));
             UiTip.Add(hudLevel.transform.parent, "等级：加薪的头衔，每两级换一个。加薪在标注台右边的商店里。", "Level: your pay-raise title, a new one every two raises. Raises are in the shop beside the labelling desk.");
@@ -422,22 +465,42 @@ namespace LingGuangV05.Desktop.Zhongbao
 
         void BuildNav()
         {
-            var nav = Rect("Nav", root, Vector2.zero, new Vector2(0, 1), new Vector2(12, 12), new Vector2(138, -70));
-            Panel(nav, XgPalette.Card);
+            var nav = Rect("Nav", root, Vector2.zero, new Vector2(0, 1), new Vector2(0, StatusH), new Vector2(NavW, -HeaderH));
+            Panel(nav, Color.white);
+            Panel(Rect("Edge", nav, new Vector2(1, 0), Vector2.one, new Vector2(-1, 0), Vector2.zero), ZhongbaoSkin.Line).raycastTarget = false;
+            const float top = 10, rowH = 40;
             for (int i = 0; i < PageIds.Length; i++)
             {
                 string id = PageIds[i];
-                var b = ui.Button(nav, "", () => { ShowPage(id); Juice.Play(XgJuice.Sfx.Id.Click); }, 17);
+                var b = ui.Button(nav, "", () => { ShowPage(id); Juice.Play(XgJuice.Sfx.Id.Click); }, 14);
                 b.rt.gameObject.name = "Tab " + id;
                 b.rt.anchorMin = new Vector2(0, 1); b.rt.anchorMax = new Vector2(1, 1);
-                b.rt.offsetMin = new Vector2(8, -8 - (i + 1) * 58); b.rt.offsetMax = new Vector2(-8, -8 - i * 58 - 6);
-                tabs.Add((id, b));
+                b.rt.offsetMin = new Vector2(0, -top - (i + 1) * rowH); b.rt.offsetMax = new Vector2(-1, -top - i * rowH);
+                b.label.alignment = TextAlignmentOptions.MidlineLeft;
+                ((RectTransform)b.label.transform).offsetMin = new Vector2(18, 0);
+                var barRect = Rect("Bar", b.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0));
+                var bar = Panel(barRect, ZhongbaoSkin.Blue); bar.raycastTarget = false;
+                var badge = ZhongbaoSkin.Badge(ui, b.rt, "Badge", new Vector2(1, .5f), new Vector2(-24, 0), 18);
+                tabs.Add(new NavTab { id = id, btn = b, bar = bar, badge = badge });
                 UiTip.Add(b.rt, () => PageHelp(id));
             }
-            lingguangLink = ui.Button(nav, "", () => { Juice.Play(XgJuice.Sfx.Id.Click); ShowTab("train"); }, 14);
-            lingguangLink.rt.gameObject.name = "LingGuangLink";
-            PlaceBottom(lingguangLink, 10, 36, 8, 8);
-            UiTip.Add(lingguangLink.rt, "去灵光.exe 训练模型：检查点在那里练出来，签订单、开自动答题都靠它。", "Train the model in LingGuang.exe: checkpoints come from there, and orders and auto-answer need them.");
+            float ruleY = top + PageIds.Length * rowH + 10;
+            Panel(Rect("Rule", nav, new Vector2(0, 1), Vector2.one, new Vector2(14, -ruleY - 1), new Vector2(-14, -ruleY)), ZhongbaoSkin.Line).raycastTarget = false;
+            accountText = ui.Text(Rect("Account", nav, new Vector2(0, 1), Vector2.one, new Vector2(18, -ruleY - 100), new Vector2(-8, -ruleY - 8)), "", 12, ZhongbaoSkin.Mute, TextAlignmentOptions.TopLeft);
+            accountText.lineSpacing = 18;
+        }
+
+        /// <summary>The 24 px strip along the bottom: connection, the no-spot-check promise, and the rent with the next settlement.</summary>
+        void BuildStatus()
+        {
+            var st = Rect("Status", root, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, StatusH));
+            Panel(st, Color.white);
+            Panel(Rect("Rule", st, new Vector2(0, 1), Vector2.one, new Vector2(0, -1), Vector2.zero), ZhongbaoSkin.Line).raycastTarget = false;
+            statusLeft = ui.Text(Rect("Link", st, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(190, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            statusMid = ui.Text(Rect("Hand", st, Vector2.zero, new Vector2(0, 1), new Vector2(200, 0), new Vector2(460, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            statusRight = ui.Text(Rect("Rent", st, new Vector2(1, 0), Vector2.one, new Vector2(-420, 0), new Vector2(-12, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
+            foreach (var t in new[] { statusLeft, statusMid, statusRight }) t.textWrappingMode = TextWrappingModes.NoWrap;
+            UiTip.Add(st, "状态栏：手动标注从不抽检；右边是家里的房租，以及离下一次每日结算还有多久。", "Status strip: hand labels are never spot-checked; on the right, the home rent and the time to the next daily settlement.");
         }
 
         string PageHelp(string id)
@@ -552,8 +615,9 @@ namespace LingGuangV05.Desktop.Zhongbao
             double before = shownMoney;
             shownMoney += (money - shownMoney) * (1 - Math.Exp(-10 * dt));
             if (Math.Abs(money - shownMoney) < .005) shownMoney = money;
-            hudMoney.text = T("余额 ", "Balance ") + "¥" + Money(shownMoney);
-            hudMoney.color = money > before + .004 ? new Color32(255, 220, 120, 255) : (Color)XgPalette.Money;
+            string ink = money > before + .004 ? "FFF3B8" : "FFE27A";
+            string text = T("余额 ", "Balance ") + "<b><color=#" + ink + ">¥" + Money(shownMoney) + "</color></b>";
+            if (hudMoney.text != text) hudMoney.text = text;
         }
 
         void UpdateCombo()
@@ -568,15 +632,17 @@ namespace LingGuangV05.Desktop.Zhongbao
             else comboSparkTimer = 0;
             if (combo != comboShown)
             {
-                if (combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); }
+                if (comboShown >= 0 && combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); }
                 comboShown = combo;
-                comboNumber.text = "×" + combo;
-                comboTier.text = tier >= 0 ? T(XgCatalog.ComboTierNames[tier], XgCatalog.ComboTierNamesEn[tier]) : (Sim.S.bestCombo > 0 ? Lang.T("最高 ×") + Sim.S.bestCombo : Lang.T("连击"));
+                comboNumber.text = T("连击 ", "Combo ") + combo;
+                comboMult.text = "×" + N(Sim.ComboMultiplier, "0.0#");
+                comboTier.text = tier >= 0 ? T(XgCatalog.ComboTierNames[tier], XgCatalog.ComboTierNamesEn[tier]) : (Sim.S.bestCombo > 0 ? T("最高 ×", "Best ×") + Sim.S.bestCombo : "");
             }
-            var color = XgPalette.Tiers[tier + 1];
-            if (tier >= 3) color = Color.Lerp(color, Color.white, .5f + .5f * Mathf.Sin(Time.unscaledTime * 10));
-            comboNumber.color = combo > 0 ? color : new Color(1, 1, 1, .45f);
-            comboTier.color = combo > 0 ? color : new Color(1, 1, 1, .45f);
+            var color = ComboInk[tier + 1];
+            if (tier >= 3) color = Color.Lerp(color, ComboInk[2], .5f + .5f * Mathf.Sin(Time.unscaledTime * 10));
+            var shown = combo > 0 ? color : new Color(ComboInk[0].r, ComboInk[0].g, ComboInk[0].b, .55f);
+            comboNumber.color = shown;
+            comboTier.color = combo > 0 ? color : ZhongbaoSkin.Mute;
             SetBar(comboFill, combo > 0 ? (float)(Sim.S.comboTimer / Math.Max(.1, comboShownWindow)) : 0);
             comboGlow.on = tier >= 0;
             comboGlow.color = XgPalette.Tiers[tier + 1] * new Color(1, 1, 1, .6f);
@@ -592,6 +658,37 @@ namespace LingGuangV05.Desktop.Zhongbao
             return newest != null ? newest.meme : "—";
         }
 
+        /// <summary>The household sim (rent, debt, the day clock) behind the wallet; null before it exists.</summary>
+        ChapterOneSim House => hub != null && hub.runtime != null ? hub.runtime.Sim : null;
+
+        /// <summary>
+        /// 累计标注: everything submitted under the account, from the lab's own state: hand answers (right and wrong),
+        /// the model's automatic ones, and the subcontract workers'.
+        /// </summary>
+        double TotalLabelled()
+        {
+            var s = Sim.S;
+            double n = s.handCorrect + s.handWrong + s.autoCorrect + s.autoWrong;
+            if (s.scWorkers != null) foreach (var w in s.scWorkers) if (w != null) n += w.labelsTotal;
+            return n;
+        }
+
+        static string Clock(double seconds)
+        {
+            int total = Math.Max(0, (int)Math.Ceiling(seconds));
+            return total / 60 + ":" + (total % 60).ToString("00");
+        }
+
+        void PlaceBadge(TMP_Text badge, string text)
+        {
+            ZhongbaoSkin.SetBadge(badge, text);
+            if (string.IsNullOrEmpty(text)) return;
+            float w = Mathf.Max(18, 9 + text.Length * 11);
+            var r = (RectTransform)badge.transform.parent;
+            r.sizeDelta = new Vector2(w, r.sizeDelta.y);
+            r.anchoredPosition = new Vector2(-10 - w / 2, 0);
+        }
+
         public void Refresh(bool force)
         {
             if (root == null || Sim == null) return;
@@ -601,25 +698,43 @@ namespace LingGuangV05.Desktop.Zhongbao
             Juice.Muted = Sim.S.mute;
             appName.text = AppTitle;
             subtitle.text = T("众包标注 · 企业接单", "Crowd labelling · Business orders");
-            if (shownMoney < 0) hudMoney.text = T("余额 ", "Balance ") + "¥" + Money(Host.Money);
-            hudCredit.text = T("信用 ", "Credit ") + N(Math.Floor(Sim.Credit), "0") + " " + (Sim.QualityActive ? Sim.CreditTierName(Sim.CreditTier) : T("未开通", "inactive"));
-            hudCredit.color = !Sim.QualityActive ? new Color32(170, 178, 230, 255) : Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 150, 150, 255) : new Color32(200, 230, 255, 255);
-            hudLevel.text = T("等级 ", "Level ") + XgCatalog.RaiseTitle(Sim.RaiseLevel, En) + " · Lv" + Sim.RaiseLevel;
-            hudTopic.text = T("今日热词 ", "Hot word ") + HotWord();
+            if (shownMoney < 0) hudMoney.text = T("余额 ", "Balance ") + "<b><color=#FFE27A>¥" + Money(Host.Money) + "</color></b>";
+            bool active = Sim.QualityActive;
+            hudCredit.text = T("信用 ", "Credit ") + "<b>" + N(Math.Floor(Sim.Credit), "0") + "</b>";
+            hudCreditTier.text = active ? Sim.CreditTierName(Sim.CreditTier) : T("未开通", "inactive");
+            hudCreditTier.color = !active ? ChipDim : Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 170, 170, 255) : ChipInk;
+            creditFill.GetComponent<Image>().color = Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 150, 150, 255) : new Color32(124, 240, 160, 255);
+            SetBar(creditFill, active ? (float)(Sim.Credit / XgSim.QcCreditMax) : 0);
+            hudLevel.text = T("等级 ", "Level ") + "<b>" + XgCatalog.RaiseTitle(Sim.RaiseLevel, En) + " Lv." + Sim.RaiseLevel + "</b>";
+            hudTopic.text = T("今日热词 ", "Hot word ") + "<b>" + HotWord() + "</b>";
 
             if (page == "contracts" && !PageOpen("contracts")) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
             string[] names = { T("标注台", "Label desk"), T("企业订单", "Orders"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             int signable = 0; foreach (var c in XgCatalog.Contracts) if (!Sim.Signed(c.id) && Sim.CanSign(c)) signable++;
             bool alarm = Sim.QualityFrozen || Sim.CaptchaPending || Sim.QualityWarning;
-            string[] badges = { raiseReady ? T("加薪", "raise") : "", signable > 0 ? signable.ToString() : "", "", "", alarm ? "!" : "" };
+            var house = House;
+            bool indebt = house != null && house.Debt > 0;
+            string[] badges = { raiseReady ? T("加薪", "↑") : "", signable > 0 ? signable.ToString() : "", "", indebt ? T("欠", "Debt") : "", alarm ? "!" : "" };
             for (int i = 0; i < tabs.Count; i++)
             {
-                bool open = PageOpen(tabs[i].id), on = tabs[i].id == page;
-                string badge = badges[i].Length > 0 ? "  <size=13><color=#" + (on ? "FFE08A" : "E08A00") + ">" + badges[i] + "</color></size>" : "";
-                tabs[i].btn.Set(names[i] + badge, open, on ? Blue : XgPalette.Button, on ? Color.white : XgPalette.Ink);
+                var tab = tabs[i];
+                bool open = PageOpen(tab.id), on = tab.id == page;
+                tab.btn.Set(names[i], open, on ? ZhongbaoSkin.Blue3 : Color.white, on ? ZhongbaoSkin.Blue : ZhongbaoSkin.Ink);
+                if (!open) { tab.btn.image.color = Color.white; tab.btn.label.color = ZhongbaoSkin.Dim; }
+                tab.btn.label.fontStyle = on ? FontStyles.Bold : FontStyles.Normal;
+                tab.bar.enabled = on;
+                PlaceBadge(tab.badge, open ? badges[i] : "");
             }
-            lingguangLink.Set(T("灵光.exe ↗", "LingGuang ↗"), true, XgPalette.Hud, Color.white);
+            lingguangLink.Set(T("打开灵光 ↗", "Open LingGuang ↗"), true, ZhongbaoSkin.Blue, Color.white);
+            accountText.text = T("账号 kk_2016\n注册 2016-05-29\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-29\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
+            statusLeft.text = "<color=#2F9E44>●</color> " + T("已连接 摆渡云", "Connected to Bodu Cloud");
+            statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");
+            // Rent and the next daily settlement come from the household sim; before rent starts there is nothing to show.
+            statusRight.text = house != null && house.EconomyActive
+                ? T("房租 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/天 · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " 后结算",
+                    "Rent ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/day · settles in " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds))
+                : "";
 
             var runtime = Controller != null ? Controller.runtime : null;
             bool waiting = runtime != null && runtime.Sim != null && runtime.Sim.InPrologue && !runtime.TestMode;

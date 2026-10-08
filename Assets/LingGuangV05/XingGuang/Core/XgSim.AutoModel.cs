@@ -316,14 +316,14 @@ namespace LingGuangV05.XingGuang
         public static int StageOfDataset(string dataset) => DatasetStage.TryGetValue(dataset ?? "", out int s) ? s : 1;
 
         /// <summary>
-        /// The parameter scale of the curve for a desk (thousands): a tenth of the next ability's threshold, so a model
-        /// the size of that threshold reaches the top grades and one fifty times smaller only grade C. A desk opened
+        /// The parameter scale of the curve for a desk (thousands): a tenth of the next rung of <see cref="CeilingLadderK"/>,
+        /// so a model the size of that rung reaches the top grades and one fifty times smaller only grade C. A desk opened
         /// by ability n is learnt properly by the model that reaches ability n + 1.
         /// </summary>
-        public static double CeilingScaleK(string dataset) => .1 * AbilityParamsK[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
+        public static double CeilingScaleK(string dataset) => .1 * CeilingLadderK[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
 
-        /// <summary>The samples a desk wants before data stops holding its ceiling down: 1/500 of the next ability's data bar.</summary>
-        public static double CeilingNeedSamples(string dataset) => .002 * AbilitySamples[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
+        /// <summary>The samples a desk wants before data stops holding its ceiling down: 1/500 of the next rung of <see cref="CeilingLadderSamples"/>.</summary>
+        public static double CeilingNeedSamples(string dataset) => .002 * CeilingLadderSamples[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
 
         /// <summary>
         /// The parts of the error the curve converges to (0 = the dataset's floor, 1 = chance), the scaling law of
@@ -363,6 +363,8 @@ namespace LingGuangV05.XingGuang
             acc = ProgressionAccuracy(run, acc);
             double chance = 1 - d.chanceError;
             acc = Math.Max(chance, acc - InbreedingPenaltyFor(run.dataset));
+            // 学习率重启 (consumable): the ceiling is 8% higher for a few rounds; the dataset's own floor still caps it.
+            if (S.sgdrRounds > 0) acc *= 1 + SgdrBoost;
             return Math.Max(chance, Math.Min(1 - d.floorError, acc));
         }
 
@@ -497,13 +499,25 @@ namespace LingGuangV05.XingGuang
             var risk = DropRisk(run);
             if (Roll() < risk.chance)
             {
-                run.valAcc = Math.Max(chance, before - range * (DropMin + DropSpread * Roll()));
-                e.dropped = before - run.valAcc > 1e-12;
-                if (e.dropped)
+                double fallen = Math.Max(chance, before - range * (DropMin + DropSpread * Roll()));
+                bool real = before - fallen > 1e-12;
+                if (real && S.rollbackGuards > 0)
                 {
-                    S.drops++;
-                    e.dropReason = risk.reason; e.dropReasonEn = risk.reasonEn;
-                    Say(T("这一轮退步了 " + F((before - run.valAcc) * 1000 / range, "0") + " 分：" + risk.reason + "。", "This round went down " + F((before - run.valAcc) * 1000 / range, "0") + " points: " + risk.reasonEn + "."));
+                    // 检查点回滚 (consumable): the drop is undone; the round neither gains nor loses.
+                    S.rollbackGuards--;
+                    e.rolledBack = true;
+                    Say(T("检查点回滚：这一轮的退步撤销了。", "Checkpoint rollback: this round's drop was undone."));
+                }
+                else
+                {
+                    run.valAcc = fallen;
+                    e.dropped = real;
+                    if (e.dropped)
+                    {
+                        S.drops++;
+                        e.dropReason = risk.reason; e.dropReasonEn = risk.reasonEn;
+                        Say(T("这一轮退步了 " + F((before - run.valAcc) * 1000 / range, "0") + " 分：" + risk.reason + "。", "This round went down " + F((before - run.valAcc) * 1000 / range, "0") + " points: " + risk.reasonEn + "."));
+                    }
                 }
             }
             else if (before < run.ceiling) run.valAcc = before + run.lastRate * (run.ceiling - before);

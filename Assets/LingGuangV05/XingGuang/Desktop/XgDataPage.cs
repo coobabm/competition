@@ -22,7 +22,7 @@ namespace LingGuangV05.Desktop.XingGuang
         // Laid out at the normal 灵光 window (1236×693, so about 1064 wide here): a dataset is a two-line card, each of its
         // sources a two-line row under it (source tag, pack name, then samples · wrong labels · download), with the
         // training switch and the buy button in fixed columns on the right. Nothing is smaller than 13 px.
-        const float RowHeight = 54, OfferHeight = 48, GroupGap = 10, Indent = 46, BarWidth = 8;
+        const float RowHeight = 60, OfferHeight = 54, GroupGap = 10, Indent = 46, BarWidth = 8;
         // Dataset columns, from the row's left edge.
         const float NameX = 46, SamplesX0 = 470, SamplesX1 = 600, QualityX = 632, QualityBar = 96;
         // Offer columns: the tag, then the text up to the two buttons on the right.

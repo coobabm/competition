@@ -204,7 +204,7 @@ namespace LingGuangV05.Desktop.Story
             if (desk == null) return;
             if (!FindNative())
             {
-                desk.Popup(Lang.T("暴风影音"), Lang.T("播放器没找到。"), 5);
+                desk.StoryPopup(Lang.T("暴风影音"), Lang.T("播放器没找到。"), 5);
                 Finished();
                 return;
             }
@@ -212,7 +212,7 @@ namespace LingGuangV05.Desktop.Story
             if (!url.Contains("://") && !File.Exists(url))
             {
                 Debug.LogWarning("OriginCurtain: missing " + url);
-                desk.Popup(Lang.T("暴风影音"), Lang.T("找不到文件：我从哪儿来.mp4"), 5);
+                desk.StoryPopup(Lang.T("暴风影音"), Lang.T("找不到文件：我从哪儿来.mp4"), 5);
                 Finished();
                 return;
             }

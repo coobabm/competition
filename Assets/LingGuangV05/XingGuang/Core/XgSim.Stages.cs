@@ -18,6 +18,13 @@ namespace LingGuangV05.XingGuang
         public bool seedPlanted;
         /// <summary>Per-save data seed: every save meets different cards of the same kinds (0 for older saves).</summary>
         public int dataSalt;
+        /// <summary>
+        /// The two bars when the current stage began: the month counts the way from here to the next ability, so a
+        /// new month starts on its first day (rent is paid per calendar day). 0 in older saves: the whole bar counts.
+        /// </summary>
+        public double stageStartParamsK, stageStartSamples;
+        /// <summary>Seconds played in the current stage since rent began (older saves start at 0 when loaded): the month's time floor.</summary>
+        public double stageClock;
 
         // Wall fields of older saves (design v1.1 walls, removed by 参数量与数据量主线). Still read, never written.
         public double wallSeenAt, winterIdle;
@@ -55,6 +62,7 @@ namespace LingGuangV05.XingGuang
             if (S.stage != from) return;
             if (!S.emerged.Contains(from)) Emerge(from);
             S.stage = from + 1; S.stageEpochs = 0; S.stageSeconds = 0; S.monthProgress = 0;
+            S.stageStartParamsK = TrainedParamsK; S.stageStartSamples = TrainedSamples; S.stageClock = 0;
             GrantAbilitiesUpTo(S.stage);
             S.stageVision = S.stageSequence = S.stage;
             Say(T("进入第 " + S.stage + " 阶段：", "Stage " + S.stage + ": ") + T(XgCatalog.StageNames[S.stage], XgCatalog.StageNamesEn[S.stage]));
@@ -122,8 +130,9 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// How far the current stage is through its month (0–1). It reads progress, it never gates it: inside a stage
-        /// the month follows the slower of the two bars towards the next ability, and it never runs backwards. Stage 6
-        /// has no next ability and runs on pre-training and alignment.
+        /// the month follows the slower of the two bars on their way from where they stood when the stage began to the
+        /// next ability (so a month never opens half gone, and its rent comes day by day), and it never runs backwards.
+        /// Stage 6 has no next ability and runs on pre-training and alignment.
         /// </summary>
         public double MonthProgress
         {
@@ -131,7 +140,9 @@ namespace LingGuangV05.XingGuang
             {
                 if (S.stage >= 6) return FinaleMonthProgress;
                 int next = NextAbility;
-                double now = next == 0 ? 1 : AbilityProgress(next);
+                double now = next == 0 ? 1 : Math.Min(StageBar(TrainedParamsK, S.stageStartParamsK, ParamsThreshold(next)), StageBar(TrainedSamples, S.stageStartSamples, SamplesThreshold(next)));
+                // Days also pass while the bars stand still: a month reaches its last day within MonthPlaySeconds.
+                now = Math.Max(now, MonthTimeFloor);
                 // The last day of a month waits for the ability itself.
                 now = Math.Min(.97, now);
                 if (!Finite(S.monthProgress)) S.monthProgress = 0;
@@ -142,9 +153,33 @@ namespace LingGuangV05.XingGuang
 
         static double Clamp01(double v) => double.IsNaN(v) ? 0 : Math.Max(0, Math.Min(1, v));
 
+        /// <summary>Seconds of play in which a stage's month runs out even if its bars do not move (stage 5 is two months).</summary>
+        public static readonly double[] MonthPlaySeconds = { 0, 480, 480, 480, 480, 960, 0 };
+
+        /// <summary>The share of the month that time alone has passed in this stage (0 for the finale).</summary>
+        public double MonthTimeFloor
+        {
+            get
+            {
+                int st = Math.Max(0, Math.Min(MonthPlaySeconds.Length - 1, S.stage));
+                double length = MonthPlaySeconds[st];
+                return length <= 0 || !Finite(S.stageClock) ? 0 : Clamp01(S.stageClock / length);
+            }
+        }
+
+        /// <summary>A bar's way from where the stage began to the threshold (0–1); full when it started full.</summary>
+        static double StageBar(double have, double start, double need)
+        {
+            if (!Finite(start) || start < 0) start = 0;
+            if (need <= 0 || have >= need) return 1;
+            if (start >= need) return 1;
+            return Clamp01((have - start) / (need - start));
+        }
+
         void TickStages(double dt)
         {
             S.stageSeconds += dt;
+            if (Finite(dt) && dt > 0) S.stageClock += dt;
             if (UseBoard) CheckCallEmergence();
         }
 

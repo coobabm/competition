@@ -59,6 +59,8 @@ namespace LingGuangV05.Desktop.Taohuo
 
         static void Pop(string whoZh, string whoEn, string zh, string en)
         {
+            // Shop ads are ambient chatter: the opening quiet window drops them (they are news of the day, never replayed).
+            if (!OpeningQuiet.Allows(false)) return;
             if (PrologueDirector.Desk != null) PrologueDirector.Desk.Popup(T(whoZh, whoEn), T(zh, en), 8);
         }
     }

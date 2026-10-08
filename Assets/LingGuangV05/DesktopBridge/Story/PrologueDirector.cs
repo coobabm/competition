@@ -82,6 +82,7 @@ namespace LingGuangV05.Desktop.Story
                 // A save that is past the prologue (loaded or finished mid-scene) never keeps a half-played one on screen.
                 if (run != null && Step != "setup" && Step != "done") StopPrologue();
                 EnsureFrozenFiles();
+                KeepLaoZhouWaiting();
             }
         }
 
@@ -219,7 +220,17 @@ namespace LingGuangV05.Desktop.Story
             txtIcon = Spawn(desk.Icon("Prologue 0.txt", Prologue.Txt, desk.notepadIcon));
             txtIcon.GetComponent<PrologueClick>().Open = () => txtOpened = true;
             Think(L("m_txt"));
-            while (!txtOpened) yield return null;
+            // Nothing happens until it is opened: a second thought after a while, and the icon wiggles now and then.
+            for (float waited = 0, next = NudgeAfter; !txtOpened; waited += Time.unscaledDeltaTime)
+            {
+                if (waited >= next)
+                {
+                    if (next == NudgeAfter) Think(L("m_txt_again"));
+                    StartCoroutine(Wiggle(txtIcon));
+                    next += NudgeEvery;
+                }
+                yield return null;
+            }
 
             // Step 2: it does not open. The mouse moves on its own.
             SetStep("hijack");
@@ -265,10 +276,7 @@ namespace LingGuangV05.Desktop.Story
             {
                 // 是: it really shuts down, and boots straight back into a desktop that already has the exe on it.
                 yield return ShutDown();
-                SetStep("setup");
-                StartCoroutine(LaoZhouAfterReboot());
-                while (runtime.Sim != null && runtime.Sim.InPrologue) yield return null;
-                SetStep("done");
+                yield return WaitForSetup();
                 run = null;
                 yield break;
             }
@@ -300,17 +308,57 @@ namespace LingGuangV05.Desktop.Story
             // The channel (design §1.1): from then only a few characters can be written back, so the thing that came
             // was small: the long number it typed was the whole program; the rest unpacked on this machine.
             yield return ThinkAndWait(L("m_number"), 2);
+            // What to do next is said plainly: the exe it left behind (the to-do note shows the same step).
+            StartCoroutine(Wiggle(ExeIcon()));
+            Think(L("m_open_exe").Replace("{exe}", GameText.IsEnglish ? AppNames.ExeEn : AppNames.ExeZh), 3);
 
-            // Step 7: 老周's only unprompted message.
-            SetStep("laozhou");
-            yield return PrologueDesk.Wait(3);
-            yield return LaoZhou();
-
-            // Step 8 happens in the exe (XgSetupOverlay). The prologue ends when the setup is saved.
-            SetStep("setup");
-            while (runtime.Sim != null && runtime.Sim.InPrologue) yield return null;
-            SetStep("done");
+            // Step 8 happens in the exe (XgSetupOverlay). The prologue ends when the setup is saved. 老周's only
+            // unprompted message (Step 7) comes afterwards, in its turn (LaoZhouInTurn).
+            yield return WaitForSetup();
             run = null;
+        }
+
+        // ───────────── nudges ─────────────
+
+        /// <summary>Seconds before a waiting prologue step nudges the player, then between nudges.</summary>
+        const float NudgeAfter = 15, NudgeEvery = 12;
+
+        RectTransform ExeIcon()
+        {
+            var shortcut = router != null ? router.Get(LingGuangInstallFlow.AppId)?.DesktopShortcut : null;
+            return shortcut != null ? shortcut.transform as RectTransform : null;
+        }
+
+        /// <summary>Step 8 waits in the exe. While the exe is closed its icon wiggles now and then (a gentle rock, no flash).</summary>
+        IEnumerator WaitForSetup()
+        {
+            SetStep("setup");
+            float closedFor = 0, next = NudgeAfter;
+            while (runtime.Sim != null && runtime.Sim.InPrologue)
+            {
+                var app = router != null ? router.Get(LingGuangInstallFlow.AppId) : null;
+                if (app != null && app.Window != null && app.Window.isOn) { closedFor = 0; next = NudgeAfter; }
+                else if ((closedFor += Time.unscaledDeltaTime) >= next)
+                {
+                    next += NudgeEvery;
+                    StartCoroutine(Wiggle(ExeIcon()));
+                }
+                yield return null;
+            }
+            SetStep("done");
+        }
+
+        /// <summary>A desktop icon rocks a few degrees and settles (about 0.7 s).</summary>
+        static IEnumerator Wiggle(RectTransform icon)
+        {
+            if (icon == null) yield break;
+            var rest = icon.localRotation;
+            for (float t = 0; t < .7f && icon != null; t += Time.unscaledDeltaTime)
+            {
+                icon.localRotation = rest * Quaternion.Euler(0, 0, Mathf.Sin(t * 26) * 8 * (1 - t / .7f));
+                yield return null;
+            }
+            if (icon != null) icon.localRotation = rest;
         }
 
         IEnumerator TitleAndBoot()
@@ -516,12 +564,6 @@ namespace LingGuangV05.Desktop.Story
             Think(L("m_reboot_exe").Replace("{exe}", GameText.IsEnglish ? AppNames.ExeEn : AppNames.ExeZh), 3);
         }
 
-        /// <summary>Step 7 after a reboot: 老周's message comes while the exe is already open, and never holds up the setup.</summary>
-        IEnumerator LaoZhouAfterReboot()
-        {
-            yield return PrologueDesk.Wait(4);
-            yield return LaoZhou();
-        }
 
         IEnumerator Rename()
         {
@@ -617,6 +659,48 @@ namespace LingGuangV05.Desktop.Story
 
         // ───────────── Step 7 ─────────────
 
+        Coroutine laoZhou;
+        /// <summary>He does not wait for 晴雯 longer than this after the AI joined YY, nor for anything longer than the second number.</summary>
+        const float LaoZhouAfterAi = 75, LaoZhouPatience = 300;
+
+        /// <summary>
+        /// Step 7, 老周's only unprompted message, comes after the setup in its turn (OpeningBeat): after the month card,
+        /// the AI joining YY and 晴雯's first line. A save quit before he wrote gets it on the next start, and one whose
+        /// reply was cut short gets his choices back. Only before the second ability; never twice.
+        /// </summary>
+        float nextLaoZhouCheck;
+
+        void KeepLaoZhouWaiting()
+        {
+            if (laoZhou != null || Time.unscaledTime < nextLaoZhouCheck) return;
+            nextLaoZhouCheck = Time.unscaledTime + 1;
+            if (laoZhou != null || runtime.Sim.InPrologue || runtime.Sim.S.prologue != 2 || !string.IsNullOrEmpty(runtime.Sim.S.laoZhouFirstReply)) return;
+            var hub = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
+            var lab = LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
+            if (hub == null || hub.S == null || lab == null || lab.AbilitiesCount >= OpeningQuiet.EndsWithAbility || lab.S.ending.Length > 0) return;
+            laoZhou = StartCoroutine(LaoZhouInTurn());
+        }
+
+        IEnumerator LaoZhouInTurn()
+        {
+            var presenter = GetComponent<StoryDesktopPresenter>();
+            var turn = new OpeningTurn();
+            float waited = 0, aiJoinedFor = 0;
+            while (true)
+            {
+                float dt = Time.unscaledDeltaTime;
+                waited += dt;
+                if (OpeningSequence.AiJoined()) aiJoinedFor += dt;
+                bool ready = turn.Ready(OpeningSequence.Turn(OpeningBeat.LaoZhou, presenter), Time.unscaledTime)
+                    || aiJoinedFor > LaoZhouAfterAi || waited > LaoZhouPatience;
+                bool busy = AiJoinsYy.Playing || presenter != null && presenter.NotificationsHeld;
+                if (ready && !busy) break;
+                yield return null;
+            }
+            yield return LaoZhou();
+            laoZhou = null;
+        }
+
         IEnumerator LaoZhou()
         {
             var hub = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
@@ -625,8 +709,13 @@ namespace LingGuangV05.Desktop.Story
             string odd = L("lz_pick_odd"), yes = L("lz_pick_yes"), later = L("lz_pick_later");
             bool answered = false, described = false;
             string picked = null;
-            // The forum icon lights up with a red dot: 周而复始's only unprompted message.
-            hub.Receive(zhou, L("lz_first"));
+            // The forum icon lights up with a red dot: 周而复始's only unprompted message. A reply cut short gets his
+            // choices back without the message twice; one already answered is only noted.
+            switch (FirstMessageState(hub))
+            {
+                case 2: runtime.Sim.S.laoZhouFirstReply = "game"; runtime.MarkDirty(); yield break;
+                case 0: hub.Receive(zhou, L("lz_first")); break;
+            }
             hub.Offer(zhou, new[] { odd, yes, later });
             hub.Script(zhou, text =>
             {
@@ -641,6 +730,7 @@ namespace LingGuangV05.Desktop.Story
             });
             while (!answered) yield return null;
             runtime.Sim.S.laoZhouFirstReply = picked == "odd" ? "odd" : "game";
+            runtime.MarkDirty();
             yield return PrologueDesk.Wait(1.6f);
             if (picked == "odd")
             {
@@ -657,6 +747,18 @@ namespace LingGuangV05.Desktop.Story
                 hub.Receive(zhou, L("lz_game_2"), hub.Showing == zhou);
             }
             hub.EndScript();
+        }
+
+        /// <summary>0: his first message is not in the conversation; 1: it is, unanswered; 2: it is, and the player wrote back.</summary>
+        static int FirstMessageState(LingGuangV05.Desktop.Tieba.TiebaHub hub)
+        {
+            var conv = hub.Conversation(LingGuangV05.Core.Forum.ForumLibrary.LaoZhou);
+            if (conv == null) return 0;
+            string zh = PrologueContent.Lines.Get("lz_first", false), en = PrologueContent.Lines.Get("lz_first", true);
+            int at = conv.messages.FindLastIndex(m => m.from == LingGuangV05.Core.Forum.ForumLibrary.LaoZhou && (m.text == zh || m.text == en));
+            if (at < 0) return 0;
+            for (int i = at + 1; i < conv.messages.Count; i++) if (conv.messages[i].from == LingGuangV05.Core.Forum.ForumLibrary.Me) return 2;
+            return 1;
         }
 
         static bool Odd(string text)
@@ -874,6 +976,7 @@ namespace LingGuangV05.Desktop.Story
             run = null;
             thinking = null;
             ending = null;
+            laoZhou = null;
             if (speaking || (thoughtGroup != null && thoughtGroup.alpha > 0) || hijacked) VoiceLines.Stop();
             if (voice != null) voice.Stop();
             if (thoughtGroup != null) thoughtGroup.alpha = 0;

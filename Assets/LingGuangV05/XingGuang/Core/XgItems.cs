@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>The shelves of the 道具 page. Only 结构 and 技巧 have items today; the others wait for the fun items.</summary>
-    public enum XgItemCategory { Structure, Technique, Power, Data, Earning, Story }
+    /// <summary>The shelves of the 道具 page: 结构, 技巧, 电力 (the cooler), 消耗品 (packs used on the 训练 page); the others wait for the fun items.</summary>
+    public enum XgItemCategory { Structure, Technique, Power, Data, Earning, Story, Consumable }
 
     /// <summary>One item on the 道具 page: the tech node it buys, its shelf and the year the idea is from.</summary>
     public sealed class XgItemDef
@@ -27,11 +27,11 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgItemCategory[] Order =
         {
-            XgItemCategory.Structure, XgItemCategory.Technique, XgItemCategory.Power, XgItemCategory.Data, XgItemCategory.Earning, XgItemCategory.Story,
+            XgItemCategory.Structure, XgItemCategory.Technique, XgItemCategory.Power, XgItemCategory.Consumable, XgItemCategory.Data, XgItemCategory.Earning, XgItemCategory.Story,
         };
 
-        static readonly string[] Names = { "结构", "技巧", "电力", "数据", "挣钱", "剧情" };
-        static readonly string[] NamesEn = { "Structures", "Techniques", "Power", "Data", "Earning", "Story" };
+        static readonly string[] Names = { "结构", "技巧", "电力", "数据", "挣钱", "剧情", "消耗品" };
+        static readonly string[] NamesEn = { "Structures", "Techniques", "Power", "Data", "Earning", "Story", "Consumables" };
 
         public static string CategoryName(XgItemCategory c, bool english) => english ? NamesEn[(int)c] : Names[(int)c];
 
@@ -42,7 +42,7 @@ namespace LingGuangV05.XingGuang
             { "sigmoid", 1986 }, { "momentum", 1986 }, { "augment", 1998 }, { "relu", 2010 }, { "rmsprop", 2012 },
             { "gradclip", 2013 }, { "wordvec", 2013 }, { "dropout", 2014 }, { "adam", 2014 }, { "cudnn", 2014 },
             { "transfer", 2014 }, { "beamsearch", 2014 }, { "batchnorm", 2015 }, { "irnn", 2015 }, { "subword", 2016 },
-            { "position", 2017 }, { "warmup", 2017 }, { "sft", 2022 }, { "cot", 2022 },
+            { "fp16", 2016 }, { "position", 2017 }, { "warmup", 2017 }, { "sft", 2022 }, { "cot", 2022 },
         };
 
         /// <summary>Items from systems outside the tech tree (the fun items being designed). Added once, at load.</summary>
@@ -64,7 +64,7 @@ namespace LingGuangV05.XingGuang
                         fromNodes.Add(new XgItemDef { id = n.id, category = XgItemCategory.Structure, year = a != null ? a.year : 0 });
                     }
                     else if (n.kind == XgNodeKind.Research)
-                        fromNodes.Add(new XgItemDef { id = n.id, category = XgItemCategory.Technique, year = TechniqueYears.TryGetValue(n.target ?? n.id, out int y) ? y : 0 });
+                        fromNodes.Add(new XgItemDef { id = n.id, category = n.id == "cooler" ? XgItemCategory.Power : XgItemCategory.Technique, year = TechniqueYears.TryGetValue(n.target ?? n.id, out int y) ? y : 0 });
                 }
             }
             var all = new List<XgItemDef>(fromNodes);

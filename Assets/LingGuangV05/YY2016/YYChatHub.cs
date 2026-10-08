@@ -653,7 +653,8 @@ namespace LingGuangV05.Desktop.YY
             eraWait = 2;
             var e = EraContent.TakeDue(runtime.Sim.S, LingGuangV05.Core.Era.EraEvents.YY);
             if (e == null) return;
-            Receive(EraGroup, "[" + EraContent.Who(e) + "] " + EraContent.Text(e));
+            // The opening quiet window (OpeningQuiet): the line still lands in the group, without a popup or a sound.
+            Receive(EraGroup, "[" + EraContent.Who(e) + "] " + EraContent.Text(e), OpeningQuiet.Allows(false));
             eraWait = EraChatGap;
         }
 

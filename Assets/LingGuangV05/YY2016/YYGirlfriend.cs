@@ -41,6 +41,8 @@ namespace LingGuangV05.Desktop.YY
             public bool hesitate, proactive;
             /// <summary>False for a good night: she does not wait for an answer to it.</summary>
             public bool expectsReply = true;
+            /// <summary>Her answer to a red packet she took gladly: it leads with 「谢谢哥哥」 and never hesitates into 「嗯」.</summary>
+            public bool thanks;
             public Action after;
         }
 
@@ -95,6 +97,8 @@ namespace LingGuangV05.Desktop.YY
             if (!g.started)
             {
                 if (runtime.Sim.InPrologue) return;
+                // One thing at a time after the setup (OpeningBeat): she appears once the AI has joined YY.
+                if (!HerTurn()) return;
                 GirlfriendRules.Begin(g, Now, Seed());
                 runtime.MarkDirty();
             }
@@ -235,6 +239,8 @@ namespace LingGuangV05.Desktop.YY
             var turn = GirlfriendRules.OnPlayerLine(g, now, text, byAi);
             foreach (var e in turn.events) Handle(e);
             turn.events.Clear();
+            // He promised her the weekend: the train ticket is paid on Saturday (ChapterOneSim.Bills.cs).
+            if (turn.promised == "weekend") runtime.Sim.BookWeekendTrip();
             runtime.MarkDirty();
             if (!byAi) aiDueGame = -1;
 
@@ -246,6 +252,7 @@ namespace LingGuangV05.Desktop.YY
             {
                 var o = GirlfriendRules.Packet(g, now, packet);
                 situation = T(o.situationZh, o.situationEn);
+                turn.thanks = o.thanks;
                 scripted = o.lines; ruled = true;
                 double amount = packet;
                 if (o.returned) after = () => { runtime.Sim.S.money += amount; runtime.MarkDirty(); System(T("晴雯ˇ 退回了你的红包，¥" + Money(amount) + " 已退回钱包。", "Qingwenˇ sent your red packet back. ¥" + Money(amount) + " returned to your wallet.")); };
@@ -274,6 +281,13 @@ namespace LingGuangV05.Desktop.YY
                 askAtGame = GirlfriendReplyPolicy.AskAt(now.game, replyAtGame);
                 replyPending = true;
                 pendingAfter = null;
+            }
+            // Quick lines answered together keep the first line's silence cues (查岗 after he vanished).
+            if (pendingTurn != null)
+            {
+                turn.keptHerWaiting = Math.Max(turn.keptHerWaiting, pendingTurn.keptHerWaiting);
+                turn.sinceHisLast = Math.Max(turn.sinceHisLast, pendingTurn.sinceHisLast);
+                turn.thanks |= pendingTurn.thanks;
             }
             pendingTurn = turn;
             pendingSituation = situation;
@@ -322,7 +336,7 @@ namespace LingGuangV05.Desktop.YY
 
         void QueueReply(GirlfriendState g, string[] pairs, Action after)
         {
-            var b = new Batch { after = after };
+            var b = new Batch { after = after, thanks = pairs.Length > 1 && pairs[0] == GirlfriendRules.ThanksZh };
             for (int i = 0; i + 1 < pairs.Length; i += 2) b.lines.Add(English ? pairs[i + 1] : pairs[i]);
             Hesitation(g, b);
             outbox.Enqueue(b);
@@ -331,7 +345,8 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Cold tier or a bad mood: typing, gone, typing again, and only 「嗯」 (design §3).</summary>
         static void Hesitation(GirlfriendState g, Batch b)
         {
-            if (b.proactive || !GirlfriendRules.Hesitates(g)) return;
+            // Her thanks for a red packet is never swallowed by a hesitation.
+            if (b.proactive || b.thanks || !GirlfriendRules.Hesitates(g)) return;
             b.hesitate = true;
             b.lines.Clear();
             b.lines.Add(Lang.T("嗯"));
@@ -348,7 +363,7 @@ namespace LingGuangV05.Desktop.YY
             if (llm == null || !GirlfriendReplyPolicy.AskModel(llm.Ready))
             {
                 LogReply(proactive, "offline:notready");
-                Offline(g, now, proactive, fallback, after, topic);
+                Offline(g, now, proactive, fallback, after, topic, turn);
                 return;
             }
             generating = true;
@@ -364,7 +379,7 @@ namespace LingGuangV05.Desktop.YY
         {
             var expected = g;
             bool english = English;
-            var messages = GirlfriendPrompt.Messages(Conv, g, Now, act, english, situation, proactive, hint);
+            var messages = GirlfriendPrompt.Messages(Conv, g, Now, act, english, situation, proactive, hint, turn);
             llm.Chat(messages, GirlfriendPromptText.MaxTokens, GirlfriendReplyPolicy.Temperature(attempt), raw =>
             {
                 if (!ReferenceEquals(G, expected)) return;
@@ -385,7 +400,7 @@ namespace LingGuangV05.Desktop.YY
                 if (verdict == GfReplyVerdict.Fallback)
                 {
                     LogReply(proactive, raw == null ? "offline:failed" : r == null ? "offline:parse" : "offline:repeat");
-                    Offline(g, Now, proactive, fallback, after, topic);
+                    Offline(g, Now, proactive, fallback, after, topic, turn);
                     return;
                 }
                 LogReply(proactive, attempt > 0 ? "model:retry" : "model");
@@ -397,8 +412,9 @@ namespace LingGuangV05.Desktop.YY
                     foreach (var e in turn.events) if (e.kind == GfEventKind.Voice) Voice(e.key);
                     turn.events.Clear();
                 }
-                var b = new Batch { proactive = proactive, after = after };
-                b.lines.AddRange(r.msgs);
+                var b = new Batch { proactive = proactive, after = after, thanks = turn != null && turn.thanks };
+                // A red packet she took gladly: 「谢谢哥哥」 leads, whatever the model began with.
+                b.lines.AddRange(b.thanks ? GirlfriendRules.ThankFirst(r.msgs, english) : r.msgs);
                 Hesitation(g, b);
                 outbox.Enqueue(b);
                 runtime.MarkDirty();
@@ -415,14 +431,14 @@ namespace LingGuangV05.Desktop.YY
             if (ReplyLog.Count > 200) ReplyLog.RemoveAt(0);
         }
 
-        void Offline(GirlfriendState g, GfNow now, bool proactive, string[] fallback, Action after, string topic)
+        void Offline(GirlfriendState g, GfNow now, bool proactive, string[] fallback, Action after, string topic, GfTurn turn = null)
         {
             generating = false;
             if (fallback != null) { if (proactive) QueueLines(fallback, true, after); else QueueReply(g, fallback, after); return; }
             var b = new Batch { proactive = proactive, after = after };
             b.lines.AddRange(topic.Length > 0
                 ? GirlfriendLines.Topic(topic, English, g, XgSpeechPolicy.Similar)
-                : GirlfriendLines.Pick(g, now.clock, English, XgSpeechPolicy.Similar, proactive ? null : LatestFromHim()));
+                : GirlfriendLines.Pick(g, now.clock, English, XgSpeechPolicy.Similar, proactive ? null : LatestFromHim(), proactive ? null : turn));
             Hesitation(g, b);
             outbox.Enqueue(b);
         }
@@ -526,7 +542,30 @@ namespace LingGuangV05.Desktop.YY
             Refresh();
         }
 
+        // ───────────── her first appearance ─────────────
+
+        readonly OpeningTurn herTurn = new OpeningTurn();
+        float waitingSince = -1;
+        /// <summary>She appears anyway after this many seconds of waiting (the AI's scene could not play).</summary>
+        const float HerPatience = 240;
+
+        StoryDesktopPresenter presenter;
+
+        bool HerTurn()
+        {
+            // A save past the opening (an older one that never met her) does not wait.
+            var lab = Lab;
+            if (lab != null && lab.AbilitiesCount >= OpeningQuiet.EndsWithAbility) return true;
+            if (waitingSince < 0) waitingSince = Time.unscaledTime;
+            if (presenter == null) presenter = FindAnyObjectByType<StoryDesktopPresenter>();
+            if (herTurn.Ready(OpeningSequence.Turn(OpeningBeat.Qingwen, presenter), Time.unscaledTime)) return true;
+            return Time.unscaledTime - waitingSince > HerPatience && !AiJoinsYy.Playing;
+        }
+
         // ───────────── things she starts ─────────────
+
+        /// <summary>While the opening quiet window is open, her own messages come at most every OpeningQuiet.QingwenSpacing seconds.</summary>
+        float spacedUntil;
 
         void Idle(GirlfriendState g, GfNow now, GfActivity act)
         {
@@ -534,13 +573,21 @@ namespace LingGuangV05.Desktop.YY
             nextIdleCheck = Time.unscaledTime + 1;
             if (!act.Present) return;
             if (hub.ChoicesFor == YYChatHub.GirlfriendId && hub.Choices != null) return;
+            bool quiet = OpeningQuiet.Active;
+            if (quiet && Time.unscaledTime < spacedUntil) return;
+            if (StartSomething(g, now, act) && quiet) spacedUntil = Time.unscaledTime + (float)OpeningQuiet.QingwenSpacing;
+        }
+
+        /// <summary>Whatever she starts by herself now, if anything. True when something was started.</summary>
+        bool StartSomething(GirlfriendState g, GfNow now, GfActivity act)
+        {
             GfEvent e;
-            if ((e = GirlfriendRules.SleepNag(g, now, act)) != null) { Queue(e, true); return; }
-            if ((e = GirlfriendRules.Goodnight(g, now, act)) != null) { Queue(e, true); runtime.MarkDirty(); return; }
+            if ((e = GirlfriendRules.SleepNag(g, now, act)) != null) { Queue(e, true); return true; }
+            if ((e = GirlfriendRules.Goodnight(g, now, act)) != null) { Queue(e, true); runtime.MarkDirty(); return true; }
             if (Stage >= 3 && (e = GirlfriendRules.MoneyQuestion(g, now, runtime.Sim.S.money)) != null)
             {
                 Queue(e, true, () => hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh));
-                return;
+                return true;
             }
             double her = GirlfriendRules.HerPacketDue(g, now);
             if (her > 0)
@@ -551,14 +598,15 @@ namespace LingGuangV05.Desktop.YY
                     runtime.Sim.S.money += her; runtime.MarkDirty();
                     System(T("你领取了 晴雯ˇ 的红包，¥" + Money(her) + " 已存入钱包。", "You opened Qingwenˇ's red packet: ¥" + Money(her) + " added to your wallet."));
                 });
-                return;
+                return true;
             }
             e = GirlfriendRules.NextProactive(g, now, act);
-            if (e == null) return;
+            if (e == null) return false;
             runtime.MarkDirty();
-            if (e.kind == GfEventKind.Shake) { Shake(e.key == "first.shake"); return; }
-            if (e.kind == GfEventKind.Topic) { Generate(g, now, act, GirlfriendRules.TopicPrompt(e.key, English), null, true, true, null, null, e.key); return; }
+            if (e.kind == GfEventKind.Shake) { Shake(e.key == "first.shake"); return true; }
+            if (e.kind == GfEventKind.Topic) { Generate(g, now, act, GirlfriendRules.TopicPrompt(e.key, English), null, true, true, null, null, e.key); return true; }
             Queue(e, true);
+            return true;
         }
 
         // ───────────── window shake (design §3: 暖档以上会抖动窗口) ─────────────
@@ -646,9 +694,9 @@ namespace LingGuangV05.Desktop.YY
             if (a.refused)
             {
                 runtime.Sim.S.money += a.order.price;
-                PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
+                PrologueDirector.Desk?.StoryPopup(Lang.T("淘货"), T("「" + a.gift.zh + "」被拒收，¥" + Money(a.order.price) + " 已退款。", "\"" + a.gift.en + "\" was refused. ¥" + Money(a.order.price) + " refunded."), 6);
             }
-            else PrologueDirector.Desk?.Popup(Lang.T("淘货"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
+            else PrologueDirector.Desk?.StoryPopup(Lang.T("淘货"), T("您的宝贝「" + a.gift.zh + "」已签收。", "Your item \"" + a.gift.en + "\" has been signed for."), 6);
             runtime.MarkDirty();
             var events = a.events;
             QueueLines(a.lines, true, () => { foreach (var e in events) Queue(e, true, e.key == "money" ? (Action)(() => hub.Offer(YYChatHub.GirlfriendId, English ? GirlfriendRules.MoneyAnswersEn : GirlfriendRules.MoneyAnswersZh)) : null); });

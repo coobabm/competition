@@ -5,10 +5,11 @@ namespace LingGuangV05.Core.Girlfriend
 {
     /// <summary>
     /// Her offline lines (design §4.4 失败兜底): when the local model is not running or fails, she still answers in
-    /// her tier's voice. His line picks the kind of answer first (a greeting, 想你, 晚安, a question, a gift…, by
-    /// keyword); otherwise she says something that fits her tier and the time of day, the summer at home, the
-    /// dated things going on in her life, or a thing he told her. Each tier × period has twelve general lines and
-    /// every keyword three moods of four; a line is never like one of her last <see cref="RecentLimit"/>.
+    /// her tier's voice. His line picks the kind of answer first (a greeting, 想你, 晚安, a question, a gift, 随便 when
+    /// he leaves her the choice, 查岗 when he turns up late…, by keyword); otherwise she says something that fits her
+    /// tier and the time of day, the summer at home, the dated things going on in her life, or a thing he told her.
+    /// Hurt, she answers coolly (「你忙吧」「没事」「哦。」) whatever her tier. Each tier × period has a dozen or more
+    /// general lines and every keyword three moods of four; a line is never like one of her last <see cref="RecentLimit"/>.
     /// </summary>
     public static class GirlfriendLines
     {
@@ -28,10 +29,10 @@ namespace LingGuangV05.Core.Girlfriend
         static readonly string[][] Tier =
         {
             /* Cold */    new[] { "嗯", "Mm", "哦", "Oh", "随便", "Whatever", "知道了", "Got it", "噢", "Right", "行吧", "Fine" },
-            /* Distant */ new[] { "嗯 知道了", "Mm, got it", "还行吧", "It's OK I guess", "哦 那你忙", "Oh, you go and be busy then", "没什么事", "Nothing much", "你开心就好", "Whatever makes you happy", "是吗", "Is that so" },
-            /* Normal */  new[] { "哈哈哈 真的假的", "Hahaha really?", "嗯嗯 然后呢", "Mm mm, and then?", "好吧|你开心就好", "Fine|as long as you're happy", "我刚也在想这个", "I was just thinking that", "你说的哦|我记住了", "You said it|I'm holding you to it", "也是醉了[流汗]", "Unbelievable [流汗]" },
-            /* Warm */    new[] { "笨蛋|你怎么才回我", "Dummy|why did you take so long", "嘿嘿 我就知道[偷笑]", "Hehe, I knew it [偷笑]", "你吃饭了没|别又泡面", "Have you eaten?|not instant noodles again", "想你了[害羞]", "Miss you [害羞]", "你今天有没有想我", "Did you think of me today?", "哼|就知道你会这么说", "Hmph|knew you'd say that" },
-            /* Sweet */   new[] { "你终于回我了！！|我等了好久[委屈]", "Finally!!|I waited so long [委屈]", "我跟你说|今天发生了好多事|等你有空慢慢讲", "Listen|so much happened today|I'll tell you when you're free", "你说的我都记着呢[爱心]", "I remember everything you say [爱心]", "好想快点放假见你", "I want the holidays to come so I can see you", "今天也是喜欢你的一天[害羞]", "Another day of liking you [害羞]", "你是不是偷偷想我了|老实交代", "Have you been secretly missing me?|confess" },
+            /* Distant */ new[] { "嗯 知道了", "Mm, got it", "还行吧", "It's OK I guess", "哦 那你忙", "Oh, you go and be busy then", "没什么事", "Nothing much", "你开心就好", "Whatever makes you happy", "是吗", "Is that so", "你忙吧", "Go on, be busy", "你是不是不爱我了", "Do you even love me any more" },
+            /* Normal */  new[] { "哈哈哈 真的假的", "Hahaha really?", "嗯嗯 然后呢", "Mm mm, and then?", "好吧|你开心就好", "Fine|as long as you're happy", "我刚也在想这个", "I was just thinking that", "你说的哦|我记住了", "You said it|I'm holding you to it", "也是醉了[流汗]", "Unbelievable [流汗]", "我跟你说|宿舍楼下那只橘猫又来了", "Guess what|the ginger cat is back outside the dorm", "今天风好大|伞都吹翻了[流汗]", "So windy today|my umbrella flipped [流汗]" },
+            /* Warm */    new[] { "笨蛋|你怎么才回我", "Dummy|why did you take so long", "嘿嘿 我就知道[偷笑]", "Hehe, I knew it [偷笑]", "你吃饭了没|别又泡面", "Have you eaten?|not instant noodles again", "想你了[害羞]", "Miss you [害羞]", "你今天有没有想我", "Did you think of me today?", "哼|就知道你会这么说", "Hmph|knew you'd say that", "讨厌|就会说好听的", "Meanie|all sweet talk", "我和你的显卡同时掉水里|你先救谁[调皮]", "If your graphics card and I fell in the water|who would you save first [调皮]", "哼|再不理我我就不理你了", "Hmph|ignore me again and I'll ignore you" },
+            /* Sweet */   new[] { "你终于回我了！！|我等了好久[委屈]", "Finally!!|I waited so long [委屈]", "我跟你说|今天发生了好多事|等你有空慢慢讲", "Listen|so much happened today|I'll tell you when you're free", "你说的我都记着呢[爱心]", "I remember everything you say [爱心]", "好想快点放假见你", "I want the holidays to come so I can see you", "今天也是喜欢你的一天[害羞]", "Another day of liking you [害羞]", "你是不是偷偷想我了|老实交代", "Have you been secretly missing me?|confess", "好不好嘛|就陪我聊一会儿", "Pleeease|just chat a bit", "你好坏|又逗我[害羞]", "You're so mean|teasing me again [害羞]" },
         };
 
         // Per tier: night, day, evening.
@@ -51,13 +52,13 @@ namespace LingGuangV05.Core.Girlfriend
             },
             /* Normal */ new[]
             {
-                new[] { "你又熬夜[白眼]", "Up late again [白眼]", "我在床上刷手机", "In bed on my phone", "室友都睡了 我小声打字", "Roommates are asleep, I'm typing quietly", "宿舍断网了 用流量跟你聊", "Dorm WiFi's off, I'm on mobile data", "睡不着|你陪我聊会儿", "Can't sleep|talk to me a bit", "明天早上又起不来了[流汗]", "I'll never get up tomorrow [流汗]" },
+                new[] { "你又熬夜[白眼]", "Up late again [白眼]", "我在床上刷手机", "In bed on my phone", "室友都睡了 我小声打字", "Roommates are asleep, I'm typing quietly", "宿舍断网了 用流量跟你聊", "Dorm WiFi's off, I'm on mobile data", "睡不着|你陪我聊会儿", "Can't sleep|talk to me a bit", "明天早上又起不来了[流汗]", "I'll never get up tomorrow [流汗]", "别熬太晚|早点睡", "Don't stay up too late|sleep early" },
                 new[] { "刚下课 饿死了", "Just out of class, starving", "今天食堂的饭好难吃", "Canteen food was awful today", "下午还有课[流汗]", "More class this afternoon [流汗]", "老师又拖堂了", "The teacher ran over again", "在图书馆占座|人超多", "Saving a seat at the library|so crowded", "点名差点没赶上", "Nearly missed roll call" },
-                new[] { "刚洗完澡", "Just showered", "在追剧", "Watching a drama", "晚饭吃的麻辣烫", "Had malatang for dinner", "室友在敷面膜|吓死宝宝了", "My roommate's in a face mask|scared me to death", "楼下又有人在弹吉他", "Someone's playing guitar downstairs again", "刚从超市回来|买了一堆零食", "Back from the supermarket|bought loads of snacks" },
+                new[] { "刚洗完澡", "Just showered", "在追剧", "Watching a drama", "晚饭吃的麻辣烫", "Had malatang for dinner", "室友在敷面膜|吓死宝宝了", "My roommate's in a face mask|scared me to death", "楼下又有人在弹吉他", "Someone's playing guitar downstairs again", "刚从超市回来|买了一堆零食", "Back from the supermarket|bought loads of snacks", "你吃饭没|别又不吃", "Have you eaten?|don't skip it again" },
             },
             /* Warm */ new[]
             {
-                new[] { "你怎么还不睡|又弄电脑", "Why aren't you asleep|computer again?", "我也睡不着[月亮]", "I can't sleep either [月亮]", "陪我聊会儿嘛", "Chat with me a bit", "被窝里好暖和|就差你了", "My duvet's so warm|just missing you", "你那边下雨了吗|我这边好大的雨", "Is it raining there?|it's pouring here", "明天要早起|可是还想跟你说话", "Early start tomorrow|but I still want to talk" },
+                new[] { "你怎么还不睡|又弄电脑", "Why aren't you asleep|computer again?", "我也睡不着[月亮]", "I can't sleep either [月亮]", "陪我聊会儿嘛", "Chat with me a bit", "被窝里好暖和|就差你了", "My duvet's so warm|just missing you", "你那边下雨了吗|我这边好大的雨", "Is it raining there?|it's pouring here", "明天要早起|可是还想跟你说话", "Early start tomorrow|but I still want to talk", "这么晚了还在干嘛呢|跟谁聊天[疑问]", "What are you still doing this late|who are you chatting with [疑问]" },
                 new[] { "上课好无聊|想你", "Class is so boring|miss you", "偷偷在课上回你[偷笑]", "Replying secretly in class [偷笑]", "中午吃什么好呢", "What should I have for lunch", "今天穿了你说好看的那件", "Wore the one you said looked nice today", "老师在上面念课件|我在下面想你", "The teacher's reading the slides|I'm thinking of you", "刚在食堂看到一对情侣|好腻歪", "Saw a couple in the canteen|so lovey-dovey" },
                 new[] { "我洗完澡啦", "Out of the shower", "今天的晚霞超好看", "The sunset was gorgeous tonight", "你吃饭了没|不许吃泡面", "Have you eaten?|no instant noodles", "室友问我在跟谁聊天|我说你猜[偷笑]", "My roommate asked who I'm chatting with|I said guess [偷笑]", "我在操场散步|风好舒服", "Walking round the track|lovely breeze", "刚和室友吃了烤串[呲牙]", "Just had kebabs with my roommates [呲牙]" },
             },
@@ -118,7 +119,7 @@ namespace LingGuangV05.Core.Girlfriend
             } },
             new Route { key = "angry", words = new[] { "生气", "不理我", "怎么了", "不开心", "angry", "mad at me", "upset", "what's wrong" }, lines = new[]
             {
-                new[] { "没有", "No", "你说呢", "What do you think", "没事", "It's nothing", "不想说", "Don't want to talk about it" },
+                new[] { "没事", "It's nothing", "你说呢", "What do you think", "没事|你忙你的吧", "It's nothing|get on with your stuff", "没生气", "I'm not angry" },
                 new[] { "没有啊|你怎么这么问", "No|why do you ask", "有一点点|就一点点", "A little|just a little", "没生气|就是有点累", "Not angry|just a bit tired", "你猜[白眼]", "Guess [白眼]" },
                 new[] { "才没有|你哄哄我就好了", "Course not|just sweet-talk me a bit", "没有啦笨蛋|逗你的[偷笑]", "No, dummy|just teasing [偷笑]", "本来有一点|看到你消息就没了", "I was a bit|gone now you've messaged", "生气了|要你哄[委屈]", "I am|you have to make it up to me [委屈]" },
             } },
@@ -145,6 +146,19 @@ namespace LingGuangV05.Core.Girlfriend
                 new[] { "没干嘛", "Nothing", "躺着", "Lying down", "发呆", "Spacing out", "有事吗", "What is it" },
                 new[] { "刚洗完头|你呢", "Just washed my hair|you?", "在刷微博|好无聊", "Scrolling Weibo|so boring", "在追剧|你又在弄电脑吧", "Watching a drama|you're on the computer again, right?", "在等你找我啊", "Waiting for you to message me" },
                 new[] { "在想你啊|这还用问", "Thinking of you|obviously", "在等你消息|等了好久", "Waiting for your message|for ages", "躺床上抱着手机|就等你了[害羞]", "In bed with my phone|just waiting for you [害羞]", "刚吃完零食|在想你在干嘛", "Just had snacks|wondering what you're up to" },
+            } },
+            new Route { key = "choose", words = new[] { "你选", "你定", "帮我选", "吃什么", "吃啥", "去哪", "看什么", "看啥", "听你的", "选哪", "哪个好", "you choose", "you pick", "you decide", "what should i eat", "which one" }, lines = new[]
+            {
+                new[] { "随便", "Whatever", "都行", "Either", "你定", "You decide", "随你", "Up to you" },
+                new[] { "随便呀|你定", "Whatever|you decide", "都行|别又泡面就行", "Anything|just not instant noodles", "你自己选嘛", "Pick yourself", "随便|反正你也不听我的[白眼]", "Whatever|you never listen to me anyway [白眼]" },
+                new[] { "随便嘛|你定 你定[偷笑]", "Whatever|you decide, you decide [偷笑]", "你猜我想让你吃什么[调皮]", "Guess what I want you to eat [调皮]", "随便|不过要吃点好的 不许泡面", "Whatever|but something proper, no instant noodles", "我说了你又不听|那就随便吧[撇嘴]", "You never listen when I say|so whatever [撇嘴]" },
+            } },
+            // 查岗: he turns up after keeping her waiting (or says so). Pick also routes here when he kept her waiting for hours.
+            new Route { key = "late", words = new[] { "刚弄完", "刚忙完", "才看到", "刚看到", "刚回来", "没看手机", "刚才在", "刚才去", "just saw", "just got back", "didn't see", "was in the shower", "was busy" }, lines = new[]
+            {
+                new[] { "回来了啊", "Back, are you", "这么久才回", "Took you long enough", "哦 忙完了？", "Oh, done being busy?", "嗯", "Mm" },
+                new[] { "怎么这么久才回|干嘛去了", "Why so long|what were you doing", "刚才在忙什么呀", "What were you busy with", "我还以为你睡了", "I thought you'd fallen asleep", "回来啦|我等了好久", "You're back|I waited ages" },
+                new[] { "怎么这么久才回[委屈]|跟谁聊天呢", "Why so long [委屈]|who were you chatting with", "哼|是不是又去网吧了", "Hmph|off to the internet cafe again?", "人家等你半天了嘛", "I've been waiting for you for ages", "老实交代|刚才干嘛去了[撇嘴]", "Confess|what were you up to [撇嘴]" },
             } },
             new Route { key = "ate", words = new[] { "吃饭", "吃了", "吃什么", "饿", "外卖", "have you eaten", "eat", "dinner", "lunch", "hungry" }, lines = new[]
             {
@@ -184,16 +198,25 @@ namespace LingGuangV05.Core.Girlfriend
             } },
             new Route { key = "short", words = new string[0], lines = new[]
             {
-                new[] { "嗯", "Mm", "哦", "Oh", "行", "OK", "好", "Fine" },
-                new[] { "嗯什么嗯[白眼]", "What's with the \"mm\" [白眼]", "你就回一个字？", "Just one word?", "好吧|那我去看剧了", "Fine|I'll go watch my drama", "你是不是在忙", "Are you busy?" },
-                new[] { "就一个字啊[委屈]", "Just one word? [委屈]", "敷衍|罚你多说两句", "Lazy|say two more lines as punishment", "你在忙吗|忙完再理我", "Are you busy?|talk to me when you're done", "哼|不理你了[撇嘴]", "Hmph|not talking to you [撇嘴]" },
+                new[] { "嗯", "Mm", "哦。", "Oh.", "行", "OK", "好", "Fine" },
+                new[] { "嗯什么嗯[白眼]", "What's with the \"mm\" [白眼]", "哦。", "Oh.", "好吧|那我去看剧了", "Fine|I'll go watch my drama", "好吧", "Fine" },
+                new[] { "就一个字啊[委屈]", "Just one word? [委屈]", "敷衍|罚你多说两句", "Lazy|say two more lines as punishment", "你是不是在忙嘛|忙完再理人家", "Are you busy?|talk to me when you're done", "哼|不理你了[撇嘴]", "Hmph|not talking to you [撇嘴]" },
             } },
         };
+
+        /// <summary>Hurt (a quarrel, a bad mood, sulking over a forgotten day): short, cold, no faces; 「没事」 that is not fine.</summary>
+        static readonly string[] Hurt = { "你忙吧", "Go on, be busy", "没事", "It's nothing", "哦。", "Oh.", "嗯", "Mm", "随便你", "Suit yourself", "不想说话", "Don't feel like talking", "你开心就好", "As long as you're happy", "没什么好说的", "Nothing to say" };
+
+        /// <summary>Hurt, and he says sorry: the first step of the thaw, not the make-up.</summary>
+        static readonly string[] Thaw = { "哼|知道错了？", "Hmph|so you know you were wrong?", "你还知道道歉啊", "So you do know how to say sorry", "哼|看你表现", "Hmph|we'll see how you behave", "……下不为例", "…don't let it happen again" };
 
         static readonly string[] ShortLines = { "嗯", "嗯嗯", "恩", "哦", "噢", "好", "好的", "好吧", "行", "ok", "okay", "mm", "oh", "k", "fine", "sure" };
         static readonly string[] QuestionWords = { "什么", "怎么", "为什么", "哪", "几", "多少", "谁", "吗", "呢", "how", "what", "why", "where", "when", "who" };
 
         static int Mood(GirlfriendTier t) => t <= GirlfriendTier.Distant ? 0 : t == GirlfriendTier.Normal ? 1 : 2;
+
+        /// <summary>Which mood's lines answer him: hurt is always the cool ones, whatever her tier.</summary>
+        static int Mood(GirlfriendState s, DateTime clock) => GirlfriendStyle.Hurt(s, clock) ? 0 : Mood(GirlfriendRules.Tier(s));
 
         /// <summary>His line is a question: a question mark, or a question word.</summary>
         public static bool IsQuestion(string his)
@@ -249,6 +272,12 @@ namespace LingGuangV05.Core.Girlfriend
             int t = (int)tier;
             bool summer = GirlfriendRules.Summer(clock);
             var pool = new List<(string zh, string en)>();
+            if (GirlfriendStyle.Hurt(s, clock))
+            {
+                AddPairs(pool, Hurt);
+                AddPairs(pool, ByPeriod[(int)GirlfriendTier.Cold][(int)PeriodOf(clock)]);
+                return pool;
+            }
             AddPairs(pool, Tier[t]);
             AddPairs(pool, ByPeriod[t][(int)PeriodOf(clock)]);
             if (summer) { pool.RemoveAll(p => School(p.zh)); AddPairs(pool, Summer[Mood(tier)]); }
@@ -296,19 +325,29 @@ namespace LingGuangV05.Core.Girlfriend
         /// 想你, 晚安, a question and so on, the answer is of that kind; otherwise the general pool for her tier and
         /// the time of day. Never a line like one of her last <see cref="RecentLimit"/>
         /// (<paramref name="similar"/> is the YY layer's XgSpeechPolicy.Similar; null compares exactly); when every
-        /// line is that recent, the one said longest ago.
+        /// line is that recent, the one said longest ago. <paramref name="turn"/> (may be null): when he kept her
+        /// waiting for hours she checks on him (the 查岗 lines); hurt, she answers coolly whatever her tier, and his
+        /// sorry gets the first step of a thaw.
         /// </summary>
-        public static string[] Pick(GirlfriendState s, DateTime clock, bool english, Func<string, string, bool> similar = null, string his = null)
+        public static string[] Pick(GirlfriendState s, DateTime clock, bool english, Func<string, string, bool> similar = null, string his = null, GfTurn turn = null)
         {
             similar = similar ?? ((a, b) => a == b);
             var tier = GirlfriendRules.Tier(s);
+            bool hurt = GirlfriendStyle.Hurt(s, clock);
             var pools = new List<List<(string zh, string en)>>();
             string key = RouteOf(his);
-            if (key.Length > 0)
+            if (turn != null && !hurt && tier >= GirlfriendTier.Distant && turn.keptHerWaiting >= GirlfriendStyle.LongWait && key != "goodnight" && key != "sorry") key = "late";
+            if (hurt && key == "sorry")
+            {
+                var thaw = new List<(string zh, string en)>();
+                AddPairs(thaw, Thaw);
+                pools.Add(thaw);
+            }
+            else if (key.Length > 0)
             {
                 var route = Array.Find(Routes, r => r.key == key);
                 var lines = new List<(string zh, string en)>();
-                AddPairs(lines, route.lines[Mood(tier)]);
+                AddPairs(lines, route.lines[Mood(s, clock)]);
                 if (GirlfriendRules.Summer(clock)) lines.RemoveAll(p => School(p.zh));
                 pools.Add(lines);
             }
@@ -350,7 +389,7 @@ namespace LingGuangV05.Core.Girlfriend
         {
             { "roommate", new[] { "我室友打呼噜跟拖拉机一样|根本睡不着[流汗]", "My roommate snores like a tractor|I can't sleep [流汗]", "室友半夜打电话|声音超大[白眼]", "My roommate's on the phone at midnight|so loud [白眼]", "室友占着卫生间一个小时了", "My roommate's been in the bathroom for an hour" } },
             { "photo", new[] { "[图片] 宿舍门口那只橘猫|我一摸它就跑了", "[图片] the cat at the dorm gate|it ran when I tried to pet it", "[图片] 今天的晚霞|好看吧", "[图片] tonight's sunset|pretty, right?", "[图片] 食堂新出的酸菜鱼|看着好吃 其实一般", "[图片] the canteen's new fish dish|looks good, tastes meh" } },
-            { "drama", new[] { "《微微一笑很倾城》好甜|你打游戏怎么就没肖奈那么帅", "Love O2O is so sweet|why don't you play games like Xiao Nai", "《欢乐颂》你看了没|樊胜美好惨", "Have you watched Ode to Joy?|poor Fan Shengmei", "在追剧|追到半夜停不下来", "Watching a drama|can't stop, it's past midnight" } },
+            { "drama", new[] { "《微微一笑很倾城》好甜|你打游戏怎么就没肖奈那么帅", "Love O2O is so sweet|why don't you play games like Xiao Nai", "《欢乐颂》你看了没|樊胜美好惨", "Have you watched Ode to Joy?|poor Fan Shengmei", "在追剧|追到半夜停不下来", "Watching a drama|can't stop, it's past midnight", "《太阳的后裔》又重看了一遍|宋仲基好帅[色]", "Rewatched Descendants of the Sun|Song Joong-ki is so handsome [色]" } },
             { "food", new[] { "和室友吃了火锅|你吃饭了没", "Had hotpot with my roommates|have you eaten?", "今天吃了麻辣烫|加了好多辣[流汗]", "Had malatang today|way too spicy [流汗]", "好饿|想吃烤串", "So hungry|I want kebabs" } },
             { "missYou", new[] { "没什么|就是想找你说话[害羞]", "Nothing|just wanted to talk to you [害羞]", "你在干嘛|我有点想你", "What are you doing|I kind of miss you", "突然好想你[委屈]", "Suddenly missing you [委屈]" } },
             { "whatDoing", new[] { "在干嘛|又在弄电脑？", "What are you doing|on the computer again?", "人呢|在忙什么", "Where are you|busy with what?", "你今天干嘛了|跟我说说", "What did you do today|tell me" } },

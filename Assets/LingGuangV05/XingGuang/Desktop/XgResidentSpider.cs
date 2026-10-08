@@ -9,6 +9,7 @@ using LingGuangV05.XingGuang;
 using Michsky.DreamOS;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop.XingGuang
@@ -25,7 +26,9 @@ namespace LingGuangV05.Desktop.XingGuang
     /// Rules live in <see cref="XgResident"/> and <see cref="XgResidentMind"/>: it appears once 灵光.exe is installed and
     /// set up, grows with the abilities (four legs to eight), hides during cutscenes and fullscreen video, keeps off
     /// 晴雯's YY conversation after the player's 【算了】, and parks in a corner when told to keep quiet (the nav toggle
-    /// in 灵光, saved in <see cref="XgState.residentQuiet"/>). It never takes a click: no raycast targets anywhere.
+    /// in 灵光, saved in <see cref="XgState.residentQuiet"/>). It never takes a click: no raycast targets on the layer it
+    /// is drawn on. The one exception is a small invisible handle that follows its body while the 标注台 is up: the player
+    /// can pick the spider up and drop it onto the labelling workspace (see "Dragged to the question" below).
     /// Light by design: one spider, a few glitches a second, words gathered one window at a time, pooled ghosts.
     /// The idea of a spider walking on text comes from @rybinfx's web crawler; this is an independent implementation.
     /// </summary>
@@ -117,6 +120,25 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSpiderWalker.Leg pressLeg;
         Coroutine intro;
 
+        // Dragged to the question: the player picks it up and drops it on the workspace; it then stands beside the card
+        // and answers with an arm that reaches the button, presses it and comes back (XgSim.SpiderDragAnswer).
+        const float ReachOut = .30f, ReachHold = .14f, ReachBack = .28f;
+        enum Reach { Idle, Out, Press, Back }
+        RectTransform handleRt;
+        XgSpiderHandle handle;
+        bool held, working, wasLabelUp;
+        Vector2 heldAt, grabOffset, pointerAt;
+        Reach reach;
+        float reachClock, thinkLeft, noteClock;
+        bool reachYes, pressed;
+        long workCard = -2;
+        RectTransform reachButton;
+        Vector2 armBase, armTip;
+        float armK;
+        /// <summary>The spider is carried by the pointer or answering beside the card (the page and tests read it).</summary>
+        public bool Dragged => held || working;
+        public bool Working => working;
+
         /// <summary>The spider's first appearance is playing (other story layers can wait for it).</summary>
         public static bool IntroPlaying { get; private set; }
         XgSpiderWalker walker;
@@ -155,6 +177,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDisable()
         {
+            StopWork();
             RestoreAll();
             if (intro != null) { StopCoroutine(intro); intro = null; }
             IntroPlaying = false;
@@ -219,6 +242,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!Find()) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
             var rt = controller.runtime;
+            var pointer = UnityEngine.InputSystem.Mouse.current;
+            if (pointer != null && (pointer.leftButton.isPressed || pointer.rightButton.isPressed)) lastPress = Time.unscaledTime;
             TickIntro(dt);
             bool present = Sim != null && rt != null && rt.Sim != null && Sim.SpiderAround && !IntroPlaying
                 && XgResident.Present(rt.Sim.AppInstalled, rt.Sim.InPrologue, CutscenePlaying || InsideCrawler, FullscreenVideo);
@@ -227,7 +252,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool disagreed = zhongbao != null && zhongbao.Label != null && zhongbao.Label.LastAnswerDisagreed;
             var mode = mind.Tick(dt, present, Sim != null && Sim.S.residentQuiet, labelVisible, answers, disagreed);
 
-            if (mode == XgResidentMode.Hidden) { Show(false); return; }
+            if (mode == XgResidentMode.Hidden) { StopWork(); UpdateHandle(false); Show(false); return; }
             Show(true);
             if (layer.GetSiblingIndex() != apps.GetSiblingIndex() + 1) layer.SetSiblingIndex(apps.GetSiblingIndex() + 1);
             screen = layer.rect;
@@ -246,8 +271,14 @@ namespace LingGuangV05.Desktop.XingGuang
             if (scanTimer <= 0) { scanTimer = ScanEvery; ScanNext(); }
 
             glitchCooldown -= dt;
-            if (mode != XgResidentMode.Watch) { fx.SetReach(null); decidedCard = -2; pressPlanned = false; }
-            switch (mode)
+            // The handle that lets the player pick it up exists only while the 标注台 is in front.
+            bool canDrag = labelVisible && mode != XgResidentMode.Parked;
+            if (!canDrag) StopWork();
+            UpdateHandle(canDrag);
+            if (mode != XgResidentMode.Watch || Dragged) { fx.SetReach(null); decidedCard = -2; pressPlanned = false; }
+            if (held) TickHeld(dt);
+            else if (working) TickWork(dt);
+            else switch (mode)
             {
                 case XgResidentMode.Parked: TickParked(dt); break;
                 case XgResidentMode.Watch: TickWatch(dt); break;
@@ -393,6 +424,225 @@ namespace LingGuangV05.Desktop.XingGuang
             return true;
         }
 
+        // ───────────── dragged to the question ─────────────
+
+        /// <summary>The small invisible handle over the body (made on first use, above the spider's layer and below the taskbar).</summary>
+        void UpdateHandle(bool on)
+        {
+            if (handleRt == null)
+            {
+                if (!on) return;
+                var go = new GameObject("Resident Spider Handle", typeof(RectTransform));
+                go.layer = desktop.gameObject.layer;
+                handleRt = (RectTransform)go.transform;
+                handleRt.SetParent(desktop, false);
+                handleRt.anchorMin = handleRt.anchorMax = new Vector2(.5f, .5f);
+                var image = go.AddComponent<Image>();
+                image.color = new Color(0, 0, 0, 0); image.raycastTarget = true;
+                image.canvasRenderer.cullTransparentMesh = false; // invisible, but it still takes the pointer
+                handle = go.AddComponent<XgSpiderHandle>();
+                handle.owner = this;
+            }
+            on &= walker != null;
+            if (handleRt.gameObject.activeSelf != on) handleRt.gameObject.SetActive(on);
+            if (!on) return;
+            handleRt.SetSiblingIndex(Mathf.Min(desktop.childCount - 1, layer.GetSiblingIndex() + 1));
+            handleRt.sizeDelta = Vector2.one * Mathf.Max(44, 52 * walker.size);
+            handleRt.position = layer.TransformPoint(walker.pos);
+        }
+
+        /// <summary>Pointer position in the spider layer's space, through the event camera (the desktop canvas is Screen Space – Camera on an LCD texture).</summary>
+        bool PointerInLayer(PointerEventData e, out Vector2 local)
+        {
+            local = default;
+            if (layer == null) return false;
+            var cam = e.pressEventCamera != null ? e.pressEventCamera : e.enterEventCamera;
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(layer, e.position, cam, out local);
+        }
+
+        internal void GrabSpider(PointerEventData e)
+        {
+            if (walker == null || !PointerInLayer(e, out var p) || zhongbao == null || zhongbao.Label == null) return;
+            held = true; working = false; reach = Reach.Idle; armK = 0;
+            grabOffset = walker.pos - p; heldAt = walker.pos; pointerAt = p;
+            zhongbao.Label.SetSpiderRole(XgLabelPage.SpiderRole.Held);
+            zhongbao.Juice?.Play(XgJuice.Sfx.Id.Swoosh, 1.4f, .5f);
+        }
+
+        internal void MoveGrabbed(PointerEventData e)
+        {
+            if (!held || !PointerInLayer(e, out var p)) return;
+            pointerAt = p;
+            heldAt = p + grabOffset;
+            heldAt.x = Mathf.Clamp(heldAt.x, screen.xMin + 12, screen.xMax - 12);
+            heldAt.y = Mathf.Clamp(heldAt.y, screen.yMin + 60, screen.yMax - 12);
+        }
+
+        /// <summary>Dropped on the workspace it goes to work; anywhere else it is let go and carries on as before.</summary>
+        internal void DropSpider(PointerEventData e)
+        {
+            if (!held) return;
+            if (PointerInLayer(e, out var p)) { pointerAt = p; heldAt = p + grabOffset; }
+            held = false;
+            var label = zhongbao != null ? zhongbao.Label : null;
+            if (label != null && label.Workspace != null && LayerRect(label.Workspace).Contains(pointerAt))
+            {
+                working = true; reach = Reach.Idle; workCard = -2; thinkLeft = .5f; noteClock = 0; armK = 0;
+                label.SetSpiderRole(XgLabelPage.SpiderRole.Working);
+                zhongbao.Juice?.Play(XgJuice.Sfx.Id.Unlock, 1.3f, .5f);
+            }
+            else
+            {
+                working = false;
+                label?.SetSpiderRole(XgLabelPage.SpiderRole.Home);
+                pauseLeft = 0; target = walker.pos + new Vector2(0, -60);
+            }
+        }
+
+        /// <summary>It stops wherever it was: carried, answering, or reaching.</summary>
+        void StopWork()
+        {
+            if (!held && !working) return;
+            held = false; working = false; reach = Reach.Idle; armK = 0; reachButton = null;
+            if (walker != null) walker.eyeBoost = 0;
+            var label = zhongbao != null ? zhongbao.Label : null;
+            label?.SetSpiderRole(XgLabelPage.SpiderRole.Home);
+        }
+
+        void TickHeld(float dt)
+        {
+            walker.Settled = false;
+            walker.eyeBoost = 0;
+            walker.bodyScale = 1.18f;
+            walker.pos = Vector2.Lerp(walker.pos, heldAt, 1 - Mathf.Exp(-22 * dt));
+            walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, 90, 1 - Mathf.Exp(-6 * dt)) * Mathf.Deg2Rad;
+            walker.Tick(dt, walker.pos, 0, Reduced);
+            var label = zhongbao.Label;
+            if (label != null && label.Workspace != null) label.SetDropHint(LayerRect(label.Workspace).Contains(pointerAt));
+        }
+
+        static float Ease(float k) { k = Mathf.Clamp01(k); return k * k * (3 - 2 * k); }
+
+        /// <summary>
+        /// Standing beside the question card, it answers again and again: think for a moment, reach for the button of its
+        /// answer, press it, bring the arm back. One answer takes about a second. When it cannot (the checkpoint is not
+        /// good enough for the desk, a review waits, the card is special) it stands and says why.
+        /// </summary>
+        void TickWork(float dt)
+        {
+            var label = zhongbao.Label;
+            var card = LayerRect(label.Paper);
+            var area = LayerRect(label.Workspace);
+            float size = walker.size;
+            var perch = new Vector2(Mathf.Max(card.xMax + 4, area.xMax - 20 * size), Mathf.Lerp(card.center.y, card.yMin, .75f));
+            breath += dt;
+            float away = Vector2.Distance(walker.pos, perch);
+            if (away > 8 && reach == Reach.Idle)
+            {
+                walker.Settled = false; walker.bodyScale = 1;
+                walker.Tick(dt, perch, 2.4f, Reduced);
+                armK = 0;
+                return;
+            }
+            walker.Settled = true;
+            walker.pos = Vector2.Lerp(walker.pos, perch, 1 - Mathf.Exp(-6 * dt));
+            walker.bodyScale = 1 + (Reduced ? 0 : .03f * Mathf.Sin(breath * 2.4f)) + (pulseT >= 0 ? .12f * Mathf.Sin(pulseT / .6f * Mathf.PI) : 0);
+
+            // Face what it is looking at: the card between answers, the button while reaching.
+            Vector2 look = card.center;
+            if (reach != Reach.Idle && reachButton != null) look = LayerRect(reachButton).center;
+            float want = Mathf.Atan2(look.y - walker.pos.y, look.x - walker.pos.x);
+            walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, want * Mathf.Rad2Deg, 1 - Mathf.Exp(-8 * dt)) * Mathf.Deg2Rad;
+            walker.Tick(dt, walker.pos, 0, Reduced);
+            walker.eyeBoost = Mathf.MoveTowards(walker.eyeBoost, reach == Reach.Idle && thinkLeft > 0 ? 1 : 0, 4 * dt);
+
+            armBase = walker.pos + walker.Forward * 9 * size * walker.bodyScale;
+            switch (reach)
+            {
+                case Reach.Idle:
+                {
+                    armK = Mathf.MoveTowards(armK, 0, 6 * dt);
+                    long id = label.ShownCardId;
+                    if (id != workCard) { workCard = id; thinkLeft = .32f + .16f * (float)rng.NextDouble(); }
+                    string blocker = label.SpiderBlocker();
+                    if (blocker != null || id < 0)
+                    {
+                        noteClock -= dt;
+                        if (noteClock <= 0 && blocker != null) { label.SpiderIdle(blocker); noteClock = 6; }
+                        return;
+                    }
+                    thinkLeft -= dt;
+                    if (thinkLeft > 0) return;
+                    if (!label.SpiderPeek(out bool yes)) return;
+                    reachYes = yes; reachButton = label.Button(yes); reachClock = 0; pressed = false; reach = Reach.Out;
+                    return;
+                }
+                case Reach.Out:
+                {
+                    if (reachButton == null || !reachButton.gameObject.activeInHierarchy) { reach = Reach.Back; return; }
+                    reachClock += dt / ReachOut;
+                    armK = Ease(reachClock);
+                    armTip = Vector2.Lerp(armBase + walker.Forward * 16 * size, LayerRect(reachButton).center, armK);
+                    if (reachClock >= 1) { reach = Reach.Press; reachClock = 0; }
+                    return;
+                }
+                case Reach.Press:
+                {
+                    armK = 1;
+                    armTip = reachButton != null ? LayerRect(reachButton).center : armTip;
+                    if (!pressed)
+                    {
+                        pressed = true;
+                        var r = label.SpiderHandPress(reachYes);
+                        if (r.accepted) { pulseT = 0; if (r.correct) fx.Credit(); }
+                    }
+                    reachClock += dt / ReachHold;
+                    if (reachClock >= 1) { reach = Reach.Back; reachClock = 1; }
+                    return;
+                }
+                default:
+                {
+                    reachClock -= dt / ReachBack;
+                    armK = Ease(reachClock);
+                    if (reachButton != null) armTip = Vector2.Lerp(armBase + walker.Forward * 16 * size, LayerRect(reachButton).center, armK);
+                    if (reachClock <= 0) { reach = Reach.Idle; armK = 0; reachButton = null; thinkLeft = Mathf.Max(thinkLeft, .12f); }
+                    return;
+                }
+            }
+        }
+
+        /// <summary>The reaching arm: two bent segments from the front of the body to a glowing hand on the button.</summary>
+        void DrawArm(VertexHelper vh, Color leg, Color halo, Color eye, float alpha)
+        {
+            if (!working || armK < .02f || walker == null) return;
+            var b = armBase; var t = armTip;
+            float len = Vector2.Distance(b, t);
+            if (len < 2) return;
+            float size = walker.size;
+            float segment = Mathf.Max(30 * size, len * .56f);
+            float bend = Mathf.Sqrt(Mathf.Max(0, segment * segment - len * len / 4));
+            var dir = (t - b) / len;
+            var normal = new Vector2(-dir.y, dir.x);
+            if (normal.y < 0) normal = -normal;
+            var knee = (b + t) * .5f + normal * bend;
+            XgDraw.Seg(vh, b, knee, 2.6f * size + 2.2f, halo);
+            XgDraw.Seg(vh, knee, t, 2.1f * size + 2.2f, halo);
+            XgDraw.Seg(vh, b, knee, 2.6f * size, leg);
+            XgDraw.Seg(vh, knee, t, 2.1f * size, leg);
+            XgDraw.Disc(vh, knee, 2f * size, leg, 8);
+            // The hand: a glowing pad that lights up as it presses.
+            float press = reach == Reach.Press ? 1 : 0;
+            var glow = eye; glow.a = (.35f + .3f * press) * alpha;
+            XgSoftDraw.Halo(vh, t, (7 + 6 * press) * size, glow, 12);
+            XgDraw.Disc(vh, t, 3.8f * size + 1.2f, halo, 10);
+            XgDraw.Disc(vh, t, 3.8f * size, eye, 10);
+            if (reach == Reach.Press && !Reduced)
+            {
+                var ring = eye; ring.a = (1 - reachClock) * .8f * alpha;
+                XgDraw.Ring(vh, t, (6 + 14 * reachClock) * size, 1.6f, ring, 20);
+            }
+        }
+
         // ───────────── first appearance ─────────────
 
         void TickIntro(float dt)
@@ -403,9 +653,25 @@ namespace LingGuangV05.Desktop.XingGuang
             introCheck = 1;
             var rt = controller.runtime;
             bool busy = rt.TestMode || CutscenePlaying || FullscreenVideo || InnerVoice.Busy || PrologueDirector.Desk == null
-                || controller.View == null || controller.View.Data == null || controller.Window == null;
+                || controller.View == null || controller.View.Data == null || controller.Window == null
+                || !IntroWelcome(controller);
             if (!Sim.SpiderIntroDue(rt.Sim.AppInstalled, rt.Sim.InPrologue, busy)) return;
             intro = StartCoroutine(IntroScene());
+        }
+
+        /// <summary>The player has not pressed a mouse button for this long: the intro may take the screen.</summary>
+        const float IntroIdleSeconds = 12;
+        float lastPress = -100;
+
+        /// <summary>
+        /// The intro pulls 灵光 to the 数据 page, so it never interrupts a step the player is in the middle of: it plays
+        /// when they are already on 数据, or have been idle for a moment, and never over the AI joining YY.
+        /// </summary>
+        bool IntroWelcome(XingGuangController lab)
+        {
+            if (AiJoinsYy.Playing) return false;
+            if (lab.View != null && lab.View.Visible && lab.View.Tab == "data") return true;
+            return Time.unscaledTime - lastPress >= IntroIdleSeconds;
         }
 
         /// <summary>
@@ -499,7 +765,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!w.alive || w.text == null) return;
             if (glitchCooldown > 0 || glitches.Count >= MaxGlitches) return;
             glitchCooldown = Reduced ? 1f : mind.Mode == XgResidentMode.Watch ? .5f : .28f;
-            bool onCard = mind.Mode == XgResidentMode.Watch;
+            bool onCard = mind.Mode == XgResidentMode.Watch || Dragged;
             StartGlitch(w, onCard);
             fx.reduced = Reduced;
             fx.Read(walker, leg, w.rect, XgSpiderFx.Accent(rng), w.count);
@@ -851,6 +1117,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (mind.Pondering > 0) eye = XgDark.Gold;
             fx.DrawBehind(vh, walker, alpha);
             walker.Draw(vh, leg, body, eye, 0, halo);
+            DrawArm(vh, leg, halo, eye, alpha);
             fx.DrawFront(vh, walker, alpha);
         }
 
@@ -874,5 +1141,31 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         static XgBox Box(Rect r) => new XgBox(r.x, r.y, r.width, r.height);
+    }
+
+    /// <summary>
+    /// The invisible handle over the resident spider's body while the 标注台 is in front: the player drags it onto the
+    /// labelling workspace. Pointer positions are converted by the spider through the event camera.
+    /// </summary>
+    public sealed class XgSpiderHandle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    {
+        public XgResidentSpider owner;
+        bool dragging;
+        public void OnBeginDrag(PointerEventData e)
+        {
+            if (e.button != PointerEventData.InputButton.Left || owner == null) return;
+            dragging = true; owner.GrabSpider(e);
+        }
+        public void OnDrag(PointerEventData e) { if (dragging) owner.MoveGrabbed(e); }
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!dragging) return;
+            dragging = false; owner.DropSpider(e);
+        }
+        void OnDisable()
+        {
+            // The handle went away mid-drag (the page closed): let go where it is.
+            dragging = false;
+        }
     }
 }

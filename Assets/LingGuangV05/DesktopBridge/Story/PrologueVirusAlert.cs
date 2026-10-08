@@ -78,7 +78,7 @@ namespace LingGuangV05.Desktop.Story
             }
 
             Close(ref virusBox);
-            desk.Popup(L("who_360"), L("virus_ignored"), 6);
+            desk.StoryPopup(L("who_360"), L("virus_ignored"), 6);
             yield return PrologueDesk.Wait(.8f);
             yield return ThinkAndWait(L("m_ignored"), 1.5f);
         }

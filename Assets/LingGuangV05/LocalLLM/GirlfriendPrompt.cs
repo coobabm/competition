@@ -40,9 +40,10 @@ namespace LingGuangV05.Desktop.LLM
         /// <summary>
         /// Stable system prompt, few-shots and recent history; the per-message state (clock, mood, memories, plans,
         /// her life these days, situation, this turn's note and a retry's <paramref name="hint"/>) goes in front of
-        /// his latest line. A proactive message ends on a nudge instead of his line.
+        /// his latest line. A proactive message ends on a nudge instead of his line. <paramref name="turn"/> (what his
+        /// line did, may be null) picks this turn's texting moves together with her state and the clock.
         /// </summary>
-        public static List<KeyValuePair<string, string>> Messages(YYConversation conv, GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, bool proactive, string hint = null)
+        public static List<KeyValuePair<string, string>> Messages(YYConversation conv, GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, bool proactive, string hint = null, GfTurn turn = null)
         {
             // His latest line picks which of her memories she is reminded of.
             string latest = null;
@@ -68,7 +69,7 @@ namespace LingGuangV05.Desktop.LLM
             if (list.Count > first && list[first].Key == "assistant") list.RemoveAt(first);
             if (proactive || list[list.Count - 1].Key != "user")
                 list.Add(new KeyValuePair<string, string>("user", english ? "(He has not said anything. You message him first.)" : "（他没说话。你主动发一条消息。）"));
-            string state = GirlfriendPromptText.State(s, now, a, english, situation, latest) + "\n" + GirlfriendPromptText.Nudge(s, latest, english, proactive);
+            string state = GirlfriendPromptText.State(s, now, a, english, situation, latest) + "\n" + GirlfriendPromptText.Nudge(s, latest, english, proactive, turn, now.clock, !string.IsNullOrEmpty(situation));
             if (!string.IsNullOrEmpty(hint)) state += "\n" + hint;
             LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state, english, english ? "[His message]" : "【他发来的】");
             return list;

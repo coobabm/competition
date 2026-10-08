@@ -106,9 +106,12 @@ namespace LingGuangV05.XingGuang
             };
         }
 
-        /// <summary>A bare equation such as 「17 + 5 = 22 吗？」.</summary>
+        /// <summary>
+        /// A bare equation with an answer, such as 「17 + 5 = 22」: the player judges it 对 / 错. About half are right; a
+        /// wrong one carries a slip a person really makes.
+        /// </summary>
         static XgLogicQuestion Equation(Random r, bool want, string cat, string catEn, string shown, long real, List<Slip> slips)
-            => Claim(r, want, cat, catEn, shown + " = {0} 吗？", "Is " + shown + " = {0}?", shown, Formula(shown), real, slips);
+            => Claim(r, want, cat, catEn, shown + " = {0}", shown + " = {0}", shown, Formula(shown), real, slips);
 
         /// <summary>The visible expression as a formula for the tests: × ÷ − become * / -.</summary>
         static string Formula(string shown) => shown.Replace("×", "*").Replace("÷", "/").Replace("−", "-");

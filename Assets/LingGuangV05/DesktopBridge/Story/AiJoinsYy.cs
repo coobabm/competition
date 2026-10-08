@@ -168,6 +168,8 @@ namespace LingGuangV05.Desktop.Story
 
         // ───────────── when to play ─────────────
 
+        readonly OpeningTurn monthTurn = new OpeningTurn();
+
         bool CanPlay(bool impatient)
         {
             if (runtime == null || runtime.Sim == null || runtime.TestMode || runtime.Sim.InPrologue) return false;
@@ -183,6 +185,8 @@ namespace LingGuangV05.Desktop.Story
             if (holo != null && holo.Showing) return false;
             // Its setup (naming it, then the first 是 / 否) comes first.
             if (lab != null && lab.View != null && lab.View.SetupShowing) return false;
+            // One thing at a time after the setup (OpeningBeat): the month card has played and the desktop has rested a moment.
+            if (!impatient && !monthTurn.Ready(OpeningSequence.Turn(OpeningBeat.AiJoins, presenter), Time.unscaledTime)) return false;
             if (impatient) return true;
             if (InnerVoice.Busy || LoveQuestionCutscene.Playing) return false;
             return Time.unscaledTime - lastPress >= QuietSeconds;
@@ -226,6 +230,7 @@ namespace LingGuangV05.Desktop.Story
             var phrases = ChatHistoryStats.Frequent(mine, english, 6);
             int total = ChatHistoryStats.RecordCount(records);
 
+            workingIn = FrontWindow();
             Playing = true;
             startedAt = Time.unscaledTime;
             clickSkipFrom = float.MaxValue;
@@ -323,7 +328,10 @@ namespace LingGuangV05.Desktop.Story
                 Unlock();
                 Deliver(3);
                 if (!teardown && (skipped || !wasUnlocked)) OpenYY(YYChatHub.LingGuangId);
+                // Its first words stay on screen a moment, then the window the player was working in comes back.
+                if (!teardown && isActiveAndEnabled && workingIn != null) StartCoroutine(GiveFocusBack(workingIn, Time.unscaledTime));
             }
+            workingIn = null;
             Cleanup(!teardown);
             Unblock(teardown || !isActiveAndEnabled);
             Playing = false;
@@ -382,6 +390,35 @@ namespace LingGuangV05.Desktop.Story
             // The playing scene already shows these bubbles and dings. Quiet fallback still needs normal notifications.
             if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener, !Playing); }
             if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, Lang.T("……是。"), !Playing); }
+        }
+
+        // ───────────── focus ─────────────
+
+        /// <summary>The window the player was working in when the scene began (null: the desktop itself).</summary>
+        Michsky.DreamOS.WindowManager workingIn;
+        /// <summary>Seconds the AI's first words stay in front before the player's window comes back.</summary>
+        const float FocusBackAfter = 3.5f;
+
+        /// <summary>The open, visible window on top of the desktop other than YY.</summary>
+        Michsky.DreamOS.WindowManager FrontWindow()
+        {
+            var yy = router != null ? router.Get(YYChatHub.AppId) : null;
+            var yyWindow = yy != null ? yy.Window : null;
+            Michsky.DreamOS.WindowManager best = null;
+            foreach (var w in FindObjectsByType<Michsky.DreamOS.WindowManager>(FindObjectsSortMode.None))
+            {
+                if (w == null || w == yyWindow || !w.isOn || !LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(w)) continue;
+                if (best == null || w.transform.parent == best.transform.parent && w.transform.GetSiblingIndex() > best.transform.GetSiblingIndex()) best = w;
+            }
+            return best;
+        }
+
+        /// <summary>Brings the player's window back to the front, unless they have clicked something since the scene ended.</summary>
+        System.Collections.IEnumerator GiveFocusBack(Michsky.DreamOS.WindowManager window, float endedAt)
+        {
+            for (float t = 0; t < FocusBackAfter; t += Time.unscaledDeltaTime) yield return null;
+            if (window == null || !window.isOn || lastPress > endedAt || Playing) yield break;
+            window.FocusToWindow();
         }
 
         void OpenYY(string contact)

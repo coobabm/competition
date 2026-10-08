@@ -70,7 +70,31 @@ namespace LingGuangV05.Desktop.Zhongbao
                 if (View != null) Register();
             }
             if (!ReferenceEquals(logged, Sim)) Relog(Sim);
+            SampleBalance();
             if (View != null) View.Tick(Unlocked);
+        }
+
+        // ───────────── the daily closing balance (for 结算's sparkline) ─────────────
+
+        XgSim sampledSim;
+        int lastDay = -1;
+
+        /// <summary>
+        /// When the in-game calendar day changes, hands the wallet's balance to <see cref="XgSim.RecordDayBalance"/> as the
+        /// closing balance of the day that ended. The household sim owns the calendar and the wallet; the lab saves the list.
+        /// </summary>
+        void SampleBalance()
+        {
+            var house = runtime != null ? runtime.Sim : null;
+            var sim = Sim;
+            if (!Unlocked || house == null || sim == null || Controller == null || Controller.Host == null) return;
+            if (!ReferenceEquals(sampledSim, sim)) { sampledSim = sim; lastDay = -1; }
+            int day = GameCalendar.CurrentDay(house.S);
+            if (lastDay < 0) { lastDay = day; return; }
+            if (day < lastDay) { lastDay = day; return; }
+            if (day == lastDay) return;
+            sim.RecordDayBalance(day - 1, Controller.Host.Money);
+            lastDay = day;
         }
 
         /// <summary>

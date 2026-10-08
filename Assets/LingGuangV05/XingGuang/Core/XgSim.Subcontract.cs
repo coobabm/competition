@@ -25,6 +25,8 @@ namespace LingGuangV05.XingGuang
         public double timer, wageTimer;
         public int labelsToday, labelsTotal, correctTotal, errorsSeen;
         public double wagesPaid, earned, fines;
+        /// <summary>The last labels this worker handed in, oldest first: 'o' right, 'x' wrong (at most <see cref="XgSim.WorkerRecentKept"/>). Additive: an older save starts empty.</summary>
+        public string recent = "";
     }
 
     /// <summary>A line for the YY 网吧 group, queued by the lab and delivered by the desktop.</summary>
@@ -72,6 +74,8 @@ namespace LingGuangV05.XingGuang
         public const long SubcontractSeed = 0x0BADC0DEL;
         public const int SubcontractStage = 2, OutboxLimit = 20;
         public const double WageSeconds = 60;
+        /// <summary>How many recent right/wrong results a worker remembers (the squares on the 分包 page).</summary>
+        public const int WorkerRecentKept = 13;
         public const double AjieScriptAfter = 1200, XiaogangHintBefore = 180, ScriptSpeedup = 2;
         public const double NightStart = 22 * 3600, NightEnd = 6 * 3600;
         /// <summary>Without a desktop clock (tests, tools) the time of day starts at 01:47 (GameCalendar.Start); the desktop sets the real time.</summary>
@@ -153,6 +157,8 @@ namespace LingGuangV05.XingGuang
                 if (!FiniteMarket(w.wagesPaid) || w.wagesPaid < 0) w.wagesPaid = 0;
                 if (!FiniteMarket(w.earned) || w.earned < 0) w.earned = 0;
                 if (!FiniteMarket(w.fines) || w.fines < 0) w.fines = 0;
+                w.recent = w.recent ?? "";
+                if (w.recent.Length > WorkerRecentKept) w.recent = w.recent.Substring(w.recent.Length - WorkerRecentKept);
                 // Nobody can work for a locked panel or without a desk.
                 if (!S.scUnlocked || w.desk.Length == 0) w.hired = false;
             }
@@ -381,6 +387,8 @@ namespace LingGuangV05.XingGuang
             var record = SubmitExternalLabel(card, host);
             if (record == null) return;
             w.labelsToday++; w.labelsTotal++;
+            w.recent = (w.recent ?? "") + (record.correct ? "o" : "x");
+            if (w.recent.Length > WorkerRecentKept) w.recent = w.recent.Substring(w.recent.Length - WorkerRecentKept);
             if (record.correct) { w.correctTotal++; w.earned += record.pay; }
             if (record.spotChecked && !record.correct) { w.errorsSeen++; w.fines += record.fine; }
         }

@@ -119,6 +119,8 @@ namespace LingGuangV05.Desktop.Story
             GuideNote.Install(this);
             // Inner-voice lines wait while a story cutscene, the prologue or a flash card covers the screen.
             InnerVoice.Hold = InnerVoiceHeld;
+            // The opening quiet window (OpeningQuiet): ambient popups wait out the prologue and the first ability.
+            OpeningQuiet.Probe = QuietOpening;
             // The curtain call after the ending: 「你是怎么被训练出来的？」 and the evolution video.
             OriginCurtain.Install(this);
             // The protagonist's own idea that the model could label for them: thoughts, then the forum cutscene.
@@ -127,19 +129,48 @@ namespace LingGuangV05.Desktop.Story
             AiJoinsYy.Install(this);
             // Stage 5: 「她……爱我吗？」, the AI reads the chats with her and answers 是 or 否 (女友系统 §6).
             LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Install(this);
+            // Rent and bankruptcy: the landlord's texts, the power cut, and the failure ending (经济压力与破产 §3).
+            BankruptcyEnding.Install(this);
             // 鲁大师 benchmarks every new card (§3 tray widgets).
             if (director != null && director.runtime != null) director.runtime.Signal += OnRuntimeSignal;
             if (director != null)
             {
                 director.Rebound += OnStoryRebound;
-                director.ExternalBusy = () => CutscenePlaying || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
+                // The setup (naming it, then its first 是 / 否) is on screen too: the month card must not cover it.
+                director.ExternalBusy = () => CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
                 director.SetOutput(this);
             }
         }
 
+        LingGuangV05.Desktop.XingGuang.XingGuangController labController;
+
+        LingGuangV05.Desktop.XingGuang.XingGuangController LabController()
+        {
+            if (labController == null) labController = FindAnyObjectByType<LingGuangV05.Desktop.XingGuang.XingGuangController>();
+            return labController;
+        }
+
+        /// <summary>The lab's setup form or its first 是 / 否 is on screen.</summary>
+        private bool SetupShowing()
+        {
+            var lab = LabController();
+            return lab != null && lab.View != null && lab.View.SetupShowing;
+        }
+
+        /// <summary>The desktop's reading of <see cref="OpeningQuiet.Rule"/> for the running save.</summary>
+        private bool QuietOpening()
+        {
+            if (this == null) return false;
+            var runtime = director != null ? director.runtime : null;
+            if (runtime == null || runtime.Sim == null) return false;
+            var lab = LabController();
+            return OpeningQuiet.Rule(runtime.TestMode, runtime.Sim.InPrologue, lab != null && lab.Sim != null ? lab.Sim.AbilitiesCount : 1);
+        }
+
         private void OnRuntimeSignal(string signal, string arg)
         {
-            if (signal == "gpu.bought")
+            // 鲁大师's benchmark is a pitch: the opening quiet window drops it.
+            if (signal == "gpu.bought" && !OpeningQuiet.Active)
             {
                 // The score depends on the card: 98% for a new card, 99.7% for a GTX 1080 (§14.3).
                 string score = LingGuangV05.Core.Hardware.HardwareCatalog.LudashiPercent(arg).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
@@ -158,6 +189,7 @@ namespace LingGuangV05.Desktop.Story
                 if (hookedWindows[i] != null) hookedWindows[i].onOpen.RemoveListener(windowHandlers[i]);
             if (chatManager != null && chatHooked) chatManager.externalEvents.RemoveListener(OnPlayerSend);
             if (director != null) { director.Rebound -= OnStoryRebound; director.SetOutput(null); }
+            if (OpeningQuiet.Probe == (Func<bool>)QuietOpening) OpeningQuiet.Probe = null;
             if (canvas != null) Destroy(canvas.gameObject);
             localizedLabels.Clear();
         }
@@ -334,6 +366,9 @@ namespace LingGuangV05.Desktop.Story
             if (runtime == null || runtime.Sim == null || runtime.TestMode) return;
             var save = runtime.Sim.S;
             var e = EraContent.TakeDue(save, EraEvents.Tray);
+            // The opening quiet window: a due bubble is used up unseen, so it never floods out afterwards; the
+            // repeating offer simply waits.
+            if (OpeningQuiet.Active) { if (e != null) trayWait = 3; return; }
             if (e == null)
                 foreach (var repeating in EraContent.Events.Repeating(EraEvents.Tray, GameCalendar.Now(save)))
                 {

@@ -15,12 +15,19 @@ namespace LingGuangV05.Desktop.XingGuang
         static readonly Color Grid = new Color32(27, 45, 59, 255);
 
         readonly List<float> train = new List<float>(), val = new List<float>();
-        float best;
+        float best, ceiling;
+        Color ceilingColor = BestColor;
         float highlight;
         bool lossMode;
+        /// <summary>Draws a red dot on every round that went back (the training page).</summary>
+        public bool MarkDrops;
+        static readonly Color DropColor = new Color32(226, 75, 74, 255);
         public float Min { get; private set; } = 0;
         public float Max { get; private set; } = 1;
         public int Capacity = 160;
+
+        /// <summary>The model's ceiling as a dashed line (an accuracy; 0 = none). Set before <see cref="SetData"/> so the range includes it.</summary>
+        public void SetCeiling(float acc, Color color) { ceiling = acc; ceilingColor = color; }
 
         public void SetData(List<float> trainAcc, List<float> valAcc, float bestAcc, bool simulatedLoss = false)
         {
@@ -32,6 +39,7 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var v in train) { lo = Mathf.Min(lo, v); hi = Mathf.Max(hi, v); }
             foreach (var v in val) { lo = Mathf.Min(lo, v); hi = Mathf.Max(hi, v); }
             if (best > 0) { lo = Mathf.Min(lo, best); hi = Mathf.Max(hi, best); }
+            if (ceiling > 0) { float c = Ceiling(); lo = Mathf.Min(lo, c); hi = Mathf.Max(hi, c); }
             if (hi < lo) { lo = 0; hi = 1; }
             // Zoom in as the curve flattens, so 98.7% → 99.1% is still visible.
             float span = Mathf.Max(.02f, hi - lo);
@@ -41,6 +49,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Max - Min < .02f) Min = Mathf.Max(0, Max - .02f);
             SetVerticesDirty();
         }
+
+        float Ceiling() => lossMode ? -Mathf.Log(Mathf.Max(.0001f, ceiling)) : ceiling;
 
         public void PulseLastSegment(float amount) { highlight = Mathf.Clamp01(amount); SetVerticesDirty(); }
         void Update() { if (highlight <= 0) return; highlight = Mathf.Max(0, highlight - Time.unscaledDeltaTime * 1.5f); SetVerticesDirty(); }
@@ -60,13 +70,46 @@ namespace LingGuangV05.Desktop.XingGuang
                 float y = Y(r, best);
                 for (float x = r.xMin; x < r.xMax; x += 12) Line(vh, new Vector2(x, y), new Vector2(Mathf.Min(r.xMax, x + 7), y), 2, BestColor);
             }
+            if (ceiling > 0 && Ceiling() >= Min && Ceiling() <= Max)
+            {
+                float y = Y(r, Ceiling());
+                for (float x = r.xMin; x < r.xMax; x += 10) Line(vh, new Vector2(x, y), new Vector2(Mathf.Min(r.xMax, x + 5), y), 1.5f, ceilingColor);
+            }
             Poly(vh, r, train, 2.5f, TrainColor);
             Poly(vh, r, val, 3f, ValColor);
+            if (MarkDrops) { Drops(vh, r, train); Drops(vh, r, val); }
             if (highlight > 0 && train.Count >= 2)
             {
                 float step = r.width / Mathf.Max(1, Capacity - 1);
                 Line(vh, new Vector2(r.xMax - step, Y(r, train[train.Count - 2])), new Vector2(r.xMax, Y(r, train[train.Count - 1])), 3 + highlight * 5, new Color(1, .72f, .1f, highlight));
             }
+        }
+
+        /// <summary>Red dots where the series went back (accuracy fell, or the loss rose).</summary>
+        void Drops(VertexHelper vh, Rect r, List<float> data)
+        {
+            if (data.Count < 2) return;
+            float step = r.width / Mathf.Max(1, Capacity - 1);
+            float x0 = r.xMax - step * (data.Count - 1);
+            float minStep = lossMode ? .002f : .0005f;
+            for (int i = 1; i < data.Count; i++)
+            {
+                float change = lossMode ? data[i] - data[i - 1] : data[i - 1] - data[i];
+                if (change > minStep) Disc(vh, new Vector2(x0 + step * i, Y(r, data[i])), 3.5f, DropColor);
+            }
+        }
+
+        static void Disc(VertexHelper vh, Vector2 c, float radius, Color color)
+        {
+            int i = vh.currentVertCount;
+            var v = UIVertex.simpleVert; v.color = color;
+            v.position = c; vh.AddVert(v);
+            for (int k = 0; k <= 10; k++)
+            {
+                float a = k / 10f * Mathf.PI * 2;
+                v.position = c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius; vh.AddVert(v);
+            }
+            for (int k = 1; k <= 10; k++) vh.AddTriangle(i, i + k, i + k + 1);
         }
 
         float Y(Rect r, float v) { return r.yMin + r.height * Mathf.InverseLerp(Min, Max, v); }

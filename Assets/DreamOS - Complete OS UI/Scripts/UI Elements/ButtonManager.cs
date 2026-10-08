@@ -205,6 +205,8 @@ namespace Michsky.DreamOS
 
         public void UpdateUI()
         {
+            // Authored-label bindings may refresh before this component's OnEnable.
+            if (!isInitialized && gameObject.activeInHierarchy) { Initialize(); }
             if (!autoFitContent)
             {
                 if (mainFitter != null) { mainFitter.enabled = false; }

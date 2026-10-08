@@ -371,6 +371,24 @@ ef32b3815f2812eb2076f7a4cf5afd924a79dceb9fb1b0411f05e98911e67e01  Assets/DreamOS
 2d67cb185c07dad0f81af439b1245eebcf36d21c9ed723ff5732329f1ddcf1d9  Assets/DreamOS - Complete OS UI/Audio/_Mixer.mixer.meta
 015d96ac9a966379b579c64838fd3efec13aefe8313c89e910e7ba4b2b6798eb  Assets/DreamOS - Complete OS UI/Editor.meta
 a6b95ee7a255b002030b47195af63e9d23e76b05d8eb72659d752968230db779  Assets/DreamOS - Complete OS UI/Editor/Icons.meta
+c717273e65ee123303771b1484d389610ebc05c75dc843536bacf75833cb133c  Assets/DreamOS - Complete OS UI/Editor/Icons/ContentActive.png
+a108ee2d0c79055da0172a105fa5c50a1e6e9f30eef44eefd96067a7a8e43910  Assets/DreamOS - Complete OS UI/Editor/Icons/ContentActive.png.meta
+74d500e4c9097008c3d0b260f10961fb9cebe08171429841fadfb6f6d702516e  Assets/DreamOS - Complete OS UI/Editor/Icons/ContentNormal.png
+077d3277793d8791ae0a42188fa13f238a7dbb8b8bb6e5c6f9c44eb770df51ae  Assets/DreamOS - Complete OS UI/Editor/Icons/ContentNormal.png.meta
+57cad43a2217631989ad7b60326d4aff4512080dcb5da209db058c950191e5d8  Assets/DreamOS - Complete OS UI/Editor/Icons/CreateApp-Hover.png
+cc2c3ebb37b4cfd59dcd3159c3539ffe74f243042105fba653e4b271ec8b6c5e  Assets/DreamOS - Complete OS UI/Editor/Icons/CreateApp-Hover.png.meta
+c662e1d3befc67948959627e0f0ceee072d5bf84f4f5eef86a6f8659b863cd31  Assets/DreamOS - Complete OS UI/Editor/Icons/CreateApp-Normal.png
+a14cad4dbdad0f562210c5080c62c3df4ee33208ce0f86eb41789f8c624506f7  Assets/DreamOS - Complete OS UI/Editor/Icons/CreateApp-Normal.png.meta
+cafc05a9ce1c123ccd9fa6654cd1b1cf6a26c2925466a8b38a535606e61cbf5a  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Info.png
+9bd168929d559d781effd007bf1c745d69d8b1c39fe638ea90b7bc03ee76531a  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Info.png.meta
+9740f42fb4d0ce3e158ceb83920274ddae4156f77f9db21ba2eb2a33f56bcd1f  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-OK.png
+277ab3f905102c01121e9c947fe3071fd7170bfd34ee41ffe61863f00fb119e7  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-OK.png.meta
+d3b1b8b732a5ee5197e878dbbe74526d01aa738a791e5947dbabf51f73ee581e  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Settings.png
+6ebd4075a0e2a74b910ac8f6045f08c3cd1b3856599f1b113719eae360dd09d1  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Settings.png.meta
+4a301b53265a2d832b22f048b3c0187cbc55833b26f400421cedb5cc676697f8  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Warning.png
+cc19e27ae427a21972e2f3d26766d5754ef18635656a283cdcf04ddad4640bda  Assets/DreamOS - Complete OS UI/Editor/Icons/DAC-Warning.png.meta
+6fb11cc85f5af007275114bfa02fc4077b0011bc2e88faee7e7ed98f1cb2b74d  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorAnimation.png
+7b1396cd3d590f7f514dc66cf4c14b99e02f253d9b5bc0a584a57c786cab9e1a  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorAnimation.png.meta
 5ed6e4d5dfe11d97d606f85423b1b3d5fcfcc137720d42b8f1625e8672fd9205  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorApps.png
 ec694e467d15a186bd19773cdf9861f3d0293f75ecae2748aa6317166b673d4a  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorApps.png.meta
 e013740e25dc65a22b47ff757a2a7b3f1f97fa2f5d0873a9ed568c2b2e9e82a0  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorAudio.png
@@ -379,14 +397,30 @@ e013740e25dc65a22b47ff757a2a7b3f1f97fa2f5d0873a9ed568c2b2e9e82a0  Assets/DreamOS
 9fd27bc107a10e8d3d1d85997c5f6ef0fb65ca6782b2496057b103ff8aac60c1  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorBSOD.png.meta
 5294f88bb09b829302177c754d93502f02afff3f036f310745feedb5e44553a4  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorBoot.png
 4a3bd07248a4baa771277d908787a5f3474c58993af166364ec7b6137b568f79  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorBoot.png.meta
+36707d192fec2034434042e4c75b50f7b00c496ad1c2704d4ff1ba9c4b66819e  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorButton.png
+dfe34e54475854f9e7662f9a05b764c44294648ad4dac527c5e6a3f78ad4cf7d  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorButton.png.meta
 bde5b27a9fd21692024c3996c96480d5161e074e16edf4b40c0343558bc1a3df  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCalculator.png
 697f619e3efbf38555604759da3ca634c381786624d3b234fd3d745617e557c4  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCalculator.png.meta
 3c71a6950714596f1c42fe43247b5a3bb982ca506e93a9858d7df8ec405ec4bd  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCommander.png
 7b40b0308b10817be1413c9eed64c0e9ce46f652644640af79054164ebf56371  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCommander.png.meta
 6f0c0bd6904f48a51d6b74606f4a0deefa81601e1b0d7ef3d1f91a6984ce9325  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorContextMenu.png
 e01d449bb7aecba0309a464ae08cd2548400c79bbe1da6a6b7f5e0f1c82f7831  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorContextMenu.png.meta
+5c24cbcf236d20c08447f759c6b84a8c878c7b620122e477464672f8a129e3b7  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCursor.png
+76ab4584826e3acd08101bfbc9243570254b458ebc302959bede5634fe7cc1b3  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorCursor.png.meta
 bc388b618ed292f5daff1d4d1c684d631bf24be4286b23d7dc3d4b52ba16b3da  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorGameHub.png
 54b9e9586f90bc9b9fdc895245295a356ccf95892406135d9ac98584bf6b61ce  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorGameHub.png.meta
+82b783eb5950ab7d85cd84bea7415fbe6d14f08231e03d1c7ef22b77c7b752c1  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorIcon.png
+47bf82d191f6cce4acdad95e3df38c3dd2cc0c024f027265dd84d80ded5aca0a  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorIcon.png.meta
+44d3b066b7fd6a382f61be39a2c0e6efab0d9b87a09acf07b0f0550eb6f6d760  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInput.png
+f641ff07bc8ecf823fe91654b7212e0b05ecf0e2b5925bb5be09f03c4cc80e51  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInput.png.meta
+df50505a742ab88202d2bfdded50ef757a45bf94585a0d4043aae7463d012c8e  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInputField.png
+ab02029d0b9c295698013dd404341c6e7af9585d6efb7b75071405df2e25c876  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInputField.png.meta
+a96d3a474cb0ea73c33c57014ffd8ee57d17fcb26241904f502a5bc4f2fcbe70  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInstance.png
+f3c2612849dd9e2df2abb99a02256fbe21397f2f334b838b550491a1918e0b14  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorInstance.png.meta
+83e9b7d5473c68db066251fc195c489ae15cb28c9c7e4762b38da1b9430f7b67  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorLocalization.png
+3a3d161a69b96828b660bf32bcdb26be4e9e721c0233983a10b53c7a88c58fa4  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorLocalization.png.meta
+c93ea517a711e0405e39d766685eb3b63a6031a46e3067ad6821ed1bb9ceabfc  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorLocalizationAlt.png
+5acb91dde780da4607edfb8f9afb3a5c9c62e3971b13e0613d3e7fc699f1b65b  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorLocalizationAlt.png.meta
 0e51f5d5ec254efc2b42cec855be95cc0a9e073aadd7937bd88e7ab1107a4cd9  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMail.png
 14f86fb7852116505a03ee12de551cf48d25d00d8a7e045276a6f680b9d22f8e  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMail.png.meta
 44aa92edf8ff991192a84708dd56384c3a938b6be1e271b44cddc3c1cc8a94b7  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMessaging.png
@@ -395,22 +429,36 @@ f8968a8762404983a0d9498b2bb04757ea261d1e9ba868243e2fe621a5eb65fe  Assets/DreamOS
 43bc28b2948da114169d217b98c5e1dd0764013ca84320a5260fa6b4ca8cce69  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMods.png.meta
 1defd65ec4c2e2c58986d8583c6205e4c89cb25cec9f32d0a3d0209c66bd69ce  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMusicPlayer.png
 7c69e4517b6b753a6f308c068d43427301445dc9645f76e1e6f3b860f33966d1  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorMusicPlayer.png.meta
+722685fed94a288a404607d19bb5428e44729ea3598aca049573c7f0a3282764  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNavDrawer.png
+6c9ebcb6898f764b1ff743cc9bd028cbe50e143cf5bb20f6dd0d421d6685948b  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNavDrawer.png.meta
 d63d514c38eeccf3433b40653b8ec08f36fc4c9c9ad9dc44bc411790a5e5d36e  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNetwork.png
 830e01eb36f957d5b7badad9dc80d8dbc1cad3ce67265b14688d2f12847cca50  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNetwork.png.meta
 dbeccfbfe7b10a66f6947f8af1f8f030241cd2aa0799b5c968cc5e0b986fe645  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNotepad.png
 c20e644897a6a91f163ec212c40a7a12363a94d56945568f532df6064a034997  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNotepad.png.meta
 6a92b1d9d4fb6d1b9b70fdc28e3b636da0a40f712392bc01c586d6d545e14eaf  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNotification.png
 d735f7aad8f59e8bf91b2df832d4f01e97aaaa1996403bade6230bf6f98faa52  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorNotification.png.meta
+3bba3ea8b7aa03ee012ef9e0efa0547b6020274c48ce9723bb0ef28d1c512d95  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorPanel.png
+95acaa90542f86ab99a433ed497b6d78c50a877cb69a9c657694aad638485164  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorPanel.png.meta
 e9d59283d284e7ce4586bfc583cab97b3ac8620b424cd711064706a352c9e844  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorPhotoGallery.png
 49fe5185bc36f6c448d749a3aa7bb03bab922f0d83331ff8aaeb2815edf9758d  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorPhotoGallery.png.meta
+bc1ac7028da32fee7cc59d79d4d2fae550496e672b6462786daf13cbb5be23fa  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorRendering.png
+65b1438d5c54a93be0aa89c1e18ede64eb967fbc39e46b86483aba243c78c9b4  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorRendering.png.meta
+101b479dce44e4673890eb8da4c957bc9460f448769c80f1a60e99bccc321d7e  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSelector.png
+30038a329c41b6e2a49591f26da5c2e84713c179b5c052d9494ce9ef382ad983  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSelector.png.meta
 6ead54fdab972ce1b77e6384a24fa5fe0e2ad7abc0d4d1c7ae49a370b8c592ff  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSettings.png
 28bdd63910e0bf4287faee560ada555bd988b6fc37eaf6627f82d6f4782d4a13  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSettings.png.meta
+1a28ed356178f394d46380234193efcf974ee0d70aaae63dbe259b15c6e19228  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSlider.png
+64f66f497760640e9b25c255e25be35716c7b2b00c4dabe7409602ee7cadb085  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSlider.png.meta
 8ed0fb422ac8634a4ca9bbe140360bfc97f34292ac34d650d997aba3454ff5af  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSpeech.png
 42091d90511610f4a99ddeece83b3c99b15d53c6f547331afe2ca211eaf7e046  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSpeech.png.meta
+f987aea2185338ecf39ce55b9c0c11aa9ddbbd5d473d7052e58a87745f44ce0b  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSwitch.png
+a013b91a64095dd1f34debef59069d1062dbd0c0dbbb5aa8c66f9630e7eca521  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorSwitch.png.meta
 90f656eef8335bcdee9f6ee89e632388cce61b3c447ebbf62f78e39b6d254af6  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorTime.png
 8abcbf90d08fac507a79db030790d4fb4362d8581a1a9d0d96d96d78b4d58024  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorTime.png.meta
 e38133547447b2a6c47ff1e13af1dea2324e9952276b16bb86ca11158072c14d  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorTool.png
 3e8d897e6f398c8fc6f6e95592d0e1b1fa539b8403deaf73b15b4810815ad734  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorTool.png.meta
+5d2dea4a3c185e50aba4237abbb2a780e93bcd9cacdcdade9e6bb69f0acbc3a8  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorUIManager.png
+429d9889e366d783819d27f6f2cc5f9deca241dacefaae5f2f2050316bd70fee  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorUIManager.png.meta
 49c21830a538696f5b788fc8eda4192e3de6560c334cad1de2e0e99fcc2d35b1  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorUser.png
 6a64ecc50999bcd5208b468fdc95b85a527915d7b309fc71f64ea5789026b3e6  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorUser.png.meta
 68fb07881482ba3d3fe1adaa0f0b09d2fff5f1b9533e976d5852d5aadfc2e6b6  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorVideoPlayer.png
@@ -421,8 +469,137 @@ c0b0c2d044b04e62612295aa700a109df88c1694b1d58248315dbf8c07d7b07b  Assets/DreamOS
 b8b6aa40a39462cc77a245bc7e59963e9d56d86db9b54501faca3a967e7aed8b  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorWebBrowser.png.meta
 97d1ec8c7cc8e197deb4ebab3e925071d6a84aedfbd551fb9ef88d6058678d80  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorWidget.png
 49d025a4d80b592247b92ffe0dd11562fe4163b75215f914032b479005372e94  Assets/DreamOS - Complete OS UI/Editor/Icons/EditorWidget.png.meta
+96a9495cf92ce8ed83941731a364b4bf4a28c2c6fbf6a18528a51502f8705bff  Assets/DreamOS - Complete OS UI/Editor/Icons/FoldoutClose.png
+97a7241ee571562ceb0d2b9ac54504a2c4b2e3f1402369c2fa7f4799d0ee8594  Assets/DreamOS - Complete OS UI/Editor/Icons/FoldoutClose.png.meta
+b0d4c8cde7f7aa1602576a417de9ad64b9a78dc341da85d8a8bdeaf5c9d9c153  Assets/DreamOS - Complete OS UI/Editor/Icons/FoldoutOpen.png
+5fd287a30a63240874bb9731ea9b138fe9c735d2ead2736fcb44941026961bee  Assets/DreamOS - Complete OS UI/Editor/Icons/FoldoutOpen.png.meta
+6035f4b7626eeed4ed3e891518dd082dd268ebf6165e0d57443910f77647bfff  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderAppElement.png
+528217a19be5aa21ce57954f771943bb47fb7b643daa046583f91ea872806a30  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderAppElement.png.meta
+8da86e51aaf3688a2f65ad99347d25616290efa95b8e6c9ccebfd2a1edeb66df  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderBSODManager.png
+a7c78ae7344a36469709dea6798f1adc81e5fcc5603cfd8fe60ad2fe9d423790  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderBSODManager.png.meta
+482c7bfe9b6ef811946403ebd115777713d2dcf432a760d7101ae04a8543bad9  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderBootManager.png
+5b3bdd7673e52666c9e71fbbc60471d161b26ae72c849484a66b5c296350f1b8  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderBootManager.png.meta
+55e47d416f0ffafe4b36deafb344f94bc05ceea0a95981bb66cb7c2d8cf05ad5  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderButton.png
+cc4c98cce36a4d2d12ccb6086a4d9779029dbe4aaa5d099340777451027e4ef3  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderButton.png.meta
+0a02cf6b3945137bf0c5cc880d19c8fabaa47590c8cde8dfa5ac8c65e6844ada  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderCalculator.png
+38ab0ea673c5c4ee42aa82e6970cd17cb5789a27b3e16e44f909352c9e0e1405  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderCalculator.png.meta
+a1ff3206345451277e620373272fd16b9d8f062aea7447bdea3b60504ccabffe  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderCommander.png
+432bfab9998298bdebad6da141fae269a84b1bdf69014658733c2935f4c9675b  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderCommander.png.meta
+866c74f5c15763012c53c7a96fb329d75f7c45ad1be18543efe1658268f24eb6  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderContextMenu.png
+aedde4ac07e1106a7aed8c86b54b602f6b62327ffb8ba16c47aa4a0397a797a8  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderContextMenu.png.meta
+cce7d5759e41eefeec29664daa99da5c76a238fa97b61ff6fbc4694159ece50e  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderDateTime.png
+e4384189d3f47b7f39ad43fc5e58e84c15ee9ea090b1fb4e38932d81433b0b38  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderDateTime.png.meta
+3dfdb87e7921855ec8793978fd1559c99af2b609dee3101997b1ac6916a7ff43  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderGameHub.png
+23b86a024537f2b32c93ffb17fbbb2e2fd2d17bb82b67011458b4e8ed2e9ee92  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderGameHub.png.meta
+96f92f2ef9fb12b32db8c2722abb92c032a96442a9c93e92eaeb3496cfc96e84  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderHorizontalSelector.png
+546b77495808b29fa0d4d23ac5974fba5226d99561110b5d4954e55b51eb2cc8  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderHorizontalSelector.png.meta
+c80a91b64ccc3d4930473e1d2734869546abc3cd5a02f5a5c99b2705437fcd2a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderIconManager.png
+6861363c977dfa4efb6f4b4983914b6596973dddbfcdc448de32d8c8e56b9972  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderIconManager.png.meta
+77d61019b1710ac23bc73d7e9d3b21642f88a23d209d4078c565f1c453a73c7a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderInstanceManager.png
+2c075058621662fcb0ee0934e29b345736901582583978a17576b52297d9c11c  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderInstanceManager.png.meta
+e539dfef987d4444623099284198485d77f914c2691323fc8b89b5fb5fd646a7  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderLocalization.png
+761ad19e9df79f9f0df4598eab833e34f293f5c3734dd68d1ea1aac2457db327  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderLocalization.png.meta
+6634b3973d3ed9975df3a56b79daf57f17f6a49ed6a6e349a065941bd4ee8d2f  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMailManager.png
+85b267dde5b9ad5e7a2bbfbad317d006343739fc28f44579706ccd26b87717a8  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMailManager.png.meta
+c6a044fe29e9181df029f9c59ce68c49a846c95e0444ce3d6e335a0ef8293e64  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMessaging.png
+010de3d3f02cba2aedb1b24c6b4bfd72939f232be66d4c57fd9585f635e20bd5  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMessaging.png.meta
+be4e01d5a8b37b7db21b5f72e90aec8dc41562b01db39207435e36636942e078  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderModManager.png
+142f3466f67dee28895206f6b09f3c8c27395c6963ba7703e8961dc4781412df  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderModManager.png.meta
+4b998b3d990c8539fdc849699334c80efe65902ca761a44fb7e2f475e0fe446a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderModalWindow.png
+68d2686b6ef9daf09618622f284b7d15e23138f9c6ea16f181b0d8b1c7e223bd  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderModalWindow.png.meta
+444c5db7f57e7603f604c9f42d83891871db9ddffef81464b28bb76c13328a56  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMusicPlayer.png
+0a0faa6b5b818a4cca1584e4de862113a49007e515efc988f8b329ff13bffbd9  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderMusicPlayer.png.meta
+a535dcdc407940a249bc08403985040db7bfe240cb4fa51c0f9ee17e70d1fd71  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNetworkManager.png
+fd856d121dab8162a760630d97ec85fab5335115fc05b733b4b3961de0e5e7ae  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNetworkManager.png.meta
+bb37105f946792d3aab0d4fdd6c1262b253fe76c3a94f4547ec4440a8bb0911a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNotepad.png
+8dfdff2b342a519971102c2d067dbc8b3a4b34ea88906f846259aea8b347f592  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNotepad.png.meta
+e9c999f41fb7a96287cb3b019cfdc11aca14be9f09c69d0eeedecacf480515a5  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNotificationManager.png
+9743ba9a2b61dbeb6f878d219edc815095e23c12562f88330eea00b0ae6dfa42  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderNotificationManager.png.meta
+5ed748aa23f1db292a7846a82a93300a408ce15fee6d71f47f2afe6577468077  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderPanelManager.png
+ab76049834ecbaa381c793e0aa2f66c540f14a7adc668655d78f3de6d14c3931  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderPanelManager.png.meta
+4324b3efe45e541d142c37ab45cbaaf560c5d0c5bc7983ddd50fafc4919908f6  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderPhotoGallery.png
+05ce53575b9cf7c685d40c72d9a24c82d0ecfe22a0299c4a36b8b0dda2f296a3  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderPhotoGallery.png.meta
+d1fd596709fa111cf26d6b6f493c7cfbc5c8b1cc7228441d5cd05958eb176e5c  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderProgressBar.png
+ec9972cf54a478d4367885f72addbe9f2ac4583911bf56ab148043d96a8cfe3f  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderProgressBar.png.meta
+4c9d6b82a7272af2ff28339acfc32e9fd3e9a1f2776beaf3a87ab58b1542dbcf  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderReminder.png
+db5d56ec8d438cb7fd97f9373e30bd36f119a6fa07766a47dfe4507cf7806f8b  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderReminder.png.meta
+387ffcaa37efec4228c1a0b15275e7eea2311e96ec90e435ec03419d199d9860  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSettings.png
+de3adb2b58879c64c3d91aceb396acc669f15f10f070ddd8f0993eaaf296468a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSettings.png.meta
+19b1f7cdc5faa4216c2364f7b6bcebe9ce374e02b4ddb6f68176804bcf118fc3  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSetupManager.png
+ae9bcf09ab4caaf07d7a2291d12b6a45edb0ec95693c86cf8e068693935ec38c  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSetupManager.png.meta
+82515c4e427f3f37b6477fa55c994efcdb67c7b4a4cb640469bf735730a35a24  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSlider.png
+36131777c34f69c0f91d12edf2cedead74e00ee90c99e7eb8680c51d44fd481a  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSlider.png.meta
+1fd006c3ef8c4064a17d67a0a20e1999a0308d4d946c960c5f6dff4f64db4118  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSpeechRecognition.png
+087bab605e0099d87019cc312b1f86d061d364cdea8986cf05917483fdce5811  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSpeechRecognition.png.meta
+0cf74e319922825acdc6d616887d3d33c48fcbe5213dd8a140d7a193bc34b2bb  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSwitchManager.png
+902c66802fe1d11f866dc24e958e8f2a80b7b0d176ab288225dc899a0765f445  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderSwitchManager.png.meta
+17aa53530e5d6711544fab807f0688fe9e4bd91533a0984fa55e0995ba547d69  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderUIGradient.png
+ec1f7edaa1f9c3ce6905d0d59fbe11dbe1d76123284700f6c736cb7fc1a92321  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderUIGradient.png.meta
+752ff39a0875a84cada27b39d1b40f8721a8d19851ea701b150db519c610d992  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderUserManager.png
+97ce3db05a26498205bcb29ea18b9281402ed0592c6954532eeac82f002c83bb  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderUserManager.png.meta
+1045cbc133369b05836032185b6b44c45a87845ecfea1380e524d9e3c4a706e6  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderVideoPlayer.png
+f191ddcb06e33a4e7d650e585e68909aa351ffde5ab441c03f38fed4a4dbdc8f  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderVideoPlayer.png.meta
+c8856d271370dc65e5ea555d8912fc8365a4a2113367d7cfc36725d654d1cffa  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWallpaper.png
+5ac6bb1905911189f6155cb85b11cc6504e5dd982c57c297917a3caba624e0c6  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWallpaper.png.meta
+3e3ee7a5c4adaeeb72eec1799b4e6470123f172213840d656f33a98cd1e774c1  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWebBrowser.png
+040f80c8a7c15bc701c22b20eb12cbadffde99004cac35a79b40782803acf2a8  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWebBrowser.png.meta
+cbb7d144962f3d60280e4821290d906ca9cb5fb1556208161a7580c2a2868740  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWidgetManager.png
+499ce5b4eba77ca07941b9375aa04503fda494ac2f9f74c72f2b137fcea0075f  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWidgetManager.png.meta
+22c38995ab2b3b374edc1ec6ec42e1861281caa9934b6e8ef8cb32bdc268e7a5  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWindowManager.png
+36b0db9ede4d6578d3a82d05f96e0a8c59b73679817c597cd2eb4814cada37ad  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWindowManager.png.meta
+4c4f41bb024dd7c0ff50e85bf2dbb59a5847949225adce3190b38e6246802b2e  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWorldSpace.png
+60da796c9d0b47070ce1eda64bcfc037e954c70a9ae0594ad53d097ebc3bc381  Assets/DreamOS - Complete OS UI/Editor/Icons/HeaderWorldSpace.png.meta
+96029561d489e94c8b2ce5160d8cffe426ea25828e8b3994ad0ddfbcaf8aed29  Assets/DreamOS - Complete OS UI/Editor/Icons/IndicatorItemFilled.png
+76fe9a4e1dca8866f06e9d9b54f59a01c78f46107dd5f98e324a47f96b52de03  Assets/DreamOS - Complete OS UI/Editor/Icons/IndicatorItemFilled.png.meta
+0918dced1ad54c3c832f16a7607186c5963d09aabb64b8532e92852c4910f5e4  Assets/DreamOS - Complete OS UI/Editor/Icons/IndicatorItemOutline.png
+a84dafaaa9ba674b7795402f548fbaff6014300a97756313c2e036f3aba837d4  Assets/DreamOS - Complete OS UI/Editor/Icons/IndicatorItemOutline.png.meta
+10fefe2285c40de4481017ee4e0d47c731a98cb6bf9a96ed657191d8fceaa530  Assets/DreamOS - Complete OS UI/Editor/Icons/ResourcesActive.png
+c4286afe7bd3698bb141fa4813152c9641205d562501c0cd5ddc6eec69d0bbea  Assets/DreamOS - Complete OS UI/Editor/Icons/ResourcesActive.png.meta
+2161938eb602d9d0a9db9acd93bccbe3242769449640e49745ab21357893a99d  Assets/DreamOS - Complete OS UI/Editor/Icons/ResourcesNormal.png
+7c17bc8e7b5c67a7e1ee5c8110125f35f550e29b25499c1124d547ef998cd27b  Assets/DreamOS - Complete OS UI/Editor/Icons/ResourcesNormal.png.meta
 f50e8db2e6bebd253a8335b6a4308e8ed8472889b6cad5ed52f4a220c93f4f68  Assets/DreamOS - Complete OS UI/Editor/Icons/Search.png
 dff27f9104145415b476bfc3fbd093cc44f472f7f9954feb1363e90693ead7b5  Assets/DreamOS - Complete OS UI/Editor/Icons/Search.png.meta
+f1f45ef7467f188308a6e7dbd3ee32a65c29569b9487a136b7bf1bc11810945d  Assets/DreamOS - Complete OS UI/Editor/Icons/SettingsActive.png
+01b33d5e28e98859613a857bbd6edd055687ca7b8ec4f10110401eb0098eaee9  Assets/DreamOS - Complete OS UI/Editor/Icons/SettingsActive.png.meta
+adab42bddd8704b855867cfac5746ed7203556679e216cba4fd2fe3964dd3b62  Assets/DreamOS - Complete OS UI/Editor/Icons/SettingsNormal.png
+d289eeee56c1b62458c7a2a1c7bee00e5c19f0cb229b0193a6ed2fbb4e7e807c  Assets/DreamOS - Complete OS UI/Editor/Icons/SettingsNormal.png.meta
+ade1503a83c1bb56951dd063540f886ce48eaad08fd35326da879142a311cfb3  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderAnimation.png
+951e1580594d37c36fbacdaa2197b83662744f7163528df8f406bc510cfb38d4  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderAnimation.png.meta
+066d84aa6376168f595d0e95e0b510deb3ab8b1edaa2e5c8a3b4d9651901f2d9  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderContent.png
+4c4db619788f239b440d2e538b97c7cf8b171e44a1198b3d8f3be29a844f8160  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderContent.png.meta
+cc2cdec0d36d30178658433a6c9761d7d43a87388f12d79d3030cb1881fc3b7f  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderCustomization.png
+770cbadaf358d29cc2d9936a6e3a338acf6f2f1f812b0db2ffbc1a5fcce24dc4  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderCustomization.png.meta
+74c9fe0dd1e4d6ad6331c2b0817f273ca7e19ca4e4feb8d04fd3dc9e1c522920  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderEvents.png
+d3ea102ef95af25180ecca9ca1f6c75e526361eabeee83232d15b79f160f31da  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderEvents.png.meta
+eee3d73ed9f024072951d602533b236fa3d3298f74a385d404f6fbefd14a9bb9  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderIntegrations.png
+cb596a113e701686d06ce9b5d57f4e68fae2cee753d5474317b9a55791483b9c  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderIntegrations.png.meta
+611d6785073313166deff5e14552d4c873af6de30438869c98a1e183c0429de0  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderLanguages.png
+a2381a198c9a8d8f92e6e863fc4b8dcf2d687b2a7b38ff23f409550de4dd32fd  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderLanguages.png.meta
+0b072d9d5f4768f83b55a123bf9dce7f49a493e3156b5e7c1b84d7f97b28a51d  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderOptions.png
+8641d4476424f4c2c22218c1832a49688e331d61fc61eef45ffca26fb16f242e  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderOptions.png.meta
+9998b2de1b30d043f014d46d808572abc0b97dbcdbba887d427bae8936650140  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderResources.png
+45c5a99ac4b8d3380a7f3028de1e66d94c8a1196790e49d26586442506762647  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderResources.png.meta
+53e899a4f03529d2c15c04f0caf9d1ac745d079db8fc152f949da70a100331bc  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderSupport.png
+3ab369754dbdcca900fcdcec149a77a908da35c38bffdde4f988b9d6f9d8c79d  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderSupport.png.meta
+a47cf0b36d15a5e4895808eab247457859be9ac18612bba476b7dfb5735469f2  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderTables.png
+c0eee29fc9c486d5ff7d8d5bc4f6ec638f38af885a92c89de2abb842b19980ca  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderTables.png.meta
+fcd9fbe197e7aefc3297f8fbbc592de14862a0eef88b718f3ee69c382b085d04  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderUIM.png
+1e02a8f43cc414d2fe8d544fe21987b8d6cba627328bcc18b49edb668e0d948b  Assets/DreamOS - Complete OS UI/Editor/Icons/SubHeaderUIM.png.meta
+35e0de647184483ad05a0e4610fedbb3b0fedf37deaf69722139f792515f4ffd  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOff.png
+a7112629800899cf95b2a4d6f69a6fd731dab6ed1dcb3ef12109efad75aa8754  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOff.png.meta
+075f8c1ce76aa625385601a1fe2b97918ee5413de0572096c74c596c6efe76df  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOffHover.png
+97f2f983412782518a1ab8b7fe7fb18dbfff46a297572c0a7e3d902ca1571b42  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOffHover.png.meta
+f75b5e84e911539a80807888528304cb1440f060decfade2a655dda3f83444b0  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOn.png
+4823f50b75eb9f4e773c3849eb1e8a59a9c0071d536201d795efbdbf74539380  Assets/DreamOS - Complete OS UI/Editor/Icons/SwitchOn.png.meta
+5d4bdf98ef5220c8a24d5910011ca441642e255c497725e62c62bc84dbe85899  Assets/DreamOS - Complete OS UI/Editor/Resources.meta
+049857936fe271ade263093f55f3dcf92959657aea39f91642fa182a692eb447  Assets/DreamOS - Complete OS UI/Editor/Resources/Banner-DAC.png
+c47fe922021688688eff2dce15b01882df6860d1a9e599137a359acfcd15a1a2  Assets/DreamOS - Complete OS UI/Editor/Resources/Banner-DAC.png.meta
+62287a6f0124507ccbcf5b9807f396291a7150ae7fa8d9f5857e312b487fc0a6  Assets/DreamOS - Complete OS UI/Editor/Resources/DreamOS-EditorDark.guiskin
+7c8e81122350ca9a69fe9683c7c2ed2140870c4de784f0ff11ce75dcaf6195a6  Assets/DreamOS - Complete OS UI/Editor/Resources/DreamOS-EditorDark.guiskin.meta
+832aaf9fe21f652480594951af63e05b56fa3883f3e453295d1034f286a79acd  Assets/DreamOS - Complete OS UI/Editor/Resources/DreamOS-EditorLight.guiskin
+ad98cff0416e8992ef8156ec28e53e7dcaa6b29781a38818c8f6a111e30c42bf  Assets/DreamOS - Complete OS UI/Editor/Resources/DreamOS-EditorLight.guiskin.meta
+77a073fba569b9a50f04ee590103180ed300e03bb3a5c548910358ca9bb0b8da  Assets/DreamOS - Complete OS UI/Editor/Resources/LocalizationWindowIcon.png
+dc57672535dfc3b3b2bc414b20f19a3192935cbf7ed74c63cb118ce09d91f710  Assets/DreamOS - Complete OS UI/Editor/Resources/LocalizationWindowIcon.png.meta
 d8ec2ad83738b0f416f7df3b069698415a3f8ab4e499381c3b82e1d435de695c  Assets/DreamOS - Complete OS UI/Fonts.meta
 5894a3649b213cf5b2d673b6e7a871815fd1d120fa68a463592f27db14eae323  Assets/DreamOS - Complete OS UI/Fonts/OpenSans-Bold.ttf
 44fa452f65b5ee23d2b22e6dd25b8a7289f97313996c40f1bab80b3482044856  Assets/DreamOS - Complete OS UI/Fonts/OpenSans-Bold.ttf.meta
@@ -682,7 +859,7 @@ fe55bf471e40020717cb686f8ae76d1d39c24bc0da95f94381d97377f816f805  Assets/DreamOS
 6b4d9736680817565123e728108ccc79724641cf1ae97705e44cbf4188f763aa  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/AudioMessage.cs.meta
 791931f46446687c120ffa039682e95d41e2964a04a06995f09d3538f99002a6  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatItemPreset.cs
 b3aa8843cd834525761967c4decb5b5e2c13b8e3c47f9bd33a6e46f7f6d626b4  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatItemPreset.cs.meta
-c7ce77d6e22cade6c624e016927e74efcc65b6f3ba547d459bd737064e59fcc9  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatLayoutPreset.cs
+e2024e48066421d925119542ae6b69c677c9850a36630742b18ae3e1a4ef870b  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatLayoutPreset.cs
 0dd0010bbeb2a51cba6aa1722680327dfa8893ece28762694a78aa906ad3296f  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatLayoutPreset.cs.meta
 f497c595876ae4ec4110ba514b2d98026ff0e72c8863438472c224f9e681b2b1  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatMessagePreset.cs
 ec8a363c437b49fb3ca14d6a7fcad76145fd76b96a971b13cb134141b53c8b89  Assets/DreamOS - Complete OS UI/Scripts/Apps/Messaging/ChatMessagePreset.cs.meta
@@ -901,7 +1078,7 @@ f089368af786ffd8dc42059d79616e22ec6f9f31b163748dee905da3da23e4f3  Assets/DreamOS
 3ca539a95150bc4f989cc35f884b33070bae3cf4f2adf80379bd887770d5b99c  Assets/DreamOS - Complete OS UI/Scripts/Network.meta
 f606660e4558c943aea2f000419084d07e3d17c617da53557f50bc245a7a5d75  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkContainer.cs
 256044f72b7ddd3bc4de9fa411f6b1e74d6fd66b9672426dea665087106bb412  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkContainer.cs.meta
-d786bf56416178abcccca1d73eb622b178ca6844b796a9dafb54d23e470d17b7  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkManager.cs
+d6ce68f51838963381a178ae290d724bf76f38823463cce72dbacb71563c683c  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkManager.cs
 19ed5b2872f1b4b2385137234d5aec906fb14e3563b1fdb0cb091adf1eaea9d7  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkManager.cs.meta
 2639f3eac0fd1de5ccc4f4ab54b325c05c47a6ddb07d9c9b4218b4b1d30eb7ec  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkManagerEditor.cs
 65bcb079ca3fc83e832bd459b92eb1509176b898c340b9cccba5bd50beb35c48  Assets/DreamOS - Complete OS UI/Scripts/Network/NetworkManagerEditor.cs.meta
@@ -951,7 +1128,7 @@ a9d7b3be3a0f5d837cfac626060d00577410e94071a8dc859ef578672488b8b8  Assets/DreamOS
 e613ea65f846697a78009da0bff424865462ed2b5c1668d3fa78294c74fba37e  Assets/DreamOS - Complete OS UI/Scripts/UI Elements.meta
 fda10f5702e1ba3d5e7658a31496e214401d6a0bc0100430b9b083aa04d47f95  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/AnimatedIconHandler.cs
 f68b2d6a62894fd3718f9175be706f7fb77a1d745047ec7c1970cecf8813db8b  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/AnimatedIconHandler.cs.meta
-dcd7c504649379e319744c2cab2dfceb92ff2f23053f36fbdfb41bae579dfdb2  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/ButtonManager.cs
+f1e11631a7e1f909b8d351cf65f4a4bcc5af2f12ec75e072ab3f76eacbca7c2e  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/ButtonManager.cs
 518cc748fc85e0847c24589a95784e3a489a030fe3681603aef5bc0dd9f0c2a7  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/ButtonManager.cs.meta
 886e8efa321ada2db17a111968133ba9a82763a0e511477dd0f6f3188c34ffcb  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/ButtonManagerEditor.cs
 b338c5cedf6292682433dc23e634d072414427efbfb1b78383586dcea5924a3e  Assets/DreamOS - Complete OS UI/Scripts/UI Elements/ButtonManagerEditor.cs.meta
@@ -2117,7 +2294,7 @@ c05e7c83239bcd70b544eb0eb31a932eac25e7f690741969ea8ca323e5898cfd  Assets/Hongmen
 b89c8ee00f93d871fece920f7d570cba543f101467de27d5ef99307ba7fdfd66  Assets/HongmengOS/Aero2010/Scripts/AeroLcdKeyTravel.cs.meta
 971bf167440663fdc2654a4cf5885d90f6d6e775e7fbf1aa37ca796be57e8816  Assets/HongmengOS/Aero2010/Scripts/AeroLcdResolution.cs
 3cd021556425c6e38b7c1994a8ebfa5d84fab571416e23f401f0c3b82116675a  Assets/HongmengOS/Aero2010/Scripts/AeroLcdResolution.cs.meta
-d20c79e1dccc1376f970f050e99c299a9f784cfdbba1901c2bb0178fa4aacae7  Assets/HongmengOS/Aero2010/Scripts/AeroLcdSourceBridge.cs
+4932a25bf49dbb893d95079caa9e97591ebadc352da6ef0ddb02331698441b6a  Assets/HongmengOS/Aero2010/Scripts/AeroLcdSourceBridge.cs
 4065b68e2202142ac7e0db782e7dca77fe7a4372f60c7b75aaac0871aa132847  Assets/HongmengOS/Aero2010/Scripts/AeroLcdSourceBridge.cs.meta
 35b4283a61a0f6eca80c800bce6596df7922ca2a5e9be4e748255073d9918d73  Assets/HongmengOS/Aero2010/Scripts/AeroLicensedIconLoader.cs
 f0bc393838d7a7e3170908da788c5e6cf89ac2626bbb11004a318885dbefb6d4  Assets/HongmengOS/Aero2010/Scripts/AeroLicensedIconLoader.cs.meta
@@ -2517,9 +2694,11 @@ d84531bb797f140f3953d4a50da45be0c4c648743f4fd61617ca3b5ada7899e7  Assets/LingGua
 15715ca5a3db7b2f8f25df19e3d7d9f995437afdd5148175b073a0d6090137a0  Assets/LingGuangV05/Core.meta
 416fa4cba8aeade23f69754df8106f3e4b5b8973e4d6ad76553284d220d6497f  Assets/LingGuangV05/Core/AppNames.cs
 2cacd95097cf1d7d3b6d46c3a555b1b6d59821508b9b49673bc75eee3569626f  Assets/LingGuangV05/Core/AppNames.cs.meta
+1460d0b020d9d9e8e00fac75513d4940650041bbb972ac7b5d0c67399c1cfeaa  Assets/LingGuangV05/Core/ChapterOneSim.Bills.cs
+95cca86610c9f0ff37d5334d251a75aaef4224c2bd7faba5f4d73b5c7a44d5ce  Assets/LingGuangV05/Core/ChapterOneSim.Bills.cs.meta
 7dc0057941d90fd935da77ac08692b5104855decd8c48bf5c60cff0b330094a6  Assets/LingGuangV05/Core/ChapterOneSim.Hardware.cs
 c73cc5d26e3835f1cf54da57ac2aafb29c502d481589cfa2b22f7ff2b4ad1440  Assets/LingGuangV05/Core/ChapterOneSim.Hardware.cs.meta
-32719c3da09f8014ae4e74841796a9d76f8298a14c5108836ccebdf6fa9c794a  Assets/LingGuangV05/Core/ChapterOneSim.cs
+727b3c6bbc14455e442cb5f67514258788605de544b3a4bd0ce14439535a4758  Assets/LingGuangV05/Core/ChapterOneSim.cs
 ef21d4142a0ac8dc6638a75a721eb75fa0c550ec4c2380bdbd64e69e7a458aac  Assets/LingGuangV05/Core/ChapterOneSim.cs.meta
 6ee71f98326a34de9029c11756d5c33a21922e61e0c55e13f79fba83f1677dd7  Assets/LingGuangV05/Core/Chat.meta
 379ab91d9df954f66bb27a6ce190e4a2e541f6a97ced278d62c61f7e045f4190  Assets/LingGuangV05/Core/Chat/ChatHistoryStats.cs
@@ -2560,15 +2739,15 @@ b4e2f9c0bfc786a7fd578e4ef45fed0e4dd88abdeb206b69114ce6a1d421c520  Assets/LingGua
 0e5b2d3119991285813da3fc90162d4db4e9ac8416632fd8b276dc5d51cd1f84  Assets/LingGuangV05/Core/Girlfriend.meta
 2713eac718ab80dcf498644602bdccc5c16a6e7cfea4c96a3aa8adcc367d0d16  Assets/LingGuangV05/Core/Girlfriend/GirlfriendCalendar.cs
 f0e7a88f9f903c66f23fe149e169619a2e0bb161ae4b78ec0f0dc639c432009d  Assets/LingGuangV05/Core/Girlfriend/GirlfriendCalendar.cs.meta
-f13bb4948b5259c7fe463205def8e9d5ffbd8f43640c86a8f4ed3689cd4e458a  Assets/LingGuangV05/Core/Girlfriend/GirlfriendLines.cs
+0d04886b125bea216b4f1fa496110e4fc707ad1660abb7a52f8d09a48c58a4ee  Assets/LingGuangV05/Core/Girlfriend/GirlfriendLines.cs
 b5b5309610c12757a410eb1e80563fa1048ce34abedd6d01a0a751cddd60fe2e  Assets/LingGuangV05/Core/Girlfriend/GirlfriendLines.cs.meta
-32caaee06526ea29b7f59361d99b0b3601cccb46326af0b269a9baa52ce58196  Assets/LingGuangV05/Core/Girlfriend/GirlfriendPromptText.cs
+ade1ee3007415df38dac11a85a4e0879579f6f165343e760df53617878459ffb  Assets/LingGuangV05/Core/Girlfriend/GirlfriendPromptText.cs
 49c33556110b209cfebfa828dfa797d45ebee2bc37433f432d94a2d071b1911b  Assets/LingGuangV05/Core/Girlfriend/GirlfriendPromptText.cs.meta
 6b1c2d693d5d1fb36104c940fc83353455829079b1c41ba029266de376033ffd  Assets/LingGuangV05/Core/Girlfriend/GirlfriendReplyPolicy.cs
 2dc96763d5566b213e5cf86412974bdb2d8eb9fb717dff5ea2957281030efd85  Assets/LingGuangV05/Core/Girlfriend/GirlfriendReplyPolicy.cs.meta
-f57dc091db56ef33d332f81ac371a2b5c227e4ad7ad45c078a60d01adc61edf4  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Logic.cs
+ff827e14ddb87ec372c3213d3a0d74fb762f9a1270fe945f16040ef34d99774e  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Logic.cs
 6dc59150ec068802df55f531897c2add1b1dd1333bae591699bcabfb0cb35696  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Logic.cs.meta
-5323688ea32e3b86f87ddc822817691515c8238e7ec6bf5016cc74849427101a  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Money.cs
+e0291a8e40db6dbd45b3c3a358a5b94420bbd527332088f0e5be284348af0b00  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Money.cs
 c2e68daa58cecb54c876214e13843a1cbc3c629ff210f6e4e97cfa4a16deee00  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Money.cs.meta
 c0b7ad071693ef9acf02910ad799534d066b37dedd819d977ef9352670adbc3c  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Proactive.cs
 37ad2f6a824640ac8142222f96baafb9efb9b81777d499a7aa52cc876aa9d77c  Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Proactive.cs.meta
@@ -2598,10 +2777,12 @@ aedc469a94f045ce3f9ebd89d6bf9f0e7fbd86c6eb6252f1adbe46becf5e4c86  Assets/LingGua
 fd2782c089d829f113ac74fcd611d15b95e5462e7f3360386fbdaa8ae4520d4c  Assets/LingGuangV05/Core/Lang.cs.meta
 d086aebd3b72e41416838ef64658185e46440f79c59d1b4b2661c51c40813249  Assets/LingGuangV05/Core/LingGuangV05.Core.asmdef
 b3e2c1227e350872d6a3efd397871587e9c330caddbcbcb39e82f86deee2aa26  Assets/LingGuangV05/Core/LingGuangV05.Core.asmdef.meta
-961bdba8198664f1d3df3e75b35c6be1b61a48de35afeea5f90caa0017f65998  Assets/LingGuangV05/Core/Models.cs
+a72fd6660c4c1cf4449f76f19596ec1be8fe0ff5a195ba7232f09a1ef3878046  Assets/LingGuangV05/Core/Models.cs
 5f8dda659ebe4fd53698162df27aa4013467fc606e00f952540774805dcb53b5  Assets/LingGuangV05/Core/Models.cs.meta
+f9c6e48735f85e20b81f946cac54ed3c2740be804f25bad5a1c6e8d290fcc80d  Assets/LingGuangV05/Core/OpeningQuiet.cs
+79eec4cb80cc6dadb7588536665d3ba76cb66909ce6d8c1f8afe2078ff404ab1  Assets/LingGuangV05/Core/OpeningQuiet.cs.meta
 33a8d4d576335c213623234cb730e46e7ae47757fd11c16012ff6b2ad8d92652  Assets/LingGuangV05/Core/Prologue.meta
-c50fb836d27d9abe15cedfa9fa8b202c81e082fd222c442794aed7cf1e0eba38  Assets/LingGuangV05/Core/Prologue/Prologue.cs
+0b867f60deb1c1cc244b39040d2ec18701ff62559850618412d76e48c01c70d3  Assets/LingGuangV05/Core/Prologue/Prologue.cs
 2108fbd54c5e6ad4a15a89cced8edab27bf5f38c40ae44a2ce7c359c5aa699e5  Assets/LingGuangV05/Core/Prologue/Prologue.cs.meta
 f0cdbe25462a598e0c7ef098a12ea8e8dc5ca396c4578b5f95964c573e0cb41f  Assets/LingGuangV05/Core/Prologue/PrologueProfile.cs
 e704d01beea7f194906ed630c3fe12ee170a281c956197500dbe90c4db918653  Assets/LingGuangV05/Core/Prologue/PrologueProfile.cs.meta
@@ -2635,7 +2816,7 @@ c0891f9f2d4be3ae7ffd15062d7771dd309ee80a03e9a7ba3d9585790ef3c067  Assets/LingGua
 bc48314422c1172a5431f50ea2ffbc9bf497048ae45727dc757d85c1aa49a663  Assets/LingGuangV05/DesktopBridge/Casino.meta
 d97abf0ef202745c24539ddccf3118326b5371692cdb249790d945a0477df9f9  Assets/LingGuangV05/DesktopBridge/Casino/CasinoCardMotion.cs
 df669c1f6e7eed12aa86a05bb12bd9a948c91b439885e1934c3416bd7cc65135  Assets/LingGuangV05/DesktopBridge/Casino/CasinoCardMotion.cs.meta
-68dc305219b0a6641e6518a4c0b2e89395daa3b0a26342a75dbc519e476517b0  Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs
+78fa2741ad7ebcccfd5c48285d4bad096e403f265e535991403f6699925f8949  Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs
 8c30c275a2f768d863be6fe32aeba41fc6ef987a2486febb60c69b7fc6696e29  Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs.meta
 71a166034a10552b1f31e5c5de663d5daaf7b2bfe02f14388ed84351b00e522f  Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs
 91479ac30fa8645eeb30a0917355bb4a40834bcf15365b1459311228888303ca  Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs.meta
@@ -2668,7 +2849,7 @@ c8c211daac03cf61679614ae09ba890bb019fda6f22f379f54c7240e6191b615  Assets/LingGua
 85d5c4851b640f0922d7eb392b323d13fbf21f1eba3398cbdaa08ed8873cf648  Assets/LingGuangV05/DesktopBridge/Games/ChessSquareInput.cs.meta
 ca28e626eedd4f78511f0d1b7601b60a3d40ba217b620288034da24d0010200b  Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs
 aac41bbf1836b6d8fd0b20850f00a3ce3de5501bf0fd0a78c542882aad62872e  Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs.meta
-01f9519deddbcc94019f27b5f2b9d57ef435b312126fcb4dff5bfc81e0a265a8  Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs
+67d1b95481a33399911ae17f926015233a451f3ee374460b8a641fed1bdc9460  Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs
 ca7144dc4bb546c0d14fc4312ad22dc08c966e8e6617133074b5de0323c940e6  Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs.meta
 a4be209559c5147c795a66c41914a0a49eda56877a6de3d3d0545009dcd83b79  Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs
 8bfff6d0b535fdc8b23b7659f6fbd4844a5ebccbd3b5a8dc1582232de72c593f  Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs.meta
@@ -2687,7 +2868,7 @@ ac71f5b6e30d84520158765fb44e27f2973479e7dcc045fed83d47e25cf52460  Assets/LingGua
 4103e8351b4ab930ed6c2a24de9c436527bc82f9d8f5ee85e2c8b99831e763a5  Assets/LingGuangV05/DesktopBridge/Localization/DesktopLocalizedText.cs.meta
 0c7817be315b74a491beda0b81223594fadb77d2f375d87fd7e0680fd51490c7  Assets/LingGuangV05/DesktopBridge/Localization/DesktopNativeContentLocalization.cs
 2c4e141f4687aaf8dcc698de2741e4fb274cc39fbf334de8c60e8902810d0ef0  Assets/LingGuangV05/DesktopBridge/Localization/DesktopNativeContentLocalization.cs.meta
-9349f5d324e8952fa2afcaaee6a7b180bb4a78fa6e034441aba780a810d7b332  Assets/LingGuangV05/DesktopBridge/MainSceneEntry.cs
+8b4a80e464c77ee33ba3f7e8d04e4086440d694ea5216673f0cf89a366470b61  Assets/LingGuangV05/DesktopBridge/MainSceneEntry.cs
 e79aff84be93aa0b3877610b6462fe566b766a1a28afb83cd1408238bdd8c69b  Assets/LingGuangV05/DesktopBridge/MainSceneEntry.cs.meta
 ad2d06d230a5f1b2711943b4a81f8d5f5e85f328673c3278d3a64af627c02ae8  Assets/LingGuangV05/DesktopBridge/Media.meta
 9ecf545fba512cf9548506d73f0ba8b5a7d8e49d2ef99d2960f468fc8522cf12  Assets/LingGuangV05/DesktopBridge/Media/DesktopMedia.cs
@@ -2704,35 +2885,39 @@ c1f34195196df3e6a68e361d7a89e82d730feccec07013950bf570dc3da00f88  Assets/LingGua
 215f5a97698f9a9ac7eefc26097279a3f1488499b40c466bfefc536502a6a8fe  Assets/LingGuangV05/DesktopBridge/NativeAppFontFallback.cs
 1f619b5c52a1c285b5a9ebdbf13ecc13fa4d8bee2ec5da8f308ea05c1f7fed4c  Assets/LingGuangV05/DesktopBridge/NativeAppFontFallback.cs.meta
 aec9cadef23edfcd05b2e7b433231f7d704229300344f0d846f80f00ae307e9a  Assets/LingGuangV05/DesktopBridge/Story.meta
-c4246c27d0f08c00b866ab1d3c9980eb87d0bf5104bbefa89e47e316a2d7a4fd  Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs
+1a41931838449ba8ded488358575a859806f0bba24f1a2bd77132107ead6ec2d  Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs
 9f18894492eb3832efb6a77c163fdcb7484afa25ad812be8e41011cf213541bb  Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs.meta
 8bbf1bbdd410900ab123641c1faf1e173d5ced8a192016e466725f9ef21a93a5  Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs
 80ebdc4fc98a1412476702cfa521cbd3b5fad06654451a00bbef7ae4282711a7  Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs.meta
+849beaa9745d52d42351f527f2f5d25590ace9c1f50e3d0c78dd66c7ce1f90f6  Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs
+9e5be99b8a02c06e2ec28449ab2ae3c10ae3ede0c4ff530b32f8c817e7504df7  Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs.meta
 aec9e7bc7d2f9126e0a103d984e5f3e18197c99bdb8d91dd3fe710f84cc38a7b  Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs
 1f1534b6779607f2f8a99ee5bc3c625e41be1c495f21b3aa240edc555eaf3c9b  Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs.meta
-948fc756a3739eeec384f11b5a6f63a25c74f57071a834eedc142232b0b0475b  Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs
+558131f8056b12c5574551efb79c441d9dff1b3e93640b61ea42e8eff9dbe451  Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs
 c75728caf444971da2dae4f4afdea82a7a981245807fd6daca5ed3b54d5f5c2d  Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs.meta
 1ad15dfbc7e204119ddd7ad899c0a8ae7e94d1c10c54e3b74483bcb202593ee6  Assets/LingGuangV05/DesktopBridge/Story/InnerVoice.cs
 35ed04b26641c4e9e43195f1e7e692a32372664efa79ceaff8ddf18638c93ba1  Assets/LingGuangV05/DesktopBridge/Story/InnerVoice.cs.meta
 da041bee251ebb0dcf555be50db49c12a56f6a6a8beb429377e37d980e2e141e  Assets/LingGuangV05/DesktopBridge/Story/LingGuangDownloadPage.cs
 cb96f7574bc5f451857f191f6aaec3393cdf2884cae6a4f661544656686c775e  Assets/LingGuangV05/DesktopBridge/Story/LingGuangDownloadPage.cs.meta
-d39041ce5e40d4d0297d8640dfabffc31b3a77ebad5179d34249c033587796dd  Assets/LingGuangV05/DesktopBridge/Story/LingGuangInstallFlow.cs
+668126a275f5e8c0e20229210a282e20dca80a52b5f46363c1ffa0956f7ba581  Assets/LingGuangV05/DesktopBridge/Story/LingGuangInstallFlow.cs
 dd71c71205edc200e4333bc560b76505f7956fd61d620da88163b73bf5653e4d  Assets/LingGuangV05/DesktopBridge/Story/LingGuangInstallFlow.cs.meta
-02153ecb8f32fcbd4a11c56798c01c18e4dca7883190b0979de662b212b6e796  Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs
+e19d27764012413b4b0498f69fe01e3a4cf59beea31ae5cc152a699bb1a8d5c8  Assets/LingGuangV05/DesktopBridge/Story/OpeningSequence.cs
+881bff27bd9417119c387fdf2cda247318304cced39208002cff2c9043af7ce4  Assets/LingGuangV05/DesktopBridge/Story/OpeningSequence.cs.meta
+0a8cd1de38bea202f93e9529d547011914394646cb2ef4b3e71f7ac5f2886f24  Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs
 dbe229042d295b42d2510176c9a5197a71dc586d86e624432181ed81f4eba1a7  Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs.meta
-7756ae864cc566ee7ca2a5ce4fef4d6c9fb04f9c3049589a0443c4b5cd8c49da  Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs
+652250be95628f22a2bc39d2d84727d376e91297b48200d63d2b4baa7f60263c  Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs
 60bfa7fc395020e8418a0243a851d958d8904bdc3313ea7479273872a04934ef  Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs.meta
-cc5bb66cf0df049eefb1ac2d2ccdce5e65ec07d510dd8290013a8f7fb661c6b9  Assets/LingGuangV05/DesktopBridge/Story/PrologueDirector.cs
+155e15739a2e40780f5dfcd8d86506b4693708a04285a3b04d655bb9a56e1a25  Assets/LingGuangV05/DesktopBridge/Story/PrologueDirector.cs
 a94052249ea7fa628dcb221f7fa2baba60be6dac1fe4f590e96ed128aca4abbd  Assets/LingGuangV05/DesktopBridge/Story/PrologueDirector.cs.meta
-215667ee86a7a8467e9f419e9a84576fbac34dedc1d66b38b9ef73bb5b256827  Assets/LingGuangV05/DesktopBridge/Story/PrologueVirusAlert.cs
+72a216a057a885037758a406daf10d5137af7c5df094b59b24451b604e14a8f9  Assets/LingGuangV05/DesktopBridge/Story/PrologueVirusAlert.cs
 deeff7fe535a380d2f1b69a51f5fd05e11d451c28a7b0b1c5f45e4d7ad15fb27  Assets/LingGuangV05/DesktopBridge/Story/PrologueVirusAlert.cs.meta
 d16f08610e36fc27edf0214060124848f0c3229dc5e77b7d24040a96426aeada  Assets/LingGuangV05/DesktopBridge/Story/StoryBootstrap.cs
 ec4a975635afcd696aa58e42a58e01e17cfc1488b5fc5e31295b3aba2eefbd2f  Assets/LingGuangV05/DesktopBridge/Story/StoryBootstrap.cs.meta
-b88de3e820942f1a84fd11176d20fab85101846b78f01f7fe032d59a170c382b  Assets/LingGuangV05/DesktopBridge/Story/StoryDesktopPresenter.cs
+3f0edf072554d0de7901dfa2ac1c982955bde2334b0202e65ddccc9d368c4e45  Assets/LingGuangV05/DesktopBridge/Story/StoryDesktopPresenter.cs
 a9a225384409a8bbc60f44555b66a1c68e163e99f42edd86099124ef06e58978  Assets/LingGuangV05/DesktopBridge/Story/StoryDesktopPresenter.cs.meta
-6aed301cb378440dc47cd681e04127257e9da76ba4939578ddfdef2cd5bb0b83  Assets/LingGuangV05/DesktopBridge/Story/TrayApps.cs
+9805190d0c9d0d9b591f1fe202b7bee87dce753eb1cb2a5d047cda5956e90431  Assets/LingGuangV05/DesktopBridge/Story/TrayApps.cs
 2c6ae82fa559a716345f13595305e7f09208d55e74caed87363fc0e8bec210db  Assets/LingGuangV05/DesktopBridge/Story/TrayApps.cs.meta
-bce4daf08b02a583ad636b67a27f2bb17bb74abb95849504bf328dc700d0a9a1  Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs
+5103aa62aa602d7ca8e8baeb8b2e50e659019f3d025f4d912d181c294fdb1c46  Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs
 56b909d4983bd24b6fe7c565a7f20f2b241e4ad3624e491164ccd2bf692ef2df  Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs.meta
 92b2a7136b84816a7f86adb922f4810d0ea6ac4769400d48edfd20fc61d4eb22  Assets/LingGuangV05/DesktopBridge/Story/UniverseFlicker.cs
 60f3be55a9dc76b37ddff3e7b76925894f502a28fcba8febf5265851c2b7d032  Assets/LingGuangV05/DesktopBridge/Story/UniverseFlicker.cs.meta
@@ -2745,7 +2930,7 @@ ca0785e159754c74f478c2c1eb638b3dad10dcafedd2b560225c410a0199b700  Assets/LingGua
 92bd5580bc8161a5f6d6c17686922ce37948bb366853c099e07a5fcc31577b8a  Assets/LingGuangV05/DesktopBridge/Taohuo/DataPackPreview.cs.meta
 65cb4b5e3ac00423fbc05f3bd79fb52fe5d90afe2ce282f0564e2862c6459530  Assets/LingGuangV05/DesktopBridge/Taohuo/ShopKit.cs
 571cd339a6a3811492d29aaaf89de4a3935faed109899e075e4ea0102282fbdc  Assets/LingGuangV05/DesktopBridge/Taohuo/ShopKit.cs.meta
-473f5cef9ced72086f8693bc65f7b68c65cd9c80aeecbe788754dfb9ae0d864e  Assets/LingGuangV05/DesktopBridge/Taohuo/ShopNotices.cs
+5bff2713cd206dc4af0facc1674e67eea182a09b655d9a39a6c2c8e5143ea346  Assets/LingGuangV05/DesktopBridge/Taohuo/ShopNotices.cs
 becf5e4fec24fe435ee98b549ef62635566d83e34fc80df098454710b2a99bfb  Assets/LingGuangV05/DesktopBridge/Taohuo/ShopNotices.cs.meta
 41330e64193670fcac6342757b0af73157a49e297f04a22dfd5428d2aab55ff1  Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Data.cs
 dd5d0a0038071ed6cce1fbffae5677a65465e3000c5d97dd146955899c8e8cdb  Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Data.cs.meta
@@ -2767,14 +2952,18 @@ c2387521019c114d47fbe553cda43b3fb1c3091d34ead13b68954d998ef97e27  Assets/LingGua
 2f755e709e4c465779246a2470f2cc0ae6870fcd7b8f5fd912893dd69c3979b9  Assets/LingGuangV05/DesktopBridge/YY2010ShellController.cs
 4cc5661b265b241e9f375bb704ce4051802d2ce59453d454c646c4ca8d5bbb4f  Assets/LingGuangV05/DesktopBridge/YY2010ShellController.cs.meta
 11ae67bcdfc531cc2b1714ec4654890157d118db3d1d0770588a39aa3c95f6fc  Assets/LingGuangV05/DesktopBridge/Zhongbao.meta
-7680b1b7a84bfdcc2f764f21fbe095c2d122a88ec88d00b8280ad4d6faa8e49c  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoHub.cs
+78c6c733b244ebc35e4abffa77fcd3a4d28c19ee0d3fa0f148a733a73d9fe15c  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoHub.cs
 c269c4c9b3accad2b23e47d94b3462b9382c9c32820a02b4bf660b8aa547fc3d  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoHub.cs.meta
-405292c8b2fdeab02d80fab3a029bbb6c156655ba2b36095aec24697a59d25b2  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs
+70675c63086a6d48cfa3c074da64199afe5fc3261372e37c05c33ac32ac9446a  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs
 bc5480ead6af336e2adab53a7eb82294b206abd49375c8762af2cee5833c9fba  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs.meta
-a6de28fb67f661707c0705c74f5ccbfe6b232afd6f7aa2bee264cb78aa75508c  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs
+180841559e81404601aab5eadbad038a2b0f97ad22b7780b18012766a8b86ccf  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoRows.cs
+ad16b3c3132884c3c7880362a4eb71af365992c2e82de982d7e1b044e521b6ac  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoRows.cs.meta
+fd384cd890509d7e290858f3fccd4abdca725b9c17bb4a7ff098ea2c76f277c4  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoSkin.cs
+6d9b6710f093a53188ee3c98a29e26d50d93b51d4f05dad3db0a06dc753128a7  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoSkin.cs.meta
+c2297d4d21cde729a6e3ff4f42a7851733f842a6697b8eabec6b6f62be497800  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs
 43b8ee524f1deaeebd72a7bbca1dd6b008cce7e39eae58898cc38e7f48c1e255  Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs.meta
 4496529de3b6f97ef2066f045d0ff57be548e92fcfa055698c2e40363d28cef2  Assets/LingGuangV05/LocalLLM.meta
-ff1bc54d8d4981727c81972520ce63b8c586409b8162976604805b2bfd36f429  Assets/LingGuangV05/LocalLLM/GirlfriendPrompt.cs
+90cb3310e893ccd77049bbee2b8e99c8ad31ec11bbf14d4b9d595fa536e234bc  Assets/LingGuangV05/LocalLLM/GirlfriendPrompt.cs
 f12e805e5779782070ed95a979faa6e913b948266af920a45e3975195e6701cd  Assets/LingGuangV05/LocalLLM/GirlfriendPrompt.cs.meta
 6e655de48beab9446811e1e5d2dbaeaf6ec5d25f126fabeba7d96b6ee3516a72  Assets/LingGuangV05/LocalLLM/LlmMemory.cs
 c6ae0d865aad54763f024553b41d4ae2830ce43d7f7030fd77a99d9474a93f85  Assets/LingGuangV05/LocalLLM/LlmMemory.cs.meta
@@ -2800,7 +2989,7 @@ fe7e1af3e28a9e96851d20c22ae72a65fff5d6288f3093e40febfe85fd8aa26c  Assets/LingGua
 42546d6fd7266c18ef79d5fdbbca0cd3d2fab2596327a320ac295e0fdff0441c  Assets/LingGuangV05/Localization/Fonts/84dd14695854bbc43a5faa24fcf93d0d.asset.meta
 f0987dcf868d0ca70414b3af3f88aaaf69d57c25bdde83774a53102b699b8fb6  Assets/LingGuangV05/Localization/Fonts/8f586378b4e144a9851e7b34d9b748ee.asset
 17dfb4a03624ffc79badb354b9311bf7fafe84b483b1d40f755eca40c5259b3c  Assets/LingGuangV05/Localization/Fonts/8f586378b4e144a9851e7b34d9b748ee.asset.meta
-56737f933c3ecfaca8e3e66b8555b0bedc2667b69895d7265eb9c53978c6479a  Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset
+4ddb99262f9669d01c6531d0a2b9844c90c0c93620050b8b7c0c379f72a01c5f  Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset
 1179b515f592f62660e042bab8291d1a5609eab528f4815ac4e01617a8e0415f  Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset.meta
 8011702915302267b2a875e6896e6bdee0ffab4bb3bc6b139a4b2e4b195c371f  Assets/LingGuangV05/Localization/Fonts/a26e617919f03488cbd79a62f120c47c.asset
 f791ffd2ab7e442b2d1fe97d421d52fc3e6793f1dce950d0a6b8570b46d33434  Assets/LingGuangV05/Localization/Fonts/a26e617919f03488cbd79a62f120c47c.asset.meta
@@ -3234,7 +3423,7 @@ f9a901d7860a496c5daec4b41dcde0e5c5a499f95d5f6b0285c7a2f5a8a3f1a1  Assets/LingGua
 cd8221d6e2a6db553026040cb2e6d3b99572da464bf8938e41d0dcad51190a4f  Assets/LingGuangV05/Resources/LingGuangV05/Media/portraits_atlas.png
 f6d8b26cbea060d8ac581af9a8c23518c83c0b0d7a26a71a4d826144fe72deea  Assets/LingGuangV05/Resources/LingGuangV05/Media/portraits_atlas.png.meta
 d353bb3cdacf96bdc256d9af6d6ad9f6ca75f1f29638b2d5b9ee94dc2d464da5  Assets/LingGuangV05/Resources/LingGuangV05/Prologue.meta
-c9e71d14e459563eb3365f951ee432953073a9e5cd22fdf041d7da749f1a05ff  Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json
+78c3e96b3422965f77c50cdff2960e9ba598ffb2c421e213f2d3d754071a9575  Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json
 bd0a5b12a83ae60f19e2a2cfe57b7587ff820b1b415e09f67393efa62bd42726  Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json.meta
 eb10e1a793d2b0b907ee3b6b18d8c72fffa2372cebe8069213e7c3c44a3ef20f  Assets/LingGuangV05/Resources/LingGuangV05/Prologue/shutdown_voice_en.wav
 e6d0e3a8b3421e2e36638f409be3525ba226200c9f14aaed38ed7fe56b9e1e53  Assets/LingGuangV05/Resources/LingGuangV05/Prologue/shutdown_voice_en.wav.meta
@@ -3304,7 +3493,7 @@ bb4c29366d2172871508ee2b018fcd4fb43b57d93259bae23e9c1180dfbfff02  Assets/LingGua
 745a29b3b14d2b9c54f530a50e09a514800b56f5bd3f141f0d780b6eba686ee7  Assets/LingGuangV05/Runtime.meta
 defc28bd26bb077c87fa41d4293744921a46b7632aaabab8dd17ec829eb9cbb9  Assets/LingGuangV05/Runtime/AssemblyInfo.cs
 0825f3dadc75cdc42796b6f9439840180d0f99dc987ea41576bf67b55209f888  Assets/LingGuangV05/Runtime/AssemblyInfo.cs.meta
-f9bb77adc17a4fdd377a76ca67ae4d8a05bb4bd2562edabdb47b88d020aa164d  Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs
+98d0d6e6f0e978adc0947b47f74159c7961f63a9ed222ceef105bf895d62b29c  Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs
 110ec14090bc9ec8fb229fecda3938a959089513969653a17c13338057b02def  Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs.meta
 cefffb4cf84bcc2c568a9537b4923d4272aa4b89c478e3769256d0c6ca39c588  Assets/LingGuangV05/Runtime/EraContent.cs
 3e0a6ca4add5238bea6f8e9525aaab18b887aeab85e98e83bbccbb4735c2e145  Assets/LingGuangV05/Runtime/EraContent.cs.meta
@@ -3315,7 +3504,7 @@ a797e6a7590dee3bf178d4bc01c8272b41076c71e071d6b60af938e21527dd44  Assets/LingGua
 1691cdb721acd0be5396263fbccf796fff68069a7c5e58fc54aaf07af7791ce4  Assets/LingGuangV05/Runtime/NativeLaoZhouReplies.cs
 542340d912ac0fafc38c369f74d213b57b42738a1c8ae45e74fa4ade780190f5  Assets/LingGuangV05/Runtime/NativeLaoZhouReplies.cs.meta
 46762bb1eae96015c46b39263da32a295b2afbe63f73baf2d98577ffe4457f6f  Assets/LingGuangV05/Runtime/Persistence.meta
-ed17ae11132fdcb20643814dd4407083c2094f266774c8a64a51fd9ec904f123  Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs
+5602023bba8770a1420df5428ef9b3c36b729b04bafe6a14b96ce1abdaa73d12  Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs
 b080b666bc0d23ab298462579943e3ec0f88a4cdd53138cae721a0673c8196a6  Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs.meta
 a8fc1f6841ccf8ac468d9d4c1405ad6b0702d2552eebbe51c6c78d7c5f339c12  Assets/LingGuangV05/Runtime/PrologueContent.cs
 bacd99a80775a9feb19fd012169e77dad37e6e71a89bec218bb324fcf0c78759  Assets/LingGuangV05/Runtime/PrologueContent.cs.meta
@@ -3348,7 +3537,7 @@ d1d88ba6db3882865177f1e08e1ed47c03d47883523bc29f820e2b3979a8a2f4  Assets/LingGua
 7f0f08810ec9dd6fdd86ed438fde5bb1f63b51f15958baeddf57665305a39ba4  Assets/LingGuangV05/XingGuang/Core/CasinoPresentation.cs.meta
 3e615f3140229cdbc8337d875269c8874b5fbd83ad29f3fcdbc55267e23acbe8  Assets/LingGuangV05/XingGuang/Core/LingGuangV05.XingGuang.Core.asmdef
 457e4b3dcdb42f7aa9437a7a23e7039ed9003afe6837a7afc3567bc2d65acd16  Assets/LingGuangV05/XingGuang/Core/LingGuangV05.XingGuang.Core.asmdef.meta
-f2ebf1690d69b055d6bbfebaa7df333c2d82b2f54b2cc617c92baea71d485a8d  Assets/LingGuangV05/XingGuang/Core/XgArith.cs
+a7b966799aca4f9711b40e3d970d1e8c55f1040a3aa25911e02f8ad9ecad5e55  Assets/LingGuangV05/XingGuang/Core/XgArith.cs
 3c7455fa4260a638f38fe07af1190955ab6d3f79827d4e2d7edd33f872cf64b9  Assets/LingGuangV05/XingGuang/Core/XgArith.cs.meta
 3877a3b0230cb8cd4738a0ce258668d1e9f406db3788ee74ef0aeb49df73b419  Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs
 79ca92ce2077653ba4eb09d66ff1d55f1a4ad313be2fc6ac021a39e165a5dde5  Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs.meta
@@ -3360,7 +3549,7 @@ dd2fec3f4a618079f26b664d0737a6ba1f8a76d2d1d7dd40b26f9b21a782b26f  Assets/LingGua
 9b32b4ff226f5f3256df1aee2fb80071da37c0ba58a8d38784a8854816d9a76f  Assets/LingGuangV05/XingGuang/Core/XgBoardPhenomena.cs.meta
 1b4aad7cec1a69973b8c53c5a086722188af5d2ecb55554ccfc2b9725cb7d91c  Assets/LingGuangV05/XingGuang/Core/XgBoardTasks.cs
 ee32f11444f79c2ba082ddac74a40d625550cb3329510e2136de220b4179fd77  Assets/LingGuangV05/XingGuang/Core/XgBoardTasks.cs.meta
-2d4623840e9b9cee262cf3285e664f3d7c601e7b4692cce0b64a54a9879c8b4e  Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
+72581befede419bc6d83236952335ec1382a530050f9d10ea06e433398c4f8af  Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
 13ee3e4700bdfba99d85313f0a2a5ecbbdb300f3145443cb6701db09420ff4b1  Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs.meta
 ee77c9a8d7467a157cce4eb1672b2be562b3a4b0796c04860673e244617bd0fa  Assets/LingGuangV05/XingGuang/Core/XgChanceHint.cs
 e8938a41f6f39c5613dd3e84c7c5292686ad5e1919f5cdff5cf6430fb7872d9e  Assets/LingGuangV05/XingGuang/Core/XgChanceHint.cs.meta
@@ -3368,11 +3557,11 @@ e8938a41f6f39c5613dd3e84c7c5292686ad5e1919f5cdff5cf6430fb7872d9e  Assets/LingGua
 63b4adae6777fc32bbcab4fe857b0d58489980e636e88250ce7a45a63c0dd69b  Assets/LingGuangV05/XingGuang/Core/XgCollaborationModels.cs.meta
 7eb645ce2e2a6095ed94806fe26d4129329dd618ed129c313dbe3e2d6819a985  Assets/LingGuangV05/XingGuang/Core/XgCrawlArticle.cs
 85a389887d26856298a26374e68c83dc27b79e233e2c3e82329ffa18ef9892d5  Assets/LingGuangV05/XingGuang/Core/XgCrawlArticle.cs.meta
-24adcd3aee309a7a5347ccdc97bd36d421cc5783e0660281216f1e36e7a63062  Assets/LingGuangV05/XingGuang/Core/XgGuide.cs
+02ee05319faeff19ef952a7ce724af10fa650ad01a6f2e41a13792c36cb3da1a  Assets/LingGuangV05/XingGuang/Core/XgGuide.cs
 e865c19ca221229772375da4cbeefde946b60855c3026d298898a941dabbb05a  Assets/LingGuangV05/XingGuang/Core/XgGuide.cs.meta
 a83a4f651d48c0b8a1c111a63ba51f2e10268abb9785c3c03bc11f547594e7d5  Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs
 c81fbacd08afb85ab932900691ced21e56e72e05668ff6099587efc4311cc65c  Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs.meta
-67f218be27de0e31ccef92e493e2e55ce97ed89111f0d761ea8e595540c312ac  Assets/LingGuangV05/XingGuang/Core/XgItems.cs
+3ddd5b7f94d5bd4b1fcb7a105bcdcedafd26886d15985d6833159eecf34a4da2  Assets/LingGuangV05/XingGuang/Core/XgItems.cs
 4fb64f0fa8b16a9466b947859134d03a61d2ede42e5fa046fe334789e60faddd  Assets/LingGuangV05/XingGuang/Core/XgItems.cs.meta
 b0cf642ea8fcfd6cac16decd05fc3dabc505cbb73ea8c9cdf53a3a592f539ee7  Assets/LingGuangV05/XingGuang/Core/XgJudgeProtocol.cs
 2a454e9ce372edd57f132f9c4a605b8a87ce7d7a250e3338d2f5b9f2d7a9a619  Assets/LingGuangV05/XingGuang/Core/XgJudgeProtocol.cs.meta
@@ -3380,17 +3569,17 @@ e11a92ccb6f2fa91dcafe0c7577a05540ff434d331feb680b47b37f84f7913af  Assets/LingGua
 2fd0202146b307809bc6378dee799915305b2c15beaa098ea1322d51541d7304  Assets/LingGuangV05/XingGuang/Core/XgLogic.cs.meta
 d4613625b079763d68ecd289221381d16a755a7e8700c5e92cfb2c453d10e2e6  Assets/LingGuangV05/XingGuang/Core/XgMemes.cs
 83fa65d217b6b4e18860d661eb6b1bc331809586e20457a10a8ae37613d53993  Assets/LingGuangV05/XingGuang/Core/XgMemes.cs.meta
-e9e6bd0a69d096d01c52e51f6d71d6839b719825df434c07b68449b5ab56fb63  Assets/LingGuangV05/XingGuang/Core/XgModels.cs
+81e2dbc6dedaf9cfaac45cc4c437c838d0376a40a639d313c21f38836faaeec9  Assets/LingGuangV05/XingGuang/Core/XgModels.cs
 a9581bbc22e45374b798148a2ab9ac89e19e41354487f99fccb8316c3775cda1  Assets/LingGuangV05/XingGuang/Core/XgModels.cs.meta
 40f536ec0909678d33108407bd09297652a41371362801dc23c1627f571b4450  Assets/LingGuangV05/XingGuang/Core/XgProgressionModels.cs
 7b34dc6b2905483400465aee0ae4e05761ea8eb0b5933efcf5072545fa94f33a  Assets/LingGuangV05/XingGuang/Core/XgProgressionModels.cs.meta
 14c0d32724c992b155aabac7caef4db826dc343a07e44b0d560a327f884e9b0d  Assets/LingGuangV05/XingGuang/Core/XgResident.cs
 d51b4dba878a1e44d4abfd8352d74e09f98f2d5f3b9161618dff945a03b48b47  Assets/LingGuangV05/XingGuang/Core/XgResident.cs.meta
-b4195d87d4194e4e054eb4b1898ac89849959bd7ed79c285d7057537945bdf1c  Assets/LingGuangV05/XingGuang/Core/XgSim.Abilities.cs
+fe46c504eaaa71598e9405ed62523a6b983a5f3f60c9c6e482a6fd3bb8f885f8  Assets/LingGuangV05/XingGuang/Core/XgSim.Abilities.cs
 32493846919dab079d80d2b3e80b5ffa135d4d793f0637f43def288fe1882848  Assets/LingGuangV05/XingGuang/Core/XgSim.Abilities.cs.meta
 cdf2bb303568c813f8997d9c4d1451baa4684aaac1723902dc3aaa98127a8573  Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs
 1cb07c2bad89e192ba7862814a6e17f42aae66b7431bce94fc86290dfc2646c0  Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs.meta
-72e992cf7f09524f4081571a6aaf8770d702831fbddabc3f7ec89ed657b46055  Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs
+a929ac29188d4c3f258f5d71a758c83778295341d28f8d1bfac8dfba1290c56a  Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs
 9ecd0818b3985d1a0cf0e7d6478dfe746d6c4c3f29cc4dd4c78e4dfb5da2ae0f  Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs.meta
 b8c06fd6ee0047198e73c7cf595b497f30ad9b708ea6e6a7ba29126600071da1  Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs
 f8691cc685447ec2f6ed26b3a5105fa90ae2a2a80f1c6a79d8b4e360f2a551b0  Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs.meta
@@ -3406,14 +3595,18 @@ ab05ef5e0518aa4f57bc74e9217b53677be052c481f94ac267f92f970e5725bf  Assets/LingGua
 4003ac931a70224acfc2b58c093ebcc77b1567e9aefeaa9a4d06ac8dede22a10  Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs.meta
 f67cc6941dc685e30b688b48fff6db196ca3505a680cfccc34d54746fbc2f587  Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs
 d69777d84e322fef0edc3da62a87118900948e7c07ff1ecc303c8615b9cc7e39  Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs.meta
-21cfa3e5bbe9e1b03ffe927999efd8c41089d2d50933ce58ac1ca2ebe1bed3ee  Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs
+7b179ad0bd750a42bd8841648a32356600e7b9cdcf31e0a830d1234e79180175  Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs
 4d6dd03fe96d63d91b3fac67cd73e872cd9f413cecaca374c9ae374e006a8198  Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs.meta
 e797f4fb7307b5afcf168ec46889fc7ee5f669ed40ce0a4238cb851dc37f86b3  Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs
 0ec8f3d5b51987cd3927003f8bc17a1c2d5693171f509f517a501833103a5dc6  Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs.meta
+92a4633b2c6131188a48358760d46b083793948dae4475dd653ef7b08acb5277  Assets/LingGuangV05/XingGuang/Core/XgSim.Consumables.cs
+6a124bb8fd2e811a8424fe376a244bf68a0268dfe7da4fbd265b3072a95975c4  Assets/LingGuangV05/XingGuang/Core/XgSim.Consumables.cs.meta
 f46c2c9efdaec180eab93265928719531a63038830e35d5c5fa97430f087f3d5  Assets/LingGuangV05/XingGuang/Core/XgSim.Crawl.cs
 eef1090bf04cf593561356a7b5fd748f9aac919186d3a058f307e20a6c25b9d1  Assets/LingGuangV05/XingGuang/Core/XgSim.Crawl.cs.meta
 fc047309d06da3caa3e4cbd3bc28602cf9f4114beeb63c73f82c994e2379205f  Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs
 97d81428b6885cd794f4735b5768f20d670f74cbeaa377484875ff8c6ee32a6e  Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs.meta
+5d4a2854ca7ad461779d533afac6a681f25741da4901f1352d0fee7b27099644  Assets/LingGuangV05/XingGuang/Core/XgSim.DayStats.cs
+820bd8c32b6b8fe4dbf413b6d5fd9b7b6c3c5f357bb982e1aa1d495ceea21262  Assets/LingGuangV05/XingGuang/Core/XgSim.DayStats.cs.meta
 112db8429f32f74b31eed0f895b76aff2268277bedc37c4fad6b0af4eee7fb98  Assets/LingGuangV05/XingGuang/Core/XgSim.Diagnostics.cs
 afc0097a889c00a45922a2b34a8f43a7256c7330c5812733e1c4d7ffded5fe78  Assets/LingGuangV05/XingGuang/Core/XgSim.Diagnostics.cs.meta
 81a087415dff44cf67af6c9e7154c287da1119b18e0cd658c3e5b2d5a45e1dfe  Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs
@@ -3426,7 +3619,7 @@ aa16331c1293faf3504ecef2f5242c0af5e8f4234c60ac9f53615a574cea761f  Assets/LingGua
 28420f99b68fcbb2a6447a1ee2e27eec1323c942ed7285d62ee491b69cf2b9c1  Assets/LingGuangV05/XingGuang/Core/XgSim.EraExam.cs.meta
 9c7f7ca06564f901d4adcd2cfa9ead4b498abc8679f1929df79e512f155ce2a8  Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs
 2b40eb7574bb4a7bc8721553294c76ecb8538cc9d5782596e73fba691e907bcd  Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs.meta
-0f0263b91365e8563f7dc087449656622ad2601f552f8d99683dec835c389edd  Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs
+e565169876c92b4e434bde1421b995f785db8e160747268f32f30b95193cc11b  Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs
 8da67110697183add31d15d1a21a382ab826a389f1ea01f72716ba1a3eaec96e  Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs.meta
 c130ccfe1a35ab07404283e19313f011eeb3de03fba8fc92f56f6a0b589caa02  Assets/LingGuangV05/XingGuang/Core/XgSim.FinaleTalk.cs
 e933d288370db31cc34cc3deb46df62ab9f710d217ee5278c1bc7de7018d83a3  Assets/LingGuangV05/XingGuang/Core/XgSim.FinaleTalk.cs.meta
@@ -3438,6 +3631,8 @@ baf7c8a63cde2e314cf4762a01c761e37c359b66c68e11273e07c537eb9a9816  Assets/LingGua
 b2488eec70f8942e4e82d4c180a2cc4e2297515f112f06eb25ccfad01f48f114  Assets/LingGuangV05/XingGuang/Core/XgSim.Habits.cs.meta
 b36cd35200f0d95f94f27d167d004d34be69619af80fdf2c6c06ac68d3fc5ed8  Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs
 afff2509734cec2d7f5721da2469a80a0ede15563665338059b71fa853ae15d1  Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs.meta
+4a98a3f08db512b407f976fa9e97fefc5c43c5bd61895663484f49483da6afa9  Assets/LingGuangV05/XingGuang/Core/XgSim.Ledger.cs
+5694f837df34625acd49279dc561419bbc5211c7cb051a53bb5bf57d90d0d9d0  Assets/LingGuangV05/XingGuang/Core/XgSim.Ledger.cs.meta
 454ba26787f842d03b5b8721a10ec62ece9d40226e97b81560f079c92f89c520  Assets/LingGuangV05/XingGuang/Core/XgSim.Love.cs
 c0759660e1cd0be920732775e85b9d74dd2ea070ed27746b7c3794375c3fedf3  Assets/LingGuangV05/XingGuang/Core/XgSim.Love.cs.meta
 fbe6455742222e2f65d68adc41ddea6d9ec63db3aec018f1556a5261cf806ac7  Assets/LingGuangV05/XingGuang/Core/XgSim.Market.cs
@@ -3450,19 +3645,19 @@ ccac6b6b9c260587a8a39b953b43c5e5a7f37793c4591b00590d70e4813b0f56  Assets/LingGua
 6a526a15e847dba8d8accd2d1a772d8d85e4fd60ebd078e1ecff6d3414dc51dc  Assets/LingGuangV05/XingGuang/Core/XgSim.Origin.cs.meta
 343fb87cd84f2eeb316f1e4da23c7885a8f9f172703c2187623d2fa2146c33b6  Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs
 70b2f44902f203b4947cdac47a15137c2ad2821e6edd47bce8db33d31c58f588  Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs.meta
-9344d2fd77aadc1af4fd47d8eef8c8fc1809e6c6f941a1604ed34262ebe5db40  Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
+2ce2d9433aa9b4416248a6379e1e61ed6c8c1c1e78448246a99c1784ca8f8aea  Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
 c8b1c7078d3acb59004b1a1cbf5fa23b9c452203047acc336e3e54cb5f3d85d3  Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs.meta
 b249b276243246f0c8416a283819251e7b70417378bbcb4d6f483ad0baf6f72d  Assets/LingGuangV05/XingGuang/Core/XgSim.Quality.cs
 a9a3e2d56dff76c7c7c958e307a3344a5f7960fa97f5b730a4da320780f4adc9  Assets/LingGuangV05/XingGuang/Core/XgSim.Quality.cs.meta
 f205ec2b7906ed7412e2c0fbddc905071825b34bbdb0f37a990650e34d537559  Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs
 3356e15862840a0379753d763a900e176b83b6b89ae647df74124b9029a8477e  Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs.meta
-d606a2fc87e2a28c2a4035bd0d814a0ea5e2f5f1b7139e1d2483277fa194abe0  Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs
+edd251fc512b8154d1d0c393f64adf21bcafd1a6013c32538fd24ff6ae4171fa  Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs
 b8e64b093d666a99723e825f2798144cf59e7b14f4e32e6589e9cc33edba6fc1  Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs.meta
-b698a5519ecf9ef9c1a6a7071c9ae4696b88c2f1f8fa1d0fbbc20238fa5e9143  Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs
+ce64e64ccfb1cc7c24adad73c771650f367dad6e4f55e30f762ab8bdc34bee98  Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs
 3c81348f2cb5129d2418c3eb27644424646495282fb52e4a5febdda8becbe6fd  Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs.meta
 3b5ed2c09ed35bd53b0284760a82d8a18c8fb15a12e9436fb1e3c583b626898d  Assets/LingGuangV05/XingGuang/Core/XgSim.StoryBeats.cs
 01f4d6e18f172feedef90f09ab09b5e6a3ed7f3a1a1349b7fa72766a986a9ad2  Assets/LingGuangV05/XingGuang/Core/XgSim.StoryBeats.cs.meta
-71d1acfdfde2f419827f6b31d0191de10e3124f4a099487b10db003c18910970  Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs
+9f755c4e4625b0fa7c5c84d6df03bada18bc5feff0fa9250c8b38331f11e66e8  Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs
 6dcfa2fefc71398320b19ced87086e60ca2ee4db0279c4959e182c82589c1012  Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs.meta
 5db11a4c7c60f804ba8a1543015be5422cfae4ddaf8d65234cadb796b21fb834  Assets/LingGuangV05/XingGuang/Core/XgSim.Trace.cs
 e481338ec8cf20c7ced76310ed20cca982dd61aa41c6824c45eba3095d6352e0  Assets/LingGuangV05/XingGuang/Core/XgSim.Trace.cs.meta
@@ -3470,7 +3665,7 @@ b901bb7d8981ea549e1a94ee5753737a81f491f8997006bc85fd384ab8ab36e4  Assets/LingGua
 d1d4df3265226ac650963e06b6b8f8ae772bdb7ecdddd93f5daa1bae0905a0be  Assets/LingGuangV05/XingGuang/Core/XgSim.Verdict.cs.meta
 3dff6bac147d69e2bb2153fc82a8a57e6aa5c3ffdca172f5a8915e79d81d82a8  Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs
 b3d30d7e59669506c5931bfd2b863a72b5c40cf7bc690d373f7cbba4628bb8bf  Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs.meta
-c11ba8bbc0c8745878e38383648384f46b4f1181bb108217d182943c5a8dd56a  Assets/LingGuangV05/XingGuang/Core/XgSim.cs
+9de5dd95ae4a125e85d05ebed55c73ede240849b198a18fd44e09e7e314f0e9a  Assets/LingGuangV05/XingGuang/Core/XgSim.cs
 efde7987ce3a149e27ade83c03e581131357d93c3abd88fef09fd54e088d972b  Assets/LingGuangV05/XingGuang/Core/XgSim.cs.meta
 5f3e3b334f0d284b607f2821ed958050e6d9548ec2e5adcab846dac8ed251025  Assets/LingGuangV05/XingGuang/Core/XgSpeechPolicy.cs
 77362e988d26b4cf6e627ddfc1c79e5eaf76d69df7fe6ad06f08305fe73f350c  Assets/LingGuangV05/XingGuang/Core/XgSpeechPolicy.cs.meta
@@ -3509,7 +3704,7 @@ d0229845a1922a0eab2909e2f8d3f4c801ae99bf91d682cf908eb02fad254e23  Assets/LingGua
 a062c4f9bcd88b67f8a46528f343e07a0bb7dd99ff4b97c6b55d1df27cc190f8  Assets/LingGuangV05/XingGuang/Desktop/XgCaptchaCard.cs.meta
 571d58c3c95ce9fec91e26318ea938c175ed932ffd905aedec98c75ec958e547  Assets/LingGuangV05/XingGuang/Desktop/XgCardsPage.cs
 d08733ee7eae8dfa47baf2f1d5608242b26e6aec970d0c8917f6ccb9de1359aa  Assets/LingGuangV05/XingGuang/Desktop/XgCardsPage.cs.meta
-a322209a06b48aeed7f8e20d73aaa13a14183a8f478c867b4660a8ce5a1c1ff0  Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs
+72ec7693b86e35aecc778c70044c43dc696b8e44c91b3b82deb03ac291303938  Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs
 255a23fc6a0e9da2058b0f478c059073246ffa50fc082605ddaefb557d2e0c66  Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs.meta
 afdabfbcb772b782b0589795a8bd65e965f4ccf4901d67bda2e1e0d4b0f79033  Assets/LingGuangV05/XingGuang/Desktop/XgCortexGraphic.cs
 150b891e0e2285c4153e31641a56df28d4b4b37c97707d3ceb9259b951857ee0  Assets/LingGuangV05/XingGuang/Desktop/XgCortexGraphic.cs.meta
@@ -3517,7 +3712,7 @@ afdabfbcb772b782b0589795a8bd65e965f4ccf4901d67bda2e1e0d4b0f79033  Assets/LingGua
 36f6b33109923636eca50ba61182282ca51e75ead0f42189dd05b1e426033aa1  Assets/LingGuangV05/XingGuang/Desktop/XgCrawlerPanel.cs.meta
 bf197a57a163a07492ce43e8331e80cd919f1447591261ef09c1e75616ea736f  Assets/LingGuangV05/XingGuang/Desktop/XgCrawlerSpider.cs
 7b56a6f17f7132fffec40d5928c8dd52e16e97afb2c86e25cab85d9aa4cb223b  Assets/LingGuangV05/XingGuang/Desktop/XgCrawlerSpider.cs.meta
-a5c7a2f1455b6abba24eb261cc0afab3bfae9fa6c62b718800f45606fa103cc7  Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs
+b327c7f6cee97acff76f175e2fba56eac529a8e80ac2a8062ccd3b0d802d25de  Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs
 44eaee051880c10ab438f8b2033bfc313f9b24670ba704c77f5e7ddb011c1fda  Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs.meta
 f5397f879e18bc80eb73ca2b5c485053ae0eb9124a950f82641e08e03a54ceb1  Assets/LingGuangV05/XingGuang/Desktop/XgDataUi.cs
 376ec3344e59f41745430bf8d4c257ca84da935122c4a95dbdbacdc9a722febf  Assets/LingGuangV05/XingGuang/Desktop/XgDataUi.cs.meta
@@ -3529,41 +3724,47 @@ d17f50d5bead9a07f3ab54aa72c68afc056c8f1c3a1864d1e314064dad48b470  Assets/LingGua
 8fefde49ca80da9249bbc34fa660e39362fe5d2f0f73e4878b5471a35de4e334  Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs.meta
 65e5bccf0e36c5b6a87685ae9e889d116d5c31d6d80d5445008b315c2d23ea43  Assets/LingGuangV05/XingGuang/Desktop/XgEraDeliveryDesk.cs
 80965051343112f05ca715242164cc63358528761d601ef09b24c95294dcc2fb  Assets/LingGuangV05/XingGuang/Desktop/XgEraDeliveryDesk.cs.meta
-be7fe7daf21f900f5062c8408d6021612b3db4677f57f9b33c755905e77df99d  Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs
+89dddb7a01d1d1c468ea7045100eade0135562b502f9e99c04abf7fe737ca8bd  Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs
 35bdc302e4c6948ec4f6c73af69ce9129829a902dd63c8e88540d945273ff934  Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs.meta
-37f3e9594913824b10027f4ad1ca17f91837ab7754e60cdab6deaa27aa38ce02  Assets/LingGuangV05/XingGuang/Desktop/XgGraphics.cs
+ba859ebc12c68f9d24bebfcc87f810e117170765985a59d06c396bd5faf595a0  Assets/LingGuangV05/XingGuang/Desktop/XgGraphics.cs
 fab42eb3ef76bd208ed8406d8bd4aca7fc27b66cbdbeb8e7195cfea1546a8967  Assets/LingGuangV05/XingGuang/Desktop/XgGraphics.cs.meta
 819d1178b7050cd6dfd928350ab982ea9fc61267d511d3739ddefee326caff07  Assets/LingGuangV05/XingGuang/Desktop/XgGuideHighlight.cs
 7caf194313d13c5999dfc3325a673ef4da323fb2b3c19ce0eb0c55babb9b0207  Assets/LingGuangV05/XingGuang/Desktop/XgGuideHighlight.cs.meta
-f0ba2aecd90b25dd9ec29bf10596730138cb8f3030e87386f10e14a2d74eeb87  Assets/LingGuangV05/XingGuang/Desktop/XgHoloCard.cs
+e0fdcd8f36cc3d56a71aa6f111b8eadf882b62bb6554c093e148cc8ae19deb9f  Assets/LingGuangV05/XingGuang/Desktop/XgHoloCard.cs
 bc21a52d78e425b5a2a0df1d6dff3a52929cab839ef51d8be5f94f01bc6b2d4d  Assets/LingGuangV05/XingGuang/Desktop/XgHoloCard.cs.meta
 14cd7510c6689b346c9f5d488943a8730d27cfc4fd520e9e56e755eb54cd3491  Assets/LingGuangV05/XingGuang/Desktop/XgHomePage.cs
 a6b17711e90c52df00cd514a81230e1cadb9068cf511d09293e76dbace7376fb  Assets/LingGuangV05/XingGuang/Desktop/XgHomePage.cs.meta
-4e7664982919f2073edb312905e338270a913d9cc25533bdcfaa62f51c2c9bb8  Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
+062f6ad000c8128676c99273ecfb499383f9713edad8a82ea454cd012756aa44  Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
 26823d58616e37cb4bab58fd953efe1e246e4552468afb722bb7ff3b76886a6d  Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs.meta
-a0c31e71448446a375e9f653e220c9417c6e9a72c2def0811fd21d72b2ffb21d  Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+2abca8bd6a93d03cf679a786f1a8b6eb2b50a2505a68ce2aa5f890844cf567ec  Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
 7ff45f6e73c18cb1871e231252f9d42512d1777cbc7b080e433fe8efd1a24460  Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs.meta
-ffddf4aa32d073604c9cf55f3bad8c987f34027a6027169b8382d020fa365975  Assets/LingGuangV05/XingGuang/Desktop/XgLabelGhost.cs
+6820dc09a6ea9f183d65dddb10bfc9e31f88467063981a3f85bde9b448ec4937  Assets/LingGuangV05/XingGuang/Desktop/XgLabelGhost.cs
 9eb26a2b2aa3cf7ae4157f5a04973a4112165d872014d1eafa6582c07763acaa  Assets/LingGuangV05/XingGuang/Desktop/XgLabelGhost.cs.meta
-2329f5c7a3498c9218b51d0b820f2b6c9cc6ae6b4a644e946840f5ea8fa2bf30  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Data.cs
+9b3c4cf19ebea3a3504fc7dca81ead732391a5cc0dca5f136ff9ad2556241f94  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Data.cs
 ab32de1cdffd5dccfc0fdbb94734f6cfd840ec1ab17c132930964a053632f938  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Data.cs.meta
-8a627947f627943fb37e7740e0c0e816a332ba7b29b9088b9ea16a36f4a0cb0e  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+e4863f48c46f94c2aa7df995f59632b0be75d7f1a1d3165bf8b5e97bd2c7a1b1  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Hall.cs
+945bf4e8b929c1fe60382013eb9f7ea1119f1f96b1e189b0eb867b14b5b8a614  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Hall.cs.meta
+ba5b513a2888de3a01abf81e1deec048eb653781aa17389d201a4a81adc916ba  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Side.cs
+ad0e1296ec4dfe4a544af3e76708b25fba817cf0316909bf4812cb87035e1b37  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Side.cs.meta
+a2d644947b93fca18c64526dfb4706deff287169d837ef2e50255d9583f20a73  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
+5882e9b097bf63a6842714673b9c3d9357dc3888b85ba33f0bcae0dee517608d  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs.meta
+4968250935cc986a5767c0c1c84b5aa6016533d547ddeffc1a95328c69d214c2  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
 14436fce6bebd28f3316843f7f6840f467e1cc95b426b6fb4263ccd25614e6cb  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs.meta
 88ca6f02d8abc388090c31c9094371f2630a7f9808cfdfd54a1a595d8c23e0ff  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPreviewGraphic.cs
 cb5f3b9ef89606183c494db1c18f2023bb82f9e857aa0c0ec0a323bfdcfc1bd4  Assets/LingGuangV05/XingGuang/Desktop/XgLabelPreviewGraphic.cs.meta
-f05d1427fb3c269e3e45877fbd35fdd21b5b7b35d1e518b6d0a26aeaa9a06e7d  Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs
+9a1b077b4a7a69f79936bc3a633b14662a1f9d5cc85d26481fdbc69ca3d27663  Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs
 9dd9d29f1ed727fc0bf93f39642a2e80d3c98cbdded800b21d49c7738400d277  Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs.meta
-08a369ccdb3719ad4014d9ad73d761c60a3323d1a1a711beb2abc516d2ad5ae5  Assets/LingGuangV05/XingGuang/Desktop/XgMarketSection.cs
+6a732f135580fcfd7dcc1fc3c08b9c55305cafcc1dc49ca4a27d0679989067b6  Assets/LingGuangV05/XingGuang/Desktop/XgMarketSection.cs
 ce433b8a0da49c1a2df85888cf5d63d54d5a89323e988cd3fbe10a5fe46ab8cd  Assets/LingGuangV05/XingGuang/Desktop/XgMarketSection.cs.meta
 a3ef580159e2a4ffb383d3bbaceb4281134ad08818d5197268f3b473932eb903  Assets/LingGuangV05/XingGuang/Desktop/XgMemoryNotebook.cs
 60dd239b6e1972fea056229404e453b668f4b5c325f319db45f9fdab9a5e1798  Assets/LingGuangV05/XingGuang/Desktop/XgMemoryNotebook.cs.meta
-732de5fd77a932b6d55381e30d35aa2714fbcf1684e7aafece25555dc30c41c1  Assets/LingGuangV05/XingGuang/Desktop/XgPlatformPopups.cs
+16ee243898c582974cddb7a4ccfe5aab7440c6f147cfafcbc8120f630296fcc7  Assets/LingGuangV05/XingGuang/Desktop/XgPlatformPopups.cs
 c55c08e3ea9188fc2baf74a8f6a414020026be3a321023e3c9dc768a79aecad0  Assets/LingGuangV05/XingGuang/Desktop/XgPlatformPopups.cs.meta
 cfcb2047281ace7b4da3b9c0262a20f5480ed2a5742a7a6e3552bc152b0032f1  Assets/LingGuangV05/XingGuang/Desktop/XgRealTrainPanel.cs
 7196374d666586b0c44f52dc5a1238eea942b13e96585d15b3968681fa684f96  Assets/LingGuangV05/XingGuang/Desktop/XgRealTrainPanel.cs.meta
 6b33b19bdfbcea8e95624d5e3a0fbf7fa252154bdc5289f1649741c57d604396  Assets/LingGuangV05/XingGuang/Desktop/XgRepoPage.cs
 4431aa009161bb6a59a55c40ce4af0511fbde4a20eb55be39fde15a1626f6161  Assets/LingGuangV05/XingGuang/Desktop/XgRepoPage.cs.meta
-caa6c1434468819fb3bb08c34336bb33f055f0871d577d0eb1bb2e56eb784150  Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs
+81b0b5d91d17b20adf837ff31e8017b64d52a636e1511272045b4213523e405c  Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs
 bbf8e5f19c5a537df72cd127ada6b3991b4175e9358253807317be3136fee27f  Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs.meta
 19dea961288820a0e3a2ae9534f263f1a7666a1d7acf7131016c072f963c53a9  Assets/LingGuangV05/XingGuang/Desktop/XgScannerGraphics.cs
 77a3d60e31a9029ad9797d35ab68cadf4ff37c55a909002d6d7b2faeb7858536  Assets/LingGuangV05/XingGuang/Desktop/XgScannerGraphics.cs.meta
@@ -3581,12 +3782,18 @@ b6162abcd06375f1cb421ed9399a2a45fcf77a17c234777c612f1d0a0f54a563  Assets/LingGua
 d5f7f00227228c6eb730bebd11561d58475161e73a5a868530cecaff2e5e7295  Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs.meta
 0d414947ad35faa8d0c4297e8174b051cdf8d0eb2444749827f2cd41b87d7bb4  Assets/LingGuangV05/XingGuang/Desktop/XgTechTreeSkin.cs
 1e3d44c37c292fe72d0a9c55c49ec06379658521c81f87547d6ef73436f9cf62  Assets/LingGuangV05/XingGuang/Desktop/XgTechTreeSkin.cs.meta
-702742d727a8384def03e6892579fafb484c0a8fc3c6c1e0f1ed45312b325af6  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Data.cs
+6d136756972ce750424367faaf72d342c5378d375eeef89f8521b4c894967d88  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Data.cs
 940e9b7a27ff6dcec6de521849e1f792a5af9d48b8675ec902866ae5d9c2416b  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Data.cs.meta
+0d25e83b1a1fc30d175ce79c7c12216cdcfbc48c9843e2f336976c59b3bdec3c  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Dock.cs
+bce7b345c526884f1bbdc4741553106e29f7207d2ae90aecd8a77bf11aaeb2d8  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Dock.cs.meta
+d8e42ba532cd4373fb8e5655a71c5eb02ab31e16d12b6fed3a2e99e3fa62c605  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs
+6ba9ee0f302c092b03ac690a195f51fe75d54357a546f840529b5985c6697020  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs.meta
 b2aebf24b1734c5a656e93be839a961d1adc3fd91444fed0b36242f3e5beeb01  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Sources.cs
 af8e306543f606840717259977fba5bcb3acf986dcd4f390f936b39ca6d18c56  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Sources.cs.meta
-d765877cb232f3a9bbd7d80c6192a318055cff0a45a7ad213adfa1a1e6effb68  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs
+32670f568e324f9a84bf1bd2747b35472f34ed92924421df69e0cebbf24e1855  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs
 b23ee65570c92278eb3468c8aac4648bf8054a264d3852f94b992a5eaf5f2b8c  Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs.meta
+38d0c3f9ae356ed33d2382dc65b1c8310978fef7eb9cec8370ea85dc53cbc442  Assets/LingGuangV05/XingGuang/Desktop/XgTrainWidgets.cs
+137fed890be43b102991a45abc8a74da9a5e7b5676b8f99d37a7778ea6fe3a8f  Assets/LingGuangV05/XingGuang/Desktop/XgTrainWidgets.cs.meta
 1e76b42f0a7e25fec42557d902106ad80bc988c7abc7acad269862fadcec8bf8  Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs
 f2dd50f0b3335554f6f6b51c1079fb7524e9fb162311f6092b1fa298552f4e28  Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs.meta
 cbbeef3d07eb14621be25cb0bb41808043a922e1375e6219f86de5a993817f72  Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs
@@ -3603,14 +3810,14 @@ bfb58ee10928b49e668312363721b408bd183f570c5b3524790e263f6ebfa1fa  Assets/LingGua
 273c4f3b495433e22fd088ad0198a5a14949d8bce8cef3f483098000d7a42bb8  Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs.meta
 1b2bd5e929008543bf93604da4954873015546ab409db1475dce36c95e2a99e2  Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
 2502e4efcbec32fa2ce30cb8bf24d6b5778a4f2c4e60e462fd7ae8bf3e33865c  Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs.meta
-4be9f3fbbca1d02a42825d30728087342db32b0f1d620509af21833fa97ced2e  Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs
+fdb29793031aa6fc4de79d5aad7ad955e21a3309bb0068f0d4e5beb48fdb24cb  Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs
 fec70ba108206924893af6d18f77274ec12e5252470649ec468ce5ca88911ea7  Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs.meta
 b753456e5fcf8fb96b1e7fe33f2a7049f7d42a940c49bed01e1dc2f863caa095  Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs
 6be28778e776bdab5eb7a3d7ec6c51388e0ca8dcef2fa252c6a99db31dcb3055  Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs.meta
 4504a47c3b066ce7cef1a86242d5bba32986adc0303a1570751e5ad68dddce60  Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs
 c309ec4aa92879a996653d4267a4e4e9b600aa75edbfb3a1de0062a376c249b1  Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs.meta
 b80afb7a25243ccc563c411bc5ee7d9d3526de7acb793c298d91d1c29466fc3e  Assets/LingGuangV05/YY2016.meta
-cdbd3121a5b999e4e71522d099f89b741ca56beb2272a861528ad662a3f3c407  Assets/LingGuangV05/YY2016/YYChatHub.cs
+626b5f110e6f4b614d862a7960525f59dd10ea6f2fae6a9c8a06fb02ce633361  Assets/LingGuangV05/YY2016/YYChatHub.cs
 f8b62e5e502e3f3feed30b0870202a2fccb95ff2e4a6c9bb7e5f437f6f93b8a1  Assets/LingGuangV05/YY2016/YYChatHub.cs.meta
 2b0c9cd3f1d2e48454977592b7d5e1726bdd8fa51b3c73e650c07b75e6a799ac  Assets/LingGuangV05/YY2016/YYChatView.Faces.cs
 b4e27ef8ae8a69cefdb8565248f2d2501b39ab30258096f7ab7435fa0aed165b  Assets/LingGuangV05/YY2016/YYChatView.Faces.cs.meta
@@ -3622,7 +3829,7 @@ e0bb6eaf44f4f0e3e5e4abda2ada06f2d0ab382a0252acf6c7a2d5420f070d33  Assets/LingGua
 e7c4f86c3f1dbdb5e291950300fba2d2e416f9760519dd17aa3da6cfeeff1f2b  Assets/LingGuangV05/YY2016/YYFacePicker.cs.meta
 5923eb90862d9e0651fb5bd895a2c7d5f115561b0f8fd6fc80f33afd742c5127  Assets/LingGuangV05/YY2016/YYFaceRenderer.cs
 221e10ee053bcae7f08bc2750e0cf57f1ec8bd50acd34121ae3ec334defc3dc3  Assets/LingGuangV05/YY2016/YYFaceRenderer.cs.meta
-566be24d43e7fb066c65b32721ac1058e8f4ef7f571a1d9958191d384e406afe  Assets/LingGuangV05/YY2016/YYGirlfriend.cs
+a206e8b73253104081468227a3ffbb28d1990e176ebc398a5712c6f5b01538cb  Assets/LingGuangV05/YY2016/YYGirlfriend.cs
 b88e7301c9f2ac955ae1889b86b32a1d34ba903f9f855c4bd9439fb89b54d640  Assets/LingGuangV05/YY2016/YYGirlfriend.cs.meta
 f2950bb499eabfaf45fdc7dde35ca239b61a8f29b0b909c8a088c61c152e218e  Assets/LingGuangV05/YY2016/YYGirlfriendUi.cs
 b70f791e0d9129e37b6bda325fd98c8a10348a61c7cda3a7e24707ec9890b59a  Assets/LingGuangV05/YY2016/YYGirlfriendUi.cs.meta
@@ -3833,5 +4040,5 @@ c88aca53996b7a2c9be5551cb82a59b405b91d5eb9ac511bdb83b16cfb0c4d96  ProjectSetting
 c317fe22b9488785c0611f0642429922e5d324430d929bffb41648130f30c218  ProjectSettings/URPProjectSettings.asset
 f066c6483919961332415ee64204f74fe52f38c02e82892eb02b7a5b2e381f0e  ProjectSettings/VFXManager.asset
 edd2beb4a2e388312b4b7da241aa51070434005d82c59363f1237dd2e567585f  ProjectSettings/XRSettings.asset
-6b2699b81e288786d7fbbde3f45460a16730b069b4d65410e9581a5bfa8dfc96  README.md
-b854e4db03fe5328fd2fbb2453358ae5cebe77f430b683a26160f05465c98c69  SNAPSHOT.json
+3d07493bff3b749995f63c7feedde80a30c27412810f202b59f728fa938a5d41  README.md
+80eab7b4e63817c12de32d65fa6fb23749ae321ec507c5391a562e0d3d26481a  SNAPSHOT.json

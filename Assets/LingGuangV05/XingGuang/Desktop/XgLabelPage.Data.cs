@@ -21,7 +21,8 @@ namespace LingGuangV05.Desktop.XingGuang
             sourceSwitch = ui.Button(pack.Root, "", NextSource, 11);
             sourceSwitch.rt.gameObject.name = "SourceSwitch";
             sourceSwitch.rt.anchorMin = sourceSwitch.rt.anchorMax = new Vector2(1, 1);
-            sourceSwitch.rt.offsetMin = new Vector2(-122, -21); sourceSwitch.rt.offsetMax = new Vector2(-10, -3);
+            sourceSwitch.rt.offsetMin = new Vector2(-100, -26); sourceSwitch.rt.offsetMax = new Vector2(-8, -6);
+            pack.InsetTitle(108);
             UiTip.Add(sourceSwitch.rt, "换一个数据来源：公开包、淘货杂包、众包标注、剧情数据。便宜的脏，干净的贵。", "Switch the data source: public pack, junk pack, crowd labelling, story data. Cheap is dirty, clean is dear.");
         }
 

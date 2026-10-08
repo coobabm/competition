@@ -266,6 +266,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             // An ability card stays quiet too: the emergence cutscene (XgEmergenceCutscene) is its moment.
             if (a.rarity < 1 || a.category == XgSim.CardInsight && a.id != "lingguang" || a.id.StartsWith("emerge.", System.StringComparison.Ordinal)) return;
+            // The opening quiet window (OpeningQuiet): an ordinary card waits in the album without the fanfare.
+            if (a.id != "lingguang" && !LingGuangV05.Core.OpeningQuiet.Allows(false)) return;
             if (pending.Count < 3) Enqueue(a.id);
         }
 

@@ -22,25 +22,30 @@ namespace LingGuangV05.Desktop.XingGuang
         public const float AutomaticCardSeconds = 3;
         /// <summary>Every epoch is assessed; only a new grade by hand earns the big card, other records a corner card.</summary>
         public static bool UseAssessmentOverlay(XgAssessment a) => a.hand && a.newGrade >= 1;
+
+        // Layout of the page at the normal window size (about 1064 × 617 here): the left column is 642 wide, the right 410.
+        const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 96, QuickBarHeight = 104, RowGap = 10;
+
         XgBtn[] trackTabs = new XgBtn[2];
         XgBtn summary, train, assess, autoTrain, saveModel, cleanNoise;
         readonly List<XgBtn> dataBtns = new List<XgBtn>();
         readonly List<XgBtn> packBtns = new List<XgBtn>();
         readonly List<float> noValidationCurve = new List<float>();
         readonly List<string> dataIds = new List<string>();
-        RectTransform left, right, chartArea, epochBar, epochFill, dataBox, dataViewport, gpuTarget, diagnosticArea;
-        RectTransform[] pips;
+        RectTransform left, right, curveCard, trainRow, chartArea, epochBar, epochFill, dataBox, dataViewport, gpuTarget, diagnosticArea;
         XgChartGraphic chart;
         XgStageGraphic diagnostic;
         readonly List<XgStageGraphic> previousDiagnostics = new List<XgStageGraphic>();
         TMP_Text diagnosticTitle, diagnosticNote, gpuLabel, noiseText, noiseHint;
         XgGlow gpuGlow;
-        TMP_Text numbers, yTop, yMid, yLow, legend, risk, hint, mode, trainSub, modelTitle, modelInfo, shapeText, techText, statsText, dataTitle;
+        TMP_Text numbers, yTop, yMid, yLow, legend, risk, hint, mode, trainSub, trainBill, dataTitle;
         XgGlow trainGlow;
         XgHold hold;
         float glitch;
         Vector2 chartRestPosition;
         string shownDataKey = "", shownStructure = "";
+        /// <summary>The quick bar of consumables is on screen (it waits for the 道具 page, or the first one owned).</summary>
+        bool quickBarShown = true;
 
         // assessment card
         RectTransform card, stamp, assessmentLayer;
@@ -59,69 +64,106 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Build(RectTransform area)
         {
             root = Rect("train", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            left = ui.Card(root, "Curve", Vector2.zero, new Vector2(.62f, 1), Vector2.zero, new Vector2(-6, 0));
+            left = Rect("Left", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-RightWidth - ColumnGap, 0));
+            right = Rect("Right", root, Vector2.zero, Vector2.one, new Vector2(-RightWidth, 0), Vector2.zero);
+            right.anchorMin = new Vector2(1, 0); right.anchorMax = Vector2.one;
+            right.offsetMin = new Vector2(-RightWidth, 0); right.offsetMax = Vector2.zero;
+
+            // Top: the two tracks, the model in one line (structure · parameters · VRAM), and the save button.
             for (int i = 0; i < 2; i++)
             {
                 var t = (XgTrack)i;
                 trackTabs[i] = ui.Button(left, "", () => { Sim.SelectedTrack = t; Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 15);
-                PlaceTopLeft(trackTabs[i], 14 + i * 112, 10, 106, 32);
+                PlaceTopLeft(trackTabs[i], i * 112, 0, 106, TabsHeight);
             }
             summary = ui.Button(left, "", () => view.ShowTab("items"), 14);
             summary.rt.anchorMin = new Vector2(0, 1); summary.rt.anchorMax = new Vector2(1, 1);
-            summary.rt.offsetMin = new Vector2(244, -42); summary.rt.offsetMax = new Vector2(-14, -10);
+            summary.rt.offsetMin = new Vector2(230, -TabsHeight); summary.rt.offsetMax = new Vector2(-108, 0);
             summary.label.alignment = TextAlignmentOptions.MidlineLeft;
-            numbers = ui.Text(Strip("Numbers", left, 48, 26, 16, 16), "", 16, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            summary.label.enableAutoSizing = true; summary.label.fontSizeMin = 10; summary.label.fontSizeMax = 14;
+            saveModel = ui.Button(left, "", () =>
+            {
+                if (Sim.SaveModel(Track) == null) { Fx.Play(XgJuice.Sfx.Id.Thud); return; }
+                Fx.Knock(saveModel.rt, .15f);
+                Fx.Burst(Fx.At(saveModel.rt), 10, XgDark.Accent, XgJuice.Shape.Spark, 180);
+                view.Refresh(true);
+            }, 14);
+            saveModel.rt.gameObject.name = "SaveModel";
+            saveModel.rt.anchorMin = saveModel.rt.anchorMax = new Vector2(1, 1);
+            saveModel.rt.offsetMin = new Vector2(-100, -TabsHeight); saveModel.rt.offsetMax = Vector2.zero;
 
-            chartArea = Rect("ChartArea", left, Vector2.zero, Vector2.one, new Vector2(56, 214), new Vector2(-16, -80));
+            // Bottom up: the consumables quick bar, the train row, then the curve card takes what is left.
+            BuildQuickBar();
+            trainRow = Rect("TrainRow", left, Vector2.zero, new Vector2(1, 0), Vector2.zero, Vector2.zero);
+            curveCard = ui.Card(left, "Curve", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -TabsHeight - RowGap));
+            LayoutLeft(true);
+
+            numbers = ui.Text(Strip("Numbers", curveCard, 6, 24, 12, 12), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            numbers.enableAutoSizing = true; numbers.fontSizeMin = 10; numbers.fontSizeMax = 15; numbers.textWrappingMode = TextWrappingModes.NoWrap;
+            chartArea = Rect("ChartArea", curveCard, Vector2.zero, Vector2.one, new Vector2(58, 30), new Vector2(-12, -34));
             Panel(chartArea, new Color32(6, 11, 16, 255));
             chartRestPosition = chartArea.anchoredPosition;
-            chart = Rect("Chart", chartArea, Vector2.zero, new Vector2(1, .52f), new Vector2(4, 4), new Vector2(-4, -4)).gameObject.AddComponent<XgChartGraphic>();
+            chart = Rect("Chart", chartArea, new Vector2(0, .37f), Vector2.one, new Vector2(4, 2), new Vector2(-4, -4)).gameObject.AddComponent<XgChartGraphic>();
             chart.raycastTarget = false;
+            chart.MarkDrops = true;
             chart.Capacity = XgSim.HistoryLength;
             BuildDiagnostics();
             yTop = ui.Text(Rect("YTop", chart.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             yMid = ui.Text(Rect("YMid", chart.rectTransform, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             yLow = ui.Text(Rect("YLow", chart.rectTransform, Vector2.zero, Vector2.zero, new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
-            legend = ui.Text(Rect("Legend", left, Vector2.zero, new Vector2(1, 0), new Vector2(56, 188), new Vector2(-16, 210)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            legend = ui.Text(Rect("Legend", chart.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(8, -20), new Vector2(-8, -2)), "", 11, XgDark.Dim, TextAlignmentOptions.TopLeft);
+            legend.textWrappingMode = TextWrappingModes.NoWrap;
+            hint = ui.Text(Rect("Hint", curveCard, Vector2.zero, new Vector2(1, 0), new Vector2(12, 4), new Vector2(-12, 28)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            hint.enableAutoSizing = true; hint.fontSizeMin = 10; hint.fontSizeMax = 13;
 
-            epochBar = Rect("EpochBar", left, Vector2.zero, new Vector2(1, 0), new Vector2(16, 170), new Vector2(-150, 182));
+            // The train row: the big button (with this round's electricity), the round's progress, risk and active effects, auto-train.
+            var trainRect = Rect("TrainAt", trainRow, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(240, 0));
+            trainGlow = Glow(trainRect, XgDark.Accent, 6);
+            train = ui.Button(trainRow, "", null, 28);
+            Place(train, trainRect);
+            train.rt.gameObject.name = "TrainButton";
+            train.label.fontStyle = FontStyles.Bold;
+            train.label.alignment = TextAlignmentOptions.TopLeft;
+            train.label.rectTransform.offsetMin = new Vector2(8, 34); train.label.rectTransform.offsetMax = new Vector2(-104, -8);
+            train.label.enableAutoSizing = true; train.label.fontSizeMin = 15; train.label.fontSizeMax = 28;
+            trainSub = ui.Text(Rect("Sub", train.rt, Vector2.zero, new Vector2(1, 0), new Vector2(14, 8), new Vector2(-14, 30)), "", 13, Color.white, TextAlignmentOptions.BottomLeft);
+            trainSub.textWrappingMode = TextWrappingModes.NoWrap;
+            mode = ui.Text(Rect("Mode", train.rt, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-96, 8), new Vector2(-8, 28)), "", 12, new Color(1, 1, 1, .7f), TextAlignmentOptions.BottomRight);
+            mode.textWrappingMode = TextWrappingModes.NoWrap;
+            trainBill = ui.Text(Rect("Bill", train.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-104, -44), new Vector2(-10, -8)), "", 14, XgDark.Money, TextAlignmentOptions.TopRight);
+            trainBill.textWrappingMode = TextWrappingModes.NoWrap;
+            hold = train.rt.gameObject.AddComponent<XgHold>();
+            hold.Down = () => Press();
+            train.rt.gameObject.AddComponent<XgTrainingSubmit>().Submit = Press;
+            assess = ui.Button(left, "", () => DoAssess(), 18);
+            assess.Show(false);
+
+            var mid = Rect("Mid", trainRow, Vector2.zero, Vector2.one, new Vector2(252, 0), new Vector2(-92, 0));
+            epochBar = Rect("EpochBar", mid, new Vector2(0, 1), Vector2.one, new Vector2(0, -12), Vector2.zero);
             epochFill = Bar(epochBar, "Fill", XgDark.Track, XgDark.Accent);
             for (int i = 1; i < 16; i++)
             {
                 var gap = Rect("EpochSegment" + i, epochBar, new Vector2(i / 16f, 0), new Vector2(i / 16f, 1), new Vector2(-1, 0), new Vector2(1, 0));
                 Panel(gap, XgDark.Card).raycastTarget = false;
             }
-            pips = new RectTransform[4];
-            for (int i = 0; i < 4; i++)
-            {
-                pips[i] = Rect("Pip" + i, left, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-138 + i * 30, 168), new Vector2(-114 + i * 30, 184));
-                Panel(pips[i], XgDark.Disabled).raycastTarget = false;
-            }
+            risk = ui.Text(Rect("Risk", mid, new Vector2(0, 1), Vector2.one, new Vector2(0, -54), new Vector2(0, -16)), "", 13, XgDark.Bad, TextAlignmentOptions.TopLeft);
+            risk.enableAutoSizing = true; risk.fontSizeMin = 10; risk.fontSizeMax = 13;
+            BuildBuffRow(Rect("Buffs", mid, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 24)));
+            autoTrain = ui.Button(trainRow, "", () => { Sim.SetAutoTrain(Track, !Sim.Run(Track).running); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 15);
+            autoTrain.rt.anchorMin = new Vector2(1, 0); autoTrain.rt.anchorMax = Vector2.one;
+            autoTrain.rt.offsetMin = new Vector2(-84, 0); autoTrain.rt.offsetMax = Vector2.zero;
 
-            var trainRect = Rect("TrainAt", left, Vector2.zero, Vector2.zero, new Vector2(16, 76), new Vector2(316, 156));
-            trainGlow = Glow(trainRect, XgDark.Accent, 6);
-            train = ui.Button(left, "", null, 28);
-            Place(train, trainRect);
-            train.label.fontStyle = FontStyles.Bold;
-            train.label.rectTransform.offsetMin = new Vector2(6, 18);
-            trainSub = ui.Text(Rect("Sub", train.rt, Vector2.zero, new Vector2(1, 0), new Vector2(6, 6), new Vector2(-6, 28)), "", 13, Color.white, TextAlignmentOptions.Center);
-            mode = ui.Text(Rect("Mode", train.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-110, -22), new Vector2(-6, -4)), "", 12, new Color(1, 1, 1, .8f), TextAlignmentOptions.TopRight);
-            hold = train.rt.gameObject.AddComponent<XgHold>();
-            hold.Down = () => Press();
-            train.rt.gameObject.AddComponent<XgTrainingSubmit>().Submit = Press;
-            assess = ui.Button(left, "", () => DoAssess(), 18);
-            PlaceBottomLeft(assess, 326, 76, 150, 80);
-            autoTrain = ui.Button(left, "", () => { Sim.SetAutoTrain(Track, !Sim.Run(Track).running); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 15);
-            PlaceBottomLeft(autoTrain, 486, 76, 140, 80);
-            risk = ui.Text(Rect("Risk", left, Vector2.zero, new Vector2(1, 0), new Vector2(16, 36), new Vector2(-16, 70)), "", 14, XgDark.Bad, TextAlignmentOptions.MidlineLeft);
-            hint = ui.Text(Rect("Hint", left, Vector2.zero, new Vector2(1, 0), new Vector2(16, 6), new Vector2(-16, 36)), "", 14, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-
-            BuildModel();
+            BuildSide();
             BuildCard();
-            for (int i = 0; i < 2; i++) UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, "训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（下面写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。", "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (see the passes below).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.");
-            UiTip.Add(autoTrain.rt, "自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).");
-            UiTip.Add(summary.rt, () => ArchTip(Sim.Run(Track).arch) + "\n\n" + T("这个区现在自动用的结构。结构是道具：买到更好的，它自己换上。点一下去道具页。", "The structure this region uses now, chosen automatically. Structures are items: buy a better one and it switches by itself. Click for the Items page."));
+            for (int i = 0; i < 2; i++)
+                UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
+            UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
+                "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
+            UiTip.Add(autoTrain.rt, () => T("自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。\n当前自动化：", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).\nAutomation now: ") + mode.text);
+            UiTip.Add(summary.rt, () => ModelTip());
+            UiTip.Add(risk, () => RiskTip());
+            UiTip.Add(numbers, () => NumbersTip());
+            UiTip.Add(hint, () => T("训练为什么停下来，或者下一步做什么。", "Why training stopped, or what to do next."));
         }
 
         void BuildCard()
@@ -154,93 +196,19 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildDiagnostics()
         {
-            diagnosticArea = Rect("StageDiagnostics", chartArea, new Vector2(0, .55f), Vector2.one, new Vector2(5, 0), new Vector2(-5, -3));
-            diagnosticTitle = ui.Text(Strip("Title", diagnosticArea, 0, 22, 2, 2), "", 13, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            diagnostic = Rect("Current", diagnosticArea, Vector2.zero, Vector2.one, new Vector2(3, 20), new Vector2(-95, -25)).gameObject.AddComponent<XgStageGraphic>();
+            // The teaching diagram of the stage sits under the curve, inside the same card (it used to take the upper half of the old page).
+            diagnosticArea = Rect("StageDiagnostics", chartArea, Vector2.zero, new Vector2(1, .36f), new Vector2(5, 3), new Vector2(-5, 0));
+            diagnosticTitle = ui.Text(Strip("Title", diagnosticArea, 0, 20, 2, 95), "", 13, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            diagnosticTitle.textWrappingMode = TextWrappingModes.NoWrap;
+            diagnostic = Rect("Current", diagnosticArea, Vector2.zero, Vector2.one, new Vector2(3, 2), new Vector2(-95, -20)).gameObject.AddComponent<XgStageGraphic>();
             diagnostic.raycastTarget = false;
             for (int i = 0; i < 5; i++)
             {
-                var r = Rect("PreviousStage" + (i + 1), diagnosticArea, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-88, 22 + i * 16), new Vector2(-3, -25));
+                var r = Rect("PreviousStage" + (i + 1), diagnosticArea, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-88, 2 + i * 16), new Vector2(-3, -20));
                 var g = r.gameObject.AddComponent<XgStageGraphic>(); g.raycastTarget = false; previousDiagnostics.Add(g);
             }
-            diagnosticNote = ui.Text(Rect("Caveat", diagnosticArea, Vector2.zero, new Vector2(1, 0), new Vector2(2, 0), new Vector2(-2, 19)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-        }
-
-        void BuildModel()
-        {
-            right = ui.Card(root, "Model", new Vector2(.62f, 0), Vector2.one, new Vector2(6, 0), Vector2.zero);
-            modelTitle = ui.Text(Strip("ModelTitle", right, 8, 28, 14, 128), "", 17, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            saveModel = ui.Button(right, "", () =>
-            {
-                if (Sim.SaveModel(Track) == null) { Fx.Play(XgJuice.Sfx.Id.Thud); return; }
-                Fx.Knock(saveModel.rt, .15f);
-                Fx.Burst(Fx.At(saveModel.rt), 10, XgDark.Accent, XgJuice.Shape.Spark, 180);
-                view.Refresh(true);
-            }, 14);
-            PlaceTopRight(saveModel, 124, 8, 110, 28);
-            modelTitle.fontStyle = FontStyles.Bold;
-            // The model, read only (训练不再需要调参数): what the lab configured from what is owned and what fits.
-            modelInfo = ui.Text(Strip("ModelInfo", right, 40, 26, 14, 14), "", 16, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            modelInfo.fontStyle = FontStyles.Bold;
-            modelInfo.enableAutoSizing = true; modelInfo.fontSizeMin = 11; modelInfo.fontSizeMax = 16;
-            shapeText = ui.Text(Strip("ModelShape", right, 68, 46, 14, 14), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
-            shapeText.enableAutoSizing = true; shapeText.fontSizeMin = 10; shapeText.fontSizeMax = 13;
-            techText = ui.Text(Strip("ModelTechniques", right, 116, 46, 14, 14), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
-            techText.enableAutoSizing = true; techText.fontSizeMin = 10; techText.fontSizeMax = 13;
-            NodeLink(modelInfo, () => ShapeNode(XgNodeKind.Width));
-            NodeLink(shapeText, () => ShapeNode(XgNodeKind.Depth));
-            techText.raycastTarget = true;
-            var items = techText.gameObject.AddComponent<Button>();
-            items.targetGraphic = techText; items.transition = Selectable.Transition.None;
-            items.onClick.AddListener(() => view.ShowTab("items"));
-            UiTip.Add(saveModel.rt, "把当前模型存进模型仓库。", "Save the current model to the model library.");
-            UiTip.Add(modelInfo, () => T("模型是自动配置的：结构用已经买到的最好的那个，宽度和层数用科技买到的上限里显卡装得下的最大的。\n参数量 = 层数 × 宽度² × 结构系数。括号里拿真实的著名模型比一比大小，只是参考。", "The model configures itself: the best structure you own, and the biggest width and depth the tech tree allows that fit the card.\nParameters = layers × width² × structure factor. The famous model in brackets is only for a sense of scale."));
-            UiTip.Add(shapeText, () => T("想要更大的模型：科技里买「宽」「层」，或者在淘货加显卡。买到以后，下一轮自动换上。", "For a bigger model, buy width or layers in the tech tree, or add a card from the shop. It switches over by the next round."));
-            UiTip.Add(techText, () => T("买到的技巧全部自动打开。Dropout、数据增强、BatchNorm、预热、梯度裁剪都会让「退步」少一些。", "Every technique you own is on. Dropout, augmentation, BatchNorm, warm-up and clipping all make drops rarer."));
-            statsText = ui.Text(Strip("Stats", right, 166, 238, 14, 14), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
-            statsText.enableAutoSizing = true; statsText.fontSizeMin = 10; statsText.fontSizeMax = 13;
-            UiTip.Add(statsText, () => T("每一轮都往这个模型的上限走一步。上限由参数量和样本量决定：参数和样本够，就一直涨；不够，就停在那里。\n每一轮也有一点机会退步：数据太少（背答案）、数据太脏、刚涨了一大截时更容易。学会的能力不会丢。", "Every round takes the model a step towards its ceiling, which parameters and samples set: with enough of both it keeps rising; without, it stops there.\nEach round may also go down a little, more often when the data is scarce (it memorises), dirty, or right after a big jump. Learned abilities are never lost."));
-            noiseText = ui.Text(Strip("DatasetNoise", right, 410, 20, 14, 14), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            noiseText.enableAutoSizing = true; noiseText.fontSizeMin = 11; noiseText.fontSizeMax = 13;
-            noiseText.textWrappingMode = TextWrappingModes.NoWrap;
-            noiseHint = ui.Text(Strip("NoiseCleaningHint", right, 432, 30, 14, 180), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            noiseHint.enableAutoSizing = true; noiseHint.fontSizeMin = 9; noiseHint.fontSizeMax = 11;
-            noiseHint.textWrappingMode = TextWrappingModes.NoWrap;
-            cleanNoise = ui.Button(right, "", CleanCurrentNoise, 12);
-            cleanNoise.rt.gameObject.name = "CleanDatasetNoise";
-            PlaceTopRight(cleanNoise, 168, 430, 154, 34);
-            BuildDataEconomy(right);
-            dataTitle = ui.Text(Strip("DataTitle", right, 468, 24, 14, 14), "", 16, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            dataTitle.fontStyle = FontStyles.Bold;
-            NodeLink(dataTitle, () => Sim.Run(Track).dataset + ".pack");
-            var scroll = Rect("Datasets", right, Vector2.zero, Vector2.one, new Vector2(14, 86), new Vector2(-14, -496));
-            var scroller = scroll.gameObject.AddComponent<ScrollRect>();
-            dataViewport = Rect("Viewport", scroll, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Panel(dataViewport, new Color(1, 1, 1, .01f)); dataViewport.gameObject.AddComponent<RectMask2D>();
-            dataBox = Rect("Content", dataViewport, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
-            dataBox.pivot = new Vector2(.5f, 1); dataBox.sizeDelta = Vector2.zero;
-            scroller.viewport = dataViewport; scroller.content = dataBox; scroller.horizontal = false; scroller.vertical = true; scroller.scrollSensitivity = 24;
-            scroller.movementType = ScrollRect.MovementType.Clamped;
-            gpuTarget = Rect("GpuInstallTarget", right, Vector2.zero, new Vector2(1, 0), new Vector2(14, 8), new Vector2(-14, 77));
-            Panel(gpuTarget, XgDark.AccentSoft);
-            gpuGlow = Glow(gpuTarget, XgDark.Gold, 4);
-            gpuLabel = ui.Text(Rect("GpuLabel", gpuTarget, Vector2.zero, Vector2.one, new Vector2(12, 4), new Vector2(-12, -4)), "", 14, XgDark.Accent, TextAlignmentOptions.MidlineLeft);
-            gpuTarget.gameObject.AddComponent<XgGpuInstallDrop>().Page = this;
-        }
-
-        /// <summary>The main line from the training page: the next ability's two bars, and whether this model would count.</summary>
-        string AbilityLine(XgRun run)
-        {
-            int next = Sim.NextAbility;
-            if (next == 0) return T("六项能力都有了。", "All six abilities are there.");
-            double need = Sim.ParamsThreshold(next), size = XgSim.ParamsK(run);
-            string line = "<color=#C88A00>" + T("下一项能力「", "Next ability: ") + XgSim.AbilityName(next, Sim.English) + T("」", "") + "</color>  "
-                + T("参数 ", "parameters ") + XgSim.ParamsText(Sim.TrainedParamsK) + "/" + XgSim.ParamsText(need)
-                + T(" · 样本 ", " · samples ") + XgSim.SamplesText(Sim.TrainedSamples) + "/" + XgSim.SamplesText(Sim.SamplesThreshold(next));
-            if (Sim.TrainedParamsK + 1e-9 < need)
-                line += size + 1e-9 >= need ? T("\n这个模型够大：练到 C 级就算数。", "\nThis model is big enough: it counts once assessed at grade C.")
-                    : T("\n这个模型 " + XgSim.ParamsText(size) + "，还不够大：去科技加宽、加深，或在道具买参数更多的结构。", "\nThis model has " + XgSim.ParamsText(size) + ", not enough yet: widen or deepen in the tech tree, or buy a bigger structure on the Items page.");
-            return line;
+            diagnosticNote = ui.Text(Rect("Caveat", diagnosticArea, new Vector2(.5f, 1), Vector2.one, new Vector2(0, -20), new Vector2(-2, 0)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineRight);
+            diagnosticNote.textWrappingMode = TextWrappingModes.NoWrap;
         }
 
         /// <summary>An architecture is a way of wiring one region of 灵光's brain; its history comes second.</summary>
@@ -297,7 +265,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (e.hand)
             {
                 Fx.Knock(train.rt, .1f, new Vector2(0, -4));
-                Fx.Burst(Fx.At(gpuTarget), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
+                Fx.Burst(Fx.At(gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
                 Fx.Play(XgJuice.Sfx.Id.Fan, 1 + Mathf.Min(.8f, Sim.S.combo * .02f), .8f);
             }
             else
@@ -321,6 +289,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Knock(chartArea, .06f, new Vector2(6, 0));
                 Fx.Play(XgJuice.Sfx.Id.Thud, .8f, e.hand ? .6f : .25f);
             }
+            else if (e.rolledBack)
+            {
+                // 检查点回滚: the drop that would have happened was undone.
+                Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("检查点回滚 · 撤销了一次退步", "Checkpoint rollback · a drop undone"), XgDark.Link, 16, 30, .8f, 1.4f);
+                Fx.Play(XgJuice.Sfx.Id.Unlock, 1, e.hand ? .5f : .2f);
+            }
             else if (e.hand) Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("第 " + e.epoch + " 轮 · ", "Epoch " + e.epoch + " · ") + (points >= .5 ? "+" + N(points, "0") + T(" 分", " points") : T("涨不动了", "no gain")), XgDark.Accent, 16, 30, .6f, 1.1f);
             chart.PulseLastSegment(e.hand ? 1 : .35f);
             Refresh();
@@ -342,6 +316,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             trainGlow.on = Sim.TrainingUnlocked(Track) && !run.epochActive && Sim.S.combo >= 10;
             trainGlow.color = XgDark.Tiers[Mathf.Min(4, XgSim.TierOf(Sim.S.combo) + 1)] * new Color(1, 1, 1, .7f);
+            TickQuickBar(dt);
         }
 
         public bool AssessmentBlocksInput => cardT >= 0 && cardBig && assessmentLayer.gameObject.activeSelf;
@@ -480,30 +455,33 @@ namespace LingGuangV05.Desktop.XingGuang
                 trackTabs[i].Show(open);
                 trackTabs[i].Set(names[i] + (Sim.Runs[i].running ? " ●" : ""), open, on ? XgDark.Accent : XgDark.Button, on ? Color.white : XgDark.Ink);
             }
-            string region = XgSim.RegionOf(run.dataset);
-            summary.Set(T(XgSim.RegionName(region, false), XgSim.RegionName(region, true)) + T("自动用 ", " runs ") + T(a.name, a.nameEn) + " · " + T(d.name, d.nameEn) + "  <color=#8FB8FF>" + T("道具 →", "Items →") + "</color>", true, Color.clear);
             // The first time the lab rewires a region by itself: the protagonist works out what a network is to it.
             string shapeKey = (int)track + ":" + run.arch;
             if (shownStructure.Length > 0 && shownStructure != shapeKey && shownStructure[0] == shapeKey[0]) VoiceWiring();
             shownStructure = shapeKey;
+            RefreshModelLine(track, run, a);
 
             double best = Sim.BestAcc(d.id), bestScore = Sim.BestScore(d.id);
             int grade = XgSim.Grade(bestScore);
             if (glitch <= 0)
-                numbers.text = T("训练 ", "Train ") + Hex(XgChartGraphic.TrainColor) + XgSim.Pct(run.trainAcc) + "</color>   "
-                    + T("验证 ", "Val ") + Hex(XgChartGraphic.ValColor) + "<b>" + XgSim.Pct(run.valAcc) + "</b></color>   "
+            {
+                string ceiling = run.epoch > 0 ? T("上限 ", "Ceiling ") + Hex(Sim.SgdrActive ? XgDark.Link : XgDark.Muted) + N(XgSim.Score(run.dataset, run.ceiling), "0") + (Sim.SgdrActive ? T("↑重启中", "↑restart") : "") + "</color>   " : "";
+                numbers.text = "<b>" + T(d.name, d.nameEn) + "</b>   "
+                    + T("验证 ", "Val ") + Hex(XgChartGraphic.TrainColor) + "<b>" + XgSim.Pct(run.valAcc) + "</b></color>   "
+                    + T("训练 ", "Train ") + Hex(XgDark.Muted) + XgSim.Pct(run.trainAcc) + "</color>   "
                     + Lang.T("最佳 ") + Hex(XgDark.Grades[XgSim.Grade(bestScore)]) + "<b>" + (best > 0 ? XgCatalog.GradeNames[XgSim.Grade(bestScore)] + " " + N(bestScore, "0") : "—") + "</b></color>   "
-                    + Lang.T("下一评级 ") + (grade >= XgCatalog.GradeNames.Length - 1 ? T("已满级", "maxed") : XgCatalog.GradeNames[grade + 1] + " " + XgCatalog.GradeScore[grade + 1]);
+                    + ceiling
+                    + T("第 " + run.epoch + " 轮", "Epoch " + run.epoch);
+                numbers.color = XgDark.Ink;
+            }
             chart.Capacity = Mathf.Clamp(run.histVal.Count, 24, XgSim.HistoryLength);
-            chart.SetData(run.histVal, noValidationCurve, 0, true);
-            yTop.text = N(chart.Max, "0.00");
-            yMid.text = N((chart.Max + chart.Min) / 2, "0.00");
-            yLow.text = N(chart.Min, "0.00");
-            legend.text = Hex(XgChartGraphic.TrainColor) + "━ " + T("模拟损失 −log(验证准确率)：往下是进步，往上是退步", "Simulated loss −log(validation accuracy): down is progress, up is a drop") + "</color>";
+            chart.SetCeiling(run.epoch > 0 ? (float)run.ceiling : 0, Sim.SgdrActive ? XgDark.Link : new Color32(88, 121, 138, 255));
+            chart.SetData(run.histVal, noValidationCurve, 0, false);
+            yTop.text = XgSim.Pct(chart.Max);
+            yMid.text = XgSim.Pct((chart.Max + chart.Min) / 2);
+            yLow.text = XgSim.Pct(chart.Min);
+            legend.text = Hex(XgChartGraphic.TrainColor) + "━ " + T("验证准确率", "validation accuracy") + "</color>   " + Hex(new Color32(88, 121, 138, 255)) + "╌ " + T("上限", "ceiling") + "</color>   " + Hex(XgDark.Bad) + "● " + T("退步", "a drop") + "</color>";
             RefreshDiagnostics(run);
-
-            // Every epoch is assessed: no countdown pips, no separate assess button.
-            for (int i = 0; i < pips.Length; i++) pips[i].gameObject.SetActive(false);
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
@@ -512,19 +490,63 @@ namespace LingGuangV05.Desktop.XingGuang
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? Lang.T(" · 连击 ×") + N(Sim.ComboMultiplier, "0.00") : "") : Lang.T("先标够样本");
             string[] modes = { "☛ " + Lang.T("手动"), "", "◷ crontab", "▣ " + Lang.T("守护进程"), "✓ " + Lang.T("自动评估"), "⇒ AutoML" };
             mode.text = modes[Mathf.Clamp(level, 0, 5)];
+            RefreshBill(run, unlocked);
             assess.Show(false);
             autoTrain.Show(level >= 2);
             if (level >= 2) autoTrain.Set(Lang.T("自动训练\n") + (run.running ? Lang.T("开") : Lang.T("关")), true, run.running ? XgDark.OnFill : (Color?)null, run.running ? XgDark.Good : (Color?)null);
 
-            // The chance that the next round goes down, as a word and a reason (XgSim.AutoModel.cs).
+            // The chance that the next round goes down, and the cards' heat (XgSim.AutoModel.cs, ChapterOneSim.Bills.cs).
             var dropRisk = Sim.DropRisk(run);
-            risk.text = unlocked ? Sim.DropRiskText(run) : "";
-            risk.color = dropRisk.level >= 2 ? XgDark.Bad : dropRisk.level == 1 ? XgDark.Gold : XgDark.Muted;
+            risk.text = unlocked ? RiskLine(run, dropRisk) : "";
+            risk.color = dropRisk.level >= 2 ? XgDark.Bad : dropRisk.level == 1 ? XgDark.Money : XgDark.Muted;
             string waiting = run.epochActive ? Sim.Blocker(run, Host) : null;
             hint.text = blocker != null ? "⚠ " + blocker : waiting != null ? "◷ " + waiting : Hint(run);
             hint.color = blocker != null ? XgDark.Bad : Sim.Plateaued(run) || Sim.ParamsShortForNext(run) ? XgDark.Gold : XgDark.Muted;
 
-            RefreshModel(track, run, a);
+            RefreshBuffs();
+            RefreshQuickBar();
+            RefreshSide(track, run);
+        }
+
+        /// <summary>
+        /// 「下一轮退步：中 12% · 脏标注 120 条」, and on a second line the warning when the cards are hot. The reason of the
+        /// risk is in the tooltip.
+        /// </summary>
+        string RiskLine(XgRun run, XgDropRisk r)
+        {
+            string line = T("下一轮退步：", "Next round drops: ") + XgSim.RiskLevelName(r.level, Sim.English) + " " + N(r.chance * 100, "0") + "%";
+            double dirty = Math.Floor(Sim.Noise(run.dataset) + Sim.DataNoise(run.dataset));
+            if (dirty >= 1) line += "  <color=#3A5566>" + T("脏标注 " + N(dirty, "0") + " 条", N(dirty, "0") + " dirty labels") + "</color>";
+            if (HeatWarning()) line += "\n<color=#EF9F27>" + T("显卡太热，可能烧卡", "The cards are hot and may burn out") + "</color>";
+            return line;
+        }
+
+        /// <summary>The cards have trained long enough in a row that every further second may burn one out (and nothing stops it now).</summary>
+        bool HeatWarning() => Host is XingGuangHost home && home.WearRiskLive && !Sim.PasteActive;
+
+        string RiskTip()
+        {
+            var run = Sim.Run(Track);
+            string tip = Sim.DropRiskText(run) + T("。\n退步：这一轮的成绩往回掉一点，学会的能力不会丢。", ".\nA drop: this round's score falls back a little; learned abilities are never lost.");
+            if (Host is XingGuangHost home && home.WearRiskLive)
+                tip += "\n\n" + T("显卡连着练太久了：每多练一秒都有一点概率烧掉一张卡（送修要花钱，修好前少一张卡）。歇几秒就清零。重涂硅脂能挡住，九州风神让概率减半。",
+                    "The cards have trained non-stop for long: every further second may burn one out (a repair costs money, and the card is gone until it is back). A few seconds of rest reset it. Fresh paste stops it; the tower cooler halves the chance.");
+            return tip;
+        }
+
+        string NumbersTip()
+        {
+            var run = Sim.Run(Track);
+            return T("验证：在没见过的题上的准确率。训练：在练过的题上的准确率（比验证高太多，说明在背答案）。\n最佳：这个数据集刷过的最高成绩。\n上限：这个模型现在最多能练到的分数，由参数量、样本量和结构决定；虚线就是它。\n红点：这一轮退步了。",
+                "Validation: accuracy on unseen cards. Train: accuracy on cards it has practised (far above validation means it memorises).\nBest: the top score reached on this dataset.\nCeiling: the most this model can reach now, set by parameters, samples and structure; the dashed line is it.\nRed dots: rounds that went back.");
+        }
+
+        /// <summary>The price of the next round, as the household's bills will take it (this month's tier, off-peak halves it, cuDNN trims the energy).</summary>
+        void RefreshBill(XgRun run, bool unlocked)
+        {
+            if (!unlocked || !(Host is XingGuangHost home) || !home.EconomyActive) { trainBill.text = ""; return; }
+            double price = home.RoundPrice(XgSim.DurationFor(run), Sim.TrainPriceFactor, Sim.TrainEnergyFactor);
+            trainBill.text = T("电费 ¥", "Power ¥") + N(price, price < 10 ? "0.0" : "0") + (Sim.OffpeakActive ? "\n<size=12><color=#7FD3FF>" + T("谷电", "off-peak") + "</color></size>" : "");
         }
 
         string Hint(XgRun run)
@@ -535,6 +557,55 @@ namespace LingGuangV05.Desktop.XingGuang
             if (plateau.Length > 0) return plateau;
             if (run.staleEvals >= XgSim.StaleHintEpochs) return Sim.StaleHint(run);
             return T("参数和样本够，就一直往上涨；连击越高，每轮涨得越多（最多 ×2）。", "With enough parameters and samples it keeps rising; a higher combo gains more per round (up to ×2).");
+        }
+
+        /// <summary>The model in one line (structure · parameters · VRAM) and the save button; the rest of the old model card is in <see cref="ModelTip"/>.</summary>
+        void RefreshModelLine(XgTrack track, XgRun run, XgArch a)
+        {
+            double size = XgSim.ParamsK(run);
+            double need = XgSim.VramNeedMB(run), have = Sim.Vram(Host);
+            string vram = N(need / 1024, "0.0") + "/" + Gigabytes(have) + (need > have + 1e-6 ? " <color=#E24B4A>" + T("超了", "over") + "</color>" : "");
+            summary.Set(T(a.name, a.nameEn) + " · " + XgSim.ParamsText(size) + T(" 参数", " params") + T(" · 显存 ", " · VRAM ") + vram + "  <color=#8FB8FF>→</color>", true, Color.clear);
+            saveModel.Show(run.epoch > 0);
+            saveModel.Set(Lang.T("存入仓库"), run.epoch > 0 && !run.epochActive, XgDark.AccentSoft, XgDark.Accent);
+            UiTip.Add(saveModel.rt, "把当前模型存进模型仓库。", "Save the current model to the model library.");
+        }
+
+        /// <summary>
+        /// What the old model card said, for the model line's tooltip: the structure, the shape it configured itself to,
+        /// the techniques in use, what a round feeds, the ceiling and why training stalls.
+        /// </summary>
+        string ModelTip()
+        {
+            var track = Track;
+            var run = Sim.Run(track);
+            var a = XgCatalog.Arch(run.arch);
+            double size = XgSim.ParamsK(run);
+            int depthCap = Sim.DepthCap(track), widthCap = Sim.WidthCap(track), archDepth = Sim.MaxDepth(run);
+            bool fullDepth = run.depth >= Math.Min(depthCap, archDepth), fullWidth = run.width >= widthCap;
+            string region = XgSim.RegionOf(run.dataset);
+            var tip = new System.Text.StringBuilder();
+            tip.Append(T(XgSim.RegionName(region, false), XgSim.RegionName(region, true))).Append(T("自动用的结构，点一下去道具页。\n", " uses this structure automatically; click for the Items page.\n"));
+            tip.Append(ArchTip(run.arch)).Append("\n\n");
+            tip.Append(T("模型是自动配置的：结构用已经买到的最好的那个，宽度和层数用科技买到的上限里显卡装得下的最大的。\n参数量 = 层数 × 宽度² × 结构系数。括号里拿真实的著名模型比一比大小，只是参考。",
+                "The model configures itself: the best structure you own, and the biggest width and depth the tech tree allows that fit the card.\nParameters = layers × width² × structure factor. The famous model in brackets is only for a sense of scale.")).Append("\n");
+            tip.Append(T("宽 ", "Width ")).Append(XgCatalog.Widths[run.width]).Append("/").Append(XgCatalog.Widths[widthCap]).Append(" · ").Append(run.depth).Append("/").Append(Math.Min(depthCap, archDepth)).Append(T(" 层", " layers"))
+                .Append(" (").Append(XgSim.ParamScale(size, Sim.English)).Append(")\n");
+            tip.Append(fullDepth && fullWidth ? T("已是科技上限里最大的一个；要更大，去科技买「宽」「层」。", "The biggest the tech tree allows; for more, buy width or layers in the tech tree.")
+                : T("显卡只装得下这么大；加显卡或接线页腾出显存，就自动长大。", "The card only holds this much; add a card or free memory on the Wiring page and it grows by itself.")).Append("\n\n");
+            tip.Append(Techniques(run)).Append("\n");
+            tip.Append(T("优化器：", "Optimizer: ")).Append(Sim.OptimizerName).Append("\n\n");
+            double share = Host.Compute;
+            tip.Append(Lang.T("每轮喂 ")).Append(Sim.CardsPerEpoch(run, Math.Max(.5, share), true)).Append(Lang.T(" 张 / 数据池 ")).Append(Sim.PoolSize(run)).Append(Lang.T(" 张（已过 ")).Append(N(Sim.PassesOverData(run), "0.0")).Append(Lang.T(" 遍）"));
+            if (run.lastScore >= 0) tip.Append(Lang.T(" · 最近评估 ")).Append(XgCatalog.GradeNames[XgSim.Grade(run.lastScore)]).Append(" ").Append(N(run.lastScore, "0"));
+            if (run.epoch > 0)
+                tip.Append("\n").Append(T("这个模型的上限 ", "This model's ceiling ")).Append(N(XgSim.Score(run.dataset, Sim.CeilingAcc(run)), "0")).Append(T(" 分", " points"))
+                    .Append(Sim.Plateaued(run) ? T("（已经到了）", " (reached)") : T("，还差 ", ", ") + N(Sim.HeadroomPoints(run), "0") + T(" 分", " to go"));
+            string plateau = Sim.PlateauText(run, out _);
+            if (plateau.Length > 0) tip.Append("\n<color=#C88A00>").Append(plateau).Append("</color>");
+            tip.Append("\n\n").Append(T("每一轮都往这个模型的上限走一步。上限由参数量和样本量决定：参数和样本够，就一直涨；不够，就停在那里。\n每一轮也有一点机会退步：数据太少（背答案）、数据太脏、刚涨了一大截时更容易。学会的能力不会丢。",
+                "Every round takes the model a step towards its ceiling, which parameters and samples set: with enough of both it keeps rising; without, it stops there.\nEach round may also go down a little, more often when the data is scarce (it memorises), dirty, or right after a big jump. Learned abilities are never lost."));
+            return tip.ToString();
         }
 
         /// <summary>The techniques the model trains with: every one owned is on (道具 → 技巧).</summary>
@@ -561,115 +632,18 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>A memory size the way the page shows it: 0.4G, 6G.</summary>
         static string Gigabytes(double mb) => N(mb / 1024, mb < 10240 ? "0.#" : "0") + "G";
 
-        void RefreshModel(XgTrack track, XgRun run, XgArch a)
-        {
-            modelTitle.text = T("模型（自动配置）· 优化器 ", "Model (configured automatically) · optimizer ") + Sim.OptimizerName;
-            saveModel.Show(run.epoch > 0);
-            saveModel.Set(Lang.T("存入仓库"), run.epoch > 0 && !run.epochActive, XgDark.AccentSoft, XgDark.Accent);
-            double size = XgSim.ParamsK(run);
-            // 「模型：ResNet · 12M 参数 · 显存 0.4/6G」
-            modelInfo.text = T("模型：", "Model: ") + T(a.name, a.nameEn) + " · " + XgSim.ParamsText(size) + T(" 参数", " parameters")
-                + T(" · 显存 ", " · VRAM ") + N(XgSim.VramNeedMB(run) / 1024, "0.0") + "/" + Gigabytes(Sim.Vram(Host));
-            int depthCap = Sim.DepthCap(track), widthCap = Sim.WidthCap(track), archDepth = Sim.MaxDepth(run);
-            bool fullDepth = run.depth >= Math.Min(depthCap, archDepth), fullWidth = run.width >= widthCap;
-            shapeText.text = T("宽 ", "Width ") + XgCatalog.Widths[run.width] + "/" + XgCatalog.Widths[widthCap] + T(" · ", " · ") + run.depth + "/" + Math.Min(depthCap, archDepth) + T(" 层", " layers")
-                + " <color=#58798A>(" + XgSim.ParamScale(size, Sim.English) + ")</color>\n"
-                + (fullDepth && fullWidth ? T("已是科技上限里最大的一个；要更大，去科技买「宽」「层」。", "The biggest the tech tree allows; for more, buy width or layers in the tech tree.")
-                    : T("显卡只装得下这么大；加显卡或接线页腾出显存，就自动长大。", "The card only holds this much; add a card or free memory on the Wiring page and it grows by itself."));
-            techText.text = Techniques(run);
-            double share = Host.Compute;
-            string plateau = Sim.PlateauText(run, out var limit);
-            string ceiling = run.epoch > 0 ? T("这个模型的上限 ", "This model's ceiling ") + N(XgSim.Score(run.dataset, Sim.CeilingAcc(run)), "0") + T(" 分", " points")
-                + (Sim.Plateaued(run) ? T("（已经到了）", " (reached)") : T("，还差 ", ", ") + N(Sim.HeadroomPoints(run), "0") + T(" 分", " to go")) : "";
-            statsText.text = Lang.T("每轮喂 ") + Sim.CardsPerEpoch(run, Math.Max(.5, share), true) + Lang.T(" 张 / 数据池 ") + Sim.PoolSize(run) + Lang.T(" 张（已过 ") + N(Sim.PassesOverData(run), "0.0") + Lang.T(" 遍）")
-                + (run.lastScore >= 0 ? Lang.T(" · 最近评估 ") + XgCatalog.GradeNames[XgSim.Grade(run.lastScore)] + " " + N(run.lastScore, "0") : "")
-                + (ceiling.Length > 0 ? "\n" + ceiling : "")
-                + (plateau.Length > 0 ? "\n<color=#C88A00>" + plateau + "</color>" : "")
-                + "\n" + AbilityLine(run);
-
-            // Own mistakes plus outside noise from packs and crowd tasks, and the user-log button (XgTrainPage.Data.cs).
-            double noise = Sim.Noise(run.dataset) + Sim.DataNoise(run.dataset);
-            RefreshDataEconomy(run);
-            bool audit = Sim.Has("label.audit");
-            cleanNoise.Show(Sim.Has("label.audit"));
-            int cleanable = audit ? Sim.CleanableNoise(run.dataset, Host, XgSim.NoiseCleanBatchLimit) : 0;
-            string cleaningState = cleanable > 0 ? Lang.T("本次 ") + cleanable + " · ¥" + Money(cleanable * XgSim.NoiseCleanMoneyPerItem)
-                : noise < 1 ? Lang.T("无噪声") : Sim.ProjectActive ? Lang.T("研发占用 GPU")
-                : Host.Blocker != null || Host.Compute <= 0 ? Lang.T("无可用算力") : Lang.T("经费不足或暂不可清洗");
-            cleanNoise.Set(Lang.T("清洗最多 ") + XgSim.NoiseCleanBatchLimit + T(" 条", " labels") + "\n<size=10>" + cleaningState + "</size>", cleanable > 0, cleanable > 0 ? XgDark.AccentSoft : XgDark.Button, cleanable > 0 ? XgDark.Accent : XgDark.Muted);
-            noiseHint.text = audit
-                ? "¥" + Money(XgSim.NoiseCleanMoneyPerItem) + " + " + N(XgSim.NoiseCleanGpuSecondsPerItem, "0.0") + Lang.T(" GPU秒 / 条") + "\n" + Lang.T("模拟数据清洗；不训练 GGUF")
-                : Lang.T("模拟数据质量统计（非 GGUF 训练）");
-            noiseHint.rectTransform.offsetMax = new Vector2(audit ? -180 : -14, noiseHint.rectTransform.offsetMax.y);
-
-            dataTitle.text = Lang.T("数据包 · 拖到 GPU 安装");
-            var data = XgCatalog.DatasetsFor(track).FindAll(x => Sim.DatasetAvailable(x.id) || Sim.NodeVisible(XgCatalog.Node(x.id + ".pack")));
-            string dkey = string.Join(",", data.ConvertAll(x => x.id)) + track;
-            if (dkey != shownDataKey)
-            {
-                shownDataKey = dkey;
-                foreach (var b in dataBtns) UnityEngine.Object.Destroy(b.rt.gameObject);
-                foreach (var b in packBtns) UnityEngine.Object.Destroy(b.rt.gameObject);
-                dataBtns.Clear(); dataIds.Clear();
-                packBtns.Clear();
-                for (int i = 0; i < data.Count; i++)
-                {
-                    string id = data[i].id;
-                    var b = ui.Button(dataBox, "", () => { if (Sim.SetDataset(Track, id)) { Fx.Play(XgJuice.Sfx.Id.Swoosh); Fx.Knock(dataBtns[dataIds.IndexOf(id)].rt, .12f); } Refresh(); }, 13);
-                    b.rt.anchorMin = new Vector2(0, 1); b.rt.anchorMax = new Vector2(1, 1); b.rt.pivot = new Vector2(.5f, 1);
-                    b.rt.offsetMin = new Vector2(0, -i * 36 - 32); b.rt.offsetMax = new Vector2(-98, -i * 36);
-                    dataBtns.Add(b); dataIds.Add(id);
-                    UiTip.Add(b.rt, () => { var d = XgCatalog.Dataset(id); return d == null ? "" : "<b>" + T(d.name, d.nameEn) + "</b>\n" + (string.IsNullOrEmpty(d.note) ? "" : T(d.note, d.noteEn) + "\n") + Lang.T("指标：") + T(d.metric, d.metricEn) + Lang.T("\n样本：") + Sim.Samples(id).ToString("0") + Lang.T("（不够就去标注台标，或买数据包）") + "\n" + XgDataUi.SourcesSummary(Sim, id); });
-                    var install = ui.Button(dataBox, "", () => InstallPack(id), 12);
-                    PlaceTopRight(install, 94, i * 36, 92, 32);
-                    var drag = install.rt.gameObject.AddComponent<XgDataPackDrag>(); drag.Page = this; drag.Dataset = id;
-                    UiTip.Add(install.rt, () => PackTip(id));
-                    packBtns.Add(install);
-                }
-                dataBox.sizeDelta = new Vector2(0, data.Count * 36);
-            }
-            for (int i = 0; i < dataBtns.Count; i++)
-            {
-                var x = XgCatalog.Dataset(dataIds[i]);
-                bool on = x.id == run.dataset;
-                double sc = Sim.BestScore(x.id);
-                string grade = Sim.BestAcc(x.id) > 0 ? "  " + Hex(on ? Color.white : XgDark.Grades[XgSim.Grade(sc)]) + XgCatalog.GradeNames[XgSim.Grade(sc)] + " " + N(sc, "0") + "</color>" : "";
-                bool enough = Sim.Samples(x.id) >= XgCatalog.SamplesToTrain;
-                dataBtns[i].Set(T(x.name, x.nameEn) + grade, Sim.DatasetAvailable(x.id) && (enough || on) && !run.epochActive, on ? XgDark.Accent : XgDark.Button, on ? Color.white : XgDark.Ink);
-                var node = XgCatalog.Node(x.id + ".pack");
-                // The public pack itself; a junk pack also makes Owns() true but leaves the public pack for sale.
-                bool owned = Sim.S.owned.Contains(x.id) || node != null && Sim.Has(node.id);
-                bool canBuy = node != null && Sim.Status(node, Host) == XgSim.NodeStatus.Buyable;
-                packBtns[i].Show(node != null);
-                // Any pack of this dataset still coming down (public, junk or story; XgSim.DataSources.cs).
-                var download = XgDataUi.ActiveDownload(Sim, x.id);
-                if (download != null)
-                {
-                    // 摆渡云 at 100KB/s: shows the time left; clicking pays for acceleration.
-                    packBtns[i].Show(true);
-                    double speed = Sim.AccelerateOfferCost(download.id);
-                    bool rich = Host.Money >= speed;
-                    packBtns[i].Set(N(download.downloadProgress * 100, "0") + Lang.T("% · 加速 ¥") + Money(speed), rich, rich ? XgDark.AccentSoft : XgDark.Button, rich ? XgDark.Accent : XgDark.Muted);
-                }
-                else packBtns[i].Set(owned ? Lang.T("已安装") : node != null ? "↓ ¥" + Money(Sim.NodeCost(node)) : "", !owned && canBuy, canBuy ? XgDark.AccentSoft : XgDark.Button, canBuy ? XgDark.Accent : XgDark.Muted);
-            }
-            // Pack switches of the current dataset below the list; also sizes the scroll content (XgTrainPage.Sources.cs).
-            RefreshSources(run, dataBtns.Count);
-            double watts = Host is XingGuangHost home ? home.TrainingWatts : 0;
-            gpuLabel.text = "▣ GPU  · " + Lang.T("松手安装数据包") + "\n" +
-                Lang.T("训练负载 ") + N(watts, "0") + " W  · " + Lang.T("累计 GPU 时间 ") + N(Sim.S.trainedSeconds, "0.0") + " s";
-        }
-
         void RefreshDiagnostics(XgRun run)
         {
             int stage = Sim.StageFor(Track);
             string[] zh = { "", "权重 · 28×28 像素", "MLP · 隐藏层组合", Track == XgTrack.Vision ? "局部结构 · 深度与表现" : "序列 · 记忆衰减", Track == XgTrack.Vision ? "残差 · 信息保留" : "门控 · 长期记忆", "注意力 · 寻找线索", "多头注意力 · 并行" };
             string[] en = { "", "Weights · 28×28 pixels", "MLP · hidden features", Track == XgTrack.Vision ? "Local structure · depth" : "Sequence · memory decay", Track == XgTrack.Vision ? "Residual · preserve information" : "Gates · longer memory", "Attention · find the clue", "Multi-head attention · parallel" };
-            diagnosticTitle.text = stage + " · " + T(zh[stage], en[stage]);
-            diagnostic.Show(Sim, run, stage);
-            diagnosticNote.text = stage >= 5
+            // The teaching note sits after the title: the thumbnails of the earlier stages take the right edge.
+            string note = stage >= 5
                 ? Lang.T("教学示意；模拟 GPU ") + XgSim.Pct(Sim.GpuUtilization(run))
                 : Lang.T("教学示意，不是本地模型的内部权重");
+            diagnosticTitle.text = stage + " · " + T(zh[stage], en[stage]) + "   <size=11><color=#6F95A5>" + note + "</color></size>";
+            diagnostic.Show(Sim, run, stage);
+            diagnosticNote.text = "";
             int count = stage - 1;
             for (int i = 0; i < previousDiagnostics.Count; i++)
             {
@@ -678,7 +652,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (i >= count) continue;
                 var rt = previous.rectTransform;
                 rt.anchorMin = new Vector2(1, i / (float)count); rt.anchorMax = new Vector2(1, (i + 1f) / count);
-                rt.offsetMin = new Vector2(-85, 22f / count); rt.offsetMax = new Vector2(-3, -25f / count);
+                rt.offsetMin = new Vector2(-85, 2f / count); rt.offsetMax = new Vector2(-3, -20f / count);
                 previous.Show(Sim, run, i + 1);
             }
         }

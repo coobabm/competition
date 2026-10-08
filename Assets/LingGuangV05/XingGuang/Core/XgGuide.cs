@@ -45,12 +45,35 @@ namespace LingGuangV05.XingGuang
     {
         public bool appInstalled = true, unpaidPower, breakerTripped, noGpu, overloaded;
         public double billDue;
+        /// <summary>The landlord cut the power for unpaid rent (the wallet itself says how much is owed).</summary>
+        public bool landlordCut;
         /// <summary>VRAM the host offers (0 = unknown; the VRAM check is skipped).</summary>
         public double vramMB;
         /// <summary>Side places the player has already looked at.</summary>
         public bool forumSeen, yySeen, gamesSeen;
         /// <summary>周而复始 still answers private messages.</summary>
         public bool zhouAvailable = true;
+    }
+
+    /// <summary>A way to the next ability's parameter bar (XgGuide.ParamsPlan): what to buy, in order, and the model it gives.</summary>
+    public sealed class XgParamsPlan
+    {
+        public XgTrack track;
+        public string arch = "";
+        public int depth, width;
+        /// <summary>The model's parameters (thousands), and the threshold once the plan's items are owned.</summary>
+        public double paramsK, threshold, cost;
+        /// <summary>Nodes still to buy, prerequisites first (empty when the caps already allow the model).</summary>
+        public readonly List<XgNode> buy = new List<XgNode>();
+    }
+
+    /// <summary>A buy towards the next ability's data bar (XgGuide.DataPlan): a data pack, or an item that lowers the threshold.</summary>
+    public sealed class XgDataBuy
+    {
+        public XgNode target;
+        /// <summary>Effective samples it adds (or takes off the threshold), and the price of the whole path.</summary>
+        public double gain, cost;
+        public readonly List<XgNode> path = new List<XgNode>();
     }
 
     /// <summary>
@@ -63,6 +86,8 @@ namespace LingGuangV05.XingGuang
     public static class XgGuide
     {
         public const string Lab = "lingguang", Home = "home", Shop = "xunbao", Tieba = "tieba", Bodu = "bodu", YY = "yy", Games = "games";
+        /// <summary>The desktop itself (the prologue's last step: open the exe it left behind).</summary>
+        public const string Desktop = "desktop";
         /// <summary>Its YY conversation (YYChatHub.LingGuangId, used as the YY tab): the chat with it moved there from the lab.</summary>
         public const string YYChat = "lingguang";
         /// <summary>摆渡众包: the 标注台 ("label") and 企业订单 ("contracts") pages moved there from the lab.</summary>
@@ -78,13 +103,8 @@ namespace LingGuangV05.XingGuang
             house = house ?? new XgGuideHouse();
             var wallet = new Wallet { money = money, vram = house.vramMB };
 
+            Rent(money, house, list);
             Blockers(sim, house, list);
-            if (!house.appInstalled)
-            {
-                list.Add(Step("install", XgGuideKind.Setup, "在 YY 里收下老周发的" + LingGuangV05.Core.AppNames.ExeZh, "Accept " + LingGuangV05.Core.AppNames.ExeEn + " from Lao Zhou in YY",
-                    "老周说这个程序能自己学东西。", "Lao Zhou says this program learns by itself.", YY, "", "", "laozhou"));
-                return Finish(list, sim, house);
-            }
             Quality(sim, list);
 
             if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); Raise(sim, money, list); return Finish(list, sim, house); }
@@ -95,18 +115,44 @@ namespace LingGuangV05.XingGuang
             else if (sim.S.assessments == 0) Assess(sim, list);
 
             Contracts(sim, list);
+            var advancing = new HashSet<string>();
             if (trainable)
             {
-                // A model that stopped improving gets the plain reason and where to fix it (XgChanceHint.cs).
-                XgChanceHint.Add(sim, list);
-                NextAbility(sim, list);
+                NextAbility(sim, wallet, list, advancing);
+                // A model that stopped improving gets the plain reason and where to fix it (XgChanceHint.cs). While the
+                // next ability's steps already name what to buy or label, a plateau for parameters or data says nothing new.
+                var hint = XgChanceHint.Step(sim);
+                bool covered = hint != null && list.Exists(x => x.kind == XgGuideKind.Ability) && (hint.id == "plateau.params" || hint.id == "plateau.data");
+                if (hint != null && !covered) list.Add(hint);
             }
-            CheapNode(sim, wallet, list);
+            AutoLabel(sim, wallet, list);
+            CheapNode(sim, wallet, list, advancing);
             Raise(sim, money, list);
             return Finish(list, sim, house);
         }
 
+        /// <summary>Right after the setup is saved, its first 是 / 否 waits on screen.</summary>
+        public static XgGuideStep AnswerFirst()
+            => Step("setup.answer", XgGuideKind.Setup, "回答它的第一个问题：是，还是否", "Answer its first question: yes or no",
+                "它现在只会这两个字。", "Those two words are all it has yet.", Lab, "", "label:是|Yes", "");
+
+        /// <summary>The prologue's last step (the note's only line until the setup is saved): open the exe on the desktop.</summary>
+        public static XgGuideStep OpenExe()
+            => Step("open.exe", XgGuideKind.Setup, "双击桌面上的「" + LingGuangV05.Core.AppNames.ExeZh + "」", "Double-click " + LingGuangV05.Core.AppNames.ExeEn + " on the desktop",
+                "它留下的程序。打开看看它想干什么。", "The program it left behind. Open it and see what it wants.", Desktop, "", "", "");
+
         // ───────────── blockers ─────────────
+
+        /// <summary>The wallet is below zero (rent and bills, ChapterOneSim.Bills.cs): paying it back comes before anything else.</summary>
+        static void Rent(double money, XgGuideHouse house, List<XgGuideStep> list)
+        {
+            if (money >= 0 || double.IsNaN(money)) return;
+            string owed = "¥" + Math.Ceiling(-money - 1e-9).ToString("0", CultureInfo.InvariantCulture);
+            list.Add(Step("rent.debt", XgGuideKind.Blocker, "赚钱交房租（欠 " + owed + "）", "Earn the rent (" + owed + " owed)",
+                house.landlordCut ? "房东拉了电闸，显卡全停；手动标注照样有钱。再拖一天，电脑就得卖了。" : "钱包见底了，房东在催。标注、订单都能挣；连着三天交不上，电脑就得卖了。",
+                house.landlordCut ? "The landlord cut the power and every card has stopped; hand labelling still pays. One more day and the computer has to be sold." : "The wallet is empty and the landlord wants his rent. Labels and contracts both pay; three days without it and the computer has to be sold.",
+                Crowd, "label", "label:是|Yes|对|True", ""));
+        }
 
         static void Blockers(XgSim sim, XgGuideHouse house, List<XgGuideStep> list)
         {
@@ -173,7 +219,7 @@ namespace LingGuangV05.XingGuang
             int need = Math.Max(1, XgCatalog.SamplesToTrain - (int)Math.Floor(have));
             var s = Step("label." + desk.id, XgGuideKind.Setup, "去标注台标 " + need + " 条「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
                 "攒够 " + XgCatalog.SamplesToTrain + " 条数据才能开始训练。答对还有钱拿。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
-                Crowd, "label", "label:是|Yes", desk.id);
+                Crowd, "label", "label:是|Yes|对|True", desk.id);
             s.current = have; s.goal = XgCatalog.SamplesToTrain;
             list.Add(s);
         }
@@ -223,36 +269,384 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// The main line (参数量与数据量主线): the next ability and the shorter of its two bars. Parameters only count
-        /// once a model of that size is assessed at grade C, so a big enough model is trained on; a small one grows.
+        /// The main line (参数量与数据量主线): the next ability, as concrete steps. The parameter bar comes first: what to
+        /// buy, in order (<see cref="ParamsPlan"/>), then training that model to grade C and assessing it. The data bar
+        /// follows: the data pack or item that closes most of the gap for its price (<see cref="DataPlan"/>), then how
+        /// many more labels on the desks that count in full. Every node these steps would buy goes into
+        /// <paramref name="advancing"/>, so the cheap-boost line can prefer them.
         /// </summary>
-        static void NextAbility(XgSim sim, List<XgGuideStep> list)
+        static void NextAbility(XgSim sim, Wallet wallet, List<XgGuideStep> list, HashSet<string> advancing)
         {
             int next = sim.NextAbility;
-            if (next == 0) return;
+            // Before the first record the 科技 page is still closed; assessing (a setup step) opens it.
+            if (next == 0 || !TabOpen(sim, Lab, "tree")) return;
+            if (sim.TrainedParamsK + 1e-9 < sim.ParamsThreshold(next)) ParamsSteps(sim, wallet, next, list, advancing);
+            if (sim.TrainedSamples + 1e-9 < sim.SamplesThreshold(next)) DataSteps(sim, wallet, next, list, advancing);
+        }
+
+        static void ParamsSteps(XgSim sim, Wallet wallet, int next, List<XgGuideStep> list, HashSet<string> advancing)
+        {
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
-            double p = sim.TrainedParamsK, pNeed = sim.ParamsThreshold(next), d = sim.TrainedSamples, dNeed = sim.SamplesThreshold(next);
-            bool paramsShort = p + 1e-9 < pNeed, dataShort = d + 1e-9 < dNeed;
-            if (!paramsShort && !dataShort) return;
-            var track = TrainableTrack(sim);
-            if (paramsShort && (!dataShort || p / pNeed <= d / dNeed))
+            double pNeed = sim.ParamsThreshold(next);
+            string have = XgSim.ParamsText(sim.TrainedParamsK), need = XgSim.ParamsText(pNeed);
+            var plan = ParamsPlan(sim, next, wallet.vram > 0 ? sim.Vram(wallet) : 0);
+            if (plan == null)
             {
-                string have = XgSim.ParamsText(p), need = XgSim.ParamsText(pNeed);
-                if (XgSim.ParamsK(sim.Run(track)) + 1e-9 >= pNeed)
-                    list.Add(Step("ability.train", XgGuideKind.Ability, "把这个大模型练到 C 级：参数 " + have + " / " + need, "Train this big model to grade C: parameters " + have + " / " + need,
-                        "「" + name + "」要练过的参数够数。评估到 C 级，这个模型的参数才算数。", "'" + nameEn + "' needs enough trained parameters. They count once this model is assessed at grade C.",
-                        Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(track)));
+                // Nothing on sale at this stage reaches it (or the card is too small): the general advice.
+                bool card = wallet.vram > 0 && ParamsPlan(sim, next, 0) != null;
+                if (card)
+                    list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下够大的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a big enough model: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                        "「" + name + "」要练过 " + need + " 参数，这张卡装不下那么大的模型。", "'" + nameEn + "' needs " + need + " trained parameters; this card cannot hold a model that big.", Shop, "shop", "name:BuyGpu", ""));
                 else
                     list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + have + " / " + need, "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + have + " / " + need,
                         "下一项能力「" + name + "」要更大的模型。买到宽度和层数，或者参数更多的结构，模型自己就会长大。", "The next ability, '" + nameEn + "', needs a bigger model. Buy width and layers, or a bigger structure, and the model grows by itself.",
                         Lab, "tree", "", ""));
                 return;
             }
-            var s = Step("ability.data", XgGuideKind.Ability, "攒数据：样本", "Gather data: samples",
-                "下一项能力「" + name + "」要更多数据。标注台答题，或在科技买数据包。", "The next ability, '" + nameEn + "', needs more data. Label on the desk, or buy data packs in the tech tree.",
-                Lab, "tree", "", "");
-            s.current = d; s.goal = dNeed;
-            list.Add(s);
+            if (!sim.TrainingUnlocked(plan.track))
+            {
+                // The big enough model is on the other line, which has no data yet: its desk first.
+                var desk = TrackDesk(sim, plan.track);
+                double samples = sim.Samples(desk.id);
+                int labels = Math.Max(1, XgCatalog.SamplesToTrain - (int)Math.Floor(samples));
+                bool vision = plan.track == XgTrack.Vision;
+                var t = Step("ability.track", XgGuideKind.Ability, "标注台标 " + labels + " 条「" + desk.name + "」，让" + (vision ? "看图" : "读字") + "的模型开练",
+                    "Label " + labels + " more " + desk.nameEn + " cards so the " + (vision ? "vision" : "reading") + " model can train",
+                    "「" + name + "」要 " + need + " 参数，这条线的模型才长得到。先攒够 " + XgCatalog.SamplesToTrain + " 条数据。",
+                    "'" + nameEn + "' needs " + need + " parameters, and only this line's model grows that big. It needs " + XgCatalog.SamplesToTrain + " samples first.",
+                    Crowd, "label", "label:是|Yes|对|True", desk.id);
+                t.current = samples; t.goal = XgCatalog.SamplesToTrain;
+                list.Add(t);
+            }
+            if (plan.buy.Count > 0)
+            {
+                foreach (var n in plan.buy) advancing.Add(n.id);
+                var first = plan.buy[0];
+                var s = Step("ability.buy", XgGuideKind.Ability, "科技买" + Chain(plan.buy, false), "Tech tree: buy " + Chain(plan.buy, true),
+                    "「" + name + "」要练过 " + XgSim.ParamsText(plan.threshold) + " 参数（现在 " + have + "）。买齐这些，模型自己长到 " + XgSim.ParamsText(plan.paramsK) + "，再练到 C 级就算数。" + ShortOfMoney(sim, wallet, first, false),
+                    "'" + nameEn + "' needs " + XgSim.ParamsText(plan.threshold) + " trained parameters (now " + have + "). With these the model grows to " + XgSim.ParamsText(plan.paramsK) + " by itself; trained to grade C, it counts." + ShortOfMoney(sim, wallet, first, true),
+                    Lab, "tree", "node:" + first.id, "");
+                MoneyProgress(sim, wallet, first, s);
+                list.Add(s);
+                return;
+            }
+            if (!sim.TrainingUnlocked(plan.track)) return;
+            // The caps already allow a big enough model: train the one the lab configured until grade C, then assess it.
+            var run = sim.Run(plan.track);
+            string arg = TrackArg(plan.track);
+            if (XgSim.ParamsK(run) + 1e-9 < pNeed)
+            {
+                // The lab configured a smaller one: the card is shared or too small for the big one.
+                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下 " + need + " 的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a " + need + " model: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                    "模型按显卡自动配置，现在只放得下 " + XgSim.ParamsText(XgSim.ParamsK(run)) + "。", "The model sizes itself to the card; right now it fits " + XgSim.ParamsText(XgSim.ParamsK(run)) + ".", Shop, "shop", "name:BuyGpu", ""));
+                return;
+            }
+            bool gradeC = XgSim.Grade(XgSim.Score(run.dataset, run.valAcc)) >= XgSim.TrainedGrade && run.shapeRounds > 0;
+            if (gradeC)
+                list.Add(Step("ability.assess", XgGuideKind.Ability, "评估一次：模型到 C 级了，参数就算数：" + have + " / " + need, "Assess once: the model is at grade C, so its parameters count: " + have + " / " + need,
+                    "「" + name + "」只认评估过的模型。这个 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 的模型评到 C 级，参数条就满了。", "'" + nameEn + "' only counts assessed models. Grade this " + XgSim.ParamsText(XgSim.ParamsK(run)) + " model C and the parameter bar is full.",
+                    Lab, "train", "label:评估|Assess", arg));
+            else
+                list.Add(Step("ability.train", XgGuideKind.Ability, "把模型练到 C 级：参数 " + have + " / " + need, "Train the model to grade C: parameters " + have + " / " + need,
+                    "模型已经有 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 参数，够「" + name + "」了。多练几轮，评估到 C 级就算数。", "The model already has " + XgSim.ParamsText(XgSim.ParamsK(run)) + " parameters, enough for '" + nameEn + "'. Train a few epochs; assessed at grade C, they count.",
+                    Lab, "train", "label:训练一轮|Train 1 epoch", arg));
+        }
+
+        static void DataSteps(XgSim sim, Wallet wallet, int next, List<XgGuideStep> list, HashSet<string> advancing)
+        {
+            string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            double d = sim.TrainedSamples, dNeed = sim.SamplesThreshold(next), gap = dNeed - d;
+            // Packs already bought and still downloading.
+            double incoming = 0, left = 0; XgDataset waiting = null;
+            foreach (var ds in XgCatalog.Datasets)
+                if (sim.S.owned.Contains(ds.id) && sim.Downloading(ds.id) && CountsAsData(ds.id))
+                {
+                    incoming += ds.dataWeight * ds.samples;
+                    if (sim.DownloadLeft(ds.id) > left) { left = sim.DownloadLeft(ds.id); waiting = ds; }
+                }
+            if (waiting != null && incoming + 1e-9 >= gap)
+            {
+                string secs = Math.Ceiling(left).ToString("0", CultureInfo.InvariantCulture);
+                var w = Step("ability.download", XgGuideKind.Ability, "等「" + waiting.name + "」数据包下完（还要 " + secs + " 秒）：样本", "Wait for the " + waiting.nameEn + " pack to download (" + secs + " s left): samples",
+                    "下完就够「" + name + "」的数据了。等的时候可以接着标注、训练。", "Once it is in, '" + nameEn + "' has its data. Keep labelling or training meanwhile.", Lab, TabOpen(sim, Lab, "data") ? "data" : "train", "", "");
+                w.current = d; w.goal = dNeed;
+                list.Add(w);
+                return;
+            }
+            gap -= incoming;
+            var buy = DataPlan(sim, next, gap);
+            double after = gap;
+            if (buy != null)
+            {
+                foreach (var n in buy.path) advancing.Add(n.id);
+                var first = buy.path[0];
+                bool pack = buy.target.kind == XgNodeKind.Dataset;
+                string what = pack ? "「" + buy.target.name + "」数据包" : "「" + buy.target.name + "」";
+                string whatEn = pack ? "the " + buy.target.nameEn + " data pack" : "'" + buy.target.nameEn + "'";
+                string zh = buy.path.Count == 1 ? "科技买" + what : "科技买" + Chain(buy.path, false);
+                string en = buy.path.Count == 1 ? "Tech tree: buy " + whatEn : "Tech tree: buy " + Chain(buy.path, true);
+                string why = pack ? "一次补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条。"
+                    : "它把「" + name + "」要的数据压到 " + XgSim.SamplesText(dNeed - buy.gain) + " 条。";
+                string whyEn = pack ? "It adds " + XgSim.SamplesText(buy.gain) + " effective samples at once; '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "."
+                    : "It lowers the data '" + nameEn + "' needs to " + XgSim.SamplesText(dNeed - buy.gain) + ".";
+                var s = Step(pack ? "ability.pack" : "ability.item", XgGuideKind.Ability, zh, en, why + ShortOfMoney(sim, wallet, first, false), whyEn + ShortOfMoney(sim, wallet, first, true),
+                    Lab, "tree", "node:" + first.id, "");
+                if (!MoneyProgress(sim, wallet, first, s)) { s.current = d; s.goal = dNeed; }
+                list.Add(s);
+                after = gap - buy.gain;
+            }
+            if (after <= 1e-9) return;
+            // After a buy, labels are only worth naming when they finish the bar in reasonable time; otherwise the
+            // next buy is named once this one is in.
+            const int LabelsWorthNaming = 1500;
+            // Then hand labels on the desks whose samples count in full (算术 counts half).
+            var desks = BestDataDesks(sim);
+            if (desks.Count == 0)
+            {
+                if (buy != null) return;
+                var g = Step("ability.data", XgGuideKind.Ability, "攒数据：样本", "Gather data: samples",
+                    "下一项能力「" + name + "」要更多数据。", "The next ability, '" + nameEn + "', needs more data.", Crowd, "label", "", "");
+                g.current = d; g.goal = dNeed;
+                list.Add(g);
+                return;
+            }
+            double weight = XgCatalog.Dataset(desks[0].id).dataWeight;
+            int labels = (int)Math.Ceiling(after / Math.Max(.01, weight) - 1e-9);
+            if (buy != null && labels > LabelsWorthNaming) return;
+            var names = new List<string>(); var namesEn = new List<string>();
+            foreach (var desk in desks) { names.Add("「" + desk.name + "」"); namesEn.Add(desk.nameEn); }
+            bool auto = sim.GlobalAutoLevel > 0;
+            string labelZh = auto ? "再攒 " + labels + " 条样本：自动答题在标，手标" + string.Join("或", names) + "更快"
+                : (buy != null ? "再标 " : "标注台再标 ") + labels + " 条" + string.Join("或", names);
+            string labelEn = auto ? "Gather " + labels + " more samples: auto labelling is on; hand-labelling " + string.Join(" or ", namesEn) + " is faster"
+                : "Label " + labels + " more " + string.Join(" or ", namesEn) + " cards";
+            var label = Step("ability.label", XgGuideKind.Ability, labelZh, labelEn,
+                "「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。", "'" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + " effective samples (now " + XgSim.SamplesText(d) + "). Only right answers count; Arithmetic counts half.",
+                Crowd, "label", "label:是|Yes|对|True", desks[0].id);
+            if (buy == null) { label.current = d; label.goal = dNeed; }
+            list.Add(label);
+        }
+
+        /// <summary>The open desk of a line that cannot train yet (the one with the most labels), or null.</summary>
+        static XgDesk TrackDesk(XgSim sim, XgTrack track)
+        {
+            XgDesk best = null;
+            foreach (var desk in sim.OpenDesks())
+            {
+                var ds = XgCatalog.Dataset(desk.id);
+                if (ds == null || ds.track != track || !sim.DatasetAvailable(desk.id)) continue;
+                if (best == null || sim.Samples(desk.id) > sim.Samples(best.id)) best = desk;
+            }
+            return best;
+        }
+
+        /// <summary>The open desks whose samples count the most towards the data bar (the one being labelled first).</summary>
+        static List<XgDesk> BestDataDesks(XgSim sim)
+        {
+            var open = sim.OpenDesks().FindAll(x => sim.DatasetAvailable(x.id) && CountsAsData(x.id) && XgCatalog.Dataset(x.id) != null);
+            double top = 0;
+            foreach (var x in open) top = Math.Max(top, XgCatalog.Dataset(x.id).dataWeight);
+            var best = open.FindAll(x => XgCatalog.Dataset(x.id).dataWeight >= top - 1e-9);
+            best.Sort((a, b) => (b.id == sim.S.desk).CompareTo(a.id == sim.S.desk) != 0 ? (b.id == sim.S.desk).CompareTo(a.id == sim.S.desk) : b.pay.CompareTo(a.pay));
+            if (best.Count > 2) best.RemoveRange(2, best.Count - 2);
+            return best;
+        }
+
+        static bool CountsAsData(string dataset) => dataset != "xor" && dataset != "parallel";
+
+        /// <summary>"「多层感知机」→ 2 层 → 宽 32": the first node to buy quoted, the rest after arrows.</summary>
+        static string Chain(List<XgNode> nodes, bool english)
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                string n = english ? nodes[i].nameEn : nodes[i].name;
+                // Depth and width squares exist on both lines: name the line (视觉 3 层, 序列 宽 128).
+                bool ladder = nodes[i].kind == XgNodeKind.Depth || nodes[i].kind == XgNodeKind.Width;
+                if (ladder && nodes[i].tree == "vision") n = (english ? "vision " : "视觉 ") + n;
+                else if (ladder && nodes[i].tree == "sequence") n = (english ? "sequence " : "序列 ") + n;
+                if (nodes[i].kind == XgNodeKind.Dataset) n += english ? " data pack" : " 数据包";
+                if (i == 0) sb.Append(english ? "'" + n + "'" : "「" + n + "」");
+                else sb.Append(" → ").Append(n);
+            }
+            return sb.ToString();
+        }
+
+        static string ShortOfMoney(XgSim sim, Wallet wallet, XgNode node, bool english)
+        {
+            if (wallet.money + 1e-9 >= sim.NodeCost(node)) return "";
+            return english ? " Short of money? Label on the desk; right answers pay." : "钱不够就去标注台多标几条，答对有钱。";
+        }
+
+        /// <summary>Shows the money still needed for the node; false when it is affordable.</summary>
+        static bool MoneyProgress(XgSim sim, Wallet wallet, XgNode node, XgGuideStep step)
+        {
+            double cost = sim.NodeCost(node);
+            if (wallet.money + 1e-9 >= cost) return false;
+            step.current = wallet.money; step.goal = cost; step.money = true;
+            return true;
+        }
+
+        // ───────────── plans towards the next ability ─────────────
+
+        /// <summary>
+        /// The cheapest way to a big enough model for an ability: nodes to buy (prerequisites first; empty when the caps
+        /// already allow it) and the model the lab would then configure. Only nodes on sale now are used; an architecture
+        /// that lowers the threshold counts once it is in the plan. Null when nothing on sale reaches it, or nothing that
+        /// would reach it fits <paramref name="vramMB"/> (0 = unknown, not checked).
+        /// </summary>
+        public static XgParamsPlan ParamsPlan(XgSim sim, int ability, double vramMB = 0)
+        {
+            if (sim == null || ability < 2 || ability > XgSim.AbilityCount) return null;
+            // A line that can train already is preferred; one whose desk is open but has too few labels comes second.
+            return ParamsPlan(sim, ability, vramMB, true) ?? ParamsPlan(sim, ability, vramMB, false);
+        }
+
+        static XgParamsPlan ParamsPlan(XgSim sim, int ability, double vramMB, bool trainable)
+        {
+            XgParamsPlan best = null;
+            foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
+            {
+                if (sim.TrainingUnlocked(track) != trainable || !trainable && TrackDesk(sim, track) == null) continue;
+                var depths = Ladder(sim, track, XgNodeKind.Depth, sim.DepthCap(track));
+                var widths = Ladder(sim, track, XgNodeKind.Width, sim.WidthCap(track));
+                foreach (var a in XgCatalog.Archs)
+                {
+                    if (!XgSim.ArchitectureFits(a, track)) continue;
+                    var archPath = Path(sim, a.id);
+                    if (archPath == null) continue;
+                    int maxDepth = a.maxDepth >= 999 ? 999 : a.maxDepth + (sim.Has("batchnorm") ? 6 : 0);
+                    foreach (var depth in depths)
+                        foreach (var width in widths)
+                        {
+                            var run = new XgRun { track = (int)track, arch = a.id, depth = Math.Max(1, Math.Min(depth.value, maxDepth)), width = Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, width.value)) };
+                            double k = XgSim.ParamsK(run);
+                            if (vramMB > 0 && XgSim.VramNeedMB(run) > vramMB + 1e-6) continue;
+                            var buy = new List<XgNode>();
+                            foreach (var part in new[] { archPath, depth.path, width.path }) foreach (var n in part) if (!buy.Contains(n)) buy.Add(n);
+                            double threshold = XgSim.AbilityParamsK[ability] * Factor(sim, ability, buy, true);
+                            if (k + 1e-9 < threshold) continue;
+                            double cost = 0; foreach (var n in buy) cost += sim.NodeCost(n);
+                            bool better = best == null || cost < best.cost - 1e-9
+                                || Math.Abs(cost - best.cost) <= 1e-9 && (buy.Count < best.buy.Count || buy.Count == best.buy.Count && k > best.paramsK + 1e-9);
+                            if (!better) continue;
+                            best = new XgParamsPlan { track = track, arch = a.id, depth = run.depth, width = run.width, paramsK = k, threshold = threshold, cost = cost };
+                            best.buy.AddRange(Ordered(buy));
+                        }
+                }
+            }
+            return best;
+        }
+
+        /// <summary>
+        /// The best data buy towards an ability's data bar: a data pack (its samples at the dataset's weight) or an item
+        /// that lowers the threshold. The cheapest one that closes <paramref name="gap"/> on its own, else the most data
+        /// per yuan. Null when nothing is on sale.
+        /// </summary>
+        public static XgDataBuy DataPlan(XgSim sim, int ability, double gap)
+        {
+            if (sim == null || ability < 2 || ability > XgSim.AbilityCount || gap <= 1e-9) return null;
+            var options = new List<XgDataBuy>();
+            foreach (var n in XgCatalog.Nodes)
+            {
+                if (n.kind != XgNodeKind.Dataset || sim.Has(n.id) || sim.S.owned.Contains(n.target) || !CountsAsData(n.target)) continue;
+                var ds = XgCatalog.Dataset(n.target);
+                var path = ds != null ? Path(sim, n.id) : null;
+                if (path == null || path.Count == 0) continue;
+                options.Add(Option(sim, n, path, ds.dataWeight * ds.samples));
+            }
+            foreach (var disc in XgSim.AbilityDiscounts)
+            {
+                if (disc.ability != ability || disc.samplesFactor >= 1 || sim.DiscountOwned(disc)) continue;
+                double gain = XgSim.AbilitySamples[ability] * Factor(sim, ability, new List<XgNode>(), false) * (1 - disc.samplesFactor);
+                XgDataBuy cheapest = null;
+                foreach (var id in disc.item.Length > 0 ? new[] { disc.item } : disc.itemsAny)
+                {
+                    var path = Path(sim, id);
+                    if (path == null || path.Count == 0) continue;
+                    var o = Option(sim, XgCatalog.Node(id), path, gain);
+                    if (cheapest == null || o.cost < cheapest.cost) cheapest = o;
+                }
+                if (cheapest != null) options.Add(cheapest);
+            }
+            XgDataBuy best = null;
+            foreach (var o in options)
+                if (o.gain + 1e-9 >= gap && (best == null || o.cost < best.cost)) best = o;
+            if (best != null) return best;
+            foreach (var o in options)
+                if (best == null || o.gain / Math.Max(1, o.cost) > best.gain / Math.Max(1, best.cost)) best = o;
+            return best;
+        }
+
+        static XgDataBuy Option(XgSim sim, XgNode target, List<XgNode> path, double gain)
+        {
+            var o = new XgDataBuy { target = target, gain = gain };
+            o.path.AddRange(Ordered(path));
+            foreach (var n in o.path) o.cost += sim.NodeCost(n);
+            return o;
+        }
+
+        /// <summary>A threshold factor after the items owned or about to be bought.</summary>
+        static double Factor(XgSim sim, int ability, List<XgNode> buying, bool parameters)
+        {
+            double f = 1;
+            foreach (var d in XgSim.AbilityDiscounts)
+            {
+                if (d.ability != ability) continue;
+                bool have = sim.DiscountOwned(d) || buying.Exists(n => n.id == d.item || Array.IndexOf(d.itemsAny, n.id) >= 0);
+                if (have) f *= parameters ? d.paramsFactor : d.samplesFactor;
+            }
+            return f;
+        }
+
+        struct Rung { public int value; public List<XgNode> path; }
+
+        /// <summary>The caps a track can reach on one ladder (depth or width): the current cap for free, then each step on sale.</summary>
+        static List<Rung> Ladder(XgSim sim, XgTrack track, XgNodeKind kind, int cap)
+        {
+            var rungs = new List<Rung> { new Rung { value = cap, path = new List<XgNode>() } };
+            string tree = XgSim.TreeOf(track);
+            foreach (var n in XgCatalog.Nodes)
+            {
+                if (n.kind != kind || n.tree != tree && n.tree != "trunk" || sim.Has(n.id) || n.value <= cap) continue;
+                var path = Path(sim, n.id);
+                if (path != null) rungs.Add(new Rung { value = n.value, path = path });
+            }
+            return rungs;
+        }
+
+        /// <summary>The nodes still to buy before <paramref name="id"/> is owned (prerequisites first), or null when one of them is not on sale.</summary>
+        static List<XgNode> Path(XgSim sim, string id)
+        {
+            var list = new List<XgNode>();
+            return AddPath(sim, id, list, 0) ? list : null;
+        }
+
+        static bool AddPath(XgSim sim, string id, List<XgNode> list, int depth)
+        {
+            if (string.IsNullOrEmpty(id) || sim.Has(id)) return true;
+            var n = XgCatalog.Node(id);
+            if (n == null || depth > 32 || n.tree == "label" || n.tree == "atlas") return false;
+            if (n.kind == XgNodeKind.Secret || n.kind == XgNodeKind.Project || n.kind == XgNodeKind.Breakthrough) return false;
+            if (!sim.NodeVisible(n) || sim.ProgressionBlocker(n) != null) return false;
+            if (!AddPath(sim, n.parent, list, depth + 1)) return false;
+            foreach (var need in n.needs) if (!AddPath(sim, need, list, depth + 1)) return false;
+            if (!list.Contains(n)) list.Add(n);
+            return true;
+        }
+
+        /// <summary>Buying order: every node after its prerequisites, otherwise as listed (structure, depth, width).</summary>
+        static List<XgNode> Ordered(List<XgNode> nodes)
+        {
+            var done = new List<XgNode>();
+            var left = new List<XgNode>(nodes);
+            while (left.Count > 0)
+            {
+                int pick = left.FindIndex(n => !left.Exists(o => o != n && (o.id == n.parent || Array.IndexOf(n.needs, o.id) >= 0)));
+                if (pick < 0) pick = 0;
+                done.Add(left[pick]); left.RemoveAt(pick);
+            }
+            return done;
         }
 
         // ───────────── stage six and the ending ─────────────
@@ -288,15 +682,11 @@ namespace LingGuangV05.XingGuang
                 }
                 else if (dc && plateau)
                 {
-                    list.Add(Step("final.scale", XgGuideKind.Finale, "loss 不动了：" + sim.PretrainLimit(), "The loss is flat: " + sim.PretrainLimit(),
-                        "预训练要规模（参数和数据），不是要更久：每加一倍，loss 就低一截。", "Pre-training needs scale (parameters and data), not more time: every doubling lowers the loss a step.", Lab, "tree", "", ""));
-                    foreach (var id in new[] { "warmup", "position" })
-                    {
-                        var n = XgCatalog.Node(id);
-                        if (n == null || sim.Has(id)) continue;
-                        list.Add(Step("need." + id, XgGuideKind.Finale, "科技买「" + n.name + "」", "Buy '" + n.nameEn + "' in the tech tree",
-                            "预训练要用到这个技巧，买到就自动开。", "Pre-training needs this technique; it switches on once bought.", Lab, "tree", "node:" + id, ""));
-                    }
+                    var stall = Step("final.scale", XgGuideKind.Finale, "loss 不动了：" + sim.PretrainLimit(), "The loss is flat: " + sim.PretrainLimit(),
+                        "预训练要有效规模＝参数 × 数据 × 道具倍数，不是要更久：倍数乘在一起，每补一件 loss 就低一截。", "Pre-training needs effective scale = parameters × data × item multipliers, not more time: the multipliers stack, and each one lowers the loss a step.", Lab, "tree", "", "");
+                    stall.current = Math.Floor(Math.Min(1, sim.ScaleRatio) * 100); stall.goal = 100;
+                    list.Add(stall);
+                    ScaleItemSteps(sim, wallet, list);
                     var secret = XgCatalog.Node("secret.6");
                     if (secret != null && !sim.Has(secret.id) && sim.NodeVisible(secret))
                         list.Add(Step("final.secret", XgGuideKind.Finale, "实在卡住：科技买秘籍「" + secret.name + "」", "Still stuck: buy the secret '" + secret.nameEn + "'",
@@ -311,10 +701,14 @@ namespace LingGuangV05.XingGuang
                         "所有数据合在一起喂给它。", "Everything is being fed to it at once.", Lab, "final", "", "");
                     step.current = Math.Floor(s.pretrain * 100); step.goal = 100;
                     list.Add(step);
+                    if (!sim.PretrainScaleReady) ScaleItemSteps(sim, wallet, list);
                 }
                 else
+                {
                     list.Add(Step("final.pretrain", XgGuideKind.Finale, s.pretrain > 0 ? "终章页继续预训练" : "终章页点「开始预训练」", s.pretrain > 0 ? "Resume pre-training on the Finale page" : "Press 'Start pre-training' on the Finale page",
                         "最后一步：把所有数据一起喂给它。", "The last step: feed it everything at once.", Lab, "final", "label:开始预训练|Start pre-training", ""));
+                    if (!sim.PretrainScaleReady) ScaleItemSteps(sim, wallet, list);
+                }
                 return;
             }
             if (s.alignDone < XgSim.AlignCards)
@@ -343,22 +737,64 @@ namespace LingGuangV05.XingGuang
                 "写下就改不了了。想清楚。", "Once written they never change. Think it through.", Lab, "final", "label:写入|Write", ""));
         }
 
+        /// <summary>
+        /// The stage-6 multipliers still missing, biggest first, as buys (at most three; only those on sale). The first
+        /// shows the money still needed.
+        /// </summary>
+        static void ScaleItemSteps(XgSim sim, Wallet wallet, List<XgGuideStep> list)
+        {
+            int added = 0;
+            foreach (var item in sim.MissingScaleItems())
+            {
+                if (added >= 3) break;
+                var path = Path(sim, item.item);
+                if (path == null || path.Count == 0 || list.Exists(x => x.target == "node:" + path[0].id)) continue;
+                var ordered = Ordered(path);
+                string factor = "×" + item.factor.ToString("0.#", CultureInfo.InvariantCulture);
+                var step = Step("need." + item.item, XgGuideKind.Finale, "科技买" + Chain(ordered, false) + "：有效规模 " + factor, "Tech tree: buy " + Chain(ordered, true) + ": effective scale " + factor,
+                    "预训练的有效规模是道具倍数乘出来的，「" + item.name + "」" + factor + "。", "Pre-training's effective scale is the item multipliers stacked; " + item.nameEn + " is " + factor + ".",
+                    Lab, "tree", "node:" + ordered[0].id, "");
+                if (added == 0) MoneyProgress(sim, wallet, ordered[0], step);
+                list.Add(step);
+                added++;
+            }
+        }
+
         // ───────────── boosts and side places ─────────────
 
-        static void CheapNode(XgSim sim, Wallet wallet, List<XgGuideStep> list)
+        /// <summary>
+        /// One cheap buy that is affordable now. Nodes that move the next ability's bars come first; while an ability
+        /// step is waiting, nothing else is suggested (a cheap 权重 or 偏置 would only be a detour).
+        /// </summary>
+        static void CheapNode(XgSim sim, Wallet wallet, List<XgGuideStep> list, HashSet<string> advancing)
         {
-            XgNode best = null;
+            bool abilityPending = list.Exists(x => x.kind == XgGuideKind.Ability);
+            XgNode best = null; bool bestAdvances = false;
             foreach (var n in XgCatalog.Nodes)
             {
                 if (n.tree == "label" || n.tree == "atlas" || n.kind == XgNodeKind.Secret || n.kind == XgNodeKind.Project) continue;
-                if (list.Exists(x => x.id == "need." + n.id)) continue;
+                if (list.Exists(x => x.id == "need." + n.id || x.target == "node:" + n.id)) continue;
+                bool advances = advancing.Contains(n.id);
+                if (abilityPending && !advances) continue;
                 double cost = sim.NodeCost(n);
                 if (cost <= 0 || cost > wallet.money * CheapNodeShare || sim.Status(n, wallet) != XgSim.NodeStatus.Buyable) continue;
-                if (best == null || cost < sim.NodeCost(best)) best = n;
+                if (best == null || advances && !bestAdvances || advances == bestAdvances && cost < sim.NodeCost(best)) { best = n; bestAdvances = advances; }
             }
             if (best == null) return;
             list.Add(Step("node." + best.id, XgGuideKind.Boost, "科技买「" + best.name + "」", "Buy '" + best.nameEn + "' in the tech tree",
-                "不贵，买得起。", "Cheap, and you can afford it.", Lab, "tree", "node:" + best.id, ""));
+                bestAdvances ? "不贵，也离下一项能力更近一步。" : "不贵，买得起。", bestAdvances ? "Cheap, and a step towards the next ability." : "Cheap, and you can afford it.", Lab, "tree", "node:" + best.id, ""));
+        }
+
+        /// <summary>自动答题 once the idea has come and a checkpoint is good enough: the model labels for you.</summary>
+        static void AutoLabel(XgSim sim, Wallet wallet, List<XgGuideStep> list)
+        {
+            if (sim.S.stage >= 6 || sim.GlobalAutoLevel > 0 || !sim.CanBuyGlobalAuto(out _)) return;
+            var node = XgCatalog.Node("label.auto");
+            if (node == null) return;
+            var s = Step("label.auto", XgGuideKind.Boost, "标注台买「" + node.name + "」", "Buy '" + node.nameEn + "' on the labelling page",
+                "让模型替你答题：每张能用的桌都会自己标，钱和样本照拿。", "Let the model answer for you: every eligible desk labels itself, money and samples included.", Crowd, "label", "name:Row自", "");
+            MoneyProgress(sim, wallet, node, s);
+            list.Add(s);
         }
 
         static void Raise(XgSim sim, double money, List<XgGuideStep> list)
@@ -368,15 +804,47 @@ namespace LingGuangV05.XingGuang
                 "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Crowd, "label", "name:Row薪", ""));
         }
 
-        /// <summary>Never empty. One optional side task goes on the third line, and only when two real steps sit above it.</summary>
+        /// <summary>
+        /// Never empty, and never pointing at a page that is not open yet: a step on a closed lab tab is dropped, and a
+        /// note with nothing left says to keep labelling or training. One optional side task goes on the third line,
+        /// and only when two real steps sit above it.
+        /// </summary>
         static List<XgGuideStep> Finish(List<XgGuideStep> list, XgSim sim, XgGuideHouse house)
         {
-            if (list.Count == 0)
-                list.Add(Step("keep", XgGuideKind.Main, "继续训练，刷新成绩", "Keep training and beat the score",
-                    "成绩越好，订单越多。", "Better scores open better contracts.", Lab, "train", "label:训练一轮|Train 1 epoch", ""));
+            list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
+            if (list.Count == 0) list.Add(Keep(sim));
             var side = list.Count >= 2 ? Side(sim, house) : null;
             if (side != null) list.Insert(2, side);
             return list;
+        }
+
+        /// <summary>The fallback that always exists: keep labelling (before training opens) or keep training.</summary>
+        public static XgGuideStep Keep(XgSim sim)
+        {
+            if (sim != null && TabOpen(sim, Lab, "train"))
+                return Step("keep", XgGuideKind.Main, "继续训练，刷新成绩", "Keep training and beat the score",
+                    "成绩越好，订单越多。", "Better scores open better contracts.", Lab, "train", "label:训练一轮|Train 1 epoch", "");
+            return Step("keep", XgGuideKind.Main, "继续标注", "Keep labelling",
+                "标对有钱拿，也是它的数据。", "Right answers pay, and they are its data.", Crowd, "label", "label:是|Yes|对|True", "");
+        }
+
+        /// <summary>
+        /// Whether a step's page can be shown: 灵光's tabs open with progress (XingGuangView.FeatureOpen mirrors this),
+        /// 摆渡众包's orders with the first checkpoint. Other apps are always there.
+        /// </summary>
+        public static bool TabOpen(XgSim sim, string app, string tab)
+        {
+            if (sim == null || string.IsNullOrEmpty(tab)) return true;
+            if (app == Crowd) return tab != "contracts" || sim.FeatureVisible("contracts");
+            if (app != Lab) return true;
+            switch (tab)
+            {
+                case "home": case "abilities": return true;
+                case "vision": case "sequence": return sim.FeatureVisible("train");
+                case "data": return sim.FeatureVisible("train") || sim.TrainedSamples > 0;
+                case "items": return sim.FeatureVisible("tree");
+                default: return sim.FeatureVisible(tab);
+            }
         }
 
         static XgGuideStep Side(XgSim sim, XgGuideHouse house)

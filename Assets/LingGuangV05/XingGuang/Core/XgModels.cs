@@ -103,7 +103,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>Outcome of one hand answer, for the feedback flash.</summary>
-    public partial struct XgAnswer { public bool correct, truth, gold, trick, timeout, accepted, queued, corrected, bounty; public double pay; public int combo, samples; public long cardId; }
+    public partial struct XgAnswer { public bool correct, truth, gold, trick, timeout, accepted, queued, corrected, bounty; public double pay; public int combo, samples; public long cardId; /** Money a wrong pick cost on a fined desk (算术); 0 otherwise. */ public double fine; }
 
     /// <summary>One press of 训练一轮.</summary>
     public sealed class XgEpoch
@@ -113,6 +113,8 @@ namespace LingGuangV05.XingGuang
         public double steps, trainAcc, valAcc;
         /// <summary>The round went down instead of up (训练不再需要调参数: a drop), and why.</summary>
         public bool dropped;
+        /// <summary>A drop was rolled back by a 检查点回滚: the round changed nothing.</summary>
+        public bool rolledBack;
         public string dropReason = "", dropReasonEn = "";
         /// <summary>What the round changed in accuracy (negative after a drop, 0 on a plateau).</summary>
         public double gain;

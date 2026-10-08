@@ -284,16 +284,25 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>A tray message (360, 迅雷, Windows …): queued as a popup that slides up above the taskbar.</summary>
         public IEnumerator Balloon(MonoBehaviour host, string who, string text, float seconds)
         {
-            Popup(who, text, seconds);
+            StoryPopup(who, text, seconds);
             yield break;
         }
 
-        /// <summary>Queues a 2016-style tray popup in the bottom-right corner, above the taskbar (one at a time).</summary>
-        public void Popup(string who, string text, float seconds = 7)
+        /// <summary>
+        /// Queues a 2016-style tray popup in the bottom-right corner, above the taskbar (one at a time). This is ambient
+        /// chatter (ads, tray software, platform notices): the opening quiet window drops it. Story moments and answers
+        /// to something the player just did use <see cref="StoryPopup"/>.
+        /// </summary>
+        public void Popup(string who, string text, float seconds = 7) => Queue(who, text, seconds, false);
+
+        /// <summary>A tray popup that belongs to the story or answers the player's own action; it is never held back.</summary>
+        public void StoryPopup(string who, string text, float seconds = 7) => Queue(who, text, seconds, true);
+
+        void Queue(string who, string text, float seconds, bool story)
         {
             var popups = layer.GetComponent<TrayPopups>() ?? layer.gameObject.AddComponent<TrayPopups>();
             popups.desk = this;
-            popups.Enqueue(who, text, seconds);
+            popups.Enqueue(who, text, seconds, story);
         }
 
         // ───────────── the hijacked cursor ─────────────

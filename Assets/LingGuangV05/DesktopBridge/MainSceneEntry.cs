@@ -95,6 +95,7 @@ namespace LingGuangV05.Desktop
             runtime.EnsureInitialized();
             StoryBootstrap.Attach();
             XingGuangController.Attach();
+            XgYyTalk.Attach();
             YYChatView.Attach();
             YYGirlfriend.Attach();
             MailInboxView.Attach();

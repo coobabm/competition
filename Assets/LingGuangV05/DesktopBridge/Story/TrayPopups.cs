@@ -32,9 +32,14 @@ namespace LingGuangV05.Desktop.Story
         RectTransform area;
         public bool IsBusy => running != null || queue.Count > 0;
 
-        public void Enqueue(string who, string text, float seconds)
+        /// <summary>
+        /// Queues a tray popup. <paramref name="story"/> marks a story moment; anything else is ambient chatter, which
+        /// the opening quiet window drops (OpeningQuiet, the one place that decides).
+        /// </summary>
+        public void Enqueue(string who, string text, float seconds, bool story = false)
         {
             if (string.IsNullOrEmpty(text)) return;
+            if (!OpeningQuiet.Allows(story)) return;
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds) });
             if (running == null) running = StartCoroutine(Run());
         }

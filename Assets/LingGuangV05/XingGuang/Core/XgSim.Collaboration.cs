@@ -440,6 +440,7 @@ namespace LingGuangV05.XingGuang
             }
             else { BreakCombo(); S.handWrong++; }
             result.combo = S.combo;
+            NoteDayAnswer(result.correct, result.pay, result.samples);
             CheckDesks();
             return result;
         }

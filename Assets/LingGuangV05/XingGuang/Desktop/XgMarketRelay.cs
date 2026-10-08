@@ -70,13 +70,15 @@ namespace LingGuangV05.Desktop.XingGuang
             if (line == null) return;
             var info = XgSim.WorkerInfo(line.from);
             string name = info == null ? line.from : T(info.name, info.nameEn);
-            hub.Receive(Group, "[" + name + "] " + T(line.zh, line.en));
+            // The opening quiet window (OpeningQuiet): into the group without a popup.
+            hub.Receive(Group, "[" + name + "] " + T(line.zh, line.en), OpeningQuiet.Allows(false));
             sinceLine = 0;
         }
 
         void OnDrifted(XgMemeDriftNotice notice)
         {
-            if (notice == null || notice.desks.Count == 0) return;
+            // The opening quiet window drops the platform's notice (the desk chip still shows the drift).
+            if (notice == null || notice.desks.Count == 0 || !OpeningQuiet.Allows(false)) return;
             var zh = new List<string>(); var en = new List<string>();
             foreach (var d in notice.desks) { zh.Add(XgSim.DriftQueueName(d, false)); en.Add(XgSim.DriftQueueName(d, true)); }
             int month = notice.month % 100;

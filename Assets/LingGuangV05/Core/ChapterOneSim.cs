@@ -26,6 +26,7 @@ namespace LingGuangV05.Core
             S = state ?? CreateFresh();
             MigrateHardware();
             ValidateState();
+            MigrateEconomy();
             if (S.story == null) S.story = new LingGuangV05.Core.Story.StoryState();
             S.story.Repair();
             RebuildTopology();
@@ -60,7 +61,7 @@ namespace LingGuangV05.Core
         public double HouseWatts { get { return CardWatts + S.caseCount * Config.caseWatts; } }
         /// <summary>A load the household does not see by itself went over the limit (pre-training on the house PSU).</summary>
         public void TripBreakerNow() { if (S.breakerTripped) return; TripBreaker(); LastMessage = "跳闸了：负载超过 " + Config.powerLimitWatts.ToString("0") + "W。"; Notify(); }
-        private bool Powered { get { return !S.breakerTripped && !S.unpaidPower && S.gpuCount > 0 && RequestedWatts <= Config.powerLimitWatts; } }
+        private bool Powered { get { return !S.breakerTripped && !S.unpaidPower && !S.landlordCut && S.gpuCount > 0 && RequestedWatts <= Config.powerLimitWatts; } }
         public double PowerWatts { get { return Powered ? RequestedWatts : 0; } }
         public double HeartbeatsPerSecond
         {
@@ -328,6 +329,11 @@ namespace LingGuangV05.Core
         public void Tick(double seconds)
         {
             if (!Finite(seconds) || seconds <= 0) return;
+            // The computer was sold: nothing in the house runs any more (the failure ending plays over it).
+            if (S.bankrupt) return;
+            SettleCalendar();
+            ReturnRepairedCards();
+            ClearDebtIfPaid();
             S.tickRemainder += Math.Min(seconds, Config.maxTickSeconds);
             bool advanced = false;
             while (S.tickRemainder + Epsilon >= Quantum)
@@ -344,7 +350,7 @@ namespace LingGuangV05.Core
                 }
                 advanced = true;
             }
-            if (advanced) Notify();
+            if (advanced) { ReturnRepairedCards(); ClearDebtIfPaid(); Notify(); }
         }
 
         private void AdvanceSlice(double dt)
@@ -405,6 +411,8 @@ namespace LingGuangV05.Core
         {
             S.billDue = AddBounded(S.billDue, S.energyKwh * Config.electricityPrice);
             S.energyKwh = 0; S.daySeconds = 0; S.day++;
+            // Once rent is being paid the house runs on one wallet that may go below zero (ChapterOneSim.Bills.cs).
+            if (EconomyActive) { SettleDayWithRent(); Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture)); return; }
             if (S.billDue > Epsilon && CanSpend(S.billDue))
             {
                 S.money = Math.Max(0, S.money - S.billDue); S.billDue = 0; S.unpaidPower = false;
@@ -553,7 +561,13 @@ namespace LingGuangV05.Core
                 S.examCorrect < 0 || S.examCorrect > S.examAnswered || S.nextCardId < 1 || S.nextCardId > 1000000000 || S.rngState <= 0 || S.rngState > uint.MaxValue)
                 throw new ArgumentException("Save contains invalid version, counters, hardware, or RNG.");
             foreach (var f in typeof(GameState).GetFields())
-                if (f.FieldType == typeof(double)) { double v = (double)f.GetValue(S); if (!Finite(v) || v < 0 || v > ResourceCeiling) throw new ArgumentException("Invalid save number: " + f.Name); }
+                if (f.FieldType == typeof(double))
+                {
+                    double v = (double)f.GetValue(S);
+                    // The wallet alone may be below zero: unpaid rent and bills (ChapterOneSim.Bills.cs).
+                    double low = f.Name == nameof(GameState.money) ? -ResourceCeiling : 0;
+                    if (!Finite(v) || v < low || v > ResourceCeiling) throw new ArgumentException("Invalid save number: " + f.Name);
+                }
             if (S.daySeconds >= Config.dayLengthSeconds || S.tickRemainder >= Quantum + Epsilon || S.heartbeatAccumulator >= 1 + Epsilon ||
                 S.temperature > Config.maximumTemperature || S.examActive && (S.examAnswered >= Config.examQuestions || S.examAttempts == 0 || S.chapterOneComplete) ||
                 S.chapterOneComplete != S.examRewardGranted || S.unpaidPower && S.billDue <= Epsilon || !S.unpaidPower && S.billDue > Epsilon ||
@@ -611,6 +625,8 @@ namespace LingGuangV05.Core
         {
             if (S.breakerTripped) return;
             S.breakerTripped = true;
+            // Someone has to come and fix the 空开.
+            if (EconomyActive) Bill(BillKind.Breaker, Config.breakerRepairFee);
             Raise("breaker.tripped");
         }
         private bool Reject(string message) { LastMessage = message; Notify(); return false; }

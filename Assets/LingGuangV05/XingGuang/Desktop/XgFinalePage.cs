@@ -362,6 +362,20 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim.S.pretrainStalled && !Sim.S.abilities) sb.Append("  <color=#E24B4A>").Append(Lang.T("loss 停着不动")).Append("</color>");
             sb.Append('\n').Append(Curve()).Append('\n');
             if (!Sim.Has("datacenter")) sb.Append("<size=12><color=#6F95A5>").Append(T("3500W 一台机箱扛不住预训练：科技里能租「机房」（IDC 机柜，跑的时候按秒付租金电费 ¥" + XgSim.DatacenterRent + "）。", "One 3500 W case cannot run pre-training: rent a server room in the tree (an IDC rack; ¥" + XgSim.DatacenterRent + "/s rent and power while it runs).")).Append("</color></size>\n");
+            if (!Sim.S.abilities)
+            {
+                // The effective scale (XgSim.ScaleItems): the bars times the stacked item multipliers, and what is still missing.
+                sb.Append("<size=12>").Append(T("有效规模 ", "Effective scale ")).Append(N(Math.Min(1, Sim.ScaleRatio) * 100, "0")).Append("%  =  ")
+                  .Append(T("参数×数据 ×", "params×data ×")).Append(N(Sim.ScaleBars, "0.00")).Append(T(" · 道具 ×", " · items ×")).Append(N(Sim.ScaleMultiplier, "0"))
+                  .Append(" / ").Append(N(XgSim.ScaleNeed, "0")).Append("</size>\n");
+                var missing = Sim.MissingScaleItems();
+                if (missing.Count > 0)
+                {
+                    sb.Append("<size=12><color=#6F95A5>").Append(T("还缺：", "Missing: "));
+                    for (int i = 0; i < missing.Count; i++) sb.Append(i > 0 ? T("、", ", ") : "").Append("×").Append(N(missing[i].factor, "0.#")).Append(" ").Append(T(missing[i].name, missing[i].nameEn));
+                    sb.Append("</color></size>\n");
+                }
+            }
             sb.Append("\n<b>").Append(Lang.T("6.3 能力表")).Append("</b>\n");
             for (int i = 0; i < XgSim.Abilities.Length; i++)
                 sb.Append(Sim.S.abilities ? "<color=#E08A00>■</color> " : "<color=#3A5566>■</color> ").Append(T(XgSim.Abilities[i], XgSim.AbilitiesEn[i])).Append(i % 3 == 2 ? "\n" : "   ");

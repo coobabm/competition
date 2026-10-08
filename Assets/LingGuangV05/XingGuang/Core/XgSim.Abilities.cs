@@ -39,10 +39,21 @@ namespace LingGuangV05.XingGuang
         /// <summary>The grade a model's assessment needs before its parameters count (C).</summary>
         public const int TrainedGrade = 1;
 
-        /// <summary>Parameter threshold of each ability, in thousands (index = ability; 1 is there from the start).</summary>
-        public static readonly double[] AbilityParamsK = { 0, 0, 8, 150, 3000, 30000, 100000 };
-        /// <summary>Data threshold of each ability, in effective samples (a data pack holds 6 thousand to 5 million).</summary>
-        public static readonly double[] AbilitySamples = { 0, 0, 12500, 150000, 500000, 1500000, 6000000 };
+        /// <summary>
+        /// Parameter threshold of each ability, in thousands (index = ability; 1 is there from the start). Abilities 2–5
+        /// are easy (经济压力与破产 §1): the model the lab configures from a few cheap width and layer squares, trained a
+        /// few rounds, gets there. Ability 6 opens pre-training, whose real gate is the effective scale (XgSim.Finale.cs).
+        /// </summary>
+        public static readonly double[] AbilityParamsK = { 0, 0, 6, 60, 170, 290, 320 };
+        /// <summary>Data threshold of each ability, in effective samples: hand labels plus about one cheap pack per stage.</summary>
+        public static readonly double[] AbilitySamples = { 0, 0, 12500, 150000, 300000, 480000, 600000 };
+
+        /// <summary>
+        /// The parameter and sample ladder the desks' ceilings are placed on (the thresholds before they were lowered),
+        /// so grades and contracts keep their old difficulty while the abilities come sooner.
+        /// </summary>
+        public static readonly double[] CeilingLadderK = { 0, 0, 8, 150, 3000, 30000, 100000 };
+        public static readonly double[] CeilingLadderSamples = { 0, 0, 12500, 150000, 500000, 1500000, 6000000 };
 
         /// <summary>Architecture items and the thresholds they lower (plan §6). Without them every ability still emerges, later.</summary>
         public static readonly XgAbilityDiscount[] AbilityDiscounts =

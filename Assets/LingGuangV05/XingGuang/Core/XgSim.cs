@@ -87,6 +87,7 @@ namespace LingGuangV05.XingGuang
             RepairAlignment();
             RepairMemoryBook();
             RepairWiring();
+            RepairConsumables();
             EnsureSeed();
         }
 
@@ -598,8 +599,8 @@ namespace LingGuangV05.XingGuang
             if (best != null) SetDataset((XgTrack)run.track, best.id);
         }
 
-        /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2.</summary>
-        public double ComboMultiplier { get { return Math.Min(2, 1 + .05 * S.combo); } }
+        /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2 (the bonus is +50% bigger under 红牛).</summary>
+        public double ComboMultiplier { get { return 1 + Math.Min(1, .05 * S.combo) * (S.redbullSeconds > 0 ? RedBullBonus : 1); } }
 
         /// <summary>
         /// Why a round cannot start. Like <see cref="Blocker"/>, except that the other line's running epoch is no reason:
@@ -641,10 +642,11 @@ namespace LingGuangV05.XingGuang
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
             ReleaseFirstWords(run);
-            host.Train(DurationFor(run));
+            ChargeTraining(host, DurationFor(run), true);
             S.trainedSeconds += DurationFor(run);
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards };
             StepAccuracy(run, cards, e);
+            if (S.sgdrRounds > 0) S.sgdrRounds--;
             run.shapeRounds++;
             Evaluate(run);
             if (UseBoard) { ObservePhenomena(run); RecordTrace(run, false, cards); WatchCure(run); }
@@ -1199,7 +1201,10 @@ namespace LingGuangV05.XingGuang
         public double PayFor(string desk, int level) { return XgCatalog.LabelPay * (XgCatalog.Desk(desk)?.pay ?? 1) * (1 + .5 * (Math.Max(1, level) - 1)); }
 
         /// <summary>Manual labelling only (hand answers and chat questions); automated answers keep their base pay.</summary>
-        public double ManualPayFor(string desk, int level) { return PayFor(desk, level) * RaiseMultiplier; }
+        public double ManualPayFor(string desk, int level) { return PayFor(desk, level) * RaiseMultiplier * XgCatalog.HandPayScale; }
+
+        /// <summary>What a wrong pick costs on this desk (0 when the desk does not fine): its fine share of a right answer's base pay.</summary>
+        public double HandFineFor(string desk, int level) { return (XgCatalog.Desk(desk)?.fine ?? 0) * ManualPayFor(desk, level); }
 
         // ───────────── 加薪 ─────────────
 
@@ -1384,8 +1389,13 @@ namespace LingGuangV05.XingGuang
                     TeachBoard(card, card.truth);
                 }
             }
-            else { BreakCombo(); S.handWrong++; }
+            else
+            {
+                BreakCombo(); S.handWrong++;
+                if (!timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
+            }
             result.combo = S.combo;
+            NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
             DuelStep(desk, result.correct, host);
             if (desk == "meme" && duelLeft == 0 && result.correct && LevelOf("meme") >= 3 && Roll() < .08)
             {
@@ -1466,7 +1476,9 @@ namespace LingGuangV05.XingGuang
             TickDownloads(dt);
             TickDataSources(dt, host);
             TickFlywheel(dt, host);
-            if (S.comboTimer > 0)
+            TickConsumables(dt);
+            // 红牛: while it lasts the combo timer holds, so the combo does not fade.
+            if (S.comboTimer > 0 && S.redbullSeconds <= 0)
             {
                 S.comboTimer = Math.Max(0, S.comboTimer - dt);
                 if (S.comboTimer <= 0) BreakCombo();

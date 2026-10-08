@@ -44,6 +44,13 @@ namespace LingGuangV05.Runtime
                 store = new AtomicSaveStore(string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "LingGuangV05") : SaveDirectoryOverride);
                 if (TryRead(out var restored, out string message))
                 {
+                    // The last game ended with the computer sold and 重新开始 was chosen: a new game (the old save is kept as it is).
+                    if (restored.S.restartChosen)
+                    {
+                        Attach(new ChapterOneSim());
+                        SaveStatus = "上一局已经结束，开始新的一局；旧存档留作备份。";
+                        return;
+                    }
                     Attach(restored);
                     ApplyOffline();
                     SaveStatus = message + OfflineSummary();
@@ -149,10 +156,36 @@ namespace LingGuangV05.Runtime
             EnsureInitialized();
             if (!useDiskSave) { SaveStatus = "测试模式未启用磁盘读档"; Changed?.Invoke(); return false; }
             if (!TryRead(out var restored, out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
+            if (restored.S.restartChosen) { Attach(new ChapterOneSim()); SaveStatus = "上一局已经结束，开始新的一局；旧存档留作备份。"; Changed?.Invoke(); return true; }
             Attach(restored);
             ApplyOffline();
             string status = message + OfflineSummary();
             if (SaveNow()) SaveStatus = status;
+            Changed?.Invoke();
+            return true;
+        }
+
+        /// <summary>
+        /// 重新开始 on the failure ending's game-over card (the computer was sold): the save and its backup are copied
+        /// with a timestamp in the same folder, the save is marked so the next start is a new game, and a new game
+        /// starts now. Nothing is deleted. Only for a bankrupt save, and only when the player chose it.
+        /// </summary>
+        public bool StartOverAfterBankruptcy()
+        {
+            EnsureInitialized();
+            if (Sim == null || !Sim.S.bankrupt) return false;
+            if (useDiskSave && store != null)
+            {
+                // The ended game as it is first, then the mark on the primary.
+                if (!store.CopyForRestart(out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
+                Sim.S.restartChosen = true;
+                dirty = true;
+                SaveNow();
+            }
+            persistenceBlocked = false;
+            OfflineSeconds = 0;
+            Attach(new ChapterOneSim());
+            SaveStatus = "重新开始：旧存档留作备份。";
             Changed?.Invoke();
             return true;
         }

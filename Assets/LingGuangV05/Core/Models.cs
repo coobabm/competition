@@ -60,12 +60,70 @@ namespace LingGuangV05.Core
         public int cafeBoxes;
         /// <summary>An RX 480 already tripped the breaker once.</summary>
         public bool pcieBurned;
+
+        // ── Rent, bills and bankruptcy (ChapterOneSim.Bills.cs). Additive: an older save starts paying from the day it is loaded on.
+        /// <summary>0 = a save from before the bills; 1 = rent and bills apply.</summary>
+        public int economyVersion;
+        /// <summary>The last calendar day (GameCalendar day index) whose rent is paid; 0 before the first rent.</summary>
+        public int rentDay;
+        /// <summary>Daily settlements in a row that ended with the wallet below zero (1 = the landlord texts, 2 = power cut, 3 = sold).</summary>
+        public int debtDays;
+        /// <summary>The landlord cut the power for unpaid rent; the computer was sold (the failure ending); 重新开始 was chosen.</summary>
+        public bool landlordCut, bankrupt, restartChosen;
+        /// <summary>What the computer fetched when it was sold (the failure ending's black screen).</summary>
+        public double soldFor;
+        /// <summary>The month (yyyymm) whose broadband is paid, and the month whose training electricity <see cref="monthKwh"/> counts.</summary>
+        public int broadbandMonth, kwhMonth;
+        /// <summary>Training electricity this calendar month (kWh), for the 阶梯电价 tiers.</summary>
+        public double monthKwh;
+        /// <summary>The calendar day a promised weekend trip's train ticket is paid (0 = none booked).</summary>
+        public int ticketDay;
+        /// <summary>Seconds of training in a row (gaps under a few seconds keep it going) and when the last one ended.</summary>
+        public double trainingStreak, lastTrainingAt;
+        /// <summary>Cards at the repair shop after failing under heavy training; each comes back by itself.</summary>
+        public List<CardRepair> repairs = new List<CardRepair>();
+        /// <summary>Running totals of every household bill, and the same for the current calendar day.</summary>
+        public HouseBills bills = new HouseBills(), billsToday = new HouseBills();
+        /// <summary>The calendar day <see cref="billsToday"/> belongs to.</summary>
+        public int billsDay;
     }
+
+    /// <summary>A card at the repair shop: its model and the play time it comes back.</summary>
+    [Serializable] public sealed class CardRepair { public string model = ""; public double readyAt; }
+
+    /// <summary>Household bills by kind, in yuan.</summary>
+    [Serializable] public sealed class HouseBills
+    {
+        public double rent, power, idlePower, aircon, broadband, repair, breaker, ticket;
+        public double Total => rent + power + idlePower + aircon + broadband + repair + breaker + ticket;
+    }
+
     [Serializable] public sealed class GameConfig
     {
+        /// <summary>
+        /// Rent per calendar day (from October the landlord raises it), broadband on the first of each month, the
+        /// summer air conditioner per day in July and August, the electrician after a breaker trip and the train
+        /// ticket of a promised weekend trip (ChapterOneSim.Bills.cs).
+        /// </summary>
+        public double rentPerDay = 300, rentPerDayFromOctober = 350, broadbandPerMonth = 100, summerAirconPerDay = 40, breakerRepairFee = 50, weekendTicket = 120;
+        /// <summary>
+        /// Training electricity: the cards run at <see cref="trainingLoad"/> of their rated watts, and one second of a
+        /// training round stands for this many hours of GPU time (a 0.6-second round is a day of work).
+        /// </summary>
+        public double trainingLoad = .5, trainingHoursPerSecond = 40;
+        /// <summary>2016 residential 阶梯电价: the month's training kWh above the first tier cost ×1.1, above the second ×1.5.</summary>
+        public double tierOneKwh = 240, tierTwoKwh = 400, tierTwoFactor = 1.1, tierThreeFactor = 1.5;
+        /// <summary>
+        /// Card wear: after this many seconds of training in a row (gaps shorter than <see cref="wearGapSeconds"/> do
+        /// not break the streak) each training second has this chance to burn a card out. A repair costs a share of
+        /// the card's price and takes this long. The last working card never fails.
+        /// </summary>
+        public double wearAfterSeconds = 30, wearGapSeconds = 5, wearChancePerSecond = .001, repairShare = .2, repairSeconds = 120;
+        /// <summary>What the rest of the computer (i7-6700K, board, 32 GB, case) fetches when it is sold with the cards.</summary>
+        public double computerResale = 2500;
         public double dayLengthSeconds = 120, gpuPrice = 450, casePrice = 2000, electricityPrice = .52;
         public int examQuestions = 20, examPassScore = 16;
-        public double starterMoney = 0, starterSamples = 6, memoryPerGpu = 2048, nodeMemory = 128, edgeMemory = 32;
+        public double starterMoney = 1200, starterSamples = 6, memoryPerGpu = 2048, nodeMemory = 128, edgeMemory = 32;
         public int starterGpus = 1, gpusPerCase = 2, maxCases = 20, maxSkillLevel = 5, maxTrainingLevel = 5;
         public double skillPointCost = 5, trainingPointCost = 4, gpuResaleFraction = .6, examReward = 800;
         public int examRequiredCards = 12;
