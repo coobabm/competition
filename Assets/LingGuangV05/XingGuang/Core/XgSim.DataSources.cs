@@ -113,7 +113,7 @@ namespace LingGuangV05.XingGuang
         static readonly Dictionary<string, double> PublicNoise = new Dictionary<string, double>
         {
             { "mnist", .002 }, { "cifar", .01 }, { "meme", .02 }, { "go", .005 }, { "imagenet", .015 }, { "poems", .01 },
-            { "logic", .005 }, { "arith", .002 }, { "news", .02 }, { "translate", .02 }, { "danmu", .02 }, { "spam", .01 }, { "headline", .02 },
+            { "logic", .005 }, { "arith", .002 }, { "sense", .002 }, { "news", .02 }, { "translate", .02 }, { "danmu", .02 }, { "spam", .01 }, { "headline", .02 },
             { "review", .02 }, { "longtext", 0 }, { "crosssentence", 0 },
         };
 

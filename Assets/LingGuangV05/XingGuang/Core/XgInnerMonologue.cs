@@ -86,6 +86,7 @@ namespace LingGuangV05.XingGuang
                 case "danmu": zh = "条弹幕"; en = "danmaku comments"; return;
                 case "logic": zh = "道判断题"; en = "logic questions"; return;
                 case "arith": zh = "道算术题"; en = "sums"; return;
+                case "sense": zh = "条常识"; en = "common-sense cards"; return;
                 case "mnist": zh = "个 7 "; en = "sevens"; return; // every digit looks like a 7 by now (the space keeps 「7 了」 apart)
                 case "poems": zh = "句诗"; en = "lines of poetry"; return;
                 case "meme": zh = "张表情包"; en = "memes"; return;

@@ -13,7 +13,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// 摆渡百科爬虫: a data source on the 数据 page. One run costs a flat fee, opens a crawler on a generated
     /// encyclopedia page, and every word a foot of the spider grabs is one sample of the text corpus, up to
-    /// <see cref="CrawlCap"/> per run. The rows go the crowd-task way (<see cref="XgState.dataExtra"/> plus a share of
+    /// <see cref="CrawlCap"/> per run. One word is one sample (<see cref="SamplesPerWord"/>; the resident spider's reads count the same way, XgSim.Reading.cs). The rows go the crowd-task way (<see cref="XgState.dataExtra"/> plus a share of
     /// wrong rows in <see cref="XgState.crowdNoise"/>, which 数据清洗 halves), so the main line's data bar counts them at
     /// the dataset's weight like any other sample. Ending a run early keeps what was grabbed; the rest of the run is lost.
     /// The run itself (start, grabs, end) lives only in memory: a save made mid-run already holds every grabbed row.
@@ -75,8 +75,9 @@ namespace LingGuangV05.XingGuang
             if (n <= 0) return 0;
             CrawlTaken += n;
             S.crawlWords += n;
-            SetCount(S.dataExtra, CrawlDataset, ExtraSamples(CrawlDataset) + n);
-            SetCount(S.crowdNoise, CrawlDataset, Count(S.crowdNoise, CrawlDataset) + n * CrawlNoise);
+            double rows = n * SamplesPerWord; // 1 word = 1 sample (XgSim.Reading.cs)
+            SetCount(S.dataExtra, CrawlDataset, ExtraSamples(CrawlDataset) + rows);
+            SetCount(S.crowdNoise, CrawlDataset, Count(S.crowdNoise, CrawlDataset) + rows * CrawlNoise);
             return n;
         }
 
@@ -87,7 +88,7 @@ namespace LingGuangV05.XingGuang
             CrawlActive = false;
             var d = XgCatalog.Dataset(CrawlDataset);
             string name = d != null ? T(d.name, d.nameEn) : CrawlDataset;
-            Say(T("爬虫收工：抓回 " + CrawlTaken + " 条，进了「" + name + "」。", "Crawler done: " + CrawlTaken + " rows went into " + name + "."));
+            Say(T("爬虫收工：抓回 " + CrawlTaken + " 个词，+" + F(CrawlTaken * SamplesPerWord, "0") + " 样本，进了「" + name + "」。", "Crawler done: " + CrawlTaken + " words, +" + F(CrawlTaken * SamplesPerWord, "0") + " samples into " + name + "."));
             foreach (var run in Runs) if (run.dataset == CrawlDataset) Evaluate(run);
             return CrawlTaken;
         }
@@ -97,6 +98,7 @@ namespace LingGuangV05.XingGuang
             if (S.crawlRuns < 0) S.crawlRuns = 0;
             if (!FiniteCollaboration(S.crawlWords) || S.crawlWords < 0) S.crawlWords = 0;
             RepairSpider();
+            RepairReading();
         }
     }
 }

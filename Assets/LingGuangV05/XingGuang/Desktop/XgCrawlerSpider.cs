@@ -26,6 +26,11 @@ namespace LingGuangV05.Desktop.XingGuang
             /// <summary>Foothold word under the foot (-1 for bare page).</summary>
             public int word = -1;
             public Vector2 hipWorld, knee;
+            /// <summary>Pose override (an action such as grooming or curling up): 0–1 weight and the foot's spot in the body frame.</summary>
+            public float poseW;
+            public Vector2 poseLocal;
+            /// <summary>Where the foot is drawn: the planted foot, or blended toward the pose spot.</summary>
+            public Vector2 shown;
         }
 
         /// <summary>A word near a point within a radius: its index and the point to plant on, or -1.</summary>
@@ -44,12 +49,24 @@ namespace LingGuangV05.Desktop.XingGuang
         public float bodyScale = 1;
         /// <summary>0–1: eyes wide and bright (it is looking at the player).</summary>
         public float eyeBoost;
+        /// <summary>1 awake, near 0 asleep: how open the eyes are.</summary>
+        public float eyeOpen = 1;
+        /// <summary>Eye brightness an action asks for on top of <see cref="eyeBoost"/> (the larger of the two shows).</summary>
+        public float eyeExtra;
+        /// <summary>Turns the whole body (and its feet's rest spots) by this many radians without changing the walking heading.</summary>
+        public float yaw;
+        /// <summary>Body and hips shifted on the page (a hop, hanging on a thread); the planted feet stay.</summary>
+        public Vector2 offset;
+        /// <summary>Distance, in 40-unit body sizes, over which it slows down before a target.</summary>
+        public float brake = 40;
         public float bob;
         public readonly Leg[] legs;
-        float stepTime = .13f, clock;
+        float stepTime = .13f, clock, bobPhase;
 
-        public Vector2 Forward => new Vector2(Mathf.Cos(heading), Mathf.Sin(heading));
-        public Vector2 Left => new Vector2(-Mathf.Sin(heading), Mathf.Cos(heading));
+        public Vector2 Forward => new Vector2(Mathf.Cos(heading + yaw), Mathf.Sin(heading + yaw));
+        public Vector2 Left => new Vector2(-Mathf.Sin(heading + yaw), Mathf.Cos(heading + yaw));
+        /// <summary>Speed as a multiple of <see cref="maxSpeed"/>: the gait and the step rhythm follow it.</summary>
+        public float SpeedRatio => vel.magnitude / Mathf.Max(1, maxSpeed);
 
         /// <summary>Which of the four leg pairs (front to back) a walker with fewer legs keeps.</summary>
         static int[] Pairs(int legCount) => legCount <= 4 ? new[] { 0, 3 } : legCount <= 6 ? new[] { 0, 1, 3 } : new[] { 0, 1, 2, 3 };
@@ -71,7 +88,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     // Alternating gait: front-left, second-right, … step together.
                     group = (order + (side > 0 ? 0 : 1)) % 2,
                 };
-                leg.foot = leg.from = leg.to = ToWorld(leg.rest);
+                leg.foot = leg.from = leg.to = leg.shown = ToWorld(leg.rest);
                 legs[i] = leg;
             }
         }
@@ -93,18 +110,20 @@ namespace LingGuangV05.Desktop.XingGuang
                 float delta = Mathf.DeltaAngle(heading * Mathf.Rad2Deg, want * Mathf.Rad2Deg) * Mathf.Deg2Rad;
                 heading += Mathf.Clamp(delta, -turnRate * dt, turnRate * dt);
             }
-            float speed = maxSpeed * speedScale * Mathf.Clamp01(dist / (40 * size)) * Mathf.Clamp01(1.2f - Mathf.Abs(Mathf.DeltaAngle(heading * Mathf.Rad2Deg, Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg)) / 120f);
-            var wantVel = Forward * speed;
+            float speed = maxSpeed * speedScale * Mathf.Clamp01(dist / (brake * size)) * Mathf.Clamp01(1.2f - Mathf.Abs(Mathf.DeltaAngle(heading * Mathf.Rad2Deg, Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg)) / 120f);
+            var wantVel = new Vector2(Mathf.Cos(heading), Mathf.Sin(heading)) * speed;
             vel = Vector2.Lerp(vel, wantVel, 1 - Mathf.Exp(-6 * dt));
             pos += vel * dt;
-            bob = reduced ? 0 : Mathf.Sin(clock * 14) * .8f * Mathf.Clamp01(vel.magnitude / (20 * size));
+            float ratio = SpeedRatio;
+            bobPhase += dt * (9 + 9 * Mathf.Min(ratio, 2.5f));
+            bob = reduced ? 0 : Mathf.Sin(bobPhase) * .8f * Mathf.Clamp01(vel.magnitude / (20 * size));
 
-            float stride = 22 * size;
-            // Faster walking: quicker steps.
-            stepTime = Mathf.Lerp(.16f, .1f, Mathf.Clamp01(vel.magnitude / Mathf.Max(1, maxSpeed)));
+            // Gait follows speed: a creep takes slow, short steps; a dash a quick flurry of long ones.
+            float stride = 22 * size * (.85f + .15f * Mathf.Min(ratio, 2.6f));
+            stepTime = Mathf.Clamp(.24f / (1 + 1.4f * ratio), .045f, .24f);
             foreach (var l in legs)
             {
-                l.hipWorld = ToWorld(l.hip);
+                l.hipWorld = ToWorld(l.hip) + offset;
                 if (l.stepping)
                 {
                     l.t += dt / stepTime;
@@ -120,11 +139,24 @@ namespace LingGuangV05.Desktop.XingGuang
                     var rest = ToWorld(l.rest);
                     float off = Vector2.Distance(l.foot, rest);
                     bool tooFar = off > stride * 2.2f;
-                    if (Settled && !tooFar && off < stride * 1.6f) { l.knee = Knee(l.hipWorld, l.foot, l.side); continue; }
-                    if ((off > stride && !GroupStepping(1 - l.group)) || tooFar) BeginStep(l, rest);
+                    bool hold = Settled && !tooFar && off < stride * 1.6f;
+                    if (!hold && ((off > stride && !GroupStepping(1 - l.group)) || tooFar)) BeginStep(l, rest);
                 }
-                l.knee = Knee(l.hipWorld, l.foot, l.side);
+                l.shown = l.poseW > .001f ? Vector2.Lerp(l.foot, ToWorld(l.poseLocal) + offset, l.poseW) : l.foot;
+                l.knee = Knee(l.hipWorld, l.shown, l.side);
             }
+        }
+
+        /// <summary>
+        /// Asks leg <paramref name="i"/> for a pose: weight 0–1, the rest vector scaled about the hip, and a shift forward and
+        /// outward (in body sizes). Weight 0 hands the foot back to its planted spot.
+        /// </summary>
+        public void SetLegPose(int i, float w, float scale, float fwd, float lat)
+        {
+            if (i < 0 || i >= legs.Length) return;
+            var l = legs[i];
+            l.poseW = Mathf.Clamp01(w);
+            l.poseLocal = l.hip + (l.rest - l.hip) * scale + new Vector2(fwd, lat * l.side) * size;
         }
 
         /// <summary>Lifts a planted leg and puts it down on a given spot (a tap on a word while it watches).</summary>
@@ -171,13 +203,19 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Draw(VertexHelper vh, Color legColor, Color bodyColor, Color eyeColor, float lift, Color? halo = null)
         {
             var dark = legColor * .55f; dark.a = legColor.a * .5f;
+            // A hop leaves a faint shadow on the page where the body was.
+            if (!hideBody && offset.y > 1.5f)
+            {
+                var sc = new Color(0, 0, 0, Mathf.Clamp01(.2f - offset.y * .004f) * legColor.a);
+                Oval(vh, pos - Forward * 10 * size * bodyScale, Forward, Left, 12 * size * bodyScale, 8.5f * size * bodyScale, sc);
+            }
             foreach (var l in legs)
             {
                 if (halo.HasValue)
                 {
                     // A light rim around a dark leg: readable on dark and light windows alike.
                     XgDraw.Seg(vh, l.hipWorld, l.knee, 2.4f * size + 2.2f, halo.Value);
-                    XgDraw.Seg(vh, l.knee, l.foot, 1.7f * size + 2.2f, halo.Value);
+                    XgDraw.Seg(vh, l.knee, l.shown, 1.7f * size + 2.2f, halo.Value);
                     XgDraw.Disc(vh, l.knee, 1.7f * size + 1.1f, halo.Value, 8);
                 }
                 else
@@ -185,17 +223,17 @@ namespace LingGuangV05.Desktop.XingGuang
                     // A soft shadow under each leg, then the leg.
                     var shadow = new Vector2(1.5f, -1.5f) * size;
                     XgDraw.Seg(vh, l.hipWorld + shadow, l.knee + shadow, 2.6f * size, dark);
-                    XgDraw.Seg(vh, l.knee + shadow, l.foot + shadow, 2f * size, dark);
+                    XgDraw.Seg(vh, l.knee + shadow, l.shown + shadow, 2f * size, dark);
                 }
                 XgDraw.Seg(vh, l.hipWorld, l.knee, 2.4f * size, legColor);
-                XgDraw.Seg(vh, l.knee, l.foot, 1.7f * size, legColor);
+                XgDraw.Seg(vh, l.knee, l.shown, 1.7f * size, legColor);
                 XgDraw.Disc(vh, l.knee, 1.7f * size, legColor, 8);
-                XgDraw.Disc(vh, l.foot, (l.stepping ? 2.6f : 1.8f) * size, legColor, 8);
+                XgDraw.Disc(vh, l.shown, (l.stepping ? 2.6f : 1.8f) * size, legColor, 8);
             }
             if (hideBody) return;
             float bs = size * bodyScale;
             var f = Forward; var left = Left;
-            var c = pos + new Vector2(0, bob + lift);
+            var c = pos + offset + new Vector2(0, bob + lift);
             // A neon rim around the abdomen, then the body itself.
             var rim = eyeColor; rim.a *= .55f;
             Oval(vh, c - f * 10 * bs, f, left, 13.2f * bs, 9.7f * bs, rim);
@@ -204,11 +242,12 @@ namespace LingGuangV05.Desktop.XingGuang
             Oval(vh, c + f * 9 * bs, f, left, 4.5f * bs, 4 * bs, bodyColor * 1.2f);
             // A thin neon stripe along the abdomen and two eyes.
             XgDraw.Seg(vh, c - f * 18 * bs, c - f * 3 * bs, 1.4f * bs, eyeColor * new Color(1, 1, 1, .6f));
-            float eye = 1.3f * bs * (1 + eyeBoost * .8f);
-            if (eyeBoost > .01f)
+            float boost = Mathf.Max(eyeBoost, eyeExtra);
+            float eye = 1.3f * bs * (1 + boost * .8f) * (.2f + .8f * Mathf.Clamp01(eyeOpen));
+            if (boost > .01f && eyeOpen > .3f)
             {
-                var glow = eyeColor; glow.a *= .5f * eyeBoost;
-                XgSoftDraw.Halo(vh, c + f * 11 * bs, 7 * bs * eyeBoost, glow, 12);
+                var glow = eyeColor; glow.a *= .5f * boost;
+                XgSoftDraw.Halo(vh, c + f * 11 * bs, 7 * bs * boost, glow, 12);
             }
             XgDraw.Disc(vh, c + f * 11 * bs + left * 2 * bs, eye, eyeColor, 8);
             XgDraw.Disc(vh, c + f * 11 * bs - left * 2 * bs, eye, eyeColor, 8);

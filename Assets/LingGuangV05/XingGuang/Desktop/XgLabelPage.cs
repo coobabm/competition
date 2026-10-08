@@ -236,6 +236,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "poems": what = Lang.T("看诗句，判断空格里是不是问的那个字。"); break;
                 case "arith": what = T("算术题：看一道写好答案的算式（加减乘除、百分数、分数……），判断它对不对。点错要扣钱；报酬比别的桌低，每条只算半条总样本。", "Sums: read an equation that already shows its answer (+ − × ÷, percentages, fractions…) and judge whether it is right. A wrong pick costs money; it pays less than the other desks and each sample counts half toward the total."); break;
                 case "logic": what = Lang.T("逻辑和推理题。要动脑子，所以报酬最高。"); break;
+                case "sense": what = T("常识判断：一句人人都知道的话，说得对就点「是」，不对点「否」。最简单，也最能教它分清是和否；点错只断连击，不扣钱。", "Common sense: a plain statement everybody knows. Press Yes if it is right, No if not. The simplest desk, and the one that teaches it yes from no; a miss only breaks the combo."); break;
                 case "danmu": what = Lang.T("判断弹幕是不是在夸。"); break;
                 case "spam": what = Lang.T("判断短信是不是垃圾或诈骗。"); break;
                 default: what = d != null ? T(d.name, d.nameEn) : id; break;
@@ -544,7 +545,9 @@ namespace LingGuangV05.Desktop.XingGuang
                     question.text = kind == XgDeskKind.Arith ? T("这道算式对不对？点错扣钱", "Is this one right? A wrong pick costs money") : Lang.T("对吗？");
                     break;
                 case XgDeskKind.Text:
-                    text.text = card.question; text.fontSizeMax = 30; text.characterSpacing = 0;
+                    // 常识判断 reads like the 算术 card: one big plain statement; the 2016 phrase desks keep their small type.
+                    bool sense = desk == XgMemes.SenseDesk;
+                    text.text = T(card.question, card.questionEn); text.fontSizeMax = sense ? 40 : 30; text.characterSpacing = sense ? 2 : 0;
                     question.text = T(XgMemes.Question(desk), XgMemes.QuestionEn(desk));
                     break;
                 case XgDeskKind.Captcha:
@@ -641,7 +644,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 sb.Append("<color=#68748C>").Append(Lang.T("难度 ")).Append(dl).Append("/").Append(dmax)
                   .Append(dl < dmax ? T(" · 再标对 " + (per - (int)Sim.Labels(desk) % per) + " 条升级（越难越值钱）", " · " + (per - (int)Sim.Labels(desk) % per) + " more to level up") : "").Append("</color>\n");
             }
-            if ((XgMemes.IsTextDesk(desk) || desk == "meme") && Sim.Topic.Length > 0)
+            if ((XgMemes.IsTextDesk(desk) && desk != XgMemes.SenseDesk || desk == "meme") && Sim.Topic.Length > 0)
                 sb.Append("<color=#E86E14>").Append(Lang.T("今日热词：")).Append(Sim.Topic).Append("</color>\n");
             // 新题型 chip (XgSim.Market.cs): this month's meme costs the checkpoint accuracy here until hand labels or epochs catch up.
             string drift = Sim.MemeDriftChip(desk);

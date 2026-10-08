@@ -125,6 +125,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim == null || runtime == null || runtime.Sim == null) return;
             Sim.English = GameText.IsEnglish;
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
+            // The rent holiday: nothing is charged until 灵光 learns its third ability (ChapterOneSim.Bills.cs).
+            if (runtime.Sim.RentWaived == null) runtime.Sim.RentWaived = () => Sim == null || Sim.AbilitiesCount < XgSim.RentFromAbility;
             // The 2016 calendar follows the lab (design v1.1 §11.7): the prologue day until 灵光 is installed, then
             // the stage's month at its progress. It reads progress and never holds anything back.
             if (runtime.Sim.AppInstalled && !runtime.Sim.InPrologue)

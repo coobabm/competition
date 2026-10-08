@@ -34,7 +34,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sb = new StringBuilder();
             sb.Append(o.SourceLabel(En)).Append(" · ");
             if (o.source == XgDataSource.Crowd) sb.Append(N(o.samples, "0")).Append(Lang.T(" 条/秒 · 每条 ¥")).Append(N(o.price, "0.00")).Append(T("", " each"));
-            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 条 · ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " rows a run · ¥" + N(o.price, "0")));
+            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 个词 · 1 词 = 1 样本 · ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " words a run · 1 word = 1 sample · ¥" + N(o.price, "0")));
             else sb.Append(Samples(o.samples));
             sb.Append(Lang.T(" · 标错 ")).Append(NoiseText(o));
             if (o.downloading) sb.Append(Lang.T(" · 下载中 ")).Append(N(o.downloadProgress * 100, "0")).Append('%');
@@ -65,8 +65,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 case XgDataSource.Crowd: sb.Append(Lang.T("相当于雇人坐标注台：按条付钱，一直流入，少量标错。钱不够会自动下架。")); break;
                 case XgDataSource.Story: sb.Append(Lang.T("要靠关系才拿得到的干净数据。")); break;
                 case XgDataSource.Crawl:
-                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回一条，时间到或抓满为止；中途收工也留下已经抓到的。这些语料计入数据总量，少量广告和错字算标错。",
-                        "Paid per run: every word the crawler steps on comes back as a row until time is up or the run is full; stopping early keeps what it grabbed. The rows count toward the data total; a few adverts and typos count as wrong labels."));
+                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回一条，时间到或抓满为止；中途收工也留下已经抓到的。1 个词 = 1 条样本，计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛读到的新词也这样算，不用花钱。",
+                        "Paid per run: every word the crawler steps on comes back as a sample (1 word = 1 sample) until time is up or the run is full; stopping early keeps what it grabbed. The samples count toward the data total; a few adverts and typos count as wrong labels. The resident spider's reads on the desktop count the same way, for free."));
                     break;
             }
             if (o.downloading) sb.Append('\n').Append(T("还剩 " + N(o.downloadLeft, "0") + " 秒；点一下开摆渡云超级会员加速 ¥", N(o.downloadLeft, "0") + " s left; click for a Bodu Cloud super-member speed-up ¥")).Append(Money(sim.AccelerateOfferCost(o.id)));
@@ -86,8 +86,13 @@ namespace LingGuangV05.Desktop.XingGuang
                     .Append(o.owned && !o.included ? " <color=#D63031>" + Lang.T("训练不用") + "</color>" : "").Append('\n');
             }
             sb.Append(AlwaysOnLine(sim, dataset));
+            // The words the crawler and the resident spider read are rows of the text corpus: list them as a source.
+            if (dataset == XgSim.ReadDataset && sim.ReadWordsTotal >= 1) sb.Append('\n').Append(ReadSourceLine(sim));
             return sb.ToString();
         }
+
+        /// <summary>"■ 读到的词 4,210 → +4,210 样本（爬虫 1,200 · 蜘蛛 3,010）· 1 个词 = 1 条样本" (the corpus' crawl and spider source).</summary>
+        public static string ReadSourceLine(XgSim sim) => "■ <size=12><color=#68748C>" + sim.ReadLine() + "</color></size>";
 
         /// <summary>"手标 1,800 条 · 众包 / 日志 300 条（总会用上）": the sources that always train, next to the pack switches.</summary>
         public static string AlwaysOnLine(XgSim sim, string dataset)

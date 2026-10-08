@@ -234,7 +234,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var cfg = house.Config;
             if (!house.EconomyActive)
             {
-                items.Add(Row.Note(T("6 月 1 日起交房租，从那天起家里的开销都记在这里。", "Rent starts on 1 June; from then on the household's bills are listed here.")));
+                items.Add(Row.Note(T("灵光学会「一个词」以后开始交房租，从那时起家里的开销都记在这里。", "Rent starts once 灵光 learns its third ability (one word); from then on the household's bills are listed here.")));
                 items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(cfg.rentPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
                 items.Add(Row.Row(T("宽带（每月 1 号）", "Broadband (the 1st of each month)"), "−" + ZhongbaoUi.Yuan(cfg.broadbandPerMonth), ZhongbaoSkin.Red));
                 return;
@@ -272,7 +272,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             string text;
             if (house == null) text = "";
             else if (!house.EconomyActive)
-                text = T("6 月 1 日起交房租：一天 ¥" + Money(house.Config.rentPerDay) + "。欠钱以后：", "Rent starts on 1 June: ¥" + Money(house.Config.rentPerDay) + " a day. Once you owe it:");
+                text = T("学会「一个词」以后交房租：每玩 " + Money(house.Config.rentDaySeconds) + " 秒算一天，¥" + Money(house.Config.rentPerDay) + "。欠钱以后：", "Rent starts after the third ability: every " + Money(house.Config.rentDaySeconds) + " s of play is a day, ¥" + Money(house.Config.rentPerDay) + ". Once you owe it:");
             else if (house.S.bankrupt)
             {
                 current = 3;

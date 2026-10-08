@@ -12,6 +12,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>First day the phrase may appear (yyyymmdd). Later memes stay hidden until the game clock reaches them.</summary>
         public int since = 20150101;
         public string source = "", why = "";
+        /// <summary>English wording of <see cref="text"/> and <see cref="why"/>; empty = same as the Chinese (the 2016 desks quote Chinese phrases as they are).</summary>
+        public string textEn = "", whyEn = "";
         /// <summary>老司机题: reads like the other answer. Only from level 3.</summary>
         public bool trick;
         public int level = 1;
@@ -38,7 +40,7 @@ namespace LingGuangV05.XingGuang
     /// game clock is shown (the calendar runs from 2016-05-24 to New Year's Eve): 葛优躺, 洪荒之力 and the like
     /// wait for their month. Post-2016 memes (EraLexicon) never appear.
     /// </summary>
-    public static class XgMemes
+    public static partial class XgMemes
     {
         public const int MaxLevel = 3;
 
@@ -136,6 +138,7 @@ namespace LingGuangV05.XingGuang
                 case "headline": return "这是标题党吗？";
                 case "review": return "这条评论是刷单刷出来的吗？";
                 case "translate": return "这句英文说得对吗？";
+                case SenseDesk: return "这句话说得对吗？";
                 default: return "是吗？";
             }
         }
@@ -149,6 +152,7 @@ namespace LingGuangV05.XingGuang
                 case "headline": return "Is this clickbait?";
                 case "review": return "Is this a paid fake review?";
                 case "translate": return "Is this English correct?";
+                case SenseDesk: return "Is this statement right?";
                 default: return "Yes?";
             }
         }
@@ -162,6 +166,7 @@ namespace LingGuangV05.XingGuang
                 case "headline": return Headline;
                 case "review": return Review;
                 case "translate": return Chinglish;
+                case SenseDesk: return Sense;
                 default: return null;
             }
         }

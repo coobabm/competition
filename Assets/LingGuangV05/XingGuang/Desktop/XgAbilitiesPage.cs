@@ -132,6 +132,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append("<color=#A99BF2>■</color> ").Append(T("参数量：评估到 C 级以上的模型里最大的那个，现在 ", "Parameters: the biggest model assessed at grade C or better, now ")).Append(XgSim.ParamsText(p))
               .Append(" <color=#58798A>(").Append(XgSim.ParamScale(p, Sim.English)).Append(")</color>");
             sb.Append("    <color=#5DA8E8>■</color> ").Append(T("样本：所有数据集的有效样本，现在 ", "Samples: every dataset's effective samples, now ")).Append(XgSim.SamplesText(d));
+            if (Sim.ReadWordsTotal >= 1) sb.Append(" <color=#58798A>(").Append(Sim.ReadShort()).Append(")</color>");
             sb.Append("\n").Append(T("结构是道具：买了能降门槛，不买也能到，只是慢一些。", "Structures are items: they lower the line; without them it still comes, only later."));
             if (next > 0)
             {

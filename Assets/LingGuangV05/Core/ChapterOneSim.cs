@@ -411,6 +411,8 @@ namespace LingGuangV05.Core
         {
             S.billDue = AddBounded(S.billDue, S.energyKwh * Config.electricityPrice);
             S.energyKwh = 0; S.daySeconds = 0; S.day++;
+            // The rent holiday (ChapterOneSim.Bills.cs): the day's electricity is free too.
+            if (Waived) { S.billDue = 0; S.unpaidPower = false; Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture)); return; }
             // Once rent is being paid the house runs on one wallet that may go below zero (ChapterOneSim.Bills.cs).
             if (EconomyActive) { SettleDayWithRent(); Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture)); return; }
             if (S.billDue > Epsilon && CanSpend(S.billDue))

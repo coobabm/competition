@@ -37,7 +37,7 @@ namespace LingGuangV05.XingGuang
                 S.vision.arch = S.sequence.arch = "perceptron";
                 S.vision.depth = S.sequence.depth = 1;
                 S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
-                S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam");
+                S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
                 S.desk = "arith"; // the easy desk first; logic pays more once the player is ready
                 S.stage = S.stageVision = S.stageSequence = 1;
                 S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
@@ -62,7 +62,7 @@ namespace LingGuangV05.XingGuang
                 if (Has("v.lr") || Has("s.lr")) Grant("shared.lr");
                 // Old milestone desks remain usable without re-buying a formerly free desk.
                 foreach (var desk in S.desksOpen)
-                    if (desk != "mnist" && desk != "spam") Grant(desk + ".pack");
+                    if (desk != "mnist" && desk != "spam" && desk != XgMemes.SenseDesk) Grant(desk + ".pack");
                 if (S.owned != null) foreach (var dataset in S.owned) Grant(dataset + ".pack");
             }
             if (!newGame && S.progressionVersion < ProgressionSchemaWalls)
@@ -265,8 +265,8 @@ namespace LingGuangV05.XingGuang
         public double ProgressionSpeed(XgRun run) =>
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
-        /// <summary>Stage one opens arithmetic, logic and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (id == "arith" || id == "logic" || id == "spam" || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+        /// <summary>Stage one opens arithmetic, logic, common sense and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (id == "arith" || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
 
         void ObserveProgression(XgRun run)
         {

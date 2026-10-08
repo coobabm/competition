@@ -143,6 +143,44 @@ namespace LingGuangV05.Runtime.Persistence
             }
         }
 
+        /// <summary>The folder the save lives in (the player profile and the backups sit next to it).</summary>
+        public string Folder => Path.GetDirectoryName(SavePath);
+
+        /// <summary>
+        /// Every save-shaped file in the folder, the primary and its .bak first, then the timestamped copies
+        /// (.gameover-*, .reset-*, repair copies) newest first. Read-only; used to learn things from older saves.
+        /// </summary>
+        public string[] SaveFiles()
+        {
+            var found = new System.Collections.Generic.List<string>();
+            if (File.Exists(SavePath)) found.Add(SavePath);
+            if (File.Exists(SavePath + ".bak")) found.Add(SavePath + ".bak");
+            try
+            {
+                if (Directory.Exists(Folder))
+                {
+                    var others = new System.Collections.Generic.List<string>();
+                    foreach (string file in Directory.GetFiles(Folder, Path.GetFileName(SavePath) + "*"))
+                    {
+                        if (file == SavePath || file == SavePath + ".bak" || file.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) continue;
+                        others.Add(file);
+                    }
+                    others.Sort((a, b) => File.GetLastWriteTimeUtc(b).CompareTo(File.GetLastWriteTimeUtc(a)));
+                    found.AddRange(others);
+                }
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException) { }
+            return found.ToArray();
+        }
+
+        /// <summary>Reads one save-shaped file (header and checksum verified) without touching the store's state. False if it is not a valid save file.</summary>
+        public static bool TryReadFile(string path, out string payload)
+        {
+            var result = Read(path);
+            payload = result.Success ? result.Payload : null;
+            return result.Success;
+        }
+
         static SaveLoadResult Read(string path)
         {
             if (!File.Exists(path)) return new SaveLoadResult();

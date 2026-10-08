@@ -18,7 +18,8 @@ namespace LingGuangV05.Desktop.Story
     /// 喵鱼 opens by itself on 「二手电脑 一台 · 含显卡 · 急出」 and a buyer takes it, the AI says its last line in YY
     /// (held to what it can say: 是/否 at stage 1, a sentence later), the inner voice, a black screen with
     /// 「电脑卖了 ¥x。房租交上了。」 and a game-over card whose 重新开始 backs the save up and starts a new game
-    /// (ChapterOneRuntime.StartOverAfterBankruptcy). A save that was already sold shows the card again when loaded.
+    /// (ChapterOneRuntime.StartOverAfterBankruptcy) right after the opening, with the setup the player chose there;
+    /// a smaller 「从开场重新开始」 plays the opening again. A save that was already sold shows the card again when loaded.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BankruptcyEnding : MonoBehaviour
@@ -168,20 +169,32 @@ namespace LingGuangV05.Desktop.Story
             for (float t = 0; t < 1; t += Time.unscaledDeltaTime * .7f) { lineGroup.alpha = t; yield return null; }
             lineGroup.alpha = 1;
             yield return PrologueDesk.Wait(fresh ? 3.5f : 1f);
-            // The game-over card: 重新开始 backs the save up and starts a new game.
-            var card = PrologueDesk.Centered("Game Over", root, new Vector2(0, -90), new Vector2(560, 190));
+            // The game-over card: 重新开始 backs the save up and starts a new game. A player who has finished the opening
+            // once starts right after it (with the name and setup they chose); a smaller button plays it again.
+            var remembered = runtime != null ? runtime.OpeningProfile() : null;
+            var card = PrologueDesk.Centered("Game Over", root, new Vector2(0, -90), new Vector2(560, 236));
             PrologueDesk.Fill(card, new Color32(24, 28, 36, 255));
-            desk.Text(PrologueDesk.Rect("Title", card, new Vector2(0, .58f), Vector2.one, new Vector2(20, 0), new Vector2(-20, -10)), T("游戏结束", "Game over"), 30, new Color(.85f, .32f, .3f), TextAlignmentOptions.Center);
-            desk.Text(PrologueDesk.Rect("Note", card, new Vector2(0, .36f), new Vector2(1, .58f), new Vector2(20, 0), new Vector2(-20, 0)),
-                T("旧存档会另存一份带时间的备份，不会删掉。", "The old save is kept as a timestamped backup, never deleted."), 15, new Color(.6f, .66f, .75f), TextAlignmentOptions.Center);
-            Button restart = null;
-            restart = desk.Button(card, T("重新开始", "Start again"), new Vector2(0, -55), new Vector2(200, 44), () =>
+            desk.Text(PrologueDesk.Rect("Title", card, new Vector2(0, .6f), Vector2.one, new Vector2(20, 0), new Vector2(-20, -10)), T("游戏结束", "Game over"), 30, new Color(.85f, .32f, .3f), TextAlignmentOptions.Center);
+            string note = T("旧存档会另存一份带时间的备份，不会删掉。", "The old save is kept as a timestamped backup, never deleted.");
+            if (remembered != null)
+                note += "\n" + T("重新开始会沿用「" + remembered.setup.name + "」的设定，直接进入实验室。", "Starting again keeps " + remembered.setup.name + "'s setup and goes straight to the lab.");
+            desk.Text(PrologueDesk.Rect("Note", card, new Vector2(0, .36f), new Vector2(1, .6f), new Vector2(20, 0), new Vector2(-20, 0)), note, 15, new Color(.6f, .66f, .75f), TextAlignmentOptions.Center);
+            Button restart = null, replay = null;
+            void Begin(bool again)
             {
                 restart.interactable = false;
-                if (runtime != null && runtime.StartOverAfterBankruptcy()) { Stop(); return; }
+                if (replay != null) replay.interactable = false;
+                if (runtime != null && runtime.StartOverAfterBankruptcy(again)) { Stop(); return; }
                 restart.interactable = true;
+                if (replay != null) replay.interactable = true;
                 if (runtime != null) desk.StoryPopup(T("存档", "Save"), runtime.SaveStatus, 8);
-            });
+            }
+            restart = desk.Button(card, T("重新开始", "Start again"), new Vector2(0, -50), new Vector2(200, 44), () => Begin(false));
+            if (remembered != null)
+            {
+                replay = desk.Button(card, T("从开场重新开始", "Replay the opening"), new Vector2(0, -94), new Vector2(180, 28), () => Begin(true));
+                replay.GetComponentInChildren<TMP_Text>().fontSize = 14;
+            }
             // The card waits for the player.
             while (true) yield return null;
         }

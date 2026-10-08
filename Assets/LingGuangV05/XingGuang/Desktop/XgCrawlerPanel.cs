@@ -62,16 +62,19 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<GhostCopy> ghosts = new List<GhostCopy>();
         readonly Stack<TMP_Text> ghostPool = new Stack<TMP_Text>();
         XgSpiderWalker spider, sophon;
+        // How the spider moves and what it does between words (gaits, curves, stops, lingering, scanning, hopping).
+        XgSpiderMotion motion;
+        Vector2 plannedWaypoint;
         XgCrawlArticle article;
         Vector2 waypoint;
         Vector2? pointer, clicked;
         float scroll, contentHeight, timeLeft, sophonAt = -1, sophonLeft, lastTick;
-        int pageNo, grabbed, startsThisFrame, glitching;
+        int pageNo, grabbed, introCredited, startsThisFrame, glitching;
         bool running, built, marksDirty;
         System.Random rng = new System.Random();
 
         public bool IsOpen => root != null && root.gameObject.activeSelf;
-        /// <summary>The first-appearance scene: nothing is paid or credited; it simply reads.</summary>
+        /// <summary>The first-appearance scene: nothing is paid; it simply reads, and its new words still count as samples (XgSim.ResidentRead).</summary>
         public bool Intro => intro;
 
         bool intro;
@@ -163,7 +166,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>
         /// Opens the page for a paid run (<paramref name="introScene"/> false) or for the spider's first appearance,
-        /// where nothing is charged or credited and it reads until the player closes the page.
+        /// where nothing is charged (its new words count as the resident's reads) and it reads until the player closes the page.
         /// </summary>
         public void Open(bool introScene)
         {
@@ -175,6 +178,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (running) return;
             running = intro || Sim.CrawlActive;
             grabbed = intro ? 0 : Sim.CrawlTaken;
+            introCredited = 0;
             fx.Clear();
             timeLeft = (float)XgSim.CrawlSeconds;
             pageNo = 0;
@@ -218,7 +222,7 @@ namespace LingGuangV05.Desktop.XingGuang
             int n = Sim.CrawlActive ? Sim.EndCrawl() : grabbed;
             var ds = XgCatalog.Dataset(XgSim.CrawlDataset);
             summaryText.text = "<b>" + T("爬虫收工", "Crawler done") + "</b>\n\n"
-                + T("抓回 ", "Grabbed ") + "<color=#5DA8E8><b>" + n + "</b></color>" + T(" 个词，每个算一条语料，进了「" + ds.name + "」。", " words, one row each, into " + ds.nameEn + ".")
+                + T("抓回 ", "Grabbed ") + "<color=#5DA8E8><b>" + n + "</b></color>" + T(" 个词 = ", " words = ") + "<color=#5DA8E8><b>+" + N(n * XgSim.SamplesPerWord, "0") + T(" 样本</b></color>，进了「" + ds.name + "」。", " samples</b></color>, into " + ds.nameEn + ".")
                 + "\n<size=12><color=#6F95A5>" + T("约 " + N(XgSim.CrawlNoise * 100, "0") + "% 是广告和错字；研究树的「数据清洗」能减半。", "About " + N(XgSim.CrawlNoise * 100, "0") + "% is adverts and typos; 数据清洗 in the research tree halves that.") + "</color></size>";
             summary.gameObject.SetActive(true);
             summary.SetAsLastSibling();
@@ -301,6 +305,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // The resident spider itself, grown as far as the abilities have taken it.
             int abilities = Sim.AbilitiesCount;
             spider = new XgSpiderWalker(start, (float)XgResident.Size(abilities) * PageScale, XgResident.LegCount(abilities)) { FindFoothold = Foothold, Planted = OnPlanted, heading = -Mathf.PI / 2 };
+            motion = new XgSpiderMotion(rng);
+            motion.brain.SetContext(XgSpiderCtx.Read);
             fx.Clear();
             sweepRight = rng.Next(2) == 0;
             waypoint = NextWaypoint(start);
@@ -454,7 +460,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             if (!running || lookLeft > 0) return;
-            if (!intro && Sim.CrawlGrab(1) <= 0) return;
+            // A paid run grabs a word = a sample. The first-appearance scene is free: its words count as the resident's
+            // reads (new words only, at most one run's worth), the same 1 word = 1 sample.
+            if (intro) { if (grabbed < XgSim.CrawlCap && Sim.ResidentRead(w.value)) introCredited++; }
+            else if (Sim.CrawlGrab(1) <= 0) return;
             w.taken = true;
             grabbed = intro ? grabbed + 1 : Sim.CrawlTaken;
             fx.reduced = Reduced;
@@ -496,21 +505,55 @@ namespace LingGuangV05.Desktop.XingGuang
             float viewH = viewport.rect.height, width = viewport.rect.width;
             if (spider != null)
             {
-                // Chase the pointer when it comes close, otherwise follow the route (or the clicked spot).
-                Vector2 target = waypoint;
-                float speedScale = running ? 1 : .35f;
+                // Chase the pointer when it comes close, otherwise follow the route (or the clicked spot). The route is
+                // walked by the behaviour machine: varied gaits, curves, short stops, a pause on a word now and then.
+                var brain = motion.brain;
+                brain.SetContext(XgSpiderCtx.Read);
+                motion.Apply(dt, spider, Reduced);
                 // Thinking: now and then it stops and its threads light up.
                 thinkTimer -= dt;
                 if (running && thinkTimer <= 0 && fx.Threads >= 4 && lookLeft <= 0) { thinkTimer = 9 + 6 * (float)rng.NextDouble(); fx.reduced = Reduced; fx.Think(); }
                 spider.Settled = fx.Thinking || lookLeft > 0;
-                if (spider.Settled) { target = spider.pos; speedScale = 0; }
-                else if (pointer.HasValue && Vector2.Distance(pointer.Value, spider.pos) < ChaseRadius) { target = pointer.Value; speedScale = 1.25f; }
-                else if (Vector2.Distance(spider.pos, waypoint) < 16)
+                if (spider.Settled)
                 {
-                    clicked = null;
-                    waypoint = NextWaypoint(spider.pos);
+                    spider.Tick(dt, spider.pos, 0, Reduced);
+                    brain.Tick(dt, false);
                 }
-                spider.Tick(dt, target, speedScale, Reduced);
+                else if (brain.Resting)
+                {
+                    spider.Settled = true;
+                    spider.Tick(dt, spider.pos, 0, Reduced);
+                    brain.Tick(dt, true);
+                }
+                else if (pointer.HasValue && Vector2.Distance(pointer.Value, spider.pos) < ChaseRadius)
+                {
+                    spider.turnRate = 3.5f; spider.brake = 40;
+                    spider.Tick(dt, pointer.Value, running ? 1.25f : .45f, Reduced);
+                    brain.Tick(dt, false);
+                }
+                else
+                {
+                    if (!brain.HasTrip || (plannedWaypoint - waypoint).sqrMagnitude > 1)
+                    {
+                        brain.Plan(spider.pos.x, spider.pos.y, waypoint.x, waypoint.y);
+                        plannedWaypoint = waypoint;
+                    }
+                    float pace = running ? 1 : .35f;
+                    if (brain.Steer(dt, spider.pos.x, spider.pos.y, 16, out double ax, out double ay, out double sc))
+                    {
+                        clicked = null;
+                        waypoint = NextWaypoint(spider.pos);
+                        // Between words it sometimes lingers on one, scans a line, grooms or hops on.
+                        brain.Arrive(running ? .3 : .12);
+                        spider.Tick(dt, waypoint, (float)sc * pace, Reduced);
+                    }
+                    else
+                    {
+                        spider.turnRate = (float)brain.TurnRate; spider.brake = (float)brain.Brake;
+                        spider.Tick(dt, new Vector2((float)ax, (float)ay), (float)sc * pace, Reduced);
+                    }
+                    brain.Tick(dt, false);
+                }
                 if (lookLeft > 0)
                 {
                     // It noticed the player: turn toward the cursor (or straight out of the screen) and hold still.
@@ -771,8 +814,10 @@ namespace LingGuangV05.Desktop.XingGuang
             if (spider != null)
             {
                 fx.DrawBehind(vh, spider);
+                motion?.DrawBehind(vh, spider, 1);
                 spider.Draw(vh, new Color(18 / 255f, 34 / 255f, 44 / 255f, .95f), new Color32(20, 48, 52, 255), XgDark.Good, 0, new Color(214 / 255f, 238 / 255f, 245 / 255f, .75f));
                 fx.DrawFront(vh, spider);
+                motion?.DrawFront(vh, spider, 1);
             }
             if (sophon != null)
             {
@@ -795,9 +840,10 @@ namespace LingGuangV05.Desktop.XingGuang
                     + T("剩 ", "") + N(Mathf.Max(0, timeLeft), "0") + T(" 秒", " s left") + "  ·  " + grabbed + " / " + XgSim.CrawlCap;
             else statusText.text = T("已收工", "Finished") + "  ·  " + grabbed + " / " + XgSim.CrawlCap;
             closeButton.Set(intro ? T("关掉", "Close") : running ? T("收工", "Stop") : T("返回数据页", "Back to Data"), true, null, running && !intro ? XgDark.Hot : XgDark.Ink);
-            counterText.text = intro ? grabbed + "<size=13><color=#6F95A5> " + T("词", "words") + "</color></size>"
-                : "+" + grabbed + "<size=13><color=#6F95A5> / " + XgSim.CrawlCap + "</color></size>";
-            counterSub.text = intro ? T("→ 它自己", "→ itself") : T("→ " + ds.name + " · 每词一条", "→ " + ds.nameEn + " · a row a word");
+            // +N samples as words are read: 1 word = 1 sample (XgSim.SamplesPerWord), into the text corpus.
+            counterText.text = intro ? "+" + N(introCredited * XgSim.SamplesPerWord, "0") + "<size=13><color=#6F95A5> " + T("样本", "samples") + "</color></size>"
+                : "+" + N(grabbed * XgSim.SamplesPerWord, "0") + "<size=13><color=#6F95A5> " + T("样本 / ", "samples / ") + N(XgSim.CrawlCap * XgSim.SamplesPerWord, "0") + "</color></size>";
+            counterSub.text = T("→ " + ds.name + " · ", "→ " + ds.nameEn + " · ") + Sim.ReadRuleText();
             SetBar(counterFill, intro ? Mathf.Repeat(grabbed / 60f, 1) : grabbed / (float)XgSim.CrawlCap);
             hintText.text = T("鼠标靠近它会追过来；点一下给它指路。收工也留下已经抓到的。", "It chases the pointer when close; click to send it somewhere. Stopping keeps what it has grabbed.")
                 + "   <color=#3A5566>" + T("灵感来自 @rybinfx 的网页蜘蛛", "Inspired by @rybinfx's web crawler") + "</color>";

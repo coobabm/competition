@@ -420,8 +420,10 @@ namespace LingGuangV05.XingGuang
                 : (buy != null ? "再标 " : "标注台再标 ") + labels + " 条" + string.Join("或", names);
             string labelEn = auto ? "Gather " + labels + " more samples: auto labelling is on; hand-labelling " + string.Join(" or ", namesEn) + " is faster"
                 : "Label " + labels + " more " + string.Join(" or ", namesEn) + " cards";
+            bool teaching = desks[0].id == XgMemes.SenseDesk && TeachesYesNo(sim);
             var label = Step("ability.label", XgGuideKind.Ability, labelZh, labelEn,
-                "「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。", "'" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + " effective samples (now " + XgSim.SamplesText(d) + "). Only right answers count; Arithmetic counts half.",
+                "「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。" + (teaching ? "「常识判断」这桌专教它分清是和否。" : ""),
+                "'" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + " effective samples (now " + XgSim.SamplesText(d) + "). Only right answers count; Arithmetic counts half." + (teaching ? " The Common sense desk teaches it yes from no." : ""),
                 Crowd, "label", "label:是|Yes|对|True", desks[0].id);
             if (buy == null) { label.current = d; label.goal = dNeed; }
             list.Add(label);
@@ -448,9 +450,22 @@ namespace LingGuangV05.XingGuang
             foreach (var x in open) top = Math.Max(top, XgCatalog.Dataset(x.id).dataWeight);
             var best = open.FindAll(x => XgCatalog.Dataset(x.id).dataWeight >= top - 1e-9);
             best.Sort((a, b) => (b.id == sim.S.desk).CompareTo(a.id == sim.S.desk) != 0 ? (b.id == sim.S.desk).CompareTo(a.id == sim.S.desk) : b.pay.CompareTo(a.pay));
+            // While it still answers at chance, the 常识判断 desk is the one that teaches it yes from no: it goes first (XgSim.SenseVoice.cs).
+            if (TeachesYesNo(sim))
+            {
+                var sense = best.Find(x => x.id == XgMemes.SenseDesk);
+                if (sense != null) { best.Remove(sense); best.Insert(0, sense); }
+            }
             if (best.Count > 2) best.RemoveRange(2, best.Count - 2);
             return best;
         }
+
+        /// <summary>Labels on the 常识判断 desk after which the guide stops singling it out.</summary>
+        public const int SenseGuideLabels = 40;
+
+        /// <summary>Stage 1, its yes/no still a coin toss and the 常识判断 desk barely touched: the note names that desk first.</summary>
+        static bool TeachesYesNo(XgSim sim)
+            => sim.S.stage == 1 && sim.YesNoAccuracy < XgSim.SenseVoiceLow && sim.Samples(XgMemes.SenseDesk) < SenseGuideLabels && sim.DeskOpen(XgMemes.SenseDesk);
 
         static bool CountsAsData(string dataset) => dataset != "xor" && dataset != "parallel";
 

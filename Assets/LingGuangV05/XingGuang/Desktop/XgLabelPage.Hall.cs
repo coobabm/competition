@@ -104,7 +104,7 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (desk.kind)
             {
                 case XgDeskKind.Logic: case XgDeskKind.Arith: return T("随机生成", "generated");
-                case XgDeskKind.Text: case XgDeskKind.Poem: return T("2016 真题库", "2016 question bank");
+                case XgDeskKind.Text: case XgDeskKind.Poem: return desk.id == XgMemes.SenseDesk ? T("常识题库", "common-sense bank") : T("2016 真题库", "2016 question bank");
                 default: return T("程序绘制", "drawn by code");
             }
         }

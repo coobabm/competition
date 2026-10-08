@@ -227,7 +227,7 @@ namespace LingGuangV05.XingGuang
             return CollaborationRate(desk, host) * correctFraction * PayFor(desk, LevelOf(desk)) * QualityPayMultiplier;
         }
         public static bool IsBrainDesk(string desk)
-        { return desk == "logic" || desk == "arith" || desk == "danmu" || desk == "spam" || desk == "headline" || desk == "review" || desk == "translate" || desk == "longtext" || desk == "crosssentence" || desk == "poems"; }
+        { return desk == "logic" || desk == "arith" || desk == "sense" || desk == "danmu" || desk == "spam" || desk == "headline" || desk == "review" || desk == "translate" || desk == "longtext" || desk == "crosssentence" || desk == "poems"; }
         bool UsesBrain(string desk) => Has("label.brain") && IsBrainDesk(desk) && BrainOnline && !OfflineSimulation;
 
         public void FillJudgmentBuffer()

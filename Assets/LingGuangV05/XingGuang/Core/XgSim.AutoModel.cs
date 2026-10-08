@@ -306,7 +306,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The stage whose ability opens each dataset's desk or pack (the desk's place on the parameter ladder).</summary>
         static readonly Dictionary<string, int> DatasetStage = new Dictionary<string, int>
         {
-            { "arith", 1 }, { "logic", 1 }, { "spam", 1 }, { "xor", 1 },
+            { "arith", 1 }, { "logic", 1 }, { "spam", 1 }, { "sense", 1 }, { "xor", 1 },
             { "mnist", 2 }, { "danmu", 2 }, { "headline", 2 },
             { "cifar", 3 }, { "meme", 3 }, { "poems", 3 }, { "longtext", 3 },
             { "review", 4 }, { "crosssentence", 4 }, { "go", 4 }, { "imagenet", 4 }, { "parallel", 4 },

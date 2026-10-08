@@ -282,6 +282,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (yes) InnerVoice.Say("……可我居然有点高兴。", "…And yet I'm a little happy.", 2.4f);
                 else InnerVoice.Say("……它就会这两个字。别当真。", "…Those are the only two words it knows. Don't take it seriously.", 2.6f);
             }
+            // Its plain 是 / 否 at stage 1: what he makes of it (XgSim.YesNoVoice). The reply that carries the love line says only that.
+            if (sim.S.stage == 1 && (r.tagged || r.early))
+                foreach (var line in sim.YesNoVoice(r.early)) InnerVoice.Say(line.zh, line.en, line.seconds);
         }
 
         static string StripThinking(string reply)

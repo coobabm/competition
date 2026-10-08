@@ -27,6 +27,7 @@ namespace LingGuangV05.XingGuang
                 case "logic": task = english ? "Is the proposition in the visible question true?" : "判断题面中的命题是否成立。"; break;
                 case "arith": task = english ? "Is the arithmetic claim in the visible question exactly right?" : "判断题面中的算式或计算结果是否完全正确。"; break;
                 case "longtext": case "crosssentence": task = english ? "Read the full context and answer its final yes/no question, respecting negation and sentence order." : "阅读完整上下文，判断题面最后的是非问题。忽略无关干扰，但不要忽略否定或说话顺序。"; break;
+                case "sense": task = english ? "Is the statement in the visible question true, by plain everyday common sense?" : "按日常常识，判断题面这句话说得对不对。"; break;
                 case "danmu": task = english ? "Is this comment praise? Watch for sarcasm and negation." : "这条弹幕是在夸赞吗？注意反讽和否定。"; break;
                 case "spam": task = english ? "Is this message spam or a scam? Ordinary legitimate notices are not." : "这条短信是垃圾或诈骗信息吗？正常通知不算。"; break;
                 case "headline": task = english ? "Is this title exaggerated clickbait? Judge the wording, not the truth of the news." : "这个标题是夸张、诱导点击的标题党吗？只判断标题写法，不猜新闻真假。"; break;

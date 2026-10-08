@@ -105,6 +105,8 @@ namespace LingGuangV05.Core
         /// summer air conditioner per day in July and August, the electrician after a breaker trip and the train
         /// ticket of a promised weekend trip (ChapterOneSim.Bills.cs).
         /// </summary>
+        /// <summary>Seconds of play one day of rent stands for (rent follows play time, not the calendar).</summary>
+        public double rentDaySeconds = 60;
         public double rentPerDay = 300, rentPerDayFromOctober = 350, broadbandPerMonth = 100, summerAirconPerDay = 40, breakerRepairFee = 50, weekendTicket = 120;
         /// <summary>
         /// Training electricity: the cards run at <see cref="trainingLoad"/> of their rated watts, and one second of a

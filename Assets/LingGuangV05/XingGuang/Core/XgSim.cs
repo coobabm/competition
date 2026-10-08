@@ -1312,8 +1312,8 @@ namespace LingGuangV05.XingGuang
                     var p = XgMemes.Pick(desk, r, level, Today, Topic);
                     if (p == null) break; // Progression-only text desks are filled by DecorateProgressionCard.
                     card.truth = p.yes; card.trick = p.trick;
-                    card.question = p.text; card.questionEn = p.text;
-                    card.why = p.why; card.whyEn = p.why; card.source = p.source;
+                    card.question = p.text; card.questionEn = p.textEn.Length > 0 ? p.textEn : p.text;
+                    card.why = p.why; card.whyEn = p.whyEn.Length > 0 ? p.whyEn : p.why; card.source = p.source;
                     card.category = p.trick ? "老司机题" : info.name; card.categoryEn = p.trick ? "Trick card" : info.nameEn;
                     break;
                 case XgDeskKind.Captcha: XgVisual.Captcha(card, r, level); break;

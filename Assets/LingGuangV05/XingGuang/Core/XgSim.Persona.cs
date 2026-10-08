@@ -165,7 +165,8 @@ namespace LingGuangV05.XingGuang
         double BestOf(params string[] datasets) { double best = 0; foreach (var d in datasets) best = Math.Max(best, BrainModelAccuracy(d)); return best; }
 
         /// <summary>
-        /// Brain gating (§11.5): at stage 1 the yes/no is flipped with probability 1 − logic accuracy, and at stage 2 the
+        /// Brain gating (§11.5): at stage 1 the yes/no is flipped with probability 1 − the yes/no accuracy
+        /// (<see cref="YesNoAccuracy"/>: the best of 常识判断, 逻辑题, 垃圾短信 and 异或, at least a coin toss), and at stage 2 the
         /// picked option (<see cref="XgSpeechPolicy.Options"/>) is swapped for another with that probability; at stages
         /// 3–4 the words are shuffled with probability 1 − semantic accuracy.
         /// </summary>
@@ -175,17 +176,19 @@ namespace LingGuangV05.XingGuang
             int stage = Math.Max(1, Math.Min(6, S.stage));
             if (stage == 1)
             {
-                double logic = Math.Max(.5, BestOf("logic", "spam", "xor"));
+                double logic = YesNoAccuracy;
                 bool yes = reply.StartsWith("是", StringComparison.Ordinal) || reply.StartsWith("yes", StringComparison.OrdinalIgnoreCase);
-                if (rng.NextDouble() > logic) yes = !yes;
+                // Learned (80% or better): it never guesses wrong, and a statement it was taught gets the taught answer.
+                if (logic >= SenseVoiceLearned) { bool? taught = TaughtAnswer(question); if (taught.HasValue) yes = taught.Value; }
+                else if (rng.NextDouble() > logic) yes = !yes;
                 return XgSpeechPolicy.Constrain(yes ? (English ? "Yes." : "是。") : (English ? "No." : "否。"), stage, English);
             }
             if (stage == 2)
             {
-                double logic = Math.Max(.5, BestOf("logic", "spam", "xor"));
+                double logic = YesNoAccuracy;
                 var options = XgSpeechPolicy.Options(question, 2, English);
                 string picked = XgSpeechPolicy.Choose(reply, options, English);
-                if (rng.NextDouble() > logic)
+                if (logic < SenseVoiceLearned && rng.NextDouble() > logic)
                 {
                     // The wrong answer: any other option.
                     var others = new List<string>();

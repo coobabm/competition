@@ -114,6 +114,7 @@ namespace LingGuangV05.Desktop.Story
             StartCoroutine(Music2016.Install());
             // The 2016 tray crowd next to the clock, and the stage-6 flicker (design v1.1 §3, §10.2 #8).
             TrayApps.Install();
+            TrayLingGuang.Install();
             UniverseFlicker.Install(gameObject);
             // The to-do sticky note: what to do next, with a ring on where to click.
             GuideNote.Install(this);

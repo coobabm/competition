@@ -334,8 +334,9 @@ namespace LingGuangV05.Desktop.XingGuang
             // Weighted like the bar itself (算术 counts half), so only wrong labels show up as taken off.
             foreach (var ds in XgCatalog.Datasets) if (ds.id != "xor" && ds.id != "parallel") raw += Sim.Samples(ds.id) * ds.dataWeight;
             double lost = Math.Max(0, raw - Sim.TrainedSamples);
+            string read = Sim.ReadWordsTotal >= 1 ? " " + Sim.ReadShort() + T("（爬虫、蜘蛛读的词都算样本）", " (crawler and spider words are samples)") + "." : "";
             return T("去摆渡众包做题，或者买数据包。标错的样本打折算", "Label on Bodu Crowd, or buy data packs. Wrong labels count against")
-                + (lost >= 1 ? T("：现在扣掉 " + XgSim.SamplesText(lost) + " 条。", ": " + XgSim.SamplesText(lost) + " taken off now.") : T("。", "."));
+                + (lost >= 1 ? T("：现在扣掉 " + XgSim.SamplesText(lost) + " 条。", ": " + XgSim.SamplesText(lost) + " taken off now.") : T("。", ".")) + read;
         }
 
         void RefreshStrip()

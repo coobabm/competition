@@ -29,8 +29,16 @@ namespace LingGuangV05.Core
         /// <summary>The lab's first day (1 June): the first rent is due on it.</summary>
         public static int FirstRentDay => GameCalendar.DayIndex(GameCalendar.FirstDay(1));
 
+        /// <summary>
+        /// The lab's rent holiday: while it answers true nothing is charged (no rent, broadband, air conditioning or
+        /// electricity) and the landlord never counts debt days. The lab sets it (free until 灵光 learns its third
+        /// ability, 一个词). Not saved: the lab answers it again every tick.
+        /// </summary>
+        public Func<bool> RentWaived { get; set; }
+        public bool Waived => RentWaived != null && RentWaived();
+
         /// <summary>Rent is being paid: bills, debt and bankruptcy apply.</summary>
-        public bool EconomyActive => S.rentDay > 0;
+        public bool EconomyActive => S.rentDay > 0 && !Waived;
         /// <summary>What the wallet is short by (0 when not in debt).</summary>
         public double Debt => Math.Max(0, -S.money);
 
@@ -90,16 +98,37 @@ namespace LingGuangV05.Core
         }
 
         /// <summary>
-        /// Rent (and broadband, the summer air conditioner, a booked train ticket) for every calendar day reached since
-        /// the last one paid. Runs at the start of every tick; the calendar itself is moved by the lab.
+        /// Calendar bills: broadband once when a new month begins, the October rent rise notice, a booked train ticket.
+        /// Rent and the summer air conditioner are charged per day of play instead (<see cref="SettleDayWithRent"/>), so a
+        /// calendar jump never bills weeks at once. Runs at the start of every tick; the calendar itself is moved by the lab.
         /// </summary>
         public void SettleCalendar()
         {
             if (S.bankrupt) return;
             int today = GameCalendar.CurrentDay(S), first = FirstRentDay;
             if (today < first) return;
-            if (S.rentDay < first - 1) S.rentDay = first - 1;
-            while (S.rentDay < today) { S.rentDay++; ChargeDay(S.rentDay); }
+            int month = MonthOf(today);
+            if (Waived)
+            {
+                // Nothing owed for the holiday; rent starts from the day it ends.
+                if (S.rentDay > 0) S.rentDay = today;
+                S.broadbandMonth = month;
+                return;
+            }
+            // The economy starts today: this month's broadband is due now.
+            if (S.rentDay < first) { S.rentDay = today; S.broadbandMonth = 0; }
+            if (S.broadbandMonth != month)
+            {
+                // One bill per month begun (a jump over a month still pays it once), none twice.
+                int months = S.broadbandMonth == 0 ? 1 : Math.Max(1, (month / 100 - S.broadbandMonth / 100) * 12 + month % 100 - S.broadbandMonth % 100);
+                S.broadbandMonth = month;
+                Bill(BillKind.Broadband, Config.broadbandPerMonth * months);
+            }
+            if (S.rentDay < today)
+            {
+                if (S.rentDay < GameCalendar.DayIndex(RentRiseDate) && today >= GameCalendar.DayIndex(RentRiseDate)) Raise("rent.raised");
+                S.rentDay = today;
+            }
             if (S.ticketDay > 0 && today >= S.ticketDay)
             {
                 S.ticketDay = 0;
@@ -109,14 +138,13 @@ namespace LingGuangV05.Core
             }
         }
 
-        void ChargeDay(int day)
+        /// <summary>Rent for one settlement of play (every <see cref="GameConfig.rentDaySeconds"/> of play is a day's rent, at the calendar date's price), and the summer air conditioner.</summary>
+        void ChargePlayDay()
         {
-            var date = GameCalendar.DateOf(day);
-            int month = date.Year * 100 + date.Month;
-            if (S.broadbandMonth != month) { S.broadbandMonth = month; Bill(BillKind.Broadband, Config.broadbandPerMonth); }
-            Bill(BillKind.Rent, RentFor(date));
-            if (date.Month == 7 || date.Month == 8) Bill(BillKind.Aircon, Config.summerAirconPerDay);
-            if (date.Date == RentRiseDate) Raise("rent.raised");
+            var date = GameCalendar.Now(S).Date;
+            double days = Config.dayLengthSeconds / Math.Max(1, Config.rentDaySeconds);
+            Bill(BillKind.Rent, RentFor(date) * days);
+            if (date.Month == 7 || date.Month == 8) Bill(BillKind.Aircon, Config.summerAirconPerDay * days);
         }
 
         // ───────────── training electricity and wear ─────────────
@@ -269,6 +297,7 @@ namespace LingGuangV05.Core
         /// <summary>The daily settlement once rent is being paid: the idle power bill goes on the wallet, then the debt days count.</summary>
         void SettleDayWithRent()
         {
+            ChargePlayDay();
             double idle = S.billDue;
             S.billDue = 0; S.unpaidPower = false;
             if (idle > Epsilon) Bill(BillKind.IdlePower, idle);

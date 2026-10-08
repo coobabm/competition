@@ -29,6 +29,11 @@ namespace LingGuangV05.Desktop.XingGuang
     /// in 灵光, saved in <see cref="XgState.residentQuiet"/>). It never takes a click: no raycast targets on the layer it
     /// is drawn on. The one exception is a small invisible handle that follows its body while the 标注台 is up: the player
     /// can pick the spider up and drop it onto the labelling workspace (see "Dragged to the question" below).
+    /// How it moves is decided by <see cref="XgSpiderBrain"/> and played by <see cref="XgSpiderMotion"/>: trips at a creep,
+    /// a walk, a scurry or a dash (eased in and out, sometimes curved, sometimes with a stop or a change of mind), and
+    /// idle actions picked by weight with cooldowns (look around, groom, stretch, drum, hop, think, sleep when the
+    /// player has been away, drop on a thread), a startle when the cursor rushes at it or a window opens beside it, and a
+    /// little spin when an ability is learned or a record set. Dragging it and the hand-answer mode suspend all of that.
     /// Light by design: one spider, a few glitches a second, words gathered one window at a time, pooled ghosts.
     /// The idea of a spider walking on text comes from @rybinfx's web crawler; this is an independent implementation.
     /// </summary>
@@ -57,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public WindowManager manager;
             public Rect rect;
             public int order;
-            public bool visible, forbidden;
+            public bool visible, forbidden, known, wasVisible;
             public readonly List<int> words = new List<int>();
         }
 
@@ -144,9 +149,18 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSpiderWalker walker;
         int legCount;
         Vector2 target;
-        float pauseLeft, glitchCooldown, tapTimer, pulseT = -1, breath, readTimer;
+        float glitchCooldown, tapTimer, pulseT = -1, breath, readTimer;
         int pulses;
         bool shown;
+        // Behaviour: the state machine behind the motion, what it reacts to, and where the current trip leads.
+        XgSpiderMotion motion;
+        readonly XgSpiderThreat threat = new XgSpiderThreat();
+        Vector2 plannedTarget;
+        float lastInput = -100;
+        Vector2 lastPointer;
+        int lastAbilities = -1, lastRecords = -1;
+        bool popupNear;
+        Vector2 popupCenter;
         Rect screen;
         readonly System.Random rng = new System.Random();
 
@@ -160,13 +174,20 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Visit(RectTransform rt)
         {
             if (rt == null || layer == null || walker == null) return;
-            target = LayerRect(rt).center; pauseLeft = 0;
+            target = LayerRect(rt).center;
+            motion?.brain.Interrupt();
         }
+
+        /// <summary>The behaviour state machine (QA and tests).</summary>
+        public XgSpiderBrain Brain => motion != null ? motion.brain : null;
+
+        /// <summary>Seeds the behaviour's random numbers (tests that need a repeatable spider).</summary>
+        public void SeedBehaviour(int seed) { motion = new XgSpiderMotion(new System.Random(seed)); }
 
         XgSim Sim => controller != null ? controller.Sim : null;
         bool Reduced => Sim != null && Sim.S.reduceFx;
 
-        void Awake() { Instance = this; TMPro_EventManager.TEXT_CHANGED_EVENT.Add(OnTextChanged); }
+        void Awake() { Instance = this; lastInput = Time.unscaledTime; motion = motion ?? new XgSpiderMotion(rng); TMPro_EventManager.TEXT_CHANGED_EVENT.Add(OnTextChanged); }
 
         void OnDestroy()
         {
@@ -252,7 +273,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool disagreed = zhongbao != null && zhongbao.Label != null && zhongbao.Label.LastAnswerDisagreed;
             var mode = mind.Tick(dt, present, Sim != null && Sim.S.residentQuiet, labelVisible, answers, disagreed);
 
-            if (mode == XgResidentMode.Hidden) { StopWork(); UpdateHandle(false); Show(false); return; }
+            if (mode == XgResidentMode.Hidden) { StopWork(); UpdateHandle(false); Show(false); motion.brain.SetSuspended(true); threat.Reset(); return; }
             Show(true);
             if (layer.GetSiblingIndex() != apps.GetSiblingIndex() + 1) layer.SetSiblingIndex(apps.GetSiblingIndex() + 1);
             screen = layer.rect;
@@ -276,6 +297,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!canDrag) StopWork();
             UpdateHandle(canDrag);
             if (mode != XgResidentMode.Watch || Dragged) { fx.SetReach(null); decidedCard = -2; pressPlanned = false; }
+            TickBehaviour(dt, mode);
             if (held) TickHeld(dt);
             else if (working) TickWork(dt);
             else switch (mode)
@@ -303,31 +325,111 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── behaviour ─────────────
 
+        /// <summary>
+        /// What the spider reacts to this frame: how long the player has been away (it may fall asleep), a learned ability
+        /// or a record (a happy spin), the cursor rushing at it or a window opening beside it (a startle), then the pose
+        /// of the current action is eased onto the walker. Dragged or answering by hand, the behaviour is suspended.
+        /// </summary>
+        void TickBehaviour(float dt, XgResidentMode mode)
+        {
+            var brain = motion.brain;
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            if (kb != null && kb.anyKey.isPressed) lastInput = Time.unscaledTime;
+            if (mouse != null)
+            {
+                var pp = mouse.position.ReadValue();
+                if ((pp - lastPointer).sqrMagnitude > 4) { lastInput = Time.unscaledTime; lastPointer = pp; }
+            }
+            brain.Reduced = Reduced;
+            brain.Quiet = Time.unscaledTime - Mathf.Max(lastInput, lastPress);
+            brain.SetSuspended(Dragged);
+            int abilities = Sim.AbilitiesCount, records = Sim.S.records;
+            if (lastAbilities >= 0 && (abilities > lastAbilities || records > lastRecords)) brain.Joy();
+            lastAbilities = abilities; lastRecords = records;
+
+            bool roaming = mode == XgResidentMode.Roam && !Dragged;
+            if (roaming)
+            {
+                if (XgCardArt.Pointer(layer, out var cp))
+                {
+                    if (threat.Update(dt, cp.x, cp.y, walker.pos.x, walker.pos.y, 150 * walker.size)) brain.Startle(threat.AwayX, threat.AwayY);
+                }
+                else threat.Reset();
+                if (popupNear)
+                {
+                    var away = walker.pos - popupCenter;
+                    brain.Startle(away.x, away.y);
+                }
+            }
+            else threat.Reset();
+            popupNear = false;
+            motion.Apply(dt, walker, Reduced);
+        }
+
         void TickRoam(float dt)
         {
+            var brain = motion.brain;
+            brain.SetContext(XgSpiderCtx.Roam);
+            brain.DeepSleep = false;
+            // A free strip of desktop above it to hang a thread from.
+            brain.CanDangle = screen.yMax - walker.pos.y > 130 * walker.size && !Forbidden(walker.pos);
             walker.Settled = false;
-            walker.bodyScale = 1;
-            if (pauseLeft > 0)
+            // Now and then it stops to think: crouching and wiggling while its threads light up in turn and a ripple goes out.
+            thinkTimer -= dt;
+            if (thinkTimer <= 0 && fx.Threads >= 4 && !brain.Resting)
             {
-                // Reading: stand still, tap a word under a front leg now and then.
-                pauseLeft -= dt;
-                walker.Settled = true;
-                readTimer -= dt;
-                if (readTimer <= 0 && !fx.Thinking) { readTimer = .5f + (float)rng.NextDouble() * .7f; TapNear(walker.pos, 70 * walker.size); }
-                walker.Tick(dt, walker.pos, 0, Reduced);
+                thinkTimer = 14 + 8 * (float)rng.NextDouble();
+                fx.Think();
+                brain.Do(XgSpiderAct.Think, 1.9f);
+            }
+            if (brain.Resting)
+            {
+                if (brain.Act == XgSpiderAct.Startle)
+                {
+                    // A quick back-off after the jolt, away from what scared it.
+                    walker.Settled = false;
+                    float away = (Reduced ? 60 : 110) * walker.size;
+                    var retreat = walker.pos + new Vector2((float)brain.AwayX, (float)brain.AwayY) * away;
+                    walker.turnRate = 6; walker.brake = 90;
+                    walker.Tick(dt, retreat, brain.ActT > .2f && brain.ActT < .75f ? (Reduced ? 1.6f : 3f) : 0, Reduced);
+                    ClampToScreen();
+                }
+                else
+                {
+                    // Reading: stand still, tap a word under a front leg now and then (not while it grooms or drums).
+                    walker.Settled = true;
+                    readTimer -= dt;
+                    bool free = brain.Act == XgSpiderAct.None || brain.Act == XgSpiderAct.Look;
+                    if (readTimer <= 0 && !fx.Thinking && free) { readTimer = .5f + (float)rng.NextDouble() * .7f; TapNear(walker.pos, 70 * walker.size); }
+                    walker.Tick(dt, walker.pos, 0, Reduced);
+                }
+                brain.Tick(dt, true);
                 return;
             }
-            // Now and then it stops to think: its threads light up in turn and a ripple goes out.
-            thinkTimer -= dt;
-            if (thinkTimer <= 0 && fx.Threads >= 4) { thinkTimer = 14 + 8 * (float)rng.NextDouble(); fx.Think(); pauseLeft = 1.9f; return; }
-            if (Vector2.Distance(walker.pos, target) < 10 * walker.size || !screen.Contains(target) || Forbidden(target))
-            {
-                if (Vector2.Distance(walker.pos, target) < 10 * walker.size) pauseLeft = .6f + (float)rng.NextDouble() * 1.8f;
-                target = NextRoamTarget();
-            }
+            if (!screen.Contains(target) || Forbidden(target)) target = NextRoamTarget();
             // Leave a forbidden window at once (晴雯's chat after 【算了】).
             if (Forbidden(walker.pos)) target = NearestOutside(walker.pos);
-            walker.Tick(dt, target, .8f, Reduced);
+            if (brain.TakeRedirect()) target = NextRoamTarget();
+            if (!brain.HasTrip || (plannedTarget - target).sqrMagnitude > 1)
+            {
+                brain.Plan(walker.pos.x, walker.pos.y, target.x, target.y);
+                plannedTarget = target;
+            }
+            if (brain.Steer(dt, walker.pos.x, walker.pos.y, 10 * walker.size, out double ax, out double ay, out double scale))
+            {
+                // Arrived: it stays a while, reads, maybe does something, then picks the next word.
+                brain.Rest(.6 + rng.NextDouble() * 1.8);
+                target = NextRoamTarget();
+                walker.Settled = true;
+                walker.Tick(dt, walker.pos, 0, Reduced);
+                brain.Tick(dt, true);
+                return;
+            }
+            walker.turnRate = (float)brain.TurnRate; walker.brake = (float)brain.Brake;
+            walker.Settled = brain.Holding && walker.vel.magnitude < 6;
+            walker.Tick(dt, new Vector2((float)ax, (float)ay), (float)scale, Reduced);
+            brain.Tick(dt, false);
             ClampToScreen();
         }
 
@@ -344,13 +446,21 @@ namespace LingGuangV05.Desktop.XingGuang
             reachPoints.Clear();
             if (mind.Leaning) foreach (var w in words) { if (w.alive && card.Overlaps(w.rect)) reachPoints.Add(w.rect.center); if (reachPoints.Count >= 5) break; }
             fx.SetReach(reachPoints);
-            if (TickPress(dt, ref perch)) return;
+            var brain = motion.brain;
+            brain.SetContext(XgSpiderCtx.Watch);
+            brain.Curious = mind.Leaning || mind.Pondering > 0;
+            brain.CanDangle = false;
+            if (TickPress(dt, ref perch)) { brain.Interrupt(); return; }
             float distance = Vector2.Distance(walker.pos, perch);
             if (distance > 6)
             {
+                // Over to the perch: at its own pace, eased in and out.
                 walker.Settled = false;
-                walker.bodyScale = 1;
-                walker.Tick(dt, perch, 1.1f, Reduced);
+                if (!brain.HasTrip || (plannedTarget - perch).sqrMagnitude > 144) { brain.Plan(walker.pos.x, walker.pos.y, perch.x, perch.y); plannedTarget = perch; }
+                if (brain.Steer(dt, walker.pos.x, walker.pos.y, 6, out double ax, out double ay, out double scale)) { brain.Rest(0); ax = perch.x; ay = perch.y; scale = .4; }
+                walker.turnRate = (float)brain.TurnRate; walker.brake = (float)brain.Brake;
+                walker.Tick(dt, new Vector2((float)ax, (float)ay), (float)scale, Reduced);
+                brain.Tick(dt, false);
                 return;
             }
             // Perched: breathe, tilt toward the card, tap a word on it now and then.
@@ -359,10 +469,11 @@ namespace LingGuangV05.Desktop.XingGuang
             float look = Mathf.Atan2(card.center.y - walker.pos.y, card.center.x - walker.pos.x);
             float tilt = mind.Pondering > 0 || Reduced ? 0 : Mathf.Sin(breath * .9f) * .14f + Mathf.Sin(breath * .37f) * .06f;
             walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, (look + tilt) * Mathf.Rad2Deg, 1 - Mathf.Exp(-3 * dt)) * Mathf.Deg2Rad;
-            walker.bodyScale = 1 + (Reduced ? 0 : .035f * Mathf.Sin(breath * 2.2f)) + (pulseT >= 0 ? .12f * Mathf.Sin(pulseT / .6f * Mathf.PI) : 0);
+            walker.bodyScale = (1 + (Reduced ? 0 : .035f * Mathf.Sin(breath * 2.2f)) + (pulseT >= 0 ? .12f * Mathf.Sin(pulseT / .6f * Mathf.PI) : 0)) * motion.Scale;
             walker.Tick(dt, walker.pos, 0, Reduced);
+            brain.Tick(dt, true);
             tapTimer -= dt;
-            if (tapTimer <= 0 && mind.Pondering <= 0)
+            if (tapTimer <= 0 && mind.Pondering <= 0 && (brain.Act == XgSpiderAct.None || brain.Act == XgSpiderAct.Look))
             {
                 tapTimer = 2 + (float)rng.NextDouble() * 1.8f;
                 TapCard(card);
@@ -495,7 +606,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 working = false;
                 label?.SetSpiderRole(XgLabelPage.SpiderRole.Home);
-                pauseLeft = 0; target = walker.pos + new Vector2(0, -60);
+                target = walker.pos + new Vector2(0, -60);
             }
         }
 
@@ -702,8 +813,21 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             XgResident.ParkingSpot(Box(screen), walker.size, out double x, out double y);
             var spot = new Vector2((float)x, (float)y);
-            walker.bodyScale = 1;
-            if (Vector2.Distance(walker.pos, spot) > 6) { walker.Settled = false; walker.Tick(dt, spot, .7f, Reduced); return; }
+            var brain = motion.brain;
+            brain.SetContext(XgSpiderCtx.Roam);
+            if (Vector2.Distance(walker.pos, spot) > 6)
+            {
+                walker.Settled = false;
+                if (!brain.HasTrip || (plannedTarget - spot).sqrMagnitude > 1) { brain.Plan(walker.pos.x, walker.pos.y, spot.x, spot.y, XgSpiderGait.Walk); plannedTarget = spot; }
+                if (brain.Steer(dt, walker.pos.x, walker.pos.y, 6, out double ax, out double ay, out double sc)) { brain.Rest(0); ax = spot.x; ay = spot.y; sc = .3; }
+                walker.turnRate = (float)brain.TurnRate; walker.brake = (float)brain.Brake;
+                walker.Tick(dt, new Vector2((float)ax, (float)ay), (float)sc * .7f, Reduced);
+                return;
+            }
+            // Told to keep quiet: it curls up in its corner and sleeps, slowly breathing, whatever the player does.
+            brain.DeepSleep = true;
+            if (brain.Act != XgSpiderAct.Sleep) brain.Do(XgSpiderAct.Sleep, 1e7);
+            brain.Tick(dt, true);
             walker.Settled = true;
             walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, 135, 1 - Mathf.Exp(-2 * dt)) * Mathf.Deg2Rad;
             walker.Tick(dt, walker.pos, 0, true);
@@ -769,6 +893,7 @@ namespace LingGuangV05.Desktop.XingGuang
             StartGlitch(w, onCard);
             fx.reduced = Reduced;
             fx.Read(walker, leg, w.rect, XgSpiderFx.Accent(rng), w.count);
+            if (XgReadCredit.Read(Sim, w.text, w.first, w.count)) fx.Credit(); // a new word is a sample (XgSim.ResidentRead)
         }
 
         // ───────────── reading the screen ─────────────
@@ -788,11 +913,20 @@ namespace LingGuangV05.Desktop.XingGuang
                 var win = windows.Find(x => x.rt == child);
                 if (win == null) { win = new Win { rt = child, manager = child.GetComponent<WindowManager>() }; windows.Add(win); }
                 win.order = i;
+                win.wasVisible = win.visible;
                 win.visible = child.gameObject.activeInHierarchy && (win.manager == null ? false : DesktopNotifications.IsWindowVisible(win.manager));
                 // The window root covers the screen; its frame is the container.
                 var frame = win.manager != null && win.manager.windowContainer != null ? win.manager.windowContainer as RectTransform : null;
                 win.rect = LayerRect(frame != null ? frame : child);
                 win.forbidden = !mayQingwen && qingwenOpen && yyWindow != null && win.manager == yyWindow;
+                // A window that just opened right where it stands (or close beside it) makes it jump.
+                if (win.known && win.visible && !win.wasVisible && walker != null && !popupNear)
+                {
+                    var near = win.rect; float pad = 90 * walker.size;
+                    near.xMin -= pad; near.xMax += pad; near.yMin -= pad; near.yMax += pad;
+                    if (near.Contains(walker.pos)) { popupNear = true; popupCenter = win.rect.center; }
+                }
+                win.known = true;
             }
             windows.RemoveAll(x => !seen.Contains(x.rt));
         }
@@ -1116,9 +1250,11 @@ namespace LingGuangV05.Desktop.XingGuang
             var eye = XgDark.Good; eye.a = alpha;
             if (mind.Pondering > 0) eye = XgDark.Gold;
             fx.DrawBehind(vh, walker, alpha);
+            motion.DrawBehind(vh, walker, alpha);
             walker.Draw(vh, leg, body, eye, 0, halo);
             DrawArm(vh, leg, halo, eye, alpha);
             fx.DrawFront(vh, walker, alpha);
+            motion.DrawFront(vh, walker, alpha);
         }
 
         // ───────────── geometry ─────────────

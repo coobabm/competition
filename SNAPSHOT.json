@@ -5,12 +5,12 @@
     "Assets/LingGuangV05/Scenes/Main.unity"
   ],
   "unity": "6000.4.5f1",
-  "captured_local_time": "2026-10-08T21:15:08+09:00",
+  "captured_local_time": "2026-10-09T05:58:37+09:00",
   "source_branch": "lingguang-v05",
-  "source_head": "88a2fae187d2c8ec4fd4afb67da876bde1759331",
+  "source_head": "878cbc1462b500503833d6fb60ad821a6c5c5533",
   "source_includes_uncommitted_changes": true,
-  "source_git_status_sha256": "37ca287e8eaa117b3169a4fee9bc76844cf785506002c3c5a00be1f87a0432e4",
-  "base_public_commit": "46bc37ea1acd92659ecbeaccdfc58360b3c0b94f",
+  "source_git_status_sha256": "64c87f278756255c5601a411082e8127fe33fbb443c70669a70bb232180b6630",
+  "base_public_commit": "4180d802ee458b3c00c4754009a9e185824d3722",
   "model_weights_included": false,
   "only_scene": false,
   "compile_checks": [
@@ -23,13 +23,13 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.Core",
-      "sources": 52,
+      "sources": 53,
       "exit_code": 0
     },
     {
       "mode": "player",
       "assembly": "LingGuangV05.Runtime",
-      "sources": 8,
+      "sources": 9,
       "exit_code": 0
     },
     {
@@ -41,13 +41,13 @@
     {
       "mode": "player",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 71,
+      "sources": 75,
       "exit_code": 0
     },
     {
       "mode": "player",
       "assembly": "Assembly-CSharp",
-      "sources": 400,
+      "sources": 403,
       "exit_code": 0
     },
     {
@@ -59,13 +59,13 @@
     {
       "mode": "editor",
       "assembly": "LingGuangV05.Core",
-      "sources": 52,
+      "sources": 53,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "LingGuangV05.Runtime",
-      "sources": 8,
+      "sources": 9,
       "exit_code": 0
     },
     {
@@ -77,13 +77,13 @@
     {
       "mode": "editor",
       "assembly": "LingGuangV05.XingGuang.Core",
-      "sources": 71,
+      "sources": 75,
       "exit_code": 0
     },
     {
       "mode": "editor",
       "assembly": "Assembly-CSharp",
-      "sources": 400,
+      "sources": 403,
       "exit_code": 0
     }
   ],
@@ -91,7 +91,11 @@
     "compilation_failed": false,
     "menu_missing_scripts": 0,
     "menu_references_complete": true,
-    "build_scene_count": 2
+    "build_scene_count": 2,
+    "main_missing_scripts": 0,
+    "main_opened": true,
+    "menu_opened": true,
+    "play_flow_verified": false
   },
   "source_drift_after_copy": [],
   "preexisting_unresolved_guid_count": 10,
@@ -676,5 +680,15 @@
   "new_unresolved_guids": [],
   "fresh_unity_import_play_verified": false,
   "play_mode_flow_verified": false,
-  "secret_pattern_findings": []
+  "secret_pattern_findings": [],
+  "safety_validation": {
+    "forbidden_files": [],
+    "secret_candidates": [],
+    "unhydrated_lfs_pointers": [],
+    "duplicate_guids": {},
+    "source_drift": []
+  },
+  "claude_round_completion_verified": true,
+  "claude_session": "local_e4a30f96-4b0a-48dc-9035-ffa6082ab971",
+  "source_compile_sources_fully_covered": true
 }

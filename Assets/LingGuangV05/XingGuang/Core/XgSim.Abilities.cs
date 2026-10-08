@@ -36,6 +36,8 @@ namespace LingGuangV05.XingGuang
     {
         public const int ProgressionSchemaAbilities = 3;
         public const int AbilityCount = 6;
+        /// <summary>Rent and bills start once this ability is learned (一个词); before it the house is free (ChapterOneSim.RentWaived).</summary>
+        public const int RentFromAbility = 3;
         /// <summary>The grade a model's assessment needs before its parameters count (C).</summary>
         public const int TrainedGrade = 1;
 

@@ -175,7 +175,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string ScaleTip()
         {
             if (Sim.S.stage < 6 && Sim.NextAbility != 0)
-                return T("下一项能力要两样都到门槛：练到 C 级的最大模型的参数量，和所有数据集的有效样本（标错的打折）。门槛已按买到的道具打折。",
+                return (Sim.ReadWordsTotal >= 1 ? Sim.ReadLine() + "\n" : "") + T("下一项能力要两样都到门槛：练到 C 级的最大模型的参数量，和所有数据集的有效样本（标错的打折）。门槛已按买到的道具打折。",
                     "The next ability needs both bars at the line: the parameters of the biggest model assessed at grade C, and the effective samples of every dataset (wrong labels count against). The lines already include the items you own.");
             return T("有效规模 = 参数 × 数据 × 买到的倍率。参数和数据各算到第六项能力门槛的 " + N(XgSim.ScaleBarCap, "0.#") + " 倍为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
                 "Effective scale = parameters × data × the multipliers you own. Parameters and data each count up to " + N(XgSim.ScaleBarCap, "0.#") + " times the sixth ability's bar; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
@@ -401,7 +401,7 @@ namespace LingGuangV05.Desktop.XingGuang
             ledgerDate.text = day.Year > 1 ? T(day.Month + " 月 " + day.Day + " 日", day.ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)) : "";
             if (!home.EconomyActive)
             {
-                ledgerLeft.text = Hex(XgDark.Muted) + T("6 月 1 日起交房租和电费。", "Rent and electricity start on 1 June.");
+                ledgerLeft.text = Hex(XgDark.Muted) + T("学会「一个词」以前不收房租和电费。", "No rent or electricity until it learns its third ability (one word).");
                 ledgerRight.text = ""; ledgerWarn.text = "";
                 return;
             }
