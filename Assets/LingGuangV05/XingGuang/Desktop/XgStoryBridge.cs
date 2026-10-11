@@ -154,7 +154,7 @@ namespace LingGuangV05.Desktop.XingGuang
             { story.Unfire("ending_card"); EmitOnce("story.next", "ending_card"); }
             // Only the legacy 「你后悔教我吗」 ending has these title cards. The rules endings (S.ending set) close in
             // PrologueDirector.PlayEnding; emitting here too would play two endings at once.
-            if (bound.S.chapterComplete && bound.S.ending.Length == 0 && story.GetFlag("chapter_one_ending_shown") <= 0) EmitOnce("lg.ending", bound.S.endingRegret ? "yes" : "no");
+            if (bound.S.endingReflectionAnswered && bound.S.ending.Length == 0 && story.GetFlag("chapter_one_ending_shown") <= 0) EmitOnce("lg.ending", bound.S.endingRegret ? "yes" : "no");
         }
         string ReadText(string name)
         {
@@ -234,7 +234,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "labSequenceStage": return sim.S.stageSequence;
                 case "labProjectActive": return sim.ProjectActive ? 1 : 0;
                 case "labExperiment": return sim.S.project.experiments;
-                case "labEndingAnswered": return sim.S.chapterComplete ? 1 : 0;
+                case "labEndingAnswered": return sim.S.endingReflectionAnswered || sim.S.chapterComplete ? 1 : 0;
                 case "labMigrated": return sim.S.migratedBeats.Count > 0 ? 1 : 0;
                 case "labCanProject": return sim.HasEmerged(5) && !sim.Has("transformer") ? 1 : 0;
                 case "labStageEpochs": return sim.S.stageEpochs;

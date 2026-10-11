@@ -71,6 +71,11 @@ namespace LingGuangV05.XingGuang
         public bool GhostGuess(string desk, out bool guess, out double confidence)
         {
             guess = false; confidence = 0;
+            if (TeachMode && desk != null && XgCatalog.Desk(desk) != null && DeskOpen(desk) && ReviewCard(desk) == null)
+            {
+                confidence = .5;
+                return TeachingGuess(Card(desk), out guess);
+            }
             if (EpiphanyDone || desk == null || XgCatalog.Desk(desk) == null || !DeskOpen(desk)) return false;
             if (BestAcc(desk) + 1e-9 < XgCatalog.AutoMinAccuracy || ReviewCard(desk) != null) return false;
             return GhostFor(Card(desk), out guess, out confidence);
@@ -92,6 +97,7 @@ namespace LingGuangV05.XingGuang
         bool GhostBeforeAnswer(string desk, XgCard card, out bool guess)
         {
             guess = false;
+            if (TeachMode) return TeachingGuess(card, out guess);
             if (EpiphanyDone || card == null || BestAcc(desk) + 1e-9 < XgCatalog.AutoMinAccuracy) return false;
             return GhostFor(card, out guess, out _);
         }

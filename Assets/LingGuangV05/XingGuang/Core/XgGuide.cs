@@ -105,6 +105,12 @@ namespace LingGuangV05.XingGuang
 
             Rent(money, house, list);
             Blockers(sim, house, list);
+            if (!house.appInstalled)
+            {
+                list.Add(Step("install", XgGuideKind.Setup, "解压刚下载的文件，打开" + LingGuangV05.Core.AppNames.ExeZh, "Extract the downloaded file and open " + LingGuangV05.Core.AppNames.ExeEn,
+                    "跟着桌面上的提示，和它第一次见面。", "Follow the desktop prompts to meet it.", "", "", "", ""));
+                return Finish(list, sim, house);
+            }
             Quality(sim, list);
 
             if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); Raise(sim, money, list); return Finish(list, sim, house); }
@@ -156,18 +162,18 @@ namespace LingGuangV05.XingGuang
 
         static void Blockers(XgSim sim, XgGuideHouse house, List<XgGuideStep> list)
         {
-            if (house.unpaidPower)
+            if (sim.SystemUnlocked("power") && house.unpaidPower)
             {
                 string due = house.billDue > 0 ? " ¥" + house.billDue.ToString("0.##", CultureInfo.InvariantCulture) : "";
                 list.Add(Step("power.bill", XgGuideKind.Blocker, "交电费" + due, "Pay the power bill" + due,
                     "欠费停电了，显卡全停。钱不够就去标注台答题抵扣。", "The power is cut for an unpaid bill; every card is idle. Short of money? Labelling pays it off.",
                     Home, "power", "name:PayBill", ""));
             }
-            if (house.breakerTripped)
+            if (sim.SystemUnlocked("power") && house.breakerTripped)
                 list.Add(Step("power.breaker", XgGuideKind.Blocker, house.overloaded ? "电闸跳了：少插一张卡，再复位" : "复位电闸", house.overloaded ? "Breaker tripped: pull a card, then reset it" : "Reset the breaker",
                     house.overloaded ? "插的卡太多，电线扛不住。" : "跳闸了，什么都不转。", house.overloaded ? "Too many cards for the wiring." : "The breaker is off; nothing runs.",
                     Home, "power", "name:ResetBreaker", ""));
-            else if (house.overloaded && !house.unpaidPower && !house.noGpu)
+            else if (sim.SystemUnlocked("power") && house.overloaded && !house.unpaidPower && !house.noGpu)
                 list.Add(Step("power.overload", XgGuideKind.Blocker, "超负载了：少插一张卡", "Overloaded: pull a card",
                     "家里的电带不动这么多卡。", "The house cannot power this many cards.", Home, "power", "", ""));
             if (house.noGpu)
@@ -179,16 +185,16 @@ namespace LingGuangV05.XingGuang
                 list.Add(Step("qc.frozen", XgGuideKind.Blocker, "账号被举报：等 " + clock + " 或去标注台申诉", "Account reported: wait " + clock + " or appeal on the labelling page",
                     "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。",
                     "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit.",
-                    Crowd, "label", "name:QcAppeal", ""));
+                    Lab, "teach", "name:QcAppeal", ""));
             }
             if (house.appInstalled && sim.CaptchaPending)
             {
                 string clock = XgSim.FreezeClock(sim.CaptchaSecondsLeft);
                 list.Add(Step("qc.captcha", XgGuideKind.Blocker, "摆渡众包要人机验证：去标注台输入验证码（" + clock + "）", "Bodu Crowdsourcing wants a captcha: enter it on the labelling page (" + clock + ")",
                     "标得太快，平台怀疑是机器。答错或超时会暂停自动标注两分钟。", "Labelling this fast looks like a machine. A wrong or late answer pauses auto labelling for two minutes.",
-                    Crowd, "label", "name:QcCaptcha", ""));
+                    Lab, "teach", "name:QcCaptcha", ""));
             }
-            if (house.vramMB > 0 && house.appInstalled && sim.S.stage < 6)
+            if (sim.SystemUnlocked("vram") && house.vramMB > 0 && house.appInstalled && sim.S.stage < 6)
             {
                 var track = TrainableTrack(sim);
                 if (sim.TrainingUnlocked(track) && XgSim.VramNeedMB(sim.Run(track)) > sim.Vram(new Wallet { vram = house.vramMB }))
@@ -217,9 +223,9 @@ namespace LingGuangV05.XingGuang
             if (desk == null) return;
             double have = sim.Samples(desk.id);
             int need = Math.Max(1, XgCatalog.SamplesToTrain - (int)Math.Floor(have));
-            var s = Step("label." + desk.id, XgGuideKind.Setup, "去标注台标 " + need + " 条「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
-                "攒够 " + XgCatalog.SamplesToTrain + " 条数据才能开始训练。答对还有钱拿。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
-                Crowd, "label", "label:是|Yes|对|True", desk.id);
+            var s = Step("label." + desk.id, XgGuideKind.Setup, "再教它 " + need + " 张「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
+                "先看它的判断，对了就确认，错了就纠正。教满 " + XgCatalog.SamplesToTrain + " 张，就带它训练。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
+                Lab, "teach", "name:Paper", desk.id);
             s.current = have; s.goal = XgCatalog.SamplesToTrain;
             list.Add(s);
         }
@@ -264,8 +270,8 @@ namespace LingGuangV05.XingGuang
             XgContract best = null;
             foreach (var c in XgCatalog.Contracts) if (sim.CanSign(c) && (best == null || c.signBonus > best.signBonus)) best = c;
             if (best == null) return;
-            list.Add(Step("contract." + best.id, XgGuideKind.Main, "去摆渡众包签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
-                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Crowd, "contracts", "contract:" + best.id, ""));
+            list.Add(Step("contract." + best.id, XgGuideKind.Main, "到训练页签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
+                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Lab, "contracts", "contract:" + best.id, ""));
         }
 
         /// <summary>
@@ -287,6 +293,17 @@ namespace LingGuangV05.XingGuang
         static void ParamsSteps(XgSim sim, Wallet wallet, int next, List<XgGuideStep> list, HashSet<string> advancing)
         {
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            var recommended = sim.NextStudyNode();
+            if (recommended != null)
+            {
+                list.Add(Step("ability.study", XgGuideKind.Ability,
+                    "下一步：科技买「" + recommended.name + "」 · ¥" + sim.NodeCost(recommended).ToString("0"),
+                    "Next: buy " + recommended.nameEn + " in Tech · ¥" + sim.NodeCost(recommended).ToString("0"),
+                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。完成阶段验收还会结算一笔众包绩效，留些钱付电费。",
+                    "Prepare for " + nameEn + ". Then train and talk to it. Each new ability funds your next research.",
+                    Lab, "tree", "node:" + recommended.id, ""));
+                return;
+            }
             double pNeed = sim.ParamsThreshold(next);
             string have = XgSim.ParamsText(sim.TrainedParamsK), need = XgSim.ParamsText(pNeed);
             var plan = ParamsPlan(sim, next, wallet.vram > 0 ? sim.Vram(wallet) : 0);
@@ -816,7 +833,7 @@ namespace LingGuangV05.XingGuang
         {
             if (sim.RaiseLevel >= XgCatalog.RaiseMax || sim.NextRaiseCost > money * CheapRaiseShare) return;
             list.Add(Step("raise", XgGuideKind.Boost, "标注台给自己加薪", "Give yourself a raise on the labelling page",
-                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Crowd, "label", "name:Row薪", ""));
+                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Lab, "teach", "name:Row薪", ""));
         }
 
         /// <summary>

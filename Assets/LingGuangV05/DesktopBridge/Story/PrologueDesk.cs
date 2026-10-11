@@ -293,16 +293,16 @@ namespace LingGuangV05.Desktop.Story
         /// chatter (ads, tray software, platform notices): the opening quiet window drops it. Story moments and answers
         /// to something the player just did use <see cref="StoryPopup"/>.
         /// </summary>
-        public void Popup(string who, string text, float seconds = 7) => Queue(who, text, seconds, false);
+        public void Popup(string who, string text, float seconds = 7, System.Action open = null) => Queue(who, text, seconds, false, open);
 
         /// <summary>A tray popup that belongs to the story or answers the player's own action; it is never held back.</summary>
-        public void StoryPopup(string who, string text, float seconds = 7) => Queue(who, text, seconds, true);
+        public void StoryPopup(string who, string text, float seconds = 7, System.Action open = null) => Queue(who, text, seconds, true, open);
 
-        void Queue(string who, string text, float seconds, bool story)
+        void Queue(string who, string text, float seconds, bool story, System.Action open)
         {
             var popups = layer.GetComponent<TrayPopups>() ?? layer.gameObject.AddComponent<TrayPopups>();
             popups.desk = this;
-            popups.Enqueue(who, text, seconds, story);
+            popups.Enqueue(who, text, seconds, story, open);
         }
 
         // ───────────── the hijacked cursor ─────────────

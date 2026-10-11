@@ -14,7 +14,8 @@ namespace LingGuangV05.Desktop.Casino
         XgGlow winGlow;
         RectTransform board;
         WindowManager browserWindow;
-        float glowUntil;
+        float glowUntil, payoutRollStart;
+        double payoutRollAmount;
         XgCasinoRound pendingPayout;
         int pendingStreak;
         readonly List<CasinoCardMotion> cardMotions = new List<CasinoCardMotion>();
@@ -56,9 +57,11 @@ namespace LingGuangV05.Desktop.Casino
             if (pendingPayout == null || PresentationBusy || !PageVisible()) return;
             var round = pendingPayout; pendingPayout = null;
             int tier = CasinoPresentation.WinTier(round);
-            if (tier == 0 || juice == null) return;
+            if (juice == null) return;
+            if (tier == 0) { juice.Knock(arena, .015f, Vector2.right * 3, .15f, true); return; }
+            payoutRollAmount = round.returned; payoutRollStart = Time.unscaledTime;
             SyncEffects();
-            bool big = tier == 2;
+            bool big = tier == 2 || round.returned >= round.stake * 10;
             var at = juice.At(arena);
             juice.Flash(Color.white, .09f, big ? .42f : .25f);
             juice.HitStop(big ? 65 : 45);
@@ -66,7 +69,7 @@ namespace LingGuangV05.Desktop.Casino
             juice.Knock(arena, juice.Reduced ? .02f : .07f, new Vector2(big ? 12 : 6, -5), .32f, true);
             juice.Knock(wallet.rectTransform, .12f, Vector2.up * 4, .32f, true);
             foreach (var m in cardMotions) if (m != null) juice.Knock((RectTransform)m.transform, .09f, new Vector2(4, -5), .3f, true);
-            juice.Float(at + Vector2.up * 35, (big ? Lang.T("大赢！ ") : "") + Signed(round.returned - round.stake), Gold, big ? 42 : 34, 85, 1.05f, 1.4f);
+            juice.Float(at + Vector2.up * 35, (big ? Lang.T("大吉大利！ ") : "") + Signed(round.returned - round.stake), Gold, big ? 42 : 34, 85, 1.05f, 1.4f);
             juice.Burst(at, big ? 28 : 14, Gold, XgJuice.Shape.Yen, big ? 300 : 190, 440, .8f);
             if (big) juice.Burst(at, 16, Gold, XgJuice.Shape.Confetti, 260, 360, .8f);
             juice.Shockwave(at, Gold, big ? 250 : 170, .4f, big ? 10 : 6);
@@ -81,7 +84,7 @@ namespace LingGuangV05.Desktop.Casino
         }
         void CancelPresentation()
         {
-            pendingPayout = null; reveal = null; glowUntil = 0;
+            pendingPayout = null; reveal = null; glowUntil = 0; payoutRollAmount = 0;
             foreach (var motion in cardMotions) if (motion != null) motion.Cancel();
             if (juice != null) juice.Clear();
             if (winGlow != null) winGlow.on = false;

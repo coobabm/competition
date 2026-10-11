@@ -51,7 +51,7 @@ namespace LingGuangV05.Core.Story
         public static bool ChooseIdentity(StoryState s,int choice)
         {
             if((choice!=1&&choice!=2)||!On(s,"era.batch.delivered")||!s.HasFired("era_delivery_confirmed")||On(s,"era.identity.reply"))return false;
-            s.SetFlag("era.identity.reply",choice);First(s,"era.identity.reply",choice==1?"就我一个。":"我和它。",choice);return true;
+            s.SetFlag("era.identity.reply",choice);First(s,"era.identity.reply",choice==1?"就我一个。":"我自己慢慢做的。",choice);return true;
         }
         public static bool ChooseContext(StoryState s,int choice)
         {

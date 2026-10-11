@@ -119,7 +119,7 @@ namespace LingGuangV05.XingGuang
                     card.truth = card.askedChar == card.line.Substring(card.shown, 1);
                     break;
                 case "logic":
-                    var q = XgLogic.Generate(seed, Math.Max(1, level));
+                    var q = XgLogic.Generate(seed, Math.Max(1, level), today);
                     card.truth = q.truth; card.category = q.category; card.question = q.text;
                     break;
                 case "arith":
@@ -130,7 +130,7 @@ namespace LingGuangV05.XingGuang
                 case "meme": XgVisual.Meme(card, r, Math.Max(1, level), today); break;
                 case "go": XgVisual.Go(card, r, Math.Max(1, level)); break;
                 default:
-                    var p = XgMemes.Pick(dataset, r, Math.Max(1, level), today, "");
+                    var p = XgMemes.Pick(dataset, r, Math.Max(1, level), today, "", false);
                     if (p != null) { card.truth = p.yes; card.question = p.text; card.trick = p.trick; }
                     break;
             }

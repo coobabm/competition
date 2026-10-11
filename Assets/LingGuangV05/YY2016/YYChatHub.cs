@@ -46,6 +46,7 @@ namespace LingGuangV05.Desktop.YY
     [Serializable]
     public sealed class YYState
     {
+        public int friendMonth, gfStage, gfReceived, gfReplies, gfIgnoredStage;
         public int version = 1;
         public string selected = YYChatHub.LaoZhou;
         /// <summary>The AI learned to talk (stage 3): it shows up as a contact.</summary>
@@ -83,7 +84,10 @@ namespace LingGuangV05.Desktop.YY
         bool Thinking { get; }
         /// <summary>Whether this message can get a 赞 / 踩 now (only its latest reply, once).</summary>
         bool CanRate(YYMessage message);
-        void Rate(YYMessage message, bool up);
+        /// <summary>Rates the reply; returns how the personality moved (「温度 +2」), empty when nothing moved.</summary>
+        string Rate(YYMessage message, bool up);
+        /// <summary>Its three axes for the header: 「温度 62 · 玩心 40 · 主见 55」.</summary>
+        string AxisLine();
         /// <summary>The header's 「它记得」 line (empty when there is nothing to show) and its hover note.</summary>
         string MemoryLine();
         string MemoryTip();
@@ -96,7 +100,7 @@ namespace LingGuangV05.Desktop.YY
     /// Story `say` lines arrive through <see cref="Receive"/>; the player's messages raise runtime signal chat.sent.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class YYChatHub : MonoBehaviour
+    public sealed partial class YYChatHub : MonoBehaviour
     {
         public const string AppId = "yy";
         public const string LaoZhou = "laozhou";
@@ -113,6 +117,8 @@ namespace LingGuangV05.Desktop.YY
         public static readonly YYContact[] Contacts =
         {
             new YYContact { id = LaoZhou, name = "老周", nameEn = "Lao Zhou", signature = "AI 是下一个风口。这周三个会。", signatureEn = "AI is the next big thing. Three meetings this week.", online = true, color = new Color32(232, 93, 74, 255) },
+            new YYContact { id = "landlord", name = "房东·按时到账", nameEn = "Landlord · Pay on time", signature = "亲兄弟明算账", signatureEn = "Rent is rent.", online = true, color = new Color32(170, 129, 80, 255) },
+            new YYContact { id = "oldfriend", name = "咸鱼本鱼", nameEn = "Salty Fish", signature = "出门走走，回来吹牛", signatureEn = "Out for a walk. Back with stories.", online = true, color = new Color32(90, 163, 139, 255) },
             new YYContact { id = "cousin", name = "表姐", nameEn = "Cousin", signature = "加班中，勿扰", signatureEn = "Working late, do not disturb", online = false, color = new Color32(236, 151, 31, 255) },
             new YYContact { id = LingGuangId, name = AppNames.AiZh, nameEn = AppNames.AiEn, signature = "是。否。……", signatureEn = "Yes. No. …", online = true, hidden = true, color = new Color32(64, 84, 196, 255) },
             new YYContact { id = GirlfriendId, name = "晴雯ˇ", nameEn = "Qingwenˇ", signature = "今天的月亮好圆", signatureEn = "The moon is so round tonight", online = true, hidden = true, color = new Color32(240, 98, 146, 255) },
@@ -153,6 +159,7 @@ namespace LingGuangV05.Desktop.YY
 
         public void Initialize(ChapterOneRuntime gameRuntime, ChapterOneDesktopRouter desktopRouter)
         {
+            if (runtime != null) { runtime.Changed -= OnRuntimeChanged; runtime.Saving -= WriteToSave; }
             Instance = this;
             runtime = gameRuntime;
             router = desktopRouter;
@@ -181,7 +188,8 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
-            pending.Clear(); inFlight.Clear(); standing.Clear();
+            pending.Clear(); inFlight.Clear(); standing.Clear(); quizReplies.Clear();
+            script = null; scriptFor = null; Choices = null; ChoicesFor = null;
             Changed?.Invoke();
         }
 
@@ -197,11 +205,14 @@ namespace LingGuangV05.Desktop.YY
         {
             var s = new YYState();
             foreach (var c in Contacts) s.conversations.Add(new YYConversation { id = c.id });
-            // A little history so the app feels lived in.
+            // Existing group history is explicitly dated before the opening. Qingwen starts empty.
             s.conversations.Find(c => c.id == "cousin").messages.Add(new YYMessage { from = "cousin", text = "你那台电脑别老开着，电费贵。", gameSeconds = -86400 * 3 });
             var group = s.conversations.Find(c => c.id == "netbar");
             group.messages.Add(new YYMessage { from = "netbar", text = "[阿杰] 1080 这周五开卖，有人去排吗？", gameSeconds = -3600 * 5 });
             group.messages.Add(new YYMessage { from = "netbar", text = "[大伟] 周五下班开黑，谁来？", gameSeconds = -3600 * 4 });
+            group.messages.Add(new YYMessage { from = "netbar", text = "[小刚] 我来，别又放鸽子。", gameSeconds = -3600 * 4 + 20 });
+            group.messages.Add(new YYMessage { from = Me, text = "算我一个，先吃个饭。", gameSeconds = -3600 * 4 + 40 });
+            group.messages.Add(new YYMessage { from = "netbar", text = "[阿杰] 你上次这顿饭吃了俩小时。", gameSeconds = -3600 * 4 + 60 });
             return s;
         }
 
@@ -236,6 +247,12 @@ namespace LingGuangV05.Desktop.YY
         {
             var conv = Conversation(id);
             if (conv == null || string.IsNullOrEmpty(text)) return;
+            if (id == GirlfriendId) { TrackGirlfriendStage(); S.gfReceived++; }
+            if (id == "netbar" && text.Contains("\n[")) {
+                var lines = text.Split('\n');
+                for (int i = 0; i < lines.Length; i++) if (!string.IsNullOrWhiteSpace(lines[i])) Receive(id, lines[i], notify && i == 0);
+                return;
+            }
             conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now });
             if (!IsShowing(id)) conv.unread++;
             if (notify) NotifyReceived(id, text);
@@ -265,6 +282,7 @@ namespace LingGuangV05.Desktop.YY
 
         public void Send(string id, string text)
         {
+            if (id == GirlfriendId && !string.IsNullOrWhiteSpace(text)) NoteGirlfriendReply(text);
             text = (text ?? "").Trim();
             if (text.Length == 0) return;
             if (text.Length > 300) text = text.Substring(0, 300);
@@ -276,6 +294,7 @@ namespace LingGuangV05.Desktop.YY
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
+            if (id == "landlord" && (text == "确认卖电脑" || text == "Confirm selling the computer")) { runtime.Sim.ConfirmComputerSale(); runtime.MarkDirty(); return; }
             if (AnswerQuiz(id, text)) return;
             if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
@@ -332,13 +351,17 @@ namespace LingGuangV05.Desktop.YY
             {
                 if (inFlight.Contains(id) || Time.unscaledTime < pending[id]) continue;
                 inFlight.Add(id);
+                float requestAt = pending[id];
+                bool delivered = false;
                 var replyingState = S;
                 var replyingSimulation = runtime.Sim;
                 Reply(id, text =>
                 {
                     if (!ReferenceEquals(S, replyingState) || !ReferenceEquals(runtime.Sim, replyingSimulation)) return;
+                    if (delivered) return;
+                    delivered = true;
                     inFlight.Remove(id);
-                    pending.Remove(id);
+                    if (pending.TryGetValue(id, out var due) && due == requestAt) pending.Remove(id);
                     if (!string.IsNullOrEmpty(text)) Receive(id, text);
                 });
             }
@@ -349,6 +372,12 @@ namespace LingGuangV05.Desktop.YY
             if (quizReplies.TryGetValue(id, out var scripted)) { quizReplies.Remove(id); done(scripted); return; }
             var lab = FindLab();
             var conv = Conversation(id);
+            string latest = LastPlayerLine(conv);
+            if (id == "netbar") {
+                var preset = YYGroup.FutureNameReply(latest);
+                if (preset != null) { done(preset); return; }
+                if (offlineRng.NextDouble() < .5) { done(null); return; }
+            }
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             if (llm != null && llm.Ready && conv != null)
             {
@@ -374,6 +403,7 @@ namespace LingGuangV05.Desktop.YY
                         // A line it said a moment ago reads like a bot: swap it for a fresh one.
                         if (RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
                     }
+                    if (id != LingGuangId && RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
                     done(Shape(id, text));
                     if (id == LingGuangId && userMessage != null) LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(lab, userMessage.text, text);
                 }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab),
@@ -387,10 +417,10 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Group lines keep the "[name] text" form the view renders as a sender label.</summary>
         static string Shape(string id, string text)
         {
-            if (id != "netbar") return text;
+            if (id != "netbar" || string.IsNullOrWhiteSpace(text)) return text;
             text = text.Trim();
             if (text.StartsWith("[", StringComparison.Ordinal)) return text;
-            foreach (var who in new[] { "阿杰", "老板", "小刚" })
+            foreach (var who in new[] { "阿杰", "大伟", "小刚", "莉莉", "老板" })
                 foreach (var sep in new[] { "：", ":" })
                     if (text.StartsWith(who + sep, StringComparison.Ordinal)) return "[" + who + "] " + text.Substring(who.Length + 1).Trim();
             return "[阿杰] " + text;
@@ -402,9 +432,11 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return LaoZhouHelp.Reply(last, runtime.Sim, lab);
+                case LaoZhou: return Lang.T("店里正忙呢。你说的那个我没用过，别把电脑折腾坏了就行。");
+                case "landlord": return GameText.T("欠款 ¥", "Debt ¥") + runtime.Sim.Debt.ToString("0") + GameText.T("。有困难先跟我说，账还是得慢慢还。", ". Let me know if you need time to repay.");
+                case "oldfriend": return FriendFallback(last, conv);
                 case "cousin": return Lang.T("在上班，晚点说。早点睡，别熬夜。");
-                case "netbar": return null;
+                case "netbar": return YYGroup.Fallback(last, conv, offlineRng);
                 default:
                     int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
                     if (lab == null)
@@ -542,19 +574,11 @@ namespace LingGuangV05.Desktop.YY
         /// </summary>
         void EnsureFileOffer()
         {
-            var conv = Conversation(LaoZhou);
-            // Since the prologue (design v1.1 §6) the exe comes out of the picture archive; only older saves still wait for this file.
-            if (conv == null || AppInstalled || runtime.Sim.S.prologue != 0) return;
-            if (conv.messages.Exists(m => m.kind == YYKind.File && m.file == FileName)) return;
-            int said = conv.messages.FindAll(m => m.from == LaoZhou && m.kind == YYKind.Text).Count;
-            bool introDone = runtime.Sim.S.story != null && runtime.Sim.S.story.HasFired("lz_intro");
-            // While the intro is still being typed (1–2 lines so far), wait for the line that announces the file.
-            if (said < 3 && !(introDone && said == 0)) return;
-            if (said == 0) conv.messages.Add(new YYMessage { from = LaoZhou, text = GameText.T(AppNames.AppZh + "我直接传给你了，点「接收」，下完它会出现在桌面上。", "I'm sending you " + AppNames.AppEn + " directly. Press Receive and it will appear on your desktop."), gameSeconds = Now });
-            conv.messages.Add(new YYMessage { from = LaoZhou, kind = YYKind.File, file = FileName, sizeMB = FileSizeMB, gameSeconds = Now });
-            if (!IsShowing(LaoZhou)) conv.unread++;
-            NotifyReceived(LaoZhou, GameText.F("发来文件：{0}", "Sent a file: {0}", FileName));
-            Touch();
+            // Legacy saves recover the local file without an NPC distributing it.
+            if (runtime.Sim.S.prologue == 0 && !AppInstalled) {
+                runtime.Sim.S.appInstallState = 2;
+                Touch();
+            }
         }
 
         public void AcceptFile(YYMessage message)
@@ -603,6 +627,8 @@ namespace LingGuangV05.Desktop.YY
             CheckQuiz();
             CheckLabelSeeds();
             DeliverEra(dt);
+            TickFriend();
+            TrackGirlfriendStage();
             TickReplies();
             S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
         }

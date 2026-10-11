@@ -247,6 +247,7 @@ namespace LingGuangV05.Desktop.XingGuang
             infoTitle.fontStyle = FontStyles.Bold;
             infoCost = ui.Text(Strip("Cost", info, 66, 26, 14, 14), "", 19, XgDark.Money, TextAlignmentOptions.MidlineLeft);
             infoBody = ui.Text(Rect("Body", info, Vector2.zero, Vector2.one, new Vector2(14, 14), new Vector2(-14, -102)), "", 16, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            infoBody.enableAutoSizing = true; infoBody.fontSizeMin = 11; infoBody.fontSizeMax = 16;
             eraCard = Rect("EraCard", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-240, -92), new Vector2(240, 92));
             Panel(eraCard, XgDark.Hud);
             eraTitle = ui.Text(Strip("EraTitle", eraCard, 16, 36, 20, 20), "", 24, XgDark.Gold, TextAlignmentOptions.Center);
@@ -290,7 +291,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (visible)
                 {
                     int i = pair.Key;
-                    pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.StageYears[i] + "</color></size>" : "");
+                    pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.ShownYear(XgCatalog.StageYears[i]) + "</color></size>" : "");
                     miniButtons[i].Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgDark.AccentSoft : XgDark.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
@@ -482,11 +483,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;
                 case "attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
                 case "caption": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
-                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n这是游戏中的提前突破；年份是真实历史。"; en = "Transformer · attention is all we need\nA fictional early discovery; the date is historical."; break;
+                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n全世界还没人走到这一步，你先到了。"; en = "Transformer · attention is all we need\nNobody else has got here yet. You did."; break;
                 default: return;
             }
             SyncRevealedContent(true);
-            eraTitle.text = year + " · " + Lang.T("时代卡"); eraBody.text = T(zh, en);
+            string shown = XgCatalog.ShownYear(year);
+            eraTitle.text = (shown.Length > 0 ? shown + " · " : "") + Lang.T("时代卡"); eraBody.text = T(zh, en);
             eraCard.gameObject.SetActive(true); eraCard.SetAsLastSibling(); eraRemaining = 8;
             FocusFrontier();
             if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgDark.Gold, 500, .8f, 16); }
@@ -638,6 +640,8 @@ namespace LingGuangV05.Desktop.XingGuang
             infoTitle.text = Sim.NodeName(node);
             infoCost.text = status == XgSim.NodeStatus.Owned ? Lang.T("已拥有") : double.IsInfinity(cost) ? T("已满级", "Maxed") : "¥ " + Money(cost);
             var text = new System.Text.StringBuilder(Sim.NodeNote(node)).Append("\n\n");
+            string lore = XgItemLore.Get(node.target ?? node.id, Sim.English);
+            if (lore.Length > 0) text.Append("<size=90%><color=#9FB8C4>").Append(lore).Append("</color></size>\n\n");
             void Condition(bool ok, string zh, string en) => text.Append(ok ? "<color=#5DCAA5>✓ " : "<color=#E07B4F>○ ").Append(T(zh, en)).Append("</color>\n");
             if (node.parent != null) Condition(Sim.Has(node.parent) || node.parent == "label.raise" && Sim.RaiseLevel > 0 || node.parent == "label.auto" && Sim.GlobalAutoLevel > 0, Sim.NodeName(XgCatalog.Node(node.parent)), Sim.NodeName(XgCatalog.Node(node.parent)));
             foreach (string need in node.needs) Condition(Sim.Has(need), Sim.NodeName(XgCatalog.Node(need)), Sim.NodeName(XgCatalog.Node(need)));

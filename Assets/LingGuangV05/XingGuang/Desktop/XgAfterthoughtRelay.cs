@@ -40,7 +40,8 @@ namespace LingGuangV05.Desktop.XingGuang
             sincePoll = 0;
             // In YY the line arrives as a YY message with its own notification; without YY it waits on 概览.
             if (bound.TakeReflectionLine() != null && !XgYyTalk.InYY)
-                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f);
+                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f,
+                    () => { controller.Open(); controller.View?.Open("home"); });
         }
 
         void Rebind(XgSim sim)

@@ -27,6 +27,7 @@ namespace LingGuangV05.Core
             MigrateHardware();
             ValidateState();
             MigrateEconomy();
+            RecordFunds("期初余额");
             if (S.story == null) S.story = new LingGuangV05.Core.Story.StoryState();
             S.story.Repair();
             RebuildTopology();
@@ -61,7 +62,9 @@ namespace LingGuangV05.Core
         public double HouseWatts { get { return CardWatts + S.caseCount * Config.caseWatts; } }
         /// <summary>A load the household does not see by itself went over the limit (pre-training on the house PSU).</summary>
         public void TripBreakerNow() { if (S.breakerTripped) return; TripBreaker(); LastMessage = "跳闸了：负载超过 " + Config.powerLimitWatts.ToString("0") + "W。"; Notify(); }
-        private bool Powered { get { return !S.breakerTripped && !S.unpaidPower && !S.landlordCut && S.gpuCount > 0 && RequestedWatts <= Config.powerLimitWatts; } }
+
+        public bool PowerCostsEnabled = true;
+        private bool Powered { get { return !PowerCostsEnabled || !S.breakerTripped && !S.unpaidPower && !S.landlordCut && S.gpuCount > 0 && RequestedWatts <= Config.powerLimitWatts; } }
         public double PowerWatts { get { return Powered ? RequestedWatts : 0; } }
         public double HeartbeatsPerSecond
         {
@@ -238,7 +241,7 @@ namespace LingGuangV05.Core
             if (S.caseCount >= Config.maxCases) return Reject("第一章机箱数量已到上限。");
             if (!CanSpend(Config.casePrice)) return Reject("经费不足：机箱需要 ¥" + Config.casePrice.ToString("0") + "。");
             S.money -= Config.casePrice; S.caseCount++;
-            if (RequestedWatts > Config.powerLimitWatts) TripBreaker();
+            if (PowerCostsEnabled && RequestedWatts > Config.powerLimitWatts) TripBreaker();
             Raise("case.bought");
             return Accept("新机箱已接入，增加 " + Config.gpusPerCase + " 个显卡插槽，也会增加基础功耗。");
         }
@@ -246,7 +249,7 @@ namespace LingGuangV05.Core
         {
             if (S.billDue <= Epsilon) return Reject("没有待缴电费。");
             if (!CanSpend(S.billDue)) return Reject("经费不足：可出售闲置显卡，或人工核对题卡抵扣欠费（不发放现金）。");
-            S.money = Math.Max(0, S.money - S.billDue); S.billDue = 0; S.unpaidPower = false;
+            Bill(BillKind.IdlePower, S.billDue); S.billDue = 0; S.unpaidPower = false;
             Raise("bill.paid");
             return Accept("电费已结清，供电恢复；若仍然跳闸，请先降低负载后合闸。");
         }
@@ -355,11 +358,11 @@ namespace LingGuangV05.Core
 
         private void AdvanceSlice(double dt)
         {
-            if (RequestedWatts > Config.powerLimitWatts) TripBreaker();
+            if (PowerCostsEnabled && RequestedWatts > Config.powerLimitWatts) TripBreaker();
             double watts = PowerWatts;
             double target = Config.ambientTemperature + watts * Config.heatPerWatt / Math.Max(1, S.caseCount);
             S.temperature = Clamp(target + (S.temperature - target) * Math.Exp(-dt / Config.thermalTimeConstant), Config.ambientTemperature, Config.maximumTemperature);
-            S.energyKwh += watts / 1000 * 24 * dt / Config.dayLengthSeconds;
+            if (PowerCostsEnabled) S.energyKwh += watts / 1000 * 24 * dt / Config.dayLengthSeconds;
             double income = IncomePerSecond * dt;
             S.money = AddBounded(S.money, income); S.totalEarned = AddBounded(S.totalEarned, income);
             for (int i = 0; i < S.nodes.Count; i++)
@@ -409,15 +412,20 @@ namespace LingGuangV05.Core
         }
         private void SettleDay()
         {
+            if (!PowerCostsEnabled)
+            {
+                S.energyKwh = 0; S.daySeconds = 0; S.day++;
+                Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                return;
+            }
             S.billDue = AddBounded(S.billDue, S.energyKwh * Config.electricityPrice);
             S.energyKwh = 0; S.daySeconds = 0; S.day++;
-            // The rent holiday (ChapterOneSim.Bills.cs): the day's electricity is free too.
-            if (Waived) { S.billDue = 0; S.unpaidPower = false; Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture)); return; }
+
             // Once rent is being paid the house runs on one wallet that may go below zero (ChapterOneSim.Bills.cs).
             if (EconomyActive) { SettleDayWithRent(); Raise("day.ended", S.day.ToString(System.Globalization.CultureInfo.InvariantCulture)); return; }
             if (S.billDue > Epsilon && CanSpend(S.billDue))
             {
-                S.money = Math.Max(0, S.money - S.billDue); S.billDue = 0; S.unpaidPower = false;
+                Bill(BillKind.IdlePower, S.billDue); S.billDue = 0; S.unpaidPower = false;
                 LastMessage = "第 " + S.day + " 天：电费已自动结清。";
             }
             else if (S.billDue > Epsilon)
@@ -633,7 +641,7 @@ namespace LingGuangV05.Core
         }
         private bool Reject(string message) { LastMessage = message; Notify(); return false; }
         private bool Accept(string message) { LastMessage = message; Notify(); return true; }
-        private void Notify() { Changed?.Invoke(); }
+        private void Notify() { RecordFunds(LastMessage); Changed?.Invoke(); }
         private static bool Finite(double value) { return !double.IsNaN(value) && !double.IsInfinity(value); }
         private static double Clamp(double value, double low, double high) { return Math.Max(low, Math.Min(high, value)); }
         private static double AddBounded(double value, double add) { return Math.Min(ResourceCeiling, value + add); }

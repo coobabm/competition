@@ -72,7 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform root;
         TMP_Text toast;
         readonly Dictionary<string, XgPage> pages = new Dictionary<string, XgPage>();
-        string tab = "home";
+        string tab = "teach";
         float refreshTimer, toastTimer;
         double shownMoney = -1;
         RectTransform welcome;
@@ -86,6 +86,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgJuice Juice { get; private set; }
         /// <summary>Shop buy amount: 1, 10 or int.MaxValue (as many as affordable).</summary>
         public int BuyAmount { get; set; } = 1;
+        public XgLabelPage Teach { get; private set; }
+        public XgBoardPage Board { get; private set; }
+        public XgContractsPage Contracts { get; private set; }
         public XgHomePage Home { get; private set; }
         public XgTrainPage Train { get; private set; }
         public XgDataPage Data { get; private set; }
@@ -120,6 +123,9 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildTopBar();
             BuildNav();
             var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavWidth + 12, 12), new Vector2(-12, -TopBarHeight - 12));
+            Teach = Add("teach", new XgLabelPage(), area);
+            Board = Add("board", new XgBoardPage(), area);
+            Contracts = Add("contracts", new XgContractsPage(), area);
             Home = Add("home", new XgHomePage(), area);
             Train = Add("train", new XgTrainPage(), area);
             Data = Add("data", new XgDataPage(), area);
@@ -156,8 +162,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (controller == null || controller.Sim == null) return false;
             switch (id)
             {
-                case "home": case "abilities": return true;
-                case "data": return controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0;
+                case "teach": case "train": case "board": case "tree": case "home": case "abilities": return true;
+                case "data": return controller.Sim.SystemUnlocked("data") && (controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0);
                 case "items": return controller.FeatureVisible("tree");
                 default: return controller.FeatureVisible(id);
             }
@@ -369,16 +375,18 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (tabId == "vision" || tabId == "sequence") { Sim.SelectedTrack = tabId == "vision" ? XgTrack.Vision : XgTrack.Sequence; tabId = "train"; }
             if (tabId == "research") tabId = "tree";
+            if (tabId == "label") tabId = "teach";
             if (IsCrowdPage(tabId)) { Refresh(true); controller.OpenCrowd(tabId); return; }
             if (!string.IsNullOrEmpty(tabId) && pages.ContainsKey(tabId)) ShowTab(tabId);
             else Refresh(true);
         }
 
         /// <summary>Pages that moved to 摆渡众包; asking 灵光 for them opens that app on the page.</summary>
-        public static bool IsCrowdPage(string id) => id == "label" || id == "contracts";
+        public static bool IsCrowdPage(string id) => false;
 
         public void ShowTab(string id)
         {
+            if (id == "label") id = "teach";
             if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
             if (!pages.ContainsKey(id) || !FeatureOpen(id)) return;
             tab = id;

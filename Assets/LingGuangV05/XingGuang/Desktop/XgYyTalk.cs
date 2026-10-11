@@ -44,6 +44,8 @@ namespace LingGuangV05.Desktop.XingGuang
         bool echo;
         float askedAt;
         Reply due;
+        YYMessage queuedQuestion;
+        bool replayQueued;
         readonly Dictionary<YYMessage, XgChatLine> lines = new Dictionary<YYMessage, XgChatLine>();
         readonly System.Random rng = new System.Random();
 
@@ -141,7 +143,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bound = sim;
             bound.LineAdded += OnLine;
             ticket++;
-            waiting = false; due = null; echo = false;
+            waiting = false; due = null; echo = false; queuedQuestion = null; replayQueued = false;
             lines.Clear();
         }
 
@@ -175,12 +177,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sim == null || message == null) return false;
             string text = NativeLaoZhouReplies.NormalizeInput(message.text);
             if (text.Length == 0) return true;
+            if (!replayQueued) sim.CountLoveAsk(text);
             // The choices with rules of their own: 【读吧】【算了】 and the two answers to 「你觉得呢？」.
             if (sim.S.loveAwaitingConsent && Consent(sim, text, out bool read)) { Echo(() => sim.AnswerLoveConsent(read)); return true; }
             if (sim.S.originAwaitingAnswer && OriginAnswer(sim, text, out bool understood)) { Echo(() => sim.AnswerOrigin(understood)); return true; }
-            Echo(() => sim.AddLine("me", text));
+            if (!replayQueued) Echo(() => sim.AddLine("me", text));
             // Several quick lines get one answer: the reply on its way answers them too.
-            if (waiting) return true;
+            if (waiting) { queuedQuestion = message; return true; }
             waiting = true; askedAt = Time.unscaledTime;
             // Before stage 5 the first 「她……爱我吗？」 gets one word it cannot possibly know; the inner voice notices.
             bool early = XgSim.IsLoveQuestion(text) && sim.S.stage < XgSim.LoveStage && sim.S.loveEarlyAsked == 0;
@@ -190,7 +193,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 due = new Reply { text = scripted, question = text, early = early, at = askedAt + ReadPause };
                 return true;
             }
-            int t = ticket;
+            int t = ++ticket;
             Ask(sim, text, null, reply => Answer(sim, t, text, message, reply, null, false));
             return true;
         }
@@ -285,6 +288,16 @@ namespace LingGuangV05.Desktop.XingGuang
             // Its plain 是 / 否 at stage 1: what he makes of it (XgSim.YesNoVoice). The reply that carries the love line says only that.
             if (sim.S.stage == 1 && (r.tagged || r.early))
                 foreach (var line in sim.YesNoVoice(r.early)) InnerVoice.Say(line.zh, line.en, line.seconds);
+            ReplyToQueued();
+        }
+
+        void ReplyToQueued()
+        {
+            var message = queuedQuestion; queuedQuestion = null;
+            if (message == null) return;
+            replayQueued = true;
+            try { Heard(message); }
+            finally { replayQueued = false; }
         }
 
         static string StripThinking(string reply)
@@ -337,7 +350,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // Stages 1–2 are bound by a GBNF grammar (design v1.1 §11.5); later stages get anti-repeat penalties.
             var sampling = XgSpeechPolicy.Sampling(stage, XgSpeechPolicy.Grammar(question, stage, GameText.IsEnglish));
             float temperature = stale != null ? Math.Min(1.5f, limits.temperature + .3f) : limits.temperature;
-            llm.Chat(messages, Math.Max(2, limits.tokens), temperature, done, limits.thinking, sampling, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
+            bool delivered = false;
+            llm.Chat(messages, Math.Max(2, limits.tokens), temperature, reply => { if (delivered) return; delivered = true; done(reply); }, limits.thinking, sampling, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
         }
 
         /// <summary>
@@ -389,14 +403,31 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         /// <summary>赞 / 踩: a tone card per element the reply used, and the habit table learns (XgSim.RateReply).</summary>
-        public void Rate(YYMessage message, bool up)
+        public string Rate(YYMessage message, bool up)
         {
-            if (!CanRate(message)) return;
+            if (!CanRate(message)) return "";
             var line = LineOf(message);
-            if (!bound.RateReply(bound.S.chat.IndexOf(line), up)) return;
+            var before = new double[3];
+            for (int a = 0; a < 3; a++) before[a] = bound.ActualAxis(a);
+            if (!bound.RateReply(bound.S.chat.IndexOf(line), up)) return "";
             message.rating = up ? 1 : -1;
             var hub = YYChatHub.Instance;
             if (hub != null) hub.Select(hub.S.selected); // saves and redraws
+            var moved = new List<string>();
+            for (int a = 0; a < 3; a++)
+            {
+                int d = (int)Math.Round(bound.ActualAxis(a) - before[a]);
+                if (d != 0) moved.Add(T(XgSim.AxisNames[a], XgSim.AxisNamesEn[a]) + " " + (d > 0 ? "+" : "") + d);
+            }
+            return string.Join("  ", moved);
+        }
+
+        public string AxisLine()
+        {
+            if (bound == null) return "";
+            var parts = new string[3];
+            for (int a = 0; a < 3; a++) parts[a] = T(XgSim.AxisNames[a], XgSim.AxisNamesEn[a]) + " " + N(bound.ActualAxis(a), "0");
+            return string.Join(" · ", parts);
         }
 
         // ───────────── the header's notes ─────────────
@@ -458,7 +489,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (beliefs.Count > 0) sb.Append('\n').Append(T("相信：", "Believes: ")).Append(Safe(string.Join(T("、", ", "), beliefs)));
                 if (mixed.Count > 0) sb.Append("\n<color=#E24B4A>").Append(T("常搞混：", "Mixes up: ")).Append(Safe(string.Join(T("、", ", "), mixed))).Append("</color>");
             }
-            sb.Append("\n\n<color=#9AA4B2>").Append(T("给它最新的回复点 赞 / 踩：每一下都是一张语气卡。", "Rate its latest reply up or down: each one is a tone card.")).Append("</color>");
+            sb.Append("\n\n<color=#9AA4B2>").Append(T("给它的回复打分，效果在性格指示器里显示。", "Rate its reply. The effect shows on the personality meter.")).Append("</color>");
             return sb.ToString();
         }
 

@@ -43,6 +43,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgStoryBridge storyBridge;
         XgPlatformPopups platformPopups;
         float sinceSave;
+        int capturedChapter;
         ChapterOneSim linked;
         TMP_Text title, status;
         XgWindowChrome chrome;
@@ -93,6 +94,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 catch (Exception error) { Debug.LogWarning("灵光进度读取失败，从头开始：" + error.Message); state = null; }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
             // The save's own date, before any catch-up tick reads the calendar.
             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
             raised.Clear();
@@ -123,7 +126,11 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
+            LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
+            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen) return;
+            LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
             Sim.English = GameText.IsEnglish;
+            runtime.Sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
             // The rent holiday: nothing is charged until 灵光 learns its third ability (ChapterOneSim.Bills.cs).
             if (runtime.Sim.RentWaived == null) runtime.Sim.RentWaived = () => Sim == null || Sim.AbilitiesCount < XgSim.RentFromAbility;
@@ -144,6 +151,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Sim.Tick(dt, Host);
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
             RaiseProgress();
+            if (capturedChapter != Sim.S.stage && runtime.CaptureChapter(Sim.S.stage)) capturedChapter = Sim.S.stage;
             // Training, income and auto-answers change the lab every frame; the runtime saves on its own 15 s rhythm.
             sinceSave += dt;
             if (sinceSave >= 1f) { sinceSave = 0; if (!runtime.TestMode) runtime.MarkDirty(); }
@@ -252,6 +260,14 @@ namespace LingGuangV05.Desktop.XingGuang
             KeepOpenOnFirstStart(Window);
             content = Window.windowContainer.Find("Content") as RectTransform;
             if (content == null) return;
+            // Normal (not maximised) size: the whole desktop area above the taskbar, with a small margin all round.
+            // The container stretches over that area (maximise sets its offsets to 0), so offsets = the margin.
+            // ponytail: fixed 18 px margin; measure the guide note / icon column if they must stay uncovered.
+            if (!Window.isFullscreen)
+            {
+                Window.windowContainer.offsetMin = new Vector2(18, 18);
+                Window.windowContainer.offsetMax = new Vector2(-18, -18);
+            }
             var shop = router.Get("xunbao");
             if (shop != null && shop.Content != null) foreach (var label in shop.Content.GetComponentsInChildren<TMP_Text>(true)) { font = label.font; break; }
             if (font == null) font = Window.GetComponentInChildren<TMP_Text>(true)?.font;
@@ -318,7 +334,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ApplyShellText()
         {
-            if (chrome != null) chrome.SetTitle(GameText.T(AppNames.ExeZh, AppNames.ExeEn), GameText.T("深度学习工作站", "deep learning workstation"));
+            if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", GameText.T("深度学习工作站", "deep learning workstation"));
             else if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
             if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);

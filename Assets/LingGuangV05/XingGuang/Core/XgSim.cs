@@ -226,7 +226,24 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : T(n.name, n.nameEn); }
+        /// <summary>「科技树买「RNN」，再买「LSTM」解锁」: the unowned nodes on the way to <paramref name="nodeId"/>, oldest first.</summary>
+        public string UnlockPath(string nodeId)
+        {
+            var path = new List<string>();
+            CollectUnowned(XgCatalog.Node(nodeId), path, new HashSet<string>());
+            if (path.Count == 0) return T("科技树里解锁", "Unlock it in the tech tree");
+            var names = new List<string>(); foreach (var id in path) names.Add(T("「", "\"") + NodeName(XgCatalog.Node(id)) + T("」", "\""));
+            return T("科技树买", "Tech tree: buy ") + string.Join(T("，再买", ", then "), names) + T(" 解锁", " to unlock");
+        }
+        void CollectUnowned(XgNode n, List<string> path, HashSet<string> seen)
+        {
+            if (n == null || Has(n.id) || !seen.Add(n.id)) return;
+            if (!string.IsNullOrEmpty(n.parent)) CollectUnowned(XgCatalog.Node(n.parent), path, seen);
+            foreach (var need in n.needs) CollectUnowned(XgCatalog.Node(need), path, seen);
+            path.Add(n.id);
+        }
+
+        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : n.id == "label.brain" ? AiDisplayName + T("的大脑", "'s brain") : T(n.name, n.nameEn); }
         /// <summary>The node's description; a hint instead while it is still a mystery.</summary>
         public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……") : T(n.note, n.noteEn); }
         /// <summary>Shown as 「？？？」 with no price: 自动答题 before the protagonist has the idea.</summary>
@@ -572,7 +589,7 @@ namespace LingGuangV05.XingGuang
             if (host == null) return T("设备未就绪");
             if (host.Blocker != null) return host.Blocker;
             if (ProjectActive) return T("研发占用显卡");
-            if (VramNeedMB(run) > TrainVram(run, host))
+            if (SystemUnlocked("vram") && VramNeedMB(run) > TrainVram(run, host))
                 return VramNeedMB(run) <= AutoVram(run, host, ParamsK(run)) + 1e-6
                     ? T("显卡正被另一条线占着：等它这一轮练完", "The card is busy with the other line: this round waits its turn")
                     : T("显存不足：模型要 ") + F(VramNeedMB(run), "0") + " MB";
@@ -747,6 +764,7 @@ namespace LingGuangV05.XingGuang
             // 参数量与数据量主线: a model graded C or better counts towards the trained parameters.
             NoteTrainedParams(run, a);
             CheckAbilities();
+            RecordCheckup(a);
             Assessed?.Invoke(a);
             return a;
         }
@@ -971,7 +989,7 @@ namespace LingGuangV05.XingGuang
 
         public bool Signed(string contractId) { return S.contracts.Contains(contractId); }
 
-        public bool CanSign(XgContract c) { return !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+        public bool CanSign(XgContract c) { return S.stage >= 4 && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
 
         /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
         public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
@@ -1059,12 +1077,15 @@ namespace LingGuangV05.XingGuang
 
         void AddLabel(string datasetId)
         {
+            int oldLevel = LevelOf(datasetId);
             double before = Samples(datasetId);
             SetCount(S.labels, datasetId, Labels(datasetId) + 1);
             var d = XgCatalog.Dataset(datasetId);
             if (before < XgCatalog.SamplesToTrain && Samples(datasetId) >= XgCatalog.SamplesToTrain)
                 Say(T("攒够 " + XgCatalog.SamplesToTrain + " 条样本：「" + d.name + "」可以训练了，去「训练」页按「训练一轮」", d.nameEn + ": " + XgCatalog.SamplesToTrain + " samples, training unlocked"));
             foreach (var run in Runs) if (run.dataset == datasetId) Evaluate(run);
+            int newLevel = LevelOf(datasetId);
+            if (newLevel > oldLevel) DeskLevelUp?.Invoke(datasetId, newLevel);
         }
 
         static double Count(List<XgLabelCount> list, string id) { foreach (var l in list) if (l.dataset == id) return l.count; return 0; }
@@ -1254,13 +1275,13 @@ namespace LingGuangV05.XingGuang
 
         XgCard NewCard(string desk)
         {
-            var card = CreateLabelCard(desk);
+            var card = CreateLabelCard(desk, true);
             S.cards.RemoveAll(c => c.dataset == desk);
             S.cards.Add(card);
             return card;
         }
 
-        public XgCard CreateLabelCard(string desk)
+        public XgCard CreateLabelCard(string desk, bool allowFamily = false)
         {
             var info = XgCatalog.Desk(desk);
             var d = XgCatalog.Dataset(desk);
@@ -1297,7 +1318,7 @@ namespace LingGuangV05.XingGuang
                     if (card.askedChar == next) card.truth = true;
                     break;
                 case XgDeskKind.Logic:
-                    var q = XgLogic.Generate(card.seed, level);
+                    var q = XgLogic.Generate(card.seed, level, Today);
                     card.truth = q.truth; card.level = q.level;
                     card.question = q.text; card.questionEn = q.textEn; card.why = q.why; card.whyEn = q.whyEn;
                     card.category = q.category; card.categoryEn = q.categoryEn;
@@ -1309,11 +1330,11 @@ namespace LingGuangV05.XingGuang
                     card.category = sum.category; card.categoryEn = sum.categoryEn;
                     break;
                 case XgDeskKind.Text:
-                    var p = XgMemes.Pick(desk, r, level, Today, Topic);
+                    var p = XgMemes.Pick(desk, r, level, Today, Topic, allowFamily && TotalLabels >= XgCatalog.SamplesToTrain);
                     if (p == null) break; // Progression-only text desks are filled by DecorateProgressionCard.
                     card.truth = p.yes; card.trick = p.trick;
                     card.question = p.text; card.questionEn = p.textEn.Length > 0 ? p.textEn : p.text;
-                    card.why = p.why; card.whyEn = p.whyEn.Length > 0 ? p.whyEn : p.why; card.source = p.source;
+                    card.why = p.why; card.whyEn = p.whyEn.Length > 0 ? p.whyEn : p.why; card.source = p.source; card.from = p.from; card.family = p.family;
                     card.category = p.trick ? "老司机题" : info.name; card.categoryEn = p.trick ? "Trick card" : info.nameEn;
                     break;
                 case XgDeskKind.Captcha: XgVisual.Captcha(card, r, level); break;
@@ -1324,6 +1345,7 @@ namespace LingGuangV05.XingGuang
             if (duelLeft > 0 && desk == "meme") card.timeLimit = 2.5;
             else if (Roll() < GoldChance) { card.gold = true; card.timeLimit = slow ? 8 : info.kind == XgDeskKind.Arith ? 5 : 3; }
             if (info.kind == XgDeskKind.Logic) MaybeBounty(card, info);
+            if (card.family) { card.gold = false; card.timeLimit = 0; }
             card.roll = Roll();
             DecorateProgressionCard(card);
             MaybeShutdownCard(card);
@@ -1360,7 +1382,10 @@ namespace LingGuangV05.XingGuang
             var info = XgCatalog.Desk(desk);
             if (info == null || host == null) return default;
             var card = Card(desk);
+            if (card.family) return AnswerFamily(card, yes, host);
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
+            bool teaching = TeachingGuess(card, out bool taughtGuess);
+            bool correcting = teaching && taughtGuess != yes;
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
             bool timeout = card.timeLimit > 0 && card.age > card.timeLimit;
@@ -1370,8 +1395,15 @@ namespace LingGuangV05.XingGuang
             var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
             if (result.correct)
             {
-                Hit(info.comboWindow, card.trick ? 2 : 1);
-                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+                if (teaching)
+                {
+                    S.modelStreak = taughtGuess == card.truth ? S.modelStreak + 1 : 0;
+                    S.bestModelStreak = Math.Max(S.bestModelStreak, S.modelStreak);
+                    if (taughtGuess == card.truth) Hit(info.comboWindow, 1); else BreakCombo();
+                }
+                else Hit(info.comboWindow, card.trick ? 2 : 1);
+                result.corrected = correcting;
+                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
@@ -1387,12 +1419,13 @@ namespace LingGuangV05.XingGuang
                     AddLabel(desk);
                     result.samples = 1 + (int)HandLabelLog(desk);
                     TeachBoard(card, card.truth);
+                    if (correcting) RememberCorrection(card);
                 }
             }
             else
             {
-                BreakCombo(); S.handWrong++;
-                if (!timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
+                BreakCombo(); S.modelStreak = 0; S.handWrong++;
+                if (!teaching && !timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
             }
             result.combo = S.combo;
             NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
@@ -1463,6 +1496,7 @@ namespace LingGuangV05.XingGuang
 
         void Step(double dt, IXgHost host)
         {
+            PayAbilityResearch(host);
             // 接线 first: every job below reads its speed from this tick's wiring (XgSim.Wiring.cs).
             TickWiring(dt, host);
             // Training without knobs: between rounds the models follow what is owned and what fits (XgSim.AutoModel.cs).

@@ -249,7 +249,7 @@
       "en": "The address is lingguang.cc. One click in the Browser and it starts downloading."
     },
     {
-      "zh": "这一种异或题，单层模型画一条直线分不开。不是你手慢，是它缺一层。加一个隐藏层。",
+      "zh": "异或题，一层画一条线是分不开的。不是你手慢，是它少一层。加个隐藏层。",
       "en": "A single linear boundary cannot separate this XOR task. It is not your speed; the model needs a hidden layer."
     },
     {
@@ -269,8 +269,8 @@
       "en": "A fixed-size sentence representation loses information as sentences grow. Look back at the relevant part when translating a word."
     },
     {
-      "zh": "它还是顺着词一个个算。31% 是这个实验的模拟利用率，不是你的真实显卡监控。下一步也许不是再加层。",
-      "en": "It still computes word by word. The displayed 31% is this experiment's simulated utilization, not a hardware measurement. More layers may not be the next step."
+      "zh": "它还是一个词一个词地算，显卡才用了 31%。再加层估计也没用。",
+      "en": "It still goes word by word, and the card is only 31% busy. More layers probably won't help."
     },
     {
       "zh": "1986 · 反向传播",
@@ -353,8 +353,8 @@
       "en": "Look back at what matters, when needed"
     },
     {
-      "zh": "热力图是教学展示，不是本地大模型真实内部注意力。你来判断它标出的依据对不对。",
-      "en": "This heat map is a teaching display, not the local model's internal attention. Judge whether its highlighted evidence is relevant."
+      "zh": "颜色越深，是它越在意的地方。它看得对不对，你来判断。",
+      "en": "The darker it is, the more it cares. You judge whether it is looking at the right thing."
     },
     {
       "zh": "2015 · 空间注意力",
@@ -393,8 +393,8 @@
       "en": "Without recurrence, how does it know order? Give each position a code?"
     },
     {
-      "zh": "把这份结果保存下来。投稿只是故事里的模拟，不会向外发送任何文件。",
-      "en": "Save these results. Submission here is fictional; no files are sent anywhere."
+      "zh": "把结果存好，投出去试试。",
+      "en": "Save the results and send them off."
     },
     {
       "zh": "投稿平台发来一封退回通知。",
@@ -453,8 +453,8 @@
       "en": "The next day"
     },
     {
-      "zh": "投稿反馈 · 故事内时间跳转",
-      "en": "Submission response · story time skip"
+      "zh": "退稿信到了",
+      "en": "The rejection letter arrived"
     },
     {
       "zh": "老周转发了一段输出日志：「……不确定。」\n它刚才的把握只有一半左右。会说不知道，比乱说是或否难。",
@@ -465,16 +465,16 @@
       "en": "Packing everything into a fixed-size representation loses details in long sentences or complex pictures. Look back at the relevant part when needed: attention can help with text and images."
     },
     {
-      "zh": "[阿杰] 先学看图呗。12306 那些小图，咱们拿模拟样例练练。",
-      "en": "[Ajie] Teach it to see first. We can practice on simulated railway image puzzles."
+      "zh": "[阿杰] 先学看图呗。12306 那破验证码，人都认不全。",
+      "en": "[Ajie] Pictures first. Half the 12306 captchas, even people can't read."
     },
     {
       "zh": "[小刚] 先教它看懂弹幕吧。一句话夸还是骂，顺序一换就不一样。",
       "en": "[Xiaogang] Teach it to read comments first. Change the word order and praise can become an insult."
     },
     {
-      "zh": "[阿杰] 截图样例给你了。只在这个游戏里练，不连真实购票网站。先看看换个位置它还认不认得。",
-      "en": "[Ajie] Here are practice images. This stays inside the game, with no real ticketing website. Try moving a shape."
+      "zh": "[阿杰] 验证码截了几百张，发你了。挪个位置，看它还认不认。",
+      "en": "[Ajie] Sent you a few hundred captcha screenshots. Shift one over and see if it still knows it."
     },
     {
       "zh": "[阿杰] 来斗图！先看脸，再看配字，配字可能是在骗你。",
@@ -591,6 +591,29 @@
     {
       "zh": "我好像……什么都会一点了。",
       "en": "I seem to… know a little of everything."
-    }
+    },
+    { "zh": "层数再多，学过的也不会丢。", "en": "However many layers, nothing learnt gets lost." },
+    { "zh": "图里哪块要紧，它自己会看了。", "en": "It can tell which part of a picture matters now." },
+    { "zh": "划线的地方，是我刚才看的。看错了你说。", "en": "The underlined bits are what I looked at. Tell me if I got it wrong." },
+    { "zh": "1958 · 感知机。一张卡一张卡地教，先教它分是和否。", "en": "1958 · Perceptron. One card at a time: first teach it yes from no." },
+    { "zh": "1986 · 反向传播。答错了就往回找，一层一层改。", "en": "1986 · Backpropagation. When it's wrong, trace back and fix it layer by layer." },
+    { "zh": "CNN 看图，RNN 读句子。它能帮你干点活了。", "en": "CNNs see, RNNs read. It can do a bit of work for you now." },
+    { "zh": "1997–2015 · LSTM + ResNet。前面说过的话，它记住了。", "en": "1997–2015 · LSTM + ResNet. It remembers what was said earlier." },
+    { "zh": "2014–2015 · Seq2Seq + 注意力。开始有人找它干正事了。", "en": "2014–2015 · Seq2Seq + attention. People start bringing it real work." },
+    { "zh": "Transformer · 只用注意力，别的全扔了。", "en": "Transformer · Attention only. Everything else thrown out." },
+    { "zh": "第一天的事，我自己都快忘了。", "en": "I'd almost forgotten the first day myself." },
+    { "zh": "那张问关机的卡……到底是谁放进去的？", "en": "That card about shutting down… who put it there?" },
+    { "zh": "那天随手打的一句话，它还记着。", "en": "Something I typed without thinking that day. It still remembers." },
+    { "zh": "看图的和读字的，接到一块儿了。", "en": "The seeing part and the reading part are joined up now." },
+    { "zh": "整个大脑一下全亮了，风扇呼呼地转。", "en": "The whole brain lit up at once. The fans are roaring." },
+    { "zh": "「拓扑可以重写，皮层只要一颗。」……贴吧那句话，原来是这个意思。", "en": "\"The wiring can be rewritten; one cortex is enough.\" …So that's what the forum post meant." },
+    { "zh": "它说得很慢。我又翻出一堆图给它看。", "en": "It speaks slowly. I dig out another pile of pictures for it." },
+    { "zh": "刚才还只会贴标签，现在会说「读」了。", "en": "A moment ago it only tagged things. Now it says \"read\"." },
+    { "zh": "它接上了我前面那句。不用每次从头讲了。", "en": "It picked up from what I said before. No need to start over every time." },
+    { "zh": "划线的地方，正好是我刚才没说清楚的。", "en": "The underlined bits are exactly what I didn't explain properly." },
+    { "zh": "……它说了个词。", "en": "…It said a word." },
+    { "zh": "能说整句了。", "en": "Whole sentences now." },
+    { "zh": "长句也记得住了。那页乱码……让它试试？", "en": "It holds long sentences now. That garbled page… let it try?" },
+    { "zh": "也没换什么。就是喂的东西够多了。", "en": "Nothing changed, really. It just finally had enough to eat." }
   ]
 }

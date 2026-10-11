@@ -43,7 +43,10 @@ namespace Michsky.DreamOS
         public void UpdateWallpaper(WallpaperManager manager)
         {
             // Set the wallpaper to targetImage
-            targetImage.sprite = manager.GetWallpaper(wallpaperManager.wallpaperIndex);
+            if (manager == null) return;
+            wallpaperManager = manager;
+            if (targetImage == null) targetImage = GetComponent<Image>();
+            targetImage.sprite = manager.GetWallpaper(manager.wallpaperIndex);
         }
     }
 }

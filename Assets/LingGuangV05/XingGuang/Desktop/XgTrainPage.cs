@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.XingGuang
         const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 96, QuickBarHeight = 104, RowGap = 10;
 
         XgBtn[] trackTabs = new XgBtn[2];
-        XgBtn summary, train, assess, autoTrain, saveModel, cleanNoise;
+        XgBtn summary, train, assess, autoTrain, saveModel, cleanNoise, orders;
         readonly List<XgBtn> dataBtns = new List<XgBtn>();
         readonly List<XgBtn> packBtns = new List<XgBtn>();
         readonly List<float> noValidationCurve = new List<float>();
@@ -217,8 +217,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var n = XgCatalog.Node(id); var a = XgCatalog.Arch(id);
             if (a == null) return n != null ? T(n.note, n.noteEn) : "";
             string region = a.shared ? Sim.RegionOfTrack(Track) : a.track == XgTrack.Vision ? "vision" : "sequence";
-            return "<b>" + T(a.name, a.nameEn) + "</b>  " + a.year + "\n"
-                + T("灵光" + XgSim.RegionName(region, false) + "的连接拓扑：", "Topology of 灵光's " + XgSim.RegionName(region, true).ToLowerInvariant() + " region: ") + (a.topo.Length > 0 ? "<b>【" + a.topo + "】</b>" : "") + T(a.wire, a.wireEn)
+            return "<b>" + T(a.name, a.nameEn) + "</b>  " + XgCatalog.ShownYear(a.year) + "\n"
+                + T(Sim.AiDisplayName + XgSim.RegionName(region, false) + "的连接拓扑：", "Topology of " + Sim.AiDisplayName + "'s " + XgSim.RegionName(region, true).ToLowerInvariant() + " region: ") + (a.topo.Length > 0 ? "<b>【" + a.topo + "】</b>" : "") + T(a.wire, a.wireEn)
                 + (string.IsNullOrEmpty(a.note) ? "" : "\n<color=#6F95A5>" + Lang.T("历史上：") + T(a.note, a.noteEn) + "</color>");
         }
 
@@ -227,9 +227,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim.S.wiringVoiced) return;
             Sim.S.wiringVoiced = true;
-            LingGuangV05.Desktop.Story.InnerVoice.Say("等等……论文里这些网络，不是别的 AI。", "Wait… these networks from the papers aren't other AIs.", 2.4f);
-            LingGuangV05.Desktop.Story.InnerVoice.Say("是给它的脑子重写连接拓扑。像人的大脑皮层，看图的、读字的、想事的，各管一块。", "They're ways of wiring its brain. Like a human cortex: seeing, reading, thinking, each has its own patch.", 3.2f);
-            LingGuangV05.Desktop.Story.InnerVoice.Say("……难怪机箱风扇一下子狂转。整颗脑子一亮，整张显卡都是它的。", "…No wonder the case fans just roared. When the whole brain lights up, the whole card is its.", 3f);
+            LingGuangV05.Desktop.Story.InnerVoice.Say("……机箱风扇一下子狂转起来。", "…The case fans just roared.", 2.4f);
         }
 
         void Press()
@@ -441,6 +439,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Refresh()
         {
+            orders.Set(Sim.FeatureVisible("contracts") ? T("企业订单 →", "Orders →") : (Sim.S.stage < 4 ? T("第 4 章开放订单", "Orders in chapter 4") : T("C 级解锁订单", "Grade C: orders")), Sim.FeatureVisible("contracts"), XgDark.Panel, XgDark.Muted);
             if (root == null) return;
             var track = Track;
             if (!Sim.TrainingUnlocked(track) && Sim.TrainingUnlocked(track == XgTrack.Vision ? XgTrack.Sequence : XgTrack.Vision))

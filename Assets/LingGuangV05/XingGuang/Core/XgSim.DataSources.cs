@@ -176,7 +176,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = n.id, datasetId = d.id, source = XgDataSource.Public, node = n.id, name = d.name, nameEn = d.nameEn,
-                    description = n.note, descriptionEn = n.noteEn, price = n.cost, samples = d.samples, noise = noise,
+                    description = n.note, descriptionEn = n.noteEn, price = Math.Ceiling(n.cost * StoryResearchPrice), samples = d.samples, noise = noise,
                     downloadSec = DownloadSeconds(d.samples), stage = n.stage, month = StageMonth(n.stage),
                 });
             }
@@ -188,7 +188,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = d.id + ".junk", datasetId = d.id, source = XgDataSource.Junk, name = (string)j[3], nameEn = (string)j[4],
-                    description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost : d.price) * JunkPriceFactor),
+                    description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost * StoryResearchPrice : d.price) * JunkPriceFactor),
                     samples = samples, noise = (double)j[1], downloadSec = Math.Round(DownloadSeconds(samples) * 1.5),
                     stage = n != null ? n.stage : 1, month = (int)j[2],
                 });

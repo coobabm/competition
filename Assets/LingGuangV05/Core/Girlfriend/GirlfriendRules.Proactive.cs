@@ -19,6 +19,17 @@ namespace LingGuangV05.Core.Girlfriend
             switch (t) { case GirlfriendTier.Sweet: return 70; case GirlfriendTier.Warm: return 100; case GirlfriendTier.Normal: return 150; case GirlfriendTier.Distant: return 280; default: return 1e9; }
         }
 
+        /// <summary>Her first hello depends on the desktop clock: 22:01–5:00 still up, then morning, lunch, afternoon, dinner.</summary>
+        public static string[] FirstHello(int hour, int minute)
+        {
+            int m = hour * 60 + minute;
+            if (m > 22 * 60 || m <= 5 * 60) return new[] { "还没睡？", "Still up?" };
+            if (m <= 11 * 60) return new[] { "醒了吗？", "Are you up?" };
+            if (m <= 13 * 60) return new[] { "吃午饭了吗？", "Had lunch yet?" };
+            if (m <= 17 * 60) return new[] { "在干嘛呢？", "What are you up to?" };
+            return new[] { "吃晚饭了吗？", "Had dinner yet?" };
+        }
+
         /// <summary>Seconds of play she waits before shaking the window (暖 and 甜 only).</summary>
         public static double ShakeAfter(GirlfriendTier t) => t == GirlfriendTier.Sweet ? 40 : t == GirlfriendTier.Warm ? 60 : double.PositiveInfinity;
 
@@ -35,7 +46,7 @@ namespace LingGuangV05.Core.Girlfriend
             if (!s.done.Contains("life:firstNight"))
             {
                 s.done.Add("life:firstNight");
-                return Proactive(s, now, GfEvent.Say("life:firstNight", Life[0].lines));
+                return Proactive(s, now, GfEvent.Say("life:firstNight", FirstHello(now.clock.Hour, now.clock.Minute)));
             }
             // The weekend question is the one the AI will not answer for him: it comes even when she is cold, quiet, or still waiting for his answer.
             if (s.asking.Length == 0 && !s.done.Contains("life:weekendAsk"))

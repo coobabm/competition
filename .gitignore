@@ -25,3 +25,10 @@
 *.ckpt
 *.pt
 *.pth
+
+# Local validation outputs, backups and personal handoff notes
+/LocalVerification/
+/build-result.json
+/Design/修改交接与后续策划_20261011.md
+/升级说明.md
+/试玩说明.md

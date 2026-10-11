@@ -76,7 +76,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The freeze ended (true when lifted by an appeal).</summary>
         public event Action<bool> QualityUnfrozen;
 
-        public bool QualityActive => PlatformChecks && GlobalAutoLevel >= 1;
+        public bool QualityActive => SystemUnlocked("quality") && PlatformChecks && GlobalAutoLevel >= 1;
         public bool QualityFrozen => QualityActive && S.qcFrozen > 0;
         public double FreezeSecondsLeft => QualityFrozen ? S.qcFrozen : 0;
         public double Credit => S.qcCredit;

@@ -135,7 +135,7 @@ namespace LingGuangV05.Desktop.XingGuang
             statIncome.text = "+" + Money(IncomeRate);
             var w = Sim.Wiring;
             double watts = w != null ? w.psuW : 0, limit = w != null && w.psuLimit > 0 ? w.psuLimit : 3500;
-            statPower.text = N(watts, "0") + "/" + N(limit, "0") + "W";
+            statPower.text = Sim.SystemUnlocked("power") ? N(watts, "0") + "/" + N(limit, "0") + "W" : T("教学期免费", "Free while learning");
             statPower.color = w != null && w.tripped || watts > limit ? XgDark.Bad : watts > limit * .85 ? XgDark.Hot : XgDark.Ink;
             var rt = controller.runtime;
             if (rt != null && rt.Sim != null)
@@ -170,13 +170,14 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── nav ─────────────
 
-        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it).</summary>
-        public static readonly string[] NavIds = { "home", "train", "data", "items", "tree", "wiring", "repo", "abilities", "cards", "final" };
+        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it). 科技 (tree) is a section of 道具.</summary>
+        public static readonly string[] NavIds = { "teach", "train", "board", "tree", "home", "data", "items", "wiring", "repo", "abilities", "cards", "final" };
 
         static readonly (string zh, string en, string[] ids)[] NavGroups =
         {
+            ("教它长大", "TEACH & GROW", new[] { "teach", "train", "board", "tree" }),
             ("它", "IT", new[] { "home" }),
-            ("养成", "RAISE", new[] { "train", "data", "items", "tree" }),
+            ("养成", "RAISE", new[] { "data", "items" }),
             ("调度", "RUN", new[] { "wiring", "repo" }),
             ("收藏", "KEEP", new[] { "abilities", "cards", "final" }),
         };
@@ -226,13 +227,13 @@ namespace LingGuangV05.Desktop.XingGuang
             var rim = crowdLink.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var hover = crowdLink.gameObject.AddComponent<XgHoverRim>(); hover.rim = rim; hover.rest = XgDark.Line; hover.hot = XgDark.Link; hover.Apply();
             var link = crowdLink.gameObject.AddComponent<Button>(); link.targetGraphic = face; link.transition = Selectable.Transition.None;
-            link.onClick.AddListener(() => { Juice.Play(XgJuice.Sfx.Id.Click); controller.OpenCrowd(null); });
+            link.onClick.AddListener(() => { Juice.Play(XgJuice.Sfx.Id.Click); if (!XgYyTalk.Open()) ShowTab("home"); });
             if (controller.Window != null) crowdLink.gameObject.AddComponent<ChapterOneWindowFocus>().Window = controller.Window;
             crowdTitle = ui.Text(Rect("Title", crowdLink, new Vector2(0, .5f), Vector2.one, new Vector2(4, 0), new Vector2(-4, -3)), "", 14, XgDark.Link, TextAlignmentOptions.Bottom);
             crowdTitle.textWrappingMode = TextWrappingModes.NoWrap;
             crowdSub = ui.Text(Rect("Sub", crowdLink, Vector2.zero, new Vector2(1, .5f), new Vector2(4, 3), new Vector2(-4, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.Top);
             crowdSub.textWrappingMode = TextWrappingModes.NoWrap; crowdSub.overflowMode = TextOverflowModes.Ellipsis;
-            UiTip.Add(crowdLink, "标注台和企业订单在「摆渡众包」：亲手标注赚钱、攒样本、叠连击，签订单让模型挣钱。", "The labelling desk and business orders are in Bodu Crowd: label by hand for money, samples and combo; sign contracts so the model earns.");
+            UiTip.Add(crowdLink, "打开 YY，直接输入想对灵光说的话。教完或训练后，再问问它，看看回答有什么变化。", "Open YY and type freely. After teaching or training, ask it again and see how its answers change.");
 
             soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; Refresh(true); }, 12);
             PlaceBottom(soundToggle, 34, 24, 10, 10);
@@ -243,7 +244,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // The resident spider (XgResidentSpider) roams the desktop; this parks it in a corner, saved with the lab.
             residentToggle = ui.Button(nav, "", () => { Sim.S.residentQuiet = !Sim.S.residentQuiet; Juice.Play(XgJuice.Sfx.Id.Click); Refresh(true); }, 12);
             PlaceBottom(residentToggle, 60, 24, 10, 10);
-            UiTip.Add(residentToggle.rt, "它会在桌面上到处看，你标注时还会过来旁观。点这里让它在角落里待着。", "It wanders the desktop reading everything, and comes to watch when you label. Click to have it sit in a corner.");
+            UiTip.Add(residentToggle.rt, "它会在桌面上到处爬，你标注时还会过来旁观。点一下让它停下，慢慢隐身。", "It crawls all over the desktop and comes to watch when you label. Click to make it stop and fade away.");
         }
 
         NavRow MakeNavRow(string id)
@@ -269,6 +270,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The nav row of a page (the guide rings it).</summary>
         public RectTransform NavButton(string id)
         {
+            if (id == "label") id = "teach";
             return id != null && navRows.TryGetValue(id, out var row) ? row.rt : null;
         }
 
@@ -276,6 +278,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
+                case "teach": return T("教它", "Teach");
+                case "board": return T("大脑", "Brain");
                 case "home": return T("概览", "Overview");
                 case "train": return Lang.T("训练");
                 case "data": return T("数据", "Data");
@@ -320,6 +324,12 @@ namespace LingGuangV05.Desktop.XingGuang
             }
         }
 
+        bool NavVisible(string id)
+        {
+            if (Sim.S.gradualSystems && Sim.S.stage < 3 && System.Array.IndexOf(new[] { "teach", "train", "board", "tree", "chat" }, id) < 0) return false;
+            return FeatureOpen(id) || id == "final";
+        }
+
         void RefreshNav()
         {
             float y = 8;
@@ -327,7 +337,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var group = NavGroups[g];
                 bool any = false;
-                foreach (var id in group.ids) if (id == "final" || FeatureOpen(id)) any = true;
+                foreach (var id in group.ids) if (NavVisible(id)) any = true;
                 var header = navGroupLabels[g];
                 header.gameObject.SetActive(any);
                 if (!any) { foreach (var id in group.ids) navRows[id].rt.gameObject.SetActive(false); continue; }
@@ -339,7 +349,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     var row = navRows[id];
                     bool open = FeatureOpen(id);
                     // 终章 stays in the list, locked until 全部放开.
-                    bool show = open || id == "final";
+                    bool show = NavVisible(id);
                     row.rt.gameObject.SetActive(show);
                     if (!show) continue;
                     row.rt.offsetMin = new Vector2(0, -y - NavRowHeight); row.rt.offsetMax = new Vector2(0, -y);
@@ -350,13 +360,16 @@ namespace LingGuangV05.Desktop.XingGuang
                     PaintNavRow(row);
                 }
             }
+            crowdLink.gameObject.SetActive(Sim.SystemUnlocked("crowd"));
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             // The 加薪 badge follows the shop to 摆渡众包.
-            crowdTitle.text = T("摆渡众包 ↗", "Bodu Crowd ↗") + (raiseReady ? "  <size=12><color=#FAC775>" + T("加薪", "raise") + "</color></size>" : "");
-            crowdSub.text = T("做题挣钱和样本", "Label for ¥ and samples");
+            crowdTitle.text = T("和它聊聊 ↗", "Talk to it ↗");
+            crowdSub.text = T("在 YY 自由输入", "Speak freely in YY");
             soundToggle.Set(Sim.S.mute ? Lang.T("音效：关") : Lang.T("音效：开"), true, XgDark.Panel, XgDark.Muted);
             fxToggle.Set(Sim.S.reduceFx ? Lang.T("减少特效：开") : Lang.T("减少特效：关"), true, XgDark.Panel, XgDark.Muted);
-            residentToggle.Set(Sim.S.residentQuiet ? T("让它出来走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
+            // Only once the desktop spider has shown up (its intro played).
+            residentToggle.rt.gameObject.SetActive(Sim.SpiderAround);
+            residentToggle.Set(Sim.S.residentQuiet ? T("让它自由走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
         }
 
         void PaintNavRow(NavRow row)

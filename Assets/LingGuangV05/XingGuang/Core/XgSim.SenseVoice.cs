@@ -101,11 +101,11 @@ namespace LingGuangV05.XingGuang
             else if (!S.senseVoiceOfCourse && S.yesNoReplies >= 2)
             {
                 S.senseVoiceOfCourse = true;
-                lines.Add(new XgVoiceLine("也是。什么都还没教过它。", "Of course. Nobody has taught it anything yet.", 2.6f));
+                lines.Add(new XgVoiceLine("难道这就是那个人所说的东西？", "Is this the thing that person was talking about?", 2.6f));
                 if (!S.senseVoicePointer)
                 {
                     S.senseVoicePointer = true;
-                    lines.Add(new XgVoiceLine("摆渡众包上有一桌「常识判断」……标给它看，它就能学会？", "Bodu Crowd has a \"Common sense\" desk… if I label those for it, will it learn?", 3.6f));
+                    lines.Add(new XgVoiceLine("摆渡众包有桌「常识判断」……标给它看看？", "Bodu Crowd has a \"Common sense\" desk… if I label those for it, will it learn?", 3.6f));
                 }
             }
             return lines;

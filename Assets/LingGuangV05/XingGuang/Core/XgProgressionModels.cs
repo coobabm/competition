@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang
         public int comboFailureVersion;
         public int comboObservations, spatialObservations, orderObservations, memoryObservations;
         public bool visionCompressionObserved, sequenceCompressionObserved, uncertaintyObserved;
-        public bool chapterComplete, endingRegret;
+        public bool chapterComplete, endingRegret, endingReflectionAnswered;
         /// <summary>How older saves passed their walls ("mnist#structure=features"). Read only.</summary>
         public List<string> wallRoutes = new List<string>();
     }

@@ -400,7 +400,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 int i = pair.Key;
                 bool visible = i <= stage;
                 pair.Value.gameObject.SetActive(visible);
-                if (visible) pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.StageYears[i] + "</color></size>" : "");
+                if (visible) pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.ShownYear(XgCatalog.StageYears[i]) + "</color></size>" : "");
                 if (visible && !miniButtons.ContainsKey(i))
                 {
                     int column = i;
@@ -682,12 +682,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;
                 case "attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
                 case "caption": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
-                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n这是游戏中的提前突破；年份是真实历史。"; en = "Transformer · attention is all we need\nA fictional early discovery; the date is historical."; break;
+                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n全世界还没人走到这一步，你先到了。"; en = "Transformer · attention is all we need\nNobody else has got here yet. You did."; break;
                 default: return;
             }
             if (!built) return;
             Sync(true);
-            eraTitle.text = year + " · " + Lang.T("时代卡"); eraBody.text = T(zh, en);
+            string shownYear = XgCatalog.ShownYear(year);
+            eraTitle.text = (shownYear.Length > 0 ? shownYear + " · " : "") + Lang.T("时代卡"); eraBody.text = T(zh, en);
             eraCard.gameObject.SetActive(true); eraCard.SetAsLastSibling(); eraRemaining = 8;
             FocusFrontier();
             if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgDark.Gold, 500, .8f, 16); }

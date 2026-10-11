@@ -60,7 +60,7 @@ namespace LingGuangV05.XingGuang
             if (!EligibleDesk(desk)) return "ability";
             if (ReviewCard(desk) != null) return "review";
             var card = Card(desk);
-            if (card == null || card.kind == "shutdown" || card.law) return "special";
+            if (card == null || card.kind == "shutdown" || card.family || card.law) return "special";
             return null;
         }
 

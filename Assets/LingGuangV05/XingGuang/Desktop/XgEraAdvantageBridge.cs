@@ -126,7 +126,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(state==null||bound==null)return null;
             switch(name)
             {
-                case "eraIdentityReply":return Flag("era.identity.reply")?(state.GetFlag("era.identity.reply")==1?"就我一个。":"我和它。"):"我还没有回答。";
+                case "eraIdentityReply":return Flag("era.identity.reply")?(state.GetFlag("era.identity.reply")==1?"就我一个。":"我自己慢慢做的。"):"我还没有回答。";
                 case "eraContextOutcome":return state.GetFlag("era.context.choice")==1?"这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。是我看过以后，才按下发送。":"我选择这次自己回。草稿留下了，它没有替我发送，也没有替我作出承诺。";
                 case "eraExpertResult":var proof=state.GetFirst("era.expert.receipt");return proof==null?"还没有新的验收记录。":"这一次的20道独立翻译题，答对了"+Math.Round(proof.value*20).ToString(CultureInfo.InvariantCulture)+"道。题目、预测和答案都留在文件夹里。";
                 case "eraDeliverySummary":return "20份商品英文页已完成；缺少单位和交期的两条另列，没有混入交付。";
@@ -147,7 +147,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void ChooseIdentity(int choice)
         {
             if(!CanSendToCousin()||!EraAdvantageStory.ChooseIdentity(state,choice))return;
-            PlayerLine("cousin",choice==1?"就我一个。":"我和它。");Changed();
+            PlayerLine("cousin",choice==1?"就我一个。":"我自己慢慢做的。");Changed();
         }
         public void ChooseContext(int choice)
         {
@@ -167,7 +167,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(!Live)return;
             var forum=LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
             if(forum==null||!forum.CanMessage(ForumLibrary.ZhouNow)||!EraAdvantageStory.RequestExpert(state,Stage))return;
-            forum.SendAuthoredChoice(ForumLibrary.ZhouNow,"你好，我做了个程序，刚用它交完一批商品英文页。想请你专门验一下当前的翻译模型：换一组没用来训练的题，我现在重新跑，不拿旧最高分糊弄你。");Changed();
+            forum.SendAuthoredChoice(ForumLibrary.ZhouNow,"你好，我刚交完一批商品英文页。想请你看看译文，能换一组新的材料吗？我再做一遍，拿不准的也标出来。");Changed();
             if(forum.View!=null)forum.View.Open("chat", ForumLibrary.ZhouNow);
         }
         bool CanSendToCousin()

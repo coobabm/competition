@@ -274,6 +274,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var mode = mind.Tick(dt, present, Sim != null && Sim.S.residentQuiet, labelVisible, answers, disagreed);
 
             if (mode == XgResidentMode.Hidden) { StopWork(); UpdateHandle(false); Show(false); motion.brain.SetSuspended(true); threat.Reset(); return; }
+            // 让它安静一会儿: it stops and fades out over ~1.5 s, then stays hidden; 让它自由走走 fades it back in.
+            layerGroup.alpha = Mathf.MoveTowards(layerGroup.alpha, mode == XgResidentMode.Parked ? 0 : 1, dt / 1.5f);
+            if (mode == XgResidentMode.Parked && layerGroup.alpha <= 0) { StopWork(); UpdateHandle(false); Show(false); threat.Reset(); return; }
             Show(true);
             if (layer.GetSiblingIndex() != apps.GetSiblingIndex() + 1) layer.SetSiblingIndex(apps.GetSiblingIndex() + 1);
             screen = layer.rect;
@@ -766,7 +769,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool busy = rt.TestMode || CutscenePlaying || FullscreenVideo || InnerVoice.Busy || PrologueDirector.Desk == null
                 || controller.View == null || controller.View.Data == null || controller.Window == null
                 || !IntroWelcome(controller);
-            if (!Sim.SpiderIntroDue(rt.Sim.AppInstalled, rt.Sim.InPrologue, busy)) return;
+            if (!Sim.SystemUnlocked("data") || !Sim.SpiderIntroDue(rt.Sim.AppInstalled, rt.Sim.InPrologue, busy)) return;
             intro = StartCoroutine(IntroScene());
         }
 
@@ -796,11 +799,13 @@ namespace LingGuangV05.Desktop.XingGuang
             Sim.S.spiderIntroDone = true;
             controller.Open();
             yield return null;
+            if (controller == null) { IntroPlaying = false; intro = null; yield break; }
             if (controller.View != null) { controller.View.Open("data"); controller.View.Data.OpenCrawlerIntro(); }
             yield return new WaitForSecondsRealtime(3.5f);
             yield return InnerVoice.SayAndWait("……那是什么？", "…what is that?", 1.6f);
             yield return InnerVoice.SayAndWait("它在……看百科？", "Is it… reading the encyclopedia?", 1.8f);
             yield return InnerVoice.SayAndWait("谁让它上网的。", "Who let it online?", 1.6f);
+            if (controller == null) { IntroPlaying = false; intro = null; yield break; }
             var crawler = controller.View != null && controller.View.Data != null ? controller.View.Data.Crawler : null;
             if (crawler != null && crawler.IsOpen) crawler.LookAtPlayer(2.6f);
             yield return new WaitForSecondsRealtime(2.8f);
@@ -809,27 +814,13 @@ namespace LingGuangV05.Desktop.XingGuang
             intro = null;
         }
 
+        /// <summary>Told to keep quiet: it stops where it stands and fades out (Update hides it once gone).</summary>
         void TickParked(float dt)
         {
-            XgResident.ParkingSpot(Box(screen), walker.size, out double x, out double y);
-            var spot = new Vector2((float)x, (float)y);
             var brain = motion.brain;
             brain.SetContext(XgSpiderCtx.Roam);
-            if (Vector2.Distance(walker.pos, spot) > 6)
-            {
-                walker.Settled = false;
-                if (!brain.HasTrip || (plannedTarget - spot).sqrMagnitude > 1) { brain.Plan(walker.pos.x, walker.pos.y, spot.x, spot.y, XgSpiderGait.Walk); plannedTarget = spot; }
-                if (brain.Steer(dt, walker.pos.x, walker.pos.y, 6, out double ax, out double ay, out double sc)) { brain.Rest(0); ax = spot.x; ay = spot.y; sc = .3; }
-                walker.turnRate = (float)brain.TurnRate; walker.brake = (float)brain.Brake;
-                walker.Tick(dt, new Vector2((float)ax, (float)ay), (float)sc * .7f, Reduced);
-                return;
-            }
-            // Told to keep quiet: it curls up in its corner and sleeps, slowly breathing, whatever the player does.
-            brain.DeepSleep = true;
-            if (brain.Act != XgSpiderAct.Sleep) brain.Do(XgSpiderAct.Sleep, 1e7);
-            brain.Tick(dt, true);
+            brain.Interrupt();
             walker.Settled = true;
-            walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, 135, 1 - Mathf.Exp(-2 * dt)) * Mathf.Deg2Rad;
             walker.Tick(dt, walker.pos, 0, true);
         }
 
@@ -1236,8 +1227,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     XgDraw.Box(vh, a, new Vector2(a.x + 1.2f, b.y), c); XgDraw.Box(vh, new Vector2(b.x - 1.2f, a.y), b, c);
                 }
             }
-            bool parked = mind.Mode == XgResidentMode.Parked;
-            float alpha = parked ? .6f : 1;
+            float alpha = 1; // parked fades through layerGroup.alpha
             if (pulseT >= 0 && !Reduced)
             {
                 float k = pulseT / .6f;

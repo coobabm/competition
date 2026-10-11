@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static readonly double[] AbilityParamsK = { 0, 0, 6, 60, 170, 290, 320 };
         /// <summary>Data threshold of each ability, in effective samples: hand labels plus about one cheap pack per stage.</summary>
-        public static readonly double[] AbilitySamples = { 0, 0, 12500, 150000, 300000, 480000, 600000 };
+        public static readonly double[] AbilitySamples = { 0, 0, 6000, 60000, 150000, 300000, 600000 };
 
         /// <summary>
         /// The parameter and sample ladder the desks' ceilings are placed on (the thresholds before they were lowered),
@@ -195,9 +195,21 @@ namespace LingGuangV05.XingGuang
         {
             if (S.stage != AbilitiesCount) RefreshStages();
             int next = NextAbility;
-            if (next == 0) return;
+            if (next == 0 || S.stage > 1 && S.stageEpochs == 0) return;
             if (TrainedParamsK + 1e-9 < ParamsThreshold(next) || TrainedSamples + 1e-9 < SamplesThreshold(next)) return;
-            EmergeAbility(next);
+            // Training can fill the bars, but only the player confirms a new chapter.
+            return;
+        }
+
+        public bool StageReady => NextAbility > 0 && S.stageEpochs > 0
+            && TrainedParamsK + 1e-9 >= ParamsThreshold(NextAbility)
+            && TrainedSamples + 1e-9 >= SamplesThreshold(NextAbility);
+
+        public bool ConfirmNextStage()
+        {
+            if (!StageReady) return false;
+            EmergeAbility(NextAbility);
+            return true;
         }
 
         void EmergeAbility(int ability)

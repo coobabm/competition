@@ -22,7 +22,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The cells a region shows at most (the deepest glyph, VGG, has 49).</summary>
         public const int CortexCells = 60;
 
-        Mode mode = Mode.Assembly;
+        Mode mode = Mode.Concepts;
         RectTransform conceptView, cortexView;
         XgBtn assemblyTab, conceptTab, cortexTab, atlasTab;
         XgCortexGraphic cortex;
@@ -41,7 +41,7 @@ namespace LingGuangV05.Desktop.XingGuang
             conceptTab = ModeTab(card, 312, Mode.Concepts);
             cortexTab = ModeTab(card, 212, Mode.Cortex);
             atlasTab = ModeTab(card, 112, Mode.Atlas);
-            UiTip.Add(assemblyTab.rt, () => T("把保存的模型拼进灵光的大脑；不同能力共同组成一个灵光。", "Assemble saved models into LingGuang's brain; their different capabilities form one LingGuang."));
+            UiTip.Add(assemblyTab.rt, () => { string ai = Sim != null ? Sim.AiDisplayName : T("灵光", "LingGuang"); return T("把保存的模型拼进" + ai + "的大脑；不同能力共同组成一个" + ai + "。", "Assemble saved models into " + ai + "'s brain; their different capabilities form one " + ai + "."); });
             UiTip.Add(conceptTab.rt, () => Lang.T("概念板：每个区记住的概念，一格一个。绿是「是」，红是「否」，越深越确定。"));
             UiTip.Add(cortexTab.rt, () => T("皮层拓扑：查看当前训练连接与共享概念；已接入的模型能力请看「模型拼装」。", "Cortex shows current training connections and shared concepts. Installed model capabilities are in Models."));
             UiTip.Add(atlasTab.rt, () => Lang.T("接法图鉴：解锁过的每一种结构，都是给某个区接线的一种办法。"));

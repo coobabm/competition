@@ -36,6 +36,11 @@ namespace LingGuangV05.Desktop.XingGuang
             sideContent.pivot = new Vector2(.5f, 1);
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.content = sideContent; scroll.viewport = viewport; scroll.horizontal = false; scroll.scrollSensitivity = 30; scroll.movementType = ScrollRect.MovementType.Clamped;
+            if (view != null)
+            {
+                teachingCompanion = Rect("TeachingHost", sideContent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                XgTeachCompanion.Build(teachingCompanion, host, ui);
+            }
             BuildToday();
             BuildAiPanel();
             BuildShop();
@@ -170,7 +175,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshAi()
         {
             bool eligible = Mode == 0 && Sim.EligibleDesk(Desk);
-            string name = T("灵光", "LingGuang");
+            string name = Sim.AiDisplayName;
             switch (Spider)
             {
                 case SpiderRole.Working:
@@ -267,6 +272,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (special) { PlaceBox(specialBox, 0, 300); y = 300; }
             else
             {
+                if (teachingCompanion != null && teachingCompanion.gameObject.activeSelf) { PlaceBox(teachingCompanion, y, 600); y += 608; }
                 PlaceBox(todayBox, y, TodayH); y += TodayH + 8;
                 if (aiBox.gameObject.activeSelf) { PlaceBox(aiBox, y, AiH); y += AiH + 8; }
                 PlaceBox(shopBox, y, shopHeight); y += shopHeight + 8;
@@ -278,6 +284,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The detailed pay formula of the current card, shown when the pointer rests on the pay note above the workspace.</summary>
         string PayTip()
         {
+            if (Sim.TeachMode) return T("先看它的猜测，再确认或纠正。正确纠正的奖励是确认的两倍；每张卡都改变它的概念。连击记录它的成绩。教错不罚钱。", "Check its guess, then confirm or correct. A correct correction pays twice confirmation; every card changes its concepts. The streak measures its answers. No fine for a mistaken lesson.");
             string desk = Desk;
             int dl = Sim.LevelOf(desk);
             double kind = XgCatalog.Desk(desk)?.pay ?? 1;

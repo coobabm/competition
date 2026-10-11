@@ -32,7 +32,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool Spend(double amount)
         {
             if (!Live || amount < 0 || runtime.Sim.S.money + 1e-9 < amount) return false;
+            runtime.Sim.RecordFunds("其他收支");
             runtime.Sim.S.money -= amount;
+            runtime.Sim.RecordFunds("学习与设备支出");
             runtime.MarkDirty();
             return true;
         }
@@ -41,14 +43,16 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!Live || amount <= 0 || double.IsNaN(amount) || double.IsInfinity(amount)) return;
             var s = runtime.Sim.S;
+            runtime.Sim.RecordFunds("其他收支");
             s.money += amount;
+            runtime.Sim.RecordFunds("众包与工作收入");
             s.totalEarned += amount;
             runtime.MarkDirty();
         }
 
         public void Train(double seconds)
         {
-            if (!Live || seconds <= 0) return;
+            if (!Live || seconds <= 0 || !runtime.Sim.PowerCostsEnabled) return;
             runtime.Sim.BillTraining(seconds);
             runtime.MarkDirty();
         }
@@ -56,7 +60,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The scaled bill of the consumables, cuDNN and the cooler (Core/ChapterOneSim.Bills.cs).</summary>
         public void TrainScaled(double seconds, double priceFactor, double energyFactor, double wearFactor)
         {
-            if (!Live || seconds <= 0) return;
+            if (!Live || seconds <= 0 || !runtime.Sim.PowerCostsEnabled) return;
             runtime.Sim.BillTraining(seconds, priceFactor, energyFactor, wearFactor);
             runtime.MarkDirty();
         }
@@ -67,7 +71,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// What the next training round will cost at the month's tier, scaled the way <see cref="TrainScaled"/> will bill it
         /// (the training page shows it on the button). 0 before the first rent.
         /// </summary>
-        public double RoundPrice(double seconds, double priceFactor, double energyFactor) => Live ? runtime.Sim.TrainingRoundPrice(seconds, priceFactor, energyFactor) : 0;
+        public double RoundPrice(double seconds, double priceFactor, double energyFactor) => Live && runtime.Sim.PowerCostsEnabled ? runtime.Sim.TrainingRoundPrice(seconds, priceFactor, energyFactor) : 0;
         /// <summary>The cards are hot and may burn out (the training page warns).</summary>
         public bool WearRiskLive => Live && runtime.Sim.WearRiskLive;
         /// <summary>Whether rent and electricity are being billed (from the lab's first day).</summary>
@@ -90,7 +94,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public double TierOneKwh => Live ? runtime.Sim.Config.tierOneKwh : 240;
         public double TierTwoKwh => Live ? runtime.Sim.Config.tierTwoKwh : 400;
 
-        public double TrainingWatts => Live ? System.Math.Max(0, runtime.Sim.CardWatts - runtime.Sim.UnpluggedWatts) * TrainingLoad : 0;
+        public double TrainingWatts => Live && runtime.Sim.PowerCostsEnabled ? System.Math.Max(0, runtime.Sim.CardWatts - runtime.Sim.UnpluggedWatts) * TrainingLoad : 0;
 
         // ───────────── IXgRig (接线) ─────────────
 
@@ -117,9 +121,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public double PowerLimitWatts => runtime != null && runtime.Sim != null ? runtime.Sim.Config.powerLimitWatts : 3500;
         public double HouseWatts => runtime != null && runtime.Sim != null ? runtime.Sim.HouseWatts : 0;
-        public bool BreakerTripped => runtime != null && runtime.Sim != null && runtime.Sim.S.breakerTripped;
-        public string HousePowerBlocker => runtime != null && runtime.Sim != null && runtime.Sim.S.landlordCut ? LandlordCut
-            : runtime != null && runtime.Sim != null && runtime.Sim.S.unpaidPower
+        public bool BreakerTripped => runtime != null && runtime.Sim != null && runtime.Sim.PowerCostsEnabled && runtime.Sim.S.breakerTripped;
+        public string HousePowerBlocker => runtime != null && runtime.Sim != null && runtime.Sim.PowerCostsEnabled && runtime.Sim.S.landlordCut ? LandlordCut
+            : runtime != null && runtime.Sim != null && runtime.Sim.PowerCostsEnabled && runtime.Sim.S.unpaidPower
             ? Lang.T("停电：电费欠缴，去「家庭」缴费") : BreakerTripped ? Lang.T("跳闸：去「家庭」合闸") : null;
 
         static string LandlordCut => GameText.T("房东拉了电闸：先去标注台挣钱把房租交上", "The landlord cut the power: earn the rent back on the labelling desk first");
@@ -138,11 +142,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (runtime == null || runtime.Sim == null) return GameText.T(AppNames.AppZh + "未启动", "Runtime not ready");
                 if (runtime.TestMode) return GameText.T("测试模式：" + AppNames.AppZh + "暂停", "Test mode: paused");
                 var s = runtime.Sim.S;
-                if (s.landlordCut) return LandlordCut;
-                if (s.unpaidPower) return Lang.T("停电：电费欠缴，去「家庭」缴费");
-                if (s.breakerTripped) return Lang.T("跳闸：去「家庭」合闸");
+                if (runtime.Sim.PowerCostsEnabled && s.landlordCut) return LandlordCut;
+                if (runtime.Sim.PowerCostsEnabled && s.unpaidPower) return Lang.T("停电：电费欠缴，去「家庭」缴费");
+                if (runtime.Sim.PowerCostsEnabled && s.breakerTripped) return Lang.T("跳闸：去「家庭」合闸");
                 if (s.gpuCount <= 0) return GameText.T("没有显卡：去「" + AppNames.ShopZh + "」买一张", "No GPU: buy one on " + AppNames.ShopEn);
-                if (runtime.Sim.PowerWatts <= 0) return Lang.T("超负载：去「家庭」扩容");
+                if (runtime.Sim.PowerCostsEnabled && runtime.Sim.PowerWatts <= 0) return Lang.T("超负载：去「家庭」扩容");
                 return null;
             }
         }

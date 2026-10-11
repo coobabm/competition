@@ -132,7 +132,7 @@ namespace LingGuangV05.Desktop.Story
                 noGpu = s.gpuCount <= 0,
                 overloaded = s.gpuCount * config.gpuWatts + s.caseCount * config.caseWatts > config.powerLimitWatts,
                 vramMB = lab.Host != null ? lab.Host.VramMB : 0,
-                zhouAvailable = hub == null || hub.S == null || hub.CanMessage(ForumLibrary.LaoZhou),
+                zhouAvailable = false,
                 forumSeen = Seen("forum"), yySeen = Seen("yy"), gamesSeen = Seen("games"),
             };
         }

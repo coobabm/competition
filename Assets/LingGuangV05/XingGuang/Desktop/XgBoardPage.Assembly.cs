@@ -34,7 +34,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform assemblyView, assemblyShelfContent, assemblyBrainViewport, assemblyCanvas, assemblyCore, assemblyGhost;
         XgPan assemblyPan;
         XgBrainAssemblyGraphic assemblyGraphic;
-        TMP_Text assemblySummary, assemblyCapabilities, assemblyStatus, assemblyCount, assemblyEmptyLibrary, assemblyGhostName;
+        TMP_Text assemblyIdentity, assemblySummary, assemblyCapabilities, assemblyStatus, assemblyCount, assemblyEmptyLibrary, assemblyGhostName;
         XgBtn assemblyRemove;
         readonly XgBtn[] assemblyFilters = new XgBtn[3];
         readonly RectTransform[] assemblyMissing = new RectTransform[3];
@@ -118,7 +118,8 @@ namespace LingGuangV05.Desktop.XingGuang
             assemblyGraphic = outline.gameObject.AddComponent<XgBrainAssemblyGraphic>(); assemblyGraphic.raycastTarget = false;
             assemblyCore = TopLeft("LingGuangCore", assemblyCanvas, 309, 150, 180, 104);
             AssemblyRound(assemblyCore, AssemblyCore);
-            AssemblyText(Strip("Identity", assemblyCore, 7, 40, 10, 10), T("灵光", "LingGuang"), 24, Color.white, TextAlignmentOptions.Center).fontStyle = FontStyles.Bold;
+            assemblyIdentity = AssemblyText(Strip("Identity", assemblyCore, 7, 40, 10, 10), Sim != null ? Sim.AiDisplayName : T("灵光", "LingGuang"), 24, Color.white, TextAlignmentOptions.Center);
+            assemblyIdentity.fontStyle = FontStyles.Bold;
             AssemblyText(Strip("IdentityContinuity", assemblyCore, 52, 45, 10, 10), T("共同记忆 · 语气习惯\n在对话与经历中延续", "Shared memory · Personal voice\nCarried through conversations"), 12, new Color32(201, 222, 226, 255), TextAlignmentOptions.Center);
             assemblyGraphic.Core = assemblyCore;
             string[] missing = { T("缺一个看图模型", "Add a vision model"), T("缺一个读句子模型", "Add a reading model"), T("缺一个判断模型", "Add a reasoning model") };
@@ -225,18 +226,20 @@ namespace LingGuangV05.Desktop.XingGuang
             { var model = Sim.Model(pair.Key); if (model != null) RefreshAssemblyModelCard(pair.Value, model, true, true); }
             for (int i = 0; i < 3; i++) assemblyFilters[i].Set(assemblyFilters[i].label.text, true, i == assemblyFilter ? AssemblyCore : XgDark.Button, i == assemblyFilter ? Color.white : AssemblyMuted);
             assemblyEmptyLibrary.gameObject.SetActive(visible == 0);
+            string ai = Sim.AiDisplayName;
+            assemblyIdentity.text = ai;
             assemblyEmptyLibrary.text = Sim.S.models.Count == 0
-                ? T("这里还没有模型卡。\n先训练一个模型并保存，\n再把学会的能力拼进灵光。", "No saved model cards yet.\nTrain and save a model,\nthen add its learned capability.")
+                ? T("这里还没有模型卡。\n先训练一个模型并保存，\n再把学会的能力拼进" + ai + "。", "No saved model cards yet.\nTrain and save a model,\nthen add its learned capability.")
                 : T("此分类没有模型卡。", "No model cards in this filter.");
             assemblyCount.text = Sim.S.models.Count + T(" 个保存版本 · 滚动查看", " saved versions · scroll to browse");
-            assemblySummary.text = assemblyInstalled.Count == 0 ? T("给灵光拼出第一块能力", "Build LingGuang's first capability") : assemblyInstalled.Count + T(" 个模型，拼成一个灵光", " models, one LingGuang");
+            assemblySummary.text = assemblyInstalled.Count == 0 ? T("给" + ai + "拼出第一块能力", "Build " + ai + "'s first capability") : assemblyInstalled.Count + T(" 个模型，拼成一个" + ai, " models, one " + ai);
             int[] counts = new int[3]; foreach (var model in installed) counts[AssemblyRegion(model.dataset)]++;
             assemblyCapabilities.text = T("看图 ", "Vision ") + counts[0] + "   ·   " + T("读句子 ", "Reading ") + counts[1] + "   ·   " + T("判断 ", "Reasoning ") + counts[2]
                 + T("  /  每张卡保留自己的验证成绩", "  /  Each model keeps its own validation result");
             for (int i = 0; i < 3; i++) assemblyMissing[i].gameObject.SetActive(counts[i] == 0);
             bool selectedInstalled = Sim.Model(assemblySelectedId) != null && Sim.IsBrainInstalled(assemblySelectedId);
             assemblyRemove.Set(T("卸下模型", "Remove"), selectedInstalled, XgDark.Button, AssemblyInk);
-            assemblyStatus.text = assemblyMessage.Length > 0 ? assemblyMessage : T("接入影响灵光的当前能力，不改训练、最佳纪录或订单部署。", "Assembly changes LingGuang's active capabilities, not training, records, or order deployments.");
+            assemblyStatus.text = assemblyMessage.Length > 0 ? assemblyMessage : T("接入影响" + ai + "的当前能力，不改训练、最佳纪录或订单部署。", "Assembly changes " + ai + "'s active capabilities, not training, records, or order deployments.");
         }
 
         void SyncAssemblyCards(Dictionary<int, BrainModelCard> cards, IList<XgModelEntry> models, bool installed)
@@ -332,7 +335,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // An explicit library choice pins this version even when it currently comes from the best-model fallback.
             bool success = Sim.InstallBrainModel(id, out string reason);
             assemblyMessage = success ? AssemblyModelName(model) + (alreadyInstalled ? T("已固定使用这个版本。", " is now fixed to this version.")
-                : previous == null ? T("已拼入灵光。", " added to LingGuang.") : T("已换成这个版本；旧模型仍在仓库。", " replaced with this version; the old model is kept.")) : reason;
+                : previous == null ? T("已拼入" + Sim.AiDisplayName + "。", " added to " + Sim.AiDisplayName + ".") : T("已换成这个版本；旧模型仍在仓库。", " replaced with this version; the old model is kept.")) : reason;
             if (success) host.Refresh(true);
             RefreshAssembly();
         }

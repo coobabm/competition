@@ -268,8 +268,21 @@ namespace LingGuangV05.Desktop.Story
             chatQueue.Enqueue(new PendingChat { who = who, text = text, delay = delay, beat = beat, simulation = director != null && director.runtime != null ? director.runtime.Sim : null });
         }
 
-        private void NoteChatDelivered(string beat)
+        static string ChatReceipt(PendingChat chat) => (chat.beat ?? "") + "\u001f" + chat.who + "\u001f" + chat.text;
+
+        bool ChatAlreadyDelivered(PendingChat chat) => !string.IsNullOrEmpty(chat.beat)
+            && chat.simulation?.S.storyMessageReceipts != null && chat.simulation.S.storyMessageReceipts.Contains(ChatReceipt(chat));
+
+        private void NoteChatDelivered(PendingChat chat)
         {
+            string beat = chat.beat;
+            if (!string.IsNullOrEmpty(beat) && chat.simulation != null)
+            {
+                if (chat.simulation.S.storyMessageReceipts == null) chat.simulation.S.storyMessageReceipts = new List<string>();
+                string receipt = ChatReceipt(chat);
+                if (!chat.simulation.S.storyMessageReceipts.Contains(receipt)) chat.simulation.S.storyMessageReceipts.Add(receipt);
+                director?.runtime?.MarkDirty();
+            }
             if (director != null && director.runtime != null && !string.IsNullOrEmpty(beat))
                 director.runtime.RaiseSignal("story.delivered", beat);
         }
@@ -279,6 +292,7 @@ namespace LingGuangV05.Desktop.Story
             while (chatQueue.Count > 0 && (director == null || director.runtime == null || !ReferenceEquals(chatQueue.Peek().simulation, director.runtime.Sim))) chatQueue.Dequeue();
             if (chatQueue.Count == 0 || Time.unscaledTime < chatDueAt) return;
             var pendingChat = chatQueue.Dequeue();
+            if (ChatAlreadyDelivered(pendingChat)) return;
             if (pendingChat.beat != null && pendingChat.beat.StartsWith("era_", StringComparison.Ordinal) && director != null && director.runtime != null)
             {
                 var lab = director.runtime.GetComponent<LingGuangV05.Desktop.XingGuang.XingGuangController>();
@@ -290,7 +304,7 @@ namespace LingGuangV05.Desktop.Story
             if (yy != null && yy.S != null && yy.Conversation(pendingChat.who) != null)
             {
                 yy.Receive(pendingChat.who, GameText.Source(text));
-                NoteChatDelivered(pendingChat.beat);
+                NoteChatDelivered(pendingChat);
                 return;
             }
             if (pendingChat.who == "zhou_now")
@@ -299,13 +313,13 @@ namespace LingGuangV05.Desktop.Story
                 if (forum != null && forum.S != null)
                 {
                     forum.Receive(LingGuangV05.Core.Forum.ForumLibrary.ZhouNow, GameText.Source(text));
-                    NoteChatDelivered(pendingChat.beat); return;
+                    NoteChatDelivered(pendingChat); return;
                 }
             }
             if (pendingChat.who != "laozhou")
             {
                 ShowToast(GameText.Source(text), null);
-                NoteChatDelivered(pendingChat.beat);
+                NoteChatDelivered(pendingChat);
                 return;
             }
             bool posted = false;
@@ -335,7 +349,7 @@ namespace LingGuangV05.Desktop.Story
             bool visible = posted && DesktopNotifications.IsWindowVisible(chatAdapter.Window) && chatManager.selectedLayout == laoZhouLayout;
             DesktopNotifications.Notify(director != null ? director.runtime : null, "YY", Lang.T("老周"),
                 GameText.Source(text), visible, () => OpenApp("yy", null));
-            NoteChatDelivered(pendingChat.beat);
+            NoteChatDelivered(pendingChat);
         }
 
         // ------------------------------------------------------------------ frame
@@ -672,7 +686,8 @@ namespace LingGuangV05.Desktop.Story
             string glitchPool = LineText("emerge_glitch_chars");
             if (string.IsNullOrEmpty(glitchPool)) glitchPool = "是否对错真假有无";
 
-            var header = Label(cutsceneRoot, mode == "prologue" ? GameText.T(AppNames.ExeZh + " · 2026 年 · 回忆", AppNames.ExeEn + " · 2026 · A memory") : AppNames.ExeZh, 24,
+            // No 2026 "memory" framing: the opening is played in 2016, not recalled.
+            var header = Label(cutsceneRoot, GameText.T(AppNames.ExeZh, AppNames.ExeEn), 24,
                 new Vector2(0, 300), new Vector2(900, 40), new Color(.56f, .72f, .87f, .9f));
             var card = Panel(cutsceneRoot, new Vector2(0, 40), new Vector2(860, 420), new Color(.055f, .1f, .17f, 1));
             Panel(card, new Vector2(0, 208), new Vector2(860, 4), new Color(.31f, .76f, .97f, .8f));

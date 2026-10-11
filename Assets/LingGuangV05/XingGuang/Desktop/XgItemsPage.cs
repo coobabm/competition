@@ -1,4 +1,5 @@
 using System;
+using LingGuangV05.Runtime;
 using System.Collections.Generic;
 using System.Text;
 using LingGuangV05.Core;
@@ -183,8 +184,9 @@ namespace LingGuangV05.Desktop.XingGuang
             c.buy.rt.gameObject.name = "BuyPack " + def.id;
             c.buy.rt.anchorMin = c.buy.rt.anchorMax = new Vector2(1, 0);
             c.buy.rt.offsetMin = new Vector2(-122, 8); c.buy.rt.offsetMax = new Vector2(-10, 32);
-            UiTip.Add(rt, () => "<b>" + T(def.name, def.nameEn) + "</b>\n" + T(def.note, def.noteEn) + "\n<color=#6F95A5>" + T(def.history, def.historyEn) + "</color>\n"
-                + T("在训练页的快捷栏里用（键盘 " + (Array.IndexOf(XgConsumables.All, def) + 1) + "）。不买也能通关。", "Used from the quick bar on the Training page (key " + (Array.IndexOf(XgConsumables.All, def) + 1) + "). You can finish without it."));
+            UiTip.Add(rt, () => "<b>" + T(def.name, def.nameEn) + "</b>\n" + T(def.note, def.noteEn) + "\n<color=#6F95A5>" + T("点开看详细", "Click for details") + "</color>");
+            Clickable(rt, () => OpenDetail(T(def.name, def.nameEn), T(def.note, def.noteEn), XgItemLore.Get(def.id, GameText.IsEnglish)
+                + T("\n\n在训练页快捷栏用，键盘 " + (Array.IndexOf(XgConsumables.All, def) + 1) + "。", "\n\nUse it from the Training page quick bar, key " + (Array.IndexOf(XgConsumables.All, def) + 1) + ".")));
             return c;
         }
 
@@ -235,7 +237,8 @@ namespace LingGuangV05.Desktop.XingGuang
             c.buy = ui.Button(rt, "", () => Buy(c), 13);
             c.buy.rt.anchorMin = c.buy.rt.anchorMax = new Vector2(1, 0);
             c.buy.rt.offsetMin = new Vector2(-122, 8); c.buy.rt.offsetMax = new Vector2(-10, 32);
-            UiTip.Add(rt, () => Sim.NodeName(node) + "\n" + Sim.NodeNote(node) + (Sim.Has(node.id) ? "" : "\n\n" + Sim.Why(node, Host)));
+            UiTip.Add(rt, () => Sim.NodeName(node) + "\n" + Sim.NodeNote(node) + (Sim.Has(node.id) ? "" : "\n\n" + Sim.Why(node, Host)) + "\n<color=#6F95A5>" + T("点开看详细", "Click for details") + "</color>");
+            Clickable(rt, () => OpenDetail(Sim.NodeName(node), Sim.NodeNote(node), XgItemLore.Get(node.target ?? node.id, GameText.IsEnglish)));
             return c;
         }
 
@@ -246,7 +249,8 @@ namespace LingGuangV05.Desktop.XingGuang
             bool owned = status == XgSim.NodeStatus.Owned;
             c.rim.color = owned ? XgDark.Good : status == XgSim.NodeStatus.Buyable ? XgDark.Money : XgDark.Line;
             c.name.text = Sim.NodeName(node);
-            c.year.text = c.def.year > 0 ? c.def.year + (XgItems.Early(c.def) ? T(" · 提前", " · early") : "") : "";
+            string shownYear = XgCatalog.ShownYear(c.def.year);
+            c.year.text = XgItems.Early(c.def) ? (shownYear.Length > 0 ? shownYear + T(" · 提前", " · early") : T("提前", "early")) : shownYear;
             c.effect.text = Effect(node);
             c.note.text = Sim.NodeNote(node);
             double cost = Sim.NodeCost(node);
@@ -291,6 +295,52 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             return sb.ToString();
         }
+
+        // ───────────── detail panel: the card's one-liner on top, the popular-science text below ─────────────
+
+        RectTransform detail;
+        TMP_Text detailTitle, detailNote, detailBody;
+
+        /// <summary>A click anywhere on the card (except its buy button, which eats its own click) opens the detail panel.</summary>
+        static void Clickable(RectTransform rt, Action open)
+        {
+            var hit = rt.GetComponent<Image>();
+            if (hit == null) { hit = rt.gameObject.AddComponent<Image>(); hit.color = new Color(0, 0, 0, 0); }
+            hit.raycastTarget = true;
+            var b = rt.gameObject.AddComponent<Button>();
+            b.transition = Selectable.Transition.None;
+            b.onClick.AddListener(() => open());
+        }
+
+        void OpenDetail(string title, string note, string body)
+        {
+            if (detail == null)
+            {
+                detail = Rect("ItemDetail", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                Panel(detail, new Color(0, 0, 0, .55f));
+                var dimButton = detail.gameObject.AddComponent<Button>(); dimButton.transition = Selectable.Transition.None;
+                dimButton.onClick.AddListener(CloseDetail);
+                var box = Rect("Box", detail, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-300, -210), new Vector2(300, 210));
+                Panel(box, XgDark.Line);
+                Panel(Rect("Inner", box, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), XgDark.Card);
+                box.gameObject.AddComponent<Button>().transition = Selectable.Transition.None; // swallow clicks inside the box
+                detailTitle = ui.Text(Rect("Title", box, new Vector2(0, 1), Vector2.one, new Vector2(20, -48), new Vector2(-60, -14)), "", 20, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+                detailNote = ui.Text(Rect("Note", box, new Vector2(0, 1), Vector2.one, new Vector2(20, -80), new Vector2(-20, -50)), "", 14, XgDark.Params, TextAlignmentOptions.MidlineLeft);
+                detailBody = ui.Text(Rect("Body", box, Vector2.zero, Vector2.one, new Vector2(20, 20), new Vector2(-20, -92)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
+                detailBody.lineSpacing = 6; detailBody.overflowMode = TextOverflowModes.Ellipsis;
+                var close = ui.Button(box, "×", CloseDetail, 18);
+                close.rt.anchorMin = close.rt.anchorMax = Vector2.one;
+                close.rt.offsetMin = new Vector2(-46, -46); close.rt.offsetMax = new Vector2(-12, -12);
+            }
+            detailTitle.text = title;
+            detailNote.text = note;
+            detailBody.text = string.IsNullOrEmpty(body) ? T("（这一项还没写详细说明。）", "(No details yet.)") : body;
+            detail.SetAsLastSibling();
+            detail.gameObject.SetActive(true);
+            Fx.Play(XgJuice.Sfx.Id.Click);
+        }
+
+        void CloseDetail() { if (detail != null) detail.gameObject.SetActive(false); }
 
         void Buy(Card c)
         {

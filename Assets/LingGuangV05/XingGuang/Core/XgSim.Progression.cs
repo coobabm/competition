@@ -16,11 +16,12 @@ namespace LingGuangV05.XingGuang
         public int StageFor(XgTrack track) => track == XgTrack.Vision ? S.stageVision : S.stageSequence;
         public bool ProjectActive => S.project != null && S.project.started && !S.project.completed;
         public bool ProjectAwaitingAnswer => ProjectActive && S.project.awaitingAnswer;
-        public bool EndingAvailable => S.project != null && S.project.completed && !S.chapterComplete;
+        public bool EndingAvailable => S.project != null && S.project.completed && !S.chapterComplete && !S.endingReflectionAnswered;
         public static bool ArchitectureFits(XgArch arch, XgTrack track) => arch != null && (arch.shared || arch.track == track);
 
         void PrepareProgression(bool newGame)
         {
+            if (S.chapterComplete && string.IsNullOrEmpty(S.ending)) { S.endingReflectionAnswered = true; S.chapterComplete = false; }
             if (S.unlocked == null) S.unlocked = new List<string>();
             if (S.owned == null) S.owned = new List<string>();
             if (S.walls == null) S.walls = new List<string>();
@@ -38,7 +39,7 @@ namespace LingGuangV05.XingGuang
                 S.vision.depth = S.sequence.depth = 1;
                 S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
                 S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
-                S.desk = "arith"; // the easy desk first; logic pays more once the player is ready
+                S.desk = "spam"; // start with a recognisable teaching card
                 S.stage = S.stageVision = S.stageSequence = 1;
                 S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
                 S.firstSpecialty = "";
@@ -127,11 +128,13 @@ namespace LingGuangV05.XingGuang
             return Has("mlp") ? "mlp" : "perceptron";
         }
 
+        public const double StoryResearchPrice = .25;
         public double NodeCost(XgNode node)
         {
             if (node == null) return double.PositiveInfinity;
             if (node.tree == "label") return LabelNodeCost(node);
-            return node.cost;
+            // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
+            return Math.Ceiling(node.cost * StoryResearchPrice);
         }
 
         public bool NodeVisible(XgNode node)
@@ -596,7 +599,7 @@ namespace LingGuangV05.XingGuang
         public bool EndingAnswer(bool regret)
         {
             if (!EndingAvailable) return false;
-            S.endingRegret = regret; S.chapterComplete = true;
+            S.endingRegret = regret; S.endingReflectionAnswered = true;
             ChapterFinished?.Invoke(regret); return true;
         }
     }
