@@ -1,0 +1,21 @@
+{
+  "version": "2026.10.11.2",
+  "archive": "LingGuang-2026.10.11.2-Windows-Qwen.zip",
+  "bytes": 2701470786,
+  "sha256": "9729440fb02373ef6ffec24d7b74fb7d32e1b0ab3a31b300b92bf391cb43b5c0",
+  "parts": [
+    {
+      "name": "LingGuang-2026.10.11.2-Windows-Qwen.zip.001",
+      "bytes": 1992294400,
+      "sha256": "44675c5272897c3c7bffa04367e4653faa8858a5258111771cd78f6f8c048908"
+    },
+    {
+      "name": "LingGuang-2026.10.11.2-Windows-Qwen.zip.002",
+      "bytes": 709176386,
+      "sha256": "261842387cc8997b8813cd9351ac6d943b0e9330931aaa2a4a4a3c5f488367c8"
+    }
+  ],
+  "modelSha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+  "verifiedGameContentUnchanged": true,
+  "localHandoffNotesIncluded": false
+}
