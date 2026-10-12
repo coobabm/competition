@@ -62,7 +62,7 @@ public static class ClaudeHandoffChecks
         Debug.Log("CLAUDE_HANDOFF_CHECKS_PASS " + report.passed.Count);
     }
 
-    public static void Validate() { Run(); LatestRequestChecks.Run(); PlayabilityChecks.Run(); }
+    public static void Validate() { Run(); LatestRequestChecks.Run(); PlayabilityChecks.Run(); WrongAnswerChecks.Run(); }
 
     static void Slots()
     {

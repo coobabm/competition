@@ -10,7 +10,7 @@ namespace LingGuangV05.XingGuang
         public int spiderAnswers;
         /// <summary>Cards answered by the spider while the player had dragged it onto the question (a hand answer: it can cost money).</summary>
         public int spiderDragAnswers;
-        /// <summary>Money lost to wrong picks on fined desks (the 算术 desk), by the player or by the dragged spider.</summary>
+        /// <summary>Money lost to wrong answers by the player or the dragged spider.</summary>
         public double handFines;
     }
 
@@ -149,10 +149,9 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>Takes the fine of a wrong pick from the wallet (never below zero, like the platform's own fines). Returns what was taken.</summary>
-        double ChargeHandFine(string desk, int level, IXgHost host)
+        double ChargeHandFine(double due, IXgHost host)
         {
-            double due = HandFineFor(desk, level);
-            if (!(due > 0) || host == null) return 0;
+            if (!FiniteCollaboration(due) || !(due > 0) || host == null) return 0;
             double money = FiniteCollaboration(host.Money) ? Math.Max(0, host.Money) : 0;
             double fine = Math.Min(due, money);
             if (fine > 0 && host.Spend(fine)) { S.totalSpent += fine; S.handFines += fine; return fine; }

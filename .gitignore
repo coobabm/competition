@@ -32,3 +32,8 @@
 /Design/修改交接与后续策划_20261011.md
 /升级说明.md
 /试玩说明.md
+
+# Standalone pure simulation regression checks
+!/Tests/**/*.csproj
+/Tests/**/bin/
+/Tests/**/obj/
