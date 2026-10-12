@@ -426,7 +426,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             lingguangLink = ui.Button(linkRim, "", () => { Juice.Play(XgJuice.Sfx.Id.Click); ShowTab("train"); }, 13);
             lingguangLink.rt.gameObject.name = "LingGuangLink";
             lingguangLink.rt.anchorMin = Vector2.zero; lingguangLink.rt.anchorMax = Vector2.one; lingguangLink.rt.offsetMin = new Vector2(1, 1); lingguangLink.rt.offsetMax = new Vector2(-1, -1);
-            UiTip.Add(lingguangLink.rt, "去灵光.exe 训练模型：检查点在那里练出来，签订单、开自动答题都靠它。", "Train the model in LingGuang.exe: checkpoints come from there, and orders and auto-answer need them.");
+            UiTip.Add(lingguangLink.rt, () => AiDesktopIdentity.Exe(Controller != null ? Controller.runtime : null) + T("：在这里训练模型、生成检查点，用于订单和自动答题。", ": train models and create checkpoints here for orders and auto-answer."));
 
             // The shared combo, as on 灵光's HUD: a white pill with the number, the multiplier, the tier name and the decay bar.
             comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 184, -16), new Vector2(-x, 16));
@@ -726,7 +726,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 tab.bar.enabled = on;
                 PlaceBadge(tab.badge, open ? badges[i] : "");
             }
-            lingguangLink.Set(T("打开灵光 ↗", "Open LingGuang ↗"), true, ZhongbaoSkin.Blue, Color.white);
+            lingguangLink.Set(T("训练模型 ↗", "Train model ↗"), true, ZhongbaoSkin.Blue, Color.white);
             accountText.text = T("账号 kk_2016\n注册 2016-05-29\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-29\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
             statusLeft.text = "<color=#2F9E44>●</color> " + T("已连接 摆渡云", "Connected to Bodu Cloud");
             statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");

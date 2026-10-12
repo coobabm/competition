@@ -35,5 +35,16 @@
     "Windows build: 0 errors, 75 warnings."
   ],
   "devlog": "Documentation/Devlogs/2026-10-11/README.md",
-  "checksum_manifest": "FILES.sha256"
+  "checksum_manifest": "FILES.sha256",
+  "pending_update": {
+    "target_version": "2026.10.12.1",
+    "game_title": "我的电脑活了",
+    "branch": "feat/my-computer-alive-naming",
+    "base_commit": "fbcf47044a15c36c7cdd27542e7f600cc0ba0dff",
+    "core_naming_checks": 46,
+    "csharp_editor_and_windows_typecheck": "PASS",
+    "unity_integration_checks": "NOT RUN: no valid Unity Editor license (198)",
+    "windows_build": "NOT BUILT",
+    "notes": "Documentation/Devlogs/2026-10-12-naming.md"
+  }
 }

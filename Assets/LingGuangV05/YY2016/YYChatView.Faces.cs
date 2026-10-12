@@ -28,9 +28,12 @@ namespace LingGuangV05.Desktop.YY
         static bool IsSticker(YYMessage m) => m != null && !string.IsNullOrEmpty(m.sticker) && YYStickers.Find(m.sticker) != null;
 
         /// <summary>The session-list preview line (TMP markup).</summary>
+        static string FileDisplayName(YYMessage m) => m.file == YYChatHub.FileName
+            ? LingGuangV05.Desktop.AiDesktopIdentity.Exe(FindAnyObjectByType<ChapterOneRuntime>()) : m.file;
+
         static string PreviewLine(YYMessage m)
         {
-            if (m.kind == YYKind.File) return YYFaceRenderer.Markup(Lang.T("[文件] ") + m.file);
+            if (m.kind == YYKind.File) return YYFaceRenderer.Markup(Lang.T("[文件] ") + FileDisplayName(m));
             string prefix = m.from == YYChatHub.Me ? Lang.T("我：") : "";
             if (IsSticker(m))
                 return YYFaceRenderer.Markup(prefix + Lang.T("[斗图] ") + YYStickers.Find(m.sticker).Caption(GameText.IsEnglish));

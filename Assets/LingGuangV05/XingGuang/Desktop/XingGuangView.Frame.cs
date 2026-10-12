@@ -94,7 +94,7 @@ namespace LingGuangV05.Desktop.XingGuang
         double VramUseMB() => Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
 
         /// <summary>The AI's display name: the name given at setup, else 灵光.</summary>
-        public string AiName => Sim != null && Sim.Profile != null && Sim.Profile.name.Length > 0 ? Sim.Profile.name : T(AppNames.AiZh, AppNames.AiEn);
+        public string AiName => Sim != null ? Sim.AiDisplayName : T(AppNames.AiZh, AppNames.AiEn);
 
         /// <summary>The bars' hover help: what they count, and what the next ability opens.</summary>
         string AbilityTip()
@@ -112,7 +112,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             aiName.text = AiName;
             int have = Sim.AbilitiesCount, next = Sim.NextAbility;
-            aiSub.text = T(AppNames.AppZh + " · 能力 ", AppNames.AppEn + " · ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
+            aiSub.text = T("能力 ", "Ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
             double p = Sim.TrainedParamsK, d = Sim.TrainedSamples;
             if (next == 0)
             {

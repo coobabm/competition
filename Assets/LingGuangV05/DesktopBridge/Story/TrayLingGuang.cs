@@ -35,9 +35,10 @@ namespace LingGuangV05.Desktop.Story
             var text = PrologueDesk.Rect("Label", chip, Vector2.zero, Vector2.one, new Vector2(2, 0), Vector2.zero).gameObject.AddComponent<TextMeshProUGUI>();
             text.font = PrologueDesk.CjkFont(); text.fontSize = 13; text.color = Color.white;
             text.alignment = TextAlignmentOptions.MidlineLeft; text.textWrappingMode = TextWrappingModes.NoWrap; text.raycastTarget = false;
+            text.overflowMode = TextOverflowModes.Ellipsis;
             c.label = text;
             PrologueDesk.Fill(chip, new Color(0, 0, 0, 0));
-            UiTip.Add(chip, "本机模型已就绪：灵光说的话由它生成。", "The local model is ready: 灵光's words come from it.");
+            UiTip.Add(chip, () => AiDesktopIdentity.Name(c.runtime) + T("：本机模型已就绪。", ": local model ready."));
         }
 
         void Update()
@@ -50,7 +51,7 @@ namespace LingGuangV05.Desktop.Story
             bool show = installed && llm != null && llm.Ready;
             group.alpha = show ? 1 : 0;
             group.blocksRaycasts = show;
-            if (show) label.text = "<color=#50DC78>●</color> " + T("灵光 就绪", "灵光 ready");
+            if (show) label.text = "<color=#50DC78>●</color> " + AiDesktopIdentity.Name(runtime) + T(" 就绪", " ready");
         }
     }
 }

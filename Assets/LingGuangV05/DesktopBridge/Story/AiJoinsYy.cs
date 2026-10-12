@@ -467,7 +467,7 @@ namespace LingGuangV05.Desktop.Story
                 "<b>" + Lang.T("检测到程序正在读取：") + "</b>", 19, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
             string path = "…\\YY Files\\" + YYNumber + "\\msg.db";
             desk.Text(PrologueDesk.Centered("Body", client, new Vector2(45, 12), new Vector2(380, 80)),
-                path + "\n" + Lang.T("程序：") + AppNames.Exe(GameText.IsEnglish) + Lang.T("　　风险：隐私文件"), 15, PrologueDesk.Muted, TextAlignmentOptions.TopLeft);
+                path + "\n" + Lang.T("程序：") + AiName(GameText.IsEnglish) + ".exe" + Lang.T("　　风险：隐私文件"), 15, PrologueDesk.Muted, TextAlignmentOptions.TopLeft);
             var allow = desk.Button(client, Lang.T("允许"), new Vector2(80, -72), new Vector2(110, 36), null, green);
             allow.GetComponentInChildren<TMP_Text>().color = Color.white;
             desk.Button(client, Lang.T("阻止"), new Vector2(205, -72), new Vector2(110, 36), null);
@@ -491,7 +491,7 @@ namespace LingGuangV05.Desktop.Story
             var label = PrologueDesk.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(12, 3), new Vector2(-12, 0)).gameObject.AddComponent<TextMeshProUGUI>();
             label.font = font != null ? font : PrologueDesk.CjkFont();
             label.fontSize = 14; label.color = Color.white; label.alignment = TextAlignmentOptions.MidlineLeft; label.raycastTarget = false;
-            string exe = AppNames.Exe(GameText.IsEnglish);
+            string exe = AiName(GameText.IsEnglish) + ".exe";
             for (float t = 0; ; t += Time.unscaledDeltaTime)
             {
                 if (strip == null) yield break;
@@ -644,7 +644,7 @@ namespace LingGuangV05.Desktop.Story
         {
             var lab = FindAnyObjectByType<XingGuangController>();
             string name = lab != null && lab.Sim != null && lab.Sim.Profile != null ? lab.Sim.Profile.name : null;
-            return string.IsNullOrWhiteSpace(name) ? AppNames.Ai(english) : name.Trim();
+            return AppNames.PersonalName(name, english);
         }
 
         /// <summary>The YY contact carries the AI's chosen name (the contact table holds the default).</summary>
@@ -654,7 +654,7 @@ namespace LingGuangV05.Desktop.Story
             if (c == null) return;
             var lab = FindAnyObjectByType<XingGuangController>();
             string name = lab != null && lab.Sim != null && lab.Sim.Profile != null ? (lab.Sim.Profile.name ?? "").Trim() : "";
-            string zh = name.Length > 0 ? name : AppNames.AiZh, en = name.Length > 0 ? name : AppNames.AiEn;
+            string zh = AppNames.PersonalName(name, false), en = AppNames.PersonalName(name, true);
             if (c.name == zh && c.nameEn == en) return;
             c.name = zh; c.nameEn = en;
             if (chat.S != null && chat.S.lingguangUnlocked) chat.Select(chat.S.selected); // redraw the list

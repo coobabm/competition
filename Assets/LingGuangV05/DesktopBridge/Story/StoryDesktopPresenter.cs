@@ -687,7 +687,7 @@ namespace LingGuangV05.Desktop.Story
             if (string.IsNullOrEmpty(glitchPool)) glitchPool = "是否对错真假有无";
 
             // No 2026 "memory" framing: the opening is played in 2016, not recalled.
-            var header = Label(cutsceneRoot, GameText.T(AppNames.ExeZh, AppNames.ExeEn), 24,
+            var header = Label(cutsceneRoot, AiDesktopIdentity.Exe(director != null ? director.runtime : null), 24,
                 new Vector2(0, 300), new Vector2(900, 40), new Color(.56f, .72f, .87f, .9f));
             var card = Panel(cutsceneRoot, new Vector2(0, 40), new Vector2(860, 420), new Color(.055f, .1f, .17f, 1));
             Panel(card, new Vector2(0, 208), new Vector2(860, 4), new Color(.31f, .76f, .97f, .8f));

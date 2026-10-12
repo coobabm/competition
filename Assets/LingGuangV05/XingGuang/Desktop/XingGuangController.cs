@@ -73,6 +73,8 @@ namespace LingGuangV05.Desktop.XingGuang
             runtime.Saving += WriteToSave;
             GameText.Changed += ApplyShellText;
             TakeOverWindow();
+            AiDesktopIdentity.Attach(runtime);
+            SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
             storyBridge = GetComponent<XgStoryBridge>() ?? gameObject.AddComponent<XgStoryBridge>();
@@ -121,6 +123,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 BindSave(runtime.Sim);
             }
+            SyncProfile(runtime.Sim.S);
         }
 
         void Update()
@@ -169,10 +172,11 @@ namespace LingGuangV05.Desktop.XingGuang
             profileSignature = signature; profiled = Sim;
             Sim.Profile = new XgProfile
             {
-                name = s.aiName == "the code" ? "" : s.aiName, self = s.aiSelf.Length > 0 ? s.aiSelf : "我", callMe = s.aiCallMe.Length > 0 ? s.aiCallMe : "你",
+                name = s.aiName == "the code" ? "" : AppNames.PersonalName(s.aiName, GameText.IsEnglish), self = s.aiSelf.Length > 0 ? s.aiSelf : "我", callMe = s.aiCallMe.Length > 0 ? s.aiCallMe : "你",
                 personality = s.personality, warmth = s.targetWarmth, play = s.targetPlay, opinion = s.targetOpinion,
                 words = new System.Collections.Generic.List<string>(s.toneWords ?? new System.Collections.Generic.List<string>()),
             };
+            ApplyShellText();
             if (!Sim.S.personaSeeded && s.prologue == 2) { Sim.S.personaSeeded = true; Sim.SeedPersonality(); }
         }
 
@@ -335,7 +339,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void ApplyShellText()
         {
             if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", GameText.T("深度学习工作站", "deep learning workstation"));
-            else if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
+            else if (title != null) title.text = AiDesktopIdentity.Exe(runtime) + GameText.T("  —  深度学习工作站", "  —  deep learning workstation");
             if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);
         }

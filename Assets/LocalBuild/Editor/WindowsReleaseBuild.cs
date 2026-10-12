@@ -18,7 +18,7 @@ public static class WindowsReleaseBuild
         PlayerSettings.companyName = "RippleLocalPreview";
         // Keep the installed Oct 8 player's save location across this upgrade.
         PlayerSettings.productName = "LingGuang-Playability-20261008";
-        PlayerSettings.bundleVersion = "2026.10.11.2";
+        PlayerSettings.bundleVersion = "2026.10.12.1";
         PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64, false);
         PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64, new[] { GraphicsDeviceType.Direct3D11 });
         PlayerSettings.graphicsJobs = false;
@@ -29,7 +29,7 @@ public static class WindowsReleaseBuild
         PlayerSettings.resizableWindow = true;
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(scene, true), new EditorBuildSettingsScene(main, true) };
         AssetDatabase.SaveAssets();
-        string output = Path.GetFullPath("Build/ClaudeHandoff-Windows/LingGuang.exe");
+        string output = Path.GetFullPath("Build/MyComputerAlive-2026.10.12.1-Windows/LingGuang.exe");
         Directory.CreateDirectory(Path.GetDirectoryName(output));
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions {
             scenes = new[] { scene, main }, locationPathName = output,

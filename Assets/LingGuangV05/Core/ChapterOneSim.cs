@@ -111,10 +111,10 @@ namespace LingGuangV05.Core
         /// Step 8 of the prologue: the opening setup is saved and the game proper starts. Validated like a save;
         /// returns false (and changes nothing) if the profile is not acceptable.
         /// </summary>
-        public bool CompletePrologue(PrologueProfile profile)
+        public bool CompletePrologue(PrologueProfile profile, bool legacyProfile = false)
         {
-            if (!InPrologue || profile == null || PrologueProfile.Problem(profile) != null) return false;
-            S.aiName = profile.name.Trim(); S.aiSelf = profile.self.Trim(); S.aiCallMe = profile.callMe.Trim(); S.personality = profile.personality.Trim();
+            if (!InPrologue || profile == null || PrologueProfile.Problem(profile, validateIdentity: !legacyProfile) != null) return false;
+            S.aiName = legacyProfile ? profile.name.Trim() : AiNamePolicy.Normalize(profile.name); S.aiSelf = legacyProfile ? profile.self.Trim() : AiNamePolicy.Normalize(profile.self); S.aiCallMe = legacyProfile ? profile.callMe.Trim() : AiNamePolicy.Normalize(profile.callMe); S.personality = profile.personality.Trim();
             S.targetWarmth = profile.warmth; S.targetPlay = profile.play; S.targetOpinion = profile.opinion;
             S.toneWords = new List<string>(profile.words);
             if (!AppInstalled) S.appInstallState = 2;

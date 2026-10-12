@@ -453,7 +453,7 @@ namespace LingGuangV05.Desktop.XingGuang
             return sb.ToString();
         }
 
-        static string AppNamesExe() => LingGuangV05.Core.AppNames.ExeZh;
+        string AppNamesExe() => (Sim != null ? Sim.AiDisplayName : LingGuangV05.Core.AppNames.Ai(GameText.IsEnglish)) + ".exe";
     }
 
     // Same page-root lifetime pattern as the trial/depth confirmation; no shared input lock is acquired.

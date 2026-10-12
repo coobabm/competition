@@ -60,7 +60,7 @@ namespace LingGuangV05.XingGuang
         public XgProfile Profile = new XgProfile();
 
         /// <summary>The name the player gave it, or the app name before setup.</summary>
-        public string AiDisplayName => Profile != null && !string.IsNullOrEmpty(Profile.name) ? Profile.name : T(LingGuangV05.Core.AppNames.AiZh, LingGuangV05.Core.AppNames.AiEn);
+        public string AiDisplayName => LingGuangV05.Core.AppNames.PersonalName(Profile?.name, English);
 
         public static readonly string[] AxisNames = { "温度", "玩心", "主见" };
         public static readonly string[] AxisNamesEn = { "Warmth", "Play", "Opinion" };

@@ -44,7 +44,7 @@ namespace LingGuangV05.Desktop.XingGuang
             title.fontStyle = FontStyles.Bold;
             float y = 66;
             labels.Add(ui.Text(Strip("NameLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
-            name = Input(Strip("Name", form, y + 26, 38, 24, 24), 16, false);
+            name = Input(Strip("Name", form, y + 26, 38, 24, 24), 128, false);
             y += 76;
             labels.Add(ui.Text(Strip("SelfLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             selfCustom = Chips(form, y + 26, PrologueProfile.SelfChoices, selfChips, v => self = v);
@@ -101,8 +101,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 x += 78;
             }
             var box = Rect("Custom", row, Vector2.zero, new Vector2(1, 1), new Vector2(x, 0), Vector2.zero);
-            custom = Input(box, 8, true);
-            custom.onValueChanged.AddListener(t => { if (t.Trim().Length > 0) pick(t.Trim()); else if (into.Count > 0) pick(into[0].Item1); Paint(); });
+            custom = Input(box, 128, true);
+            custom.onValueChanged.AddListener(t => { if (t.Trim().Length > 0) pick(t); else if (into.Count > 0) pick(into[0].Item1); Paint(); });
             return custom;
         }
 
@@ -142,7 +142,8 @@ namespace LingGuangV05.Desktop.XingGuang
             home.gameObject.SetActive(homePending);
             title.text = L("setup_title");
             string[] keys = { "setup_name", "setup_self", "setup_call", "setup_mood" };
-            for (int i = 0; i < labels.Count; i++) labels[i].text = L(keys[i]);
+            for (int i = 0; i < labels.Count; i++) labels[i].text = L(keys[i]) + (i == 0 ? " · 1–16" : i == 3 ? " · 1–60" : " · 1–8");
+            ((TMP_Text)name.placeholder).text = T("给它取个名字，不用加 .exe", "A name for your AI, without .exe");
             ((TMP_Text)mood.placeholder).text = L("setup_mood_hint");
             ((TMP_Text)selfCustom.placeholder).text = L("setup_custom");
             ((TMP_Text)callCustom.placeholder).text = L("setup_custom");

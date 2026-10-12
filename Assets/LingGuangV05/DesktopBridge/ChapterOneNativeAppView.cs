@@ -132,7 +132,7 @@ namespace LingGuangV05.Desktop
             if (profileId == "lingguang" && bindings.boardArea != null) BuildDiagram();
             if (_inputs.TryGetValue("NameInput", out TMP_InputField name))
             {
-                name.characterLimit = 64; name.onValueChanged.AddListener(OnNameEdited);
+                name.characterLimit = 128; name.onValueChanged.AddListener(OnNameEdited);
             }
             if (_inputs.TryGetValue("SearchInput", out TMP_InputField search))
             {

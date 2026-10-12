@@ -167,13 +167,14 @@ namespace LingGuangV05.CaseMenu
             chromeGroup.blocksRaycasts = false;
             chromeGroup.interactable = false;
 
-            var eyebrow = Label("Eyebrow", chrome, "LING GUANG / 2016", 14, Muted);
+            var eyebrow = Label("Eyebrow", chrome, "MY COMPUTER IS ALIVE / 2016", 14, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(70, -66), new Vector2(520, 26));
             eyebrow.characterSpacing = 5f;
-            var title = Label("Title", chrome, "灵光", 78, Ink);
-            Place(title.rectTransform, new Vector2(0, 1), new Vector2(64, -98), new Vector2(520, 124));
-            title.overflowMode = TextOverflowModes.Overflow;
-            title.characterSpacing = 13f;
+            var title = Label("Title", chrome, LingGuangV05.Core.AppNames.GameZh, 66, Ink);
+            Place(title.rectTransform, new Vector2(0, 1), new Vector2(64, -98), new Vector2(610, 124));
+            title.overflowMode = TextOverflowModes.Ellipsis;
+            title.enableAutoSizing = true; title.fontSizeMin = 42; title.fontSizeMax = 66;
+            title.characterSpacing = 2f;
             var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);
             Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, -234), new Vector2(640, 36));
 

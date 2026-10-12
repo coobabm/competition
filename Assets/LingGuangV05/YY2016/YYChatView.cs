@@ -183,7 +183,7 @@ namespace LingGuangV05.Desktop.YY
             peerAvatar = Rect("PeerAvatar", header, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -48), new Vector2(54, -8));
             peerName = Text(Rect("Name", header, new Vector2(0, 1), new Vector2(1, 1), new Vector2(66, -34), new Vector2(-180, -4)), "", 19, C.Ink, TextAlignmentOptions.MidlineLeft);
             peerName.fontStyle = FontStyles.Bold;
-            peerName.overflowMode = TextOverflowModes.Overflow; peerName.textWrappingMode = TextWrappingModes.NoWrap;
+            peerName.overflowMode = TextOverflowModes.Ellipsis; peerName.textWrappingMode = TextWrappingModes.NoWrap;
             peerSign = Text(Rect("Sign", header, Vector2.zero, new Vector2(1, 0), new Vector2(66, 4), new Vector2(-180, 24)), "", 13, C.Muted, TextAlignmentOptions.MidlineLeft);
             typing = Text(Rect("Typing", header, new Vector2(1, 0), Vector2.one, new Vector2(-176, 0), new Vector2(-16, 0)), "", 13, C.Muted, TextAlignmentOptions.MidlineRight);
             // 灵光 only: 「它记得」 (stage 5+) at the bottom right, its persona on its name; both explain themselves on hover.
@@ -559,7 +559,7 @@ namespace LingGuangV05.Desktop.YY
             var icon = Rect("Icon", card, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -60), new Vector2(50, -14));
             icon.gameObject.AddComponent<YYFileIcon>();
             Text(Rect("Ext", icon, Vector2.zero, Vector2.one, new Vector2(0, 2), new Vector2(0, -24)), "EXE", 9, Color.white, TextAlignmentOptions.Center).fontStyle = FontStyles.Bold;
-            Text(Rect("Name", card, new Vector2(0, 1), new Vector2(1, 1), new Vector2(62, -36), new Vector2(-12, -12)), m.file, 16, C.Ink, TextAlignmentOptions.MidlineLeft).fontStyle = FontStyles.Bold;
+            Text(Rect("Name", card, new Vector2(0, 1), new Vector2(1, 1), new Vector2(62, -36), new Vector2(-12, -12)), FileDisplayName(m), 16, C.Ink, TextAlignmentOptions.MidlineLeft).fontStyle = FontStyles.Bold;
             var status = Text(Rect("Status", card, new Vector2(0, 1), new Vector2(1, 1), new Vector2(62, -58), new Vector2(-12, -38)), "", 12, C.Muted, TextAlignmentOptions.MidlineLeft);
             var track = Rect("Track", card, new Vector2(0, 0), new Vector2(1, 0), new Vector2(14, 46), new Vector2(-14, 50));
             Fill(track, new Color32(229, 234, 240, 255));

@@ -22,13 +22,20 @@ namespace LingGuangV05.Core
 
         /// <summary>True if a new game may skip the opening with this profile.</summary>
         public static bool IsUsable(PlayerProfile profile)
-            => profile != null && profile.version == CurrentVersion && profile.openingFinished && PrologueProfile.Problem(profile.setup) == null;
+            => profile != null && profile.version == CurrentVersion && profile.openingFinished && PrologueProfile.Problem(profile.setup, validateIdentity: false) == null;
 
         /// <summary>The profile of a player who has just finished the opening setup. Null if the setup is not acceptable.</summary>
         public static PlayerProfile FromSetup(PrologueProfile setup, string source = "setup")
         {
-            if (PrologueProfile.Problem(setup) != null) return null;
-            return new PlayerProfile { openingFinished = true, setup = Trimmed(setup), source = source ?? "" };
+            if (PrologueProfile.Problem(setup, validateIdentity: source != "save") != null) return null;
+            var copy = Trimmed(setup);
+            if (source != "save")
+            {
+                copy.name = AiNamePolicy.Normalize(copy.name);
+                copy.self = AiNamePolicy.Normalize(copy.self);
+                copy.callMe = AiNamePolicy.Normalize(copy.callMe);
+            }
+            return new PlayerProfile { openingFinished = true, setup = copy, source = source ?? "" };
         }
 
         /// <summary>
