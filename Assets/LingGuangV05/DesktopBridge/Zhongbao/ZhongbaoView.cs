@@ -29,7 +29,6 @@ namespace LingGuangV05.Desktop.Zhongbao
         public static readonly string[] PageIds = { "label", "contracts", "subcontract", "ledger", "credit" };
         static readonly Vector2 Design = new Vector2(1266, 763);
         /// <summary>The window as big as the other app windows (the calculator is a small one).</summary>
-        static readonly Vector2 WindowSizeDelta = new Vector2(-640, -200);
         public static readonly Color Blue = new Color32(41, 50, 225, 255);
         /// <summary>Header chips: the white-on-blue glass of the mockup (a faint white fill with a fainter rim).</summary>
         static readonly Color ChipFill = new Color32(67, 75, 229, 255), ChipRim = new Color32(110, 117, 236, 255);
@@ -283,8 +282,6 @@ namespace LingGuangV05.Desktop.Zhongbao
             foreach (var (bm, _, _) in buttons) if (bm != null) { bm.buttonText = name; bm.buttonIcon = sprite; bm.UpdateUI(); }
             if (window.taskbarButton != null) window.taskbarButton.buttonTitle = name;
             SetStartEntry(name, (startEntry.keywords ?? "") + " 摆渡众包 Bodu Crowd 众包 标注 订单");
-            var container = window.windowContainer;
-            if (container != null) container.sizeDelta = WindowSizeDelta;
             foreach (var (go, _) in nativeChildren) if (go != null && go != (root != null ? root.gameObject : null)) go.SetActive(false);
             if (root != null) root.gameObject.SetActive(true);
         }
@@ -301,7 +298,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (window.taskbarButton != null && taskTitle != null) window.taskbarButton.buttonTitle = taskTitle;
             SetStartEntry(startEntry.title, startEntry.keywords);
             var container = window.windowContainer;
-            if (container != null) { container.sizeDelta = nativeSize; container.anchoredPosition = nativePosition; }
+            // Rebranding must not overwrite the player's window size or position.
             foreach (var (go, active) in nativeChildren) if (go != null) go.SetActive(active);
             if (root != null) root.gameObject.SetActive(false);
         }

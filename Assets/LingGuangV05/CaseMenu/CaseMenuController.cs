@@ -208,7 +208,11 @@ namespace LingGuangV05.CaseMenu
             if (fanMotor != null) fanMotor.StartBoot();
             // Give the physical switch and LCD backlight a short, visible lead before the dolly.
             yield return new WaitForSecondsRealtime(.20f);
-            float duration = reducedMotion ? .65f : Mathf.Max(2f, transitionSeconds);
+            // One flight ends at the fullscreen desktop. Reduced-motion waits for boot first;
+            // the regular flight leaves a continuous final segment after the LCD has booted.
+            if (reducedMotion) while (!mainDisplay.IsBootComplete) yield return null;
+            float duration = reducedMotion ? .9f : Mathf.Max(CaseMenuMainDisplay.BootDuration + 1f, transitionSeconds);
+            float expansionStart = -1;
             Vector3 start = menuCamera.transform.position;
             Quaternion startRotation = menuCamera.transform.rotation;
             // Match Main's native monitor framing (scaled by .25) at every aspect ratio.
@@ -228,13 +232,22 @@ namespace LingGuangV05.CaseMenu
                 menuCamera.transform.rotation = CaseMenuMotion.Rotation(startRotation, Quaternion.identity, raw);
                 menuCamera.fieldOfView = Mathf.Lerp(initialFov, finalFov, t);
                 hud.SetChromeAlpha(1 - Mathf.Clamp01(raw * 3f));
+                if (expansionStart < 0 && raw >= .7f && mainDisplay.IsBootComplete)
+                {
+                    expansionStart = raw;
+                    mainDisplay.BeginDesktopExpansion();
+                }
+                if (expansionStart >= 0)
+                    mainDisplay.SetDesktopExpansionProgress(Mathf.InverseLerp(expansionStart, 1, raw));
                 yield return null;
             }
             menuCamera.transform.SetPositionAndRotation(end, Quaternion.identity);
             menuCamera.fieldOfView = finalFov; TransitionProgress = 1;
-            // Reduced motion may arrive early. Keep desktop input locked until the visible boot ends.
-            while (!mainDisplay.IsBootComplete) yield return null;
+            mainDisplay.SetDesktopExpansionProgress(1);
+            // Render the finished desktop before the prologue/first chapter can appear.
+            yield return null;
             mainDisplay.EnterDesktop();
+            while (!mainDisplay.HasEnteredDesktop) yield return null;
             HasEnteredGame = true; IsTransitioning = false;
             hud.SetChromeAlpha(0);
             hud.SetLoading(-1, null);

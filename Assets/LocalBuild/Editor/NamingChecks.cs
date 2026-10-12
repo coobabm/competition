@@ -45,12 +45,13 @@ public static class NamingChecks
             var runtime = go.AddComponent<ChapterOneRuntime>(); runtime.EnsureInitialized();
             Check(runtime.CompletePrologue(Profile("小白")), "Opening persists name");
             runtime.Sim.S.money = 12345;
-            Check(runtime.SaveSlot(1), "Save original named slot");
+            // Slot 1 is the active autosave. Use an independent manual slot for this roundtrip.
+            Check(runtime.SaveSlot(2), "Save original named slot");
             Check(!runtime.RecordName("a/b") && runtime.Sim.S.aiName == "小白", "Rejected rename leaves existing name intact");
             Check(runtime.RecordName("  小星  ") && runtime.Sim.S.aiName == "小星", "Rename persists normalized identity");
             Check(runtime.OpeningProfile().setup.name == "小星", "Next game profile follows rename");
             Check(runtime.ReloadSave() && runtime.Sim.S.aiName == "小星" && runtime.Sim.S.money == 12345, "Reload preserves new name and progress");
-            Check(runtime.LoadArchive(1) && runtime.Sim.S.aiName == "小白", "Another slot restores its own name");
+            Check(runtime.LoadArchive(2) && runtime.Sim.S.aiName == "小白", "Another slot restores its own name");
             runtime.Sim.S.aiName = "CON";
             Check(runtime.SaveNow() && runtime.ReloadSave() && runtime.Sim.S.aiName == "CON" && runtime.Sim.S.money == 12345, "Old disallowed name still loads without progress loss");
             UnityEngine.Object.DestroyImmediate(go); go = null;

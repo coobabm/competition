@@ -57,6 +57,13 @@ namespace HongmengOS.Aero2010
             EnsureEventData();
         }
 
+        private void OnTransformParentChanged()
+        {
+            CancelInteraction();
+            havePointer = false; pointerInside = false;
+            displayCanvas = displayRect != null ? displayRect.GetComponentInParent<Canvas>() : null;
+        }
+
         private void OnDisable() { CancelInteraction(); havePointer = false; pointerInside = false; }
         private void OnApplicationFocus(bool focused) { if (!focused) CancelInteraction(); }
         private void OnApplicationPause(bool paused) { if (paused) CancelInteraction(); }

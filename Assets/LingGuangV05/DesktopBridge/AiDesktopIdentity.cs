@@ -4,6 +4,7 @@ using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.XingGuang;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop
 {
@@ -61,6 +62,7 @@ namespace LingGuangV05.Desktop
                     if (download.fileName == Story.LingGuangInstallFlow.FileName) download.SetDisplayName(exe);
             }
             if (menu == null) menu = FindAnyObjectByType<AeroStartMenu>(FindObjectsInactive.Include);
+            EnsureMenuEntry(exe);
             if (menu != null && menu.programs != null)
                 for (int i = 0; i < menu.programs.Length; i++)
                 {
@@ -72,6 +74,32 @@ namespace LingGuangV05.Desktop
                     menu.programs[i] = item;
                     if (changed && menu.menu != null && menu.menu.activeSelf) menu.SetSearch(menu.search != null ? menu.search.text : "");
                 }
+        }
+
+        void EnsureMenuEntry(string exe)
+        {
+            if (menu == null || menu.programs == null || bridge.Window == null || !runtime.Sim.AppInstalled) return;
+            foreach (var item in menu.programs)
+                if (item.window == bridge.Window || (item.searchKeywords ?? "").Contains("#lingguang-hidden")) return;
+            // This scene predates the AI shortcut: give it an actual menu entry as well as a desktop icon.
+            foreach (var template in menu.programs)
+            {
+                if (template.row == null || template.row.GetComponent<Button>() == null) continue;
+                var row = Instantiate(template.row, template.row.transform.parent);
+                row.name = "Player AI Program";
+                var button = row.GetComponent<Button>();
+                button.onClick = new Button.ButtonClickedEvent();
+                button.onClick.AddListener(() => { bridge.OpenApp(); menu.Close(); });
+                var icon = row.transform.Find("Icon")?.GetComponent<Image>();
+                if (icon != null && bridge.TaskbarShortcut?.headerButton != null) icon.sprite = bridge.TaskbarShortcut.headerButton.buttonIcon;
+                SetLabels(row.transform, exe);
+                var entries = new System.Collections.Generic.List<AeroStartMenu.ProgramEntry>(menu.programs);
+                entries.Add(new AeroStartMenu.ProgramEntry { title = exe, searchKeywords = "AI 灵光 LingGuang", row = row, window = bridge.Window });
+                menu.programs = entries.ToArray();
+                row.SetActive(true);
+                menu.SetSearch(menu.search != null ? menu.search.text : "");
+                break;
+            }
         }
 
         static void SetLabels(Transform parent, string value)

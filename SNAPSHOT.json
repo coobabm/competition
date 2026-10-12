@@ -1,6 +1,6 @@
 {
-  "version": "2026.10.11.2",
-  "captured_local_date": "2026-10-11",
+  "version": "2026.10.12.1",
+  "captured_local_date": "2026-10-12",
   "unity": "6000.4.5f1",
   "base_public_commit": "1307fc01bab8bd7fed4950f804edd92237ce191f",
   "entry_scene": "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity",
@@ -12,6 +12,34 @@
   "windows_build_included": false,
   "editor_validation_sources_included": true,
   "verification": {
+    "version": "2026.10.12.1",
+    "baseCommit": "8f815ad",
+    "windowsBuild": "Succeeded",
+    "buildErrors": 0,
+    "buildWarnings": 78,
+    "logicChecks": 251,
+    "desktopSmoke": "PASS",
+    "fullscreenViewports": [
+      "1600x1000",
+      "1920x1080"
+    ],
+    "packagedQwen": "SHA256 and packaged runtime startup PASS",
+    "modelBytes": 2497280256,
+    "modelSha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "builtUtc": "2026-10-12T11:33:34.6456645Z",
+    "windowsOutput": "Build/MyComputerAlive-2026.10.12.1-Windows",
+    "publishedToGitHub": false
+  },
+  "validation_limits": [
+    "Screenshots are Unity runtime captures from an isolated scripted desktop check; some use prepared stage and funds.",
+    "The full human two-hour playthrough has not been completed. Scripted pacing is not a human completion-time guarantee.",
+    "No GGUF weight fine-tuning was performed.",
+    "Full GUID audit was not repeated; prior audit remains in base_public_commit SNAPSHOT.json.",
+    "Windows build: 0 errors, 78 warnings."
+  ],
+  "devlog": "Documentation/Devlogs/2026-10-12-naming.md",
+  "checksum_manifest": "FILES.sha256",
+  "previous_published_verification": {
     "version": "2026.10.11.2",
     "baseCommit": "1307fc01bab8bd7fed4950f804edd92237ce191f",
     "windowsBuild": "Succeeded",
@@ -26,25 +54,5 @@
     "archiveFiles": 265,
     "archiveSha256": "956d3b82766016031fca31ae6c935c5145db4d359dbd326b0267a20dba3210a3",
     "archiveName": "LingGuang-2026.10.11.2-Windows-Qwen.zip"
-  },
-  "validation_limits": [
-    "Screenshots are Unity runtime captures from an isolated scripted desktop check; some use prepared stage and funds.",
-    "The full human two-hour playthrough has not been completed. Scripted pacing is not a human completion-time guarantee.",
-    "No GGUF weight fine-tuning was performed.",
-    "Full GUID audit was not repeated; prior audit remains in base_public_commit SNAPSHOT.json.",
-    "Windows build: 0 errors, 75 warnings."
-  ],
-  "devlog": "Documentation/Devlogs/2026-10-11/README.md",
-  "checksum_manifest": "FILES.sha256",
-  "pending_update": {
-    "target_version": "2026.10.12.1",
-    "game_title": "我的电脑活了",
-    "branch": "feat/my-computer-alive-naming",
-    "base_commit": "fbcf47044a15c36c7cdd27542e7f600cc0ba0dff",
-    "core_naming_checks": 46,
-    "csharp_editor_and_windows_typecheck": "PASS",
-    "unity_integration_checks": "NOT RUN: no valid Unity Editor license (198)",
-    "windows_build": "NOT BUILT",
-    "notes": "Documentation/Devlogs/2026-10-12-naming.md"
   }
 }

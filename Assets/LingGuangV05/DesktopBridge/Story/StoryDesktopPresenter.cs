@@ -92,8 +92,14 @@ namespace LingGuangV05.Desktop.Story
         private void OnEnable() { GameText.Changed += RefreshLocalizedText; RefreshLocalizedText(); }
         private void OnDisable() { GameText.Changed -= RefreshLocalizedText; }
 
-        private void Start()
+        bool shellPrepared;
+        private void Start() => PrepareDesktopShell();
+
+        /// <summary>Warm views while the boot screen hides them; story hosts remain paused.</summary>
+        public void PrepareDesktopShell()
         {
+            if (shellPrepared) return;
+            shellPrepared = true;
             if (director == null) director = GetComponent<StoryDirector>();
             if (router == null) router = GetComponent<ChapterOneDesktopRouter>();
             BuildOverlay();

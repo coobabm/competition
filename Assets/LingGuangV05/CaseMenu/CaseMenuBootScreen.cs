@@ -13,6 +13,7 @@ namespace LingGuangV05.CaseMenu
         TextMeshProUGUI stage, percent;
         int lastPercent = -1, lastStage = -1;
         static readonly string[] Stages = { "正在检测硬件", "正在初始化设备", "正在载入系统", "正在准备桌面" };
+        public bool IsOpaque => IsVisible && cover != null && cover.alpha >= .999f;
         public bool IsVisible => root != null && root.gameObject.activeSelf;
 
         public void Build(RectTransform display, TMP_FontAsset font)
@@ -64,15 +65,21 @@ namespace LingGuangV05.CaseMenu
             if (root == null) return;
             progress = float.IsNaN(progress) ? 0 : Mathf.Clamp01(progress);
             luminance = float.IsNaN(luminance) ? 0 : Mathf.Clamp01(luminance);
-            background.color = Color.Lerp(Color.black, new Color(.012f, .025f, .035f), luminance);
-            content.alpha = luminance;
+            // The camera travels into a powered, black screen. Keep the prepared desktop
+            // concealed until it already fills the viewport; no premature desktop flash.
+            background.color = Color.black;
+            content.alpha = 0;
             progressFill.anchorMax = new Vector2(progress, 1);
-            // This final reveal is within the monitor glass only; the camera never cuts or fades.
-            cover.alpha = 1 - CaseMenuMotion.SmootherStep(Mathf.InverseLerp(.94f, 1f, progress));
+            cover.alpha = 1;
             int value = Mathf.RoundToInt(progress * 100);
             if (lastPercent != value) { lastPercent = value; percent.text = value + "%"; }
             int index = progress < .24f ? 0 : progress < .50f ? 1 : progress < .85f ? 2 : 3;
             if (lastStage != index) { lastStage = index; stage.text = Stages[index]; }
+        }
+
+        public void SetReveal(float progress)
+        {
+            if (cover != null) cover.alpha = 1 - CaseMenuMotion.SmootherStep(progress);
         }
 
         public void Hide() { if (root != null) root.gameObject.SetActive(false); }

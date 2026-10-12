@@ -74,6 +74,7 @@ namespace LingGuangV05.Desktop.XingGuang
             GameText.Changed += ApplyShellText;
             TakeOverWindow();
             AiDesktopIdentity.Attach(runtime);
+            DesktopWindowDefaults.Attach(runtime);
             SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
@@ -264,14 +265,7 @@ namespace LingGuangV05.Desktop.XingGuang
             KeepOpenOnFirstStart(Window);
             content = Window.windowContainer.Find("Content") as RectTransform;
             if (content == null) return;
-            // Normal (not maximised) size: the whole desktop area above the taskbar, with a small margin all round.
-            // The container stretches over that area (maximise sets its offsets to 0), so offsets = the margin.
-            // ponytail: fixed 18 px margin; measure the guide note / icon column if they must stay uncovered.
-            if (!Window.isFullscreen)
-            {
-                Window.windowContainer.offsetMin = new Vector2(18, 18);
-                Window.windowContainer.offsetMax = new Vector2(-18, -18);
-            }
+            // DesktopWindowDefaults owns the first-open rectangle; preserve later player adjustments.
             var shop = router.Get("xunbao");
             if (shop != null && shop.Content != null) foreach (var label in shop.Content.GetComponentsInChildren<TMP_Text>(true)) { font = label.font; break; }
             if (font == null) font = Window.GetComponentInChildren<TMP_Text>(true)?.font;
