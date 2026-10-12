@@ -420,6 +420,7 @@ namespace LingGuangV05.XingGuang
         {
             var card = S.queue.Find(c => c.id == cardId);
             if (card == null || host == null || XgCatalog.Desk(card.dataset) == null) return default;
+            double answerPay = AnswerPayFor(card, true);
             S.queue.Remove(card);
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
@@ -430,7 +431,7 @@ namespace LingGuangV05.XingGuang
                 Hit(XgCatalog.Desk(card.dataset).comboWindow, result.corrected || card.trick ? 2 : 1);
                 // Re-checked old rows pay as ordinary cards: no hard-case bonus on top of the cleaned noise.
                 bool hard = Has("label.hard") && !card.recheck;
-                result.pay = ManualPayFor(card.dataset, card.level) * ComboMultiplier * (hard ? 1.5 : 1);
+                result.pay = answerPay;
                 host.Earn(result.pay); S.totalIncome += result.pay; S.handCorrect++;
                 QualityHandCorrect();
                 if (card.recheck) RecheckCorrected(card.dataset);
@@ -438,9 +439,9 @@ namespace LingGuangV05.XingGuang
                 result.samples = hard ? 2 : 1;
                 for (int i = 0; i < result.samples; i++) AddLabel(card.dataset);
             }
-            else { BreakCombo(); S.handWrong++; }
+            else { BreakCombo(); S.handWrong++; result.fine = ChargeHandFine(answerPay, host); }
             result.combo = S.combo;
-            NoteDayAnswer(result.correct, result.pay, result.samples);
+            NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
             CheckDesks();
             return result;
         }

@@ -204,7 +204,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
             UiTip.Add(qno, () => Sim == null ? "" : HandStats());
             UiTip.Add(yes.rt, () => Sim != null && Sim.TeachMode ? Lang.T("题目说得对就点「对」。它答错时你纠正，钱翻倍；教错不扣钱。") : TrueFalseDesk ? Lang.T("算式对就点「对」。答对连击 +1；点错扣钱，连击也断。") : Lang.T("题目说得对就点「对」。答对连击 +1。"));
-            UiTip.Add(no.rt, () => Sim != null && Sim.TeachMode ? Lang.T("题面不成立，就教它「否」。确认它的判断，或者纠正它；正确纠正获得双倍奖励，教错不罚钱。") : TrueFalseDesk ? Lang.T("算式是错的，就点「错」。答对 +1 连击；点错要扣钱，还会断连击。") : Lang.T("题面说得不对，就点「否」。答错连击清零。"));
+            UiTip.Add(no.rt, () => Sim != null && Sim.TeachMode ? Lang.T("题面不成立，就教它「否」。确认它的判断，或者纠正它；正确纠正获得双倍奖励；答错扣除本题答对可得的报酬，余额不足时扣至零。") : TrueFalseDesk ? Lang.T("算式是错的，就点「错」。答对 +1 连击；点错要扣钱，还会断连击。") : Lang.T("题面说得不对，就点「否」。答错扣除本题报酬，连击清零。"));
             UiTip.Add(auto.Root, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("？？？\n也许有更省力的办法……")
                 : Lang.T("自动答题：模型替你答题，每秒都有收入。\n需要任一模型的准确率先达到 60%；只有检查点达到 60% 的桌才会替你答。\n交出去的题会被摆渡众包抽检，错了要罚款，错太多会被举报冻结。"));
             UiTip.Add(pack.Root, SourceTip);
@@ -536,10 +536,10 @@ namespace LingGuangV05.Desktop.XingGuang
             int level = card.level > 0 ? card.level : Sim.LevelOf(desk), max = XgSim.MaxLevelOf(desk);
             string stars = max > 1 ? "  <color=#E8A317>" + new string('★', Math.Min(level, max)) + "</color><color=#B4B8C2>" + new string('☆', Math.Max(0, max - level)) + "</color>" : "";
             wkTitle.text = T(info.name, info.nameEn);
-            double handPay = Sim.ManualPayFor(desk, level);
-            wkRule.text = T("每题 ¥", "¥") + N(handPay * (card.bounty ? XgSim.BountyMultiplier : 1), "0.00") + T("", " a card")
-                + (info.fine > 0 ? " · " + T("点错 −¥", "a miss −¥") + N(Sim.HandFineFor(desk, level), "0.00") : "") + " · " + T("连击越高越多", "the higher the combo, the more");
-            if (Sim.TeachMode) wkRule.text = T("确认有奖励 · 正确纠正 ×2 · 教错不罚钱", "Confirm for pay · Correct for ×2 · No lesson fines");
+            double answerPay = Sim.AnswerPayFor(card, Sim.ReviewCard(desk) != null);
+            bool subjective = card.family || card.kind == "shutdown";
+            wkRule.text = subjective ? T("表达态度，不判对错", "Your choice, no right or wrong")
+                : T("答对 +¥", "Right +¥") + N(answerPay, "0.00") + T(" · 答错 −¥", " · Wrong −¥") + N(answerPay, "0.00");
             qno.text = T("第 " + (Sim.DayDone + 1) + " 题", "Card " + (Sim.DayDone + 1));
             string cat = card.category.Length > 0 ? T(card.category, card.categoryEn) : T(info.name, info.nameEn);
             meta.text = (card.gold ? "<color=#E0A000><b>" + T("前方高能 ×3", "HYPE ×3") + "</b></color>  " : "")

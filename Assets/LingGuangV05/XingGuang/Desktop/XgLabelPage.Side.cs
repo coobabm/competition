@@ -192,8 +192,8 @@ namespace LingGuangV05.Desktop.XingGuang
             aiSub.text = eligible ? T("这桌能答 · 检查点 " + XgSim.Pct(acc), "Can answer this desk · checkpoint " + XgSim.Pct(acc))
                 : acc > 0 ? T("这桌还不会 · 检查点 " + XgSim.Pct(acc) + "，要 60%", "Cannot do this desk yet · checkpoint " + XgSim.Pct(acc) + ", needs 60%")
                 : T("这桌还不会 · 还没有检查点", "Cannot do this desk yet · no checkpoint");
-            var info = XgCatalog.Desk(Desk);
-            double fine = info != null && info.fine > 0 ? Sim.HandFineFor(Desk, Sim.LevelOf(Desk)) : 0;
+            var shown = CurrentCard;
+            double fine = shown.family || shown.kind == "shutdown" ? 0 : Sim.AnswerPayFor(shown, Sim.ReviewCard(Desk) != null);
             aiHint.text = T("把它拖到题目旁边，它会伸手替你答。", "Drag it by the question and it reaches out to answer for you. ")
                 + (fine > 0 ? "<color=#E33E33>" + T("那时它答错要扣你的钱（每错 −¥" + N(fine, "0.00") + "）。", "Then every wrong answer costs your money (−¥" + N(fine, "0.00") + " each).") + "</color>"
                     : "<color=#E33E33>" + T("那时它答错会断掉连击。", "Then a wrong answer breaks the combo.") + "</color>")
@@ -284,20 +284,12 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The detailed pay formula of the current card, shown when the pointer rests on the pay note above the workspace.</summary>
         string PayTip()
         {
-            if (Sim.TeachMode) return T("先看它的猜测，再确认或纠正。正确纠正的奖励是确认的两倍；每张卡都改变它的概念。连击记录它的成绩。教错不罚钱。", "Check its guess, then confirm or correct. A correct correction pays twice confirmation; every card changes its concepts. The streak measures its answers. No fine for a mistaken lesson.");
-            string desk = Desk;
-            int dl = Sim.LevelOf(desk);
-            double kind = XgCatalog.Desk(desk)?.pay ?? 1;
-            string kindZh = Math.Abs(kind - 1) > 1e-9 ? " · 题型 ×" + N(kind, "0.0#") : "", kindEn = Math.Abs(kind - 1) > 1e-9 ? " · card type ×" + N(kind, "0.0#") : "";
-            double fine = Sim.HandFineFor(desk, dl);
-            return T("手动标注：基础 ¥" + N(XgCatalog.LabelPay, "0.0#") + " × 手动 ×" + N(XgCatalog.HandPayScale, "0.0#") + kindZh + " × 难度 ×" + N(1 + .5 * (dl - 1), "0.0") + " × 加薪 ×" + N(Sim.RaiseMultiplier, "0") + " × 连击 ×" + N(Sim.ComboMultiplier, "0.00")
-                    + "  =  每题 ¥" + N(Sim.ManualPayFor(desk, dl) * Sim.ComboMultiplier, "0.00")
-                    + (fine > 0 ? "\n点错：扣 ¥" + N(fine, "0.00") + "（右答案的一半，随加薪涨，不随连击涨），连击清零。" : "")
-                    + "\n答对 +1 连击，题桌之间不断；答错、超时、NaN 清零。",
-                "Hand labelling: base ¥" + N(XgCatalog.LabelPay, "0.0#") + " × hand ×" + N(XgCatalog.HandPayScale, "0.0#") + kindEn + " × difficulty ×" + N(1 + .5 * (dl - 1), "0.0") + " × raise ×" + N(Sim.RaiseMultiplier, "0") + " × combo ×" + N(Sim.ComboMultiplier, "0.00")
-                    + " = ¥" + N(Sim.ManualPayFor(desk, dl) * Sim.ComboMultiplier, "0.00") + " per card"
-                    + (fine > 0 ? "\nA wrong pick costs ¥" + N(fine, "0.00") + " (half of a right answer's pay: it rises with the raise, not with the combo) and resets the combo." : "")
-                    + "\nA right answer adds 1 to the combo, across desks; a wrong one, a timeout or NaN resets it.");
+            var card = CurrentCard;
+            if (card.family || card.kind == "shutdown")
+                return T("这是一道主观选择题，不判对错，也不扣款。", "This is a personal choice; there is no wrong answer or fine.");
+            double pay = Sim.AnswerPayFor(card, Sim.ReviewCard(Desk) != null);
+            return T("本题答对 +¥" + N(pay, "0.00") + "；答错扣同额 ¥" + N(pay, "0.00") + "，连击清零，不增加样本。\n金额包含本题适用的难度、加薪、连击、纠正和特殊奖励。余额不足时只扣剩余余额；超时不扣款。",
+                "Right +¥" + N(pay, "0.00") + "; wrong −¥" + N(pay, "0.00") + ", resets the combo and adds no sample.\nIncludes applicable difficulty, raises, combo, correction and special bonuses. Fines stop at zero balance; timeouts are not fined.");
         }
 
         // ───────────── the last 20 answers ─────────────

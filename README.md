@@ -4,6 +4,20 @@
 
 **[本次开发日志与 8 张运行截图](Documentation/Devlogs/2026-10-11/README.md)**
 
+## 源码更新：答错扣款（未发布）
+
+人工答题改为「答对赚多少，答错扣多少」，教学、人工复核、拖动蜘蛛代答和 YY 有偿问答适用。扣款与该题答对收益共用计算，包含适用的加薪、难度、连击、纠正和特殊奖励；余额不足只扣剩余余额。超时和没有客观对错的主观选择不扣款，自动标注仍沿用平台抽检规则。
+
+题面展示本题答对收益与答错扣款，实际支出进入现有账本。此改动尚未打入上方版本的 Windows 试玩包。
+
+纯逻辑回归检查（需要 .NET 6 SDK 或可构建 net6.0 的 SDK）：
+
+```sh
+dotnet run --project Tests/WrongAnswerPenalty/WrongAnswerPenalty.csproj
+```
+
+Unity 统一检查入口 `ClaudeHandoffChecks.Validate` 也包含这组检查。
+
 ## 本次更新
 
 - 更直观的开局教学、学习反馈与手动章节验收，补充逻辑和时事题。

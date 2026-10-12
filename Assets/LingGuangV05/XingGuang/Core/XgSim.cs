@@ -617,7 +617,8 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2 (the bonus is +50% bigger under 红牛).</summary>
-        public double ComboMultiplier { get { return 1 + Math.Min(1, .05 * S.combo) * (S.redbullSeconds > 0 ? RedBullBonus : 1); } }
+        public double ComboMultiplier => ComboMultiplierAt(S.combo);
+        double ComboMultiplierAt(int combo) => 1 + Math.Min(1, .05 * combo) * (S.redbullSeconds > 0 ? RedBullBonus : 1);
 
         /// <summary>
         /// Why a round cannot start. Like <see cref="Blocker"/>, except that the other line's running epoch is no reason:
@@ -1224,8 +1225,27 @@ namespace LingGuangV05.XingGuang
         /// <summary>Manual labelling only (hand answers and chat questions); automated answers keep their base pay.</summary>
         public double ManualPayFor(string desk, int level) { return PayFor(desk, level) * RaiseMultiplier * XgCatalog.HandPayScale; }
 
-        /// <summary>What a wrong pick costs on this desk (0 when the desk does not fine): its fine share of a right answer's base pay.</summary>
-        public double HandFineFor(string desk, int level) { return (XgCatalog.Desk(desk)?.fine ?? 0) * ManualPayFor(desk, level); }
+        /// <summary>Full base reward at stake on a chat question, without card or combo bonuses.</summary>
+        public double HandFineFor(string desk, int level) => XgCatalog.Desk(desk) == null ? 0 : ManualPayFor(desk, level);
+
+        /// <summary>The current card's potential correct-answer reward, also its wrong-answer fine.
+        /// Includes the next correct hit's combo without changing the combo while quoting.</summary>
+        public double AnswerPayFor(XgCard card, bool queued = false)
+        {
+            if (card == null || XgCatalog.Desk(card.dataset) == null) return 0;
+            double pay = ManualPayFor(card.dataset, card.level);
+            if (card.family) return pay;
+            if (queued)
+            {
+                bool corrected = card.hasJudgment && card.truth != card.guess;
+                return pay * ComboMultiplierAt(S.combo + (corrected || card.trick ? 2 : 1))
+                    * (Has("label.hard") && !card.recheck ? 1.5 : 1);
+            }
+            bool teaching = TeachingGuess(card, out bool guess);
+            double multiplier = teaching ? (guess != card.truth ? CorrectionPayMultiplier : 1)
+                : ComboMultiplierAt(S.combo + (card.trick ? 2 : 1));
+            return pay * multiplier * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+        }
 
         // ───────────── 加薪 ─────────────
 
@@ -1375,7 +1395,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// Hand answer. Right: ¥ (× combo, ×3 on 前方高能, harder cards pay more), one more sample, combo +1 (+2 on a
-        /// 老司机 trick). Wrong or too late: no pay, combo reset, label discarded. Either way the next card comes up.
+        /// 老司机 trick). Wrong: lose the same reward, capped to the wallet. Late: no pay. Both reset the combo.
         /// </summary>
         public XgAnswer Answer(string desk, bool yes, IXgHost host)
         {
@@ -1386,6 +1406,7 @@ namespace LingGuangV05.XingGuang
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
             bool teaching = TeachingGuess(card, out bool taughtGuess);
             bool correcting = teaching && taughtGuess != yes;
+            double answerPay = AnswerPayFor(card);
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
             bool timeout = card.timeLimit > 0 && card.age > card.timeLimit;
@@ -1403,7 +1424,7 @@ namespace LingGuangV05.XingGuang
                 }
                 else Hit(info.comboWindow, card.trick ? 2 : 1);
                 result.corrected = correcting;
-                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+                result.pay = answerPay;
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
@@ -1425,7 +1446,7 @@ namespace LingGuangV05.XingGuang
             else
             {
                 BreakCombo(); S.modelStreak = 0; S.handWrong++;
-                if (!teaching && !timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
+                if (!timeout && !shutdown) result.fine = ChargeHandFine(answerPay, host);
             }
             result.combo = S.combo;
             NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
@@ -1455,12 +1476,12 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// A card answered somewhere else (老周 or the group asking in YY). Right: one sample and the desk's pay, no combo.
-        /// Returns the pay.
+        /// Returns the net payment: a wrong answer deducts the same pay, capped to the wallet.
         /// </summary>
         public double ChatLabel(string desk, bool correct, IXgHost host)
         {
-            if (XgCatalog.Desk(desk) == null) return 0;
-            if (!correct) { S.handWrong++; return 0; }
+            if (XgCatalog.Desk(desk) == null || host == null) return 0;
+            if (!correct) { S.handWrong++; return -ChargeHandFine(HandFineFor(desk, LevelOf(desk)), host); }
             double pay = ManualPayFor(desk, LevelOf(desk));
             host.Earn(pay); S.totalIncome += pay;
             S.handCorrect++;

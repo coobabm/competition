@@ -503,6 +503,8 @@ namespace LingGuangV05.Desktop.YY
             var conv = Conversation(id);
             if (correct && pay > 0 && conv != null)
                 conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = GameText.T(AppNames.AiZh + "：「" + XgCatalog.Dataset(S.quizDesk).name + "」样本 +1，+¥" + pay.ToString("0.00", CultureInfo.InvariantCulture), "灵光: +1 sample, +¥" + pay.ToString("0.00", CultureInfo.InvariantCulture)), gameSeconds = Now });
+            if (!correct && pay < 0 && conv != null)
+                conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = GameText.T("答错扣款 −¥" + (-pay).ToString("0.00", CultureInfo.InvariantCulture), "Wrong answer −¥" + (-pay).ToString("0.00", CultureInfo.InvariantCulture)), gameSeconds = Now });
             S.quizFrom = S.quizDesk = S.quizText = S.quizWhy = "";
             pending[id] = Time.unscaledTime + 1.2f;
             Touch();
