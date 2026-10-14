@@ -226,8 +226,13 @@ namespace LingGuangV05.XingGuang
             && TrainedParamsK + 1e-9 >= ParamsThreshold(NextAbility)
             && TrainedSamples + 1e-9 >= SamplesThreshold(NextAbility);
 
+        /// <summary>
+        /// The old chapter button (both bars full). The player now turns the chapter through the 能力考
+        /// (XgSim.AbilityExam.cs); a passed exam waiting to be claimed is claimed here too.
+        /// </summary>
         public bool ConfirmNextStage()
         {
+            if (ExamPassPending) return ClaimExamPass();
             if (!StageReady) return false;
             EmergeAbility(NextAbility);
             return true;
@@ -237,6 +242,7 @@ namespace LingGuangV05.XingGuang
         {
             if (HasAbility(ability) || ability != NextAbility) return;
             S.abilitiesEmerged.Add(ability);
+            S.examRetryEpoch = 0;
             // 笨办法: it got here on scale alone, with none of its architecture discounts.
             if (ParamsDiscount(ability) >= 1 && SamplesDiscount(ability) >= 1 && !S.insights.Contains(ScaleInsight + ability)) S.insights.Add(ScaleInsight + ability);
             Say(T("学会了：", "It learned: ") + AbilityName(ability, English));

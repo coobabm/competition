@@ -97,7 +97,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
             numbers = ui.Text(Strip("Numbers", curveCard, 6, 24, 12, 12), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             numbers.enableAutoSizing = true; numbers.fontSizeMin = 10; numbers.fontSizeMax = 15; numbers.textWrappingMode = TextWrappingModes.NoWrap;
-            chartArea = Rect("ChartArea", curveCard, Vector2.zero, Vector2.one, new Vector2(58, 30), new Vector2(-12, -34));
+            // The sheet (答卷) takes the top of the card; the curve and the stage diagram share the bottom.
+            chartArea = Rect("ChartArea", curveCard, Vector2.zero, new Vector2(1, SheetSplit), new Vector2(58, 30), new Vector2(-12, -6));
             Panel(chartArea, new Color32(6, 11, 16, 255));
             chartRestPosition = chartArea.anchoredPosition;
             chart = Rect("Chart", chartArea, new Vector2(0, .37f), Vector2.one, new Vector2(4, 2), new Vector2(-4, -4)).gameObject.AddComponent<XgChartGraphic>();
@@ -105,6 +106,7 @@ namespace LingGuangV05.Desktop.XingGuang
             chart.MarkDrops = true;
             chart.Capacity = XgSim.HistoryLength;
             BuildDiagnostics();
+            BuildSheet();
             yTop = ui.Text(Rect("YTop", chart.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             yMid = ui.Text(Rect("YMid", chart.rectTransform, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             yLow = ui.Text(Rect("YLow", chart.rectTransform, Vector2.zero, Vector2.zero, new Vector2(-54, -11), new Vector2(-2, 11)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
@@ -146,6 +148,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
             BuildSide();
             BuildCard();
+            BuildDiagnosis();
+            BuildExam();
             for (int i = 0; i < 2; i++)
                 UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
             UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
@@ -275,15 +279,17 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("残差贴纸 · 这次退步不计入", "Residual sticker · the drop does not count"), XgDark.Link, 16, 30, .8f, 1.4f);
                 Fx.Play(XgJuice.Sfx.Id.Unlock, 1, .5f);
             }
-            else Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("第 " + e.epoch + " 轮 · ", "Epoch " + e.epoch + " · ") + (points >= .5 ? "+" + N(points, "0") + T(" 分", " points") : T("涨不动了", "no gain")), XgDark.Accent, 16, 30, .6f, 1.1f);
             chart.PulseLastSegment(1);
             Refresh();
+            // The round's points are a corner badge now; what changed is the sheet (答卷).
+            SheetRound(e, points);
         }
 
         public void Glitch() { glitch = Sim.LastEpochWasHand ? .3f : .12f; }
 
         public override void Tick(float dt)
         {
+            TickExam(dt);
             var run = Sim.Run(Track);
             SetBar(epochFill, run.epochActive ? (float)run.epochProgress : 0);
             if (glitch > 0)
@@ -454,6 +460,8 @@ namespace LingGuangV05.Desktop.XingGuang
             yLow.text = XgSim.Pct(chart.Min);
             legend.text = Hex(XgChartGraphic.TrainColor) + "━ " + T("验证准确率", "validation accuracy") + "</color>   " + Hex(new Color32(88, 121, 138, 255)) + "╌ " + T("上限", "ceiling") + "</color>   " + Hex(XgDark.Bad) + "● " + T("退步", "a drop") + "</color>";
             RefreshDiagnostics(run);
+            RefreshSheet(run);
+            RefreshDiagnoseButton(run);
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
@@ -518,6 +526,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!Sim.TrainingUnlocked(Track)) return T("先去标注台标够 " + XgCatalog.SamplesToTrain + " 条样本。", "Label " + XgCatalog.SamplesToTrain + " samples first.");
             if (run.epoch == 0) return Lang.T("按「训练一轮」。每轮练完都会考一次：刷新纪录才给钱。");
+            // The cause is the player's to work out (卡住时让玩家诊断): no fix named before the diagnosis.
+            if (Sim.DiagnosisDue(run) != XgLimit.None) return T("它卡住了，再练也涨不动。点「看看为什么」，自己找原因。", "It's stuck and training no longer helps. Press \"see why\" and work out the cause.");
             string plateau = Sim.PlateauText(run, out _);
             if (plateau.Length > 0) return plateau;
             if (run.staleEvals >= XgSim.StaleHintEpochs) return Sim.StaleHint(run);
@@ -566,7 +576,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (run.epoch > 0)
                 tip.Append("\n").Append(T("这个模型的上限 ", "This model's ceiling ")).Append(N(XgSim.Score(run.dataset, Sim.CeilingAcc(run)), "0")).Append(T(" 分", " points"))
                     .Append(Sim.Plateaued(run) ? T("（已经到了）", " (reached)") : T("，还差 ", ", ") + N(Sim.HeadroomPoints(run), "0") + T(" 分", " to go"));
-            string plateau = Sim.PlateauText(run, out _);
+            string plateau = Sim.DiagnosisDue(run) != XgLimit.None ? T("它卡住了：原因要你自己找（训练按钮旁「看看为什么」）。", "It's stuck: the cause is yours to find (\"see why\" by the train button).") : Sim.PlateauText(run, out _);
             if (plateau.Length > 0) tip.Append("\n<color=#C88A00>").Append(plateau).Append("</color>");
             tip.Append("\n\n").Append(T("每一轮都往这个模型的上限走一步。上限由参数量和样本量决定：参数和样本够，就一直涨；不够，就停在那里。\n每一轮也有一点机会退步：数据太少（背答案）、数据太脏、刚涨了一大截时更容易。学会的能力不会丢。",
                 "Every round takes the model a step towards its ceiling, which parameters and samples set: with enough of both it keeps rising; without, it stops there.\nEach round may also go down a little, more often when the data is scarce (it memorises), dirty, or right after a big jump. Learned abilities are never lost."));

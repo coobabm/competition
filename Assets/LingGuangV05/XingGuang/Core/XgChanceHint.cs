@@ -39,6 +39,11 @@ namespace LingGuangV05.XingGuang
                 if (!sim.TrainingUnlocked(track) || run.epoch < PlateauEpochs) continue;
                 string text = sim.PlateauText(run, out var limit);
                 if (limit == XgLimit.None || limit == XgLimit.Done) continue;
+                // The cause is the player's to work out first (卡住时让玩家诊断): point at the evidence, not the fix.
+                if (sim.DiagnosisDue(run) != XgLimit.None)
+                    return Make("plateau.diagnose", "它卡住了，再练也涨不动：去训练页看看为什么", "It is stuck and training will not help: see why on the Training page",
+                        "先看证据，再选原因：模型太小、没见过、结构看不懂，还是标签脏了。", "Read the evidence, then pick the cause: too small, never seen, wrong structure, or dirty labels.",
+                        "train", "name:DiagnoseButton", track == XgTrack.Vision ? "vision" : "sequence");
                 return StepFor(sim, run, limit);
             }
             return null;

@@ -253,7 +253,7 @@ sealed class Driver
                 Mark("transformer.complete"); sim.EndingAnswer(regret); Mark("chapter.complete");
             }
             // Both bars full: the player presses the chapter button (XgTrainPage.Side) to confirm the next ability.
-            if (sim.StageReady) ConfirmStage();
+            if (XgGuide.ChapterWaits(sim)) ConfirmStage();
             if (sim.S.stage >= 6) Finale();
             // Stage 6 keeps labelling and training too: the wallet has to stay above the rent while the items are bought.
             if (!sim.ProjectActive && time >= nextAction && (!options.FaultCheck || time >= 125)) PlayerAction();
@@ -345,6 +345,14 @@ sealed class Driver
             return;
         }
         if (host.Blocker != null) { var any = DeskOf(XgTrack.Sequence) ?? DeskOf(XgTrack.Vision); if (any != null) Answer(any); else nextAction = time + 1; return; }
+        // 卡住时让玩家诊断: the bot reads the cause straight off the curve and picks it first time.
+        foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
+        {
+            var due = sim.DiagnosisDue(sim.Run(track));
+            if (due == XgLimit.None) continue;
+            var r = sim.Diagnose(sim.Run(track), due, host);
+            if (r != null) Record("diagnose", sim.Run(track).dataset + " " + due + (r.firstTry ? " first" : ""));
+        }
         foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
             if (!sim.TrainingUnlocked(track) && DeskOf(track) != null) { Answer(DeskOf(track)); return; }
         bool label = ((int)(time / 6) % 2) == 0;
@@ -714,7 +722,17 @@ sealed class Driver
             if (!bar) Fault("chapter ready but the top bar's link does not lead to the confirm step");
         }
         int before = sim.S.stage;
-        if (!sim.ConfirmNextStage()) return;
+        // 能力考: sit it (a fail waits a few rounds), then claim the pass.
+        if (!sim.ExamPassPending)
+        {
+            var exam = sim.TakeExam();
+            if (exam == null) return;
+            sim.RevealExam(); // the page has played the answers
+            Record("exam", "ability " + exam.ability + " try " + exam.attempt + ": " + exam.rightCount + "/" + exam.items.Count + (exam.passed ? " pass" : " fail")
+                + " (P " + Math.Round(exam.paramsReady * 100) + "% D " + Math.Round(exam.samplesReady * 100) + "%)");
+            if (!exam.passed) return;
+        }
+        if (!sim.ClaimExamPass()) return;
         Record("stage.confirm", before + " -> " + sim.S.stage);
         if (!options.GuideCheck) return;
         guideConfirms++;

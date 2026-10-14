@@ -134,7 +134,7 @@ namespace LingGuangV05.XingGuang
             if (node == null) return double.PositiveInfinity;
             if (node.tree == "label") return LabelNodeCost(node);
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
-            return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)));
+            return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }
 
         public bool NodeVisible(XgNode node)

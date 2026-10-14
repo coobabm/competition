@@ -89,9 +89,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
             scaleVerdict = ui.Text(Rect("Verdict", scaleCard, Vector2.zero, Vector2.one, new Vector2(12, 4), new Vector2(-12, -156)), "", 11, XgDark.Muted, TextAlignmentOptions.TopLeft);
             scaleVerdict.enableAutoSizing = true; scaleVerdict.fontSizeMin = 9; scaleVerdict.fontSizeMax = 11;
-            confirmStage = ui.Button(scaleCard, "", () => {
-                if (Sim.ConfirmNextStage()) { Fx.Play(XgJuice.Sfx.Id.Unlock); view.Refresh(true); }
-            }, 13);
+            // The chapter turns through the 能力考 (XgTrainPage.Exam.cs).
+            confirmStage = ui.Button(scaleCard, "", ChapterButton, 13);
             confirmStage.rt.name = "ConfirmNextStage";
             confirmStage.rt.anchorMin = Vector2.zero; confirmStage.rt.anchorMax = new Vector2(1, 0);
             confirmStage.rt.offsetMin = new Vector2(10, 6); confirmStage.rt.offsetMax = new Vector2(-10, 38);
@@ -120,8 +119,7 @@ namespace LingGuangV05.Desktop.XingGuang
             formulaArea.gameObject.SetActive(six); logBack.gameObject.SetActive(six); logLabel.gameObject.SetActive(six);
             nextArea.gameObject.SetActive(!six);
             confirmStage.rt.gameObject.SetActive(!six);
-            confirmStage.Set(Sim.StageReady ? T("验收完成 · 进入下一章", "Confirm · next chapter")
-                : T("待完成：训练到 C 级，补齐上面两条进度", "Train to C and fill both bars"), Sim.StageReady);
+            if (!six) RefreshChapterButton();
             scaleVerdict.gameObject.SetActive(six);
             scaleBig.gameObject.SetActive(six);
             if (six)

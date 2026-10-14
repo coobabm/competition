@@ -99,6 +99,7 @@ namespace LingGuangV05.XingGuang
                 // 对症下药: cures read off the 训练图式.
                 Card(CardCure, 1, "cure.first", "药", "对症下药", "The right medicine", "照「训练图式」的结论改了设置，问题解决了。", "Changed the settings by the training map's verdict and the problem went away.", "先看清卡在哪，再动手。", "See where it is stuck first, then act."),
                 Card(CardCure, 2, "cure.five", "医", "妙手回春", "Healing hands", "治好 " + CuresForCard + " 种不同的问题。", "Cured " + CuresForCard + " different kinds of problem."),
+                Card(CardCure, 1, "cure.sight", "看", "一眼看穿", "Spotted at once", "它卡住时，第一次就选对了原因。", "Picked the right cause the first time it was stuck.", "证据都摆在那：练过的、没见过的、错在哪一类、标签对不对。", "The evidence was all there: practice cards, new cards, the kind of mistake, the labels."),
 
                 // 数据.
                 Card(CardData, 1, "data.junkoff", "伪", "去伪存真", "Out with the junk", "把一个淘货杂包关掉，不让它参与训练。", "Switched a junk pack off for training.", "数据多不一定好，标错的会把它往反方向拉。", "More data is not always better: wrong labels pull the other way."),

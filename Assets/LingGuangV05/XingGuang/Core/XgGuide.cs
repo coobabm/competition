@@ -112,8 +112,8 @@ namespace LingGuangV05.XingGuang
                 return Finish(list, sim, house);
             }
             Quality(sim, list);
-            // Both bars full: only the player's press on the training page turns the chapter, so it leads the note.
-            if (sim.StageReady && !sim.OpeningFocus) list.Add(ConfirmStage(sim));
+            // The 能力考 can be sat (or was passed): only the player turns the chapter, so it leads the note.
+            if (ChapterWaits(sim) && !sim.OpeningFocus) list.Add(ConfirmStage(sim));
 
             // The first minutes (XgSim.Opening.cs): label 常识判断, train, then chat; nothing else until it learned yes from no.
             if (sim.OpeningFocus) { Opening(sim, list); return Finish(list, sim, house); }
@@ -152,8 +152,8 @@ namespace LingGuangV05.XingGuang
             paramsBar = true;
             int next = sim == null ? 0 : sim.NextAbility;
             if (next == 0 || !TabOpen(sim, Lab, "tree")) return null;
-            // Both bars full: the way on is the chapter button, not another purchase.
-            if (sim.StageReady && TabOpen(sim, Lab, "train")) { paramsBar = true; return ConfirmStage(sim); }
+            // The exam is open (or passed): the way on is the chapter button, not another purchase.
+            if (ChapterWaits(sim) && TabOpen(sim, Lab, "train")) { paramsBar = true; return ConfirmStage(sim); }
             bool paramsFirst = sim.ParamsProgress(next) <= sim.SamplesProgress(next);
             for (int pass = 0; pass < 2; pass++)
             {
@@ -175,12 +175,20 @@ namespace LingGuangV05.XingGuang
         /// Both bars are full and the next ability waits for the player (<see cref="XgSim.StageReady"/>): press the
         /// training page's chapter button, which is named "ConfirmNextStage" (XgTrainPage.Side).
         /// </summary>
+        /// <summary>The chapter waits on the player: the 能力考 can be sat, or was passed and not claimed.</summary>
+        public static bool ChapterWaits(XgSim sim) => sim.ExamReady || sim.ExamPassPending;
+
         public static XgGuideStep ConfirmStage(XgSim sim)
         {
             int next = sim.NextAbility;
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
-            return Step(ConfirmStageId, XgGuideKind.Main, "两样都到门槛了：点「进入下一章」让它学会「" + name + "」", "Both bars are full: press 'Next chapter' so it learns " + nameEn,
-                "参数和样本都够了，但章节要你亲手翻页：训练页右边的「验收完成 · 进入下一章」。", "Parameters and samples are both enough, but only you turn the chapter: the 'Confirm · next chapter' button on the right of the training page.",
+            if (sim.ExamPassPending)
+                return Step(ConfirmStageId, XgGuideKind.Main, "能力考过了：点「继续」让它学会「" + name + "」", "The exam is passed: press 'Continue' so it learns " + nameEn,
+                    "训练页右边的按钮翻到下一章。", "The button on the right of the training page turns the chapter.",
+                    Lab, "train", "name:ConfirmNextStage", TrackArg(TrainableTrack(sim)));
+            return Step(ConfirmStageId, XgGuideKind.Main, "两样都到门槛的八成了：去训练页让它考「" + name + "」", "Both bars are at 80%: let it sit the exam for " + nameEn + " on the Training page",
+                XgSim.AbilityExamQuestions + " 道题答对 " + XgSim.AbilityExamPass + " 道就过；两条进度越满，越容易过。没过也不扣钱，再练几轮就能重考。",
+                XgSim.AbilityExamPass + " of " + XgSim.AbilityExamQuestions + " right passes; the fuller the bars, the easier. A fail costs nothing: train a few rounds and sit it again.",
                 Lab, "train", "name:ConfirmNextStage", TrackArg(TrainableTrack(sim)));
         }
 

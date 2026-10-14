@@ -35,6 +35,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>The comparison for an ability (1–6). Always three non-empty strings per language, and the new answer differs from the old.</summary>
         public XgBeforeAfter BeforeAfter(int ability)
         {
+            // A chapter turned by the 能力考 shows one of its own questions (XgSim.AbilityExam.cs).
+            if (ability >= 2) { var exam = ExamBeforeAfter(ability); if (exam != null) return exam; }
             switch (ability)
             {
                 case 1: return YesNoBeforeAfter();

@@ -176,6 +176,7 @@ namespace LingGuangV05.XingGuang.Tests
             StringAssert.Contains("门槛 ", text);
             StringAssert.Contains("准确率最高 " + XgSim.Pct(sim.CeilingAcc(run)), text);
             StringAssert.Contains("C 级线 " + XgSim.Pct(XgSim.GradeAccuracy("mnist", XgSim.TrainedGrade)), text);
+            sim.Diagnose(run, XgLimit.Params, null); // the guide names the fix once the cause is worked out
             var step = XgChanceHint.Step(sim);
             TestContext.WriteLine(step.zh + "\n" + step.whyZh + "\n" + step.whyEn);
             StringAssert.Contains("C 级线 ", step.whyZh);

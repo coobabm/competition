@@ -258,6 +258,7 @@ namespace LingGuangV05.XingGuang
             double price = NodeCost(n);
             if (!host.Spend(price)) { Say(T("经费不足 ¥") + F(NodeCost(n), "0")); return false; }
             S.totalSpent += price;
+            UseDiagnosisCoupon(n);
             if (n.kind != XgNodeKind.Project) S.unlocked.Add(n.id);
             Say(T("解锁 ") + NodeName(n));
             switch (n.kind)
@@ -650,6 +651,7 @@ namespace LingGuangV05.XingGuang
             run.shapeRounds++;
             Evaluate(run);
             if (UseBoard) { ObservePhenomena(run); RecordTrace(run, false, cards); WatchCure(run); }
+            SheetAfterRound(run);
             S.stageEpochs++;
             Push(run.histTrain, (float)run.trainAcc);
             Push(run.histVal, (float)run.valAcc);
@@ -1342,6 +1344,7 @@ namespace LingGuangV05.XingGuang
                     AddLabel(desk);
                     result.samples = 1 + (int)HandLabelLog(desk) + RelicLabelExtra();
                     TeachBoard(card, card.truth);
+                    RememberSheetCard(card);
                     if (correcting) RememberCorrection(card);
                 }
             }

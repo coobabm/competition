@@ -494,8 +494,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgGuide.Lab, step.app); Assert.AreEqual("train", step.tab);
             Assert.AreEqual("name:ConfirmNextStage", step.target, "the training page's chapter button, by its object name");
             Assert.IsTrue(XgGuide.TabOpen(sim, step.app, step.tab));
-            StringAssert.Contains("两样都到门槛了：点「进入下一章」让它学会「" + XgSim.AbilityName(2, false) + "」", step.zh);
-            StringAssert.Contains("Both bars are full: press 'Next chapter' so it learns " + XgSim.AbilityName(2, true), step.en);
+            // The chapter turns through the 能力考 (XgSim.AbilityExam.cs).
+            StringAssert.Contains("去训练页让它考「" + XgSim.AbilityName(2, false) + "」", step.zh);
+            StringAssert.Contains("let it sit the exam for " + XgSim.AbilityName(2, true), step.en);
             StringAssert.DoesNotContain("涌现", step.zh + step.whyZh);
             Assert.IsNotEmpty(step.whyZh); Assert.IsNotEmpty(step.whyEn);
 

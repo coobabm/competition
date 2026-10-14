@@ -45,6 +45,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.Plateaued(run), Is.True, "a perceptron of a few hundred parameters cannot learn the digits");
             Assert.That(sim.PlateauText(run, out var limit), Does.Contain("参数量不够，再练也涨不动"));
             Assert.That(limit, Is.EqualTo(XgLimit.Params));
+            // Until the player has worked out the cause, the guide points at the evidence, not the fix.
+            Assert.That(XgChanceHint.Step(sim).id, Is.EqualTo("plateau.diagnose"));
+            Assert.That(XgChanceHint.Step(sim).target, Is.EqualTo("name:DiagnoseButton"));
+            Assert.That(sim.Diagnose(run, XgLimit.Params, null).correct, Is.True);
             var step = XgChanceHint.Step(sim);
             Assert.That(step, Is.Not.Null);
             Assert.That(step.id, Is.EqualTo("plateau.params"));
@@ -60,6 +64,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.Plateaued(run), Is.True, "head " + sim.HeadroomPoints(run));
             Assert.That(sim.CeilingLimit(run), Is.EqualTo(XgLimit.Data));
             Assert.That(sim.PlateauText(run, out _), Does.Contain("样本不够"));
+            // A wrong pick first, so the right one earns no samples that would lift the plateau.
+            sim.Diagnose(run, XgLimit.Params, null);
+            sim.Diagnose(run, XgLimit.Data, null);
             Assert.That(XgChanceHint.Step(sim).tab, Is.EqualTo("label"));
         }
 
