@@ -31,7 +31,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         readonly RegionView[] regions = new RegionView[4];
-        TMP_Text header, atlas;
+        TMP_Text header, atlas, checkupHistory;
         long shownCards = -1;
         int shownPhenomena = -1;
 
@@ -61,6 +61,9 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(right, XgDark.Page);
             atlas = ui.Text(Rect("Text", right, Vector2.zero, Vector2.one, new Vector2(12, 10), new Vector2(-12, -10)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);
             atlas.enableAutoSizing = true; atlas.fontSizeMin = 9; atlas.fontSizeMax = 13;
+            checkupHistory = ui.Text(Rect("CheckupHistory", conceptView, Vector2.zero, new Vector2(.7f, 0), new Vector2(18, 12), new Vector2(-8, 92)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
+            checkupHistory.enableAutoSizing = true; checkupHistory.fontSizeMin = 9; checkupHistory.fontSizeMax = 12;
+            left.offsetMin = new Vector2(12, 98);
             BuildCortex(card);
             BuildTopologies(card);
             BuildAssembly(card);
@@ -80,6 +83,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (header == null || Sim == null) return;
+            checkupHistory.text = T("体检历史\n", "Checkup history\n") + Sim.CheckupText(true);
             if (mode == Mode.Habits && !HabitsOpen) mode = Mode.Concepts;
             RefreshModeTabs();
             if (mode == Mode.Assembly) { RefreshAssembly(); return; }

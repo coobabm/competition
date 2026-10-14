@@ -11,6 +11,9 @@ namespace LingGuangV05.Core
     [Serializable] public sealed class TrainingPulse { public int[] nodeIds = new int[0]; public bool correction; }
     [Serializable] public sealed class GameState
     {
+        public bool fundsStarted;
+        public double fundsBalance, fundsIncome, fundsExpense;
+        public List<FundsEntry> funds = new List<FundsEntry>();
         public int version = 1, chapter = 1, day = 1, gpuCount = 1, caseCount = 1, semanticLevel = 1, trainingLevel = 1;
         public int cardsReviewed, correctedCards, examAttempts, examAnswered, examCorrect, nextCardId = 1;
         public double money = 0, samples = 6, steps, learningPoints, gameSeconds, daySeconds, billDue, totalEarned, temperature = 30;
@@ -34,6 +37,8 @@ namespace LingGuangV05.Core
         public string chatState = "";
         /// <summary>摆渡贴吧 private messages and posts (Core.Forum.ForumState as JSON). Additive.</summary>
         public string forumState = "";
+        /// <summary>Exactly-once receipts for authored story messages (beat, recipient, text), not ordinary AI replies.</summary>
+        public List<string> storyMessageReceipts = new List<string>();
         /// <summary>When the 2016 calendar moved to which day (design v1.1 §11.7). Additive: older saves start on the prologue day.</summary>
         public List<EraMark> eraMarks = new List<EraMark>();
         /// <summary>Dated events (era_events.json) already delivered or skipped.</summary>

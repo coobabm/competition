@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 显存俄罗斯方块</title>
+<!--
+  显存俄罗斯方块: the well is the VRAM of a 6 GB GTX 980 Ti (10 columns). The seven tetrominoes are model layers (卷积 3×3,
+  全连接, 注意力, Dropout ...). Clearing a row = one training round fits into memory: samples and ¥ come in, the electricity
+  bill goes out (cheap, grows with the level). A stack that reaches the top = CUDA out of memory.
+  Standard rules: 7-bag, rotation with simple wall kicks, hold, soft/hard drop, lock delay, level-ups.
+  灵光 skill: it proposes a placement (purple dashed ghost). The proposal is the best-scoring spot of a Dellacherie-style
+  heuristic search with probability rising in skill; at low skill it picks from the worst spots, at mid skill a mediocre one.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.pn{position:absolute;font-size:12px;color:var(--ink)}
+.cap{font-size:12px;color:var(--mute);margin-bottom:5px;display:flex;justify-content:space-between}
+.gpu{position:relative;height:108px;border-radius:8px;background:linear-gradient(#2A2F3F,#161A26);border:1px solid #0B0E16;box-shadow:inset 0 0 0 2px #3C4357;color:#C9D2F0;overflow:hidden}
+.gpu .nv{position:absolute;left:12px;top:8px;font-size:11px;letter-spacing:1px;color:#76B900;font-weight:700}
+.gpu .md{position:absolute;left:12px;top:24px;font-size:15px;font-weight:700;color:#fff}
+.gpu .sub{position:absolute;left:12px;top:46px;font-size:11px;color:#8C97B8}
+.gpu .fans{position:absolute;right:12px;top:18px;display:flex;gap:8px}
+.fan{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle,#0B0E16 0 30%,#222838 31% 100%);border:2px solid #4A5370;position:relative;--sp:2s}
+.fan i{position:absolute;inset:4px;border-radius:50%;background:conic-gradient(#8C97B8 0 14%,transparent 14% 25%,#8C97B8 25% 39%,transparent 39% 50%,#8C97B8 50% 64%,transparent 64% 75%,#8C97B8 75% 89%,transparent 89%);animation:spin var(--sp) linear infinite;opacity:.8}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gpu .tmp{position:absolute;left:12px;bottom:8px;font-size:12px}
+.gpu .tmp b{color:#FFD43B}
+.vbar{height:22px;border-radius:5px;background:#E7E9EE;position:relative;overflow:hidden;border:1px solid var(--line)}
+.vbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#51CF66,#FCC419 65%,#FF6B6B);transition:width .25s}
+.vbar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#222;text-shadow:0 0 3px #fff}
+.mini{display:block;background:#F7F8FB;border:1px solid var(--line);border-radius:5px}
+.keys{color:var(--mute);line-height:1.8;font-size:12px}
+.keys b{display:inline-block;background:#F0F2F7;border:1px solid var(--line);border-radius:3px;padding:0 5px;color:#333;margin-right:2px}
+.hint{background:var(--ai2);border:1px solid #DCD6FB;border-radius:6px;padding:7px 9px;color:#4B3FA8;line-height:1.6;min-height:50px}
+.log{font-family:Menlo,Consolas,monospace;font-size:11px;color:#556;line-height:1.7;height:92px;overflow:hidden;background:#F7F8FB;border:1px solid var(--line);border-radius:5px;padding:4px 7px}
+.log div:last-child{color:var(--green)}
+.cons{margin:0;background:#0D1117;color:#FF7B72;font-size:11px;line-height:1.6;text-align:left;padding:10px 14px;border-radius:6px;max-width:620px;white-space:pre-wrap;font-family:Menlo,Consolas,monospace}
+#wellh{position:absolute;left:334px;top:5px;width:250px;text-align:center;font-size:12px;color:var(--mute)}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'vramtetris', title:'显存俄罗斯方块', subtitle:'把模型的层塞进显存', icon:'显', dataset:'训练 · 显存',
+  stats:[['训练轮数','sRound'],['层级','sLevel','1'],['电费','sElec','¥0'],['灵光建议被采纳','sAdopt','—'],['收入','sPay','¥0']], statsNote:'每清一行 = 一轮训练',
+  aiHello:'我帮你看看哪里放得下。',
+  rule:'<b>玩法</b>：层从上面掉下来，铺满一行 = 一轮训练塞进显存，得样本和钱，扣一点电费。叠到顶 = 显存不足。<br><span style="color:var(--ai)">紫色虚线 = 灵光觉得该放的位置，水平低时它会乱指。</span>'
+});
+
+// ───────────────────────── constants ─────────────────────────
+const COLS=10, ROWS=22, VIS=2, CELL=25, WX=334, WY=26;        // 2 hidden rows above the visible 20
+const FONT='"PingFang SC","Microsoft YaHei",sans-serif';
+// Matrices: 1 = layer cell, 2 = the cell that carries the layer's short label.
+const TYPES={
+ I:{m:[[0,0,0,0],[1,2,1,1],[0,0,0,0],[0,0,0,0]],c:'#3BC9DB',n:[['全连接','FC'],['词向量','词'],['Softmax','Sm']]},
+ O:{m:[[2,1],[1,1]],c:'#FCC419',n:[['池化 2×2','池'],['BatchNorm','BN']]},
+ T:{m:[[0,1,0],[1,2,1],[0,0,0]],c:'#9775FA',n:[['注意力','注'],['残差块','残']]},
+ S:{m:[[0,1,1],[1,2,0],[0,0,0]],c:'#51CF66',n:[['卷积 3×3','3×3'],['ReLU','Re']]},
+ Z:{m:[[1,1,0],[0,2,1],[0,0,0]],c:'#FF6B6B',n:[['卷积 5×5','5×5'],['LSTM','LS']]},
+ L:{m:[[0,0,1],[1,2,1],[0,0,0]],c:'#FF922B',n:[['Dropout','Dp'],['GRU','GR']]},
+ J:{m:[[1,0,0],[1,2,1],[0,0,0]],c:'#4C6EF5',n:[['卷积 1×1','1×1'],['LRN','LR']]},
+};
+const KEYS=Object.keys(TYPES);
+const rotM=(m,dir)=>{ const N=m.length, o=m.map(r=>r.slice()); for(let r=0;r<N;r++)for(let c=0;c<N;c++){ if(dir>0) o[r][c]=m[N-1-c][r]; else o[r][c]=m[c][N-1-r]; } return o; };
+const rotN=(m,k)=>{ for(let i=0;i<((k%4)+4)%4;i++) m=rotM(m,1); return m; };
+
+stage.insertAdjacentHTML('beforeend',`
+ <div class="pn" style="left:14px;top:14px;width:296px">
+   <div class="gpu"><div class="nv">NVIDIA</div><div class="md">GeForce GTX 980 Ti</div><div class="sub">6 GB GDDR5 · 2816 CUDA 核心</div>
+     <div class="fans"><div class="fan" id="fan1"><i></i></div><div class="fan" id="fan2"><i></i></div></div>
+     <div class="tmp">核心温度 <b id="tmp">42°C</b>　风扇 <b id="fanr">30%</b></div></div>
+   <div style="margin-top:12px"><div class="cap"><span>显存占用（最高的一列）</span><span id="vramT"></span></div><div class="vbar"><i id="vramB" style="width:0"></i><span id="vramS">0.0 / 6.0 GB</span></div></div>
+   <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-end"><div><div class="cap"><span>暂存槽</span><span>C</span></div><canvas class="mini" id="holdC" width="96" height="60" style="width:96px;height:60px"></canvas></div>
+     <div style="flex:1"><div class="cap"><span>训练进度</span></div><div style="font-size:12px;line-height:1.8;color:var(--mute)">已训练 <b id="pRounds" style="color:var(--ink)">0</b> 轮　累计电费 <b id="pElec" style="color:var(--red)">¥0.0</b><br>下一档提速：还差 <b id="pNext" style="color:var(--ink)">8</b> 轮</div></div></div>
+   <div class="keys" style="margin-top:14px"><b>←</b><b>→</b> 移动　<b>↑</b>/<b>X</b> 顺转　<b>Z</b> 逆转<br><b>↓</b> 软降　<b>空格</b> 直落　<b>C</b> 暂存　<b>P</b> 暂停</div>
+ </div>
+ <div id="wellh">显存 · 10 通道 × 20 行</div>
+ <canvas id="well" width="${COLS*CELL*2}" height="${(ROWS-VIS)*CELL*2}" style="position:absolute;left:${WX}px;top:${WY}px;width:${COLS*CELL}px;height:${(ROWS-VIS)*CELL}px;border-radius:4px;box-shadow:0 0 0 3px #2A2F3F,0 6px 18px #0004"></canvas>
+ <div class="pn" style="left:612px;top:14px;width:292px">
+   <div class="cap"><span>接下来的层</span></div>
+   <div style="display:flex;gap:8px"><canvas class="mini" id="nx0" width="96" height="60" style="width:96px;height:60px"></canvas><canvas class="mini" id="nx1" width="96" height="60" style="width:80px;height:50px;margin-top:5px"></canvas><canvas class="mini" id="nx2" width="96" height="60" style="width:80px;height:50px;margin-top:5px"></canvas></div>
+   <div id="nxName" style="font-size:11px;color:var(--mute);margin-top:4px;height:16px"></div>
+   <div class="cap" style="margin-top:12px"><span>灵光的建议</span><span id="hq"></span></div>
+   <div class="hint" id="hint">……</div>
+   <div class="cap" style="margin-top:12px"><span>训练日志</span><span>cutorch</span></div>
+   <div class="log" id="log"></div>
+ </div>
+ <div class="over" id="ov"></div>`);
+const wc=document.getElementById('well'), wg=wc.getContext('2d'); wg.scale(2,2);
+const miniCtx=id=>{ const c=document.getElementById(id), x=c.getContext('2d'); x.scale(2,2); return x; };
+const holdG=miniCtx('holdC'), nxG=[miniCtx('nx0'),miniCtx('nx1'),miniCtx('nx2')];
+const winPos=(x,y)=>{ const r=stage.getBoundingClientRect(), wr=document.getElementById('win').getBoundingClientRect(), k=wr.width/1236; return {x:(r.left-wr.left)/k+x, y:(r.top-wr.top)/k+y}; };
+
+// ───────────────────────── state ─────────────────────────
+let B, bag=[], queue=[], cur=null, hold=null, holdUsed=false, plan=null;
+const S={state:'idle',t:0,drop:0,lock:0,lockResets:0,lines:0,level:1,rounds:0,elec:0,pay:0,adopt:0,placed:0,clear:null,parts:[],flash:0,
+  das:{l:0,r:0,dir:0},soft:false,best:0,log:[],gross:0,samples:0,over:false};
+
+const newBoard=()=>Array.from({length:ROWS},()=>Array(COLS).fill(null));
+const grav=()=>Math.max(.05,.8*Math.pow(.8,S.level-1));
+function nextType(){ if(!bag.length) bag=LG.shuffle(KEYS); return bag.pop(); }
+function mkPiece(type){ const T=TYPES[type], nm=LG.pick(T.n); return {type,rot:0,base:T.m.map(r=>r.slice()),m:T.m.map(r=>r.slice()),x:Math.floor((COLS-T.m.length)/2),y:VIS-1,name:nm[0],short:nm[1],c:T.c}; }
+function collide(m,x,y,b){ b=b||B; const N=m.length; for(let r=0;r<N;r++)for(let c=0;c<N;c++){ if(!m[r][c]) continue; const bx=x+c, by=y+r; if(bx<0||bx>=COLS||by>=ROWS) return true; if(by>=0&&b[by][bx]) return true; } return false; }
+function dropY(m,x,y,b){ while(!collide(m,x,y+1,b)) y++; return y; }
+
+// ───────────────────────── 灵光's placement proposal ─────────────────────────
+// Dellacherie-style heuristic over every (rotation, column); then pick a rank that depends on skill.
+function evalGrid(g,lines){
+  let agg=0,holes=0,bump=0,prev=-1;
+  for(let c=0;c<COLS;c++){ let h=0; for(let r=0;r<ROWS;r++){ if(g[r][c]){ h=ROWS-r; for(let q=r+1;q<ROWS;q++) if(!g[q][c]) holes++; break; } } agg+=h; if(prev>=0) bump+=Math.abs(h-prev); prev=h; }
+  return -0.51*agg+0.76*lines-0.36*holes-0.18*bump;
+}
+function allPlacements(p){
+  const out=[], seen=new Set();
+  for(let r=0;r<4;r++){
+    const m=rotN(p.base,r), key=JSON.stringify(m.map(row=>row.map(v=>v?1:0)));
+    if(seen.has(key)) continue; seen.add(key);
+    for(let x=-2;x<COLS;x++){
+      if(collide(m,x,0)) continue;
+      const y=dropY(m,x,0); const g=B.map(row=>row.map(v=>!!v)); const N=m.length;
+      for(let rr=0;rr<N;rr++)for(let cc=0;cc<N;cc++) if(m[rr][cc]) g[y+rr][x+cc]=true;
+      let lines=0; const kept=g.filter(row=>{ const full=row.every(Boolean); if(full) lines++; return !full; }); while(kept.length<ROWS) kept.unshift(Array(COLS).fill(false));
+      out.push({r,m,x,y,score:evalGrid(kept,lines),lines});
+    }
+  }
+  return out.sort((a,b)=>b.score-a.score);
+}
+function makePlan(){
+  if(!cur) return; const list=allPlacements(cur); if(!list.length){ plan=null; return; }
+  const s=LG.skill(), sk=Math.max(0,Math.min(1,(s-.2)/.77));
+  // rank fraction: 0 = best, 1 = worst. Low skill lands in the worst quartile, high skill hits the best.
+  const frac=sk>=.97?0:(1-sk)*(.7+.3*Math.random())*(sk<.5?1:.8);
+  const idx=Math.max(0,Math.min(list.length-1,Math.round(frac*(list.length-1))));
+  plan=Object.assign({},list[idx],{rank:idx,total:list.length,best:list[0].score});
+  const q=plan.score>=list[0].score-.05?'good':idx<=list.length*.3?'ok':'bad';
+  plan.q=q;
+  document.getElementById('hq').textContent=q==='good'?'靠谱':q==='ok'?'还行':'不太靠谱';
+  const colTxt=`第 ${Math.min(...cellsOf(plan).map(c=>c.x))+1} 列附近`;
+  const lines={good:['放这里，一点缝都不留。','我算过了，这里最省显存。',plan.lines>0?'放这里能直接清一行！':'放这里，别的地方留给后面。'],
+    ok:['大概放这里？','这里……应该能放下。','我觉得这里还行。'],bad:['随便放这里吧？','这里看着挺空的。','我也不太确定，要不放这？','……我是不是又指错了。']}[q];
+  document.getElementById('hint').innerHTML=`<b>${cur.name}</b> → ${colTxt}<br>${LG.pick(lines)}`;
+}
+
+// ───────────────────────── game flow ─────────────────────────
+function spawn(type){
+  cur=mkPiece(type||queue.shift()); while(queue.length<4) queue.push(nextType());
+  holdUsed=false; S.lock=0; S.lockResets=0; S.drop=0;
+  if(collide(cur.m,cur.x,cur.y)){ gameOver(); return; }
+  makePlan(); panels();
+}
+function reset(){
+  B=newBoard(); bag=[]; queue=[]; hold=null; Object.assign(S,{state:'play',t:0,lines:0,level:1,rounds:0,elec:0,pay:0,adopt:0,placed:0,clear:null,parts:[],flash:0,log:[],gross:0,samples:0,over:false,soft:false});
+  for(let i=0;i<5;i++) queue.push(nextType());
+  document.getElementById('ov').style.display='none'; document.getElementById('lgHist').innerHTML=''; document.getElementById('log').innerHTML='';
+  spawn(); stats();
+  const s=LG.skill(); LG.say(s<.35?'我还认不清哪里空，建议你别全信。':s<.7?'我大概能看出哪里放得下。':'这种摆法我很熟，听我的。');
+}
+function stats(){
+  LG.set('sRound',S.rounds); LG.set('sLevel',S.level); LG.set('sElec','−¥'+S.elec.toFixed(1)); LG.set('sPay','¥'+S.pay.toFixed(1)); LG.set('sAdopt',S.placed?Math.round(S.adopt/S.placed*100)+'%':'—');
+  LG.set('pRounds',S.rounds); LG.set('pElec','¥'+S.elec.toFixed(1)); LG.set('pNext',8-(S.lines%8));
+}
+function panels(){
+  // VRAM meter from the tallest column
+  let top=ROWS; for(let r=0;r<ROWS;r++) if(B[r].some(Boolean)){ top=r; break; } const h=Math.max(0,ROWS-top-VIS+(top<ROWS?0:0)), used=Math.min(6,Math.max(0,(ROWS-top))/(ROWS-VIS)*6);
+  const frac=Math.min(1,Math.max(0,(ROWS-top)/(ROWS-VIS)));
+  const vb=document.getElementById('vramB'); vb.style.width=frac*100+'%'; document.getElementById('vramS').textContent=(frac*6).toFixed(1)+' / 6.0 GB';
+  document.getElementById('tmp').textContent=Math.round(42+frac*46)+'°C'; document.getElementById('fanr').textContent=Math.round(30+frac*70)+'%';
+  const sp=Math.max(.15,1.6-frac*1.3-S.level*.05)+'s'; document.getElementById('fan1').style.setProperty('--sp',sp); document.getElementById('fan2').style.setProperty('--sp',sp);
+  document.getElementById('vramT').textContent=frac>.75?'显存紧张！':'';
+  // previews
+  drawMini(holdG,hold,96,60,hold&&holdUsed); nxG.forEach((g,i)=>drawMini(g,queue[i],i?80:96,i?50:60));
+  const T=queue[0]; document.getElementById('nxName').textContent=T?'下一层：'+TYPES[T].n.map(n=>n[0]).join(' / '):'';
+  S.frac=frac; return frac;
+}
+function drawMini(g,type,w,h,dim){
+  g.clearRect(0,0,96,60); if(!type) return; const T=TYPES[type], m=T.m, N=m.length, cs=w>=96?15:12;
+  const cells=[]; for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(m[r][c]) cells.push([r,c,m[r][c]]);
+  const r0=Math.min(...cells.map(a=>a[0])), r1=Math.max(...cells.map(a=>a[0])), c0=Math.min(...cells.map(a=>a[1])), c1=Math.max(...cells.map(a=>a[1]));
+  const ox=(w-(c1-c0+1)*cs)/2, oy=(h-(r1-r0+1)*cs)/2; g.globalAlpha=dim?.35:1;
+  for(const [r,c,v] of cells) cell(g,ox+(c-c0)*cs,oy+(r-r0)*cs,cs,T.c);
+  g.globalAlpha=1;
+}
+function cell(g,x,y,s,col,lab){
+  g.fillStyle=col; g.fillRect(x,y,s,s); g.fillStyle='rgba(255,255,255,.38)'; g.fillRect(x,y,s,2); g.fillRect(x,y,2,s); g.fillStyle='rgba(0,0,0,.28)'; g.fillRect(x,y+s-2,s,2); g.fillRect(x+s-2,y,2,s);
+  g.fillStyle='rgba(255,255,255,.12)'; g.fillRect(x+3,y+3,s-6,s-6);
+  if(lab&&s>=20){ g.fillStyle='#fff'; g.font=`bold ${lab.length>2?9:11}px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.shadowColor='#0008'; g.shadowBlur=2; g.fillText(lab,x+s/2,y+s/2+1); g.shadowBlur=0; }
+}
+
+function tryMove(dx,dy){ if(!cur||S.clear) return false; if(collide(cur.m,cur.x+dx,cur.y+dy)) return false; cur.x+=dx; cur.y+=dy; if(dy===0&&onGround()) bumpLock(); return true; }
+const onGround=()=>collide(cur.m,cur.x,cur.y+1);
+function bumpLock(){ if(S.lockResets<12){ S.lock=0; S.lockResets++; } }
+function rotate(dir){
+  if(!cur||S.clear) return; const m=rotM(cur.m,dir);
+  for(const [dx,dy] of [[0,0],[-1,0],[1,0],[-2,0],[2,0],[0,-1],[-1,-1],[1,-1]]) if(!collide(m,cur.x+dx,cur.y+dy)){ cur.m=m; cur.x+=dx; cur.y+=dy; cur.rot=(cur.rot+dir+4)%4; if(onGround()) bumpLock(); return true; }
+  return false;
+}
+function hardDrop(){ if(!cur||S.clear) return; const y=dropY(cur.m,cur.x,cur.y); const dist=y-cur.y; S.trail={x:cur.x,y0:cur.y,y1:y,m:cur.m,c:cur.c,l:1}; cur.y=y; lockPiece(); }
+function doHold(){
+  if(!cur||holdUsed||S.clear) return; const t=cur.type; if(hold){ const h=hold; hold=t; spawn(h); } else { hold=t; spawn(); } holdUsed=true; panels();
+}
+function lockPiece(){
+  const m=cur.m, N=m.length; let allHidden=true;
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(m[r][c]){ const by=cur.y+r,bx=cur.x+c; if(by>=0) B[by][bx]={c:cur.c,lab:m[r][c]===2?cur.short:null}; if(by>=VIS) allHidden=false; }
+  S.placed++; const adopted=plan&&plan.x===cur.x&&plan.y===cur.y&&JSON.stringify(plan.m)===JSON.stringify(cur.m);
+  if(adopted){ S.adopt++; if(plan.q==='good'&&Math.random()<.5) LG.say(LG.pick(['对，就是这里。','我们想到一块去了。','你听我的就对了。'])); else if(plan.q==='bad'&&Math.random()<.5) LG.say(LG.pick(['啊，你真按我说的放了……','……这里好像不太对？'])); }
+  else if(plan&&plan.q==='good'&&Math.random()<.2) LG.say(LG.pick(['你放别处了？也行。','嗯，你有自己的打算。']));
+  S.lockFx={cells:cellsOf(cur),l:1};
+  cur=null; plan=null;
+  // line check
+  const full=[]; for(let r=0;r<ROWS;r++) if(B[r].every(Boolean)) full.push(r);
+  if(full.length){ S.clear={rows:full,t:.3}; clearReward(full.length); }
+  else if(allHidden) { gameOver(); return; }
+  else spawn();
+  panels();
+}
+const cellsOf=p=>{ const o=[],N=p.m.length; for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(p.m[r][c]) o.push({x:p.x+c,y:p.y+r}); return o; };
+function clearReward(n){
+  S.lines+=n; S.rounds+=n; const oldL=S.level; S.level=1+Math.floor(S.lines/8);
+  const samples=[0,1,3,5,8][n], elec=+((0.1+0.03*(S.level-1))*n).toFixed(2), gross=+(samples*.9).toFixed(2), net=gross-elec;
+  S.elec+=elec; S.pay+=net; S.gross+=gross; S.samples+=samples;
+  LG.give(samples,net);
+  const y=winPos(WX+20,WY+(Math.min(...S.clear.rows)-VIS)*CELL-8);
+  LG.float(y,'+'+samples+' 样本 · 训练一轮','#2F9E44'); setTimeout(()=>LG.float({x:y.x+30,y:y.y+22},'电费 −¥'+elec.toFixed(2),'#999'),160);
+  for(let i=0;i<n;i++) LG.hist('ok','轮');
+  S.log.push(`第 ${S.rounds} 轮 · +${samples} 样本 · 电费 −¥${elec.toFixed(2)}`); const lg=document.getElementById('log'); lg.innerHTML=S.log.slice(-5).map(t=>`<div>${t}</div>`).join('');
+  if(n>=4){ LG.shake(stage); LG.say('一次四行……显存在发烫！'); } else if(n>=2) LG.say(LG.pick(['两轮一起训，省电。','一口气塞进去了！']));
+  if(S.level>oldL){ LG.float(winPos(WX+60,WY+120),'层级 '+S.level+' · 提速','#2932E1'); LG.say('速度上去了，我也跟紧。'); }
+  stats();
+  // particles along cleared rows
+  for(const r of S.clear.rows) for(let c=0;c<COLS;c++){ const b=B[r][c]; for(let k=0;k<2;k++) S.parts.push({x:c*CELL+CELL/2,y:(r-VIS)*CELL+CELL/2,vx:(Math.random()-.5)*160,vy:(Math.random()-.9)*140,l:1,c:b?b.c:'#fff'}); }
+}
+function finishClear(){
+  const rows=S.clear.rows; for(const r of rows){ B.splice(r,1); B.unshift(Array(COLS).fill(null)); } S.clear=null; spawn(); panels();
+}
+function gameOver(){
+  S.state='over'; S.over=true; cur=null; plan=null; stats();
+  const ov=document.getElementById('ov'); ov.style.display='flex';
+  ov.innerHTML=`<pre class="cons">THCudaCheck FAIL file=/tmp/luarocks_cutorch/lib/THC/THCGeneral.c line=66 error=2 : out of memory
+cudaMalloc failed: out of memory (2 vs. 0)
+*** Check failure stack trace: ***
+    @ 0x7f3a1c  caffe::SyncedMemory::to_gpu()</pre>
+    <h2 style="color:var(--red)">显存不足 · CUDA out of memory</h2>
+    <p>这一局训练了 <b style="color:var(--ink)">${S.rounds}</b> 轮　层级 ${S.level}　共 ${S.samples} 条样本<br>毛收入 ¥${S.gross.toFixed(1)} − 电费 ¥${S.elec.toFixed(1)} = <b style="color:var(--red)">¥${S.pay.toFixed(1)}</b><br>灵光的建议你采纳了 ${S.adopt} / ${S.placed} 次</p>
+    <button class="btn" id="again">重新分配显存（空格）</button>`;
+  document.getElementById('again').onclick=reset;
+  LG.say(S.rounds>=16?'塞了这么多轮……显卡都烫手了。':S.rounds>=6?'下次我们把缝填满一点。':'这么快就满了……');
+  LG.shake(stage);
+}
+
+// ───────────────────────── loop ─────────────────────────
+function step(dt){
+  S.t+=dt;
+  if(S.clear){ S.clear.t-=dt; if(S.clear.t<=0) finishClear(); return; }
+  if(!cur) return;
+  // DAS / ARR for left and right
+  const d=S.das; if(d.dir){ d.t-=dt; if(d.t<=0){ tryMove(d.dir,0); d.t=.045; } }
+  S.drop+=dt; const gi=S.soft?.035:grav();
+  while(S.drop>=gi&&cur){ S.drop-=gi; if(!tryMove(0,1)){ break; } }
+  if(cur&&onGround()){ S.lock+=dt; if(S.lock>=(S.soft?.12:.5)) { lockPiece(); } } else S.lock=0;
+  if(S.frac>.8&&Math.random()<dt*.15) LG.say(LG.pick(['显存快满了！','再往上就要爆了……','别叠这么高啊。']));
+}
+function drawWell(){
+  const g=wg, W=COLS*CELL, H=(ROWS-VIS)*CELL;
+  const bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#1C2238'); bg.addColorStop(1,'#10142A'); g.fillStyle=bg; g.fillRect(0,0,W,H);
+  g.strokeStyle='rgba(255,255,255,.05)'; g.lineWidth=1; g.beginPath(); for(let c=1;c<COLS;c++){ g.moveTo(c*CELL+.5,0); g.lineTo(c*CELL+.5,H); } for(let r=1;r<ROWS-VIS;r++){ g.moveTo(0,r*CELL+.5); g.lineTo(W,r*CELL+.5); } g.stroke();
+  // danger line (3 rows from the top)
+  g.fillStyle='rgba(255,107,107,.08)'; g.fillRect(0,0,W,CELL*3);
+  // locked cells
+  for(let r=VIS;r<ROWS;r++)for(let c=0;c<COLS;c++){ const b=B&&B[r][c]; if(b) cell(g,c*CELL,(r-VIS)*CELL,CELL,b.c,b.lab); }
+  if(S.clear){ const k=Math.max(0,S.clear.t/.3); for(const r of S.clear.rows){ g.fillStyle=`rgba(255,255,255,${1-k*.4})`; g.fillRect(0,(r-VIS)*CELL,W*(1-k),CELL); g.fillStyle=`rgba(255,255,255,${k*.5})`; g.fillRect(0,(r-VIS)*CELL,W,CELL); } }
+  if(cur){
+    // 灵光's ghost
+    if(plan){ g.save(); g.strokeStyle='#B7A9FF'; g.fillStyle='rgba(138,120,232,.22)'; g.lineWidth=2; g.setLineDash([5,3]);
+      for(const c of cellsOf({m:plan.m,x:plan.x,y:plan.y})){ const x=c.x*CELL,y=(c.y-VIS)*CELL; g.fillRect(x+1,y+1,CELL-2,CELL-2); g.strokeRect(x+2,y+2,CELL-4,CELL-4); }
+      g.setLineDash([]); const pc=cellsOf({m:plan.m,x:plan.x,y:plan.y})[0]; g.fillStyle='#8A78E8'; g.fillRect(pc.x*CELL,(pc.y-VIS)*CELL-1,16,14); g.fillStyle='#fff'; g.font=`bold 10px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillText('灵',pc.x*CELL+8,(pc.y-VIS)*CELL+6); g.restore(); }
+    // ordinary landing shadow
+    const sy=dropY(cur.m,cur.x,cur.y); g.save(); g.strokeStyle='rgba(255,255,255,.35)'; g.lineWidth=1.5; for(const c of cellsOf({m:cur.m,x:cur.x,y:sy})) if(c.y>=VIS) g.strokeRect(c.x*CELL+2,(c.y-VIS)*CELL+2,CELL-4,CELL-4); g.restore();
+    // current piece
+    const m=cur.m, N=m.length; for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(m[r][c]&&cur.y+r>=VIS) cell(g,(cur.x+c)*CELL,(cur.y+r-VIS)*CELL,CELL,cur.c,m[r][c]===2?cur.short:null);
+    // layer name tag above the piece
+    g.save(); g.font=`bold 11px ${FONT}`; g.textAlign='center'; g.fillStyle='rgba(255,255,255,.85)'; const cs=cellsOf(cur); const mx=cs.reduce((s,c)=>s+c.x,0)/cs.length*CELL+CELL/2, my=Math.min(...cs.map(c=>c.y))-VIS; if(my>=1) g.fillText(cur.name,mx,my*CELL-3); g.restore();
+  }
+  if(S.trail){ const t=S.trail; g.globalAlpha=t.l*.35; g.fillStyle=t.c; for(const c of cellsOf({m:t.m,x:t.x,y:t.y0})){ g.fillRect(c.x*CELL+4,(c.y-VIS)*CELL,CELL-8,(t.y1-t.y0)*CELL); } g.globalAlpha=1; t.l-=.08; if(t.l<=0) S.trail=null; }
+  if(S.lockFx){ g.globalAlpha=S.lockFx.l*.7; g.fillStyle='#fff'; for(const c of S.lockFx.cells) if(c.y>=VIS) g.fillRect(c.x*CELL,(c.y-VIS)*CELL,CELL,CELL); g.globalAlpha=1; S.lockFx.l-=.15; if(S.lockFx.l<=0) S.lockFx=null; }
+  for(const p of S.parts){ p.x+=p.vx/60; p.y+=p.vy/60; p.vy+=9; p.l-=.025; g.globalAlpha=Math.max(0,p.l); g.fillStyle=p.c; g.fillRect(p.x-2,p.y-2,5,5); } g.globalAlpha=1; S.parts=S.parts.filter(p=>p.l>0);
+  if(S.state==='pause'){ g.fillStyle='rgba(16,20,42,.75)'; g.fillRect(0,0,W,H); g.fillStyle='#fff'; g.font=`bold 20px ${FONT}`; g.textAlign='center'; g.fillText('已暂停 · 按 P 继续',W/2,H/2); }
+}
+let last=performance.now();
+function loop(t){ const dt=Math.min(.05,(t-last)/1000); last=t; if(S.state==='play') step(dt); drawWell(); requestAnimationFrame(loop); }
+
+// ───────────────────────── input ─────────────────────────
+addEventListener('keydown',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(k===' '||k==='Enter'){ e.preventDefault(); if(S.state==='play'&&k===' ') hardDrop(); else if(S.state!=='play'&&S.state!=='pause') reset(); return; }
+  if(k==='p'){ if(S.state==='play') S.state='pause'; else if(S.state==='pause') S.state='play'; return; }
+  if(S.state!=='play') return;
+  if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp'].includes(k)) e.preventDefault();
+  if(e.repeat) return;
+  if(k==='ArrowLeft'){ S.das.dir=-1; S.das.t=.16; tryMove(-1,0); }
+  else if(k==='ArrowRight'){ S.das.dir=1; S.das.t=.16; tryMove(1,0); }
+  else if(k==='ArrowDown') S.soft=true;
+  else if(k==='ArrowUp'||k==='x') rotate(1);
+  else if(k==='z') rotate(-1);
+  else if(k==='c'||k==='Shift') doHold();
+});
+addEventListener('keyup',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(k==='ArrowLeft'&&S.das.dir===-1) S.das.dir=0; if(k==='ArrowRight'&&S.das.dir===1) S.das.dir=0; if(k==='ArrowDown') S.soft=false;
+});
+LG.onSkill=()=>{ if(cur&&S.state==='play') makePlan(); };
+
+// start screen
+B=newBoard(); for(let i=0;i<5;i++) queue.push(nextType()); panels(); stats();
+const ov=document.getElementById('ov'); ov.style.display='flex';
+ov.innerHTML=`<h2>🧱 显存俄罗斯方块</h2><p>你的显卡是 GTX 980 Ti，6 GB 显存，就是中间这口井。<br>掉下来的是模型的各种层：<b style="color:var(--ink)">卷积 3×3、全连接、注意力、Dropout</b>……<br>把一行塞满 = <b style="color:var(--ink)">一轮训练装下了</b>，得样本和钱，扣一点电费。叠到顶就是 CUDA out of memory。<br>紫色虚线是<b style="color:var(--ai)">灵光建议的位置</b>——它水平越高，指得越准。</p>
+ <div class="keys"><b>←</b><b>→</b> 移动　<b>↑</b> 旋转　<b>↓</b> 软降　<b>空格</b> 直落　<b>C</b> 暂存　<b>P</b> 暂停</div><button class="btn" id="go">开始训练（空格）</button>`;
+document.getElementById('go').onclick=reset;
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

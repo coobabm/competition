@@ -115,6 +115,8 @@ namespace LingGuangV05.XingGuang.Tests
         public void AWrongPickOnTheArithmeticDeskCostsHalfARightAnswerAndBreaksTheCombo()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            sim.S.teachMode = false; // the plain combo and the fine are what is being priced
+            sim.SelectDesk("arith");
             Assert.AreEqual("arith", sim.S.desk);
             var first = sim.Card("arith");
             Assert.IsTrue(sim.Answer("arith", first.truth, host).correct);
@@ -136,6 +138,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TheFineScalesWithTheRaiseAndNotWithTheCombo()
         {
             var plain = new XgSim { GoldChance = 0 }; var raised = new XgSim { GoldChance = 0 };
+            plain.S.teachMode = raised.S.teachMode = false;
             raised.S.payRaise = 5;
             var host = new Host { money = 1000 };
             raised.S.combo = 40; raised.S.comboTimer = 5;
@@ -149,6 +152,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TheFineNeverTakesMoreThanTheWalletHolds()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = .1 };
+            sim.S.teachMode = false; // fines belong to the classic scoring; taught answers are never fined
             var card = sim.Card("arith");
             var r = sim.Answer("arith", !card.truth, host);
             Assert.AreEqual(.1, r.fine, 1e-9);
@@ -171,9 +175,30 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void ATaughtAnswerIsNeverFined()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            Assert.IsTrue(sim.S.teachMode, "teaching mode is the default");
+            int taught = 0;
+            for (int i = 0; i < 60; i++)
+            {
+                var card = sim.Card("arith");
+                if (!sim.TeachingGuess(card, out _)) continue;
+                taught++;
+                double before = host.money;
+                var r = sim.Answer("arith", !card.truth, host);
+                Assert.IsFalse(r.correct);
+                Assert.AreEqual(0, r.fine); Assert.AreEqual(before, host.money, 1e-9);
+            }
+            Assert.Greater(taught, 0);
+            Assert.AreEqual(0, sim.S.handFines);
+        }
+
+        [Test]
         public void TheFineSurvivesAReload()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            sim.S.teachMode = false;
             sim.Answer("arith", !sim.Card("arith").truth, host);
             double fines = sim.S.handFines;
             Assert.Greater(fines, 0);
@@ -186,6 +211,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TheDraggedSpiderAnswersLikeAHandAndItsMistakesCostMoney()
         {
             var sim = WithCheckpoint("arith", .75); var host = new Host { money = 5000 };
+            sim.S.teachMode = false; // a taught answer builds its own streak and is never fined
             sim.S.desk = "arith";
             int right = 0, wrong = 0, n = 400; double fines = 0, paid = 0;
             for (int i = 0; i < n; i++)

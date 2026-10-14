@@ -16,11 +16,12 @@ namespace LingGuangV05.XingGuang
         public int StageFor(XgTrack track) => track == XgTrack.Vision ? S.stageVision : S.stageSequence;
         public bool ProjectActive => S.project != null && S.project.started && !S.project.completed;
         public bool ProjectAwaitingAnswer => ProjectActive && S.project.awaitingAnswer;
-        public bool EndingAvailable => S.project != null && S.project.completed && !S.chapterComplete;
+        public bool EndingAvailable => S.project != null && S.project.completed && !S.chapterComplete && !S.endingReflectionAnswered;
         public static bool ArchitectureFits(XgArch arch, XgTrack track) => arch != null && (arch.shared || arch.track == track);
 
         void PrepareProgression(bool newGame)
         {
+            if (S.chapterComplete && string.IsNullOrEmpty(S.ending)) { S.endingReflectionAnswered = true; S.chapterComplete = false; }
             if (S.unlocked == null) S.unlocked = new List<string>();
             if (S.owned == null) S.owned = new List<string>();
             if (S.walls == null) S.walls = new List<string>();
@@ -38,7 +39,7 @@ namespace LingGuangV05.XingGuang
                 S.vision.depth = S.sequence.depth = 1;
                 S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
                 S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
-                S.desk = "arith"; // the easy desk first; logic pays more once the player is ready
+                S.desk = "spam"; // start with a recognisable teaching card
                 S.stage = S.stageVision = S.stageSequence = 1;
                 S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
                 S.firstSpecialty = "";
@@ -127,11 +128,13 @@ namespace LingGuangV05.XingGuang
             return Has("mlp") ? "mlp" : "perceptron";
         }
 
+        public const double StoryResearchPrice = .25;
         public double NodeCost(XgNode node)
         {
             if (node == null) return double.PositiveInfinity;
             if (node.tree == "label") return LabelNodeCost(node);
-            return node.cost;
+            // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
+            return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)));
         }
 
         public bool NodeVisible(XgNode node)
@@ -266,7 +269,7 @@ namespace LingGuangV05.XingGuang
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
         /// <summary>Stage one opens arithmetic, logic, common sense and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (id == "arith" || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (id == "arith" || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
 
         void ObserveProgression(XgRun run)
         {
@@ -596,7 +599,7 @@ namespace LingGuangV05.XingGuang
         public bool EndingAnswer(bool regret)
         {
             if (!EndingAvailable) return false;
-            S.endingRegret = regret; S.chapterComplete = true;
+            S.endingRegret = regret; S.endingReflectionAnswered = true;
             ChapterFinished?.Invoke(regret); return true;
         }
     }

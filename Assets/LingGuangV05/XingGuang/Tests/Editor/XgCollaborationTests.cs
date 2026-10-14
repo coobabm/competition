@@ -356,6 +356,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(0, mode(false), "Do not show the ending before its story message");
             Assert.AreEqual(2, mode(true));
             Assert.IsTrue(sim.EndingAnswer(false));
+            Assert.AreEqual(0, mode(false)); Assert.AreEqual(0, mode(true), "answered: back to cards; the chapter-two preview waits until the whole chapter is complete");
+            sim.S.chapterComplete = true;
             Assert.AreEqual(3, mode(false)); Assert.AreEqual(3, mode(true));
         }
 

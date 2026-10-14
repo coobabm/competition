@@ -1,4 +1,5 @@
 using System;
+using LingGuangV05.Runtime;
 using System.Collections.Generic;
 using System.Text;
 using LingGuangV05.Core;
@@ -12,10 +13,9 @@ namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
     /// 养成 › 道具 (lingguang-redesign/index.html #items): the items the tech tree sells, shelved by category (结构,
-    /// 技巧, 电力; later 数据, 挣钱, 剧情) from the data-driven list in <see cref="XgItems"/>, and the 消耗品 shelf: packs
-    /// of things used up on the 训练 page (XgSim.Consumables.cs). A card shows the year, the
+    /// 技巧, 电力; later 数据, 挣钱, 剧情) from the data-driven list in <see cref="XgItems"/>. A card shows the year, the
     /// ability discount (参数量与数据量主线 §6), the note, the price and whether it is owned; buying is the tree's own
-    /// purchase. Width, depth, packs, automation and the rest of the tree are one click away under 科技树.
+    /// purchase. Width, depth, packs and the rest of the tree are one click away under 科技树.
     /// </summary>
     public sealed class XgItemsPage : XgPage
     {
@@ -31,21 +31,10 @@ namespace LingGuangV05.Desktop.XingGuang
             public XgBtn buy;
         }
 
-        /// <summary>A card of the 消耗品 shelf: a pack to buy, and how many are in stock.</summary>
-        sealed class ConsumableCard
-        {
-            public XgConsumableDef def;
-            public RectTransform rt;
-            public Image rim;
-            public TMP_Text name, effect, note, state;
-            public XgBtn buy;
-        }
-
         TMP_Text header, motto;
         XgBtn treeLink;
         RectTransform content;
         readonly List<Card> cards = new List<Card>();
-        readonly List<ConsumableCard> consumableCards = new List<ConsumableCard>();
         readonly List<TMP_Text> shelfTitles = new List<TMP_Text>();
         string signature = "";
 
@@ -59,7 +48,7 @@ namespace LingGuangV05.Desktop.XingGuang
             treeLink = ui.Button(root, "", () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab("tree"); }, 13);
             PlaceTopRight(treeLink, 222, 0, 220, 30);
             treeLink.rt.gameObject.name = "TechTreeLink";
-            UiTip.Add(treeLink.rt, () => T("科技树：加宽、加深的上限，数据包，自动化（crontab、守护进程），研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech tree: width and depth caps, data packs, automation (crontab, daemon), research, the server room and the pre-training secret. Hold a node 0.6 s to buy."));
+            UiTip.Add(treeLink.rt, () => T("科技树：加宽、加深的上限，数据包，研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech tree: width and depth caps, data packs, research, the server room and the pre-training secret. Hold a node 0.6 s to buy."));
 
             var list = Rect("List", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -38));
             list.gameObject.AddComponent<RectMask2D>();
@@ -124,29 +113,26 @@ namespace LingGuangV05.Desktop.XingGuang
             var shown = Shown();
             var sig = new StringBuilder();
             foreach (var (def, _) in shown) sig.Append(def.id).Append(',');
-            sig.Append("|packs");
             if (sig.ToString() != signature) { signature = sig.ToString(); Rebuild(shown); }
 
             int owned = 0;
             foreach (var c in cards) if (Sim.Has(c.node.id)) owned++;
-            header.text = T("道具 · 结构、技巧和消耗品", "ITEMS · structures, techniques and consumables") + "  <color=#3A5566>" + owned + "/" + cards.Count + "</color>";
+            header.text = T("道具 · 结构和技巧", "ITEMS · structures and techniques") + "  <color=#3A5566>" + owned + "/" + cards.Count + "</color>";
             motto.text = T("不买也能通关，只是更慢、更贵", "You can finish without them; it is slower and dearer");
             int treeBuyable = TreeBuyableCount();
-            treeLink.Set(T("科技树 · 加宽 加深 自动化 ↗", "Tech tree · width, depth, automation ↗") + (treeBuyable > 0 ? "  <color=#FAC775>" + treeBuyable + "</color>" : ""), true, null, XgDark.Link);
+            treeLink.Set(T("科技树 · 加宽 加深 研究 ↗", "Tech tree · width, depth, research ↗") + (treeBuyable > 0 ? "  <color=#FAC775>" + treeBuyable + "</color>" : ""), true, null, XgDark.Link);
             foreach (var c in cards) RefreshCard(c);
-            foreach (var c in consumableCards) RefreshConsumable(c);
         }
 
         void Rebuild(List<(XgItemDef def, XgNode node)> shown)
         {
             foreach (Transform child in content) UnityEngine.Object.Destroy(child.gameObject);
-            cards.Clear(); consumableCards.Clear(); shelfTitles.Clear();
+            cards.Clear(); shelfTitles.Clear();
             float y = 0;
             foreach (var category in XgItems.Order)
             {
-                bool packs = category == XgItemCategory.Consumable;
-                var group = packs ? null : shown.FindAll(x => x.def.category == category);
-                int count = packs ? XgConsumables.All.Length : group.Count;
+                var group = shown.FindAll(x => x.def.category == category);
+                int count = group.Count;
                 if (count == 0) continue;
                 var title = ui.Text(Strip("Shelf " + category, content, y, ShelfHead, 2, 2), XgItems.CategoryName(category, Sim.English) + "  <color=#3A5566>" + count + "</color>", 13, XgDark.Muted, TextAlignmentOptions.BottomLeft);
                 title.characterSpacing = 4;
@@ -156,63 +142,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     int col = k % 3, row = k / 3;
                     float top = y + row * (CardHeight + Gap);
-                    if (packs) consumableCards.Add(MakeConsumableCard(XgConsumables.All[k], col, top));
-                    else cards.Add(MakeCard(group[k].def, group[k].node, col, top));
+                    cards.Add(MakeCard(group[k].def, group[k].node, col, top));
                 }
                 y += ((count + 2) / 3) * (CardHeight + Gap) + 4;
             }
             content.sizeDelta = new Vector2(0, y);
-        }
-
-        ConsumableCard MakeConsumableCard(XgConsumableDef def, int col, float y)
-        {
-            var c = new ConsumableCard { def = def };
-            var rt = Rect("Pack " + def.id, content, new Vector2(col / 3f, 1), new Vector2((col + 1) / 3f, 1), new Vector2(col == 0 ? 0 : Gap / 2, -y - CardHeight), new Vector2(col == 2 ? 0 : -Gap / 2, -y));
-            c.rt = rt;
-            c.rim = Panel(rt, XgDark.Line);
-            Panel(Rect("Inner", rt, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), XgDark.Card).raycastTarget = false;
-            c.name = ui.Text(Rect("Name", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -32), new Vector2(-96, -6)), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            c.name.textWrappingMode = TextWrappingModes.NoWrap; c.name.overflowMode = TextOverflowModes.Ellipsis;
-            c.effect = ui.Text(Rect("Effect", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -54), new Vector2(-10, -32)), "", 12, XgDark.Params, TextAlignmentOptions.MidlineLeft);
-            c.effect.textWrappingMode = TextWrappingModes.NoWrap; c.effect.overflowMode = TextOverflowModes.Ellipsis;
-            c.note = ui.Text(Rect("Note", rt, Vector2.zero, Vector2.one, new Vector2(12, 34), new Vector2(-10, -54)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
-            c.note.overflowMode = TextOverflowModes.Ellipsis;
-            c.state = ui.Text(Rect("State", rt, Vector2.zero, new Vector2(1, 0), new Vector2(12, 8), new Vector2(-130, 32)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            c.state.textWrappingMode = TextWrappingModes.NoWrap; c.state.overflowMode = TextOverflowModes.Ellipsis;
-            c.buy = ui.Button(rt, "", () => BuyPack(c), 13);
-            c.buy.rt.gameObject.name = "BuyPack " + def.id;
-            c.buy.rt.anchorMin = c.buy.rt.anchorMax = new Vector2(1, 0);
-            c.buy.rt.offsetMin = new Vector2(-122, 8); c.buy.rt.offsetMax = new Vector2(-10, 32);
-            UiTip.Add(rt, () => "<b>" + T(def.name, def.nameEn) + "</b>\n" + T(def.note, def.noteEn) + "\n<color=#6F95A5>" + T(def.history, def.historyEn) + "</color>\n"
-                + T("在训练页的快捷栏里用（键盘 " + (Array.IndexOf(XgConsumables.All, def) + 1) + "）。不买也能通关。", "Used from the quick bar on the Training page (key " + (Array.IndexOf(XgConsumables.All, def) + 1) + "). You can finish without it."));
-            return c;
-        }
-
-        void RefreshConsumable(ConsumableCard c)
-        {
-            var def = c.def;
-            int stock = Sim.ConsumableCount(def.id);
-            bool full = stock + def.pack > XgSim.MaxStock, can = !full && Host.Money + 1e-9 >= def.price;
-            c.rim.color = stock > 0 ? XgDark.Good : can ? XgDark.Money : XgDark.Line;
-            c.name.text = T(def.name, def.nameEn);
-            c.effect.text = T(def.note, def.noteEn);
-            c.note.text = T(def.history, def.historyEn);
-            string cooldown = def.cooldown > 0 ? T(" · 冷却 " + N(def.cooldown, "0") + " 秒", " · cooldown " + N(def.cooldown, "0") + " s") : "";
-            c.state.text = stock > 0 ? "<color=#5DCAA5>" + T("已有 " + stock + " 个", "In stock: " + stock) + "</color>" + cooldown : "<color=#58798A>" + T("没有存货", "None in stock") + cooldown + "</color>";
-            c.buy.Set(full ? T("装满了", "Full") : "¥" + N(def.price, "0") + " / " + def.pack + T(" 个", ""), can, null, XgDark.Money);
-        }
-
-        void BuyPack(ConsumableCard c)
-        {
-            if (Sim.BuyConsumable(c.def.id, Host))
-            {
-                Fx.Play(XgJuice.Sfx.Id.Coin, 1, .7f);
-                Fx.Knock(c.rt, .06f);
-                Fx.Burst(Fx.At(c.buy.rt), 10, XgDark.Money, XgJuice.Shape.Yen, 200);
-                Fx.Float(Fx.At(c.rt, new Vector2(0, 30)), "+" + c.def.pack + " " + T(c.def.name, c.def.nameEn), XgDark.Good, 16, 34, .8f, 1.2f);
-                host.Refresh(true);
-            }
-            else { Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); }
         }
 
         Card MakeCard(XgItemDef def, XgNode node, int col, float y)
@@ -235,7 +169,8 @@ namespace LingGuangV05.Desktop.XingGuang
             c.buy = ui.Button(rt, "", () => Buy(c), 13);
             c.buy.rt.anchorMin = c.buy.rt.anchorMax = new Vector2(1, 0);
             c.buy.rt.offsetMin = new Vector2(-122, 8); c.buy.rt.offsetMax = new Vector2(-10, 32);
-            UiTip.Add(rt, () => Sim.NodeName(node) + "\n" + Sim.NodeNote(node) + (Sim.Has(node.id) ? "" : "\n\n" + Sim.Why(node, Host)));
+            UiTip.Add(rt, () => Sim.NodeName(node) + "\n" + Sim.NodeNote(node) + (Sim.Has(node.id) ? "" : "\n\n" + Sim.Why(node, Host)) + "\n<color=#6F95A5>" + T("点开看详细", "Click for details") + "</color>");
+            Clickable(rt, () => OpenDetail(Sim.NodeName(node), Sim.NodeNote(node), XgItemLore.Get(node.target ?? node.id, GameText.IsEnglish)));
             return c;
         }
 
@@ -246,7 +181,8 @@ namespace LingGuangV05.Desktop.XingGuang
             bool owned = status == XgSim.NodeStatus.Owned;
             c.rim.color = owned ? XgDark.Good : status == XgSim.NodeStatus.Buyable ? XgDark.Money : XgDark.Line;
             c.name.text = Sim.NodeName(node);
-            c.year.text = c.def.year > 0 ? c.def.year + (XgItems.Early(c.def) ? T(" · 提前", " · early") : "") : "";
+            string shownYear = XgCatalog.ShownYear(c.def.year);
+            c.year.text = XgItems.Early(c.def) ? (shownYear.Length > 0 ? shownYear + T(" · 提前", " · early") : T("提前", "early")) : shownYear;
             c.effect.text = Effect(node);
             c.note.text = Sim.NodeNote(node);
             double cost = Sim.NodeCost(node);
@@ -291,6 +227,52 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             return sb.ToString();
         }
+
+        // ───────────── detail panel: the card's one-liner on top, the popular-science text below ─────────────
+
+        RectTransform detail;
+        TMP_Text detailTitle, detailNote, detailBody;
+
+        /// <summary>A click anywhere on the card (except its buy button, which eats its own click) opens the detail panel.</summary>
+        static void Clickable(RectTransform rt, Action open)
+        {
+            var hit = rt.GetComponent<Image>();
+            if (hit == null) { hit = rt.gameObject.AddComponent<Image>(); hit.color = new Color(0, 0, 0, 0); }
+            hit.raycastTarget = true;
+            var b = rt.gameObject.AddComponent<Button>();
+            b.transition = Selectable.Transition.None;
+            b.onClick.AddListener(() => open());
+        }
+
+        void OpenDetail(string title, string note, string body)
+        {
+            if (detail == null)
+            {
+                detail = Rect("ItemDetail", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                Panel(detail, new Color(0, 0, 0, .55f));
+                var dimButton = detail.gameObject.AddComponent<Button>(); dimButton.transition = Selectable.Transition.None;
+                dimButton.onClick.AddListener(CloseDetail);
+                var box = Rect("Box", detail, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-300, -210), new Vector2(300, 210));
+                Panel(box, XgDark.Line);
+                Panel(Rect("Inner", box, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), XgDark.Card);
+                box.gameObject.AddComponent<Button>().transition = Selectable.Transition.None; // swallow clicks inside the box
+                detailTitle = ui.Text(Rect("Title", box, new Vector2(0, 1), Vector2.one, new Vector2(20, -48), new Vector2(-60, -14)), "", 20, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+                detailNote = ui.Text(Rect("Note", box, new Vector2(0, 1), Vector2.one, new Vector2(20, -80), new Vector2(-20, -50)), "", 14, XgDark.Params, TextAlignmentOptions.MidlineLeft);
+                detailBody = ui.Text(Rect("Body", box, Vector2.zero, Vector2.one, new Vector2(20, 20), new Vector2(-20, -92)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
+                detailBody.lineSpacing = 6; detailBody.overflowMode = TextOverflowModes.Ellipsis;
+                var close = ui.Button(box, "×", CloseDetail, 18);
+                close.rt.anchorMin = close.rt.anchorMax = Vector2.one;
+                close.rt.offsetMin = new Vector2(-46, -46); close.rt.offsetMax = new Vector2(-12, -12);
+            }
+            detailTitle.text = title;
+            detailNote.text = note;
+            detailBody.text = string.IsNullOrEmpty(body) ? T("（这一项还没写详细说明。）", "(No details yet.)") : body;
+            detail.SetAsLastSibling();
+            detail.gameObject.SetActive(true);
+            Fx.Play(XgJuice.Sfx.Id.Click);
+        }
+
+        void CloseDetail() { if (detail != null) detail.gameObject.SetActive(false); }
 
         void Buy(Card c)
         {

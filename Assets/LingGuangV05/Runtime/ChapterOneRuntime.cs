@@ -9,7 +9,7 @@ namespace LingGuangV05.Runtime
 {
     /// <summary>The sole clock and persistence owner. Never parent this to an app window.</summary>
     [DefaultExecutionOrder(-1500)]
-    public sealed class ChapterOneRuntime : MonoBehaviour
+    public sealed partial class ChapterOneRuntime : MonoBehaviour
     {
         public bool useDiskSave = true;
         public bool tickEnabled = true;
@@ -31,6 +31,10 @@ namespace LingGuangV05.Runtime
         [NonSerialized] bool initialized, dirty, notify, persistenceBlocked;
         float sinceSave, sinceNotify;
         internal Func<long> ClockOverride;
+#if UNITY_EDITOR
+        // Editor verification keeps additive Main reloads on the same isolated save root.
+        public static string VerificationSaveDirectory;
+#endif
         [NonSerialized] internal string SaveDirectoryOverride;
         long UtcNow => ClockOverride != null ? ClockOverride() : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -42,6 +46,9 @@ namespace LingGuangV05.Runtime
             initialized = true;
             if (useDiskSave)
             {
+#if UNITY_EDITOR
+                if (!string.IsNullOrEmpty(VerificationSaveDirectory)) SaveDirectoryOverride = VerificationSaveDirectory;
+#endif
                 store = new AtomicSaveStore(string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "LingGuangV05") : SaveDirectoryOverride);
                 profiles = new PlayerProfileStore(store);
                 if (TryRead(out var restored, out string message))
@@ -122,7 +129,7 @@ namespace LingGuangV05.Runtime
         void OnSimulationSignal(string name, string arg) { Signal?.Invoke(name, arg); }
 
         /// <summary>Story or other non-simulation state changed; save on the next interval.</summary>
-        public void MarkDirty() { dirty = true; }
+        public void MarkDirty() { Sim?.RecordFunds("其他收支"); dirty = true; }
 
         /// <summary>Raise a runtime-level signal (desktop events such as an app opening).</summary>
         public void RaiseSignal(string name, string arg = null) { Signal?.Invoke(name, arg); }
@@ -137,7 +144,7 @@ namespace LingGuangV05.Runtime
             sinceSave += dt;
             sinceNotify += dt;
             if (notify && sinceNotify >= .12f) { notify = false; sinceNotify = 0; Changed?.Invoke(); }
-            if (useDiskSave && dirty && sinceSave >= 15f) SaveNow();
+            if (useDiskSave && dirty && sinceSave >= 300f) SaveNow();
         }
 
         public bool SaveNow()

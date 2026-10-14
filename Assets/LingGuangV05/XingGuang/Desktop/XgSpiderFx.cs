@@ -81,7 +81,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Clear() { threads.Clear(); motes.Clear(); pulses.Clear(); reach.Clear(); digest = 0; ringT = thinkT = rippleT = -1; }
 
-        static Vector2 Belly(XgSpiderWalker w) => w.pos - w.Forward * 10 * w.size * w.bodyScale;
+        static Vector2 Belly(XgSpiderWalker w) => w.pos + w.offset - w.Forward * 10 * w.size * w.bodyScale;
 
         public void Tick(float dt, XgSpiderWalker w)
         {
@@ -161,7 +161,7 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var p in pulses)
             {
                 var l = p.leg;
-                var at = p.t < .5f ? Vector2.Lerp(l.foot, l.knee, p.t * 2) : Vector2.Lerp(l.knee, l.hipWorld, (p.t - .5f) * 2);
+                var at = p.t < .5f ? Vector2.Lerp(l.shown, l.knee, p.t * 2) : Vector2.Lerp(l.knee, l.hipWorld, (p.t - .5f) * 2);
                 var c = p.color; c.a = (1 - p.t * .5f) * alpha;
                 XgSoftDraw.Halo(vh, at, 5 * w.size, c, 12);
                 XgDraw.Disc(vh, at, 1.4f * w.size, Color.Lerp(c, Color.white, .5f), 8);

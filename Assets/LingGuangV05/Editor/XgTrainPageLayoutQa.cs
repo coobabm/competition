@@ -90,20 +90,24 @@ namespace LingGuangV05.EditorTools
                     sim.S.stage = 6; sim.S.trainedParamsK = 310;
                     sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 300000 });
                 }
-                sim.S.consumables.Add(new XgStack { id = "offpeak", count = 2 });
-                sim.S.consumables.Add(new XgStack { id = "redbull", count = 4, cooldown = 9 });
-                sim.S.consumables.Add(new XgStack { id = "ckpt", count = 1 });
-                sim.S.consumables.Add(new XgStack { id = "clean", count = 1 });
-                sim.S.offpeakRounds = 7; sim.S.redbullSeconds = 42; sim.S.rollbackGuards = 1;
                 for (int i = 0; i < 24; i++) sim.TrainEpoch(XgTrack.Vision, host);
 
                 var stub = new Stub { sim = sim, host = host };
                 var ui = new XgUi(font, null, true);
-                XgPage page = pageName == "items" ? (XgPage)new XgItemsPage() : new XgTrainPage();
+                if (pageName == "backpack")
+                {
+                    sim.S.relicPicks = 3;
+                    foreach (string id in new[] { "tieba", "redbull", "attention_scratch", "coupon", "tablet", "multimeter", "mining_1080" }) sim.GrantRelic(id);
+                    sim.MarkRelicsViewed();
+                    sim.GrantRelic("zhou_usb");
+                    sim.S.relicSeen.Add("angel_term");
+                }
+                XgPage page = pageName == "items" ? (XgPage)new XgItemsPage() : pageName == "backpack" ? new XgBackpackPage() : new XgTrainPage();
                 stub.tab = pageName;
                 page.Init(stub, ui);
                 page.Build(area);
                 page.root.gameObject.name = pageName;
+                if (pageName == "backpack") page.Shown();
                 if (pageName == "train") typeof(XgTrainPage).GetField("dataView", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(page, dataView);
                 page.Refresh();
                 Canvas.ForceUpdateCanvases();

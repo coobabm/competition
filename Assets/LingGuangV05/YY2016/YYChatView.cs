@@ -324,7 +324,7 @@ namespace LingGuangV05.Desktop.YY
                 row.GetComponent<Image>().color = on ? C.Selected : new Color(0, 0, 0, 0);
                 var conv = hub.Conversation(c.id);
                 var last = conv.messages.Count > 0 ? conv.messages[conv.messages.Count - 1] : null;
-                row.Find("Name").GetComponent<TMP_Text>().text = GameText.T(c.name, c.nameEn) + (c.group ? "" : c.online ? "" : Lang.T("  <size=12><color=#9AA4B2>[离线]</color></size>"));
+                row.Find("Name").GetComponent<TMP_Text>().text = (c.id == YYChatHub.EraGroup ? YYGroup.Title(c) : GameText.T(c.name, c.nameEn)) + (c.group ? "" : c.online ? "" : Lang.T("  <size=12><color=#9AA4B2>[离线]</color></size>"));
                 row.Find("Name").GetComponent<TMP_Text>().richText = true;
                 var previewLabel = row.Find("Preview").GetComponent<TMP_Text>();
                 YYFaceRenderer.Prepare(previewLabel);
@@ -336,8 +336,13 @@ namespace LingGuangV05.Desktop.YY
             }
 
             var contact = YYChatHub.Contact(hub.S.selected);
-            if (contact == null || !hub.IsVisible(contact)) contact = YYChatHub.Contacts[0];
-            peerName.text = GameText.T(contact.name, contact.nameEn);
+            if (contact == null || !hub.IsVisible(contact))
+            {
+                contact = System.Array.Find(YYChatHub.Contacts, hub.IsVisible);
+                if (contact == null) return;
+                hub.S.selected = contact.id;
+            }
+            peerName.text = contact.id == YYChatHub.EraGroup ? YYGroup.Title(contact) : GameText.T(contact.name, contact.nameEn);
             if (peerAvatarId != contact.id)
             {
                 peerAvatarId = contact.id;
@@ -346,6 +351,7 @@ namespace LingGuangV05.Desktop.YY
             }
             peerSign.text = (contact.group ? Lang.T("群 · ") : contact.online ? Lang.T("<color=#4CAF50>●</color> 在线 · ") : Lang.T("○ 离线 · ")) + GameText.T(contact.signature, contact.signatureEn);
             if (contact.id == YYChatHub.GirlfriendId && hub.Girlfriend != null) peerSign.text = hub.Girlfriend.StatusLine();
+            if (LingGuangShown) { string axes = hub.LingGuangTalk.AxisLine(); if (axes.Length > 0) peerSign.text = axes; }
             peerSign.richText = true;
             string remembers = contact.id == YYChatHub.LingGuangId && hub.LingGuangTalk != null ? hub.LingGuangTalk.MemoryLine() : "";
             memoryLine.text = remembers;
@@ -468,14 +474,30 @@ namespace LingGuangV05.Desktop.YY
             for (int i = 0; i < 2; i++)
             {
                 bool up = i == 0;
-                var b = FlatButton(scrollContent, up ? GameText.T("赞", "Up") : GameText.T("踩", "Down"), () => { talk.Rate(m, up); lastSignature = ""; dirty = true; }, 13, up ? C.Online : C.Badge, Color.white);
+                var b = FlatButton(scrollContent, up ? GameText.T("赞", "Up") : GameText.T("踩", "Down"), () => { string moved = talk.Rate(m, up); lastSignature = ""; dirty = true; if (moved.Length > 0) StartCoroutine(FloatUp(moved, up)); }, 13, up ? C.Online : C.Badge, Color.white);
                 var r = (RectTransform)b.transform;
                 r.anchorMin = r.anchorMax = new Vector2(0, 1);
                 r.offsetMin = new Vector2(x + i * (w + 6), bottom); r.offsetMax = new Vector2(x + i * (w + 6) + w, bottom + 24);
                 b.name = up ? "RateUp" : "RateDown";
                 var face = b.GetComponent<YYRoundRect>(); face.border = 1; face.borderColor = C.Line;
-                UiTip.Add(r, () => GameText.T("给它这句回复打分：每一下都是一张语气卡，它的语气习惯也跟着学。", "Rate this reply: each one is a tone card, and its tone habits learn from it too."));
+                UiTip.Add(r, () => GameText.T("给它的回复打分，效果在性格指示器里显示。", "Rate its reply. The effect shows on the personality meter."));
             }
+        }
+
+        /// <summary>「温度 +2」 rising over the conversation after a rating, then gone.</summary>
+        System.Collections.IEnumerator FloatUp(string text, bool up)
+        {
+            var label = Text(Rect("Float", messageArea.parent, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-160, 0), new Vector2(160, 26)), text, 16, up ? C.Online : C.Badge, TextAlignmentOptions.Center);
+            label.fontStyle = FontStyles.Bold;
+            var rt = label.rectTransform;
+            float bottom = messageArea.offsetMin.y + 20;
+            for (float t = 0; t < 1.2f && label != null; t += Time.unscaledDeltaTime)
+            {
+                rt.offsetMin = new Vector2(-160, bottom + t * 50); rt.offsetMax = new Vector2(160, bottom + 26 + t * 50);
+                var c = label.color; c.a = Mathf.Clamp01(1.5f - t * 1.25f); label.color = c;
+                yield return null;
+            }
+            if (label != null) Destroy(label.gameObject);
         }
 
         // Exact sender + prewritten-phrase whitelist. byAi only excludes the AI speaking for the player;

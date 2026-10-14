@@ -86,11 +86,11 @@ namespace LingGuangV05.Desktop.XingGuang
         public int VisibleNodeCount { get { int count = 0; foreach (var v in views) if (v.gameObject.activeSelf) count += v.entry.members.Count; return count; } }
         public bool IsNodeShown(string id) => views.Exists(v => v.Covers(id) && v.gameObject.activeSelf);
 
-        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "auto", "atlas" };
+        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "atlas" };
 
         static Color LaneColor(string lane) => lane == "vision" ? XgDark.Accent : lane == "sequence" ? new Color32(18, 135, 125, 255)
             : lane == "label" ? new Color32(200, 120, 30, 255) : lane == "trunk" ? new Color32(110, 90, 200, 255) : lane == "atlas" ? new Color32(20, 140, 160, 255)
-            : lane == "auto" ? new Color32(70, 130, 200, 255) : new Color32(150, 100, 230, 255);
+            : new Color32(150, 100, 230, 255);
         /// <summary>The four state colours of the package, in the dark palette.</summary>
         static readonly Color Affordable = XgDark.Good, Unaffordable = XgDark.Bad, LockedGrey = new Color32(74, 92, 106, 255), Maxed = XgDark.Gold;
 
@@ -209,7 +209,6 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "vision": return T("视觉", "Vision");
                 case "sequence": return T("序列", "Sequence");
                 case "research": return T("研究", "Research");
-                case "auto": return T("自动化", "Automation");
                 default: return T("图鉴 · 现象与能力", "Atlas · phenomena and abilities");
             }
         }
@@ -400,7 +399,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 int i = pair.Key;
                 bool visible = i <= stage;
                 pair.Value.gameObject.SetActive(visible);
-                if (visible) pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.StageYears[i] + "</color></size>" : "");
+                if (visible) pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.ShownYear(XgCatalog.StageYears[i]) + "</color></size>" : "");
                 if (visible && !miniButtons.ContainsKey(i))
                 {
                     int column = i;
@@ -569,7 +568,6 @@ namespace LingGuangV05.Desktop.XingGuang
                 case XgNodeKind.Width: return XgTechIcon.Kind.Channels;
                 case XgNodeKind.LrKnob: return XgTechIcon.Kind.Knob;
                 case XgNodeKind.Dataset: return XgTechIcon.Kind.Data;
-                case XgNodeKind.Auto: return XgTechIcon.Kind.Gear;
                 case XgNodeKind.Secret: return XgTechIcon.Kind.Key;
                 case XgNodeKind.Phenomenon: return XgTechIcon.Kind.Eye;
                 case XgNodeKind.Ability: return XgTechIcon.Kind.Star;
@@ -682,12 +680,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;
                 case "attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
                 case "caption": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
-                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n这是游戏中的提前突破；年份是真实历史。"; en = "Transformer · attention is all we need\nA fictional early discovery; the date is historical."; break;
+                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n全世界还没人走到这一步，你先到了。"; en = "Transformer · attention is all we need\nNobody else has got here yet. You did."; break;
                 default: return;
             }
             if (!built) return;
             Sync(true);
-            eraTitle.text = year + " · " + Lang.T("时代卡"); eraBody.text = T(zh, en);
+            string shownYear = XgCatalog.ShownYear(year);
+            eraTitle.text = (shownYear.Length > 0 ? shownYear + " · " : "") + Lang.T("时代卡"); eraBody.text = T(zh, en);
             eraCard.gameObject.SetActive(true); eraCard.SetAsLastSibling(); eraRemaining = 8;
             FocusFrontier();
             if (id == "transformer") { Fx.Flash(Color.white, .2f, .8f); Fx.HitStop(240); Fx.Shockwave(Fx.At(eraCard), XgDark.Gold, 500, .8f, 16); }

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 句子排序</title>
+<!--
+  句子排序: a shuffled, pre-segmented sentence sits in a tray of word tiles; drag a tile and the others slide aside (FLIP
+  animation). Submit: a correct order = labelled samples for 灵光. Then 灵光 shows its own ordering of the same sentence and
+  reads it out loud (as text), which is where the comedy comes from.
+  灵光 skill: it starts from the true order and applies random swaps; the expected number of swaps falls with skill
+  (about n at 25%, almost none at 97%). A sentence the player has ordered correctly before is "memorised": 灵光 gets it right
+  with 90% probability next time (kept in localStorage, so it persists across games).
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.sn-top{position:absolute;left:19px;right:19px;top:12px;display:flex;align-items:center;gap:14px;font-size:14px}
+.sn-top b{font-size:16px}
+.tb{flex:1;height:8px;background:#ECEEF2;border-radius:4px;overflow:hidden}.tb i{display:block;height:100%;background:var(--orange);width:100%}
+.sn-ins{position:absolute;left:19px;top:44px;font-size:15px}.sn-ins small{color:var(--mute);font-size:12px;margin-left:10px}
+.col{position:absolute;left:19px;top:76px;width:880px;display:flex;flex-direction:column;gap:12px}
+.tray{position:relative;width:880px;min-height:138px;background:repeating-linear-gradient(#FFFEF6 0 61px,#EADFB0 61px 62px);border:2px solid #E6D9A0;border-radius:10px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 10px;align-content:flex-start}
+.wd{font-size:23px;padding:7px 14px;background:#fff;border:2px solid #B9C4E6;border-radius:9px;box-shadow:0 3px 0 #B9C4E6;cursor:grab;white-space:nowrap;touch-action:none;position:relative;line-height:1.3}
+.wd:hover{border-color:var(--blue2)}
+.wd.sel{border-color:var(--blue);box-shadow:0 3px 0 var(--blue),0 0 0 3px #2932E133}
+.wd.drag{position:absolute;z-index:10;cursor:grabbing;box-shadow:0 12px 22px #0003;transform:rotate(-2deg) scale(1.06);transition:none}
+.wd.drop{transition:left .15s,top .15s}
+.wd.ok{background:#E3F6E8;border-color:#7FCF96;box-shadow:0 3px 0 #7FCF96;cursor:default}
+.wd.no{background:#FDE6E3;border-color:#F0968D;box-shadow:0 3px 0 #F0968D;cursor:default}
+.ph{border:2px dashed #B9C4E6;border-radius:9px;background:#EEF2FF88}
+.sn-btns{display:flex;gap:10px;align-items:center}
+.sn-btns span{color:var(--mute);font-size:12px}
+.rev{width:880px;display:none;flex-direction:column;gap:9px}
+.rr{display:flex;gap:12px;align-items:flex-start}
+.rr .lab{flex:none;width:78px;text-align:right;color:var(--mute);font-size:12px;padding-top:7px}
+.rr .lab.ai{color:var(--ai);font-weight:700}
+.rr .txt{font-size:19px;color:var(--green);font-weight:700;padding-top:2px;line-height:1.5}
+.aitiles{display:flex;flex-wrap:wrap;gap:6px}
+.at{font-size:17px;padding:4px 10px;border-radius:7px;border:2px solid #DCD6FB;background:var(--ai2);color:#4B3FA8;animation:pin .25s ease-out backwards}
+.at.ok{background:#E3F6E8;border-color:#7FCF96;color:#1E6B2E}.at.no{background:#FDE6E3;border-color:#F0968D;color:#A33A30}
+@keyframes pin{from{opacity:0;transform:translateY(-10px) scale(.8)}}
+.read{font-size:20px;color:#4B3FA8;background:var(--ai2);border:1px solid #DCD6FB;border-radius:10px;padding:5px 14px;line-height:1.5;min-height:36px}
+.read:after{content:"";}
+.vd{font-size:15px;line-height:1.7;margin-left:90px}
+.vd b{font-size:17px}
+.sn-next{margin-left:90px}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'sentence', title:'句子排序', subtitle:'把打乱的词拖回原位', icon:'句', dataset:'长句 · 语序',
+  stats:[['你排对','sOk'],['灵光排对','sAi'],['已完成','sDone','0 / 8'],['灵光背过的句子','sKnown'],['收入','sPay','¥0']], statsNote:'排对 = 样本',
+  aiHello:'我也想排排看。你先来。',
+  rule:'<b>玩法</b>：把词块拖成通顺的句子，每局 8 句。排对 = 2 条样本，基本对 = 1 条，越快越多钱。<br><span style="color:var(--ai)">你交卷后，灵光亮出它自己的排法，还会「读」给你听。你排对过的句子它会记住。</span>'
+});
+
+// ───────────────────────── sentences (pre-segmented with "/") ─────────────────────────
+const RAW=[
+ '今天/北京/的/天气/非常/适合/出去/放风筝。','这部/电影/的/特效/比/我/想象/中/好/得多。','小明/昨天/晚上/在/家里/看/了/一场/足球/比赛。','我/打算/下个月/和/朋友/一起/去/成都/吃/火锅。',
+ '地铁/二号线/因为/信号/故障/暂时/停运/了。','老板/要求/我们/周五/之前/把/方案/发给/他。','她/每天/早上/都/会/在/小区/里/跑步/半小时。','这家/餐厅/的/红烧肉/做得/特别/地道。',
+ '手机/没电/之后/我/才/发现/充电器/忘/带/了。','下班/高峰/期/路上/堵得/一动/也/不动。','他/把/所有/的/积蓄/都/投/进/了/股市。','图书馆/里/不能/大声/说话/也/不能/吃/东西。',
+ '网上/购物/已经/成为/年轻人/生活/的/一部分。','孩子们/在/操场/上/开心/地/玩/着/游戏。','中国/女排/在/里约/奥运会/上/夺得/了/金牌。','谷歌/的/围棋/程序/打败/了/世界/冠军/李世石。',
+ '很多/人/睡前/都/喜欢/刷/一会儿/朋友圈。','滴滴/和/优步/中国/在/今年/八月/宣布/合并。','春节/的/时候/大家/都/会/抢/微信/红包。','听说/这个/周末/会/下/一场/大/暴雨。',
+ '我/在/淘宝/上/买/了/一件/很/便宜/的/外套。','她/的/微博/一/晚上/就/多/了/十万/粉丝。','公司/新/推出/的/智能/手环/可以/监测/睡眠/质量。','机器/学习/需要/大量/带/标签/的/数据。',
+ '神经网络/的/层数/越/多/训练/就/越/费电。','这块/显卡/跑/一晚上/就/能/训练/完/这个/模型。','高考/结束/以后/同学们/终于/可以/好好/睡/一觉/了。','他/做事/总是/慢吞吞/的/让/人/很/着急。',
+ '北京/到/上海/的/高铁/只/需要/四个/半/小时。','夏天/到/了/大家/都/想/去/海边/度假。','老师/让/我们/把/课文/背/下来/再/默写/一遍。','新/版本/上线/后/用户/反馈/速度/快/了/很多。',
+ '他/因为/堵车/迟到/了/半个/小时/被/老板/批评/了。','直男/最/爱/说/的/一句/话/是/多/喝/热水。','外卖/小哥/冒着/大雨/把/午饭/送到/了/公司。','周杰伦/的/新/专辑/一/发布/就/卖/断货/了。',
+ '他的/手机/屏幕/摔碎/了/却/还/能/用。','傅园慧/说/自己/已经/使出/了/洪荒之力。'
+].map(s=>s.split('/'));
+RAW.forEach((t,i)=>{ if(t.length<6||t.length>12) console.warn('sentence length out of range',i,t.length); });
+const ROUND=8, TIME=45;
+const KEY='lg-sentence-known';
+const known=new Set((()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; } })());
+const saveKnown=()=>localStorage.setItem(KEY,JSON.stringify([...known]));
+
+stage.insertAdjacentHTML('beforeend',`
+ <div class="sn-top"><b id="snNo">第 1 / ${ROUND} 句</b><div class="tb"><i id="snT"></i></div><span id="snSec">${TIME}</span><span style="color:var(--mute)">秒</span></div>
+ <div class="sn-ins">把下面的词块拖成一句通顺的话<small>拖动换位　·　点一下选中，再用 ← → 挪动</small></div>
+ <div class="col"><div class="tray" id="tray"></div>
+ <div class="sn-btns"><button class="btn" id="submit">排好了（Enter）</button><button class="btn ghost" id="shuf">重新打乱（R）</button><span id="bonusT"></span></div>
+ <div class="rev" id="rev">
+   <div class="rr" id="ansRow"><span class="lab">正确答案</span><span class="txt" id="ans"></span></div>
+   <div class="rr"><span class="lab ai">灵光的排法</span><div class="aitiles" id="aiTiles"></div></div>
+   <div class="rr"><span class="lab ai">灵光读出来</span><div class="read" id="aiRead"></div></div>
+   <div class="vd" id="vd"></div>
+   <div class="sn-next"><button class="btn" id="next">下一句（空格）</button></div>
+ </div></div>
+ <div class="over" id="ov"></div>`);
+const tray=document.getElementById('tray');
+
+// ───────────────────────── state ─────────────────────────
+const S={state:'idle',idx:0,n:0,cur:null,curI:-1,t:TIME,ok:0,part:0,ai:0,pay:0,samples:0,done:[],phase:'order',used:[],sel:null,aiGood:0};
+const winPos=(x,y)=>{ const r=stage.getBoundingClientRect(), wr=document.getElementById('win').getBoundingClientRect(), k=wr.width/1236; return {x:(r.left-wr.left)/k+x, y:(r.top-wr.top)/k+y}; };
+const orderNow=()=>[...tray.querySelectorAll('.wd')].map(e=>e.textContent);
+const eq=(a,b)=>a.length===b.length&&a.every((x,i)=>x===b[i]);
+
+function pickSentence(){
+  const pool=RAW.map((_,i)=>i).filter(i=>!S.used.includes(i)), kn=pool.filter(i=>known.has(i)), un=pool.filter(i=>!known.has(i));
+  let i; if(kn.length&&(Math.random()<.25||!un.length)) i=LG.pick(kn); else i=LG.pick(un.length?un:pool);
+  S.used.push(i); return i;
+}
+function startGame(){
+  Object.assign(S,{state:'play',n:0,ok:0,part:0,ai:0,pay:0,samples:0,used:[],aiGood:0});
+  document.getElementById('ov').style.display='none'; document.getElementById('lgHist').innerHTML=''; newRound();
+  const s=LG.skill(); LG.say(s<.35?'我还分不清谁在前谁在后……你先排。':s<.7?'我大概知道主语该放前面。':'这种句子我很熟，等你排完我也排一遍。');
+}
+function newRound(){
+  S.n++; S.phase='order'; S.sel=null; S.curI=pickSentence(); S.cur=RAW[S.curI]; S.t=TIME;
+  let sh; do sh=LG.shuffle(S.cur); while(eq(sh,S.cur));
+  tray.innerHTML=''; sh.forEach(t=>tray.appendChild(mkTile(t)));
+  document.getElementById('rev').style.display='none'; document.querySelector('.sn-btns').style.display='flex'; document.getElementById('submit').disabled=false; document.getElementById('shuf').disabled=false;
+  document.getElementById('snNo').textContent=`第 ${S.n} / ${ROUND} 句`; stats();
+  
+}
+function mkTile(t){ const e=document.createElement('div'); e.className='wd'; e.textContent=t; e.onpointerdown=onDown; e.onpointermove=onMove; e.onpointerup=onUp; e.onpointercancel=onUp; return e; }
+function stats(){
+  LG.set('sOk',S.ok+(S.part?'（+'+S.part+' 基本对）':'')); LG.set('sAi',S.ai); LG.set('sDone',(S.state==='play'?(S.phase==='reveal'?S.n:S.n-1):S.n)+' / '+ROUND); LG.set('sKnown',known.size+' / '+RAW.length); LG.set('sPay','¥'+S.pay.toFixed(1));
+}
+
+// ───────────────────────── drag & drop with FLIP reorder ─────────────────────────
+let drag=null;
+function flip(fn){
+  const els=[...tray.children].filter(c=>!drag||c!==drag.el); const before=new Map(els.map(c=>[c,[c.offsetLeft,c.offsetTop]]));
+  fn();
+  const moving=[]; for(const c of els){ const b=before.get(c), dx=b[0]-c.offsetLeft, dy=b[1]-c.offsetTop; if(dx||dy){ c.style.transition='none'; c.style.transform=`translate(${dx}px,${dy}px)`; moving.push(c); } }
+  void tray.offsetWidth;
+  for(const c of moving){ c.style.transition='transform .18s ease-out'; c.style.transform=''; setTimeout(()=>{ if(c.style.transform==='') c.style.transition=''; },220); }
+}
+function onDown(e){
+  if(S.phase!=='order'||e.button>0) return; const el=e.currentTarget, p=LG.local(e,tray);
+  drag={el,dx:p.x-el.offsetLeft,dy:p.y-el.offsetTop,sx:p.x,sy:p.y,moved:false,id:e.pointerId,ph:null}; el.setPointerCapture(e.pointerId);
+}
+function onMove(e){
+  if(!drag||e.pointerId!==drag.id) return; const p=LG.local(e,tray);
+  if(!drag.moved){ if(Math.hypot(p.x-drag.sx,p.y-drag.sy)<5) return; startDrag(); }
+  const el=drag.el; el.style.left=(p.x-drag.dx)+'px'; el.style.top=(p.y-drag.dy)+'px'; place(p);
+}
+function startDrag(){
+  const el=drag.el; drag.moved=true; select(null);
+  const w=el.offsetWidth,h=el.offsetHeight,l=el.offsetLeft,t=el.offsetTop, ph=document.createElement('div'); ph.className='ph'; ph.style.width=w+'px'; ph.style.height=h+'px';
+  tray.insertBefore(ph,el); el.style.width=w+'px'; el.style.height=h+'px'; el.style.left=l+'px'; el.style.top=t+'px'; el.classList.add('drag'); drag.ph=ph;
+}
+// Put the placeholder next to the tile nearest to the pointer: before it if the pointer is left of its centre, else after it.
+function place(p){
+  const others=[...tray.children].filter(c=>c!==drag.el&&c!==drag.ph); if(!others.length) return;
+  let best=null,bd=1e9; for(const c of others){ const cx=c.offsetLeft+c.offsetWidth/2, cy=c.offsetTop+c.offsetHeight/2, d=Math.pow(p.x-cx,2)+Math.pow((p.y-cy)*2.4,2); if(d<bd){ bd=d; best=c; } }
+  const cx=best.offsetLeft+best.offsetWidth/2, ref=(p.x<cx)?best:best.nextSibling;
+  if(best===drag.ph) return; if(ref===drag.ph||drag.ph.nextSibling===ref) return;
+  flip(()=>tray.insertBefore(drag.ph,ref));
+}
+function onUp(e){
+  if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null;
+  if(!d.moved){ select(S.sel===d.el?null:d.el); return; }
+  const el=d.el, ph=d.ph; el.classList.add('drop'); el.style.left=ph.offsetLeft+'px'; el.style.top=ph.offsetTop+'px'; el.style.transform='rotate(0) scale(1)';
+  setTimeout(()=>{ if(ph.parentNode){ el.classList.remove('drag','drop'); el.style.cssText=''; tray.replaceChild(el,ph); } },160);
+}
+function select(el){ if(S.sel) S.sel.classList.remove('sel'); S.sel=el; if(el) el.classList.add('sel'); }
+function nudge(dir){
+  const el=S.sel; if(!el||S.phase!=='order') return; const kids=[...tray.children], i=kids.indexOf(el), j=i+dir; if(j<0||j>=kids.length) return;
+  flip(()=>{ if(dir<0) tray.insertBefore(el,kids[j]); else tray.insertBefore(el,kids[j].nextSibling); });
+}
+
+// ───────────────────────── 灵光's ordering ─────────────────────────
+function aiOrder(ans,idx){
+  const s=LG.skill(), n=ans.length; let out=ans.slice(), swaps;
+  if(known.has(idx)&&Math.random()<.9) return {order:out,memo:true};
+  const expect=Math.pow(1-s,1.3)*n*1.15; swaps=Math.round(expect*(.6+.8*Math.random()));
+  if(s>.9) swaps=Math.random()<.65?0:1;
+  for(let k=0;k<swaps;k++){ const a=LG.rnd(n); let b=LG.rnd(n); if(s>.7) b=Math.min(n-1,Math.max(0,a+(Math.random()<.5?-1:1))); [out[a],out[b]]=[out[b],out[a]]; }
+  if(s<.5&&eq(out,ans)){ const a=LG.rnd(n-1); [out[a],out[a+1]]=[out[a+1],out[a]]; }
+  return {order:out,memo:false};
+}
+
+// ───────────────────────── submit & reveal ─────────────────────────
+function submit(){
+  if(S.state!=='play'||S.phase!=='order') return; S.phase='reveal'; select(null);
+  const mine=orderNow(), ans=S.cur, right=eq(mine,ans), pos=mine.filter((t,i)=>t===ans[i]).length, frac=pos/ans.length;
+  // tiles coloured by position
+  [...tray.querySelectorAll('.wd')].forEach((e,i)=>e.classList.add(e.textContent===ans[i]?'ok':'no'));
+  document.getElementById('submit').disabled=true; document.getElementById('shuf').disabled=true; document.querySelector('.sn-btns').style.display='none';
+  let samples=0,money=0,msg;
+  if(right){ S.ok++; samples=2; money=1+Math.max(0,S.t)*.03; LG.hist('ok','✓'); msg=`<b style="color:var(--green)">排对了！</b> +2 条样本，用时 ${(TIME-S.t).toFixed(0)} 秒，速度奖励 ¥${(Math.max(0,S.t)*.03).toFixed(1)}`; }
+  else if(frac>=.7){ S.part++; samples=1; money=.5; LG.hist('ok','≈'); msg=`<b style="color:var(--orange)">基本通顺</b>（${pos}/${ans.length} 个词在位）。+1 条样本。`; }
+  else { LG.hist('no','✗'); msg=`<b style="color:var(--red)">顺序不对</b>（${pos}/${ans.length} 个词在位）。没有样本。`; }
+  S.pay+=money; S.samples+=samples; if(samples||money) LG.give(samples,+money.toFixed(2));
+  if(samples) LG.float(winPos(430,70),'+'+samples+' 条样本　+¥'+money.toFixed(1),'#2F9E44'); else LG.float(winPos(430,70),'没排对','#E33E33');
+  // reveal 灵光's version
+  const {order,memo}=aiOrder(ans,S.curI), aiRight=eq(order,ans); if(aiRight) S.ai++;
+  if(right){ known.add(S.curI); saveKnown(); }   // memorised only after 灵光 has had its turn
+  const rev=document.getElementById('rev'); rev.style.display='flex';
+  document.getElementById('ansRow').style.display=right?'none':'flex'; document.getElementById('ans').textContent=ans.join('');
+  const at=document.getElementById('aiTiles'); at.innerHTML=''; order.forEach((t,i)=>{ const e=document.createElement('span'); e.className='at '+(t===ans[i]?'ok':'no'); e.textContent=t; e.style.animationDelay=(i*70)+'ms'; at.appendChild(e); });
+  const rd=document.getElementById('aiRead'), line=order.join(''); rd.textContent=''; let k=0; clearInterval(S.tw);
+  setTimeout(()=>{ S.tw=setInterval(()=>{ rd.textContent=line.slice(0,++k); if(k>=line.length) clearInterval(S.tw); },55); },order.length*70+150);
+  const s=LG.skill(), wrong=order.filter((t,i)=>t!==ans[i]).length;
+  const v=aiRight?(memo?'灵光<b>记得这一句</b>（你上回排对过），它也排对了。':'灵光也排对了。'):wrong<=2?'灵光<b>差一点</b>：有一处换错了位置。':'灵光排得<b style="color:var(--red)">乱七八糟</b>，但它自己觉得读着挺顺。';
+  document.getElementById('vd').innerHTML=msg+'<br>'+v;
+  setTimeout(()=>LG.say(aiRight?(memo?'这句我背过！':LG.pick(['我也排对了。','我们想的一样。'])):wrong<=2?LG.pick(['啊，差了一个词的位置。','咦，是这里吗……']):s<.4?LG.pick(['我读着觉得没问题啊。','这样读……不通顺吗？','语序到底是谁规定的。']):LG.pick(['再多给我几句，我就能排对了。','我再看看你是怎么排的。'])),order.length*70+200);
+  if(right&&!aiRight) setTimeout(()=>LG.say('我把你的排法记下来了。'),order.length*70+1600);
+  stats(); document.getElementById('next').textContent=(S.n>=ROUND?'看结果':'下一句')+'（空格）';
+}
+function next(){
+  if(S.state!=='play'||S.phase!=='reveal') return; clearInterval(S.tw);
+  if(S.n>=ROUND) endGame(); else newRound();
+}
+function endGame(){
+  S.state='over'; stats(); const ov=document.getElementById('ov'); ov.style.display='flex';
+  ov.innerHTML=`<h2>这一局排完了</h2><p>你排对 <b style="color:var(--ink)">${S.ok}</b> 句，基本对 ${S.part} 句，共 ${S.samples} 条样本　收入 <b style="color:var(--red)">¥${S.pay.toFixed(1)}</b><br>灵光排对 <b style="color:var(--ai)">${S.ai}</b> 句 / ${ROUND}　灵光背过的句子：${known.size} / ${RAW.length}<br>${S.ok>S.ai?'这局你比灵光强。':S.ok<S.ai?'这局灵光比你强……':'这局和灵光打平。'}</p><button class="btn" id="again">再来一局（空格）</button>`;
+  document.getElementById('again').onclick=startGame;
+  LG.say(S.ai>=6?'这局我排得不错吧。':S.ai>=3?'有几句我是真的会了。':'我还得多学。再来一局？');
+}
+
+// ───────────────────────── input / loop ─────────────────────────
+document.getElementById('submit').onclick=submit; document.getElementById('shuf').onclick=()=>{ if(S.phase==='order'&&S.state==='play'){ let sh; do sh=LG.shuffle(S.cur); while(eq(sh,S.cur)); flip(()=>{ tray.innerHTML=''; sh.forEach(t=>tray.appendChild(mkTile(t))); }); S.sel=null; } };
+document.getElementById('next').onclick=next;
+addEventListener('keydown',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(k==='Enter'){ e.preventDefault(); if(S.state==='play'){ if(S.phase==='order') submit(); else next(); } else startGame(); return; }
+  if(k===' '){ e.preventDefault(); if(S.state==='play'){ if(S.phase==='reveal') next(); } else startGame(); return; }
+  if(k==='r'&&S.state==='play') document.getElementById('shuf').onclick();
+  if(k==='ArrowLeft'){ e.preventDefault(); nudge(-1); } if(k==='ArrowRight'){ e.preventDefault(); nudge(1); }
+});
+setInterval(()=>{
+  if(S.state!=='play'||S.phase!=='order') return; S.t-=.1; if(S.t<=0){ S.t=0; submit(); }
+  document.getElementById('snT').style.width=S.t/TIME*100+'%'; document.getElementById('snSec').textContent=Math.ceil(S.t); document.getElementById('bonusT').textContent=S.t>20?'现在交卷有速度奖励':'';
+  document.getElementById('snT').style.background=S.t<10?'var(--red)':'var(--orange)';
+},100);
+
+// start screen
+const ov=document.getElementById('ov'); ov.style.display='flex';
+ov.innerHTML=`<h2>🧩 句子排序</h2><p>每局 ${ROUND} 句。词块被打乱了，<b style="color:var(--ink)">把它们拖回正确的顺序</b>（拖动时别的词块会让开）。<br>排对 = 2 条样本，基本通顺 = 1 条，越快越有速度奖励。限时 ${TIME} 秒一句。<br>交卷后，灵光会亮出它自己的排法，<b style="color:var(--ai)">还会把它排的句子「读」给你听</b>。<br>水平低的时候，它读出来的东西你可能听不懂；你排对过的句子，它会记住。</p><button class="btn" id="go">开始（空格）</button>`;
+document.getElementById('go').onclick=startGame;
+newRoundPreview();
+function newRoundPreview(){ stats(); }
+</script>
+</body>
+</html>

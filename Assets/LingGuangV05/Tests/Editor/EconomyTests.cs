@@ -179,13 +179,20 @@ namespace LingGuangV05.Tests
             Assert.That(sim.WearRiskLive, Is.False, "and it ends once training pauses");
         }
 
-        [Test] public void BeforeTheFirstRentTrainingStaysOnTheOldDailyBill()
+        [Test] public void ElectricityIsBilledFromTheFirstRoundEvenBeforeTheFirstRent()
         {
             var sim = new ChapterOneSim();
             double before = sim.S.money;
-            Assert.That(sim.BillTraining(.6), Is.Zero);
-            Assert.That(sim.S.money, Is.EqualTo(before));
-            Assert.That(sim.S.energyKwh, Is.GreaterThan(0));
+            double cost = sim.BillTraining(.6);
+            Assert.That(cost, Is.GreaterThan(0), "electricity is always paid; only the rent waits for its day");
+            Assert.That(sim.S.money, Is.EqualTo(before - cost).Within(1e-9));
+            Assert.That(sim.S.bills.power, Is.EqualTo(cost).Within(1e-9));
+            Assert.That(sim.EconomyActive, Is.False, "and rent has not started");
+            // A lab that has not unlocked the power system yet (PowerCostsEnabled off) pays nothing.
+            var free = new ChapterOneSim { PowerCostsEnabled = false };
+            double wallet = free.S.money;
+            Assert.That(free.BillTraining(.6), Is.Zero);
+            Assert.That(free.S.money, Is.EqualTo(wallet));
         }
 
         [Test] public void TieredPricingAboveTwoHundredFortyAndFourHundredKwh()
@@ -261,11 +268,11 @@ namespace LingGuangV05.Tests
 
         // ───────────── bankruptcy ─────────────
 
-        [Test] public void ThreeDaysBelowZeroTextThenCutThenSell()
+        [Test] public void ThreeDaysBelowZeroTextThenCutThenAskThenSell()
         {
             var sim = Started(Day(6, 5), -500);
             string signals = "";
-            sim.Signal += (name, arg) => { if (name == "rent.due" || name == "power.cut" || name == "bankrupt") signals += name + ";"; };
+            sim.Signal += (name, arg) => { if (name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "bankrupt") signals += name + ";"; };
             double day = sim.Config.dayLengthSeconds;
             Assert.That(sim.HeartbeatsPerSecond, Is.GreaterThan(0));
             sim.Tick(day);
@@ -278,8 +285,12 @@ namespace LingGuangV05.Tests
             Assert.That(sim.HeartbeatsPerSecond, Is.Zero, "training is blocked");
             Assert.That(sim.S.bankrupt, Is.False);
             sim.Tick(day);
-            Assert.That(sim.S.bankrupt, Is.True, "day 3: the computer is sold");
-            Assert.That(signals, Is.EqualTo("rent.due;power.cut;bankrupt;"));
+            Assert.That(sim.S.bankrupt, Is.False, "day 3: the landlord asks; nothing is sold without the player's word");
+            Assert.That(signals, Is.EqualTo("rent.due;power.cut;rent.decision;"));
+            Assert.That(sim.ConfirmComputerSale(), Is.True, "the player chooses to sell");
+            Assert.That(sim.S.bankrupt, Is.True, "the computer is sold");
+            Assert.That(signals, Is.EqualTo("rent.due;power.cut;rent.decision;bankrupt;"));
+            Assert.That(sim.ConfirmComputerSale(), Is.False, "once");
             Assert.That(sim.S.soldFor, Is.GreaterThan(0));
             double money = sim.S.money;
             sim.Tick(day * 3);
@@ -309,6 +320,18 @@ namespace LingGuangV05.Tests
             for (int i = 0; i < 5; i++) sim.Tick(sim.Config.dayLengthSeconds);
             Assert.That(sim.S.debtDays, Is.Zero);
             Assert.That(sim.S.bankrupt, Is.False);
+        }
+
+        [Test] public void ADebtorsSaveLoadsWithTheFundsLedgerThatFollowedItBelowZero()
+        {
+            var sim = Started(Day(6, 5), -500);
+            sim.RecordFunds("其他收支");
+            PlayDay(sim); PlayDay(sim); // rent keeps coming: the ledger's balance follows the wallet down
+            Assert.That(sim.S.money, Is.LessThan(0));
+            Assert.That(sim.S.fundsBalance, Is.LessThan(0));
+            var loaded = new ChapterOneSim(UnityEngine.JsonUtility.FromJson<GameState>(UnityEngine.JsonUtility.ToJson(sim.S)));
+            Assert.That(loaded.S.fundsBalance, Is.EqualTo(sim.S.fundsBalance));
+            Assert.That(loaded.S.debtDays, Is.EqualTo(sim.S.debtDays));
         }
 
         [Test] public void ADebtorsSaveLoadsWithItsNegativeWallet()

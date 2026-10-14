@@ -19,11 +19,11 @@ namespace LingGuangV05.XingGuang.Tests
             public string Blocker => null;
         }
 
-        /// <summary>Stage 2 with 自动答题 owned: the panel opens on the first tick. Noon on the desktop clock.</summary>
+        /// <summary>The crowd stage (the platform's checks and captchas run from there) with 自动答题 owned: the panel opens on the first tick. Noon on the desktop clock.</summary>
         static XgSim Open(Host host, double checkChance = 0)
         {
             var sim = new XgSim { GoldChance = 0 };
-            sim.S.stage = 2;
+            sim.S.stage = XgSim.FeatureUnlock["quality"]; sim.S.fundedAbility = sim.S.stage; // the milestone payments are not what these tests count
             sim.S.autoLevel = 1;
             sim.ForcedCheckChance = checkChance;
             sim.ClockOfDaySeconds = 12 * 3600;

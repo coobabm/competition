@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 谁是卧底</title>
+<!--
+  谁是卧底 (party game, 2015-16): 4 players - you, 灵光, 小周, 阿杰. Three share one word (civilians), one holds a similar
+  word (the undercover). Each round everybody gives a one-line description, you tag every other description as 像我的词 /
+  不像, then vote someone out. Undercover out = civilians win; if the undercover survives to 2 players, it wins.
+  Labels produced: (word, description) -> same word as the speaker's or not, and the word-pair relation itself (近义词对).
+  灵光's description is limited by LG.skill():  <35% only 「是」/「否」;  <62% one related word (sometimes off);
+  <80% a short phrase (sometimes vague);  >=80% a good clue, and if it suspects it is the undercover it bluffs with
+  the other side's description. 灵光's vote is evidence-based with probability skill, otherwise random.
+  NPCs read the descriptions' hidden kinds (shared / side A / side B) and vote on mismatches; a speaker that says nothing
+  informative (「是」, off-topic) also looks suspicious to them.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#ss{position:absolute;inset:0;display:grid;grid-template-columns:1fr 292px;background:#2B5B49}
+.ss-board{padding:12px;display:grid;grid-template-rows:34px 1fr 1fr;grid-template-columns:1fr 1fr;gap:10px;min-height:0;background:radial-gradient(ellipse at 50% 50%,#3A7A60,#2B5B49 70%)}
+.ss-head{grid-column:1/3;display:flex;align-items:center;gap:12px;color:#fff;font-size:14px}
+.ss-head b{font-size:18px}.ss-head .ph{margin-left:auto;background:#00000033;border-radius:12px;padding:3px 12px;font-size:13px}
+.ss-seat{background:#FFFCF3;border-radius:10px;border:3px solid transparent;box-shadow:0 3px 0 #0004;padding:8px 10px;display:flex;flex-direction:column;gap:5px;min-height:0;position:relative;transition:border-color .15s,transform .15s}
+.ss-seat.now{border-color:#F2C94C;transform:translateY(-2px)}
+.ss-seat.out{filter:grayscale(1);opacity:.55}
+.ss-seat.ai{background:#F6F3FF}
+.ss-top{display:flex;align-items:center;gap:8px}
+.ss-av{width:38px;height:38px;border-radius:50%;background:#E8EEF8;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;position:relative}
+.ss-av .spider{transform:scale(1.15)}
+.ss-nm{font-size:16px}
+.ss-badge{font-size:11px;border-radius:9px;padding:0 7px;line-height:18px;background:#E3E6EC;color:#555}
+.ss-badge.uc{background:var(--red);color:#fff}.ss-badge.cv{background:var(--green);color:#fff}
+.ss-tally{margin-left:auto;font-size:13px;font-weight:700;color:var(--red)}
+.ss-lines{flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-height:0}
+.ss-ln{background:#F1EFE6;border-radius:8px;padding:5px 9px;font-size:14px;line-height:1.45;position:relative;animation:sspop .25s}
+.ss-seat.ai .ss-ln{background:#EAE5FF;color:#3F338F}
+.ss-ln small{display:block;color:#999;font-size:10px;margin-bottom:1px}
+.ss-ln .tg{position:absolute;right:6px;top:4px;font-size:10px;padding:0 5px;border-radius:7px;line-height:16px}
+.ss-ln .tg.y{background:#DDF3E1;color:#1f7a34}.ss-ln .tg.n{background:#FBE0DE;color:#b3261e}
+.ss-ln.typing{color:#aaa}
+@keyframes sspop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+.ss-act{display:flex;gap:6px;min-height:28px;align-items:center}
+.ss-act button{flex:1;border:1px solid #ccc;background:#fff;border-radius:14px;padding:4px 6px;font-size:12px;cursor:pointer;font-family:inherit}
+.ss-act button:hover{border-color:var(--blue);color:var(--blue)}
+.ss-act button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ss-act button.vote{background:var(--red);color:#fff;border-color:var(--red);font-size:14px;padding:5px}
+.ss-act button.vote:hover{background:#c92d23}
+.ss-act .info{font-size:12px;color:#777;flex:1;text-align:center}
+.ss-panel{background:#FAFAFC;border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.ss-word{margin:12px;border-radius:10px;background:linear-gradient(135deg,#4E6EF2,#2932E1);color:#fff;padding:12px;text-align:center;box-shadow:0 3px 0 #1a21a0}
+.ss-word small{display:block;opacity:.8;font-size:11px;letter-spacing:1px}
+.ss-word b{display:block;font-size:34px;letter-spacing:4px;margin-top:4px}
+.ss-word.hide b{filter:blur(9px)}
+.ss-word i{font-style:normal;font-size:11px;opacity:.7;cursor:pointer}
+.ss-ctl{flex:1;padding:0 12px 12px;display:flex;flex-direction:column;gap:8px;min-height:0;font-size:13px;line-height:1.6;overflow:hidden}
+.ss-ctl h4{margin:0;font-size:15px}
+.ss-ctl .hint{color:var(--mute);font-size:12px}
+.ss-ctl input[type=text]{width:100%;border:2px solid #CBD2E6;border-radius:8px;padding:8px 10px;font-size:15px;font-family:inherit;outline:none}
+.ss-ctl input[type=text]:focus{border-color:var(--blue)}
+.ss-chip{display:block;width:100%;text-align:left;border:1px solid #D5D9EA;background:#fff;border-radius:8px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4}
+.ss-chip:hover{border-color:var(--blue);background:var(--blue3)}
+.ss-chip kbd{font-family:inherit;color:var(--blue);font-weight:700;margin-right:6px}
+.ss-ctl .btn{width:100%}
+.ss-ctl .res{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.over{background:#fffffff4}
+.over .big{font-size:52px}
+.over table{border-collapse:collapse;font-size:14px}.over td{padding:3px 14px;text-align:left}.over td:last-child{text-align:right;font-weight:700}
+.over .rel{background:#F3F1FF;color:#4B3FA8;border-radius:8px;padding:5px 14px}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'shuishiwodi', title:'谁是卧底', subtitle:'描述 · 判断 · 投票', icon:'🕵️', dataset:'词语关系',
+  stats:[['轮数','sRound'],['描述','sDesc'],['判断','sMark'],['投票','sVote'],['本局收入','sPay','¥0']],
+  statsNote:'每句描述 / 每次判断 = 1 条样本',
+  aiHello:'游戏我会玩，就是……词语我不太会说。',
+  rule:'<b>玩法</b>：4 人，3 人拿同一个词，<b>卧底</b>拿相近的另一个词。每轮每人说一句描述（不能直接说出词），然后投票。<br><b>标一标</b>：每句别人的描述，判断它「像我的词」还是「不像」——这就是在标词语关系，局末按真相结算。<br><b>灵光</b>：水平低时只会说「是/否」；再高会说一个词、一句话；很高时会看风向，当卧底还会装。'
+});
+const $=s=>document.querySelector(s);
+const {pick,rnd,shuffle}=LG;
+
+let AC=null;
+function beep(f,d=.08,type='sine',v=.05,f2){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;
+    o.type=type;o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d);
+  }catch(e){}
+}
+
+// ---------- word pair bank ----------
+// [wordA, wordB, shared phrases, A-only phrases, B-only phrases, shared tags, A tags, B tags]
+const PAIRS_RAW=[
+['饺子','馄饨',['面皮包着馅，煮熟了吃','过年的时候经常吃','热乎乎的，一口一个'],['月牙形的，要蘸醋吃','一般不带汤，捞出来吃','过年包一大盆放阳台'],['皮薄得透亮，泡在汤里','常配紫菜和虾皮','早餐摊上一碗一碗卖'],['面皮','馅'],['蘸醋','月牙'],['紫菜','汤']],
+['微信','QQ',['每天都要打开好几次','可以聊天发图片','要有网络才能用'],['有朋友圈和红包','语音一按就能说','妈妈也会用'],['有企鹅头像和表情','可以挂着升级太阳月亮','上学的时候就在用'],['聊天','好友'],['朋友圈','红包'],['企鹅','空间']],
+['可乐','雪碧',['冰镇的最好喝','一打开就冒气泡','夏天配烧烤'],['黑色的，甜里带点冲','红色的瓶标','配汉堡薯条最搭'],['透明的，一股柠檬味','绿色的瓶子','喝完清清爽爽'],['汽水','气泡'],['黑色','红色'],['透明','柠檬']],
+['包子','馒头',['用面粉蒸出来的','早餐经常吃','热的比凉的好吃'],['里面有馅，一咬流汁','有肉的有素的有豆沙的','蒸笼里一屉屉摆着'],['白白的，没有馅','可以蘸炼乳或者配菜','北方人当主食'],['蒸','面粉'],['肉馅','汁'],['白','主食']],
+['筷子','勺子',['每顿饭都要用','餐桌上少不了','用完要洗干净'],['一双两根，木头或竹子的','夹菜很灵活，小孩要练好久','外国人觉得很难用'],['圆圆的，能盛汤','喝粥喝汤必须用它','小孩子最先学会用的'],['餐具','吃饭'],['夹','一双'],['舀','汤']],
+['手机','平板',['屏幕是触摸的','要经常充电','里面能装很多应用'],['随身揣在兜里','能打电话发短信','每个人至少有一部'],['屏幕更大，适合看视频','出门不太方便带','家里一般只有一个'],['屏幕','触摸'],['电话','口袋'],['大屏','iPad']],
+['滴滴','出租车',['载着人从这里到那里','要付钱的','上下班高峰很难叫'],['手机上点一下就来','能看到司机的位置和评分','有优惠券，红包满天飞'],['路边招手就能拦','车顶上有个灯牌','按计价器收费'],['打车','司机'],['软件','优惠券'],['招手','计价器']],
+['淘宝','京东',['手机上就能买东西','有快递送到家','双十一都在抢'],['卖家很多，什么都有，能砍价','店铺要看信誉和好评','天猫是它家的'],['自家物流，红衣服的快递员','主要卖电器，次日达','有个小狗吉祥物'],['购物','快递'],['天猫','掌柜'],['自营','小狗']],
+['火锅','麻辣烫',['又烫又辣，吃得满头汗','要涮各种食材','朋友一起吃最热闹'],['一大锅放桌子中间，大家围着涮','蘸料自己调，有芝麻酱香菜','要提前订位，一坐两小时'],['自己拿篮子挑菜，老板帮你煮','一个人也能吃，一碗端上来','街边小店，论斤称'],['辣','涮'],['蘸料','订位'],['称重','一碗']],
+['咖啡','奶茶',['一杯拿在手里','有人天天喝','常常要排队买'],['苦苦的，提神醒脑','加班熬夜必备','星巴克里最常点'],['甜甜的，里面有珍珠','女孩子很爱','要选三分糖还是五分糖'],['饮料','杯子'],['提神','苦'],['珍珠','甜']],
+['周杰伦','林俊杰',['唱歌很好听的男歌手','华人乐坛的大明星','开演唱会一票难求'],['唱歌咬字有点含糊，很多人模仿','会弹钢琴，还拍过电影','有《七里香》《晴天》'],['歌声很干净，高音很稳','新加坡人','有《江南》《曹操》'],['歌手','演唱会'],['含糊','双截棍'],['江南','新加坡']],
+['蜘蛛侠','蝙蝠侠',['电影里的超级英雄','穿着紧身衣，戴着面具','经常在城市里飞来飞去'],['会吐丝，在大楼之间荡来荡去','是个高中生，名字叫彼得','红蓝色的衣服'],['有很多高科技装备，很有钱','晚上出没，有一辆很酷的车','黑色披风，住在哥谭'],['英雄','面具'],['蜘蛛','吐丝'],['蝙蝠','哥谭']],
+['英雄联盟','DOTA',['五个人一队推塔','要打团战','可以开黑'],['有个召唤师峡谷，简称LOL','英雄的技能比较简单','大学宿舍里很多人玩'],['要补刀，有个叫跳刀的装备，很难上手','TI比赛奖金特别高','和魔兽争霸有渊源'],['游戏','团战'],['峡谷','召唤师'],['补刀','TI']],
+['西瓜','哈密瓜',['夏天的水果','甜甜的，切开来吃','瓜农用车拉到街边卖'],['外面绿皮条纹，里面红瓤黑籽','要拿勺子挖着吃','一整个特别重'],['外面像网格，里面橙色或者白色','新疆的特别有名','一块一块切开吃'],['水果','瓜'],['红瓤','籽'],['新疆','网纹']],
+['牙刷','梳子',['每天早上都会用','有一排小刺的东西','放在洗手间里'],['要沾牙膏，放到嘴里','一般三个月换一次','刷完要漱口'],['用在头发上，整理发型','木头的或者塑料的','很多人随身放包里'],['日用品','刷'],['牙膏','嘴'],['头发','发型']],
+['电影','电视剧',['大家都爱追','有演员有剧情','用来打发周末时间'],['两个小时左右就结束','要去影院买票，吃爆米花','一次看完就知道结局'],['一集一集地播，能追好几个月','在家就能看，也有人熬夜刷','集数一多，剧情就拖拖拉拉'],['演员','剧情'],['影院','爆米花'],['集数','追剧']],
+['微博','朋友圈',['每天都要刷','可以发图片和心情','有人点赞有人评论'],['明星和网红都在，有热搜','陌生人也能关注你','最多发一百四十个字'],['只有朋友才看得到','晒娃晒美食的地方','还能屏蔽某些人'],['社交','点赞'],['热搜','关注'],['熟人','屏蔽']],
+['雨伞','雨衣',['下雨天才会用','淋湿了要晾干','用来挡雨'],['手里撑着，收起来是一根棍','可以折叠，放包里','风大会被吹翻'],['穿在身上，骑车的时候用','一整件，有帽子','塑料的，常常闷得慌'],['雨','挡'],['撑','折叠'],['穿','骑车']],
+['地铁','公交',['上下班挤满人','可以刷卡坐','按站停靠'],['在地下跑，不会堵车','一线城市才有','站台上有黄线，很多人挤'],['在马路上跑，会堵车','前面写着几路','可以看沿路风景'],['交通','刷卡'],['地下','站台'],['马路','路线']],
+['洗发水','沐浴露',['洗澡时候要用','瓶子里的液体，有香味','用完要冲干净'],['抹在头发上起泡','有去屑的、柔顺的','广告里有人头发飘飘'],['抹在身上，打出泡泡','有滋润型的，夏天用清爽的','香味有点浓'],['泡沫','香'],['头发','去屑'],['身体','滋润']],
+['口红','腮红',['女生化妆台上常见','有各种颜色','出门前会涂'],['涂在嘴巴上，色号一大堆','一管一管的，旋出来用','亲到杯子上会留印'],['扫在脸颊上，让气色好','常常是粉盒，配刷子','一不小心就涂成猴屁股'],['化妆','颜色'],['嘴','色号'],['脸','气色']],
+['红烧肉','东坡肉',['肥而不腻的猪肉','色泽红亮，入口即化','逢年过节的硬菜'],['家家都会做，放酱油和冰糖','切成小块，炖得汁很浓','毛主席爱吃'],['一块块方方正正，皮上扎着棉线','名字来自一位宋朝大文豪','杭州的名菜'],['肉','酱油'],['冰糖','毛氏'],['杭州','苏轼']],
+['高铁','动车',['在铁轨上跑得很快','火车站里检票上车','春运的时候一票难求'],['G开头的车次，时速三百','车头像子弹头','北京到上海四个多小时'],['D开头的车次，速度稍微慢点','票价比高铁便宜一点','有的站停得多一点'],['火车','车次'],['G字头','三百'],['D字头','二百']],
+['篮球','足球',['全世界很多人爱看的球类运动','两队比赛，比分高低定胜负','要穿球鞋球衣'],['圆圆的，用手拍，往篮筐里投','NBA、姚明、科比','一场四节'],['用脚踢，进球门就得分','世界杯、梅西、C罗','九十分钟，有点球'],['比赛','球场'],['篮筐','NBA'],['世界杯','进球']],
+['豆浆','牛奶',['早餐常喝的白色饮品','热的好喝，也可以冷着','一杯杯地喝'],['黄豆磨出来的，配油条','有的人嫌有豆腥味','小区门口早餐摊'],['奶牛产的，超市一盒盒','有的人乳糖不耐受','喝完嘴角有白胡子'],['白色','早餐'],['黄豆','油条'],['奶牛','超市']],
+['自拍杆','三脚架',['拍照的好帮手','能撑住手机或者相机','旅游景点很常见'],['手握着，伸出去自己拍','2015年特别火，但景区开始禁止','一根杆，可以伸缩'],['有三条腿，放在地上','摄影爱好者的装备','拍夜景长曝光不糊'],['拍照','支架'],['自拍','伸缩'],['三条腿','夜景']],
+['方便面','米线',['用开水泡一泡就能吃','加班的夜宵','一碗热腾腾的'],['一块饼状的面，配调料包','火车上人手一桶','红烧牛肉味最经典'],['白色细细的，加汤和配菜','云南过桥的最有名','用米做的'],['面条','汤'],['调料包','康师傅'],['过桥','云南']],
+];
+const PAIRS=PAIRS_RAW.map(r=>({a:r[0],b:r[1],S:r[2],A:r[3],B:r[4],tS:r[5],tA:r[6],tB:r[7]}));
+const NOISE=['天气','桌子','今天','很大','颜色','好看','便宜','贵','路上','周末','听说','一般般','不知道','挺好的','书包'];
+const PHRASE_NOISE=['这个嘛……说不好，反正大家都见过','我觉得吧，生活里挺常见的','感觉是个不错的东西'];
+
+// ---------- game state ----------
+let RUN=0, S=null, G=null;
+const CANCEL={};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const NPC={zhou:{bold:.3,lines:['嗯……我想想','让我组织一下语言']},jie:{bold:.7,lines:['这还不简单','我先来个直白的']}};
+
+stage.innerHTML=`
+<div id="ss">
+  <div class="ss-board" id="ssBoard">
+    <div class="ss-head"><b id="ssRound">谁是卧底</b><span id="ssTip"></span><span class="ph" id="ssPh">准备</span></div>
+  </div>
+  <div class="ss-panel">
+    <div class="ss-word hide" id="ssWord"><small>你的词</small><b id="ssWordT">——</b><i id="ssPeek">点击查看 / 隐藏</i></div>
+    <div class="ss-ctl" id="ssCtl"></div>
+  </div>
+</div>
+<div class="over" id="ssOver">
+  <div class="big">🕵️</div><h2>谁是卧底</h2>
+  <p>你、灵光、小周、阿杰四个人：三人拿同一个词，<b>一人拿相近的另一个词</b>（卧底）。<br>每轮每人说一句话描述自己的词（不能直接说出来），你要判断每句话<b>像不像你的词</b>，然后投票揪出卧底。<br>如果你自己拿到的是卧底词，就藏好自己。<br>灵光的描述受它水平限制：水平低时它只会说「是」或「否」。</p>
+  <button class="btn" id="ssGo" style="font-size:18px;padding:10px 40px">开始（回车）</button>
+</div>`;
+const board=$('#ssBoard'), ctl=$('#ssCtl');
+$('#ssPeek').onclick=()=>$('#ssWord').classList.toggle('hide');
+$('#ssWord').onclick=e=>{ if(e.target.id!=='ssPeek') $('#ssWord').classList.toggle('hide'); };
+
+function ev(desc,side,pair){
+  // +1 match, -1 mismatch, 0 neutral, from the point of view of a reader holding word on `side` (a|b)
+  const k=desc.kind;
+  if(k==='A'||k==='tA') return side==='a'?1:-1;
+  if(k==='B'||k==='tB') return side==='b'?1:-1;
+  if(k==='free'){
+    const ha=pair.tA.some(t=>desc.text.includes(t)), hb=pair.tB.some(t=>desc.text.includes(t));
+    if(ha&&!hb) return side==='a'?1:-1;
+    if(hb&&!ha) return side==='b'?1:-1;
+  }
+  return 0;
+}
+const vague=d=>d.kind==='yesno'||d.kind==='noise'||(d.kind==='free'&&d.text.length<3);
+
+/** Suspicion scores for a reader on `side`; higher = more likely the undercover. noise adds personality. */
+function suspicion(reader,noise){
+  const sc={}; let against=0;
+  for(const q of G.P){ if(q===reader||!q.alive) continue;
+    let s=0; for(const d of q.descs){ const e=ev(d,reader.side,G.pair); s-=e; if(e<0) against++; if(vague(d)) s+=.8; }
+    sc[q.id]=s+Math.random()*noise;
+  }
+  // everybody else seems to disagree with me: probably I am the undercover, so shift blame at random
+  const mism=[...G.P].filter(q=>q!==reader&&q.alive).reduce((a,q)=>a+q.descs.reduce((b,d)=>b+(ev(d,reader.side,G.pair)<0?1:0),0),0);
+  return {sc,doubtSelf:mism>=2};
+}
+
+function buildSeats(){
+  [...board.querySelectorAll('.ss-seat')].forEach(e=>e.remove());
+  // order on the table: row 1 小周, 灵光; row 2 阿杰, 你
+  ['zhou','ai','jie','me'].forEach(id=>{
+    const p=G.P.find(x=>x.id===id);
+    const e=document.createElement('div'); e.className='ss-seat'+(id==='ai'?' ai':''); e.id='seat-'+id; p.el=e;
+    e.innerHTML=`<div class="ss-top"><span class="ss-av">${id==='ai'?LG.SPIDER:p.emoji}</span><b class="ss-nm">${p.name}</b><span class="ss-badge" style="display:none"></span><span class="ss-tally"></span></div><div class="ss-lines"></div><div class="ss-act"></div>`;
+    board.appendChild(e);
+  });
+}
+const seatLines=p=>p.el.querySelector('.ss-lines');
+const seatAct=p=>p.el.querySelector('.ss-act');
+function setPhase(t,tip){ $('#ssPh').textContent=t; $('#ssTip').textContent=tip||''; }
+function panel(html){ ctl.innerHTML=html; return ctl; }
+function addLine(p,d,typing){
+  const L=seatLines(p); const div=document.createElement('div'); div.className='ss-ln'+(typing?' typing':'');
+  div.innerHTML='<small>第 '+G.round+' 轮</small><span></span>'; div.querySelector('span').textContent=typing?'……':'「'+d.text+'」';
+  L.appendChild(div); if(d) d.lineEl=div; return div;
+}
+function setNow(p){ G.P.forEach(q=>q.el.classList.toggle('now',q===p)); }
+
+// ---------- describing ----------
+const usedText=new Set();
+const take=(arr)=>{ const f=arr.filter(t=>!usedText.has(t)); return pick(f.length?f:arr); };
+function npcDescribe(p){
+  const cfg=NPC[p.id], pair=G.pair, mine=p.side==='a'?'A':'B', other=p.side==='a'?'B':'A';
+  const prior=G.P.filter(q=>q!==p&&q.alive).flatMap(q=>q.descs);
+  const seen=prior.reduce((a,d)=>a+ev(d,p.side,pair),0);
+  let kind;
+  if(seen<0) kind=Math.random()<.8?'S':mine;                 // I think I'm odd one out: stay vague
+  else kind=Math.random()<(.35+.45*cfg.bold)?mine:'S';
+  const useTag=Math.random()<.25;
+  const k=useTag?'t'+kind:kind;
+  const text=take(pair[k]); usedText.add(text);
+  return {text,kind:k};
+}
+function aiDescribe(p){
+  const s=LG.skill(), pair=G.pair, mine=p.side==='a'?'A':'B', other=p.side==='a'?'B':'A';
+  const prior=G.P.filter(q=>q!==p&&q.alive).flatMap(q=>q.descs);
+  const seen=prior.reduce((a,d)=>a+ev(d,p.side,pair),0);
+  if(s<.35){ return {text:pick(['是','否']),kind:'yesno'}; }
+  if(s<.62){
+    if(Math.random()<.12+(.62-s)*1.7){ return {text:pick(NOISE),kind:'noise'}; }
+    const kind=pick(['tS','t'+mine,'t'+mine]); const text=take(pair[kind]); return {text,kind};
+  }
+  if(s<.8){
+    if(Math.random()<.25){ const t=pick(PHRASE_NOISE); return {text:t,kind:'noise'}; }
+    const kind=pick(['S',mine]); const text=take(pair[kind]); usedText.add(text); return {text,kind};
+  }
+  // strong: reads the room
+  if(prior.length&&seen<0){            // the others sound unlike me: bluff with their side
+    const text=take(pair[other]); usedText.add(text); return {text,kind:other,bluff:true};
+  }
+  const kind=(prior.length&&seen>0)?mine:'S'; const text=take(pair[kind]); usedText.add(text); return {text,kind};
+}
+function askDescribe(p){
+  return new Promise(res=>{
+    const pair=G.pair, mine=p.side==='a'?'A':'B';
+    const sugs=shuffle([{kind:'S',text:take(pair.S)},{kind:mine,text:take(pair[mine])},{kind:'t'+(Math.random()<.5?'S':mine),text:null}]);
+    sugs.forEach(x=>{ if(!x.text) x.text=take(pair[x.kind]); });
+    // avoid duplicates inside the three chips
+    const seen=new Set(); const chips=sugs.filter(x=>!seen.has(x.text)&&seen.add(x.text));
+    panel(`<h4>轮到你描述</h4><div class="hint">用一句话描述你的词，但不能直接说出它。选一句，或自己写。</div>
+      ${chips.map((c,i)=>`<button class="ss-chip" data-i="${i}"><kbd>${i+1}</kbd><span></span></button>`).join('')}
+      <input type="text" id="ssIn" maxlength="20" placeholder="或者自己写，回车发送">
+      <div class="hint" id="ssErr" style="color:var(--red)"></div>`);
+    ctl.querySelectorAll('.ss-chip').forEach((b,i)=>{ b.querySelector('span').textContent=chips[i].text; b.onclick=()=>done(chips[i]); });
+    const inp=$('#ssIn'); inp.focus();
+    inp.onkeydown=e=>{ if(e.key==='Enter'&&inp.value.trim()){
+        const t=inp.value.trim();
+        if(t.includes(p.word)){ $('#ssErr').textContent='不能直接说出你的词！'; LG.shake(inp); beep(150,.15,'sawtooth'); return; }
+        if(t.length<1) return; done({text:t,kind:'free'}); } };
+    function done(d){ ctl.innerHTML=''; res(d); }
+    G.chipKey=n=>{ if(chips[n-1]&&document.activeElement!==inp) done(chips[n-1]); };
+  });
+}
+
+// ---------- marking & voting ----------
+function askMarks(){
+  return new Promise(res=>{
+    const others=G.P.filter(q=>q.id!=='me'&&q.alive);
+    const me=G.me;
+    let n=0;
+    others.forEach(q=>{
+      const d=q.descs[q.descs.length-1]; const act=seatAct(q); act.innerHTML='';
+      const b1=document.createElement('button'), b2=document.createElement('button');
+      b1.textContent='👍 像我的词'; b2.textContent='🤔 不像';
+      const set=(v,btn)=>{ const first=!d.mark; d.mark=v; b1.classList.toggle('on',v==='like'); b2.classList.toggle('on',v==='not');
+        if(first){ n++; S.marks++; LG.give(1,0); LG.set('sMark',S.marks); LG.hist('ai','判'); beep(500,.05,'triangle'); upd(); }
+        G.marks=G.marks.filter(m=>m.d!==d); G.marks.push({q,d,v}); };
+      b1.onclick=()=>set('like'); b2.onclick=()=>set('not');
+      act.appendChild(b1); act.appendChild(b2);
+    });
+    function upd(){ $('#ssMk').textContent=n+' / '+others.length; }
+    panel(`<h4>标一标</h4><div class="hint">每个人的描述，<b>像你手里的词</b>还是<b>不像</b>？点卡片下面的按钮。答案在局末揭晓：对 +¥0.5，错 −¥0.2。</div>
+      <div class="res">已标：<b id="ssMk">0 / ${others.length}</b></div>
+      <div class="hint" id="ssAiRead"></div>
+      <button class="btn" id="ssPrimary">标完了，去投票（回车）</button>`);
+    // 灵光 gives a spoken reading of the table, accurate by skill
+    const s=LG.skill();
+    setTimeout(()=>{
+      const el=$('#ssAiRead'); if(!el) return;
+      const {sc}=suspicion(G.ai,.4); const real=Object.entries(sc).filter(([id])=>id!=='ai').sort((a,b)=>b[1]-a[1]);
+      const pickId=(Math.random()<s&&real.length)?real[0][0]:pick(G.P.filter(q=>q.alive&&q.id!=='ai').map(q=>q.id));
+      const nm=G.P.find(q=>q.id===pickId).name;
+      const t=s<.4?`灵光：我感觉……${nm}？（我也不确定）`:s<.7?`灵光：我觉得 ${nm} 说得有点怪。`:`灵光：${nm} 的话和我们对不上，我怀疑 TA。`;
+      el.textContent=t; LG.say(t.replace('灵光：',''));
+      G.aiPick=pickId;
+    },900+(1-s)*700);
+    $('#ssPrimary').onclick=()=>{ others.forEach(q=>seatAct(q).innerHTML=''); res(); };
+  });
+}
+function askVote(){
+  return new Promise(res=>{
+    const alive=G.P.filter(q=>q.alive), cands=alive.filter(q=>q.id!=='me');
+    setPhase('投票','点击你要投出去的人');
+    cands.forEach(q=>{
+      const act=seatAct(q); act.innerHTML=''; const b=document.createElement('button'); b.className='vote'; b.textContent='投 '+q.name+'  ('+(cands.indexOf(q)+1)+')';
+      b.onclick=()=>{ cands.forEach(c=>seatAct(c).innerHTML=''); res(q); }; act.appendChild(b);
+    });
+    G.voteKey=n=>{ if(cands[n-1]){ cands.forEach(c=>seatAct(c).innerHTML=''); res(cands[n-1]); } };
+    panel(`<h4>投票</h4><div class="hint">谁的话对不上？点卡片上的红色按钮，或按数字键。</div>`);
+  });
+}
+
+// ---------- the game ----------
+async function play(){
+  const id=++RUN; const chk=()=>{ if(RUN!==id) throw CANCEL; };
+  try{
+    const pair=pick(PAIRS), civSide=Math.random()<.5?'a':'b', ucSide=civSide==='a'?'b':'a';
+    const ucIdx=rnd(4);
+    const defs=[['me','你','😎'],['ai','灵光',''],['zhou','小周','🧑'],['jie','阿杰','🧢']];
+    G={pair,P:defs.map((d,i)=>({id:d[0],name:d[1],emoji:d[2],under:i===ucIdx,side:i===ucIdx?ucSide:civSide,word:pair[(i===ucIdx?ucSide:civSide)],alive:true,descs:[]})),round:0,marks:[],aiPick:null};
+    G.me=G.P[0]; G.ai=G.P[1];
+    S={marks:0,desc:0,votes:0,earn:0,aiVoted:0,aiBluff:false,aiKinds:[]};
+    usedText.clear();
+    ['sRound','sDesc','sMark','sVote'].forEach(k=>LG.set(k,0)); LG.set('sPay','¥0'); const hs=document.getElementById('lgHist'); if(hs) hs.innerHTML='';
+    $('#ssOver').style.display='none';
+    buildSeats();
+    $('#ssWordT').textContent=G.me.word; $('#ssWord').classList.remove('hide');
+    setTimeout(()=>$('#ssWord').classList.add('hide'),3000);
+    setPhase('发词','看一眼你的词，3 秒后会自动盖住（点击词牌再看）');
+    const s0=LG.skill();
+    LG.say(s0<.35?'我拿到词了。但我现在只会回答「是」或者「否」……':s0<.62?'我拿到词了，我只能说一个词来形容它。':s0<.8?'我拿到词了，我能说一句话。':'我拿到词了。放心，我会看风向的。');
+    panel('<h4>发牌</h4><div class="hint">三个人拿同一个词，一个人拿相近的词。你们互相不知道谁是谁。</div>');
+    await sleep(1800); chk();
+
+    let winner=null, outPlayer=null;
+    while(!winner){
+      G.round++; LG.set('sRound',G.round); G.aiPick=null;
+      $('#ssRound').textContent='第 '+G.round+' 轮';
+      const alive=G.P.filter(q=>q.alive); const order=shuffle(alive);
+      setPhase('描述');
+      for(const p of order){
+        chk(); setNow(p);
+        let d;
+        if(p.id==='me'){
+          $('#ssTip').textContent='轮到你'; d=await askDescribe(p); chk();
+          S.desc++; LG.set('sDesc',S.desc); LG.give(1,.5); S.earn+=.5; LG.set('sPay','¥'+S.earn.toFixed(1)); LG.hist('ok','说');
+        }else{
+          $('#ssTip').textContent=p.name+' 在想……';
+          const ln=addLine(p,null,true);
+          if(p.id==='ai'){ const s=LG.skill(); LG.say(s<.35?'……让我想想。（其实我只有两个选项）':s<.62?'嗯……找一个相关的词。':s<.8?'想一句话。':'先看看前面的人怎么说。'); }
+          else LG.say(pick(NPC[p.id].lines)+'——'+p.name);
+          await sleep(900+rnd(700)); chk();
+          d=p.id==='ai'?aiDescribe(p):npcDescribe(p);
+          ln.remove();
+        }
+        d.round=G.round; p.descs.push(d); addLine(p,d); beep(380+rnd(120),.08,'triangle',.04);
+        if(p.id==='ai'){ S.aiKinds.push(d); if(d.bluff) S.aiBluff=true;
+          LG.say(d.kind==='yesno'?'我说的是「'+d.text+'」。（我现在只能这样）':d.kind==='noise'?'「'+d.text+'」……好像说偏了。':d.bluff?'我说得像不像你们的词？':'我说完了。'); }
+        await sleep(350); chk();
+      }
+      setNow(null);
+      // marking
+      setPhase('标一标','判断每句话像不像你的词');
+      await askMarks(); chk();
+      // voting
+      const myVote=await askVote(); chk();
+      setPhase('开票'); panel('<h4>开票</h4>');
+      const votes={}; G.P.forEach(q=>votes[q.id]=0);
+      const casts=[['me',myVote]];
+      for(const v of alive.filter(q=>q.id!=='me')){
+        const {sc,doubtSelf}=suspicion(v,v.id==='ai'?.2:(NPC[v.id].bold>.5?.9:.5));
+        let tgt, note='';
+        const others=alive.filter(q=>q!==v);
+        if(v.id==='ai'){
+          const s=LG.skill();
+          if(Math.random()<s&&!doubtSelf){ tgt=others.sort((a,b)=>sc[b.id]-sc[a.id])[0]; }
+          else if(Math.random()<s&&G.aiPick){ tgt=G.P.find(q=>q.id===G.aiPick)||pick(others); }
+          else { tgt=pick(others); note='（随便选的）'; }
+          if(!alive.includes(tgt)) tgt=pick(others);
+        }else{
+          tgt=doubtSelf?pick(others):others.sort((a,b)=>sc[b.id]-sc[a.id])[0];
+        }
+        casts.push([v.id,tgt,note]);
+      }
+      for(const [vid,tgt,note] of casts){
+        chk(); await sleep(520);
+        const voter=G.P.find(q=>q.id===vid); votes[tgt.id]++;
+        const a=seatAct(voter); a.innerHTML='<span class="info">投给 <b>'+tgt.name+'</b> '+(note||'')+'</span>';
+        tgt.el.querySelector('.ss-tally').textContent=votes[tgt.id]+' 票';
+        beep(300,.06,'square',.04);
+        if(vid==='ai') LG.say(note?'我投 '+tgt.name+'……'+note.replace(/[（）]/g,''):'我投 '+tgt.name+'。');
+      }
+      await sleep(700); chk();
+      S.votes++; LG.set('sVote',S.votes);
+      // resolve
+      const max=Math.max(...Object.values(votes)); let tied=alive.filter(q=>votes[q.id]===max);
+      const out=pick(tied); out.alive=false; outPlayer=out;
+      out.el.classList.add('out');
+      const bd=out.el.querySelector('.ss-badge'); bd.style.display=''; bd.textContent=out.under?'卧底':'平民'; bd.className='ss-badge '+(out.under?'uc':'cv');
+      G.P.forEach(q=>seatAct(q).innerHTML='');
+      // did the player vote correctly?
+      const mineRight=myVote.under;
+      if(mineRight){ LG.give(1,1.5); S.earn+=1.5; LG.hist('ok','票'); LG.float(G.me.el,'投中卧底 +¥1.5','var(--red)'); }
+      else { LG.hist('no','票'); }
+      const aiCast=casts.find(c=>c[0]==='ai'); if(aiCast&&aiCast[1].under) S.aiVoted++;
+      LG.set('sPay','¥'+S.earn.toFixed(1));
+      const alive2=G.P.filter(q=>q.alive);
+      if(out.under) winner='civ';
+      else if(alive2.length<=2) winner='uc';
+      beep(out.under?700:200,.3,'sawtooth',.05,out.under?1200:90);
+      const tie=tied.length>1?'（平票，随机一人出局）':'';
+      panel(`<h4>${out.name} 出局${tie}</h4><div class="res">${out.name}是 <b style="color:${out.under?'var(--red)':'var(--green)'}">${out.under?'卧底':'平民'}</b>。${winner?'':'游戏继续。'}</div>
+        <button class="btn" id="ssPrimary">${winner?'看结果（回车）':'下一轮（回车）'}</button>`);
+      setPhase('出局');
+      if(out.id==='ai') LG.say(out.under?'我是卧底……被你们揪出来了。':'我是平民……冤枉。');
+      else if(out.id==='me'){ winner=winner||'me_out'; }
+      await new Promise(r=>{ $('#ssPrimary').onclick=r; }); chk();
+      if(out.id==='me'&&!winner) winner='me_out';
+      if(winner==='me_out'||winner) break;
+    }
+    finish(winner);
+  }catch(e){ if(e!==CANCEL) console.error(e); }
+}
+
+function finish(winner){
+  // reveal all words
+  G.P.forEach(q=>{ const L=seatLines(q); const d=document.createElement('div'); d.className='ss-ln'; d.innerHTML='<small>词</small><b></b>'; d.querySelector('b').textContent=q.word+(q.under?'（卧底词）':''); L.appendChild(d);
+    const bd=q.el.querySelector('.ss-badge'); bd.style.display=''; bd.textContent=q.under?'卧底':'平民'; bd.className='ss-badge '+(q.under?'uc':'cv'); q.el.classList.remove('out'); seatAct(q).innerHTML=''; });
+  // settle the markings against the truth
+  let ok=0,no=0;
+  G.marks.forEach(m=>{
+    const same=m.q.side===G.me.side, right=(m.v==='like')===same;
+    right?ok++:no++;
+    const tag=document.createElement('span'); tag.className='tg '+(right?'y':'n'); tag.textContent=(m.v==='like'?'你标：像':'你标：不像')+(right?' ✓':' ✗');
+    m.d.lineEl&&m.d.lineEl.appendChild(tag);
+    LG.hist(right?'ok':'no',right?'✓':'✗');
+  });
+  const mpay=ok*.5-no*.2; if(ok||no){ LG.give(0,mpay); S.earn+=mpay; }
+  let win;
+  if(winner==='civ') win=!G.me.under; else if(winner==='uc') win=G.me.under; else win=false; // me_out: out is a loss
+  const bonus=win?(G.me.under?8:5):0;
+  if(bonus){ LG.give(0,bonus); S.earn+=bonus; }
+  LG.set('sPay','¥'+S.earn.toFixed(1));
+  const s=LG.skill();
+  const aiRole=G.ai.under?'卧底':'平民';
+  const ov=$('#ssOver'); ov.style.display='flex';
+  const headline=winner==='me_out'?'你被投出去了':winner==='civ'?'卧底被揪出来了':'卧底活到了最后';
+  ov.innerHTML=`<div class="big">${win?'🏆':'🕵️'}</div><h2>${win?'你赢了':'你输了'} · ${headline}</h2>
+    <p>${G.pair.a} ／ ${G.pair.b}　卧底是 <b>${G.P.find(q=>q.under).name}</b>（${G.P.find(q=>q.under).word}），其余人拿到 <b>${G.P.find(q=>!q.under).word}</b>。</p>
+    <table>
+      <tr><td>你的判断</td><td>${ok} 对 / ${no} 错</td></tr>
+      <tr><td>描述 / 投票</td><td>${S.desc} 句 / ${S.votes} 次</td></tr>
+      <tr><td>胜利奖金</td><td>${bonus?'+¥'+bonus.toFixed(1):'—'}</td></tr>
+      <tr><td>本局收入</td><td style="color:var(--red)">¥${S.earn.toFixed(1)}</td></tr>
+      <tr><td><span class="tagai">灵光</span>（${aiRole}）的表现</td><td>${S.aiKinds.map(d=>'「'+d.text+'」').join(' ')||'—'}</td></tr>
+    </table>
+    <p class="rel">词语关系已记入：${G.pair.a} ≈ ${G.pair.b}（近义词对）${S.aiBluff?'　灵光这局装过：它其实知道自己的词和你们不一样':''}</p>
+    <button class="btn" id="ssAgain" style="font-size:16px;padding:9px 34px">再来一局（回车）</button>`;
+  $('#ssAgain').onclick=play;
+  LG.say(s<.35?'我还是只会「是」和「否」……下次教我多说几个词。':s<.7?'我学到了一点：'+G.pair.a+'和'+G.pair.b+'要这样区分。':'这对词我记住了，下次我来带节奏。');
+}
+$('#ssGo').onclick=play;
+addEventListener('keydown',e=>{
+  if(e.target&&e.target.tagName==='INPUT') return;
+  if(/^[1-9]$/.test(e.key)){ const n=+e.key; G&&G.chipKey&&ctl.querySelector('.ss-chip')&&G.chipKey(n); G&&G.voteKey&&ctl.textContent.includes('谁的话对不上')&&G.voteKey(n); return; }
+  if(e.key==='Enter'||e.key===' '){
+    const over=$('#ssOver');
+    if(over.style.display!=='none'){ e.preventDefault(); play(); return; }
+    const b=$('#ssPrimary'); if(b){ e.preventDefault(); b.click(); }
+  }
+});
+</script>
+</body>
+</html>

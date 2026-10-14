@@ -49,6 +49,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 r.dataFill = Bar(Rect("D", r.bars, new Vector2(.51f, 0), Vector2.one, Vector2.zero, Vector2.zero), "Fill", XgDark.Track, XgDark.Data);
                 r.items = ui.Text(Rect("Items", card, Vector2.zero, Vector2.one, new Vector2(648, 8), new Vector2(-12, -8)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
                 r.items.enableAutoSizing = true; r.items.fontSizeMin = 12; r.items.fontSizeMax = 13;
+                int ability = i + 1;
+                UiTip.Add(card, () => RowTip(ability));
                 rows[i] = r;
             }
             notes = ui.Text(Rect("Notes", root, Vector2.zero, new Vector2(1, 0), new Vector2(2, 0), new Vector2(-2, 52)), "", 12, XgDark.Muted, TextAlignmentOptions.BottomLeft);
@@ -126,12 +128,27 @@ namespace LingGuangV05.Desktop.XingGuang
             return names.ToString();
         }
 
+        /// <summary>Hover help for a row: the bars with their numbers for the next ability, the lines for the others.</summary>
+        string RowTip(int ability)
+        {
+            if (Sim == null) return "";
+            if (ability == Sim.NextAbility) return Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport();
+            string name = "「" + XgSim.AbilityName(ability, false) + "」", nameEn = "'" + XgSim.AbilityName(ability, true) + "'";
+            if (ability == 1) return T(name + "起始即有，不用参数和样本。", nameEn + " is there from the start; it needs no parameters or samples.");
+            string lines = T("门槛：参数 ", "Lines: parameters ") + XgSim.ParamsText(Sim.ParamsThreshold(ability)) + T("，样本 ", ", samples ") + XgSim.SamplesText(Sim.SamplesThreshold(ability));
+            if (Sim.HasAbility(ability)) return T(name + "已学会。\n", nameEn + " is learned.\n") + lines;
+            return T(name + "还没轮到：先学会前面的能力。\n", nameEn + " comes after the earlier abilities.\n") + lines;
+        }
+
         string NotesText(int next, double p, double d)
         {
             var sb = new StringBuilder();
-            sb.Append("<color=#A99BF2>■</color> ").Append(T("参数量：评估到 C 级以上的模型里最大的那个，现在 ", "Parameters: the biggest model assessed at grade C or better, now ")).Append(XgSim.ParamsText(p))
-              .Append(" <color=#58798A>(").Append(XgSim.ParamScale(p, Sim.English)).Append(")</color>");
+            sb.Append("<color=#A99BF2>■</color> ").Append(T("参数量：练到 C 级以上的模型里最大的那个，现在 ", "Parameters: the biggest model trained to grade C or better, now ")).Append(XgSim.ParamsText(p));
+            if (next > 0) sb.Append(" / ").Append(XgSim.ParamsText(Sim.ParamsThreshold(next))).Append(T("（", " (")).Append(N(Sim.ParamsProgress(next) * 100, "0")).Append(T("%）", "%)"));
+            sb.Append(" <color=#58798A>(").Append(XgSim.ParamScale(p, Sim.English)).Append(")</color>");
             sb.Append("    <color=#5DA8E8>■</color> ").Append(T("样本：所有数据集的有效样本，现在 ", "Samples: every dataset's effective samples, now ")).Append(XgSim.SamplesText(d));
+            if (next > 0) sb.Append(" / ").Append(XgSim.SamplesText(Sim.SamplesThreshold(next))).Append(T("（", " (")).Append(N(Sim.SamplesProgress(next) * 100, "0")).Append(T("%）", "%)"));
+            if (Sim.ReadWordsTotal >= 1) sb.Append(" <color=#58798A>(").Append(Sim.ReadShort()).Append(")</color>");
             sb.Append("\n").Append(T("结构是道具：买了能降门槛，不买也能到，只是慢一些。", "Structures are items: they lower the line; without them it still comes, only later."));
             if (next > 0)
             {

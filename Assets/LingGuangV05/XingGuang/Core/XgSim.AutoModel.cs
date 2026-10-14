@@ -133,11 +133,20 @@ namespace LingGuangV05.XingGuang
             return AutoShape(run, arch, cards, all);
         }
 
-        XgRun AutoShape(XgRun run, string arch, List<AutoCard> cards, double all)
+        /// <summary><see cref="AutoShape(XgRun, string, IXgHost)"/> as if the caps were <paramref name="depthCap"/> and <paramref name="widthCap"/> (for "what would the next tech node give").</summary>
+        public XgRun AutoShapeWithCaps(XgRun run, string arch, IXgHost host, int depthCap, int widthCap)
+        {
+            double all;
+            var cards = host == null ? null : AutoCards(run, host, out all);
+            all = host == null ? double.PositiveInfinity : cards == null ? Vram(host) : 0;
+            return AutoShape(run, arch, cards, all, depthCap, widthCap);
+        }
+
+        XgRun AutoShape(XgRun run, string arch, List<AutoCard> cards, double all, int depthCapAt = -1, int widthCapAt = -1)
         {
             var track = (XgTrack)run.track;
             var probe = new XgRun { track = run.track, arch = arch, dataset = run.dataset };
-            int depthCap = Math.Max(1, Math.Min(DepthCap(track), MaxDepth(probe))), widthCap = Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, WidthCap(track)));
+            int depthCap = Math.Max(1, Math.Min(depthCapAt >= 0 ? depthCapAt : DepthCap(track), MaxDepth(probe))), widthCap = Math.Max(0, Math.Min(XgCatalog.Widths.Length - 1, widthCapAt >= 0 ? widthCapAt : WidthCap(track)));
             XgRun best = null; double bestK = -1, bestVram = 0;
             for (int d = 1; d <= depthCap; d++)
                 for (int w = 0; w <= widthCap; w++)
@@ -190,7 +199,7 @@ namespace LingGuangV05.XingGuang
             var sb = new System.Text.StringBuilder();
             sb.Append(S.unlocked.Count).Append('|').Append(run.dataset).Append('|').Append(run.arch).Append('|').Append(run.depth).Append('|').Append(run.width)
               .Append('|').Append(Math.Round(Math.Log(1 + SamplesEffective(run)) * 4)).Append('|').Append(Math.Round(InbreedingPenaltyFor(run.dataset) * 200))
-              .Append('|').Append(AutoTrainLevel).Append('|').Append(Math.Round(all));
+              .Append('|').Append(Math.Round(all));
             if (cards != null) foreach (var c in cards) sb.Append('|').Append(Math.Round(c.free)).Append(c.self ? "s" : "");
             return sb.ToString();
         }
@@ -301,7 +310,7 @@ namespace LingGuangV05.XingGuang
         // ───────────── the ceiling ─────────────
 
         /// <summary>The final-rate factor of the existing curve: the learning-rate search finds a better rate, a schedule a better one still.</summary>
-        public double RateFinal => Has("lrschedule") || AutoTrainLevel >= 5 ? XgCatalog.LrFinal[4] : HasLrKnob(XgTrack.Vision) ? XgCatalog.LrFinal[3] : XgCatalog.LrFinal[2];
+        public double RateFinal => Has("lrschedule") ? XgCatalog.LrFinal[4] : HasLrKnob(XgTrack.Vision) ? XgCatalog.LrFinal[3] : XgCatalog.LrFinal[2];
 
         /// <summary>The stage whose ability opens each dataset's desk or pack (the desk's place on the parameter ladder).</summary>
         static readonly Dictionary<string, int> DatasetStage = new Dictionary<string, int>
@@ -320,7 +329,14 @@ namespace LingGuangV05.XingGuang
         /// so a model the size of that rung reaches the top grades and one fifty times smaller only grade C. A desk opened
         /// by ability n is learnt properly by the model that reaches ability n + 1.
         /// </summary>
-        public static double CeilingScaleK(string dataset) => .1 * CeilingLadderK[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
+        public static double CeilingScaleK(string dataset)
+            => dataset == XgMemes.SenseDesk ? SenseScaleK : .1 * CeilingLadderK[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
+
+        /// <summary>
+        /// 常识判断 is the nursery: plain sentences everybody knows, so the model the lab starts with (a perceptron, 0.26K) can learn it
+        /// to the line where its yes/no stops being a guess (<see cref="SenseVoiceLearned"/>) by training alone, before any tech is bought.
+        /// </summary>
+        public const double SenseScaleK = .22;
 
         /// <summary>The samples a desk wants before data stops holding its ceiling down: 1/500 of the next rung of <see cref="CeilingLadderSamples"/>.</summary>
         public static double CeilingNeedSamples(string dataset) => .002 * CeilingLadderSamples[Math.Min(AbilityCount, StageOfDataset(dataset) + 1)];
@@ -363,8 +379,6 @@ namespace LingGuangV05.XingGuang
             acc = ProgressionAccuracy(run, acc);
             double chance = 1 - d.chanceError;
             acc = Math.Max(chance, acc - InbreedingPenaltyFor(run.dataset));
-            // 学习率重启 (consumable): the ceiling is 8% higher for a few rounds; the dataset's own floor still caps it.
-            if (S.sgdrRounds > 0) acc *= 1 + SgdrBoost;
             return Math.Max(chance, Math.Min(1 - d.floorError, acc));
         }
 
@@ -427,7 +441,8 @@ namespace LingGuangV05.XingGuang
             switch (limit)
             {
                 case XgLimit.Params:
-                    return T("参数量不够，再练也涨不动：去科技加宽、加深，或在道具买参数更多的结构。", "Not enough parameters; more training will not help: widen or deepen in the tech tree, or buy a bigger structure on the Items page.");
+                    return T("参数量不够，再练也涨不动：去科技加宽、加深，或在道具买参数更多的结构。", "Not enough parameters; more training will not help: widen or deepen in the tech tree, or buy a bigger structure on the Items page.")
+                        + (English ? " " : "") + ParamsPlateauDetail(run, English);
                 case XgLimit.Data:
                     return T("样本不够，再练也涨不动：去标注台多标，或买数据包。", "Not enough samples; more training will not help: label more, or buy a data pack.");
                 case XgLimit.Structure:
@@ -443,7 +458,7 @@ namespace LingGuangV05.XingGuang
         // ───────────── one round ─────────────
 
         /// <summary>Share of the way to the ceiling one round covers: more cards (compute, combo, research) are faster, bigger models slower.</summary>
-        public double GainRate(XgRun run, int cards) => Math.Max(GainMin, Math.Min(GainMax, GainPerCard * Math.Max(0, cards) / Math.Max(1, Tau(run))));
+        public double GainRate(XgRun run, int cards) => Math.Min(1, Math.Max(GainMin, Math.Min(GainMax, GainPerCard * Math.Max(0, cards) / Math.Max(1, Tau(run)))) * RelicGainFactor(run));
 
         /// <summary>
         /// The chance that the next round goes down, and why: data scarce for the model's size (params per sample, as in
@@ -465,7 +480,7 @@ namespace LingGuangV05.XingGuang
             r.jump = .1 * Clamp01((jumpPoints - 30) / 120) * (Has("warmup") ? .5 : 1) * (Has("gradclip") ? .7 : 1);
             r.wobble = DropWobble * (perSample < 1 ? .67 : 1);
             double total = (r.overfit + r.noise + r.drift + r.jump + r.wobble) * (Has("batchnorm") ? .8 : 1);
-            r.chance = Math.Max(0, Math.Min(DropMax, total));
+            r.chance = Math.Max(0, Math.Min(DropMax, total)) * (1 - Math.Min(.9, RelicFx.dropCut));
             r.level = r.chance < RiskMedium ? 0 : r.chance < RiskHigh ? 1 : 2;
             double top = Math.Max(Math.Max(r.overfit, r.noise), Math.Max(r.drift, Math.Max(r.jump, r.wobble)));
             if (top == r.wobble) { r.reason = "正常波动"; r.reasonEn = "the usual wobble"; }
@@ -501,12 +516,12 @@ namespace LingGuangV05.XingGuang
             {
                 double fallen = Math.Max(chance, before - range * (DropMin + DropSpread * Roll()));
                 bool real = before - fallen > 1e-12;
-                if (real && S.rollbackGuards > 0)
+                if (real && RelicGuardReady)
                 {
-                    // 检查点回滚 (consumable): the drop is undone; the round neither gains nor loses.
-                    S.rollbackGuards--;
+                    // 残差贴纸 (relic): the failed round does not count; it neither gains nor loses.
+                    S.relicCharge = 0;
                     e.rolledBack = true;
-                    Say(T("检查点回滚：这一轮的退步撤销了。", "Checkpoint rollback: this round's drop was undone."));
+                    Say(T("残差贴纸：这一轮失败的训练不计入。", "Residual sticker: this failed round does not count."));
                 }
                 else
                 {

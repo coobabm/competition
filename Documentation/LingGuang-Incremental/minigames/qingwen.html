@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 教它认人</title>
+<!--
+  教它认人 — messages from 晴雯 (girlfriend, 2016 YY texting style) arrive one by one. 灵光 reads her mood first
+  (purple chip, right with probability LG.skill(); wrong guesses are confusable moods). The player labels her mood
+  (6 tags) and may reply with one of three lines (styles fit each mood differently). At skill >= .5 灵光 marks the line
+  it thinks is best (right with prob skill), at skill >= .8 it also writes a fitting line of its own.
+  Mislabelling 生气/委屈 and badly fitting replies lower 晴雯's mood meter; her next lines get colder.
+  12 messages per run (dorm network cuts at 23:30). Labels = mood tags: each is a sample. Ends with 灵光's answer to 「她爱我吗」.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.qw{display:grid;grid-template-columns:488px 1fr;gap:12px;height:100%;padding:12px}
+.yy{display:flex;flex-direction:column;border:1px solid #E7B9C8;border-radius:8px;overflow:hidden;background:#FFFAFC;min-height:0}
+.yh{display:flex;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(#FFD9E6,#FFC2D7);border-bottom:1px solid #E7A5BC;flex:none}
+.yav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FF9EC0,#E8588F);color:#fff;font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 2px #fff}
+.yh .nm{font-weight:700;font-size:15px}.yh .nm small{font-weight:400;color:#B0577A;font-size:11px;margin-left:6px}
+.yh .sig{font-size:12px;color:#8A4A64;height:17px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:350px}
+.yh .sig.typing{color:var(--orange)}
+.ylog{flex:1;overflow-y:auto;padding:6px 0;min-height:0;scroll-behavior:smooth}
+.ts{text-align:center;color:#B9A3AD;font-size:11px;margin:8px 0 4px}
+.sys{text-align:center;color:#8A4A64;font-size:11.5px;margin:8px 14px;background:#FFE9F1;border-radius:10px;padding:4px 8px;line-height:1.6}
+.m{display:flex;gap:6px;margin:5px 10px;align-items:flex-start;animation:pop .18s ease-out}
+.m.me{flex-direction:row-reverse}
+.mav{width:26px;height:26px;border-radius:50%;flex:none;background:linear-gradient(135deg,#FF9EC0,#E8588F);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.m.me .mav{background:linear-gradient(135deg,#7BD08A,#2F9E44)}
+.bub{max-width:76%;padding:6px 10px;border-radius:4px 10px 10px 10px;background:#fff;border:1px solid #EFD3DE;font-size:14px;line-height:1.55;word-break:break-all}
+.m.me .bub{background:#C9F0A8;border-color:#A9D985;border-radius:10px 4px 10px 10px}
+.bub.aib{background:var(--ai2);border-color:#DCD6FB;color:#4B3FA8}
+.bub.typ{padding:8px 12px;display:flex;gap:4px}
+.bub.typ i{width:6px;height:6px;border-radius:50%;background:#C9A9B8;animation:bl 1s infinite}
+.bub.typ i:nth-child(2){animation-delay:.18s}.bub.typ i:nth-child(3){animation-delay:.36s}
+.em{font-size:16px}
+.gchip{display:inline-flex;align-items:center;gap:5px;margin:2px 10px 4px 42px;background:var(--ai2);border:1px solid #DCD6FB;color:#4B3FA8;border-radius:12px;padding:1px 10px 1px 4px;font-size:12px;animation:pop .2s}
+.gchip b{width:16px;height:16px;border-radius:50%;background:var(--ai);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.gchip.think{opacity:.7}
+@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.yin{flex:none;border-top:1px solid #F0D5DF;padding:6px 12px;font-size:12px;color:#B9A3AD;background:#FFF2F7;display:flex;justify-content:space-between}
+.ctl{display:flex;flex-direction:column;gap:10px;min-height:0}
+.meter{flex:none;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:#fff}
+.meter .t{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.meter .t b{font-size:15px}
+.mb{height:12px;border-radius:6px;background:#F1E3E8;margin-top:6px;overflow:hidden;position:relative}
+.mb i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#E33E33,#F27B1D 40%,#E8588F);transition:width .6s}
+.stepbox{flex:1;border:1px solid var(--line);border-radius:8px;background:#fff;padding:12px;min-height:0;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.stepbox h4{margin:0;font-size:15px}
+.stepbox .sub{font-size:12px;color:var(--mute);margin-top:-6px}
+.moods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mood{position:relative;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 4px;cursor:pointer;font-family:inherit;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,box-shadow .12s,border-color .12s}
+.mood span{font-size:26px;line-height:1.2}
+.mood:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px #0002;border-color:var(--blue)}
+.mood:disabled{cursor:default}
+.mood.ok{background:#E8F7EC;border-color:var(--green)}.mood.bad{background:#FDECEA;border-color:var(--red)}.mood.truth{background:#E8F7EC;border-color:var(--green);animation:lgsh .3s}
+.mood .ag{position:absolute;right:5px;top:4px;width:17px;height:17px;border-radius:50%;background:var(--ai);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+.res{background:#F7F8FB;border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.7}
+.res b.g{color:var(--green)}.res b.r{color:var(--red)}.res .aix{color:#4B3FA8}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{position:relative;text-align:left;border:1px solid #C9D2F0;background:#fff;border-radius:8px;padding:8px 12px;font-family:inherit;font-size:14px;cursor:pointer;transition:transform .12s,border-color .12s}
+.opt:hover:not(:disabled){border-color:var(--blue);transform:translateX(3px)}
+.opt.hastag{padding-right:96px}
+.opt.aiopt{border-color:#C9BEF8;background:var(--ai2);color:#4B3FA8}
+.opt .tg{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--ai);color:#fff;border-radius:10px;font-size:11px;padding:0 7px;line-height:18px}
+.opt.fit2{background:#E8F7EC;border-color:var(--green)}.opt.fit1{background:#F5F9E8;border-color:#9CC24A}.opt.fit0{background:#FFF6E5;border-color:var(--gold)}.opt.fitn{background:#FDECEA;border-color:var(--red)}
+.opt .fl{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700}
+.skip{align-self:flex-start;font-size:12px;color:var(--mute);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0}
+.over h2{letter-spacing:2px}
+.over .sc{display:flex;gap:26px;font-size:13px;color:var(--mute)}.over .sc b{display:block;font-size:26px;color:var(--ink)}
+.over .aiq{max-width:560px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:10px;padding:10px 16px;color:#4B3FA8;font-size:15px;line-height:1.8}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'qingwen', title:'教它认人', subtitle:'晴雯的消息 · 教灵光读她的心情', icon:'雯', dataset:'晴雯的消息',
+  stats:[['你读对','sOk'],['你读错','sNo'],['灵光读对','sAi'],['晴雯心情','sMood','60']], statsNote:'每条消息 = 1 条情绪标签',
+  aiHello:'……她回了一个「哦」。「哦」是什么意思？',
+  rule:'<b>玩法</b>：晴雯发来消息，灵光先猜她的心情（紫色），你再给它标上。然后可以回她一句。<br><b>小心</b>：把生气、委屈看错，或者回错话，她的心情条会往下掉。<br><b>怎么标数据</b>：每条消息 + 你选的心情 = 1 条情绪标签。'
+});
+
+/* ---------- data ---------- */
+const MOODS=['开心','生气','委屈','想你','敷衍','试探'];
+const MI={开心:'😄',生气:'😠',委屈:'🥺',想你:'💗',敷衍:'😐',试探:'🧐'};
+// what 灵光 confuses each mood with when it is wrong
+const CONF={开心:['想你','试探','敷衍'],生气:['敷衍','委屈','试探'],委屈:['想你','敷衍','生气'],想你:['开心','试探','委屈'],敷衍:['生气','开心','委屈'],试探:['生气','委屈','想你']};
+const EMO={微笑:'🙂',抠鼻:'😏',再见:'👋'};
+// [true mood, messages separated by |, clue shown after labelling, flags: h = hesitates before sending, m = masks with a cheerful signature]
+const MSG=[
+['开心','今天概率论考完了！！|感觉能过 [微笑]|晚上请室友吃火锅','连着两个感叹号，还主动要请客。'],
+['开心','我妈给我发了煤球的视频|它居然学会开门了！！|笑死我了哈哈哈哈','「哈哈哈」加感叹号：她在分享好玩的事。'],
+['开心','欢乐颂追到第十集了|安迪好帅啊啊啊|你快去看 不许说我幼稚','她在安利，不是在抱怨。'],
+['开心','今天奶茶买一送一 [微笑]|我给你留了半杯|骗你的 早喝完了哈哈','开玩笑逗你，说明心情很好。'],
+['开心','笨蛋 我今天被老师表扬了！|说我PPT做得最好|嘿嘿','「笨蛋」是撒娇，后面还跟着「嘿嘿」。'],
+['开心','啊啊啊奖学金发下来了！|请你吃饭 隔着屏幕 [抠鼻]','表情是调皮的，在逗你。'],
+['开心','我今天换了新发型|你猜猜 猜对有奖','主动找你玩游戏，心情不错。'],
+['生气','你昨天为什么没回我|我等到十二点|算了','先质问，再用一句「算了」收场。','h'],
+['生气','呵呵','「呵呵」比「哈哈」冷十度。','h'],
+['生气','你自己看看你几点回我的','不是在问，是在翻旧账。'],
+['生气','你每次都说在忙|忙什么 忙到连一句话都没空回？','连续两句质问，还带问号。'],
+['生气','你是不是又和他们开黑去了|我说了多少次','「又」和「说了多少次」：这是旧账。'],
+['生气','行 你厉害 你什么都对','夸你的话，语气是反的。','h'],
+['生气','我没生气。|真的没有。|你不用管我','连着否认三遍，就是生气了。','hm'],
+['生气','你根本没在听我说话','「根本」是气话的标志。'],
+['委屈','今天好累|被室友说了|不想说话了','她在示弱，希望你问下去。'],
+['委屈','你都不问我','只有一句。不是质问，是在等你主动。','h'],
+['委屈','我今天一个人去吃的饭|一个人去的图书馆|一个人回的宿舍|没事 习惯了','「一个人」说了三遍，「习惯了」才是重点。'],
+['委屈','你是不是忘了今天是什么日子|没关系 我自己记得就行','「没关系」是反话，后面更像委屈。'],
+['委屈','为什么每次都是我先说晚安','没有火气，是失落。'],
+['委屈','你忙吧','没有表情，也没有「我也忙」：她在等你说「不忙」。','h'],
+['委屈','室友都有人来接|我自己拎着箱子走了二十分钟|没事 就是有点重','说的是箱子，难过的是没人来。'],
+['委屈','我昨天哭了一晚上|你也不知道吧','「你也不知道吧」是失望，不是质问。'],
+['想你','你在干嘛呢|我睡不着|想听你说话','睡不着，想听你说话：她直说了。'],
+['想你','今天路过我们以前去的那家奶茶店|关门了|突然好想你','一件小事引出一句「好想你」。'],
+['想你','好想你啊|什么时候放假|快点来看我 笨蛋','「笨蛋」在这里是撒娇。'],
+['想你','下雨了|没带伞|如果你在就好了','她真正想说的是「如果你在」。'],
+['想你','梦到你了|醒来发现是假的|不想起床了','梦、醒来、失落：她在想你。'],
+['想你','你那边冷不冷|多穿点 笨蛋 我不在没人提醒你','嘴上是叮嘱，心里是惦记。'],
+['想你','宿舍马上断网了|晚安|……想你','省略号后面，才是她想说的。'],
+['敷衍','哦','没有表情，没有标点：她在应付。','h'],
+['敷衍','随便','「随便」是没心情聊，不是没意见。'],
+['敷衍','嗯嗯好的呀~','客气得过头，像在回客服。'],
+['敷衍','嗯','一个字，没有后文。'],
+['敷衍','好吧','「好吧」不是同意，是不想再说了。'],
+['敷衍','哈哈','「哈哈」后面没有任何内容，她可能在看别的。'],
+['敷衍','看情况吧','没承诺也没拒绝，注意力不在你这里。'],
+['敷衍','在看剧 等下说','不是生气，是没空：她的注意力在别的地方。'],
+['敷衍','都行 你定','什么都「都行」，说明她不想花力气。'],
+['试探','你觉得我和你初恋比 谁好看？','没有标准答案的送命题，她想看你怎么答。'],
+['试探','假如我现在不理你了|你会怎么办','「假如」开头：她在试你。'],
+['试探','你是不是不爱我了','看起来是质问，其实是在等你说「不是」。'],
+['试探','你同学朋友圈里那个女生是谁啊 [微笑]','[微笑] 加「是谁啊」：她在看你的反应。'],
+['试探','我最近胖了好多|你是不是嫌弃我','她要的不是答案，是一句否认。'],
+['试探','如果我们分手了|你会难过吗','「如果」：假设问题，真实情绪。'],
+['试探','你手机里我的备注是什么？','她在试你有没有把她当回事。'],
+['试探','我要是考研去北京了|你怎么办','她想听你说「我跟你去」。'],
+];
+const SIG={开心:['今天的月亮好圆','考完试啦！','欢乐颂追更中~','今天心情 100 分'],生气:['有些人，说了也不懂。','呵呵','别烦我'],委屈:['想哭','我很好，真的。','累了，想放假'],想你:['想你的第 N 天','今晚的星星很亮','晚安，世界'],敷衍:['……','随便','无题'],试探:['有些问题不敢问','如果……','在吗？']};
+// reply styles: 哄 问 逗 共 想 冷 敷 转 表
+const RT={
+哄:['对不起嘛 是我不好 你别生气了','我错了我错了 你想怎么罚我都行','是我不对 我以后不会了 你原谅我好不好'],
+问:['怎么了？跟我说说好不好','你今天是不是不开心 我听着呢','发生什么事了 慢慢说 我在'],
+逗:['笨蛋 谁惹我们晴雯了 我去打他','哎呀 谁家的小朋友又鼓脸了 [抠鼻]','你再这样我要截图发给你室友了'],
+共:['哇 太棒了吧！！！','真的假的 好厉害 [微笑]','我就知道你可以 晚上必须庆祝'],
+想:['我也想你 想得不行','想你 真想马上买票过去','我也是 好想抱你'],
+冷:['哦 那你先忙','行 随你','那就这样吧'],
+敷:['嗯嗯 好的','哈哈 是吗','哦哦 知道了'],
+转:['对了 你今天吃了什么','话说你昨天看球赛了吗','我最近发现一个好玩的游戏'],
+表:['当然是你啊 笨蛋 除了你我谁也不要','不会的 我哪也不去','你问这个干嘛 我心里只有你一个'],
+};
+const FIT={
+开心:{共:2,逗:1,问:1,想:1,哄:0,转:0,表:0,冷:-1,敷:-1},
+生气:{哄:2,问:1,想:0,表:0,逗:-1,共:-1,冷:-1,转:-1,敷:-2},
+委屈:{哄:2,问:2,想:1,表:1,逗:0,共:-1,转:-1,冷:-1,敷:-2},
+想你:{想:2,表:1,哄:1,逗:1,问:0,共:0,转:0,敷:-1,冷:-1},
+敷衍:{问:2,逗:1,想:1,哄:0,表:0,转:0,冷:-1,共:-1,敷:-1},
+试探:{表:2,想:1,问:1,哄:1,逗:0,共:0,转:-1,敷:-1,冷:-2},
+};
+// 灵光's own wording at high skill (always a fitting line)
+const AIR={开心:'太好了。我也替你高兴 [微笑] 晚上好好庆祝一下',生气:'对不起 我知道我让你等了 你想骂就骂 我听着',委屈:'辛苦了 你先别说话 我陪着你 想说的时候再说',想你:'我也想你 刚刚还在翻我们以前的聊天记录 [微笑]',敷衍:'你是不是有点累了？不想聊就不聊 我陪你安静一会儿',试探:'不会 不管怎么样 我都在 这个问题 你不用试我'};
+const DLT={2:10,1:4,0:-3,'-1':-10,'-2':-16};
+const FL={2:['很贴心','g'],1:['还行','g'],0:['有点偏','o'],'-1':['不太对','r'],'-2':['踩雷了','r']};
+const ROUNDS=12;
+
+/* ---------- helpers ---------- */
+const $c=document.createElement.bind(document);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function esc(s){ return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function rich(s){ return esc(s).replace(/\[(.+?)\]/g,(m,k)=>EMO[k]?`<span class="em" title="${k}">${EMO[k]}</span>`:m); }
+
+/* ---------- layout ---------- */
+stage.innerHTML=`
+<div class="qw">
+  <div class="yy">
+    <div class="yh"><div class="yav">雯</div><div><div class="nm">晴雯ˇ<small>WiFi 在线</small></div><div class="sig" id="qSig">今天的月亮好圆</div></div></div>
+    <div class="ylog" id="qLog"></div>
+    <div class="yin"><span>由灵光和你一起读她的心情</span><span>YY · 私聊</span></div>
+  </div>
+  <div class="ctl">
+    <div class="meter"><div class="t"><span>晴雯的心情 <small id="qMf" style="color:var(--mute)"></small></span><b id="qMv">60</b></div><div class="mb"><i id="qMb" style="width:60%"></i></div></div>
+    <div class="stepbox" id="qStep"></div>
+  </div>
+</div>
+<div class="over" id="qOver"></div>`;
+const logEl=document.getElementById('qLog'), sigEl=document.getElementById('qSig'), stepEl=document.getElementById('qStep'), overEl=document.getElementById('qOver');
+let Gm=null;
+
+function scroll(){ logEl.scrollTop=logEl.scrollHeight; }
+function addMsg(who,text,cls){
+  const m=$c('div'); m.className='m'+(who==='me'?' me':''); m.innerHTML=`<div class="mav">${who==='me'?'我':'雯'}</div><div class="bub ${cls||''}">${rich(text)}</div>`;
+  logEl.appendChild(m); scroll(); return m;
+}
+function addSys(t){ const d=$c('div'); d.className='sys'; d.textContent=t; logEl.appendChild(d); scroll(); }
+function addTs(){ const d=$c('div'); d.className='ts'; const t=Gm.clock; d.textContent='23:'+String(Math.min(59,t)).padStart(2,'0'); logEl.appendChild(d); Gm.clock+=1+LG.rnd(3); }
+function typing(on){
+  const o=logEl.querySelector('.typrow'); if(o) o.remove();
+  sigEl.classList.toggle('typing',on);
+  if(on){ sigEl.dataset.s=sigEl.dataset.s||sigEl.textContent; sigEl.textContent='对方正在输入…'; const m=$c('div'); m.className='m typrow'; m.innerHTML='<div class="mav">雯</div><div class="bub typ"><i></i><i></i><i></i></div>'; logEl.appendChild(m); scroll(); }
+  else if(sigEl.dataset.s){ sigEl.textContent=sigEl.dataset.s; delete sigEl.dataset.s; }
+}
+function setSig(t){ delete sigEl.dataset.s; sigEl.textContent=t; }
+async function herSay(lines,hes){
+  const tok=Gm.tok;
+  for(let i=0;i<lines.length;i++){
+    const t=lines[i];
+    typing(true);
+    if(hes&&i===0){ await sleep(800); typing(false); await sleep(1000); typing(true); }
+    await sleep(Math.min(2000,450+t.length*110));
+    if(Gm.tok!==tok) return false;
+    typing(false); addMsg('her',t);
+    if(i<lines.length-1) await sleep(300+LG.rnd(300));
+  }
+  return true;
+}
+
+/* ---------- meter ---------- */
+function setMeter(v,delta){
+  Gm.meter=clamp(v,0,100);
+  document.getElementById('qMv').textContent=Math.round(Gm.meter);
+  document.getElementById('qMb').style.width=Gm.meter+'%';
+  document.getElementById('qMf').textContent=Gm.meter>75?'笑嘻嘻':Gm.meter>50?'还行':Gm.meter>25?'有点闷':'快要不理你了';
+  LG.set('sMood',Math.round(Gm.meter));
+  if(delta){ const r=document.getElementById('qMv'); LG.float(r,(delta>0?'+':'')+delta+' ♥',delta>0?'var(--green)':'var(--red)'); if(delta<0) LG.shake(document.querySelector('.meter')); }
+}
+
+/* ---------- flow ---------- */
+function startGame(){
+  Gm={tok:Math.random(), round:0, meter:60, clock:6, used:new Set(), lastMoods:[], ok:0, no:0, ai:0, done:false, noticed:false};
+  logEl.innerHTML=''; overEl.style.display='none';
+  ['sOk','sNo','sAi'].forEach(i=>LG.set(i,0));
+  setSig('今天的月亮好圆'); setMeter(60);
+  addTs(); addSys('晴雯ˇ 上线了。宿舍 23:30 断网，在那之前教教灵光。');
+  LG.say(LG.pick(['……她来了。','我先看。你再教我。','「哦」到底是什么意思。']));
+  setTimeout(nextMsg,700);
+}
+function pickEntry(){
+  const m=Gm.meter;
+  const bad=['生气','委屈','敷衍'], good=['开心','想你'];
+  const pool=MSG.filter(e=>!Gm.used.has(e)).filter(e=>{ const L=Gm.lastMoods; return !(L.length>=2&&L[L.length-1]===e[0]&&L[L.length-2]===e[0]); });
+  const w=e=>{ if(m<35) return bad.includes(e[0])?4:e[0]==='试探'?1.5:.4; if(m>72) return good.includes(e[0])?3:e[0]==='试探'?1.2:.6; return 1; };
+  let tot=pool.reduce((a,e)=>a+w(e),0), r=Math.random()*tot;
+  for(const e of pool){ r-=w(e); if(r<=0) return e; }
+  return pool[0];
+}
+async function nextMsg(){
+  if(Gm.done) return; const tok=Gm.tok;
+  Gm.round++; const e=pickEntry(); Gm.used.add(e); Gm.cur=e; Gm.lastMoods.push(e[0]); Gm.guess=null; Gm.label=null;
+  stepEl.innerHTML='<h4>晴雯正在输入…</h4><div class="sub">先看看她说了什么。</div>';
+  addTs();
+  const flags=e[3]||'';
+  // signature mostly reflects the true mood, sometimes lies (masked)
+  let sig=LG.pick(SIG[e[0]]); if(flags.includes('m')) sig=LG.pick(SIG.开心); else if(Math.random()<.15) sig=LG.pick(SIG[LG.pick(['开心','敷衍'])]);
+  setSig(sig);
+  const lines=e[1].split('|');
+  const alive=await herSay(lines,flags.includes('h')||(e[0]==='生气'&&Math.random()<.5));
+  if(!alive||Gm.tok!==tok) return;
+  // 灵光 reads first
+  const chip=$c('div'); chip.className='gchip think'; chip.innerHTML='<b>灵</b>灵光正在看…'; logEl.appendChild(chip); scroll();
+  await sleep(700+LG.rnd(500)); if(Gm.tok!==tok) return;
+  const s=LG.skill(), right=LG.right();
+  const g=right?e[0]:LG.pick(CONF[e[0]]);
+  const conf=Math.round((right?.45+.5*s*(.7+.3*Math.random()):.28+.3*Math.random())*100);
+  Gm.guess=g; Gm.guessRight=right;
+  chip.className='gchip'; chip.innerHTML=`<b>灵</b>灵光觉得：${MI[g]}${g} · ${conf}%`;
+  showLabel();
+}
+function showLabel(){
+  stepEl.innerHTML=`<h4>第 ${Gm.round} / ${ROUNDS} 条：她现在是什么心情？</h4><div class="sub">紫色小圆点是灵光的判断。标对了才算好样本。</div>
+  <div class="moods">${MOODS.map(m=>`<button class="mood" data-m="${m}"><span>${MI[m]}</span>${m}${Gm.guess===m?'<i class="ag">灵</i>':''}</button>`).join('')}</div>`;
+  stepEl.querySelectorAll('.mood').forEach(b=>b.onclick=()=>onLabel(b.dataset.m));
+}
+function onLabel(m){
+  if(Gm.label) return; Gm.label=m; const e=Gm.cur, t=e[0], good=m===t;
+  stepEl.querySelectorAll('.mood').forEach(b=>{ b.disabled=true; if(b.dataset.m===t) b.classList.add(good?'ok':'truth'); else if(b.dataset.m===m) b.classList.add('bad'); });
+  if(good){ Gm.ok++; LG.give(1,1,stepEl.querySelector('.mood.ok')||stepEl,'var(--red)'); LG.hist('ok'); }
+  else { Gm.no++; LG.give(1,-.5,stepEl.querySelector('.mood.bad'),'#999'); LG.hist('no'); LG.shake(stepEl); }
+  if(Gm.guessRight) Gm.ai++;
+  LG.set('sOk',Gm.ok); LG.set('sNo',Gm.no); LG.set('sAi',Gm.ai);
+  // consequence of misreading an upset message
+  let pen=0, extra=null;
+  if(!good&&(t==='生气'||t==='委屈')){ pen=10; extra=LG.pick(['你根本没看懂我','你是不是没在看我说什么','算了 说了你也不懂']); }
+  Gm.pen=pen; Gm.extra=extra;
+  const aiTxt=Gm.guessRight?`灵光读对了 ${MI[t]}${t}`:`灵光看成了 ${MI[Gm.guess]}${Gm.guess}`;
+  const aiSay=Gm.guessRight?LG.pick(['记住了。这种说法是「'+t+'」。','对。我是从标点看出来的。','和你一样。']):LG.pick(['……原来是「'+t+'」。我看反了。','我把她的话当成了「'+Gm.guess+'」。','这一句，我又记错了。']);
+  setTimeout(()=>LG.say(aiSay),300);
+  const head=`<div class="res"><b class="${good?'g':'r'}">${good?'读对了':'读错了'}：她是「${MI[t]}${t}」</b>${good?'':'（你标的是'+m+'）'}<br><span style="color:var(--mute)">线索：${e[2]}</span><br><span class="aix">${aiTxt}</span>${pen?'<br><b class="r">你没看出她在难过，她的心情 −'+pen+'</b>':''}</div>`;
+  setTimeout(()=>showReply(head),good?900:1300);
+}
+function buildOpts(t){
+  const F=FIT[t], st=Object.keys(F);
+  const by=v=>st.filter(k=>F[k]===v);
+  const best=LG.pick(by(2)), mid=LG.pick(by(1).filter(k=>k!==best)), bad=LG.pick(st.filter(k=>F[k]<=0));
+  const opts=LG.shuffle([best,mid,bad]).map(k=>({k,text:LG.pick(RT[k]),fit:F[k]}));
+  const s=LG.skill(); let aiIdx=-1, custom=null;
+  if(s>=.5){ // 灵光 marks one of the lines: the best with probability skill, otherwise a random wrong one
+    aiIdx=LG.right()?opts.findIndex(o=>o.k===best):opts.findIndex(o=>o.k!==best&&Math.random()<.6);
+    if(aiIdx<0) aiIdx=opts.findIndex(o=>o.k!==best);
+  }
+  if(s>=.8) custom={k:'ai',text:AIR[t],fit:2,ai:true};
+  return {opts,aiIdx,custom};
+}
+function showReply(head){
+  if(Gm.done) return;
+  const t=Gm.cur[0], B=buildOpts(t); Gm.B=B;
+  const all=B.opts.slice(); if(B.custom) all.push(B.custom);
+  stepEl.innerHTML=`${head}<h4>回她一句？</h4><div class="opts">${all.map((o,i)=>`<button class="opt ${o.ai?'aiopt':''} ${o.ai||i===B.aiIdx?'hastag':''}" data-i="${i}">${rich(o.text)}${o.ai?'<span class="tg">灵光写的</span>':i===B.aiIdx?'<span class="tg">灵光：这句</span>':''}</button>`).join('')}</div><button class="skip" id="qSkip">先不回</button>`;
+  stepEl.querySelectorAll('.opt').forEach(b=>b.onclick=()=>onReply(all[+b.dataset.i],b));
+  document.getElementById('qSkip').onclick=()=>onReply(null);
+}
+async function onReply(o,btn){
+  if(Gm.reply!==undefined&&Gm.replyRound===Gm.round) return; Gm.reply=o; Gm.replyRound=Gm.round;
+  const t=Gm.cur[0], tok=Gm.tok;
+  let fit, delta;
+  if(o){ fit=o.fit; delta=DLT[fit]; addMsg('me',o.text); }
+  else { const upset=['生气','委屈','想你','试探'].includes(t); fit=upset?-1:0; delta=upset?-5:0; }
+  // 晴雯 may notice a line written by 灵光
+  let noticed=false;
+  if(o&&o.ai&&LG.skill()>=.9&&Math.random()<.3){ noticed=true; delta-=4; }
+  delta-=Gm.pen;
+  stepEl.querySelectorAll('.opt,.skip').forEach(b=>b.disabled=true);
+  if(btn&&o){ const f=FL[o.fit]; btn.classList.add(o.fit===2?'fit2':o.fit===1?'fit1':o.fit===0?'fit0':'fitn'); const sp=btn.querySelector('.tg'); if(sp) sp.remove(); btn.insertAdjacentHTML('beforeend',`<span class="fl" style="color:${f[1]==='g'?'var(--green)':f[1]==='o'?'var(--gold)':'var(--red)'}">${f[0]}</span>`); }
+  setMeter(Gm.meter+delta,delta);
+  // her follow-up depends on how the reply fit
+  await sleep(900); if(Gm.tok!==tok) return;
+  let fl=[];
+  if(!o) fl=upsetFollow(t,'skip');
+  else if(fit===2) fl=[LG.pick(['嗯…好吧 [微笑]','笨蛋 [抠鼻]','你今天怎么这么会说','好啦 不气了','哼 算你会说','嘿嘿 [微笑]'])];
+  else if(fit===1) fl=[LG.pick(['嗯','哦 好吧','行吧','还行吧','嗯嗯'])];
+  else fl=upsetFollow(t,'bad');
+  if(Gm.extra) fl.unshift(Gm.extra);
+  if(noticed) fl=['你今天说话怎么怪怪的','……这不是你吧？'];
+  await herSay(fl,fit<=0||noticed); if(Gm.tok!==tok) return;
+  if(noticed){ LG.say('她问的是你，不是我。'); }
+  afterRound();
+}
+function upsetFollow(t,why){
+  if(why==='skip') return [LG.pick(['你怎么不回我','……','已读不回是吧','嗯 不回就不回'])];
+  if(t==='开心') return [LG.pick(['你这是什么反应 扫兴','算了 不跟你说了'])];
+  return [LG.pick(['你根本不懂我','算了 不说了','哦','你就会说这些','你都不问我','我现在不想聊这个'])];
+}
+function afterRound(){
+  if(Gm.done) return;
+  if(Gm.meter<=0){ return finish('left'); }
+  if(Gm.round>=ROUNDS){ return finish('end'); }
+  stepEl.insertAdjacentHTML('beforeend','<button class="btn" id="qNext" style="align-self:flex-end;margin-top:auto">下一条 ›</button>');
+  document.getElementById('qNext').onclick=()=>{ if(Gm.done) return; document.getElementById('qNext').disabled=true; nextMsg(); };
+}
+async function finish(kind){
+  Gm.done=true; const tok=Gm.tok;
+  if(kind==='left'){ await sleep(300); addMsg('her','我去睡了。'); } else { await sleep(300); addMsg('her','宿舍要断网了 晚安~ [微笑]'); }
+  addSys(kind==='left'?'晴雯ˇ 下线了。':'晴雯ˇ 已离线（宿舍断网）。');
+  await sleep(1100);
+  const s=LG.skill(), m=Gm.meter;
+  const bonus=Math.round(m/20*10)/10;
+  if(bonus>0) LG.give(0,bonus);
+  let line;
+  if(s<.35) line='……我还看不懂。她说的「哦」，我只会数它出现了几次。';
+  else if(s<.65) line=m>=45?'我觉得……是。但我只认得六种心情，她的心情不止六种。':'我觉得她……不太开心。但这不等于不爱。我只认得六种心情。';
+  else if(s<.9) line=m>=55?'是。她等你说晚安，等到了断网前。她的字里有你。':'是。可她今天不开心。这两件事不矛盾。你去哄她，不是问我。';
+  else line=m>=55?'是。……她每次问「你爱我吗」，其实是在问「你会不会走」。我不会替你回答。':'是。……但她今晚的每一个「哦」，我都记住了。别让我再数到。';
+  overEl.style.display='flex';
+  overEl.innerHTML=`<h2>${kind==='left'?'💔 她下线了':'🌙 晚安'}</h2>
+  <div class="sc"><div><b>${Gm.ok}/${ROUNDS}</b>你读对</div><div><b style="color:var(--ai)">${Gm.ai}/${ROUNDS}</b>灵光读对</div><div><b style="color:#E8588F">${Math.round(m)}</b>晴雯心情</div><div><b style="color:var(--red)">+¥${bonus.toFixed(1)}</b>心情奖励</div></div>
+  <p>你给灵光标了 ${Gm.ok+Gm.no} 条情绪标签。<br>${kind==='left'?'她心情掉到了底。有些话，不是标对了就够的。':'问问它：她爱我吗？'}</p>
+  <div class="aiq" id="qAiq">……</div><button class="btn" id="qAgain">再来一晚</button>`;
+  document.getElementById('qAgain').onclick=startGame;
+  LG.say('……');
+  await sleep(900);
+  document.getElementById('qAiq').textContent='灵光：「'+line+'」'; LG.say(line);
+}
+
+/* ---------- start screen ---------- */
+function startScreen(){
+  overEl.style.display='flex';
+  overEl.innerHTML=`<h2>💬 教它认人</h2><p>晚上 11 点，晴雯在 YY 上找你聊天。<br>她从不直说自己的心情：「哦」「随便」「你忙吧」……<br>灵光先猜，你来教它。每条消息你标一个心情，再回她一句。<br><b style="color:var(--red)">看错了生气和委屈，她会真的不开心。</b></p>
+  <p style="font-size:12px">灵光现在的水平：<b id="qSk"></b></p><button class="btn" id="qGo">开始聊天（${ROUNDS} 条）</button>`;
+  document.getElementById('qGo').onclick=startGame; skHint();
+}
+function skHint(){ const e=document.getElementById('qSk'); if(!e) return; const s=LG.skill(); e.textContent=Math.round(s*100)+'%'+(s<.4?'（它连「哦」都读不懂）':s<.65?'（它开始读出标点的味道了）':s<.9?'（它会替你挑回复了）':'（它会替你写回复了）'); }
+LG.onSkill=skHint;
+startScreen();
+</script>
+</body>
+</html>

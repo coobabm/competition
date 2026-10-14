@@ -127,6 +127,9 @@ namespace LingGuangV05.Desktop.Miaoyu
             Label(top, "Slogan", Vector2.zero, new Vector2(1, 1), new Vector2(170, 0), new Vector2(-420, 0), "", 16, new Color32(90, 70, 0, 255), TextAlignmentOptions.MidlineLeft).name = "Slogan";
             wallet = Label(top, "Wallet", new Vector2(1, 0), Vector2.one, new Vector2(-400, 0), new Vector2(-18, 0), "", 17, Ink, TextAlignmentOptions.MidlineRight);
 
+            wallet.rectTransform.offsetMax = new Vector2(-66, 0);
+            Btn(top, "CloseMiaoyu", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-54, -20), new Vector2(-14, 20),
+                Yellow, "×", 24, Ink, () => window.CloseWindow(), out _);
             var bar = PrologueDesk.Rect("Tabs", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -106), new Vector2(0, -64));
             PrologueDesk.Fill(bar, Color.white);
             string[] ids = { "sell", "used", "cafe" };

@@ -25,8 +25,11 @@ namespace LingGuangV05.Desktop.XingGuang
 
         RectTransform barsRect, moneyRect;
         XgOrbGraphic orb;
-        TMP_Text aiName, aiSub, paramsLabel, paramsValue, dataLabel, dataValue, statMoney, statIncome, statPower, statClock, statYear;
+        TMP_Text nextHead, goLabel, aiName, aiSub, paramsLabel, paramsValue, dataLabel, dataValue, statMoney, statIncome, statPower, statClock, statYear;
         RectTransform paramsFill, dataFill;
+        Button goButton;
+        XgGuideStep barStep;
+        float barStepAt = -1;
 
         void BuildTopBar()
         {
@@ -73,21 +76,33 @@ namespace LingGuangV05.Desktop.XingGuang
                 + "\n" + T("单卡显存 ", "VRAM per card ") + N(VramUseMB() / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G");
             UiTip.Add(clockCell, "2016 年的游戏时间。", "The game's time in 2016.");
 
-            // The main line: two bars toward the next ability, between the AI and the stats.
-            barsRect = Rect("Chip3", bar, Vector2.zero, Vector2.one, new Vector2(248, 0), new Vector2(-406, 0));
+            // The main line in one place: the next ability's name and the 去做 link on top, two thin bars under it
+            // (trained parameters P and samples D against the lines after the items owned). Every text is 13 px or more.
+            barsRect = Rect("Chip3", bar, Vector2.zero, Vector2.one, new Vector2(248, 0), new Vector2(-406 - StripWidth - 14, 0));
+            Panel(barsRect, Color.clear);
+            nextHead = ui.Text(Rect("Next", barsRect, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -23), new Vector2(-84, -3)), "", 13, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            nextHead.textWrappingMode = TextWrappingModes.NoWrap; nextHead.overflowMode = TextOverflowModes.Ellipsis;
+            var goRt = Rect("Go", barsRect, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -23), new Vector2(0, -3));
+            var goImg = Panel(goRt, Color.clear);
+            goButton = goRt.gameObject.AddComponent<Button>(); goButton.targetGraphic = goImg;
+            goButton.onClick.AddListener(GoDo);
+            goLabel = ui.Text(Rect("Label", goRt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 13, XgDark.Link, TextAlignmentOptions.MidlineRight);
+            goLabel.textWrappingMode = TextWrappingModes.NoWrap;
+            UiTip.Add(goRt, () => GoTip());
             RectTransform BarRow(string name, float x0, float x1, Color fill, out TMP_Text label, out TMP_Text value)
             {
-                var row = Rect(name, barsRect, new Vector2(x0, 0), new Vector2(x1, 1), new Vector2(x0 > 0 ? 6 : 0, 0), new Vector2(x1 < 1 ? -6 : 0, 0));
-                label = ui.Text(Rect("Label", row, new Vector2(0, .5f), Vector2.one, new Vector2(0, 2), new Vector2(-124, -6)), "", 12, XgDark.Muted, TextAlignmentOptions.BottomLeft);
-                label.textWrappingMode = TextWrappingModes.NoWrap; label.overflowMode = TextOverflowModes.Ellipsis;
-                value = ui.Text(Rect("Value", row, new Vector2(1, .5f), Vector2.one, new Vector2(-124, 2), new Vector2(0, -6)), "", 12, XgDark.Ink, TextAlignmentOptions.BottomRight);
-                value.textWrappingMode = TextWrappingModes.NoWrap;
-                var track = Rect("Track", row, new Vector2(0, .5f), new Vector2(1, .5f), new Vector2(0, -12), new Vector2(0, -4));
+                var row = Rect(name, barsRect, new Vector2(x0, 0), new Vector2(x1, 1), new Vector2(x0 > 0 ? 8 : 0, 0), new Vector2(x1 < 1 ? -8 : 0, 0));
+                label = ui.Text(Rect("Label", row, Vector2.zero, new Vector2(0, 0), new Vector2(0, 11), new Vector2(64, 29)), "", 13, XgDark.Muted, TextAlignmentOptions.BottomLeft);
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+                value = ui.Text(Rect("Value", row, Vector2.zero, new Vector2(1, 0), new Vector2(64, 11), new Vector2(0, 29)), "", 13, XgDark.Ink, TextAlignmentOptions.BottomRight);
+                value.textWrappingMode = TextWrappingModes.NoWrap; value.overflowMode = TextOverflowModes.Ellipsis;
+                var track = Rect("Track", row, Vector2.zero, new Vector2(1, 0), new Vector2(0, 6), new Vector2(0, 10));
                 return Bar(track, "Fill", XgDark.Track, fill);
             }
             paramsFill = BarRow("Params", 0, .5f, XgDark.Params, out paramsLabel, out paramsValue);
             dataFill = BarRow("Data", .5f, 1, XgDark.Data, out dataLabel, out dataValue);
             UiTip.Add(barsRect, () => AbilityTip());
+            BuildRelicStrip(bar);
         }
 
         /// <summary>The biggest model shape of the two training lines in VRAM (MB).</summary>
@@ -102,8 +117,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim == null) return "";
             int next = Sim.NextAbility;
             string head = T("能力 " + Sim.AbilitiesCount + "/6。", "Abilities " + Sim.AbilitiesCount + "/6.");
-            string bars = T("\n参数量：评估到 C 级的模型里最大的那个。光买宽度不练，不算。\n样本：所有数据集的有效样本（标错的打折）。\n两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。",
-                "\nParameters: the biggest model assessed at grade C or better. Width bought but never trained does not count.\nSamples: the effective samples of every dataset (wrong labels count against).\nWhen both reach the line, the next ability comes. The lines already include the items you own.");
+            // Live numbers: each bar against its line, the models behind P with their formula, caps and memory.
+            string bars = "\n" + Sim.ParamsReport(Host) + T("\n光买宽度不练，不算。", "\nWidth bought but never trained does not count.") + "\n\n" + Sim.SamplesReport()
+                + "\n\n" + T("两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。", "When both reach the line, the next ability comes. The lines already include the items you own.");
             if (next == 0) return head + bars;
             return head + bars + "\n\n" + T("下一项「" + XgSim.AbilityName(next, false) + "」：", "Next, '" + XgSim.AbilityName(next, true) + "': ") + T(XgSim.AbilityUnlocks[next], XgSim.AbilityUnlocksEn[next]);
         }
@@ -114,28 +130,32 @@ namespace LingGuangV05.Desktop.XingGuang
             int have = Sim.AbilitiesCount, next = Sim.NextAbility;
             aiSub.text = T(AppNames.AppZh + " · 能力 ", AppNames.AppEn + " · ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
             double p = Sim.TrainedParamsK, d = Sim.TrainedSamples;
+            paramsLabel.text = T("参数", "Params");
+            dataLabel.text = T("样本", "Samples");
             if (next == 0)
             {
-                paramsLabel.text = T("参数量 · 六项都有了", "Parameters · all six");
-                dataLabel.text = T("样本 · 六项都有了", "Samples · all six");
+                nextHead.text = T("六项都有了", "All six learned");
                 paramsValue.text = XgSim.ParamsText(p); dataValue.text = XgSim.SamplesText(d);
                 SetBar(paramsFill, 1); SetBar(dataFill, 1);
+                barStep = null; goButton.gameObject.SetActive(false);
             }
             else
             {
-                string name = XgSim.AbilityName(next, Sim.English);
-                paramsLabel.text = T("参数量 → ", "Parameters → ") + name;
-                dataLabel.text = T("样本 → ", "Samples → ") + name;
-                paramsValue.text = XgSim.ParamsText(p) + " / " + XgSim.ParamsText(Sim.ParamsThreshold(next));
-                dataValue.text = XgSim.SamplesText(d) + " / " + XgSim.SamplesText(Sim.SamplesThreshold(next));
+                nextHead.text = T("下一项能力 · ", "Next ability · ") + XgSim.AbilityName(next, Sim.English);
+                paramsValue.text = XgSim.ParamsText(p) + " / " + XgSim.ParamsText(Sim.ParamsThreshold(next)) + " (" + Percent(Sim.ParamsProgress(next)) + "%)";
+                dataValue.text = XgSim.SamplesText(d) + " / " + XgSim.SamplesText(Sim.SamplesThreshold(next)) + " (" + Percent(Sim.SamplesProgress(next)) + "%)";
                 SetBar(paramsFill, (float)Sim.ParamsProgress(next));
                 SetBar(dataFill, (float)Sim.SamplesProgress(next));
+                // The step behind the link is planned a couple of times a second, not every refresh.
+                if (barStepAt < 0 || Time.unscaledTime - barStepAt > .5f) { barStepAt = Time.unscaledTime; barStep = FindBarStep(out _); }
+                goButton.gameObject.SetActive(barStep != null);
+                goLabel.text = T("去做 ›", "Do it ›");
             }
             if (shownMoney < 0) statMoney.text = Money(Host.Money);
             statIncome.text = "+" + Money(IncomeRate);
             var w = Sim.Wiring;
             double watts = w != null ? w.psuW : 0, limit = w != null && w.psuLimit > 0 ? w.psuLimit : 3500;
-            statPower.text = N(watts, "0") + "/" + N(limit, "0") + "W";
+            statPower.text = Sim.SystemUnlocked("power") ? N(watts, "0") + "/" + N(limit, "0") + "W" : T("教学期免费", "Free while learning");
             statPower.color = w != null && w.tripped || watts > limit ? XgDark.Bad : watts > limit * .85 ? XgDark.Hot : XgDark.Ink;
             var rt = controller.runtime;
             if (rt != null && rt.Sim != null)
@@ -144,6 +164,32 @@ namespace LingGuangV05.Desktop.XingGuang
                 statYear.text = now.Year.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 statClock.text = now.ToString("MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             }
+        }
+
+        /// <summary>Whole percent, never 100 before the bar is full.</summary>
+        static string Percent(double k) => Math.Floor(k * 100 + 1e-9).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+
+        XgGuideStep FindBarStep(out bool parameters) => XgGuide.BarStep(Sim, Host.Money, Host.VramMB, out parameters);
+
+        /// <summary>「去做 ›」: goes where the guide would send you for the shorter bar, and rings the control (the to-do note's own way there).</summary>
+        void GoDo()
+        {
+            var step = FindBarStep(out _);
+            if (step == null) return;
+            barStep = step;
+            var note = LingGuangV05.Desktop.Story.GuideNote.Instance;
+            if (note != null && note.Follow(step)) return;
+            // Without the note (a bare lab window): the lab's own pages only.
+            if (step.app != XgGuide.Lab) return;
+            Open(step.tab == "train" && (step.arg == "vision" || step.arg == "sequence") ? step.arg : step.tab);
+            XgGuideHighlight.Show(this, step.tab, step.target);
+        }
+
+        string GoTip()
+        {
+            var step = barStep ?? FindBarStep(out _);
+            if (step == null) return "";
+            return T("去做：", "Do it: ") + step.Text(Sim.English) + "\n" + step.Why(Sim.English);
         }
 
         float orbTime;
@@ -170,13 +216,14 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── nav ─────────────
 
-        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it).</summary>
-        public static readonly string[] NavIds = { "home", "train", "data", "items", "tree", "wiring", "repo", "abilities", "cards", "final" };
+        /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it). 科技 (tree) is a section of 道具.</summary>
+        public static readonly string[] NavIds = { "teach", "train", "board", "tree", "home", "data", "items", "backpack", "wiring", "repo", "abilities", "cards", "final" };
 
         static readonly (string zh, string en, string[] ids)[] NavGroups =
         {
+            ("教它长大", "TEACH & GROW", new[] { "teach", "train", "board", "tree" }),
             ("它", "IT", new[] { "home" }),
-            ("养成", "RAISE", new[] { "train", "data", "items", "tree" }),
+            ("养成", "RAISE", new[] { "data", "items", "backpack" }),
             ("调度", "RUN", new[] { "wiring", "repo" }),
             ("收藏", "KEEP", new[] { "abilities", "cards", "final" }),
         };
@@ -200,7 +247,7 @@ namespace LingGuangV05.Desktop.XingGuang
             void OnDisable() => changed?.Invoke(false);
         }
 
-        const float NavRowHeight = 30, NavGroupHeight = 26;
+        const float NavRowHeight = 27, NavGroupHeight = 26;
         readonly Dictionary<string, NavRow> navRows = new Dictionary<string, NavRow>();
         readonly List<TMP_Text> navGroupLabels = new List<TMP_Text>();
         RectTransform nav, crowdLink;
@@ -226,13 +273,13 @@ namespace LingGuangV05.Desktop.XingGuang
             var rim = crowdLink.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var hover = crowdLink.gameObject.AddComponent<XgHoverRim>(); hover.rim = rim; hover.rest = XgDark.Line; hover.hot = XgDark.Link; hover.Apply();
             var link = crowdLink.gameObject.AddComponent<Button>(); link.targetGraphic = face; link.transition = Selectable.Transition.None;
-            link.onClick.AddListener(() => { Juice.Play(XgJuice.Sfx.Id.Click); controller.OpenCrowd(null); });
+            link.onClick.AddListener(() => { Juice.Play(XgJuice.Sfx.Id.Click); if (!XgYyTalk.Open()) ShowTab("home"); });
             if (controller.Window != null) crowdLink.gameObject.AddComponent<ChapterOneWindowFocus>().Window = controller.Window;
             crowdTitle = ui.Text(Rect("Title", crowdLink, new Vector2(0, .5f), Vector2.one, new Vector2(4, 0), new Vector2(-4, -3)), "", 14, XgDark.Link, TextAlignmentOptions.Bottom);
             crowdTitle.textWrappingMode = TextWrappingModes.NoWrap;
             crowdSub = ui.Text(Rect("Sub", crowdLink, Vector2.zero, new Vector2(1, .5f), new Vector2(4, 3), new Vector2(-4, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.Top);
             crowdSub.textWrappingMode = TextWrappingModes.NoWrap; crowdSub.overflowMode = TextOverflowModes.Ellipsis;
-            UiTip.Add(crowdLink, "标注台和企业订单在「摆渡众包」：亲手标注赚钱、攒样本、叠连击，签订单让模型挣钱。", "The labelling desk and business orders are in Bodu Crowd: label by hand for money, samples and combo; sign contracts so the model earns.");
+            UiTip.Add(crowdLink, "打开 YY，直接输入想对灵光说的话。教完或训练后，再问问它，看看回答有什么变化。", "Open YY and type freely. After teaching or training, ask it again and see how its answers change.");
 
             soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; Refresh(true); }, 12);
             PlaceBottom(soundToggle, 34, 24, 10, 10);
@@ -243,7 +290,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // The resident spider (XgResidentSpider) roams the desktop; this parks it in a corner, saved with the lab.
             residentToggle = ui.Button(nav, "", () => { Sim.S.residentQuiet = !Sim.S.residentQuiet; Juice.Play(XgJuice.Sfx.Id.Click); Refresh(true); }, 12);
             PlaceBottom(residentToggle, 60, 24, 10, 10);
-            UiTip.Add(residentToggle.rt, "它会在桌面上到处看，你标注时还会过来旁观。点这里让它在角落里待着。", "It wanders the desktop reading everything, and comes to watch when you label. Click to have it sit in a corner.");
+            UiTip.Add(residentToggle.rt, "它会在桌面上到处爬，你标注时还会过来旁观。点一下让它停下，慢慢隐身。", "It crawls all over the desktop and comes to watch when you label. Click to make it stop and fade away.");
         }
 
         NavRow MakeNavRow(string id)
@@ -269,6 +316,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The nav row of a page (the guide rings it).</summary>
         public RectTransform NavButton(string id)
         {
+            if (id == "label") id = "teach";
             return id != null && navRows.TryGetValue(id, out var row) ? row.rt : null;
         }
 
@@ -276,10 +324,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
+                case "teach": return T("教它", "Teach");
+                case "board": return T("大脑", "Brain");
                 case "home": return T("概览", "Overview");
                 case "train": return Lang.T("训练");
                 case "data": return T("数据", "Data");
                 case "items": return T("道具", "Items");
+                case "backpack": return T("背包", "Backpack");
                 case "tree": return T("科技", "Tech");
                 case "wiring": return T("接线", "Wiring");
                 case "repo": return T("模型仓库", "Models");
@@ -296,8 +347,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "home": return T("概览：它现在会什么、下一项能力还差多少，和最近发生的事。", "Overview: what it can do now, how far the next ability is, and what just happened.");
                 case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
-                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
-                case "tree": return T("科技：加宽、加深的上限，数据包，自动化（crontab、守护进程），研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech: width and depth caps, data packs, automation (crontab, daemon), research, the server room and the pre-training secret. Hold a node 0.6 s to buy.");
+                case "backpack": return T("背包：拿到的稀有道具都在这里，最多装备 4 件，只有装备的才生效，随时可换。也有已买的结构和技巧，和稀有道具图鉴。", "Backpack: every rare item you found. Equip up to four; only equipped ones work, and you can swap any time. Also the structures and techniques you bought, and the collection book.");
+                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth and research are under Tech.");
+                case "tree": return T("科技：加宽、加深的上限，数据包，研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech: width and depth caps, data packs, research, the server room and the pre-training secret. Hold a node 0.6 s to buy.");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
                 case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练、预训练和替你回消息都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training, pre-training and replies all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");
@@ -310,6 +362,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
+                case "backpack": return Sim.RelicsFresh && tab != "backpack" ? "<color=#E24B4A>●</color>" : "";
                 case "items": { int n = Items != null ? Items.BuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
                 case "tree": { int n = Items != null ? Items.TreeBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
                 case "repo": { int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0); return fresh > 0 && tab != "repo" ? "+" + fresh : ""; }
@@ -320,6 +373,12 @@ namespace LingGuangV05.Desktop.XingGuang
             }
         }
 
+        bool NavVisible(string id)
+        {
+            if (Sim.S.gradualSystems && Sim.S.stage < 3 && System.Array.IndexOf(new[] { "teach", "train", "board", "tree", "chat" }, id) < 0) return false;
+            return FeatureOpen(id) || id == "final";
+        }
+
         void RefreshNav()
         {
             float y = 8;
@@ -327,7 +386,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var group = NavGroups[g];
                 bool any = false;
-                foreach (var id in group.ids) if (id == "final" || FeatureOpen(id)) any = true;
+                foreach (var id in group.ids) if (NavVisible(id)) any = true;
                 var header = navGroupLabels[g];
                 header.gameObject.SetActive(any);
                 if (!any) { foreach (var id in group.ids) navRows[id].rt.gameObject.SetActive(false); continue; }
@@ -339,7 +398,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     var row = navRows[id];
                     bool open = FeatureOpen(id);
                     // 终章 stays in the list, locked until 全部放开.
-                    bool show = open || id == "final";
+                    bool show = NavVisible(id);
                     row.rt.gameObject.SetActive(show);
                     if (!show) continue;
                     row.rt.offsetMin = new Vector2(0, -y - NavRowHeight); row.rt.offsetMax = new Vector2(0, -y);
@@ -350,13 +409,16 @@ namespace LingGuangV05.Desktop.XingGuang
                     PaintNavRow(row);
                 }
             }
+            crowdLink.gameObject.SetActive(Sim.SystemUnlocked("crowd"));
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             // The 加薪 badge follows the shop to 摆渡众包.
-            crowdTitle.text = T("摆渡众包 ↗", "Bodu Crowd ↗") + (raiseReady ? "  <size=12><color=#FAC775>" + T("加薪", "raise") + "</color></size>" : "");
-            crowdSub.text = T("做题挣钱和样本", "Label for ¥ and samples");
+            crowdTitle.text = T("和它聊聊 ↗", "Talk to it ↗");
+            crowdSub.text = T("在 YY 自由输入", "Speak freely in YY");
             soundToggle.Set(Sim.S.mute ? Lang.T("音效：关") : Lang.T("音效：开"), true, XgDark.Panel, XgDark.Muted);
             fxToggle.Set(Sim.S.reduceFx ? Lang.T("减少特效：开") : Lang.T("减少特效：关"), true, XgDark.Panel, XgDark.Muted);
-            residentToggle.Set(Sim.S.residentQuiet ? T("让它出来走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
+            // Only once the desktop spider has shown up (its intro played).
+            residentToggle.rt.gameObject.SetActive(Sim.SpiderAround);
+            residentToggle.Set(Sim.S.residentQuiet ? T("让它自由走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
         }
 
         void PaintNavRow(NavRow row)

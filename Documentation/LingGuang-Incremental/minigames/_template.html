@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 模板</title>
+<!-- Template for a game page: copy, rename, fill in. See common.js for the LG API. -->
+<link rel="stylesheet" href="common.css">
+<style>
+/* game-specific styles */
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'_template', title:'模板', subtitle:'一句话玩法', icon:'模', dataset:'某数据集',
+  stats:[['对','sOk'],['错','sNo'],['收入','sPay','¥0']], statsNote:'每题 = 1 条样本',
+  aiHello:'……', rule:'<b>玩法</b>：……<br><b>怎么标数据</b>：……'
+});
+stage.innerHTML='<div style="padding:20px">游戏内容</div>';
+// LG.skill(), LG.right(), LG.give(samples,money,el), LG.say(text), LG.hist('ok'|'no'|'ai'), LG.set(id,text), LG.float(el,text,color)
+</script>
+</body>
+</html>

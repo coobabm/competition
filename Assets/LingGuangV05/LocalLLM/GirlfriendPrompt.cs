@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.LLM
         /// </summary>
         public static List<KeyValuePair<string, string>> Prefix(GirlfriendState s, GfNow now, bool english)
         {
-            string system = GirlfriendPromptText.Stable(s, now, english) + "\n\n" + GirlfriendPromptText.Examples(GirlfriendRules.Tier(s), english);
+            string system = GirlfriendPromptText.Stable(s, now, english) + "你不知道对方电脑里的秘密应用，也看不到电脑和训练进度。不能假装知情；如果他提到一个陌生程序，你从没用过。" + "\n\n" + GirlfriendPromptText.Examples(GirlfriendRules.Tier(s), english);
             return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", system) };
         }
 

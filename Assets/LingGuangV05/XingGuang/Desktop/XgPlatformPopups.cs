@@ -25,7 +25,8 @@ namespace LingGuangV05.Desktop.XingGuang
         static string T(string zh, string en) => GameText.T(zh, en);
         static string Who => T("摆渡众包", "Bodu Crowdsourcing");
         static string Yuan(double v) => "¥" + v.ToString(v >= 10 ? "0" : "0.##", CultureInfo.InvariantCulture);
-        static void Popup(string text, float seconds) { PrologueDirector.Desk?.StoryPopup(Who, text, seconds); }
+        // Click opens 摆渡众包.
+        static void Popup(string text, float seconds) { PrologueDirector.Desk?.StoryPopup(Who, text, seconds, () => FindAnyObjectByType<ChapterOneDesktopRouter>()?.Open(XingGuangController.CrowdAppId)); }
 
         public void Bind(XingGuangController owner) { controller = owner; }
 

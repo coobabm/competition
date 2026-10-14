@@ -26,7 +26,8 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<(string value, XgBtn b)> selfChips = new List<(string, XgBtn)>(), callChips = new List<(string, XgBtn)>();
         readonly XgBtn done, yes, no;
         string self = PrologueProfile.SelfChoices[0], call = PrologueProfile.CallChoices[0];
-        bool reading, homePending;
+        bool reading, homePending, answering;
+        ChapterOneSim setupOwner;
 
         static string L(string key) => PrologueContent.L(key);
 
@@ -126,6 +127,12 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Shown while the prologue waits for its setup, and once afterwards for the home page.</summary>
         public void Refresh(ChapterOneRuntime runtime)
         {
+            if (runtime != null && runtime.Sim != setupOwner)
+            {
+                setupOwner = runtime.Sim;
+                reading = homePending = answering = false;
+                error.text = "";
+            }
             bool prologue = runtime != null && runtime.Sim != null && runtime.Sim.InPrologue && !runtime.TestMode;
             bool on = prologue || homePending;
             if (root.gameObject.activeSelf != on) root.gameObject.SetActive(on);
@@ -142,7 +149,7 @@ namespace LingGuangV05.Desktop.XingGuang
             done.Set(reading ? L("setup_reading") : L("setup_done"), !reading, XgDark.Accent, Color.white);
             yes.Set(L("yes"), true, XgDark.Card, XgDark.Ink);
             no.Set(L("no"), true, XgDark.Card, XgDark.Ink);
-            if (homePending) homeLine.text = runtime.Sim.S.aiName + T("：", ": ") + L("no_intelligence");
+            if (homePending) homeLine.text = T("「你愿意教我吗？」\n它还说不出来。先碰一下，看看它的反应。", "Will you teach me?\nIt cannot say it yet. Touch a button to meet it.");
             Paint();
         }
 
@@ -185,6 +192,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The first 是 / 否: the bulb lights for a moment, then 摆渡众包 opens on the labelling desk.</summary>
         void Answer(bool answer)
         {
+            if (answering) return;
+            answering = true;
             view.StartCoroutine(Light(answer));
         }
 
@@ -196,8 +205,8 @@ namespace LingGuangV05.Desktop.XingGuang
             homePending = false;
             Refresh(view.Controller.runtime);
             // 灵光 lands on 概览 behind 摆渡众包, so closing the crowd window shows the overview first.
-            view.ShowTab("home");
-            view.Controller.OpenCrowd("label");
+            view.ShowTab("teach");
+            view.ShowToast(T("它还不会判断。先教它 4 张卡，再让它训练。随时可以和它说话。", "Teach four cards, then train. You can talk to it any time."), 7);
         }
     }
 }

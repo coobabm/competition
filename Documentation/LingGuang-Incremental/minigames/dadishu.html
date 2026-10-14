@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 打地鼠</title>
+<!--
+  打地鼠 (arithmetic): moles pop out of a 3x3 board holding a sign with an equation like 37+48=85. Whack only the WRONG
+  ones (click / tap, or keys 1-9 in reading order). Hitting a correct equation costs money and the combo.
+  Label produced: equation -> correct / incorrect. Moles with a purple hat are 灵光's own computed answers: it is right
+  with probability LG.skill(), so at low skill most of them are wrong; whacking a wrong one teaches it.
+  About half of the ordinary moles also carry a small purple verdict badge from 灵光 (灵✓ / 灵✗) that is right with
+  probability 0.5 + 0.5*(skill-0.25)/0.75 (a coin flip at 25%, ~97% at 95%): useless when it is weak, reliable when it is strong.
+  Speed ramps up over the 60 s round (spawn interval, stay time and number of simultaneous moles).
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#dd{position:absolute;inset:0;background:linear-gradient(#BFE6FF 0,#DDF3FF 14%,#9BD36B 14%,#6FB04A 100%);overflow:hidden;cursor:none}
+.dd-hud{position:absolute;left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:14px;padding:0 16px;z-index:5}
+.dd-tm{width:300px;height:12px;background:#ffffffaa;border-radius:6px;overflow:hidden;border:2px solid #fff}.dd-tm i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7ED957,#F2C94C,#F2603F);background-size:300px 100%}
+#ddT{font-weight:800;font-size:20px;width:46px;color:#1f4d2b;font-variant-numeric:tabular-nums}
+.dd-cb{margin-left:auto;font-size:26px;font-weight:900;color:#B5471C;text-shadow:0 2px 0 #fff;transition:transform .1s}
+.dd-cb small{font-size:13px;color:#555;font-weight:600;margin-left:4px;text-shadow:none}
+.dd-grid{position:absolute;left:36px;right:36px;top:62px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,146px);gap:4px 14px}
+.dd-cell{position:relative;overflow:hidden}
+.dd-hole{position:absolute;left:50%;bottom:6px;width:190px;height:42px;margin-left:-95px;border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#1b0f08,#3b2415)}
+.dd-mound{position:absolute;left:50%;bottom:0;width:214px;height:34px;margin-left:-107px;background:linear-gradient(#8B5E3C,#5E3B22);border-radius:50% 50% 0 0/100% 100% 0 0;z-index:3;box-shadow:inset 0 4px 0 #A97852}
+.dd-num{position:absolute;left:8px;bottom:6px;z-index:4;width:22px;height:22px;border-radius:50%;background:#ffffffcc;color:#4A3020;font-weight:800;font-size:13px;text-align:center;line-height:22px}
+.mole{position:absolute;left:50%;bottom:20px;width:150px;height:120px;margin-left:-75px;transform:translateY(106%);transition:transform .13s ease-out;z-index:2}
+.mole.up{transform:none}
+.mole.hit{transform:translateY(44%) scaleY(.8);transition:transform .08s;filter:brightness(1.4) saturate(.6)}
+.mole.gone{transform:translateY(106%);transition:transform .16s ease-in}
+.m-head{position:absolute;left:47px;top:24px;width:56px;height:50px;border-radius:50% 50% 46% 46%;background:radial-gradient(circle at 40% 30%,#B58863,#8B5E3C 70%);z-index:1}
+.m-ear{position:absolute;top:24px;width:16px;height:16px;border-radius:50%;background:#8B5E3C}.m-ear.l{left:42px}.m-ear.r{left:92px}
+.m-eye{position:absolute;top:18px;width:8px;height:9px;border-radius:50%;background:#222}.m-eye.l{left:14px}.m-eye.r{left:34px}
+.m-eye:after{content:"";position:absolute;left:1px;top:1px;width:3px;height:3px;border-radius:50%;background:#fff}
+.m-nose{position:absolute;left:21px;top:28px;width:14px;height:10px;border-radius:50%;background:#F4A6B0}
+.m-tooth{position:absolute;left:25px;top:38px;width:7px;height:7px;background:#fff;border-radius:0 0 2px 2px}
+.m-sign{position:absolute;left:7px;top:70px;width:136px;height:38px;background:#FFFDF5;border:3px solid #5E3B22;border-radius:7px;font-family:Menlo,Consolas,monospace;font-size:21px;font-weight:800;text-align:center;line-height:32px;color:#222;z-index:2;letter-spacing:-.5px;white-space:nowrap;box-shadow:0 3px 0 #0003}
+.mole.ai .m-sign{border-color:var(--ai);background:#F8F5FF;color:#4B3FA8}
+.m-arm{position:absolute;top:80px;width:16px;height:16px;border-radius:50%;background:#8B5E3C;z-index:3}.m-arm.l{left:0}.m-arm.r{right:0}
+.m-hat{position:absolute;left:50px;top:2px;width:0;height:0;border-left:25px solid transparent;border-right:25px solid transparent;border-bottom:34px solid var(--ai);z-index:2}
+.m-hat:after{content:"灵";position:absolute;left:-8px;top:12px;color:#fff;font-size:13px;font-weight:800;line-height:18px;width:16px;text-align:center}
+.m-brim{position:absolute;left:40px;top:34px;width:70px;height:7px;border-radius:4px;background:#6B5BC9;z-index:2}
+.m-hint{position:absolute;right:4px;top:30px;background:var(--ai);color:#fff;font-size:12px;font-weight:700;border-radius:9px;padding:0 6px;line-height:18px;z-index:4;display:none}
+.m-hint.on{display:block;animation:ddpop .25s}
+@keyframes ddpop{from{transform:scale(2);opacity:0}to{transform:scale(1);opacity:1}}
+.dd-star{position:absolute;z-index:6;font-size:20px;pointer-events:none;animation:ddstar .6s ease-out forwards}
+@keyframes ddstar{from{opacity:1;transform:translate(0,0) scale(1.3)}to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.5)}}
+.dd-boom{position:absolute;left:50%;top:18px;margin-left:-30px;z-index:6;font-size:30px;font-weight:900;color:#E33E33;text-shadow:0 2px 0 #fff;pointer-events:none;animation:ddboom .5s ease-out forwards}
+@keyframes ddboom{from{transform:scale(.5);opacity:1}60%{transform:scale(1.4);opacity:1}to{transform:scale(1.1) translateY(-14px);opacity:0}}
+#ddHam{position:absolute;z-index:30;font-size:58px;line-height:1;pointer-events:none;transform:translate(-30px,-46px) rotate(-30deg);transform-origin:70% 90%;display:none;filter:drop-shadow(0 3px 2px #0005)}
+#ddHam.sw{animation:ddsw .18s ease-out}
+@keyframes ddsw{0%{transform:translate(-30px,-46px) rotate(-30deg)}45%{transform:translate(-30px,-40px) rotate(38deg) scale(1.1)}100%{transform:translate(-30px,-46px) rotate(-30deg)}}
+.dd-foot{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:12px;color:#fff;text-shadow:0 1px 2px #0008;z-index:5}
+.over .big{font-size:56px}
+.over table{border-collapse:collapse;font-size:14px}.over td{padding:3px 16px;text-align:left}.over td:last-child{text-align:right;font-weight:700}
+.over .eqs{font-family:Menlo,Consolas,monospace;font-weight:800;font-size:20px;color:#4B3FA8;background:#F3F1FF;border-radius:8px;padding:6px 18px;margin:0 3px}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'dadishu', title:'打地鼠', subtitle:'只敲算错的算式', icon:'🔨', dataset:'算式对错',
+  stats:[['敲对（敲中错式）','sOk'],['敲错（冤枉对式）','sNo'],['漏掉错式','sMiss'],['最高连击','sBest'],['纠正灵光','sAi'],['本局收入','sPay','¥0']],
+  statsNote:'每只地鼠 = 1 条样本',
+  aiHello:'口算……我比较擅长慢慢算。',
+  rule:'<b>玩法</b>：地鼠举着算式，<b>只敲算错的</b>，算对的放走。<br><b>操作</b>：点洞，或按键盘 <b>1–9</b>（九宫格顺序）。<br><b>紫帽子</b>地鼠举的是灵光自己算的答案，水平低时常算错，敲掉它它就学会了。旁边紫色的「灵✓/灵✗」是它的判断，不一定准。<br><b>敲错</b>算对的：−¥0.5，断连击。'
+});
+const $=s=>document.querySelector(s);
+const {pick,rnd,shuffle}=LG;
+
+let AC=null;
+function beep(f,d=.08,type='sine',v=.05,f2){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;
+    o.type=type;o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d);
+  }catch(e){}
+}
+
+// ---------- equations ----------
+function swapDigits(n){ const s=String(n); if(s.length<2) return n; const a=s.split(''); [a[a.length-1],a[a.length-2]]=[a[a.length-2],a[a.length-1]]; return +a.join(''); }
+/** A plausible wrong answer; hard 0..1 makes the error smaller and sneakier. */
+function wrongOf(ans,hard){
+  const easy=[10,-10,5,-5,3,-3,7,-7,20,-20,4,-4];
+  const sneaky=[1,-1,2,-2,10,-10,10,-10,-3,3,100,-100,0];
+  for(let k=0;k<20;k++){
+    let w;
+    const r=Math.random();
+    if(r<.18+.2*hard){ w=swapDigits(ans); }
+    else w=ans+pick(hard<.4?easy:sneaky);
+    if(w!==ans&&w>=0&&!(w===0&&ans!==0)) return w;
+  }
+  return ans+1;
+}
+function makeEq(hard){
+  const r=Math.random(); let a,b,op,ans;
+  if(r<.55){ op='+'; a=12+rnd(30+Math.round(hard*57)); b=12+rnd(30+Math.round(hard*57)); ans=a+b; }
+  else if(r<.85){ op='−'; a=30+rnd(30+Math.round(hard*39)); b=8+rnd(a-12); ans=a-b; }
+  else { op='×'; a=3+rnd(7); b=6+rnd(7+Math.round(hard*16)); ans=a*b; }
+  return {a,b,op,ans};
+}
+function fmt(e,shown){ return e.a+e.op+e.b+'='+shown; }
+
+// ---------- state ----------
+const T=60;
+let S=null, running=false, gt=0, last=0, nextSpawn=0, raf=0, combo=0, aiSaid=0;
+const holes=[];
+
+stage.innerHTML=`
+<div id="dd">
+  <div class="dd-hud"><div class="dd-tm"><i id="ddTi"></i></div><span id="ddT">60</span><div class="dd-cb" id="ddCb"></div></div>
+  <div class="dd-grid" id="ddGrid"></div>
+  <div class="dd-foot">只敲算错的 · 键盘 1–9 对应九个洞 · 紫帽子是灵光自己算的</div>
+  <div id="ddHam">🔨</div>
+</div>
+<div class="over" id="ddOver">
+  <div class="big">🔨</div><h2>打地鼠 · 算术版</h2>
+  <p>地鼠举着算式冒出来，<b>只敲算错的</b>，算对的放它走。<br>越往后冒得越快。连击有奖金，敲错了对的扣钱。<br>戴紫帽子的是灵光自己算的答案——它水平低的时候，常常算错。<br>点洞，或按键盘 1–9。</p>
+  <button class="btn" id="ddGo" style="font-size:18px;padding:10px 40px">开始（回车）</button>
+</div>`;
+const grid=$('#ddGrid'), ham=$('#ddHam'), dd=$('#dd');
+for(let i=0;i<9;i++){
+  const c=document.createElement('div'); c.className='dd-cell';
+  c.innerHTML='<div class="dd-hole"></div><div class="dd-mound"></div><div class="dd-num">'+(i+1)+'</div>';
+  c.addEventListener('pointerdown',e=>{ if(!running) return; e.preventDefault(); whack(i); });
+  grid.appendChild(c); holes.push({el:c,mole:null});
+}
+// hammer follows the pointer
+dd.addEventListener('pointermove',e=>{ const p=LG.local(e,dd); ham.style.left=p.x+'px'; ham.style.top=p.y+'px'; ham.style.display=running?'block':'none'; });
+dd.addEventListener('pointerleave',()=>{ ham.style.display='none'; });
+function swing(){ ham.classList.remove('sw'); void ham.offsetWidth; ham.classList.add('sw'); }
+
+function updCombo(){
+  const c=$('#ddCb'); c.innerHTML=combo>1?`连击 ×${combo}<small>${combo>=5?'+¥'+(Math.min(combo-1,5)*.1).toFixed(1)+'/次':''}</small>`:'';
+  c.style.transform='scale(1.25)'; setTimeout(()=>c.style.transform='',100);
+}
+
+function spawn(){
+  const pr=gt/(T*1000);
+  const alive=holes.filter(h=>h.mole).length, maxAlive=2+Math.floor(pr*3);
+  const free=holes.filter(h=>!h.mole);
+  if(!free.length||alive>=maxAlive) return;
+  const h=pick(free), idx=holes.indexOf(h), hard=pr;
+  const isAi=Math.random()<.25, e=makeEq(hard);
+  let ok;
+  if(isAi) ok=LG.right(); else ok=Math.random()<.5;
+  const shown=ok?e.ans:wrongOf(e.ans,hard);
+  const el=document.createElement('div'); el.className='mole'+(isAi?' ai':'');
+  el.innerHTML=(isAi?'<div class="m-hat"></div><div class="m-brim"></div>':'')+
+    '<div class="m-ear l"></div><div class="m-ear r"></div><div class="m-head"><i class="m-eye l"></i><i class="m-eye r"></i><i class="m-nose"></i><i class="m-tooth"></i></div>'+
+    '<div class="m-sign"></div><i class="m-arm l"></i><i class="m-arm r"></i><span class="m-hint"></span>';
+  el.querySelector('.m-sign').textContent=fmt(e,shown);
+  h.el.insertBefore(el,h.el.querySelector('.dd-mound'));
+  const stay=(2500-1300*pr)*(.85+Math.random()*.3);
+  const m={h,idx,el,e,ok,ai:isAi,born:gt,stay,state:'up',shown,hintT:0};
+  h.mole=m;
+  setTimeout(()=>el.classList.add('up'),16);
+  beep(300+rnd(120),.05,'triangle',.02);
+  // 灵光's verdict badge on about half of the ordinary moles
+  if(!isAi&&Math.random()<.55){
+    const s=LG.skill(), acc=Math.max(.4,Math.min(.97,.5+.5*(s-.25)/.75)), verdictOk=(Math.random()<acc)?ok:!ok, hint=el.querySelector('.m-hint');
+    m.hintT=setTimeout(()=>{ if(m.state!=='up') return; hint.textContent=verdictOk?'灵✓':'灵✗'; hint.classList.add('on'); },450+(1-s)*700);
+    m.verdictOk=verdictOk;
+  }
+  if(isAi&&aiSaid<3&&Math.random()<.5){ aiSaid++; LG.say(LG.skill()<.5?'那顶紫帽子是我！我算的……大概对吧。':'紫帽子是我自己算的答案，错了你就敲我。'); }
+}
+
+function removeMole(m,delay){
+  setTimeout(()=>{ m.el.remove(); if(m.h.mole===m) m.h.mole=null; },delay);
+}
+function stars(cell,col){
+  for(let i=0;i<6;i++){ const s=document.createElement('span'); s.className='dd-star'; s.textContent=pick(['★','✦','✧']); s.style.color=col;
+    s.style.left=(50+rnd(40))+'%'; s.style.top=(30+rnd(30))+'px'; s.style.setProperty('--dx',(rnd(120)-60)+'px'); s.style.setProperty('--dy',(-20-rnd(50))+'px');
+    cell.appendChild(s); setTimeout(()=>s.remove(),620); }
+}
+function boom(cell,txt,col){ const b=document.createElement('div'); b.className='dd-boom'; b.textContent=txt; if(col) b.style.color=col; cell.appendChild(b); setTimeout(()=>b.remove(),520); }
+
+function whack(i){
+  if(!running) return;
+  swing();
+  const h=holes[i], m=h.mole;
+  if(!m||m.state!=='up'){ beep(110,.05,'sine',.02); return; }
+  clearTimeout(m.hintT);
+  m.state='hit'; m.el.classList.remove('up'); m.el.classList.add('hit');
+  removeMole(m,320);
+  const trueEq=fmt(m.e,m.e.ans);
+  if(!m.ok){
+    combo++; S.ok++; S.best=Math.max(S.best,combo);
+    let pay=1+Math.min(combo-1,5)*.1; const extra=m.ai?.5:0; pay+=extra;
+    LG.give(1,pay); S.earn+=pay;
+    stars(h.el,'#F2C94C'); boom(h.el,'砰!');
+    LG.float(h.el,'+¥'+pay.toFixed(1)+(combo>2?'  ×'+combo:''),'var(--red)');
+    LG.hist(m.ai?'ai':'ok'); beep(420+Math.min(combo,10)*40,.1,'square',.05,780+Math.min(combo,10)*40);
+    if(m.ai){ S.aiFix++; LG.say('灵光：……原来不对。'+trueEq+' 才对。'); LG.set('sAi',S.aiFix); }
+    else if(m.verdictOk===true&&Math.random()<.6) LG.say('我刚才觉得它对……看走眼了。');
+    else if(m.verdictOk===false&&Math.random()<.35) LG.say('嗯，我也觉得它不对。');
+  }else{
+    combo=0; S.no++; S.earn-=.5;
+    LG.give(0,-.5); stars(h.el,'#999'); boom(h.el,'冤枉!','#777');
+    LG.float(h.el,'−¥0.5','#999'); LG.shake(dd); LG.hist('no'); beep(140,.2,'sawtooth',.05,80);
+    if(m.ai) LG.say('灵光：我算对了呀！'+trueEq+'。');
+    else if(m.verdictOk===false&&Math.random()<.7) LG.say('我说它错的？……看来我算错了。');
+    else if(Math.random()<.3) LG.say('这条是对的，别手滑。');
+  }
+  LG.set('sOk',S.ok); LG.set('sNo',S.no); LG.set('sBest',S.best); LG.set('sPay','¥'+S.earn.toFixed(1)); updCombo();
+}
+
+/** A mole left on its own: a wrong equation that escapes is a miss, a correct one let through is a good label. */
+function retreat(m){
+  if(m.state!=='up') return;
+  clearTimeout(m.hintT);
+  m.state='gone'; m.el.classList.remove('up'); m.el.classList.add('gone'); removeMole(m,220);
+  if(!m.ok){
+    S.miss++; LG.set('sMiss',S.miss); if(combo){ combo=0; updCombo(); } LG.hist('no','漏');
+    if(m.ai&&Math.random()<.5) LG.say('我的答案算错了，没人敲我……我会一直这样算。');
+  }else{
+    LG.give(1,.3); S.earn+=.3; LG.set('sPay','¥'+S.earn.toFixed(1)); LG.float(m.h.el,'放过 +¥0.3','#6a9');
+    if(m.ai) S.aiRight++;
+  }
+}
+
+function loop(ts){
+  if(!running) return;
+  const dt=Math.min(100,ts-last); last=ts; gt+=dt;
+  const left=Math.max(0,T-gt/1000);
+  $('#ddT').textContent=Math.ceil(left); $('#ddTi').style.width=(left/T*100)+'%';
+  for(const h of holes){ const m=h.mole; if(m&&m.state==='up'&&gt>=m.born+m.stay) retreat(m); }
+  if(gt>=nextSpawn){
+    spawn(); const pr=gt/(T*1000);
+    nextSpawn=gt+(1000-560*pr)*(.75+Math.random()*.5);
+  }
+  if(gt>=T*1000){ finish(); return; }
+  raf=requestAnimationFrame(loop);
+}
+
+function start(){
+  S={ok:0,no:0,miss:0,best:0,aiFix:0,aiRight:0,earn:0};
+  for(const h of holes){ if(h.mole){ h.mole.el.remove(); h.mole=null; } }
+  combo=0; aiSaid=0; gt=0; nextSpawn=400; running=true; updCombo();
+  ['sOk','sNo','sMiss','sBest','sAi'].forEach(id=>LG.set(id,0)); LG.set('sPay','¥0'); const hs=document.getElementById('lgHist'); if(hs) hs.innerHTML='';
+  $('#ddOver').style.display='none';
+  const s=LG.skill();
+  LG.say(s<.4?'开始了。我先说好，我算数不太行……':s<.7?'我算得还凑合，紫帽子里错的比以前少了。':'这回我算得挺准，紫帽子别乱敲。');
+  last=performance.now(); raf=requestAnimationFrame(loop);
+}
+function finish(){
+  running=false; cancelAnimationFrame(raf); ham.style.display='none';
+  for(const h of holes){ const m=h.mole; if(m){ clearTimeout(m.hintT); m.el.classList.remove('up'); m.el.classList.add('gone'); removeMole(m,200); } }
+  const tot=S.ok+S.no+S.miss, acc=(S.ok+S.miss)?Math.round(S.ok/(S.ok+S.miss)*100):0;
+  const s=LG.skill();
+  const ov=$('#ddOver'); ov.style.display='flex';
+  ov.innerHTML=`<div class="big">${S.no<=1&&S.ok>=15?'🏆':'🔨'}</div><h2>时间到</h2>
+    <table>
+      <tr><td>敲中错误算式</td><td>${S.ok} 只</td></tr>
+      <tr><td>漏掉的错误算式</td><td>${S.miss} 只</td></tr>
+      <tr><td>敲错了对的</td><td>${S.no} 只</td></tr>
+      <tr><td>最高连击</td><td>×${S.best}</td></tr>
+      <tr><td><span class="tagai">灵光</span> 被你纠正</td><td>${S.aiFix} 次（它答对 ${S.aiRight} 次）</td></tr>
+      <tr><td>本局收入</td><td style="color:var(--red)">¥${S.earn.toFixed(1)}</td></tr>
+    </table>
+    <p>${S.aiFix?'灵光：<span class="eqs">'+(s<.4?'原来这样算才对……':s<.7?'进位我记住了。':'下次不会再错了。')+'</span>':'灵光：这回我没算错，嘿嘿。'}</p>
+    <button class="btn" id="ddAgain" style="font-size:16px;padding:9px 34px">再来一局（回车）</button>`;
+  $('#ddAgain').onclick=start;
+  LG.say(S.aiFix?`你纠正了我 ${S.aiFix} 次，我现在水平 ${Math.round(s*100)}%。`:'这局我没怎么出错。');
+}
+$('#ddGo').onclick=start;
+addEventListener('keydown',e=>{
+  if(e.repeat) return;
+  if(/^[1-9]$/.test(e.key)){ whack(+e.key-1); return; }
+  if((e.key==='Enter'||e.key===' ')&&!running){ e.preventDefault(); start(); }
+});
+</script>
+</body>
+</html>

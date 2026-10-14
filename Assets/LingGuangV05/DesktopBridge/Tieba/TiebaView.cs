@@ -313,6 +313,7 @@ namespace LingGuangV05.Desktop.Tieba
 
         string Name(string user)
         {
+            if (TiebaHub.IsDiscussion(user)) return hub.DiscussionTitle(user);
             if (user == ForumLibrary.LaoZhou && hub.S != null && hub.S.zhouGone) return Lang.T("该用户已注销");
             return hub.Library.Users.TryGetValue(user, out var u) ? T(u.name, u.nameEn) : user;
         }
@@ -389,6 +390,16 @@ namespace LingGuangV05.Desktop.Tieba
                 string sign = user != null && user.sign.Length > 0 && v == FloorView.Shown ? "\n<size=13><color=#A0A6B0>—— " + T(user.sign, user.signEn) + "</color></size>" : "";
                 Line(card, "<color=#A0A6B0>" + floor + Lang.T(" 楼") + "</color>" + sign, 13, Muted);
             }
+            DiscussionLink("thread:" + id);
+        }
+
+        void DiscussionLink(string id)
+        {
+            if (!hub.DiscussionAvailable(id)) return;
+            var conv = hub.Conversation(id);
+            var card = Card(new Color32(232, 240, 255, 255));
+            Line(card, "参与讨论 · " + conv.messages.Count + " 条新回复" + (conv.unread > 0 ? "  ●" + conv.unread : ""), 18, Link, () => Go("chat", id));
+            if (conv.messages.Count > 0) Line(card, conv.messages[conv.messages.Count - 1].text, 16, Ink);
         }
 
         void DrawEra(string id)
@@ -403,6 +414,7 @@ namespace LingGuangV05.Desktop.Tieba
             var reply = Card();
             AuthorLine(reply, "xiaobai", "<b>" + Name("xiaobai") + "</b>  <color=#E08A00>Lv.2</color>", 16, Link);
             Line(reply, Lang.T("前排。"), 18, Ink);
+            DiscussionLink("era:" + id);
         }
 
         void DrawUser(ForumContext c, string id)
@@ -421,7 +433,9 @@ namespace LingGuangV05.Desktop.Tieba
         void DrawInbox(ForumContext c)
         {
             Line(Card(new Color32(232, 240, 255, 255)), "<b>" + Lang.T("私信") + "</b>", 20, Ink);
-            foreach (var id in new[] { ForumLibrary.LaoZhou, ForumLibrary.ZhouNow })
+            var inboxIds = new List<string> { ForumLibrary.LaoZhou, ForumLibrary.ZhouNow };
+            foreach (var conversation in hub.S.conversations) if (TiebaHub.IsDiscussion(conversation.id) && conversation.messages.Count > 0) inboxIds.Add(conversation.id);
+            foreach (var id in inboxIds)
             {
                 if (!hub.CanMessage(id) && !(id == ForumLibrary.LaoZhou && hub.S.zhouGone)) continue;
                 var conv = hub.Conversation(id);
@@ -446,6 +460,10 @@ namespace LingGuangV05.Desktop.Tieba
             Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
             var body = PrologueDesk.Rect("Body", main, Vector2.zero, Vector2.one, new Vector2(0, bottom), new Vector2(0, -44));
             NewScroll(body, Vector2.zero);
+            if (TiebaHub.IsDiscussion(id)) {
+                Line(Card(), "← 返回原帖", 16, Link, () => Go(id.StartsWith("thread:") ? "thread" : "era", id.Substring(id.IndexOf(':') + 1)));
+                Line(Card(), hub.DiscussionContext(id), 16, Muted);
+            }
             DateTime lastDay = DateTime.MinValue;
             foreach (var m in conv.messages)
             {
@@ -454,7 +472,7 @@ namespace LingGuangV05.Desktop.Tieba
                 if (when.Date != lastDay) { lastDay = when.Date; Line(Card(new Color(0, 0, 0, 0)), "<align=center><color=#A0A6B0>" + Date(when) + "</color></align>", 13, Muted); }
                 bool mine = m.from == ForumLibrary.Me;
                 var card = Card(mine ? new Color32(220, 235, 255, 255) : Color.white);
-                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
+                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : TiebaHub.IsDiscussion(id) ? "热心吧友" : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
                 Line(card, m.text, 17, Ink);
             }
             var bar = PrologueDesk.Rect("Input", main, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, bottom));

@@ -59,6 +59,9 @@ namespace LingGuangV05.XingGuang
 
         public XgProfile Profile = new XgProfile();
 
+        /// <summary>The name the player gave it, or the app name before setup.</summary>
+        public string AiDisplayName => Profile != null && !string.IsNullOrEmpty(Profile.name) ? Profile.name : T(LingGuangV05.Core.AppNames.AiZh, LingGuangV05.Core.AppNames.AiEn);
+
         public static readonly string[] AxisNames = { "温度", "玩心", "主见" };
         public static readonly string[] AxisNamesEn = { "Warmth", "Play", "Opinion" };
         static readonly string[] Low = { "语气:冷静", "语气:正经", "语气:顺从" };
@@ -151,13 +154,14 @@ namespace LingGuangV05.XingGuang
         public XgSpeechLimits Limits()
         {
             int stage = Math.Max(1, Math.Min(6, S.stage));
+            int tokens = XgSpeechPolicy.TokenLimit(stage, SpeechGrade);
             switch (stage)
             {
                 case 1: return new XgSpeechLimits { tokens = 2, context = 256, contextMessages = 1, temperature = .7f };
                 case 2: return new XgSpeechLimits { tokens = 8, context = 256, contextMessages = 1, temperature = .7f };
-                case 3: return new XgSpeechLimits { tokens = 6, context = 512, contextMessages = 2, temperature = 1.2f };
-                case 4: return new XgSpeechLimits { tokens = 48, context = 1024, contextMessages = 8, temperature = .9f };
-                case 5: return new XgSpeechLimits { tokens = 128, context = 2048, contextMessages = 12, temperature = .8f };
+                case 3: return new XgSpeechLimits { tokens = tokens, context = 512, contextMessages = 2, temperature = 1f };
+                case 4: return new XgSpeechLimits { tokens = tokens, context = 1024, contextMessages = 8, temperature = .9f };
+                case 5: return new XgSpeechLimits { tokens = tokens, context = 2048, contextMessages = 12, temperature = .8f };
                 default: return new XgSpeechLimits { tokens = S.fullOpen ? 400 : 200, context = 4096, contextMessages = 20, temperature = .8f, thinking = S.fullOpen };
             }
         }
@@ -176,11 +180,9 @@ namespace LingGuangV05.XingGuang
             int stage = Math.Max(1, Math.Min(6, S.stage));
             if (stage == 1)
             {
-                double logic = YesNoAccuracy;
                 bool yes = reply.StartsWith("是", StringComparison.Ordinal) || reply.StartsWith("yes", StringComparison.OrdinalIgnoreCase);
                 // Learned (80% or better): it never guesses wrong, and a statement it was taught gets the taught answer.
-                if (logic >= SenseVoiceLearned) { bool? taught = TaughtAnswer(question); if (taught.HasValue) yes = taught.Value; }
-                else if (rng.NextDouble() > logic) yes = !yes;
+                yes = YesNoAnswer(yes, question, rng);
                 return XgSpeechPolicy.Constrain(yes ? (English ? "Yes." : "是。") : (English ? "No." : "否。"), stage, English);
             }
             if (stage == 2)
@@ -197,12 +199,14 @@ namespace LingGuangV05.XingGuang
                 }
                 return picked;
             }
-            reply = XgSpeechPolicy.Constrain(reply, stage, English);
+            reply = XgSpeechPolicy.Constrain(reply, stage, English, SpeechGrade);
             if (stage <= 4)
             {
                 double semantic = Math.Max(.5, BestOf("danmu", "longtext", "poems", "headline", "translate"));
-                if (rng.NextDouble() > semantic) reply = Shuffle(reply, rng);
-                if (stage == 4 && reply.Length > 24) reply = reply.Substring(0, 24) + "…";
+                // Improvement should sound like improvement; high grades reduce word-order mistakes.
+                if (rng.NextDouble() < (1 - semantic) / (1 + SpeechGrade)) reply = Shuffle(reply, rng);
+                int length = 24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12;
+                if (stage == 4 && reply.Length > length) reply = reply.Substring(0, length) + "…";
             }
             return reply;
         }
@@ -338,6 +342,8 @@ namespace LingGuangV05.XingGuang
             if (hotWords != null) foreach (var w in hotWords) if (words.Count < 5 && Knows(w)) words.Add(w);
             if (words.Count > 0) sb.Append(T("近期热词：")).Append(string.Join("、", words)).Append(T("。", ". "));
             sb.Append(BrainModuleSummary());
+            sb.Append(TaughtPrompt());
+            sb.Append(FamilyPrompt());
             return sb.ToString();
         }
 
@@ -490,8 +496,8 @@ namespace LingGuangV05.XingGuang
             {
                 case 1: return T("只允许回答一个字：是，或者否。");
                 case 2: return T("只能从这几个里选一个回答：") + string.Join(T("、"), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
-                case 3: return T("只说一个词，不加标点。");
-                case 4: return T("一句短句，不超过二十个字。只记得最近几轮。");
+                case 3: return T("只说简短词组或碎片，不讲长句。最多 " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " 个字。", "Use only short fragments, at most " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " characters.");
+                case 4: return T("说一两句短句，不超过 " + (24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12) + " 个字。只记得最近几轮。", "Use one or two short sentences, at most " + (24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12) + " characters. Remember only recent turns.");
                 case 5: return T("一到两句。可以提起你记得的事。");
                 default: return T("说话流畅，一到三句。");
             }

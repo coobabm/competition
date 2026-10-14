@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// It takes over the existing 灵光.exe window: icon, taskbar button and the "installed" gate stay as they were;
     /// the old native content is removed and the bridge routes opening through this controller.
     /// Story signals (first time each): lg.trainable, lg.epoch, lg.assess, lg.checkpoint, lg.gradeA, lg.gradeS, lg.auto,
-    /// lg.autotrain, lg.contract, lg.nan, lg.combo50.
+    /// lg.contract, lg.nan, lg.combo50.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class XingGuangController : MonoBehaviour, IDesktopAppView
@@ -43,6 +43,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgStoryBridge storyBridge;
         XgPlatformPopups platformPopups;
         float sinceSave;
+        int capturedChapter;
         ChapterOneSim linked;
         TMP_Text title, status;
         XgWindowChrome chrome;
@@ -93,6 +94,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 catch (Exception error) { Debug.LogWarning("灵光进度读取失败，从头开始：" + error.Message); state = null; }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+            // A new game starts with the first-minutes focus (only 常识判断 and training, XgSim.Opening.cs); a loaded save is left as it is.
+            if (state == null) Sim.BeginOpening();
+            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
             // The save's own date, before any catch-up tick reads the calendar.
             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
             raised.Clear();
@@ -123,10 +128,16 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
+            LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
+            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen) return;
+            LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
             Sim.English = GameText.IsEnglish;
+            runtime.Sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
             // The rent holiday: nothing is charged until 灵光 learns its third ability (ChapterOneSim.Bills.cs).
             if (runtime.Sim.RentWaived == null) runtime.Sim.RentWaived = () => Sim == null || Sim.AbilitiesCount < XgSim.RentFromAbility;
+            // 实验室的旧服务器钥匙 (a relic) cuts the rent; the sim answers it again every tick.
+            if (runtime.Sim.RentFactor == null) runtime.Sim.RentFactor = () => Sim == null ? 1 : Sim.RelicRentFactor;
             // The 2016 calendar follows the lab (design v1.1 §11.7): the prologue day until 灵光 is installed, then
             // the stage's month at its progress. It reads progress and never holds anything back.
             if (runtime.Sim.AppInstalled && !runtime.Sim.InPrologue)
@@ -144,6 +155,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Sim.Tick(dt, Host);
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
             RaiseProgress();
+            if (capturedChapter != Sim.S.stage && runtime.CaptureChapter(Sim.S.stage)) capturedChapter = Sim.S.stage;
             // Training, income and auto-answers change the lab every frame; the runtime saves on its own 15 s rhythm.
             sinceSave += dt;
             if (sinceSave >= 1f) { sinceSave = 0; if (!runtime.TestMode) runtime.MarkDirty(); }
@@ -183,7 +195,6 @@ namespace LingGuangV05.Desktop.XingGuang
             Raise("lg.gradeA", gradeA);
             Raise("lg.gradeS", gradeS);
             Raise("lg.auto", Sim.AutoLevelTotal > 0);
-            Raise("lg.autotrain", Sim.AutoTrainLevel >= 2);
             Raise("lg.combo50", Sim.S.bestCombo >= 50);
             Raise("lg.contract", Sim.S.contracts.Count > 0);
             Raise("lg.nan", Sim.S.nanEvents > 0);
@@ -252,6 +263,14 @@ namespace LingGuangV05.Desktop.XingGuang
             KeepOpenOnFirstStart(Window);
             content = Window.windowContainer.Find("Content") as RectTransform;
             if (content == null) return;
+            // Normal (not maximised) size: the whole desktop area above the taskbar, with a small margin all round.
+            // The container stretches over that area (maximise sets its offsets to 0), so offsets = the margin.
+            // ponytail: fixed 18 px margin; measure the guide note / icon column if they must stay uncovered.
+            if (!Window.isFullscreen)
+            {
+                Window.windowContainer.offsetMin = new Vector2(18, 18);
+                Window.windowContainer.offsetMax = new Vector2(-18, -18);
+            }
             var shop = router.Get("xunbao");
             if (shop != null && shop.Content != null) foreach (var label in shop.Content.GetComponentsInChildren<TMP_Text>(true)) { font = label.font; break; }
             if (font == null) font = Window.GetComponentInChildren<TMP_Text>(true)?.font;
@@ -318,7 +337,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ApplyShellText()
         {
-            if (chrome != null) chrome.SetTitle(GameText.T(AppNames.ExeZh, AppNames.ExeEn), GameText.T("深度学习工作站", "deep learning workstation"));
+            if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", GameText.T("深度学习工作站", "deep learning workstation"));
             else if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
             if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);

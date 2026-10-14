@@ -147,6 +147,7 @@ namespace LingGuangV05.Desktop
 
         public void OpenApp(string tab = null)
         {
+            if (!LingGuangV05.Desktop.Story.StudyDesktopGates.Allows(applicationId)) return;
             if (customView != null)
             {
                 if (window == null || !customView.EnsureReady()) return;

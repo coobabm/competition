@@ -30,12 +30,14 @@ namespace LingGuangV05.Core
         public static int FirstRentDay => GameCalendar.DayIndex(GameCalendar.FirstDay(1));
 
         /// <summary>
-        /// The lab's rent holiday: while it answers true nothing is charged (no rent, broadband, air conditioning or
-        /// electricity) and the landlord never counts debt days. The lab sets it (free until 灵光 learns its third
+        /// The lab's rent holiday: while it answers true rent-related charges are postponed (rent, broadband, air conditioning and
+        /// other household charges) and the landlord never counts debt days. Electricity is always paid. The lab sets it (free until 灵光 learns its third
         /// ability, 一个词). Not saved: the lab answers it again every tick.
         /// </summary>
         public Func<bool> RentWaived { get; set; }
         public bool Waived => RentWaived != null && RentWaived();
+        /// <summary>The share of the rent still paid (1 = all). The lab sets it from its equipped relics; not saved.</summary>
+        public Func<double> RentFactor { get; set; }
 
         /// <summary>Rent is being paid: bills, debt and bankruptcy apply.</summary>
         public bool EconomyActive => S.rentDay > 0 && !Waived;
@@ -46,7 +48,7 @@ namespace LingGuangV05.Core
         static string Yuan(double v) => "¥" + Math.Round(v).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
 
         /// <summary>The rent of a calendar day.</summary>
-        public double RentFor(DateTime date) => date.Date >= RentRiseDate ? Config.rentPerDayFromOctober : Config.rentPerDay;
+        public double RentFor(DateTime date) => (date.Date >= RentRiseDate ? Config.rentPerDayFromOctober : Config.rentPerDay) * (RentFactor == null ? 1 : Math.Max(0, RentFactor()));
 
         /// <summary>Additive fields of older saves; an older save starts paying rent from the day after the one it is on.</summary>
         void MigrateEconomy()
@@ -74,7 +76,9 @@ namespace LingGuangV05.Core
         void Bill(BillKind kind, double amount)
         {
             if (!Finite(amount) || amount <= 0) return;
+            RecordFunds("其他收支");
             S.money = Math.Max(-ResourceCeiling, S.money - amount);
+            RecordFunds(BillTitle(kind));
             int today = GameCalendar.CurrentDay(S);
             if (S.billsDay != today || S.billsToday == null) { S.billsDay = today; S.billsToday = new HouseBills(); }
             if (S.bills == null) S.bills = new HouseBills();
@@ -108,7 +112,7 @@ namespace LingGuangV05.Core
             int today = GameCalendar.CurrentDay(S), first = FirstRentDay;
             if (today < first) return;
             int month = MonthOf(today);
-            if (Waived)
+            if (Waived || !PowerCostsEnabled)
             {
                 // Nothing owed for the holiday; rent starts from the day it ends.
                 if (S.rentDay > 0) S.rentDay = today;
@@ -175,7 +179,7 @@ namespace LingGuangV05.Core
 
         /// <summary>The same with the lab's scaling (see <see cref="BillTraining(double,double,double,double)"/>).</summary>
         public double TrainingRoundPrice(double seconds, double priceFactor, double energyFactor) =>
-            EconomyActive ? TieredCost(MonthKwh, TrainingKwh(seconds) * energyFactor, Config) * priceFactor : 0;
+            PowerCostsEnabled ? TieredCost(MonthKwh, TrainingKwh(seconds) * energyFactor, Config) * priceFactor : 0;
 
         /// <summary>
         /// A training round (or a slice of pre-training) ran for this many seconds: bills its electricity at the
@@ -190,15 +194,10 @@ namespace LingGuangV05.Core
         /// </summary>
         public double BillTraining(double seconds, double priceFactor, double energyFactor, double wearFactor)
         {
-            if (!Finite(seconds) || seconds <= 0 || S.bankrupt) return 0;
+            if (!PowerCostsEnabled || !Finite(seconds) || seconds <= 0 || S.bankrupt) return 0;
             if (!Finite(priceFactor) || priceFactor < 0) priceFactor = 1;
             if (!Finite(energyFactor) || energyFactor < 0) energyFactor = 1;
             if (!Finite(wearFactor) || wearFactor < 0) wearFactor = 1;
-            if (!EconomyActive)
-            {
-                S.energyKwh += TrainingWatts / 1000 * 24 * seconds / Config.dayLengthSeconds * energyFactor;
-                return 0;
-            }
             double kwh = TrainingKwh(seconds) * energyFactor;
             int month = MonthOf(GameCalendar.CurrentDay(S));
             if (S.kwhMonth != month) { S.kwhMonth = month; S.monthKwh = 0; }
@@ -233,7 +232,7 @@ namespace LingGuangV05.Core
         public bool WearRiskLive => EconomyActive && S.gpuModels.Count >= 2 && S.trainingStreak >= Config.wearAfterSeconds
             && S.gameSeconds - S.lastTrainingAt <= Config.wearGapSeconds;
 
-        /// <summary>The cards cool down: the run of non-stop training starts again (fresh thermal paste).</summary>
+        /// <summary>The cards cool down: the run of non-stop training starts again.</summary>
         public void CoolCards() { S.trainingStreak = 0; }
 
         /// <summary>The hardest-working card (the most watts) burns out and goes to the repair shop. Never the last one.</summary>
@@ -315,7 +314,11 @@ namespace LingGuangV05.Core
                 LastMessage = T("房东拉了电闸：欠 " + owed + "，再不交就别住了。显卡全停，手动标注还能挣钱。", "The landlord cut the power: " + owed + " owed. Pay or move out. Every card has stopped; hand labelling still pays.");
                 Raise("power.cut", owed);
             }
-            else SellComputer();
+            else if (S.debtDays == DebtCutDay + 1)
+            {
+                LastMessage = T("欠款还没还清。可以继续手动标注还债；是否卖电脑，由你决定。", "Debt remains. Keep labelling to repay it, or choose to sell the computer.");
+                Raise("rent.decision", owed);
+            }
         }
 
         /// <summary>Money back to zero or above ends the landlord's countdown and brings the power back.</summary>
@@ -339,6 +342,12 @@ namespace LingGuangV05.Core
         }
 
         /// <summary>The third day in debt: the computer is sold to pay the rent. The failure ending plays on the desktop.</summary>
+        public bool ConfirmComputerSale()
+        {
+            if (S.bankrupt || S.money >= -Epsilon || S.debtDays <= DebtCutDay) return false;
+            SellComputer(); return true;
+        }
+
         void SellComputer()
         {
             if (S.bankrupt) return;

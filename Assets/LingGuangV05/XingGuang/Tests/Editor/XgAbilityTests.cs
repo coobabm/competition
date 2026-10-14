@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace LingGuangV05.XingGuang.Tests
@@ -59,18 +60,28 @@ namespace LingGuangV05.XingGuang.Tests
             var host = new Host();
             var emerged = new List<int>();
             sim.AbilityEmerged += a => emerged.Add(a);
+            sim.S.stageEpochs = 1; // a round has been trained in this stage
 
             sim.S.trainedParamsK = sim.ParamsThreshold(2);
             sim.Tick(1, host);
-            Assert.That(sim.HasAbility(2), Is.False, "parameters alone are not enough");
+            Assert.That(sim.StageReady, Is.False, "parameters alone are not enough");
+            Assert.That(sim.ConfirmNextStage(), Is.False);
+            Assert.That(sim.HasAbility(2), Is.False);
 
             sim.S.trainedParamsK = 0;
             AddLabels(sim, "logic", sim.SamplesThreshold(2) + 10);
             sim.Tick(1, host);
-            Assert.That(sim.HasAbility(2), Is.False, "data alone is not enough");
+            Assert.That(sim.StageReady, Is.False, "data alone is not enough");
+            Assert.That(sim.HasAbility(2), Is.False);
 
             sim.S.trainedParamsK = sim.ParamsThreshold(2);
             sim.Tick(1, host);
+            Assert.That(sim.HasAbility(2), Is.False, "full bars do not start the next chapter by themselves");
+            Assert.That(sim.StageReady, Is.True);
+            sim.S.stageEpochs = 0;
+            Assert.That(sim.StageReady, Is.False, "and a stage nothing was trained in cannot be confirmed");
+            sim.S.stageEpochs = 1;
+            Assert.That(sim.ConfirmNextStage(), Is.True);
             Assert.That(sim.HasAbility(2), Is.True);
             Assert.That(sim.S.stage, Is.EqualTo(2), "the stage is the number of abilities");
             Assert.That(emerged, Is.EqualTo(new[] { 2 }));
@@ -89,11 +100,19 @@ namespace LingGuangV05.XingGuang.Tests
             sim.AbilityEmerged += a => emerged.Add(a);
             sim.S.trainedParamsK = XgSim.AbilityParamsK[4];
             AddLabels(sim, "logic", XgSim.AbilitySamples[4]);
-            sim.Tick(1, host);
-            Assert.That(emerged, Is.EqualTo(new[] { 2, 3, 4 }).Or.EqualTo(new[] { 2 }), "never out of order");
+            sim.S.stageEpochs = 1;
             for (int i = 0; i < 5; i++) sim.Tick(1, host);
-            Assert.That(emerged, Is.EqualTo(new[] { 2, 3, 4 }));
-            Assert.That(sim.S.stage, Is.EqualTo(4));
+            Assert.That(emerged, Is.Empty, "bars that are full for several abilities still change nothing until confirmed");
+            for (int ability = 2; ability <= 4; ability++)
+            {
+                sim.S.stageEpochs = 0;
+                Assert.That(sim.StageReady, Is.False, "each new stage needs a trained round before it can be confirmed");
+                sim.S.stageEpochs = 1;
+                Assert.That(sim.ConfirmNextStage(), Is.True);
+                Assert.That(emerged, Is.EqualTo(Enumerable.Range(2, ability - 1).ToArray()), "never out of order");
+                Assert.That(sim.S.stage, Is.EqualTo(ability));
+            }
+            Assert.That(sim.StageReady, Is.False, "the fifth ability's bars are not full");
         }
 
         [Test]

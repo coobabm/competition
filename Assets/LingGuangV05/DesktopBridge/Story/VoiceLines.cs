@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using LingGuangV05.Runtime;
 using UnityEngine;
 
@@ -12,7 +14,7 @@ namespace LingGuangV05.Desktop.Story
     /// </summary>
     public static class VoiceLines
     {
-        const string Folder = "LingGuangV05/Voice/me/";
+        const string Folder = "LingGuangV05/Voice/";
 
         /// <summary>Chinese line → clip name. Keep the text identical to the line the game shows.</summary>
         static readonly Dictionary<string, string> Lines = new Dictionary<string, string>
@@ -33,6 +35,51 @@ namespace LingGuangV05.Desktop.Story
 
         static Dictionary<string, string> byKey;
         static AudioSource source;
+        static readonly List<PartialLine> partialLines = new List<PartialLine>();
+
+        [Serializable] sealed class Manifest { public Entry[] entries; public Portion[] portions; }
+        [Serializable] sealed class Entry { public string text, clip; }
+        [Serializable] sealed class Portion { public string template, clip; }
+        sealed class PartialLine { public Regex pattern; public string clip; }
+
+        static bool SafeClip(string name) => name != null &&
+            Regex.IsMatch(name, @"\A(?:me|generated)/[a-zA-Z0-9_-]+\z");
+
+        static void LoadManifest()
+        {
+            byKey = new Dictionary<string, string>();
+            partialLines.Clear();
+            foreach (var kv in Lines) byKey[Key(kv.Key)] = "me/" + kv.Value;
+            var asset = Resources.Load<TextAsset>(Folder + "voicestudio_manifest");
+            if (asset == null) return; // Older builds keep their original recordings.
+            var manifest = JsonUtility.FromJson<Manifest>(asset.text);
+            if (manifest == null) return;
+            if (manifest.entries != null)
+                foreach (var entry in manifest.entries)
+                {
+                    if (entry == null || !SafeClip(entry.clip)) continue;
+                    string key = Key(entry.text);
+                    if (key.Length > 0) byKey[key] = entry.clip;
+                }
+            if (manifest.portions == null) return;
+            foreach (var portion in manifest.portions)
+            {
+                if (portion == null || !SafeClip(portion.clip) || string.IsNullOrEmpty(portion.template)) continue;
+                var pattern = new StringBuilder(@"\A");
+                int literalLength = 0;
+                foreach (string part in Regex.Split(portion.template, @"(\{[^{}]+\})"))
+                {
+                    if (part.StartsWith("{", StringComparison.Ordinal)) pattern.Append(@".{0,128}?");
+                    else { string literal = Key(part); literalLength += literal.Length; pattern.Append(Regex.Escape(literal)); }
+                }
+                if (literalLength < 2) continue; // Allow authored "她说" but never a variable-only catch-all.
+                pattern.Append(@"\z");
+                partialLines.Add(new PartialLine {
+                    pattern = new Regex(pattern.ToString(), RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(25)),
+                    clip = portion.clip
+                });
+            }
+        }
 
         static string Key(string text)
         {
@@ -53,12 +100,16 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>The recording for this Chinese line, or null.</summary>
         public static AudioClip Find(string zh)
         {
-            if (byKey == null)
+            if (byKey == null) LoadManifest();
+            string key = Key(zh);
+            if (key.Length == 0 || key.Length > 2048) return null;
+            if (byKey.TryGetValue(key, out var name)) return Resources.Load<AudioClip>(Folder + name);
+            foreach (var line in partialLines)
             {
-                byKey = new Dictionary<string, string>();
-                foreach (var kv in Lines) byKey[Key(kv.Key)] = kv.Value;
+                try { if (line.pattern.IsMatch(key)) return Resources.Load<AudioClip>(Folder + line.clip); }
+                catch (RegexMatchTimeoutException) { /* Player-provided names must not stall the frame. */ }
             }
-            return byKey.TryGetValue(Key(zh), out var name) ? Resources.Load<AudioClip>(Folder + name) : null;
+            return null;
         }
 
         /// <summary>
@@ -67,13 +118,13 @@ namespace LingGuangV05.Desktop.Story
         /// </summary>
         public static float Play(string zh)
         {
-            if (GameText.IsEnglish) return 0;
+            if (GameText.IsEnglish) { Stop(); return 0; }
             var clip = Find(zh);
-            if (clip == null) return 0;
+            if (clip == null) { Stop(); return 0; }
             if (source == null)
             {
                 var go = new GameObject("LingGuang Voice Lines");
-                Object.DontDestroyOnLoad(go);
+                UnityEngine.Object.DontDestroyOnLoad(go);
                 source = go.AddComponent<AudioSource>();
                 source.playOnAwake = false;
                 source.spatialBlend = 0;

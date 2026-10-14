@@ -138,13 +138,14 @@ namespace LingGuangV05.Desktop.Story
         void OnDestroy()
         {
             GameText.Changed -= OnLanguage;
-            if (instance == this) { instance = null; lastFinished = nextTicket; }
+            if (instance == this) { VoiceLines.Stop(); instance = null; lastFinished = nextTicket; }
         }
 
         void OnLanguage()
         {
             if (!speaking || text == null) return;
             english = GameText.IsEnglish;
+            if (english) VoiceLines.Stop();
             SetText(english ? current.en : current.zh, text.maxVisibleCharacters);
         }
 

@@ -148,7 +148,9 @@ namespace LingGuangV05.Desktop.LLM
             if (!isActiveAndEnabled || (State != Status.Off && State != Status.Failed)) return;
             if (server != null && !StopServer()) return;
             disposing = false; changingSlots = false; judgeRetryAfter = 0;
-            LaunchMode = LlmLaunchMode.Gpu;
+            // This Windows bundle uses the verified local CPU runtime.
+            LaunchMode = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor
+                ? LlmLaunchMode.Cpu : LlmLaunchMode.Gpu;
             if (!editorQaInstance) Instance = this;
             StartCoroutine(Boot());
         }
@@ -210,6 +212,8 @@ namespace LingGuangV05.Desktop.LLM
                     SlowMode = mode == LlmLaunchMode.Cpu || (total > 0 && onGpu < total);
                     State = Status.Ready;
                     Detail = LlmScheduling.SlowNotice(mode, onGpu, total, GameText.IsEnglish);
+                    if (Application.platform == RuntimePlatform.WindowsPlayer && mode == LlmLaunchMode.Cpu)
+                        Detail = GameText.T("当前配置使用本地 CPU 推理，回复可能慢一些。", "Configured for local CPU inference; replies may take longer.");
                     Debug.Log("[灵光] 本地模型就绪：" + ModelName + " · " + mode + " · GPU 层 " + (total > 0 ? onGpu + "/" + total : "?") +
                         " · " + ParallelSlots + " slots × " + LlmScheduling.SlotContext + " · 启动 " + (Time.realtimeSinceStartup - started).ToString("0.0") + "s" +
                         (Detail.Length > 0 ? " · " + Detail : ""));

@@ -204,6 +204,13 @@ namespace LingGuangV05.CaseMenu
         {
             if (!IsReady || !IsBootComplete || HasEnteredDesktop) return;
             HasEnteredDesktop = true;
+            // Once seated, the monitor surrounds are opaque. No room may peek
+            // through on narrow windows or when the player resizes the window.
+            view.clearFlags = CameraClearFlags.SolidColor;
+            view.backgroundColor = new Color(.012f, .014f, .018f);
+            foreach (var root in view.gameObject.scene.GetRootGameObjects())
+                foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
+                    if (!renderer.transform.IsChildOf(rig)) renderer.enabled = false;
             IsScreenPowered = true;
             if (powerRoutine != null) { StopCoroutine(powerRoutine); powerRoutine = null; }
             ApplyVisualPower(1);

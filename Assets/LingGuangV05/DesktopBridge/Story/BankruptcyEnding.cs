@@ -84,8 +84,14 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (runtime == null || runtime.TestMode || desk == null) return;
+            if (name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
+                LingGuangV05.Desktop.YY.YYChatHub.Instance?.Receive("landlord", runtime.Sim.LastMessage);
             switch (name)
             {
+                case "rent.decision":
+                    LingGuangV05.Desktop.YY.YYChatHub.Instance?.Offer("landlord", GameText.IsEnglish ? new[] { "Keep earning", "Confirm selling the computer" } : new[] { "继续挣钱还债", "确认卖电脑" });
+                    desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 12, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
+                    break;
                 case "rent.due":
                     desk.StoryPopup(Landlord, T("房租该交了，欠着 " + arg + " 呢。", "The rent is due. You owe " + arg + "."), 9);
                     break;

@@ -300,7 +300,7 @@ namespace LingGuangV05.XingGuang
             return full <= 0 ? 0 : Math.Min(1, TrainFactor((XgTrack)run.track) / full);
         }
 
-        double TrainingMemoryMultiplier => Has("datacenter") ? DatacenterVram : 1;
+        double TrainingMemoryMultiplier => (Has("datacenter") ? DatacenterVram : 1) * RelicVramFactor;
 
         bool WantsTrainingMemory(XgWiringView view, XgRun run, XgWNode card)
         {
@@ -893,7 +893,11 @@ namespace LingGuangV05.XingGuang
             return w == XgWiring.Recurrent || w == XgWiring.GatedRecurrent || w == XgWiring.EncoderDecoder || w == XgWiring.Attention;
         }
 
-        string TooLow(double acc, double min) => T("准确率不够 ", "Accuracy too low ") + N(acc * 100, "0.#") + "% < " + N(min * 100, "0") + "%";
+        /// <summary>
+        /// "Accuracy too low 62.4% < 63%". The line keeps its own decimals (97.5%, not 98%) and the score is cut, not rounded,
+        /// so a score under the line never reads as equal to it or above it.
+        /// </summary>
+        string TooLow(double acc, double min) => T("准确率不够 ", "Accuracy too low ") + N(Math.Floor(acc * 1000 + 1e-9) / 10, "0.#") + "% < " + N(Math.Round(min * 1000) / 10, "0.#") + "%";
 
         void Rates(XgWNode t, XgWNode m)
         {
@@ -1297,6 +1301,8 @@ namespace LingGuangV05.XingGuang
                 if (c == null) return T("接不上", "Cannot connect");
                 if (!Signed(c.id))
                 {
+                    // The stage lock comes first: no score signs an order before then, so "accuracy too low" would be a false reason.
+                    if (S.stage < ContractStage) return T("第 " + ContractStage + " 阶段才开放", "Opens at stage " + ContractStage);
                     if (!CanSign(c)) return RealtimeMiss(c, model) ? T("实时：循环网络跟不上", "Realtime: a loop cannot keep up") : TooLow(ContractAcc(c), c.threshold);
                     if (!Sign(c.id, host)) return T("签不了", "Cannot sign");
                 }

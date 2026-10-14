@@ -647,18 +647,18 @@
       "board": "ai",
       "author": "liandan",
       "date": "2016-06-21",
-      "title": "每天守着电脑点训练？教你偷懒",
-      "titleEn": "Sitting there clicking Train all day? How to slack off",
+      "title": "每天守着电脑点训练？说说我的窍门",
+      "titleEn": "Sitting there clicking Train all day? My tips",
       "minStage": 1,
       "floors": [
         {
           "author": "liandan",
-          "text": "挂个 crontab 定时训练，人不用守着；再弄成后台进程，关了窗口它也在练。",
-          "textEn": "Add a crontab to train on a timer so you need not sit there; then make it a daemon so it trains with the window closed."
+          "text": "训练没法挂机，每一轮都得自己按。好在连着按会攒连击，学得更多，别按一下歇半天。",
+          "textEn": "Training has no idle mode: you press every epoch yourself. The upside is the combo, which makes each press learn more, so keep pressing instead of resting between them."
         },
         {
           "author": "xiaobai",
-          "text": "那标注能偷懒吗？",
+          "text": "标注呢，能偷懒吗？",
           "textEn": "Can I slack off on labelling too?"
         },
         {

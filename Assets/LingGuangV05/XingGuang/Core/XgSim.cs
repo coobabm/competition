@@ -8,7 +8,7 @@ namespace LingGuangV05.XingGuang
     /// 灵光: an incremental game about training CNNs and RNNs. Pure rules, no Unity.
     /// Loop: label yes/no cards (¥ + samples) → press 训练一轮 (one epoch) → every few epochs an assessment scores the
     /// model 0–1000 and pays for new records → spend ¥ in the tech tree (architectures, layers, width, rates, data,
-    /// research, automation). One combo counter spans labelling and training; only hand actions build it.
+    /// research). One combo counter spans labelling and training; only hand actions build it.
     ///
     /// The curve is a stylised scaling law:
     ///   capacity error  ∝ bias · (scale / params)^0.6, plus depth / memory / encoder / data penalties
@@ -22,8 +22,6 @@ namespace LingGuangV05.XingGuang
         public const int LogLength = 40;
         /// <summary>GPU-seconds of training in one epoch (a hand press at 0.6 s cadence ≈ continuous training).</summary>
         public const double EpochSeconds = .6;
-        /// <summary>Automatic epochs are half as strong as a hand press.</summary>
-        public const double AutoEpochFactor = .5;
         /// <summary>A new record must beat the old one by this much on yes/no cards (about one standard error of the test set).</summary>
         public const double RecordMargin = .02;
         /// <summary>Seconds a training press keeps the combo alive.</summary>
@@ -44,7 +42,7 @@ namespace LingGuangV05.XingGuang
         /// anything keyed to the calendar (the monthly meme drift) waits instead of reading the wrong month.
         /// </summary>
         public bool TodayKnown { get; private set; }
-        /// <summary>The 灵光 window is open: crontab training and card timers only run then.</summary>
+        /// <summary>The 灵光 window is open: card timers only run then.</summary>
         public bool WindowOpen;
         /// <summary>灵光 game clock (seconds) for model timestamps.</summary>
         public double Clock;
@@ -87,7 +85,9 @@ namespace LingGuangV05.XingGuang
             RepairAlignment();
             RepairMemoryBook();
             RepairWiring();
-            RepairConsumables();
+            RepairConsumablesRetired();
+            RepairAutoRetired();
+            RepairRelics();
             EnsureSeed();
         }
 
@@ -141,8 +141,8 @@ namespace LingGuangV05.XingGuang
             if (string.IsNullOrEmpty(S.desk) || XgCatalog.Desk(S.desk) == null)
                 S.desk = XgCatalog.Desks[Math.Max(0, Math.Min(2, S.labelTrack))].id;
             S.visionCard = S.sequenceCard = S.logicCard = null;
-            foreach (var d in XgCatalog.Desks) if (d.unlock == XgDeskUnlock.Start && !S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
-            if (!DeskOpen(S.desk)) S.desk = "logic";
+            foreach (var d in XgCatalog.Desks) if (d.unlock == XgDeskUnlock.Start && !S.desksOpen.Contains(d.id) && !OpeningLocksDesk(d.id)) S.desksOpen.Add(d.id);
+            if (!DeskOpen(S.desk)) S.desk = S.openingFocus ? XgMemes.SenseDesk : "logic";
             S.selected = S.selected == 1 ? 1 : 0;
             S.combo = Math.Max(0, S.combo);
             // The first version sold a one-off ×2 raise as a research node; it maps to raise level 5 (×2).
@@ -226,7 +226,24 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : T(n.name, n.nameEn); }
+        /// <summary>「科技树买「RNN」，再买「LSTM」解锁」: the unowned nodes on the way to <paramref name="nodeId"/>, oldest first.</summary>
+        public string UnlockPath(string nodeId)
+        {
+            var path = new List<string>();
+            CollectUnowned(XgCatalog.Node(nodeId), path, new HashSet<string>());
+            if (path.Count == 0) return T("科技树里解锁", "Unlock it in the tech tree");
+            var names = new List<string>(); foreach (var id in path) names.Add(T("「", "\"") + NodeName(XgCatalog.Node(id)) + T("」", "\""));
+            return T("科技树买", "Tech tree: buy ") + string.Join(T("，再买", ", then "), names) + T(" 解锁", " to unlock");
+        }
+        void CollectUnowned(XgNode n, List<string> path, HashSet<string> seen)
+        {
+            if (n == null || Has(n.id) || !seen.Add(n.id)) return;
+            if (!string.IsNullOrEmpty(n.parent)) CollectUnowned(XgCatalog.Node(n.parent), path, seen);
+            foreach (var need in n.needs) CollectUnowned(XgCatalog.Node(need), path, seen);
+            path.Add(n.id);
+        }
+
+        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : n.id == "label.brain" ? AiDisplayName + T("的大脑", "'s brain") : T(n.name, n.nameEn); }
         /// <summary>The node's description; a hint instead while it is still a mystery.</summary>
         public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……") : T(n.note, n.noteEn); }
         /// <summary>Shown as 「？？？」 with no price: 自动答题 before the protagonist has the idea.</summary>
@@ -248,9 +265,6 @@ namespace LingGuangV05.XingGuang
                 case XgNodeKind.Dataset:
                     if (!S.owned.Contains(n.target)) S.owned.Add(n.target);
                     StartDownload(n.target);
-                    break;
-                case XgNodeKind.Auto:
-                    if (n.value == 2 || n.value == 5) foreach (var run in Runs) run.running = true;
                     break;
             }
             ApplyProgressionNode(n);
@@ -281,22 +295,10 @@ namespace LingGuangV05.XingGuang
         public bool HasLrKnob(XgTrack track) { return Has("shared.lr") || Has("v.lr") || Has("s.lr"); }
         public static int DefaultLr(XgTrack track) { return 2; }
 
-        /// <summary>
-        /// 0 = hand only, 2 = crontab … 5 = AutoML. Each automation node needs the one before; the chain starts at
-        /// crontab (auto2): the old run.sh (auto1, hold to repeat) is gone, so level 1 no longer exists.
-        /// </summary>
-        public int AutoTrainLevel
-        {
-            get { int level = 0; for (int i = 2; i <= 5; i++) if (Has("auto" + i)) level = i; else break; return level; }
-        }
-
-        /// <summary>Seconds between automatic epochs at this automation level.</summary>
-        public static double AutoInterval(int level) { return level >= 5 ? 1 : level == 4 ? 1.5 : level == 3 ? 2 : 3; }
-
         /// <summary>Every epoch ends with an exam on unseen cards (a record saves the checkpoint and pays).</summary>
         public int EvalEvery => 1;
-        /// <summary>Epochs in a row without a record before the hint, AutoML's dataset switch, and early stopping.</summary>
-        public const int StaleHintEpochs = 12, AutoSwitchEpochs = 8, EarlyStopEpochs = 12;
+        /// <summary>Assessments in a row without a record before the hint.</summary>
+        public const int StaleHintEpochs = 12;
 
         public XgResearch Optimizer
         {
@@ -447,8 +449,6 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        /// <summary>Automatic training on this track (needs the crontab node).</summary>
-        public void SetAutoTrain(XgTrack track, bool on) { Run(track).running = on && AutoTrainLevel >= 2; }
 
         // ───────────── the curve ─────────────
 
@@ -572,7 +572,7 @@ namespace LingGuangV05.XingGuang
             if (host == null) return T("设备未就绪");
             if (host.Blocker != null) return host.Blocker;
             if (ProjectActive) return T("研发占用显卡");
-            if (VramNeedMB(run) > TrainVram(run, host))
+            if (SystemUnlocked("vram") && VramNeedMB(run) > TrainVram(run, host))
                 return VramNeedMB(run) <= AutoVram(run, host, ParamsK(run)) + 1e-6
                     ? T("显卡正被另一条线占着：等它这一轮练完", "The card is busy with the other line: this round waits its turn")
                     : T("显存不足：模型要 ") + F(VramNeedMB(run), "0") + " MB";
@@ -599,8 +599,8 @@ namespace LingGuangV05.XingGuang
             if (best != null) SetDataset((XgTrack)run.track, best.id);
         }
 
-        /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2 (the bonus is +50% bigger under 红牛).</summary>
-        public double ComboMultiplier { get { return 1 + Math.Min(1, .05 * S.combo) * (S.redbullSeconds > 0 ? RedBullBonus : 1); } }
+        /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2 (a relic pair raises the cap).</summary>
+        public double ComboMultiplier { get { return 1 + Math.Min(1 + RelicFx.comboCapBonus, .05 * S.combo); } }
 
         /// <summary>
         /// Why a round cannot start. Like <see cref="Blocker"/>, except that the other line's running epoch is no reason:
@@ -615,7 +615,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// One round. The model configures itself first (XgSim.AutoModel.cs). Hand presses build the combo and feed
-        /// ×(combo multiplier) cards; automatic ones half. The brain learns from the cards; the accuracy moves towards
+        /// ×(combo multiplier) cards. The brain learns from the cards; the accuracy moves towards
         /// the model's ceiling, or goes down a little (<see cref="StepAccuracy"/>). Bills the GPU time, and every
         /// <see cref="EvalEvery"/> rounds runs an assessment.
         /// </summary>
@@ -646,7 +646,7 @@ namespace LingGuangV05.XingGuang
             S.trainedSeconds += DurationFor(run);
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards };
             StepAccuracy(run, cards, e);
-            if (S.sgdrRounds > 0) S.sgdrRounds--;
+            RelicRoundDone();
             run.shapeRounds++;
             Evaluate(run);
             if (UseBoard) { ObservePhenomena(run); RecordTrace(run, false, cards); WatchCure(run); }
@@ -655,6 +655,7 @@ namespace LingGuangV05.XingGuang
             Push(run.histVal, (float)run.valAcc);
             e.trainAcc = run.trainAcc; e.valAcc = run.valAcc;
             CheckDesks();
+            AutoCountTrainedParams(run);
             if (run.sinceEval >= EvalEvery) e.assessment = Assess(track, host, hand);
             ObserveProgression(run);
             EpochDone?.Invoke(e);
@@ -730,16 +731,11 @@ namespace LingGuangV05.XingGuang
             }
             double pay = a.reward + a.gradeBonus;
             if (pay > 0) { host.Earn(pay); S.totalIncome += pay; S.paidAssessmentReached = true; }
+            if (a.record && a.grade >= RelicRecordGrade) TryRelicDrop("record", RelicRecordChance);
             if (!a.record)
             {
                 run.staleEvals++;
                 if (run.staleEvals == StaleHintEpochs) Say(StaleHint(run));
-                if (AutoTrainLevel >= 5 && run.staleEvals >= AutoSwitchEpochs) AutoSwitchData(run);
-                else if (!hand && AutoTrainLevel == 4 && run.staleEvals >= EarlyStopEpochs)
-                {
-                    run.running = false;
-                    Say(T("早停：连续 " + EarlyStopEpochs + " 轮没有刷新纪录，已保留最佳检查点。", "Early stop: " + EarlyStopEpochs + " epochs without a record; the best checkpoint is preserved."));
-                }
             }
             run.lastScore = a.score;
             run.sinceEval = 0;
@@ -747,6 +743,7 @@ namespace LingGuangV05.XingGuang
             // 参数量与数据量主线: a model graded C or better counts towards the trained parameters.
             NoteTrainedParams(run, a);
             CheckAbilities();
+            RecordCheckup(a);
             Assessed?.Invoke(a);
             return a;
         }
@@ -893,73 +890,6 @@ namespace LingGuangV05.XingGuang
             return T("还在涨，只是慢：多练几轮，或者攒连击。", "Still improving, only slowly: train more rounds, or build the combo.");
         }
 
-        /// <summary>
-        /// AutoML's next dataset once the current one stops setting records: first a desk this month's new meme has
-        /// dragged down (新题型; every epoch there wins a point back), then a contract almost within reach (its bar
-        /// within <see cref="AutoContractReach"/>), then the dataset with the most samples still short of 950.
-        /// </summary>
-        void AutoSwitchData(XgRun run)
-        {
-            XgDataset best = null; double bestKey = double.NegativeInfinity;
-            foreach (var d in XgCatalog.DatasetsFor((XgTrack)run.track))
-            {
-                if (!DatasetAvailable(d.id) || Samples(d.id) < XgCatalog.SamplesToTrain) continue;
-                double drift = MemeDrift(d.id), gap = ContractGap(d.id), key;
-                if (drift > 0) key = 3e9 + drift;
-                else if (gap > 0 && gap <= AutoContractReach) key = 2e9 - gap * 1e6;
-                else if (BestScore(d.id) < 950) key = Samples(d.id);
-                else continue;
-                if (key > bestKey) { bestKey = key; best = d; }
-            }
-            if (best == null || best.id == run.dataset) return;
-            string why = MemeDrift(best.id) > 0 ? T("（新题型拖了分，先回炉）")
-                : ContractGap(best.id) > 0 && ContractGap(best.id) <= AutoContractReach ? T("（离签约线只差一点）") : "";
-            SetDataset((XgTrack)run.track, best.id);
-            Say(T("AutoML：换到「" + XgCatalog.Dataset(best.id).name + "」" + why, "AutoML: switched to " + XgCatalog.Dataset(best.id).nameEn + why));
-        }
-
-        /// <summary>A contract counts as within reach for AutoML when its bar is this close above the best checkpoint.</summary>
-        public const double AutoContractReach = .08;
-
-        /// <summary>How far the best checkpoint is below the nearest unsigned contract's bar on this dataset (0 = none open).</summary>
-        public double ContractGap(string dataset)
-        {
-            double gap = 0;
-            foreach (var c in XgCatalog.Contracts)
-            {
-                if (c.dataset != dataset || Signed(c.id)) continue;
-                double g = c.threshold - ContractAcc(c);
-                if (g > 1e-9 && (gap <= 0 || g < gap)) gap = g;
-            }
-            return gap;
-        }
-
-        /// <summary>
-        /// AutoML runs the data flywheel too: the model labels a dataset's user logs itself once it answers at least
-        /// <see cref="AutoLogAccuracy"/> right (few enough of its own mistakes get in), and stops before the noise
-        /// reaches the 近亲繁殖 line.
-        /// </summary>
-        void AutoFlywheel()
-        {
-            foreach (var l in S.logs)
-            {
-                if (l.count <= 0 || XgCatalog.Dataset(l.dataset) == null) continue;
-                bool on = LogAutoOn(l.dataset);
-                bool clean = NoiseShare(l.dataset) < InbreedingFreeShare * .8;
-                if (!on && clean && LogAutoBlocker(l.dataset) == null && 1 - LogAutoNoise(l.dataset) >= AutoLogAccuracy)
-                {
-                    if (SetLogAuto(l.dataset, true)) Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」的用户日志交给模型自己标。", "AutoML: the model now labels the user logs of " + XgCatalog.Dataset(l.dataset).nameEn + "."));
-                }
-                else if (on && !clean)
-                {
-                    SetLogAuto(l.dataset, false);
-                    Say(T("AutoML：「" + XgCatalog.Dataset(l.dataset).name + "」自己标的错快到一成了，先停下，免得近亲繁殖。", "AutoML: own labelling mistakes on " + XgCatalog.Dataset(l.dataset).nameEn + " near a tenth; stopped before inbreeding."));
-                }
-            }
-        }
-
-        public const double AutoLogAccuracy = .9;
-
         // ───────────── checkpoints, contracts ─────────────
 
         public XgBest Best(string datasetId)
@@ -971,7 +901,10 @@ namespace LingGuangV05.XingGuang
 
         public bool Signed(string contractId) { return S.contracts.Contains(contractId); }
 
-        public bool CanSign(XgContract c) { return !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+        /// <summary>The stage that opens business orders for signing.</summary>
+        public const int ContractStage = 4;
+
+        public bool CanSign(XgContract c) { return S.stage >= ContractStage && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
 
         /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
         public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
@@ -1009,7 +942,7 @@ namespace LingGuangV05.XingGuang
 
         public double IncomePerSecond
         {
-            get { double sum = 0; foreach (var c in XgCatalog.Contracts) sum += ContractIncome(c); return sum; }
+            get { double sum = 0; foreach (var c in XgCatalog.Contracts) sum += ContractIncome(c); return sum * RelicIncomeFactor; }
         }
 
         public bool ContractsUnlocked { get { return S.best.Count > 0 || S.contracts.Count > 0; } }
@@ -1028,7 +961,7 @@ namespace LingGuangV05.XingGuang
 
         void BreakCombo()
         {
-            if (S.combo <= 0) return;
+            if (S.combo <= 0 || RelicFx.comboKeep) return;
             int was = S.combo;
             S.combo = 0; S.comboTimer = 0;
             if (was >= 3) ComboBroken?.Invoke(was);
@@ -1059,12 +992,16 @@ namespace LingGuangV05.XingGuang
 
         void AddLabel(string datasetId)
         {
+            int oldLevel = LevelOf(datasetId);
             double before = Samples(datasetId);
             SetCount(S.labels, datasetId, Labels(datasetId) + 1);
             var d = XgCatalog.Dataset(datasetId);
             if (before < XgCatalog.SamplesToTrain && Samples(datasetId) >= XgCatalog.SamplesToTrain)
                 Say(T("攒够 " + XgCatalog.SamplesToTrain + " 条样本：「" + d.name + "」可以训练了，去「训练」页按「训练一轮」", d.nameEn + ": " + XgCatalog.SamplesToTrain + " samples, training unlocked"));
+            RelicLabelBonus(datasetId);
             foreach (var run in Runs) if (run.dataset == datasetId) Evaluate(run);
+            int newLevel = LevelOf(datasetId);
+            if (newLevel > oldLevel) DeskLevelUp?.Invoke(datasetId, newLevel);
         }
 
         static double Count(List<XgLabelCount> list, string id) { foreach (var l in list) if (l.dataset == id) return l.count; return 0; }
@@ -1083,7 +1020,7 @@ namespace LingGuangV05.XingGuang
             return (d != null ? PackSamples(datasetId) + ExtraSamples(datasetId) : 0) + Labels(datasetId);
         }
 
-        public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && S.desksOpen.Contains(id); }
+        public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && S.desksOpen.Contains(id) && !OpeningLocksDesk(id); }
 
         public List<XgDesk> OpenDesks()
         {
@@ -1103,6 +1040,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public string DeskConditionText(XgDesk desk)
         {
+            if (desk != null && OpeningLocksDesk(desk.id)) return OpeningReason;
             if (desk == null || ProgressionDeskAvailable(desk.id)) return "";
             if ((desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
                 return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
@@ -1129,13 +1067,17 @@ namespace LingGuangV05.XingGuang
 
         void CheckDesks()
         {
+            // The first-minutes focus ends here, before the desks it was holding back open.
+            bool opened = EndOpeningIfDone(out bool learned);
             foreach (var d in XgCatalog.Desks)
             {
                 if (DeskOpen(d.id) || !DeskCondition(d)) continue;
-                S.desksOpen.Add(d.id);
+                if (!S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
+                if (opened) continue;
                 Say(T("新标注桌开放：") + T(d.name, d.nameEn));
                 DeskOpened?.Invoke(d);
             }
+            if (learned) AnnounceYesNoLearned();
         }
 
         public void SelectDesk(string id)
@@ -1254,13 +1196,13 @@ namespace LingGuangV05.XingGuang
 
         XgCard NewCard(string desk)
         {
-            var card = CreateLabelCard(desk);
+            var card = CreateLabelCard(desk, true);
             S.cards.RemoveAll(c => c.dataset == desk);
             S.cards.Add(card);
             return card;
         }
 
-        public XgCard CreateLabelCard(string desk)
+        public XgCard CreateLabelCard(string desk, bool allowFamily = false)
         {
             var info = XgCatalog.Desk(desk);
             var d = XgCatalog.Dataset(desk);
@@ -1297,7 +1239,7 @@ namespace LingGuangV05.XingGuang
                     if (card.askedChar == next) card.truth = true;
                     break;
                 case XgDeskKind.Logic:
-                    var q = XgLogic.Generate(card.seed, level);
+                    var q = XgLogic.Generate(card.seed, level, Today);
                     card.truth = q.truth; card.level = q.level;
                     card.question = q.text; card.questionEn = q.textEn; card.why = q.why; card.whyEn = q.whyEn;
                     card.category = q.category; card.categoryEn = q.categoryEn;
@@ -1309,11 +1251,11 @@ namespace LingGuangV05.XingGuang
                     card.category = sum.category; card.categoryEn = sum.categoryEn;
                     break;
                 case XgDeskKind.Text:
-                    var p = XgMemes.Pick(desk, r, level, Today, Topic);
+                    var p = XgMemes.Pick(desk, r, level, Today, Topic, allowFamily && TotalLabels >= XgCatalog.SamplesToTrain);
                     if (p == null) break; // Progression-only text desks are filled by DecorateProgressionCard.
                     card.truth = p.yes; card.trick = p.trick;
                     card.question = p.text; card.questionEn = p.textEn.Length > 0 ? p.textEn : p.text;
-                    card.why = p.why; card.whyEn = p.whyEn.Length > 0 ? p.whyEn : p.why; card.source = p.source;
+                    card.why = p.why; card.whyEn = p.whyEn.Length > 0 ? p.whyEn : p.why; card.source = p.source; card.from = p.from; card.family = p.family;
                     card.category = p.trick ? "老司机题" : info.name; card.categoryEn = p.trick ? "Trick card" : info.nameEn;
                     break;
                 case XgDeskKind.Captcha: XgVisual.Captcha(card, r, level); break;
@@ -1324,6 +1266,7 @@ namespace LingGuangV05.XingGuang
             if (duelLeft > 0 && desk == "meme") card.timeLimit = 2.5;
             else if (Roll() < GoldChance) { card.gold = true; card.timeLimit = slow ? 8 : info.kind == XgDeskKind.Arith ? 5 : 3; }
             if (info.kind == XgDeskKind.Logic) MaybeBounty(card, info);
+            if (card.family) { card.gold = false; card.timeLimit = 0; }
             card.roll = Roll();
             DecorateProgressionCard(card);
             MaybeShutdownCard(card);
@@ -1331,7 +1274,7 @@ namespace LingGuangV05.XingGuang
             return card;
         }
 
-        /// <summary>The deployed checkpoint's guess for the current card, once one exists.</summary>
+        /// <summary>The deployed checkpoint's guess for the current card; false (the UI's "no model yet") until the desk has a trained checkpoint.</summary>
         public bool Suggestion(string desk, out bool yes, out double confidence)
         {
             if (S.stage == 1)
@@ -1340,9 +1283,11 @@ namespace LingGuangV05.XingGuang
                 if (shown.kind == "combo") return TryGetComboSuggestion(shown, out yes, out confidence);
             }
             if (TryCollaborativeSuggestion(desk, out yes, out confidence)) { ObserveUncertainty(confidence); return true; }
+            yes = false; confidence = 0;
+            // No trained checkpoint on this desk: no model, and no guess (the board's chance level would read as a 50% coin flip).
+            if (!(BestAcc(desk) > 0)) return false;
             var card = Card(desk);
             double acc = CardAccuracy(Run(XgCatalog.Dataset(desk).track), card, BestAcc(desk));
-            yes = false; confidence = 0;
             if (acc <= 0) return false;
             bool right = card.roll < acc;
             yes = right ? card.truth : !card.truth;
@@ -1360,7 +1305,10 @@ namespace LingGuangV05.XingGuang
             var info = XgCatalog.Desk(desk);
             if (info == null || host == null) return default;
             var card = Card(desk);
+            if (card.family) return AnswerFamily(card, yes, host);
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
+            bool teaching = TeachingGuess(card, out bool taughtGuess);
+            bool correcting = teaching && taughtGuess != yes;
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
             bool timeout = card.timeLimit > 0 && card.age > card.timeLimit;
@@ -1370,8 +1318,15 @@ namespace LingGuangV05.XingGuang
             var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
             if (result.correct)
             {
-                Hit(info.comboWindow, card.trick ? 2 : 1);
-                result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+                if (teaching)
+                {
+                    S.modelStreak = taughtGuess == card.truth ? S.modelStreak + 1 : 0;
+                    S.bestModelStreak = Math.Max(S.bestModelStreak, S.modelStreak);
+                    if (taughtGuess == card.truth) Hit(info.comboWindow, 1); else BreakCombo();
+                }
+                else Hit(info.comboWindow, card.trick ? 2 : 1);
+                result.corrected = correcting;
+                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
@@ -1385,14 +1340,15 @@ namespace LingGuangV05.XingGuang
                 else
                 {
                     AddLabel(desk);
-                    result.samples = 1 + (int)HandLabelLog(desk);
+                    result.samples = 1 + (int)HandLabelLog(desk) + RelicLabelExtra();
                     TeachBoard(card, card.truth);
+                    if (correcting) RememberCorrection(card);
                 }
             }
             else
             {
-                BreakCombo(); S.handWrong++;
-                if (!timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
+                BreakCombo(); S.modelStreak = 0; S.handWrong++;
+                if (!teaching && !timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
             }
             result.combo = S.combo;
             NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
@@ -1463,6 +1419,9 @@ namespace LingGuangV05.XingGuang
 
         void Step(double dt, IXgHost host)
         {
+            PayAbilityResearch(host);
+            PayAutoRefund(host);
+            PayConsumableRefund(host);
             // 接线 first: every job below reads its speed from this tick's wiring (XgSim.Wiring.cs).
             TickWiring(dt, host);
             // Training without knobs: between rounds the models follow what is owned and what fits (XgSim.AutoModel.cs).
@@ -1476,34 +1435,19 @@ namespace LingGuangV05.XingGuang
             TickDownloads(dt);
             TickDataSources(dt, host);
             TickFlywheel(dt, host);
-            TickConsumables(dt);
-            // 红牛: while it lasts the combo timer holds, so the combo does not fade.
-            if (S.comboTimer > 0 && S.redbullSeconds <= 0)
+            RelicTick(dt);
+            // 网吧通宵卡: the combo timer holds, so the combo does not fade.
+            if (S.comboTimer > 0 && !RelicFx.comboKeep)
             {
                 S.comboTimer = Math.Max(0, S.comboTimer - dt);
                 if (S.comboTimer <= 0) BreakCombo();
             }
-            if (WindowOpen) TickCard(dt);
+            if (WindowOpen && !MiniGameSurfaceActive) TickCard(dt);
 
-            int level = AutoTrainLevel;
-            if (level >= 2 && (WindowOpen || level >= 3))
-            {
-                S.autoTrainTimer += dt;
-                double interval = AutoInterval(level);
-                int guard = 0;
-                while (S.autoTrainTimer >= interval && guard++ < 8)
-                {
-                    S.autoTrainTimer -= interval;
-                    foreach (var run in Runs)
-                        if (run.running && TrainingUnlocked((XgTrack)run.track) && Blocker(run, host) == null) BeginEpoch((XgTrack)run.track, host, false);
-                }
-                if (S.autoTrainTimer > interval) S.autoTrainTimer = 0;
-            }
             AutoAnswer(dt, host);
             TickMarket(dt, host);
             double income = IncomePerSecond * dt;
             if (income > 0) { host.Earn(income); S.totalIncome += income; }
-            if (level >= 5) { foreach (var c in XgCatalog.Contracts) if (CanSign(c)) Sign(c.id, host); AutoFlywheel(); }
             CheckAbilities();
             CheckDesks();
         }

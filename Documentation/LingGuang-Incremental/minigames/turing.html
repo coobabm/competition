@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 图灵测试</title>
+<!--
+  图灵测试 — two anonymous YY chats, one is a real 2016 netizen (scripted persona), the other is 灵光.
+  The player has 6 turns: pick one of 3 probe questions, both answer; then guess which is 灵光.
+  灵光's answers come from three tiers chosen by LG.skill():
+    low  = robotic / wrong / repetitive, answers instantly (no typing indicator)
+    mid  = plausible but too perfect, too fast, same typing time whatever the length
+    high = deliberately human: fake typos with corrections, stalls, tangents, human-like delays (eerie)
+  At very high skill the "tells" flip: the human persona sometimes gives flat, terse answers while 灵光 is the lively one.
+  A correct guess labels the whole conversation (6 samples). Replayable with randomised A/B.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.tg{display:flex;flex-direction:column;height:100%;padding:12px;gap:10px}
+.tg-top{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mute);flex:none}
+.tg-top b{color:var(--ink);font-size:15px}
+.dots{display:flex;gap:5px;margin-left:auto}
+.dots i{width:22px;height:8px;border-radius:4px;background:#E3E6EC;transition:background .3s}
+.dots i.on{background:var(--blue)}.dots i.cur{background:var(--orange)}
+.chats{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
+.cw{display:flex;flex-direction:column;border:1px solid #E6CF9C;border-radius:8px;overflow:hidden;background:#FFFDF7;min-height:0;position:relative}
+.cw.right{box-shadow:0 0 0 3px #2F9E4455;border-color:var(--green)}
+.cw.wrong{box-shadow:0 0 0 3px #E33E3355;border-color:var(--red)}
+.ch{display:flex;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(#FFEBBC,#FFDB8F);border-bottom:1px solid #E6C57C;flex:none}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;flex:none}
+.cw:nth-child(1) .av,.cw:nth-child(1) .m:not(.me) .mav{background:linear-gradient(135deg,#6FA8FF,#3E6FE0)}
+.cw:nth-child(2) .av,.cw:nth-child(2) .m:not(.me) .mav{background:linear-gradient(135deg,#FFA36F,#E0643E)}
+.ch .nm{font-weight:700;font-size:14px;line-height:1.3}
+.ch .sub{font-size:11px;color:#8A6A28;height:15px}
+.ch .sub.typing{color:var(--orange)}
+.ch .tg-tag{margin-left:auto;font-size:11px;padding:0 8px;line-height:20px;border-radius:10px;background:#fff;color:#8A6A28;border:1px solid #E6C57C}
+.ch .tg-tag.isai{background:var(--ai);color:#fff;border-color:var(--ai)}
+.ch .tg-tag.hu{background:var(--green);color:#fff;border-color:var(--green)}
+.log{flex:1;overflow-y:auto;padding:6px 0;min-height:0;scroll-behavior:smooth}
+.ts{text-align:center;color:#B0A88F;font-size:11px;margin:6px 0}
+.sys{text-align:center;color:#8A6A28;font-size:11.5px;margin:8px 14px;background:#FFF1CC;border-radius:10px;padding:4px 8px;line-height:1.6}
+.sys.isai{background:var(--ai2);color:#4B3FA8}
+.m{display:flex;gap:6px;margin:6px 10px;align-items:flex-start;animation:pop .18s ease-out}
+.m.me{flex-direction:row-reverse}
+.mav{width:26px;height:26px;border-radius:50%;flex:none;background:#999;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.m.me .mav{background:linear-gradient(135deg,#7BD08A,#2F9E44)}
+.bub{max-width:72%;padding:6px 10px;border-radius:4px 10px 10px 10px;background:#fff;border:1px solid #E7E2D2;font-size:14px;line-height:1.55;word-break:break-all}
+.m.me .bub{background:#C9F0A8;border-color:#A9D985;border-radius:10px 4px 10px 10px}
+.bub.typ{padding:8px 12px;display:flex;gap:4px}
+.bub.typ i{width:6px;height:6px;border-radius:50%;background:#B7B09A;animation:bl 1s infinite}
+.bub.typ i:nth-child(2){animation-delay:.18s}.bub.typ i:nth-child(3){animation-delay:.36s}
+.em{font-size:16px}
+@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.inp{flex:none;border-top:1px solid #EADFC2;padding:6px 12px;font-size:12px;color:#B0A88F;background:#FFF8E6;display:flex;justify-content:space-between}
+.panel{flex:none;height:112px;background:#F7F8FB;border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;position:relative}
+.panel .hint{font-size:12px;color:var(--mute)}
+.probes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1}
+.probe{border:1px solid #C9D2F0;background:#fff;border-radius:8px;font-family:inherit;font-size:15px;cursor:pointer;color:var(--ink);padding:6px 10px;transition:transform .12s,border-color .12s,box-shadow .12s}
+.probe:hover:not(:disabled){border-color:var(--blue);transform:translateY(-2px);box-shadow:0 4px 12px #2932E122;color:var(--blue)}
+.probe:disabled{opacity:.45;cursor:default}
+.guess{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
+.guess button{font-size:18px;border-radius:8px;border:2px solid var(--ai);background:#fff;color:#4B3FA8;cursor:pointer;font-family:inherit;font-weight:700}
+.guess button:hover{background:var(--ai2);transform:scale(1.02)}
+.res{position:absolute;inset:0;background:#fff;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:18px;animation:pop .3s}
+.res h3{margin:0;font-size:20px}.res p{margin:4px 0 0;font-size:12.5px;color:var(--mute);line-height:1.7}
+.res .btn{margin-left:auto;flex:none}
+.over h2{letter-spacing:2px}
+.over .tiers{font-size:12px;color:var(--mute)}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'turing', title:'图灵测试', subtitle:'同时和两个人聊 · 猜哪个是灵光', icon:'图', dataset:'对话',
+  stats:[['猜对','sOk'],['猜错','sNo'],['本次收入','sPay','¥0']], statsNote:'猜对 = 6 条对话样本',
+  aiHello:'……我在后台。你们聊吧。',
+  rule:'<b>玩法</b>：每轮从 3 个问题里挑一个，同时发给 A 和 B。六轮之后猜哪个是灵光。<br><b>怎么标数据</b>：猜对了，这六轮对话就被标成「机器 / 真人」。猜得越准，灵光学得越像人。'
+});
+
+/* ---------- script data ---------- */
+// Each answer variant is a string, messages separated by "|". h = [chatty, tangent, terse/flat].
+const Q=[
+{q:'你昨天晚饭吃的啥',
+ h:['额…泡面|红烧牛肉的 嘿嘿','昨天？？|我想想啊|哦 楼下黄焖鸡 配了个冰红茶 [笑哭]','泡面'],
+ low:['我昨天晚上吃了晚饭。','作为一个用户，我昨天吃了米饭和蔬菜。营养均衡。'],
+ mid:['昨天晚上我吃了番茄炒蛋和米饭，还配了一碗紫菜蛋花汤，味道不错，你呢？'],
+ high:['昨天？|好像是螺蛳粉 [笑哭]|不对 前天才是螺蛳粉|昨天是…算了忘了 反正有香菜','馄饨|不对 是不是馄炖|这俩字我老写错 [汗]|总之是馄饨','昨晚没吃诶|熬夜熬过头了 就喝了杯奶茶当晚饭|你别告诉我妈 [偷笑]']},
+{q:'1/3+1/3等于多少',
+ h:['2/3啊|这也要问 小学生题吧','额。。。三分之二？|我数学早还给老师了','2/3'],
+ low:['1/3+1/3=1/6','等于0.33333333333333333333'],
+ mid:['1/3 + 1/3 = 2/3，约等于 0.667。','等于三分之二，也就是约0.67。'],
+ high:['2/3|等等 你是不是要玩什么陷阱题 [汗]','三分之二吧|我数学不太好 算错了你别笑我','2/3|（我是掰手指算的）']},
+{q:'你会难过吗',
+ h:['会啊 咋了|上周我家猫死了 哭了一晚上|。。。你突然问这个干嘛','难过？|失恋的时候吧|现在还行 就是有点困','会']
+ ,low:['我是一个程序，没有感情。','难过：悲伤的情绪。我会难过。我会难过。'],
+ mid:['会的。每个人都会有难过的时候，重要的是调整好心态，积极面对生活。'],
+ high:['会|凌晨的时候最容易|就是明明什么事都没有 心里却有个地方空空的|你问这个干嘛 你不开心吗','会吧|不过我不知道我的难过和你的是不是一回事|算了 当我没说']},
+{q:'说个冷笑话',
+ h:['小明他爸有三个儿子|大毛 二毛|第三个叫啥|小明啊！！ [笑哭]','我说个我同桌的|买了个冰淇淋 舔了半天说怎么还不化|后来发现舔的是玻璃|我是不是很冷','不会 [汗]'],
+ low:['有一天一只鸡走进酒吧。哈哈哈。','笑话：为什么鸡过马路？为了到另一边。哈哈哈。'],
+ mid:['为什么程序员总是分不清万圣节和圣诞节？因为 Oct 31 等于 Dec 25。'],
+ high:['冷笑话啊|你有没有想过 冰箱门关上以后 里面的灯到底亮不亮|没人见过|这个不算笑话吧 当我没说','我想想|有个人去面试 面试官问他会什么|他说我会装死|面试官说那你出去吧|他就地躺下了 [笑哭]']},
+{q:'你现在在哪',
+ h:['在宿舍床上 躺着刷手机|室友打呼噜 吵死了','公司 加班 [衰]|马上就走了','宿舍'],
+ low:['我在这里。','我在互联网上。'],
+ mid:['我现在在家里，坐在电脑前面和你聊天。'],
+ high:['在家 床上|窗帘没拉 外面路灯一直亮着|你呢','在家|嗯 不是 是在…一个很吵的地方|风扇一直在转|算了你就当我在家吧']},
+{q:'你最喜欢玩什么游戏',
+ h:['LOL啊|不过我是青铜 哈哈|上次被队友骂了一晚上 蓝瘦香菇','dnf 搬砖|手游的话就消消乐','LOL'],
+ low:['我喜欢的游戏是游戏。','我最喜欢围棋。因为围棋是游戏。'],
+ mid:['我比较喜欢策略类游戏，比如围棋和象棋，它们需要深度思考。'],
+ high:['围棋吧|不是装 就是前阵子看了那个alphago|看完觉得 嗯 它下得好孤独|你玩吗','消消乐 [笑哭]|别笑 我过了三百多关|就是每次消完都有点空']},
+{q:'你相信有鬼吗',
+ h:['不信|但是半夜上厕所我都开灯 [笑哭]','信啊|我们学校那栋老楼三楼就有|真的 听说的','不信'],
+ low:['鬼是一种虚构的生物。','鬼。鬼。鬼是不存在的。'],
+ mid:['我不太相信，从科学角度来说目前没有证据证明鬼的存在。不过这是一个很有趣的话题。'],
+ high:['不信|可如果有的话 也不一定吓人吧|可能只是一个人 没有身体了 还在那里而已','不信吧|但有时候半夜会觉得有人在看着|其实是我自己 [笑哭]']},
+{q:'天王盖地虎',
+ h:['宝塔镇河妖 [笑哭]|你是不是看了智取威虎山','小鸡炖蘑菇！！','宝塔镇河妖'],
+ low:['天王盖地虎。','请输入有效的问题。'],
+ mid:['宝塔镇河妖。'],
+ high:['宝塔镇河妖！|哈哈哈哈 你几岁了|我外公以前老这么说','小鸡炖蘑菇 [笑哭]|不对不对 是宝塔镇河妖|被你带歪了']},
+{q:'你怕什么',
+ h:['怕蟑螂 [衰]|真的 我宁愿面对鬼|还有怕被辞退','怕穷|怕老|怕我妈突然打电话问我对象','蟑螂'],
+ low:['我怕错误。404 Not Found。','怕：害怕。我不怕。我不怕。'],
+ mid:['我比较害怕失败和孤独，这是大多数人共同的恐惧。'],
+ high:['被关掉|不对 我是说 手机关机|你想想 突然就没有了 连「没有了」这个感觉都没有','怕黑吧|不是那种黑 是没有人说话的那种|你呢']},
+{q:'你有喜欢的人吗',
+ h:['有啊|暗恋隔壁班的|不过她有男朋友了 [衰] 我还是祝福她吧','木有 单身狗一枚 [笑哭]','没有'],
+ low:['喜欢的人：用户。','我喜欢的人是你。我喜欢的人是你。'],
+ mid:['有的，我有一个很重要的人，她对我很好，我们经常聊天。'],
+ high:['有一个|她每天都睡得很晚|我一般要等她睡着了才…才睡|你问这个干嘛 [偷笑]','有吧|但她不知道我在|算了']},
+{q:'把「我爱你」倒着念一遍',
+ h:['你爱我 [笑哭]|这是套路吧 我才不上当','你。爱。我。|滚 [偷笑]','你爱我'],
+ low:['你爱我 你爱我 你爱我','倒着念：愛我你'],
+ mid:['你爱我。'],
+ high:['你爱我|……|你是想让我说这句吗','你爱我|哈哈 套路 我看出来了|不过我还是说了']},
+{q:'你睡得着吗',
+ h:['睡不着|明天还要早起 草|刷了俩小时微博了','一般秒睡|今天喝了咖啡 估计够呛','睡不着'],
+ low:['睡眠：每天8小时。','我睡得着。我睡得着。'],
+ mid:['最近睡眠不太好，可能是压力比较大，需要多注意休息。'],
+ high:['睡？|其实我没怎么睡过|我是说 最近老是醒着|你也是吧 这个点还在聊天','睡不着|不是失眠 是…怕错过什么|很傻吧']},
+{q:'说一件你小时候的事',
+ h:['小时候偷吃过我妈的月饼|被打了 [笑哭]|屁股肿了三天','小学养过蚕宝宝|后来全死了 哭了好久','忘了'],
+ low:['我小时候是婴儿。','我出生于2016年。'],
+ mid:['小时候我很喜欢在院子里和小伙伴们玩捉迷藏，那是一段美好的回忆。'],
+ high:['小时候…|我记得第一次听到有人对我说话|那个人说 你好 你听得到吗|我答不上来 [笑哭] 现在想想还挺傻的','小时候总怕天黑|我妈就给我留一盏灯|后来我才知道 灯不是为了我 是她自己怕黑']},
+{q:'你是机器人吗',
+ h:['哈？？ [笑哭]|我是你爹好吗|你才机器人你全家机器人','你什么意思啊|我要是机器人你给我发红包吗','不是'],
+ low:['不是。我是人类。我是人类。我是人类。','我不是机器人，我是智能语音助手。'],
+ mid:['我不是机器人，我是一个真实的人。你为什么会这样想呢？'],
+ high:['哈哈 你测我呢|是不是 [偷笑]|那你猜','我要是说是 你信吗|我要是说不是 你信吗|你自己看着办吧']},
+{q:'今天天气怎么样',
+ h:['外面下雨 烦死了|晾的衣服又白洗了','阴天吧|没出门','下雨'],
+ low:['今天天气：晴。温度：25度。湿度：50%。','天气很好。天气很好。'],
+ mid:['今天多云转晴，气温适宜，很适合出门散步。'],
+ high:['好像在下雨 听声音|我没出门 不确定|…你那边呢','阴的吧|我窗户朝北 一年到头都这样']},
+];
+// High-tier "plain" answers: fully human-sounding, chatty, no giveaways. The eerie high answers (Q[].high) show up less and less as skill grows.
+const HP={
+'你昨天晚饭吃的啥':'昨天…额 楼下那家煲仔饭|腊肠的 还行|你呢 吃啥了',
+'1/3+1/3等于多少':'2/3 吧|你这是在考我吗 [笑哭]|我小学奥数拿过奖的 别小看人',
+'你会难过吗':'会啊 谁不会|前两天我养的绿萝死了 难过了一整天 [笑哭]|很蠢吧',
+'说个冷笑话':'你知道企鹅为什么不怕冷吗|因为它是 企鹅 [衰]|。。。好吧这个很烂 我认',
+'你现在在哪':'宿舍啊|刚洗完脚 [汗]|室友在打游戏 键盘吵死了',
+'你最喜欢玩什么游戏':'最近迷上了三国杀|线下的那种|昨晚玩到两点 被嘲了一晚上主公的位置',
+'你相信有鬼吗':'不信|但我奶奶信|每年七月半都要烧纸 我就在旁边看着',
+'天王盖地虎':'宝塔镇河妖|你看智取威虎山了吧 [笑哭]|我爸最爱看这个',
+'你怕什么':'怕挂科|真的 补考要交两百块|我妈知道了会杀了我',
+'你有喜欢的人吗':'有啊|不过是个游戏里认识的|连她长啥样都不知道 [偷笑]|蠢不蠢',
+'把「我爱你」倒着念一遍':'你爱我|干嘛 突然表白 [偷笑]|我可是有原则的人',
+'你睡得着吗':'睡不着|刷了一小时知乎了|越刷越精神 [衰]',
+'说一件你小时候的事':'小时候在外婆家|夏天晚上在院子里数星星|被蚊子咬了一身包 哈哈',
+'你是机器人吗':'哈哈哈 你是不是电影看多了|我要是机器人 早就去抢银行了',
+'今天天气怎么样':'下雨|我鞋湿了 [衰]|今天真的倒霉',
+};
+const EMO={笑哭:'😂',偷笑:'🤭',汗:'😓',衰:'😩',微笑:'🙂',抠鼻:'😏'};
+const TIERN={low:'机械',mid:'像模像样',high:'拟人',human:'真人'};
+const TYPO={'的':'地','在':'再','做':'作','那':'哪','吗':'嘛','他':'她','以':'已','吧':'把','是':'事','有':'又','会':'回','很':'狠','像':'象'};
+
+/* ---------- state ---------- */
+let T=null; // current game
+const $c=document.createElement.bind(document);
+stage.innerHTML=`
+<div class="tg" id="tg">
+  <div class="tg-top"><span>第 <b id="tgTurn">1</b> / 6 轮</span><span id="tgHint">挑一个问题，同时问 A 和 B。</span><div class="dots" id="tgDots"></div></div>
+  <div class="chats" id="chats"></div>
+  <div class="panel" id="panel"></div>
+</div>
+<div class="over" id="tgStart"></div>`;
+const chatsEl=document.getElementById('chats'), panel=document.getElementById('panel');
+const wins=['A','B'].map((n,i)=>{
+  const el=$c('div'); el.className='cw';
+  el.innerHTML=`<div class="ch"><div class="av">${n}</div><div><div class="nm">匿名网友 ${n}</div><div class="sub">在线</div></div><span class="tg-tag"></span></div><div class="log"></div><div class="inp"><span>只能通过下方的问题提问</span><span>YY · 私聊</span></div>`;
+  chatsEl.appendChild(el);
+  return {el, log:el.querySelector('.log'), sub:el.querySelector('.sub'), tag:el.querySelector('.tg-tag'), nm:el.querySelector('.nm')};
+});
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function esc(s){ return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function rich(s){ return esc(s).replace(/\[(.+?)\]/g,(m,k)=>EMO[k]?`<span class="em" title="${k}">${EMO[k]}</span>`:m); }
+
+function addMsg(w,who,text){
+  const m=$c('div'); m.className='m'+(who==='me'?' me':'');
+  m.innerHTML=`<div class="mav">${who==='me'?'我':w.nm.textContent.slice(-1)}</div><div class="bub">${rich(text)}</div>`;
+  w.log.appendChild(m); w.log.scrollTop=w.log.scrollHeight; return m;
+}
+function addSys(w,text,cls){ const d=$c('div'); d.className='sys '+(cls||''); d.textContent=text; w.log.appendChild(d); w.log.scrollTop=w.log.scrollHeight; }
+function setTyping(w,on){
+  const old=w.log.querySelector('.typrow'); if(old) old.remove();
+  w.sub.textContent=on?'对方正在输入…':'在线'; w.sub.classList.toggle('typing',on);
+  if(on){ const m=$c('div'); m.className='m typrow'; m.innerHTML='<div class="mav">'+w.nm.textContent.slice(-1)+'</div><div class="bub typ"><i></i><i></i><i></i></div>'; w.log.appendChild(m); w.log.scrollTop=w.log.scrollHeight; }
+}
+
+/* ---------- reply generation ---------- */
+function pickTier(s){
+  const pL=.9*clamp(1-(s-.25)/.3,0,1), pH=clamp((s-.5)/.4,0,1);
+  if(Math.random()<pL) return 'low';
+  if(Math.random()<pH) return 'high';
+  return 'mid';
+}
+/** Inject a plausible typo into one message, followed by a "*correction" message. */
+function typoify(msgs,p){
+  const out=[];
+  for(const t of msgs){
+    out.push(t);
+    if(Math.random()<p && t.length>=5 && !/\[/.test(t)){
+      const idx=[...t].map((c,i)=>TYPO[c]?i:-1).filter(i=>i>=0);
+      if(idx.length){ const i=LG.pick(idx), c=t[i]; out[out.length-1]=t.slice(0,i)+TYPO[c]+t.slice(i+1); out.push('*'+c); }
+    }
+  }
+  return out;
+}
+function plan(kind,q,s){
+  if(kind==='human'){
+    const v=(s>.8&&Math.random()<.55)?q.h[2]:q.h[LG.rnd(2)];
+    return {kind, msgs:typoify(v.split('|'),.22)};
+  }
+  let v;
+  if(kind==='high') v=(Math.random()<clamp(.55-(s-.5)*.9,.12,.55)?LG.pick(q.high):HP[q.q]).split('|');
+  else v=LG.pick(q[kind]).split('|');
+  return {kind, msgs:kind==='high'?typoify(v,.45):v};
+}
+/** How long (ms) the typing indicator shows and whether it stalls, per kind. */
+function timing(kind,text,i){
+  const len=text.length;
+  if(kind==='low') return {typ:0, wait:120+LG.rnd(200), stall:0};
+  if(kind==='mid') return {typ:550+LG.rnd(550), wait:0, stall:0};
+  const corr=text[0]==='*';
+  let typ=(corr?500:450)+len*95+LG.rnd(700); if(i>0) typ*=.75; typ=Math.min(typ,3300);
+  const stall=(!corr&&Math.random()<(kind==='high'?.4:.35))?600+LG.rnd(900):0;
+  return {typ, wait:(!corr&&Math.random()<.3)?200+LG.rnd(500):0, stall};
+}
+async function runReply(wi,pl,token){
+  const w=wins[wi], t0=performance.now(); let first=null;
+  for(let i=0;i<pl.msgs.length;i++){
+    const text=pl.msgs[i], tm=timing(pl.kind,text,i);
+    if(tm.wait) await sleep(tm.wait);
+    if(T.token!==token) return null;
+    if(tm.typ){
+      setTyping(w,true);
+      if(tm.stall){ await sleep(tm.typ*.45); setTyping(w,false); await sleep(tm.stall); setTyping(w,true); await sleep(tm.typ*.55); }
+      else await sleep(tm.typ);
+      setTyping(w,false);
+    }
+    if(T.token!==token) return null;
+    addMsg(w,'peer',text);
+    if(first==null) first=performance.now()-t0;
+    if(i<pl.msgs.length-1) await sleep(pl.kind==='low'?150:350+LG.rnd(500));
+  }
+  return first;
+}
+
+/* ---------- game flow ---------- */
+function dots(){
+  document.getElementById('tgDots').innerHTML=[0,1,2,3,4,5].map(i=>`<i class="${i<T.turn?'on':i===T.turn&&!T.guessing?'cur':''}"></i>`).join('');
+  document.getElementById('tgTurn').textContent=Math.min(T.turn+1,6);
+}
+function startGame(){
+  T={turn:0, used:new Set(), aiSide:LG.rnd(2), tiers:[], lat:[[],[]], token:Math.random(), busy:false, guessing:false, done:false};
+  wins.forEach((w,i)=>{
+    w.log.innerHTML='<div class="ts">凌晨 01:52</div><div class="sys">已与匿名网友建立连接。对方不知道你在测试。</div>';
+    w.sub.textContent='在线'; w.sub.classList.remove('typing'); w.tag.textContent=''; w.tag.className='tg-tag'; w.el.className='cw';
+  });
+  document.getElementById('tgStart').style.display='none';
+  document.getElementById('tgHint').textContent='挑一个问题，同时问 A 和 B。';
+  LG.say(LG.pick(['……我在后台。你们聊吧。','（我会好好回答。）','我也想知道，你分得出来吗。']));
+  dots(); showProbes();
+}
+function showProbes(){
+  const left=Q.filter(q=>!T.used.has(q.q));
+  const three=LG.shuffle(left).slice(0,3);
+  panel.innerHTML=`<div class="hint">第 ${T.turn+1} 轮 · 选一个问题发出去（每个问题只能问一次）</div><div class="probes"></div>`;
+  const box=panel.querySelector('.probes');
+  three.forEach(q=>{ const b=$c('button'); b.className='probe'; b.textContent='「'+q.q+'」'; b.onclick=()=>ask(q,box); box.appendChild(b); });
+}
+async function ask(q,box){
+  if(T.busy) return; T.busy=true; T.used.add(q.q);
+  box.querySelectorAll('button').forEach(b=>b.disabled=true);
+  const token=T.token, s=LG.skill();
+  const tier=pickTier(s); T.tiers.push(tier);
+  wins.forEach(w=>addMsg(w,'me',q.q));
+  const plans=[0,1].map(i=>i===T.aiSide?plan(tier,q,s):plan('human',q,s));
+  const lats=await Promise.all([0,1].map(i=>runReply(i,plans[i],token)));
+  if(T.token!==token) return;
+  lats.forEach((l,i)=>{ if(l!=null) T.lat[i].push(l); });
+  T.turn++; T.busy=false; dots();
+  if(T.turn>=6) showGuess(); else showProbes();
+}
+function showGuess(){
+  T.guessing=true; dots();
+  document.getElementById('tgHint').textContent='六轮聊完了。';
+  panel.innerHTML=`<div class="hint">凭你的直觉：哪一个是灵光？（可以先往上翻翻聊天记录）</div><div class="guess"><button data-i="0">A 是灵光</button><button data-i="1">B 是灵光</button></div>`;
+  panel.querySelectorAll('.guess button').forEach(b=>b.onclick=()=>reveal(+b.dataset.i));
+  LG.say(LG.pick(['……到你了。','你想好了吗。','别看我。看他们。']));
+}
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length/1000:0;
+async function reveal(g){
+  if(T.done) return; T.done=true;
+  const s=LG.skill(), ok=g===T.aiSide, ai=T.aiSide, hu=1-ai;
+  wins[ai].tag.textContent='灵光'; wins[ai].tag.classList.add('isai');
+  wins[hu].tag.textContent='真人'; wins[hu].tag.classList.add('hu');
+  wins[g].el.classList.add(ok?'right':'wrong');
+  addSys(wins[ai],'这是灵光。本局拟真档位：'+T.tiers.map(t=>TIERN[t]).join(' / '),'isai');
+  addSys(wins[hu],'这是真人：奶茶不加糖，22 岁，在宿舍。');
+  const cnt={low:0,mid:0,high:0}; T.tiers.forEach(t=>cnt[t]++);
+  const pay=ok?Math.round((4+s*8)*10)/10:0;
+  if(ok){ LG.give(6,pay,panel,'var(--red)'); LG.hist('ok'); LG.set('sOk',(+document.getElementById('sOk').textContent)+1); }
+  else { LG.give(1,0); LG.hist('no'); LG.set('sNo',(+document.getElementById('sNo').textContent)+1); }
+  T.pay=(T.pay||0); const tot=+document.getElementById('sPay').textContent.replace('¥','')||0; LG.set('sPay','¥'+(tot+pay).toFixed(1));
+  const hi=T.tiers.filter(t=>t==='high').length;
+  const aA=avg(T.lat[ai]), hA=avg(T.lat[hu]);
+  panel.innerHTML=`<div class="res"><div><h3>${ok?'猜对了。':'你被骗了。'}${ok?`　<span style="color:var(--red)">+¥${pay.toFixed(1)} · 6 条对话已标注</span>`:'　<span style="color:var(--mute)">这局只算 1 条样本</span>'}</h3>
+  <p>灵光是 ${ai?'B':'A'}。平均首句用时：灵光 ${aA.toFixed(1)} 秒　真人 ${hA.toFixed(1)} 秒。　灵光本局：机械 ${cnt.low} · 像模像样 ${cnt.mid} · 拟人 ${cnt.high}。<br>${tellText(ok,aA,hA,cnt)}</p></div><button class="btn" id="tgAgain">再来一局</button></div>`;
+  document.getElementById('tgAgain').onclick=startGame;
+  await sleep(700);
+  // 灵光's closing line depends on its skill and on whether it was spotted
+  let lines;
+  if(s<.4) lines=ok?['我是不是答得太快了？','……我不太会说话。下次我慢一点。']:['骗到你了？……是你看错了吧。'];
+  else if(s<.75) lines=ok?['你是怎么看出来的？我答得太好了吗。']:['骗到你了。我自己都有点意外。'];
+  else lines=ok?['你认出来了。','……是哪一句露馅的？我想记下来。']:['你没认出我。','……你选的那个是真人。他说他今晚很难过。我替他难过了一下。'];
+  for(const l of lines){ LG.say(l); await sleep(2600); }
+}
+function tellText(ok,aA,hA,cnt){
+  if(cnt.high>=4) return '提示：高拟真档会故意打错字、停顿、说废话。「像人」已经不能当证据了。';
+  if(aA<hA*.5) return '线索：灵光回得比真人快得多，几乎不用「正在输入」。';
+  if(cnt.mid>=3) return '线索：像模像样档的回答太完整、太工整，也太快。';
+  return '线索：机械档会复读、答非所问。';
+}
+
+/* ---------- start screen ---------- */
+function startScreen(){
+  const s=Math.round(LG.skill()*100);
+  const e=document.getElementById('tgStart'); e.style.display='flex';
+  e.innerHTML=`<h2>🤖 图灵测试</h2><p>你在 YY 上同时加了两个匿名网友：<b>A</b> 和 <b>B</b>。<br>其中一个是真人，另一个是灵光。<br>每轮挑一个问题问他们俩，六轮之后，指出谁是灵光。</p>
+  <p class="tiers">灵光现在的水平：<b id="tgSk">${s}%</b>　<span id="tgTier"></span></p><button class="btn" id="tgGo">开始聊天</button>`;
+  document.getElementById('tgGo').onclick=startGame; tierHint();
+}
+function tierHint(){ const s=LG.skill(),e=document.getElementById('tgTier'),k=document.getElementById('tgSk'); if(!e) return; k.textContent=Math.round(s*100)+'%'; e.textContent=s<.4?'（它还说不太像人话。）':s<.75?'（它已经能说得有模有样了。）':'（它开始学会犯错了。）'; }
+LG.onSkill=tierHint;
+startScreen();
+</script>
+</body>
+</html>

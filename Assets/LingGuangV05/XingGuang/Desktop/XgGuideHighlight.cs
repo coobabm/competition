@@ -37,6 +37,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var existing = old != null ? old.GetComponent<XgGuideHighlight>() : null;
             if (existing != null) { existing.age = 0; existing.life = seconds; existing.transform.SetAsLastSibling(); return existing; }
             var go = new GameObject("Guide Ring", typeof(RectTransform));
+            // Built inactive so the graphic is unmaskable before it first enables: a scroll view's RectMask2D never
+            // registers it (the ring draws outside its target anyway), so the mask cannot clip it after it is gone.
+            go.SetActive(false);
             go.layer = target.gameObject.layer;
             var rt = (RectTransform)go.transform;
             rt.SetParent(target, false);
@@ -47,15 +50,19 @@ namespace LingGuangV05.Desktop.XingGuang
             var h = go.AddComponent<XgGuideHighlight>();
             h.ring = go.AddComponent<XgGuideRingGraphic>();
             h.ring.raycastTarget = false;
+            h.ring.maskable = false;
             h.ring.color = Gold;
             h.life = seconds;
+            go.SetActive(true);
             return h;
         }
 
         void Update()
         {
             age += Time.unscaledDeltaTime;
-            if (ring == null || age >= life + Fade) { Destroy(gameObject); return; }
+            // Deactivate first so the ring leaves its RectMask2D while its CanvasRenderer still exists; destroying it
+            // straight away left the mask clipping a graphic without a renderer (MissingComponentException).
+            if (ring == null || age >= life + Fade) { gameObject.SetActive(false); Destroy(gameObject); return; }
             float breathe = .55f + .45f * (.5f + .5f * Mathf.Sin(age * 6.3f - 1.57f));
             float fade = age < .2f ? age / .2f : age > life ? 1 - (age - life) / Fade : 1;
             var c = Gold; c.a = Mathf.Clamp01(breathe * fade); ring.color = c;
@@ -71,7 +78,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var nav = Root(view)?.Find("Nav");
             if (nav == null || string.IsNullOrEmpty(tab)) return null;
-            // The nav rows are built named "Tab id".
+            // The nav rows are built named "Tab id"; 科技 (tree) is a section of the 道具 page.
+            if (tab == "label") tab = "teach";
             return nav.Find("Tab " + tab) as RectTransform;
         }
 
@@ -94,7 +102,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 string id = target.Substring(5);
                 if (view.Tree != null) view.Tree.FocusNode(id);
-                // The 科技 page draws a ladder (depth, width, automation) as one square: it covers each step's id.
+                // The 科技 page draws a ladder (depth, width) as one square: it covers each step's id.
                 foreach (var square in page.GetComponentsInChildren<XgTechNodeView>(false))
                     if (square.Covers(id)) return (RectTransform)square.transform;
                 foreach (var node in page.GetComponentsInChildren<XgNodeView>(false))

@@ -75,8 +75,9 @@ namespace LingGuangV05.Desktop.XingGuang
             nextName.textWrappingMode = TextWrappingModes.NoWrap;
             paramsCard = BigCard(right, "Params", 0, .5f, XgDark.Params);
             dataCard = BigCard(right, "Samples", .5f, 1, XgDark.Data);
-            UiTip.Add(paramsCard.rim.rectTransform, () => T("已训练参数量：评估到 C 级以上的模型里最大的那个。加宽、加深在训练页（宽度和层数的上限在科技树里买）。", "Trained parameters: the biggest model assessed at grade C or better. Widen and deepen on the training page (the caps are in the tech tree)."));
-            UiTip.Add(dataCard.rim.rectTransform, () => T("样本：所有数据集的有效样本。标错的、杂包里的噪声按规矩打折。", "Samples: the effective samples of every dataset. Wrong labels and junk-pack noise count against."));
+            // Live numbers: P against the line, the formula with the real layers, width and factor, the caps, the card.
+            UiTip.Add(paramsCard.rim.rectTransform, () => Sim == null ? "" : Sim.ParamsReport(Host) + "\n" + T("加宽、加深是自动的：宽度和层数的上限在科技树里买，显存不够就加显卡。", "Widening and deepening is automatic: buy the caps in the tech tree, and add a card when the VRAM runs out."));
+            UiTip.Add(dataCard.rim.rectTransform, () => Sim == null ? "" : Sim.SamplesReport() + "\n" + T("标错的、杂包里的噪声按规矩打折。", "Wrong labels and junk-pack noise count against."));
 
             const float StripTop = 20 + 8 + 150 + 12;
             var strip = Rect("Abilities", right, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -StripTop - 58), new Vector2(0, -StripTop));
@@ -320,12 +321,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         string ParamsNote()
         {
-            double biggest = 0;
-            foreach (var run in Sim.Runs) biggest = Math.Max(biggest, XgSim.ParamsK(run));
+            // The biggest model now against what counts (it counts once trained to grade C), and what it takes of the card.
+            XgRun biggest = null;
+            foreach (var run in Sim.Runs) if (biggest == null || XgSim.ParamsK(run) > XgSim.ParamsK(biggest)) biggest = run;
             double vram = Sim.Vram(Host);
-            string fits = vram > 300 ? T("显存 " + N(vram / 1024, "0.#") + "G 最多放约 " + XgSim.ParamsText((vram - 300) / .016) + "。", "VRAM " + N(vram / 1024, "0.#") + " GB holds about " + XgSim.ParamsText((vram - 300) / .016) + ".") : T("还没有能训练的显卡。", "No card to train on yet.");
-            return T("把模型加宽加深，再训练到 C 级以上才算数。", "Widen and deepen the model, then train it to grade C or better.")
-                + T("现在最大的模型 ", " The biggest model now is ") + XgSim.ParamsText(biggest) + T("；", "; ") + fits;
+            string fits = vram > 300 ? T("，最多放约 ", "; holds about ") + XgSim.ParamsText((vram - 300) / .016) : T("；还没有能训练的显卡", "; no card to train on yet");
+            return Sim.ParamsSplitText(biggest) + " · " + Sim.VramText(biggest, vram) + fits + T("。", ".");
         }
 
         string SamplesNote()
@@ -334,8 +335,9 @@ namespace LingGuangV05.Desktop.XingGuang
             // Weighted like the bar itself (算术 counts half), so only wrong labels show up as taken off.
             foreach (var ds in XgCatalog.Datasets) if (ds.id != "xor" && ds.id != "parallel") raw += Sim.Samples(ds.id) * ds.dataWeight;
             double lost = Math.Max(0, raw - Sim.TrainedSamples);
+            string read = Sim.ReadWordsTotal >= 1 ? " " + Sim.ReadShort() + T("（爬虫、蜘蛛读的词都算样本）", " (crawler and spider words are samples)") + "." : "";
             return T("去摆渡众包做题，或者买数据包。标错的样本打折算", "Label on Bodu Crowd, or buy data packs. Wrong labels count against")
-                + (lost >= 1 ? T("：现在扣掉 " + XgSim.SamplesText(lost) + " 条。", ": " + XgSim.SamplesText(lost) + " taken off now.") : T("。", "."));
+                + (lost >= 1 ? T("：现在扣掉 " + XgSim.SamplesText(lost) + " 条。", ": " + XgSim.SamplesText(lost) + " taken off now.") : T("。", ".")) + read;
         }
 
         void RefreshStrip()

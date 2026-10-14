@@ -167,7 +167,8 @@ namespace LingGuangV05.Desktop.Zhongbao
 
         void ShowPage(string id)
         {
-            if (!pages.ContainsKey(id) || !PageOpen(id)) return;
+            if (!pages.ContainsKey(id)) return;
+            if (!PageOpen(id)) { if (OpeningLocked(id)) { ShowToast(Sim.OpeningReason, 3); Juice.Play(XgJuice.Sfx.Id.Thud); } return; }
             page = id;
             foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == id);
             pages[id].Shown();
@@ -176,7 +177,10 @@ namespace LingGuangV05.Desktop.Zhongbao
         }
 
         /// <summary>企业订单 opens with the first checkpoint, as the 订单 tab did in 灵光; the other pages are always there.</summary>
-        bool PageOpen(string id) => id != "contracts" || (Controller != null && Controller.FeatureVisible("contracts"));
+        bool PageOpen(string id) => !OpeningLocked(id) && (id != "contracts" || (Controller != null && Controller.FeatureVisible("contracts")));
+
+        /// <summary>The first-minutes focus keeps every page but the labelling desk shut (XgSim.Opening.cs).</summary>
+        bool OpeningLocked(string id) => Sim != null && Sim.OpeningLocksCrowdTab(id);
 
         /// <summary>Rings a control for the to-do note: "" = the nav button, "name:Foo", "label:a|b" or "contract:id".</summary>
         public bool Highlight(string tab, string target)
@@ -505,6 +509,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
         string PageHelp(string id)
         {
+            if (OpeningLocked(id)) return Sim.OpeningReason;
             switch (id)
             {
                 case "label": return T("标注台：亲手给数据打标签。\n答对赚钱，也给模型攒训练数据。逻辑题最值钱。", "Labelling desk: label data by hand.\nRight answers pay and give the model training data. Logic cards pay best.");
@@ -708,7 +713,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             hudLevel.text = T("等级 ", "Level ") + "<b>" + XgCatalog.RaiseTitle(Sim.RaiseLevel, En) + " Lv." + Sim.RaiseLevel + "</b>";
             hudTopic.text = T("今日热词 ", "Hot word ") + "<b>" + HotWord() + "</b>";
 
-            if (page == "contracts" && !PageOpen("contracts")) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
+            if (page != "label" && !PageOpen(page)) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
             string[] names = { T("标注台", "Label desk"), T("企业订单", "Orders"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             int signable = 0; foreach (var c in XgCatalog.Contracts) if (!Sim.Signed(c.id) && Sim.CanSign(c)) signable++;

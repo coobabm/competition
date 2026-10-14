@@ -67,9 +67,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, sim.S.vision.epoch);
             Assert.AreEqual(XgSim.EpochSeconds, host.trained, 1e-9);
             Assert.Greater(sim.S.vision.valAcc, before);
-            Assert.AreEqual(1, sim.S.combo, "a hand press is a hit");
+            Assert.IsTrue(e.assessment != null && e.assessment.record, "every round ends with an exam, and the first one is a record");
+            Assert.AreEqual(1 + 5, sim.S.combo, "a hand press is a hit, and a record adds five more");
             sim.Tick(30, host);
-            Assert.AreEqual(1, sim.S.vision.epoch, "without automation nothing trains on its own");
+            Assert.AreEqual(1, sim.S.vision.epoch, "nothing trains on its own");
         }
 
         [Test]
@@ -86,13 +87,10 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void ComboMakesHandPressesStrongerThanAutoOnes()
+        public void ComboRaisesTheMultiplierUpToTwo()
         {
             var sim = WithPack("mnist"); var host = new Host();
-            var hand = sim.TrainEpoch(XgTrack.Vision, host, true);
-            var auto = sim.TrainEpoch(XgTrack.Vision, host, false);
-            Assert.Greater(hand.steps, auto.steps * 1.9, "auto epochs are half strength, hand ×combo");
-            for (int i = 0; i < 30; i++) sim.TrainEpoch(XgTrack.Vision, host, true);
+            for (int i = 0; i < 31; i++) sim.TrainEpoch(XgTrack.Vision, host, true);
             Assert.AreEqual(2, sim.ComboMultiplier, 1e-9, "capped at ×2");
             Assert.Greater(sim.S.combo, 30);
         }
@@ -120,11 +118,12 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void EveryFourthEpochIsAssessedAndOnlyRecordsPay()
+        public void EveryEpochIsAssessedAndOnlyRecordsPay()
         {
             var sim = WithPack("mnist"); sim.UseBoard = false; /* legacy curve */ var host = new Host { money = 0 };
-            XgAssessment first = null;
-            for (int i = 0; i < 4; i++) { var e = sim.TrainEpoch(XgTrack.Vision, host); if (i < 3) Assert.IsNull(e.assessment); else first = e.assessment; }
+            Assert.AreEqual(1, sim.EvalEvery, "every round ends with an exam");
+            var e0 = sim.TrainEpoch(XgTrack.Vision, host);
+            var first = e0.assessment;
             Assert.IsNotNull(first);
             Assert.IsTrue(first.record);
             Assert.Greater(first.reward, 0);
@@ -202,12 +201,14 @@ namespace LingGuangV05.XingGuang.Tests
         public void ContractsNeedTheThresholdAndPayIntoTheWallet()
         {
             var sim = new XgSim(); var host = new Host { money = 0 };
+            sim.S.stage = 4; sim.S.fundedAbility = 4; // signing opens at the crowd stage; the stages' milestone payments are not counted here
             Assert.IsFalse(sim.Sign("cheque", host));
             sim.S.best.Add(new XgBest { dataset = "mnist", arch = "lenet", acc = .97 });
             Assert.IsTrue(sim.Sign("cheque", host));
-            Assert.AreEqual(60, host.money, 1e-9);
+            var cheque = XgCatalog.Contract("cheque");
+            Assert.AreEqual(cheque.signBonus, host.money, 1e-9);
             sim.Tick(10, host);
-            Assert.AreEqual(75, host.money, 1e-6, "¥1.5/s at exactly the threshold");
+            Assert.AreEqual(cheque.signBonus + 10 * cheque.income, host.money, 1e-6, "the base income per second at exactly the threshold");
         }
 
         // ───────────── skill tree ─────────────
@@ -344,6 +345,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void RaiseMultipliesHandPayButNotSamples(string desk, bool gold)
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
+            sim.S.teachMode = false; // taught answers pay on their own terms (a correction pays double)
             sim.S.payRaise = 10;
             var card = sim.Card(desk); card.gold = gold; card.level = 3;
             double expected = sim.PayFor(desk, card.level) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[10] * 1.05 * (gold ? 3 : 1);
@@ -389,14 +391,14 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void NodesNeedTheirParentAndMoney()
         {
-            var sim = LegacyStageThree(); var host = new Host { money = XgCatalog.Node("v.d3").cost + 20 };
+            var sim = LegacyStageThree(); var host = new Host { money = sim.NodeCost(XgCatalog.Node("v.d3")) + 20 };
             var d4 = XgCatalog.Node("v.d4");
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(d4, host));
             Assert.IsTrue(sim.BuyNode("v.d3", host));
             Assert.AreEqual(20, host.money, 1e-9);
             Assert.AreEqual(3, sim.S.vision.depth, "buying a layer node grows the model");
             Assert.AreEqual(XgSim.NodeStatus.TooExpensive, sim.Status(d4, host));
-            host.money = XgCatalog.Node("alexnet").cost + 100;
+            host.money = sim.NodeCost(XgCatalog.Node("alexnet")) + 100;
             Assert.IsTrue(sim.BuyNode("alexnet", host), "architectures no longer wait for papers");
             Assert.AreEqual("alexnet", sim.S.vision.arch, "a new architecture is switched to");
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.Status(XgCatalog.Node("v.d6"), host), "needs v.d5 too");
@@ -424,33 +426,6 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AutomationTrainsOnItsOwn()
-        {
-            var sim = LegacyStageThree("resnet"); sim.S.owned.Add("mnist"); sim.Evaluate(sim.S.vision); var host = new Host { money = 1e6 };
-            foreach (var id in new[] { "auto1", "auto2" }) Assert.IsTrue(sim.BuyNode(id, host));
-            Assert.AreEqual(2, sim.AutoTrainLevel);
-            Assert.IsTrue(sim.S.vision.running, "crontab switches auto-training on");
-            sim.Tick(30, host);
-            Assert.AreEqual(0, sim.S.vision.epoch, "crontab only runs with the window open");
-            sim.WindowOpen = true;
-            sim.Tick(30, host);
-            Assert.AreEqual(9, sim.S.vision.epoch, "every 3 s starts an action; the tenth is still running at 30 s");
-            Assert.IsTrue(sim.S.vision.epochActive);
-            sim.Tick(.6, host);
-            Assert.AreEqual(10, sim.S.vision.epoch, "the tenth action settles only after its duration");
-            Assert.AreEqual(0, sim.S.combo, "automatic epochs do not build the combo");
-            sim.WindowOpen = false;
-            Assert.IsTrue(sim.BuyNode("auto3", host));
-            sim.Tick(20, host);
-            Assert.AreEqual(19, sim.S.vision.epoch, "daemon starts every 2 s; the last action is still running at this boundary");
-            Assert.IsTrue(sim.S.vision.epochActive);
-            sim.Tick(.6, host);
-            Assert.AreEqual(20, sim.S.vision.epoch, "background epochs settle after the same action duration");
-            Assert.IsTrue(sim.BuyNode("auto4", host));
-            Assert.AreEqual(1, sim.EvalEvery);
-        }
-
-        [Test]
         public void BrokenSaveIsRepaired()
         {
             var state = new XgState { vision = null };
@@ -475,6 +450,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void RightAnswerPaysAndAddsASample()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
+            sim.S.teachMode = false; // the combo multiplier is what is being priced
             var r = sim.Answer("mnist", sim.Card("mnist").truth, host);
             Assert.IsTrue(r.correct);
             Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 1.05, host.money, 1e-9, "first combo step");
@@ -486,6 +462,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void WrongAnswerPaysNothingResetsComboAndDiscardsTheLabel()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
+            sim.S.teachMode = false; // taught answers keep their own streak; this is the plain combo
             int broken = 0; sim.ComboBroken += n => broken = n;
             Label(sim, "mnist", 5, host);
             double money = host.money;
@@ -554,17 +531,45 @@ namespace LingGuangV05.XingGuang.Tests
             double start = host.money;
             sim.Tick(1000, host);
             double answered = sim.S.autoCorrect + sim.S.autoWrong;
-            Assert.AreEqual(300, answered, 1.5, "0.3 cards/s at level 1");
-            Assert.AreEqual(.8, sim.S.autoCorrect / answered, .07);
+            Assert.AreEqual(1000 * XgCatalog.AutoRatePerLevel, answered, 1.5, "AutoRatePerLevel cards/s at level 1");
+            Assert.AreEqual(XgSim.BinaryAccuracy("mnist", .8), sim.S.autoCorrect / answered, .07, "a card is one yes/no question: the score maps onto binary accuracy");
             Assert.AreEqual(sim.S.autoCorrect * XgCatalog.LabelPay, host.money - start, 1e-6);
             Assert.AreEqual(sim.S.autoCorrect, sim.Samples("mnist"), 1e-9, "wrong auto labels are discarded too");
             Assert.AreEqual(0, sim.S.combo, "auto answers never build the combo");
         }
 
         [Test]
+        public void WithoutATrainedCheckpointThereIsNoSuggestionEvenOnTheBoard()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            Assert.IsTrue(sim.UseBoard, "the board's chance level is 50%, which used to read as a coin-flip guess");
+            Assert.IsNull(sim.Best("spam"));
+            for (int i = 0; i < 30; i++)
+            {
+                Assert.IsFalse(sim.Suggestion("spam", out bool yes, out double confidence), "card " + i + ": no model, no guess");
+                Assert.IsFalse(yes); Assert.AreEqual(0, confidence);
+                sim.Answer("spam", sim.Card("spam").truth, host);
+            }
+            // A checkpoint on another desk is not a model for this one.
+            sim.S.best.Add(new XgBest { dataset = "logic", arch = "perceptron", acc = .8 });
+            Assert.IsFalse(sim.Suggestion("spam", out _, out _));
+            // The first trained checkpoint on the desk gives the guess back, at its own accuracy.
+            sim.S.best.Add(new XgBest { dataset = "spam", arch = "perceptron", acc = .8 });
+            Assert.IsTrue(sim.Suggestion("spam", out _, out double c));
+            Assert.Greater(c, .5);
+            // The opening's sense desk help is the yes/no gate rule, not this: it still guesses before any training.
+            var random = new Random(7); int wrong = 0;
+            var fresh = new XgSim { GoldChance = 0 };
+            Assert.IsFalse(fresh.Suggestion("sense", out _, out _));
+            foreach (var p in XgMemes.SenseBank) for (int i = 0; i < 6; i++) if (fresh.SenseHelp(p, random) != p.yes) wrong++;
+            Assert.Greater(wrong, 0, "the gate may still guess wrong");
+        }
+
+        [Test]
         public void SuggestionIsRightAsOftenAsTheCheckpoint()
         {
             var sim = LegacyStageThree(); var host = new Host();
+            sim.UseBoard = false; /* legacy curve: the score is the per-card accuracy, and no checkpoint means no guess */
             Assert.IsFalse(sim.Suggestion("mnist", out _, out _));
             sim.S.best.Add(new XgBest { dataset = "mnist", arch = "lenet", acc = .75 });
             int right = 0, n = 2000;
@@ -581,6 +586,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void GoldCardsPayTripleButExpire()
         {
             var sim = new XgSim { GoldChance = 1 }; var host = new Host { money = 0 };
+            sim.S.teachMode = false; // the combo multiplier is what is being priced
             var card = sim.Card("mnist");
             Assert.IsTrue(card.gold);
             sim.Answer("mnist", card.truth, host);
@@ -597,6 +603,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TrickCardsAddTwoToTheCombo()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            sim.S.teachMode = false; // taught answers build the combo one step at a time
             sim.S.desksOpen.Add("danmu");
             sim.S.labels.Add(new XgLabelCount { dataset = "danmu", count = 200 });
             int tricks = 0;

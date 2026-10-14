@@ -135,6 +135,22 @@ namespace LingGuangV05.XingGuang
             S(3, false, "鸡蛋掉在地上会弹起来。", "An egg dropped on the floor bounces back up.", "鸡蛋摔在地上会碎。", "An egg dropped on the floor breaks."),
             S(3, false, "毛毛虫长大后变成青蛙。", "A caterpillar grows up into a frog.", "毛毛虫长大变成蝴蝶或蛾子。", "A caterpillar grows into a butterfly or a moth."),
             S(3, false, "网吧里没有电脑。", "An internet cafe has no computers.", "网吧里满是电脑。", "An internet cafe is full of computers."),
+
+            // ───────────── 级别 3 · 2016 年的新鲜事（按日期出现） ─────────────
+            On(20160316, S(3, true, "AlphaGo 下围棋赢了李世石。", "AlphaGo beat Lee Sedol at Go.", "三月首尔五番棋，AlphaGo 四比一。", "Seoul, March: AlphaGo won four games to one.")),
+            On(20160316, S(3, false, "李世石五盘全赢了 AlphaGo。", "Lee Sedol won all five games against AlphaGo.", "李世石只赢了第四盘。", "Lee Sedol won only game four.")),
+            On(20160806, S(3, true, "2016 年奥运会在里约热内卢举办。", "The 2016 Olympics are in Rio de Janeiro.", "里约，巴西。", "Rio, Brazil.")),
+            On(20160806, S(3, false, "2016 年奥运会在北京举办。", "The 2016 Olympics are in Beijing.", "北京是 2008 年，今年是里约。", "Beijing was 2008; this year it is Rio.")),
+            On(20160822, S(3, true, "中国女排拿了里约奥运会金牌。", "China's women's volleyball team won gold in Rio.", "决赛赢了塞尔维亚。", "They beat Serbia in the final.")),
+            On(20160822, S(3, false, "中国女排在里约第一轮就被淘汰了。", "China's women's volleyball team went out in Rio's first round.", "她们拿了冠军。", "They won it.")),
+            On(20160415, S(3, true, "科比打完最后一场就退役了。", "Kobe retired after his last game.", "告别战砍了 60 分。", "He scored 60 in his farewell game.")),
+            On(20160415, S(3, false, "科比是踢足球的。", "Kobe plays football.", "科比打篮球，湖人队。", "Kobe plays basketball, for the Lakers.")),
+            On(20160912, S(3, true, "三星 Note7 因为电池会着火被召回了。", "The Samsung Note7 was recalled because its battery can catch fire.", "九月开始全球召回。", "A worldwide recall began in September.")),
+            On(20160912, S(3, false, "三星 Note7 召回是因为屏幕太大。", "The Note7 was recalled for having too big a screen.", "是电池的问题。", "It was the battery.")),
+            On(20160917, S(3, true, "天宫二号是中国的空间实验室。", "Tiangong-2 is China's space lab.", "九月十五日中秋夜发射。", "Launched on Mid-Autumn night, 15 September.")),
+            On(20160917, S(3, false, "天宫二号是一部宫廷剧。", "Tiangong-2 is a palace drama.", "是空间实验室，不是电视剧。", "It is a space lab, not a TV show.")),
         };
+
+        static XgPhrase On(int since, XgPhrase p) { p.since = since; return p; }
     }
 }

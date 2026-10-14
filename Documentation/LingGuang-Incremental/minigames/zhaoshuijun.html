@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 找水军</title>
+<!--
+  找水军 (spot-the-difference feel, like QQ「大家来找茬」): a fake 2016 淘宝 product page with 12 reviews, 3-5 of them are
+  刷单 (paid fake praise). Click the fakes within 45 s; wrong clicks cost 3 s and a little money.
+  Label produced: review -> 刷单 / 真实. 灵光 reads the page too and outlines its suspects in purple, right as often as
+  LG.skill() (and falsely accusing real reviews more often when it is weak).
+  Pages are generated from banks: 6 products x 8 genuine reviews + 8 generic genuine ones, and 24 fake patterns.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#zs{position:absolute;inset:0;display:grid;grid-template-rows:36px 1fr 46px;background:#F5F5F5}
+.zs-top{background:linear-gradient(#FF5A1F,#FF4400);color:#fff;display:flex;align-items:center;gap:14px;padding:0 12px;font-size:12px}
+.zs-top .lg{font-size:19px;font-weight:900;letter-spacing:1px}.zs-top .lg small{font-size:10px;font-weight:400;margin-left:4px;opacity:.85}
+.zs-top .sr{flex:1;max-width:330px;height:22px;background:#fff;border-radius:11px;color:#bbb;padding:0 12px;line-height:22px;font-size:12px}
+.zs-top .ln{opacity:.9}
+.zs-main{display:grid;grid-template-columns:196px 1fr;gap:8px;padding:8px;min-height:0}
+.zs-prod{background:#fff;border:1px solid #eee;padding:8px;display:flex;flex-direction:column;gap:5px;font-size:12px;min-height:0;overflow:hidden}
+.zs-img{height:160px;border-radius:4px;background:linear-gradient(135deg,#FFE8D6,#FFC9A5);display:flex;align-items:center;justify-content:center;font-size:84px}
+.zs-pn{font-weight:700;line-height:1.4;font-size:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.zs-pr{color:#FF4400;font-size:23px;font-weight:700;line-height:1}.zs-pr small{font-size:12px}.zs-pr s{font-size:11px;color:#aaa;font-weight:400;margin-left:6px}
+.zs-meta{color:#888;line-height:1.7;font-size:11px}.zs-meta b{color:#333}
+.zs-buy{display:flex;gap:6px;margin-top:auto}.zs-buy span{flex:1;text-align:center;line-height:26px;border-radius:3px;font-size:12px;color:#fff;background:#FF4400}.zs-buy span:first-child{background:#FFB300}
+.zs-rv-wrap{background:#fff;border:1px solid #eee;display:flex;flex-direction:column;min-height:0}
+.zs-tabs{display:flex;gap:16px;padding:0 12px;height:28px;align-items:center;border-bottom:2px solid #FF4400;font-size:12px;color:#666}
+.zs-tabs b{color:#FF4400}
+.zs-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(6,1fr);min-height:0}
+.zs-rv{position:relative;display:grid;grid-template-columns:32px 1fr;gap:8px;padding:5px 9px;border-bottom:1px dashed #eee;border-right:1px dashed #eee;cursor:pointer;overflow:hidden;transition:background .15s}
+.zs-rv:nth-child(2n){border-right:0}
+.zs-rv:hover{background:#FFF8F0}
+.zs-av{width:30px;height:30px;border-radius:50%;background:#E8EEF8;display:flex;align-items:center;justify-content:center;font-size:16px;margin-top:2px}
+.zs-av.def{background:#CCC;color:#fff}
+.zs-l1{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;white-space:nowrap}
+.zs-nm{color:#333;font-weight:600;max-width:84px;overflow:hidden;text-overflow:ellipsis}
+.zs-st{color:#FF9A00;letter-spacing:-1px;font-size:11px}.zs-st i{font-style:normal;color:#ddd}
+.zs-dt{margin-left:auto;font-size:10px;color:#aaa}
+.zs-tx{font-size:12px;line-height:1.35;color:#333;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-all}
+.zs-ad{font-size:11px;line-height:1.3;color:#C77A00;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zs-ai{position:absolute;right:5px;top:4px;width:18px;height:18px;border-radius:50%;background:var(--ai);color:#fff;font-size:11px;line-height:18px;text-align:center;display:none;z-index:2}
+.zs-rv.sus{outline:2px solid var(--ai);outline-offset:-2px;background:#F8F6FF}
+.zs-rv.sus .zs-ai{display:block;animation:zspop .3s}
+.zs-rv.scan{background:#EFEBFF}
+.zs-rv.fake{background:#FFECEC;outline:2px solid var(--red);outline-offset:-2px;cursor:default}
+.zs-rv.real{background:#EEF9F0;cursor:default}
+.zs-rv.miss{background:#FFF3E0;outline:2px dashed var(--orange);outline-offset:-2px;cursor:default}
+.zs-rv.done{cursor:default}
+.zs-stamp{position:absolute;right:8px;bottom:4px;font-size:11px;font-weight:800;color:var(--red);border:2px solid var(--red);border-radius:4px;padding:0 5px;line-height:16px;transform:rotate(-5deg);background:#fffd;display:none;max-width:84%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:3}
+.zs-rv.fake .zs-stamp,.zs-rv.miss .zs-stamp{display:block;animation:zsstamp .25s}
+.zs-rv.miss .zs-stamp{color:var(--orange);border-color:var(--orange)}
+.zs-rv.real .zs-stamp{display:block;color:var(--green);border-color:var(--green)}
+@keyframes zspop{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes zsstamp{from{transform:rotate(-5deg) scale(2.4);opacity:0}to{transform:rotate(-5deg) scale(1);opacity:1}}
+.zs-bar{background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 12px;font-size:13px}
+.zs-tm{width:260px;height:10px;background:#ECEEF2;border-radius:5px;overflow:hidden}.zs-tm i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#2F9E44,#E8A317,#E33E33);background-size:260px 100%;transition:width .1s linear}
+#zsLeft{font-weight:800;font-size:18px;width:62px;font-variant-numeric:tabular-nums}
+#zsLeft.low{color:var(--red)}
+#zsInfo{flex:1;color:var(--mute);font-size:12px;line-height:1.4}
+.over .big{font-size:56px}
+.over table{border-collapse:collapse;font-size:14px}.over td{padding:3px 16px;text-align:left}.over td:last-child{text-align:right;font-weight:700}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'zhaoshuijun', title:'找水军', subtitle:'淘宝商品页 · 点出刷单好评', icon:'🛒', dataset:'商品评论',
+  stats:[['找出刷单','sFound'],['冤枉好人','sWrong'],['第几页','sPage','1/3'],['连击','sCombo'],['本局收入','sPay','¥0']],
+  statsNote:'每找出一条 = 1 条样本',
+  aiHello:'评论我都读得懂，就是分不清谁是真的……',
+  rule:'<b>玩法</b>：每页 45 秒，12 条评论里藏着 3~5 条刷单。点它们！<br><b>线索</b>：复读机、好评返现、凌晨同一分钟、夸张故事、评价比上架还早……<br><b>误点</b>：−3 秒、−¥0.5。<br><b>灵光</b>：紫框是它觉得可疑的，它的水平越高越准。你确认或否定它，就是在教它。<br><b>快捷键</b>：回车 开始/下一页'
+});
+const $=s=>document.querySelector(s);
+const {pick,rnd,shuffle}=LG;
+const p2=n=>String(n).padStart(2,'0');
+
+// ---------- audio (tiny WebAudio beeps) ----------
+let AC=null;
+function beep(f,d=.08,type='sine',v=.05,f2){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;
+    o.type=type;o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d);
+  }catch(e){}
+}
+
+// ---------- banks ----------
+// "today" in the story is 2016-05-29; ago = days before that.
+function dstr(ago,h,m){ const d=new Date(Date.UTC(2016,4,29)-ago*864e5); return d.getUTCFullYear()+'-'+p2(d.getUTCMonth()+1)+'-'+p2(d.getUTCDate())+' '+p2(h)+':'+p2(m); }
+function dday(ago){ return dstr(ago,0,0).slice(0,10); }
+
+// genuine reviews: [text, stars, 追评(optional)]
+const GENERIC_GOOD=[
+  ['物流很快，东西和描述一样，满意',5],['还可以，没有想象中那么好，也不差',3],['卖家发货很快，包装也仔细，好评',5],
+  ['东西收到了，先用几天再来评价',4],['性价比不错，朋友推荐来的，没失望',5],['一分钱一分货，价格便宜，凑合用',3],
+  ['客服回复很及时，问的问题都耐心解答了',5],['第二次买了，上次的用得不错，这次又来',5],['拍下第二天就发货了，快递小哥还给我打了电话',4],
+  ['有点小瑕疵，和客服说了，给我补偿了五块钱，态度可以',4],
+];
+const PRODUCTS=[
+  {name:'iPhone6s 手机壳 苹果6plus 硅胶防摔软壳 透明超薄 全包保护套',short:'手机壳',price:'19.90',old:'59.00',emoji:'📱',shop:'潮玩数码专营店',ago:57,sales:'3,284',total:'1,172',
+   cross:'壳子手感好，包得很严实，按键也灵敏',
+   good:[['手感不错，就是边缘有点滑，装上去跟原机贴得挺紧的',4],['透明的用了一个星期有点发黄了，不过价格摆在这儿，凑合用',3],['按键位置开孔都很准，闺蜜看到也说好看，准备再买一个送她',5],
+         ['比我想象的薄，防摔不知道，反正摔了一次手机没事',4,'后来又摔了两次，还是没事，可以'],['快递三天到，包装是个小塑料袋，壳子本身没问题',4],['有一股淡淡的塑料味，晾了两天就没了，颜色和图片一样',4],
+         ['摄像头那圈高了一点点，拍照不挡，赞一个',5],['尺寸稍微有点紧，套了好几次才套上，不过装上就很服帖',4]]},
+  {name:'小米 活塞耳机 入耳式 线控 带麦 手机通用 重低音',short:'耳机',price:'49.00',old:'79.00',emoji:'🎧',shop:'数码配件旗舰店',ago:44,sales:'1,960',total:'803',
+   cross:'音质很棒，低音很足，戴着也舒服',
+   good:[['音质对这个价位来说可以，低音有点闷，听流行歌够用',4],['线控按钮手感很好，接电话也能用，麦克风声音清楚',5],['戴久了耳朵有点胀，换了个大一号的耳塞套就好多了',4,'换了耳塞套之后舒服多了，加一星'],
+         ['线有点细，担心用不久，先用着看',3],['买给老爸的，他说声音比他原来那个大，很满意',5],['安卓和苹果都能用，我6s试了线控部分功能不能用，其他没问题',4],
+         ['外观比图片好看，银色的很有质感，跑步的时候也不太掉',5],['左耳有点电流声，联系客服马上给换了，态度挺好的',4]]},
+  {name:'韩版2016夏装新款 碎花连衣裙 气质修身显瘦 中长款雪纺裙',short:'连衣裙',price:'128.00',old:'268.00',emoji:'👗',shop:'茉莉女装工厂店',ago:62,sales:'926',total:'431',
+   cross:'面料很舒服，尺码标准，穿上很显瘦',
+   good:[['面料有点薄，里面最好穿个打底，颜色很清新，我165/105斤穿M刚好',4],['腰身收得很好看，就是裙摆比图片短一点，不过我喜欢',4],['线头有点多，自己剪了就好，穿上去同事都问哪里买的',4],
+         ['色差有点，实物偏黄一些，退换麻烦就没退了',3],['拉链有点涩，试着拉了几次就顺了，整体还行',4],['夏天穿很凉快，洗了一次没掉色，下水后缩了一点点',4,'穿了三次了，不起球不变形，加一星'],
+         ['码数偏小，建议买大一码，客服推荐的M结果有点紧',3],['买来参加同学聚会的，意外地合身，朋友说显瘦',5]]},
+  {name:'每日坚果混合装 孕妇零食大礼包 25包 腰果核桃夏威夷果 750g',short:'坚果',price:'59.90',old:'99.00',emoji:'🥜',shop:'果然美味食品旗舰店',ago:38,sales:'5,402',total:'2,316',
+   cross:'味道很好吃，很新鲜，孩子很爱吃',
+   good:[['包装完整，每包分量刚刚好，腰果有点软，核桃还脆',4],['生产日期是上个月的，挺新鲜，夏威夷果开口很好剥',5],['有两包的杏仁有点苦，其他都好吃，给个四星',4],
+         ['快递包装压坏了一个角，里面的东西没事',4],['比超市便宜一点点，味道一样，会回购',5],['葡萄干偏酸，我不太喜欢，坚果类的还可以',3],
+         ['给孩子买的，他吃了说好吃，一个星期就吃完了',5,'又买了一箱，孩子还是喜欢'],['发货慢了两天，客服说是备货，东西没问题就不计较了',4]]},
+  {name:'苹果数据线 iPhone6 5s 编织线 加长 1米 快速充电线 MFi',short:'数据线',price:'12.80',old:'39.00',emoji:'🔌',shop:'极客数码小铺',ago:51,sales:'8,731',total:'3,055',
+   cross:'充电很快，线很结实，不容易断',
+   good:[['充电速度还行，编织线手感不错，就是接口有点紧',4],['用了一个月了，没有出现提示不支持配件的情况',5,'用了两个月，还是正常，不错'],['线比较粗，不容易打结，比原装的结实',5],
+         ['一米的刚好够床头用，再长一点就更好了',4],['充电偶尔会断，动一下线才连上，可能是接口公差',3],['这个价位别要求太多了，能充就行，买了三条',4],
+         ['发货很快，第二天就到了，线头处加粗了，应该不容易断',5],['玫瑰金很好看，和我手机配，就是充电稍微慢一点',4]]},
+  {name:'不锈钢保温杯 男女学生便携水杯 500ml 简约商务车载杯',short:'保温杯',price:'39.00',old:'88.00',emoji:'🥤',shop:'居家好物工厂店',ago:46,sales:'2,118',total:'947',
+   cross:'保温效果很好，杯子很漂亮，很实用',
+   good:[['保温效果不错，早上倒的开水晚上还是温的，杯盖密封很好',5],['有一点金属味，用盐水泡了一晚上就没了，容量比较实在',4],['杯子颜色是磨砂的，手感好，就是容易留指纹',4],
+         ['盖子拧起来有点紧，开始以为坏了，用几次就顺了',4],['包装有压痕，杯子没有磕到，重量比我想象的轻',4],['买了送爸爸，他很喜欢，就是附送的杯套质量一般',5],
+         ['保冷还行，放冰块六个小时还有，倒的时候出水量有点小',4],['外观很简约，用了两周，漆没有掉，值得入手',5,'一个月后漆还是好好的']]},
+];
+const NAMES=['小鱼儿','阿杰','蓝色海岸','梦想家','happy','路过的猫','糖果','lily','大白','听风','半夏','阿福','浅笑','老王','sunny','晴天','木子李','橙子','小熊','夏天的风','tom','追梦人','七月','暖暖','海盐','阿鹏','思思','卡卡'];
+const AVAS=['🐱','🐶','🌸','🍀','⭐','🐼','🌙','🐰','🦊','🍉','🐧','🌻'];
+const mask=n=>{ const a=Array.from(n); return a.length<2?a[0]+'***':a[0]+'***'+a[a.length-1]; };
+const gname=()=>mask(pick(NAMES));
+
+// 24 fake patterns. mk(product) returns a list of partial reviews; "why" is the tell shown when revealed.
+const SAMEDAY=p=>1+rnd(Math.min(25,p.ago-2));
+const FK=[
+  {why:'三条一字不差的复读机好评',mk:p=>{ const t=pick(['宝贝收到了，质量很好，物流很快','宝贝收到了，质量很好，物流很快！','东西收到了，质量很好，发货很快，好评']),a=SAMEDAY(p); return [0,1,2].map(i=>({t,ago:a,h:9+rnd(12),m:rnd(60)})); }},
+  {why:'两条一模一样的客套话',mk:p=>{ const t='东西不错，下次还会再来，五星好评！',a=SAMEDAY(p); return [0,1].map(()=>({t,ago:a,h:10+rnd(10),m:rnd(60)})); }},
+  {why:'“好评返现”',mk:()=>[{t:'好评返现5元红包！卖家说好评截图发客服就返现，大家快来买~'}]},
+  {why:'返现到账：花钱买来的好评',mk:()=>[{t:'返现已到账，谢谢掌柜！五星好评奉上，掌柜大气~',add:'返现的红包收到了，再次感谢！',addAgo:1}]},
+  {why:'“凑字数”',mk:()=>[{t:'好评好评好评，凑字数凑字数凑字数，系统要求十五个字以上'}]},
+  {why:'夸张到不真实的“买家秀故事”',mk:()=>[{t:'买了这个以后，我老公升职了，婆婆不唠叨了，全家都爱上了它！'}]},
+  {why:'和商品无关的夸张文艺腔',mk:()=>[{t:'此物只应天上有，人间能得几回买。五星！'}]},
+  {why:'像详情页的广告腔，不像真人说话',mk:()=>[{t:'该产品采用优质材料精心打造，工艺精湛，性价比极高，值得广大消费者信赖'}]},
+  {why:'堆关键词，为了搜索排名',mk:()=>[{t:'正品 包邮 特价 热卖 清仓 爆款 质量好 发货快 好评 实惠'}]},
+  {why:'凌晨3点同一分钟集中冒出来的好评',n:3,mk:p=>{ const a=SAMEDAY(p),m=rnd(55),T=shuffle(['质量不错，物流给力，好评','很喜欢，值得购买，推荐','满意，卖家服务态度好，五星']); return T.map((t,i)=>({t,ago:a,h:3,m:m+(i===2?1:0)})); }},
+  {why:'评价时间比商品上架时间还早',mk:p=>[{t:pick(['用了几天了，质量很好，很满意','不错，和描述一致，好评']),ago:p.ago+4+rnd(20),h:12+rnd(8),m:rnd(60)}]},
+  {why:'评价内容和这件商品对不上（串货）',mk:p=>[{t:pick(PRODUCTS.filter(x=>x!==p)).cross}]},
+  {why:'上架才两天就“回购十几次”',mk:p=>[{t:'老顾客了，已经回购第12次了，每次都满意！',ago:p.ago-2,h:1+rnd(4),m:rnd(60)}]},
+  {why:'评论区打广告，不是买家',mk:()=>[{t:'想在家兼职日赚300的朋友加QQ 28451***，真的能赚钱'}]},
+  {why:'当天买、当天追评“用了一个月”',mk:()=>[{t:'非常好，没有任何问题，推荐购买',add:'用了一个月了，依然完美，继续好评！',addAgo:0}]},
+  {why:'机器昵称 + 默认头像 + 只有两个字',mk:()=>[{t:'不错',name:'tb_'+(1000000+rnd(8999999)),def:true}]},
+  {why:'标点刷屏',mk:()=>[{t:'好！！！！！！！！！！！！！！！！！！！！！'}]},
+  {why:'全在夸卖家，一句没提商品',mk:()=>[{t:'客服小姐姐超级耐心！掌柜人品好！包装好！物流快！下次还来！'}]},
+  {why:'模板占位符没替换',mk:()=>[{t:'亲，这个{商品名}真的很不错，{评价内容}，下次还会光顾{店铺名}'}]},
+  {why:'外文复制粘贴的刷手评价',mk:()=>[{t:'A+++++ seller, fast shipping, good item, thanks',def:true}]},
+  {why:'“按卖家要求”写的好评',mk:()=>[{t:'按卖家要求给五星好评，附上十五个字以上的评价内容，谢谢'}]},
+  {why:'三个连号昵称，同一天下单',n:3,mk:p=>{ const a=SAMEDAY(p),b=pick(['淘友','买家','happy']),T=shuffle(['不错，喜欢','很满意，好评','质量好，推荐']),s=rnd(80); return T.map((t,i)=>({t,ago:a,h:14+rnd(6),m:rnd(60),name:b+'***'+p2(s+i)})); }},
+  {why:'硬凹的“推荐故事”',mk:()=>[{t:'已经推荐给三个同事，同事都说好，公司全买了，老板还夸我会买东西'}]},
+  {why:'“零缺点”的不真实好评',mk:()=>[{t:'没有任何缺点！完美！完美！完美！强烈推荐给所有人！'}]},
+];
+
+// ---------- game state ----------
+const PAGES=3, TIME=45, PEN=3;
+let S=null, P=null, revs=[], tm=null, timers=[], used=[];
+
+stage.innerHTML=`
+<div id="zs">
+  <div class="zs-top"><span class="lg">淘宝网<small>Taobao.com</small></span><span class="sr">搜索 宝贝 / 店铺</span><span class="ln">我的淘宝 ▾</span><span class="ln">🛒 购物车</span><span class="ln">★ 收藏夹</span></div>
+  <div class="zs-main">
+    <div class="zs-prod" id="zsProd"></div>
+    <div class="zs-rv-wrap"><div class="zs-tabs" id="zsTabs"></div><div class="zs-grid" id="zsGrid"></div></div>
+  </div>
+  <div class="zs-bar">
+    <div class="zs-tm"><i id="zsTmI"></i></div><span id="zsLeft">45.0</span>
+    <span id="zsInfo">……</span>
+    <button class="btn" id="zsNext" style="display:none">下一页 ▶</button>
+  </div>
+</div>
+<div class="over" id="zsOver">
+  <div class="big">🛒</div><h2>找水军</h2>
+  <p>商品页上有 12 条评论，其中 3~5 条是刷单。<br>45 秒内把它们点出来；点错了扣 3 秒、扣一点钱。<br>紫色的框是灵光觉得可疑的，它不一定对——你点对了，它就学会了。</p>
+  <button class="btn" id="zsGo" style="font-size:18px;padding:10px 40px">开始（回车）</button>
+</div>`;
+
+function buildPage(round){
+  let pool=PRODUCTS.filter(x=>!used.includes(x)); if(!pool.length){ used=[]; pool=PRODUCTS.slice(); }
+  const p=pick(pool); used.push(p);
+  const nFake=[3,4,5][round]+(round===2&&Math.random()<.3?0:0);
+  // fakes: add patterns until the quota is met
+  let fakes=[]; for(const pat of shuffle(FK)){
+    if(fakes.length>=nFake) break;
+    const items=pat.mk(p); if(fakes.length+items.length>nFake) continue;
+    items.forEach(o=>fakes.push(Object.assign({fake:true,why:pat.why,stars:5},o)));
+  }
+  // top up with single-review patterns if the random pass came up short
+  for(const pat of shuffle(FK)){ if(fakes.length>=nFake) break; const it=pat.mk(p); if(it.length===1&&!fakes.some(f=>f.why===pat.why)) fakes.push(Object.assign({fake:true,why:pat.why,stars:5},it[0])); }
+  // genuine
+  const gpool=shuffle(p.good.concat(GENERIC_GOOD.slice(0,0)).concat(shuffle(GENERIC_GOOD).slice(0,3))).slice(0,12-fakes.length);
+  const good=gpool.map(g=>{
+    const ago=1+rnd(p.ago-2), hr=Math.random()<.05?rnd(2):8+rnd(16);
+    const o={fake:false,t:g[0],stars:g[1],ago,h:hr,m:rnd(60)};
+    if(g[2]){ o.add=g[2]; o.addAgo=Math.min(ago-1>0?1+rnd(ago-1):1,5+rnd(20)); }
+    return o;
+  });
+  const list=shuffle(fakes.concat(good)).map((o,i)=>{
+    const r=Object.assign({ago:SAMEDAY(p),h:8+rnd(15),m:rnd(60),name:gname()},o);
+    r.def=r.def||(!r.fake&&Math.random()<.08);
+    r.av=r.def?'👤':pick(AVAS);
+    r.lv=r.fake?(Math.random()<.5?'❤':'❤❤'):'❤'.repeat(1+rnd(4));
+    r.date=dstr(Math.max(1,r.ago),r.h,r.m);
+    r.done=false; r.aiSus=false; r.idx=i;
+    return r;
+  });
+  return {p,list,nFake:fakes.length};
+}
+
+function render(){
+  const p=P.p;
+  $('#zsProd').innerHTML=`
+    <div class="zs-img">${p.emoji}</div>
+    <div class="zs-pn">${p.name}</div>
+    <div class="zs-pr"><small>¥</small>${p.price}<s>¥${p.old}</s></div>
+    <div class="zs-meta">月销量 <b>${p.sales}</b> 笔<br>累计评价 <b>${p.total}</b><br>上架时间 <b>${dday(p.ago)}</b><br>${p.shop}<br>掌柜信誉 💎💎<br><span style="color:var(--ai)">本页刷单评论：<b id="zsLeftN">${P.nFake}</b> 条</span></div>
+    <div class="zs-buy"><span>加入购物车</span><span>立刻购买</span></div>`;
+  $('#zsTabs').innerHTML=`<span>全部评价 <b>${p.total}</b></span><span>好评 <b>98%</b></span><span>有图(${Math.round(parseInt(p.total.replace(',',''))/9)})</span><span>追评(${Math.round(parseInt(p.total.replace(',',''))/20)})</span><span style="margin-left:auto;color:#aaa">第 ${S.page+1}/${PAGES} 页</span>`;
+  const g=$('#zsGrid'); g.innerHTML='';
+  P.list.forEach(r=>{
+    const e=document.createElement('div'); e.className='zs-rv'; r.el=e;
+    const stars='★'.repeat(r.stars)+'<i>'+'★'.repeat(5-r.stars)+'</i>';
+    e.innerHTML=`<div class="zs-av ${r.def?'def':''}">${r.av}</div><div>
+      <div class="zs-l1"><span class="zs-nm">${r.name}</span><span class="zs-lv" style="color:#E33;font-size:9px">${r.lv}</span><span class="zs-st">${stars}</span><span class="zs-dt">${r.date}</span></div>
+      <div class="zs-tx"></div>${r.add?`<div class="zs-ad">追评（${r.addAgo}天后）：</div>`:''}</div>
+      <span class="zs-ai">灵</span><div class="zs-stamp"></div>`;
+    e.querySelector('.zs-tx').textContent=r.t;
+    if(r.add) e.querySelector('.zs-ad').textContent='追评（'+(r.addAgo===0?'当天':r.addAgo+'天后')+'）：'+r.add;
+    e.onclick=()=>click(r);
+    g.appendChild(e);
+  });
+}
+
+const SAY_START=[
+  '评论里有好多字，我只能凭感觉乱标……',
+  '我先扫一遍，紫色框是我觉得可疑的。',
+  '看出来了：这几条像是同一个模板刷出来的。',
+];
+function aiSweep(){
+  const s=LG.skill(), step=520-380*s;
+  LG.say(s<.4?SAY_START[0]:s<.7?SAY_START[1]:SAY_START[2]);
+  P.list.forEach((r,i)=>{
+    r.aiSus=r.fake?Math.random()<s:Math.random()<.02+.26*(1-s);
+    timers.push(setTimeout(()=>{
+      if(!S||P.list[i]!==r) return;
+      r.el.classList.add('scan'); setTimeout(()=>r.el.classList.remove('scan'),step);
+      if(r.aiSus&&!r.done){ r.el.classList.add('sus'); beep(660,.06,'triangle',.025); }
+    },500+i*step));
+  });
+  timers.push(setTimeout(()=>{
+    const n=P.list.filter(r=>r.aiSus).length;
+    LG.say(n?`我标了 ${n} 条可疑的。${s<.4?'不过我没什么把握……':s<.7?'你来判断吧。':'应该八九不离十。'}`:'这页我没看出可疑的……是我眼神不好吗？');
+  },500+12*step+250));
+}
+
+let left=TIME, combo=0, lastHit=0, active=false, pageEarn=0;
+function startPage(){
+  active=false; timers.forEach(clearTimeout); timers=[]; clearInterval(tm);
+  P=buildPage(S.page); render();
+  left=TIME; combo=0; lastHit=0; pageEarn=0; active=true;
+  $('#zsNext').style.display='none';
+  LG.set('sPage',(S.page+1)+'/'+PAGES); LG.set('sCombo','0');
+  $('#zsInfo').textContent='点出刷单评论！点错扣 3 秒。';
+  updTimer();
+  aiSweep();
+  const t0=performance.now(), base=left;
+  tm=setInterval(()=>{ if(!active) return; const dt=(performance.now()-t0)/1000; left=Math.max(0,TIME-dt-S.pen); // penalties accumulate in S.pen
+    if(left<=0) endPage(false); updTimer(); },100);
+  S.pen=0;
+}
+function updTimer(){
+  $('#zsLeft').textContent=left.toFixed(1); $('#zsLeft').classList.toggle('low',left<10);
+  $('#zsTmI').style.width=(left/TIME*100)+'%';
+  if(performance.now()-lastHit>6000&&combo){ combo=0; LG.set('sCombo','0'); }
+}
+function foundCount(){ return P.list.filter(r=>r.fake&&r.done).length; }
+
+function click(r){
+  if(!active||r.done) return;
+  r.done=true;
+  const el=r.el, nowT=performance.now();
+  if(r.fake){
+    combo=(nowT-lastHit<6000)?combo+1:1; lastHit=nowT;
+    const bonus=Math.min(combo-1,3)*.5, pay=1+bonus;
+    el.classList.remove('sus'); el.classList.add('fake'); el.querySelector('.zs-stamp').textContent='刷单 · '+r.why;
+    LG.give(1,pay); S.found++; S.earn+=pay; pageEarn+=pay;
+    LG.float(el,'+¥'+pay.toFixed(1)+(combo>1?'  连击×'+combo:''),'var(--red)');
+    LG.hist('ok'); LG.set('sFound',S.found); LG.set('sCombo',combo); LG.set('sPay','¥'+S.earn.toFixed(1));
+    beep(520+combo*70,.1,'square',.04,900+combo*70);
+    $('#zsLeftN').textContent=P.nFake-foundCount();
+    if(r.aiSus) LG.say(pick(['对！这条我也觉得是刷的。','嗯，我猜对了——记住了：'+r.why+'。']));
+    else LG.say('这条我没看出来……原来是：'+r.why+'。记住了。');
+    if(foundCount()===P.nFake) endPage(true);
+  }else{
+    S.pen+=PEN; S.wrong++; S.earn-=.5; combo=0; LG.set('sCombo','0');
+    LG.give(0,-.5); LG.float(el,'冤枉好人  −3秒 −¥0.5','#999');
+    el.classList.remove('sus'); el.classList.add('real'); el.querySelector('.zs-stamp').textContent='真实评论';
+    LG.shake(el); LG.hist('no'); LG.set('sWrong',S.wrong); LG.set('sPay','¥'+S.earn.toFixed(1));
+    beep(150,.18,'sawtooth',.05,90);
+    if(r.aiSus){ LG.say('……原来这条是真的。我又标错了。'); S.aiCorrected++; LG.give(1,0); LG.hist('ai'); }
+    else LG.say(pick(['这条是真的呀，手别抖。','真评论也有"物流很快"的，别一概而论。']));
+  }
+}
+
+function endPage(cleared){
+  if(!active) return; active=false; clearInterval(tm); timers.forEach(clearTimeout); timers=[];
+  const missed=P.list.filter(r=>r.fake&&!r.done);
+  missed.forEach(r=>{ r.el.classList.add('miss'); r.el.querySelector('.zs-stamp').textContent='漏了 · '+r.why; r.el.classList.remove('sus'); LG.hist('no'); });
+  // 灵光's page score
+  const tp=P.list.filter(r=>r.fake&&r.aiSus).length, fp=P.list.filter(r=>!r.fake&&r.aiSus).length;
+  S.aiTP+=tp; S.aiFP+=fp; S.aiFake+=P.nFake;
+  // real reviews that 灵光 wrongly flagged and the player left alone count as quiet corrections
+  const quiet=P.list.filter(r=>!r.fake&&r.aiSus&&!r.done);
+  quiet.forEach(r=>{ r.el.classList.remove('sus'); r.el.classList.add('real'); r.el.querySelector('.zs-stamp').textContent='真实评论'; });
+  let msg='';
+  if(cleared){
+    const bonus=Math.min(4,Math.floor(left/5)*.5);
+    if(bonus>0){ LG.give(0,bonus); S.earn+=bonus; LG.float($('#zsGrid'),'提前清完 +¥'+bonus.toFixed(1),'var(--gold)'); }
+    S.cleared++; beep(660,.12,'triangle',.05,990); setTimeout(()=>beep(990,.2,'triangle',.05),120);
+    msg=`全部找出！剩 ${left.toFixed(1)} 秒`+(bonus>0?`，提速奖励 ¥${bonus.toFixed(1)}`:'')+'。';
+    LG.say(pick(['全找出来了。我学到几个套路。','你比我快多了——不过我也跟上一点了。']));
+  }else{
+    beep(180,.4,'sawtooth',.05,80);
+    msg=`时间到，还有 ${missed.length} 条没找出来（橙色虚线）。`;
+    LG.say(`漏了 ${missed.length} 条……我下次会记住它们的样子。`);
+  }
+  if(quiet.length){ LG.give(quiet.length,quiet.length*.5); S.earn+=quiet.length*.5; msg+=` 灵光误标了 ${quiet.length} 条真评论，你没点，也算纠正（+¥${(quiet.length*.5).toFixed(1)}）。`; for(let i=0;i<quiet.length;i++) LG.hist('ai'); }
+  LG.set('sPay','¥'+S.earn.toFixed(1));
+  $('#zsInfo').textContent=msg+` 灵光这页：抓到 ${tp}/${P.nFake}，误报 ${fp}。`;
+  const nx=$('#zsNext'); nx.style.display=''; nx.textContent=(S.page+1<PAGES)?'下一页 ▶（回车）':'看成绩 ▶（回车）';
+}
+
+function nextPage(){
+  if(S.page+1<PAGES){ S.page++; startPage(); }
+  else finish();
+}
+function finish(){
+  const acc=S.aiFake?Math.round(S.aiTP/S.aiFake*100):0;
+  const ov=$('#zsOver'); ov.style.display='flex';
+  ov.innerHTML=`<div class="big">${S.cleared===PAGES?'🏆':'🛒'}</div><h2>${S.cleared===PAGES?'水军一网打尽':'水军清理完毕'}</h2>
+    <table>
+      <tr><td>清完的页数</td><td>${S.cleared} / ${PAGES}</td></tr>
+      <tr><td>找出的刷单评论</td><td>${S.found} / ${S.aiFake} 条</td></tr>
+      <tr><td>冤枉的好人</td><td>${S.wrong} 条</td></tr>
+      <tr><td>本局收入</td><td style="color:var(--red)">¥${S.earn.toFixed(1)}</td></tr>
+      <tr><td><span class="tagai">灵光</span> 抓到刷单</td><td>${S.aiTP} / ${S.aiFake}（${acc}%），误报 ${S.aiFP} 条</td></tr>
+    </table>
+    <p>${LG.skill()<.4?'灵光：我连"好评返现"都要你教……':LG.skill()<.7?'灵光：复读机和返现我已经认得出来了。':'灵光：套路都见过了，下次我先来。'}</p>
+    <button class="btn" id="zsAgain" style="font-size:16px;padding:9px 34px">再来一局（回车）</button>`;
+  $('#zsAgain').onclick=startGame;
+}
+function startGame(){
+  S={page:0,found:0,wrong:0,earn:0,pen:0,cleared:0,aiTP:0,aiFP:0,aiFake:0,aiCorrected:0};
+  used=[];
+  $('#zsOver').style.display='none';
+  LG.set('sFound',0); LG.set('sWrong',0); LG.set('sPay','¥0'); const h=document.getElementById('lgHist'); if(h) h.innerHTML='';
+  startPage();
+}
+$('#zsGo').onclick=startGame;
+$('#zsNext').onclick=nextPage;
+addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();
+    if(!S||$('#zsOver').style.display!=='none'){ if(!S||$('#zsAgain')) startGame(); else startGame(); }
+    else if($('#zsNext').style.display!=='none') nextPage();
+  }
+});
+</script>
+</body>
+</html>

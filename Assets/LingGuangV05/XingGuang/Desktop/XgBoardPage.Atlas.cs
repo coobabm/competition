@@ -70,7 +70,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var a = XgCatalog.Arch(id);
             if (a == null || Sim == null) return "";
-            if (!TopologyOpen(id)) return Lang.T("还没解锁。去「科技」里找它（") + a.year + Lang.T(" 年）。");
+            if (!TopologyOpen(id)) return T("还没解锁。", "Locked. ") + Sim.UnlockPath(id) + T("。", ".");
             return T(a.name, a.nameEn) + "【" + Lang.T(a.topo) + "】\n" + T(a.wire, a.wireEn) + "\n" + T(a.note, a.noteEn);
         }
 
@@ -85,16 +85,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (tile.glyph.gameObject.activeSelf != tile.open) tile.glyph.gameObject.SetActive(tile.open);
                 if (tile.open)
                 {
-                    tile.name.text = T(a.name, a.nameEn) + "  <size=11><color=#8494C8>" + a.year + "</color></size>";
+                    tile.name.text = T(a.name, a.nameEn) + "  <size=11><color=#8494C8>" + XgCatalog.ShownYear(a.year) + "</color></size>";
                     tile.topo.text = "【" + Lang.T(a.topo) + "】";
                     tile.wire.text = T(a.wire, a.wireEn);
                     tile.name.color = XgCortexGraphic.N.Text;
                 }
                 else
                 {
-                    tile.name.text = "？？？  <size=11>" + a.year + "</size>";
+                    tile.name.text = "？？？  <size=11>" + XgCatalog.ShownYear(a.year) + "</size>";
                     tile.topo.text = "";
-                    tile.wire.text = Lang.T("在「科技」里解锁");
+                    tile.wire.text = Sim.UnlockPath(tile.id);
                     tile.name.color = new Color32(90, 104, 150, 255);
                 }
             }

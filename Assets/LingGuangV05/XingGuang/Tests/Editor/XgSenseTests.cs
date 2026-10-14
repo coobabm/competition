@@ -73,7 +73,8 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.AreNotEqual(p.text, p.textEn, where + ": the English is not the Chinese pasted twice");
                 Assert.IsTrue(seen.Add(p.text), where + ": listed twice");
                 Assert.IsFalse(p.trick, where + ": no trick questions");
-                Assert.LessOrEqual(p.since, 20160524, where + ": nothing that needs a later date");
+                // Some statements are news of 2016 and only appear from their date on; none may need a date after the game's last day.
+                Assert.LessOrEqual(p.since, 20161231, where + ": nothing that needs a later date");
                 Assert.IsTrue(p.level >= 1 && p.level <= XgMemes.MaxLevel, where);
                 perLevel[p.level]++;
                 Assert.AreEqual(p.text, EraLexicon.Scrub(p.text), where + ": nothing from after 2016");
@@ -87,6 +88,27 @@ namespace LingGuangV05.XingGuang.Tests
                 int y = 0, n = 0;
                 foreach (var p in bank) if (p.level == level) { if (p.yes) y++; else n++; }
                 Assert.AreEqual(y, n, "level " + level + " is balanced too");
+            }
+        }
+
+        [Test]
+        public void NewsOfTheYearIsDrawnOnlyFromItsDate()
+        {
+            var dated = new List<XgPhrase>();
+            foreach (var p in XgMemes.SenseBank) if (p.since > 20160101) dated.Add(p); // undated statements carry the default 2015 date
+            Assert.GreaterOrEqual(dated.Count, 2, "the bank carries some 2016 news");
+            var rng = new Random(7);
+            foreach (var news in dated)
+            {
+                bool seenBefore = false, seenFrom = false;
+                for (int i = 0; i < 3000; i++)
+                {
+                    var early = XgMemes.Pick(XgMemes.SenseDesk, rng, XgMemes.MaxLevel, news.since - 1, "");
+                    if (early.since > news.since - 1) seenBefore = true;
+                    if (XgMemes.Pick(XgMemes.SenseDesk, rng, XgMemes.MaxLevel, news.since, "") == news) seenFrom = true;
+                }
+                Assert.IsFalse(seenBefore, news.text + ": drawn before its date");
+                Assert.IsTrue(seenFrom, news.text + ": never drawn on its date");
             }
         }
 
@@ -227,7 +249,7 @@ namespace LingGuangV05.XingGuang.Tests
 
         // ───────────── the inner voice ─────────────
 
-        static readonly string Doubt = "……它好像什么都不懂。", OfCourse = "也是。什么都还没教过它。", Learned = "……这次答对了。它是真学会了。";
+        static readonly string Doubt = "……它好像什么都不懂。", OfCourse = "难道这就是那个人所说的东西？", Learned = "……这次答对了。它是真学会了。";
 
         [Test]
         public void TheLinesComeOneAfterAnotherAndOnlyOnce()
@@ -238,7 +260,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("…It doesn't seem to understand anything.", first[0].en);
             var second = sim.YesNoVoice();
             Assert.AreEqual(2, second.Count);
-            Assert.AreEqual(OfCourse, second[0].zh); Assert.AreEqual("Of course. Nobody has taught it anything yet.", second[0].en);
+            Assert.AreEqual(OfCourse, second[0].zh); Assert.AreEqual("Is this the thing that person was talking about?", second[0].en);
             StringAssert.Contains("「常识判断」", second[1].zh); StringAssert.Contains("Common sense", second[1].en);
             StringAssert.Contains("摆渡众包", second[1].zh);
             for (int i = 0; i < 20; i++) Assert.AreEqual(0, sim.YesNoVoice().Count, "nothing repeats");
@@ -345,6 +367,9 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.epochs = 5; sim.S.assessments = 1; sim.S.treeIntroDelivered = true;
             sim.S.trainedParamsK = sim.ParamsThreshold(2);
             sim.S.unlocked.Add("spam.pack"); sim.S.owned.Add("spam");
+            // The pack alone would fill the data bar; its noise takes part of it back, so labels are still what is left.
+            sim.S.noise.Add(new XgLabelCount { dataset = "spam", count = 4000 });
+            Assert.Less(sim.TrainedSamples, sim.SamplesThreshold(2));
             Train(sim, "spam", .5);
             var label = XgGuide.Current(sim, 0).Find(s => s.id == "ability.label");
             Assert.IsNotNull(label);

@@ -77,7 +77,7 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 2; i <= ability; i++) foreach (var (d, n) in ModestData[i]) Labels(sim, d, n);
             // Only the auto-configured model, a few rounds on one desk, assessed along the way.
             sim.SetDataset(track, dataset);
-            for (int round = 0; round < 40 && !sim.HasAbility(ability); round++) { sim.TrainEpoch(track, host); sim.Tick(.1, host); }
+            for (int round = 0; round < 40 && !sim.HasAbility(ability); round++) { sim.TrainEpoch(track, host); sim.Tick(.1, host); if (sim.StageReady) sim.ConfirmNextStage(); /* the player's confirmation */ }
             Assert.That(XgSim.ParamsK(sim.Run(track)), Is.GreaterThanOrEqualTo(sim.ParamsThreshold(ability)), "the default model of the cheap squares is big enough");
             Assert.That(sim.TrainedSamples, Is.GreaterThanOrEqualTo(sim.SamplesThreshold(ability)), "about one pack per stage is enough data");
             Assert.That(sim.HasAbility(ability), Is.True, "ability " + ability + ": P " + XgSim.ParamsText(sim.TrainedParamsK) + "/" + XgSim.ParamsText(sim.ParamsThreshold(ability)));

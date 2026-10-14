@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 传话游戏</title>
+<!--
+  传话游戏: a Chinese sentence goes through 灵光's 中→英→中 round trip. Translation is simulated from a hand-annotated bank
+  (25 sentences): every token has its English chunk, an optional "literal" Chinglish chunk (加油 → add oil, 小心地滑 →
+  carefully slide ...) and a list of wrong Chinese words. The player sees the three stages and fixes the wrong words of the
+  final Chinese (click a word, pick one of three).
+  灵光 skill: per-token error probability p = 0.07 + 0.85 * (1 - skill)^1.25 (x1.25 for tokens with a literal Chinglish form,
+  x0.2^n for tokens the player has already corrected n times in this sentence — persisted in localStorage). At low skill
+  neighbouring words are also swapped. From ~45% it marks its own doubtful words with a purple dot (right more often as it improves).
+  Fixes are labelled samples (wrong -> right pairs); damaging a correct word costs ¥.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.ch{position:absolute;inset:0;padding:10px 18px;display:flex;flex-direction:column;gap:6px}
+.ch-top{display:flex;align-items:center;gap:14px;font-size:13px;height:24px}
+.ch-top b{font-size:15px}
+.ch-top .src{background:var(--blue3);color:var(--blue);border-radius:10px;padding:0 9px;font-size:12px}
+.ch-top .conf{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--mute)}
+.cbar{width:90px;height:7px;background:#E7E5FA;border-radius:4px;overflow:hidden;display:inline-block}.cbar i{display:block;height:100%;background:var(--ai);transition:width .4s}
+.ch-top .conf b{color:var(--ai);font-size:13px}
+.ch-top .conf em{font-style:normal;background:#E3F6E8;color:#1E6B2E;border-radius:9px;padding:0 8px;font-size:11px}
+.cd{border:1px solid var(--line);border-radius:8px;padding:7px 12px 9px;background:#fff;position:relative}
+.cd .lb{font-size:12px;color:var(--mute);margin-bottom:5px;display:flex;gap:8px;align-items:center}
+.cd .lb i{font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;text-align:center;line-height:18px;font-size:11px}
+.cd.ai{background:var(--ai2);border-color:#DCD6FB}.cd.ai .lb i{background:var(--ai)}
+.cd.fx{border-color:var(--orange);box-shadow:0 0 0 3px #F27B1D22}
+.tk{display:flex;flex-wrap:wrap;gap:6px;min-height:40px;align-items:center}
+.tk span{position:relative;font-size:22px;padding:3px 9px;border-radius:7px;background:#F0F2F7;line-height:1.35;transition:background .15s;animation:chin .22s ease-out backwards}
+.tk span.pn{background:none;padding:3px 0;color:#667}
+.tk span.pt{background:#fff;border:1px dashed #D3D7E2}
+.tk.edit span.cl{cursor:pointer;border:1px dashed #9BA6D8;background:#fff}
+.tk.edit span.cl:hover{border-color:var(--blue);background:var(--blue3)}
+.tk span.chg{background:#E8F0FF;border:1px solid var(--blue2);color:var(--blue)}
+.tk span.flag:before{content:"灵";position:absolute;right:-5px;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--ai);color:#fff;font-size:10px;line-height:16px;text-align:center}
+.tk span.rs-fx{background:#DDF4E3;border:1px solid #7FCF96;color:#1E6B2E}
+.tk span.rs-ok{background:#EEF8F0;color:#2F6B3E}
+.tk span.rs-miss{background:#FDE6E3;border:1px solid #F0968D;color:#A33A30}
+.tk span.rs-bad{background:#FFEBD6;border:1px solid #F5A55A;color:#9A4E0C}
+.tk span small{position:absolute;left:0;right:0;bottom:-15px;text-align:center;font-size:11px;color:var(--green);white-space:nowrap}
+@keyframes chin{from{opacity:0;transform:translateY(-8px)}}
+.en{font-size:20px;line-height:1.55;font-family:Georgia,"Times New Roman",serif;color:#3B2F8C;min-height:32px}
+.en span{display:inline-block;margin-right:6px;animation:chin .22s ease-out backwards}
+.en span.lit{color:#C0392B;text-decoration:underline wavy #E33E33}
+.ch-ar{height:20px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ai);font-size:12px}
+.ch-ar b{animation:pulse 1s infinite alternate}
+@keyframes pulse{from{opacity:.35}to{opacity:1}}
+.ch-bt{display:flex;gap:10px;align-items:center;margin-top:2px}
+.ch-bt span{color:var(--mute);font-size:12px}
+.pop{position:absolute;z-index:30;background:#fff;border:1px solid var(--blue);border-radius:8px;box-shadow:0 8px 24px #0004;padding:6px;display:none;gap:6px}
+.pop button{font-family:inherit;font-size:20px;padding:6px 14px;border:1px solid #CBD2E6;background:#fff;border-radius:6px;cursor:pointer;position:relative}
+.pop button:hover{background:var(--blue3);border-color:var(--blue)}
+.pop button em{position:absolute;left:3px;top:0;font-size:9px;font-style:normal;color:var(--dim)}
+.pop button.cur{background:#F4F5F7;color:#999}
+.res{margin-top:16px;font-size:13px;line-height:1.7;color:var(--mute)}
+.res b{color:var(--ink)}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'chuanhua', title:'传话游戏', subtitle:'中 → 英 → 中，看句子变成什么样', icon:'传', dataset:'翻译 · 中英',
+  stats:[['改对的词','sFix'],['漏掉的错','sMiss'],['改坏的词','sBad'],['灵光学到的改正','sMem'],['收入','sPay','¥0']], statsNote:'每个改正 = 1 条样本',
+  aiHello:'我把它翻成英文再翻回来，你来挑错。',
+  rule:'<b>玩法</b>：看原句、灵光的英文和它翻回来的中文，点中文里译错的词，从三个里选对的。改对一个 = 1 条样本。<br><span style="color:var(--ai)">改坏了正确的词要扣钱。水平越低，它翻得越离谱；教过它的句子，下次它会少错。</span>'
+});
+
+// ───────────────────────── bank ─────────────────────────
+// token: [chinese, english chunk, literal Chinglish chunk|null, wrong Chinese words (absent = not clickable)]
+// o: the tokens that carry English, in natural English order (looked up by their Chinese text)
+const BANK=[
+ {src:'微博',o:'加油,兄弟们,做完,方案,一起',t:[['兄弟们','guys,','brothers,',['弟弟们','哥哥们']],['，',''],['一起','together.',null,['一定','一些']],['加油','come on','add oil',['添油','加汽油']],['，',''],['把',''],['方案','the plan',null,['方向','方法']],['做完','finish',null,['做饭','做梦']],['！','']]},
+ {src:'路牌',o:'雨天,路面,很,湿,请,小心地滑',t:[['雨天','on rainy days',null,['晴天','阴天']],['路面','the road',null,['路线','路灯']],['很','is very'],['湿','wet,',null,['干','热']],['，',''],['请','please'],['小心地滑','watch your step','carefully slide',['小心滑行','小心地滑倒']],['。','']]},
+ {src:'公告',o:'医院里,严禁,大声喧哗,和,吸烟',t:[['医院里','in the hospital',null,['学校里','医院外']],['严禁','it is strictly forbidden to',null,['严肃','严重']],['大声喧哗','make loud noise',null,['大声唱歌','大声回答']],['和','or'],['吸烟','smoke.','suck smoke.',['吸烟雾','吸气']],['。','']]},
+ {src:'校训',o:'同学们,要,好好学习,天天向上',t:[['同学们','students',null,['同事们','老师们']],['要','should',null,['想','不']],['好好学习','study hard','good good study',['好好好学习','好学生']],['，',''],['天天向上','and improve every day.','day day up',['天天上去','每天上去']],['。','']]},
+ {src:'日记',o:'我,考得,马马虎虎,考试,这次',t:[['这次','this time.',null,['这里','这些']],['考试','on the exam',null,['考虑','考验']],['我','I',null,['他','你']],['考得','did',null,['考到','考验']],['马马虎虎','so-so','horse horse tiger tiger',['马和老虎','骑马老虎']],['。','']]},
+ {src:'路牌',o:'请,加油,加油站,前面',t:[['请','please'],['在',''],['前面','ahead.',null,['后面','上面']],['的',''],['加油站','at the gas station','at the add-oil station',['添油站','加油车']],['加油','fill up','add oil',['添油','加汽油']],['。','']]},
+ {src:'聊天',o:'真的,不用,这么,客气,谢谢你',t:[['真的','really,',null,['假的','真正']],['不用','you don\'t need to',null,['不够','不同']],['这么','be so',null,['怎么','什么']],['客气','polite,','guest air,',['客人气','客房']],['，',''],['谢谢你','thank you.',null,['谢谢他','谢谢我']],['。','']]},
+ {src:'微信',o:'过年的时候,我,抢到了,一个,红包',t:[['过年的时候','during the Spring Festival',null,['过生日的时候','下班的时候']],['我','I',null,['他','你']],['抢到了','grabbed',null,['抢走了','抢救了']],['一个','a',null,['一些','一百']],['红包','red envelope.','red bag.',['红色的包','红袋子']],['。','']]},
+ {src:'微信',o:'我,发了,一张,照片,朋友圈',t:[['我','I',null,['他','你']],['在',''],['朋友圈','on WeChat Moments.','in the circle of friends.',['朋友的圈子','朋友们']],['发了','posted',null,['发现了','发烧了']],['一张','a',null,['一场','一本']],['照片','photo',null,['相机','电影']],['。','']]},
+ {src:'新闻',o:'我,已经,使出了,洪荒之力',t:[['我','I',null,['他','你']],['已经','have already',null,['已知','以后']],['使出了','used',null,['使不出','使坏了']],['洪荒之力','all my strength.','prehistoric power.',['史前的力量','洪水的力量']],['。','']]},
+ {src:'日常',o:'地铁站里,人,太多了,我,挤不上去',t:[['地铁站里','in the subway station',null,['火车站里','地铁站外']],['人','there are',null,['入','火']],['太多了','too many people,',null,['太少了','太大了']],['，',''],['我','so I',null,['他','你']],['挤不上去','can\'t squeeze in.','squeeze not up go.',['挤不起来','挤上去了']],['。','']]},
+ {src:'淘宝',o:'我的快递,被放在了,门卫,那里',t:[['我的快递','my package',null,['我的快餐','我的电话']],['被放在了','was left at',null,['被拿走了','被扔掉了']],['门卫','the security guard\'s',null,['门口','门铃']],['那里','place.',null,['这里','哪里']],['。','']]},
+ {src:'新闻',o:'高铁,北京,上海,只要,四个半小时',t:[['北京','from Beijing',null,['南京','东京']],['到',''],['上海','to Shanghai',null,['天津','深圳']],['的',''],['高铁','the high-speed train','tall iron',['高大的铁','飞机']],['只要','takes only',null,['一定要','不要']],['四个半小时','four and a half hours.',null,['四个小时','三个半小时']],['。','']]},
+ {src:'日常',o:'周末,我,要,成都,吃,火锅',t:[['周末','on the weekend',null,['周围','周一']],['我','I',null,['他','你']],['要','am going to',null,['不要','别']],['去',''],['成都','Chengdu',null,['重庆','北京']],['吃','to eat',null,['喝','玩']],['火锅','hot pot.',null,['火炉','火柴']],['。','']]},
+ {src:'职场',o:'老板,说,今天,必须,加班',t:[['老板','the boss',null,['老师','老爷']],['说','said',null,['想','看']],['今天','today',null,['昨天','明天']],['必须','we must',null,['可以','不用']],['加班','work overtime.','add class.',['加班级','上课']],['。','']]},
+ {src:'新闻',o:'外卖小哥,冒着,大雨,送到了,饭',t:[['外卖小哥','the delivery guy',null,['外卖小姐','快递小哥']],['冒着','braved',null,['冒充','冒险']],['大雨','the heavy rain',null,['大风','小雨']],['把',''],['饭','the meal.',null,['面','钱']],['送到了','and delivered',null,['送走了','送给了']],['。','']]},
+ {src:'论文',o:'神经网络,需要,大量,数据,才能,学会,认,猫',t:[['神经网络','a neural network','nerve net',['神经的网','网络']],['需要','needs',null,['想要','不要']],['大量','a lot of',null,['大型','少量']],['数据','data',null,['数字','数学']],['才能','before it can',null,['不能','就能']],['学会','learn to',null,['学习','学校']],['认','recognize',null,['叫','看']],['猫','cats.',null,['狗','鼠']],['。','']]},
+ {src:'机房',o:'这块显卡,耗了,十度电,一晚上',t:[['这块显卡','this graphics card',null,['这块屏幕','这块硬盘']],['一晚上','in one night.',null,['一早上','一整天']],['耗了','used',null,['烧了','赚了']],['十度电','ten kilowatt-hours of electricity',null,['十度温度','十个电池']],['。','']]},
+ {src:'摆渡众包',o:'这个任务,只给,五毛钱,一条',t:[['这个任务','this task',null,['这个人物','这个问题']],['一条','per item.',null,['一天','一辆']],['只给','only pays',null,['只要','只好']],['五毛钱','fifty cents','five hairs money',['五根头发钱','五块钱']],['。','']]},
+ {src:'验证码',o:'请,点击,所有,图片,包含,红绿灯',t:[['请','please'],['点击','click',null,['点心','攻击']],['所有','all',null,['所以','有些']],['包含','containing',null,['包装','包子']],['红绿灯','traffic lights.','red and green lanterns.',['红色和绿色的灯笼','红灯']],['的',''],['图片','pictures',null,['图书','地图']],['。','']]},
+ {src:'微信',o:'我的手机,没电了,所以,不能,回,你,消息',t:[['我的手机','my phone',null,['我的电脑','我的手表']],['没电了','ran out of battery,','lost its electricity,',['失去了它的电','没钱了']],['，',''],['所以','so',null,['因为','但是']],['不能','I couldn\'t',null,['可以','不用']],['回','reply to',null,['删','转']],['你','your',null,['我','他']],['消息','messages.',null,['新闻','信号']],['。','']]},
+ {src:'路牌',o:'洗手间,在,二楼,左边',t:[['洗手间','the restroom','the wash hand room',['洗手的房间','洗衣间']],['在','is'],['二楼','on the second floor,',null,['三楼','一楼']],['的',''],['左边','on the left.',null,['右边','后边']],['。','']]},
+ {src:'微博',o:'这部手机,太,给力,电池,能用,两天',t:[['这部手机','this phone',null,['这部电影','这个电话']],['太','is so',null,['不','没']],['给力','awesome,','give power,',['给力量','给你力']],['了',''],['，',''],['电池','the battery',null,['电脑','电视']],['能用','lasts',null,['不能用','想用']],['两天','two days.',null,['两周','三天']],['。','']]},
+ {src:'网络用语',o:'我,只是,路过,打酱油',t:[['我','I',null,['他','你']],['只是','am just',null,['只好','只有']],['路过','passing by,',null,['路面','过路费']],['打酱油','a bystander.','beating soy sauce.',['打击酱油','买酱油']],['的',''],['。','']]},
+ {src:'相亲',o:'找对象,我,主要,看,气质',t:[['找对象','when looking for a partner,',null,['找东西','找朋友']],['我','I',null,['他','你']],['主要','mainly',null,['需要','主人']],['看','look at',null,['听','想']],['气质','temperament.','air quality.',['空气质量','气味']],['。','']]}
+];
+// resolve the English order of every sentence to token indexes
+BANK.forEach((s,k)=>{ const used=new Set(); s.oi=s.o.split(',').map(z=>{ const i=s.t.findIndex((t,j)=>t[0]===z&&!used.has(j)); if(i<0) console.warn('bad order token',k,z); used.add(i); return i; }); s.zh=s.t.map(t=>t[0]).join(''); });
+const ROUND=8, MEMK='lg-chuanhua-mem';
+const mem=(()=>{ try{ return JSON.parse(localStorage.getItem(MEMK)||'{}'); }catch(e){ return {}; } })();
+const saveMem=()=>localStorage.setItem(MEMK,JSON.stringify(mem));
+const memTotal=()=>Object.values(mem).reduce((a,m)=>a+Object.values(m).reduce((x,y)=>x+y,0),0);
+
+stage.insertAdjacentHTML('beforeend',`<div class="ch">
+  <div class="ch-top"><b id="chNo">第 1 / ${ROUND} 句</b><span class="src" id="chSrc"></span><span class="conf">灵光对这句的把握 <i class="cbar"><i id="chConf"></i></i> <b id="chConfT"></b> <em id="chLearn" style="display:none">你教过它</em></span></div>
+  <div class="cd"><div class="lb"><i>1</i>原句（中文）</div><div class="tk" id="t1"></div></div>
+  <div class="ch-ar" id="a1">▼ 灵光翻译：中 → 英</div>
+  <div class="cd ai"><div class="lb"><i>2</i>灵光的英文</div><div class="en" id="t2"></div></div>
+  <div class="ch-ar" id="a2">▼ 灵光翻译：英 → 中</div>
+  <div class="cd" id="c3"><div class="lb"><i>3</i>灵光翻回来的中文 <span id="c3h" style="color:var(--orange)"></span></div><div class="tk" id="t3"></div><div class="res" id="res"></div></div>
+  <div class="ch-bt"><button class="btn" id="done" disabled>改好了（Enter）</button><button class="btn ghost" id="okb" disabled>这句没问题（N）</button><button class="btn ghost" id="nxt" style="display:none">下一句（空格）</button><span id="hint"></span></div>
+ </div><div class="pop" id="pop"></div><div class="over" id="ov"></div>`);
+const $=id=>document.getElementById(id);
+const winPos=(x,y)=>{ const r=stage.getBoundingClientRect(), wr=$('win').getBoundingClientRect(), k=wr.width/1236; return {x:(r.left-wr.left)/k+x, y:(r.top-wr.top)/k+y}; };
+
+// ───────────────────────── state ─────────────────────────
+const S={state:'idle',phase:'idle',n:0,sid:0,used:[],cur:[],init:[],fl:[],fix:0,miss:0,bad:0,pay:0,perfect:0,tm:[],pk:null,conf:0};
+
+function pickSentence(){
+  const pool=BANK.map((_,i)=>i).filter(i=>!S.used.includes(i)), kn=pool.filter(i=>mem[i]&&Object.keys(mem[i]).length), un=pool.filter(i=>!kn.includes(i));
+  const i=(kn.length&&(Math.random()<.35||!un.length))?LG.pick(kn):LG.pick(un.length?un:pool); S.used.push(i); return i;
+}
+// The simulated round trip. st[i]: null | 'lit' (Chinglish in English, wrong word back) | 'bt' (only the back-translation is wrong) | 'swap'
+function translate(sid){
+  const T=BANK[sid].t, s=LG.skill(), base=.07+.85*Math.pow(1-s,1.25), m=mem[sid]||{}, st=T.map(()=>null), ps=[], cl=[];
+  T.forEach((t,i)=>{ if(!t[3]) return; cl.push(i); let p=base*Math.pow(.2,m[i]||0); if(t[2]) p*=1.25; p=Math.min(.9,p); ps.push(p);
+    if(Math.random()<p) st[i]=(t[2]&&Math.random()<.7)?'lit':'bt'; });
+  const fin=T.map((t,i)=>st[i]==='lit'?t[3][0]:st[i]==='bt'?LG.pick(t[2]?t[3].slice(1):t[3]):t[0]);
+  // low skill: two neighbouring content words trade places
+  if(base>.3&&Math.random()<(base-.2)*.9&&cl.length>=2){ const a=LG.rnd(cl.length-1), i=cl[a], j=cl[a+1]; if(!st[i]&&!st[j]){ fin[i]=T[j][0]; fin[j]=T[i][0]; st[i]=st[j]='swap'; } }
+  const conf=1-ps.reduce((a,b)=>a+b,0)/ps.length;
+  // 灵光's own doubts: it can only guess, better the more skilled it is
+  const fl=T.map((t,i)=>{ if(!t[3]) return false; const wrong=fin[i]!==t[0]; if(s<.45) return false; const q=Math.min(.92,(s-.4)/.55); return wrong?Math.random()<q:Math.random()<.1*(1-s); });
+  const en=BANK[sid].oi.map(i=>({i,text:st[i]==='lit'?T[i][2]:T[i][1],lit:st[i]==='lit'})).filter(c=>c.text);
+  if(en.length&&!/[.!?]$/.test(en[en.length-1].text)) en[en.length-1].text+='.';
+  return {st,fin,en,conf,fl};
+}
+
+function startGame(){
+  Object.assign(S,{state:'play',n:0,used:[],fix:0,miss:0,bad:0,pay:0,perfect:0}); $('ov').style.display='none'; $('lgHist').innerHTML='';
+  const s=LG.skill(); LG.say(s<.35?'我翻出来的中文……你多担待。':s<.7?'我翻得不一定对，你帮我挑挑。':'我现在翻得还行，但还是请你把关。'); loadSentence();
+}
+function loadSentence(){
+  S.n++; S.sid=pickSentence(); const B=BANK[S.sid], tr=translate(S.sid); S.tr=tr; S.cur=tr.fin.slice(); S.init=tr.fin.slice(); S.phase='anim'; S.pk=null; hidePop();
+  $('chNo').textContent=`第 ${S.n} / ${ROUND} 句`; $('chSrc').textContent='来自：'+B.src; $('chConf').style.width=tr.conf*100+'%'; $('chConfT').textContent=Math.round(tr.conf*100)+'%';
+  const learned=mem[S.sid]&&Object.keys(mem[S.sid]).length; $('chLearn').style.display=learned?'':'none';
+  $('t1').innerHTML=B.t.map((t,i)=>`<span class="${t[3]?'':'pn'}" style="animation-delay:${i*40}ms">${t[0]}</span>`).join(''); $('t2').innerHTML=''; $('t3').innerHTML=''; $('t3').classList.remove('edit'); $('res').innerHTML='';
+  $('c3').classList.remove('fx'); $('c3h').textContent=''; $('a1').innerHTML='▼ 灵光翻译：中 → 英 <b>…</b>'; $('a2').innerHTML='▼ 灵光翻译：英 → 中';
+  $('done').disabled=true; $('okb').disabled=true; $('nxt').style.display='none'; $('done').style.display=''; $('okb').style.display=''; $('hint').textContent='';
+  stats(); S.tm.forEach(clearTimeout); S.tm=[]; let t=500; const at=(f,ms)=>{ S.tm.push(setTimeout(f,ms)); };
+  tr.en.forEach((c,k)=>at(()=>{ const sp=document.createElement('span'); sp.textContent=(k===0?c.text.charAt(0).toUpperCase()+c.text.slice(1):c.text); if(c.lit) sp.dataset.lit=1; $('t2').appendChild(sp); },t+=190));
+  at(()=>{ $('a1').innerHTML='▼ 灵光翻译：中 → 英'; $('a2').innerHTML='▼ 灵光翻译：英 → 中 <b>…</b>'; },t+=250);
+  at(()=>{ renderT3(true); $('a2').innerHTML='▼ 灵光翻译：英 → 中'; },t+=900);
+  at(()=>enterFix(),t+B.t.length*40+250);
+}
+function skipAnim(){ if(S.phase!=='anim') return; S.tm.forEach(clearTimeout); S.tm=[]; const tr=S.tr; $('t2').innerHTML=''; tr.en.forEach((c,k)=>{ const sp=document.createElement('span'); sp.textContent=(k===0?c.text.charAt(0).toUpperCase()+c.text.slice(1):c.text); if(c.lit) sp.dataset.lit=1; $('t2').appendChild(sp); }); $('a1').innerHTML='▼ 灵光翻译：中 → 英'; $('a2').innerHTML='▼ 灵光翻译：英 → 中'; renderT3(false); enterFix(); }
+function renderT3(anim){
+  const T=BANK[S.sid].t; $('t3').innerHTML='';
+  T.forEach((t,i)=>{ const sp=document.createElement('span'); sp.textContent=S.cur[i]; sp.dataset.i=i; sp.className=t[3]?'cl':'pn'; if(S.cur[i]!==S.init[i]) sp.classList.add('chg'); if(S.phase!=='anim'&&S.tr.fl[i]===undefined){} if(S.tr.fl[i]&&S.phase==='fix') sp.classList.add('flag');
+    if(anim) sp.style.animationDelay=(i*40)+'ms'; else sp.style.animation='none'; if(t[3]) sp.onclick=e=>openPop(i,sp,e); $('t3').appendChild(sp); });
+}
+function enterFix(){
+  S.phase='fix'; $('t3').classList.add('edit'); $('c3').classList.add('fx'); $('c3h').textContent='点橙色虚线框的词来改（灵光觉得有疑问的会标「灵」）'; renderT3(false);
+  $('done').disabled=false; $('okb').disabled=false; $('hint').textContent='';
+  const nfl=S.tr.fl.filter(Boolean).length, s=LG.skill();
+  if(nfl&&Math.random()<.8){ const i=S.tr.fl.findIndex(Boolean); LG.say(LG.pick(['我对「'+S.cur[i]+'」不太有把握。','这个「'+S.cur[i]+'」，我翻得对吗？','我标了几个觉得可能错的。'])); }
+  else LG.say(S.tr.st.every(x=>!x)?LG.pick(['这次我觉得都翻对了，你看看？','这句我一点怀疑都没有。']):s<.4?LG.pick(['翻回来了……是这样吧？','嗯，意思应该差不多。']):LG.pick(['翻好了。']));
+}
+
+// ───────────────────────── fixing ─────────────────────────
+function optionsFor(i){
+  const t=BANK[S.sid].t[i], right=t[0], cur=S.cur[i]; let o=[right]; if(cur!==right) o.push(cur);
+  for(const w of t[3]) if(o.length<3&&!o.includes(w)) o.push(w);
+  return LG.shuffle(o);
+}
+function openPop(i,el,e){
+  if(S.phase!=='fix') return; e&&e.stopPropagation(); const pop=$('pop'), opts=optionsFor(i); S.pk={i,opts};
+  pop.innerHTML=opts.map((w,k)=>`<button data-k="${k}" class="${w===S.cur[i]?'cur':''}"><em>${k+1}</em>${w}${w===S.cur[i]?'<small style="font-size:10px;color:#999">（现在）</small>':''}</button>`).join(''); pop.style.display='flex';
+  const sr=stage.getBoundingClientRect(), tr=el.getBoundingClientRect(), k=sr.width/stage.offsetWidth;
+  let left=(tr.left-sr.left)/k, top=(tr.bottom-sr.top)/k+6; pop.style.left=Math.max(6,Math.min(left,stage.offsetWidth-pop.offsetWidth-8))+'px'; pop.style.top=top+'px';
+  pop.querySelectorAll('button').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); choose(+b.dataset.k); });
+}
+function choose(k){ if(!S.pk) return; const {i,opts}=S.pk; S.cur[i]=opts[k]; hidePop(); renderT3(false); }
+function hidePop(){ $('pop').style.display='none'; S.pk=null; }
+addEventListener('pointerdown',e=>{ if(!e.target.closest('#pop')&&!e.target.closest('.cl')) hidePop(); });
+
+// ───────────────────────── submit & results ─────────────────────────
+function submit(noChange){
+  if(S.phase!=='fix') return; hidePop(); if(noChange) S.cur=S.init.slice(); S.phase='result';
+  const B=BANK[S.sid], T=B.t; let fixed=0,missed=0,bad=0,errors=0; const cls=[], learned=[];
+  T.forEach((t,i)=>{ if(!t[3]){ cls[i]='pn'; return; } const wasWrong=S.init[i]!==t[0], nowRight=S.cur[i]===t[0];
+    if(wasWrong) errors++;
+    if(wasWrong&&nowRight){ fixed++; cls[i]='rs-fx'; learned.push([S.init[i],t[0],i]); }
+    else if(wasWrong){ missed++; cls[i]='rs-miss'; }
+    else if(!nowRight){ bad++; cls[i]='rs-bad'; } else cls[i]='rs-ok'; });
+  S.fix+=fixed; S.miss+=missed; S.bad+=bad;
+  let pay=fixed*.8-bad*.3, samples=fixed;
+  if(!errors&&!bad){ samples=1; pay=.4; S.perfect++; }
+  S.pay+=pay; LG.give(samples,+pay.toFixed(2));
+  // 灵光 learns from the corrected pairs
+  for(const [,,i] of learned){ mem[S.sid]=mem[S.sid]||{}; mem[S.sid][i]=(mem[S.sid][i]||0)+1; } if(learned.length) saveMem();
+  // show
+  $('t3').classList.remove('edit'); $('c3').classList.remove('fx'); $('c3h').textContent='';
+  $('t3').innerHTML=''; T.forEach((t,i)=>{ const sp=document.createElement('span'); sp.className=cls[i]; sp.textContent=S.cur[i]; if(cls[i]==='rs-miss'||cls[i]==='rs-bad'){ sp.innerHTML+='<small>应为「'+t[0]+'」</small>'; } else if(cls[i]==='rs-fx') sp.innerHTML+='<small>✓ 改对了</small>'; $('t3').appendChild(sp); });
+  $('t3').style.paddingBottom='14px';
+  [...$('t2').children].forEach(sp=>{ if(sp.dataset.lit) sp.classList.add('lit'); });
+  const lits=T.map((t,i)=>S.tr.st[i]==='lit'?`「${t[0]}」→ ${t[2].replace(/[.,]$/,'')}`:null).filter(Boolean);
+  let msg=''; if(!errors&&!bad) msg='<b style="color:var(--green)">这句灵光翻对了。</b> 校对通过，+1 条样本 ¥0.4。'; else msg=`<b>改对 ${fixed} 个</b>（+${fixed} 条样本 ¥${(fixed*.8).toFixed(1)}）${missed?` · <span style="color:var(--red)">漏了 ${missed} 个</span>`:''}${bad?` · <span style="color:var(--orange)">改坏 ${bad} 个 −¥${(bad*.3).toFixed(1)}</span>`:''}`;
+  if(lits.length) msg+='<br>英文里的洋泾浜：'+lits.join('　');
+  if(learned.length) msg+='<br><span style="color:var(--ai)">灵光学到了：'+learned.map(l=>`「${l[0]}」应该是「${l[1]}」`).join('　')+'。这句再来，它会少错。</span>';
+  $('res').innerHTML=msg;
+  if(fixed) LG.float(winPos(430,300),'+'+fixed+' 条样本','#2F9E44'); if(bad) setTimeout(()=>LG.float(winPos(470,320),'改坏了 −¥'+(bad*.3).toFixed(1),'#E33E33'),200);
+  LG.hist(missed||bad?'no':'ok',missed||bad?'✗':'✓');
+  $('done').style.display='none'; $('okb').style.display='none'; $('nxt').style.display=''; $('nxt').textContent=(S.n>=ROUND?'看结果':'下一句')+'（空格）';
+  LG.say(learned.length?LG.pick(['「'+learned[0][1]+'」，我记住了。','哦，原来是这个词。','你改对的我都存起来了。']):!errors&&!bad?'这句我翻对了。':missed?LG.pick(['有的错你没挑出来？','我自己也没发现这个错。']):LG.pick(['又一句。']));
+  stats();
+}
+function next(){ if(S.phase!=='result') return; if(S.n>=ROUND) endGame(); else loadSentence(); }
+function stats(){ LG.set('sFix',S.fix); LG.set('sMiss',S.miss); LG.set('sBad',S.bad); LG.set('sMem',memTotal()+' 条'); LG.set('sPay','¥'+S.pay.toFixed(1)); }
+function endGame(){
+  S.state='over'; const ov=$('ov'), s=LG.skill(); ov.style.display='flex';
+  ov.innerHTML=`<h2>这一局传完了</h2><p>改对 <b style="color:var(--ink)">${S.fix}</b> 个词（样本），校对通过 ${S.perfect} 句　漏掉 ${S.miss}　改坏 ${S.bad}<br>收入 <b style="color:var(--red)">¥${S.pay.toFixed(1)}</b>　灵光现在 ${Math.round(s*100)}%，累计学到 ${memTotal()} 条改正<br>${S.perfect>=4?'灵光越翻越准了。':S.fix>=10?'它翻错的地方被你一个个改回来了。':'再来一局，看它能不能少错点。'}</p><button class="btn" id="again">再传一局（空格）</button>`;
+  $('again').onclick=startGame; LG.say(S.perfect>=4?'我这次翻对了好几句。':'我会把你改的都记着。');
+}
+
+// ───────────────────────── input ─────────────────────────
+$('done').onclick=()=>submit(false); $('okb').onclick=()=>submit(true); $('nxt').onclick=next;
+addEventListener('keydown',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(S.pk&&['1','2','3'].includes(k)){ e.preventDefault(); if(+k<=S.pk.opts.length) choose(+k-1); return; }
+  if(k==='Escape'){ hidePop(); return; }
+  if(k===' '||k==='Enter'){ e.preventDefault(); if(S.state!=='play') startGame(); else if(S.phase==='anim') skipAnim(); else if(S.phase==='fix'&&k==='Enter') submit(false); else if(S.phase==='result') next(); return; }
+  if(k==='n'&&S.phase==='fix') submit(true);
+});
+// start screen
+$('ov').style.display='flex';
+$('ov').innerHTML=`<h2>📞 传话游戏</h2><p>一句中文先被灵光译成英文，再译回中文——就像小时候的传话游戏，传着传着就变了味。<br><b style="color:var(--ink)">加油 → add oil → 添油？</b>　你来把最后那句中文里译错的词改回来。<br>点一个词，从三个里选对的。每改对一个 = 1 条样本。改坏正确的词会扣钱。<br>灵光水平低的时候译得离谱，还会把相邻的词调换位置；<b style="color:var(--ai)">你改过的错它会记住</b>，同一句再来就少错。</p><button class="btn" id="go">开始传话（空格）</button>`;
+$('go').onclick=startGame; stats();
+</script>
+</body>
+</html>

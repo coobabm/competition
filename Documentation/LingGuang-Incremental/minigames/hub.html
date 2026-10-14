@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 全部小游戏</title>
+<!-- The hub: every game prototype, grouped by what it replaces. Cards whose file is missing are greyed out. -->
+<link rel="stylesheet" href="common.css">
+<style>
+.bd{grid-template-columns:1fr;overflow:auto;align-content:start}
+.grp{font-weight:700;color:var(--mute);letter-spacing:2px;margin:6px 2px 2px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cd{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px;min-height:96px;position:relative}
+.cd:hover{border-color:var(--blue);box-shadow:0 2px 10px #2932E122}
+.cd .ic{font-size:24px}
+.cd b{font-size:15px}
+.cd small{color:var(--mute);font-size:11px;line-height:1.5}
+.cd .ds{position:absolute;right:10px;top:10px;font-size:11px;color:var(--blue);background:var(--blue3);border-radius:8px;padding:0 6px}
+.cd.missing{opacity:.4;pointer-events:none}
+.cd.played::after{content:"玩过";position:absolute;right:10px;bottom:8px;font-size:10px;color:var(--green)}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const GAMES=[
+  ['已经做好的',[
+    ['index.html','🖌','你画我猜','手写数字','画数字，灵光实时猜。它从你的画里真的在学。'],
+    ['index.html','🔪','切短信','垃圾短信 · 常识','像切水果一样切垃圾短信和错的常识。'],
+    ['index.html','🤝','对暗号','弹幕情绪','和灵光选同一个词就对上暗号（ESP Game）。'],
+    ['forgetax.html','🔨','敲锤炼模型','训练','ForgeTax 式抽签强化，参数指数级涨。'],
+  ]],
+  ['换掉原来的标注桌',[
+    ['captcha12306.html','🎫','12306 验证码','验证码','「请点击下图中所有的锅铲」，限时点图。'],
+    ['alphago.html','⚫','AlphaGo 死活题','围棋气数','限时吃子、救活。灵光当对手，越下越强。'],
+    ['feihualing.html','🌸','飞花令','唐诗下一字','和灵光轮流说带「花」的诗句（诗词大会）。'],
+    ['doutu.html','🐸','斗图','表情包','3 秒内挑一张表情包回击。'],
+    ['swipe.html','💔','左滑右滑','标题党','标题卡片像探探一样滑：震惊体左滑。'],
+    ['zhaoshuijun.html','🛒','找水军','刷单评论','淘宝商品页里限时点出刷单好评。'],
+    ['dadishu.html','🔨','打地鼠','算术','算式冒头，只敲算错的。'],
+    ['shuishiwodi.html','🕵️','谁是卧底','逻辑题','灵光的描述受它的阶段限制，后期还会骗你。'],
+    ['kaixincidian.html','🎤','开心辞典','常识判断','连答 12 题，卡住了「求助灵光」。'],
+    ['danmushooter.html','✈️','弹幕射击','弹幕情绪','开飞机打掉骂主播的弹幕，好话放过。'],
+  ]],
+  ['跟主线结合',[
+    ['spidersnake.html','🕷️','爬虫贪吃蛇','摆渡百科','操控小蜘蛛吃字，吃到的词算样本。'],
+    ['vramtetris.html','🧱','显存俄罗斯方块','训练','把模型的层塞进显存，塞满一行多练一轮。'],
+    ['merge2048.html','📦','2048 合成数据','数据','小数据包合成大数据集。'],
+    ['sentence.html','🧩','句子排序','长句','把打乱的词拖回正确顺序，和灵光比。'],
+    ['chuanhua.html','📞','传话游戏','翻译','中→英→中，看句子变成什么样，你来修。'],
+  ]],
+  ['剧情向 · 后期',[
+    ['turing.html','🤖','图灵测试','对话','同时和两个人聊，猜哪个是灵光。'],
+    ['qingwen.html','💬','教它认人','晴雯的消息','教灵光分辨「她生气了没」。'],
+    ['zhaobutong.html','🔍','找不同','看图','灵光先找，你检查它找得对不对。'],
+    ['lianliankan.html','🔗','连连看','词 ↔ 图','把词连到对应的表情，灵光先连一部分。'],
+  ]],
+];
+LG.mount({id:'hub',title:'全部小游戏',subtitle:'标注换成小游戏 · 灵光一起玩',icon:'摆',dataset:'全部',rule:'',aiHello:'挑一个玩吧。我在旁边学。'});
+document.getElementById('side').remove();
+const st=document.getElementById('stage'); st.className=''; st.style.cssText='display:flex;flex-direction:column;gap:8px';
+document.querySelector('.bd').style.gridTemplateColumns='1fr';
+st.innerHTML=GAMES.map(([g,list])=>`<div class="grp">${g}</div><div class="cards">${list.map(c=>`<a class="cd" data-f="${c[0]}" href="${c[0]}"><span class="ds">${c[3]}</span><span class="ic">${c[1]}</span><b>${c[2]}</b><small>${c[4]}</small></a>`).join('')}</div>`).join('');
+// Grey out games whose file is not there yet; mark the ones already played.
+document.querySelectorAll('.cd').forEach(a=>{
+  const id=a.dataset.f.replace('.html','');
+  if(LG.G.played[id]) a.classList.add('played');
+  fetch(a.dataset.f,{method:'HEAD'}).then(r=>{ if(!r.ok) a.classList.add('missing'); }).catch(()=>a.classList.add('missing'));
+});
+</script>
+</body>
+</html>

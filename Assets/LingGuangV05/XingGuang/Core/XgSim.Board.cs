@@ -194,7 +194,7 @@ namespace LingGuangV05.XingGuang
             var a = XgCatalog.Arch(run.arch);
             var k = Knobs(run);
             double n = 24 * Math.Pow(Math.Max(.5, compute), .7) * OptSpeed * (a == null ? 1 : a.speed) * SpeedResearch * ProgressionSpeed(run)
-                * (hand ? ComboMultiplier : AutoEpochFactor) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
+                * (hand ? ComboMultiplier : 1) * (1 + RelicFx.cardsBonus) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
                 * (run.dataset == "parallel" && SerialWiring(k) ? SerialCardFactor : 1);
             return (int)Math.Max(4, Math.Min(MaxCardsPerEpoch, Math.Round(n)));
         }

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 2048 合成数据</title>
+<!--
+  2048 合成数据: a 4x4 board of data packs. 100 条 + 100 条 = 200 条 ... Bigger packs carry the names of real datasets
+  (PASCAL VOC, 人民日报语料, CIFAR-10 / MNIST, COCO ...). Each merge pays samples = merged size / 100 (change SAMPLE_PER_100 to
+  rescale the economy) and a little ¥. Asking 灵光 costs ¥0.1 of electricity.
+  灵光 skill: its suggestion is the depth-2 expectimax move (monotonicity / empties / merges heuristic) with probability
+  rising in skill; otherwise a greedy "most merges now" move, otherwise a random direction, which may not even move.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#board{position:absolute;left:36px;top:64px;width:450px;height:450px;background:#C9D2EE;border-radius:10px;box-shadow:inset 0 0 0 2px #B5C0E4}
+.slot{position:absolute;width:100px;height:100px;background:#DCE3F8;border-radius:8px}
+#tiles{position:absolute;inset:0}
+.tile{position:absolute;left:0;top:0;width:100px;height:100px;transition:transform .12s ease-out}
+.tile .in{position:absolute;inset:0;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 0 #0002;text-align:center;line-height:1.25}
+.tile .in b{font-size:26px;letter-spacing:-.5px}
+.tile .in small{font-size:12px;opacity:.9}
+.tile .in.nm b{font-size:17px}
+.tile.new .in{animation:tnew .18s ease-out}
+.tile.pop .in{animation:tpop .2s ease-out}
+@keyframes tnew{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes tpop{0%{transform:scale(1)}50%{transform:scale(1.22)}100%{transform:scale(1)}}
+.r1 .in,.r1{} .tile .r1{background:#8FA8E8;color:#fff}
+.tile .r2{background:#7B96E6}.tile .r3{background:#6783E3}.tile .r4{background:#5470DC}.tile .r5{background:#4559D0}.tile .r6{background:#3744C4}
+.tile .r7{background:#5A3FC4}.tile .r8{background:#7B3FC4}.tile .r9{background:#A23FB5}.tile .r10{background:#C73F8E}
+.tile .r11{background:#DB4A5E}.tile .r12{background:#EA6A2B}.tile .r13{background:#F08C14}.tile .r14{background:#E8A317}.tile .r15{background:linear-gradient(135deg,#F5C842,#E8A317);box-shadow:0 0 18px #F5C842aa}
+.tile .r16{background:linear-gradient(135deg,#8A78E8,#E8A317);box-shadow:0 0 22px #8A78E8aa}
+.tile .r10,.tile .r11,.tile .r12,.tile .r13,.tile .r14,.tile .r15,.tile .r16{box-shadow:0 0 12px #fff6}
+.m-top{position:absolute;left:36px;top:14px;width:450px;display:flex;justify-content:space-between;align-items:center}
+.m-top b{font-size:15px}.m-top span{color:var(--mute);font-size:12px}
+.m-lad{position:absolute;left:36px;top:524px;width:850px;display:flex;gap:5px;align-items:center;font-size:11px;color:var(--mute);overflow:hidden;white-space:nowrap}
+.m-lad i{font-style:normal;border:1px solid var(--line);border-radius:10px;padding:1px 8px;background:#F7F8FB}
+.m-lad i.on{background:#FFF0BF;border-color:#E8A317;color:#7A4E00;font-weight:700}
+.m-right{position:absolute;left:520px;top:14px;width:380px;display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#fff}
+.card .cap{font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between}
+.card .cap small{color:var(--mute);font-weight:400}
+.sug{display:flex;gap:14px;align-items:center;margin-top:10px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:8px;padding:10px 12px;min-height:76px}
+.sug .arr{font-size:44px;line-height:1;color:var(--ai);width:54px;text-align:center;font-weight:800}
+.sug div{color:#4B3FA8;line-height:1.7;font-size:14px}
+.kv2{display:grid;grid-template-columns:1fr auto;gap:5px 8px;margin-top:10px;font-size:13px}.kv2 span{color:var(--mute)}
+#sugArrow{position:absolute;z-index:6;pointer-events:none;display:none;font-size:70px;font-weight:800;color:#8A78E8;text-shadow:0 0 18px #fff,0 0 8px #8A78E8;animation:sa .6s ease-in-out infinite alternate}
+@keyframes sa{from{opacity:.55;transform:translate(var(--dx,0),var(--dy,0))}to{opacity:1;transform:translate(calc(var(--dx,0)*2),calc(var(--dy,0)*2))}}
+.m-hint{color:var(--mute);font-size:12px;line-height:1.8}
+.m-hint b{display:inline-block;background:#F0F2F7;border:1px solid var(--line);border-radius:3px;padding:0 5px;color:#333}
+.banner{position:absolute;left:36px;top:230px;width:450px;text-align:center;z-index:8;pointer-events:none;animation:bn 2.2s ease-out forwards}
+.banner div{display:inline-block;background:#FFF0BF;border:2px solid #E8A317;color:#7A4E00;border-radius:10px;padding:8px 18px;font-weight:800;font-size:18px;box-shadow:0 6px 20px #0003}
+@keyframes bn{0%{opacity:0;transform:translateY(20px) scale(.8)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const SAMPLE_PER_100=1;   // samples paid per 100 条 of merged size
+const {stage}=LG.mount({
+  id:'merge2048', title:'2048 合成数据', subtitle:'小数据包合成大数据集', icon:'合', dataset:'数据集 · 合成',
+  stats:[['合并次数','sMerge'],['最大数据集','sMax','—'],['问灵光','sAsk','0'],['灵光靠谱率','sAcc','—'],['收入','sPay','¥0']], statsNote:'合并 = 样本',
+  aiHello:'我可以帮你想想往哪边合。',
+  rule:'<b>玩法</b>：方向键 / WASD / 滑动合并数据包。每次合并得「合并后的条数 ÷ 100」条样本和一点钱。<br><span style="color:var(--ai)">点「问灵光」，它会指一个方向。水平低时它乱指，甚至指到动不了的方向。</span>'
+});
+
+// ───────────────────────── tiers ─────────────────────────
+// rank r holds 100 * 2^(r-1) 条. Names are flavour: the nearest real dataset of that size class.
+const NAMES={8:['PASCAL VOC','≈1.3万'],9:['人民日报语料','≈2.6万'],10:[['MNIST','≈6万'],['CIFAR-10','≈5万']],11:['SVHN 门牌','≈10万'],12:['COCO','≈20万'],13:['豆瓣评论','≈41万'],14:['搜狗新闻','≈82万'],15:['ImageNet','≈120万'],16:['ImageNet 全集','≈330万']};
+const GOAL=12;
+const valOf=r=>100*Math.pow(2,r-1);
+const fmt=v=>v>=10000?(v/10000).toFixed(1).replace(/\.0$/,'')+'万':v.toLocaleString('en-US');
+function label(t){
+  const n=NAMES[t.rank]; if(!n) return {main:fmt(valOf(t.rank)),sub:'条',nm:false};
+  const x=t.rank===10?n[t.v10||0]:n; return {main:x[0],sub:x[1],nm:true};
+}
+const WIN_LABEL=NAMES[GOAL][0];
+
+stage.insertAdjacentHTML('beforeend',`
+ <div class="m-top"><b>我的数据集</b><span>最大 <b id="mMax" style="color:var(--blue)">—</b>　总量 <b id="mSum" style="color:var(--ink)">0</b> 条　步数 <b id="mMoves" style="color:var(--ink)">0</b></span></div>
+ <div id="board"></div>
+ <div id="sugArrow">←</div>
+ <div class="m-right">
+   <div class="card"><div class="cap">问问灵光 <small>每问一次 电费 −¥0.1</small></div>
+     <button class="btn" id="ask" style="width:100%">灵光，往哪边合？（空格）</button>
+     <div class="sug"><div class="arr" id="arr">·</div><div id="sugT">按下按钮，灵光会想一想，然后指一个方向。</div></div>
+     <div class="kv2"><span>问过</span><b id="kAsk">0</b><span>你照它说的走了</span><b id="kFol">0</b><span>它指的方向是最优的</span><b id="kGood">—</b></div></div>
+   <div class="card m-hint"><b>←</b><b>↑</b><b>→</b><b>↓</b> / WASD / 在棋盘上滑动　合并<br><b>空格</b> 问灵光　<b>R</b> 重开<br>目标：合出「${WIN_LABEL}」；一直合下去，还有豆瓣评论、搜狗新闻，最远是 ImageNet。</div>
+   <div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="m-hint">合不动了会 <b>CPU 过载</b>。</span><button class="btn ghost" id="restart">重新开始</button></div>
+ </div>
+ <div class="m-lad" id="lad"></div>
+ <div class="over" id="ov"></div>`);
+const board=document.getElementById('board');
+board.innerHTML='<div id="tiles"></div>'; for(let i=0;i<16;i++){ const s=document.createElement('div'); s.className='slot'; s.style.left=(10+(i%4)*110)+'px'; s.style.top=(10+Math.floor(i/4)*110)+'px'; board.insertBefore(s,document.getElementById('tiles')); }
+const layer=document.getElementById('tiles');
+document.getElementById('lad').innerHTML='数据集阶梯：'+Object.keys(NAMES).map(r=>`<i data-r="${r}">${Array.isArray(NAMES[r][0])?'MNIST/CIFAR':NAMES[r][0]}</i>`).join('');
+
+// ───────────────────────── model ─────────────────────────
+let tiles=[], uid=0, busy=false, pend=null, sug=null, sugT=0;
+const S={state:'idle',merges:0,pay:0,asks:0,follow:0,good:0,sugGood:0,max:0,moves:0,reached:new Set(),won:false,cont:false};
+const pxy=(r,c)=>[10+c*110,10+r*110];
+function setPos(t){ const [x,y]=pxy(t.r,t.c); t.el.style.transform=`translate(${x}px,${y}px)`; }
+function render(t){ const L=label(t); t.el.firstChild.className='in r'+t.rank+(L.nm?' nm':''); t.el.firstChild.innerHTML=`<b>${L.main}</b><small>${L.sub}</small>`; t.el.className='tile r'+t.rank+(t.el.classList.contains('new')?' new':''); }
+function addTile(r,c,rank,cls){
+  const t={id:++uid,r,c,rank,v10:Math.random()<.5?0:1}; const el=document.createElement('div'); el.className='tile'+(cls?' '+cls:''); el.innerHTML='<div class="in"></div>'; t.el=el; layer.appendChild(el); render(t); setPos(t); tiles.push(t); return t;
+}
+const gridOf=()=>{ const g=Array.from({length:4},()=>[0,0,0,0]); tiles.forEach(t=>g[t.r][t.c]=t.rank); return g; };
+function lineCoords(dir,i){ return dir===0?[[i,0],[i,1],[i,2],[i,3]]:dir===2?[[i,3],[i,2],[i,1],[i,0]]:dir===1?[[0,i],[1,i],[2,i],[3,i]]:[[3,i],[2,i],[1,i],[0,i]]; }
+// pure simulation (also used by 灵光)
+function simMove(g,dir){
+  const n=g.map(r=>r.slice()); let moved=false,gain=0;
+  for(let i=0;i<4;i++){
+    const L=lineCoords(dir,i), a=L.map(([r,c])=>g[r][c]), t=a.filter(Boolean), out=[];
+    for(let j=0;j<t.length;j++){ if(j+1<t.length&&t[j]===t[j+1]){ out.push(t[j]+1); gain+=Math.pow(2,t[j]); j++; } else out.push(t[j]); }
+    while(out.length<4) out.push(0);
+    for(let k=0;k<4;k++){ const [r,c]=L[k]; if(n[r][c]!==out[k]) moved=true; n[r][c]=out[k]; }
+  }
+  return {g:n,moved,gain};
+}
+const canMove=g=>[0,1,2,3].some(d=>simMove(g,d).moved);
+
+// ───────────────────────── 灵光's brain ─────────────────────────
+const rowCache=new Map();
+function heurRow(row){
+  const key=row.join(); let v=rowCache.get(key); if(v!=null) return v;
+  let sum=0,empty=0,merges=0,prev=0,counter=0;
+  for(let i=0;i<4;i++){ const r=row[i]; sum+=Math.pow(r,3.5); if(r===0) empty++; else { if(prev===r) counter++; else if(counter>0){ merges+=1+counter; counter=0; } prev=r; } }
+  if(counter>0) merges+=1+counter;
+  let mL=0,mR=0; for(let i=1;i<4;i++){ if(row[i-1]>row[i]) mL+=Math.pow(row[i-1],4)-Math.pow(row[i],4); else mR+=Math.pow(row[i],4)-Math.pow(row[i-1],4); }
+  v=200000+270*empty+700*merges-47*Math.min(mL,mR)-11*sum; rowCache.set(key,v); return v;
+}
+function evalBoard(g){ let s=0; for(let i=0;i<4;i++){ s+=heurRow(g[i]); s+=heurRow([g[0][i],g[1][i],g[2][i],g[3][i]]); } return s; }
+function maxNode(g,d){ if(d<=0) return evalBoard(g); let best=-1; for(let dir=0;dir<4;dir++){ const m=simMove(g,dir); if(!m.moved) continue; const v=chance(m.g,d); if(v>best) best=v; } return best<0?0:best; }
+function chance(g,d){
+  const e=[]; for(let r=0;r<4;r++)for(let c=0;c<4;c++) if(!g[r][c]) e.push([r,c]); if(!e.length) return evalBoard(g);
+  const pick=e.length>5?LG.shuffle(e).slice(0,5):e; let tot=0;
+  for(const [r,c] of pick) for(const [rk,p] of [[1,.9],[2,.1]]){ const g2=g.map(x=>x.slice()); g2[r][c]=rk; tot+=p*maxNode(g2,d-1); }
+  return tot/pick.length;
+}
+function bestMove(g){ let best=-1,bd=0; for(let dir=0;dir<4;dir++){ const m=simMove(g,dir); if(!m.moved) continue; const v=chance(m.g,2); if(v>best){ best=v; bd=dir; } } return bd; }
+function greedyMove(g){ let best=-1,bd=0; for(let dir=0;dir<4;dir++){ const m=simMove(g,dir); if(!m.moved) continue; const e=m.g.flat().filter(x=>!x).length, v=m.gain*10+e; if(v>best){ best=v; bd=dir; } } return bd; }
+const DIRS=['←','↑','→','↓'], DIRN=['左','上','右','下'];
+function askAI(){
+  if(S.state!=='play'||busy) return; const g=gridOf(); S.asks++; LG.give(0,-.1); S.pay-=.1;
+  const s=LG.skill(), q=Math.max(0,Math.min(1,(s-.2)/.77)), r=Math.random(), best=bestMove(g);
+  let dir, how; const sk=r<q?0:r<q+(1-q)*.4?1:2;
+  if(sk===0){ dir=best; how='算出来的'; } else if(sk===1){ dir=greedyMove(g); how='看眼前的'; } else { dir=LG.rnd(4); how='瞎猜的'; }
+  sug={dir,best,how,valid:simMove(g,dir).moved}; if(dir===best) S.sugGood++;
+  document.getElementById('arr').textContent='…'; document.getElementById('sugT').textContent='嗯……让我想想。';
+  setTimeout(()=>showSug(),250+Math.round(500*(1-q)));
+  stats();
+}
+function showSug(){
+  if(!sug||S.state!=='play') return; const s=LG.skill();
+  document.getElementById('arr').textContent=DIRS[sug.dir];
+  const t=sug.valid?(sug.how==='算出来的'?LG.pick(['往'+DIRN[sug.dir]+'。我算了几步，这样最稳。','往'+DIRN[sug.dir]+'，大的留在角落。','我觉得往'+DIRN[sug.dir]+'。']):sug.how==='看眼前的'?LG.pick(['往'+DIRN[sug.dir]+'？能合好几个。','往'+DIRN[sug.dir]+'吧，眼前合得最多。']):LG.pick(['往'+DIRN[sug.dir]+'……大概？','随便往'+DIRN[sug.dir]+'吧。'])):LG.pick(['往'+DIRN[sug.dir]+'……咦，动不了？','往'+DIRN[sug.dir]+'！……撞墙了。我再想想。']);
+  document.getElementById('sugT').textContent=t; LG.say(t);
+  const A=document.getElementById('sugArrow'); A.textContent=DIRS[sug.dir]; const bx=36,by=64,cx=bx+225,cy=by+225, d=[[-1,0],[0,-1],[1,0],[0,1]][sug.dir];
+  A.style.left=(cx+d[0]*190-24)+'px'; A.style.top=(cy+d[1]*190-44)+'px'; A.style.setProperty('--dx',d[0]*6+'px'); A.style.setProperty('--dy',d[1]*6+'px'); A.style.display='block';
+}
+function hideSug(){ document.getElementById('sugArrow').style.display='none'; }
+
+// ───────────────────────── moves ─────────────────────────
+function spawn(){
+  const e=[]; for(let r=0;r<4;r++)for(let c=0;c<4;c++) if(!tiles.some(t=>t.r===r&&t.c===c)) e.push([r,c]); if(!e.length) return;
+  const [r,c]=LG.pick(e); addTile(r,c,Math.random()<.9?1:2,'new');
+}
+function move(dir){
+  if(S.state!=='play') return; if(busy){ pend=dir; return; }
+  const pos=new Map(); tiles.forEach(t=>pos.set(t.r+','+t.c,t)); const plans=[]; let moved=false;
+  for(let i=0;i<4;i++){
+    const L=lineCoords(dir,i), ts=L.map(([r,c])=>pos.get(r+','+c)).filter(Boolean); let o=0;
+    for(let j=0;j<ts.length;j++){ const t=ts[j], tg=L[o++];
+      if(j+1<ts.length&&ts[j+1].rank===t.rank){ plans.push({t,u:ts[j+1],tg}); moved=true; j++; }
+      else { if(t.r!==tg[0]||t.c!==tg[1]) moved=true; plans.push({t,tg}); } }
+  }
+  if(!moved){ LG.shake(board); return; }
+  // judge suggestion
+  if(sug){ if(sug.dir===dir){ S.follow++; LG.hist('ai','灵'); if(sug.best===dir&&Math.random()<.5) LG.say(LG.pick(['你听我的了！','嗯，这步不错。'])); else if(sug.best!==dir&&Math.random()<.5) LG.say(LG.pick(['……这步我是不是指得不太好？','你竟然真听了。'])); } sug=null; hideSug(); document.getElementById('arr').textContent='·'; }
+  busy=true; S.moves++;
+  for(const p of plans){ p.t.r=p.tg[0]; p.t.c=p.tg[1]; setPos(p.t); if(p.u){ p.u.r=p.tg[0]; p.u.c=p.tg[1]; p.u.el.style.zIndex=1; setPos(p.u); } }
+  setTimeout(()=>finish(plans),130);
+}
+function finish(plans){
+  let big=0;
+  for(const p of plans) if(p.u){
+    p.u.el.remove(); tiles=tiles.filter(t=>t!==p.u); p.t.rank++; if(p.t.rank===10) p.t.v10=Math.random()<.5?0:1; render(p.t); p.t.el.classList.remove('pop'); void p.t.el.offsetWidth; p.t.el.classList.add('pop');
+    const R=p.t.rank, samples=Math.round(valOf(R)/100*SAMPLE_PER_100), money=+(0.05*R).toFixed(2);
+    S.merges++; S.pay+=money; LG.give(samples,money);
+    LG.float(p.t.el,'+'+samples+' 样本',R>=8?'#E8A317':'#2F9E44'); if(R>=5) LG.hist('ok',String(samples)); else if(S.merges%2===0) LG.hist('ok','合');
+    if(R>big) big=R;
+    if(R>S.max){ S.max=R; }
+    if(NAMES[R]&&!S.reached.has(R)){ S.reached.add(R); const nm=label(p.t).main; unlock(R,nm,p.t); }
+  }
+  spawn();
+  busy=false; stats(); const g=gridOf();
+  if(S.max>=GOAL&&!S.won){ S.won=true; setTimeout(winScreen,500); }
+  else if(!canMove(g)){ setTimeout(gameOver,350); }
+  if(pend!=null){ const d=pend; pend=null; if(S.state==='play') move(d); }
+}
+function unlock(R,nm,t){
+  const bonus=+(0.2*(R-6)).toFixed(1); if(bonus>0){ LG.give(0,bonus); S.pay+=bonus; }
+  const b=document.createElement('div'); b.className='banner'; b.innerHTML=`<div>数据集入库：${nm}${bonus>0?'　+¥'+bonus:''}</div>`; stage.appendChild(b); setTimeout(()=>b.remove(),2300);
+  LG.say(R>=15?'ImageNet……我感觉自己什么都认识了。':R>=12?'「'+nm+'」……这么多图，我得看好久。':R>=10?nm+' 我知道这个，大家都拿它练手。':'「'+nm+'」入库了。');
+  document.querySelector(`#lad i[data-r="${R}"]`)?.classList.add('on');
+}
+function stats(){
+  const g=gridOf(), sum=tiles.reduce((s,t)=>s+valOf(t.rank),0), mx=tiles.reduce((m,t)=>Math.max(m,t.rank),0);
+  document.getElementById('mMax').textContent=mx?(label({rank:mx,v10:0}).main+(NAMES[mx]?'':' 条')):'—'; document.getElementById('mSum').textContent=sum.toLocaleString('en-US'); document.getElementById('mMoves').textContent=S.moves;
+  LG.set('sMerge',S.merges); LG.set('sMax',S.max?(NAMES[S.max]?label({rank:S.max,v10:0}).main:fmt(valOf(S.max))):'—'); LG.set('sAsk',S.asks); LG.set('sPay','¥'+S.pay.toFixed(1)); LG.set('sAcc',S.asks?Math.round(S.sugGood/S.asks*100)+'%':'—');
+  LG.set('kAsk',S.asks); LG.set('kFol',S.follow); LG.set('kGood',S.asks?S.sugGood+' / '+S.asks:'—');
+}
+function reset(){
+  tiles.forEach(t=>t.el.remove()); tiles=[]; busy=false; pend=null; sug=null; hideSug();
+  Object.assign(S,{state:'play',merges:0,pay:0,asks:0,follow:0,good:0,sugGood:0,max:0,moves:0,reached:new Set(),won:false,cont:false});
+  document.getElementById('ov').style.display='none'; document.getElementById('lgHist').innerHTML=''; document.querySelectorAll('#lad i').forEach(i=>i.classList.remove('on'));
+  document.getElementById('arr').textContent='·'; document.getElementById('sugT').textContent='按下按钮，灵光会想一想，然后指一个方向。';
+  spawn(); spawn(); stats();
+  const s=LG.skill(); LG.say(s<.35?'我还不太会，指的方向你自己判断。':s<.7?'我大概知道怎么合，但不一定对。':'交给我吧，我会让大的待在角落。');
+}
+function gameOver(){
+  S.state='over'; const sum=tiles.reduce((s,t)=>s+valOf(t.rank),0), ov=document.getElementById('ov'); ov.style.display='flex';
+  ov.innerHTML=`<h2>合不动了 · 内存已满</h2><p>最大数据集：<b style="color:var(--ink)">${S.max?(NAMES[S.max]?label({rank:S.max,v10:0}).main:fmt(valOf(S.max))+' 条'):'—'}</b>　合并 ${S.merges} 次　数据共 ${sum.toLocaleString('en-US')} 条<br>收入 <b style="color:var(--red)">¥${S.pay.toFixed(1)}</b>（含问灵光的电费）<br>灵光指对 ${S.sugGood} / ${S.asks} 次，你照做了 ${S.follow} 次</p><button class="btn" id="again">再合一局（空格）</button>`;
+  document.getElementById('again').onclick=reset; LG.say(S.max>=GOAL?'这一局合出了好大的数据集。':'下次把大的靠边放。');
+}
+function winScreen(){
+  S.state='win'; const ov=document.getElementById('ov'); ov.style.display='flex';
+  ov.innerHTML=`<h2>🎉 合出了「${WIN_LABEL}」</h2><p>这个规模的数据集，灵光能学很久了。<br>可以继续合成下去，冲 ImageNet。</p><div style="display:flex;gap:12px"><button class="btn" id="cont">继续合成（空格）</button><button class="btn ghost" id="again">收工，重新开始</button></div>`;
+  document.getElementById('cont').onclick=()=>{ S.state='play'; S.cont=true; ov.style.display='none'; if(!canMove(gridOf())) gameOver(); };
+  document.getElementById('again').onclick=reset; LG.say('「'+WIN_LABEL+'」！我们把它喂给我吧。');
+}
+
+// ───────────────────────── input ─────────────────────────
+const KEYMAP={ArrowLeft:0,ArrowUp:1,ArrowRight:2,ArrowDown:3,a:0,w:1,d:2,s:3};
+addEventListener('keydown',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(k in KEYMAP){ e.preventDefault(); move(KEYMAP[k]); return; }
+  if(k===' '||k==='Enter'){ e.preventDefault(); if(S.state==='play'){ if(k===' ') askAI(); } else if(S.state==='win') document.getElementById('cont').click(); else reset(); return; }
+  if(k==='r') reset();
+});
+let sx=0,sy=0,sw=false;
+board.addEventListener('pointerdown',e=>{ sx=e.clientX; sy=e.clientY; sw=true; });
+addEventListener('pointerup',e=>{ if(!sw) return; sw=false; const dx=e.clientX-sx, dy=e.clientY-sy; if(Math.max(Math.abs(dx),Math.abs(dy))<24) return; move(Math.abs(dx)>Math.abs(dy)?(dx<0?0:2):(dy<0?1:3)); });
+document.getElementById('ask').onclick=askAI; document.getElementById('restart').onclick=reset;
+
+// start screen
+const ov=document.getElementById('ov'); ov.style.display='flex';
+ov.innerHTML=`<h2>📦 2048 合成数据</h2><p>方向键（或 WASD、在棋盘上滑动）把数据包推向一边，<b style="color:var(--ink)">两个一样大的会合成一个</b>：100 条 + 100 条 = 200 条……<br>每次合并，灵光得到 <b style="color:var(--ink)">「合并后的条数 ÷ 100」</b> 条样本，你得一点钱。<br>大到一定程度会变成真正的数据集：PASCAL VOC、人民日报语料、MNIST / CIFAR-10、COCO ……<br>不会合？点<b style="color:var(--ai)">「问灵光」</b>，它会指方向（每次电费 ¥0.1）。水平低的时候它指得很随便。</p><button class="btn" id="go">开始合成（空格）</button>`;
+document.getElementById('go').onclick=reset; stats();
+</script>
+</body>
+</html>

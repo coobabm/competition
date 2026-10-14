@@ -20,6 +20,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             progressionVersion = XgSim.ProgressionSchemaWalls,
             stage = stage, stageVision = stage, stageSequence = stage,
+            fundedAbility = XgSim.AbilityCount, // the milestone payments of the stages it reached were collected long ago
         };
 
         [TestCase("goclub", "go")]

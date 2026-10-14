@@ -137,7 +137,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool endless = info.kind == XgDeskKind.Logic || info.kind == XgDeskKind.Arith;
                 string left = endless ? T("不限", "no limit") : T("剩 ", "left ") + Math.Max(0, (long)(dataset.samples - Sim.Samples(row.id)));
                 string stars = max > 1 ? "<color=#E8A317>" + new string('★', Math.Min(level, max)) + "</color><color=#B4B8C2>" + new string('☆', Math.Max(0, max - level)) + "</color>" : "<color=#E8A317>★</color>";
-                string note = info.fine > 0 ? T("判对错 · 错了扣钱", "true/false · a miss costs") : SourceNote(info);
+                string note = Sim.TeachMode ? T("确认或纠正 · 教它判断", "Confirm or correct · teach it") : info.fine > 0 ? T("判对错 · 错了扣钱", "true/false · a miss costs") : SourceNote(info);
                 string tags = (info.pay >= 2 ? Tag(T("高价", "high pay"), ZhongbaoSkin.Orange, ZhongbaoSkin.OrangeSoft) + " " : "")
                     + (Sim.Labels(row.id) < 1 ? Tag(T("新", "new"), ZhongbaoSkin.Red, ZhongbaoSkin.RedSoft) + " " : "");
                 int waiting = Sim.ReviewCount(row.id);

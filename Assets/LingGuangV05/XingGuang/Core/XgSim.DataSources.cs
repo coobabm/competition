@@ -102,8 +102,6 @@ namespace LingGuangV05.XingGuang
         public const string DataCleanId = "dataclean";
         /// <summary>Crowd tasks: labels per second and ¥ per label.</summary>
         public const double CrowdRate = 12, CrowdPricePerLabel = .04;
-        /// <summary>Crowd tasks open with the crontab automation node (the 自动化 lane).</summary>
-        public const string CrowdNode = "auto2";
 
         public event Action<XgDataOffer> DataOfferBought;
         /// <summary>A story offer just became available (老周 line: zh, en).</summary>
@@ -176,7 +174,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = n.id, datasetId = d.id, source = XgDataSource.Public, node = n.id, name = d.name, nameEn = d.nameEn,
-                    description = n.note, descriptionEn = n.noteEn, price = n.cost, samples = d.samples, noise = noise,
+                    description = n.note, descriptionEn = n.noteEn, price = Math.Ceiling(n.cost * StoryResearchPrice), samples = d.samples, noise = noise,
                     downloadSec = DownloadSeconds(d.samples), stage = n.stage, month = StageMonth(n.stage),
                 });
             }
@@ -188,7 +186,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = d.id + ".junk", datasetId = d.id, source = XgDataSource.Junk, name = (string)j[3], nameEn = (string)j[4],
-                    description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost : d.price) * JunkPriceFactor),
+                    description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost * StoryResearchPrice : d.price) * JunkPriceFactor),
                     samples = samples, noise = (double)j[1], downloadSec = Math.Round(DownloadSeconds(samples) * 1.5),
                     stage = n != null ? n.stage : 1, month = (int)j[2],
                 });
@@ -502,7 +500,6 @@ namespace LingGuangV05.XingGuang
             }
             if (o.source == XgDataSource.Crowd)
             {
-                if (!Has(CrowdNode)) { var p = XgCatalog.Node(CrowdNode); en = "Unlock first: " + (p != null ? p.nameEn : CrowdNode); return "先解锁 " + (p != null ? p.name : CrowdNode); }
                 if (!DeskOpen(o.datasetId)) { en = "The desk is not open yet"; return "这张标注桌还没开"; }
             }
             return null;

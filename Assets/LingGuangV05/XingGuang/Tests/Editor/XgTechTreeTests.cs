@@ -50,8 +50,10 @@ namespace LingGuangV05.XingGuang.Tests
                 if (XgTechTree.Ladder(n.kind) && parent != null && parent.kind == n.kind)
                     Assert.AreSame(XgTechTree.EntryOf(parent.id), XgTechTree.EntryOf(n.id), n.id);
             }
-            var auto = XgTechTree.EntryOf("auto3");
-            Assert.IsNotNull(auto); Assert.IsTrue(auto.IsChain); Assert.AreEqual("auto2", auto.id);
+            var depth = XgTechTree.EntryOf("v.d4");
+            Assert.IsNotNull(depth); Assert.IsTrue(depth.IsChain);
+            Assert.IsNull(XgCatalog.Node("auto2"), "the automation lane is gone");
+            foreach (var n in XgCatalog.Nodes) Assert.AreNotEqual("auto", n.lane, n.id);
         }
 
         [Test]
@@ -76,7 +78,9 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host();
             sim.S.stage = 6; sim.Tick(1, host);
             if (!sim.Has("perceptron")) sim.S.unlocked.Add("perceptron");
-            var auto = XgTechTree.EntryOf("auto2");
+            var auto = XgTechTree.EntryOf("v.w1");
+            Assert.IsTrue(auto.IsChain);
+            foreach (var id in new[] { "lenet", "mlp", "alexnet" }) if (!sim.Has(id)) sim.S.unlocked.Add(id);
             int max = XgTechTree.MaxLevel(auto);
             for (int level = 0; level < max; level++)
             {
@@ -86,7 +90,7 @@ namespace LingGuangV05.XingGuang.Tests
                 double before = host.money;
                 Assert.IsTrue(XgTechTree.Buy(auto, sim, host));
                 Assert.IsTrue(sim.Has(next.id));
-                Assert.AreEqual(next.cost, before - host.money, 1e-9);
+                Assert.AreEqual(sim.NodeCost(next), before - host.money, 1e-9);
                 Assert.AreEqual(level + 1, XgTechTree.Level(auto, sim));
             }
             Assert.IsNull(XgTechTree.Next(auto, sim));

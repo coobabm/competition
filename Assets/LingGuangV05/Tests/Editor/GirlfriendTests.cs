@@ -378,14 +378,14 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void MoneyAnswerAiSetsKnowsAi()
+        public void MoneyAnswerAiStaysPrivate()
         {
             var s = Fresh();
             Assert.IsNotNull(GirlfriendRules.MoneyQuestion(s, At(10, 2, 2, 0, 10), 50000));
             Assert.IsNull(GirlfriendRules.MoneyQuestion(s, At(10, 3, 2, 0, 20), 90000), "asked once");
             var t = GirlfriendRules.OnPlayerLine(s, At(10, 2, 2, 1, 15), GirlfriendRules.MoneyAnswersZh[1]);
-            Assert.AreEqual("ai", t.answered);
-            Assert.IsTrue(GirlfriendRules.Has(s, GirlfriendRules.FlagKnowsAi));
+            Assert.AreEqual("work", t.answered, "the AI is a private application: she only hears that it is work");
+            Assert.IsFalse(GirlfriendRules.Has(s, GirlfriendRules.FlagKnowsAi), "she never learns about it");
         }
 
         // ───────────── gifts ─────────────
@@ -508,9 +508,9 @@ namespace LingGuangV05.Tests
             var admit = Fresh(80);
             Talking(admit, At(10, 10, 2, 0, 10));
             GirlfriendRules.Caught(admit, At(10, 10, 2, 0, 10));
-            GirlfriendRules.OnPlayerLine(admit, At(10, 10, 2, 1, 20), "是 AI 帮我回的");
-            Assert.AreEqual(75, admit.affection);
-            Assert.IsTrue(GirlfriendRules.Has(admit, GirlfriendRules.FlagKnowsAi));
+            GirlfriendRules.OnPlayerLine(admit, At(10, 10, 2, 1, 20), "刚才走神了，对不起");
+            Assert.AreEqual(75, admit.affection, "admitting he was distracted costs five");
+            Assert.IsFalse(GirlfriendRules.Has(admit, GirlfriendRules.FlagKnowsAi), "and still tells her nothing about the application");
         }
 
         [Test]

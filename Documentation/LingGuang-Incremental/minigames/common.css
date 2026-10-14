@@ -1,0 +1,54 @@
+/* Shared look for the 摆渡众包 game prototypes: a 1236×693 desktop window, platform blue, white body. */
+:root{
+  --blue:#2932E1;--blue2:#4E6EF2;--blue3:#EEF2FF;--ink:#222;--mute:#7A7F8C;--dim:#B4B8C2;--line:#E3E6EC;--bg:#F4F5F7;
+  --red:#E33E33;--green:#2F9E44;--gold:#E8A317;--orange:#F27B1D;--ai:#8A78E8;--ai2:#F3F1FF;
+  --font:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#1E4D8C;font-family:var(--font);color:var(--ink);font-size:13px;overflow:hidden;min-height:100vh;user-select:none}
+.win{width:1236px;height:693px;background:#fff;border:1px solid #9AA4B8;position:absolute;left:50%;top:50%;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 56px 1fr 24px;overflow:hidden}
+.title{background:linear-gradient(#DCE6F4,#C8D6EA);display:flex;align-items:center;padding-left:8px;gap:6px;font-size:12px;color:#223}
+.title .ico{width:16px;height:16px;background:var(--blue);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-weight:700}
+.title .sp{flex:1}.title i{width:40px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-style:normal}.title i.x{background:#C7483F;color:#fff;width:46px}
+.hd{background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 16px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px}
+.paw{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--blue);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.logo b{font-size:19px;letter-spacing:1px}.logo small{display:block;font-size:11px;opacity:.8}
+.back{color:#fff;text-decoration:none;border:1px solid #ffffff55;border-radius:14px;padding:4px 12px;font-size:12px}
+.back:hover{background:#ffffff22}
+.hud{display:flex;gap:8px;margin-left:auto;align-items:center}
+.chip{background:#ffffff1f;border:1px solid #ffffff33;padding:4px 10px;border-radius:14px;font-size:12px;white-space:nowrap}
+.chip b{font-size:14px}.chip.money b{color:#FFE27A}
+.skill{display:flex;align-items:center;gap:8px;background:#fff;color:var(--ink);border-radius:14px;padding:4px 10px}
+.skill .bar{width:90px;height:7px;background:#E7E5FA;border-radius:4px;overflow:hidden}.skill .bar i{display:block;height:100%;background:var(--ai);transition:width .4s}
+.skill b{color:var(--ai)}
+.st{background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 12px;font-size:11px;color:var(--mute)}
+.st .sp{flex:1}.st input{vertical-align:middle}
+.bd{background:var(--bg);padding:12px;min-height:0;position:relative;display:grid;grid-template-columns:1fr 280px;gap:12px}
+.box{background:#fff;border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden}
+.stage{min-height:0}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.bh{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.bh small{font-weight:400;color:var(--mute)}
+.kv{padding:8px 12px;display:grid;grid-template-columns:1fr auto;gap:7px 8px;font-size:13px}
+.kv span{color:var(--mute)}
+.rule{padding:10px 12px;color:var(--mute);font-size:12px;line-height:1.8}.rule b{color:var(--ink)}
+.btn{border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:4px;padding:7px 16px;cursor:pointer;font-family:inherit;font-size:14px}
+.btn:hover{background:var(--blue2)}.btn.ghost{background:#fff;color:var(--blue)}
+.btn:disabled{background:#E7E9EE;border-color:#E7E9EE;color:#A9ADB7;cursor:default}
+.hist{display:flex;gap:4px;flex-wrap:wrap;padding:8px 12px}
+.hist i{width:16px;height:16px;border-radius:3px;background:#ECEEF2;font-style:normal;font-size:10px;color:#fff;text-align:center;line-height:16px}
+.hist i.ok{background:var(--green)}.hist i.no{background:var(--red)}.hist i.ai{background:var(--ai)}
+.ai{padding:10px 12px}
+.ai .who{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:12px}
+.spider{width:30px;height:30px;position:relative;flex:none}
+.spider .b{position:absolute;left:8px;top:8px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E1F5EE,#5DCAA5 45%,#0F3D33 80%);box-shadow:0 0 10px #5DCAA5}
+.spider svg{position:absolute;inset:0}
+.bubble{margin-top:8px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:8px;padding:8px 10px;color:#4B3FA8;min-height:40px;line-height:1.6;font-size:14px}
+.float{position:absolute;pointer-events:none;font-weight:800;white-space:nowrap;animation:lgup 1.1s ease-out forwards;z-index:50;font-size:18px}
+@keyframes lgup{from{opacity:1;transform:translateY(0) scale(1.1)}to{opacity:0;transform:translateY(-46px) scale(1)}}
+.over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#ffffffee;z-index:20;text-align:center;padding:20px}
+.over h2{margin:0;font-size:28px}.over p{margin:0;color:var(--mute);font-size:14px;line-height:1.9}
+.tagai{display:inline-block;background:var(--ai);color:#fff;border-radius:10px;font-size:11px;padding:0 6px;line-height:18px}
+.shake{animation:lgsh .3s}
+@keyframes lgsh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}

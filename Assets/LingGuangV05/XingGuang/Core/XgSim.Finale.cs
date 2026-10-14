@@ -63,7 +63,7 @@ namespace LingGuangV05.XingGuang
         public const double DatacenterVram = 8;
 
         /// <summary>VRAM the lab can use: the host's cards, times eight with the server room.</summary>
-        public double Vram(IXgHost host) => host == null ? 0 : host.VramMB * (Has("datacenter") ? DatacenterVram : 1);
+        public double Vram(IXgHost host) => host == null ? 0 : host.VramMB * TrainingMemoryMultiplier;
 
         // ───────────── 6.2 pre-training ─────────────
 

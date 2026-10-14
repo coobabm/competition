@@ -91,6 +91,8 @@ sealed class Options
     public double ReserveDays = 5;
     /// <summary>--guide-check: read the to-do note (XgGuide) every simulated second; any empty note, empty line or step on a closed page fails the run.</summary>
     public bool GuideCheck;
+    /// <summary>--spider=N: the resident spider reads N new words a minute from the first epoch on (each is a sample, XgSim.ResidentRead). 0 = the old bot, which never modelled it.</summary>
+    public double SpiderWordsPerMinute;
     public static Options Parse(string[] args)
     {
         var o = new Options(); int position = 0;
@@ -114,6 +116,7 @@ sealed class Options
                 case "--fault-check": o.FaultCheck = true; break;
                 case "--guide-check": o.GuideCheck = true; break;
                 case "--careless": o.Careless = true; break;
+                case "--spider": o.SpiderWordsPerMinute = Number(value); break;
                 case "--reserve-days": o.ReserveDays = Number(value); break;
                 case "--from": o.From = Path.GetFullPath(value); break;
                 default: throw new ArgumentException("Unknown option: " + name);
@@ -159,6 +162,8 @@ sealed class Driver
     readonly Dictionary<int, string> configured = new Dictionary<int, string>();
     /// <summary>Seconds between progress lines (BOT_REPORT_SECONDS, default 600).</summary>
     static readonly double ReportEvery = double.TryParse(Environment.GetEnvironmentVariable("BOT_REPORT_SECONDS"), NumberStyles.Float, CultureInfo.InvariantCulture, out double r) && r >= 10 ? r : 600;
+    double spiderCarry;
+    int spiderWords;
     double time, nextAction, nextDecision, nextReport = ReportEvery, projectQuestionAt = -1, researchGpuSeconds;
     int lastExperiment = -1, comboDisplayedWrong, comboDisplayedCorrect;
     bool faultInjected, retryExercised;
@@ -182,9 +187,14 @@ sealed class Driver
             sim = new XgSim { WindowOpen = true, GoldChance = 0 };
             // RNG is a reproducibility input, not a gameplay resource.
             sim.S.rng = options.Seed == 0 ? 7 : options.Seed;
+            // A new game opens as in the desktop (XingGuangController): only 常识判断 and training until its yes/no is learned.
+            sim.BeginOpening();
         }
         // The rent holiday, as in the game (XingGuangController): nothing is charged before ability 3.
         host.House.RentWaived = () => sim.AbilitiesCount < XgSim.RentFromAbility;
+        // 实验室的旧服务器钥匙 halves the rent, as in the game.
+        host.House.RentFactor = () => sim.RelicRentFactor;
+        sim.YesNoLearned += () => Mark("opening.learned");
         sim.AbilityEmerged += ability => Mark("ability." + ability + "." + XgSim.AbilitiesEn[ability - 1].Replace(' ', '_') + ".P" + XgSim.ParamsText(sim.TrainedParamsK) + ".D" + XgSim.SamplesText(sim.TrainedSamples).Replace(",", ""));
         sim.BreakthroughDone += id => { Mark(id); configured.Clear(); };
         sim.NodeBought += n => { Record("purchase", n.id); if (n.kind == XgNodeKind.Project) Mark("project.started"); configured.Clear(); };
@@ -214,6 +224,12 @@ sealed class Driver
             GameCalendar.Advance(host.House.S, GameCalendar.DayFor(sim.S.stage, sim.MonthProgress)); sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(host.House.S));
             double researchBefore = sim.S.project.gpuSeconds;
             sim.Tick(dt, host);
+            ManageRelics();
+            if (options.SpiderWordsPerMinute > 0 && sim.S.epochs >= XgSim.SpiderIntroEpochs)
+            {
+                spiderCarry += options.SpiderWordsPerMinute * dt / 60;
+                while (spiderCarry >= 1) { spiderCarry -= 1; sim.ResidentRead("word" + spiderWords++); }
+            }
             researchGpuSeconds += Math.Max(0, sim.S.project.gpuSeconds - researchBefore);
             if (host.House.S.unpaidPower && host.Money >= host.House.S.billDue) { host.PayPower(); Record("power", "bill paid"); }
             if (host.House.S.breakerTripped)
@@ -236,6 +252,8 @@ sealed class Driver
                 // Old saves only: the old research project's ending.
                 Mark("transformer.complete"); sim.EndingAnswer(regret); Mark("chapter.complete");
             }
+            // Both bars full: the player presses the chapter button (XgTrainPage.Side) to confirm the next ability.
+            if (sim.StageReady) ConfirmStage();
             if (sim.S.stage >= 6) Finale();
             // Stage 6 keeps labelling and training too: the wallet has to stay above the rent while the items are bought.
             if (!sim.ProjectActive && time >= nextAction && (!options.FaultCheck || time >= 125)) PlayerAction();
@@ -254,6 +272,7 @@ sealed class Driver
         // A careless run must end with the computer sold; a normal one must finish the chapter without it.
         bool success = options.Careless ? host.House.S.bankrupt : sim.S.chapterComplete && !host.House.S.bankrupt;
         ReportMoney();
+        Console.WriteLine("---- relics: " + relicsPicked + " picked, " + sim.RelicsOwned.Count + " owned, equipped " + string.Join("+", Enumerable.Range(0, XgRelics.Slots).Select(i => sim.RelicInSlot(i)?.id ?? "-")));
         if (options.GuideCheck) success &= ReportGuide();
         var payload = new
         {
@@ -282,6 +301,37 @@ sealed class Driver
         return success;
     }
 
+    // ───────────── rare items ─────────────
+
+    /// <summary>What the bot values in a relic for this route, best first: the ability lines, scale, then training, money and data.</summary>
+    static readonly string[] RelicPriority =
+    {
+        "advisor_page", "taihulight", "tieba", "attention_scratch", "angel_term", "imagenet_disc", "data_broker", "campus_vpn", "gold_cert",
+        "dropout_paper", "server_key", "coupon", "zhou_usb", "redbull", "batchnorm_paper", "resnet_sticker", "mining_1080", "spider_ua",
+        "multimeter", "arcade_tokens", "watermelon_book", "allnight", "tablet", "alphago_book",
+    };
+    int relicsPicked;
+    string relicOwnedKey = "";
+
+    /// <summary>As a player does: take the first of the three cards, and keep the four best relics equipped (swapping is free).</summary>
+    void ManageRelics()
+    {
+        while (sim.RelicPickPending)
+        {
+            string id = sim.RelicPick[0];
+            if (!sim.PickRelic(id)) break;
+            relicsPicked++; Record("relic.pick", id);
+        }
+        string key = string.Join(",", sim.RelicsOwned);
+        if (key == relicOwnedKey) return;
+        relicOwnedKey = key;
+        var best = RelicPriority.Where(sim.RelicOwned).Take(XgRelics.Slots).ToList();
+        if (best.All(sim.RelicEquipped) && sim.RelicsEquippedCount == best.Count) return;
+        for (int i = 0; i < XgRelics.Slots; i++) sim.UnequipSlot(i);
+        foreach (var id in best) sim.EquipRelic(id);
+        Record("relic.equip", string.Join("+", best));
+    }
+
     void PlayerAction()
     {
         string DeskOf(XgTrack track) => sim.OpenDesks().Where(d => XgCatalog.Dataset(d.id).track == track).OrderBy(d => sim.Labels(d.id)).Select(d => d.id).FirstOrDefault();
@@ -297,7 +347,7 @@ sealed class Driver
         if (host.Blocker != null) { var any = DeskOf(XgTrack.Sequence) ?? DeskOf(XgTrack.Vision); if (any != null) Answer(any); else nextAction = time + 1; return; }
         foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
             if (!sim.TrainingUnlocked(track) && DeskOf(track) != null) { Answer(DeskOf(track)); return; }
-        bool label = ((int)(time / 6) % (sim.AutoTrainLevel >= 2 ? 4 : 2)) == 0;
+        bool label = ((int)(time / 6) % 2) == 0;
         var trackToTrain = ChooseTrack();
         if (!label && sim.Blocker(sim.Run(trackToTrain), host) == null)
         {
@@ -444,13 +494,15 @@ sealed class Driver
 
     /// <summary>
     /// 参数量与数据量主线 as a player plays it: sign what can be signed, buy the next ability's item, fill the shorter
-    /// bar (width and layers for parameters, data packs for samples), then research, raises, automation and cards.
+    /// bar (width and layers for parameters, data packs for samples), then research, raises and cards.
     /// </summary>
     /// <summary>What a normal player keeps back for rent while buying: some days of rent, but never more than half the wallet (none when careless).</summary>
     double RentReserve => options.Careless ? 0 : Math.Min(options.ReserveDays * host.House.RentFor(GameCalendar.Now(host.House.S).Date), Math.Max(0, host.House.S.money) * .5);
 
     void Decide()
     {
+        // The first-minutes focus (XgSim.Opening.cs) keeps the tech tree shut: a player only labels 常识判断 and trains until it learned.
+        if (sim.OpeningFocus) return;
         host.Reserve = RentReserve;
         try { DecideWithReserve(); } finally { host.Reserve = 0; }
     }
@@ -500,8 +552,6 @@ sealed class Driver
         var required = essentials.Select(XgCatalog.Node).FirstOrDefault(n => Buyable(sim, n, host));
         if (required != null && (reserve == 0 || host.Money > reserve + sim.NodeCost(required))) sim.BuyNode(required.id, host);
         if (sim.RaiseLevel < 7 && sim.NextRaiseCost <= host.Money * .25 && (reserve == 0 || host.Money > reserve + sim.NextRaiseCost)) sim.BuyRaise(host);
-        var nextAuto = XgCatalog.Node("auto" + (sim.AutoTrainLevel + 1));
-        if (sim.AutoTrainLevel < 3 && nextAuto != null && sim.Status(nextAuto, host) == XgSim.NodeStatus.Buyable && host.Money >= sim.NodeCost(nextAuto) * 3 + reserve) sim.BuyNode(nextAuto.id, host);
         if (sim.CanBuyGlobalAuto(out _) && sim.GlobalAutoLevel < 3 && host.Money >= XgCatalog.AutoCost(sim.GlobalAutoLevel) * 3 + reserve) sim.BuyGlobalAuto(host);
         // Cards earn their keep (faster rounds, better grades, more contracts); when the card itself is what is short, a bigger one comes first.
         var notePlan = next > 0 && sim.TrainedParamsK < sim.ParamsThreshold(next) ? XgGuide.ParamsPlan(sim, next, sim.Vram(host)) : null;
@@ -641,15 +691,40 @@ sealed class Driver
     readonly List<string> guideLog = new List<string>(), guideFaults = new List<string>();
     double guideLongest; string guideLongestId = "";
 
+    /// <summary>The household facts the note reads, the way the desktop gathers them.</summary>
+    XgGuideHouse GuideHouse() => new XgGuideHouse
+    {
+        unpaidPower = host.House.S.unpaidPower, breakerTripped = host.House.S.breakerTripped, billDue = host.House.S.billDue, landlordCut = host.House.S.landlordCut,
+        noGpu = host.House.S.gpuCount <= 0, vramMB = host.VramMB, forumSeen = true, yySeen = true, gamesSeen = true,
+    };
+
+    int guideConfirms;
+
+    /// <summary>
+    /// Both bars are full: the player presses the chapter button (XgTrainPage.Side). With --guide-check the bot presses it
+    /// only while the note offers that step (XgGuide.ConfirmStage), and checks the step is gone once it has pressed.
+    /// </summary>
+    void ConfirmStage()
+    {
+        if (options.GuideCheck)
+        {
+            bool offered = XgGuide.Current(sim, host.Money, GuideHouse()).Exists(x => x.id == XgGuide.ConfirmStageId);
+            bool bar = XgGuide.BarStep(sim, host.Money, host.VramMB, out _)?.id == XgGuide.ConfirmStageId;
+            if (!offered) { Fault("chapter ready but the note does not offer the confirm step"); return; }
+            if (!bar) Fault("chapter ready but the top bar's link does not lead to the confirm step");
+        }
+        int before = sim.S.stage;
+        if (!sim.ConfirmNextStage()) return;
+        Record("stage.confirm", before + " -> " + sim.S.stage);
+        if (!options.GuideCheck) return;
+        guideConfirms++;
+        if (XgGuide.Current(sim, host.Money, GuideHouse()).Exists(x => x.id == XgGuide.ConfirmStageId)) Fault("confirm step still offered after confirming");
+    }
+
     /// <summary>Reads the note as the desktop would and checks it is never empty, never blank and never on a closed page.</summary>
     void CheckGuide()
     {
-        var house = new XgGuideHouse
-        {
-            unpaidPower = host.House.S.unpaidPower, breakerTripped = host.House.S.breakerTripped, billDue = host.House.S.billDue, landlordCut = host.House.S.landlordCut,
-            noGpu = host.House.S.gpuCount <= 0, vramMB = host.VramMB, forumSeen = true, yySeen = true, gamesSeen = true,
-        };
-        var steps = XgGuide.Current(sim, host.Money, house);
+        var steps = XgGuide.Current(sim, host.Money, GuideHouse());
         if (steps.Count == 0) Fault("empty note");
         foreach (var step in steps)
         {
@@ -673,7 +748,7 @@ sealed class Driver
 
     bool ReportGuide()
     {
-        Console.WriteLine("---- to-do note: " + guideLog.Count + " first lines, longest " + guideLongestId + " for " + Clock(guideLongest));
+        Console.WriteLine("---- to-do note: " + guideLog.Count + " first lines, longest " + guideLongestId + " for " + Clock(guideLongest) + "; " + guideConfirms + " chapter confirmations, each offered by the note");
         foreach (var line in guideLog.Take(60)) Console.WriteLine("  " + line);
         foreach (var fault in guideFaults) Console.WriteLine("  GUIDE FAULT " + fault);
         return guideFaults.Count == 0;
@@ -727,7 +802,7 @@ sealed class Driver
         {
             seconds = Math.Round(time, 2), stage = sim.S.stage, visionStage = sim.S.stageVision, sequenceStage = sim.S.stageSequence,
             money = host.Money, gpus = host.House.S.gpuCount, cases = host.House.S.caseCount, temperature = host.House.S.temperature, paidPower = host.paidPower,
-            incomePerSecond = sim.IncomePerSecond, labels = sim.TotalLabels, autoTraining = sim.AutoTrainLevel, autoLabelling = sim.GlobalAutoLevel,
+            incomePerSecond = sim.IncomePerSecond, labels = sim.TotalLabels, autoLabelling = sim.GlobalAutoLevel,
             tracks = sim.Runs.Select(r => new { r.track, r.arch, r.dataset, r.depth, r.width, r.lr, r.epoch, r.valAcc, samples = sim.Samples(r.dataset), bestScore = sim.BestScore(r.dataset) }).ToArray(),
         });
         Console.WriteLine("---- " + Clock(time) + " stage " + sim.S.stageVision + "/" + sim.S.stageSequence + " ¥" + host.Money.ToString("0") + " income/s " + sim.IncomePerSecond.ToString("0.0") + " GPUs " + host.House.S.gpuCount + " ×" + host.House.CardCompute.ToString("0.##") + " power paid " + host.paidPower.ToString("0.0"));

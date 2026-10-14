@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>The shelves of the 道具 page: 结构, 技巧, 电力 (the cooler), 消耗品 (packs used on the 训练 page); the others wait for the fun items.</summary>
-    public enum XgItemCategory { Structure, Technique, Power, Data, Earning, Story, Consumable }
+    /// <summary>The shelves of the 道具 page: 结构, 技巧, 电力 (the cooler); the others wait for the fun items.</summary>
+    public enum XgItemCategory { Structure, Technique, Power, Data, Earning, Story }
 
     /// <summary>One item on the 道具 page: the tech node it buys, its shelf and the year the idea is from.</summary>
     public sealed class XgItemDef
@@ -27,11 +27,11 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgItemCategory[] Order =
         {
-            XgItemCategory.Structure, XgItemCategory.Technique, XgItemCategory.Power, XgItemCategory.Consumable, XgItemCategory.Data, XgItemCategory.Earning, XgItemCategory.Story,
+            XgItemCategory.Structure, XgItemCategory.Technique, XgItemCategory.Power, XgItemCategory.Data, XgItemCategory.Earning, XgItemCategory.Story,
         };
 
-        static readonly string[] Names = { "结构", "技巧", "电力", "数据", "挣钱", "剧情", "消耗品" };
-        static readonly string[] NamesEn = { "Structures", "Techniques", "Power", "Data", "Earning", "Story", "Consumables" };
+        static readonly string[] Names = { "结构", "技巧", "电力", "数据", "挣钱", "剧情" };
+        static readonly string[] NamesEn = { "Structures", "Techniques", "Power", "Data", "Earning", "Story" };
 
         public static string CategoryName(XgItemCategory c, bool english) => english ? NamesEn[(int)c] : Names[(int)c];
 

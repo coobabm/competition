@@ -36,11 +36,11 @@ namespace LingGuangV05.Desktop.Story
         /// Queues a tray popup. <paramref name="story"/> marks a story moment; anything else is ambient chatter, which
         /// the opening quiet window drops (OpeningQuiet, the one place that decides).
         /// </summary>
-        public void Enqueue(string who, string text, float seconds, bool story = false)
+        public void Enqueue(string who, string text, float seconds, bool story = false, System.Action open = null)
         {
             if (string.IsNullOrEmpty(text)) return;
             if (!OpeningQuiet.Allows(story)) return;
-            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds) });
+            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open });
             if (running == null) running = StartCoroutine(Run());
         }
 

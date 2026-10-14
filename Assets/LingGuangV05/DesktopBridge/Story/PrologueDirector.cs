@@ -244,7 +244,7 @@ namespace LingGuangV05.Desktop.Story
             yield return desk.Move(desk.LocalOf(address), .6f);
             yield return desk.Click();
             // The long number, one digit at a time, so the player can read it.
-            yield return PrologueDesk.Type(address.GetComponentInChildren<TMP_Text>(), "", Prologue.LongNumber, .14f);
+            yield return PrologueDesk.Type(address.GetComponentInChildren<TMP_Text>(), "", Prologue.LongNumber, .045f);
             yield return PrologueDesk.Wait(2.5f);
             var page = ShowGarbledPage();
             yield return PrologueDesk.Wait(1.2f);
@@ -262,11 +262,27 @@ namespace LingGuangV05.Desktop.Story
             // Step 4: the word was heard. The rule makes it offer, say and stop.
             SetStep("shutdown");
             shutdownAnswer = -1;
-            ShowShutdownDialog();
+            var question = ShowShutdownDialog();
             var clip = PrologueContent.ShutdownVoice();
             if (clip != null) voice.PlayOneShot(clip);
             Hijack(false);
-            OpenNotepad(L("txt_bios"));
+            // The question appears as it is spoken; 0.txt answers only after the voice is done.
+            // ponytail: reveal is linear over the clip; per-character timings if the recording drifts from it.
+            float speak = clip != null ? clip.length : question.text.Length * .18f;
+            question.ForceMeshUpdate();
+            int chars = question.textInfo.characterCount;
+            int cue = question.text.IndexOf(GameText.IsEnglish ? "shut" : "关", StringComparison.OrdinalIgnoreCase);
+            float cueTime = speak * (cue >= 0 ? (float)(cue + 1) / Mathf.Max(1, chars) : .7f);
+            bool noteShown = false;
+            for (float t = 0; t < speak && shutdownAnswer < 0; t += Time.unscaledDeltaTime)
+            {
+                question.maxVisibleCharacters = Mathf.CeilToInt(chars * t / speak);
+                if (!noteShown && t >= cueTime) { noteShown = true; OpenNotepad(L("txt_bios")); dialog.SetAsLastSibling(); }
+                yield return null;
+            }
+            question.maxVisibleCharacters = 99999;
+            if (shutdownAnswer < 0) yield return PrologueDesk.Wait(.3f);
+            if (!noteShown && shutdownAnswer != 1) OpenNotepad(L("txt_bios"));
             dialog.SetAsLastSibling(); // the question stays on top until it is answered
             Think(L("m_who"), 5);
 
@@ -274,10 +290,10 @@ namespace LingGuangV05.Desktop.Story
             while (shutdownAnswer < 0) yield return null;
             if (shutdownAnswer == 1)
             {
-                // 是: it really shuts down, and boots straight back into a desktop that already has the exe on it.
-                yield return ShutDown();
-                yield return WaitForSetup();
+                SetStep("shutdown-exit");
+                Release();
                 run = null;
+                LingGuangV05.Desktop.GameExit.ReturnToTitle();
                 yield break;
             }
             Close(ref dialog);
@@ -297,7 +313,7 @@ namespace LingGuangV05.Desktop.Story
             yield return PrologueDesk.Wait(.6f);
             Bring(notepad);
             notepadText.text = "";
-            yield return PrologueDesk.Type(notepadText, "", L("txt_poem"), .11f);
+            yield return PrologueDesk.Type(notepadText, "", L("txt_poem"), .045f);
             yield return ThinkAndWait(L("m_poem"), 1.5f);
             yield return PrologueDesk.Wait(2);
             Close(ref notepad);
@@ -490,19 +506,20 @@ namespace LingGuangV05.Desktop.Story
             yield return PrologueDesk.Wait(.6f);
         }
 
-        void ShowShutdownDialog()
+        TMP_Text ShowShutdownDialog()
         {
             var client = desk.Window("Prologue Shutdown", L("dialog_title"), Vector2.zero, new Vector2(520, 220), out dialog);
             spawned.Add(dialog.gameObject);
             var icon = PrologueDesk.Centered("Icon", client, new Vector2(-190, 30), new Vector2(48, 48));
             PrologueDesk.Fill(icon, new Color32(40, 100, 200, 255), false);
             desk.Text(PrologueDesk.Rect("Q", icon, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "?", 34, Color.white, TextAlignmentOptions.Center);
-            desk.Text(PrologueDesk.Centered("Text", client, new Vector2(40, 30), new Vector2(380, 60)), L("dialog_shutdown"), 22, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+            var question = desk.Text(PrologueDesk.Centered("Text", client, new Vector2(40, 30), new Vector2(380, 60)), L("dialog_shutdown"), 22, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
             desk.Button(client, L("yes"), new Vector2(70, -55), new Vector2(110, 38), () => shutdownAnswer = 1);
             desk.Button(client, L("no"), new Vector2(195, -55), new Vector2(110, 38), () => shutdownAnswer = 0);
             // Closing the box is not an answer: it comes back until one is given.
             var close = dialog.Find("Title/Close").GetComponent<Button>();
             close.onClick.RemoveAllListeners();
+            return question;
         }
 
         void OpenNotepad(string text)
@@ -672,13 +689,11 @@ namespace LingGuangV05.Desktop.Story
 
         void KeepLaoZhouWaiting()
         {
-            if (laoZhou != null || Time.unscaledTime < nextLaoZhouCheck) return;
-            nextLaoZhouCheck = Time.unscaledTime + 1;
-            if (laoZhou != null || runtime.Sim.InPrologue || runtime.Sim.S.prologue != 2 || !string.IsNullOrEmpty(runtime.Sim.S.laoZhouFirstReply)) return;
-            var hub = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
-            var lab = LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
-            if (hub == null || hub.S == null || lab == null || lab.AbilitiesCount >= OpeningQuiet.EndsWithAbility || lab.S.ending.Length > 0) return;
-            laoZhou = StartCoroutine(LaoZhouInTurn());
+            // The player keeps the application private; no outsider reacts to setup.
+            if (runtime.Sim.S.laoZhouFirstReply != "private") {
+                runtime.Sim.S.laoZhouFirstReply = "private";
+                runtime.MarkDirty();
+            }
         }
 
         IEnumerator LaoZhouInTurn()

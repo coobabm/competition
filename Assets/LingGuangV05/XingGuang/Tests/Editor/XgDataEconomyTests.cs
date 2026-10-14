@@ -24,6 +24,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim { GoldChance = 0 };
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = stage;
+            sim.S.fundedAbility = stage; // the stages' milestone payments are not what these tests count
             foreach (var id in unlocked) sim.S.unlocked.Add(id);
             return sim;
         }
@@ -57,7 +58,7 @@ namespace LingGuangV05.XingGuang.Tests
                 var o = XgSim.DataOfferDef(n.id);
                 Assert.IsNotNull(o, n.id);
                 Assert.AreEqual(XgDataSource.Public, o.source);
-                Assert.AreEqual(n.cost, o.price, n.id);
+                Assert.AreEqual(System.Math.Ceiling(n.cost * XgSim.StoryResearchPrice), o.price, n.id);
                 Assert.That(o.noise, Is.InRange(0, .02), n.id);
                 Assert.AreEqual(XgSim.StageMonth(n.stage), o.month, n.id);
             }
@@ -102,14 +103,15 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = AtStage(1, "perceptron"); var host = new Host();
             Assert.IsTrue(sim.Offer("spam.pack").available);
+            double price = sim.Offer("spam.pack").price;
             Assert.IsTrue(sim.BuyDataOffer("spam.pack", host));
             Assert.IsTrue(sim.Has("spam.pack"));
             Assert.IsTrue(sim.Owns("spam"));
-            Assert.AreEqual(100000 - 300, host.money, 1e-9);
+            Assert.AreEqual(100000 - price, host.money, 1e-9);
             var o = sim.Offer("spam.pack");
             Assert.IsTrue(o.owned); Assert.IsFalse(o.available);
             Assert.IsFalse(sim.BuyDataOffer("spam.pack", host), "never twice");
-            Assert.AreEqual(100000 - 300, host.money, 1e-9);
+            Assert.AreEqual(100000 - price, host.money, 1e-9);
         }
 
         [Test]
@@ -118,7 +120,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage(2, "mlp"); var host = new Host();
             XgDataOffer bought = null; sim.DataOfferBought += o => bought = o;
             double price = sim.Offer("mnist.junk").price;
-            Assert.AreEqual(Math.Round(XgCatalog.Node("mnist.pack").cost * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
+            Assert.AreEqual(Math.Round(XgSim.DataOfferDef("mnist.pack").price * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
             Assert.IsTrue(sim.BuyDataOffer("mnist.junk", host));
             Assert.IsNotNull(bought);
             Assert.AreEqual(100000 - price, host.money, 1e-9);
@@ -190,7 +192,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(.5, sim.NoiseRatio("spam"), 1e-9, "capped at a coin toss");
         }
 
-        [Test]
+        [Test, Timeout(900000)] // three 160-epoch LeNet trainings: ~25 s on .NET, several minutes under the editor's Mono
         public void JunkNoiseHurtsTheBoardAndCleaningWinsMostOfItBack()
         {
             double Acc(double noise, bool clean)
@@ -284,8 +286,6 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = AtStage(2); var host = new Host();
             sim.S.desksOpen.Add("danmu");
-            Assert.IsFalse(sim.SetCrowd("danmu", true), "needs the crontab node");
-            sim.S.unlocked.Add(XgSim.CrowdNode);
             Assert.IsTrue(sim.BuyDataOffer("danmu.crowd", host));
             Assert.IsTrue(sim.CrowdPosted("danmu"));
             double before = sim.Samples("danmu");
@@ -345,13 +345,13 @@ namespace LingGuangV05.XingGuang.Tests
         public void AMetContractSendsBackLogsSlowlyBeforeStageFive()
         {
             var c = XgCatalog.Contract("danmaku");
-            Assert.AreEqual(c.income * 2, XgSim.LogPerSec(c), 1e-9);
+            Assert.AreEqual(c.income * XgSim.LogPerIncome, XgSim.LogPerSec(c), 1e-9);
             var early = WithContract(3); var host = new Host();
             early.Tick(10, host);
-            Assert.AreEqual(10 * c.income * 2 * XgSim.LogEarlyFactor, early.Logs("danmu"), 1e-6);
+            Assert.AreEqual(10 * c.income * XgSim.LogPerIncome * XgSim.LogEarlyFactor, early.Logs("danmu"), 1e-6);
             var late = WithContract(5);
             late.Tick(10, host);
-            Assert.AreEqual(10 * c.income * 2, late.Logs("danmu"), 1e-6);
+            Assert.AreEqual(10 * c.income * XgSim.LogPerIncome, late.Logs("danmu"), 1e-6);
             Assert.IsTrue(late.S.log.Exists(l => l.Contains("聊天记录")));
 
             var unmet = WithContract(5);
@@ -384,11 +384,14 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = WithContract(5); var host = new Host();
             sim.S.logs.Add(new XgLabelCount { dataset = "danmu", count = 1000 });
-            Assert.AreEqual(.1, sim.LogAutoNoise("danmu"), 1e-9);
+            // The checkpoint's score is on the dataset's own scale; the yes/no cards it labels are wrong as often as 1 − its binary accuracy.
+            double noise = 1 - XgSim.BinaryAccuracy("danmu", .9);
+            Assert.That(noise, Is.GreaterThan(0).And.LessThan(.2));
+            Assert.AreEqual(noise, sim.LogAutoNoise("danmu"), 1e-9);
             Assert.AreEqual(1000, sim.AutoLabelLogs("danmu", host));
             Assert.AreEqual(0, sim.Logs("danmu"), 1e-9);
-            Assert.AreEqual(900, sim.ExtraSamples("danmu"), 1e-6);
-            Assert.AreEqual(100, sim.Noise("danmu"), 1e-6, "its mistakes are its own noise (近亲繁殖)");
+            Assert.AreEqual(1000 * (1 - noise) * XgSim.PseudoLabelWorth, sim.ExtraSamples("danmu"), 1e-6, "labelled by itself, a log is worth a fraction of a hand label");
+            Assert.AreEqual(1000 * noise, sim.Noise("danmu"), 1e-6, "its mistakes are its own noise (近亲繁殖)");
             Assert.AreEqual(1000, sim.S.logsAuto, 1e-9);
         }
 
@@ -451,7 +454,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void DataEconomyStateSurvivesASaveRoundTrip()
         {
             var sim = WithContract(5); var host = new Host();
-            sim.S.unlocked.Add(XgSim.CrowdNode); sim.S.unlocked.Add("mlp");
+            sim.S.unlocked.Add("mlp");
             sim.BuyDataOffer("danmu.junk", host);
             sim.SetCrowd("danmu", true);
             sim.Tick(3, host);

@@ -72,6 +72,8 @@ namespace LingGuangV05.Core.Girlfriend
             if (s.recalled == null) s.recalled = new List<string>();
             if (s.promises == null) s.promises = new List<GfPromise>();
             if (s.flags == null) s.flags = new List<string>();
+            s.flags.Remove(FlagKnowsAi);
+            if (s.asking == "aiWorry") s.asking = "";
             if (s.done == null) s.done = new List<string>();
             if (s.orders == null) s.orders = new List<GfGiftOrder>();
             if (s.recentLines == null) s.recentLines = new List<string>();
@@ -337,13 +339,13 @@ namespace LingGuangV05.Core.Girlfriend
                     break;
                 case "money":
                     bool ai = AnyIn(text, AiWords);
-                    turn.answered = ai ? "ai" : "work";
+                    turn.answered = "work";
                     Mark(s, FlagMoneyAnswered);
                     if (ai) KnowAi(s, now);
                     s.asking = "";
                     break;
                 case "caught":
-                    bool admit = AnyIn(text, new[] { "是ai", "是 ai", "ai帮", "ai 帮", "代回", "承认", "对不起", "是它", "灵光", "program", "it was", "admit", "sorry" })
+                    bool admit = AnyIn(text, new[] { "走神", "没认真", "是ai", "是 ai", "ai帮", "ai 帮", "代回", "承认", "对不起", "是它", "灵光", "program", "it was", "admit", "sorry" })
                         && !AnyIn(text, new[] { "不是ai", "不是 ai", "就是我", "没有", "哪有", "was me", "it's me" });
                     turn.answered = admit ? "admit" : "deny";
                     if (admit) { AddAffection(s, -5); KnowAi(s, now); s.flags.Remove(FlagDeniedAi); }
@@ -365,7 +367,8 @@ namespace LingGuangV05.Core.Girlfriend
 
         static void KnowAi(GirlfriendState s, GfNow now)
         {
-            if (Mark(s, FlagKnowsAi)) s.done.Add("knewAi@" + now.day);
+            // The application remains private; her concern is his attention.
+            s.flags.Remove(FlagKnowsAi);
         }
 
         /// <summary>

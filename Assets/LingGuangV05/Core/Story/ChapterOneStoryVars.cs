@@ -22,7 +22,7 @@ namespace LingGuangV05.Core
             // runtime and desktop
             "name.set", "app.open", "app.installed", "chat.sent", "debug",
             // 灵光 lab milestones (XingGuangController, first time each)
-            "lg.trainable", "lg.epoch", "lg.assess", "lg.checkpoint", "lg.gradeA", "lg.gradeS", "lg.auto", "lg.autotrain", "lg.contract", "lg.nan", "lg.combo50",
+            "lg.trainable", "lg.epoch", "lg.assess", "lg.checkpoint", "lg.gradeA", "lg.gradeS", "lg.auto", "lg.contract", "lg.nan", "lg.combo50",
             "story.delivered", "lg.paidAssessment", "lg.migration", "lg.unsure", "lg.emerge", "lg.breakthrough", "lg.stage", "lg.project", "lg.ending", "lg.month", "prologue.done",
             // story-internal
             "chapter.up", "story.next",

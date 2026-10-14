@@ -21,13 +21,16 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // 有效规模
         RectTransform scaleCard, nextArea, formulaArea, logBack, logFill, logMark, pFill, dFill;
-        TMP_Text scaleTitle, scaleTag, scaleBig, scaleVerdict, logLabel, pLabel, pValue, dLabel, dValue;
+        TMP_Text scaleTitle, scaleTag, scaleBig, scaleVerdict, logLabel, pLabel, pValue, dLabel, dValue, pSub, dSub;
         readonly List<Chip> formulaChips = new List<Chip>();
         const int FormulaChipCount = 2 + 7;
 
         // 装备 / 数据集
         RectTransform gearCard, gearPane, dataPane;
-        XgBtn gearTab, dataTab;
+        XgBtn gearTab, dataTab, learningTab, confirmStage;
+        bool learningView = true;
+        RectTransform learningPane;
+        TMP_Text learningText;
         TMP_Text gearCount;
         bool dataView;
         sealed class Tile
@@ -50,6 +53,9 @@ namespace LingGuangV05.Desktop.XingGuang
             gearCard = ui.Card(right, "Gear", Vector2.zero, Vector2.one, new Vector2(0, LedgerHeight + SideGap), new Vector2(0, -ScaleHeight - SideGap));
             BuildGearCard();
             BuildLedgerCard();
+            orders = ui.Button(ledgerCard, "", () => view.ShowTab("contracts"), 12);
+            orders.rt.anchorMin = orders.rt.anchorMax = new Vector2(1, 1);
+            orders.rt.offsetMin = new Vector2(-144, -30); orders.rt.offsetMax = new Vector2(-8, -6);
         }
 
         // ───────────── 有效规模 ─────────────
@@ -77,23 +83,32 @@ namespace LingGuangV05.Desktop.XingGuang
             logLabel.textWrappingMode = TextWrappingModes.NoWrap;
 
             // Stages 1–5: the next ability's two bars.
-            nextArea = Rect("Next", scaleCard, new Vector2(0, 1), Vector2.one, new Vector2(12, -138), new Vector2(-12, -34));
-            pFill = BarRow(nextArea, 0, XgDark.Params, out pLabel, out pValue);
-            dFill = BarRow(nextArea, 52, XgDark.Data, out dLabel, out dValue);
+            nextArea = Rect("Next", scaleCard, new Vector2(0, 1), Vector2.one, new Vector2(12, -138), new Vector2(-12, -30));
+            pFill = BarRow(nextArea, 0, XgDark.Params, out pLabel, out pValue, out pSub);
+            dFill = BarRow(nextArea, 46, XgDark.Data, out dLabel, out dValue, out dSub);
 
             scaleVerdict = ui.Text(Rect("Verdict", scaleCard, Vector2.zero, Vector2.one, new Vector2(12, 4), new Vector2(-12, -156)), "", 11, XgDark.Muted, TextAlignmentOptions.TopLeft);
             scaleVerdict.enableAutoSizing = true; scaleVerdict.fontSizeMin = 9; scaleVerdict.fontSizeMax = 11;
+            confirmStage = ui.Button(scaleCard, "", () => {
+                if (Sim.ConfirmNextStage()) { Fx.Play(XgJuice.Sfx.Id.Unlock); view.Refresh(true); }
+            }, 13);
+            confirmStage.rt.name = "ConfirmNextStage";
+            confirmStage.rt.anchorMin = Vector2.zero; confirmStage.rt.anchorMax = new Vector2(1, 0);
+            confirmStage.rt.offsetMin = new Vector2(10, 6); confirmStage.rt.offsetMax = new Vector2(-10, 38);
             UiTip.Add(scaleCard, () => ScaleTip());
         }
 
-        /// <summary>A label, a value and a bar under them, <paramref name="y"/> from the top of the parent.</summary>
-        RectTransform BarRow(RectTransform parent, float y, Color fill, out TMP_Text label, out TMP_Text value)
+        /// <summary>A label, a value, a bar under them and a small line under the bar, <paramref name="y"/> from the top of the parent.</summary>
+        RectTransform BarRow(RectTransform parent, float y, Color fill, out TMP_Text label, out TMP_Text value, out TMP_Text sub)
         {
-            label = ui.Text(Rect("Label", parent, new Vector2(0, 1), new Vector2(.4f, 1), new Vector2(0, -y - 20), new Vector2(0, -y)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            label = ui.Text(Rect("Label", parent, new Vector2(0, 1), new Vector2(.4f, 1), new Vector2(0, -y - 18), new Vector2(0, -y)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             label.textWrappingMode = TextWrappingModes.NoWrap;
-            value = ui.Text(Rect("Value", parent, new Vector2(.4f, 1), Vector2.one, new Vector2(0, -y - 20), new Vector2(0, -y)), "", 13, XgDark.Ink, TextAlignmentOptions.MidlineRight);
+            value = ui.Text(Rect("Value", parent, new Vector2(.4f, 1), Vector2.one, new Vector2(0, -y - 18), new Vector2(0, -y)), "", 13, XgDark.Ink, TextAlignmentOptions.MidlineRight);
             value.textWrappingMode = TextWrappingModes.NoWrap;
-            var track = Rect("Track", parent, new Vector2(0, 1), Vector2.one, new Vector2(0, -y - 32), new Vector2(0, -y - 22));
+            var track = Rect("Track", parent, new Vector2(0, 1), Vector2.one, new Vector2(0, -y - 27), new Vector2(0, -y - 19));
+            // The split under the bar: what this model is against what counts (parameters), what is there against what counts (samples).
+            sub = ui.Text(Rect("Sub", parent, new Vector2(0, 1), Vector2.one, new Vector2(0, -y - 43), new Vector2(0, -y - 29)), "", 10, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            sub.textWrappingMode = TextWrappingModes.NoWrap; sub.enableAutoSizing = true; sub.fontSizeMin = 8; sub.fontSizeMax = 10;
             return Bar(track, "Fill", XgDark.Track, fill);
         }
 
@@ -104,6 +119,10 @@ namespace LingGuangV05.Desktop.XingGuang
             bool six = Sim.S.stage >= 6 || Sim.NextAbility == 0;
             formulaArea.gameObject.SetActive(six); logBack.gameObject.SetActive(six); logLabel.gameObject.SetActive(six);
             nextArea.gameObject.SetActive(!six);
+            confirmStage.rt.gameObject.SetActive(!six);
+            confirmStage.Set(Sim.StageReady ? T("验收完成 · 进入下一章", "Confirm · next chapter")
+                : T("待完成：训练到 C 级，补齐上面两条进度", "Train to C and fill both bars"), Sim.StageReady);
+            scaleVerdict.gameObject.SetActive(six);
             scaleBig.gameObject.SetActive(six);
             if (six)
             {
@@ -149,16 +168,21 @@ namespace LingGuangV05.Desktop.XingGuang
                 double paramsNeed = Sim.ParamsThreshold(next), samplesNeed = Sim.SamplesThreshold(next), size = XgSim.ParamsK(run);
                 scaleTitle.text = T("下一项能力 · 能力 " + next + "「" + XgSim.AbilityName(next, false) + "」", "NEXT ABILITY · " + next + " '" + XgSim.AbilityName(next, true) + "'");
                 scaleTag.text = "";
-                pLabel.text = T("参数量", "Parameters"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " / " + XgSim.ParamsText(paramsNeed);
-                dLabel.text = T("样本", "Samples"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " / " + XgSim.SamplesText(samplesNeed);
+                string pPct = Math.Floor(Sim.ParamsProgress(next) * 100 + 1e-9).ToString("0"), dPct = Math.Floor(Sim.SamplesProgress(next) * 100 + 1e-9).ToString("0");
+                pLabel.text = T("参数量", "Parameters"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " / " + XgSim.ParamsText(paramsNeed) + " <size=11>" + Hex(XgDark.Muted) + pPct + "%</color></size>";
+                dLabel.text = T("样本", "Samples"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " / " + XgSim.SamplesText(samplesNeed) + " <size=11>" + Hex(XgDark.Muted) + dPct + "%</color></size>";
                 SetBar(pFill, (float)Sim.ParamsProgress(next)); SetBar(dFill, (float)Sim.SamplesProgress(next));
+                // This model against what already counts (P only takes a model trained to grade C), and the samples there against the samples that count.
+                pSub.text = Sim.ParamsSplitText(run); pSub.color = Sim.CountState(run) == XgCountState.Counted ? XgDark.Muted : XgDark.Gold;
+                dSub.text = Sim.SamplesSplitText();
                 string line;
                 if (Sim.TrainedParamsK + 1e-9 < paramsNeed)
-                    line = size + 1e-9 >= paramsNeed ? Hex(XgDark.Muted) + T("这个模型够大：练到 C 级就算数。", "This model is big enough: it counts once assessed at grade C.") + "</color>"
-                        : Hex(XgDark.Gold) + T("这个模型 " + XgSim.ParamsText(size) + "，还不够大：去科技加宽、加深，或在道具买参数更多的结构。", "This model has " + XgSim.ParamsText(size) + ", not enough yet: widen or deepen in the tech tree, or buy a bigger structure on the Items page.") + "</color>";
+                    line = size + 1e-9 >= paramsNeed ? Hex(XgDark.Muted) + T("这个模型够大：练到 C 级就算数。", "This model is big enough: it counts once trained to grade C.") + "</color>"
+                        : Hex(XgDark.Gold) + T("这个模型还差 " + XgSim.ParamsText(paramsNeed - size) + "：去科技加宽、加深，或在道具买更大的结构。", "This model is " + XgSim.ParamsText(paramsNeed - size) + " short: widen or deepen in the tech tree, or buy a bigger structure on the Items page.") + "</color>";
                 else line = Hex(XgDark.Muted) + T("参数够了，样本到门槛，它就学会这一项。", "The parameters are there; once the samples reach the line it learns this ability.") + "</color>";
                 scaleVerdict.rectTransform.offsetMax = new Vector2(-12, -122);
-                scaleVerdict.text = line + "\n" + Hex(XgDark.Dim) + T("阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。", "Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.") + "</color>";
+                // The size's makeup (layers × width² × structure) and the caps the tech tree sets for it.
+                scaleVerdict.text = line + "\n" + Hex(XgDark.Dim) + Sim.ModelFormula(run) + " · " + Sim.CapsText(run) + "</color>";
             }
         }
 
@@ -175,8 +199,9 @@ namespace LingGuangV05.Desktop.XingGuang
         string ScaleTip()
         {
             if (Sim.S.stage < 6 && Sim.NextAbility != 0)
-                return T("下一项能力要两样都到门槛：练到 C 级的最大模型的参数量，和所有数据集的有效样本（标错的打折）。门槛已按买到的道具打折。",
-                    "The next ability needs both bars at the line: the parameters of the biggest model assessed at grade C, and the effective samples of every dataset (wrong labels count against). The lines already include the items you own.");
+                return (Sim.ReadWordsTotal >= 1 ? Sim.ReadLine() + "\n" : "") + Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport() + "\n\n"
+                    + T("两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。",
+                    "When both reach the line, the next ability comes. The lines already include the items you own. Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.");
             return T("有效规模 = 参数 × 数据 × 买到的倍率。参数和数据各算到第六项能力门槛的 " + N(XgSim.ScaleBarCap, "0.#") + " 倍为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
                 "Effective scale = parameters × data × the multipliers you own. Parameters and data each count up to " + N(XgSim.ScaleBarCap, "0.#") + " times the sixth ability's bar; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
         }
@@ -185,12 +210,24 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildGearCard()
         {
-            gearTab = ui.Button(gearCard, "", () => { dataView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
+            gearTab = ui.Button(gearCard, "", () => { learningView = false; dataView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
             gearTab.rt.gameObject.name = "GearTab";
             PlaceTopLeft(gearTab, 8, 6, 84, 22);
-            dataTab = ui.Button(gearCard, "", () => { dataView = true; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
+            dataTab = ui.Button(gearCard, "", () => { learningView = false; dataView = true; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
             dataTab.rt.gameObject.name = "DataTab";
             PlaceTopLeft(dataTab, 98, 6, 96, 22);
+            learningTab = ui.Button(gearCard, T("它学会了吗", "Learning"), () => { learningView = true; RefreshSide(Track, Sim.Run(Track)); }, 12);
+            PlaceTopLeft(learningTab, 202, 6, 104, 22);
+            learningPane = Rect("LearningPane", gearCard, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -36));
+            var learningScroll = Rect("Evidence", learningPane, Vector2.zero, Vector2.one, new Vector2(0, 40), Vector2.zero);
+            Panel(learningScroll, Color.clear); learningScroll.gameObject.AddComponent<RectMask2D>();
+            var content = Rect("Content", learningScroll, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
+            content.pivot = new Vector2(.5f, 1);
+            learningText = ui.Text(content, "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            var fit = content.gameObject.AddComponent<ContentSizeFitter>(); fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var evidenceScroll = learningScroll.gameObject.AddComponent<ScrollRect>(); evidenceScroll.content = content; evidenceScroll.viewport = learningScroll; evidenceScroll.horizontal = false; evidenceScroll.scrollSensitivity = 25;
+            var talk = ui.Button(learningPane, T("练完，去 YY 问问它 →", "Ask it on YY →"), () => { if (!XgYyTalk.Open()) view.ShowTab("home"); }, 14);
+            PlaceBottom(talk, 0, 32, 0, 0);
             gearCount = ui.Text(Rect("Count", gearCard, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-110, -28), new Vector2(-12, -6)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             gearCount.textWrappingMode = TextWrappingModes.NoWrap;
 
@@ -360,11 +397,14 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshSide(XgTrack track, XgRun run)
         {
             RefreshScale(track, run);
-            gearTab.Set(T("装备", "Gear"), true, !dataView ? XgDark.Accent : XgDark.Button, !dataView ? Color.white : XgDark.Ink);
-            dataTab.Set(T("数据集", "Datasets"), true, dataView ? XgDark.Accent : XgDark.Button, dataView ? Color.white : XgDark.Ink);
-            gearPane.gameObject.SetActive(!dataView);
-            dataPane.gameObject.SetActive(dataView);
-            gearCount.gameObject.SetActive(!dataView);
+            gearTab.Set(T("装备", "Gear"), true, !learningView && !dataView ? XgDark.Accent : XgDark.Button, !learningView && !dataView ? Color.white : XgDark.Ink);
+            dataTab.Set(T("数据集", "Datasets"), true, !learningView && dataView ? XgDark.Accent : XgDark.Button, !learningView && dataView ? Color.white : XgDark.Ink);
+            learningTab.Set(T("它学会了吗", "Learning"), true, learningView ? XgDark.Accent : XgDark.Button, XgDark.Ink);
+            learningPane.gameObject.SetActive(learningView);
+            learningText.text = Sim.CheckupText();
+            gearPane.gameObject.SetActive(!learningView && !dataView);
+            dataPane.gameObject.SetActive(!learningView && dataView);
+            gearCount.gameObject.SetActive(false);
             if (dataView) RefreshDataPane(track, run); else RefreshGear();
             RefreshLedger();
         }
@@ -375,9 +415,17 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             ledgerCard = ui.Card(right, "Ledger", Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, LedgerHeight));
             ledgerHead = ui.Text(Strip("Head", ledgerCard, 6, 18, 12, 140), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            ledgerHead.gameObject.SetActive(false);
             ledgerHead.characterSpacing = 1; ledgerHead.textWrappingMode = TextWrappingModes.NoWrap;
             ledgerDate = ui.Text(Rect("Date", ledgerCard, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-140, -24), new Vector2(-12, -6)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineRight);
-            ledgerDate.textWrappingMode = TextWrappingModes.NoWrap;
+            ledgerDate.textWrappingMode = TextWrappingModes.NoWrap; ledgerDate.gameObject.SetActive(false);
+            var funds=ui.Button(ledgerCard,T("查看资金账本","Funds book"),()=>{
+                var runtime=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Runtime.ChapterOneRuntime>();
+                if(runtime!=null)(runtime.GetComponent<LingGuangV05.Desktop.FundsPanel>() ?? runtime.gameObject.AddComponent<LingGuangV05.Desktop.FundsPanel>()).Open();
+            },11);
+            funds.rt.name="OpenFundsBook";funds.rt.anchorMin=funds.rt.anchorMax=Vector2.one;
+            funds.rt.anchorMin=funds.rt.anchorMax=new Vector2(0,1);
+            funds.rt.offsetMin=new Vector2(8,-24);funds.rt.offsetMax=new Vector2(130,-3);
             ledgerLeft = ui.Text(Rect("Left", ledgerCard, Vector2.zero, Vector2.one, new Vector2(12, 34), new Vector2(-150, -26)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
             ledgerLeft.textWrappingMode = TextWrappingModes.NoWrap; ledgerLeft.lineSpacing = 0;
             ledgerRight = ui.Text(Rect("Right", ledgerCard, Vector2.zero, Vector2.one, new Vector2(-150, 34), new Vector2(-12, -26)), "", 12, XgDark.Ink, TextAlignmentOptions.TopRight);
@@ -388,7 +436,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var home = Host as XingGuangHost;
                 string one = N(home != null ? home.TierOneKwh : 240, "0"), two = N(home != null ? home.TierTwoKwh : 400, "0");
-                return T("训练每一轮都要交电费，按这个月的阶梯电价：一个月用电超过 " + one + " 度，超出的部分贵一成；超过 " + two + " 度，贵五成。房租每过一个日历日扣一次，10 月起涨到 ¥350。",
+                return T("训练每一轮都要交电费，按这个月的阶梯电价：一个月用电超过 " + one + " 度，超出的部分贵一成；超过 " + two + " 度，贵五成。房租每分钟按一天折算，10 月起涨到 ¥350。",
                     "Every training round pays electricity at this month's tiered rate: past " + one + " kWh a month the rest costs 10% more; past " + two + " kWh, 50% more. Rent is paid once per calendar day, rising to ¥350 from October.");
             });
         }
@@ -399,20 +447,14 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!(Host is XingGuangHost home)) { ledgerDate.text = ""; ledgerLeft.text = ledgerRight.text = ledgerWarn.text = ""; return; }
             var day = home.Today;
             ledgerDate.text = day.Year > 1 ? T(day.Month + " 月 " + day.Day + " 日", day.ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)) : "";
-            if (!home.EconomyActive)
-            {
-                ledgerLeft.text = Hex(XgDark.Muted) + T("学会「一个词」以前不收房租和电费。", "No rent or electricity until it learns its third ability (one word).");
-                ledgerRight.text = ""; ledgerWarn.text = "";
-                return;
-            }
             home.TodayBills(out double power, out _);
             double kwh = home.MonthKwh;
             int tier = home.PowerTier;
-            ledgerLeft.text = T("训练电费（今天）", "Training power (today)") + "\n" + T("房租（日历走一天扣一次）", "Rent (once per calendar day)") + "\n" + T("本月用电 " + N(kwh, "0") + " 度 · 第 " + tier + " 档", N(kwh, "0") + " kWh this month · tier " + tier);
+            ledgerLeft.text = T("训练电费（今天）", "Training power (today)") + "\n" + T("房租（每分钟折算一天）", "Rent (one day per minute)") + "\n" + T("本月用电 " + N(kwh, "0") + " 度 · 第 " + tier + " 档", N(kwh, "0") + " kWh this month · tier " + tier);
             string tierNote = tier >= 3 ? Hex(XgDark.Bad) + T("更贵 ×1.5", "dearer ×1.5") : tier == 2 ? Hex(XgDark.Money) + T("贵了 ×1.1", "dearer ×1.1") : Hex(XgDark.Muted) + "—";
-            ledgerRight.text = Hex(XgDark.Bad) + "−¥" + N(power, "0.0") + "</color>\n" + Hex(XgDark.Bad) + "¥" + N(home.RentToday, "0") + T("/天", "/day") + "</color>\n" + tierNote + "</color>";
-            bool poor = Host.Money < home.RentToday;
-            ledgerWarn.text = poor ? T("⚠ 余额不够交下一天房租。去摆渡众包标注挣点，或者少练几轮。", "⚠ Not enough for the next day's rent. Earn some on the labelling desk in Bodu Crowd, or train fewer rounds.") : "";
+            ledgerRight.text = Hex(XgDark.Bad) + "−¥" + N(power, "0.0") + "</color>\n" + Hex(XgDark.Bad) + "¥" + N(home.EconomyActive ? home.RentToday : 0, "0") + T("/天", "/day") + "</color>\n" + tierNote + "</color>";
+            bool poor = Host.Money < Math.Max(50, home.EconomyActive ? home.RentToday : 0);
+            ledgerWarn.text = poor ? T("⚠ 余额偏低。先做众包补充资金；每轮训练都收电费。", "⚠ Not enough for the next day's rent. Earn some on the labelling desk in Bodu Crowd, or train fewer rounds.") : "";
         }
     }
 }

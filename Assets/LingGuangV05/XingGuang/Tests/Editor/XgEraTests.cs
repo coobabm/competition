@@ -51,6 +51,9 @@ namespace LingGuangV05.XingGuang.Tests
             sim.StageAdvanced += from => advanced = from;
             sim.S.trainedParamsK = sim.ParamsThreshold(4);
             sim.Tick(1, new Host());
+            Assert.AreEqual(0, advanced, "full bars only make the stage ready; the player confirms it");
+            sim.S.stageEpochs = 1; // a round has been trained in this stage
+            Assert.IsTrue(sim.ConfirmNextStage());
             Assert.AreEqual(3, advanced);
             Assert.AreEqual(4, sim.S.stage);
             // A new stage is a new month (GameCalendar.DayFor(4, p) is past every day of stage 3's month for any p).

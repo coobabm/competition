@@ -176,6 +176,8 @@ namespace LingGuangV05.XingGuang.Tests
             int hand = sim.S.handCorrect + sim.S.handWrong, combo = sim.S.combo, right = 0, n = 300;
             for (int i = 0; i < n; i++)
             {
+                // A text from the family is the player's own opinion to give: the spider never presses it.
+                while (sim.Card("spam").family) { Assert.AreEqual("special", sim.SpiderAnswerBlocker("spam", host)); sim.Answer("spam", false, host); }
                 var card = sim.Card("spam");
                 bool truth = card.truth; long id = card.id;
                 Assert.IsTrue(sim.Suggestion("spam", out bool guess, out _));

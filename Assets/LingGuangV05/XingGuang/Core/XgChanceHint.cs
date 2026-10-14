@@ -57,13 +57,13 @@ namespace LingGuangV05.XingGuang
                 case XgLimit.Params:
                 {
                     var node = NextScaleNode(sim, track);
-                    string size = XgSim.ParamsText(XgSim.ParamsK(run));
+                    // The numbers behind it: this model against the line, its accuracy ceiling against grade C, the next node's size.
                     return node != null
                         ? Make(id, "参数量不够，再练也涨不动：科技买「" + node.name + "」", "Not enough parameters, training will not help: buy " + node.nameEn + " in the tech tree",
-                            seen + "模型 " + size + " 参数。加宽、加深以后，它会自动用上更大的模型。", seenEn + " The model has " + size + " parameters. Wider or deeper, and it uses the bigger model by itself.",
+                            seen + sim.ParamsPlateauDetail(run, false) + "加宽、加深以后，它会自动用上更大的模型。", seenEn + " " + sim.ParamsPlateauDetail(run, true) + " Wider or deeper, and it uses the bigger model by itself.",
                             "tree", "node:" + node.id, "")
                         : Make(id, "参数量不够，再练也涨不动：去道具买参数更多的结构", "Not enough parameters, training will not help: buy a bigger structure on the Items page",
-                            seen + "这条线的宽度和层数都到顶了，或者显存装不下更大的。", seenEn + " This line's width and depth are at their cap, or the card holds nothing bigger.",
+                            seen + sim.ParamsPlateauDetail(run, false) + "这条线的宽度和层数都到顶了，或者显存装不下更大的。", seenEn + " " + sim.ParamsPlateauDetail(run, true) + " This line's width and depth are at their cap, or the card holds nothing bigger.",
                             "items", "", "");
                 }
                 case XgLimit.Data:
@@ -81,7 +81,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>The cheapest visible width or layer node not owned yet that raises this track's caps.</summary>
-        static XgNode NextScaleNode(XgSim sim, XgTrack track)
+        public static XgNode NextScaleNode(XgSim sim, XgTrack track)
         {
             string tree = XgSim.TreeOf(track);
             int widthCap = sim.WidthCap(track), depthCap = sim.DepthCap(track);

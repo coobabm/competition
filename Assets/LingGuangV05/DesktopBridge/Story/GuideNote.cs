@@ -61,12 +61,24 @@ namespace LingGuangV05.Desktop.Story
         WindowManager tiebaWindow, gamesWindow;
         bool windowsLooked;
 
+        /// <summary>The installed note, for places that send the player where a step points (the lab's 「去做 ›」 link).</summary>
+        public static GuideNote Instance { get; private set; }
+
+        /// <summary>Goes where <paramref name="step"/> points, the way a click on the note does. False while the note is busy.</summary>
+        public bool Follow(XgGuideStep step)
+        {
+            if (step == null || busy) return false;
+            Go(step);
+            return true;
+        }
+
         /// <summary>Adds the note next to the story presenter (once). Call from its Start().</summary>
         public static GuideNote Install(MonoBehaviour host)
         {
             if (host == null) return null;
             var note = host.GetComponent<GuideNote>() ?? host.gameObject.AddComponent<GuideNote>();
             note.host = host;
+            Instance = note;
             return note;
         }
 
@@ -76,7 +88,7 @@ namespace LingGuangV05.Desktop.Story
             router = FindAnyObjectByType<ChapterOneDesktopRouter>(FindObjectsInactive.Include);
         }
 
-        void OnDestroy() { if (note != null) Destroy(note.gameObject); }
+        void OnDestroy() { if (note != null) Destroy(note.gameObject); if (Instance == this) Instance = null; }
 
         // The note steps aside for story cutscenes and while the origin video plays (it would cover the player).
         bool CutscenePlaying => AiJoinsYy.Playing || host is StoryDesktopPresenter presenter && (presenter.CutscenePlaying || presenter.GetComponent<OriginCurtain>() is OriginCurtain c && c.Playing);
@@ -132,7 +144,7 @@ namespace LingGuangV05.Desktop.Story
                 noGpu = s.gpuCount <= 0,
                 overloaded = s.gpuCount * config.gpuWatts + s.caseCount * config.caseWatts > config.powerLimitWatts,
                 vramMB = lab.Host != null ? lab.Host.VramMB : 0,
-                zhouAvailable = hub == null || hub.S == null || hub.CanMessage(ForumLibrary.LaoZhou),
+                zhouAvailable = false,
                 forumSeen = Seen("forum"), yySeen = Seen("yy"), gamesSeen = Seen("games"),
             };
         }

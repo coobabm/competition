@@ -149,7 +149,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
             double total = Sim.TrainedSamples;
             header.text = T("样本 · 全部 ", "SAMPLES · ") + XgSim.SamplesText(total) + T(" 条（有效）", " effective");
-            from.text = T("来自摆渡众包做题 + 买的数据包", "from labelling on Bodu Crowd + packs you bought");
+            from.text = T("来自摆渡众包做题 + 数据包 + 读到的词", "from Bodu Crowd labels + packs + words read");
             foreach (var r in datasetRows) RefreshDataset(r);
             foreach (var r in offerRows) RefreshOffer(r);
         }
@@ -249,6 +249,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 note.Append(T("亲手标 ", "by hand ")).Append(Samples(Sim.Labels(r.id)));
                 if (extra >= 1) note.Append(" · ").Append(T("众包 / 日志 ", "crowd / logs ")).Append(Samples(extra));
             }
+            // Words the crawler and the resident spider read are this corpus' samples: say how many (1 word = 1 sample).
+            if (r.id == XgSim.ReadDataset && Sim.ReadWordsTotal >= 1)
+                note.Append(note.Length > 0 ? " · " : "").Append(T("读到的词 +", "words read +")).Append(XgSim.SamplesText(Sim.ReadSamplesTotal));
             r.note.text = note.ToString();
             r.samples.text = XgSim.SamplesText(Sim.Samples(r.id));
             // Quality: the share of rows labelled right, less a meme drift's lost points.

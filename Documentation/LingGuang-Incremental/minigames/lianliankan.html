@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 连连看</title>
+<!--
+  连连看 — QQ-连连看 style board of word tiles and emoji tiles (30 pairs drawn from a pool of ~55). Two tiles can be
+  connected when they are a word/emoji pair AND a path with at most 2 turns exists through empty cells (the empty border
+  ring counts); the path is found with a real BFS and drawn as a line. Each match = 1 sample.
+  灵光 pre-connects pairs at the start of every board (purple lines, listed on the left): each is correct with probability
+  LG.skill(); wrong ones are connectable but mismatched (same-category mix-ups such as 猫-🐶 become more frequent as it gets
+  plausible). The player confirms (v) or breaks (x) every line. Timer, shuffle button, hint button (灵光 suggests a pair).
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.ll{display:grid;grid-template-columns:186px 1fr;gap:12px;height:100%;padding:12px}
+.lc{display:flex;flex-direction:column;gap:10px;min-height:0}
+.lbox{border:1px solid var(--line);border-radius:8px;background:#fff;padding:8px 10px}
+.tbig{display:flex;align-items:baseline;justify-content:space-between}
+.tbig b{font-size:30px;font-variant-numeric:tabular-nums}
+.tbar{height:8px;border-radius:4px;background:#ECEEF2;overflow:hidden;margin-top:4px}
+.tbar i{display:block;height:100%;background:var(--green);transition:width .2s linear}
+.irow{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-top:6px}.irow b{color:var(--ink)}
+.lbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lbtns button{border:1px solid #C9D2F0;background:#fff;border-radius:8px;padding:8px 2px;font-family:inherit;font-size:13px;cursor:pointer;line-height:1.35}
+.lbtns button small{display:block;color:var(--mute);font-size:10px}
+.lbtns button:hover:not(:disabled){border-color:var(--blue);background:var(--blue3)}
+.lbtns button:disabled{opacity:.45;cursor:default}
+.plist{flex:1;min-height:0;display:flex;flex-direction:column;border:1px solid #DCD6FB;background:var(--ai2);border-radius:8px;padding:8px}
+.plist h5{margin:0 0 4px;font-size:12px;color:#4B3FA8}
+.plist .sub{font-size:11px;color:#7E73C8;line-height:1.5;margin-bottom:6px}
+.pl{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.pi{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #DCD6FB;border-radius:6px;padding:3px 4px;font-size:13px;animation:pop .25s}
+.pi:hover{border-color:var(--ai);box-shadow:0 0 0 2px #8A78E833}
+.pi .t{flex:1;text-align:center;white-space:nowrap}
+.pi .t em{font-style:normal;font-size:17px}
+.pi button{width:24px;height:24px;border-radius:5px;border:1px solid;cursor:pointer;font-size:13px;padding:0;line-height:1;font-family:inherit}
+.pi .y{color:var(--green);border-color:var(--green);background:#fff}.pi .y:hover{background:#E8F7EC}
+.pi .n{color:var(--red);border-color:var(--red);background:#fff}.pi .n:hover{background:#FDECEA}
+@keyframes pop{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.lbw{display:flex;align-items:center;justify-content:center;min-width:0}
+.board{position:relative;width:696px;height:432px;background:#F0F4FA;border:1px solid #C9D6EE;border-radius:8px;background-image:radial-gradient(#C9D6EE 1px,transparent 1px);background-size:58px 54px;background-position:29px 27px}
+.tile{position:absolute;width:56px;height:52px;margin:1px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s,box-shadow .12s,opacity .25s;font-weight:700;box-shadow:0 2px 0 #0002,0 0 0 1px #0000000d inset}
+.tile.w{background:linear-gradient(#FFFBEA,#FFF1C4);color:#5a4210;border:2px solid #E8D28A;font-size:20px}
+.tile.e{background:linear-gradient(#F4F8FF,#DCE8FF);border:2px solid #A9C2F0;font-size:30px}
+.tile.long{font-size:16px}
+.tile:hover:not(.lock){transform:translateY(-2px)}
+.tile.sel{border-color:var(--orange);box-shadow:0 0 0 3px #F27B1D66;transform:translateY(-3px) scale(1.05);z-index:3}
+.tile.lock{border-color:var(--ai);box-shadow:0 0 0 3px #8A78E855;cursor:default}
+.tile.hint{animation:hint .6s infinite;border-color:var(--ai)}
+.tile.gone{opacity:0;transform:scale(.3) rotate(12deg);pointer-events:none}
+.tile.shk{animation:lgsh .3s}
+@keyframes hint{0%,100%{box-shadow:0 0 0 3px #8A78E855}50%{box-shadow:0 0 0 7px #8A78E8aa}}
+#lsvg{position:absolute;inset:0;pointer-events:none;z-index:5}
+#lsvg polyline{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lmsg{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);background:#222c;color:#fff;border-radius:14px;padding:3px 14px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .3s;z-index:6;white-space:nowrap}
+.lmsg.on{opacity:1}
+.over h2{letter-spacing:2px}
+.over .sc{display:flex;gap:26px;font-size:13px;color:var(--mute)}.over .sc b{display:block;font-size:26px;color:var(--ink)}
+.over .aiq{max-width:560px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:10px;padding:8px 16px;color:#4B3FA8;font-size:14px;line-height:1.8}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'lianliankan', title:'连连看', subtitle:'把词连到对应的表情', icon:'连', dataset:'词 ↔ 图',
+  stats:[['配对','sPair','0 / 30'],['灵光连对','sAi','—'],['连击','sCombo','0'],['本盘收入','sPay','¥0']], statsNote:'每连对一组 = 1 条样本',
+  aiHello:'词和图，我先连几个。',
+  rule:'<b>玩法</b>：点两个<b>互相对应</b>的词和图，中间用不超过 2 个拐弯的线连得通就消掉。<br><b>灵光</b>先连了几对（紫线）：对的点 ✓，错的点 ✗。<br><b>怎么标数据</b>：你连对 / 拆对的每一组，都是一条「这个词就是这个图」的样本。'
+});
+
+/* ---------- data: [word, emoji, category] ---------- */
+const POOL=[
+['猫','🐱','a'],['狗','🐶','a'],['鱼','🐟','a'],['鸡','🐔','a'],['猪','🐷','a'],['兔子','🐰','a'],['熊猫','🐼','a'],['老虎','🐯','a'],['青蛙','🐸','a'],['猴子','🐵','a'],['牛','🐮','a'],['蜜蜂','🐝','a'],['蝴蝶','🦋','a'],
+['苹果','🍎','f'],['西瓜','🍉','f'],['生日','🎂','f'],['咖啡','☕','f'],['啤酒','🍺','f'],['汉堡','🍔','f'],['冰淇淋','🍦','f'],['披萨','🍕','f'],['面条','🍜','f'],['米饭','🍚','f'],['香蕉','🍌','f'],['葡萄','🍇','f'],['草莓','🍓','f'],
+['下雨','🌧️','w'],['太阳','☀️','w'],['月亮','🌙','w'],['星星','⭐','w'],['雪花','❄️','w'],['彩虹','🌈','w'],['闪电','⚡','w'],['火','🔥','w'],['花','🌸','w'],['树','🌲','w'],['玫瑰','🌹','w'],
+['电话','📞','o'],['书','📖','o'],['钥匙','🔑','o'],['眼镜','👓','o'],['雨伞','☂️','o'],['电脑','💻','o'],['相机','📷','o'],['礼物','🎁','o'],['手机','📱','o'],['钱','💰','o'],['灯泡','💡','o'],['时钟','⏰','o'],['吉他','🎸','o'],['气球','🎈','o'],['戒指','💍','o'],['帽子','🎩','o'],['鞋','👟','o'],['音乐','🎵','o'],['足球','⚽','o'],
+['汽车','🚗','v'],['飞机','✈️','v'],['自行车','🚲','v'],['火箭','🚀','v'],['火车','🚂','v'],['轮船','🚢','v'],
+];
+const PAIRS=30, ROWS=8, COLS=12, CW=58, CH=54, TIME=150;
+const DIRS=[[0,1],[1,0],[0,-1],[-1,0]];
+
+/* ---------- layout ---------- */
+stage.innerHTML=`
+<div class="ll">
+  <div class="lc">
+    <div class="lbox"><div class="tbig"><span style="font-size:12px;color:var(--mute)">剩余时间</span><b id="lT">150</b></div><div class="tbar"><i id="lBar" style="width:100%"></i></div>
+      <div class="irow"><span>还剩</span><b id="lLeft">30 对</b></div><div class="irow"><span>连击</span><b id="lCb">0</b></div></div>
+    <div class="lbtns"><button id="lHint">💡 灵光提示<small>−¥0.3</small></button><button id="lShuf">🔀 洗牌<small>−5 秒</small></button></div>
+    <div class="plist"><h5>灵光先连了 <span id="lPn">0</span> 对</h5><div class="sub">对的点 ✓ 消掉，错的点 ✗ 拆开。把鼠标放在一行上能看到线。</div><div class="pl" id="lPl"></div></div>
+  </div>
+  <div class="lbw"><div class="board" id="board"><svg id="lsvg" viewBox="0 0 ${COLS*CW} ${ROWS*CH}" width="${COLS*CW}" height="${ROWS*CH}"></svg><div class="lmsg" id="lMsg"></div></div></div>
+</div>
+<div class="over" id="lOver"></div>`;
+const boardEl=document.getElementById('board'), svg=document.getElementById('lsvg'), plEl=document.getElementById('lPl'), lOver=document.getElementById('lOver');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+let Bd=null;
+
+/* ---------- path finding (real: <= 2 turns, border ring is walkable) ---------- */
+function findPath(grid,r1,c1,r2,c2){
+  const free=(r,c)=>r>=0&&r<ROWS&&c>=0&&c<COLS&&(!grid[r][c]||(r===r2&&c===c2));
+  const best=new Map(), q=[[],[],[]];
+  for(let d=0;d<4;d++){ best.set(r1+','+c1+','+d,0); q[0].push({r:r1,c:c1,d,t:0,p:null}); }
+  for(let t=0;t<=2;t++){
+    for(let i=0;i<q[t].length;i++){
+      const n=q[t][i];
+      if(n.r===r2&&n.c===c2){ // rebuild corners
+        const pts=[]; for(let x=n;x;x=x.p) pts.push([x.r,x.c]); pts.reverse();
+        const out=[pts[0]]; for(let k=1;k<pts.length-1;k++){ const a=pts[k-1],b=pts[k],c=pts[k+1]; if((b[0]-a[0])*(c[1]-b[1])!==(b[1]-a[1])*(c[0]-b[0])) out.push(b); } out.push(pts[pts.length-1]); return out;
+      }
+      for(let d2=0;d2<4;d2++){
+        const nt=n.p?(d2===n.d?n.t:n.t+1):0; if(nt>2) continue;
+        const nr=n.r+DIRS[d2][0], nc=n.c+DIRS[d2][1]; if(!free(nr,nc)) continue;
+        const key=nr+','+nc+','+d2; if(best.has(key)&&best.get(key)<=nt) continue;
+        best.set(key,nt); q[nt].push({r:nr,c:nc,d:d2,t:nt,p:n});
+      }
+    }
+  }
+  return null;
+}
+const gridOf=()=>Bd.grid;
+const pathOf=(a,b)=>findPath(Bd.grid,a.r,a.c,b.r,b.c);
+const isPair=(a,b)=>a!==b&&a.pair===b.pair&&a.kind!==b.kind;
+
+/* ---------- board ---------- */
+function newBoard(){
+  const pairs=LG.shuffle(POOL).slice(0,PAIRS).map((p,i)=>({id:i,w:p[0],e:p[1],cat:p[2]}));
+  const tiles=[]; pairs.forEach(p=>{ tiles.push({pair:p.id,kind:'w',txt:p.w,cat:p.cat}); tiles.push({pair:p.id,kind:'e',txt:p.e,cat:p.cat}); });
+  const cells=[]; for(let r=1;r<ROWS-1;r++) for(let c=1;c<COLS-1;c++) cells.push([r,c]);
+  const order=LG.shuffle(cells), grid=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  tiles.forEach((t,i)=>{ t.id=i; t.r=order[i][0]; t.c=order[i][1]; t.gone=false; t.locked=false; grid[t.r][t.c]=t; });
+  return {pairs,tiles,grid};
+}
+function drawTiles(){
+  boardEl.querySelectorAll('.tile').forEach(e=>e.remove());
+  Bd.tiles.forEach(t=>{
+    const e=document.createElement('div'); e.className='tile '+t.kind+(t.kind==='w'&&t.txt.length>2?' long':''); e.textContent=t.txt;
+    t.el=e; place(t); e.onclick=()=>onTile(t); boardEl.appendChild(e);
+  });
+}
+function place(t){ t.el.style.left=t.c*CW+'px'; t.el.style.top=t.r*CH+'px'; }
+function remaining(){ return Bd.tiles.filter(t=>!t.gone); }
+function matchableList(unlockedOnly){
+  const out=[];
+  for(const p of Bd.pairs){ const w=Bd.tiles[p.id*2], e=Bd.tiles[p.id*2+1]; if(w.gone||e.gone) continue; if(unlockedOnly&&(w.locked||e.locked)) continue; const path=pathOf(w,e); if(path) out.push({w,e,path}); }
+  return out;
+}
+function msg(t){ const m=document.getElementById('lMsg'); m.textContent=t; m.classList.add('on'); clearTimeout(msg.t); msg.t=setTimeout(()=>m.classList.remove('on'),1400); }
+
+/* ---------- line drawing ---------- */
+const center=(r,c)=>[c*CW+CW/2,r*CH+CH/2];
+function line(path,color,w,dash,keep){
+  const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  pl.setAttribute('points',path.map(p=>center(p[0],p[1]).join(',')).join(' ')); pl.setAttribute('stroke',color); pl.setAttribute('stroke-width',w);
+  if(dash) pl.setAttribute('stroke-dasharray',dash); svg.appendChild(pl);
+  if(!keep){ pl.style.transition='opacity .45s .25s'; requestAnimationFrame(()=>pl.style.opacity=0); setTimeout(()=>pl.remove(),800); }
+  return pl;
+}
+
+/* ---------- game flow ---------- */
+function startBoard(){
+  lOver.style.display='none'; clearInterval(Bd&&Bd.timer);
+  let b; do{ b=newBoard(); Bd=b; Bd.grid=b.grid; }while(!matchableList(false).length);
+  Object.assign(Bd,{t:TIME,sel:null,pending:[],matched:0,aiRight:0,aiTot:0,pay:0,combo:0,lastMatch:0,ended:false,tok:Math.random(),hintT:0,running:false,dead:false});
+  svg.innerHTML=''; plEl.innerHTML=''; drawTiles(); updHud();
+  LG.set('sPair','0 / '+PAIRS); LG.set('sAi','—'); LG.set('sCombo','0'); LG.set('sPay','¥0'); document.getElementById('lPn').textContent='0';
+  document.getElementById('lHint').disabled=false; document.getElementById('lShuf').disabled=false;
+  aiConnect();
+}
+function updHud(){
+  const t=Math.max(0,Bd.t); document.getElementById('lT').textContent=Math.ceil(t);
+  const bar=document.getElementById('lBar'); bar.style.width=(t/TIME*100)+'%'; bar.style.background=t<25?'var(--red)':t<60?'var(--orange)':'var(--green)';
+  document.getElementById('lLeft').textContent=(remaining().length/2)+' 对'; document.getElementById('lCb').textContent=Bd.combo; LG.set('sCombo',Bd.combo);
+}
+function tick(){ if(!Bd.running||Bd.ended) return; const now=performance.now(); Bd.t-=(now-Bd.last)/1000; Bd.last=now; if(Bd.t<=0){ Bd.t=0; updHud(); finish(false); return; } updHud(); }
+
+/* ---------- 灵光 pre-connects ---------- */
+async function aiConnect(){
+  const tok=Bd.tok, s=LG.skill(), n=2+Math.round(s*6);
+  LG.say(s<.4?LG.pick(['词和图，我先连几个。','我只认得几个……','先连连看，不对你就拆。']):s<.75?LG.pick(['我先连几对。','这些我有把握。']):LG.pick(['我先连了。你确认。','一共 '+n+' 对。']));
+  const picks=[], used=new Set(); const good=LG.shuffle(matchableList(true));
+  for(let i=0;i<n;i++){
+    let pk=null;
+    const rightDraw=LG.right();
+    if(rightDraw){ const g=good.find(x=>!used.has(x.w.id)&&!used.has(x.e.id)); if(!g) continue; // no more connectable true pairs: it simply stops
+      pk={a:g.w,b:g.e,real:true,path:g.path}; }
+    else { // wrong but connectable; plausible (same category) with higher skill
+      for(let k=0;k<500&&!pk;k++){
+        const w=LG.pick(Bd.tiles.filter(t=>t.kind==='w')), e=LG.pick(Bd.tiles.filter(t=>t.kind==='e'));
+        if(w.pair===e.pair||used.has(w.id)||used.has(e.id)) continue;
+        if(k<250&&Math.random()<.4+.5*s&&w.cat!==e.cat) continue;
+        const path=pathOf(w,e); if(path) pk={a:w,b:e,real:false,path};
+      }
+    }
+    if(!pk) continue; used.add(pk.a.id); used.add(pk.b.id); picks.push(pk);
+  }
+  Bd.aiTot=picks.length;
+  await sleep(700);
+  for(const p of picks){
+    if(Bd.tok!==tok) return;
+    p.a.locked=p.b.locked=true; p.a.el.classList.add('lock'); p.b.el.classList.add('lock');
+    p.poly=line(p.path,'#8A78E8',4,'8 5',true); p.poly.style.opacity=.9;
+    const li=document.createElement('div'); li.className='pi'; li.innerHTML=`<span class="t">${p.a.txt} – <em>${p.b.txt}</em></span><button class="y" title="对">✓</button><button class="n" title="错">✗</button>`;
+    li.onmouseenter=()=>{ p.poly.setAttribute('stroke-width',8); p.a.el.style.transform=p.b.el.style.transform='translateY(-3px)'; };
+    li.onmouseleave=()=>{ p.poly.setAttribute('stroke-width',4); p.a.el.style.transform=p.b.el.style.transform=''; };
+    li.querySelector('.y').onclick=()=>resolve(p,true,li); li.querySelector('.n').onclick=()=>resolve(p,false,li);
+    p.li=li; plEl.appendChild(li); Bd.pending.push(p); document.getElementById('lPn').textContent=picks.length;
+    await sleep(380);
+  }
+  if(Bd.tok!==tok) return;
+  Bd.running=true; Bd.last=performance.now(); Bd.timer=setInterval(tick,100);
+  if(!picks.length) LG.say('……我连不出来。');
+}
+function resolve(p,said,li){
+  if(Bd.ended||p.done) return; p.done=true;
+  const truth=p.real, ok=said===truth;
+  Bd.pending=Bd.pending.filter(x=>x!==p); li.remove(); p.poly.remove();
+  p.a.locked=p.b.locked=false; p.a.el.classList.remove('lock'); p.b.el.classList.remove('lock'); p.a.el.style.transform=p.b.el.style.transform='';
+  if(p.real) Bd.aiRight++; LG.set('sAi',Bd.aiRight+' / '+Bd.aiTot);
+  let say;
+  if(said&&truth){ doMatch(p.a,p.b,p.path,'ai'); say=LG.pick(['「'+p.a.txt+'」就是 '+p.b.txt+'。记住了。','对。','我们想的一样。']); }
+  else if(!said&&!truth){ pay(1,.6,p.a.el); LG.hist('ok'); msg('拆对了：「'+p.a.txt+'」不是 '+p.b.txt); say=LG.pick(['……原来「'+p.a.txt+'」不是 '+p.b.txt+'。','我连错了。你拆得对。','我把它们混在一起了。']); line(p.path,'#E33E33',4,'3 6'); }
+  else if(said&&!truth){ pay(0,-.6,p.a.el); LG.hist('no'); msg('这一对其实不是一对！连线作废'); LG.shake(p.a.el); LG.shake(p.b.el); say=LG.pick(['你确认了？……可它们不是一对。','这条线是我连错的，你不该信我。']); }
+  else { pay(0,-.3,p.a.el); LG.hist('no'); msg('这一对本来是对的，被你拆开了。'); say=LG.pick(['它们本来就是一对。','我是对的……你可以自己再连。']); line(p.path,'#E8A317',4,'3 6'); }
+  LG.say(say);
+  updHud(); checkDead();
+}
+function pay(samples,money,el){ Bd.pay+=money; LG.give(samples,money,el); LG.set('sPay','¥'+Bd.pay.toFixed(1)); }
+
+/* ---------- player interaction ---------- */
+function onTile(t){
+  if(!Bd||Bd.ended||!Bd.running||t.gone) return;
+  if(t.locked){ msg('这两块灵光连着，先点它的 ✓ 或 ✗'); LG.shake(t.el); return; }
+  const s=Bd.sel;
+  if(!s){ Bd.sel=t; t.el.classList.add('sel'); return; }
+  if(s===t){ t.el.classList.remove('sel'); Bd.sel=null; return; }
+  s.el.classList.remove('sel'); Bd.sel=null;
+  if(!isPair(s,t)){ msg('不是一对：「'+(s.kind==='w'?s.txt:t.txt)+'」对不上这个图'); [s,t].forEach(x=>{ x.el.classList.remove('shk'); void x.el.offsetWidth; x.el.classList.add('shk'); }); Bd.combo=0; updHud(); return; }
+  const path=pathOf(s,t);
+  if(!path){ msg('是一对，但连不通（最多拐 2 个弯）'); [s,t].forEach(x=>{ x.el.classList.remove('shk'); void x.el.offsetWidth; x.el.classList.add('shk'); }); return; }
+  doMatch(s,t,path,'me');
+}
+function doMatch(a,b,path,who){
+  const now=performance.now();
+  if(who==='me'){ Bd.combo=(now-Bd.lastMatch<4500)?Bd.combo+1:1; Bd.lastMatch=now; }
+  const bonus=who==='me'?Math.min(.5,(Bd.combo-1)*.1):0;
+  line(path,who==='ai'?'#8A78E8':'#2932E1',5);
+  a.gone=b.gone=true; a.el.classList.add('gone'); b.el.classList.add('gone'); Bd.grid[a.r][a.c]=null; Bd.grid[b.r][b.c]=null;
+  Bd.matched++; Bd.t=Math.min(TIME,Bd.t+1.5);
+  pay(1,.5+bonus,b.el); LG.hist('ok'); LG.set('sPair',Bd.matched+' / '+PAIRS);
+  if(Bd.combo>=3&&who==='me') LG.float(a.el,'连击 ×'+Bd.combo,'var(--orange)');
+  updHud();
+  if(Bd.matched>=PAIRS){ setTimeout(()=>finish(true),500); return; }
+  checkDead();
+}
+function checkDead(){
+  if(Bd.ended) return;
+  if(matchableList(true).length) return;
+  if(Bd.pending.length){ msg('暂时没有能连的，先处理灵光的连线'); return; }
+  msg('无解了，自动洗牌'); setTimeout(()=>shuffle(true),500);
+}
+function shuffle(auto){
+  if(Bd.ended||!Bd.running) return;
+  const free=Bd.tiles.filter(t=>!t.gone&&!t.locked); if(free.length<2) return;
+  const spots=free.map(t=>[t.r,t.c]);
+  for(let k=0;k<60;k++){
+    const sh=LG.shuffle(spots); free.forEach((t,i)=>{ Bd.grid[t.r][t.c]=null; }); free.forEach((t,i)=>{ t.r=sh[i][0]; t.c=sh[i][1]; Bd.grid[t.r][t.c]=t; });
+    if(matchableList(true).length||k===59) break;
+  }
+  free.forEach(place); if(Bd.sel){ Bd.sel.el.classList.remove('sel'); Bd.sel=null; }
+  if(!auto){ Bd.t=Math.max(1,Bd.t-5); updHud(); LG.say(LG.pick(['都乱了。','……位置变了，但它们还是一对一对的。'])); }
+  svg.querySelectorAll('polyline:not([stroke-dasharray="8 5"])').forEach(p=>p.remove());
+  // keep purple lines valid: the tiles on them did not move
+}
+document.getElementById('lShuf').onclick=()=>shuffle(false);
+document.getElementById('lHint').onclick=async()=>{
+  if(!Bd||!Bd.running||Bd.ended||performance.now()<Bd.hintT) return; Bd.hintT=performance.now()+2500;
+  const s=LG.skill(); const good=matchableList(true);
+  Bd.tiles.forEach(t=>t.el&&t.el.classList.remove('hint'));
+  pay(0,-.3,document.getElementById('lHint'));
+  let a,b,right=Math.random()<.55+.45*s&&good.length;
+  if(right){ const g=LG.pick(good); a=g.w; b=g.e; }
+  else { for(let k=0;k<300;k++){ const w=LG.pick(Bd.tiles.filter(t=>t.kind==='w'&&!t.gone&&!t.locked)), e=LG.pick(Bd.tiles.filter(t=>t.kind==='e'&&!t.gone&&!t.locked)); if(!w||!e||w.pair===e.pair) continue; if(pathOf(w,e)){ a=w; b=e; break; } } }
+  if(!a){ LG.say('我也找不到了……'); return; }
+  a.el.classList.add('hint'); b.el.classList.add('hint');
+  LG.say(right?(s>.75?LG.pick(['这对。','「'+a.txt+'」在这里。']):LG.pick(['这一对吧？','我觉得是这个。'])):LG.pick(['这对……吗？我不太确定。','（它犹豫地指了一对。）']));
+  setTimeout(()=>{ a.el&&a.el.classList.remove('hint'); b.el&&b.el.classList.remove('hint'); },2600);
+};
+
+/* ---------- end ---------- */
+async function finish(win){
+  if(Bd.ended) return; Bd.ended=true; clearInterval(Bd.timer); Bd.running=false;
+  const bonus=win?Math.round(Math.min(6,Bd.t/12)*10)/10:0; if(bonus>0) pay(0,bonus,boardEl);
+  const s=LG.skill(); let line_;
+  if(s<.4) line_=win?'都连完了。我记住了几个词和图的对子。':'来不及了……我只会连很少的几对。';
+  else if(s<.75) line_=win?`我连了 ${Bd.aiTot} 对，对了 ${Bd.aiRight} 对。其余的是你教我的。`:'下一盘我连得更准一点。';
+  else line_=win?'「猫」就是「🐱」。这些我都认得了。……你呢，认得什么是「🐱」吗？':'我连的那些对了。剩下的……你再快一点。';
+  await sleep(700);
+  lOver.style.display='flex';
+  lOver.innerHTML=`<h2>${win?'🔗 全部连完！':'⏰ 时间到'}</h2>
+  <div class="sc"><div><b>${Bd.matched}/${PAIRS}</b>配对</div><div><b style="color:var(--ai)">${Bd.aiRight}/${Bd.aiTot}</b>灵光连对</div><div><b>${Math.ceil(Bd.t)}</b>剩余秒</div><div><b style="color:var(--red)">¥${Bd.pay.toFixed(1)}</b>本盘收入</div></div>
+  <p>${win?'每连对一组，就是一条「词 ↔ 图」的样本。':'还剩 '+(remaining().length/2)+' 对没连。'}</p>
+  <div class="aiq">灵光：「${line_}」</div><button class="btn" id="lAgain">下一盘</button>`;
+  document.getElementById('lAgain').onclick=startBoard; LG.say(line_);
+}
+
+/* ---------- start screen ---------- */
+function startScreen(){
+  lOver.style.display='flex';
+  lOver.innerHTML=`<h2>🔗 连连看</h2><p>棋盘上有 ${PAIRS} 组「词 ↔ 图」：猫 ↔ 🐱，下雨 ↔ 🌧️，生日 ↔ 🎂……<br>点一个词，再点它对应的图，两块之间连线<b>不超过 2 个拐弯</b>就消掉。<br><b style="color:var(--ai)">灵光会先连几对（紫线）。</b>对的点 ✓，错的点 ✗。<br>${TIME} 秒；连得越快，连击奖励越多。可以洗牌，也可以请灵光提示。</p><p style="font-size:12px">灵光现在的水平：<b id="lSk"></b></p><button class="btn" id="lGo">开始连线</button>`;
+  document.getElementById('lGo').onclick=startBoard; skHint();
+}
+function skHint(){ const e=document.getElementById('lSk'); if(!e) return; const s=LG.skill(); e.textContent=Math.round(s*100)+'%'+(s<.4?'（它常把「猫」和「🐶」连在一起）':s<.75?'（它大多连得对）':'（它几乎不会连错）'); }
+LG.onSkill=skHint;
+startScreen();
+</script>
+</body>
+</html>

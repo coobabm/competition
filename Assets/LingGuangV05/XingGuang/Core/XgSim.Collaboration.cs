@@ -384,7 +384,7 @@ namespace LingGuangV05.XingGuang
             }
             bool correct = card.guess == card.truth;
             bool audited = CollaborationEnabled && !correct && Has("label.audit") && Roll() < AuditProbability;
-            double pay = 0, fine = 0, unitPay = PayFor(card.dataset, card.level) * QualityPayMultiplier;
+            double pay = 0, fine = 0, unitPay = PayFor(card.dataset, card.level) * QualityPayMultiplier * RelicIncomeFactor;
             bool spotChecked = false;
             if (audited) EnqueueReview(card);
             else

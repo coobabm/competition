@@ -18,6 +18,8 @@ namespace LingGuangV05.XingGuang
         public bool loveLastYes;
         /// <summary>Times it was asked before stage 5, when it could only answer 是 or 否 (the inner voice reacts to the first).</summary>
         public int loveEarlyAsked;
+        /// <summary>「她爱我吗」 asked in a row in its YY chat, any other line resets it (问三遍也是否).</summary>
+        public int loveRun;
     }
 
     /// <summary>
@@ -63,6 +65,16 @@ namespace LingGuangV05.XingGuang
             string lower = (question ?? "").Trim().ToLowerInvariant();
             foreach (var p in LovePhrasesEn) if (lower.Contains(p)) return true;
             return false;
+        }
+
+        /// <summary>Love questions in a row for 问三遍也是否.</summary>
+        public const int LoveRunCard = 3;
+
+        /// <summary>Every line the player sends it in YY: three 「她爱我吗」 in a row earn 问三遍也是否.</summary>
+        public void CountLoveAsk(string line)
+        {
+            S.loveRun = IsLoveQuestion(line) ? S.loveRun + 1 : 0;
+            if (S.loveRun >= LoveRunCard) Earn("life.love.thrice");
         }
 
         /// <summary>The inner voice has wondered (§6.2): the chip appears. Once.</summary>

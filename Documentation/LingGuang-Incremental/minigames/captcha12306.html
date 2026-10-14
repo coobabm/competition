@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 12306 验证码</title>
+<!--
+  12306 验证码 (春运 2015): a 4x2 grid of "photos", an instruction like 「请点击下图中所有的 锅铲」, 8 s per screen.
+  Every selected / unselected cell is a yes/no image tag, which is the labelling side effect.
+  灵光 pre-highlights the cells it believes match (purple outline). Its per-cell accuracy follows LG.skill(),
+  gets worse on the absurd rules, and it reacts slower at low skill (the hint shows up later).
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.cap{position:absolute;inset:0;background:linear-gradient(#EAF1FB,#F7F9FD);overflow:hidden}
+.cap .top{height:34px;background:#0A3E7E;color:#fff;display:flex;align-items:center;padding:0 16px;gap:14px;font-size:13px}
+.cap .top b{font-size:16px;letter-spacing:2px}
+.cap .top em{font-style:normal;opacity:.75;font-size:12px}
+.cap .fake{position:absolute;left:30px;right:30px;top:50px;color:#98A4B8;font-size:13px;line-height:2}
+.cap .fake .row{display:flex;gap:30px;border-bottom:1px solid #DCE4F0;padding:4px 0}
+.cap .fake .row span:first-child{width:90px}
+.cap .fake .go{margin-top:12px;display:inline-block;background:#F3A12B;color:#fff;border-radius:3px;padding:2px 24px;opacity:.7}
+.cap .mask{position:absolute;inset:34px 0 0 0;background:#0007}
+.dlg{position:absolute;left:50%;top:50px;width:772px;margin-left:-386px;background:#fff;border:1px solid #9AA4B8;box-shadow:0 8px 30px #0006;border-radius:3px}
+.dlg .th{height:34px;background:#F1F4F9;border-bottom:1px solid #DDE3EE;display:flex;align-items:center;padding:0 12px;font-weight:600;color:#333;gap:8px}
+.dlg .th .sp{flex:1}.dlg .th .t{font-weight:400;color:#7A7F8C;font-size:12px}
+.dlg .th .x{color:#999;font-size:16px}
+.ask{padding:10px 24px 8px;font-size:20px;color:#333;display:flex;align-items:center;gap:10px;height:56px}
+.ask b{color:#fff;background:#E64B3B;padding:0 12px;border-radius:3px;font-size:22px;line-height:36px}
+.ask small{font-size:12px;color:#fff;background:#8A78E8;border-radius:8px;padding:0 6px;line-height:18px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 24px}
+.cell{height:140px;border-radius:3px;position:relative;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:transform .08s}
+.cell:hover{transform:scale(.985)}
+.cell .em{position:absolute;left:0;right:0;top:0;bottom:16px;display:flex;align-items:center;justify-content:center;font-size:74px;text-shadow:0 4px 8px #0003;line-height:1}
+.cell .em svg{width:84px;height:84px;filter:drop-shadow(0 4px 5px #0004)}
+.cell .cp{position:absolute;left:0;right:0;bottom:0;height:20px;background:#000a;color:#fff;font-size:12px;text-align:center;line-height:20px}
+.cell .no{position:absolute;left:5px;top:3px;color:#fff;font-size:11px;background:#0006;border-radius:3px;padding:0 4px}
+.cell .ck{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:#2D8CF0;color:#fff;display:none;align-items:center;justify-content:center;font-size:15px;box-shadow:0 1px 4px #0006}
+.cell.sel{border-color:#2D8CF0}.cell.sel .ck{display:flex}
+.cell.sel::after{content:"";position:absolute;inset:0;background:#2D8CF044}
+.cell.aiy{outline:3px solid var(--ai);outline-offset:-3px;z-index:1}
+.cell.aiy .aib{display:block}
+.aib{display:none;position:absolute;left:5px;bottom:24px;background:var(--ai);color:#fff;border-radius:9px;font-size:11px;padding:0 6px;line-height:18px}
+.cell.good::before,.cell.miss::before{content:"";position:absolute;inset:0;z-index:2;box-shadow:inset 0 0 0 4px var(--green)}
+.cell.miss::before{box-shadow:inset 0 0 0 4px var(--red)}
+.cell.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+.msg{height:26px;padding:4px 24px 0;color:#E64B3B;font-size:14px;font-weight:600}
+.msg.ok{color:var(--green)}
+.tm{margin:0 24px;height:7px;background:#E7EAF1;border-radius:4px;overflow:hidden}
+.tm i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.bt{display:flex;align-items:center;gap:12px;padding:10px 24px 12px}
+.bt .info{flex:1;color:#7A7F8C;font-size:12px}
+.sub{background:#F3A12B;border-color:#F3A12B;padding:7px 38px;font-size:16px}.sub:hover{background:#F5AE45}
+.ref{background:#fff;color:#555;border:1px solid #CCD2DE}.ref:hover{background:#F4F6FA}
+.over{background:#fffffff2}
+.over .tag12{background:#E64B3B;color:#fff;border-radius:3px;padding:0 10px}
+.res{display:grid;grid-template-columns:auto auto;gap:6px 26px;text-align:left;font-size:15px;color:#333}
+.res b{text-align:right}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'captcha12306', title:'12306 验证码', subtitle:'春运抢票 · 点图识物', icon:'票', dataset:'图片标签',
+  stats:[['通过','sOk'],['验证码错误','sNo'],['连击','sCombo'],['灵光猜对格数','sAi','—'],['收入','sPay','¥0']], statsNote:'一屏 8 格 = 8 个标签',
+  aiHello:'春运的票……我也想抢一张。',
+  rule:'<b>玩法</b>：8 秒内点出所有符合要求的图，按「提交」(Enter)。键盘 1–8 选格子，R 刷新。<br><b>标签</b>：你选的和没选的，都是图片的标签。<br><span style="color:var(--ai)">紫色框 = 灵光觉得是。水平低时它出得慢，还会看走眼。</span>'
+});
+
+/* ---------- sound ---------- */
+let AC;
+function beep(f,d,type,v,when){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(when||0);
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(v||.05,t); g.gain.exponentialRampToValueAtTime(.0001,t+(d||.08)); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+(d||.08)+.02);}catch(e){} }
+const sfx={ok(){beep(660,.1,'triangle',.07);beep(880,.14,'triangle',.07,.09);}, bad(){beep(160,.25,'sawtooth',.05);}, tick(){beep(1200,.03,'square',.02);}, sel(){beep(520,.04,'triangle',.04);}};
+
+/* ---------- data: pictures and their tags ---------- */
+const SVG={
+  '锅铲':'<svg viewBox="0 0 100 100"><g transform="rotate(38 50 50)"><rect x="45" y="46" width="10" height="50" rx="5" fill="#8A5A2B"/><path d="M28 6h44v16q0 16-14 18H42Q28 38 28 22z" fill="#C5CBD4" stroke="#6B727D" stroke-width="2.5"/><path d="M40 12v18M50 12v18M60 12v18" stroke="#6B727D" stroke-width="3" stroke-linecap="round"/><rect x="42" y="38" width="16" height="12" fill="#9AA2AE"/></g></svg>',
+  '漏斗':'<svg viewBox="0 0 100 100"><path d="M10 16h80L58 56v32H42V56z" fill="#F2A93B" stroke="#9B6410" stroke-width="3" stroke-linejoin="round"/><ellipse cx="50" cy="16" rx="40" ry="6" fill="#FFD27A" stroke="#9B6410" stroke-width="3"/></svg>'
+};
+// e: emoji or SVG key; n: name; t: tags; cap: caption for the "not yet on sale" round
+const ITEMS=[
+  {e:'svg:锅铲',n:'锅铲',t:['锅铲','厨具']},
+  {e:'svg:漏斗',n:'漏斗',t:['漏斗','厨具']},
+  {e:'🍳',n:'煎锅',t:['厨具','圆的东西']},
+  {e:'🔪',n:'菜刀',t:['厨具']},
+  {e:'🍴',n:'刀叉',t:['厨具']},
+  {e:'☕',n:'咖啡',t:['会烫的东西']},
+  {e:'🍎',n:'苹果',t:['红色的东西','能吃的','圆的东西']},
+  {e:'🍌',n:'香蕉',t:['能吃的']},
+  {e:'🍓',n:'草莓',t:['红色的东西','能吃的']},
+  {e:'🍉',n:'西瓜',t:['能吃的','圆的东西']},
+  {e:'🍔',n:'汉堡',t:['能吃的']},
+  {e:'🍜',n:'面条',t:['能吃的','会烫的东西','想回家']},
+  {e:'🍚',n:'米饭',t:['能吃的','想回家']},
+  {e:'🐱',n:'猫',t:['动物','毛茸茸的']},
+  {e:'🐶',n:'狗',t:['动物','毛茸茸的']},
+  {e:'🐔',n:'鸡',t:['动物']},
+  {e:'🐸',n:'青蛙',t:['动物']},
+  {e:'🐘',n:'大象',t:['动物']},
+  {e:'🚗',n:'汽车',t:['交通工具','红色的东西','想回家']},
+  {e:'🚌',n:'公交车',t:['交通工具','想回家']},
+  {e:'🚄',n:'高铁',t:['交通工具','想回家']},
+  {e:'✈️',n:'飞机',t:['交通工具','想回家']},
+  {e:'🚲',n:'自行车',t:['交通工具']},
+  {e:'🌸',n:'樱花',t:['花']},
+  {e:'🌻',n:'向日葵',t:['花']},
+  {e:'🌹',n:'玫瑰',t:['花','红色的东西']},
+  {e:'🌵',n:'仙人掌',t:[]},
+  {e:'🔥',n:'火',t:['红色的东西','会烫的东西','会发光的东西']},
+  {e:'🧸',n:'小熊',t:['毛茸茸的']},
+  {e:'🕯',n:'蜡烛',t:['会发光的东西','会烫的东西']},
+  {e:'💡',n:'灯泡',t:['会发光的东西','圆的东西']},
+  {e:'☀️',n:'太阳',t:['会发光的东西','圆的东西','会烫的东西']},
+  {e:'🌙',n:'月亮',t:['会发光的东西']},
+  {e:'⚽',n:'足球',t:['圆的东西']},
+  {e:'🏀',n:'篮球',t:['圆的东西']},
+  {e:'🎈',n:'气球',t:['红色的东西','圆的东西']},
+  {e:'🔔',n:'铃铛',t:['会响的东西']},
+  {e:'📞',n:'电话',t:['会响的东西']},
+  {e:'⏰',n:'闹钟',t:['会响的东西','圆的东西']},
+  {e:'🎺',n:'喇叭',t:['会响的东西']},
+  {e:'🧧',n:'红包',t:['红色的东西','想回家']},
+  // 2016 joke round: captions are shown in that round
+  {e:'📱',n:'iPhone 7',t:['未上市'],cap:'iPhone 7'},
+  {e:'🔋',n:'Note 7',t:['未上市'],cap:'Galaxy Note 7'},
+  {e:'🎧',n:'AirPods',t:['未上市'],cap:'AirPods'},
+  {e:'⚡',n:'Pokémon GO',t:['未上市'],cap:'Pokémon GO'},
+  {e:'🎮',n:'Switch',t:['未上市'],cap:'任天堂 Switch'},
+  {e:'⌚',n:'Apple Watch',t:['已上市'],cap:'Apple Watch'},
+  {e:'🕶',n:'Oculus Rift',t:['已上市'],cap:'Oculus Rift'},
+  {e:'💿',n:'光盘',t:['已上市'],cap:'光盘'},
+  {e:'💻',n:'MacBook',t:['已上市'],cap:'MacBook'},
+  {e:'📺',n:'电视机',t:['已上市'],cap:'电视机'},
+  {e:'📷',n:'相机',t:['已上市'],cap:'单反相机'},
+  {e:'💾',n:'软盘',t:['已上市'],cap:'软盘'},
+  {e:'📻',n:'收音机',t:['已上市'],cap:'收音机'},
+];
+const has=(i,tag)=>i.t.indexOf(tag)>=0;
+// d: difficulty 0..3; joke rules show captions and are hard for 灵光
+const RULES=[
+  {q:'锅铲',test:i=>has(i,'锅铲'),d:0},
+  {q:'漏斗',test:i=>has(i,'漏斗'),d:0},
+  {q:'动物',test:i=>has(i,'动物'),d:0},
+  {q:'交通工具',test:i=>has(i,'交通工具'),d:0},
+  {q:'花',test:i=>has(i,'花'),d:0},
+  {q:'厨具',test:i=>has(i,'厨具'),d:0},
+  {q:'红色的东西',test:i=>has(i,'红色的东西'),d:1},
+  {q:'能吃的',test:i=>has(i,'能吃的'),d:1},
+  {q:'会发光的东西',test:i=>has(i,'会发光的东西'),d:1},
+  {q:'圆的东西',test:i=>has(i,'圆的东西'),d:1},
+  {q:'毛茸茸的',test:i=>has(i,'毛茸茸的'),d:1},
+  {q:'会响的东西',test:i=>has(i,'会响的东西'),d:1},
+  {q:'会烫的东西',test:i=>has(i,'会烫的东西'),d:2},
+  {q:'让你想回家过年的东西',test:i=>has(i,'想回家'),d:2},
+  {q:'不能吃的东西',test:i=>!has(i,'能吃的'),d:2,notag:true},
+  {q:'2016 年还没上市的东西',test:i=>has(i,'未上市'),d:3,joke:true},
+];
+const DSEQ=[0,0,1,1,1,2,1,2,3,2];
+const TOTAL=DSEQ.length, TIME=8;
+
+/* ---------- state ---------- */
+const S={on:false,screen:0,ok:0,bad:0,combo:0,best:0,pay:0,aiR:0,aiT:0,rule:null,cells:[],sel:new Set(),aiSel:new Set(),t0:0,raf:0,used:[],locked:false,hintTO:0,refreshes:0,fastest:99};
+
+stage.innerHTML=`
+<div class="cap">
+  <div class="top"><b>12306</b><span>中国铁路客户服务中心</span><em>· 2016 春运 · 欢迎 老周 登录</em></div>
+  <div class="fake">
+    <div class="row"><span>G1 次</span><span>北京南 → 上海虹桥</span><span>二等座 ¥553</span></div>
+    <div class="row"><span>G7 次</span><span>北京南 → 上海虹桥</span><span>二等座 ¥553</span></div>
+    <div class="row"><span>D321 次</span><span>北京 → 广州</span><span>硬卧 ¥ 无</span></div>
+    <span class="go">预 订</span>
+  </div>
+  <div class="mask"></div>
+  <div class="dlg" id="dlg">
+    <div class="th">验证码<span class="t">· 请完成以下验证后继续</span><span class="sp"></span><span class="x">✕</span></div>
+    <div class="ask" id="ask">请点击下图中所有的 <b id="askQ">锅铲</b><small id="askTag" style="display:none">提前</small><span style="flex:1"></span><span style="font-size:13px;color:#7A7F8C" id="askN">第 1/10 屏</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="msg" id="msg">&nbsp;</div>
+    <div class="tm"><i id="tm"></i></div>
+    <div class="bt"><span class="info" id="info">键盘：1–8 选图 · Enter 提交 · R 刷新</span><button class="btn ref" id="bRef">🔄 刷新 (−¥0.3)</button><button class="btn sub" id="bSub">提 交</button></div>
+  </div>
+  <div class="over" id="over"></div>
+</div>`;
+const $=id=>document.getElementById(id);
+const grid=$('grid');
+
+/* ---------- build one screen ---------- */
+function pickRule(d){
+  let pool=RULES.filter(r=>r.d===d&&S.used.indexOf(r)<0);
+  if(!pool.length) pool=RULES.filter(r=>r.d===d);
+  return LG.pick(pool);
+}
+function buildCells(rule){
+  let pool=ITEMS.slice();
+  if(rule.joke) pool=pool.filter(i=>i.cap);
+  const yes=LG.shuffle(pool.filter(rule.test)), no=LG.shuffle(pool.filter(i=>!rule.test(i)));
+  const k=Math.min(yes.length,1+LG.rnd(3)+(rule.notag?2:0), rule.notag?5:3);
+  const picked=yes.slice(0,Math.max(1,k)).concat(no.slice(0,8-Math.max(1,k)));
+  return LG.shuffle(picked).map(it=>({it,truth:rule.test(it)}));
+}
+function paint(c,idx,showCap){
+  const h=LG.rnd(360), h2=(h+40+LG.rnd(80))%360;
+  const el=document.createElement('div'); el.className='cell';
+  el.style.background=`radial-gradient(circle at ${20+LG.rnd(60)}% ${20+LG.rnd(60)}%,hsla(${h2},70%,78%,.9),transparent 55%),repeating-linear-gradient(${LG.rnd(180)}deg,hsla(${h},30%,92%,.5) 0 6px,transparent 6px 14px),linear-gradient(${LG.rnd(360)}deg,hsl(${h},55%,76%),hsl(${h2},50%,64%))`;
+  const rot=LG.rnd(30)-15, sc=(.88+Math.random()*.3).toFixed(2);
+  const body=c.it.e.indexOf('svg:')===0?SVG[c.it.e.slice(4)]:c.it.e;
+  el.innerHTML=`<span class="no">${idx+1}</span><div class="em" style="transform:rotate(${rot}deg) scale(${sc})">${body}</div>${showCap?`<div class="cp">${c.it.cap||c.it.n}</div>`:''}<span class="aib">灵</span><span class="ck">✓</span>`;
+  el.onclick=()=>toggle(idx);
+  c.el=el; return el;
+}
+function toggle(i){
+  if(!S.on||S.locked) return;
+  const c=S.cells[i]; if(!c) return;
+  if(S.sel.has(i)){ S.sel.delete(i); c.el.classList.remove('sel'); } else { S.sel.add(i); c.el.classList.add('sel'); }
+  c.el.classList.remove('pop'); void c.el.offsetWidth; c.el.classList.add('pop'); sfx.sel();
+}
+function show(rule,keepTimer){
+  S.rule=rule; S.cells=buildCells(rule); S.sel.clear(); S.aiSel.clear(); S.locked=false;
+  grid.innerHTML=''; S.cells.forEach((c,i)=>grid.appendChild(paint(c,i,rule.joke)));
+  $('askQ').textContent=rule.q; $('askTag').style.display=rule.joke?'':'none';
+  $('askN').textContent='第 '+(S.screen+1)+'/'+TOTAL+' 屏';
+  $('msg').innerHTML='&nbsp;'; $('msg').className='msg';
+  if(!keepTimer) S.t0=performance.now();
+  scheduleHint();
+}
+
+/* ---------- 灵光's guess ---------- */
+function aiAcc(rule){ return Math.max(.5,Math.min(.98,.5+.47*LG.skill()-.06*rule.d-(rule.joke?.08:0))); }
+function scheduleHint(){
+  clearTimeout(S.hintTO);
+  const sk=LG.skill(), acc=aiAcc(S.rule), mine=S.rule, cells=S.cells;
+  const delay=500+2200*(1-sk)+LG.rnd(300);
+  // below 35% skill it sometimes has no idea at all
+  const clueless=sk<.35&&Math.random()<(.35-sk)/.35*.45;
+  S.hintTO=setTimeout(()=>{
+    if(!S.on||S.locked||S.rule!==mine||S.cells!==cells) return;
+    if(clueless){ LG.say(LG.pick(['这个……我没见过。你自己来吧。','我看到的全是色块……','锅铲？是做饭那个吗？我只认识数据。'])); return; }
+    S.aiSel.clear();
+    cells.forEach((c,i)=>{ const right=Math.random()<acc; const says=right?c.truth:!c.truth; c.aiSays=says; c.el.classList.toggle('aiy',says); if(says) S.aiSel.add(i); });
+    const n=S.aiSel.size;
+    const hi=sk>.75, mid=sk>.45;
+    LG.say(n===0?(hi?'这屏我看是……一个都没有？不对，再看看。':'我觉得……没有？'):
+      hi?LG.pick(['紫框那几个。快，别耽误抢票。','这种题我见过两百遍了。','标好了，你点就行。']):
+      mid?LG.pick(['我圈了 '+n+' 个，大概对。','紫框是我的意见，别全信。','这个有点像，那个也有点像……']):
+      LG.pick(['我圈了几个，但我不太确定……','这个是锅铲吗？还是漏斗？','别全信我，我刚学。','我觉得全都像，又全都不像。']));
+  },delay);
+}
+
+/* ---------- flow ---------- */
+function nextScreen(){
+  S.screen++;
+  if(S.screen>=TOTAL){ return finish(); }
+  const r=pickRule(DSEQ[S.screen]); S.used.push(r); show(r);
+}
+function submit(auto){
+  if(!S.on||S.locked) return;
+  S.locked=true; clearTimeout(S.hintTO);
+  const left=Math.max(0,TIME-(performance.now()-S.t0)/1000);
+  let allOk=true; S.cells.forEach((c,i)=>{ const picked=S.sel.has(i); if(picked!==c.truth) allOk=false; });
+  // AI stats
+  let aiHit=0; S.cells.forEach((c,i)=>{ if(c.aiSays!==undefined){ S.aiT++; if(c.aiSays===c.truth){ S.aiR++; aiHit++; } } });
+  const aiShown=S.cells.some(c=>c.aiSays!==undefined);
+  LG.set('sAi',S.aiT?Math.round(S.aiR/S.aiT*100)+'%':'—');
+  S.cells.forEach((c,i)=>{ if(c.truth) c.el.classList.add(S.sel.has(i)?'good':'miss'); });
+  if(allOk&&!auto){
+    S.ok++; S.combo++; S.best=Math.max(S.best,S.combo); S.fastest=Math.min(S.fastest,TIME-left);
+    const bonus=+(left/TIME*2).toFixed(1), cb=Math.min(S.combo-1,3)*.5, pay=+(3+bonus+cb).toFixed(1);
+    S.pay+=pay; LG.give(3,pay,$('dlg'),'var(--red)'); LG.hist('ok'); sfx.ok();
+    $('msg').textContent='验证通过 ✓'+(S.combo>1?'　连击 ×'+S.combo:''); $('msg').className='msg ok';
+    LG.say(aiShown?(aiHit===8?'我八格全对！这几张我记住了。':aiHit>=6?'我对了 '+aiHit+' 格，差不多。':'我只对了 '+aiHit+' 格……你比我强。'):'你自己点的？好快。');
+  } else {
+    S.bad++; S.combo=0; S.pay-=.5; LG.give(0,-.5,$('dlg'),'#999'); LG.hist('no'); sfx.bad(); LG.shake($('dlg'));
+    $('msg').textContent=auto?'验证码已过期，请重新选择':'验证码错误，请重新选择'; $('msg').className='msg';
+    LG.say(aiShown&&aiHit>=6&&!auto?LG.pick(['我刚才对了 '+aiHit+' 格，你怎么没听我的？','紫框你都不信……']):LG.pick(['12306 就是这样的，别气。','「验证码错误，请重新选择」——春运名句。','再来。抢票要紧。']));
+  }
+  LG.set('sOk',S.ok); LG.set('sNo',S.bad); LG.set('sCombo',S.combo); LG.set('sPay','¥'+S.pay.toFixed(1));
+  setTimeout(()=>{ if(S.on) nextScreen(); },allOk&&!auto?850:1250);
+}
+function refresh(){
+  if(!S.on||S.locked) return;
+  S.refreshes++; S.pay-=.3; LG.give(0,-.3,$('dlg'),'#999'); LG.set('sPay','¥'+S.pay.toFixed(1)); sfx.tick();
+  show(S.rule,true); LG.say('换一批。这回我重新看。');
+}
+function loop(){
+  if(!S.on) return;
+  const el=(performance.now()-S.t0)/1000, f=Math.max(0,1-el/TIME);
+  const bar=$('tm'); bar.style.transform=`scaleX(${f})`; bar.style.background=f>.5?'var(--green)':f>.25?'var(--gold)':'var(--red)';
+  if(!S.locked){
+    const sec=Math.ceil(TIME-el); if(sec!==S.lastSec&&sec<=3&&sec>0){ sfx.tick(); } S.lastSec=sec;
+    if(el>=TIME) submit(true);
+  }
+  S.raf=requestAnimationFrame(loop);
+}
+function start(){
+  Object.assign(S,{on:true,screen:0,ok:0,bad:0,combo:0,best:0,pay:0,aiR:0,aiT:0,used:[],refreshes:0,fastest:99,locked:false});
+  ['sOk','sNo','sCombo'].forEach(k=>LG.set(k,0)); LG.set('sAi','—'); LG.set('sPay','¥0');
+  const h=document.getElementById('lgHist'); if(h) h.innerHTML='';
+  $('over').style.display='none';
+  const r=pickRule(DSEQ[0]); S.used=[r]; show(r); cancelAnimationFrame(S.raf); loop();
+  LG.say('开始抢票。我帮你看图。');
+}
+function finish(){
+  S.on=false; cancelAnimationFrame(S.raf); clearTimeout(S.hintTO);
+  const aiPct=S.aiT?Math.round(S.aiR/S.aiT*100):0;
+  const verdict=S.ok>=9?'「您已通过验证」。可惜票早就没了。':S.ok>=6?'手速还行，至少比黄牛慢一点点。':S.ok>=3?'「请重新选择」你看了多少遍？':'建议明天凌晨再来。';
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>🎫 抢票结束</h2><p>${verdict}</p>
+   <div class="res"><span>通过</span><b>${S.ok} / ${TOTAL}</b><span>最高连击</span><b>×${S.best}</b><span>收入</span><b style="color:var(--red)">¥${S.pay.toFixed(1)}</b><span>灵光猜对的格子</span><b style="color:var(--ai)">${aiPct}%</b><span>最快一屏</span><b>${S.fastest<99?S.fastest.toFixed(1)+' 秒':'—'}</b></div>
+   <p style="font-size:13px">${aiPct>=85?'灵光的紫框已经很靠谱了。':aiPct>=65?'灵光大致能认出来，难题还会错。':'灵光还在乱猜，多喂它几屏。'}</p>
+   <button class="btn" id="again">再抢一次 (Enter)</button>`;
+  $('again').onclick=start;
+  LG.say(S.ok>=7?'这票……抢到了吗？':'下次我会认得更多。');
+}
+function intro(){
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>🎫 12306 验证码</h2>
+   <p>春运抢票，先过验证码。每屏 8 张图，<b>8 秒</b>内点出<b>所有</b>符合题目的图，再「提交」。<br>
+   题目会越来越离谱：「所有的 <span class="tag12">能吃的</span>」「所有的 <span class="tag12">2016 年还没上市的</span>」……<br>
+   错了就是那句——「验证码错误，请重新选择」。通过 +¥3，快和连击有加成，错一屏 −¥0.5。<br>
+   灵光会在图上圈<span style="color:var(--ai)"><b>紫框</b></span>：它水平越低，出得越慢，圈得越不准。</p>
+   <button class="btn" id="go">开始抢票 (Space)</button>`;
+  $('go').onclick=start;
+}
+$('bSub').onclick=()=>submit(false);
+$('bRef').onclick=refresh;
+addEventListener('keydown',e=>{
+  if(!S.on){ if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); start(); } return; }
+  if(e.key>='1'&&e.key<='8') toggle(+e.key-1);
+  else if(e.key==='Enter'){ e.preventDefault(); submit(false); }
+  else if(e.key==='r'||e.key==='R') refresh();
+});
+LG.onSkill=()=>{ if(S.on&&!S.locked&&!S.sel.size) scheduleHint(); };
+intro();
+</script>
+</body>
+</html>

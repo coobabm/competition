@@ -43,7 +43,7 @@ namespace LingGuangV05.XingGuang
         /// The accuracy that decides whether its 是 / 否 is kept or flipped: the best of the yes/no datasets, never below a
         /// coin toss (an untrained 灵光 really answers at random).
         /// </summary>
-        public double YesNoAccuracy => Math.Max(.5, BestOf(YesNoDatasets));
+        public double YesNoAccuracy { get { double b = Math.Max(.5, BestOf(YesNoDatasets)); return Math.Max(b, Math.Min(.99, b + RelicFx.yesNo)); } }
 
         /// <summary>
         /// The answer the 常识判断 desk taught for this question, if it is one of the bank's statements (asked as it is,
@@ -57,6 +57,25 @@ namespace LingGuangV05.XingGuang
                 if (SenseKey(p.text) == q || p.textEn.Length > 0 && SenseKey(p.textEn) == q) return p.yes;
             return null;
         }
+
+        /// <summary>
+        /// The stage-1 yes/no rule in one place: what 灵光 finally says when its model leans <paramref name="modelYes"/> on this
+        /// question. Learned (<see cref="SenseVoiceLearned"/> or better): it never guesses wrong, and a statement it was taught
+        /// gets the taught answer. Below that: flipped with probability 1 − <see cref="YesNoAccuracy"/>.
+        /// </summary>
+        public bool YesNoAnswer(bool modelYes, string question, Random rng)
+        {
+            double accuracy = YesNoAccuracy;
+            if (accuracy >= SenseVoiceLearned) { bool? taught = TaughtAnswer(question); return taught ?? modelYes; }
+            return rng.NextDouble() > accuracy ? !modelYes : modelYes;
+        }
+
+        /// <summary>
+        /// What 灵光 says when the player asks it for help on a 常识判断 statement (the quiz's 求助): its real yes/no ability,
+        /// the same rule the chat gate uses. Early it is a coin toss, so it is often wrong; once learned it is right on every
+        /// statement the desk taught, and the bank is exactly what the desk teaches.
+        /// </summary>
+        public bool SenseHelp(XgPhrase statement, Random rng) { return YesNoAnswer(statement.yes, statement.text, rng); }
 
         static string SenseKey(string text)
         {
@@ -101,11 +120,11 @@ namespace LingGuangV05.XingGuang
             else if (!S.senseVoiceOfCourse && S.yesNoReplies >= 2)
             {
                 S.senseVoiceOfCourse = true;
-                lines.Add(new XgVoiceLine("也是。什么都还没教过它。", "Of course. Nobody has taught it anything yet.", 2.6f));
+                lines.Add(new XgVoiceLine("难道这就是那个人所说的东西？", "Is this the thing that person was talking about?", 2.6f));
                 if (!S.senseVoicePointer)
                 {
                     S.senseVoicePointer = true;
-                    lines.Add(new XgVoiceLine("摆渡众包上有一桌「常识判断」……标给它看，它就能学会？", "Bodu Crowd has a \"Common sense\" desk… if I label those for it, will it learn?", 3.6f));
+                    lines.Add(new XgVoiceLine("摆渡众包有桌「常识判断」……标给它看看？", "Bodu Crowd has a \"Common sense\" desk… if I label those for it, will it learn?", 3.6f));
                 }
             }
             return lines;

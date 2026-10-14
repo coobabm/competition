@@ -393,15 +393,15 @@ namespace LingGuangV05.Core.Girlfriend
             s.aiCaught++;
             if (Mark(s, FlagCaughtAi)) events.Add(GfEvent.Of(GfEventKind.Voice, "first.caught"));
             s.asking = "caught"; s.askDay = now.day;
-            events.Add(GfEvent.Say("caught", "你今天说话怎么怪怪的", "You sound weird today", "这不是你吧？", "This isn't you, is it?"));
-            events.Add(GfEvent.Of(GfEventKind.Choices, "caught", "是 AI 帮我回的", "The AI was answering for me", "就是我啊", "It's me, of course"));
+            events.Add(GfEvent.Say("caught", "你今天说话怎么怪怪的", "You sound weird today", "你有没有认真看我说的？", "Are you reading what I said?"));
+            events.Add(GfEvent.Of(GfEventKind.Choices, "caught", "刚才走神了，对不起", "Sorry, I was distracted", "就是我啊", "It's me, of course"));
             return events;
         }
 
         /// <summary>Her answer to his confession or denial.</summary>
         public static string[] CaughtReply(GirlfriendState s, string answered)
         {
-            if (answered == "admit") return new[] { "……", "…", "所以刚才那些都不是你说的", "So none of that was you", "你那个 AI 还会谈恋爱？", "Your AI does romance now?" };
+            if (answered == "admit") return new[] { "……", "…", "你先忙完再回我吧", "Finish what you are doing first", "我想和你好好说话", "I want a proper conversation with you" };
             if (s.aiCaught > 1) return new[] { "你又骗我", "You lied to me again", "我不想说话了", "I don't want to talk" };
             return new[] { "哦", "Oh", "那可能是我想多了", "Maybe I'm overthinking it" };
         }

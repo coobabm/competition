@@ -23,6 +23,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim Ready(bool coop = false, double acc = .8)
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.stage = XgSim.FeatureUnlock["quality"]; // the platform's checks belong to the crowd stage
             sim.S.desksOpen.Add("mnist");
             sim.S.autoLevel = 1;
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = acc, arch = "perceptron" });
@@ -67,6 +68,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.QualityActive); Assert.AreEqual(0, sim.SpotCheckChance); Assert.AreEqual(1, sim.QualityPayMultiplier);
             Assert.AreEqual(XgSim.QcCreditStart, sim.Credit);
             sim.S.autoLevel = 1;
+            Assert.IsFalse(sim.QualityActive, "the checks wait for the crowd stage even once auto-labelling is owned");
+            sim.S.stage = XgSim.FeatureUnlock["quality"];
             Assert.IsTrue(sim.QualityActive); Assert.AreEqual(.4, sim.SpotCheckChance, 1e-9);
         }
 

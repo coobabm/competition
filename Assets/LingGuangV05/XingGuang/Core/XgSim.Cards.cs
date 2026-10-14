@@ -111,6 +111,7 @@ namespace LingGuangV05.XingGuang
 
                 // 下班以后: hidden cards for the life outside the lab (the casino, 晴雯, 三体, the desktop). The album
                 // shows only a rumour until one is found; the desktop apps call EarnSecret, the lab's own chat earns here.
+                Life(1, "life.gf.busy", "忙", "抱歉，我真的在忙", "Sorry, I really was busy", "上一章没回晴雯，这一章终于道了歉。", "Left Qingwen unanswered for a chapter, then apologized.", "有些消息不能一直放着。", "Some messages should not wait forever.", "刚看到。对不起。", "Just saw this. Sorry."),
                 Life(0, "life.casino.first", "赌", "小赌怡情", "A little flutter", "在 888.vip 下了第一注。", "Placed a first bet on 888.vip.", "听说有个网站，一夜就能把显卡钱赚回来。", "Rumour has it a website pays back a graphics card overnight.",
                     "庄家从来不急。", "The house is never in a hurry."),
                 Life(1, "life.casino.blackjack", "A", "黑杰克", "Blackjack", "二十一点开局就拿到黑杰克。", "Dealt a natural blackjack.", "有人在二十一点的桌上等一张 A。", "Someone at the blackjack table is waiting for an ace.",
@@ -146,6 +147,8 @@ namespace LingGuangV05.XingGuang
                     "它读了每一句话，给了你一个数字。转过来看，那只是一个数字。", "It read every line and gave you a number. Turn it over: it is only a number.", "数"),
                 Life(2, "life.love.never", "算", "有些事不必知道", "Some things stay unread", "它要读你们的聊天记录时，你说了「算了」。", "When it offered to read your messages, you said never mind.", "有个问题，问出口以后可以收回。", "There is a question you can take back after asking.",
                     "「好。」", "\"All right.\""),
+                Life(1, "life.love.thrice", "问", "问三遍也是否", "Ask thrice, still yes or no", "连着问了它三遍「她爱我吗」。", "Asked it \"does she love me\" three times in a row.", "同一个问题，有人就是不死心。", "Some people just keep asking the same question.",
+                    "问一遍是问题，问三遍，答案其实你自己知道。", "Ask once, it's a question. Ask three times, and you already know the answer."),
 
                 Life(0, "life.santi.login", "V", "V 装备", "The V-suit", "在摆渡上找到了「三体」的游戏登录页。", "Found the Three Body game login on Bodu.", "据说有个网游，要穿 V 装备才能进。", "There is said to be an online game you need a V-suit for.",
                     "需要 V 装备与邀请码。", "Requires a V-suit and an invitation code."),

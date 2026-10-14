@@ -121,7 +121,7 @@ namespace LingGuangV05.XingGuang.Tests
             double clean = sim.CardAccuracy(run, spam, .9);
             sim.Today = 20160808; sim.Tick(1, host);
             Assert.AreEqual(clean - .15, sim.CardAccuracy(run, spam, .9), 1e-9);
-            Assert.AreEqual(.9, sim.CardAccuracy(run, new XgCard { dataset = "logic" }, .9), 1e-9, "other desks keep their accuracy");
+            Assert.AreEqual(XgSim.BinaryAccuracy("logic", .9), sim.CardAccuracy(run, new XgCard { dataset = "logic" }, .9), 1e-9, "other desks keep their accuracy (no drift taken off)");
             // The ghost and suggestion read the same per-card accuracy.
             Assert.IsTrue(sim.Suggestion("spam", out _, out double confidence));
             Assert.AreEqual(sim.CardAccuracy(run, sim.Card("spam"), .9), confidence, 1e-9);

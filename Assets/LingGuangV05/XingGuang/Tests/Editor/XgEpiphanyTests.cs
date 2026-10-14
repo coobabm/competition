@@ -24,11 +24,19 @@ namespace LingGuangV05.XingGuang.Tests
 
         static XgSim Fresh(double acc)
         {
+            // The checkpoint's ghost is the classic mode's; in teaching mode the visible guess is the board's own (XgSim.Teaching.cs).
             var sim = new XgSim { GoldChance = 0, PlatformChecks = false };
+            sim.S.teachMode = false;
             Assert.IsTrue(sim.DeskOpen(Desk));
             sim.SelectDesk(Desk);
             if (acc > 0) sim.S.best.Add(new XgBest { dataset = Desk, acc = acc, arch = "perceptron" });
             return sim;
+        }
+
+        /// <summary>A text from the family is an opinion, not a labelled sample: it never counts towards the realisation, so the labelling loops answer it away.</summary>
+        static void SkipFamilyTexts(XgSim sim, Host host)
+        {
+            for (int guard = 0; guard < 50 && sim.Card(Desk).family; guard++) sim.Answer(Desk, false, host);
         }
 
         /// <summary>Answers the visible card agreeing (or not) with its ghost; the ghost must be there.</summary>
@@ -107,11 +115,14 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.best.Add(new XgBest { dataset = Desk, acc = .7, arch = "perceptron" });
             for (int i = 0; i < XgSim.EpiphanyFallbackLabels - 1; i++)
             {
+                SkipFamilyTexts(sim, host);
                 if (sim.GhostGuess(Desk, out bool ghost, out _)) sim.Answer(Desk, !ghost, host); // never agree
                 else sim.Answer(Desk, sim.Card(Desk).truth, host);
                 Assert.AreEqual(0, fired, "label " + i);
             }
+            Assert.AreEqual(XgSim.EpiphanyFallbackLabels - 1, sim.S.ghostLabels);
             Assert.AreEqual(0, sim.S.ghostStreak);
+            SkipFamilyTexts(sim, host);
             AnswerGhost(sim, host, false);
             Assert.AreEqual(1, fired, "the fallback");
             Assert.IsTrue(sim.EpiphanyDone);

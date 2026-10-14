@@ -110,23 +110,29 @@ namespace LingGuangV05.XingGuang.Tests
         public void LogicDeskGetsHarderAndPaysMore()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            sim.S.teachMode = false; // plain pay: a taught correction pays double, which would hide the level
             Assert.AreEqual(1, sim.LogicLevel);
-            double first = 0;
-            for (int i = 0; i < 80; i++)
+            double first = 0; bool firstSeen = false;
+            // Outsourced law questions and bounties pay on their own terms and are no training data: they do not count as labels.
+            for (int i = 0; i < 400 && sim.Samples("logic") < 80; i++)
             {
                 var card = sim.Card("logic");
                 Assert.IsFalse(string.IsNullOrEmpty(card.question));
                 double before = host.money;
                 Assert.IsTrue(sim.Answer("logic", card.truth, host).correct);
-                if (i == 0) first = host.money - before;
+                if (!firstSeen) { first = host.money - before; firstSeen = true; }
             }
-            Assert.AreEqual(3, sim.LogicLevel, "one level per 40 labels");
             Assert.AreEqual(80, sim.Samples("logic"), 1e-9);
+            Assert.AreEqual(3, sim.LogicLevel, "one level per 40 labels");
+            Assert.AreEqual(2, sim.PayFor("logic", 3) / sim.PayFor("logic", 1), 1e-9, "level 3 pays double");
             sim.S.combo = 0;
             var c = sim.Card("logic");
+            for (int i = 0; i < 100 && c.bounty; i++) { sim.Answer("logic", c.truth, host); c = sim.Card("logic"); }
+            Assert.IsFalse(c.bounty);
+            sim.S.combo = 0;
             double b2 = host.money;
             sim.Answer("logic", c.truth, host);
-            Assert.Greater(host.money - b2, first * 1.9, "level 3 pays double");
+            Assert.Greater(host.money - b2, first * 1.9, "and it really does");
             Assert.AreEqual(0, sim.Samples("poems"), 1e-9, "logic labels do not count as poems");
         }
 
@@ -141,7 +147,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, sim.AutoLevel("logic"));
             Assert.AreEqual(1, sim.AutoLevel("poems"));
             sim.Tick(100, host);
-            Assert.Greater(sim.Samples("logic"), 15);
+            Assert.Greater(sim.Samples("logic"), 100 * XgCatalog.AutoRatePerLevel * .8, "about AutoRatePerLevel cards a second, most of them right");
             Assert.AreEqual(0, sim.Samples("poems"), 1e-9);
         }
     }

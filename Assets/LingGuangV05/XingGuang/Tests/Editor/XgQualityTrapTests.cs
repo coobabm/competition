@@ -21,6 +21,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim Ready(bool coop = false)
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.stage = XgSim.FeatureUnlock["quality"]; // the platform's checks belong to the crowd stage
             sim.S.desksOpen.Add("mnist");
             sim.S.autoLevel = 1;
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8, arch = "perceptron" });

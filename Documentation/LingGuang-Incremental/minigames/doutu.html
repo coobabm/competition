@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 斗图</title>
+<!--
+  斗图 (2016 group-chat culture). 表哥 posts a 表情包; you have 3 s to answer with the best comeback out of 4 cards.
+  Every meme has an emotion tag; COUNTER lists which tags beat which, so a pick is one (meme tag -> reply tag) label.
+  Correct pick: opponent loses 面子 (HP), combo >= 3 hits twice as hard. Wrong or too slow: you lose a heart.
+  From round 4 灵光 joins the group as a second fighter. It also answers each round: with probability ~skill it plays
+  the right card (otherwise a random card), and the faster it is the sooner its purple 灵 badge appears on the card as
+  a hint. A correct 灵光 reply is an assist (extra damage).
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.dt{position:absolute;inset:0;background:#EBEBEB;display:flex;flex-direction:column}
+.hd2{height:46px;background:#393A3F;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex:none}
+.hd2 .t{font-size:16px;font-weight:600;display:flex;gap:8px;align-items:center}
+.hd2 .t em{font-style:normal;font-size:12px;opacity:.65;font-weight:400}
+.hd2 .side2{display:flex;align-items:center;gap:8px;font-size:13px;min-width:230px}
+.hd2 .side2.r{justify-content:flex-end}
+.hearts{font-size:18px;letter-spacing:2px;color:#FF6B6B}
+.hp{width:110px;height:10px;background:#ffffff33;border-radius:5px;overflow:hidden}.hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#FFB020,#FF5A3C);transition:width .4s}
+.chat{flex:1;overflow:hidden;padding:10px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px}
+.sys{align-self:center;background:#CECECE;color:#fff;border-radius:4px;padding:2px 10px;font-size:12px}
+.row{display:flex;align-items:flex-start;gap:8px;animation:in .22s}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.row.me{flex-direction:row-reverse}
+.row.ai,.av.ai{padding:0} /* common.css gives .ai a padding */
+.av{width:36px;height:36px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
+.av.op{background:#F2C14E}.av.me{background:#6FA8F5}.av.ai{background:var(--ai);font-size:18px;color:#fff;font-weight:700}
+.bub{background:#fff;border-radius:6px;padding:7px 11px;font-size:15px;position:relative;max-width:420px;line-height:1.5}
+.row.me .bub{background:#9EEA6A}
+.row.ai .bub{background:var(--ai2);border:1px solid #DCD6FB}
+.bub.m{padding:3px}
+.bub.m .mc{width:124px;height:84px}.bub.m .mc .e{font-size:42px;margin-top:-6px}.bub.m .mc .c{font-size:13px;bottom:3px;-webkit-text-stroke:2.5px #000}
+.nm{display:none}
+.mc{width:150px;height:140px;border-radius:5px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mc .e{font-size:68px;line-height:1;margin-top:-8px;filter:drop-shadow(0 3px 3px #0003)}
+.mc .c{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-weight:900;font-size:17px;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;letter-spacing:1px;padding:0 4px;line-height:1.15}
+.tagc{position:absolute;right:-6px;bottom:-9px;font-size:11px;border-radius:9px;padding:0 7px;line-height:18px;color:#fff;white-space:nowrap;box-shadow:0 1px 3px #0004}
+.tagc.ok{background:var(--green)}.tagc.no{background:var(--red)}
+.tray{height:192px;background:#F5F5F5;border-top:1px solid #D6D6D6;flex:none;display:flex;flex-direction:column;padding:6px 16px 8px;gap:6px}
+.tbar{height:8px;background:#E0E0E0;border-radius:4px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.cards{flex:1;display:flex;gap:12px;justify-content:center;align-items:center}
+.card{position:relative;cursor:pointer;border-radius:8px;border:3px solid transparent;padding:0;transition:transform .08s;background:none}
+.card:hover{transform:translateY(-4px)}
+.card .k{position:absolute;left:-6px;top:-6px;width:20px;height:20px;border-radius:50%;background:#555;color:#fff;font-size:12px;text-align:center;line-height:20px;z-index:3}
+.card .mc{width:180px;height:140px}.card .mc .e{font-size:62px}.card .mc .c{font-size:17px}
+.card.good{border-color:var(--green);box-shadow:0 0 0 3px #2F9E4455}
+.card.bad{border-color:var(--red)}
+.card.dim{opacity:.4}
+.card.aip::after{content:"灵";position:absolute;right:-8px;top:-8px;width:24px;height:24px;border-radius:50%;background:var(--ai);color:#fff;font-size:13px;line-height:24px;text-align:center;z-index:3;box-shadow:0 2px 6px #0004;animation:pop .3s}
+@keyframes pop{from{transform:scale(0)}}
+.th2{text-align:center;font-size:12px;color:#8A8A8A;height:14px}
+.over{background:#fffffff0}
+.res{display:grid;grid-template-columns:auto auto;gap:6px 26px;text-align:left;font-size:15px;color:#333}.res b{text-align:right}
+.combo{position:absolute;right:20px;top:60px;font-size:30px;font-weight:900;color:#FF5A3C;text-shadow:0 2px 0 #fff;pointer-events:none;transition:transform .15s}
+.hit{animation:hit .35s}
+@keyframes hit{20%{transform:translateX(-8px) rotate(-4deg)}60%{transform:translateX(8px) rotate(4deg)}}
+.flash{position:absolute;inset:0;pointer-events:none;background:#E33E33;opacity:0;z-index:5}
+.flash.on{animation:fl .35s}
+@keyframes fl{from{opacity:.35}to{opacity:0}}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'doutu', title:'斗图', subtitle:'3 秒内回一张更狠的', icon:'图', dataset:'表情包情绪',
+  stats:[['命中','sOk'],['被怼','sNo'],['连击','sCombo'],['灵光助攻','sAi','—'],['收入','sPay','¥0']], statsNote:'每次命中 = 1 条情绪标签',
+  aiHello:'斗图……是什么运动？',
+  rule:'<b>玩法</b>：表哥发一张表情包，3 秒内从 4 张里挑最合适的回击（1–4 键）。<br><b>标签</b>：你的回击 = 「这张表情是什么情绪 → 该怎么回」。<br><span style="color:var(--ai)">第 4 回合灵光入群：水平高就挑神回复（卡片上的紫色「灵」），水平低就乱发。</span>'
+});
+
+/* ---------- sound ---------- */
+let AC;
+function beep(f,d,type,v,when){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(when||0);
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(v||.05,t); g.gain.exponentialRampToValueAtTime(.0001,t+(d||.08)); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+(d||.08)+.02);}catch(e){} }
+const sfx={msg(){beep(900,.05,'sine',.04);},ok(){beep(660,.08,'triangle',.07);beep(990,.14,'triangle',.07,.08);},crit(){beep(660,.08,'square',.05);beep(880,.08,'square',.05,.08);beep(1320,.18,'square',.05,.16);},bad(){beep(150,.3,'sawtooth',.06);},tick(){beep(1200,.03,'square',.02);},ai(){beep(480,.1,'sine',.05);beep(720,.12,'sine',.05,.08);}};
+
+/* ---------- memes: emoji + caption + emotion tag (m). 2016 slang only ---------- */
+const MOODS={taunt:'嘲讽',sad:'卖惨',betray:'翻脸',speechless:'无语',shock:'惊吓',hype:'夸赞',fight:'开怼',cute:'卖萌',comfort:'安慰',money:'要钱',disgust:'嫌弃',flirt:'撩',laugh:'大笑',calm:'淡定',spectator:'吃瓜',plead:'求饶',celebrate:'庆祝'};
+const MEMES=[
+  {e:'😠',c:'你瞅啥',m:'taunt'},{e:'🙄',c:'你咋不上天呢',m:'taunt'},{e:'🙂',c:'呵呵',m:'taunt'},
+  {e:'😢',c:'蓝瘦香菇',m:'sad'},{e:'😭',c:'宝宝心里苦',m:'sad'},{e:'😩',c:'我太难了',m:'sad'},
+  {e:'🚣',c:'友谊的小船说翻就翻',m:'betray'},
+  {e:'😵',c:'我也是醉了',m:'speechless'},{e:'😑',c:'然并卵',m:'speechless'},{e:'🤔',c:'你是逗我玩呢',m:'speechless'},
+  {e:'😱',c:'吓死宝宝了',m:'shock'},{e:'😲',c:'不明觉厉',m:'shock'},
+  {e:'👍',c:'厉害了我的哥',m:'hype'},{e:'💪',c:'洪荒之力',m:'hype'},{e:'🎪',c:'城会玩',m:'hype'},
+  {e:'😤',c:'一言不合就…',m:'fight'},{e:'🤜',c:'来啊互相伤害啊',m:'fight'},
+  {e:'😘',c:'么么哒',m:'cute'},
+  {e:'🤗',c:'抱抱',m:'comfort'},{e:'😊',c:'摸摸头，不哭',m:'comfort'},
+  {e:'🧧',c:'红包拿来',m:'money'},{e:'💰',c:'土豪我们做朋友吧',m:'money'},
+  {e:'😂',c:'哈哈哈哈哈',m:'laugh'},
+  {e:'🍉',c:'吃瓜群众',m:'spectator'},
+  {e:'🙈',c:'辣眼睛',m:'disgust'},
+  {e:'😎',c:'淡定',m:'calm'},
+  {e:'🙏',c:'不要啊！',m:'plead'},
+  {e:'🍻',c:'干杯',m:'celebrate'},
+  {e:'😏',c:'约吗？',m:'flirt'},
+];
+MEMES.forEach((m,i)=>{ m.i=i; m.h=(i*47+20)%360; });
+// which reply tags answer which opening tag
+const COUNTER={
+  taunt:['fight','speechless'], sad:['comfort','cute'], betray:['sad','plead'], speechless:['laugh','taunt'],
+  shock:['calm','laugh'], hype:['hype','laugh','celebrate'], fight:['calm','plead','shock'], cute:['cute','flirt','comfort'],
+  money:['money','plead','speechless'], disgust:['speechless','fight','laugh'], flirt:['cute','disgust','speechless'],
+  laugh:['laugh','taunt'], celebrate:['celebrate','hype'], plead:['taunt','comfort'],
+};
+const OPEN=MEMES.filter(m=>COUNTER[m.m]);
+const TALK=['来来来，斗图！','就这？','这张你肯定没见过','接招！','我这儿有的是','不服来战','斗不过吧？','第 N 回合，开始！'];
+
+/* ---------- state ---------- */
+const TL=3000, HP0=12, LIVES=3, AI_JOIN=3;
+const D={on:false,round:0,hp:HP0,lives:LIVES,ok:0,bad:0,combo:0,best:0,pay:0,assist:0,aiR:0,aiN:0,phase:'',cur:null,opts:[],t0:0,raf:0,aiTO:0,nextTO:0,recent:[],aiIn:false,aiPick:-1,aiDone:false,wins:0};
+const $=id=>document.getElementById(id);
+stage.innerHTML=`
+<div class="dt" id="dt">
+  <div class="hd2"><div class="side2"><span>🙂 你</span><span class="hearts" id="hearts">❤❤❤</span></div>
+    <div class="t"><span id="grp">斗图小分队(2)</span><em id="rn">第 1 回合</em></div>
+    <div class="side2 r"><span>表哥 面子</span><span class="hp"><i id="hp"></i></span><b id="hpn">12</b></div></div>
+  <div class="chat" id="chat"></div>
+  <div class="tray"><div class="tbar"><i id="tb"></i></div><div class="cards" id="cards"></div><div class="th2" id="th2">&nbsp;</div></div>
+  <div class="combo" id="combo"></div><div class="flash" id="flash"></div>
+  <div class="over" id="over"></div>
+</div>`;
+const chat=$('chat');
+
+/* ---------- rendering ---------- */
+function card(m,small){ return `<div class="mc" style="background:linear-gradient(145deg,hsl(${m.h},70%,82%),hsl(${(m.h+50)%360},65%,68%))"><div class="e">${m.e}</div><div class="c">${m.c}</div></div>`; }
+const AV={op:'😎',me:'🙂',ai:'灵'};
+function say(side,html,isMeme){
+  const r=document.createElement('div'); r.className='row '+side;
+  r.innerHTML=`<div class="av ${side}">${AV[side]}</div><div><div class="nm" style="${side==='me'?'text-align:right':''}">${{op:'表哥',me:'你',ai:'灵光'}[side]}</div><div class="bub${isMeme?' m':''}">${html}</div></div>`;
+  chat.appendChild(r); trim(); sfx.msg(); return r.querySelector('.bub');
+}
+function sys(t){ const s=document.createElement('div'); s.className='sys'; s.textContent=t; chat.appendChild(s); trim(); }
+function trim(){ // drop the oldest messages until the rest fit (animation offsets would fool scrollHeight, so sum the heights)
+  const used=()=>{ let h=20+10*(chat.children.length-1); for(const c of chat.children) h+=c.offsetHeight; return h; };
+  while(chat.children.length>1&&used()>chat.clientHeight) chat.firstChild.remove(); }
+function hud(){ $('hearts').textContent='❤'.repeat(D.lives)+'♡'.repeat(LIVES-D.lives); $('hp').style.width=(D.hp/HP0*100)+'%'; $('hpn').textContent=D.hp; $('rn').textContent='第 '+(D.round+1)+' 回合';
+  LG.set('sOk',D.ok); LG.set('sNo',D.bad); LG.set('sCombo',D.combo); LG.set('sPay','¥'+D.pay.toFixed(1)); LG.set('sAi',D.aiIn?D.assist+' 次':'—'); }
+
+/* ---------- a round ---------- */
+function start(){
+  clearTimeout(D.nextTO); clearTimeout(D.aiTO); cancelAnimationFrame(D.raf);
+  Object.assign(D,{on:true,round:-1,hp:HP0,lives:LIVES,ok:0,bad:0,combo:0,best:0,pay:0,assist:0,aiR:0,aiN:0,recent:[],aiIn:false});
+  chat.innerHTML=''; $('over').style.display='none'; $('grp').textContent='斗图小分队(2)'; $('cards').innerHTML=''; $('combo').textContent='';
+  const h=document.getElementById('lgHist'); if(h) h.innerHTML='';
+  sys('你邀请了 表哥 加入群聊'); say('op','敢不敢跟我斗图？'); hud();
+  LG.say('我在群里潜水。你先上。');
+  D.nextTO=setTimeout(nextRound,900);
+}
+function pickOpen(){ let m,g=0; do{ m=LG.pick(OPEN); }while(D.recent.indexOf(m.i)>=0&&++g<30); D.recent.push(m.i); if(D.recent.length>6) D.recent.shift(); return m; }
+function nextRound(){
+  if(!D.on) return;
+  D.round++; D.phase='wait'; D.aiDone=false; D.aiPick=-1; hud();
+  if(D.round===AI_JOIN&&!D.aiIn){ D.aiIn=true; $('grp').textContent='斗图小分队(3)'; sys('灵光 加入了群聊'); const sk=LG.skill();
+    say('ai',sk>.7?'我也来斗图。别的我不会，这个我学得快。':sk>.4?'我也来试试……':'我、我也来了……（我只会发表情）'); sfx.ai();
+    LG.say(sk>.7?'我来助攻。紫色「灵」是我的选择。':'我也出手了。可能会发错。'); hud(); D.nextTO=setTimeout(ask,1100); return; }
+  ask();
+}
+function ask(){
+  if(!D.on) return;
+  const m=pickOpen(); D.cur=m;
+  say('op',LG.pick(TALK).replace('N',D.round+1));
+  D.nextTO=setTimeout(()=>{
+    if(!D.on) return;
+    const b=say('op',card(m),true); b.firstChild.classList.add('hit'); D.bubOp=b;
+    // options: one right reply and three tags that do not answer it
+    const good=MEMES.filter(x=>COUNTER[m.m].indexOf(x.m)>=0&&x!==m), right=LG.pick(good), taken=new Set([right.m]), opts=[right];
+    LG.shuffle(MEMES.filter(x=>COUNTER[m.m].indexOf(x.m)<0&&x!==m)).forEach(x=>{ if(opts.length<4&&!taken.has(x.m)){ taken.add(x.m); opts.push(x); } });
+    D.opts=LG.shuffle(opts); D.right=right;
+    const cs=$('cards'); cs.innerHTML='';
+    D.opts.forEach((o,i)=>{ const c=document.createElement('div'); c.className='card'; c.innerHTML=`<span class="k">${i+1}</span>`+card(o); c.onclick=()=>choose(i); o.el=c; cs.appendChild(c); });
+    $('th2').textContent='表哥发来：「'+m.c+'」——回一张！';
+    D.phase='ask'; D.t0=performance.now(); D.ls=-1; cancelAnimationFrame(D.raf); loop();
+    if(D.aiIn) planAi();
+  },650);
+}
+function planAi(){
+  const sk=LG.skill(), delay=700+(1-sk)*1900+LG.rnd(250);
+  const correct=Math.random()<Math.pow(sk,1.2); const idx=correct?D.opts.indexOf(D.right):LG.rnd(4);
+  D.aiPick=idx; D.aiN++;
+  D.aiTO=setTimeout(()=>{ if(!D.on||D.phase!=='ask') return; aiShow(); },delay);
+}
+function aiShow(){ if(D.aiDone||D.aiPick<0) return; D.aiDone=true; D.opts[D.aiPick].el.classList.add('aip'); sfx.ai(); const sk=LG.skill();
+  LG.say(sk>.75?LG.pick(['我选这张。','这个情绪我认得。']):sk>.4?LG.pick(['我觉得这张……','大概是这个？']):LG.pick(['随便点了一张……','我也不知道哪个对。'])); }
+function loop(){
+  if(D.phase!=='ask') return;
+  const el=performance.now()-D.t0, f=Math.max(0,1-el/TL), bar=$('tb');
+  bar.style.transform=`scaleX(${f})`; bar.style.background=f>.5?'var(--green)':f>.25?'var(--gold)':'var(--red)';
+  const s=Math.ceil((TL-el)/1000); if(s!==D.ls&&s>0){ sfx.tick(); } D.ls=s;
+  if(el>=TL) return choose(-1);
+  D.raf=requestAnimationFrame(loop);
+}
+function choose(i){
+  if(D.phase!=='ask') return; D.phase='reveal'; cancelAnimationFrame(D.raf); clearTimeout(D.aiTO);
+  const took=(performance.now()-D.t0)/1000, m=D.cur, p=i>=0?D.opts[i]:null, ok=!!p&&p===D.right;
+  D.opts.forEach((o,k)=>{ if(o===D.right) o.el.classList.add('good'); else if(k===i) o.el.classList.add('bad'); else o.el.classList.add('dim'); });
+  if(p){ const b=say('me',card(p),true); b.insertAdjacentHTML('beforeend',`<span class="tagc ${ok?'ok':'no'}">${MOODS[m.m]} ← ${MOODS[p.m]}</span>`); }
+  else { say('me','……（来不及了）'); }
+  // 灵光 answers too (once it is in the group)
+  let aiOk=false;
+  const finish=()=>{
+    if(ok){
+      D.ok++; D.combo++; D.best=Math.max(D.best,D.combo);
+      const crit=D.combo>=3, dmg=1+(crit?1:0)+(aiOk?1:0);
+      const pay=+(1+(took<1?.5:0)+(crit?.5:0)).toFixed(1); D.pay+=pay; LG.give(1,pay,$('cards'),'var(--red)'); LG.hist('ok');
+      D.hp=Math.max(0,D.hp-dmg); D.bubOp.classList.add('hit'); sfx[crit?'crit':'ok']();
+      LG.float($('hpn'),'−'+dmg+(crit?' 暴击':''),'#FF5A3C');
+      const cb=$('combo'); cb.textContent=D.combo>=2?'连击 ×'+D.combo:''; cb.style.transform='scale(1.4)'; setTimeout(()=>cb.style.transform='scale(1)',150);
+      $('th2').innerHTML='<b style="color:var(--green)">命中！</b> '+MOODS[m.m]+' → '+MOODS[p.m]+(aiOk?'　<span style="color:var(--ai)">灵光助攻 +1</span>':'');
+      if(!D.aiIn) LG.say(LG.pick(['你怎么知道回这个？','记下了：'+MOODS[m.m]+' 要回 '+MOODS[p.m]+'。']));
+    } else {
+      D.bad++; D.combo=0; D.lives--; D.pay-=.5; LG.give(0,-.5,$('cards'),'#999'); LG.hist('no'); sfx.bad(); LG.shake($('dt')); $('flash').classList.remove('on'); void $('flash').offsetWidth; $('flash').classList.add('on'); $('combo').textContent='';
+      say('op',LG.pick(['哈哈哈哈就这？','你输了！','蓝瘦香菇？','回的什么玩意儿']));
+      $('th2').innerHTML='<b style="color:var(--red)">'+(p?'没接住':'超时')+'</b> 正解：'+D.right.c+'（'+MOODS[D.right.m]+'）';
+      if(!D.aiIn) LG.say('这条我也不会……下次告诉我。');
+    }
+    hud();
+    if(D.hp<=0) return D.nextTO=setTimeout(()=>end(true),1100);
+    if(D.lives<=0) return D.nextTO=setTimeout(()=>end(false),1100);
+    D.nextTO=setTimeout(nextRound,1500);
+  };
+  if(D.aiIn){
+    D.aiDone=false; const j=D.aiPick; if(!D.opts[j].el.classList.contains('aip')) D.opts[j].el.classList.add('aip');
+    setTimeout(()=>{ const a=D.opts[j]; const b=say('ai',card(a),true); aiOk=(a===D.right); if(aiOk){ D.aiR++; D.assist++; b.insertAdjacentHTML('beforeend','<span class="tagc ok">助攻</span>'); sfx.ai(); } else b.insertAdjacentHTML('beforeend','<span class="tagc no">发错</span>');
+      const sk=LG.skill(); LG.say(aiOk?(sk>.75?LG.pick(['这一张，对。','我就知道是它。']):LG.pick(['我蒙对了？','对了！我学会了。'])):(sk>.6?LG.pick(['我选错了……我下次会认得。','这个情绪我判断偏了。']):LG.pick(['发错了……','我随便点的，你别学。']))); hud(); setTimeout(finish,650); },380);
+  } else finish();
+}
+function end(win){
+  D.on=false; D.phase=''; const o=$('over'); o.style.display='flex';
+  const rate=D.aiN?Math.round(D.aiR/D.aiN*100):0;
+  o.innerHTML=`<h2>${win?'🏆 斗图大获全胜':'😭 蓝瘦香菇'}</h2><p>${win?'表哥发来：「友谊的小船说翻就翻」。':'你被表哥的表情包轰成了渣。'}</p>
+   <div class="res"><span>命中</span><b>${D.ok}</b><span>被怼</span><b>${D.bad}</b><span>最高连击</span><b>×${D.best}</b><span>收入</span><b style="color:var(--red)">¥${D.pay.toFixed(1)}</b>
+   <span>灵光回对</span><b style="color:var(--ai)">${D.aiN?D.aiR+'/'+D.aiN+'（'+rate+'%）':'没出场'}</b></div>
+   <button class="btn" id="again">再来一局 (Enter)</button>`;
+  $('again').onclick=start; LG.say(win?'你们斗得真好看……我又学了几个表情。':'输了就输了，我记住了他的路数。');
+}
+function intro(){
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>🐸 斗图</h2>
+   <p>2016 年，群聊就是战场。表哥发来一张表情包，你有 <b>3 秒</b>从 4 张里挑最合适的回击：<br>
+   「蓝瘦香菇」要回安慰，「你瞅啥」要怼回去，「吓死宝宝了」要淡定……<br>
+   命中让表哥掉面子，连击 ≥3 暴击；回错或超时丢一颗心（共 3 颗）。把表哥的面子打光就赢。<br>
+   第 4 回合<b style="color:var(--ai)">灵光</b>入群：水平高时它帮你出神回复，水平低时它只会乱发。</p>
+   <button class="btn" id="go">开始斗图 (Enter)</button>`;
+  $('go').onclick=start;
+}
+addEventListener('keydown',e=>{
+  if(!D.on){ if(e.code==='Enter'||e.code==='Space'){ e.preventDefault(); start(); } return; }
+  if(e.key>='1'&&e.key<='4') choose(+e.key-1);
+});
+intro();
+</script>
+</body>
+</html>

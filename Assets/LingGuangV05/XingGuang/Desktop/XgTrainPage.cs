@@ -24,10 +24,10 @@ namespace LingGuangV05.Desktop.XingGuang
         public static bool UseAssessmentOverlay(XgAssessment a) => a.hand && a.newGrade >= 1;
 
         // Layout of the page at the normal window size (about 1064 × 617 here): the left column is 642 wide, the right 410.
-        const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 96, QuickBarHeight = 104, RowGap = 10;
+        const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 96, RowGap = 10;
 
         XgBtn[] trackTabs = new XgBtn[2];
-        XgBtn summary, train, assess, autoTrain, saveModel, cleanNoise;
+        XgBtn summary, train, assess, saveModel, cleanNoise, orders;
         readonly List<XgBtn> dataBtns = new List<XgBtn>();
         readonly List<XgBtn> packBtns = new List<XgBtn>();
         readonly List<float> noValidationCurve = new List<float>();
@@ -38,14 +38,12 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<XgStageGraphic> previousDiagnostics = new List<XgStageGraphic>();
         TMP_Text diagnosticTitle, diagnosticNote, gpuLabel, noiseText, noiseHint;
         XgGlow gpuGlow;
-        TMP_Text numbers, yTop, yMid, yLow, legend, risk, hint, mode, trainSub, trainBill, dataTitle;
+        TMP_Text numbers, yTop, yMid, yLow, legend, risk, hint, trainSub, trainBill, dataTitle;
         XgGlow trainGlow;
         XgHold hold;
         float glitch;
         Vector2 chartRestPosition;
         string shownDataKey = "", shownStructure = "";
-        /// <summary>The quick bar of consumables is on screen (it waits for the 道具 page, or the first one owned).</summary>
-        bool quickBarShown = true;
 
         // assessment card
         RectTransform card, stamp, assessmentLayer;
@@ -92,11 +90,10 @@ namespace LingGuangV05.Desktop.XingGuang
             saveModel.rt.anchorMin = saveModel.rt.anchorMax = new Vector2(1, 1);
             saveModel.rt.offsetMin = new Vector2(-100, -TabsHeight); saveModel.rt.offsetMax = Vector2.zero;
 
-            // Bottom up: the consumables quick bar, the train row, then the curve card takes what is left.
-            BuildQuickBar();
+            // Bottom up: the train row, then the curve card takes what is left.
             trainRow = Rect("TrainRow", left, Vector2.zero, new Vector2(1, 0), Vector2.zero, Vector2.zero);
             curveCard = ui.Card(left, "Curve", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -TabsHeight - RowGap));
-            LayoutLeft(true);
+            LayoutLeft();
 
             numbers = ui.Text(Strip("Numbers", curveCard, 6, 24, 12, 12), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             numbers.enableAutoSizing = true; numbers.fontSizeMin = 10; numbers.fontSizeMax = 15; numbers.textWrappingMode = TextWrappingModes.NoWrap;
@@ -128,8 +125,6 @@ namespace LingGuangV05.Desktop.XingGuang
             train.label.enableAutoSizing = true; train.label.fontSizeMin = 15; train.label.fontSizeMax = 28;
             trainSub = ui.Text(Rect("Sub", train.rt, Vector2.zero, new Vector2(1, 0), new Vector2(14, 8), new Vector2(-14, 30)), "", 13, Color.white, TextAlignmentOptions.BottomLeft);
             trainSub.textWrappingMode = TextWrappingModes.NoWrap;
-            mode = ui.Text(Rect("Mode", train.rt, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-96, 8), new Vector2(-8, 28)), "", 12, new Color(1, 1, 1, .7f), TextAlignmentOptions.BottomRight);
-            mode.textWrappingMode = TextWrappingModes.NoWrap;
             trainBill = ui.Text(Rect("Bill", train.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-104, -44), new Vector2(-10, -8)), "", 14, XgDark.Money, TextAlignmentOptions.TopRight);
             trainBill.textWrappingMode = TextWrappingModes.NoWrap;
             hold = train.rt.gameObject.AddComponent<XgHold>();
@@ -138,7 +133,7 @@ namespace LingGuangV05.Desktop.XingGuang
             assess = ui.Button(left, "", () => DoAssess(), 18);
             assess.Show(false);
 
-            var mid = Rect("Mid", trainRow, Vector2.zero, Vector2.one, new Vector2(252, 0), new Vector2(-92, 0));
+            var mid = Rect("Mid", trainRow, Vector2.zero, Vector2.one, new Vector2(252, 0), new Vector2(-8, 0));
             epochBar = Rect("EpochBar", mid, new Vector2(0, 1), Vector2.one, new Vector2(0, -12), Vector2.zero);
             epochFill = Bar(epochBar, "Fill", XgDark.Track, XgDark.Accent);
             for (int i = 1; i < 16; i++)
@@ -148,10 +143,6 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             risk = ui.Text(Rect("Risk", mid, new Vector2(0, 1), Vector2.one, new Vector2(0, -54), new Vector2(0, -16)), "", 13, XgDark.Bad, TextAlignmentOptions.TopLeft);
             risk.enableAutoSizing = true; risk.fontSizeMin = 10; risk.fontSizeMax = 13;
-            BuildBuffRow(Rect("Buffs", mid, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 24)));
-            autoTrain = ui.Button(trainRow, "", () => { Sim.SetAutoTrain(Track, !Sim.Run(Track).running); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 15);
-            autoTrain.rt.anchorMin = new Vector2(1, 0); autoTrain.rt.anchorMax = Vector2.one;
-            autoTrain.rt.offsetMin = new Vector2(-84, 0); autoTrain.rt.offsetMax = Vector2.zero;
 
             BuildSide();
             BuildCard();
@@ -159,7 +150,6 @@ namespace LingGuangV05.Desktop.XingGuang
                 UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
             UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
                 "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
-            UiTip.Add(autoTrain.rt, () => T("自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。\n当前自动化：", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).\nAutomation now: ") + mode.text);
             UiTip.Add(summary.rt, () => ModelTip());
             UiTip.Add(risk, () => RiskTip());
             UiTip.Add(numbers, () => NumbersTip());
@@ -217,8 +207,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var n = XgCatalog.Node(id); var a = XgCatalog.Arch(id);
             if (a == null) return n != null ? T(n.note, n.noteEn) : "";
             string region = a.shared ? Sim.RegionOfTrack(Track) : a.track == XgTrack.Vision ? "vision" : "sequence";
-            return "<b>" + T(a.name, a.nameEn) + "</b>  " + a.year + "\n"
-                + T("灵光" + XgSim.RegionName(region, false) + "的连接拓扑：", "Topology of 灵光's " + XgSim.RegionName(region, true).ToLowerInvariant() + " region: ") + (a.topo.Length > 0 ? "<b>【" + a.topo + "】</b>" : "") + T(a.wire, a.wireEn)
+            return "<b>" + T(a.name, a.nameEn) + "</b>  " + XgCatalog.ShownYear(a.year) + "\n"
+                + T(Sim.AiDisplayName + XgSim.RegionName(region, false) + "的连接拓扑：", "Topology of " + Sim.AiDisplayName + "'s " + XgSim.RegionName(region, true).ToLowerInvariant() + " region: ") + (a.topo.Length > 0 ? "<b>【" + a.topo + "】</b>" : "") + T(a.wire, a.wireEn)
                 + (string.IsNullOrEmpty(a.note) ? "" : "\n<color=#6F95A5>" + Lang.T("历史上：") + T(a.note, a.noteEn) + "</color>");
         }
 
@@ -227,9 +217,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim.S.wiringVoiced) return;
             Sim.S.wiringVoiced = true;
-            LingGuangV05.Desktop.Story.InnerVoice.Say("等等……论文里这些网络，不是别的 AI。", "Wait… these networks from the papers aren't other AIs.", 2.4f);
-            LingGuangV05.Desktop.Story.InnerVoice.Say("是给它的脑子重写连接拓扑。像人的大脑皮层，看图的、读字的、想事的，各管一块。", "They're ways of wiring its brain. Like a human cortex: seeing, reading, thinking, each has its own patch.", 3.2f);
-            LingGuangV05.Desktop.Story.InnerVoice.Say("……难怪机箱风扇一下子狂转。整颗脑子一亮，整张显卡都是它的。", "…No wonder the case fans just roared. When the whole brain lights up, the whole card is its.", 3f);
+            LingGuangV05.Desktop.Story.InnerVoice.Say("……机箱风扇一下子狂转起来。", "…The case fans just roared.", 2.4f);
         }
 
         void Press()
@@ -262,24 +250,16 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!view.Visible || view.Tab != "train") return;
             if ((XgTrack)e.track != Track) return;
-            if (e.hand)
-            {
-                Fx.Knock(train.rt, .1f, new Vector2(0, -4));
-                Fx.Burst(Fx.At(gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
-                Fx.Play(XgJuice.Sfx.Id.Fan, 1 + Mathf.Min(.8f, Sim.S.combo * .02f), .8f);
-            }
-            else
-            {
-                Fx.Knock(train.rt, .025f);
-                Fx.Play(XgJuice.Sfx.Id.Tick, .8f, .25f);
-            }
+            Fx.Knock(train.rt, .1f, new Vector2(0, -4));
+            Fx.Burst(Fx.At(gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
+            Fx.Play(XgJuice.Sfx.Id.Fan, 1 + Mathf.Min(.8f, Sim.S.combo * .02f), .8f);
             Refresh();
         }
 
         public void OnEpoch(XgEpoch e)
         {
             if (!view.Visible || view.Tab != "train" || (XgTrack)e.track != Track) return;
-            Fx.Shockwave(Fx.At(epochBar, new Vector2(epochBar.rect.width * .5f, 0)), XgDark.Accent, e.hand ? 60 : 28, .3f, e.hand ? 5 : 2);
+            Fx.Shockwave(Fx.At(epochBar, new Vector2(epochBar.rect.width * .5f, 0)), XgDark.Accent, 60, .3f, 5);
             var d = XgCatalog.Dataset(Sim.Run(Track).dataset);
             double points = d == null ? 0 : e.gain * 1000 / Math.Max(1e-9, d.chanceError - d.floorError);
             if (e.dropped)
@@ -287,16 +267,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 // A drop: the round went backwards a little (训练不再需要调参数). Nothing learned is lost.
                 Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("退步 " + N(points, "0") + " 分 · " + e.dropReason, "Down " + N(-points, "0") + " points · " + e.dropReasonEn), XgDark.Bad, 16, 30, .8f, 1.4f);
                 Fx.Knock(chartArea, .06f, new Vector2(6, 0));
-                Fx.Play(XgJuice.Sfx.Id.Thud, .8f, e.hand ? .6f : .25f);
+                Fx.Play(XgJuice.Sfx.Id.Thud, .8f, .6f);
             }
             else if (e.rolledBack)
             {
-                // 检查点回滚: the drop that would have happened was undone.
-                Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("检查点回滚 · 撤销了一次退步", "Checkpoint rollback · a drop undone"), XgDark.Link, 16, 30, .8f, 1.4f);
-                Fx.Play(XgJuice.Sfx.Id.Unlock, 1, e.hand ? .5f : .2f);
+                // 残差贴纸 (a relic): the drop that would have happened does not count.
+                Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("残差贴纸 · 这次退步不计入", "Residual sticker · the drop does not count"), XgDark.Link, 16, 30, .8f, 1.4f);
+                Fx.Play(XgJuice.Sfx.Id.Unlock, 1, .5f);
             }
-            else if (e.hand) Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("第 " + e.epoch + " 轮 · ", "Epoch " + e.epoch + " · ") + (points >= .5 ? "+" + N(points, "0") + T(" 分", " points") : T("涨不动了", "no gain")), XgDark.Accent, 16, 30, .6f, 1.1f);
-            chart.PulseLastSegment(e.hand ? 1 : .35f);
+            else Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("第 " + e.epoch + " 轮 · ", "Epoch " + e.epoch + " · ") + (points >= .5 ? "+" + N(points, "0") + T(" 分", " points") : T("涨不动了", "no gain")), XgDark.Accent, 16, 30, .6f, 1.1f);
+            chart.PulseLastSegment(1);
             Refresh();
         }
 
@@ -316,7 +296,6 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             trainGlow.on = Sim.TrainingUnlocked(Track) && !run.epochActive && Sim.S.combo >= 10;
             trainGlow.color = XgDark.Tiers[Mathf.Min(4, XgSim.TierOf(Sim.S.combo) + 1)] * new Color(1, 1, 1, .7f);
-            TickQuickBar(dt);
         }
 
         public bool AssessmentBlocksInput => cardT >= 0 && cardBig && assessmentLayer.gameObject.activeSelf;
@@ -336,10 +315,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!view.Visible) return;
             if (view.Tab != "train" || (XgTrack)a.track != Track)
             {
-                if (a.record && a.hand == false && a.newGrade >= 0) view.ShowToast(Lang.T("自动评估：") + XgCatalog.Dataset(a.dataset).name + " " + XgCatalog.GradeNames[a.grade] + " " + N(a.score, "0"), 2.5f);
                 return;
             }
-            if (AssessmentBlocksInput && shown != null && shown.hand && !a.hand) return;
             // Every epoch is assessed; only a record is worth a card.
             if (!a.record) return;
             shown = a;
@@ -359,12 +336,12 @@ namespace LingGuangV05.Desktop.XingGuang
             card.anchorMin = card.anchorMax = cardBig ? new Vector2(.5f, .5f) : new Vector2(1, 0);
             card.anchoredPosition = cardBig ? Vector2.zero : new Vector2(150, 86);
             var d = XgCatalog.Dataset(a.dataset);
-            cardTitle.text = Lang.T("评估 · ") + T(d.name, d.nameEn) + (a.hand ? "" : Lang.T("（自动）"));
+            cardTitle.text = Lang.T("评估 · ") + T(d.name, d.nameEn);
             cardBest.text = Lang.T("历史最高 ") + N(a.previousBest, "0") + " · " + XgSim.Pct(a.acc);
             cardReward.text = "";
             ribbon.text = "";
             stampText.text = ""; stampRing.color = Color.clear;
-            if (cardBig) Fx.Play(XgJuice.Sfx.Id.Whoosh, 1, a.hand ? .7f : .3f);
+            if (cardBig) Fx.Play(XgJuice.Sfx.Id.Whoosh, 1, .7f);
         }
 
         public void TickAssessment(float dt)
@@ -408,12 +385,6 @@ namespace LingGuangV05.Desktop.XingGuang
             cardReward.color = a.record ? XgDark.Gold : new Color(1, 1, 1, .5f);
             ribbon.text = a.newGrade >= 0 ? Lang.T("首次 ") + XgCatalog.GradeNames[a.newGrade] + "！" : a.record ? Lang.T("新纪录") : "";
             Vector2 at = Fx.At(stamp);
-            if (!a.hand)
-            {
-                Fx.Play(a.record ? XgJuice.Sfx.Id.Coin : XgJuice.Sfx.Id.Tick, 1, .5f);
-                if (a.record) Fx.Float(Fx.At(card, new Vector2(0, 50)), "+¥" + Money(pay), XgDark.Money, 18);
-                return;
-            }
             if (!a.record)
             {
                 cardBg.color = new Color(.3f, .32f, .38f, .94f);
@@ -441,6 +412,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Refresh()
         {
+            orders.Set(Sim.FeatureVisible("contracts") ? T("企业订单 →", "Orders →") : (Sim.S.stage < 4 ? T("第 4 章开放订单", "Orders in chapter 4") : T("C 级解锁订单", "Grade C: orders")), Sim.FeatureVisible("contracts"), XgDark.Panel, XgDark.Muted);
             if (root == null) return;
             var track = Track;
             if (!Sim.TrainingUnlocked(track) && Sim.TrainingUnlocked(track == XgTrack.Vision ? XgTrack.Sequence : XgTrack.Vision))
@@ -453,7 +425,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 bool on = (int)track == i, open = Sim.TrainingUnlocked((XgTrack)i);
                 trackTabs[i].Show(open);
-                trackTabs[i].Set(names[i] + (Sim.Runs[i].running ? " ●" : ""), open, on ? XgDark.Accent : XgDark.Button, on ? Color.white : XgDark.Ink);
+                trackTabs[i].Set(names[i] + (Sim.Runs[i].epochActive ? " ●" : ""), open, on ? XgDark.Accent : XgDark.Button, on ? Color.white : XgDark.Ink);
             }
             // The first time the lab rewires a region by itself: the protagonist works out what a network is to it.
             string shapeKey = (int)track + ":" + run.arch;
@@ -465,7 +437,7 @@ namespace LingGuangV05.Desktop.XingGuang
             int grade = XgSim.Grade(bestScore);
             if (glitch <= 0)
             {
-                string ceiling = run.epoch > 0 ? T("上限 ", "Ceiling ") + Hex(Sim.SgdrActive ? XgDark.Link : XgDark.Muted) + N(XgSim.Score(run.dataset, run.ceiling), "0") + (Sim.SgdrActive ? T("↑重启中", "↑restart") : "") + "</color>   " : "";
+                string ceiling = run.epoch > 0 ? T("上限 ", "Ceiling ") + Hex(XgDark.Muted) + N(XgSim.Score(run.dataset, run.ceiling), "0") + "</color>   " : "";
                 numbers.text = "<b>" + T(d.name, d.nameEn) + "</b>   "
                     + T("验证 ", "Val ") + Hex(XgChartGraphic.TrainColor) + "<b>" + XgSim.Pct(run.valAcc) + "</b></color>   "
                     + T("训练 ", "Train ") + Hex(XgDark.Muted) + XgSim.Pct(run.trainAcc) + "</color>   "
@@ -475,7 +447,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 numbers.color = XgDark.Ink;
             }
             chart.Capacity = Mathf.Clamp(run.histVal.Count, 24, XgSim.HistoryLength);
-            chart.SetCeiling(run.epoch > 0 ? (float)run.ceiling : 0, Sim.SgdrActive ? XgDark.Link : new Color32(88, 121, 138, 255));
+            chart.SetCeiling(run.epoch > 0 ? (float)run.ceiling : 0, new Color32(88, 121, 138, 255));
             chart.SetData(run.histVal, noValidationCurve, 0, false);
             yTop.text = XgSim.Pct(chart.Max);
             yMid.text = XgSim.Pct((chart.Max + chart.Min) / 2);
@@ -485,15 +457,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
-            int level = Sim.AutoTrainLevel;
             train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? Lang.T(" · 连击 ×") + N(Sim.ComboMultiplier, "0.00") : "") : Lang.T("先标够样本");
-            string[] modes = { "☛ " + Lang.T("手动"), "", "◷ crontab", "▣ " + Lang.T("守护进程"), "✓ " + Lang.T("自动评估"), "⇒ AutoML" };
-            mode.text = modes[Mathf.Clamp(level, 0, 5)];
             RefreshBill(run, unlocked);
             assess.Show(false);
-            autoTrain.Show(level >= 2);
-            if (level >= 2) autoTrain.Set(Lang.T("自动训练\n") + (run.running ? Lang.T("开") : Lang.T("关")), true, run.running ? XgDark.OnFill : (Color?)null, run.running ? XgDark.Good : (Color?)null);
 
             // The chance that the next round goes down, and the cards' heat (XgSim.AutoModel.cs, ChapterOneSim.Bills.cs).
             var dropRisk = Sim.DropRisk(run);
@@ -503,8 +470,6 @@ namespace LingGuangV05.Desktop.XingGuang
             hint.text = blocker != null ? "⚠ " + blocker : waiting != null ? "◷ " + waiting : Hint(run);
             hint.color = blocker != null ? XgDark.Bad : Sim.Plateaued(run) || Sim.ParamsShortForNext(run) ? XgDark.Gold : XgDark.Muted;
 
-            RefreshBuffs();
-            RefreshQuickBar();
             RefreshSide(track, run);
         }
 
@@ -522,15 +487,15 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         /// <summary>The cards have trained long enough in a row that every further second may burn one out (and nothing stops it now).</summary>
-        bool HeatWarning() => Host is XingGuangHost home && home.WearRiskLive && !Sim.PasteActive;
+        bool HeatWarning() => Host is XingGuangHost home && home.WearRiskLive;
 
         string RiskTip()
         {
             var run = Sim.Run(Track);
             string tip = Sim.DropRiskText(run) + T("。\n退步：这一轮的成绩往回掉一点，学会的能力不会丢。", ".\nA drop: this round's score falls back a little; learned abilities are never lost.");
             if (Host is XingGuangHost home && home.WearRiskLive)
-                tip += "\n\n" + T("显卡连着练太久了：每多练一秒都有一点概率烧掉一张卡（送修要花钱，修好前少一张卡）。歇几秒就清零。重涂硅脂能挡住，九州风神让概率减半。",
-                    "The cards have trained non-stop for long: every further second may burn one out (a repair costs money, and the card is gone until it is back). A few seconds of rest reset it. Fresh paste stops it; the tower cooler halves the chance.");
+                tip += "\n\n" + T("显卡连着练太久了：每多练一秒都有一点概率烧掉一张卡（送修要花钱，修好前少一张卡）。歇几秒就清零。九州风神让概率减半。",
+                    "The cards have trained non-stop for long: every further second may burn one out (a repair costs money, and the card is gone until it is back). A few seconds of rest reset it. The tower cooler halves the chance.");
             return tip;
         }
 
@@ -541,12 +506,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 "Validation: accuracy on unseen cards. Train: accuracy on cards it has practised (far above validation means it memorises).\nBest: the top score reached on this dataset.\nCeiling: the most this model can reach now, set by parameters, samples and structure; the dashed line is it.\nRed dots: rounds that went back.");
         }
 
-        /// <summary>The price of the next round, as the household's bills will take it (this month's tier, off-peak halves it, cuDNN trims the energy).</summary>
+        /// <summary>The price of the next round, as the household's bills will take it (this month's tier, cuDNN trims the energy).</summary>
         void RefreshBill(XgRun run, bool unlocked)
         {
             if (!unlocked || !(Host is XingGuangHost home) || !home.EconomyActive) { trainBill.text = ""; return; }
             double price = home.RoundPrice(XgSim.DurationFor(run), Sim.TrainPriceFactor, Sim.TrainEnergyFactor);
-            trainBill.text = T("电费 ¥", "Power ¥") + N(price, price < 10 ? "0.0" : "0") + (Sim.OffpeakActive ? "\n<size=12><color=#7FD3FF>" + T("谷电", "off-peak") + "</color></size>" : "");
+            trainBill.text = T("电费 ¥", "Power ¥") + N(price, price < 10 ? "0.0" : "0");
         }
 
         string Hint(XgRun run)

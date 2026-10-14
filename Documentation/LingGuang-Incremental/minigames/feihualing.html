@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 飞花令</title>
+<!--
+  飞花令 (《中国诗词大会》, CCTV-1, Feb 2016). A theme character; you and 灵光 take turns saying a classical line that
+  contains it. Lines are not repeated. Whoever fails first loses the round; 5 rounds.
+  Your turn: pick the one real, unused line from 4 candidates (10 s). The other three are garbled / spliced lines that look
+  plausible, a real line without the character, or a line already said. Each pick labels four candidates real / fake.
+  灵光's turn: with probability q(skill) it says a real unused line from the bank; otherwise it produces a garbled or invented
+  line and the judge rejects it ("查无此句"). So a weak 灵光 loses rounds quickly, a strong one forces you to really know poems.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.fh{position:absolute;inset:0;background:linear-gradient(#FBF5E4,#F2E8CC);font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif}
+.fh .ban{position:absolute;left:0;right:0;top:0;height:46px;background:linear-gradient(#8E1B1F,#B3282D);color:#F9E7B0;display:flex;align-items:center;padding:0 18px;gap:14px;box-shadow:0 2px 8px #0003}
+.fh .ban b{font-size:22px;letter-spacing:6px}
+.fh .ban em{font-style:normal;font-size:12px;opacity:.8;font-family:var(--font)}
+.fh .ban .sc{margin-left:auto;font-size:15px;font-family:var(--font);display:flex;gap:14px;align-items:center}
+.fh .ban .sc strong{font-size:24px;color:#fff}
+.chain{position:absolute;left:12px;top:58px;bottom:12px;width:286px;background:#FFFDF6;border:1px solid #E3D6B2;border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.chain .h{padding:7px 12px;font-size:13px;color:#8A7A5C;border-bottom:1px solid #EDE2C2;font-family:var(--font);display:flex;justify-content:space-between}
+.chain .l{flex:1;overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:7px}
+.ent{border-radius:8px;padding:6px 10px;font-size:17px;line-height:1.4;position:relative;max-width:92%;animation:ent .25s}
+@keyframes ent{from{opacity:0;transform:translateY(8px)}}
+.ent.me{align-self:flex-end;background:#E8F3FF;border:1px solid #BFD9F5}
+.ent.ai{align-self:flex-start;background:var(--ai2);border:1px solid #DCD6FB;color:#3F3490}
+.ent small{display:block;font-size:11px;color:#8A7A5C;font-family:var(--font)}
+.ent.bad{text-decoration:line-through;text-decoration-color:#E33E33;opacity:.85}
+.ent .mk{position:absolute;right:-4px;top:-8px;font-size:12px;border-radius:9px;padding:0 6px;color:#fff;background:var(--green);font-family:var(--font)}
+.ent.bad .mk{background:var(--red);text-decoration:none}
+.main{position:absolute;left:312px;right:12px;top:58px;bottom:12px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.theme{margin-top:2px;display:flex;align-items:center;gap:22px}
+.seal{width:104px;height:104px;border-radius:14px;background:#B3282D;color:#FBEFC6;font-size:78px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px #8E1B1F66,inset 0 0 0 4px #FBEFC655;transform:rotate(-3deg);transition:transform .3s}
+.seal.pop{animation:sp .5s}
+@keyframes sp{0%{transform:scale(.3) rotate(-30deg);opacity:0}70%{transform:scale(1.15) rotate(-3deg)}100%{transform:scale(1) rotate(-3deg);opacity:1}}
+.who{font-family:var(--font);font-size:15px;color:#5A4A2A;line-height:1.7}
+.who b{font-size:22px;color:#B3282D}
+.who .turn{display:inline-block;border-radius:12px;padding:0 12px;font-size:14px;color:#fff;background:var(--blue)}
+.who .turn.ai{background:var(--ai)}
+.tm{width:540px;height:7px;background:#E6DCC4;border-radius:4px;overflow:hidden}.tm i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:584px}
+.opt{height:92px;background:#FFFDF6;border:2px solid #D9C9A0;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:25px;letter-spacing:2px;color:#2B2316;position:relative;transition:transform .08s,border-color .1s;padding:0 12px;text-align:center}
+.opt:hover{border-color:var(--blue);transform:translateY(-2px)}
+.opt .k{position:absolute;left:8px;top:6px;font-size:12px;color:#fff;background:#8A7A5C;border-radius:50%;width:18px;height:18px;line-height:18px;font-family:var(--font);letter-spacing:0}
+.opt.good{border-color:var(--green);background:#EAF8EE}.opt.bad{border-color:var(--red);background:#FFF0EE}
+.opt.dim{opacity:.45}
+.opt small{position:absolute;bottom:5px;left:0;right:0;font-size:11px;color:#8A7A5C;letter-spacing:0;font-family:var(--font)}
+.judge{width:584px;min-height:92px;background:#fff;border:1px solid #E3D6B2;border-radius:10px;display:flex;align-items:center;gap:14px;padding:8px 16px;font-family:var(--font);position:relative}
+.judge .av{width:52px;height:52px;border-radius:50%;background:#2B2316;color:#F9E7B0;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;font-family:"Songti SC",serif}
+.judge .tx{font-size:15px;line-height:1.7;color:#3A2E1A}
+.stamp{position:absolute;right:18px;top:50%;margin-top:-30px;border:4px solid;border-radius:10px;padding:2px 12px;font-size:30px;font-weight:900;transform:rotate(-8deg);opacity:0;pointer-events:none;font-family:"Songti SC",serif}
+.stamp.ok{color:var(--green);border-color:var(--green)}.stamp.no{color:var(--red);border-color:var(--red)}
+.stamp.show{animation:st .5s forwards}
+@keyframes st{0%{opacity:0;transform:scale(2.6) rotate(-8deg)}60%{opacity:1;transform:scale(.92) rotate(-8deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+.over{background:#FBF5E4f2;font-family:var(--font)}
+.res{display:grid;grid-template-columns:auto auto;gap:6px 26px;text-align:left;font-size:15px;color:#333}.res b{text-align:right}
+.think{display:none;flex-direction:column;align-items:center;justify-content:center;width:584px;height:196px;color:var(--ai);font-family:var(--font);font-size:18px;gap:10px;background:var(--ai2);border:2px dashed #CFC6F6;border-radius:12px}
+.think .dots span{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ai);margin:0 4px;animation:dt 1s infinite}
+.think .dots span:nth-child(2){animation-delay:.15s}.think .dots span:nth-child(3){animation-delay:.3s}
+@keyframes dt{50%{transform:translateY(-8px);opacity:.4}}
+.think .say{font-size:25px;font-family:"Songti SC",serif;color:#3F3490;letter-spacing:3px;min-height:36px}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'feihualing', title:'飞花令', subtitle:'《中国诗词大会》· 和灵光对诗', icon:'诗', dataset:'诗句真伪',
+  stats:[['你赢的局','sOk'],['灵光赢的局','sNo'],['你说出的诗','sLines'],['灵光背对','sAi','—'],['收入','sPay','¥0']], statsNote:'每选一次 = 4 条真伪标签',
+  aiHello:'飞花令……花、月、春、风……我背过很多。',
+  rule:'<b>玩法</b>：每局一个字，你和灵光轮流说一句带这个字的真诗，不能重复。先说不出的输。<br><b>你的回合</b>：10 秒内从 4 句里选出那一句真的（1–4 键）。<br><b>标签</b>：你的每次选择都在标注句子真伪。<br><span style="color:var(--ai)">灵光水平低就会背串、编句子，评委当场驳回。</span>'
+});
+
+/* ---------- sound ---------- */
+let AC;
+function beep(f,d,type,v,when){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(when||0);
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(v||.05,t); g.gain.exponentialRampToValueAtTime(.0001,t+(d||.08)); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+(d||.08)+.02);}catch(e){} }
+const sfx={ok(){beep(660,.1,'triangle',.07);beep(990,.16,'triangle',.07,.09);},bad(){beep(180,.3,'sawtooth',.05);},tick(){beep(1200,.03,'square',.02);},gong(){beep(220,.6,'sine',.09);beep(330,.5,'sine',.05,.02);},ai(){beep(420,.1,'sine',.05);}};
+
+/* ---------- the bank: real lines (Tang / Song, public domain), tagged by the characters they contain ---------- */
+const RAW=`春眠不觉晓|孟浩然《春晓》
+夜来风雨声|孟浩然《春晓》
+花落知多少|孟浩然《春晓》
+床前明月光|李白《静夜思》
+举头望明月|李白《静夜思》
+春城无处不飞花|韩翃《寒食》
+寒食东风御柳斜|韩翃《寒食》
+人面桃花相映红|崔护《题都城南庄》
+花间一壶酒|李白《月下独酌》
+举杯邀明月|李白《月下独酌》
+感时花溅泪|杜甫《春望》
+国破山河在|杜甫《春望》
+城春草木深|杜甫《春望》
+无可奈何花落去|晏殊《浣溪沙》
+昨夜西风凋碧树|晏殊《蝶恋花》
+竹外桃花三两枝|苏轼《惠崇春江晚景》
+春江水暖鸭先知|苏轼《惠崇春江晚景》
+明月几时有|苏轼《水调歌头》
+月有阴晴圆缺|苏轼《水调歌头》
+不识庐山真面目|苏轼《题西林壁》
+只缘身在此山中|苏轼《题西林壁》
+水光潋滟晴方好|苏轼《饮湖上初晴后雨》
+山色空蒙雨亦奇|苏轼《饮湖上初晴后雨》
+一蓑烟雨任平生|苏轼《定风波》
+花褪残红青杏小|苏轼《蝶恋花》
+春风又绿江南岸|王安石《泊船瓜洲》
+明月何时照我还|王安石《泊船瓜洲》
+海上生明月|张九龄《望月怀远》
+月落乌啼霜满天|张继《枫桥夜泊》
+夜半钟声到客船|张继《枫桥夜泊》
+春江潮水连海平|张若虚《春江花月夜》
+海上明月共潮生|张若虚《春江花月夜》
+江畔何人初见月|张若虚《春江花月夜》
+好雨知时节|杜甫《春夜喜雨》
+随风潜入夜|杜甫《春夜喜雨》
+当春乃发生|杜甫《春夜喜雨》
+花重锦官城|杜甫《春夜喜雨》
+春风吹又生|白居易《赋得古原草送别》
+乱花渐欲迷人眼|白居易《钱塘湖春行》
+夜深知雪重|白居易《夜雪》
+二月春风似剪刀|贺知章《咏柳》
+春风得意马蹄疾|孟郊《登科后》
+一日看尽长安花|孟郊《登科后》
+春风不度玉门关|王之涣《凉州词》
+白日依山尽|王之涣《登鹳雀楼》
+黄河之水天上来|李白《将进酒》
+抽刀断水水更流|李白《宣州谢朓楼饯别校书叔云》
+桃花潭水深千尺|李白《赠汪伦》
+两岸青山相对出|李白《望天门山》
+长风破浪会有时|李白《行路难》
+秦时明月汉时关|王昌龄《出塞》
+空山不见人|王维《鹿柴》
+空山新雨后|王维《山居秋暝》
+明月松间照|王维《山居秋暝》
+渭城朝雨浥轻尘|王维《送元二使安西》
+清明时节雨纷纷|杜牧《清明》
+远上寒山石径斜|杜牧《山行》
+天街小雨润如酥|韩愈《早春呈水部张十八员外》
+忽如一夜春风来|岑参《白雪歌送武判官归京》
+千树万树梨花开|岑参《白雪歌送武判官归京》
+北风卷地白草折|岑参《白雪歌送武判官归京》
+东风夜放花千树|辛弃疾《青玉案·元夕》
+青山遮不住|辛弃疾《菩萨蛮》
+山重水复疑无路|陆游《游山西村》
+柳暗花明又一村|陆游《游山西村》
+夜阑卧听风吹雨|陆游《十一月四日风雨大作》
+春花秋月何时了|李煜《虞美人》
+小楼昨夜又东风|李煜《虞美人》
+一江春水向东流|李煜《虞美人》
+流水落花春去也|李煜《浪淘沙》
+帘外雨潺潺|李煜《浪淘沙》
+春色满园关不住|叶绍翁《游园不值》
+沾衣欲湿杏花雨|志南《绝句》
+吹面不寒杨柳风|志南《绝句》
+映日荷花别样红|杨万里《晓出净慈寺送林子方》
+今夜月明人尽望|王建《十五夜望月》
+露从今夜白|杜甫《月夜忆舍弟》
+月是故乡明|杜甫《月夜忆舍弟》
+月涌大江流|杜甫《旅夜书怀》
+会当凌绝顶|杜甫《望岳》
+一览众山小|杜甫《望岳》
+却话巴山夜雨时|李商隐《夜雨寄北》
+昨夜星辰昨夜风|李商隐《无题》
+东风无力百花残|李商隐《无题》
+春蚕到死丝方尽|李商隐《无题》
+夜吟应觉月光寒|李商隐《无题》
+春水碧于天|韦庄《菩萨蛮》
+梧桐更兼细雨|李清照《声声慢》
+花自飘零水自流|李清照《一剪梅》
+风急天高猿啸哀|杜甫《登高》
+黄四娘家花满蹊|杜甫《江畔独步寻花》
+千山鸟飞绝|柳宗元《江雪》
+能开二月花|李峤《风》
+今夜鄜州月|杜甫《月夜》
+春潮带雨晚来急|韦应物《滁州西涧》
+东风不与周郎便|杜牧《赤壁》
+山外青山楼外楼|林升《题临安邸》
+暖风熏得游人醉|林升《题临安邸》
+为有源头活水来|朱熹《观书有感》
+日出江花红胜火|白居易《忆江南》
+春来江水绿如蓝|白居易《忆江南》
+春宵一刻值千金|苏轼《春夜》
+花有清香月有阴|苏轼《春夜》
+夜泊秦淮近酒家|杜牧《泊秦淮》
+烟笼寒水月笼沙|杜牧《泊秦淮》
+寒雨连江夜入吴|王昌龄《芙蓉楼送辛渐》
+春风十里扬州路|杜牧《赠别》
+山抹微云|秦观《满庭芳》`;
+const LINES=RAW.trim().split('\n').map(l=>{ const p=l.split('|'); return {t:p[0],s:p[1]}; });
+const REAL=new Set(LINES.map(l=>l.t));
+const BY=new Map(LINES.map(l=>[l.t,l]));
+const THEMES=['花','月','春','风','山','水','雨','夜'];
+const byChar=ch=>LINES.filter(l=>l.t.indexOf(ch)>=0);
+const POOL=[...'风云雪霜烟江海天星雨山水花月春秋夜日人心情梦思君愁泪酒柳草木鸟马舟城楼门窗灯影声寒暖红白青黄碧金玉'];
+
+/* ---------- fake line makers ---------- */
+function garble(line,th,n){ const a=[...line], idx=LG.shuffle([...a.keys()].filter(i=>a[i]!==th));
+  for(let k=0;k<n&&k<idx.length;k++){ let c,g=0; do{ c=LG.pick(POOL); }while((c===a[idx[k]]||c===th)&&++g<20); a[idx[k]]=c; } return a.join(''); }
+function splice(th){ // first half of one line + second half of another, same length, still contains the theme char
+  for(let k=0;k<30;k++){ const A=LG.pick(byChar(th)), cands=LINES.filter(l=>l.t.length===A.t.length&&l.t!==A.t); if(!cands.length) continue; const B=LG.pick(cands);
+    const cut=A.t.length===5?2:3; const r=A.t.slice(0,cut)+B.t.slice(cut); if(r.indexOf(th)>=0&&!REAL.has(r)) return r; }
+  return garble(LG.pick(byChar(th)).t,th,2); }
+function fakeLine(th,kind){ let r,g=0; do{ r=kind==='splice'?splice(th):garble(LG.pick(byChar(th)).t,th,1+LG.rnd(2)); }while(REAL.has(r)&&++g<20); return r; }
+function gibberish(th){ const len=LG.pick([5,7]); const a=Array.from({length:len},()=>LG.pick(POOL)); a[LG.rnd(len)]=th; return a.join(''); }
+
+/* ---------- state ---------- */
+const ROUNDS=5, TLIM=10, CAP=4; // CAP: lines each per round; if nobody fails the round is a draw
+const F={on:false,r:-1,order:[],theme:'',used:new Set(),turn:'',phase:'',win:0,lose:0,draw:0,n:0,lines:0,pay:0,combo:0,best:0,aiReal:0,aiAll:0,t0:0,raf:0,opts:[],aiTO:0,nextTO:0,fastest:99,total:0};
+const $=id=>document.getElementById(id);
+stage.innerHTML=`
+<div class="fh">
+  <div class="ban"><b>飞 花 令</b><em>中国诗词大会 · 第一季</em><div class="sc"><span>第 <b id="rN" style="color:#fff">1</b>/${ROUNDS} 局</span><span>你 <strong id="scMe">0</strong> : <strong id="scAi" style="color:#CBBEFF">0</strong> 灵光</span></div></div>
+  <div class="chain"><div class="h"><span>已说的诗</span><span id="cN">0 句</span></div><div class="l" id="chain"></div></div>
+  <div class="main">
+    <div class="theme"><div class="seal" id="seal">花</div><div class="who"><div>本局飞花令：含 <b id="thT">花</b> 字</div><div><span class="turn" id="turn">你的回合</span> <span id="tleft"></span></div></div></div>
+    <div class="tm"><i id="tm"></i></div>
+    <div class="opts" id="opts"></div>
+    <div class="think" id="think"><div class="dots"><span></span><span></span><span></span></div><div>灵光在想……</div><div class="say" id="aiLine">&nbsp;</div></div>
+    <div class="judge"><div class="av">评</div><div class="tx" id="jt">评委：飞花令，请开始。</div><div class="stamp" id="stamp">通过</div></div>
+  </div>
+  <div class="over" id="over"></div>
+</div>`;
+
+/* ---------- helpers ---------- */
+function judgeSay(t){ $('jt').innerHTML=t; }
+function stamp(ok){ const s=$('stamp'); s.textContent=ok?'通 过':'驳 回'; s.className='stamp '+(ok?'ok':'no'); void s.offsetWidth; s.classList.add('show'); }
+function addChain(who,text,ok,src){
+  const c=$('chain'), e=document.createElement('div'); e.className='ent '+who+(ok?'':' bad');
+  e.innerHTML=text+(src?`<small>${src}</small>`:'')+`<span class="mk">${ok?'✓':'✗'}</span>`; c.appendChild(e); c.scrollTop=c.scrollHeight; $('cN').textContent=c.children.length+' 句';
+}
+function setTurn(who){ F.turn=who; const t=$('turn'); t.textContent=who==='me'?'你的回合':'灵光的回合'; t.className='turn'+(who==='ai'?' ai':''); $('opts').style.display=who==='me'?'grid':'none'; $('think').style.display=who==='ai'?'flex':'none'; $('tm').parentNode.style.visibility=who==='me'?'visible':'hidden'; }
+function sync(){ LG.set('sOk',F.win); LG.set('sNo',F.lose); LG.set('sLines',F.lines); LG.set('sAi',F.aiAll?F.aiReal+'/'+F.aiAll+' 句':'—'); LG.set('sPay','¥'+F.pay.toFixed(1)); $('scMe').textContent=F.win; $('scAi').textContent=F.lose; }
+
+/* ---------- a round ---------- */
+function startGame(){
+  Object.assign(F,{on:true,r:-1,order:LG.shuffle(THEMES).slice(0,ROUNDS),win:0,lose:0,draw:0,lines:0,pay:0,combo:0,best:0,aiReal:0,aiAll:0,fastest:99});
+  const h=document.getElementById('lgHist'); if(h) h.innerHTML=''; $('over').style.display='none'; $('chain').innerHTML=''; sync();
+  nextRound();
+}
+function nextRound(){
+  clearTimeout(F.aiTO); clearTimeout(F.nextTO); cancelAnimationFrame(F.raf);
+  F.r++; if(F.r>=ROUNDS) return finish();
+  F.theme=F.order[F.r]; F.used=new Set(); F.phase=''; F.n=0;
+  $('rN').textContent=F.r+1; $('seal').textContent=F.theme; $('thT').textContent=F.theme; $('seal').classList.remove('pop'); void $('seal').offsetWidth; $('seal').classList.add('pop');
+  $('chain').innerHTML=''; $('cN').textContent='0 句'; $('stamp').className='stamp'; sfx.gong();
+  judgeSay('评委：第 '+(F.r+1)+' 局，飞花令——<b style="color:#B3282D">「'+F.theme+'」</b>。你先来。');
+  LG.say(LG.skill()>.7?'「'+F.theme+'」我库里有一大把。':LG.skill()>.4?'「'+F.theme+'」……我试试。':'「'+F.theme+'」？我只会一两句……');
+  F.nextTO=setTimeout(()=>playerTurn(),900);
+}
+function playerTurn(){
+  const th=F.theme, pool=byChar(th).filter(l=>!F.used.has(l.t));
+  if(!pool.length){ return endRound(false,'「'+th+'」字的诗，你一句也想不出来了。'); }
+  setTurn('me');
+  const right=pool[LG.rnd(pool.length)], opts=[{t:right.t,s:right.s,ok:true,kind:'real'}], taken=new Set([right.t]);
+  const add=(t,kind,s)=>{ if(taken.has(t)) return false; taken.add(t); opts.push({t,s,ok:false,kind}); return true; };
+  let g=0; while(opts.length<2&&g++<20) add(fakeLine(th,'garble'),'fake');
+  g=0; while(opts.length<3&&g++<20) add(fakeLine(th,'splice'),'fake');
+  // fourth: a line that was already said, or a real line without the character
+  const usedLines=[...F.used].filter(t=>BY.has(t));
+  if(usedLines.length&&Math.random()<.6){ const t=LG.pick(usedLines); opts.push({t,s:BY.get(t).s,ok:false,kind:'used'}); taken.add(t); }
+  else { const no=LG.shuffle(LINES.filter(l=>l.t.indexOf(th)<0&&!taken.has(l.t)&&l.t.length===right.t.length)); if(no.length){ opts.push({t:no[0].t,s:no[0].s,ok:false,kind:'nochar'}); } else add(fakeLine(th,'garble'),'fake'); }
+  while(opts.length<4) add(fakeLine(th,'garble'),'fake');
+  F.opts=LG.shuffle(opts); F.phase='me';
+  const o=$('opts'); o.innerHTML='';
+  F.opts.forEach((p,i)=>{ const d=document.createElement('div'); d.className='opt'; d.innerHTML=`<span class="k">${i+1}</span>${p.t}`; d.onclick=()=>pick(i); p.el=d; o.appendChild(d); });
+  F.t0=performance.now(); cancelAnimationFrame(F.raf); loop();
+}
+function loop(){
+  if(F.phase!=='me') return;
+  const el=(performance.now()-F.t0)/1000, f=Math.max(0,1-el/TLIM), bar=$('tm');
+  bar.style.transform=`scaleX(${f})`; bar.style.background=f>.5?'var(--green)':f>.25?'var(--gold)':'var(--red)';
+  const s=Math.ceil(TLIM-el); $('tleft').textContent=s+' 秒'; if(s!==F.ls&&s<=3&&s>0) sfx.tick(); F.ls=s;
+  if(el>=TLIM){ F.phase=''; F.opts.forEach(p=>{ if(p.ok) p.el.classList.add('good'); else p.el.classList.add('dim'); }); stamp(false); sfx.bad(); judgeSay('评委：时间到。这一局，<b>你</b>说不出来了。'); return setTimeout(()=>endRound(false,'超时'),1100); }
+  F.raf=requestAnimationFrame(loop);
+}
+function pick(i){
+  if(F.phase!=='me') return; F.phase='judge'; cancelAnimationFrame(F.raf);
+  const p=F.opts[i], took=(performance.now()-F.t0)/1000;
+  F.opts.forEach(q=>{ if(q.ok) q.el.classList.add('good'); else if(q!==p) q.el.classList.add('dim'); });
+  if(p.ok){
+    F.used.add(p.t); F.lines++; F.combo++; F.best=Math.max(F.best,F.combo); F.fastest=Math.min(F.fastest,took);
+    const pay=+(1+Math.max(0,1-took/TLIM)*.5+Math.min(F.combo-1,4)*.2).toFixed(1); F.pay+=pay; LG.give(1,pay,p.el,'var(--red)'); LG.hist('ok');
+    addChain('me',p.t,true,p.s); stamp(true); sfx.ok(); sync();
+    judgeSay('评委：<b style="color:#2F9E44">正确</b>，'+p.s+'。');
+    const sk=LG.skill(); LG.say(sk>.7?LG.pick(['好句。我这儿还有。','不错。轮到我了。']):sk>.4?LG.pick(['这句我也背过……','你背得真熟。']):LG.pick(['这句我没听过……','哇，你是诗词大会选手吗？']));
+    F.n++; F.nextTO=setTimeout(()=>{ if(F.n>=CAP*2) endRound(null,'双方各说了 '+CAP+' 句，都没出错'); else aiTurn(); },1300);
+  } else {
+    p.el.classList.add('bad'); F.combo=0; F.pay-=.5; LG.give(0,-.5,p.el,'#999'); LG.hist('no'); sfx.bad(); stamp(false); LG.shake(p.el); sync();
+    addChain('me',p.t,false);
+    const th=F.theme;
+    judgeSay('评委：'+(p.kind==='used'?'这句刚才已经说过了。':p.kind==='nochar'?'这句是真的（'+p.s+'），但没有「'+th+'」字。':'查无此句。这是被改过的诗。')+' <b>你</b>输了这一局。');
+    LG.say(LG.skill()>.6?'这句不对。我听出来了。':'诶？这句是真的吗？我也分不清……');
+    F.nextTO=setTimeout(()=>endRound(false,'选错'),1700);
+  }
+}
+function aiTurn(){
+  setTurn('ai'); F.phase='ai'; const th=F.theme, sk=LG.skill();
+  const pool=byChar(th).filter(l=>!F.used.has(l.t));
+  $('aiLine').innerHTML='&nbsp;';
+  const delay=700+(1-sk)*2200+LG.rnd(500);
+  F.aiTO=setTimeout(()=>{
+    if(!F.on) return;
+    if(!pool.length){ addChain('ai','……',false); stamp(false); sfx.bad(); judgeSay('评委：灵光，词穷了。<b>你</b>赢了这一局。'); LG.say('我……想不出来了。这个字的诗，我都说完了。'); return F.nextTO=setTimeout(()=>endRound(true,'灵光词穷'),1700); }
+    const q=Math.min(.97,.18+.8*sk), real=Math.random()<q; F.aiAll++;
+    let text,src='',ok=false;
+    if(real){ const l=pool[LG.rnd(pool.length)]; text=l.t; src=l.s; ok=true; F.aiReal++; }
+    else { const r=Math.random(); text=(sk<.4&&r<.35)?gibberish(th):fakeLine(th,r<.6?'garble':'splice'); }
+    $('aiLine').textContent=text; sfx.ai();
+    LG.say(ok?(sk>.7?LG.pick(['这一句，我选这个。','「'+th+'」字的诗，我还有很多。']):sk>.4?LG.pick(['这句我背过。','我来一句。']):LG.pick(['我想起来了！就是这句。','应该……是这句。'])):
+      (sk>.6?LG.pick(['这句……好像记错了一个字。','我刚才是不是串行了？']):LG.pick(['这句……是我自己编的……吗？','床前……不对，我也不知道。','这听起来像诗，对吧？'])));
+    setTimeout(()=>{
+      if(!F.on) return;
+      addChain('ai',text,ok,src); LG.hist(ok?'ai':'no'); sync();
+      if(ok){ F.used.add(text); stamp(true); sfx.ok(); judgeSay('评委：<b style="color:#2F9E44">正确</b>，'+src+'。轮到你了。'); F.n++; F.nextTO=setTimeout(()=>{ if(F.n>=CAP*2) endRound(null,'双方各说了 '+CAP+' 句，都没出错'); else playerTurn(); },1200); }
+      else { stamp(false); sfx.bad(); judgeSay('评委：<b>查无此句</b>。灵光这一局输了。'); LG.say(sk>.6?'……我串了。下次不会。':'我编的不对吗？看起来很像啊。'); F.nextTO=setTimeout(()=>endRound(true,'灵光编了一句假诗'),1800); }
+    },700);
+  },delay);
+}
+function endRound(youWin,why){
+  if(!F.on) return; F.phase=''; clearTimeout(F.aiTO); cancelAnimationFrame(F.raf);
+  if(youWin===null){ F.draw++; F.pay+=1; LG.give(0,1,$('seal'),'var(--red)'); sfx.gong(); }
+  else if(youWin){ F.win++; F.pay+=2; LG.give(0,2,$('seal'),'var(--red)'); sfx.ok(); } else { F.lose++; F.combo=0; }
+  sync();
+  judgeSay('第 '+(F.r+1)+' 局：'+(youWin===null?'<b style="color:#8A7A5C">平局</b>（'+why+'）。+¥1':'<b style="color:'+(youWin?'#2F9E44':'#E33E33')+'">'+(youWin?'你赢了':'灵光赢了')+'</b>（'+why+'）。'+(youWin?'+¥2':'')));
+  F.nextTO=setTimeout(nextRound,1900);
+}
+function finish(){
+  F.on=false; const o=$('over'); o.style.display='flex';
+  const w=F.win>F.lose, aiRate=F.aiAll?Math.round(F.aiReal/F.aiAll*100):0;
+  o.innerHTML=`<h2>${w?'🌸 你赢了灵光':F.win===F.lose?'平局':'灵光获胜'}　${F.win} : ${F.lose}${F.draw?'（平 '+F.draw+'）':''}</h2>
+   <p>${w?'「花落知多少」——这回是你背得多。':F.win===F.lose?'旗鼓相当。':'灵光背得比你多。多教教它，也多背几首。'}</p>
+   <div class="res"><span>你说出的真诗</span><b>${F.lines} 句</b><span>最高连击</span><b>×${F.best}</b><span>收入</span><b style="color:var(--red)">¥${F.pay.toFixed(1)}</b><span>灵光说对的诗</span><b style="color:var(--ai)">${F.aiReal}/${F.aiAll}（${aiRate}%）</b></div>
+   <button class="btn" id="again">再来一场 (Enter)</button>`;
+  $('again').onclick=startGame; LG.say(w?'你背得真多……我回去再背。':'这次我背对了不少。');
+}
+function intro(){
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>🌸 飞花令</h2>
+   <p>《中国诗词大会》里的游戏：定一个字，轮流说出带这个字的诗句。<br>
+   每局一个字（花、月、春、风、山、水、雨、夜……），你先说。<b>10 秒</b>内，从 4 句里选出真的那句——<br>
+   另外三句是被改过的诗、拼起来的诗，或者<b>已经说过</b>的、<b>没有那个字</b>的真诗。<br>
+   然后轮到<b style="color:var(--ai)">灵光</b>。它水平低时会背串、编句子，评委当场驳回；水平高时背得又快又对，你得拿真本事。<br>
+   先说不出来的输这一局；双方各说满 ${CAP} 句都没出错就算平局。共 ${ROUNDS} 局。选对 +¥1 起，赢一局 +¥2，选错 −¥0.5。</p>
+   <button class="btn" id="go">开始 (Enter)</button>`;
+  $('go').onclick=startGame;
+}
+addEventListener('keydown',e=>{
+  if(!F.on){ if(e.code==='Enter'||e.code==='Space'){ e.preventDefault(); startGame(); } return; }
+  if(e.key>='1'&&e.key<='4') pick(+e.key-1);
+});
+intro();
+</script>
+</body>
+</html>

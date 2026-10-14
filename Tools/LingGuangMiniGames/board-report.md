@@ -1,0 +1,23 @@
+# Native board minigames — implementation evidence
+
+## Delivered
+- `XgBoardGames.Create`: alphago / forgetax / vramtetris / merge2048 / sentence / lianliankan; null for unknown.
+- Pure no-engine rules in `XgMiniBoard*.cs`; native uGUI/TMP UI, fixed 900 × 480, Tick-only timers, no packages/scenes/persistence format changes.
+- Settlement only through `C.Report`. Training games report successful hammer draws / cleared rows only, leaving actual epoch eligibility, samples and cost to root-owned integration. No Params mutation or independent wallet.
+
+## Behavioral reference and intentional differences
+- **Go:** All 13 original positions and explanations. 9×9 group/liberty counting, enemy captures, suicide/occupied rejection; capture, atari, escape, double-atari, depth-bounded ladder and two-ply kill judges. Single submitted move ends a timed puzzle. Invalid moves / hints / reset never report. Skill-conditioned hint. Native stones and target markers. No full alternating Go match/ko history (one-move puzzles), no original separate six-round AI race or ladder animation.
+- **ForgeTax:** The original is weighted ticket drawing, not timing accuracy. Preserves three model slots, load/heat, up/great/plateau/damage/explosion, +18 target, ten-strike four-second frenzy, eight original paper modifiers and model-consuming paper acquisition. All state is explicitly local minigame progress. Main game owns monetary economy; no duplicate shop/rent wallet, sale payouts or direct parameter scaling. Original 26-paper shop/rent campaign is not reproduced; replacement failure is three exhausted model batches. Cooldown 160 ms prevents duplicate rapid strike settlement.
+- **Tetris:** 10×20 visible plus two hidden rows, seven tetrominoes / seven-bag, square rotation with horizontal wall kicks, collision, soft/hard drop, hold once per piece, next/hold previews, ghost, pause, row compaction, speed increase and overflow. Skill-conditioned scored placement hint. Reports one training request per cleared row. No original particle effects or 500 ms ground lock delay / full SRS; locks on failed gravity movement.
+- **2048:** Original rank values (100, 200, ...), directional slide, one merge per source tile, spawn only after actual movement, 90/10 rank spawn, keyboard/swipe/buttons, goal and no-moves state, restart. Skill-conditioned greedy hint, not the original sampled expectimax. Each slide containing one or more successful merges reports one verified training request (not dataset-size units); root settles real training costs and blockers. Original dataset aliases rendered as numeric values except goal caption.
+- **Sentence:** All 38 original presegmented sentences, shuffled eight-round session, 45-second rounds, exact / >=70% position scoring, skill-conditioned companion answer after submission, session-local learned sentences. Native click-to-place and click-to-remove replace drag ordering; no browser speech synthesis or separate localStorage.
+- **Link:** 30 original concepts rendered as native vector pictograms, 30 opposite-kind word/image pairs in original 8×12 grid with empty border. Real path search <=2 turns, elapsed-time limit, shuffle penalty, pair time bonus, four skill-conditioned prelinked proposals and correct/incorrect review, hints, dead-board reshuffle. No font-dependent emoji. Uses fixed curated 30 concepts rather than random 30 from larger original pool; no independent hint currency charges or combo monetary formula.
+
+## Verification
+- Added nine NUnit tests: Go capture/source immutability; suicide/occupied rejection; 2048 single merge; no-op; Tetris collision; adjacent-row compaction; four rotations; link obstruction/border; all 13 Go puzzles have at least one legal solution.
+- Executed these exact NUnit test methods against installed Unity nunit.framework using temporary .NET 8 reflection runner: **9 passed, 0 failed**. This is domain-test execution, not Unity EditMode runner evidence.
+- Compiled all group native game files + actual shared context against current project/Unity assemblies via temporary netstandard2.1 project: **0 errors**, 2 framework assembly version-conflict warnings from broad existing Editor assembly references (not source diagnostics).
+- No Unity launch, Play mode/input/screenshot acceptance performed by worker. Root owns live import and end-to-end verification.
+
+## Complexity / boundaries
+Core Go group/play O(board area), 2048 O(16), Tetris collision O(piece area), row clearing O(HW), link search O(HW) with four directions and at most two turns. Go tactical solution enumeration is higher-order bounded search on 81 cells, ladder recursion capped at 40. No background jobs or external calls.

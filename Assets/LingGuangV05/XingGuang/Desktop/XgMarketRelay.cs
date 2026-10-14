@@ -33,7 +33,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static string T(string zh, string en) => GameText.T(zh, en);
         static string Who => T("摆渡众包", "Bodu Crowdsourcing");
-        static void Popup(string text, float seconds) { PrologueDirector.Desk?.Popup(Who, text, seconds); }
+        // Click opens 摆渡众包.
+        static void Popup(string text, float seconds) { PrologueDirector.Desk?.Popup(Who, text, seconds, () => FindAnyObjectByType<ChapterOneDesktopRouter>()?.Open(XingGuangController.CrowdAppId)); }
 
         void Update()
         {

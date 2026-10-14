@@ -21,6 +21,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim Ready()
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.stage = XgSim.FeatureUnlock["quality"]; // the platform's checks belong to the crowd stage
             sim.S.desksOpen.Add("mnist");
             sim.S.autoLevel = 1;
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8, arch = "perceptron" });
@@ -32,7 +33,13 @@ namespace LingGuangV05.XingGuang.Tests
         /// <summary>One second of play with this many hand labels in it.</summary>
         static void Second(XgSim sim, Host host, int handLabels)
         {
-            for (int i = 0; i < handLabels; i++) { var c = sim.Card("spam"); sim.Answer("spam", c.truth, host); }
+            for (int i = 0; i < handLabels; i++)
+            {
+                var c = sim.Card("spam");
+                // A family text is an opinion, not a labelled sample: it never counts towards the speed meter.
+                while (c.family) { sim.Answer("spam", false, host); c = sim.Card("spam"); }
+                sim.Answer("spam", c.truth, host);
+            }
             sim.TickCollaboration(1, host);
         }
 
@@ -277,7 +284,7 @@ namespace LingGuangV05.XingGuang.Tests
             var reloaded = new XgSim(sim.S);
             Assert.IsTrue(reloaded.CaptchaPending);
             Assert.AreEqual(XgSim.CaptchaTimeout, reloaded.CaptchaSecondsLeft, 1e-9, "a waiting captcha gets a fresh clock");
-            var bad = new XgState { autoLevel = 1, qcCaptcha = true, qcCaptchaCode = "12a", qcSuspicion = double.NaN, qcAutoPause = 1e9, qcSpeed = null, qcSpeedHead = 99, qcCaptchaFails = 7 };
+            var bad = new XgState { stage = XgSim.FeatureUnlock["quality"], autoLevel = 1, qcCaptcha = true, qcCaptchaCode = "12a", qcSuspicion = double.NaN, qcAutoPause = 1e9, qcSpeed = null, qcSpeedHead = 99, qcCaptchaFails = 7 };
             var fixedSim = new XgSim(bad);
             Assert.IsFalse(fixedSim.CaptchaPending); Assert.AreEqual(0, fixedSim.Suspicion);
             Assert.AreEqual(XgSim.CaptchaPause, fixedSim.CaptchaPauseLeft, 1e-9);

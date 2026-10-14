@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 找不同</title>
+<!--
+  找不同 — two procedurally drawn scenes (2016 dorm desk / 网吧), 5 differences (missing object, colour change, moved item,
+  size change). 灵光 goes first and circles its picks in purple: each pick is a real difference with probability LG.skill(),
+  otherwise a spot where nothing changed. The player verifies every circle (对 / 错), then finds the rest by clicking.
+  At skill >= .9 it may also circle a "ghost" difference (a 3-level colour shift nobody can see) that is really there.
+  Timer 90 s, a wrong click costs 3 s. Correct verifications and finds are samples.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.zb{display:flex;flex-direction:column;gap:8px;height:100%;padding:12px}
+.zt{display:flex;align-items:center;gap:14px;flex:none;height:30px}
+.tm{flex:1;height:10px;border-radius:5px;background:#ECEEF2;overflow:hidden}
+.tm i{display:block;height:100%;background:var(--green);transition:background .3s}
+.tn{font-weight:800;font-size:18px;width:62px;text-align:right;font-variant-numeric:tabular-nums}
+.pips{display:flex;gap:6px}
+.pips i{width:20px;height:20px;border-radius:50%;border:2px solid #C9CFDD;background:#fff;font-style:normal;font-size:12px;color:#fff;text-align:center;line-height:16px;transition:all .25s}
+.pips i.on{background:var(--green);border-color:var(--green);transform:scale(1.15)}
+.pair{display:flex;gap:14px;flex:none}
+.picw{width:440px;position:relative}
+.picw .cap{position:absolute;left:8px;top:6px;z-index:4;background:#0007;color:#fff;font-size:11px;padding:0 8px;line-height:18px;border-radius:9px;pointer-events:none}
+.pic{width:440px;height:330px;position:relative;border:1px solid #C9CFDD;border-radius:6px;overflow:hidden;cursor:crosshair;background:#fff}
+.pic canvas{width:440px;height:330px;display:block}
+.ov{position:absolute;inset:0;pointer-events:none}
+.ci{position:absolute;border:3px dashed var(--ai);border-radius:50%;box-shadow:0 0 0 2px #fff8,0 0 12px var(--ai);animation:cin .35s ease-out;transition:opacity .3s,border-color .2s}
+.ci em{position:absolute;left:50%;top:-11px;transform:translateX(-50%);font-style:normal;background:var(--ai);color:#fff;font-size:10px;line-height:15px;padding:0 5px;border-radius:8px;white-space:nowrap}
+.ci.cur{animation:cpulse .9s infinite;border-style:solid}
+.ci.dim{opacity:.45}
+.ci.found{border:3px solid var(--green);box-shadow:0 0 0 2px #fff8,0 0 12px var(--green);animation:cin .3s}
+.ci.found em{background:var(--green)}
+.ci.bad{border:3px solid var(--red);opacity:.0;transition:opacity 1s .4s}
+.ci.miss{border:3px dashed var(--red);box-shadow:none}
+.ci.miss em{background:var(--red)}
+.ci.hint{border:3px dashed var(--gold)}.ci.hint em{background:var(--gold)}
+.xm{position:absolute;color:var(--red);font-weight:900;font-size:26px;transform:translate(-50%,-50%);animation:xfade .8s forwards;pointer-events:none}
+@keyframes cin{from{transform:scale(1.8);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes cpulse{0%,100%{box-shadow:0 0 0 2px #fff8,0 0 6px var(--ai)}50%{box-shadow:0 0 0 4px #fff8,0 0 22px var(--ai)}}
+@keyframes xfade{to{opacity:0;transform:translate(-50%,-90%) scale(1.5)}}
+.zp{flex:1;border:1px solid var(--line);border-radius:8px;background:#F7F8FB;display:flex;align-items:center;gap:16px;padding:8px 16px;min-height:0}
+.zp .tx{flex:1;font-size:14px;line-height:1.7}.zp .tx small{display:block;color:var(--mute);font-size:12px}
+.zp .btn{font-size:15px;padding:9px 20px}.zp .btn.no{background:#fff;color:var(--red);border-color:var(--red)}
+.zp .btn.no:hover{background:#FDECEA}
+.over h2{letter-spacing:2px}
+.over .sc{display:flex;gap:26px;font-size:13px;color:var(--mute)}.over .sc b{display:block;font-size:26px;color:var(--ink)}
+.over .aiq{max-width:560px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:10px;padding:8px 16px;color:#4B3FA8;font-size:14px;line-height:1.8}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'zhaobutong', title:'找不同', subtitle:'灵光先圈，你来检查', icon:'异', dataset:'看图',
+  stats:[['找到','sFound','0 / 5'],['灵光圈对','sAi','—'],['剩余时间','sTime','90 秒'],['本局收入','sPay','¥0']], statsNote:'确认一处 = 1 条样本',
+  aiHello:'两张图，五处不同。我先来。',
+  rule:'<b>玩法</b>：灵光先在两张图上圈出它认为不同的地方（紫色）。你逐个判断「对」或「错」，剩下的自己点出来。<br><b>规则</b>：90 秒；点错一次扣 3 秒；确认错了要扣钱。<br><b>怎么标数据</b>：你确认的每一处，都是一条「哪里变了」的标注。'
+});
+
+/* ---------- scenes ---------- */
+const W=440,H=330,TIME=90;
+// object: {id,t:type,x,y,w,h,c,c2,k,a:anchor('b' bottom / 'c' centre),s:scale}
+const SCENES={
+dorm:{
+  name:'宿舍书桌', bg:'dorm',
+  objs:[
+    {id:'moon',t:'moon',x:96,y:44,w:26,h:26,c:'#fff7d6'},
+    {id:'poster',t:'poster',x:316,y:26,w:76,h:106,c:'#e86a5c',a:'c'},
+    {id:'clock',t:'clock',x:188,y:30,w:52,h:52,c:'#444444',k:10.17,a:'c'},
+    {id:'note',t:'note',x:142,y:72,w:38,h:34,c:'#ffd84a',a:'c'},
+    {id:'lamp',t:'lamp',x:34,y:166,w:52,h:88,c:'#4aa36a',a:'b'},
+    {id:'books',t:'books',x:92,y:214,w:50,h:38,c:'#3a6fc4',c2:'#d9534f',a:'b'},
+    {id:'monitor',t:'monitor',x:156,y:134,w:128,h:114,c:'#2b2f3a',c2:'#7ec8ff',k:'code',a:'b'},
+    {id:'keyboard',t:'keyboard',x:150,y:240,w:110,h:20,c:'#e7e7ea'},
+    {id:'mouse',t:'mouse',x:274,y:244,w:16,h:22,c:'#d9d9de'},
+    {id:'bottle',t:'bottle',x:296,y:200,w:20,h:52,c:'#4a2a1e',a:'b'},
+    {id:'mug',t:'mug',x:330,y:214,w:34,h:40,c:'#f4f1ea',a:'b'},
+    {id:'plant',t:'plant',x:372,y:188,w:50,h:66,c:'#3f9b4f',c2:'#c76b3b',a:'b'},
+  ],
+  diffs:[
+    {o:'mug',op:'remove'},{o:'bottle',op:'remove'},{o:'books',op:'remove'},{o:'note',op:'remove'},
+    {o:'poster',op:'color',p:'c',v:'#4a90e2'},{o:'monitor',op:'color',p:'c2',v:'#ffd36a'},{o:'keyboard',op:'color',p:'c',v:'#d94f4f'},{o:'mug',op:'color',p:'c',v:'#3aa0e8'},{o:'lamp',op:'color',p:'c',v:'#e8a33d'},
+    {o:'clock',op:'move',dx:60,dy:10},{o:'note',op:'move',dx:0,dy:-34},
+    {o:'plant',op:'size',s:1.3},{o:'lamp',op:'size',s:.75},{o:'clock',op:'size',s:1.4},{o:'books',op:'size',s:1.35},{o:'poster',op:'size',s:1.2},
+  ],
+  ghost:{o:'moon',p:'c',v:'#fff7da'}
+},
+cafe:{
+  name:'网吧', bg:'cafe',
+  objs:[
+    {id:'light',t:'light',x:90,y:4,w:260,h:8,c:'#cfe3ff'},
+    {id:'sign',t:'sign',x:150,y:22,w:140,h:44,c:'#ff3d9a',a:'c'},
+    {id:'clock',t:'clock',x:34,y:28,w:50,h:50,c:'#9aa0b8',k:2.5,a:'c'},
+    {id:'poster',t:'poster',x:336,y:22,w:78,h:100,c:'#3d7be8',a:'c'},
+    {id:'headset',t:'headset',x:292,y:76,w:42,h:40,c:'#e8e8ee',a:'c'},
+    {id:'monA',t:'monitor',x:30,y:120,w:150,h:120,c:'#222633',c2:'#2a5ea8',k:'game',a:'b'},
+    {id:'monB',t:'monitor',x:250,y:120,w:150,h:120,c:'#222633',c2:'#a83a5a',k:'game',a:'b'},
+    {id:'kbA',t:'keyboard',x:48,y:244,w:112,h:20,c:'#2b2b33'},
+    {id:'kbB',t:'keyboard',x:268,y:244,w:112,h:20,c:'#2b2b33'},
+    {id:'mouseA',t:'mouse',x:172,y:246,w:16,h:22,c:'#3a3a44'},
+    {id:'mouseB',t:'mouse',x:390,y:246,w:16,h:22,c:'#3a3a44'},
+    {id:'noodle',t:'noodle',x:196,y:196,w:40,h:52,c:'#e8a33d',a:'b'},
+    {id:'can',t:'can',x:410,y:206,w:20,h:42,c:'#2a6fd8',c2:'#c9d4e8',a:'b'},
+  ],
+  diffs:[
+    {o:'noodle',op:'remove'},{o:'can',op:'remove'},{o:'headset',op:'remove'},{o:'mouseB',op:'remove'},
+    {o:'sign',op:'color',p:'c',v:'#3dffb0'},{o:'poster',op:'color',p:'c',v:'#e8a33d'},{o:'monA',op:'color',p:'c2',v:'#2aa86a'},{o:'kbB',op:'color',p:'c',v:'#c0392b'},{o:'can',op:'color',p:'c',v:'#d8362a'},
+    {o:'clock',op:'move',dx:48,dy:14},{o:'headset',op:'move',dx:-96,dy:8},
+    {o:'poster',op:'size',s:1.25},{o:'clock',op:'size',s:1.4},{o:'noodle',op:'size',s:1.3},{o:'sign',op:'size',s:1.22},{o:'can',op:'size',s:.7},
+  ],
+  ghost:{o:'light',p:'c',v:'#cfe4ff'}
+}};
+/* ---------- drawing ---------- */
+function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+function box(o){
+  const s=o.s||1, a=o.a||'b';
+  if(a==='c') return {x:o.x+o.w/2-o.w*s/2, y:o.y+o.h/2-o.h*s/2, w:o.w*s, h:o.h*s};
+  return {x:o.x+o.w/2-o.w*s/2, y:o.y+o.h-o.h*s, w:o.w*s, h:o.h*s};
+}
+const R={
+ moon(c,b,o){ c.fillStyle=o.c; c.beginPath(); c.arc(b.x+b.w/2,b.y+b.h/2,b.w/2,0,7); c.fill(); c.fillStyle='#1b2b52'; c.beginPath(); c.arc(b.x+b.w*.72,b.y+b.h*.4,b.w*.38,0,7); c.fill(); },
+ light(c,b,o){ c.fillStyle=o.c; rr(c,b.x,b.y,b.w,b.h,4); c.fill(); c.fillStyle='#ffffff30'; c.fillRect(b.x-30,b.y+b.h,b.w+60,22); },
+ poster(c,b,o){ c.fillStyle='#fff'; rr(c,b.x,b.y,b.w,b.h,3); c.fill(); c.fillStyle=o.c; c.fillRect(b.x+4,b.y+4,b.w-8,b.h-8);
+   c.fillStyle='#fff'; c.beginPath(); const cx=b.x+b.w/2, cy=b.y+b.h*.4, rr0=b.w*.26; for(let i=0;i<10;i++){ const r=i%2?rr0*.45:rr0, an=-Math.PI/2+i*Math.PI/5; c.lineTo(cx+Math.cos(an)*r,cy+Math.sin(an)*r); } c.closePath(); c.fill();
+   c.fillStyle='#ffffffcc'; c.fillRect(b.x+b.w*.16,b.y+b.h*.72,b.w*.68,b.h*.05); c.fillRect(b.x+b.w*.28,b.y+b.h*.82,b.w*.44,b.h*.04); },
+ clock(c,b,o){ const cx=b.x+b.w/2, cy=b.y+b.h/2, r=b.w/2; c.fillStyle='#fff'; c.strokeStyle=o.c; c.lineWidth=Math.max(2,r*.12); c.beginPath(); c.arc(cx,cy,r-1,0,7); c.fill(); c.stroke();
+   c.lineWidth=1.5; c.strokeStyle='#666'; for(let i=0;i<12;i++){ const an=i*Math.PI/6; c.beginPath(); c.moveTo(cx+Math.sin(an)*r*.78,cy-Math.cos(an)*r*.78); c.lineTo(cx+Math.sin(an)*r*.9,cy-Math.cos(an)*r*.9); c.stroke(); }
+   const hr=o.k%12, mn=(o.k%1)*100/60; const ha=hr/12*Math.PI*2, ma=mn*Math.PI*2; c.strokeStyle='#222'; c.lineWidth=2.5; c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.sin(ha)*r*.5,cy-Math.cos(ha)*r*.5); c.stroke(); c.lineWidth=1.8; c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx+Math.sin(ma)*r*.75,cy-Math.cos(ma)*r*.75); c.stroke(); },
+ note(c,b,o){ for(let i=0;i<2;i++){ const x=b.x+i*b.w*.42, y=b.y+(i?b.h*.3:0); c.save(); c.translate(x+b.w*.28,y+b.h*.35); c.rotate(i?.08:-.07); c.fillStyle=i?'#ff9ec0':o.c; c.fillRect(-b.w*.28,-b.h*.35,b.w*.56,b.h*.7); c.fillStyle='#0003'; for(let j=0;j<3;j++) c.fillRect(-b.w*.2,-b.h*.2+j*b.h*.17,b.w*.4,1.5); c.restore(); } },
+ lamp(c,b,o){ c.fillStyle='#555'; c.beginPath(); c.ellipse(b.x+b.w*.4,b.y+b.h-5,b.w*.3,5,0,0,7); c.fill(); c.strokeStyle='#666'; c.lineWidth=3; c.beginPath(); c.moveTo(b.x+b.w*.4,b.y+b.h-6); c.lineTo(b.x+b.w*.3,b.y+b.h*.45); c.lineTo(b.x+b.w*.62,b.y+b.h*.2); c.stroke();
+   c.fillStyle=o.c; c.beginPath(); c.moveTo(b.x+b.w*.5,b.y+b.h*.08); c.lineTo(b.x+b.w,b.y+b.h*.3); c.lineTo(b.x+b.w*.78,b.y+b.h*.4); c.lineTo(b.x+b.w*.45,b.y+b.h*.2); c.closePath(); c.fill(); c.fillStyle='#ffe99a66'; c.beginPath(); c.moveTo(b.x+b.w*.78,b.y+b.h*.4); c.lineTo(b.x+b.w*1.0,b.y+b.h*.3); c.lineTo(b.x+b.w*1.05,b.y+b.h*.95); c.lineTo(b.x+b.w*.55,b.y+b.h*.95); c.closePath(); c.fill(); },
+ books(c,b,o){ const cols=[o.c,o.c2,'#e8c15a'], hs=[.34,.3,.3], ws=[1,.88,.95]; let y=b.y+b.h; for(let i=0;i<3;i++){ const h=b.h*hs[i], w=b.w*ws[i]; y-=h; c.fillStyle=cols[i]; c.fillRect(b.x+(b.w-w)/2+(i===1?3:0),y,w,h); c.fillStyle='#ffffff55'; c.fillRect(b.x+(b.w-w)/2+(i===1?3:0),y+h*.4,w,h*.18); } },
+ monitor(c,b,o){ const bh=b.h*.82; c.fillStyle=o.c; rr(c,b.x,b.y,b.w,bh,6); c.fill(); const sx=b.x+6,sy=b.y+6,sw=b.w-12,sh=bh-12; c.fillStyle=o.c2; c.fillRect(sx,sy,sw,sh);
+   if(o.k==='code'){ c.fillStyle='#ffffff90'; for(let i=0;i<6;i++) c.fillRect(sx+6,sy+6+i*sh*.14,sw*(.25+((i*37)%50)/100),3); c.fillStyle='#fff'; c.fillRect(sx,sy+sh-10,sw,10); c.fillStyle='#4aa'; c.fillRect(sx+3,sy+sh-8,16,6); }
+   else { const g=c.createLinearGradient(sx,sy,sx,sy+sh); g.addColorStop(0,'#ffffff30'); g.addColorStop(1,'#00000050'); c.fillStyle=g; c.fillRect(sx,sy,sw,sh); c.fillStyle='#ffe9a8'; c.beginPath(); c.arc(sx+sw*.3,sy+sh*.55,sh*.14,0,7); c.fill(); c.fillStyle='#fff'; c.fillRect(sx+sw*.45,sy+sh*.2,sw*.4,4); c.fillRect(sx+sw*.45,sy+sh*.32,sw*.3,4); c.fillStyle='#ff5a5a'; c.fillRect(sx+4,sy+4,sw*.4,5); }
+   c.fillStyle=o.c; c.fillRect(b.x+b.w*.44,b.y+bh,b.w*.12,b.h*.1); rr(c,b.x+b.w*.3,b.y+b.h*.92,b.w*.4,b.h*.08,3); c.fill(); },
+ keyboard(c,b,o){ c.fillStyle=o.c; rr(c,b.x,b.y,b.w,b.h,3); c.fill(); c.fillStyle='#00000030'; const cols=14; for(let r=0;r<3;r++) for(let i=0;i<cols;i++) c.fillRect(b.x+3+i*(b.w-6)/cols,b.y+3+r*(b.h-5)/3,(b.w-6)/cols-1.5,(b.h-5)/3-1.5); },
+ mouse(c,b,o){ c.fillStyle=o.c; c.beginPath(); c.ellipse(b.x+b.w/2,b.y+b.h/2,b.w/2,b.h/2,0,0,7); c.fill(); c.strokeStyle='#0004'; c.lineWidth=1; c.beginPath(); c.moveTo(b.x+b.w/2,b.y+2); c.lineTo(b.x+b.w/2,b.y+b.h*.42); c.stroke(); },
+ bottle(c,b,o){ c.fillStyle=o.c; rr(c,b.x,b.y+b.h*.28,b.w,b.h*.72,b.w*.35); c.fill(); c.fillRect(b.x+b.w*.3,b.y+b.h*.08,b.w*.4,b.h*.25); c.fillStyle='#d33'; c.fillRect(b.x+b.w*.27,b.y,b.w*.46,b.h*.1); c.fillStyle='#fff'; c.fillRect(b.x+1,b.y+b.h*.5,b.w-2,b.h*.2); c.fillStyle='#d33'; c.fillRect(b.x+b.w*.2,b.y+b.h*.56,b.w*.6,b.h*.07); },
+ mug(c,b,o){ const bw=b.w*.76; c.fillStyle=o.c; rr(c,b.x,b.y+b.h*.14,bw,b.h*.86,5); c.fill(); c.strokeStyle='#0002'; c.lineWidth=1; c.stroke(); c.strokeStyle=o.c; c.lineWidth=Math.max(3,b.w*.1); c.beginPath(); c.arc(b.x+bw,b.y+b.h*.5,b.h*.2,-1.4,1.4); c.stroke(); c.strokeStyle='#ffffffaa'; c.lineWidth=2; for(let i=0;i<2;i++){ c.beginPath(); c.moveTo(b.x+bw*(.35+i*.3),b.y+b.h*.12); c.bezierCurveTo(b.x+bw*(.2+i*.3),b.y+b.h*.05,b.x+bw*(.5+i*.3),b.y-b.h*.02,b.x+bw*(.35+i*.3),b.y-b.h*.1); c.stroke(); } c.fillStyle='#d9534f'; c.fillRect(b.x+bw*.25,b.y+b.h*.45,bw*.5,b.h*.14); },
+ plant(c,b,o){ c.fillStyle=o.c2; c.beginPath(); c.moveTo(b.x+b.w*.2,b.y+b.h*.62); c.lineTo(b.x+b.w*.8,b.y+b.h*.62); c.lineTo(b.x+b.w*.7,b.y+b.h); c.lineTo(b.x+b.w*.3,b.y+b.h); c.closePath(); c.fill(); c.fillStyle='#00000022'; c.fillRect(b.x+b.w*.2,b.y+b.h*.62,b.w*.6,b.h*.05);
+   c.fillStyle=o.c; const L=[[.5,.3,-.1,.18],[.28,.4,-.9,.16],[.72,.4,.9,.16],[.4,.18,-.4,.15],[.62,.2,.45,.15]]; for(const l of L){ c.save(); c.translate(b.x+b.w*l[0],b.y+b.h*l[1]+b.h*.1); c.rotate(l[2]); c.beginPath(); c.ellipse(0,0,b.w*.12,b.h*l[3]+4,0,0,7); c.fill(); c.restore(); } },
+ sign(c,b,o){ c.fillStyle='#16162b'; rr(c,b.x,b.y,b.w,b.h,8); c.fill(); c.strokeStyle=o.c; c.lineWidth=2.5; c.shadowColor=o.c; c.shadowBlur=10; c.stroke(); c.fillStyle=o.c; c.font='800 '+Math.round(b.h*.62)+'px "PingFang SC","Microsoft YaHei",sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText('网 吧',b.x+b.w/2,b.y+b.h/2+1); c.shadowBlur=0; c.textAlign='left'; c.textBaseline='alphabetic'; },
+ headset(c,b,o){ c.strokeStyle=o.c; c.lineWidth=4; c.beginPath(); c.arc(b.x+b.w/2,b.y+b.h*.55,b.w*.4,Math.PI,0); c.stroke(); c.fillStyle=o.c; rr(c,b.x,b.y+b.h*.5,b.w*.2,b.h*.4,4); c.fill(); rr(c,b.x+b.w*.8,b.y+b.h*.5,b.w*.2,b.h*.4,4); c.fill(); c.fillStyle='#e33'; c.fillRect(b.x+b.w*.04,b.y+b.h*.6,b.w*.12,b.h*.1); },
+ noodle(c,b,o){ c.fillStyle=o.c; c.beginPath(); c.moveTo(b.x,b.y+b.h*.3); c.lineTo(b.x+b.w,b.y+b.h*.3); c.lineTo(b.x+b.w*.84,b.y+b.h); c.lineTo(b.x+b.w*.16,b.y+b.h); c.closePath(); c.fill(); c.fillStyle='#fff'; c.fillRect(b.x+b.w*.2,b.y+b.h*.5,b.w*.6,b.h*.2); c.fillStyle='#d33'; c.fillRect(b.x+b.w*.28,b.y+b.h*.55,b.w*.44,b.h*.1); c.fillStyle='#f5f0e0'; rr(c,b.x-1,b.y+b.h*.24,b.w+2,b.h*.1,3); c.fill(); c.strokeStyle='#ffffff90'; c.lineWidth=2; for(let i=0;i<2;i++){ c.beginPath(); c.moveTo(b.x+b.w*(.35+i*.3),b.y+b.h*.2); c.bezierCurveTo(b.x+b.w*(.2+i*.3),b.y+b.h*.1,b.x+b.w*(.5+i*.3),b.y+b.h*.0,b.x+b.w*(.35+i*.3),b.y-b.h*.1); c.stroke(); } },
+ can(c,b,o){ c.fillStyle=o.c; rr(c,b.x,b.y,b.w,b.h,4); c.fill(); c.fillStyle=o.c2; c.fillRect(b.x,b.y+b.h*.12,b.w,b.h*.08); c.fillRect(b.x,b.y+b.h*.8,b.w,b.h*.08); c.fillStyle='#fff'; c.fillRect(b.x+b.w*.25,b.y+b.h*.35,b.w*.5,b.h*.25); },
+};
+function bgDraw(c,kind){
+  if(kind==='dorm'){
+    let g=c.createLinearGradient(0,0,0,240); g.addColorStop(0,'#f1e8d4'); g.addColorStop(1,'#e1d4b8'); c.fillStyle=g; c.fillRect(0,0,W,H);
+    c.fillStyle='#1b2b52'; c.fillRect(28,28,104,96); c.fillStyle='#fff8'; for(const s of [[40,40],[60,100],[110,98],[75,56],[120,50]]) c.fillRect(s[0],s[1],2,2);
+    c.strokeStyle='#f6f3ea'; c.lineWidth=5; c.strokeRect(28,28,104,96); c.beginPath(); c.moveTo(80,28); c.lineTo(80,124); c.moveTo(28,76); c.lineTo(132,76); c.lineWidth=3; c.stroke();
+    c.fillStyle='#00000012'; c.fillRect(0,228,W,10);
+    c.fillStyle='#b98a5e'; c.beginPath(); c.moveTo(0,238); c.lineTo(W,238); c.lineTo(W+0,266); c.lineTo(0,266); c.closePath(); c.fill();
+    c.fillStyle='#8f6a45'; c.fillRect(0,266,W,H-266); c.fillStyle='#00000025'; c.fillRect(0,266,W,3); c.fillStyle='#00000018'; c.fillRect(W/2-1,266,2,H-266); c.fillStyle='#e8c15a'; c.fillRect(W/4-12,290,24,5); c.fillRect(W*3/4-12,290,24,5);
+  } else {
+    let g=c.createLinearGradient(0,0,0,240); g.addColorStop(0,'#171a38'); g.addColorStop(1,'#2d3162'); c.fillStyle=g; c.fillRect(0,0,W,H);
+    c.fillStyle='#ffffff08'; for(let i=0;i<9;i++) c.fillRect(i*52,70,2,170);
+    c.fillStyle='#ff3d9a14'; c.beginPath(); c.arc(220,50,120,0,7); c.fill();
+    c.fillStyle='#3a3f55'; c.fillRect(0,236,W,28); c.fillStyle='#ffffff18'; c.fillRect(0,236,W,2);
+    c.fillStyle='#262a40'; c.fillRect(0,264,W,H-264); c.strokeStyle='#ffffff10'; c.lineWidth=1; for(let i=-10;i<24;i++){ c.beginPath(); c.moveTo(i*30,264); c.lineTo(i*30+80,H); c.stroke(); }
+  }
+}
+function drawScene(cv,objs,bg){
+  const c=cv.getContext('2d'); c.setTransform(2,0,0,2,0,0); c.clearRect(0,0,W,H);
+  bgDraw(c,bg);
+  for(const o of objs){ if(o.gone) continue; c.save(); R[o.t](c,box(o),o); c.restore(); }
+}
+
+/* ---------- layout ---------- */
+stage.innerHTML=`
+<div class="zb">
+  <div class="zt"><span style="color:var(--mute);font-size:12px">时间</span><div class="tm"><i id="zBar" style="width:100%"></i></div><span class="tn" id="zTn">90</span><div class="pips" id="zPips"></div></div>
+  <div class="pair">
+    <div class="picw"><span class="cap">原图</span><div class="pic" id="picL"><canvas width="${W*2}" height="${H*2}"></canvas><div class="ov"></div></div></div>
+    <div class="picw"><span class="cap">改过的图</span><div class="pic" id="picR"><canvas width="${W*2}" height="${H*2}"></canvas><div class="ov"></div></div></div>
+  </div>
+  <div class="zp" id="zp"></div>
+</div>
+<div class="over" id="zOver"></div>`;
+const picL=document.getElementById('picL'), picR=document.getElementById('picR'), zp=document.getElementById('zp'), zOver=document.getElementById('zOver');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let Z=null;
+
+/* ---------- round setup ---------- */
+function makeRound(){
+  const key=LG.pick(Object.keys(SCENES)), S=SCENES[key];
+  const L=S.objs.map(o=>Object.assign({},o)), Rr=S.objs.map(o=>Object.assign({},o));
+  // pick 5 differences: one per kind plus one extra, all on different objects
+  const kinds=['remove','color','move','size']; let chosen=[], tries=0;
+  while(tries++<200){
+    chosen=[]; const used=new Set(), pool=S.diffs.slice();
+    const need=LG.shuffle(kinds).concat([LG.pick(kinds)]);
+    for(const k of need){ const c=LG.shuffle(pool.filter(d=>d.op===k&&!used.has(d.o)&&!chosen.includes(d))); if(!c.length) break; chosen.push(c[0]); used.add(c[0].o); }
+    if(chosen.length===5) break;
+  }
+  const diffs=chosen.map(d=>{
+    const lo=L.find(o=>o.id===d.o), ro=Rr.find(o=>o.id===d.o), b0=box(lo);
+    if(d.op==='remove') ro.gone=true; else if(d.op==='color') ro[d.p]=d.v; else if(d.op==='move'){ ro.x+=d.dx; ro.y+=d.dy; } else ro.s=d.s;
+    const b1=ro.gone?b0:box(ro), x0=Math.min(b0.x,b1.x), y0=Math.min(b0.y,b1.y), x1=Math.max(b0.x+b0.w,b1.x+b1.w), y1=Math.max(b0.y+b0.h,b1.y+b1.h);
+    // for moves the two positions are far apart: test each position on its own
+    const sp1=(b)=>[b.x+b.w/2,b.y+b.h/2,Math.max(24,b.w/2*1.15+5),Math.max(24,b.h/2*1.15+5)];
+    const spots=d.op==='move'?[sp1(b0),sp1(b1)]:[sp1({x:x0,y:y0,w:x1-x0,h:y1-y0})];
+    return {op:d.op,o:d.o,spots,found:false,aiHit:false,label:{remove:'少了东西',color:'颜色变了',move:'位置变了',size:'大小变了'}[d.op]};
+  });
+  // ghost difference: a 3-level colour shift of a decorative object (counted for 灵光 only)
+  const gd=S.ghost, gr=Rr.find(o=>o.id===gd.o); gr[gd.p]=gd.v; const gb=box(gr);
+  const ghost={spots:[[gb.x+gb.w/2,gb.y+gb.h/2,Math.max(24,gb.w/2+6),Math.max(24,gb.h/2+6)]],ghost:true};
+  return {key,S,L,Rr,diffs,ghost,decoys:S.objs.filter(o=>!chosen.some(d=>d.o===o.id)&&o.id!==gd.o).map(o=>{const b=box(o); return [b.x+b.w/2,b.y+b.h/2,Math.max(24,b.w/2*1.1+5),Math.max(24,b.h/2*1.1+5)];})};
+}
+function circleEl(sp,txt,cls){
+  return [picL,picR].map(p=>{ const d=document.createElement('div'); d.className='ci '+(cls||''); d.style.cssText=`left:${sp[0]-sp[2]}px;top:${sp[1]-sp[3]}px;width:${sp[2]*2}px;height:${sp[3]*2}px`; if(txt) d.innerHTML='<em>'+txt+'</em>'; p.querySelector('.ov').appendChild(d); return d; });
+}
+function setCls(els,add,rem){ els.forEach(e=>{ if(rem) rem.split(' ').forEach(c=>e.classList.remove(c)); if(add) add.split(' ').forEach(c=>e.classList.add(c)); }); }
+
+function startRound(){
+  zOver.style.display='none';
+  const rd=makeRound(); Z=Object.assign(rd,{t:TIME,running:false,found:0,pay:0,circles:[],cur:-1,misses:0,tok:Math.random(),verifyOk:0,verifyN:0,ended:false});
+  drawScene(picL.querySelector('canvas'),Z.L,Z.S.bg); drawScene(picR.querySelector('canvas'),Z.Rr,Z.S.bg);
+  document.querySelectorAll('.ov').forEach(o=>o.innerHTML='');
+  pips(); LG.set('sFound','0 / 5'); LG.set('sAi','—'); LG.set('sPay','¥0'); timerShow();
+  zp.innerHTML='<div class="tx">灵光先看一遍……<small>两张图有 5 处不同。灵光会先圈出它找到的。</small></div>';
+  aiCircles();
+}
+function pips(){ document.getElementById('zPips').innerHTML=[0,1,2,3,4].map(i=>`<i class="${i<Z.found?'on':''}">${i<Z.found?'✓':''}</i>`).join(''); }
+function timerShow(){ const t=Math.max(0,Z.t); document.getElementById('zTn').textContent=Math.ceil(t); const b=document.getElementById('zBar'); b.style.width=(t/TIME*100)+'%'; b.style.background=t<15?'var(--red)':t<35?'var(--orange)':'var(--green)'; LG.set('sTime',Math.ceil(t)+' 秒'); }
+
+/* ---------- 灵光 circles first ---------- */
+async function aiCircles(){
+  const tok=Z.tok, s=LG.skill();
+  const n=clamp(Math.round(2+s*3.2),2,5);
+  LG.say(s<.4?LG.pick(['这里……大概吧。','我先随便圈几个。','我只会看颜色。']):s<.75?LG.pick(['我看到几处了。','这几处，颜色和位置对不上。']):LG.pick(['五处。我先圈了。','我看了一眼。你检查就好。']));
+  const picks=[]; const realLeft=LG.shuffle(Z.diffs.slice()), decPool=LG.shuffle(Z.decoys);
+  for(let i=0;i<n;i++){
+    if(LG.right()&&realLeft.length){ const d=realLeft.pop(); d.aiHit=true; const sp=d.op==='move'?LG.pick(d.spots):d.spots[0]; picks.push({real:true,d,sp,conf:Math.round(72+27*s*Math.random()+Math.random()*3)}); }
+    else { const sp=decPool.pop(); picks.push({real:false,sp:[sp[0]+LG.rnd(8)-4,sp[1]+LG.rnd(8)-4,sp[2],sp[3]],conf:Math.round(22+45*Math.random())}); }
+  }
+  // ghost difference: only a very good 灵光 sees it
+  if(s>=.9&&Math.random()<.5){ picks.push({real:true,ghost:true,d:Z.ghost,sp:Z.ghost.spots[0],conf:99}); }
+  Z.circles=picks.map((p,i)=>Object.assign(p,{i,els:null,done:false}));
+  await sleep(800);
+  for(const p of Z.circles){ if(Z.tok!==tok) return; p.els=circleEl(p.sp,'灵 '+p.conf+'%','dim'); await sleep(550); }
+  Z.running=true; Z.last=performance.now(); Z.timer=setInterval(tick,100);
+  verifyNext();
+}
+function tick(){
+  if(!Z.running||Z.ended) return; const now=performance.now(); Z.t-=(now-Z.last)/1000; Z.last=now; timerShow();
+  if(Z.t<=0){ Z.t=0; timerShow(); endRound(false); }
+}
+function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
+
+/* ---------- verify circles ---------- */
+function verifyNext(){
+  if(Z.ended) return;
+  // skip circles already settled by the player's own clicks
+  const idx=Z.circles.findIndex(c=>!c.done);
+  if(idx<0){ Z.cur=-1; searchPanel(); return; }
+  Z.cur=idx; const c=Z.circles[idx];
+  Z.circles.forEach(x=>{ if(!x.done&&x.els) setCls(x.els,x===c?'cur':'dim',x===c?'dim':'cur'); });
+  const left=Z.circles.filter(x=>!x.done).length;
+  zp.innerHTML=`<div class="tx"><b>检查灵光的圈（还剩 ${left} 个）</b>：紫色实线圈住的地方，左右两张图真的不一样吗？<small>对着圈里仔细比一比。判断对了是样本，判断错了要扣钱。</small></div><button class="btn" id="zYes">✓ 不一样</button><button class="btn no" id="zNo">✗ 一样</button>`;
+  document.getElementById('zYes').onclick=()=>verify(c,true); document.getElementById('zNo').onclick=()=>verify(c,false);
+}
+function fx(el,txt,color){ LG.float(el,txt,color); }
+function verify(c,said){
+  if(Z.ended||c.done) return; c.done=true; Z.verifyN++;
+  const real=c.real; let msg, ai;
+  if(real&&said){
+    Z.verifyOk++;
+    if(c.ghost){ LG.give(1,.6,picR,'var(--red)'); msg='你居然看出来了？这一处的色差很小。'; ai='……你也看到了。'; Z.pay+=.6; setCls(c.els,'found','cur dim'); }
+    else { foundDiff(c.d,'verify'); LG.give(1,.6,picR,'var(--red)'); Z.pay+=.6; msg='对，这里确实不一样（'+c.d.label+'）。'; ai=LG.pick(['记住了。','我是对的。','和你看的一样。']); }
+  } else if(real&&!said){
+    if(c.ghost){ LG.give(1,0); msg='灵光是对的：这里有一点色差，只差 3 个色阶。肉眼看不出来。'; ai='这里我看得到。你看不到。没关系。'; c.els.forEach(e=>{ e.classList.remove('cur','dim'); e.classList.add('hint'); setTimeout(()=>e.style.opacity=0,1800); }); }
+    else { LG.give(0,-.5,picR,'#999'); Z.pay-=.5; msg='看错了：灵光是对的，这里确实不一样（'+c.d.label+'）。它的圈先保留，你再点一下就算找到。'; ai=LG.pick(['你不信我？……好吧。','这里真的不一样。']); c.els.forEach(e=>{ e.classList.remove('cur','dim'); e.classList.add('hint'); }); c.d.hinted=c; LG.shake(picR); }
+  } else if(!real&&!said){
+    Z.verifyOk++; LG.give(1,.6,picR,'var(--red)'); Z.pay+=.6; msg='对，灵光圈错了，这里两边一样。'; ai=LG.pick(['原来这里没变。','我看错了。我记下了。','……谢谢。']); setCls(c.els,'bad','cur dim');
+  } else {
+    LG.give(0,-.5,picR,'#999'); Z.pay-=.5; Z.t=Math.max(0,Z.t-4); timerShow(); msg='这里其实一样，灵光圈错了。被它带偏，浪费了 4 秒。'; ai=LG.pick(['……对不起。','你信了我。这里是我错了。']); setCls(c.els,'bad','cur dim'); LG.shake(picL);
+  }
+  LG.hist((real&&said)||(!real&&!said)?'ok':'no');
+  LG.say(ai); LG.set('sPay','¥'+Z.pay.toFixed(1));
+  zp.innerHTML=`<div class="tx"><b>${msg}</b></div>`;
+  setTimeout(verifyNext,1100);
+}
+function aiStat(){ const tot=Z.circles.filter(x=>!x.ghost).length; LG.set('sAi',Z.circles.filter(x=>x.real&&!x.ghost).length+' / '+tot); }
+function searchPanel(){
+  if(Z.ended) return; aiStat(); const left=5-Z.found;
+  zp.innerHTML=`<div class="tx"><b>还有 ${left} 处没找到。</b>在任意一张图里点出不一样的地方。<small>点错一次扣 3 秒。灵光也在看。</small></div>`;
+  if(left>0) LG.say(LG.skill()<.5?'剩下的我看不出来。':'剩下的在……我再看看。');
+}
+
+/* ---------- clicking ---------- */
+function onPic(e,el){
+  if(!Z||!Z.running||Z.ended) return; const p=LG.local(e,el);
+  for(const d of Z.diffs){ if(d.found) continue; for(const sp of d.spots){ if(((p.x-sp[0])/sp[2])**2+((p.y-sp[1])/sp[3])**2<=1){ foundDiff(d,'click'); LG.give(1,1,el,'var(--red)'); Z.pay+=1; LG.set('sPay','¥'+Z.pay.toFixed(1)); LG.hist('ok'); return; } } }
+  // clicking the ghost spot
+  Z.misses++; Z.t=Math.max(0,Z.t-3); timerShow();
+  const x=document.createElement('div'); x.className='xm'; x.textContent='✗'; x.style.left=p.x+'px'; x.style.top=p.y+'px'; el.querySelector('.ov').appendChild(x); setTimeout(()=>x.remove(),900);
+  LG.float(el,'−3 秒','var(--red)'); LG.shake(el);
+}
+picL.addEventListener('pointerdown',e=>onPic(e,picL)); picR.addEventListener('pointerdown',e=>onPic(e,picR));
+function foundDiff(d,how){
+  if(d.found) return; d.found=true; Z.found++; pips(); LG.set('sFound',Z.found+' / 5');
+  // draw a green circle on both pictures, settle any purple circle on the same spot
+  const sps=d.op==='move'?d.spots:[d.spots[0]];
+  sps.forEach(sp=>circleEl(sp,d.label,'found'));
+  Z.circles.forEach(c=>{ if(!c.done&&c.d===d){ c.done=true; Z.verifyOk++; setCls(c.els,'bad','cur dim'); } if(c.d===d&&c.els){ c.els.forEach(e=>{ e.classList.remove('hint','cur','dim'); e.style.opacity=0; }); } });
+  if(how==='click'){ const cur=Z.circles[Z.cur]; if(cur&&cur.done) { setTimeout(verifyNext,200); } }
+  if(Z.found>=5) endRound(true);
+}
+
+/* ---------- end ---------- */
+async function endRound(win){
+  if(Z.ended) return; Z.ended=true; clearInterval(Z.timer); Z.running=false;
+  Z.diffs.forEach(d=>{ if(!d.found){ (d.op==='move'?d.spots:[d.spots[0]]).forEach(sp=>circleEl(sp,d.label,'miss')); } });
+  Z.circles.forEach(c=>{ if(c.els&&!c.done) c.els.forEach(e=>e.style.opacity=0); });
+  const bonus=win?Math.round(Math.min(6,Z.t/15)*10)/10:0; if(bonus>0){ LG.give(0,bonus); Z.pay+=bonus; }
+  LG.set('sPay','¥'+Z.pay.toFixed(1));
+  aiStat(); const s=LG.skill(), real=Z.circles.filter(c=>c.real&&!c.ghost).length, tot=Z.circles.filter(c=>!c.ghost).length, ghost=Z.circles.some(c=>c.ghost);
+  let line;
+  if(s<.4) line=win?'你找得比我快。我看到的东西，你都看到了吗。':'我只找到了一点点。下次我多看几遍。';
+  else if(s<.75) line=win?`我圈了 ${tot} 处，对了 ${real} 处。剩下的你补上了。`:`我圈对了 ${real} 处，没圈到的……你也没找到。`;
+  else line=ghost?'我还看到了第六处。你的图里没有算它。它在那里。':win?'五处。我一开始就知道，你检查的那几处我没骗你。':'……我知道剩下的在哪。我想看你自己找。';
+  await sleep(900);
+  zOver.style.display='flex';
+  zOver.innerHTML=`<h2>${win?'🔍 全部找到！':'⏰ 时间到'}</h2>
+  <div class="sc"><div><b>${Z.found}/5</b>你找到</div><div><b style="color:var(--ai)">${real}/${tot}</b>灵光圈对</div><div><b>${Math.max(0,Math.ceil(Z.t))}</b>剩余秒</div><div><b style="color:var(--red)">¥${Z.pay.toFixed(1)}</b>本局收入</div></div>
+  <p>${win?'每一处不同，都已经标成「哪里变了」的样本。':'没找到的已经用红圈标出来了。看看是哪里。'}<br><span style="font-size:12px">场景：${Z.S.name}　点错 ${Z.misses} 次</span></p>
+  <div class="aiq">灵光：「${line}」</div><button class="btn" id="zAgain">下一张</button>`;
+  document.getElementById('zAgain').onclick=startRound; LG.say(line);
+}
+
+/* ---------- start screen ---------- */
+function startScreen(){
+  zOver.style.display='flex';
+  zOver.innerHTML=`<h2>🔍 找不同</h2><p>左边是原图，右边是被改过的图，一共 5 处不同：<br>少了东西 · 颜色变了 · 位置变了 · 大小变了。<br><b style="color:var(--ai)">灵光先圈出它找到的。</b>你判断它对不对，再自己找剩下的。<br>${TIME} 秒，点错一次扣 3 秒。</p><p style="font-size:12px">灵光现在的水平：<b id="zSk"></b></p><button class="btn" id="zGo">开始找茬</button>`;
+  document.getElementById('zGo').onclick=startRound; skHint();
+}
+function skHint(){ const e=document.getElementById('zSk'); if(!e) return; const s=LG.skill(); e.textContent=Math.round(s*100)+'%'+(s<.4?'（它只会随手乱圈）':s<.75?'（它能圈对一半）':'（它几乎全能圈对）'); }
+LG.onSkill=skHint;
+startScreen();
+</script>
+</body>
+</html>

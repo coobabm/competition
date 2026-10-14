@@ -167,6 +167,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void TickKeys()
         {
             if (captchaCard != null && captchaCard.Visible) return;
+            if (HandwritingVisible) return;
             var kb = UnityEngine.InputSystem.Keyboard.current;
             if (kb == null || !host.Visible || host.Tab != "label" || !FrontWindow() || Typing()) return;
             if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) { if (yes.button.interactable && yes.button.gameObject.activeInHierarchy) yes.button.onClick.Invoke(); }

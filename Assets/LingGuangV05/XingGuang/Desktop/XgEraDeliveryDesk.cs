@@ -147,9 +147,9 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 bool received = Fired("era_delivery_confirmed");
                 hint.text = received ? "亲友问：这些都是谁做的？由你选择如何回答。" : "已发送。等待亲友收到并回复；这里不会自动替你回答。";
-                if (received) { SetAction(0, "就我一个", true, () => owner.ChooseIdentity(1)); SetAction(1, "我和它", true, () => owner.ChooseIdentity(2)); }
+                if (received) { SetAction(0, "就我一个", true, () => owner.ChooseIdentity(1)); SetAction(1, "自己慢慢做的", true, () => owner.ChooseIdentity(2)); }
             }
-            else hint.text = "交付已完成；你的回答：" + (bound.GetFlag("era.identity.reply") == 1 ? "就我一个。" : "我和它。");
+            else hint.text = "交付已完成；你的回答：" + (bound.GetFlag("era.identity.reply") == 1 ? "就我一个。" : "我自己慢慢做的。");
         }
 
         void Draft()

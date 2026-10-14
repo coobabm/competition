@@ -72,8 +72,8 @@ namespace LingGuangV05.XingGuang
                 Set(v, "overtrained", 0, "练过头了：第 " + peakEpoch + " 轮最高 " + Pct(peak) + "，现在 " + Pct(p.test) + "。" + (full ? "格子满了，新学的把旧的挤掉了。" : "越练越偏向练过的题。"),
                     "Overtrained: " + Pct(peak) + " at epoch " + peakEpoch + ", " + Pct(p.test) + " now. " + (full ? "The cells are full; new concepts push out the old ones." : "It keeps leaning towards the trained cards."),
                     "去模型仓库读回最好那次的检查点。", "Load the best checkpoint back from the model repository.",
-                    Has("auto4") ? "早停开着时，分数不涨它会自己停在最好那次。" : "买「早停」：分数不再涨就自动停，留住最高那次。",
-                    Has("auto4") ? "With early stopping on it stops at the best epoch by itself." : "Buy early stopping: it stops once the score stops rising and keeps the best.");
+                    "分数不再涨就该停手，最高那次已经存在仓库里。",
+                    "Stop once the score stops rising; the best epoch is already saved in the repository.");
             }
             else if (First("relay") is XgLayerHealth relay)
             {

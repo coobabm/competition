@@ -55,7 +55,7 @@ namespace LingGuangV05.XingGuang
         {
             L(Night, "night.work", "{time} 了，明天还要上班。", "{time} already. Work tomorrow."),
             L(Night, "night.ten", "{time}。再标十个就睡。……上次也是这么说的。", "{time}. Ten more and then bed. … I said that last time too."),
-            L(Night, "night.bbq", "楼下烧烤摊都收摊了，我还在点「是」「否」。", "Even the barbecue stall downstairs has packed up, and I'm still clicking Yes and No."),
+            L(Night, "night.bbq", "楼下烧烤摊都收了，我还在这儿点对、点错。", "Even the barbecue stall downstairs has packed up, and I'm still clicking Yes and No."),
             L(Night, "night.window", "这个点，整栋楼就我这扇窗还亮着吧。", "At this hour mine must be the only lit window in the building."),
 
             L(Money, "money.short", "电费单快来了，这点钱不够。", "The power bill is coming, and this won't cover it."),

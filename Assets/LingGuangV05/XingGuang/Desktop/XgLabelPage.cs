@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed partial class XgLabelPage : XgPage
     {
         // Layout (the approved mockup): 任务大厅 | workspace | right column, side by side in the page area.
-        const float HallW = 252, SideW = 300, ColumnGap = 10;
+        const float HallW = 202, SideW = 300, ColumnGap = 10;
 
         RectTransform workspace, body, timerBar, timerFill;
         TMP_Text wkTitle, wkRule, qno;
@@ -34,6 +34,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim previewOwner;
         float previewReadTime;
         TMP_Text thresholdText, coopStats, brainStatus, specialInfo;
+        RectTransform teachingCompanion;
         // 摆渡众包 quality control: the credit chip (right column) and the frozen-account banner (over the feed strip).
         RectTransform platformChip, frozenBanner;
         Image platformImage;
@@ -87,13 +88,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool LastAnswerDisagreed { get; private set; }
         bool shownGuessValid, shownGuess;
         /// <summary>The checkpoint's guess shown on the card (the spider presses this button when it answers).</summary>
-        public bool HasShownGuess => shownGuessValid && Mode == 0;
+        public bool HasShownGuess => !DeskGameVisible && !HandwritingVisible && shownGuessValid && Mode == 0;
         public bool ShownGuessYes => shownGuess;
         /// <summary>The 是 / 否 (算术: 对 / 错) buttons, for the spider's leg to reach.</summary>
         public RectTransform YesButton => yes != null ? yes.rt : null;
         public RectTransform NoButton => no != null ? no.rt : null;
         /// <summary>Id of the card on screen now (the spider decides once per card).</summary>
-        public long ShownCardId => Mode == 0 && Sim != null ? CurrentCard.id : -1;
+        public long ShownCardId => !DeskGameVisible && !HandwritingVisible && Mode == 0 && Sim != null ? CurrentCard.id : -1;
 
         /// <summary>
         /// The resident spider presses a button itself (XgSim.SpiderAnswer: the checkpoint's guess, settled like an
@@ -101,7 +102,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         public XgSpiderAnswer SpiderPress()
         {
-            if (Sim == null || Mode != 0) return default;
+            if (Sim == null || Mode != 0 || DeskGameVisible || HandwritingVisible) return default;
             var r = Sim.SpiderAnswer(Desk, Host);
             if (!r.accepted) return r;
             var button = r.yes ? yes.rt : no.rt;
@@ -128,9 +129,9 @@ namespace LingGuangV05.Desktop.XingGuang
             ((card.kind == "long" || card.kind == "translation" || card.kind == "order" && card.bottleneckPreview) &&
              (!string.IsNullOrEmpty(card.sourceText) || !string.IsNullOrEmpty(card.candidateText)));
 
-        /// <summary>The 算术 desk is true/false: its buttons say 对 / 错, every other desk 是 / 否.</summary>
+        /// <summary>The 算术 desk keeps its own tooltip; every desk's buttons say 对 / 错 (is the card's statement right?).</summary>
         bool TrueFalseDesk => XgCatalog.Desk(Desk)?.kind == XgDeskKind.Arith;
-        string YesNoWord(bool yesButton) => TrueFalseDesk ? (yesButton ? T("对", "True") : T("错", "False")) : (yesButton ? T("是", "Yes") : T("否", "No"));
+        string YesNoWord(bool yesButton) => yesButton ? T("对", "True") : T("错", "False");
 
         public override void Build(RectTransform area)
         {
@@ -148,10 +149,10 @@ namespace LingGuangV05.Desktop.XingGuang
             meta.textWrappingMode = TextWrappingModes.NoWrap; meta.overflowMode = TextOverflowModes.Ellipsis;
             qno = ui.Text(Rect("QuestionNo", body, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-94, -58), new Vector2(-14, -36)), "", 13, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
 
-            paper = Rect("Paper", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -276), new Vector2(224, -66));
+            paper = Rect("Paper", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -252), new Vector2(224, -66));
             paperGlow = Glow(paper, XgPalette.Gold, 6);
             paperImage = Panel(paper, XgPalette.Paper);
-            digit = Square<XgDigitGraphic>("Digit", 214);
+            digit = Square<XgDigitGraphic>("Digit", 174);
             digit.color = new Color32(30, 34, 52, 255);
             poem = ui.Text(Rect("Poem", paper, Vector2.zero, Vector2.one, new Vector2(10, 10), new Vector2(-10, -10)), "", 64, XgPalette.Ink, TextAlignmentOptions.Center);
             poem.textWrappingMode = TextWrappingModes.NoWrap;
@@ -159,9 +160,9 @@ namespace LingGuangV05.Desktop.XingGuang
             text = ui.Text(Rect("Text", paper, Vector2.zero, Vector2.one, new Vector2(22, 12), new Vector2(-22, -12)), "", 26, XgPalette.Ink, TextAlignmentOptions.Center);
             text.enableAutoSizing = true; text.fontSizeMin = 15; text.fontSizeMax = 30;
             captchaA = Rect("CaptchaA", paper, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-107, -107), new Vector2(107, 107)).gameObject.AddComponent<XgCaptchaGraphic>();
-            captchaB = Rect("CaptchaB", paper, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(8, -100), new Vector2(208, 100)).gameObject.AddComponent<XgCaptchaGraphic>();
+            captchaB = Rect("CaptchaB", paper, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(24, -85), new Vector2(194, 85)).gameObject.AddComponent<XgCaptchaGraphic>();
             captchaA.raycastTarget = captchaB.raycastTarget = false;
-            face = Rect("Face", paper, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-88, -184), new Vector2(88, -8)).gameObject.AddComponent<XgFaceGraphic>();
+            face = Rect("Face", paper, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-65, -138), new Vector2(65, -8)).gameObject.AddComponent<XgFaceGraphic>();
             face.raycastTarget = false;
             captionFocus = Rect("ReportedAttentionRegion", face.transform, Vector2.zero, new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
             Panel(captionFocus, new Color(1, .72f, .1f, .22f)).raycastTarget = false;
@@ -170,27 +171,28 @@ namespace LingGuangV05.Desktop.XingGuang
             captionFocus.gameObject.SetActive(false);
             caption = ui.Text(Rect("Caption", paper, Vector2.zero, new Vector2(1, 0), new Vector2(10, 6), new Vector2(-10, 48)), "", 24, XgPalette.Ink, TextAlignmentOptions.Center);
             caption.fontStyle = FontStyles.Bold;
-            go = Square<XgGoGraphic>("Go", 226);
+            go = Square<XgGoGraphic>("Go", 174);
             BuildPreviewSurface();
 
-            timerBar = Rect("Timer", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -288), new Vector2(224, -282));
+            timerBar = Rect("Timer", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -262), new Vector2(224, -256));
             timerFill = Bar(timerBar, "Fill", new Color(0, 0, 0, .08f), XgPalette.Gold);
 
-            question = ui.Text(Strip("Question", body, 292, 38), "", 24, XgPalette.Ink, TextAlignmentOptions.Center);
+            question = ui.Text(Strip("Question", body, 268, 34), "", 24, XgPalette.Ink, TextAlignmentOptions.Center);
             question.fontStyle = FontStyles.Bold;
             question.enableAutoSizing = true; question.fontSizeMin = 14; question.fontSizeMax = 24;
-            suggestion = ui.Text(Strip("Suggestion", body, 332, 44), "", 15, XgPalette.Accent, TextAlignmentOptions.Top);
-            confidenceRoot = Strip("Confidence", body, 378, 4, 60, 60);
+            suggestion = ui.Text(Strip("Suggestion", body, 296, 50), "", 15, XgPalette.Accent, TextAlignmentOptions.Top);
+            suggestion.fontStyle = FontStyles.Bold;
+            confidenceRoot = Strip("Confidence", body, 350, 4, 60, 60);
             confidenceFill = Bar(confidenceRoot, "Fill", XgPalette.Line, XgPalette.Accent);
             yes = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(true), 24, new Color32(203, 210, 230, 255));
             no = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(false), 24, new Color32(203, 210, 230, 255));
             var yesFrame = ZhongbaoSkin.Frame(yes); var noFrame = ZhongbaoSkin.Frame(no);
             yesFrame.name = "AnswerYes"; noFrame.name = "AnswerNo";
-            yesFrame.anchorMin = yesFrame.anchorMax = new Vector2(.5f, 1); yesFrame.offsetMin = new Vector2(-214, -454); yesFrame.offsetMax = new Vector2(-8, -394);
-            noFrame.anchorMin = noFrame.anchorMax = new Vector2(.5f, 1); noFrame.offsetMin = new Vector2(8, -454); noFrame.offsetMax = new Vector2(214, -394);
-            feedback = ui.Text(Rect("Feedback", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(16, -516), new Vector2(-16, -460)), "", 15, XgPalette.Good, TextAlignmentOptions.Top);
+            yesFrame.anchorMin = yesFrame.anchorMax = new Vector2(.5f, 1); yesFrame.offsetMin = new Vector2(-214, -422); yesFrame.offsetMax = new Vector2(-8, -368);
+            noFrame.anchorMin = noFrame.anchorMax = new Vector2(.5f, 1); noFrame.offsetMin = new Vector2(8, -422); noFrame.offsetMax = new Vector2(214, -368);
+            feedback = ui.Text(Rect("Feedback", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(16, -460), new Vector2(-16, -426)), "", 15, XgPalette.Good, TextAlignmentOptions.Top);
             // The desk's info line: samples, difficulty, hot word, the next step.
-            var infoBack = Rect("InfoBox", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -582), new Vector2(-14, -520));
+            var infoBack = Rect("InfoBox", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -506), new Vector2(-14, -464));
             Panel(infoBack, ZhongbaoSkin.Page).raycastTarget = false;
             steps = ui.Text(Rect("Info", infoBack, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2)), "", 13, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             steps.enableAutoSizing = true; steps.fontSizeMin = 10; steps.fontSizeMax = 13;
@@ -201,14 +203,16 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildSide(root);
 
             UiTip.Add(qno, () => Sim == null ? "" : HandStats());
-            UiTip.Add(yes.rt, () => TrueFalseDesk ? Lang.T("算式是对的，就点「对」。答对 +1 连击；点错要扣钱，还会断连击。") : Lang.T("题面说得对，就点「是」。答对 +1 连击。"));
-            UiTip.Add(no.rt, () => TrueFalseDesk ? Lang.T("算式是错的，就点「错」。答对 +1 连击；点错要扣钱，还会断连击。") : Lang.T("题面说得不对，就点「否」。答错连击清零。"));
+            UiTip.Add(yes.rt, () => Sim != null && Sim.TeachMode ? Lang.T("题目说得对就点「对」。它答错时你纠正，钱翻倍；教错不扣钱。") : TrueFalseDesk ? Lang.T("算式对就点「对」。答对连击 +1；点错扣钱，连击也断。") : Lang.T("题目说得对就点「对」。答对连击 +1。"));
+            UiTip.Add(no.rt, () => Sim != null && Sim.TeachMode ? Lang.T("题面不成立，就教它「否」。确认它的判断，或者纠正它；正确纠正获得双倍奖励，教错不罚钱。") : TrueFalseDesk ? Lang.T("算式是错的，就点「错」。答对 +1 连击；点错要扣钱，还会断连击。") : Lang.T("题面说得不对，就点「否」。答错连击清零。"));
             UiTip.Add(auto.Root, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("？？？\n也许有更省力的办法……")
                 : Lang.T("自动答题：模型替你答题，每秒都有收入。\n需要任一模型的准确率先达到 60%；只有检查点达到 60% 的桌才会替你答。\n交出去的题会被摆渡众包抽检，错了要罚款，错太多会被举报冻结。"));
             UiTip.Add(pack.Root, SourceTip);
             for (int i = 0; i < amountBtns.Length; i++) UiTip.Add(amountBtns[i].rt, "一次买几级：×1、×10，或者钱够的最大数量。", "How many levels per purchase: ×1, ×10, or as many as you can afford.");
             builtEnglish = En;
             RebuildTabs();
+            BuildHandwriting();
+            BuildDeskGame();
         }
 
         /// <summary>
@@ -232,7 +236,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string what;
             switch (id)
             {
-                case "mnist": what = Lang.T("看手写数字，判断是不是问的那个数。"); break;
+                case "mnist": what = T("照被问的数字写一个，灵光边看边猜，写得越多它越认得你的字；也可以切回是非题。", "Write the digit you are asked for while LingGuang guesses; the more you write, the better it reads your hand. You can switch back to yes/no cards."); break;
                 case "poems": what = Lang.T("看诗句，判断空格里是不是问的那个字。"); break;
                 case "arith": what = T("算术题：看一道写好答案的算式（加减乘除、百分数、分数……），判断它对不对。点错要扣钱；报酬比别的桌低，每条只算半条总样本。", "Sums: read an equation that already shows its answer (+ − × ÷, percentages, fractions…) and judge whether it is right. A wrong pick costs money; it pays less than the other desks and each sample counts half toward the total."); break;
                 case "logic": what = Lang.T("逻辑和推理题。要动脑子，所以报酬最高。"); break;
@@ -302,7 +306,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var list = new List<XgDesk>(Sim.OpenDesks());
             open = list.Count;
-            foreach (var d in XgCatalog.Desks) if (!Sim.DeskOpen(d.id)) list.Add(d);
+            foreach (var d in XgCatalog.Desks) if (!Sim.DeskOpen(d.id) && (!Sim.TeachMode || Sim.S.stage >= 3)) list.Add(d);
             SortByPay(list, 0, open);
             SortByPay(list, open, list.Count - open);
             return list;
@@ -357,11 +361,23 @@ namespace LingGuangV05.Desktop.XingGuang
             string truthText = YesNoWord(card.truth);
             string why = T(card.why, card.whyEn);
             string source = card.source;
+            bool teachingAnswer = !queued && Sim.TeachingGuess(card, out _);
             var button = answer ? yes.rt : no.rt;
+            int oldDeskLevel = Sim.LevelOf(desk);
             var r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
             LastAnswerDisagreed = shownGuessValid && shownGuess != answer;
             AnswerCount++;
+            if (Sim.LevelOf(desk) > oldDeskLevel) {
+                Fx.Float(Fx.At(paper), T("升级！", "Level up! ") + T(XgCatalog.Desk(desk).name, XgCatalog.Desk(desk).nameEn)
+                    + " Lv." + Sim.LevelOf(desk) + T(" · 单价 ×", " · Pay ×") + N(1 + .5 * (Sim.LevelOf(desk) - 1), "0.#"), XgPalette.Gold, 26);
+                Fx.Burst(Fx.At(paper), 24, XgPalette.Gold, XgJuice.Shape.Confetti, 260);
+            }
+            if (r.subjective) {
+                feedback.text = Sim.AiDisplayName + T("记住了你的态度 · +¥", " remembered your choice · +¥") + N(r.pay, "0.00");
+                feedback.color = XgPalette.Accent; feedbackTimer = 3f;
+                Refresh(); return;
+            }
             Remember(r.correct ? HistoryMark.Right : HistoryMark.Wrong);
             SpiderWatches();
             Vector2 at = Fx.At(paper);
@@ -373,6 +389,10 @@ namespace LingGuangV05.Desktop.XingGuang
                     + (why.Length > 0 && card.question.Length > 0 ? "\n<size=13><color=#68748C>" + why + "</color></size>" : "");
                 // A user log from the data flywheel was labelled: it counts as several samples.
                 if (!queued && r.samples > 1) feedback.text += "  <color=#0F8C7E>" + Lang.T("用户日志 +") + r.samples + Lang.T(" 样本") + "</color>";
+                if (teachingAnswer)
+                    feedback.text = (r.corrected ? T("你纠正了它 · +¥", "You corrected it · +¥") : T("它答对了 · +¥", "It got it right · +¥")) + N(r.pay, "0.00")
+                        + "\n" + T("它：", "It: ") + XgSpeechPolicy.Constrain(r.truth ? "是。" : "否。", Sim.S.stage, En)
+                        + (Sim.S.modelStreak == 3 ? T("  它记住了", "  It remembered") : "");
                 feedbackTimer = 3f;
                 Fx.Knock(button, .12f);
                 Fx.Knock(paper, .04f, new Vector2(answer ? 26 : -26, 6), .22f);
@@ -393,7 +413,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 if (r.corrected)
                 {
-                    Fx.Float(at + new Vector2(0, 72), Lang.T("纠错！连击 +2"), XgPalette.Accent, 28);
+                    Fx.Float(at + new Vector2(0, 72), (Sim.TeachMode ? T("教会一张 · 奖励 ×2", "Lesson learned · Pay ×2") : Lang.T("纠错！连击 +2")), XgPalette.Accent, 28);
                     feedback.text += Lang.T("  · 纠错") + (r.samples == 2 ? Lang.T(" · 难例 +2 样本") : "");
                     Fx.Play(XgJuice.Sfx.Id.Unlock, 1.15f, .55f);
                 }
@@ -416,7 +436,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         : Lang.T("」。没有钱，连击清零，这条作废")) + "</color>"
                     + (why.Length > 0 ? "\n<size=14><color=#5B6478>" + why + "</color></size>" : "")
                     + (source.Length > 0 ? "\n<size=13><color=#8A94AA>" + Lang.T("出处：") + Safe(source) + "</color></size>" : "")
-                    + (Sim.S.stage >= 5 && card.explanation.Length > 0 ? "\n<size=13><color=#4054C4>" + T(AppNames.AiZh + "：", AppNames.AiEn + ": ") + Safe(T(card.explanation, card.explanationEn)) + "</color></size>" : "");
+                    + (Sim.S.stage >= 5 && card.explanation.Length > 0 ? "\n<size=13><color=#4054C4>" + Sim.AiDisplayName + T("：", ": ") + Safe(T(card.explanation, card.explanationEn)) + "</color></size>" : "");
                 feedbackTimer = why.Length > 0 ? 7f : 3f;
                 if (r.fine > 0) Fx.Float(Fx.At(button, new Vector2(0, 40)), "−¥" + N(r.fine, "0.00"), XgPalette.Bad, 26);
                 Wrong(at);
@@ -447,6 +467,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Tick(float dt)
         {
+            if (RefreshDeskGame(false)) { deskGame.Tick(dt); return; }
+            TickHandwriting(dt);
             if (feedbackTimer > 0) { feedbackTimer -= dt; if (feedbackTimer <= 0) feedback.text = ""; }
             if (redTimer > 0) redTimer -= dt;
             AnimateFeed(dt);
@@ -455,7 +477,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Mode != displayedMode || displayedSim != Sim) { Refresh(); return; }
             if (Sim.QualityFrozen != wasFrozen || Sim.CaptchaPauseLeft > 0 != wasPaused || Sim.CaptchaPending != wasCaptcha) { Refresh(); return; }
             if ((wasFrozen || wasPaused) && Mode == 0) RefreshFrozenBanner();
-            captchaCard.Tick(host.Visible && host.Tab == "label");
+            captchaCard.Tick(host.Visible && (host.Tab == "label" || host.Tab == "teach"));
             if (Mode != 0) { timerBar.gameObject.SetActive(false); paperGlow.on = false; return; }
             var card = CurrentCard;
             if (card.id != displayedId) { Refresh(); return; }
@@ -480,6 +502,8 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (root == null) return;
+            RefreshHandwriting();
+            if (RefreshDeskGame(true)) return;
             if (displayedSim != Sim)
             {
                 displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; lastFeedId = 0;
@@ -521,6 +545,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double handPay = Sim.ManualPayFor(desk, level);
             wkRule.text = T("每题 ¥", "¥") + N(handPay * (card.bounty ? XgSim.BountyMultiplier : 1), "0.00") + T("", " a card")
                 + (info.fine > 0 ? " · " + T("点错 −¥", "a miss −¥") + N(Sim.HandFineFor(desk, level), "0.00") : "") + " · " + T("连击越高越多", "the higher the combo, the more");
+            if (Sim.TeachMode) wkRule.text = T("确认有奖励 · 正确纠正 ×2 · 教错不罚钱", "Confirm for pay · Correct for ×2 · No lesson fines");
             qno.text = T("第 " + (Sim.DayDone + 1) + " 题", "Card " + (Sim.DayDone + 1));
             string cat = card.category.Length > 0 ? T(card.category, card.categoryEn) : T(info.name, info.nameEn);
             meta.text = (card.gold ? "<color=#E0A000><b>" + T("前方高能 ×3", "HYPE ×3") + "</b></color>  " : "")
@@ -542,18 +567,19 @@ namespace LingGuangV05.Desktop.XingGuang
                     // The sums are big and spaced like a calculator; the logic cards are sentences.
                     text.fontSizeMax = kind == XgDeskKind.Arith ? 44 : 30;
                     text.characterSpacing = kind == XgDeskKind.Arith ? 3 : 0;
-                    question.text = kind == XgDeskKind.Arith ? T("这道算式对不对？点错扣钱", "Is this one right? A wrong pick costs money") : Lang.T("对吗？");
+                    question.text = kind == XgDeskKind.Arith ? (Sim.TeachMode ? T("这道算式对不对？", "Is this equation right?") : T("这道算式对不对？点错扣钱", "Is this one right? A wrong pick costs money")) : Lang.T("对吗？");
                     break;
                 case XgDeskKind.Text:
                     // 常识判断 reads like the 算术 card: one big plain statement; the 2016 phrase desks keep their small type.
                     bool sense = desk == XgMemes.SenseDesk;
-                    text.text = T(card.question, card.questionEn); text.fontSizeMax = sense ? 40 : 30; text.characterSpacing = sense ? 2 : 0;
+                    text.text = (string.IsNullOrEmpty(card.from) ? "" : "<size=70%><color=#68748C>" + T("发件人：", "From: ") + Safe(card.from) + "</color></size>\n")
+                        + T(card.question, card.questionEn); text.fontSizeMax = sense ? 40 : 30; text.characterSpacing = sense ? 2 : 0;
                     question.text = T(XgMemes.Question(desk), XgMemes.QuestionEn(desk));
                     break;
                 case XgDeskKind.Captcha:
                     bool two = card.shown >= 0;
                     var a = captchaA.rectTransform;
-                    if (two) { a.offsetMin = new Vector2(-208, -100); a.offsetMax = new Vector2(-8, 100); } else { a.offsetMin = new Vector2(-107, -107); a.offsetMax = new Vector2(107, 107); }
+                    if (two) { a.offsetMin = new Vector2(-194, -85); a.offsetMax = new Vector2(-24, 85); } else { a.offsetMin = new Vector2(-85, -85); a.offsetMax = new Vector2(85, 85); }
                     captchaA.Show(card.digit, card.seed, card.level);
                     if (two) captchaB.Show(card.shown, card.seed + 7, card.level);
                     question.text = T(card.question, card.questionEn);
@@ -592,16 +618,18 @@ namespace LingGuangV05.Desktop.XingGuang
             bool hasGuess;
             bool guess;
             double confidence;
-            if (Sim.S.stage == 1 && card.kind == "combo" && card.judgeSource != "brain") hasGuess = Sim.TryGetComboSuggestion(card, out guess, out confidence);
-            else if (queued) { hasGuess = card.hasJudgment; guess = card.guess; confidence = card.confidence; }
+            if (queued) { hasGuess = card.hasJudgment; guess = card.guess; confidence = card.confidence; }
+            else if (Sim.TeachingGuess(card, out guess)) { hasGuess = true; confidence = .5; }
+            else if (Sim.S.stage == 1 && card.kind == "combo" && card.judgeSource != "brain") hasGuess = Sim.TryGetComboSuggestion(card, out guess, out confidence);
             else hasGuess = Sim.Suggestion(desk, out guess, out confidence);
             shownGuessValid = hasGuess; shownGuess = guess;
+            bool teaching = !queued && Sim.TeachingGuess(card, out _);
             suggestion.text = hasGuess
-                ? T(AppNames.AiZh + "：", AppNames.AiEn + ": ") + YesNoWord(guess) + "？ " + XgSim.Pct(confidence)
+                ? Sim.AiDisplayName + T("：", ": ") + YesNoWord(guess) + "？ " + XgSim.Pct(confidence)
                     + "  (" + (queued && card.judgeSource == "brain" ? Lang.T("本地模型") : Lang.T("检查点估计")) + ")"
                     + (queued && !string.IsNullOrEmpty(card.judgeFailure) ? " · " + Lang.T("大脑离线") : "")
                 : T("还没有模型。标够 " + XgCatalog.SamplesToTrain + " 条，去「训练」按「训练一轮」。", "No model yet. Label " + XgCatalog.SamplesToTrain + ", then press Train in the Train tab.");
-            if (hasGuess && host.Visible && host.Tab == "label" && suggestion.gameObject.activeInHierarchy && card.kind == "combo" && card.judgeSource != "brain")
+            if (hasGuess && host.Visible && (host.Tab == "label" || host.Tab == "teach") && suggestion.gameObject.activeInHierarchy && card.kind == "combo" && card.judgeSource != "brain")
                 Sim.MarkComboSuggestionDisplayed(card, guess);
             if (hasGuess && Sim.FeatureVisible("lingguang-contact"))
             {
@@ -610,18 +638,41 @@ namespace LingGuangV05.Desktop.XingGuang
                     comment = queued ? XgSpeechPolicy.Constrain(Lang.T("这个……我拿不准。你来。"), Sim.S.stage, En) : null;
                     RequestComment(desk, card, guess, confidence);
                 }
-                if (!string.IsNullOrEmpty(comment)) suggestion.text += "\n<size=14><color=#4054C4>" + T(AppNames.AiZh + "：「", AppNames.AiEn + ": “") + Safe(comment) + T("」", "”") + "</color></size>";
+                if (!string.IsNullOrEmpty(comment)) suggestion.text += "\n<size=14><color=#4054C4>" + Sim.AiDisplayName + T("：「", ": “") + Safe(comment) + T("」", "”") + "</color></size>";
             }
-            confidenceRoot.gameObject.SetActive(hasGuess);
+            if (teaching) suggestion.text = Sim.AiDisplayName + T("：", ": ") + (guess ? T("是", "Yes") : T("否", "No"));
+            if (card.family) suggestion.text = Sim.AiDisplayName + T("：这条消息，你在意吗？", ": Does this message matter to you?");
+            suggestion.fontSize = teaching ? 34 : 16;
+            // Keep the answer beside the question on spacious windows; the narrow
+            // fallback remains directly above the answer buttons.
+            bool beside = (teaching || card.family) && body.rect.width >= 730;
+            float shift = beside ? -90 : 0;
+            paper.anchoredPosition = new Vector2(shift, paper.anchoredPosition.y);
+            timerBar.anchoredPosition = new Vector2(shift, timerBar.anchoredPosition.y);
+            suggestion.rectTransform.anchorMin = new Vector2(beside ? .5f : 0, 1);
+            suggestion.rectTransform.anchorMax = new Vector2(beside ? .5f : 1, 1);
+            suggestion.rectTransform.offsetMin = beside ? new Vector2(158,-240) : new Vector2(12,-346);
+            suggestion.rectTransform.offsetMax = beside ? new Vector2(338,-78) : new Vector2(-12,-296);
+            suggestion.alignment = beside ? TextAlignmentOptions.Center : TextAlignmentOptions.Top;
+            suggestion.enableAutoSizing = true; suggestion.fontSizeMin = card.family ? 20 : 25;
+            suggestion.fontSizeMax = teaching || card.family ? 34 : 16;
+            if (!teaching && !card.family) suggestion.fontSizeMin = 13;
+            confidenceRoot.gameObject.SetActive(hasGuess && !teaching);
             SetBar(confidenceFill, (float)confidence);
             confidenceFill.GetComponent<UnityEngine.UI.Image>().color = confidence < Sim.S.coopThreshold ? XgPalette.Gold : XgPalette.Good;
             yes.label.fontSize = no.label.fontSize = 24;
             yes.Set(YesNoWord(true) + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
             no.Set(YesNoWord(false) + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
+            if (card.family) {
+                yes.Set(T("当作垃圾", "Mark as junk") + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
+                no.Set(T("留作重要", "Keep as important") + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
+            }
 
             if (card.kind == "translation") { translationFadeCount = -1; AnimateTranslation(card, 0); }
-            XgLabelGhost.For(paper)?.Show(Sim, desk, card); // the model's faint guess before the auto-labelling idea
+            if (Sim.TeachMode) XgLabelGhost.For(paper)?.Hide();
+            else XgLabelGhost.For(paper)?.Show(Sim, desk, card); // the model's faint guess before the auto-labelling idea
             RefreshSteps(desk, d);
+            if (HandwritingVisible) wkRule.text = T("手写 · 每张 ¥" + N(handPay, "0.00") + " + 速度奖励 · 不扣钱", "Handwriting · ¥" + N(handPay, "0.00") + " a drawing + speed bonus · no fines");
             RefreshCollaboration();
             RefreshPlatform();
             RefreshSide(desk);
@@ -633,6 +684,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             double samples = Sim.Samples(d.id);
             double best = Sim.BestAcc(d.id);
+            if (Sim.TeachMode)
+            {
+                steps.text = T("这类样本 ", "Examples ") + Samples(samples) + T(" · 你纠正了 ", " · Corrections ") + Sim.S.teachingCorrections + T(" 次 · 它连续答对 ", " · Its streak ") + Sim.S.modelStreak
+                    + "\n" + (samples < XgCatalog.SamplesToTrain ? T("再教 ", "Teach ") + (XgCatalog.SamplesToTrain - (int)samples) + T(" 张，就能训练。", " more to train.") : T("样本够了：点右边「带它去训练」。", "Ready: choose Train together on the right."));
+                return;
+            }
             var sb = new StringBuilder();
             sb.Append("<b>").Append(T(d.name, d.nameEn)).Append("</b>  <color=#7A7F8C>").Append(T("样本 ", "samples ")).Append(Samples(samples));
             if (best > 0) sb.Append(Lang.T(" · 最佳 ")).Append(XgCatalog.GradeNames[XgSim.Grade(Sim.BestScore(d.id))]).Append(" ").Append(XgSim.Pct(best));
@@ -764,7 +821,7 @@ namespace LingGuangV05.Desktop.XingGuang
             previewGraphic.Show(card.patternA, card.patternB);
             previewMemoryRoot.gameObject.SetActive(memory);
             previewHeading.text = (card.bottleneckPreview ? Lang.T("瓶颈预览 · ") : "")
-                + Lang.T("教学示意，不是真实模型内部状态");
+                + Lang.T("它在看哪里");
             previewSourceScroll.gameObject.SetActive(!grid || !two);
             previewCandidateScroll.gameObject.SetActive(!grid || !two);
             string source = VisibleText(card.sourceText, card.sourceTextEn);
@@ -1122,6 +1179,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void RefreshSpecialVisibility(bool special)
         {
+            if (teachingCompanion != null) teachingCompanion.gameObject.SetActive(!special && Sim.TeachMode && Sim.ReviewCard(Sim.S.desk) == null);
             specialInfo.gameObject.SetActive(special);
             if (special)
             {
@@ -1158,22 +1216,22 @@ namespace LingGuangV05.Desktop.XingGuang
                 string[] questions = { "把循环全部去掉？", "让几组注意力同时看不同的东西？", "没有循环，它就不知道词的先后。给每个位置编个号？" };
                 string[] english = { "Remove recurrence entirely?", "Let several attention heads look at different things at once?", "Without recurrence, it loses word order. Give each position a number?" };
                 int step = Math.Max(0, Math.Min(2, Sim.S.project.experiments));
-                meta.text = T(AppNames.AiZh + "的实验 ", AppNames.AiEn + "'s experiment ") + (step + 1) + "/3";
+                meta.text = Sim.AiDisplayName + T("的实验 ", "'s experiment ") + (step + 1) + "/3";
                 text.text = T(questions[step], english[step]);
                 question.text = Lang.T("这次，轮到我问你。"); question.fontSize = 22;
                 suggestion.text = Lang.T("答「否」：重做本段实验，不再次扣钱。");
                 SetBar(confidenceFill, (float)(Sim.S.project.gpuSeconds / XgSim.ProjectGpuSeconds));
                 steps.text = Lang.T("Transformer 研发") + "\n" + N(Sim.S.project.gpuSeconds, "0") + " / " + XgSim.ProjectGpuSeconds + Lang.T(" GPU·秒");
-                specialInfo.text = Lang.T("研究已暂停，等待你的判断。\n\n三个实验：去掉循环、多头注意力、位置编号。\n\n这里的研发是游戏模拟，不会改写本机 GGUF 模型的权重。");
+                specialInfo.text = Lang.T("实验停下了，等你拍板。\n\n三个实验：去掉循环、多头注意力、给位置编号。");
             }
             else if (Mode == 2)
             {
-                meta.text = Lang.T("最后一张题卡");
+                meta.text = Lang.T("它想问你");
                 text.text = Lang.T("你后悔教我吗？");
-                question.text = T("出题者：" + AppNames.AiZh, "Asked by " + AppNames.AiEn); question.fontSize = 22;
+                question.text = T("出题者：", "Asked by ") + Sim.AiDisplayName; question.fontSize = 22;
                 suggestion.text = Lang.T("这次没有标准答案。");
-                steps.text = Lang.T("第一章 · 只要注意力");
-                specialInfo.text = Lang.T("无论回答是或否，都走向第一章的结尾。\n\n这段 2016 年提前突破的故事是虚构；历史字幕会标明真实年份。");
+                steps.text = Lang.T("回答后，继续教它、训练和自由对话。");
+                specialInfo.text = Lang.T("这次它想知道你的感受。\n\n回答不会结束游戏；继续提升能力，向突变前进。");
             }
             else
             {

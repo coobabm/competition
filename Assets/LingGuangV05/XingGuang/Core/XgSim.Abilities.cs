@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static readonly double[] AbilityParamsK = { 0, 0, 6, 60, 170, 290, 320 };
         /// <summary>Data threshold of each ability, in effective samples: hand labels plus about one cheap pack per stage.</summary>
-        public static readonly double[] AbilitySamples = { 0, 0, 12500, 150000, 300000, 480000, 600000 };
+        public static readonly double[] AbilitySamples = { 0, 0, 6000, 60000, 150000, 300000, 600000 };
 
         /// <summary>
         /// The parameter and sample ladder the desks' ceilings are placed on (the thresholds before they were lowered),
@@ -166,8 +166,8 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>The parameter threshold of an ability after the items owned (thousands).</summary>
-        public double ParamsThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilityParamsK[ability] * ParamsDiscount(ability);
-        public double SamplesThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilitySamples[ability] * SamplesDiscount(ability);
+        public double ParamsThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilityParamsK[ability] * ParamsDiscount(ability) * Math.Max(.2, RelicFx.paramsFactor);
+        public double SamplesThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilitySamples[ability] * SamplesDiscount(ability) * Math.Max(.2, RelicFx.samplesFactor);
 
         /// <summary>How full the parameter bar is towards an ability (0–1).</summary>
         public double ParamsProgress(int ability) => BarProgress(TrainedParamsK, ParamsThreshold(ability));
@@ -180,12 +180,33 @@ namespace LingGuangV05.XingGuang
         /// <summary>The parameters (thousands) of the model a run trains (configured automatically, so always the one assessed).</summary>
         public static double TrainedShapeParamsK(XgRun run) => run == null ? 0 : ParamsK(run);
 
-        /// <summary>After an assessment: a model graded C or better counts towards P, once it has trained a round in its current shape.</summary>
+        /// <summary>
+        /// A model graded C or better counts towards P once it has trained a round in its current shape. Returns whether P
+        /// rose; <paramref name="announce"/> says so in the feed ("练到 C 级，参数算数了：5K → 49K").
+        /// </summary>
+        bool CountTrainedParams(XgRun run, int grade, bool announce)
+        {
+            if (run == null || grade < TrainedGrade || run.shapeRounds <= 0) return false;
+            double k = TrainedShapeParamsK(run), before = TrainedParamsK;
+            if (!Finite(k) || k <= before + 1e-9) return false;
+            S.trainedParamsK = k;
+            if (announce) Say(T("练到 C 级，参数算数了：", "Grade C reached, parameters count: ") + ParamsText(before) + " → " + ParamsText(k));
+            return true;
+        }
+
+        /// <summary>
+        /// Right after a training round: the model counts as soon as its accuracy earns grade C, with no assessment needed.
+        /// Assessing (<see cref="Assess"/>) still pays, records and tells the story, and counts the same way if this missed.
+        /// </summary>
+        void AutoCountTrainedParams(XgRun run)
+        {
+            if (CountTrainedParams(run, ModelGrade(run), true)) CheckAbilities();
+        }
+
+        /// <summary>After an assessment: the same count, for a model that reached grade C by another road.</summary>
         void NoteTrainedParams(XgRun run, XgAssessment a)
         {
-            if (run == null || a == null || a.grade < TrainedGrade || run.shapeRounds <= 0) return;
-            double k = TrainedShapeParamsK(run);
-            if (Finite(k) && k > S.trainedParamsK) S.trainedParamsK = k;
+            if (a != null) CountTrainedParams(run, a.grade, true);
         }
 
         // ───────────── emergence ─────────────
@@ -195,9 +216,21 @@ namespace LingGuangV05.XingGuang
         {
             if (S.stage != AbilitiesCount) RefreshStages();
             int next = NextAbility;
-            if (next == 0) return;
+            if (next == 0 || S.stage > 1 && S.stageEpochs == 0) return;
             if (TrainedParamsK + 1e-9 < ParamsThreshold(next) || TrainedSamples + 1e-9 < SamplesThreshold(next)) return;
-            EmergeAbility(next);
+            // Training can fill the bars, but only the player confirms a new chapter.
+            return;
+        }
+
+        public bool StageReady => NextAbility > 0 && S.stageEpochs > 0
+            && TrainedParamsK + 1e-9 >= ParamsThreshold(NextAbility)
+            && TrainedSamples + 1e-9 >= SamplesThreshold(NextAbility);
+
+        public bool ConfirmNextStage()
+        {
+            if (!StageReady) return false;
+            EmergeAbility(NextAbility);
+            return true;
         }
 
         void EmergeAbility(int ability)
@@ -210,6 +243,7 @@ namespace LingGuangV05.XingGuang
             // The stage follows: the old stage change (its desks, words and story) happens now.
             AdvanceStage(ability - 1);
             RefreshStages();
+            OfferRelicPick();
             AbilityEmerged?.Invoke(ability);
         }
 

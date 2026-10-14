@@ -150,8 +150,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BeginEpoch(XgTrack.Vision, rig));
             Assert.AreEqual(XgTaskState.Run, sim.RefreshWiring(rig).Node("train:0").state);
             sim.S.vision.epochActive = false;
-            sim.S.vision.running = true;
-            Assert.AreEqual(XgTaskState.Idle, sim.RefreshWiring(rig).Node("train:0").state, "automation enabled between epochs is still waiting");
+            Assert.AreEqual(XgTaskState.Idle, sim.RefreshWiring(rig).Node("train:0").state, "between epochs the line is waiting");
         }
 
         [Test]
@@ -559,7 +558,6 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgSim.AjieMiningRate, sim.AjieRentMultiplier, 1e-9);
             Assert.AreEqual(2 * XgSim.CafeRent * 1.6, sim.Wiring.rentPerSecond, 1e-9);
             Assert.IsNull(sim.Wiring.Node("ajie"));
-            sim.S.vision.running = true;
             Assert.IsNull(sim.Connect("cafe7", "run:0", rig));
             Assert.IsNull(sim.Connect("cafe8", "run:0", rig));
             sim.Tick(XgSim.AjieAskAgain + 10, rig);
@@ -578,7 +576,7 @@ namespace LingGuangV05.XingGuang.Tests
             // Cards idle: no suspicion.
             sim.Tick(XgSim.AjieAskAgain + 10, rig);
             Assert.IsFalse(sim.AjiePending, "idle cards do not make him ask");
-            // Real work, not an idle automation switch, makes both café cards busy.
+            // Real work makes both café cards busy.
             Assert.IsNull(sim.Connect("cafe7", "run:0", rig));
             Assert.IsNull(sim.Connect("cafe8", "run:0", rig));
             Assert.IsTrue(sim.BeginEpoch(XgTrack.Vision, rig));
@@ -643,9 +641,53 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void AStageLockedOrderSaysWhenItOpensNotThatTheAccuracyIsLow()
+        {
+            var sim = Lab(XgSim.ContractStage - 1);
+            var rig = new Rig(Ti980);
+            sim.Tick(1, rig);
+            string digits = "m:" + sim.Best("mnist").modelId;
+            sim.Best("mnist").acc = .995; // above the order's 99% line: the score is not the reason
+            Assert.AreEqual("第 " + XgSim.ContractStage + " 阶段才开放", sim.Connect(digits, "contract:zipcode", rig));
+            Assert.IsFalse(sim.Signed("zipcode"));
+            sim.English = true;
+            Assert.AreEqual("Opens at stage " + XgSim.ContractStage, sim.Connect(digits, "contract:zipcode", rig));
+            sim.English = false;
+            // The lock is the stage, whatever the score: a low score does not hide it behind a second-best reason.
+            sim.Best("mnist").acc = .9;
+            StringAssert.StartsWith("第 ", sim.Connect(digits, "contract:zipcode", rig));
+            // Once the stage is there, the score is judged and signs it.
+            sim.S.stage = XgSim.ContractStage;
+            sim.Best("mnist").acc = .995;
+            Assert.IsNull(sim.Connect(digits, "contract:zipcode", rig));
+            Assert.IsTrue(sim.Signed("zipcode"));
+        }
+
+        [Test]
+        public void TheAccuracyMessageComparesTheRealNumbers()
+        {
+            var sim = Lab(XgSim.ContractStage);
+            var rig = new Rig(Ti980);
+            sim.Tick(1, rig);
+            string digits = "m:" + sim.Best("mnist").modelId;
+            sim.Best("mnist").acc = .975;
+            Assert.AreEqual("准确率不够 97.5% < 99%", sim.Connect(digits, "contract:zipcode", rig));
+            // Just under the line must not round up to it ("99% < 99%").
+            sim.Best("mnist").acc = .9899;
+            Assert.AreEqual("准确率不够 98.9% < 99%", sim.Connect(digits, "contract:zipcode", rig));
+            sim.English = true;
+            Assert.AreEqual("Accuracy too low 98.9% < 99%", sim.Connect(digits, "contract:zipcode", rig));
+            // A plain low score.
+            sim.English = false;
+            sim.Best("mnist").acc = .9;
+            Assert.AreEqual("准确率不够 90% < 99%", sim.Connect(digits, "contract:zipcode", rig));
+            Assert.IsFalse(sim.Signed("zipcode"));
+        }
+
+        [Test]
         public void JobWiresUseTheOrdersRules()
         {
-            var sim = Lab(3);
+            var sim = Lab(XgSim.FeatureUnlock["crowd"]); // orders can only be signed from the crowd stage on
             var rig = new Rig(Ti980);
             sim.Tick(1, rig);
             string digits = "m:" + sim.Best("mnist").modelId, logic = "m:" + sim.Best("logic").modelId;

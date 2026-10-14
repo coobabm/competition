@@ -57,7 +57,6 @@ namespace LingGuangV05.EditorTools
             var sim = ctl.Sim;
             sim.Connect("cafe", "cafe7", ctl.Host);
             sim.Connect("cafe7", "run:0", ctl.Host);
-            sim.S.vision.running = true;
             Show(ctl);
             return "bound stage " + sim.S.stage + ", tab " + ctl.View.Tab;
         }

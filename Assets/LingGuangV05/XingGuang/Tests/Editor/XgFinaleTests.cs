@@ -507,8 +507,12 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage6(out _);
             sim.S.stage = 5; sim.S.stageVision = sim.S.stageSequence = 5;
             Assert.AreEqual(0, sim.GarbleLinesRead);
-            sim.S.best.Add(new XgBest { dataset = "translate", acc = .72 });
-            Assert.AreEqual(2, sim.GarbleLinesRead);
+            sim.S.best.Add(new XgBest { dataset = "translate", acc = XgSim.GarbleThresholds[1] });
+            Assert.AreEqual(2, sim.GarbleLinesRead, "one line per translation threshold passed");
+            sim.S.best[0].acc = XgSim.GarbleThresholds[2] - .001;
+            Assert.AreEqual(2, sim.GarbleLinesRead, "just under the third threshold");
+            sim.S.best[0].acc = XgSim.GarbleThresholds[3];
+            Assert.AreEqual(4, sim.GarbleLinesRead, "the last threshold reads the last line");
             StringAssert.Contains("听见关机", sim.GarbleLine(2));
         }
     }

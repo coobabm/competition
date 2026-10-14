@@ -70,17 +70,19 @@ namespace LingGuangV05.Tests
             Assert.That(runtime.Sim.S.money,Is.EqualTo(balance));
             Assert.That(runtime.Sim.S.gpuCount,Is.EqualTo(1));
         }
-        [Test] public void OfflineStartupSettlesDaysAndIncomeOnlyOnce()
+        // Time away is not simulated any more (ChapterOneRuntime.ApplyOffline): no income, power bills, days or training while the game is closed.
+        [Test] public void ClosedTimeIsNotSimulatedAndTheAnchorOnlyMovesForward()
         {
             runtime.Sim.SetJobEnabled(true);
             Assert.That(runtime.SaveNow(),Is.True);
-            var expected=new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S)));
-            expected.Tick(300);
+            var saved=new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S)));
             clock+=300; OpenRuntime();
-            Assert.That(runtime.OfflineSeconds,Is.EqualTo(300));
-            Assert.That(runtime.Sim.S.day,Is.EqualTo(expected.S.day));
-            Assert.That(runtime.Sim.S.money,Is.EqualTo(expected.S.money).Within(1e-7));
-            Assert.That(runtime.Sim.S.steps,Is.EqualTo(expected.S.steps));
+            Assert.That(runtime.OfflineSeconds,Is.Zero);
+            Assert.That(runtime.Sim.S.day,Is.EqualTo(saved.S.day));
+            Assert.That(runtime.Sim.S.money,Is.EqualTo(saved.S.money).Within(1e-7));
+            Assert.That(runtime.Sim.S.steps,Is.EqualTo(saved.S.steps));
+            Assert.That(runtime.Sim.S.gameSeconds,Is.EqualTo(saved.S.gameSeconds).Within(1e-6));
+            Assert.That(runtime.Sim.S.lastSeenUnix,Is.EqualTo(1300),"the anchor follows the clock");
             double balance=runtime.Sim.S.money, steps=runtime.Sim.S.steps;
             OpenRuntime();
             Assert.That(runtime.OfflineSeconds,Is.Zero);
@@ -96,11 +98,13 @@ namespace LingGuangV05.Tests
             Assert.That(runtime.Sim.S.lastSeenUnix,Is.EqualTo(1000));
             Assert.That(runtime.Sim.S.money,Is.EqualTo(balance));
         }
-        [Test] public void LargeOfflineGapIsCappedAtThirtyMinutes()
+        [Test] public void ALargeGapAwayChangesNothingEither()
         {
-            runtime.SaveNow(); clock+=864000; OpenRuntime();
-            Assert.That(runtime.OfflineSeconds,Is.EqualTo(1800));
-            Assert.That(runtime.Sim.S.gameSeconds,Is.EqualTo(1800).Within(1e-6));
+            runtime.SaveNow(); double game=runtime.Sim.S.gameSeconds, balance=runtime.Sim.S.money;
+            clock+=864000; OpenRuntime();
+            Assert.That(runtime.OfflineSeconds,Is.Zero);
+            Assert.That(runtime.Sim.S.gameSeconds,Is.EqualTo(game).Within(1e-6));
+            Assert.That(runtime.Sim.S.money,Is.EqualTo(balance).Within(1e-7));
         }
         [Test] public void MalformedJsonWithGoodEnvelopeRecoversPreviousValidPayload()
         {

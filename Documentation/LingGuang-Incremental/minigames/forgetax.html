@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>灵光.exe · 炼模型（ForgeTax 对照版）</title>
+<!--
+  Playable prototype: pure AI training as a ForgeTax-style roguelite. Every ForgeTax mechanic has a counterpart
+  (the 对照表 button lists them all):
+    sword → a model run (starts at +0); heat → load onto the GPU (显存温度); strike → one training round;
+    ticket draw (Success/Great/Hold/Damage/Break) → 涨了/顿悟/平台期/退步/梯度爆炸;
+    Frenzy (10 strikes on one sword) → 入神 (no explosions for a few seconds);
+    relics → 论文 (papers/tricks, ticket changes and value bonuses); relic shop by day → 每天的论文推送 (3 offers, reroll);
+    relic machine (feed swords) → 投稿 (submit a model for a random paper);
+    dragon tribute → 房东收租 every 3 days; Rage → 房东的耐心; daily sword supply → 每天的显卡时段 (new +0 models);
+    starter gift → 开局三选一; endings → 学会「全部放开」 / 卖电脑.
+  All numbers are placeholders for feel. Space = strike, F = 入神, L = load.
+-->
+<style>
+:root{
+  --bg:#070C12;--panel:#0B131C;--panel2:#0E1823;--panel3:#122130;--line:#1B2D3B;--line2:#28475A;
+  --ink:#D6EEF5;--mute:#6F95A5;--dim:#3A5566;
+  --p:#A99BF2;--ok:#5DCAA5;--money:#FAC775;--bad:#E24B4A;--hot:#EF9F27;--cool:#7FD3FF;--great:#F5D76E;
+  --mono:"SF Mono",Menlo,Consolas,"PingFang SC",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#1E4D8C;font-family:var(--mono);color:var(--ink);font-size:12px;min-height:100vh}
+.win{width:1236px;height:693px;background:var(--bg);border:1px solid var(--line2);position:absolute;left:50%;top:50%;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 46px 1fr 22px;overflow:hidden}
+.title{background:#05090E;color:var(--mute);display:flex;align-items:center;padding:0 0 0 10px;gap:8px;border-bottom:1px solid var(--line);user-select:none}
+.title .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.title .sp{flex:1}.title i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:28px;font-style:normal}
+.top{display:flex;align-items:center;gap:20px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.top .k small{display:block;color:var(--mute);font-size:10px}.top .k b{font-size:15px;font-weight:500}
+.top .sp{flex:1}
+.rage{display:flex;gap:4px}.rage i{width:12px;height:12px;border-radius:50%;border:1px solid var(--bad)}.rage i.on{background:var(--bad);box-shadow:0 0 6px var(--bad)}
+.btn{border:1px solid var(--line2);background:var(--panel3);color:var(--ink);padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px}
+.btn:hover{border-color:var(--ok)}
+.btn.money{border-color:var(--money);color:var(--money)}
+.btn.p{border-color:var(--p);color:var(--p)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.4;cursor:default;border-color:var(--line2)}
+.main{display:grid;grid-template-columns:250px 1fr 300px;gap:10px;padding:10px;min-height:0;background:
+  linear-gradient(#0C1822 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#0C1822 1px,transparent 1px) 0 0/24px 24px,var(--bg)}
+.status{background:var(--panel);border-top:1px solid var(--line);color:var(--dim);font-size:11px;display:flex;align-items:center;padding:0 10px;gap:16px}
+.status .sp{flex:1}
+.card{background:var(--panel2);border:1px solid var(--line2);padding:8px 10px;position:relative}
+.h{color:var(--mute);font-size:11px;letter-spacing:1px;margin:0 0 6px;display:flex;justify-content:space-between;align-items:center}
+.h b{color:var(--ink);font-weight:400;letter-spacing:0}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0}
+/* models */
+.models{display:flex;flex-direction:column;gap:5px;overflow:auto;flex:1;min-height:0}
+.md{border:1px solid var(--line2);background:var(--panel3);padding:6px 8px;cursor:pointer;display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center}
+.md:hover{border-color:var(--cool)}
+.md.on{border-color:var(--ok);background:#0F2A2A}
+.md .lv{font-size:18px;font-weight:700}
+.md .inf{font-size:11px;color:var(--mute)}.md .inf b{color:var(--p);font-weight:400}
+.md .val{color:var(--money);font-size:12px;text-align:right}
+.md.dead{opacity:.35;cursor:default}
+.empty{color:var(--dim);font-size:11px;padding:6px 2px;line-height:1.7}
+/* anvil */
+.anvil{flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#10202C,#060B10 70%);border:1px solid var(--line2);min-height:0}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.big{position:absolute;left:16px;top:10px;font-size:52px;font-weight:700;letter-spacing:-2px;text-shadow:0 0 18px currentColor}
+.big small{display:block;font-size:12px;letter-spacing:0;color:var(--mute);font-weight:400;text-shadow:none;margin-top:-4px}
+.pv{position:absolute;right:16px;top:14px;text-align:right}
+.pv b{font-size:26px;color:var(--p);font-weight:600;text-shadow:0 0 12px #A99BF288}
+.pv .v{color:var(--money);font-size:15px;margin-top:2px}
+.pv small{display:block;color:var(--mute);font-size:11px}
+.core{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%)}
+.verdict{position:absolute;left:0;right:0;top:30%;text-align:center;font-size:34px;font-weight:700;pointer-events:none;opacity:0;letter-spacing:4px;z-index:3}
+.verdict small{display:block;font-size:13px;letter-spacing:1px;font-weight:400;margin-top:4px}
+.verdict.show{animation:pop 1.2s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:scale(1.6)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+.heat{position:absolute;left:16px;bottom:96px;width:220px}
+.heat .bar{height:8px;background:#15262F;border:1px solid var(--line2)}.heat .bar i{display:block;height:100%;background:linear-gradient(90deg,#EF9F27,#E24B4A);transition:width .2s}
+.heat small{color:var(--mute);font-size:11px}
+.frenzy{position:absolute;right:16px;bottom:96px;text-align:right}
+.pips{display:flex;gap:3px;justify-content:flex-end;margin-top:3px}.pips i{width:12px;height:8px;background:#15262F;border:1px solid var(--line2)}.pips i.on{background:var(--cool);border-color:var(--cool);box-shadow:0 0 6px var(--cool)}
+.frenzyOn{position:absolute;inset:0;box-shadow:inset 0 0 90px #7FD3FF66;pointer-events:none;display:none;z-index:2}
+.frenzyOn.show{display:block;animation:fz .5s infinite alternate}
+@keyframes fz{to{box-shadow:inset 0 0 140px #7FD3FFaa}}
+/* tickets */
+.bag{position:absolute;left:16px;right:16px;bottom:12px}
+.bag .row{display:flex;height:30px;border:1px solid var(--line2);overflow:hidden}
+.tk{display:flex;align-items:center;justify-content:center;font-size:11px;color:#071018;font-weight:600;transition:flex .25s;position:relative;white-space:nowrap;overflow:hidden}
+.tk.hit{outline:3px solid #fff;outline-offset:-3px;z-index:2}
+.bag .lg{display:flex;gap:12px;margin-top:5px;font-size:11px;color:var(--mute)}
+.bag .lg span b{font-weight:400}
+.strike{display:grid;grid-template-columns:1fr 110px 170px;gap:8px}
+.ham{border:1px solid var(--hot);background:linear-gradient(#5A3412,#2F1B0B);color:#fff;cursor:pointer;text-align:center;user-select:none;padding:8px 0}
+.ham:hover{filter:brightness(1.2)}.ham b{font-size:18px;letter-spacing:2px;display:block}.ham small{color:#F6D7B0;font-size:11px}
+.ham.off{filter:grayscale(1) brightness(.5);cursor:default}
+.fzb{border:1px solid var(--cool);color:var(--cool);background:#0E2733}
+.side2{display:flex;flex-direction:column;gap:5px}
+/* papers */
+.relics{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.rl{height:38px;border:1px solid var(--line2);background:var(--panel3);display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;cursor:default}
+.rl.new{animation:nw 1s 2}@keyframes nw{50%{border-color:var(--money);box-shadow:0 0 10px #FAC775}}
+.rl.empty{opacity:.25}
+.shop{display:flex;flex-direction:column;gap:5px}
+.of{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;border:1px solid var(--line2);background:var(--panel3);padding:5px 8px}
+.of .ic{font-size:20px;text-align:center}
+.of .nm{font-size:12px}.of .nm small{display:block;color:var(--mute);font-size:10px;line-height:1.4;margin-top:2px}
+.of.sold{opacity:.35}
+.tip{position:fixed;z-index:20;max-width:300px;background:#0B1720;border:1px solid var(--line2);padding:8px 10px;line-height:1.6;pointer-events:none;display:none;font-size:12px}
+.tip small{color:var(--mute)}.tip em{color:var(--dim);font-style:normal}
+/* modal */
+.modal{position:absolute;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:30}
+.modal.show{display:flex}
+.dlg{background:var(--panel2);border:1px solid var(--line2);padding:16px 18px;width:760px;max-height:620px;overflow:auto}
+.dlg h2{margin:0 0 10px;font-size:16px;font-weight:600}
+.dlg table{width:100%;border-collapse:collapse;font-size:12px}
+.dlg td{border-bottom:1px solid var(--line);padding:5px 6px;vertical-align:top}
+.dlg td:first-child{color:var(--mute);width:200px}
+.gift{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.gift .of{cursor:pointer;grid-template-columns:30px 1fr}
+.gift .of:hover{border-color:var(--money)}
+.endtx{font-size:14px;line-height:1.9;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="title"><span class="dot"></span>灵光.exe — 炼模型 · 纯 AI 训练<span class="sp"></span><i>—</i><i>□</i><i>✕</i></div>
+  <div class="top">
+    <div class="k"><small>日子</small><b id="tDay">第 1 天</b></div>
+    <div class="k"><small>余额</small><b id="tMoney" style="color:var(--money)">¥0</b></div>
+    <div class="k"><small>房租（每 3 天收一次）</small><b id="tRent"></b></div>
+    <div class="k"><small>房东的耐心</small><div class="rage" id="tRage"></div></div>
+    <div class="k"><small>最好的模型</small><b id="tBest">+0</b></div>
+    <span class="sp"></span>
+    <button class="btn" id="mapBtn">对照表 · ForgeTax</button>
+    <button class="btn money" id="endBtn">结束今天 →</button>
+  </div>
+  <div class="main">
+    <div class="col">
+      <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+        <div class="h"><span>今天的模型</span><b id="supply"></b></div>
+        <div class="models" id="models"></div>
+      </div>
+      <div class="card side2">
+        <div class="h"><span>选中的模型</span></div>
+        <button class="btn money" id="sellBtn">卖给企业 · ¥0</button>
+        <button class="btn p" id="subBtn">投稿换论文（模型没了）</button>
+        <div class="empty">卖掉换钱交房租；投稿拿一篇论文，等级越高拿到的越好。</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="anvil" id="anvil">
+        <canvas id="fx"></canvas>
+        <div class="frenzyOn" id="fzOn"></div>
+        <div class="big" id="big">+0<small>选一个模型开始</small></div>
+        <div class="pv"><b id="pv">—</b><div class="v" id="vv"></div><small id="like"></small></div>
+        <div class="core"><canvas id="coreCv" width="300" height="300" style="width:240px;height:240px"></canvas></div>
+        <div class="verdict" id="verdict"></div>
+        <div class="heat"><small id="heatTx">显存温度</small><div class="bar"><i id="heatBar"></i></div></div>
+        <div class="frenzy"><small id="fzTx" style="color:var(--cool)">入神 0/10</small><div class="pips" id="fzPips"></div></div>
+        <div class="bag"><div class="row" id="bag"></div><div class="lg" id="bagLg"></div></div>
+      </div>
+      <div class="strike">
+        <div class="ham" id="ham"><b>🔨 训练一轮</b><small id="hamSub">抽一张签</small></div>
+        <div class="ham fzb" id="fzBtn"><b style="font-size:15px">入神</b><small style="color:var(--cool)" id="fzSub">攒满 10 次</small></div>
+        <div class="ham" id="loadBtn" style="border-color:var(--line2);background:var(--panel3)"><b style="font-size:15px">加载到显卡</b><small style="color:var(--mute)" id="loadSub">电费 ¥5</small></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="h"><span>论文 · 永久生效</span><b id="relN">0</b></div>
+        <div class="relics" id="relics"></div>
+      </div>
+      <div class="card" style="flex:1;min-height:0">
+        <div class="h"><span>今天的论文推送</span><button class="btn" id="rerollBtn" style="padding:2px 8px">换一批 ¥40</button></div>
+        <div class="shop" id="shop"></div>
+      </div>
+    </div>
+  </div>
+  <div class="status"><span id="stLog">● 显卡在线 · 980 Ti</span><span class="sp"></span><span>空格 = 训练 · F = 入神 · L = 加载</span></div>
+  <div class="modal" id="modal"><div class="dlg" id="dlg"></div></div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const rnd=n=>Math.floor(Math.random()*n);
+const OUT=[ // the five tickets
+  {id:'up',   name:'涨了',     col:'#5DCAA5', ft:'Success'},
+  {id:'great',name:'顿悟',     col:'#F5D76E', ft:'Great'},
+  {id:'hold', name:'平台期',   col:'#6F95A5', ft:'Hold'},
+  {id:'dmg',  name:'退步',     col:'#EF9F27', ft:'Damage'},
+  {id:'brk',  name:'梯度爆炸', col:'#E24B4A', ft:'Break'},
+];
+// ───────────── papers = relics (each names its ForgeTax counterpart) ─────────────
+const R=[
+  {id:'clip',  ic:'✂️', n:'梯度裁剪',      y:2013, d:2, p:180, ft:'Iron Hoop',            e:'爆炸签 −2'},
+  {id:'lrdec', ic:'📉', n:'学习率衰减',    y:2012, d:2, p:160, ft:'Black Knot',           e:'爆炸概率 −10%'},
+  {id:'drop',  ic:'🕳️', n:'Dropout',       y:2014, d:2, p:200, ft:'Bent Nail',            e:'涨了签 +4'},
+  {id:'warm',  ic:'🌡️', n:'学习率预热',    y:2017, d:2, p:140, ft:'Lucky Coal',           e:'顿悟签 +1'},
+  {id:'early', ic:'⏸️', n:'早停',          y:1998, d:2, p:120, ft:'Patient Weight',       e:'平台期签 +3（不涨也不坏）'},
+  {id:'aug',   ic:'🔄', n:'数据增强',      y:1998, d:2, p:180, ft:'Blunt Mallet',         e:'1 张退步签 → 涨了签'},
+  {id:'paper', ic:'📝', n:'写博客',        y:0,    d:2, p:150, ft:'Inspection Stamp',     e:'每次涨了 / 顿悟，模型估值 +¥15'},
+  {id:'star',  ic:'⭐', n:'GitHub 开源',   y:2008, d:2, p:220, ft:'Iron Signet',          e:'模型估值 +15%'},
+  {id:'bn',    ic:'📏', n:'BatchNorm',     y:2015, d:3, p:320, ft:'Golden Nail',          e:'顿悟签 +2'},
+  {id:'res',   ic:'↪️', n:'残差连接',      y:2015, d:3, p:300, ft:'Worn Whetstone',       e:'2 张平台期签 → 涨了签'},
+  {id:'mom',   ic:'🏃', n:'动量',          y:1986, d:3, p:340, ft:'Third Hand',           e:'连着 2 次涨了 / 顿悟，再 +1 级'},
+  {id:'trans', ic:'🎓', n:'迁移学习',      y:2014, d:3, p:360, ft:'Broken Holy Sword',    e:'模型炸了，30% 的等级传给下一个 +0 模型，并给 3 次入神'},
+  {id:'wrong', ic:'📒', n:'错题本',        y:0,    d:3, p:280, ft:'Grudge Nail',          e:'模型炸了，存下等级张数的一次性顿悟签'},
+  {id:'sgdr',  ic:'🔁', n:'学习率重启',    y:2016, d:3, p:260, ft:'Red Thread',           e:'平台期之后，下一次爆炸概率 −20%'},
+  {id:'ckpt',  ic:'💾', n:'勤存档',        y:0,    d:4, p:480, ft:'Unyielding Cornerstone',e:'每个模型第一次爆炸改成退步'},
+  {id:'coffee',ic:'☕', n:'通宵咖啡',      y:0,    d:4, p:300, ft:'Ember Locket',         e:'每个模型第一轮 +2 入神'},
+  {id:'adam',  ic:'🅰️', n:'Adam',          y:2014, d:5, p:520, ft:'Echo Hammer',          e:'涨了 / 顿悟有 25% 再 +1 级'},
+  {id:'xav',   ic:'🧮', n:'Xavier 初始化', y:2010, d:5, p:560, ft:'Dragonscale Tongs',    e:'+6 级以上爆炸概率 −25%'},
+  {id:'rebate',ic:'🧾', n:'押金抵扣',      y:0,    d:5, p:400, ft:'Sealed Rebate',        e:'房租 −10%'},
+  {id:'fp16',  ic:'⚡', n:'半精度',        y:2016, d:6, p:520, ft:'Red Hourglass',        e:'入神时间 +1 秒'},
+  {id:'attn',  ic:'👁️', n:'注意力',        y:2014, d:6, p:700, ft:'Obsidian Eye',         e:'+8 级以上 2 张涨了签 → 顿悟签'},
+  {id:'pardon',ic:'🙏', n:'房东宽限',      y:0,    d:6, p:600, ft:"Dragon's Pardon",      e:'交不上房租时免一次，然后消失'},
+  {id:'ens',   ic:'👯', n:'集成学习',      y:1996, d:8, p:800, ft:'Seal of Twins',        e:'每次没炸的训练 2% 复制出一个同级模型'},
+  {id:'room',  ic:'🏢', n:'租机房',        y:0,    d:8, p:900, ft:'Supply Permit',        e:'每天多 1 个模型'},
+  {id:'conf',  ic:'🏆', n:'顶会录用',      y:0,    d:9, p:900, ft:'Dragon Signet',        e:'+12 级以上估值 +50%'},
+  {id:'tfm',   ic:'🤖', n:'Transformer',   y:2017, d:10,p:1500,ft:'Lifetime Contract',    e:'新模型从 +7 开始，不用加载'},
+];
+const GIFT=['drop','lrdec','early','warm','aug','paper','star','coffee'];
+const RENT=[600,1400,3000,6000,11000,18000];
+
+const S={day:1, money:300, rage:0, owned:[], models:[], sel:-1, shop:[], frenzy:0, fzT:0, bestL:0, nextId:1, inherit:null, bankGreat:0, lastRes:null, log:[], over:false};
+
+const has=id=>S.owned.includes(id);
+const rentDue=()=>Math.round(RENT[Math.floor((S.day-1)/3)]*(has('rebate')?.9:1));
+const daysLeft=()=>3-((S.day-1)%3);
+function newModel(){
+  const m={id:S.nextId++, L:has('tfm')?7:0, flat:0, heat:has('tfm')?100:0, strikes:0, streak:0, savedBreak:false, extraGreat:0, dead:false};
+  if(S.inherit){ m.L=Math.max(m.L,S.inherit.L); S.frenzy=Math.min(10,S.frenzy+S.inherit.fz); S.inherit=null; }
+  return m;
+}
+function supply(){ const n=3+(has('room')?1:0); for(let i=0;i<n;i++) S.models.push(newModel()); }
+const params=m=>Math.pow(2,m.L); // M
+const value=m=>Math.round((60*Math.pow(1.32,m.L)+m.flat)*(1+(has('star')?.15:0)+(has('conf')&&m.L>=12?.5:0)));
+const cur=()=>S.models[S.sel];
+
+// ───────────── tickets ─────────────
+function tickets(m){
+  const t={up:10, great:2, hold:5, dmg:3, brk:m.L};
+  if(has('drop')) t.up+=4; if(has('warm')) t.great+=1; if(has('bn')) t.great+=2; if(has('early')) t.hold+=3;
+  if(has('aug')){ const k=Math.min(1,t.dmg); t.dmg-=k; t.up+=k; }
+  if(has('res')){ const k=Math.min(2,t.hold); t.hold-=k; t.up+=k; }
+  if(has('attn')&&m.L>=8){ const k=Math.min(2,t.up); t.up-=k; t.great+=k; }
+  if(has('clip')) t.brk=Math.max(0,t.brk-2);
+  t.great+=m.extraGreat;
+  if(m.L===0) t.dmg=0;
+  return t;
+}
+function probs(m){
+  const t=tickets(m), tot=Object.values(t).reduce((a,b)=>a+b,0), p={};
+  for(const k in t) p[k]=t[k]/tot;
+  let f=1; if(has('lrdec')) f*=.9; if(has('xav')&&m.L>=6) f*=.75; if(has('sgdr')&&S.lastRes==='hold') f*=.8;
+  if(S.fzT>0) f=0;
+  const nb=p.brk*f, shift=p.brk-nb; p.brk=nb; p.hold+=shift; // a prevented explosion is a plateau
+  return {t,p};
+}
+
+// ───────────── strike ─────────────
+function strike(){
+  const m=cur(); if(S.over||!m||m.dead) return;
+  if(m.heat<=0){ verdict('显卡凉了','var(--mute)','先加载到显卡'); return; }
+  m.heat=Math.max(0,m.heat-(S.fzT>0?0:14));
+  const {p}=probs(m); let r=Math.random(), res='up';
+  for(const o of OUT){ if(r<p[o.id]){ res=o.id; break; } r-=p[o.id]; }
+  if(res==='brk'&&has('ckpt')&&!m.savedBreak){ m.savedBreak=true; res='dmg'; note('勤存档：这次爆炸改成了退步'); }
+  const before=m.L; let gainL=0;
+  if(res==='up') gainL=1; if(res==='great') gainL=2; if(res==='dmg') gainL=-1;
+  if(res==='up'||res==='great'){
+    m.streak++; if(has('mom')&&m.streak%2===0) gainL++;
+    if(has('adam')&&Math.random()<.25) gainL++;
+    if(has('paper')) m.flat+=15;
+  } else m.streak=0;
+  if(res==='great'&&m.extraGreat>0) m.extraGreat--;
+  // 入神 charge: ten rounds on the same model
+  m.strikes++; if(S.fzT<=0) S.frenzy=Math.min(10,S.frenzy+1+(has('coffee')&&m.strikes===1?2:0));
+  hitTicket(res);
+  if(res==='brk'){
+    m.dead=true; sparks(140,'#E24B4A',3.5); shake(true);
+    verdict('梯度爆炸','var(--bad)','loss = NaN · +'+m.L+' 的模型报废了');
+    if(has('trans')&&m.L>0) S.inherit={L:Math.floor(m.L*.3), fz:3};
+    if(has('wrong')) S.bankGreat+=m.L;
+    note(`+${m.L} 炸了`+(S.inherit?` · 迁移学习：下一个新模型从 +${S.inherit.L} 开始`:'')+(has('wrong')?` · 错题本存下 ${m.L} 张顿悟签`:''));
+  } else {
+    m.L=Math.max(0,m.L+gainL);
+    const o=OUT.find(x=>x.id===res);
+    verdict(o.name,o.col,res==='hold'?'这一轮没变化':`+${before} → +${m.L}`+(gainL>(res==='great'?2:1)?'（论文加成）':''));
+    if(gainL>0){ sparks(30+gainL*20,o.col,1.6+gainL*.4); bump(); } else if(res==='dmg') shake(false);
+    if(has('ens')&&Math.random()<.02){ const c={...m,id:S.nextId++}; S.models.push(c); note('集成学习：复制出一个 +'+m.L+' 的模型'); }
+  }
+  // the banked one-use great tickets go to the next model that strikes
+  if(S.bankGreat>0 && !m.dead && m.strikes===1){ m.extraGreat+=S.bankGreat; S.bankGreat=0; }
+  S.lastRes=res; S.bestL=Math.max(S.bestL,m.L);
+  if(m.L>=18) win();
+  render();
+}
+function load(){ const m=cur(); if(!m||m.dead||S.over) return; if(m.heat>=100) return; if(S.money<5){ verdict('电费不够','var(--bad)'); return; } S.money-=5; m.heat=100; render(); }
+function frenzy(){ if(S.frenzy<10||S.fzT>0||S.over) return; S.frenzy=0; S.fzT=4+(has('fp16')?1:0); verdict('入神','var(--cool)',S.fzT+' 秒内不会爆炸 · 显存不降温'); render(); }
+function sell(){ const m=cur(); if(!m||m.dead) return; S.money+=value(m); note(`卖了一个 +${m.L} 的模型 · +¥${value(m)}`); S.models.splice(S.sel,1); S.sel=-1; render(); }
+function submit(){ const m=cur(); if(!m||m.dead) return;
+  const pool=R.filter(r=>!has(r.id)&&r.d<=S.day+Math.floor(m.L/3)); if(!pool.length) return;
+  pool.sort((a,b)=>a.p-b.p); const pick=pool[Math.min(pool.length-1, Math.floor(Math.random()*Math.min(pool.length, 2+m.L)))];
+  S.owned.push(pick.id); S.models.splice(S.sel,1); S.sel=-1; verdict('录用了','var(--p)',pick.ic+' '+pick.n); note(`投稿 +${m.L} 的模型 → 论文「${pick.n}」`); render(true);
+}
+function buy(i){ const o=S.shop[i]; if(!o||o.sold||S.money<o.p) return; S.money-=o.p; o.sold=true; S.owned.push(o.id); render(true); }
+function reroll(){ if(S.money<40) return; S.money-=40; rollShop(); render(); }
+function rollShop(){ const pool=R.filter(r=>r.d<=S.day&&!has(r.id)); S.shop=[]; while(S.shop.length<3&&pool.length){ S.shop.push({...pool.splice(rnd(pool.length),1)[0]}); } }
+function endDay(){
+  if(S.over) return;
+  if(daysLeft()===1){ // rent day
+    const due=rentDue();
+    if(S.money>=due){ S.money-=due; note(`交了房租 ¥${due}`); }
+    else if(has('pardon')){ S.owned.splice(S.owned.indexOf('pardon'),1); note('房东宽限了一次'); }
+    else { S.money=0; S.rage++; note(`房租没交够 · 房东的耐心 ${3-S.rage}/3`); }
+    if(S.rage>=3){ lose(); return; }
+  }
+  S.day++; S.models=S.models.filter(m=>!m.dead); S.models.forEach(m=>m.heat=has('tfm')?100:0); supply(); rollShop(); S.sel=S.models.length?0:-1; S.fzT=0;
+  verdict('第 '+S.day+' 天','var(--ink)','新到 '+(3+(has('room')?1:0))+' 个 +'+(has('tfm')?7:0)+' 模型'); render();
+}
+function win(){ S.over=true; modal(`<h2 style="color:var(--ok)">学会了「全部放开」</h2><div class="endtx">一个 +${cur().L} 的模型，${fmtP(params(cur()))} 参数，像 GPT-3。<br>第 ${S.day} 天。论文 ${S.owned.length} 篇。<br><br><button class="btn" onclick="location.reload()">再来一局</button></div>`); }
+function lose(){ S.over=true; modal(`<h2 style="color:var(--bad)">电脑卖了</h2><div class="endtx">房东没耐心了。喵鱼上挂出「二手电脑 一台 · 含显卡 · 急出」。<br>最好的模型 +${S.bestL}，撑到第 ${S.day} 天。<br><br><button class="btn" onclick="location.reload()">重新开始</button></div>`); }
+
+// ───────────── view ─────────────
+function fmtP(m){ return m>=1000?(m/1000).toFixed(m>=10000?0:1).replace(/\.0$/,'')+'B':(m>=10?m.toFixed(0):m.toFixed(1)).replace(/\.0$/,'')+'M'; }
+function like(m){ return m<5?'像 LeNet':m<70?'像 AlexNet':m<700?'像 VGG':m<7000?'像 GPT-1 的十倍':m<100000?'像 GPT-2 的几十倍':'像 GPT-3'; }
+const LC=['#D6EEF5','#5DCAA5','#7FD3FF','#A99BF2','#F5D76E','#EF9F27','#E24B4A'];
+const lcol=L=>LC[Math.min(LC.length-1,Math.floor(L/3))];
+function render(newRelic){
+  $('#tDay').textContent='第 '+S.day+' 天';
+  $('#tMoney').textContent='¥'+S.money.toLocaleString();
+  $('#tRent').innerHTML=`¥${rentDue().toLocaleString()} · <span style="color:${daysLeft()===1?'var(--bad)':'var(--mute)'}">${daysLeft()===1?'今晚收':'还有 '+daysLeft()+' 天'}</span>`;
+  $('#tRage').innerHTML=[0,1,2].map(i=>`<i class="${i<S.rage?'on':''}"></i>`).join('');
+  $('#tBest').textContent='+'+S.bestL;
+  // models
+  const live=S.models.filter(m=>!m.dead).length;
+  $('#supply').textContent=live+' 个';
+  $('#models').innerHTML=S.models.length?S.models.map((m,i)=>`<div class="md ${i===S.sel?'on':''} ${m.dead?'dead':''}" data-i="${i}"><div class="lv" style="color:${m.dead?'var(--bad)':lcol(m.L)}">${m.dead?'✕':'+'+m.L}</div><div class="inf"><b>${fmtP(params(m))}</b> 参数<br>${m.dead?'炸了':m.heat>0?'显存 '+m.heat+'°':'没加载'}</div><div class="val">${m.dead?'':'¥'+value(m)}</div></div>`).join(''):'<div class="empty">今天的模型用完了。结束今天，明天再来。</div>';
+  document.querySelectorAll('.md').forEach(el=>el.onclick=()=>{ const i=+el.dataset.i; if(S.models[i].dead) return; S.sel=i; render(); });
+  const m=cur();
+  $('#sellBtn').textContent=m&&!m.dead?'卖给企业 · ¥'+value(m):'卖给企业'; $('#sellBtn').disabled=!m||m.dead;
+  $('#subBtn').disabled=!m||m.dead;
+  // anvil
+  if(m){
+    $('#big').innerHTML=(m.dead?'✕':'+'+m.L)+'<small>'+(m.dead?'报废了，选下一个':'第 '+m.strikes+' 轮 · 连涨 '+m.streak)+'</small>'; $('#big').style.color=m.dead?'var(--bad)':lcol(m.L);
+    $('#pv').textContent=fmtP(params(m)); $('#vv').textContent=m.dead?'':'估值 ¥'+value(m); $('#like').textContent='参数 · '+like(params(m));
+    $('#heatBar').style.width=m.heat+'%'; $('#heatTx').textContent='显存温度 '+m.heat+'° · 每轮 −14°'+(m.heat<=0?' · 要重新加载':'');
+    const {t,p}=probs(m);
+    $('#bag').innerHTML=OUT.map(o=>`<div class="tk" data-k="${o.id}" style="flex:${Math.max(.0001,p[o.id])};background:${o.col}">${p[o.id]>.06?o.name+' '+t[o.id]:''}</div>`).join('');
+    $('#bagLg').innerHTML=OUT.map(o=>`<span style="color:${o.col}">${o.name} <b>${Math.round(p[o.id]*100)}%</b></span>`).join('')+(S.fzT>0?'<span style="color:var(--cool)">入神中：爆炸 → 平台期</span>':'')+(m.extraGreat?`<span style="color:var(--great)">错题本 +${m.extraGreat} 顿悟</span>`:'');
+  } else {
+    $('#big').innerHTML='—<small>选一个模型</small>'; $('#pv').textContent='—'; $('#vv').textContent=''; $('#like').textContent=''; $('#bag').innerHTML=''; $('#bagLg').innerHTML=''; $('#heatBar').style.width='0';
+  }
+  const off=!m||m.dead||m.heat<=0||S.over;
+  $('#ham').classList.toggle('off',off); $('#hamSub').textContent=m&&!m.dead&&m.heat<=0?'先加载':'抽一张签';
+  $('#fzPips').innerHTML=Array.from({length:10},(_,i)=>`<i class="${i<S.frenzy?'on':''}"></i>`).join('');
+  $('#fzTx').textContent=S.fzT>0?'入神中 '+S.fzT.toFixed(1)+' 秒':'入神 '+S.frenzy+'/10';
+  $('#fzBtn').classList.toggle('off',S.frenzy<10||S.fzT>0); $('#fzSub').textContent=S.fzT>0?'不会爆炸':S.frenzy>=10?'按 F':'攒满 10 次';
+  $('#fzOn').classList.toggle('show',S.fzT>0);
+  $('#loadBtn').classList.toggle('off',!m||m.dead||m.heat>=100);
+  // papers
+  $('#relN').textContent=S.owned.length+' 篇';
+  const slots=Math.max(12,Math.ceil(S.owned.length/6)*6);
+  $('#relics').innerHTML=Array.from({length:slots},(_,i)=>{ const r=R.find(x=>x.id===S.owned[i]); return r?`<div class="rl ${newRelic&&i===S.owned.length-1?'new':''}" data-id="${r.id}">${r.ic}</div>`:'<div class="rl empty"></div>'; }).join('');
+  document.querySelectorAll('.rl[data-id]').forEach(el=>tipOn(el,()=>relTip(R.find(x=>x.id===el.dataset.id))));
+  $('#shop').innerHTML=S.shop.length?S.shop.map((o,i)=>`<div class="of ${o.sold?'sold':''}" data-i="${i}"><div class="ic">${o.ic}</div><div class="nm">${o.n}${o.y?' <span style="color:var(--dim)">'+o.y+'</span>':''}<small>${o.e}</small></div><button class="btn money" ${o.sold||S.money<o.p?'disabled':''}>${o.sold?'已买':'¥'+o.p}</button></div>`).join(''):'<div class="empty">今天没有新论文。</div>';
+  document.querySelectorAll('.of[data-i]').forEach(el=>{ el.querySelector('button').onclick=()=>buy(+el.dataset.i); tipOn(el,()=>relTip(S.shop[+el.dataset.i])); });
+  $('#rerollBtn').disabled=S.money<40;
+  $('#stLog').textContent='● '+(S.log[0]||'显卡在线 · 980 Ti');
+}
+function relTip(r){ return `<b>${r.ic} ${r.n}</b>${r.y?' <small>'+r.y+'</small>':''}<br>${r.e}<br><em>对应 ForgeTax：${r.ft}</em>`; }
+function note(t){ S.log.unshift(t); S.log.length=Math.min(S.log.length,8); }
+function hitTicket(res){ setTimeout(()=>{ const el=document.querySelector(`.tk[data-k="${res}"]`); if(el) el.classList.add('hit'); },10); }
+function verdict(t,c,sub){ const v=$('#verdict'); v.innerHTML=t+(sub?`<small>${sub}</small>`:''); v.style.color=c; v.classList.remove('show'); void v.offsetWidth; v.classList.add('show'); }
+function shake(big){ const a=$('#anvil'); a.style.animation='none'; void a.offsetWidth; a.style.animation=big?'sh .4s':'sh .25s'; }
+const tip=$('#tip');
+function tipOn(el,fn){ el.onmouseenter=()=>{ tip.innerHTML=fn(); tip.style.display='block'; }; el.onmousemove=e=>{ tip.style.left=Math.min(innerWidth-320,e.clientX+14)+'px'; tip.style.top=(e.clientY+14)+'px'; }; el.onmouseleave=()=>tip.style.display='none'; }
+function modal(html){ $('#dlg').innerHTML=html; $('#modal').classList.add('show'); }
+function closeModal(){ $('#modal').classList.remove('show'); }
+
+// the mapping table (every ForgeTax mechanic and its counterpart here)
+const MAP=[
+  ['剑 · 从 +0 开始','一个模型（一次训练），从 +0、1M 参数开始'],
+  ['加热（Heat a blade）','加载到显卡：显存温度 100°，每轮 −14°，凉了要重新加载（电费 ¥5）'],
+  ['在铁砧上敲一锤','训练一轮'],
+  ['抽签：Success / Great / Hold / Damage / Break','涨了 +1 / 顿悟 +2 / 平台期 不变 / 退步 −1 / 梯度爆炸 报废'],
+  ['基础签数','涨了 10 · 顿悟 2 · 平台期 5 · 退步 3 · 爆炸 = 当前等级（越高越容易炸）'],
+  ['剑的价值','模型估值：随等级指数上涨；参数量每级 ×2'],
+  ['Frenzy（同一把剑敲 10 次）','入神：同一模型练 10 轮攒满，按 F：几秒内不会爆炸、显存不降温'],
+  ['Relic（遗物）','论文 / 技巧：永久生效，改签数、改概率、加估值'],
+  ['每天商店三选一 + 重抽','今天的论文推送：3 篇，¥40 换一批'],
+  ['开局免费三选一','开局三选一：免费拿一篇论文'],
+  ['Relic Machine（拿剑换遗物）','投稿：交出一个模型换一篇论文，等级越高拿到越好的'],
+  ['给龙交贡品（摇铃）','房东每 3 天收一次房租，越往后越贵'],
+  ['龙失去耐心（Rage）','房东的耐心：交不上一次少一格，三格没了 → 卖电脑'],
+  ["Dragon's Pardon",'论文「房东宽限」：免一次'],
+  ['每天的剑供给','每天到 3 个新模型（租机房 +1）'],
+  ['卖剑换金币','卖给企业：按估值换钱'],
+  ['剑碎后传承（Broken Holy Sword）','迁移学习：炸掉的模型把 30% 等级传给下一个'],
+  ['Lifetime Contract（第 10 天）','Transformer：新模型从 +7 开始，不用加载'],
+  ['结局','练出 +18（像 GPT-3）→ 学会「全部放开」；房东耐心耗尽 → 卖电脑'],
+];
+$('#mapBtn').onclick=()=>modal(`<h2>对照表 · ForgeTax → 灵光</h2><table>${MAP.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
+  <div style="margin-top:10px;color:var(--mute)">论文一共 ${R.length} 篇，每篇的提示里写着对应的 ForgeTax 遗物。</div><div style="margin-top:12px"><button class="btn" onclick="closeModal()">关闭</button></div>`);
+function starterGift(){
+  const pick=[...GIFT].sort(()=>Math.random()-.5).slice(0,3).map(id=>R.find(r=>r.id===id));
+  modal(`<h2>开局 · 免费三选一</h2><div style="color:var(--mute)">老周塞给你一摞打印的论文。只能细看一篇。</div><div class="gift">${pick.map(r=>`<div class="of" data-id="${r.id}"><div class="ic">${r.ic}</div><div class="nm">${r.n}<small>${r.e}<br><span style="color:var(--dim)">对应 ${r.ft}</span></small></div></div>`).join('')}</div>`);
+  document.querySelectorAll('.gift .of').forEach(el=>el.onclick=()=>{ S.owned.push(el.dataset.id); closeModal(); render(true); });
+}
+
+// ───────────── visuals ─────────────
+const cc=$('#coreCv').getContext('2d'); let bumpT=0; function bump(){ bumpT=1; }
+function drawCore(t){
+  const g=cc, W=300, c=W/2, m=cur(); g.clearRect(0,0,W,W); if(!m) return;
+  const L=m.dead?0:m.L, col=m.dead?'#E24B4A':lcol(L), rings=2+Math.floor(L/2), pulse=1+Math.sin(t/400)*.03+bumpT*.12, heat=m.heat/100;
+  const grd=g.createRadialGradient(c,c,4,c,c,c*.9); grd.addColorStop(0,col); grd.addColorStop(.35,col+'55'); grd.addColorStop(1,'#00000000');
+  g.globalAlpha=m.dead?.3:.5+heat*.5; g.fillStyle=grd; g.beginPath(); g.arc(c,c,c*.9*pulse,0,7); g.fill();
+  for(let i=0;i<rings;i++){ const r=c*(.22+i*.66/Math.max(rings,1))*pulse, n=6+i*3; g.strokeStyle=col+'66'; g.beginPath(); g.arc(c,c,r,0,7); g.stroke();
+    for(let k=0;k<n;k++){ const a=k/n*6.283+t/(1600+i*500)*(i%2?1:-1)*(S.fzT>0?4:1); g.fillStyle=col; g.beginPath(); g.arc(c+Math.cos(a)*r,c+Math.sin(a)*r,1.6+L*.08,0,7); g.fill(); } }
+  g.globalAlpha=1; g.fillStyle='#fff'; g.beginPath(); g.arc(c,c,6+L*.8,0,7); g.fill(); bumpT=Math.max(0,bumpT-.06);
+}
+const fx=$('#fx'), fg=fx.getContext('2d'); let P=[];
+function sizeFx(){ fx.width=fx.offsetWidth; fx.height=fx.offsetHeight; }
+function sparks(n,col,pow){ const cx=fx.width/2, cy=fx.height*.47; for(let i=0;i<n;i++){ const a=Math.random()*6.283, v=(2+Math.random()*5)*pow; P.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,l:1,c:col}); } }
+let last=performance.now();
+function loop(t){
+  const dt=(t-last)/1000; last=t;
+  if(S.fzT>0){ S.fzT=Math.max(0,S.fzT-dt); if(S.fzT===0) render(); else $('#fzTx').textContent='入神中 '+S.fzT.toFixed(1)+' 秒'; }
+  drawCore(t); fg.clearRect(0,0,fx.width,fx.height);
+  P=P.filter(p=>p.l>0); for(const p of P){ p.x+=p.vx; p.y+=p.vy; p.vy+=.18; p.l-=.022; fg.globalAlpha=Math.max(0,p.l); fg.fillStyle=p.c; fg.fillRect(p.x,p.y,3,3); } fg.globalAlpha=1;
+  requestAnimationFrame(loop);
+}
+const css=document.createElement('style'); css.textContent='@keyframes sh{20%{transform:translate(-8px,3px)}40%{transform:translate(7px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(3px,-1px)}}'; document.head.appendChild(css);
+
+$('#ham').onclick=strike; $('#fzBtn').onclick=frenzy; $('#loadBtn').onclick=load; $('#sellBtn').onclick=sell; $('#subBtn').onclick=submit; $('#rerollBtn').onclick=reroll; $('#endBtn').onclick=endDay;
+addEventListener('keydown',e=>{ if($('#modal').classList.contains('show')) return; if(e.key===' '){ e.preventDefault(); strike(); } if(e.key==='f'||e.key==='F') frenzy(); if(e.key==='l'||e.key==='L') load(); });
+function fit(){ const k=Math.min(innerWidth/1260, innerHeight/715, 1.4); $('#win').style.transform=`translate(-50%,-50%) scale(${k})`; sizeFx(); }
+addEventListener('resize',fit); fit();
+supply(); S.sel=0; rollShop(); render(); requestAnimationFrame(loop); starterGift();
+</script>
+</body>
+</html>

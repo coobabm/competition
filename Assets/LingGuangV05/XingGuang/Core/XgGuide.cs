@@ -105,7 +105,19 @@ namespace LingGuangV05.XingGuang
 
             Rent(money, house, list);
             Blockers(sim, house, list);
+            if (!house.appInstalled)
+            {
+                list.Add(Step("install", XgGuideKind.Setup, "解压刚下载的文件，打开" + LingGuangV05.Core.AppNames.ExeZh, "Extract the downloaded file and open " + LingGuangV05.Core.AppNames.ExeEn,
+                    "跟着桌面上的提示，和它第一次见面。", "Follow the desktop prompts to meet it.", "", "", "", ""));
+                return Finish(list, sim, house);
+            }
             Quality(sim, list);
+            // Both bars full: only the player's press on the training page turns the chapter, so it leads the note.
+            if (sim.StageReady && !sim.OpeningFocus) list.Add(ConfirmStage(sim));
+
+            // The first minutes (XgSim.Opening.cs): label 常识判断, train, then chat; nothing else until it learned yes from no.
+            if (sim.OpeningFocus) { Opening(sim, list); return Finish(list, sim, house); }
+            if (sim.OpeningChatDue) list.Add(OpeningChat());
 
             if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); Raise(sim, money, list); return Finish(list, sim, house); }
 
@@ -129,6 +141,47 @@ namespace LingGuangV05.XingGuang
             CheapNode(sim, wallet, list, advancing);
             Raise(sim, money, list);
             return Finish(list, sim, house);
+        }
+
+        /// <summary>
+        /// The first step that fills one bar of the next ability, for the lab's top-bar 「去做 ›」 link: the shorter bar's
+        /// own steps, else the other bar's; null when both are full or their page is not open yet.
+        /// </summary>
+        public static XgGuideStep BarStep(XgSim sim, double money, double vramMB, out bool paramsBar)
+        {
+            paramsBar = true;
+            int next = sim == null ? 0 : sim.NextAbility;
+            if (next == 0 || !TabOpen(sim, Lab, "tree")) return null;
+            // Both bars full: the way on is the chapter button, not another purchase.
+            if (sim.StageReady && TabOpen(sim, Lab, "train")) { paramsBar = true; return ConfirmStage(sim); }
+            bool paramsFirst = sim.ParamsProgress(next) <= sim.SamplesProgress(next);
+            for (int pass = 0; pass < 2; pass++)
+            {
+                bool parameters = paramsFirst == (pass == 0);
+                var list = new List<XgGuideStep>();
+                var wallet = new Wallet { money = money, vram = vramMB };
+                if (parameters && sim.TrainedParamsK + 1e-9 < sim.ParamsThreshold(next)) ParamsSteps(sim, wallet, next, list, new HashSet<string>());
+                else if (!parameters && sim.TrainedSamples + 1e-9 < sim.SamplesThreshold(next)) DataSteps(sim, wallet, next, list, new HashSet<string>());
+                list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
+                if (list.Count > 0) { paramsBar = parameters; return list[0]; }
+            }
+            return null;
+        }
+
+        /// <summary>Id of the step that asks the player to press the chapter button (<see cref="ConfirmStage"/>).</summary>
+        public const string ConfirmStageId = "stage.confirm";
+
+        /// <summary>
+        /// Both bars are full and the next ability waits for the player (<see cref="XgSim.StageReady"/>): press the
+        /// training page's chapter button, which is named "ConfirmNextStage" (XgTrainPage.Side).
+        /// </summary>
+        public static XgGuideStep ConfirmStage(XgSim sim)
+        {
+            int next = sim.NextAbility;
+            string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            return Step(ConfirmStageId, XgGuideKind.Main, "两样都到门槛了：点「进入下一章」让它学会「" + name + "」", "Both bars are full: press 'Next chapter' so it learns " + nameEn,
+                "参数和样本都够了，但章节要你亲手翻页：训练页右边的「验收完成 · 进入下一章」。", "Parameters and samples are both enough, but only you turn the chapter: the 'Confirm · next chapter' button on the right of the training page.",
+                Lab, "train", "name:ConfirmNextStage", TrackArg(TrainableTrack(sim)));
         }
 
         /// <summary>Right after the setup is saved, its first 是 / 否 waits on screen.</summary>
@@ -156,18 +209,18 @@ namespace LingGuangV05.XingGuang
 
         static void Blockers(XgSim sim, XgGuideHouse house, List<XgGuideStep> list)
         {
-            if (house.unpaidPower)
+            if (sim.SystemUnlocked("power") && house.unpaidPower)
             {
                 string due = house.billDue > 0 ? " ¥" + house.billDue.ToString("0.##", CultureInfo.InvariantCulture) : "";
                 list.Add(Step("power.bill", XgGuideKind.Blocker, "交电费" + due, "Pay the power bill" + due,
                     "欠费停电了，显卡全停。钱不够就去标注台答题抵扣。", "The power is cut for an unpaid bill; every card is idle. Short of money? Labelling pays it off.",
                     Home, "power", "name:PayBill", ""));
             }
-            if (house.breakerTripped)
+            if (sim.SystemUnlocked("power") && house.breakerTripped)
                 list.Add(Step("power.breaker", XgGuideKind.Blocker, house.overloaded ? "电闸跳了：少插一张卡，再复位" : "复位电闸", house.overloaded ? "Breaker tripped: pull a card, then reset it" : "Reset the breaker",
                     house.overloaded ? "插的卡太多，电线扛不住。" : "跳闸了，什么都不转。", house.overloaded ? "Too many cards for the wiring." : "The breaker is off; nothing runs.",
                     Home, "power", "name:ResetBreaker", ""));
-            else if (house.overloaded && !house.unpaidPower && !house.noGpu)
+            else if (sim.SystemUnlocked("power") && house.overloaded && !house.unpaidPower && !house.noGpu)
                 list.Add(Step("power.overload", XgGuideKind.Blocker, "超负载了：少插一张卡", "Overloaded: pull a card",
                     "家里的电带不动这么多卡。", "The house cannot power this many cards.", Home, "power", "", ""));
             if (house.noGpu)
@@ -179,20 +232,20 @@ namespace LingGuangV05.XingGuang
                 list.Add(Step("qc.frozen", XgGuideKind.Blocker, "账号被举报：等 " + clock + " 或去标注台申诉", "Account reported: wait " + clock + " or appeal on the labelling page",
                     "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。",
                     "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit.",
-                    Crowd, "label", "name:QcAppeal", ""));
+                    Lab, "teach", "name:QcAppeal", ""));
             }
             if (house.appInstalled && sim.CaptchaPending)
             {
                 string clock = XgSim.FreezeClock(sim.CaptchaSecondsLeft);
                 list.Add(Step("qc.captcha", XgGuideKind.Blocker, "摆渡众包要人机验证：去标注台输入验证码（" + clock + "）", "Bodu Crowdsourcing wants a captcha: enter it on the labelling page (" + clock + ")",
                     "标得太快，平台怀疑是机器。答错或超时会暂停自动标注两分钟。", "Labelling this fast looks like a machine. A wrong or late answer pauses auto labelling for two minutes.",
-                    Crowd, "label", "name:QcCaptcha", ""));
+                    Lab, "teach", "name:QcCaptcha", ""));
             }
-            if (house.vramMB > 0 && house.appInstalled && sim.S.stage < 6)
+            if (sim.SystemUnlocked("vram") && house.vramMB > 0 && house.appInstalled && sim.S.stage < 6)
             {
                 var track = TrainableTrack(sim);
                 if (sim.TrainingUnlocked(track) && XgSim.VramNeedMB(sim.Run(track)) > sim.Vram(new Wallet { vram = house.vramMB }))
-                    list.Add(Step("vram", XgGuideKind.Blocker, "显存装不下最小的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Even the smallest model does not fit: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                    list.Add(Step("vram", XgGuideKind.Blocker, "显存装不下最小的模型（" + VramBar(XgSim.VramNeedMB(sim.Run(track)), house.vramMB, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Even the smallest model does not fit (" + VramBar(XgSim.VramNeedMB(sim.Run(track)), house.vramMB, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
                         "模型是自动配置的，显卡装得下多大就用多大；现在连最小的都放不下。", "The model sizes itself to the card; right now not even the smallest fits.", Shop, "shop", "name:BuyGpu", ""));
             }
         }
@@ -209,6 +262,48 @@ namespace LingGuangV05.XingGuang
                 coop ? Crowd : Lab, coop ? "label" : "tree", coop ? "name:ThresholdSlider" : "node:label.coop", ""));
         }
 
+        // ───────────── the first minutes ─────────────
+
+        /// <summary>Labels on 常识判断 the note asks for while its yes/no is still short of learned (training opens at <see cref="XgCatalog.SamplesToTrain"/>).</summary>
+        public const int OpeningLabelGoal = 80;
+
+        /// <summary>
+        /// Only the sense desk and the training page are open, so only they are named: label 常识判断 on 摆渡众包 until
+        /// training opens, then train until the yes/no reaches the learned line, with a second line to label more while the
+        /// desk is still thin. Chatting with it comes after (<see cref="OpeningChat"/>).
+        /// </summary>
+        static void Opening(XgSim sim, List<XgGuideStep> list)
+        {
+            var desk = XgCatalog.Desk(XgMemes.SenseDesk);
+            double have = sim.Samples(XgMemes.SenseDesk);
+            if (!sim.TrainingUnlocked(XgTrack.Sequence))
+            {
+                var s = Step("opening.label", XgGuideKind.Setup, "在摆渡众包标「" + desk.name + "」", "Label '" + desk.nameEn + "' on Bodu Crowd",
+                    "先教它分辨对错。标满 " + XgCatalog.SamplesToTrain + " 张，就能带它训练。", XgCatalog.SamplesToTrain + " labels unlock training; first teach it right from wrong.",
+                    Crowd, "label", "name:Paper", desk.id);
+                s.current = have; s.goal = XgCatalog.SamplesToTrain;
+                list.Add(s);
+                return;
+            }
+            if (sim.S.epochs > 0 && sim.S.assessments == 0) { Assess(sim, list); return; }
+            int pct = (int)Math.Floor(sim.YesNoAccuracy * 100 + 1e-9), line = (int)Math.Round(XgSim.SenseVoiceLearned * 100);
+            list.Add(Step("opening.train", XgGuideKind.Setup, "训练一轮，直到常识判断到 " + line + "%（现在 " + pct + "%）", "Train until Common sense reaches " + line + "% (now " + pct + "%)",
+                "练过的题它才会。练到 " + line + "%，它的是和否就不再靠蒙。", "It only knows what it trained on. At " + line + "% its yes and no stop being guesses.",
+                Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(XgTrack.Sequence)));
+            if (sim.YesNoAccuracy < XgSim.SenseVoiceLearned && have < OpeningLabelGoal)
+            {
+                var more = Step("opening.more", XgGuideKind.Setup, "再标几张「" + desk.name + "」，它会分得更准", "Label a few more '" + desk.nameEn + "' cards to sharpen it",
+                    "样本越多，练出来的越准。", "More samples, a sharper model.", Crowd, "label", "name:Paper", desk.id);
+                more.current = have; more.goal = OpeningLabelGoal;
+                list.Add(more);
+            }
+        }
+
+        /// <summary>After it learned yes from no: ask it something it was taught and see the change.</summary>
+        public static XgGuideStep OpeningChat()
+            => Step("opening.chat", XgGuideKind.Main, "和它聊聊，看看有什么不同", "Chat with it and see what changed",
+                "问它一句教过的话，比如「冰是烫的吗」。它现在答得对了。", "Ask it something you taught, like \"Is ice hot?\". It answers right now.", YY, YYChat, "", "");
+
         // ───────────── getting the loop going ─────────────
 
         static void Label(XgSim sim, List<XgGuideStep> list)
@@ -217,9 +312,9 @@ namespace LingGuangV05.XingGuang
             if (desk == null) return;
             double have = sim.Samples(desk.id);
             int need = Math.Max(1, XgCatalog.SamplesToTrain - (int)Math.Floor(have));
-            var s = Step("label." + desk.id, XgGuideKind.Setup, "去标注台标 " + need + " 条「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
-                "攒够 " + XgCatalog.SamplesToTrain + " 条数据才能开始训练。答对还有钱拿。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
-                Crowd, "label", "label:是|Yes|对|True", desk.id);
+            var s = Step("label." + desk.id, XgGuideKind.Setup, "再教它 " + need + " 张「" + desk.name + "」", "Label " + need + " more " + desk.nameEn + " cards",
+                "先看它的判断，对了就确认，错了就纠正。教满 " + XgCatalog.SamplesToTrain + " 张，就带它训练。", XgCatalog.SamplesToTrain + " samples unlock training. Right answers pay too.",
+                Lab, "teach", "name:Paper", desk.id);
             s.current = have; s.goal = XgCatalog.SamplesToTrain;
             list.Add(s);
         }
@@ -264,13 +359,13 @@ namespace LingGuangV05.XingGuang
             XgContract best = null;
             foreach (var c in XgCatalog.Contracts) if (sim.CanSign(c) && (best == null || c.signBonus > best.signBonus)) best = c;
             if (best == null) return;
-            list.Add(Step("contract." + best.id, XgGuideKind.Main, "去摆渡众包签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
-                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Crowd, "contracts", "contract:" + best.id, ""));
+            list.Add(Step("contract." + best.id, XgGuideKind.Main, "到训练页签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
+                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Lab, "contracts", "contract:" + best.id, ""));
         }
 
         /// <summary>
         /// The main line (参数量与数据量主线): the next ability, as concrete steps. The parameter bar comes first: what to
-        /// buy, in order (<see cref="ParamsPlan"/>), then training that model to grade C and assessing it. The data bar
+        /// buy, in order (<see cref="ParamsPlan"/>), then training that model to grade C (it counts at once). The data bar
         /// follows: the data pack or item that closes most of the gap for its price (<see cref="DataPlan"/>), then how
         /// many more labels on the desks that count in full. Every node these steps would buy goes into
         /// <paramref name="advancing"/>, so the cheap-boost line can prefer them.
@@ -278,7 +373,7 @@ namespace LingGuangV05.XingGuang
         static void NextAbility(XgSim sim, Wallet wallet, List<XgGuideStep> list, HashSet<string> advancing)
         {
             int next = sim.NextAbility;
-            // Before the first record the 科技 page is still closed; assessing (a setup step) opens it.
+            // Before the first record the 科技 page is still closed; the first trained round (a setup step) opens it.
             if (next == 0 || !TabOpen(sim, Lab, "tree")) return;
             if (sim.TrainedParamsK + 1e-9 < sim.ParamsThreshold(next)) ParamsSteps(sim, wallet, next, list, advancing);
             if (sim.TrainedSamples + 1e-9 < sim.SamplesThreshold(next)) DataSteps(sim, wallet, next, list, advancing);
@@ -287,20 +382,43 @@ namespace LingGuangV05.XingGuang
         static void ParamsSteps(XgSim sim, Wallet wallet, int next, List<XgGuideStep> list, HashSet<string> advancing)
         {
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            var recommended = sim.NextStudyNode();
+            if (recommended != null)
+            {
+                list.Add(Step("ability.study", XgGuideKind.Ability,
+                    "下一步：科技买「" + recommended.name + "」 · ¥" + sim.NodeCost(recommended).ToString("0"),
+                    "Next: buy " + recommended.nameEn + " in Tech · ¥" + sim.NodeCost(recommended).ToString("0"),
+                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。完成阶段验收还会结算一笔众包绩效，留些钱付电费。",
+                    "Prepare for " + nameEn + ". Then train and talk to it. Each new ability funds your next research.",
+                    Lab, "tree", "node:" + recommended.id, ""));
+                return;
+            }
             double pNeed = sim.ParamsThreshold(next);
             string have = XgSim.ParamsText(sim.TrainedParamsK), need = XgSim.ParamsText(pNeed);
             var plan = ParamsPlan(sim, next, wallet.vram > 0 ? sim.Vram(wallet) : 0);
             if (plan == null)
             {
                 // Nothing on sale at this stage reaches it (or the card is too small): the general advice.
-                bool card = wallet.vram > 0 && ParamsPlan(sim, next, 0) != null;
-                if (card)
-                    list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下够大的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a big enough model: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
-                        "「" + name + "」要练过 " + need + " 参数，这张卡装不下那么大的模型。", "'" + nameEn + "' needs " + need + " trained parameters; this card cannot hold a model that big.", Shop, "shop", "name:BuyGpu", ""));
+                var big = wallet.vram > 0 ? ParamsPlan(sim, next, 0) : null;
+                if (big != null)
+                {
+                    // The smallest model that would do takes this much of the card; the card has less.
+                    double needMB = XgSim.VramNeedMB(PlanRun(big)), cardMB = sim.Vram(wallet);
+                    list.Add(Step("ability.card", XgGuideKind.Ability,
+                        "显存放不下够大的模型（" + VramBar(needMB, cardMB, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡",
+                        "Not enough VRAM for a big enough model (" + VramBar(needMB, cardMB, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                        "「" + name + "」要练过 " + need + " 参数，这张卡装不下那么大的模型。\n" + XgSim.ParamsText(big.paramsK) + " 的模型要 " + XgSim.MemText(needMB) + " 显存，卡上只有 " + XgSim.MemText(cardMB) + "，还差 " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + "。",
+                        "'" + nameEn + "' needs " + need + " trained parameters; this card cannot hold a model that big.\nA " + XgSim.ParamsText(big.paramsK) + " model takes " + XgSim.MemText(needMB) + " of VRAM; the card has " + XgSim.MemText(cardMB) + ", " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + " short.",
+                        Shop, "shop", "name:BuyGpu", ""));
+                }
                 else
-                    list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + have + " / " + need, "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + have + " / " + need,
-                        "下一项能力「" + name + "」要更大的模型。买到宽度和层数，或者参数更多的结构，模型自己就会长大。", "The next ability, '" + nameEn + "', needs a bigger model. Buy width and layers, or a bigger structure, and the model grows by itself.",
+                {
+                    var line = sim.Run(TrainableTrack(sim));
+                    list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + ParamsBar(sim.TrainedParamsK, pNeed, false), "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + ParamsBar(sim.TrainedParamsK, pNeed, true),
+                        "下一项能力「" + name + "」要更大的模型。买到宽度和层数，或者参数更多的结构，模型自己就会长大。\n这台模型 " + sim.ModelFormula(line) + "；" + sim.CapsText(line) + "。",
+                        "The next ability, '" + nameEn + "', needs a bigger model. Buy width and layers, or a bigger structure, and the model grows by itself.\nThis model: " + sim.ModelFormula(line) + "; " + sim.CapsText(line) + ".",
                         Lab, "tree", "", ""));
+                }
                 return;
             }
             if (!sim.TrainingUnlocked(plan.track))
@@ -322,34 +440,39 @@ namespace LingGuangV05.XingGuang
             {
                 foreach (var n in plan.buy) advancing.Add(n.id);
                 var first = plan.buy[0];
+                // The numbers: P against the line, the model after each purchase, the bill against the wallet, the grade-C line to train to.
+                var planLine = sim.Run(plan.track);
+                string cLineZh = "买齐后模型 " + XgSim.ParamsText(plan.paramsK) + " ≥ 门槛 " + XgSim.ParamsText(plan.threshold) + "；再练到 C 级（" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + "）就算数。";
+                string cLineEn = "Afterwards the model is " + XgSim.ParamsText(plan.paramsK) + " ≥ line " + XgSim.ParamsText(plan.threshold) + "; train it to grade C (" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + ") and it counts.";
                 var s = Step("ability.buy", XgGuideKind.Ability, "科技买" + Chain(plan.buy, false), "Tech tree: buy " + Chain(plan.buy, true),
-                    "「" + name + "」要练过 " + XgSim.ParamsText(plan.threshold) + " 参数（现在 " + have + "）。买齐这些，模型自己长到 " + XgSim.ParamsText(plan.paramsK) + "，再练到 C 级就算数。" + ShortOfMoney(sim, wallet, first, false),
-                    "'" + nameEn + "' needs " + XgSim.ParamsText(plan.threshold) + " trained parameters (now " + have + "). With these the model grows to " + XgSim.ParamsText(plan.paramsK) + " by itself; trained to grade C, it counts." + ShortOfMoney(sim, wallet, first, true),
+                    "「" + name + "」要练过 " + XgSim.ParamsText(plan.threshold) + " 参数。现在 " + ParamsBar(sim.TrainedParamsK, plan.threshold, false) + "。买齐这些，模型自己长到 " + XgSim.ParamsText(plan.paramsK) + "，再练到 C 级就算数。\n"
+                        + BuyBreakdown(sim, wallet, plan, false) + "\n" + cLineZh + ShortOfMoney(sim, wallet, first, false),
+                    "'" + nameEn + "' needs " + XgSim.ParamsText(plan.threshold) + " trained parameters. Now " + ParamsBar(sim.TrainedParamsK, plan.threshold, true) + ". With these the model grows to " + XgSim.ParamsText(plan.paramsK) + " by itself; trained to grade C, it counts.\n"
+                        + BuyBreakdown(sim, wallet, plan, true) + "\n" + cLineEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
                 MoneyProgress(sim, wallet, first, s);
                 list.Add(s);
                 return;
             }
             if (!sim.TrainingUnlocked(plan.track)) return;
-            // The caps already allow a big enough model: train the one the lab configured until grade C, then assess it.
+            // The caps already allow a big enough model: train the one the lab configured until grade C; it counts at once.
             var run = sim.Run(plan.track);
             string arg = TrackArg(plan.track);
             if (XgSim.ParamsK(run) + 1e-9 < pNeed)
             {
                 // The lab configured a smaller one: the card is shared or too small for the big one.
-                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下 " + need + " 的模型：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a " + need + " model: buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
-                    "模型按显卡自动配置，现在只放得下 " + XgSim.ParamsText(XgSim.ParamsK(run)) + "。", "The model sizes itself to the card; right now it fits " + XgSim.ParamsText(XgSim.ParamsK(run)) + ".", Shop, "shop", "name:BuyGpu", ""));
+                double bigMB = XgSim.VramNeedMB(PlanRun(plan)), cardNow = wallet.vram > 0 ? sim.Vram(wallet) : 0;
+                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下 " + need + " 的模型（" + VramBar(bigMB, cardNow, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a " + need + " model (" + VramBar(bigMB, cardNow, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                    "模型按显卡自动配置，现在只放得下 " + XgSim.ParamsText(XgSim.ParamsK(run)) + "（" + VramBar(XgSim.VramNeedMB(run), cardNow, false) + "）；" + need + " 的模型要 " + XgSim.MemText(bigMB) + "。",
+                    "The model sizes itself to the card; right now it fits " + XgSim.ParamsText(XgSim.ParamsK(run)) + " (" + VramBar(XgSim.VramNeedMB(run), cardNow, true) + "); a " + need + " model takes " + XgSim.MemText(bigMB) + ".", Shop, "shop", "name:BuyGpu", ""));
                 return;
             }
-            bool gradeC = XgSim.Grade(XgSim.Score(run.dataset, run.valAcc)) >= XgSim.TrainedGrade && run.shapeRounds > 0;
-            if (gradeC)
-                list.Add(Step("ability.assess", XgGuideKind.Ability, "评估一次：模型到 C 级了，参数就算数：" + have + " / " + need, "Assess once: the model is at grade C, so its parameters count: " + have + " / " + need,
-                    "「" + name + "」只认评估过的模型。这个 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 的模型评到 C 级，参数条就满了。", "'" + nameEn + "' only counts assessed models. Grade this " + XgSim.ParamsText(XgSim.ParamsK(run)) + " model C and the parameter bar is full.",
-                    Lab, "train", "label:评估|Assess", arg));
-            else
-                list.Add(Step("ability.train", XgGuideKind.Ability, "把模型练到 C 级：参数 " + have + " / " + need, "Train the model to grade C: parameters " + have + " / " + need,
-                    "模型已经有 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 参数，够「" + name + "」了。多练几轮，评估到 C 级就算数。", "The model already has " + XgSim.ParamsText(XgSim.ParamsK(run)) + " parameters, enough for '" + nameEn + "'. Train a few epochs; assessed at grade C, they count.",
-                    Lab, "train", "label:训练一轮|Train 1 epoch", arg));
+            double cLine = XgSim.GradeAccuracy(run.dataset, XgSim.TrainedGrade);
+            string accZh = "准确率 " + XgSim.Pct(run.valAcc) + " / C 线 " + XgSim.Pct(cLine), accEn = "accuracy " + XgSim.Pct(run.valAcc) + " / grade C " + XgSim.Pct(cLine);
+            list.Add(Step("ability.train", XgGuideKind.Ability, "把模型练到 C 级（" + accZh + "）：参数 " + have + " / " + need, "Train the model to grade C (" + accEn + "): parameters " + have + " / " + need,
+                "模型已经有 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 参数，够「" + name + "」了。练到 C 级就算数。\n" + CLine(run, false) + (run.shapeRounds <= 0 ? "；刚长成这个大小，还没练过一轮。" : "。"),
+                "The model already has " + XgSim.ParamsText(XgSim.ParamsK(run)) + " parameters, enough for '" + nameEn + "'. Train a few epochs; at grade C they count.\n" + CLine(run, true) + (run.shapeRounds <= 0 ? "; it just grew to this size and has not trained a round yet." : "."),
+                Lab, "train", "label:训练一轮|Train 1 epoch", arg));
         }
 
         static void DataSteps(XgSim sim, Wallet wallet, int next, List<XgGuideStep> list, HashSet<string> advancing)
@@ -470,21 +593,111 @@ namespace LingGuangV05.XingGuang
         static bool CountsAsData(string dataset) => dataset != "xor" && dataset != "parallel";
 
         /// <summary>"「多层感知机」→ 2 层 → 宽 32": the first node to buy quoted, the rest after arrows.</summary>
+        /// <summary>A node's name inside a step: depth and width squares exist on both lines, so they name the line (视觉 3 层, 序列 宽 128).</summary>
+        public static string NodeLabel(XgNode node, bool english)
+        {
+            string n = english ? node.nameEn : node.name;
+            bool ladder = node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width;
+            if (ladder && node.tree == "vision") n = (english ? "vision " : "视觉 ") + n;
+            else if (ladder && node.tree == "sequence") n = (english ? "sequence " : "序列 ") + n;
+            if (node.kind == XgNodeKind.Dataset) n += english ? " data pack" : " 数据包";
+            return n;
+        }
+
         static string Chain(List<XgNode> nodes, bool english)
         {
             var sb = new System.Text.StringBuilder();
             for (int i = 0; i < nodes.Count; i++)
             {
-                string n = english ? nodes[i].nameEn : nodes[i].name;
-                // Depth and width squares exist on both lines: name the line (视觉 3 层, 序列 宽 128).
-                bool ladder = nodes[i].kind == XgNodeKind.Depth || nodes[i].kind == XgNodeKind.Width;
-                if (ladder && nodes[i].tree == "vision") n = (english ? "vision " : "视觉 ") + n;
-                else if (ladder && nodes[i].tree == "sequence") n = (english ? "sequence " : "序列 ") + n;
-                if (nodes[i].kind == XgNodeKind.Dataset) n += english ? " data pack" : " 数据包";
+                string n = NodeLabel(nodes[i], english);
                 if (i == 0) sb.Append(english ? "'" + n + "'" : "「" + n + "」");
                 else sb.Append(" → ").Append(n);
             }
             return sb.ToString();
+        }
+
+        /// <summary>「1.2M / 6M（20%），差 4.8M」: a parameter bar with its share and gap.</summary>
+        static string ParamsBar(double have, double need, bool english)
+        {
+            int pct = (int)Math.Floor(100 * Math.Min(1, have / Math.Max(1e-9, need)) + 1e-9);
+            string gap = XgSim.ParamsText(Math.Max(0, need - have));
+            return english ? XgSim.ParamsText(have) + " / " + XgSim.ParamsText(need) + " (" + pct + "%), short by " + gap
+                : XgSim.ParamsText(have) + " / " + XgSim.ParamsText(need) + "（" + pct + "%），差 " + gap;
+        }
+
+        /// <summary>「显存 2.1 GB / 卡 1 GB」: what a model takes of the card (card 0 = unknown).</summary>
+        static string VramBar(double needMB, double cardMB, bool english)
+        {
+            string need = XgSim.MemText(needMB);
+            if (!(cardMB > 0)) return english ? "VRAM " + need : "显存 " + need;
+            return english ? "VRAM " + need + " / card " + XgSim.MemText(cardMB) : "显存 " + need + " / 卡 " + XgSim.MemText(cardMB);
+        }
+
+        static XgRun PlanRun(XgParamsPlan plan) => new XgRun { track = (int)plan.track, arch = plan.arch, depth = plan.depth, width = plan.width };
+
+        /// <summary>
+        /// The biggest model the lab could configure on the plan's line once the first <paramref name="count"/> nodes of
+        /// <see cref="XgParamsPlan.buy"/> are owned (the caps they raise, the structures they add, the card).
+        /// </summary>
+        static double ParamsAfterBuying(XgSim sim, XgParamsPlan plan, int count, double vramMB)
+        {
+            var track = plan.track; string tree = XgSim.TreeOf(track);
+            var bought = plan.buy.GetRange(0, Math.Min(count, plan.buy.Count));
+            int depthCap = sim.DepthCap(track), widthCap = sim.WidthCap(track);
+            foreach (var n in bought)
+            {
+                if (n.tree != tree && n.tree != "trunk") continue;
+                if (n.kind == XgNodeKind.Depth) depthCap = Math.Max(depthCap, n.value);
+                else if (n.kind == XgNodeKind.Width) widthCap = Math.Max(widthCap, n.value);
+            }
+            bool batchNorm = sim.Has("batchnorm") || bought.Exists(n => n.id == "batchnorm");
+            double best = 0;
+            foreach (var a in XgCatalog.Archs)
+            {
+                if (!XgSim.ArchitectureFits(a, track) || !(sim.Has(a.id) || bought.Exists(n => n.id == a.id))) continue;
+                int maxDepth = a.maxDepth >= 999 ? 999 : a.maxDepth + (batchNorm ? 6 : 0);
+                for (int d = 1; d <= Math.Min(depthCap, maxDepth); d++)
+                    for (int w = 0; w <= Math.Min(widthCap, XgCatalog.Widths.Length - 1); w++)
+                    {
+                        var run = new XgRun { track = (int)track, arch = a.id, depth = d, width = w };
+                        if (vramMB > 0 && XgSim.VramNeedMB(run) > vramMB + 1e-6) continue;
+                        best = Math.Max(best, XgSim.ParamsK(run));
+                    }
+            }
+            return best;
+        }
+
+        /// <summary>One line per node of the plan, with the model after each: 「①「多层感知机」¥150：1.2K → 3.1K」, then the total against the wallet.</summary>
+        static string BuyBreakdown(XgSim sim, Wallet wallet, XgParamsPlan plan, bool english)
+        {
+            var sb = new System.Text.StringBuilder();
+            double before = XgSim.ParamsK(sim.Run(plan.track)), vram = wallet.vram > 0 ? sim.Vram(wallet) : 0;
+            for (int i = 0; i < plan.buy.Count; i++)
+            {
+                var n = plan.buy[i];
+                // The last node lands on the plan's own model (the figure the sentence above promises).
+                double after = i == plan.buy.Count - 1 ? plan.paramsK : ParamsAfterBuying(sim, plan, i + 1, vram);
+                sb.Append(i + 1).Append(". ").Append(NodeLabel(n, english)).Append(" ¥").Append(sim.NodeCost(n).ToString("0", CultureInfo.InvariantCulture))
+                  .Append(english ? ": model " : "：模型 ").Append(XgSim.ParamsText(before)).Append(" → ").Append(XgSim.ParamsText(after)).Append('\n');
+                before = after;
+            }
+            double have = Math.Max(0, wallet.money), gap = plan.cost - have;
+            string c = plan.cost.ToString("0", CultureInfo.InvariantCulture), h = have.ToString("0", CultureInfo.InvariantCulture);
+            sb.Append(english ? "Total ¥" + c + ", you have ¥" + h + (gap > 1e-9 ? ", short by ¥" + gap.ToString("0", CultureInfo.InvariantCulture) : ", enough")
+                : "共 ¥" + c + "，手头 ¥" + h + (gap > 1e-9 ? "，差 ¥" + gap.ToString("0", CultureInfo.InvariantCulture) : "，够了"));
+            return sb.ToString();
+        }
+
+        /// <summary>「《数字》现在 41.2%（D 级），C 级线 62.0%，还差 20.8 个百分点」: the model's accuracy against the grade-C line.</summary>
+        static string CLine(XgRun run, bool english)
+        {
+            var d = XgCatalog.Dataset(run.dataset);
+            string name = d == null ? run.dataset : english ? d.nameEn : d.name;
+            double line = XgSim.GradeAccuracy(run.dataset, XgSim.TrainedGrade), gap = Math.Max(0, line - run.valAcc) * 100;
+            string grade = XgSim.GradeLetter(XgSim.Grade(XgSim.Score(run.dataset, run.valAcc)));
+            string left = gap > 1e-9 ? (english ? ", " + gap.ToString("0.#", CultureInfo.InvariantCulture) + " points to go" : "，还差 " + gap.ToString("0.#", CultureInfo.InvariantCulture) + " 个百分点") : (english ? ", reached" : "，到了");
+            return english ? name + " is at " + XgSim.Pct(run.valAcc) + " (grade " + grade + "), the grade C line is " + XgSim.Pct(line) + left
+                : "「" + name + "」现在 " + XgSim.Pct(run.valAcc) + "（" + grade + " 级），C 级线 " + XgSim.Pct(line) + left;
         }
 
         static string ShortOfMoney(XgSim sim, Wallet wallet, XgNode node, bool english)
@@ -816,7 +1029,7 @@ namespace LingGuangV05.XingGuang
         {
             if (sim.RaiseLevel >= XgCatalog.RaiseMax || sim.NextRaiseCost > money * CheapRaiseShare) return;
             list.Add(Step("raise", XgGuideKind.Boost, "标注台给自己加薪", "Give yourself a raise on the labelling page",
-                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Crowd, "label", "name:Row薪", ""));
+                "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Lab, "teach", "name:Row薪", ""));
         }
 
         /// <summary>
@@ -828,7 +1041,7 @@ namespace LingGuangV05.XingGuang
         {
             list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
             if (list.Count == 0) list.Add(Keep(sim));
-            var side = list.Count >= 2 ? Side(sim, house) : null;
+            var side = list.Count >= 2 && !sim.OpeningFocus ? Side(sim, house) : null;
             if (side != null) list.Insert(2, side);
             return list;
         }
@@ -850,8 +1063,9 @@ namespace LingGuangV05.XingGuang
         public static bool TabOpen(XgSim sim, string app, string tab)
         {
             if (sim == null || string.IsNullOrEmpty(tab)) return true;
-            if (app == Crowd) return tab != "contracts" || sim.FeatureVisible("contracts");
+            if (app == Crowd) return !sim.OpeningLocksCrowdTab(tab) && (tab != "contracts" || sim.FeatureVisible("contracts"));
             if (app != Lab) return true;
+            if (sim.OpeningLocksLabTab(tab)) return false;
             switch (tab)
             {
                 case "home": case "abilities": return true;

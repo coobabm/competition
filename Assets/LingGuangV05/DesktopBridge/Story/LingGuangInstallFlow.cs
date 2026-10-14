@@ -42,7 +42,7 @@ namespace LingGuangV05.Desktop.Story
             if (!networkChecked) EnsureNetwork();
             if (!reconciled) Reconcile(installed);
             Gate(installed);
-            if (browser == null) return;
+            if (browser == null || sim.S.prologue != 0) return;
             var item = FindItem();
             if (item == null) { wiredItem = false; return; }
             if (item.isFinished && !sim.AppInstalled)

@@ -72,7 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform root;
         TMP_Text toast;
         readonly Dictionary<string, XgPage> pages = new Dictionary<string, XgPage>();
-        string tab = "home";
+        string tab = "teach";
         float refreshTimer, toastTimer;
         double shownMoney = -1;
         RectTransform welcome;
@@ -86,6 +86,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgJuice Juice { get; private set; }
         /// <summary>Shop buy amount: 1, 10 or int.MaxValue (as many as affordable).</summary>
         public int BuyAmount { get; set; } = 1;
+        public XgLabelPage Teach { get; private set; }
+        public XgBoardPage Board { get; private set; }
+        public XgContractsPage Contracts { get; private set; }
         public XgHomePage Home { get; private set; }
         public XgTrainPage Train { get; private set; }
         public XgDataPage Data { get; private set; }
@@ -96,6 +99,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgFinalePage Finale { get; private set; }
         public XgCardsPage Cards { get; private set; }
         public XgWiringPage Wiring { get; private set; }
+        public XgBackpackPage Backpack { get; private set; }
         /// <summary>The big card overlay (earned cards flip in; the album opens them).</summary>
         public XgHoloCard Holo { get; private set; }
         public bool Visible => controller != null && controller.Window != null && controller.Window.isOn && isActiveAndEnabled;
@@ -120,10 +124,14 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildTopBar();
             BuildNav();
             var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavWidth + 12, 12), new Vector2(-12, -TopBarHeight - 12));
+            Teach = Add("teach", new XgLabelPage(), area);
+            Board = Add("board", new XgBoardPage(), area);
+            Contracts = Add("contracts", new XgContractsPage(), area);
             Home = Add("home", new XgHomePage(), area);
             Train = Add("train", new XgTrainPage(), area);
             Data = Add("data", new XgDataPage(), area);
             Items = Add("items", new XgItemsPage(), area);
+            Backpack = Add("backpack", new XgBackpackPage(), area);
             Tree = Add("tree", new XgTechTreePage(), area);
             Repo = Add("repo", new XgRepoPage(), area);
             Wiring = Add("wiring", new XgWiringPage(), area);
@@ -134,6 +142,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330 + NavWidth / 2, 16), new Vector2(330 + NavWidth / 2, 52));
             Panel(toastBox, new Color32(14, 24, 35, 240)).raycastTarget = false;
             var rim = toastBox.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Good; rim.effectDistance = new Vector2(1, -1);
+            toastRim = rim;
             toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 16, XgDark.Ink, TextAlignmentOptions.Center);
             toastBox.gameObject.SetActive(false);
             font = fontAsset;
@@ -154,11 +163,14 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool FeatureOpen(string id)
         {
             if (controller == null || controller.Sim == null) return false;
+            // The first-minutes focus (XgSim.Opening.cs) keeps every page but labelling and training shut.
+            if (controller.Sim.OpeningLocksLabTab(id)) return false;
             switch (id)
             {
-                case "home": case "abilities": return true;
-                case "data": return controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0;
+                case "teach": case "train": case "board": case "tree": case "home": case "abilities": return true;
+                case "data": return controller.Sim.SystemUnlocked("data") && (controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0);
                 case "items": return controller.FeatureVisible("tree");
+                case "backpack": return controller.Sim.S.relicPicks > 0 || controller.Sim.S.relicOwned.Count > 0;
                 default: return controller.FeatureVisible(id);
             }
         }
@@ -196,6 +208,8 @@ namespace LingGuangV05.Desktop.XingGuang
             boundSim.DeskOpened += OnDeskOpened;
             boundSim.ModelSaved += OnModelSaved;
             boundSim.WiringLogged += OnWiringLogged;
+            boundSim.YesNoLearned += OnYesNoLearned;
+            boundSim.RelicGained += OnRelicGained;
             Juice.Reduced = Sim.S.reduceFx;
             Juice.Muted = Sim.S.mute;
             SeedFeed();
@@ -207,6 +221,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sim.EpochStarted -= OnEpochStarted; sim.BreakthroughDone -= OnBreakthrough; sim.Emerged -= OnEmerged; sim.StageAdvanced -= OnStageAdvanced;
             sim.Message -= OnMessage; sim.Diverged -= OnDiverged; sim.EpochDone -= OnEpoch; sim.Assessed -= OnAssessed;
             sim.NodeBought -= OnNodeBought; sim.DeskOpened -= OnDeskOpened; sim.ModelSaved -= OnModelSaved; sim.WiringLogged -= OnWiringLogged;
+            sim.YesNoLearned -= OnYesNoLearned; sim.RelicGained -= OnRelicGained;
         }
 
         void OnDestroy() { if (boundSim != null) Unsubscribe(boundSim); }
@@ -269,6 +284,14 @@ namespace LingGuangV05.Desktop.XingGuang
             Refresh(true);
         }
 
+        /// <summary>The yes/no reached the learned line: a small lift over the window (the toast with its before/after is the sim's own notice).</summary>
+        void OnYesNoLearned()
+        {
+            Juice.Play(XgJuice.Sfx.Id.Fanfare, .6f);
+            Juice.Float(Juice.At(root), T("它学会分辨对错了", "It can tell right from wrong now"), XgDark.Gold, 22, 90, 3f, 1f);
+            Refresh(true);
+        }
+
         void OnStageAdvanced(int from)
         {
             Juice.Flash(Color.white, .2f, .8f);
@@ -301,6 +324,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (toast == null || !Visible) return;
             toast.text = text;
+            if (toastRim != null) toastRim.effectColor = XgDark.Good;
             toast.transform.parent.gameObject.SetActive(true);
             toast.transform.parent.SetAsLastSibling();
             Juice.BringToFront();
@@ -369,18 +393,26 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (tabId == "vision" || tabId == "sequence") { Sim.SelectedTrack = tabId == "vision" ? XgTrack.Vision : XgTrack.Sequence; tabId = "train"; }
             if (tabId == "research") tabId = "tree";
+            if (tabId == "label") tabId = "teach";
             if (IsCrowdPage(tabId)) { Refresh(true); controller.OpenCrowd(tabId); return; }
             if (!string.IsNullOrEmpty(tabId) && pages.ContainsKey(tabId)) ShowTab(tabId);
             else Refresh(true);
         }
 
         /// <summary>Pages that moved to 摆渡众包; asking 灵光 for them opens that app on the page.</summary>
-        public static bool IsCrowdPage(string id) => id == "label" || id == "contracts";
+        public static bool IsCrowdPage(string id) => false;
 
         public void ShowTab(string id)
         {
+            if (id == "label") id = "teach";
             if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
-            if (!pages.ContainsKey(id) || !FeatureOpen(id)) return;
+            if (!pages.ContainsKey(id)) return;
+            if (!FeatureOpen(id))
+            {
+                // A soft lock says why, in one line.
+                if (Sim.OpeningLocksLabTab(id)) { ShowToast(Sim.OpeningReason, 3); Juice.Play(XgJuice.Sfx.Id.Thud); }
+                return;
+            }
             tab = id;
             foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == id);
             pages[id].Shown();
@@ -396,6 +428,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!FeatureOpen(tab)) { tab = FirstOpenTab(); foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == tab); }
             RefreshTopBar();
             RefreshNav();
+            RefreshRelicStrip();
+            RefreshRelicPick();
             if (pages.TryGetValue(tab, out var page)) page.Refresh();
             setup?.Refresh(controller.runtime);
         }

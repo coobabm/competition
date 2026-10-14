@@ -28,8 +28,7 @@ namespace LingGuangV05.XingGuang
         public int track;
         public string arch = "", dataset = "";
         public int depth = 2, width, lr = 3;
-        /// <summary>Automatic training (crontab level and up) is switched on for this track.</summary>
-        public bool running, autoLr = true;
+        public bool autoLr = true;
         public double steps, trainAcc, valAcc;
         /// <summary>Epochs trained, epochs since the last assessment, assessments in a row without a record.</summary>
         public int epoch, sinceEval, staleEvals;
@@ -92,6 +91,9 @@ namespace LingGuangV05.XingGuang
         public string question = "", questionEn = "", why = "", whyEn = "", category = "", categoryEn = "";
         /// <summary>Where the meme or phrase comes from, shown after a wrong answer.</summary>
         public string source = "";
+        /// <summary>短信桌 sender line (empty on other desks). Display only: the answer is still <see cref="truth"/>.</summary>
+        public string from = "";
+        public bool family;
         public int level;
         /// <summary>前方高能: pays ×3 but must be answered within <see cref="timeLimit"/> seconds.</summary>
         public bool gold;
@@ -103,7 +105,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>Outcome of one hand answer, for the feedback flash.</summary>
-    public partial struct XgAnswer { public bool correct, truth, gold, trick, timeout, accepted, queued, corrected, bounty; public double pay; public int combo, samples; public long cardId; /** Money a wrong pick cost on a fined desk (算术); 0 otherwise. */ public double fine; }
+    public partial struct XgAnswer { public bool subjective; public bool correct, truth, gold, trick, timeout, accepted, queued, corrected, bounty; public double pay; public int combo, samples; public long cardId; /** Money a wrong pick cost on a fined desk (算术); 0 otherwise. */ public double fine; }
 
     /// <summary>One press of 训练一轮.</summary>
     public sealed class XgEpoch
@@ -113,7 +115,7 @@ namespace LingGuangV05.XingGuang
         public double steps, trainAcc, valAcc;
         /// <summary>The round went down instead of up (训练不再需要调参数: a drop), and why.</summary>
         public bool dropped;
-        /// <summary>A drop was rolled back by a 检查点回滚: the round changed nothing.</summary>
+        /// <summary>A drop was excused by a relic (残差贴纸): the round changed nothing.</summary>
         public bool rolledBack;
         public string dropReason = "", dropReasonEn = "";
         /// <summary>What the round changed in accuracy (negative after a drop, 0 on a plateau).</summary>
@@ -171,7 +173,6 @@ namespace LingGuangV05.XingGuang
         public List<XgModelEntry> models = new List<XgModelEntry>();
         public int nextModelId = 1;
         public double comboTimer;
-        public double autoTrainTimer;
         public bool reduceFx, mute;
         /// <summary>灵光 game clock when the lab last saved.</summary>
         public double linkedGameSeconds;

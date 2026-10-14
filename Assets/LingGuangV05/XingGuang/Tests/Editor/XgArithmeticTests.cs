@@ -133,7 +133,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             Assert.IsTrue(sim.DeskOpen("arith"));
             Assert.IsTrue(sim.DeskOpen("logic") && sim.DeskOpen("spam"));
-            Assert.AreEqual("arith", sim.S.desk, "a new player starts on the easy desk");
+            Assert.AreEqual("spam", sim.S.desk, "a new player starts on the recognisable teaching desk, not on arithmetic");
             for (int i = 0; i < 40; i++)
             {
                 var card = sim.Card("arith");

@@ -16,7 +16,15 @@ namespace LingGuangV05.XingGuang
         public static int TokenLimit(int stage)
         { return new[] { 2, 4, 24, 60, 100, 140 }[Stage(stage) - 1]; }
 
-        public static string Constrain(string text, int stage, bool english = false)
+        public static int TokenLimit(int stage, int grade)
+        {
+            int s = Stage(stage) - 1;
+            int lower = new[] { 2, 8, 8, 32, 64, 100 }[s];
+            int upper = new[] { 2, 8, 24, 72, 128, 200 }[s];
+            return lower + (upper - lower) * Math.Max(0, Math.Min(3, grade - 1)) / 3;
+        }
+
+        public static string Constrain(string text, int stage, bool english = false, int grade = 0)
         {
             text = (text ?? "").Trim(); stage = Stage(stage);
             // It only learns YY faces at stage 4; earlier codes are dropped before any truncation can split one.
@@ -34,10 +42,10 @@ namespace LingGuangV05.XingGuang
                 if (english)
                 {
                     var words = text.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    return string.Join(" ", words, 0, Math.Min(6, words.Length));
+                    return string.Join(" ", words, 0, Math.Min(6 + Math.Max(0, Math.Min(3, grade - 1)) * 2, words.Length));
                 }
                 var elements = StringInfo.GetTextElementEnumerator(text); var result = new StringBuilder(); int count = 0;
-                while (count++ < 6 && elements.MoveNext()) result.Append(elements.GetTextElement());
+                while (count++ < 6 + Math.Max(0, Math.Min(3, grade - 1)) * 2 && elements.MoveNext()) result.Append(elements.GetTextElement());
                 return result.Length == 0 ? "……" : result.ToString();
             }
             return text;

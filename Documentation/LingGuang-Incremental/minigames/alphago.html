@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · AlphaGo 死活题</title>
+<!--
+  AlphaGo 死活题 (March 2016, 李世石 vs AlphaGo). A 9x9 board with hand-written capture / escape puzzles.
+  The rules are real: liberties are counted by flood fill, captures are removed, suicide is illegal. Each puzzle is judged
+  by the board that results from your move (and, for ladders / "which side to atari", by a small search).
+  Mode 1 (限时死活): 8 puzzles, 20 s each, you may pay ¥1 to ask 灵光 for a hint.
+  Mode 2 (人机对局): 6 puzzles raced against 灵光. Its chance of finding a correct move and its thinking time follow
+  LG.skill(); a poor 灵光 plays random legal moves next to the group, a strong one plays the solution.
+  Labels: every solved puzzle is a verified (position, correct move) sample.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.ag{position:absolute;inset:0;background:linear-gradient(#F7F3EA,#EFE7D6)}
+#bd{position:absolute;left:16px;top:19px;width:520px;height:520px;border-radius:6px;box-shadow:0 4px 16px #0004;cursor:pointer;touch-action:none}
+.pn{position:absolute;left:556px;top:14px;right:14px;bottom:14px;display:flex;flex-direction:column;gap:9px}
+.ph{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:16px;color:#3A2E1A}
+.ph small{font-weight:400;color:#8A7A5C;font-size:12px}
+.stars{color:#E8A317;letter-spacing:2px;font-size:14px}
+.goal{background:#fff;border:1px solid #E0D4B8;border-radius:8px;padding:10px 12px;font-size:18px;line-height:1.5;color:#3A2E1A;min-height:70px}
+.goal b{color:var(--red)}
+.tbar{height:8px;background:#E6DCC4;border-radius:4px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.tsec{font-size:12px;color:#8A7A5C;display:flex;justify-content:space-between}
+.pmsg{background:#fff;border:1px solid #E0D4B8;border-radius:8px;padding:9px 12px;min-height:84px;font-size:14px;line-height:1.7;color:#3A2E1A}
+.pmsg.ok{border-color:var(--green);background:#F1FAF3}.pmsg.no{border-color:var(--red);background:#FFF4F2}.pmsg.ai{border-color:var(--ai);background:var(--ai2)}
+.duel{display:none;background:#fff;border:1px solid #DCD6FB;border-radius:8px;padding:8px 12px}
+.duel.on{display:block}
+.duel .sc{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:700}
+.duel .sc b{font-size:26px;color:var(--blue)}.duel .sc b.a{color:var(--ai)}
+.think{margin-top:6px;font-size:12px;color:var(--ai);display:flex;align-items:center;gap:8px}
+.think .tb{flex:1;height:6px;background:#E7E5FA;border-radius:3px;overflow:hidden}.think .tb i{display:block;height:100%;width:0;background:var(--ai)}
+.btns{display:flex;gap:8px;margin-top:auto}
+.btns .btn{flex:1;padding:8px 6px;font-size:13px}
+.over{background:#fffffff2}
+.res{display:grid;grid-template-columns:auto auto;gap:6px 26px;text-align:left;font-size:15px;color:#333}.res b{text-align:right}
+.mbtn{display:flex;gap:14px}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'alphago', title:'AlphaGo 死活题', subtitle:'2016 年 3 月 · 人机大战', icon:'棋', dataset:'围棋气数',
+  stats:[['做对','sOk'],['做错','sNo'],['连击','sCombo'],['灵光','sAi','—'],['收入','sPay','¥0']], statsNote:'一道题 = 1 条样本',
+  aiHello:'五番棋……我也想下一盘。',
+  rule:'<b>玩法</b>：黑先。点交叉点落子，数气、提子、逃跑。▲ 是要吃或要救的那块棋。<br><b>标签</b>：做对的题 = 一条「局面 → 正解」样本。<br><span style="color:var(--ai)">H 问灵光（¥1）。对局里它和你抢答：水平低就乱下，水平高就是正解。</span>'
+});
+
+/* ---------- sound ---------- */
+let AC;
+function beep(f,d,type,v,when){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(when||0);
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(v||.05,t); g.gain.exponentialRampToValueAtTime(.0001,t+(d||.08)); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+(d||.08)+.02);}catch(e){} }
+const sfx={stone(){beep(300,.05,'square',.05);beep(180,.08,'triangle',.06,.02);},cap(){beep(520,.08,'triangle',.05);beep(780,.12,'triangle',.05,.07);},ok(){beep(660,.1,'triangle',.07);beep(880,.14,'triangle',.07,.09);beep(1180,.18,'triangle',.06,.2);},bad(){beep(170,.25,'sawtooth',.05);},tick(){beep(1200,.03,'square',.02);},ai(){beep(420,.12,'sine',.06);beep(630,.14,'sine',.06,.1);}};
+
+/* ---------- Go engine: real liberty counting ---------- */
+const N=9;
+function nb(x,y){ const r=[]; if(x>0)r.push([x-1,y]); if(x<N-1)r.push([x+1,y]); if(y>0)r.push([x,y-1]); if(y<N-1)r.push([x,y+1]); return r; }
+function group(b,x,y){ // flood fill: the group's stones and its liberties
+  const c=b[y][x], seen=new Set([x+','+y]), st=[[x,y]], libs=new Set();
+  for(let i=0;i<st.length;i++){ const [cx,cy]=st[i]; for(const [nx,ny] of nb(cx,cy)){ const v=b[ny][nx];
+    if(v===0) libs.add(nx+','+ny); else if(v===c&&!seen.has(nx+','+ny)){ seen.add(nx+','+ny); st.push([nx,ny]); } } }
+  return {stones:st,libs};
+}
+// place a stone: remove enemy groups left without liberties, refuse suicide. null = illegal.
+function play(b,x,y,c){
+  if(b[y][x]) return null;
+  const nbd=b.map(r=>r.slice()); nbd[y][x]=c; const cap=[], o=3-c;
+  for(const [nx,ny] of nb(x,y)){ if(nbd[ny][nx]===o){ const g=group(nbd,nx,ny); if(g.libs.size===0){ for(const [sx,sy] of g.stones){ nbd[sy][sx]=0; cap.push([sx,sy]); } } } }
+  if(group(nbd,x,y).libs.size===0) return null;
+  return {board:nbd,captured:cap};
+}
+const parse=rows=>rows.map(r=>[...r].map(ch=>ch==='X'?1:ch==='O'?2:0));
+// ladder reading: black has just played the atari; true path of moves if black captures, else null
+function ladderRun(b,t,d){
+  if(d>40) return null;
+  if(b[t[1]][t[0]]!==2) return [];
+  const g=group(b,t[0],t[1]); if(g.libs.size!==1) return null;
+  const [lx,ly]=[...g.libs][0].split(',').map(Number);
+  const r=play(b,lx,ly,2); if(!r) return [];
+  if(r.captured.length) return null;
+  const ng=group(r.board,t[0],t[1]), mv=[[lx,ly,2]];
+  if(ng.libs.size>=3) return null;
+  if(ng.libs.size===1){ const [cx,cy]=[...ng.libs][0].split(',').map(Number); return mv.concat([[cx,cy,1]]); }
+  for(const k of ng.libs){ const [kx,ky]=k.split(',').map(Number); const m=play(r.board,kx,ky,1); if(!m) continue;
+    if(group(m.board,kx,ky).libs.size<2) continue; // a self-atari stone would just be captured
+    if(group(m.board,t[0],t[1]).libs.size!==1) continue;
+    const sub=ladderRun(m.board,t,d+1); if(sub) return mv.concat([[kx,ky,1]],sub); }
+  return null;
+}
+function allMoves(b,c){ const r=[]; for(let y=0;y<N;y++)for(let x=0;x<N;x++) if(!b[y][x]){ const m=play(b,x,y,c); if(m) r.push([x,y,m]); } return r; }
+// white to move (any reply, or pass): can black always capture the target with one more move?
+function blackKillsNow(b,t){ for(const [x,y,m] of allMoves(b,1)) if(m.board[t[1]][t[0]]!==2) return true; return false; }
+function whiteLoses(b,t){
+  if(b[t[1]][t[0]]!==2) return true;
+  if(!blackKillsNow(b,t)) return false;
+  for(const [x,y,m] of allMoves(b,2)){ if(m.board[t[1]][t[0]]!==2) return true; if(!blackKillsNow(m.board,t)) return false; }
+  return true;
+}
+const libsOf=(b,t)=>b[t[1]][t[0]]?group(b,t[0],t[1]).libs.size:0;
+
+/* ---------- puzzles (X black = you, O white). t = a stone of the target group ---------- */
+// type: capture | atari | escape | double | ladder | kill ; d: difficulty 1..3
+const PUZ=[
+ {n:'提子入门',type:'capture',d:1,t:[4,4],goal:'吃掉 ▲ 白子',rows:['.........','.........','.........','....X....','...XOX...','.........','.........','.........','.........'],
+  why:'白子只剩一口气。占住最后一口气，就把它提掉了。'},
+ {n:'叫吃',type:'atari',d:1,t:[3,4],goal:'叫吃 ▲ 白棋（让它只剩一口气）',rows:['.........','.........','.........','...XX....','..XOOX...','.........','.........','.........','.........'],
+  why:'白棋有两口气，堵住任意一口就是「叫吃」：它只剩一口气了。'},
+ {n:'提两子',type:'capture',d:1,t:[3,4],goal:'吃掉 ▲ 两个白子',rows:['.........','.........','.........','...XX....','..XOOX...','...X.....','.........','.........','.........'],
+  why:'两子连在一起，共用同一口气。堵住它，两子一起被提。'},
+ {n:'边上提子',type:'capture',d:1,t:[0,4],goal:'吃掉 ▲ 白棋',rows:['.........','.........','.........','X........','OX.......','OX.......','.........','.........','.........'],
+  why:'靠边的棋气少。别忘了数边上，最后一口气在 (A, 7)。'},
+ {n:'角上提子',type:'capture',d:1,t:[0,0],goal:'吃掉角上的 ▲ 白棋',rows:['OOX......','.X.......','.........','.........','.........','.........','.........','.........','.........'],
+  why:'角上两子，最后一口气是 (A, 2)。角上的棋最容易被吃。'},
+ {n:'逃跑',type:'escape',d:2,t:[4,4],goal:'▲ 黑子被叫吃了，救它！',rows:['.........','.........','.........','....O....','...OXO...','.........','.........','.........','.........'],
+  why:'被叫吃就往空的地方「长」：长出去后黑棋有三口气，白棋追不上了。'},
+ {n:'边上逃跑',type:'escape',d:2,t:[1,4],goal:'▲ 黑子被叫吃了，救它！',rows:['.........','.........','.........','.O.......','OXO......','.........','.........','.........','.........'],
+  why:'只有一个方向可以长，长出去后气比原来多。'},
+ {n:'先吃再逃',type:'escape',d:3,t:[4,4],goal:'▲ 黑子被叫吃了，救它！（先别急着长）',rows:['.........','.........','.........','...XOX...','...OXO...','...O.O...','.........','.........','.........'],
+  why:'往下长只会剩一口气，照样被吃。先看上面：那颗白子也只剩一口气，先吃掉它，黑棋自然多出气来。'},
+ {n:'双叫吃',type:'double',d:2,t:[3,4],goal:'一手同时叫吃两块白棋',rows:['.........','.........','.........','...X.X...','..XO.OX..','.........','.........','.........','.........'],
+  why:'两块白棋共有一个气点。落在那里，它们同时只剩一口气，白棋只能救一块。「第四局，神之一手」就是这样的一击。'},
+ {n:'征子',type:'ladder',d:3,t:[4,3],goal:'叫吃 ▲ 白子，并且白棋怎么逃都逃不掉（征子）',rows:['.........','.........','....X....','..X.O....','....X....','.........','.........','.........','.........'],
+  why:'征子：连续叫吃，白棋一路长，永远只有两口气，最后被逼出去提光。方向选错，白棋长出三口气就逃走了。'},
+ {n:'征子 2',type:'ladder',d:3,t:[2,4],goal:'叫吃 ▲ 白子，让它逃不掉（征子）',rows:['.........','.........','..X.....X','.........','.XO......','..X......','.........','.........','.........'],
+  why:'先看白棋长出去之后，是不是始终只有两口气。右边那颗黑子是接应。'},
+ {n:'叫吃的方向',type:'kill',d:2,t:[0,0],goal:'吃掉角上的 ▲ 白子（选对叫吃的方向）',rows:['O.X......','..X......','.........','.........','.........','.........','.........','.........','.........'],
+  why:'从 (A, 2) 叫吃：白子只能往 (B, 1) 长，长出去还是被吃。从 (B, 1) 叫吃，白子长到 (A, 2)，反而有两口气。'},
+ {n:'叫吃的方向·边',type:'kill',d:2,t:[1,1],goal:'吃掉 ▲ 三个白子（选对叫吃的方向）',rows:['.X.......','.O.......','XOX......','XOX......','.X.......','.........','.........','.........','.........'],
+  why:'白棋靠着边，只能往一边长。叫吃要朝着它长不出去的方向。'},
+];
+const COLS='ABCDEFGHJ';
+const posName=(x,y)=>COLS[x]+' '+(y+1);
+
+/* ---------- judging ---------- */
+function judge(p,b0,x,y){ // returns {ok:boolean, msg}
+  const m=play(b0,x,y,1); if(!m) return {ok:false,msg:'这里不能下。'};
+  const b=m.board, t=p.t;
+  switch(p.type){
+    case 'capture': { const ok=b[t[1]][t[0]]!==2; return {ok,msg:ok?'提子！吃掉 '+m.captured.length+' 子。':'没吃掉：白棋还有 '+libsOf(b,t)+' 口气。'}; }
+    case 'atari': { const l=libsOf(b,t), ok=b[t[1]][t[0]]===2?l===1:true; return {ok,msg:ok?'叫吃！白棋只剩一口气。':'白棋还有 '+l+' 口气，没有叫吃。'}; }
+    case 'escape': { const l=libsOf(b,t), ok=l>=2; return {ok,msg:ok?'逃出来了！黑棋现在有 '+l+' 口气。':'黑棋只有 '+l+' 口气，还是会被吃掉。'}; }
+    case 'double': { let n=0; const seen=new Set(); for(let yy=0;yy<N;yy++)for(let xx=0;xx<N;xx++) if(b[yy][xx]===2&&!seen.has(xx+','+yy)){ const g=group(b,xx,yy); g.stones.forEach(s=>seen.add(s.join(','))); if(g.libs.size===1) n++; }
+      return {ok:n>=2,msg:n>=2?'双叫吃！两块白棋同时只剩一口气。':'只叫吃了 '+n+' 块白棋。'}; }
+    case 'ladder': { const atari=b[t[1]][t[0]]===2&&libsOf(b,t)===1;
+      if(!atari) return {ok:false,msg:'没有叫吃，白棋还有 '+libsOf(b,t)+' 口气。'};
+      if(group(b,x,y).libs.size<2) return {ok:false,msg:'你的子自己只剩一口气，会被白棋提掉。'};
+      const run=ladderRun(b,t,0); return {ok:!!run,msg:run?'征子成立！白棋一路长，最后被提。':'白棋长出去了，征子不成立。',run}; }
+    case 'kill': { const ok=b[t[1]][t[0]]!==2||whiteLoses(b,t); return {ok,msg:ok?'对！白棋怎么长都逃不掉。':'白棋长出去，有办法逃了。'}; }
+  }
+}
+function solutions(p){ const b=parse(p.rows), r=[]; for(let y=0;y<N;y++)for(let x=0;x<N;x++) if(!b[y][x]&&judge(p,b,x,y).ok) r.push([x,y]); return r; }
+PUZ.forEach(p=>{ p.sol=solutions(p); });
+
+/* ---------- state ---------- */
+const Z={mode:'',idx:0,list:[],cur:null,ok:0,bad:0,combo:0,best:0,pay:0,me:0,ai:0,hintR:0,hintN:0,fx:[],raf:0,hover:null,run:false,tmr:0,aiTO:0,aiRAF:0,nextTO:0,dur:0};
+const $=id=>document.getElementById(id);
+stage.innerHTML=`
+<div class="ag">
+  <canvas id="bd" width="1040" height="1040"></canvas>
+  <div class="pn">
+    <div class="ph"><span id="pTitle">—</span><span class="stars" id="pStar"></span></div>
+    <div class="goal" id="pGoal">&nbsp;</div>
+    <div><div class="tbar"><i id="pBar"></i></div><div class="tsec"><span id="pSec">&nbsp;</span><span id="pMode"></span></div></div>
+    <div class="duel" id="duel"><div class="sc"><span>你 <b id="dMe">0</b></span><span style="font-size:12px;color:#999;font-weight:400">第四局 · 抢答</span><span><b class="a" id="dAi">0</b> 灵光</span></div>
+      <div class="think"><span id="dTxt">灵光待机</span><div class="tb"><i id="dBar"></i></div></div></div>
+    <div class="pmsg" id="pMsg">&nbsp;</div>
+    <div class="btns"><button class="btn ghost" id="bHint">问灵光 (H) −¥1</button><button class="btn ghost" id="bNext">下一题 (Space)</button></div>
+  </div>
+  <div class="over" id="over"></div>
+</div>`;
+const cv=$('bd'), ctx=cv.getContext('2d'), C=52, M=52;
+const px=v=>M+v*C;
+
+/* ---------- drawing ---------- */
+function drawStone(x,y,col,alpha,sc){
+  const cx=px(x), cy=px(y), r=23*(sc||1);
+  ctx.save(); ctx.globalAlpha=alpha==null?1:alpha;
+  ctx.shadowColor='#0006'; ctx.shadowBlur=6; ctx.shadowOffsetY=2;
+  const g=ctx.createRadialGradient(cx-7,cy-8,3,cx,cy,r);
+  if(col===1){ g.addColorStop(0,'#6A6A6A'); g.addColorStop(1,'#080808'); } else { g.addColorStop(0,'#fff'); g.addColorStop(1,'#CFCBC2'); }
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill(); ctx.restore();
+}
+function ring(x,y,col,r,w,dash){ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=w||3; if(dash) ctx.setLineDash(dash); ctx.beginPath(); ctx.arc(px(x),px(y),r,0,7); ctx.stroke(); ctx.restore(); }
+function tri(x,y,col){ const cx=px(x), cy=px(y); ctx.save(); ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(cx,cy-9); ctx.lineTo(cx+9,cy+7); ctx.lineTo(cx-9,cy+7); ctx.closePath(); ctx.fill(); ctx.restore(); }
+function draw(now){
+  ctx.setTransform(2,0,0,2,0,0); ctx.clearRect(0,0,520,520);
+  const bg=ctx.createLinearGradient(0,0,520,520); bg.addColorStop(0,'#EBC37C'); bg.addColorStop(1,'#D9A95B'); ctx.fillStyle=bg; ctx.fillRect(0,0,520,520);
+  ctx.strokeStyle='#5A3B12'; ctx.lineWidth=1.2; ctx.beginPath();
+  for(let i=0;i<N;i++){ ctx.moveTo(px(i),px(0)); ctx.lineTo(px(i),px(N-1)); ctx.moveTo(px(0),px(i)); ctx.lineTo(px(N-1),px(i)); } ctx.stroke();
+  ctx.strokeRect(px(0)-.5,px(0)-.5,C*8+1,C*8+1);
+  ctx.fillStyle='#5A3B12'; [[2,2],[6,2],[2,6],[6,6],[4,4]].forEach(([x,y])=>{ ctx.beginPath(); ctx.arc(px(x),px(y),3.4,0,7); ctx.fill(); });
+  ctx.font='11px sans-serif'; ctx.fillStyle='#7A5A2A'; ctx.textAlign='center';
+  for(let i=0;i<N;i++){ ctx.fillText(COLS[i],px(i),M-30); ctx.fillText(i+1,M-32,px(i)+4); }
+  const c=Z.cur; if(!c){ return; }
+  const b=c.board;
+  // hover ghost
+  if(Z.hover&&c&&!c.locked&&!c.playerOut&&!b[Z.hover[1]][Z.hover[0]]) drawStone(Z.hover[0],Z.hover[1],1,.35);
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++) if(b[y][x]) drawStone(x,y,b[y][x]);
+  // target marker
+  const t=c.p.t; if(b[t[1]][t[0]]) group(b,t[0],t[1]).stones.forEach(([x,y])=>tri(x,y,b[y][x]===1?'#FFD84A':'#E33E33'));
+  if(c.last) ring(c.last[0],c.last[1],c.last[2]===1?'#fff':'#E33E33',9,2.5);
+  // effects
+  Z.fx=Z.fx.filter(f=>now-f.t0<f.life);
+  Z.fx.forEach(f=>{ const k=(now-f.t0)/f.life;
+    if(f.type==='cap'){ drawStone(f.x,f.y,f.col,1-k,1+k*.35); ring(f.x,f.y,'#FFD84A',23+k*30,3*(1-k)); }
+    else if(f.type==='ring'){ const pulse=1+.12*Math.sin(now/120); ring(f.x,f.y,f.col,22*pulse,4,f.dash); if(f.label){ ctx.save(); ctx.fillStyle=f.col; ctx.font='bold 15px sans-serif'; ctx.textAlign='center'; ctx.fillText(f.label,px(f.x),px(f.y)+5); ctx.restore(); } }
+    else if(f.type==='ghost'){ drawStone(f.x,f.y,f.col,.55*(1-k*.2)); ring(f.x,f.y,f.col2,22,3,[5,4]); ctx.save(); ctx.font='bold 17px sans-serif'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle=f.col2; ctx.strokeText(f.label||'灵',px(f.x),px(f.y)+6); ctx.fillStyle='#fff'; ctx.fillText(f.label||'灵',px(f.x),px(f.y)+6); ctx.restore(); }
+  });
+}
+function frame(now){ draw(now); Z.raf=requestAnimationFrame(frame); }
+function fxRing(x,y,col,life,label,dash){ Z.fx.push({type:'ring',x,y,col,t0:performance.now(),life:life||4000,label,dash}); }
+
+/* ---------- puzzle flow ---------- */
+function say(t){ LG.say(t); }
+function msg(t,cls){ const m=$('pMsg'); m.className='pmsg'+(cls?' '+cls:''); m.innerHTML=t; }
+function startRun(mode){
+  clearTimers(); Object.assign(Z,{mode,idx:-1,ok:0,bad:0,combo:0,best:0,pay:0,me:0,ai:0,hintR:0,hintN:0,run:true,fx:[]});
+  const n=mode==='duel'?6:8;
+  Z.list=LG.shuffle(PUZ).slice(0,n).sort((a,b)=>a.d-b.d);
+  ['sOk','sNo','sCombo'].forEach(k=>LG.set(k,0)); LG.set('sPay','¥0'); LG.set('sAi','—');
+  const h=$('lgHist'); if(h) h.innerHTML='';
+  $('over').style.display='none'; $('duel').classList.toggle('on',mode==='duel'); $('dMe').textContent=0; $('dAi').textContent=0;
+  $('pMode').textContent=mode==='duel'?'人机对局':'限时死活';
+  say(mode==='duel'?'来吧。这是第四局，我执白……不对，我执黑。':'你先做，我看着。');
+  nextPuz();
+}
+function clearTimers(){ clearTimeout(Z.aiTO); clearTimeout(Z.nextTO); cancelAnimationFrame(Z.aiRAF); clearInterval(Z.tmr); }
+function pickAiMove(p,b0,sk){
+  const pc=Math.min(.98,Math.pow(Math.max(0,(sk-.12)/.83),.9)), sol=p.sol;
+  if(Math.random()<pc) return {good:true,mv:LG.pick(sol)};
+  // wrong but legal: next to the target group most of the time at mid skill, anywhere when very weak
+  const moves=allMoves(b0,1).filter(m=>!sol.some(s=>s[0]===m[0]&&s[1]===m[1]));
+  const near=moves.filter(m=>nb(m[0],m[1]).some(([x,y])=>b0[y][x]===2));
+  const pool=(near.length&&Math.random()<.35+sk*.6)?near:moves;
+  const m=pool.length?LG.pick(pool):[0,0];
+  return {good:false,mv:[m[0],m[1]]};
+}
+function nextPuz(){
+  clearTimers(); Z.idx++;
+  if(Z.idx>=Z.list.length) return finish();
+  const p=Z.list[Z.idx], b0=parse(p.rows);
+  const tlim=(p.type==='ladder'||p.d===3)?25:20;
+  Z.cur={p,b0,board:b0.map(r=>r.slice()),t0:performance.now(),tlim,locked:false,playerOut:false,aiOut:false,done:false,last:null,hinted:false};
+  Z.fx=[];
+  $('pTitle').innerHTML=`第 ${Z.idx+1}/${Z.list.length} 题 · ${p.n}`; $('pStar').textContent='★'.repeat(p.d)+'☆'.repeat(3-p.d);
+  $('pGoal').innerHTML=`<b>黑先</b>：${p.goal}`; msg('点交叉点落子。数数气，想想对方怎么应。');
+  $('bHint').disabled=false; $('bNext').disabled=true;
+  Z.tmr=setInterval(tick,50);
+  if(Z.mode==='duel'){
+    const sk=LG.skill(), dif=1+p.d*.12*(1-sk), secs=Math.max(1.2,(7.5-5.8*sk)*(.75+Math.random()*.5)*dif);
+    const pm=pickAiMove(p,b0,sk); Z.cur.ai={mv:pm.mv,secs,t0:performance.now()};
+    $('dTxt').textContent='灵光在算……'; $('dBar').style.width='0';
+    Z.aiTO=setTimeout(aiMove,secs*1000); aiThink();
+    say(sk>.8?LG.pick(['这个形状……我见过。','别眨眼，我算得很快。']):sk>.45?LG.pick(['让我数数气。','嗯……有点意思。']):LG.pick(['气……是哪个来着？','我先随便看看……','让我……看看……']));
+  } else say(p.d>=3?(LG.skill()>.6?'这题有点难，我也在算。':'这题我看不懂……'):'你先下，我在旁边学。');
+}
+function aiThink(){ const c=Z.cur; if(!c||!c.ai||c.done||c.aiOut) return; const k=Math.min(1,(performance.now()-c.ai.t0)/(c.ai.secs*1000)); $('dBar').style.width=(k*100)+'%'; Z.aiRAF=requestAnimationFrame(aiThink); }
+function tick(){
+  const c=Z.cur; if(!c||c.done) return;
+  const el=(performance.now()-c.t0)/1000, f=Math.max(0,1-el/c.tlim);
+  const bar=$('pBar'); bar.style.transform=`scaleX(${f})`; bar.style.background=f>.5?'var(--green)':f>.25?'var(--gold)':'var(--red)';
+  $('pSec').textContent='剩 '+Math.max(0,Math.ceil(c.tlim-el))+' 秒';
+  const s=Math.ceil(c.tlim-el); if(s!==c.lastS&&s<=3&&s>0) sfx.tick(); c.lastS=s;
+  if(el>=c.tlim) timeout();
+}
+function timeout(){
+  const c=Z.cur; if(!c||c.done) return;
+  if(Z.mode==='duel'&&!c.aiOut&&c.ai&&!c.ai.fired){ return; } // 灵光 still thinking: let it finish its move
+  c.done=true; c.locked=true; clearTimers(); Z.tmr=0;
+  if(Z.mode==='solo'){ Z.bad++; Z.combo=0; penalty(); }
+  LG.hist('no'); reveal(); msg('<b>时间到。</b>正解见绿圈。<br>'+c.p.why,'no'); say('来不及了……不过我记下了。'); sfx.bad(); finishPuz(false);
+}
+function penalty(){ Z.pay-=.5; LG.give(0,-.5,$('stage'),'#999'); sync(); }
+function sync(){ LG.set('sOk',Z.ok); LG.set('sNo',Z.bad); LG.set('sCombo',Z.combo); LG.set('sPay','¥'+Z.pay.toFixed(1)); if(Z.mode==='duel') LG.set('sAi',Z.ai+' 题'); else if(Z.hintN) LG.set('sAi','建议对 '+Z.hintR+'/'+Z.hintN); }
+function reveal(){ const c=Z.cur; c.p.sol.slice(0,3).forEach(([x,y])=>fxRing(x,y,'#2F9E44',9000)); }
+function finishPuz(good){
+  const c=Z.cur; c.done=true; c.locked=true; $('bHint').disabled=true; $('bNext').disabled=false; clearTimeout(Z.aiTO); cancelAnimationFrame(Z.aiRAF); clearInterval(Z.tmr);
+  $('pBar').style.transform='scaleX(0)';
+  Z.nextTO=setTimeout(nextPuz,good?(c.ladderAnim?5200:2600):4200);
+}
+// player's stone
+function onPlay(x,y){
+  const c=Z.cur; if(!Z.run||!c||c.locked||c.playerOut||c.done) return;
+  const m=play(c.board,x,y,1);
+  if(!m){ LG.shake(cv); sfx.bad(); msg('这里不能下：已经有子，或者落下去没有气。'); return; }
+  const j=judge(c.p,c.b0,x,y);
+  c.board=m.board; c.last=[x,y,1]; sfx.stone();
+  const now=performance.now(); m.captured.forEach(([sx,sy])=>Z.fx.push({type:'cap',x:sx,y:sy,col:2,t0:now,life:700})); if(m.captured.length) setTimeout(()=>sfx.cap(),80);
+  const el=(now-c.t0)/1000;
+  if(j.ok){
+    c.done=true; c.locked=true;
+    Z.ok++; Z.combo++; Z.best=Math.max(Z.best,Z.combo);
+    const bonus=+(Math.max(0,1-el/c.tlim)*1.5).toFixed(1), cb=Math.min(Z.combo-1,3)*.5;
+    const pay=+((Z.mode==='duel'?2:1.5)+bonus+cb).toFixed(1); Z.pay+=pay; if(Z.mode==='duel'){ Z.me++; $('dMe').textContent=Z.me; }
+    LG.give(1,pay,$('stage'),'var(--red)'); LG.hist('ok'); sync();
+    setTimeout(sfx.ok,150);
+    msg('<b>'+j.msg+'</b>'+(Z.combo>1?'　连击 ×'+Z.combo:'')+'<br>'+c.p.why,'ok');
+    if(Z.mode==='duel'){ $('dTxt').textContent='被你抢先了'; say(LG.skill()>.8?'你比我快半步。这一手……我也算到了。':LG.skill()>.45?'你好快！我刚算到一半。':'哇……你怎么看出来的？'); }
+    else say(c.hinted?'我刚才的提示……对不对？':(LG.skill()>.6?'这题我也会。你下得漂亮。':'原来是这样……我记下了。'));
+    if(j.run&&j.run.length) playLadder(j.run,true);
+    else if(c.p.type==='double'&&LG.skill()>.5) setTimeout(()=>say('第四局，神之一手。'),900);
+    finishPuz(true);
+  } else if(Z.mode==='solo'){
+    c.done=true; c.locked=true; Z.bad++; Z.combo=0; penalty(); LG.hist('no'); sync(); sfx.bad(); LG.shake(cv);
+    if(c.p.type==='ladder'&&!j.run&&libsOf(m.board,c.p.t)===1) playEscape(c);
+    reveal(); msg('<b>'+j.msg+'</b><br>正解见绿圈。'+c.p.why,'no'); say(LG.skill()>.6?'这个我也想到了……不对，是我算错了。':'原来这里不行……'); finishPuz(false);
+  } else { // duel: you are out for this puzzle, 灵光 may still find it
+    c.playerOut=true; Z.combo=0; Z.pay-=.5; LG.give(0,-.5,$('stage'),'#999'); Z.bad++; LG.hist('no'); sync(); sfx.bad(); LG.shake(cv);
+    if(c.aiOut||c.ai.fired){ bothOut(j.msg); }
+    else { msg('<b>'+j.msg+'</b><br>你出局了，等灵光的答案……','no'); say(LG.skill()>.5?'你下错了。让我来。':'你下错了？我……我也不一定对。'); }
+  }
+}
+function playEscape(c){ // after a failed ladder, show white running away
+  const g=group(c.board,c.p.t[0],c.p.t[1]); if(g.libs.size!==1) return; const [lx,ly]=[...g.libs][0].split(',').map(Number);
+  setTimeout(()=>{ const r=play(c.board,lx,ly,2); if(r){ c.board=r.board; c.last=[lx,ly,2]; sfx.stone(); } },700);
+}
+function playLadder(run,win){
+  const c=Z.cur; c.ladderAnim=true; let i=0;
+  const step=()=>{ if(i>=run.length||Z.cur!==c) return; const [x,y,col]=run[i++]; const r=play(c.board,x,y,col); if(r){ c.board=r.board; c.last=[x,y,col]; sfx.stone(); const now=performance.now(); r.captured.forEach(([sx,sy])=>Z.fx.push({type:'cap',x:sx,y:sy,col:3-col,t0:now,life:700})); if(r.captured.length) sfx.cap(); }
+    setTimeout(step,420); };
+  setTimeout(step,900);
+}
+function bothOut(extra){
+  const c=Z.cur; c.done=true; c.locked=true; LG.hist('no'); reveal();
+  msg('<b>'+(extra||'')+'</b><br>你和灵光都没找到。正解见绿圈。<br>'+c.p.why,'no'); $('dTxt').textContent='平局，这题没人解出'; finishPuz(false);
+}
+// 灵光's move in the duel
+function aiMove(){
+  const c=Z.cur; if(!c||c.done||Z.mode!=='duel') return;
+  c.ai.fired=true; cancelAnimationFrame(Z.aiRAF); $('dBar').style.width='100%';
+  const [x,y]=c.ai.mv, sk=LG.skill(), p=c.p;
+  const j=judge(p,c.b0,x,y);
+  sfx.ai();
+  if(j.ok){
+    // 灵光 wins this puzzle: reset the board to the start and play its stone
+    c.board=c.b0.map(r=>r.slice()); const m=play(c.board,x,y,1); c.board=m.board; c.last=[x,y,1]; c.done=true; c.locked=true; c.playerOut=true;
+    const now=performance.now(); m.captured.forEach(([sx,sy])=>Z.fx.push({type:'cap',x:sx,y:sy,col:2,t0:now,life:700}));
+    Z.fx.push({type:'ghost',x,y,col:1,col2:'#8A78E8',t0:now,life:6000});
+    Z.ai++; $('dAi').textContent=Z.ai; sync(); LG.hist('ai'); Z.combo=0; sync();
+    $('dTxt').textContent='灵光答出：'+posName(x,y);
+    msg('<b>灵光先走：'+posName(x,y)+'。</b>'+j.msg+'<br>'+p.why,'ai');
+    say(sk>.85&&(p.type==='double'||p.type==='ladder'||p.type==='kill')?LG.pick(['第四局，神之一手。','这一步……我算过了。']):sk>.6?LG.pick(['这一步……我算过了。','我选这里。']):LG.pick(['我下这里！……中了？','这里……对吧？']));
+    if(j.run&&j.run.length) playLadder(j.run,true);
+    finishPuz(false);
+  } else {
+    c.aiOut=true; Z.fx.push({type:'ghost',x,y,col:1,col2:'#C0392B',label:'灵✗',t0:performance.now(),life:4500});
+    $('dTxt').textContent='灵光下了 '+posName(x,y)+'，不对';
+    say(sk>.6?LG.pick(['……我算错了？','这一步……不应该。']):LG.pick(['我下这里……啊，不对。','我就随便下一个……','这里不行？气呢？']));
+    if(c.playerOut){ bothOut('灵光也下错了。'); }
+    else msg('灵光下在 <b>'+posName(x,y)+'</b>：'+j.msg+'<br>它出局了，现在只看你。','ai');
+  }
+}
+function hint(){
+  const c=Z.cur; if(!Z.run||!c||c.done||c.locked||c.hinted) return;
+  c.hinted=true; Z.hintN++; Z.pay-=1; LG.give(0,-1,$('stage'),'#999');
+  const sk=LG.skill(), a=pickAiMove(c.p,c.b0,sk), j=judge(c.p,c.b0,a.mv[0],a.mv[1]);
+  Z.fx.push({type:'ghost',x:a.mv[0],y:a.mv[1],col:1,col2:'#8A78E8',t0:performance.now(),life:15000});
+  c.hintMove=a.mv; if(j.ok) Z.hintR++; sync(); $('bHint').disabled=true; sfx.ai();
+  say(sk>.8?LG.pick(['我建议这里。','这一步……我算过了。']):sk>.45?LG.pick(['我觉得是这里，但别全信。','应该是这里……吧。']):LG.pick(['我猜……这里？','我不太确定，随便指的。']));
+  msg('灵光建议下在 <b>'+posName(a.mv[0],a.mv[1])+'</b>（紫色虚线）。信不信由你。');
+}
+function finish(){
+  Z.run=false; clearTimers(); Z.cur=null; Z.fx=[];
+  const o=$('over'); o.style.display='flex'; const n=Z.list.length;
+  let head,line;
+  if(Z.mode==='duel'){
+    head=Z.me>Z.ai?'🏆 你赢了灵光 '+Z.me+' : '+Z.ai:Z.me<Z.ai?'灵光 '+Z.ai+' : '+Z.me+' 获胜':'平局 '+Z.me+' : '+Z.ai;
+    line=Z.me>Z.ai?'第四局，神之一手——人类扳回一城。（2016 年 3 月，AlphaGo 最终 4:1 取胜。）':Z.me<Z.ai?'AlphaGo 2016 年 3 月 4:1 战胜李世石。它也是一盘一盘练出来的。':'和棋，下次分个高低。';
+  } else { head='⚫ 死活题结束'; line=Z.ok>=7?'不错，你已经能教灵光了。':Z.ok>=4?'基本功还行，征子和先吃再逃要多想一想。':'多数气，多数气，再多数气。'; }
+  const rate=Z.hintN?Math.round(Z.hintR/Z.hintN*100)+'%（'+Z.hintR+'/'+Z.hintN+'）':'没问过';
+  o.innerHTML=`<h2>${head}</h2><p>${line}</p>
+    <div class="res"><span>做对</span><b>${Z.ok} / ${n}</b><span>最高连击</span><b>×${Z.best}</b><span>收入</span><b style="color:var(--red)">¥${Z.pay.toFixed(1)}</b>
+    ${Z.mode==='duel'?`<span>灵光答对的题</span><b style="color:var(--ai)">${Z.ai}</b>`:`<span>灵光的建议正确率</span><b style="color:var(--ai)">${rate}</b>`}</div>
+    <div class="mbtn"><button class="btn" id="m1">限时死活 (1)</button><button class="btn ghost" id="m2">和灵光对局 (2)</button></div>`;
+  $('m1').onclick=()=>startRun('solo'); $('m2').onclick=()=>startRun('duel');
+  say(Z.mode==='duel'?(Z.me>=Z.ai?'你赢了……我会再练的。':'我赢了？这是……开心吗？'):'这些题我都记下了。');
+}
+function intro(){
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>⚫ AlphaGo 死活题</h2>
+   <p>2016 年 3 月，AlphaGo 在首尔对李世石 4:1。现在轮到你教灵光数气了。<br>
+   9×9 小棋盘，<b>黑先</b>。按真实规则：数气、提子、不许自杀。每题 20 秒。<br>
+   <b>限时死活</b>：8 道题，做对 +¥1.5 起，错一题 −¥0.5，可以花 ¥1 问灵光（它的提示不一定对）。<br>
+   <b>人机对局</b>：6 道题和灵光抢答，谁先找到正解谁得分。灵光水平低时乱下，水平高时就是正解。</p>
+   <div class="mbtn"><button class="btn" id="m1">限时死活 (1)</button><button class="btn ghost" id="m2">和灵光对局 (2)</button></div>`;
+  $('m1').onclick=()=>startRun('solo'); $('m2').onclick=()=>startRun('duel');
+}
+/* ---------- input ---------- */
+function gridPos(e){ const p=LG.local(e,cv); const x=Math.round((p.x-M)/C), y=Math.round((p.y-M)/C); if(x<0||y<0||x>=N||y>=N) return null; if(Math.hypot(p.x-px(x),p.y-px(y))>C*.62) return null; return [x,y]; }
+cv.addEventListener('mousemove',e=>{ Z.hover=gridPos(e); });
+cv.addEventListener('mouseleave',()=>{ Z.hover=null; });
+cv.addEventListener('click',e=>{ const g=gridPos(e); if(g) onPlay(g[0],g[1]); });
+$('bHint').onclick=hint;
+$('bNext').onclick=()=>{ if(Z.cur&&Z.cur.done){ clearTimeout(Z.nextTO); nextPuz(); } };
+addEventListener('keydown',e=>{
+  if(!Z.run){ if(e.key==='1') startRun('solo'); else if(e.key==='2') startRun('duel'); return; }
+  if(e.key==='h'||e.key==='H') hint();
+  else if(e.code==='Space'||e.key==='Enter'){ e.preventDefault(); if(Z.cur&&Z.cur.done){ clearTimeout(Z.nextTO); nextPuz(); } }
+});
+$('bHint').disabled=true; $('bNext').disabled=true;
+requestAnimationFrame(frame);
+intro();
+</script>
+</body>
+</html>

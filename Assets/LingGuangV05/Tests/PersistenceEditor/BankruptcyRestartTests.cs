@@ -41,14 +41,16 @@ namespace LingGuangV05.Tests
             runtime.EnsureInitialized();
         }
 
-        /// <summary>Three days below zero on the lab's calendar: the computer is sold.</summary>
+        /// <summary>Three days below zero on the lab's calendar, then the player agrees to sell: the computer is sold.</summary>
         void GoBankrupt()
         {
             var sim = runtime.Sim;
             GameCalendar.Advance(sim.S, GameCalendar.DayIndex(new DateTime(2016, 6, 3)));
             sim.Tick(.25);
             sim.S.money = -800;
-            for (int i = 0; i < 3 && !sim.S.bankrupt; i++) sim.Tick(sim.Config.dayLengthSeconds);
+            for (int i = 0; i < ChapterOneSim.DebtSaleDay; i++) sim.Tick(sim.Config.dayLengthSeconds);
+            Assert.That(sim.S.bankrupt, Is.False, "the third day only asks: nothing is sold without the player's word");
+            Assert.That(sim.ConfirmComputerSale(), Is.True);
             Assert.That(sim.S.bankrupt, Is.True);
             Assert.That(runtime.SaveNow(), Is.True);
         }

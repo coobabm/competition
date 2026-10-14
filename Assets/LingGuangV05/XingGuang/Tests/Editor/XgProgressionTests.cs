@@ -46,6 +46,14 @@ namespace LingGuangV05.XingGuang.Tests
             }
         }
 
+        /// <summary>The player's confirmation on the training page: a trained round this stage and both bars full (the bars filling alone changes nothing).</summary>
+        static void Confirm(XgSim sim)
+        {
+            sim.S.stageEpochs = System.Math.Max(1, sim.S.stageEpochs);
+            Assert.IsTrue(sim.StageReady, "both bars are full");
+            Assert.IsTrue(sim.ConfirmNextStage());
+        }
+
         static void FillBars(XgSim sim, int ability)
         {
             sim.S.trainedParamsK = Math.Max(sim.S.trainedParamsK, sim.ParamsThreshold(ability));
@@ -100,6 +108,8 @@ namespace LingGuangV05.XingGuang.Tests
             sim.StageAdvanced += stages.Add; sim.BreakthroughDone += milestones.Add;
             FillBars(sim, 2);
             sim.Tick(1, host);
+            Assert.That(sim.S.stage, Is.EqualTo(1), "full bars wait for the player's confirmation");
+            Confirm(sim);
             Assert.That(sim.S.stage, Is.EqualTo(2));
             Assert.That(stages, Is.EqualTo(new[] { 1 }));
             Assert.That(milestones, Does.Contain("bt.hidden"));
@@ -114,6 +124,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.BreakthroughDone += milestones.Add;
             FillBars(sim, 3);
             sim.Tick(1, host);
+            Confirm(sim);
             Assert.That(sim.S.stage, Is.EqualTo(3));
             Assert.That(sim.S.firstTrack, Is.Not.Empty, "它的第一个选择 is made by the time it speaks");
             Assert.That(milestones, Does.Contain("bt." + sim.S.firstTrack));
@@ -148,6 +159,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.Has("transformer"));
             FillBars(sim, 6);
             sim.Tick(1, host);
+            Confirm(sim);
             Assert.That(sim.S.stage, Is.EqualTo(6));
             Assert.IsTrue(sim.Has("transformer") && sim.Has("position") && sim.Has("warmup"));
             Assert.That(milestones, Does.Contain("transformer"));
@@ -165,11 +177,12 @@ namespace LingGuangV05.XingGuang.Tests
                 if (second % 10 == 0)
                 {
                     foreach (var node in XgCatalog.Nodes)
-                        if (node.tree != "label" && node.kind != XgNodeKind.Auto && node.kind != XgNodeKind.Secret && sim.Status(node, host) == XgSim.NodeStatus.Buyable) sim.BuyNode(node.id, host);
+                        if (node.tree != "label" && node.kind != XgNodeKind.Secret && sim.Status(node, host) == XgSim.NodeStatus.Buyable) sim.BuyNode(node.id, host);
                 }
                 if (sim.TrainingUnlocked(XgTrack.Sequence)) sim.TrainEpoch(XgTrack.Sequence, host);
                 if (sim.TrainingUnlocked(XgTrack.Vision)) sim.TrainEpoch(XgTrack.Vision, host);
                 sim.Tick(1, host);
+                if (sim.StageReady) sim.ConfirmNextStage(); // the player's confirmation on the training page
             }
             Assert.That(sim.S.stage, Is.EqualTo(3), "stage=" + sim.S.stage + ", P=" + XgSim.ParamsText(sim.TrainedParamsK) + ", D=" + sim.TrainedSamples);
             Assert.That(sim.S.emerged, Is.EquivalentTo(new[] { 1, 2 }));

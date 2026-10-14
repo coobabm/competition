@@ -529,7 +529,7 @@ namespace LingGuangV05.Core.Girlfriend
             }
             if (s.sulkUntil >= now.day && s.sulkZh.Length > 0) sb.Append(english ? " He forgot an important day recently; you are still sulking about it." : "他前几天忘了一个重要的日子，你还在别扭。");
             if (s.fighting) sb.Append(english ? " You are in a quarrel; you will not be won over by small talk." : "你们在冷战，几句闲聊哄不好你。");
-            if (GirlfriendRules.Has(s, GirlfriendRules.FlagKnowsAi)) sb.Append(english ? " You know he has trained some AI program on his computer; you find it a bit strange." : "你知道他在电脑上训练了一个什么 AI 程序，觉得有点怪。");
+            sb.Append(english ? " You do not know about any private application on his computer." : "你不知道他电脑里有任何秘密应用。不要假装知道他的私人操作。");
             return sb.ToString().Trim();
         }
 

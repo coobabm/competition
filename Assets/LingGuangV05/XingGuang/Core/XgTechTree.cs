@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// The 科技 tree as squares with levels (the Upgrade Tree look). Built from <see cref="XgCatalog.Nodes"/> at runtime:
-    /// depth caps, width caps and automation steps form ladders in the catalog (each step's parent is the step before),
+    /// depth caps and width caps form ladders in the catalog (each step's parent is the step before),
     /// so each ladder becomes one square whose level is the number of steps owned. Nodes the simulation already counts
     /// in levels (加薪, 自动答题) are one square with their own level. Everything else is one square per node.
     /// </summary>
@@ -45,7 +45,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>Kinds whose catalog ladders become one square with levels.</summary>
-        public static bool Ladder(XgNodeKind kind) => kind == XgNodeKind.Depth || kind == XgNodeKind.Width || kind == XgNodeKind.Auto;
+        public static bool Ladder(XgNodeKind kind) => kind == XgNodeKind.Depth || kind == XgNodeKind.Width;
 
         static void Ensure()
         {
@@ -151,7 +151,7 @@ namespace LingGuangV05.XingGuang
             {
                 case XgNodeKind.Depth: return track + (en ? (track.Length > 0 ? "depth" : "Depth") : "层数");
                 case XgNodeKind.Width: return track + (en ? (track.Length > 0 ? "width" : "Width") : "宽度");
-                default: return en ? "Automation" : "自动化";
+                default: return sim.NodeName(e.First);
             }
         }
     }

@@ -46,6 +46,7 @@ namespace LingGuangV05.Desktop.YY
     [Serializable]
     public sealed class YYState
     {
+        public int friendMonth, gfStage, gfReceived, gfReplies, gfIgnoredStage;
         public int version = 1;
         public string selected = YYChatHub.LaoZhou;
         /// <summary>The AI learned to talk (stage 3): it shows up as a contact.</summary>
@@ -83,7 +84,10 @@ namespace LingGuangV05.Desktop.YY
         bool Thinking { get; }
         /// <summary>Whether this message can get a 赞 / 踩 now (only its latest reply, once).</summary>
         bool CanRate(YYMessage message);
-        void Rate(YYMessage message, bool up);
+        /// <summary>Rates the reply; returns how the personality moved (「温度 +2」), empty when nothing moved.</summary>
+        string Rate(YYMessage message, bool up);
+        /// <summary>Its three axes for the header: 「温度 62 · 玩心 40 · 主见 55」.</summary>
+        string AxisLine();
         /// <summary>The header's 「它记得」 line (empty when there is nothing to show) and its hover note.</summary>
         string MemoryLine();
         string MemoryTip();
@@ -96,7 +100,7 @@ namespace LingGuangV05.Desktop.YY
     /// Story `say` lines arrive through <see cref="Receive"/>; the player's messages raise runtime signal chat.sent.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class YYChatHub : MonoBehaviour
+    public sealed partial class YYChatHub : MonoBehaviour
     {
         public const string AppId = "yy";
         public const string LaoZhou = "laozhou";
@@ -113,6 +117,8 @@ namespace LingGuangV05.Desktop.YY
         public static readonly YYContact[] Contacts =
         {
             new YYContact { id = LaoZhou, name = "老周", nameEn = "Lao Zhou", signature = "AI 是下一个风口。这周三个会。", signatureEn = "AI is the next big thing. Three meetings this week.", online = true, color = new Color32(232, 93, 74, 255) },
+            new YYContact { id = "landlord", name = "房东·按时到账", nameEn = "Landlord · Pay on time", signature = "亲兄弟明算账", signatureEn = "Rent is rent.", online = true, color = new Color32(170, 129, 80, 255) },
+            new YYContact { id = "oldfriend", name = "咸鱼本鱼", nameEn = "Salty Fish", signature = "出门走走，回来吹牛", signatureEn = "Out for a walk. Back with stories.", online = true, color = new Color32(90, 163, 139, 255) },
             new YYContact { id = "cousin", name = "表姐", nameEn = "Cousin", signature = "加班中，勿扰", signatureEn = "Working late, do not disturb", online = false, color = new Color32(236, 151, 31, 255) },
             new YYContact { id = LingGuangId, name = AppNames.AiZh, nameEn = AppNames.AiEn, signature = "是。否。……", signatureEn = "Yes. No. …", online = true, hidden = true, color = new Color32(64, 84, 196, 255) },
             new YYContact { id = GirlfriendId, name = "晴雯ˇ", nameEn = "Qingwenˇ", signature = "今天的月亮好圆", signatureEn = "The moon is so round tonight", online = true, hidden = true, color = new Color32(240, 98, 146, 255) },
@@ -153,6 +159,7 @@ namespace LingGuangV05.Desktop.YY
 
         public void Initialize(ChapterOneRuntime gameRuntime, ChapterOneDesktopRouter desktopRouter)
         {
+            if (runtime != null) { runtime.Changed -= OnRuntimeChanged; runtime.Saving -= WriteToSave; }
             Instance = this;
             runtime = gameRuntime;
             router = desktopRouter;
@@ -181,7 +188,8 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
-            pending.Clear(); inFlight.Clear(); standing.Clear();
+            pending.Clear(); inFlight.Clear(); standing.Clear(); quizReplies.Clear();
+            script = null; scriptFor = null; Choices = null; ChoicesFor = null;
             Changed?.Invoke();
         }
 
@@ -197,11 +205,14 @@ namespace LingGuangV05.Desktop.YY
         {
             var s = new YYState();
             foreach (var c in Contacts) s.conversations.Add(new YYConversation { id = c.id });
-            // A little history so the app feels lived in.
+            // Existing group history is explicitly dated before the opening. Qingwen starts empty.
             s.conversations.Find(c => c.id == "cousin").messages.Add(new YYMessage { from = "cousin", text = "你那台电脑别老开着，电费贵。", gameSeconds = -86400 * 3 });
             var group = s.conversations.Find(c => c.id == "netbar");
             group.messages.Add(new YYMessage { from = "netbar", text = "[阿杰] 1080 这周五开卖，有人去排吗？", gameSeconds = -3600 * 5 });
             group.messages.Add(new YYMessage { from = "netbar", text = "[大伟] 周五下班开黑，谁来？", gameSeconds = -3600 * 4 });
+            group.messages.Add(new YYMessage { from = "netbar", text = "[小刚] 我来，别又放鸽子。", gameSeconds = -3600 * 4 + 20 });
+            group.messages.Add(new YYMessage { from = Me, text = "算我一个，先吃个饭。", gameSeconds = -3600 * 4 + 40 });
+            group.messages.Add(new YYMessage { from = "netbar", text = "[阿杰] 你上次这顿饭吃了俩小时。", gameSeconds = -3600 * 4 + 60 });
             return s;
         }
 
@@ -236,6 +247,12 @@ namespace LingGuangV05.Desktop.YY
         {
             var conv = Conversation(id);
             if (conv == null || string.IsNullOrEmpty(text)) return;
+            if (id == GirlfriendId) { TrackGirlfriendStage(); S.gfReceived++; }
+            if (id == "netbar" && text.Contains("\n[")) {
+                var lines = text.Split('\n');
+                for (int i = 0; i < lines.Length; i++) if (!string.IsNullOrWhiteSpace(lines[i])) Receive(id, lines[i], notify && i == 0);
+                return;
+            }
             conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now });
             if (!IsShowing(id)) conv.unread++;
             if (notify) NotifyReceived(id, text);
@@ -265,6 +282,7 @@ namespace LingGuangV05.Desktop.YY
 
         public void Send(string id, string text)
         {
+            if (id == GirlfriendId && !string.IsNullOrWhiteSpace(text)) NoteGirlfriendReply(text);
             text = (text ?? "").Trim();
             if (text.Length == 0) return;
             if (text.Length > 300) text = text.Substring(0, 300);
@@ -276,6 +294,7 @@ namespace LingGuangV05.Desktop.YY
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
+            if (id == "landlord" && (text == "确认卖电脑" || text == "Confirm selling the computer")) { runtime.Sim.ConfirmComputerSale(); runtime.MarkDirty(); return; }
             if (AnswerQuiz(id, text)) return;
             if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
@@ -332,13 +351,17 @@ namespace LingGuangV05.Desktop.YY
             {
                 if (inFlight.Contains(id) || Time.unscaledTime < pending[id]) continue;
                 inFlight.Add(id);
+                float requestAt = pending[id];
+                bool delivered = false;
                 var replyingState = S;
                 var replyingSimulation = runtime.Sim;
                 Reply(id, text =>
                 {
                     if (!ReferenceEquals(S, replyingState) || !ReferenceEquals(runtime.Sim, replyingSimulation)) return;
+                    if (delivered) return;
+                    delivered = true;
                     inFlight.Remove(id);
-                    pending.Remove(id);
+                    if (pending.TryGetValue(id, out var due) && due == requestAt) pending.Remove(id);
                     if (!string.IsNullOrEmpty(text)) Receive(id, text);
                 });
             }
@@ -349,6 +372,12 @@ namespace LingGuangV05.Desktop.YY
             if (quizReplies.TryGetValue(id, out var scripted)) { quizReplies.Remove(id); done(scripted); return; }
             var lab = FindLab();
             var conv = Conversation(id);
+            string latest = LastPlayerLine(conv);
+            if (id == "netbar") {
+                var preset = YYGroup.FutureNameReply(latest);
+                if (preset != null) { done(preset); return; }
+                if (offlineRng.NextDouble() < .5) { done(null); return; }
+            }
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             if (llm != null && llm.Ready && conv != null)
             {
@@ -374,6 +403,7 @@ namespace LingGuangV05.Desktop.YY
                         // A line it said a moment ago reads like a bot: swap it for a fresh one.
                         if (RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
                     }
+                    if (id != LingGuangId && RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
                     done(Shape(id, text));
                     if (id == LingGuangId && userMessage != null) LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(lab, userMessage.text, text);
                 }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab),
@@ -387,10 +417,10 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Group lines keep the "[name] text" form the view renders as a sender label.</summary>
         static string Shape(string id, string text)
         {
-            if (id != "netbar") return text;
+            if (id != "netbar" || string.IsNullOrWhiteSpace(text)) return text;
             text = text.Trim();
             if (text.StartsWith("[", StringComparison.Ordinal)) return text;
-            foreach (var who in new[] { "阿杰", "老板", "小刚" })
+            foreach (var who in new[] { "阿杰", "大伟", "小刚", "莉莉", "老板" })
                 foreach (var sep in new[] { "：", ":" })
                     if (text.StartsWith(who + sep, StringComparison.Ordinal)) return "[" + who + "] " + text.Substring(who.Length + 1).Trim();
             return "[阿杰] " + text;
@@ -402,9 +432,11 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return LaoZhouHelp.Reply(last, runtime.Sim, lab);
+                case LaoZhou: return Lang.T("店里正忙呢。你说的那个我没用过，别把电脑折腾坏了就行。");
+                case "landlord": return GameText.T("欠款 ¥", "Debt ¥") + runtime.Sim.Debt.ToString("0") + GameText.T("。有困难先跟我说，账还是得慢慢还。", ". Let me know if you need time to repay.");
+                case "oldfriend": return FriendFallback(last, conv);
                 case "cousin": return Lang.T("在上班，晚点说。早点睡，别熬夜。");
-                case "netbar": return null;
+                case "netbar": return YYGroup.Fallback(last, conv, offlineRng);
                 default:
                     int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
                     if (lab == null)
@@ -542,19 +574,11 @@ namespace LingGuangV05.Desktop.YY
         /// </summary>
         void EnsureFileOffer()
         {
-            var conv = Conversation(LaoZhou);
-            // Since the prologue (design v1.1 §6) the exe comes out of the picture archive; only older saves still wait for this file.
-            if (conv == null || AppInstalled || runtime.Sim.S.prologue != 0) return;
-            if (conv.messages.Exists(m => m.kind == YYKind.File && m.file == FileName)) return;
-            int said = conv.messages.FindAll(m => m.from == LaoZhou && m.kind == YYKind.Text).Count;
-            bool introDone = runtime.Sim.S.story != null && runtime.Sim.S.story.HasFired("lz_intro");
-            // While the intro is still being typed (1–2 lines so far), wait for the line that announces the file.
-            if (said < 3 && !(introDone && said == 0)) return;
-            if (said == 0) conv.messages.Add(new YYMessage { from = LaoZhou, text = GameText.T(AppNames.AppZh + "我直接传给你了，点「接收」，下完它会出现在桌面上。", "I'm sending you " + AppNames.AppEn + " directly. Press Receive and it will appear on your desktop."), gameSeconds = Now });
-            conv.messages.Add(new YYMessage { from = LaoZhou, kind = YYKind.File, file = FileName, sizeMB = FileSizeMB, gameSeconds = Now });
-            if (!IsShowing(LaoZhou)) conv.unread++;
-            NotifyReceived(LaoZhou, GameText.F("发来文件：{0}", "Sent a file: {0}", FileName));
-            Touch();
+            // Legacy saves recover the local file without an NPC distributing it.
+            if (runtime.Sim.S.prologue == 0 && !AppInstalled) {
+                runtime.Sim.S.appInstallState = 2;
+                Touch();
+            }
         }
 
         public void AcceptFile(YYMessage message)
@@ -603,6 +627,8 @@ namespace LingGuangV05.Desktop.YY
             CheckQuiz();
             CheckLabelSeeds();
             DeliverEra(dt);
+            TickFriend();
+            TrackGirlfriendStage();
             TickReplies();
             S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
         }
@@ -710,16 +736,16 @@ namespace LingGuangV05.Desktop.YY
             if (Has(q, "连击", "combo"))
                 return T("连击是标注和训练共用的：答对 +1，按一轮 +1，刷新纪录 +5。慢了、答错都清零。连击越高，钱和训练都越多，最多翻倍。你最高 ×" + lab.S.bestCombo + "。",
                          "The combo is shared: +1 per right card or epoch, +5 per record. Too slow or a miss resets it. Up to ×2 on pay and training. Your best: ×" + lab.S.bestCombo + ".");
-            // Before the protagonist has the auto-labelling idea, 老周 only talks about training automation.
+            // Before the protagonist has the auto-labelling idea, 老周 only says training and labelling are by hand.
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab") && lab.AutoLabelHidden)
-                return T("训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。标注嘛，只能靠手。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Training automation is in Research, the automation row, crontab to AutoML. Labelling? That's by hand. Level " + lab.AutoTrainLevel + " now.");
+                return T("训练要你自己按「训练一轮」，没有挂机的法子。标注嘛，也只能靠手。",
+                         "Training means pressing 训练一轮 yourself; there is no idle mode. Labelling? That's by hand too.");
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab"))
-                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练的自动化在「科技」的自动化那一行，从 crontab 到 AutoML。现在自动化 " + lab.AutoTrainLevel + " 级。",
-                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training automation is in Research, crontab to AutoML. Level " + lab.AutoTrainLevel + " now.");
+                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练要你自己按「训练一轮」。",
+                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training you press yourself.");
             if (Has(q, "技能", "架构", "层", "宽", "tree", "skill", "layer", "alexnet", "lstm"))
-                return T("「科技」用钱买层数、宽度、数据包和自动化；「道具」买新结构和技巧。模型自己配：用最好的结构、装得下的最大尺寸，技巧全开。参数量不够就再练也涨不动，那就去加宽、加深。按住节点不放就买了。",
-                         "The tech tree sells layers, width, data packs and automation; the Items page sells structures and techniques. The model sets itself up: the best structure, the biggest size that fits, every technique on. Short of parameters it stops improving, so widen or deepen. Hold a node to buy it.");
+                return T("「科技」用钱买层数、宽度、数据包和研究；「道具」买新结构和技巧。模型自己配：用最好的结构、装得下的最大尺寸，技巧全开。参数量不够就再练也涨不动，那就去加宽、加深。按住节点不放就买了。",
+                         "The tech tree sells layers, width, data packs and research; the Items page sells structures and techniques. The model sets itself up: the best structure, the biggest size that fits, every technique on. Short of parameters it stops improving, so widen or deepen. Hold a node to buy it.");
             if (Has(q, "训练", "模型", "准确", "曲线", "过拟合", "检查点", "评估", "train", "model", "overfit", "checkpoint", "assess"))
                 return T("训练页按「训练一轮」，按一下跑一轮，不用调参数。每轮练完自动考一次，打个分，刷新纪录才给钱，纪录自动存成检查点。现在 " + v.arch + "，验证集 " + P(v.valAcc) + "，最佳 " + Best(lab, v.dataset) + "。",
                          "Press Train for one epoch; there is nothing to tune. Every epoch ends with an exam; only records pay and they save the checkpoint. Now " + v.arch + ", validation " + P(v.valAcc) + ", best " + Best(lab, v.dataset) + ".");
@@ -735,11 +761,14 @@ namespace LingGuangV05.Desktop.YY
             if (Has(q, "订单", "赚钱", "收入", "钱", "order", "contract", "money", "earn"))
                 return T("一开始只能在摆渡众包的标注台手点挣钱。有了检查点就能在摆渡众包接「企业订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
                          "At first you earn by hand at the labelling desk in Bodu Crowd. With a checkpoint you can take its business orders, which pay every second. Now ¥" + lab.IncomePerSecond.ToString("0.0") + "/s.");
+            if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label") && lab.OpeningFocus)
+                return T("先去「摆渡众包」的「标注台」，标「常识判断」：看句子点「是」或「否」。答对给钱、多一条样本。攒够 " + XgCatalog.SamplesToTrain + " 条就能回灵光训练，练到它分得清对错，别的桌和页面就都开了。你现在 " + lab.Samples("sense").ToString("0") + " 条。",
+                         "Open the labelling desk in Bodu Crowd and label Common sense: read the sentence and press Yes or No. Right answers pay and add a sample. " + XgCatalog.SamplesToTrain + " samples unlock training in LingGuang; train until it can tell right from wrong and the other desks and pages open. You have " + lab.Samples("sense").ToString("0") + ".");
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label"))
                 return T("先去「摆渡众包」的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局有算术、常识判断、逻辑题和垃圾短信：算术最简单，常识判断专教它分是和否，逻辑题最值钱，其它桌以后开。你现在算术 " + lab.Samples("arith").ToString("0") + " 条，常识判断 " + lab.Samples("sense").ToString("0") + " 条，逻辑题 " + lab.Samples("logic").ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
                          "Open the labelling desk in Bodu Crowd and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. You start with arithmetic, common sense, logic and spam: arithmetic is easiest, common sense is what teaches it yes from no, logic pays best, the other desks open later. Arithmetic " + lab.Samples("arith").ToString("0") + ", common sense " + lab.Samples("sense").ToString("0") + ", logic " + lab.Samples("logic").ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
-            return T("我不一定马上回。可以问我：怎么开始、算术、逻辑题、训练、连击、科技、自动化、退步、显卡、电费、阶段、订单。",
-                     "I may not answer right away. Ask me about: getting started, arithmetic, logic, training, combo, tech, automation, drops, cards, power, stages, orders.");
+            return T("我不一定马上回。可以问我：怎么开始、算术、逻辑题、训练、连击、科技、退步、显卡、电费、阶段、订单。",
+                     "I may not answer right away. Ask me about: getting started, arithmetic, logic, training, combo, tech, drops, cards, power, stages, orders.");
         }
 
         static string Best(XgSim lab, string dataset) { double b = lab.BestAcc(dataset); return b > 0 ? P(b) : "—"; }

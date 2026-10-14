@@ -47,14 +47,14 @@
 > `Editor/XgTrainPageLayoutQa.cs` renders the 训练 or 道具 page to a PNG in Edit mode (in-memory lab and household, nothing saved) for a look at the layout without Play mode.
 
 1. **标注台（开局唯一收入）**：每张桌一道是/否题。答对：¥0.5 × 连击加成（最多 ×2）× 难度加成，多一条样本；答错或超时：不给钱、连击清零、这条作废。答错时显示正确答案、理由和梗的出处。
-2. **训练是一个动作**：攒够 12 条样本后，在「训练」页按「训练一轮」。一轮 = 0.6 秒显卡时间，耗电记进家里电费；手按吃连击加成，自动训练只有一半效果。学习率太大会 NaN，退回一半进度、连击清零。
+2. **训练是一个动作**：攒够 12 条样本后，在「训练」页按「训练一轮」。一轮 = 0.6 秒显卡时间，耗电记进家里电费；手按吃连击加成。学习率太大会 NaN，退回一半进度、连击清零。
 3. **评估**：每 4 轮自动评估一次（也可以手动按）。模型分 0–1000（瞎猜 = 0，数据集极限 = 1000），评级 D/C/B/A/S（300/600/800/950）。刷新纪录才给钱：分数涨幅 × 数据集 citationBase × 0.2，首次达到每个评级另有奖金（C ¥20、B ¥60、A ¥200、S ¥800，× citationBase）。纪录自动存成检查点；订单、论文、自动答题都认它。连续 3 次没进步会提示卡在哪（学习率 / 数据 / 模型大小）。
 4. **技能树**（`XgCatalog.Nodes`，用 ¥ 买，按住节点 0.6 秒）：
    - 视觉：LeNet-5 → AlexNet（1 篇论文）→ VGG-16（3 篇）→ GoogLeNet（6 篇）/ ResNet（10 篇）；层数 3…32、宽度 32…1024、学习率旋钮、MNIST / CIFAR / ImageNet 数据包挂在下面。
    - 序列：朴素 RNN → LSTM（1 篇）→ GRU（3 篇）/ Seq2Seq（5 篇）→ 注意力（10 篇）；层数、宽度、旋钮、唐诗 / 逻辑题 / 人民日报 / 中英语料。
-   - 研究：动量 → RMSProp → Adam；梯度裁剪 → BatchNorm；Dropout → 数据增强；学习率衰减 → cuDNN → 迁移学习；自动化五级。
+   - 研究：动量 → RMSProp → Adam；梯度裁剪 → BatchNorm；Dropout → 数据增强；学习率衰减 → cuDNN → 迁移学习。
    - 层数、宽度是「上限」：在训练页 −/+ 免费调；买下时自动长到新上限（显存够的话）。没买旋钮时学习率固定（视觉 0.003、序列 0.001）。
-5. **自动化**：run.sh（按住连发）→ crontab（窗口开着时每 3 秒自动一轮）→ 守护进程（关窗也练，每 2 秒）→ 自动评估（每轮都评估，每 1.5 秒）→ AutoML（自动调学习率、卡住时换数据集、自动签订单，每 1 秒）。自动的轮次不算连击。
+5. **自动化已下线**：训练只能手按「训练一轮」；老存档里的自动化节点会一次性退款（「自动训练下线了，退回 ¥X」）。
 6. **连击**（`XgState.combo / bestCombo`）：标注答对 +1、老司机题 +2、训练一轮 +1、评估刷新纪录 +5。每桌有自己的续命时间（数字 3 秒、逻辑题 12 秒、训练 1.5 秒），超时清零。10「不错」、25「手热了」、50「上头」、100「灵光一闪」各有一次闪白 + 震屏 + 音效。
 7. **订单**：拖下方的检查点卡到订单上签约（也可以点按钮）。只显示数据已开放的订单。
 8. **加薪**（标注台右栏商店）：17 级，人工标注报酬 ×1 → ×1.5 → ×2 … ×11 … ×30，每级至少 +0.5；首级 ¥10，之后每级 ×1.7。每两级换一个头衔（实习标注员 → … → 首席标注官），换头衔时有「升职」特效。只加手标和 YY 答题，不加自动答题。可以按 ×1 / ×10 / 最大 批量买。旧存档里的一次性「人工标注加薪 ×2」节点自动换算成 5 级（现在是 ×4）。
@@ -218,6 +218,17 @@ Laya 是 Convai Innovations 在 2026 年 9 月以 Apache 2.0 开源的非自回�
 ### 摆渡百科爬虫 (data source)
 
 Offer `news.crawl` (`XgDataSource.Crawl`) on the 数据 page under 人民日报语料. Stage 3 (2016-08). One run costs ¥8 (= ¥0.04 × 200, the crowd task's price per label), lasts 60 s and can grab at most 200 words; every grabbed word is one row of `news`, stored like crowd rows (`dataExtra`, with 12% junk rows in `crowdNoise` that 数据清洗 halves), so the data bar counts it at the dataset's weight less the noise penalty. Closing early keeps what was grabbed. At the bottom of a page the crawler follows a link to the next article. Very rarely a darker spider's legs reach in from the edge for a few seconds and take nothing.
+
+### Words read count as samples (2026-10-09)
+
+Before: only the paid crawler's grabbed words counted (1 word = 1 row of `news` in `dataExtra`, so the data bar already had them, less the junk share); the first-appearance scene credited nothing, and the resident spider's reading of the desktop was pure animation, never counted or recorded.
+
+Now (`Core/XgSim.Reading.cs`, tests `Tests/Editor/XgReadTests.cs`): **1 word = 1 sample** (`XgSim.SamplesPerWord`, 1:1) of 人民日报语料 (`XgSim.ReadDataset`), for both readers, booked as crowd-style rows in `dataExtra`.
+- Crawler: unchanged cost and cap (¥8, 200 words, 12% junk that the noise penalty takes off). Its end-of-run line and the page now say 「+N 样本」.
+- Resident spider (free): each foot-plant on a *new* word calls `XgSim.ResidentRead` (hook: one line in `XgResidentSpider.OnPlanted` via `Desktop/XgReadCredit.cs`; the credit ring plays). The last 2048 distinct words are remembered and do not pay again, so re-walking the same screen is worth nothing; a fresh launch forgets, so a screen can pay once per launch. No junk share. The intro scene's words count the same way (at most 200).
+- Shown: the crawler counter reads 「+N 样本 / 200」 with the rule under it; 数据 page dataset note 「读到的词 +N」 and the dataset tooltip (`XgDataUi.SourcesSummary`) lists 「读到的词 N → +N 样本（爬虫 · 蜘蛛）」; the 概览/能力 sample notes and the train page's next-ability tooltip say 「含读到的词」; the lab log says so every 250 resident words.
+- Old saves: crawler words were already booked when grabbed, so nothing is credited twice (`XgState.readSchema` 0 → 1 only tops up a tally that has no rows behind it, once). The resident's earlier reads were never recorded, so there is nothing to credit; `XgState.residentWords` starts at 0.
+- Bot: `--spider=N` models N new resident words a minute from the first epoch (default 0 = as before).
 
 ## 已知未完成
 

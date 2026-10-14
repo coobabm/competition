@@ -37,7 +37,7 @@ namespace LingGuangV05.EditorTools
                 runtime.Sim.S.unpaidPower = false; runtime.Sim.S.billDue = 0; runtime.Sim.S.breakerTripped = false;
                 foreach(var n in XgCatalog.Nodes)
                 {
-                    if (n.stage > stage || n.kind == XgNodeKind.Project || n.kind == XgNodeKind.Auto || n.tree == "label") continue;
+                    if (n.stage > stage || n.kind == XgNodeKind.Project || n.tree == "label") continue;
                     if (!sim.S.unlocked.Contains(n.id)) sim.S.unlocked.Add(n.id);
                     if (n.kind == XgNodeKind.Dataset && !sim.S.owned.Contains(n.target)) sim.S.owned.Add(n.target);
                 }

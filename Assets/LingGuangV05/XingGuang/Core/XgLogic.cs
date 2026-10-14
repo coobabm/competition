@@ -21,7 +21,7 @@ namespace LingGuangV05.XingGuang
     /// Puzzle words are made up where real-world knowledge could interfere (syllogisms). Sums, number properties and
     /// number patterns live on the 算术 desk (<see cref="XgArith"/>); this desk is reasoning only.
     /// </summary>
-    public static class XgLogic
+    public static partial class XgLogic
     {
         public const int MaxLevel = 5;
 
@@ -36,10 +36,12 @@ namespace LingGuangV05.XingGuang
             (4, 2, Knights), (4, 2, Elimination),
         };
 
-        public static XgLogicQuestion Generate(int seed, int level)
+        public static XgLogicQuestion Generate(int seed, int level, int today = 20160524)
         {
             level = Math.Max(1, Math.Min(MaxLevel, level));
             var r = new Random(seed);
+            // Before the first meme is dated (today = 0 for a desk that is not topical) there is none to ask: fall through to a plain question.
+            if (r.Next(5) == 0) { var meme = MemeQuestion(r.Next(), today, level); if (meme != null) return meme; }
             var pool = new List<Gen>();
             foreach (var (min, weight, gen) in Generators) if (level >= min) for (int i = 0; i < weight; i++) pool.Add(gen);
             // Newly unlocked kinds show up more often at their first level.

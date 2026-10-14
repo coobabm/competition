@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 开心辞典</title>
+<!--
+  开心辞典 (CCTV quiz show feel): 12 questions of rising difficulty (4 tiers x 3), 4 options, 15 s each, a prize ladder with
+  safe points at question 4 and 8. Lifelines (once each): 求助灵光, 去掉两个错误答案, 换一题.
+  Label produced: (question, option) -> right / wrong common-sense judgement; every answered question = 1 sample.
+  求助灵光: 灵光 picks the right option with probability LG.skill() (minus 4% per difficulty tier). Its stated confidence is
+  only loosely tied to being right, so a weak 灵光 is often wrong AND confident. After the reveal, if 灵光 was wrong, it
+  says what the right answer was (that is the teaching moment).
+  Money is settled at the end: wrong or timeout -> last safe point, 放弃 -> current prize, clear all 12 -> top prize.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#kx{position:absolute;inset:0;display:grid;grid-template-columns:1fr 196px;background:radial-gradient(ellipse at 50% -10%,#35408F 0,#1A2050 45%,#0B0E2B 100%);color:#fff;overflow:hidden}
+#kx:before,#kx:after{content:"";position:absolute;top:-40px;width:380px;height:560px;background:conic-gradient(from 160deg at 50% 0,transparent 0 20deg,#ffffff18 20deg 40deg,transparent 40deg);opacity:.55;pointer-events:none;transform-origin:50% 0;animation:kxsw 7s ease-in-out infinite alternate}
+#kx:before{left:40px}
+#kx:after{right:230px;animation-delay:-3.5s;animation-direction:alternate-reverse}
+@keyframes kxsw{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.kx-main{position:relative;display:flex;flex-direction:column;padding:12px 18px 12px 20px;gap:10px;z-index:1;min-width:0}
+.kx-top{display:flex;align-items:center;gap:14px}
+.kx-logo{font-size:26px;font-weight:900;letter-spacing:4px;color:#FFD84A;text-shadow:0 0 14px #FFB300aa,0 2px 0 #7a4b00}
+.kx-logo small{display:block;font-size:11px;letter-spacing:2px;color:#9FB0FF;text-shadow:none;font-weight:400}
+.kx-host{flex:1;background:#ffffff14;border:1px solid #ffffff2a;border-radius:18px;padding:6px 14px;font-size:13px;color:#DDE3FF;min-height:30px;line-height:1.5}
+.kx-timer{width:60px;height:60px;border-radius:50%;background:conic-gradient(#FFD84A calc(var(--p,100)*1%),#ffffff22 0);display:flex;align-items:center;justify-content:center;flex:none}
+.kx-timer span{width:48px;height:48px;border-radius:50%;background:#10163F;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.kx-timer.low{--c:#ff5a4f;animation:kxlow .5s infinite}
+.kx-timer.low span{color:#ff7a70}
+@keyframes kxlow{50%{transform:scale(1.08)}}
+.kx-q{position:relative;border:3px solid #FFD84A;border-radius:14px;background:linear-gradient(#1B2878,#121A56);padding:16px 22px;font-size:24px;line-height:1.5;text-align:center;min-height:100px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px #FFB30055,inset 0 0 20px #0006}
+.kx-q .no{position:absolute;left:12px;top:-14px;background:#FFD84A;color:#5a3a00;border-radius:12px;padding:1px 14px;font-size:14px;font-weight:800}
+.kx-q .dif{position:absolute;right:12px;top:-14px;background:#2d3a9a;border:1px solid #FFD84A;border-radius:12px;padding:1px 12px;font-size:12px;color:#FFE9A0}
+.kx-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kx-op{position:relative;height:58px;border:2px solid #6D7BD6;border-radius:30px;background:linear-gradient(#1B2878,#141C5C);color:#fff;font-size:19px;font-family:inherit;display:flex;align-items:center;gap:12px;padding:0 18px;cursor:pointer;text-align:left;transition:transform .1s,border-color .1s,background .1s}
+.kx-op:hover:not(:disabled){border-color:#FFD84A;transform:scale(1.02)}
+.kx-op b{width:30px;height:30px;border-radius:50%;background:#FFD84A;color:#5a3a00;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.kx-op.sel{background:linear-gradient(#E68A00,#B86500);border-color:#FFD84A;animation:kxblink .3s infinite}
+@keyframes kxblink{50%{filter:brightness(1.4)}}
+.kx-op.ok{background:linear-gradient(#2FAE55,#1E8A40);border-color:#B6FFC9}
+.kx-op.bad{background:linear-gradient(#D83A3A,#9E2222);border-color:#FFB3B3}
+.kx-op.gone{visibility:hidden}
+.kx-op.ai{border-color:var(--ai)}
+.kx-op .aitag{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:var(--ai);color:#fff;border-radius:12px;font-size:12px;padding:1px 9px;line-height:18px;display:none}
+.kx-op.ai .aitag{display:block}
+.kx-life{display:flex;gap:10px;align-items:stretch}
+.kx-lf{flex:1;border:2px solid #FFD84A88;background:#ffffff12;color:#fff;border-radius:12px;padding:6px 8px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.35}
+.kx-lf b{display:block;font-size:15px}.kx-lf small{opacity:.7;font-size:11px}
+.kx-lf:hover:not(:disabled){background:#ffffff26;border-color:#FFD84A}
+.kx-lf:disabled{opacity:.3;text-decoration:line-through;cursor:default}
+.kx-lf.ai{border-color:var(--ai);background:#8A78E822}
+.kx-quit{width:92px;border:2px solid #ff7a7088;background:#ff5a4f22;color:#ffb3ad;border-radius:12px;font-family:inherit;font-size:13px;cursor:pointer}
+.kx-quit:hover:not(:disabled){background:#ff5a4f44}
+.kx-quit:disabled{opacity:.3;cursor:default}
+.kx-aibox{min-height:44px;background:#8A78E826;border:1px solid #8A78E8;border-radius:10px;padding:6px 12px;font-size:13px;color:#E6E0FF;display:flex;align-items:center;gap:10px;line-height:1.45}
+.kx-aibox .cf{width:96px;height:8px;background:#ffffff25;border-radius:4px;overflow:hidden;flex:none}.kx-aibox .cf i{display:block;height:100%;background:#B7A9FF}
+.kx-ladder{position:relative;z-index:1;background:#0008;border-left:2px solid #FFD84A55;display:flex;flex-direction:column-reverse;padding:8px 10px;gap:3px}
+.kx-st{flex:1;display:flex;align-items:center;gap:8px;padding:0 8px;border-radius:7px;font-size:13px;color:#9FB0FF;position:relative}
+.kx-st i{font-style:normal;width:22px;text-align:right;font-size:12px;opacity:.8}
+.kx-st b{margin-left:auto;font-size:14px;color:#FFE9A0;font-variant-numeric:tabular-nums}
+.kx-st.safe{color:#fff}.kx-st.safe i{color:#FFD84A;opacity:1}.kx-st.safe:after{content:"安全";position:absolute;right:62px;font-size:10px;color:#FFD84A}
+.kx-st.done{background:#2FAE5533;color:#B6FFC9}
+.kx-st.now{background:linear-gradient(90deg,#E68A00,#FFB300);color:#3a2300;font-weight:800}.kx-st.now b{color:#3a2300}.kx-st.now i{color:#3a2300}
+.kx-conf{position:absolute;width:8px;height:8px;pointer-events:none;z-index:40;animation:kxfall 1.4s ease-in forwards}
+@keyframes kxfall{from{transform:translate(0,0) rotate(0);opacity:1}to{transform:translate(var(--dx),520px) rotate(720deg);opacity:.2}}
+.over{z-index:50;background:#0B0E2Bee;color:#fff}.over p{color:#C9D2F0}
+.over .big{font-size:52px}
+.over table{border-collapse:collapse;font-size:14px}.over td{padding:3px 16px;text-align:left}.over td:last-child{text-align:right;font-weight:700;color:#FFE9A0}
+.over h2{color:#FFD84A}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'kaixincidian', title:'开心辞典', subtitle:'连答 12 题 · 求助灵光', icon:'🎤', dataset:'常识问答',
+  stats:[['答到第几题','sQ','0 / 12'],['答对','sOk'],['求助灵光','sAiN'],['灵光答对','sAiOk'],['当前奖金','sPrize','¥0']],
+  statsNote:'每答一题 = 1 条样本',
+  aiHello:'常识题……我会尽力帮你，但别全信我。',
+  rule:'<b>玩法</b>：12 题，每题 15 秒，难度逐级上升。答错回到最近的<b>安全点</b>（第 4、8 题），中途「放弃」可拿走当前奖金。<br><b>求助灵光</b>：它答对的概率就是它的水平，而且它自己的把握并不总靠谱。<br><b>快捷键</b>：A/B/C/D 或 1–4 作答；Z 求助灵光、X 去掉两个、V 换一题、Esc 放弃。'
+});
+const $=s=>document.querySelector(s);
+const {pick,rnd,shuffle}=LG;
+
+let AC=null;
+function beep(f,d=.08,type='sine',v=.05,f2){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;
+    o.type=type;o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d);
+  }catch(e){}
+}
+
+// ---------- question bank: [question, correct, wrong1, wrong2, wrong3]; four difficulty tiers ----------
+const BANK={
+1:[
+['彩虹一般有几种颜色？','七种','五种','六种','八种'],
+['中国的首都是哪座城市？','北京','上海','广州','南京'],
+['下列哪种动物是哺乳动物？','鲸鱼','鲨鱼','乌贼','海龟'],
+['在标准大气压下，水多少摄氏度沸腾？','100 ℃','90 ℃','80 ℃','120 ℃'],
+['「床前明月光」的下一句是？','疑是地上霜','低头思故乡','举头望明月','月落乌啼霜满天'],
+['2016年夏季奥运会的举办城市是？','里约热内卢','伦敦','北京','东京'],
+['《西游记》中孙悟空的兵器是？','金箍棒','青龙偃月刀','方天画戟','三叉戟'],
+['太阳每天从哪个方向升起？','东方','西方','南方','北方'],
+['一米等于多少厘米？','100','10','1000','50'],
+['大熊猫最爱吃的食物是？','竹子','肉','鱼','树叶'],
+['中国的国庆节是哪一天？','10月1日','5月1日','1月1日','8月1日'],
+['十二生肖中排在第一位的是？','鼠','牛','虎','龙'],
+['北京奥运会是哪一年举办的？','2008年','2004年','2012年','2000年'],
+['人民币第五套纸币上印的是谁的头像？','毛泽东','孙中山','邓小平','周恩来'],
+['一支足球队场上一共有几名球员（含守门员）？','11 名','9 名','10 名','12 名'],
+['地球自转一周大约需要多长时间？','24 小时','12 小时','一个月','一年'],
+['被称为「诗仙」的唐代诗人是？','李白','杜甫','白居易','王维'],
+['英国的首都是哪座城市？','伦敦','巴黎','柏林','纽约'],
+],
+2:[
+['《红楼梦》的作者是？','曹雪芹','吴承恩','施耐庵','罗贯中'],
+['光在真空中的速度大约是每秒多少公里？','30 万公里','3 万公里','300 万公里','3000 公里'],
+['人体最大的器官是？','皮肤','肝脏','肺','大脑'],
+['化学元素符号「Au」代表的是？','金','银','铝','铜'],
+['国际象棋的棋盘一共有多少个格子？','64','81','100','49'],
+['《哈利·波特》系列的作者是？','J.K.罗琳','托尔金','乔治·马丁','丹·布朗'],
+['地球上最大的陆地动物是？','非洲象','犀牛','长颈鹿','河马'],
+['下列哪座城市是中国的直辖市？','重庆','成都','杭州','武汉'],
+['中国大陆的手机号码一共有几位？','11 位','10 位','12 位','9 位'],
+['中国科学家屠呦呦因发现什么而获得2015年诺贝尔奖？','青蒿素','胰岛素','抗生素','干扰素'],
+['下列哪一项不属于中国古代四大发明？','丝绸','造纸术','火药','指南针'],
+['第一位获得诺贝尔文学奖的中国籍作家是？','莫言','巴金','老舍','余华'],
+['元素周期表中原子序数为 1 的元素是？','氢','氦','锂','碳'],
+['圆周率 π 约等于？','3.14159','3.16159','3.41159','2.14159'],
+['提出相对论的物理学家是？','爱因斯坦','牛顿','伽利略','霍金'],
+['2016年3月，AlphaGo 以 4:1 战胜了哪位围棋九段？','李世石','柯洁','古力','常昊'],
+['植物的光合作用主要吸收哪种气体？','二氧化碳','氧气','氮气','氢气'],
+['被称为「诗圣」的唐代诗人是？','杜甫','李白','白居易','王维'],
+['网络流行字「囧」最常用来表达什么心情？','郁闷、尴尬','开心','生气','饥饿'],
+['奥运五环的颜色里没有下列哪一种？','紫色','红色','黑色','绿色'],
+['太阳系中体积最大的行星是？','木星','土星','地球','海王星'],
+['联合国总部设在哪座城市？','纽约','日内瓦','伦敦','巴黎'],
+['人类第一个登上月球的是？','阿姆斯特朗','加加林','奥尔德林','杨利伟'],
+['马拉松比赛的全程大约是多少公里？','42.195','21.0975','50','36.5'],
+['2016年5月，美国总统是？','奥巴马','克林顿','小布什','特朗普'],
+],
+3:[
+['「但愿人长久，千里共婵娟」的作者是？','苏轼','李白','李清照','辛弃疾'],
+['世界上面积最小的国家是？','梵蒂冈','摩纳哥','圣马力诺','瑙鲁'],
+['世界上最深的海沟是？','马里亚纳海沟','日本海沟','波多黎各海沟','爪哇海沟'],
+['《清明上河图》描绘的是哪座城市的景象？','汴京（今开封）','长安','杭州','洛阳'],
+['「O2O」中的第一个「O」指的是？','Online','Offline','Open','Order'],
+['DNA 的中文全称是？','脱氧核糖核酸','核糖核酸','氨基酸','蛋白质'],
+['提出「日心说」的科学家是？','哥白尼','托勒密','布鲁诺','伽利略'],
+['电话的发明者通常认为是？','贝尔','爱迪生','特斯拉','马可尼'],
+['世界上最早的纸币「交子」出现在哪个朝代？','宋朝','唐朝','元朝','明朝'],
+['「不到长城非好汉」出自谁的诗词？','毛泽东','李白','岳飞','曹操'],
+['国际单位制中，力的单位是？','牛顿','焦耳','瓦特','帕斯卡'],
+['酸雨的形成主要与下列哪种气体有关？','二氧化硫','氧气','氮气','氦气'],
+['下列哪座山属于佛教「四大名山」？','五台山','泰山','华山','黄山'],
+['中国最大的淡水湖是？','鄱阳湖','洞庭湖','太湖','青海湖'],
+['成年人的骨头一共有多少块？','206','108','300','180'],
+['爱国诗人屈原是哪个诸侯国的人？','楚国','齐国','秦国','赵国'],
+['第一个进入太空的人是？','加加林','阿姆斯特朗','格伦','杨利伟'],
+['下列哪座城市不在长江沿岸？','广州','武汉','南京','重庆'],
+['血液中负责运输氧气的是？','红细胞','白细胞','血小板','血浆'],
+['图灵测试是用来判断什么的？','机器是否具有智能','电脑运算速度','软件有没有漏洞','网络延迟'],
+['2016年2月，科学家宣布首次直接探测到了什么？','引力波','暗物质','希格斯玻色子','中微子'],
+['世界上除南极洲外最大的沙漠是？','撒哈拉沙漠','戈壁沙漠','塔克拉玛干沙漠','阿拉伯沙漠'],
+],
+4:[
+['标准乒乓球的直径是多少毫米？','40','38','44','50'],
+['下列哪位不属于「唐宋八大家」？','李白','韩愈','柳宗元','欧阳修'],
+['2015年，谷歌新成立的母公司名叫？','Alphabet','Google X','Android','Chrome'],
+['「摩尔定律」说的是什么大约每两年翻一番？','集成电路上的晶体管数量','手机屏幕尺寸','硬盘价格','网络速度'],
+['中国发射的第一颗人造地球卫星叫？','东方红一号','神舟一号','嫦娥一号','天宫一号'],
+['1984年，中国第一位奥运会金牌得主是？','许海峰','郎平','李宁','刘翔'],
+['下列哪部不属于莎士比亚「四大悲剧」？','《罗密欧与朱丽叶》','《哈姆雷特》','《奥赛罗》','《李尔王》'],
+['「三十六计」中的最后一计是？','走为上','空城计','美人计','苦肉计'],
+['《诗经》一共收录了多少首诗？','305','300','365','108'],
+['2016年第88届奥斯卡最佳影片是？','《聚焦》','《荒野猎人》','《火星救援》','《王牌特工》'],
+['被誉为「计算机科学之父」、提出「图灵机」的人是？','阿兰·图灵','冯·诺依曼','比尔·盖茨','香农'],
+['「大数据」常被概括为 4V，下列哪一个不在其中？','Visible（可见）','Volume（大量）','Velocity（高速）','Variety（多样）'],
+]};
+const DIFF_NAME={1:'热身',2:'进阶',3:'挑战',4:'终极'};
+
+// ---------- prize ladder ----------
+const LADDER=[1,2,3,4,6,8,10,13,17,22,30,50];
+const SAFE_AT=[3,7];                      // indexes of safe points (questions 4 and 8)
+const safeAmount=cleared=>cleared>=8?LADDER[7]:cleared>=4?LADDER[3]:0;
+const HOST={
+  start:['欢迎来到《开心辞典》！今天的挑战者是——你！','准备好了吗？我们开始吧！'],
+  ok:['答对了！','恭喜你！','正确！太棒了！','没错，就是它！'],
+  safe:['到达安全点了！就算后面答错，这些钱也是你的。'],
+  bad:['很遗憾……','答错了，真可惜。'],
+  wait:['请注意，时间在走哦。','仔细想想，不着急……','你确定吗？'],
+  swap:['好的，给你换一道题。'],
+};
+const LABEL='ABCD';
+let RUN=0, Q=null, tmr=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+stage.innerHTML=`
+<div id="kx">
+  <div class="kx-main">
+    <div class="kx-top"><div class="kx-logo">开心辞典<small>HAPPY DICTIONARY</small></div><div class="kx-host" id="kxHost">🎤 欢迎来到《开心辞典》</div>
+      <div class="kx-timer" id="kxTm"><span id="kxTmN">15</span></div></div>
+    <div class="kx-q" id="kxQ"><span class="no" id="kxNo">第 1 题</span><span class="dif" id="kxDif"></span><span id="kxQT">……</span></div>
+    <div class="kx-opts" id="kxOpts"></div>
+    <div class="kx-aibox" id="kxAi" style="display:none"></div>
+    <div class="kx-life">
+      <button class="kx-lf ai" id="lfAi"><b>🕷 求助灵光 (Z)</b><small>它的把握不一定靠谱</small></button>
+      <button class="kx-lf" id="lfFifty"><b>✂ 去掉两个错误答案 (X)</b><small>剩一对一选</small></button>
+      <button class="kx-lf" id="lfSwap"><b>🔁 换一题 (V)</b><small>同难度另一道</small></button>
+      <button class="kx-quit" id="kxQuit">放弃<br>拿走奖金<br>(Esc)</button>
+    </div>
+  </div>
+  <div class="kx-ladder" id="kxLad"></div>
+</div>
+<div class="over" id="kxOver">
+  <div class="big">🎤</div><h2>开心辞典</h2>
+  <p>12 道常识题，每题 15 秒，难度越来越高，奖金一路上涨。<br>第 4、8 题是<b>安全点</b>：答错也能保住这里的奖金。<br>有三个求助机会：<b>求助灵光</b>、<b>去掉两个错误答案</b>、<b>换一题</b>。<br>灵光答得对不对，取决于它现在的水平——它的把握，也不一定靠谱。</p>
+  <button class="btn" id="kxGo" style="font-size:18px;padding:10px 40px">上场（回车）</button>
+</div>`;
+const lad=$('#kxLad');
+for(let i=0;i<12;i++){ const d=document.createElement('div'); d.className='kx-st'+(SAFE_AT.includes(i)?' safe':''); d.id='st'+i; d.innerHTML='<i>'+(i+1)+'</i><span>'+(SAFE_AT.includes(i)?'◆':'')+'</span><b>¥'+LADDER[i]+'</b>'; lad.appendChild(d); }
+const host=t=>$('#kxHost').textContent='🎤 '+t;
+
+function pickQ(diff){
+  const pool=BANK[diff].filter(q=>!Q.used.has(q[0]));
+  const q=pick(pool.length?pool:BANK[diff]); Q.used.add(q[0]);
+  const opts=shuffle(q.slice(1).map((t,i)=>({t,ok:i===0})));
+  return {text:q[0],opts,diff};
+}
+function showQ(){
+  const q=Q.cur; $('#kxNo').textContent='第 '+(Q.n+1)+' 题 · ¥'+LADDER[Q.n]; $('#kxDif').textContent=DIFF_NAME[q.diff];
+  $('#kxQT').textContent=q.text;
+  const box=$('#kxOpts'); box.innerHTML='';
+  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='kx-op'; b.innerHTML='<b>'+LABEL[i]+'</b><span></span><span class="aitag">灵</span>';
+    b.querySelector('span').textContent=o.t; b.onclick=()=>choose(i); o.el=b; o.gone=false; box.appendChild(b); });
+  const ai=$('#kxAi'); ai.style.display='none'; ai.innerHTML='';
+  for(let i=0;i<12;i++){ const e=$('#st'+i); e.classList.toggle('now',i===Q.n); e.classList.toggle('done',i<Q.n); }
+  LG.set('sQ',(Q.n+1)+' / 12'); LG.set('sPrize','¥'+(Q.n?LADDER[Q.n-1]:0));
+  Q.locked=false; Q.left=15; Q.aiPick=-1; updTimer();
+}
+function updTimer(){
+  const t=$('#kxTm'); t.style.setProperty('--p',Q.left/15*100); $('#kxTmN').textContent=Math.ceil(Q.left);
+  t.classList.toggle('low',Q.left<=5);
+}
+function startTimer(){
+  clearInterval(tmr);
+  tmr=setInterval(()=>{
+    if(!Q||Q.locked||Q.over) return;
+    Q.left=Math.max(0,Q.left-.1); updTimer();
+    if(Q.left<=5&&Math.abs(Q.left-Math.round(Q.left))<.05) beep(880,.05,'square',.03);
+    if(Q.left<=0){ clearInterval(tmr); timeout(); }
+  },100);
+}
+function lockUI(on){ Q.locked=on; }
+
+async function choose(i){
+  if(!Q||Q.locked||Q.over) return; const o=Q.cur.opts[i]; if(o.gone) return;
+  const id=RUN; lockUI(true);
+  o.el.classList.add('sel'); host(pick(HOST.wait)); beep(440,.1,'triangle',.05);
+  await sleep(1100); if(id!==RUN) return;
+  await reveal(i);
+}
+async function timeout(){
+  if(!Q||Q.over) return; lockUI(true); host('时间到！'); beep(120,.5,'sawtooth',.06,60); LG.shake($('#kxQ'));
+  await sleep(600); await reveal(-1);
+}
+async function reveal(i){
+  const id=RUN, q=Q.cur, rightI=q.opts.findIndex(o=>o.ok);
+  q.opts[rightI].el.classList.remove('sel'); q.opts[rightI].el.classList.add('ok');
+  const good=(i===rightI);
+  if(i>=0&&!good){ q.opts[i].el.classList.remove('sel'); q.opts[i].el.classList.add('bad'); }
+  Q.answered++; LG.give(1,0); LG.hist(good?'ok':'no',good?'✓':'✗');
+  // 灵光 learns from the reveal if it was consulted
+  if(Q.aiPick>=0){
+    Q.aiRes++;
+    if(Q.aiPick===rightI){ LG.say('灵光：看，我答对了，对吧。'); Q.aiOk++; LG.set('sAiOk',Q.aiOk); }
+    else LG.say('灵光：……原来是「'+q.opts[rightI].t+'」，不是我选的那个。我记住了。');
+  }
+  if(good){
+    Q.right++; LG.set('sOk',Q.right); beep(660,.12,'triangle',.06,990); setTimeout(()=>beep(990,.2,'triangle',.06),120);
+    confetti(); host(pick(HOST.ok)+(SAFE_AT.includes(Q.n)?pick(HOST.safe):''));
+    Q.n++; LG.set('sPrize','¥'+LADDER[Q.n-1]); LG.float({x:700,y:120},'¥'+LADDER[Q.n-1],'#FFD84A');
+    await sleep(1500); if(id!==RUN) return;
+    if(Q.n>=12){ return end('clear'); }
+    Q.cur=pickQ(Math.floor(Q.n/3)+1); showQ(); startTimer();
+  }else{
+    host(pick(HOST.bad)+(i<0?'':'')); beep(130,.5,'sawtooth',.06,50); LG.shake($('#kxQ'));
+    await sleep(1800); if(id!==RUN) return;
+    end('fail');
+  }
+}
+function confetti(){
+  const k=$('#kx'); const cols=['#FFD84A','#FF6B6B','#6BCB77','#4D96FF','#C77DFF'];
+  for(let j=0;j<26;j++){ const c=document.createElement('i'); c.className='kx-conf'; c.style.background=pick(cols); c.style.left=(120+rnd(600))+'px'; c.style.top=(60+rnd(40))+'px'; c.style.setProperty('--dx',(rnd(160)-80)+'px'); c.style.animationDelay=(rnd(300))+'ms'; k.appendChild(c); setTimeout(()=>c.remove(),1900); }
+}
+
+// ---------- lifelines ----------
+function visible(){ return Q.cur.opts.map((o,i)=>({o,i})).filter(x=>!x.o.gone); }
+function useAi(){
+  if(!Q||Q.locked||Q.over||!Q.life.ai) return;
+  Q.life.ai=false; $('#lfAi').disabled=true; Q.aiN++; LG.set('sAiN',Q.aiN);
+  const s=LG.skill(), q=Q.cur, rightI=q.opts.findIndex(o=>o.ok);
+  const p=Math.max(.1,s-.04*(q.diff-1));
+  const vis=visible();
+  const right=Math.random()<p;
+  const pickI=right?rightI:pick(vis.filter(x=>x.i!==rightI)).i;
+  // stated confidence is only loosely tied to being right
+  const conf=right?Math.min(.98,.45+.4*s+Math.random()*.15):.3+Math.random()*.6;
+  const box=$('#kxAi'); box.style.display='flex'; box.textContent='灵光思考中…'; Q.locked=true;
+  LG.say(s<.4?'我想想……这题我也不太确定。':s<.7?'让我想想这个问题。':'我来看看。');
+  const id=RUN;
+  setTimeout(()=>{
+    if(id!==RUN||Q.over) return; Q.locked=false; Q.aiPick=pickI;
+    const L=LABEL[pickI];
+    box.innerHTML='<span class="tagai">灵光</span><span>我选 <b>'+L+'</b>。'+(conf>.8?'把握很大！':conf>.55?'有点把握。':'……猜的。')+'</span><span class="cf"><i style="width:'+Math.round(conf*100)+'%"></i></span><b>'+Math.round(conf*100)+'%</b>';
+    q.opts[pickI].el.classList.add('ai'); beep(700,.15,'triangle',.05);
+    LG.say(conf>.8?'选 '+L+'！我很肯定。':conf>.55?'我倾向于 '+L+'。':'我猜是 '+L+'……');
+  },1100+(1-s)*800);
+}
+function useFifty(){
+  if(!Q||Q.locked||Q.over||!Q.life.fifty) return;
+  Q.life.fifty=false; $('#lfFifty').disabled=true;
+  const wrong=visible().filter(x=>!x.o.ok); shuffle(wrong).slice(0,2).forEach(x=>{ x.o.gone=true; x.o.el.classList.add('gone'); });
+  host('好的，去掉两个错误答案。'); beep(520,.12,'square',.04,260);
+}
+function useSwap(){
+  if(!Q||Q.locked||Q.over||!Q.life.swap) return;
+  Q.life.swap=false; $('#lfSwap').disabled=true; host(pick(HOST.swap));
+  Q.cur=pickQ(Q.cur.diff); const left=Q.left; showQ(); Q.left=left; updTimer(); beep(400,.12,'triangle',.05,700);
+  LG.say('换题了。刚才那题我也没来得及看。');
+}
+function giveUp(){
+  if(!Q||Q.locked||Q.over) return; if(Q.n===0){ host('还没答题，不能放弃哦。'); return; }
+  end('quit');
+}
+
+function end(kind){
+  Q.over=true; clearInterval(tmr);
+  let prize;
+  if(kind==='clear') prize=LADDER[11];
+  else if(kind==='quit') prize=LADDER[Q.n-1];
+  else prize=safeAmount(Q.n);
+  if(prize) LG.give(0,prize);
+  LG.set('sPrize','¥'+prize);
+  const ov=$('#kxOver'); ov.style.display='flex';
+  const title=kind==='clear'?'通关！开心辞典大奖':kind==='quit'?'见好就收':prize?'答错了，保住了安全点奖金':'答错了，空手而归';
+  const s=LG.skill();
+  ov.innerHTML=`<div class="big">${kind==='clear'?'🏆':kind==='quit'?'💰':'🎤'}</div><h2>${title}</h2>
+    <table>
+      <tr><td>答对题数</td><td>${Q.right} / 12</td></tr>
+      <tr><td>最终奖金</td><td>¥${prize}</td></tr>
+      <tr><td>提交的样本</td><td>${Q.answered} 条</td></tr>
+      <tr><td><span class="tagai">灵光</span> 被求助</td><td>${Q.aiN?Q.aiN+' 次，答对 '+Q.aiOk+' / '+Q.aiRes+' 次':'没有被求助'}</td></tr>
+    </table>
+    <p>${Q.aiRes&&!Q.aiOk?'灵光：我一道都没答对……你可以教我吧。':Q.aiRes?'灵光：谢谢你信我，下次我会更靠谱。':Q.aiN?'灵光：你问了我又换题……我白想了一回。':'灵光：下次可以问问我嘛。'}（现在水平 ${Math.round(s*100)}%）</p>
+    <button class="btn" id="kxAgain" style="font-size:16px;padding:9px 34px">再来一局（回车）</button>`;
+  $('#kxAgain').onclick=start;
+  LG.say(Q.aiRes?(Q.aiOk===Q.aiRes?'这次你问我的我都答对了！':'你问我的题里，我答错了 '+(Q.aiRes-Q.aiOk)+' 道，答案我都记下了。'):'这局你没怎么问我。我自己在旁边偷偷学。');
+}
+
+function start(){
+  RUN++; clearInterval(tmr);
+  Q={n:0,used:new Set(),life:{ai:true,fifty:true,swap:true},locked:true,over:false,left:15,right:0,answered:0,aiN:0,aiRes:0,aiOk:0,aiPick:-1,cur:null};
+  ['lfAi','lfFifty','lfSwap'].forEach(i=>$('#'+i).disabled=false);
+  ['sOk','sAiN','sAiOk'].forEach(k=>LG.set(k,0)); const hs=document.getElementById('lgHist'); if(hs) hs.innerHTML='';
+  $('#kxOver').style.display='none';
+  Q.cur=pickQ(1); showQ(); host(pick(HOST.start)); startTimer();
+  const s=LG.skill();
+  LG.say(s<.4?'常识题……我会的不多，但可以试试。':s<.7?'我可以帮你一道，别指望全对。':'我现在准备得挺充分，卡住了就问我。');
+}
+$('#kxGo').onclick=start;
+$('#lfAi').onclick=useAi; $('#lfFifty').onclick=useFifty; $('#lfSwap').onclick=useSwap; $('#kxQuit').onclick=giveUp;
+addEventListener('keydown',e=>{
+  if(e.repeat) return;
+  const over=$('#kxOver').style.display!=='none';
+  if(over){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); start(); } return; }
+  const k=e.key.toLowerCase();
+  if(k.length===1&&'abcd'.includes(k)){ choose('abcd'.indexOf(k)); return; }
+  if(/^[1-4]$/.test(k)){ choose(+k-1); return; }
+  if(k==='z') useAi(); else if(k==='x') useFifty(); else if(k==='v') useSwap(); else if(k==='escape') giveUp();
+});
+</script>
+</body>
+</html>

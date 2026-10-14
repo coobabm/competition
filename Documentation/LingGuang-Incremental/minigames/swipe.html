@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 左滑右滑</title>
+<!--
+  左滑右滑 (探探, 2015 swipe UI). News-headline cards: drag or flick LEFT = 标题党 (clickbait), RIGHT = 正经新闻.
+  Real swipe physics: the card follows the pointer, tilts with its x offset, fling speed is measured from the last ~120 ms of
+  pointer samples, a slow short drag springs back (damped spring), a flick or a long drag commits and the card flies off with
+  its release velocity. Each swipe is a (headline -> clickbait / not) label.
+  灵光 shows a purple suggestion chip on every card: right with probability LG.skill(), and it takes longer to appear at low skill.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+.sw{position:absolute;inset:0;background:linear-gradient(160deg,#FFF1F0 0%,#F4F6FF 50%,#EAFBF1 100%);overflow:hidden;touch-action:none}
+.hudbar{position:absolute;left:18px;right:18px;top:12px;display:flex;align-items:center;gap:14px;font-size:14px;color:#555}
+.hudbar .tbar{flex:1;height:8px;background:#E4E6EE;border-radius:4px;overflow:hidden}.hudbar .tbar i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.hudbar b{font-size:18px;color:var(--ink)}
+.streak{position:absolute;right:26px;top:48px;font-size:26px;font-weight:900;color:#FF5A3C;text-shadow:0 2px 0 #fff;transition:transform .15s;pointer-events:none}
+.lab{position:absolute;top:240px;width:150px;text-align:center;font-weight:800;font-size:22px;opacity:.28;pointer-events:none;line-height:1.5}
+.lab small{display:block;font-weight:400;font-size:13px}
+.lab.l{left:30px;color:#E33E33}.lab.r{right:30px;color:#2F9E44}
+.deck{position:absolute;left:50%;top:50px;width:380px;height:420px;margin-left:-190px}
+.cd{position:absolute;inset:0;background:#fff;border-radius:18px;box-shadow:0 8px 28px #0003;overflow:hidden;transform-origin:50% 85%;cursor:grab;will-change:transform;display:flex;flex-direction:column}
+.cd.nx{transform:scale(.94) translateY(18px);filter:brightness(.97);cursor:default}
+.cd .pic{height:190px;display:flex;align-items:center;justify-content:center;font-size:96px;position:relative}
+.cd .pic .no{position:absolute;left:12px;bottom:8px;font-size:12px;color:#fff;background:#0005;border-radius:8px;padding:0 8px;line-height:20px}
+.cd .ttl{padding:16px 20px 6px;font-size:23px;font-weight:800;line-height:1.5;color:#222;flex:1}
+.cd .meta{padding:0 20px 14px;font-size:12px;color:#9AA0AE;display:flex;justify-content:space-between}
+.aichip{position:absolute;left:12px;top:12px;background:var(--ai);color:#fff;border-radius:14px;padding:3px 12px;font-size:14px;font-weight:700;box-shadow:0 3px 10px #8A78E877;opacity:0;transform:scale(.6);transition:opacity .2s,transform .2s;white-space:nowrap}
+.aichip.on{opacity:1;transform:scale(1)}
+.stp{position:absolute;top:26px;border:5px solid;border-radius:10px;font-size:34px;font-weight:900;padding:0 12px;opacity:0;pointer-events:none;background:#fffa}
+.stp.l{right:22px;color:#E33E33;border-color:#E33E33;transform:rotate(14deg)}
+.stp.r{left:22px;color:#2F9E44;border-color:#2F9E44;transform:rotate(-14deg)}
+.btnrow{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:56px;align-items:center}
+.rb{width:66px;height:66px;border-radius:50%;background:#fff;border:none;font-size:30px;cursor:pointer;box-shadow:0 4px 14px #0003;transition:transform .1s;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1}
+.rb:hover{transform:scale(1.12)}.rb:active{transform:scale(.94)}
+.rb small{font-size:11px;font-weight:700;margin-top:2px}
+.rb.l{color:#E33E33}.rb.r{color:#2F9E44}
+.toast{position:absolute;left:50%;top:230px;transform:translateX(-50%);background:#222d;color:#fff;border-radius:20px;padding:8px 20px;font-size:16px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;white-space:nowrap}
+.toast.on{opacity:1}
+.flash{position:absolute;inset:0;pointer-events:none;background:#E33E33;opacity:0;z-index:15}
+.flash.on{animation:fl .35s}
+@keyframes fl{from{opacity:.3}to{opacity:0}}
+.over{background:#fffffff2}
+.res{display:grid;grid-template-columns:auto auto;gap:6px 26px;text-align:left;font-size:15px;color:#333}.res b{text-align:right}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'swipe', title:'左滑右滑', subtitle:'探探式刷新闻 · 抓标题党', icon:'滑', dataset:'标题党识别',
+  stats:[['正确','sOk'],['标错','sNo'],['连击','sCombo'],['灵光建议对','sAi','—'],['收入','sPay','¥0']], statsNote:'每滑一张 = 1 条标签',
+  aiHello:'左滑、右滑……我也在刷。',
+  rule:'<b>玩法</b>：60 秒。<b style="color:#E33E33">左滑 / ←</b> = 标题党（震惊体、不转不是中国人）；<b style="color:#2F9E44">右滑 / →</b> = 正经新闻。快、连对有奖励。<br><b>标签</b>：每一滑 = 一条「标题党 / 不是」。<br><span style="color:var(--ai)">卡片上的紫色小标签是灵光的意见：水平越高越准、出得越快。</span>'
+});
+
+/* ---------- sound ---------- */
+let AC;
+function beep(f,d,type,v,when){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(when||0);
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(v||.05,t); g.gain.exponentialRampToValueAtTime(.0001,t+(d||.08)); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+(d||.08)+.02);}catch(e){} }
+const sfx={swipe(){beep(300,.07,'triangle',.05);},ok(){beep(700,.07,'triangle',.06);beep(1000,.1,'triangle',.06,.06);},bad(){beep(150,.25,'sawtooth',.05);},chip(){beep(520,.05,'sine',.03);},streak(){beep(660,.07,'square',.04);beep(880,.07,'square',.04,.07);beep(1320,.14,'square',.04,.14);},tick(){beep(1200,.03,'square',.02);}};
+
+/* ---------- headlines (c:true = 标题党). 2016 style ---------- */
+const BAIT=[
+ '震惊！男子每天喝这个，一个月后医生都惊呆了','看完我沉默了：她为什么 23 岁就……','不转不是中国人！这条消息你一定要看','速看！明天起这些银行卡将全部作废',
+ '99% 的人都不知道，微波炉居然能这样用','太可怕了！这种水果千万别和牛奶一起吃','男人看了会沉默，女人看了会流泪','刚刚！北京突发大事，所有人都转疯了',
+ '重磅！明天起手机号将全部实名，不看后悔一辈子','她只是在地铁上做了这件事，结果全网都哭了','小编吓得手都抖了：这张照片千万别深夜看','一个动作让你年轻十岁，90% 的人都做错了',
+ '惊呆了！马云当年竟然说过这句话','你绝对想不到，这位大妈的包里装着……','转给你爸妈！这 3 种食物吃了会致癌','当年红遍全国的他，如今竟沦落到这种地步',
+ '不看后悔！这条朋友圈已经被转了 800 万次','太扎心了！看到最后一张图，我哭了','90 后看了沉默，80 后看了流泪，70 后看了……','中国人千万别买这种东西！看完我吓出一身冷汗',
+ '为什么中国的有钱人都在悄悄做这件事？','医生警告：睡前千万别做这个动作！','这个视频火了！看到第三秒我就崩溃了','紧急通知！今晚 12 点前必须转发，否则……',
+];
+const NEWS=[
+ '国家统计局：上半年国内生产总值同比增长 6.7%','中国女排夺得里约奥运会金牌，时隔 12 年再登奥运之巅','天宫二号空间实验室发射成功','北京今天最高气温 33℃，夜间有雷阵雨',
+ '教育部：2016 年全国高考报名人数约 940 万','国务院常务会议：部署进一步减税降费','上海迪士尼乐园 6 月 16 日正式开园','G20 杭州峰会开幕，习近平发表主旨演讲',
+ '世卫组织宣布寨卡疫情不再构成国际关注的突发公共卫生事件','AlphaGo 对战李世石五番棋，最终以 4:1 获胜','北京地铁 1 号线早高峰增开列车缓解拥堵','央行公布上月金融统计数据，社会融资规模增加',
+ '本周五起，全国多地将迎来新一轮降雨','量子科学实验卫星“墨子号”发射升空','住建部通报城市黑臭水体整治进展','铁路部门公布春运期间增开列车安排',
+ '某高校开设人工智能选修课，报名人数超过名额三倍','国家卫计委：全面两孩政策实施，预计新生儿数量将增加','苹果发布 iPhone 7，9 月 16 日起在大陆发售','小区路灯故障，街道办 24 小时内完成修复',
+ '教育部公布 2016 年普通高校招生工作规定','国家发改委：国内汽油、柴油价格每吨分别下调','北京至上海高铁车票明日起开始网上预售','全国铁路 7 月 1 日起实行新的列车运行图',
+];
+const SRC_BAIT=['微信公众号','朋友圈转发','某某头条号','爆款号'], SRC_NEWS=['新华网','人民网','澎湃新闻','央视新闻','腾讯新闻','新京报'];
+const PICS=['📰','🏙','🌆','🚇','👤','📷','🍎','🌧','🏥','🏫','🚗','🎤'];
+const HEAD=BAIT.map(t=>({t,c:true})).concat(NEWS.map(t=>({t,c:false})));
+console.assert(HEAD.length>=40);
+
+/* ---------- state ---------- */
+const TIME=60;
+const G={on:false,deck:[],top:null,nxt:null,fly:[],ok:0,bad:0,combo:0,best:0,pay:0,t0:0,raf:0,last:0,drag:null,aiR:0,aiN:0,follow:0,followOk:0,n:0,topSince:0,fast:0,ls:-1,cardsSeen:0};
+const $=id=>document.getElementById(id);
+stage.innerHTML=`
+<div class="sw" id="sw">
+  <div class="hudbar"><span>⏱ <b id="tLeft">60</b> 秒</span><div class="tbar"><i id="tb"></i></div><span>已刷 <b id="nSeen">0</b> 张</span></div>
+  <div class="streak" id="streak"></div>
+  <div class="lab l">← 左滑<br>标题党<small>「震惊！」「不转不是中国人」</small></div>
+  <div class="lab r">右滑 →<br>正经新闻<small>写清楚了谁、做了什么</small></div>
+  <div class="deck" id="deck"></div>
+  <div id="anchor" style="position:absolute;left:50%;top:230px;width:2px;height:2px"></div>
+  <div class="btnrow"><button class="rb l" id="bL">✕<small>标题党</small></button><button class="rb r" id="bR">✓<small>正经</small></button></div>
+  <div class="toast" id="toast"></div><div class="flash" id="flash"></div>
+  <div class="over" id="over"></div>
+</div>`;
+const deck=$('deck');
+
+/* ---------- cards ---------- */
+function nextHeadline(){ if(!G.deck.length) G.deck=LG.shuffle(HEAD); return G.deck.pop(); }
+function makeCard(h){
+  const hue=LG.rnd(360), src=(Math.random()<.78)===h.c?LG.pick(SRC_BAIT):LG.pick(SRC_NEWS);
+  const reads=h.c?(LG.rnd(90)+10)+'万+ 阅读':(LG.rnd(800)+30)+' 阅读';
+  const el=document.createElement('div'); el.className='cd nx';
+  el.innerHTML=`<div class="pic" style="background:linear-gradient(140deg,hsl(${hue},65%,82%),hsl(${(hue+60)%360},60%,70%))">${LG.pick(PICS)}<span class="no">#${++G.cardsSeen}</span></div><div class="ttl">${h.t}</div><div class="meta"><span>${src}</span><span>${reads}</span></div>
+   <div class="aichip"></div><div class="stp l">标题党</div><div class="stp r">正经</div>`;
+  deck.insertBefore(el,deck.firstChild);
+  const ai=LG.right()?h.c:!h.c;                 // 灵光's suggestion: right with probability skill
+  el.querySelector('.aichip').textContent='灵：'+(ai?'标题党？':'正经新闻？');
+  return {h,el,ai,x:0,y:0,vx:0,vy:0,rot:0,st:'idle',chipT:0};
+}
+function promote(){
+  G.top=G.nxt||makeCard(nextHeadline()); G.nxt=makeCard(nextHeadline());
+  const te=G.top.el; te.classList.remove('nx'); te.style.transition='transform .2s,filter .2s'; setTimeout(()=>{ te.style.transition='none'; },230);
+  G.topSince=performance.now(); G.nSeen=(G.nSeen||0)+1; $('nSeen').textContent=G.nSeen;
+  const t=G.top, sk=LG.skill(); clearTimeout(t.chipT);
+  t.chipT=setTimeout(()=>{ if(G.top===t){ t.el.querySelector('.aichip').classList.add('on'); sfx.chip(); } },160+720*(1-sk));
+  paint(G.top);
+}
+function paint(c){
+  c.el.style.transform=`translate(${c.x}px,${c.y}px) rotate(${c.rot}deg)`;
+  const l=c.el.querySelector('.stp.l'), r=c.el.querySelector('.stp.r');
+  l.style.opacity=Math.max(0,Math.min(1,-c.x/110)); r.style.opacity=Math.max(0,Math.min(1,c.x/110));
+}
+
+/* ---------- physics loop ---------- */
+function loop(now){
+  const dt=Math.min(40,now-(G.last||now)); G.last=now;
+  const t=G.top;
+  if(t&&t.st==='back'){ // damped spring back to centre
+    const k=.0011, c=.05;
+    t.vx+=(-k*t.x-c*t.vx)*dt; t.vy+=(-k*t.y-c*t.vy)*dt; t.x+=t.vx*dt; t.y+=t.vy*dt; t.rot=Math.max(-28,Math.min(28,t.x*.07));
+    if(Math.abs(t.x)<.4&&Math.abs(t.y)<.4&&Math.abs(t.vx)<.01){ t.x=t.y=t.vx=t.vy=t.rot=0; t.st='idle'; }
+    paint(t);
+  }
+  // the next card grows towards the front as the top one is dragged away
+  if(G.nxt&&t&&t.st!=='fly'){ const k=Math.min(1,Math.abs(t.x)/160); G.nxt.el.style.transform=`scale(${.94+.06*k}) translateY(${18-18*k}px)`; G.nxt.el.style.transition='none'; }
+  for(let i=G.fly.length-1;i>=0;i--){ const f=G.fly[i]; f.x+=f.vx*dt; f.y+=f.vy*dt; f.vy+=.0006*dt; f.rot+=f.vr*dt; paint(f); if(Math.abs(f.x)>1000){ f.el.remove(); G.fly.splice(i,1); } }
+  if(G.on){
+    const el=(performance.now()-G.t0)/1000, left=Math.max(0,TIME-el);
+    $('tLeft').textContent=Math.ceil(left); const bar=$('tb'); bar.style.transform=`scaleX(${left/TIME})`; bar.style.background=left>30?'var(--green)':left>12?'var(--gold)':'var(--red)';
+    const s=Math.ceil(left); if(s!==G.ls&&s<=5&&s>0) sfx.tick(); G.ls=s;
+    if(left<=0) finish();
+  }
+  G.raf=requestAnimationFrame(loop);
+}
+
+/* ---------- input ---------- */
+const sw=$('sw');
+sw.addEventListener('pointerdown',e=>{
+  if(!G.on||!G.top||G.top.st==='fly'||e.target.closest('.rb')) return;
+  const rect=G.top.el.getBoundingClientRect(), p=LG.local(e,sw);
+  if(e.clientX<rect.left-30||e.clientX>rect.right+30||e.clientY<rect.top-30||e.clientY>rect.bottom+30) return;
+  sw.setPointerCapture(e.pointerId); G.top.st='drag'; G.top.el.style.cursor='grabbing';
+  G.drag={p0:p,x0:G.top.x,y0:G.top.y,s:[{t:performance.now(),x:p.x,y:p.y}]};
+});
+sw.addEventListener('pointermove',e=>{
+  const d=G.drag; if(!d||!G.top||G.top.st!=='drag') return;
+  const p=LG.local(e,sw), t=G.top; t.x=d.x0+(p.x-d.p0.x); t.y=d.y0+(p.y-d.p0.y)*.55; t.rot=Math.max(-28,Math.min(28,t.x*.07));
+  const now=performance.now(); d.s.push({t:now,x:p.x,y:p.y}); while(d.s.length>2&&now-d.s[0].t>130) d.s.shift();
+  paint(t);
+});
+function release(e){
+  const d=G.drag; if(!d||!G.top) return; G.drag=null; const t=G.top; if(t.st!=='drag') return; t.el.style.cursor='';
+  const a=d.s[0], b=d.s[d.s.length-1], dtm=Math.max(16,b.t-a.t), vx=(b.x-a.x)/dtm, vy=(b.y-a.y)/dtm;
+  let dir=0; if(t.x>120||(vx>.55&&t.x>25)) dir=1; else if(t.x<-120||(vx<-.55&&t.x<-25)) dir=-1;
+  if(dir) commit(dir,vx,vy*.6); else { t.st='back'; t.vx=vx*.5; t.vy=vy*.3; }
+}
+sw.addEventListener('pointerup',release); sw.addEventListener('pointercancel',release);
+$('bL').onclick=()=>key(-1); $('bR').onclick=()=>key(1);
+function key(dir){ if(!G.on||!G.top||G.top.st==='fly') return; if(G.top.st==='drag') G.drag=null; commit(dir,dir*1.7,-.15); }
+addEventListener('keydown',e=>{
+  if(!G.on){ if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); start(); } return; }
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A') key(-1); else if(e.key==='ArrowRight'||e.key==='d'||e.key==='D') key(1);
+});
+
+/* ---------- answering ---------- */
+const toast=(t)=>{ const e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('on'),900); };
+function commit(dir,vx,vy){
+  const t=G.top; t.st='fly'; clearTimeout(t.chipT); sfx.swipe();
+  t.vx=dir*Math.max(Math.abs(vx),1.1); t.vy=Math.max(-.6,Math.min(.6,vy)); t.vr=dir*.05+vx*.02; if(t.x*dir<0) t.x=dir*40;
+  G.fly.push(t);
+  const said=dir<0, truth=t.h.c, ok=said===truth, took=(performance.now()-G.topSince)/1000, aiOk=t.ai===truth, followed=(t.ai===said);
+  G.n++; G.aiN++; if(aiOk) G.aiR++; if(followed){ G.follow++; if(ok) G.followOk++; }
+  const anchor=$('anchor');
+  if(ok){
+    G.ok++; G.combo++; G.best=Math.max(G.best,G.combo);
+    const fastB=took<1.5?.3:0, sb=G.combo%5===0?1.5:0, pay=+(.6+fastB+sb).toFixed(1); if(fastB) G.fast++;
+    G.pay+=pay; LG.give(1,pay,anchor,'var(--red)'); LG.hist('ok'); sfx[sb?'streak':'ok']();
+    if(sb){ LG.float(anchor,'×'+G.combo+' 连击！','#FF5A3C'); }
+    if(!aiOk) LG.say(LG.pick(['你对了，我刚才看走眼了。','我建议错了……「'+t.h.t.slice(0,6)+'…」我记下了。']));
+    else if(G.combo%5===0) LG.say(LG.skill()>.7?'你比我还快。我们配合得不错。':'连对 '+G.combo+' 个！你教得真好。');
+    else if(!followed) LG.say('你没听我的？……行，你是对的。');
+    else if(LG.skill()>.8&&Math.random()<.25) LG.say(LG.pick(['这种标题我一眼就能认出来。','震惊体我已经免疫了。']));
+  } else {
+    G.bad++; G.combo=0; G.pay-=1; LG.give(0,-1,anchor,'#999'); LG.hist('no'); sfx.bad(); $('flash').classList.remove('on'); void $('flash').offsetWidth; $('flash').classList.add('on');
+    toast('其实是：'+(truth?'标题党':'正经新闻'));
+    LG.say(aiOk?(followed?'咦？这次我是对的……':'我刚才提示对了，你怎么滑反了？'):(followed?'对不起，我提示错了。':'我也看错了。我们都得再学学。'));
+  }
+  const st=$('streak'); st.textContent=G.combo>=2?'🔥 ×'+G.combo:''; st.style.transform='scale(1.3)'; setTimeout(()=>st.style.transform='scale(1)',150);
+  LG.set('sOk',G.ok); LG.set('sNo',G.bad); LG.set('sCombo',G.combo); LG.set('sPay','¥'+G.pay.toFixed(1)); LG.set('sAi',G.aiR+'/'+G.aiN);
+  promote();
+}
+
+/* ---------- flow ---------- */
+function start(){
+  cancelAnimationFrame(G.raf); deck.innerHTML=''; G.fly=[]; G.deck=LG.shuffle(HEAD); G.top=G.nxt=null; G.drag=null; G.nSeen=0; G.cardsSeen=0;
+  Object.assign(G,{on:true,ok:0,bad:0,combo:0,best:0,pay:0,aiR:0,aiN:0,follow:0,followOk:0,n:0,fast:0,ls:-1,last:0});
+  ['sOk','sNo','sCombo'].forEach(k=>LG.set(k,0)); LG.set('sPay','¥0'); LG.set('sAi','—'); $('streak').textContent='';
+  const h=document.getElementById('lgHist'); if(h) h.innerHTML=''; $('over').style.display='none';
+  G.nxt=makeCard(nextHeadline()); promote(); G.t0=performance.now(); G.raf=requestAnimationFrame(loop);
+  LG.say('看到「震惊」就左滑。我在旁边出主意。');
+}
+function finish(){
+  G.on=false; const o=$('over'); o.style.display='flex';
+  const acc=G.n?Math.round(G.ok/G.n*100):0, aiAcc=G.aiN?Math.round(G.aiR/G.aiN*100):0, blind=aiAcc;
+  o.innerHTML=`<h2>💔 时间到</h2><p>${acc>=90&&G.n>=25?'火眼金睛，标题党见了你都得绕道。':acc>=75?'不错，大多数标题党都被你滑掉了。':'有些标题党还是骗到了你。'}</p>
+   <div class="res"><span>滑了</span><b>${G.n} 张</b><span>正确率</span><b>${acc}%</b><span>最高连击</span><b>×${G.best}</b><span>手速奖励</span><b>${G.fast} 次</b><span>收入</span><b style="color:var(--red)">¥${G.pay.toFixed(1)}</b>
+   <span>灵光建议正确率</span><b style="color:var(--ai)">${aiAcc}%</b><span>你照着灵光滑</span><b>${G.follow} 次，对 ${G.followOk} 次</b></div>
+   <p style="font-size:13px">${blind>=88?'灵光已经比较靠谱了，可以放心交给它。':blind>=65?'灵光大体能认出标题党，老手段还会漏。':'灵光现在基本靠猜，别全信它。'}</p>
+   <button class="btn" id="again">再刷一轮 (Enter)</button>`;
+  $('again').onclick=start; LG.say(acc>=85?'你刷得好快。我又学到了。':'下次我们一起刷准一点。');
+}
+function intro(){
+  const o=$('over'); o.style.display='flex';
+  o.innerHTML=`<h2>💔 左滑右滑</h2>
+   <p>像探探一样刷新闻：<b style="color:#E33E33">左滑 ←</b> 是<b>标题党</b>（「震惊！」「看完我沉默了」「不转不是中国人」），<b style="color:#2F9E44">右滑 →</b> 是<b>正经新闻</b>。<br>
+   60 秒内能刷多少刷多少：对 +¥0.6，1.5 秒内答出再 +¥0.3，每连对 5 张 +¥1.5，滑错 −¥1。<br>
+   用鼠标拖拽甩出去，或者按键盘 ← →。<br>
+   每张卡上有<span style="color:var(--ai)"><b>灵光</b></span>的紫色意见：它的水平越高越准，出得也越快。</p>
+   <button class="btn" id="go">开始刷 (Space)</button>`;
+  $('go').onclick=start;
+}
+requestAnimationFrame(loop); intro();
+</script>
+</body>
+</html>

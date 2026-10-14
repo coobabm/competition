@@ -146,8 +146,8 @@ namespace LingGuangV05.XingGuang.Tests
         public void VanishingMemorisationAndAmnesiaAreDetected()
         {
             Assert.That(Observe(new XgKnobs { depth = 6, activation = XgActivation.Sigmoid, lr = .3 }, "xor", XgBoardTasks.Xor, 200, 600), Does.Contain("vanish"));
-            Assert.That(Observe(new XgKnobs { depth = 3, width = 32, activation = XgActivation.Sigmoid, lr = .3 }, "mnist", s => XgBoardTasks.Digit(s), 60, 2000), Does.Contain("memorize"));
-            var local = Observe(new XgKnobs { depth = 3, width = 32, activation = XgActivation.Sigmoid, wiring = XgWiring.LocalShared, lr = .3 }, "mnist", s => XgBoardTasks.Digit(s), 60, 2000);
+            Assert.That(Observe(new XgKnobs { depth = 3, width = 32, activation = XgActivation.Sigmoid, lr = .3 }, "mnist", s => XgBoardTasks.Digit(s), 40, 2000), Does.Contain("memorize"));
+            var local = Observe(new XgKnobs { depth = 3, width = 32, activation = XgActivation.Sigmoid, wiring = XgWiring.LocalShared, lr = .3 }, "mnist", s => XgBoardTasks.Digit(s), 40, 2000);
             Assert.That(local, Does.Contain("generalize")); Assert.That(local, Does.Not.Contain("memorize"));
             Assert.That(Observe(new XgKnobs { depth = 3, width = 32, activation = XgActivation.Relu, wiring = XgWiring.Recurrent, lr = .1 }, "poems", s => XgBoardTasks.FirstChar(s, 12), 120, 1000, 12), Does.Contain("amnesia"));
         }

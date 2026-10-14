@@ -19,7 +19,12 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.paidAssessmentReached = true; Assert.That(sim.FeatureVisible("tree"), Is.True, "the tree opens with the first paid assessment");
             Assert.That(sim.FeatureVisible("contracts"), Is.False, "contracts need a checkpoint");
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8 }); Assert.That(sim.FeatureVisible("repo"), Is.True);
-            Assert.That(sim.FeatureVisible("contracts"), Is.True);
+            Assert.That(sim.FeatureVisible("contracts"), Is.False, "orders belong to the crowd stage, whatever the checkpoint");
+            sim.S.stage = XgSim.FeatureUnlock["crowd"];
+            Assert.That(XgSim.Grade(sim.BestScore("mnist")), Is.GreaterThanOrEqualTo(1));
+            Assert.That(sim.FeatureVisible("contracts"), Is.True, "the crowd stage with a graded checkpoint");
+            sim.S.best[0].acc = .1;
+            Assert.That(sim.FeatureVisible("contracts"), Is.False, "and a checkpoint that earned a grade");
         }
         [Test] public void UnfinishedStageMilestonesResume()
         {

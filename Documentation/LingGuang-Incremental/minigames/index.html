@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 游戏标注（三个小游戏原型）</title>
+<!--
+  Prototype: labelling replaced by three games that label as a side effect (games with a purpose, as in the
+  ESP Game 2004, reCAPTCHA, Quick Draw 2016). 灵光 plays along at its current skill, so its growth is visible.
+    你画我猜  — draw the digit asked for; 灵光 guesses live. Its recogniser is real: font templates plus every
+               drawing you make (k-nearest neighbours), so it genuinely gets better from your drawings.
+    切短信    — messages and statements fly up; slice spam and false statements, let the rest go. 灵光 marks
+               what it thinks is junk (purple), right as often as its skill.
+    对暗号    — a 2016 danmaku line or meme appears; you and 灵光 each pick a word; a match labels it.
+  灵光水平 rises with the samples you give it (or set it with the debug slider). Numbers are placeholders.
+-->
+<style>
+:root{
+  --blue:#2932E1;--blue2:#4E6EF2;--blue3:#EEF2FF;--ink:#222;--mute:#7A7F8C;--dim:#B4B8C2;--line:#E3E6EC;--bg:#F4F5F7;
+  --red:#E33E33;--green:#2F9E44;--gold:#E8A317;--orange:#F27B1D;--ai:#8A78E8;--ai2:#F3F1FF;
+  --font:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#1E4D8C;font-family:var(--font);color:var(--ink);font-size:13px;overflow:hidden;min-height:100vh;user-select:none}
+.win{width:1236px;height:693px;background:#fff;border:1px solid #9AA4B8;position:absolute;left:50%;top:50%;box-shadow:0 10px 40px #0008;display:grid;grid-template-rows:28px 56px 1fr 24px;overflow:hidden}
+.title{background:linear-gradient(#DCE6F4,#C8D6EA);display:flex;align-items:center;padding-left:8px;gap:6px;font-size:12px;color:#223}
+.title .ico{width:16px;height:16px;background:var(--blue);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-weight:700}
+.title .sp{flex:1}.title i{width:40px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-style:normal}.title i.x{background:#C7483F;color:#fff;width:46px}
+.hd{background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 16px;gap:18px}
+.logo{display:flex;align-items:center;gap:10px}
+.paw{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--blue);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.logo b{font-size:19px;letter-spacing:1px}.logo small{display:block;font-size:11px;opacity:.75}
+.tabs{display:flex;gap:6px;margin-left:12px}
+.tab{padding:7px 16px;border-radius:16px;background:#ffffff1f;border:1px solid #ffffff33;cursor:pointer;font-size:14px}
+.tab.on{background:#fff;color:var(--blue);font-weight:700}
+.hud{display:flex;gap:8px;margin-left:auto;align-items:center}
+.chip{background:#ffffff1f;border:1px solid #ffffff33;padding:4px 10px;border-radius:14px;font-size:12px;white-space:nowrap}
+.chip b{font-size:14px}.chip.money b{color:#FFE27A}
+.skill{display:flex;align-items:center;gap:8px;background:#fff;color:var(--ink);border-radius:14px;padding:4px 10px}
+.skill .bar{width:90px;height:7px;background:#E7E5FA;border-radius:4px;overflow:hidden}.skill .bar i{display:block;height:100%;background:var(--ai);transition:width .4s}
+.skill b{color:var(--ai)}
+.st{background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 12px;font-size:11px;color:var(--mute)}
+.st .sp{flex:1}
+.st input{vertical-align:middle}
+.bd{background:var(--bg);padding:12px;min-height:0;position:relative}
+.game{display:none;height:100%;gap:12px}
+.game.on{display:grid}
+.box{background:#fff;border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden}
+.bh{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.bh small{font-weight:400;color:var(--mute)}
+.btn{border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:4px;padding:7px 16px;cursor:pointer;font-family:inherit;font-size:14px}
+.btn:hover{background:var(--blue2)}.btn.ghost{background:#fff;color:var(--blue)}
+.btn:disabled{background:#E7E9EE;border-color:#E7E9EE;color:#A9ADB7;cursor:default}
+.float{position:absolute;pointer-events:none;font-weight:800;white-space:nowrap;animation:up 1.1s ease-out forwards;z-index:9;font-size:18px}
+@keyframes up{from{opacity:1;transform:translateY(0) scale(1.1)}to{opacity:0;transform:translateY(-46px) scale(1)}}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.kv{padding:8px 12px;display:grid;grid-template-columns:1fr auto;gap:7px 8px;font-size:13px}
+.kv span{color:var(--mute)}
+.ai{padding:10px 12px}
+.ai .who{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:12px}
+.spider{width:30px;height:30px;position:relative}
+.spider .b{position:absolute;left:8px;top:8px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E1F5EE,#5DCAA5 45%,#0F3D33 80%);box-shadow:0 0 10px #5DCAA5}
+.spider svg{position:absolute;inset:0}
+.bubble{margin-top:8px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:8px;padding:8px 10px;color:#4B3FA8;min-height:40px;line-height:1.6;font-size:14px}
+.hist{display:flex;gap:4px;flex-wrap:wrap;padding:8px 12px}
+.hist i{width:16px;height:16px;border-radius:3px;background:#ECEEF2;font-style:normal;font-size:10px;color:#fff;text-align:center;line-height:16px}
+.hist i.ok{background:var(--green)}.hist i.no{background:var(--red)}
+.rule{padding:10px 12px;color:var(--mute);font-size:12px;line-height:1.8}
+.rule b{color:var(--ink)}
+/* draw */
+#g-draw{grid-template-columns:1fr 300px}
+.drawwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%}
+.prompt{font-size:22px}.prompt b{font-size:40px;color:var(--blue);margin:0 6px}
+.pad{position:relative}
+#pad{background:#fff;border:2px solid #CBD2E6;border-radius:10px;cursor:crosshair;touch-action:none}
+.timer{width:280px;height:6px;background:#ECEEF2;border-radius:3px;overflow:hidden}.timer i{display:block;height:100%;background:var(--orange)}
+.guess{position:absolute;right:-150px;top:10px;width:136px}
+.gb{display:grid;grid-template-columns:22px 1fr 34px;gap:6px;align-items:center;font-size:13px;margin-bottom:6px}
+.gb .bar{height:8px;background:#ECEEF2;border-radius:4px;overflow:hidden}.gb .bar i{display:block;height:100%;background:var(--ai)}
+.gb b{font-size:16px}
+.say{position:absolute;left:-170px;top:30px;width:150px;background:var(--ai2);border:1px solid #DCD6FB;border-radius:10px;padding:8px 10px;color:#4B3FA8;font-size:18px;text-align:center;font-weight:700;min-height:44px}
+.say:after{content:"";position:absolute;right:-8px;top:16px;border:8px solid transparent;border-left-color:#DCD6FB;border-right:0}
+.drawbtns{display:flex;gap:10px}
+.mem{font-size:12px;color:var(--mute)}
+/* slice */
+#g-slice{grid-template-columns:1fr 260px}
+#sl{display:block;width:100%;height:100%;cursor:crosshair;background:linear-gradient(#1A2340,#0E1428)}
+.slhud{position:absolute;left:12px;top:10px;color:#fff;font-size:14px;display:flex;gap:16px;pointer-events:none}
+.slhud .hearts{color:#FF6B6B;letter-spacing:2px}
+.over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#0E1428cc;color:#fff;z-index:5}
+.over h2{margin:0;font-size:30px}.over p{margin:0;color:#C9D2F0;font-size:14px;line-height:1.8;text-align:center}
+.legend{display:flex;gap:10px;flex-wrap:wrap;padding:8px 12px;font-size:12px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend em{width:12px;height:12px;border-radius:3px;display:inline-block}
+/* esp */
+#g-esp{grid-template-columns:1fr 280px}
+.espwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;height:100%;padding:20px}
+.video{width:560px;height:200px;border-radius:10px;background:linear-gradient(135deg,#2B2F4A,#16192B);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.video .dm{color:#fff;font-size:34px;font-weight:700;text-shadow:0 2px 0 #000,0 0 12px #000a;white-space:nowrap}
+.video .tag{position:absolute;left:10px;top:8px;color:#9AA3C7;font-size:12px}
+.video .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#ffffff06 0 2px,transparent 2px 4px)}
+.opts{display:grid;grid-template-columns:repeat(4,120px);gap:10px}
+.opts button{height:48px;font-size:18px;border:2px solid #CBD2E6;background:#fff;border-radius:8px;cursor:pointer;font-family:inherit;position:relative}
+.opts button:hover{border-color:var(--blue);color:var(--blue)}
+.opts button.me{border-color:var(--blue);background:var(--blue3);color:var(--blue);font-weight:700}
+.opts button.aipick::after{content:"灵";position:absolute;right:-8px;top:-8px;width:22px;height:22px;border-radius:50%;background:var(--ai);color:#fff;font-size:12px;line-height:22px}
+.opts button:disabled{cursor:default}
+.esptimer{width:500px;height:6px;background:#ECEEF2;border-radius:3px;overflow:hidden}.esptimer i{display:block;height:100%;background:var(--orange)}
+.espres{height:30px;font-size:20px;font-weight:700}
+.big{font-size:22px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="title"><span class="ico">摆</span>摆渡众包 - 游戏标注<span class="sp"></span><i>—</i><i>□</i><i class="x">✕</i></div>
+  <div class="hd">
+    <div class="logo"><div class="paw">摆</div><div><b>摆渡众包</b><small>玩着玩着就标完了</small></div></div>
+    <div class="tabs" id="tabs">
+      <span class="tab on" data-g="draw">🖌 你画我猜</span>
+      <span class="tab" data-g="slice">🔪 切短信</span>
+      <span class="tab" data-g="esp">🤝 对暗号</span>
+    </div>
+    <div class="hud">
+      <span class="chip money">余额 <b id="hMoney">¥0</b></span>
+      <span class="chip">样本 <b id="hSamp">0</b></span>
+      <span class="skill">灵光水平 <span class="bar"><i id="hSkill"></i></span><b id="hSkillT">25%</b></span>
+    </div>
+  </div>
+
+  <div class="bd">
+    <!-- 你画我猜 -->
+    <div class="game on" id="g-draw">
+      <div class="box">
+        <div class="drawwrap">
+          <div class="prompt">画一个<b id="dTarget">7</b><span style="color:var(--mute);font-size:14px">灵光猜中了才算</span></div>
+          <div class="pad">
+            <div class="say" id="dSay">……</div>
+            <canvas id="pad" width="280" height="280"></canvas>
+            <div class="guess" id="dGuess"></div>
+          </div>
+          <div class="timer"><i id="dTimer"></i></div>
+          <div class="drawbtns"><button class="btn ghost" id="dClear">清空</button><button class="btn" id="dDone">画好了</button><button class="btn ghost" id="dSkip">换一个</button></div>
+          <div class="mem" id="dMem"></div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="box"><div class="bh">这一局 <small>每张画 = 1 条样本</small></div>
+          <div class="kv"><span>画了</span><b id="dN">0</b><span>灵光猜中</span><b id="dHit">0</b><span>平均几秒猜中</span><b id="dSec">—</b><span>收入</span><b id="dPay" style="color:var(--red)">¥0</b></div>
+          <div class="hist" id="dHist"></div></div>
+        <div class="box rule"><b>玩法</b>：在 20 秒内画出上面的数字，灵光一边看一边猜。猜中越快钱越多。<br>
+          <b>它真的在学</b>：灵光一开始只见过印刷体数字；你的每一张画都会记进它的样本里，下次它就更认得你的笔迹。<br>
+          <span style="color:var(--ai)">灵光水平越低，它越容易乱猜。</span></div>
+      </div>
+    </div>
+
+    <!-- 切短信 -->
+    <div class="game" id="g-slice">
+      <div class="box" id="slBox">
+        <canvas id="sl"></canvas>
+        <div class="slhud"><span class="hearts" id="slHearts">♥♥♥</span><span>得分 <b id="slScore">0</b></span><span>连击 <b id="slCombo">0</b></span><span id="slTime">60</span></div>
+        <div class="over" id="slOver"><h2>🔪 切短信</h2><p>按住鼠标划过去就是一刀。<br><b style="color:#FF8A8A">切掉</b>：垃圾短信、说错了的常识　　<b style="color:#8AE2A8">放过</b>：正常短信、说对了的常识<br>切错一条扣一颗心，漏掉垃圾不扣心但扣钱。一刀切多条有连击。</p><button class="btn" id="slStart">开始（60 秒）</button></div>
+      </div>
+      <div class="side">
+        <div class="box"><div class="bh">这一局 <small>切过的每条 = 1 条样本</small></div>
+          <div class="kv"><span>切对</span><b id="slOk">0</b><span>切错</span><b id="slBad">0</b><span>漏掉的垃圾</span><b id="slMiss">0</b><span>收入</span><b id="slPay" style="color:var(--red)">¥0</b></div></div>
+        <div class="box ai"><div class="who"><div class="spider"><svg viewBox="0 0 30 30"><g stroke="#2F6F5E" stroke-width="1.2" fill="none"><path d="M11 12 L4 7 L1 11"/><path d="M11 15 L3 15 L0 18"/><path d="M11 18 L4 23 L2 27"/><path d="M19 12 L26 7 L29 11"/><path d="M19 15 L27 15 L30 18"/><path d="M19 18 L26 23 L28 27"/></g></svg><div class="b"></div></div><div>灵光也在看</div></div>
+          <div class="bubble" id="slSay">紫色虚线框 = 它觉得是垃圾。</div>
+          <div class="kv" style="padding:8px 0 0"><span>它判断对了</span><b id="slAi">—</b></div></div>
+        <div class="box legend"><span><em style="background:#3D4A7A"></em>短信</span><span><em style="background:#4A6B3D"></em>常识</span><span><em style="border:2px dashed var(--ai)"></em>灵光觉得是垃圾</span></div>
+      </div>
+    </div>
+
+    <!-- 对暗号 -->
+    <div class="game" id="g-esp">
+      <div class="box">
+        <div class="espwrap">
+          <div class="video"><span class="tag" id="eTag">弹幕 · 第 1 条</span><div class="dm" id="eItem">洪荒之力</div><div class="scan"></div></div>
+          <div class="big">这条弹幕是什么情绪？<span style="color:var(--mute);font-size:14px;font-weight:400">　和灵光选一样的，就对上暗号了</span></div>
+          <div class="esptimer"><i id="eTimer"></i></div>
+          <div class="opts" id="eOpts"></div>
+          <div class="espres" id="eRes"></div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="box"><div class="bh">这一局 <small>对上一次 = 1 条样本</small></div>
+          <div class="kv"><span>对上暗号</span><b id="eHit">0</b><span>没对上</span><b id="eMiss">0</b><span>和大家想的一样</span><b id="eCrowd">0</b><span>收入</span><b id="ePay" style="color:var(--red)">¥0</b></div>
+          <div class="hist" id="eHist"></div></div>
+        <div class="box ai"><div class="who"><div class="spider"><svg viewBox="0 0 30 30"><g stroke="#2F6F5E" stroke-width="1.2" fill="none"><path d="M11 12 L4 7 L1 11"/><path d="M11 15 L3 15 L0 18"/><path d="M11 18 L4 23 L2 27"/><path d="M19 12 L26 7 L29 11"/><path d="M19 15 L27 15 L30 18"/><path d="M19 18 L26 23 L28 27"/></g></svg><div class="b"></div></div><div>灵光 · 暗号搭档</div></div>
+          <div class="bubble" id="eSay">你先选，我再翻牌。</div></div>
+        <div class="box rule"><b>为什么能标数据</b>：两个人各选各的，选到一起的那个词，多半就是这条弹幕真正的情绪（2004 年的 ESP Game 就是这么给图片打标签的）。</div>
+      </div>
+    </div>
+  </div>
+  <div class="st"><span>● 游戏标注 · 每条样本 ¥1（加薪另算）</span><span class="sp"></span>
+    <label><input type="checkbox" id="dbg"> 调试：手动设定灵光水平</label><input type="range" id="dbgR" min="0" max="100" value="25" disabled> <span id="dbgV">25%</span></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), rnd=n=>Math.floor(Math.random()*n), pick=a=>a[rnd(a.length)];
+const G={money:0, samples:0, manual:false, manualSkill:.25};
+const skill=()=>G.manual?G.manualSkill:Math.min(.97,.25+.72*(1-Math.exp(-G.samples/90)));
+function give(n,pay,el,c){ G.samples+=n; G.money+=pay; hud(); if(el&&pay) float(el,(pay>0?'+':'−')+'¥'+Math.abs(pay).toFixed(1),c||'var(--red)'); }
+function hud(){ $('#hMoney').textContent='¥'+G.money.toFixed(1); $('#hSamp').textContent=G.samples; const s=skill(); $('#hSkill').style.width=s*100+'%'; $('#hSkillT').textContent=Math.round(s*100)+'%'; }
+function float(el,t,c){ const r=el.getBoundingClientRect(), w=$('#win').getBoundingClientRect(), k=w.width/1236; const f=document.createElement('div'); f.className='float'; f.textContent=t; f.style.color=c; f.style.left=((r.left-w.left)/k+r.width/k/2-24)+'px'; f.style.top=((r.top-w.top)/k)+'px'; $('#win').appendChild(f); setTimeout(()=>f.remove(),1100); }
+function floatAt(x,y,t,c){ const f=document.createElement('div'); f.className='float'; f.textContent=t; f.style.color=c; f.style.left=x+'px'; f.style.top=y+'px'; $('#win').appendChild(f); setTimeout(()=>f.remove(),1100); }
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t)); document.querySelectorAll('.game').forEach(g=>g.classList.toggle('on',g.id==='g-'+t.dataset.g)); if(t.dataset.g==='slice') sizeSl(); if(t.dataset.g==='esp'&&!E.cur) espNext(); });
+$('#dbg').onchange=e=>{ G.manual=e.target.checked; $('#dbgR').disabled=!G.manual; hud(); };
+$('#dbgR').oninput=e=>{ G.manualSkill=e.target.value/100; $('#dbgV').textContent=e.target.value+'%'; hud(); };
+
+// ═════════════ 你画我猜 ═════════════
+// A real recogniser: digits rendered in several fonts as templates, plus every drawing the player makes.
+const N=16, pad=$('#pad'), pg=pad.getContext('2d');
+function feature(src){
+  const w=src.width,h=src.height,d=src.getContext('2d').getImageData(0,0,w,h).data;
+  let x0=w,y0=h,x1=0,y1=0,any=false;
+  for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2){ if(d[(y*w+x)*4]<128){ any=true; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  if(!any) return null;
+  const bw=x1-x0+1,bh=y1-y0+1,s=Math.max(bw,bh), c=document.createElement('canvas'); c.width=c.height=N; const g=c.getContext('2d');
+  g.fillStyle='#fff'; g.fillRect(0,0,N,N); g.imageSmoothingEnabled=true;
+  const sz=N-2, dw=bw/s*sz, dh=bh/s*sz; g.drawImage(src,x0,y0,bw,bh,(N-dw)/2,(N-dh)/2,dw,dh);
+  const p=g.getImageData(0,0,N,N).data, v=new Float32Array(N*N); let norm=0;
+  for(let i=0;i<N*N;i++){ v[i]=1-p[i*4]/255; norm+=v[i]*v[i]; }
+  norm=Math.sqrt(norm)||1; for(let i=0;i<v.length;i++) v[i]/=norm; return v;
+}
+const MEM=[]; // {v,label,mine}
+(function templates(){
+  const fonts=['Arial','Georgia','Courier New','Verdana','Times New Roman','Trebuchet MS','Comic Sans MS','Impact','Helvetica','Menlo'];
+  const c=document.createElement('canvas'); c.width=c.height=140; const g=c.getContext('2d');
+  for(const f of fonts) for(let d=0;d<10;d++){ g.fillStyle='#fff'; g.fillRect(0,0,140,140); g.fillStyle='#000'; g.font='bold 110px "'+f+'"'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(String(d),70,76); const v=feature(c); if(v) MEM.push({v,label:d,mine:false}); }
+})();
+function classify(v){
+  const best=new Array(10).fill(-1);
+  for(const m of MEM){ let s=0; for(let i=0;i<v.length;i++) s+=v[i]*m.v[i]; if(m.mine) s+=.02; if(s>best[m.label]) best[m.label]=s; }
+  const ex=best.map(s=>Math.exp((s-1)*18)), sum=ex.reduce((a,b)=>a+b,0);
+  return ex.map(e=>e/sum);
+}
+const D={target:7,t0:0,running:false,drawn:false,lastGuess:-1,n:0,hit:0,secs:[],pay:0,hist:[]};
+let drawing=false,last=null;
+function clearPad(){ pg.fillStyle='#fff'; pg.fillRect(0,0,280,280); D.drawn=false; }
+function pos(e){ const r=pad.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*280, y:(e.clientY-r.top)/r.height*280}; }
+pad.onpointerdown=e=>{ if(!D.running) return; drawing=true; last=pos(e); pad.setPointerCapture(e.pointerId); };
+pad.onpointermove=e=>{ if(!drawing) return; const p=pos(e); pg.strokeStyle='#111'; pg.lineWidth=17; pg.lineCap='round'; pg.lineJoin='round'; pg.beginPath(); pg.moveTo(last.x,last.y); pg.lineTo(p.x,p.y); pg.stroke(); last=p; D.drawn=true; };
+pad.onpointerup=()=>{ drawing=false; };
+function drawRound(){ clearPad(); let t; do t=rnd(10); while(t===D.target); D.target=t; $('#dTarget').textContent=t; D.t0=performance.now(); D.running=true; D.lastGuess=-1; $('#dSay').textContent='……'; $('#dGuess').innerHTML=''; }
+function finish(hit){
+  D.running=false; D.n++; const v=feature(pad);
+  if(v){ MEM.push({v,label:D.target,mine:true}); }
+  const sec=(performance.now()-D.t0)/1000;
+  let pay=1;
+  if(hit){ D.hit++; D.secs.push(sec); pay+=Math.max(0,(15-sec)/5); $('#dSay').textContent='是 '+D.target+'！'; float($('#pad'),'猜中了 '+sec.toFixed(1)+' 秒','var(--green)'); }
+  else { $('#dSay').textContent=v?'……没认出来':'你没画呀'; }
+  D.pay+=v?pay:0; D.hist.push(hit?'ok':'no'); if(D.hist.length>24) D.hist.shift();
+  if(v) give(1,pay,$('#dDone'));
+  drawStats(); setTimeout(drawRound, hit?900:1300);
+}
+function drawStats(){
+  $('#dN').textContent=D.n; $('#dHit').textContent=D.hit; $('#dPay').textContent='¥'+D.pay.toFixed(1);
+  $('#dSec').textContent=D.secs.length?(D.secs.reduce((a,b)=>a+b,0)/D.secs.length).toFixed(1)+' 秒':'—';
+  $('#dHist').innerHTML=D.hist.map(h=>`<i class="${h}">${h==='ok'?'✓':'✗'}</i>`).join('');
+  $('#dMem').textContent='灵光见过的数字：印刷体 '+MEM.filter(m=>!m.mine).length+' 张 + 你画的 '+MEM.filter(m=>m.mine).length+' 张';
+}
+setInterval(()=>{
+  if(!D.running) return;
+  const el=(performance.now()-D.t0)/1000; $('#dTimer').style.width=Math.max(0,100-el/20*100)+'%';
+  if(el>20){ finish(false); return; }
+  if(!D.drawn) return;
+  const v=feature(pad); if(!v) return;
+  let p=classify(v), s=skill();
+  // Lower skill: its view is noisier; it blurts a wrong digit more often.
+  p=p.map(x=>Math.pow(x,.6+1.4*s)+(1-s)*Math.random()*.12); const sum=p.reduce((a,b)=>a+b,0); p=p.map(x=>x/sum);
+  const order=[...p.keys()].sort((a,b)=>p[b]-p[a]);
+  $('#dGuess').innerHTML=order.slice(0,3).map(d=>`<div class="gb"><b>${d}</b><span class="bar"><i style="width:${p[d]*100}%"></i></span><span>${Math.round(p[d]*100)}%</span></div>`).join('');
+  const g=order[0];
+  if(g!==D.lastGuess){ D.lastGuess=g; $('#dSay').textContent=p[g]>.55?'是 '+g+'！':p[g]>.3?'是 '+g+'？':pick(['……','嗯？','像 '+g+'…']); }
+  if(g===D.target && p[g]>.5 && el>.6) finish(true);
+},450);
+$('#dClear').onclick=()=>{ clearPad(); $('#dGuess').innerHTML=''; $('#dSay').textContent='……'; };
+$('#dDone').onclick=()=>{ if(D.running) finish(false); };
+$('#dSkip').onclick=()=>{ if(D.running){ D.running=false; drawRound(); } };
+
+// ═════════════ 切短信 ═════════════
+const SPAM=['【中国移动】您的积分即将清零，点击 10086.cn.xyz 兑换','妈，我手机掉水里了，加一下这个新号','恭喜您被《奔跑吧兄弟》抽中二等奖','您的银行卡在异地消费 9800 元，详询 400-xxx','代开发票 13800001111','您的快递丢了，客服给您赔偿 300 元','同学聚会照片：t.cn/xxxx','爸，我是儿子，急需打钱','高薪招聘刷单员，日结 500','您的 QQ 已被冻结，点此解冻'];
+const HAM=['明天下午三点的会改到四点','晚上回来吃饭吗？','快递放门卫了','周末一起去看《美人鱼》吗','车到楼下了','记得带伞，晚上有雨','生日快乐！','你的作业我交了','到家了吗','房东说明天来修水管'];
+const TRUE=['太阳从东边升起','水在 0°C 结冰','一年有十二个月','鱼生活在水里','北京是中国的首都','光比声音快'];
+const FALSE=['鱼会爬树','一年有 13 个月','长城在日本','大熊猫主要吃肉','冰是热的','手机没电也能一直用'];
+const sl=$('#sl'), sg=sl.getContext('2d'); let W=0,H=0;
+const SL={on:false,items:[],trail:[],down:false,score:0,combo:0,hearts:3,t:60,ok:0,bad:0,miss:0,pay:0,spawnT:0,aiRight:0,aiTotal:0,parts:[],halves:[]};
+function sizeSl(){ const r=$('#slBox').getBoundingClientRect(), k=$('#win').getBoundingClientRect().width/1236; W=Math.round(r.width/k); H=Math.round(r.height/k); sl.width=W*2; sl.height=H*2; sg.setTransform(2,0,0,2,0,0); }
+function spawn(){
+  const kind=rnd(4), text=kind===0?pick(SPAM):kind===1?pick(HAM):kind===2?pick(TRUE):pick(FALSE), bad=kind===0||kind===3, sense=kind>=2;
+  sg.font='bold 15px PingFang SC'; const w=Math.min(380,sg.measureText(text).width+28), h=34;
+  const x=60+Math.random()*(W-120-w), vx=(Math.random()-.5)*2.2;
+  const aiBad=Math.random()<skill()?bad:!bad;
+  SL.items.push({text,bad,sense,x,y:H+10,w,h,vx,vy:-(10.5+Math.random()*2.5),rot:(Math.random()-.5)*.3,vr:(Math.random()-.5)*.01,aiBad,cut:false});
+  SL.aiTotal++; if(aiBad===bad) SL.aiRight++;
+}
+function slStart(){ Object.assign(SL,{on:true,items:[],score:0,combo:0,hearts:3,t:60,ok:0,bad:0,miss:0,pay:0,spawnT:0,aiRight:0,aiTotal:0}); $('#slOver').style.display='none'; slHud(); }
+function slEnd(){ SL.on=false; const o=$('#slOver'); o.style.display='flex'; o.innerHTML=`<h2>${SL.hearts>0?'时间到':'心没了'}</h2><p>切对 ${SL.ok} · 切错 ${SL.bad} · 漏掉 ${SL.miss}<br>收入 ¥${SL.pay.toFixed(1)} · 灵光这局判断对了 ${SL.aiTotal?Math.round(SL.aiRight/SL.aiTotal*100):0}%</p><button class="btn" id="slStart">再来一局</button>`; $('#slStart').onclick=slStart; }
+$('#slStart').onclick=slStart;
+function slHud(){ $('#slHearts').textContent='♥'.repeat(SL.hearts)+'♡'.repeat(3-SL.hearts); $('#slScore').textContent=SL.score; $('#slCombo').textContent=SL.combo; $('#slTime').textContent=Math.ceil(SL.t)+' 秒';
+  $('#slOk').textContent=SL.ok; $('#slBad').textContent=SL.bad; $('#slMiss').textContent=SL.miss; $('#slPay').textContent='¥'+SL.pay.toFixed(1); $('#slAi').textContent=SL.aiTotal?Math.round(SL.aiRight/SL.aiTotal*100)+'%':'—'; }
+function lp(e){ const r=sl.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*W, y:(e.clientY-r.top)/r.height*H, t:performance.now()}; }
+sl.onpointerdown=e=>{ SL.down=true; SL.trail=[lp(e)]; SL.swipeHits=0; sl.setPointerCapture(e.pointerId); };
+sl.onpointermove=e=>{ if(!SL.down||!SL.on) return; const p=lp(e), q=SL.trail[SL.trail.length-1]; SL.trail.push(p);
+  for(const it of SL.items){ if(it.cut) continue; for(let k=0;k<=6;k++){ const x=q.x+(p.x-q.x)*k/6, y=q.y+(p.y-q.y)*k/6; if(x>it.x&&x<it.x+it.w&&y>it.y&&y<it.y+it.h){ cut(it,p); break; } } } };
+sl.onpointerup=()=>{ SL.down=false; if(SL.swipeHits>=2){ const b=SL.swipeHits; SL.score+=b*5; floatAt(W/2+120,90,'一刀 '+b+' 条！+'+b*5,'#FFE27A'); } SL.swipeHits=0; };
+function cut(it,p){
+  it.cut=true; SL.swipeHits=(SL.swipeHits||0)+1;
+  for(let i=0;i<18;i++) SL.parts.push({x:p.x,y:p.y,vx:(Math.random()-.5)*8,vy:(Math.random()-.8)*7,l:1,c:it.bad?'#FFB347':'#FF6B6B'});
+  SL.halves.push({...it,side:-1,vy:it.vy*.3,vx:it.vx-2},{...it,side:1,vy:it.vy*.3,vx:it.vx+2});
+  if(it.bad){ SL.ok++; SL.combo++; SL.score+=10+SL.combo; const pay=1+Math.min(SL.combo,20)*.05; SL.pay+=pay; give(1,pay); floatAt(it.x+12,it.y+60,'+¥'+pay.toFixed(1),'#FFE27A'); $('#slSay').textContent=it.aiBad?pick(['我也觉得是垃圾。','对，切得好。','这条我认得。']):pick(['……原来这也是垃圾？','记下了。','我刚才看错了。']); }
+  else { SL.bad++; SL.combo=0; SL.hearts--; SL.pay-=1; give(1,-1); floatAt(it.x+12,it.y+60,'切错了！'+(it.sense?'这句是对的':'正常短信'),'#FF6B6B'); if(SL.hearts<=0) slEnd(); }
+  slHud();
+}
+let lastF=performance.now();
+function slLoop(t){
+  const dt=Math.min(.05,(t-lastF)/1000); lastF=t;
+  if($('#g-slice').classList.contains('on')&&W){
+    if(SL.on){ const before=Math.ceil(SL.t); SL.t-=dt; if(Math.ceil(SL.t)!==before) $('#slTime').textContent=Math.ceil(SL.t)+' 秒'; if(SL.t<=0){ SL.t=0; slEnd(); } SL.spawnT-=dt; if(SL.spawnT<=0){ spawn(); if(Math.random()<.35) spawn(); SL.spawnT=Math.max(.45,1.1-(60-SL.t)/120); } }
+    const g=.32*60*dt;
+    for(const it of SL.items){ it.x+=it.vx*60*dt; it.y+=it.vy*60*dt; it.vy+=g; it.rot+=it.vr; }
+    for(const it of SL.items) if(!it.cut&&it.vy>0&&it.y>H+20){ it.cut=true; if(it.bad&&SL.on){ SL.miss++; SL.combo=0; SL.pay-=.5; give(0,-.5); floatAt(it.x+12,H-20,'漏掉一条 −¥0.5','#FF8A8A'); slHud(); } }
+    SL.items=SL.items.filter(it=>!it.cut);
+    for(const h of SL.halves){ h.x+=h.vx*60*dt; h.y+=h.vy*60*dt; h.vy+=g; h.rot+=h.side*.06; }
+    SL.halves=SL.halves.filter(h=>h.y<H+60);
+    sg.clearRect(0,0,W,H);
+    for(const it of SL.items) pill(it,1);
+    for(const h of SL.halves) pill(h,.8,h.side);
+    for(const p of SL.parts){ p.x+=p.vx; p.y+=p.vy; p.vy+=.3; p.l-=.03; sg.globalAlpha=Math.max(0,p.l); sg.fillStyle=p.c; sg.fillRect(p.x,p.y,3,3); } sg.globalAlpha=1; SL.parts=SL.parts.filter(p=>p.l>0);
+    const now=performance.now(); SL.trail=SL.trail.filter(p=>now-p.t<140);
+    if(SL.trail.length>1){ sg.strokeStyle='#fff'; sg.lineCap='round'; for(let i=1;i<SL.trail.length;i++){ sg.lineWidth=i/SL.trail.length*7; sg.beginPath(); sg.moveTo(SL.trail[i-1].x,SL.trail[i-1].y); sg.lineTo(SL.trail[i].x,SL.trail[i].y); sg.stroke(); } }
+  }
+  requestAnimationFrame(slLoop);
+}
+function pill(it,a,half){
+  sg.save(); sg.translate(it.x+it.w/2,it.y+it.h/2); sg.rotate(it.rot); sg.globalAlpha=a;
+  if(half){ sg.beginPath(); sg.rect(half<0?-it.w/2-4:0,-it.h,it.w/2+4,it.h*2); sg.clip(); }
+  sg.fillStyle=it.sense?'#4A6B3D':'#3D4A7A'; rr(-it.w/2,-it.h/2,it.w,it.h,10); sg.fill();
+  sg.fillStyle='#fff'; sg.font='bold 15px PingFang SC'; sg.textAlign='center'; sg.textBaseline='middle'; sg.fillText(it.text,0,1,it.w-16);
+  if(!half&&it.aiBad){ sg.strokeStyle='#B7A9FF'; sg.setLineDash([5,4]); sg.lineWidth=2; rr(-it.w/2-4,-it.h/2-4,it.w+8,it.h+8,13); sg.stroke(); sg.setLineDash([]); sg.fillStyle='#B7A9FF'; sg.font='bold 11px PingFang SC'; sg.fillText('灵：垃圾?',it.w/2-28,-it.h/2-12); }
+  sg.restore();
+}
+function rr(x,y,w,h,r){ sg.beginPath(); sg.moveTo(x+r,y); sg.arcTo(x+w,y,x+w,y+h,r); sg.arcTo(x+w,y+h,x,y+h,r); sg.arcTo(x,y+h,x,y,r); sg.arcTo(x,y,x+w,y,r); sg.closePath(); }
+
+// ═════════════ 对暗号 ═════════════
+const MOODS=['开心','难过','生气','佩服','讽刺','害怕','无奈','感动'];
+const ITEMS=[
+  ['哈哈哈哈哈哈哈哈哈','开心'],['洪荒之力','开心'],['蓝瘦香菇','难过'],['宝宝心里苦','难过'],['友谊的小船说翻就翻','无奈'],['我也是醉了','无奈'],
+  ['666666666','佩服'],['厉害了我的哥','佩服'],['城会玩','讽刺'],['你们城里人真会玩','讽刺'],['吓死宝宝了','害怕'],['前方高能预警','害怕'],
+  ['(╯‵□′)╯︵┻━┻','生气'],['气死我了！！','生气'],['泪目','感动'],['感动哭了','感动'],['主要看气质','讽刺'],['且行且珍惜','讽刺'],
+  ['233333','开心'],['这操作我服','佩服'],['心疼主播','难过'],['日了狗了','生气'],['好暖','感动'],['完了完了','害怕'],
+];
+const E={cur:null,opts:[],me:null,t0:0,locked:false,hit:0,miss:0,crowd:0,pay:0,hist:[],n:0};
+function espNext(){
+  E.cur=pick(ITEMS); E.n++; E.me=null; E.locked=false; E.t0=performance.now();
+  const others=MOODS.filter(m=>m!==E.cur[1]).sort(()=>Math.random()-.5).slice(0,3);
+  E.opts=[E.cur[1],...others].sort(()=>Math.random()-.5);
+  $('#eItem').textContent=E.cur[0]; $('#eTag').textContent='弹幕 · 第 '+E.n+' 条'; $('#eRes').textContent='';
+  $('#eOpts').innerHTML=E.opts.map((o,i)=>`<button data-v="${o}">${o}</button>`).join('');
+  document.querySelectorAll('#eOpts button').forEach(b=>b.onclick=()=>espPick(b.dataset.v));
+  $('#eSay').textContent=pick(['你先选，我再翻牌。','我想好了。你呢？','……这个我好像见过。']);
+}
+function espPick(v){
+  if(E.locked) return; E.locked=true; E.me=v;
+  document.querySelectorAll('#eOpts button').forEach(b=>{ b.disabled=true; if(b.dataset.v===v) b.classList.add('me'); });
+  $('#eSay').textContent='翻牌……';
+  setTimeout(()=>{
+    // 灵光 picks the crowd's word as often as its skill; otherwise another option.
+    const ai=Math.random()<skill()?E.cur[1]:pick(E.opts.filter(o=>o!==E.cur[1]));
+    const b=[...document.querySelectorAll('#eOpts button')].find(x=>x.dataset.v===ai); if(b) b.classList.add('aipick');
+    const match=v===ai, crowd=v===E.cur[1];
+    if(match){ E.hit++; let pay=1+(crowd?.5:0); E.pay+=pay; give(1,pay,b); if(crowd) E.crowd++; $('#eRes').innerHTML=`<span style="color:var(--green)">暗号对上了！「${v}」</span>`+(crowd?'<span style="color:var(--mute);font-size:14px">　和大家想的一样 +¥0.5</span>':''); $('#eSay').textContent=pick(['我们想到一起了。','对上了。','我就知道你会选这个。']); }
+    else { E.miss++; if(crowd){ E.pay+=.5; give(1,.5,b); } $('#eRes').innerHTML=`<span style="color:var(--red)">没对上：你「${v}」 · 灵光「${ai}」</span>`+(crowd?'<span style="color:var(--mute);font-size:14px">　你选得和大家一样，灵光记下了 +¥0.5</span>':''); $('#eSay').textContent=ai===E.cur[1]?pick(['大家都觉得是「'+ai+'」。','……你和别人想的不一样。']):pick(['我还不太懂这句。','这个梗我没见过。','……是我想错了吗。']); }
+    E.hist.push(match?'ok':'no'); if(E.hist.length>24) E.hist.shift(); espStats();
+    setTimeout(espNext,1300);
+  },650);
+}
+function espStats(){ $('#eHit').textContent=E.hit; $('#eMiss').textContent=E.miss; $('#eCrowd').textContent=E.crowd; $('#ePay').textContent='¥'+E.pay.toFixed(1); $('#eHist').innerHTML=E.hist.map(h=>`<i class="${h}">${h==='ok'?'✓':'✗'}</i>`).join(''); }
+setInterval(()=>{ if(!E.cur||E.locked||!$('#g-esp').classList.contains('on')) return; const el=(performance.now()-E.t0)/1000; $('#eTimer').style.width=Math.max(0,100-el/8*100)+'%'; if(el>8) espPick('（没选）'); },100);
+addEventListener('keydown',e=>{ if($('#g-esp').classList.contains('on')&&e.key>='1'&&e.key<='4'&&E.opts[+e.key-1]) espPick(E.opts[+e.key-1]); });
+
+function fit(){ const k=Math.min(innerWidth/1260, innerHeight/715, 1.4); $('#win').style.transform=`translate(-50%,-50%) scale(${k})`; if($('#g-slice').classList.contains('on')) sizeSl(); }
+addEventListener('resize',fit); fit(); hud(); drawRound(); drawStats(); requestAnimationFrame(slLoop);
+</script>
+</body>
+</html>

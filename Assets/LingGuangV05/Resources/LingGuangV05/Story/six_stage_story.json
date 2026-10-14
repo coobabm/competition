@@ -5,12 +5,7 @@
       "id": "emerge_2",
       "on": "lg.emerge:2",
       "priority": 66,
-      "steps": [
-        {
-          "op": "think",
-          "key": "emerge_2_think"
-        }
-      ]
+      "steps": []
     },
     {
       "id": "emerge_3",
@@ -409,8 +404,8 @@
         },
         {
           "op": "open",
-          "app": "zhongbao",
-          "tab": "label"
+          "app": "lingguang",
+          "tab": "teach"
         }
       ]
     },
@@ -432,18 +427,6 @@
         {
           "op": "wait",
           "seconds": 2
-        },
-        {
-          "op": "cutscene",
-          "name": "Title",
-          "key": "history_yes",
-          "subKey": "history_yes_sub"
-        },
-        {
-          "op": "cutscene",
-          "name": "Title",
-          "key": "six_end_yes",
-          "subKey": "six_end_yes_sub"
         },
         {
           "op": "flag",
@@ -469,18 +452,6 @@
         {
           "op": "wait",
           "seconds": 2
-        },
-        {
-          "op": "cutscene",
-          "name": "Title",
-          "key": "history_no",
-          "subKey": "history_no_sub"
-        },
-        {
-          "op": "cutscene",
-          "name": "Title",
-          "key": "six_end_no",
-          "subKey": "six_end_no_sub"
         },
         {
           "op": "flag",
@@ -528,10 +499,6 @@
         {
           "op": "waitSignal",
           "ev": "story.delivered:specialty_motivation"
-        },
-        {
-          "op": "think",
-          "key": "s2_choice_think"
         }
       ]
     },
@@ -693,10 +660,6 @@
         {
           "op": "waitSignal",
           "ev": "story.delivered:s2_name"
-        },
-        {
-          "op": "think",
-          "key": "s2_name_think"
         }
       ]
     },
@@ -717,10 +680,6 @@
         {
           "op": "waitSignal",
           "ev": "story.delivered:s2_moved"
-        },
-        {
-          "op": "think",
-          "key": "s2_moved_think"
         }
       ]
     },

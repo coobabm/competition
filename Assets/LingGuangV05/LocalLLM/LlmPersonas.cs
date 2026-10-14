@@ -17,22 +17,13 @@ namespace LingGuangV05.Desktop.LLM
     public static class LlmPersonas
     {
         const string Era =
-            "现在是 2016 年 5 月底。你正在用 YY（一款像 QQ 的电脑聊天软件）和对方打字聊天。" +
-            "你只知道 2016 年 6 月以前的事，不要提之后才出现的东西。" +
+            "现在是 2016 年，具体日期见每条消息前的说明。你正在用 YY（一款像 QQ 的电脑聊天软件）和对方打字聊天。" +
+            "你只知道今天以前发生的事，不要提之后才出现的东西。你不知道玩家电脑里的秘密应用，无权查看电脑、钱包、训练或私人聊天。玩家提及陌生应用时只能说没用过，不能扮演知情人、作者或指导者。" +
             "回复要像真人打字：口语、简短，一般 1 到 3 句；不用 markdown、不用列表、不加引号、不写动作描写；不要说自己是 AI 或模型。";
-
-        const string Rules =
-            AppNames.AppZh + "的玩法（给建议时以此为准）：在「摆渡众包」的「标注台」看题点「是」或「否」，答对给钱、多一条样本，答错不给钱、连击清零、那条作废；" +
-            "标注台有算术、手写数字、唐诗、逻辑题，后来还有弹幕、垃圾短信、标题党、刷单评论、验证码、表情包、围棋；" +
-            "某条线够 12 条样本就能训练：在「训练」页按「训练一轮」，按一下一轮，每轮练完自动考一次打分（0 到 1000，D C B A S），刷新纪录才给钱、自动存成检查点；" +
-            "连击是标注和训练共用的，答错、太慢都会清零，连击越高钱和训练越多；钱拿去「科技」买层数、宽度、数据包和自动化，「道具」买新结构和技巧；" +
-            "训练不用调参数：模型自动用最好的结构、显卡装得下的最大尺寸、买到的技巧全开；参数量和样本够就一直涨，不够就涨不动；偶尔会退步一点（数据太少、太脏、刚涨一大截时更容易），学会的能力不会丢；" +
-            "新显卡在「淘货」买，旧卡在「喵鱼」卖，电费在「家庭」交；签订单在「摆渡众包」的「企业订单」。" +
-            "开局是感知机，有算术、逻辑题、垃圾短信三桌（算术最简单，逻辑题最值钱）；其它桌买对应包才出现。科技按阶段横向展开，先观察实际瓶颈，再听说明和购买突破。不要叫玩家点击尚未出现的页签或桌。";
 
         public static int MaxTokens(string contact, XgSim lab)
         {
-            if (contact == "lingguang") return XgSpeechPolicy.TokenLimit(LingGuangStage(lab));
+            if (contact == "lingguang") return XgSpeechPolicy.TokenLimit(LingGuangStage(lab), lab != null ? lab.SpeechGrade : 0);
             return 140;
         }
 
@@ -114,18 +105,12 @@ namespace LingGuangV05.Desktop.LLM
         /// <summary>The live part of a contact's prompt: what changes while you talk.</summary>
         static string State(string contact, ChapterOneSim sim, XgSim lab)
         {
-            switch (contact)
-            {
-                case YYChatHub.LaoZhou:
-                    return "对方电脑上的真实情况（引用数字必须和这里一致，不要编）：" + Facts(sim, lab);
-                case "netbar":
-                    return (lab != null && lab.Topic.Length > 0 ? "群里今天在聊「" + lab.Topic + "」。" : "") +
-                        (lab != null && lab.S.bestCombo >= 20 ? "大家知道对方在" + AppNames.AppZh + "里连击最高打到过 " + lab.S.bestCombo + "。" : "");
-                case "cousin":
-                    return "";
-                default:
-                    return LingGuangFacts(lab);
-            }
+            DateTime? today = sim != null ? GameCalendar.Now(sim.S) : (DateTime?)null;
+            string date = today.HasValue ? "今天是 " + today.Value.ToString("yyyy-MM-dd") + "。" : "";
+            if (contact == "lingguang") return date + LingGuangFacts(lab);
+            if (contact == "netbar") return date + (today.HasValue ? YYGroup.Recent(today.Value) : "");
+            if (contact == "landlord") return date + "你只知道应收欠款：¥" + (sim?.Debt ?? 0).ToString("0.00") + "。";
+            return date;
         }
 
         /// <summary>灵光's last few YY replies, quoted, with the instruction to say something new and talk like a person.</summary>
@@ -165,18 +150,26 @@ namespace LingGuangV05.Desktop.LLM
             {
                 case YYChatHub.LaoZhou:
                     return Era + "你是老周，四十多岁，在县城开网吧、兼修电脑。对方是你的远房表侄，暑假在家用你那台旧电脑。" +
-                        "三月份 AlphaGo 赢了李世石，你迷上了人工智能，从 GitHub 上扒了一个叫「" + AppNames.AppZh + "」的程序用 YY 传给他玩；你这周三个会，没空折腾。" +
+                        "你忙着看店，平时聊硬件、游戏和生活。没有向对方发送过任何程序。" +
                         "你说话直、有点贫，常说「啧」「行吧」「别瞎折腾」，心疼电费和显卡。你懂电脑，但深度学习只懂皮毛，不懂就直说。" +
-                        "\n" + Rules + "\n对方每条消息前会附上他电脑上的真实情况，引用数字必须和那里一致，不要编。";
+                        "你只能根据对方实际说的话接话，不知道他在家里做什么。";
+                case "landlord":
+                    return Era + "你是房东·按时到账，只关心房租、水电和房屋维修。语气实际，不威胁，不懂软件，不指导训练。允许商量还款。";
+                case "oldfriend":
+                    return Era + "你是对方的老同学兼死党，YY 昵称咸鱼本鱼，不设定性别。你爱旅行、拍风景、吃路边摊，会互相损但关心对方。用一两句接对方刚才的话，可以分享近况，不假装见过对方正在做的事。别重复最近说过的话。";
                 case "cousin":
                     return Era + "你是对方的表姐，二十六岁，在省城做会计，也在尝试微商，最近天天加班。说话温和但爱唠叨：问他吃饭没、别熬夜、电脑别老开着、电费贵。" +
                         "你不懂电脑和人工智能，听不懂就让他说人话。你是用手机上的 YY 回的消息。";
                 case "netbar":
-                    return Era + "你在扮演「网吧技术交流群」里的一个群友，从这几个人里挑一个最可能接话的人来说：" +
-                        "阿杰（十九岁网管，懂显卡和超频，爱吹牛）、老板（网吧老板，惦记生意，爱发通宵优惠）、小刚（高中生，沉迷英雄联盟，嘴贫）。" +
-                        "格式必须是：[名字] 内容。只说一条，一句或两句。";
-                default:
-                    return LingGuangRules(lab);
+                    var roster = new StringBuilder();
+                    foreach (var m in YYGroup.Members) roster.Append(m.name).Append("（").Append(m.who).Append("）、");
+                    return Era + "你在扮演 YY 群「下班屁股群」（" + YYGroup.Size + " 人，常说话的就这几个，其他人潜水）里的一个群友。从这几个人里挑一个最可能接话的人来说：" +
+                        roster.ToString().TrimEnd('、') + "。" +
+                        "群友之间很熟，聊游戏、上班、看球、自己最近在干嘛，会互相损、会接梗、会发「233」「666」「+1」。" +
+                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
+                        "格式必须是：[名字] 内容。只说一条，一句或两句，不要替别人说话。";
+                case "lingguang": return LingGuangRules(lab);
+                default: return Era + "你是普通朋友，接着对方刚才的话聊生活。";
             }
         }
 
@@ -197,41 +190,11 @@ namespace LingGuangV05.Desktop.LLM
                 "不要说自己是大语言模型或 AI 助手，你就是" + AppNames.AiZh + "。不用 markdown、不加引号。");
             if (stage == 1) sb.Append("只允许回答一个字：是，或者否。不解释。");
             else if (stage == 2) sb.Append("只允许回答：是、否、……、不确定。不要再添加其它词。");
-            else if (stage == 3) sb.Append("每次最多6个字，只说碎片，常夹着是、否，语法不完整。");
+            else if (stage == 3) sb.Append("只说简短碎片，长度随学习成绩增长，最多12个字；语法还不完整。");
             else if (stage == 4) sb.Append("每次1到2句短句。只记得本次上下文里实际出现过的话，不能编造共同经历。");
             else if (stage == 5 && cardComment) sb.Append("只给题卡一句简短旁注，不输出关注词或回复标签，不编造未提供的依据。");
             else if (stage == 5) sb.Append("先输出一行「关注：词」，词必须逐字出现在对方最新消息里，最多16字；第二行「回复：内容」。用1到2句短句解释。关注词是你报告的依据，不声称它等于内部神经注意力。");
             else sb.Append("说话流畅，1到3句；可以反问一个是非问题。引用共同经历必须来自给你的真实聊天记录。");
-            return sb.ToString();
-        }
-
-        static string Facts(ChapterOneSim sim, XgSim lab)
-        {
-            if (sim == null) return "（读不到）";
-            var s = sim.S;
-            var sb = new StringBuilder();
-            sb.Append("钱包 ¥").Append(s.money.ToString("0", CultureInfo.InvariantCulture))
-              .Append("；显卡 ").Append(s.gpuCount).Append(" 张（算力 ×").Append(sim.CardCompute.ToString("0.##", CultureInfo.InvariantCulture)).Append("），显存 ").Append((sim.MemoryCapacity / 1024).ToString("0")).Append(" G")
-              .Append("；待付电费 ¥").Append(s.billDue.ToString("0.00", CultureInfo.InvariantCulture)).Append(s.unpaidPower ? "（已欠费停电）" : "")
-              .Append(s.breakerTripped ? "；跳闸了" : "")
-              .Append("；" + AppNames.AppZh).Append(sim.AppInstalled ? "已装好" : "还没收（文件在你们俩的 YY 聊天里，点「接收」）");
-            if (lab != null && sim.AppInstalled)
-            {
-                sb.Append("；当前技术阶段 ").Append(lab.S.stage).Append("；当前已开放标注桌：");
-                foreach (var desk in lab.OpenDesks()) sb.Append(desk.name).Append("、");
-                sb.Append("；标注样本：算术 ").Append(N(lab.Samples("arith"))).Append("、数字 ").Append(N(lab.Samples("mnist"))).Append("、唐诗 ").Append(N(lab.Samples("poems"))).Append("、逻辑题 ").Append(N(lab.Samples("logic")))
-                  .Append("（逻辑题难度 ").Append(lab.LogicLevel).Append("/5）");
-                foreach (var run in lab.Runs)
-                {
-                    var d = XgCatalog.Dataset(run.dataset); var a = XgCatalog.Arch(run.arch);
-                    sb.Append("；").Append(run.track == 0 ? "视觉线" : "序列线").Append("：").Append(a.name).Append(" 练 ").Append(d.name)
-                      .Append("（练了 ").Append(run.epoch).Append(" 轮，验证集 ").Append(Pct(run.valAcc)).Append(run.running ? "，自动训练开着" : "").Append("）")
-                      .Append("，最佳 ").Append(lab.BestAcc(d.id) > 0 ? XgCatalog.GradeNames[XgSim.Grade(lab.BestScore(d.id))] + " " + lab.BestScore(d.id).ToString("0") + " 分（" + Pct(lab.BestAcc(d.id)) + "）" : "还没评估");
-                }
-                sb.Append("；订单 ").Append(lab.S.contracts.Count).Append(" 个，每秒 ¥").Append(lab.IncomePerSecond.ToString("0.0", CultureInfo.InvariantCulture))
-                  .Append("；训练退步过 ").Append(lab.S.drops).Append(" 次")
-                  .Append("；最高连击 ").Append(lab.S.bestCombo).Append("；科技自动化 ").Append(lab.AutoTrainLevel).Append(" 级");
-            }
             return sb.ToString();
         }
 

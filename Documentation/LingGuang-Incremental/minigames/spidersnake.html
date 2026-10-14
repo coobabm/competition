@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>摆渡众包 · 爬虫贪吃蛇</title>
+<!--
+  爬虫贪吃蛇: the stage is a fake 摆渡百科 page. A spider (the crawler) eats the words of the article; every word is one
+  labelled sample and joins its silk tail. Ads (banner, sidebar, inline, pop-ups) and the spider's own silk cut the tail.
+  Words only turn into ¥ when they leave the tail's far end (woven into the web), so a cut loses the unpaid ones.
+  灵光 skill: from ~35% it opens a "reading radar" that eats nearby words by itself (bigger and faster with skill);
+  the spider also walks a little faster. Below that it only watches and comments.
+-->
+<link rel="stylesheet" href="common.css">
+<style>
+#sc{display:block;position:absolute;left:0;top:0;cursor:crosshair}
+.tm{position:absolute;right:12px;top:4px;display:flex;gap:6px;align-items:center;font-size:12px;color:#556}
+.tm b{background:var(--blue);color:#fff;border-radius:10px;padding:1px 10px;font-size:14px;min-width:64px;text-align:center}
+.tm b.low{background:var(--red)}
+.tm em{font-style:normal;background:var(--ai2);color:var(--ai);border:1px solid #DCD6FB;border-radius:10px;padding:1px 8px}
+.eaten{position:absolute;left:0;right:0;bottom:0;height:34px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;gap:5px;padding:0 8px 0 70px;overflow:hidden;font-size:12px}
+.eaten .lb{position:absolute;left:0;top:0;bottom:0;width:62px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--mute);z-index:2;box-shadow:6px 0 6px #fff}
+.eaten i{font-style:normal;background:#E6F4EF;color:#1E6B55;border-radius:10px;padding:1px 8px;white-space:nowrap;flex:none}
+.eaten i.t{background:#FFF0BF;color:#8A5A00;font-weight:700}
+.eaten i.a{background:var(--ai2);color:var(--ai)}
+.over .tg{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:560px}
+.over .tg i{font-style:normal;background:#FFF0BF;color:#8A5A00;border-radius:10px;padding:1px 10px;font-size:13px}
+.over .hint{font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script>
+const {stage}=LG.mount({
+  id:'spidersnake', title:'爬虫贪吃蛇', subtitle:'摆渡百科 · 一路吃字', icon:'蛛', dataset:'摆渡百科 词条',
+  stats:[['读到的词','sW'],['术语','sT'],['断线','sCut'],['灵光雷达','sRad','关'],['收入','sPay','¥0']], statsNote:'每个词 = 1 条样本',
+  aiHello:'前面那些字，是不是都能吃？',
+  rule:'<b>玩法</b>：鼠标指哪爬哪（或方向键 / WASD）。吃字 = 读一个词；金色术语 +3 样本。<br><b>别碰</b>：广告、弹窗、自己的丝线，会断线丢字。<br><span style="color:var(--ai)">灵光水平 ≥ 35% 开「阅读雷达」自动吃附近的字。</span>'
+});
+
+// ───────────────────────── content ─────────────────────────
+// Tokens are separated by spaces; [bracketed] tokens are golden terms. Punctuation stays glued to the word before it.
+const ARTICLES=[
+ {title:'蜘蛛', crumb:'摆渡百科 › 动物 › 节肢动物 › 蜘蛛', q:'蜘蛛',
+  info:[['界','动物界'],['门','节肢动物门'],['纲','蛛形纲'],['目','蜘蛛目']],
+  rel:['蛛形纲','狼蛛','跳蛛','黑寡妇','蛛丝','网络爬虫','昆虫','喜蛛'],
+  paras:[
+   '蜘蛛 是 [节肢动物门] [蛛形纲] 的 动物， 全世界 已知 约 四万五千 种。 大多数 蜘蛛 会 用 [丝腺] 分泌 的 蛛丝 织网， 捕食 飞虫。 它们 有 八条 腿， 身体 分为 头胸部 和 腹部， 与 六条 腿 的 昆虫 不同。',
+   '蛛网 的 形状 各不相同， 常见 的 有 圆网、 漏斗网 和 不规则网。 圆网 蜘蛛 每天 都会 重新 织网， 再 把 旧网 吃掉， 以便 回收 蛋白质。 蛛丝 的 强度 高于 同样 粗细 的 钢丝， 因此 被 科学家 称为 [生物材料] 的 明星。',
+   '有 的 蜘蛛 并 不 织网， 例如 [跳蛛] 靠 敏锐 的 视力 主动 追捕 猎物， 狼蛛 则 在 夜间 出洞 巡游。 近年 来， 互联网 上 的 [网络爬虫] 也 被 形象 地 称作 蜘蛛， 它们 沿着 链接 爬行 网页， 把 内容 带回 搜索引擎。'
+  ]},
+ {title:'深度学习', crumb:'摆渡百科 › 科技 › 人工智能 › 深度学习', q:'深度学习',
+  info:[['英文','Deep Learning'],['隶属','机器学习'],['代表','AlexNet']],
+  rel:['神经网络','AlphaGo','GPU','TensorFlow','ImageNet','Caffe','百度大脑'],
+  paras:[
+   '[深度学习] 是 [机器学习] 的 一个 分支， 通过 多层 [神经网络] 从 大量 数据 中 自动 学习 特征。 2012 年， [AlexNet] 在 [ImageNet] 图像 识别 比赛 中 大幅 领先 传统 方法， 使 这一 领域 迅速 升温。',
+   '2016 年 3 月， [AlphaGo] 以 四比一 战胜 [李世石]， 让 公众 第一次 直观 感受到 [人工智能] 的 力量。 训练 这样 的 模型 需要 [GPU] 提供 强大 的 并行 计算 能力， 同时 也 消耗 大量 电力。',
+   '常见 的 网络 结构 包括 用于 图像 的 [卷积神经网络] 和 用于 文本 与 语音 的 [循环神经网络]。 训练 时 通过 [反向传播] 算法 不断 调整 参数， 使 预测 结果 与 标注 数据 之间 的 误差 逐渐 减小， 因此 高质量 的 标注 数据 是 模型 效果 的 关键。'
+  ]},
+ {title:'众包', crumb:'摆渡百科 › 经济 › 互联网 › 众包', q:'众包',
+  info:[['提出者','杰夫·豪'],['提出','2006 年'],['典型','维基百科']],
+  rel:['维基百科','验证码','数据标注','兼职','交叉验证','12306'],
+  paras:[
+   '[众包] 一词 由 杰夫·豪 于 2006 年 提出， 指 企业 把 原本 由 员工 完成 的 工作， 以 公开 招募 的 方式 外包 给 不特定 的 网络 大众。 [维基百科] 就是 众包 的 典型 例子。',
+   '在 [数据标注] 领域， 众包 平台 把 海量 图片 与 文本 拆分 成 小 任务， 由 众多 兼职 用户 分别 完成， 再 通过 [交叉验证] 判断 结果 的 可靠性。 一般 同一 条 数据 会 交给 三个 人 标注， 取 多数 意见 作为 答案。',
+   '国内 的 众包 平台 近年 兴起， 任务 类型 涵盖 图片 分类、 语音 转写、 情感 判断 等。 业内 人士 指出， 标注 质量 与 报酬 水平 直接 相关， 而 [验证码] 也 可以 看作 一种 免费 的 众包 标注。'
+  ]}
+];
+const FONT='"PingFang SC","Microsoft YaHei",sans-serif';
+const W=stage.clientWidth, H=stage.clientHeight;
+const BAR=34, TOP=68, BOTTOM=H-BAR-8;      // bottom strip with the eaten-word list
+const COLX=18, SIDEW=236, SIDEX=W-12-SIDEW, COLW=SIDEX-18-COLX;
+const LINE=30, GAP=30, NECK=18, CAP=18, SELFSKIP=64, TIME=60;
+
+stage.insertAdjacentHTML('beforeend',`<canvas id="sc"></canvas>
+  <div class="tm"><em id="tmR"></em><b id="tmT">60 秒</b></div>
+  <div class="eaten" id="eaten"><div class="lb">已读：</div></div><div class="over" id="ov"></div>`);
+const cv=document.getElementById('sc'); cv.width=W*2; cv.height=H*2; cv.style.width=W+'px'; cv.style.height=H+'px';
+const g=cv.getContext('2d'); g.scale(2,2);
+const pgc=document.createElement('canvas'); pgc.width=W*2; pgc.height=H*2; const pg=pgc.getContext('2d'); pg.scale(2,2);
+
+// ───────────────────────── state ─────────────────────────
+const S={state:'idle',x:0,y:0,h:0,trail:[],lastPush:null,tail:[],words:[],hazards:[],popups:[],parts:[],page:0,art:null,
+  time:TIME,t:0,inv:0,flash:0,combo:0,comboT:0,radT:0,radAng:0,popT:8,sayT:10,
+  nW:0,nT:0,nAI:0,nCut:0,pay:0,terms:[],mode:'mouse',beam:null,pageFlash:0};
+const mouse={x:W/2,y:H/2,in:false}, keys={};
+
+const rr=(c,x,y,w,h,r)=>{ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); };
+const winPos=(x,y)=>{ const r=stage.getBoundingClientRect(), wr=document.getElementById('win').getBoundingClientRect(), k=wr.width/1236; return {x:(r.left-wr.left)/k+x, y:(r.top-wr.top)/k+y}; };
+const plain=t=>t.replace(/[，。、；：“”！？（）,.!?]/g,'');
+const skillN=()=>Math.max(0,Math.min(1,(LG.skill()-.35)/.62));   // 0 = radar off, 1 = full power
+const radarOn=()=>LG.skill()>=.35;
+const radarR=()=>56+96*skillN(), radarGap=()=>1.5-1.1*skillN();
+
+// ───────────────────────── page layout ─────────────────────────
+function layoutPage(){
+  const a=ARTICLES[S.page%ARTICLES.length]; S.art=a; S.words=[]; g.font=`17px ${FONT}`;
+  const PT=TOP+60, FL={x:COLX+COLW-250,y:PT+3*LINE+6,w:250,h:48};
+  let x=COLX,y=PT;
+  const maxW=()=>(y+LINE>FL.y-4&&y<FL.y+FL.h+4)?COLW-FL.w-14:COLW;
+  outer: for(const p of a.paras){
+    for(const raw of p.split(/\s+/)){
+      const term=/^\[.*\]/.test(raw), t=raw.replace(/[\[\]]/g,''), w=Math.ceil(g.measureText(t).width)+12;
+      if(x+w>COLX+maxW()&&x>COLX){ x=COLX; y+=LINE; }
+      if(y+24>BOTTOM) break outer;
+      S.words.push({t,term,x,y,w,h:24,eaten:false}); x+=w+4;
+    }
+    x=COLX; y+=LINE+10;
+  }
+  S.total=S.words.length; S.left=S.total;
+  // sidebar: two ads and a list of related entries (these are food too)
+  const rel=[]; let rx=SIDEX+10, ry=TOP+98+30+98+8+22;       // computed below
+  const infoY=TOP+104, infoH=24+a.info.length*22+8, relY=infoY+infoH+10;
+  rx=SIDEX+8; ry=relY+26; g.font=`14px ${FONT}`;
+  for(const t of a.rel){ const w=Math.ceil(g.measureText(t).width)+12; if(rx+w>SIDEX+SIDEW-6){ rx=SIDEX+8; ry+=28; } if(ry+22>BOTTOM-124) break; S.words.push({t,term:false,x:rx,y:ry,w,h:22,eaten:false,side:true}); rx+=w+4; }
+  S.total=S.words.length; S.left=S.total;
+  const ad1={x:SIDEX,y:TOP,w:SIDEW,h:96,tag:'广告',l1:'一键开店 月入过万',l2:'0 元加盟 · 马上咨询 ➜',c:'#FFE9E4'};
+  const ad2={x:SIDEX,y:BOTTOM-112,w:SIDEW,h:112,tag:'广告',l1:'传奇霸业 · 登录就送充值卡',l2:'点击领取 VIP ➜',c:'#E8F0FF'};
+  const ban={x:12,y:BAR+2,w:W-24,h:26,tag:'百度推广',l1:'蜘蛛网防护 · 灭蜘蛛上门服务 · 一键清除',l2:'立即咨询 ➜',c:'#FFF4E0',banner:true};
+  const inl={x:FL.x,y:FL.y,w:FL.w,h:FL.h,tag:'广告',l1:'热门推荐：震惊！看完你就明白了',l2:'点击查看 ➜',c:'#F2E9FF',small:true};
+  S.hazards=[ban,ad1,ad2,inl]; S.layout={infoY,infoH,relY};
+  paintPage();
+}
+function drawAd(c,r){
+  c.save(); c.fillStyle=r.c; rr(c,r.x,r.y,r.w,r.h,4); c.fill();
+  c.strokeStyle='#E8574A'; c.lineWidth=2; c.setLineDash([7,4]); rr(c,r.x+1,r.y+1,r.w-2,r.h-2,4); c.stroke(); c.setLineDash([]);
+  c.fillStyle='#8A8F9C'; c.font=`10px ${FONT}`; const tw=c.measureText(r.tag).width+8; c.fillRect(r.x+r.w-tw-2,r.y+r.h-14,tw,12); c.fillStyle='#fff'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(r.tag,r.x+r.w-tw/2-2,r.y+r.h-8);
+  c.textAlign='left'; c.fillStyle='#B3261E'; c.font=`bold ${r.banner?13:r.small?13:16}px ${FONT}`;
+  if(r.banner){ c.fillText(r.l1,r.x+12,r.y+r.h/2+1); c.fillStyle='#2932E1'; c.font=`12px ${FONT}`; c.fillText(r.l2,r.x+r.w-190,r.y+r.h/2+1); }
+  else { c.fillText(r.l1,r.x+10,r.y+(r.small?18:30)); c.fillStyle='#2932E1'; c.font=`12px ${FONT}`; c.fillText(r.l2,r.x+10,r.y+(r.small?36:56)); }
+  c.restore();
+}
+function paintPage(){
+  const c=pg, a=S.art;
+  c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  // browser-ish header
+  c.fillStyle='#F2F4F8'; c.fillRect(0,0,W,BAR); c.fillStyle='#E3E6EC'; c.fillRect(0,BAR-1,W,1);
+  c.textBaseline='middle'; c.textAlign='left'; c.fillStyle='#2932E1'; c.font=`bold 16px ${FONT}`; c.fillText('摆渡百科',14,BAR/2);
+  c.fillStyle='#fff'; c.strokeStyle='#CBD2E6'; c.lineWidth=1; rr(c,104,6,250,22,11); c.fill(); c.stroke();
+  c.fillStyle='#333'; c.font=`12px ${FONT}`; c.fillText(a.q,118,BAR/2+1);
+  c.fillStyle='#2932E1'; rr(c,300,7,52,20,10); c.fill(); c.fillStyle='#fff'; c.textAlign='center'; c.fillText('进入词条',326,BAR/2+1); c.textAlign='left';
+  c.fillStyle='#8A8F9C'; c.fillText('baike.baidu.example/item/'+encodeURIComponent(a.q).slice(0,9)+'…',370,BAR/2+1);
+  // breadcrumb + title
+  c.fillStyle='#8A8F9C'; c.font=`12px ${FONT}`; c.fillText(a.crumb,COLX,TOP+8);
+  c.fillStyle='#222'; c.font=`bold 28px ${FONT}`; c.fillText(a.title,COLX,TOP+34);
+  const tw=c.measureText(a.title).width; c.fillStyle='#8A8F9C'; c.font=`12px ${FONT}`; c.fillText('编辑　历史　讨论',COLX+tw+16,TOP+38);
+  c.fillStyle='#E3E6EC'; c.fillRect(COLX,TOP+50,COLW,1);
+  // sidebar info box
+  const L=S.layout; c.fillStyle='#F7F8FB'; c.strokeStyle='#E3E6EC'; rr(c,SIDEX,L.infoY,SIDEW,L.infoH,4); c.fill(); c.stroke();
+  c.fillStyle='#2932E1'; c.font=`bold 13px ${FONT}`; c.fillText('词条概览',SIDEX+10,L.infoY+13);
+  c.font=`12px ${FONT}`; a.info.forEach((kv,i)=>{ c.fillStyle='#8A8F9C'; c.fillText(kv[0],SIDEX+10,L.infoY+36+i*22); c.fillStyle='#333'; c.fillText(kv[1],SIDEX+70,L.infoY+36+i*22); });
+  c.fillStyle='#8A8F9C'; c.font=`bold 12px ${FONT}`; c.fillText('相关词条',SIDEX+8,L.relY+10);
+  // words
+  for(const w of S.words){
+    if(w.eaten){ c.strokeStyle='#E3E6EC'; c.lineWidth=1; c.setLineDash([3,3]); rr(c,w.x+.5,w.y+.5,w.w-1,w.h-1,5); c.stroke(); c.setLineDash([]); continue; }
+    if(w.term){ c.fillStyle='#FFF0BF'; rr(c,w.x,w.y,w.w,w.h,5); c.fill(); c.strokeStyle='#E8A317'; c.lineWidth=1.5; c.stroke(); c.fillStyle='#7A4E00'; }
+    else if(w.side){ c.fillStyle='#EEF2FF'; rr(c,w.x,w.y,w.w,w.h,5); c.fill(); c.fillStyle='#2932E1'; }
+    else { c.fillStyle='#F0F2F7'; rr(c,w.x,w.y,w.w,w.h,5); c.fill(); c.fillStyle='#2B2F3A'; }
+    c.font=`${w.side?14:17}px ${FONT}`; c.fillText(w.t,w.x+6,w.y+w.h/2+1);
+  }
+  for(const hz of S.hazards) drawAd(c,hz);
+}
+
+// ───────────────────────── play ─────────────────────────
+function resetGame(){
+  Object.assign(S,{state:'play',x:COLX+70,y:TOP+400>BOTTOM?BOTTOM-60:TOP+200,h:0,trail:[],tail:[],popups:[],parts:[],time:TIME,t:0,inv:.8,flash:0,combo:0,comboT:0,radT:1,popT:8,sayT:9,
+    nW:0,nT:0,nAI:0,nCut:0,pay:0,terms:[],beam:null,page:Math.floor(Math.random()*ARTICLES.length)});
+  S.lastPush={x:S.x,y:S.y};
+  layoutPage(); document.getElementById('ov').style.display='none'; document.getElementById('lgHist').innerHTML=''; listRender(); stats();
+  const s=LG.skill();
+  LG.say(s<.35?'我还看不懂这些字……你带我爬，我跟着学。':s<.7?'旁边的字我能认出来了，我帮你吃近的！':'你管躲广告，字交给我的雷达。');
+}
+function stats(){
+  LG.set('sW',S.nW); LG.set('sT',S.nT); LG.set('sCut',S.nCut); LG.set('sPay','¥'+S.pay.toFixed(1));
+  LG.set('sRad',radarOn()?('半径 '+Math.round(radarR())):'未开启'); document.getElementById('tmR').textContent=radarOn()?'灵光雷达 · 半径 '+Math.round(radarR()):'灵光雷达 · 未开启';
+}
+LG.onSkill=stats;
+const eatList=[];
+function listRender(){ document.getElementById('eaten').innerHTML='<div class="lb">已读：</div>'+eatList.slice(-24).map(e=>`<i class="${e.term?'t':e.ai?'a':''}">${plain(e.t)}</i>`).join(''); }
+
+function eat(w,byAI){
+  w.eaten=true; S.left--; S.nW++; if(byAI) S.nAI++; if(w.term){ S.nT++; S.terms.push(plain(w.t)); }
+  const n=w.term?3:1;
+  LG.give(n,0);
+  S.tail.unshift({t:w.t,term:w.term,ai:byAI});
+  eatList.push({t:w.t,term:w.term,ai:byAI}); if(eatList.length>60) eatList.shift(); listRender();
+  const p=winPos(w.x+w.w/2-34,w.y-4);
+  LG.float(p,w.term?'+3 样本 · 术语':'+1 样本 · 词',w.term?'#E8A317':byAI?'#8A78E8':'#2F9E44');
+  LG.hist(byAI?'ai':'ok',w.term?'术':null);
+  for(let i=0;i<(w.term?14:7);i++) S.parts.push({x:w.x+w.w/2,y:w.y+12,vx:(Math.random()-.5)*120,vy:(Math.random()-.8)*110,l:1,c:w.term?'#E8A317':byAI?'#8A78E8':'#5DCAA5'});
+  if(!byAI){ S.combo++; S.comboT=1.3; if(S.combo>=4&&S.combo%2===0) LG.float(winPos(S.x-20,S.y-34),'连读 ×'+S.combo,'#2932E1'); }
+  if(w.term) LG.say(LG.skill()<.5?'「'+plain(w.t)+'」……是个很厉害的词吗？':'「'+plain(w.t)+'」，术语，我记下了。');
+  while(S.tail.length>CAP){ const o=S.tail.pop(); bank(o); }
+  paintPage(); stats();
+  if(S.left<=Math.ceil(S.total*.18)) flipPage();
+}
+function bank(o){ const m=o.term?2:.4; S.pay+=m; LG.give(0,m); for(let i=0;i<3;i++) S.parts.push({x:S.x,y:S.y,vx:0,vy:0,l:.5,c:'#E8A317',tailEnd:true}); }
+function flipPage(){ S.page++; S.pageFlash=1; layoutPage(); LG.float(winPos(W/2-60,TOP+120),'翻到下一页 ▶','#2932E1'); }
+
+function calcTail(){
+  const out=[{x:S.x,y:S.y,c:0}]; let c=0,px=S.x,py=S.y;
+  for(let i=S.trail.length-1;i>=0;i--){ const p=S.trail[i]; c+=Math.hypot(p.x-px,p.y-py); px=p.x; py=p.y; out.push({x:p.x,y:p.y,c}); }
+  return out;
+}
+const tailLen=()=>Math.max(30,NECK+S.tail.length*GAP+8);
+function pointAt(pts,d){ for(let i=1;i<pts.length;i++) if(pts[i].c>=d){ const a=pts[i-1],b=pts[i],t=(d-a.c)/Math.max(1e-6,b.c-a.c); return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}; } const l=pts[pts.length-1]; return {x:l.x,y:l.y}; }
+
+// circle (head) vs rect; returns the outward normal if it overlaps
+function circRect(cx,cy,r,rc){
+  const px=Math.max(rc.x,Math.min(cx,rc.x+rc.w)), py=Math.max(rc.y,Math.min(cy,rc.y+rc.h)); let dx=cx-px,dy=cy-py; const d=Math.hypot(dx,dy);
+  if(d>=r) return null;
+  if(d<1e-3){ const l=cx-rc.x,rg=rc.x+rc.w-cx,t=cy-rc.y,b=rc.y+rc.h-cy,m=Math.min(l,rg,t,b); return m===l?{x:-1,y:0}:m===rg?{x:1,y:0}:m===t?{x:0,y:-1}:{x:0,y:1}; }
+  return {x:dx/d,y:dy/d};
+}
+function reflect(n){ let vx=Math.cos(S.h),vy=Math.sin(S.h); const d=vx*n.x+vy*n.y; if(d<0){ vx-=2*d*n.x; vy-=2*d*n.y; S.h=Math.atan2(vy,vx); } }
+
+function cutTail(keep,hitC,pts,why){
+  const lost=S.tail.splice(keep); S.nCut++; S.inv=1.1; S.flash=1;
+  if(hitC!=null){ const i=pts.findIndex(p=>p.c>=hitC); if(i>0) S.trail.splice(0,Math.max(0,S.trail.length-i)); }
+  const val=lost.reduce((s,o)=>s+(o.term?2:.4),0);
+  LG.shake(stage); LG.hist('no','断');
+  LG.float(winPos(S.x-50,S.y-30),lost.length?('✂ 断线！丢了 '+lost.length+' 个词'):'✂ 断线！','#E33E33');
+  if(lost.length) setTimeout(()=>LG.float(winPos(S.x-40,S.y-6),'−¥'+val.toFixed(1)+'（未入账）','#999'),250);
+  LG.say(why==='ad'?pick(['那是广告！别碰！','我读不懂广告，也不想读。']):pick(['你咬到自己了……','丝断了，字都掉了。']));
+  stats();
+}
+const pick=LG.pick;
+
+function step(dt){
+  S.t+=dt; S.time-=dt; S.inv=Math.max(0,S.inv-dt); S.flash=Math.max(0,S.flash-dt*2.5); S.pageFlash=Math.max(0,S.pageFlash-dt*2);
+  if(S.comboT>0){ S.comboT-=dt; if(S.comboT<=0) S.combo=0; }
+  if(S.time<=0){ S.time=0; endGame(); return; }
+  const sk=LG.skill(), sp=135+45*sk;
+  // steering: mouse = go toward the pointer, keys = go in the pressed direction (turn rate limited => smooth)
+  let ta=null;
+  if(S.mode==='key'){ const dx=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0), dy=(keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0); if(dx||dy) ta=Math.atan2(dy,dx); }
+  else if(mouse.in){ const dx=mouse.x-S.x,dy=mouse.y-S.y; if(Math.hypot(dx,dy)>18) ta=Math.atan2(dy,dx); }
+  if(ta!=null){ let d=ta-S.h; d=Math.atan2(Math.sin(d),Math.cos(d)); const mx=6*dt; S.h+=Math.max(-mx,Math.min(mx,d)); }
+  S.x+=Math.cos(S.h)*sp*dt; S.y+=Math.sin(S.h)*sp*dt;
+  if(S.x<10){ S.x=10; S.h=Math.PI-S.h; } if(S.x>W-10){ S.x=W-10; S.h=Math.PI-S.h; }
+  if(S.y<TOP-4){ S.y=TOP-4; S.h=-S.h; } if(S.y>H-BAR-12){ S.y=H-BAR-12; S.h=-S.h; }
+  if(Math.hypot(S.x-S.lastPush.x,S.y-S.lastPush.y)>=3){ S.trail.push({x:S.x,y:S.y}); S.lastPush={x:S.x,y:S.y}; }
+  const pts=calcTail(), L=tailLen();
+  // trim the trail beyond the silk's end
+  for(let k=1;k<pts.length;k++) if(pts[k].c>L+40){ S.trail.splice(0,Math.max(0,S.trail.length-k)); break; }
+  // eating by the head
+  for(const w of S.words) if(!w.eaten&&circRect(S.x,S.y,12,w)) eat(w,false);
+  // hazards
+  if(S.inv<=0){
+    for(const hz of S.hazards.concat(S.popups.filter(p=>p.age>p.warn))){
+      const n=circRect(S.x,S.y,9,hz); if(n){ reflect(n); S.x+=n.x*6; S.y+=n.y*6; cutTail(Math.floor(S.tail.length/2),null,pts,'ad'); break; }
+    }
+  }
+  if(S.inv<=0){
+    for(let i=1;i<pts.length;i++){ const p=pts[i]; if(p.c<=SELFSKIP) continue; if(p.c>L) break;
+      if(Math.hypot(p.x-S.x,p.y-S.y)<7){ const keep=Math.max(0,Math.floor((p.c-6-NECK)/GAP)); cutTail(keep,p.c,pts,'self'); break; } }
+  }
+  // 灵光's reading radar
+  S.radAng+=dt*3;
+  if(radarOn()){
+    S.radT-=dt;
+    if(S.radT<=0){
+      let best=null,bd=1e9; const R=radarR();
+      for(const w of S.words){ if(w.eaten) continue; const d=Math.hypot(w.x+w.w/2-S.x,w.y+w.h/2-S.y); if(d<R&&d<bd){ bd=d; best=w; } }
+      if(best){ S.beam={x:best.x+best.w/2,y:best.y+best.h/2,l:1}; eat(best,true); S.radT=radarGap(); if(Math.random()<.18) LG.say(pick(['这个字我认识。','顺手读了。','嗯，吃到了。','旁边这个也是词。'])); }
+      else S.radT=.2;
+    }
+  }
+  // pop-up ads
+  S.popT-=dt;
+  if(S.popT<=0&&S.popups.length<2){
+    S.popT=6+Math.random()*4;
+    for(let tries=0;tries<12;tries++){ const p={x:30+Math.random()*(W-60-170),y:TOP+20+Math.random()*(BOTTOM-TOP-130),w:158,h:92,age:0,warn:1.1,life:7.5}; if(Math.hypot(p.x+p.w/2-S.x,p.y+p.h/2-S.y)>150){ S.popups.push(p); break; } }
+  }
+  for(const p of S.popups) p.age+=dt; S.popups=S.popups.filter(p=>p.age<p.life);
+  // hint chatter
+  S.sayT-=dt; if(S.sayT<=0){ S.sayT=11+Math.random()*5; const s=LG.skill();
+    LG.say(pick(s<.35?['我还看不懂……你吃一个我学一个。','这些字弯弯扭扭的，真的是人写的吗？','黄色的是专有名词？看着就贵。']:s<.7?['左边那一片字很密，过去吃。','弹窗广告要来了，我感觉得到。','我已经能读出一点意思了。']:['这篇我读得很顺。','你绕开广告，雷达替你扫字。','再来几个术语，我的词表就满了。'])); }
+  for(const p of S.parts){ if(p.tailEnd){ p.l-=dt*2; continue; } p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=260*dt; p.l-=dt*1.6; } S.parts=S.parts.filter(p=>p.l>0);
+  if(S.beam){ S.beam.l-=dt*4; if(S.beam.l<=0) S.beam=null; }
+  const tm=document.getElementById('tmT'); tm.textContent=Math.ceil(S.time)+' 秒'; tm.classList.toggle('low',S.time<=10);
+}
+
+function endGame(){
+  S.state='over'; const pts=calcTail(); while(S.tail.length){ bank(S.tail.pop()); } stats();
+  const ov=document.getElementById('ov'); ov.style.display='flex';
+  const s=LG.skill();
+  ov.innerHTML=`<h2>爬取完成</h2><p>读了 <b style="color:var(--ink)">${S.nW}</b> 个词（术语 ${S.nT} 个）　断线 ${S.nCut} 次<br>灵光的雷达自己读了 ${S.nAI} 个${radarOn()?'':'（它还没学会开雷达）'}<br>收入 <b style="color:var(--red)">¥${S.pay.toFixed(1)}</b>　灵光水平现在 ${Math.round(s*100)}%</p>
+    ${S.terms.length?`<div class="tg">${S.terms.map(t=>`<i>${t}</i>`).join('')}</div>`:''}
+    <button class="btn" id="again">再爬一遍（空格）</button>`;
+  document.getElementById('again').onclick=resetGame;
+  LG.say(S.nW>=60?'读了好多……我感觉脑子里多了一块东西。':S.nW>=25?'这些词我都记下了。':'下次爬快一点嘛。');
+}
+
+// ───────────────────────── drawing ─────────────────────────
+function drawSpider(){
+  g.save(); g.translate(S.x,S.y); g.rotate(S.h); if(S.inv>0&&Math.floor(S.t*14)%2===0) g.globalAlpha=.45;
+  g.strokeStyle='#2F6F5E'; g.lineWidth=1.6; g.lineCap='round';
+  for(let i=0;i<4;i++) for(const sd of [-1,1]){ const bx=(i-1.5)*4.5, w=Math.sin(S.t*16+i*1.3+(sd>0?Math.PI:0))*3; g.beginPath(); g.moveTo(bx,sd*3); g.lineTo(bx+(i-1.5)*3+w,sd*11); g.lineTo(bx+(i-1.5)*7+w*1.4,sd*17); g.stroke(); }
+  g.fillStyle='#173F35'; g.beginPath(); g.ellipse(-8,0,8,6.5,0,0,7); g.fill();
+  const gr=g.createRadialGradient(1,-2,1,3,0,9); gr.addColorStop(0,'#E1F5EE'); gr.addColorStop(.45,'#5DCAA5'); gr.addColorStop(1,'#0F3D33');
+  g.fillStyle=gr; g.shadowColor='#5DCAA5'; g.shadowBlur=8; g.beginPath(); g.arc(3,0,7.5,0,7); g.fill(); g.shadowBlur=0;
+  g.fillStyle='#fff'; g.beginPath(); g.arc(7.5,-2.8,1.7,0,7); g.arc(7.5,2.8,1.7,0,7); g.fill(); g.fillStyle='#111'; g.beginPath(); g.arc(8.2,-2.8,.8,0,7); g.arc(8.2,2.8,.8,0,7); g.fill();
+  g.restore();
+}
+function drawFrame(){
+  g.clearRect(0,0,W,H); g.drawImage(pgc,0,0,W,H);
+  const pts=calcTail(), L=tailLen();
+  // radar
+  if(radarOn()&&S.state==='play'){
+    const R=radarR(); g.save(); g.fillStyle='rgba(138,120,232,.09)'; g.strokeStyle='rgba(138,120,232,.7)'; g.lineWidth=1.5; g.setLineDash([6,5]);
+    g.beginPath(); g.arc(S.x,S.y,R,0,7); g.fill(); g.stroke(); g.setLineDash([]);
+    const grd=g.createLinearGradient(S.x,S.y,S.x+Math.cos(S.radAng)*R,S.y+Math.sin(S.radAng)*R); grd.addColorStop(0,'rgba(138,120,232,0)'); grd.addColorStop(1,'rgba(138,120,232,.55)');
+    g.strokeStyle=grd; g.lineWidth=2; g.beginPath(); g.moveTo(S.x,S.y); g.lineTo(S.x+Math.cos(S.radAng)*R,S.y+Math.sin(S.radAng)*R); g.stroke();
+    g.fillStyle='rgba(138,120,232,.9)'; g.font=`bold 10px ${FONT}`; g.textAlign='center'; g.fillText('灵光 · 阅读雷达',S.x,S.y-R-6); g.restore();
+  }
+  if(S.beam){ g.strokeStyle='rgba(138,120,232,'+S.beam.l+')'; g.lineWidth=2.5; g.beginPath(); g.moveTo(S.x,S.y); g.lineTo(S.beam.x,S.beam.y); g.stroke(); }
+  // pop-up ads
+  for(const p of S.popups){
+    const warn=p.age<p.warn, a=Math.min(1,(p.life-p.age)*2);
+    g.save(); g.globalAlpha=warn?.9:a;
+    if(warn){ const pulse=.5+.5*Math.sin(p.age*18); g.strokeStyle=`rgba(227,62,51,${.5+.5*pulse})`; g.lineWidth=3; g.setLineDash([8,5]); rr(g,p.x,p.y,p.w,p.h,6); g.stroke(); g.setLineDash([]); g.fillStyle='rgba(227,62,51,.08)'; g.fill(); g.fillStyle='#E33E33'; g.font=`bold 13px ${FONT}`; g.textAlign='center'; g.fillText('! 弹窗广告即将出现',p.x+p.w/2,p.y+p.h/2); }
+    else {
+      g.shadowColor='#0006'; g.shadowBlur=14; g.fillStyle='#fff'; rr(g,p.x,p.y,p.w,p.h,6); g.fill(); g.shadowBlur=0;
+      g.fillStyle='#E8574A'; g.fillRect(p.x,p.y,p.w,20); g.fillStyle='#fff'; g.font=`bold 12px ${FONT}`; g.textAlign='left'; g.fillText('恭喜您！',p.x+8,p.y+11); g.fillText('✕',p.x+p.w-16,p.y+11);
+      g.fillStyle='#B3261E'; g.font=`bold 14px ${FONT}`; g.fillText('您是第 100 万位访客',p.x+8,p.y+40); g.fillStyle='#2932E1'; g.font=`12px ${FONT}`; g.fillText('点此领取 iPhone 7 ➜',p.x+8,p.y+62);
+      g.strokeStyle='#E8574A'; g.lineWidth=2; rr(g,p.x+1,p.y+1,p.w-2,p.h-2,6); g.stroke();
+    }
+    g.restore();
+  }
+  // silk
+  if(S.state!=='idle'){
+    g.save(); g.lineCap='round'; g.lineJoin='round';
+    g.beginPath(); for(let i=0;i<pts.length&&pts[i].c<=L;i++){ i?g.lineTo(pts[i].x,pts[i].y):g.moveTo(pts[i].x,pts[i].y); }
+    g.strokeStyle='rgba(95,202,165,.28)'; g.lineWidth=7; g.stroke(); g.strokeStyle='#2F6F5E'; g.lineWidth=2; g.stroke();
+    // tail words
+    g.font=`bold 12px ${FONT}`; g.textAlign='center'; g.textBaseline='middle';
+    for(let j=S.tail.length-1;j>=0;j--){ const o=S.tail[j], p=pointAt(pts,NECK+(j+1)*GAP), t=plain(o.t), w=Math.min(60,g.measureText(t).width+12);
+      g.fillStyle=o.term?'#E8A317':o.ai?'#8A78E8':'#2F6F5E'; rr(g,p.x-w/2,p.y-9,w,18,9); g.fill(); g.fillStyle='#fff'; g.fillText(t,p.x,p.y+.5,w-6); }
+    g.restore();
+  }
+  drawSpider();
+  for(const p of S.parts){ g.globalAlpha=Math.max(0,p.l); g.fillStyle=p.c; if(p.tailEnd){ const e=pointAt(pts,L); g.beginPath(); g.arc(e.x,e.y,4+(1-p.l)*8,0,7); g.fill(); } else g.fillRect(p.x-2,p.y-2,4,4); } g.globalAlpha=1;
+  if(S.flash>0){ g.fillStyle=`rgba(227,62,51,${S.flash*.22})`; g.fillRect(0,0,W,H); }
+  if(S.pageFlash>0){ g.fillStyle=`rgba(255,255,255,${S.pageFlash*.8})`; g.fillRect(0,0,W,H); }
+}
+
+// ───────────────────────── input & loop ─────────────────────────
+cv.addEventListener('pointermove',e=>{ const p=LG.local(e,cv); mouse.x=p.x; mouse.y=p.y; mouse.in=true; S.mode='mouse'; });
+cv.addEventListener('pointerdown',e=>{ const p=LG.local(e,cv); mouse.x=p.x; mouse.y=p.y; mouse.in=true; S.mode='mouse'; });
+cv.addEventListener('pointerleave',()=>{ mouse.in=false; });
+addEventListener('keydown',e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(k===' '||k==='Enter'){ e.preventDefault(); if(S.state!=='play') resetGame(); return; }
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d'].includes(k)){ e.preventDefault(); keys[k]=true; S.mode='key'; }
+});
+addEventListener('keyup',e=>{ const k=e.key.length===1?e.key.toLowerCase():e.key; keys[k]=false; });
+let last=performance.now();
+function loop(t){ const dt=Math.min(.05,(t-last)/1000); last=t; if(S.state==='play') step(dt); drawFrame(); requestAnimationFrame(loop); }
+
+// start screen
+S.page=0; S.x=COLX+70; S.y=TOP+200; layoutPage();
+const ov=document.getElementById('ov'); ov.style.display='flex';
+ov.innerHTML=`<h2>🕷️ 爬虫贪吃蛇</h2><p>你是 摆渡百科 上的一只爬虫。<b style="color:var(--ink)">鼠标指哪爬哪</b>（或方向键 / WASD），吃掉文章里的字。<br>吃一个词 = 读了一遍 = <b style="color:var(--ink)">1 条样本</b>，吃到<b style="color:#B8860B">金色术语</b>一次给 3 条。<br>碰到<b style="color:var(--red)">广告框、弹窗、自己的丝线</b>会断线，丢掉没入账的字。<br>灵光水平到 35%，它会开「阅读雷达」自动帮你吃身边的字。限时 60 秒。</p><button class="btn" id="go">开始爬取（空格）</button>`;
+document.getElementById('go').onclick=resetGame;
+stats(); requestAnimationFrame(loop);
+</script>
+</body>
+</html>
