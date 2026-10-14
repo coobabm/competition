@@ -26,6 +26,13 @@ namespace LingGuangV05.Desktop.Story
     public sealed class OriginCurtain : MonoBehaviour
     {
         const string VideoPath = "LingGuangV05/Video/evolution.mp4";
+        /// <summary>
+        /// Play the real-time film (<see cref="OriginLive"/>, all nine scenes, 161 s) instead of the mp4. On by default
+        /// (<see cref="XgOriginFilm.LiveFilmByDefault"/>); the mp4 is only the fallback when the live player cannot be built. When the
+        /// film ends (or Esc skips it) the curtain finishes as if the video had ended, so 「你觉得呢？」 still follows.
+        /// </summary>
+        public static bool UseLive = XgOriginFilm.LiveFilmByDefault;
+        OriginLive live;
         const float ReplyToVideo = 1.8f, HintAfterEnding = 60f;
 
         StoryDesktopPresenter presenter;
@@ -52,7 +59,7 @@ namespace LingGuangV05.Desktop.Story
 
         static string T(string zh, string en) => GameText.T(zh, en);
         /// <summary>The origin video is playing in the native player (full screen or windowed).</summary>
-        public bool Playing => watching;
+        public bool Playing => watching || live != null;
 
         void Update()
         {
@@ -79,11 +86,15 @@ namespace LingGuangV05.Desktop.Story
             else readySince = -1;
             if (hintQueued && !InnerVoice.Busy) hintQueued = false;
 
+            // Chapter six opens with the origin video, after the stage's own cutscene and the relic pick are out of the way.
+            if (!watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && bound.TakeChapterSixOrigin())
+            { promiseKept = true; playAt = Time.unscaledTime + ReplyToVideo; }
             if (bound.S.originVideoSeen && fileIcon == null) MakeFileIcon(desk);
             // It promised to explain but the video never ran (the reply came during a save switch or before a reload): run it now, once.
             if (!promiseKept && bound.S.originExplained && !bound.S.originVideoSeen && !watching && playAt < 0) playAt = Time.unscaledTime + ReplyToVideo;
-            if (playAt >= 0 && Time.unscaledTime >= playAt && !watching && !EndingOnScreen()) { playAt = -1; promiseKept = true; Play(); }
+            if (playAt >= 0 && Time.unscaledTime >= playAt && !watching && live == null && !EndingOnScreen()) { playAt = -1; promiseKept = true; Play(); }
             if (watching) TickPlayer();
+            if (live != null && (live.Ended || live.gameObject == null)) { live.Close(); live = null; Finished(); }
         }
 
         bool EndingOnScreen()
@@ -99,22 +110,24 @@ namespace LingGuangV05.Desktop.Story
             bound.OriginVideoRequested += OnRequested;
             playAt = -1; readySince = -1; hintQueued = false; promiseKept = false;
             if (fileIcon != null) { Destroy(fileIcon.gameObject); fileIcon = null; }
+            if (live != null) { live.Close(); live = null; }
             Stop(false);
         }
 
         void OnDestroy()
         {
             if (bound != null) bound.OriginVideoRequested -= OnRequested;
+            if (live != null) { live.Close(); live = null; }
             Stop(false);
         }
 
         // Let the reply 「好，我来给你解释」 be read first.
-        void OnRequested() { if (!watching) playAt = Time.unscaledTime + ReplyToVideo; }
+        void OnRequested() { if (!watching && live == null) playAt = Time.unscaledTime + ReplyToVideo; }
 
         void MakeFileIcon(PrologueDesk desk)
         {
             fileIcon = desk.Icon("Origin Video File", Lang.T("我从哪儿来.mp4"), null, DrawFilm);
-            fileIcon.GetComponent<PrologueClick>().Open = () => { if (!watching) Play(); };
+            fileIcon.GetComponent<PrologueClick>().Open = () => { if (!watching && live == null) Play(); };
         }
 
         static void DrawFilm(RectTransform art)
@@ -202,6 +215,14 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (desk == null) return;
+            if (TryPlayLive(desk)) return;
+            // The mp4 is gone from the game: if the live film cannot be built the story still goes on.
+            if (!File.Exists(url ?? ""))
+            {
+                desk.StoryPopup(Lang.T("暴风影音"), Lang.T("播放器出错了。"), 5);
+                Finished();
+                return;
+            }
             if (!FindNative())
             {
                 desk.StoryPopup(Lang.T("暴风影音"), Lang.T("播放器没找到。"), 5);
@@ -220,6 +241,26 @@ namespace LingGuangV05.Desktop.Story
             native.OpenVideo(url);
             watching = true;
             SetFullscreen(true);
+        }
+
+        /// <summary>Builds and starts the live film. False (after logging, with nothing left on screen) when it cannot be built, so the mp4 plays instead.</summary>
+        bool TryPlayLive(PrologueDesk desk)
+        {
+            try
+            {
+                live = OriginLive.Create(desk.layer);
+                live.transform.SetAsLastSibling();
+                live.Bind(bound);
+                if (live.FailedScenes > 0) throw new InvalidOperationException(live.FailedScenes + " scene(s) failed to build");
+                live.Begin();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("OriginCurtain: the live film could not be built, playing the mp4 instead: " + e);
+                if (live != null) { try { live.Close(); } catch (Exception) { } live = null; }
+                return false;
+            }
         }
 
         /// <summary>Full screen is a black stage over the whole desktop showing the player's own picture.</summary>

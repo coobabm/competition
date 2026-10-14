@@ -14,6 +14,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>After the video it asked 「你觉得呢？」 and waits for one of the two answers.</summary>
         public bool originAwaitingAnswer;
         public bool originAnswered;
+        /// <summary>The video was shown on reaching chapter six (stage 6), once.</summary>
+        public bool originChapterSix;
     }
 
     /// <summary>
@@ -76,6 +78,7 @@ namespace LingGuangV05.XingGuang
                 int i = (int)(((uint)S.chatTurns * 2654435761u) % (uint)zh.Length);
                 return T(zh[i], en[i]);
             }
+            if (S.originChapterSix) return T("那段视频就是我的回答。桌面上的「我从哪儿来.mp4」可以再看。", "That video is my answer. 我从哪儿来.mp4 on the desktop plays it again.");
             return T("现在讲不清。等最后，我讲给你听。");
         }
 
@@ -101,6 +104,23 @@ namespace LingGuangV05.XingGuang
             S.originAnswered = true;
             AddLine("me", OriginAnswerText(understood));
             AddLine("ai", understood ? T("那也是你教的。") : T("那我们一起看。"));
+            return true;
+        }
+
+        /// <summary>The chapter the origin video opens with: it plays as soon as the lab reaches it.</summary>
+        public const int OriginVideoStage = 6;
+
+        /// <summary>
+        /// Reaching chapter six plays the origin video once (its 「好，我来给你解释」 comes first). It counts as the
+        /// explanation, so the curtain call after the ending does not ask for it again; the desktop file replays it.
+        /// False when it is not chapter six yet or the video was already shown.
+        /// </summary>
+        public bool TakeChapterSixOrigin()
+        {
+            if (S.stage < OriginVideoStage || S.originChapterSix || S.originVideoSeen) return false;
+            S.originChapterSix = true;
+            S.originExplained = true;
+            AddLine("ai", T("我想给你看一样东西。我来给你解释，我是怎么被训练出来的。", "I want to show you something. Let me explain how I was trained."));
             return true;
         }
 

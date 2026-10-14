@@ -74,6 +74,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBtn yes, no, toTrain;
         XgBtn[] amountBtns;
         XgShopRow auto, pack;
+        XgBtn autoPause;
         XgGlow paperGlow;
         Image paperImage;
         float feedbackTimer, redTimer;
@@ -688,6 +689,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 steps.text = T("这类样本 ", "Examples ") + Samples(samples) + T(" · 你纠正了 ", " · Corrections ") + Sim.S.teachingCorrections + T(" 次 · 它连续答对 ", " · Its streak ") + Sim.S.modelStreak
                     + "\n" + (samples < XgCatalog.SamplesToTrain ? T("再教 ", "Teach ") + (XgCatalog.SamplesToTrain - (int)samples) + T(" 张，就能训练。", " more to train.") : T("样本够了：点右边「带它去训练」。", "Ready: choose Train together on the right."));
+                RefreshShop(desk, d);
                 return;
             }
             var sb = new StringBuilder();
@@ -714,7 +716,15 @@ namespace LingGuangV05.Desktop.XingGuang
             string logs = XgDataUi.LogLine(Sim, desk);
             if (logs.Length > 0) sb.Append("\n<color=#0F8C7E>").Append(logs).Append(Lang.T(" · 亲手标一条 = ")).Append(N(XgSim.LogHandSamples, "0")).Append(Lang.T(" 样本")).Append("</color>");
             steps.text = sb.ToString();
+            RefreshShop(desk, d);
+        }
 
+        /// <summary>
+        /// The auto-answer and data-pack rows. Kept out of the steps text so teaching mode, which writes its own steps,
+        /// still fills them (they were left blank there before).
+        /// </summary>
+        void RefreshShop(string desk, XgDataset d)
+        {
             for (int i = 0; i < amountBtns.Length; i++)
             {
                 bool on = (i == 0 && host.BuyAmount == 1) || (i == 1 && host.BuyAmount == 10) || (i == 2 && host.BuyAmount == int.MaxValue);
@@ -727,8 +737,12 @@ namespace LingGuangV05.Desktop.XingGuang
             double acost = XgCatalog.AutoCost(al);
             // Until the protagonist has the idea (XgSim.Epiphany.cs) the row is a 「？？？」 with a hint.
             auto.SetGlyph(Sim.AutoLabelHidden ? "？" : "自");
+            bool pausable = al > 0 && !Sim.AutoLabelHidden;
+            autoPause.rt.gameObject.SetActive(pausable);
+            if (pausable) autoPause.Set(Sim.AutoPaused ? T("▶ 继续", "▶ Resume") : T("Ⅱ 暂停", "Ⅱ Pause"), true, Sim.AutoPaused ? XgPalette.Good : (Color?)null, Sim.AutoPaused ? Color.white : (Color?)null);
             auto.Set(Sim.AutoLabelHidden ? Lang.T("？？？") : Lang.T("自动答题（全局）"), "Lv " + al + "/" + XgCatalog.AutoMaxLevel,
-                al > 0 && !Sim.AutoLabelHidden && !Sim.EligibleDesk(desk) ? "<color=#D63031>" + Lang.T("这张桌的检查点不到 60%，它不替你答") + "</color>"
+                pausable && Sim.AutoPaused ? "<color=#D63031>" + T("已暂停：它不替你答题，也不挣这份钱", "Paused: it answers nothing for you and earns nothing") + "</color>"
+                : al > 0 && !Sim.AutoLabelHidden && !Sim.EligibleDesk(desk) ? "<color=#D63031>" + Lang.T("这张桌的检查点不到 60%，它不替你答") + "</color>"
                 : canAuto || al > 0 ? Lang.T("每秒 ") + N(Sim.AutoCardsPerSecond(desk, Host), "0.0") + Lang.T(" 张 → ") + "<b>" + N((al + 1) * XgCatalog.AutoRatePerLevel * Math.Min(1, Math.Max(0, Host.Compute)), "0.0") + "</b>" + Lang.T("  · 约 ¥") + N(Sim.AutoIncome(desk, Host), "0.00") + T("/秒", "/s")
                     : (Sim.AutoLabelHidden ? "<color=#68748C>" : "<color=#D63031>") + (why ?? "") + "</color>",
                 canAuto ? "¥" + Money(acost) : al >= XgCatalog.AutoMaxLevel ? Lang.T("满级") : Lang.T("未解锁"), canAuto && Host.Money >= acost, canAuto ? (float)(Host.Money / acost) : 0, al / (float)XgCatalog.AutoMaxLevel);

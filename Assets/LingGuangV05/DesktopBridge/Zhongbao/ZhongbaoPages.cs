@@ -327,7 +327,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             double dayLength = house != null ? house.Config.dayLengthSeconds : 120;
             items.Clear();
             items.Add(Row.Row(T("企业订单 · " + signedCount + " 单", "Business orders · " + signedCount + " signed"), "+" + ZhongbaoUi.Yuan(contracts) + T("/秒", "/s"), ZhongbaoSkin.Green));
-            items.Add(Row.Row(T("自动答题", "Auto-answer") + (Sim.QualityFrozen ? ZhongbaoUi.Muted(T("（账号冻结中，暂停）", " (account frozen, paused)")) : ""), "+" + ZhongbaoUi.Yuan(auto) + T("/秒", "/s"), ZhongbaoSkin.Green));
+            items.Add(Row.Row(T("自动答题", "Auto-answer") + (Sim.QualityFrozen ? ZhongbaoUi.Muted(T("（账号冻结中，暂停）", " (account frozen, paused)")) : Sim.AutoPaused && Sim.GlobalAutoLevel > 0 ? ZhongbaoUi.Muted(T("（你暂停了）", " (paused by you)")) : ""), "+" + ZhongbaoUi.Yuan(auto) + T("/秒", "/s"), ZhongbaoSkin.Green));
             items.Add(Row.Row(T("分包工资", "Subcontract wages"), wages > 0 ? "−" + ZhongbaoUi.Yuan(wages) + T("/分钟", "/min") : "—", wages > 0 ? ZhongbaoSkin.Red : ZhongbaoSkin.Mute));
             items.Add(Row.Total(T("合计约", "About"), (net >= 0 ? "+" : "−") + ZhongbaoUi.Yuan(Math.Abs(net)) + T("/秒 ≈ ", "/s ≈ ") + (net >= 0 ? "" : "−") + ZhongbaoUi.Yuan(Math.Abs(net) * dayLength) + T("/天", "/day"), net >= 0 ? ZhongbaoSkin.Green : ZhongbaoSkin.Red));
             income.Set(items);

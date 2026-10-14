@@ -111,6 +111,21 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void ThePlayerCanPauseAutoAnswerAndItSurvivesASave()
+        {
+            var sim = Ready(); var host = new Host();
+            Assert.Greater(sim.CollaborationRate("spam", host), 0);
+            sim.AutoPaused = true;
+            Assert.AreEqual(0, sim.CollaborationRate("spam", host), "paused: nothing labelled on its own");
+            Assert.AreEqual(0, sim.AutoIncome("spam", host), 1e-12);
+            Assert.IsFalse(sim.AutomationHeld, "the player's pause is not a platform hold");
+            var loaded = UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S));
+            Assert.IsTrue(loaded.autoPaused);
+            sim.AutoPaused = false;
+            Assert.Greater(sim.CollaborationRate("spam", host), 0);
+        }
+
+        [Test]
         public void AWrongOrLateAnswerPausesTwoMinutesAndCostsCredit()
         {
             var sim = Ready(); var host = new Host();

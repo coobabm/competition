@@ -22,6 +22,8 @@ namespace LingGuangV05.XingGuang
         public int LabelPresentationMode(bool endingQuestionReady) => S.chapterComplete ? 3 : EndingAvailable && endingQuestionReady ? 2 : ProjectAwaitingAnswer ? 1 : 0;
         public bool ReviewFull => S.queue.Count >= ReviewCapacity;
         public int GlobalAutoLevel => S.autoLevel;
+        /// <summary>The player's own pause of 自动答题 (the platform's captcha holds are separate, see AutomationHeld).</summary>
+        public bool AutoPaused { get => S.autoPaused; set => S.autoPaused = value; }
         public event Action<XgAutoRecord> AutoRouted;
 
         // No reference to XgCatalog here: its static node initialization appends these nodes.
@@ -217,7 +219,7 @@ namespace LingGuangV05.XingGuang
         public bool EligibleDesk(string desk) => DeskOpen(desk) && BestAcc(desk) >= XgCatalog.AutoMinAccuracy && XgCatalog.Desk(desk) != null;
         public double CollaborationRate(string desk, IXgHost host)
         {
-            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld || !EligibleDesk(desk)) return 0;
+            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld || S.autoPaused || !EligibleDesk(desk)) return 0;
             return GlobalAutoLevel * XgCatalog.AutoRatePerLevel * Math.Min(1, host.Compute) * WireSpeed("label:" + desk);
         }
         public double CollaborationIncome(string desk, IXgHost host)

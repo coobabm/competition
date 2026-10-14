@@ -221,6 +221,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 amountBtns[i].rt.offsetMin = new Vector2(-right - 40, -29); amountBtns[i].rt.offsetMax = new Vector2(-right, -6);
             }
             auto = new XgShopRow(ui, shopBox, "自", XgPalette.Accent, BuyAuto);
+            // Pause / resume 自动答题 in the row's top-right corner; the title stops short of it.
+            autoPause = ui.Button(auto.Root, "", () => { if (Sim == null) return; Sim.AutoPaused = !Sim.AutoPaused; Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 12);
+            autoPause.rt.name = "AutoPause";
+            autoPause.rt.anchorMin = autoPause.rt.anchorMax = new Vector2(1, 1);
+            autoPause.rt.offsetMin = new Vector2(-64, -26); autoPause.rt.offsetMax = new Vector2(-8, -5);
+            auto.InsetTitle(70);
+            UiTip.Add(autoPause.rt, () => Sim != null && Sim.AutoPaused
+                ? T("继续：它接着替你答题挣钱。", "Resume: it goes back to answering for you.")
+                : T("暂停：它先不替你答题，也不挣这份钱；你自己标的不受影响。", "Pause: it stops answering for you and earns nothing from it; your own labels are not affected."));
             pack = new XgShopRow(ui, shopBox, "包", new Color32(18, 150, 140, 255), BuyPack);
             BuildSourceSwitch();
             BuildCollaborationPanel(shopBox);

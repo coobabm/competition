@@ -44,6 +44,8 @@ namespace LingGuangV05.XingGuang
     public partial class XgState
     {
         public int coopVersion, autoLevel;
+        /// <summary>The player paused 自动答题: the model labels nothing on its own until it is resumed.</summary>
+        public bool autoPaused;
         public double coopThreshold = .8;
         public long nextCardId = 1;
         public List<XgLabelCount> noise = new List<XgLabelCount>();

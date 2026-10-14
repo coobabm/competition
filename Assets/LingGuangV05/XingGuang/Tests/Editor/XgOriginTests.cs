@@ -36,6 +36,22 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void ChapterSixPlaysTheVideoOnceAndCountsAsTheExplanation()
+        {
+            var sim = new XgSim();
+            sim.S.stage = 5; Assert.IsFalse(sim.TakeChapterSixOrigin(), "not before chapter six");
+            sim.S.stage = 6;
+            Assert.IsTrue(sim.TakeChapterSixOrigin());
+            Assert.IsFalse(sim.TakeChapterSixOrigin(), "only once");
+            Assert.IsTrue(sim.S.originExplained);
+            StringAssert.Contains("视频", sim.Scripted("你是怎么被训练出来的？"));
+            sim.S.chapterComplete = true; sim.S.ending = "E1";
+            Assert.IsFalse(sim.OfferOriginQuestion, "the curtain call does not ask again");
+            var seen = new XgSim(); seen.S.stage = 6; seen.S.originVideoSeen = true;
+            Assert.IsFalse(seen.TakeChapterSixOrigin(), "an old save that already watched it");
+        }
+
+        [Test]
         public void AfterTheEndingItExplainsAndAsksForTheVideoOnce()
         {
             foreach (var ending in new[] { "E1", "E2", "E3-1", "E3-2" })
