@@ -1,4 +1,5 @@
 # Keep source, scenes, prefabs and .meta files diffable in normal Git.
+# lockable: run `git lfs lock <path>` before editing scenes, prefabs and source art.
 * text=auto
 *.cs text eol=lf
 *.shader text eol=lf
@@ -6,13 +7,13 @@
 *.json text eol=lf
 *.md text eol=lf
 *.meta text eol=lf
-*.unity text eol=lf
-*.prefab text eol=lf
+*.unity text eol=lf lockable
+*.prefab text eol=lf lockable
 # Binary artwork/audio/models use Git LFS; Desktop supports the same pointers.
 *.[pP][nN][gG] filter=lfs diff=lfs merge=lfs -text
 *.[jJ][pP][gG] filter=lfs diff=lfs merge=lfs -text
 *.[jJ][pP][eE][gG] filter=lfs diff=lfs merge=lfs -text
-*.[pP][sS][dD] filter=lfs diff=lfs merge=lfs -text
+*.[pP][sS][dD] filter=lfs diff=lfs merge=lfs -text lockable
 *.[tT][gG][aA] filter=lfs diff=lfs merge=lfs -text
 *.[tT][iI][fF] filter=lfs diff=lfs merge=lfs -text
 *.[tT][iI][fF][fF] filter=lfs diff=lfs merge=lfs -text
@@ -21,8 +22,8 @@
 *.[wW][aA][vV] filter=lfs diff=lfs merge=lfs -text
 *.[mM][pP]3 filter=lfs diff=lfs merge=lfs -text
 *.[oO][gG][gG] filter=lfs diff=lfs merge=lfs -text
-*.[fF][bB][xX] filter=lfs diff=lfs merge=lfs -text
-*.blend filter=lfs diff=lfs merge=lfs -text
+*.[fF][bB][xX] filter=lfs diff=lfs merge=lfs -text lockable
+*.blend filter=lfs diff=lfs merge=lfs -text lockable
 *.[oO][tT][fF] filter=lfs diff=lfs merge=lfs -text
 *.[tT][tT][fF] filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
