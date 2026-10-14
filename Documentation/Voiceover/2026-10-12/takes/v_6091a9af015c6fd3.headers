@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 16:51:08 GMT
+server: uvicorn
+x-audio-id: 6caad750
+x-gen-time: 4.61
+x-audio-path: 6caad750.wav
+x-seed: 1620158895
+x-audio-duration: 3.76
+content-length: 180524
+content-type: audio/wav
+x-omnivoice-backend: 0.5.6
+

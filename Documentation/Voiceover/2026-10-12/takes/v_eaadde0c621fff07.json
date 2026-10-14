@@ -1,0 +1,12 @@
+{
+  "seconds": 3.57,
+  "peak": 0.780426025390625,
+  "rms": 0.14027599302506724,
+  "samples": 85680,
+  "clipped_fraction": 0.0,
+  "signature": "c2493eb2bc651e2a48c9d6205f4cfe2a3df1ac0c6e5d98a5db5a5f8f5ae09388",
+  "elapsed": 4.753599707968533,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "刚才发出去的是：「我还没有回答。」"
+}

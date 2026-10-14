@@ -1,0 +1,12 @@
+{
+  "seconds": 5.35,
+  "peak": 0.79541015625,
+  "rms": 0.1434677380586072,
+  "samples": 128400,
+  "clipped_fraction": 0.0,
+  "signature": "6f0a957bea208ecd2efcb615dd3bf3c36baf2b57ffa35dd2161690b836be33d1",
+  "elapsed": 5.241283665993251,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "从头到尾它就往地址栏里敲了串数字……那串数字是干嘛的？"
+}

@@ -1,0 +1,12 @@
+{
+  "seconds": 5.25,
+  "peak": 0.76312255859375,
+  "rms": 0.13642427765462406,
+  "samples": 126000,
+  "clipped_fraction": 0.0,
+  "signature": "98964d8578448bc49cf18f61a246773cea4c00581feed61d45dc7f4c1c574c81",
+  "elapsed": 5.118403916945681,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "这一次的二十道独立翻译题。题目、预测和答案都留在文件夹里。"
+}

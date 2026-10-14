@@ -1,0 +1,12 @@
+{
+  "seconds": 2.2,
+  "peak": 0.789764404296875,
+  "rms": 0.0970999443410961,
+  "samples": 52800,
+  "clipped_fraction": 0.0,
+  "signature": "c4af92070231e5ad0bda0efdebc36e54aa8885ac0150f43376e715ee29c27471",
+  "elapsed": 4.146702916012146,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "明天还要上班。"
+}

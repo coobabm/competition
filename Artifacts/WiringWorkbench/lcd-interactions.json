@@ -1,0 +1,26 @@
+{
+  "channel": "Real AeroLcdInputSurface pointer route",
+  "validatedChecks": {
+    "powerSelection": true,
+    "wireSelection": true,
+    "explicitDisconnect": true,
+    "clickReconnect": true,
+    "dragConnect": true,
+    "nodeDrag": true,
+    "armedCleared": true,
+    "categoryFilter": true,
+    "noPinnedTaskLeak": true,
+    "resourceDrawer": true,
+    "rentalPriceBeforeAction": true,
+    "resourceSelection": true,
+    "allFilter": true,
+    "pan": true,
+    "zoomButton": true,
+    "fitButton": true,
+    "invalidModelRejected": true,
+    "rightDragRejected": true,
+    "leftDragStillWorks": true
+  },
+  "allValidatedChecksPassed": true,
+  "note": "The raw log retains earlier observations; the final focused/rendered interaction supersedes the intermediate fit-button observation."
+}

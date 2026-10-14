@@ -1,0 +1,12 @@
+{
+  "seconds": 1.8,
+  "peak": 0.801666259765625,
+  "rms": 0.1536864619220856,
+  "samples": 43200,
+  "clipped_fraction": 0.0,
+  "signature": "8e7656af18eb42689e759f104d0219b09d874baa5d893b3fe4a107ed67abac1b",
+  "elapsed": 2.3639155419077724,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "让它替我回吧。"
+}

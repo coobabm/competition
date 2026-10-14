@@ -1,0 +1,42 @@
+{
+  "result": {
+    "success": true,
+    "message": "Test job status retrieved.",
+    "error": null,
+    "data": {
+      "job_id": "2f51cad4d5a347d397973a391345a5b0",
+      "status": "succeeded",
+      "mode": "EditMode",
+      "started_unix_ms": 1791311410818,
+      "finished_unix_ms": 1791311426852,
+      "last_update_unix_ms": 1791311426852,
+      "progress": {
+        "completed": 27,
+        "total": 27,
+        "current_test_full_name": null,
+        "current_test_started_unix_ms": 1791311426616,
+        "last_finished_test_full_name": "LingGuangV05.XingGuang.Tests.XgBrainModelTests.UndeployedInstalledModelsCannotBeDeletedCleanedOrStrippedOfWeights",
+        "last_finished_unix_ms": 1791311426677,
+        "stuck_suspected": false,
+        "editor_is_focused": false,
+        "blocked_reason": null,
+        "failures_so_far": [],
+        "failures_capped": false
+      },
+      "error": null,
+      "result": {
+        "mode": "EditMode",
+        "summary": {
+          "total": 27,
+          "passed": 27,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 2.4379713,
+          "resultState": "Passed"
+        },
+        "results": []
+      }
+    },
+    "hint": null
+  }
+}

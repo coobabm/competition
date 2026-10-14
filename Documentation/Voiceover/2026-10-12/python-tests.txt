@@ -1,0 +1,14 @@
+test_broken_checkpoint_is_treated_as_unfinished (test_voiceover.VoiceoverTests.test_broken_checkpoint_is_treated_as_unfinished) ... ok
+test_dynamic_is_explicit (test_voiceover.VoiceoverTests.test_dynamic_is_explicit) ... ok
+test_excludes_empty_monologue (test_voiceover.VoiceoverTests.test_excludes_empty_monologue) ... ok
+test_feeding_data_is_not_an_alarm_interjection (test_voiceover.VoiceoverTests.test_feeding_data_is_not_an_alarm_interjection) ... ok
+test_ids_are_deterministic (test_voiceover.VoiceoverTests.test_ids_are_deterministic) ... ok
+test_inventory_excludes_internal_flag_names (test_voiceover.VoiceoverTests.test_inventory_excludes_internal_flag_names) ... ok
+test_key_matches_unity (test_voiceover.VoiceoverTests.test_key_matches_unity) ... ok
+test_pauses_do_not_change_words (test_voiceover.VoiceoverTests.test_pauses_do_not_change_words) ... ok
+test_truncated_wav_rejected (test_voiceover.VoiceoverTests.test_truncated_wav_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.128s
+
+OK

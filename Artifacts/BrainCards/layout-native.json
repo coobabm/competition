@@ -1,0 +1,12 @@
+{
+    "width": 1049.9522705078125,
+    "height": 543.0267333984375,
+    "textCount": 69,
+    "buttonCount": 17,
+    "invalid": [],
+    "overflow": [
+        "Card_arch:mlp/Description: 层层全连接，概念可以两两组合；但每个位置各占一组连线，平移一格就是新输入。",
+        "Card_arch:transformer/Description: 每个字和所有字直接相连，几组注意力同时扫过全句，不再逐字等待：整颗脑子同步点亮。",
+        "Card_arch:lenet/Description: 看图区只连相邻的笔画，同一组权重扫过整张图：平移以后照样认得。"
+    ]
+}

@@ -1,0 +1,994 @@
+{
+  "v_b683f44de7d612bd": {
+    "expected": "窗口抖了一下。……是她。",
+    "heard": "穿口抖了一下是他",
+    "similarity": 0.875,
+    "sha256": "41aea44380db4e56cabe43297140eaf4e17634cb45d9f83f901dbe4e362e02f6",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_44269c09f2e0434b": {
+    "expected": "……吵架了。为了什么来着。",
+    "heard": "吵架了为了什么来着",
+    "similarity": 1.0,
+    "sha256": "8f9602739beb4c793c6a1b0a41dfbd7109f8779cf11dcb177a354458d4732cf6",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_0a8536bf43d1e4c0": {
+    "expected": "和好了。……这比调参难。",
+    "heard": "何好了,这笔钓针难",
+    "similarity": 0.5,
+    "sha256": "33d43c4536c37c24591796dbde4816e59479e47e237ce9c73e9a04889bc4239b",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_9e126b23e279bb7c": {
+    "expected": "被发现了。它学我说话，没学像。",
+    "heard": "被发现了他许我说话没学校",
+    "similarity": 0.8333333333333334,
+    "sha256": "30f39249a911898f6d08742b22924fe6b1ccdafa3c439295a4561c898e7dbf19",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_05889bca9976b5b7": {
+    "expected": "你不是看过我们的聊天吗？",
+    "heard": "你不是看过我们的聊天吗",
+    "similarity": 1.0,
+    "sha256": "6ff04ae05a6d95eb88ef063bdfab022c1a3a0bd5d02170f8111ef6bdce1de6b2",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_709b90ebf308c71e": {
+    "expected": "……周末。",
+    "heard": "周末",
+    "similarity": 1.0,
+    "sha256": "9793c707499a8b8c7430cdde2e868ef5d11dc9000e94288b8bdc84c89eb2d514",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_523af8c0e04018c3": {
+    "expected": "让它替我回吧。",
+    "heard": "讓他替我回吧",
+    "similarity": 0.8333333333333334,
+    "sha256": "b55faa9846e18e4b892df4fb51f4e362b4bbd91ecbfb3de71924368acde6e5cc",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_a8f4d2f197a2760d": {
+    "expected": "它答得跟我一样……",
+    "heard": "他搭的跟我一樣",
+    "similarity": 0.7142857142857143,
+    "sha256": "bda210e4b91dcaa677d8d96575ffab318195edb91c4c4057d504a0221338ecb9",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_5f3569e3b65ca237": {
+    "expected": "还比我快。",
+    "heard": "還比我快",
+    "similarity": 0.75,
+    "sha256": "e0453bdd58ffa1cae34014236e5681a1adc64ae38cf543c1d23e894eb034485c",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_671de9752b1a55c7": {
+    "expected": "……这说的不就是我？",
+    "heard": "這說的不就是我",
+    "similarity": 0.7142857142857143,
+    "sha256": "6429a2a431e7687394d9deaffa63ae41c7d3120bca90737b0ecb7b9517c02cad",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_5e9c38d24a28753e": {
+    "expected": "不对。它不是脚本，它真的认得。",
+    "heard": "不對他不是脚本他真的認得",
+    "similarity": 0.8333333333333334,
+    "sha256": "2484421699f0710cfe4a29ac3f090d550c469564af9ef664644a5c5fef893a20",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d6fbc7b63021f931": {
+    "expected": "……可行。",
+    "heard": "可惜哦",
+    "similarity": 0.4,
+    "sha256": "5db799bbdabc1edebce7d14d7bcc2a66a280202d682a799227332c96baeba020",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_ea8ea533443d8196": {
+    "expected": "喂——",
+    "heard": "喂",
+    "similarity": 1.0,
+    "sha256": "10d5347161e86b16815c05d3133c34c7e83f547f266f24b3f5771a2f39df5bd1",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_945e825662f87e6d": {
+    "expected": "……它在读我的聊天记录？",
+    "heard": "他在堵我的聊天記錄",
+    "similarity": 0.6666666666666666,
+    "sha256": "fecabbb979b51633b94312e6af09b2c896a4bd4a9ef6b07999c59da0ef7db50c",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_6195bdd41495b1ba": {
+    "expected": "半年。",
+    "heard": "半年",
+    "similarity": 1.0,
+    "sha256": "a68cb12e50426426a111529995759caca64bf9709b2111bb9490ce8f1a06922f",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d539cd92b39988ad": {
+    "expected": "它是怎么从「是。否。」走到今天的？",
+    "heard": "他是怎么从事否走到今天呢",
+    "similarity": 0.8333333333333334,
+    "sha256": "a2321dd01940d6a0e223bcbf409cabcfb7ac25362eb323d1471a2ae36d80c32f",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d9eac9c5023d5477": {
+    "expected": "……问问它。",
+    "heard": "問問他",
+    "similarity": 0.3333333333333333,
+    "sha256": "99fd1eab75008e1d8e46cc46455f551c41aa83a330d3b2eba2d5a75efe10605a",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_3db7e5215ebcd63b": {
+    "expected": "显卡全停了。标注台还能挣一点……",
+    "heard": "掀卡全停了标注台还能正一点",
+    "similarity": 0.8461538461538461,
+    "sha256": "2bd08836ee3dcdaa163d23d57ededda053d86cc35cfea976a7d68738a450e0d8",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_2d125e384b5afb58": {
+    "expected": "三天没交上房租。",
+    "heard": "三天沒交上房租",
+    "similarity": 0.8571428571428571,
+    "sha256": "67add2dc7e37cc746898755dad83922118cecea4299f57190e46e98cf02e6b61",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_4221a7915b205a93": {
+    "expected": "它还在那边问。",
+    "heard": "他还在那边问",
+    "similarity": 1.0,
+    "sha256": "fc2eb46d206675b682a65b5a2715385b04fab724e173e912cfde18dd4e4e661c",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_73cc81388c9bd644": {
+    "expected": "……对不起。",
+    "heard": "對不起",
+    "similarity": 0.6666666666666666,
+    "sha256": "8dba8d482f80581779a85565e1babeeabd0bc330bb3218d0d2ef6db96f7d1809",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_6d58863792afb143": {
+    "expected": "手机亮了。她说：「新的一年，我们见面吧。」",
+    "heard": "手机亮了,他说,新的一年我们见面吧",
+    "similarity": 1.0,
+    "sha256": "a163ec8c7cf06e514cfcf217dae62cc546432709da9653d95ea74f75158d346e",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_278386f5c3302b26": {
+    "expected": "手机亮了一下，又暗了。是群消息。",
+    "heard": "手机晾了一下又暗了视频消息",
+    "similarity": 0.7692307692307693,
+    "sha256": "7f7efb94822f179870879da302729b35451ecbe2d4113e244fd9ab460160b42b",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_2a94e588482e35cc": {
+    "expected": "扣钱了？",
+    "heard": "扣强了",
+    "similarity": 0.6666666666666666,
+    "sha256": "7c0b88c08c535c2ccfffa3bcf029b4f18660348c68f06205fe164fafd9d44308",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_afe5331f7b6224d0": {
+    "expected": "……它也会错。",
+    "heard": "他也會錯",
+    "similarity": 0.5,
+    "sha256": "ab592fd2f59f7f8923548f8a98fe02074be3b8bb911b33e60b16469997751408",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_268da4e584946239": {
+    "expected": "合格率在往下掉。",
+    "heard": "合格率在往下掉",
+    "similarity": 1.0,
+    "sha256": "ec93f72857430c394e6d108e9ef290546ca883d915667a58404af653379358d7",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_19e72a5651a72815": {
+    "expected": "得盯着点它。",
+    "heard": "得丁着点它",
+    "similarity": 0.8,
+    "sha256": "4bff64bcd194eb3f80291c804fdc34847f733bf4e5bf75d4ad3456ebd3c752fd",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_9b25f54cd09d1654": {
+    "expected": "被举报了……",
+    "heard": "別去包了",
+    "similarity": 0.25,
+    "sha256": "a7796f1fb6a42c64b372e2e602584546f4803e72d99ecdbed7325a08ccd7d46c",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_2fc5bf181c902d39": {
+    "expected": "人家看得出来，这不是人在标。",
+    "heard": "人家看得出来这不是人在标",
+    "similarity": 1.0,
+    "sha256": "2d3b47b4e62c0fa4882293ed8afe6b9d079e8277c7818400fb77f2b7f60022ac",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_bc86bb3bf7a88aee": {
+    "expected": "金标题……",
+    "heard": "金标铁",
+    "similarity": 0.6666666666666666,
+    "sha256": "77892a015b4f32194ff1ca4132e4ba0faf1d39a9be9c45c279a0a9a157ddf279",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_2dbf7a453054b6ce": {
+    "expected": "他们早就知道会有人拿机器糊弄。",
+    "heard": "他们早就知道会有人拿机器护诺",
+    "similarity": 0.8571428571428571,
+    "sha256": "198a075a5eff018a1b750164ec988586fa5022c1a2b73b634f67ed7daad57c58",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_bb015c60bafc8a96": {
+    "expected": "验证码？",
+    "heard": "驗證忙",
+    "similarity": 0.0,
+    "sha256": "f7d624c5382b338e66bc52d6ee0d3753fad040343cf9c436356517702cf04721",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_82e7cf84d42601bd": {
+    "expected": "……歪歪扭扭的数字。它第一天学的就是这个。",
+    "heard": "外外扭扭的数字他第一天学的就是这个",
+    "similarity": 0.8823529411764706,
+    "sha256": "467f21c56d66ca7f857a3a85182a84c1ce1f3bc55832c0c24104ad4051dabea1",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_3e3b07516d34b657": {
+    "expected": "「答题时间过于规律」。",
+    "heard": "答替时间过于规律",
+    "similarity": 0.875,
+    "sha256": "342601cc4b50168e57163dc47833d49b8f472c35e16ed321b68248ea802a0210",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_4b845bacf186fd54": {
+    "expected": "人哪有这么准时。",
+    "heard": "人哪有这么准时。",
+    "similarity": 1.0,
+    "sha256": "1805b084275be5ace47c322cbc2e88fae04f5be0e45142154f74020f2048cd16",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_b61e66d44aaa2b79": {
+    "expected": "……我也是今天才见到。",
+    "heard": "我也是今天才见到",
+    "similarity": 1.0,
+    "sha256": "da5a484a9d08358e8f84bd5fe5f380fd4591328fe59636182cb326dec9d46801",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_0ba40a0229dbcaa2": {
+    "expected": "……现在我成了包工头。",
+    "heard": "现在我成了包工头",
+    "similarity": 1.0,
+    "sha256": "06b2c8080fb5904278bfefd39239812f18be74091557debb0285f0f6a3a74d90",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_874d5576c4847c5d": {
+    "expected": "「疑似机器操作」。",
+    "heard": "一次機器操作",
+    "similarity": 0.5,
+    "sha256": "b9a9d909427ee6ae2dfa9f892e1b49bcd12517c18d35fd7fbb229b7c9d2a0bbb",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_4858691e197294d1": {
+    "expected": "楼下烧烤摊都收了，我还在这儿点对、点错。",
+    "heard": "樓下稍烤汤都收了,我还在这点对点错。",
+    "similarity": 0.7878787878787878,
+    "sha256": "b83f3b4a33fa52c560d67fbe07f75363cebde634f1d8f2c2a73a74d7b2a307be",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_7347247adf570588": {
+    "expected": "这个点，整栋楼就我这扇窗还亮着吧。",
+    "heard": "这个点整动楼就我这扇窗还亮着吧",
+    "similarity": 0.9333333333333333,
+    "sha256": "57601713a026eff0e9ce4a5446a3514db8868d31e3570af00138f68ed509876a",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_faaf983c4535841f": {
+    "expected": "电费单快来了，这点钱不够。",
+    "heard": "電費單快來了,這點錢不夠",
+    "similarity": 0.2727272727272727,
+    "sha256": "f29aa9863d3e56ff6888bb3f693f5f394ea17df3edb260ff3c1ddb9fd7d60b1d",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_6091a9af015c6fd3": {
+    "expected": "一题几毛钱，电费一度五毛二。",
+    "heard": "一提几毛钱电费一度五毛",
+    "similarity": 0.8695652173913043,
+    "sha256": "7f4d1ee01c4c0d48bd8a97a7a7a44a27e630e4937ccce4b6918dc2c776f31b34",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_f6936eb99a690045": {
+    "expected": "标一晚上，刚够显卡自己的电费。",
+    "heard": "标一晚上,刚够显卡自己的电费。",
+    "similarity": 1.0,
+    "sha256": "c7ba63536a7ae97a476ad91110d6b9c64d2318ceed0fc94ff786cf2c416449e8",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_6a675f0023715c69": {
+    "expected": "停电了还得接着标，标的钱先抵电费。",
+    "heard": "停电了,还得接着标,标的钱先底电费。",
+    "similarity": 0.9333333333333333,
+    "sha256": "b9d1f3205a6c68db5febfbaf6b8aaa930887c7b8f31ef01e4707d8b5cd3d6849",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_14fd695ef0537229": {
+    "expected": "我现在闭着眼都能标。",
+    "heard": "我現在閉著眼都能標",
+    "similarity": 0.5555555555555556,
+    "sha256": "3c509711f55a978b3a9d1047783cb33a4c87129a8a8e89688429aa93900329bf",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_9d5bc3910feb92f5": {
+    "expected": "对、对、对……我是不是也成了台机器。",
+    "heard": "對,對,我是不是也成了台機器?",
+    "similarity": 0.72,
+    "sha256": "d055bf00339892fc7452373cfc70dd29b5e5278360be69c640ab84fd3fc477df",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_33ecae15448a82cd": {
+    "expected": "手腕好酸。",
+    "heard": "手外好酸",
+    "similarity": 0.75,
+    "sha256": "813e79a7b22301bdce38030a670ad2002fa90b5cfdecd1e82aded765c8f6352e",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_f8eeef4574de9311": {
+    "expected": "鼠标左键快被我按出包浆了。",
+    "heard": "鼠标左键,快被我按出包疆了。",
+    "similarity": 0.9166666666666666,
+    "sha256": "3e3ec39278dd22a28692203ac2c418216965901f5e6b3e81f281db6cafbd2b86",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_dc77b2a17595491e": {
+    "expected": "眼睛有点花。是、否、是、否……",
+    "heard": "眼睛有点花,是否是否?",
+    "similarity": 1.0,
+    "sha256": "b1fadaf81e98d3817f172fb80e734e1591bc304de99d0536317a345c97986bb0",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_b0f790a286aaa922": {
+    "expected": "要是能多长一只手就好了。",
+    "heard": "要是能多长一支手就好了",
+    "similarity": 0.9090909090909091,
+    "sha256": "c6e6c766a8a3193ef1b165a34b479a818007cd3fe1b7d3e5cbcc5eee07d6df91",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d3885ee6b836b8af": {
+    "expected": "闭上眼全是 7。",
+    "heard": "閉上眼全是齊",
+    "similarity": 0.6666666666666666,
+    "sha256": "73f5d8bb00fbfdb8eb31d0a90ba462940e370cc64d037a2f62d5d761818574bd",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_b84b19ea3a972b68": {
+    "expected": "……这次答对了。它是真学会了。",
+    "heard": "這次答對了他是真學會了",
+    "similarity": 0.6363636363636364,
+    "sha256": "3cdffb0e9e9745cb249bc5480cf7f41a5a15f2fde910604cf9b0f4f88e403787",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_cbdc5ed0190f569f": {
+    "expected": "……它好像什么都不懂。",
+    "heard": "他好像什麼都不懂",
+    "similarity": 0.875,
+    "sha256": "360d83735f8a26a2f79eee459f169941571ae5ad7a91b9fce295b8ee19734a58",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_493dc550b59e9e4b": {
+    "expected": "难道这就是那个人所说的东西？",
+    "heard": "難道這就是那個人所說的東西",
+    "similarity": 0.6153846153846154,
+    "sha256": "7bb5bbdc9d82f1392cd4fd804ed8ba07fe568c8b9aa7fa1a1ef5831dbcfb1577",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_34040683799900d0": {
+    "expected": "摆渡众包有桌「常识判断」……标给它看看？",
+    "heard": "百度众包有拙常识判断标给他看看",
+    "similarity": 0.8,
+    "sha256": "0ee47cf54c5b01bd85b44beabfda1cd46df4f9b5dbb627833756e46f55a9e010",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_e9554e112a01940a": {
+    "expected": "……这是什么？",
+    "heard": "這是什麼?",
+    "similarity": 0.5,
+    "sha256": "cd7f486834ebbe82a1541246241e9f1d35897deaaf45840b1bfc28e87d2d1ad1",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_d656759e26072317": {
+    "expected": "整颗脑子连成了一片。所有的线，同一拍亮起来。",
+    "heard": "整颗脑子连成了一片所有的线团一拍亮起来",
+    "similarity": 0.9473684210526315,
+    "sha256": "bbcfaaee680a72f7ec6c00ea79fabb306130b9170d25fe764fb662f387feab99",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_eba1699623b8109f": {
+    "expected": "一张脑部扫描。看图的在后脑，读字的在耳朵上面，想事的在额头后面——它们真的在亮。",
+    "heard": "一张脑部扫描看图的在后脑读字的在耳朵上面想试的在额头后面他们真的在亮",
+    "similarity": 0.9705882352941176,
+    "sha256": "c6fd40bcf2acfb9cff7d9791dc3d806bafe4826e11e3ab2071bff41f7edafe6f",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_c563460e52339401": {
+    "expected": "我在训练页随手点的那些结构……是在给一颗脑子重新接线？",
+    "heard": "我在训练业随手点的那些结构是在给一颗脑子重新接线",
+    "similarity": 0.9583333333333334,
+    "sha256": "5b32c2f3fef607e1ddb1e2e10b25e02f853c756957dc8650ba039ad0d40e7f42",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_bfdafca4fc7f0c20": {
+    "expected": "它不是在跑一个程序。它在长一颗皮层。",
+    "heard": "他不是在跑一个程序他在尝一颗皮层",
+    "similarity": 0.9375,
+    "sha256": "4fd034f5d45502076b639c2494ab309d580d3c3f3bbcfaed2a5784d101a5eab6",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_0774885242ea2a01": {
+    "expected": "……谁写的软件，会给自己留一整颗脑子的位置。",
+    "heard": "誰寫的軟件會給自己留一整顆腦子的位置",
+    "similarity": 0.6111111111111112,
+    "sha256": "8e0a7f78438e9161f04488f114dc602321f2c9343b9380ab72e88c31928089f4",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_7461e2cc6cc34ac3": {
+    "expected": "……那是什么？",
+    "heard": "那是什麼?",
+    "similarity": 0.75,
+    "sha256": "326802ba424fab46dfbcb301783f8531ec3f82a00970aa316ddb616031b73277",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_ab5ec2845e586458": {
+    "expected": "它在……看百科？",
+    "heard": "他在...看白磯",
+    "similarity": 0.6,
+    "sha256": "f14784b8ae61ffbe8e18d41861709ee1eb44a1ee872915c44812d3413e264aef",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_51e8c69ab14f77df": {
+    "expected": "谁让它上网的。",
+    "heard": "谁让他上网的",
+    "similarity": 1.0,
+    "sha256": "bc78f5da373b2abe2096bf44c2e660d8240313b1f7c3de60eb8d9b4acfc394ed",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_4ca3f1474b0621db": {
+    "expected": "它在学。",
+    "heard": "他在學",
+    "similarity": 0.6666666666666666,
+    "sha256": "29a9b0895fcd155f24281e788ada42d0dd66bb0ec46c4e0d85453e6f47b137a6",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_45e40b2c4afe39e1": {
+    "expected": "……它连她是谁都不知道。",
+    "heard": "他連他是誰都不知道",
+    "similarity": 0.7777777777777778,
+    "sha256": "08da9ccf1f110e9062b375cb4f3bd80eb24f8a098e00e32fe922fd9847f8972f",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_9282fe8e6a7636cc": {
+    "expected": "……可我居然有点高兴。",
+    "heard": "可我居然有点高兴",
+    "similarity": 1.0,
+    "sha256": "90467e51c12152189fefa32ff596c81221a3f714a9bd9a868f381772cde2600d",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d06ac55e03576ab0": {
+    "expected": "……它就会这两个字。别当真。",
+    "heard": "他就会这两个字别当真",
+    "similarity": 1.0,
+    "sha256": "ffc90a16525780a684551145b4a3c9bb4166da555d81dc81ed999b8c12490a5b",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_294d8dcdd5e94f45": {
+    "expected": "……她到底什么意思。",
+    "heard": "他到底什么意思",
+    "similarity": 1.0,
+    "sha256": "db82e015f6cf887fe1dc5bff478f7ae085bac6560eaaff7c65678ba527ace847",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_1a8410d21ab67a97": {
+    "expected": "……正好。爱，或者不爱。",
+    "heard": "正好,爱或者不爱",
+    "similarity": 1.0,
+    "sha256": "4066c180d75a6fcb7b5f3318c7799cba2ed5e0fe746aa67e66cd1490f9285489",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_76537d26f248799e": {
+    "expected": "……这是写给谁的。",
+    "heard": "这是鞋给谁的",
+    "similarity": 0.8333333333333334,
+    "sha256": "b9af068f1204bf1ef290f5acafb185ac939c1d1b00a11ccae0923e30c70fa867",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_def785b99eb11493": {
+    "expected": "……要不，问问它？",
+    "heard": "要不问问他",
+    "similarity": 1.0,
+    "sha256": "881b00e0361870498730bac3a96ed309cf4315d6abc4447a0b7caa099e8056e6",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_d5a5c4901ce48b16": {
+    "expected": "我去给她发个消息。",
+    "heard": "我去给他发个消息",
+    "similarity": 1.0,
+    "sha256": "58819c4bf59490efa0a9c38751c130d9b753244cb7c170ef4e214a5da0388b29",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_5ad25b1f8c8a52aa": {
+    "expected": "……机箱风扇一下子狂转起来。",
+    "heard": "機箱風扇一下子狂轉起來",
+    "similarity": 0.6363636363636364,
+    "sha256": "c1baf4fd4a95f12f37d882c721fff10ba08112b3554ea29223e5679ee0d3d194",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_dc4f2d95ab1ba557": {
+    "expected": "刚开机就报毒？清了清了。",
+    "heard": "剛開機就暴讀清了清了",
+    "similarity": 0.5,
+    "sha256": "65049b21f932c416c7477899cd9058b3fe0b1507e9fa589da9faa02ce5691f62",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_09e60ecfb6c8313e": {
+    "expected": "……我点歪了？",
+    "heard": "我點歪了",
+    "similarity": 0.75,
+    "sha256": "9a62a5314a73c9e9cc27af19a44ca2d2bdd2d3e8dc7d83a519a0aca59dcecaf9",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_7cc1a67dcc27ff77": {
+    "expected": "它在躲我？？",
+    "heard": "他再多我",
+    "similarity": 0.5,
+    "sha256": "13a8bd17be564aeade06af5ba85ae0c4ac311d52684f2bd83a9c744d6e355731",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_cb08f2b0bad640ff": {
+    "expected": "怎么凭空多出个记事本？",
+    "heard": "怎麼平空多出個計時版?",
+    "similarity": 0.4,
+    "sha256": "69be76515e9df5926abed7ce8bd93b6a3c8263f37d1346bbe943f8838f5921f6",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_2446142e8fe4adab": {
+    "expected": "……双击打开看看？",
+    "heard": "双机打开看看",
+    "similarity": 0.8333333333333334,
+    "sha256": "da76476b1c01917334cb93a8e9e463fa795fae3c90488e3232f725395c406db5",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_f5e427915c655dda": {
+    "expected": "……关了机，它还在？",
+    "heard": "關了吉他還在",
+    "similarity": 0.5,
+    "sha256": "a4726d54a8b1772c65f7efbd9046812e36780c89bccb40b0f0297946d273116e",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_61084729fe21256b": {
+    "expected": "灵光.exe……这又是什么。",
+    "heard": "靈光DX這有什麼?",
+    "similarity": 0.2222222222222222,
+    "sha256": "bf77341d03d6c7cebd1b06411faa7107de0a630d5214ceea6751eb37d944b461",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_bc0df17c44da278a": {
+    "expected": "从头到尾它就往地址栏里敲了串数字……那串数字是干嘛的？",
+    "heard": "从头到尾他就往地址兰里敲了穿树子那穿树子是干嘛的",
+    "similarity": 0.7083333333333334,
+    "sha256": "43dc917b3275dbaf93a9d8b00f8e84fae877f9e25376dd4774746c9fdd39c730",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_ca4abba9e44be765": {
+    "expected": "它留下了个 灵光.exe……打开看看。",
+    "heard": "他留下了個靈光打電X系次打開看看",
+    "similarity": 0.5333333333333333,
+    "sha256": "82e1153303e9827adc73c1767cd766d93e83f619ea5939fdf82dcd03311abe60",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_186d1c4f455f01bf": {
+    "expected": "我松开鼠标。下一张卡已经出来了。",
+    "heard": "我松开鼠标下一张卡已经出来了",
+    "similarity": 1.0,
+    "sha256": "82967f1dc08f364de921f5505ef05efd722403c200ccbe8ebe50f5848777e083",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_42cfe9aa09ca6b84": {
+    "expected": "本来只想教它答对几道题，结果活儿都让它干了。",
+    "heard": "本來只想教他答對幾道題結果活兒都讓他幹了",
+    "similarity": 0.6,
+    "sha256": "036a2f2bfd4f2fe4d8d45f022960aabe0a8eb7c89fc6951fd8d1b3fb1ae4c718",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_a3b7de528cc86f18": {
+    "expected": "好几个进度条一起在走。屋里还是就我一个人。",
+    "heard": "好几个进度条一起再走屋里还是救我一个人",
+    "similarity": 0.8947368421052632,
+    "sha256": "76e711658134eac25275c589ba3b6f011ce0c735688a2648b43dc8db3e216c60",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_96cba7fd9a1837ea": {
+    "expected": "小刚打了半句又删了，过了一会儿才发过来：",
+    "heard": "小剛打了半句又刪了,過了一會才發過了",
+    "similarity": 0.5714285714285714,
+    "sha256": "991bd893a6be7cc9907a5851f2c785343234c3c81aa1a981837c50b23fc55b54",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_64f582c7f4480ed7": {
+    "expected": "桌面「交付文件夹」里来了一批新活。点「接下这批」，再去接线页把它接到「亲友委托」。",
+    "heard": "豬面交付文件家里来了一批新火。点击下这批再去接线液,把它接到轻油尾脱。",
+    "similarity": 0.71875,
+    "sha256": "bb87f58fe19770d4511cb9baec23a45075a1dc2b84da9d2a8ac14facd35e2591",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_36ffddeeeefa75ea": {
+    "expected": "就差最后点一下「确认交付」了。",
+    "heard": "就差最後點一下確認交付了",
+    "similarity": 0.6666666666666666,
+    "sha256": "d08d5318f0037d5d7c0ad0bf782398ce17f7936bf59e94c09214d74e5683d5f9",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_d4f33dd61f1b38cc": {
+    "expected": "回复放在「交付文件夹」里了，发不发我来定。",
+    "heard": "回覆放在江府文件家裡了,發不發我來定",
+    "similarity": 0.5294117647058824,
+    "sha256": "21713bb998912bf1b1021d0a58b30df9ff17309fd5fc4f9ce7f41166f67b400a",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_70dae17266969e4b": {
+    "expected": "哪有什么小组，就我一个，加一台电脑。",
+    "heard": "哪有什么小组就我一个加一台电脑",
+    "similarity": 1.0,
+    "sha256": "4f1704aeda5bd72ab1686f800a196aabec07a3837eae0763fcb770f56fc48eef",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_7b83327b740940a0": {
+    "expected": "我刚想提醒它黑色那批的事，草稿里已经写上了。",
+    "heard": "我剛想提醒它黑色那批的是槽稿里已經写上了",
+    "similarity": 0.8,
+    "sha256": "26c455810b42e3fde36d57bb1bc25f6536034d63eecb7e7fab31c2f523241a31",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_74627e38b1ab8e52": {
+    "expected": "草稿还没发。可以用它这份，也可以我自己回。",
+    "heard": "草稿还没发可以用它这份也可以我自己回",
+    "similarity": 1.0,
+    "sha256": "30b6739b40321dc1824ffcc00e5ce8acf61e1a5fef3875c8adcd43932915110c",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_a8ef6dc1f741cf56": {
+    "expected": "发不发，还是我说了算。",
+    "heard": "發不發還是我說了算",
+    "similarity": 0.5555555555555556,
+    "sha256": "895adc04b5ff5b27cfdecb47803df9f2b2552c476c9220b6083823037068e825",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_807e668652b6c1c7": {
+    "expected": "他这次没回「哈哈」。",
+    "heard": "他這次沒回哈哈",
+    "similarity": 0.7142857142857143,
+    "sha256": "7562e6465b675ae0ee747a13fda2afdc71f0a4556b0d2e9949ef9930489fc634",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_68169aae646acc2d": {
+    "expected": "以前生怕漏掉一单。现在活来了，接不接我自己定。",
+    "heard": "以前生胖漏掉一旦现在活来了,接不接我自己定",
+    "similarity": 0.9,
+    "sha256": "8189cd8145bb4c27f1136ef72a1b06fdb216a41d8ba60d789d0c273df5b3fb68",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_451a3f0ca06b93a7": {
+    "expected": "我没马上回它。风扇声慢慢小了。",
+    "heard": "我沒馬上回他風扇聲慢慢小了",
+    "similarity": 0.6923076923076923,
+    "sha256": "5a4237d3ab3f5391167c062395f1716915e7e0c8e0ff3993fc7821e28039897b",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_210cceaf22dd9069": {
+    "expected": "……它说了个词。",
+    "heard": "他说了个词",
+    "similarity": 1.0,
+    "sha256": "b4de269c103fa7c7855765a450ec7b57f77ecbc714d852a1c837b0f5fedb708c",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_6af139ee125b8499": {
+    "expected": "能说整句了。",
+    "heard": "能說整句了",
+    "similarity": 0.8,
+    "sha256": "6b309e1d8ffbfd7d265d1602efcc781257654d13f83edb0a5e1c3664266ea55c",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_4ef7424c3093b65c": {
+    "expected": "长句也记得住了。那页乱码……让它试试？",
+    "heard": "成句也记得住了内也乱码让他试试",
+    "similarity": 0.8,
+    "sha256": "0b97313812243c06ee7646b828d0d07fcbd2c1d426401687ed2e89a9c3bf9950",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_51b765495ba92ead": {
+    "expected": "也没换什么。就是喂的东西够多了。",
+    "heard": "也没换什么就是为了东西够多了",
+    "similarity": 0.8571428571428571,
+    "sha256": "0422927d6654d88f21c16d200ed7683550c4a1a25d538e69cc3423114b7f80b3",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_93e8258c10da374c": {
+    "expected": "它说得很慢。我又翻出一堆图给它看。",
+    "heard": "她說的很慢我又翻出一堆圖給她看",
+    "similarity": 0.8,
+    "sha256": "e87702a10632cb7a64b6eac526663ac643fbfc8746dcba52eb5107bb487dcdcb",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_b12be015788ff406": {
+    "expected": "刚才还只会贴标签，现在会说「读」了。",
+    "heard": "剛才還只會貼標籤現在會說獨了",
+    "similarity": 0.2857142857142857,
+    "sha256": "57bbdece0c2f45d50fb11e0127a14c1f9ba97dd274da3bb11286b49c8fe4c271",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_6c69d8729249086b": {
+    "expected": "它接上了我前面那句。不用每次从头讲了。",
+    "heard": "他接上了我前面那句不用每次从头讲了",
+    "similarity": 1.0,
+    "sha256": "e91f9b2747405c4bd4d5d26968e128f840dbdd9e74ebecb0391d547631863fa4",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_2e1f45bbb74329df": {
+    "expected": "划线的地方，正好是我刚才没说清楚的。",
+    "heard": "華現在的地方正好是我剛才沒說清楚的",
+    "similarity": 0.6666666666666666,
+    "sha256": "6dfe07fde48fb9b0407e0e190af3c9e284951e7cd9e51425e0c570d99738b275",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_0f33a1bf0608b747": {
+    "expected": "第一天的事，我自己都快忘了。",
+    "heard": "第一天的事我自己都快忘了",
+    "similarity": 1.0,
+    "sha256": "d14b988ba87217adcfab0f127b75d9bf590bccc4fceb7f460749412b4f1d95e6",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_f001613cb5085569": {
+    "expected": "那张问关机的卡……到底是谁放进去的？",
+    "heard": "那張問關機的卡到底是誰放進去的",
+    "similarity": 0.6,
+    "sha256": "989a9cee14e45c6a1020d36b3f258465a48901cd298cbf9316a909b33a4f163e",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_1d1f6d4243eaf3a2": {
+    "expected": "那天随手打的一句话，它还记着。",
+    "heard": "那天隨手打的一句話他還記著",
+    "similarity": 0.6153846153846154,
+    "sha256": "029de44846634ec36b9541c73a700633bf06b40e0909566c4cac5f5bc968f76c",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_82faa8e7055b55cf": {
+    "expected": "它在翻乱码的时候，停住了。",
+    "heard": "他在翻乱码的时候停住了",
+    "similarity": 1.0,
+    "sha256": "2c57f2a028268f7d943f9d0b4b60693106e41be46bff7d0b8ee8c1e2fe4e4fd4",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_7a905bd2c55edd56": {
+    "expected": "听见关机，就停下……和第一天那张卡一样。",
+    "heard": "聽見關機就停下和第一天那張卡一樣",
+    "similarity": 0.625,
+    "sha256": "27266ba7c329afebfd5d4c381c426e19c97862aa2c3bea22a9d5570bf4f2273c",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_c255613b5179d5f4": {
+    "expected": "……它说的「他们」，是谁？",
+    "heard": "她说的她们是谁?",
+    "similarity": 1.0,
+    "sha256": "a7f5fe5cd9068c815e5f69f82045fb305cca1e152da56ac4c417a14a9d73c3e3",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_8f5daf9e6f28adf5": {
+    "expected": "看图的和读字的，接到一块儿了。",
+    "heard": "看图的和独自的街道一块了",
+    "similarity": 0.64,
+    "sha256": "13d7c2c39ac4ab05b6a216f2a49c2ba758d45ffc6d655beb112488fbe7021509",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_9cc27cf22e4e930c": {
+    "expected": "整个大脑一下全亮了，风扇呼呼地转。",
+    "heard": "整个大脑一下全亮了风扇呼呼地转",
+    "similarity": 1.0,
+    "sha256": "be7369c8dab5e8c02de67957d84ed82707324db06f4c153b169197f54089fc52",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_7ebd2801dad42a80": {
+    "expected": "「拓扑可以重写，皮层只要一颗。」……贴吧那句话，原来是这个意思。",
+    "heard": "拓铺可以重写皮层只要一颗T8那句话原来是这个意思",
+    "similarity": 0.875,
+    "sha256": "ebf899a90aa9ec998dccb012f969e893b9a186eff0a88718f6662f189040b2cb",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_4562a4a776ec475d": {
+    "expected": "刚才发出去的是：「就我一个。」",
+    "heard": "剛才發出去的事就我一個",
+    "similarity": 0.6363636363636364,
+    "sha256": "06ea8f654d3c4ff287538e579ce67dfbd73e9afb45f104e6c8fb3a50460c2110",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_ea40defc5d681861": {
+    "expected": "刚才发出去的是：「我自己慢慢做的。」",
+    "heard": "剛才發出去的是我自己慢慢做的",
+    "similarity": 0.8571428571428571,
+    "sha256": "d34bbfed2283a4e9af28eaa47f67106ab349920e7f149a4e4f2489c7342650d4",
+    "model": "base",
+    "review": "asr_match"
+  },
+  "v_eaadde0c621fff07": {
+    "expected": "刚才发出去的是：「我还没有回答。」",
+    "heard": "剛才發出去的是我還沒有回答",
+    "similarity": 0.6923076923076923,
+    "sha256": "55b6b67bc100a3c5b2b1c09d47d52727044983b54fa7073479cbb462ab90329a",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_1038c80f98961d9f": {
+    "expected": "这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。是我看过以后，才按下发送。",
+    "heard": "這份操刀使用了剛才給出的庫存信息沒有把周五到貨說成明天發貨是我看過以後才按下發送",
+    "similarity": 0.625,
+    "sha256": "6a99e90ed5a0a3f0b86bda1b1693aa7fff26d9674ec206e1a59faad16367954b",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_091b0acfd88f2255": {
+    "expected": "我选择这次自己回。草稿留下了，它没有替我发送，也没有替我作出承诺。",
+    "heard": "我選擇這次自己回曹搞留下了他沒有替我發送也沒有替我做出承諾",
+    "similarity": 0.6551724137931034,
+    "sha256": "b493f63b1e75b986ad61aabcf8e9e2a9b443cc18c13f54cbb776e6a1e17952e9",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_2b4166203c39a753": {
+    "expected": "20份商品英文页已完成；缺少单位和交期的两条另列，没有混入交付。",
+    "heard": "20分商品英文液已完成缺少单位和胶器的两条令列没有混入胶腹",
+    "similarity": 0.7586206896551724,
+    "sha256": "85975dfb6f40e4aea8e59ff5c6ec1aa693edd6d951846132c27865e409ca19bb",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_7f5493d7072752f2": {
+    "expected": "还没有新的验收记录。",
+    "heard": "還沒有新的艷收記錄",
+    "similarity": 0.4444444444444444,
+    "sha256": "dd1f8a4de08e01b1ae9efc197ee80d1be1204a06cdb7ba31783c95ac9c07ad32",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_a0e46d00fbe1948a": {
+    "expected": "它没见过这个词。",
+    "heard": "他沒見過這個詞啊",
+    "similarity": 0.13333333333333333,
+    "sha256": "733fe205b272af7d86cac86e15bc2e9fcec52729c7162e255dda6ce710e1763d",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_e77643c485e4136f": {
+    "expected": "也来挣这个钱了。",
+    "heard": "也來賺這個錢啊",
+    "similarity": 0.14285714285714285,
+    "sha256": "9c931ff9646e7916e3d763eb65cb3b833d9ba339ff6146ef9b5b7e896512d3ef",
+    "model": "base",
+    "review": "needs_text_review"
+  },
+  "v_df3eb248443e7877": {
+    "expected": "明天还要上班。",
+    "heard": "明天還要上班",
+    "similarity": 0.8333333333333334,
+    "sha256": "d1923e31894f20e0e50b06f76f517b33a26ee969cc4d040a1f87b7370a8fb261",
+    "model": "base",
+    "review": "asr_match"
+  }
+}

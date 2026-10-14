@@ -1,0 +1,12 @@
+{
+  "seconds": 1.8,
+  "peak": 0.780670166015625,
+  "rms": 0.147503610918808,
+  "samples": 43200,
+  "clipped_fraction": 0.0,
+  "signature": "d90b9c8aa3547e7f2346708be538c48f8a424ae88ad229cb9323585e5f904572",
+  "elapsed": 2.3506134169874713,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "只会答是或否。"
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "Normal Unity Play, memory-only stage fixtures; actual native LCD pointer interactions, real story delivery and fresh concept-weight exams",
+  "verified": {
+    "liveStoryLoadedBeats": 59,
+    "newBeats": 13,
+    "briefDeliveredBeforeStart": true,
+    "startDidNotAutoConnect": true,
+    "nativeWiringConnectedCommission": true,
+    "realTimedProcessingReachedTwenty": true,
+    "didNotAutoDeliver": true,
+    "nativeConfirmationDeliveredOnce": true,
+    "identityPlayerLineRecorded": true,
+    "contextWasNotAutoSent": true,
+    "nativeContextSendOnlyOneMessage": true,
+    "expertRequestedByPlayer": true,
+    "expertNotPassedBeforeFreshExam": true,
+    "newTwentyQuestionExamPassed": true,
+    "secondExamSignaturesDisjoint": true,
+    "storyJsonRoundtripRetainedReceipt": true,
+    "roundtripBlockedRepeatedDeliveryAndSend": true,
+    "allThirteenBeatsDelivered": true,
+    "thirteenInSeparateStageFixturesNotWholeRun": true,
+    "nativeIdentityChoiceSentCorrectLine": true,
+    "nativeDraftChoiceSentExactlyOnce": true,
+    "nativeExpertRequestRecordedInCurrentTimelineForum": true,
+    "nativeFreshExamPassedUsingTrainedFixtureWeights": true,
+    "endingStopsUnfinishedCommission": true,
+    "endingHidesFolder": true
+  },
+  "fixtures": "Stage 5 fixture provides prerequisite checkpoints. Translation concept weights were trained on the existing training split for the positive exam case; no player save was used."
+}

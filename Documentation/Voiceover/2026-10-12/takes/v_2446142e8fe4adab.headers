@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 16:53:35 GMT
+server: uvicorn
+x-audio-id: baf5dbed
+x-gen-time: 2.36
+x-audio-path: baf5dbed.wav
+x-seed: 608572462
+x-audio-duration: 2.35
+content-length: 112844
+content-type: audio/wav
+x-omnivoice-backend: 0.5.6
+

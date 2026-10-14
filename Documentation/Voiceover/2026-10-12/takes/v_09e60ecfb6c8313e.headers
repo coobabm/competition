@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 16:53:26 GMT
+server: uvicorn
+x-audio-id: cbbc51b0
+x-gen-time: 2.26
+x-audio-path: cbbc51b0.wav
+x-seed: 166072015
+x-audio-duration: 2.15
+content-length: 103244
+content-type: audio/wav
+x-omnivoice-backend: 0.5.6
+

@@ -1,0 +1,12 @@
+{
+  "seconds": 1.76,
+  "peak": 0.797882080078125,
+  "rms": 0.15515067810423597,
+  "samples": 42240,
+  "clipped_fraction": 0.0,
+  "signature": "80d71c24f3ecc14f2a81a839467c3640ecdba8355ee86a39d2b24ba16b8bd623",
+  "elapsed": 2.5093167079612613,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "era.context.choice"
+}

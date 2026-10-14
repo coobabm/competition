@@ -1,0 +1,12 @@
+{
+  "seconds": 2.04,
+  "peak": 0.785888671875,
+  "rms": 0.16221110869412855,
+  "samples": 48960,
+  "clipped_fraction": 0.0,
+  "signature": "6a5302c60b857f7e7eb0265836b2b0578311f8e93f4a421b9f9c52939f1e7b8d",
+  "elapsed": 2.5046075829304755,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "我现在闭着眼都能标。"
+}

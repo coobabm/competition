@@ -1,0 +1,12 @@
+{
+  "seconds": 1.72,
+  "peak": 0.802581787109375,
+  "rms": 0.14175890776749625,
+  "samples": 41280,
+  "clipped_fraction": 0.0,
+  "signature": "6ccf8983d10ea4725453358aa98e0af21c1ef6aa5895cfb07929e54cbc2a756d",
+  "elapsed": 2.535509124980308,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "能说整句了。"
+}

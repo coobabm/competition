@@ -1,0 +1,1 @@
+RED previous board has no QaModelCardRect model composition UI.

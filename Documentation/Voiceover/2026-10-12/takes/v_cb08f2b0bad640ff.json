@@ -1,0 +1,12 @@
+{
+  "seconds": 2.12,
+  "peak": 0.789703369140625,
+  "rms": 0.12900622320405658,
+  "samples": 50880,
+  "clipped_fraction": 0.0,
+  "signature": "38a4b1fc9bafa094e91478a693c9b5528930842f0d83152faca0fa9174e62c39",
+  "elapsed": 2.4225462910253555,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "怎么凭空多出个记事本？"
+}

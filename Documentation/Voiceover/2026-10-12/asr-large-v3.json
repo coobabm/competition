@@ -1,0 +1,74 @@
+{
+  "v_0a8536bf43d1e4c0": {
+    "expected": "和好了。……这比调参难。",
+    "heard": "和好了这笔调餐呢",
+    "similarity": 0.625,
+    "sha256": "a2b5d65fe51d651c6aa3645a8442664f4e12701c3e051adbd5e80e4fc6bf1aae",
+    "model": "large-v3",
+    "review": "needs_text_review"
+  },
+  "v_d6fbc7b63021f931": {
+    "expected": "……可行。",
+    "heard": "可行",
+    "similarity": 1.0,
+    "sha256": "5db799bbdabc1edebce7d14d7bcc2a66a280202d682a799227332c96baeba020",
+    "model": "large-v3",
+    "review": "asr_match"
+  },
+  "v_9b25f54cd09d1654": {
+    "expected": "被举报了……",
+    "heard": "被举报了",
+    "similarity": 1.0,
+    "sha256": "a7796f1fb6a42c64b372e2e602584546f4803e72d99ecdbed7325a08ccd7d46c",
+    "model": "large-v3",
+    "review": "asr_match"
+  },
+  "v_bb015c60bafc8a96": {
+    "expected": "验证码？",
+    "heard": "验证吗",
+    "similarity": 0.6666666666666666,
+    "sha256": "f7d624c5382b338e66bc52d6ee0d3753fad040343cf9c436356517702cf04721",
+    "model": "large-v3",
+    "review": "needs_text_review"
+  },
+  "v_874d5576c4847c5d": {
+    "expected": "「疑似机器操作」。",
+    "heard": "疑似机器操作",
+    "similarity": 1.0,
+    "sha256": "b9a9d909427ee6ae2dfa9f892e1b49bcd12517c18d35fd7fbb229b7c9d2a0bbb",
+    "model": "large-v3",
+    "review": "asr_match"
+  },
+  "v_ab5ec2845e586458": {
+    "expected": "它在……看百科？",
+    "heard": "他在看百科",
+    "similarity": 1.0,
+    "sha256": "f14784b8ae61ffbe8e18d41861709ee1eb44a1ee872915c44812d3413e264aef",
+    "model": "large-v3",
+    "review": "asr_match"
+  },
+  "v_61084729fe21256b": {
+    "expected": "灵光.exe……这又是什么。",
+    "heard": "灵光点EXE这又是什么",
+    "similarity": 0.6666666666666666,
+    "sha256": "91c67b9747cdf54f9ed94f4d9b3c73c83bab98c3df530d69899b361d5e98c2f4",
+    "model": "large-v3",
+    "review": "needs_text_review"
+  },
+  "v_ca4abba9e44be765": {
+    "expected": "它留下了个 灵光.exe……打开看看。",
+    "heard": "它留下了个灵光点EX一系打开看看",
+    "similarity": 0.7333333333333333,
+    "sha256": "10c1b30ac410817947a6befe40a16f4132f3b1ff9605b50b3468d9d6bf64cd9b",
+    "model": "large-v3",
+    "review": "needs_text_review"
+  },
+  "v_d539cd92b39988ad": {
+    "expected": "它是怎么从「是。否。」走到今天的？",
+    "heard": "他是怎么从是否走到今天呢",
+    "similarity": 0.9166666666666666,
+    "sha256": "a28aafb81c56297ba7d3664177f4581438efbf227a82e51e8fdd7f6d7f6bd898",
+    "model": "large-v3",
+    "review": "asr_match"
+  }
+}

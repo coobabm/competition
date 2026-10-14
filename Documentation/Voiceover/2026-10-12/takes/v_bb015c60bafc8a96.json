@@ -1,0 +1,12 @@
+{
+  "seconds": 1.48,
+  "peak": 0.80377197265625,
+  "rms": 0.1296406776384506,
+  "samples": 35520,
+  "clipped_fraction": 0.0,
+  "signature": "2179e0b5bfda7dcfd726a8f55e23e511f654ab2c2c63d69bff115a0062f94add",
+  "elapsed": 2.4016607500379905,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "验证码？"
+}

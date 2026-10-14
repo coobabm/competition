@@ -1,0 +1,12 @@
+{
+  "seconds": 3.73,
+  "peak": 0.7991943359375,
+  "rms": 0.1402571513425602,
+  "samples": 89520,
+  "clipped_fraction": 0.0,
+  "signature": "0c4e4a05302a6231b3bc8411c8bbac4634dd3bb58e7418a57cab736e12aad4e3",
+  "elapsed": 4.660334374988452,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "刚才发出去的是：「我自己慢慢做的。」"
+}

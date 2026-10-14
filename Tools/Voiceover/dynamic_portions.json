@@ -1,0 +1,19 @@
+[
+  {"template":"「{0}」？它没见过这个词。","spoken":"它没见过这个词。"},
+  {"template":"{0}也来挣这个钱了。","spoken":"也来挣这个钱了。"},
+  {"template":"{time} 了，明天还要上班。","spoken":"明天还要上班。"},
+  {"template":"{time}。再标十个就睡。……上次也是这么说的。","spoken":"再标十个就睡。……上次也是这么说的。"},
+  {"template":"¥{money}……还差 ¥{gap} 才够交电费。","spoken":"","note":"Entire proposition depends on two amounts; keep subtitle rather than fabricate amounts or read broken clauses."},
+  {"template":"连着对了 {streak} 个，手比脑子快了。","spoken":"手比脑子快了。"},
+  {"template":"这已经是第 {n} {noun}了。","spoken":"","note":"Count and noun form the proposition; subtitle only avoids an unfinished sentence."},
+  {"template":"标了 {total} 条了，一条才几毛。","spoken":"一条才几毛。"},
+  {"template":"她说：『{said}』","spoken":"她说。"},
+  {"template":"{ai} 只会答是或否。","spoken":"只会答是或否。"},
+  {"template":"她回了个『{word}』。","spoken":"她回了个……"},
+  {"template":"……『{word}』是什么意思。","spoken":"……是什么意思。"},
+  {"template":"她改了签名：『{signature}』","spoken":"她改了签名。"},
+  {"template":"{ai} 现在能读长句了。","spoken":"现在能读长句了。"},
+  {"template":"自动处理成功的记录已经有 {count} 条。不是按钮上的演示，是它刚刚完成的活。","spoken":"不是按钮上的演示，是它刚刚完成的活。"},
+  {"template":"{count} 项任务正在同一台电脑上运行。钱、电、模型和接线都记在同一本账里。","spoken":"钱、电、模型和接线都记在同一本账里。"},
+  {"template":"这一次的20道独立翻译题，答对了{count}道。题目、预测和答案都留在文件夹里。","spoken":"这一次的二十道独立翻译题。题目、预测和答案都留在文件夹里。"}
+]

@@ -1,0 +1,12 @@
+{
+  "seconds": 3.48,
+  "peak": 0.7933349609375,
+  "rms": 0.09655701081155675,
+  "samples": 83520,
+  "clipped_fraction": 0.0,
+  "signature": "7151648a732ac541032a53af3c1c9bf367fa18220758557277391c6ba00eaa38",
+  "elapsed": 4.618532666005194,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "电费单快来了，这点钱不够。"
+}

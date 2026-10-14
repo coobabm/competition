@@ -1,0 +1,12 @@
+{
+  "seconds": 2.0,
+  "peak": 0.794769287109375,
+  "rms": 0.15146027348203672,
+  "samples": 48000,
+  "clipped_fraction": 0.0,
+  "signature": "54d1a5425da5e53ea2bb84c33d0008e49630e6eaf3ae1c702b5d46cd6201697f",
+  "elapsed": 2.502212000079453,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "「答题时间过于规律」。"
+}

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -115,6 +115,11 @@ namespace Michsky.DreamOS
 
         public void Shutdown()
         {
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Main")
+            {
+                LingGuangV05.Desktop.GameExit.ReturnToTitle();
+                return;
+            }
             if (isShutdownInProgress)
                 return;
 

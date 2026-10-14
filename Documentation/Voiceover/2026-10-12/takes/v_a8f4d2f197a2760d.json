@@ -1,0 +1,12 @@
+{
+  "seconds": 3.12,
+  "peak": 0.814361572265625,
+  "rms": 0.09142637012414931,
+  "samples": 74880,
+  "clipped_fraction": 0.0,
+  "signature": "9d061c6e622de0bd18f0a145ae82febf6869d043d63dcd47df0f4b334031bdf7",
+  "elapsed": 3.1138045829720795,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "它答得跟我一样……"
+}

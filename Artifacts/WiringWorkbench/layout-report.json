@@ -1,0 +1,22 @@
+{
+    "rootRect": [
+        -536.9761352539063,
+        -305.51336669921877,
+        1073.9522705078125,
+        611.0267333984375
+    ],
+    "nodeCount": 10,
+    "inspectedNodes": 10,
+    "textCount": 73,
+    "zoom": 0.7711891531944275,
+    "selected": "label:mnist",
+    "armed": "",
+    "workspaceFilter": "0",
+    "state": "tab=wiring; stage=5; running=18; wired=20; tripped=False",
+    "invariantsRun": true,
+    "passed": true,
+    "invalidRects": [],
+    "failures": [],
+    "textOverflow": [],
+    "boundedClipping": []
+}

@@ -1,0 +1,12 @@
+{
+  "seconds": 1.92,
+  "peak": 0.793365478515625,
+  "rms": 0.12997344263474947,
+  "samples": 46080,
+  "clipped_fraction": 0.0,
+  "signature": "4eaef03a39b24b35a068922305b42b6cee477929ca4ccb17b0c63474e016a66f",
+  "elapsed": 2.432212417013943,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "现在能读长句了。"
+}

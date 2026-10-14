@@ -1,0 +1,12 @@
+{
+  "seconds": 4.45,
+  "peak": 0.786712646484375,
+  "rms": 0.13101822730673404,
+  "samples": 106800,
+  "clipped_fraction": 0.0,
+  "signature": "b4e7b9311301a2ced3df970d3f616b599f04aff106cddeb5b98f9fa0bcceca12",
+  "elapsed": 4.845464666956104,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "它接上了我前面那句。不用每次从头讲了。"
+}

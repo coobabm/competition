@@ -1,0 +1,99 @@
+{
+  "unity_tests": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Test job status retrieved.\",\"error\":null,\"data\":{\"job_id\":\"f07a46963d6944809e7f20d784e32694\",\"status\":\"succeeded\",\"mode\":\"EditMode\",\"started_unix_ms\":1791738280476,\"finished_unix_ms\":1791738296969,\"last_update_unix_ms\":1791738296969,\"progress\":{\"completed\":7,\"total\":7,\"current_test_full_name\":null,\"current_test_started_unix_ms\":1791738296577,\"last_finished_test_full_name\":\"LingGuangV05.UI.Tests.MonologueVoiceTests.QuotedDynamicSpeechUsesOnlyItsAuthoredPrefix\",\"last_finished_unix_ms\":1791738296577,\"stuck_suspected\":false,\"editor_is_focused\":false,\"blocked_reason\":null,\"failures_so_far\":[],\"failures_capped\":false},\"error\":null,\"result\":{\"mode\":\"EditMode\",\"summary\":{\"total\":7,\"passed\":7,\"failed\":0,\"skipped\":0,\"durationSeconds\":1.7245989,\"resultState\":\"Passed\"},\"results\":[]}},\"hint\":null}"
+      }
+    ],
+    "structuredContent": {
+      "result": {
+        "success": true,
+        "message": "Test job status retrieved.",
+        "error": null,
+        "data": {
+          "job_id": "f07a46963d6944809e7f20d784e32694",
+          "status": "succeeded",
+          "mode": "EditMode",
+          "started_unix_ms": 1791738280476,
+          "finished_unix_ms": 1791738296969,
+          "last_update_unix_ms": 1791738296969,
+          "progress": {
+            "completed": 7,
+            "total": 7,
+            "current_test_full_name": null,
+            "current_test_started_unix_ms": 1791738296577,
+            "last_finished_test_full_name": "LingGuangV05.UI.Tests.MonologueVoiceTests.QuotedDynamicSpeechUsesOnlyItsAuthoredPrefix",
+            "last_finished_unix_ms": 1791738296577,
+            "stuck_suspected": false,
+            "editor_is_focused": false,
+            "blocked_reason": null,
+            "failures_so_far": [],
+            "failures_capped": false
+          },
+          "error": null,
+          "result": {
+            "mode": "EditMode",
+            "summary": {
+              "total": 7,
+              "passed": 7,
+              "failed": 0,
+              "skipped": 0,
+              "durationSeconds": 1.7245989,
+              "resultState": "Passed"
+            },
+            "results": []
+          }
+        },
+        "hint": null
+      }
+    },
+    "isError": false
+  },
+  "preview_start": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"clip\":\"v_1038c80f98961d9f\",\"seconds\":7.73,\"frequency\":24000,\"channels\":1,\"loadState\":\"Loaded\",\"playing\":true},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "clip": "v_1038c80f98961d9f",
+          "seconds": 7.73,
+          "frequency": 24000,
+          "channels": 1,
+          "loadState": "Loaded",
+          "playing": true
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  },
+  "preview_stop": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"position\":6.61300039,\"playingBeforeStop\":true,\"playingAfterStop\":false,\"editorPlaying\":false},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "position": 6.61300039,
+          "playingBeforeStop": true,
+          "playingAfterStop": false,
+          "editorPlaying": false
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

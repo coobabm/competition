@@ -267,6 +267,7 @@ namespace LingGuangV05.Desktop.Casino
             if (bound == null) return;
             var c = bound.Casino;
             double money = controller.Host.Money - (pendingPayout != null ? pendingPayout.returned : 0);
+            if (payoutRollAmount > 0) money -= payoutRollAmount * (1 - Mathf.SmoothStep(0, 1, (Time.unscaledTime - payoutRollStart) / 1.2f));
             wallet.text = Lang.T("余额  ") + "¥" + Money(money);
             totals.text = Lang.T("累计净输赢  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0));
             string id = Games[game];

@@ -41,7 +41,7 @@ namespace LingGuangV05.Desktop.Taohuo
             if (stage < TaohuoView.OpenStage && nowStage >= TaohuoView.OpenStage)
                 Pop(AppNames.ShopZh, AppNames.ShopEn, "亲，淘货开张啦！显卡、机箱、固态都在这里，包邮哦～", "Dear, Taohuo is open! Cards, cases and SSDs, free shipping~");
             if (stage < Miaoyu.MiaoyuView.OpenStage && nowStage >= Miaoyu.MiaoyuView.OpenStage)
-                Pop(AppNames.UsedZh, AppNames.UsedEn, "喵鱼开通了：旧显卡挂上来回回血吧。", "Miaoyu is open: list your old cards for some cash back.");
+                PopUsed("sell", "喵鱼开通了：旧显卡挂上来回回血吧。", "Miaoyu is open: list your old cards for some cash back.");
             if (today > day && nowStage >= TaohuoView.OpenStage)
             {
                 foreach (var g in HardwareCatalog.Gpus)
@@ -53,15 +53,23 @@ namespace LingGuangV05.Desktop.Taohuo
                     Pop(AppNames.ShopZh, AppNames.ShopEn, "双 11 狂欢：全场显卡 8 折，只限今天！", "Singles' Day: every card 20% off, today only!");
             }
             if (today > day && nowStage >= Miaoyu.MiaoyuView.OpenStage && HardwareCatalog.CafeRelease > day && HardwareCatalog.CafeRelease <= today)
-                Pop(AppNames.UsedZh, AppNames.UsedEn, "网吧倒闭清仓：8 台 E5 + GTX 970 整机，一台 ¥" + HardwareCatalog.CafeBoxPrice.ToString("0") + "。", "Net cafe closing down: 8 PCs with a GTX 970 each, ¥" + HardwareCatalog.CafeBoxPrice.ToString("0") + " apiece.");
+                PopUsed("cafe", "网吧倒闭清仓：8 台 E5 + GTX 970 整机，一台 ¥" + HardwareCatalog.CafeBoxPrice.ToString("0") + "。", "Net cafe closing down: 8 PCs with a GTX 970 each, ¥" + HardwareCatalog.CafeBoxPrice.ToString("0") + " apiece.");
             stage = nowStage; day = today;
         }
 
-        static void Pop(string whoZh, string whoEn, string zh, string en)
+        // 淘货 notices open 淘货 when clicked.
+        static void Pop(string whoZh, string whoEn, string zh, string en) =>
+            Pop(whoZh, whoEn, zh, en, () => FindAnyObjectByType<ChapterOneDesktopRouter>()?.Open(TaohuoView.AppId));
+
+        // 喵鱼 notices open 喵鱼 on the matching tab.
+        static void PopUsed(string tab, string zh, string en) =>
+            Pop(AppNames.UsedZh, AppNames.UsedEn, zh, en, () => Miaoyu.MiaoyuView.Instance?.Open(tab));
+
+        static void Pop(string whoZh, string whoEn, string zh, string en, Action open)
         {
             // Shop ads are ambient chatter: the opening quiet window drops them (they are news of the day, never replayed).
             if (!OpeningQuiet.Allows(false)) return;
-            if (PrologueDirector.Desk != null) PrologueDirector.Desk.Popup(T(whoZh, whoEn), T(zh, en), 8);
+            if (PrologueDirector.Desk != null) PrologueDirector.Desk.Popup(T(whoZh, whoEn), T(zh, en), 8, open);
         }
     }
 }

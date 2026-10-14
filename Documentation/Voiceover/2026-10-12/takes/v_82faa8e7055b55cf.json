@@ -1,0 +1,12 @@
+{
+  "seconds": 2.2,
+  "peak": 0.78363037109375,
+  "rms": 0.15729092991557597,
+  "samples": 52800,
+  "clipped_fraction": 0.0,
+  "signature": "4bd9bc2f562c405b9173b920e9d668586de72fb233420258beb612e5cab8afc2",
+  "elapsed": 2.6264103340217844,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "它在翻乱码的时候，停住了。"
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "powerSelection": true,
+    "wireSelection": true,
+    "explicitDisconnect": true,
+    "clickReconnect": true,
+    "before": 1,
+    "after": 0,
+    "resumed": 1
+  },
+  {
+    "dragConnect": true,
+    "nodeDrag": true,
+    "drag": "drag dispatched through LCD: (1425.01, 747.51) -> (1464.73, 747.51); inspect resulting state separately",
+    "move": "drag dispatched through LCD: (1335.62, 747.51) -> (1375.35, 724.94); inspect resulting state separately",
+    "before": "(601.00, -107.00)",
+    "after": "(634.40, -125.98)",
+    "armedCleared": true
+  },
+  {
+    "categoryFilter": true,
+    "noPinnedTaskLeak": true,
+    "resourceDrawer": true,
+    "rentalPriceBeforeAction": true,
+    "resourceSelection": true
+  },
+  {
+    "allFilter": true,
+    "pan": true,
+    "hit": "Wires",
+    "before": "(40.00, -6.00)",
+    "after": "(40.00, 56.60)",
+    "size": "(970.00, 2967.00)",
+    "zoom": 0.7057108,
+    "dragged": "drag dispatched through LCD: (986.33, 724.31) -> (986.33, 808.61); inspect resulting state separately"
+  },
+  {
+    "fitExecuted": true,
+    "initialZoom": 0.771189153,
+    "workingSet": 0
+  },
+  {
+    "zoomButton": true,
+    "fitButton": false,
+    "before": 0.771189153,
+    "zoomed": 0.8868675,
+    "fitted": 0.8868675,
+    "invalidModelRejected": true
+  },
+  {
+    "fitButton": true,
+    "hit": "Fit",
+    "before": 0.8868675,
+    "fitted": 0.771189153,
+    "invalidModelRejected": true
+  },
+  {
+    "rightDragRejected": true,
+    "leftDragStillWorks": true
+  }
+]

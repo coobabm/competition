@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 16:56:55 GMT
+server: uvicorn
+x-audio-id: cdc2486f
+x-gen-time: 2.35
+x-audio-path: cdc2486f.wav
+x-seed: 627895034
+x-audio-duration: 1.72
+content-length: 82604
+content-type: audio/wav
+x-omnivoice-backend: 0.5.6
+

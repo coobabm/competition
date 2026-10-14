@@ -1,0 +1,561 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="99e1af88-a040-4b76-9160-594c5121e912" name="@Mac 2026-10-07 03:27:01" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-07T03:27:01.7473770+09:00" queuing="2026-10-07T03:27:01.7473770+09:00" start="2026-10-07T03:27:00.4780870+09:00" finish="2026-10-07T03:27:03.4430970+09:00" />
+  <TestSettings name="default" id="ba2c8e89-a906-4910-bd91-a14d33d00081">
+    <Deployment runDeploymentRoot="_Mac_2026-10-07_03_27_01" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f7251edc-0c73-4ea1-b28f-4afe5d7639d4" testId="0c28a05a-d4a1-2345-0f55-2faf8a07de21" testName="CommentaryCoversEverySituation" computerName="Mac" duration="00:00:00.0028780" startTime="2026-10-07T03:27:03.2193510+09:00" endTime="2026-10-07T03:27:03.2222290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7251edc-0c73-4ea1-b28f-4afe5d7639d4" />
+    <UnitTestResult executionId="bcf32679-d813-4009-a92e-e3ccd5dcee5e" testId="3d9db1d4-2356-79f3-c6fb-e487a115a441" testName="CorruptCandidatesAreRejectedAtomically(&quot;infinity&quot;)" computerName="Mac" duration="00:00:00.0155370" startTime="2026-10-07T03:27:01.3985020+09:00" endTime="2026-10-07T03:27:01.4140380+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bcf32679-d813-4009-a92e-e3ccd5dcee5e" />
+    <UnitTestResult executionId="beef0a74-fad5-49b7-a061-f51a77305e72" testId="69b6ea77-28f4-619a-4b07-cf3c86047dc7" testName="ChessTrainsReasoningAndAWinIsWorthMore" computerName="Mac" duration="00:00:00.0158120" startTime="2026-10-07T03:27:03.2035210+09:00" endTime="2026-10-07T03:27:03.2193330+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="beef0a74-fad5-49b7-a061-f51a77305e72" />
+    <UnitTestResult executionId="1fb10aeb-4614-4aac-be17-2201697158da" testId="596cc283-0874-e51b-8562-c3b67a1a5e4c" testName="SerializedModuleListSurvivesReloadAlongsideExistingRepositoryAndBest" computerName="Mac" duration="00:00:00.0594360" startTime="2026-10-07T03:27:01.7277660+09:00" endTime="2026-10-07T03:27:01.7872020+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1fb10aeb-4614-4aac-be17-2201697158da" />
+    <UnitTestResult executionId="582a3b3b-edc5-42e1-a737-e680a5bb3ab0" testId="186741e2-a959-292b-dbd6-ef402f3c8f48" testName="MissingIdsAreRejectedWithoutChangingSelections(999)" computerName="Mac" duration="00:00:00.0148610" startTime="2026-10-07T03:27:01.6757380+09:00" endTime="2026-10-07T03:27:01.6905990+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="582a3b3b-edc5-42e1-a737-e680a5bb3ab0" />
+    <UnitTestResult executionId="be19a423-448e-4ce5-b2a6-1fbc927922d5" testId="3a11b58a-5c9d-4283-7208-61fe18dee29c" testName="TheCachedPartIsStableBetweenTurns" computerName="Mac" duration="00:00:00.0181349" startTime="2026-10-07T03:27:03.3729210+09:00" endTime="2026-10-07T03:27:03.3910560+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be19a423-448e-4ce5-b2a6-1fbc927922d5" />
+    <UnitTestResult executionId="ca4beae1-b9f7-480f-b091-332ed796370a" testId="74f88e11-6c97-2826-a497-6a04ff8b0f72" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-noise&quot;)" computerName="Mac" duration="00:00:00.0136480" startTime="2026-10-07T03:27:02.1299520+09:00" endTime="2026-10-07T03:27:02.1435990+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca4beae1-b9f7-480f-b091-332ed796370a" />
+    <UnitTestResult executionId="640f8b0a-1d54-46f3-8fe4-7fcd1214c834" testId="f6702a14-e53e-726b-3fea-808142cb25e5" testName="UndeployedInstalledModelsCannotBeDeletedCleanedOrStrippedOfWeights" computerName="Mac" duration="00:00:00.0232519" startTime="2026-10-07T03:27:01.8200680+09:00" endTime="2026-10-07T03:27:01.8433200+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="640f8b0a-1d54-46f3-8fe4-7fcd1214c834" />
+    <UnitTestResult executionId="afccba7f-22b5-4e0f-9a2e-a9fb824937a6" testId="7481f660-d54e-7cf8-2c12-f349a175c89d" testName="NeverTheSameReactionTwiceInARow" computerName="Mac" duration="00:00:00.1116490" startTime="2026-10-07T03:27:03.2597470+09:00" endTime="2026-10-07T03:27:03.3713960+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="afccba7f-22b5-4e0f-9a2e-a9fb824937a6" />
+    <UnitTestResult executionId="b62632ba-90d1-447a-bb18-2e298a1e102c" testId="8a866860-22a4-12ea-45cc-d80d25e6400b" testName="CleaningNoiseDiscardsBadRowsWithoutCreatingSamplesCheckpointsOrRewards" computerName="Mac" duration="00:00:00.0169729" startTime="2026-10-07T03:27:01.9703120+09:00" endTime="2026-10-07T03:27:01.9872850+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b62632ba-90d1-447a-bb18-2e298a1e102c" />
+    <UnitTestResult executionId="0106c8b5-d3b1-4b64-8a77-60a4124f6c9f" testId="2bef85de-2331-563f-b562-e2a80acd73d8" testName="ResearchReservesGpuAndPausesAutomationButAllowsHumanReview" computerName="Mac" duration="00:00:00.0638860" startTime="2026-10-07T03:27:02.8741810+09:00" endTime="2026-10-07T03:27:02.9380670+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0106c8b5-d3b1-4b64-8a77-60a4124f6c9f" />
+    <UnitTestResult executionId="073b156f-79d8-4566-b993-787172050fc0" testId="029f2d01-69ef-eabe-e290-be26aa7152d6" testName="AssemblyDoesNotModifyTrainingBestEconomyOrTheLiveBoard" computerName="Mac" duration="00:00:00.0490660" startTime="2026-10-07T03:27:01.3338070+09:00" endTime="2026-10-07T03:27:01.3828730+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="073b156f-79d8-4566-b993-787172050fc0" />
+    <UnitTestResult executionId="b74eb9cc-069a-4228-b1dd-150c3e455b09" testId="5bad557f-faef-a55f-7436-b2fc5fc6f8df" testName="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(False)" computerName="Mac" duration="00:00:00.1032880" startTime="2026-10-07T03:27:01.2124490+09:00" endTime="2026-10-07T03:27:01.3157070+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b74eb9cc-069a-4228-b1dd-150c3e455b09" />
+    <UnitTestResult executionId="1abf0310-ebc6-4ff6-8728-4bf40653ab8d" testId="e8a469f8-88ed-f404-4d83-ee6193fe8531" testName="AllNewTextDesksAreEligibleForLocalJudging(&quot;crosssentence&quot;)" computerName="Mac" duration="00:00:00.0001090" startTime="2026-10-07T03:27:01.8930230+09:00" endTime="2026-10-07T03:27:01.8931320+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1abf0310-ebc6-4ff6-8728-4bf40653ab8d" />
+    <UnitTestResult executionId="7dbbd9d7-9092-445f-b7a9-5cfef7213208" testId="a9adfc2b-4c3b-6542-6d2c-af45ca13ccc5" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;project&quot;)" computerName="Mac" duration="00:00:00.0137460" startTime="2026-10-07T03:27:02.0444150+09:00" endTime="2026-10-07T03:27:02.0581600+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dbbd9d7-9092-445f-b7a9-5cfef7213208" />
+    <UnitTestResult executionId="4c99c899-0a3d-4c63-8f9c-b596de55d97c" testId="13ec074f-a73e-26a3-8372-09be13302ee7" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;negative&quot;)" computerName="Mac" duration="00:00:00.0141340" startTime="2026-10-07T03:27:02.1011530+09:00" endTime="2026-10-07T03:27:02.1152870+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c99c899-0a3d-4c63-8f9c-b596de55d97c" />
+    <UnitTestResult executionId="e1834449-e54c-4b8d-82f2-45476c3c29b2" testId="018a48d1-6948-6719-3df8-cefbe743d78a" testName="CleaningNoiseUsesTheAffordableRequestedSubset" computerName="Mac" duration="00:00:00.0139710" startTime="2026-10-07T03:27:02.1580900+09:00" endTime="2026-10-07T03:27:02.1720610+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1834449-e54c-4b8d-82f2-45476c3c29b2" />
+    <UnitTestResult executionId="64d9bc4e-1d26-4148-aa29-21466aea23be" testId="313e93c8-3e7a-d238-b16d-311040f422c5" testName="CheckpointThresholdHigherMeansLessAutomaticAndBetterPrecision" computerName="Mac" duration="00:00:00.0311900" startTime="2026-10-07T03:27:01.9239390+09:00" endTime="2026-10-07T03:27:01.9551300+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64d9bc4e-1d26-4148-aa29-21466aea23be" />
+    <UnitTestResult executionId="0821528b-4a61-4326-b8f9-e49bf745147f" testId="d41823e4-3800-04ea-79ef-0cc8af6c8706" testName="SixStageSpeechHasATestablePolicySeparateFromPersonaProse" computerName="Mac" duration="00:00:00.0001100" startTime="2026-10-07T03:27:03.4078650+09:00" endTime="2026-10-07T03:27:03.4079750+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0821528b-4a61-4326-b8f9-e49bf745147f" />
+    <UnitTestResult executionId="5ed53ac2-ebcf-482c-bfdf-f302c63f0a52" testId="e991c0d6-7a10-ccc5-da03-4b5c89d675b3" testName="InstallingTheSameDatasetReplacesOnlyItsOwnModule" computerName="Mac" duration="00:00:00.0155820" startTime="2026-10-07T03:27:01.5863230+09:00" endTime="2026-10-07T03:27:01.6019050+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ed53ac2-ebcf-482c-bfdf-f302c63f0a52" />
+    <UnitTestResult executionId="9984c396-6a3c-437e-aefd-3aaa4738ddbd" testId="1f960003-7841-a980-13c7-15d9e24ddb37" testName="WrongReviewClearsComboAndNeverPays" computerName="Mac" duration="00:00:00.0197320" startTime="2026-10-07T03:27:03.1667130+09:00" endTime="2026-10-07T03:27:03.1864450+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9984c396-6a3c-437e-aefd-3aaa4738ddbd" />
+    <UnitTestResult executionId="71a5773a-ea15-417a-9608-19b494df6b8e" testId="2a6e37c6-5f3e-d98f-2b50-fc40239e0634" testName="LegacySavedBestIsEffectivelyInstalledWithoutCreatingAnOverride" computerName="Mac" duration="00:00:00.0156840" startTime="2026-10-07T03:27:01.6165550+09:00" endTime="2026-10-07T03:27:01.6322390+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71a5773a-ea15-417a-9608-19b494df6b8e" />
+    <UnitTestResult executionId="4b3f7afb-0101-4cbd-a66c-c3d83e8be1f6" testId="7191e406-cf67-f73b-3204-8b91501754f5" testName="CleaningNoiseDoesNotMutateAnythingWhenHostRejectsPayment" computerName="Mac" duration="00:00:00.0138630" startTime="2026-10-07T03:27:01.9873170+09:00" endTime="2026-10-07T03:27:02.0011800+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b3f7afb-0101-4cbd-a66c-c3d83e8be1f6" />
+    <UnitTestResult executionId="72a3fbef-017a-47ac-97ed-0dda3da487a3" testId="d9b4cc10-f11a-19ed-274b-34ec0c89397c" testName="QualityAuditInterceptsApproximatelyFortyPercentBeforeNoiseOrPay" computerName="Mac" duration="00:00:00.3858280" startTime="2026-10-07T03:27:02.4213660+09:00" endTime="2026-10-07T03:27:02.8071960+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72a3fbef-017a-47ac-97ed-0dda3da487a3" />
+    <UnitTestResult executionId="d87f117e-d368-4151-b5fd-9a12ea64a2b5" testId="6b97c844-2b34-4b09-b7b6-244847fa866d" testName="MalformedNoiseCannotPoisonTrainingDuringLoad" computerName="Mac" duration="00:00:00.0333290" startTime="2026-10-07T03:27:02.3212380+09:00" endTime="2026-10-07T03:27:02.3545670+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d87f117e-d368-4151-b5fd-9a12ea64a2b5" />
+    <UnitTestResult executionId="c46c6f69-6f45-4953-a612-2b6de96a67f9" testId="2e36d503-8411-56ac-7ff0-cd275add114a" testName="EveryFewMovesAddSamples" computerName="Mac" duration="00:00:00.0160280" startTime="2026-10-07T03:27:03.2222430+09:00" endTime="2026-10-07T03:27:03.2382710+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c46c6f69-6f45-4953-a612-2b6de96a67f9" />
+    <UnitTestResult executionId="355120ce-b526-477e-98fd-a6dd5416d673" testId="fdc9b013-c0df-7c3b-8525-9ed3693a1514" testName="HumanCorrectionRewardsHardCasesAndIsExactlyOnce" computerName="Mac" duration="00:00:00.0248900" startTime="2026-10-07T03:27:02.1902270+09:00" endTime="2026-10-07T03:27:02.2151170+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="355120ce-b526-477e-98fd-a6dd5416d673" />
+    <UnitTestResult executionId="19df17c1-a7fd-4ebd-98ae-983070e0cd40" testId="905cfda9-9d72-75bb-0818-1976958e852f" testName="NoisePenalizesEffectiveSamplesAndCurrentEvaluation" computerName="Mac" duration="00:00:00.0165580" startTime="2026-10-07T03:27:02.3546070+09:00" endTime="2026-10-07T03:27:02.3711640+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19df17c1-a7fd-4ebd-98ae-983070e0cd40" />
+    <UnitTestResult executionId="a5133b1f-6a9f-4223-bbb3-0e8cad4769e9" testId="11ffd052-d771-34cc-707d-4830b6ef6fc6" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;empty&quot;)" computerName="Mac" duration="00:00:00.0144210" startTime="2026-10-07T03:27:02.1436300+09:00" endTime="2026-10-07T03:27:02.1580510+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5133b1f-6a9f-4223-bbb3-0e8cad4769e9" />
+    <UnitTestResult executionId="662eced0-7795-42cd-8f53-04085166f707" testId="b90126da-bc29-e750-70d8-d1c3fdbf0ac2" testName="ReactionsGrowWithTheStage" computerName="Mac" duration="00:00:00.0007490" startTime="2026-10-07T03:27:03.3715760+09:00" endTime="2026-10-07T03:27:03.3723250+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="662eced0-7795-42cd-8f53-04085166f707" />
+    <UnitTestResult executionId="f01a953c-abbf-43bb-b964-5728dc64e7d8" testId="c721de4b-f6ad-6e7b-a174-477081914acb" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;money&quot;)" computerName="Mac" duration="00:00:00.0143770" startTime="2026-10-07T03:27:02.0581900+09:00" endTime="2026-10-07T03:27:02.0725670+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f01a953c-abbf-43bb-b964-5728dc64e7d8" />
+    <UnitTestResult executionId="67ab49f1-82ed-4e88-a19f-9ecf6f774869" testId="4c5c52af-83cf-a1c8-0218-db048681ea85" testName="EffectiveLegacyInstallationAlsoProtectsOldWeights" computerName="Mac" duration="00:00:00.0242220" startTime="2026-10-07T03:27:01.5476120+09:00" endTime="2026-10-07T03:27:01.5718360+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="67ab49f1-82ed-4e88-a19f-9ecf6f774869" />
+    <UnitTestResult executionId="d9428912-1d29-4c58-b434-16146f4f20e1" testId="a889418d-8c99-3bc2-d6e8-79d4177faf8e" testName="PersonalityPicksTheVoice" computerName="Mac" duration="00:00:00.0001420" startTime="2026-10-07T03:27:03.3714300+09:00" endTime="2026-10-07T03:27:03.3715720+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9428912-1d29-4c58-b434-16146f4f20e1" />
+    <UnitTestResult executionId="e8ebf708-af34-4009-a1de-029261fbcc97" testId="856d72b5-04f3-8aa3-a8b8-d6098e76ccdd" testName="MissingIdsAreRejectedWithoutChangingSelections(0)" computerName="Mac" duration="00:00:00.0159300" startTime="2026-10-07T03:27:01.6460040+09:00" endTime="2026-10-07T03:27:01.6619340+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8ebf708-af34-4009-a1de-029261fbcc97" />
+    <UnitTestResult executionId="fa1c84eb-f283-4ac1-8a0c-4c88ef49eba6" testId="0dcee1a6-b44b-904b-a525-073aa8717a71" testName="UnsupportedDesksNeverClaimRealTextModelInference(&quot;cifar&quot;)" computerName="Mac" duration="00:00:00.0001200" startTime="2026-10-07T03:27:03.1507320+09:00" endTime="2026-10-07T03:27:03.1508520+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa1c84eb-f283-4ac1-8a0c-4c88ef49eba6" />
+    <UnitTestResult executionId="4b558464-5df3-49d7-a416-d833213e8b27" testId="8d27b5d5-20bd-940c-5e5a-6f5b9eb80a62" testName="CorruptOrMissingExplicitChoicesFailClosedRatherThanFollowingBest" computerName="Mac" duration="00:00:00.0267780" startTime="2026-10-07T03:27:01.5104780+09:00" endTime="2026-10-07T03:27:01.5372550+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b558464-5df3-49d7-a416-d833213e8b27" />
+    <UnitTestResult executionId="addda29f-618b-43db-a6c6-2f219a82e042" testId="600c3fe4-231f-b563-5923-a8a3af8833fb" testName="ManualChoiceDoesNotFollowLaterBetterCheckpoints" computerName="Mac" duration="00:00:00.0136860" startTime="2026-10-07T03:27:01.6322620+09:00" endTime="2026-10-07T03:27:01.6459490+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="addda29f-618b-43db-a6c6-2f219a82e042" />
+    <UnitTestResult executionId="f49c15f1-2208-4263-bb94-5cbe0f5af1c7" testId="35877598-57bc-9dcc-152e-2f77b68afa4d" testName="PowerCutBlocksDispatchAndRoutingButNotHumanWork" computerName="Mac" duration="00:00:00.0172450" startTime="2026-10-07T03:27:02.3873550+09:00" endTime="2026-10-07T03:27:02.4046000+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f49c15f1-2208-4263-bb94-5cbe0f5af1c7" />
+    <UnitTestResult executionId="dc24fe33-eaac-44aa-b389-863d64517207" testId="5dda9bd0-2555-a215-dd3f-4777a555215c" testName="LegacyDeskAutomationMigratesToMaximumGlobalLevel" computerName="Mac" duration="00:00:00.0291110" startTime="2026-10-07T03:27:02.2460220+09:00" endTime="2026-10-07T03:27:02.2751330+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc24fe33-eaac-44aa-b389-863d64517207" />
+    <UnitTestResult executionId="533e8064-e8ef-4518-ba69-8e94253c7062" testId="d0bb56c0-f216-d4fc-211e-abd8a231cb02" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;locked&quot;)" computerName="Mac" duration="00:00:00.0147790" startTime="2026-10-07T03:27:02.0012380+09:00" endTime="2026-10-07T03:27:02.0160180+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="533e8064-e8ef-4518-ba69-8e94253c7062" />
+    <UnitTestResult executionId="27456e1e-8649-41fe-a6f2-ea20a0978568" testId="6c1ea1ef-32bd-1061-4b93-3f6af2361865" testName="AllNewTextDesksAreEligibleForLocalJudging(&quot;poems&quot;)" computerName="Mac" duration="00:00:00.0000100" startTime="2026-10-07T03:27:01.8931500+09:00" endTime="2026-10-07T03:27:01.8931600+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="27456e1e-8649-41fe-a6f2-ea20a0978568" />
+    <UnitTestResult executionId="e24a1e42-a525-475c-ab38-6124340589d2" testId="af6f49a5-e3fd-1f90-a2c9-c56e4a5ef204" testName="SeveralDatasetsInTheSameRegionCanBeInstalledTogether" computerName="Mac" duration="00:00:00.0164340" startTime="2026-10-07T03:27:01.7872360+09:00" endTime="2026-10-07T03:27:01.8036700+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e24a1e42-a525-475c-ab38-6124340589d2" />
+    <UnitTestResult executionId="352bb4e9-cdc8-448a-8da1-4da2533da614" testId="50a92d48-ec0b-a63e-cfc4-29a321155dd3" testName="CorruptCandidatesAreRejectedAtomically(&quot;track&quot;)" computerName="Mac" duration="00:00:00.0147560" startTime="2026-10-07T03:27:01.4590730+09:00" endTime="2026-10-07T03:27:01.4738290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="352bb4e9-cdc8-448a-8da1-4da2533da614" />
+    <UnitTestResult executionId="0ee6b258-2db8-4b8f-be4c-eb2b9c886f50" testId="00300ab5-0a6a-4c89-12f7-6f28b56af424" testName="CorruptCandidatesAreRejectedAtomically(&quot;range&quot;)" computerName="Mac" duration="00:00:00.0141810" startTime="2026-10-07T03:27:01.4140670+09:00" endTime="2026-10-07T03:27:01.4282480+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ee6b258-2db8-4b8f-be4c-eb2b9c886f50" />
+    <UnitTestResult executionId="76f663d3-ef10-4f48-afb3-fc811f6e64de" testId="161cd9ab-6474-9ffd-af47-4ed815ef3b80" testName="PromptManifestUsesTrustedCatalogLabelsAndIsBounded" computerName="Mac" duration="00:00:00.0218930" startTime="2026-10-07T03:27:01.6906340+09:00" endTime="2026-10-07T03:27:01.7125270+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76f663d3-ef10-4f48-afb3-fc811f6e64de" />
+    <UnitTestResult executionId="a47d5594-44ef-40f0-8cf9-ab2d1880c2cb" testId="1a2720fb-f9d6-f8a0-81b9-3fafeebcd15a" testName="CorruptCandidatesAreRejectedAtomically(&quot;architecture&quot;)" computerName="Mac" duration="00:00:00.0141460" startTime="2026-10-07T03:27:01.4448980+09:00" endTime="2026-10-07T03:27:01.4590440+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a47d5594-44ef-40f0-8cf9-ab2d1880c2cb" />
+    <UnitTestResult executionId="717e1d0c-9a85-466a-9805-9a8973a5d27a" testId="8c04fb5f-35c9-9460-bcdf-7beca36d7cda" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;compute&quot;)" computerName="Mac" duration="00:00:00.0144860" startTime="2026-10-07T03:27:02.0299070+09:00" endTime="2026-10-07T03:27:02.0443930+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="717e1d0c-9a85-466a-9805-9a8973a5d27a" />
+    <UnitTestResult executionId="128f1f05-039f-4981-b160-e89698eed4d7" testId="360147ee-5017-2d38-158b-843c0da6d284" testName="CheckpointJudgingUsesDeployedArchitectureRatherThanCurrentTrainingArchitecture" computerName="Mac" duration="00:00:00.0156630" startTime="2026-10-07T03:27:01.9082510+09:00" endTime="2026-10-07T03:27:01.9239140+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="128f1f05-039f-4981-b160-e89698eed4d7" />
+    <UnitTestResult executionId="f9b6634e-844f-4c95-8100-18103fbb00f6" testId="a26e3c9d-161d-ebd6-5b51-58acaf7c9ad2" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;unknown&quot;)" computerName="Mac" duration="00:00:00.0138020" startTime="2026-10-07T03:27:02.0726320+09:00" endTime="2026-10-07T03:27:02.0864340+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9b6634e-844f-4c95-8100-18103fbb00f6" />
+    <UnitTestResult executionId="e2848668-0c99-435c-9be0-753840dde7e5" testId="99a1d570-f1f5-506b-19c2-492c3014f41e" testName="AllNewTextDesksAreEligibleForLocalJudging(&quot;longtext&quot;)" computerName="Mac" duration="00:00:00.0001260" startTime="2026-10-07T03:27:01.8928930+09:00" endTime="2026-10-07T03:27:01.8930190+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2848668-0c99-435c-9be0-753840dde7e5" />
+    <UnitTestResult executionId="8d6bd9de-82af-4397-80b8-c4683ac30e76" testId="74a74410-ccfe-ac8f-5903-eea2f3050348" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;power&quot;)" computerName="Mac" duration="00:00:00.0138370" startTime="2026-10-07T03:27:02.0160460+09:00" endTime="2026-10-07T03:27:02.0298820+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d6bd9de-82af-4397-80b8-c4683ac30e76" />
+    <UnitTestResult executionId="cbbcf2a5-7664-499e-b3f5-b4f45cf379ff" testId="7a0e1438-7dc4-59c9-2756-298f65f31f5f" testName="SpeechGateAndGameStrengthUseTheInstalledCheckpointNotTheBest" computerName="Mac" duration="00:00:00.0163340" startTime="2026-10-07T03:27:01.8037070+09:00" endTime="2026-10-07T03:27:01.8200400+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cbbcf2a5-7664-499e-b3f5-b4f45cf379ff" />
+    <UnitTestResult executionId="83cb6bad-6158-40e9-b101-5ac6931c3172" testId="f6a2e692-995f-c66f-f126-1f596bc3fe6f" testName="InstallingASettingsOnlyCheckpointDoesNotRequireWeights" computerName="Mac" duration="00:00:00.0144170" startTime="2026-10-07T03:27:01.5718720+09:00" endTime="2026-10-07T03:27:01.5862890+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83cb6bad-6158-40e9-b101-5ac6931c3172" />
+    <UnitTestResult executionId="fd3a4623-7a31-456d-a3cc-4c45e7c7afd7" testId="88264c45-5211-9bff-fb04-1265762dff23" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-money&quot;)" computerName="Mac" duration="00:00:00.0146250" startTime="2026-10-07T03:27:02.1153100+09:00" endTime="2026-10-07T03:27:02.1299350+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd3a4623-7a31-456d-a3cc-4c45e7c7afd7" />
+    <UnitTestResult executionId="edd8c370-0515-45f6-9210-4125d28c651a" testId="2c7ede57-36f7-022d-618c-42ddafdd8e13" testName="ReviewQueueAtTwentyPausesAllAutomationAndResumeDoesNotBurst" computerName="Mac" duration="00:00:00.0280860" startTime="2026-10-07T03:27:02.9381040+09:00" endTime="2026-10-07T03:27:02.9661900+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="edd8c370-0515-45f6-9210-4125d28c651a" />
+    <UnitTestResult executionId="7264cc92-5c79-4c40-ac07-e8ec1aa9ce5d" testId="fa2fcf81-ec5a-e403-8dda-4137484109a2" testName="FailureFallsBackExplicitlyAndDoesNotCountAsBrainAccuracy" computerName="Mac" duration="00:00:00.0181090" startTime="2026-10-07T03:27:02.1720850+09:00" endTime="2026-10-07T03:27:02.1901940+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7264cc92-5c79-4c40-ac07-e8ec1aa9ce5d" />
+    <UnitTestResult executionId="5ab28558-437a-4f0c-980d-d10359465d04" testId="6e73b4c2-aa3e-7fe2-aed8-454ac6f8b378" testName="LegacyTrackAutomationAndMalformedLevelsAreBounded" computerName="Mac" duration="00:00:00.0287960" startTime="2026-10-07T03:27:02.2751540+09:00" endTime="2026-10-07T03:27:02.3039500+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ab28558-437a-4f0c-980d-d10359465d04" />
+    <UnitTestResult executionId="77b1050b-e515-4291-9d19-9b2c2693b839" testId="bdc0b4e2-87f2-9581-37ce-921677fa2374" testName="TicketsContainOnlyAllowedPromptAndDispatchBillsOnce" computerName="Mac" duration="00:00:00.0168500" startTime="2026-10-07T03:27:03.1337540+09:00" endTime="2026-10-07T03:27:03.1506030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77b1050b-e515-4291-9d19-9b2c2693b839" />
+    <UnitTestResult executionId="3d4242f0-1579-4b76-bfcd-85255dcabeac" testId="cee8b2f2-b73c-4643-6de5-f2b3a92fe65e" testName="LimitsMatchAllSixStages" computerName="Mac" duration="00:00:00.0006190" startTime="2026-10-07T03:27:03.4072290+09:00" endTime="2026-10-07T03:27:03.4078480+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d4242f0-1579-4b76-bfcd-85255dcabeac" />
+    <UnitTestResult executionId="7dd298ba-123b-47cd-8eea-afb9a098a3d1" testId="0c2c4c63-4d42-67f8-b660-825206fd1b15" testName="AFinishedGameAddsSamplesAndCountsTheScore" computerName="Mac" duration="00:00:00.0168840" startTime="2026-10-07T03:27:03.1866130+09:00" endTime="2026-10-07T03:27:03.2034960+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dd298ba-123b-47cd-8eea-afb9a098a3d1" />
+    <UnitTestResult executionId="925253ab-ef18-4615-bd2e-057713084fff" testId="47332394-a1a4-b003-c273-b139b897f7dd" testName="UnsupportedDesksNeverClaimRealTextModelInference(&quot;mnist&quot;)" computerName="Mac" duration="00:00:00.0000590" startTime="2026-10-07T03:27:03.1506690+09:00" endTime="2026-10-07T03:27:03.1507270+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="925253ab-ef18-4615-bd2e-057713084fff" />
+    <UnitTestResult executionId="08a22bc5-e869-4fa3-95b9-f513666e5ca8" testId="ec706143-dee8-f139-0103-271fadb12dc2" testName="PrefetchIsThreePerDeskAndNeverReplacesTheVisibleCard" computerName="Mac" duration="00:00:00.0167120" startTime="2026-10-07T03:27:02.4046340+09:00" endTime="2026-10-07T03:27:02.4213450+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08a22bc5-e869-4fa3-95b9-f513666e5ca8" />
+    <UnitTestResult executionId="e159f75c-b490-4ead-99cc-2498c824dbb9" testId="9da4e845-71d2-495a-826a-9327cae6f55b" testName="CorruptCandidatesAreRejectedAtomically(&quot;dataset&quot;)" computerName="Mac" duration="00:00:00.0165700" startTime="2026-10-07T03:27:01.4282810+09:00" endTime="2026-10-07T03:27:01.4448510+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e159f75c-b490-4ead-99cc-2498c824dbb9" />
+    <UnitTestResult executionId="454a3d19-aaf5-43eb-8d11-eab44e2ef58e" testId="b61b8f26-df2d-b5d9-7f71-d046e532ae45" testName="TheAiPlaysFromItsStageAndGetsStronger" computerName="Mac" duration="00:00:00.0004630" startTime="2026-10-07T03:27:03.3723400+09:00" endTime="2026-10-07T03:27:03.3728020+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="454a3d19-aaf5-43eb-8d11-eab44e2ef58e" />
+    <UnitTestResult executionId="aed6b721-c11d-4835-9c1c-da0ed35917bd" testId="6fd61e6e-fc4e-2c17-aa40-9c8f93d51044" testName="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(True)" computerName="Mac" duration="00:00:00.0166020" startTime="2026-10-07T03:27:01.3165490+09:00" endTime="2026-10-07T03:27:01.3331510+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aed6b721-c11d-4835-9c1c-da0ed35917bd" />
+    <UnitTestResult executionId="7af972e7-8724-4c1c-bf3f-e66c0ec89f78" testId="8df4f906-e927-f4a7-7ba7-57603ab82363" testName="LinesUseTheProfileAndTheScore" computerName="Mac" duration="00:00:00.0214150" startTime="2026-10-07T03:27:03.2383160+09:00" endTime="2026-10-07T03:27:03.2597310+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7af972e7-8724-4c1c-bf3f-e66c0ec89f78" />
+    <UnitTestResult executionId="643647b3-f88e-497a-ab86-3b20b9d996a4" testId="642a33a2-56c7-f7a0-13fa-7d3c3c9631bf" testName="RemovedModuleStaysAbsentWhenANewBestAppears" computerName="Mac" duration="00:00:00.0151860" startTime="2026-10-07T03:27:01.7125620+09:00" endTime="2026-10-07T03:27:01.7277490+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="643647b3-f88e-497a-ab86-3b20b9d996a4" />
+    <UnitTestResult executionId="13f62c6a-d70b-430d-8961-46b8cc814fb3" testId="e23fe7a0-e7cb-02ed-0f41-b0f7b9dae5be" testName="LabelPresentationWaitsForTheStoryGateAndPrioritizesExperiments" computerName="Mac" duration="00:00:00.0150500" startTime="2026-10-07T03:27:02.2309290+09:00" endTime="2026-10-07T03:27:02.2459790+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13f62c6a-d70b-430d-8961-46b8cc814fb3" />
+    <UnitTestResult executionId="a42fc437-2592-42ae-b2f9-09ddd85284d1" testId="5bc149b8-58ee-9202-45bd-02290e924aa5" testName="ADeskWithAWeakCheckpointIsNeverLabelledAutomatically" computerName="Mac" duration="00:00:00.0490060" startTime="2026-10-07T03:27:01.8438230+09:00" endTime="2026-10-07T03:27:01.8928290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a42fc437-2592-42ae-b2f9-09ddd85284d1" />
+    <UnitTestResult executionId="7251ddd8-a301-4ba6-ab4d-98f5fcd307d2" testId="c11e5f28-d2f5-94a7-dba8-79c6898aed07" testName="WithoutCoopWrongAutomaticAnswersRemainDiscarded" computerName="Mac" duration="00:00:00.0158130" startTime="2026-10-07T03:27:03.1508760+09:00" endTime="2026-10-07T03:27:03.1666890+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7251ddd8-a301-4ba6-ab4d-98f5fcd307d2" />
+    <UnitTestResult executionId="0daecd20-480d-412f-8f7a-32296df864eb" testId="19a9ee6d-8d1e-14f5-82f5-b18d011703d6" testName="ThePromptIsCoreThenBoardThenMemories" computerName="Mac" duration="00:00:00.0155340" startTime="2026-10-07T03:27:03.3910730+09:00" endTime="2026-10-07T03:27:03.4066070+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0daecd20-480d-412f-8f7a-32296df864eb" />
+    <UnitTestResult executionId="2562ce83-8123-4f68-8f0d-a757c485b1a6" testId="78e28caf-1145-bd7c-4074-c43ecfd37018" testName="OfflineSimulationNeverIssuesRealModelTickets" computerName="Mac" duration="00:00:00.0161340" startTime="2026-10-07T03:27:02.3711980+09:00" endTime="2026-10-07T03:27:02.3873310+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2562ce83-8123-4f68-8f0d-a757c485b1a6" />
+    <UnitTestResult executionId="98d11ab5-56fe-4c4f-9502-03d92de29878" testId="7be22663-7cf4-39c6-130e-2d688a834d2f" testName="LegacyAccuracyWithoutRepositoryEntryStillFollowsBest" computerName="Mac" duration="00:00:00.0145930" startTime="2026-10-07T03:27:01.6019370+09:00" endTime="2026-10-07T03:27:01.6165300+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98d11ab5-56fe-4c4f-9502-03d92de29878" />
+    <UnitTestResult executionId="93d4da3d-ce8b-4c80-989a-18392add30f8" testId="2e4fd542-d1cd-48a8-7744-a0657f9837a7" testName="ReloadPreservesCompletedPredictionsButRejectsOldAndRetriedTickets" computerName="Mac" duration="00:00:00.0376330" startTime="2026-10-07T03:27:02.8365190+09:00" endTime="2026-10-07T03:27:02.8741510+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93d4da3d-ce8b-4c80-989a-18392add30f8" />
+    <UnitTestResult executionId="438ed7d1-9e07-4b66-9642-d9fdab43003a" testId="957a62b7-aa81-b550-8127-425629f170a8" testName="BrainRequiresStageFour" computerName="Mac" duration="00:00:00.0150470" startTime="2026-10-07T03:27:01.8931750+09:00" endTime="2026-10-07T03:27:01.9082220+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="438ed7d1-9e07-4b66-9642-d9fdab43003a" />
+    <UnitTestResult executionId="09f1b0fc-6853-47f2-93ce-d735a6401c83" testId="2a01d2e4-c121-153e-5560-ee75e118c790" testName="RealPredictionIsRecordedBeforeTruthIsUsedForSettlement" computerName="Mac" duration="00:00:00.0292520" startTime="2026-10-07T03:27:02.8072370+09:00" endTime="2026-10-07T03:27:02.8364890+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09f1b0fc-6853-47f2-93ce-d735a6401c83" />
+    <UnitTestResult executionId="2a00b622-f352-4400-bb9e-1f2927798082" testId="b6dd110e-124f-6549-aca0-7e8208dfad5c" testName="CorruptCandidatesAreRejectedAtomically(&quot;nan&quot;)" computerName="Mac" duration="00:00:00.0155410" startTime="2026-10-07T03:27:01.3829340+09:00" endTime="2026-10-07T03:27:01.3984750+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a00b622-f352-4400-bb9e-1f2927798082" />
+    <UnitTestResult executionId="6b01835f-fa61-408b-9f74-068cf27d3185" testId="9e5fe11f-78f2-07ac-e811-9d623b393056" testName="CorruptCandidatesAreRejectedAtomically(&quot;shape&quot;)" computerName="Mac" duration="00:00:00.0195780" startTime="2026-10-07T03:27:01.4907210+09:00" endTime="2026-10-07T03:27:01.5102990+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b01835f-fa61-408b-9f74-068cf27d3185" />
+    <UnitTestResult executionId="3f37a27d-f827-4991-b3fd-54206eccb7ef" testId="432b3fc7-3eff-d9dc-eb8b-4df4d9a16207" testName="LabelNodesShareTheExistingRaiseAndGlobalAutoPurchase" computerName="Mac" duration="00:00:00.0157620" startTime="2026-10-07T03:27:02.2151400+09:00" endTime="2026-10-07T03:27:02.2309030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f37a27d-f827-4991-b3fd-54206eccb7ef" />
+    <UnitTestResult executionId="c1dd0e13-d296-456e-85f8-0753cd2c0d79" testId="6c441469-2d70-ef35-dc46-5bc140641dbe" testName="MissingIdsAreRejectedWithoutChangingSelections(-1)" computerName="Mac" duration="00:00:00.0137560" startTime="2026-10-07T03:27:01.6619550+09:00" endTime="2026-10-07T03:27:01.6757110+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1dd0e13-d296-456e-85f8-0753cd2c0d79" />
+    <UnitTestResult executionId="b39cc3ca-70ec-45b8-a74a-97905352e7df" testId="9d55688c-ad1c-e5f6-3eba-82b77637afa9" testName="CorruptCandidatesAreRejectedAtomically(&quot;duplicate&quot;)" computerName="Mac" duration="00:00:00.0168490" startTime="2026-10-07T03:27:01.4738540+09:00" endTime="2026-10-07T03:27:01.4907030+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b39cc3ca-70ec-45b8-a74a-97905352e7df" />
+    <UnitTestResult executionId="9ae510c4-4c9d-4f35-a117-c893403d21d4" testId="ff851a09-6336-4263-9a60-0b043d90c59b" testName="AttentionWordsMustComeFromActualInputAndCannotInjectRichText" computerName="Mac" duration="00:00:00.0004640" startTime="2026-10-07T03:27:03.4067450+09:00" endTime="2026-10-07T03:27:03.4072090+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ae510c4-4c9d-4f35-a117-c893403d21d4" />
+    <UnitTestResult executionId="a4710f72-2648-40a4-8980-3d94c3b8a6b1" testId="11324422-0a0e-c34e-6a93-cda9805fb698" testName="LowConfidenceWrongGuessRoutesToHumanWithoutUsingTruthToChooseRoute" computerName="Mac" duration="00:00:00.0172260" startTime="2026-10-07T03:27:02.3039800+09:00" endTime="2026-10-07T03:27:02.3212070+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4710f72-2648-40a4-8980-3d94c3b8a6b1" />
+    <UnitTestResult executionId="760419ab-58a8-4b65-aa11-8af0838337aa" testId="d5ed584a-4d6c-0b7b-1023-8e0f7b85284a" testName="UnsupportedDesksNeverClaimRealTextModelInference(&quot;go&quot;)" computerName="Mac" duration="00:00:00.0000030" startTime="2026-10-07T03:27:03.1508610+09:00" endTime="2026-10-07T03:27:03.1508640+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="760419ab-58a8-4b65-aa11-8af0838337aa" />
+    <UnitTestResult executionId="84d3ea2a-1a98-4e50-902d-af66bb163279" testId="073bafd7-5d7e-bd4c-3cd2-35131076108f" testName="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;zero&quot;)" computerName="Mac" duration="00:00:00.0146690" startTime="2026-10-07T03:27:02.0864590+09:00" endTime="2026-10-07T03:27:02.1011290+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84d3ea2a-1a98-4e50-902d-af66bb163279" />
+    <UnitTestResult executionId="168b331b-7983-4d04-807f-757306f54a42" testId="d23b5466-91da-9c8e-4aad-6e88993ee149" testName="RollingWindowsHaveFixedBoundsAndSeparateModelProvenance" computerName="Mac" duration="00:00:00.1346520" startTime="2026-10-07T03:27:02.9662240+09:00" endTime="2026-10-07T03:27:03.1008760+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="168b331b-7983-4d04-807f-757306f54a42" />
+    <UnitTestResult executionId="0e43baf3-4f89-4263-9dd6-0df3bbcb8b37" testId="13caf126-4a85-5f0f-058c-21cc328dec30" testName="ThresholdHasSafeDefaultsAndRejectsNonFiniteValues" computerName="Mac" duration="00:00:00.0328130" startTime="2026-10-07T03:27:03.1009100+09:00" endTime="2026-10-07T03:27:03.1337220+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e43baf3-4f89-4263-9dd6-0df3bbcb8b37" />
+    <UnitTestResult executionId="2dc011f6-9ff2-495b-a3e1-1d5b4543e072" testId="183b643b-beca-fb11-ce84-c97fa15f2059" testName="UnsupportedDesksNeverClaimRealTextModelInference(&quot;meme&quot;)" computerName="Mac" duration="00:00:00.0000040" startTime="2026-10-07T03:27:03.1508560+09:00" endTime="2026-10-07T03:27:03.1508590+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2dc011f6-9ff2-495b-a3e1-1d5b4543e072" />
+    <UnitTestResult executionId="29b89a5f-0724-4295-9ea2-b31aa7a2675b" testId="cd7cab61-8242-11a7-a3b7-a101ad7ea02b" testName="CleaningNoiseCapsAtTenAndAnEmptyRepeatDoesNotChargeAgain" computerName="Mac" duration="00:00:00.0151190" startTime="2026-10-07T03:27:01.9551640+09:00" endTime="2026-10-07T03:27:01.9702830+09:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29b89a5f-0724-4295-9ea2-b31aa7a2675b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="LegacyDeskAutomationMigratesToMaximumGlobalLevel" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="5dda9bd0-2555-a215-dd3f-4777a555215c">
+      <Execution id="dc24fe33-eaac-44aa-b389-863d64517207" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="LegacyDeskAutomationMigratesToMaximumGlobalLevel" />
+    </UnitTest>
+    <UnitTest name="OfflineSimulationNeverIssuesRealModelTickets" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="78e28caf-1145-bd7c-4074-c43ecfd37018">
+      <Execution id="2562ce83-8123-4f68-8f0d-a757c485b1a6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="OfflineSimulationNeverIssuesRealModelTickets" />
+    </UnitTest>
+    <UnitTest name="WrongReviewClearsComboAndNeverPays" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="1f960003-7841-a980-13c7-15d9e24ddb37">
+      <Execution id="9984c396-6a3c-437e-aefd-3aaa4738ddbd" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="WrongReviewClearsComboAndNeverPays" />
+    </UnitTest>
+    <UnitTest name="SpeechGateAndGameStrengthUseTheInstalledCheckpointNotTheBest" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="7a0e1438-7dc4-59c9-2756-298f65f31f5f">
+      <Execution id="cbbcf2a5-7664-499e-b3f5-b4f45cf379ff" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="SpeechGateAndGameStrengthUseTheInstalledCheckpointNotTheBest" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;project&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="a9adfc2b-4c3b-6542-6d2c-af45ca13ccc5">
+      <Execution id="7dbbd9d7-9092-445f-b7a9-5cfef7213208" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;project&quot;)" />
+    </UnitTest>
+    <UnitTest name="LabelPresentationWaitsForTheStoryGateAndPrioritizesExperiments" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="e23fe7a0-e7cb-02ed-0f41-b0f7b9dae5be">
+      <Execution id="13f62c6a-d70b-430d-8961-46b8cc814fb3" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="LabelPresentationWaitsForTheStoryGateAndPrioritizesExperiments" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;negative&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="13ec074f-a73e-26a3-8372-09be13302ee7">
+      <Execution id="4c99c899-0a3d-4c63-8f9c-b596de55d97c" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;negative&quot;)" />
+    </UnitTest>
+    <UnitTest name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;mnist&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="47332394-a1a4-b003-c273-b139b897f7dd">
+      <Execution id="925253ab-ef18-4615-bd2e-057713084fff" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;mnist&quot;)" />
+    </UnitTest>
+    <UnitTest name="LinesUseTheProfileAndTheScore" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="8df4f906-e927-f4a7-7ba7-57603ab82363">
+      <Execution id="7af972e7-8724-4c1c-bf3f-e66c0ec89f78" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="LinesUseTheProfileAndTheScore" />
+    </UnitTest>
+    <UnitTest name="PrefetchIsThreePerDeskAndNeverReplacesTheVisibleCard" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="ec706143-dee8-f139-0103-271fadb12dc2">
+      <Execution id="08a22bc5-e869-4fa3-95b9-f513666e5ca8" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="PrefetchIsThreePerDeskAndNeverReplacesTheVisibleCard" />
+    </UnitTest>
+    <UnitTest name="ThePromptIsCoreThenBoardThenMemories" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="19a9ee6d-8d1e-14f5-82f5-b18d011703d6">
+      <Execution id="0daecd20-480d-412f-8f7a-32296df864eb" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgPersonaPrefixTests" name="ThePromptIsCoreThenBoardThenMemories" />
+    </UnitTest>
+    <UnitTest name="WithoutCoopWrongAutomaticAnswersRemainDiscarded" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="c11e5f28-d2f5-94a7-dba8-79c6898aed07">
+      <Execution id="7251ddd8-a301-4ba6-ab4d-98f5fcd307d2" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="WithoutCoopWrongAutomaticAnswersRemainDiscarded" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;duplicate&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="9d55688c-ad1c-e5f6-3eba-82b77637afa9">
+      <Execution id="b39cc3ca-70ec-45b8-a74a-97905352e7df" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;duplicate&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseUsesTheAffordableRequestedSubset" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="018a48d1-6948-6719-3df8-cefbe743d78a">
+      <Execution id="e1834449-e54c-4b8d-82f2-45476c3c29b2" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseUsesTheAffordableRequestedSubset" />
+    </UnitTest>
+    <UnitTest name="BrainRequiresStageFour" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="957a62b7-aa81-b550-8127-425629f170a8">
+      <Execution id="438ed7d1-9e07-4b66-9642-d9fdab43003a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="BrainRequiresStageFour" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;track&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="50a92d48-ec0b-a63e-cfc4-29a321155dd3">
+      <Execution id="352bb4e9-cdc8-448a-8da1-4da2533da614" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;track&quot;)" />
+    </UnitTest>
+    <UnitTest name="InstallingASettingsOnlyCheckpointDoesNotRequireWeights" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="f6a2e692-995f-c66f-f126-1f596bc3fe6f">
+      <Execution id="83cb6bad-6158-40e9-b101-5ac6931c3172" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="InstallingASettingsOnlyCheckpointDoesNotRequireWeights" />
+    </UnitTest>
+    <UnitTest name="RemovedModuleStaysAbsentWhenANewBestAppears" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="642a33a2-56c7-f7a0-13fa-7d3c3c9631bf">
+      <Execution id="643647b3-f88e-497a-ab86-3b20b9d996a4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="RemovedModuleStaysAbsentWhenANewBestAppears" />
+    </UnitTest>
+    <UnitTest name="AllNewTextDesksAreEligibleForLocalJudging(&quot;crosssentence&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="e8a469f8-88ed-f404-4d83-ee6193fe8531">
+      <Execution id="1abf0310-ebc6-4ff6-8728-4bf40653ab8d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="AllNewTextDesksAreEligibleForLocalJudging(&quot;crosssentence&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;money&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="c721de4b-f6ad-6e7b-a174-477081914acb">
+      <Execution id="f01a953c-abbf-43bb-b964-5728dc64e7d8" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;money&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseDiscardsBadRowsWithoutCreatingSamplesCheckpointsOrRewards" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="8a866860-22a4-12ea-45cc-d80d25e6400b">
+      <Execution id="b62632ba-90d1-447a-bb18-2e298a1e102c" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseDiscardsBadRowsWithoutCreatingSamplesCheckpointsOrRewards" />
+    </UnitTest>
+    <UnitTest name="FailureFallsBackExplicitlyAndDoesNotCountAsBrainAccuracy" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="fa2fcf81-ec5a-e403-8dda-4137484109a2">
+      <Execution id="7264cc92-5c79-4c40-ac07-e8ec1aa9ce5d" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="FailureFallsBackExplicitlyAndDoesNotCountAsBrainAccuracy" />
+    </UnitTest>
+    <UnitTest name="CommentaryCoversEverySituation" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0c28a05a-d4a1-2345-0f55-2faf8a07de21">
+      <Execution id="f7251edc-0c73-4ea1-b28f-4afe5d7639d4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="CommentaryCoversEverySituation" />
+    </UnitTest>
+    <UnitTest name="PersonalityPicksTheVoice" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="a889418d-8c99-3bc2-d6e8-79d4177faf8e">
+      <Execution id="d9428912-1d29-4c58-b434-16146f4f20e1" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="PersonalityPicksTheVoice" />
+    </UnitTest>
+    <UnitTest name="PromptManifestUsesTrustedCatalogLabelsAndIsBounded" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="161cd9ab-6474-9ffd-af47-4ed815ef3b80">
+      <Execution id="76f663d3-ef10-4f48-afb3-fc811f6e64de" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="PromptManifestUsesTrustedCatalogLabelsAndIsBounded" />
+    </UnitTest>
+    <UnitTest name="SeveralDatasetsInTheSameRegionCanBeInstalledTogether" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="af6f49a5-e3fd-1f90-a2c9-c56e4a5ef204">
+      <Execution id="e24a1e42-a525-475c-ab38-6124340589d2" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="SeveralDatasetsInTheSameRegionCanBeInstalledTogether" />
+    </UnitTest>
+    <UnitTest name="MissingIdsAreRejectedWithoutChangingSelections(0)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="856d72b5-04f3-8aa3-a8b8-d6098e76ccdd">
+      <Execution id="e8ebf708-af34-4009-a1de-029261fbcc97" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="MissingIdsAreRejectedWithoutChangingSelections(0)" />
+    </UnitTest>
+    <UnitTest name="TheAiPlaysFromItsStageAndGetsStronger" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="b61b8f26-df2d-b5d9-7f71-d046e532ae45">
+      <Execution id="454a3d19-aaf5-43eb-8d11-eab44e2ef58e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="TheAiPlaysFromItsStageAndGetsStronger" />
+    </UnitTest>
+    <UnitTest name="RollingWindowsHaveFixedBoundsAndSeparateModelProvenance" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d23b5466-91da-9c8e-4aad-6e88993ee149">
+      <Execution id="168b331b-7983-4d04-807f-757306f54a42" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="RollingWindowsHaveFixedBoundsAndSeparateModelProvenance" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;infinity&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="3d9db1d4-2356-79f3-c6fb-e487a115a441">
+      <Execution id="bcf32679-d813-4009-a92e-e3ccd5dcee5e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;infinity&quot;)" />
+    </UnitTest>
+    <UnitTest name="AssemblyDoesNotModifyTrainingBestEconomyOrTheLiveBoard" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="029f2d01-69ef-eabe-e290-be26aa7152d6">
+      <Execution id="073b156f-79d8-4566-b993-787172050fc0" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="AssemblyDoesNotModifyTrainingBestEconomyOrTheLiveBoard" />
+    </UnitTest>
+    <UnitTest name="UndeployedInstalledModelsCannotBeDeletedCleanedOrStrippedOfWeights" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="f6702a14-e53e-726b-3fea-808142cb25e5">
+      <Execution id="640f8b0a-1d54-46f3-8fe4-7fcd1214c834" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="UndeployedInstalledModelsCannotBeDeletedCleanedOrStrippedOfWeights" />
+    </UnitTest>
+    <UnitTest name="SerializedModuleListSurvivesReloadAlongsideExistingRepositoryAndBest" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="596cc283-0874-e51b-8562-c3b67a1a5e4c">
+      <Execution id="1fb10aeb-4614-4aac-be17-2201697158da" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="SerializedModuleListSurvivesReloadAlongsideExistingRepositoryAndBest" />
+    </UnitTest>
+    <UnitTest name="QualityAuditInterceptsApproximatelyFortyPercentBeforeNoiseOrPay" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d9b4cc10-f11a-19ed-274b-34ec0c89397c">
+      <Execution id="72a3fbef-017a-47ac-97ed-0dda3da487a3" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="QualityAuditInterceptsApproximatelyFortyPercentBeforeNoiseOrPay" />
+    </UnitTest>
+    <UnitTest name="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(False)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="5bad557f-faef-a55f-7436-b2fc5fc6f8df">
+      <Execution id="b74eb9cc-069a-4228-b1dd-150c3e455b09" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(False)" />
+    </UnitTest>
+    <UnitTest name="AFinishedGameAddsSamplesAndCountsTheScore" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0c2c4c63-4d42-67f8-b660-825206fd1b15">
+      <Execution id="7dd298ba-123b-47cd-8eea-afb9a098a3d1" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="AFinishedGameAddsSamplesAndCountsTheScore" />
+    </UnitTest>
+    <UnitTest name="PowerCutBlocksDispatchAndRoutingButNotHumanWork" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="35877598-57bc-9dcc-152e-2f77b68afa4d">
+      <Execution id="f49c15f1-2208-4263-bb94-5cbe0f5af1c7" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="PowerCutBlocksDispatchAndRoutingButNotHumanWork" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseCapsAtTenAndAnEmptyRepeatDoesNotChargeAgain" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="cd7cab61-8242-11a7-a3b7-a101ad7ea02b">
+      <Execution id="29b89a5f-0724-4295-9ea2-b31aa7a2675b" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseCapsAtTenAndAnEmptyRepeatDoesNotChargeAgain" />
+    </UnitTest>
+    <UnitTest name="ReactionsGrowWithTheStage" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="b90126da-bc29-e750-70d8-d1c3fdbf0ac2">
+      <Execution id="662eced0-7795-42cd-8f53-04085166f707" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="ReactionsGrowWithTheStage" />
+    </UnitTest>
+    <UnitTest name="EveryFewMovesAddSamples" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2e36d503-8411-56ac-7ff0-cd275add114a">
+      <Execution id="c46c6f69-6f45-4953-a612-2b6de96a67f9" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="EveryFewMovesAddSamples" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;locked&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d0bb56c0-f216-d4fc-211e-abd8a231cb02">
+      <Execution id="533e8064-e8ef-4518-ba69-8e94253c7062" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;locked&quot;)" />
+    </UnitTest>
+    <UnitTest name="ManualChoiceDoesNotFollowLaterBetterCheckpoints" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="600c3fe4-231f-b563-5923-a8a3af8833fb">
+      <Execution id="addda29f-618b-43db-a6c6-2f219a82e042" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="ManualChoiceDoesNotFollowLaterBetterCheckpoints" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;shape&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="9e5fe11f-78f2-07ac-e811-9d623b393056">
+      <Execution id="6b01835f-fa61-408b-9f74-068cf27d3185" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;shape&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;power&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="74a74410-ccfe-ac8f-5903-eea2f3050348">
+      <Execution id="8d6bd9de-82af-4397-80b8-c4683ac30e76" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;power&quot;)" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;range&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="00300ab5-0a6a-4c89-12f7-6f28b56af424">
+      <Execution id="0ee6b258-2db8-4b8f-be4c-eb2b9c886f50" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;range&quot;)" />
+    </UnitTest>
+    <UnitTest name="RealPredictionIsRecordedBeforeTruthIsUsedForSettlement" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2a01d2e4-c121-153e-5560-ee75e118c790">
+      <Execution id="09f1b0fc-6853-47f2-93ce-d735a6401c83" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="RealPredictionIsRecordedBeforeTruthIsUsedForSettlement" />
+    </UnitTest>
+    <UnitTest name="ChessTrainsReasoningAndAWinIsWorthMore" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="69b6ea77-28f4-619a-4b07-cf3c86047dc7">
+      <Execution id="beef0a74-fad5-49b7-a061-f51a77305e72" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="ChessTrainsReasoningAndAWinIsWorthMore" />
+    </UnitTest>
+    <UnitTest name="ResearchReservesGpuAndPausesAutomationButAllowsHumanReview" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2bef85de-2331-563f-b562-e2a80acd73d8">
+      <Execution id="0106c8b5-d3b1-4b64-8a77-60a4124f6c9f" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="ResearchReservesGpuAndPausesAutomationButAllowsHumanReview" />
+    </UnitTest>
+    <UnitTest name="LowConfidenceWrongGuessRoutesToHumanWithoutUsingTruthToChooseRoute" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="11324422-0a0e-c34e-6a93-cda9805fb698">
+      <Execution id="a4710f72-2648-40a4-8980-3d94c3b8a6b1" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="LowConfidenceWrongGuessRoutesToHumanWithoutUsingTruthToChooseRoute" />
+    </UnitTest>
+    <UnitTest name="ThresholdHasSafeDefaultsAndRejectsNonFiniteValues" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="13caf126-4a85-5f0f-058c-21cc328dec30">
+      <Execution id="0e43baf3-4f89-4263-9dd6-0df3bbcb8b37" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="ThresholdHasSafeDefaultsAndRejectsNonFiniteValues" />
+    </UnitTest>
+    <UnitTest name="LabelNodesShareTheExistingRaiseAndGlobalAutoPurchase" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="432b3fc7-3eff-d9dc-eb8b-4df4d9a16207">
+      <Execution id="3f37a27d-f827-4991-b3fd-54206eccb7ef" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="LabelNodesShareTheExistingRaiseAndGlobalAutoPurchase" />
+    </UnitTest>
+    <UnitTest name="AllNewTextDesksAreEligibleForLocalJudging(&quot;poems&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6c1ea1ef-32bd-1061-4b93-3f6af2361865">
+      <Execution id="27456e1e-8649-41fe-a6f2-ea20a0978568" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="AllNewTextDesksAreEligibleForLocalJudging(&quot;poems&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;zero&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="073bafd7-5d7e-bd4c-3cd2-35131076108f">
+      <Execution id="84d3ea2a-1a98-4e50-902d-af66bb163279" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;zero&quot;)" />
+    </UnitTest>
+    <UnitTest name="ADeskWithAWeakCheckpointIsNeverLabelledAutomatically" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="5bc149b8-58ee-9202-45bd-02290e924aa5">
+      <Execution id="a42fc437-2592-42ae-b2f9-09ddd85284d1" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="ADeskWithAWeakCheckpointIsNeverLabelledAutomatically" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseDoesNotMutateAnythingWhenHostRejectsPayment" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="7191e406-cf67-f73b-3204-8b91501754f5">
+      <Execution id="4b3f7afb-0101-4cbd-a66c-c3d83e8be1f6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseDoesNotMutateAnythingWhenHostRejectsPayment" />
+    </UnitTest>
+    <UnitTest name="NoisePenalizesEffectiveSamplesAndCurrentEvaluation" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="905cfda9-9d72-75bb-0818-1976958e852f">
+      <Execution id="19df17c1-a7fd-4ebd-98ae-983070e0cd40" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="NoisePenalizesEffectiveSamplesAndCurrentEvaluation" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;empty&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="11ffd052-d771-34cc-707d-4830b6ef6fc6">
+      <Execution id="a5133b1f-6a9f-4223-bbb3-0e8cad4769e9" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;empty&quot;)" />
+    </UnitTest>
+    <UnitTest name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;cifar&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="0dcee1a6-b44b-904b-a525-073aa8717a71">
+      <Execution id="fa1c84eb-f283-4ac1-8a0c-4c88ef49eba6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;cifar&quot;)" />
+    </UnitTest>
+    <UnitTest name="NeverTheSameReactionTwiceInARow" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="7481f660-d54e-7cf8-2c12-f349a175c89d">
+      <Execution id="afccba7f-22b5-4e0f-9a2e-a9fb824937a6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgGamesTests" name="NeverTheSameReactionTwiceInARow" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;compute&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="8c04fb5f-35c9-9460-bcdf-7beca36d7cda">
+      <Execution id="717e1d0c-9a85-466a-9805-9a8973a5d27a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;compute&quot;)" />
+    </UnitTest>
+    <UnitTest name="LegacyAccuracyWithoutRepositoryEntryStillFollowsBest" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="7be22663-7cf4-39c6-130e-2d688a834d2f">
+      <Execution id="98d11ab5-56fe-4c4f-9502-03d92de29878" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="LegacyAccuracyWithoutRepositoryEntryStillFollowsBest" />
+    </UnitTest>
+    <UnitTest name="InstallingTheSameDatasetReplacesOnlyItsOwnModule" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="e991c0d6-7a10-ccc5-da03-4b5c89d675b3">
+      <Execution id="5ed53ac2-ebcf-482c-bfdf-f302c63f0a52" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="InstallingTheSameDatasetReplacesOnlyItsOwnModule" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-money&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="88264c45-5211-9bff-fb04-1265762dff23">
+      <Execution id="fd3a4623-7a31-456d-a3cc-4c45e7c7afd7" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-money&quot;)" />
+    </UnitTest>
+    <UnitTest name="AttentionWordsMustComeFromActualInputAndCannotInjectRichText" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="ff851a09-6336-4263-9a60-0b043d90c59b">
+      <Execution id="9ae510c4-4c9d-4f35-a117-c893403d21d4" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgSpeechPolicyTests" name="AttentionWordsMustComeFromActualInputAndCannotInjectRichText" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;unknown&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="a26e3c9d-161d-ebd6-5b51-58acaf7c9ad2">
+      <Execution id="f9b6634e-844f-4c95-8100-18103fbb00f6" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;unknown&quot;)" />
+    </UnitTest>
+    <UnitTest name="TheCachedPartIsStableBetweenTurns" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="3a11b58a-5c9d-4283-7208-61fe18dee29c">
+      <Execution id="be19a423-448e-4ce5-b2a6-1fbc927922d5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgPersonaPrefixTests" name="TheCachedPartIsStableBetweenTurns" />
+    </UnitTest>
+    <UnitTest name="TicketsContainOnlyAllowedPromptAndDispatchBillsOnce" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="bdc0b4e2-87f2-9581-37ce-921677fa2374">
+      <Execution id="77b1050b-e515-4291-9d19-9b2c2693b839" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="TicketsContainOnlyAllowedPromptAndDispatchBillsOnce" />
+    </UnitTest>
+    <UnitTest name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;meme&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="183b643b-beca-fb11-ce84-c97fa15f2059">
+      <Execution id="2dc011f6-9ff2-495b-a3e1-1d5b4543e072" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;meme&quot;)" />
+    </UnitTest>
+    <UnitTest name="CheckpointThresholdHigherMeansLessAutomaticAndBetterPrecision" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="313e93c8-3e7a-d238-b16d-311040f422c5">
+      <Execution id="64d9bc4e-1d26-4148-aa29-21466aea23be" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CheckpointThresholdHigherMeansLessAutomaticAndBetterPrecision" />
+    </UnitTest>
+    <UnitTest name="CheckpointJudgingUsesDeployedArchitectureRatherThanCurrentTrainingArchitecture" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="360147ee-5017-2d38-158b-843c0da6d284">
+      <Execution id="128f1f05-039f-4981-b160-e89698eed4d7" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CheckpointJudgingUsesDeployedArchitectureRatherThanCurrentTrainingArchitecture" />
+    </UnitTest>
+    <UnitTest name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;go&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d5ed584a-4d6c-0b7b-1023-8e0f7b85284a">
+      <Execution id="760419ab-58a8-4b65-aa11-8af0838337aa" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="UnsupportedDesksNeverClaimRealTextModelInference(&quot;go&quot;)" />
+    </UnitTest>
+    <UnitTest name="HumanCorrectionRewardsHardCasesAndIsExactlyOnce" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="fdc9b013-c0df-7c3b-8525-9ed3693a1514">
+      <Execution id="355120ce-b526-477e-98fd-a6dd5416d673" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="HumanCorrectionRewardsHardCasesAndIsExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;nan&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="b6dd110e-124f-6549-aca0-7e8208dfad5c">
+      <Execution id="2a00b622-f352-4400-bb9e-1f2927798082" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;nan&quot;)" />
+    </UnitTest>
+    <UnitTest name="CorruptOrMissingExplicitChoicesFailClosedRatherThanFollowingBest" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="8d27b5d5-20bd-940c-5e5a-6f5b9eb80a62">
+      <Execution id="4b558464-5df3-49d7-a416-d833213e8b27" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptOrMissingExplicitChoicesFailClosedRatherThanFollowingBest" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;dataset&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="9da4e845-71d2-495a-826a-9327cae6f55b">
+      <Execution id="e159f75c-b490-4ead-99cc-2498c824dbb9" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;dataset&quot;)" />
+    </UnitTest>
+    <UnitTest name="ReloadPreservesCompletedPredictionsButRejectsOldAndRetriedTickets" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2e4fd542-d1cd-48a8-7744-a0657f9837a7">
+      <Execution id="93d4da3d-ce8b-4c80-989a-18392add30f8" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="ReloadPreservesCompletedPredictionsButRejectsOldAndRetriedTickets" />
+    </UnitTest>
+    <UnitTest name="CorruptCandidatesAreRejectedAtomically(&quot;architecture&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="1a2720fb-f9d6-f8a0-81b9-3fafeebcd15a">
+      <Execution id="a47d5594-44ef-40f0-8cf9-ab2d1880c2cb" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="CorruptCandidatesAreRejectedAtomically(&quot;architecture&quot;)" />
+    </UnitTest>
+    <UnitTest name="SixStageSpeechHasATestablePolicySeparateFromPersonaProse" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="d41823e4-3800-04ea-79ef-0cc8af6c8706">
+      <Execution id="0821528b-4a61-4326-b8f9-e49bf745147f" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgSpeechPolicyTests" name="SixStageSpeechHasATestablePolicySeparateFromPersonaProse" />
+    </UnitTest>
+    <UnitTest name="EffectiveLegacyInstallationAlsoProtectsOldWeights" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="4c5c52af-83cf-a1c8-0218-db048681ea85">
+      <Execution id="67ab49f1-82ed-4e88-a19f-9ecf6f774869" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="EffectiveLegacyInstallationAlsoProtectsOldWeights" />
+    </UnitTest>
+    <UnitTest name="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(True)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6fd61e6e-fc4e-2c17-aa40-9c8f93d51044">
+      <Execution id="aed6b721-c11d-4835-9c1c-da0ed35917bd" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="AFullProtectedRepositoryKeepsTheCheckpointBeingSaved(True)" />
+    </UnitTest>
+    <UnitTest name="LimitsMatchAllSixStages" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="cee8b2f2-b73c-4643-6de5-f2b3a92fe65e">
+      <Execution id="3d4242f0-1579-4b76-bfcd-85255dcabeac" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgSpeechPolicyTests" name="LimitsMatchAllSixStages" />
+    </UnitTest>
+    <UnitTest name="MissingIdsAreRejectedWithoutChangingSelections(999)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="186741e2-a959-292b-dbd6-ef402f3c8f48">
+      <Execution id="582a3b3b-edc5-42e1-a737-e680a5bb3ab0" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="MissingIdsAreRejectedWithoutChangingSelections(999)" />
+    </UnitTest>
+    <UnitTest name="AllNewTextDesksAreEligibleForLocalJudging(&quot;longtext&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="99a1d570-f1f5-506b-19c2-492c3014f41e">
+      <Execution id="e2848668-0c99-435c-9be0-753840dde7e5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="AllNewTextDesksAreEligibleForLocalJudging(&quot;longtext&quot;)" />
+    </UnitTest>
+    <UnitTest name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-noise&quot;)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="74f88e11-6c97-2826-a497-6a04ff8b0f72">
+      <Execution id="ca4beae1-b9f7-480f-b091-332ed796370a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="CleaningNoiseFailsClosedWithoutChargingOrElectricity(&quot;nan-noise&quot;)" />
+    </UnitTest>
+    <UnitTest name="ReviewQueueAtTwentyPausesAllAutomationAndResumeDoesNotBurst" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2c7ede57-36f7-022d-618c-42ddafdd8e13">
+      <Execution id="edd8c370-0515-45f6-9210-4125d28c651a" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="ReviewQueueAtTwentyPausesAllAutomationAndResumeDoesNotBurst" />
+    </UnitTest>
+    <UnitTest name="MalformedNoiseCannotPoisonTrainingDuringLoad" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6b97c844-2b34-4b09-b7b6-244847fa866d">
+      <Execution id="d87f117e-d368-4151-b5fd-9a12ea64a2b5" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="MalformedNoiseCannotPoisonTrainingDuringLoad" />
+    </UnitTest>
+    <UnitTest name="MissingIdsAreRejectedWithoutChangingSelections(-1)" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6c441469-2d70-ef35-dc46-5bc140641dbe">
+      <Execution id="c1dd0e13-d296-456e-85f8-0753cd2c0d79" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="MissingIdsAreRejectedWithoutChangingSelections(-1)" />
+    </UnitTest>
+    <UnitTest name="LegacySavedBestIsEffectivelyInstalledWithoutCreatingAnOverride" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="2a6e37c6-5f3e-d98f-2b50-fc40239e0634">
+      <Execution id="71a5773a-ea15-417a-9608-19b494df6b8e" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgBrainModelTests" name="LegacySavedBestIsEffectivelyInstalledWithoutCreatingAnOverride" />
+    </UnitTest>
+    <UnitTest name="LegacyTrackAutomationAndMalformedLevelsAreBounded" storage="/users/kk/competition/tools/xingguang/tests/bin/debug/net8.0/tests.dll" id="6e73b4c2-aa3e-7fe2-aed8-454ac6f8b378">
+      <Execution id="5ab28558-437a-4f0c-980d-d10359465d04" />
+      <TestMethod codeBase="/Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="LingGuangV05.XingGuang.Tests.XgCollaborationTests" name="LegacyTrackAutomationAndMalformedLevelsAreBounded" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0c28a05a-d4a1-2345-0f55-2faf8a07de21" executionId="f7251edc-0c73-4ea1-b28f-4afe5d7639d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d9db1d4-2356-79f3-c6fb-e487a115a441" executionId="bcf32679-d813-4009-a92e-e3ccd5dcee5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69b6ea77-28f4-619a-4b07-cf3c86047dc7" executionId="beef0a74-fad5-49b7-a061-f51a77305e72" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="596cc283-0874-e51b-8562-c3b67a1a5e4c" executionId="1fb10aeb-4614-4aac-be17-2201697158da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="186741e2-a959-292b-dbd6-ef402f3c8f48" executionId="582a3b3b-edc5-42e1-a737-e680a5bb3ab0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a11b58a-5c9d-4283-7208-61fe18dee29c" executionId="be19a423-448e-4ce5-b2a6-1fbc927922d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74f88e11-6c97-2826-a497-6a04ff8b0f72" executionId="ca4beae1-b9f7-480f-b091-332ed796370a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6702a14-e53e-726b-3fea-808142cb25e5" executionId="640f8b0a-1d54-46f3-8fe4-7fcd1214c834" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7481f660-d54e-7cf8-2c12-f349a175c89d" executionId="afccba7f-22b5-4e0f-9a2e-a9fb824937a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a866860-22a4-12ea-45cc-d80d25e6400b" executionId="b62632ba-90d1-447a-bb18-2e298a1e102c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bef85de-2331-563f-b562-e2a80acd73d8" executionId="0106c8b5-d3b1-4b64-8a77-60a4124f6c9f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="029f2d01-69ef-eabe-e290-be26aa7152d6" executionId="073b156f-79d8-4566-b993-787172050fc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bad557f-faef-a55f-7436-b2fc5fc6f8df" executionId="b74eb9cc-069a-4228-b1dd-150c3e455b09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8a469f8-88ed-f404-4d83-ee6193fe8531" executionId="1abf0310-ebc6-4ff6-8728-4bf40653ab8d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9adfc2b-4c3b-6542-6d2c-af45ca13ccc5" executionId="7dbbd9d7-9092-445f-b7a9-5cfef7213208" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13ec074f-a73e-26a3-8372-09be13302ee7" executionId="4c99c899-0a3d-4c63-8f9c-b596de55d97c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="018a48d1-6948-6719-3df8-cefbe743d78a" executionId="e1834449-e54c-4b8d-82f2-45476c3c29b2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="313e93c8-3e7a-d238-b16d-311040f422c5" executionId="64d9bc4e-1d26-4148-aa29-21466aea23be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d41823e4-3800-04ea-79ef-0cc8af6c8706" executionId="0821528b-4a61-4326-b8f9-e49bf745147f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e991c0d6-7a10-ccc5-da03-4b5c89d675b3" executionId="5ed53ac2-ebcf-482c-bfdf-f302c63f0a52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f960003-7841-a980-13c7-15d9e24ddb37" executionId="9984c396-6a3c-437e-aefd-3aaa4738ddbd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a6e37c6-5f3e-d98f-2b50-fc40239e0634" executionId="71a5773a-ea15-417a-9608-19b494df6b8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7191e406-cf67-f73b-3204-8b91501754f5" executionId="4b3f7afb-0101-4cbd-a66c-c3d83e8be1f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d9b4cc10-f11a-19ed-274b-34ec0c89397c" executionId="72a3fbef-017a-47ac-97ed-0dda3da487a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b97c844-2b34-4b09-b7b6-244847fa866d" executionId="d87f117e-d368-4151-b5fd-9a12ea64a2b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e36d503-8411-56ac-7ff0-cd275add114a" executionId="c46c6f69-6f45-4953-a612-2b6de96a67f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdc9b013-c0df-7c3b-8525-9ed3693a1514" executionId="355120ce-b526-477e-98fd-a6dd5416d673" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="905cfda9-9d72-75bb-0818-1976958e852f" executionId="19df17c1-a7fd-4ebd-98ae-983070e0cd40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11ffd052-d771-34cc-707d-4830b6ef6fc6" executionId="a5133b1f-6a9f-4223-bbb3-0e8cad4769e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b90126da-bc29-e750-70d8-d1c3fdbf0ac2" executionId="662eced0-7795-42cd-8f53-04085166f707" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c721de4b-f6ad-6e7b-a174-477081914acb" executionId="f01a953c-abbf-43bb-b964-5728dc64e7d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4c5c52af-83cf-a1c8-0218-db048681ea85" executionId="67ab49f1-82ed-4e88-a19f-9ecf6f774869" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a889418d-8c99-3bc2-d6e8-79d4177faf8e" executionId="d9428912-1d29-4c58-b434-16146f4f20e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="856d72b5-04f3-8aa3-a8b8-d6098e76ccdd" executionId="e8ebf708-af34-4009-a1de-029261fbcc97" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0dcee1a6-b44b-904b-a525-073aa8717a71" executionId="fa1c84eb-f283-4ac1-8a0c-4c88ef49eba6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d27b5d5-20bd-940c-5e5a-6f5b9eb80a62" executionId="4b558464-5df3-49d7-a416-d833213e8b27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="600c3fe4-231f-b563-5923-a8a3af8833fb" executionId="addda29f-618b-43db-a6c6-2f219a82e042" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35877598-57bc-9dcc-152e-2f77b68afa4d" executionId="f49c15f1-2208-4263-bb94-5cbe0f5af1c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5dda9bd0-2555-a215-dd3f-4777a555215c" executionId="dc24fe33-eaac-44aa-b389-863d64517207" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0bb56c0-f216-d4fc-211e-abd8a231cb02" executionId="533e8064-e8ef-4518-ba69-8e94253c7062" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c1ea1ef-32bd-1061-4b93-3f6af2361865" executionId="27456e1e-8649-41fe-a6f2-ea20a0978568" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af6f49a5-e3fd-1f90-a2c9-c56e4a5ef204" executionId="e24a1e42-a525-475c-ab38-6124340589d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50a92d48-ec0b-a63e-cfc4-29a321155dd3" executionId="352bb4e9-cdc8-448a-8da1-4da2533da614" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00300ab5-0a6a-4c89-12f7-6f28b56af424" executionId="0ee6b258-2db8-4b8f-be4c-eb2b9c886f50" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="161cd9ab-6474-9ffd-af47-4ed815ef3b80" executionId="76f663d3-ef10-4f48-afb3-fc811f6e64de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a2720fb-f9d6-f8a0-81b9-3fafeebcd15a" executionId="a47d5594-44ef-40f0-8cf9-ab2d1880c2cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c04fb5f-35c9-9460-bcdf-7beca36d7cda" executionId="717e1d0c-9a85-466a-9805-9a8973a5d27a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="360147ee-5017-2d38-158b-843c0da6d284" executionId="128f1f05-039f-4981-b160-e89698eed4d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a26e3c9d-161d-ebd6-5b51-58acaf7c9ad2" executionId="f9b6634e-844f-4c95-8100-18103fbb00f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99a1d570-f1f5-506b-19c2-492c3014f41e" executionId="e2848668-0c99-435c-9be0-753840dde7e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74a74410-ccfe-ac8f-5903-eea2f3050348" executionId="8d6bd9de-82af-4397-80b8-c4683ac30e76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a0e1438-7dc4-59c9-2756-298f65f31f5f" executionId="cbbcf2a5-7664-499e-b3f5-b4f45cf379ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6a2e692-995f-c66f-f126-1f596bc3fe6f" executionId="83cb6bad-6158-40e9-b101-5ac6931c3172" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88264c45-5211-9bff-fb04-1265762dff23" executionId="fd3a4623-7a31-456d-a3cc-4c45e7c7afd7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c7ede57-36f7-022d-618c-42ddafdd8e13" executionId="edd8c370-0515-45f6-9210-4125d28c651a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa2fcf81-ec5a-e403-8dda-4137484109a2" executionId="7264cc92-5c79-4c40-ac07-e8ec1aa9ce5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e73b4c2-aa3e-7fe2-aed8-454ac6f8b378" executionId="5ab28558-437a-4f0c-980d-d10359465d04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bdc0b4e2-87f2-9581-37ce-921677fa2374" executionId="77b1050b-e515-4291-9d19-9b2c2693b839" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cee8b2f2-b73c-4643-6de5-f2b3a92fe65e" executionId="3d4242f0-1579-4b76-bfcd-85255dcabeac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c2c4c63-4d42-67f8-b660-825206fd1b15" executionId="7dd298ba-123b-47cd-8eea-afb9a098a3d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="47332394-a1a4-b003-c273-b139b897f7dd" executionId="925253ab-ef18-4615-bd2e-057713084fff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec706143-dee8-f139-0103-271fadb12dc2" executionId="08a22bc5-e869-4fa3-95b9-f513666e5ca8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9da4e845-71d2-495a-826a-9327cae6f55b" executionId="e159f75c-b490-4ead-99cc-2498c824dbb9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b61b8f26-df2d-b5d9-7f71-d046e532ae45" executionId="454a3d19-aaf5-43eb-8d11-eab44e2ef58e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fd61e6e-fc4e-2c17-aa40-9c8f93d51044" executionId="aed6b721-c11d-4835-9c1c-da0ed35917bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8df4f906-e927-f4a7-7ba7-57603ab82363" executionId="7af972e7-8724-4c1c-bf3f-e66c0ec89f78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="642a33a2-56c7-f7a0-13fa-7d3c3c9631bf" executionId="643647b3-f88e-497a-ab86-3b20b9d996a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e23fe7a0-e7cb-02ed-0f41-b0f7b9dae5be" executionId="13f62c6a-d70b-430d-8961-46b8cc814fb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bc149b8-58ee-9202-45bd-02290e924aa5" executionId="a42fc437-2592-42ae-b2f9-09ddd85284d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c11e5f28-d2f5-94a7-dba8-79c6898aed07" executionId="7251ddd8-a301-4ba6-ab4d-98f5fcd307d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19a9ee6d-8d1e-14f5-82f5-b18d011703d6" executionId="0daecd20-480d-412f-8f7a-32296df864eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78e28caf-1145-bd7c-4074-c43ecfd37018" executionId="2562ce83-8123-4f68-8f0d-a757c485b1a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7be22663-7cf4-39c6-130e-2d688a834d2f" executionId="98d11ab5-56fe-4c4f-9502-03d92de29878" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e4fd542-d1cd-48a8-7744-a0657f9837a7" executionId="93d4da3d-ce8b-4c80-989a-18392add30f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="957a62b7-aa81-b550-8127-425629f170a8" executionId="438ed7d1-9e07-4b66-9642-d9fdab43003a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a01d2e4-c121-153e-5560-ee75e118c790" executionId="09f1b0fc-6853-47f2-93ce-d735a6401c83" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6dd110e-124f-6549-aca0-7e8208dfad5c" executionId="2a00b622-f352-4400-bb9e-1f2927798082" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e5fe11f-78f2-07ac-e811-9d623b393056" executionId="6b01835f-fa61-408b-9f74-068cf27d3185" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="432b3fc7-3eff-d9dc-eb8b-4df4d9a16207" executionId="3f37a27d-f827-4991-b3fd-54206eccb7ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c441469-2d70-ef35-dc46-5bc140641dbe" executionId="c1dd0e13-d296-456e-85f8-0753cd2c0d79" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d55688c-ad1c-e5f6-3eba-82b77637afa9" executionId="b39cc3ca-70ec-45b8-a74a-97905352e7df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ff851a09-6336-4263-9a60-0b043d90c59b" executionId="9ae510c4-4c9d-4f35-a117-c893403d21d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11324422-0a0e-c34e-6a93-cda9805fb698" executionId="a4710f72-2648-40a4-8980-3d94c3b8a6b1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5ed584a-4d6c-0b7b-1023-8e0f7b85284a" executionId="760419ab-58a8-4b65-aa11-8af0838337aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="073bafd7-5d7e-bd4c-3cd2-35131076108f" executionId="84d3ea2a-1a98-4e50-902d-af66bb163279" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d23b5466-91da-9c8e-4aad-6e88993ee149" executionId="168b331b-7983-4d04-807f-757306f54a42" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13caf126-4a85-5f0f-058c-21cc328dec30" executionId="0e43baf3-4f89-4263-9dd6-0df3bbcb8b37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="183b643b-beca-fb11-ce84-c97fa15f2059" executionId="2dc011f6-9ff2-495b-a3e1-1d5b4543e072" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd7cab61-8242-11a7-a3b7-a101ad7ea02b" executionId="29b89a5f-0724-4295-9ea2-b31aa7a2675b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="89" executed="89" passed="89" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started
+Running selected tests in /Users/kk/competition/Tools/XingGuang/tests/bin/Debug/net8.0/Tests.dll
+   NUnit3TestExecutor discovered 89 of 89 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.6.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

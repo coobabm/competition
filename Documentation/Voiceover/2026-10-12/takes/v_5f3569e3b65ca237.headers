@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 16:49:14 GMT
+server: uvicorn
+x-audio-id: bceca890
+x-gen-time: 2.52
+x-audio-path: bceca890.wav
+x-seed: 1597336035
+x-audio-duration: 1.72
+content-length: 82604
+content-type: audio/wav
+x-omnivoice-backend: 0.5.6
+

@@ -1,0 +1,12 @@
+{
+  "seconds": 3.33,
+  "peak": 0.79180908203125,
+  "rms": 0.14669399826197635,
+  "samples": 79920,
+  "clipped_fraction": 0.0,
+  "signature": "d6e402c9dcd0d0542df5666b461ca348899f0d1de852843b7c435854806909e2",
+  "elapsed": 4.5274442080408335,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "刚才发出去的是：「就我一个。」"
+}

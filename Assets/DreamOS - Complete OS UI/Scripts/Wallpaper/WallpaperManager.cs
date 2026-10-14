@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -60,7 +60,8 @@ namespace Michsky.DreamOS
         public void SetWallpaper(int index, bool updateCachedObjects = false)
         {
             // Set new wallpaper index
-            wallpaperIndex = index;
+            if (wallpaperLibrary == null || wallpaperLibrary.wallpapers.Count == 0) return;
+            wallpaperIndex = Mathf.Clamp(index, 0, wallpaperLibrary.wallpapers.Count - 1);
 
             // Save selected wallpaper if requested
             if (saveSelected) { DreamOSDataManager.WriteIntData(dataCat, "CurrentWallpaper", wallpaperIndex); }
@@ -70,14 +71,15 @@ namespace Michsky.DreamOS
             {
                 foreach (WallpaperObject wo in cachedObjects)
                 {
-                    wo.UpdateWallpaper();
+                    if (wo != null) wo.UpdateWallpaper(this);
                 }
             }
         }
 
         public Sprite GetWallpaper(int index)
         {
-            return wallpaperLibrary.wallpapers[index].wallpaperSprite;
+            if (wallpaperLibrary == null || wallpaperLibrary.wallpapers.Count == 0) return null;
+            return wallpaperLibrary.wallpapers[Mathf.Clamp(index, 0, wallpaperLibrary.wallpapers.Count - 1)].wallpaperSprite;
         }
 
         public void AddWallpaperToLibrary(Sprite wallpaperSprite, string wallpaperName)
@@ -97,10 +99,11 @@ namespace Michsky.DreamOS
         public void AddCachedObject(WallpaperObject woInstance, bool updateAfterAdding = false)
         {
             // Add the new cached object
-            cachedObjects.Add(woInstance);
+            if (woInstance == null) return;
+            if (!cachedObjects.Contains(woInstance)) cachedObjects.Add(woInstance);
 
             // Update the cached object wallpaper after adding
-            if (updateAfterAdding) { woInstance.UpdateWallpaper(); }
+            if (updateAfterAdding) { woInstance.UpdateWallpaper(this); }
         }
     }
 }

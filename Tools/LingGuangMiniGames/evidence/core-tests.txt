@@ -1,0 +1,45 @@
+/Users/kk/competition/Assets/LingGuangV05/XingGuang/Core/XgSim.DayStats.cs(33,17): warning CS1718: Comparison made to same variable; did you mean to compare something else? [/Users/kk/competition/Tools/LingGuangMiniGames/LingGuangMiniGames.csproj]
+PASS all 23 distinct games
+PASS unique draw
+PASS unique slice
+PASS unique esp
+PASS unique forgetax
+PASS unique captcha12306
+PASS unique alphago
+PASS unique feihualing
+PASS unique doutu
+PASS unique swipe
+PASS unique zhaoshuijun
+PASS unique dadishu
+PASS unique shuishiwodi
+PASS unique kaixincidian
+PASS unique danmushooter
+PASS unique spidersnake
+PASS unique vramtetris
+PASS unique merge2048
+PASS unique sentence
+PASS unique chuanhua
+PASS unique turing
+PASS unique qingwen
+PASS unique zhaobutong
+PASS unique lianliankan
+PASS unknown blocked
+PASS locked digit desk blocked
+PASS initial spam playable
+PASS verified samples feed existing dataset
+PASS shared host wallet paid
+PASS duplicate event rejected
+PASS sequence gap rejected
+PASS oversized result rejected
+PASS mistakes grant no samples or money
+PASS cancelled ticket rejected
+PASS new session invalidates previous
+PASS loaded save has no outstanding ticket
+PASS old null-list save repaired
+PASS manual labels allowed during automatic freeze
+PASS forge does not mint data
+PASS null host rejected
+PASS late story stays gated
+PASS does not secretly answer unrelated story card
+PASS skill bounded
+43 minigame assertions passed

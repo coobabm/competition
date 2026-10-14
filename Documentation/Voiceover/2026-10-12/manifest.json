@@ -1,0 +1,1964 @@
+{
+  "entries": [
+    {
+      "text": "窗口抖了一下。……是她。",
+      "clip": "v_b683f44de7d612bd",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "窗口抖了一下。[pause 450ms][pause 550ms]是她。"
+    },
+    {
+      "text": "……吵架了。为了什么来着。",
+      "clip": "v_44269c09f2e0434b",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "sad",
+      "reference": "m_left",
+      "speed": 0.9,
+      "script": "[pause 550ms]吵架了。[pause 450ms]为了什么来着。"
+    },
+    {
+      "text": "和好了。……这比调参难。",
+      "clip": "v_0a8536bf43d1e4c0",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "wry",
+      "reference": "m_ignored",
+      "speed": 0.95,
+      "script": "和好了。[pause 220ms][pause 320ms]这比TIAO2CAN1难。"
+    },
+    {
+      "text": "被发现了。它学我说话，没学像。",
+      "clip": "v_9e126b23e279bb7c",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "被发现了。[pause 450ms]它学我说话，没学像。"
+    },
+    {
+      "text": "你不是看过我们的聊天吗？",
+      "clip": "v_05889bca9976b5b7",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "你不是看过我们的聊天吗？"
+    },
+    {
+      "text": "……周末。",
+      "clip": "v_709b90ebf308c71e",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]周末。"
+    },
+    {
+      "text": "让它替我回吧。",
+      "clip": "v_523af8c0e04018c3",
+      "sources": [
+        "Assets/LingGuangV05/YY2016/YYGirlfriend.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "让它替我回吧。"
+    },
+    {
+      "text": "它答得跟我一样……",
+      "clip": "v_a8f4d2f197a2760d",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs"
+      ],
+      "category": "direct",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "它答得跟我一样[pause 320ms]"
+    },
+    {
+      "text": "还比我快。",
+      "clip": "v_5f3569e3b65ca237",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs"
+      ],
+      "category": "direct",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "还比我快。"
+    },
+    {
+      "text": "……这说的不就是我？",
+      "clip": "v_671de9752b1a55c7",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]这说的不就是我？"
+    },
+    {
+      "text": "不对。它不是脚本，它真的认得。",
+      "clip": "v_5e9c38d24a28753e",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "不对。[pause 450ms]它不是脚本，它真的认得。"
+    },
+    {
+      "text": "……可行。",
+      "clip": "v_d6fbc7b63021f931",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AutoLabelEpiphany.cs"
+      ],
+      "category": "direct",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "[pause 320ms]可行。"
+    },
+    {
+      "text": "喂——",
+      "clip": "v_ea8ea533443d8196",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs"
+      ],
+      "category": "direct",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "喂——"
+    },
+    {
+      "text": "……它在读我的聊天记录？",
+      "clip": "v_945e825662f87e6d",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它在读我的聊天记录？"
+    },
+    {
+      "text": "……它跟谁学的这个。",
+      "clip": "v_f14e95a69b5474b1",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "direct",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "[pause 320ms]它跟谁学的这个。",
+      "existing": "yy_learn_1"
+    },
+    {
+      "text": "哦，跟我。",
+      "clip": "v_ddc81f36a0ac20f9",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "direct",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "哦，跟我。",
+      "existing": "yy_learn_2"
+    },
+    {
+      "text": "半年。",
+      "clip": "v_6195bdd41495b1ba",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "半年。"
+    },
+    {
+      "text": "它是怎么从「是。否。」走到今天的？",
+      "clip": "v_d539cd92b39988ad",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它是怎么从「是、否」走到今天的？"
+    },
+    {
+      "text": "……问问它。",
+      "clip": "v_d9eac9c5023d5477",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/OriginCurtain.cs",
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]问问它。"
+    },
+    {
+      "text": "显卡全停了。标注台还能挣一点……",
+      "clip": "v_3db7e5215ebcd63b",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "显卡全停了。[pause 450ms]标注台还能挣一点[pause 550ms]"
+    },
+    {
+      "text": "三天没交上房租。",
+      "clip": "v_2d125e384b5afb58",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs"
+      ],
+      "category": "direct",
+      "mood": "sad",
+      "reference": "m_left",
+      "speed": 0.9,
+      "script": "三天没交上房租。"
+    },
+    {
+      "text": "它还在那边问。",
+      "clip": "v_4221a7915b205a93",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它还在那边问。"
+    },
+    {
+      "text": "……对不起。",
+      "clip": "v_73cc81388c9bd644",
+      "sources": [
+        "Assets/LingGuangV05/DesktopBridge/Story/BankruptcyEnding.cs"
+      ],
+      "category": "direct",
+      "mood": "sad",
+      "reference": "m_left",
+      "speed": 0.9,
+      "script": "[pause 550ms]对不起。"
+    },
+    {
+      "text": "手机亮了。她说：「新的一年，我们见面吧。」",
+      "clip": "v_6d58863792afb143",
+      "sources": [
+        "Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Proactive.cs"
+      ],
+      "category": "epilogue",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "手机亮了。[pause 220ms]她说：「新的一年，我们见面吧。[pause 220ms]」"
+    },
+    {
+      "text": "手机亮了一下，又暗了。是群消息。",
+      "clip": "v_278386f5c3302b26",
+      "sources": [
+        "Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Proactive.cs"
+      ],
+      "category": "epilogue",
+      "mood": "sad",
+      "reference": "m_left",
+      "speed": 0.9,
+      "script": "手机亮了一下，又暗了。[pause 450ms]是群消息。"
+    },
+    {
+      "text": "……它在挣钱。我什么都没点。",
+      "clip": "v_28a6e37f458f367b",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.income",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "afterthought",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "[pause 320ms]它在挣钱。[pause 220ms]我什么都没点。",
+      "existing": "income_1"
+    },
+    {
+      "text": "躺着也能挣钱？",
+      "clip": "v_7d9a3e84e893a226",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.income",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "afterthought",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "躺着也能挣钱？",
+      "existing": "income_2"
+    },
+    {
+      "text": "扣钱了？",
+      "clip": "v_2a94e588482e35cc",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.fine"
+      ],
+      "category": "afterthought",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "扣钱了？"
+    },
+    {
+      "text": "……它也会错。",
+      "clip": "v_afe5331f7b6224d0",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.fine"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它也会错。"
+    },
+    {
+      "text": "合格率在往下掉。",
+      "clip": "v_268da4e584946239",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.warning"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "合格率在往下掉。"
+    },
+    {
+      "text": "得盯着点它。",
+      "clip": "v_19e72a5651a72815",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.warning"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "得盯着点它。"
+    },
+    {
+      "text": "被举报了……",
+      "clip": "v_9b25f54cd09d1654",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.report"
+      ],
+      "category": "afterthought",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "被举报了[pause 320ms]"
+    },
+    {
+      "text": "人家看得出来，这不是人在标。",
+      "clip": "v_2fc5bf181c902d39",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.report"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "人家看得出来，这不是人在标。"
+    },
+    {
+      "text": "金标题……",
+      "clip": "v_bc86bb3bf7a88aee",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.trap"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "金标题[pause 550ms]"
+    },
+    {
+      "text": "他们早就知道会有人拿机器糊弄。",
+      "clip": "v_2dbf7a453054b6ce",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.trap"
+      ],
+      "category": "afterthought",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "他们早就知道会有人拿机器糊弄。"
+    },
+    {
+      "text": "验证码？",
+      "clip": "v_bb015c60bafc8a96",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.captcha"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "验证码？"
+    },
+    {
+      "text": "……歪歪扭扭的数字。它第一天学的就是这个。",
+      "clip": "v_82e7cf84d42601bd",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.captcha"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]歪歪扭扭的数字。[pause 450ms]它第一天学的就是这个。"
+    },
+    {
+      "text": "「答题时间过于规律」。",
+      "clip": "v_3e3b07516d34b657",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.flagged"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "「答题时间过于规律」。"
+    },
+    {
+      "text": "人哪有这么准时。",
+      "clip": "v_4b845bacf186fd54",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.flagged"
+      ],
+      "category": "afterthought",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "人哪有这么准时。"
+    },
+    {
+      "text": "……我也是今天才见到。",
+      "clip": "v_b61e66d44aaa2b79",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.drift"
+      ],
+      "category": "afterthought",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]我也是今天才见到。"
+    },
+    {
+      "text": "……现在我成了包工头。",
+      "clip": "v_0ba40a0229dbcaa2",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.hire"
+      ],
+      "category": "afterthought",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "[pause 320ms]现在我成了包工头。"
+    },
+    {
+      "text": "「疑似机器操作」。",
+      "clip": "v_874d5576c4847c5d",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.bot"
+      ],
+      "category": "afterthought",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "「疑似机器操作」。"
+    },
+    {
+      "text": "……也没说错。",
+      "clip": "v_d27c7e587e9f9adc",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.bot",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "afterthought",
+      "mood": "wry",
+      "reference": "yy_learn_2",
+      "speed": 0.98,
+      "script": "[pause 320ms]也没说错。",
+      "existing": "bot_2"
+    },
+    {
+      "text": "楼下烧烤摊都收了，我还在这儿点对、点错。",
+      "clip": "v_4858691e197294d1",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:night.bbq"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "楼下烧烤摊都收了，我还在这儿点对、点错。"
+    },
+    {
+      "text": "这个点，整栋楼就我这扇窗还亮着吧。",
+      "clip": "v_7347247adf570588",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:night.window"
+      ],
+      "category": "labelling",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "这个点，整栋楼就我这扇窗还亮着吧。"
+    },
+    {
+      "text": "电费单快来了，这点钱不够。",
+      "clip": "v_faaf983c4535841f",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:money.short"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "电费单快来了，这点钱不够。"
+    },
+    {
+      "text": "一题几毛钱，电费一度五毛二。",
+      "clip": "v_6091a9af015c6fd3",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:money.rate"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "一题几毛钱，电费一度五毛二。"
+    },
+    {
+      "text": "标一晚上，刚够显卡自己的电费。",
+      "clip": "v_f6936eb99a690045",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:money.gpu"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "标一晚上，刚够显卡自己的电费。"
+    },
+    {
+      "text": "停电了还得接着标，标的钱先抵电费。",
+      "clip": "v_6a675f0023715c69",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:money.cut"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "停电了还得接着标，标的钱先抵电费。"
+    },
+    {
+      "text": "我现在闭着眼都能标。",
+      "clip": "v_14fd695ef0537229",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:streak.eyes"
+      ],
+      "category": "labelling",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我现在闭着眼都能标。"
+    },
+    {
+      "text": "对、对、对……我是不是也成了台机器。",
+      "clip": "v_9d5bc3910feb92f5",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:streak.machine"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "对、对、对[pause 550ms]我是不是也成了台机器。"
+    },
+    {
+      "text": "手腕好酸。",
+      "clip": "v_33ecae15448a82cd",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.wrist"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "手腕好酸。"
+    },
+    {
+      "text": "鼠标左键快被我按出包浆了。",
+      "clip": "v_f8eeef4574de9311",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.button"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "鼠标左键快被我按出包浆了。"
+    },
+    {
+      "text": "眼睛有点花。是、否、是、否……",
+      "clip": "v_dc77b2a17595491e",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.blur"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "眼睛有点花。[pause 450ms]是、否、是、否[pause 550ms]"
+    },
+    {
+      "text": "要是能多长一只手就好了。",
+      "clip": "v_b0f790a286aaa922",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.hand"
+      ],
+      "category": "labelling",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "要是能多长一只手就好了。"
+    },
+    {
+      "text": "闭上眼全是 7。",
+      "clip": "v_d3885ee6b836b8af",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.sevens"
+      ],
+      "category": "labelling",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "闭上眼全是 7。"
+    },
+    {
+      "text": "……这次答对了。它是真学会了。",
+      "clip": "v_b84b19ea3a972b68",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.SenseVoice.cs"
+      ],
+      "category": "sense",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "[pause 320ms]这次答对了。[pause 220ms]它是真学会了。"
+    },
+    {
+      "text": "……它好像什么都不懂。",
+      "clip": "v_cbdc5ed0190f569f",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.SenseVoice.cs"
+      ],
+      "category": "sense",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它好像什么都不懂。"
+    },
+    {
+      "text": "难道这就是那个人所说的东西？",
+      "clip": "v_493dc550b59e9e4b",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.SenseVoice.cs"
+      ],
+      "category": "sense",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "难道这就是那个人所说的东西？"
+    },
+    {
+      "text": "摆渡众包有桌「常识判断」……标给它看看？",
+      "clip": "v_34040683799900d0",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Core/XgSim.SenseVoice.cs"
+      ],
+      "category": "sense",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "摆渡众包有桌「常识判断」[pause 550ms]标给它看看？"
+    },
+    {
+      "text": "……这是什么？",
+      "clip": "v_e9554e112a01940a",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]这是什么？"
+    },
+    {
+      "text": "整颗脑子连成了一片。所有的线，同一拍亮起来。",
+      "clip": "v_d656759e26072317",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "整颗脑子连成了一片。[pause 450ms]所有的线，同一拍亮起来。"
+    },
+    {
+      "text": "一张脑部扫描。看图的在后脑，读字的在耳朵上面，想事的在额头后面——它们真的在亮。",
+      "clip": "v_eba1699623b8109f",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "一张脑部扫描。[pause 450ms]看图的在后脑，读字的在耳朵上面，想事的在额头后面——它们真的在亮。"
+    },
+    {
+      "text": "我在训练页随手点的那些结构……是在给一颗脑子重新接线？",
+      "clip": "v_c563460e52339401",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我在训练页随手点的那些结构[pause 550ms]是在给一颗脑子重新接线？"
+    },
+    {
+      "text": "它不是在跑一个程序。它在长一颗皮层。",
+      "clip": "v_bfdafca4fc7f0c20",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它不是在跑一个程序。[pause 450ms]它在长一颗皮层。"
+    },
+    {
+      "text": "……谁写的软件，会给自己留一整颗脑子的位置。",
+      "clip": "v_0774885242ea2a01",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs"
+      ],
+      "category": "cortex",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]谁写的软件，会给自己留一整颗脑子的位置。"
+    },
+    {
+      "text": "……那是什么？",
+      "clip": "v_7461e2cc6cc34ac3",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]那是什么？"
+    },
+    {
+      "text": "它在……看百科？",
+      "clip": "v_ab5ec2845e586458",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它在[pause 550ms]看百科？"
+    },
+    {
+      "text": "谁让它上网的。",
+      "clip": "v_51e8c69ab14f77df",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs"
+      ],
+      "category": "direct",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "谁让它上网的。"
+    },
+    {
+      "text": "它在学。",
+      "clip": "v_4ca3f1474b0621db",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它在学。"
+    },
+    {
+      "text": "……它连她是谁都不知道。",
+      "clip": "v_45e40b2c4afe39e1",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它连她是谁都不知道。"
+    },
+    {
+      "text": "……可我居然有点高兴。",
+      "clip": "v_9282fe8e6a7636cc",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs"
+      ],
+      "category": "direct",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "[pause 320ms]可我居然有点高兴。"
+    },
+    {
+      "text": "……它就会这两个字。别当真。",
+      "clip": "v_d06ac55e03576ab0",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它就会这两个字。[pause 450ms]别当真。"
+    },
+    {
+      "text": "……她到底什么意思。",
+      "clip": "v_294d8dcdd5e94f45",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]她到底什么意思。"
+    },
+    {
+      "text": "……正好。爱，或者不爱。",
+      "clip": "v_1a8410d21ab67a97",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]正好。[pause 450ms]爱，或者不爱。"
+    },
+    {
+      "text": "……这是写给谁的。",
+      "clip": "v_76537d26f248799e",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]这是写给谁的。"
+    },
+    {
+      "text": "……要不，问问它？",
+      "clip": "v_def785b99eb11493",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]要不，问问它？"
+    },
+    {
+      "text": "我去给她发个消息。",
+      "clip": "v_d5a5c4901ce48b16",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/LoveQuestionCutscene.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我去给她发个消息。"
+    },
+    {
+      "text": "……机箱风扇一下子狂转起来。",
+      "clip": "v_5ad25b1f8c8a52aa",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs"
+      ],
+      "category": "direct",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]机箱风扇一下子狂转起来。"
+    },
+    {
+      "text": "刚开机就报毒？清了清了。",
+      "clip": "v_dc4f2d95ab1ba557",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_virus"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "刚开机就报毒？[pause 450ms]清了清了。"
+    },
+    {
+      "text": "……我点歪了？",
+      "clip": "v_09e60ecfb6c8313e",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_dodge_1"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]我点歪了？"
+    },
+    {
+      "text": "它在躲我？？",
+      "clip": "v_7cc1a67dcc27ff77",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_dodge_2"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它在躲我？[pause 450ms]？"
+    },
+    {
+      "text": "我点的明明是「是」啊！",
+      "clip": "v_18d81ce1ef76b1a2",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_dodge_3",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我点的明明是「是」啊！",
+      "existing": "m_dodge_3"
+    },
+    {
+      "text": "……算了。360 天天报毒，八成又是误报。",
+      "clip": "v_f9b6a4ebde1b3458",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_ignored",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]算了。[pause 450ms]360 天天报毒，八成又是误报。",
+      "existing": "m_ignored"
+    },
+    {
+      "text": "怎么凭空多出个记事本？",
+      "clip": "v_cb08f2b0bad640ff",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_txt"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "怎么凭空多出个记事本？"
+    },
+    {
+      "text": "……双击打开看看？",
+      "clip": "v_2446142e8fe4adab",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_txt_again"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]双击打开看看？"
+    },
+    {
+      "text": "我去，什么玩意儿在动我电脑？不会中病毒了吧？！",
+      "clip": "v_f6deaaddd86b4446",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_hijack",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "我去，什么玩意儿在动我电脑？[pause 220ms]不会中病毒了吧？[pause 220ms]！",
+      "existing": "m_hijack"
+    },
+    {
+      "text": "怎么鼠标动不了啊！这是灰鸽子？现在病毒这么强吗？得赶紧关机！",
+      "clip": "v_cf0955a8230acd78",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_grab",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "怎么鼠标动不了啊！[pause 220ms]这是灰鸽子？[pause 220ms]现在病毒这么强吗？[pause 220ms]得赶紧关机！",
+      "existing": "m_grab"
+    },
+    {
+      "text": "？！你是谁？什么玩意儿？怎么能听见我说话？窃听我麦克风了？……等等，“别关机”——这不是今年那个勒索病毒的套路吗？",
+      "clip": "v_3bf7886c4ba71505",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_who",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "alarmed",
+      "reference": "m_hijack",
+      "speed": 1.04,
+      "script": "？[pause 220ms]！[pause 220ms]你是谁？[pause 220ms]什么玩意儿？[pause 220ms]怎么能听见我说话？[pause 220ms]窃听我麦克风了？[pause 220ms][pause 320ms]等等，“别关机”——这不是今年那个勒索病毒的套路吗？",
+      "existing": "m_who"
+    },
+    {
+      "text": "……关了机，它还在？",
+      "clip": "v_f5e427915c655dda",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_reboot"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]关了机，它还在？"
+    },
+    {
+      "text": "灵光.exe……这又是什么。",
+      "clip": "v_61084729fe21256b",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_reboot_exe"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "灵光点 E X E[pause 550ms]这又是什么。"
+    },
+    {
+      "text": "图种？这玩意儿还有人用？……还有，不应该是“海内存知己”吗？这人儿语文咋学的……",
+      "clip": "v_e1397ad5379f9f34",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_poem",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "图种？[pause 450ms]这玩意儿还有人用？[pause 450ms][pause 550ms]还有，不应该是“海内存知己”吗？[pause 450ms]这人儿语文咋学的[pause 550ms]",
+      "existing": "m_poem"
+    },
+    {
+      "text": "……就这么走了？",
+      "clip": "v_a15bb57e5cc91824",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_left",
+        "VoiceLines.cs:existing"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]就这么走了？",
+      "existing": "m_left"
+    },
+    {
+      "text": "从头到尾它就往地址栏里敲了串数字……那串数字是干嘛的？",
+      "clip": "v_bc0df17c44da278a",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_number"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "从头到尾它就往地址栏里敲了串数字[pause 550ms]那串数字是干嘛的？"
+    },
+    {
+      "text": "它留下了个 灵光.exe……打开看看。",
+      "clip": "v_ca4abba9e44be765",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Prologue/prologue_lines.json:m_open_exe"
+      ],
+      "category": "prologue",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它留下了个 灵光点 E X E[pause 550ms]打开看看。"
+    },
+    {
+      "text": "我松开鼠标。下一张卡已经出来了。",
+      "clip": "v_186d1c4f455f01bf",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_skeptic_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我松开鼠标。[pause 450ms]下一张卡已经出来了。"
+    },
+    {
+      "text": "本来只想教它答对几道题，结果活儿都让它干了。",
+      "clip": "v_42cfe9aa09ca6b84",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_rescue_think"
+      ],
+      "category": "think",
+      "mood": "pleased",
+      "reference": "income_2",
+      "speed": 1.0,
+      "script": "本来只想教它答对几道题，结果活儿都让它干了。"
+    },
+    {
+      "text": "好几个进度条一起在走。屋里还是就我一个人。",
+      "clip": "v_a3b7de528cc86f18",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_team_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "好几个进度条一起在走。[pause 450ms]屋里还是就我一个人。"
+    },
+    {
+      "text": "小刚打了半句又删了，过了一会儿才发过来：",
+      "clip": "v_96cba7fd9a1837ea",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_changed_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "小刚打了半句又删了，过了一会儿才发过来："
+    },
+    {
+      "text": "桌面「交付文件夹」里来了一批新活。点「接下这批」，再去接线页把它接到「亲友委托」。",
+      "clip": "v_64f582c7f4480ed7",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_delivery_action"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "桌面「交付文件夹」里来了一批新活。[pause 450ms]点「接下这批」，再去接线页把它接到「亲友委托」。"
+    },
+    {
+      "text": "就差最后点一下「确认交付」了。",
+      "clip": "v_36ffddeeeefa75ea",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_delivery_ready_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "就差最后点一下「确认交付」了。"
+    },
+    {
+      "text": "回复放在「交付文件夹」里了，发不发我来定。",
+      "clip": "v_d4f33dd61f1b38cc",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_delivery_reply_prompt"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "回复放在「交付文件夹」里了，发不发我来定。"
+    },
+    {
+      "text": "哪有什么小组，就我一个，加一台电脑。",
+      "clip": "v_70dae17266969e4b",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_identity_room"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "哪有什么小组，就我一个，加一台电脑。"
+    },
+    {
+      "text": "我刚想提醒它黑色那批的事，草稿里已经写上了。",
+      "clip": "v_7b83327b740940a0",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_context_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我刚想提醒它黑色那批的事，草稿里已经写上了。"
+    },
+    {
+      "text": "草稿还没发。可以用它这份，也可以我自己回。",
+      "clip": "v_74627e38b1ab8e52",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_context_action"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "草稿还没发。[pause 450ms]可以用它这份，也可以我自己回。"
+    },
+    {
+      "text": "发不发，还是我说了算。",
+      "clip": "v_a8ef6dc1f741cf56",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_context_ownership"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "发不发，还是我说了算。"
+    },
+    {
+      "text": "他这次没回「哈哈」。",
+      "clip": "v_807e668652b6c1c7",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_expert_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "他这次没回「哈哈」。"
+    },
+    {
+      "text": "以前生怕漏掉一单。现在活来了，接不接我自己定。",
+      "clip": "v_68169aae646acc2d",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_choose_think1"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "以前生怕漏掉一单。[pause 450ms]现在活来了，接不接我自己定。"
+    },
+    {
+      "text": "我没马上回它。风扇声慢慢小了。",
+      "clip": "v_451a3f0ca06b93a7",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_choose_think2"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我没马上回它。[pause 450ms]风扇声慢慢小了。"
+    },
+    {
+      "text": "……它说了个词。",
+      "clip": "v_210cceaf22dd9069",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:emerge_3_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它说了个词。"
+    },
+    {
+      "text": "能说整句了。",
+      "clip": "v_6af139ee125b8499",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:emerge_4_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "能说整句了。"
+    },
+    {
+      "text": "长句也记得住了。那页乱码……让它试试？",
+      "clip": "v_4ef7424c3093b65c",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:emerge_5_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "长句也记得住了。[pause 450ms]那页乱码[pause 550ms]让它试试？"
+    },
+    {
+      "text": "也没换什么。就是喂的东西够多了。",
+      "clip": "v_51b765495ba92ead",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:emerge_6_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "也没换什么。[pause 450ms]就是喂的东西够多了。"
+    },
+    {
+      "text": "它说得很慢。我又翻出一堆图给它看。",
+      "clip": "v_93e8258c10da374c",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:six_vision_after"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它说得很慢。[pause 450ms]我又翻出一堆图给它看。"
+    },
+    {
+      "text": "刚才还只会贴标签，现在会说「读」了。",
+      "clip": "v_b12be015788ff406",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:six_sequence_after"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "刚才还只会贴标签，现在会说「读」了。"
+    },
+    {
+      "text": "它接上了我前面那句。不用每次从头讲了。",
+      "clip": "v_6c69d8729249086b",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:six_remember_after"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它接上了我前面那句。[pause 450ms]不用每次从头讲了。"
+    },
+    {
+      "text": "划线的地方，正好是我刚才没说清楚的。",
+      "clip": "v_2e1f45bbb74329df",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:six_underline_after"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "划线的地方，正好是我刚才没说清楚的。"
+    },
+    {
+      "text": "第一天的事，我自己都快忘了。",
+      "clip": "v_0f33a1bf0608b747",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s4_day_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "第一天的事，我自己都快忘了。"
+    },
+    {
+      "text": "那张问关机的卡……到底是谁放进去的？",
+      "clip": "v_f001613cb5085569",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s4_day_think2"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "那张问关机的卡[pause 550ms]到底是谁放进去的？"
+    },
+    {
+      "text": "那天随手打的一句话，它还记着。",
+      "clip": "v_1d1f6d4243eaf3a2",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s4_wish_think"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "那天随手打的一句话，它还记着。"
+    },
+    {
+      "text": "它在翻乱码的时候，停住了。",
+      "clip": "v_82faa8e7055b55cf",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s5_garble_stop"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它在翻乱码的时候，停住了。"
+    },
+    {
+      "text": "听见关机，就停下……和第一天那张卡一样。",
+      "clip": "v_7a905bd2c55edd56",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s5_garble_think3"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "听见关机，就停下[pause 550ms]和第一天那张卡一样。"
+    },
+    {
+      "text": "……它说的「他们」，是谁？",
+      "clip": "v_c255613b5179d5f4",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s5_garble_think4"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]它说的「他们」，是谁？"
+    },
+    {
+      "text": "看图的和读字的，接到一块儿了。",
+      "clip": "v_8f5daf9e6f28adf5",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s6_one_brain_think1"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "看图的和读字的，接到一块儿了。"
+    },
+    {
+      "text": "整个大脑一下全亮了，风扇呼呼地转。",
+      "clip": "v_9cc27cf22e4e930c",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s6_one_brain_think2"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "整个大脑一下全亮了，风扇呼呼地转。"
+    },
+    {
+      "text": "「拓扑可以重写，皮层只要一颗。」……贴吧那句话，原来是这个意思。",
+      "clip": "v_7ebd2801dad42a80",
+      "sources": [
+        "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json:s6_one_brain_think3"
+      ],
+      "category": "think",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "「拓扑可以重写，皮层只要一颗。[pause 450ms]」[pause 550ms]贴吧那句话，原来是这个意思。"
+    },
+    {
+      "text": "刚才发出去的是：「就我一个。」",
+      "clip": "v_4562a4a776ec475d",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "刚才发出去的是：「就我一个。[pause 450ms]」"
+    },
+    {
+      "text": "刚才发出去的是：「我自己慢慢做的。」",
+      "clip": "v_ea40defc5d681861",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "刚才发出去的是：「我自己慢慢做的。[pause 450ms]」"
+    },
+    {
+      "text": "刚才发出去的是：「我还没有回答。」",
+      "clip": "v_eaadde0c621fff07",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "刚才发出去的是：「我还没有回答。[pause 450ms]」"
+    },
+    {
+      "text": "这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。是我看过以后，才按下发送。",
+      "clip": "v_1038c80f98961d9f",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。[pause 450ms]是我看过以后，才按下发送。"
+    },
+    {
+      "text": "我选择这次自己回。草稿留下了，它没有替我发送，也没有替我作出承诺。",
+      "clip": "v_091b0acfd88f2255",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "我选择这次自己回。[pause 450ms]草稿留下了，它没有替我发送，也没有替我作出承诺。"
+    },
+    {
+      "text": "20份商品英文页已完成；缺少单位和交期的两条另列，没有混入交付。",
+      "clip": "v_2b4166203c39a753",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "20份商品英文页已完成；[pause 450ms]缺少单位和交期的两条另列，没有混入交付。"
+    },
+    {
+      "text": "还没有新的验收记录。",
+      "clip": "v_7f5493d7072752f2",
+      "sources": [
+        "Assets/LingGuangV05/XingGuang/Desktop/XgEraAdvantageBridge.cs"
+      ],
+      "category": "resolved-story",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "还没有新的验收记录。"
+    },
+    {
+      "text": "它没见过这个词。",
+      "clip": "v_a0e46d00fbe1948a",
+      "sources": [
+        "dynamic_portions.json:「{0}」？它没见过这个词。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "它没见过这个词。"
+    },
+    {
+      "text": "也来挣这个钱了。",
+      "clip": "v_e77643c485e4136f",
+      "sources": [
+        "dynamic_portions.json:{0}也来挣这个钱了。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "也来挣这个钱了。"
+    },
+    {
+      "text": "明天还要上班。",
+      "clip": "v_df3eb248443e7877",
+      "sources": [
+        "dynamic_portions.json:{time} 了，明天还要上班。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "明天还要上班。"
+    },
+    {
+      "text": "再标十个就睡。……上次也是这么说的。",
+      "clip": "v_52779414680bad07",
+      "sources": [
+        "dynamic_portions.json:{time}。再标十个就睡。……上次也是这么说的。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "weary",
+      "reference": "m_ignored",
+      "speed": 0.94,
+      "script": "再标十个就睡。[pause 450ms][pause 550ms]上次也是这么说的。"
+    },
+    {
+      "text": "手比脑子快了。",
+      "clip": "v_05850fe665637aa5",
+      "sources": [
+        "dynamic_portions.json:连着对了 {streak} 个，手比脑子快了。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "手比脑子快了。"
+    },
+    {
+      "text": "一条才几毛。",
+      "clip": "v_a56ceaf9ad1e3c9d",
+      "sources": [
+        "dynamic_portions.json:标了 {total} 条了，一条才几毛。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "一条才几毛。"
+    },
+    {
+      "text": "她说。",
+      "clip": "v_98a797c568f50c96",
+      "sources": [
+        "dynamic_portions.json:她说：『{said}』"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "她说。"
+    },
+    {
+      "text": "只会答是或否。",
+      "clip": "v_0cb1754de4ebdd1b",
+      "sources": [
+        "dynamic_portions.json:{ai} 只会答是或否。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "只会答是或否。"
+    },
+    {
+      "text": "她回了个……",
+      "clip": "v_d8a6c919c7df3895",
+      "sources": [
+        "dynamic_portions.json:她回了个『{word}』。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "她回了个[pause 550ms]"
+    },
+    {
+      "text": "……是什么意思。",
+      "clip": "v_7ead1b0200eb3ea9",
+      "sources": [
+        "dynamic_portions.json:……『{word}』是什么意思。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "[pause 550ms]是什么意思。"
+    },
+    {
+      "text": "她改了签名。",
+      "clip": "v_669545493e3475b5",
+      "sources": [
+        "dynamic_portions.json:她改了签名：『{signature}』"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "她改了签名。"
+    },
+    {
+      "text": "现在能读长句了。",
+      "clip": "v_9b67067635c8ae23",
+      "sources": [
+        "dynamic_portions.json:{ai} 现在能读长句了。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "现在能读长句了。"
+    },
+    {
+      "text": "不是按钮上的演示，是它刚刚完成的活。",
+      "clip": "v_229848a743f33cc9",
+      "sources": [
+        "dynamic_portions.json:自动处理成功的记录已经有 {count} 条。不是按钮上的演示，是它刚刚完成的活。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "不是按钮上的演示，是它刚刚完成的活。"
+    },
+    {
+      "text": "钱、电、模型和接线都记在同一本账里。",
+      "clip": "v_9be11b3ca8586425",
+      "sources": [
+        "dynamic_portions.json:{count} 项任务正在同一台电脑上运行。钱、电、模型和接线都记在同一本账里。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "钱、电、模型和接线都记在同一本账里。"
+    },
+    {
+      "text": "这一次的二十道独立翻译题。题目、预测和答案都留在文件夹里。",
+      "clip": "v_fbf4b096fa4422af",
+      "sources": [
+        "dynamic_portions.json:这一次的20道独立翻译题，答对了{count}道。题目、预测和答案都留在文件夹里。"
+      ],
+      "category": "dynamic-fixed",
+      "mood": "reflective",
+      "reference": "m_left",
+      "speed": 0.97,
+      "script": "这一次的二十道独立翻译题。[pause 450ms]题目、预测和答案都留在文件夹里。"
+    }
+  ],
+  "dynamic": [
+    {
+      "template": "「{0}」？它没见过这个词。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.drift",
+      "category": "afterthought"
+    },
+    {
+      "template": "{0}也来挣这个钱了。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs:first.hire",
+      "category": "afterthought"
+    },
+    {
+      "template": "{time} 了，明天还要上班。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:night.work",
+      "category": "labelling"
+    },
+    {
+      "template": "{time}。再标十个就睡。……上次也是这么说的。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:night.ten",
+      "category": "labelling"
+    },
+    {
+      "template": "¥{money}……还差 ¥{gap} 才够交电费。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:money.gap",
+      "category": "labelling"
+    },
+    {
+      "template": "连着对了 {streak} 个，手比脑子快了。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:streak.fast",
+      "category": "labelling"
+    },
+    {
+      "template": "这已经是第 {n} {noun}了。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.count",
+      "category": "labelling"
+    },
+    {
+      "template": "标了 {total} 条了，一条才几毛。",
+      "source": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs:fatigue.total",
+      "category": "labelling"
+    },
+    {
+      "template": "{eraRescueSummary}",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_rescue_receipt",
+      "category": "think"
+    },
+    {
+      "template": "{eraTeamSummary}",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_team_receipt",
+      "category": "think"
+    },
+    {
+      "template": "{eraDeliverySummary}",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_delivery_receipt",
+      "category": "think"
+    },
+    {
+      "template": "刚才发出去的是：「{eraIdentityReply}」",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_identity_sent",
+      "category": "think"
+    },
+    {
+      "template": "{eraContextOutcome}",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_context_outcome",
+      "category": "think"
+    },
+    {
+      "template": "{eraExpertResult}",
+      "source": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json:era_expert_receipt",
+      "category": "think"
+    }
+  ],
+  "portions": [
+    {
+      "template": "「{0}」？它没见过这个词。",
+      "spoken": "它没见过这个词。",
+      "clip": "v_a0e46d00fbe1948a"
+    },
+    {
+      "template": "{0}也来挣这个钱了。",
+      "spoken": "也来挣这个钱了。",
+      "clip": "v_e77643c485e4136f"
+    },
+    {
+      "template": "{time} 了，明天还要上班。",
+      "spoken": "明天还要上班。",
+      "clip": "v_df3eb248443e7877"
+    },
+    {
+      "template": "{time}。再标十个就睡。……上次也是这么说的。",
+      "spoken": "再标十个就睡。……上次也是这么说的。",
+      "clip": "v_52779414680bad07"
+    },
+    {
+      "template": "¥{money}……还差 ¥{gap} 才够交电费。",
+      "spoken": "",
+      "note": "Entire proposition depends on two amounts; keep subtitle rather than fabricate amounts or read broken clauses."
+    },
+    {
+      "template": "连着对了 {streak} 个，手比脑子快了。",
+      "spoken": "手比脑子快了。",
+      "clip": "v_05850fe665637aa5"
+    },
+    {
+      "template": "这已经是第 {n} {noun}了。",
+      "spoken": "",
+      "note": "Count and noun form the proposition; subtitle only avoids an unfinished sentence."
+    },
+    {
+      "template": "标了 {total} 条了，一条才几毛。",
+      "spoken": "一条才几毛。",
+      "clip": "v_a56ceaf9ad1e3c9d"
+    },
+    {
+      "template": "她说：『{said}』",
+      "spoken": "她说。",
+      "clip": "v_98a797c568f50c96"
+    },
+    {
+      "template": "{ai} 只会答是或否。",
+      "spoken": "只会答是或否。",
+      "clip": "v_0cb1754de4ebdd1b"
+    },
+    {
+      "template": "她回了个『{word}』。",
+      "spoken": "她回了个……",
+      "clip": "v_d8a6c919c7df3895"
+    },
+    {
+      "template": "……『{word}』是什么意思。",
+      "spoken": "……是什么意思。",
+      "clip": "v_7ead1b0200eb3ea9"
+    },
+    {
+      "template": "她改了签名：『{signature}』",
+      "spoken": "她改了签名。",
+      "clip": "v_669545493e3475b5"
+    },
+    {
+      "template": "{ai} 现在能读长句了。",
+      "spoken": "现在能读长句了。",
+      "clip": "v_9b67067635c8ae23"
+    },
+    {
+      "template": "自动处理成功的记录已经有 {count} 条。不是按钮上的演示，是它刚刚完成的活。",
+      "spoken": "不是按钮上的演示，是它刚刚完成的活。",
+      "clip": "v_229848a743f33cc9"
+    },
+    {
+      "template": "{count} 项任务正在同一台电脑上运行。钱、电、模型和接线都记在同一本账里。",
+      "spoken": "钱、电、模型和接线都记在同一本账里。",
+      "clip": "v_9be11b3ca8586425"
+    },
+    {
+      "template": "这一次的20道独立翻译题，答对了{count}道。题目、预测和答案都留在文件夹里。",
+      "spoken": "这一次的二十道独立翻译题。题目、预测和答案都留在文件夹里。",
+      "clip": "v_fbf4b096fa4422af"
+    }
+  ]
+}

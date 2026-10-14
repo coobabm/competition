@@ -1,0 +1,12 @@
+{
+  "seconds": 2.64,
+  "peak": 0.794097900390625,
+  "rms": 0.15951979444452954,
+  "samples": 63360,
+  "clipped_fraction": 0.0,
+  "signature": "e96221d07d5a9e91049bafe65be79963c671dba2bef31f748fb6a97806132017",
+  "elapsed": 3.0865464999806136,
+  "engine": "omnivoice",
+  "subjective_review": "not_listened",
+  "text": "刚才还只会贴标签，现在会说「读」了。"
+}

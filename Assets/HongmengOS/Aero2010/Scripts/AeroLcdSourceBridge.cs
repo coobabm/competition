@@ -29,6 +29,12 @@ namespace HongmengOS.Aero2010
             var desktop=sourceCanvas!=null?sourceCanvas.transform.Find("Desktop"):null;
             if(desktop==null)return;
             var wallpaper=desktop.Find("Wallpaper");
+            // The rendered desktop is a separate canvas from the lock-screen preview.
+            if(wallpaper!=null && wallpaper.GetComponent<Image>()!=null) {
+                var manager=FindAnyObjectByType<WallpaperManager>();
+                var target=wallpaper.GetComponent<WallpaperObject>() ?? wallpaper.gameObject.AddComponent<WallpaperObject>();
+                if(manager!=null) manager.AddCachedObject(target,true);
+            }
             var mark=desktop.Find("Aero Edition Mark");
             if(wallpaper==null||mark==null)return;
             // Keep desktop decoration above the wallpaper, below application windows.
