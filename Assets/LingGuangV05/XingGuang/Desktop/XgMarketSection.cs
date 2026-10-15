@@ -161,7 +161,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (info.id)
             {
-                case "ajie": return Lang.T("阿杰：便宜、手快，偶尔走神。正确率约 85%，比平台的举报线还低一截，别让他一个人扛一张桌太久。");
+                case "ajie": return Lang.T("阿杰：便宜、手快，偶尔走神。正确率约 85%，抽检抽到他的错题照样罚你的钱，别让他一个人扛一张桌太久。");
                 case "xiaogang": return Lang.T("小刚：慢，但几乎不出错（约 97%）。");
                 default: return Lang.T("网吧老板：只上夜班（22:00–06:00），天一亮就回去睡觉。正确率约 93%。");
             }

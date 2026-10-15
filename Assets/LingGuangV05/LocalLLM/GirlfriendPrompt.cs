@@ -69,9 +69,44 @@ namespace LingGuangV05.Desktop.LLM
             if (list.Count > first && list[first].Key == "assistant") list.RemoveAt(first);
             if (proactive || list[list.Count - 1].Key != "user")
                 list.Add(new KeyValuePair<string, string>("user", english ? "(He has not said anything. You message him first.)" : "（他没说话。你主动发一条消息。）"));
-            string state = GirlfriendPromptText.State(s, now, a, english, situation, latest) + "\n" + GirlfriendPromptText.Nudge(s, latest, english, proactive, turn, now.clock, !string.IsNullOrEmpty(situation));
+            string recall = Recall(history, start, latest, english);
+            string state = GirlfriendPromptText.State(s, now, a, english, situation, latest, recall) + "\n" + GirlfriendPromptText.Nudge(s, latest, english, proactive, turn, now.clock, !string.IsNullOrEmpty(situation));
             if (!string.IsNullOrEmpty(hint)) state += "\n" + hint;
             LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state, english, english ? "[His message]" : "【他发来的】");
+            return list;
+        }
+
+        /// <summary>Exchanges recalled from the chat before the window (each a line and the one after it).</summary>
+        public const int RecalledExchanges = 2;
+
+        /// <summary>
+        /// The older exchanges his latest line brings back (RAG over the whole chat, not just the 12 lines in the
+        /// prompt), written as 他：/ 你： lines. Empty when the history fits the window or nothing matches.
+        /// </summary>
+        public static string Recall(List<YYMessage> history, int windowStart, string latest, bool english)
+        {
+            if (history == null || windowStart <= 1 || string.IsNullOrWhiteSpace(latest)) return "";
+            var lines = new List<string>(windowStart);
+            for (int i = 0; i < windowStart; i++) lines.Add(Speaker(history[i], english) + history[i].text);
+            var picked = LingGuangV05.Core.Chat.Rag.Episodes(GirlfriendPromptText.MemoryScorer, LingGuangV05.Core.Chat.MemoryQuery.Of(latest), lines, windowStart, RecalledExchanges);
+            if (picked.Count == 0) return "";
+            var sb = new StringBuilder(english ? "You two talked about this before:\n" : "你们以前聊过：\n");
+            foreach (int i in picked)
+            {
+                sb.Append("- ").Append(lines[i]);
+                if (i + 1 < windowStart) sb.Append(" / ").Append(lines[i + 1]);
+                sb.Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        static string Speaker(YYMessage m, bool english) => m.from == YYChatHub.Me ? (english ? "He: " : "他：") : (english ? "You: " : "你：");
+
+        /// <summary>The texts whose embeddings her next prompt needs (LocalEmbedder.Prepare): his latest line.</summary>
+        public static List<string> QueryTexts(YYConversation conv)
+        {
+            var list = new List<string>();
+            if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == YYChatHub.Me && conv.messages[i].kind == YYKind.Text) { list.Add(conv.messages[i].text); break; }
             return list;
         }
 
@@ -117,6 +152,8 @@ namespace LingGuangV05.Desktop.LLM
             }
             if (list[list.Count - 1].Key != "user") list.Add(new KeyValuePair<string, string>("user", incoming.Length > 0 ? incoming : "在吗"));
             string state = lab.PersonaTone() + lab.PersonaMemory(incoming);
+            string known = lab.PersonaKnowledge(incoming ?? "", null);
+            if (known.Length > 0) state += "\n" + known;
             if (lab.StageRuleVaries) state += (state.Length > 0 ? "\n" : "") + lab.StageRule(incoming);
             LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state, english);
             return list;

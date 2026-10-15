@@ -1,0 +1,35 @@
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+# Original SHA256: 2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+@@ -36,8 +36,9 @@
+         readonly List<Floater> floaters = new List<Floater>();
+         readonly List<Particle> particles = new List<Particle>();
+         readonly List<Wave> waves = new List<Wave>();
+         readonly Dictionary<RectTransform, Punch> punches = new Dictionary<RectTransform, Punch>();
++        List<RectTransform> completedPunches; // Lazily retained scratch space; cleared after removals.
+         readonly Stack<TMP_Text> textPool = new Stack<TMP_Text>();
+         readonly Stack<Particle> imagePool = new Stack<Particle>();
+         readonly Stack<Particle> glyphPool = new Stack<Particle>();
+         readonly Stack<XgRingGraphic> ringPool = new Stack<XgRingGraphic>();
+@@ -290,9 +291,9 @@
+             }
+ 
+             if (punches.Count > 0)
+             {
+-                var done = new List<RectTransform>();
++                var done = completedPunches ?? (completedPunches = new List<RectTransform>());
+                 foreach (var p in punches.Values)
+                 {
+                     if (p.rt == null) { done.Add(p.rt); continue; }
+                     p.t += dt;
+@@ -303,8 +304,9 @@
+                     p.rt.localScale = p.squash ? Vector3.Scale(p.scale, new Vector3(1 + p.amp * wobble, 1 - p.amp * wobble, 1)) : p.scale * (1 - p.amp * wobble);
+                     p.rt.anchoredPosition = p.pos + p.dir * wobble;
+                 }
+                 foreach (var rt in done) punches.Remove(rt);
++                done.Clear(); // Retain capacity, not references to completed targets.
+             }
+         }
+ 
+         void OnDisable()

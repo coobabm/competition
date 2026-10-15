@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using LingGuangV05.Desktop.LLM;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
@@ -53,10 +54,10 @@ namespace LingGuangV05.Editor
 
         [Serializable] sealed class Fixtures { public Fixture[] items; }
         [Serializable] sealed class Fixture { public string id, prompt; }
-        [Serializable] sealed class Props { public int total_slots; public Generation default_generation_settings; }
+        // LlamaLib's built-in server answers POST /props with the per-slot context only; it has no /slots, so slot
+        // activity is read from LocalLlm (native calls in flight per slot) instead.
+        [Serializable] sealed class Props { public Generation default_generation_settings; }
         [Serializable] sealed class Generation { public int n_ctx; }
-        [Serializable] sealed class Slots { public Slot[] slots; }
-        [Serializable] sealed class Slot { public int id, n_ctx; public bool is_processing; }
 
         public static bool Running { get; private set; }
         public static Report Result { get; private set; }
@@ -71,9 +72,9 @@ namespace LingGuangV05.Editor
         static Fixture[] fixtures;
         static readonly List<RequestRecord> batch = new List<RequestRecord>();
         static RequestRecord chat;
-        static UnityWebRequest propsRequest, slotsRequest;
-        static UnityWebRequestAsyncOperation propsOperation, slotsOperation;
-        static double deadline, nextSlotsProbe, nextMemorySample;
+        static UnityWebRequest propsRequest;
+        static UnityWebRequestAsyncOperation propsOperation;
+        static double deadline, nextMemorySample;
         static bool ending;
         static int firstPid, disabledPid;
 
@@ -96,7 +97,7 @@ namespace LingGuangV05.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (File.Exists(path)) File.Copy(path, Path.Combine(Path.GetDirectoryName(path), "parallel.previous-" + runId + ".json"), false);
             Result = new Report { runId = runId, startedUtc = DateTime.UtcNow.ToString("O"), port = AvailablePort(preferredPort), externalPid = externalPid, outputPath = path };
-            batch.Clear(); chat = null; nextMemorySample = nextSlotsProbe = 0;
+            batch.Clear(); chat = null; nextMemorySample = 0;
             ending = false; Running = true;
             EditorApplication.update += Advance;
             EditorApplication.playModeStateChanged += PlayChanged;
@@ -132,7 +133,7 @@ namespace LingGuangV05.Editor
                     case Phase.BootOne:
                         if (!service.Ready) break;
                         Require(service.OwnsServer && service.ParallelSlots == 1 && service.EndpointPort != LocalLlm.Port, "QA did not own its one-slot service.");
-                        firstPid = service.OwnedProcessId; RememberProcess();
+                        firstPid = service.OwnedServiceId; RememberProcess();
                         BeginProps(); SetPhase(Phase.PropsOne, 8); break;
                     case Phase.PropsOne:
                         if (!ReadProps(1)) break;
@@ -142,24 +143,23 @@ namespace LingGuangV05.Editor
                         CheckValidBatch(); service.SetParallelJudging(true); SetPhase(Phase.BootFour, 130); break;
                     case Phase.BootFour:
                         if (!service.Ready || service.ParallelSlots != 4) break;
-                        Require(service.OwnsServer && service.OwnedProcessId != firstPid, "1-to-4 reconfiguration did not create a new owned service.");
-                        CheckNow("one-slot process exited during owned resize", Exited(firstPid) && service.LastStopConfirmed);
+                        Require(service.OwnsServer && service.OwnedServiceId != firstPid, "1-to-4 reconfiguration did not create a new owned service.");
+                        CheckNow("one-slot service was freed during owned resize", Exited(firstPid) && service.LastStopConfirmed);
                         RememberProcess(); BeginProps(); SetPhase(Phase.PropsFour, 8); break;
                     case Phase.PropsFour:
                         if (!ReadProps(4)) break;
-                        StartSlots(); SetPhase(Phase.SlotsFour, 8); break;
+                        SetPhase(Phase.SlotsFour, 8); break;
                     case Phase.SlotsFour:
-                        if (!ReadSlots(true)) break;
                         batch.Clear();
                         for (int slot = 0; slot < 3; slot++) batch.Add(QueueJudge("parallel", slot, slot + 1));
                         chat = QueueChat("parallel-chat", false);
-                        Observe(); nextSlotsProbe = 0; SetPhase(Phase.Parallel, 65); break;
+                        Observe(); PollSlots(); SetPhase(Phase.Parallel, 65); break;
                     case Phase.Parallel:
                         PollSlots();
                         if (!BatchDone() || chat.callbacks == 0 || service.Busy) break;
                         CheckValidBatch();
                         CheckNow("three judges plus reserved chat slot were simultaneously in flight", Result.threeJudgesAndChatObserved && Result.maxJudges == 3 && Result.maxTotalInference >= 4);
-                        CheckNow("backend observed four processing slots", Result.maxServerProcessing >= 4, "maxServerProcessing=" + Result.maxServerProcessing);
+                        CheckNow("service ran four native slots at once", Result.maxServerProcessing >= 4, "maxServerProcessing=" + Result.maxServerProcessing);
                         CheckNow("reserved-slot chat completed once with real text", chat.callbacks == 1 && !string.IsNullOrWhiteSpace(chat.reply));
                         batch.Clear(); batch.Add(QueueJudge("fourth-slot", 3, 4)); SetPhase(Phase.FourthSlot, 20); break;
                     case Phase.FourthSlot:
@@ -172,25 +172,25 @@ namespace LingGuangV05.Editor
                     case Phase.Cancel:
                         if (!BatchDone() || service.Busy) break;
                         foreach (var row in batch) CheckNow(row.id + " callback cancelled exactly once", row.callbacks == 1 && row.failure == "cancelled");
-                        disabledPid = service.OwnedProcessId;
+                        disabledPid = service.OwnedServiceId;
                         batch.Clear(); batch.Add(QueueJudge("disable", 0, 1, true));
                         chat = QueueChat("disable-chat", true);
                         service.enabled = false;
-                        CheckNow("OnDisable stopped only the owned process", !service.OwnsServer && service.LastStopConfirmed && Exited(disabledPid));
+                        CheckNow("OnDisable stopped only the owned service", !service.OwnsServer && service.LastStopConfirmed && Exited(disabledPid));
                         CheckNow("OnDisable completed active judge once", batch[0].callbacks == 1 && batch[0].failure == "cancelled");
                         CheckNow("OnDisable completed chat once", chat.callbacks == 1 && chat.reply == null);
                         service.enabled = true; SetPhase(Phase.Reenable, 130); break;
                     case Phase.Reenable:
                         if (!service.Ready) break;
-                        CheckNow("re-enable starts a fresh owned service with preserved four-slot configuration", service.OwnsServer && service.OwnedProcessId != disabledPid && service.ParallelSlots == 4);
+                        CheckNow("re-enable starts a fresh owned service with preserved four-slot configuration", service.OwnsServer && service.OwnedServiceId != disabledPid && service.ParallelSlots == 4);
                         RememberProcess(); batch.Clear(); batch.Add(QueueJudge("resumed", 3, 2)); SetPhase(Phase.ResumedJudge, 20); break;
                     case Phase.ResumedJudge:
                         PollSlots();
                         if (!BatchDone() || service.Busy) break;
                         CheckValidBatch();
-                        int reloadPid = service.OwnedProcessId;
+                        int reloadPid = service.OwnedServiceId;
                         typeof(LocalLlm).GetMethod("BeforeAssemblyReload", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(service, null);
-                        CheckNow("pre-reload handler stops owned process before reference loss", !service.OwnsServer && service.LastStopConfirmed && Exited(reloadPid));
+                        CheckNow("pre-reload handler stops owned service before reference loss", !service.OwnsServer && service.LastStopConfirmed && Exited(reloadPid));
                         service.enabled = false; service.enabled = true;
                         SetPhase(Phase.ReloadStopped, 3); break;
                     case Phase.ReloadStopped:
@@ -241,48 +241,29 @@ namespace LingGuangV05.Editor
             }
         }
 
-        static void BeginProps() { propsRequest = Get("/props"); propsOperation = propsRequest.SendWebRequest(); }
+        static void BeginProps()
+        {
+            propsRequest = new UnityWebRequest("http://127.0.0.1:" + Result.port + "/props", "POST")
+            { uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes("{}")), downloadHandler = new DownloadHandlerBuffer(), timeout = 5, redirectLimit = 0 };
+            propsRequest.SetRequestHeader("Content-Type", "application/json");
+            propsOperation = propsRequest.SendWebRequest();
+        }
         static bool ReadProps(int slots)
         {
             if (propsOperation == null || !propsOperation.isDone) return false;
             Require(propsRequest.result == UnityWebRequest.Result.Success, "Owned /props failed: " + propsRequest.error);
             string raw = propsRequest.downloadHandler.text;
-            if (slots == 1) Result.np1Props = raw; else Result.np4Props = raw;
+            if (slots == 1) Result.np1Props = raw; else { Result.np4Props = raw; Result.np4Slots = "service slots=" + service.ParallelSlots; }
             var props = JsonUtility.FromJson<Props>(raw);
-            CheckNow("np" + slots + " server reports slot count and context", props != null && props.total_slots == slots && props.default_generation_settings != null && props.default_generation_settings.n_ctx >= LingGuangV05.Core.Chat.LlmScheduling.SlotContext);
+            CheckNow("np" + slots + " service has the slot count and per-slot context", service.ParallelSlots == slots && props != null && props.default_generation_settings != null && props.default_generation_settings.n_ctx >= LingGuangV05.Core.Chat.LlmScheduling.SlotContext);
             propsRequest.Dispose(); propsRequest = null; propsOperation = null; return true;
         }
-        static UnityWebRequest Get(string suffix)
-        {
-            var request = UnityWebRequest.Get("http://127.0.0.1:" + Result.port + suffix);
-            request.timeout = 5; request.redirectLimit = 0; return request;
-        }
-        static void StartSlots() { if (slotsRequest != null) return; slotsRequest = Get("/slots"); slotsOperation = slotsRequest.SendWebRequest(); }
-        static bool ReadSlots(bool checkContext)
-        {
-            if (slotsOperation == null || !slotsOperation.isDone) return false;
-            Require(slotsRequest.result == UnityWebRequest.Result.Success, "Owned /slots failed: " + slotsRequest.error);
-            string raw = slotsRequest.downloadHandler.text;
-            var parsed = JsonUtility.FromJson<Slots>("{\"slots\":" + raw + "}");
-            Require(parsed?.slots != null, "Malformed owned /slots response.");
-            int processing = 0; bool context = parsed.slots.Length == 4;
-            foreach (var slot in parsed.slots)
-            {
-                context &= slot.n_ctx >= LingGuangV05.Core.Chat.LlmScheduling.SlotContext;
-                if (!slot.is_processing) continue;
-                processing++;
-                foreach (var row in batch) if (row.slot == slot.id && row.dispatched && !row.completed) row.serverSlotObserved = true;
-            }
-            if (checkContext) { Result.np4Slots = raw; CheckNow("all four backend slots preserve the per-slot context", context); }
-            Result.maxServerProcessing = Math.Max(Result.maxServerProcessing, processing);
-            slotsRequest.Dispose(); slotsRequest = null; slotsOperation = null;
-            return true;
-        }
+        /// <summary>Samples how many slots run native completions now, and which dispatched rows are among them.</summary>
         static void PollSlots()
         {
-            if (slotsRequest != null) ReadSlots(false);
-            if (slotsRequest == null && EditorApplication.timeSinceStartup >= nextSlotsProbe)
-            { nextSlotsProbe = EditorApplication.timeSinceStartup + .025; StartSlots(); }
+            int processing = service.NativeCallsInFlight;
+            foreach (var row in batch) if (row.dispatched && !row.completed && service.NativeSlotRunning(row.slot)) row.serverSlotObserved = true;
+            Result.maxServerProcessing = Math.Max(Result.maxServerProcessing, processing);
         }
 
         static void Observe()
@@ -294,12 +275,13 @@ namespace LingGuangV05.Editor
             if (service.ActiveJudges == 3 && service.ActiveChats > 0) Result.threeJudgesAndChatObserved = true;
             if (EditorApplication.timeSinceStartup < nextMemorySample) return;
             nextMemorySample = EditorApplication.timeSinceStartup + .1;
-            int pid = service.OwnedProcessId;
+            int pid = service.OwnedServiceId;
             if (pid <= 0) return;
             var row = RememberProcess();
+            // The model runs inside this (editor) process now: its resident memory is the closest measure.
             try
             {
-                using (var process = Process.GetProcessById(pid))
+                using (var process = Process.GetCurrentProcess())
                 {
                     process.Refresh(); double rss = process.WorkingSet64 / (1024.0 * 1024);
                     row.peakRssMiB = Math.Max(row.peakRssMiB, rss);
@@ -307,12 +289,11 @@ namespace LingGuangV05.Editor
                     else Result.peakParallelRssMiB = Math.Max(Result.peakParallelRssMiB, rss);
                 }
             }
-            catch (ArgumentException) { }
             catch (InvalidOperationException) { }
         }
         static ProcessRecord RememberProcess()
         {
-            int pid = service.OwnedProcessId;
+            int pid = service.OwnedServiceId;
             var row = Result.processes.Find(value => value.pid == pid);
             if (row != null) return row;
             row = new ProcessRecord { pid = pid, slots = service.ParallelSlots, totalContext = service.ParallelSlots * LingGuangV05.Core.Chat.LlmScheduling.SlotContext, logPath = service.LastOwnedLogPath };
@@ -321,20 +302,13 @@ namespace LingGuangV05.Editor
 
         static void SetPhase(Phase next, double seconds)
         {
-            // Metadata requests from an earlier phase must not survive an owned-server restart.
-            if (next != Phase.SlotsFour) StopSlotsProbe();
             phase = next; Result.stage = next.ToString(); deadline = EditorApplication.timeSinceStartup + seconds; Save();
-        }
-        static void StopSlotsProbe()
-        {
-            if (slotsRequest != null) { slotsRequest.Abort(); slotsRequest.Dispose(); }
-            slotsRequest = null; slotsOperation = null;
         }
         static void CheckNow(string name, bool passed, string detail = "") { Result.checks.Add(new Check { name = name, passed = passed, detail = detail }); if (passed) Result.passed++; else Result.failed++; }
         static void Require(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
         static void Save() { if (Result != null && !string.IsNullOrEmpty(path)) File.WriteAllText(path, JsonUtility.ToJson(Result, true)); }
         static void PlayChanged(PlayModeStateChange state) { if (Running && state == PlayModeStateChange.ExitingPlayMode) Finish(false, "Interrupted by Play exit."); }
-        static void Reloading() { if (Running) Finish(false, "Interrupted by actual assembly reload; owned process cleaned before reload."); }
+        static void Reloading() { if (Running) Finish(false, "Interrupted by actual assembly reload; owned service cleaned before reload."); }
 
         static void Finish(bool completed, string error = "")
         {
@@ -344,7 +318,6 @@ namespace LingGuangV05.Editor
             try
             {
                 propsRequest?.Abort(); propsRequest?.Dispose(); propsRequest = null;
-                StopSlotsProbe();
                 if (service != null) service.StopEditorQa();
                 Result.allOwnedProcessesExited = true;
                 foreach (var process in Result.processes) { process.exited = Exited(process.pid); Result.allOwnedProcessesExited &= process.exited; }
@@ -355,7 +328,7 @@ namespace LingGuangV05.Editor
                 Result.externalPidChecked = Result.externalPid > 0;
                 Result.externalPidPreserved = Result.externalPidChecked && SameExternalProcess(Result.externalPid, externalStart);
                 CheckNow("all accepted requests completed/cancelled exactly once", Result.callbacksExactlyOnce);
-                CheckNow("all QA-owned processes exited", Result.allOwnedProcessesExited);
+                CheckNow("all QA-owned services were freed", Result.allOwnedProcessesExited);
                 CheckNow("game singleton and memory-only runtime preserved", Result.singletonPreserved && Result.runtimePreserved);
                 if (Result.externalPid > 0) CheckNow("pre-existing external PID remained alive and unchanged", Result.externalPidPreserved);
                 CheckNow("resident memory was measured in both configurations", Result.peakSingleRssMiB > 0 && Result.peakParallelRssMiB > 0);
@@ -371,12 +344,8 @@ namespace LingGuangV05.Editor
             }
         }
 
-        static bool Exited(int pid)
-        {
-            if (pid <= 0) return true;
-            try { using (var process = Process.GetProcessById(pid)) return process.HasExited; }
-            catch (ArgumentException) { return true; }
-        }
+        /// <summary>The QA service with this id (recorded as "pid" in the report) has been freed.</summary>
+        static bool Exited(int pid) => LocalLlm.ServiceStopped(pid);
         static bool SameExternalProcess(int pid, DateTime start)
         {
             try { using (var process = Process.GetProcessById(pid)) return !process.HasExited && process.StartTime == start; }

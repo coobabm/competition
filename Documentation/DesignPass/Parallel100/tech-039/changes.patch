@@ -1,0 +1,10 @@
+Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+Source-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -174,3 +174,3 @@
+                 case "fp16": return T(sim, "增加下列预训练规模倍数；本节点不直接把训练显存占用减半。", "Adds the pre-training scale multiplier below; this item does not directly halve training VRAM usage.");
+-                case "gradclip": return T(sim, "启用裁剪后，限制过大的学习步幅，降低训练失稳的风险；不保证任何设置都安全。", "When enabled, clipping limits oversized learning steps and reduces instability; it does not make every setting safe.");
++                case "gradclip": return T(sim, "购买后无需装备，系统在下一次训练结算前自动启用。每张训练卡对单个权重的拉动不超过 ±", "No equipment step is needed after purchase; clipping is enabled automatically before the next training settlement. Each training card caps the pull on each weight at ±") + N(XgBoard.ClipLimit) + T(sim, "（权重单位）。失稳步长阈值的基础项 ×2，并取消循环结构的额外阈值折减；仍可能失稳。购买后，大幅进步带来的回落风险分量 ×0.7，即该分量减少 30%，并与其他减险倍率相乘；不是总风险减 30 个百分点。不可重复购买叠加，不直接增加准确率。", " weight units. The base instability threshold is multiplied by 2, and extra threshold reductions for loops are removed; instability is still possible. Once purchased, the drop-risk component caused by a large gain is multiplied by 0.7 (30% less for that component), stacking multiplicatively with other risk reductions; total risk does not fall by 30 percentage points. Cannot be purchased repeatedly for stacking bonuses and does not directly add accuracy.");
+                 case "dropout": return T(sim, "训练时跳过部分线索更新，减少死记硬背；评估成绩仍受数据和模型影响。", "Skip some clue updates during training to reduce memorization; evaluation scores still depend on the data and model.");

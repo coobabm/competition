@@ -1,0 +1,9 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -168,3 +168,4 @@
+                 case "bias": return T(sim, "训练中可以学习判断门槛；能否答对仍由学到的权重和题目决定。", "Training can learn a decision threshold; answers still depend on learned weights and the question.");
+-                case "step": case "sigmoid": return T(sim, "增加可用激活函数，系统可在训练配置中采用；成绩变化需重新训练和评估。", "Add an available activation function for training configuration; train and evaluate to see the score change.");
++                case "step": return T(sim, "增加可用激活函数，系统可在训练配置中采用；成绩变化需重新训练和评估。", "Add an available activation function for training configuration; train and evaluate to see the score change.");
++                case "sigmoid": return T(sim, "购买后无需装备：两条训练线的准确率上限公式各增加 1 个百分点，与其他同类加成相加，再受结构限制和数据集上限约束；不是立即给当前成绩加分。系统自动配置时，未拥有 ReLU 就采用 Sigmoid，激活函数不叠加；训练后再看评估成绩。采用时，概念板层间误差基础保留 25%，前向信号基础保留 80%，逐层相乘，相关技术可改变这些系数。", "No equipment step is needed after purchase. Add 1 percentage point to each track's accuracy-ceiling formula, alongside other additive bonuses, before architecture limits and the dataset cap; this does not instantly raise the current score. Automatic configuration uses Sigmoid unless ReLU is owned; activation functions do not stack. Train and evaluate to see the result. While selected, the concept board retains a base 25% of the error and 80% of the forward signal per layer, multiplying across layers; related techniques can change these factors.");
+                 case "features": return T(sim, "启用人工特征后，感知机也可学习组合线索；每轮训练卡数按 ", "With engineered features enabled, a perceptron can learn combined clues; epoch card throughput is multiplied by ") + N(XgSim.FeaturesCardFactor) + T(sim, " 倍计算。", ".");

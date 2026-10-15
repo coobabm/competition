@@ -28,11 +28,11 @@ namespace LingGuangV05.Desktop.XingGuang
         // 装备 / 数据集
         RectTransform gearCard, gearPane, dataPane;
         XgBtn gearTab, dataTab, learningTab, confirmStage;
-        bool learningView = true;
+        bool learningView;
         RectTransform learningPane;
         TMP_Text learningText;
         TMP_Text gearCount;
-        bool dataView;
+        bool dataView = true;
         sealed class Tile
         {
             public RectTransform rt;
@@ -200,22 +200,23 @@ namespace LingGuangV05.Desktop.XingGuang
                 return (Sim.ReadWordsTotal >= 1 ? Sim.ReadLine() + "\n" : "") + Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport() + "\n\n"
                     + T("两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。",
                     "When both reach the line, the next ability comes. The lines already include the items you own. Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.");
-            return T("有效规模 = 参数 × 数据 × 买到的倍率。参数和数据各算到第六项能力门槛的 " + N(XgSim.ScaleBarCap, "0.#") + " 倍为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
-                "Effective scale = parameters × data × the multipliers you own. Parameters and data each count up to " + N(XgSim.ScaleBarCap, "0.#") + " times the sixth ability's bar; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
+            return T("有效规模 = 参数 × 数据 × 买到的倍率。参数以 " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + "、数据以 " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " 条算 1 份，各算到 " + N(XgSim.ScaleBarCap, "0.#") + " 份为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
+                "Effective scale = parameters × data × the multipliers you own. Parameters count in units of " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + " and data in units of " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " samples, each up to " + N(XgSim.ScaleBarCap, "0.#") + " units; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
         }
 
         // ───────────── 装备 · 数据集 ─────────────
 
         void BuildGearCard()
         {
-            gearTab = ui.Button(gearCard, "", () => { learningView = false; dataView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
+            gearTab = ui.Button(gearCard, "", () => { learningView = false; booksView = false; dataView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
             gearTab.rt.gameObject.name = "GearTab";
             PlaceTopLeft(gearTab, 8, 6, 84, 22);
-            dataTab = ui.Button(gearCard, "", () => { learningView = false; dataView = true; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
+            dataTab = ui.Button(gearCard, "", () => { learningView = false; booksView = false; dataView = true; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
             dataTab.rt.gameObject.name = "DataTab";
             PlaceTopLeft(dataTab, 98, 6, 96, 22);
-            learningTab = ui.Button(gearCard, T("它学会了吗", "Learning"), () => { learningView = true; RefreshSide(Track, Sim.Run(Track)); }, 12);
+            learningTab = ui.Button(gearCard, T("它学会了吗", "Learning"), () => { learningView = true; booksView = false; RefreshSide(Track, Sim.Run(Track)); }, 12);
             PlaceTopLeft(learningTab, 202, 6, 104, 22);
+            BuildBooksTab();
             learningPane = Rect("LearningPane", gearCard, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -36));
             var learningScroll = Rect("Evidence", learningPane, Vector2.zero, Vector2.one, new Vector2(0, 40), Vector2.zero);
             Panel(learningScroll, Color.clear); learningScroll.gameObject.AddComponent<RectMask2D>();
@@ -282,6 +283,7 @@ namespace LingGuangV05.Desktop.XingGuang
             gpuLabel = ui.Text(Rect("GpuLabel", gpuTarget, Vector2.zero, Vector2.one, new Vector2(12, 3), new Vector2(-12, -3)), "", 13, XgDark.Accent, TextAlignmentOptions.MidlineLeft);
             gpuLabel.enableAutoSizing = true; gpuLabel.fontSizeMin = 9; gpuLabel.fontSizeMax = 13;
             gpuTarget.gameObject.AddComponent<XgGpuInstallDrop>().Page = this;
+            BuildDownloadStrip(dataPane);
             UiTip.Add(noiseText, () => XgDataUi.NoiseTip(Sim, Sim.Run(Track).dataset));
             UiTip.Add(cleanNoise.rt, () => T("花钱和 GPU 时间把已知的脏标注扔掉（需要科技里的「标注抽检」）。更省事的办法：道具页的清洗脚本，一次清 50 条。",
                 "Spend money and GPU time to discard the known dirty labels (needs the 'label audit' tech). A cheaper way: the cleaning script on the Items page removes 50 at once."));
@@ -395,15 +397,18 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshSide(XgTrack track, XgRun run)
         {
             RefreshScale(track, run);
-            gearTab.Set(T("装备", "Gear"), true, !learningView && !dataView ? XgDark.Accent : XgDark.Button, !learningView && !dataView ? Color.white : XgDark.Ink);
-            dataTab.Set(T("数据集", "Datasets"), true, !learningView && dataView ? XgDark.Accent : XgDark.Button, !learningView && dataView ? Color.white : XgDark.Ink);
+            bool other = learningView || booksView;
+            gearTab.Set(T("装备", "Gear"), true, !other && !dataView ? XgDark.Accent : XgDark.Button, !other && !dataView ? Color.white : XgDark.Ink);
+            dataTab.Set(T("数据来源", "Data sources"), true, !other && dataView ? XgDark.Accent : XgDark.Button, !other && dataView ? Color.white : XgDark.Ink);
             learningTab.Set(T("它学会了吗", "Learning"), true, learningView ? XgDark.Accent : XgDark.Button, XgDark.Ink);
+            booksTab.Set(T("书架", "Books"), true, booksView ? XgDark.Accent : XgDark.Button, booksView ? Color.white : XgDark.Ink);
             learningPane.gameObject.SetActive(learningView);
-            learningText.text = Sim.CheckupText();
-            gearPane.gameObject.SetActive(!learningView && !dataView);
-            dataPane.gameObject.SetActive(!learningView && dataView);
+            if (learningView) learningText.text = Sim.CheckupText(dataset: run.dataset) + BookQuizText();
+            booksPane.gameObject.SetActive(booksView);
+            gearPane.gameObject.SetActive(!other && !dataView);
+            dataPane.gameObject.SetActive(!other && dataView);
             gearCount.gameObject.SetActive(false);
-            if (dataView) RefreshDataPane(track, run); else RefreshGear();
+            if (booksView) RefreshBooks(); else if (dataView) RefreshDataPane(track, run); else RefreshGear();
             RefreshLedger();
         }
 

@@ -53,6 +53,8 @@ namespace LingGuangV05.Desktop.Taohuo
             view.binding = binding; view.window = window; view.holder = content;
             binding.UseCustomView(view);
             ShopNotices.Install(router.gameObject);
+            // The home app's broadband line (its upgrade button is on the bills tab, not in the shop).
+            HomeBroadbandCard.Install(router);
             GameText.Changed -= view.Relabel; GameText.Changed += view.Relabel;
             view.Relabel();
             Instance = view;
@@ -79,6 +81,8 @@ namespace LingGuangV05.Desktop.Taohuo
             Build();
             XingGuangController.EnsureShown(this, window);
             if (requested == "data" || requested == "gpu" || requested == "pc" || requested == "disk" || requested == "soft" || requested == GiftTab) Show(requested);
+            // The guide's 硬盘满了 step opens the shop generically: land on the drive (its "BuyDrive" button).
+            else if (DiskBlocked(Lab) && Sim != null && Sim.Cards.Count > 0) Show("disk");
             signature = "";
         }
 
@@ -160,7 +164,7 @@ namespace LingGuangV05.Desktop.Taohuo
             {
                 case "gpu": return ("新显卡按日历上市。算力倍率越高训练越快，显存决定模型能多大。", "New cards come out on the calendar. A higher multiplier trains faster; VRAM decides how big a model fits.");
                 case "pc": return ("多一个机箱就多两个显卡插槽，卡分开放也更凉快。", "Another case adds two card slots and keeps the cards cooler.");
-                case "disk": return ("9 月上市的 NVMe 固态：数据读得快，所有卡训练快 10%。", "The NVMe drive from September: data loads faster, every card trains 10% faster.");
+                case "disk": return ("移动硬盘放下载的数据；9 月上市的 NVMe 固态让所有卡训练快 10%。", "Portable drives hold downloaded data; the NVMe drive from September makes every card train 10% faster.");
                 case "data": return ("数据包：公开包、杂包、大包。便宜的脏，贵的干净。", "Data packs: public, bulk and big. Cheap ones are dirty, dear ones are clean.");
                 case GiftTab: return GiftTabTip;
                 default: return ("2016 年的装机必备。", "The 2016 must-have installers.");
@@ -188,7 +192,7 @@ namespace LingGuangV05.Desktop.Taohuo
             bool open = Stage >= OpenStage;
             bool data = HasData;
             string cards = sim != null ? string.Join(",", sim.Cards) + "|" + sim.S.caseCount + "|" + sim.S.nvme : "";
-            string now = tab + "|" + today.ToString("MMdd") + "|" + open + "|" + data + "|" + GameText.IsEnglish + "|" + cards + "|" + (search != null ? search.text : "") + "|" + (tab == "data" ? DataSignature() : "") + (tab == GiftTab ? GiftSignature() : "");
+            string now = tab + "|" + today.ToString("MMdd") + "|" + open + "|" + data + "|" + GameText.IsEnglish + "|" + cards + "|" + (search != null ? search.text : "") + "|" + (tab == "data" ? DataSignature() : "") + (tab == GiftTab ? GiftSignature() : "") + (tab == "disk" ? DriveSignature() : "");
             if (now != signature) { signature = now; Redraw(sim, today, open, data); }
             UpdateLive(sim);
         }
@@ -409,6 +413,7 @@ namespace LingGuangV05.Desktop.Taohuo
 
         void BuildDisk(ChapterOneSim sim, DateTime today)
         {
+            BuildDrive();
             var row = Row(list, "Nvme", 150, Color.white);
             var pic = PrologueDesk.Rect("Picture", row, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(14, -60), new Vector2(146, 60));
             PrologueDesk.Fill(pic, new Color32(20, 40, 90, 255), false);
@@ -434,7 +439,10 @@ namespace LingGuangV05.Desktop.Taohuo
                 if (s.S.money + 1e-9 < HardwareCatalog.NvmePrice) return (false, Lang.T("钱不够"));
                 return (true, Lang.T("立即购买"));
             }));
-            Note(Lang.T("本机自带：240G 固态（系统盘，已经快满了）。"));
+            // The data disk is the lab's (XgSim.Downloads.cs): what the download queue fills and the 2TB drive extends.
+            string start = (LingGuangV05.XingGuang.XgSim.DiskStartMB / 1000).ToString("0"), taken = (LingGuangV05.XingGuang.XgSim.DiskSystemMB / 1000).ToString("0");
+            Note(T("本机自带：240G 固态装系统，一块 " + start + "G 机械盘放下载的数据（软件和杂七杂八已经占了 " + taken + "G）。",
+                "Already inside: a 240 GB SSD for the system and a " + start + " GB hard disk for downloaded data (software and clutter already take " + taken + " GB)."));
         }
 
         static readonly (string name, string nameEn, string zh, string en)[] Soft =

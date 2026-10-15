@@ -1,0 +1,77 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs
+index 95a8aa8..2565606 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs
+@@ -30,7 +30,7 @@ namespace LingGuangV05.Desktop.XingGuang
+         {
+             public string key;
+             public XgWireLane lane;
+-            public RectTransform rt, inPort, outPort, fill;
++            public RectTransform rt, inPort, outPort, inPress, outPress, fill;
+             public Image frame, accent;
+             public TMP_Text title, sub, status, metric;
+             public CanvasGroup group;
+@@ -337,25 +337,28 @@ namespace LingGuangV05.Desktop.XingGuang
+             node.group = node.rt.gameObject.AddComponent<CanvasGroup>();
+             node.frame = Rounded(node.rt, Line, true);
+             Rounded(Rect("Body", node.rt, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), Card);
+-            var button = node.rt.gameObject.AddComponent<UnityEngine.UI.Button>(); button.targetGraphic = node.frame; button.transition = Selectable.Transition.None;
++            var button = node.rt.gameObject.AddComponent<XgButtonPressFeedback>(); button.targetGraphic = node.frame; button.transition = Selectable.Transition.None;
+             string key = n.key; button.onClick.AddListener(() => Select(key));
+             if (ui.window != null) node.rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
+             var drag = node.rt.gameObject.AddComponent<XgWiringHover>(); drag.page = this; drag.key = key;
+             var dot = TopLeft("Kind", node.rt, 12, 15, 6, 6); node.accent = Rounded(dot, Tone[(int)n.lane]);
+             node.title = Text(TopLeft("Title", node.rt, 25, 8, 160, 39), "", 14, Ink, TextAlignmentOptions.MidlineLeft);
+-            node.title.maxVisibleLines = 2;
++            node.title.maxVisibleLines = 2; button.Label = node.title.rectTransform;
+             node.sub = Text(TopLeft("Resource", node.rt, 13, 52, 172, 21), "", 11, Mute, TextAlignmentOptions.MidlineLeft); node.sub.textWrappingMode = TextWrappingModes.NoWrap;
+             node.fill = Bar(TopLeft("Load", node.rt, 13, 81, 172, 4), "Fill", Soft, Tone[(int)n.lane]);
+             node.status = Text(TopLeft("State", node.rt, 13, 94, 105, 19), "", 11, Good, TextAlignmentOptions.MidlineLeft); node.status.textWrappingMode = TextWrappingModes.NoWrap;
+             node.metric = Text(TopLeft("Metric", node.rt, 117, 94, 68, 19), "", 10, Mute, TextAlignmentOptions.MidlineRight); node.metric.textWrappingMode = TextWrappingModes.NoWrap;
+-            if (n.lane != XgWireLane.Power) node.inPort = Port(node.rt, true, key);
+-            if (n.lane != XgWireLane.Task) node.outPort = Port(node.rt, false, key);
++            if (n.lane != XgWireLane.Power) node.inPort = Port(node.rt, true, key, out node.inPress);
++            if (n.lane != XgWireLane.Task) node.outPort = Port(node.rt, false, key, out node.outPress);
+             return node;
+         }
+-        RectTransform Port(RectTransform parent, bool input, string key)
++        RectTransform Port(RectTransform parent, bool input, string key, out RectTransform press)
+         {
+             var rt = Rect(input ? "In" : "Out", parent, new Vector2(input ? 0 : 1, .5f), new Vector2(input ? 0 : 1, .5f), new Vector2(-13, -13), new Vector2(13, 13));
+-            var image = Panel(rt, Color.clear); var b = rt.gameObject.AddComponent<UnityEngine.UI.Button>(); b.targetGraphic = image; b.transition = Selectable.Transition.None;
++            var image = Panel(rt, Color.clear); var b = rt.gameObject.AddComponent<XgButtonPressFeedback>(); b.targetGraphic = image; b.transition = Selectable.Transition.None;
++            // Only this visual proxy moves. The port hit area and cable endpoints stay fixed.
++            press = Rect("PressVisual", rt, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
++            b.Label = press;
+             b.onClick.AddListener(() => PortClick(key, input));
+             var relay = rt.gameObject.AddComponent<XgWiringPort>(); relay.page = this; relay.key = key; relay.input = input;
+             if (ui.window != null) rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
+@@ -657,8 +660,8 @@ namespace LingGuangV05.Desktop.XingGuang
+         {
+             foreach (var n in order)
+             {
+-                if (n.inPort != null) DrawPort(vh, End(n, false), Tone[Mathf.Max(0, (int)n.lane - 1)], armed == n.key && armedInput);
+-                if (n.outPort != null) DrawPort(vh, End(n, true), Tone[(int)n.lane], armed == n.key && !armedInput);
++                if (n.inPort != null) DrawPort(vh, End(n, false), Tone[Mathf.Max(0, (int)n.lane - 1)], armed == n.key && armedInput, n.inPress);
++                if (n.outPort != null) DrawPort(vh, End(n, true), Tone[(int)n.lane], armed == n.key && !armedInput, n.outPress);
+             }
+             if (armed != null && views.TryGetValue(armed, out var armedNode))
+             {
+@@ -673,8 +676,15 @@ namespace LingGuangV05.Desktop.XingGuang
+                 XgSoftDraw.Disc(vh, At(a, b, pulse.progress), 4, 1, pulse.correct ? Good : Bad, 12);
+             }
+         }
+-        static void DrawPort(VertexHelper vh, Vector2 p, Color tone, bool armed)
+-        { XgSoftDraw.Disc(vh, p, 7, 1, Card, 16); XgSoftDraw.Ring(vh, p, 5.7f, 1.7f, tone, 20); XgSoftDraw.Disc(vh, p, armed ? 3.6f : 2, .5f, tone, 10); }
++        static void DrawPort(VertexHelper vh, Vector2 p, Color tone, bool armed, RectTransform press)
++        {
++            // Keep the original foreground order; a private Button effect supplies only the pose.
++            float scale = press != null ? press.localScale.x : 1;
++            if (press != null) p += press.anchoredPosition;
++            XgSoftDraw.Disc(vh, p, 7 * scale, 1 * scale, Card, 16);
++            XgSoftDraw.Ring(vh, p, 5.7f * scale, 1.7f * scale, tone, 20);
++            XgSoftDraw.Disc(vh, p, (armed ? 3.6f : 2) * scale, .5f * scale, tone, 10);
++        }
+         void OnRouted(XgAutoRecord r) { if (r != null) OnItem("label:" + r.dataset, r.correct); }
+         void OnEpoch(XgEpoch e) { if (e != null) OnItem("train:" + e.track, !e.diverged); }
+         void OnItem(string task, bool correct)

@@ -19,6 +19,10 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<XgBtn> sourceBtns = new List<XgBtn>();
         readonly List<string> sourceIds = new List<string>();
         string shownSourceKey = "";
+        readonly List<XgBtn> acquireBtns = new List<XgBtn>();
+        readonly List<string> acquireIds = new List<string>();
+        string shownAcquireKey = "";
+        TMP_Text acquireTitle;
 
         /// <summary>Owned packs of the dataset that can be switched; story data shows as the public pack it stands for.</summary>
         List<XgDataOffer> SwitchablePacks(string dataset) =>
@@ -70,6 +74,55 @@ namespace LingGuangV05.Desktop.XingGuang
                 sourceBtns[i].Set(text, can, o.included ? XgDark.AccentSoft : XgDark.Button, o.included ? XgDark.Accent : XgDark.Ink);
             }
             dataBox.sizeDelta = new Vector2(0, top + SourceTitle + sourceBtns.Count * SourceRow);
+            RefreshSourceOffers(run, dataBox.sizeDelta.y + 8);
+        }
+
+        void RefreshSourceOffers(XgRun run, float top)
+        {
+            bool unlocked = Sim.SystemUnlocked("data");
+            var offers = unlocked ? Sim.OffersFor(run.dataset) : new List<XgDataOffer>();
+            string key = run.dataset + ":" + string.Join(",", offers.ConvertAll(o => o.id)) + ":" + top;
+            if (key != shownAcquireKey)
+            {
+                shownAcquireKey = key;
+                foreach (var b in acquireBtns) Object.Destroy(b.rt.gameObject);
+                acquireBtns.Clear(); acquireIds.Clear();
+                if (acquireTitle == null)
+                {
+                    acquireTitle = ui.Text(Strip("AcquireSources", dataBox, top, 32, 2, 2), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+                    acquireTitle.enableAutoSizing = true; acquireTitle.fontSizeMin = 10; acquireTitle.fontSizeMax = 12;
+                }
+                acquireTitle.rectTransform.offsetMin = new Vector2(2, -top - 32);
+                acquireTitle.rectTransform.offsetMax = new Vector2(-2, -top);
+                for (int i = 0; i < offers.Count; i++)
+                {
+                    string id = offers[i].id;
+                    XgBtn button = null;
+                    button = ui.Button(dataBox, "", () => { if (Sim.SystemUnlocked("data")) view.Data?.InvokeOffer(id, button.rt); }, 12);
+                    button.rt.name = "AcquireSource";
+                    button.rt.anchorMin = new Vector2(0, 1); button.rt.anchorMax = Vector2.one;
+                    button.rt.offsetMin = new Vector2(0, -top - 32 - (i + 1) * 54 + 4);
+                    button.rt.offsetMax = new Vector2(0, -top - 32 - i * 54);
+                    button.label.alignment = TextAlignmentOptions.MidlineLeft;
+                    button.label.enableAutoSizing = true; button.label.fontSizeMin = 10; button.label.fontSizeMax = 12;
+                    UiTip.Add(button.rt, () => { var offer = Sim.Offer(id); return offer == null ? "" : XgDataUi.OfferTip(Sim, offer); });
+                    acquireBtns.Add(button); acquireIds.Add(id);
+                }
+            }
+            acquireTitle.text = unlocked ? T("补充数据 · 购买 / 众包 / 爬虫", "More data · packs / crowd / crawler") : T("更多数据来源在第三阶段开放", "More sources open at stage 3");
+            for (int i = 0; i < acquireBtns.Count; i++)
+            {
+                var o = Sim.Offer(acquireIds[i]);
+                if (o == null) continue;
+                string action; bool enabled;
+                if (o.downloading) { double price = Sim.AccelerateOfferCost(o.id); action = T("加速 ¥", "Speed up ¥") + Money(price); enabled = Host.Money + 1e-9 >= price; }
+                else if (o.source == XgDataSource.Crawl) { action = o.owned ? T("回到爬虫", "Open crawler") : T("爬一次 ¥", "Crawl ¥") + Money(o.price); enabled = o.owned || o.available && Host.Money + 1e-9 >= o.price; }
+                else if (o.source == XgDataSource.Crowd) { action = o.owned ? T("撤包", "Withdraw") : T("发包", "Post task"); enabled = o.owned || o.available; }
+                else { action = o.owned ? T("已拥有", "Owned") : T("购买 ¥", "Buy ¥") + Money(o.price); enabled = !o.owned && o.available && Host.Money + 1e-9 >= o.price; }
+                acquireBtns[i].Set(o.SourceLabel(Sim.English) + " · " + o.Name(Sim.English) + "\n" + action
+                    + (!o.owned && !o.available && o.lockedReason.Length > 0 ? " · " + T(o.lockedReason, o.lockedReasonEn) : ""), enabled, XgDark.Button, enabled ? XgDark.Data : XgDark.Muted);
+            }
+            dataBox.sizeDelta = new Vector2(0, top + 32 + acquireBtns.Count * 54);
         }
 
         void TogglePack(string offerId)

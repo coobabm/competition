@@ -280,13 +280,16 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>A hand-labelled card goes straight onto the board: what you teach is what it becomes.</summary>
-        void TeachBoard(XgCard card, bool label)
+        void TeachBoard(XgCard card, bool label, List<XgConceptPull> pulls = null)
         {
             if (!UseBoard || card == null || XgCatalog.Dataset(card.dataset) == null) return;
             var run = Run(XgCatalog.Dataset(card.dataset).track);
             var b = XgBoardData.FromCard(card);
             b.truth = label;
-            Board.Train(b, Knobs(run));
+            Board.Train(b, Knobs(run), pulls);
+            // Content nudges style more gently than an explicit praise/dislike judgment.
+            if (b.region == "sequence")
+                foreach (var element in ToneElements(LessonText(card))) ToneCard(element, true, .2);
         }
 
         /// <summary>Changing the depth reinitialises the network for that region (the SI's seed survives).</summary>

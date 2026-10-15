@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+    "sha256": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs",
+    "sha256": "CF6FC6F55FD84843E96E2B2516D591F2F9AF304C0D6D4321AABA92B73A474AE7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Family.cs",
+    "sha256": "4779BEFB0C33261ECCD0468419CBB90C9662F70391C573121EF5570C3180115E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs",
+    "sha256": "C87745EE6C3052921C6A55FE373AD740179DACB7D43ADC22BC510EA620F9BC98"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "sha256": "C6716EFA175D5659BF1EA9C0BAFBAE9BE3315421F9B820B581CEB0DFCDF9D5A1"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/ClaudeHandoffChecks.cs",
+    "sha256": "A7430899A89741AADAAFC4B28CBBA6B1BCDB027AC17130760F9801BCFA49AA2C"
+  }
+]

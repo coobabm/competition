@@ -1,0 +1,12 @@
+{
+  "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs": "308fe4cd23d4410107d15670ff04520effc6cf59ab44b6370837053ecddadfe8",
+  "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs": "1d051cdc9a59ab3c1f1825a0445abd486cc6638273320306fb427556f17685b7",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.cs": "c4f1998e95b717c93ad4195d5c9fbb43616614d5c4a88837cb3ebcf44de9966b",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs": "a1ec4ad656114e54bbc5a43902a3e5e3b5324e7444daadd3eb75f8dd322822d7",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs": "d997bb22368619936b2cc7d3144efe82519d0114a792b945ba7a9ade40abb838",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs": "b8c06fd6ee0047198e73c7cf595b497f30ad9b708ea6e6a7ba29126600071da1",
+  "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs": "daf725a9b24e7e8c7dd303c8a32ecd4b87d3b1ae301e0ab867ad503b2f75e963",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs": "73ce990c4a6e454cfd65c5d5f47c06b748ce93d27b9e651dec3f4a4857f6a747",
+  "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs": "c2795a20598fa9b22f91a4678ad7946f97ac0d03e518a62a3108a80350d0414d",
+  "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs": "f27cc730c4871776fc3e29fb95d765c099c02007889648334c42e3491ca8a523"
+}

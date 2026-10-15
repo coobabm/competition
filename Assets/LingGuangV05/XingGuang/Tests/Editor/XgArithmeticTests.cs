@@ -128,12 +128,15 @@ namespace LingGuangV05.XingGuang.Tests
         // ───────────── the desk ─────────────
 
         [Test]
-        public void ArithmeticDeskIsOpenFromTheStartAndPaysLeast()
+        public void ArithmeticDeskOpensAtStageTwoAndPaysLeast()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
-            Assert.IsTrue(sim.DeskOpen("arith"));
+            Assert.IsFalse(sim.DeskOpen("arith"), "since the 2026-10-15 integration 算术 waits for stage two");
+            Assert.IsFalse(sim.ProgressionDeskAvailable("arith"));
             Assert.IsTrue(sim.DeskOpen("logic") && sim.DeskOpen("spam"));
-            Assert.AreEqual("spam", sim.S.desk, "a new player starts on the recognisable teaching desk, not on arithmetic");
+            Assert.AreEqual(XgMemes.SenseDesk, sim.S.desk, "a new player starts on 常识判断, not on arithmetic");
+            sim.S.stage = 2;
+            Assert.IsTrue(sim.ProgressionDeskAvailable("arith"));
             for (int i = 0; i < 40; i++)
             {
                 var card = sim.Card("arith");
@@ -149,11 +152,12 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void OldSavesGetTheArithmeticDesk()
+        public void OldSavesKeepTheirArithmeticDesk()
         {
-            var state = new XgState(); state.desksOpen.AddRange(new[] { "logic", "spam" }); state.desk = "spam";
+            var state = new XgState(); state.desksOpen.AddRange(new[] { "arith", "logic", "spam" }); state.desk = "spam";
             var sim = new XgSim(state);
-            Assert.IsTrue(sim.DeskOpen("arith"));
+            Assert.IsTrue(sim.DeskOpen("arith"), "a desk the save already had stays open");
+            Assert.IsTrue(sim.ProgressionDeskAvailable("arith"));
             Assert.AreEqual("spam", sim.S.desk, "the old selection stays");
         }
 

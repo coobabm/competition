@@ -184,6 +184,10 @@ namespace LingGuangV05.XingGuang
                 Card(CardEnding, 3, "end.E2", "自", "没有那条规则", "No such rule", "没写那条规则。", "Did not write the rule.", hidden: true),
                 Card(CardEnding, 3, "end.E3", "托", "托付", "Entrusted", "让它自己选。", "Let it choose.", hidden: true),
             };
+            // 书架: one card per book read to the end (XgSim.Books.cs).
+            foreach (var b in XgBooks.All)
+                list.Add(Card(CardData, b.ability >= 5 ? 2 : b.ability >= 4 ? 1 : 0, "book." + b.id, b.name.Substring(0, 1), "读完《" + b.name + "》", "Read " + b.nameEn,
+                    "把《" + b.name + "》一篇一篇读完了：参数 +" + ParamsText(b.paramsK) + "。", "Read " + b.nameEn + " to the end, chapter by chapter: parameters +" + ParamsText(b.paramsK) + ".", b.note, b.noteEn));
             // 现象图鉴: one common card per phenomenon of the board.
             foreach (var p in XgPhenomena.All)
                 list.Add(Card(CardPhenomenon, 0, "ph." + p.id, p.name.Substring(0, 1), p.name, p.nameEn, "第一次观察到「" + p.name + "」。", "Saw " + p.nameEn + " for the first time.", p.why, p.whyEn));

@@ -106,14 +106,14 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, s.S.combo);
         }
 
-        [Test] public void OnlyDesksWithAFinePayOneAndOnlyAfterAWrongAnswer()
+        [Test] public void EveryDeskFinesOnlyAfterAWrongAnswer()
         {
             foreach (var d in MappedDesks())
             {
                 var s = OpenAll(); var h = new Host();
                 s.S.combo = 7;
                 double money = h.Money, rows = s.Labels(d.id);
-                double expected = d.fine * s.MiniBasePay(d.id);
+                double expected = (d.fine > 0 ? d.fine : XgCatalog.HandFine) * s.MiniBasePay(d.id);
                 var a = s.SettleMiniAction(d.id, false, h);
                 Assert.AreEqual(expected, a.fine, 1e-9, d.id);
                 Assert.AreEqual(money - expected, h.Money, 1e-9, d.id);

@@ -178,6 +178,9 @@ namespace LingGuangV05.XingGuang.Tests
                 {
                     foreach (var node in XgCatalog.Nodes)
                         if (node.tree != "label" && node.kind != XgNodeKind.Secret && sim.Status(node, host) == XgSim.NodeStatus.Buyable) sim.BuyNode(node.id, host);
+                    // Packs come in batches: the next one of each pack the lab owns.
+                    foreach (var ds in XgCatalog.Datasets)
+                        if (sim.BatchBlocker(ds.id, out _) == null && host.Money >= sim.NextBatchPrice(ds.id)) sim.BuyBatch(ds.id, host);
                 }
                 if (sim.TrainingUnlocked(XgTrack.Sequence)) sim.TrainEpoch(XgTrack.Sequence, host);
                 if (sim.TrainingUnlocked(XgTrack.Vision)) sim.TrainEpoch(XgTrack.Vision, host);

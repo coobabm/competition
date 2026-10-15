@@ -1,0 +1,109 @@
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
+# Source SHA256: 1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
+@@ -12,10 +12,11 @@
+     {
+         public RectTransform Label { get; set; }
+ 
+         XgJuice pressFx, hostFx;
+         float elapsed, duration;
++        bool reducedPress;
+ 
+         public override void OnPointerDown(PointerEventData eventData)
+         {
+             base.OnPointerDown(eventData);
+             if (eventData.button == PointerEventData.InputButton.Left) PressLabel();
+@@ -37,10 +38,11 @@
+             // Knock needs no particle canvas or audio Init. Allocate only on first use.
+             // A private stack allows cancellation without clearing the host's business FX.
+             if (pressFx == null) pressFx = Label.gameObject.AddComponent<XgJuice>();
+             pressFx.enabled = true;
+             bool reduced = hostFx != null && hostFx.Reduced;
++            reducedPress = reduced;
+             duration = reduced ? .12f : .18f;
+             elapsed = 0;
+             pressFx.Knock(Label, reduced ? .015f : .045f,
+                 reduced ? Vector2.zero : Vector2.down, duration);
+             // Repeated presses reuse Knock's saved resting transform, never the deformed one.
+@@ -50,11 +52,21 @@
+         {
+             if (pressFx == null || !pressFx.enabled) return;
+             elapsed += Mathf.Min(Time.unscaledDeltaTime, .05f);
+             if (!IsInteractable() || Label == null || elapsed >= duration ||
+                 (hostFx != null && (!hostFx.isActiveAndEnabled || !hostFx.Visible())))
++            {
+                 ResetPress();
++                return;
++            }
++            // Observe changes after the host toggle callback. Never amplify or replay an
++            // in-flight press when Reduced turns off; the next press selects that mode.
++            if (!reducedPress && hostFx != null && hostFx.Reduced)
++            {
++                reducedPress = true;
++                pressFx.SettleKnock(Label, .06f);
++            }
+         }
+ 
+         protected override void DoStateTransition(SelectionState state, bool instant)
+         {
+             base.DoStateTransition(state, instant);
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+# Source SHA256: 2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+@@ -29,11 +29,11 @@
+         public Func<bool> Visible = () => true;
+ 
+         sealed class Floater { public TMP_Text text; public Vector2 from; public float t, life, rise, scale; public Color color; }
+         sealed class Particle { public RectTransform rt; public Graphic g; public Vector2 pos, vel, from, to; public float t, life, spin, gravity; public Color color; public bool travelling; }
+         sealed class Wave { public XgRingGraphic ring; public Vector2 pos; public float t, life, radius, width; public Color color; }
+-        sealed class Punch { public RectTransform rt; public Vector3 scale; public Vector2 pos, dir; public float t, life, amp; public bool squash; }
++        sealed class Punch { public RectTransform rt; public Vector3 scale; public Vector2 pos, dir; public float t, life, amp; public bool squash, settling; public Vector3 settleScale; public Vector2 settlePos; }
+ 
+         readonly List<Floater> floaters = new List<Floater>();
+         readonly List<Particle> particles = new List<Particle>();
+         readonly List<Wave> waves = new List<Wave>();
+         readonly Dictionary<RectTransform, Punch> punches = new Dictionary<RectTransform, Punch>();
+@@ -101,11 +101,22 @@
+         /// <summary>Scale punch (buttons "pressed in" then overshoot) plus an optional knockback offset.</summary>
+         public void Knock(RectTransform rt, float amp = .08f, Vector2 dir = default, float seconds = .22f, bool squash = false)
+         {
+             if (rt == null || !Visible()) return;
+             if (!punches.TryGetValue(rt, out var p)) { p = new Punch { rt = rt, scale = rt.localScale, pos = rt.anchoredPosition }; punches[rt] = p; }
+-            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash;
++            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash; p.settling = false;
++        }
++
++        /// <summary>Opt-in quiet return from the current pose; preserves the saved rest
++        /// transform and never extends the remaining punch lifetime. Other FX are untouched.</summary>
++        public void SettleKnock(RectTransform rt, float seconds = .06f)
++        {
++            if (rt == null || !punches.TryGetValue(rt, out var p) || p.settling) return;
++            float remaining = p.life - p.t;
++            if (remaining <= 0 || seconds <= 0) return;
++            p.settleScale = rt.localScale; p.settlePos = rt.anchoredPosition;
++            p.life = Mathf.Min(seconds, remaining); p.t = 0; p.settling = true;
+         }
+ 
+         public void Float(Vector2 at, string text, Color color, float size = 22, float rise = 60, float life = .75f, float scale = 1.3f)
+         {
+             if (!Visible()) return;
+@@ -296,10 +307,17 @@
+                 {
+                     if (p.rt == null) { done.Add(p.rt); continue; }
+                     p.t += dt;
+                     float k = p.t / p.life;
+                     if (k >= 1) { p.rt.localScale = p.scale; p.rt.anchoredPosition = p.pos; done.Add(p.rt); continue; }
++                    if (p.settling)
++                    {
++                        float ease = k * k * (3 - 2 * k);
++                        p.rt.localScale = Vector3.LerpUnclamped(p.settleScale, p.scale, ease);
++                        p.rt.anchoredPosition = Vector2.LerpUnclamped(p.settlePos, p.pos, ease);
++                        continue;
++                    }
+                     // Pressed in first (−amp), then overshoot, settling with a damped wobble.
+                     float wobble = Mathf.Sin(k * Mathf.PI * 2.5f) * (1 - k);
+                     p.rt.localScale = p.squash ? Vector3.Scale(p.scale, new Vector3(1 + p.amp * wobble, 1 - p.amp * wobble, 1)) : p.scale * (1 - p.amp * wobble);
+                     p.rt.anchoredPosition = p.pos + p.dir * wobble;
+                 }

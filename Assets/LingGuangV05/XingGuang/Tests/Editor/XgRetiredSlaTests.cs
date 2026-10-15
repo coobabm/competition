@@ -31,7 +31,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void LegacyEarnedEscrowIsReleasedOnceAcrossReloads()
         {
-            var sim = new XgSim(new XgState { slaHeld = 47.5, totalIncome = 100, fundedAbility = XgSim.AbilityCount });
+            var sim = new XgSim(new XgState { slaHeld = 47.5, totalIncome = 100, fundedAbility = XgSim.AbilityCount, downloadsVersion = XgSim.DownloadsSchema });
             var host = new Host();
             sim.Tick(.1, host);
             Assert.AreEqual(170.5, host.money, 1e-9);
@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang.Tests
         [TestCase(double.PositiveInfinity)]
         public void InvalidLegacyEscrowCannotChangeTheWallet(double held)
         {
-            var sim = new XgSim(new XgState { slaHeld = held, fundedAbility = XgSim.AbilityCount });
+            var sim = new XgSim(new XgState { slaHeld = held, fundedAbility = XgSim.AbilityCount, downloadsVersion = XgSim.DownloadsSchema });
             var host = new Host();
             sim.Tick(.1, host);
             Assert.AreEqual(123, host.money, 1e-9);

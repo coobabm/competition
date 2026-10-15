@@ -1,0 +1,33 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -15,6 +15,7 @@
+             if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeName(node);
+             switch (node.id)
+             {
++                case "resnet": return T(sim, "残差网络（ResNet）", "Residual network (ResNet)");
+                 case "rnn": return T(sim, "循环神经网络（RNN）", "Recurrent neural network (RNN)");
+                 case "lstm": return T(sim, "长短期记忆网络（LSTM）", "Long short-term memory (LSTM)");
+                 case "gru": return T(sim, "门控循环单元（GRU）", "Gated recurrent unit (GRU)");
+@@ -63,6 +64,9 @@
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.id == "resnet") return T(sim,
++                "给信息留一条绕过中间层的近道，让原来的线索能直接传下去。",
++                "Give information a shortcut around intermediate layers so the original clues can pass straight through.");
+             switch (node.kind)
+             {
+                 case XgNodeKind.Depth: return T(sim, "多一层，就多一次把简单线索组合成复杂线索的机会。", "Each extra layer can combine simple clues into more complex ones.");
+                 case XgNodeKind.Width: return T(sim, "同一层能同时容纳更多线索，网络就更宽。", "A wider layer can hold more clues at the same time.");
+@@ -128,6 +132,9 @@
+         static string Effect(XgNode node, XgSim sim)
+         {
++            if (node.id == "resnet") return T(sim,
++                "购买后加入视觉结构候选；系统按数据、已解锁层数和显存自动选择，不保证立即换用或变成 152 层。两条训练线下次自动配置时都会开启跨层直连，无需手动装备；正在训练的一轮结束后再配置。大脑的层间传话不再因经过更多层而衰减或被改写；阶跃激活仍不能传回学习信号。换用新结构后需重新训练，已拥有迁移学习时保留部分进度；成绩需训练后评估。下列预训练倍率只需拥有便计入，不要求选用或训练 ResNet。",
++                "Buying adds a vision architecture option. The system selects for the data, unlocked layer cap and VRAM; it may not switch to ResNet or build 152 layers. Both tracks enable skip connections at their next automatic configuration, after any active epoch; no manual equip step is needed. On the brain board, passing clues through extra layers no longer weakens or garbles them; step activation still blocks the learning signal. A new architecture needs training again, with some progress retained if transfer learning is owned. Evaluate after training to see the score. The pre-training multiplier below counts as soon as ResNet is owned, without selecting or training it.");
+             if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)
+             {
+                 bool depth = node.kind == XgNodeKind.Depth;
+                 string scope = node.tree == "trunk" ? T(sim, "两条训练线", "Both training tracks") : node.tree == "vision" ? T(sim, "视觉训练线", "The vision track") : T(sim, "序列训练线", "The sequence track");

@@ -49,7 +49,7 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public sealed partial class XgSim
     {
-        public const double PretrainWork = 900, PretrainPlateau = .6;
+        public const double PretrainWork = 800, PretrainPlateau = .6;
         public const int AlignCards = 12, MaxRules = 5, ExamQuestions = 6;
         /// <summary>Rent and power of the IDC rack per game second while pre-training runs.</summary>
         public const int DatacenterRent = 25;
@@ -84,12 +84,17 @@ namespace LingGuangV05.XingGuang
         };
 
         /// <summary>
-        /// The effective scale pre-training needs. With the parameter and data bars just at ability 6 the full stack
+        /// The effective scale pre-training needs. With the parameter and data bars just at one unit each the full stack
         /// (×2160) clears it; one big item missing (Transformer, 注意力 or 机房) never does, even with both bars at
         /// their cap; one small one missing can be made up with bigger bars, residuals and mixed precision together cannot.
         /// </summary>
         public const double ScaleNeed = 2000;
-        /// <summary>Trained parameters and data each count up to this many times ability 6's bar: items, not grinding, close the gap.</summary>
+        /// <summary>
+        /// The unit each bar of the effective scale counts in: 320K parameters and 600,000 samples (ability 6's line
+        /// before 2026-10-15). Fixed on its own, so the chapter lines can move without moving pre-training.
+        /// </summary>
+        public const double ScaleUnitParamsK = 320, ScaleUnitSamples = 600000;
+        /// <summary>Trained parameters and data each count up to this many units: items, not grinding, close the gap.</summary>
         public const double ScaleBarCap = 1.5;
 
         /// <summary>The product of the stage-6 multipliers owned.</summary>
@@ -98,12 +103,12 @@ namespace LingGuangV05.XingGuang
             get { double m = 1; foreach (var i in ScaleItems) if (Has(i.item)) m *= i.factor; return m; }
         }
 
-        /// <summary>Trained parameters × data, each as a multiple of ability 6's bar (capped at <see cref="ScaleBarCap"/>).</summary>
+        /// <summary>Trained parameters × data, each in scale units (capped at <see cref="ScaleBarCap"/>).</summary>
         public double ScaleBars => ScaleParamsRatio * ScaleDataRatio;
 
         /// <summary>The two factors of <see cref="ScaleBars"/> on their own (the training page shows them as chips).</summary>
-        public double ScaleParamsRatio => ScaleBar(TrainedParamsK, AbilityParamsK[AbilityCount]);
-        public double ScaleDataRatio => ScaleBar(TrainedSamples, AbilitySamples[AbilityCount]);
+        public double ScaleParamsRatio => ScaleBar(TrainedParamsK, ScaleUnitParamsK);
+        public double ScaleDataRatio => ScaleBar(TrainedSamples, ScaleUnitSamples);
 
         static double ScaleBar(double have, double bar) => bar <= 0 || !Finite(have) ? 0 : Math.Max(0, Math.Min(ScaleBarCap, have / bar));
 

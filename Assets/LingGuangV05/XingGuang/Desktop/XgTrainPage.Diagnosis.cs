@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.XingGuang
             diagnose = ui.Button(trainRow, "", OpenDiagnosis, 15);
             diagnose.rt.gameObject.name = "DiagnoseButton";
             diagnose.rt.anchorMin = diagnose.rt.anchorMax = Vector2.zero;
-            diagnose.rt.offsetMin = new Vector2(252, 6); diagnose.rt.offsetMax = new Vector2(252 + 280, 38);
+            diagnose.rt.offsetMin = new Vector2(252, 4); diagnose.rt.offsetMax = new Vector2(252 + 280, 32);
             diagnose.label.fontStyle = FontStyles.Bold;
             diagnose.Show(false);
             UiTip.Add(diagnose.rt, () => T("再练也涨不动了。看看证据，自己判断是哪里出了问题：第一次就选对有奖励。", "Training no longer helps. Read the evidence and decide what is wrong: the right cause at the first pick earns a reward."));

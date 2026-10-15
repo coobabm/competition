@@ -69,7 +69,7 @@ namespace LingGuangV05.Desktop.Story
         public bool ReduceMotion { get { return PlayerPrefs.GetInt(ReduceMotionPref, 0) == 1; } }
         public bool CutscenePlaying { get { return cutsceneRoutine != null; } }
         /// <summary>Shares the established cutscene/prologue/hologram gate with desktop message delivery.</summary>
-        public bool NotificationsHeld => InnerVoiceHeld();
+        public bool NotificationsHeld => OpeningSequence.FirstLessonActive || InnerVoiceHeld();
 
         PrologueDirector prologueForVoice;
         LingGuangV05.Desktop.XingGuang.XgHoloCard holoForVoice;
@@ -92,8 +92,14 @@ namespace LingGuangV05.Desktop.Story
         private void OnEnable() { GameText.Changed += RefreshLocalizedText; RefreshLocalizedText(); }
         private void OnDisable() { GameText.Changed -= RefreshLocalizedText; }
 
-        private void Start()
+        bool shellPrepared;
+        private void Start() => PrepareDesktopShell();
+
+        /// <summary>Warm views while the boot screen hides them; story hosts remain paused.</summary>
+        public void PrepareDesktopShell()
         {
+            if (shellPrepared) return;
+            shellPrepared = true;
             if (director == null) director = GetComponent<StoryDirector>();
             if (router == null) router = GetComponent<ChapterOneDesktopRouter>();
             BuildOverlay();
@@ -112,6 +118,8 @@ namespace LingGuangV05.Desktop.Story
             LingGuangV05.Desktop.Miaoyu.MiaoyuView.Install();
             // The music player's 2016 playlist (the player's own audio files; none are shipped).
             StartCoroutine(Music2016.Install());
+            // Background music: the music app's 灵光 playlist, track 1 on repeat at 60 %.
+            GameMusic.Install(gameObject);
             // The 2016 tray crowd next to the clock, and the stage-6 flicker (design v1.1 §3, §10.2 #8).
             TrayApps.Install();
             TrayLingGuang.Install();
@@ -138,7 +146,7 @@ namespace LingGuangV05.Desktop.Story
             {
                 director.Rebound += OnStoryRebound;
                 // The setup (naming it, then its first 是 / 否) is on screen too: the month card must not cover it.
-                director.ExternalBusy = () => CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
+                director.ExternalBusy = () => OpeningSequence.FirstLessonActive || CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
                 director.SetOutput(this);
             }
         }
@@ -687,7 +695,7 @@ namespace LingGuangV05.Desktop.Story
             if (string.IsNullOrEmpty(glitchPool)) glitchPool = "是否对错真假有无";
 
             // No 2026 "memory" framing: the opening is played in 2016, not recalled.
-            var header = Label(cutsceneRoot, GameText.T(AppNames.ExeZh, AppNames.ExeEn), 24,
+            var header = Label(cutsceneRoot, AiDesktopIdentity.Exe(director != null ? director.runtime : null), 24,
                 new Vector2(0, 300), new Vector2(900, 40), new Color(.56f, .72f, .87f, .9f));
             var card = Panel(cutsceneRoot, new Vector2(0, 40), new Vector2(860, 420), new Color(.055f, .1f, .17f, 1));
             Panel(card, new Vector2(0, 208), new Vector2(860, 4), new Color(.31f, .76f, .97f, .8f));

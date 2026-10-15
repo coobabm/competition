@@ -1,0 +1,5 @@
+Validation kind: static only.
+git apply --check changes.patch exit code: 0
+Dependency SHA256 recheck count: 12
+Changed dependencies: 0
+No C# compilation, Unity/game execution, or visual acceptance performed.

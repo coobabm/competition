@@ -80,8 +80,8 @@ namespace LingGuangV05.Desktop.Story
             if (installed || (item != null && item.isFinished))
             {
                 ShowProgress(1, 1);
-                Set(status, GameText.T("下载完成 · " + AppNames.ExeZh + " 已放到桌面", "Download complete · " + AppNames.ExeEn + " is on your desktop"));
-                SetButton(GameText.T("打开 " + AppNames.ExeZh, "Open " + AppNames.ExeEn), true);
+                Set(status, GameText.T("下载完成 · " + AiDesktopIdentity.Exe(runtime) + " 已放到桌面", "Download complete · " + AiDesktopIdentity.Exe(runtime) + " is on your desktop"));
+                SetButton(GameText.T("打开 " + AiDesktopIdentity.Exe(runtime), "Open " + AiDesktopIdentity.Exe(runtime)), true);
             }
             else if (native != null)
             {

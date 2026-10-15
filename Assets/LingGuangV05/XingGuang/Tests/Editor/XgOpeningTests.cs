@@ -16,7 +16,7 @@ namespace LingGuangV05.XingGuang.Tests
             public void Train(double s) { }
         }
 
-        static readonly string[] Locked = { "arith", "logic", "spam" };
+        static readonly string[] Locked = { "logic", "spam" }; // 算术 waits for stage two since the 2026-10-15 integration
 
         static XgSim Fresh()
         {

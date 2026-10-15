@@ -98,12 +98,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             string date = Sim.TodayKnown ? T(Sim.Today / 100 % 100 + "月" + Sim.Today % 100 + "日", new DateTime(2016, Math.Max(1, Math.Min(12, Sim.Today / 100 % 100)), Math.Max(1, Math.Min(28, Sim.Today % 100))).ToString("MMM d", System.Globalization.CultureInfo.InvariantCulture)) : "";
             dayNote.text = date;
-            int done = Sim.DayDone;
+            int done = WorkContext ? Sim.S.workSubmitted : Sim.DayDone;
             dayValues[0].text = done + T(" 条", "");
-            dayValues[1].text = done > 0 ? Math.Round(100.0 * Sim.DayRight / done) + "%" : "—";
-            double income = Sim.DayIncome;
+            dayValues[1].text = done > 0 ? Math.Round(100.0 * (WorkContext ? Sim.S.workCorrect : Sim.DayRight) / done) + "%" : "—";
+            double income = WorkContext ? Sim.S.workIncome : Sim.DayIncome;
             dayValues[2].text = (income < 0 ? "−¥" : "¥") + N(Math.Abs(income), "0.00");
-            dayValues[3].text = Sim.DaySamples.ToString();
+            dayValues[3].text = WorkContext ? Sim.S.workCorrect.ToString() : Sim.DaySamples.ToString();
+            if (WorkContext) { todayTitle.text = T("工作记录", "Work record"); dayLabels[3].text = T("合格提交", "Accepted"); }
 
             int rl = Sim.RaiseLevel;
             bool maxed = rl >= XgCatalog.RaiseMax;
@@ -194,7 +195,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 : acc > 0 ? T("这桌还不会 · 检查点 " + XgSim.Pct(acc) + "，要 60%", "Cannot do this desk yet · checkpoint " + XgSim.Pct(acc) + ", needs 60%")
                 : T("这桌还不会 · 还没有检查点", "Cannot do this desk yet · no checkpoint");
             var info = XgCatalog.Desk(Desk);
-            double fine = info != null && info.fine > 0 ? Sim.HandFineFor(Desk, Sim.LevelOf(Desk)) : 0;
+            double fine = info != null ? Sim.HandFineFor(Desk, Sim.LevelOf(Desk)) : 0;
             aiHint.text = T("把它拖到题目旁边，它会伸手替你答。", "Drag it by the question and it reaches out to answer for you. ")
                 + (fine > 0 ? "<color=#E33E33>" + T("那时它答错要扣你的钱（每错 −¥" + N(fine, "0.00") + "）。", "Then every wrong answer costs your money (−¥" + N(fine, "0.00") + " each).") + "</color>"
                     : "<color=#E33E33>" + T("那时它答错会断掉连击。", "Then a wrong answer breaks the combo.") + "</color>")
@@ -294,7 +295,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The detailed pay formula of the current card, shown when the pointer rests on the pay note above the workspace.</summary>
         string PayTip()
         {
-            if (Sim.TeachMode) return T("先看它的猜测，再确认或纠正。正确纠正的奖励是确认的两倍；每张卡都改变它的概念。连击记录它的成绩。教错不罚钱。", "Check its guess, then confirm or correct. A correct correction pays twice confirmation; every card changes its concepts. The streak measures its answers. No fine for a mistaken lesson.");
+            if (TeachingContext) return T("答对有报酬；判错扣 ¥" + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + "，连击清零。", "A correct answer earns pay; a wrong answer costs ¥" + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + " and resets the combo.");
             string desk = Desk;
             int dl = Sim.LevelOf(desk);
             double kind = XgCatalog.Desk(desk)?.pay ?? 1;

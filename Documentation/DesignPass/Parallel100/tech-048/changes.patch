@@ -1,0 +1,8 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -165,3 +165,3 @@
+                 case "wordvec": return Speed(sim, 1.08);
+-                case "beamsearch": return Speed(sim, 1.1);
++                case "beamsearch": return T(sim, "购买后自动生效，无需装备；视觉与序列的手动、自动训练在结算时，取整前的每轮训练卡数 ×1.1（+10%），与其他训练处理量倍率相乘。本项只生效一次。实际每轮卡数受算力、取整及 4–320 张范围限制；成绩需训练后评估。", "Active automatically once purchased; no equip step. For both vision and sequence, manual and automatic training multiply pre-rounding cards per epoch by 1.1 (+10%) at settlement, stacking multiplicatively with other throughput factors. This research applies once. Actual cards per epoch depend on compute, rounding and the 4–320 card limits; evaluate after training to see the score.");
+                 case "subword": case "sft": case "cot": return Speed(sim, 1.05);

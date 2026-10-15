@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang
         public const double EpochSeconds = .6;
         /// <summary>A new record must beat the old one by this much on yes/no cards (about one standard error of the test set).</summary>
         public const double RecordMargin = .02;
-        /// <summary>Seconds a training press keeps the combo alive.</summary>
+        /// <summary>Seconds a hand round keeps the combo alive, counted from the end of the round (the timer holds while a hand round runs).</summary>
         public const double EpochComboWindow = 1.5;
         /// <summary>Chance of a 前方高能 card (tests set 0 for exact pay).</summary>
         public double GoldChance = .05;
@@ -84,6 +84,7 @@ namespace LingGuangV05.XingGuang
             RepairAfterthoughts();
             RepairAlignment();
             RepairMemoryBook();
+            RepairKnowledge();
             RepairWiring();
             RepairConsumablesRetired();
             RepairAutoRetired();
@@ -643,8 +644,9 @@ namespace LingGuangV05.XingGuang
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
             ReleaseFirstWords(run);
-            ChargeTraining(host, DurationFor(run), true);
-            S.trainedSeconds += DurationFor(run);
+            double billed = BilledSeconds(run);
+            ChargeTraining(host, billed, true);
+            S.trainedSeconds += billed;
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards };
             StepAccuracy(run, cards, e);
             RelicRoundDone();
@@ -655,6 +657,7 @@ namespace LingGuangV05.XingGuang
             S.stageEpochs++;
             Push(run.histTrain, (float)run.trainAcc);
             Push(run.histVal, (float)run.valAcc);
+            PushHoldout(run);
             e.trainAcc = run.trainAcc; e.valAcc = run.valAcc;
             CheckDesks();
             AutoCountTrainedParams(run);
@@ -876,7 +879,7 @@ namespace LingGuangV05.XingGuang
                 else if (run.depth != m.depth) ReinitialiseBoard(run);
             }
             Evaluate(run);
-            Push(run.histTrain, (float)run.trainAcc); Push(run.histVal, (float)run.valAcc);
+            Push(run.histTrain, (float)run.trainAcc); Push(run.histVal, (float)run.valAcc); PushHoldout(run);
             SelectedTrack = (XgTrack)m.track;
             Say(T("已加载 ") + m.name + (reshaped ? T("：长成现在的大小，保留大部分进度。", ": grown to the current size, keeping most of its progress.") : ""));
             return true;
@@ -944,12 +947,16 @@ namespace LingGuangV05.XingGuang
 
         public double IncomePerSecond
         {
-            get { double sum = 0; foreach (var c in XgCatalog.Contracts) sum += ContractIncome(c); return sum * RelicIncomeFactor; }
+            // Signed contracts plus the crowd-order tier the abilities reached (XgSim.StoryPacing.cs).
+            get { double sum = CrowdOrderIncome; foreach (var c in XgCatalog.Contracts) sum += ContractIncome(c); return sum * RelicIncomeFactor; }
         }
 
         public bool ContractsUnlocked { get { return S.best.Count > 0 || S.contracts.Count > 0; } }
 
         // ───────────── combo ─────────────
+
+        /// <summary>A round pressed by hand is on the bar: the combo timer waits for it (it restarts when the round lands).</summary>
+        public bool HandRoundRunning => S.vision.epochActive && S.vision.epochHand || S.sequence.epochActive && S.sequence.epochHand;
 
         void Hit(double window, int amount)
         {
@@ -1037,14 +1044,14 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// How a locked desk opens, under the current rules: digits and danmaku open by themselves with the second
+        /// How a locked desk opens, under the current rules: arithmetic, digits and danmaku open by themselves with the second
         /// ability; the rest with their data pack in the tech tree, some of which also need an item first.
         /// </summary>
         public string DeskConditionText(XgDesk desk)
         {
             if (desk != null && OpeningLocksDesk(desk.id)) return OpeningReason;
             if (desk == null || ProgressionDeskAvailable(desk.id)) return "";
-            if ((desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
+            if ((desk.id == "arith" || desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
                 return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
             var pack = XgCatalog.Node(desk.id + ".pack");
             if (pack == null) return "";
@@ -1148,7 +1155,12 @@ namespace LingGuangV05.XingGuang
         public double ManualPayFor(string desk, int level) { return PayFor(desk, level) * RaiseMultiplier * XgCatalog.HandPayScale; }
 
         /// <summary>What a wrong pick costs on this desk (0 when the desk does not fine): its fine share of a right answer's base pay.</summary>
-        public double HandFineFor(string desk, int level) { return (XgCatalog.Desk(desk)?.fine ?? 0) * ManualPayFor(desk, level); }
+        public double HandFineFor(string desk, int level)
+        {
+            var info = XgCatalog.Desk(desk);
+            if (info == null) return 0;
+            return (info.fine > 0 ? info.fine : XgCatalog.HandFine) * ManualPayFor(desk, level);
+        }
 
         // ───────────── 加薪 ─────────────
 
@@ -1204,7 +1216,7 @@ namespace LingGuangV05.XingGuang
             return card;
         }
 
-        public XgCard CreateLabelCard(string desk, bool allowFamily = false)
+        public XgCard CreateLabelCard(string desk, bool allowFamily = false, bool companyWork = false)
         {
             var info = XgCatalog.Desk(desk);
             var d = XgCatalog.Dataset(desk);
@@ -1271,7 +1283,7 @@ namespace LingGuangV05.XingGuang
             if (card.family) { card.gold = false; card.timeLimit = 0; }
             card.roll = Roll();
             DecorateProgressionCard(card);
-            MaybeShutdownCard(card);
+            if (!companyWork) MaybeShutdownCard(card);
             EnsureCardId(card);
             return card;
         }
@@ -1307,9 +1319,19 @@ namespace LingGuangV05.XingGuang
             var info = XgCatalog.Desk(desk);
             if (info == null || host == null) return default;
             var card = Card(desk);
-            if (card.family) return AnswerFamily(card, yes, host);
+            var traceReceiver = CardAnswered;
+            long traceCardId = card.id;
+            string traceDataset = card.dataset;
+            var traceSource = AnswerTraceSource(card);
+            List<XgConceptPull> correctionPulls = null;
+            if (card.family)
+            {
+                var familyResult = AnswerFamily(card, yes, host);
+                PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, null, familyResult);
+                return familyResult;
+            }
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
-            bool teaching = TeachingGuess(card, out bool taughtGuess);
+            bool teaching = TeachingGuess(card, out bool taughtGuess, out XgPredictionTrace predictionTrace, traceReceiver != null);
             bool correcting = teaching && taughtGuess != yes;
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
@@ -1343,15 +1365,17 @@ namespace LingGuangV05.XingGuang
                 {
                     AddLabel(desk);
                     result.samples = 1 + (int)HandLabelLog(desk) + RelicLabelExtra();
-                    TeachBoard(card, card.truth);
+                    if (traceReceiver != null && correcting) correctionPulls = new List<XgConceptPull>();
+                    TeachBoard(card, card.truth, correctionPulls);
                     RememberSheetCard(card);
+                    RememberTaught(card);
                     if (correcting) RememberCorrection(card);
                 }
             }
             else
             {
                 BreakCombo(); S.modelStreak = 0; S.handWrong++;
-                if (!teaching && !timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
+                if (!timeout && !shutdown) result.fine = ChargeHandFine(desk, card.level, host);
             }
             result.combo = S.combo;
             NoteDayAnswer(result.correct, result.pay - result.fine, result.samples);
@@ -1364,6 +1388,7 @@ namespace LingGuangV05.XingGuang
             NewCard(desk);
             CheckDesks();
             ObserveGhost(hadGhost, ghost, yes, timeout);
+            PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, predictionTrace, result, correctionPulls);
             return result;
         }
 
@@ -1431,6 +1456,8 @@ namespace LingGuangV05.XingGuang
             AutoConfigureAll(host);
             TickProject(dt, host);
             TickEpochs(dt, host);
+            TickBooks(dt, host);
+            TickBookPuzzles(dt);
             NoteRegionWiring();
             TickStages(dt);
             if (S.stage >= 6) TickFinale(dt, host);
@@ -1439,8 +1466,8 @@ namespace LingGuangV05.XingGuang
             TickDataSources(dt, host);
             TickFlywheel(dt, host);
             RelicTick(dt);
-            // 网吧通宵卡: the combo timer holds, so the combo does not fade.
-            if (S.comboTimer > 0 && !RelicFx.comboKeep)
+            // 网吧通宵卡: the combo timer holds, so the combo does not fade. So does a hand round on the bar (rounds take seconds now).
+            if (S.comboTimer > 0 && !RelicFx.comboKeep && !HandRoundRunning)
             {
                 S.comboTimer = Math.Max(0, S.comboTimer - dt);
                 if (S.comboTimer <= 0) BreakCombo();
@@ -1449,10 +1476,12 @@ namespace LingGuangV05.XingGuang
 
             AutoAnswer(dt, host);
             TickMarket(dt, host);
+            TickLifeEvents(dt, host);
             double income = IncomePerSecond * dt;
             if (income > 0) { host.Earn(income); S.totalIncome += income; }
             CheckAbilities();
             CheckDesks();
+            TickChronicle();
         }
 
         void TickCard(double dt)

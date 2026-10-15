@@ -69,8 +69,10 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void BigPacksDownloadOverTime()
         {
+            // Real 2016 sizes on 4M ADSL: text arrives at once, pictures take a while, ImageNet's batch of 120k images a few minutes.
             Assert.AreEqual(0, XgSim.DataOfferDef("spam.pack").downloadSec);
-            Assert.That(XgSim.DataOfferDef("news.pack").downloadSec, Is.InRange(20, 90));
+            Assert.That(XgSim.DataOfferDef("news.pack").downloadSec, Is.GreaterThan(0));
+            Assert.That(XgSim.DataOfferDef("imagenet.pack").downloadSec, Is.InRange(120, 300));
             Assert.That(XgSim.DataOfferDef("mnist.junk").downloadSec, Is.GreaterThan(0), "120k scanned digits come down through 迅雷");
         }
 

@@ -31,6 +31,8 @@ namespace LingGuangV05.CaseMenu
         public float TransitionProgress { get; private set; }
         public string LastError { get; private set; }
         public bool HasEnteredGame { get; private set; }
+        public bool IsReturningToTitle { get; private set; }
+        public float ReturnTransitionProgress { get; private set; }
         public bool IsMainReady => mainDisplay != null && mainDisplay.IsReady;
         CaseMenuHud hud;
         CaseMenuMainDisplay mainDisplay;
@@ -39,6 +41,10 @@ namespace LingGuangV05.CaseMenu
         CaseMenuButton hovered, captured;
         float initialFov, lastHoverSound = -1, originalListenerVolume;
         bool reducedMotion, keyboardFocus;
+        Vector3 flightStart, flightEnd, flightControlA, flightControlB;
+        Quaternion flightStartRotation;
+        float flightDuration;
+        bool flightReduced;
         enum PressSource { None, Mouse, Touch, Enter, Space }
         PressSource pressSource;
 
@@ -208,6 +214,7 @@ namespace LingGuangV05.CaseMenu
             if (fanMotor != null) fanMotor.StartBoot();
             // Give the physical switch and LCD backlight a short, visible lead before the dolly.
             yield return new WaitForSecondsRealtime(.20f);
+            // Original camera timing and physical monitor framing; the LCD stays on the model.
             float duration = reducedMotion ? .65f : Mathf.Max(2f, transitionSeconds);
             Vector3 start = menuCamera.transform.position;
             Quaternion startRotation = menuCamera.transform.rotation;
@@ -218,6 +225,9 @@ namespace LingGuangV05.CaseMenu
             Vector3 end = monitorCenter.position + Vector3.back * distance;
             Vector3 controlA = start + startRotation * Vector3.forward * .85f;
             Vector3 controlB = end + new Vector3(0, .025f, -.65f);
+            flightStart = start; flightEnd = end;
+            flightControlA = controlA; flightControlB = controlB;
+            flightStartRotation = startRotation; flightDuration = duration; flightReduced = reducedMotion;
             for (float elapsed = 0; elapsed < duration; elapsed += CaseMenuMotion.FrameStep(Time.unscaledDeltaTime))
             {
                 float raw = Mathf.Clamp01(elapsed / duration);
@@ -232,13 +242,70 @@ namespace LingGuangV05.CaseMenu
             }
             menuCamera.transform.SetPositionAndRotation(end, Quaternion.identity);
             menuCamera.fieldOfView = finalFov; TransitionProgress = 1;
-            // Reduced motion may arrive early. Keep desktop input locked until the visible boot ends.
+            // The original reduced-motion flight arrives before firmware startup finishes.
             while (!mainDisplay.IsBootComplete) yield return null;
             mainDisplay.EnterDesktop();
+            while (!mainDisplay.HasEnteredDesktop) yield return null;
             HasEnteredGame = true; IsTransitioning = false;
             hud.SetChromeAlpha(0);
             hud.SetLoading(-1, null);
             if (fanMotor != null) { fanMotor.SetStable(); fanMotor.BeginGameplayCountdown(); }
+        }
+
+        /// <summary>Called only after GameExit has successfully saved the active session.</summary>
+        public bool TryReturnToTitle()
+        {
+            if (IsReturningToTitle) return true;
+            if (!HasEnteredGame || IsTransitioning || mainDisplay == null || !mainDisplay.HasEnteredDesktop) return false;
+            if (!Application.CanStreamedLevelBeLoaded(ScenePath)) return false;
+            IsReturningToTitle = true; IsTransitioning = true;
+            ReturnTransitionProgress = 0;
+            CancelCapture(); SetHovered(null); hud.HideSettings();
+            mainDisplay.BeginShutdown();
+            StartCoroutine(ReturnToTitle());
+            return true;
+        }
+
+        IEnumerator ReturnToTitle()
+        {
+            // Preserve the accepted shutdown: fade the physical LCD, then reverse the camera flight.
+            const float fadeSeconds = .35f;
+            float fanVolume = fan != null ? fan.volume : 0;
+            if (fanMotor != null) fanMotor.ReleaseForShutdown();
+            if (effects != null) effects.Stop();
+            for (float elapsed = 0; elapsed < fadeSeconds; elapsed += CaseMenuMotion.FrameStep(Time.unscaledDeltaTime))
+            {
+                mainDisplay.SetShutdownProgress(elapsed / fadeSeconds);
+                if (fan != null) fan.volume = fanVolume * (1 - elapsed / fadeSeconds);
+                yield return null;
+            }
+            mainDisplay.SetShutdownProgress(1);
+            if (fan != null) { fan.Stop(); fan.volume = 0; }
+            mainDisplay.BeginDesktopReturn();
+            float duration = Mathf.Max(.1f, flightDuration);
+            for (float elapsed = 0; elapsed < duration; elapsed += CaseMenuMotion.FrameStep(Time.unscaledDeltaTime))
+            {
+                float raw = 1 - Mathf.Clamp01(elapsed / duration);
+                ReturnTransitionProgress = 1 - raw;
+                SetFlightPose(raw);
+                hud.SetChromeAlpha(1 - Mathf.Clamp01(raw * 3f));
+                yield return null;
+            }
+            menuCamera.transform.SetPositionAndRotation(flightStart, flightStartRotation);
+            menuCamera.fieldOfView = initialFov;
+            ReturnTransitionProgress = 1; hud.SetChromeAlpha(1);
+            // Keep the landed title visible for a rendered frame before discarding the old session.
+            yield return null;
+            SceneManager.LoadSceneAsync(ScenePath, LoadSceneMode.Single);
+        }
+
+        void SetFlightPose(float raw)
+        {
+            float t = CaseMenuMotion.SmootherStep(raw);
+            menuCamera.transform.position = flightReduced ? Vector3.Lerp(flightStart, flightEnd, t)
+                : CaseMenuMotion.Bezier(flightStart, flightControlA, flightControlB, flightEnd, t);
+            menuCamera.transform.rotation = CaseMenuMotion.Rotation(flightStartRotation, Quaternion.identity, raw);
+            menuCamera.fieldOfView = Mathf.Lerp(initialFov, 32f, t);
         }
 
         void Play(AudioClip clip, float gain)

@@ -417994,10 +417994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91122f21d7f91a40b8d7e360dd87b7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  libraryPlaylist: {fileID: 11400000, guid: fa4608419c399d34e85f447c2852eb32, type: 2}
+  libraryPlaylist: {fileID: 11400000, guid: 33b49288bb3054983a89d3d12642c0d6, type: 2}
   modPlaylist: {fileID: 11400000, guid: 2bd10ceef25f08b45838f50bb90a272c, type: 2}
-  customPlaylists:
-  - {fileID: 11400000, guid: c8616457c5d7e784891347e6f136a22b, type: 2}
+  customPlaylists: []
   audioSource: {fileID: 195255146857726880}
   libraryParent: {fileID: 133158239}
   playlistParent: {fileID: 1076245676}
@@ -418008,7 +418007,7 @@ MonoBehaviour:
   musicPanelManager: {fileID: 1817931161}
   nowPlayingListTitle: {fileID: 1077333307}
   repeat: 1
-  shuffle: 1
+  shuffle: 0
   sortListByName: 1
   enablePopupNotification: 0
   playlistSingularLabel: Song

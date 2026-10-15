@@ -10,7 +10,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// the work items and never takes input. Pivot top-left: local (x, −y) is the canvas pixel (x, y).
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
-    public sealed class XgWiringGraphic : MaskableGraphic, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
+    public sealed class XgWiringGraphic : MaskableGraphic, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
     {
         public XgWiringPage page;
         public bool front;
@@ -20,6 +20,10 @@ namespace LingGuangV05.Desktop.XingGuang
             if (front) page.DrawFront(vh); else page.DrawBack(vh);
         }
         public void OnPointerClick(PointerEventData e) { if (!front && page != null) page.CanvasClick(e); }
+        public void OnPointerDown(PointerEventData e) { if (!front && page != null) page.CanvasPress(e); }
+        public void OnPointerUp(PointerEventData e) { if (!front && page != null) page.CanvasRelease(e); }
+        public void OnPointerExit(PointerEventData e) { if (!front && page != null) page.CanvasLeave(e); }
+        protected override void OnDisable() { if (!front && page != null) page.CancelCablePress(); base.OnDisable(); }
         public void OnBeginDrag(PointerEventData e) { if (!front && page != null) page.BeginPan(e); }
         public void OnDrag(PointerEventData e) { if (!front && page != null) page.DragPan(e); }
         public void OnEndDrag(PointerEventData e) { if (!front && page != null) page.EndPan(e); }

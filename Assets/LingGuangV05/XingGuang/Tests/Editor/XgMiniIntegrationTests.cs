@@ -51,8 +51,9 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var s = new XgSim(); var h = new Host(); s.S.qcFrozen = 100;
             long t = s.BeginMiniGame("slice", h); double before = s.Labels("spam"), money = h.Money;
-            Assert.IsTrue(s.SubmitMiniGame(t, 1, false, h).accepted);
-            Assert.AreEqual(before, s.Labels("spam")); Assert.AreEqual(money, h.Money);
+            var wrong = s.SubmitMiniGame(t, 1, false, h);
+            Assert.IsTrue(wrong.accepted);
+            Assert.AreEqual(before, s.Labels("spam")); Assert.AreEqual(money - wrong.fine, h.Money, 1e-9);
             Assert.IsTrue(s.SubmitMiniGame(t, 2, true, h).accepted);
         }
         #if UNITY_5_3_OR_NEWER

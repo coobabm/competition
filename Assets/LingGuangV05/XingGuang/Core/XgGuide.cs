@@ -71,6 +71,8 @@ namespace LingGuangV05.XingGuang
     public sealed class XgDataBuy
     {
         public XgNode target;
+        /// <summary>The next batch of a pack already owned (dataset id; <see cref="target"/> is its pack node), or null.</summary>
+        public string batch;
         /// <summary>Effective samples it adds (or takes off the threshold), and the price of the whole path.</summary>
         public double gain, cost;
         public readonly List<XgNode> path = new List<XgNode>();
@@ -234,12 +236,17 @@ namespace LingGuangV05.XingGuang
             if (house.noGpu)
                 list.Add(Step("gpu.none", XgGuideKind.Blocker, "去" + LingGuangV05.Core.AppNames.ShopZh + "买张显卡", "Buy a graphics card on " + LingGuangV05.Core.AppNames.ShopEn,
                     "没有显卡，什么都训不了。", "No card, no training.", Shop, "shop", "name:BuyGpu", ""));
+            if (house.appInstalled && sim.DownloadBlocker(out _) != null)
+                list.Add(Step("disk.full", XgGuideKind.Blocker, "硬盘满了：去" + LingGuangV05.Core.AppNames.ShopZh + "买一块（¥" + Money(sim.NextDrivePrice) + "）", "Disk full: buy a drive on " + LingGuangV05.Core.AppNames.ShopEn + " (¥" + Money(sim.NextDrivePrice) + ")",
+                    "下载停在半路，数据进不来。一块 2TB 移动硬盘就够放很久" + (sim.Has(XgSim.DataCleanId) ? "。" : "；研究「数据清洗」也能压掉 30%。"),
+                    "Downloads stopped halfway and no data comes in. One 2TB portable drive lasts a long time" + (sim.Has(XgSim.DataCleanId) ? "." : "; Data cleaning research also squeezes out 30%."),
+                    Shop, "shop", "name:BuyDrive", ""));
             if (house.appInstalled && sim.QualityFrozen)
             {
                 string clock = XgSim.FreezeClock(sim.FreezeSecondsLeft);
                 list.Add(Step("qc.frozen", XgGuideKind.Blocker, "账号被举报：等 " + clock + " 或去标注台申诉", "Account reported: wait " + clock + " or appeal on the labelling page",
-                    "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。",
-                    "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit.",
+                    "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。解冻前先处理：" + sim.QualityAdvice(false),
+                    "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit. Before it thaws: " + sim.QualityAdvice(true),
                     Lab, "teach", "name:QcAppeal", ""));
             }
             if (house.appInstalled && sim.CaptchaPending)
@@ -264,9 +271,11 @@ namespace LingGuangV05.XingGuang
             if (!sim.QualityWarning) return;
             bool coop = sim.CollaborationEnabled;
             string pass = Math.Floor(sim.PassRate * 100 + 1e-9).ToString("0", CultureInfo.InvariantCulture) + "%";
-            string line = Math.Round(XgSim.QcReportRate * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
-            list.Add(Step("qc.rate", XgGuideKind.Main, "抽检合格率偏低：调高「拿不准才问我」阈值，或先把模型练好", "Spot-check pass rate is low: raise the 'Ask when unsure' threshold, or train a better model first",
-                "摆渡众包近期合格率 " + pass + "；错误率到 " + line + " 账号会被举报冻结。", "Bodu Crowdsourcing's recent pass rate is " + pass + "; at a " + line + " error rate the account is reported and frozen.",
+            string fine = XgSim.QcFineMultiplier.ToString("0", CultureInfo.InvariantCulture);
+            list.Add(Step("qc.rate", XgGuideKind.Main,
+                coop ? "抽检合格率偏低：调高「拿不准才问我」阈值，或先把模型练好" : "抽检合格率偏低：去科技买「拿不准才问我」",
+                coop ? "Spot-check pass rate is low: raise the 'Ask when unsure' threshold, or train a better model first" : "Spot-check pass rate is low: buy 'Ask when unsure' in Tech",
+                "摆渡众包近期合格率 " + pass + "；抽到的错题每道罚 " + fine + " 倍工钱。" + sim.QualityAdvice(false), "Bodu Crowdsourcing's recent pass rate is " + pass + "; each wrong label caught costs " + fine + "× its pay. " + sim.QualityAdvice(true),
                 coop ? Crowd : Lab, coop ? "label" : "tree", coop ? "name:ThresholdSlider" : "node:label.coop", ""));
         }
 
@@ -487,21 +496,12 @@ namespace LingGuangV05.XingGuang
         {
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
             double d = sim.TrainedSamples, dNeed = sim.SamplesThreshold(next), gap = dNeed - d;
-            // Packs already bought and still downloading.
-            double incoming = 0, left = 0; XgDataset waiting = null;
-            foreach (var ds in XgCatalog.Datasets)
-                if (sim.S.owned.Contains(ds.id) && sim.Downloading(ds.id) && CountsAsData(ds.id))
-                {
-                    incoming += ds.dataWeight * ds.samples;
-                    if (sim.DownloadLeft(ds.id) > left) { left = sim.DownloadLeft(ds.id); waiting = ds; }
-                }
+            // Batches and packs already bought and still in the download queue.
+            double incoming = sim.QueuedDataSamples(out var waiting);
             if (waiting != null && incoming + 1e-9 >= gap)
             {
-                string secs = Math.Ceiling(left).ToString("0", CultureInfo.InvariantCulture);
-                var w = Step("ability.download", XgGuideKind.Ability, "等「" + waiting.name + "」数据包下完（还要 " + secs + " 秒）：样本", "Wait for the " + waiting.nameEn + " pack to download (" + secs + " s left): samples",
-                    "下完就够「" + name + "」的数据了。等的时候可以接着标注、训练。", "Once it is in, '" + nameEn + "' has its data. Keep labelling or training meanwhile.", Lab, TabOpen(sim, Lab, "data") ? "data" : "train", "", "");
-                w.current = d; w.goal = dNeed;
-                list.Add(w);
+                list.Add(DownloadWait(sim, waiting, name, nameEn, d, dNeed));
+                Broadband(sim, wallet, list);
                 return;
             }
             gap -= incoming;
@@ -510,15 +510,21 @@ namespace LingGuangV05.XingGuang
             if (buy != null)
             {
                 foreach (var n in buy.path) advancing.Add(n.id);
+                if (buy.batch != null)
+                {
+                    list.Add(BatchStep(sim, wallet, buy, name, nameEn, d, dNeed));
+                    if (waiting != null) Broadband(sim, wallet, list);
+                    return;
+                }
                 var first = buy.path[0];
                 bool pack = buy.target.kind == XgNodeKind.Dataset;
                 string what = pack ? "「" + buy.target.name + "」数据包" : "「" + buy.target.name + "」";
                 string whatEn = pack ? "the " + buy.target.nameEn + " data pack" : "'" + buy.target.nameEn + "'";
                 string zh = buy.path.Count == 1 ? "科技买" + what : "科技买" + Chain(buy.path, false);
                 string en = buy.path.Count == 1 ? "Tech tree: buy " + whatEn : "Tech tree: buy " + Chain(buy.path, true);
-                string why = pack ? "一次补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条。"
+                string why = pack ? "下载权连第一批：补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条。"
                     : "它把「" + name + "」要的数据压到 " + XgSim.SamplesText(dNeed - buy.gain) + " 条。";
-                string whyEn = pack ? "It adds " + XgSim.SamplesText(buy.gain) + " effective samples at once; '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "."
+                string whyEn = pack ? "The download right with the first batch: " + XgSim.SamplesText(buy.gain) + " effective samples; '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "."
                     : "It lowers the data '" + nameEn + "' needs to " + XgSim.SamplesText(dNeed - buy.gain) + ".";
                 var s = Step(pack ? "ability.pack" : "ability.item", XgGuideKind.Ability, zh, en, why + ShortOfMoney(sim, wallet, first, false), whyEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
@@ -559,6 +565,61 @@ namespace LingGuangV05.XingGuang
             if (buy == null) { label.current = d; label.goal = dNeed; }
             list.Add(label);
         }
+
+        /// <summary>「等下载：ImageNet 还要 2:10」: the queue already holds the data the bar needs.</summary>
+        static XgGuideStep DownloadWait(XgSim sim, XgDownload waiting, string name, string nameEn, double d, double dNeed)
+        {
+            var ds = XgCatalog.Dataset(waiting.dataset);
+            var o = XgSim.DataOfferDef(waiting.offer);
+            bool junk = o != null && o.source == XgDataSource.Junk;
+            string what = junk ? o.name : ds.name, whatEn = junk ? o.nameEn : ds.nameEn;
+            string eta = XgSim.ClockText(sim.DownloadEtaOf(waiting));
+            bool paused = !waiting.campus && sim.DownloadBlocker(out _) != null;
+            var w = Step("ability.download", XgGuideKind.Ability,
+                paused ? "下载停了（硬盘满）：" + what + "，样本" : "等下载：" + what + " 还要 " + eta + "，样本",
+                paused ? "Downloads stopped (disk full): " + whatEn + ", samples" : "Wait for the download: " + whatEn + ", " + eta + " left, samples",
+                "下完就够「" + name + "」的数据了。现在是" + XgSim.BroadbandName(sim.BroadbandTier, false) + "，" + Num(sim.LineMBps, "0.#") + " MB/s。等的时候可以接着标注、训练。",
+                "Once it is in, '" + nameEn + "' has its data. The line is " + XgSim.BroadbandName(sim.BroadbandTier, true) + ", " + Num(sim.LineMBps, "0.#") + " MB/s. Keep labelling or training meanwhile.",
+                Lab, TabOpen(sim, Lab, "data") ? "data" : "train", "", "");
+            w.current = d; w.goal = dNeed;
+            return w;
+        }
+
+        /// <summary>The line is the slow part and a faster one is on offer: 「宽带太慢：装光纤 20M」.</summary>
+        static void Broadband(XgSim sim, Wallet wallet, List<XgGuideStep> list)
+        {
+            if (!sim.BroadbandBottleneck) return;
+            int next = sim.BroadbandTier + 1;
+            double price = sim.NextBroadbandPrice;
+            string tier = XgSim.BroadbandName(next, false), tierEn = XgSim.BroadbandName(next, true);
+            bool short_ = wallet.money + 1e-9 < price;
+            var s = Step("broadband", XgGuideKind.Ability, "宽带太慢：装" + tier + (short_ ? "" : "（¥" + Money(price) + "）"), "The line is the bottleneck: install " + tierEn + (short_ ? "" : " (¥" + Money(price) + ")"),
+                "排着的下载还要 " + XgSim.ClockText(sim.LineQueueSeconds) + "。" + tier + " 是 " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s，快 " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " 倍；月租 ¥" + Money(XgSim.BroadbandMonthly[next]) + "。",
+                "The queue still needs " + XgSim.ClockText(sim.LineQueueSeconds) + ". " + tierEn + " is " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s, " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " times faster; ¥" + Money(XgSim.BroadbandMonthly[next]) + " a month.",
+                Home, "power", "name:BuyBroadband", "");
+            if (short_) { s.money = true; s.current = wallet.money; s.goal = price; }
+            list.Add(s);
+        }
+
+        /// <summary>「数据页买「ImageNet」第 3 批」: the next batch of a pack the lab owns.</summary>
+        static XgGuideStep BatchStep(XgSim sim, Wallet wallet, XgDataBuy buy, string name, string nameEn, double d, double dNeed)
+        {
+            var ds = XgCatalog.Dataset(buy.batch);
+            int k = sim.BatchesBought(ds.id) + 1, all = XgSim.PackBatches(ds);
+            // Short of money, the progress shows the price; otherwise the line names it.
+            bool short_ = wallet.money + 1e-9 < buy.cost;
+            string price = short_ ? "" : "（¥" + Money(buy.cost) + "）", priceEn = short_ ? "" : " (¥" + Money(buy.cost) + ")";
+            var s = Step("ability.batch", XgGuideKind.Ability, "数据页买「" + ds.name + "」第 " + k + "/" + all + " 批" + price, "Data page: buy batch " + k + "/" + all + " of " + ds.nameEn + priceEn,
+                "补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，" + XgSim.SizeText(XgSim.BatchMB(ds)) + "，要下载一阵。「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条；每批比上一批贵 25%。",
+                XgSim.SamplesText(buy.gain) + " more effective samples, " + XgSim.SizeText(XgSim.BatchMB(ds)) + " to download. '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "; each batch costs 25% more than the last.",
+                Lab, TabOpen(sim, Lab, "data") ? "data" : "tree", "batch:" + ds.id, ds.id);
+            if (short_) { s.money = true; s.current = wallet.money; s.goal = buy.cost; }
+            else { s.current = d; s.goal = dNeed; }
+            return s;
+        }
+
+        static string Num(double v, string format) => v.ToString(format, CultureInfo.InvariantCulture);
+        static string Money(double v) => double.IsInfinity(v) ? "-" : Math.Ceiling(v - 1e-9).ToString("0", CultureInfo.InvariantCulture);
 
         /// <summary>The open desk of a line that cannot train yet (the one with the most labels), or null.</summary>
         static XgDesk TrackDesk(XgSim sim, XgTrack track)
@@ -760,7 +821,7 @@ namespace LingGuangV05.XingGuang
                             if (vramMB > 0 && XgSim.VramNeedMB(run) > vramMB + 1e-6) continue;
                             var buy = new List<XgNode>();
                             foreach (var part in new[] { archPath, depth.path, width.path }) foreach (var n in part) if (!buy.Contains(n)) buy.Add(n);
-                            double threshold = XgSim.AbilityParamsK[ability] * Factor(sim, ability, buy, true);
+                            double threshold = XgSim.AbilityParamsK[ability] * Factor(sim, ability, buy, true) * sim.RelicParamsFactor;
                             if (k + 1e-9 < threshold) continue;
                             double cost = 0; foreach (var n in buy) cost += sim.NodeCost(n);
                             bool better = best == null || cost < best.cost - 1e-9
@@ -785,16 +846,27 @@ namespace LingGuangV05.XingGuang
             var options = new List<XgDataBuy>();
             foreach (var n in XgCatalog.Nodes)
             {
-                if (n.kind != XgNodeKind.Dataset || sim.Has(n.id) || sim.S.owned.Contains(n.target) || !CountsAsData(n.target)) continue;
+                if (n.kind != XgNodeKind.Dataset || !CountsAsData(n.target)) continue;
                 var ds = XgCatalog.Dataset(n.target);
-                var path = ds != null ? Path(sim, n.id) : null;
+                if (ds == null) continue;
+                // A pack already owned: its next batch (节奏重做 §2.3, each one dearer than the last).
+                if (sim.Has(n.id) || sim.S.owned.Contains(n.target))
+                {
+                    if (sim.BatchBlocker(ds.id, out _) != null) continue;
+                    var b = new XgDataBuy { target = n, batch = ds.id, gain = ds.dataWeight * XgSim.BatchSamples(ds), cost = sim.NextBatchPrice(ds.id) };
+                    b.path.Add(n);
+                    options.Add(b);
+                    continue;
+                }
+                var path = Path(sim, n.id);
                 if (path == null || path.Count == 0) continue;
-                options.Add(Option(sim, n, path, ds.dataWeight * ds.samples));
+                // The pack node is the download right with its first batch.
+                options.Add(Option(sim, n, path, ds.dataWeight * XgSim.BatchSamples(ds)));
             }
             foreach (var disc in XgSim.AbilityDiscounts)
             {
                 if (disc.ability != ability || disc.samplesFactor >= 1 || sim.DiscountOwned(disc)) continue;
-                double gain = XgSim.AbilitySamples[ability] * Factor(sim, ability, new List<XgNode>(), false) * (1 - disc.samplesFactor);
+                double gain = XgSim.AbilitySamples[ability] * Factor(sim, ability, new List<XgNode>(), false) * sim.RelicSamplesFactor * (1 - disc.samplesFactor);
                 XgDataBuy cheapest = null;
                 foreach (var id in disc.item.Length > 0 ? new[] { disc.item } : disc.itemsAny)
                 {

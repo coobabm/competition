@@ -791,7 +791,7 @@ namespace LingGuangV05.UI
             _nameInput.textComponent = (TextMeshProUGUI)inputText;
             _nameInput.placeholder = placeholder;
             // Runtime validates Unicode text elements; allow enough UTF-16 units for sixteen names.
-            _nameInput.characterLimit = 64;
+            _nameInput.characterLimit = 128;
             _nameInput.lineType = TMP_InputField.LineType.SingleLine;
             _nameInput.richText = false;
             _nameInput.onValueChanged.AddListener(_ => _nameDraftEdited = true);

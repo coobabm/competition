@@ -1,0 +1,13 @@
+{
+  "baseline": {
+    "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs": "7bb948b3e8cee122a4e7d00ee5fa55baae2d5af4c003ab44fa14cb05f71063f3",
+    "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs": "07fc13e841025f7f962154290faea2cccc26a11aebf5e67e9c9e1bc2c762b0c0"
+  },
+  "candidate": {
+    "DesignWallpaperSmoke.cs": "d8e4adc2cd02baea51e38c57e129897d51b25a1c284d00050b796a7e9558952c",
+    "DesignWallpaperSmoke.TechCards.cs": "55aba99e5347998ac3f417bb56c6130ae76902339dac3d8b12226a0c8ed04e75",
+    "XgTechCardCopy.cs": "60e1ae5e97cf14b3dcbda112a1ac3e6eaa4780b02e49bce1d8cce10b57dedcae",
+    "XgTechTreePage.Cards.cs": "354b6d9bbd90670829b665b52ea59087b5e2b31e317b67991d82874878aebdb9",
+    "XgTechTreePage.cs": "d5078e434fe3bcdf587d2310ede9c92e464d59ad9c2a4a3b83632042c0f11685"
+  }
+}

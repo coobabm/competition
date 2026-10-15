@@ -230,13 +230,13 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(answers.TrueForAll(a => a), "all 是");
             Assert.IsTrue(sim.MonotoneAnswers);
 
-            // Once the platform looks, the identical answers get the account reported as a script.
+            // Once the platform looks, his wrong 是 answers are fined to you; the account is never reported.
             var reports = new List<XgReportReason>(); sim.QualityReported += (r, s) => reports.Add(r);
             sim.ForcedCheckChance = 1;
+            double fines = sim.S.qcFines;
             sim.Tick(150, host);
-            Assert.AreEqual(1, reports.Count);
-            Assert.AreEqual(XgReportReason.MonotoneAnswers, reports[0]);
-            Assert.IsTrue(sim.QualityFrozen);
+            Assert.AreEqual(0, reports.Count);
+            Assert.Greater(sim.S.qcFines, fines, "the script costs money instead");
         }
 
         const double XiaogangHint = XgSim.XiaogangHintBefore;

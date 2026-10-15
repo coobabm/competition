@@ -69,9 +69,11 @@ namespace LingGuangV05.Desktop.XingGuang
             incomeCaption.text = T("收入/秒", "income/s");
             powerCaption.text = T("电力", "power");
             UiTip.Add(moneyRect, "经费。手动标注、订单、评级奖励会加钱；电费、显卡、道具和科技会花钱。", "Funds. Labelling, contracts and grade rewards add money; power, cards, items and the tech tree cost money.");
-            UiTip.Add(incomeCell, () => Sim != null && Sim.AutoLabelHidden
+            UiTip.Add(incomeCell, () => (Sim != null && Sim.AutoLabelHidden
                 ? T("每秒自动进账 = 已签订单。\n去「摆渡众包」的企业订单页：模型准确率够了就能签。", "Income per second = signed contracts.\nGo to Business orders in Bodu Crowd: sign once the model is accurate enough.")
-                : T("每秒自动进账 = 已签订单 + 自动答题。\n去「摆渡众包」的企业订单页：模型准确率够了就能签。", "Income per second = signed contracts + auto-answer.\nGo to Business orders in Bodu Crowd: sign once the model is accurate enough."));
+                : T("每秒自动进账 = 已签订单 + 自动答题。\n去「摆渡众包」的企业订单页：模型准确率够了就能签。", "Income per second = signed contracts + auto-answer.\nGo to Business orders in Bodu Crowd: sign once the model is accurate enough."))
+                // 节奏重做 §2.4: each ability opens the next crowd-order tier, paid by the second.
+                + (Sim != null ? "\n" + XgDataUi.CrowdTierLine(Sim) : ""));
             UiTip.Add(powerCell, () => T("家里机箱的电：显卡、训练和接线页上的任务一起算，超过 3500W 就跳闸。\n显存：每张卡放得下多大的模型。", "The house case's power: cards, training and the jobs on the wiring page together; past 3500 W the breaker trips.\nVRAM: how big a model each card holds.")
                 + "\n" + T("单卡显存 ", "VRAM per card ") + N(VramUseMB() / 1024, "0.0") + "/" + N(Sim.Vram(Host) / 1024, "0") + "G");
             UiTip.Add(clockCell, "2016 年的游戏时间。", "The game's time in 2016.");
@@ -109,7 +111,7 @@ namespace LingGuangV05.Desktop.XingGuang
         double VramUseMB() => Math.Max(XgSim.VramNeedMB(Sim.S.vision), XgSim.VramNeedMB(Sim.S.sequence));
 
         /// <summary>The AI's display name: the name given at setup, else 灵光.</summary>
-        public string AiName => Sim != null && Sim.Profile != null && Sim.Profile.name.Length > 0 ? Sim.Profile.name : T(AppNames.AiZh, AppNames.AiEn);
+        public string AiName => Sim != null ? Sim.AiDisplayName : T(AppNames.AiZh, AppNames.AiEn);
 
         /// <summary>The bars' hover help: what they count, and what the next ability opens.</summary>
         string AbilityTip()
@@ -128,7 +130,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             aiName.text = AiName;
             int have = Sim.AbilitiesCount, next = Sim.NextAbility;
-            aiSub.text = T(AppNames.AppZh + " · 能力 ", AppNames.AppEn + " · ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
+            aiSub.text = T("能力 ", "Ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
             double p = Sim.TrainedParamsK, d = Sim.TrainedSamples;
             paramsLabel.text = T("参数", "Params");
             dataLabel.text = T("样本", "Samples");
@@ -217,15 +219,11 @@ namespace LingGuangV05.Desktop.XingGuang
         // ───────────── nav ─────────────
 
         /// <summary>The nav's pages in order (XgGuideHighlight.TabIds follows it). 科技 (tree) is a section of 道具.</summary>
-        public static readonly string[] NavIds = { "teach", "train", "board", "tree", "home", "data", "items", "backpack", "wiring", "repo", "abilities", "cards", "final" };
+        public static readonly string[] NavIds = { "teach", "train", "tree", "home" };
 
         static readonly (string zh, string en, string[] ids)[] NavGroups =
         {
-            ("教它长大", "TEACH & GROW", new[] { "teach", "train", "board", "tree" }),
-            ("它", "IT", new[] { "home" }),
-            ("养成", "RAISE", new[] { "data", "items", "backpack" }),
-            ("调度", "RUN", new[] { "wiring", "repo" }),
-            ("收藏", "KEEP", new[] { "abilities", "cards", "final" }),
+            ("", "", new[] { "teach", "train", "tree", "home" }),
         };
 
         sealed class NavRow
@@ -252,7 +250,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<TMP_Text> navGroupLabels = new List<TMP_Text>();
         RectTransform nav, crowdLink;
         TMP_Text crowdTitle, crowdSub;
-        XgBtn soundToggle, fxToggle, residentToggle;
+        XgBtn soundToggle, fxToggle, residentToggle, residentRecall;
 
         void BuildNav()
         {
@@ -268,7 +266,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
 
             // 摆渡众包: labelling, orders and the combo live there.
-            crowdLink = Rect("CrowdLink", nav, Vector2.zero, new Vector2(1, 0), new Vector2(10, 90), new Vector2(-10, 138));
+            crowdLink = Rect("CrowdLink", nav, Vector2.zero, new Vector2(1, 0), new Vector2(10, 120), new Vector2(-10, 168));
             var face = Panel(crowdLink, XgDark.Panel);
             var rim = crowdLink.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var hover = crowdLink.gameObject.AddComponent<XgHoverRim>(); hover.rim = rim; hover.rest = XgDark.Line; hover.hot = XgDark.Link; hover.Apply();
@@ -290,6 +288,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // The resident spider (XgResidentSpider) roams the desktop; this parks it in a corner, saved with the lab.
             residentToggle = ui.Button(nav, "", () => { Sim.S.residentQuiet = !Sim.S.residentQuiet; Juice.Play(XgJuice.Sfx.Id.Click); Refresh(true); }, 12);
             PlaceBottom(residentToggle, 60, 24, 10, 10);
+            residentRecall = ui.Button(nav, "", () => { XgResidentSpider.Instance?.Recall(); Refresh(true); }, 12);
+            PlaceBottom(residentRecall, 88, 24, 10, 10);
             UiTip.Add(residentToggle.rt, "它会在桌面上到处爬，你标注时还会过来旁观。点一下让它停下，慢慢隐身。", "It crawls all over the desktop and comes to watch when you label. Click to make it stop and fade away.");
         }
 
@@ -316,22 +316,25 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The nav row of a page (the guide rings it).</summary>
         public RectTransform NavButton(string id)
         {
+            if (id == "data" || id == "repo" || id == "wiring") id = "train";
+            if (id == "board" || id == "cards" || id == "final") id = "home";
             if (id == "label") id = "teach";
+            if (id == "items" || id == "abilities" || id == "growth") id = "tree";
             return id != null && navRows.TryGetValue(id, out var row) ? row.rt : null;
         }
 
-        static string NavName(string id)
+        string NavName(string id)
         {
             switch (id)
             {
-                case "teach": return T("教它", "Teach");
+                case "teach": return T("教", "Teach");
                 case "board": return T("大脑", "Brain");
-                case "home": return T("概览", "Overview");
-                case "train": return Lang.T("训练");
+                case "home": return AiName;
+                case "train": return T("练", "Train");
                 case "data": return T("数据", "Data");
                 case "items": return T("道具", "Items");
                 case "backpack": return T("背包", "Backpack");
-                case "tree": return T("科技", "Tech");
+                case "tree": return T("科技", "Technology");
                 case "wiring": return T("接线", "Wiring");
                 case "repo": return T("模型仓库", "Models");
                 case "abilities": return T("能力", "Abilities");
@@ -344,12 +347,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
+                case "teach": return T("教：逻辑、常识题直接判断题目对错；其他教学卡按按钮提示回答。", "Teach: judge logic and common-sense statements directly; follow the prompts on other cards.");
                 case "home": return T("概览：它现在会什么、下一项能力还差多少，和最近发生的事。", "Overview: what it can do now, how far the next ability is, and what just happened.");
                 case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
                 case "backpack": return T("背包：拿到的稀有道具都在这里，最多装备 4 件，只有装备的才生效，随时可换。也有已买的结构和技巧，和稀有道具图鉴。", "Backpack: every rare item you found. Equip up to four; only equipped ones work, and you can swap any time. Also the structures and techniques you bought, and the collection book.");
-                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth and research are under Tech.");
-                case "tree": return T("科技：加宽、加深的上限，数据包，研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech: width and depth caps, data packs, research, the server room and the pre-training secret. Hold a node 0.6 s to buy.");
+                case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
+                case "tree": return T("成长：六项能力、参数和样本门槛，以及结构、技巧和数据包。点击节点购买；消耗品在右侧货架。", "Growth: six abilities, their parameter and sample thresholds, structures, techniques and data packs. Click a node to buy; consumables are on the right shelf.");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
                 case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练、预训练和替你回消息都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training, pre-training and replies all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");
@@ -362,9 +366,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (id)
             {
-                case "backpack": return Sim.RelicsFresh && tab != "backpack" ? "<color=#E24B4A>●</color>" : "";
+                // 背包 now lives in the AI page, so a fresh rare item marks that row.
+                case "home": return Sim.RelicsFresh && !(tab == "home" && profileSection == "backpack") ? "<color=#E24B4A>●</color>" : "";
                 case "items": { int n = Items != null ? Items.BuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
-                case "tree": { int n = Items != null ? Items.TreeBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
+                case "tree": { int n = Tree != null ? Tree.GrowthBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
                 case "repo": { int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0); return fresh > 0 && tab != "repo" ? "+" + fresh : ""; }
                 case "wiring": return (Sim.AjiePending || Sim.Wiring.tripped) && tab != "wiring" ? "!" : "";
                 case "cards": { int n = Sim.NewCards(); return n > 0 ? "+" + n : ""; }
@@ -375,6 +380,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         bool NavVisible(string id)
         {
+            if (id == "items" || id == "abilities") return false; // Legacy routes remain available through the single Growth row.
+            if (id == "home") return true;
             if (Sim.S.gradualSystems && Sim.S.stage < 3 && System.Array.IndexOf(new[] { "teach", "train", "board", "tree", "chat" }, id) < 0) return false;
             return FeatureOpen(id) || id == "final";
         }
@@ -388,11 +395,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool any = false;
                 foreach (var id in group.ids) if (NavVisible(id)) any = true;
                 var header = navGroupLabels[g];
-                header.gameObject.SetActive(any);
+                header.gameObject.SetActive(false);
                 if (!any) { foreach (var id in group.ids) navRows[id].rt.gameObject.SetActive(false); continue; }
                 header.text = T(group.zh, group.en);
                 header.rectTransform.offsetMin = new Vector2(14, -y - NavGroupHeight); header.rectTransform.offsetMax = new Vector2(-8, -y - 4);
-                y += NavGroupHeight;
                 foreach (var id in group.ids)
                 {
                     var row = navRows[id];
@@ -403,7 +409,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (!show) continue;
                     row.rt.offsetMin = new Vector2(0, -y - NavRowHeight); row.rt.offsetMax = new Vector2(0, -y);
                     y += NavRowHeight;
-                    row.label.text = id == "final" && !open ? T("终章 · 全部放开后", "Finale · after Everything") : NavName(id);
+                    row.label.text = NavName(id);
                     row.badge.text = open ? NavBadge(id) : "";
                     row.button.interactable = open;
                     PaintNavRow(row);
@@ -418,6 +424,8 @@ namespace LingGuangV05.Desktop.XingGuang
             fxToggle.Set(Sim.S.reduceFx ? Lang.T("减少特效：开") : Lang.T("减少特效：关"), true, XgDark.Panel, XgDark.Muted);
             // Only once the desktop spider has shown up (its intro played).
             residentToggle.rt.gameObject.SetActive(Sim.SpiderAround);
+            residentRecall.rt.gameObject.SetActive(Sim.SpiderAround);
+            residentRecall.Set(T("叫回灵宠", "Recall companion"), true, XgDark.Panel, XgDark.Muted);
             residentToggle.Set(Sim.S.residentQuiet ? T("让它自由走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
         }
 

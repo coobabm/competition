@@ -1,0 +1,119 @@
+Fixed game title fits menu
+Window defaults also install through the real title-to-game path
+Title-to-game AI window uses normal size
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (66 samples, 0.0001220703 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 3840x2160
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Pointer maps correctly at (0.98, 0.03)
+Pointer maps correctly at (0.03, 0.98)
+Pointer maps correctly at (0.98, 0.98)
+16:10 viewport selected
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (66 samples, 0.0001220703 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1600x1000
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Corner click and scroll are delivered once at (0.03, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.03)
+Corner click and scroll are delivered once at (0.98, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.03, 0.98)
+Corner click and scroll are delivered once at (0.03, 0.98) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.98)
+Corner click and scroll are delivered once at (0.98, 0.98) (clicks=1, scrolls=1, depth=0)
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (66 samples, 0.0001220703 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1600x1000
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Corner click and scroll are delivered once at (0.03, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.03)
+Corner click and scroll are delivered once at (0.98, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.03, 0.98)
+Corner click and scroll are delivered once at (0.03, 0.98) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.98)
+Corner click and scroll are delivered once at (0.98, 0.98) (clicks=1, scrolls=1, depth=0)
+Real application caption drag moves window through fullscreen relay
+16:9 viewport selected
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (66 samples, 0.0001220703 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1920x1080
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Corner click and scroll are delivered once at (0.03, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.03)
+Corner click and scroll are delivered once at (0.98, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.03, 0.98)
+Corner click and scroll are delivered once at (0.03, 0.98) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.98)
+Corner click and scroll are delivered once at (0.98, 0.98) (clicks=1, scrolls=1, depth=0)
+Fullscreen overlay released when returning to title
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (84 samples, 6.103516E-05 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1920x1080
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Pointer maps correctly at (0.98, 0.03)
+Pointer maps correctly at (0.03, 0.98)
+Pointer maps correctly at (0.98, 0.98)
+Archive regression uses isolated save directory
+Complete isolated first chapter setup
+Save isolated chapter one slot
+Capture isolated later chapter
+Load chapter one without scene replacement
+Chapter one restored
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (84 samples, 6.103516E-05 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1920x1080
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Corner click and scroll are delivered once at (0.03, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.03)
+Corner click and scroll are delivered once at (0.98, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.03, 0.98)
+Corner click and scroll are delivered once at (0.03, 0.98) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.98)
+Corner click and scroll are delivered once at (0.98, 0.98) (clicks=1, scrolls=1, depth=0)
+Enter unlocked chapter snapshot
+Later chapter restored
+Real menu has entered desktop
+Desktop expands over multiple frames with no initial position jump (84 samples, 6.103516E-05 pixels)
+Desktop is a fullscreen overlay
+Desktop covers every viewport edge
+Desktop rendered at native viewport resolution 1920x1080
+Fullscreen desktop input enabled
+Boot cover reveals the chapter only after full-screen arrival
+Wallpaper covers the viewport without letterboxing
+Pointer maps correctly at (0.03, 0.03)
+Corner click and scroll are delivered once at (0.03, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.03)
+Corner click and scroll are delivered once at (0.98, 0.03) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.03, 0.98)
+Corner click and scroll are delivered once at (0.03, 0.98) (clicks=1, scrolls=1, depth=0)
+Pointer maps correctly at (0.98, 0.98)
+Corner click and scroll are delivered once at (0.98, 0.98) (clicks=1, scrolls=1, depth=0)

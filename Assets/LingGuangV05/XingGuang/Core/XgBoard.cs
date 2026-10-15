@@ -53,6 +53,10 @@ namespace LingGuangV05.XingGuang
         public long seen;
         /// <summary>Board card count when it was made (R3 spares it for <see cref="XgBoard.GraceCards"/> cards; 0 in older saves).</summary>
         public long born;
+        /// <summary>Cards that actually trained this cell; unlike seen, this is a count, not a board timestamp.</summary>
+        public long trainedCards;
+        /// <summary>Old saves lack historical counts. Their new observations remain a lower bound.</summary>
+        public bool trainingCountKnown;
         public XgConcept MemberwiseCloneConcept() => (XgConcept)MemberwiseClone();
     }
 
@@ -225,6 +229,7 @@ namespace LingGuangV05.XingGuang
         public const string BiasElement = "偏置";
 
         public XgBoardState S { get; private set; }
+        public event Action<IReadOnlyList<XgConceptTransition>> ConceptsChanged;
 
         readonly Dictionary<string, XgConcept> byKey = new Dictionary<string, XgConcept>();
         readonly Dictionary<string, List<XgConcept>> byElement = new Dictionary<string, List<XgConcept>>();
@@ -443,11 +448,20 @@ namespace LingGuangV05.XingGuang
         /// weight matched means a guess.
         /// </summary>
         public double Score(List<Match> matches, XgKnobs k, int seed, out bool guessed, out int topLayer)
+            => Score(matches, k, seed, out guessed, out topLayer, null);
+
+        double Score(List<Match> matches, XgKnobs k, int seed, out bool guessed, out int topLayer, List<XgUsedConcept> used)
         {
             topLayer = 0;
             double score = 0;
             foreach (var m in matches)
-                if (m.c.pinned && Math.Abs(m.c.w) > 1e-3) { topLayer = Math.Max(1, m.c.layer); guessed = false; return m.c.w * 100; }
+                if (m.c.pinned && Math.Abs(m.c.w) > 1e-3)
+                {
+                    topLayer = Math.Max(1, m.c.layer); guessed = false;
+                    double pinnedVote = m.c.w * 100;
+                    used?.Add(new XgUsedConcept(m, pinnedVote));
+                    return pinnedVote;
+                }
             int depth = k != null ? k.depth : 1;
             foreach (var m in matches)
             {
@@ -460,6 +474,7 @@ namespace LingGuangV05.XingGuang
                 int above = Math.Max(0, depth - Math.Min(depth, m.c.layer));
                 if (above > 0 && RelayOn) vote = vote * k.RelayLeft(above) + Math.Abs(vote) * k.RelayGarble(above) * Jitter(seed, m.c.layer);
                 score += vote;
+                used?.Add(new XgUsedConcept(m, vote));
                 if (m.c.layer > topLayer) topLayer = m.c.layer;
             }
             guessed = topLayer == 0;
@@ -510,11 +525,21 @@ namespace LingGuangV05.XingGuang
         }
 
         public bool Predict(XgBoardCard card, XgKnobs k, out bool guessed)
+            => Predict(card, k, out guessed, out _, false);
+
+        /// <summary>Observe the same readout before training can change any participating concept.</summary>
+        public bool Predict(XgBoardCard card, XgKnobs k, out bool guessed, out XgPredictionTrace trace)
+            => Predict(card, k, out guessed, out trace, true);
+
+        bool Predict(XgBoardCard card, XgKnobs k, out bool guessed, out XgPredictionTrace trace, bool captureTrace)
         {
+            var used = captureTrace ? new List<XgUsedConcept>() : null;
             var elements = Elements(card, k);
             Gate(elements, card, k);
-            double score = Score(Matches(card, elements, k), k, card.seed, out guessed, out _);
-            return guessed ? (card.seed & 1) == 0 : score > 0;
+            double score = Score(Matches(card, elements, k), k, card.seed, out guessed, out int topLayer, used);
+            bool answer = guessed ? (card.seed & 1) == 0 : score > 0;
+            trace = captureTrace ? new XgPredictionTrace(answer, guessed, score, topLayer, used) : null;
+            return answer;
         }
 
         /// <summary>Share of cards answered right (the test set is never trained on).</summary>
@@ -528,14 +553,30 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── training: R1–R6 on one card ─────────────
 
-        public XgBoardStep Train(XgBoardCard card, XgKnobs k)
+        public XgBoardStep Train(XgBoardCard card, XgKnobs k) => Train(card, k, null);
+
+        // Optional transient evidence of R1 writes and R2 creations, captured before R4 decay.
+        internal XgBoardStep Train(XgBoardCard card, XgKnobs k, List<XgConceptPull> pulls)
         {
             var step = new XgBoardStep();
+            var changes = ConceptsChanged == null ? null : new List<XgConceptTransition>();
+            HashSet<int> created = null;
             var elements = Elements(card, k);
             Gate(elements, card, k);
             // Unknown elements become layer-1 concepts first (R3 decides whether they fit).
             for (int i = 0; i < elements.Count; i++)
-                if (!byKey.ContainsKey(card.region + "|" + elements[i].id)) { if (Create(card.region, elements[i].id, 1, k) != null) step.created++; }
+                if (!byKey.ContainsKey(card.region + "|" + elements[i].id))
+                {
+                    var made = Create(card.region, elements[i].id, 1, k);
+                    if (made == null) continue;
+                    step.created++;
+                    changes?.Add(new XgConceptTransition(XgConceptTransitionKind.ElementBorn, made));
+                    if (pulls != null)
+                    {
+                        if (created == null) created = new HashSet<int>();
+                        created.Add(made.id);
+                    }
+                }
             var matches = Matches(card, elements, k);
             double score = Score(matches, k, card.seed, out bool guessed, out _);
             bool predicted = guessed ? (card.seed & 1) == 0 : score > 0;
@@ -553,11 +594,15 @@ namespace LingGuangV05.XingGuang
             {
                 if (m.c.pinned) continue;
                 if (k.dropout && Dropped(card.seed, m.c.id)) continue;
+                double beforeWeight = m.c.w, beforeStrength = m.c.s;
                 double pull = k.lr * err * m.act * Math.Pow(g, Math.Max(0, k.depth - m.c.layer));
                 if (k.clip) pull = Math.Max(-ClipLimit, Math.Min(ClipLimit, pull));
                 m.c.w = Math.Max(-WeightLimit, Math.Min(WeightLimit, m.c.w + pull));
                 m.c.s = Math.Min(10, m.c.s + m.act);
+                if (pulls != null && (m.c.w != beforeWeight || m.c.s != beforeStrength))
+                    pulls.Add(new XgConceptPull(m.c, beforeWeight, beforeStrength, created != null && created.Contains(m.c.id)));
                 m.c.seen = S.cards;
+                if (m.c.trainedCards < long.MaxValue) m.c.trainedCards++;
             }
 
             // R2 合: reachable pairs that fire together grow a link; past the threshold it becomes a higher concept.
@@ -581,7 +626,13 @@ namespace LingGuangV05.XingGuang
                         if (link.c < LinkThreshold) continue;
                         link.c = 0;
                         var made = Create(card.region, key, layer, k);
-                        if (made != null) { made.w = (a.c.w + b.c.w) * .5; step.created++; }
+                        if (made != null)
+                        {
+                            made.w = (a.c.w + b.c.w) * .5; made.trainedCards = 1; step.created++;
+                            changes?.Add(new XgConceptTransition(XgConceptTransitionKind.Merged, made, a.c.id, b.c.id));
+                            // R2 created this cell; zero is its absent-state baseline.
+                            if (pulls != null) pulls.Add(new XgConceptPull(made, 0, 0, true));
+                        }
                     }
             }
 
@@ -589,7 +640,8 @@ namespace LingGuangV05.XingGuang
             S.cards++;
             // Weight decay scales with the learning rate (as in real optimisers): a careful rate also forgets slowly.
             double rate = Math.Max(.1, Math.Min(3, k.lr / .1));
-            if (S.cards % DecayEvery == 0) DecayAll(Math.Pow(1 - Decay * rate, DecayEvery), card.region, Math.Pow(1 - OtherRegionDecay, DecayEvery));
+            if (S.cards % DecayEvery == 0) DecayAll(Math.Pow(1 - Decay * rate, DecayEvery), card.region, Math.Pow(1 - OtherRegionDecay, DecayEvery), changes);
+            if (changes != null && changes.Count > 0) ConceptsChanged?.Invoke(changes.AsReadOnly());
             return step;
         }
 
@@ -660,7 +712,7 @@ namespace LingGuangV05.XingGuang
                 if (layer <= 1 && Math.Abs(victim.w) >= DeadWeight) return null;
                 Remove(victim); S.evicted++;
             }
-            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards, born = S.cards };
+            var made = new XgConcept { id = S.nextId++, region = region, key = key, layer = layer, s = 1, seen = S.cards, born = S.cards, trainingCountKnown = true };
             Add(made); S.created++;
             return made;
         }
@@ -675,7 +727,7 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── R4 衰 ─────────────
 
-        void DecayAll(double factor, string region = null, double otherFactor = -1)
+        void DecayAll(double factor, string region = null, double otherFactor = -1, List<XgConceptTransition> changes = null)
         {
             var dead = new List<XgConcept>();
             foreach (var c in S.concepts)
@@ -685,7 +737,11 @@ namespace LingGuangV05.XingGuang
                 c.w *= f; c.s *= f;
                 if (c.s < .05 && Math.Abs(c.w) < .02) dead.Add(c);
             }
-            foreach (var c in dead) Remove(c);
+            foreach (var c in dead)
+            {
+                changes?.Add(new XgConceptTransition(XgConceptTransitionKind.Decayed, c));
+                Remove(c);
+            }
             // Links fade too (per region, like concepts); links of removed concepts and each region's weakest beyond
             // its cap are dropped, so one busy region never prunes another's slowly growing links.
             var byRegion = new Dictionary<string, List<XgLink>>();
@@ -710,7 +766,10 @@ namespace LingGuangV05.XingGuang
         /// <summary>Training stopped for a while (e.g. 寒冬): time alone fades the board.</summary>
         public void Idle(int cards)
         {
-            if (cards > 0) DecayAll(Math.Pow(1 - Decay, cards));
+            if (cards <= 0) return;
+            var changes = ConceptsChanged == null ? null : new List<XgConceptTransition>();
+            DecayAll(Math.Pow(1 - Decay, cards), changes: changes);
+            if (changes != null && changes.Count > 0) ConceptsChanged?.Invoke(changes.AsReadOnly());
         }
 
         // ───────────── seeds, resets and queries ─────────────

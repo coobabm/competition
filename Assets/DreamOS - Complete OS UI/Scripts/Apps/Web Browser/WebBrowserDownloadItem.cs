@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -27,6 +27,15 @@ namespace Michsky.DreamOS
         [HideInInspector] public bool isFinished;
         [HideInInspector] public bool isProcessing;
         DreamOSDataManager.DataCategory dataCat = DreamOSDataManager.DataCategory.Network;
+
+        // Display can follow a player's name without changing the download's persistence key.
+        public void SetDisplayName(string displayName)
+        {
+            if (fileNameObject == null) return;
+            fileNameObject.richText = false;
+            fileNameObject.overflowMode = TextOverflowModes.Ellipsis;
+            if (fileNameObject.text != displayName) fileNameObject.text = displayName;
+        }
 
         public void ProcessItem()
         {

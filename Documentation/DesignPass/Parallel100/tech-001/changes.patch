@@ -1,0 +1,11 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -143,6 +143,8 @@
+                 if (data.dataWeight != 1) result += T(sim, "每条计入总数据进度的权重为 ", "Each sample counts toward total data progress with weight ") + N(data.dataWeight) + "。";
+                 return result;
+             }
++            if (node.kind == XgNodeKind.Arch && node.target == "rnn")
++                return T(sim, "解锁后成为序列训练线的可选结构，无需手动装备；系统在训练轮次之间按数据和显存决定是否采用。采用后，前文信号每隔一个序列位置的基础保留率为 75%，逐步相乘：隔 2 步约剩 56.25%；这是信号强度，不是准确率，也不是固定记忆字数。已生效的技术可能改变此比例；拥有其他结构不会叠加这项效果。继续训练并查看评估成绩，购买不保证立即提分。", "Once unlocked, RNN becomes an option for the sequence track; no manual equip step is needed. Between training rounds, the system decides whether to use it based on data and VRAM. While active, an earlier signal retains a base 75% per sequence position, multiplied at each step: 56.25% remains after 2 steps. This is signal strength, not accuracy or a fixed memory length. Active techniques may change this rate; owning other architectures does not stack this effect. Continue training and check evaluation scores; buying it does not guarantee an immediate improvement.");
+             if (node.kind == XgNodeKind.Arch) return T(sim, "加入可用结构，系统按数据和显存选择合适的模型；训练后再看评估成绩。", "Add an available architecture. The system selects a model for the data and VRAM; check its score after training.");
+             if (node.kind == XgNodeKind.Auto)
+             {

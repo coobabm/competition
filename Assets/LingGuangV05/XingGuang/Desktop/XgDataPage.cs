@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// speed-up, post and training-switch actions of the data economy (XgSim.DataSources.cs). The 摆渡百科爬虫 source
     /// opens its crawler over this page (<see cref="XgCrawlerPanel"/>); closing it comes back here.
     /// </summary>
-    public sealed class XgDataPage : XgPage
+    public sealed partial class XgDataPage : XgPage
     {
         // Laid out at the normal 灵光 window (1236×693, so about 1064 wide here): a dataset is a two-line card, each of its
         // sources a two-line row under it (source tag, pack name, then samples · wrong labels · download), with the
@@ -45,6 +45,8 @@ namespace LingGuangV05.Desktop.XingGuang
             public Image tag;
             public TMP_Text source, name, line;
             public XgBtn buy, use;
+            /// <summary>Public packs and story copies: one small segment per batch (arrived, coming, not bought).</summary>
+            public Image[] segments;
         }
 
         TMP_Text header, from;
@@ -55,7 +57,9 @@ namespace LingGuangV05.Desktop.XingGuang
         string signature = "";
         XgCrawlerPanel crawler;
         /// <summary>The 摆渡百科 crawler is open on this page (the resident spider is inside it then, not on the desktop).</summary>
-        public bool CrawlerOpen => crawler != null && crawler.IsOpen && root != null && root.gameObject.activeInHierarchy;
+        public bool CrawlerOpen => crawler != null && crawler.Visible;
+        public void MountCrawler(RectTransform parent) { crawler?.Mount(parent); }
+        public void InvokeOffer(string id, RectTransform from) { if (Sim.SystemUnlocked("data")) Buy(id, from); }
         /// <summary>The crawler page (the spider's first appearance drives it).</summary>
         public XgCrawlerPanel Crawler => crawler;
 
@@ -70,7 +74,8 @@ namespace LingGuangV05.Desktop.XingGuang
             from = ui.Text(Rect("From", root, new Vector2(1, 1), Vector2.one, new Vector2(-460, -24), new Vector2(-2, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineRight);
             from.textWrappingMode = TextWrappingModes.NoWrap;
 
-            var heads = Strip("Columns", root, 30, 26, 0, BarWidth + 6);
+            BuildDownloads();
+            var heads = columns = Strip("Columns", root, 30, 26, 0, BarWidth + 6);
             Panel(Rect("Rule", heads, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 1)), XgDark.Line).raycastTarget = false;
             Head(heads, T("数据集 · 来源", "Dataset · sources"), NameX, SamplesX0 - 10, TextAlignmentOptions.MidlineLeft);
             Head(heads, T("样本", "Samples"), SamplesX0, SamplesX1, TextAlignmentOptions.MidlineRight);
@@ -90,6 +95,7 @@ namespace LingGuangV05.Desktop.XingGuang
             scroll.verticalScrollbar = ScrollBar(list);
             scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             crawler = new XgCrawlerPanel(host, ui, root, () => host.Refresh(true));
+            LayoutDownloads(0);
         }
 
         /// <summary>A slim bar on the list's right edge, shown only when the list is longer than the page.</summary>
@@ -152,6 +158,7 @@ namespace LingGuangV05.Desktop.XingGuang
             from.text = T("来自摆渡众包做题 + 数据包 + 读到的词", "from Bodu Crowd labels + packs + words read");
             foreach (var r in datasetRows) RefreshDataset(r);
             foreach (var r in offerRows) RefreshOffer(r);
+            RefreshDownloads();
         }
 
         void Rebuild(List<(XgDataset ds, List<XgDataOffer> offers)> shown)
@@ -223,6 +230,14 @@ namespace LingGuangV05.Desktop.XingGuang
             r.buy = ui.Button(r.rt, "", () => Buy(id, r.buy.rt), 14);
             r.buy.rt.anchorMin = r.buy.rt.anchorMax = new Vector2(1, .5f);
             r.buy.rt.offsetMin = new Vector2(-BuyWidth - 10, -14); r.buy.rt.offsetMax = new Vector2(-10, 14);
+            if (o.source == XgDataSource.Public || o.source == XgDataSource.Story)
+            {
+                // The guide's "batch:<dataset>" locator rings this button (XgGuideHighlight via FocusBatch).
+                if (o.source == XgDataSource.Public) r.buy.rt.name = BatchButtonName(o.datasetId);
+                r.segments = BatchSegments(r.rt, XgSim.PackBatches(o.datasetId), textRight);
+                // The name gives the segments room on its right.
+                r.name.rectTransform.offsetMax = new Vector2(-textRight - SegmentsWidth - 8, -4);
+            }
             UiTip.Add(r.rt, () => { var live = Sim.Offer(id); return live != null ? XgDataUi.OfferTip(Sim, live) : ""; });
             return r;
         }
@@ -278,9 +293,16 @@ namespace LingGuangV05.Desktop.XingGuang
             string line = XgDataUi.SourceLine(o), prefix = o.SourceLabel(Sim.English) + " · ";
             if (line.StartsWith(prefix, StringComparison.Ordinal)) line = line.Substring(prefix.Length);
             if (!o.owned && !o.available && o.lockedReason.Length > 0) line += "  <color=#E07B4F>" + T(o.lockedReason, o.lockedReasonEn) + "</color>";
+            if (o.source == XgDataSource.Public || o.source == XgDataSource.Story) line = BatchLine(o, line);
             r.line.text = line;
-            // Buy / speed up / post or withdraw / owned.
-            if (o.downloading)
+            PaintSegments(r, o);
+            // Buy / speed up / post or withdraw / owned. A public pack sells its batches one by one: the first purchase
+            // is the pack itself (the download right with batch 1), later ones 买下一批.
+            if (o.source == XgDataSource.Public && !o.owned)
+                r.buy.Set(T("买第 1 批 ¥", "Batch 1 ¥") + Money(o.price), o.available && Host.Money + 1e-9 >= o.price, null, XgDark.Money);
+            else if (o.source == XgDataSource.Public && !double.IsInfinity(o.nextBatchPrice))
+                r.buy.Set(T("买下一批 ¥", "Next batch ¥") + Money(o.nextBatchPrice), Host.Money + 1e-9 >= o.nextBatchPrice, null, XgDark.Money);
+            else if (o.downloading)
             {
                 double cost = Sim.AccelerateOfferCost(o.id);
                 r.buy.Set(T("加速 ¥", "Speed up ¥") + Money(cost), Host.Money + 1e-9 >= cost, null, XgDark.Money);
@@ -291,7 +313,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 else r.buy.Set(T("爬一次 ¥", "Crawl ¥") + Money(o.price), o.available && Host.Money + 1e-9 >= o.price, null, XgDark.Money);
             }
             else if (o.source == XgDataSource.Crowd) r.buy.Set(o.owned ? T("撤包", "Withdraw") : T("发包", "Post"), o.owned || o.available, null, XgDark.Link);
-            else if (o.owned) r.buy.Set(T("✓ 已拥有", "✓ Owned"), false);
+            else if (o.owned) r.buy.Set(o.source == XgDataSource.Public ? T("✓ 已买全", "✓ All batches") : T("✓ 已拥有", "✓ Owned"), false);
             else r.buy.Set(T("购买 ¥", "Buy ¥") + Money(o.price), o.available && Host.Money + 1e-9 >= o.price, null, XgDark.Money);
             // Owned packs can be left out of training (the training page's switches).
             bool switchable = o.owned && XgSim.PackSwitchable(o);
@@ -332,12 +354,14 @@ namespace LingGuangV05.Desktop.XingGuang
                 host.Refresh(true);
                 return;
             }
-            if (o.downloading) ok = Sim.AccelerateOffer(offerId, Host);
+            bool nextBatch = o.source == XgDataSource.Public && o.owned && !double.IsInfinity(o.nextBatchPrice);
+            if (nextBatch) ok = Sim.BuyBatch(o.datasetId, Host);
+            else if (o.downloading) ok = Sim.AccelerateOffer(offerId, Host);
             else if (o.source == XgDataSource.Crowd) ok = Sim.SetCrowd(o.datasetId, !o.owned);
             else ok = Sim.BuyDataOffer(offerId, Host);
             if (!ok) { Fx.Knock(from, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); host.Refresh(true); return; }
             Fx.Knock(from, .15f);
-            if (o.source != XgDataSource.Crowd && !o.downloading) Fx.Burst(Fx.At(from), 18, XgDark.Gold, XgJuice.Shape.Yen, 260);
+            if (o.source != XgDataSource.Crowd && (nextBatch || !o.downloading)) Fx.Burst(Fx.At(from), 18, XgDark.Gold, XgJuice.Shape.Yen, 260);
             Fx.Play(XgJuice.Sfx.Id.Coin);
             host.Refresh(true);
         }

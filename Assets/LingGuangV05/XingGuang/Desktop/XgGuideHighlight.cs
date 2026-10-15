@@ -73,22 +73,20 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static Transform Root(XingGuangView view) => view != null ? view.transform.Find("XingGuang") : null;
 
-        /// <summary>The nav button of a tab (named "Tab id" on first use).</summary>
-        public static RectTransform TabButton(XingGuangView view, string tab)
-        {
-            var nav = Root(view)?.Find("Nav");
-            if (nav == null || string.IsNullOrEmpty(tab)) return null;
-            // The nav rows are built named "Tab id"; 科技 (tree) is a section of the 道具 page.
-            if (tab == "label") tab = "teach";
-            return nav.Find("Tab " + tab) as RectTransform;
-        }
+        /// <summary>The visible nav button, including routes merged into Growth.</summary>
+        public static RectTransform TabButton(XingGuangView view, string tab) => view != null ? view.NavButton(tab) : null;
 
         /// <summary>The page root of a tab (pages are named by their id).</summary>
-        public static RectTransform Page(XingGuangView view, string tab) => string.IsNullOrEmpty(tab) ? null : Root(view)?.Find("Pages/" + tab) as RectTransform;
+        public static RectTransform Page(XingGuangView view, string tab)
+        {
+            if (tab == "items" || tab == "abilities" || tab == "growth") tab = "tree";
+            return string.IsNullOrEmpty(tab) ? null : Root(view)?.Find("Pages/" + tab) as RectTransform;
+        }
 
         /// <summary>
         /// A control on a lab page. Locators: "" = the tab button, "name:Foo", "label:是|Yes", "node:id" (also
-        /// scrolls the tech tree to it), "contract:id", "chip:n" (the HUD chips).
+        /// scrolls the tech tree to it), "batch:dataset" (the pack's 买下一批 on 数据, else its tech node), "contract:id",
+        /// "chip:n" (the HUD chips).
         /// </summary>
         public static RectTransform Find(XingGuangView view, string tab, string target)
         {
@@ -108,6 +106,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 foreach (var node in page.GetComponentsInChildren<XgNodeView>(false))
                     if (node.node != null && node.node.id == id) return (RectTransform)node.transform;
                 return null;
+            }
+            if (target.StartsWith("batch:", StringComparison.Ordinal))
+            {
+                // A pack's next batch: its 买下一批 button on the 数据 page (scrolled into view), else the pack's tech node.
+                string id = target.Substring(6);
+                var button = tab == "data" && view.Data != null ? view.Data.FocusBatch(id) : null;
+                return button != null ? button : Find(view, tab, "node:" + id + ".pack");
             }
             if (target.StartsWith("contract:", StringComparison.Ordinal)) return FindIn(page, "name:Row" + target.Substring(9));
             return FindIn(page, target);

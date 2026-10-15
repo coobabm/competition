@@ -151,7 +151,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void ThreeFailuresInARowAreReportedAsABot()
+        public void ThreeFailuresInARowOnlyPauseAndCostCredit()
         {
             var sim = Ready(); var host = new Host();
             var reasons = new List<XgReportReason>(); sim.QualityReported += (r, s) => reasons.Add(r);
@@ -160,10 +160,10 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < 2; i++) { Require(sim, host); sim.SubmitCaptcha(Wrong(sim.CaptchaCode)); }
             Assert.AreEqual(0, reasons.Count);
             Require(sim, host); sim.SubmitCaptcha(Wrong(sim.CaptchaCode));
-            CollectionAssert.AreEqual(new[] { XgReportReason.SuspectedBot }, reasons);
-            Assert.IsTrue(sim.QualityFrozen); Assert.AreEqual(XgReportReason.SuspectedBot, sim.LastReportReason);
-            Assert.AreEqual(0, sim.CaptchaPauseLeft, "the freeze replaces the pause");
-            Assert.AreEqual(0, sim.S.qcCaptchaFails);
+            Assert.AreEqual(0, reasons.Count, "since 2026-10-16 the account is never reported");
+            Assert.IsFalse(sim.QualityFrozen);
+            Assert.AreEqual(XgSim.CaptchaPause, sim.CaptchaPauseLeft, 1e-9, "the usual pause");
+            Assert.AreEqual(0, sim.S.qcCaptchaFails, "the streak starts over");
         }
 
         [Test]
@@ -231,6 +231,7 @@ namespace LingGuangV05.XingGuang.Tests
             int flagged = 0; sim.CaptchaFlagged += () => flagged++;
             sim.ForcedAutofillRoll = .05;
             Require(sim, host);
+            sim.S.qcCredit = 92; // stays above the start after the flag: no drift back toward 80 during the tick
             double credit = sim.Credit;
             sim.TickCollaboration(6.5, host);
             Assert.IsFalse(sim.CaptchaPending);

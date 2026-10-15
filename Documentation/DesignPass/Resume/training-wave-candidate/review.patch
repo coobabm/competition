@@ -1,0 +1,86 @@
+--- a/Documentation/DesignPass/Resume/training-wave-candidate/XgBoard.cs
++++ b/Documentation/DesignPass/Resume/training-wave-candidate/XgBoard.cs
+@@ -766,7 +766,10 @@
+         /// <summary>Training stopped for a while (e.g. 寒冬): time alone fades the board.</summary>
+         public void Idle(int cards)
+         {
+-            if (cards > 0) DecayAll(Math.Pow(1 - Decay, cards));
++            if (cards <= 0) return;
++            var changes = ConceptsChanged == null ? null : new List<XgConceptTransition>();
++            DecayAll(Math.Pow(1 - Decay, cards), changes: changes);
++            if (changes != null && changes.Count > 0) ConceptsChanged?.Invoke(changes.AsReadOnly());
+         }
+ 
+         // ───────────── seeds, resets and queries ─────────────
+--- a/Documentation/DesignPass/Resume/training-wave-candidate/XgWallpaperTraining.cs
++++ b/Documentation/DesignPass/Resume/training-wave-candidate/XgWallpaperTraining.cs
+@@ -21,6 +21,7 @@
+         }
+         struct Wave { public float started, strength; }
+         readonly List<Life> lives = new List<Life>();
++        readonly Dictionary<int, Life> births = new Dictionary<int, Life>();
+         readonly List<Wave> waves = new List<Wave>();
+         XingGuangController controller;
+         XgBrainWallpaper wallpaper;
+@@ -55,7 +56,7 @@
+ 
+         void Clear()
+         {
+-            lives.Clear(); waves.Clear(); refreshConcepts = false;
++            lives.Clear(); births.Clear(); waves.Clear(); refreshConcepts = false;
+             SetVerticesDirty(); if (concepts != null) concepts.SetVerticesDirty();
+         }
+         void Detach()
+@@ -93,11 +94,13 @@
+             foreach (var change in changes)
+             {
+                 lives.RemoveAll(life => life.change.Id == change.Id);
++                births.Remove(change.Id);
+                 var life = new Life { change = change, started = Time.unscaledTime };
+                 // A removed cell uses its last actually displayed location; never invent a missing LOD cell.
+                 if (change.Kind == XgConceptTransitionKind.Decayed && !TryUv(change.Id, out life.retiredUv)) continue;
+-                if (lives.Count == MaxLives) lives.RemoveAt(0);
++                if (lives.Count == MaxLives) { births.Remove(lives[0].change.Id); lives.RemoveAt(0); }
+                 lives.Add(life);
++                if (change.Kind != XgConceptTransitionKind.Decayed) births[change.Id] = life;
+             }
+             refreshConcepts = true;
+             ApplyBrightness(); SetVerticesDirty();
+@@ -108,7 +111,9 @@
+             if (!Visible) { if (lives.Count > 0 || waves.Count > 0) Clear(); return; }
+             bool hadLife = lives.Count > 0;
+             bool active = hadLife || waves.Count > 0;
+-            lives.RemoveAll(life => Time.unscaledTime - life.started >= LifeSeconds);
++            for (int i = lives.Count - 1; i >= 0; i--)
++                if (Time.unscaledTime - lives[i].started >= LifeSeconds)
++                { births.Remove(lives[i].change.Id); lives.RemoveAt(i); }
+             waves.RemoveAll(wave => Time.unscaledTime - wave.started >= WaveSeconds);
+             if (active) SetVerticesDirty();
+             if (hadLife && concepts != null) concepts.SetVerticesDirty();
+@@ -128,9 +133,7 @@
+         public float CellOpacity(int id)
+         {
+             if (!isActiveAndEnabled || Reduced) return 1;
+-            foreach (var life in lives)
+-                if (life.change.Id == id && life.change.Kind != XgConceptTransitionKind.Decayed)
+-                    return Mathf.SmoothStep(0, 1, (Age(life) - .5f) * 2);
++            if (births.TryGetValue(id, out var life)) return Mathf.SmoothStep(0, 1, (Age(life) - .5f) * 2);
+             return 1;
+         }
+         static float Age(Life life) => Mathf.Clamp01((Time.unscaledTime - life.started) / LifeSeconds);
+--- a/Documentation/DesignPass/Resume/training-wave-candidate/XgConceptTransition.cs
++++ b/Documentation/DesignPass/Resume/training-wave-candidate/XgConceptTransition.cs
+@@ -5,7 +5,12 @@
+ {
+     public enum XgConceptTransitionKind { ElementBorn, Merged, Decayed }
+ 
+-    /// <summary>Transient evidence of an actual creation or R4 removal, never a saved concept.</summary>
++    /// <summary>
++    /// Transient evidence of an actual creation or R4 removal, never a saved concept.
++    /// ElementBorn samples Create's initial w=0/s=1 before R1 pulls; Merged samples the assigned
++    /// parent-mean weight before R4; Decayed samples after R4 scaling, immediately before removal.
++    /// Weight/Strength describe that event instant, not the concept's eventual end-of-frame state.
++    /// </summary>
+     public sealed class XgConceptTransition
+     {
+         public XgConceptTransitionKind Kind { get; }

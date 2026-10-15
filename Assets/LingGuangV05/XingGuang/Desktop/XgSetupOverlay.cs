@@ -44,7 +44,7 @@ namespace LingGuangV05.Desktop.XingGuang
             title.fontStyle = FontStyles.Bold;
             float y = 66;
             labels.Add(ui.Text(Strip("NameLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
-            name = Input(Strip("Name", form, y + 26, 38, 24, 24), 16, false);
+            name = Input(Strip("Name", form, y + 26, 38, 24, 24), 128, false);
             y += 76;
             labels.Add(ui.Text(Strip("SelfLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             selfCustom = Chips(form, y + 26, PrologueProfile.SelfChoices, selfChips, v => self = v);
@@ -101,8 +101,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 x += 78;
             }
             var box = Rect("Custom", row, Vector2.zero, new Vector2(1, 1), new Vector2(x, 0), Vector2.zero);
-            custom = Input(box, 8, true);
-            custom.onValueChanged.AddListener(t => { if (t.Trim().Length > 0) pick(t.Trim()); else if (into.Count > 0) pick(into[0].Item1); Paint(); });
+            custom = Input(box, 128, true);
+            custom.onValueChanged.AddListener(t => { if (t.Trim().Length > 0) pick(t); else if (into.Count > 0) pick(into[0].Item1); Paint(); });
             return custom;
         }
 
@@ -142,7 +142,8 @@ namespace LingGuangV05.Desktop.XingGuang
             home.gameObject.SetActive(homePending);
             title.text = L("setup_title");
             string[] keys = { "setup_name", "setup_self", "setup_call", "setup_mood" };
-            for (int i = 0; i < labels.Count; i++) labels[i].text = L(keys[i]);
+            for (int i = 0; i < labels.Count; i++) labels[i].text = L(keys[i]) + (i == 0 ? " · 1–16" : i == 3 ? " · 1–60" : " · 1–8");
+            ((TMP_Text)name.placeholder).text = T("给它取个名字，不用加 .exe", "A name for your AI, without .exe");
             ((TMP_Text)mood.placeholder).text = L("setup_mood_hint");
             ((TMP_Text)selfCustom.placeholder).text = L("setup_custom");
             ((TMP_Text)callCustom.placeholder).text = L("setup_custom");
@@ -202,11 +203,12 @@ namespace LingGuangV05.Desktop.XingGuang
             bulb.color = XgDark.Gold;
             view.Juice.Play(answer ? XgJuice.Sfx.Id.Ding : XgJuice.Sfx.Id.Click);
             for (float t = 0; t < .8f; t += Time.unscaledDeltaTime) yield return null;
+            XgFirstLessonWindow.Arm(view.Sim);
             homePending = false;
             Refresh(view.Controller.runtime);
             // 灵光 lands on 概览 behind 摆渡众包, so closing the crowd window shows the overview first.
             view.ShowTab("teach");
-            view.ShowToast(T("它还不会判断。先教它 4 张卡，再让它训练。随时可以和它说话。", "Teach four cards, then train. You can talk to it any time."), 7);
+            view.ShowToast(T("按 1「对」，或按 2「错」。", "1: True · 2: False"), 7);
         }
     }
 }

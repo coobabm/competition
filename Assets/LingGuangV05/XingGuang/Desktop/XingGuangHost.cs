@@ -12,9 +12,10 @@ namespace LingGuangV05.Desktop.XingGuang
     /// compute = the cards' summed multipliers as heartbeats (already 0 on a power cut or unpaid bill, and throttled when hot),
     /// VRAM = the cards' summed memory, ¥ = the one wallet, training = each round's electricity billed at once at the month's
     /// 阶梯电价 tier (ChapterOneSim.Bills.cs; before the first rent it is extra kWh on the daily bill, as before).
-    /// As <see cref="IXgRig"/> it gives the 接线 page the owned cards (HardwareCatalog) and the house PSU and breaker.
+    /// As <see cref="IXgRig"/> it gives the 接线 page the owned cards (HardwareCatalog) and the house PSU and breaker; as
+    /// <see cref="IXgThermal"/> it tells the training bar when the cards are hot enough to clock down (显卡降频).
     /// </summary>
-    public sealed class XingGuangHost : IXgHost, IXgRig, IXgHousePower, IXgTrainingBill
+    public sealed class XingGuangHost : IXgHost, IXgRig, IXgHousePower, IXgTrainingBill, IXgThermal
     {
         /// <summary>Training runs the cards at about half of their rated power on top of the job.</summary>
         public const double TrainingLoad = .5;
@@ -70,6 +71,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// (the training page shows it on the button). 0 before the first rent.
         /// </summary>
         public double RoundPrice(double seconds, double priceFactor, double energyFactor) => Live && runtime.Sim.PowerCostsEnabled ? runtime.Sim.TrainingRoundPrice(seconds, priceFactor, energyFactor) : 0;
+        /// <summary>The house is past the throttle temperature: the cards clock down (ChapterOneSim's compute throttle, the bar's 显卡降频).</summary>
+        public bool Throttling => Live && runtime.Sim.S.temperature > runtime.Sim.Config.throttleTemperature;
         /// <summary>The cards are hot and may burn out (the training page warns).</summary>
         public bool WearRiskLive => Live && runtime.Sim.WearRiskLive;
         /// <summary>Whether rent and electricity are being billed (from the lab's first day).</summary>

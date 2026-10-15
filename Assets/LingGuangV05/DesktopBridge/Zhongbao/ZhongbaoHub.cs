@@ -180,8 +180,8 @@ namespace LingGuangV05.Desktop.Zhongbao
         void OnReported(XgReportReason reason, double seconds)
         {
             string minutes = (seconds / 60).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
-            Add("账号被举报（" + XgSim.ReportReasonText(reason, false) + "），冻结 " + minutes + " 分钟，信用 −" + XgSim.QcCreditReport.ToString("0"),
-                "Account reported (" + XgSim.ReportReasonText(reason, true) + "), frozen " + minutes + " min, credit −" + XgSim.QcCreditReport.ToString("0"));
+            Add("账号被举报（" + XgSim.ReportReasonText(reason, false) + "），冻结 " + minutes + " 分钟",
+                "Account reported (" + XgSim.ReportReasonText(reason, true) + "), frozen " + minutes + " min");
         }
 
         void OnUnfrozen(bool appealed) { Add(appealed ? "申诉通过，账号解冻" : "冻结期满，账号解冻", appealed ? "Appeal accepted, account unfrozen" : "Freeze over, account unfrozen"); }

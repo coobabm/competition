@@ -1,6 +1,8 @@
 using LingGuangV05.Core;
 using LingGuangV05.Desktop.YY;
 using LingGuangV05.Runtime;
+using LingGuangV05.Desktop.XingGuang;
+using UnityEngine;
 
 namespace LingGuangV05.Desktop.Story
 {
@@ -12,6 +14,10 @@ namespace LingGuangV05.Desktop.Story
     /// </summary>
     public static class OpeningSequence
     {
+        /// <summary>New setup's first visible lesson gets a minute without unsolicited story beats.</summary>
+        public static bool FirstLessonActive => XgFirstLessonWindow.ActiveFor(
+            LingGuangV05.Desktop.Tieba.TiebaHub.Lab(), Time.unscaledTime);
+
         /// <summary>The month card of the lab's stage has played (or there is no story running to play it).</summary>
         public static bool MonthCardDone(StoryDesktopPresenter presenter)
         {
@@ -40,6 +46,6 @@ namespace LingGuangV05.Desktop.Story
 
         /// <summary>Whether a beat may start now, from the running desktop.</summary>
         public static bool Turn(OpeningBeat beat, StoryDesktopPresenter presenter)
-            => OpeningQuiet.Turn(beat, MonthCardDone(presenter), AiJoined(), QingwenSpoke());
+            => !FirstLessonActive && OpeningQuiet.Turn(beat, MonthCardDone(presenter), AiJoined(), QingwenSpoke());
     }
 }

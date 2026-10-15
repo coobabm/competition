@@ -35,6 +35,11 @@ namespace LingGuangV05.XingGuang
         public string id, name, nameEn, metric, metricEn, note, noteEn;
         public XgTrack track;
         public double price, samples;
+        /// <summary>
+        /// Size of the whole public pack in real megabytes (2016 files: text is tiny, pictures are big; ImageNet's
+        /// training set is about 150 GB). Downloads take <c>sizeMB / line MB/s × XgSim.DownloadTimeScale</c> game seconds.
+        /// </summary>
+        public double sizeMB;
         /// <summary>Error of an untrained model and the best error reachable on this data.</summary>
         public double chanceError, floorError;
         /// <summary>Parameters (thousands) at which capacity stops being the main limit.</summary>
@@ -172,78 +177,78 @@ namespace LingGuangV05.XingGuang
         public static readonly XgDataset[] Datasets =
         {
             new XgDataset { id = "longtext", name = "长句理解", nameEn = "Long sentences", metric = "理解准确率", metricEn = "comprehension accuracy", track = XgTrack.Sequence,
-                price = 2500, samples = 80000, chanceError = .5, floorError = .02, scale = 4, complexity = 2, handLabel = true, need = 1200, needSpan = 60,
+                price = 2500, samples = 80000, sizeMB = 40, chanceError = .5, floorError = .02, scale = 4, complexity = 2, handLabel = true, need = 1200, needSpan = 60,
                 rewardBase = 6, note = "句首的决定性信息隔着干扰句。", noteEn = "Decisive information separated by distractors." },
             new XgDataset { id = "crosssentence", name = "跨句理解", nameEn = "Cross-sentence context", metric = "关联准确率", metricEn = "reference accuracy", track = XgTrack.Sequence,
-                price = 2500, samples = 80000, chanceError = .5, floorError = .02, scale = 5, complexity = 2, need = 1500, needSpan = 80,
+                price = 2500, samples = 80000, sizeMB = 40, chanceError = .5, floorError = .02, scale = 5, complexity = 2, need = 1500, needSpan = 80,
                 rewardBase = 7, note = "一句话的意思藏在上一句。", noteEn = "A sentence gets its meaning from the previous one." },
             new XgDataset { id = "mnist", name = "MNIST 手写数字", nameEn = "MNIST digits", metric = "准确率", metricEn = "accuracy", track = XgTrack.Vision,
-                price = 300, samples = 60000, chanceError = .9, floorError = .002, scale = .5, complexity = 1, handLabel = true, need = 850,
+                price = 300, samples = 60000, sizeMB = 55, chanceError = .9, floorError = .002, scale = .5, complexity = 1, handLabel = true, need = 850,
                 rewardBase = 1,
-                note = "先在标注台亲手标；买下完整包一次得 6 万张。这里的数字会在画布上挪位置，比原版 MNIST（数字都居中）难：全连接把位置绑死，挪一格就不认得了。", noteEn = "Label by hand first; the full pack adds 60k at once. Digits here move around the canvas, harder than the real (centred) MNIST: a dense net binds positions and loses a digit moved by one cell." },
+                note = "先在标注台亲手标；完整包 6 万张，分批下载。这里的数字会在画布上挪位置，比原版 MNIST（数字都居中）难：全连接把位置绑死，挪一格就不认得了。", noteEn = "Label by hand first; the full pack is 60k, downloaded in batches. Digits here move around the canvas, harder than the real (centred) MNIST: a dense net binds positions and loses a digit moved by one cell." },
             new XgDataset { id = "cifar", name = "CIFAR-10", nameEn = "CIFAR-10", metric = "准确率", metricEn = "accuracy", track = XgTrack.Vision,
-                price = 600, samples = 50000, chanceError = .9, floorError = .03, scale = 120, complexity = 3, need = 21000, handLabel = true,
+                price = 600, samples = 50000, sizeMB = 165, chanceError = .9, floorError = .03, scale = 120, complexity = 3, need = 21000, handLabel = true,
                 rewardBase = 6,
                 note = "5 万张 32×32 彩图。标注台的「验证码」桌也往这里攒小图。", noteEn = "50k 32×32 colour photos. The captcha desk feeds small pictures here too." },
             new XgDataset { id = "meme", name = "表情包情绪", nameEn = "Meme moods", metric = "情绪准确率", metricEn = "mood accuracy", track = XgTrack.Vision,
-                price = 700, samples = 6000, chanceError = .5, floorError = .03, scale = 3, complexity = 1, handLabel = true, need = 600,
+                price = 700, samples = 6000, sizeMB = 300, chanceError = .5, floorError = .03, scale = 3, complexity = 1, handLabel = true, need = 600,
                 rewardBase = 2,
                 note = "金馆长、暴走脸：看脸，不看字。", noteEn = "Panda-man and rage faces: read the face, not the caption." },
             new XgDataset { id = "go", name = "围棋局面", nameEn = "Go positions", metric = "气数判断准确率", metricEn = "liberty accuracy", track = XgTrack.Vision,
-                price = 2500, samples = 50000, chanceError = .5, floorError = .02, scale = 60, complexity = 3, handLabel = true, need = 2500,
+                price = 2500, samples = 50000, sizeMB = 120, chanceError = .5, floorError = .02, scale = 60, complexity = 3, handLabel = true, need = 2500,
                 rewardBase = 10,
                 note = "9 路小棋盘数气。AlphaGo 今年三月刚赢了李世石。", noteEn = "Count liberties on a 9×9 board. AlphaGo beat Lee Sedol this March." },
             new XgDataset { id = "imagenet", name = "ImageNet", nameEn = "ImageNet", metric = "Top-5 准确率", metricEn = "top-5 accuracy", track = XgTrack.Vision,
-                price = 4000, samples = 1200000, chanceError = .995, floorError = .03, scale = 4000, complexity = 8, need = 260000,
+                price = 4000, samples = 1200000, sizeMB = 153600, chanceError = .995, floorError = .03, scale = 4000, complexity = 8, need = 260000,
                 rewardBase = 40,
                 note = "120 万张图、1000 类。买硬盘加下载一周。", noteEn = "1.2M images, 1000 classes. A week of downloading." },
 
             new XgDataset { id = "poems", name = "全唐诗", nameEn = "Tang poems", metric = "下一字准确率", metricEn = "next-char accuracy", track = XgTrack.Sequence,
-                price = 300, samples = 200000, chanceError = .999, floorError = .45, scale = .4, complexity = 1.5, needSpan = 28, handLabel = true, need = 2000,
+                price = 300, samples = 200000, sizeMB = 30, chanceError = .999, floorError = .45, scale = .4, complexity = 1.5, needSpan = 28, handLabel = true, need = 2000,
                 rewardBase = 2,
-                note = "先在标注台亲手标；买下全唐诗一次得 20 万条。", noteEn = "Label by hand first; the full corpus adds 200k at once." },
+                note = "先在标注台亲手标；全唐诗 20 万条，分批下载。", noteEn = "Label by hand first; the full corpus is 200k, downloaded in batches." },
             new XgDataset { id = "logic", name = "逻辑是非题", nameEn = "Yes/no logic", metric = "是非题准确率", metricEn = "yes/no accuracy", track = XgTrack.Sequence,
-                price = 500, samples = 100000, chanceError = .5, floorError = .03, scale = 4, complexity = 3, needSpan = 40, handLabel = true, need = 1500,
+                price = 500, samples = 100000, sizeMB = 20, chanceError = .5, floorError = .03, scale = 4, complexity = 3, needSpan = 40, handLabel = true, need = 1500,
                 rewardBase = 8,
                 note = "无限生成：比较、否定、条件推理、三段论、真话假话……标得越多题越难。完整包是十万道行测判断题。", noteEn = "Endless: ordering, negation, if–then, syllogisms, liars… harder as you label more. The pack is 100k exam questions." },
             new XgDataset { id = "arith", name = "算术是非题", nameEn = "Yes/no arithmetic", metric = "算术判断准确率", metricEn = "arithmetic accuracy", track = XgTrack.Sequence,
-                price = 2500, samples = 20000, chanceError = .5, floorError = .02, scale = .3, complexity = 1.2, needSpan = 20, handLabel = true, need = 700,
+                price = 2500, samples = 20000, sizeMB = 1, chanceError = .5, floorError = .02, scale = .3, complexity = 1.2, needSpan = 20, handLabel = true, need = 700,
                 rewardBase = 2, dataWeight = .5,
                 note = "无限生成：加减乘除、混合运算、百分数、分数……标得越多题越难。题简单，每条只算半条总样本。完整包是两万道小学口算题。",
                 noteEn = "Endless: sums, order of operations, percentages, fractions… harder as you label more. Easy, so each sample counts half toward the total. The pack is 20k primary-school drill questions." },
             new XgDataset { id = "sense", name = "常识判断", nameEn = "Common sense", metric = "常识是非准确率", metricEn = "common-sense accuracy", track = XgTrack.Sequence,
-                price = 300, samples = 12000, chanceError = .5, floorError = .02, scale = .3, complexity = 1.1, needSpan = 12, handLabel = true, need = 700,
+                price = 300, samples = 12000, sizeMB = 1, chanceError = .5, floorError = .02, scale = .3, complexity = 1.1, needSpan = 12, handLabel = true, need = 700,
                 rewardBase = 2,
                 note = "「太阳从东边升起。」是，「鱼会爬树。」否。每条是一句人人都知道的话，标得越多，它越分得清是和否。（它回答「是」「否」时，靠的就是这点本事。）",
                 noteEn = "\"The sun rises in the east.\" Yes. \"Fish climb trees.\" No. Plain things everybody knows: the more you label, the better it tells yes from no. (That is the skill behind its own yes and no.)" },
             new XgDataset { id = "news", name = "人民日报语料", nameEn = "People's Daily corpus", metric = "下一字准确率", metricEn = "next-char accuracy", track = XgTrack.Sequence,
-                price = 800, samples = 5000000, chanceError = .999, floorError = .3, scale = 60, complexity = 4, needSpan = 60, need = 1080000,
+                price = 800, samples = 5000000, sizeMB = 2000, chanceError = .999, floorError = .3, scale = 60, complexity = 4, needSpan = 60, need = 1080000,
                 rewardBase = 10,
                 note = "二十年新闻，五百万句。", noteEn = "Twenty years of news, five million sentences." },
             new XgDataset { id = "translate", name = "中英平行语料", nameEn = "Chinese–English pairs", metric = "翻译准确率", metricEn = "translation accuracy", track = XgTrack.Sequence,
-                price = 5000, samples = 2000000, chanceError = 1, floorError = .25, scale = 6000, complexity = 9, needSpan = 50, needSeq2Seq = true, need = 430000,
+                price = 5000, samples = 2000000, sizeMB = 3000, chanceError = 1, floorError = .25, scale = 6000, complexity = 9, needSpan = 50, needSeq2Seq = true, need = 430000,
                 rewardBase = 50,
                 note = "两百万对中英句子。没有编码器-解码器做不了。", noteEn = "Two million sentence pairs. Needs an encoder–decoder." },
             new XgDataset { id = "xor", name = "异或", nameEn = "XOR", metric = "准确率", metricEn = "accuracy", track = XgTrack.Sequence,
-                price = 0, samples = 600, chanceError = .5, floorError = .02, scale = .2, complexity = 1, need = 200, rewardBase = 0,
+                price = 0, samples = 600, sizeMB = 0, chanceError = .5, floorError = .02, scale = .2, complexity = 1, need = 200, rewardBase = 0,
                 note = "恰好一个为真。单层感知机只能画一条直线。", noteEn = "Exactly one is true. One layer draws one straight line." },
             new XgDataset { id = "parallel", name = "串行瓶颈", nameEn = "Serial bottleneck", metric = "准确率", metricEn = "accuracy", track = XgTrack.Sequence,
-                price = 0, samples = 600, chanceError = .5, floorError = .02, scale = 20, complexity = 4, need = 800, rewardBase = 0,
+                price = 0, samples = 600, sizeMB = 0, chanceError = .5, floorError = .02, scale = 20, complexity = 4, need = 800, rewardBase = 0,
                 note = "一批长文档，订单有期限。句首的字决定答案，后面也会出现同样的字。循环一句话里只能一个字一个字地算。", noteEn = "Long documents with a deadline. The first character decides; the same characters appear again later. A loop reads a sentence one word at a time." },
             new XgDataset { id = "danmu", name = "弹幕情绪", nameEn = "Bullet-comment sentiment", metric = "情绪准确率", metricEn = "sentiment accuracy", track = XgTrack.Sequence,
-                price = 300, samples = 20000, chanceError = .5, floorError = .04, scale = .5, complexity = 1.5, needSpan = 12, handLabel = true, need = 900,
+                price = 300, samples = 20000, sizeMB = 2, chanceError = .5, floorError = .04, scale = .5, complexity = 1.5, needSpan = 12, handLabel = true, need = 900,
                 rewardBase = 3,
                 note = "「前方高能」是夸，「辣眼睛」是骂。小心反话。", noteEn = "\"Hype incoming\" praises, \"my eyes\" mocks. Mind the sarcasm." },
             new XgDataset { id = "spam", name = "垃圾短信", nameEn = "SMS spam", metric = "拦截准确率", metricEn = "filter accuracy", track = XgTrack.Sequence,
-                price = 300, samples = 12000, chanceError = .5, floorError = .02, scale = .3, complexity = 1.2, needSpan = 20, handLabel = true, need = 700,
+                price = 300, samples = 12000, sizeMB = 0.5, chanceError = .5, floorError = .02, scale = .3, complexity = 1.2, needSpan = 20, handLabel = true, need = 700,
                 rewardBase = 3,
                 note = "「您被《我是歌手》抽中」……老周也常被骗。", noteEn = "\"You won a prize from I Am a Singer\"… 老周 falls for these." },
             new XgDataset { id = "headline", name = "标题党", nameEn = "Clickbait", metric = "识别准确率", metricEn = "detection accuracy", track = XgTrack.Sequence,
-                price = 450, samples = 12000, chanceError = .5, floorError = .05, scale = 1.5, complexity = 2, needSpan = 20, handLabel = true, need = 1200,
+                price = 450, samples = 12000, sizeMB = 1, chanceError = .5, floorError = .05, scale = 1.5, complexity = 2, needSpan = 20, handLabel = true, need = 1200,
                 rewardBase = 5,
                 note = "只看标题的写法，不看事情真假。", noteEn = "Judge the style of the headline, not whether it is true." },
             new XgDataset { id = "review", name = "刷单评论", nameEn = "Fake reviews", metric = "识别准确率", metricEn = "detection accuracy", track = XgTrack.Sequence,
-                price = 1000, samples = 12000, chanceError = .5, floorError = .06, scale = 2, complexity = 2.2, needSpan = 30, handLabel = true, need = 1500,
+                price = 1000, samples = 12000, sizeMB = 5, chanceError = .5, floorError = .06, scale = 2, complexity = 2.2, needSpan = 30, handLabel = true, need = 1500,
                 rewardBase = 6,
                 note = "「好评好评好评」和真买家的抱怨。", noteEn = "\"Great great great\" versus real buyers' gripes." },
         };
@@ -256,7 +261,7 @@ namespace LingGuangV05.XingGuang
             new XgDesk { id = "mnist", name = "手写数字", nameEn = "Digits", kind = XgDeskKind.Digit, unlock = XgDeskUnlock.Specialty, comboWindow = 3 },
             new XgDesk { id = "poems", name = "唐诗下一字", nameEn = "Next character", kind = XgDeskKind.Poem, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
             new XgDesk { id = "sense", name = "常识判断", nameEn = "Common sense", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1 },
-            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1, fine = ArithFine },
+            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 6, pay = 1, fine = ArithFine },
             new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 3.2 },
             new XgDesk { id = "danmu", name = "弹幕情绪", nameEn = "Danmaku", kind = XgDeskKind.Text, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 5, pay = 1.4 },
             new XgDesk { id = "spam", name = "垃圾短信", nameEn = "SMS spam", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1.4 },
@@ -293,8 +298,8 @@ namespace LingGuangV05.XingGuang
         {
             var d = Dataset(dataset);
             return N(dataset + ".pack", tree, parent, XgNodeKind.Dataset, dataset, 0, cost, x, y, d.name, d.nameEn,
-                d.handLabel ? "完整数据包：一次补足 " + Count(d.samples) + "。" : "数据集：" + Count(d.samples) + "。" + d.note,
-                d.handLabel ? "Full pack: " + d.samples.ToString("0") + " samples at once." : "Dataset: " + d.samples.ToString("0") + " samples. " + d.noteEn, needs);
+                (d.handLabel ? "完整数据包 " + Count(d.samples) + "，" : "数据集：" + Count(d.samples) + "，") + "分 " + XgSim.PackBatches(d) + " 批下载，这里买的是下载权和第一批。" + (d.handLabel ? "" : d.note),
+                (d.handLabel ? "Full pack: " + d.samples.ToString("0") + " samples" : "Dataset: " + d.samples.ToString("0") + " samples") + " in " + XgSim.PackBatches(d) + " batches; this buys the download right and the first batch." + (d.handLabel ? "" : " " + d.noteEn), needs);
         }
 
         static XgNode ArchNode(string tree, string id, string parent, double cost, float x, float y)
@@ -410,7 +415,7 @@ namespace LingGuangV05.XingGuang
             W("vision", 4, "v.w3", 6000, 3, "vision");
             D("sequence", 4, "s.d3", 1500, 3, "sequence"); W("sequence", 4, "s.w3", 8000, 3, "sequence");
             P("cifar", "lenet", 2000, 3, "vision"); P("meme", "lenet", 1500, 3, "vision");
-            P("poems", "rnn", 2000, 3, "sequence");
+            P("poems", "rnn", 1500, 3, "sequence");
             R("relu", "lenet", 200, 3); R("gradclip", "rnn", 150, 3); R("irnn", "gradclip", 1200, 3); R("dropout", "mlp", 400, 3); R("augment", "dropout", 900, 3); R("dataclean", "dropout", 800, 3); R("rmsprop", "momentum", 1200, 3);
             A("lstm", 3, "sequence", "rnn", 4000); A("gru", 3, "sequence", "lstm", 1500);
             P("longtext", "lstm", 2500, 3, "sequence");
@@ -418,10 +423,10 @@ namespace LingGuangV05.XingGuang
             // ── 阶段 4 · LSTM + ResNet → 编码器-解码器
             D("vision", 12, "v.d8", 5000, 4, "vision"); D("vision", 16, "v.d12", 12000, 4, "vision"); W("vision", 5, "v.w4", 30000, 4, "vision");
             D("sequence", 6, "s.d4", 8000, 4, "sequence"); W("sequence", 5, "s.w4", 30000, 4, "sequence");
-            P("crosssentence", "lstm", 2500, 4, "sequence"); P("review", "lstm", 1000, 4, "sequence");
+            P("crosssentence", "lstm", 6000, 4, "sequence"); P("review", "lstm", 1000, 4, "sequence");
             A("textcnn", 4, "sequence", "rnn", 2500);
             A("resnet", 4, "vision", "lenet", 15000);
-            P("go", "resnet", 5000, 4, "vision"); P("imagenet", "resnet", 15000, 4, "vision");
+            P("go", "resnet", 5000, 4, "vision"); P("imagenet", "resnet", 20000, 4, "vision");
             R("batchnorm", "dropout", 3000, 4); R("adam", "rmsprop", 5000, 4); R("lrschedule", "momentum", 1500, 4);
             A("seq2seq", 4, "sequence", "lstm", 15000);
             A("attention", 4, "sequence", "seq2seq", 15000);
@@ -430,7 +435,7 @@ namespace LingGuangV05.XingGuang
             R("position", "attention", 6000, 5);
             D("vision", 32, "v.d16", 8000, 5, "vision"); W("vision", 6, "v.w5", 70000, 5, "vision");
             D("sequence", 8, "s.d6", 8000, 5, "sequence"); W("sequence", 6, "s.w5", 50000, 5, "sequence");
-            P("translate", "attention", 30000, 5, "sequence"); P("news", "rnn", 40000, 5, "sequence");
+            P("translate", "attention", 30000, 5, "sequence"); P("news", "rnn", 30000, 5, "sequence");
             A("caption", 5, "vision", "resnet", 20000); list[list.Count - 1].needs = new[] { "attention" };
             R("transfer", "lrschedule", 12000, 5);
             // Not bought, the Transformer comes free with the sixth ability; bought, it lowers that ability's thresholds.
@@ -581,7 +586,7 @@ namespace LingGuangV05.XingGuang
         public static readonly XgResearch[] Research =
         {
             new XgResearch { id = "earlystop", kind = XgResearchKind.Feel, name = "早停", nameEn = "Early stopping", cost = 2500, effect = "分数不涨就停。训练 +5%", effectEn = "Stop when the score stalls. Training +5%" },
-            new XgResearch { id = "wordvec", kind = XgResearchKind.Feel, name = "词向量", nameEn = "Word vectors", cost = 3500, effect = "每个词变成一串数字。文字训练 +8%", effectEn = "Every word becomes a list of numbers. Text training +8%" },
+            new XgResearch { id = "wordvec", kind = XgResearchKind.Feel, name = "词向量", nameEn = "Word vectors", cost = 3500, effect = "每个词变成一串数字。文字训练 +8%；聊天时能按意思想起有关的事", effectEn = "Every word becomes a list of numbers. Text training +8%; in chat it recalls things by meaning" },
             new XgResearch { id = "beamsearch", kind = XgResearchKind.Feel, name = "束搜索", nameEn = "Beam search", cost = 7000, effect = "翻译时多留几条候选。翻译训练 +10%", effectEn = "Keep a few candidates while translating. Translation +10%" },
             new XgResearch { id = "subword", kind = XgResearchKind.Feel, name = "子词切分", nameEn = "Subword units", cost = 9000, effect = "生僻词拆成小块。文字训练 +5%", effectEn = "Rare words split into pieces. Text training +5%" },
             new XgResearch { id = "sft", kind = XgResearchKind.Feel, name = "指令微调", nameEn = "Instruction tuning", cost = 25000, effect = "教它听懂吩咐。预训练 +5%", effectEn = "Teach it to follow requests. Pre-training +5%" },
@@ -613,7 +618,7 @@ namespace LingGuangV05.XingGuang
             new XgResearch { id = "augment", kind = XgResearchKind.Augment, name = "数据增强", nameEn = "Data augmentation", cost = 25,
                 effect = "图片挪一挪、转一转，一张变几张", effectEn = "Shift and turn pictures: one becomes several" },
             new XgResearch { id = "dataclean", kind = XgResearchKind.Augment, name = "数据清洗", nameEn = "Data cleaning", cost = 800,
-                effect = "杂包和众包的错标减半", effectEn = "Half the wrong labels in junk packs and crowd work" },
+                effect = "杂包和众包的错标减半；去重压缩，下好的数据少占 30% 硬盘", effectEn = "Half the wrong labels in junk packs and crowd work; de-duplicated, stored data takes 30% less disk" },
             new XgResearch { id = "rmsprop", kind = XgResearchKind.Optimizer, name = "RMSProp", nameEn = "RMSProp", cost = 30, speed = 1.6, stability = 2,
                 effect = "每个参数自己定步子。训练 ×1.6", effectEn = "Each parameter sets its own step. Training ×1.6" },
             new XgResearch { id = "lrschedule", kind = XgResearchKind.LrSchedule, name = "学习率衰减", nameEn = "LR schedule", cost = 50,
@@ -641,6 +646,8 @@ namespace LingGuangV05.XingGuang
         public const double HandPayScale = 2.5;
         /// <summary>The 算术 desk is true/false: a wrong pick costs this fraction of a right answer's base pay.</summary>
         public const double ArithFine = .5;
+        /// <summary>Every other desk: a wrong hand answer costs this fraction of a right answer's base pay (0 = free misses).</summary>
+        public const double HandFine = .5;
         /// <summary>Auto-answering needs a deployed checkpoint at least this good.</summary>
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;

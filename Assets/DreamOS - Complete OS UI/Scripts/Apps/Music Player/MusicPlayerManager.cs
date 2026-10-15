@@ -26,6 +26,8 @@ namespace Michsky.DreamOS
 
         // Settings
         public bool repeat;
+        /// <summary>Background music: closing the window leaves the music playing (LingGuang GameMusic).</summary>
+        [HideInInspector] public bool keepPlayingWhenClosed;
         public bool shuffle;
         public bool sortListByName = true;
         public bool enablePopupNotification;
@@ -55,8 +57,15 @@ namespace Michsky.DreamOS
             Initialize();
         }
 
+        void OnEnable()
+        {
+            // Music that kept going while the window was closed gets its playback loop back.
+            if (keepPlayingWhenClosed && audioSource != null && audioSource.isPlaying) { StopCoroutine("ProcessPlayback"); StartCoroutine("ProcessPlayback"); }
+        }
+
         void OnDisable()
         {
+            if (keepPlayingWhenClosed) { StopCoroutine("ProcessPlayback"); return; }
             Stop();
         }
 

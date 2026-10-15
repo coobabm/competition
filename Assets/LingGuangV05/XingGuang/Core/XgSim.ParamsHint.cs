@@ -41,7 +41,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Whether this model's size already counts, and if not what is missing.</summary>
         public XgCountState CountState(XgRun run)
         {
-            if (ParamsK(run) <= TrainedParamsK + 1e-9) return XgCountState.Counted;
+            if (ParamsK(run) <= ModelParamsK + 1e-9) return XgCountState.Counted;
             if (run.shapeRounds <= 0) return XgCountState.Fresh;
             return ModelGrade(run) < TrainedGrade ? XgCountState.BelowC : XgCountState.Unassessed;
         }

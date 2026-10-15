@@ -46,6 +46,12 @@ namespace LingGuangV05.Runtime
             initialized = true;
             if (useDiskSave)
             {
+#if RECORDING_PREVIEW
+                // Dedicated recording build: keep every save and slot beside this copy of the game.
+                SaveDirectoryOverride = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "UserData"));
+                if (Array.IndexOf(Environment.GetCommandLineArgs(), "--recording-smoke") >= 0)
+                    SaveDirectoryOverride = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "VerificationData"));
+#endif
 #if UNITY_EDITOR
                 if (!string.IsNullOrEmpty(VerificationSaveDirectory)) SaveDirectoryOverride = VerificationSaveDirectory;
 #endif
@@ -261,16 +267,19 @@ namespace LingGuangV05.Runtime
         public bool RecordName(string name)
         {
             EnsureInitialized();
-            name = (name ?? "").Trim();
-            if (name.Length == 0 || new StringInfo(name).LengthInTextElements > 16)
-            { SaveStatus = "名字请输入 1–16 个字。"; Changed?.Invoke(); return false; }
-            foreach (char character in name)
-                if (char.IsControl(character) || character == '<' || character == '>' || character == '[' || character == ']')
-                { SaveStatus = "名字不能包含控制符或格式标签。"; Changed?.Invoke(); return false; }
+            string problem = AiNamePolicy.Problem(name, GameText.IsEnglish);
+            if (problem != null) { SaveStatus = problem; Changed?.Invoke(); return false; }
+            name = AiNamePolicy.Normalize(name);
             Sim.S.aiName = name;
             dirty = true;
             Signal?.Invoke("name.set", name);
-            SaveStatus = "已记下名字；它会在后续章节开口时使用。";
+            bool saved = SaveNow();
+            if (saved && useDiskSave && profiles != null)
+            {
+                var profile = PlayerProfile.FromState(Sim.S);
+                if (profile != null) profiles.Write(profile, out _);
+            }
+            if (saved) SaveStatus = GameText.T("名字已更新，桌面程序现在叫 ", "Name updated. The desktop app is now ") + name + ".exe";
             Changed?.Invoke();
             return true;
         }
@@ -285,7 +294,7 @@ namespace LingGuangV05.Runtime
         /// <summary>Ends the prologue with this setup. <paramref name="remember"/>: also write it to player-profile.json (the opening was just played).</summary>
         bool FinishPrologue(PrologueProfile profile, bool remember)
         {
-            if (!Sim.CompletePrologue(profile)) { SaveStatus = PrologueProfile.Problem(profile, GameText.IsEnglish) ?? "序章已结束。"; Changed?.Invoke(); return false; }
+            if (!Sim.CompletePrologue(profile, legacyProfile: !remember)) { SaveStatus = PrologueProfile.Problem(profile, GameText.IsEnglish) ?? "序章已结束。"; Changed?.Invoke(); return false; }
             if (remember && profiles != null)
             {
                 var played = PlayerProfile.FromSetup(profile);

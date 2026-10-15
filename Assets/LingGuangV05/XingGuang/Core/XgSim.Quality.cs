@@ -42,26 +42,30 @@ namespace LingGuangV05.XingGuang
         public long qcRng = XgSim.QcSeed;
         /// <summary>Spot checks since the platform last judged the window (it judges every 20).</summary>
         public int qcSinceJudge;
+        /// <summary>Unused since reports were removed (2026-10-16); kept so old saves load.</summary>
+        public double qcCleanSeconds;
     }
 
     /// <summary>
     /// 摆渡众包 quality control. The platform spot-checks automatic labels that left the lab (hand labels are never
-    /// checked), fines the wrong ones, tracks a credit score and a rolling pass rate over the last 40 checks, and
-    /// judges it every 20 checks: a 15% error rate warns, 20% over a full window of 40 reports the account (15% when
-    /// the answers look scripted). A report freezes automatic labelling
-    /// for a while; hand labelling keeps working, and an appeal can lift the freeze for a fee.
+    /// checked), fines the wrong ones (twice their pay), tracks a credit score and a rolling pass rate over the last 40
+    /// checks, and judges it every 20 checks: a 15% error rate warns once per crossing. Since 2026-10-16 the account is
+    /// never reported or frozen (user call: 「账号别被举报了 标错扣钱就行」); a wrong label only costs money, and a low
+    /// credit tier means more checks and lower pay. The freeze fields stay in the save and are cleared on load.
     /// Only active once the player owns the first level of 自动答题.
     /// </summary>
     public sealed partial class XgSim
     {
         public const long QcSeed = 0x0C0FFEE5L;
         public const int QcWindow = 40, QcMinChecks = 20, QcJudgeEvery = 20, QcMonotoneMin = 20;
-        public const double QcWarnRate = .15, QcReportRate = .20, QcMonotoneShare = .95;
+        public const double QcWarnRate = .15, QcMonotoneShare = .95;
         public const double QcCreditStart = 80, QcCreditMax = 100, QcCreditGold = 90, QcCreditWatch = 60;
-        public const double QcCreditFail = 4, QcCreditPass = 1, QcCreditReport = 20, QcCreditHand = .2;
+        public const double QcCreditFail = 4, QcCreditPass = 1, QcCreditHand = .2;
         public const double QcFineMultiplier = 2, QcAppealMin = 100, QcAppealShare = .1;
-        /// <summary>Freeze length for the first, second and third (and later) report.</summary>
-        public static readonly double[] QcFreezeSeconds = { 180, 480, 1200 };
+        /// <summary>Credit drifts back up by this much a second, but only up to <see cref="QcCreditStart"/>; above that it is earned by passed checks.</summary>
+        public const double QcCreditRegen = 1.0 / 15;
+        /// <summary>A desk is named as the weak one once it has this many recent automatic labels.</summary>
+        public const int QcWeakDeskMin = 5;
 
         /// <summary>Tests and tools may switch the platform off to look at the lab's own rules in isolation.</summary>
         public bool PlatformChecks = true;
@@ -95,7 +99,6 @@ namespace LingGuangV05.XingGuang
         public static XgCreditTier TierOfCredit(double credit) => credit >= QcCreditGold ? XgCreditTier.Gold : credit >= QcCreditWatch ? XgCreditTier.Normal : XgCreditTier.Watch;
         public static double CheckChanceOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? .25 : tier == XgCreditTier.Normal ? .4 : .65;
         public static double PayMultiplierOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? 1.2 : tier == XgCreditTier.Normal ? 1 : .8;
-        public static double FreezeSecondsFor(int report) => QcFreezeSeconds[Math.Max(0, Math.Min(QcFreezeSeconds.Length - 1, report - 1))];
         /// <summary>Chance that the platform checks one automatic label right now.</summary>
         public double SpotCheckChance => !QualityActive ? 0 : ForcedCheckChance >= 0 ? Math.Min(1, ForcedCheckChance) : CheckChanceOf(CreditTier);
         /// <summary>Credit-tier multiplier on automatic income (1 while the platform is not active).</summary>
@@ -127,16 +130,15 @@ namespace LingGuangV05.XingGuang
             if (S.qcVersion == 0) { S.qcCredit = QcCreditStart; S.qcVersion = 1; }
             if (!FiniteCollaboration(S.qcCredit)) S.qcCredit = QcCreditStart;
             S.qcCredit = Math.Max(0, Math.Min(QcCreditMax, S.qcCredit));
-            if (!FiniteCollaboration(S.qcFrozen) || S.qcFrozen < 0) S.qcFrozen = 0;
-            S.qcFrozen = Math.Min(S.qcFrozen, QcFreezeSeconds[QcFreezeSeconds.Length - 1]);
-            S.qcReports = Math.Max(0, S.qcReports);
+            // No more reports or freezes: a save frozen under the old rules is free again.
+            S.qcFrozen = 0; S.qcReports = 0; S.qcAppealed = false;
             if (!FiniteCollaboration(S.qcFines) || S.qcFines < 0) S.qcFines = 0;
             S.qcCheckedTotal = Math.Max(0, S.qcCheckedTotal);
             S.qcFailedTotal = Math.Max(0, Math.Min(S.qcCheckedTotal, S.qcFailedTotal));
             if (!Enum.IsDefined(typeof(XgReportReason), S.qcReason)) S.qcReason = (int)XgReportReason.None;
-            if (S.qcFrozen > 0 && S.qcReason == (int)XgReportReason.None) S.qcReason = (int)XgReportReason.LowPassRate;
             Trim(S.qcChecks, QcWindow); Trim(S.qcAnswers, QcWindow);
             S.qcSinceJudge = Math.Max(0, Math.Min(QcJudgeEvery - 1, S.qcSinceJudge));
+            S.qcCleanSeconds = 0;
             if (S.qcRng == 0) S.qcRng = QcSeed;
             PrepareTraps();
             PrepareCaptcha();
@@ -183,7 +185,7 @@ namespace LingGuangV05.XingGuang
             return fine;
         }
 
-        /// <summary>After a spot check: report, warn once per crossing, or re-arm the warning.</summary>
+        /// <summary>After a spot check: warn once per crossing, or re-arm the warning. Nothing is ever reported.</summary>
         void JudgeQuality()
         {
             // The platform reviews the account in batches: every 20 checks, once 20 are in.
@@ -191,16 +193,13 @@ namespace LingGuangV05.XingGuang
             S.qcSinceJudge = 0;
             double error = ErrorRate;
             bool warn = error >= QcWarnRate - 1e-9;
-            // Reports need a full window, so a short unlucky streak is not enough.
-            bool full = S.qcChecks.Count >= QcWindow;
-            if (full && error >= QcReportRate - 1e-9) Report(MonotoneAnswers ? XgReportReason.MonotoneAnswers : XgReportReason.LowPassRate);
-            else if (full && warn && MonotoneAnswers) Report(XgReportReason.MonotoneAnswers);
-            else if (warn)
+            if (warn)
             {
                 if (S.qcWarned) return;
                 S.qcWarned = true;
-                string pass = F(PassRate * 100, "0") + "%", line = F((1 - QcReportRate) * 100, "0") + "%";
-                Say(T("摆渡众包：近期抽检合格率 " + pass + "，低于 " + line + " 将被举报。", "Bodu Crowdsourcing: recent spot-check pass rate " + pass + ". Below " + line + " the account will be reported."));
+                string pass = F(PassRate * 100, "0") + "%", fine = F(QcFineMultiplier, "0");
+                string advice = QualityAdvice(false), adviceEn = QualityAdvice(true);
+                Say(T("摆渡众包：近期抽检合格率 " + pass + "，抽到的错题每道罚 " + fine + " 倍工钱。" + advice, "Bodu Crowdsourcing: recent spot-check pass rate " + pass + ". Each wrong label caught costs " + fine + "× its pay. " + adviceEn));
                 QualityWarned?.Invoke(error);
             }
             else S.qcWarned = false;
@@ -218,36 +217,66 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        void Report(XgReportReason reason)
-        {
-            S.qcReports++;
-            AddCredit(-QcCreditReport);
-            S.qcChecks.Clear(); S.qcAnswers.Clear(); S.qcSinceJudge = 0;
-            S.qcWarned = false; S.qcAppealed = false;
-            ClearCaptcha();
-            double seconds = FreezeSecondsFor(S.qcReports);
-            S.qcFrozen = seconds; S.qcReason = (int)reason;
-            string minutes = F(seconds / 60, "0");
-            Say(T("摆渡众包：账号被举报（" + ReportReasonText(reason, false) + "），自动标注冻结 " + minutes + " 分钟。手动标注不受影响。",
-                "Bodu Crowdsourcing: account reported (" + ReportReasonText(reason, true) + "). Auto labelling is frozen for " + minutes + " min; hand labelling still works."));
-            QualityReported?.Invoke(reason, seconds);
-        }
-
-        /// <summary>Counts the freeze down by real seconds. Called once per step, before any routing.</summary>
+        /// <summary>Lets credit drift back toward the starting 80. Called once per step, before any routing.</summary>
         void TickQuality(double dt)
         {
             if (dt <= 0 || !FiniteCollaboration(dt)) return;
             TickCaptcha(dt);
-            if (S.qcFrozen <= 0) return;
-            S.qcFrozen = Math.Max(0, S.qcFrozen - dt);
-            if (S.qcFrozen > 0) return;
-            S.qcAppealed = false;
-            Say(T("摆渡众包：账号已解冻，自动标注恢复。"));
-            QualityUnfrozen?.Invoke(false);
+            if (QualityActive && S.qcCredit < QcCreditStart) S.qcCredit = Math.Min(QcCreditStart, S.qcCredit + QcCreditRegen * dt);
         }
 
         /// <summary>A correct hand label while frozen earns a little trust back.</summary>
         void QualityHandCorrect() { if (QualityFrozen) AddCredit(QcCreditHand); }
+
+        /// <summary>
+        /// The desk whose recent automatic labels are most often wrong (from the route history), or null when no desk
+        /// has <see cref="QcWeakDeskMin"/> recent automatic labels. <paramref name="accuracy"/> is its share right.
+        /// </summary>
+        public string WeakestAutoDesk(out double accuracy)
+        {
+            accuracy = 1;
+            var total = new Dictionary<string, int>(); var right = new Dictionary<string, int>();
+            foreach (var r in S.routeHistory)
+            {
+                if (r == null || !r.automatic || string.IsNullOrEmpty(r.dataset)) continue;
+                total.TryGetValue(r.dataset, out int n); total[r.dataset] = n + 1;
+                right.TryGetValue(r.dataset, out int k); right[r.dataset] = k + (r.correct ? 1 : 0);
+            }
+            string worst = null;
+            foreach (var kv in total)
+            {
+                if (kv.Value < QcWeakDeskMin) continue;
+                double a = (double)right[kv.Key] / kv.Value;
+                if (worst == null || a < accuracy - 1e-9 || Math.Abs(a - accuracy) < 1e-9 && string.CompareOrdinal(kv.Key, worst) < 0) { worst = kv.Key; accuracy = a; }
+            }
+            return worst;
+        }
+
+        /// <summary>
+        /// What actually helps the pass rate right now, in one sentence: without 「拿不准才问我」 every automatic answer
+        /// leaves the lab, so buy it first; with it, raise its threshold. Names the weakest desk when one stands out.
+        /// </summary>
+        public string QualityAdvice(bool english)
+        {
+            string desk = WeakestAutoDesk(out double acc);
+            var d = desk != null ? XgCatalog.Dataset(desk) : null;
+            string weak = d != null && acc < 1 - QcWarnRate
+                ? (english ? " " + d.nameEn + " is only " + F(acc * 100, "0") + "% right when it labels on its own." : "「" + d.name + "」自动标注只对 " + F(acc * 100, "0") + "%。")
+                : "";
+            if (!CollaborationEnabled)
+            {
+                var n = XgCatalog.Node("label.coop");
+                string price = n != null ? F(LabelNodeCost(n), "0") : "";
+                return english
+                    ? "Buy 'Ask when unsure' (¥" + price + ") in Tech: answers it is not sure of come to you instead of going out." + weak
+                    : "去科技买「拿不准才问我」（¥" + price + "）：没把握的题交给你，不再直接交出去。" + weak;
+            }
+            if (S.coopThreshold < .95 - 1e-9)
+                return english
+                    ? "Raise the 'Ask when unsure' threshold (now " + F(S.coopThreshold * 100, "0") + "%) on the labelling page." + weak
+                    : "在标注台把「拿不准才问我」阈值调高（现在 " + F(S.coopThreshold * 100, "0") + "%）。" + weak;
+            return english ? "Train the weak desk's model further." + weak : "把弱的那个标注台的模型练好。" + weak;
+        }
 
         /// <summary>申诉: max(¥100, 10% of the wallet).</summary>
         public double AppealCost(IXgHost host)

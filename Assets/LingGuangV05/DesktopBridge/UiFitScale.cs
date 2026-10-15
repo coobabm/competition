@@ -18,17 +18,15 @@ namespace LingGuangV05.Desktop
         Vector2 lastParent = new Vector2(-1, -1);
 
         /// <summary>
-        /// Fits <paramref name="root"/> to its parent. The design size is the parent's size while the window
-        /// is not maximised; if it already is, <paramref name="fallback"/> is used.
+        /// Fits <paramref name="root"/> to its parent using the authored layout size in <paramref name="fallback"/>.
         /// </summary>
         public static UiFitScale Attach(RectTransform root, WindowManager window, Vector2 fallback)
         {
             if (root == null) return null;
             var fit = root.GetComponent<UiFitScale>() ?? root.gameObject.AddComponent<UiFitScale>();
-            var parent = root.parent as RectTransform;
-            var measured = parent != null ? parent.rect.size : Vector2.zero;
-            bool normal = window == null || !window.isFullscreen;
-            fit.designSize = normal && measured.x > 1 && measured.y > 1 ? measured : fallback;
+            // Use the authored layout size, not the current window rectangle. The first open can
+            // happen during a window animation, and the player's resized window is not a design baseline.
+            fit.designSize = fallback;
             fit.Apply(true);
             return fit;
         }

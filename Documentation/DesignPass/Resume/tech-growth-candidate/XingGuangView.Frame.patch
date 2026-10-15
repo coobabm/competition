@@ -1,0 +1,45 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs
+@@ -271,6 +271,7 @@
+         public RectTransform NavButton(string id)
+         {
+             if (id == "label") id = "teach";
++            if (id == "items" || id == "abilities" || id == "growth") id = "tree";
+             return id != null && navRows.TryGetValue(id, out var row) ? row.rt : null;
+         }
+ 
+@@ -284,7 +285,7 @@
+                 case "train": return Lang.T("训练");
+                 case "data": return T("数据", "Data");
+                 case "items": return T("道具", "Items");
+-                case "tree": return T("科技", "Tech");
++                case "tree": return T("成长", "Growth");
+                 case "wiring": return T("接线", "Wiring");
+                 case "repo": return T("模型仓库", "Models");
+                 case "abilities": return T("能力", "Abilities");
+@@ -301,7 +302,7 @@
+                 case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
+                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
+                 case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
+-                case "tree": return T("科技：加宽、加深的上限，数据包，自动化（crontab、守护进程），研究，机房和预训练秘籍。按住节点 0.6 秒购买。", "Tech: width and depth caps, data packs, automation (crontab, daemon), research, the server room and the pre-training secret. Hold a node 0.6 s to buy.");
++                case "tree": return T("成长：六项能力、参数和样本门槛，以及结构、技巧和数据包。点击节点购买；消耗品在右侧货架。", "Growth: six abilities, their parameter and sample thresholds, structures, techniques and data packs. Click a node to buy; consumables are on the right shelf.");
+                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
+                 case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练、预训练和替你回消息都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training, pre-training and replies all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
+                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");
+@@ -315,7 +316,7 @@
+             switch (id)
+             {
+                 case "items": { int n = Items != null ? Items.BuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
+-                case "tree": { int n = Items != null ? Items.TreeBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
++                case "tree": { int n = Tree != null ? Tree.GrowthBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
+                 case "repo": { int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0); return fresh > 0 && tab != "repo" ? "+" + fresh : ""; }
+                 case "wiring": return (Sim.AjiePending || Sim.Wiring.tripped) && tab != "wiring" ? "!" : "";
+                 case "cards": { int n = Sim.NewCards(); return n > 0 ? "+" + n : ""; }
+@@ -326,6 +327,7 @@
+ 
+         bool NavVisible(string id)
+         {
++            if (id == "items" || id == "abilities") return false; // Legacy routes remain available through the single Growth row.
+             if (id == "home") return true;
+             if (Sim.S.gradualSystems && Sim.S.stage < 3 && System.Array.IndexOf(new[] { "teach", "train", "board", "tree", "chat" }, id) < 0) return false;
+             return FeatureOpen(id) || id == "final";

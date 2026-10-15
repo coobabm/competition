@@ -138,6 +138,8 @@ namespace LingGuangV05.Desktop.XingGuang
             Abilities = Add("abilities", new XgAbilitiesPage(), area);
             Cards = Add("cards", new XgCardsPage(), area);
             Finale = Add("final", new XgFinalePage(), area);
+            Data.MountCrawler(Train.root);
+            BuildProfileSections(area);
             Repo.SeenUpTo = owner.Sim.S.nextModelId - 1;
             var toastBox = Rect("Toast", root, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-330 + NavWidth / 2, 16), new Vector2(330 + NavWidth / 2, 52));
             Panel(toastBox, new Color32(14, 24, 35, 240)).raycastTarget = false;
@@ -165,11 +167,11 @@ namespace LingGuangV05.Desktop.XingGuang
             if (controller == null || controller.Sim == null) return false;
             // The first-minutes focus (XgSim.Opening.cs) keeps every page but labelling and training shut.
             if (controller.Sim.OpeningLocksLabTab(id)) return false;
+            if (id == "items" || id == "abilities" || id == "growth") id = "tree";
             switch (id)
             {
-                case "teach": case "train": case "board": case "tree": case "home": case "abilities": return true;
+                case "teach": case "train": case "board": case "tree": case "home": return true;
                 case "data": return controller.Sim.SystemUnlocked("data") && (controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0);
-                case "items": return controller.FeatureVisible("tree");
                 case "backpack": return controller.Sim.S.relicPicks > 0 || controller.Sim.S.relicOwned.Count > 0;
                 default: return controller.FeatureVisible(id);
             }
@@ -263,7 +265,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── events → feel ─────────────
 
-        void OnMessage(string text) { AddFeed(text, 0); ShowToast(text, 3.5f); }
+        void OnMessage(string text)
+        {
+            AddFeed(text, 0);
+            // Keep the existing unlock in the activity feed, without adding a second objective to the first lesson.
+            bool trainingUnlocked = text != null && (text.StartsWith("攒够 ", StringComparison.Ordinal)
+                && text.Contains("可以训练了") || text.EndsWith(" samples, training unlocked", StringComparison.Ordinal));
+            if (trainingUnlocked && (tab == "teach" || tab == "label") && XgFirstLessonWindow.ActiveFor(Sim, Time.unscaledTime)) return;
+            ShowToast(text, 3.5f);
+        }
 
         void OnDiverged(int track)
         {
@@ -392,7 +402,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Open(string tabId)
         {
             if (tabId == "vision" || tabId == "sequence") { Sim.SelectedTrack = tabId == "vision" ? XgTrack.Vision : XgTrack.Sequence; tabId = "train"; }
-            if (tabId == "research") tabId = "tree";
+            if (tabId == "research" || tabId == "growth") tabId = "tree";
             if (tabId == "label") tabId = "teach";
             if (IsCrowdPage(tabId)) { Refresh(true); controller.OpenCrowd(tabId); return; }
             if (!string.IsNullOrEmpty(tabId) && pages.ContainsKey(tabId)) ShowTab(tabId);
@@ -404,6 +414,13 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void ShowTab(string id)
         {
+            string requested = id;
+            if (id == "data" && !FeatureOpen("data")) return;
+            if (id == "final" && !FeatureOpen("final")) return;
+            if (id == "backpack" && !FeatureOpen("backpack")) return;
+            if (id == "data" || id == "repo" || id == "wiring") id = "train";
+            if (id == "board" || id == "cards" || id == "final" || id == "backpack") id = "home";
+            if (id == "items" || id == "abilities" || id == "growth") id = "tree";
             if (id == "label") id = "teach";
             if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
             if (!pages.ContainsKey(id)) return;
@@ -414,10 +431,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             tab = id;
-            foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == id);
-            pages[id].Shown();
+            profileSection = requested == "cards" || requested == "final" || requested == "backpack" ? requested : "home";
+            string contentId = id == "home" ? profileSection : id;
+            foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == contentId);
+            if (profileSections != null) profileSections.gameObject.SetActive(id == "home");
+            pages[contentId].Shown();
             Juice.BringToFront();
             Refresh(true);
+            if (requested == "items") Tree.SetGrowthShelf(true);
+            if (requested == "abilities") Tree.FocusGrowthAbility(Sim.NextAbility > 0 ? Sim.NextAbility : XgSim.AbilityCount);
+            if (requested == "data") Train.OpenSources();
         }
 
         public void Refresh(bool force)
@@ -430,7 +453,8 @@ namespace LingGuangV05.Desktop.XingGuang
             RefreshNav();
             RefreshRelicStrip();
             RefreshRelicPick();
-            if (pages.TryGetValue(tab, out var page)) page.Refresh();
+            if (pages.TryGetValue(tab == "home" ? profileSection : tab, out var page)) page.Refresh();
+            RefreshProfileSections();
             setup?.Refresh(controller.runtime);
         }
     }

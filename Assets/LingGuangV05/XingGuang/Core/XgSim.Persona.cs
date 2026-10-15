@@ -60,7 +60,7 @@ namespace LingGuangV05.XingGuang
         public XgProfile Profile = new XgProfile();
 
         /// <summary>The name the player gave it, or the app name before setup.</summary>
-        public string AiDisplayName => Profile != null && !string.IsNullOrEmpty(Profile.name) ? Profile.name : T(LingGuangV05.Core.AppNames.AiZh, LingGuangV05.Core.AppNames.AiEn);
+        public string AiDisplayName => LingGuangV05.Core.AppNames.PersonalName(Profile?.name, English);
 
         public static readonly string[] AxisNames = { "温度", "玩心", "主见" };
         public static readonly string[] AxisNamesEn = { "Warmth", "Play", "Opinion" };
@@ -162,7 +162,7 @@ namespace LingGuangV05.XingGuang
                 case 3: return new XgSpeechLimits { tokens = tokens, context = 512, contextMessages = 2, temperature = 1f };
                 case 4: return new XgSpeechLimits { tokens = tokens, context = 1024, contextMessages = 8, temperature = .9f };
                 case 5: return new XgSpeechLimits { tokens = tokens, context = 2048, contextMessages = 12, temperature = .8f };
-                default: return new XgSpeechLimits { tokens = S.fullOpen ? 400 : 200, context = 4096, contextMessages = 20, temperature = .8f, thinking = S.fullOpen };
+                default: return new XgSpeechLimits { tokens = S.fullOpen ? 400 : 90, context = 4096, contextMessages = 20, temperature = .8f, thinking = S.fullOpen };
             }
         }
 
@@ -205,10 +205,42 @@ namespace LingGuangV05.XingGuang
                 double semantic = Math.Max(.5, BestOf("danmu", "longtext", "poems", "headline", "translate"));
                 // Improvement should sound like improvement; high grades reduce word-order mistakes.
                 if (rng.NextDouble() < (1 - semantic) / (1 + SpeechGrade)) reply = Shuffle(reply, rng);
-                int length = 24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12;
-                if (stage == 4 && reply.Length > length) reply = reply.Substring(0, length) + "…";
             }
+            // Cold and brief from stage 4 on (2026-10-16): no exclamations or faces, cut at a sentence end.
+            if (stage >= 4) reply = Cool(reply, MaxReplyChars);
             return reply;
+        }
+
+        /// <summary>The most characters a reply may have from stage 4 on: it says little (4: 16–28 by grade, 5: 24, 6: 32).</summary>
+        public int MaxReplyChars
+        {
+            get
+            {
+                switch (SpeechStage)
+                {
+                    case 4: return 16 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 4;
+                    case 5: return 24;
+                    default: return 32;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Flattens a reply: exclamation marks become full stops, faces and tildes go, and a reply longer than
+        /// <paramref name="max"/> is cut at the last sentence end that fits (or hard, with 「…」, when none does).
+        /// </summary>
+        public string Cool(string reply, int max)
+        {
+            string t = LingGuangV05.Core.Chat.YYFaces.StripFaces(reply ?? "").Trim();
+            t = t.Replace("！", "。").Replace("!", ".").Replace("~", "").Replace("～", "");
+            while (t.Contains("。。")) t = t.Replace("。。", "。");
+            t = t.Trim();
+            if (t.Length == 0) return "……";
+            if (t.Length <= max) return t;
+            int cut = -1;
+            for (int i = Math.Min(max, t.Length) - 1; i >= 3; i--)
+                if ("。？?…".IndexOf(t[i]) >= 0 || t[i] == '.' && English) { cut = i + 1; break; }
+            return cut > 0 ? t.Substring(0, cut).Trim() : t.Substring(0, max).TrimEnd('，', ',', '、', ' ') + "…";
         }
 
         static string Shuffle(string text, Random rng)
@@ -344,6 +376,8 @@ namespace LingGuangV05.XingGuang
             sb.Append(BrainModuleSummary());
             sb.Append(TaughtPrompt());
             sb.Append(FamilyPrompt());
+            // 书架 (XgSim.Books.cs): the books it has read, to quote now and then; none it never read.
+            if (S.stage >= 4) { string shelf = BooksReadLine(); if (shelf.Length > 0) sb.Append(shelf); sb.Append(BookAnswersLine()); }
             return sb.ToString();
         }
 
@@ -497,9 +531,9 @@ namespace LingGuangV05.XingGuang
                 case 1: return T("只允许回答一个字：是，或者否。");
                 case 2: return T("只能从这几个里选一个回答：") + string.Join(T("、"), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
                 case 3: return T("只说简短词组或碎片，不讲长句。最多 " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " 个字。", "Use only short fragments, at most " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " characters.");
-                case 4: return T("说一两句短句，不超过 " + (24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12) + " 个字。只记得最近几轮。", "Use one or two short sentences, at most " + (24 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 12) + " characters. Remember only recent turns.");
-                case 5: return T("一到两句。可以提起你记得的事。");
-                default: return T("说话流畅，一到三句。");
+                case 4: return T("语气冷淡，话少。一句短句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不撒娇，不主动关心。只记得最近几轮。", "Flat and curt. One short sentence, at most " + MaxReplyChars + " characters. No exclamation marks, no fuss, no unasked concern. Remember only recent turns.");
+                case 5: return T("语气冷淡，话少。一句，不超过 " + MaxReplyChars + " 个字。可以提起你记得的事。不用感叹号，不客套。", "Flat and curt. One sentence, at most " + MaxReplyChars + " characters. You may mention what you remember. No exclamation marks, no pleasantries.");
+                default: return T("语气冷淡，话少。一两句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不客套，不反问。", "Flat and curt. One or two sentences, at most " + MaxReplyChars + " characters. No exclamation marks, no pleasantries, no questions back.");
             }
         }
 
@@ -686,6 +720,17 @@ namespace LingGuangV05.XingGuang
             var longer = RecentReplies(FreshWindow * 3);
             var freshReact = Fresh(react, longer, stage);
             if (freshReact.Count == 0) freshReact = Fresh(react, recent, stage);
+            // 书架: now and then a line of a book it finished that fits what was said (never one it has not read).
+            if (stage >= 4)
+            {
+                string quote = BookQuote(q, rng);
+                if (quote != null && rng.NextDouble() < BookQuoteChance)
+                {
+                    bool said = false;
+                    foreach (var r in longer) if (XgSpeechPolicy.Similar(quote, r)) { said = true; break; }
+                    if (!said) return quote;
+                }
+            }
             var freshSmall = Fresh(small, longer, stage);
             if (freshSmall.Count == 0) freshSmall = Fresh(small, recent, stage);
             string line;
@@ -908,25 +953,8 @@ namespace LingGuangV05.XingGuang
         string Humanize(string line, int stage, Random rng, List<string> others, Dictionary<string, string> fill)
         {
             if (stage < 4) return line;
-            int limit = stage == 4 ? 20 : 120;
-            double warmth = ActualAxis(0);
-            if (warmth >= 65 && rng.NextDouble() < .35) line = Swap(line, English ? "." : "。", English ? "!" : "！");
-            else if (warmth <= 35) line = Swap(line, English ? "!" : "！", English ? "." : "。");
-            bool asks = line.EndsWith("？", StringComparison.Ordinal) || line.EndsWith("?", StringComparison.Ordinal);
-            if (!asks && rng.NextDouble() < (stage == 4 ? .15 : .25))
-            {
-                var pick = AskBack[rng.Next(AskBack.Length)];
-                bool wallfacer = Profile.callMe == "面壁者";
-                string extra = Fill(T(pick.zh, pick.en), fill);
-                if (extra != null && !(wallfacer && pick.zh.StartsWith("为什么", StringComparison.Ordinal)) && Join(line, extra).Length <= limit && !line.Contains(extra))
-                    return Join(line, extra);
-            }
-            if (stage >= 5 && rng.NextDouble() < .25 && others.Count > 1)
-            {
-                string second = others[rng.Next(others.Count)];
-                if (second != line && !XgSpeechPolicy.Similar(second, line) && Join(line, second).Length <= limit) return Join(line, second);
-            }
-            return line;
+            // Cold (2026-10-16): never an exclamation, no question tacked on, no second line joined.
+            return Swap(line, English ? "!" : "！", English ? "." : "。");
         }
 
         string Join(string a, string b) => English ? a + " " + b : a + b;

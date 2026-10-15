@@ -367,7 +367,12 @@ namespace LingGuangV05.Desktop.YY
                 return;
             }
             generating = true;
-            Ask(llm, g, act, situation, turn, ruled, proactive, fallback, after, topic, 0, null);
+            // Embed his latest line first (a few ms; capped) so her memories, life facts and old chats are found by meaning.
+            LocalEmbedder.Prepare(GirlfriendPrompt.QueryTexts(Conv), () =>
+            {
+                if (this == null) return;
+                Ask(llm, g, act, situation, turn, ruled, proactive, fallback, after, topic, 0, null);
+            });
         }
 
         /// <summary>
@@ -553,6 +558,7 @@ namespace LingGuangV05.Desktop.YY
 
         bool HerTurn()
         {
+            if (OpeningSequence.FirstLessonActive) { herTurn.Reset(); waitingSince = -1; return false; }
             // A save past the opening (an older one that never met her) does not wait.
             var lab = Lab;
             if (lab != null && lab.AbilitiesCount >= OpeningQuiet.EndsWithAbility) return true;

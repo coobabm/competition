@@ -1,0 +1,76 @@
+diff --git a/Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs b/Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs
+index 169a897..3a4d23a 100644
+--- a/Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs
++++ b/Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs
+@@ -34,6 +34,7 @@ public static class DesignFirstLessonChecks
+     static XgSim Fixture(bool guess, bool truth, out XgCard card)
+     {
+         var sim = new XgSim();
++        sim.SelectDesk("spam"); // This answer-path fixture deliberately visits the SMS desk.
+         card = new XgCard { id = 90001, dataset = "spam", seed = guess ? 9138 : 9137,
+             question = "恭喜您中奖，请点击领取", truth = truth, level = 1 };
+         sim.S.cards.RemoveAll(c => c.dataset == "spam");
+@@ -45,17 +46,17 @@ public static class DesignFirstLessonChecks
+     public static void Run()
+     {
+         var first = new XgSim();
+-        Check(first.S.desk == "spam" && first.S.handCorrect == 0 && first.S.handWrong == 0,
+-            "Fresh game starts at the first SMS lesson");
++        Check(first.S.desk == XgMemes.SenseDesk && first.S.handCorrect == 0 && first.S.handWrong == 0,
++            "Fresh game starts at the first common-sense lesson");
+         var firstCard = first.Card(first.S.desk);
+         Check(first.TeachingGuess(firstCard, out bool firstGuess), "First card guesses before any player answer or training");
+         bool firstTruth = firstCard.truth;
+         firstCard.truth = !firstTruth;
+         Check(first.TeachingGuess(firstCard, out bool pairedGuess) && pairedGuess == firstGuess,
+-            "Untrained SMS prediction does not read ground truth");
++            "Untrained common-sense prediction does not read ground truth");
+         firstCard.truth = firstTruth;
+         Check(first.TeachingGuess(firstCard, out bool repeatedGuess) && repeatedGuess == firstGuess
+-            && ReferenceEquals(first.Card(first.S.desk), firstCard) && first.Samples("spam") == 0
++            && ReferenceEquals(first.Card(first.S.desk), firstCard) && first.Samples(XgMemes.SenseDesk) == 0
+             && first.S.best.Count == 0 && first.S.models.Count == 0 && first.S.handCorrect + first.S.handWrong == 0,
+             "Repeated first-card display does not teach, settle or create a checkpoint");
+ 
+@@ -181,10 +182,41 @@ public static class DesignFirstLessonChecks
+         Lesson004PredictionRecoveryChecks.Run();
+         Lesson007SpecialCardChecks.Run();
+         RunInputDispatch();
++        RunSenseDeskProgression();
+         RunFirstMinuteFocus();
+         Debug.Log("DESIGN_FIRST_LESSON_CHECKS_PASS");
+     }
+ 
++    static void RunSenseDeskProgression()
++    {
++        var fresh = new XgSim(); var wallet = new Wallet();
++        Check(fresh.S.desk == XgMemes.SenseDesk && fresh.S.sequence.dataset == XgMemes.SenseDesk
++            && !fresh.DeskOpen("arith") && !fresh.ProgressionDeskAvailable("arith"),
++            "Fresh stage one starts on common sense and keeps arithmetic locked");
++        fresh.SelectDesk("arith"); fresh.Tick(.1, wallet);
++        Check(fresh.S.desk == XgMemes.SenseDesk && !fresh.DeskOpen("arith"),
++            "Selecting or ticking a fresh stage-one save cannot open arithmetic");
++        var reloaded = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(fresh.S)));
++        Check(reloaded.S.desk == XgMemes.SenseDesk && !reloaded.DeskOpen("arith"),
++            "New stage-one save reload does not re-add arithmetic through repair");
++        reloaded.S.stage = 2; reloaded.Tick(.1, wallet);
++        Check(reloaded.DeskOpen("arith") && reloaded.ProgressionDeskAvailable("arith")
++            && reloaded.DeskConditionText(XgCatalog.Desk("arith")) == "",
++            "Arithmetic opens automatically at stage two without buying its data pack");
++        foreach (string desk in new[] { "spam", "arith" })
++        {
++            var old = new XgSim();
++            if (!old.S.desksOpen.Contains("arith")) old.S.desksOpen.Add("arith");
++            old.SelectDesk(desk);
++            old.S.labels.Add(new XgLabelCount { dataset = "arith", count = 7 });
++            long cardId = old.Card(desk).id;
++            var restored = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(old.S)));
++            Check(restored.S.stage == 1 && restored.S.desk == desk && restored.DeskOpen("arith")
++                && restored.ProgressionDeskAvailable("arith") && restored.Labels("arith") == 7
++                && restored.Card(desk).id == cardId,
++                "Existing stage-one save preserves selected desk, arithmetic access, labels and card: " + desk);
++        }
++    }
+     static void RunFirstMinuteFocus()
+     {
+         var window = new LingGuangV05.Desktop.XingGuang.XgFirstLessonFocus();

@@ -1,0 +1,15 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Base-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -169,3 +169,8 @@
+                 case "step": case "sigmoid": return T(sim, "增加可用激活函数，系统可在训练配置中采用；成绩变化需重新训练和评估。", "Add an available activation function for training configuration; train and evaluate to see the score change.");
+-                case "features": return T(sim, "启用人工特征后，感知机也可学习组合线索；每轮训练卡数按 ", "With engineered features enabled, a perceptron can learn combined clues; epoch card throughput is multiplied by ") + N(XgSim.FeaturesCardFactor) + T(sim, " 倍计算。", ".");
++                case "features": return T(sim,
++                    "购买后解除感知机在逻辑题上的 55% 准确率结构限制；仍需训练，成绩不保证立即提高。系统在轮次之间为感知机自动启用，无需装备；其他架构不自动启用。启用后，逻辑题增加成对线索，图像去掉杂点并对齐左上角，文字去掉填充词并整理成单词和相邻词对。正常训练每轮卡数的计算值 ×",
++                    "Buying removes the perceptron's 55% accuracy restriction on logic tasks; further training is needed, with no guaranteed immediate score gain. The system enables it for perceptrons between rounds, with no equipment step; other architectures do not enable it automatically. When enabled, logic gains paired clues, images lose stray dots and align to the top-left, and text drops filler words and becomes single-word and adjacent-pair clues. The calculated card count per normal training round is multiplied by ")
++                    + N(XgSim.FeaturesCardFactor) + T(sim, "，与其他卡数倍率相乘后取整，最终为 4–", ", multiplicatively with other card-count factors, then rounded and limited to 4–")
++                    + XgSim.MaxCardsPerEpoch + T(sim, " 张；离线结算固定每轮 ", " cards; offline simulation uses a fixed ")
++                    + XgSim.OfflineCardsPerEpoch + T(sim, " 张，不应用此倍率。只能购买一次，效果不重复叠加。", " cards per round without this multiplier. A one-time purchase; the effect does not stack with itself.");
+                 case "irnn": return T(sim, "配合 ReLU 的普通循环网络能保留更久的记忆；仍会衰减，梯度裁剪需另行解锁。", "A plain recurrent network with ReLU retains memory longer; it still decays, and clipping is a separate unlock.");

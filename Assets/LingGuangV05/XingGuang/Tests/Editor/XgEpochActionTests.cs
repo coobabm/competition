@@ -38,10 +38,13 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.BeginEpoch(XgTrack.Vision, host), Is.False);
             Assert.That(sim.S.epochs, Is.Zero); Assert.That(host.energy, Is.Zero);
             Assert.That(sim.Assess(XgTrack.Vision, host), Is.Null);
-            sim.Tick(.3, host);
-            Assert.That(sim.S.epochs, Is.Zero); Assert.That(sim.S.vision.epochProgress, Is.EqualTo(.5).Within(.001));
-            sim.Tick(.3, host);
-            Assert.That(sim.S.epochs, Is.EqualTo(1)); Assert.That(host.energy, Is.EqualTo(.6).Within(.001));
+            // The round takes real time (XgSim.TrainPace.cs): it lands between ×0.7 and ×1.5 of its planned length.
+            double nominal = sim.S.vision.epochDuration, t = 0;
+            Assert.That(nominal, Is.GreaterThan(XgSim.EpochSeconds));
+            while (sim.S.epochs == 0 && t < 30) { sim.Tick(.05, host); t += .05; if (t < XgSim.PaceMinFactor * nominal - .05) Assert.That(sim.S.epochs, Is.Zero); }
+            Assert.That(t, Is.InRange(XgSim.PaceMinFactor * nominal - .05, XgSim.PaceMaxFactor * nominal + .05));
+            Assert.That(sim.S.epochs, Is.EqualTo(1));
+            Assert.That(host.energy, Is.EqualTo(nominal * XgSim.PowerSecondsPerPaceSecond).Within(.001), "the bill follows the round's planned length");
             Assert.That(starts, Is.EqualTo(1)); Assert.That(completed, Is.EqualTo(1));
             sim.Tick(1, host); Assert.That(sim.S.epochs, Is.EqualTo(1));
         }
@@ -50,21 +53,26 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Ready(); var host = new Host();
             sim.BeginEpoch(XgTrack.Vision, host); sim.Tick(.2, host);
+            double progress = sim.S.vision.epochProgress;
+            Assert.That(progress, Is.GreaterThan(0));
             host.blocker = "Power cut"; sim.Tick(10, host);
             Assert.That(sim.S.epochs, Is.Zero); Assert.That(host.energy, Is.Zero);
-            Assert.That(sim.S.vision.epochProgress, Is.EqualTo(1.0/3).Within(.001));
+            Assert.That(sim.S.vision.epochProgress, Is.EqualTo(progress).Within(1e-12));
+            Assert.That(sim.Pace(XgTrack.Vision).speed, Is.Zero);
             var loaded = new XgSim(sim.S);
             Assert.That(loaded.AnyEpochActive, Is.False); Assert.That(loaded.S.epochs, Is.Zero);
         }
         [Test]
-        public void TransformerEpochTakesPointOneEightSeconds()
+        public void TransformerEpochBillsItsShorterRound()
         {
             var sim = Ready(); var host = new Host();
             sim.S.unlocked.Add("transformer"); sim.S.vision.arch = "transformer";
             Assert.That(sim.BeginEpoch(XgTrack.Vision, host), Is.True);
-            sim.Tick(.17, host); Assert.That(sim.S.epochs, Is.Zero);
-            sim.Tick(.01, host); Assert.That(sim.S.epochs, Is.EqualTo(1));
-            Assert.That(host.energy, Is.EqualTo(.18).Within(.0001));
+            double nominal = sim.S.vision.epochDuration;
+            for (int i = 0; i < 400 && sim.S.epochs == 0; i++) sim.Tick(.05, host);
+            Assert.That(sim.S.epochs, Is.EqualTo(1));
+            Assert.That(host.energy, Is.EqualTo(nominal * XgSim.PowerSecondsPerPaceSecond).Within(.0001));
+            Assert.That(host.energy, Is.LessThan(XgSim.EpochSeconds), "every word at once: a shorter round than the reference, a smaller bill");
         }
     }
 }

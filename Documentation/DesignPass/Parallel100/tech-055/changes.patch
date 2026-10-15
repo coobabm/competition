@@ -1,0 +1,29 @@
+# Target source SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+index 39a6f05..abc45ee 100644
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -15,6 +15,7 @@ namespace LingGuangV05.XingGuang
+             if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeName(node);
+             switch (node.id)
+             {
++                case "mlp": return T(sim, "多层感知机（MLP）", "Multilayer perceptron (MLP)");
+                 case "rnn": return T(sim, "循环神经网络（RNN）", "Recurrent neural network (RNN)");
+                 case "lstm": return T(sim, "长短期记忆网络（LSTM）", "Long short-term memory (LSTM)");
+                 case "gru": return T(sim, "门控循环单元（GRU）", "Gated recurrent unit (GRU)");
+@@ -62,6 +63,7 @@ namespace LingGuangV05.XingGuang
+ 
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.id == "mlp") return T(sim, "用层层相连的网络，把简单线索组合起来判断；遇到位置或顺序变化，仍可能答错。", "Layers of connected units combine simple clues to make a decision; changes in position or order can still cause mistakes.");
+             switch (node.kind)
+             {
+                 case XgNodeKind.Depth: return T(sim, "多一层，就多一次把简单线索组合成复杂线索的机会。", "Each extra layer can combine simple clues into more complex ones.");
+@@ -127,6 +129,7 @@ namespace LingGuangV05.XingGuang
+ 
+         static string Effect(XgNode node, XgSim sim)
+         {
++            if (node.id == "mlp") return T(sim, "购买后，两条训练线均可自动选用；无需手动装备，每条线只用一种结构，不与其他结构叠加。训练中购买会等本轮结束后再配置；换结构后需重新训练，购买不保证提分。基础结构支持 3 层，实际层数还受已解锁上限、其他技术和显存限制。使用此结构答空间或顺序题时，模拟正确率至多 60%（不是增加 60 个百分点）。下方能力门槛折扣在拥有后立即生效，无需先训练。", "After purchase, both training tracks may select it automatically; no manual equip is needed, and each track uses one architecture at a time without stacking architectures. A purchase during an epoch waits until it ends before reconfiguration. A changed architecture needs training again; buying it does not guarantee a higher score. The base architecture supports 3 layers; actual depth also depends on unlocked caps, other techniques and VRAM. With this architecture, simulated correctness on spatial or order cards is at most 60% (not a 60-percentage-point bonus). The ability-threshold discount shown below applies as soon as you own it, without prior training.");
+             if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)
+             {
+                 bool depth = node.kind == XgNodeKind.Depth;

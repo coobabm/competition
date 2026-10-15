@@ -1,0 +1,16 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -193,3 +193,3 @@
+                 case "label.audit": return T(sim, "将 ", "Return ") + N(XgSim.AuditProbability * 100) + T(sim, "% 的自动错题退回复核，避免它们直接进入训练数据。", "% of wrong automatic answers for review before they enter training data.");
+-                case "label.parallel": return T(sim, "本地推理并发上限从 1 增至 4，聊天优先；实际速度取决于本机。", "Raise local inference concurrency from 1 to 4, with chat priority; actual speed depends on the computer.");
++                case "label.parallel": return T(sim, "第四阶段起，拥有本地模型推理后可购买一次，不可叠加；无需装备或训练。由游戏启动的本地服务在空闲重启完成后，同时判题上限从 1 题增至 2 题；聊天或输入时暂停派发新判题。外部服务按已有容量运行，不自动扩容；实际速度取决于本机。", "From stage 4, buy once after Local model inference; no stacking, equipment or training required. After the game-started local service becomes idle and finishes restarting, simultaneous card judgments increase from 1 to 2. New judgments wait while you chat or type. External services keep their existing capacity; actual speed depends on the computer.");
+                 case "label.trapmemory": return T(sim, "再遇到已记住的金标准题时，转入人工复核，不自动提交。", "Send remembered gold-standard items to human review instead of submitting automatically.");
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+@@ -548,3 +548,3 @@
+                 case "label.hard": return "×1.5";
+-                case "label.parallel": return "×4";
++                case "label.parallel": return "1→2";
+                 case "label.captcha": return "Aa";

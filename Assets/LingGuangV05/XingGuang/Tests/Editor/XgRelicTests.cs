@@ -127,7 +127,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("redbull", s.S.relicSlots[1]);
             Assert.AreEqual("tieba", s.S.relicSlots[3]);
             Assert.AreEqual(2, s.RelicsEquippedCount);
-            Assert.AreEqual(.75, s.RelicFx.paramsFactor, 1e-9, "counted once");
+            Assert.AreEqual(.85, s.RelicFx.paramsFactor, 1e-9, "counted once");
         }
 
         [Test] public void AFreedSlotTakesTheNextArrivalAtOnce()
@@ -203,7 +203,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void TiebaAndKinLowerBothAbilityLines()
         {
             var plain = Fresh();
-            foreach (var pair in new[] { ("tieba", .75, .75), ("advisor_page", .6, .6), ("data_broker", 1.0, .65), ("campus_vpn", .65, 1.0) })
+            foreach (var pair in new[] { ("tieba", .85, .85), ("advisor_page", .75, .75), ("data_broker", 1.0, .8), ("campus_vpn", .8, 1.0) })
             {
                 var s = With(pair.Item1);
                 Assert.AreEqual(plain.ParamsThreshold(3) * pair.Item2, s.ParamsThreshold(3), 1e-6, pair.Item1 + " parameters");
@@ -211,20 +211,29 @@ namespace LingGuangV05.XingGuang.Tests
             }
         }
 
+        [Test] public void StackedThresholdRelicsStopAtTheFloor()
+        {
+            var plain = Fresh();
+            var s = With("tieba", "advisor_page", "data_broker", "campus_vpn");
+            Assert.That(s.RelicFx.paramsFactor, Is.LessThan(XgSim.RelicLineFloor), "four of them would cut deeper");
+            Assert.AreEqual(plain.ParamsThreshold(4) * XgSim.RelicLineFloor, s.ParamsThreshold(4), 1e-6);
+            Assert.AreEqual(plain.SamplesThreshold(4) * XgSim.RelicLineFloor, s.SamplesThreshold(4), 1e-6);
+        }
+
         [Test] public void TheCouponAndTheTermSheetCutTechTreePrices()
         {
             var node = XgCatalog.Nodes.First(n => n.cost > 20 && !double.IsInfinity(n.cost) && !XgItems.IsItem(n.id));
             var plain = Fresh(); var coupon = With("coupon"); var angel = With("angel_term"); var both = With("coupon", "angel_term");
             double basePrice = plain.NodeCost(node);
-            Assert.AreEqual(basePrice * .8, coupon.NodeCost(node), 1.01);
-            Assert.AreEqual(basePrice * .7, angel.NodeCost(node), 1.01);
-            Assert.AreEqual(basePrice * .5, both.NodeCost(node), 1.01, "they add up");
+            Assert.AreEqual(basePrice * .9, coupon.NodeCost(node), 1.01);
+            Assert.AreEqual(basePrice * .9, angel.NodeCost(node), 1.01);
+            Assert.AreEqual(basePrice * .8, both.NodeCost(node), 1.01, "they add up");
         }
 
-        [Test] public void TheServerKeyHalvesTheRent()
+        [Test] public void TheServerKeyCutsTheRent()
         {
             Assert.AreEqual(1, Fresh().RelicRentFactor, 1e-9);
-            Assert.AreEqual(.5, With("server_key").RelicRentFactor, 1e-9);
+            Assert.AreEqual(.75, With("server_key").RelicRentFactor, 1e-9);
         }
 
         [Test] public void TheWatermelonBookRaisesTheYesNoAccuracy()
@@ -324,9 +333,9 @@ namespace LingGuangV05.XingGuang.Tests
             }
             double basic = Income();
             Assert.Greater(basic, 0);
-            Assert.AreEqual(basic * 1.4, Income("gold_cert"), 1e-6);
-            Assert.AreEqual(basic * 1.8, Income("angel_term"), 1e-6);
-            Assert.AreEqual(basic * 2.2, Income("gold_cert", "angel_term"), 1e-6);
+            Assert.AreEqual(basic * 1.2, Income("gold_cert"), 1e-6);
+            Assert.AreEqual(basic * 1.3, Income("angel_term"), 1e-6);
+            Assert.AreEqual(basic * 1.5, Income("gold_cert", "angel_term"), 1e-6);
         }
 
         [Test] public void BatchNormAndItsPairLowerTheChanceOfADrop()
@@ -363,7 +372,7 @@ namespace LingGuangV05.XingGuang.Tests
             fx = XgRelics.Build(new[] { "zhou_usb", "data_broker" });
             Assert.AreEqual(2, fx.extraSamples, 1e-9);
             fx = XgRelics.Build(new[] { "tieba", "advisor_page" });
-            Assert.AreEqual(.75 * .6 * .9, fx.paramsFactor, 1e-9); Assert.AreEqual(.75 * .6 * .9, fx.samplesFactor, 1e-9);
+            Assert.AreEqual(.85 * .75 * .95, fx.paramsFactor, 1e-9); Assert.AreEqual(.85 * .75 * .95, fx.samplesFactor, 1e-9);
             fx = XgRelics.Build(new[] { "allnight", "redbull" });
             Assert.AreEqual(1, fx.comboCapBonus, 1e-9);
         }

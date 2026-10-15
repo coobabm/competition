@@ -88,14 +88,18 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AccelerationFinishesTheDownloadForATenth()
+        public void AccelerationFinishesTheDownloadForTheSecondsItSaves()
         {
             var sim = new XgSim(); var host = new Host();
-            sim.S.owned.Add("translate"); sim.S.downloads.Add(new XgScore { key = "translate", value = 60 });
-            double before = host.money, cost = sim.AccelerateCost("translate");
-            Assert.IsTrue(sim.Accelerate("translate", host));
+            sim.S.stage = 5; sim.S.unlocked.Add("rnn");
+            Assert.IsTrue(sim.BuyNode("news.pack", host));
+            Assert.IsTrue(sim.Downloading("news"));
+            double before = host.money, cost = sim.AccelerateCost("news");
+            Assert.AreEqual(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("news") * XgSim.AcceleratePerSecond)), cost, 1, "¥ for the seconds it saves");
+            Assert.IsTrue(sim.Accelerate("news", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
-            Assert.IsTrue(sim.Owns("translate"));
+            Assert.IsTrue(sim.Owns("news"));
+            Assert.IsFalse(sim.Accelerate("news", host), "nothing left to speed up");
         }
 
         [Test]

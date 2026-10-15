@@ -97,11 +97,11 @@ namespace LingGuangV05.XingGuang
                 "「成色 95 新，没怎么用过。」风扇里一股焦味。", "'95% new, barely used.' The fan smells scorched.",
                 "显存 ×2，但训练电费 +30%", "VRAM ×2, but training power +30%", f => { f.vramBonus += 1; f.powerRise += .30; }),
             R("coupon", XgRarity.Rare, "券", "满减优惠券", "Coupon booklet",
-                "满 300 减 50，叠加使用，论坛里的人都这么省。", "Spend 300, save 50, stackable. Everyone on the forum saves like this.",
-                "科技树价格 −20%", "Tech tree prices −20%", f => f.techCut += .20),
+                "满 300 减 30，叠加使用，论坛里的人都这么省。", "Spend 300, save 30, stackable. Everyone on the forum saves like this.",
+                "科技树价格 −10%", "Tech tree prices −10%", f => f.techCut += .10),
             R("server_key", XgRarity.Rare, "钥", "实验室的旧服务器钥匙", "Old lab server-room key",
                 "没人记得是哪间屋的。试了一下，真能开，里面还有张行军床。", "Nobody remembers which room. It opens one, with a camp bed inside.",
-                "房租 −50%", "Rent −50%", f => f.rentCut += .50),
+                "房租 −25%", "Rent −25%", f => f.rentCut += .25),
             R("multimeter", XgRarity.Rare, "电", "老电工的万用表", "Old electrician's multimeter",
                 "「你家用的电，比我整栋楼都多。」", "'Your house burns more power than my whole building.'",
                 "训练电费 −40%", "Training power cost −40%", f => f.powerCut += .40),
@@ -115,7 +115,7 @@ namespace LingGuangV05.XingGuang
             // ───────────── 史诗 ─────────────
             R("tieba", XgRarity.Epic, "吧", "百度贴吧「精品帖」合集", "Tieba 'featured posts' archive",
                 "每层楼都在回「楼主好人」，但内容是真的。", "Every floor says 'thanks, OP', but the content is real.",
-                "能力门槛 −25%（参数和样本）", "Ability thresholds −25% (parameters and samples)", f => { f.paramsFactor *= .75; f.samplesFactor *= .75; }),
+                "能力门槛 −15%（参数和样本）", "Ability thresholds −15% (parameters and samples)", f => { f.paramsFactor *= .85; f.samplesFactor *= .85; }),
             R("allnight", XgRarity.Epic, "夜", "网吧通宵卡", "All-night café pass",
                 "包夜十块，送一碗泡面。键盘上还留着上个人的油手印。", "Ten yuan for the night, instant noodles included. The last guy's greasy prints are still on the keys.",
                 "连击不会断", "The combo never breaks", f => f.comboKeep = true),
@@ -133,13 +133,13 @@ namespace LingGuangV05.XingGuang
                 "每练 8 轮，下一次失败的训练不计入", "Every 8 rounds, the next failed training does not count", f => f.guardEvery = f.guardEvery == 0 ? 8 : Math.Min(f.guardEvery, 8)),
             R("data_broker", XgRarity.Epic, "贩", "数据贩子的名片", "A data broker's card",
                 "「要数据找我，不问来路。」背面是一个 QQ 号。", "'Need data? Ask me, no questions about origin.' A QQ number on the back.",
-                "样本门槛 −35%", "Sample threshold −35%", f => f.samplesFactor *= .65),
+                "样本门槛 −20%", "Sample threshold −20%", f => f.samplesFactor *= .8),
             R("campus_vpn", XgRarity.Epic, "网", "校园网的 VPN 账号", "Campus-network VPN login",
                 "能看到外面的论文，一天省掉三天的弯路。", "It reaches the papers outside; one day saves three days of detours.",
-                "参数门槛 −35%", "Parameter threshold −35%", f => f.paramsFactor *= .65),
+                "参数门槛 −20%", "Parameter threshold −20%", f => f.paramsFactor *= .8),
             R("gold_cert", XgRarity.Epic, "金", "摆渡众包「金牌」认证", "Bodu Crowdsourcing Gold badge",
                 "右下角的小金牌，客户看了就放心。", "A small gold badge in the corner; clients relax when they see it.",
-                "订单和自动答题收入 +40%", "Contract and auto-answer income +40%", f => f.incomeBonus += .40),
+                "订单和自动答题收入 +20%", "Contract and auto-answer income +20%", f => f.incomeBonus += .20),
 
             // ───────────── 传说（只出现在学会能力的三选一里）─────────────
             R("attention_scratch", XgRarity.Legendary, "At", "「Attention」草稿纸", "'Attention' scratch paper",
@@ -153,10 +153,10 @@ namespace LingGuangV05.XingGuang
                 "显存 ×3，训练每轮准确率提升 +30%", "VRAM ×3, each training round gains +30%", f => { f.vramBonus += 2; f.gain += .30; }),
             R("advisor_page", XgRarity.Legendary, "签", "导师的署名页", "Advisor's signature page",
                 "一个签名，所有人都开始相信你的结果。", "One signature, and suddenly everyone believes your results.",
-                "能力门槛 −40%（参数和样本）", "Ability thresholds −40% (parameters and samples)", f => { f.paramsFactor *= .60; f.samplesFactor *= .60; }),
+                "能力门槛 −25%（参数和样本）", "Ability thresholds −25% (parameters and samples)", f => { f.paramsFactor *= .75; f.samplesFactor *= .75; }),
             R("angel_term", XgRarity.Legendary, "投", "天使轮投资意向书", "Angel-round term sheet",
                 "「我们看好你。」下面是一行写着「估值」的空格。", "'We believe in you.' Below it, a blank line labelled valuation.",
-                "订单和自动答题收入 +80%，科技树价格 −30%", "Contract and auto-answer income +80%, tech tree prices −30%", f => { f.incomeBonus += .80; f.techCut += .30; }),
+                "订单和自动答题收入 +30%，科技树价格 −10%", "Contract and auto-answer income +30%, tech tree prices −10%", f => { f.incomeBonus += .30; f.techCut += .10; }),
         };
 
         public static readonly XgRelicPair[] Pairs =
@@ -172,7 +172,7 @@ namespace LingGuangV05.XingGuang
             new XgRelicPair { a = "zhou_usb", b = "data_broker", zh = "数据双保险", en = "Double data cover",
                 textZh = "手标样本再多记 1 条", textEn = "One more sample per hand label", apply = f => f.extraSamples += 1 },
             new XgRelicPair { a = "tieba", b = "advisor_page", zh = "引经据典", en = "Citing the classics",
-                textZh = "能力门槛再 ×0.9", textEn = "Ability thresholds another ×0.9", apply = f => { f.paramsFactor *= .9; f.samplesFactor *= .9; } },
+                textZh = "能力门槛再 ×0.95", textEn = "Ability thresholds another ×0.95", apply = f => { f.paramsFactor *= .95; f.samplesFactor *= .95; } },
         };
 
         static Dictionary<string, XgRelic> byId;

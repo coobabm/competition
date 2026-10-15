@@ -1,0 +1,11 @@
+{
+  "time": "2026-10-13T22:30:45.7624664+08:00",
+  "executable": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\training-comparison\\core-checks\\bin\\Release\\net10.0\\TrainingComparisonChecks.exe",
+  "failureExitCode": 1,
+  "successExitCode": 0,
+  "assertions": 38,
+  "failureProcessExited": true,
+  "successProcessExited": true,
+  "sourceSha256": "D2DFB82277CDB4B6B9F549A2B2714DDC532E60F7B18A0623D6C4FDF590C01CA8",
+  "executableSha256": "88837FE65BFB548A711C3ACBD50DEF125E455A6091634E9970CA1C919182E218"
+}

@@ -1,0 +1,10 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -180,3 +180,5 @@
+                 case "lrschedule": return T(sim, "评估上限公式中的误差项乘 ", "Multiply the error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[4]) + T(sim, "，让可达到的成绩上限更高；替代学习率搜索，与 AutoML 的同项效果不叠加。需训练后评估。", " for a higher reachable score ceiling; replaces learning-rate search and does not stack with AutoML's same effect. Train and evaluate to see results.");
+-                case "batchnorm": return Speed(sim, 1.2) + T(sim, "有限制的结构可承受层数 +6；仍须购买层数上限，并有足够显存。", "Architectures with a depth limit tolerate 6 more layers; purchased layer caps and available VRAM still apply.");
++                case "batchnorm": return T(sim,
++                    "购买后两条训练线自动启用，无需装备；仅达到解锁条件还不生效。训练处理量 ×1.2，与其他处理量倍率相乘；每轮卡数仍受算力、取整和上限影响。有限制的结构可承受层数 +6；仍须购买层数上限，并有足够显存。每轮成绩回落的各项风险合计先 ×0.8，再按 45% 封顶；不是直接减少 20 个百分点。大脑训练可承受的更新步幅 ×1.5，并减轻普通层之间的信号衰减和传递扰动；不能让阶跃激活传回误差。后续训练使用这些效果，成绩需训练后评估，不保证立即提分。",
++                    "Automatically enabled for both training tracks after purchase; no equipment step is needed. Meeting unlock requirements alone grants no effect. Training throughput ×1.2, multiplying with other throughput bonuses; cards per epoch still depend on compute, rounding and caps. Architectures with a depth limit tolerate 6 more layers; purchased layer caps and available VRAM still apply. The combined risk of a score drop per epoch is multiplied by 0.8 before the 45% cap; this is not a reduction of 20 percentage points. Brain training tolerates update steps ×1.5 and reduces signal loss and distortion between ordinary layers; it cannot make a step activation pass errors backward. Subsequent training uses these effects. Train and evaluate to see the score; an immediate improvement is not guaranteed.");
+                 case "cudnn": return Speed(sim, 1.3) + T(sim, "训练能耗 ×", "Training energy use ×") + N(XgSim.CuDnnEnergyFactor) + "。";

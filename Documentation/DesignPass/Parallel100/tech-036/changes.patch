@@ -1,0 +1,30 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -15,6 +15,7 @@
+             if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeName(node);
+             switch (node.id)
+             {
++                case "momentum": return T(sim, "动量随机梯度下降（Momentum SGD）", "Stochastic gradient descent with momentum (Momentum SGD)");
+                 case "rnn": return T(sim, "循环神经网络（RNN）", "Recurrent neural network (RNN)");
+                 case "lstm": return T(sim, "长短期记忆网络（LSTM）", "Long short-term memory (LSTM)");
+                 case "gru": return T(sim, "门控循环单元（GRU）", "Gated recurrent unit (GRU)");
+@@ -85,7 +86,7 @@
+                 case "position": return T(sim, "给每个字加上位置编号，让网络分清前后顺序。", "Tag each word with its position so the network can tell their order.");
+                 case "warmup": return T(sim, "刚换设置时先小步学习，再慢慢恢复正常步幅。", "After a settings change, start with small learning steps and gradually return to the normal size.");
+                 case "fp16": return T(sim, "用较短的数字表示参与计算，降低大模型计算的资源需求。", "Use shorter number representations to reduce the resources needed for large-model computation.");
+-                case "momentum": return T(sim, "记住前几次调整的方向，少走来回摇摆的路。", "Remember recent update directions to reduce back-and-forth motion.");
++                case "momentum": return T(sim, "动量算法的原理是：调整时参考之前的方向，像推球时保留一点惯性。", "Momentum means using earlier update directions when making the next adjustment, like keeping a ball rolling.");
+                 case "rmsprop": return T(sim, "根据每个参数最近变化的大小，分别调整学习步幅。", "Adjust each parameter's step size using the size of its recent changes.");
+                 case "adam": return T(sim, "同时参考过去的方向和变化大小，为每个参数调整步幅。", "Use both recent direction and change size to adjust each parameter's steps.");
+                 case "gradclip": return T(sim, "一次改动太大时把它截短，减少训练突然失稳。", "Trim oversized updates to reduce sudden training instability.");
+@@ -153,6 +154,10 @@
+                 return result;
+             }
+             var research = XgCatalog.ResearchItem(node.id);
++            if (node.id == "momentum" && research != null)
++                return T(sim, "购买后无需装备：若它是已拥有的最快优化器，两条训练线在之后结算训练轮次时自动采用。相对基础 SGD，", "No equipment step after purchase: if this is the fastest owned optimizer, both tracks use it when subsequent epochs settle. Relative to base SGD, ")
++                    + Speed(sim, research.speed)
++                    + T(sim, "优化器之间只取最快一种，不相乘；与其他训练处理量倍数相乘。离线模拟固定每轮卡数，不受此倍率影响。购买本身不保证提分。", "Only the fastest owned optimizer applies; optimizer multipliers do not stack, but multiply with other throughput factors. Offline simulation uses a fixed card count per epoch, unaffected by this multiplier. Buying alone does not guarantee a higher score.");
+             if (research != null && research.kind == XgResearchKind.Optimizer)
+                 return T(sim, "相对基础 SGD，", "Relative to base SGD, ") + Speed(sim, research.speed) + T(sim, "优化器只采用已拥有者中速度最高的一种，倍率不相乘。", "Only the fastest owned optimizer is used; their multipliers do not stack.");
+             switch (node.id)

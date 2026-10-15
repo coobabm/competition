@@ -1,0 +1,20 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs
+index 21dd10d..c576ee7 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs
+@@ -41,6 +41,7 @@ namespace LingGuangV05.Desktop.XingGuang
+                 sim.SelectedTrack = data.track; sim.SetDataset(data.track, data.id); host.ShowTab("train");
+             }, 20);
+             PlaceBottom(self.train, 106, 48, 20, 20);
++            self.train.rt.gameObject.SetActive(false);
+             self.chat = ui.Button(box, T("和它说句话 →", "Talk to it →"), () => { if (!XgYyTalk.Open(playerRequested: true)) host.ShowTab("home"); }, 17);
+             PlaceBottom(self.chat, 56, 40, 20, 20);
+             self.brain = ui.Button(box, T("看看它记住了什么", "Look inside its brain"), () => host.ShowTab("board"), 15);
+@@ -68,6 +69,7 @@ namespace LingGuangV05.Desktop.XingGuang
+                 : T("教它 → 训练 → 和它聊\n你喂的内容，会慢慢变成\n它认识的东西和说话的样子。", "Teach → Train → Talk\nYour lessons shape what it knows\nand how it speaks.");
+             progress.text = T("这类样本 ", "Examples: ") + count + (firstLesson ? "" : ready ? T(" · 可以训练了", " · Ready to train") : " / " + XgCatalog.SamplesToTrain);
+             train.Set(firstLesson ? T("训练 →", "Train →") : ready ? T("带它去训练 →", "Train together →") : T("再教 ", "Teach ") + (XgCatalog.SamplesToTrain - count) + T(" 张就能训练", " more cards"), ready, ready && !firstLesson ? XgDark.Accent : XgDark.Track, XgDark.Ink);
++            train.rt.gameObject.SetActive(ready);
+             var concepts = new List<XgConcept>(sim.Board.Concepts(XgSim.RegionOf(data.id)));
+             for (int i = 0; i < cells.Count; i++)
+             {

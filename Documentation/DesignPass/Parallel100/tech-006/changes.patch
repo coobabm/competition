@@ -1,0 +1,25 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+# Scope: caption explanation/effect only; keep Name and mystery/atlas guards unchanged.
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -62,6 +62,8 @@
+ 
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.id == "caption") return T(sim, "用一句话描述图片里有什么、正在做什么。",
++                "Describe what is in a picture and what is happening in one sentence.");
+             switch (node.kind)
+             {
+                 case XgNodeKind.Depth: return T(sim, "多一层，就多一次把简单线索组合成复杂线索的机会。", "Each extra layer can combine simple clues into more complex ones.");
+@@ -127,6 +129,9 @@
+ 
+         static string Effect(XgNode node, XgSim sim)
+         {
++            if (node.id == "caption") return T(sim,
++                "购买后，后续新生成的表情包题会让你核对图片与预设描述，并标出教学关注区域；无需装备或先训练，未调用图像模型生成描述。同时加入视觉训练的候选结构，由系统在训练轮次之间按数据、显存和已购上限选择；不保证立即切换或提分，需训练后查看评估。同一训练线只用一种结构，架构效果不相乘。",
++                "After purchase, newly generated meme cards ask you to check a preset description against the picture and highlight a teaching focus region. No equipping or training is required for these cards; no image model generates the descriptions. This also becomes an available vision architecture. Between epochs, the system chooses a model using the data, VRAM and purchased caps. A switch or score increase is not guaranteed; train and check the evaluation. Each track uses one architecture at a time; architecture effects do not multiply together.");
+             if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)
+             {
+                 bool depth = node.kind == XgNodeKind.Depth;

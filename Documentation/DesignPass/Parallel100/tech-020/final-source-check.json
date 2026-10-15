@@ -1,0 +1,47 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "sha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs",
+    "sha256": "31F6D4234DC64046ED6961F3DE7B7D28EE8A677C2ED1EA50226DCE421B7ACDB8",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs",
+    "sha256": "DDE8E23FF9F1775BA0B04B5BF530E7F03B63A45486D0101ECE1C12A2368BBBEE",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Captcha.cs",
+    "sha256": "EE015230E1178932814B826D032D940651D24EC83B46B5A22B80AA8BC42AA519",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs",
+    "sha256": "3DFF6BAC147D69E2BB2153FC82A8A57E6AA5C3FFDCA172F5A8915E79D81D82A8",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "sha256": "308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+    "sha256": "C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D",
+    "unchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523",
+    "unchanged": true
+  }
+]

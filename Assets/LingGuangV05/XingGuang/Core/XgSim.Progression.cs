@@ -37,9 +37,9 @@ namespace LingGuangV05.XingGuang
                 S.unlocked.Clear(); S.unlocked.Add("perceptron");
                 S.vision.arch = S.sequence.arch = "perceptron";
                 S.vision.depth = S.sequence.depth = 1;
-                S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
-                S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
-                S.desk = "spam"; // start with a recognisable teaching card
+                S.vision.dataset = "mnist"; S.sequence.dataset = XgMemes.SenseDesk;
+                S.desksOpen.Clear(); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
+                S.desk = XgMemes.SenseDesk;
                 S.stage = S.stageVision = S.stageSequence = 1;
                 S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
                 S.firstSpecialty = "";
@@ -207,7 +207,7 @@ namespace LingGuangV05.XingGuang
             }
             if (node.kind == XgNodeKind.Secret)
             {
-                if (node.id == "secret.6") Say(T("秘籍：预训练要的是有效规模＝参数 × 数据 × 道具倍数，倍数乘在一起：Transformer ×10、机房 ×8、注意力 ×3、残差 ×2、混合精度 ×2、预热 ×1.5、BatchNorm ×1.5。三件大的一样都不能少，小的最多缺一件；参数和数据只算到第六项能力门槛的 1.5 倍。", "Secret: pre-training needs effective scale = parameters × data × item multipliers, and the multipliers stack: Transformer ×10, server room ×8, attention ×3, residuals ×2, mixed precision ×2, warm-up ×1.5, BatchNorm ×1.5. None of the three big ones can be missing, and at most one small one; parameters and data count only up to 1.5 times the sixth ability's bar."));
+                if (node.id == "secret.6") Say(T("秘籍：预训练要的是有效规模＝参数 × 数据 × 道具倍数，倍数乘在一起：Transformer ×10、机房 ×8、注意力 ×3、残差 ×2、混合精度 ×2、预热 ×1.5、BatchNorm ×1.5。三件大的一样都不能少，小的最多缺一件；参数和数据只算到 " + ParamsText(ScaleBarCap * ScaleUnitParamsK) + " 参数、" + SamplesText(ScaleBarCap * ScaleUnitSamples) + " 条样本。", "Secret: pre-training needs effective scale = parameters × data × item multipliers, and the multipliers stack: Transformer ×10, server room ×8, attention ×3, residuals ×2, mixed precision ×2, warm-up ×1.5, BatchNorm ×1.5. None of the three big ones can be missing, and at most one small one; parameters and data count only up to " + ParamsText(ScaleBarCap * ScaleUnitParamsK) + " parameters and " + SamplesText(ScaleBarCap * ScaleUnitSamples) + " samples."));
             }
             RefreshStages();
         }
@@ -268,8 +268,8 @@ namespace LingGuangV05.XingGuang
         public double ProgressionSpeed(XgRun run) =>
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
-        /// <summary>Stage one opens arithmetic, logic, common sense and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (id == "arith" || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+        /// <summary>Stage one opens logic, common sense and SMS spam; stage two adds arithmetic, digits and danmaku. The first-minutes focus locks all but common sense; previously opened desks remain available on load.</summary>
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "arith" || id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
 
         void ObserveProgression(XgRun run)
         {
@@ -375,8 +375,8 @@ namespace LingGuangV05.XingGuang
                 {
                     bool right = (card.seed & 1) == 0;
                     card.category = "注意力 · 教学示意"; card.categoryEn = "Attention · Teaching illustration";
-                    card.question = "原文：他坐在河边的 bank 上，看着小船。\n翻译 bank 时，" + LingGuangV05.Core.AppNames.AiZh + "关注的是“" + (right ? "河" : "小船") + "”。它看对了吗？";
-                    card.questionEn = "Source: He sat on the river bank watching boats.\nFor “bank”, LingGuang focused on “" + (right ? "river" : "boats") + "”. Did it focus on the right clue?";
+                    card.question = "原文：他坐在河边的 bank 上，看着小船。\n“" + (right ? "河" : "小船") + "”是确定 bank 含义的关键线索。";
+                    card.questionEn = "Source: He sat on the river bank watching boats.\n“" + (right ? "river" : "boats") + "” is the decisive clue to the meaning of bank.";
                     card.truth = right; card.attentionWord = right ? "河" : "小船"; card.attentionContext = "他坐在河边的 bank 上，看着小船。";
                     card.length = card.attentionContext.Length;
                     card.why = "bank 在这里是河岸，决定意思的线索是河。"; card.whyEn = "Here bank means river bank; river is the decisive clue.";

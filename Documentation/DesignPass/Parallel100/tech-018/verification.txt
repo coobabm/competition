@@ -1,0 +1,12 @@
+Static verification only; no Unity/game/C# runtime/visual test executed.
+Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs unchanged=True SHA256=1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7
+Assets/LingGuangV05/XingGuang/Core/XgSim.cs unchanged=True SHA256=C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B
+Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs unchanged=True SHA256=D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838
+Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs unchanged=True SHA256=E565169876C92B4E434BDE1421B995F785DB8E160747268F32F30B95193CC11B
+Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs unchanged=True SHA256=CE64E64CCFB1CC7C24ADAD73C771650F367DAD6E4F55E30F762AB8BDC34BEE98
+Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs unchanged=True SHA256=308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs unchanged=True SHA256=C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D
+Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs unchanged=True SHA256=F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523
+git apply --check: successful after normalizing delivery patch to source LF line endings; patch was NOT applied.
+Reviewed arithmetic: purchase=Ceiling(30000*1*0.25)=7500 yuan; bonus=7500*1.5=11250 yuan.
+Patch scope: one secret.6 Effect line; Name, Explanation, mystery/visibility guards unchanged.

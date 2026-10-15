@@ -1,0 +1,370 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/CasinoPresentation.cs",
+    "sha256": "D1D88BA6DB3882865177F1E08E1ED47C03D47883523BC29F820E2B3979A8A2F4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgArith.cs",
+    "sha256": "A7B966799ACA4F9711B40E3D970D1E8C55F1040A3AA25911E02F8AD9ECAD5E55"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs",
+    "sha256": "3877A3B0230CB8CD4738A0CE258668D1E9F406DB3788EE74EF0AEB49DF73B419"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs",
+    "sha256": "DAF725A9B24E7E8C7DD303C8A32ECD4B87D3B1AE301E0AB867AD503B2F75E963"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs",
+    "sha256": "914B8F2523827EF473098100EB97CA9AACC923B4FFA31682DC08E3B4ABA3ED51"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardPhenomena.cs",
+    "sha256": "82832C67ECDF3CCD924AEE087703B24CBCF447075243CC507B572865BDF1EDCB"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardTasks.cs",
+    "sha256": "1B4AAD7CEC1A69973B8C53C5A086722188AF5D2ECB55554CCFC2B9725CB7D91C"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "sha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgChanceHint.cs",
+    "sha256": "EE77C9A8D7467A157CCE4EB1672B2BE562B3A4B0796C04860673E244617BD0FA"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCollaborationModels.cs",
+    "sha256": "6D3242EAB1871D6F301144B7674EAC8C937BF8BEC01BD44415D8C0A317A6F070"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCrawlArticle.cs",
+    "sha256": "7EB645CE2E2A6095ED94806FE26D4129329DD618ED129C313DBE3E2D6819A985"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgGlossary.cs",
+    "sha256": "07221D8B4D4FD9B52E416283896AE500B2B26A73997D016AD69CEE0DE6F19AEA"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgGuide.cs",
+    "sha256": "7F5C4196BBE925F64DBBF7AE16562D94B35FA4688B1575DD501CBB3C22D8919C"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgInnerMonologue.cs",
+    "sha256": "BDCBFDFAF83AEECE788660EF71FCF7C7073AB575A27A2B118FB9FA0634E07C27"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgItemLore.cs",
+    "sha256": "D72D2F4047287250D0B3F6D5580D8144E401F059D722D338C98C90667A320723"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgItems.cs",
+    "sha256": "3DDD5B7F94D5BD4B1FCB7A105BCDCEDAFD26886D15985D6833159EECF34A4DA2"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgJudgeProtocol.cs",
+    "sha256": "F4F3FFCF466F3372B159CC309B9EBD4A6FE539B3C6736BA51EAFB7FBFBBE9BDF"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgLogic.cs",
+    "sha256": "1B3907115D1F381F4C324B86ACAAC0EC8DC46BE9FEA2F7D798208FCA0A3AF127"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgLogic.Memes.cs",
+    "sha256": "8D82A7EF909078E644995FC5E8D38CA2AF94C5F5D8B22BBF78A580991FFDA43D"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.cs",
+    "sha256": "33CB756DFFCF838412A86769789EBAE2C4C2286334E877D530BD5F75DDFFF07C"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "sha256": "CA532E1461AC28F3D98D66E753C3F197E26EA597A75E4153F3F24CE1A0112A1E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgModels.cs",
+    "sha256": "4461CA0A8857A8BA78EAD346C869B5C125AB160411CF4EAAFB9F631E40197953"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgProgressionModels.cs",
+    "sha256": "A9D1BDD773DA37CB4A14EED006321B3210B56CA53E3330D908B2D09241366AA9"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgResident.cs",
+    "sha256": "14C0D32724C992B155AABAC7CAEF4DB826DC343A07E44B0D560A327F884E9B0D"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Abilities.cs",
+    "sha256": "86BD0BFE0DC9FCA1570E36DFA960DB4BA4031A0A8A9E0959572B2C3E5F2B3787"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Afterthoughts.cs",
+    "sha256": "CDF2BB303568C813F8997D9C4D1451BAA4684AAAC1723902DC3AAA98127A8573"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs",
+    "sha256": "A1EC4AD656114E54BBC5A43902A3E5E3B5324E7444DAADD3EB75F8DD322822D7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs",
+    "sha256": "B8C06FD6EE0047198E73C7CF595B497F30AD9B708EA6E6A7BA29126600071DA1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Bounty.cs",
+    "sha256": "166537BD04F2B694594B19CAF24339F77988C299D5E210DC597210FE0B345BAD"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Brain.cs",
+    "sha256": "27327E866ACF50BB71DDE5C73A7793B1A4DE9DC631A4CACA8AB621B1501AD745"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BrainModels.cs",
+    "sha256": "F897C8B43BE7FF7CEDE6627BCB0320AAAF71AF304790ECE3E40EA7C408698179"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Captcha.cs",
+    "sha256": "EE015230E1178932814B826D032D940651D24EC83B46B5A22B80AA8BC42AA519"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs",
+    "sha256": "9A4BA93173CADB2970A20F8D36D77ECBF5FF62800D2864504348711EC0002B56"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs",
+    "sha256": "F67CC6941DC685E30B688B48FFF6DB196CA3505A680CFCCC34D54746FBC2F587"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs",
+    "sha256": "31F6D4234DC64046ED6961F3DE7B7D28EE8A677C2ED1EA50226DCE421B7ACDB8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs",
+    "sha256": "E797F4FB7307B5AFCF168EC46889FC7EE5F669ED40CE0A4238CB851DC37F86B3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Consumables.cs",
+    "sha256": "E68D3F9367CA4A59E2835C7C37A2973E866C93765452B87337ADF88075205B58"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Crawl.cs",
+    "sha256": "8101C2EBE4F319804FF94FAABD768806979E892A962A4113ABD19B21021EE67A"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs",
+    "sha256": "3623A45A332B1D8D7F000D26174F3F24FFDD2C467F44821C1348B94DB6DCC1C5"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DayStats.cs",
+    "sha256": "5D4A2854CA7AD461779D533AFAC6A681F25741DA4901F1352D0FEE7B27099644"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Diagnostics.cs",
+    "sha256": "112DB8429F32F74B31EED0F895B76AFF2268277BEDC37C4FAD6B0AF4EEE7FB98"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs",
+    "sha256": "DDE8E23FF9F1775BA0B04B5BF530E7F03B63A45486D0101ECE1C12A2368BBBEE"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs",
+    "sha256": "73CE990C4A6E454CFD65C5D5F47C06B748CE93D27B9E651DEC3F4A4857F6A747"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EraDelivery.cs",
+    "sha256": "160EAEE4E14509E06461AA69E877C1A3CA159CC991FEAC72BBDF51A72154A8ED"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EraExam.cs",
+    "sha256": "4DD54AB3C198FFEE08FF786B53F775895CA08AF43782B80BB0795E77E3D12FAA"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Family.cs",
+    "sha256": "4779BEFB0C33261ECCD0468419CBB90C9662F70391C573121EF5570C3180115E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+    "sha256": "F3A6D71DC55E808539061FABE6203FE204394190E23A3AA5EF9D7F53F1B8BCC7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs",
+    "sha256": "E565169876C92B4E434BDE1421B995F785DB8E160747268F32F30B95193CC11B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.FinaleTalk.cs",
+    "sha256": "C130CCFE1A35AB07404283E19313F011EEB3DE03FBA8FC92F56F6A0B589CAA02"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Flywheel.cs",
+    "sha256": "3BE4B4601EAB078560D62E34AF3D16659706C8093E60D052161E3A6A5EA3F3EB"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs",
+    "sha256": "A85F52DEA717C8C0F12F882CD37EBF00373E7DBA630BF61A6E6DD171EC523AD8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Habits.cs",
+    "sha256": "BAF7C8A63CDE2E314CF4762A01C761E37C359B66C68E11273E07C537EB9A9816"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs",
+    "sha256": "B36CD35200F0D95F94F27D167D004D34BE69619AF80FDF2C6C06AC68D3FC5ED8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Ledger.cs",
+    "sha256": "4A98A3F08DB512B407F976FA9E97FEFC5C43C5BD61895663484F49483DA6AFA9"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Love.cs",
+    "sha256": "EEA4C2408F8AAFFC2BB7ED01112B07FA902F14BEA387821C005B6CFFDD2D8B8A"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Market.cs",
+    "sha256": "FBE6455742222E2F65D68ADC41DDEA6D9EC63DB3AEC018F1556A5261CF806AC7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MemoryBook.cs",
+    "sha256": "1125802500124DA99B017542B66F0E13C257767797E1D7AAB5DEE80A2EF9E854"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Mistakes.cs",
+    "sha256": "CCAC6B6B9C260587A8A39B953B43C5E5A7F37793C4591B00590D70E4813B0F56"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Origin.cs",
+    "sha256": "1E5A6299799C63DC74DB5F1A1FD158316BABCB4D5B6D1DC4F310DE3F6DBCF41A"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs",
+    "sha256": "D00FFBC54CC23A900C4A7D734C73E322FE3F032FD1DA02B765E35330478A46AC"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "sha256": "D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Quality.cs",
+    "sha256": "14B94D8A8B5937E71C15C7D3C84D1A74021749290A88AAF64A3429ECBD6C4283"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs",
+    "sha256": "F205EC2B7906ED7412E2C0FBDDC905071825B34BBDB0F37A990650E34D537559"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Reading.cs",
+    "sha256": "33B15F77991476C5BC90552857ADA6469237C0A5AB1B95AD9264E395A431CD14"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.SenseVoice.cs",
+    "sha256": "1B13E73938F1889F3ED4DAE73EE6033CA70244A2C36A3045A398A1B04D7984DA"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs",
+    "sha256": "C87745EE6C3052921C6A55FE373AD740179DACB7D43ADC22BC510EA620F9BC98"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs",
+    "sha256": "CE64E64CCFB1CC7C24ADAD73C771650F367DAD6E4F55E30F762AB8BDC34BEE98"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.StoryBeats.cs",
+    "sha256": "3B5ED2C09ED35BD53B0284760A82D8A18C8FB15A12E9436FB1E3C583B626898D"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.StoryPacing.cs",
+    "sha256": "EB52C93D48C35E6241DB9EEA1EE65E2F6E15B72A72321BBACE3FBF3AF76BB847"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs",
+    "sha256": "9F755C4E4625B0FA7C5C84D6DF03BADA18BC5FEFF0FA9250C8B38331F11E66E8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs",
+    "sha256": "CF6FC6F55FD84843E96E2B2516D591F2F9AF304C0D6D4321AABA92B73A474AE7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Trace.cs",
+    "sha256": "5DB11A4C7C60F804BA8A1543015BE5422CFAE4DDAF8D65234CADB796B21FB834"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Verdict.cs",
+    "sha256": "B901BB7D8981EA549E1A94EE5753737A81F491F8997006BC85FD384AB8AB36E4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs",
+    "sha256": "3DFF6BAC147D69E2BB2153FC82A8A57E6AA5C3FFDCA172F5A8915E79D81D82A8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSpeechPolicy.cs",
+    "sha256": "3FA4F655CB1716FDD6C98CFE189DA4E869824A9D81BFB150B4B5271367145B89"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSpiderBrain.cs",
+    "sha256": "BBB8A6B495D3A213321EB42DE12A94E8BF9498555E34D0BECF8B3D67039A3C94"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgStoryMilestones.cs",
+    "sha256": "9E5537A764B2D059E6F515F6110AC01CF9B6D2B3B3A303B287CA1FB0E484AB0C"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+    "sha256": "C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "sha256": "308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTinyNet.cs",
+    "sha256": "6BAC46DCC313028FA5A655F0717076475BA4B0428DF59DAEFAAA37C2257F12F4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgVisual.cs",
+    "sha256": "981FD99D5253033DFCC635DD6CBF2DC3F12CD96BE1205DA40A04526AA918759A"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/AppNames.cs",
+    "sha256": "AAAB44B8A1F2EA1F8CC3BC7DBE976EFFA7CA32AE5428C6087541BFBA6D5FB0BB"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Chat/MemoryRetrieval.cs",
+    "sha256": "55E7A30D08EA130F7E4C65B0A3633E172E6D092D7965EF0247E28AF27AFFB1AE"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "sha256": "C6716EFA175D5659BF1EA9C0BAFBAE9BE3315421F9B820B581CEB0DFCDF9D5A1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangHost.cs",
+    "sha256": "2259F1F61FAE281ECDA3C0462A38D9D45BF602C7D87915D1007A182F23204DA7"
+  },
+  {
+    "path": "Documentation/DesignPass/Agents/issues-task-001.md",
+    "sha256": "C1F0ABF07714DC13B73A795C975D9EEDD48A9E59A418A96343E86E47F545B971"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/AiNamePolicy.cs",
+    "sha256": "51759A0E87D8612D7AFF06EAB1F1790EE48306535FE488C0C951B1584ED6DE12"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Lang.cs",
+    "sha256": "AEDC469A94F045CE3F9EBD89D6BF9F0E7FBD86C6EB6252F1ADBE46BECF5E4C86"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Lang.En.cs",
+    "sha256": "1D8E4842DE18AD982749AAFD870E8C8AE183E22013E80131E4BC671316463F71"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Chat/YYFaces.cs",
+    "sha256": "A9441E8C7D2BB9038FFCD21F0CBACE817F8060365C46AF2F68CE2B2375C2D00B"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Era/EraLexicon.cs",
+    "sha256": "048B36DF13A04B2745EC18D4EBDFF4A90E87F90A018DD7B7FE0CCEE5E23DAB35"
+  }
+]

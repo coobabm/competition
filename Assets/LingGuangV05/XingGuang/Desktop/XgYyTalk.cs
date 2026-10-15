@@ -83,11 +83,23 @@ namespace LingGuangV05.Desktop.XingGuang
             get { var hub = YYChatHub.Instance; return hub != null && hub.S != null && hub.S.lingguangUnlocked; }
         }
 
-        /// <summary>Opens YY on its conversation. False before it has joined YY (callers fall back to 概览).</summary>
-        public static bool Open()
+        /// <summary>Opens YY; only an explicit player request may open the contact during the first lesson.</summary>
+        public static bool Open(bool playerRequested = false)
         {
             var hub = YYChatHub.Instance;
-            if (!InYY || hub.router == null) return false;
+            if (hub == null || hub.S == null || hub.router == null) return false;
+            if (!InYY && playerRequested && OpeningSequence.FirstLessonActive)
+            {
+                var runtime = FindAnyObjectByType<ChapterOneRuntime>();
+                if (runtime != null && runtime.Sim != null && runtime.Sim.AppInstalled && !runtime.Sim.InPrologue
+                    && hub.Conversation(Id) != null)
+                {
+                    // Open the existing contact without autoplaying a scene, greeting or changing the lesson clock.
+                    hub.S.lingguangUnlocked = true;
+                    hub.Select(Id);
+                }
+            }
+            if (!InYY) return false;
             return hub.router.Open(YYChatHub.AppId, Id);
         }
 
@@ -185,12 +197,26 @@ namespace LingGuangV05.Desktop.XingGuang
             // Several quick lines get one answer: the reply on its way answers them too.
             if (waiting) { queuedQuestion = message; return true; }
             waiting = true; askedAt = Time.unscaledTime;
+            // 它没读懂的地方 (XgSim.BookPuzzles.cs): with a question about a book pending, this message is the answer.
+            if (sim.BookPuzzlePending != null)
+            {
+                int pt = ++ticket;
+                XgBookPuzzleJudge.Answer(sim, text, said =>
+                {
+                    if (!ReferenceEquals(sim, bound) || pt != ticket) return;
+                    if (string.IsNullOrEmpty(said)) { waiting = false; return; }
+                    due = new Reply { text = said, question = text, asked = message, at = Math.Max(Time.unscaledTime, askedAt + ReadPause) };
+                    XgYyLens.Typing(sim, said, due.at);
+                });
+                return true;
+            }
             // Before stage 5 the first 「她……爱我吗？」 gets one word it cannot possibly know; the inner voice notices.
             bool early = XgSim.IsLoveQuestion(text) && sim.S.stage < XgSim.LoveStage && sim.S.loveEarlyAsked == 0;
             string scripted = sim.Scripted(text);
             if (scripted != null)
             {
                 due = new Reply { text = scripted, question = text, early = early, at = askedAt + ReadPause };
+                XgYyLens.Typing(sim, due.text, due.at);
                 return true;
             }
             int t = ++ticket;
@@ -259,6 +285,8 @@ namespace LingGuangV05.Desktop.XingGuang
             bool fromModel = reply.Trim().Length > 0 && !sim.Repeats(reply);
             string said = sim.Reply(reply, question, rng, now, HotWords(now));
             due = new Reply { text = said, question = question, asked = asked, focus = focus, model = fromModel, tagged = true, at = Math.Max(Time.unscaledTime, askedAt + ReadPause) };
+            // 它在学: the next-character candidates play in the pause before it shows (XgYyLens).
+            XgYyLens.Typing(sim, said, due.at);
         }
 
         void Deliver(YYChatHub hub)
@@ -323,6 +351,12 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <param name="stale">The model's previous try when it repeated itself: this retry runs hotter and is told to avoid it.</param>
         void Ask(XgSim sim, string question, string stale, Action<string> done)
         {
+            // The owner's lines are embedded first (≤1.5 s), so what it recalls below is found by meaning too.
+            LingGuangV05.Desktop.LLM.LocalEmbedder.Prepare(sim.RecallQueries(), () => { if (this == null) { done(null); return; } AskNow(sim, question, stale, done); });
+        }
+
+        void AskNow(XgSim sim, string question, string stale, Action<string> done)
+        {
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             if (llm == null || !llm.Ready) { done(null); return; }
             var limits = sim.Limits();
@@ -335,6 +369,9 @@ namespace LingGuangV05.Desktop.XingGuang
             int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(chat.Count, limits.contextMessages);
             for (int i = start; i < chat.Count; i++) messages.Add(new KeyValuePair<string, string>(chat[i].from == "me" ? "user" : "assistant", chat[i].text));
             var state = new StringBuilder(sim.PersonaTone()).Append(sim.PersonaMemory());
+            // RAG (XgSim.Knowledge.cs): taught cards, read chapters, older talks and 2016 news that fit the owner's line.
+            string known = sim.PersonaKnowledge(null, null, start);
+            if (known.Length > 0) state.Append('\n').Append(known);
             // The learned tone habit (XgSim.Habits.cs): picked once per question, kept for the retry.
             if (stale == null) sim.PickHabit(question, today);
             string habit = sim.HabitOrder();

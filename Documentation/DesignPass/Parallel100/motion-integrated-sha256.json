@@ -1,0 +1,50 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "sha256": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "sha256": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "sha256": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs",
+    "sha256": "9C796DF03ECA69F177ABA982445B7680666995B654525CFFAB225325E92518F4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "sha256": "F339D451A8E1A5022FE07398BAF3F9A83449A04EFC567146138FA48FE2F8A1B4"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "sha256": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/Motion003PointerChecks.cs",
+    "sha256": "744592E1B37322E1C117EE495533D232E5CC636E589DB8DF3B4B7524C061E7BD"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/Motion008HoldChecks.cs",
+    "sha256": "2FF35E27D16811E75A208EC28C57F52329D5F717C19C165B2DA1F93416F0531F"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LabelBaselineChecks.cs",
+    "sha256": "C90B741567A899AEAEE0BDC0F5523759DA878EC34C47714CAF38DCECFB3C3BEE"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/ReducedSwitchChecks.cs",
+    "sha256": "880132745FFAB4520BCA29CBBAE06C0389ED006789CE133BC542B541CEB375E8"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionButtonPerfProbe.cs",
+    "sha256": "CC9FD5612BF5BC744A7998B53D933784842687C43F7B2576656B5CB9160DEB60"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionIntegrationChecks.cs",
+    "sha256": "658C6F93497C292908B803B12D4774B937278D7D8D43A2D4D7E27D96AD88359E"
+  }
+]

@@ -202,16 +202,9 @@ namespace LingGuangV05.XingGuang
             Say(timeout ? T("摆渡众包：验证超时，自动标注暂停 2 分钟，信用 −3。")
                 : T("摆渡众包：验证码错误，自动标注暂停 2 分钟，信用 −3。"));
             CaptchaFailed?.Invoke(timeout, inARow);
-            if (inARow < CaptchaFailsToReport) return;
-            S.qcCaptchaFails = 0;
-            Report(XgReportReason.SuspectedBot);
+            // Repeated failures used to report the account; since 2026-10-16 the pause and the credit are all it costs.
+            if (inARow >= CaptchaFailsToReport) S.qcCaptchaFails = 0;
         }
 
-        /// <summary>A report supersedes any captcha business: the account is frozen anyway.</summary>
-        void ClearCaptcha()
-        {
-            S.qcCaptcha = false; S.qcCaptchaLeft = 0; S.qcAutofillIn = -1;
-            S.qcAutoPause = 0; S.qcSuspicion = 0;
-        }
     }
 }

@@ -940,6 +940,8 @@ namespace LingGuangV05.Desktop.Story
                 Destroy(dllIcon.gameObject); dllIcon = null;
             }
             yield return PrologueDesk.Wait(2);
+            // 《灵光记》: it hands over the year as a 章回 novel before the clock turns (XgSim.Chronicle.cs).
+            yield return ShowChronicle(lab);
             GameCalendar.NewYear(runtime.Sim.S);
             var black = PrologueDesk.Rect("Title", screenRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             PrologueDesk.Fill(black, Color.black);
@@ -955,6 +957,51 @@ namespace LingGuangV05.Desktop.Story
             ending = null;
             // A quiet desktop first: no prompts, no tasks. Life starting again (360's boot counter) comes after.
             StartCoroutine(NewYearBalloon());
+        }
+
+        /// <summary>
+        /// 《灵光记》 on a sheet of paper: the 回目 and a line under each come one by one (a click hurries them), then the
+        /// owner's 批语 in red; a click (or a minute) closes it. 灵光记.txt stays on the desktop afterwards.
+        /// </summary>
+        IEnumerator ShowChronicle(LingGuangV05.XingGuang.XgSim lab)
+        {
+            lab.English = GameText.IsEnglish;
+            var chapters = lab.Chronicle();
+            var ink = new Color32(46, 38, 30, 255);
+            var page = PrologueDesk.Rect("Chronicle", screenRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var paper = PrologueDesk.Fill(page, new Color32(244, 237, 221, 255));
+            var group = page.gameObject.AddComponent<CanvasGroup>();
+            bool clicked = false;
+            var button = page.gameObject.AddComponent<Button>();
+            button.transition = Selectable.Transition.None; button.targetGraphic = paper;
+            button.onClick.AddListener(() => clicked = true);
+            desk.Text(PrologueDesk.Rect("Title", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -110), new Vector2(0, -40)), GameText.T("灵光记", "The Record of Lingguang"), 54, ink, TextAlignmentOptions.Center);
+            desk.Text(PrologueDesk.Rect("Author", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -150), new Vector2(0, -110)),
+                GameText.T("（" + (lab.Profile.name.Length > 0 ? lab.Profile.name : "灵光") + " 著　二〇一六年）", "(by " + (lab.Profile.name.Length > 0 ? lab.Profile.name : "Lingguang") + ", 2016)"), 22, new Color32(120, 100, 80, 255), TextAlignmentOptions.Center);
+            var body = desk.Text(PrologueDesk.Rect("Body", page, Vector2.zero, Vector2.one, new Vector2(220, 110), new Vector2(-220, -170)), "", 24, ink, TextAlignmentOptions.TopLeft);
+            body.enableAutoSizing = true; body.fontSizeMin = 13; body.fontSizeMax = 24; body.lineSpacing = 4;
+            var hint = desk.Text(PrologueDesk.Rect("Hint", page, Vector2.zero, new Vector2(1, 0), new Vector2(0, 30), new Vector2(0, 70)), "", 18, new Color32(140, 120, 100, 255), TextAlignmentOptions.Center);
+            group.alpha = 0;
+            for (float t = 0; t < 1; t += Time.unscaledDeltaTime) { group.alpha = t; yield return null; }
+            // A long first frame (a hitch) ends the loop early: the page must still end up fully shown.
+            group.alpha = 1;
+            var text = new System.Text.StringBuilder();
+            for (int i = 0; i < chapters.Count; i++)
+            {
+                var c = chapters[i];
+                text.Append("<b>").Append(c.Title(i + 1, GameText.IsEnglish)).Append("</b>\n<color=#7A6650><size=85%>").Append(c.body).Append("</size></color>\n");
+                body.text = text.ToString();
+                for (float t = 0; t < 2.4f && !clicked; t += Time.unscaledDeltaTime) yield return null;
+                clicked = false;
+            }
+            text.Append("\n<color=#B22222>").Append(lab.ChronicleComment()).Append("</color>");
+            body.text = text.ToString();
+            hint.text = GameText.T("（点击合上。桌面上会留一份「灵光记.txt」。）", "(Click to close. A copy stays on the desktop as Lingguang.txt.)");
+            yield return PrologueDesk.Wait(1.5f);
+            clicked = false;
+            for (float t = 0; t < 60 && !clicked; t += Time.unscaledDeltaTime) yield return null;
+            for (float t = 0; t < 1; t += Time.unscaledDeltaTime) { group.alpha = 1 - t; yield return null; }
+            Destroy(page.gameObject);
         }
 
         /// <summary>Seconds of quiet desktop after the ending before 360's New Year balloon.</summary>

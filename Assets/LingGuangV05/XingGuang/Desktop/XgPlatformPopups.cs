@@ -83,9 +83,9 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnWarned(double errorRate)
         {
             string pass = ((1 - errorRate) * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
-            string line = ((1 - XgSim.QcReportRate) * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
-            Popup(T("近期抽检合格率 " + pass + "，低于 " + line + " 将被举报。\n建议调高「拿不准才问我」阈值。",
-                "Recent spot-check pass rate " + pass + ". Below " + line + " the account will be reported.\nTry raising the 'Ask when unsure' threshold."), 9);
+            string fine = XgSim.QcFineMultiplier.ToString("0", CultureInfo.InvariantCulture);
+            Popup(T("近期抽检合格率 " + pass + "，抽到的错题每道罚 " + fine + " 倍工钱。\n" + bound.QualityAdvice(false),
+                "Recent spot-check pass rate " + pass + ". Each wrong label caught costs " + fine + "× its pay.\n" + bound.QualityAdvice(true)), 9);
         }
 
         void OnReported(XgReportReason reason, double seconds)
@@ -110,9 +110,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnCaptchaFailed(bool timeout, int inARow)
         {
-            string left = (XgSim.CaptchaFailsToReport - inARow).ToString(CultureInfo.InvariantCulture);
-            Popup((timeout ? Lang.T("人机验证超时") : Lang.T("验证码错误")) + Lang.T("，自动标注暂停 2 分钟，信用 −3。")
-                + (inARow < XgSim.CaptchaFailsToReport ? T("\n再失败 " + left + " 次将按疑似机器操作处理。", "\n" + left + " more in a row and the account is treated as a bot.") : ""), 9);
+            Popup((timeout ? Lang.T("人机验证超时") : Lang.T("验证码错误")) + Lang.T("，自动标注暂停 2 分钟，信用 −3。"), 9);
         }
 
         void OnCaptchaFlagged()

@@ -386,7 +386,8 @@ namespace LingGuangV05.Core.Girlfriend
         /// What changes from one message to the next: the clock, where she is, her mood, the memories his latest line
         /// brings up, your plans, the day's special situation and code's account of what just happened.
         /// </summary>
-        public static string State(GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, string latest = null)
+        /// <param name="recall">Earlier exchanges of the chat that his line brings back (GirlfriendPrompt, from the history outside the window); may be null.</param>
+        public static string State(GirlfriendState s, GfNow now, GfActivity a, bool english, string situation, string latest = null, string recall = null)
         {
             var c = now.clock;
             var sb = new StringBuilder();
@@ -399,6 +400,7 @@ namespace LingGuangV05.Core.Girlfriend
                 sb.Append("Your plans together: ").Append(Promises(s, true)).Append('\n');
                 string life = LifeNow(s, now, true);
                 if (life.Length > 0) sb.Append("Going on in your life these days: ").Append(life).Append('\n');
+                sb.Append(Knowledge(latest, c, true));
             }
             else
             {
@@ -409,7 +411,9 @@ namespace LingGuangV05.Core.Girlfriend
                 sb.Append("你们的约定：").Append(Promises(s, false)).Append('\n');
                 string life = LifeNow(s, now, false);
                 if (life.Length > 0) sb.Append("你这几天的生活：").Append(life).Append('\n');
+                sb.Append(Knowledge(latest, c, false));
             }
+            if (!string.IsNullOrEmpty(recall)) sb.Append(recall);
             string special = Special(s, now, english);
             if (special.Length > 0) sb.Append(special).Append('\n');
             if (!string.IsNullOrEmpty(situation)) sb.Append(situation).Append('\n');
@@ -473,7 +477,27 @@ namespace LingGuangV05.Core.Girlfriend
             return sb.Append(always).ToString();
         }
 
-        static readonly IMemoryScorer MemoryScorer = new Bm25Scorer();
+        /// <summary>Her retrieval: BM25 plus meaning (embedding) similarity whenever the embedding model runs.</summary>
+        public static readonly IMemoryScorer MemoryScorer = new HybridScorer();
+
+        /// <summary>Facts about her own life (Rag.Qingwen) and the news of the time (Rag.Era) that his line touches.</summary>
+        public const int LifeFacts = 3, EraFacts = 1;
+
+        /// <summary>
+        /// Her own life and the era, retrieved for his latest line (design: RAG for 晴雯). Only what holds on the
+        /// story day: no future news, no summer-holiday facts in November. Empty without a line or a match.
+        /// </summary>
+        public static string Knowledge(string latest, DateTime day, bool english)
+        {
+            if (string.IsNullOrWhiteSpace(latest)) return "";
+            var query = MemoryQuery.Of(latest);
+            var life = new List<string>();
+            foreach (var e in Rag.Lookup(MemoryScorer, query, Rag.Qingwen, day, english, LifeFacts)) life.Add(e.Text(english));
+            var era = new List<string>();
+            foreach (var e in Rag.Lookup(MemoryScorer, query, Rag.Era, day, english, EraFacts)) era.Add(e.Text(english));
+            return Rag.Block(english ? "About yourself (true; stick to it and do not invent other details):" : "关于你自己（都是真的，照着说，别另外编）：", life)
+                 + Rag.Block(english ? "In the news lately (you know this):" : "最近外面的事（你知道）：", era);
+        }
 
         /// <summary>
         /// Her memories for the prompt: the ones most similar to his latest line first (the lab AI's BM25 retriever),

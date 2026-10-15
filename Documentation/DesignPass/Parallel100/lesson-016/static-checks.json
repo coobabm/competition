@@ -1,0 +1,32 @@
+{
+  "kind": "Static source/geometry/contrast checks only; no Unity execution or visual acceptance",
+  "dependencies_changed": [],
+  "white_contrast": {
+    "old_hint_B4B8C2": 1.9856533797868898,
+    "new_hint_596273": 6.141422322055167,
+    "focus_2455A4": 7.2153031107137835
+  },
+  "design_geometry": {
+    "teach_body_width": 540,
+    "crowd_body_width": 586,
+    "pair_outer_width": 428,
+    "button_outer": [
+      206,
+      54
+    ],
+    "button_hit": [
+      204,
+      52
+    ],
+    "label_width": 192,
+    "pair_gap": 16,
+    "scale_0_78_hit": [
+      159.12,
+      40.56
+    ],
+    "scale_0_5_hit": [
+      102,
+      26
+    ]
+  }
+}

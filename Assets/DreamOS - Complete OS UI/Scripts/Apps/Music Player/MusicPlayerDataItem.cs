@@ -47,6 +47,8 @@ namespace Michsky.DreamOS
             AccentMatchColorTMP
         }
 
+        public bool IsVolumeSlider => objectType == ObjectType.VolumeSlider;
+
         void Start() 
         {
             Initalize();

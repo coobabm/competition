@@ -1,0 +1,29 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs
+@@ -382,7 +382,7 @@
+         public void Open(string tabId)
+         {
+             if (tabId == "vision" || tabId == "sequence") { Sim.SelectedTrack = tabId == "vision" ? XgTrack.Vision : XgTrack.Sequence; tabId = "train"; }
+-            if (tabId == "research") tabId = "tree";
++            if (tabId == "research" || tabId == "growth") tabId = "tree";
+             if (tabId == "label") tabId = "teach";
+             if (IsCrowdPage(tabId)) { Refresh(true); controller.OpenCrowd(tabId); return; }
+             if (!string.IsNullOrEmpty(tabId) && pages.ContainsKey(tabId)) ShowTab(tabId);
+@@ -394,6 +394,8 @@
+ 
+         public void ShowTab(string id)
+         {
++            string requested = id;
++            if (id == "items" || id == "abilities" || id == "growth") id = "tree";
+             if (id == "label") id = "teach";
+             if (IsCrowdPage(id)) { controller.OpenCrowd(id); return; }
+             if (!pages.ContainsKey(id) || !FeatureOpen(id)) return;
+@@ -402,6 +404,8 @@
+             pages[id].Shown();
+             Juice.BringToFront();
+             Refresh(true);
++            if (requested == "items") Tree.SetGrowthShelf(true);
++            if (requested == "abilities") Tree.FocusGrowthAbility(Sim.NextAbility > 0 ? Sim.NextAbility : XgSim.AbilityCount);
+         }
+ 
+         public void Refresh(bool force)

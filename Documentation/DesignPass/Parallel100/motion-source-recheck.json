@@ -1,0 +1,858 @@
+[
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Button.cs",
+    "expected": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "current": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "matches": true
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Selectable.cs",
+    "expected": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "current": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "matches": true
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/EventSystem/InputModules/PointerInputModule.cs",
+    "expected": "022612B030DE58C8A07FAD32763210C99BF120427661880DA4695F36AA9EBD77",
+    "current": "022612B030DE58C8A07FAD32763210C99BF120427661880DA4695F36AA9EBD77",
+    "matches": true
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/EventSystem/InputModules/StandaloneInputModule.cs",
+    "expected": "286252C0E94B556B359751812B845C6E655364C62D80E90CA6D01A499E54D4C1",
+    "current": "286252C0E94B556B359751812B845C6E655364C62D80E90CA6D01A499E54D4C1",
+    "matches": true
+  },
+  {
+    "task": "motion-003",
+    "evidence": "source-sha256.json",
+    "path": "Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/UI/InputSystemUIInputModule.cs",
+    "expected": "1334661B7A824EAD8B3B0A8FF3CE17E93F80A369EC3E3E37CD796D90F13223E2",
+    "current": "1334661B7A824EAD8B3B0A8FF3CE17E93F80A369EC3E3E37CD796D90F13223E2",
+    "matches": true
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Selectable.cs",
+    "expected": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "current": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "matches": true
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Button.cs",
+    "expected": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "current": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "matches": true
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/EventSystem/InputModules/StandaloneInputModule.cs",
+    "expected": "286252C0E94B556B359751812B845C6E655364C62D80E90CA6D01A499E54D4C1",
+    "current": "286252C0E94B556B359751812B845C6E655364C62D80E90CA6D01A499E54D4C1",
+    "matches": true
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/UI/InputSystemUIInputModule.cs",
+    "expected": "1334661B7A824EAD8B3B0A8FF3CE17E93F80A369EC3E3E37CD796D90F13223E2",
+    "current": "1334661B7A824EAD8B3B0A8FF3CE17E93F80A369EC3E3E37CD796D90F13223E2",
+    "matches": true
+  },
+  {
+    "task": "motion-005",
+    "evidence": "dependency-sha256.json",
+    "path": "Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/UI/PointerModel.cs",
+    "expected": "2FB51CC58931FF3AE2DECAAF6A72A179A0424525B933D09DF7C917F2E92BE653",
+    "current": "2FB51CC58931FF3AE2DECAAF6A72A179A0424525B933D09DF7C917F2E92BE653",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "expected": "5C20DA1967F47EA3E5241613C69D1FEBDA3E5633BAB924499EB1AAAED1E222B6",
+    "current": "5C20DA1967F47EA3E5241613C69D1FEBDA3E5633BAB924499EB1AAAED1E222B6",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+    "expected": "72EC7693B86E35AECC778C70044C43DC696B8E44C91B3B82DEB03AC291303938",
+    "current": "72EC7693B86E35AECC778C70044C43DC696B8E44C91B3B82DEB03AC291303938",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs",
+    "expected": "C6506987A950CDEB71C992A861273252349BDEF750AA1460C746705BB2A9C2F3",
+    "current": "C6506987A950CDEB71C992A861273252349BDEF750AA1460C746705BB2A9C2F3",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs",
+    "expected": "8361F777B746D8E0359EF9BB02E2CEFC48E9B0AF0023EF85819DA59E5662239A",
+    "current": "9C796DF03ECA69F177ABA982445B7680666995B654525CFFAB225325E92518F4",
+    "matches": false
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Assets/DreamOS - Complete OS UI/Scripts/Window/WindowManager.cs",
+    "expected": "87B7DE2E84A1F0B16EE6A740420322B89E6B6DA0C15F766F493FBF1B4FB945B8",
+    "current": "87B7DE2E84A1F0B16EE6A740420322B89E6B6DA0C15F766F493FBF1B4FB945B8",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Button.cs",
+    "expected": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "current": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "matches": true
+  },
+  {
+    "task": "motion-006",
+    "evidence": "source-evidence.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Selectable.cs",
+    "expected": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "current": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "matches": true
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "expected": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E",
+    "current": "F339D451A8E1A5022FE07398BAF3F9A83449A04EFC567146138FA48FE2F8A1B4",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Selectable.cs",
+    "expected": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "current": "02EBB0484A16FE6FA0D34EA1CA5248B845503214D3D6E7318E055D54B8537596",
+    "matches": true
+  },
+  {
+    "task": "motion-008",
+    "evidence": "source-hashes.json",
+    "path": "Library/PackageCache/com.unity.ugui@d8a2716f3013/Runtime/UGUI/UI/Core/Button.cs",
+    "expected": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "current": "3AD850616D59ED6303135BA648A620A3730398EE9D398914612C581BECF7C69C",
+    "matches": true
+  },
+  {
+    "task": "motion-009",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-009",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-009",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-009",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-009",
+    "evidence": "source-hashes.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs",
+    "expected": "E6EBBFC22E5639856D62CF3E7F4C8D5247450F98C8611FC9248EB512D01948A8",
+    "current": "E6EBBFC22E5639856D62CF3E7F4C8D5247450F98C8611FC9248EB512D01948A8",
+    "matches": true
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-011",
+    "evidence": "source-hashes.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs",
+    "expected": "49B550CCCB47BC44F54382E0883A233E3D3F8467C9B3A4F3697B356E5B4380A4",
+    "current": "49B550CCCB47BC44F54382E0883A233E3D3F8467C9B3A4F3697B356E5B4380A4",
+    "matches": true
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRepoPage.cs",
+    "expected": "6B33B19BDFBCEA8E95624D5E3A0FBF7FA252154BDC5289F1649741C57D604396",
+    "current": "6B33B19BDFBCEA8E95624D5E3A0FBF7FA252154BDC5289F1649741C57D604396",
+    "matches": true
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-013",
+    "evidence": "source-baseline.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "expected": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E",
+    "current": "F339D451A8E1A5022FE07398BAF3F9A83449A04EFC567146138FA48FE2F8A1B4",
+    "matches": false
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs",
+    "expected": "73CE990C4A6E454CFD65C5D5F47C06B748CE93D27B9E651DEC3F4A4857F6A747",
+    "current": "73CE990C4A6E454CFD65C5D5F47C06B748CE93D27B9E651DEC3F4A4857F6A747",
+    "matches": true
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "expected": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "current": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "matches": true
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRealTrainPanel.cs",
+    "expected": "CFCB2047281ACE7B4DA3B9C0262A20F5480ED2A5742A7A6E3552BC152B0032F1",
+    "current": "CFCB2047281ACE7B4DA3B9C0262A20F5480ED2A5742A7A6E3552BC152B0032F1",
+    "matches": true
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-015",
+    "evidence": "source-hashes.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs",
+    "expected": "8361F777B746D8E0359EF9BB02E2CEFC48E9B0AF0023EF85819DA59E5662239A",
+    "current": "9C796DF03ECA69F177ABA982445B7680666995B654525CFFAB225325E92518F4",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs",
+    "expected": "C6506987A950CDEB71C992A861273252349BDEF750AA1460C746705BB2A9C2F3",
+    "current": "C6506987A950CDEB71C992A861273252349BDEF750AA1460C746705BB2A9C2F3",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "expected": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523",
+    "current": "99186007284CD2E8CB6F6FEF045BDD855621FA1CABAEF2AB6D884497BA32F456",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "expected": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "current": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs",
+    "expected": "3623A45A332B1D8D7F000D26174F3F24FFDD2C467F44821C1348B94DB6DCC1C5",
+    "current": "3623A45A332B1D8D7F000D26174F3F24FFDD2C467F44821C1348B94DB6DCC1C5",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Consumables.cs",
+    "expected": "E68D3F9367CA4A59E2835C7C37A2973E866C93765452B87337ADF88075205B58",
+    "current": "E68D3F9367CA4A59E2835C7C37A2973E866C93765452B87337ADF88075205B58",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Data.cs",
+    "expected": "41330E64193670FCAC6342757B0AF73157A49E297F04A22DFD5428D2AAB55FF1",
+    "current": "41330E64193670FCAC6342757B0AF73157A49E297F04A22DFD5428D2AAB55FF1",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LingGuangV05/DesktopBridge/Taohuo/ShopKit.cs",
+    "expected": "65CB4B5E3AC00423FBC05F3BD79FB52FE5D90AFE2CE282F0564E2862C6459530",
+    "current": "65CB4B5E3AC00423FBC05F3BD79FB52FE5D90AFE2CE282F0564E2862C6459530",
+    "matches": true
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-016",
+    "evidence": "source-hashes.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "expected": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "current": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "expected": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E",
+    "current": "F339D451A8E1A5022FE07398BAF3F9A83449A04EFC567146138FA48FE2F8A1B4",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs",
+    "expected": "249870A0B6A1E121BF46D8F193E75E22112072142678A2C3DA7AC7C55FBB0017",
+    "current": "249870A0B6A1E121BF46D8F193E75E22112072142678A2C3DA7AC7C55FBB0017",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgCortexGraphic.cs",
+    "expected": "AFDABFBCB772B782B0589795A8BD65E965F4CCF4901D67BDA2E1E0D4B0F79033",
+    "current": "AFDABFBCB772B782B0589795A8BD65E965F4CCF4901D67BDA2E1E0D4B0F79033",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaper.cs",
+    "expected": "8D08D5480C15322DA9232A07CA9CFFAB98FC5B8F375BDD04F10C56E5E1783162",
+    "current": "8D08D5480C15322DA9232A07CA9CFFAB98FC5B8F375BDD04F10C56E5E1783162",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaperPresentation.cs",
+    "expected": "C97DAD8F9DA53E61FDE90A8454D1AA6E7C730C7891C39AEC83F364C332585E5B",
+    "current": "C97DAD8F9DA53E61FDE90A8454D1AA6E7C730C7891C39AEC83F364C332585E5B",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaperPin.cs",
+    "expected": "E202E9CBF01CC176DA87B246EF37594DDE67E96D498F6E32F3B4018228E412CF",
+    "current": "E202E9CBF01CC176DA87B246EF37594DDE67E96D498F6E32F3B4018228E412CF",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperRegionCard.cs",
+    "expected": "CA9C519BCEE834807EA46EAB77109C65CBE06B7FE0C318CF930793773DC9CF9B",
+    "current": "CA9C519BCEE834807EA46EAB77109C65CBE06B7FE0C318CF930793773DC9CF9B",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperConcepts.cs",
+    "expected": "137BF53E38596B1DFB7851F082BA85E47F1884D197D333E62FDDCB6C71AECA50",
+    "current": "5500CAA77FEE0414471CA5BF208412C25DF39248CED06616EC8E2E6113B991B0",
+    "matches": false
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperConcepts.Regions.cs",
+    "expected": "342D72E7A9FA3A2760597716DCBDA3031EDAEFF769FDB2709956EFD59C898F01",
+    "current": "342D72E7A9FA3A2760597716DCBDA3031EDAEFF769FDB2709956EFD59C898F01",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperPersona.cs",
+    "expected": "E5DFB0D55B39627EEEDDA626CD63177BF42C6128160157BE6E99D35C914D9CDF",
+    "current": "E5DFB0D55B39627EEEDDA626CD63177BF42C6128160157BE6E99D35C914D9CDF",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs",
+    "expected": "F98E391C7EFC7F62499B04837AE9DA9580E7F2D736702B2B36E5CE8A068370D0",
+    "current": "F98E391C7EFC7F62499B04837AE9DA9580E7F2D736702B2B36E5CE8A068370D0",
+    "matches": true
+  },
+  {
+    "task": "motion-017",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgShapes.cs",
+    "expected": "ACD56AD041CE4A621FAD5727D539660C9D2D9EEAFFF7095D174ACF7D7099FCA6",
+    "current": "ACD56AD041CE4A621FAD5727D539660C9D2D9EEAFFF7095D174ACF7D7099FCA6",
+    "matches": true
+  },
+  {
+    "task": "motion-018",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "expected": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+    "current": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857",
+    "matches": false
+  },
+  {
+    "task": "motion-018",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "expected": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+    "current": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F",
+    "matches": false
+  },
+  {
+    "task": "motion-018",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "expected": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+    "current": "66EB046451047A36075741EB3129E553131E5BBD79AAD22F811F9927ECD6560F",
+    "matches": false
+  },
+  {
+    "task": "motion-018",
+    "evidence": "source-sha256.json",
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "expected": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+    "current": "F95F0BB19A10038C2A0A5C813676F8ACF4EED7096C0E76E1B451E7E851531574",
+    "matches": false
+  },
+  {
+    "task": "motion-018",
+    "evidence": "source-sha256.json",
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "expected": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+    "current": "E74E4ABCF65833FAB4FC1C425E4CC8E0A2AEF6212C314F859644B6789A816679",
+    "matches": false
+  }
+]

@@ -1,0 +1,17 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -63,3 +63,6 @@
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.id == "perceptron") return T(sim,
++                "给每条线索分配分量，加总后与门槛比较，回答「是」或「否」。基础结构没有隐藏层，需要人先整理线索，才能处理某些组合关系。",
++                "Weight each clue, add them up and compare the total with a threshold to answer yes or no. The basic structure has no hidden layer; some combinations need people to prepare the clues first.");
+             switch (node.kind)
+@@ -128,3 +131,6 @@
+         static string Effect(XgNode node, XgSim sim)
+         {
++            if (node.id == "perceptron") return T(sim,
++                "开局免费拥有，是视觉和序列训练线的默认结构，无需购买或手动装备；系统会按数据和显存自动选择结构。基础深度上限为 1 层，其他已拥有技术可能提高此上限。没有可重复叠加的数值奖励；样本和资源满足要求后，训练并查看评估成绩。未拥有人为整理的组合线索时，逻辑数据的基础准确率上限为 55%（并非增加 55 个百分点，临时效果另算）。",
++                "Owned free from the start and the default for both vision and sequence tracks; no purchase or manual equip is needed. The system selects an architecture for the data and VRAM. The base depth cap is 1 layer; other owned techniques may raise it. There is no repeatable stat bonus. Train when samples and resources are sufficient, then check the evaluation. Without engineered clues, the base accuracy ceiling on logic data is 55% (not a 55-percentage-point bonus; temporary effects are applied separately).");
+             if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)

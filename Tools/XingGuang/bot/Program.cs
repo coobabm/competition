@@ -9,8 +9,13 @@ using LingGuangV05.Core;
 using LingGuangV05.XingGuang;
 
 /// <summary>Uses the actual household simulation, not a wallet with free power.</summary>
-sealed class EconomyHost : IXgHost, IXgRig
+sealed class EconomyHost : IXgHost, IXgRig, IXgThermal, IXgHousehold
 {
+    // Life events (XgSim.LifeEvents.cs): the house's bills and clock.
+    public bool BillsActive => House.EconomyActive;
+    public double MonthKwh => House.MonthKwh;
+    public double HighKwh => House.Config.tierTwoKwh;
+    public double SecondsOfDay => GameCalendar.Now(House.S).TimeOfDay.TotalSeconds;
     // 接线: the household's real cards, PSU and breaker (the lab auto-wires them exactly as before).
     public IReadOnlyList<XgCardSpec> Cards => House.Cards.Select(id => LingGuangV05.Core.Hardware.HardwareCatalog.Gpu(id)).Where(g => g != null)
         .Select(g => new XgCardSpec { id = g.id, name = g.name, nameEn = g.nameEn, compute = g.compute, vramMB = g.vramMB, watts = g.watts }).ToList();
@@ -30,6 +35,8 @@ sealed class EconomyHost : IXgHost, IXgRig
         House.Signal += (signal, arg) => { if (signal == "power.unpaid") outages++; if (signal == "breaker.tripped") breakerTrips++; };
     }
     public double Compute => House.HeartbeatsPerSecond;
+    /// <summary>The cards are above the throttle temperature (进度条仿真's 显卡降频 stall, XgSim.TrainPace.cs).</summary>
+    public bool Throttling => House.S.temperature > House.Config.throttleTemperature;
     public double VramMB => House.MemoryCapacity;
     /// <summary>The wallet as the bot's decisions see it: what it may spend (the rent reserve held back while deciding).</summary>
     public double Money => House.S.money - Reserve;
@@ -225,6 +232,7 @@ sealed class Driver
             double researchBefore = sim.S.project.gpuSeconds;
             sim.Tick(dt, host);
             ManageRelics();
+            AnswerLifeEvents();
             if (options.SpiderWordsPerMinute > 0 && sim.S.epochs >= XgSim.SpiderIntroEpochs)
             {
                 spiderCarry += options.SpiderWordsPerMinute * dt / 60;
@@ -255,6 +263,7 @@ sealed class Driver
             // Both bars full: the player presses the chapter button (XgTrainPage.Side) to confirm the next ability.
             if (XgGuide.ChapterWaits(sim)) ConfirmStage();
             if (sim.S.stage >= 6) Finale();
+            ReadBooks();
             // Stage 6 keeps labelling and training too: the wallet has to stay above the rent while the items are bought.
             if (!sim.ProjectActive && time >= nextAction && (!options.FaultCheck || time >= 125)) PlayerAction();
             if (time >= nextDecision && (!options.FaultCheck || time >= 125)) { Decide(); nextDecision = time + options.DecisionSeconds; }
@@ -265,6 +274,7 @@ sealed class Driver
             if (options.GuideCheck && time >= nextGuide) { CheckGuide(); nextGuide = time + 1; }
             if (time >= nextReport) { Snapshot(); nextReport += ReportEvery; if (Environment.GetEnvironmentVariable("BOT_DEBUG") != null) Debug(); }
             TrackMoney();
+            TrackPacing();
             time += dt;
         }
         Snapshot();
@@ -272,6 +282,7 @@ sealed class Driver
         // A careless run must end with the computer sold; a normal one must finish the chapter without it.
         bool success = options.Careless ? host.House.S.bankrupt : sim.S.chapterComplete && !host.House.S.bankrupt;
         ReportMoney();
+        ReportPacing();
         Console.WriteLine("---- relics: " + relicsPicked + " picked, " + sim.RelicsOwned.Count + " owned, equipped " + string.Join("+", Enumerable.Range(0, XgRelics.Slots).Select(i => sim.RelicInSlot(i)?.id ?? "-")));
         if (options.GuideCheck) success &= ReportGuide();
         var payload = new
@@ -299,6 +310,24 @@ sealed class Driver
         else if (options.Careless) Console.WriteLine(success ? "BANKRUPT AS EXPECTED: " + Clock(time) : "NOT BANKRUPT (careless run must go bankrupt): " + string.Join("; ", Missing()));
         else Console.WriteLine(success ? "COMPLETE: " + Clock(time) : host.House.S.bankrupt ? "BANKRUPT at " + Clock(time) : "INCOMPLETE: " + string.Join("; ", Missing()));
         return success;
+    }
+
+    // ───────────── life events ─────────────
+
+    /// <summary>A careful player's answer to each life event (XgSim.LifeEvents.cs), first available wins: help 老周, keep the data, decline the money nudges.</summary>
+    static readonly string[] LifePreference = { "redeem", "backup", "renew", "pay", "redbull", "data", "decline", "hangup", "lend", "lose", "drop", "throttle", "refuse", "later" };
+    double lifeSeenAt = -1;
+
+    /// <summary>An open life event is read for the story delay, then answered.</summary>
+    void AnswerLifeEvents()
+    {
+        if (!sim.LifeEventOpen) { lifeSeenAt = -1; return; }
+        if (lifeSeenAt < 0) lifeSeenAt = time;
+        if (time < lifeSeenAt + options.StorySeconds) return;
+        var v = sim.LifeEventView(host);
+        var pick = LifePreference.Select(id => v.choices.FirstOrDefault(c => c.id == id && c.enabled)).FirstOrDefault(c => c != null) ?? v.choices.First(c => c.enabled);
+        if (sim.AnswerLifeEvent(pick.id, host)) Record("life", v.id + "/" + pick.id);
+        lifeSeenAt = -1;
     }
 
     // ───────────── rare items ─────────────
@@ -340,7 +369,7 @@ sealed class Driver
             // Only the first samples training needs, then rounds back to back on every line that can train.
             if (!sim.TrainingUnlocked(XgTrack.Sequence) && !sim.TrainingUnlocked(XgTrack.Vision)) { var first = DeskOf(XgTrack.Sequence) ?? DeskOf(XgTrack.Vision); if (first != null) Answer(first); else nextAction = time + 1; return; }
             foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
-                if (sim.TrainingUnlocked(track) && !sim.Run(track).epochActive && sim.BeginEpoch(track, host)) { nextAction = time + XgSim.DurationFor(sim.Run(track)); return; }
+                if (sim.TrainingUnlocked(track) && !sim.Run(track).epochActive && sim.BeginEpoch(track, host)) { nextAction = time + sim.Run(track).epochDuration; return; }
             nextAction = time + .1;
             return;
         }
@@ -361,7 +390,7 @@ sealed class Driver
         {
             // Settings only change between epochs: decide them right before starting the next one.
             if (!sim.Run(trackToTrain).epochActive) Configure(trackToTrain);
-            if (sim.BeginEpoch(trackToTrain, host)) { nextAction = time + XgSim.DurationFor(sim.Run(trackToTrain)); return; }
+            if (sim.BeginEpoch(trackToTrain, host)) { nextAction = time + sim.Run(trackToTrain).epochDuration; return; }
             if (sim.AnyEpochActive) { nextAction = time + .1; return; }
         }
         // While the data bar is the short one, label where a sample counts in full (算术 counts half toward D).
@@ -419,7 +448,7 @@ sealed class Driver
     {
         int next = sim.NextAbility;
         // In stage 6 the parameter bar still counts towards pre-training's effective scale, up to its cap.
-        double need = next > 0 ? sim.ParamsThreshold(next) : sim.S.stage >= 6 && !sim.S.abilities ? XgSim.ScaleBarCap * XgSim.AbilityParamsK[XgSim.AbilityCount] : 0;
+        double need = next > 0 ? sim.ParamsThreshold(next) : sim.S.stage >= 6 && !sim.S.abilities ? XgSim.ScaleBarCap * XgSim.ScaleUnitParamsK : 0;
         if (need <= 0) return null;
         if (sim.TrainedParamsK + 1e-9 >= need) return null;
         (XgTrack, string, int, int, double)? biggest = null;
@@ -496,8 +525,37 @@ sealed class Driver
     {
         var (first, price) = Cheapest(wanted);
         if (first == null) return 0;
-        if (Buyable(sim, first, host) && !(first.kind == XgNodeKind.Arch && sim.AnyEpochActive)) { sim.BuyNode(first.id, host); Mark(mark + "." + first.id); configured.Clear(); return 0; }
+        if (Buyable(sim, first, host)) { sim.BuyNode(first.id, host); Mark(mark + "." + first.id); configured.Clear(); return 0; }
         return price;
+    }
+
+    /// <summary>
+    /// Data takes money and time (节奏重做 §2.1–2.3): a full disk gets a drive first; then, unless the download queue already
+    /// holds what the bar needs, the note's data buy (a pack's download right, the next batch of an owned pack, or an
+    /// item) when the wallet covers it. A slow queue gets the faster broadband once it is on offer. Returns the price to
+    /// save for (0 when nothing is wanted or it was bought).
+    /// </summary>
+    double BuyData(int ability, double need)
+    {
+        if (sim.DownloadBlocker(out _) != null)
+        {
+            if (host.Money >= sim.NextDrivePrice) { sim.BuyDrive(host); Mark("disk.drive." + sim.DrivesOwned); }
+            else return sim.NextDrivePrice;
+        }
+        if (sim.BroadbandBottleneck && host.Money >= sim.NextBroadbandPrice * 1.5) { sim.BuyBroadband(host); Mark("broadband." + sim.BroadbandTier); }
+        double gap = need - sim.TrainedSamples - sim.QueuedDataSamples(out _);
+        if (gap <= 1e-9) return 0;
+        var buy = XgGuide.DataPlan(sim, ability, gap);
+        if (buy == null) return 0;
+        if (buy.batch != null)
+        {
+            if (host.Money < buy.cost) return buy.cost;
+            if (sim.BuyBatch(buy.batch, host)) Mark("data.batch." + buy.batch + "." + sim.BatchesBought(buy.batch));
+            return 0;
+        }
+        var first = buy.path[0];
+        if (Buyable(sim, first, host)) { sim.BuyNode(first.id, host); Mark("data." + first.id); configured.Clear(); return 0; }
+        return buy.cost;
     }
 
     /// <summary>
@@ -523,7 +581,9 @@ sealed class Driver
         var items = XgCatalog.Nodes.Where(n => n.kind == XgNodeKind.Arch && XgSim.DiscountsOf(n.id).Count > 0 && sim.NodeVisible(n) && !sim.Has(n.id))
             .OrderBy(n => XgSim.DiscountsOf(n.id).Min(d => d.ability)).ToList();
         double reserve = 0;
-        if (!sim.AnyEpochActive && items.Count > 0)
+        // The game sells an item while a round runs (only breakthroughs and projects wait for it, XgSim.Status); rounds
+        // take seconds now, so waiting for both lines to be idle held the items back for minutes.
+        if (items.Count > 0)
         {
             // The nearest ability's item, with any parent architecture it needs first (attention needs Seq2Seq).
             int nearest = XgSim.DiscountsOf(items[0].id).Min(d => d.ability);
@@ -543,14 +603,14 @@ sealed class Driver
                 if (plan != null && plan.buy.Count > 0)
                 {
                     var first = plan.buy[0];
-                    if (Buyable(sim, first, host) && !(first.kind == XgNodeKind.Arch && sim.AnyEpochActive)) { sim.BuyNode(first.id, host); Mark("note." + first.id); configured.Clear(); }
+                    if (Buyable(sim, first, host)) { sim.BuyNode(first.id, host); Mark("note." + first.id); configured.Clear(); }
                     else scale = plan.cost;
                 }
                 reserve = Math.Max(reserve, scale);
             }
             // Data: the cheapest pack (with its parents) while the samples are short.
             if (sim.TrainedSamples < sim.SamplesThreshold(next))
-                reserve = Math.Max(reserve, BuyTowards(n => n.kind == XgNodeKind.Dataset, "data"));
+                reserve = Math.Max(reserve, BuyData(next, sim.SamplesThreshold(next)));
         }
         string[] essentials =
         {
@@ -643,6 +703,18 @@ sealed class Driver
 
     readonly Dictionary<int, double> switchedAt = new Dictionary<int, double>();
 
+    // 书架 (XgSim.Books.cs): the bot reads only what is cheapest, 三字经 and 论语, whenever the card is free of a book.
+    void ReadBooks()
+    {
+        if (sim.Reading) return;
+        foreach (var id in new[] { "sanzijing", "lunyu" })
+        {
+            if (sim.BookDone(id)) { Mark("book." + id + ".done"); continue; }
+            if (sim.StartReading(id, host) == null) Mark("book." + id + ".start");
+            return;
+        }
+    }
+
     /// <summary>Stage 6 and the ending (design v1.1 §7–8) as a player who has read the secret would play them.</summary>
     void Finale()
     {
@@ -661,8 +733,8 @@ sealed class Driver
                 if (price > 0) break;
             }
             // The two bars count up to 1.5 times ability 6's: grow them while they are short of that.
-            double pCap = XgSim.ScaleBarCap * XgSim.AbilityParamsK[XgSim.AbilityCount], dCap = XgSim.ScaleBarCap * XgSim.AbilitySamples[XgSim.AbilityCount];
-            if (sim.TrainedSamples < dCap) BuyTowards(n => n.kind == XgNodeKind.Dataset, "data");
+            double pCap = XgSim.ScaleBarCap * XgSim.ScaleUnitParamsK, dCap = XgSim.ScaleBarCap * XgSim.ScaleUnitSamples;
+            if (sim.TrainedSamples < dCap) BuyData(XgSim.AbilityCount, dCap);
             if (sim.TrainedParamsK < pCap && ReachableParamsK() < pCap) BuyScale(pCap);
             if (sim.Has("datacenter") && !milestones.ContainsKey("datacenter")) Mark("datacenter");
             foreach (var id in new[] { "position", "warmup" })
@@ -787,6 +859,54 @@ sealed class Driver
             nextCurve += 60;
             moneyCurve.Add(new { minute = (int)Math.Round(time / 60), money = Math.Round(m), stage = sim.S.stage, date = GameCalendar.Now(host.House.S).ToString("MM-dd", CultureInfo.InvariantCulture), rentDay = host.House.S.rentDay });
         }
+    }
+
+    // ───────────── chapter pacing: when each bar reached the next ability's line, and what the line was ─────────────
+
+    sealed class ChapterPace
+    {
+        public int ability;
+        public double start, paramsAt = -1, samplesAt = -1, end = -1;
+        public double rawP, rawD, itemP, itemD, relicP, relicD, endP, endD;
+    }
+
+    readonly List<ChapterPace> pace = new List<ChapterPace>();
+
+    void TrackPacing()
+    {
+        int next = sim.NextAbility;
+        var cur = pace.Count > 0 ? pace[pace.Count - 1] : null;
+        if (cur != null && cur.end < 0 && cur.ability != next)
+        {
+            cur.end = time; cur.endP = sim.TrainedParamsK; cur.endD = sim.TrainedSamples;
+            // A bar that crossed in the same tick the ability emerged was never seen below its line.
+            if (cur.paramsAt < 0) cur.paramsAt = time;
+            if (cur.samplesAt < 0) cur.samplesAt = time;
+            cur = null;
+        }
+        if (next <= 1) return;
+        if (cur == null || cur.ability != next) { cur = new ChapterPace { ability = next, start = time }; pace.Add(cur); }
+        cur.rawP = XgSim.AbilityParamsK[next]; cur.rawD = XgSim.AbilitySamples[next];
+        cur.itemP = sim.ParamsDiscount(next); cur.itemD = sim.SamplesDiscount(next);
+        cur.relicP = sim.RelicParamsFactor; cur.relicD = sim.RelicSamplesFactor;
+        if (cur.paramsAt < 0 && sim.TrainedParamsK + 1e-9 >= sim.ParamsThreshold(next)) cur.paramsAt = time;
+        if (cur.samplesAt < 0 && sim.TrainedSamples + 1e-9 >= sim.SamplesThreshold(next)) cur.samplesAt = time;
+    }
+
+    void ReportPacing()
+    {
+        Console.WriteLine("---- pacing (chapter = time from the last ability to this one; bars = when each reached its line; line = raw × items × relics)");
+        foreach (var c in pace)
+        {
+            if (c.end < 0) continue;
+            string At(double t) => t < 0 ? "  -  " : Clock(t);
+            Console.WriteLine("     ch" + c.ability + "  " + Clock(c.start) + "→" + Clock(c.end) + "  (" + Clock(c.end - c.start) + ")"
+                + "  P line " + XgSim.ParamsText(c.rawP * c.itemP * c.relicP) + " = " + XgSim.ParamsText(c.rawP) + "×" + c.itemP.ToString("0.##", CultureInfo.InvariantCulture) + "×" + c.relicP.ToString("0.##", CultureInfo.InvariantCulture) + " at " + At(c.paramsAt)
+                + " | D line " + XgSim.SamplesText(c.rawD * c.itemD * c.relicD) + " = " + XgSim.SamplesText(c.rawD) + "×" + c.itemD.ToString("0.##", CultureInfo.InvariantCulture) + "×" + c.relicD.ToString("0.##", CultureInfo.InvariantCulture) + " at " + At(c.samplesAt)
+                + " | at end P " + XgSim.ParamsText(c.endP) + " D " + XgSim.SamplesText(c.endD));
+        }
+        double six = pace.Where(c => c.ability == XgSim.AbilityCount && c.end >= 0).Select(c => c.end).DefaultIfEmpty(-1).First();
+        if (six >= 0) Console.WriteLine("     pre-training and finale  " + Clock(six) + "→" + Clock(time) + "  (" + Clock(time - six) + ")");
     }
 
     void ReportMoney()

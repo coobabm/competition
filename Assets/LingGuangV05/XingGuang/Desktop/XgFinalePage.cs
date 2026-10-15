@@ -38,6 +38,13 @@ namespace LingGuangV05.Desktop.XingGuang
         bool endingDelegated, endingInputReleased;
         float endingReadyAt;
         int endingReleasedFrame;
+        // 逐层点亮 (它在学_可视化借鉴设计 §2.5): the 12-block stack over the right panel until the ending opens.
+        RectTransform stackRoot;
+        XgPretrainStackGraphic stack;
+        TMP_Text stackNotes;
+        readonly TMP_Text[] stackTags = new TMP_Text[XgSim.PretrainLayerCount];
+        int stackShownLit = -1;
+        float stackLitAt = -99;
 
 
         public override void Build(RectTransform area)
@@ -57,6 +64,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(r, XgDark.Page);
             right = ui.Text(Rect("Text", r, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8)), "", 14, XgDark.Ink, TextAlignmentOptions.TopLeft);
             right.enableAutoSizing = true; right.fontSizeMin = 9; right.fontSizeMax = 14;
+            BuildStack(r);
 
             pretrain = Bottom(card, 0, .24f, () => { if (Sim.TogglePretrain(Host)) Fx.Play(XgJuice.Sfx.Id.Charge); else Fx.Play(XgJuice.Sfx.Id.Buzz); Refresh(); });
             pickA = Bottom(card, .25f, .37f, () => { if (Talking) Talk(0); else Align(true); });
@@ -74,6 +82,66 @@ namespace LingGuangV05.Desktop.XingGuang
                 b.rt.offsetMin = new Vector2(10, -40 - (i + 1) * 28); b.rt.offsetMax = new Vector2(-10, -40 - i * 28 - 3);
                 ruleButtons.Add(b);
             }
+        }
+
+        /// <summary>The pre-training stack: commentary on the left of the right panel, the 12 blocks on its right.</summary>
+        void BuildStack(RectTransform panel)
+        {
+            stackRoot = Rect("PretrainStack", panel, Vector2.zero, Vector2.one, new Vector2(10, 8), new Vector2(-8, -8));
+            stackNotes = ui.Text(Rect("Commentary", stackRoot, Vector2.zero, new Vector2(.46f, 1), new Vector2(2, 4), new Vector2(-6, -2)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            stackNotes.enableAutoSizing = true; stackNotes.fontSizeMin = 9; stackNotes.fontSizeMax = 14;
+            var area = Rect("Stack", stackRoot, new Vector2(.46f, 0), Vector2.one, Vector2.zero, Vector2.zero);
+            stack = area.gameObject.AddComponent<XgPretrainStackGraphic>();
+            stack.raycastTarget = false;
+            for (int i = 0; i < stackTags.Length; i++)
+            {
+                var tag = Rect("Tag" + (i + 1), area, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
+                tag.pivot = new Vector2(0, .5f); tag.sizeDelta = new Vector2(40, 16);
+                stackTags[i] = ui.Text(tag, "L" + (i + 1), 10, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+                stackTags[i].textWrappingMode = TextWrappingModes.NoWrap;
+            }
+        }
+
+        public override void Tick(float dt)
+        {
+            if (stack != null && stackRoot.gameObject.activeInHierarchy) stack.Tick();
+        }
+
+        void RefreshStack()
+        {
+            var sim = Sim;
+            int lit = sim.PretrainLayersLit;
+            bool stalled = sim.PretrainLayersStalled;
+            float heat = (float)sim.PretrainLossHeat;
+            if (lit != stackShownLit) { if (stackShownLit >= 0 && lit > stackShownLit) stackLitAt = Time.unscaledTime; stackShownLit = lit; }
+            stack.SetState(lit, (float)sim.PretrainLayerFill, heat, sim.S.pretrainRunning, stalled, sim.S.reduceFx);
+            Color tint = XgPretrainStackGraphic.LitColor(heat);
+            for (int i = 0; i < stackTags.Length; i++)
+            {
+                ((RectTransform)stackTags[i].transform).anchoredPosition = stack.TagPosition(i);
+                bool on = i < lit, next = i == lit && lit < XgSim.PretrainLayerCount;
+                stackTags[i].color = on ? Color.Lerp(tint, Color.white, .35f) : next && stalled ? XgDark.Bad : next ? XgDark.Ink : XgDark.Muted;
+                stackTags[i].alpha = on || next ? 1 : .55f;
+            }
+
+            var sb = new StringBuilder();
+            sb.Append("<b>").Append(T("预训练 · 12 层 Transformer", "Pre-training · 12 Transformer layers")).Append("</b>  <size=11>")
+              .Append(Hex(tint)).Append(lit).Append("/").Append(XgSim.PretrainLayerCount).Append(" · loss ").Append(N(sim.PretrainLoss, "0.00")).Append("</color></size>\n");
+            sb.Append("<size=11><color=#6F95A5>").Append(T("每过 1/12 进度点亮一层，从下往上；颜色跟着 loss 走。", "One layer lights per twelfth of progress, bottom up; the colour follows the loss.")).Append("</color></size>\n\n");
+            // The headline: why the next layer will not light, the newest layer (gold for a moment), or the intro.
+            string headline = sim.PretrainLayerHeadline().Replace("<", "‹").Replace(">", "›");
+            string hc = stalled ? "#E24B4A" : sim.S.abilities ? "#5DCAA5" : lit > 0 && Time.unscaledTime - stackLitAt < 3 ? "#FFD666" : lit > 0 ? "#D6EEF5" : "#8FB8FF";
+            sb.Append("<size=15><color=").Append(hc).Append(">").Append(headline).Append("</color></size>\n");
+            // Earlier layers, newest first: the stalled view lists every lit one, otherwise all but the headline.
+            int from = stalled ? lit : lit - 1, shown = 0;
+            for (int layer = from; layer >= 1; layer--)
+            {
+                if (shown == 4) { sb.Append("<size=11><color=#3A5566>……</color></size>\n"); break; }
+                sb.Append("<size=11><color=#6F95A5>").Append(sim.PretrainLayerLine(layer)).Append("</color></size>\n");
+                shown++;
+            }
+            if (sim.S.abilities) sb.Append("\n<size=11><color=#6F95A5>").Append(Lang.T("终章在预训练和对齐之后。")).Append("</color></size>");
+            stackNotes.text = sb.ToString();
         }
 
         XgBtn Bottom(RectTransform card, float x0, float x1, Action click)
@@ -302,7 +370,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (header == null || Sim == null) return;
             // Rule ticks and final-test answers are page state for one save; another save starts clean.
-            if (!ReferenceEquals(pageSim, Sim)) { chosen.Clear(); answers.Clear(); pageSim = Sim; }
+            if (!ReferenceEquals(pageSim, Sim)) { chosen.Clear(); answers.Clear(); pageSim = Sim; stack.Snap(); stackShownLit = -1; stackLitAt = -99; }
             if (endingOwner != null)
             {
                 string reason = EndingConfirmationBlocker();
@@ -313,7 +381,11 @@ namespace LingGuangV05.Desktop.XingGuang
             displayedAlignmentSim = Sim;
             displayedAlignmentIndex = Sim.S.alignDone;
             left.text = LeftText();
-            right.text = RightText();
+            // Until the ending opens the right panel is free: the stack lives there through pre-training and alignment.
+            bool showStack = !Sim.S.fullOpen && Sim.S.ending.Length == 0;
+            if (stackRoot.gameObject.activeSelf != showStack) stackRoot.gameObject.SetActive(showStack);
+            right.text = showStack ? "" : RightText();
+            if (showStack) RefreshStack();
             bool pre = !Sim.S.abilities;
             string block = Sim.PretrainBlocker(Host);
             pretrain.Show(pre);
@@ -453,7 +525,7 @@ namespace LingGuangV05.Desktop.XingGuang
             return sb.ToString();
         }
 
-        static string AppNamesExe() => LingGuangV05.Core.AppNames.ExeZh;
+        string AppNamesExe() => (Sim != null ? Sim.AiDisplayName : LingGuangV05.Core.AppNames.Ai(GameText.IsEnglish)) + ".exe";
     }
 
     // Same page-root lifetime pattern as the trial/depth confirmation; no shared input lock is acquired.

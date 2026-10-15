@@ -1,0 +1,25 @@
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
+# Original SHA256: 1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
+@@ -19,6 +19,20 @@
+         {
+             base.OnPointerDown(eventData);
+             if (eventData.button == PointerEventData.InputButton.Left) PressLabel();
++        }
++
++        public override void OnPointerExit(PointerEventData eventData)
++        {
++            base.OnPointerExit(eventData);
++            if (eventData.button != PointerEventData.InputButton.Left) return;
++            var hold = GetComponent<XgHold>();
++            if (hold == null || !hold.isActiveAndEnabled) return;
++
++            // XgHold ends on exit and does not restart on re-entry. Release only
++            // Selectable's visual state; do not dispatch Up or invoke business callbacks.
++            // Do not inspect Held: either component may receive the exit first.
++            base.OnPointerUp(eventData);
++            ResetPress();
+         }
+ 
+         public override void OnSubmit(BaseEventData eventData)

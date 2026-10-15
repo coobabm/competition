@@ -143,15 +143,15 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static string Name(XgTechEntry e, XgSim sim)
         {
-            if (!e.IsChain) return sim.NodeName(e.First);
+            if (!e.IsChain) return XgTechTreeCopy.Name(e.First, sim);
             var at = Next(e, sim) ?? e.members[e.members.Count - 1];
             bool en = sim.English;
             string track = at.tree == "vision" ? (en ? "Vision " : "视觉 ") : at.tree == "sequence" ? (en ? "Sequence " : "序列 ") : "";
             switch (e.First.kind)
             {
-                case XgNodeKind.Depth: return track + (en ? (track.Length > 0 ? "depth" : "Depth") : "层数");
-                case XgNodeKind.Width: return track + (en ? (track.Length > 0 ? "width" : "Width") : "宽度");
-                default: return sim.NodeName(e.First);
+                case XgNodeKind.Depth: return track + (en ? "network depth" : "网络深度");
+                case XgNodeKind.Width: return track + (en ? "network width" : "网络宽度");
+                default: return en ? "Training automation" : "训练自动化";
             }
         }
     }

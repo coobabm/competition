@@ -1,0 +1,16 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -201,7 +201,9 @@
+         static string Raise(XgSim sim)
+         {
+             int level = Math.Max(0, Math.Min(sim.RaiseLevel, XgCatalog.RaiseMax));
+-            string result = T(sim, "人工答题报酬 ×", "Hand-answer pay ×") + N(XgCatalog.RaiseMultipliers[level]);
+-            if (level < XgCatalog.RaiseMax) result += " → ×" + N(XgCatalog.RaiseMultipliers[level + 1]);
+-            return result + T(sim, "；与标注台商店共用，自动标注报酬不变。", "; shared with the labelling shop. Automatic labelling pay is unchanged.");
++            string result = T(sim, "当前人工答题报酬 ×", "Current hand-answer pay ×") + N(XgCatalog.RaiseMultipliers[level]);
++            if (level < XgCatalog.RaiseMax) result += T(sim, " → 购买后 ×", " → after purchase ×") + N(XgCatalog.RaiseMultipliers[level + 1]);
++            return result + T(sim,
++                "；购买后立即用于各标注台后续的人工答题结算，无需装备或训练。与标注台商店共用等级。\n倍率从 ×1 起，首次购买升至 ×2，此后每级增加 2，最高 ×34（17 级）；与适用的其他报酬倍数相乘，金额单位为 ¥/题。\n按人工单题报酬计算的答错罚款也随之提高，实扣不超过余额；自动标注报酬不受此倍率影响。",
++                "; applies immediately to subsequent hand-answer settlements across all labelling desks, with no equipping or training. Shares its level with the labelling shop.\nStarts at ×1; the first purchase gives ×2, then each level adds 2 to the multiplier, up to ×34 (level 17). Multiplies with other applicable pay bonuses; amounts are in ¥ per card.\nWrong-answer fines based on manual pay also increase, capped at the available balance. This multiplier does not affect automatic labelling pay.");
+         }

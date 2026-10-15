@@ -1,0 +1,17 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -74,5 +74,5 @@
+             {
+                 case "weights": return T(sim, "给每条线索分配不同的分量，重要的线索更能影响答案。", "Give each clue a weight so important clues influence the answer more.");
+-                case "learnrule": return T(sim, "答错后，把线索的分量往正确答案的方向调一点。", "After a wrong answer, adjust the weights a little toward the right one.");
++                case "learnrule": return T(sim, "原理：判断错了，就调整各条线索的分量，让下次判断更接近正确答案。", "The principle: after a wrong prediction, adjust the weight of each clue to move the next prediction toward the correct answer.");
+                 case "bias": return T(sim, "让判断的门槛可以移动，不必总从同一个起点划线。", "Move the decision threshold instead of always drawing the boundary from the same starting point.");
+                 case "step": return T(sim, "像开关一样：线索总分过门槛就开，否则就关。", "Like a switch: turn on when the combined clues cross the threshold, otherwise stay off.");
+@@ -159,5 +159,5 @@
+             {
+                 case "weights": case "chainrule": return Speed(sim, 1.1);
+-                case "learnrule": return Speed(sim, 1.15);
++                case "learnrule": return T(sim, "购买即生效，无需装备：两条训练线的手动和自动训练，每轮处理卡数在取整和限幅前 ×1.15（+15%），与其他训练处理量倍率相乘。常规训练每轮最终为 4–", "Active on purchase, with no equip step: on both tracks, manual and automatic training multiply cards per epoch by 1.15 (+15%) before rounding and limits; this multiplies with other training-throughput factors. Each normal epoch processes 4–") + XgSim.MaxCardsPerEpoch + T(sim, " 张卡，实际增量可能不足 15%；不缩短每轮时长，也不直接增加准确率，成绩需训练后评估。", " cards, so the actual gain may be less than 15%. Epoch duration is unchanged, and accuracy is not directly increased; train and evaluate to see the score.");
+                 case "backprop": return Speed(sim, 1.2);
+                 case "relu": return Speed(sim, 1.3);

@@ -119,7 +119,7 @@ namespace LingGuangV05.Desktop.Story
         /// icon, so on install it would land on top of that icon. If it overlaps, move it to the first empty grid cell
         /// (column by column) and store that position before the dragger reads it.
         /// </summary>
-        private static void PlaceInFreeCell(RectTransform icon)
+        internal static void PlaceInFreeCell(RectTransform icon)
         {
             if (icon == null || icon.parent == null) return;
             var grid = icon.parent.GetComponent<UnityEngine.UI.GridLayoutGroup>();

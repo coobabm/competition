@@ -55,7 +55,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         /// <summary>Why the spider cannot answer this card (see XgSim.SpiderAnswerBlocker); null when it can.</summary>
-        public string SpiderBlocker() => Sim == null ? "host" : Mode != 0 ? "special" : Sim.SpiderDragBlocker(Desk, Host);
+        public string SpiderBlocker() => Sim == null ? "host" : Mode != 0 ? "special" : shownTeachingEvaluation ? "teaching" : Sim.SpiderDragBlocker(Desk, Host);
 
         /// <summary>The note the spider says when it cannot answer.</summary>
         public void SpiderIdle(string blocker)
@@ -63,6 +63,7 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (blocker)
             {
                 case "ability": Say("这桌我还不会。", "I can't do this desk yet.", 4); break;
+                case "teaching": Say("我在看你教的内容。", "I am watching what you teach.", 4); break;
                 case "review": Say("先把待复核的题看完。", "Finish the review inbox first.", 4); break;
                 case "special": Say("这题得你自己来。", "This one is yours.", 4); break;
                 case "host": Say("现在干不了活。", "I can't work right now.", 4); break;
@@ -75,7 +76,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool SpiderPeek(out bool yesButton)
         {
             yesButton = false;
-            if (Sim == null || Mode != 0 || displayedSim != Sim || CurrentCard.id != displayedId) return false;
+            if (Sim == null || WorkContext || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return false;
             return Sim.SpiderDragPeek(Desk, Host, out yesButton);
         }
 
@@ -88,7 +89,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         public XgSpiderAnswer SpiderHandPress(bool yesButton)
         {
-            if (Sim == null || Mode != 0 || displayedSim != Sim || CurrentCard.id != displayedId) return default;
+            if (Sim == null || WorkContext || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return default;
             var card = CurrentCard;
             string truthWord = YesNoWord(card.truth);
             var r = Sim.SpiderDragPress(Desk, Host, yesButton);
@@ -169,9 +170,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (captchaCard != null && captchaCard.Visible) return;
             if (HandwritingVisible) return;
             var kb = UnityEngine.InputSystem.Keyboard.current;
-            if (kb == null || !host.Visible || host.Tab != "label" || !FrontWindow() || Typing()) return;
-            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) { if (yes.button.interactable && yes.button.gameObject.activeInHierarchy) yes.button.onClick.Invoke(); }
-            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) { if (no.button.interactable && no.button.gameObject.activeInHierarchy) no.button.onClick.Invoke(); }
+            if (kb == null || !host.Visible || (host.Tab != "label" && host.Tab != "teach") || !FrontWindow() || Typing()) return;
+            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) { if (yes.button.IsInteractable() && yes.button.gameObject.activeInHierarchy) CaptureAnswer(true)(); }
+            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) { if (no.button.IsInteractable() && no.button.gameObject.activeInHierarchy) CaptureAnswer(false)(); }
         }
 
         bool FrontWindow()

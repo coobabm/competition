@@ -1,0 +1,31 @@
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.SenseStart.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.SenseStart.cs
+index a4ae352..817de52 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.SenseStart.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.SenseStart.cs
+@@ -104,6 +104,26 @@ public static partial class DesignWallpaperSmoke
+             var dataset = XgCatalog.Dataset(XgMemes.SenseDesk);
+             Check(numbers.gameObject.activeInHierarchy && numbers.text.Contains(sim.English ? dataset.nameEn : dataset.name),
+                 "Rendered training summary names the same common-sense dataset");
++            var learning = SenseStartField<TMP_Text>(controller.View.Train, "learningText");
++            var fixedSense = XgBoardData.Make(XgMemes.SenseDesk, 9137, 1, 20160524);
++            string comparison = fixedSense.source.question;
++            bool authored = false;
++            foreach (var phrase in XgMemes.SenseBank)
++                authored |= phrase.text == comparison && phrase.yes == fixedSense.truth;
++            Check(authored && learning.gameObject.activeInHierarchy
++                && learning.text == sim.CheckupText(dataset: XgMemes.SenseDesk)
++                && learning.text.Contains(comparison) && !learning.text.Contains("中奖"),
++                "Visible learning comparison shows the real common-sense bank question for the selected dataset");
++            XgCheckup baseline = null;
++            foreach (var checkup in sim.S.checkups)
++                if (checkup.dataset == XgMemes.SenseDesk && !checkup.taught) baseline = checkup;
++            Check(baseline != null && baseline.assessment == 0 && baseline.question == comparison
++                && learning.text.Contains(" → " + baseline.answer),
++                "Visible learning comparison renders the stored pre-training model answer to that same sense question");
++            string comparisonState = JsonUtility.ToJson(sim.S);
++            controller.View.Refresh(true);
++            Check(JsonUtility.ToJson(sim.S) == comparisonState,
++                "Refreshing the real training comparison preserves learning and saved state");
+             yield return new WaitForEndOfFrame();
+             SenseStartCapture("sense-start-training-handoff");
+ 

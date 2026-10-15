@@ -30,7 +30,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly RectTransform[] cellBars = new RectTransform[XgSim.AbilityCount];
         readonly Act[] acts = new Act[4];
         readonly List<TMP_Text> feedLines = new List<TMP_Text>();
-        TMP_Text feedHead;
+        TMP_Text feedHead, crowdTier;
         float animTimer;
         bool cortexSet;
 
@@ -103,12 +103,16 @@ namespace LingGuangV05.Desktop.XingGuang
             acts[0] = Action(row, 0, "Train", TrainOnce);
             acts[1] = Action(row, 1, "BuyData", () => Go("data", "label"));
             acts[2] = Action(row, 2, "BuyItems", () => Go("items", null));
-            acts[3] = Action(row, 3, "Wiring", () => Go("wiring", null));
+            acts[3] = Action(row, 3, "Collection", () => view.ShowTab("cards"));
 
             const float FeedTop = ActsTop + 56 + 12;
             var feed = Rect("Feed", right, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -FeedTop));
             feedHead = ui.Text(Strip("Head", feed, 0, 20, 0, 0), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             feedHead.characterSpacing = 2;
+            // 「众包订单 · 第 3 档 +¥14/秒」 on the feed header's right (节奏重做 §2.4).
+            crowdTier = ui.Text(Rect("CrowdTier", feed, new Vector2(.3f, 1), Vector2.one, new Vector2(0, -20), Vector2.zero), "", 13, XgDark.Good, TextAlignmentOptions.MidlineRight);
+            crowdTier.textWrappingMode = TextWrappingModes.NoWrap; crowdTier.overflowMode = TextOverflowModes.Ellipsis; crowdTier.raycastTarget = true;
+            UiTip.Add(crowdTier.rectTransform, () => T("摆渡众包的订单按档付钱：每学会一项能力，平台开下一档，每秒多一份收入。", "Bodu Crowd pays orders by tier: every ability learned opens the next tier, one more income per second."));
             for (int i = 0; i < 9; i++)
             {
                 var line = Strip("Line" + i, feed, 22 + i * 26, 26, 0, 0);
@@ -280,7 +284,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (next == 0)
             {
                 nextName.text = T("六项都有了", "All six");
-                FillBig(paramsCard, T("已训练参数量", "Trained parameters"), "", XgSim.ParamsText(p), "", 1, T("六项能力都有了。终章在「收藏」里。", "All six abilities. The finale is under Keep."));
+                FillBig(paramsCard, T("已训练参数量", "Trained parameters"), "", XgSim.ParamsText(p), "", 1, T("六项能力都有了，可以从本页进入终章。", "All six abilities. Open the finale from this page."));
                 FillBig(dataCard, T("样本", "Samples"), "", XgSim.SamplesText(d), "", 1, "");
                 return;
             }
@@ -389,18 +393,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 string owned = OwnedDiscountName(Sim.NextAbility);
                 a.sub.text = (owned.Length > 0 ? owned + T(" 已打折 · ", " discounting · ") : "") + (buyable > 0 ? T(buyable + " 件可买", buyable + " affordable") : T("暂时没有买得起的", "Nothing affordable yet"));
             }
-            // 接线
             a = acts[3];
-            a.title.text = T("接线", "Wiring");
-            if (!view.FeatureOpen("wiring")) a.sub.text = T("有了「多选一」或第一个检查点以后开", "Opens with 'Pick one' or the first checkpoint");
-            else
-            {
-                var w = Sim.Wiring;
-                int bad = 0;
-                if (w != null) foreach (var n in w.nodes) if (n.shown && n.bad) bad++;
-                a.sub.text = T((w != null ? w.running : 0) + " 条在跑", (w != null ? w.running : 0) + " running") + (bad > 0 ? " · <color=#E24B4A>" + T(bad + " 条出错", bad + " failing") + "</color>" : "")
-                    + (w != null && w.tripped ? " · <color=#E24B4A>" + T("跳闸", "tripped") + "</color>" : "");
-            }
+            a.title.text = T("闪卡与成就", "Cards & awards");
+            a.sub.text = T("看看一起留下的记忆", "Memories collected together");
         }
 
         /// <summary>The cheapest pack on sale now (public, junk or story data), or null.</summary>
@@ -432,6 +427,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshFeed()
         {
             feedHead.text = T("最近发生的事", "RECENT");
+            crowdTier.text = XgDataUi.CrowdTierLine(Sim);
             var feed = view.Feed;
             for (int i = 0; i < feedLines.Count; i++)
             {

@@ -177,6 +177,40 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void MessagesCarryTheFixedInstructionAndTheQuestion()
+        {
+            var messages = XgJudgeProtocol.Messages("2加2等于4吗？");
+            Assert.AreEqual(2, messages.Count);
+            Assert.AreEqual("system", messages[0].Key); Assert.AreEqual(XgJudgeProtocol.SystemPrompt, messages[0].Value);
+            Assert.AreEqual("user", messages[1].Key); Assert.AreEqual("2加2等于4吗？", messages[1].Value);
+            Assert.Throws<System.ArgumentException>(() => XgJudgeProtocol.Messages("  "));
+        }
+
+        [Test]
+        public void CompletionReplyIsReadLikeAChatReply()
+        {
+            // What llama.cpp's /completion (the in-process LlamaLib service) returns with n_probs = 10.
+            string completion = "{\"index\":0,\"content\":\"是\",\"id_slot\":2,\"stop\":true,\"completion_probabilities\":[" +
+                "{\"id\":20412,\"token\":\"是\",\"bytes\":[230,152,175],\"logprob\":-0.2231435513142097,\"top_logprobs\":[" +
+                "{\"id\":20412,\"token\":\"是\",\"bytes\":[230,152,175],\"logprob\":-0.2231435513142097}," +
+                "{\"id\":31411,\"token\":\"否\",\"bytes\":[229,144,166],\"logprob\":-1.6094379124341003}]}]," +
+                "\"tokens_predicted\":1}";
+            string chat = XgJudgeProtocol.FromCompletion(completion);
+            Assert.IsTrue(XgJudgeProtocol.TryParseProbability(chat, out double p, out string failure), failure + " " + chat);
+            Assert.AreEqual(.8, p, 1e-10);
+        }
+
+        [Test]
+        public void CompletionWithoutProbabilitiesOrWithAnErrorIsNotAJudgement()
+        {
+            Assert.IsFalse(XgJudgeProtocol.TryParseProbability(XgJudgeProtocol.FromCompletion("{\"content\":\"是\"}"), out _, out string failure));
+            Assert.AreEqual("missing_logprobs", failure);
+            Assert.IsNull(XgJudgeProtocol.FromCompletion("{\"error\":{\"code\":500,\"message\":\"x\"}}"));
+            Assert.IsNull(XgJudgeProtocol.FromCompletion("not json"));
+            Assert.IsNull(XgJudgeProtocol.FromCompletion(""));
+        }
+
+        [Test]
         public void ProbabilityNormalizesYesAndNoMass()
         {
             Assert.IsTrue(XgJudgeProtocol.TryParseProbability(Reply(Yes + "," + No), out double p, out string failure), failure);

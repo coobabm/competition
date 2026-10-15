@@ -9,7 +9,7 @@ namespace LingGuangV05.XingGuang
         public List<string> achievements = new List<string>();
         /// <summary>Self-insight cards already revealed to the player ("pretrain"; older saves also hold wall ids).</summary>
         public List<string> cardsShown = new List<string>();
-        /// <summary>Big data packs still downloading: dataset id → seconds left (摆渡云, design v1.1 §3).</summary>
+        /// <summary>Retired: downloads of older saves (key → seconds left). Read once and cleared (XgSim.Downloads.cs).</summary>
         public List<XgScore> downloads = new List<XgScore>();
     }
 
@@ -82,54 +82,7 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        /// <summary>Packs this big come down through 摆渡云 at the free 100KB/s and take a while.</summary>
-        public const double BigPackSamples = 100000;
-
-        public event Action<string, double> DownloadStarted;
-
-        public double DownloadLeft(string dataset) { foreach (var d in S.downloads) if (d.key == dataset) return d.value; return 0; }
-        public bool Downloading(string dataset) => DownloadLeft(dataset) > 0;
-
-        void StartDownload(string dataset)
-        {
-            var d = XgCatalog.Dataset(dataset);
-            if (d == null || d.samples < BigPackSamples || Downloading(dataset)) return;
-            double seconds = Math.Max(20, Math.Min(90, d.samples / 20000));
-            S.downloads.Add(new XgScore { key = dataset, value = seconds });
-            Say(T("摆渡云：非会员限速 100KB/s，《" + d.name + "》预计 " + F(seconds, "0") + " 秒下完。", "Bodu Cloud: free users are limited to 100KB/s; " + d.nameEn + " needs about " + F(seconds, "0") + " s."));
-            DownloadStarted?.Invoke(dataset, seconds);
-        }
-
-        /// <summary>摆渡云 super-member acceleration: a tenth of the pack's price, at least ¥50.</summary>
-        public double AccelerateCost(string dataset)
-        {
-            var node = XgCatalog.Node(dataset + ".pack");
-            return Math.Max(50, Math.Round((node != null ? node.cost : 500) * .1));
-        }
-
-        public bool Accelerate(string dataset, IXgHost host)
-        {
-            if (!Downloading(dataset)) return false;
-            double cost = AccelerateCost(dataset);
-            if (!host.Spend(cost)) { Say(T("经费不足 ¥") + F(cost, "0")); return false; }
-            S.totalSpent += cost;
-            S.downloads.RemoveAll(d => d.key == dataset);
-            Say(T("开通了一天超级会员，下完了。"));
-            return true;
-        }
-
-        void TickDownloads(double dt)
-        {
-            for (int i = S.downloads.Count - 1; i >= 0; i--)
-            {
-                S.downloads[i].value -= dt;
-                if (S.downloads[i].value > 0) continue;
-                string key = S.downloads[i].key;
-                S.downloads.RemoveAt(i);
-                // Keys are dataset ids (public packs) or offer ids (junk / story packs, XgSim.DataSources.cs).
-                if (XgCatalog.Dataset(key) != null || DataOfferDef(key) != null) Say(T("下载完成：") + DownloadName(key));
-            }
-        }
+        // Downloads (the queue, the line, the disk) live in XgSim.Downloads.cs.
 
         void TickCollection()
         {

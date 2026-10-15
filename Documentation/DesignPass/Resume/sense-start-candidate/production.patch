@@ -1,0 +1,76 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs b/Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
+index 85eb1ae..5102734 100644
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
+@@ -37,9 +37,9 @@ namespace LingGuangV05.XingGuang
+                 S.unlocked.Clear(); S.unlocked.Add("perceptron");
+                 S.vision.arch = S.sequence.arch = "perceptron";
+                 S.vision.depth = S.sequence.depth = 1;
+-                S.vision.dataset = "mnist"; S.sequence.dataset = "spam";
+-                S.desksOpen.Clear(); S.desksOpen.Add("arith"); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
+-                S.desk = "spam"; // start with a recognisable teaching card
++                S.vision.dataset = "mnist"; S.sequence.dataset = XgMemes.SenseDesk;
++                S.desksOpen.Clear(); S.desksOpen.Add("logic"); S.desksOpen.Add("spam"); S.desksOpen.Add(XgMemes.SenseDesk);
++                S.desk = XgMemes.SenseDesk;
+                 S.stage = S.stageVision = S.stageSequence = 1;
+                 S.abilitiesEmerged.Clear(); S.abilitiesEmerged.Add(1);
+                 S.firstSpecialty = "";
+@@ -268,8 +268,8 @@ namespace LingGuangV05.XingGuang
+         public double ProgressionSpeed(XgRun run) =>
+             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
+         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
+-        /// <summary>Stage one opens arithmetic, logic, common sense and SMS spam; stage two adds digits and danmaku (design v1.1 §7); the rest come with packs.</summary>
+-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (id == "arith" || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
++        /// <summary>Stage one opens logic, common sense and SMS spam; stage two adds arithmetic, digits and danmaku. Previously opened desks remain available on load.</summary>
++        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && (DeskOpen(id) || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "arith" || id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+ 
+         void ObserveProgression(XgRun run)
+         {
+
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs b/Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
+index 759a864..a29baa0 100644
+--- a/Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
+@@ -256,7 +256,7 @@ namespace LingGuangV05.XingGuang
+             new XgDesk { id = "mnist", name = "手写数字", nameEn = "Digits", kind = XgDeskKind.Digit, unlock = XgDeskUnlock.Specialty, comboWindow = 3 },
+             new XgDesk { id = "poems", name = "唐诗下一字", nameEn = "Next character", kind = XgDeskKind.Poem, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
+             new XgDesk { id = "sense", name = "常识判断", nameEn = "Common sense", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1 },
+-            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1, fine = ArithFine },
++            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 6, pay = 1, fine = ArithFine },
+             new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 3.2 },
+             new XgDesk { id = "danmu", name = "弹幕情绪", nameEn = "Danmaku", kind = XgDeskKind.Text, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 5, pay = 1.4 },
+             new XgDesk { id = "spam", name = "垃圾短信", nameEn = "SMS spam", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1.4 },
+
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgSim.cs b/Assets/LingGuangV05/XingGuang/Core/XgSim.cs
+index ecd73ac..6575a8b 100644
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.cs
+@@ -1119,13 +1119,13 @@ namespace LingGuangV05.XingGuang
+         }
+ 
+         /// <summary>
+-        /// How a locked desk opens, under the current rules: digits and danmaku open by themselves with the second
++        /// How a locked desk opens, under the current rules: arithmetic, digits and danmaku open by themselves with the second
+         /// ability; the rest with their data pack in the tech tree, some of which also need an item first.
+         /// </summary>
+         public string DeskConditionText(XgDesk desk)
+         {
+             if (desk == null || ProgressionDeskAvailable(desk.id)) return "";
+-            if ((desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
++            if ((desk.id == "arith" || desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
+                 return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
+             var pack = XgCatalog.Node(desk.id + ".pack");
+             if (pack == null) return "";
+
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
+index 97ee083..6de8bb6 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
+@@ -99,7 +99,6 @@ namespace LingGuangV05.Desktop.XingGuang
+             }
+             Sim = new XgSim(state) { English = GameText.IsEnglish };
+             if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+-            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
+             // The save's own date, before any catch-up tick reads the calendar.
+             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
+             raised.Clear();

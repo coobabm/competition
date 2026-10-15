@@ -34,6 +34,13 @@ namespace LingGuangV05.XingGuang
         public int epoch, sinceEval, staleEvals;
         public bool epochActive, epochHand;
         public double epochProgress, epochDuration;
+        /// <summary>
+        /// The running round's bar (XgSim.TrainPace.cs): its seed (0 = not planned, e.g. an old save), the round clock in
+        /// effective seconds, the smoothed rate behind the ETA, the last tick's share of the card, the planned stall (kind,
+        /// progress where it starts, length, clock when it started or −1) and the clock when validation ends (−1 = not yet).
+        /// </summary>
+        public int paceSeed, paceStall;
+        public double paceClock, paceRate, paceFactor = 1, paceStallAt, paceStallLength, paceStallClock = -1, paceValidateUntil = -1;
         public double lastScore = -1;
         public List<float> histTrain = new List<float>();
         public List<float> histVal = new List<float>();

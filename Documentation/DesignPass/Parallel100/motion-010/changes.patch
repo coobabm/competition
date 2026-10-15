@@ -1,0 +1,45 @@
+# motion-010 candidate only; source SHA256 preconditions:
+# Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs: 1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78
+# Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs: 2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs
+@@ -13,7 +13,6 @@
+         public RectTransform Label { get; set; }
+ 
+         XgJuice pressFx, hostFx;
+-        float elapsed, duration;
+ 
+         public override void OnPointerDown(PointerEventData eventData)
+         {
+@@ -39,8 +38,7 @@
+             if (pressFx == null) pressFx = Label.gameObject.AddComponent<XgJuice>();
+             pressFx.enabled = true;
+             bool reduced = hostFx != null && hostFx.Reduced;
+-            duration = reduced ? .12f : .18f;
+-            elapsed = 0;
++            float duration = reduced ? .12f : .18f;
+             pressFx.Knock(Label, reduced ? .015f : .045f,
+                 reduced ? Vector2.zero : Vector2.down, duration);
+             // Repeated presses reuse Knock's saved resting transform, never the deformed one.
+@@ -49,8 +47,7 @@
+         void LateUpdate()
+         {
+             if (pressFx == null || !pressFx.enabled) return;
+-            elapsed += Mathf.Min(Time.unscaledDeltaTime, .05f);
+-            if (!IsInteractable() || Label == null || elapsed >= duration ||
++            if (!IsInteractable() || Label == null || !pressFx.HasActiveKnock(Label) ||
+                 (hostFx != null && (!hostFx.isActiveAndEnabled || !hostFx.Visible())))
+                 ResetPress();
+         }
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs
+@@ -105,6 +105,9 @@
+             if (!punches.TryGetValue(rt, out var p)) { p = new Punch { rt = rt, scale = rt.localScale, pos = rt.anchoredPosition }; punches[rt] = p; }
+             p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash;
+         }
++
++        /// <summary>True until Knock restores its target or is explicitly cleared.</summary>
++        public bool HasActiveKnock(RectTransform target) => target != null && punches.ContainsKey(target);
+ 
+         public void Float(Vector2 at, string text, Color color, float size = 22, float rise = 60, float life = .75f, float scale = 1.3f)
+         {

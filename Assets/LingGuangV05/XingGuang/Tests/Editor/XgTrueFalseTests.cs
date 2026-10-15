@@ -116,6 +116,8 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             sim.S.teachMode = false; // the plain combo and the fine are what is being priced
+            sim.S.stage = 2; // 算术 opens at stage two
+            sim.S.desksOpen.Add("arith");
             sim.SelectDesk("arith");
             Assert.AreEqual("arith", sim.S.desk);
             var first = sim.Card("arith");
@@ -163,19 +165,20 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void OtherDesksOnlyBreakTheComboOnAMistake()
+        public void OtherDesksFineTheDefaultHalfOnAMistake()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             sim.S.desk = "spam";
             var card = sim.Card("spam");
             var r = sim.Answer("spam", !card.truth, host);
             Assert.IsFalse(r.correct);
-            Assert.AreEqual(0, r.fine);
-            Assert.AreEqual(1000, host.money, 1e-9);
+            Assert.AreEqual(XgCatalog.HandFine * sim.ManualPayFor("spam", card.level), r.fine, 1e-9);
+            Assert.Greater(r.fine, 0);
+            Assert.AreEqual(1000 - r.fine, host.money, 1e-9);
         }
 
         [Test]
-        public void ATaughtAnswerIsNeverFined()
+        public void ATaughtWrongAnswerCostsTheDefaultHalfFine()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             Assert.IsTrue(sim.S.teachMode, "teaching mode is the default");
@@ -188,10 +191,11 @@ namespace LingGuangV05.XingGuang.Tests
                 double before = host.money;
                 var r = sim.Answer("arith", !card.truth, host);
                 Assert.IsFalse(r.correct);
-                Assert.AreEqual(0, r.fine); Assert.AreEqual(before, host.money, 1e-9);
+                // Since the 2026-10-15 integration every hand desk fines a wrong pick, taught answers included.
+                Assert.AreEqual(sim.HandFineFor("arith", card.level), r.fine, 1e-9); Assert.AreEqual(before - r.fine, host.money, 1e-9);
             }
             Assert.Greater(taught, 0);
-            Assert.AreEqual(0, sim.S.handFines);
+            Assert.Greater(sim.S.handFines, 0);
         }
 
         [Test]

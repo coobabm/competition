@@ -49,18 +49,6 @@ namespace LingGuangV05.XingGuang.Tests
             return sim.Route(c.id, host);
         }
 
-        /// <summary>A full window of failed checks: reported for a low pass rate.</summary>
-        static void ReportOnce(XgSim sim, Host host)
-        {
-            double chance = sim.ForcedCheckChance;
-            sim.ForcedCheckChance = 1;
-            int before = sim.S.qcReports;
-            for (int i = 0; i < XgSim.QcWindow && sim.S.qcReports == before; i++) Assert.IsTrue(Route(sim, host, false, i % 2 == 0));
-            sim.ForcedCheckChance = chance;
-            Assert.AreEqual(before + 1, sim.S.qcReports);
-            Assert.IsTrue(sim.QualityFrozen);
-        }
-
         [Test]
         public void PlatformIsInactiveUntilAutoLabellingIsOwned()
         {
@@ -131,7 +119,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, sim.ReviewCount());
             sim.AnswerQueued(review.id, !review.truth, host);
             Assert.AreEqual(0, sim.SpotChecks); Assert.AreEqual(0, sim.S.qcCheckedTotal);
-            Assert.AreEqual(XgSim.QcCreditStart, sim.Credit); Assert.AreEqual(money, host.money); Assert.AreEqual(0, sim.S.qcFines);
+            Assert.AreEqual(XgSim.QcCreditStart, sim.Credit); Assert.AreEqual(money - sim.S.handFines, host.money, 1e-6, "only the hand fines"); Assert.AreEqual(0, sim.S.qcFines);
         }
 
         [Test]
@@ -158,43 +146,39 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void TheWindowIsJudgedEveryTwentyChecksAndReportsNeedAFullWindow()
+        public void TheWindowIsJudgedEveryTwentyChecksAndNeverReports()
         {
             var sim = Ready(); var host = new Host(); sim.ForcedCheckChance = 1;
-            var warnings = new List<double>(); var reports = new List<(XgReportReason, double)>();
-            sim.QualityWarned += warnings.Add; sim.QualityReported += (r, s) => reports.Add((r, s));
+            var warnings = new List<double>(); int reports = 0;
+            sim.QualityWarned += warnings.Add; sim.QualityReported += (r, sec) => reports++;
             Checks(sim, host, 0, 19);
             Assert.AreEqual(0, warnings.Count, "nineteen checks are not judged");
             Checks(sim, host, 0, 1);
             Assert.AreEqual(1, warnings.Count, "twenty failures warn");
-            Assert.AreEqual(0, reports.Count, "but a short streak is not a report: the window is not full");
-            Assert.IsFalse(sim.QualityFrozen);
-            Checks(sim, host, 0, 19);
-            Assert.AreEqual(0, reports.Count, "between judgements nothing happens");
-            Checks(sim, host, 0, 1);
-            Assert.AreEqual(1, reports.Count);
-            Assert.AreEqual(XgReportReason.LowPassRate, reports[0].Item1); Assert.AreEqual(180, reports[0].Item2, 1e-9);
-            Assert.AreEqual(1, sim.S.qcReports); Assert.AreEqual(0, sim.SpotChecks, "the check window clears");
-            Assert.IsTrue(sim.QualityFrozen); Assert.AreEqual(180, sim.FreezeSecondsLeft, 1e-9);
+            Checks(sim, host, 0, 60);
+            Assert.AreEqual(0, reports, "since 2026-10-16 the account is never reported");
+            Assert.IsFalse(sim.QualityFrozen); Assert.AreEqual(0, sim.S.qcReports);
+            Assert.AreEqual(XgSim.QcWindow, sim.SpotChecks, "the window keeps rolling");
+            Assert.AreEqual(1, warnings.Count, "one warning per crossing");
         }
 
         [Test]
-        public void WarningAtFifteenPercentThenReportAtTwentyPercent()
+        public void WarningAtFifteenPercentNamesTheFineAndTwentyPercentIsNoReport()
         {
             var sim = Ready(); var host = new Host(); sim.ForcedCheckChance = 1;
             var warnings = new List<double>(); int reports = 0;
-            sim.QualityWarned += warnings.Add; sim.QualityReported += (r, s) => reports++;
+            sim.QualityWarned += warnings.Add; sim.QualityReported += (r, sec) => reports++;
             Checks(sim, host, 17, 3);
             Assert.AreEqual(1, warnings.Count, "3 in 20 = 15%: warned"); Assert.AreEqual(.15, warnings[0], 1e-9);
             Assert.IsTrue(sim.QualityWarning);
-            StringAssert.Contains("85%", sim.S.log[sim.S.log.Count - 1]);
-            StringAssert.Contains("80%", sim.S.log[sim.S.log.Count - 1]);
-            Checks(sim, host, 15, 4);
-            Assert.AreEqual(0, reports);
-            Checks(sim, host, 0, 1);
-            Assert.AreEqual(1, reports, "8 in 40 = 20%: reported");
+            string said = sim.S.log[sim.S.log.Count - 1];
+            StringAssert.Contains("85%", said);
+            StringAssert.Contains("罚 2 倍", said);
+            StringAssert.DoesNotContain("举报", said);
+            Checks(sim, host, 15, 5);
+            Assert.AreEqual(.2, sim.ErrorRate, 1e-9);
+            Assert.AreEqual(0, reports, "8 in 40 = 20%: still only fines");
             Assert.AreEqual(1, warnings.Count, "no second warning on the way");
-            Assert.AreEqual(XgReportReason.LowPassRate, sim.LastReportReason);
         }
 
         [Test]
@@ -223,78 +207,69 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void FreezeStopsRoutingAndCountsDownWhileHandLabellingStillWorks()
+        public void ARunOfMistakesOnlyCostsMoneyAndAutoLabellingKeepsGoing()
         {
-            var sim = Ready(); var host = new Host();
-            ReportOnce(sim, host);
-            int unfrozen = 0; bool? appealed = null; sim.QualityUnfrozen += a => { unfrozen++; appealed = a; };
-            Assert.AreEqual(0, sim.CollaborationRate("spam", host)); Assert.AreEqual(0, sim.CollaborationIncome("spam", host));
-            var c = Judged(sim, true);
-            Assert.IsFalse(sim.Route(c.id, host), "frozen accounts cannot submit");
-            double answered = sim.S.autoCorrect + sim.S.autoWrong;
-            for (int i = 0; i < 179; i++) sim.TickCollaboration(1, host);
-            Assert.AreEqual(answered, sim.S.autoCorrect + sim.S.autoWrong, "no routing while frozen");
-            Assert.IsTrue(sim.QualityFrozen); Assert.AreEqual(1, sim.FreezeSecondsLeft, 1e-6);
-            Assert.AreEqual("0:01", XgSim.FreezeClock(sim.FreezeSecondsLeft));
-
-            double credit = sim.Credit, money = host.money;
-            var card = sim.Card("spam");
-            Assert.IsTrue(sim.Answer("spam", card.truth, host).correct);
-            Assert.Greater(host.money, money, "hand labels still pay");
-            Assert.AreEqual(credit + XgSim.QcCreditHand, sim.Credit, 1e-9, "good hand labels earn trust back while frozen");
-
-            sim.TickCollaboration(1, host);
-            Assert.IsFalse(sim.QualityFrozen); Assert.AreEqual(1, unfrozen); Assert.AreEqual(false, appealed);
-            Assert.Greater(sim.CollaborationRate("spam", host), 0);
-            Assert.IsTrue(sim.Route(c.id, host));
-
-            credit = sim.Credit; card = sim.Card("spam");
-            sim.Answer("spam", card.truth, host);
-            Assert.AreEqual(credit, sim.Credit, 1e-9, "the hand bonus only applies while frozen");
-        }
-
-        [Test]
-        public void TickCountsTheFreezeDownToo()
-        {
-            var sim = Ready(); var host = new Host();
-            ReportOnce(sim, host);
-            sim.Tick(100, host);
-            Assert.AreEqual(80, sim.FreezeSecondsLeft, 1e-6);
-            sim.Tick(80, host);
-            Assert.IsFalse(sim.QualityFrozen);
-        }
-
-        [Test]
-        public void ReportsEscalateThreeEightTwentyMinutes()
-        {
-            var sim = Ready(); var host = new Host();
-            var seconds = new List<double>(); sim.QualityReported += (r, s) => seconds.Add(s);
-            for (int n = 0; n < 4; n++)
+            var sim = Ready(); var host = new Host(); sim.ForcedCheckChance = 1;
+            double money = host.money, pay = sim.PayFor("spam", 1);
+            for (int i = 0; i < 2 * XgSim.QcWindow; i++)
             {
-                ReportOnce(sim, host);
-                Assert.AreEqual(seconds[n], sim.FreezeSecondsLeft, 1e-9);
-                sim.TickCollaboration(seconds[n] / 2, host); sim.TickCollaboration(seconds[n] / 2, host);
-                for (int i = 0; i < 20 && sim.QualityFrozen; i++) sim.TickCollaboration(1, host);
-                Assert.IsFalse(sim.QualityFrozen);
+                var c = Judged(sim, false, .99, i % 2 == 0);
+                Assert.IsTrue(sim.Route(c.id, host), "the account keeps submitting");
             }
-            CollectionAssert.AreEqual(new[] { 180.0, 480, 1200, 1200 }, seconds);
-            Assert.AreEqual(4, sim.S.qcReports);
-            Assert.Less(sim.Credit, 5, "four reports and forty failed checks all but empty the credit");
-            Assert.AreEqual(XgCreditTier.Watch, sim.CreditTier);
+            Assert.IsFalse(sim.QualityFrozen); Assert.AreEqual(0, sim.FreezeSecondsLeft);
+            Assert.AreEqual(2 * XgSim.QcWindow, sim.S.qcFailedTotal);
+            Assert.Greater(sim.S.qcFines, 0); Assert.Less(host.money, money);
+            Assert.Greater(sim.CollaborationRate("spam", host), 0);
+            Assert.IsFalse(sim.Appeal(host), "nothing to appeal");
         }
 
         [Test]
-        public void ReportCostsTwentyCredit()
+        public void CreditDriftsBackToTheStartButNotAboveIt()
+        {
+            var sim = Ready();
+            // No host: the platform clock runs but nothing is routed, so no spot check moves the credit.
+            sim.S.qcCredit = 10;
+            sim.TickCollaboration(15 * 10, null);
+            Assert.AreEqual(20, sim.Credit, 1e-6, "one point every 15 seconds");
+            Assert.AreEqual(XgCreditTier.Watch, sim.CreditTier);
+            sim.TickCollaboration(15 * 100, null);
+            Assert.AreEqual(XgSim.QcCreditStart, sim.Credit, 1e-6, "drift stops at the starting credit");
+            sim.S.qcCredit = 95;
+            sim.TickCollaboration(60, null);
+            Assert.AreEqual(95, sim.Credit, 1e-9, "credit above the start is kept, not drifted down or up");
+        }
+
+        [Test]
+        public void AdviceSaysBuyAskWhenUnsureFirstAndNamesTheWeakDesk()
+        {
+            var sim = Ready();
+            sim.S.unlocked.Remove("label.coop");
+            for (int i = 0; i < 10; i++) sim.S.routeHistory.Add(new XgRouteRecord { dataset = "cifar", automatic = true, correct = i < 4 });
+            for (int i = 0; i < 10; i++) sim.S.routeHistory.Add(new XgRouteRecord { dataset = "spam", automatic = true, correct = true });
+            for (int i = 0; i < 3; i++) sim.S.routeHistory.Add(new XgRouteRecord { dataset = "logic", automatic = true, correct = false });
+            Assert.AreEqual("cifar", sim.WeakestAutoDesk(out double acc), "logic has too few labels to judge");
+            Assert.AreEqual(.4, acc, 1e-9);
+            string advice = sim.QualityAdvice(false);
+            StringAssert.Contains("买「拿不准才问我」", advice);
+            StringAssert.Contains("40%", advice);
+            StringAssert.DoesNotContain("阈值", advice);
+            sim.S.unlocked.Add("label.coop");
+            StringAssert.Contains("阈值调高", sim.QualityAdvice(false));
+            StringAssert.Contains("Ask when unsure", sim.QualityAdvice(true));
+        }
+
+        [Test]
+        public void MistakesCostCreditPerCheckButNoReportPenalty()
         {
             var sim = Ready(); var host = new Host(); sim.ForcedCheckChance = 1;
             sim.S.qcCredit = 100;
             Checks(sim, host, 32, 8);
-            Assert.IsTrue(sim.QualityFrozen);
-            Assert.AreEqual(100 - 8 * XgSim.QcCreditFail - XgSim.QcCreditReport, sim.Credit, 1e-9);
+            Assert.IsFalse(sim.QualityFrozen);
+            Assert.AreEqual(100 - 8 * XgSim.QcCreditFail, sim.Credit, 1e-9);
         }
 
         [Test]
-        public void MonotoneAnswersAreReportedAsAScriptAtTheWarningLine()
+        public void MonotoneAnswersAreNotReportedEither()
         {
             var sim = Ready(); var host = new Host(); sim.ForcedCheckChance = 1;
             var reports = new List<XgReportReason>(); sim.QualityReported += (r, s) => reports.Add(r);
@@ -302,8 +277,8 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < 5; i++) Assert.IsTrue(Route(sim, host, false, false));  // answers 是, wrong
             Assert.AreEqual(0, reports.Count);
             Assert.IsTrue(Route(sim, host, false, false));                              // 6 in 40 = 15%, all 是
-            Assert.AreEqual(1, reports.Count);
-            Assert.AreEqual(XgReportReason.MonotoneAnswers, reports[0]);
+            Assert.IsTrue(sim.MonotoneAnswers);
+            Assert.AreEqual(0, reports.Count, "a script-like run is only warned and fined");
             Assert.AreEqual("答案高度雷同，疑似脚本", XgSim.ReportReasonText(XgReportReason.MonotoneAnswers, false));
             Assert.IsNotEmpty(XgSim.ReportReasonText(XgReportReason.MonotoneAnswers, true));
             Assert.IsNotEmpty(XgSim.ReportReasonText(XgReportReason.LowPassRate, true));
@@ -321,33 +296,13 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AppealCostsAtLeastAHundredOrTenPercentAndWorksOncePerFreeze()
+        public void ASaveFrozenUnderTheOldRulesIsFreeOnLoad()
         {
-            var sim = Ready(); var host = new Host { money = 500 };
-            Assert.IsFalse(sim.Appeal(host), "nothing to appeal");
-            ReportOnce(sim, host);
-            host.money = 500;
-            Assert.AreEqual(100, sim.AppealCost(host), 1e-9);
-            host.money = 5000;
-            Assert.AreEqual(500, sim.AppealCost(host), 1e-9);
-            host.money = 50;
+            var old = new XgState { qcVersion = 1, qcFrozen = 200, qcReports = 3, qcReason = (int)XgReportReason.LowPassRate, qcAppealed = true };
+            var sim = new XgSim(old); var host = new Host();
+            Assert.AreEqual(0, sim.S.qcFrozen); Assert.AreEqual(0, sim.S.qcReports); Assert.IsFalse(sim.S.qcAppealed);
+            Assert.IsFalse(sim.QualityFrozen);
             Assert.IsFalse(sim.CanAppeal(host, out string why)); Assert.IsNotEmpty(why);
-            Assert.IsFalse(sim.Appeal(host)); Assert.AreEqual(50, host.money); Assert.IsTrue(sim.QualityFrozen);
-
-            host.money = 5000;
-            bool? appealed = null; sim.QualityUnfrozen += a => appealed = a;
-            double credit = sim.Credit, spent = sim.S.totalSpent;
-            Assert.IsTrue(sim.CanAppeal(host, out _));
-            Assert.IsTrue(sim.Appeal(host));
-            Assert.AreEqual(4500, host.money, 1e-9); Assert.AreEqual(spent + 500, sim.S.totalSpent, 1e-9);
-            Assert.IsFalse(sim.QualityFrozen); Assert.AreEqual(true, appealed); Assert.AreEqual(credit, sim.Credit, "credit unchanged");
-            Assert.IsTrue(sim.S.qcAppealed);
-            int spends = host.spendCalls;
-            Assert.IsFalse(sim.Appeal(host)); Assert.AreEqual(4500, host.money); Assert.AreEqual(spends, host.spendCalls);
-
-            ReportOnce(sim, host);
-            Assert.IsFalse(sim.S.qcAppealed, "a new freeze can be appealed again");
-            Assert.IsTrue(sim.Appeal(host));
         }
 
         [Test]
@@ -390,7 +345,7 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < 100; i++) { corrupt.qcChecks.Add(true); corrupt.qcAnswers.Add(false); }
             var fixedSim = new XgSim(corrupt);
             Assert.AreEqual(XgSim.QcCreditStart, fixedSim.Credit);
-            Assert.AreEqual(1200, fixedSim.S.qcFrozen, 1e-9); Assert.AreEqual(XgReportReason.LowPassRate, fixedSim.LastReportReason);
+            Assert.AreEqual(0, fixedSim.S.qcFrozen, "no freeze survives a load");
             Assert.AreEqual(XgSim.QcWindow, fixedSim.S.qcChecks.Count); Assert.AreEqual(XgSim.QcWindow, fixedSim.S.qcAnswers.Count);
 
             var high = new XgSim(new XgState { qcVersion = 1, qcCredit = 250 });
@@ -410,7 +365,6 @@ namespace LingGuangV05.XingGuang.Tests
                 foreach (var card in sim.S.prefetch.ToArray())
                 {
                     if (!card.hasJudgment) continue;
-                    if (sim.QualityFrozen) sim.TickCollaboration(XgSim.QcFreezeSeconds[2], host);
                     if (sim.Route(card.id, host)) routed++;
                     if (sim.ReviewFull) sim.S.queue.Clear();
                     if (routed >= routes) break;
@@ -431,25 +385,26 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void ANinetyPercentModelWithoutTheThresholdIsRarelyReported()
+        public void ANinetyPercentModelWithoutTheThresholdIsFinedButNeverReported()
         {
-            int reports = 0;
+            int reports = 0; double fines = 0;
             for (int seed = 0; seed < 4; seed++)
             {
                 var sim = Ready(coop: false, acc: .9); var host = new Host();
                 sim.S.qcRng = 0x1234567L + seed * 7919L; sim.S.rng = 0x5EED5EEDL + seed * 104729L;
                 for (int t = 0; t < 3600; t++) sim.TickCollaboration(1, host);
-                reports += sim.S.qcReports;
+                reports += sim.S.qcReports; fines += sim.S.qcFines;
             }
-            Assert.LessOrEqual(reports, 6, "about one report an hour or fewer on average");
+            Assert.AreEqual(0, reports);
+            Assert.Greater(fines, 0, "its one-in-ten mistakes are fined when caught");
         }
 
         [Test]
-        public void ASeventyPercentModelWithoutTheThresholdIsReported()
+        public void ASeventyPercentModelWithoutTheThresholdPaysFinesAndKeepsWorking()
         {
             var sim = Ready(coop: false, acc: .7); var host = new Host();
-            Simulate(sim, host, 2000);
-            Assert.GreaterOrEqual(sim.S.qcReports, 1);
+            Assert.AreEqual(2000, Simulate(sim, host, 2000));
+            Assert.AreEqual(0, sim.S.qcReports); Assert.IsFalse(sim.QualityFrozen);
             Assert.Greater(sim.S.qcFines, 0);
         }
     }

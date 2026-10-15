@@ -162,8 +162,9 @@ namespace LingGuangV05.Desktop.XingGuang
             c.year.textWrappingMode = TextWrappingModes.NoWrap;
             c.effect = ui.Text(Rect("Effect", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -54), new Vector2(-10, -32)), "", 12, XgDark.Params, TextAlignmentOptions.MidlineLeft);
             c.effect.textWrappingMode = TextWrappingModes.NoWrap; c.effect.overflowMode = TextOverflowModes.Ellipsis;
-            c.note = ui.Text(Rect("Note", rt, Vector2.zero, Vector2.one, new Vector2(12, 34), new Vector2(-10, -54)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
-            c.note.overflowMode = TextOverflowModes.Ellipsis;
+            c.note = ui.Text(Rect("Note", rt, Vector2.zero, Vector2.one, new Vector2(12, 32), new Vector2(-10, -54)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
+            // 18 px: an Ellipsis label shorter than the font's line (≈17.4 px at 12) drops its only line and shows nothing.
+            c.note.textWrappingMode = TextWrappingModes.NoWrap; c.note.overflowMode = TextOverflowModes.Ellipsis;
             c.state = ui.Text(Rect("State", rt, Vector2.zero, new Vector2(1, 0), new Vector2(12, 8), new Vector2(-130, 32)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             c.state.textWrappingMode = TextWrappingModes.NoWrap; c.state.overflowMode = TextOverflowModes.Ellipsis;
             c.buy = ui.Button(rt, "", () => Buy(c), 13);
@@ -276,7 +277,14 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Buy(Card c)
         {
-            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable) { Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); return; }
+            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable)
+            {
+                Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0));
+                Fx.Play(XgJuice.Sfx.Id.Thud);
+                host.ShowToast(Sim.Why(c.node, Host), 3.5f);
+                host.Refresh(true);
+                return;
+            }
             host.BuyNode(c.node, c.rt);
         }
     }

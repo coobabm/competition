@@ -31,6 +31,7 @@ namespace LingGuangV05.Desktop.Story
 
         static InnerVoice instance;
         static int nextTicket, lastFinished;
+        static bool shutdownMuted;
 
         readonly Queue<Line> queue = new Queue<Line>();
         /// <summary>A line a cutscene interrupted; it plays again first once the screen is clear.</summary>
@@ -62,6 +63,7 @@ namespace LingGuangV05.Desktop.Story
         /// </summary>
         public static int Say(string zh, string en, float seconds = DefaultSeconds, Action shown = null)
         {
+            if (shutdownMuted) return lastFinished;
             if (string.IsNullOrEmpty(zh) && string.IsNullOrEmpty(en)) return lastFinished;
             var v = Instance();
             var line = new Line { zh = zh ?? en, en = string.IsNullOrEmpty(en) ? zh : en, seconds = Mathf.Max(.5f, seconds), ticket = ++nextTicket, shown = shown };
@@ -80,6 +82,21 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>A line is on screen or waiting.</summary>
         public static bool Busy => instance != null && (instance.speaking || instance.queue.Count > 0 || instance.resume.HasValue);
         public static int Pending => instance != null ? instance.queue.Count : 0;
+
+        /// <summary>The session has been saved; late callbacks must not narrate over the return to title.</summary>
+        public static void StopForShutdown()
+        {
+            shutdownMuted = true;
+            lastFinished = nextTicket;
+            VoiceLines.Stop();
+            if (instance == null) return;
+            instance.StopAllCoroutines();
+            instance.routine = null; instance.speaking = false;
+            instance.queue.Clear(); instance.resume = null;
+            if (instance.group != null) instance.group.alpha = 0;
+        }
+
+        public static void ResumeAfterBoot() => shutdownMuted = false;
 
         /// <summary>Drops every waiting line and fades the current one out quickly.</summary>
         public static void Clear()

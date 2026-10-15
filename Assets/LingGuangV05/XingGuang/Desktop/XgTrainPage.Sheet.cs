@@ -13,6 +13,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// 答卷 on the training page (训练页_答卷诊断能力考_设计.md §一): the same few questions for many rounds, each with
     /// what 灵光 answers now. A question that turns right flips to ✓ with a ding; one that falls back after a drop turns
     /// × again. The round's points shrink to a corner badge. The rules are in XgSim.Sheet.cs.
+    /// A picture question opens 「它怎么看的」 (XgConvLook, 它在学 §2.3) over the curve card when clicked.
     /// </summary>
     public sealed partial class XgTrainPage
     {
@@ -24,11 +25,13 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<SheetRow> sheetRows = new List<SheetRow>();
         string badgeText = "";
         Color badgeColor = XgDark.Muted;
+        XgConvLook look;
 
         sealed class SheetRow
         {
             public RectTransform rt, iconRt;
             public Image bg;
+            public Button hit;
             public TMP_Text icon, question, answer;
         }
 
@@ -48,6 +51,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 PlaceRow(row.rt, i);
                 row.bg = Panel(row.rt, XgDark.Panel);
                 row.bg.raycastTarget = false;
+                // Picture questions open 「它怎么看的」; the others stay plain rows.
+                int index = i;
+                row.hit = row.rt.gameObject.AddComponent<Button>();
+                row.hit.targetGraphic = row.bg; row.hit.transition = Selectable.Transition.None;
+                row.hit.onClick.AddListener(() => OpenLook(index));
                 row.iconRt = Rect("Mark", row.rt, Vector2.zero, new Vector2(0, 1), new Vector2(4, 0), new Vector2(32, 0));
                 row.icon = ui.Text(row.iconRt, "", 20, XgDark.Muted, TextAlignmentOptions.Center);
                 row.icon.fontStyle = FontStyles.Bold;
@@ -80,7 +88,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sheetArea == null) return;
             bool open = Sim.TrainingUnlocked(Track);
             sheetArea.gameObject.SetActive(open);
-            if (!open) return;
+            if (!open) { look?.Hide(); return; }
             var sheet = Sim.Sheet(run);
             int right = 0;
             foreach (var item in sheet) if (item.right) right++;
@@ -96,6 +104,17 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.rt.gameObject.SetActive(has);
                 if (has) ShowSheetRow(row, run, sheet[i]);
             }
+            look?.Sync(Sim, sheet);
+        }
+
+        /// <summary>Opens (or closes) 「它怎么看的」 for question i, a picture question.</summary>
+        void OpenLook(int i)
+        {
+            var sheet = Sim.Run(Track).sheet;
+            if (sheet == null || i >= sheet.Count || !XgTinyLook.IsPicture(sheet[i].dataset)) return;
+            if (look == null) look = XgConvLook.Create(curveCard, ui, Fx);
+            look.Toggle(Sim, sheet[i]);
+            RefreshSheet(Sim.Run(Track));
         }
 
         void ShowSheetRow(SheetRow row, XgRun run, XgSheetItem item)
@@ -109,7 +128,11 @@ namespace LingGuangV05.Desktop.XingGuang
             // The desktop font has ✓ and × (no ✗).
             row.icon.text = dirty ? "？" : item.right ? "✓" : "×";
             row.icon.color = c;
-            row.answer.text = Hex(XgDark.Muted) + T("它答 ", "It says ") + "</color>" + Hex(c) + "<b>" + Sim.SheetAnswer(run, item) + "</b></color>";
+            bool picture = XgTinyLook.IsPicture(item.dataset);
+            row.answer.text = Hex(XgDark.Muted) + T("它答 ", "It says ") + "</color>" + Hex(c) + "<b>" + Sim.SheetAnswer(run, item) + "</b></color>"
+                + (picture ? "\n<size=72%>" + Hex(look != null && look.Showing && look.Item == item ? XgDark.Gold : XgDark.Link) + T("它怎么看的 ›", "how it sees ›") + "</color></size>" : "");
+            row.bg.raycastTarget = picture;
+            row.hit.interactable = picture;
             row.bg.color = item.right ? new Color32(13, 32, 30, 255) : dirty ? new Color32(36, 30, 18, 255) : XgDark.Panel;
         }
 

@@ -1,0 +1,25 @@
+diff --git a/Assets/LocalBuild/Editor/PlayabilityChecks.cs b/Assets/LocalBuild/Editor/PlayabilityChecks.cs
+index e89e76f..a593745 100644
+--- a/Assets/LocalBuild/Editor/PlayabilityChecks.cs
++++ b/Assets/LocalBuild/Editor/PlayabilityChecks.cs
+@@ -68,8 +68,9 @@ public static class PlayabilityChecks
+         try
+         {
+             var sim = new XgSim(); var wallet = new Wallet();
+-            Check(sim.S.desk == "spam", "Fresh game starts with a recognisable SMS lesson");
+-            Check(sim.GhostGuess("spam", out _, out _), "First card has a prediction without a checkpoint");
++            Check(sim.S.desk == XgMemes.SenseDesk, "Fresh game starts with a common-sense lesson");
++            Check(sim.GhostGuess(XgMemes.SenseDesk, out _, out _), "Default common-sense card has a prediction without a checkpoint");
++            sim.SelectDesk("spam"); // The following reward and assessment regression is specifically an SMS lesson.
+             Check(!sim.TrainingUnlocked(XgTrack.Sequence), "Training is not unlocked before collecting examples");
+             var sample = new XgCard { dataset = "spam", seed = 9137, question = "恭喜您中奖，请点击领取", truth = true, level = 1 };
+             sim.TeachingGuess(sample, out bool original);
+@@ -142,7 +143,7 @@ public static class PlayabilityChecks
+         var repaired = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(oldReading.S)));
+         var repairedTwice = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(repaired.S)));
+         Check(repaired.ExtraSamples(XgSim.ReadDataset) == 10 && repairedTwice.ExtraSamples(XgSim.ReadDataset) == 10, "Old crawler tally is repaired once on upgrade");
+-        Check(reader.DeskOpen(XgMemes.SenseDesk) && reader.S.desk == "spam", "New sense desk is preserved alongside the SMS teaching start");
++        Check(reader.DeskOpen(XgMemes.SenseDesk) && reader.S.desk == XgMemes.SenseDesk, "Common sense remains the default desk after resident reading");
+ 
+         var profile = new PrologueProfile { name = "灵光", self = "我", callMe = "你", personality = "好奇，诚实" };
+         var game = new ChapterOneSim();

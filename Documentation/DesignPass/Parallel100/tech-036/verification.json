@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-13T00:49:43.625146+08:00",
+  "type": "static only",
+  "production_files_compared": 10,
+  "changed_dependencies": [],
+  "patch_check_exit_code": 0,
+  "patch_check_output": "",
+  "compiled": false,
+  "unity_or_game_run": false,
+  "visual_acceptance": false
+}

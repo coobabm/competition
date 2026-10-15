@@ -51,7 +51,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.TrainingUnlocked(XgTrack.Vision));
             Assert.IsNull(sim.TrainEpoch(XgTrack.Vision, host), "no data, no training");
             Assert.IsFalse(sim.ContractsUnlocked);
-            CollectionAssert.AreEquivalent(new[] { "arith", "logic", "spam", "sense" }, sim.S.desksOpen);
+            CollectionAssert.AreEquivalent(new[] { "logic", "spam", "sense" }, sim.S.desksOpen);
             sim.Tick(60, host);
             Assert.AreEqual(1000, host.money, 1e-9, "an idle lab neither earns nor bills");
             Assert.AreEqual(0, host.trained, 1e-9);
@@ -418,7 +418,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void DataNodesBuyThePack()
         {
-            var sim = new XgSim(); var host = new Host { money = 1000 };
+            var sim = new XgSim(); var host = new Host { money = 5000 };
             Assert.IsFalse(sim.DatasetAvailable("news"));
             Assert.IsTrue(sim.BuyNode("spam.pack", host));
             Assert.IsTrue(sim.Owns("spam"));
@@ -459,7 +459,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void WrongAnswerPaysNothingResetsComboAndDiscardsTheLabel()
+        public void WrongAnswerFinesHalfResetsComboAndDiscardsTheLabel()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
             sim.S.teachMode = false; // taught answers keep their own streak; this is the plain combo
@@ -468,7 +468,8 @@ namespace LingGuangV05.XingGuang.Tests
             double money = host.money;
             var r = sim.Answer("mnist", !sim.Card("mnist").truth, host);
             Assert.IsFalse(r.correct);
-            Assert.AreEqual(money, host.money, 1e-9);
+            Assert.Greater(r.fine, 0);
+            Assert.AreEqual(money - r.fine, host.money, 1e-9);
             Assert.AreEqual(0, sim.S.combo);
             Assert.AreEqual(5, broken);
             Assert.AreEqual(5, sim.Samples("mnist"), 1e-9);

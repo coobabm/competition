@@ -1,0 +1,13 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -184,5 +184,8 @@
+                 case "transfer": return T(sim, "换结构保留 60% 数值训练进度；同结构扩容保留进度从 ", "Keep 60% of numerical training progress when changing architecture; same-architecture growth retention rises from ") + N(XgSim.GrowKeep * 100) + "% → " + N(XgSim.GrowKeepTransfer * 100) + T(sim, "%。基础概念能否带走取决于新结构是否支持与位置无关的线索。", "%. Carrying basic concepts depends on whether the new wiring supports position-independent clues.");
+                 case "multihead": case "layernorm": case "residual": return T(sim, "随 Transformer 一同获得的技术标记，不另收费，也不再叠加独立购买加成。", "A technology marker granted with Transformer, with no separate charge or additional purchase bonus.");
+-                case "datacenter": return T(sim, "可用显存 ×", "Available VRAM ×") + N(XgSim.DatacenterVram) + T(sim, "；预训练运行时另付 ¥", "; running pre-training also costs ¥") + XgSim.DatacenterRent + T(sim, "/秒，钱不够会停机。", "/s and stops when funds run out.");
++                case "datacenter": return T(sim, "购买后训练可用显存 ×", "After purchase, usable training VRAM ×") + N(XgSim.DatacenterVram)
++                    + T(sim, "（接线模式按卡扣除驻留占用后计算），无需装备或先训练。新增 IDC 供电和机架；机架算力、显存分别为自有显卡对应最大值的 ×", " (after resident use on each connected card); no equip step or prior training required. Adds IDC power and a rack whose compute and VRAM are each the corresponding maximum among your own cards ×") + N(XgSim.DatacenterVram)
++                    + T(sim, "。预训练须本体接在 IDC 机架上且在线；自动放置会迁入，手动放置需自行调整。启动后、未达当前进度上限时，另付租金电费 ¥", ". Pre-training needs the AI itself online on the IDC rack; automatic placement moves it there, while manual placement needs adjustment. Once started, while below the current progress cap, rent and power cost ¥") + XgSim.DatacenterRent
++                    + T(sim, "/游戏秒；付不起当步费用就停止并保留进度，达到上限停滞时不扣这笔费。购买不会直接增加已训练参数、数据或保证提分。", "/game second; inability to pay the current step stops pre-training and keeps its progress. No rack fee is deducted while stalled at the cap. Buying does not directly add trained parameters or data, or guarantee a higher score.");
+                 case "secret.6": return T(sim, "显示预训练配置提示；购买后将失去自行跑通预训练的奖金（本节点价格 ×", "Show pre-training setup hints; buying forfeits the self-discovery bonus (this item's price ×") + N(XgSim.SelfInsightBonus) + T(sim, "）。", ").");
+                 case "label.raise": return Raise(sim);

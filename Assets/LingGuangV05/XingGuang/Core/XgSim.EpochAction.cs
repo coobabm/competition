@@ -7,7 +7,24 @@ namespace LingGuangV05.XingGuang
         public event Action<XgEpoch> EpochStarted;
         public bool LastEpochWasHand { get; private set; } = true;
         public bool AnyEpochActive => S.vision.epochActive || S.sequence.epochActive;
+        /// <summary>GPU-seconds a round without a planned pace bills (a round trained directly, an old save's round).</summary>
         public static double DurationFor(XgRun run) => run.arch == "transformer" ? EpochSeconds * .3 : EpochSeconds;
+
+        /// <summary>
+        /// Billed GPU-seconds per second of a round's planned length (<see cref="PaceSeconds"/>): the reference round, a tiny
+        /// model on one GTX 980 Ti, still bills the old <see cref="EpochSeconds"/>, and a round that takes longer (a bigger
+        /// model, more samples) uses the cards longer and bills more (节奏重做, 2026-10-16).
+        /// </summary>
+        public const double PowerSecondsPerPaceSecond = EpochSeconds / PaceBaseSeconds;
+
+        /// <summary>
+        /// GPU-seconds one round bills (electricity, trainedSeconds): its planned length at full speed, scaled by
+        /// <see cref="PowerSecondsPerPaceSecond"/>. Stalls do not bill (the card is waiting). A round without a planned
+        /// pace bills <see cref="DurationFor"/>.
+        /// </summary>
+        public double BilledSeconds(XgRun run) =>
+            run != null && run.paceSeed != 0 && run.epochDuration > 0 && !double.IsNaN(run.epochDuration) && !double.IsInfinity(run.epochDuration)
+                ? run.epochDuration * PowerSecondsPerPaceSecond : DurationFor(run);
 
         /// <summary>Player/automation entry point. Starting never grants samples, income, or a completed epoch.</summary>
         public bool BeginEpoch(XgTrack track, IXgHost host, bool hand = true)
@@ -21,7 +38,8 @@ namespace LingGuangV05.XingGuang
             run.epochActive = true;
             run.epochHand = hand;
             run.epochProgress = 0;
-            run.epochDuration = DurationFor(run);
+            // The bar takes real time and moves like a real one (XgSim.TrainPace.cs).
+            PlanPace(run, host, PaceSeconds(run, host));
             EpochStarted?.Invoke(new XgEpoch { track = (int)track, epoch = run.epoch + 1, hand = hand });
             return true;
         }
@@ -36,8 +54,9 @@ namespace LingGuangV05.XingGuang
             foreach (var run in Runs)
             {
                 double progressFactor = run.track == (int)XgTrack.Vision ? visionProgress : sequenceProgress;
-                if (!run.epochActive || progressFactor <= 0 || Blocker(run, host) != null) continue;
-                run.epochProgress = Math.Min(1, run.epochProgress + dt * progressFactor / Math.Max(.01, run.epochDuration));
+                if (!run.epochActive) continue;
+                if (progressFactor <= 0 || Blocker(run, host) != null) { run.paceFactor = 0; continue; }
+                AdvancePace(run, dt * progressFactor, progressFactor);
                 if (run.epochProgress < 1 - 1e-8) continue;
                 bool hand = run.epochHand;
                 double learningFactor = run.track == (int)XgTrack.Vision ? visionLearning : sequenceLearning;

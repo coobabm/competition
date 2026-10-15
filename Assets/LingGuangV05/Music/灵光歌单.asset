@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdf3c64a3f8691d4296e8c066e497849, type: 3}
+  m_Name: "\u7075\u5149\u6B4C\u5355"
+  m_EditorClassIdentifier: Assembly-CSharp::Michsky.DreamOS.MusicPlayerPlaylist
+  coverImage: {fileID: 21300000, guid: d87d10131b58cbf459f7de006c4714f2, type: 3}
+  playlistName: "\u7075\u5149"
+  playlist:
+  - musicTitle: Emergency
+    artistTitle: "\u7075\u5149"
+    albumTitle: "\u7075\u5149"
+    musicClip: {fileID: 8300000, guid: 44adba67b1ac0452a93618e2a9d83dd3, type: 3}
+    musicCover: {fileID: 21300000, guid: b13a8885e6844bc4eb7ca58c32cc0fc9, type: 3}
+    excludeFromLibrary: 0
+    isModContent: 0
+  - musicTitle: Emergency II
+    artistTitle: "\u7075\u5149"
+    albumTitle: "\u7075\u5149"
+    musicClip: {fileID: 8300000, guid: 2bf2316ed039c4a828799bc23852fca7, type: 3}
+    musicCover: {fileID: 21300000, guid: b13a8885e6844bc4eb7ca58c32cc0fc9, type: 3}
+    excludeFromLibrary: 0
+    isModContent: 0
+  - musicTitle: Emergency III
+    artistTitle: "\u7075\u5149"
+    albumTitle: "\u7075\u5149"
+    musicClip: {fileID: 8300000, guid: 40791b02141d34c9baf0e7e5a74cad23, type: 3}
+    musicCover: {fileID: 21300000, guid: b13a8885e6844bc4eb7ca58c32cc0fc9, type: 3}
+    excludeFromLibrary: 0
+    isModContent: 0
+  - musicTitle: Emergency IV
+    artistTitle: "\u7075\u5149"
+    albumTitle: "\u7075\u5149"
+    musicClip: {fileID: 8300000, guid: 6dded92b34bfa48aea8561c89475d0f4, type: 3}
+    musicCover: {fileID: 21300000, guid: b13a8885e6844bc4eb7ca58c32cc0fc9, type: 3}
+    excludeFromLibrary: 0
+    isModContent: 0

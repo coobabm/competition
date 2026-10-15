@@ -16,7 +16,7 @@ namespace LingGuangV05.Core
     {
         public const int MaxWords = 2;
         public static readonly string[] SelfChoices = { "我", "本机", "人家" };
-        public static readonly string[] SelfChoicesEn = { "I", "this machine", "little me" };
+        public static readonly string[] SelfChoicesEn = { "I", "this PC", "me" };
         public static readonly string[] CallChoices = { "你", "主人", "老大", "哥", "姐" };
         public static readonly string[] CallChoicesEn = { "you", "master", "boss", "bro", "sis" };
 
@@ -33,10 +33,17 @@ namespace LingGuangV05.Core
         }
 
         /// <summary>What is wrong with the profile (zh / en), or null if it can be saved.</summary>
-        public static string Problem(PrologueProfile p, bool english = false)
+        public static string Problem(PrologueProfile p, bool english = false, bool validateIdentity = true)
         {
             string T(string zh, string en) => english ? en : zh;
             if (p == null) return T("没有填写。", "Nothing filled in.");
+            if (validateIdentity)
+            {
+                string problem = AiNamePolicy.Problem(p.name, english)
+                    ?? AiNamePolicy.Problem(p.self, english, AiNamePolicy.MaxAddress, false)
+                    ?? AiNamePolicy.Problem(p.callMe, english, AiNamePolicy.MaxAddress, false);
+                if (problem != null) return problem;
+            }
             string name = (p.name ?? "").Trim(), self = (p.self ?? "").Trim(), call = (p.callMe ?? "").Trim(), mood = (p.personality ?? "").Trim();
             if (Length(name) < 1 || Length(name) > 16) return T("名字请输入 1–16 个字。", "Name: 1–16 characters.");
             if (Length(self) < 1 || Length(self) > 8) return T("自称请选一个，或输入 1–8 个字。", "Self-reference: pick one or type 1–8 characters.");

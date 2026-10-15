@@ -1,0 +1,25 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Base SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+# Scope: LSTM copy only; recheck the base before integration.
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -62,6 +62,9 @@
+ 
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.id == "lstm") return T(sim,
++                "给记忆装上筛子：学过的重要线索留得更久，其余线索更快淡去。",
++                "A filter for memory: learned important clues last longer, while other clues fade faster.");
+             switch (node.kind)
+             {
+                 case XgNodeKind.Depth: return T(sim, "多一层，就多一次把简单线索组合成复杂线索的机会。", "Each extra layer can combine simple clues into more complex ones.");
+@@ -127,6 +130,9 @@
+ 
+         static string Effect(XgNode node, XgSim sim)
+         {
++            if (node.id == "lstm") return T(sim,
++                "购买后，第5项能力的数据门槛降至原来的80%（300,000 → 240,000条有效样本），无需装备；参数门槛不变，同项门槛折扣相乘。加入可用结构，系统在两轮训练之间按数据和显存选择，购买不保证切换或提分。采用时，训练处理量系数为×0.8，与其他处理量系数相乘，实际卡数受取整和上下限影响。换结构后需训练并评估；能力进阶仍需满足参数、数据和本阶段训练条件，并由你确认。",
++                "Buying lowers ability 5's data threshold to 80% (300,000 → 240,000 effective samples), with no equip step. Its parameter threshold is unchanged; discounts on the same threshold multiply. LSTM becomes available for automatic selection between training rounds, based on data and VRAM; buying does not guarantee a switch or a higher score. When selected, its training-throughput factor is ×0.8 and multiplies with other throughput factors; card counts are rounded and capped at both ends. Train and evaluate after switching. Advancing still requires the parameter, data and stage-training conditions, then your confirmation.");
+             if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)
+             {
+                 bool depth = node.kind == XgNodeKind.Depth;

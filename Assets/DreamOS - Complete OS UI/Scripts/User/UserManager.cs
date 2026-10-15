@@ -55,7 +55,6 @@ namespace Michsky.DreamOS
 
         // Helpers
         string noSecQuestionIndicator = "No security question set.";
-        float cachedDesktopLength = 0.5f;
         float cachedLockScreenInLength = 0.5f;
         float cachedLockScreenOutLength = 0.5f;
         public bool isLockScreenOpen;
@@ -72,7 +71,6 @@ namespace Michsky.DreamOS
         void Awake()
         {
             // Get animator state lengths
-            if (desktopScreen != null) { cachedDesktopLength = DreamOSInternalTools.GetAnimatorClipLength(desktopScreen, "Desktop_In") + 0.1f; }
             if (lockScreen != null)
             {
                 cachedLockScreenOutLength = DreamOSInternalTools.GetAnimatorClipLength(lockScreen, "LockScreen_PasswordIn") + 0.1f;
@@ -361,19 +359,19 @@ namespace Michsky.DreamOS
         {
             desktopScreen.gameObject.SetActive(true);
             desktopScreen.enabled = true;
-            desktopScreen.Play("In");
+            desktopScreen.Play("In", 0, 0);
 
             StopCoroutine("DisableDesktopAnimator");
-            StartCoroutine("DisableDesktopAnimator");
+            StartCoroutine("DisableDesktopAnimator", "In");
         }
 
         public void HideDesktop()
         {
             desktopScreen.enabled = true;
-            desktopScreen.Play("Out");
+            desktopScreen.Play("Out", 0, 0);
 
             StopCoroutine("DisableDesktopAnimator");
-            StartCoroutine("DisableDesktopAnimator");
+            StartCoroutine("DisableDesktopAnimator", "Out");
         }
 
         public void AnimateLockScreen()
@@ -420,10 +418,25 @@ namespace Michsky.DreamOS
             bootManager.Reboot();
         }
 
-        IEnumerator DisableDesktopAnimator()
+        IEnumerator DisableDesktopAnimator(string expectedState)
         {
-            yield return new WaitForSeconds(cachedDesktopLength);
-            desktopScreen.enabled = false;
+            // A wall-clock delay can resume before the Animator has evaluated its
+            // last frame after a slow startup. That leaves the whole desktop faint.
+            // Let the requested In/Out state actually finish before freezing it.
+            yield return null;
+            // Requests made at EndOfFrame must pass a fresh Animator evaluation;
+            // otherwise the previous completed state can be mistaken for this request.
+            yield return new WaitForEndOfFrame();
+            while (desktopScreen != null && desktopScreen.isActiveAndEnabled)
+            {
+                var state = desktopScreen.GetCurrentAnimatorStateInfo(0);
+                if (!desktopScreen.IsInTransition(0) && state.IsName(expectedState) && state.normalizedTime >= 1)
+                {
+                    desktopScreen.enabled = false;
+                    yield break;
+                }
+                yield return null;
+            }
         }
 
         IEnumerator DisableLockScreenAnimator()

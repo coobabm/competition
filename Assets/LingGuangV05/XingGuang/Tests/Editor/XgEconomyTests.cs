@@ -43,32 +43,35 @@ namespace LingGuangV05.XingGuang.Tests
 
         // ───────────── abilities 2–5 ─────────────
 
-        /// <summary>The cheap squares that reach each ability (the to-do note's plan), cumulative.</summary>
+        /// <summary>
+        /// The squares that reach each ability (the to-do note's plan), cumulative: cheap ones up to ability 3, then
+        /// that stage's wider layers (chapters 4–5 were spread out on 2026-10-15 so they no longer pass in seconds).
+        /// </summary>
         static readonly string[][] CheapNodes =
         {
             new string[0], new string[0],
             new[] { "mlp", "s.d2", "s.w1", "s.w2" },
             new[] { "lenet", "v.d3", "v.d4" },
-            new[] { "alexnet", "v.d5", "v.d6" },
+            new[] { "alexnet", "v.d5", "v.d6", "v.w3" },
             // LSTM is the parent of the long-text packs.
             new[] { "vgg", "v.d8", "lstm" },
         };
 
-        /// <summary>About one pack per stage plus a few hundred hand labels: what a player picks up on the way.</summary>
+        /// <summary>About one pack per stage plus a few hundred hand labels up to ability 3, then two to three packs a stage.</summary>
         static readonly (string dataset, double samples)[][] ModestData =
         {
             new (string, double)[0], new (string, double)[0],
             new[] { ("spam", 12000.0), ("logic", 600.0) },
             new[] { ("logic", 100000.0), ("mnist", 500.0) },
-            new[] { ("poems", 200000.0), ("cifar", 500.0) },
-            new[] { ("longtext", 80000.0), ("crosssentence", 80000.0), ("meme", 500.0) },
+            new[] { ("poems", 400000.0), ("cifar", 500.0) },
+            new[] { ("longtext", 150000.0), ("crosssentence", 150000.0), ("meme", 500.0) },
         };
 
         [TestCase(2, "logic", XgTrack.Sequence)]
         [TestCase(3, "mnist", XgTrack.Vision)]
         [TestCase(4, "cifar", XgTrack.Vision)]
         [TestCase(5, "cifar", XgTrack.Vision)]
-        public void AbilitiesTwoToFiveComeFromTheDefaultAutoModelAndModestData(int ability, string dataset, XgTrack track)
+        public void AbilitiesTwoToFiveComeFromTheDefaultAutoModelAndTheStagesData(int ability, string dataset, XgTrack track)
         {
             var nodes = new List<string>();
             for (int i = 2; i <= ability; i++) nodes.AddRange(CheapNodes[i]);
@@ -78,8 +81,8 @@ namespace LingGuangV05.XingGuang.Tests
             // Only the auto-configured model, a few rounds on one desk, assessed along the way.
             sim.SetDataset(track, dataset);
             for (int round = 0; round < 40 && !sim.HasAbility(ability); round++) { sim.TrainEpoch(track, host); sim.Tick(.1, host); if (sim.StageReady) sim.ConfirmNextStage(); /* the player's confirmation */ }
-            Assert.That(XgSim.ParamsK(sim.Run(track)), Is.GreaterThanOrEqualTo(sim.ParamsThreshold(ability)), "the default model of the cheap squares is big enough");
-            Assert.That(sim.TrainedSamples, Is.GreaterThanOrEqualTo(sim.SamplesThreshold(ability)), "about one pack per stage is enough data");
+            Assert.That(XgSim.ParamsK(sim.Run(track)), Is.GreaterThanOrEqualTo(sim.ParamsThreshold(ability)), "the default model of the stage's squares is big enough");
+            Assert.That(sim.TrainedSamples, Is.GreaterThanOrEqualTo(sim.SamplesThreshold(ability)), "the stage's packs are enough data");
             Assert.That(sim.HasAbility(ability), Is.True, "ability " + ability + ": P " + XgSim.ParamsText(sim.TrainedParamsK) + "/" + XgSim.ParamsText(sim.ParamsThreshold(ability)));
         }
 
@@ -103,9 +106,9 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = 6;
             if (!sim.S.abilitiesEmerged.Contains(6)) sim.S.abilitiesEmerged.Add(6);
             foreach (var id in items) if (!sim.Has(id)) sim.S.unlocked.Add(id);
-            // Both bars at ability 6's threshold.
-            sim.S.trainedParamsK = XgSim.AbilityParamsK[6];
-            Labels(sim, "poems", XgSim.AbilitySamples[6]);
+            // Both bars at one scale unit each.
+            sim.S.trainedParamsK = XgSim.ScaleUnitParamsK;
+            Labels(sim, "poems", XgSim.ScaleUnitSamples);
             return sim;
         }
 
@@ -130,7 +133,7 @@ namespace LingGuangV05.XingGuang.Tests
             StringAssert.Contains("Transformer", none.PretrainLimit());
 
             var full = StageSix(FullStack);
-            Assert.That(full.PretrainScaleReady, Is.True, "full stack, bars at ability 6");
+            Assert.That(full.PretrainScaleReady, Is.True, "full stack, bars at one unit");
             Assert.That(full.PretrainCap, Is.EqualTo(1));
             Assert.That(full.TogglePretrain(host), Is.True);
             for (int i = 0; i < 2000 && !full.S.abilities; i++) full.Tick(1, host);
@@ -144,8 +147,8 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var items = Array.FindAll(FullStack, x => x != missing);
             var sim = StageSix(items);
-            sim.S.trainedParamsK = XgSim.AbilityParamsK[6] * 10;
-            Labels(sim, "news", XgSim.AbilitySamples[6] * 10);
+            sim.S.trainedParamsK = XgSim.ScaleUnitParamsK * 10;
+            Labels(sim, "news", XgSim.ScaleUnitSamples * 10);
             Assert.That(sim.ScaleBars, Is.EqualTo(XgSim.ScaleBarCap * XgSim.ScaleBarCap).Within(1e-9), "grinding the bars is capped");
             Assert.That(sim.PretrainScaleReady, Is.False, missing + " missing");
             Assert.That(sim.MissingScaleItems().ConvertAll(i => i.item), Is.EqualTo(new List<string> { missing }));
@@ -155,12 +158,12 @@ namespace LingGuangV05.XingGuang.Tests
         public void TwoMissingSmallItemsFailButOneCanBeMadeUpWithBiggerBars()
         {
             var noBoth = StageSix("transformer", "datacenter", "attention", "warmup", "batchnorm");
-            noBoth.S.trainedParamsK = XgSim.AbilityParamsK[6] * 10; Labels(noBoth, "news", XgSim.AbilitySamples[6] * 10);
+            noBoth.S.trainedParamsK = XgSim.ScaleUnitParamsK * 10; Labels(noBoth, "news", XgSim.ScaleUnitSamples * 10);
             Assert.That(noBoth.PretrainScaleReady, Is.False, "residuals and mixed precision both missing");
 
             var noBatchNorm = StageSix("transformer", "datacenter", "attention", "resnet", "fp16", "warmup");
             Assert.That(noBatchNorm.PretrainScaleReady, Is.False, "at the bare bars one small item short is not enough");
-            noBatchNorm.S.trainedParamsK = XgSim.AbilityParamsK[6] * 10; Labels(noBatchNorm, "news", XgSim.AbilitySamples[6] * 10);
+            noBatchNorm.S.trainedParamsK = XgSim.ScaleUnitParamsK * 10; Labels(noBatchNorm, "news", XgSim.ScaleUnitSamples * 10);
             Assert.That(noBatchNorm.PretrainScaleReady, Is.True, "with the bars at their cap it is");
         }
 

@@ -168,9 +168,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(dc.money); Assert.AreEqual(10, dc.current); Assert.AreEqual(sim.NodeCost(XgCatalog.Node("datacenter")), dc.goal);
 
             s.unlocked.Add("datacenter");
-            // The effective scale (XgSim.ScaleItems): every item owned and both bars at ability 6.
-            s.trainedParamsK = XgSim.AbilityParamsK[6];
-            s.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.AbilitySamples[6] });
+            // The effective scale (XgSim.ScaleItems): every item owned and both bars at one scale unit.
+            s.trainedParamsK = XgSim.ScaleUnitParamsK;
+            s.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.ScaleUnitSamples });
             Assert.IsTrue(sim.TogglePretrain(host));
             s.pretrain = .3;
             var wait = First(XgGuide.Current(sim, 0));
@@ -244,7 +244,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNotNull(s, "3 failures in 20 is on the 15% line");
             Assert.AreEqual(XgGuideKind.Main, s.kind);
             Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("tree", s.tab); Assert.AreEqual("node:label.coop", s.target, "without the node, point at the node");
-            StringAssert.Contains("拿不准才问我", s.zh); StringAssert.Contains("85%", s.whyZh); StringAssert.Contains("20%", s.whyEn);
+            StringAssert.Contains("拿不准才问我", s.zh); StringAssert.Contains("85%", s.whyZh); StringAssert.Contains("罚 2 倍", s.whyZh); StringAssert.Contains("2× its pay", s.whyEn); StringAssert.DoesNotContain("举报", s.whyZh);
             sim.S.unlocked.Add("label.coop");
             s = Find(XgGuide.Current(sim, 0), "qc.rate");
             Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:ThresholdSlider", s.target);
@@ -528,6 +528,8 @@ namespace LingGuangV05.XingGuang.Tests
         {
             XgTrack Track() { var t = s.arg == "vision" ? XgTrack.Vision : XgTrack.Sequence; return sim.TrainingUnlocked(t) ? t : 1 - t; }
             if (s.target.StartsWith("node:", StringComparison.Ordinal)) { if (!sim.BuyNode(s.target.Substring(5), host)) Label(sim, host, ""); return; }
+            // The next batch of a pack (节奏重做 §2.3): bought like a node, labelling while the money comes in.
+            if (s.target.StartsWith("batch:", StringComparison.Ordinal)) { if (!sim.BuyBatch(s.target.Substring(6), host)) Label(sim, host, ""); return; }
             if (s.target.StartsWith("contract:", StringComparison.Ordinal)) { sim.Sign(s.target.Substring(9), host); return; }
             if (s.target.StartsWith("label:训练一轮", StringComparison.Ordinal)) { sim.TrainEpoch(Track(), host); return; }
             if (s.target.StartsWith("label:评估", StringComparison.Ordinal)) { sim.Assess(Track(), host); return; }

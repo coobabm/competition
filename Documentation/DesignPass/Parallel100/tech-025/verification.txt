@@ -1,0 +1,1 @@
+POLICY_CHECKS_OK 15 (pure scheduling only; no Unity/game/visual validation)

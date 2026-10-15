@@ -325,8 +325,8 @@ namespace LingGuangV05.XingGuang.Tests
             solo.Tick(.2, soloRig);
             shared.Tick(.2, sharedRig);
             Assert.Greater(solo.S.vision.epochProgress, shared.S.vision.epochProgress);
-            for (int i = 0; i < 30 && solo.S.vision.epoch == 0; i++) solo.Tick(.1, soloRig);
-            for (int i = 0; i < 30 && shared.S.vision.epoch == 0; i++) shared.Tick(.1, sharedRig);
+            for (int i = 0; i < 200 && solo.S.vision.epoch == 0; i++) solo.Tick(.1, soloRig);
+            for (int i = 0; i < 200 && shared.S.vision.epoch == 0; i++) shared.Tick(.1, sharedRig);
             Assert.AreEqual(1, solo.S.vision.epoch);
             Assert.AreEqual(1, shared.S.vision.epoch);
             Assert.AreEqual(solo.S.vision.steps, shared.S.vision.steps, 1e-9, "the same completed work took longer, not less learning per completed epoch");

@@ -100,6 +100,8 @@ namespace LingGuangV05.XingGuang
             if (!FiniteCollaboration(S.crawlWords) || S.crawlWords < 0) S.crawlWords = 0;
             RepairSpider();
             RepairReading();
+            RepairBooks();
+            RepairBookPuzzles();
         }
     }
 }

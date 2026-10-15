@@ -1,0 +1,12 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -171,7 +171,7 @@
+                 case "irnn": return T(sim, "配合 ReLU 的普通循环网络能保留更久的记忆；仍会衰减，梯度裁剪需另行解锁。", "A plain recurrent network with ReLU retains memory longer; it still decays, and clipping is a separate unlock.");
+                 case "position": return T(sim, "启用位置编码后，非循环结构也能使用字的位置线索。", "When enabled, positional encoding lets non-recurrent structures use word-position clues.");
+                 case "warmup": return T(sim, "启用预热后，换设置的前 ", "With warm-up enabled, the first ") + XgSim.WarmupCards + T(sim, " 张训练卡逐步恢复学习率，减少开头失稳。", " training cards after a settings change gradually restore the learning rate, reducing initial instability.");
+-                case "fp16": return T(sim, "增加下列预训练规模倍数；本节点不直接把训练显存占用减半。", "Adds the pre-training scale multiplier below; this item does not directly halve training VRAM usage.");
++                case "fp16": return T(sim, "购买后立即计入下列预训练有效规模倍数，无需装备或先训练；预训练可达到的进度上限随规模重新计算（最低 10%，最高 100%），实际进度仍需运行预训练推进。本节点不直接把训练显存占用减半，也不提高预训练推进速度。", "The effective pre-training scale multiplier below applies immediately on purchase, with no equip step or prior training required. The reachable progress cap is recalculated from scale (minimum 10%, maximum 100%); actual progress still requires pre-training to run. This item does not directly halve training VRAM usage or increase pre-training speed.");
+                 case "gradclip": return T(sim, "启用裁剪后，限制过大的学习步幅，降低训练失稳的风险；不保证任何设置都安全。", "When enabled, clipping limits oversized learning steps and reduces instability; it does not make every setting safe.");
+                 case "dropout": return T(sim, "训练时跳过部分线索更新，减少死记硬背；评估成绩仍受数据和模型影响。", "Skip some clue updates during training to reduce memorization; evaluation scores still depend on the data and model.");
+                 case "augment": return T(sim, "训练题池变体：手写数字 ×2，围棋 ×8，CIFAR、ImageNet、表情包 ×3；文字不变，不增加已收集样本数。", "Training-pool variants: digits ×2, Go ×8, CIFAR, ImageNet and memes ×3. Text and collected sample counts stay unchanged.");

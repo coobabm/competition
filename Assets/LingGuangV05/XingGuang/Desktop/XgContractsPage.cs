@@ -219,7 +219,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 return t;
             }
 
-            k.client = Label("Client", 12, 16, 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft, 12, 70);
+            k.client = Label("Client", 11, 18, 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft, 12, 70);
             k.title = Label("Job", 30, 22, 15, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
             k.title.fontStyle = FontStyles.Bold;
             k.acc = ui.Text(Rect("Accuracy", inner, new Vector2(0, 1), new Vector2(0, 1), new Vector2(12, -74), new Vector2(162, -58)), "", 12, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);

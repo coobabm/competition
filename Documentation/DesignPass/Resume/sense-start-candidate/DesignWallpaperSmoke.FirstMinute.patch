@@ -1,0 +1,45 @@
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
+index 35840ca..826d875 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
+@@ -118,16 +118,27 @@ public static partial class DesignWallpaperSmoke
+                     "Chat can send and receive while first-card protection waits for presentation");
+                 controller.Open(); controller.View.ShowTab("teach");
+             }
++            Check(controller.Sim.S.desk == XgMemes.SenseDesk && controller.Sim.Card(controller.Sim.S.desk).dataset == XgMemes.SenseDesk
++                && !controller.Sim.DeskOpen("arith"), "Real setup enters the default common-sense desk with arithmetic still locked");
+             if (deterministicCorrection)
+             {
+                 Check(controller.Sim.S.handCorrect == 0 && controller.Sim.S.handWrong == 0, "Correction fixture precedes all teaching");
+-                var fixture = new XgCard { id = 91370001, dataset = "spam", seed = 9137, truth = true, level = 1,
+-                    question = "恭喜您中奖，请点击领取", questionEn = "Congratulations! Click to claim your prize." };
+-                controller.Sim.S.cards.RemoveAll(c => c.dataset == "spam");
++                var phrase = XgMemes.Pick(XgMemes.SenseDesk, new System.Random(9137), 1, controller.Sim.Today, controller.Sim.Topic, false);
++                Check(phrase != null && phrase.yes && phrase.textEn == "Beijing is the capital of China.",
++                    "Correction input is a real, authored common-sense phrase with unchanged truth");
++                var fixture = new XgCard { id = 91370001, dataset = XgMemes.SenseDesk, track = (int)XgTrack.Sequence,
++                    seed = 9137, truth = phrase.yes, level = 1, question = phrase.text, questionEn = phrase.textEn,
++                    why = phrase.why, whyEn = phrase.whyEn, source = phrase.source,
++                    category = XgCatalog.Desk(XgMemes.SenseDesk).name, categoryEn = XgCatalog.Desk(XgMemes.SenseDesk).nameEn };
++                var features = XgBoardData.FromCard(fixture);
++                bool realWords = features.region == "sequence" && features.features.Count > 0;
++                foreach (var feature in features.features) realWords &= fixture.question.Contains(feature.name);
++                Check(realWords, "Deterministic common-sense card uses its real production word features");
++                controller.Sim.S.cards.RemoveAll(c => c.dataset == XgMemes.SenseDesk);
+                 controller.Sim.S.cards.Add(fixture);
+                 Check(controller.Sim.TeachingGuess(fixture, out bool predicted) && !predicted, "Deterministic UI input has true answer and actual false model prediction");
+                 controller.View.Refresh(true);
+-                File.AppendAllText(Path.Combine(Output, "first-minute-observations.txt"), "Scenario=deterministic correction; only card input replaced before any lesson.\n");
++                File.AppendAllText(Path.Combine(Output, "first-minute-observations.txt"), "Scenario=deterministic common-sense correction; only card input replaced with its authored bank phrase before any lesson.\n");
+             }
+             yield return null;
+             yield return new WaitForEndOfFrame();
+@@ -406,7 +417,7 @@ public static partial class DesignWallpaperSmoke
+         var no = FirstMinuteField<XgBtn>(page, "no").label;
+         if (!answered)
+         {
+-            Check(question.text == "Congratulations! Click to claim your prize.", "Rendered card uses its authored English question");
++            Check(question.text == "Beijing is the capital of China.", "Rendered card uses its authored English question");
+             Check(guess.text.Contains("guesses: No"), "Rendered first guess explicitly says No in English");
+             CheckFirstMinuteEnglishTextFits(question, "English question");
+             CheckFirstMinuteEnglishTextFits(guess, "English shown guess");

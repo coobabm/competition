@@ -30,7 +30,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             public string key;
             public XgWireLane lane;
-            public RectTransform rt, inPort, outPort, fill;
+            public RectTransform rt, inPort, outPort, inPress, outPress, fill;
             public Image frame, accent;
             public TMP_Text title, sub, status, metric;
             public CanvasGroup group;
@@ -68,6 +68,9 @@ namespace LingGuangV05.Desktop.XingGuang
         float refreshClock, animationClock, suppressClickUntil;
         string hint = "";
         float hintUntil;
+        string pressedCableFrom, pressedCableTo;
+        int? cablePointer;
+        float cablePressAt;
         Vector2 lastViewport;
 
         public string QaSelected => selected;
@@ -214,6 +217,7 @@ namespace LingGuangV05.Desktop.XingGuang
             boundSim = Sim;
             boundSim.AutoRouted += OnRouted; boundSim.EpochDone += OnEpoch; boundSim.WireItem += OnItem;
             positions.Clear(); pinned.Clear(); pulses.Clear(); completed.Clear(); selected = armed = hovered = selectedFrom = selectedTo = null;
+            CancelCablePress();
             topologyKey = inventoryKey = ""; fitPending = true;
         }
         public override void Tick(float dt)
@@ -229,6 +233,7 @@ namespace LingGuangV05.Desktop.XingGuang
             zoomLabel.text = Mathf.RoundToInt(QaZoom * 100) + "%";
             footer.text = Time.unscaledTime < hintUntil ? hint : T("拖动节点整理 · 空白处拖动平移 · 点击或拖动端口接线 · 点线查看", "Drag cards / canvas · Click or drag ports to wire · Click a cable to inspect");
             front.SetVerticesDirty();
+            if (cablePointer.HasValue) back.SetVerticesDirty();
         }
 
         void RefreshMetrics(XgWiringView v)
@@ -337,25 +342,28 @@ namespace LingGuangV05.Desktop.XingGuang
             node.group = node.rt.gameObject.AddComponent<CanvasGroup>();
             node.frame = Rounded(node.rt, Line, true);
             Rounded(Rect("Body", node.rt, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), Card);
-            var button = node.rt.gameObject.AddComponent<UnityEngine.UI.Button>(); button.targetGraphic = node.frame; button.transition = Selectable.Transition.None;
+            var button = node.rt.gameObject.AddComponent<XgButtonPressFeedback>(); button.targetGraphic = node.frame; button.transition = Selectable.Transition.None;
             string key = n.key; button.onClick.AddListener(() => Select(key));
             if (ui.window != null) node.rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
             var drag = node.rt.gameObject.AddComponent<XgWiringHover>(); drag.page = this; drag.key = key;
             var dot = TopLeft("Kind", node.rt, 12, 15, 6, 6); node.accent = Rounded(dot, Tone[(int)n.lane]);
             node.title = Text(TopLeft("Title", node.rt, 25, 8, 160, 39), "", 14, Ink, TextAlignmentOptions.MidlineLeft);
-            node.title.maxVisibleLines = 2;
+            node.title.maxVisibleLines = 2; button.Label = node.title.rectTransform;
             node.sub = Text(TopLeft("Resource", node.rt, 13, 52, 172, 21), "", 11, Mute, TextAlignmentOptions.MidlineLeft); node.sub.textWrappingMode = TextWrappingModes.NoWrap;
             node.fill = Bar(TopLeft("Load", node.rt, 13, 81, 172, 4), "Fill", Soft, Tone[(int)n.lane]);
             node.status = Text(TopLeft("State", node.rt, 13, 94, 105, 19), "", 11, Good, TextAlignmentOptions.MidlineLeft); node.status.textWrappingMode = TextWrappingModes.NoWrap;
             node.metric = Text(TopLeft("Metric", node.rt, 117, 94, 68, 19), "", 10, Mute, TextAlignmentOptions.MidlineRight); node.metric.textWrappingMode = TextWrappingModes.NoWrap;
-            if (n.lane != XgWireLane.Power) node.inPort = Port(node.rt, true, key);
-            if (n.lane != XgWireLane.Task) node.outPort = Port(node.rt, false, key);
+            if (n.lane != XgWireLane.Power) node.inPort = Port(node.rt, true, key, out node.inPress);
+            if (n.lane != XgWireLane.Task) node.outPort = Port(node.rt, false, key, out node.outPress);
             return node;
         }
-        RectTransform Port(RectTransform parent, bool input, string key)
+        RectTransform Port(RectTransform parent, bool input, string key, out RectTransform press)
         {
             var rt = Rect(input ? "In" : "Out", parent, new Vector2(input ? 0 : 1, .5f), new Vector2(input ? 0 : 1, .5f), new Vector2(-13, -13), new Vector2(13, 13));
-            var image = Panel(rt, Color.clear); var b = rt.gameObject.AddComponent<UnityEngine.UI.Button>(); b.targetGraphic = image; b.transition = Selectable.Transition.None;
+            var image = Panel(rt, Color.clear); var b = rt.gameObject.AddComponent<XgButtonPressFeedback>(); b.targetGraphic = image; b.transition = Selectable.Transition.None;
+            // Only this visual proxy moves. The port hit area and cable endpoints stay fixed.
+            press = Rect("PressVisual", rt, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
+            b.Label = press;
             b.onClick.AddListener(() => PortClick(key, input));
             var relay = rt.gameObject.AddComponent<XgWiringPort>(); relay.page = this; relay.key = key; relay.input = input;
             if (ui.window != null) rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
@@ -594,9 +602,13 @@ namespace LingGuangV05.Desktop.XingGuang
             string why = Sim.Connect(from, to, Host);
             if (why != null) { Hint(why); host.ShowToast(why, 4); return; }
             pinned.Add(to); pinned.Add(from); selected = to; selectedFrom = selectedTo = null; CancelWire(); topologyKey = "";
-            Refresh(); Hint(T("已接通：", "Connected: ") + NodeName(Sim.Wiring.Node(from)) + " → " + NodeName(Sim.Wiring.Node(to)));
+            Refresh();
+            string connected = T("已接通：", "Connected: ") + NodeName(Sim.Wiring.Node(from)) + " → " + NodeName(Sim.Wiring.Node(to));
+            Hint(connected);
+            // A successful retry must replace the previous refusal still visible in the application.
+            host.ShowToast(connected, 2.5f);
         }
-        public void CancelWire() { armed = null; draggingPort = false; if (front != null) front.SetVerticesDirty(); }
+        public void CancelWire() { armed = null; draggingPort = false; CancelCablePress(); if (front != null) front.SetVerticesDirty(); }
         Vector2 Local(PointerEventData e)
         { RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, e.position, e.pressEventCamera != null ? e.pressEventCamera : e.enterEventCamera, out var p); return p; }
         public void BeginPortDrag(string key, bool input, PointerEventData e) { if (e.button != PointerEventData.InputButton.Left) return; Arm(key, input); draggingPort = true; pointer = Local(e); }
@@ -616,22 +628,52 @@ namespace LingGuangV05.Desktop.XingGuang
             positions[node.key] = node.position; Position(node); UpdateWorldBounds(); back.SetVerticesDirty(); front.SetVerticesDirty();
         }
         public void EndNodeDrag() { draggingNode = false; dragNodeKey = null; suppressClickUntil = Time.unscaledTime + .15f; }
-        public void BeginPan(PointerEventData e) { pan.OnBeginDrag(e); }
+        public void BeginPan(PointerEventData e) { CancelCablePress(); pan.OnBeginDrag(e); }
         public void DragPan(PointerEventData e) { pan.OnDrag(e); }
         public void EndPan(PointerEventData e) { pan.OnEndDrag(e); suppressClickUntil = Time.unscaledTime + .15f; }
         public void CanvasScroll(PointerEventData e) { pan.OnScroll(e); }
         public void CanvasClick(PointerEventData e)
         {
-            if (Time.unscaledTime < suppressClickUntil) return;
-            var p = Local(e); Cable nearest = null; float best = 9 / Mathf.Max(.65f, QaZoom);
+            if (e.button != PointerEventData.InputButton.Left || Time.unscaledTime < suppressClickUntil) return;
+            var nearest = CableAt(Local(e));
+            if (nearest != null) { selectedFrom = nearest.from; selectedTo = nearest.to; selected = null; SetDetails(true); back.SetVerticesDirty(); return; }
+            CancelWire();
+        }
+        Cable CableAt(Vector2 p)
+        {
+            Cable nearest = null; float best = 9 / Mathf.Max(.65f, QaZoom);
             foreach (var c in cables)
             {
                 if (!Ends(c, out var a, out var b)) continue;
                 var prev = a;
                 for (int i = 1; i <= 28; i++) { var q = At(a, b, i / 28f); float distance = Distance(p, prev, q); if (distance < best) { best = distance; nearest = c; } prev = q; }
             }
-            if (nearest != null) { selectedFrom = nearest.from; selectedTo = nearest.to; selected = null; SetDetails(true); back.SetVerticesDirty(); return; }
-            CancelWire();
+            return nearest;
+        }
+        public void CanvasPress(PointerEventData e)
+        {
+            if (e.button != PointerEventData.InputButton.Left || Time.unscaledTime < suppressClickUntil) return;
+            CancelCablePress();
+            var cable = CableAt(Local(e));
+            if (cable == null) return;
+            pressedCableFrom = cable.from; pressedCableTo = cable.to;
+            cablePointer = e.pointerId; cablePressAt = Time.unscaledTime;
+            back.SetVerticesDirty();
+        }
+        public void CanvasRelease(PointerEventData e)
+        { if (e.button == PointerEventData.InputButton.Left && cablePointer == e.pointerId) CancelCablePress(); }
+        public void CanvasLeave(PointerEventData e)
+        { if (cablePointer == e.pointerId) CancelCablePress(); }
+        public void CancelCablePress()
+        {
+            pressedCableFrom = pressedCableTo = null; cablePointer = null;
+            if (back != null) back.SetVerticesDirty();
+        }
+        float CablePress(Cable cable)
+        {
+            if (!cablePointer.HasValue || cable.from != pressedCableFrom || cable.to != pressedCableTo) return 0;
+            if (Fx != null && Fx.Reduced) return .25f;
+            return Mathf.Sin(Mathf.Clamp01((Time.unscaledTime - cablePressAt) / .18f) * Mathf.PI);
         }
         static float Distance(Vector2 p, Vector2 a, Vector2 b) { var v = b - a; return Vector2.Distance(p, a + v * (v.sqrMagnitude < .001f ? 0 : Mathf.Clamp01(Vector2.Dot(p - a, v) / v.sqrMagnitude))); }
         static Vector2 End(NodeView n, bool output) => new Vector2(n.position.x + (output ? CardWidth : 0), -n.position.y - CardHeight * .5f);
@@ -649,16 +691,19 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (!Ends(c, out var a, out var b)) continue;
                 bool focused = FocusCable(c); var color = Alpha(Tone[(int)c.lane], focused ? c.live ? .9f : .44f : .18f);
+                float press = CablePress(c);
+                color = Color.Lerp(color, Alpha(Color.white, Mathf.Max(.7f, color.a)), press * .45f);
+                float width = (selectedFrom == c.from && selectedTo == c.to ? 3 : 1.8f) + press * 1.2f;
                 Vector2 prev = a;
-                for (int i = 1; i <= 28; i++) { Vector2 next = At(a, b, i / 28f); if (c.live || i % 2 == 0) XgSoftDraw.Seg(vh, prev, next, selectedFrom == c.from && selectedTo == c.to ? 3 : 1.8f, .6f, color); prev = next; }
+                for (int i = 1; i <= 28; i++) { Vector2 next = At(a, b, i / 28f); if (c.live || i % 2 == 0) XgSoftDraw.Seg(vh, prev, next, width, .6f, color); prev = next; }
             }
         }
         public void DrawFront(VertexHelper vh)
         {
             foreach (var n in order)
             {
-                if (n.inPort != null) DrawPort(vh, End(n, false), Tone[Mathf.Max(0, (int)n.lane - 1)], armed == n.key && armedInput);
-                if (n.outPort != null) DrawPort(vh, End(n, true), Tone[(int)n.lane], armed == n.key && !armedInput);
+                if (n.inPort != null) DrawPort(vh, End(n, false), Tone[Mathf.Max(0, (int)n.lane - 1)], armed == n.key && armedInput, n.inPress);
+                if (n.outPort != null) DrawPort(vh, End(n, true), Tone[(int)n.lane], armed == n.key && !armedInput, n.outPress);
             }
             if (armed != null && views.TryGetValue(armed, out var armedNode))
             {
@@ -673,8 +718,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 XgSoftDraw.Disc(vh, At(a, b, pulse.progress), 4, 1, pulse.correct ? Good : Bad, 12);
             }
         }
-        static void DrawPort(VertexHelper vh, Vector2 p, Color tone, bool armed)
-        { XgSoftDraw.Disc(vh, p, 7, 1, Card, 16); XgSoftDraw.Ring(vh, p, 5.7f, 1.7f, tone, 20); XgSoftDraw.Disc(vh, p, armed ? 3.6f : 2, .5f, tone, 10); }
+        static void DrawPort(VertexHelper vh, Vector2 p, Color tone, bool armed, RectTransform press)
+        {
+            // Keep the original foreground order; a private Button effect supplies only the pose.
+            float scale = press != null ? press.localScale.x : 1;
+            if (press != null) p += press.anchoredPosition;
+            XgSoftDraw.Disc(vh, p, 7 * scale, 1 * scale, Card, 16);
+            XgSoftDraw.Ring(vh, p, 5.7f * scale, 1.7f * scale, tone, 20);
+            XgSoftDraw.Disc(vh, p, (armed ? 3.6f : 2) * scale, .5f * scale, tone, 10);
+        }
         void OnRouted(XgAutoRecord r) { if (r != null) OnItem("label:" + r.dataset, r.correct); }
         void OnEpoch(XgEpoch e) { if (e != null) OnItem("train:" + e.track, !e.diverged); }
         void OnItem(string task, bool correct)

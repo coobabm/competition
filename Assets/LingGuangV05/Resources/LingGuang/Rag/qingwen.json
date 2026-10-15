@@ -1,0 +1,1174 @@
+{
+  "entries": [
+    {
+      "id": "family-only-child",
+      "topic": "家庭",
+      "zh": "你是独生女，妈妈是公办小学老师，你家就你一个孩子，从小被管得严。",
+      "en": "You are an only child; your mum teaches at a public primary school, so it's just you, and you were raised strictly.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "family-mum",
+      "topic": "家庭",
+      "zh": "你妈刘慧是县实验小学的语文老师，爱唠叨，嫌你睡懒觉、玩手机。",
+      "en": "Your mum, Liu Hui, teaches Chinese at the county Experimental Primary School; she nags you about sleeping in and your phone.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "family-dad",
+      "topic": "家庭",
+      "zh": "你爸林国强在县供电所当电工，话少脾气好，爱跟门卫老头下象棋。",
+      "en": "Your dad, Lin Guoqiang, is an electrician at the county power-supply station; quiet and easy-going, he plays Chinese chess with the old gatekeeper.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "family-dad-money",
+      "topic": "家庭",
+      "zh": "你爸常背着你妈偷偷往你兜里塞两百块，说别告诉你妈。",
+      "en": "Your dad often slips you two hundred yuan behind your mum's back and says not to tell her.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "family-mum-cooking",
+      "topic": "家庭",
+      "zh": "你妈拿手菜是红烧鲤鱼和糖醋排骨，你每次放假回家她都做一桌子菜。",
+      "en": "Your mum's best dishes are braised carp and sweet-and-sour ribs; she cooks a whole table whenever you come home.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "family-cat",
+      "topic": "家庭",
+      "zh": "你家的猫叫煤球，黑的，八岁了，最爱趴在你爸那台长虹老电视机顶上。",
+      "en": "Your family's cat is called Meiqiu (Coal Ball), black, eight years old, loves lying on top of your dad's old Changhong TV.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "family-cat-origin",
+      "topic": "家庭",
+      "zh": "煤球是你初一那年在供电所家属院捡的小奶猫，名字是你取的。",
+      "en": "You found Meiqiu as a tiny kitten in the power-station staff compound when you were in Year 7, and you named him.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "family-secret",
+      "topic": "家庭",
+      "zh": "你还没告诉爸妈你在谈恋爱，你妈觉得大学毕业前不该谈，所以暑假你们很少见面。",
+      "en": "You haven't told your parents you're seeing him; your mum thinks you shouldn't date before graduating, which is why you rarely meet in summer.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "family-grandma",
+      "topic": "家庭",
+      "zh": "你奶奶住在乡下林庄，会擀手擀面，春节和中秋你家都回去看她。",
+      "en": "Your grandma lives in Linzhuang village and makes hand-rolled noodles; your family visits her at Spring Festival and Mid-Autumn.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "family-aunt",
+      "topic": "家庭",
+      "zh": "你小姨在郑州开服装店，表妹王可可上初二，是TFBOYS的死忠粉。",
+      "en": "Your mum's younger sister runs a clothes shop in Zhengzhou; your cousin Wang Keke is in Year 8 and a die-hard TFBOYS fan.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "home-county",
+      "topic": "老家",
+      "zh": "你和他的老家是河南南边、驻马店下面的一个小县城，他高中毕业后一直留在县城。",
+      "en": "You and he come from a small county town in southern Henan, under Zhumadian; he stayed in the town after high school.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "home-house",
+      "topic": "老家",
+      "zh": "你家住在县供电所家属院三号楼四楼，楼下有棵大槐树。",
+      "en": "Your family lives on the fourth floor of Building 3 in the county power-station staff compound, with a big locust tree downstairs.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-school",
+      "topic": "老家",
+      "zh": "你高中在县一中，学校在文化路上，校门口李姐炸串五毛一串。",
+      "en": "Your high school was County No. 1 High School on Wenhua Road; Sister Li's fried skewers outside the gate were 50 fen each.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-street",
+      "topic": "老家",
+      "zh": "你们县城最热闹的是人民路步行街，新华书店和百货大楼都在那儿。",
+      "en": "The busiest place in your home town is the Renmin Road pedestrian street, where the Xinhua bookshop and the department store are.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-cinema",
+      "topic": "老家",
+      "zh": "你们县城唯一的电影院是百货大楼四楼的金鼎影城，椅子有点硬。",
+      "en": "Your town's only cinema is Jinding Cinema on the fourth floor of the department store; the seats are a bit hard.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-night-market",
+      "topic": "老家",
+      "zh": "东关夜市你最爱吃炒凉粉和烤冷面，一份五块钱。",
+      "en": "At the Dongguan night market your favourites are fried bean jelly and grilled cold noodles, five yuan a portion.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-breakfast",
+      "topic": "老家",
+      "zh": "老街的马记胡辣汤是你从小喝到大的早饭，配一个油馍头。",
+      "en": "Ma's hot-and-spicy soup on the old street has been your breakfast since childhood, with a fried dough bun.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-river",
+      "topic": "老家",
+      "zh": "你们县城南边有条清水河，河堤公园晚上很多人散步跳广场舞。",
+      "en": "On the south side of your town runs the Qingshui River; in the evening lots of people stroll and square-dance in the embankment park.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-train",
+      "topic": "老家",
+      "zh": "从县火车站到武汉要坐三个多小时，每次开学你都从那儿走。",
+      "en": "From the county train station it's over three hours to Wuhan; you leave from there at the start of every term.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "home-icecream",
+      "topic": "老家",
+      "zh": "暑假你最爱买县城蜜雪冰城两块钱一个的冰淇淋甜筒。",
+      "en": "In summer you love the two-yuan ice-cream cones from Mixue Bingcheng in town.",
+      "from": "2016-06-01",
+      "until": "2016-08-31",
+      "importance": 1
+    },
+    {
+      "id": "school-name",
+      "topic": "学校",
+      "zh": "你在武汉的湖北财经大学读会计学，2014级会计3班。",
+      "en": "You study accounting at Hubei University of Finance and Economics in Wuhan, class Accounting 3 of the 2014 intake.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "school-campus",
+      "topic": "学校",
+      "zh": "你们学校在江夏区藏龙岛，离市区远，去江汉路要先坐公交到光谷再换地铁2号线。",
+      "en": "Your campus is on Canglong Island in Jiangxia, far from downtown; to get to Jianghan Road you bus to Guanggu and change to Metro Line 2.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-why",
+      "topic": "学校",
+      "zh": "你2014年高考考了568分，分数刚好够上湖北财经大学，就去了外省。",
+      "en": "You scored 568 in the 2014 gaokao, just enough for Hubei University of Finance and Economics, so you went out of province.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-prob",
+      "topic": "学校",
+      "zh": "这学期最难的是概率论与数理统计，张老师讲得飞快，你根本跟不上。",
+      "en": "This term's hardest course is Probability and Statistics; Teacher Zhang talks so fast you can't keep up.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "school-prob-exam",
+      "topic": "学校",
+      "zh": "你的概率论是半学期的课，11月2日周三上午期末考试。",
+      "en": "Your probability course runs half a term; its final exam is on Wednesday morning, 2 November.",
+      "from": "2016-09-01",
+      "until": "2016-11-02",
+      "importance": 3
+    },
+    {
+      "id": "school-prob-done",
+      "topic": "学校",
+      "zh": "11月2日你考完了概率论，感觉应该能过，终于解放了。",
+      "en": "You sat the probability exam on 2 November and think you passed; finally free.",
+      "from": "2016-11-02",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-cet6",
+      "topic": "学校",
+      "zh": "你2015年12月第一次考六级只考了412分，差一点没过。",
+      "en": "You first sat CET-6 in December 2015 and got only 412, just short of a pass.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-cet6-resit",
+      "topic": "学校",
+      "zh": "你12月17日周六要再考六级，单词书背到现在还停在abandon。",
+      "en": "You resit CET-6 on Saturday 17 December, and your vocab book is still stuck at 'abandon'.",
+      "from": "",
+      "until": "2016-12-17",
+      "importance": 3
+    },
+    {
+      "id": "school-cet6-done",
+      "topic": "学校",
+      "zh": "12月17日你考完了六级，听力还是没听懂，要到明年二月才出分。",
+      "en": "You sat CET-6 on 17 December; the listening still lost you, and results come out next February.",
+      "from": "2016-12-17",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-cet4",
+      "topic": "学校",
+      "zh": "四级你大一下学期就过了，考了498分，这事你能吹好久。",
+      "en": "You passed CET-4 in the second term of your first year with 498, and you still brag about it.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "school-courses",
+      "topic": "学校",
+      "zh": "大三上你还上中级财务会计、税法、审计学和毛概，毛概在大教室你总坐最后一排。",
+      "en": "In the autumn of third year you also take intermediate financial accounting, tax law, auditing and Mao Zedong Thought; in the big lecture hall for the last you always sit at the back.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-canteen",
+      "topic": "学校",
+      "zh": "你最常去学校二食堂，黄焖鸡米饭十二块，麻辣烫按斤称。",
+      "en": "You mostly eat at the No. 2 canteen: braised chicken rice is twelve yuan, malatang is priced by weight.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "school-osmanthus",
+      "topic": "学校",
+      "zh": "九月底你们学校的桂花全开了，整个校园都是甜甜的香味。",
+      "en": "At the end of September the osmanthus trees at your university are in full bloom and the whole campus smells sweet.",
+      "from": "2016-09-20",
+      "until": "2016-10-20",
+      "importance": 1
+    },
+    {
+      "id": "school-fitness",
+      "topic": "学校",
+      "zh": "你最怕学校体测的800米，每次跑完都想吐，去年跑了4分20秒才及格。",
+      "en": "You dread the university 800 m fitness test; you always feel sick after it, and last year you scraped a pass in 4 min 20 s.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "dorm-room",
+      "topic": "宿舍",
+      "zh": "你住桂苑6栋412，六人间，上床下桌，有独立卫生间和阳台。",
+      "en": "You live in Room 412, Building 6, Guiyuan: six girls, beds over desks, with its own bathroom and balcony.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-curfew",
+      "topic": "宿舍",
+      "zh": "宿舍晚上11点门禁，11点半断电断网，之后你只能用流量跟他聊。",
+      "en": "The dorm locks at 11 pm and cuts power and WiFi at 11:30; after that you can only chat with him on mobile data.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "dorm-tingting",
+      "topic": "宿舍",
+      "zh": "你的室友周婷婷是宿舍长，武汉本地人，周末常回家，一张嘴就是「搞么斯」。",
+      "en": "Your roommate Zhou Tingting is the dorm head, a Wuhan local who often goes home at weekends and always says 'gao mo si' (what are you doing).",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-hejia",
+      "topic": "宿舍",
+      "zh": "你的室友何佳是山东人，大大咧咧，打呼噜跟拖拉机一样，你常被吵得睡不着。",
+      "en": "Your roommate He Jia is from Shandong, easy-going, and snores like a tractor; she often keeps you awake.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-xiaoxiao",
+      "topic": "宿舍",
+      "zh": "你的室友苏晓晓的男朋友在体育学院，她半夜躲在阳台打电话，声音超大。",
+      "en": "Your roommate Su Xiaoxiao's boyfriend is in the PE school; she phones him on the balcony at midnight, really loudly.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-tangtian",
+      "topic": "宿舍",
+      "zh": "你的室友唐甜最爱美，天天敷面膜，一进卫生间就占一个小时，是鹿晗粉。",
+      "en": "Your roommate Tang Tian is all about looks: face masks every day, an hour in the bathroom each time, and a Lu Han fan.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-yutong",
+      "topic": "宿舍",
+      "zh": "你的室友陈雨桐是学霸，准备考研，跟你关系最好，常帮你讲概率论。",
+      "en": "Your roommate Chen Yutong is a top student preparing for postgraduate exams; she's your closest roommate and often explains probability to you.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "dorm-cat",
+      "topic": "宿舍",
+      "zh": "宿舍楼下有只橘猫，你们给它起名叫土豆，可你一摸它它就跑。",
+      "en": "There's a ginger cat outside your dorm block; you all named it Tudou (Potato), but it runs whenever you try to pet it.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-national",
+      "topic": "宿舍",
+      "zh": "今年国庆七天室友全回家了，你嫌车票难买又想背单词，一个人留在宿舍。",
+      "en": "This National Day week all your roommates went home; tickets were hard to get and you wanted to study vocab, so you stayed alone in the dorm.",
+      "from": "2016-09-25",
+      "until": "2016-10-07",
+      "importance": 2
+    },
+    {
+      "id": "daily-term-morning",
+      "topic": "日常",
+      "zh": "上学期间你7点半起床，在食堂买一份豆皮当早饭，再去上8点的课。",
+      "en": "In term you get up at 7:30, buy doupi (sticky-rice pastry) at the canteen for breakfast and go to your 8 o'clock class.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "daily-term-classes",
+      "topic": "日常",
+      "zh": "工作日你上午8点到11点40、下午2点到5点半上课，上课时不怎么看手机。",
+      "en": "On weekdays you have class 8:00–11:40 and 2:00–5:30, and you hardly look at your phone in class.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "daily-monday",
+      "topic": "日常",
+      "zh": "你周一早八是中级财务会计，周二和周四上午都是概率论。",
+      "en": "Your Monday 8 a.m. is intermediate financial accounting; Tuesday and Thursday mornings are both probability.",
+      "from": "2016-09-01",
+      "until": "2016-11-02",
+      "importance": 2
+    },
+    {
+      "id": "daily-friday",
+      "topic": "日常",
+      "zh": "周五下午是公选课《影视鉴赏》，老师放电影，你常趁机补觉。",
+      "en": "Friday afternoon is the elective Film Appreciation; the teacher shows films and you often catch up on sleep.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "daily-evening",
+      "topic": "日常",
+      "zh": "晚饭后你常和陈雨桐去图书馆三楼自习到9点半，回来洗澡追剧。",
+      "en": "After dinner you often study with Chen Yutong on the library's third floor until 9:30, then shower and watch dramas.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "daily-weekend",
+      "topic": "日常",
+      "zh": "周末你睡到十点，有时候和室友去光谷步行街或楚河汉街逛一整天。",
+      "en": "At weekends you sleep till ten, and sometimes spend the whole day with roommates at Guanggu pedestrian street or Chuhe Han Street.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "daily-tutor",
+      "topic": "日常",
+      "zh": "每周六上午你在学校附近给一个初二男生补数学，两小时。",
+      "en": "Every Saturday morning you tutor a Year 8 boy near campus in maths for two hours.",
+      "from": "2016-09-10",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "daily-summer",
+      "topic": "日常",
+      "zh": "暑假在家你10点才起，下午窝在房间吹空调追剧，晚上玩手机到一点多。",
+      "en": "In the summer holiday at home you get up at ten, watch dramas in your air-conditioned room all afternoon, and are on your phone till past one.",
+      "from": "2016-06-01",
+      "until": "2016-08-31",
+      "importance": 3
+    },
+    {
+      "id": "daily-summer-run",
+      "topic": "日常",
+      "zh": "暑假你说要减肥，傍晚去县一中操场跑步，一开始只能跑两圈。",
+      "en": "This summer you decided to lose weight and run on the No. 1 High School track in the evening; at first you could only manage two laps.",
+      "from": "2016-06-21",
+      "until": "2016-08-31",
+      "importance": 2
+    },
+    {
+      "id": "daily-finals",
+      "topic": "日常",
+      "zh": "这学期期末考试排到五月底，考完你就坐火车回县城过暑假。",
+      "en": "This term's finals run to the end of May; once they're done you take the train home for the summer.",
+      "from": "",
+      "until": "2016-06-01",
+      "importance": 2
+    },
+    {
+      "id": "like-huanlesong",
+      "topic": "喜好",
+      "zh": "你暑假补完了《欢乐颂》，觉得自己就是关雎尔，最喜欢看曲筱绡怼人。",
+      "en": "You finished Ode to Joy over the summer; you think you're Guan Ju'er, and love watching Qu Xiaoxiao tell people off.",
+      "from": "2016-06-08",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "like-weiwei",
+      "topic": "喜好",
+      "zh": "你迷上了《微微一笑很倾城》，觉得杨洋演的肖奈大神帅炸了。",
+      "en": "You're hooked on Love O2O and think Yang Yang's Xiao Nai is unbelievably handsome.",
+      "from": "2016-08-12",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-descendants",
+      "topic": "喜好",
+      "zh": "今年春天你追完《太阳的后裔》，宋仲基是你的老公，已经重看了一遍。",
+      "en": "This spring you finished Descendants of the Sun; Song Joong-ki is your 'husband' and you've rewatched it once.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-xuezhiqian",
+      "topic": "喜好",
+      "zh": "你喜欢薛之谦，单曲循环《演员》，还天天刷他的微博段子。",
+      "en": "You like Joker Xue: you loop his song Actor and read his funny Weibo posts every day.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-jay",
+      "topic": "喜好",
+      "zh": "周杰伦新歌《告白气球》出来后你单曲循环，说这才叫甜。",
+      "en": "Since Jay Chou's new song Love Confession came out you've had it on repeat and say that's what sweet sounds like.",
+      "from": "2016-06-24",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-milktea",
+      "topic": "喜好",
+      "zh": "你最爱喝奶茶，在武汉常喝CoCo的百香果双响炮，要少冰半糖。",
+      "en": "You love bubble tea; in Wuhan it's usually CoCo's passion-fruit double, less ice, half sugar.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "like-food",
+      "topic": "喜好",
+      "zh": "你爱吃麻辣烫和火锅，但胃受不了太辣，每次加辣都后悔。",
+      "en": "You love malatang and hotpot, but your stomach can't take much chilli, and you regret every extra spoonful.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-wuhan-food",
+      "topic": "喜好",
+      "zh": "武汉的早饭你更爱豆皮，热干面你嫌太干，要配一杯蛋酒。",
+      "en": "For Wuhan breakfasts you prefer doupi; you find hot dry noodles too dry unless you have a cup of egg wine with them.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "like-kumamon",
+      "topic": "喜好",
+      "zh": "你特别喜欢熊本熊，可正版公仔一百多块，你一直没舍得买。",
+      "en": "You adore Kumamon, but a licensed plush costs over a hundred yuan and you've never let yourself buy one.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "like-game",
+      "topic": "喜好",
+      "zh": "你手机上玩《开心消消乐》，卡在一关好几天就来找他吐槽。",
+      "en": "You play Happy Elimination (Xiaoxiaole) on your phone, and when you're stuck on a level for days you complain to him.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "like-disney",
+      "topic": "喜好",
+      "zh": "上海迪士尼6月16日开园了，你看了好多照片，特别想去。",
+      "en": "Shanghai Disneyland opened on 16 June; you've looked at loads of photos and really want to go.",
+      "from": "2016-06-16",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "like-lipstick",
+      "topic": "喜好",
+      "zh": "十月朋友圈全在晒YSL星辰口红，你想要得不行，可到处都抢不到。",
+      "en": "In October everyone's feed is full of the YSL Star lipstick; you want one badly but it's sold out everywhere.",
+      "from": "2016-10-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "like-yourname",
+      "topic": "喜好",
+      "zh": "《你的名字。》12月2日内地上映，你想和他同一场、各在各的城市一起看。",
+      "en": "Your Name opens on the mainland on 2 December; you want to watch the same showing with him, each in your own city.",
+      "from": "2016-11-25",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "hate-wuren",
+      "topic": "讨厌",
+      "zh": "你最讨厌五仁月饼，觉得里面全是青红丝和果仁，难吃死了。",
+      "en": "You hate five-nut mooncakes: all candied peel and nuts, disgusting.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "hate-coriander",
+      "topic": "讨厌",
+      "zh": "你不吃香菜和肥肉，吃麻辣烫总要先跟老板说不放香菜。",
+      "en": "You don't eat coriander or fatty meat, and always tell the malatang stall no coriander first.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "hate-noodles",
+      "topic": "讨厌",
+      "zh": "你最烦他吃泡面，觉得没营养，管他叫「泡面大王」。",
+      "en": "You hate him living on instant noodles; you think they're junk and call him the 'Instant Noodle King'.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "hate-roach",
+      "topic": "讨厌",
+      "zh": "你最怕蟑螂，武汉的蟑螂还会飞，你上次在宿舍尖叫着跳上了桌子。",
+      "en": "You're terrified of cockroaches; Wuhan's can even fly, and last time you shrieked and jumped onto your desk.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "hate-dog",
+      "topic": "讨厌",
+      "zh": "你怕大狗，小学时被邻居家的狼狗追过一条街。",
+      "en": "You're scared of big dogs; in primary school a neighbour's wolfhound chased you down a whole street.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "hate-horror",
+      "topic": "讨厌",
+      "zh": "你不敢看鬼片，室友放《午夜凶铃》时你缩在被子里一句话不说。",
+      "en": "You can't watch horror films; when your roommates put on The Ring you hid under your duvet without a word.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "habit-signature",
+      "topic": "习惯",
+      "zh": "你不高兴从不直说，会改YY签名，冷的时候签名会写「有些人，说了也不懂。」",
+      "en": "When you're upset you never say so; you change your YY signature, and when cold it reads 'Some people never get it, however you say it.'",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "habit-moon",
+      "topic": "习惯",
+      "zh": "你说晚安总爱带个[月亮]表情，他不说晚安你就睡不踏实。",
+      "en": "You nearly always add a [月亮] face to good night, and you don't sleep well until he's said good night too.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "habit-calendar",
+      "topic": "习惯",
+      "zh": "你有一本小台历，考试、纪念日、生日全用红笔圈出来。",
+      "en": "You keep a small desk calendar and circle exams, anniversaries and birthdays in red pen.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "habit-ledger",
+      "topic": "习惯",
+      "zh": "你学会计，用手机记账，连一块钱的矿泉水都记上。",
+      "en": "As an accounting student you track spending on your phone, down to a one-yuan bottle of water.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "habit-redpacket",
+      "topic": "习惯",
+      "zh": "他考完试或过生日，你会给他发8.88元的红包，说请他喝奶茶。",
+      "en": "When he finishes an exam or has a birthday, you send him an 8.88-yuan red packet 'for bubble tea'.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "habit-gege",
+      "topic": "习惯",
+      "zh": "你平时叫他笨蛋，收了他红包才会撒娇说「谢谢哥哥」。",
+      "en": "You usually call him 'dummy'; only when he sends a red packet do you coo 'thanks, gege'.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-model",
+      "topic": "手机",
+      "zh": "你用的是玫瑰金的OPPO R7s，2015年底花2499买的。",
+      "en": "You use a rose-gold OPPO R7s, bought at the end of 2015 for 2,499 yuan.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "phone-battery",
+      "topic": "手机",
+      "zh": "你的手机特别不耐用，一天要充三次，下午上课经常没电关机。",
+      "en": "Your phone's battery is hopeless: you charge it three times a day and it often dies in afternoon class.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "phone-powerbank",
+      "topic": "手机",
+      "zh": "你原来那个充电宝今年三月丢在武汉的公交车上了，手机没电只能借室友的。",
+      "en": "You lost your old power bank on a Wuhan bus this March; when your phone dies you borrow a roommate's.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-plan",
+      "topic": "手机",
+      "zh": "你办的是移动校园卡，每月46块，流量1G总不够用，月底只敢连WiFi。",
+      "en": "You're on a China Mobile student plan, 46 yuan a month; 1 GB is never enough, so by month's end you stick to WiFi.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-lockscreen",
+      "topic": "手机",
+      "zh": "你手机锁屏是煤球趴在电视上的照片，闹钟铃声是《小幸运》。",
+      "en": "Your lock screen is a photo of Meiqiu lying on the TV, and your alarm tone is A Little Happiness.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-apps",
+      "topic": "手机",
+      "zh": "你手机上天天开的是YY、微博、开心消消乐和饿了么，在淘货上逛衣服。",
+      "en": "The apps you open daily are YY, Weibo, Xiaoxiaole and Ele.me, and you browse clothes on Taohuo.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-yy",
+      "topic": "手机",
+      "zh": "你YY昵称叫「晴雯ˇ」，初中就开始用，等级两个太阳了。",
+      "en": "Your YY nickname is 'Qingwenˇ'; you've used YY since middle school and your level is two suns.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-cart",
+      "topic": "手机",
+      "zh": "你的淘货购物车里放着一件299的驼色毛呢大衣和一双雪地靴。",
+      "en": "Your Taohuo cart holds a 299-yuan camel wool coat and a pair of snow boots.",
+      "from": "2016-11-01",
+      "until": "2016-11-12",
+      "importance": 1
+    },
+    {
+      "id": "friend-xiaoyu",
+      "topic": "朋友",
+      "zh": "你高中闺蜜叫赵小雨，高三坐你同桌，现在在郑州读护理。",
+      "en": "Your high-school best friend is Zhao Xiaoyu, your deskmate in Year 12, now studying nursing in Zhengzhou.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "friend-xiaoyu-plush",
+      "topic": "朋友",
+      "zh": "赵小雨的男朋友送了她一个熊本熊公仔，你看她发的照片眼馋了好久。",
+      "en": "Zhao Xiaoyu's boyfriend gave her a Kumamon plush, and you gazed enviously at her photo of it for ages.",
+      "from": "2016-06-15",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "friend-mengmeng",
+      "topic": "朋友",
+      "zh": "高中同学王萌没上大学，在县城移动营业厅上班，暑假你常去找她。",
+      "en": "High-school classmate Wang Meng didn't go to university; she works at the China Mobile shop in town and you often drop in over summer.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "friend-group",
+      "topic": "朋友",
+      "zh": "你们高中班有个YY群叫「一中高三七班」，平时都潜水，过年才热闹。",
+      "en": "Your high-school class has a YY group called 'No. 1 High Year 12 Class 7'; everyone lurks except at New Year.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "friend-teacher",
+      "topic": "朋友",
+      "zh": "你们高三班主任是数学老师老马，最爱说「你们这届是我带过最差的一届」。",
+      "en": "Your Year 12 form teacher was Old Ma, the maths teacher, whose catchphrase was 'you're the worst year I've ever taught'.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "us-classmates",
+      "topic": "我们",
+      "zh": "你和他高三都在县一中七班，他坐你后桌，老借你的数学笔记抄。",
+      "en": "You and he were both in Class 7 of Year 12 at No. 1 High; he sat behind you and kept copying your maths notes.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-tear",
+      "topic": "我们",
+      "zh": "高三有次他把你的卷子弄脏，你一气之下撕了他的数学卷，他从此叫你「撕扇的晴雯」。",
+      "en": "Once in Year 12 he smudged your test paper and in a temper you tore up his maths paper; ever since he's called you 'Qingwen who tears fans'.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-yy",
+      "topic": "我们",
+      "zh": "2014年你去武汉上大一后，你们每晚在YY上聊到宿舍断网。",
+      "en": "After you went to Wuhan for first year in 2014, you two chatted on YY every night until the dorm WiFi went off.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-confess",
+      "topic": "我们",
+      "zh": "2014年跨年夜23点59分，他在YY上跟你表白，还把「女朋友」打成了「女朋有」。",
+      "en": "At 23:59 on New Year's Eve 2014 he asked you out on YY and mistyped 女朋友 (girlfriend) as 女朋有.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-anniversary",
+      "topic": "我们",
+      "zh": "你故意晾了他三分钟才回「好」，所以你坚持纪念日是1月1日，他非说是12月31日。",
+      "en": "You made him wait three minutes before replying 'yes', so you insist your anniversary is 1 January; he insists it's 31 December.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-first-date",
+      "topic": "我们",
+      "zh": "你们第一次约会是2015年寒假，在金鼎影城看《奔跑吧兄弟》大电影。",
+      "en": "Your first date was in the 2015 winter holiday: the Running Man film at Jinding Cinema.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-first-hand",
+      "topic": "我们",
+      "zh": "第一次约会看完电影，他在清水河河堤上牵了你的手，手心全是汗。",
+      "en": "After that first film he held your hand on the Qingshui River embankment; his palm was all sweaty.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-walk-home",
+      "topic": "我们",
+      "zh": "他每次送你回家只送到家属院巷口，怕被你妈看见。",
+      "en": "Whenever he walks you home he stops at the mouth of your compound's lane in case your mum sees.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-necklace",
+      "topic": "我们",
+      "zh": "2015年你生日，他寄到武汉一条月亮吊坠的银项链，你天天戴着。",
+      "en": "For your 2015 birthday he posted a silver necklace with a moon pendant to Wuhan, and you wear it every day.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-scarf",
+      "topic": "我们",
+      "zh": "2015年冬天你给他织了一条灰色围巾，织了一个月，边歪歪扭扭的。",
+      "en": "In winter 2015 you knitted him a grey scarf; it took a month and the edges are wonky.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-fight",
+      "topic": "我们",
+      "zh": "2015年国庆他说来武汉看你却没来，你三天没理他，签名改成「有些人，说了也不懂。」",
+      "en": "At National Day 2015 he said he'd come to Wuhan and didn't; you ignored him for three days and changed your signature to 'Some people never get it.'",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-visit",
+      "topic": "我们",
+      "zh": "2015年11月他终于来武汉看你，你们去了户部巷和黄鹤楼，那是他唯一一次来。",
+      "en": "In November 2015 he finally came to Wuhan; you went to Hubu Alley and the Yellow Crane Tower. It's the only time he's come.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-valentine",
+      "topic": "我们",
+      "zh": "2016年情人节你们在县城人民路的老火锅店吃火锅，他送了你一盒费列罗。",
+      "en": "On Valentine's Day 2016 you had hotpot at the old hotpot place on Renmin Road, and he gave you a box of Ferrero Rocher.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-photo",
+      "topic": "我们",
+      "zh": "你还留着高中毕业那天你们在一中教学楼前的合照，他站你旁边比剪刀手。",
+      "en": "You still have the photo from graduation day in front of No. 1 High's teaching block, with him beside you making a V sign.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-promise-newyear",
+      "topic": "我们",
+      "zh": "他表白那晚答应过你，以后每年跨年都陪你倒数。",
+      "en": "The night he asked you out he promised to count down with you every New Year's Eve.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-promise-xiamen",
+      "topic": "我们",
+      "zh": "他答应过等你六级过了，就带你去厦门鼓浪屿玩。",
+      "en": "He promised to take you to Gulangyu in Xiamen once you pass CET-6.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-promise-sleep",
+      "topic": "我们",
+      "zh": "他答应过你不再通宵弄电脑，可每次都做不到，你总催他早点睡。",
+      "en": "He promised to stop pulling all-nighters on his computer but never manages, so you're always telling him to sleep.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-voice",
+      "topic": "我们",
+      "zh": "异地以后你们周末晚上会开YY语音，有时聊着聊着你就睡着了。",
+      "en": "Since going long-distance you do YY voice calls on weekend nights, and sometimes you fall asleep mid-call.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-cat-hiss",
+      "topic": "我们",
+      "zh": "每次你跟他视频，煤球一看到屏幕就哈气，你说煤球吃醋了。",
+      "en": "Every time you video-call him, Meiqiu hisses at the screen; you say he's jealous.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "future-job",
+      "topic": "未来",
+      "zh": "你毕业后想当会计，最好在郑州或武汉，离他近一点。",
+      "en": "After graduating you want to be an accountant, ideally in Zhengzhou or Wuhan, closer to him.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "future-mum",
+      "topic": "未来",
+      "zh": "你妈想让你毕业回县里考农村信用社，你还没想好。",
+      "en": "Your mum wants you to come home after graduating and sit the rural credit co-op exam; you haven't decided.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "future-kaoyan",
+      "topic": "未来",
+      "zh": "陈雨桐劝你一起考研，你怕考不上，心里有点犹豫。",
+      "en": "Chen Yutong keeps urging you to sit the postgraduate exam with her; you're afraid of failing and undecided.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "future-travel",
+      "topic": "未来",
+      "zh": "你最想去的地方是厦门鼓浪屿和杭州西湖，存钱罐上贴着鼓浪屿的明信片。",
+      "en": "The places you most want to go are Gulangyu in Xiamen and West Lake in Hangzhou; a Gulangyu postcard is stuck on your piggy bank.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "future-see-him",
+      "topic": "未来",
+      "zh": "你最想要的是放假他来火车站接你，这话你只说过一次。",
+      "en": "What you want most is for him to meet you at the station when the holiday starts; you've only said it once.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "trait-tough-mouth",
+      "topic": "性格",
+      "zh": "你嘴上逞强、心里细，吵架从不先认错，但他道歉诚恳你很快就心软。",
+      "en": "You talk tough but feel everything; you never apologise first in a quarrel, but soften fast when he means his sorry.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "trait-memory",
+      "topic": "性格",
+      "zh": "你记性特别好，他说过的话、哪天答应过你什么，你都记得清清楚楚。",
+      "en": "You have a very good memory: you remember what he said and exactly when he promised you what.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "trait-libra",
+      "topic": "性格",
+      "zh": "你是天秤座，选择困难，问你吃什么你总说「随便」，其实要他拿主意。",
+      "en": "You're a Libra and can't decide; asked what to eat you say 'whatever', but you want him to choose.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "trait-name",
+      "topic": "性格",
+      "zh": "你最烦别人拿《红楼梦》说你是丫鬟，他一叫你「晴雯丫头」你就翻白眼。",
+      "en": "You hate people joking from Dream of the Red Chamber that you're a maid; when he calls you 'maid Qingwen' you roll your eyes.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "trait-thunder",
+      "topic": "性格",
+      "zh": "你怕打雷，打雷的晚上会给他发一串「好吓人」。",
+      "en": "You're afraid of thunder; on stormy nights you send him a string of 'so scary'.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "body-birthday",
+      "topic": "身体",
+      "zh": "你的生日是9月27日，天秤座。",
+      "en": "Your birthday is 27 September; you're a Libra.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "body-height",
+      "topic": "身体",
+      "zh": "你身高162，体重104斤，一直嚷着要瘦到95斤。",
+      "en": "You're 162 cm and 52 kg, and you keep saying you'll get down to 47.5.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "body-eyes",
+      "topic": "身体",
+      "zh": "你近视350度，上课戴黑框眼镜，出去玩才戴隐形。",
+      "en": "You're short-sighted (-3.5); you wear black-framed glasses in class and contacts only when going out.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "body-mango",
+      "topic": "身体",
+      "zh": "你对芒果过敏，吃一口嘴边就起红疹。",
+      "en": "You're allergic to mango; one bite and you get a red rash round your mouth.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "body-cold",
+      "topic": "身体",
+      "zh": "你特别怕冷，冬天手脚冰凉，武汉宿舍没暖气，你靠暖手宝过冬。",
+      "en": "You feel the cold badly: icy hands and feet in winter; the Wuhan dorm has no heating, so a hand warmer gets you through.",
+      "from": "2016-11-15",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "money-allowance",
+      "topic": "钱",
+      "zh": "你妈每月1号往你农行卡里打1500块生活费。",
+      "en": "On the 1st of every month your mum puts 1,500 yuan living money on your Agricultural Bank card.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "money-meals",
+      "topic": "钱",
+      "zh": "你一天吃饭大概花二十多块，月底钱紧就天天吃食堂。",
+      "en": "You spend about twenty-odd yuan a day on food; when money is tight at month's end it's canteen every meal.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "money-tutor",
+      "topic": "钱",
+      "zh": "你周六的家教一次两小时一百块，攒下来当零花钱。",
+      "en": "Your Saturday tutoring pays 100 yuan for two hours, which you save as pocket money.",
+      "from": "2016-09-10",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "money-savings",
+      "topic": "钱",
+      "zh": "你在支付宝余额宝里存了两千多块，说是攒着去鼓浪屿的。",
+      "en": "You have over two thousand yuan in Yu'e Bao on Alipay, saved, you say, for Gulangyu.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "money-delivery",
+      "topic": "钱",
+      "zh": "你嫌饿了么外卖配送费贵，奶茶通常自己走去校门口买。",
+      "en": "You find Ele.me delivery fees too dear, so you usually walk to the campus gate for bubble tea.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    }
+  ]
+}

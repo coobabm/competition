@@ -1,0 +1,64 @@
+{
+  "checkedAtUTC": "2026-10-12T16:44:12.1303655Z",
+  "dependencies": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+      "initialSHA256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+      "finalSHA256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+      "initialSHA256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+      "finalSHA256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+      "initialSHA256": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+      "finalSHA256": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoSkin.cs",
+      "initialSHA256": "FD384CD890509D7E290858F3FCCD4ABDCA725B9C17BB4A7FF098EA2C76F277C4",
+      "finalSHA256": "FD384CD890509D7E290858F3FCCD4ABDCA725B9C17BB4A7FF098EA2C76F277C4",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+      "initialSHA256": "72EC7693B86E35AECC778C70044C43DC696B8E44C91B3B82DEB03AC291303938",
+      "finalSHA256": "72EC7693B86E35AECC778C70044C43DC696B8E44C91B3B82DEB03AC291303938",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+      "initialSHA256": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89",
+      "finalSHA256": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Side.cs",
+      "initialSHA256": "A33C59008377337C5C0BA3E73F905C900C1FAC529F7AB05EEEDBB710A4FA4DB0",
+      "finalSHA256": "A33C59008377337C5C0BA3E73F905C900C1FAC529F7AB05EEEDBB710A4FA4DB0",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+      "initialSHA256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+      "finalSHA256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E",
+      "unchanged": true
+    },
+    {
+      "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+      "initialSHA256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+      "finalSHA256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE",
+      "unchanged": true
+    }
+  ],
+  "additionalEvidence": {
+    "note": "Final hash only; no earlier full-file hash was taken.",
+    "sha256": "7238987932349770A100D68FA8B3FC06F5A3BA48315C4B31386804A5E5C7DC40",
+    "path": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs"
+  }
+}

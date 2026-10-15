@@ -25,6 +25,15 @@ namespace LingGuangV05.Core.Hardware
         public bool SoldNew => price > 0 && !rumour;
     }
 
+    /// <summary>A storage listing on 淘货 (节奏重做 §2.2): capacity in real megabytes and the first one's price.</summary>
+    public sealed class DriveModel
+    {
+        public string id = "", name = "", nameEn = "", title = "", titleEn = "", pitch = "", pitchEn = "";
+        public double capacityMB, price;
+        public DateTime release;
+        public int sold;
+    }
+
     /// <summary>
     /// The 2016 hardware timeline (design v1.1 §14.3). Each owned card adds its compute (×, relative to the
     /// 980 Ti the player starts with), VRAM and watts. New cards come out on the in-game calendar
@@ -54,6 +63,22 @@ namespace LingGuangV05.Core.Hardware
         public const int CafeBoxLimit = 8;
         public const double CafeBoxPrice = 1200;
         public static readonly DateTime CafeRelease = new DateTime(2016, 10, 1);
+
+        /// <summary>
+        /// A portable hard drive (节奏重做 §2.2): room for downloaded data. The lab (XgSim.Downloads.cs) keeps the drives
+        /// and buys them; every drive after the first costs <see cref="DrivePriceGrowth"/> times the one before.
+        /// </summary>
+        public static readonly DriveModel PortableDrive = new DriveModel
+        {
+            id = "drive.2tb", name = "2TB 移动硬盘", nameEn = "2TB portable drive", capacityMB = 2000000, price = 450, sold = 5210,
+            release = new DateTime(2016, 1, 1),
+            title = "2TB 移动硬盘 USB3.0 2.5 寸 送硬盘包 全国包邮", titleEn = "2TB portable drive, USB 3.0, 2.5-inch, free pouch and shipping",
+            pitch = "插上就能用，放得下一整个 ImageNet 还有富余。", pitchEn = "Plug and play. Holds all of ImageNet with room to spare.",
+        };
+        public const double DrivePriceGrowth = 1.3;
+
+        /// <summary>淘货's price for the next drive when <paramref name="alreadyBought"/> are owned (whole yuan).</summary>
+        public static double DrivePrice(int alreadyBought) => Math.Round(PortableDrive.price * Math.Pow(DrivePriceGrowth, Math.Max(0, alreadyBought)));
 
         /// <summary>Singles' Day (§14.1): 淘货 takes 20% off every card for the day.</summary>
         public static readonly DateTime SinglesDay = new DateTime(2016, 11, 11);

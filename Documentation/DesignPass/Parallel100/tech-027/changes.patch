@@ -1,0 +1,15 @@
+Target SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+Only label.captcha explanation and effect; name and mystery guards unchanged.
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -119,3 +119,3 @@
+                 case "label.trapmemory": return T(sim, "记住平台用来检查质量的标准答案题。", "Remember known-answer items the platform uses to check quality.");
+-                case "label.captcha": return T(sim, "让数字识别模型帮忙填写验证码。", "Let the digit-recognition model help fill in captchas.");
++                case "label.captcha": return T(sim, "自动替你完成人机验证，不必再手输四位数字。", "Automatically complete the four-digit verification so you do not have to type it.");
+                 default: return null;
+@@ -195,3 +195,3 @@
+                 case "label.trapmemory": return T(sim, "再遇到已记住的金标准题时，转入人工复核，不自动提交。", "Send remembered gold-standard items to human review instead of submitting automatically.");
+-                case "label.captcha": return T(sim, "第三阶段且手写数字检查点 ≥95% 后可购买；验证码会在 3–6 秒后自动提交，仍可能引起平台注意。", "Available at stage 3 with a digits checkpoint ≥95%; captchas are submitted after 3–6 s, which can still attract platform scrutiny.");
++                case "label.captcha": return T(sim, "已购买置信度分流、达到第三阶段且手写数字最佳检查点准确率 ≥95% 后可购买一次，无需装备或再训练。购买后新出现的验证码在 3–6 秒倒计时结束后自动通过；已弹出的不会补代填。每次通过信用 +1（上限100），解除本次验证造成的自动标注暂停。累计第4次代填起，若最近一分钟平均提交速度 >1.5 题/秒，每次有8%概率额外扣10点信用。功能不叠加。", "Buy once after owning confidence-based routing, reaching stage 3 and recording a best digits checkpoint accuracy ≥95%; no equipping or further training is needed. Newly issued captchas pass automatically after a 3–6 s countdown; an already pending captcha is not scheduled retroactively. Each pass adds 1 credit (cap 100) and clears this captcha pause on auto labelling. From the fourth lifetime autofill, each pass has an 8% chance of an extra 10-credit deduction if the last minute averaged >1.5 submitted cards/s. The feature does not stack.");
+                 default: return null;

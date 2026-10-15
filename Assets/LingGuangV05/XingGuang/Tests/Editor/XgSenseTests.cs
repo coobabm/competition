@@ -141,14 +141,14 @@ namespace LingGuangV05.XingGuang.Tests
             var desk = XgCatalog.Desk("sense");
             Assert.IsNotNull(desk); Assert.AreEqual("常识判断", desk.name); Assert.AreEqual("Common sense", desk.nameEn);
             Assert.AreEqual(XgDeskUnlock.Start, desk.unlock);
-            Assert.AreEqual(1, desk.pay, 1e-9); Assert.AreEqual(0, desk.fine, 1e-9, "only 算术 fines");
+            Assert.AreEqual(1, desk.pay, 1e-9); Assert.AreEqual(0, desk.fine, 1e-9, "only 算术 has its own fine");
             Assert.IsTrue(sim.DeskOpen("sense")); Assert.IsTrue(sim.ProgressionDeskAvailable("sense")); Assert.IsTrue(sim.DatasetAvailable("sense"));
             Assert.IsTrue(sim.OpenDesks().Exists(d => d.id == "sense"));
             var data = XgCatalog.Dataset("sense");
             Assert.AreEqual(XgTrack.Sequence, data.track); Assert.IsTrue(data.handLabel);
             Assert.AreEqual(1, XgSim.StageOfDataset("sense"));
             Assert.AreEqual(sim.PayFor("arith", 1), sim.PayFor("sense", 1), 1e-9, "pay factor 1, like 算术");
-            Assert.AreEqual(0, sim.HandFineFor("sense", 3), 1e-9);
+            Assert.AreEqual(XgCatalog.HandFine * sim.ManualPayFor("sense", 3), sim.HandFineFor("sense", 3), 1e-9, "the default half fine");
             Assert.IsTrue(XgSim.IsBrainDesk("sense"));
         }
 
@@ -164,7 +164,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AnswersFeedTheDatasetPayAndNeverFine()
+        public void AnswersFeedTheDatasetPayAndAWrongOneFinesHalf()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             sim.SelectDesk("sense");
@@ -174,9 +174,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, sim.Samples("sense"), 1e-9);
             Assert.AreEqual(before + right.pay, host.money, 1e-9);
             double mid = host.money;
-            var wrong = sim.Answer("sense", !sim.Card("sense").truth, host);
-            Assert.IsFalse(wrong.correct); Assert.AreEqual(0, wrong.fine, 1e-9);
-            Assert.AreEqual(mid, host.money, 1e-9, "a wrong pick costs nothing but the combo");
+            var wrongCard = sim.Card("sense");
+            var wrong = sim.Answer("sense", !wrongCard.truth, host);
+            Assert.IsFalse(wrong.correct); Assert.AreEqual(XgCatalog.HandFine * sim.ManualPayFor("sense", wrongCard.level), wrong.fine, 1e-9);
+            Assert.AreEqual(mid - wrong.fine, host.money, 1e-9, "a wrong pick costs half a right answer's pay");
             for (int i = 0; i < XgCatalog.SamplesToTrain; i++) sim.Answer("sense", sim.Card("sense").truth, host);
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence), "its labels alone unlock training");
         }
@@ -363,6 +364,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TheNoteSendsAnUntrainedLabToTheCommonSenseDeskFirst()
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.desk = "spam"; // a player who has moved on from the starting desk
             sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 300 });
             sim.S.epochs = 5; sim.S.assessments = 1; sim.S.treeIntroDelivered = true;
             sim.S.trainedParamsK = sim.ParamsThreshold(2);

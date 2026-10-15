@@ -26,8 +26,13 @@ namespace LingGuangV05.XingGuang
         public double samples;
         /// <summary>Share of wrong labels (0–1) before 数据清洗.</summary>
         public double noise;
-        /// <summary>Seconds the pack takes to download at the free speed (0 = instant).</summary>
+        /// <summary>
+        /// Game seconds one download of it takes (a public pack: one batch) on 4M ADSL; 0 = arrives at once. Live copies
+        /// from <see cref="XgSim.Offer"/> give the time on the current line. Story copies: 老周's campus link.
+        /// </summary>
         public double downloadSec;
+        /// <summary>Real megabytes of the whole pack (junk: the whole dump; crowd tasks and the crawler: 0).</summary>
+        public double sizeMB;
         /// <summary>Month the offer reaches the shelves (yyyymm, design v1.1 §14).</summary>
         public int month;
         /// <summary>Stage at which the offer can appear.</summary>
@@ -51,6 +56,9 @@ namespace LingGuangV05.XingGuang
         public bool included = true;
         /// <summary>Why it cannot be bought now (empty when it can).</summary>
         public string lockedReason = "", lockedReasonEn = "";
+        /// <summary>Public packs: batches in all, bought and on the disk, and the next batch's price (infinity when all are bought).</summary>
+        public int batches = 1, batchesBought, batchesArrived;
+        public double nextBatchPrice = double.PositiveInfinity;
 
         public XgDataOffer Copy() => (XgDataOffer)MemberwiseClone();
         public string Name(bool english) => english ? nameEn : name;
@@ -92,7 +100,8 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// Data sources (design v1.1 §11.8.3): every dataset can be fed several ways, cheap-but-dirty, slow-but-clean or
     /// expensive-but-good. Pack noise goes straight into R5 (<see cref="NoiseRatio"/>); 数据清洗 halves the noise of
-    /// junk packs and crowd rows. Big packs download over time through 摆渡云 / 迅雷 and can be sped up with ¥.
+    /// junk packs and crowd rows. Packs come down the home broadband through the download queue (XgSim.Downloads.cs)
+    /// and can be sped up with ¥.
     /// </summary>
     public sealed partial class XgSim
     {
@@ -146,7 +155,7 @@ namespace LingGuangV05.XingGuang
                 "字幕组的双语字幕拆成句对，时间轴错位，一半对不上。", "Fansub bilingual subtitles split into pairs; the timings drift and half do not match." },
         };
 
-        /// <summary>Story data: dataset, price, noise, download seconds, month, zh name, en name, zh note, en note, 老周 zh, 老周 en.</summary>
+        /// <summary>Story data: dataset, price, noise, seconds until 老周 brings his copy (links come down the home line instead), month, zh name, en name, zh note, en note, 老周 zh, 老周 en.</summary>
         static readonly object[][] StoryPacks =
         {
             new object[] { "imagenet", 600.0, .005, 150.0, 201609, "ImageNet 学术下载（老周的 edu 邮箱）", "ImageNet academic download (老周's edu mail)",
@@ -156,6 +165,13 @@ namespace LingGuangV05.XingGuang
                 "联合国文件的中英对照，句子工整。今年 5 月刚公开，老周帮你下好了，钱是硬盘和整理的钱。", "Chinese–English UN documents, neat sentence pairs. Made public this May; 老周 downloaded it for you, you pay for the drive and the clean-up.",
                 "联合国今年 5 月公开了中英平行语料，我帮你下好了。比淘货上那些字幕包干净多了。", "The UN released its Chinese–English corpus this May; I downloaded it for you. Much cleaner than the subtitle packs on 淘货." },
         };
+
+        /// <summary>
+        /// Story data that is only a link: it comes down the home line batch by batch (onto the drive its price paid for).
+        /// The others are copies 老周 already has and brings over.
+        /// </summary>
+        static readonly string[] StoryOverHomeLine = { "imagenet.story" };
+        public static bool StoryComesOverHomeLine(string offerId) => Array.IndexOf(StoryOverHomeLine, offerId) >= 0;
 
         static List<XgDataOffer> offerCatalog;
 
@@ -175,7 +191,7 @@ namespace LingGuangV05.XingGuang
                 {
                     id = n.id, datasetId = d.id, source = XgDataSource.Public, node = n.id, name = d.name, nameEn = d.nameEn,
                     description = n.note, descriptionEn = n.noteEn, price = Math.Ceiling(n.cost * StoryResearchPrice), samples = d.samples, noise = noise,
-                    downloadSec = DownloadSeconds(d.samples), stage = n.stage, month = StageMonth(n.stage),
+                    downloadSec = DownloadSecondsAt(BatchMB(d), BroadbandMBps[0]), sizeMB = d.sizeMB, batches = PackBatches(d), stage = n.stage, month = StageMonth(n.stage),
                 });
             }
             foreach (var j in JunkPacks)
@@ -187,7 +203,7 @@ namespace LingGuangV05.XingGuang
                 {
                     id = d.id + ".junk", datasetId = d.id, source = XgDataSource.Junk, name = (string)j[3], nameEn = (string)j[4],
                     description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost * StoryResearchPrice : d.price) * JunkPriceFactor),
-                    samples = samples, noise = (double)j[1], downloadSec = Math.Round(DownloadSeconds(samples) * 1.5),
+                    samples = samples, noise = (double)j[1], sizeMB = d.sizeMB * JunkSampleFactor, downloadSec = DownloadSecondsAt(d.sizeMB * JunkSampleFactor, BroadbandMBps[0] * JunkLineShare),
                     stage = n != null ? n.stage : 1, month = (int)j[2],
                 });
             }
@@ -198,8 +214,8 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = d.id + ".story", datasetId = d.id, source = XgDataSource.Story, node = n.id, price = (double)s[1], noise = (double)s[2],
-                    downloadSec = (double)s[3], month = (int)s[4], name = (string)s[5], nameEn = (string)s[6], description = (string)s[7],
-                    descriptionEn = (string)s[8], samples = d.samples, stage = n.stage,
+                    downloadSec = StoryComesOverHomeLine(d.id + ".story") ? DownloadSecondsAt(d.sizeMB, BroadbandMBps[0]) : (double)s[3], month = (int)s[4], name = (string)s[5], nameEn = (string)s[6], description = (string)s[7],
+                    descriptionEn = (string)s[8], samples = d.samples, sizeMB = d.sizeMB, batches = PackBatches(d), stage = n.stage,
                 });
             }
             foreach (var desk in XgCatalog.Desks)
@@ -242,8 +258,12 @@ namespace LingGuangV05.XingGuang
         /// <summary>The shelves' month: the calendar, or the stage's month if the story has run ahead of the clock.</summary>
         public int CurrentMonth => Math.Max(Today / 100, StageMonth(S.stage));
 
-        /// <summary>Download time through 摆渡云 at the free 100KB/s: small packs are instant, big ones take 20–90 s.</summary>
-        public static double DownloadSeconds(double samples) => samples < BigPackSamples ? 0 : Math.Max(20, Math.Min(90, samples / 20000));
+        /// <summary>Game seconds <paramref name="mb"/> real megabytes take at <paramref name="mbps"/> (0 when it arrives at once).</summary>
+        public static double DownloadSecondsAt(double mb, double mbps)
+        {
+            double t = mb / Math.Max(1e-9, mbps) * DownloadTimeScale;
+            return t <= InstantDownloadSeconds ? 0 : Math.Round(t, 1);
+        }
 
         // ───────────── ownership ─────────────
 
@@ -262,8 +282,8 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// Download key in <see cref="XgState.downloads"/>: public packs keep the dataset id (older saves), and so does
-        /// story data, which is the public pack by another road; junk packs use the offer id.
+        /// Download key in <see cref="XgState.downloadQueue"/>: public packs use the dataset id, and so does story data,
+        /// which is the public pack by another road; junk packs use the offer id.
         /// </summary>
         static string DownloadKey(XgDataOffer o) => o.source == XgDataSource.Public || o.source == XgDataSource.Story ? o.datasetId : o.id;
 
@@ -278,21 +298,20 @@ namespace LingGuangV05.XingGuang
             return false;
         }
 
-        /// <summary>Samples from packs that finished downloading and are switched on (public pack + junk packs; story data stands for the public pack).</summary>
+        /// <summary>
+        /// Samples from packs that are on the disk and switched on: the public pack's arrived batches (story data is the
+        /// whole public pack by another road) and the junk packs.
+        /// </summary>
         public double PackSamples(string dataset)
         {
             var d = XgCatalog.Dataset(dataset);
             if (d == null) return 0;
-            bool full = PackIncluded(dataset + ".pack");
-            bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            double n = publicPack && full ? d.samples : 0;
+            double n = PackIncluded(dataset + ".pack") ? BatchSamples(d) * BatchesArrived(dataset) : 0;
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
-                if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) n += o.samples; }
-                // Story data is the public pack by another road; it only counts if the public one is not already in.
-                else if (o.source == XgDataSource.Story && full && !publicPack) { n += o.samples; publicPack = true; }
+                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || Downloading(DownloadKey(o))) continue;
+                if (PackIncluded(o.id)) n += o.samples;
             }
             return n;
         }
@@ -301,15 +320,18 @@ namespace LingGuangV05.XingGuang
         double PackNoiseRows(string dataset, bool dirtyOnly)
         {
             double rows = 0;
-            bool full = PackIncluded(dataset + ".pack");
-            bool publicPack = S.owned.Contains(dataset) && !Downloading(dataset);
-            if (publicPack && full && !dirtyOnly) { var o = DataOfferDef(dataset + ".pack"); if (o != null) rows += o.samples * o.noise; }
+            var d = XgCatalog.Dataset(dataset);
+            int arrived = BatchesArrived(dataset);
+            if (d != null && arrived > 0 && PackIncluded(dataset + ".pack") && !dirtyOnly)
+            {
+                var o = DataOfferDef(dataset + (StoryOwned(dataset) ? ".story" : ".pack"));
+                if (o != null) rows += BatchSamples(d) * arrived * o.noise;
+            }
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
-                if (o == null || o.datasetId != dataset || Downloading(DownloadKey(o))) continue;
-                if (o.source == XgDataSource.Junk) { if (PackIncluded(o.id)) rows += o.samples * o.noise; }
-                else if (o.source == XgDataSource.Story && full && !publicPack && !dirtyOnly) { rows += o.samples * o.noise; publicPack = true; }
+                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || Downloading(DownloadKey(o))) continue;
+                if (PackIncluded(o.id)) rows += o.samples * o.noise;
             }
             return rows;
         }
@@ -457,10 +479,18 @@ namespace LingGuangV05.XingGuang
             var o = def.Copy();
             o.owned = OfferOwned(id);
             string key = DownloadKey(def);
-            o.downloadLeft = DownloadLeft(key);
-            o.downloading = o.owned && o.downloadLeft > 0;
-            double total = DownloadTotal(key, def);
-            o.downloadProgress = o.downloading ? Math.Max(0, Math.Min(1, 1 - o.downloadLeft / Math.Max(1, total))) : o.owned ? 1 : 0;
+            var queued = def.source == XgDataSource.Crowd || def.source == XgDataSource.Crawl ? null : FirstQueued(key);
+            o.downloadLeft = queued != null ? DownloadLeft(key) : 0;
+            o.downloading = o.owned && queued != null;
+            o.downloadProgress = queued != null ? (queued.sizeMB > 0 ? Clamp01(queued.doneMB / queued.sizeMB) : 1) : o.owned ? 1 : 0;
+            if (StoryComesOverHomeLine(def.id)) o.downloadSec = DownloadSecondsAt(def.sizeMB, LineMBps);
+            if (def.source == XgDataSource.Public || def.source == XgDataSource.Junk)
+                o.downloadSec = DownloadSecondsAt(def.source == XgDataSource.Public ? BatchMB(XgCatalog.Dataset(def.datasetId)) : def.sizeMB, LineMBps * (def.source == XgDataSource.Junk ? JunkLineShare : 1));
+            if (def.source == XgDataSource.Public || def.source == XgDataSource.Story)
+            {
+                o.batchesBought = BatchesBought(def.datasetId); o.batchesArrived = BatchesArrived(def.datasetId);
+                o.nextBatchPrice = def.source == XgDataSource.Public && BatchBlocker(def.datasetId, out _) == null ? NextBatchPrice(def.datasetId) : double.PositiveInfinity;
+            }
             o.effectiveNoise = def.noise * (Has(DataCleanId) && (def.source == XgDataSource.Junk || def.source == XgDataSource.Crowd || def.source == XgDataSource.Crawl) ? CleanNoiseFactor : 1);
             o.included = !PackSwitchable(def) || PackIncluded(PackSwitchKey(def));
             o.isNew = def.month == CurrentMonth;
@@ -468,12 +498,6 @@ namespace LingGuangV05.XingGuang
             o.available = why == null;
             o.lockedReason = why ?? ""; o.lockedReasonEn = whyEn ?? "";
             return o;
-        }
-
-        double DownloadTotal(string key, XgDataOffer def)
-        {
-            foreach (var d in S.downloads) if (d.key == key && d.count > 0) return d.count;
-            return def.downloadSec > 0 ? def.downloadSec : DownloadSeconds(def.samples);
         }
 
         /// <summary>Why the offer cannot be bought now (null when it can; money is not checked).</summary>
@@ -539,7 +563,6 @@ namespace LingGuangV05.XingGuang
             if (def.source == XgDataSource.Public)
             {
                 if (!BuyNode(def.node, host)) return false;
-                if (Downloading(def.datasetId)) SetDownloadTotal(def.datasetId, DownloadLeft(def.datasetId));
                 DataOfferBought?.Invoke(Offer(def.id));
                 return true;
             }
@@ -548,21 +571,34 @@ namespace LingGuangV05.XingGuang
             S.dataOffers.Add(def.id);
             if (def.source == XgDataSource.Story)
             {
-                // The data is the public pack: the node and the dataset count as owned, the download is the campus one.
+                // The data is the whole public pack: the node and the dataset count as owned, every batch is bought. It
+                // lands on the drive its price paid for (no room taken on the lab's disk). A link comes down the home
+                // line batch by batch; a copy 老周 already has is brought over whole.
                 Grant(def.node);
                 if (!S.owned.Contains(def.datasetId)) S.owned.Add(def.datasetId);
-                S.downloads.RemoveAll(x => x.key == def.datasetId);
-                if (def.downloadSec > 0) S.downloads.Add(new XgScore { key = def.datasetId, value = def.downloadSec, count = (int)Math.Ceiling(def.downloadSec) });
-                Say(T("收到老周转来的下载链接：《" + def.name + "》，预计 " + F(def.downloadSec, "0") + " 秒下完。", "老周 forwarded the link: " + def.nameEn + ", about " + F(def.downloadSec, "0") + " s to download."));
+                S.downloadQueue.RemoveAll(x => x.key == def.datasetId);
+                var d = XgCatalog.Dataset(def.datasetId);
+                int all = PackBatches(d);
+                SetCount(S.batchesBought, def.datasetId, all); SetCount(S.batchesArrived, def.datasetId, 0);
+                if (StoryComesOverHomeLine(def.id))
+                {
+                    for (int b = 1; b <= all; b++)
+                        Enqueue(new XgDownload { key = def.datasetId, dataset = def.datasetId, offer = def.id, batch = b, batches = 1, sizeMB = BatchMB(d), samples = BatchSamples(d), ownDrive = true }, false);
+                    Say(T("收到老周转来的下载链接：《" + def.name + "》，" + SizeText(def.sizeMB) + " 走你家宽带，" + BroadbandName(BroadbandTier, false) + " 约 " + ClockText(LineQueueSeconds) + "，分 " + all + " 批到。钱买的那块硬盘专门放它。",
+                          "老周 forwarded the link: " + def.nameEn + ", " + SizeText(def.sizeMB) + " over your own broadband, about " + ClockText(LineQueueSeconds) + " on " + BroadbandName(BroadbandTier, true) + ", in " + all + " batches. The drive the money bought holds it."));
+                }
+                else
+                {
+                    Enqueue(new XgDownload { key = def.datasetId, dataset = def.datasetId, offer = def.id, batches = all, sizeMB = def.sizeMB, samples = def.samples, campus = true, ownDrive = true }, false);
+                    Say(T("老周：《" + def.name + "》我下好了，拷在硬盘里给你拿过来，约 " + ClockText(def.downloadSec) + " 到。", "老周: " + def.nameEn + " is already downloaded; he is bringing it over on a drive, about " + ClockText(def.downloadSec) + "."));
+                }
                 CheckDesks();
             }
             else
             {
-                if (def.downloadSec > 0)
-                {
-                    S.downloads.Add(new XgScore { key = def.id, value = def.downloadSec, count = (int)Math.Ceiling(def.downloadSec) });
-                    Say(T("迅雷：《" + def.name + "》只有 3 个资源，预计 " + F(def.downloadSec, "0") + " 秒下完。", "Thunder: " + def.nameEn + " has 3 sources, about " + F(def.downloadSec, "0") + " s left."));
-                }
+                var x = Enqueue(new XgDownload { key = def.id, dataset = def.datasetId, offer = def.id, sizeMB = def.sizeMB, samples = def.samples }, true);
+                if (x != null)
+                    Say(T("迅雷：《" + def.name + "》只有 3 个资源" + QueueNote(x, false) + "。", "Thunder: " + def.nameEn + " has 3 sources" + QueueNote(x, true) + "."));
                 else Say(T("淘货到手：") + T(def.name, def.nameEn));
                 CheckDesks();
             }
@@ -571,33 +607,18 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        void SetDownloadTotal(string key, double seconds)
-        {
-            foreach (var d in S.downloads) if (d.key == key) d.count = (int)Math.Ceiling(seconds);
-        }
-
-        /// <summary>摆渡云 super-member speed-up for any download: a tenth of the pack's price, at least ¥50.</summary>
+        /// <summary>摆渡云 super-member speed-up for the offer's next queued item: ¥ for the seconds it saves (XgSim.Downloads.cs).</summary>
         public double AccelerateOfferCost(string offerId)
         {
             var def = DataOfferDef(offerId);
-            if (def == null) return 0;
-            return def.source == XgDataSource.Public ? AccelerateCost(def.datasetId) : Math.Max(50, Math.Round(def.price * .1));
+            return def == null ? 0 : AccelerateCost(DownloadKey(def));
         }
 
         public bool AccelerateOffer(string offerId, IXgHost host)
         {
             var def = DataOfferDef(offerId);
-            if (def == null || host == null) return false;
-            string key = DownloadKey(def);
-            if (!Downloading(key)) return false;
-            if (def.source == XgDataSource.Public) return Accelerate(def.datasetId, host);
-            double cost = AccelerateOfferCost(offerId);
-            if (!host.Spend(cost)) { Say(T("经费不足 ¥") + F(cost, "0")); return false; }
-            S.totalSpent += cost;
-            S.downloads.RemoveAll(d => d.key == key);
-            Say(T("开通了一天超级会员，下完了。"));
-            foreach (var run in Runs) if (run.dataset == def.datasetId) Evaluate(run);
-            return true;
+            if (def == null || host == null || def.source == XgDataSource.Crowd || def.source == XgDataSource.Crawl) return false;
+            return Accelerate(DownloadKey(def), host);
         }
 
         /// <summary>Display name of a download key (dataset id or offer id).</summary>
@@ -654,6 +675,7 @@ namespace LingGuangV05.XingGuang
         void TickDataSources(double dt, IXgHost host)
         {
             TickCrowd(dt, host);
+            TickBroadbandBill(host);
             // Story data: 老周 mentions it once, the first time it is on offer.
             foreach (var s in StoryPacks)
             {
@@ -685,6 +707,7 @@ namespace LingGuangV05.XingGuang
                 list.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             S.crowdOn.RemoveAll(id => DataOfferDef(id + ".crowd") == null);
             RepairCrawl();
+            RepairDownloads();
         }
     }
 }

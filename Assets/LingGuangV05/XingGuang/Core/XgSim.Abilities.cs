@@ -46,9 +46,9 @@ namespace LingGuangV05.XingGuang
         /// are easy (经济压力与破产 §1): the model the lab configures from a few cheap width and layer squares, trained a
         /// few rounds, gets there. Ability 6 opens pre-training, whose real gate is the effective scale (XgSim.Finale.cs).
         /// </summary>
-        public static readonly double[] AbilityParamsK = { 0, 0, 6, 60, 170, 290, 320 };
+        public static readonly double[] AbilityParamsK = { 0, 0, 6, 60, 400, 900, 2000 };
         /// <summary>Data threshold of each ability, in effective samples: hand labels plus about one cheap pack per stage.</summary>
-        public static readonly double[] AbilitySamples = { 0, 0, 6000, 60000, 150000, 300000, 600000 };
+        public static readonly double[] AbilitySamples = { 0, 0, 6000, 60000, 400000, 900000, 3200000 };
 
         /// <summary>
         /// The parameter and sample ladder the desks' ceilings are placed on (the thresholds before they were lowered),
@@ -114,8 +114,10 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── the two bars ─────────────
 
-        /// <summary>Trained parameters P (thousands).</summary>
-        public double TrainedParamsK => Finite(S.trainedParamsK) ? Math.Max(0, S.trainedParamsK) : 0;
+        /// <summary>Trained parameters P (thousands): the largest model that counted, plus what the finished books added (XgSim.Books.cs).</summary>
+        public double TrainedParamsK => ModelParamsK + BookParamsK;
+        /// <summary>The model part of P: the largest model graded C or better (thousands).</summary>
+        public double ModelParamsK => Finite(S.trainedParamsK) ? Math.Max(0, S.trainedParamsK) : 0;
 
         /// <summary>
         /// Data D: effective samples of every dataset (packs, labels, crowd rows, logs), minus the noise penalty, each
@@ -165,9 +167,19 @@ namespace LingGuangV05.XingGuang
             return list;
         }
 
+        /// <summary>
+        /// The most the equipped relics together lower an ability line: to this share of it. Four threshold relics
+        /// stacked would otherwise reach a quarter, and the late chapters passed in seconds (bot pacing, 2026-10-15).
+        /// </summary>
+        public const double RelicLineFloor = .6;
+
+        /// <summary>The relics' multiplier on the parameter line, and on the sample line (never below <see cref="RelicLineFloor"/>).</summary>
+        public double RelicParamsFactor => Math.Max(RelicLineFloor, RelicFx.paramsFactor);
+        public double RelicSamplesFactor => Math.Max(RelicLineFloor, RelicFx.samplesFactor);
+
         /// <summary>The parameter threshold of an ability after the items owned (thousands).</summary>
-        public double ParamsThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilityParamsK[ability] * ParamsDiscount(ability) * Math.Max(.2, RelicFx.paramsFactor);
-        public double SamplesThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilitySamples[ability] * SamplesDiscount(ability) * Math.Max(.2, RelicFx.samplesFactor);
+        public double ParamsThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilityParamsK[ability] * ParamsDiscount(ability) * RelicParamsFactor;
+        public double SamplesThreshold(int ability) => ability < 1 || ability > AbilityCount ? 0 : AbilitySamples[ability] * SamplesDiscount(ability) * RelicSamplesFactor;
 
         /// <summary>How full the parameter bar is towards an ability (0–1).</summary>
         public double ParamsProgress(int ability) => BarProgress(TrainedParamsK, ParamsThreshold(ability));
@@ -187,10 +199,10 @@ namespace LingGuangV05.XingGuang
         bool CountTrainedParams(XgRun run, int grade, bool announce)
         {
             if (run == null || grade < TrainedGrade || run.shapeRounds <= 0) return false;
-            double k = TrainedShapeParamsK(run), before = TrainedParamsK;
+            double k = TrainedShapeParamsK(run), before = ModelParamsK, books = BookParamsK;
             if (!Finite(k) || k <= before + 1e-9) return false;
             S.trainedParamsK = k;
-            if (announce) Say(T("练到 C 级，参数算数了：", "Grade C reached, parameters count: ") + ParamsText(before) + " → " + ParamsText(k));
+            if (announce) Say(T("练到 C 级，参数算数了：", "Grade C reached, parameters count: ") + ParamsText(before + books) + " → " + ParamsText(k + books));
             return true;
         }
 

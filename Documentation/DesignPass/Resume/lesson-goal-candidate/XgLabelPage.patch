@@ -1,0 +1,34 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+index 7aea1d7..c897794 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+@@ -22,7 +22,7 @@ namespace LingGuangV05.Desktop.XingGuang
+         const float HallW = 202, SideW = 300, ColumnGap = 10;
+ 
+         RectTransform workspace, body, timerBar, timerFill;
+-        TMP_Text wkTitle, wkRule, qno;
++        TMP_Text wkTitle, wkRule, qno, lessonProgress;
+         RectTransform confidenceRoot, confidenceFill, coopPanel, feedRoot, captionFocus;
+         UnityEngine.UI.Slider threshold;
+         RectTransform previewRoot, previewMemoryRoot, previewMemoryFill;
+@@ -155,6 +155,8 @@ namespace LingGuangV05.Desktop.XingGuang
+             meta = ui.Text(Rect("Meta", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-96, -36)), "", 14, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+             meta.textWrappingMode = TextWrappingModes.NoWrap; meta.overflowMode = TextOverflowModes.Ellipsis;
+             qno = ui.Text(Rect("QuestionNo", body, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-94, -58), new Vector2(-14, -36)), "", 13, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
++            lessonProgress = ui.Text(Rect("LessonProgress", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-14, -36)), "", 16, ZhongbaoSkin.Ink, TextAlignmentOptions.Center);
++            lessonProgress.gameObject.SetActive(false);
+ 
+             paper = Rect("Paper", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -252), new Vector2(224, -66));
+             paperGlow = Glow(paper, XgPalette.Gold, 6);
+@@ -1289,6 +1291,11 @@ namespace LingGuangV05.Desktop.XingGuang
+ 
+         void RefreshSpecialVisibility(bool special)
+         {
++            bool lessonGoal = !special && Sim.TeachMode && Sim.S.stage == 1 && Sim.S.epochs == 0 && Sim.ReviewCard(Sim.S.desk) == null;
++            lessonProgress.gameObject.SetActive(lessonGoal);
++            meta.gameObject.SetActive(!lessonGoal); qno.gameObject.SetActive(!lessonGoal);
++            if (lessonGoal)
++                lessonProgress.text = (int)Math.Max(0, Math.Min(XgCatalog.SamplesToTrain, Sim.Samples(Sim.S.desk))) + "/" + XgCatalog.SamplesToTrain;
+             if (teachingCompanion != null) teachingCompanion.gameObject.SetActive(!special && Sim.TeachMode && Sim.ReviewCard(Sim.S.desk) == null);
+             specialInfo.gameObject.SetActive(special);
+             if (special)

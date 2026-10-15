@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "887a72d55fdb6668cf10401b8ed0b3c857be58d931270ba5ca9aa78011e9063b",
+    "fragments": 25
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "afe02940f404d7041b10233a9b70b4ce09aab1aab7a66b51a1045f7c06dc1df8",
+    "fragments": 3
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs",
+    "sha256": "e6ebbfc22e5639856d62cf3e7f4c8d5247450f98c8611fc9248eb512d01948a8",
+    "fragments": 5
+  }
+]

@@ -22,7 +22,18 @@ namespace HongmengOS.Aero2010
         private readonly List<ButtonManager> contextButtons=new List<ButtonManager>(32);
         private bool raycastersInitialized;
         private bool contextWasOpen;
+        private Image wallpaperImage;
+        private AspectRatioFitter wallpaperFill;
         private Vector2 contextPosition;
+        private bool contextPointerProvided;
+        // The relayed pointer already uses source pixels. Keep this click anchor
+        // instead of sampling a possibly moved physical cursor in LateUpdate.
+        public void AnchorContextMenu(Vector2 sourcePosition)
+        {
+            if (contextMenu == null || !contextMenu.isOn) return;
+            contextPosition = sourcePosition;
+            contextPointerProvided = true;
+        }
         private void Start()
         {
             RefreshRaycasters();
@@ -34,6 +45,10 @@ namespace HongmengOS.Aero2010
                 var manager=FindAnyObjectByType<WallpaperManager>();
                 var target=wallpaper.GetComponent<WallpaperObject>() ?? wallpaper.gameObject.AddComponent<WallpaperObject>();
                 if(manager!=null) manager.AddCachedObject(target,true);
+                wallpaperImage = wallpaper.GetComponent<Image>();
+                wallpaperFill = wallpaper.GetComponent<AspectRatioFitter>() ?? wallpaper.gameObject.AddComponent<AspectRatioFitter>();
+                wallpaperFill.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                FitWallpaper();
             }
             var mark=desktop.Find("Aero Edition Mark");
             if(wallpaper==null||mark==null)return;
@@ -98,14 +113,22 @@ namespace HongmengOS.Aero2010
             var canvas=raycaster.GetComponent<Canvas>();
             if(canvas!=null)canvas.worldCamera=sourceCamera;
         }
+        private void FitWallpaper()
+        {
+            if (wallpaperImage == null || wallpaperFill == null || wallpaperImage.sprite == null) return;
+            var size = wallpaperImage.sprite.rect.size;
+            if (size.y > 0) wallpaperFill.aspectRatio = size.x / size.y;
+        }
         private void LateUpdate()
         {
+            FitWallpaper();
             if(contextMenu==null||contextMenu.contentRect==null)return;
-            if(!contextMenu.isOn){contextWasOpen=false;return;}
+            if(!contextMenu.isOn){contextWasOpen=false;contextPointerProvided=false;return;}
             if(contextWasOpen)return;
             contextWasOpen=true;RefreshRaycasters();
             var mouse=Mouse.current;
-            if(mouse!=null&&inputSurface.TryMap(mouse.position.ReadValue(),out var p))contextPosition=p;
+            if(!contextPointerProvided&&mouse!=null&&inputSurface.TryMap(mouse.position.ReadValue(),out var p))contextPosition=p;
+            contextPointerProvided=false;
             var context=contextMenu.contentRect.parent as RectTransform;
             if(context!=null&&RectTransformUtility.ScreenPointToWorldPointInRectangle((RectTransform)sourceCanvas.transform,contextPosition,sourceCamera,out var world))context.position=world;
             var rect=contextMenu.contentRect;

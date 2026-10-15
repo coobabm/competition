@@ -6,11 +6,31 @@ namespace LingGuangV05.XingGuang
     {
         // Ledger survives save/load. Each real ability pays once, regardless of repeated assessments.
         public int fundedAbility = 1;
+        /// <summary>The 摆渡众包 order tier reached (节奏重做 §2.4): each ability opens the next, paying per second.</summary>
+        public int crowdTier;
     }
 
     public sealed partial class XgSim
     {
-        public static readonly int[] AbilityResearchGrant = { 0, 0, 8000, 12000, 20000, 36000, 80000 };
+        /// <summary>
+        /// ¥ per second the 摆渡众包 orders pay once ability i has been learned (节奏重做 §2.4): the abilities raise a steady
+        /// income instead of handing over one big sum, so each chapter's purchases take time to save up for.
+        /// </summary>
+        public static readonly double[] CrowdTierIncome = { 0, 0, 16, 110, 125, 250, 280 };
+        /// <summary>The one-off welcome payment of a new tier is this many seconds of the tier's income.</summary>
+        public const double WelcomeSeconds = 120;
+        /// <summary>The welcome payment of each ability (index = ability). Declared after <see cref="CrowdTierIncome"/> on purpose.</summary>
+        public static readonly int[] AbilityResearchGrant = WelcomePayments();
+
+        static int[] WelcomePayments()
+        {
+            var g = new int[CrowdTierIncome.Length];
+            for (int i = 0; i < g.Length; i++) g[i] = (int)Math.Round(CrowdTierIncome[i] * WelcomeSeconds);
+            return g;
+        }
+
+        /// <summary>¥ per second of the crowd-order tier reached (before relics; part of <see cref="IncomePerSecond"/>).</summary>
+        public double CrowdOrderIncome => CrowdTierIncome[Math.Max(0, Math.Min(AbilityCount, S.crowdTier))];
 
         // One clear route for a new player; every other architecture remains available in the tree.
         public XgNode NextStudyNode()
@@ -54,12 +74,14 @@ namespace LingGuangV05.XingGuang
             int reached = AbilitiesCount;
             for (int i = Math.Max(2, S.fundedAbility + 1); i <= reached; i++)
             {
+                double before = CrowdOrderIncome;
+                S.crowdTier = Math.Max(S.crowdTier, i);
                 int amount = AbilityResearchGrant[i];
                 host.Earn(amount);
                 S.totalIncome += amount;
                 S.fundedAbility = i;
-                Say(T("众包绩效结算 +¥", "Crowd-work milestone payment +¥") + amount
-                    + T(" · 去科技升级，再回来教它新东西。", " · Upgrade the model, then teach it something new."));
+                Say(T("摆渡众包升级：它学会了「" + AbilityName(i, false) + "」，平台给你开了第 " + (i - 1) + " 档订单，每秒 ¥" + F(CrowdOrderIncome, "0") + "（原来 ¥" + F(before, "0") + "）。见面礼 +¥" + amount + "。钱按秒进账，攒够了再去科技升级。",
+                      "Bodu Crowd upgrade: it learned '" + AbilityName(i, true) + "', so the platform opened order tier " + (i - 1) + " for you: ¥" + F(CrowdOrderIncome, "0") + "/s (was ¥" + F(before, "0") + "/s). Welcome bonus +¥" + amount + ". The money comes in by the second; save up, then upgrade the model."));
             }
         }
     }

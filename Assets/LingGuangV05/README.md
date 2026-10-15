@@ -80,6 +80,24 @@ YY 从未修改的 `2010desktop` 原生 Messaging 组件树恢复，保留了 Ma
 - 再次启动按同一模拟规则结算最多 30 分钟离线时间（含电费）；结算后立即写入时间锚点，避免重复领取；时间回拨不产生收益。
 - 所有本章 AI 答案/置信度为可复现的规则模拟。不下载模型、不联网、不调用付费服务、不执行系统命令。
 
+## 本地模型（LLM for Unity）
+
+自由聊天、判题和灵光说话用的是本地 Qwen3.5-4B。现在由 LLM for Unity（`ai.undream.llm` 3.0.3，底层 LlamaLib v2.0.5）在游戏进程内运行，不再启动 llama-server 子进程。代码在 `LocalLLM/LocalLlm.cs`。排队、按角色分槽、预热、超时和 GPU→CPU 降级的规则在 `Core/Chat/LlmScheduling.cs`，这些都跟以前一样。
+
+- 运行库：第一次打开工程时，LLM for Unity 会把 LlamaLib 下载到 `Assets/StreamingAssets/LlamaLib-v2.0.5/`（约 1.7 GB，已 gitignore）。打包时它自己只留目标平台；Windows 包里的 GPU 库由 `LocalLLM/Editor/LlamaBuildStrip.cs` 删掉，因为 Windows 只走 CPU。
+- 模型：`StreamingAssets/LingGuang/Models/Qwen_Qwen3.5-4B-Q4_K_M.gguf`。LlamaLib 的 llama.cpp 是 2026-03 的版本，不认新版 GGUF 里的 MTP（nextn）层，会报 `missing tensor 'blk.32.ssm_conv1d.weight'`。用 `Tools/LocalLLM/strip_qwen_mtp.py` 去掉这一层，其余权重原样复制（用法写在脚本开头）。
+- 已知限制：llama.cpp 原生层如果 abort，会连游戏一起退出（以前只是子进程退出，然后自动重启）。LlamaLib 的 `apply_template` 不能并发，所以 `LocalLlm` 给它加了锁。`SixStageParallelQa` 通过 LlamaLib 自带的 HTTP 服务读 `/props`（POST），slot 占用改从 `LocalLlm.NativeCallsInFlight` 读。
+
+## 检索（RAG）：晴雯和灵光的记忆
+
+回复之前，游戏先找出和对方最新一句相关的几条资料，放进这一轮的状态块。系统提示词不变，所以前缀缓存照常生效。
+
+- 打分：`Core/Chat/Rag.cs` 的 `HybridScorer`，用 BM25 加向量余弦。语义相近（余弦 ≥ .46）就算相关；字面命中但意思无关（余弦 < .36）就过滤掉。没有向量时退回纯 BM25。
+- 向量模型：Qwen3-Embedding-0.6B（`StreamingAssets/LingGuang/Embedding/*.gguf`，已 gitignore），由 `LocalLLM/LocalEmbedder.cs` 在进程内单开一个 LlamaLib 服务、一条工作线程。向量缓存在 `persistentDataPath/LingGuangV05/embeddings-*.bin`。发问前会先算问句的向量，最多等 1.5 秒；资料在后台计算，还没算好的条目先只用 BM25。
+- 知识库：`Resources/LingGuang/Rag/qingwen.json` 是晴雯的生活设定，`era2016.json` 是 2016 年的常识和新闻。每条带 `from`/`until`（游戏内日期），过期或还没发生的不会被检索到。可以直接改 JSON。
+- 晴雯：每轮带 3 条自身设定、1 条时代常识、2 段窗口之外的旧聊天。实现在 `GirlfriendPromptText.Knowledge` 和 `GirlfriendPrompt.Recall`。
+- 灵光：`XingGuang/Core/XgSim.Knowledge.cs`。从阶段 3 起能检索被教过的卡和时代新闻，阶段 4 起加上读过的书（按回目和概要检索），阶段 5 起加上和主人的旧对话。研究「词向量」之后才按意思检索，之前只按字面。
+
 ## 工程结构
 
 - `/Users/kk/competition/Assets/LingGuangV05/Core/`：无 Unity 引用的模拟、题卡、拓扑、经济与考试；参数集中在 `Models.cs` 的 `GameConfig`。

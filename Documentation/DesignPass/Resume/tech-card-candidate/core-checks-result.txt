@@ -1,0 +1,6 @@
+Command: dotnet run --project Documentation/DesignPass/Resume/tech-card-candidate/core-checks/CardChecks.csproj --configuration Release
+Exit code: 0
+PASS 2928 assertions; all cards, both languages, mystery/atlas states and chain levels
+
+Existing compiler warning: Assets/LingGuangV05/XingGuang/Core/XgSim.DayStats.cs(33,17), CS1718 (same-variable comparison).
+No Unity process was launched and no player save was accessed.

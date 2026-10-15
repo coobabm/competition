@@ -75,8 +75,8 @@ namespace LingGuangV05.XingGuang
         public static readonly string[] MemorySubjects = { "主人", "晴雯", "老周", "它自己", "世界" };
         public static readonly string[] MemorySubjectsEn = { "owner", "Qingwen", "Lao Zhou", "itself", "world" };
 
-        /// <summary>The similarity seam: BM25 today, an embedding scorer later.</summary>
-        public IMemoryScorer MemoryScorer = new Bm25Scorer();
+        /// <summary>The similarity seam: BM25, plus meaning once it has 词向量 and the embedding model runs (XgSim.Knowledge.cs).</summary>
+        public IMemoryScorer MemoryScorer = new HybridScorer();
 
         public List<XgMemoryEntry> MemoryBook => S.memoryBook;
         public bool MemoryOpen => S.stage >= MemoryFirstStage;
@@ -317,7 +317,7 @@ namespace LingGuangV05.XingGuang
             DateUndatedMemories();
             var docs = new List<string>(); var importance = new List<int>(); var ages = new List<double>();
             foreach (var e in S.memoryBook) { docs.Add(e.text); importance.Add(e.importance); ages.Add(MemoryAgeDays(e)); }
-            foreach (int i in MemoryRanker.Rank(MemoryScorer, MemoryQuery.Of(latest, previous), docs, count, importance, ages)) found.Add(S.memoryBook[i]);
+            foreach (int i in MemoryRanker.Rank(RecallScorer(), MemoryQuery.Of(latest, previous), docs, count, importance, ages)) found.Add(S.memoryBook[i]);
             if (touch)
             {
                 string key = (latest ?? "") + "\n" + (previous ?? "");

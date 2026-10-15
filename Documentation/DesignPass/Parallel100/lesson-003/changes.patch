@@ -1,0 +1,148 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+@@ -86,8 +86,12 @@
+         public int AnswerCount { get; private set; }
+         /// <summary>The latest answer went against the checkpoint's guess shown on the card.</summary>
+         public bool LastAnswerDisagreed { get; private set; }
+         bool shownGuessValid, shownGuess, shownTeachingEvaluation;
++        XgSim lessonPresentedSim;
++        long lessonPresentedId;
++        bool lessonPresented, lessonPresentedGuess;
++        int lessonPresentedFrame = -1;
+         /// <summary>A shown guess the spider may submit; teaching evaluations belong to the player.</summary>
+         public bool HasShownGuess => shownGuessValid && !shownTeachingEvaluation && Mode == 0;
+         public bool ShownGuessYes => shownGuess;
+         /// <summary>The 是 / 否 (算术: 对 / 错) buttons, for the spider's leg to reach.</summary>
+@@ -183,10 +187,12 @@
+             suggestion = ui.Text(Strip("Suggestion", body, 296, 50), "", 15, XgPalette.Accent, TextAlignmentOptions.Top);
+             suggestion.fontStyle = FontStyles.Bold;
+             confidenceRoot = Strip("Confidence", body, 350, 4, 60, 60);
+             confidenceFill = Bar(confidenceRoot, "Fill", XgPalette.Line, XgPalette.Accent);
+-            yes = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(true), 24, new Color32(203, 210, 230, 255));
+-            no = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(false), 24, new Color32(203, 210, 230, 255));
++            yes = ZhongbaoSkin.Outlined(ui, body, "", null, 24, new Color32(203, 210, 230, 255));
++            no = ZhongbaoSkin.Outlined(ui, body, "", null, 24, new Color32(203, 210, 230, 255));
++            yes.button.gameObject.AddComponent<XgLessonAnswerInput>().Bind(yes.button, () => CaptureAnswer(true));
++            no.button.gameObject.AddComponent<XgLessonAnswerInput>().Bind(no.button, () => CaptureAnswer(false));
+             var yesFrame = ZhongbaoSkin.Frame(yes); var noFrame = ZhongbaoSkin.Frame(no);
+             yesFrame.name = "AnswerYes"; noFrame.name = "AnswerNo";
+             yesFrame.anchorMin = yesFrame.anchorMax = new Vector2(.5f, 1); yesFrame.offsetMin = new Vector2(-214, -422); yesFrame.offsetMax = new Vector2(-8, -368);
+             noFrame.anchorMin = noFrame.anchorMax = new Vector2(.5f, 1); noFrame.offsetMin = new Vector2(8, -422); noFrame.offsetMax = new Vector2(214, -368);
+@@ -351,10 +357,31 @@
+         }
+ 
+         // ───────────── answering ─────────────
+ 
++        // Mouse input belongs to the view at pointer-down, even if a refresh occurs before release.
++        Action CaptureAnswer(bool answer)
++        {
++            var owner = displayedSim;
++            int mode = displayedMode;
++            long id = displayedId;
++            string desk = Desk;
++            bool teaching = shownTeachingEvaluation, guess = shownGuess, valid = shownGuessValid;
++            bool wasPresented = !teaching || Time.frameCount > lessonPresentedFrame;
++            return () =>
++            {
++                if (!wasPresented || (teaching || shownTeachingEvaluation) &&
++                    (owner != displayedSim || mode != displayedMode || id != displayedId || desk != Desk ||
++                     teaching != shownTeachingEvaluation || guess != shownGuess || valid != shownGuessValid))
++                { Refresh(); return; }
++                OnAnswer(answer);
++            };
++        }
++
+         void OnAnswer(bool answer)
+         {
++            // Refresh updates labels synchronously; they have not rendered until the next frame.
++            if (shownTeachingEvaluation && Time.frameCount <= lessonPresentedFrame) { Refresh(); return; }
+             if (displayedSim != Sim || displayedMode != Mode) { Refresh(); return; }
+             if (Mode != 0) { AnswerSpecial(answer); return; }
+             string desk = Desk;
+             var card = CurrentCard;
+@@ -529,9 +556,9 @@
+             displayedSim = Sim; displayedMode = Mode;
+             RefreshSpecialVisibility(special);
+             RefreshFeed();
+             RefreshHall(special);
+-            if (special) { RefreshSpecial(); LayoutSide(true, 0); return; }
++            if (special) { lessonPresented = false; RefreshSpecial(); LayoutSide(true, 0); return; }
+             var card = CurrentCard;
+             if (card.id != displayedId) { displayedId = card.id; translationTime = 0; translationFadeCount = -1; }
+             var kind = info.kind;
+             bool dedicatedPreview = HasPreviewSurface(card);
+@@ -629,8 +656,12 @@
+             else if (Sim.S.stage == 1 && card.kind == "combo" && card.judgeSource != "brain") hasGuess = Sim.TryGetComboSuggestion(card, out guess, out confidence);
+             else hasGuess = Sim.Suggestion(desk, out guess, out confidence);
+             shownGuessValid = hasGuess; shownGuess = guess;
+             bool teaching = !queued && Sim.TeachingGuess(card, out _);
++            if (teaching && (!lessonPresented || lessonPresentedSim != Sim || lessonPresentedId != card.id || lessonPresentedGuess != guess))
++                lessonPresentedFrame = Time.frameCount;
++            lessonPresented = teaching; lessonPresentedSim = Sim;
++            lessonPresentedId = card.id; lessonPresentedGuess = guess;
+             shownTeachingEvaluation = teaching;
+             suggestion.text = hasGuess
+                 ? Sim.AiDisplayName + T("：", ": ") + YesNoWord(guess) + "？ " + XgSim.Pct(confidence)
+                     + "  (" + (queued && card.judgeSource == "brain" ? Lang.T("本地模型") : Lang.T("检查点估计")) + ")"
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
+@@ -168,10 +168,10 @@
+         {
+             if (captchaCard != null && captchaCard.Visible) return;
+             var kb = UnityEngine.InputSystem.Keyboard.current;
+             if (kb == null || !host.Visible || host.Tab != "label" || !FrontWindow() || Typing()) return;
+-            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) { if (yes.button.interactable && yes.button.gameObject.activeInHierarchy) yes.button.onClick.Invoke(); }
+-            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) { if (no.button.interactable && no.button.gameObject.activeInHierarchy) no.button.onClick.Invoke(); }
++            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) { if (yes.button.interactable && yes.button.gameObject.activeInHierarchy) OnAnswer(true); }
++            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) { if (no.button.interactable && no.button.gameObject.activeInHierarchy) OnAnswer(false); }
+         }
+ 
+         bool FrontWindow()
+         {
+--- /dev/null
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLessonAnswerInput.cs
+@@ -0,0 +1,44 @@
++using System;
++using UnityEngine;
++using UnityEngine.EventSystems;
++using UnityEngine.UI;
++
++namespace LingGuangV05.Desktop.XingGuang
++{
++    // Button retains its visuals/navigation; this component owns answer dispatch.
++    // No callback runs on pointer-down, and canceled presses cannot submit a lesson.
++    public sealed class XgLessonAnswerInput : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, ISubmitHandler
++    {
++        Button button;
++        Func<Action> capture;
++        Action pending;
++        int pointerId;
++
++        public void Bind(Button target, Func<Action> snapshot) { button = target; capture = snapshot; }
++        bool Ready => button != null && button.IsActive() && button.IsInteractable() && capture != null;
++
++        public void OnPointerDown(PointerEventData data)
++        {
++            if (data.button != PointerEventData.InputButton.Left) return;
++            pending = null;
++            if (!Ready) return;
++            pointerId = data.pointerId;
++            pending = capture();
++        }
++
++        public void OnPointerClick(PointerEventData data)
++        {
++            if (data.button != PointerEventData.InputButton.Left || data.pointerId != pointerId) return;
++            var submit = pending;
++            pending = null; // Consume before dispatch, including reentrant callbacks.
++            if (Ready) submit?.Invoke();
++        }
++
++        public void OnSubmit(BaseEventData data)
++        {
++            if (Ready) capture()?.Invoke();
++        }
++
++        void OnDisable() { pending = null; }
++    }
++}

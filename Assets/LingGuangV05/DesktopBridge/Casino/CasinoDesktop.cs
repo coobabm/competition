@@ -67,6 +67,9 @@ namespace LingGuangV05.Desktop.Casino
         public static bool OpenAddress(string address)
         {
             if (!CasinoRules.IsAddress(address) || Instance == null) return false;
+            // 888 opens at stage 5 (名词简化与训练页减负策划 §1.6); before that the address is just an ordinary search.
+            var lab = Instance.controller != null ? Instance.controller : FindAnyObjectByType<XingGuangController>();
+            if (lab != null && lab.Sim != null && !lab.Sim.SystemUnlocked("casino")) return false;
             return Instance.OpenSite();
         }
 
@@ -107,7 +110,7 @@ namespace LingGuangV05.Desktop.Casino
             if (!ReferenceEquals(sim, bound)) { bound = sim; if (ad != null) Destroy(ad.gameObject); ad = null; }
             bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
             sim.AdvanceCasinoAd(Mathf.Min(Time.unscaledDeltaTime, 2), held);
-            bool show = !held && sim.S.stage >= 3 && !sim.S.chapterComplete && sim.Casino.adVisible;
+            bool show = !held && sim.SystemUnlocked("casino") && !sim.S.chapterComplete && sim.Casino.adVisible;
             if (!show) { if (ad != null) ad.gameObject.SetActive(false); return; }
             if (ad != null && english != GameText.IsEnglish) { Destroy(ad.gameObject); ad = null; }
             if (ad == null) BuildAd();

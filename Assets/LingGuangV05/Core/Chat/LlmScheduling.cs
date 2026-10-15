@@ -11,11 +11,11 @@ namespace LingGuangV05.Core.Chat
     /// <summary>Visible: the player is waiting for this reply. Background: nobody is watching (judges, comments, memory).</summary>
     public enum LlmLane { Visible = 0, Background = 1 }
 
-    /// <summary>How the owned llama-server is started. Each failed start falls to the next, more conservative mode.</summary>
+    /// <summary>How the owned model service is started. Each failed start falls to the next, more conservative mode.</summary>
     public enum LlmLaunchMode { Gpu = 0, GpuPlainCache = 1, Cpu = 2 }
 
     /// <summary>
-    /// Pure policy for the local model service (LocalLlm): server flags, slot routing, queue priority and timeouts.
+    /// Pure policy for the local model service (LocalLlm): service flags, slot routing, queue priority and timeouts.
     /// Kept free of Unity so the rules can be tested on their own.
     /// </summary>
     public static class LlmScheduling
@@ -27,7 +27,8 @@ namespace LingGuangV05.Core.Chat
         public const int CacheRamMiB = 2048;
         /// <summary>
         /// Qwen3.5 is a hybrid (recurrent + attention) model: a prompt can only be resumed from a saved checkpoint, and
-        /// llama.cpp saves one at the start of the last user message. A small spacing lets every turn leave one behind.
+        /// llama.cpp saves one at the start of the last user message. A small spacing lets every turn leave one behind
+        /// (the spacing is llama.cpp's built-in minimum in the LlamaLib build; it is not passed as a flag).
         /// </summary>
         public const int CheckpointsPerSlot = 6, CheckpointSpacing = 64;
         public const float VisibleTimeout = 20, BackgroundTimeout = 40, SlowFactor = 3;
@@ -87,14 +88,16 @@ namespace LingGuangV05.Core.Chat
             (lane == LlmLane.Visible ? VisibleTimeout : BackgroundTimeout) * (slow ? SlowFactor : 1);
 
         /// <summary>
-        /// llama-server arguments. GPU modes leave the layer count unset so llama.cpp's --fit offloads as many layers
-        /// as fit in video memory and keeps the rest on the CPU (fit only adjusts arguments that were not given).
+        /// llama.cpp server-style arguments for the in-process LlamaLib service (LLM for Unity parses them with
+        /// llama.cpp's own server parser). GPU modes leave the layer count unset so llama.cpp's --fit offloads as many
+        /// layers as fit in video memory and keeps the rest on the CPU (fit only adjusts arguments that were not given).
         /// GpuPlainCache drops the quantized KV cache for GPUs whose flash attention cannot take it; Cpu uses no GPU.
+        /// No host / port / log file: the service is called directly, and its log comes through LlamaLib's callback.
         /// </summary>
-        public static string ServerArgs(LlmLaunchMode mode, string model, int port, int slots, string logPath = null)
+        public static string ServiceArgs(LlmLaunchMode mode, string model, int slots)
         {
             var sb = new StringBuilder();
-            sb.Append("-m \"").Append(model).Append("\" --host 127.0.0.1 --port ").Append(port.ToString(CultureInfo.InvariantCulture))
+            sb.Append("-m \"").Append(model).Append('"')
               .Append(" -c ").Append((SlotContext * slots).ToString(CultureInfo.InvariantCulture))
               .Append(" -np ").Append(slots.ToString(CultureInfo.InvariantCulture));
             if (mode == LlmLaunchMode.Cpu) sb.Append(" --n-gpu-layers 0 --device none --fit off");
@@ -102,12 +105,10 @@ namespace LingGuangV05.Core.Chat
             sb.Append(" --flash-attn auto");
             if (mode != LlmLaunchMode.GpuPlainCache) sb.Append(" --cache-type-k q8_0 --cache-type-v q8_0");
             sb.Append(" --cache-reuse 256 --cache-ram ").Append(CacheRamMiB.ToString(CultureInfo.InvariantCulture))
+              // LlamaLib v2.0.5's llama.cpp (2026-03) has no --checkpoint-min-step: it spaces checkpoints 64 tokens
+              // apart itself, which is CheckpointSpacing, so the flag would change nothing.
               .Append(" --ctx-checkpoints ").Append(CheckpointsPerSlot.ToString(CultureInfo.InvariantCulture))
-              .Append(" --checkpoint-min-step ").Append(CheckpointSpacing.ToString(CultureInfo.InvariantCulture))
-              .Append(" --jinja --reasoning-budget 0")
-              // Verbosity 4 is where this build prints "offloaded N/M layers to GPU"; the output is read and dropped.
-              .Append(" --verbosity 4");
-            if (!string.IsNullOrEmpty(logPath)) sb.Append(" --log-file \"").Append(logPath).Append('"');
+              .Append(" --jinja --reasoning-budget 0");
             return sb.ToString();
         }
 
@@ -120,7 +121,7 @@ namespace LingGuangV05.Core.Chat
 
         static readonly Regex Offloaded = new Regex(@"offloaded (\d+)/(\d+) layers to GPU", RegexOptions.CultureInvariant);
 
-        /// <summary>Reads llama.cpp's "offloaded N/M layers to GPU" log line.</summary>
+        /// <summary>Reads llama.cpp's "offloaded N/M layers to GPU" log line (arrives through LlamaLib's log callback).</summary>
         public static bool TryParseOffload(string line, out int onGpu, out int total)
         {
             onGpu = total = 0;
@@ -132,6 +133,28 @@ namespace LingGuangV05.Core.Chat
             return true;
         }
 
+        /// <summary>The empty reasoning block that closes thinking before the assistant's answer (Qwen chat format).</summary>
+        public const string ClosedThinking = "<think>\n\n</think>\n\n";
+        /// <summary>What the assistant turn starts with when the model should reason first.</summary>
+        public const string OpenThinking = "<think>\n";
+
+        static readonly Regex TrailingClosedThinking = new Regex(@"<think>\s*</think>\s*$", RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// The service applies the chat template with thinking off (one setting for every slot). LlamaLib's template
+        /// leaves the closed block as "&lt;think&gt;\n&lt;/think&gt;" with no blank line after it, so the model's first token
+        /// would be "\n\n" (a one-token judge would read that instead of 是/否): it is rewritten to
+        /// <see cref="ClosedThinking"/>. A request that wants thinking (design v1.1 §11.5: stage 6's full open) gets
+        /// <see cref="OpenThinking"/> instead. A prompt without the block is left alone.
+        /// </summary>
+        public static string WithThinking(string templated, bool thinking)
+        {
+            if (string.IsNullOrEmpty(templated)) return templated;
+            var m = TrailingClosedThinking.Match(templated);
+            if (!m.Success) return templated;
+            return templated.Substring(0, m.Index) + (thinking ? OpenThinking : ClosedThinking);
+        }
+
         /// <summary>Player-facing note for a model that does not run fully on the GPU; empty when it does.</summary>
         public static string SlowNotice(LlmLaunchMode mode, int onGpu, int total, bool english)
         {
@@ -141,10 +164,5 @@ namespace LingGuangV05.Core.Chat
                 return english ? "Not enough video memory: part of the model runs in system memory, replies will be slower." : "显存不够，部分在内存里跑，会慢一些";
             return "";
         }
-
-        /// <summary>A chat body with the slot pin inserted (the body is a JSON object ending in '}').</summary>
-        public static string WithSlot(string body, int slot) =>
-            slot < 0 || string.IsNullOrEmpty(body) || body[body.Length - 1] != '}' ? body
-                : body.Substring(0, body.Length - 1) + ",\"id_slot\":" + slot.ToString(CultureInfo.InvariantCulture) + "}";
     }
 }

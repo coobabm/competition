@@ -46,6 +46,13 @@ namespace LingGuangV05.CaseMenu
 
         public void SetStable() => SetBootElapsed(4.2f);
 
+        // Let the menu fade the existing voice without restarting an already silent fan.
+        public void ReleaseForShutdown()
+        {
+            started = false;
+            gameplayStopAt = double.NaN;
+        }
+
         public void BeginGameplayCountdown()
         {
             if (!started || source == null || !double.IsNaN(gameplayStopAt)) return;

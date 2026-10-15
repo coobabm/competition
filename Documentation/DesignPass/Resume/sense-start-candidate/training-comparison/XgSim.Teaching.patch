@@ -1,0 +1,77 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs b/Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs
+index c286a96..3dd34d1 100644
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs
+@@ -70,7 +70,7 @@ namespace LingGuangV05.XingGuang
+             trace = null;
+             if (!TeachMode || card == null || card.kind == "shutdown" || card.family || card.law || XgCatalog.Dataset(card.dataset) == null) return false;
+             if (S.checkups == null) S.checkups = new List<XgCheckup>();
+-            if (S.checkups.Count == 0) AddCheckup(FixedCheckup(1, "spam"), "spam", false);
++            if (!S.checkups.Exists(c => c.dataset == card.dataset && !c.taught)) AddCheckup(FixedCheckup(card.dataset), card.dataset, false);
+             var boardCard = XgBoardData.FromCard(card);
+             var knobs = Knobs(Run(XgCatalog.Dataset(card.dataset).track));
+             guess = captureTrace ? Board.Predict(boardCard, knobs, out _, out trace) : Board.Predict(boardCard, knobs, out _);
+@@ -102,8 +102,8 @@ namespace LingGuangV05.XingGuang
+             if (!TeachMode) return;
+             if (S.checkups == null) S.checkups = new List<XgCheckup>();
+             // Fixed seed, difficulty and date: a changed answer must come from the brain, not a new question.
+-            string dataset = new[] { "spam", "mnist", "poems", "danmu", "longtext", "logic" }[Math.Max(0, Math.Min(5, S.stage - 1))];
+-            var fixedCard = FixedCheckup(S.stage, dataset);
++            string dataset = assessment.dataset;
++            var fixedCard = FixedCheckup(dataset);
+             AddCheckup(fixedCard, dataset, false);
+             if (S.recentCorrections != null)
+             {
+@@ -111,22 +111,21 @@ namespace LingGuangV05.XingGuang
+                 for (int i = S.recentCorrections.Count - 1, n = 0; i >= 0 && n < 3; i--)
+                 {
+                     var c = S.recentCorrections[i];
+-                    if (!seen.Add(c.question)) continue;
++                    if (c.dataset != dataset || !seen.Add(c.question)) continue;
+                     AddCheckup(c.Card(), c.dataset, true);
+                     n++;
+                 }
+             }
+-            while (S.checkups.Count > CheckupMemory) S.checkups.RemoveAt(0);
+         }
+ 
+-        static XgBoardCard FixedCheckup(int stage, string dataset)
++        static XgBoardCard FixedCheckup(string dataset)
+         {
+             XgCard source = null;
+-            if (stage == 1) source = new XgCard { dataset = "spam", seed = 9137, truth = true, question = "恭喜您中奖，请点击领取", level = 1 };
+-            else if (stage == 2) source = new XgCard { dataset = "mnist", seed = 9137, truth = true, digit = 0, asked = 0, level = 1 };
+-            else if (stage == 3) source = new XgCard { dataset = "poems", seed = 9137, truth = true, line = "疑是地上霜", shown = 4, askedChar = "霜", level = 1 };
++            if (dataset == "spam") source = new XgCard { dataset = "spam", seed = 9137, truth = true, question = "恭喜您中奖，请点击领取", level = 1 };
++            else if (dataset == "mnist") source = new XgCard { dataset = "mnist", seed = 9137, truth = true, digit = 0, asked = 0, level = 1 };
++            else if (dataset == "poems") source = new XgCard { dataset = "poems", seed = 9137, truth = true, line = "疑是地上霜", shown = 4, askedChar = "霜", level = 1 };
+             var card = source == null ? XgBoardData.Make(dataset, 9137, 1, 20160524) : XgBoardData.FromCard(source);
+-            card.text = stage == 1 ? "这条短信是诈骗吗：恭喜您中奖，请点击领取" : stage == 2 ? "这张手写数字是 0 吗？" : stage == 3 ? "床前明月光，疑是地上__，填「霜」吗？" : !string.IsNullOrEmpty(card.text) ? card.text : "判断「" + XgCatalog.Dataset(dataset).name + "」中的固定样本";
++            card.text = dataset == "spam" ? "这条短信是诈骗吗：恭喜您中奖，请点击领取" : dataset == "mnist" ? "这张手写数字是 0 吗？" : dataset == "poems" ? "床前明月光，疑是地上__，填「霜」吗？" : !string.IsNullOrEmpty(card.text) ? card.text : !string.IsNullOrEmpty(card.source?.question) ? card.source.question : "判断「" + XgCatalog.Dataset(dataset).name + "」中的固定样本";
+             return card;
+         }
+ 
+@@ -151,16 +150,20 @@ namespace LingGuangV05.XingGuang
+             S.checkups.Add(new XgCheckup { stage = S.stage, assessment = S.assessments, dataset = dataset,
+                 question = string.IsNullOrEmpty(card.text) ? XgCatalog.Dataset(dataset).name : card.text,
+                 answer = answer ? "是" : "否", correct = answer == card.truth, taught = taught });
++            while (S.checkups.Count > CheckupMemory) S.checkups.RemoveAt(0);
+         }
+ 
+-        public string CheckupText(bool history = false)
++        public string CheckupText(bool history = false, string dataset = null)
+         {
+-            if (S.checkups == null || S.checkups.Count == 0) return T("教它 4 张卡，再训练一轮。练完让它当面答给你看。", "Teach four cards, then train. It will answer in front of you.");
++            int latest = -1;
++            if (S.checkups != null) foreach (var c in S.checkups)
++                if (dataset == null || c.dataset == dataset) latest = c.assessment;
++            if (latest < 0) return T("教它 4 张卡，再训练一轮。练完让它当面答给你看。", "Teach four cards, then train. It will answer in front of you.");
+             var sb = new StringBuilder();
+-            int latest = S.checkups[S.checkups.Count - 1].assessment;
+             int historyStart = Math.Max(0, latest - 5);
+             foreach (var c in S.checkups)
+             {
++                if (dataset != null && c.dataset != dataset) continue;
+                 if (!history && c.assessment != latest || history && c.taught) continue;
+                 if (history && c.assessment < historyStart) continue;
+                 sb.Append(c.correct ? "<color=#54CD8A>✓ " : "<color=#EF8282>× ")

@@ -1,0 +1,65 @@
+{
+  "kind": "Static source dependency recheck; not runtime or visual acceptance",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "baselineSha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7",
+      "finalSha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "baselineSha256": "308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8",
+      "finalSha256": "308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "baselineSha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+      "finalSha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "baselineSha256": "D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838",
+      "finalSha256": "D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs",
+      "baselineSha256": "E565169876C92B4E434BDE1421B995F785DB8E160747268F32F30B95193CC11B",
+      "finalSha256": "E565169876C92B4E434BDE1421B995F785DB8E160747268F32F30B95193CC11B",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Stages.cs",
+      "baselineSha256": "CE64E64CCFB1CC7C24ADAD73C771650F367DAD6E4F55E30F762AB8BDC34BEE98",
+      "finalSha256": "CE64E64CCFB1CC7C24ADAD73C771650F367DAD6E4F55E30F762AB8BDC34BEE98",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs",
+      "baselineSha256": "B8C06FD6EE0047198E73C7CF595B497F30AD9B708EA6E6A7BA29126600071DA1",
+      "finalSha256": "B8C06FD6EE0047198E73C7CF595B497F30AD9B708EA6E6A7BA29126600071DA1",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs",
+      "baselineSha256": "A1EC4AD656114E54BBC5A43902A3E5E3B5324E7444DAADD3EB75F8DD322822D7",
+      "finalSha256": "A1EC4AD656114E54BBC5A43902A3E5E3B5324E7444DAADD3EB75F8DD322822D7",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+      "baselineSha256": "C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D",
+      "finalSha256": "C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+      "baselineSha256": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523",
+      "finalSha256": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523",
+      "unchanged": true
+    }
+  ]
+}

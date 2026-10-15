@@ -95,9 +95,10 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void ServerFlagsLetFitPlaceLayers()
+        public void ServiceFlagsLetFitPlaceLayers()
         {
-            string gpu = LlmScheduling.ServerArgs(LlmLaunchMode.Gpu, "/m/q.gguf", 18088, 3);
+            string gpu = LlmScheduling.ServiceArgs(LlmLaunchMode.Gpu, "/m/q.gguf", 3);
+            StringAssert.StartsWith("-m \"/m/q.gguf\"", gpu);
             StringAssert.Contains("-c 12288 -np 3", gpu);
             StringAssert.Contains("--fit on --fit-ctx 4096", gpu);
             StringAssert.DoesNotContain("-ngl", gpu);
@@ -106,12 +107,14 @@ namespace LingGuangV05.Tests
             StringAssert.Contains("--flash-attn auto", gpu);
             StringAssert.Contains("--cache-reuse 256 --cache-ram 2048", gpu);
             StringAssert.Contains("--jinja --reasoning-budget 0", gpu);
+            StringAssert.Contains("--ctx-checkpoints 6", gpu);
+            StringAssert.DoesNotContain("--checkpoint-min-step", gpu, "LlamaLib's llama.cpp rejects it (its spacing is built in)");
+            StringAssert.DoesNotContain("--port", gpu, "the in-process service is not reached over HTTP");
             StringAssert.DoesNotContain("--log-file", gpu);
-            StringAssert.DoesNotContain("q8_0", LlmScheduling.ServerArgs(LlmLaunchMode.GpuPlainCache, "m", 1, 3));
-            string cpu = LlmScheduling.ServerArgs(LlmLaunchMode.Cpu, "m", 1, 4, "/tmp/x.log");
+            StringAssert.DoesNotContain("q8_0", LlmScheduling.ServiceArgs(LlmLaunchMode.GpuPlainCache, "m", 3));
+            string cpu = LlmScheduling.ServiceArgs(LlmLaunchMode.Cpu, "m", 4);
             StringAssert.Contains("--n-gpu-layers 0 --device none", cpu);
             StringAssert.Contains("-c 16384 -np 4", cpu);
-            StringAssert.Contains("--log-file \"/tmp/x.log\"", cpu);
         }
 
         [Test]
@@ -136,11 +139,19 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void SlotPinIsAppendedToTheBody()
+        public void ThinkingBlockIsNormalizedOrOpened()
         {
-            Assert.AreEqual("{\"a\":1,\"id_slot\":2}", LlmScheduling.WithSlot("{\"a\":1}", 2));
-            Assert.AreEqual("{\"a\":1}", LlmScheduling.WithSlot("{\"a\":1}", -1));
+            const string head = "<|im_start|>user\n在吗<|im_end|>\n<|im_start|>assistant\n";
+            // What LlamaLib v2.0.5's template returns with thinking off: no blank line after the block.
+            string tight = head + "<think>\n</think>";
+            Assert.AreEqual(head + "<think>\n\n</think>\n\n", LlmScheduling.WithThinking(tight, false));
+            Assert.AreEqual(head + LlmScheduling.ClosedThinking, LlmScheduling.WithThinking(head + LlmScheduling.ClosedThinking, false));
+            Assert.AreEqual(head + "<think>\n", LlmScheduling.WithThinking(tight, true));
+            Assert.AreEqual(head, LlmScheduling.WithThinking(head, true), "a template without the block is left alone");
+            Assert.AreEqual(head + "<think>\n</think> 好", LlmScheduling.WithThinking(head + "<think>\n</think> 好", false), "only a trailing block counts");
+            Assert.IsNull(LlmScheduling.WithThinking(null, true));
         }
+
         [Test]
         public void StateRidesInTheLastUserTurnOnly()
         {

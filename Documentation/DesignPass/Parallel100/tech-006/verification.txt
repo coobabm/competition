@@ -1,0 +1,9 @@
+tech-006 verification (2026-10-13 Asia/Singapore)
+Static patch applicability: git apply --check --verbose (no production files written)
+Exit code: 0
+Checking patch Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs...
+
+Dependency SHA256 recheck: 11 files, 0 changed
+Actual C# / Unity / game execution: NOT RUN
+Visual acceptance: NOT RUN
+No production patch applied.

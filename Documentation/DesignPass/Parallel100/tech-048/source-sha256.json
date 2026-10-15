@@ -1,0 +1,46 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "sha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "sha256": "308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collection.cs",
+    "sha256": "E797F4FB7307B5AFCF168EC46889FC7EE5F669ED40CE0A4238CB851DC37F86B3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs",
+    "sha256": "B8C06FD6EE0047198E73C7CF595B497F30AD9B708EA6E6A7BA29126600071DA1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs",
+    "sha256": "73CE990C4A6E454CFD65C5D5F47C06B748CE93D27B9E651DEC3F4A4857F6A747"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "sha256": "D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Finale.cs",
+    "sha256": "E565169876C92B4E434BDE1421B995F785DB8E160747268F32F30B95193CC11B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs",
+    "sha256": "31F6D4234DC64046ED6961F3DE7B7D28EE8A677C2ED1EA50226DCE421B7ACDB8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+    "sha256": "C2795A20598FA9B22F91A4678AD7946F97AC0D03E518A62A3108A80350D0414D"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523"
+  }
+]

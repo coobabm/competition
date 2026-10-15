@@ -1,0 +1,10 @@
+{
+  "staticDependencyRecheck": "13 of 13 unchanged",
+  "patchApplyCheck": "git apply --check exited 0; not applied",
+  "patchScope": "One label.coop Effect branch replaced; Name and Explanation unchanged",
+  "compile": "not run",
+  "simulation": "not run",
+  "unity": "not started",
+  "visualAcceptance": "not performed",
+  "playerSaves": "not accessed"
+}

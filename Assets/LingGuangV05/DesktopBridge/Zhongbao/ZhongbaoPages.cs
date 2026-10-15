@@ -70,8 +70,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             root = Rect("subcontract", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var crew = ZhongbaoSkin.Box(ui, root, "Crew", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-332, 0));
             ZhongbaoSkin.Header(ui, crew, "网吧兄弟", "Netbar friends", out title, out note);
-            ZhongbaoUi.TipOnHeader(crew, "阿杰、小刚和网吧老板用你的摆渡众包账号标注。平台照样抽检他们的标注：错的罚款、扣信用分、举报都算在你头上；没抽到的错题会变成训练数据里的噪声。工资每分钟照付，账号冻结或等验证码时他们只能干等，钱照样给。",
-                "Ajie, Xiaogang and the netbar boss label under your Bodu Crowd account. The platform spot-checks their labels like any other: fines, lost credit and reports all land on you, and unchecked mistakes become noise in your training data. Wages are due every minute, even while a frozen account or a captcha keeps them waiting.");
+            ZhongbaoUi.TipOnHeader(crew, "阿杰、小刚和网吧老板用你的摆渡众包账号标注。平台照样抽检他们的标注：错的罚款、扣信用分都算在你头上；漏检的错题仍需人工复核。工资每分钟照付，等验证码时他们只能干等，钱照样给。",
+                "Ajie, Xiaogang and the netbar boss label under your Bodu Crowd account. The platform spot-checks their labels like any other: fines and lost credit land on you, and unchecked mistakes still need manual review. Wages are due every minute, even while a captcha keeps them waiting.");
             list = ZhongbaoUi.BoxScroll(crew, "Viewport");
             market = new XgMarketSection(host, ui, list);
             locked = ui.Text(Rect("Locked", crew, Vector2.zero, Vector2.one, new Vector2(60, 60), new Vector2(-60, -80)), "", 18, ZhongbaoSkin.Mute, TextAlignmentOptions.Center);
@@ -111,7 +111,7 @@ namespace LingGuangV05.Desktop.Zhongbao
         {
             if (root == null || Sim == null) return;
             title.text = T("网吧兄弟", "Netbar friends");
-            note.text = T("用你的账号标，按分钟发工资；罚款和举报都算你头上", "They label under your account for wages by the minute; fines and reports land on you");
+            note.text = T("用你的账号标，按分钟发工资；罚款算你头上", "They label under your account for wages by the minute; fines land on you");
             chatTitle.text = T("YY · 网吧群", "YY · Netbar group");
             bool open = Sim.SubcontractUnlocked;
             locked.gameObject.SetActive(!open);
@@ -159,7 +159,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── left: the household's bills, the debt box under them ──
             var billsBox = ZhongbaoSkin.Box(ui, left, "Bills", Vector2.zero, Vector2.one, new Vector2(0, DebtH + 12), Vector2.zero);
             ZhongbaoSkin.Header(ui, billsBox, "家里的开销", "Household bills", out billsTitle, out billsNote);
-            ZhongbaoUi.TipOnHeader(billsBox, "房租、训练电费、宽带和夏天的空调：从六月一号起每天扣。下面是每一项现在的价和六月以来的累计。", "Rent, training power, broadband and the summer air con: charged every day from 1 June. Each item's price now and its total since June.");
+            ZhongbaoUi.TipOnHeader(billsBox, "房租、电脑电费、宽带和夏天的空调：从六月一号起每天扣。下面是每一项现在的价和六月以来的累计。", "Rent, computer power, broadband and the summer air con: charged every day from 1 June. Each item's price now and its total since June.");
             billsList = ZhongbaoUi.BoxScroll(billsBox, "Viewport");
             bills = new Row(ui, billsList);
 
@@ -234,7 +234,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var cfg = house.Config;
             if (!house.EconomyActive)
             {
-                items.Add(Row.Note(T("灵光学会「一个词」以后开始交房租，从那时起家里的开销都记在这里。", "Rent starts once 灵光 learns its third ability (one word); from then on the household's bills are listed here.")));
+                items.Add(Row.Note(T("日常账单启用后，家里的开销会记在这里。", "Once daily billing starts, household expenses are listed here.")));
                 items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(cfg.rentPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
                 items.Add(Row.Row(T("宽带（每月 1 号）", "Broadband (the 1st of each month)"), "−" + ZhongbaoUi.Yuan(cfg.broadbandPerMonth), ZhongbaoSkin.Red));
                 return;
@@ -244,7 +244,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             items.Add(Row.Row(T(today.Month + " 月 " + today.Day + " 日账单", "Bill for " + today.ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)), "−" + ZhongbaoUi.Yuan(todayTotal), MoneyInk(todayTotal)));
             items.Add(Row.Row(T("房租", "Rent") + (today < ChapterOneSim.RentRiseDate ? ZhongbaoUi.Muted(T("（10 月起 ¥" + Money(cfg.rentPerDayFromOctober) + "）", " (¥" + Money(cfg.rentPerDayFromOctober) + " from October)")) : ""),
                 "−" + ZhongbaoUi.Yuan(house.RentFor(today)) + T("/天", "/day"), ZhongbaoSkin.Red));
-            items.Add(Row.Row(T("训练电费 · 本月 " + Money(house.MonthKwh) + " 度 · 第 " + house.PowerTier + " 档", "Training power · " + Money(house.MonthKwh) + " kWh this month · tier " + house.PowerTier),
+            items.Add(Row.Row(T("电脑电费 · 本月 " + Money(house.MonthKwh) + " 度 · 第 " + house.PowerTier + " 档", "Computer power · " + Money(house.MonthKwh) + " kWh this month · tier " + house.PowerTier),
                 T("约 ¥", "about ¥") + N(house.TrainingRoundPrice(XgSim.EpochSeconds), "0.0") + T("/轮", "/round"), ZhongbaoSkin.Red));
             items.Add(Row.Sub(T("阶梯电价：每月 " + Money(cfg.tierOneKwh) + " 度以上 ×" + N(cfg.tierTwoFactor, "0.0#") + "，" + Money(cfg.tierTwoKwh) + " 度以上 ×" + N(cfg.tierThreeFactor, "0.0#"),
                 "Tiered pricing: above " + Money(cfg.tierOneKwh) + " kWh a month ×" + N(cfg.tierTwoFactor, "0.0#") + ", above " + Money(cfg.tierTwoKwh) + " kWh ×" + N(cfg.tierThreeFactor, "0.0#"))));
@@ -255,7 +255,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var b = s.bills ?? new HouseBills();
             items.Add(Row.Head(T("6 月以来", "Since June")));
             items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(b.rent), MoneyInk(b.rent)));
-            items.Add(Row.Row(T("训练电费", "Training power"), "−" + ZhongbaoUi.Yuan(b.power), MoneyInk(b.power)));
+            items.Add(Row.Row(T("电脑电费", "Computer power"), "−" + ZhongbaoUi.Yuan(b.power), MoneyInk(b.power)));
             items.Add(Row.Row(T("待机电费", "Idle power"), "−" + ZhongbaoUi.Yuan(b.idlePower), MoneyInk(b.idlePower)));
             if (b.aircon > 0) items.Add(Row.Row(T("夏天空调", "Summer air con"), "−" + ZhongbaoUi.Yuan(b.aircon), ZhongbaoSkin.Red));
             items.Add(Row.Row(T("宽带", "Broadband"), "−" + ZhongbaoUi.Yuan(b.broadband), MoneyInk(b.broadband)));
@@ -343,8 +343,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── records ──
             items.Clear();
             items.Add(Row.Head(T("存档里记下的累计", "Totals kept in the save")));
-            items.Add(Row.Row(T("实验室总收入", "Lab income"), ZhongbaoUi.Yuan(s.totalIncome), ZhongbaoSkin.Green));
-            items.Add(Row.Row(T("实验室总支出", "Lab spending"), ZhongbaoUi.Yuan(s.totalSpent), MoneyInk(s.totalSpent)));
+            items.Add(Row.Row(T("标注工作净收入", "Annotation net earnings"), ZhongbaoUi.Yuan(s.workIncome), ZhongbaoSkin.Green));
+            items.Add(Row.Row(T("合格提交 / 总提交", "Accepted / submitted"), s.workCorrect + " / " + s.workSubmitted));
             double bonuses = 0; int signed = 0;
             foreach (var c in XgCatalog.Contracts) if (Sim.Signed(c.id)) { bonuses += c.signBonus; signed++; }
             items.Add(Row.Row(T("签约首付", "Signing advances"), ZhongbaoUi.Yuan(bonuses) + T("（" + signed + " 单）", " (" + signed + " signed)")));
@@ -353,8 +353,8 @@ namespace LingGuangV05.Desktop.Zhongbao
                     items.Add(Row.Sub(T(c.client, c.clientEn) + " · " + T(c.job, c.jobEn), "¥" + Money(Sim.ContractIncome(c)) + T("/秒", "/s")));
             items.Add(Row.Row(T("抽检罚款", "Spot-check fines"), "−" + ZhongbaoUi.Yuan(s.qcFines), MoneyInk(s.qcFines)));
             items.Add(Row.Row(T("点错罚款（算术）", "Wrong-pick fines (arithmetic)"), "−" + ZhongbaoUi.Yuan(s.handFines), MoneyInk(s.handFines)));
-            items.Add(Row.Sub(T("抽检 " + s.qcCheckedTotal + " 次 · 不合格 " + s.qcFailedTotal + " 次 · 其中金标题 " + s.qcTrapFails + " 次 · 举报 " + s.qcReports + " 次",
-                s.qcCheckedTotal + " checks · " + s.qcFailedTotal + " failed · " + s.qcTrapFails + " on trap items · " + s.qcReports + " reports")));
+            items.Add(Row.Sub(T("抽检 " + s.qcCheckedTotal + " 次 · 不合格 " + s.qcFailedTotal + " 次 · 其中金标题 " + s.qcTrapFails + " 次 · 罚款 ¥" + N(s.qcFines, "0"),
+                s.qcCheckedTotal + " checks · " + s.qcFailedTotal + " failed · " + s.qcTrapFails + " on trap items · fines ¥" + N(s.qcFines, "0"))));
             if (s.scUnlocked)
                 foreach (var info in XgSim.Workers)
                 {
@@ -465,7 +465,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             rules = new Row(ui, rulesList);
 
             var moreBox = ZhongbaoSkin.Box(ui, right, "More", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -TierH - RulesH - 24));
-            ZhongbaoSkin.Header(ui, moreBox, "举报规则与数据噪声", "Report rules and data noise", out moreTitle, out _);
+            ZhongbaoSkin.Header(ui, moreBox, "抽检与罚款规则", "Spot checks and fines", out moreTitle, out _);
             moreList = ZhongbaoUi.BoxScroll(moreBox, "Viewport");
             more = new Row(ui, moreList);
         }
@@ -517,8 +517,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 : T("合格率 " + ZhongbaoUi.Pct(Sim.PassRate) + "（近 " + Sim.SpotChecks + " 次）", "pass rate " + ZhongbaoUi.Pct(Sim.PassRate) + " (last " + Sim.SpotChecks + ")");
             if (Sim.SpotChecks > 0 && !Sim.PassRateJudged) rate += T("  满 " + XgSim.QcMinChecks + " 次才评定", "  judged from " + XgSim.QcMinChecks);
             passLine.text = Sim.QualityWarning ? "<color=#D63031>" + rate + T(" · 已警告", " · warned") + "</color>" : rate;
-            reportLine.text = T("已被举报 " + s.qcReports + " 次 · 下次冻结 " + N(XgSim.FreezeSecondsFor(s.qcReports + 1) / 60, "0") + " 分钟",
-                "Reported " + s.qcReports + " times · next freeze " + N(XgSim.FreezeSecondsFor(s.qcReports + 1) / 60, "0") + " min");
+            reportLine.text = T("账号不会被举报 · 抽到错题罚 " + N(XgSim.QcFineMultiplier, "0") + " 倍工钱", "Never reported · a wrong label caught costs " + N(XgSim.QcFineMultiplier, "0") + "× its pay");
 
             // ── the tier table ──
             tiersTitle.text = T("信用档位", "Credit tiers");
@@ -563,42 +562,24 @@ namespace LingGuangV05.Desktop.Zhongbao
             items.Add(Rule(XgSim.QcCreditPass, "抽检合格", "A spot check passes"));
             items.Add(Rule(-XgSim.QcCreditFail, "抽检不合格（罚该题报酬 ×" + N(XgSim.QcFineMultiplier, "0") + "）", "A spot check fails (fine: the card's pay ×" + N(XgSim.QcFineMultiplier, "0") + ")"));
             items.Add(Rule(-XgSim.TrapCreditFail, "金标题答错（平台预置的已知答案题，罚 ×" + N(XgSim.TrapFineMultiplier, "0") + "，在抽检记录里算两次）", "A trap item is wrong (the platform knew the answer; fine ×" + N(XgSim.TrapFineMultiplier, "0") + ", counts twice in the window)"));
-            items.Add(Rule(-XgSim.QcCreditReport, "被举报（冻结 " + N(XgSim.QcFreezeSeconds[0] / 60, "0") + " / " + N(XgSim.QcFreezeSeconds[1] / 60, "0") + " / " + N(XgSim.QcFreezeSeconds[2] / 60, "0") + " 分钟）",
-                "Reported (frozen " + N(XgSim.QcFreezeSeconds[0] / 60, "0") + " / " + N(XgSim.QcFreezeSeconds[1] / 60, "0") + " / " + N(XgSim.QcFreezeSeconds[2] / 60, "0") + " min)"));
-            items.Add(Rule(XgSim.QcCreditHand, "冻结期间每手动标对一条", "Each right hand label while frozen"));
+            items.Add(Rule(1, "每 " + N(1 / XgSim.QcCreditRegen, "0") + " 秒自己回 1 点（只回到 " + N(XgSim.QcCreditStart, "0") + "，再往上要靠抽检合格）",
+                "Every " + N(1 / XgSim.QcCreditRegen, "0") + " s on its own (only back up to " + N(XgSim.QcCreditStart, "0") + "; above that it takes passed checks)"));
             items.Add(Rule(XgSim.CaptchaCreditPass, "人机验证通过", "A captcha passed"));
-            items.Add(Rule(-XgSim.CaptchaCreditFail, "验证码答错或超时（自动标注暂停 " + N(XgSim.CaptchaPause / 60, "0") + " 分钟；连错 " + XgSim.CaptchaFailsToReport + " 次按机器处理）",
-                "A captcha wrong or late (auto labelling pauses " + N(XgSim.CaptchaPause / 60, "0") + " min; " + XgSim.CaptchaFailsToReport + " in a row counts as a bot)"));
+            items.Add(Rule(-XgSim.CaptchaCreditFail, "验证码答错或超时（自动标注暂停 " + N(XgSim.CaptchaPause / 60, "0") + " 分钟）",
+                "A captcha wrong or late (auto labelling pauses " + N(XgSim.CaptchaPause / 60, "0") + " min)"));
             items.Add(Rule(-XgSim.AutofillFlagCredit, "验证码代填被识破（每次 " + ZhongbaoUi.Pct(XgSim.AutofillFlagChance) + " 的可能）", "Captcha autofill spotted (" + ZhongbaoUi.Pct(XgSim.AutofillFlagChance) + " chance each time)"));
             rulesList.sizeDelta = new Vector2(0, rules.Set(items));
 
             // ── report rules and the data noise ──
-            moreTitle.text = T("举报规则与数据噪声", "Report rules and data noise");
+            moreTitle.text = T("抽检与罚款规则", "Spot checks and fines");
             items.Clear();
-            items.Add(Row.Head(T("举报规则", "When the account is reported")));
-            items.Add(Row.Note(T("平台每 " + XgSim.QcJudgeEvery + " 次抽检评一次，看最近 " + XgSim.QcWindow + " 次（满 " + XgSim.QcMinChecks + " 次才评）：\n"
-                    + "· 错误率 ≥ " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " 警告；\n"
-                    + "· 满 " + XgSim.QcWindow + " 次且错误率 ≥ " + ZhongbaoUi.Pct(XgSim.QcReportRate) + " 举报；\n"
-                    + "· 答案 " + ZhongbaoUi.Pct(XgSim.QcMonotoneShare) + " 以上是同一个，像脚本：错误率到 " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " 就举报。\n"
-                    + "冻结期间自动标注不能提交；申诉付 ¥" + N(XgSim.QcAppealMin, "0") + " 或余额的 " + ZhongbaoUi.Pct(XgSim.QcAppealShare) + "（取较多者），信用不变。",
-                "The platform judges every " + XgSim.QcJudgeEvery + " checks over the last " + XgSim.QcWindow + " (once there are " + XgSim.QcMinChecks + "):\n"
-                    + "· an error rate of " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " or more warns;\n"
-                    + "· with a full " + XgSim.QcWindow + " checks, " + ZhongbaoUi.Pct(XgSim.QcReportRate) + " or more reports the account;\n"
-                    + "· when " + ZhongbaoUi.Pct(XgSim.QcMonotoneShare) + " of the answers are the same it looks like a script, and " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " is enough.\n"
-                    + "While frozen, auto labels cannot be submitted. An appeal costs ¥" + N(XgSim.QcAppealMin, "0") + " or " + ZhongbaoUi.Pct(XgSim.QcAppealShare) + " of your money (whichever is more); credit stays the same."), ZhongbaoSkin.Ink));
-            items.Add(Row.Head(T("数据噪声（不扣信用，伤模型）", "Data noise (no credit cost, hurts the model)")));
-            bool any = false;
-            foreach (var d in Sim.OpenDesks())
-            {
-                double share = Sim.NoiseShare(d.id);
-                if (share <= 0) continue;
-                any = true;
-                double penalty = Sim.InbreedingPenaltyFor(d.id);
-                items.Add(Row.Row(T(d.name, d.nameEn), T("噪声 ", "noise ") + ZhongbaoUi.Pct(share) + (penalty > 0 ? "  " + T("近亲繁殖 −", "inbreeding −") + ZhongbaoUi.Pct(penalty) : ""), penalty > 0 ? ZhongbaoSkin.Red : (Color?)null));
-            }
-            if (!any) items.Add(Row.Note(T("没有记下的错标。", "No wrong labels recorded.")));
-            items.Add(Row.Note(T("没被抽到的错题会混进训练数据；超过样本的 " + ZhongbaoUi.Pct(XgSim.InbreedingFreeShare) + " 模型就会学回自己的错。标注台的「人工复核旧数据」能清掉它们。",
-                "Wrong labels nobody checked go into the training data; above " + ZhongbaoUi.Pct(XgSim.InbreedingFreeShare) + " of the samples the model learns its own mistakes back. Re-check old labels on the labelling desk to clear them.")));
+            items.Add(Row.Head(T("账号不会被举报", "The account is never reported")));
+            items.Add(Row.Note(T("标错只扣钱：抽检抽到错题罚该题报酬 ×" + N(XgSim.QcFineMultiplier, "0") + "，金标题 ×" + N(XgSim.TrapFineMultiplier, "0") + "。\n"
+                    + "平台每 " + XgSim.QcJudgeEvery + " 次抽检看一次最近 " + XgSim.QcWindow + " 次（满 " + XgSim.QcMinChecks + " 次才看）：错误率 ≥ " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " 提醒一次。\n"
+                    + "信用低了抽得更勤、自动收入打折（见上面的档位表）。",
+                "A wrong label only costs money: a failed spot check is fined the card's pay ×" + N(XgSim.QcFineMultiplier, "0") + ", a trap item ×" + N(XgSim.TrapFineMultiplier, "0") + ".\n"
+                    + "Every " + XgSim.QcJudgeEvery + " checks the platform looks at the last " + XgSim.QcWindow + " (once there are " + XgSim.QcMinChecks + "): an error rate of " + ZhongbaoUi.Pct(XgSim.QcWarnRate) + " or more warns once.\n"
+                    + "Low credit means more checks and lower auto income (see the tier table above)."), ZhongbaoSkin.Ink));
             moreList.sizeDelta = new Vector2(0, more.Set(items));
         }
     }

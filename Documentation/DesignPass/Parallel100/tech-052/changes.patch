@@ -1,0 +1,11 @@
+Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+Source-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+Scope: multihead effect copy only; recheck source hash and context before applying.
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -184,3 +184,4 @@
+                 case "transfer": return T(sim, "换结构保留 60% 数值训练进度；同结构扩容保留进度从 ", "Keep 60% of numerical training progress when changing architecture; same-architecture growth retention rises from ") + N(XgSim.GrowKeep * 100) + "% → " + N(XgSim.GrowKeepTransfer * 100) + T(sim, "%。基础概念能否带走取决于新结构是否支持与位置无关的线索。", "%. Carrying basic concepts depends on whether the new wiring supports position-independent clues.");
+-                case "multihead": case "layernorm": case "residual": return T(sim, "随 Transformer 一同获得的技术标记，不另收费，也不再叠加独立购买加成。", "A technology marker granted with Transformer, with no separate charge or additional purchase bonus.");
++                case "multihead": return T(sim, "随 Transformer 免费获得，无需单独购买或装备。模型实际使用 Transformer 时，单句训练保留词本身的线索；已启用位置编码时，还能单独学习句首词的线索。训练后可形成相应概念，不保证立即提分；没有独立数值加成，也不重复叠加。", "Granted free with Transformer; no separate purchase or equipment step. When a model uses Transformer, single-sentence training keeps clues for the words themselves; with positional encoding enabled, it can also learn a separate clue for the opening word. Training can form these concepts, with no guaranteed immediate score gain. There is no separate numerical bonus to stack.");
++                case "layernorm": case "residual": return T(sim, "随 Transformer 一同获得的技术标记，不另收费，也不再叠加独立购买加成。", "A technology marker granted with Transformer, with no separate charge or additional purchase bonus.");
+                 case "datacenter": return T(sim, "可用显存 ×", "Available VRAM ×") + N(XgSim.DatacenterVram) + T(sim, "；预训练运行时另付 ¥", "; running pre-training also costs ¥") + XgSim.DatacenterRent + T(sim, "/秒，钱不够会停机。", "/s and stops when funds run out.");

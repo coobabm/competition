@@ -146,6 +146,23 @@ namespace LingGuangV05.Desktop.XingGuang
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 「众包订单 · 第 3 档 +¥14/秒」 (节奏重做 §2.4): the 摆渡众包 order tier its abilities opened and what it pays per
+        /// second (before relics); before the first tier, which ability opens it.
+        /// </summary>
+        public static string CrowdTierLine(XgSim sim)
+        {
+            if (sim == null) return "";
+            int reached = Math.Max(0, Math.Min(XgSim.AbilityCount, sim.S.crowdTier));
+            if (reached < 2 || sim.CrowdOrderIncome <= 0)
+                return T("众包订单 · 还没开档（学会「" + XgSim.AbilityName(2, false) + "」开第 1 档 +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/秒）",
+                         "Crowd orders · no tier yet (learning '" + XgSim.AbilityName(2, true) + "' opens tier 1, +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/s)");
+            string line = T("众包订单 · 第 " + (reached - 1) + " 档 +¥", "Crowd orders · tier " + (reached - 1) + " +¥") + N(sim.CrowdOrderIncome, "0") + T("/秒", "/s");
+            if (reached < XgSim.AbilityCount && reached + 1 < XgSim.CrowdTierIncome.Length)
+                line += T("（下一档 +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/秒）", " (next +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/s)");
+            return line;
+        }
+
         /// <summary>The live download for a dataset (public, junk or story pack), or null.</summary>
         public static XgDataOffer ActiveDownload(XgSim sim, string dataset)
         {

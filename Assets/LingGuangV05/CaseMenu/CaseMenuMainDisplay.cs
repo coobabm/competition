@@ -16,7 +16,7 @@ namespace LingGuangV05.CaseMenu
 {
     /// <summary>
     /// Preloads the real desktop into the menu's physical monitor. There is one visible camera
-    /// throughout; entering gameplay only releases input and the paused story/simulation hosts.
+    /// throughout boot and gameplay; the desktop stays inside the original physical monitor.
     /// All modifications are scene-instance changes, never shared rendering or asset changes.
     /// </summary>
     [DisallowMultipleComponent]
@@ -30,6 +30,8 @@ namespace LingGuangV05.CaseMenu
         public bool IsBootComplete { get; private set; }
         public float BootProgress { get; private set; }
         public bool IsBootScreenVisible => bootScreen != null && bootScreen.IsVisible;
+        public bool IsBootScreenOpaque => bootScreen != null && bootScreen.IsOpaque;
+        public bool IsRevealingDesktop { get; private set; }
         public AeroLcdInputSurface InputSurface => input;
         public ChapterOneRuntime Runtime => runtime;
         readonly List<MonoBehaviour> pausedHosts = new List<MonoBehaviour>();
@@ -129,9 +131,12 @@ namespace LingGuangV05.CaseMenu
                 environment.Apply();
                 if (!MainSceneEntry.EnsureInitialized()) throw new InvalidOperationException("Main 启动桥未完成初始化。");
 
-                // Pause only gameplay hosts; native UI, its source camera and the local model keep warming up.
+                // Warm the heavy application shells before any camera motion, then pause every
+                // installed gameplay host before its Start/Update can advance the story.
+                runtime.GetComponent<StoryDesktopPresenter>()?.PrepareDesktopShell();
+                // Pause only gameplay hosts; native UI, its source camera and the local models keep warming up.
                 foreach (var host in runtime.GetComponents<MonoBehaviour>())
-                    if (host != null && host.enabled && !(host is LocalLlm))
+                    if (host != null && host.enabled && !(host is LocalLlm) && !(host is LocalEmbedder))
                     { pausedHosts.Add(host); host.enabled = false; }
                 foreach (var root in scene.GetRootGameObjects())
                     foreach (var prologue in root.GetComponentsInChildren<PrologueDirector>(true))
@@ -202,27 +207,72 @@ namespace LingGuangV05.CaseMenu
 
         public void EnterDesktop()
         {
-            if (!IsReady || !IsBootComplete || HasEnteredDesktop) return;
-            HasEnteredDesktop = true;
-            // Once seated, the monitor surrounds are opaque. No room may peek
-            // through on narrow windows or when the player resizes the window.
-            view.clearFlags = CameraClearFlags.SolidColor;
-            view.backgroundColor = new Color(.012f, .014f, .018f);
-            foreach (var root in view.gameObject.scene.GetRootGameObjects())
-                foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
-                    if (!renderer.transform.IsChildOf(rig)) renderer.enabled = false;
-            IsScreenPowered = true;
-            if (powerRoutine != null) { StopCoroutine(powerRoutine); powerRoutine = null; }
-            ApplyVisualPower(1);
-            if (bootScreen != null) bootScreen.Hide();
-            if (lcd != null) lcd.enabled = lcdWasEnabled;
+            if (!IsReady || !IsBootComplete || HasEnteredDesktop || IsRevealingDesktop) return;
+            IsRevealingDesktop = true;
+            // Keep the title room visible around the physical monitor, as in the first draft.
+            lcd.enabled = lcdWasEnabled; ApplyVisualPower(1);
             if (physicalInput != null) { physicalInput.blocksRaycasts = true; physicalInput.interactable = true; }
             foreach (var raycaster in pausedRaycasters) if (raycaster != null) raycaster.enabled = true;
-            pausedRaycasters.Clear();
-            if (input != null) input.SetInputEnabled(lcd != null && lcd.IsPowered);
-            // Presenter Start runs only now, so prologue choices cannot be consumed before the camera arrives.
+            pausedRaycasters.Clear(); input.SetInputEnabled(false);
+            // Keep the original bezel and LCD/input canvas; resume the story after the camera arrives.
+            InnerVoice.ResumeAfterBoot();
             foreach (var host in pausedHosts) if (host != null) host.enabled = true;
             pausedHosts.Clear();
+            StartCoroutine(RevealDesktop());
+        }
+
+        public void BeginShutdown()
+        {
+            InnerVoice.StopForShutdown();
+            input.SetInputEnabled(false);
+            if (physicalInput != null) { physicalInput.blocksRaycasts = false; physicalInput.interactable = false; }
+            lcd.enabled = false;
+            // The accepted save is the end of this session. Stop timers and story coroutines
+            // while the menu camera returns; disabling a MonoBehaviour alone does not stop them.
+            if (runtime != null)
+            {
+                foreach (var host in runtime.GetComponents<MonoBehaviour>())
+                    if (host != null && !(host is LocalLlm)) { host.enabled = false; host.StopAllCoroutines(); }
+                foreach (var root in runtime.gameObject.scene.GetRootGameObjects())
+                {
+                    foreach (var prologue in root.GetComponentsInChildren<PrologueDirector>(true))
+                    { prologue.enabled = false; prologue.StopAllCoroutines(); }
+                    foreach (var source in root.GetComponentsInChildren<AudioSource>(true)) source.Stop();
+                    // Story subtitles/toasts live outside the LCD texture. They must not
+                    // remain painted over the physical room after the monitor switches off.
+                    foreach (var canvas in root.GetComponentsInChildren<Canvas>(true))
+                        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay) canvas.enabled = false;
+                    foreach (var raycaster in root.GetComponentsInChildren<GraphicRaycaster>(true)) raycaster.enabled = false;
+                }
+            }
+            // Story hosts release their own modal input locks from OnDisable. Take the
+            // shutdown lock last so those cleanup callbacks cannot reopen desktop input.
+            input.SetInputEnabled(false);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+            InnerVoice.StopForShutdown();
+            if (bootScreen != null) bootScreen.SetShutdown(0);
+        }
+
+        public void SetShutdownProgress(float progress)
+        {
+            if (bootScreen != null) bootScreen.SetShutdown(progress);
+            ApplyVisualPower(1 - CaseMenuMotion.SmootherStep(progress));
+            if (progress >= 1) IsScreenPowered = false;
+        }
+
+        public void BeginDesktopReturn()
+        {
+            environment.Apply();
+        }
+
+        IEnumerator RevealDesktop()
+        {
+            // The original firmware has already revealed the LCD; settle the resumed layout.
+            yield return null;
+            yield return null;
+            if (bootScreen != null) bootScreen.Hide();
+            input.SetInputEnabled(lcd.IsPowered);
+            HasEnteredDesktop = true; IsRevealingDesktop = false;
         }
 
         /// <summary>Runs the fictional workstation startup on its LCD; the real source is already loaded.</summary>

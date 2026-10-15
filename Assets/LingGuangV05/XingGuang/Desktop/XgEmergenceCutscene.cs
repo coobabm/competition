@@ -25,9 +25,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static XgEmergenceCutscene active;
         /// <summary>A cutscene is on screen: the story waits for it, the inner voice too.</summary>
-        public static bool Playing => active != null && active.Showing;
+        public static bool Playing => active != null && active.Showing || XgWallpaperRebirth.Playing;
         /// <summary>A cutscene is on or about to start (queued behind another full-window moment): the choice of a rare item waits for it.</summary>
-        public static bool Busy => active != null && (active.Showing || active.pending.Count > 0 || active.OtherCutscene());
+        public static bool Busy => Playing || active != null && (active.pending.Count > 0 || active.OtherCutscene());
         const int FlatPoints = 26, RisePoints = 8;
 
         XingGuangView view;
@@ -128,7 +128,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bound = null;
         }
 
-        void OnAbility(int emerged) { if (!pending.Contains(emerged)) { pending.Enqueue(emerged); queuedAt = Time.unscaledTime; } }
+        void OnAbility(int emerged) { if (!XgWallpaperRebirth.Available && !pending.Contains(emerged)) { pending.Enqueue(emerged); queuedAt = Time.unscaledTime; } }
 
         /// <summary>Another full-window moment is on: the story's own cutscene (the month card), a love question, an insight card.</summary>
         bool OtherCutscene()

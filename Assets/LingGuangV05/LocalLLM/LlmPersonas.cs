@@ -60,7 +60,8 @@ namespace LingGuangV05.Desktop.LLM
             bool english = LingGuangV05.Runtime.GameText.IsEnglish;
             var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
             var history = new List<YYMessage>();
-            foreach (var message in conv.messages) if (message.kind != YYKind.System) history.Add(message);
+            foreach (var message in conv.messages)
+                if (message.kind != YYKind.System && !(contact == "netbar" && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
             int limit = contact == "lingguang" ? XgSpeechPolicy.ContextLimit(LingGuangStage(lab)) : 14;
             int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(history.Count, limit);
             // Keep the selected history within the local service's context budget. Whole short histories fit;
@@ -88,6 +89,18 @@ namespace LingGuangV05.Desktop.LLM
                 }
                 string remembered = lab.MemoryPromptFor(latest, previous);
                 if (remembered.Length > 0) state.Append('\n').Append(remembered);
+            }
+            // RAG (XgSim.Knowledge.cs): taught cards, read chapters and 2016 news that fit the owner's line.
+            if (contact == "lingguang" && lab != null)
+            {
+                string latest = null, previous = null;
+                for (int i = history.Count - 1; i >= 0; i--)
+                {
+                    if (history[i].from != YYChatHub.Me || history[i].kind != YYKind.Text) continue;
+                    if (latest == null) latest = history[i].text; else { previous = history[i].text; break; }
+                }
+                string known = latest != null ? lab.PersonaKnowledge(latest, previous) : "";
+                if (known.Length > 0) state.Append('\n').Append(known);
             }
             // 灵光 must not loop: from stage 3 on it sees its own last replies and is told not to say them again.
             if (contact == "lingguang" && LingGuangStage(lab) >= 3) state.Append(NoRepeat(history));
@@ -166,7 +179,7 @@ namespace LingGuangV05.Desktop.LLM
                     return Era + "你在扮演 YY 群「下班屁股群」（" + YYGroup.Size + " 人，常说话的就这几个，其他人潜水）里的一个群友。从这几个人里挑一个最可能接话的人来说：" +
                         roster.ToString().TrimEnd('、') + "。" +
                         "群友之间很熟，聊游戏、上班、看球、自己最近在干嘛，会互相损、会接梗、会发「233」「666」「+1」。" +
-                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
+                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。摆渡众包是公司发布数据标注兼职的平台，群友只知道公开的兼职信息，不知道玩家是否接单。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
                         "格式必须是：[名字] 内容。只说一条，一句或两句，不要替别人说话。";
                 case "lingguang": return LingGuangRules(lab);
                 default: return Era + "你是普通朋友，接着对方刚才的话聊生活。";

@@ -27,9 +27,8 @@ namespace LingGuangV05.Core.Chat
     /// <summary>
     /// Scores documents against a query. One score per document, in the same order. A score of 0 or less means the
     /// document is not relevant at all and must never be returned, so each scorer owns its own threshold.
-    /// BM25 (<see cref="Bm25Scorer"/>) is the default. An embedding scorer can be added behind this seam later, for
-    /// example llama-server's /v1/embeddings with a separate small embedding GGUF such as Qwen3-Embedding-0.6B
-    /// (cosine similarity minus a cut-off). No such model ships with the game today.
+    /// BM25 (<see cref="Bm25Scorer"/>) is the base; <see cref="HybridScorer"/> (Rag.cs) adds embedding similarity from
+    /// the game's Qwen3-Embedding-0.6B (LocalEmbedder) and falls back to BM25 without it.
     /// </summary>
     public interface IMemoryScorer
     {

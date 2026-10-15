@@ -117,9 +117,9 @@ namespace LingGuangV05.XingGuang.Tests
         public void PretrainingStallsWithoutScaleAndTripsWithoutAServerRoom()
         {
             var sim = AtStage6(out var host);
-            // The effective scale (经济压力与破产 §1): the bars at ability 6, but three of the stacked items missing.
-            sim.S.trainedParamsK = XgSim.AbilityParamsK[6];
-            sim.S.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.AbilitySamples[6] });
+            // The effective scale (经济压力与破产 §1): the bars at one scale unit, but three of the stacked items missing.
+            sim.S.trainedParamsK = XgSim.ScaleUnitParamsK;
+            sim.S.labels.Add(new XgLabelCount { dataset = "poems", count = XgSim.ScaleUnitSamples });
             var scale = new[] { "fp16", "batchnorm", "resnet" };
             foreach (var id in scale) sim.S.unlocked.Remove(id);
             Assert.IsFalse(sim.TogglePretrain(host), "no server room: the breaker trips");

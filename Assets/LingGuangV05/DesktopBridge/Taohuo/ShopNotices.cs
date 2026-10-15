@@ -16,6 +16,7 @@ namespace LingGuangV05.Desktop.Taohuo
     public sealed class ShopNotices : MonoBehaviour
     {
         int stage = -1;
+        bool diskFull;
         DateTime day;
         float next;
         ChapterOneRuntime runtime;
@@ -37,7 +38,14 @@ namespace LingGuangV05.Desktop.Taohuo
             if (runtime == null || runtime.Sim == null || runtime.TestMode || lab == null || lab.Sim == null) return;
             int nowStage = lab.Sim.S.stage;
             var today = GameCalendar.Now(runtime.Sim.S).Date;
-            if (stage < 0) { stage = nowStage; day = today; return; }
+            bool full = lab.Sim.DownloadBlocker(out _) != null;
+            if (stage < 0) { stage = nowStage; day = today; diskFull = full; return; }
+            // 节奏重做 §2.2: the first hint to buy a drive comes when the disk is full and the downloads stop.
+            if (full && !diskFull && nowStage >= TaohuoView.OpenStage)
+                Pop(AppNames.ShopZh, AppNames.ShopEn, "亲，硬盘满了下载就停啦～2TB 移动硬盘 ¥" + lab.Sim.NextDrivePrice.ToString("0") + "，插上接着下！",
+                    "Dear, a full disk stops your downloads~ a 2TB portable drive is ¥" + lab.Sim.NextDrivePrice.ToString("0") + ", plug it in and carry on!",
+                    () => FindAnyObjectByType<ChapterOneDesktopRouter>()?.Open(TaohuoView.AppId, "disk"));
+            diskFull = full;
             if (stage < TaohuoView.OpenStage && nowStage >= TaohuoView.OpenStage)
                 Pop(AppNames.ShopZh, AppNames.ShopEn, "亲，淘货开张啦！显卡、机箱、固态都在这里，包邮哦～", "Dear, Taohuo is open! Cards, cases and SSDs, free shipping~");
             if (stage < Miaoyu.MiaoyuView.OpenStage && nowStage >= Miaoyu.MiaoyuView.OpenStage)

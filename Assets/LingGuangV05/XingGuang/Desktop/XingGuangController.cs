@@ -73,6 +73,10 @@ namespace LingGuangV05.Desktop.XingGuang
             runtime.Saving += WriteToSave;
             GameText.Changed += ApplyShellText;
             TakeOverWindow();
+            AiDesktopIdentity.Attach(runtime);
+            DesktopWindowDefaults.Attach(runtime);
+            XgBrainWallpaper.Install(this);
+            SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
             storyBridge = GetComponent<XgStoryBridge>() ?? gameObject.AddComponent<XgStoryBridge>();
@@ -80,6 +84,9 @@ namespace LingGuangV05.Desktop.XingGuang
             platformPopups = GetComponent<XgPlatformPopups>() ?? gameObject.AddComponent<XgPlatformPopups>();
             platformPopups.Bind(this);
             (GetComponent<XgMemoryNotebook>() ?? gameObject.AddComponent<XgMemoryNotebook>()).Bind(this);
+            (GetComponent<XgChronicleNotebook>() ?? gameObject.AddComponent<XgChronicleNotebook>()).Bind(this);
+            // Life events (节奏重做 §2.5): the busy gate, the house's numbers, the tray popup and the card over 灵光.
+            (GetComponent<XgLifeEventCard>() ?? gameObject.AddComponent<XgLifeEventCard>()).Bind(this);
         }
 
         /// <summary>The lab lives inside the 灵光 save (GameState.labState): load, reload and 重新开始 all follow it.</summary>
@@ -97,7 +104,6 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
             // A new game starts with the first-minutes focus (only 常识判断 and training, XgSim.Opening.cs); a loaded save is left as it is.
             if (state == null) Sim.BeginOpening();
-            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
             // The save's own date, before any catch-up tick reads the calendar.
             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
             raised.Clear();
@@ -123,6 +129,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 BindSave(runtime.Sim);
             }
+            SyncProfile(runtime.Sim.S);
         }
 
         void Update()
@@ -153,6 +160,8 @@ namespace LingGuangV05.Desktop.XingGuang
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             if (brain != null) brain.TickBeforeSimulation();
             Sim.Tick(dt, Host);
+            // 《灵光记》 (XgSim.Chronicle.cs): the rent the lab cannot see for itself.
+            if (runtime.Sim.Debt > 0 || runtime.Sim.S.debtDays > 0) Sim.NoteChronicle("rent.late");
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
             RaiseProgress();
             if (capturedChapter != Sim.S.stage && runtime.CaptureChapter(Sim.S.stage)) capturedChapter = Sim.S.stage;
@@ -173,10 +182,11 @@ namespace LingGuangV05.Desktop.XingGuang
             profileSignature = signature; profiled = Sim;
             Sim.Profile = new XgProfile
             {
-                name = s.aiName == "the code" ? "" : s.aiName, self = s.aiSelf.Length > 0 ? s.aiSelf : "我", callMe = s.aiCallMe.Length > 0 ? s.aiCallMe : "你",
+                name = s.aiName == "the code" ? "" : AppNames.PersonalName(s.aiName, GameText.IsEnglish), self = s.aiSelf.Length > 0 ? s.aiSelf : "我", callMe = s.aiCallMe.Length > 0 ? s.aiCallMe : "你",
                 personality = s.personality, warmth = s.targetWarmth, play = s.targetPlay, opinion = s.targetOpinion,
                 words = new System.Collections.Generic.List<string>(s.toneWords ?? new System.Collections.Generic.List<string>()),
             };
+            ApplyShellText();
             if (!Sim.S.personaSeeded && s.prologue == 2) { Sim.S.personaSeeded = true; Sim.SeedPersonality(); }
         }
 
@@ -263,14 +273,7 @@ namespace LingGuangV05.Desktop.XingGuang
             KeepOpenOnFirstStart(Window);
             content = Window.windowContainer.Find("Content") as RectTransform;
             if (content == null) return;
-            // Normal (not maximised) size: the whole desktop area above the taskbar, with a small margin all round.
-            // The container stretches over that area (maximise sets its offsets to 0), so offsets = the margin.
-            // ponytail: fixed 18 px margin; measure the guide note / icon column if they must stay uncovered.
-            if (!Window.isFullscreen)
-            {
-                Window.windowContainer.offsetMin = new Vector2(18, 18);
-                Window.windowContainer.offsetMax = new Vector2(-18, -18);
-            }
+            // DesktopWindowDefaults owns the first-open rectangle; preserve later player adjustments.
             var shop = router.Get("xunbao");
             if (shop != null && shop.Content != null) foreach (var label in shop.Content.GetComponentsInChildren<TMP_Text>(true)) { font = label.font; break; }
             if (font == null) font = Window.GetComponentInChildren<TMP_Text>(true)?.font;
@@ -338,7 +341,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void ApplyShellText()
         {
             if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", GameText.T("深度学习工作站", "deep learning workstation"));
-            else if (title != null) title.text = GameText.T(AppNames.ExeZh + "  —  深度学习工作站", AppNames.ExeEn + "  —  deep learning workstation");
+            else if (title != null) title.text = AiDesktopIdentity.Exe(runtime) + GameText.T("  —  深度学习工作站", "  —  deep learning workstation");
             if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
             if (View != null) View.Refresh(true);
         }

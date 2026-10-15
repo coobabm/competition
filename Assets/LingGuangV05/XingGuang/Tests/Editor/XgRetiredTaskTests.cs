@@ -21,6 +21,7 @@ namespace LingGuangV05.XingGuang.Tests
             progressionVersion = XgSim.ProgressionSchemaWalls,
             stage = stage, stageVision = stage, stageSequence = stage,
             fundedAbility = XgSim.AbilityCount, // the milestone payments of the stages it reached were collected long ago
+            downloadsVersion = XgSim.DownloadsSchema, // a save of today's format: no crowd-order tier to migrate, so no income of its own
         };
 
         [TestCase("goclub", "go")]
@@ -145,8 +146,11 @@ namespace LingGuangV05.XingGuang.Tests
         public void RetiredDatasetUnlockDoesNotBypassAnActivePackDownload(string id)
         {
             var state = Saved(); state.owned.Add(id); state.unlocked.Add(id + ".pack");
-            state.downloads.Add(new XgScore { key = id, value = 120 });
+            // The pack's first batch is still in the download queue.
+            state.batchesBought.Add(new XgLabelCount { dataset = id, count = 1 });
+            state.downloadQueue.Add(new XgDownload { key = id, dataset = id, offer = id + ".pack", batch = 1, batches = 1, sizeMB = 100, samples = 1000 });
             var sim = new XgSim(state);
+            Assert.IsTrue(sim.Downloading(id));
             Assert.IsFalse(sim.DatasetAvailable(id));
         }
 

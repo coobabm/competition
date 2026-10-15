@@ -1,0 +1,74 @@
+[
+  {
+    "path": "Documentation/DesignPass/Agents/issues-task-001.md",
+    "sha256": "C1F0ABF07714DC13B73A795C975D9EEDD48A9E59A418A96343E86E47F545B971"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "sha256": "C6716EFA175D5659BF1EA9C0BAFBAE9BE3315421F9B820B581CEB0DFCDF9D5A1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs",
+    "sha256": "CF6FC6F55FD84843E96E2B2516D591F2F9AF304C0D6D4321AABA92B73A474AE7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+    "sha256": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs",
+    "sha256": "A2D644947B93FCA18C64526DFB4706DEFF287169D837EF2E50255D9583F20A73"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs",
+    "sha256": "0DD93A51E16FBB841AE4AB31CA369E45C29F6F12995894FC13D24826848C14D5"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs",
+    "sha256": "77011564851BFE389781EBBD73FC617ECA66268D2DF78548D9B61B711E9464E8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaper.cs",
+    "sha256": "8D08D5480C15322DA9232A07CA9CFFAB98FC5B8F375BDD04F10C56E5E1783162"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperConcepts.cs",
+    "sha256": "137BF53E38596B1DFB7851F082BA85E47F1884D197D333E62FDDCB6C71AECA50"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/AiJoinsYy.cs",
+    "sha256": "811FD8273F5CC981F1F448F32A9D8EB73439CEC94F3EEF0FFD0AE53127419704"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/OpeningSequence.cs",
+    "sha256": "E19D27764012413B4B0498F69FE01E3A4CF59BEEA31AE5CC152A699BB1A8D5C8"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/TrayPopups.cs",
+    "sha256": "D2E4433F522CD7E54A39F427447114A4FE520B2FBB966BD2750C556F8AA455C1"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/OpeningQuiet.cs",
+    "sha256": "F9C6E48735F85E20B81F946CAC54ED3C2740BE804F25BAD5A1C6E8D290FCC80D"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/DesktopNotificationBudget.cs",
+    "sha256": "3EFB67300CC23988D8B543A2739AB557891CF3FA2A335B30DDB3EB7BED1720CE"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Media/DesktopNotifications.cs",
+    "sha256": "F123B5A75BC5EEE59C95D56B736E89F20DD982033BAD4480410AA060EDC0E5C9"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "sha256": "A905C38EB602CF8CB8ABBD2A0BCEE443961A2603F4EA9E6E1F8569A5B4B030B9"
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+    "sha256": "DF79E8B9079F9D845F14F1C10D8A7332F96169E0CA244325CA5EA1FE3F0BFD2C"
+  }
+]

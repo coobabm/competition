@@ -1,0 +1,20 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+@@ -203,10 +203,14 @@
+             BuildSide(root);
+ 
+             UiTip.Add(qno, () => Sim == null ? "" : HandStats());
+-            UiTip.Add(yes.rt, () => Sim == null ? "" : shownTeachingEvaluation && Mode == 0
++            UiTip.Add(yes.rt, () => Sim == null ? "" : Mode == 0 && CurrentCard.family
++                ? T("把这条家人短信当作垃圾，记住你的态度；不判对错，不罚款，也不改变连击。", "Treat this family message as junk. Your preference is remembered; there is no right or wrong answer, no fine, and no streak change.")
++                : shownTeachingEvaluation && Mode == 0
+                 ? T("它猜对了就点这里：认可它刚才的「是／否」。", "Choose this if its Yes/No guess is right.")
+                 : T("题目对就点「对」。答对 +¥，连击 +1；点错 −¥", "Right? Press True. +¥ and +1 combo; a miss −¥") + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + T("，连击清零。", ", combo reset."));
+-            UiTip.Add(no.rt, () => Sim == null ? "" : shownTeachingEvaluation && Mode == 0
++            UiTip.Add(no.rt, () => Sim == null ? "" : Mode == 0 && CurrentCard.family
++                ? T("把这条家人短信留作重要，记住你的态度；不判对错，不罚款，也不改变连击。", "Keep this family message as important. Your preference is remembered; there is no right or wrong answer, no fine, and no streak change.")
++                : shownTeachingEvaluation && Mode == 0
+                 ? T("它猜错了就点这里：教它与刚才相反的答案。", "Choose this if its guess is wrong: teach it the opposite answer.")
+                 : T("题目错就点「错」。答对 +¥，连击 +1；点错 −¥", "Wrong? Press False. +¥ and +1 combo; a miss −¥") + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + T("，连击清零。", ", combo reset."));
+             UiTip.Add(auto.Root, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("？？？\n也许有更省力的办法……")

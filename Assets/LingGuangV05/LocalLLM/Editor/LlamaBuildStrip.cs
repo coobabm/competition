@@ -10,9 +10,10 @@ using Debug = UnityEngine.Debug;
 namespace LingGuangV05.Desktop.LLM.Editor
 {
     /// <summary>
-    /// StreamingAssets/LingGuang/llama holds one llama-server bundle per platform. After a player build, delete the
-    /// bundles the target cannot run (a Windows build does not need the macOS dylibs and vice versa).
-    /// macOS builds are ad-hoc signed by Unity, so the app is re-signed ad-hoc after the files are removed.
+    /// StreamingAssets/LingGuang/llama holds the llama-server bundles the game used before it switched to LLM for Unity
+    /// (in-process LlamaLib, whose per-platform libraries LLM for Unity's own build step selects). After a player build,
+    /// delete that folder from the output: no build runs it any more. macOS builds are ad-hoc signed by Unity, so the
+    /// app is re-signed ad-hoc after the files are removed.
     /// </summary>
     public sealed class LlamaBuildStrip : IPostprocessBuildWithReport
     {
@@ -23,27 +24,39 @@ namespace LingGuangV05.Desktop.LLM.Editor
             var target = report.summary.platform;
             string output = report.summary.outputPath;
             string streaming;
-            string[] drop;
             if (target == BuildTarget.StandaloneOSX)
-            {
                 streaming = Path.Combine(output, "Contents", "Resources", "Data", "StreamingAssets");
-                drop = new[] { "win-x64" };
-            }
             else if (target == BuildTarget.StandaloneWindows64 || target == BuildTarget.StandaloneWindows)
-            {
                 streaming = Path.Combine(Path.GetDirectoryName(output) ?? "", Path.GetFileNameWithoutExtension(output) + "_Data", "StreamingAssets");
-                drop = new[] { "mac-arm64" };
-            }
             else return;
 
+            bool changed = false;
             string llama = Path.Combine(streaming, "LingGuang", "llama");
-            if (!Directory.Exists(llama)) return;
-            foreach (var name in drop)
+            if (Directory.Exists(llama))
             {
-                string dir = Path.Combine(llama, name);
-                if (Directory.Exists(dir)) { Directory.Delete(dir, true); Debug.Log("[灵光] 构建里删掉了用不上的 llama 包：" + name); }
+                Directory.Delete(llama, true);
+                changed = true;
+                Debug.Log("[灵光] 构建里删掉了不再使用的 llama-server 包（本地模型改由 LLM for Unity 运行）");
             }
-            foreach (var meta in Directory.GetFiles(llama, "*.meta", SearchOption.AllDirectories)) File.Delete(meta);
+            // Windows runs the CPU runtime only (LocalLlm.StartService), so LlamaLib's GPU builds there (CUDA via
+            // tinyblas ~360 MB, Vulkan ~70 MB) and the import libraries would be dead weight. Turn Windows GPU on in
+            // LocalLlm and these must stay.
+            if (target != BuildTarget.StandaloneOSX)
+                foreach (var lib in Directory.GetDirectories(streaming, "LlamaLib-*"))
+                {
+                    string native = Path.Combine(lib, "win-x64", "native");
+                    if (!Directory.Exists(native)) continue;
+                    long freed = 0;
+                    foreach (var file in Directory.GetFiles(native))
+                    {
+                        string name = Path.GetFileName(file);
+                        if (!(name.EndsWith(".lib", StringComparison.OrdinalIgnoreCase) || name.Contains("tinyblas") || name.Contains("vulkan") || name.Contains("cublas") || name.Contains("cudart"))) continue;
+                        freed += new FileInfo(file).Length;
+                        File.Delete(file);
+                    }
+                    if (freed > 0) Debug.Log("[灵光] Windows 构建只用 CPU 推理，删掉了 LlamaLib 的 GPU 库：" + (freed / (1024 * 1024)) + " MB");
+                }
+            if (!changed) return;
 
             if (target == BuildTarget.StandaloneOSX)
             {

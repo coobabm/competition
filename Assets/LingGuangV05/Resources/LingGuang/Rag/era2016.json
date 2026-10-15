@@ -1,0 +1,1417 @@
+{
+  "entries": [
+    {
+      "id": "dartmouth-1956",
+      "topic": "AI",
+      "zh": "1956 年夏天的达特茅斯会议上，麦卡锡等人正式提出了“人工智能”这个说法。",
+      "en": "At the Dartmouth workshop in summer 1956, John McCarthy and others formally coined the term \"artificial intelligence\".",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "perceptron-1958",
+      "topic": "AI",
+      "zh": "1958 年，美国心理学家罗森布拉特提出感知机，这是最早能从样本中学习的人工神经元模型之一。",
+      "en": "In 1958, American psychologist Frank Rosenblatt proposed the perceptron, one of the first artificial neuron models that could learn from examples.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "perceptrons-book-1969",
+      "topic": "AI",
+      "zh": "1969 年，明斯基和佩珀特在《感知机》一书中指出单层感知机解决不了异或问题，神经网络研究随后陷入低潮。",
+      "en": "In 1969, Minsky and Papert showed in the book Perceptrons that a single-layer perceptron cannot solve XOR, and neural network research went into a slump.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "backprop-1986",
+      "topic": "AI",
+      "zh": "1986 年，鲁梅尔哈特、辛顿和威廉姆斯在《自然》发表论文，让反向传播成为训练多层神经网络的标准方法。",
+      "en": "In 1986, Rumelhart, Hinton and Williams published a paper in Nature that made backpropagation the standard way to train multi-layer neural networks.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "deep-blue-1997",
+      "topic": "AI",
+      "zh": "1997 年 5 月，IBM 的“深蓝”以 3.5 比 2.5 战胜国际象棋世界冠军卡斯帕罗夫。",
+      "en": "In May 1997, IBM's Deep Blue beat world chess champion Garry Kasparov 3.5–2.5.",
+      "from": "1997-05-11",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "lenet-1998",
+      "topic": "AI",
+      "zh": "1998 年，杨立昆等人发表卷积神经网络 LeNet-5，用来识别手写数字，曾被用于银行支票识别。",
+      "en": "In 1998, Yann LeCun and colleagues published the convolutional network LeNet-5 for handwritten digit recognition; it was used to read bank cheques.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "mnist-dataset",
+      "topic": "AI",
+      "zh": "MNIST 手写数字数据集有 6 万张训练图和 1 万张测试图，每张是 28×28 像素灰度图，是神经网络入门常用练习。",
+      "en": "The MNIST handwritten digit dataset has 60,000 training and 10,000 test images, each a 28×28 greyscale picture; it is the usual first exercise for neural networks.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "hinton-2006-deep-learning",
+      "topic": "AI",
+      "zh": "2006 年，辛顿等人用逐层预训练的深度信念网络让深层网络重新可以训练，“深度学习”一词随之流行。",
+      "en": "In 2006, Hinton and colleagues used layer-by-layer pre-trained deep belief networks to make deep networks trainable again, and the term \"deep learning\" caught on.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "cuda-2007",
+      "topic": "AI",
+      "zh": "2007 年，亮影公司推出 CUDA 平台，让程序员能用显卡做通用计算，后来成了深度学习训练的基础。",
+      "en": "In 2007, Liangying released the CUDA platform so programmers could use graphics cards for general computing; it later became the basis of deep learning training.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "imagenet-2009",
+      "topic": "AI",
+      "zh": "ImageNet 图像库由李飞飞团队建立并于 2009 年发布，后来收录了 1400 多万张标注图片、2 万多个类别。",
+      "en": "The ImageNet image database was built by Fei-Fei Li's team and released in 2009; it grew to over 14 million labelled images in more than 20,000 categories.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "ilsvrc-challenge",
+      "topic": "AI",
+      "zh": "从 2010 年起，ImageNet 每年举办视觉识别挑战赛 ILSVRC，比赛用其中 1000 个类别、约 120 万张训练图。",
+      "en": "From 2010, ImageNet held the yearly visual recognition challenge ILSVRC, using 1,000 of its categories and about 1.2 million training images.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "alexnet-2012",
+      "topic": "AI",
+      "zh": "2012 年，辛顿的学生克里切夫斯基设计的 AlexNet 在 ImageNet 比赛中把前五错误率降到 15.3%，第二名约 26%。",
+      "en": "In 2012, AlexNet, designed by Hinton's student Alex Krizhevsky, cut the ImageNet top-5 error to 15.3%, against about 26% for second place.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "alexnet-gpu",
+      "topic": "AI",
+      "zh": "AlexNet 是用两块 3GB 显存的亮影 GTX 580 显卡训练的，用了五六天，从此用显卡训练神经网络出了名。",
+      "en": "AlexNet was trained on two Liangying GTX 580 cards with 3GB of memory each, taking five to six days; after that, training neural networks on graphics cards became famous.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "google-cat-2012",
+      "topic": "AI",
+      "zh": "2012 年 6 月，谷歌大脑用 1.6 万个 CPU 核心看了大量 YouTube 视频截图，网络自己学会了识别猫脸。",
+      "en": "In June 2012, Google Brain ran 16,000 CPU cores over large numbers of YouTube video frames, and the network learned to recognise cat faces by itself.",
+      "from": "2012-06-26",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "word2vec-2013",
+      "topic": "AI",
+      "zh": "2013 年，谷歌的米科洛夫等人发布 word2vec，把词变成向量，“国王－男人＋女人≈女王”成了著名例子。",
+      "en": "In 2013, Tomas Mikolov and colleagues at Google released word2vec, turning words into vectors; \"king − man + woman ≈ queen\" became the famous example.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "ng-baidu-2014",
+      "topic": "AI",
+      "zh": "2014 年 5 月，斯坦福教授吴恩达加入摆渡，出任首席科学家，负责其深度学习研究。",
+      "en": "In May 2014, Stanford professor Andrew Ng joined Bodu as chief scientist, leading its deep learning research.",
+      "from": "2014-05-16",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "gan-2014",
+      "topic": "AI",
+      "zh": "2014 年 6 月，伊恩·古德费洛提出生成对抗网络 GAN，让一个生成网络和一个判别网络互相较量、共同进步。",
+      "en": "In June 2014, Ian Goodfellow proposed generative adversarial networks (GANs), in which a generator network and a discriminator network compete and improve together.",
+      "from": "2014-06-10",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "dqn-atari-2015",
+      "topic": "AI",
+      "zh": "2015 年 2 月，DeepMind 在《自然》发表 DQN：同一个网络只看屏幕像素，就学会了玩 49 款雅达利游戏。",
+      "en": "In February 2015, DeepMind published DQN in Nature: one network, looking only at screen pixels, learned to play 49 Atari games.",
+      "from": "2015-02-26",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "tensorflow-2015",
+      "topic": "AI",
+      "zh": "2015 年 11 月 9 日，谷歌开源了深度学习框架 TensorFlow，很快成为最热门的框架之一。",
+      "en": "On 9 November 2015, Google open-sourced the deep learning framework TensorFlow, which quickly became one of the most popular frameworks.",
+      "from": "2015-11-09",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "resnet-2015",
+      "topic": "AI",
+      "zh": "2015 年 12 月，微软亚洲研究院何恺明等人的 152 层残差网络 ResNet 以 3.57% 前五错误率夺得 ImageNet 冠军。",
+      "en": "In December 2015, the 152-layer residual network ResNet by Kaiming He and colleagues at Microsoft Research Asia won ImageNet with a 3.57% top-5 error.",
+      "from": "2015-12-10",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "openai-founded-2015",
+      "topic": "AI",
+      "zh": "2015 年 12 月 11 日，马斯克、阿尔特曼等人宣布成立非营利研究机构 OpenAI，承诺投入 10 亿美元。",
+      "en": "On 11 December 2015, Elon Musk, Sam Altman and others announced the non-profit research lab OpenAI, with US$1 billion pledged.",
+      "from": "2015-12-12",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "go-complexity",
+      "topic": "AI",
+      "zh": "围棋棋盘有 19×19＝361 个交叉点，合法局面约有 10 的 170 次方种，比宇宙中的原子还多。",
+      "en": "A Go board has 19×19 = 361 points, and there are about 10^170 legal positions, more than the atoms in the universe.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "alphago-fan-hui",
+      "topic": "AI",
+      "zh": "2016 年 1 月公布：AlphaGo 曾在 2015 年 10 月以 5 比 0 战胜欧洲围棋冠军樊麾，首次在不让子的正式对局中赢下职业棋手。",
+      "en": "Announced in January 2016: in October 2015 AlphaGo beat European Go champion Fan Hui 5–0, the first win by a computer over a professional in an even game.",
+      "from": "2016-01-28",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "alphago-training-data",
+      "topic": "AI",
+      "zh": "AlphaGo 先学习了 KGS 围棋网站约 16 万盘人类对局中的 3000 万个局面，再靠自己和自己下棋继续变强。",
+      "en": "AlphaGo first learned from 30 million positions in about 160,000 human games on the KGS Go server, then kept improving by playing against itself.",
+      "from": "2016-01-28",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "alphago-lee-sedol",
+      "topic": "AI",
+      "zh": "2016 年 3 月 9 日到 15 日，谷歌 DeepMind 的 AlphaGo 在首尔以 4 比 1 战胜李世石九段。",
+      "en": "From 9 to 15 March 2016, Google DeepMind's AlphaGo beat Lee Sedol 9-dan 4–1 in Seoul.",
+      "from": "2016-03-15",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "alphago-game4-move78",
+      "topic": "AI",
+      "zh": "2016 年 3 月 13 日的第四局，李世石第 78 手下出妙手，赢下了人类在这场五番棋中唯一的一盘。",
+      "en": "In game four on 13 March 2016, Lee Sedol's brilliant move 78 won humanity's only game of the five-game match.",
+      "from": "2016-03-13",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "tay-chatbot",
+      "topic": "AI",
+      "zh": "2016 年 3 月 23 日，微软在推特上线聊天机器人 Tay，不到一天就被网友教出不当言论，随即被下线。",
+      "en": "On 23 March 2016, Microsoft launched the chatbot Tay on Twitter; within a day users taught it offensive remarks and it was taken offline.",
+      "from": "2016-03-24",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "google-tpu",
+      "topic": "AI",
+      "zh": "2016 年 5 月 18 日的谷歌 I/O 大会上，谷歌公布自研机器学习芯片 TPU，并说 AlphaGo 对战李世石时就用了它。",
+      "en": "At Google I/O on 18 May 2016, Google revealed its own machine learning chip, the TPU, and said AlphaGo used it against Lee Sedol.",
+      "from": "2016-05-19",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "prisma-app",
+      "topic": "AI",
+      "zh": "2016 年 6 月上线的 Prisma 用神经网络把照片变成梵高等名画风格，上线后很快在全球走红。",
+      "en": "Prisma, launched in June 2016, uses neural networks to turn photos into the style of Van Gogh and other painters; it quickly went viral around the world.",
+      "from": "2016-06-20",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "tesla-autopilot-crash",
+      "topic": "AI",
+      "zh": "2016 年 6 月 30 日，特斯拉公布一起 5 月的致命车祸：车主开着自动辅助驾驶撞上横穿公路的货车。",
+      "en": "On 30 June 2016, Tesla disclosed a fatal May crash in which a driver using Autopilot hit a lorry crossing the highway.",
+      "from": "2016-07-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "wavenet",
+      "topic": "AI",
+      "zh": "2016 年 9 月 8 日，DeepMind 发布 WaveNet，用神经网络逐点生成声音波形，合成语音比以往自然得多。",
+      "en": "On 8 September 2016, DeepMind released WaveNet, which generates sound waveforms sample by sample with a neural network, making synthetic speech far more natural.",
+      "from": "2016-09-09",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "google-nmt",
+      "topic": "AI",
+      "zh": "2016 年 9 月 27 日，谷歌宣布神经机器翻译系统上线，最先用于中译英，翻译错误比旧系统大幅减少。",
+      "en": "On 27 September 2016, Google announced its neural machine translation system, first used for Chinese-to-English, with far fewer translation errors than the old system.",
+      "from": "2016-09-28",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "alphago-master-online",
+      "topic": "AI",
+      "zh": "2016 年 12 月 29 日起，一个先叫 Magister、次日改名 Master 的神秘账号在弈城网快棋连胜多位职业高手，身份不明。",
+      "en": "From 29 December 2016, a mystery account first called Magister, renamed Master the next day, won fast games in a row against top professionals on Tygem; nobody knew who it was.",
+      "from": "2016-12-30",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "gpu-parallel-training",
+      "topic": "科技",
+      "zh": "训练神经网络主要是海量矩阵乘法，显卡有上千个并行核心，做这类计算通常比 CPU 快十几倍以上。",
+      "en": "Training a neural network is mostly huge numbers of matrix multiplications; a graphics card has thousands of parallel cores and is usually over ten times faster than a CPU at this.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "gtx-750ti",
+      "topic": "科技",
+      "zh": "亮影 GTX 750 Ti 是 2014 年 2 月发布的入门显卡，功耗只有 60W，不用外接供电，常见 2GB 显存版本。",
+      "en": "The Liangying GTX 750 Ti is an entry-level card released in February 2014; it draws only 60W, needs no extra power cable and commonly has 2GB of memory.",
+      "from": "2014-02-18",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "gtx-1080-announce",
+      "topic": "科技",
+      "zh": "北京时间 2016 年 5 月 7 日，亮影发布 GTX 1080 显卡，8GB GDDR5X 显存，号称比上代旗舰 Titan X 还快。",
+      "en": "On 7 May 2016 Beijing time, Liangying unveiled the GTX 1080 with 8GB of GDDR5X memory, claimed to be faster than the previous flagship Titan X.",
+      "from": "2016-05-07",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "gtx-1080-launch",
+      "topic": "科技",
+      "zh": "亮影 GTX 1080 于 2016 年 5 月 27 日上市，16 纳米 Pascal 架构，功耗 180W，定价 599 美元起，公版 699 美元。",
+      "en": "The Liangying GTX 1080 went on sale on 27 May 2016: 16nm Pascal architecture, 180W, from US$599, Founders Edition US$699.",
+      "from": "2016-05-27",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "gtx-1070-launch",
+      "topic": "科技",
+      "zh": "亮影 GTX 1070 于 2016 年 6 月 10 日上市，同样有 8GB 显存，定价 379 美元起，性价比受到关注。",
+      "en": "The Liangying GTX 1070 went on sale on 10 June 2016, also with 8GB of memory, from US$379, and was noted for its value.",
+      "from": "2016-06-10",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "gtx-1060-launch",
+      "topic": "科技",
+      "zh": "2016 年 7 月 19 日，亮影 GTX 1060 上市，国内非公版 1999 元起，公版 2399 元，被称为新一代“甜点卡”。",
+      "en": "On 19 July 2016, the Liangying GTX 1060 went on sale in China from ¥1,999 for partner cards and ¥2,399 for the reference card, called the new sweet-spot card.",
+      "from": "2016-07-19",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ligo-gravitational-waves",
+      "topic": "科技",
+      "zh": "2016 年 2 月 11 日，美国 LIGO 宣布首次直接探测到引力波，来自 13 亿年前两个黑洞的合并。",
+      "en": "On 11 February 2016, LIGO announced the first direct detection of gravitational waves, from two black holes merging 1.3 billion years ago.",
+      "from": "2016-02-11",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "oppo-r9",
+      "topic": "科技",
+      "zh": "2016 年 3 月 17 日，OPPO R9 发布，售价 2799 元，主打前置 1600 万像素自拍和“充电五分钟，通话两小时”。",
+      "en": "On 17 March 2016, the OPPO R9 launched at ¥2,799, selling on its 16MP selfie camera and the slogan \"charge five minutes, talk two hours\".",
+      "from": "2016-03-17",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "vr-year-2016",
+      "topic": "科技",
+      "zh": "2016 年被称为“VR 元年”：Oculus Rift 3 月、HTC Vive 4 月、索尼 PS VR 10 月 13 日相继上市。",
+      "en": "2016 was called \"year one of VR\": the Oculus Rift shipped in March, the HTC Vive in April and Sony's PS VR on 13 October.",
+      "from": "2016-10-13",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "sunway-taihulight",
+      "topic": "科技",
+      "zh": "2016 年 6 月 20 日，中国“神威·太湖之光”以每秒 9.3 亿亿次登上全球超算 500 强第一，芯片全部国产。",
+      "en": "On 20 June 2016, China's Sunway TaihuLight topped the TOP500 supercomputer list at 93 petaflops, using only Chinese-made chips.",
+      "from": "2016-06-20",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "mozi-quantum-satellite",
+      "topic": "科技",
+      "zh": "2016 年 8 月 16 日凌晨 1 时 40 分，世界首颗量子科学实验卫星“墨子号”在酒泉发射升空。",
+      "en": "At 1:40 a.m. on 16 August 2016, Micius (Mozi), the world's first quantum science satellite, was launched from Jiuquan.",
+      "from": "2016-08-16",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "iphone-7-announce",
+      "topic": "科技",
+      "zh": "北京时间 2016 年 9 月 8 日，苹果发布 iPhone 7，取消 3.5 毫米耳机孔，国行 32GB 版售价 5388 元。",
+      "en": "On 8 September 2016 Beijing time, Apple unveiled the iPhone 7, dropping the 3.5mm headphone jack; the 32GB China model cost ¥5,388.",
+      "from": "2016-09-08",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "iphone-7-onsale",
+      "topic": "科技",
+      "zh": "iPhone 7 于 2016 年 9 月 16 日在国内上市，新颜色“亮黑色”最难买到。",
+      "en": "The iPhone 7 went on sale in China on 16 September 2016; the new jet black colour was the hardest to get.",
+      "from": "2016-09-16",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "tiangong-2",
+      "topic": "科技",
+      "zh": "2016 年 9 月 15 日中秋夜 22 时 04 分，天宫二号空间实验室在酒泉发射升空。",
+      "en": "At 22:04 on the Mid-Autumn night of 15 September 2016, the Tiangong-2 space lab was launched from Jiuquan.",
+      "from": "2016-09-15",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "fast-telescope",
+      "topic": "科技",
+      "zh": "2016 年 9 月 25 日，贵州平塘的 500 米口径球面射电望远镜“中国天眼”FAST 落成启用，是世界最大单口径射电望远镜。",
+      "en": "On 25 September 2016, the 500-metre FAST radio telescope, \"China's Sky Eye\" in Pingtang, Guizhou, began operating as the world's largest single-dish radio telescope.",
+      "from": "2016-09-25",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "note7-halt",
+      "topic": "科技",
+      "zh": "2016 年 10 月 11 日，三星因电池起火问题宣布永久停产 Galaxy Note 7 并全球召回。",
+      "en": "On 11 October 2016, Samsung permanently stopped making the Galaxy Note 7 over battery fires and recalled it worldwide.",
+      "from": "2016-10-11",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "shenzhou-11-launch",
+      "topic": "科技",
+      "zh": "2016 年 10 月 17 日 7 时 30 分，神舟十一号载着景海鹏、陈冬从酒泉发射，19 日凌晨与天宫二号对接。",
+      "en": "At 7:30 on 17 October 2016, Shenzhou-11 launched from Jiuquan with Jing Haipeng and Chen Dong, docking with Tiangong-2 early on the 19th.",
+      "from": "2016-10-19",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "xiaomi-mix",
+      "topic": "科技",
+      "zh": "2016 年 10 月 25 日，小米发布全面屏概念手机小米 MIX，陶瓷机身，售价 3499 元起。",
+      "en": "On 25 October 2016, Xiaomi launched the near-bezel-less concept phone Mi MIX with a ceramic body, from ¥3,499.",
+      "from": "2016-10-25",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "long-march-5",
+      "topic": "科技",
+      "zh": "2016 年 11 月 3 日，长征五号在文昌首飞成功，是当时中国起飞质量最大、运载能力最强的火箭。",
+      "en": "On 3 November 2016, Long March 5 made its successful maiden flight from Wenchang, then China's heaviest and most powerful rocket.",
+      "from": "2016-11-03",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "shenzhou-11-return",
+      "topic": "科技",
+      "zh": "2016 年 11 月 18 日，神舟十一号返回舱在内蒙古着陆，两名航天员在太空飞行 33 天，其中 30 天住在天宫二号。",
+      "en": "On 18 November 2016, the Shenzhou-11 capsule landed in Inner Mongolia; the two astronauts spent 33 days in space, 30 of them aboard Tiangong-2.",
+      "from": "2016-11-18",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "two-child-policy",
+      "topic": "新闻",
+      "zh": "2016 年 1 月 1 日起，全面二孩政策正式实施，一对夫妇可以生育两个孩子。",
+      "en": "From 1 January 2016, the universal two-child policy took effect, allowing every couple to have two children.",
+      "from": "2016-01-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "shanghai-disney-opening",
+      "topic": "新闻",
+      "zh": "2016 年 6 月 16 日，上海迪士尼乐园开园，开幕期后门票平日 370 元、高峰日 499 元。",
+      "en": "Shanghai Disneyland opened on 16 June 2016; after the opening period tickets cost ¥370 on regular days and ¥499 on peak days.",
+      "from": "2016-06-16",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "brexit-vote",
+      "topic": "新闻",
+      "zh": "2016 年 6 月 23 日英国举行脱欧公投，次日结果公布，51.9% 的选票支持离开欧盟，首相卡梅伦宣布将辞职。",
+      "en": "The UK held its EU referendum on 23 June 2016; the next day 51.9% voted to leave, and Prime Minister Cameron said he would resign.",
+      "from": "2016-06-24",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "wuhan-floods",
+      "topic": "新闻",
+      "zh": "2016 年 7 月初，长江中下游连降暴雨，武汉城区大面积内涝，多地遭遇洪灾。",
+      "en": "In early July 2016, heavy rain along the middle and lower Yangtze flooded large parts of Wuhan, and many places were hit by floods.",
+      "from": "2016-07-07",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ride-hailing-rules",
+      "topic": "新闻",
+      "zh": "2016 年 7 月 28 日，交通运输部等七部门公布网约车管理暂行办法，网约车获得合法地位，11 月 1 日起施行。",
+      "en": "On 28 July 2016, seven ministries published interim rules for ride-hailing, making it legal; they took effect on 1 November.",
+      "from": "2016-07-28",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "didi-uber-china",
+      "topic": "新闻",
+      "zh": "2016 年 8 月 1 日，滴滴出行宣布收购优步中国的品牌、业务和数据，网约车补贴大战告一段落。",
+      "en": "On 1 August 2016, Didi Chuxing announced it was buying Uber China's brand, business and data, ending the ride-hailing subsidy war.",
+      "from": "2016-08-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "g20-hangzhou",
+      "topic": "新闻",
+      "zh": "2016 年 9 月 4 日至 5 日，二十国集团领导人峰会在杭州举行，4 日晚西湖上演了文艺晚会《最忆是杭州》。",
+      "en": "The G20 leaders' summit was held in Hangzhou on 4–5 September 2016; on the evening of the 4th the gala Hangzhou: Most Memorable was staged on West Lake.",
+      "from": "2016-09-05",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-election-trump",
+      "topic": "新闻",
+      "zh": "北京时间 2016 年 11 月 9 日，美国大选结果揭晓，共和党候选人特朗普击败希拉里，当选美国总统。",
+      "en": "On 9 November 2016 Beijing time, the US election result came in: Republican Donald Trump beat Hillary Clinton to become president.",
+      "from": "2016-11-09",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "castro-death",
+      "topic": "新闻",
+      "zh": "2016 年 11 月 25 日，古巴革命领导人菲德尔·卡斯特罗在哈瓦那去世，终年 90 岁。",
+      "en": "On 25 November 2016, Cuban revolutionary leader Fidel Castro died in Havana at the age of 90.",
+      "from": "2016-11-26",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "beijing-smog-red-alert",
+      "topic": "新闻",
+      "zh": "2016 年 12 月 16 日晚，北京启动当年首个空气重污染红色预警，单双号限行，持续到 22 日零时。",
+      "en": "On the evening of 16 December 2016, Beijing issued its first red alert for heavy air pollution that year, with odd-even driving limits, lasting until midnight on the 22nd.",
+      "from": "2016-12-22",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "wuzhen-internet-conference",
+      "topic": "新闻",
+      "zh": "2016 年 11 月 16 日至 18 日，第三届世界互联网大会在浙江乌镇举行，无人驾驶汽车在乌镇街头试乘。",
+      "en": "The third World Internet Conference was held in Wuzhen, Zhejiang, on 16–18 November 2016, with self-driving cars giving trial rides on Wuzhen's streets.",
+      "from": "2016-11-18",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "chunyun-2016",
+      "topic": "新闻",
+      "zh": "2016 年春运从 1 月 24 日开始，到 3 月 3 日结束，共 40 天，抢火车票是很多人的头等难题。",
+      "en": "The 2016 Spring Festival travel rush ran 40 days from 24 January to 3 March, and getting a train ticket was many people's biggest headache.",
+      "from": "2016-01-24",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "china-football-top12",
+      "topic": "体育",
+      "zh": "2016 年 3 月 29 日，国足在西安 2 比 0 战胜卡塔尔，凭借其他场次结果惊险晋级世预赛亚洲区 12 强赛。",
+      "en": "On 29 March 2016, China beat Qatar 2–0 in Xi'an and, helped by other results, scraped into the final 12-team round of Asian World Cup qualifying.",
+      "from": "2016-03-29",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "kobe-retires",
+      "topic": "体育",
+      "zh": "北京时间 2016 年 4 月 14 日，科比在职业生涯最后一场比赛中砍下 60 分，告别 NBA。",
+      "en": "On 14 April 2016 Beijing time, Kobe Bryant scored 60 points in the last game of his career and said goodbye to the NBA.",
+      "from": "2016-04-14",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "leicester-title",
+      "topic": "体育",
+      "zh": "2016 年 5 月 2 日，赛前赔率 5000 比 1 的莱斯特城提前两轮夺得英超冠军。",
+      "en": "On 2 May 2016, Leicester City, 5000–1 outsiders before the season, clinched the Premier League title with two games to spare.",
+      "from": "2016-05-03",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ding-junhui-final",
+      "topic": "体育",
+      "zh": "2016 年 5 月 2 日，丁俊晖在斯诺克世锦赛决赛中以 14 比 18 负于塞尔比，成为首位进入世锦赛决赛的亚洲球员。",
+      "en": "On 2 May 2016, Ding Junhui lost the World Snooker Championship final 14–18 to Mark Selby, the first Asian player to reach the final.",
+      "from": "2016-05-03",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "nba-finals-cavaliers",
+      "topic": "体育",
+      "zh": "北京时间 2016 年 6 月 20 日，詹姆斯率骑士在 1 比 3 落后的情况下连扳三场，击败勇士夺得 NBA 总冠军。",
+      "en": "On 20 June 2016 Beijing time, LeBron James's Cavaliers came back from 1–3 down to beat the Warriors and win the NBA title.",
+      "from": "2016-06-20",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "euro-2016-portugal",
+      "topic": "体育",
+      "zh": "2016 年 7 月 10 日，葡萄牙在法国欧洲杯决赛加时 1 比 0 击败东道主法国，首次夺得欧洲杯。",
+      "en": "On 10 July 2016, Portugal beat hosts France 1–0 after extra time in the Euro 2016 final to win their first European Championship.",
+      "from": "2016-07-11",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "rio-olympics-open",
+      "topic": "体育",
+      "zh": "里约奥运会于当地时间 2016 年 8 月 5 日开幕、21 日闭幕，是奥运会首次在南美洲举办。",
+      "en": "The Rio Olympics opened on 5 August 2016 local time and closed on the 21st, the first Olympics held in South America.",
+      "from": "2016-08-22",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "fu-yuanhui-bronze",
+      "topic": "体育",
+      "zh": "2016 年 8 月 9 日，傅园慧在里约奥运会女子 100 米仰泳决赛中与加拿大选手并列获得铜牌。",
+      "en": "On 9 August 2016, Fu Yuanhui tied with a Canadian swimmer for bronze in the women's 100m backstroke at the Rio Olympics.",
+      "from": "2016-08-09",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "sun-yang-200m",
+      "topic": "体育",
+      "zh": "北京时间 2016 年 8 月 9 日，孙杨夺得里约奥运会男子 200 米自由泳金牌。",
+      "en": "On 9 August 2016 Beijing time, Sun Yang won Olympic gold in the men's 200m free in Rio.",
+      "from": "2016-08-09",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "table-tennis-sweep",
+      "topic": "体育",
+      "zh": "里约奥运会上中国乒乓球队包揽四枚金牌，丁宁获女单冠军，马龙获男单冠军并完成个人大满贯。",
+      "en": "At the Rio Olympics the Chinese table tennis team won all four golds; Ding Ning won the women's singles and Ma Long the men's singles, completing his career Grand Slam.",
+      "from": "2016-08-18",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "volleyball-beat-brazil",
+      "topic": "体育",
+      "zh": "北京时间 2016 年 8 月 17 日，中国女排在奥运四分之一决赛中 3 比 2 逆转东道主、卫冕冠军巴西。",
+      "en": "On 17 August 2016 Beijing time, China's women's volleyball team came from behind to beat hosts and defending champions Brazil 3–2 in the Olympic quarter-final.",
+      "from": "2016-08-17",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "chen-long-badminton",
+      "topic": "体育",
+      "zh": "里约奥运会羽毛球男单决赛，谌龙击败李宗伟夺冠；林丹半决赛输给李宗伟，无缘奖牌。",
+      "en": "In the Rio Olympic men's badminton singles final, Chen Long beat Lee Chong Wei for gold; Lin Dan lost to Lee in the semi-final and missed a medal.",
+      "from": "2016-08-21",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "women-volleyball-gold",
+      "topic": "体育",
+      "zh": "当地时间 2016 年 8 月 20 日，郎平执教的中国女排 3 比 1 击败塞尔维亚，时隔 12 年再夺奥运金牌，朱婷获最有价值球员。",
+      "en": "On 20 August 2016 local time, China's women's volleyball team, coached by Lang Ping, beat Serbia 3–1 for their first Olympic gold in 12 years; Zhu Ting was MVP.",
+      "from": "2016-08-21",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "china-rio-medal-tally",
+      "topic": "体育",
+      "zh": "里约奥运会中国代表团获得 26 金 18 银 26 铜共 70 枚奖牌，金牌榜排第三。",
+      "en": "At the Rio Olympics China won 26 gold, 18 silver and 26 bronze, 70 medals in all, third on the gold table.",
+      "from": "2016-08-22",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "rio-paralympics-china",
+      "topic": "体育",
+      "zh": "2016 年里约残奥会上，中国代表团获得 107 金、共 239 枚奖牌，连续第四届位居金牌榜和奖牌榜第一。",
+      "en": "At the 2016 Rio Paralympics, China won 107 golds and 239 medals in all, topping both tables for the fourth Games in a row.",
+      "from": "2016-09-19",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "lippi-china-coach",
+      "topic": "体育",
+      "zh": "2016 年 10 月 11 日国足 0 比 2 负于乌兹别克斯坦后高洪波辞职，22 日中国足协宣布聘请里皮任主教练。",
+      "en": "After China lost 0–2 to Uzbekistan on 11 October 2016, Gao Hongbo resigned; on the 22nd the Chinese FA named Marcello Lippi head coach.",
+      "from": "2016-10-22",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "descendants-of-the-sun",
+      "topic": "娱乐",
+      "zh": "2016 年 2 月 24 日，韩剧《太阳的后裔》开播，国内在视频网站同步播出，宋仲基一时被很多女生叫“老公”。",
+      "en": "The Korean drama Descendants of the Sun premiered on 24 February 2016, streamed in China at the same time; many young women started calling Song Joong-ki \"husband\".",
+      "from": "2016-03-10",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dicaprio-oscar",
+      "topic": "娱乐",
+      "zh": "北京时间 2016 年 2 月 29 日，莱昂纳多凭《荒野猎人》终于获得奥斯卡最佳男主角，网友调侃“小李子终于拿到小金人”。",
+      "en": "On 29 February 2016 Beijing time, Leonardo DiCaprio finally won the Best Actor Oscar for The Revenant, and Chinese netizens joked that \"Little Li\" had got his statuette at last.",
+      "from": "2016-02-29",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "mermaid-box-office",
+      "topic": "娱乐",
+      "zh": "周星驰导演的《美人鱼》2016 年 2 月 8 日大年初一上映，成为内地首部票房突破 30 亿元的电影。",
+      "en": "Stephen Chow's The Mermaid opened on Chinese New Year's Day, 8 February 2016, and became the first film to pass ¥3 billion at the mainland box office.",
+      "from": "2016-03-15",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "zootopia-china",
+      "topic": "娱乐",
+      "zh": "迪士尼动画《疯狂动物城》2016 年 3 月 4 日在内地上映，口碑极好，内地票房超过 15 亿元。",
+      "en": "Disney's Zootopia opened in mainland China on 4 March 2016 to excellent reviews and took over ¥1.5 billion there.",
+      "from": "2016-04-30",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ode-to-joy-drama",
+      "topic": "娱乐",
+      "zh": "2016 年 4 月 18 日，电视剧《欢乐颂》在东方卫视和浙江卫视开播，讲同住 22 楼的五个女孩，非常火。",
+      "en": "On 18 April 2016, the TV drama Ode to Joy premiered on Dragon TV and Zhejiang TV; its story of five women living on the 22nd floor was a huge hit.",
+      "from": "2016-04-25",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "warcraft-movie",
+      "topic": "娱乐",
+      "zh": "电影《魔兽》2016 年 6 月 8 日在内地上映，比北美早两天，内地票房突破 13 亿元，远超北美。",
+      "en": "The film Warcraft opened in mainland China on 8 June 2016, two days before North America, and passed ¥1.3 billion there, far more than in North America.",
+      "from": "2016-06-20",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "jay-chou-bedtime-stories",
+      "topic": "娱乐",
+      "zh": "2016 年 6 月 24 日，周杰伦发行新专辑《周杰伦的床边故事》。",
+      "en": "On 24 June 2016, Jay Chou released his new album Jay Chou's Bedtime Stories.",
+      "from": "2016-06-24",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "mystic-nine-drama",
+      "topic": "娱乐",
+      "zh": "2016 年 7 月 4 日，盗墓题材网剧《老九门》开播，由陈伟霆、张艺兴等主演，播放量很高。",
+      "en": "On 4 July 2016, the tomb-raiding drama The Mystic Nine, starring William Chan and Zhang Yixing, premiered and drew huge view counts.",
+      "from": "2016-07-15",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "sing-china",
+      "topic": "娱乐",
+      "zh": "因版权纠纷，《中国好声音》改名《中国新歌声》，2016 年 7 月 15 日在浙江卫视开播，周杰伦首次当导师。",
+      "en": "After a copyright dispute, The Voice of China was renamed Sing! China and premiered on Zhejiang TV on 15 July 2016, with Jay Chou as a coach for the first time.",
+      "from": "2016-07-15",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "wang-baoqiang-divorce",
+      "topic": "娱乐",
+      "zh": "2016 年 8 月 14 日凌晨，王宝强在微博发布离婚声明，一时成为全网热议的话题，微博服务器都被挤得卡顿。",
+      "en": "Early on 14 August 2016, Wang Baoqiang posted a divorce statement on Weibo; it became the talk of the whole internet and Weibo's servers struggled.",
+      "from": "2016-08-14",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "love-o2o-drama",
+      "topic": "娱乐",
+      "zh": "2016 年 8 月 22 日，电视剧版《微微一笑很倾城》开播，杨洋、郑爽主演，讲大学生在网游里相恋。",
+      "en": "On 22 August 2016, the TV drama Love O2O premiered, starring Yang Yang and Zheng Shuang, about university students who fall in love in an online game.",
+      "from": "2016-08-22",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "operation-mekong",
+      "topic": "娱乐",
+      "zh": "林超贤导演的《湄公河行动》2016 年 9 月 30 日上映，改编自湄公河惨案，张涵予、彭于晏主演，口碑票房双丰收。",
+      "en": "Dante Lam's Operation Mekong, based on the Mekong River massacre and starring Zhang Hanyu and Eddie Peng, opened on 30 September 2016 and did well with critics and at the box office.",
+      "from": "2016-10-08",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ppap-song",
+      "topic": "娱乐",
+      "zh": "2016 年秋天，日本艺人 Piko 太郎只有几十秒的洗脑歌《PPAP》（笔菠萝苹果笔）在全球网络爆红。",
+      "en": "In autumn 2016, Japanese comedian Pikotaro's catchy song PPAP (Pen-Pineapple-Apple-Pen), just under a minute long, went viral around the world.",
+      "from": "2016-10-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "i-am-not-madame-bovary",
+      "topic": "娱乐",
+      "zh": "冯小刚导演、范冰冰主演的《我不是潘金莲》2016 年 11 月 18 日上映，大部分画面用圆形画幅拍摄。",
+      "en": "Feng Xiaogang's I Am Not Madame Bovary, starring Fan Bingbing, opened on 18 November 2016, with most of it shot in a round frame.",
+      "from": "2016-11-18",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "your-name-china",
+      "topic": "娱乐",
+      "zh": "新海诚的动画电影《你的名字。》2016 年 12 月 2 日在内地上映，首周末票房约 2.87 亿元，创日本电影在华纪录。",
+      "en": "Makoto Shinkai's anime film Your Name opened in mainland China on 2 December 2016, taking about ¥287 million in its first weekend, a record for a Japanese film in China.",
+      "from": "2016-12-05",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "great-wall-movie",
+      "topic": "娱乐",
+      "zh": "张艺谋导演、马特·达蒙主演的《长城》2016 年 12 月 16 日上映，口碑两极分化。",
+      "en": "Zhang Yimou's The Great Wall, starring Matt Damon, opened on 16 December 2016 to sharply divided reviews.",
+      "from": "2016-12-17",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "wechat-red-packets-2016",
+      "topic": "网络",
+      "zh": "2016 年除夕当天，微信红包收发总量达 80.8 亿个，约 4.2 亿人参与，是上一年的近 8 倍。",
+      "en": "On Chinese New Year's Eve 2016, 8.08 billion WeChat red packets were sent and received by about 420 million people, nearly eight times the year before.",
+      "from": "2016-02-08",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "alipay-five-fortunes",
+      "topic": "网络",
+      "zh": "2016 年春节支付宝“集五福”中，“敬业福”最难集，最终 79 万多人集齐五福，平分 2.15 亿元，每人约 271 元。",
+      "en": "In Alipay's 2016 Spring Festival \"collect five fortunes\" game, the \"dedication\" card was the hardest to get; just over 790,000 people completed the set and split ¥215 million, about ¥271 each.",
+      "from": "2016-02-08",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "laosiji-slang",
+      "topic": "网络",
+      "zh": "“老司机”是 2016 年流行的网络用语，指在某方面经验丰富、懂门道的人，常说“老司机带带我”。",
+      "en": "\"Old driver\" (老司机) was popular 2016 slang for someone experienced who knows the ropes, as in \"old driver, take me along\".",
+      "from": "2016-03-01",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "friendship-boat",
+      "topic": "网络",
+      "zh": "2016 年 4 月初，喃东尼画的两只企鹅漫画让“友谊的小船说翻就翻”刷屏，网友纷纷创作“翻船体”。",
+      "en": "In early April 2016, Nan Dongni's comic of two penguins made \"the little boat of friendship capsizes just like that\" go viral, and people made their own versions.",
+      "from": "2016-04-06",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "papi-jiang-auction",
+      "topic": "网络",
+      "zh": "2016 年 4 月 21 日，短视频网红 papi 酱的首条贴片广告被丽人丽妆以 2200 万元拍下。",
+      "en": "On 21 April 2016, the first video ad slot of short-video star papi酱 was sold at auction to Lily & Beauty for ¥22 million.",
+      "from": "2016-04-21",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "livestream-boom",
+      "topic": "网络",
+      "zh": "2016 年被称为“直播元年”，手机直播平台大量出现，网红主播靠观众送礼物赚钱。",
+      "en": "2016 was called \"year one of live streaming\": phone streaming platforms sprang up everywhere, and hosts earned money from viewers' virtual gifts.",
+      "from": "2016-05-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "chigua-qunzhong",
+      "topic": "网络",
+      "zh": "“吃瓜群众”是 2016 年的流行语，指不明真相、在一旁围观看热闹的网友。",
+      "en": "\"Melon-eating masses\" (吃瓜群众) was a 2016 buzzword for bystanders online who watch the drama without knowing the full story.",
+      "from": "2016-05-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "taolu-slang",
+      "topic": "网络",
+      "zh": "“套路”在 2016 年成了流行语，指让人防不胜防的固定手法，网友常说“城市套路深，我要回农村”。",
+      "en": "\"Taolu\" (routine, trick) became a 2016 buzzword for tricks people fall for; netizens joked \"the city is full of tricks, I'm going back to the countryside\".",
+      "from": "2016-05-01",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "yiyanbuhe-slang",
+      "topic": "网络",
+      "zh": "“一言不合就……”是 2016 年流行的句式，意思是动不动就做某事，比如“一言不合就开唱”。",
+      "en": "\"At the drop of a word, (do something)\" (一言不合就……) was a popular 2016 pattern meaning doing something at the slightest excuse, e.g. \"bursts into song at the drop of a word\".",
+      "from": "2016-06-01",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "ge-you-slouch",
+      "topic": "网络",
+      "zh": "2016 年 7 月，葛优在 1993 年情景剧《我爱我家》中瘫在沙发上的剧照爆红，被称为“葛优躺”。",
+      "en": "In July 2016, a still of Ge You slumped on a sofa in the 1993 sitcom I Love My Family went viral as the \"Ge You slouch\".",
+      "from": "2016-07-12",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "honghuang-zhili",
+      "topic": "网络",
+      "zh": "2016 年 8 月 8 日，傅园慧在奥运赛后采访中说自己“用了洪荒之力”，表情夸张，“洪荒之力”立刻成为全网热词。",
+      "en": "On 8 August 2016, Fu Yuanhui said in a post-race Olympic interview that she had used her \"primordial power\", and with her wild expressions the phrase instantly went viral.",
+      "from": "2016-08-08",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "small-goal",
+      "topic": "网络",
+      "zh": "2016 年 8 月底，王健林在访谈节目中说“先定一个能达到的小目标，比方说我先挣它一个亿”，“小目标”随即走红。",
+      "en": "In late August 2016, Wang Jianlin said in a TV interview, \"First set a small achievable goal, say, earn 100 million\", and \"small goal\" went viral.",
+      "from": "2016-08-30",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "lanshou-xianggu",
+      "topic": "网络",
+      "zh": "2016 年 10 月初，一位广西南宁小伙的失恋视频走红，他口音中的“难受，想哭”听起来像“蓝瘦，香菇”。",
+      "en": "In early October 2016, a heartbroken young man from Nanning, Guangxi, went viral: in his accent \"so sad, want to cry\" sounded like \"blue thin, mushroom\".",
+      "from": "2016-10-08",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "double-11-2016",
+      "topic": "网络",
+      "zh": "2016 年 11 月 11 日，阿里巴巴“双 11”全天成交额达 1207 亿元，比上年的 912 亿元增长约 32%，八成以上来自手机。",
+      "en": "On 11 November 2016, Alibaba's Double 11 sales reached ¥120.7 billion for the day, about 32% up on ¥91.2 billion the year before, over 80% of it on phones.",
+      "from": "2016-11-12",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "yaowen-jiaozi-2016",
+      "topic": "网络",
+      "zh": "2016 年 12 月 14 日，《咬文嚼字》公布年度十大流行语，有洪荒之力、吃瓜群众、葛优躺、小目标、蓝瘦香菇等。",
+      "en": "On 14 December 2016, the magazine Yaowen Jiaozi published its top ten buzzwords of the year, including primordial power, melon-eating masses, Ge You slouch, small goal and blue thin mushroom.",
+      "from": "2016-12-14",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "hanyu-pandian-2016",
+      "topic": "网络",
+      "zh": "2016 年 12 月 20 日，“汉语盘点 2016”揭晓，年度国内字是“规”，年度国内词是“小目标”。",
+      "en": "On 20 December 2016, the \"Chinese Language Review 2016\" named \"规\" (rule) its domestic character of the year and \"small goal\" its domestic word of the year.",
+      "from": "2016-12-20",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "lol-netbar-staple",
+      "topic": "游戏",
+      "zh": "《英雄联盟》《穿越火线》《地下城与勇士》是 2016 年网吧里最常见的游戏，开机就能看到一排排人在打。",
+      "en": "League of Legends, CrossFire and Dungeon & Fighter were the most common games in 2016 internet cafés; you could see whole rows of people playing them.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "honor-of-kings",
+      "topic": "游戏",
+      "zh": "5V5 手游《王者荣耀》2015 年 11 月 26 日公测，前身叫《英雄战迹》《王者联盟》，2016 年在学生中火了起来，宿舍里常听到“开黑”。",
+      "en": "The 5v5 mobile game Honor of Kings opened to the public on 26 November 2015, formerly called Hero Battle and King Alliance; in 2016 it took off among students, and dorms rang with calls to team up.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "overwatch-launch",
+      "topic": "游戏",
+      "zh": "2016 年 5 月 24 日，暴雪的《守望先锋》全球同步上线，国服买断制，畅玩版 198 元、典藏版 328 元。",
+      "en": "On 24 May 2016, Blizzard's Overwatch launched worldwide; the China version was buy-to-play at ¥198 for the standard edition and ¥328 for the collector's edition.",
+      "from": "2016-05-24",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "pokemon-go",
+      "topic": "游戏",
+      "zh": "2016 年 7 月 6 日，AR 手游《精灵宝可梦 GO》在美国等地上线并风靡全球，但国内无法正常游玩。",
+      "en": "On 6 July 2016, the AR mobile game Pokémon GO launched in the US and elsewhere and swept the world, but it could not be played normally in China.",
+      "from": "2016-07-12",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "ti6-wings",
+      "topic": "游戏",
+      "zh": "2016 年 8 月 13 日，中国战队 Wings 在西雅图 DOTA2 国际邀请赛 TI6 决赛 3 比 1 夺冠，奖金约 913 万美元。",
+      "en": "On 13 August 2016, China's Wings Gaming won the DOTA 2 International (TI6) final 3–1 in Seattle, taking about US$9.13 million.",
+      "from": "2016-08-14",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "onmyoji",
+      "topic": "游戏",
+      "zh": "网易手游《阴阳师》2016 年 9 月上线，和风画面加抽卡玩法，很快火遍朋友圈。",
+      "en": "NetEase's mobile game Onmyoji launched in September 2016; its Japanese-style art and card-drawing system quickly made it the talk of WeChat Moments.",
+      "from": "2016-09-20",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "kpl-first-season",
+      "topic": "游戏",
+      "zh": "2016 年 9 月 17 日，《王者荣耀》职业联赛 KPL 首届秋季赛开赛，共有 12 支战队。",
+      "en": "On 17 September 2016, the first autumn season of the Honor of Kings professional league (KPL) began, with 12 teams.",
+      "from": "2016-09-17",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "civilization-6",
+      "topic": "游戏",
+      "zh": "2016 年 10 月 21 日，策略游戏《文明 6》发售，“再来一回合”又让很多玩家熬到天亮。",
+      "en": "On 21 October 2016, the strategy game Civilization VI came out, and \"one more turn\" kept many players up until dawn again.",
+      "from": "2016-10-21",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "lol-s6-final",
+      "topic": "游戏",
+      "zh": "2016 年 10 月 29 日，英雄联盟 S6 总决赛 SKT 以 3 比 2 战胜三星夺冠；中国的 RNG 和 EDG 都止步八强。",
+      "en": "On 29 October 2016, SKT beat Samsung Galaxy 3–2 to win the League of Legends Season 6 World Championship; China's RNG and EDG both went out in the quarter-finals.",
+      "from": "2016-10-30",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "super-mario-run",
+      "topic": "游戏",
+      "zh": "2016 年 12 月 15 日，任天堂首款马里奥手机游戏《超级马里奥酷跑》在苹果手机上推出。",
+      "en": "On 15 December 2016, Nintendo's first Mario phone game, Super Mario Run, came out on iPhone.",
+      "from": "2016-12-15",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "spring-festival-2016",
+      "topic": "生活",
+      "zh": "2016 年是农历丙申猴年，春节是 2 月 8 日，除夕是 2 月 7 日。",
+      "en": "2016 was the lunar Year of the Monkey; Spring Festival fell on 8 February and New Year's Eve on 7 February.",
+      "from": "2016-01-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "mid-autumn-2016",
+      "topic": "生活",
+      "zh": "2016 年中秋节是 9 月 15 日，放假三天，国庆节放假七天，从 10 月 1 日到 7 日。",
+      "en": "Mid-Autumn Festival 2016 was on 15 September with three days off, and the National Day holiday ran seven days from 1 to 7 October.",
+      "from": "2016-01-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "mobike-launch",
+      "topic": "生活",
+      "zh": "摩拜单车 2016 年 4 月 22 日在上海上线，扫码开锁、随骑随停，押金 299 元，每半小时 1 元，9 月 1 日进入北京。",
+      "en": "Mobike launched in Shanghai on 22 April 2016: scan to unlock, park anywhere, a ¥299 deposit and ¥1 per half hour; it entered Beijing on 1 September.",
+      "from": "2016-04-22",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "ofo-campus-to-city",
+      "topic": "生活",
+      "zh": "小黄车 ofo 起家于大学校园，到 2016 年 9 月已进入约 200 所高校，10 月开始在北京、上海街头试运营。",
+      "en": "The yellow ofo bikes started on university campuses, reached about 200 colleges by September 2016, and began trial operations on the streets of Beijing and Shanghai in October.",
+      "from": "2016-10-11",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "bike-sharing-county",
+      "topic": "生活",
+      "zh": "2016 年共享单车主要出现在大城市和大学校园，一般小县城还看不到，县城人出行多靠电动车。",
+      "en": "In 2016 shared bikes appeared mainly in big cities and on campuses; most small county towns had none yet, and county people mostly got around by e-bike.",
+      "from": "2016-10-11",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "mobile-payment-habits",
+      "topic": "生活",
+      "zh": "2016 年县城里用微信、支付宝扫码付钱越来越常见，但菜市场和小店很多人仍习惯用现金。",
+      "en": "In 2016 paying by scanning WeChat or Alipay codes was becoming common in county towns, but at markets and small shops many people still preferred cash.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "phone-brands-county",
+      "topic": "生活",
+      "zh": "2016 年县城街上常见 OPPO、vivo 的门店，年轻人多用 OPPO、vivo、华为、小米，用苹果手机算是“有钱”。",
+      "en": "In 2016 county high streets were full of OPPO and vivo shops; young people mostly used OPPO, vivo, Huawei and Xiaomi, and an iPhone counted as \"rich\".",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "chat-apps-2016",
+      "topic": "生活",
+      "zh": "2016 年年轻人电脑上聊天常用 YY，手机上 YY 和微信都用，班级、同学和游戏好友多建 YY 群。",
+      "en": "In 2016 young people chatted on YY on the computer and on both YY and WeChat on the phone; classes, classmates and gaming friends usually had YY groups.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "takeout-apps",
+      "topic": "生活",
+      "zh": "2016 年外卖软件在学生里很流行，下单常有“满 20 减 10”之类的红包，宿舍楼下常见外卖小哥。",
+      "en": "In 2016 takeaway apps were very popular with students; orders often came with discounts like ¥10 off ¥20, and delivery riders waited outside dorms.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "netbar-id-rules",
+      "topic": "生活",
+      "zh": "2016 年进网吧上网要刷身份证实名登记，按规定未成年人不能进入。",
+      "en": "In 2016 using an internet café required registering with your ID card, and minors were not allowed in by law.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "kuaishou-county",
+      "topic": "生活",
+      "zh": "2016 年短视频应用快手在县城和农村很受欢迎，很多人拍自己的日常生活上传。",
+      "en": "In 2016 the short-video app Kuaishou was very popular in county towns and villages, with many people filming and posting their daily lives.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "price-netbar",
+      "topic": "物价",
+      "zh": "2016 年县城网吧普通区上网一般每小时 3 到 5 元，包夜通常二三十元。",
+      "en": "In 2016 a county internet café typically charged ¥3–5 an hour in the regular area, and an overnight session usually cost ¥20–30.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "price-milk-tea",
+      "topic": "物价",
+      "zh": "2016 年县城街边奶茶店一杯奶茶一般 6 到 12 元，加珍珠、椰果要另加一两元。",
+      "en": "In 2016 a cup of milk tea from a county street shop typically cost ¥6–12, with pearls or coconut jelly a yuan or two extra.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "price-canteen",
+      "topic": "物价",
+      "zh": "2016 年大学食堂一荤一素加米饭一般 6 到 10 元，一碗面条多在 5 到 8 元。",
+      "en": "In 2016 a university canteen meal of one meat dish, one vegetable dish and rice typically cost ¥6–10, and a bowl of noodles ¥5–8.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "price-bus-taxi",
+      "topic": "物价",
+      "zh": "2016 年县城公交一般 1 元一趟，空调车 2 元；出租车起步价多在 5 元左右。",
+      "en": "In 2016 a county bus ride usually cost ¥1, or ¥2 with air conditioning; taxi flag fall was typically around ¥5.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "price-4g-plan",
+      "topic": "物价",
+      "zh": "2016 年常见手机 4G 套餐每月 50 到 100 元，全国流量多在几百 MB 到 2GB，用完常买 10 元 100MB 的流量包。",
+      "en": "In 2016 a typical 4G phone plan cost ¥50–100 a month with a few hundred MB to 2GB of national data; when it ran out people often bought ¥10 add-ons for 100MB.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "price-electricity",
+      "topic": "物价",
+      "zh": "2016 年居民电价第一档大多在每度 0.5 到 0.6 元之间，用电多了按阶梯加价。",
+      "en": "In 2016 the first tier of household electricity cost about ¥0.5–0.6 per kWh in most places, with higher tiers for heavy use.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "price-living-allowance",
+      "topic": "物价",
+      "zh": "2016 年大学生每月生活费一般在 1000 到 1500 元，吃饭占大头，家境一般的学生常做兼职补贴。",
+      "en": "In 2016 a university student's monthly allowance was typically ¥1,000–1,500, mostly spent on food; students from modest families often took part-time jobs.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "price-tuition",
+      "topic": "物价",
+      "zh": "2016 年公办本科学费一般每年 4000 到 6000 元，宿舍住宿费每年约 800 到 1200 元。",
+      "en": "In 2016 tuition at a public university was typically ¥4,000–6,000 a year, and a dorm bed about ¥800–1,200 a year.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "price-snacks",
+      "topic": "物价",
+      "zh": "2016 年小卖部一瓶 500 毫升可乐约 3 元，一桶方便面约 4 到 5 元，一瓶矿泉水 1 到 2 元。",
+      "en": "In 2016 a 500ml bottle of cola cost about ¥3 at a corner shop, a cup of instant noodles about ¥4–5 and a bottle of water ¥1–2.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "price-cinema",
+      "topic": "物价",
+      "zh": "2016 年县城电影院原价票一般 30 到 50 元，用手机购票软件常能买到二三十元的特价票。",
+      "en": "In 2016 full-price tickets at a county cinema were typically ¥30–50, and phone ticketing apps often had deals for ¥20–30.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "price-pork-eggs",
+      "topic": "物价",
+      "zh": "2016 年猪肉价格偏高，县城菜市场猪肉一般每斤十三到十六元，鸡蛋每斤四元左右。",
+      "en": "Pork prices were high in 2016; in county markets pork typically cost ¥13–16 a jin (500g), and eggs about ¥4 a jin.",
+      "from": "",
+      "until": "",
+      "importance": 1
+    },
+    {
+      "id": "price-county-wage-housing",
+      "topic": "物价",
+      "zh": "2016 年县城普通工作月薪多在 2000 到 3000 元，新房房价常见每平方米三四千元。",
+      "en": "In 2016 ordinary jobs in a county town typically paid ¥2,000–3,000 a month, and new flats commonly cost ¥3,000–4,000 per square metre.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "price-used-750ti",
+      "topic": "物价",
+      "zh": "2016 年二手亮影 GTX 750 Ti 2G 显卡在网上二手市场一般四五百元，是装机党常买的入门卡。",
+      "en": "In 2016 a used Liangying GTX 750 Ti 2GB typically sold for ¥400–500 on second-hand sites, a common entry card for PC builders.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "cet-schedule-2016",
+      "topic": "校园",
+      "zh": "2016 年大学英语四六级考试在 6 月 18 日和 12 月 17 日举行，四级在上午，六级在下午。",
+      "en": "In 2016 the College English Test bands 4 and 6 were held on 18 June and 17 December, with CET-4 in the morning and CET-6 in the afternoon.",
+      "from": "2016-01-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "cet-score-line",
+      "topic": "校园",
+      "zh": "四六级满分 710 分，一般把 425 分看作“过线”，四级 425 分以上才能报考六级。",
+      "en": "The CET-4 and CET-6 are marked out of 710; 425 is generally treated as a pass, and you need 425 or more on CET-4 to sit CET-6.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "gaokao-2016",
+      "topic": "校园",
+      "zh": "2016 年 6 月 7 日全国高考开考，全国报名人数约为 940 万人。",
+      "en": "The 2016 gaokao began on 7 June, with about 9.4 million registered candidates nationwide.",
+      "from": "2016-06-07",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "graduates-2016",
+      "topic": "校园",
+      "zh": "2016 年全国普通高校毕业生约 765 万人，人数创新高，就业压力是大学生常聊的话题。",
+      "en": "About 7.65 million students graduated from Chinese universities in 2016, a record, and job pressure was a constant topic among students.",
+      "from": "2016-06-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "kaoyan-dec-2016",
+      "topic": "校园",
+      "zh": "全国研究生招生考试初试于 2016 年 12 月 24 日至 26 日举行，报名人数达 201 万，首次突破 200 万。",
+      "en": "The national postgraduate entrance exam was held on 24–26 December 2016, with 2.01 million applicants, over two million for the first time.",
+      "from": "2016-12-24",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "dorm-rules",
+      "topic": "校园",
+      "zh": "大学宿舍多为四到六人间，很多学校晚上 11 点左右熄灯断电，禁止使用热得快、电热锅等大功率电器。",
+      "en": "University dorms usually house four to six students; many schools cut lights and power around 11 p.m. and ban high-power appliances such as immersion heaters and electric cookers.",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "dorm-curfew",
+      "topic": "校园",
+      "zh": "很多大学宿舍楼晚上 11 点左右关门，晚归要登记，辅导员会不定期查寝。",
+      "en": "Many university dorm buildings lock their doors around 11 p.m.; coming back late means signing in, and counsellors do surprise room checks.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "student-train-discount",
+      "topic": "校园",
+      "zh": "大学生凭学生证和优惠卡买火车票，硬座可以半价，每学年限家和学校之间单程 4 次。",
+      "en": "With a student ID and discount card, university students get half-price hard-seat train tickets, limited to four one-way trips a year between home and school.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "campus-net",
+      "topic": "校园",
+      "zh": "2016 年很多大学宿舍要办校园网才能上网，按月或按流量收费，晚上熄灯后也常断网。",
+      "en": "In 2016 many university dorms needed a campus network account to get online, paid monthly or by data, and the internet often went off after lights-out.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "semester-calendar",
+      "topic": "校园",
+      "zh": "大学一般 9 月初开学，1 月中旬前后放寒假；春季学期 2 月底开学，7 月上旬放暑假。",
+      "en": "University usually starts in early September and breaks for winter around mid-January; the spring term starts in late February and summer holidays begin in early July.",
+      "from": "",
+      "until": "",
+      "importance": 2
+    }
+  ]
+}

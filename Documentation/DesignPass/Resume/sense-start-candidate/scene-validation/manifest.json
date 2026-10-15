@@ -1,0 +1,24 @@
+{
+  "dispatcherSourceSha256": "F871FD7421128720ACBEEE11A62650AB8DB1DDAA9B4DF122E8529C5B9A7CCEF6",
+  "unityRun": "not run",
+  "files": [
+    {
+      "sha256": "D3D4580D9B37F0AF8556E9B98D305C71F15C22C798E1F5148A9210259EB8617A",
+      "file": "DesignWallpaperSmoke.SenseStart.cs"
+    },
+    {
+      "sha256": "46119B609C6D0224E7E98D209CD822E674A12A9D1615F7E5AC76A939D01F472C",
+      "file": "DesignWallpaperSmoke.SenseStart.cs.meta"
+    },
+    {
+      "sha256": "7B36A5E89063B45FA1E607D326F053B84E95CD46F8520558C878E2A876DBE132",
+      "file": "dispatcher.patch"
+    },
+    {
+      "sha256": "E9AAAD8DFC326441AE0C90047ADD563940964BC38C122674D1C35E30A510CE61",
+      "file": "DesignWallpaperSmoke.dispatcher.cs"
+    }
+  ],
+  "independentEditorCompileExit": 0,
+  "dispatcherSource": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs"
+}

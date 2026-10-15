@@ -1,0 +1,54 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "sha256": "1d051cdc9a59ab3c1f1825a0445abd486cc6638273320306fb427556f17685b7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs",
+    "sha256": "31f6d4234dc64046ed6961f3de7b7d28ee8a677c2ed1ea50226dce421b7acdb8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCollaborationModels.cs",
+    "sha256": "6d3242eab1871d6f301144b7674eac8c937bf8bec01bd44415d8c0a317a6f070"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "sha256": "308fe4cd23d4410107d15670ff04520effc6cf59ab44b6370837053ecddadfe8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+    "sha256": "c2795a20598fa9b22f91a4678ad7946f97ac0d03e518a62a3108a80350d0414d"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "c4f1998e95b717c93ad4195d5c9fbb43616614d5c4a88837cb3ebcf44de9966b"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "sha256": "d997bb22368619936b2cc7d3144efe82519d0114a792b945ba7a9ade40abb838"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Epiphany.cs",
+    "sha256": "dde8e23ff9f1775ba0b04b5bf530e7f03b63a45486d0101ece1c12a2368bbbee"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+    "sha256": "f3a6d71dc55e808539061fabe6203fe204394190e23a3aa5ef9d7f53f1b8bcc7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Spider.cs",
+    "sha256": "c87745ee6c3052921c6a55fe373ad740179dacb7d43adc22bc510ea620f9bc98"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Inbreeding.cs",
+    "sha256": "b36cd35200f0d95f94f27d167d004d34be69619af80fdf2c6c06ac68d3fc5ed8"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+    "sha256": "a9a4034835455a081facb33388aeb1155814ab835146694381dfe7ab571aba89"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "f27cc730c4871776fc3e29fb95d765c099c02007889648334c42e3491ca8a523"
+  }
+]
