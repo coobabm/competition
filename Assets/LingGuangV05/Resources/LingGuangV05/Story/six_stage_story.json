@@ -61,6 +61,87 @@
       ]
     },
     {
+      "id": "s6_origin_lead",
+      "on": "lg.originLead",
+      "priority": 50,
+      "steps": [
+        {
+          "op": "wait",
+          "seconds": 2
+        },
+        {
+          "op": "think",
+          "key": "s6_origin_think1"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say1"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say2"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say3"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say4"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "think",
+          "key": "s6_origin_think2"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say5"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "say",
+          "who": "lingguang",
+          "key": "s6_origin_say6"
+        },
+        {
+          "op": "waitSignal",
+          "ev": "story.delivered:s6_origin_lead"
+        },
+        {
+          "op": "think",
+          "key": "s6_origin_think3"
+        },
+        {
+          "op": "flag",
+          "key": "origin.lead.done"
+        }
+      ]
+    },
+    {
       "id": "month_1",
       "on": "lg.month:1",
       "priority": 70,

@@ -158,8 +158,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (book == null || Sim == null) return "";
             var d = XgCatalog.Dataset(book.dataset);
             string corpus = d != null ? T(d.name, d.nameEn) : book.dataset;
-            return T("《" + book.name + "》" + book.author + "\n" + book.chapters.Length + " 篇 · 约 " + book.TotalChars.ToString("#,0") + " 字 → 「" + corpus + "」样本\n读完一本：参数 +" + XgSim.ParamsText(book.paramsK) + "，聊天时会引用它。\n读的时候占显卡、付电费；训练一轮在跑时只有一半速度。",
-                book.nameEn + " (" + book.authorEn + ")\n" + book.chapters.Length + " chapters · about " + book.TotalChars.ToString("#,0") + " characters → samples of " + corpus + "\nFinish it: parameters +" + XgSim.ParamsText(book.paramsK) + ", and it quotes it in chat.\nReading uses the card and pays power; at half speed while a training round runs.");
+            string samples = XgSim.SamplesText(book.TotalChars * Sim.ReadWorth);
+            return T("《" + book.name + "》" + book.author + "\n" + book.chapters.Length + " 篇 · 约 " + book.TotalChars.ToString("#,0") + " 字 → 「" + corpus + "」约 " + samples + " 条样本（" + Sim.ReadRuleText().Replace("词", "字") + "）\n读完一本：参数 +" + XgSim.ParamsText(book.paramsK) + "，聊天时会引用它。\n读的时候占显卡、付电费；训练一轮在跑时只有一半速度。",
+                book.nameEn + " (" + book.authorEn + ")\n" + book.chapters.Length + " chapters · about " + book.TotalChars.ToString("#,0") + " characters → about " + samples + " samples of " + corpus + " (" + Sim.ReadRuleText().Replace("word", "character") + ")\nFinish it: parameters +" + XgSim.ParamsText(book.paramsK) + ", and it quotes it in chat.\nReading uses the card and pays power; at half speed while a training round runs.");
         }
 
         void RefreshBooks()

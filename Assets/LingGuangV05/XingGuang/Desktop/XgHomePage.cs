@@ -318,7 +318,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool owned = Sim.DiscountOwned(dsc);
                 string name = dsc.item.Length > 0 ? Sim.NodeName(XgCatalog.Node(dsc.item)) : Sim.NodeName(XgCatalog.Node(dsc.itemsAny[0]));
                 if (sb.Length > 0) sb.Append("  ");
-                sb.Append(owned ? "" : "<color=#3A5566>").Append("[").Append(name).Append(" ×").Append(N(f, "0.0#")).Append("]").Append(owned ? "" : "</color>");
+                sb.Append(owned ? "" : "<color=#7E9DB0>").Append("[").Append(name).Append(" ×").Append(N(f, "0.0#")).Append("]").Append(owned ? "" : "</color>");
             }
             return sb.ToString();
         }
@@ -340,8 +340,33 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var ds in XgCatalog.Datasets) if (ds.id != "xor" && ds.id != "parallel") raw += Sim.Samples(ds.id) * ds.dataWeight;
             double lost = Math.Max(0, raw - Sim.TrainedSamples);
             string read = Sim.ReadWordsTotal >= 1 ? " " + Sim.ReadShort() + T("（爬虫、蜘蛛读的词都算样本）", " (crawler and spider words are samples)") + "." : "";
-            return T("去摆渡众包做题，或者买数据包。标错的样本打折算", "Label on Bodu Crowd, or buy data packs. Wrong labels count against")
+            return SamplesShortcut() + T("去摆渡众包做题，或者买数据包。标错的样本打折算", "Label on Bodu Crowd, or buy data packs. Wrong labels count against")
                 + (lost >= 1 ? T("：现在扣掉 " + XgSim.SamplesText(lost) + " 条。", ": " + XgSim.SamplesText(lost) + " taken off now.") : T("。", ".")) + read;
+        }
+
+        /// <summary>
+        /// 「捷径：「Transformer」让样本门槛 ×0.6（3.2M → 1.92M）—— 去「科技」买它。」: the item that lowers the next
+        /// ability's sample line and how to get it, so a 3.2M line never reads as the only way (2026-10-16).
+        /// </summary>
+        string SamplesShortcut()
+        {
+            int next = Sim.NextAbility;
+            if (next == 0) return "";
+            foreach (var dsc in XgSim.AbilityDiscounts)
+            {
+                if (dsc.ability != next || dsc.samplesFactor >= 1 || Sim.DiscountOwned(dsc)) continue;
+                var node = XgCatalog.Node(dsc.item.Length > 0 ? dsc.item : dsc.itemsAny[0]);
+                if (node == null) continue;
+                double now = Sim.SamplesThreshold(next);
+                string name = Sim.NodeName(node), cut = XgSim.SamplesText(now) + " → " + XgSim.SamplesText(now * dsc.samplesFactor);
+                var status = Sim.Status(node, Host);
+                string how = status == XgSim.NodeStatus.Buyable ? T("去「科技」买它", "buy it under Technology")
+                    : status == XgSim.NodeStatus.TooExpensive ? T("去「科技」买它，还差 ¥", "buy it under Technology, ¥") + N(Sim.NodeCost(node) - Host.Money, "#,0") + T("", " short")
+                    : Sim.Why(node, Host);
+                return T("捷径：「" + name + "」让样本门槛 ×" + N(dsc.samplesFactor, "0.0#") + "（" + cut + "）—— " + how + "。\n",
+                    "Shortcut: " + name + " cuts the sample line ×" + N(dsc.samplesFactor, "0.0#") + " (" + cut + ") — " + how + ".\n");
+            }
+            return "";
         }
 
         void RefreshStrip()

@@ -37,7 +37,9 @@ namespace LingGuangV05.Runtime
         {
             if (string.IsNullOrWhiteSpace(payload) || !payload.Contains("\"rngState\"")) return false;
             var state = JsonUtility.FromJson<GameState>(payload);
-            return state != null && state.version == 1 && state.nodes != null && state.nodes.Count >= 3 && state.edges != null;
+            if (state == null || state.version != 1 || state.nodes == null || state.nodes.Count < 3 || state.edges == null) return false;
+            // A slot whose lab cannot be read must not replace the main save.
+            return string.IsNullOrEmpty(state.labState) || LabStateReadable == null || LabStateReadable(state.labState);
         }
 
         public bool SaveSlot(int index)

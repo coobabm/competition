@@ -100,7 +100,7 @@ namespace LingGuangV05.Desktop.Story
 
         void Refresh()
         {
-            headerText.text = (Expanded ? "▾  " : "▸  ") + Lang.T("我的设备") + "  " + (Expanded ? "1/1" : "1");
+            headerText.text = (Expanded ? "▼  " : "▶  ") + Lang.T("我的设备") + "  " + (Expanded ? "1/1" : "1");
             if (Scripted) return;
             NameLabel.text = T("我的电脑", "My Computer");
             Preview.text = Lang.T("已连接 · 可以给自己传文件");

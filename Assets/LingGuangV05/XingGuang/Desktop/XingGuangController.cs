@@ -45,6 +45,14 @@ namespace LingGuangV05.Desktop.XingGuang
         float sinceSave;
         int capturedChapter;
         ChapterOneSim linked;
+        /// <summary>
+        /// The save's lab could not be read (bad JSON or another version): its text is kept as it was and written back
+        /// unchanged, so a fresh lab never overwrites it. A copy sits beside the save and the player is told.
+        /// </summary>
+        string unreadableLab;
+        bool unreadableTold;
+        /// <summary>The stage last written to disk: a new stage saves at once instead of waiting for the next autosave.</summary>
+        int savedStage;
         TMP_Text title, status;
         XgWindowChrome chrome;
         TMP_FontAsset font;
@@ -67,6 +75,8 @@ namespace LingGuangV05.Desktop.XingGuang
             initialized = true;
             runtime.EnsureInitialized();
             Host = new XingGuangHost(runtime);
+            // Slots and chapter snapshots whose lab cannot be read are refused before they replace the main save.
+            ChapterOneRuntime.LabStateReadable = LabReadable;
             BindSave(runtime.Sim);
             // No offline progress: the lab only works while the game runs.
             runtime.Changed += OnRuntimeChanged;
@@ -95,10 +105,19 @@ namespace LingGuangV05.Desktop.XingGuang
             linked = sim;
             XgState state = null;
             string json = sim != null ? sim.S.labState : null;
+            unreadableLab = null; unreadableTold = false;
             if (!string.IsNullOrEmpty(json))
             {
-                try { state = JsonUtility.FromJson<XgState>(json); if (state != null && state.version != 1) state = null; }
-                catch (Exception error) { Debug.LogWarning("灵光进度读取失败，从头开始：" + error.Message); state = null; }
+                string why = null;
+                try { state = JsonUtility.FromJson<XgState>(json); if (state == null) why = "空"; else if (state.version != 1) { why = "版本 " + state.version; state = null; } }
+                catch (Exception error) { why = error.Message; state = null; }
+                if (state == null)
+                {
+                    // Never start over on top of it: keep the text, copy it out, and say so (UnreadableNotice).
+                    unreadableLab = json;
+                    string copy = runtime != null ? runtime.BackupText("lab-unreadable", json) : null;
+                    Debug.LogWarning("[存档] 灵光进度读不出来（" + why + "），原样保留，不会被覆盖" + (copy != null ? "；副本：" + copy : "") + "。");
+                }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
             if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
@@ -109,13 +128,28 @@ namespace LingGuangV05.Desktop.XingGuang
             raised.Clear();
             // Milestones already reached in this save do not re-trigger the story this session.
             if (state != null) RaiseProgress(silent: true);
+            savedStage = Sim.S.stage;
             if (View != null) View.Bind(this);
+        }
+
+        static bool LabReadable(string json)
+        {
+            try { var state = JsonUtility.FromJson<XgState>(json); return state != null && state.version == 1; }
+            catch (Exception) { return false; }
         }
 
         void WriteToSave()
         {
-            if (Sim == null || runtime == null || runtime.Sim == null || runtime.Sim != linked) return;
-            runtime.Sim.S.labState = JsonUtility.ToJson(Sim.S);
+            if (Sim == null || runtime == null || runtime.Sim == null) return;
+            if (runtime.Sim != linked)
+            {
+                // The house save changed (a reload, a slot, a new game) and the Changed rebind has not run yet: bind to
+                // it now, so the lab written is the one that belongs to it, never the previous one carried across.
+                Debug.LogWarning("[存档] 存档换了但实验室还没重绑：先重绑再写入。");
+                BindSave(runtime.Sim);
+            }
+            // An unreadable lab stays exactly as it was on disk.
+            runtime.Sim.S.labState = unreadableLab ?? JsonUtility.ToJson(Sim.S);
         }
 
         public bool SaveNow() { return runtime != null && runtime.SaveNow(); }
@@ -165,9 +199,23 @@ namespace LingGuangV05.Desktop.XingGuang
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
             RaiseProgress();
             if (capturedChapter != Sim.S.stage && runtime.CaptureChapter(Sim.S.stage)) capturedChapter = Sim.S.stage;
-            // Training, income and auto-answers change the lab every frame; the runtime saves on its own 15 s rhythm.
+            // A new stage is written at once: a crash or a killed process must not take a chapter back.
+            if (Sim.S.stage != savedStage && unreadableLab == null && !runtime.TestMode && runtime.SaveNow()) savedStage = Sim.S.stage;
+            UnreadableNotice();
+            // Training, income and auto-answers change the lab every frame; the runtime autosaves every AutosaveSeconds.
             sinceSave += dt;
             if (sinceSave >= 1f) { sinceSave = 0; if (!runtime.TestMode) runtime.MarkDirty(); }
+        }
+
+        /// <summary>Tells the player once that the saved lab could not be read and was kept untouched.</summary>
+        void UnreadableNotice()
+        {
+            if (unreadableLab == null || unreadableTold) return;
+            var desk = LingGuangV05.Desktop.Story.PrologueDirector.Desk;
+            if (desk == null) return;
+            unreadableTold = true;
+            desk.StoryPopup(GameText.T("存档", "Save"), GameText.T("灵光的进度没读出来。原来的进度原样留着，不会被覆盖，存档文件夹里也有一份副本。这一局里的灵光进度不会存下来。",
+                "Lingguang's progress could not be read. The old progress is kept untouched and a copy is in the save folder. Lab progress in this session will not be saved."), 12);
         }
 
         string profileSignature = "";

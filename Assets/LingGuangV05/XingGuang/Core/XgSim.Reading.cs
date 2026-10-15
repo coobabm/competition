@@ -10,16 +10,19 @@ namespace LingGuangV05.XingGuang
         /// credited as samples of <see cref="XgSim.ReadDataset"/>. Old saves read 0: those reads were never recorded.
         /// </summary>
         public double residentWords;
-        /// <summary>Version of the reading ledger. 0 = saved before reading counted (see <see cref="XgSim.RepairReading"/>), 1 = current.</summary>
+        /// <summary>Version of the reading ledger. 0 = saved before reading counted (see <see cref="XgSim.RepairReading"/>), 2 = current.</summary>
         public int readSchema;
+        /// <summary>Samples the crawler, the resident and the bookshelf have booked for what they read (words × <see cref="XgSim.ReadWorth"/> at the time).</summary>
+        public double readSamples;
     }
 
     /// <summary>
     /// Words the spider reads count as samples (参数量与数据量主线: they feed the data bar D like any other row).
     /// <para>
-    /// The rule, for both readers: <b>one word = <see cref="SamplesPerWord"/> sample</b> (1:1) of the text corpus
+    /// The rule, for both readers and the bookshelf: <b>one word = <see cref="ReadWorth"/> samples</b> of the text corpus
     /// <see cref="ReadDataset"/> (人民日报语料, the next-character dataset), booked as crowd-style rows in
-    /// <see cref="XgState.dataExtra"/>.
+    /// <see cref="XgState.dataExtra"/>. A word is worth more the more it understands (<see cref="ReadWorthByStage"/>: 1
+    /// up to stage 3, 2 in stage 4, 3 from stage 5), so reading still moves the late sample lines (2026-10-16).
     /// </para>
     /// <list type="bullet">
     /// <item>The crawler (<see cref="CrawlGrab"/>, XgSim.Crawl.cs) is a paid run: up to <see cref="CrawlCap"/> words, with
@@ -37,16 +40,23 @@ namespace LingGuangV05.XingGuang
     {
         /// <summary>The text corpus the read words go into.</summary>
         public const string ReadDataset = CrawlDataset;
-        /// <summary>Samples one read word is worth, for the crawler and the resident alike.</summary>
+        /// <summary>Samples one read word is worth at stage 1, for the crawler and the resident alike.</summary>
         public const double SamplesPerWord = 1;
-        /// <summary>Distinct recently read words the resident remembers (a word in memory does not count again).</summary>
-        public const int ReadMemory = 2048;
+        /// <summary>What a read word is worth at each stage, times <see cref="SamplesPerWord"/>.</summary>
+        public static readonly double[] ReadWorthByStage = { 1, 1, 1, 1, 2, 3, 3 };
+        /// <summary>Samples one word read now is worth (the crawler, the resident spider and the bookshelf).</summary>
+        public double ReadWorth => SamplesPerWord * ReadWorthByStage[Math.Max(0, Math.Min(ReadWorthByStage.Length - 1, S.stage))];
+        /// <summary>
+        /// Distinct recently read words the resident remembers (a word in memory does not count again). Small enough
+        /// that walking about the desktop keeps paying a trickle once it has moved on to other words.
+        /// </summary>
+        public const int ReadMemory = 256;
         /// <summary>Reads between two re-evaluations of the corpus' training runs.</summary>
         public const int ReadEvalBatch = 25;
         /// <summary>The lab's log says so every this many resident words.</summary>
         public const int ReadSayEvery = 250;
         /// <summary>Version stamped on the reading ledger.</summary>
-        public const int ReadSchemaNow = 1;
+        public const int ReadSchemaNow = 2;
 
         readonly HashSet<int> readSeen = new HashSet<int>();
         readonly Queue<int> readOrder = new Queue<int>();
@@ -54,8 +64,8 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>Words read in total, by the crawler and the resident.</summary>
         public double ReadWordsTotal => Math.Max(0, S.crawlWords) + Math.Max(0, S.residentWords);
-        /// <summary>Samples those words are worth before the data bar's noise penalty.</summary>
-        public double ReadSamplesTotal => ReadWordsTotal * SamplesPerWord;
+        /// <summary>Samples those words were worth when read, before the data bar's noise penalty (books not included).</summary>
+        public double ReadSamplesTotal => Math.Max(0, S.readSamples);
 
         /// <summary>
         /// The resident spider read a word (its foot landed on it). Counts one sample when it is a word (a letter or a
@@ -68,15 +78,17 @@ namespace LingGuangV05.XingGuang
             readSeen.Add(key); readOrder.Enqueue(key);
             if (readOrder.Count > ReadMemory) readSeen.Remove(readOrder.Dequeue());
             S.residentWords += 1;
-            SetCount(S.dataExtra, ReadDataset, ExtraSamples(ReadDataset) + SamplesPerWord * RelicFx.readMult);
+            double worth = ReadWorth;
+            S.readSamples += worth;
+            SetCount(S.dataExtra, ReadDataset, ExtraSamples(ReadDataset) + worth * RelicFx.readMult);
             TryRelicDrop("spider", RelicSpiderChance);
             if (++readPending >= ReadEvalBatch) FlushReads();
             if (((long)S.residentWords) % ReadSayEvery == 0)
             {
                 var d = XgCatalog.Dataset(ReadDataset);
                 string name = d != null ? T(d.name, d.nameEn) : ReadDataset;
-                Say(T("它读了 " + ReadSayEvery + " 个词，记作 " + F(ReadSayEvery * SamplesPerWord, "0") + " 条样本，进了「" + name + "」。",
-                    "It read " + ReadSayEvery + " more words: " + F(ReadSayEvery * SamplesPerWord, "0") + " samples into " + name + "."));
+                Say(T("它读了 " + ReadSayEvery + " 个词，记作 " + F(ReadSayEvery * worth, "0") + " 条样本，进了「" + name + "」。",
+                    "It read " + ReadSayEvery + " more words: " + F(ReadSayEvery * worth, "0") + " samples into " + name + "."));
             }
             return true;
         }
@@ -110,10 +122,10 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>The rule in one line for the player.</summary>
-        public string ReadRuleText() => T("1 个词 = " + F(SamplesPerWord, "0") + " 条样本", "1 word = " + F(SamplesPerWord, "0") + " sample");
+        public string ReadRuleText() => T("现在 1 个词 = " + F(ReadWorth, "0") + " 条样本", "1 word = " + F(ReadWorth, "0") + (ReadWorth == 1 ? " sample now" : " samples now"));
 
         /// <summary>
-        /// "读到的词 4,210 → +4,210 样本（爬虫 1,200 · 蜘蛛 3,010）· 1 个词 = 1 条样本"; empty until something was read.
+        /// "读到的词 4,210 → +8,420 样本（爬虫 1,200 · 蜘蛛 3,010）· 现在 1 个词 = 2 条样本" (the worth grows by stage); empty until something was read.
         /// Shown in the corpus' source breakdown and on the data page.
         /// </summary>
         public string ReadLine()
@@ -140,7 +152,8 @@ namespace LingGuangV05.XingGuang
         internal void RepairReading()
         {
             if (!FiniteCollaboration(S.residentWords) || S.residentWords < 0) S.residentWords = 0;
-            if (S.readSchema < ReadSchemaNow)
+            if (!FiniteCollaboration(S.readSamples) || S.readSamples < 0) S.readSamples = 0;
+            if (S.readSchema < 1)
             {
                 double missing = Math.Max(0, S.crawlWords) * SamplesPerWord - ExtraSamples(ReadDataset);
                 if (missing >= 1)
@@ -148,8 +161,10 @@ namespace LingGuangV05.XingGuang
                     SetCount(S.dataExtra, ReadDataset, ExtraSamples(ReadDataset) + missing);
                     SetCount(S.crowdNoise, ReadDataset, Count(S.crowdNoise, ReadDataset) + missing * CrawlNoise);
                 }
-                S.readSchema = ReadSchemaNow;
             }
+            // Schema 2 keeps a samples tally beside the word counts; everything read before it was worth 1:1.
+            if (S.readSchema < 2) S.readSamples = Math.Max(S.readSamples, ReadWordsTotal * SamplesPerWord);
+            S.readSchema = ReadSchemaNow;
         }
     }
 }

@@ -208,7 +208,7 @@ namespace LingGuangV05.Desktop.Story
 
             // Footer: greyed opt-out on the left, the action button on the right.
             PrologueDesk.Fill(PrologueDesk.Rect("Rule", inner, Vector2.zero, new Vector2(1, 0), new Vector2(10, 44), new Vector2(-10, 45)), new Color32(228, 230, 234, 255), false);
-            desk.Text(PrologueDesk.Rect("Mute", inner, Vector2.zero, new Vector2(.6f, 0), new Vector2(14, 8), new Vector2(0, 40)), "☐ " + Lang.T("今日不再提醒"), 12, new Color32(150, 150, 150, 255), TextAlignmentOptions.MidlineLeft);
+            desk.Text(PrologueDesk.Rect("Mute", inner, Vector2.zero, new Vector2(.6f, 0), new Vector2(14, 8), new Vector2(0, 40)), "□ " + Lang.T("今日不再提醒"), 12, new Color32(150, 150, 150, 255), TextAlignmentOptions.MidlineLeft);
             var ok = PrologueDesk.Rect("Action", inner, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-104, 9), new Vector2(-12, 37));
             var okImg = PrologueDesk.Fill(ok, theme.bar);
             var okButton = ok.gameObject.AddComponent<Button>(); okButton.targetGraphic = okImg;

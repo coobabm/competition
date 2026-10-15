@@ -165,14 +165,16 @@ namespace LingGuangV05.XingGuang
             S.bookReading = ""; S.bookClock = 0; S.bookDuration = 0;
             var e = BookEntry(book.id, true);
             e.count = index + 1;
-            SetCount(S.dataExtra, book.dataset, ExtraSamples(book.dataset) + ch.chars * SamplesPerWord);
+            // A character read is worth what a word read is worth now (XgSim.Reading.cs: more in the later stages).
+            double samples = ch.chars * ReadWorth;
+            SetCount(S.dataExtra, book.dataset, ExtraSamples(book.dataset) + samples);
             foreach (var run in Runs) if (run != null && run.dataset == book.dataset) Evaluate(run);
             string line = BookReaction(book, index);
             S.bookLineBook = book.id; S.bookLineChapter = index; S.bookLine = line;
             var d = XgCatalog.Dataset(book.dataset);
             string corpus = d != null ? T(d.name, d.nameEn) : book.dataset;
-            Say(T("读完《" + book.name + "》" + ch.title + "：" + ch.chars.ToString("#,0") + " 字，记作 " + ch.chars.ToString("#,0") + " 条样本，进了「" + corpus + "」。",
-                "Read " + book.nameEn + ", " + ch.titleEn + ": " + ch.chars.ToString("#,0") + " characters, " + ch.chars.ToString("#,0") + " samples into " + corpus + "."));
+            Say(T("读完《" + book.name + "》" + ch.title + "：" + ch.chars.ToString("#,0") + " 字，记作 " + samples.ToString("#,0") + " 条样本，进了「" + corpus + "」。",
+                "Read " + book.nameEn + ", " + ch.titleEn + ": " + ch.chars.ToString("#,0") + " characters, " + samples.ToString("#,0") + " samples into " + corpus + "."));
             if (!string.IsNullOrEmpty(line)) Say(T("它：", "It: ") + line);
             BookChapterRead?.Invoke(book, index, line);
             if (e.count >= book.chapters.Length)

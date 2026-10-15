@@ -43,8 +43,8 @@ namespace LingGuangV05.XingGuang
         {
             id = CrawlOfferId, datasetId = CrawlDataset, source = XgDataSource.Crawl,
             name = "摆渡百科爬虫", nameEn = "Bodu Encyclopedia crawler",
-            description = "放一只爬虫去摆渡百科：它踩到的每个词都抓回来当一条语料。按次付钱，一次最多 " + CrawlCap + " 条，有少量广告和错字。",
-            descriptionEn = "Let a crawler loose on Bodu Encyclopedia: every word it steps on comes back as one row of text. Paid per run, at most " + CrawlCap + " rows a run, with a few adverts and typos.",
+            description = "放一只爬虫去摆渡百科：它踩到的每个词都抓回来当语料（阶段越高一个词算的样本越多）。按次付钱，一次最多 " + CrawlCap + " 条，有少量广告和错字。",
+            descriptionEn = "Let a crawler loose on Bodu Encyclopedia: every word it steps on comes back as text (later stages count each word as more samples). Paid per run, at most " + CrawlCap + " rows a run, with a few adverts and typos.",
             price = CrawlPrice, samples = CrawlCap, noise = CrawlNoise, stage = CrawlStage, month = StageMonth(CrawlStage),
         };
 
@@ -75,7 +75,9 @@ namespace LingGuangV05.XingGuang
             if (n <= 0) return 0;
             CrawlTaken += n;
             S.crawlWords += n;
-            double rows = n * SamplesPerWord * RelicFx.readMult; // 1 word = 1 sample (XgSim.Reading.cs)
+            double worth = ReadWorth; // 1 word = ReadWorth samples (XgSim.Reading.cs)
+            S.readSamples += n * worth;
+            double rows = n * worth * RelicFx.readMult;
             TryRelicDrop("spider", 1 - Math.Pow(1 - RelicSpiderChance, n)); // one roll for all n words
             SetCount(S.dataExtra, CrawlDataset, ExtraSamples(CrawlDataset) + rows);
             SetCount(S.crowdNoise, CrawlDataset, Count(S.crowdNoise, CrawlDataset) + rows * CrawlNoise);
@@ -89,7 +91,7 @@ namespace LingGuangV05.XingGuang
             CrawlActive = false;
             var d = XgCatalog.Dataset(CrawlDataset);
             string name = d != null ? T(d.name, d.nameEn) : CrawlDataset;
-            Say(T("爬虫收工：抓回 " + CrawlTaken + " 个词，+" + F(CrawlTaken * SamplesPerWord, "0") + " 样本，进了「" + name + "」。", "Crawler done: " + CrawlTaken + " words, +" + F(CrawlTaken * SamplesPerWord, "0") + " samples into " + name + "."));
+            Say(T("爬虫收工：抓回 " + CrawlTaken + " 个词，+" + F(CrawlTaken * ReadWorth, "0") + " 样本，进了「" + name + "」。", "Crawler done: " + CrawlTaken + " words, +" + F(CrawlTaken * ReadWorth, "0") + " samples into " + name + "."));
             foreach (var run in Runs) if (run.dataset == CrawlDataset) Evaluate(run);
             return CrawlTaken;
         }
@@ -100,6 +102,7 @@ namespace LingGuangV05.XingGuang
             if (!FiniteCollaboration(S.crawlWords) || S.crawlWords < 0) S.crawlWords = 0;
             RepairSpider();
             RepairReading();
+            RepairRates();
             RepairBooks();
             RepairBookPuzzles();
         }

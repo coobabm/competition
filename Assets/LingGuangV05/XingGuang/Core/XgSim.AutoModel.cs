@@ -216,8 +216,8 @@ namespace LingGuangV05.XingGuang
             // 特征工程 is the road before networks: people make the features for a model that cannot make its own.
             run.features = FeaturesOwned && run.arch == "perceptron";
             run.attnOnly = false;
-            run.autoLr = true;
-            run.lr = SafeLr(run);
+            // The player's own step stays until they pick 自动 again (XgSim.Rates.cs); it follows the safe rate.
+            run.lr = BoardLr(run);
         }
 
         /// <summary>
@@ -510,9 +510,18 @@ namespace LingGuangV05.XingGuang
             if (d == null) return;
             Evaluate(run);
             double before = run.valAcc, chance = 1 - d.chanceError, range = d.chanceError - d.floorError;
-            run.lastRate = GainRate(run, cards);
+            if (e.diverged)
+            {
+                run.lastRate = 0;
+                TearRound(run, e, before, chance, range);
+                run.lastGain = run.valAcc - before;
+                e.gain = run.lastGain;
+                Remember(run);
+                return;
+            }
+            run.lastRate = Math.Min(1, GainRate(run, cards) * RateGain(run));
             var risk = DropRisk(run);
-            if (Roll() < risk.chance)
+            if (Roll() < risk.chance * RateSteady(run))
             {
                 double fallen = Math.Max(chance, before - range * (DropMin + DropSpread * Roll()));
                 bool real = before - fallen > 1e-12;
@@ -531,7 +540,13 @@ namespace LingGuangV05.XingGuang
                     {
                         S.drops++;
                         e.dropReason = risk.reason; e.dropReasonEn = risk.reasonEn;
-                        Say(T("这一轮退步了 " + F((before - run.valAcc) * 1000 / range, "0") + " 分：" + risk.reason + "。", "This round went down " + F((before - run.valAcc) * 1000 / range, "0") + " points: " + risk.reasonEn + "."));
+                        e.overfit = risk.overfit > 0 && risk.overfit >= Math.Max(Math.Max(risk.noise, risk.drift), Math.Max(risk.jump, risk.wobble));
+                        string lost = F((before - run.valAcc) * 1000 / range, "0");
+                        if (e.overfit)
+                            Say(T("过拟合了：它在背训练题的答案，新题反而退步 " + lost + " 分。多标数据、买数据包或学 Dropout 能治；也可以点「回档」回到最好的检查点。",
+                                "Overfitting: it memorised the training answers and did worse on new ones, down " + lost + " points. More labels, data packs or Dropout fix it; 回档 restores the best checkpoint."));
+                        else
+                            Say(T("这一轮退步了 " + lost + " 分：" + risk.reason + "。", "This round went down " + lost + " points: " + risk.reasonEn + "."));
                     }
                 }
             }

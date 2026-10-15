@@ -703,15 +703,16 @@ sealed class Driver
 
     readonly Dictionary<int, double> switchedAt = new Dictionary<int, double>();
 
-    // 书架 (XgSim.Books.cs): the bot reads only what is cheapest, 三字经 and 论语, whenever the card is free of a book.
+    // 书架 (XgSim.Books.cs): like a player following the 待办 note (ability.book), the bot reads every book that is open,
+    // shelf order, whenever the card is free of a book; one that waits on the player (红楼梦's question) is skipped.
     void ReadBooks()
     {
         if (sim.Reading) return;
-        foreach (var id in new[] { "sanzijing", "lunyu" })
+        foreach (var book in XgBooks.All)
         {
-            if (sim.BookDone(id)) { Mark("book." + id + ".done"); continue; }
-            if (sim.StartReading(id, host) == null) Mark("book." + id + ".start");
-            return;
+            if (!sim.BookOpen(book)) continue;
+            if (sim.BookDone(book)) { Mark("book." + book.id + ".done"); continue; }
+            if (sim.StartReading(book.id, host) == null) { Mark("book." + book.id + ".start"); return; }
         }
     }
 

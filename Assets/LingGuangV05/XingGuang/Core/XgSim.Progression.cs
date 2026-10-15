@@ -151,13 +151,23 @@ namespace LingGuangV05.XingGuang
         /// <summary>The Transformer item waits until it has asked 「如果只用注意力呢？」 (stage 5's emergence moment).</summary>
         public bool TransformerIdeaReached => HasEmerged(5) || S.stage >= 6;
 
+        /// <summary>「它还没想到：有了「注意力」再训练 3 轮，或再过 4 分钟」.</summary>
+        public string TransformerIdeaHint()
+        {
+            if (S.stage < 5) return T("它还没想到：第 5 阶段才会想到", "It has not thought of it yet: it comes in stage 5");
+            if (!Has("attention")) return T("它还没想到：先买「注意力」", "It has not thought of it yet: buy Attention first");
+            int rounds = AttentionIdeaRoundsLeft;
+            int minutes = (int)Math.Ceiling(AttentionIdeaSecondsLeft / 60);
+            return T("它还没想到：再训练 " + rounds + " 轮，或再过 " + minutes + " 分钟", "It has not thought of it yet: " + rounds + " more training rounds, or " + minutes + " more minutes");
+        }
+
         public string ProgressionBlocker(XgNode node)
         {
             if (node == null) return T("未知节点");
             if (Has(node.id)) return null;
             if (!NodeVisible(node)) return T("还没到这一阶段");
             if (node.id == "transformer" && !TransformerIdeaReached)
-                return T("它还没想到：阶段 5 用注意力练一阵", "It has not thought of it yet: train with attention for a while in stage 5");
+                return TransformerIdeaHint();
             if (node.id == "multihead" || node.id == "layernorm" || node.id == "residual")
                 return T("随 Transformer 一起来", "Comes with the Transformer");
             if (node.id == "caption" && S.stage < 5) return T("需要第五阶段");

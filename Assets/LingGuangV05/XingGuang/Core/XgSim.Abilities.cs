@@ -93,12 +93,12 @@ namespace LingGuangV05.XingGuang
             return F(paramsK / 1000000, "0.#") + "B";
         }
 
-        /// <summary>A sample count the way the bars show it: 9,800 or 1.2M.</summary>
+        /// <summary>A sample count the way the bars show it: 9,800 or 1.57M (two decimals, so 10k more samples show).</summary>
         public static string SamplesText(double samples)
         {
             if (!(samples > 0)) return "0";
             if (samples < 1000000) return Math.Floor(samples).ToString("#,0", System.Globalization.CultureInfo.InvariantCulture);
-            return F(samples / 1000000, "0.#") + "M";
+            return F(Math.Floor(samples / 10000) / 100, "0.##") + "M";
         }
 
         public static string AbilityName(int ability, bool english)

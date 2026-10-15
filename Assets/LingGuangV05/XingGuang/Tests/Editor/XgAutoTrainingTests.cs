@@ -233,6 +233,24 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void AnOverfitDropSaysItIsOverfitting()
+        {
+            // A big model on a handful of clean samples: the drops come from 背答案, and each one says so.
+            var sim = Lab(3, 40, "mnist", VisionScale);
+            var host = new Host();
+            int overfits = 0;
+            for (int i = 0; i < 300; i++)
+            {
+                var e = sim.TrainEpoch(XgTrack.Vision, host);
+                if (!e.overfit) continue;
+                overfits++;
+                Assert.IsTrue(e.dropped, "only a real drop is flagged");
+                Assert.That(sim.S.log[sim.S.log.Count - 1], Does.Contain("过拟合"));
+            }
+            Assert.That(overfits, Is.GreaterThan(3), "overfit drops happened and were flagged");
+        }
+
+        [Test]
         public void RoundsAreDeterministicThroughTheSavesRng()
         {
             List<double> Play()

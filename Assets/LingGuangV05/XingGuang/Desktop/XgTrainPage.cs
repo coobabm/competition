@@ -24,7 +24,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public static bool UseAssessmentOverlay(XgAssessment a) => a.hand && a.newGrade >= 1;
 
         // Layout of the page at the normal window size (about 1064 × 617 here): the left column is 642 wide, the right 410.
-        const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 112, RowGap = 10;
+        const float RightWidth = 410, ColumnGap = 12, TabsHeight = 34, TrainRowHeight = 112 + RateStripHeight + RateStripGap, RowGap = 10;
 
         XgBtn[] trackTabs = new XgBtn[2];
         XgBtn summary, train, assess, saveModel, cleanNoise, orders;
@@ -118,7 +118,8 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildCurveExtras();
 
             // The train row: the big button (with this round's electricity), the round's progress, risk and active effects, auto-train.
-            var trainRect = Rect("TrainAt", trainRow, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(240, 0));
+            // The 学习率 strip runs along the top of the row (XgTrainPage.Rate.cs); the button and the round sit under it.
+            var trainRect = Rect("TrainAt", trainRow, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(240, -RateStripHeight - RateStripGap));
             trainGlow = Glow(trainRect, XgDark.Accent, 6);
             train = ui.Button(trainRow, "", null, 28);
             Place(train, trainRect);
@@ -137,12 +138,13 @@ namespace LingGuangV05.Desktop.XingGuang
             assess = ui.Button(left, "", () => DoAssess(), 18);
             assess.Show(false);
 
-            var mid = Rect("Mid", trainRow, Vector2.zero, Vector2.one, new Vector2(252, 0), new Vector2(-8, 0));
+            var mid = Rect("Mid", trainRow, Vector2.zero, Vector2.one, new Vector2(252, 0), new Vector2(-8, -RateStripHeight - RateStripGap));
             // The round's progress bar, the way a training console draws it (XgTrainPage.Pace.cs).
             BuildPace(mid);
             risk = ui.Text(Rect("Risk", mid, new Vector2(0, 1), Vector2.one, new Vector2(0, -80), new Vector2(0, -52)), "", 13, XgDark.Bad, TextAlignmentOptions.TopLeft);
             risk.enableAutoSizing = true; risk.fontSizeMin = 10; risk.fontSizeMax = 13;
 
+            BuildRates();
             BuildSide();
             BuildCard();
             BuildDiagnosis();
@@ -269,6 +271,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Float(Fx.At(epochBar, new Vector2(0, 20)), T("退步 " + N(points, "0") + " 分 · " + e.dropReason, "Down " + N(-points, "0") + " points · " + e.dropReasonEn), XgDark.Bad, 16, 30, .8f, 1.4f);
                 Fx.Knock(chartArea, .06f, new Vector2(6, 0));
                 Fx.Play(XgJuice.Sfx.Id.Thud, .8f, .6f);
+                if (e.overfit) OverfitNotice(points);
             }
             else if (e.rolledBack)
             {
@@ -468,6 +471,7 @@ namespace LingGuangV05.Desktop.XingGuang
             train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? Lang.T(" · 连击 ×") + N(Sim.ComboMultiplier, "0.00") : "") : Lang.T("先标够样本");
             RefreshBill(run, unlocked);
+            RefreshRates(run, unlocked);
             assess.Show(false);
 
             // The chance that the next round goes down, and the cards' heat (XgSim.AutoModel.cs, ChapterOneSim.Bills.cs).
@@ -488,9 +492,13 @@ namespace LingGuangV05.Desktop.XingGuang
         string RiskLine(XgRun run, XgDropRisk r)
         {
             string line = T("下一轮退步：", "Next round drops: ") + XgSim.RiskLevelName(r.level, Sim.English) + " " + N(r.chance * 100, "0") + "%";
+            double tear = Sim.TearChance(run);
+            if (tear > 0) line = "<color=#E24B4A><b>" + T("这一轮可能炸：", "This round may blow up: ") + N(tear * 100, "0") + "%</b></color>  " + line;
             double dirty = Math.Floor(Sim.Noise(run.dataset) + Sim.DataNoise(run.dataset));
             if (dirty >= 1) line += "  <color=#3A5566>" + T("脏标注 " + N(dirty, "0") + " 条", N(dirty, "0") + " dirty labels") + "</color>";
             if (HeatWarning()) line += "\n<color=#EF9F27>" + T("显卡太热，可能烧卡", "The cards are hot and may burn out") + "</color>";
+            // Stays on the page for a while after an overfit drop, whatever toast comes next (XgTrainPage.Overfit.cs).
+            if (OverfitNudging) line = "<color=#E24B4A><b>" + T("上一轮过拟合退步了：补数据 / Dropout / 点「回档」", "Last round overfit: more data / Dropout / Restore") + "</b></color>\n" + line;
             return line;
         }
 
@@ -545,7 +553,9 @@ namespace LingGuangV05.Desktop.XingGuang
             summary.Set(T(a.name, a.nameEn) + " · " + XgSim.ParamsText(size) + T(" 参数", " params") + T(" · 显存 ", " · VRAM ") + vram + "  <color=#8FB8FF>→</color>", true, Color.clear);
             var checkpoint = BestRollback();
             saveModel.Show(true);
-            saveModel.Set(RollbackBusy ? T("回档 · 忙碌", "Restore · busy") : checkpoint == null ? T("回档 · 无档", "No checkpoint") : T("回档", "Restore"), !RollbackBusy && checkpoint != null, XgDark.AccentSoft, XgDark.Accent);
+            bool nudge = OverfitNudging && !RollbackBusy && checkpoint != null;
+            saveModel.Set(RollbackBusy ? T("回档 · 忙碌", "Restore · busy") : checkpoint == null ? T("回档 · 无档", "No checkpoint") : nudge ? T("← 回档", "← Restore") : T("回档", "Restore"), !RollbackBusy && checkpoint != null,
+                nudge ? Color.Lerp(XgDark.Card, XgDark.Bad, .55f) : XgDark.AccentSoft, nudge ? Color.white : XgDark.Accent);
         }
 
         /// <summary>

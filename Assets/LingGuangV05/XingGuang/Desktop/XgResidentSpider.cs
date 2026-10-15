@@ -272,6 +272,8 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (!Find()) return;
+            // A script reload during Play keeps the component but not this unserialized field, and Awake does not run again.
+            if (motion == null) motion = new XgSpiderMotion(rng);
             float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
             var rt = controller.runtime;
             var pointer = UnityEngine.InputSystem.Mouse.current;

@@ -152,6 +152,30 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void TheTransformerIdeaAlsoComesWithTimeInStageFive()
+        {
+            var sim = AtStage(5); var host = new Host();
+            Assert.IsTrue(sim.Has("attention"));
+            var transformer = XgCatalog.Node("transformer");
+            StringAssert.Contains(XgSim.AttentionIdeaRounds.ToString(), sim.Why(transformer, host), "it says how many rounds are left");
+            for (int i = 0; i < XgSim.AttentionIdeaSeconds - 1; i++) sim.Tick(1, host);
+            Assert.IsFalse(sim.HasEmerged(5));
+            sim.Tick(2, host);
+            Assert.IsTrue(sim.HasEmerged(5), "ten minutes in stage 5 with attention owned is enough");
+            Assert.That(sim.Status(transformer, host), Is.Not.EqualTo(XgSim.NodeStatus.Locked));
+        }
+
+        [Test]
+        public void TheTransformerIdeaClockStartsWithAttentionNotWithTheStage()
+        {
+            var sim = AtStage(5); var host = new Host();
+            sim.S.stageClock = XgSim.AttentionIdeaSeconds * 3;
+            sim.Tick(1, host);
+            Assert.IsFalse(sim.HasEmerged(5), "an old save long in stage 5 does not get the idea the moment it loads");
+            Assert.That(sim.AttentionIdeaSecondsLeft, Is.EqualTo(XgSim.AttentionIdeaSeconds - 1).Within(1e-6));
+        }
+
+        [Test]
         public void TheSixthAbilityBringsTheTransformerWhenItWasNotBought()
         {
             var sim = AtStage(5); var host = new Host(); var milestones = new List<string>();

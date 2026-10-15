@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// hover for the tooltip, drag to pan. Purchases go through <see cref="XgTechTree.Buy"/>, which is the simulation's
     /// own <see cref="XgSim.BuyNode"/>.
     /// </summary>
-    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
     {
         public XgTechEntry entry;
         public XgTechTreePage page;
@@ -38,6 +38,8 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnBeginDrag(PointerEventData e) { dragged = true; page.Pan.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => page.Pan.OnDrag(e);
         public void OnEndDrag(PointerEventData e) => page.Pan.OnEndDrag(e);
+        /// <summary>The wheel scrolls this square's card when it is too long to show whole; otherwise it pans the tree.</summary>
+        public void OnScroll(PointerEventData e) { if (!page.ScrollTooltip(this, e)) page.Pan.OnScroll(e); }
         void OnDisable() { if (page != null) page.Hover(this, false); }
     }
 
@@ -61,6 +63,8 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly Vector3[] tipTaskbarCorners = new Vector3[4];
         LayoutElement tipHeadLayout, tipCostLayout;
         float tipExitAt = -1;
+        /// <summary>The card never catches the pointer, so it cannot cover a square you want to buy; a long card scrolls with the wheel over its square.</summary>
+        CanvasGroup tipGroup;
 
         RectTransform viewport, content, bandLayer, linkLayer, nodeLayer, miniMap, frontierWall, eraCard, tooltip;
         TMP_Text header, tipName, tipLevel, tipBody, tipCost, tipGlyph, eraTitle, eraBody;
@@ -353,6 +357,7 @@ namespace LingGuangV05.Desktop.XingGuang
             tooltip = Rect("Tooltip", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
             tooltip.pivot = new Vector2(.5f, 0); tooltip.sizeDelta = new Vector2(TooltipWidth, 0);
             var bg = Panel(tooltip, new Color32(5, 9, 14, 250)); bg.sprite = skin.fill; bg.raycastTarget = true;
+            tipGroup = tooltip.gameObject.AddComponent<CanvasGroup>(); tipGroup.blocksRaycasts = false; tipGroup.interactable = false;
             var rim = tooltip.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var clip = Rect("Clip", tooltip, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-12, 0));
             clip.gameObject.AddComponent<RectMask2D>();
@@ -657,6 +662,15 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var view in views) if (view.gameObject.activeSelf) view.ring.color = view == hovered || view == pinned ? new Color(1, 1, 1, .85f) : Color.clear;
         }
 
+        /// <summary>Scrolls the hovered square's card when it is longer than it shows; false when there is nothing to scroll.</summary>
+        public bool ScrollTooltip(XgTechNodeView v, PointerEventData e)
+        {
+            if (v == null || v != hovered || tooltip == null || !tooltip.gameObject.activeSelf || tipScroll == null) return false;
+            if (tipContent.rect.height <= tooltip.rect.height + 1) return false;
+            tipScroll.OnScroll(e);
+            return true;
+        }
+
         public void Click(XgTechNodeView v)
         {
             var e = v.entry;
@@ -819,6 +833,7 @@ namespace LingGuangV05.Desktop.XingGuang
             LayoutRebuilder.ForceRebuildLayoutImmediate(tipContent);
             float h = Mathf.Min(tipContent.rect.height, bounds.height - 8);
             tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+
             // Preserve the current scroll position on live copy/size updates, clamped to the new extent.
             tipContent.anchoredPosition = new Vector2(0, Mathf.Clamp(tipContent.anchoredPosition.y, 0, Mathf.Max(0, tipContent.rect.height - h)));
             Vector2 top = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, SquareSize * .5f, 0)));

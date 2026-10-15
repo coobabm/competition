@@ -58,16 +58,17 @@ namespace LingGuangV05.Tests
         {
             var sim = Rich();
             Assert.That(sim.BuyCard(HardwareCatalog.Gtx1080, D(7, 1)), Is.True);
-            Assert.That(sim.CardCompute, Is.EqualTo(2.5).Within(1e-9));
+            double both = HardwareCatalog.Gpu(HardwareCatalog.Gtx980Ti).compute + HardwareCatalog.Gpu(HardwareCatalog.Gtx1080).compute;
+            Assert.That(sim.CardCompute, Is.EqualTo(both).Within(1e-9));
             Assert.That(sim.MemoryCapacity, Is.EqualTo(6144 + 8192));
             Assert.That(sim.CardWatts, Is.EqualTo(250 + 180));
-            Assert.That(sim.HeartbeatsPerSecond, Is.EqualTo(2.5).Within(1e-9));
+            Assert.That(sim.HeartbeatsPerSecond, Is.EqualTo(both).Within(1e-9));
             Assert.That(sim.S.money, Is.EqualTo(100000 - 4999).Within(1e-9));
             // Both slots of the one case are full.
             Assert.That(sim.BuyCard(HardwareCatalog.Gtx1070, D(7, 1)), Is.False);
             Assert.That(sim.BuyNvme(D(8, 31)), Is.False);
             Assert.That(sim.BuyNvme(D(9, 1)), Is.True);
-            Assert.That(sim.CardCompute, Is.EqualTo(2.5 * HardwareCatalog.NvmeBoost).Within(1e-9));
+            Assert.That(sim.CardCompute, Is.EqualTo(both * HardwareCatalog.NvmeBoost).Within(1e-9));
         }
 
         [Test]
@@ -92,8 +93,8 @@ namespace LingGuangV05.Tests
             Assert.That(launch, Is.LessThan(may));
             Assert.That(july, Is.LessThan(launch));
             Assert.That(december, Is.LessThanOrEqualTo(july));
-            // §14.3: selling the 980 Ti on 喵鱼 brings back about ¥2000.
-            Assert.That(july, Is.InRange(1800, 2200));
+            // §14.3: selling the 980 Ti on 喵鱼 brings back well under its old price (the 2016-10-06 retune moved it up from ¥2000).
+            Assert.That(july, Is.InRange(ti.usedPrice * .6, ti.usedPrice * .9));
             Assert.That(december, Is.GreaterThanOrEqualTo(ti.usedPrice * HardwareCatalog.UsedFloor - 10));
         }
 
@@ -110,7 +111,7 @@ namespace LingGuangV05.Tests
             Assert.That(sim.SellCard(0, haggled, aug), Is.True);
             Assert.That(sim.S.money, Is.EqualTo(before + haggled).Within(1e-9));
             Assert.That(sim.Cards, Is.EqualTo(new[] { HardwareCatalog.Gtx1080 }));
-            Assert.That(sim.CardCompute, Is.EqualTo(1.5).Within(1e-9));
+            Assert.That(sim.CardCompute, Is.EqualTo(HardwareCatalog.Gpu(HardwareCatalog.Gtx1080).compute).Within(1e-9));
         }
 
         [Test]
@@ -122,11 +123,12 @@ namespace LingGuangV05.Tests
             Assert.That(sim.BuyCafeBox(D(10, 2)), Is.False);
             Assert.That(sim.S.caseCount, Is.EqualTo(1 + HardwareCatalog.CafeBoxLimit));
             Assert.That(sim.S.gpuCount, Is.EqualTo(1 + HardwareCatalog.CafeBoxLimit));
-            // §14.3: the eight 970s add ×3.
-            Assert.That(sim.CardCompute, Is.EqualTo(1 + 3).Within(1e-9));
+            // §14.3: the eight 970s add their compute to the 980 Ti's.
+            double cluster = HardwareCatalog.Gpu(HardwareCatalog.Gtx980Ti).compute + HardwareCatalog.CafeBoxLimit * HardwareCatalog.Gpu(HardwareCatalog.Gtx970).compute;
+            Assert.That(sim.CardCompute, Is.EqualTo(cluster).Within(1e-9));
             Assert.That(sim.S.breakerTripped, Is.False, "the cluster fits under the house's 3500 W");
             var reloaded = new ChapterOneSim(Clone(sim.S));
-            Assert.That(reloaded.CardCompute, Is.EqualTo(4).Within(1e-9));
+            Assert.That(reloaded.CardCompute, Is.EqualTo(cluster).Within(1e-9));
         }
 
         [Test]
@@ -137,7 +139,7 @@ namespace LingGuangV05.Tests
             double price = HardwareCatalog.UsedPrice(HardwareCatalog.Gpu(HardwareCatalog.Gtx750Ti), aug);
             Assert.That(sim.BuyUsedCard(HardwareCatalog.Gtx750Ti, aug), Is.True);
             Assert.That(sim.S.money, Is.EqualTo(1000 - price).Within(1e-9));
-            Assert.That(sim.CardCompute, Is.EqualTo(1.3).Within(1e-9));
+            Assert.That(sim.CardCompute, Is.EqualTo(HardwareCatalog.Gpu(HardwareCatalog.Gtx980Ti).compute + HardwareCatalog.Gpu(HardwareCatalog.Gtx750Ti).compute).Within(1e-9));
         }
 
         [Test]

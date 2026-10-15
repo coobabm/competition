@@ -268,7 +268,7 @@ namespace LingGuangV05.Desktop.Story
                 var step = i < steps.Count ? steps[i] : null;
                 rows[i].step = step;
                 rows[i].label.color = i == 0 ? Ink : Soft;
-                rows[i].label.text = step == null ? "" : (i == 0 ? "☐ " : "· ") + step.Text(english);
+                rows[i].label.text = step == null ? "" : (i == 0 ? "□ " : "· ") + step.Text(english);
             }
             Layout();
         }

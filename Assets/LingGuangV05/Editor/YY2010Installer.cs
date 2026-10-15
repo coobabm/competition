@@ -111,7 +111,7 @@ namespace LingGuangV05.Editor
             shell.FriendsTab = builder.Button(buddyContent, "Friends Tab", "好友", 8, 160, 104, 34, 346, 653);
             shell.GroupsTab = builder.Button(buddyContent, "Groups Tab", "群", 120, 160, 104, 34, 346, 653);
             shell.RecentTab = builder.Button(buddyContent, "Recent Tab", "最近", 232, 160, 106, 34, 346, 653);
-            labels.Add(builder.Text(buddyContent, "▾ 我的好友 (1)", 13, 204, 320, 25, 15, 346, 653));
+            labels.Add(builder.Text(buddyContent, "▼ 我的好友 (1)", 13, 204, 320, 25, 15, 346, 653));
             shell.EmptyStateText = builder.Text(buddyContent, "暂无群聊", 18, 258, 310, 56, 15, 346, 653);
             shell.EmptyStateText.gameObject.SetActive(false); labels.Add(shell.EmptyStateText);
             builder.Surface(buddyContent, "YY2010 Bottom Bar", 0, 601, 346, 52, 346, 653,

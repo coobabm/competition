@@ -173,5 +173,36 @@ namespace LingGuangV05.XingGuang.Tests
             var broken = new XgSim(new XgState { residentWords = double.NaN });
             Assert.AreEqual(0, broken.S.residentWords);
         }
+            [Test]
+        public void LaterStagesMakeEachWordWorthMore()
+        {
+            CollectionAssert.AreEqual(new double[] { 1, 1, 1, 1, 2, 3, 3 }, XgSim.ReadWorthByStage);
+            var sim = AtStage(5);
+            Assert.AreEqual(3, sim.ReadWorth, 1e-9);
+            double d0 = sim.TrainedSamples;
+            Assert.IsTrue(sim.ResidentRead("灵光"));
+            Assert.AreEqual(3, sim.ExtraSamples(XgSim.ReadDataset), 1e-9);
+            Assert.AreEqual(3, sim.TrainedSamples - d0, 1e-9, "the spider's word moves the bar three samples in stage 5");
+            Assert.AreEqual(3, sim.ReadSamplesTotal, 1e-9);
+            Assert.AreEqual(1, sim.S.residentWords, 1e-9, "still one word");
+            StringAssert.Contains("3", sim.ReadRuleText());
+        }
+
+        [Test]
+        public void TheCrawlerPaysTheStageWorthToo()
+        {
+            var sim = AtStage(4); var host = new Host();
+            sim.StartCrawl(host); sim.CrawlGrab(10); sim.EndCrawl();
+            Assert.AreEqual(20, sim.ExtraSamples(XgSim.ReadDataset), 1e-9);
+            Assert.AreEqual(20, sim.ReadSamplesTotal, 1e-9);
+        }
+
+        [Test]
+        public void AnOldSaveKeepsItsReadSamplesAtOneToOne()
+        {
+            var sim = new XgSim(new XgState { residentWords = 100, crawlWords = 0, readSchema = 1, stage = 5 }) { GoldChance = 0 };
+            Assert.AreEqual(100, sim.ReadSamplesTotal, 1e-9, "words read before the worth went up stay 1:1");
+            Assert.AreEqual(XgSim.ReadSchemaNow, sim.S.readSchema);
+        }
     }
 }

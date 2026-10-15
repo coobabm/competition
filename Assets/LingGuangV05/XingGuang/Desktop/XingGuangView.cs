@@ -281,6 +281,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim.LastEpochWasHand) { Juice.Shake(12, .4f); Juice.HitStop(200); }
             Juice.Play(XgJuice.Sfx.Id.Buzz);
             Train.Glitch();
+            Train.Exploded(track);
         }
 
         void OnEpochStarted(XgEpoch e) { Train.OnEpochStarted(e); }

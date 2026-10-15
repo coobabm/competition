@@ -92,7 +92,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .95 });
             var s = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("contract.antifraud", s.id);
-            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("contracts", s.tab); Assert.AreEqual("contract:antifraud", s.target);
+            Assert.AreEqual(XgGuide.Crowd, s.app, "orders live on 摆渡众包"); Assert.AreEqual("contracts", s.tab); Assert.AreEqual("contract:antifraud", s.target);
             StringAssert.Contains("诈骗短信拦截", s.zh);
             sim.S.contracts.Add("antifraud");
             Assert.IsNull(Find(XgGuide.Current(sim, 0), "contract.antifraud"), "a signed contract is done");
@@ -213,24 +213,6 @@ namespace LingGuangV05.XingGuang.Tests
             var done = XgGuide.Current(sim, 0);
             Assert.AreEqual("done", done[0].id);
             Assert.AreEqual(1, done.Count, "after the ending the note has nothing left to ask");
-        }
-
-        [Test]
-        public void AReportedAccountIsABlockerThatPointsAtTheAppeal()
-        {
-            var sim = Trained(CrowdStage); sim.S.autoLevel = 1;
-            Assert.IsNull(Find(XgGuide.Current(sim, 0), "qc.frozen"));
-            sim.S.qcFrozen = 125; sim.S.qcReason = (int)XgReportReason.MonotoneAnswers;
-            var s = First(XgGuide.Current(sim, 0));
-            Assert.AreEqual("qc.frozen", s.id); Assert.AreEqual(XgGuideKind.Blocker, s.kind);
-            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("teach", s.tab); Assert.AreEqual("name:QcAppeal", s.target);
-            StringAssert.Contains("2:05", s.zh); StringAssert.Contains("2:05", s.en);
-            StringAssert.Contains("疑似脚本", s.whyZh); Assert.IsNotEmpty(s.whyEn);
-            var both = XgGuide.Current(sim, 0, new XgGuideHouse { unpaidPower = true });
-            Assert.AreEqual("power.bill", both[0].id); Assert.AreEqual("qc.frozen", both[1].id);
-            Assert.IsNull(Find(both, "qc.rate"), "frozen accounts get the freeze step, not the rate step");
-            sim.S.autoLevel = 0;
-            Assert.IsNull(Find(XgGuide.Current(sim, 0), "qc.frozen"), "no platform before auto labelling");
         }
 
         [Test]
@@ -466,9 +448,54 @@ namespace LingGuangV05.XingGuang.Tests
                 at = found;
             }
             StringAssert.Contains("练到 C 级", all);
-            StringAssert.Contains("科技买「垃圾短信」数据包", all);
+            StringAssert.Contains("科技买「垃圾短信」", all);
+            StringAssert.DoesNotContain("科技买「垃圾短信」数据包", all, "the pack is named once (the study line), not twice");
             foreach (var detour in new[] { "weights", "bias", "step" })
                 StringAssert.DoesNotContain("「" + XgCatalog.Node(detour).name + "」", all, "no cheap detour on the way");
+        }
+
+        [Test]
+        public void TheExamLeadsOnlyWhenAPassIsLikely()
+        {
+            var sim = BarsFull();
+            Assert.AreEqual(XgGuide.ConfirmStageId, First(XgGuide.Current(sim, 0)).id, "full bars: the exam leads");
+            sim.S.trainedParamsK = sim.ParamsThreshold(2) * .85;
+            Assert.IsTrue(sim.ExamReady, "setup: the exam can be sat at 85%");
+            var steps = XgGuide.Current(sim, 0);
+            Assert.IsNotNull(Find(steps, XgGuide.ConfirmStageId), "it is still offered");
+            Assert.AreNotEqual(XgGuide.ConfirmStageId, First(steps).id, "but the bars come first");
+        }
+
+        [Test]
+        public void AFailedExamSaysHowManyRoundsToTheRetry()
+        {
+            var sim = BarsFull();
+            sim.S.examRetryEpoch = sim.S.stageEpochs + 3;
+            Assert.IsFalse(sim.ExamReady);
+            var retry = Find(XgGuide.Current(sim, 0), "exam.retry");
+            Assert.IsNotNull(retry);
+            StringAssert.Contains("3 轮", retry.zh);
+            Assert.AreEqual("train", retry.tab);
+        }
+
+        [Test]
+        public void StageFiveWithAttentionNamesTheTransformerIdea()
+        {
+            var sim = Trained(5);
+            sim.S.unlocked.Add("attention");
+            var step = Find(XgGuide.Current(sim, 1e6), "ability.transformer");
+            Assert.IsNotNull(step);
+            StringAssert.Contains(XgSim.AttentionIdeaRounds + " 轮", step.zh);
+            sim.S.attentionEpochs = XgSim.AttentionIdeaRounds;
+            sim.S.emerged.Add(5);
+            Assert.IsNull(Find(XgGuide.Current(sim, 1e6), "ability.transformer"), "gone once it thought of it");
+        }
+
+        [Test]
+        public void RaisesStopBeingNamedAfterStageThree()
+        {
+            var sim = Trained(4);
+            Assert.IsNull(Find(XgGuide.Current(sim, 1e9), "raise"));
         }
 
         /// <summary>A stage-one lab with both bars full for the second ability: only the player's press is missing.</summary>

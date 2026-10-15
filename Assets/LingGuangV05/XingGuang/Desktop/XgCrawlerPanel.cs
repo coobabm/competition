@@ -84,6 +84,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly XgSpiderFx fx = new XgSpiderFx();
 
         XgSim Sim => host.Sim;
+        double Worth => Sim != null ? Sim.ReadWorth : XgSim.SamplesPerWord;
         XgJuice Fx => host.Juice;
         bool Reduced => Sim != null && Sim.S.reduceFx;
 
@@ -224,7 +225,7 @@ namespace LingGuangV05.Desktop.XingGuang
             int n = Sim.CrawlActive ? Sim.EndCrawl() : grabbed;
             var ds = XgCatalog.Dataset(XgSim.CrawlDataset);
             summaryText.text = "<b>" + T("爬虫收工", "Crawler done") + "</b>\n\n"
-                + T("抓回 ", "Grabbed ") + "<color=#5DA8E8><b>" + n + "</b></color>" + T(" 个词 = ", " words = ") + "<color=#5DA8E8><b>+" + N(n * XgSim.SamplesPerWord, "0") + T(" 样本</b></color>，进了「" + ds.name + "」。", " samples</b></color>, into " + ds.nameEn + ".")
+                + T("抓回 ", "Grabbed ") + "<color=#5DA8E8><b>" + n + "</b></color>" + T(" 个词 = ", " words = ") + "<color=#5DA8E8><b>+" + N(n * Worth, "0") + T(" 样本</b></color>，进了「" + ds.name + "」。", " samples</b></color>, into " + ds.nameEn + ".")
                 + "\n<size=12><color=#6F95A5>" + T("约 " + N(XgSim.CrawlNoise * 100, "0") + "% 是广告和错字；研究树的「数据清洗」能减半。", "About " + N(XgSim.CrawlNoise * 100, "0") + "% is adverts and typos; 数据清洗 in the research tree halves that.") + "</color></size>";
             summary.gameObject.SetActive(true);
             summary.SetAsLastSibling();
@@ -842,9 +843,9 @@ namespace LingGuangV05.Desktop.XingGuang
                     + T("剩 ", "") + N(Mathf.Max(0, timeLeft), "0") + T(" 秒", " s left") + "  ·  " + grabbed + " / " + XgSim.CrawlCap;
             else statusText.text = T("已收工", "Finished") + "  ·  " + grabbed + " / " + XgSim.CrawlCap;
             closeButton.Set(intro ? T("关掉", "Close") : running ? T("收工", "Stop") : T("返回数据页", "Back to Data"), true, null, running && !intro ? XgDark.Hot : XgDark.Ink);
-            // +N samples as words are read: 1 word = 1 sample (XgSim.SamplesPerWord), into the text corpus.
-            counterText.text = intro ? "+" + N(introCredited * XgSim.SamplesPerWord, "0") + "<size=13><color=#6F95A5> " + T("样本", "samples") + "</color></size>"
-                : "+" + N(grabbed * XgSim.SamplesPerWord, "0") + "<size=13><color=#6F95A5> " + T("样本 / ", "samples / ") + N(XgSim.CrawlCap * XgSim.SamplesPerWord, "0") + "</color></size>";
+            // +N samples as words are read: 1 word = XgSim.ReadWorth samples (more in the later stages), into the text corpus.
+            counterText.text = intro ? "+" + N(introCredited * Worth, "0") + "<size=13><color=#6F95A5> " + T("样本", "samples") + "</color></size>"
+                : "+" + N(grabbed * Worth, "0") + "<size=13><color=#6F95A5> " + T("样本 / ", "samples / ") + N(XgSim.CrawlCap * Worth, "0") + "</color></size>";
             counterSub.text = T("→ " + ds.name + " · ", "→ " + ds.nameEn + " · ") + Sim.ReadRuleText();
             SetBar(counterFill, intro ? Mathf.Repeat(grabbed / 60f, 1) : grabbed / (float)XgSim.CrawlCap);
             hintText.text = T("鼠标靠近它会追过来；点一下给它指路。收工也留下已经抓到的。", "It chases the pointer when close; click to send it somewhere. Stopping keeps what it has grabbed.")

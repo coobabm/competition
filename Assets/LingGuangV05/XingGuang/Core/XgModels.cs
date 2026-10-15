@@ -29,6 +29,8 @@ namespace LingGuangV05.XingGuang
         public string arch = "", dataset = "";
         public int depth = 2, width, lr = 3;
         public bool autoLr = true;
+        /// <summary>The player's learning-rate step relative to the safe rate (−2…2), used when not <see cref="autoLr"/> (XgSim.Rates.cs).</summary>
+        public int rateNotch;
         public double steps, trainAcc, valAcc;
         /// <summary>Epochs trained, epochs since the last assessment, assessments in a row without a record.</summary>
         public int epoch, sinceEval, staleEvals;
@@ -125,6 +127,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>A drop was excused by a relic (残差贴纸): the round changed nothing.</summary>
         public bool rolledBack;
         public string dropReason = "", dropReasonEn = "";
+        /// <summary>The drop came mostly from overfitting (背答案): too little data for the model, so new questions got worse.</summary>
+        public bool overfit;
         /// <summary>What the round changed in accuracy (negative after a drop, 0 on a plateau).</summary>
         public double gain;
         /// <summary>Set when this epoch triggered an assessment.</summary>

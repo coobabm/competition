@@ -208,6 +208,8 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (wish.Length == 0) return "你什么都没写。";
                     return "「" + (wish.Length > 18 ? wish.Substring(0, 18) + "……" : wish) + "」";
                 case "wishVerdict": return sim.Profile.personality.Length == 0 ? "那我就长成你喂的样子。" : sim.WishDrifted ? "不太像。我被喂歪了。" : "我在学。";
+                case "originEpochs": return sim.S.epochs.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+                case "originSamples": return XgSim.SamplesText(sim.TrainedSamples);
                 case "garble1": return sim.GarbleLine(0);
                 case "garble2": return sim.GarbleLine(1);
                 case "garble3": return sim.GarbleLine(2);

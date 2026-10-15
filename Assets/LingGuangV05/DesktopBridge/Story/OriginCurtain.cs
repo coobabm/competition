@@ -86,8 +86,9 @@ namespace LingGuangV05.Desktop.Story
             else readySince = -1;
             if (hintQueued && !InnerVoice.Busy) hintQueued = false;
 
-            // Chapter six opens with the origin video, after the stage's own cutscene and the relic pick are out of the way.
-            if (!watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && bound.TakeChapterSixOrigin())
+            // Chapter six opens with the origin video, after the stage's own cutscene and the relic pick are out of the way,
+            // and after its lead-in (story beat s6_origin_lead: it reads back its training log and says why it made the film).
+            if (!watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && ChapterSixLeadDone() && bound.TakeChapterSixOrigin())
             { promiseKept = true; playAt = Time.unscaledTime + ReplyToVideo; }
             if (bound.S.originVideoSeen && fileIcon == null) MakeFileIcon(desk);
             // It promised to explain but the video never ran (the reply came during a save switch or before a reload): run it now, once.
@@ -96,6 +97,27 @@ namespace LingGuangV05.Desktop.Story
             if (watching) TickPlayer();
             if (live != null && (live.Ended || live.gameObject == null)) { live.Close(); live = null; Finished(); }
         }
+
+        /// <summary>Longest wait for the lead-in beat before the film plays anyway (a missing beat must not hold chapter six forever).</summary>
+        const float LeadTimeout = 120f;
+        float leadAskedAt = -1;
+
+        /// <summary>
+        /// The film waits for its lead-in: the first time chapter six is due, the beat is asked for (lg.originLead) and the
+        /// film follows once the beat sets origin.lead.done. Without a running story (QA test mode) it goes straight on.
+        /// </summary>
+        bool ChapterSixLeadDone()
+        {
+            if (bound.S.stage < XgSim.OriginVideoStage || bound.S.originChapterSix || bound.S.originVideoSeen) return false;
+            var story = runtime != null && runtime.Sim != null ? runtime.Sim.S.story : null;
+            if (story == null || runtime.TestMode) return true;
+            if (story.GetFlag(LeadDoneFlag) > 0) return true;
+            if (leadAskedAt < 0) { leadAskedAt = Time.unscaledTime; runtime.RaiseSignal("lg.originLead"); }
+            return Time.unscaledTime - leadAskedAt >= LeadTimeout;
+        }
+
+        /// <summary>Set by the last step of the lead-in beat (six_stage_story.json, s6_origin_lead).</summary>
+        public const string LeadDoneFlag = "origin.lead.done";
 
         bool EndingOnScreen()
         {
@@ -108,7 +130,7 @@ namespace LingGuangV05.Desktop.Story
             if (bound != null) bound.OriginVideoRequested -= OnRequested;
             bound = sim;
             bound.OriginVideoRequested += OnRequested;
-            playAt = -1; readySince = -1; hintQueued = false; promiseKept = false;
+            playAt = -1; readySince = -1; hintQueued = false; promiseKept = false; leadAskedAt = -1;
             if (fileIcon != null) { Destroy(fileIcon.gameObject); fileIcon = null; }
             if (live != null) { live.Close(); live = null; }
             Stop(false);

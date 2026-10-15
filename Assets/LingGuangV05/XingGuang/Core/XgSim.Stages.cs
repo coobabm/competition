@@ -25,6 +25,8 @@ namespace LingGuangV05.XingGuang
         public double stageStartParamsK, stageStartSamples;
         /// <summary>Seconds played in the current stage since rent began (older saves start at 0 when loaded): the month's time floor.</summary>
         public double stageClock;
+        /// <summary>Seconds in stage 5 with 注意力 owned: the Transformer idea's time floor (older saves start at 0).</summary>
+        public double attentionClock;
 
         // Wall fields of older saves (design v1.1 walls, removed by 参数量与数据量主线). Still read, never written.
         public double wallSeenAt, winterIdle;
@@ -181,13 +183,30 @@ namespace LingGuangV05.XingGuang
             S.stageSeconds += dt;
             if (Finite(dt) && dt > 0) S.stageClock += dt;
             if (UseBoard) CheckCallEmergence();
+            // Stage five's idea also comes with time, so the Transformer (sample line ×0.6) cannot stay hidden behind
+            // rounds the player did not know to train (2026-10-16: a 2.4 h stage 5 with no attention rounds).
+            if (S.stage == 5 && !S.emerged.Contains(5) && Has("attention"))
+            {
+                if (Finite(dt) && dt > 0) S.attentionClock += dt;
+                if (S.attentionClock >= AttentionIdeaSeconds) Emerge(5);
+            }
         }
+
+        /// <summary>Training rounds in stage 5, once 注意力 is owned, before it asks 「如果只用注意力呢？」.</summary>
+        public const int AttentionIdeaRounds = 8;
+        /// <summary>Or this long in stage 5 with 注意力 owned (counted from the purchase, not the stage), whichever comes first.</summary>
+        public const double AttentionIdeaSeconds = 600;
+
+        /// <summary>Rounds still to train before the Transformer idea, and seconds still to wait (0 when either is done).</summary>
+        public int AttentionIdeaRoundsLeft => Math.Max(0, AttentionIdeaRounds - (int)S.attentionEpochs);
+        public double AttentionIdeaSecondsLeft => Math.Max(0, AttentionIdeaSeconds - (Finite(S.attentionClock) ? S.attentionClock : 0));
 
         void ObserveStageFive(XgRun run)
         {
-            if (S.stage != 5 || S.emerged.Contains(5) || run.arch != "attention") return;
+            // Any round on either line counts once 注意力 is owned: the reading line configures itself to it.
+            if (S.stage != 5 || S.emerged.Contains(5) || !Has("attention")) return;
             S.attentionEpochs++;
-            if (S.attentionEpochs >= 8) Emerge(5);
+            if (S.attentionEpochs >= AttentionIdeaRounds) Emerge(5);
         }
 
         // ───────────── the SI's seed and its cards ─────────────

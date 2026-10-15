@@ -113,15 +113,17 @@ namespace LingGuangV05.XingGuang
                     "跟着桌面上的提示，和它第一次见面。", "Follow the desktop prompts to meet it.", "", "", "", ""));
                 return Finish(list, sim, house);
             }
-            Quality(sim, list);
-            // The 能力考 can be sat (or was passed): only the player turns the chapter, so it leads the note.
-            if (ChapterWaits(sim) && !sim.OpeningFocus) list.Add(ConfirmStage(sim));
+            // The 能力考 can be sat (or was passed): only the player turns the chapter, so it leads the note once a pass is
+            // likely; with fuller bars still worth waiting for, it goes below the steps that fill them.
+            bool examLater = ChapterWaits(sim) && !sim.OpeningFocus && !ExamLeads(sim);
+            if (ChapterWaits(sim) && !sim.OpeningFocus && !examLater) list.Add(ConfirmStage(sim));
+            if (!ChapterWaits(sim) && !sim.OpeningFocus && sim.S.stage < 6) ExamRetry(sim, list);
 
             // The first minutes (XgSim.Opening.cs): label 常识判断, train, then chat; nothing else until it learned yes from no.
             if (sim.OpeningFocus) { Opening(sim, list); return Finish(list, sim, house); }
             if (sim.OpeningChatDue) list.Add(OpeningChat());
 
-            if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); Raise(sim, money, list); return Finish(list, sim, house); }
+            if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); return Finish(list, sim, house); }
 
             bool trainable = sim.TrainingUnlocked(XgTrack.Vision) || sim.TrainingUnlocked(XgTrack.Sequence);
             if (!trainable) Label(sim, list);
@@ -132,6 +134,7 @@ namespace LingGuangV05.XingGuang
             var advancing = new HashSet<string>();
             if (trainable)
             {
+                TransformerIdea(sim, list);
                 NextAbility(sim, wallet, list, advancing);
                 // A model that stopped improving gets the plain reason and where to fix it (XgChanceHint.cs). While the
                 // next ability's steps already name what to buy or label, a plateau for parameters or data says nothing new.
@@ -139,10 +142,71 @@ namespace LingGuangV05.XingGuang
                 bool covered = hint != null && list.Exists(x => x.kind == XgGuideKind.Ability) && (hint.id == "plateau.params" || hint.id == "plateau.data");
                 if (hint != null && !covered) list.Add(hint);
             }
+            if (examLater) list.Add(ConfirmStage(sim));
+            Books(sim, list);
+            Quality(sim, list);
             AutoLabel(sim, wallet, list);
             CheapNode(sim, wallet, list, advancing);
             Raise(sim, money, list);
             return Finish(list, sim, house);
+        }
+
+        /// <summary>Both bars this full lead with the exam (its pass odds are high by then; at 80% they are about one in seven).</summary>
+        public const double ExamLeadShare = .95;
+
+        static bool ExamLeads(XgSim sim) => sim.ExamPassPending || Math.Min(sim.ExamParamsReady, sim.ExamSamplesReady) + 1e-9 >= ExamLeadShare;
+
+        /// <summary>A failed 能力考 waits a few rounds: 「没考过：再练 3 轮就能重考」.</summary>
+        static void ExamRetry(XgSim sim, List<XgGuideStep> list)
+        {
+            int n = sim.ExamRoundsToRetry;
+            if (n <= 0 || sim.NextAbility <= 0 || Math.Min(sim.ExamParamsReady, sim.ExamSamplesReady) + 1e-9 < XgSim.ExamOpenShare) return;
+            list.Add(Step("exam.retry", XgGuideKind.Main, "没考过：再练 " + n + " 轮就能重考", "Exam failed: " + n + " more rounds and it can sit it again",
+                "两条进度越满越好考；等的时候补数据或参数，下次更稳。", "The fuller both bars, the easier; fill them while you wait and the next try is safer.",
+                Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(TrainableTrack(sim))));
+        }
+
+        /// <summary>
+        /// Stage 5 with 注意力 owned: the Transformer idea comes after a few rounds (or ten minutes). Training is the quick
+        /// way, and the Transformer then cuts both lines to six tenths, so it leads the ability steps.
+        /// </summary>
+        static void TransformerIdea(XgSim sim, List<XgGuideStep> list)
+        {
+            if (sim.S.stage != 5 || !sim.Has("attention") || sim.TransformerIdeaReached || sim.Has("transformer")) return;
+            int rounds = sim.AttentionIdeaRoundsLeft, minutes = (int)Math.Ceiling(sim.AttentionIdeaSecondsLeft / 60);
+            list.Add(Step("ability.transformer", XgGuideKind.Ability,
+                "再练 " + rounds + " 轮（或等 " + minutes + " 分钟），它会想到「只用注意力」",
+                rounds + " more rounds (or " + minutes + " minutes) and it thinks of 'attention only'",
+                "想到以后科技能买 Transformer：样本线和参数线都砍到六成。大批数据可以等它想到再买。",
+                "Then the Transformer goes on sale: it cuts both the sample and the parameter line to six tenths. Big data batches can wait until then.",
+                Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(TrainableTrack(sim))));
+        }
+
+        /// <summary>Unread chapters on the shelf worth at least this share of the bar still missing get a line (stage 4 on).</summary>
+        public const double BookWorthShare = .05;
+
+        /// <summary>「书架读《红楼梦》：+20 万样本、+300K 参数，不花钱」: from stage 4 a book is a free share of the bars.</summary>
+        static void Books(XgSim sim, List<XgGuideStep> list)
+        {
+            int next = sim.NextAbility;
+            if (sim.S.stage < 4 || next <= 0 || sim.Reading || !TabOpen(sim, Lab, "train")) return;
+            double dGap = sim.SamplesThreshold(next) - sim.TrainedSamples, pGap = sim.ParamsThreshold(next) - sim.TrainedParamsK;
+            XgBook best = null; double bestSamples = 0;
+            foreach (var b in XgBooks.All)
+            {
+                if (!sim.BookOpen(b) || sim.BookDone(b)) continue;
+                double chars = 0; int read = sim.ChaptersRead(b);
+                for (int i = read; i < b.chapters.Length; i++) chars += b.chapters[i].chars;
+                double samples = chars * sim.ReadWorth;
+                bool worth = dGap > 0 && samples >= dGap * BookWorthShare || pGap > 0 && b.paramsK >= pGap * BookWorthShare;
+                if (worth && samples > bestSamples) { best = b; bestSamples = samples; }
+            }
+            if (best == null) return;
+            list.Add(Step("ability.book", XgGuideKind.Ability,
+                "书架读《" + best.name + "》：+" + XgSim.SamplesText(bestSamples) + " 样本、读完 +" + XgSim.ParamsText(best.paramsK) + " 参数，不花钱",
+                "Read " + best.nameEn + " on the shelf: +" + XgSim.SamplesText(bestSamples) + " samples, +" + XgSim.ParamsText(best.paramsK) + " parameters when finished, free",
+                "现在 1 个字 = " + Num(sim.ReadWorth, "0") + " 条样本，只花电。等钱、等下载的时候正好读。", "Right now 1 character = " + Num(sim.ReadWorth, "0") + " samples, and it only costs power. Good while waiting for money or a download.",
+                Lab, "train", "name:BooksTab", ""));
         }
 
         /// <summary>
@@ -241,14 +305,6 @@ namespace LingGuangV05.XingGuang
                     "下载停在半路，数据进不来。一块 2TB 移动硬盘就够放很久" + (sim.Has(XgSim.DataCleanId) ? "。" : "；研究「数据清洗」也能压掉 30%。"),
                     "Downloads stopped halfway and no data comes in. One 2TB portable drive lasts a long time" + (sim.Has(XgSim.DataCleanId) ? "." : "; Data cleaning research also squeezes out 30%."),
                     Shop, "shop", "name:BuyDrive", ""));
-            if (house.appInstalled && sim.QualityFrozen)
-            {
-                string clock = XgSim.FreezeClock(sim.FreezeSecondsLeft);
-                list.Add(Step("qc.frozen", XgGuideKind.Blocker, "账号被举报：等 " + clock + " 或去标注台申诉", "Account reported: wait " + clock + " or appeal on the labelling page",
-                    "摆渡众包冻结了自动标注（" + XgSim.ReportReasonText(sim.LastReportReason, false) + "）。手动标注照常有钱，标对还能挽回信用。解冻前先处理：" + sim.QualityAdvice(false),
-                    "Bodu Crowdsourcing froze auto labelling (" + XgSim.ReportReasonText(sim.LastReportReason, true) + "). Hand labelling still pays and right answers win back credit. Before it thaws: " + sim.QualityAdvice(true),
-                    Lab, "teach", "name:QcAppeal", ""));
-            }
             if (house.appInstalled && sim.CaptchaPending)
             {
                 string clock = XgSim.FreezeClock(sim.CaptchaSecondsLeft);
@@ -304,10 +360,18 @@ namespace LingGuangV05.XingGuang
             }
             if (sim.S.epochs > 0 && sim.S.assessments == 0) { Assess(sim, list); return; }
             int pct = (int)Math.Floor(sim.YesNoAccuracy * 100 + 1e-9), line = (int)Math.Round(XgSim.SenseVoiceLearned * 100);
+            // Training alone stopped helping (two assessments without a record) and the desk is thin: labels come first.
+            if (sim.YesNoAccuracy < XgSim.SenseVoiceLearned && have < OpeningLabelGoal && sim.S.sequence.staleEvals >= 2)
+            {
+                var first = Step("opening.more", XgGuideKind.Setup, "先再标 " + (int)Math.Ceiling(OpeningLabelGoal - have) + " 张「" + desk.name + "」，光练涨不动了", "Label " + (int)Math.Ceiling(OpeningLabelGoal - have) + " more '" + desk.nameEn + "' cards first: training alone has stalled",
+                    "它把手上这几张背熟了，再练也只是重复。多给它几张新题。", "It has these few cards by heart; more rounds only repeat them. Give it new cards.", Crowd, "label", "name:Paper", desk.id);
+                first.current = have; first.goal = OpeningLabelGoal;
+                list.Add(first);
+            }
             list.Add(Step("opening.train", XgGuideKind.Setup, "训练一轮，直到常识判断到 " + line + "%（现在 " + pct + "%）", "Train until Common sense reaches " + line + "% (now " + pct + "%)",
                 "练过的题它才会。练到 " + line + "%，它的是和否就不再靠蒙。", "It only knows what it trained on. At " + line + "% its yes and no stop being guesses.",
                 Lab, "train", "label:训练一轮|Train 1 epoch", TrackArg(XgTrack.Sequence)));
-            if (sim.YesNoAccuracy < XgSim.SenseVoiceLearned && have < OpeningLabelGoal)
+            if (sim.YesNoAccuracy < XgSim.SenseVoiceLearned && have < OpeningLabelGoal && sim.S.sequence.staleEvals < 2)
             {
                 var more = Step("opening.more", XgGuideKind.Setup, "再标几张「" + desk.name + "」，它会分得更准", "Label a few more '" + desk.nameEn + "' cards to sharpen it",
                     "样本越多，练出来的越准。", "More samples, a sharper model.", Crowd, "label", "name:Paper", desk.id);
@@ -376,8 +440,8 @@ namespace LingGuangV05.XingGuang
             XgContract best = null;
             foreach (var c in XgCatalog.Contracts) if (sim.CanSign(c) && (best == null || c.signBonus > best.signBonus)) best = c;
             if (best == null) return;
-            list.Add(Step("contract." + best.id, XgGuideKind.Main, "到训练页签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
-                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Lab, "contracts", "contract:" + best.id, ""));
+            list.Add(Step("contract." + best.id, XgGuideKind.Main, "到摆渡众包签「" + best.job + "」", "Sign '" + best.jobEn + "' in Bodu Crowd",
+                "成绩够了，签下来以后每秒都有进账。", "The score is good enough; once signed it pays every second.", Crowd, "contracts", "contract:" + best.id, ""));
         }
 
         /// <summary>
@@ -400,12 +464,13 @@ namespace LingGuangV05.XingGuang
         {
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
             var recommended = sim.NextStudyNode();
-            if (recommended != null)
+            // From stage 4 the route's pack is an old one; the data plan names the pack that closes the most of the gap.
+            if (recommended != null && !(recommended.kind == XgNodeKind.Dataset && sim.S.stage >= 4))
             {
                 list.Add(Step("ability.study", XgGuideKind.Ability,
                     "下一步：科技买「" + recommended.name + "」 · ¥" + sim.NodeCost(recommended).ToString("0"),
                     "Next: buy " + recommended.nameEn + " in Tech · ¥" + sim.NodeCost(recommended).ToString("0"),
-                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。完成阶段验收还会结算一笔众包绩效，留些钱付电费。",
+                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。通过能力考后，摆渡众包升级会发一笔见面礼；留些钱付电费。",
                     "Prepare for " + nameEn + ". Then train and talk to it. Each new ability funds your next research.",
                     Lab, "tree", "node:" + recommended.id, ""));
                 return;
@@ -522,20 +587,21 @@ namespace LingGuangV05.XingGuang
                 string whatEn = pack ? "the " + buy.target.nameEn + " data pack" : "'" + buy.target.nameEn + "'";
                 string zh = buy.path.Count == 1 ? "科技买" + what : "科技买" + Chain(buy.path, false);
                 string en = buy.path.Count == 1 ? "Tech tree: buy " + whatEn : "Tech tree: buy " + Chain(buy.path, true);
+                if (!pack) { zh += "¥" + Money(buy.cost) + "：" + LineCuts(sim, next, buy, false); en += " ¥" + Money(buy.cost) + ": " + LineCuts(sim, next, buy, true); }
                 string why = pack ? "下载权连第一批：补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条。"
                     : "它把「" + name + "」要的数据压到 " + XgSim.SamplesText(dNeed - buy.gain) + " 条。";
                 string whyEn = pack ? "The download right with the first batch: " + XgSim.SamplesText(buy.gain) + " effective samples; '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "."
                     : "It lowers the data '" + nameEn + "' needs to " + XgSim.SamplesText(dNeed - buy.gain) + ".";
                 var s = Step(pack ? "ability.pack" : "ability.item", XgGuideKind.Ability, zh, en, why + ShortOfMoney(sim, wallet, first, false), whyEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
-                if (!MoneyProgress(sim, wallet, first, s)) { s.current = d; s.goal = dNeed; }
+                if (!MoneyProgress(sim, wallet, first, s)) { s.current = d; s.goal = pack ? dNeed : dNeed - buy.gain; }
                 list.Add(s);
                 after = gap - buy.gain;
             }
             if (after <= 1e-9) return;
             // After a buy, labels are only worth naming when they finish the bar in reasonable time; otherwise the
             // next buy is named once this one is in.
-            const int LabelsWorthNaming = 1500;
+            const int LabelsWorthNaming = 300;
             // Then hand labels on the desks whose samples count in full (算术 counts half).
             var desks = BestDataDesks(sim);
             if (desks.Count == 0)
@@ -553,10 +619,11 @@ namespace LingGuangV05.XingGuang
             var names = new List<string>(); var namesEn = new List<string>();
             foreach (var desk in desks) { names.Add("「" + desk.name + "」"); namesEn.Add(desk.nameEn); }
             bool auto = sim.GlobalAutoLevel > 0;
+            int handMinutes = (int)Math.Ceiling(labels * HandLabelSeconds / 60);
             string labelZh = auto ? "再攒 " + labels + " 条样本：自动答题在标，手标" + string.Join("或", names) + "更快"
-                : (buy != null ? "再标 " : "标注台再标 ") + labels + " 条" + string.Join("或", names);
+                : (buy != null ? "再标 " : "标注台再标 ") + labels + " 条" + string.Join("或", names) + (handMinutes >= 2 ? "（手标约 " + handMinutes + " 分钟）" : "");
             string labelEn = auto ? "Gather " + labels + " more samples: auto labelling is on; hand-labelling " + string.Join(" or ", namesEn) + " is faster"
-                : "Label " + labels + " more " + string.Join(" or ", namesEn) + " cards";
+                : "Label " + labels + " more " + string.Join(" or ", namesEn) + " cards" + (handMinutes >= 2 ? " (about " + handMinutes + " min by hand)" : "");
             bool teaching = desks[0].id == XgMemes.SenseDesk && TeachesYesNo(sim);
             var label = Step("ability.label", XgGuideKind.Ability, labelZh, labelEn,
                 "「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。" + (teaching ? "「常识判断」这桌专教它分清是和否。" : ""),
@@ -564,6 +631,21 @@ namespace LingGuangV05.XingGuang
                 Crowd, "label", "label:是|Yes|对|True", desks[0].id);
             if (buy == null) { label.current = d; label.goal = dNeed; }
             list.Add(label);
+        }
+
+        /// <summary>A player's hand-labelling pace for the 「手标约 N 分钟」 estimate (the bot labels at 1.2 s).</summary>
+        public const double HandLabelSeconds = 2;
+
+        /// <summary>「样本线 3.2M→1.92M、参数线 2M→1.2M」: what a threshold item does to the next ability's lines.</summary>
+        static string LineCuts(XgSim sim, int next, XgDataBuy buy, bool english)
+        {
+            double dNeed = sim.SamplesThreshold(next), pNeed = sim.ParamsThreshold(next), pFactor = 1;
+            foreach (var disc in XgSim.AbilityDiscounts)
+                if (disc.ability == next && !sim.DiscountOwned(disc) && buy.path.Exists(n => n.id == disc.item || Array.IndexOf(disc.itemsAny, n.id) >= 0))
+                    pFactor *= disc.paramsFactor;
+            string s = (english ? "sample line " : "样本线 ") + XgSim.SamplesText(dNeed) + "→" + XgSim.SamplesText(dNeed - buy.gain);
+            if (pFactor < 1) s += (english ? ", parameter line " : "、参数线 ") + XgSim.ParamsText(pNeed) + "→" + XgSim.ParamsText(pNeed * pFactor);
+            return s;
         }
 
         /// <summary>「等下载：ImageNet 还要 2:10」: the queue already holds the data the bar needs.</summary>
@@ -610,13 +692,15 @@ namespace LingGuangV05.XingGuang
             bool short_ = wallet.money + 1e-9 < buy.cost;
             string price = short_ ? "" : "（¥" + Money(buy.cost) + "）", priceEn = short_ ? "" : " (¥" + Money(buy.cost) + ")";
             var s = Step("ability.batch", XgGuideKind.Ability, "数据页买「" + ds.name + "」第 " + k + "/" + all + " 批" + price, "Data page: buy batch " + k + "/" + all + " of " + ds.nameEn + priceEn,
-                "补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，" + XgSim.SizeText(XgSim.BatchMB(ds)) + "，要下载一阵。「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条；每批比上一批贵 25%。",
-                XgSim.SamplesText(buy.gain) + " more effective samples, " + XgSim.SizeText(XgSim.BatchMB(ds)) + " to download. '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "; each batch costs 25% more than the last.",
+                "补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，" + XgSim.SizeText(XgSim.BatchMB(ds)) + "，要下载一阵。「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条；每批比上一批贵 " + BatchRise + "%。",
+                XgSim.SamplesText(buy.gain) + " more effective samples, " + XgSim.SizeText(XgSim.BatchMB(ds)) + " to download. '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "; each batch costs " + BatchRise + "% more than the last.",
                 Lab, TabOpen(sim, Lab, "data") ? "data" : "tree", "batch:" + ds.id, ds.id);
             if (short_) { s.money = true; s.current = wallet.money; s.goal = buy.cost; }
             else { s.current = d; s.goal = dNeed; }
             return s;
         }
+
+        static string BatchRise => Num(Math.Round((XgSim.BatchPriceGrowth - 1) * 100), "0");
 
         static string Num(double v, string format) => v.ToString(format, CultureInfo.InvariantCulture);
         static string Money(double v) => double.IsInfinity(v) ? "-" : Math.Ceiling(v - 1e-9).ToString("0", CultureInfo.InvariantCulture);
@@ -771,8 +855,12 @@ namespace LingGuangV05.XingGuang
 
         static string ShortOfMoney(XgSim sim, Wallet wallet, XgNode node, bool english)
         {
-            if (wallet.money + 1e-9 >= sim.NodeCost(node)) return "";
-            return english ? " Short of money? Label on the desk; right answers pay." : "钱不够就去标注台多标几条，答对有钱。";
+            double short_ = sim.NodeCost(node) - wallet.money;
+            if (short_ <= 1e-9) return "";
+            double rate = sim.IncomePerSecond;
+            if (sim.S.stage <= 2 || rate <= 1e-9) return english ? " Short of money? Label on the desk; right answers pay." : "钱不够就去标注台多标几条，答对有钱。";
+            string eta = XgSim.ClockText(short_ / rate);
+            return english ? " ¥" + Money(short_) + " short: about " + eta + " of income." : "还差 ¥" + Money(short_) + "，约 " + eta + " 的进账。";
         }
 
         /// <summary>Shows the money still needed for the node; false when it is affordable.</summary>
@@ -1107,7 +1195,8 @@ namespace LingGuangV05.XingGuang
 
         static void Raise(XgSim sim, double money, List<XgGuideStep> list)
         {
-            if (sim.RaiseLevel >= XgCatalog.RaiseMax || sim.NextRaiseCost > money * CheapRaiseShare) return;
+            // From stage 4 orders pay far more than hand labels: a raise is no longer worth a line.
+            if (sim.S.stage > 3 || sim.RaiseLevel >= XgCatalog.RaiseMax || sim.NextRaiseCost > money * CheapRaiseShare) return;
             list.Add(Step("raise", XgGuideKind.Boost, "标注台给自己加薪", "Give yourself a raise on the labelling page",
                 "手动标注的报酬一级比一级高。", "Hand labelling pays more with every raise.", Lab, "teach", "name:Row薪", ""));
         }
@@ -1120,6 +1209,9 @@ namespace LingGuangV05.XingGuang
         static List<XgGuideStep> Finish(List<XgGuideStep> list, XgSim sim, XgGuideHouse house)
         {
             list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
+            // Two lines naming the same purchase (科技买「X」 from the parameter plan and the data plan) keep the first.
+            var seen = new HashSet<string>();
+            list.RemoveAll(x => x.target.StartsWith("node:") && !seen.Add(x.target));
             if (list.Count == 0) list.Add(Keep(sim));
             var side = list.Count >= 2 && !sim.OpeningFocus ? Side(sim, house) : null;
             if (side != null) list.Insert(2, side);
@@ -1165,7 +1257,7 @@ namespace LingGuangV05.XingGuang
             if (!house.yySeen)
                 return Step("side.yy", XgGuideKind.Side, "上 YY 看看大家在聊啥", "Check what people are saying on YY",
                     "老周他们都在线。", "Lao Zhou and the others are online.", YY, "", "", "");
-            if (!house.gamesSeen && sim.S.epochs > 0)
+            if (!house.gamesSeen && sim.S.epochs > 0 && sim.SystemUnlocked("games"))
                 return Step("side.games", XgGuideKind.Side, "累了去游戏中心下盘棋", "Tired? Play a game of chess in the Game Hub",
                     "训练可以先放一放。", "Training can wait a moment.", Games, "", "", "");
             return null;

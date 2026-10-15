@@ -34,7 +34,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sb = new StringBuilder();
             sb.Append(o.SourceLabel(En)).Append(" · ");
             if (o.source == XgDataSource.Crowd) sb.Append(N(o.samples, "0")).Append(Lang.T(" 条/秒 · 每条 ¥")).Append(N(o.price, "0.00")).Append(T("", " each"));
-            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 个词 · 1 词 = 1 样本 · ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " words a run · 1 word = 1 sample · ¥" + N(o.price, "0")));
+            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 个词 · 1 词 = 1–3 样本（越往后越多）· ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " words a run · 1 word = 1–3 samples (more later on) · ¥" + N(o.price, "0")));
             else sb.Append(Samples(o.samples));
             sb.Append(Lang.T(" · 标错 ")).Append(NoiseText(o));
             if (o.downloading) sb.Append(Lang.T(" · 下载中 ")).Append(N(o.downloadProgress * 100, "0")).Append('%');
@@ -65,8 +65,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 case XgDataSource.Crowd: sb.Append(Lang.T("相当于雇人坐标注台：按条付钱，一直流入，少量标错。钱不够会自动下架。")); break;
                 case XgDataSource.Story: sb.Append(Lang.T("要靠关系才拿得到的干净数据。")); break;
                 case XgDataSource.Crawl:
-                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回一条，时间到或抓满为止；中途收工也留下已经抓到的。1 个词 = 1 条样本，计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛读到的新词也这样算，不用花钱。",
-                        "Paid per run: every word the crawler steps on comes back as a sample (1 word = 1 sample) until time is up or the run is full; stopping early keeps what it grabbed. The samples count toward the data total; a few adverts and typos count as wrong labels. The resident spider's reads on the desktop count the same way, for free."));
+                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回来，时间到或抓满为止；中途收工也留下已经抓到的。" + sim.ReadRuleText() + "（越往后的阶段越多），计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛走到的词也这样算，不用花钱；书架上读的书，一个字也这样算。",
+                        "Paid per run: every word the crawler steps on comes back until time is up or the run is full; stopping early keeps what it grabbed. " + sim.ReadRuleText() + " (more in the later stages), toward the data total; a few adverts and typos count as wrong labels. Words the resident spider walks over count the same way, for free, and so does every character of a book on the shelf."));
                     break;
             }
             if (o.downloading) sb.Append('\n').Append(T("还剩 " + N(o.downloadLeft, "0") + " 秒；点一下开摆渡云超级会员加速 ¥", N(o.downloadLeft, "0") + " s left; click for a Bodu Cloud super-member speed-up ¥")).Append(Money(sim.AccelerateOfferCost(o.id)));

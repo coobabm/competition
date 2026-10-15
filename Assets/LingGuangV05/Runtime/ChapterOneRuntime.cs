@@ -150,7 +150,29 @@ namespace LingGuangV05.Runtime
             sinceSave += dt;
             sinceNotify += dt;
             if (notify && sinceNotify >= .12f) { notify = false; sinceNotify = 0; Changed?.Invoke(); }
-            if (useDiskSave && dirty && sinceSave >= 300f) SaveNow();
+            if (useDiskSave && dirty && sinceSave >= AutosaveSeconds) SaveNow();
+        }
+
+        /// <summary>Seconds between autosaves while something changed (the lab marks itself dirty every second).</summary>
+        public const float AutosaveSeconds = 60f;
+
+        /// <summary>
+        /// Checks an archive's lab text before it may replace the main save (XingGuangController sets it: the runtime
+        /// cannot read XgState itself). Null means not checked.
+        /// </summary>
+        public static Func<string, bool> LabStateReadable;
+
+        /// <summary>Writes a text copy beside the save (name-yyyyMMddTHHmmss.txt) and returns its path, or null.</summary>
+        public string BackupText(string name, string text)
+        {
+            if (!useDiskSave || store == null || string.IsNullOrEmpty(text)) return null;
+            try
+            {
+                string path = Path.Combine(store.Folder, name + "-" + DateTime.Now.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".txt");
+                File.WriteAllText(path, text);
+                return path;
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException) { Debug.LogWarning("[存档] 副本没写成：" + error.Message); return null; }
         }
 
         public bool SaveNow()
@@ -158,7 +180,7 @@ namespace LingGuangV05.Runtime
             EnsureInitialized();
             sinceSave = 0;
             if (!useDiskSave) { SaveStatus = "测试模式：不写入本机存档"; return true; }
-            if (persistenceBlocked) { SaveStatus = "存档受保护：请备份后使用“重置进度”，不会自动覆盖。"; notify = true; return false; }
+            if (persistenceBlocked) { SaveStatus = "存档受保护：请备份后使用“重置进度”，不会自动覆盖。"; Debug.LogWarning("[存档] " + SaveStatus); notify = true; return false; }
             // Design v1.1 §6: the prologue is never saved; the save starts with the opening setup (Step 8).
             if (Sim.InPrologue) { SaveStatus = "序章不存档"; dirty = false; return true; }
             Sim.S.lastSeenUnix = Math.Max(Sim.S.lastSeenUnix, UtcNow);
@@ -168,6 +190,9 @@ namespace LingGuangV05.Runtime
             try { saved = store.TrySave(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
             catch (ArgumentException error) { saved = false; SaveStatus = "无法序列化存档：" + error.Message; }
             if (saved) dirty = false;
+            // One line per write, so a save that silently failed (or never happened) shows up in the Editor log.
+            if (saved) Debug.Log("[存档] 已保存 · day " + Sim.S.day + " · " + Sim.S.gameSeconds.ToString("0") + " s · lab " + (Sim.S.labState == null ? 0 : Sim.S.labState.Length) + " chars");
+            else Debug.LogWarning("[存档] 没写进去：" + SaveStatus);
             notify = true;
             return saved;
         }
@@ -320,6 +345,13 @@ namespace LingGuangV05.Runtime
 
         void OnApplicationPause(bool paused) { if (paused && initialized && useDiskSave) SaveNow(); }
         void OnApplicationQuit() { if (initialized && useDiskSave) SaveNow(); }
+#if UNITY_EDITOR
+        // Stopping Play in the editor saves before the scene is torn down, whatever order the quit callbacks run in.
+        void OnEnable() { UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged; }
+        void OnDisable() { UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged; }
+        void OnPlayModeChanged(UnityEditor.PlayModeStateChange change)
+        { if (change == UnityEditor.PlayModeStateChange.ExitingPlayMode && initialized && useDiskSave && !TestMode) SaveNow(); }
+#endif
         void OnDestroy() { if (Sim != null) { Sim.Changed -= OnSimulationChanged; Sim.Signal -= OnSimulationSignal; } }
     }
 }

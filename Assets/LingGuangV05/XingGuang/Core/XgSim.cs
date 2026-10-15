@@ -638,8 +638,11 @@ namespace LingGuangV05.XingGuang
             if (blocker != null) { if (hand) Say(blocker); return null; }
             if (hand) { Hit(EpochComboWindow, 1); S.clicks++; }
             int cards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            // A rate the player set too big may tear the round (XgSim.Rates.cs); 自动 never rolls.
+            double tearChance = TearChance(run);
+            bool torn = tearChance > 0 && Roll() < tearChance;
             // The brain itself learns from the cards (the 大脑 page, the phenomena); the score follows the scaling law.
-            if (UseBoard) TrainBoard(run, cards);
+            if (UseBoard && !torn) TrainBoard(run, cards);
             run.steps += cards;
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
@@ -647,7 +650,7 @@ namespace LingGuangV05.XingGuang
             double billed = BilledSeconds(run);
             ChargeTraining(host, billed, true);
             S.trainedSeconds += billed;
-            var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards };
+            var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards, diverged = torn };
             StepAccuracy(run, cards, e);
             RelicRoundDone();
             run.shapeRounds++;
@@ -663,6 +666,7 @@ namespace LingGuangV05.XingGuang
             AutoCountTrainedParams(run);
             if (run.sinceEval >= EvalEvery) e.assessment = Assess(track, host, hand);
             ObserveProgression(run);
+            if (e.diverged) Diverged?.Invoke((int)track);
             EpochDone?.Invoke(e);
             return e;
         }

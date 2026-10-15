@@ -120,7 +120,8 @@ namespace LingGuangV05.XingGuang
             if (S.stage < OriginVideoStage || S.originChapterSix || S.originVideoSeen) return false;
             S.originChapterSix = true;
             S.originExplained = true;
-            AddLine("ai", T("我想给你看一样东西。我来给你解释，我是怎么被训练出来的。", "I want to show you something. Let me explain how I was trained."));
+            // The lead-in beat (s6_origin_lead) has already said why; this is the line the film starts on.
+            AddLine("ai", T("开始了。", "Here it starts."));
             return true;
         }
 
