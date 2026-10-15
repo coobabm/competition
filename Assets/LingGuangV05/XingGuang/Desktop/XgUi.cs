@@ -120,9 +120,18 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public Action Down, Up;
         public bool Held { get; private set; }
-        public void OnPointerDown(PointerEventData e) { if (e.button != PointerEventData.InputButton.Left) return; Held = true; Down?.Invoke(); }
-        public void OnPointerUp(PointerEventData e) { if (!Held) return; Held = false; Up?.Invoke(); }
-        public void OnPointerExit(PointerEventData e) { if (!Held) return; Held = false; Up?.Invoke(); }
+        int pointerId;
+        public void OnPointerDown(PointerEventData e)
+        {
+            if (!isActiveAndEnabled || Held || e.button != PointerEventData.InputButton.Left) return;
+            var button = GetComponent<Selectable>();
+            if (button != null && (!button.IsActive() || !button.IsInteractable())) return;
+            pointerId = e.pointerId; Held = true; Down?.Invoke();
+        }
+        public void OnPointerUp(PointerEventData e)
+        { if (!Held || e.button != PointerEventData.InputButton.Left || e.pointerId != pointerId) return; Held = false; Up?.Invoke(); }
+        public void OnPointerExit(PointerEventData e)
+        { if (!Held || e.pointerId != pointerId) return; Held = false; Up?.Invoke(); }
         void OnDisable() { if (Held) { Held = false; Up?.Invoke(); } }
     }
 
@@ -189,7 +198,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var rt = Rect("Button", parent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
             var img = Panel(rt, dark ? XgDark.Button : XgPalette.Button);
-            var button = rt.gameObject.AddComponent<Button>();
+            var button = rt.gameObject.AddComponent<XgButtonPressFeedback>();
             button.targetGraphic = img;
             var colors = button.colors;
             colors.normalColor = Color.white; colors.highlightedColor = new Color(.93f, .95f, 1f); colors.pressedColor = new Color(.82f, .86f, .96f);
@@ -207,6 +216,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             var text = Text(Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(6, 0), new Vector2(-6, 0)), label, size, dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.Center);
             text.textWrappingMode = TextWrappingModes.NoWrap;
+            button.Label = text.rectTransform;
             return new XgBtn { button = button, image = img, label = text, rt = rt, dark = dark };
         }
 

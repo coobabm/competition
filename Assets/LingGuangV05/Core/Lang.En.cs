@@ -330,6 +330,7 @@ namespace LingGuangV05.Core
             { "」……这句李白没写过吧？", "\" … Li Bai never wrote that, did he?" },
             { "」。把数据集换成「", "\". Switch the dataset to \"" },
             { "」。没有钱，连击清零，这条作废", "\". No pay, combo reset, label discarded" },
+            { "」。连击清零，这条作废", "\". Combo reset, label discarded" },
             { "」回个「夸」或「骂」", "」Say 夸 or 骂" },
             { "」强度 ", "\" strength " },
             { "【准系统】游戏悍将机箱 + Z170 主板 + 600W 电源 + 16G 内存（不含显卡）", "[Barebone] Gaming case + Z170 board + 600 W PSU + 16 GB RAM (no graphics card)" },

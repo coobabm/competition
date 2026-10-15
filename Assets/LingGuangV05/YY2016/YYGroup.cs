@@ -63,9 +63,9 @@ namespace LingGuangV05.Desktop.YY
                 "[大伟] 工资还没发，月底吃土", "[Da Wei] Payday hasn't come. Eating dirt till month end",
                 "[小刚] 穷，下一个", "[Xiao Gang] Broke. Next question" }),
             (new[] { "灵光", "训练", "人工智能", "阿尔法", "alphago", "模型" }, new[] {
-                "[大伟] 你又在捣鼓那个程序？电费交了没", "[Da Wei] Still messing with that program? Paid the power bill?",
-                "[小刚] 阿尔法狗都赢李世石了，你那个能干啥", "[Xiao Gang] AlphaGo beat Lee Sedol. What does yours do?",
-                "[阿杰] 别搞着搞着把显卡烧了", "[A-Jie] Don't fry your card while you're at it",
+                "[大伟] 阿尔法狗那场我看了，围棋规则还是没弄懂", "[Da Wei] I watched that AlphaGo match. Still do not understand Go.",
+                "[小刚] 阿尔法狗都赢李世石了，这新闻够聊一阵了", "[Xiao Gang] AlphaGo beat Lee Sedol. That will be news for a while.",
+                "[阿杰] 这方面我也不懂，先看看新闻吧", "[A-Jie] I do not know much about that. I just follow the news.",
                 "[莉莉] 听不懂，但感觉很厉害的样子", "[Lili] No idea what that means, but it sounds impressive" }),
             (new[] { "球", "奥运", "欧洲杯", "nba", "女排", "比赛", "football", "olympic" }, new[] {
                 "[小刚] 今晚熬夜看球的扣 1", "[Xiao Gang] Type 1 if you're staying up for the match",
@@ -85,6 +85,48 @@ namespace LingGuangV05.Desktop.YY
                 "[小刚] 我就静静地看着你们", "[Xiao Gang] I'll just quietly watch you all",
                 "[大伟] 这个可以有", "[Da Wei] Now that I can get behind" }),
         };
+
+        // A human contact has no access to the owner's private application. Keep this
+        // check narrow so ordinary discussion of public AI news or annotation jobs survives.
+        public static bool RevealsPrivateLab(string text, string privateName = null)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            string lower = text.ToLowerInvariant();
+            foreach (string phrase in new[] { "灵光.exe", "小光.exe", "你的训练", "你那个程序", "那个程序的", "你训练的", "你的模型", "你的ai", "你的 ai", "灵光训练", "灵光的", "给灵光", "lingguang.exe", "your training pack", "your model", "your ai", "still messing with that program", "what does yours do" })
+                if (lower.Contains(phrase)) return true;
+            if ((lower.Contains("训练包") || lower.Contains("training pack")) &&
+                (lower.Contains("你") || lower.Contains("给") || lower.Contains("准备") || lower.Contains("your"))) return true;
+            if (string.IsNullOrWhiteSpace(privateName)) privateName = LingGuangV05.Core.AppNames.AiZh;
+            if (!string.IsNullOrWhiteSpace(privateName) && lower.Contains(privateName.ToLowerInvariant()))
+                foreach (string fact in new[] { "训练", "样本", "数据包", "模型", ".exe", "学会", "阶段" })
+                    if (lower.Contains(fact)) return true;
+            return false;
+        }
+
+        public static int MigratePrivateKnowledge(YYState state, string privateName)
+        {
+            int changed = 0;
+            var group = state?.conversations?.Find(c => c.id == "netbar");
+            if (group == null) return changed;
+            foreach (var message in group.messages)
+                if (message.from != YYChatHub.Me && message.kind == YYKind.Text && RevealsPrivateLab(message.text, privateName))
+                {
+                    message.text = PrivateLabReplacement(message.text);
+                    changed++;
+                }
+            return changed;
+        }
+
+        public static string PrivateLabReplacement(string original)
+        {
+            string prefix = "[阿杰] ";
+            if (!string.IsNullOrEmpty(original) && original.StartsWith("[", StringComparison.Ordinal))
+            {
+                int end = original.IndexOf(']');
+                if (end > 0 && end < 30) prefix = original.Substring(0, end + 1) + " ";
+            }
+            return prefix + GameText.T("你说的这个我没用过。", "I haven't used what you're talking about.");
+        }
 
         /// <summary>A preset group line for <paramref name="last"/> (the player's line), not one said in the last few group lines.</summary>
         public static string Fallback(string last, YYConversation conv, Random rng)

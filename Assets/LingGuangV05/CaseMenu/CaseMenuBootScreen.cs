@@ -65,12 +65,11 @@ namespace LingGuangV05.CaseMenu
             if (root == null) return;
             progress = float.IsNaN(progress) ? 0 : Mathf.Clamp01(progress);
             luminance = float.IsNaN(luminance) ? 0 : Mathf.Clamp01(luminance);
-            // The camera travels into a powered, black screen. Keep the prepared desktop
-            // concealed until it already fills the viewport; no premature desktop flash.
-            background.color = Color.black;
-            content.alpha = 0;
+            // Restore the original firmware/logo/progress presentation on the monitor.
+            background.color = Color.Lerp(Color.black, new Color(.012f, .025f, .035f), luminance);
+            content.alpha = luminance;
             progressFill.anchorMax = new Vector2(progress, 1);
-            cover.alpha = 1;
+            cover.alpha = 1 - CaseMenuMotion.SmootherStep(Mathf.InverseLerp(.94f, 1f, progress));
             int value = Mathf.RoundToInt(progress * 100);
             if (lastPercent != value) { lastPercent = value; percent.text = value + "%"; }
             int index = progress < .24f ? 0 : progress < .50f ? 1 : progress < .85f ? 2 : 3;
@@ -80,6 +79,15 @@ namespace LingGuangV05.CaseMenu
         public void SetReveal(float progress)
         {
             if (cover != null) cover.alpha = 1 - CaseMenuMotion.SmootherStep(progress);
+        }
+
+        public void SetShutdown(float progress)
+        {
+            if (root == null) return;
+            root.gameObject.SetActive(true);
+            background.color = Color.black;
+            content.alpha = 0;
+            cover.alpha = CaseMenuMotion.SmootherStep(progress);
         }
 
         public void Hide() { if (root != null) root.gameObject.SetActive(false); }

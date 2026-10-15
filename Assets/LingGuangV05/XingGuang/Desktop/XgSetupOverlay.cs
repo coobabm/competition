@@ -203,11 +203,12 @@ namespace LingGuangV05.Desktop.XingGuang
             bulb.color = XgDark.Gold;
             view.Juice.Play(answer ? XgJuice.Sfx.Id.Ding : XgJuice.Sfx.Id.Click);
             for (float t = 0; t < .8f; t += Time.unscaledDeltaTime) yield return null;
+            XgFirstLessonWindow.Arm(view.Sim);
             homePending = false;
             Refresh(view.Controller.runtime);
             // 灵光 lands on 概览 behind 摆渡众包, so closing the crowd window shows the overview first.
             view.ShowTab("teach");
-            view.ShowToast(T("它还不会判断。先教它 4 张卡，再让它训练。随时可以和它说话。", "Teach four cards, then train. You can talk to it any time."), 7);
+            view.ShowToast(T("按 1「对」，或按 2「错」。", "1: True · 2: False"), 7);
         }
     }
 }

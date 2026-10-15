@@ -15,6 +15,41 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         XgBtn logAuto;
 
+        public bool SourcesOpen => root != null && root.gameObject.activeInHierarchy && dataView && !learningView;
+
+        public void OpenSources()
+        {
+            learningView = false; dataView = true;
+            Refresh();
+        }
+
+        bool RollbackBusy => Sim.Run(Track).epochActive || Sim.Run(Track).running || Sim.ProjectActive;
+
+        // Records are automatic. Restore only a compatible checkpoint for the selected task;
+        // higher assessed score wins, then the newer checkpoint breaks an exact tie.
+        XgModelEntry BestRollback()
+        {
+            XgModelEntry best = null;
+            var run = Sim.Run(Track);
+            foreach (var entry in Sim.S.models)
+            {
+                if (entry == null || entry.track != (int)Track || entry.dataset != run.dataset || Sim.CannotLoad(entry) != null) continue;
+                if (best == null || entry.score > best.score || entry.score == best.score && entry.id > best.id) best = entry;
+            }
+            return best;
+        }
+
+        string RollbackTip()
+        {
+            if (RollbackBusy) return T("先停止自动训练，等当前训练或研发结束再回档。", "Stop auto-training and wait for the current round or research to finish.");
+            var entry = BestRollback();
+            if (entry == null) return T("当前数据集和结构还没有可用检查点。练出新纪录时会自动保存。", "No compatible checkpoint for this dataset and structure yet. New assessment records save automatically.");
+            return T("回到当前数据集最佳的可用检查点：", "Restore the best compatible checkpoint for this dataset: ")
+                + entry.name + "\n" + T("评估分数 ", "Assessment score ") + N(entry.score, "0.0")
+                + "\n" + T("保留现有装备；本轮曲线重新开始。规模变化时按现有规则保留部分进度。", "Keep current equipment; restart this curve. A size change retains progress under the normal restore rules.")
+                + (!entry.HasWeights ? "\n" + T("此旧检查点只保留成绩与设置，不含完整脑区权重。", "This older checkpoint retains scores and settings, not full region weights.") : "");
+        }
+
         void BuildDataEconomy(RectTransform pane)
         {
             logAuto = ui.Button(pane, "", ToggleLogAuto, 11);

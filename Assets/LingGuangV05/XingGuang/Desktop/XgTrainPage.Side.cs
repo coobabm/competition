@@ -28,11 +28,11 @@ namespace LingGuangV05.Desktop.XingGuang
         // 装备 / 数据集
         RectTransform gearCard, gearPane, dataPane;
         XgBtn gearTab, dataTab, learningTab, confirmStage;
-        bool learningView = true;
+        bool learningView;
         RectTransform learningPane;
         TMP_Text learningText;
         TMP_Text gearCount;
-        bool dataView;
+        bool dataView = true;
         sealed class Tile
         {
             public RectTransform rt;
@@ -389,10 +389,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             RefreshScale(track, run);
             gearTab.Set(T("装备", "Gear"), true, !learningView && !dataView ? XgDark.Accent : XgDark.Button, !learningView && !dataView ? Color.white : XgDark.Ink);
-            dataTab.Set(T("数据集", "Datasets"), true, !learningView && dataView ? XgDark.Accent : XgDark.Button, !learningView && dataView ? Color.white : XgDark.Ink);
+            dataTab.Set(T("数据来源", "Data sources"), true, !learningView && dataView ? XgDark.Accent : XgDark.Button, !learningView && dataView ? Color.white : XgDark.Ink);
             learningTab.Set(T("它学会了吗", "Learning"), true, learningView ? XgDark.Accent : XgDark.Button, XgDark.Ink);
             learningPane.gameObject.SetActive(learningView);
-            learningText.text = Sim.CheckupText();
+            learningText.text = Sim.CheckupText(dataset: run.dataset);
             gearPane.gameObject.SetActive(!learningView && !dataView);
             dataPane.gameObject.SetActive(!learningView && dataView);
             gearCount.gameObject.SetActive(false);

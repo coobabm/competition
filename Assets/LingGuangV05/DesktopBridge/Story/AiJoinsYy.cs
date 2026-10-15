@@ -160,6 +160,8 @@ namespace LingGuangV05.Desktop.Story
             }
 
             if (dueHub == null || Time.unscaledTime - dueAt > .5f || dueHub.S == null || dueHub.S.lingguangUnlocked) { dueHub = null; dueSince = -1; return; }
+            // Do not accumulate impatience (including JoinQuietly) while the first lesson owns the opening.
+            if (OpeningSequence.FirstLessonActive) { dueSince = Time.unscaledTime; monthTurn.Reset(); return; }
             float waited = Time.unscaledTime - dueSince;
             if (waited < SettleSeconds && !qaForce) return;
             if (CanPlay(qaForce || waited > ForceAfter)) Begin(dueHub);
@@ -173,6 +175,7 @@ namespace LingGuangV05.Desktop.Story
         bool CanPlay(bool impatient)
         {
             if (runtime == null || runtime.Sim == null || runtime.TestMode || runtime.Sim.InPrologue) return false;
+            if (OpeningSequence.FirstLessonActive) return false;
             var desk = PrologueDirector.Desk;
             if (desk == null || router == null || router.Get(YYChatHub.AppId) == null || dueHub.View == null) return false;
             if (presenter != null && presenter.CutscenePlaying || AutoLabelEpiphany.Playing) return false;

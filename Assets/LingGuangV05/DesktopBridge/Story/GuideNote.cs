@@ -114,6 +114,19 @@ namespace LingGuangV05.Desktop.Story
             List<XgGuideStep> steps;
             if (exe) steps = new List<XgGuideStep> { XgGuide.OpenExe() };
             else if (lab.View != null && lab.View.SetupShowing) steps = new List<XgGuideStep> { XgGuide.AnswerFirst() };
+            else if (lab.View != null && lab.View.Visible && lab.View.Tab == "teach" && OpeningSequence.FirstLessonActive)
+            {
+                steps = new List<XgGuideStep> { new XgGuideStep {
+                    id = "lesson.judge", kind = XgGuideKind.Setup, app = XgGuide.Lab, tab = "teach",
+                    zh = "它先猜，你判对错", en = "It guesses; you judge",
+                    whyZh = "看题目和它的猜测，再选「猜对了」或「猜错了」。",
+                    whyEn = "Read the question and its guess, then choose Guessed right or Guessed wrong."
+                } };
+                // Do not finish an old collect/train objective over the current lesson.
+                if (busy) { StopAllCoroutines(); busy = false; pending = null; }
+                Show(steps);
+                return;
+            }
             else steps = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House());
             if (busy) { pending = steps; return; }
             Apply(steps);
@@ -342,7 +355,8 @@ namespace LingGuangV05.Desktop.Story
             if (router == null || !router.Open(XingGuangController.AppId, string.IsNullOrEmpty(tab) ? null : tab)) c.Open();
             for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime)
             {
-                if (c.View != null && c.View.Visible && (string.IsNullOrEmpty(step.tab) || c.View.Tab == step.tab)) break;
+                if (c.View != null && c.View.Visible && (string.IsNullOrEmpty(step.tab)
+                    || XgGuideHighlight.Page(c.View, step.tab)?.gameObject.activeInHierarchy == true)) break;
                 yield return null;
             }
             // Pages build some rows on refresh; give them a frame or two.
@@ -355,6 +369,12 @@ namespace LingGuangV05.Desktop.Story
         {
             var c = Lab();
             if (c != null && c.Sim != null && step.tab == "label" && step.arg.Length > 0) c.Sim.SelectDesk(step.arg);
+            // Before stage 4 摆渡众包 is not on the desktop yet: the same desks are on the lab's 「教」 page.
+            if (!StudyDesktopGates.Allows(XgGuide.Crowd) && step.tab == "label")
+            {
+                if (router == null || !router.Open(XingGuangController.AppId, "teach")) c?.Open();
+                yield break;
+            }
             if (router == null || !router.Open(XgGuide.Crowd, string.IsNullOrEmpty(step.tab) ? null : step.tab)) yield break;
             var crowd = ZhongbaoView.Instance;
             for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime)

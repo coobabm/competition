@@ -553,6 +553,7 @@ namespace LingGuangV05.Desktop.YY
 
         bool HerTurn()
         {
+            if (OpeningSequence.FirstLessonActive) { herTurn.Reset(); waitingSince = -1; return false; }
             // A save past the opening (an older one that never met her) does not wait.
             var lab = Lab;
             if (lab != null && lab.AbilitiesCount >= OpeningQuiet.EndsWithAbility) return true;

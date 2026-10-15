@@ -27,7 +27,10 @@ namespace LingGuangV05.Desktop
         internal static void HideUnusedPhotoGalleryAfterSceneLoad()
         {
             var scene = SceneManager.GetActiveScene();
-            if (scene.IsValid() && scene.path == ScenePath) HideUnusedPhotoGallery(scene);
+            if (scene.IsValid() && scene.path == ScenePath)
+            {
+                HideUnusedPhotoGallery(scene);
+            }
         }
 
         /// <summary>The retired messenger used this native slot; do not restore the demo photo app in its place.</summary>

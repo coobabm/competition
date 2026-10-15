@@ -111,7 +111,16 @@ namespace HongmengOS.Aero2010
         public void OpenControlPanel() { Open(controlPanelWindow); }
         public void OpenUser() { Open(userWindow != null ? userWindow : controlPanelWindow); }
         private void Open(WindowManager window) { if (window != null) window.OpenWindow(); Close(); }
-        public void RequestShutdown() { Close(); shutdown.Invoke(); }
+        public void RequestShutdown()
+        {
+            Close();
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().path == LingGuangV05.Desktop.MainSceneEntry.ScenePath)
+            {
+                LingGuangV05.Desktop.GameExit.ReturnToTitle();
+                return;
+            }
+            shutdown.Invoke();
+        }
 
         public void ShowDesktop()
         {

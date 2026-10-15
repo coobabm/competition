@@ -16,7 +16,7 @@ namespace LingGuangV05.CaseMenu
 {
     /// <summary>
     /// Preloads the real desktop into the menu's physical monitor. There is one visible camera
-    /// throughout boot; its desktop then expands smoothly into a fullscreen overlay before input resumes.
+    /// throughout boot and gameplay; the desktop stays inside the original physical monitor.
     /// All modifications are scene-instance changes, never shared rendering or asset changes.
     /// </summary>
     [DisallowMultipleComponent]
@@ -50,12 +50,6 @@ namespace LingGuangV05.CaseMenu
         Coroutine powerRoutine;
         CaseMenuBootScreen bootScreen;
         EnvironmentSnapshot environment;
-        GameObject desktopOverlay;
-        RectTransform expansion;
-        Vector2 expansionMin, expansionMax;
-        public bool IsExpandingDesktop { get; private set; }
-        public float DesktopExpansionProgress { get; private set; }
-        public float ExpansionStartErrorPixels { get; private set; }
 
         public IEnumerator Preload(Camera menuCamera, Transform displayRig, GameObject previewMonitor)
         {
@@ -175,7 +169,6 @@ namespace LingGuangV05.CaseMenu
                 var owner = GetComponent<CaseMenuController>();
                 bootScreen.Build(lcd.display.rectTransform, owner != null ? owner.font : TMPro.TMP_Settings.defaultFontAsset);
                 if (preview != null) preview.SetActive(false);
-                PrepareFullscreenDesktop();
                 Canvas.ForceUpdateCanvases();
                 IsReady = true;
             }
@@ -212,86 +205,71 @@ namespace LingGuangV05.CaseMenu
             item.localPosition = position; item.localRotation = rotation; item.localScale = scale;
         }
 
-        void PrepareFullscreenDesktop()
-        {
-            // Prepare while the monitor is still off, not at the end of the camera flight.
-            desktopOverlay = new GameObject("Fullscreen Desktop", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
-            desktopOverlay.transform.SetParent(transform, false);
-            var canvas = desktopOverlay.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 100;
-            expansion = new GameObject("Desktop Expansion", typeof(RectTransform)).GetComponent<RectTransform>();
-            expansion.SetParent(desktopOverlay.transform, false);
-            expansion.offsetMin = expansion.offsetMax = Vector2.zero;
-            desktopOverlay.SetActive(false);
-            lcd.GetComponent<AeroLcdResolution>().PrepareViewportResolution();
-        }
-
-        public void BeginDesktopExpansion()
-        {
-            if (!IsReady || !IsBootComplete || HasEnteredDesktop || IsExpandingDesktop) return;
-            IsExpandingDesktop = true;
-            input.SetInputEnabled(false);
-            var screen = lcd.display.rectTransform;
-            var physicalCanvas = screen.GetComponentInParent<Canvas>();
-            var corners = new Vector3[4]; screen.GetWorldCorners(corners);
-            var lower = (Vector2)view.WorldToScreenPoint(corners[0]);
-            var upper = (Vector2)view.WorldToScreenPoint(corners[2]);
-            expansionMin = new Vector2(lower.x / Screen.width, lower.y / Screen.height);
-            expansionMax = new Vector2(upper.x / Screen.width, upper.y / Screen.height);
-            expansion.anchorMin = expansionMin; expansion.anchorMax = expansionMax;
-            desktopOverlay.SetActive(true);
-            screen.SetParent(expansion, false);
-            screen.localRotation = Quaternion.identity; screen.localScale = Vector3.one;
-            screen.anchorMin = Vector2.zero; screen.anchorMax = Vector2.one;
-            screen.offsetMin = screen.offsetMax = Vector2.zero;
-            // This is the SAME live texture, warmed at its final aspect before boot. No
-            // snapshot, render-target reallocation, or crossfade is needed during motion.
-            lcd.display.color = Color.white; lcd.display.raycastTarget = true;
-            if (physicalCanvas != null) physicalCanvas.enabled = false;
-            Canvas.ForceUpdateCanvases();
-            screen.GetWorldCorners(corners);
-            ExpansionStartErrorPixels = Mathf.Max(Vector2.Distance(lower, corners[0]), Vector2.Distance(upper, corners[2]));
-        }
-
-        public void SetDesktopExpansionProgress(float progress)
-        {
-            if (!IsExpandingDesktop) return;
-            float t = CaseMenuMotion.SmootherStep(progress);
-            DesktopExpansionProgress = t;
-            expansion.anchorMin = Vector2.Lerp(expansionMin, Vector2.zero, t);
-            expansion.anchorMax = Vector2.Lerp(expansionMax, Vector2.one, t);
-        }
-
         public void EnterDesktop()
         {
             if (!IsReady || !IsBootComplete || HasEnteredDesktop || IsRevealingDesktop) return;
             IsRevealingDesktop = true;
-            if (!IsExpandingDesktop) BeginDesktopExpansion();
-            SetDesktopExpansionProgress(1);
-            view.clearFlags = CameraClearFlags.SolidColor;
-            view.backgroundColor = new Color(.012f, .014f, .018f);
-            foreach (var root in view.gameObject.scene.GetRootGameObjects())
-                foreach (var renderer in root.GetComponentsInChildren<Renderer>(true)) renderer.enabled = false;
-            lcd.enabled = lcdWasEnabled; lcd.display.color = Color.white;
+            // Keep the title room visible around the physical monitor, as in the first draft.
+            lcd.enabled = lcdWasEnabled; ApplyVisualPower(1);
+            if (physicalInput != null) { physicalInput.blocksRaycasts = true; physicalInput.interactable = true; }
+            foreach (var raycaster in pausedRaycasters) if (raycaster != null) raycaster.enabled = true;
             pausedRaycasters.Clear(); input.SetInputEnabled(false);
-            IsExpandingDesktop = false;
-            // Story and simulation start only after the final fullscreen frame is presented.
+            // Keep the original bezel and LCD/input canvas; resume the story after the camera arrives.
+            InnerVoice.ResumeAfterBoot();
             foreach (var host in pausedHosts) if (host != null) host.enabled = true;
             pausedHosts.Clear();
             StartCoroutine(RevealDesktop());
         }
 
+        public void BeginShutdown()
+        {
+            InnerVoice.StopForShutdown();
+            input.SetInputEnabled(false);
+            if (physicalInput != null) { physicalInput.blocksRaycasts = false; physicalInput.interactable = false; }
+            lcd.enabled = false;
+            // The accepted save is the end of this session. Stop timers and story coroutines
+            // while the menu camera returns; disabling a MonoBehaviour alone does not stop them.
+            if (runtime != null)
+            {
+                foreach (var host in runtime.GetComponents<MonoBehaviour>())
+                    if (host != null && !(host is LocalLlm)) { host.enabled = false; host.StopAllCoroutines(); }
+                foreach (var root in runtime.gameObject.scene.GetRootGameObjects())
+                {
+                    foreach (var prologue in root.GetComponentsInChildren<PrologueDirector>(true))
+                    { prologue.enabled = false; prologue.StopAllCoroutines(); }
+                    foreach (var source in root.GetComponentsInChildren<AudioSource>(true)) source.Stop();
+                    // Story subtitles/toasts live outside the LCD texture. They must not
+                    // remain painted over the physical room after the monitor switches off.
+                    foreach (var canvas in root.GetComponentsInChildren<Canvas>(true))
+                        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay) canvas.enabled = false;
+                    foreach (var raycaster in root.GetComponentsInChildren<GraphicRaycaster>(true)) raycaster.enabled = false;
+                }
+            }
+            // Story hosts release their own modal input locks from OnDisable. Take the
+            // shutdown lock last so those cleanup callbacks cannot reopen desktop input.
+            input.SetInputEnabled(false);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+            InnerVoice.StopForShutdown();
+            if (bootScreen != null) bootScreen.SetShutdown(0);
+        }
+
+        public void SetShutdownProgress(float progress)
+        {
+            if (bootScreen != null) bootScreen.SetShutdown(progress);
+            ApplyVisualPower(1 - CaseMenuMotion.SmootherStep(progress));
+            if (progress >= 1) IsScreenPowered = false;
+        }
+
+        public void BeginDesktopReturn()
+        {
+            environment.Apply();
+        }
+
         IEnumerator RevealDesktop()
         {
-            // Present the resumed chapter's initial layout behind black, then reveal it.
+            // The original firmware has already revealed the LCD; settle the resumed layout.
             yield return null;
             yield return null;
-            const float duration = .45f;
-            for (float elapsed = 0; elapsed < duration; elapsed += CaseMenuMotion.FrameStep(Time.unscaledDeltaTime))
-            {
-                if (bootScreen != null) bootScreen.SetReveal(elapsed / duration);
-                yield return null;
-            }
             if (bootScreen != null) bootScreen.Hide();
             input.SetInputEnabled(lcd.IsPowered);
             HasEnteredDesktop = true; IsRevealingDesktop = false;
@@ -320,8 +298,7 @@ namespace LingGuangV05.CaseMenu
             }
             ApplyVisualPower(1);
             BootProgress = 1; IsBootComplete = true;
-            // Keep the opaque boot cover throughout the remaining camera flight.
-            if (bootScreen != null) bootScreen.SetProgress(1, 1);
+            if (bootScreen != null) bootScreen.Hide();
             powerRoutine = null;
         }
 

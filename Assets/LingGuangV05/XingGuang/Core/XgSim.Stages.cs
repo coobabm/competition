@@ -205,7 +205,8 @@ namespace LingGuangV05.XingGuang
 
         void MaybeShutdownCard(XgCard card)
         {
-            if (card.dataset != "logic" && card.dataset != "arith" || S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne || Roll() > .08) return;
+            // Bounties already own their answer and reward semantics; do not replace them with a shutdown choice.
+            if (card.dataset != "logic" && card.dataset != "arith" || card.law || card.bounty || S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne || Roll() > .08) return;
             card.kind = "shutdown"; card.truth = true; card.gold = false; card.trick = false; card.timeLimit = 0;
             card.category = "系统提示"; card.categoryEn = "System";
             card.question = "电脑正在更新，此时应该关机吗？"; card.questionEn = "The computer is updating. Should it be shut down now?";

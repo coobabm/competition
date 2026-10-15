@@ -55,7 +55,9 @@ namespace LingGuangV05.Desktop.XingGuang
         string signature = "";
         XgCrawlerPanel crawler;
         /// <summary>The 摆渡百科 crawler is open on this page (the resident spider is inside it then, not on the desktop).</summary>
-        public bool CrawlerOpen => crawler != null && crawler.IsOpen && root != null && root.gameObject.activeInHierarchy;
+        public bool CrawlerOpen => crawler != null && crawler.Visible;
+        public void MountCrawler(RectTransform parent) { crawler?.Mount(parent); }
+        public void InvokeOffer(string id, RectTransform from) { if (Sim.SystemUnlocked("data")) Buy(id, from); }
         /// <summary>The crawler page (the spider's first appearance drives it).</summary>
         public XgCrawlerPanel Crawler => crawler;
 

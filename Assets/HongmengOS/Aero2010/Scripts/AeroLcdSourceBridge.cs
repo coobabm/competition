@@ -25,6 +25,15 @@ namespace HongmengOS.Aero2010
         private Image wallpaperImage;
         private AspectRatioFitter wallpaperFill;
         private Vector2 contextPosition;
+        private bool contextPointerProvided;
+        // The relayed pointer already uses source pixels. Keep this click anchor
+        // instead of sampling a possibly moved physical cursor in LateUpdate.
+        public void AnchorContextMenu(Vector2 sourcePosition)
+        {
+            if (contextMenu == null || !contextMenu.isOn) return;
+            contextPosition = sourcePosition;
+            contextPointerProvided = true;
+        }
         private void Start()
         {
             RefreshRaycasters();
@@ -114,11 +123,12 @@ namespace HongmengOS.Aero2010
         {
             FitWallpaper();
             if(contextMenu==null||contextMenu.contentRect==null)return;
-            if(!contextMenu.isOn){contextWasOpen=false;return;}
+            if(!contextMenu.isOn){contextWasOpen=false;contextPointerProvided=false;return;}
             if(contextWasOpen)return;
             contextWasOpen=true;RefreshRaycasters();
             var mouse=Mouse.current;
-            if(mouse!=null&&inputSurface.TryMap(mouse.position.ReadValue(),out var p))contextPosition=p;
+            if(!contextPointerProvided&&mouse!=null&&inputSurface.TryMap(mouse.position.ReadValue(),out var p))contextPosition=p;
+            contextPointerProvided=false;
             var context=contextMenu.contentRect.parent as RectTransform;
             if(context!=null&&RectTransformUtility.ScreenPointToWorldPointInRectangle((RectTransform)sourceCanvas.transform,contextPosition,sourceCamera,out var world))context.position=world;
             var rect=contextMenu.contentRect;

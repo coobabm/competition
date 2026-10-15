@@ -24,10 +24,6 @@ public static class NamingDesktopSmoke
     const string Key = "NamingDesktopSmoke.Active";
     static string output => Path.GetFullPath("LocalVerification/Naming/DesktopSmoke");
     static int step;
-    static int expansionSamples;
-    static RenderTexture expansionTexture;
-    static float previousExpansion;
-    static CaseMenuMainDisplay observedDisplay;
     static double due;
     static string taskbarKey;
     static XgSetupOverlay setup;
@@ -35,10 +31,12 @@ public static class NamingDesktopSmoke
     static Vector2 browserSize, browserPosition;
     static NamingDesktopSmoke() { EditorApplication.update += Update; }
     public static void Validate() { NamingChecks.Validate(); Run(); }
+    public static void RunMonitor() { RunFullscreen(); }
     public static void RunFullscreen() { SessionState.SetBool("NamingDesktopSmoke.FullscreenOnly", true); Run(); }
     public static void Run()
     {
         Directory.CreateDirectory(output);
+        SessionState.SetString("NamingDesktopSmoke.SaveRoot", Path.Combine(output, "Save-" + DateTime.UtcNow.Ticks));
         File.WriteAllText(Path.Combine(output, "result.txt"), "RUNNING");
         File.WriteAllText(Path.Combine(output, "checks.txt"), "");
         EditorSceneManager.OpenScene(SessionState.GetBool("NamingDesktopSmoke.FullscreenOnly", false) ? "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity" : "Assets/LingGuangV05/Scenes/Main.unity");
@@ -54,7 +52,7 @@ public static class NamingDesktopSmoke
     static void Isolate()
     {
         if (!SessionState.GetBool(Key, false)) return;
-        ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(output, "Save");
+        ChapterOneRuntime.VerificationSaveDirectory = SessionState.GetString("NamingDesktopSmoke.SaveRoot", Path.Combine(output, "Save"));
         var path = Path.Combine(output, "DesktopProfile") + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(path);
         typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, path);
@@ -89,7 +87,7 @@ public static class NamingDesktopSmoke
     static void Update()
     {
         if (!SessionState.GetBool(Key, false) || !EditorApplication.isPlaying || EditorApplication.isCompiling) return;
-        try { ObserveExpansion(); }
+        try { ObservePhysicalMonitor(); }
         catch (Exception e) { File.WriteAllText(Path.Combine(output, "result.txt"), "FAIL: " + e); Debug.LogException(e); Finish(1); return; }
         if (due == 0) { if (SessionState.GetBool("NamingDesktopSmoke.FullscreenOnly", false)) step = 12; due = EditorApplication.timeSinceStartup + 12; return; }
         if (EditorApplication.timeSinceStartup < due) return;
@@ -178,45 +176,67 @@ public static class NamingDesktopSmoke
                     Check(runtime != null && runtime.GetComponent<DesktopWindowDefaults>() != null, "Window defaults also install through the real title-to-game path");
                     var ai = Bridge().Window.windowContainer;
                     Check(Vector2.Distance(ai.rect.size, DesktopWindowDefaults.SizeFor(Bridge().Window.name, ((RectTransform)ai.parent).rect.size)) < 3, "Title-to-game AI window uses normal size");
-                    VerifyFullscreen();
+                    VerifyPhysicalMonitor();
                     Shot("10-title-entered-desktop");
                     AfterShot(() => SetViewSize(1600, 1000)); break;
                 case 14:
                     Check(Screen.width == 1600 && Screen.height == 1000, "16:10 viewport selected");
-                    VerifyFullscreen(); Shot("11-full-desktop-16x10");
+                    VerifyPhysicalMonitor(); Shot("11-full-desktop-16x10");
                     runtime.Sim.InstallApp(); controller.Open(); break;
                 case 15:
-                    VerifyFullscreen(); VerifyDrag(); Shot("12-full-desktop-app");
+                    VerifyPhysicalMonitor(); VerifyDrag(); Shot("12-full-desktop-app");
                     AfterShot(() => SetViewSize(1920, 1080)); break;
                 case 16:
                     Check(Screen.width == 1920 && Screen.height == 1080, "16:9 viewport selected");
-                    VerifyFullscreen(); Shot("13-full-desktop-16x9");
+                    VerifyPhysicalMonitor(); Shot("13-full-desktop-16x9");
                     AfterShot(GameExit.ReturnToTitle); due += 12; break;
                 case 17:
-                    Check(GameObject.Find("Fullscreen Desktop") == null, "Fullscreen overlay released when returning to title");
+                    Check(GameObject.Find("Fullscreen Desktop") == null, "No fullscreen desktop overlay at the returned title");
                     UnityEngine.Object.FindAnyObjectByType<CaseMenuController>().BeginGame(); due += 16; break;
                 case 18:
-                    VerifyFullscreen(); Shot("14-full-desktop-reentered");
-                    File.WriteAllText(Path.Combine(output, "result.txt"), "PASS: opening validation, personal name, rename, long name, restored state, stable app IDs, all window defaults, maximize/restore, adjusted size after reopening, menu title and actual title-to-game startup, opaque black screen during the single camera flight, full-screen arrival before chapter reveal, fullscreen coverage and relay click/scroll/drag at 16:10 and 16:9, return and reenter. Inspect screenshots visually.");
+                    VerifyPhysicalMonitor(); Shot("14-full-desktop-reentered");
+                    break;
+                case 19:
+                    Check(runtime.SavePath.StartsWith(output, StringComparison.OrdinalIgnoreCase), "Archive regression uses isolated save directory");
+                    if (runtime.Sim.InPrologue)
+                        Check(runtime.CompletePrologue(new PrologueProfile { name = "小星", self = "我", callMe = "你", personality = "好奇" }), "Complete isolated first chapter setup");
+                    runtime.Sim.S.chapter = 1;
+                    Check(runtime.SaveSlot(2), "Save isolated chapter one slot");
+                    controller.Sim.S.abilitiesEmerged = new System.Collections.Generic.List<int> { 1, 2, 3 };
+                    controller.Sim.S.stage = 3;
+                    Check(runtime.CaptureChapter(3), "Capture isolated later chapter");
+                    controller.Open(); controller.Window.MinimizeWindow();
+                    Check(runtime.LoadArchive(2), "Load chapter one without scene replacement");
+                    break;
+                case 20:
+                    Check(controller.Sim.AbilitiesCount == 1, "Chapter one restored");
+                    VerifyPhysicalMonitor();
+                    Check(runtime.LoadArchive(3, true), "Enter unlocked chapter snapshot");
+                    break;
+                case 21:
+                    Check(controller.Sim.AbilitiesCount == 3, "Later chapter restored");
+                    VerifyPhysicalMonitor();
+                    Shot("15-fullscreen-after-chapter-load");
+                    File.WriteAllText(Path.Combine(output, "result.txt"), "PASS: original physical-monitor entry, firmware camera flight, chapter reveal, 16:9 and 16:10 pointer mapping, app open/minimize, return and reenter, real slot and chapter loading retain physical monitor. Inspect screenshots visually.");
                     break;
                 default: Finish(0); break;
             }
         }
         catch (Exception e) { File.WriteAllText(Path.Combine(output, "result.txt"), "FAIL: " + e); Debug.LogException(e); Finish(1); }
     }
-    static void ObserveExpansion()
+    static void ObservePhysicalMonitor()
     {
         var display = UnityEngine.Object.FindAnyObjectByType<CaseMenuMainDisplay>();
-        if (display == null || !display.IsExpandingDesktop) return;
-        if (observedDisplay != display) { observedDisplay = display; expansionSamples = 0; previousExpansion = 0; expansionTexture = display.InputSurface.sourceCamera.targetTexture; }
-        float progress = display.DesktopExpansionProgress;
-        if (display.InputSurface.inputEnabled || progress < previousExpansion || progress - previousExpansion > .2f) throw new Exception("Desktop expansion skipped a large step or enabled pointer input early");
-        if (progress > previousExpansion) expansionSamples++;
-        previousExpansion = progress;
-        if (!display.IsBootScreenOpaque) throw new Exception("Desktop was exposed before the camera reached fullscreen");
-        if (display.Runtime.enabled || display.InputSurface.sourceCamera.targetTexture != expansionTexture) throw new Exception("Story resumed or render target reallocated during the camera flight");
-        // Do not encode screenshots during the animation: synchronous PNG capture itself
-        // stalls the editor. The final stills are captured only after motion completes.
+        if (display == null || !display.IsReady) return;
+        var menu = display.GetComponent<CaseMenuController>();
+        var canvas = display.InputSurface.displayRect.GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode != RenderMode.WorldSpace
+            || !display.InputSurface.displayRect.IsChildOf(menu.displayRig)
+            || GameObject.Find("Fullscreen Desktop") != null)
+            throw new Exception("LCD left its physical monitor or created a fullscreen overlay");
+        if (!menu.HasEnteredGame && menu.TransitionProgress < 1
+            && (display.InputSurface.inputEnabled || display.Runtime.enabled))
+            throw new Exception("Desktop input or simulation resumed before the original camera arrived");
     }
 
     static void SetViewSize(int width, int height)
@@ -235,29 +255,35 @@ public static class NamingDesktopSmoke
         view.GetType().GetProperty("selectedSizeIndex", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(view, count - 1);
     }
 
-    static void VerifyFullscreen()
+    static void VerifyPhysicalMonitor()
     {
         var display = UnityEngine.Object.FindAnyObjectByType<CaseMenuMainDisplay>();
         Check(display != null && display.HasEnteredDesktop, "Real menu has entered desktop");
-        Check(expansionSamples >= 3 && display.ExpansionStartErrorPixels < 1, "Desktop expands over multiple frames with no initial position jump (" + expansionSamples + " samples, " + display.ExpansionStartErrorPixels + " pixels)");
         var input = display.InputSurface;
         var canvas = input.displayRect.GetComponentInParent<Canvas>();
-        Check(canvas.renderMode == RenderMode.ScreenSpaceOverlay, "Desktop is a fullscreen overlay");
+        Check(canvas.renderMode == RenderMode.WorldSpace && canvas.enabled, "Desktop stays on the physical monitor canvas");
         var corners = new Vector3[4]; input.displayRect.GetWorldCorners(corners);
-        Check(Vector2.Distance(corners[0], Vector2.zero) < 1 && Vector2.Distance(corners[2], new Vector2(Screen.width, Screen.height)) < 1, "Desktop covers every viewport edge");
+        var lower = canvas.worldCamera.WorldToViewportPoint(corners[0]);
+        var upper = canvas.worldCamera.WorldToViewportPoint(corners[2]);
+        Check(lower.x > 0 && lower.y > 0 && upper.x < 1 && upper.y < 1,
+            "Original monitor framing retains space for its bezel");
         var texture = input.sourceCamera.targetTexture;
-        Check(texture.width == Screen.width && texture.height == Screen.height, "Desktop rendered at native viewport resolution " + texture.width + "x" + texture.height);
-        Check(input.inputEnabled, "Fullscreen desktop input enabled");
-        Check(!display.IsBootScreenVisible && !display.IsRevealingDesktop, "Boot cover reveals the chapter only after full-screen arrival");
+        Check(texture != null && Mathf.Abs((float)texture.width / texture.height - input.displayRect.rect.width / input.displayRect.rect.height) < .01f, "Desktop texture preserves the LCD panel aspect");
+        Check(input.inputEnabled, "Physical desktop input enabled");
+        Check(!display.IsBootScreenVisible && !display.IsRevealingDesktop, "Boot cover is gone after original camera arrival");
         var wallpaper = UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>().sourceCanvas.transform.Find("Desktop/Wallpaper").GetComponent<RectTransform>();
         wallpaper.GetWorldCorners(corners);
         var wallpaperMin = input.sourceCamera.WorldToScreenPoint(corners[0]);
         var wallpaperMax = input.sourceCamera.WorldToScreenPoint(corners[2]);
-        Check(wallpaperMin.x <= 1 && wallpaperMin.y <= 1 && wallpaperMax.x >= Screen.width - 1 && wallpaperMax.y >= Screen.height - 1, "Wallpaper covers the viewport without letterboxing");
+        Check(wallpaperMin.x <= 1 && wallpaperMin.y <= 1 && wallpaperMax.x >= texture.width - 1 && wallpaperMax.y >= texture.height - 1, "Wallpaper covers the LCD source texture without letterboxing");
         foreach (var uv in new[] { new Vector2(.025f,.025f), new Vector2(.975f,.025f), new Vector2(.025f,.975f), new Vector2(.975f,.975f) })
         {
-            var point = Vector2.Scale(uv, new Vector2(Screen.width, Screen.height));
-            Check(input.TryMap(point, out var mapped) && Vector2.Distance(point, mapped) < 1, "Pointer maps correctly at " + uv);
+            var panelUv = new Vector2(uv.x, input.flipY ? 1 - uv.y : uv.y);
+            var bounds = input.displayRect.rect;
+            var world = input.displayRect.TransformPoint(new Vector3(Mathf.Lerp(bounds.xMin, bounds.xMax, panelUv.x), Mathf.Lerp(bounds.yMin, bounds.yMax, panelUv.y)));
+            var point = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, world);
+            var expected = Vector2.Scale(uv, new Vector2(texture.width, texture.height));
+            Check(input.TryMap(point, out var mapped) && Vector2.Distance(expected, mapped) < 2, "Physical LCD pointer maps correctly at " + uv);
             string probeName = "Temporary input probe " + uv;
             var probe = GameObject.Find(probeName);
             if (probe == null)
@@ -292,7 +318,7 @@ public static class NamingDesktopSmoke
         input.OnPointerEnter(data); input.OnPointerDown(data);
         data.position += new Vector2(20,-15); input.OnDrag(data);
         data.position += new Vector2(40,-25); input.OnDrag(data); input.OnPointerUp(data);
-        Check(Vector2.Distance(before, window.windowContainer.anchoredPosition) > 10, "Real application caption drag moves window through fullscreen relay");
+        Check(Vector2.Distance(before, window.windowContainer.anchoredPosition) > 10, "Real application caption drag moves window through physical LCD relay");
     }
 
     static void Finish(int code) { SessionState.SetBool(Key, false); SessionState.SetBool("NamingDesktopSmoke.FullscreenOnly", false); EditorApplication.isPlaying = false; EditorApplication.Exit(code); }

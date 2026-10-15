@@ -22,6 +22,8 @@ namespace LingGuangV05.Desktop.XingGuang
         bool hitstopOwned;
         float previousTimeScale = 1;
         public bool Reduced, Muted;
+        /// <summary>Opt-in for private label stacks: adopt external absolute layout/rest writes.</summary>
+        public bool TrackKnockLayoutChanges;
         /// <summary>Opt-in for desktop minigames: freeze only this effect stack, never the shared simulation.</summary>
         public bool LocalHitStop;
         public bool IsHitStopped => hitstop > 0;
@@ -31,12 +33,20 @@ namespace LingGuangV05.Desktop.XingGuang
         sealed class Floater { public TMP_Text text; public Vector2 from; public float t, life, rise, scale; public Color color; }
         sealed class Particle { public RectTransform rt; public Graphic g; public Vector2 pos, vel, from, to; public float t, life, spin, gravity; public Color color; public bool travelling; }
         sealed class Wave { public XgRingGraphic ring; public Vector2 pos; public float t, life, radius, width; public Color color; }
-        sealed class Punch { public RectTransform rt; public Vector3 scale; public Vector2 pos, dir; public float t, life, amp; public bool squash; }
+        sealed class Punch
+        {
+            public RectTransform rt;
+            public Vector3 scale, appliedScale, settleScale;
+            public Vector2 pos, dir, appliedPos, settlePos;
+            public float t, life, amp;
+            public bool squash, settling;
+        }
 
         readonly List<Floater> floaters = new List<Floater>();
         readonly List<Particle> particles = new List<Particle>();
         readonly List<Wave> waves = new List<Wave>();
         readonly Dictionary<RectTransform, Punch> punches = new Dictionary<RectTransform, Punch>();
+        List<RectTransform> completedPunches;
         readonly Stack<TMP_Text> textPool = new Stack<TMP_Text>();
         readonly Stack<Particle> imagePool = new Stack<Particle>();
         readonly Stack<Particle> glyphPool = new Stack<Particle>();
@@ -102,8 +112,65 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Knock(RectTransform rt, float amp = .08f, Vector2 dir = default, float seconds = .22f, bool squash = false)
         {
             if (rt == null || !Visible()) return;
-            if (!punches.TryGetValue(rt, out var p)) { p = new Punch { rt = rt, scale = rt.localScale, pos = rt.anchoredPosition }; punches[rt] = p; }
-            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash;
+            if (!punches.TryGetValue(rt, out var p))
+            {
+                p = new Punch { rt = rt, scale = rt.localScale, pos = rt.anchoredPosition };
+                punches[rt] = p;
+                RememberApplied(p);
+            }
+            RebaseExternalTransform(p);
+            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash; p.settling = false;
+        }
+
+        /// <summary>True until Knock restores its target or is explicitly cleared.</summary>
+        public bool HasActiveKnock(RectTransform target) => target != null && punches.ContainsKey(target);
+
+        /// <summary>Return quietly from the current pose without extending the remaining lifetime.</summary>
+        public void SettleKnock(RectTransform rt, float seconds = .06f)
+        {
+            if (rt == null || !punches.TryGetValue(rt, out var p) || p.settling) return;
+            float remaining = p.life - p.t;
+            if (remaining <= 0 || seconds <= 0) return;
+            RebaseExternalTransform(p);
+            p.settleScale = rt.localScale; p.settlePos = rt.anchoredPosition;
+            p.life = Mathf.Min(seconds, remaining); p.t = 0; p.settling = true;
+            RememberApplied(p);
+        }
+
+        void RebaseExternalTransform(Punch p)
+        {
+            if (!TrackKnockLayoutChanges || p.rt == null) return;
+            var scale = p.rt.localScale;
+            var pos = p.rt.anchoredPosition;
+            // Layout writes absolute rest values. Untouched axes must not absorb wobble.
+            for (int axis = 0; axis < 3; axis++)
+                if (scale[axis] != p.appliedScale[axis])
+                {
+                    p.scale[axis] = scale[axis];
+                    if (p.settling) p.settleScale[axis] = scale[axis];
+                }
+            for (int axis = 0; axis < 2; axis++)
+                if (pos[axis] != p.appliedPos[axis])
+                {
+                    p.pos[axis] = pos[axis];
+                    if (p.settling) p.settlePos[axis] = pos[axis];
+                }
+        }
+
+        /// <summary>Declare a complete absolute rest transform after a custom layout write,
+        /// including the ambiguous case where its new value equals our last animated value.</summary>
+        public void SetKnockRestTransform(RectTransform rt, Vector3 scale, Vector2 position)
+        {
+            if (!TrackKnockLayoutChanges || rt == null || !punches.TryGetValue(rt, out var p)) return;
+            p.scale = scale; p.pos = position;
+            if (p.settling) { p.settleScale = rt.localScale; p.settlePos = rt.anchoredPosition; }
+            RememberApplied(p);
+        }
+
+        static void RememberApplied(Punch p)
+        {
+            p.appliedScale = p.rt.localScale;
+            p.appliedPos = p.rt.anchoredPosition;
         }
 
         public void Float(Vector2 at, string text, Color color, float size = 22, float rise = 60, float life = .75f, float scale = 1.3f)
@@ -291,19 +358,30 @@ namespace LingGuangV05.Desktop.XingGuang
 
             if (punches.Count > 0)
             {
-                var done = new List<RectTransform>();
+                var done = completedPunches ?? (completedPunches = new List<RectTransform>());
                 foreach (var p in punches.Values)
                 {
                     if (p.rt == null) { done.Add(p.rt); continue; }
+                    RebaseExternalTransform(p);
                     p.t += dt;
                     float k = p.t / p.life;
                     if (k >= 1) { p.rt.localScale = p.scale; p.rt.anchoredPosition = p.pos; done.Add(p.rt); continue; }
+                    if (p.settling)
+                    {
+                        float ease = k * k * (3 - 2 * k);
+                        p.rt.localScale = Vector3.LerpUnclamped(p.settleScale, p.scale, ease);
+                        p.rt.anchoredPosition = Vector2.LerpUnclamped(p.settlePos, p.pos, ease);
+                        RememberApplied(p);
+                        continue;
+                    }
                     // Pressed in first (−amp), then overshoot, settling with a damped wobble.
                     float wobble = Mathf.Sin(k * Mathf.PI * 2.5f) * (1 - k);
                     p.rt.localScale = p.squash ? Vector3.Scale(p.scale, new Vector3(1 + p.amp * wobble, 1 - p.amp * wobble, 1)) : p.scale * (1 - p.amp * wobble);
                     p.rt.anchoredPosition = p.pos + p.dir * wobble;
+                    RememberApplied(p);
                 }
                 foreach (var rt in done) punches.Remove(rt);
+                done.Clear(); // Retain capacity, not completed/destroyed target references.
             }
         }
 
@@ -311,7 +389,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (hitstopOwned) RestoreTimeScale();
             if (shakeTarget != null) shakeTarget.anchoredPosition = shakeBase;
-            foreach (var p in punches.Values) if (p.rt != null) { p.rt.localScale = p.scale; p.rt.anchoredPosition = p.pos; }
+            foreach (var p in punches.Values) if (p.rt != null) { RebaseExternalTransform(p); p.rt.localScale = p.scale; p.rt.anchoredPosition = p.pos; }
             punches.Clear();
         }
 

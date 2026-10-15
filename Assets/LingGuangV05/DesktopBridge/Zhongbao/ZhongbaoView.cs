@@ -278,7 +278,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var sprite = AppIcon();
             foreach (var (c, _) in localizers) if (c != null) c.enabled = false;
             foreach (var (img, _) in icons) if (img != null) img.sprite = sprite;
-            foreach (var cache in texts) if (cache.text != null) cache.text.text = cache.status ? T("众包标注 · 企业接单", "Crowd labelling · Business orders") : name;
+            foreach (var cache in texts) if (cache.text != null) cache.text.text = cache.status ? T("企业数据标注 · 按题付酬", "Company annotation · Paid per task") : name;
             foreach (var (bm, _, _) in buttons) if (bm != null) { bm.buttonText = name; bm.buttonIcon = sprite; bm.UpdateUI(); }
             if (window.taskbarButton != null) window.taskbarButton.buttonTitle = name;
             SetStartEntry(name, (startEntry.keywords ?? "") + " 摆渡众包 Bodu Crowd 众包 标注 订单");
@@ -420,10 +420,10 @@ namespace LingGuangV05.Desktop.Zhongbao
             var linkRim = Rect("LingGuangLinkRim", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 104, -14), new Vector2(-x, 14));
             Panel(linkRim, new Color(1, 1, 1, .6f)).raycastTarget = false;
             x += 104 + 10;
-            lingguangLink = ui.Button(linkRim, "", () => { Juice.Play(XgJuice.Sfx.Id.Click); ShowTab("train"); }, 13);
+            lingguangLink = ui.Button(linkRim, "", () => { Juice.Play(XgJuice.Sfx.Id.Click); ShowTab("ledger"); }, 13);
             lingguangLink.rt.gameObject.name = "LingGuangLink";
             lingguangLink.rt.anchorMin = Vector2.zero; lingguangLink.rt.anchorMax = Vector2.one; lingguangLink.rt.offsetMin = new Vector2(1, 1); lingguangLink.rt.offsetMax = new Vector2(-1, -1);
-            UiTip.Add(lingguangLink.rt, () => AiDesktopIdentity.Exe(Controller != null ? Controller.runtime : null) + T("：在这里训练模型、生成检查点，用于订单和自动答题。", ": train models and create checkpoints here for orders and auto-answer."));
+            UiTip.Add(lingguangLink.rt, () => T("查看标注报酬、企业订单收入和账户结算。", "View annotation pay, business income and account settlements."));
 
             // The shared combo, as on 灵光's HUD: a white pill with the number, the multiplier, the tier name and the decay bar.
             comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 184, -16), new Vector2(-x, 16));
@@ -457,7 +457,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 : T("买下自动答题以后，平台才开始抽检、算信用。", "The platform starts spot-checking and scoring credit once you buy auto-answer."));
             UiTip.Add(hudLevel.transform.parent, "等级：加薪的头衔，每两级换一个。加薪在标注台右边的商店里。", "Level: your pay-raise title, a new one every two raises. Raises are in the shop beside the labelling desk.");
             UiTip.Add(hudTopic.transform.parent, "今日热词：弹幕、短信这些文字桌最近在聊什么。新的梗会让旧检查点答错（新题型）。", "Today's hot word: what the text desks are talking about. A new meme makes old checkpoints answer wrong (new card types).");
-            UiTip.Add(comboChip, "连击：和灵光共用。连续答对、连续手动训练都会叠加。\n连击越高，标注报酬和手动训练效果越高。\n答错、超时或停太久会清零。", "Combo: shared with LingGuang. Builds with every right answer and every hand-pressed epoch.\nHigher combo pays more for labels and trains faster by hand.\nA wrong answer, a timeout or a long pause resets it.");
+            UiTip.Add(comboChip, "连续正确提交可提高标注报酬；答错、超时或停太久会清零。", "Correct submissions build a pay bonus. A wrong answer, timeout or long pause resets it.");
         }
 
         void BuildNav()
@@ -504,9 +504,9 @@ namespace LingGuangV05.Desktop.Zhongbao
         {
             switch (id)
             {
-                case "label": return T("标注台：亲手给数据打标签。\n答对赚钱，也给模型攒训练数据。逻辑题最值钱。", "Labelling desk: label data by hand.\nRight answers pay and give the model training data. Logic cards pay best.");
-                case "contracts": return PageOpen("contracts") ? T("企业订单：模型准确率达到要求就能签约，之后每秒自动给钱。", "Business orders: sign once the model is accurate enough; they pay every second.")
-                    : T("企业订单：先在灵光训练出第一个检查点，才有企业找你。", "Business orders: train a first checkpoint in LingGuang and companies will come.");
+                case "label": return T("标注兼职：为企业核对数据，合格提交按题结算报酬。", "Annotation work: verify company data and earn pay for each accepted submission.");
+                case "contracts": return PageOpen("contracts") ? T("企业订单：通过质量验收即可签约，持续交付获得报酬。", "Business orders: pass quality acceptance and earn pay for ongoing deliveries.")
+                    : T("企业订单：尚未取得交付资质，先在标注台积累经验。", "Business orders: delivery qualification is not yet available. Start with annotation work.");
                 case "subcontract": return T("分包：网吧兄弟用你的账号帮你标，按分钟发工资。他们的错算在你头上。", "Subcontract: netbar friends label under your account for wages by the minute. Their mistakes count against you.");
                 case "ledger": return T("结算：现在每秒进出多少钱，以及平台记下的罚款、尾款和工资。", "Ledger: money in and out per second now, and the fines, balances and wages the platform has recorded.");
                 default: return T("信用：信用分、抽检和举报规则，以及什么会让它涨跌。", "Credit: the credit score, the spot-check and report rules, and what moves it.");
@@ -521,7 +521,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var card = Rect("Card", gate, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-260, -110), new Vector2(260, 110));
             Panel(card, Color.white);
             gateText = ui.Text(Rect("Text", card, Vector2.zero, Vector2.one, new Vector2(24, 70), new Vector2(-24, -20)), "", 18, XgPalette.Ink, TextAlignmentOptions.Center);
-            gateButton = ui.Button(card, "", () => Controller?.Open(), 17);
+            gateButton = ui.Button(card, "", () => window?.CloseWindow(), 17);
             gateButton.rt.anchorMin = gateButton.rt.anchorMax = new Vector2(.5f, 0); gateButton.rt.offsetMin = new Vector2(-110, 18); gateButton.rt.offsetMax = new Vector2(110, 60);
             gate.gameObject.SetActive(false);
         }
@@ -665,7 +665,7 @@ namespace LingGuangV05.Desktop.Zhongbao
         double TotalLabelled()
         {
             var s = Sim.S;
-            double n = s.handCorrect + s.handWrong + s.autoCorrect + s.autoWrong;
+            double n = s.workSubmitted + s.autoCorrect + s.autoWrong;
             if (s.scWorkers != null) foreach (var w in s.scWorkers) if (w != null) n += w.labelsTotal;
             return n;
         }
@@ -694,7 +694,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             Juice.Reduced = Sim.S.reduceFx;
             Juice.Muted = Sim.S.mute;
             appName.text = AppTitle;
-            subtitle.text = T("众包标注 · 企业接单", "Crowd labelling · Business orders");
+            subtitle.text = T("企业数据标注 · 按题付酬", "Company annotation · Paid per task");
             if (shownMoney < 0) hudMoney.text = T("余额 ", "Balance ") + "<b><color=#FFE27A>¥" + Money(Host.Money) + "</color></b>";
             bool active = Sim.QualityActive;
             hudCredit.text = T("信用 ", "Credit ") + "<b>" + N(Math.Floor(Sim.Credit), "0") + "</b>";
@@ -702,7 +702,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             hudCreditTier.color = !active ? ChipDim : Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 170, 170, 255) : ChipInk;
             creditFill.GetComponent<Image>().color = Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 150, 150, 255) : new Color32(124, 240, 160, 255);
             SetBar(creditFill, active ? (float)(Sim.Credit / XgSim.QcCreditMax) : 0);
-            hudLevel.text = T("等级 ", "Level ") + "<b>" + XgCatalog.RaiseTitle(Sim.RaiseLevel, En) + " Lv." + Sim.RaiseLevel + "</b>";
+            hudLevel.text = T("合格提交 ", "Accepted ") + "<b>" + Sim.S.workCorrect + " / " + Sim.S.workSubmitted + "</b>";
             hudTopic.text = T("今日热词 ", "Hot word ") + "<b>" + HotWord() + "</b>";
 
             if (page == "contracts" && !PageOpen("contracts")) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
@@ -723,7 +723,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 tab.bar.enabled = on;
                 PlaceBadge(tab.badge, open ? badges[i] : "");
             }
-            lingguangLink.Set(T("训练模型 ↗", "Train model ↗"), true, ZhongbaoSkin.Blue, Color.white);
+            lingguangLink.Set(T("查看报酬", "My earnings"), true, ZhongbaoSkin.Blue, Color.white);
             accountText.text = T("账号 kk_2016\n注册 2016-05-29\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-29\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
             statusLeft.text = "<color=#2F9E44>●</color> " + T("已连接 摆渡云", "Connected to Bodu Cloud");
             statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");
@@ -739,8 +739,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (waiting)
             {
                 gate.SetAsLastSibling();
-                gateText.text = T("<b>欢迎来到摆渡众包</b>\n\n先在灵光.exe 里完成初次设置，\n这里的标注台就开张。", "<b>Welcome to Bodu Crowd</b>\n\nFinish LingGuang.exe's first setup\nand the labelling desk opens here.");
-                gateButton.Set(T("打开灵光.exe", "Open LingGuang.exe"), true, Blue, Color.white);
+                gateText.text = T("<b>欢迎来到摆渡众包</b>\n\n企业在这里发布数据核对任务，\n合格提交按题结算报酬。\n当前账户正在准备接单。", "<b>Welcome to Bodu Crowd</b>\n\nCompanies post data verification jobs here.\nAccepted submissions earn pay per task.\nYour account is being prepared.");
+                gateButton.Set(T("返回桌面", "Back to desktop"), true, Blue, Color.white);
             }
             if (pages.TryGetValue(page, out var p)) p.Refresh();
         }

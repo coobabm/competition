@@ -46,6 +46,12 @@ namespace LingGuangV05.Runtime
             initialized = true;
             if (useDiskSave)
             {
+#if RECORDING_PREVIEW
+                // Dedicated recording build: keep every save and slot beside this copy of the game.
+                SaveDirectoryOverride = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "UserData"));
+                if (Array.IndexOf(Environment.GetCommandLineArgs(), "--recording-smoke") >= 0)
+                    SaveDirectoryOverride = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "VerificationData"));
+#endif
 #if UNITY_EDITOR
                 if (!string.IsNullOrEmpty(VerificationSaveDirectory)) SaveDirectoryOverride = VerificationSaveDirectory;
 #endif

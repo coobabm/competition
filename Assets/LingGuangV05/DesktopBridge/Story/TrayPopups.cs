@@ -23,6 +23,7 @@ namespace LingGuangV05.Desktop.Story
         sealed class Notice
         {
             public string who, text;
+            public bool systemBalloon;
             public float seconds;
             public System.Action open;
             public System.Func<bool> valid, held;
@@ -46,10 +47,10 @@ namespace LingGuangV05.Desktop.Story
 
         /// <summary>Message notices are invalidated on save swap and hidden/paused during a cutscene.</summary>
         public void EnqueueNotification(string who, string text, float seconds, System.Action open,
-            System.Func<bool> valid, System.Func<bool> held)
+            System.Func<bool> valid, System.Func<bool> held, bool systemBalloon = false)
         {
             if (string.IsNullOrEmpty(text)) return;
-            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held });
+            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held, systemBalloon = systemBalloon });
             if (running == null) running = StartCoroutine(Run());
         }
 
@@ -87,7 +88,7 @@ namespace LingGuangV05.Desktop.Story
                 {
                     closed = true;
                     if (item.valid == null || item.valid()) item.open?.Invoke();
-                }, item.open != null, out var hover);
+                }, item.open != null, out var hover, item.systemBalloon);
                 LingGuangV05.Desktop.Media.DesktopNotifications.Ping();
                 // Slide up out of the taskbar.
                 for (float t = 0; t < .35f && Valid(item);)
@@ -137,7 +138,32 @@ namespace LingGuangV05.Desktop.Story
             return (new Color32(70, 100, 140, 255), new Color32(110, 140, 180, 255), "i", Lang.T("确定"));
         }
 
-        RectTransform Build(string who, string text, System.Action close, System.Action open, bool canOpen, out Hover hover)
+        // Quiet Win7 information balloon: a status notice has no marketing footer or action.
+        RectTransform BuildSystemBalloon(RectTransform parent, string who, string message, System.Action close, out Hover hover)
+        {
+            var box = PrologueDesk.Rect("System Balloon", parent, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 94));
+            box.pivot = new Vector2(.5f, 0);
+            hover = box.gameObject.AddComponent<Hover>();
+            var border = PrologueDesk.Fill(box, new Color32(105, 112, 115, 255));
+            border.sprite = LingGuangV05.Desktop.XingGuang.XgCardArt.Rounded(); border.type = Image.Type.Sliced; border.pixelsPerUnitMultiplier = 3;
+            var paper = PrologueDesk.Rect("Paper", box, Vector2.zero, Vector2.one, Vector2.one, -Vector2.one);
+            var background = PrologueDesk.Fill(paper, new Color32(255, 255, 232, 255), false);
+            background.sprite = border.sprite; background.type = Image.Type.Sliced; background.pixelsPerUnitMultiplier = 3;
+            var badge = PrologueDesk.Rect("Info", box, new Vector2(0, 1), new Vector2(0, 1), new Vector2(14, -31), new Vector2(32, -13));
+            var info = PrologueDesk.Fill(badge, new Color32(50, 115, 181, 255), false); info.sprite = PrologueDesk.Circle();
+            desk.Text(PrologueDesk.Rect("Glyph", badge, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "i", 15, Color.white, TextAlignmentOptions.Center);
+            var title = desk.Text(PrologueDesk.Rect("Title", box, new Vector2(0, 1), Vector2.one, new Vector2(42, -34), new Vector2(-35, -9)), who, 15, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+            title.fontStyle = FontStyles.Bold;
+            desk.Text(PrologueDesk.Rect("Message", box, Vector2.zero, Vector2.one, new Vector2(16, 15), new Vector2(-16, -39)), message, 16, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
+            var x = PrologueDesk.Rect("Close", box, Vector2.one, Vector2.one, new Vector2(-31, -32), new Vector2(-7, -8));
+            var face = PrologueDesk.Fill(x, Color.clear);
+            var button = x.gameObject.AddComponent<Button>(); button.targetGraphic = face;
+            button.onClick.AddListener(() => close());
+            desk.Text(PrologueDesk.Rect("Glyph", x, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "×", 19, PrologueDesk.Muted, TextAlignmentOptions.Center);
+            return box;
+        }
+
+        RectTransform Build(string who, string text, System.Action close, System.Action open, bool canOpen, out Hover hover, bool systemBalloon = false)
         {
             if (area == null)
             {
@@ -146,6 +172,7 @@ namespace LingGuangV05.Desktop.Story
                 area.gameObject.AddComponent<RectMask2D>();
             }
             area.SetAsLastSibling();
+            if (systemBalloon) return BuildSystemBalloon(area, who, text, close, out hover);
             var theme = Theme(who);
             var box = PrologueDesk.Rect("Tray Popup", area, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(0, Height));
             box.pivot = new Vector2(.5f, 0);

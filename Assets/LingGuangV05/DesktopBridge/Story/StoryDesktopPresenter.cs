@@ -69,7 +69,7 @@ namespace LingGuangV05.Desktop.Story
         public bool ReduceMotion { get { return PlayerPrefs.GetInt(ReduceMotionPref, 0) == 1; } }
         public bool CutscenePlaying { get { return cutsceneRoutine != null; } }
         /// <summary>Shares the established cutscene/prologue/hologram gate with desktop message delivery.</summary>
-        public bool NotificationsHeld => InnerVoiceHeld();
+        public bool NotificationsHeld => OpeningSequence.FirstLessonActive || InnerVoiceHeld();
 
         PrologueDirector prologueForVoice;
         LingGuangV05.Desktop.XingGuang.XgHoloCard holoForVoice;
@@ -144,7 +144,7 @@ namespace LingGuangV05.Desktop.Story
             {
                 director.Rebound += OnStoryRebound;
                 // The setup (naming it, then its first 是 / 否) is on screen too: the month card must not cover it.
-                director.ExternalBusy = () => CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
+                director.ExternalBusy = () => OpeningSequence.FirstLessonActive || CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
                 director.SetOutput(this);
             }
         }

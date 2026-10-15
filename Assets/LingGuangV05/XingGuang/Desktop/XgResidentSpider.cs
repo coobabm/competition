@@ -230,6 +230,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildLayer()
         {
+            // This controller survives scene reloads; its old text pool and layer do not.
+            ghosts.Clear(); ghostPool.Clear(); glitches.Clear(); shown = false;
             var go = new GameObject("Resident Spider", typeof(RectTransform));
             go.layer = desktop.gameObject.layer;
             layer = (RectTransform)go.transform;
@@ -255,6 +257,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         /// <summary>Inside 灵光's 摆渡百科 crawler, it is the crawler; it is not on the desktop at the same time.</summary>
         bool InsideCrawler => controller != null && controller.View != null && controller.View.Data != null && controller.View.Data.CrawlerOpen && controller.View.Visible;
+
+        public void Recall()
+        {
+            if (!Find() || Sim == null || !Sim.SpiderAround) return;
+            Sim.S.residentQuiet = false;
+            StopWork(); motion.brain.Interrupt();
+            if (walker != null) walker.pos = layer.rect.center;
+            layerGroup.alpha = 1; Show(true);
+        }
 
         // ───────────── frame ─────────────
 
@@ -312,6 +323,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (mind.Pulses != pulses) { pulses = mind.Pulses; pulseT = 0; }
             if (pulseT >= 0) { pulseT += dt; if (pulseT > .6f) pulseT = -1; }
             fx.reduced = Reduced;
+            ClampToScreen();
             fx.Tick(dt, walker);
             TickGlitches(dt);
             TickGhosts(dt);
@@ -320,9 +332,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Show(bool on)
         {
-            if (shown == on || layer == null) return;
+            if (layer == null || shown == on && layer.gameObject.activeSelf == on) return;
             shown = on;
-            if (!on) { RestoreAll(); fx.Clear(); foreach (var g in ghosts) { g.text.gameObject.SetActive(false); ghostPool.Push(g.text); } ghosts.Clear(); }
+            if (!on) { RestoreAll(); fx.Clear(); foreach (var g in ghosts) { if (g.text == null) continue; g.text.gameObject.SetActive(false); ghostPool.Push(g.text); } ghosts.Clear(); }
             layer.gameObject.SetActive(on);
         }
 
@@ -500,6 +512,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 pressWait = 1.4f + 1.4f * (float)rng.NextDouble();
             }
             if (!pressPlanned) return false;
+            // A refresh may turn the same card's buttons into player-only teaching evaluations.
+            if (!label.HasShownGuess) { pressPlanned = false; pressStage = 0; pressLeg = null; return false; }
             var button = label.ShownGuessYes ? label.YesButton : label.NoButton;
             if (button == null || !button.gameObject.activeInHierarchy) { pressPlanned = false; return false; }
             if (pressStage == 0)
@@ -784,7 +798,7 @@ namespace LingGuangV05.Desktop.XingGuang
         bool IntroWelcome(XingGuangController lab)
         {
             if (AiJoinsYy.Playing) return false;
-            if (lab.View != null && lab.View.Visible && lab.View.Tab == "data") return true;
+            if (lab.View != null && lab.View.Visible && lab.View.Tab == "train" && lab.View.Train.SourcesOpen) return true;
             return Time.unscaledTime - lastPress >= IntroIdleSeconds;
         }
 
@@ -1161,9 +1175,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Ghost(Word w, Color accent)
         {
-            TMP_Text t;
-            if (ghostPool.Count > 0) t = ghostPool.Pop();
-            else if (ghosts.Count < GhostPool)
+            if (w == null || w.text == null || !w.text.isActiveAndEnabled || layer == null) return;
+            TMP_Text t = null;
+            while (ghostPool.Count > 0 && t == null) t = ghostPool.Pop();
+            if (t == null && ghosts.Count < GhostPool)
             {
                 var go = new GameObject("Ghost", typeof(RectTransform));
                 go.layer = layer.gameObject.layer;
@@ -1175,7 +1190,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 t.raycastTarget = false; t.richText = true; t.alignment = TextAlignmentOptions.Center;
                 t.textWrappingMode = TextWrappingModes.NoWrap;
             }
-            else return;
+            if (t == null) return;
             t.gameObject.SetActive(true);
             t.font = w.text.font;
             var info = w.text.textInfo;
@@ -1200,6 +1215,7 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = ghosts.Count - 1; i >= 0; i--)
             {
                 var g = ghosts[i];
+                if (g.text == null) { ghosts.RemoveAt(i); continue; }
                 g.t += dt;
                 if (g.t >= g.life) { g.text.gameObject.SetActive(false); ghostPool.Push(g.text); ghosts.RemoveAt(i); continue; }
                 float k = g.t / g.life;

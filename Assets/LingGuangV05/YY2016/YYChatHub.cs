@@ -188,6 +188,9 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
+            // Rewrite only obsolete NPC knowledge; preserve player lines, timestamps,
+            // unread counts, normal conversation and every progression flag.
+            YYGroup.MigratePrivateKnowledge(S, sim?.S.aiName);
             pending.Clear(); inFlight.Clear(); standing.Clear(); quizReplies.Clear();
             script = null; scriptFor = null; Choices = null; ChoicesFor = null;
             Changed?.Invoke();
@@ -253,6 +256,7 @@ namespace LingGuangV05.Desktop.YY
                 for (int i = 0; i < lines.Length; i++) if (!string.IsNullOrWhiteSpace(lines[i])) Receive(id, lines[i], notify && i == 0);
                 return;
             }
+            if (id == "netbar" && YYGroup.RevealsPrivateLab(text, runtime?.Sim?.S.aiName)) text = YYGroup.PrivateLabReplacement(text);
             conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now });
             if (!IsShowing(id)) conv.unread++;
             if (notify) NotifyReceived(id, text);
@@ -502,7 +506,7 @@ namespace LingGuangV05.Desktop.YY
             quizReplies[id] = reply;
             var conv = Conversation(id);
             if (correct && pay > 0 && conv != null)
-                conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = GameText.T(AppNames.AiZh + "：「" + XgCatalog.Dataset(S.quizDesk).name + "」样本 +1，+¥" + pay.ToString("0.00", CultureInfo.InvariantCulture), "灵光: +1 sample, +¥" + pay.ToString("0.00", CultureInfo.InvariantCulture)), gameSeconds = Now });
+                conv.messages.Add(new YYMessage { from = "system", kind = YYKind.System, text = GameText.T("本机记录：「" + XgCatalog.Dataset(S.quizDesk).name + "」样本 +1，+¥" + pay.ToString("0.00", CultureInfo.InvariantCulture), "Local record: +1 sample, +¥" + pay.ToString("0.00", CultureInfo.InvariantCulture)), gameSeconds = Now });
             S.quizFrom = S.quizDesk = S.quizText = S.quizWhy = "";
             pending[id] = Time.unscaledTime + 1.2f;
             Touch();
@@ -659,7 +663,7 @@ namespace LingGuangV05.Desktop.YY
             else if (!S.seedJieAsk && hand >= SeedJieAskLabels)
             {
                 S.seedJieAsk = true;
-                Receive("netbar", "[阿杰] " + Lang.T("听说你天天在摆渡众包上做标注？反正你都在标了，顺手帮我也标点呗，钱分你一半。"));
+                Receive("netbar", "[阿杰] " + Lang.T("摆渡众包有公司发的数据标注兼职，按合格题数结报酬。我要接点单，你有空也能去看看。"));
             }
         }
 

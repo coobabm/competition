@@ -66,18 +66,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static Transform Root(XingGuangView view) => view != null ? view.transform.Find("XingGuang") : null;
 
-        /// <summary>The nav button of a tab (named "Tab id" on first use).</summary>
-        public static RectTransform TabButton(XingGuangView view, string tab)
-        {
-            var nav = Root(view)?.Find("Nav");
-            if (nav == null || string.IsNullOrEmpty(tab)) return null;
-            // The nav rows are built named "Tab id"; 科技 (tree) is a section of the 道具 page.
-            if (tab == "label") tab = "teach";
-            return nav.Find("Tab " + tab) as RectTransform;
-        }
+        /// <summary>The visible nav button, including routes merged into Growth.</summary>
+        public static RectTransform TabButton(XingGuangView view, string tab) => view != null ? view.NavButton(tab) : null;
 
         /// <summary>The page root of a tab (pages are named by their id).</summary>
-        public static RectTransform Page(XingGuangView view, string tab) => string.IsNullOrEmpty(tab) ? null : Root(view)?.Find("Pages/" + tab) as RectTransform;
+        public static RectTransform Page(XingGuangView view, string tab)
+        {
+            if (tab == "items" || tab == "abilities" || tab == "growth") tab = "tree";
+            return string.IsNullOrEmpty(tab) ? null : Root(view)?.Find("Pages/" + tab) as RectTransform;
+        }
 
         /// <summary>
         /// A control on a lab page. Locators: "" = the tab button, "name:Foo", "label:是|Yes", "node:id" (also

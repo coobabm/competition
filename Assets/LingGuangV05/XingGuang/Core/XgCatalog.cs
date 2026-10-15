@@ -256,7 +256,7 @@ namespace LingGuangV05.XingGuang
             new XgDesk { id = "mnist", name = "手写数字", nameEn = "Digits", kind = XgDeskKind.Digit, unlock = XgDeskUnlock.Specialty, comboWindow = 3 },
             new XgDesk { id = "poems", name = "唐诗下一字", nameEn = "Next character", kind = XgDeskKind.Poem, unlock = XgDeskUnlock.Specialty, comboWindow = 4 },
             new XgDesk { id = "sense", name = "常识判断", nameEn = "Common sense", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1 },
-            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1, fine = ArithFine },
+            new XgDesk { id = "arith", name = "算术", nameEn = "Arithmetic", kind = XgDeskKind.Arith, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 6, pay = 1, fine = ArithFine },
             new XgDesk { id = "logic", name = "逻辑题", nameEn = "Logic", kind = XgDeskKind.Logic, unlock = XgDeskUnlock.Start, comboWindow = 12, pay = 3.2 },
             new XgDesk { id = "danmu", name = "弹幕情绪", nameEn = "Danmaku", kind = XgDeskKind.Text, unlock = XgDeskUnlock.FirstEpoch, comboWindow = 5, pay = 1.4 },
             new XgDesk { id = "spam", name = "垃圾短信", nameEn = "SMS spam", kind = XgDeskKind.Text, unlock = XgDeskUnlock.Start, comboWindow = 6, pay = 1.4 },
@@ -665,6 +665,8 @@ namespace LingGuangV05.XingGuang
         public const double HandPayScale = 2.5;
         /// <summary>The 算术 desk is true/false: a wrong pick costs this fraction of a right answer's base pay.</summary>
         public const double ArithFine = .5;
+        /// <summary>Every other desk: a wrong hand answer costs this fraction of a right answer's base pay (0 = free misses).</summary>
+        public const double HandFine = .5;
         /// <summary>Auto-answering needs a deployed checkpoint at least this good.</summary>
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;

@@ -32,3 +32,18 @@
 /Design/修改交接与后续策划_20261011.md
 /升级说明.md
 /试玩说明.md
+
+# Unity recovery scenes and generated artifacts from archived design experiments
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+/Documentation/DesignPass/**/bin/
+/Documentation/DesignPass/**/obj/
+/Documentation/DesignPass/**/.dotnet/
+/Documentation/DesignPass/**/__pycache__/
+/Documentation/DesignPass/**/*.dll
+/Documentation/DesignPass/**/*.exe
+/Documentation/DesignPass/**/*.pdb
+/Documentation/DesignPass/**/*.cache
+/Documentation/DesignPass/**/*.rsp
+/Documentation/DesignPass/**/*.log
+/Documentation/DesignPass/Resume/brain-reference-assets/

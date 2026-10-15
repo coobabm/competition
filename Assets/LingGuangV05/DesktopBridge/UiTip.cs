@@ -37,6 +37,7 @@ namespace LingGuangV05.Desktop
         public void OnPointerMove(PointerEventData e) { Layer()?.Move(this, e); }
         public void OnPointerExit(PointerEventData e) { Layer()?.End(this); }
         public void OnPointerDown(PointerEventData e) { Layer()?.End(this); }
+        public void Refresh() { if (layer != null) layer.Refresh(this); }
         void OnDisable() { if (layer != null) layer.End(this); }
 
         UiTipLayer layer;
@@ -66,12 +67,14 @@ namespace LingGuangV05.Desktop
             if (box != null) return;
             box = PrologueDesk.Rect("Hover Tip", transform, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
             box.pivot = new Vector2(0, 1);
+            // Deep blue-grey card; glossary terms inside it are amber (XgGlossary.TermColor).
             var bg = PrologueDesk.Fill(box, new Color32(28, 34, 48, 242), false);
             box.gameObject.AddComponent<Outline>().effectColor = new Color32(120, 140, 175, 200);
             var group = box.gameObject.AddComponent<CanvasGroup>(); group.blocksRaycasts = false; group.interactable = false;
             var text = PrologueDesk.Rect("Text", box, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -8));
             label = text.gameObject.AddComponent<TextMeshProUGUI>();
-            label.font = PrologueDesk.CjkFont(); label.fontSize = 17; label.color = Color.white; label.raycastTarget = false;
+            label.font = PrologueDesk.CjkFont(); label.fontSize = 17; label.color = new Color32(230, 234, 242, 255); label.raycastTarget = false;
+            label.lineSpacing = 8;
             label.textWrappingMode = TextWrappingModes.Normal; label.alignment = TextAlignmentOptions.TopLeft; label.richText = true;
             bg.raycastTarget = false;
             box.gameObject.SetActive(false);
@@ -104,6 +107,19 @@ namespace LingGuangV05.Desktop
             showAt = -1;
             string text = current.Text != null ? current.Text() : null;
             if (string.IsNullOrEmpty(text) || !current.isActiveAndEnabled) return;
+            ShowText(text);
+        }
+
+        public void Refresh(UiTip tip)
+        {
+            if (tip != current || box == null || !box.gameObject.activeSelf) return;
+            string text = tip.Text != null ? tip.Text() : null;
+            if (string.IsNullOrEmpty(text) || !tip.isActiveAndEnabled) { End(tip); return; }
+            if (label.text != text) ShowText(text);
+        }
+
+        void ShowText(string text)
+        {
             EnsureBox();
             label.text = text;
             // Wrap at about 380 units, then shrink the box to the text.

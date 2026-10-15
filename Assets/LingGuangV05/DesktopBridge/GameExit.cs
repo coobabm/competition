@@ -1,4 +1,5 @@
 using LingGuangV05.Runtime;
+using LingGuangV05.CaseMenu;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,8 @@ namespace LingGuangV05.Desktop
         public const string TitleScene = "ComputerCaseMenu";
         public static void ReturnToTitle()
         {
+            var menu = Object.FindAnyObjectByType<CaseMenuController>();
+            if (menu != null && (menu.IsReturningToTitle || menu.IsTransitioning)) return;
             var runtime = Object.FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime != null && runtime.useDiskSave && !runtime.TestMode && runtime.Sim != null && !runtime.Sim.InPrologue)
             {
@@ -22,6 +25,7 @@ namespace LingGuangV05.Desktop
             Time.timeScale = 1;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+            if (menu != null && menu.TryReturnToTitle()) return;
             if (Application.CanStreamedLevelBeLoaded(TitleScene)) SceneManager.LoadScene(TitleScene);
             else
             {

@@ -102,7 +102,7 @@ namespace LingGuangV05.Desktop.XingGuang
             acts[0] = Action(row, 0, "Train", TrainOnce);
             acts[1] = Action(row, 1, "BuyData", () => Go("data", "label"));
             acts[2] = Action(row, 2, "BuyItems", () => Go("items", null));
-            acts[3] = Action(row, 3, "Wiring", () => Go("wiring", null));
+            acts[3] = Action(row, 3, "Collection", () => view.ShowTab("cards"));
 
             const float FeedTop = ActsTop + 56 + 12;
             var feed = Rect("Feed", right, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -FeedTop));
@@ -279,7 +279,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (next == 0)
             {
                 nextName.text = T("六项都有了", "All six");
-                FillBig(paramsCard, T("已训练参数量", "Trained parameters"), "", XgSim.ParamsText(p), "", 1, T("六项能力都有了。终章在「收藏」里。", "All six abilities. The finale is under Keep."));
+                FillBig(paramsCard, T("已训练参数量", "Trained parameters"), "", XgSim.ParamsText(p), "", 1, T("六项能力都有了，可以从本页进入终章。", "All six abilities. Open the finale from this page."));
                 FillBig(dataCard, T("样本", "Samples"), "", XgSim.SamplesText(d), "", 1, "");
                 return;
             }
@@ -388,18 +388,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 string owned = OwnedDiscountName(Sim.NextAbility);
                 a.sub.text = (owned.Length > 0 ? owned + T(" 已打折 · ", " discounting · ") : "") + (buyable > 0 ? T(buyable + " 件可买", buyable + " affordable") : T("暂时没有买得起的", "Nothing affordable yet"));
             }
-            // 接线
             a = acts[3];
-            a.title.text = T("接线", "Wiring");
-            if (!view.FeatureOpen("wiring")) a.sub.text = T("有了「多选一」或第一个检查点以后开", "Opens with 'Pick one' or the first checkpoint");
-            else
-            {
-                var w = Sim.Wiring;
-                int bad = 0;
-                if (w != null) foreach (var n in w.nodes) if (n.shown && n.bad) bad++;
-                a.sub.text = T((w != null ? w.running : 0) + " 条在跑", (w != null ? w.running : 0) + " running") + (bad > 0 ? " · <color=#E24B4A>" + T(bad + " 条出错", bad + " failing") + "</color>" : "")
-                    + (w != null && w.tripped ? " · <color=#E24B4A>" + T("跳闸", "tripped") + "</color>" : "");
-            }
+            a.title.text = T("闪卡与成就", "Cards & awards");
+            a.sub.text = T("看看一起留下的记忆", "Memories collected together");
         }
 
         /// <summary>The cheapest pack on sale now (public, junk or story data), or null.</summary>

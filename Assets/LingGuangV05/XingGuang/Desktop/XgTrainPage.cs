@@ -64,10 +64,9 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Build(RectTransform area)
         {
             root = Rect("train", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            left = Rect("Left", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-RightWidth - ColumnGap, 0));
-            right = Rect("Right", root, Vector2.zero, Vector2.one, new Vector2(-RightWidth, 0), Vector2.zero);
-            right.anchorMin = new Vector2(1, 0); right.anchorMax = Vector2.one;
-            right.offsetMin = new Vector2(-RightWidth, 0); right.offsetMax = Vector2.zero;
+            // Keep the curve and training controls together; the source roll is always on their left.
+            left = Rect("TrainingMain", root, Vector2.zero, Vector2.one, new Vector2(RightWidth + ColumnGap, 0), Vector2.zero);
+            right = Rect("SourceSidebar", root, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(RightWidth, 0));
 
             // Top: the two tracks, the model in one line (structure · parameters · VRAM), and the save button.
             for (int i = 0; i < 2; i++)
@@ -83,12 +82,15 @@ namespace LingGuangV05.Desktop.XingGuang
             summary.label.enableAutoSizing = true; summary.label.fontSizeMin = 10; summary.label.fontSizeMax = 14;
             saveModel = ui.Button(left, "", () =>
             {
-                if (Sim.SaveModel(Track) == null) { Fx.Play(XgJuice.Sfx.Id.Thud); return; }
+                var checkpoint = BestRollback();
+                if (RollbackBusy || checkpoint == null || !Sim.LoadModel(checkpoint.id)) { Fx.Play(XgJuice.Sfx.Id.Thud); view.Refresh(true); return; }
+                view.ShowToast(T("已回到最佳可用检查点：", "Restored best available checkpoint: ") + checkpoint.name, 4);
                 Fx.Knock(saveModel.rt, .15f);
                 Fx.Burst(Fx.At(saveModel.rt), 10, XgDark.Accent, XgJuice.Shape.Spark, 180);
                 view.Refresh(true);
             }, 14);
-            saveModel.rt.gameObject.name = "SaveModel";
+            saveModel.rt.gameObject.name = "RollbackModel";
+            UiTip.Add(saveModel.rt, () => RollbackTip());
             saveModel.rt.anchorMin = saveModel.rt.anchorMax = new Vector2(1, 1);
             saveModel.rt.offsetMin = new Vector2(-100, -TabsHeight); saveModel.rt.offsetMax = Vector2.zero;
 
@@ -157,9 +159,9 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildCard();
             for (int i = 0; i < 2; i++)
                 UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
-                "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
-            UiTip.Add(autoTrain.rt, () => T("自动训练：每隔几秒自己训练一轮（效果是手按的一半，不算连击）。\n当前自动化：", "Auto-train: runs an epoch every few seconds (half as effective as by hand, no combo).\nAutomation now: ") + mode.text);
+            UiTip.Add(train.rt, () => XgGlossary.Tip("练", Sim.English, T("手按会叠连击，学得更多；考出新纪录就存档、发奖金。右上角是这一轮的电费，夜间电减半。",
+                "Pressing by hand builds a combo and learns more; a new record is saved and paid. Top right is this round's power bill, halved at night.")));
+            UiTip.Add(autoTrain.rt, () => XgGlossary.Tip("自动", Sim.English, T("每隔几秒自己练一轮，效果是手按的一半，不算连击。现在：", "One round every few seconds, half as effective as by hand, no combo. Now: ") + mode.text));
             UiTip.Add(summary.rt, () => ModelTip());
             UiTip.Add(risk, () => RiskTip());
             UiTip.Add(numbers, () => NumbersTip());
@@ -302,6 +304,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Tick(float dt)
         {
+            view.Data?.Tick(dt);
             var run = Sim.Run(Track);
             SetBar(epochFill, run.epochActive ? (float)run.epochProgress : 0);
             if (glitch > 0)
@@ -526,7 +529,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string RiskTip()
         {
             var run = Sim.Run(Track);
-            string tip = Sim.DropRiskText(run) + T("。\n退步：这一轮的成绩往回掉一点，学会的能力不会丢。", ".\nA drop: this round's score falls back a little; learned abilities are never lost.");
+            string tip = XgGlossary.Tip("退步", Sim.English, Sim.DropRiskText(run) + T("。", "."));
             if (Host is XingGuangHost home && home.WearRiskLive)
                 tip += "\n\n" + T("显卡连着练太久了：每多练一秒都有一点概率烧掉一张卡（送修要花钱，修好前少一张卡）。歇几秒就清零。重涂硅脂能挡住，九州风神让概率减半。",
                     "The cards have trained non-stop for long: every further second may burn one out (a repair costs money, and the card is gone until it is back). A few seconds of rest reset it. Fresh paste stops it; the tower cooler halves the chance.");
@@ -535,9 +538,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         string NumbersTip()
         {
-            var run = Sim.Run(Track);
-            return T("验证：在没见过的题上的准确率。训练：在练过的题上的准确率（比验证高太多，说明在背答案）。\n最佳：这个数据集刷过的最高成绩。\n上限：这个模型现在最多能练到的分数，由参数量、样本量和结构决定；虚线就是它。\n红点：这一轮退步了。",
-                "Validation: accuracy on unseen cards. Train: accuracy on cards it has practised (far above validation means it memorises).\nBest: the top score reached on this dataset.\nCeiling: the most this model can reach now, set by parameters, samples and structure; the dashed line is it.\nRed dots: rounds that went back.");
+            return XgGlossary.Tips(Sim.English, "分", "死记硬背", "天花板", "退步")
+                + "\n\n<size=15><color=" + XgGlossary.NoteColor + ">" + T("曲线是每一轮考出来的分；虚线是天花板，红点是退步的那一轮。",
+                    "The curve is each round's test score; the dashed line is the ceiling, red dots are drops.") + "</color></size>";
         }
 
         /// <summary>The price of the next round, as the household's bills will take it (this month's tier, off-peak halves it, cuDNN trims the energy).</summary>
@@ -565,9 +568,9 @@ namespace LingGuangV05.Desktop.XingGuang
             double need = XgSim.VramNeedMB(run), have = Sim.Vram(Host);
             string vram = N(need / 1024, "0.0") + "/" + Gigabytes(have) + (need > have + 1e-6 ? " <color=#E24B4A>" + T("超了", "over") + "</color>" : "");
             summary.Set(T(a.name, a.nameEn) + " · " + XgSim.ParamsText(size) + T(" 参数", " params") + T(" · 显存 ", " · VRAM ") + vram + "  <color=#8FB8FF>→</color>", true, Color.clear);
-            saveModel.Show(run.epoch > 0);
-            saveModel.Set(Lang.T("存入仓库"), run.epoch > 0 && !run.epochActive, XgDark.AccentSoft, XgDark.Accent);
-            UiTip.Add(saveModel.rt, "把当前模型存进模型仓库。", "Save the current model to the model library.");
+            var checkpoint = BestRollback();
+            saveModel.Show(true);
+            saveModel.Set(RollbackBusy ? T("回档 · 忙碌", "Restore · busy") : checkpoint == null ? T("回档 · 无档", "No checkpoint") : T("回档", "Restore"), !RollbackBusy && checkpoint != null, XgDark.AccentSoft, XgDark.Accent);
         }
 
         /// <summary>
@@ -712,7 +715,13 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XgTrainingSubmit : MonoBehaviour, ISubmitHandler
     {
         public Action Submit;
-        public void OnSubmit(BaseEventData e) { Submit?.Invoke(); }
+        public void OnSubmit(BaseEventData e)
+        {
+            if (!isActiveAndEnabled) return;
+            var button = GetComponent<UnityEngine.UI.Selectable>();
+            if (button == null || !button.IsActive() || !button.IsInteractable()) return;
+            Submit?.Invoke();
+        }
     }
 
     public sealed class XgAssessmentClock : MonoBehaviour

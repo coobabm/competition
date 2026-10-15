@@ -344,7 +344,14 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Buy(Card c)
         {
-            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable) { Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); return; }
+            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable)
+            {
+                Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0));
+                Fx.Play(XgJuice.Sfx.Id.Thud);
+                host.ShowToast(Sim.Why(c.node, Host), 3.5f);
+                host.Refresh(true);
+                return;
+            }
             host.BuyNode(c.node, c.rt);
         }
     }

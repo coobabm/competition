@@ -83,11 +83,23 @@ namespace LingGuangV05.Desktop.XingGuang
             get { var hub = YYChatHub.Instance; return hub != null && hub.S != null && hub.S.lingguangUnlocked; }
         }
 
-        /// <summary>Opens YY on its conversation. False before it has joined YY (callers fall back to 概览).</summary>
-        public static bool Open()
+        /// <summary>Opens YY; only an explicit player request may open the contact during the first lesson.</summary>
+        public static bool Open(bool playerRequested = false)
         {
             var hub = YYChatHub.Instance;
-            if (!InYY || hub.router == null) return false;
+            if (hub == null || hub.S == null || hub.router == null) return false;
+            if (!InYY && playerRequested && OpeningSequence.FirstLessonActive)
+            {
+                var runtime = FindAnyObjectByType<ChapterOneRuntime>();
+                if (runtime != null && runtime.Sim != null && runtime.Sim.AppInstalled && !runtime.Sim.InPrologue
+                    && hub.Conversation(Id) != null)
+                {
+                    // Open the existing contact without autoplaying a scene, greeting or changing the lesson clock.
+                    hub.S.lingguangUnlocked = true;
+                    hub.Select(Id);
+                }
+            }
+            if (!InYY) return false;
             return hub.router.Open(YYChatHub.AppId, Id);
         }
 

@@ -75,6 +75,7 @@ namespace LingGuangV05.Desktop.XingGuang
             TakeOverWindow();
             AiDesktopIdentity.Attach(runtime);
             DesktopWindowDefaults.Attach(runtime);
+            XgBrainWallpaper.Install(this);
             SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
@@ -98,7 +99,6 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
             if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
-            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
             // The save's own date, before any catch-up tick reads the calendar.
             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
             raised.Clear();

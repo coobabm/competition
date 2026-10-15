@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         readonly IXgPageHost host;
         readonly XgUi ui;
-        readonly RectTransform parent;
+        RectTransform parent;
         readonly Action closed;
         RectTransform root, viewport, content, tokenLayer, counterBox, summary;
         TMP_Text titleText, statusText, urlText, counterText, counterSub, hintText, summaryText;
@@ -74,6 +74,8 @@ namespace LingGuangV05.Desktop.XingGuang
         System.Random rng = new System.Random();
 
         public bool IsOpen => root != null && root.gameObject.activeSelf;
+        public bool Visible => root != null && root.gameObject.activeInHierarchy;
+        public void Mount(RectTransform target) { parent = target; if (root != null) root.SetParent(target, false); }
         /// <summary>The first-appearance scene: nothing is paid; it simply reads, and its new words still count as samples (XgSim.ResidentRead).</summary>
         public bool Intro => intro;
 
