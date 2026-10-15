@@ -1,0 +1,22 @@
+# Target SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -30,6 +30,7 @@
+                 case "dropout": return T(sim, "随机失活（Dropout）", "Dropout");
+                 case "batchnorm": return T(sim, "批量归一化", "Batch normalization");
+                 case "layernorm": return T(sim, "层归一化", "Layer normalization");
++                case "cudnn": return T(sim, "cuDNN（CUDA 深度神经网络库）", "cuDNN (CUDA Deep Neural Network library)");
+                 case "cooler": return T(sim, "塔式散热器", "Tower cooler");
+                 case "datacenter": return T(sim, "IDC 机柜租赁", "IDC rack rental");
+                 case "secret.6": return T(sim, "预训练配置指南", "Pre-training configuration guide");
+@@ -179,7 +180,9 @@
+                 case "shared.lr": return T(sim, "评估上限公式中的误差项乘 ", "Multiply the error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[3]) + T(sim, "，让可达到的成绩上限更高；已有学习率衰减或 AutoML 时不再叠加。需训练后评估。", " for a higher reachable score ceiling; does not stack with a learning-rate schedule or AutoML. Train and evaluate to see results.");
+                 case "lrschedule": return T(sim, "评估上限公式中的误差项乘 ", "Multiply the error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[4]) + T(sim, "，让可达到的成绩上限更高；替代学习率搜索，与 AutoML 的同项效果不叠加。需训练后评估。", " for a higher reachable score ceiling; replaces learning-rate search and does not stack with AutoML's same effect. Train and evaluate to see results.");
+                 case "batchnorm": return Speed(sim, 1.2) + T(sim, "有限制的结构可承受层数 +6；仍须购买层数上限，并有足够显存。", "Architectures with a depth limit tolerate 6 more layers; purchased layer caps and available VRAM still apply.");
+-                case "cudnn": return Speed(sim, 1.3) + T(sim, "训练能耗 ×", "Training energy use ×") + N(XgSim.CuDnnEnergyFactor) + "。";
++                case "cudnn": return T(sim, "购买后自动生效，无需装备。两条训练线此后结算的手动和自动训练，每轮处理卡数的计算值 ×1.3，与其他训练倍率相乘；实际卡数仍受算力、取整和每轮 4–", "Active automatically after purchase; no equipment step. For subsequent manual and automatic epoch settlements on both tracks, the calculated cards per epoch are multiplied by 1.3, stacking multiplicatively with other training factors. Actual card counts still depend on compute, rounding and the 4–")
++                    + N(XgSim.MaxCardsPerEpoch) + T(sim, " 张范围影响，不直接缩短每轮时间；成绩需训练后评估。此后结算的训练用电量（kWh）×", " card range; epoch duration is unchanged. Evaluate after training to see the score. Training electricity use (kWh) billed after purchase ×")
++                    + N(XgSim.CuDnnEnergyFactor) + T(sim, "，再按阶梯电价计费；谷电另按费用倍率叠加，总账单不保证减少 30%。", ", then billed at tiered rates. Off-peak power applies its cost multiplier separately; the total bill is not guaranteed to fall by 30%.");
+                 case "cooler": return T(sim, "训练造成的显卡磨损 ×", "GPU wear from training ×") + N(XgSim.CoolerWearFactor) + T(sim, "；已有导热膏保护时仍按零磨损处理。", "; active thermal-paste protection still gives zero wear.");
+                 case "transfer": return T(sim, "换结构保留 60% 数值训练进度；同结构扩容保留进度从 ", "Keep 60% of numerical training progress when changing architecture; same-architecture growth retention rises from ") + N(XgSim.GrowKeep * 100) + "% → " + N(XgSim.GrowKeepTransfer * 100) + T(sim, "%。基础概念能否带走取决于新结构是否支持与位置无关的线索。", "%. Carrying basic concepts depends on whether the new wiring supports position-independent clues.");
+                 case "multihead": case "layernorm": case "residual": return T(sim, "随 Transformer 一同获得的技术标记，不另收费，也不再叠加独立购买加成。", "A technology marker granted with Transformer, with no separate charge or additional purchase bonus.");

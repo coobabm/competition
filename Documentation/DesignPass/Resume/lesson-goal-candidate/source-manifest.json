@@ -1,0 +1,26 @@
+[
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\lesson-goal-candidate\\sources\\XgLabelPage.cs",
+    "sourceSha256": "5CF936D4A16F31F8B6DFCAB694CFFA87F1D17EA44CCFE74DFBE988D48E13F55E",
+    "candidateSha256": "B6CC8EC534803791F7D2AF3B9CD8B6A5FBF876645FF127F3C802346AE5FBDB2F"
+  },
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Desktop/XgTeachCompanion.cs",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\lesson-goal-candidate\\sources\\XgTeachCompanion.cs",
+    "sourceSha256": "82813CB86A1021C813189DCEBCDA91F91C17ECDFE3D69E761D3139CB0A50E31E",
+    "candidateSha256": "219F76C9142C6BDA150F99E512CE3761BECA6EC398CAB7C5B2A69BA718E1DE13"
+  },
+  {
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\lesson-goal-candidate\\sources\\DesignWallpaperSmoke.FirstMinute.cs",
+    "sourceSha256": "E0414C487BA56AF4A5E9DF7387F3973F15B58FBF156C846D212469F3E0C3F3F5",
+    "candidateSha256": "4BB32ECE4BAAA5AEF470FC245CECFE030DA1F4E3CA4851E1C48D2986E79579B5"
+  },
+  {
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\lesson-goal-candidate\\sources\\DesignWallpaperSmoke.cs",
+    "sourceSha256": "07FC13E841025F7F962154290FAEA2CCCC26A11AEBF5E67E9C9E1BC2C762B0C0",
+    "candidateSha256": "F0D5241C1D823EF5E4E63983E8F8975F49D2297E215A97EBE9FEB974678076D9"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs": "F0D5241C1D823EF5E4E63983E8F8975F49D2297E215A97EBE9FEB974678076D9",
+  "Documentation/DesignPass/Resume/training-wave-candidate/scene/DesignWallpaperSmoke.TrainingScene.cs": "50BF6DF58A87F9F0DCD7DC16B7CFD12DC57D80F9FDB283C998DBE633FA2BCE09",
+  "Documentation/DesignPass/Resume/training-wave-candidate/scene/dispatcher.patch": "79050AF6AE6C994037B30DA64970AB371962AC049D52FBC78480F0375A6EB772",
+  "Documentation/DesignPass/Resume/training-wave-candidate/XgBoard.cs": "C886DAA8EC4DC855DADB7FEF0C5D86D0E02007927E7D7395C2D5E71C923E8818",
+  "Documentation/DesignPass/Resume/training-wave-candidate/XgConceptTransition.cs": "E732BE57F57FA28A558C3265D6B1E74FF3911E078BA6DB17F8B4A7245A719BFF",
+  "Documentation/DesignPass/Resume/training-wave-candidate/XgBrainWallpaper.cs": "74603141275EEF2F7DDFCE4F6A7354B0BCFC057BB532139F4FF56C2156F85304",
+  "Documentation/DesignPass/Resume/training-wave-candidate/XgWallpaperConcepts.cs": "A4A5EF8B2CF1742537BB3FD8E07115A44665CEAAE483853542649AA10A2B8A8E",
+  "Documentation/DesignPass/Resume/training-wave-candidate/XgWallpaperTraining.cs": "0C5C4E0B902EFDC7F6DEC0878D66678424B5326D6793A9F80D4AAB59A7A6A1AB"
+}

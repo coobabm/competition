@@ -1,0 +1,11 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -145,3 +145,7 @@
+             }
++            if (node.id == "transformer")
++                return T(sim, "购买后加入两条训练线的候选结构，无需手动装备；系统在轮次之间按数据、模型上限和显存选择，未必立即采用。拥有后，下方能力门槛折扣和预训练规模倍数立即计入，并附送多头注意力、层归一化和残差连接标记。实际采用时：每轮基础时长从 ", "Buying adds a candidate architecture for both training tracks, with no manual equip step. Between epochs, the system chooses using data, model caps and VRAM; it may not select Transformer immediately. Ownership immediately applies the ability-threshold discounts and pre-training scale multiplier shown below, and grants the multi-head attention, layer normalization and residual-connection markers. When selected, base epoch duration changes from ")
++                    + N(XgSim.EpochSeconds) + T(sim, " 秒变为 ", " s to ") + N(XgSim.DurationFor(new XgRun { arch = "transformer" }))
++                    + T(sim, " 秒；资源争用或阻塞仍可能延长实际耗时，自动训练尝试间隔不变。序列数据的准确率上限公式加 6 个百分点（与通用加法项相加，受数据集上限限制），不再受非注意力结构的翻译惩罚；成绩需训练后评估，并非立即加分。自动换结构通常重练，已有迁移学习则保留高于随机水平的 60% 数值进度。不购买也可在达标并确认进入第六阶段时免费获得。", " s; resource contention or blockers can still extend elapsed time, and automatic training attempt intervals are unchanged. Sequence datasets gain 6 percentage points in the accuracy-ceiling formula (added to the common additive bonuses and capped by the dataset); non-attention translation penalties no longer apply. Train and evaluate to improve scores; this is not an instant score bonus. Automatic architecture changes normally restart learning; transfer learning retains 60% of numerical progress above chance. It is also granted free when you meet the requirements and confirm entry into stage 6.");
+             if (node.kind == XgNodeKind.Arch) return T(sim, "加入可用结构，系统按数据和显存选择合适的模型；训练后再看评估成绩。", "Add an available architecture. The system selects a model for the data and VRAM; check its score after training.");
+             if (node.kind == XgNodeKind.Auto)

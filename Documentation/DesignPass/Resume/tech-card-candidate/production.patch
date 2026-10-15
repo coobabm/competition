@@ -1,0 +1,234 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+@@ -51,8 +51,8 @@
+     public sealed partial class XgTechTreePage : XgPage
+     {
+         /// <summary>Square size, slot pitch and row pitch of the generated layout, in content pixels.</summary>
+-        public const float SquareSize = 56, SlotWidth = 128, RowHeight = 118, LaneHeader = 34, LaneGap = 12, TopMargin = 180;
+-        public const int Columns = 5;
++        public const float SquareSize = 56, SlotWidth = 320, RowHeight = 194, LaneHeader = 34, LaneGap = 12, TopMargin = 180;
++        public const int Columns = 2;
+         public const float StageWidth = Columns * SlotWidth + 40;
+         const float TooltipWidth = 312;
+         RectTransform tipContent;
+@@ -138,6 +138,7 @@
+             BuildToolbar();
+             BuildLegend();
+             BuildTooltip();
++            BuildTechDetailsClose();
+             BuildEraCard();
+             BuildGrowthShelf();
+             built = true;
+@@ -160,6 +161,7 @@
+             var taken = new HashSet<string>();
+             var slot = new Dictionary<XgTechEntry, Vector2Int>();
+             var rows = new Dictionary<string, int>();
++            var heights = new Dictionary<string, float>();
+             foreach (var e in XgTechTree.Entries)
+             {
+                 if (e.First.kind == XgNodeKind.Ability) continue; // The route headers now display these abilities.
+@@ -174,13 +176,17 @@
+                         if (!taken.Contains(key + ":" + row + ":" + col)) { r = row; c = col; }
+                 taken.Add(key + ":" + r + ":" + c);
+                 slot[e] = new Vector2Int(c, r);
++                string rowKey = bandId + ":" + r;
++                heights.TryGetValue(rowKey, out float currentHeight);
++                heights[rowKey] = Mathf.Max(currentHeight, TechCardHeight(e) + 20);
+                 rows.TryGetValue(bandId, out int used); rows[bandId] = Math.Max(used, r + 1);
+             }
+-            float top = TopMargin;
++            float top = TopMargin + growthHeaderHeight - 154;
+             foreach (var lane in Bands)
+             {
+                 if (!rows.TryGetValue(lane, out int count)) continue;
+-                bandTop[lane] = top; bandHeight[lane] = LaneHeader + count * RowHeight;
++                bandTop[lane] = top; bandHeight[lane] = LaneHeader;
++                for (int row = 0; row < count; row++) bandHeight[lane] += heights[lane + ":" + row];
+                 top += bandHeight[lane] + LaneGap;
+             }
+             treeHeight = top + 20;
+@@ -188,17 +194,23 @@
+             {
+                 string bandId = XgCatalog.Band(kv.Key.Lane);
+                 float x = GrowthColumn(kv.Key) * StageWidth + 24 + kv.Value.x * SlotWidth + SlotWidth * .5f;
+-                float y = bandTop[bandId] + LaneHeader + kv.Value.y * RowHeight + SquareSize * .5f + 6;
++                float y = bandTop[bandId] + LaneHeader + TechCardHeight(kv.Key) * .5f + 6;
++                for (int row = 0; row < kv.Value.y; row++) y += heights[bandId + ":" + row];
+                 position[kv.Key] = new Vector2(x, -y);
+             }
+             bool hasSecret = false;
+             foreach (var entry in XgTechTree.Entries)
+                 if (entry.First.kind == XgNodeKind.Secret)
+                 {
+-                    position[entry] = new Vector2((GrowthColumn(entry) + 1) * StageWidth - SlotWidth * .5f - 24, -treeHeight - SquareSize * .5f);
++                    position[entry] = new Vector2((GrowthColumn(entry) + 1) * StageWidth - SlotWidth * .5f - 24, -treeHeight - TechCardHeight(entry) * .5f);
+                     hasSecret = true;
+                 }
+-            if (hasSecret) treeHeight += RowHeight + 20;
++            if (hasSecret)
++            {
++                float secretHeight = RowHeight;
++                foreach (var entry in XgTechTree.Entries) if (entry.First.kind == XgNodeKind.Secret) secretHeight = Mathf.Max(secretHeight, TechCardHeight(entry));
++                treeHeight += secretHeight + 20;
++            }
+         }
+ 
+         void BuildStageHeader(int i)
+@@ -231,45 +243,7 @@
+             }
+         }
+ 
+-        void MakeNode(XgTechEntry e)
+-        {
+-            var at = position[e];
+-            var rt = Rect("Node " + e.id, nodeLayer, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, Vector2.zero);
+-            rt.sizeDelta = new Vector2(SquareSize, SquareSize);
+-            rt.anchoredPosition = at;
+-            var view = rt.gameObject.AddComponent<XgTechNodeView>();
+-            view.entry = e; view.page = this; view.home = at;
+-            // The UpgradeButton hierarchy: bg (fill) holding the icon and the border; the name sits under the square.
+-            view.square = Rect("Square", rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+-            view.fill = view.square.gameObject.AddComponent<Image>();
+-            view.fill.sprite = skin.fill; view.fill.raycastTarget = true;
+-            var iconRt = Rect("Icon", view.square, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -12));
+-            iconRt.gameObject.AddComponent<CanvasRenderer>();
+-            view.icon = iconRt.gameObject.AddComponent<XgTechIcon>(); view.icon.raycastTarget = false;
+-            view.glyph = ui.Text(Rect("Glyph", view.square, Vector2.zero, Vector2.one, new Vector2(5, 5), new Vector2(-5, -5)), "", 17, XgDark.Ink, TextAlignmentOptions.Center);
+-            view.glyph.fontStyle = FontStyles.Bold; view.glyph.textWrappingMode = TextWrappingModes.NoWrap;
+-            view.glyph.enableAutoSizing = true; view.glyph.fontSizeMin = 9; view.glyph.fontSizeMax = 18;
+-            var frameRt = Rect("Border", view.square, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+-            view.frame = frameRt.gameObject.AddComponent<Image>(); view.frame.raycastTarget = false;
+-            if (skin.frame != null) view.frame.sprite = skin.frame;
+-            else { view.frame.enabled = false; var rim = view.square.gameObject.AddComponent<Outline>(); rim.effectDistance = new Vector2(3, -3); }
+-            var ringRt = Rect("HoverRing", view.square, Vector2.zero, Vector2.one, new Vector2(-6, -6), new Vector2(6, 6));
+-            view.ring = ringRt.gameObject.AddComponent<Image>(); view.ring.raycastTarget = false;
+-            view.ring.sprite = skin.ring != null ? skin.ring : skin.frame; view.ring.color = Color.clear;
+-            if (view.ring.sprite == null) view.ring.enabled = false;
+-            var badgeRt = Rect("Level", view.square, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-30, -7), new Vector2(7, 11));
+-            Panel(badgeRt, new Color32(7, 12, 18, 235)).raycastTarget = false;
+-            view.badge = ui.Text(Rect("Text", badgeRt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, XgDark.Ink, TextAlignmentOptions.Center);
+-            view.badge.fontStyle = FontStyles.Bold; view.badge.textWrappingMode = TextWrappingModes.NoWrap;
+-            // Names are what the player reads: two lines at most under the square, shrinking only for long English names.
+-            view.label = ui.Text(Rect("Name", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f + 3, -42), new Vector2(SlotWidth * .5f - 3, -4)), "", 15, XgDark.Ink, TextAlignmentOptions.Top);
+-            view.label.fontStyle = FontStyles.Bold; view.label.lineSpacing = -12;
+-            view.label.enableAutoSizing = true; view.label.fontSizeMin = 12; view.label.fontSizeMax = 15;
+-            view.cost = ui.Text(Rect("Cost", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f, -60), new Vector2(SlotWidth * .5f, -42)), "", 14, XgDark.Money, TextAlignmentOptions.Center);
+-            view.cost.fontStyle = FontStyles.Bold; view.cost.textWrappingMode = TextWrappingModes.NoWrap;
+-            rt.gameObject.SetActive(false);
+-            views.Add(view); viewOf[e] = view;
+-        }
++        void MakeNode(XgTechEntry e) => MakeTechCard(e);
+ 
+         void MakeLinks(XgTechNodeView child)
+         {
+@@ -378,7 +352,7 @@
+             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+             enter.callback.AddListener(_ => tipExitAt = -1); events.triggers.Add(enter);
+             var leave = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+-            leave.callback.AddListener(_ => tipExitAt = Time.unscaledTime + .35f); events.triggers.Add(leave);
++            leave.callback.AddListener(_ => { if (!detailsOpen) tipExitAt = Time.unscaledTime + .35f; }); events.triggers.Add(leave);
+             var column = tipContent.gameObject.AddComponent<VerticalLayoutGroup>();
+             column.padding = new RectOffset(12, 12, 10, 10); column.spacing = 6;
+             column.childControlWidth = column.childControlHeight = true; column.childForceExpandWidth = true; column.childForceExpandHeight = false;
+@@ -507,6 +481,7 @@
+                 if (XgTechTree.Status(v.entry, Sim, Host) == XgSim.NodeStatus.Buyable) buyable++;
+                 Paint(v);
+             }
++            LayoutTechCards();
+             header.text = "<b>" + T("成长", "Growth") + "</b>  <color=#FAC775>¥ " + Money(Host.Money) + "</color>";
+             eraDismiss.Set(T("继续", "Continue"), true);
+             toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
+@@ -555,6 +530,7 @@
+             else if (lit) v.cost.text = max > 1 ? "<color=#FFBE28>MAX</color>" : "<color=#5DCAA5>✓</color>";
+             else if (mystery || double.IsInfinity(cost) || next == null || !Sim.NodeVisible(next)) v.cost.text = "";
+             else v.cost.text = Hex(status == XgSim.NodeStatus.Buyable ? XgDark.Money : status == XgSim.NodeStatus.TooExpensive ? Unaffordable : XgDark.Dim) + (cost > 0 ? "¥" + Money(cost) : T("免费", "Free")) + "</color>";
++            PaintTechCard(v);
+         }
+ 
+         void PaintLinks()
+@@ -634,6 +610,7 @@
+         public void Hover(XgTechNodeView v, bool on)
+         {
+             if (!built || v == null) return;
++            if (detailsOpen) return;
+             if (on)
+             {
+                 tipExitAt = -1;
+@@ -645,7 +622,7 @@
+                 }
+                 hovered = v;
+                 Fx.Play(XgJuice.Sfx.Id.Tick, 1.5f, .25f);
+-                if (!Fx.Reduced) { v.square.DOKill(); v.square.DOScale(1.08f, .12f).SetUpdate(true).SetLink(v.gameObject); }
++                if (!Fx.Reduced) { v.square.DOKill(); v.square.DOScale(1.015f, .12f).SetUpdate(true).SetLink(v.gameObject); }
+                 ShowTooltip(v);
+             }
+             else
+@@ -767,6 +744,7 @@
+ 
+         void HideTooltip()
+         {
++            detailsOpen = false;
+             tipExitAt = -1;
+             if (tooltip == null) return;
+             tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
+@@ -810,6 +788,8 @@
+             var bounds = TooltipBounds();
+             if (bounds.width <= 8 || bounds.height <= 8) { HideTooltip(); return; }
+             float w = XgTechTooltipGeometry.Width(bounds.width, TooltipWidth);
++            bounds = TechTooltipBounds(v, bounds, w);
++            if (bounds.height <= 8) { HideTooltip(); return; }
+             tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
+             // 12 gutter + 24 padding; keep the icon only when the title has usable space.
+             float inner = Mathf.Max(1, w - 36);
+@@ -819,12 +799,12 @@
+                 tipName.GetPreferredValues(tipName.text, Mathf.Max(1, inner - (showIcon ? 44 : 0)), Mathf.Infinity).y);
+             tipCostLayout.preferredHeight = Mathf.Max(28, tipCost.GetPreferredValues(tipCost.text, Mathf.Max(1, inner - 16), Mathf.Infinity).y + 8);
+             LayoutRebuilder.ForceRebuildLayoutImmediate(tipContent);
+-            float h = Mathf.Min(tipContent.rect.height, bounds.height - 8);
++            float h = Mathf.Min(tipContent.rect.height + (detailsOpen ? 36 : 0), bounds.height - 8);
+             tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+             // Preserve the current scroll position on live copy/size updates, clamped to the new extent.
+-            tipContent.anchoredPosition = new Vector2(0, Mathf.Clamp(tipContent.anchoredPosition.y, 0, Mathf.Max(0, tipContent.rect.height - h)));
+-            Vector2 top = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, SquareSize * .5f, 0)));
+-            Vector2 bottom = root.InverseTransformPoint(v.transform.TransformPoint(new Vector3(0, -SquareSize * .5f - 62, 0)));
++            tipContent.anchoredPosition = new Vector2(0, Mathf.Clamp(tipContent.anchoredPosition.y, 0, Mathf.Max(0, tipContent.rect.height - h + (detailsOpen ? 36 : 0))));
++            Vector2 top = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, v.square.rect.yMax, 0)));
++            Vector2 bottom = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, v.square.rect.yMin, 0)));
+             XgTechTooltipGeometry.Place(bounds.xMin, bounds.yMin, bounds.xMax, bounds.yMax, w, h, top.x, top.y, bottom.y, out float x, out float y);
+             tooltip.pivot = new Vector2(.5f, 1);
+             // anchoredPosition uses the centre anchor; local bounds need not have a centred pivot.
+@@ -833,6 +813,7 @@
+ 
+         void FillTooltip(XgTechNodeView v)
+         {
++            RefreshTechDetails();
+             var e = v.entry; var node = e.First;
+             var status = XgTechTree.Status(e, Sim, Host);
+             int level = XgTechTree.Level(e, Sim), max = XgTechTree.MaxLevel(e);
+@@ -847,8 +828,8 @@
+                 bool ability = node.kind == XgNodeKind.Ability;
+                 tipName.text = lit || ability ? Sim.NodeName(node) : Lang.T("？？？");
+                 tipLevel.text = lit ? Hex(Maxed) + T("已点亮", "Lit") + "</color>" : T("未发现", "Not seen yet");
+-                body.Append(lit || ability ? T(node.note, node.noteEn) + "\n\n<color=#6F95A5>" + Sim.Why(node, Host) + "</color>"
+-                    : Lang.T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。"));
++                body.Append(lit || ability ? XgTechCardCopy.Science(e, Sim) + "\n\n<color=#6F95A5>" + Sim.Why(node, Host) + "</color>"
++                    : detailsOpen ? XgTechCardCopy.Science(e, Sim) : Lang.T("还没发生过。规则叠在一起，它自己会冒出来；第一次发生时会记进图鉴。"));
+                 SetCost(lit ? Maxed : LockedGrey, lit ? "✓ " + T("已点亮", "Lit") : T("不能购买 · 它自己会发生", "Not for sale · it happens on its own"));
+                 tipBody.text = body.ToString();
+                 return;
+@@ -861,13 +842,13 @@
+                 SetCost(LockedGrey, "？");
+                 return;
+             }
+-            tipName.text = XgTechTree.Name(e, Sim);
++            tipName.text = detailsOpen ? XgTechCardCopy.Name(e, Sim) : XgTechTree.Name(e, Sim);
+             string word = lit ? Hex(Maxed) + (max > 1 ? T("已满级", "Maxed") : T("已拥有", "Owned"))
+                 : status == XgSim.NodeStatus.Buyable ? Hex(Affordable) + T("可以买", "Affordable")
+                 : status == XgSim.NodeStatus.TooExpensive ? Hex(Unaffordable) + T("钱不够", "Too expensive") : Hex(LockedGrey) + T("未解锁", "Locked");
+             tipLevel.text = "Lv. " + level + " / " + max + "    " + word + "</color>";
+             var shownNode = next ?? e.members[e.members.Count - 1];
+-            body.Append(XgTechTreeCopy.Note(shownNode, Sim));
++            body.Append(detailsOpen ? XgTechCardCopy.Science(e, Sim) : XgTechTreeCopy.Note(shownNode, Sim));
+             if (node.id == "label.raise")
+                 body.Append("\n<color=#FAC775>").Append(XgCatalog.RaiseTitle(Sim.RaiseLevel, Sim.English)).Append("</color>");
+             if (e.IsChain) body.Append("\n").Append(Ladder(e));

@@ -1,0 +1,54 @@
+# lesson-008: patch only; production files have not been changed.
+# Base SHA256 Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs: 5F31EF668DAE56076BE3C53A087C82746520198EAF8173CA3DDCF97832F1C48B
+# Base SHA256 Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs: A2D644947B93FCA18C64526DFB4706DEFF287169D837EF2E50255D9583F20A73
+# Requires XgLabelPage.cs shownTeachingEvaluation and HasShownGuess as documented in result.md.
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs
+@@ -500,6 +500,8 @@
+                 pressWait = 1.4f + 1.4f * (float)rng.NextDouble();
+             }
+             if (!pressPlanned) return false;
++            // A refresh may turn the same card's buttons into player-only teaching evaluations.
++            if (!label.HasShownGuess) { pressPlanned = false; pressStage = 0; pressLeg = null; return false; }
+             var button = label.ShownGuessYes ? label.YesButton : label.NoButton;
+             if (button == null || !button.gameObject.activeInHierarchy) { pressPlanned = false; return false; }
+             if (pressStage == 0)
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.Spider.cs
+@@ -55,7 +55,7 @@
+         }
+ 
+         /// <summary>Why the spider cannot answer this card (see XgSim.SpiderAnswerBlocker); null when it can.</summary>
+-        public string SpiderBlocker() => Sim == null ? "host" : Mode != 0 ? "special" : Sim.SpiderDragBlocker(Desk, Host);
++        public string SpiderBlocker() => Sim == null ? "host" : Mode != 0 ? "special" : shownTeachingEvaluation ? "teaching" : Sim.SpiderDragBlocker(Desk, Host);
+ 
+         /// <summary>The note the spider says when it cannot answer.</summary>
+         public void SpiderIdle(string blocker)
+@@ -63,6 +63,7 @@
+             switch (blocker)
+             {
+                 case "ability": Say("这桌我还不会。", "I can't do this desk yet.", 4); break;
++                case "teaching": Say("我先猜，你来判对错。", "I'll guess. You tell me if I'm right.", 4); break;
+                 case "review": Say("先把待复核的题看完。", "Finish the review inbox first.", 4); break;
+                 case "special": Say("这题得你自己来。", "This one is yours.", 4); break;
+                 case "host": Say("现在干不了活。", "I can't work right now.", 4); break;
+@@ -75,7 +76,7 @@
+         public bool SpiderPeek(out bool yesButton)
+         {
+             yesButton = false;
+-            if (Sim == null || Mode != 0 || displayedSim != Sim || CurrentCard.id != displayedId) return false;
++            if (Sim == null || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return false;
+             return Sim.SpiderDragPeek(Desk, Host, out yesButton);
+         }
+ 
+@@ -88,7 +89,7 @@
+         /// </summary>
+         public XgSpiderAnswer SpiderHandPress(bool yesButton)
+         {
+-            if (Sim == null || Mode != 0 || displayedSim != Sim || CurrentCard.id != displayedId) return default;
++            if (Sim == null || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return default;
+             var card = CurrentCard;
+             string truthWord = YesNoWord(card.truth);
+             var r = Sim.SpiderDragPress(Desk, Host, yesButton);

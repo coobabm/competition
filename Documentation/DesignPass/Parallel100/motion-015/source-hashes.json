@@ -1,0 +1,38 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "sha256": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "sha256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "sha256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.EpochAction.cs",
+    "sha256": "73CE990C4A6E454CFD65C5D5F47C06B748CE93D27B9E651DEC3F4A4857F6A747"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRealTrainPanel.cs",
+    "sha256": "CFCB2047281ACE7B4DA3B9C0262A20F5480ED2A5742A7A6E3552BC152B0032F1"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "sha256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E"
+  },
+  {
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "sha256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE"
+  }
+]

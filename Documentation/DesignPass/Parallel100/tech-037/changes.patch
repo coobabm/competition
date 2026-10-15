@@ -1,0 +1,23 @@
+# Base-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -86,7 +86,7 @@
+                 case "warmup": return T(sim, "刚换设置时先小步学习，再慢慢恢复正常步幅。", "After a settings change, start with small learning steps and gradually return to the normal size.");
+                 case "fp16": return T(sim, "用较短的数字表示参与计算，降低大模型计算的资源需求。", "Use shorter number representations to reduce the resources needed for large-model computation.");
+                 case "momentum": return T(sim, "记住前几次调整的方向，少走来回摇摆的路。", "Remember recent update directions to reduce back-and-forth motion.");
+-                case "rmsprop": return T(sim, "根据每个参数最近变化的大小，分别调整学习步幅。", "Adjust each parameter's step size using the size of its recent changes.");
++                case "rmsprop": return T(sim, "算法原理：按每个参数最近收到的调整信号，分别控制学习步幅。", "Algorithm principle: use each parameter's recent gradient signals to set its learning step size.");
+                 case "adam": return T(sim, "同时参考过去的方向和变化大小，为每个参数调整步幅。", "Use both recent direction and change size to adjust each parameter's steps.");
+                 case "gradclip": return T(sim, "一次改动太大时把它截短，减少训练突然失稳。", "Trim oversized updates to reduce sudden training instability.");
+                 case "dropout": return T(sim, "训练时暂时关掉部分线索，避免总靠同一条捷径答题。", "Temporarily drop some clues during training so the model cannot always rely on one shortcut.");
+@@ -153,6 +153,9 @@
+                 return result;
+             }
+             var research = XgCatalog.ResearchItem(node.id);
++            if (node.id == "rmsprop" && research != null)
++                return T(sim, "购买后由系统自动选用已拥有的最快优化器，无需装备。RMSProp 被选用时，两条训练线相对基础 SGD 的训练处理量 ×", "After purchase, the fastest owned optimizer is selected automatically; no equipment step is needed. While RMSProp is selected, both training tracks have a throughput factor relative to base SGD of ×") + N(research.speed)
++                    + T(sim, "；同配置下的训练失稳步幅阈值 ×1.15。优化器之间不叠加，处理量与其他训练倍率相乘，阈值与已启用的归一化、裁剪倍率相乘。实际每轮卡数受算力、取整和上限影响；效果在后续训练结算时采用，成绩需训练后评估。", "; the step-size threshold for training instability is ×1.15 at the same configuration, relative to base SGD. Optimizers do not stack: throughput multiplies with other training factors, and the threshold multiplies with active normalization and clipping factors. Cards per epoch depend on compute, rounding and caps. These effects apply at subsequent training settlements; evaluate after training to see the score.");
+             if (research != null && research.kind == XgResearchKind.Optimizer)
+                 return T(sim, "相对基础 SGD，", "Relative to base SGD, ") + Speed(sim, research.speed) + T(sim, "优化器只采用已拥有者中速度最高的一种，倍率不相乘。", "Only the fastest owned optimizer is used; their multipliers do not stack.");
+             switch (node.id)

@@ -1,0 +1,23 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+# Documentation-only candidate; not applied. Rebase only the lenet branches if the target changed.
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -62,6 +62,8 @@
+ 
+         static string Explanation(XgNode node, XgSim sim)
+         {
++            if (node.kind == XgNodeKind.Arch && node.id == "lenet")
++                return T(sim, "用同一套小窗口寻找相邻笔画；学会的局部线索可以在图中别的位置复用。", "Use the same small window to find neighbouring strokes; learned local clues can be reused elsewhere in the picture.");
+             switch (node.kind)
+             {
+                 case XgNodeKind.Depth: return T(sim, "多一层，就多一次把简单线索组合成复杂线索的机会。", "Each extra layer can combine simple clues into more complex ones.");
+@@ -143,6 +145,8 @@
+                 if (data.dataWeight != 1) result += T(sim, "每条计入总数据进度的权重为 ", "Each sample counts toward total data progress with weight ") + N(data.dataWeight) + "。";
+                 return result;
+             }
++            if (node.kind == XgNodeKind.Arch && node.id == "lenet")
++                return T(sim, "拥有即使「看图说词」的参数门槛从 60K 降至 42K（K＝千参数），有效样本门槛从 60,000 降至 42,000，均为 ×0.7；同组架构道具只计一次，无需装备。加入视觉候选结构，系统在训练轮次之间按数据、已解锁规模和显存选用，不保证立即切换。切换结构时，无迁移加成则从头练，有该加成则保留高于随机水平进度的 60%。当前模型须训练至少一轮、评估达 C 级才计入参数进度；两项进度达标且本阶段训练过后，仍需确认进入下一阶段。", "Ownership immediately lowers the Picture to word threshold from 60K to 42K parameters (K = thousand) and from 60,000 to 42,000 effective samples, both ×0.7. Items in this architecture group count once; no equipment step is needed. Adds a vision candidate, selected between epochs according to data, unlocked size and VRAM; switching is not guaranteed. An architecture change restarts learning without a transfer bonus, or retains 60% of progress above chance with that bonus. The current model must train at least one epoch and earn grade C or better in an assessment before its parameters count. Once both progress thresholds are met and this stage has had training, you must still confirm the next stage.");
+             if (node.kind == XgNodeKind.Arch) return T(sim, "加入可用结构，系统按数据和显存选择合适的模型；训练后再看评估成绩。", "Add an available architecture. The system selects a model for the data and VRAM; check its score after training.");
+             if (node.kind == XgNodeKind.Auto)
+             {

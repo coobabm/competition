@@ -1,0 +1,23 @@
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+index 8fc5253..c5ce61f 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -116,6 +116,10 @@ public static partial class DesignWallpaperSmoke
+             var runtime = UnityEngine.Object.FindAnyObjectByType<ChapterOneRuntime>();
+             var brain = UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
+             var controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
++            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "lesson-goal" && step >= 250)
++            {
++                TickLessonGoal(controller, runtime); return;
++            }
+             if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "sense-start" && step >= 240)
+             {
+                 TickSenseStart(controller, runtime); return;
+@@ -272,6 +276,7 @@ public static partial class DesignWallpaperSmoke
+                     if (mode == "answer-path") step = 210;
+                     if (mode == "growth") step = 220;
+                     if (mode == "sense-start") step = 240;
++                    if (mode == "lesson-goal") step = 250;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
+                     if (mode == "wiring-scene") StartWiringSceneChecks(controller, runtime);
+                     if (mode == "readonly")

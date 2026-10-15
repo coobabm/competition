@@ -1,0 +1,12 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
+index 97ee083..6de8bb6 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs
+@@ -99,7 +99,6 @@ namespace LingGuangV05.Desktop.XingGuang
+             }
+             Sim = new XgSim(state) { English = GameText.IsEnglish };
+             if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+-            if (state == null && Sim.DeskOpen("spam")) Sim.S.desk = "spam";
+             // The save's own date, before any catch-up tick reads the calendar.
+             if (sim != null) Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(sim.S));
+             raised.Clear();

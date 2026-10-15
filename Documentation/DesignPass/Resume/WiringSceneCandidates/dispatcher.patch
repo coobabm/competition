@@ -1,0 +1,10 @@
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -273,6 +273,7 @@
+                     if (mode == "growth") step = 220;
+                     if (mode == "sense-start") step = 240;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
++                    if (mode == "wiring-scene") StartWiringSceneChecks(controller, runtime);
+                     if (mode == "readonly")
+                     {
+                         controller.Window.MinimizeWindow(); step = 190;

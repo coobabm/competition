@@ -1,0 +1,36 @@
+Isolated player save
+Opening shows original wallpaper in real scene
+No background notification before setup
+Wallpaper lives in rendered desktop
+Placed immediately above default wallpaper
+Direct Main entry hides physical bezel
+Actual game viewport covered on all four edges
+Direct entry pointer maps at (0.01, 0.01)
+Direct entry pointer maps at (0.99, 0.01)
+Direct entry pointer maps at (0.01, 0.99)
+Direct entry pointer maps at (0.99, 0.99)
+Wallpaper cannot intercept desktop input
+Finish first meeting
+Scene samples intermediate fade
+Notification waits for final point
+Scene fade completes
+Exactly one Windows tray notification after reveal
+Revealed Center
+Revealed Inputs
+Revealed Outputs
+Revealed Seed
+An open application keeps the background subdued
+Subdued wallpaper does not receive pointer input
+Opening application keeps wallpaper alive
+Application window is above wallpaper
+AI backing is translucent
+Real wallpaper light contributes through the application backing
+Minimizing application reveals persistent wallpaper
+Minimized windows enable desktop showcase
+Showcase brightens smoothly
+Showcase points explain themselves on hover
+Showcase point participates in source desktop raycasts
+Hover explanation actually renders
+Old save restores without replay
+Loading another save does not notify again
+Restart restores original wallpaper

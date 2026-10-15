@@ -1,0 +1,15 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source-SHA256: D0EAF30E8972D638EA0082291EE72BCBEBEAEBF9CC5E0204AFDEC755CE8405C2
+# Only the two augment copy branches; recheck contexts if the file has changed.
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -98,3 +98,3 @@
+                 case "dropout": return T(sim, "训练时让部分线索暂停更新，减少只靠熟题背答案。", "Pause updates to some clues during training to reduce reliance on memorized examples.");
+-                case "augment": return T(sim, "把同一道图片题挪动、裁剪或旋转，让它练习不同样子。", "Shift, crop or rotate picture examples to practise different appearances.");
++                case "augment": return T(sim, "把图片题平移，或把围棋局面旋转、镜像，换个样子继续练，答案保持不变。", "Shift picture examples, or rotate and mirror Go positions, to practise different appearances with the same answers.");
+                 case "dataclean": return T(sim, "清理杂包、众包和爬取数据里的错误示范。", "Clean incorrect examples from junk packs, crowd data and crawled data.");
+@@ -231,3 +231,3 @@
+                 case "dropout": return T(sim, "购买后训练会按固定规则跳过约", "After purchase, training skips updates to about ") + N(XgBoard.DropoutRate * 100) + T(sim, "%的匹配线索；背答案造成的回落风险分量和训练—评估差距系数各×0.5，总风险与显示差距不保证减半。无需装备，成绩需训练后观察。", "% of matched clues under a fixed rule. The overfitting drop-risk component and training/evaluation-gap coefficient each become ×0.5; total risk and the displayed gap need not halve. No equipment step; observe scores after training.");
+-                case "augment": return T(sim, "训练题池变体：手写数字 ×2，围棋 ×8，CIFAR、ImageNet、表情包 ×3；文字不变，不增加已收集样本数。", "Training-pool variants: digits ×2, Go ×8, CIFAR, ImageNet and memes ×3. Text and collected sample counts stay unchanged.");
++                case "augment": return T(sim, "购买后自动生效，无需装备。训练题池大小与有效样本数：手写数字 ×2，围棋 ×8，CIFAR、ImageNet、表情包 ×3，文字不变；倍率含原题，只应用一次。减少成绩上限中的数据不足项和过拟合因素，后续训练再评估成绩；不保证固定提分。已收集样本数与总数据进度不变。", "Active automatically on purchase; no equipment needed. Training-pool size and effective sample count: digits ×2, Go ×8, CIFAR, ImageNet and memes ×3; text is unchanged. Multipliers include originals and apply once. Reduces the data-shortage term in the score ceiling and overfitting factors; train and evaluate for results, with no fixed score gain. Collected samples and total data progress stay unchanged.");
+                 case "dataclean": return T(sim, "购买后，已下载且纳入训练的杂包、爬取数据及众包的有效错标×0.5；只计一次，再扣按条清除的错标，最低为0。自身自动标注错题和公共、剧情包不享受此倍率。样本总数不变，后续训练使用新噪声统计。", "Once purchased, effective wrong labels from downloaded, included junk/crawl packs and crowd data become ×0.5, once, before subtracting individually cleaned labels with a floor of zero. Your automatic mistakes and public/story packs receive no such multiplier. Sample totals stay unchanged; subsequent training uses the updated noise count.");

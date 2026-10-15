@@ -1,0 +1,15 @@
+# Seq2Seq 可采用文案
+
+仅对已显示节点呈现。名称沿用当前实现。
+
+## 中文
+
+1. 正式名称：序列到序列模型
+2. 通俗解释：先把输入的一句话压成一份固定大小的摘要，再根据摘要组织输出；摘要装不下的细节可能丢失。
+3. 真实效果：购买后加入序列训练线的候选结构，无需手动装备；系统只在轮次之间按数据与显存选用一种结构，各架构效果不叠加。选用后，需要编码—解码的数据不再额外计入 0.5 的结构误差项（不是准确率增加 50 个百分点）；翻译评分上限仍受 ×0.75 的瓶颈系数影响。训练处理量系数为 ×0.85，与其他处理量系数相乘；每轮卡数仍受算力、取整和上限影响。切换结构需要重新训练，再看评估成绩。
+
+## English
+
+1. Name: Sequence-to-sequence model
+2. Explanation: Compress the input sentence into a fixed-size summary, then build the output from it; details that do not fit may be lost.
+3. Effect: Buying adds a candidate for the sequence track; no manual equip is needed. Between epochs, the system selects one architecture for the data and VRAM; architecture effects do not stack. When selected, data requiring an encoder-decoder no longer adds the 0.5 structural error term (not a 50-percentage-point accuracy gain); the translation score ceiling still has a ×0.75 bottleneck factor. The training-throughput factor is ×0.85 and multiplies with other throughput factors; cards per epoch still depend on compute, rounding and caps. Train again after switching architecture, then check the evaluation score.

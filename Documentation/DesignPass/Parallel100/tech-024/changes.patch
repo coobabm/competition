@@ -1,0 +1,18 @@
+Task: tech-024 / label.audit copy only
+Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+Source-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+Apply only after source/context review; production source was not edited.
+
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -116,3 +116,3 @@
+                 case "label.hard": return T(sim, "为你处理需要复核的难题提供额外奖励。", "Reward you for handling difficult cards that need human review.");
+-                case "label.audit": return T(sim, "抽查自动提交的答案，在错题进入训练前拦下一部分。", "Sample automatic answers and catch some mistakes before they enter the training data.");
++                case "label.audit": return T(sim, "抽查即将自动提交的答案，把部分错题留给你复核；也能手动清理已有数据里的错标。", "Check answers before automatic submission and send some mistakes to you for review; also let you manually clean wrong labels from existing data.");
+                 case "label.parallel": return T(sim, "让本地模型同时处理几项判断请求。", "Let the local model handle several judgment requests at once.");
+@@ -192,3 +192,3 @@
+                 case "label.hard": return T(sim, "新题人工复核答对时，报酬 ×1.5，样本 ×2；旧数据重审不享受此奖励。", "Correct human reviews of new cards pay ×1.5 and award ×2 samples; rechecking old data does not earn this bonus.");
+-                case "label.audit": return T(sim, "将 ", "Return ") + N(XgSim.AuditProbability * 100) + T(sim, "% 的自动错题退回复核，避免它们直接进入训练数据。", "% of wrong automatic answers for review before they enter training data.");
++                case "label.audit": return T(sim, "购买后即启用，无需装备或先训练；仅购一次，概率不叠加。每道进入自动提交分支的错题有 ", "Active upon purchase, with no equipment or training step; one purchase only, with no probability stacking. Each wrong answer reaching automatic submission has a ") + N(XgSim.AuditProbability * 100) + T(sim, "% 概率转入人工复核，拦下的错题不直接进入训练数据；复核队列满时自动标注暂停。\n另解锁数据集手动清洗：每批最多 ", "% chance of being sent for human review, keeping that mistake out of training data; a full review inbox pauses automation.\nAlso unlocks manual dataset cleaning: up to ") + XgSim.NoiseCleanBatchLimit + T(sim, " 条，每条 ¥", " labels per batch, at ¥") + N(XgSim.NoiseCleanMoneyPerItem) + T(sim, " 并计 ", " plus ") + N(XgSim.NoiseCleanGpuSecondsPerItem) + T(sim, " GPU秒；先清自身错标，再清外来错标。实际条数受剩余错标和经费限制，需有可用算力且研发未占用。清洗后噪声立即减少，不直接提高模型准确率。", " GPU-seconds per label. Clean your own wrong labels first, then outside noise. The actual count is limited by remaining noise and funds; available compute is required and research must not be occupying it. Cleaning reduces noise immediately without directly raising model accuracy.");
+                 case "label.parallel": return T(sim, "本地推理并发上限从 1 增至 4，聊天优先；实际速度取决于本机。", "Raise local inference concurrency from 1 to 4, with chat priority; actual speed depends on the computer.");

@@ -1,0 +1,295 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgBoard.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgBoard.cs
+@@ -552,14 +552,28 @@
+ 
+         // ───────────── training: R1–R6 on one card ─────────────
+ 
+-        public XgBoardStep Train(XgBoardCard card, XgKnobs k)
++        public XgBoardStep Train(XgBoardCard card, XgKnobs k) => Train(card, k, null);
++
++        // Optional transient evidence of R1 writes and R2 creations, captured before R4 decay.
++        internal XgBoardStep Train(XgBoardCard card, XgKnobs k, List<XgConceptPull> pulls)
+         {
+             var step = new XgBoardStep();
++            HashSet<int> created = null;
+             var elements = Elements(card, k);
+             Gate(elements, card, k);
+             // Unknown elements become layer-1 concepts first (R3 decides whether they fit).
+             for (int i = 0; i < elements.Count; i++)
+-                if (!byKey.ContainsKey(card.region + "|" + elements[i].id)) { if (Create(card.region, elements[i].id, 1, k) != null) step.created++; }
++                if (!byKey.ContainsKey(card.region + "|" + elements[i].id))
++                {
++                    var made = Create(card.region, elements[i].id, 1, k);
++                    if (made == null) continue;
++                    step.created++;
++                    if (pulls != null)
++                    {
++                        if (created == null) created = new HashSet<int>();
++                        created.Add(made.id);
++                    }
++                }
+             var matches = Matches(card, elements, k);
+             double score = Score(matches, k, card.seed, out bool guessed, out _);
+             bool predicted = guessed ? (card.seed & 1) == 0 : score > 0;
+@@ -577,10 +591,13 @@
+             {
+                 if (m.c.pinned) continue;
+                 if (k.dropout && Dropped(card.seed, m.c.id)) continue;
++                double beforeWeight = m.c.w, beforeStrength = m.c.s;
+                 double pull = k.lr * err * m.act * Math.Pow(g, Math.Max(0, k.depth - m.c.layer));
+                 if (k.clip) pull = Math.Max(-ClipLimit, Math.Min(ClipLimit, pull));
+                 m.c.w = Math.Max(-WeightLimit, Math.Min(WeightLimit, m.c.w + pull));
+                 m.c.s = Math.Min(10, m.c.s + m.act);
++                if (pulls != null && (m.c.w != beforeWeight || m.c.s != beforeStrength))
++                    pulls.Add(new XgConceptPull(m.c, beforeWeight, beforeStrength, created != null && created.Contains(m.c.id)));
+                 m.c.seen = S.cards;
+                 if (m.c.trainedCards < long.MaxValue) m.c.trainedCards++;
+             }
+@@ -606,7 +623,12 @@
+                         if (link.c < LinkThreshold) continue;
+                         link.c = 0;
+                         var made = Create(card.region, key, layer, k);
+-                        if (made != null) { made.w = (a.c.w + b.c.w) * .5; made.trainedCards = 1; step.created++; }
++                        if (made != null)
++                        {
++                            made.w = (a.c.w + b.c.w) * .5; made.trainedCards = 1; step.created++;
++                            // R2 created this cell; zero is its absent-state baseline.
++                            if (pulls != null) pulls.Add(new XgConceptPull(made, 0, 0, true));
++                        }
+                     }
+             }
+ 
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.Board.cs
+@@ -280,13 +280,13 @@
+         }
+ 
+         /// <summary>A hand-labelled card goes straight onto the board: what you teach is what it becomes.</summary>
+-        void TeachBoard(XgCard card, bool label)
++        void TeachBoard(XgCard card, bool label, List<XgConceptPull> pulls = null)
+         {
+             if (!UseBoard || card == null || XgCatalog.Dataset(card.dataset) == null) return;
+             var run = Run(XgCatalog.Dataset(card.dataset).track);
+             var b = XgBoardData.FromCard(card);
+             b.truth = label;
+-            Board.Train(b, Knobs(run));
++            Board.Train(b, Knobs(run), pulls);
+         }
+ 
+         /// <summary>Changing the depth reinitialises the network for that region (the SI's seed survives).</summary>
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.AnswerTrace.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.AnswerTrace.cs
+@@ -42,7 +42,11 @@
+ 
+     public enum XgAnswerTraceSource { LocalBoard, Manual, Family, Law, Shutdown }
+ 
+-    /// <summary>Values on either side of this lesson's actual training step, excluding untouched and pinned cells.</summary>
++    /// <summary>
++    /// Values around an actual R1 write or R2 creation, captured before R4 decay, not the final board values.
++    /// New R1 cells start at weight 0/strength 1; R2 creations use an absent-state baseline of 0/0.
++    /// Pinned, Dropout-skipped and unchanged R1 cells contribute no record.
++    /// </summary>
+     public sealed class XgConceptPull
+     {
+         public int Id { get; }
+@@ -89,33 +93,6 @@
+         /// <summary>Presentation notification after one hand answer settles, including wrong/late/opinion answers.</summary>
+         public event Action<XgAnswerTrace> CardAnswered;
+ 
+-        struct BeforePull { public double weight, strength; public long trained; }
+-        Dictionary<int, BeforePull> CaptureBeforeCorrection(string dataset)
+-        {
+-            var before = new Dictionary<int, BeforePull>();
+-            string region = XgBoardData.Region(dataset);
+-            foreach (var cell in S.board.concepts)
+-                if (cell != null && cell.region == region)
+-                    before[cell.id] = new BeforePull { weight = cell.w, strength = cell.s, trained = cell.trainedCards };
+-            return before;
+-        }
+-
+-        List<XgConceptPull> CaptureCorrectionPulls(string dataset, Dictionary<int, BeforePull> before)
+-        {
+-            var pulls = new List<XgConceptPull>();
+-            string region = XgBoardData.Region(dataset);
+-            foreach (var cell in S.board.concepts)
+-            {
+-                if (cell == null || cell.pinned || cell.region != region) continue;
+-                bool existed = before.TryGetValue(cell.id, out var old);
+-                // Decay also changes weights. The lesson counter distinguishes an actual pull from global fading.
+-                if (cell.trainedCards <= old.trained) continue;
+-                if (cell.w == old.weight && cell.s == old.strength) continue;
+-                pulls.Add(new XgConceptPull(cell, old.weight, old.strength, !existed));
+-            }
+-            return pulls;
+-        }
+-
+         static XgAnswerTraceSource AnswerTraceSource(XgCard card)
+         {
+             if (card.family) return XgAnswerTraceSource.Family;
+--- a/Assets/LingGuangV05/XingGuang/Core/XgSim.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgSim.cs
+@@ -1433,9 +1433,8 @@
+                 {
+                     AddLabel(desk);
+                     result.samples = 1 + (int)HandLabelLog(desk);
+-                    var beforeCorrection = traceReceiver != null && correcting ? CaptureBeforeCorrection(card.dataset) : null;
+-                    TeachBoard(card, card.truth);
+-                    if (beforeCorrection != null) correctionPulls = CaptureCorrectionPulls(card.dataset, beforeCorrection);
++                    if (traceReceiver != null && correcting) correctionPulls = new List<XgConceptPull>();
++                    TeachBoard(card, card.truth, correctionPulls);
+                     if (correcting) RememberCorrection(card);
+                 }
+             }
+--- a/Assets/LocalBuild/Editor/AnswerTraceChecks.cs
++++ b/Assets/LocalBuild/Editor/AnswerTraceChecks.cs
+@@ -27,6 +27,8 @@
+         CheckPrediction();
+         CheckAnswerSettlement();
+         CheckCorrectionPulls();
++        CheckClampedCorrectionPulls();
++        CheckCreatedCorrectionPulls();
+         CorrectionDropoutChecks.Run(message => Debug.Log(message));
+         CheckEmptySourcesAndRejections();
+         Debug.Log("ANSWER_TRACE_CORE_CHECKS_PASS: readout evidence and settled events; real frames and wallpaper still require acceptance.");
+@@ -188,9 +190,8 @@
+         {
+             var sim = Fixture(false, out var card);
+             sim.S.board.concepts[0].pinned = pinned;
+-            // The unrelated cell can fade but is not pulled by this card's lesson.
++            // This unrelated cell is not pulled by this card's lesson.
+             sim.S.board.concepts.Add(new XgConcept { id = 900, region = "sequence", key = "unrelated-test-token", w = .8, s = 1 });
+-            sim.S.board.cards = XgBoard.DecayEvery - 1;
+             var before = new Dictionary<int, XgConcept>();
+             foreach (var cell in sim.S.board.concepts) before[cell.id] = JsonUtility.FromJson<XgConcept>(JsonUtility.ToJson(cell));
+             XgAnswerTrace trace = null;
+@@ -204,8 +205,8 @@
+                 Require(after != null && !after.pinned && pull.Id != 900 && (!pinned || pull.Id != 17),
+                     "Only actual learned, non-pinned cells receive correction highlights");
+                 Require(pull.BeforeWeight == (existed ? old.w : 0) && pull.AfterWeight == after.w
+-                    && pull.BeforeStrength == (existed ? old.s : 0) && pull.AfterStrength == after.s && pull.Created == !existed,
+-                    "Correction captures exact before/after values, including newly learned cells");
++                    && pull.BeforeStrength == (existed ? old.s : after.layer == 1 ? 1 : 0) && pull.AfterStrength == after.s && pull.Created == !existed,
++                    "Correction captures exact pre-decay write values, including initialized new R1 cells");
+                 double captured = pull.AfterWeight;
+                 after.w += 1;
+                 Require(pull.AfterWeight == captured, "Later learning cannot mutate a previous correction snapshot");
+@@ -222,6 +223,119 @@
+             "An incorrect player correction never claims a learning change");
+     }
+ 
++    static void CheckClampedCorrectionPulls()
++    {
++        double learnedWeight = 0, learnedStrength = 0;
++        foreach (bool decay in new[] { false, true })
++        {
++            var template = new XgSim();
++            var run = template.Run(XgCatalog.Dataset("spam").track);
++            run.depth = 1; run.width = XgCatalog.Widths.Length - 1;
++            var card = new XgCard { id = 89001, dataset = "spam", seed = 9139,
++                question = "恭喜您中奖，请点击领取", truth = false, level = 1 };
++            template.S.cards.RemoveAll(c => c.dataset == "spam"); template.S.cards.Add(card);
++            var prepared = XgBoardData.FromCard(card);
++            var knobs = template.Knobs(run);
++            var elements = XgBoard.Elements(prepared, knobs);
++            Require(!knobs.dropout && elements.Count > 2, "Clamp fixture has three actual features without Dropout");
++            template.S.board = new XgBoardState { cards = XgBoard.DecayEvery - (decay ? 1 : 2), nextId = 901 };
++            template.S.board.concepts.Add(new XgConcept { id = 17, region = prepared.region, key = elements[0].id,
++                layer = 1, w = .8, s = 1, pinned = true, trainedCards = 7, trainingCountKnown = true });
++            template.S.board.concepts.Add(new XgConcept { id = 18, region = prepared.region, key = elements[1].id,
++                layer = 1, w = -XgBoard.WeightLimit, s = 10, trainedCards = 5, trainingCountKnown = true });
++            template.S.board.concepts.Add(new XgConcept { id = 19, region = prepared.region, key = elements[2].id,
++                layer = 1, w = .25, s = 1, trainedCards = long.MaxValue, trainingCountKnown = true });
++            string saved = JsonUtility.ToJson(template.S);
++            var sim = new XgSim(JsonUtility.FromJson<XgState>(saved));
++            var control = new XgSim(JsonUtility.FromJson<XgState>(saved));
++            Require(sim.TeachingGuess(sim.Card("spam"), out bool guess) && guess &&
++                control.TeachingGuess(control.Card("spam"), out bool plainGuess) && plainGuess,
++                "Both real teaching predictions are wrong before correction");
++            XgAnswerTrace trace = null; int events = 0;
++            sim.CardAnswered += value => { events++; trace = value; };
++            var wallet = new Wallet(); var plainWallet = new Wallet();
++            bool plainAccepted = control.TryEvaluateTeachingGuess("spam", card.id, guess, false, plainWallet, out var plain);
++            bool accepted = sim.TryEvaluateTeachingGuess("spam", card.id, guess, false, wallet, out var result);
++            Require(plainAccepted && accepted && result.corrected && events == 1,
++                "The real teaching UI route settles one correction, with and without an observer");
++            Require(JsonUtility.ToJson(plain) == JsonUtility.ToJson(result) && JsonUtility.ToJson(control.S) == JsonUtility.ToJson(sim.S)
++                && wallet.Money == plainWallet.Money, "Write capture preserves outcome, state, RNG and payment across the decay boundary");
++            var clamped = sim.S.board.concepts.Find(c => c.id == 18);
++            var changed = sim.S.board.concepts.Find(c => c.id == 19);
++            XgConceptPull learned = null;
++            foreach (var pull in trace.CorrectionPulls)
++            {
++                Require(pull.Id != 17 && pull.Id != 18, "Pinned and fully clamped R1 cells never claim a write, even when R4 fades them");
++                if (pull.Id == 19) learned = pull;
++            }
++            Require(clamped.trainedCards == 6 && changed.trainedCards == long.MaxValue,
++                "Real R1 runs for the clamped cell and still writes when the lesson counter is saturated");
++            Require(learned != null && !learned.Created && learned.BeforeWeight == .25 && learned.BeforeStrength == 1
++                && learned.AfterWeight < .25 && learned.AfterStrength > 1, "An actual changed cell is captured with precise prior values");
++            if (!decay)
++            {
++                Require(clamped.w == -XgBoard.WeightLimit && clamped.s == 10, "Clamping and saturation leave both parameters unchanged before decay");
++                learnedWeight = learned.AfterWeight; learnedStrength = learned.AfterStrength;
++                Require(changed.w == learnedWeight && changed.s == learnedStrength, "Without R4 the write snapshot equals the final board values");
++            }
++            else
++            {
++                Require(clamped.w > -XgBoard.WeightLimit && clamped.s < 10, "The clamped cell actually fades on the decay step");
++                Require(learned.AfterWeight == learnedWeight && learned.AfterStrength == learnedStrength,
++                    "The same actual write has the same snapshot on either side of the decay boundary");
++                Require(changed.w != learned.AfterWeight && changed.s < learned.AfterStrength,
++                    "The snapshot intentionally precedes R4, rather than claiming the decayed final values");
++            }
++        }
++        Debug.Log("CORRECTION_WRITE_CHECKS_PASS: clamped decay-only cells excluded; actual writes, saturated counters and pre-decay values retained.");
++    }
++
++    static void CheckCreatedCorrectionPulls()
++    {
++        var initialWrites = new Dictionary<int, XgConceptPull>();
++        foreach (bool decay in new[] { false, true })
++        {
++            var sim = Fixture(false, out var card);
++            sim.S.unlocked.Add("relu");
++            var run = sim.Run(XgCatalog.Dataset("spam").track);
++            run.depth = 2; run.width = XgCatalog.Widths.Length - 1; run.lr = 1; run.act = 2;
++            sim.S.board.concepts[0].pinned = true;
++            sim.S.board.cards = XgBoard.DecayEvery - (decay ? 1 : 2);
++            Require(sim.TeachingGuess(card, out bool guess) && guess, "R2 fixture uses a real wrong teaching prediction");
++            XgAnswerTrace trace = null;
++            sim.CardAnswered += value => trace = value;
++            Require(sim.TryEvaluateTeachingGuess("spam", card.id, guess, false, new Wallet(), out var result) && result.corrected,
++                "R2 fixture settles through the actual teaching route");
++            int combinations = 0;
++            foreach (var pull in trace.CorrectionPulls)
++            {
++                var cell = sim.S.board.concepts.Find(c => c.id == pull.Id);
++                Require(cell != null && cell.id != 17 && pull.Created && pull.BeforeWeight == 0,
++                    "Every captured cell in this fixture was actually created, excluding the pinned anchor");
++                if (cell.layer > 1)
++                {
++                    combinations++;
++                    Require(pull.BeforeStrength == 0 && pull.AfterStrength == 1 && cell.trainedCards == 1,
++                        "Actual R2 creation captures an absent 0/0 baseline and the initialized combination before decay");
++                }
++                else Require(pull.BeforeStrength == 1, "R1 creation records its initialized strength before the actual pull");
++                if (!decay)
++                {
++                    initialWrites.Add(pull.Id, pull);
++                    Require(pull.AfterWeight == cell.w && pull.AfterStrength == cell.s, "Without R4 the creation/write snapshot equals board values");
++                }
++                else
++                {
++                    Require(initialWrites.TryGetValue(pull.Id, out var previous) && previous.AfterWeight == pull.AfterWeight
++                        && previous.AfterStrength == pull.AfterStrength, "R1 and R2 capture the same writes before a later decay step");
++                    Require(cell.s < pull.AfterStrength, "Created cells really decay after the immutable evidence was captured");
++                }
++            }
++            Require(combinations > 0, "The real training rule must create at least one higher-layer combination");
++        }
++        Debug.Log("CORRECTION_CREATION_CHECKS_PASS: actual R1 writes and R2 creations captured before decay with distinct initial baselines.");
++    }
++
+     static void Require(bool value, string message)
+     { if (!value) throw new InvalidOperationException("AnswerTraceChecks: " + message); }
+ }

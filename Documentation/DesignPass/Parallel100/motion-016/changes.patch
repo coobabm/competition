@@ -1,0 +1,20 @@
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
+# Source SHA256: 8361F777B746D8E0359EF9BB02E2CEFC48E9B0AF0023EF85819DA59E5662239A
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs
+@@ -345,6 +345,13 @@
+         void Buy(Card c)
+         {
+-            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable) { Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); return; }
++            if (Sim.Status(c.node, Host) != XgSim.NodeStatus.Buyable)
++            {
++                Fx.Knock(c.buy.rt, .05f, new Vector2(8, 0));
++                Fx.Play(XgJuice.Sfx.Id.Thud);
++                host.ShowToast(Sim.Why(c.node, Host), 3.5f);
++                host.Refresh(true);
++                return;
++            }
+             host.BuyNode(c.node, c.rt);
+         }
+     }

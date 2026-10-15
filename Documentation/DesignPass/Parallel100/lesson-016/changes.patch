@@ -1,0 +1,99 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+@@ -71,8 +71,9 @@
+         XgFaceGraphic face;
+         XgGoGraphic go;
+         TMP_Text meta, poem, text, caption, question, suggestion, feedback, steps;
+         XgBtn yes, no, toTrain;
++        Outline yesAnswerFocus, noAnswerFocus;
+         XgBtn[] amountBtns;
+         XgShopRow auto, pack;
+         XgGlow paperGlow;
+         Image paperImage;
+@@ -187,8 +188,10 @@
+             yes = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(true), 24, new Color32(203, 210, 230, 255));
+             no = ZhongbaoSkin.Outlined(ui, body, "", () => OnAnswer(false), 24, new Color32(203, 210, 230, 255));
+             var yesFrame = ZhongbaoSkin.Frame(yes); var noFrame = ZhongbaoSkin.Frame(no);
+             yesFrame.name = "AnswerYes"; noFrame.name = "AnswerNo";
++            yesAnswerFocus = AnswerFocusOutline(yesFrame);
++            noAnswerFocus = AnswerFocusOutline(noFrame);
+             yesFrame.anchorMin = yesFrame.anchorMax = new Vector2(.5f, 1); yesFrame.offsetMin = new Vector2(-214, -422); yesFrame.offsetMax = new Vector2(-8, -368);
+             noFrame.anchorMin = noFrame.anchorMax = new Vector2(.5f, 1); noFrame.offsetMin = new Vector2(8, -422); noFrame.offsetMax = new Vector2(214, -368);
+             feedback = ui.Text(Rect("Feedback", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(16, -460), new Vector2(-16, -426)), "", 15, XgPalette.Good, TextAlignmentOptions.Top);
+             // The desk's info line: samples, difficulty, hot word, the next step.
+@@ -481,8 +484,9 @@
+             if (redTimer > 0) redTimer -= dt;
+             AnimateFeed(dt);
+             if (bubbleTimer > 0) { bubbleTimer -= dt; if (bubbleTimer <= 0 && bubbleText != null) bubbleText.text = bubbleDefault; }
+             TickKeys();
++            RefreshAnswerFocus();
+             if (Mode != displayedMode || displayedSim != Sim) { Refresh(); return; }
+             if (Sim.QualityFrozen != wasFrozen || Sim.CaptchaPauseLeft > 0 != wasPaused || Sim.CaptchaPending != wasCaptcha) { Refresh(); return; }
+             if ((wasFrozen || wasPaused) && Mode == 0) RefreshFrozenBanner();
+             captchaCard.Tick(host.Visible && (host.Tab == "label" || host.Tab == "teach"));
+@@ -529,9 +533,9 @@
+             displayedSim = Sim; displayedMode = Mode;
+             RefreshSpecialVisibility(special);
+             RefreshFeed();
+             RefreshHall(special);
+-            if (special) { RefreshSpecial(); LayoutSide(true, 0); return; }
++            if (special) { RefreshSpecial(); RefreshAnswerFocus(); LayoutSide(true, 0); return; }
+             var card = CurrentCard;
+             if (card.id != displayedId) { displayedId = card.id; translationTime = 0; translationFadeCount = -1; }
+             var kind = info.kind;
+             bool dedicatedPreview = HasPreviewSurface(card);
+@@ -630,8 +634,9 @@
+             else hasGuess = Sim.Suggestion(desk, out guess, out confidence);
+             shownGuessValid = hasGuess; shownGuess = guess;
+             bool teaching = !queued && Sim.TeachingGuess(card, out _);
+             shownTeachingEvaluation = teaching;
++            RefreshAnswerFocus();
+             suggestion.text = hasGuess
+                 ? Sim.AiDisplayName + T("：", ": ") + YesNoWord(guess) + "？ " + XgSim.Pct(confidence)
+                     + "  (" + (queued && card.judgeSource == "brain" ? Lang.T("本地模型") : Lang.T("检查点估计")) + ")"
+                     + (queued && !string.IsNullOrEmpty(card.judgeFailure) ? " · " + Lang.T("大脑离线") : "")
+@@ -667,10 +672,10 @@
+             confidenceRoot.gameObject.SetActive(hasGuess && !teaching);
+             SetBar(confidenceFill, (float)confidence);
+             confidenceFill.GetComponent<UnityEngine.UI.Image>().color = confidence < Sim.S.coopThreshold ? XgPalette.Gold : XgPalette.Good;
+             yes.label.fontSize = no.label.fontSize = 24;
+-            yes.Set((teaching ? T("猜对了", "Guessed right") : YesNoWord(true)) + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
+-            no.Set((teaching ? T("猜错了", "Guessed wrong") : YesNoWord(false)) + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
++            yes.Set((teaching ? T("猜对了", "Guessed right") : YesNoWord(true)) + (teaching ? TeachingKeyHint(1) : KeyHint(1)), true, Color.white, ZhongbaoSkin.Ink);
++            no.Set((teaching ? T("猜错了", "Guessed wrong") : YesNoWord(false)) + (teaching ? TeachingKeyHint(2) : KeyHint(2)), true, Color.white, ZhongbaoSkin.Ink);
+             if (card.family) {
+                 yes.Set(T("当作垃圾", "Mark as junk") + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
+                 no.Set(T("留作重要", "Keep as important") + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
+             }
+@@ -684,8 +689,31 @@
+             RefreshCollaboration();
+             RefreshPlatform();
+             RefreshSide(desk);
+         }
++
++        // Keep focus on the frame; decorative graphics must not change the hit rectangle.
++        static Outline AnswerFocusOutline(RectTransform frame)
++        {
++            var focus = frame.gameObject.AddComponent<Outline>();
++            focus.effectColor = new Color32(36, 85, 164, 255);
++            focus.effectDistance = new Vector2(2, -2);
++            focus.enabled = false;
++            return focus;
++        }
++
++        void RefreshAnswerFocus()
++        {
++            var events = UnityEngine.EventSystems.EventSystem.current;
++            var selected = events != null ? events.currentSelectedGameObject : null;
++            bool active = shownTeachingEvaluation && Mode == 0 && host.Visible && FrontWindow();
++            if (yesAnswerFocus != null) yesAnswerFocus.enabled = active && yes.button.IsInteractable()
++                && yes.button.gameObject.activeInHierarchy && selected == yes.button.gameObject;
++            if (noAnswerFocus != null) noAnswerFocus.enabled = active && no.button.IsInteractable()
++                && no.button.gameObject.activeInHierarchy && selected == no.button.gameObject;
++        }
++
++        static string TeachingKeyHint(int n) => "  <size=13><color=#596273>" + n + "</color></size>";
+ 
+         static string KeyHint(int n) => "  <size=13><color=#B4B8C2>" + n + "</color></size>";
+ 
+         void RefreshSteps(string desk, XgDataset d)

@@ -1,0 +1,15 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs
+@@ -439,9 +439,11 @@
+             else
+             {
+                 feedback.color = XgPalette.Bad;
+                 feedback.text = "<color=#D63031>× " + (r.timeout ? Lang.T("超时了。") : teachingAnswer
+-                    ? (shownGuess == card.truth ? T("它其实猜对了。", "Its guess was right. ") : T("它其实猜错了。", "Its guess was wrong. ")) : "")
++                    ? (shownGuess == card.truth
++                        ? T("你判反了：它猜对了，应选「猜对了」。", "You misjudged it: its guess was right. Choose \"Guessed right\". ")
++                        : T("你判反了：它猜错了，应选「猜错了」。", "You misjudged it: its guess was wrong. Choose \"Guessed wrong\". ")) : "")
+                     + (teachingAnswer ? T("题目的答案是「", "The answer to the question is \"") : Lang.T("应该是「")) + truthText
+                     + (r.fine > 0 ? T("」。扣 ¥" + N(r.fine, "0.00") + "，连击清零，这条作废", "\". It cost ¥" + N(r.fine, "0.00") + ", the combo resets and the label is discarded")
+                         : Lang.T("」。连击清零，这条作废")) + "</color>"
+                     + (why.Length > 0 ? "\n<size=14><color=#5B6478>" + why + "</color></size>" : "")

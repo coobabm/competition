@@ -1,0 +1,8 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -182,3 +182,3 @@
+                 case "cudnn": return Speed(sim, 1.3) + T(sim, "训练能耗 ×", "Training energy use ×") + N(XgSim.CuDnnEnergyFactor) + "。";
+-                case "cooler": return T(sim, "训练造成的显卡磨损 ×", "GPU wear from training ×") + N(XgSim.CoolerWearFactor) + T(sim, "；已有导热膏保护时仍按零磨损处理。", "; active thermal-paste protection still gives zero wear.");
++                case "cooler": return T(sim, "购买后自动生效，无需装备或重新训练。连续训练过久时，烧卡风险按 ×", "Active automatically after purchase; no equipping or retraining needed. During prolonged continuous training, burn-out risk is scaled by ×") + N(XgSim.CoolerWearFactor) + T(sim, " 计算；仅在电力系统启用且至少有两张显卡时可能触发。硅脂保护期间不会因训练烧卡，保护结束后恢复本效果；同一道具不重复叠加。", "; training burn-outs require the power system to be enabled and at least two GPUs. Thermal-paste protection prevents training burn-outs while active; this effect resumes when it expires. This item does not stack with itself.");
+                 case "transfer": return T(sim, "换结构保留 60% 数值训练进度；同结构扩容保留进度从 ", "Keep 60% of numerical training progress when changing architecture; same-architecture growth retention rises from ") + N(XgSim.GrowKeep * 100) + "% → " + N(XgSim.GrowKeepTransfer * 100) + T(sim, "%。基础概念能否带走取决于新结构是否支持与位置无关的线索。", "%. Carrying basic concepts depends on whether the new wiring supports position-independent clues.");

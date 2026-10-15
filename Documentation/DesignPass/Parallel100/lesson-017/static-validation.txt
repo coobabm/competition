@@ -1,0 +1,5 @@
+Static validation only; Unity and scene execution: NOT_RUN; visual acceptance: NOT_RUN.
+SOURCE_BASELINE_UNCHANGED: 18 files; static fingerprint check only; scene NOT_RUN.
+CSV_VALID: 11 NOT_RUN rows; 26 columns.
+PATCH_CONTEXT_VALID: git apply --check --ignore-space-change; no application performed.
+Final dependency review: all 18 source files unchanged against source-baseline.json.

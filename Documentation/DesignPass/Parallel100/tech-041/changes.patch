@@ -1,0 +1,15 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -93,3 +93,3 @@
+                 case "augment": return T(sim, "把同一道图片题挪动、裁剪或旋转，让它练习不同样子。", "Shift, crop or rotate picture examples to practise different appearances.");
+-                case "dataclean": return T(sim, "检查买来的杂包和众包答案，减少错误示范。", "Check junk packs and crowd answers to reduce incorrect examples.");
++                case "dataclean": return T(sim, "清理杂包、众包和爬取数据里的错误示范，让训练少受坏数据干扰。", "Clean incorrect examples from junk packs, crowd data and crawled data so bad data interferes less with training.");
+                 case "shared.lr": return T(sim, "比较不同学习步幅，寻找更合适的训练设置。", "Compare learning step sizes to find a better training setting.");
+@@ -177,3 +177,3 @@
+                 case "augment": return T(sim, "训练题池变体：手写数字 ×2，围棋 ×8，CIFAR、ImageNet、表情包 ×3；文字不变，不增加已收集样本数。", "Training-pool variants: digits ×2, Go ×8, CIFAR, ImageNet and memes ×3. Text and collected sample counts stay unchanged.");
+-                case "dataclean": return T(sim, "杂包和众包的有效错标数量减半，训练数据中的错误示范减少。", "Halve effective wrong labels in junk packs and crowd data, reducing incorrect training examples.");
++                case "dataclean": return T(sim, "购买解锁后立即生效，无需装备或先训练。已有及新增的杂包、众包和爬取数据，其有效错标条数 ×0.5；数据包须下载完成并纳入训练。只购一次，不反复减半；若另有按条清洗，先减半，再扣已清除条数，最低为 0。自身自动标注错题、公共及剧情包噪声不享受此倍率。样本总数不变，噪声统计即时更新，后续训练按新噪声计算；准确率不直接增加固定数值。", "Active immediately upon purchase; no equipment or prior training needed. Effective wrong-label counts in existing and future junk packs, crowd data and crawled data are multiplied by 0.5; packs must finish downloading and be included in training. One purchase only; no repeated halving. If per-label cleaning also applies, halve first, then subtract the cleaned count, with a floor of 0. Your own automatic labelling mistakes and public or story pack noise do not receive this multiplier. Total sample count stays unchanged. Noise statistics update immediately and subsequent training uses the new noise level; accuracy gains no fixed bonus.");
+                 case "shared.lr": return T(sim, "评估上限公式中的误差项乘 ", "Multiply the error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[3]) + T(sim, "，让可达到的成绩上限更高；已有学习率衰减或 AutoML 时不再叠加。需训练后评估。", " for a higher reachable score ceiling; does not stack with a learning-rate schedule or AutoML. Train and evaluate to see results.");

@@ -1,0 +1,10 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgSetupOverlay.cs
+@@ -207,5 +207,5 @@
+             Refresh(view.Controller.runtime);
+             // 灵光 lands on 概览 behind 摆渡众包, so closing the crowd window shows the overview first.
+             view.ShowTab("teach");
+-            view.ShowToast(T("它还不会判断。先教它 4 张卡，再让它训练。随时可以和它说话。", "Teach four cards, then train. You can talk to it any time."), 7);
++            view.ShowToast(T("它先猜，你判对错。猜错就纠正它，猜对就告诉它。", "It guesses first. Judge its guess: correct it if wrong, confirm it if right."), 7);
+         }

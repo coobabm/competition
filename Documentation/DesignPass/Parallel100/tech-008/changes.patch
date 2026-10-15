@@ -1,0 +1,11 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -167,5 +167,6 @@
+                 case "subword": case "sft": case "cot": return Speed(sim, 1.05);
+                 case "bias": return T(sim, "训练中可以学习判断门槛；能否答对仍由学到的权重和题目决定。", "Training can learn a decision threshold; answers still depend on learned weights and the question.");
+-                case "step": case "sigmoid": return T(sim, "增加可用激活函数，系统可在训练配置中采用；成绩变化需重新训练和评估。", "Add an available activation function for training configuration; train and evaluate to see the score change.");
++                case "step": return T(sim, "购买后自动计入准确率上限公式：+1 个百分点（加 0.01，非乘 1.01）；与同类加成相加，再受结构、数据集等限制。无需装备；继续训练并评估才可能提高成绩，不保证每轮提分。阶跃原本即可使用，购买不会新增激活函数。", "Buying this automatically adds 1 percentage point (+0.01, not ×1.01) to the accuracy-ceiling formula. It adds to similar bonuses before architecture, dataset and other limits apply. No equipping is needed; further training and evaluation may improve the score, but gains are not guaranteed each epoch. Step activation is already available before purchase.");
++                case "sigmoid": return T(sim, "增加可用激活函数，系统可在训练配置中采用；成绩变化需重新训练和评估。", "Add an available activation function for training configuration; train and evaluate to see the score change.");
+                 case "features": return T(sim, "启用人工特征后，感知机也可学习组合线索；每轮训练卡数按 ", "With engineered features enabled, a perceptron can learn combined clues; epoch card throughput is multiplied by ") + N(XgSim.FeaturesCardFactor) + T(sim, " 倍计算。", ".");
+                 case "irnn": return T(sim, "配合 ReLU 的普通循环网络能保留更久的记忆；仍会衰减，梯度裁剪需另行解锁。", "A plain recurrent network with ReLU retains memory longer; it still decays, and clipping is a separate unlock.");

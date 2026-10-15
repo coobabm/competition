@@ -1,0 +1,5 @@
+Dependency drift: none
+Patch/source parity and read-only git apply check: passed
+Static scope/layout contract checks: passed
+Executed C# geometry assertions: 20007 passed.
+Unity compile: NOT RUN. TMP glyph layout/input: NOT RUN. Visual acceptance: NOT RUN.

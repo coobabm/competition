@@ -1,0 +1,4 @@
+Dependency SHA256 final recheck
+Files checked: 12
+Changed files: 0
+Static file comparison only; no C# compilation, simulation execution or visual acceptance performed.

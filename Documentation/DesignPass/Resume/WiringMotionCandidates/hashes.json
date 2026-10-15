@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs",
+    "sha256": "2F97346E43C5F60C6C2FBD26A82C4C36488FFAF971011D1992C2A51FF3AEC1C1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWiringGraphic.cs",
+    "sha256": "C11833DBFCA71D845153D73454DDEC13218F2BD4AD5C7B541995964AF0BEDE50"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "sha256": "B3E14C55A6696385CC03FC764A64493EB0A20EE74F418B823504DB152F13637F"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "sha256": "4788B992BDC23FEB5F2E0A7CFA31A4C3D9544757C18897E1F49EE667D94C9857"
+  },
+  {
+    "path": "Documentation/DesignPass/Resume/WiringMotionCandidates/XgWiringPage.cs",
+    "sha256": "EF2F068E1514568F8FBF27CA75C9EFA737F81DFC346864870C2FC058A924F1F0"
+  },
+  {
+    "path": "Documentation/DesignPass/Resume/WiringMotionCandidates/WiringMotionChecks.cs",
+    "sha256": "FC6066825AF16D0A1466DE576AB2747BEB970D5238CC3C30FA743C014DA608B9"
+  },
+  {
+    "path": "Documentation/DesignPass/Resume/WiringMotionCandidates/changes.patch",
+    "sha256": "6BF623A28E0373C85352BD63E835A916DD7608D64D1125CEA08699CF858EA020"
+  }
+]

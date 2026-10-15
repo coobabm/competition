@@ -1,0 +1,6 @@
+{
+  "verification": "Static source fingerprint recheck only; no C# or game execution",
+  "dependencies": 12,
+  "changed": [],
+  "patch_apply_check": "git apply --check exited 0 after preserving source CRLF; patch was not applied"
+}

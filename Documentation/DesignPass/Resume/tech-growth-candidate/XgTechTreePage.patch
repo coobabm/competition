@@ -1,0 +1,196 @@
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+@@ -48,10 +48,10 @@
+     /// <see cref="XgTechTree"/> (the catalog, with ladders folded into levels); the simulation owns visibility, prices
+     /// and purchases. Only the package's art and tweens are used, never its managers.
+     /// </summary>
+-    public sealed class XgTechTreePage : XgPage
++    public sealed partial class XgTechTreePage : XgPage
+     {
+         /// <summary>Square size, slot pitch and row pitch of the generated layout, in content pixels.</summary>
+-        public const float SquareSize = 56, SlotWidth = 128, RowHeight = 118, LaneHeader = 34, LaneGap = 12, TopMargin = 64;
++        public const float SquareSize = 56, SlotWidth = 128, RowHeight = 118, LaneHeader = 34, LaneGap = 12, TopMargin = 180;
+         public const int Columns = 5;
+         public const float StageWidth = Columns * SlotWidth + 40;
+         const float TooltipWidth = 312;
+@@ -107,7 +107,7 @@
+             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
+             skin = XgTechTreeSkin.Load();
+             root = ui.Card(area, "tree", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+-            // 科技 has its own nav row (养成), so the page needs no way back to 道具.
++            // One growth route now owns technologies, items and ability progress.
+             header = ui.Text(Strip("Header", root, 8, 30, 16, 520), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+             viewport = Rect("Viewport", root, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -78));
+             viewport.gameObject.AddComponent<CanvasRenderer>();
+@@ -120,7 +120,7 @@
+             Pan.minZoom = .6f; Pan.maxZoom = 1.5f;
+             bandLayer = Layer("Bands"); linkLayer = Layer("Links"); nodeLayer = Layer("Nodes");
+             Layout();
+-            content.sizeDelta = new Vector2(StageWidth * 2, treeHeight);
++            content.sizeDelta = new Vector2(StageWidth * XgSim.AbilityCount + 40, treeHeight);
+             int band = 0;
+             foreach (var lane in Bands)
+             {
+@@ -128,8 +128,8 @@
+                 var stripe = Rect("LaneBand " + lane, bandLayer, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -bandTop[lane] - bandHeight[lane] - LaneGap * .5f), new Vector2(0, -bandTop[lane] + LaneGap * .5f));
+                 Panel(stripe, band++ % 2 == 0 ? new Color32(11, 19, 28, 200) : new Color32(0, 0, 0, 0)).raycastTarget = false;
+             }
+-            for (int i = 0; i < XgCatalog.StageNames.Length; i++) BuildStageHeader(i);
+-            foreach (var e in XgTechTree.Entries) MakeNode(e);
++            for (int i = 0; i < XgSim.AbilityCount; i++) BuildStageHeader(i);
++            foreach (var e in XgTechTree.Entries) if (e.First.kind != XgNodeKind.Ability) MakeNode(e);
+             foreach (var v in views) MakeLinks(v);
+             frontierWall = TopLeft("UnexploredBoundary", content, 0, 50, 8, treeHeight - 50);
+             frontierWall.pivot = new Vector2(.5f, 1);
+@@ -138,6 +138,7 @@
+             BuildLegend();
+             BuildTooltip();
+             BuildEraCard();
++            BuildGrowthShelf();
+             built = true;
+             Sync(false);
+         }
+@@ -160,10 +161,11 @@
+             var rows = new Dictionary<string, int>();
+             foreach (var e in XgTechTree.Entries)
+             {
+-                string bandId = XgCatalog.Band(e.Lane), key = e.Stage + ":" + bandId;
++                if (e.First.kind == XgNodeKind.Ability) continue; // The route headers now display these abilities.
++                string bandId = XgCatalog.Band(e.Lane), key = GrowthColumn(e) + ":" + bandId;
+                 var parent = XgTechTree.EntryOf(e.First.parent);
+                 int r = -1, c = -1;
+-                if (parent != null && slot.TryGetValue(parent, out var ps) && parent.Stage == e.Stage && XgCatalog.Band(parent.Lane) == bandId
++                if (parent != null && slot.TryGetValue(parent, out var ps) && GrowthColumn(parent) == GrowthColumn(e) && XgCatalog.Band(parent.Lane) == bandId
+                     && ps.x + 1 < Columns && !taken.Contains(key + ":" + ps.y + ":" + (ps.x + 1)))
+                 { r = ps.y; c = ps.x + 1; }
+                 for (int row = 0; r < 0; row++)
+@@ -184,21 +186,29 @@
+             foreach (var kv in slot)
+             {
+                 string bandId = XgCatalog.Band(kv.Key.Lane);
+-                float x = kv.Key.Stage * StageWidth + 24 + kv.Value.x * SlotWidth + SlotWidth * .5f;
++                float x = GrowthColumn(kv.Key) * StageWidth + 24 + kv.Value.x * SlotWidth + SlotWidth * .5f;
+                 float y = bandTop[bandId] + LaneHeader + kv.Value.y * RowHeight + SquareSize * .5f + 6;
+                 position[kv.Key] = new Vector2(x, -y);
+             }
++            bool hasSecret = false;
++            foreach (var entry in XgTechTree.Entries)
++                if (entry.First.kind == XgNodeKind.Secret)
++                {
++                    position[entry] = new Vector2((GrowthColumn(entry) + 1) * StageWidth - SlotWidth * .5f - 24, -treeHeight - SquareSize * .5f);
++                    hasSecret = true;
++                }
++            if (hasSecret) treeHeight += RowHeight + 20;
+         }
+ 
+         void BuildStageHeader(int i)
+         {
+-            var title = ui.Text(TopLeft("StageHeader" + i, content, i * StageWidth + 24, 12, StageWidth - 40, 36), "", 21, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
++            var title = BuildGrowthAbility(i);
+             title.fontStyle = FontStyles.Bold; stageTitles.Add(i, title);
+             foreach (var lane in Bands)
+             {
+                 if (!bandTop.ContainsKey(lane)) continue;
+                 bool any = false;
+-                foreach (var e in XgTechTree.Entries) if (e.Stage == i && XgCatalog.Band(e.Lane) == lane) { any = true; break; }
++                foreach (var e in XgTechTree.Entries) if (e.First.kind != XgNodeKind.Ability && GrowthColumn(e) == i && XgCatalog.Band(e.Lane) == lane) { any = true; break; }
+                 if (!any) continue;
+                 var label = ui.Text(TopLeft("Lane " + lane + " " + i, content, i * StageWidth + 28, bandTop[lane] + 4, 300, 26), "", 16, LaneColor(lane == "trunk" && i == 0 ? "label" : lane), TextAlignmentOptions.MidlineLeft);
+                 label.fontStyle = FontStyles.Bold;
+@@ -284,7 +294,7 @@
+ 
+         void BuildToolbar()
+         {
+-            miniMap = Strip("DiscoveredStages", root, 48, 28, 16, 310);
++            miniMap = Strip("DiscoveredStages", root, 48, 28, 12, 310);
+             miniMap.gameObject.SetActive(false);
+             string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+" };
+             string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+" };
+@@ -435,21 +445,20 @@
+             foreach (var pair in stageTitles)
+             {
+                 int i = pair.Key;
+-                bool visible = i <= stage;
++                bool visible = true; // The six known ability names are the route; catalog mystery nodes retain their own visibility.
+                 pair.Value.gameObject.SetActive(visible);
+-                if (visible) pair.Value.text = (i == 0 ? "⓪ " : i + " · ") + T(XgCatalog.StageNames[i], XgCatalog.StageNamesEn[i]) + (i > 0 ? "  <size=14><color=#6F95A5>" + XgCatalog.ShownYear(XgCatalog.StageYears[i]) + "</color></size>" : "");
+                 if (visible && !miniButtons.ContainsKey(i))
+                 {
+                     int column = i;
+-                    var button = ui.Button(miniMap, "", () => FocusStage(column), 13);
++                    var button = ui.Button(miniMap, "", () => FocusGrowthAbility(column + 1), 13);
+                     button.rt.anchorMin = button.rt.anchorMax = new Vector2(0, .5f); button.rt.pivot = new Vector2(0, .5f);
+-                    button.rt.anchoredPosition = new Vector2(i * 56, 0); button.rt.sizeDelta = new Vector2(50, 25);
++                    button.rt.anchoredPosition = new Vector2(i * 35, 0); button.rt.sizeDelta = new Vector2(31, 25);
+                     miniButtons.Add(i, button);
+                 }
+                 if (miniButtons.TryGetValue(i, out var mini))
+                 {
+                     mini.rt.gameObject.SetActive(visible);
+-                    if (visible) mini.Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgDark.AccentSoft : XgDark.Button);
++                    if (visible) mini.Set((i + 1).ToString(), true, i + 1 == Sim.NextAbility ? XgDark.AccentSoft : XgDark.Button);
+                 }
+             }
+             foreach (var title in laneTitles)
+@@ -457,8 +466,9 @@
+                 // "Lane <band> <stage>"
+                 var parts = title.name.Split(' ');
+                 int i = int.Parse(parts[2]);
+-                title.gameObject.SetActive(i <= stage);
+-                if (i <= stage) title.GetComponent<TMP_Text>().text = LaneTitle(parts[1], i);
++                bool visible = GrowthLaneVisible(parts[1], i);
++                title.gameObject.SetActive(visible);
++                if (visible) title.GetComponent<TMP_Text>().text = LaneTitle(parts[1], i);
+             }
+             foreach (var view in views)
+             {
+@@ -472,10 +482,11 @@
+                     rt.DOScale(1, .35f).SetEase(Ease.OutBack).SetUpdate(true).SetLink(view.gameObject);
+                 }
+             }
+-            content.sizeDelta = new Vector2((stage + 1) * StageWidth + 40, treeHeight);
+-            frontierWall.gameObject.SetActive(stage < XgCatalog.StageNames.Length - 1);
++            content.sizeDelta = new Vector2(XgSim.AbilityCount * StageWidth + 40, treeHeight);
++            frontierWall.gameObject.SetActive(false);
+             frontierWall.anchoredPosition = new Vector2((stage + 1) * StageWidth - 6, -50);
+-            miniMap.gameObject.SetActive(stage > 1); toolbar[1].rt.gameObject.SetActive(stage > 1);
++            toolbar[1].rt.gameObject.SetActive(true);
++            RefreshGrowth();
+             if (animate && !rebound && stage > displayedStage) FocusFrontier();
+             displayedStage = stage; Pan.Clamp();
+             tooltip.SetAsLastSibling(); eraCard.SetAsLastSibling();
+@@ -494,7 +505,7 @@
+                 if (XgTechTree.Status(v.entry, Sim, Host) == XgSim.NodeStatus.Buyable) buyable++;
+                 Paint(v);
+             }
+-            header.text = "<b>" + Lang.T("科技") + "</b>  <color=#FAC775>¥ " + Money(Host.Money) + "</color>";
++            header.text = "<b>" + T("成长", "Growth") + "</b>  <color=#FAC775>¥ " + Money(Host.Money) + "</color>";
+             toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
+             toolbar[2].Set(T("可买 ", "Buyable ") + buyable, true, buyable > 0 ? XgDark.AccentSoft : XgDark.Button);
+             PaintLinks();
+@@ -940,7 +951,7 @@
+             PaintLinks();
+         }
+ 
+-        public void FocusFrontier() => FocusStage(Sim.S.stage);
++        public void FocusFrontier() => FocusGrowthAbility(Sim.NextAbility > 0 ? Sim.NextAbility : XgSim.AbilityCount);
+ 
+         void FocusStage(int stage)
+         {
+@@ -961,6 +972,7 @@
+ 
+         public RectTransform NodeTarget(string id)
+         {
++            if (id != null && id.StartsWith("ab.") && int.TryParse(id.Substring(3), out int ability)) return GrowthAbilityTarget(ability);
+             var v = views.Find(n => n.Covers(id) && n.gameObject.activeSelf);
+             return v != null ? (RectTransform)v.transform : null;
+         }
+@@ -968,6 +980,8 @@
+         public bool FocusNode(string id)
+         {
+             if (!built) return false;
++            if (id != null && id.StartsWith("ab.") && int.TryParse(id.Substring(3), out int ability) && GrowthAbilityTarget(ability) != null)
++            { FocusGrowthAbility(ability); return true; }
+             Sync(false);
+             var v = views.Find(n => n.Covers(id) && n.gameObject.activeSelf);
+             if (v == null) return false;

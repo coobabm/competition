@@ -1,0 +1,58 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgItemsPage.cs",
+    "sha256": "8361F777B746D8E0359EF9BB02E2CEFC48E9B0AF0023EF85819DA59E5662239A"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDataPage.cs",
+    "sha256": "C6506987A950CDEB71C992A861273252349BDEF750AA1460C746705BB2A9C2F3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "F27CC730C4871776FC3E29FB95D765C099C02007889648334C42E3491CA8A523"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "sha256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "sha256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "sha256": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sha256": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs",
+    "sha256": "3623A45A332B1D8D7F000D26174F3F24FFDD2C467F44821C1348B94DB6DCC1C5"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Consumables.cs",
+    "sha256": "E68D3F9367CA4A59E2835C7C37A2973E866C93765452B87337ADF88075205B58"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Data.cs",
+    "sha256": "41330E64193670FCAC6342757B0AF73157A49E297F04A22DFD5428D2AAB55FF1"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Taohuo/ShopKit.cs",
+    "sha256": "65CB4B5E3AC00423FBC05F3BD79FB52FE5D90AFE2CE282F0564E2862C6459530"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "sha256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E"
+  },
+  {
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "sha256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE"
+  }
+]

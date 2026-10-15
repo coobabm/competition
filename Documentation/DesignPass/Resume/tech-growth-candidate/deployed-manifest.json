@@ -1,0 +1,34 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "sha256": "7BB948B3E8CEE122A4E7D00EE5FA55BAAE2D5AF4C003AB44FA14CB05F71063F3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.Growth.cs",
+    "sha256": "2B0DB5BF2D2189F0343D592A8E0F3069618762E2AD35EC0FA701115E83B61D79"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.Growth.cs.meta",
+    "sha256": "8EF61F5764A6324EE33A35C38C26C4C0B3F65ABC23F3E1248EC44CFC4375EDC4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "AAC34DE7D1D2528580A721BB1AF679C016688934F994FA0011F574E4F3441AA0"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs",
+    "sha256": "A9CE805BAC57F2C62A708A69440AC50AD98A995C0F905356E1684FE4944A942C"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Growth.cs",
+    "sha256": "E64F3C0A060C7279B8CA56EC486A1FF63DED53DD191901D57EE45A8DA4D32A08"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Growth.cs.meta",
+    "sha256": "8D8B02DDD26E12CE8249E408A288359C55036A84E44587B378B8C973857EB337"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWindowGlass.cs",
+    "sha256": "8766490152973D07DECB4B8A92C769016D2925BEE6D7B99B8646F724A9CE88FC"
+  }
+]

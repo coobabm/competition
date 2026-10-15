@@ -1,0 +1,22 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -83,7 +83,7 @@
+                 case "bias": return T(sim, "让判断的门槛可以移动，不必总从同一个起点划线。", "Move the decision threshold instead of always drawing the boundary from the same starting point.");
+                 case "step": return T(sim, "像开关一样：线索总分过门槛就开，否则就关。", "Like a switch: turn on when the combined clues cross the threshold, otherwise stay off.");
+                 case "sigmoid": return T(sim, "把突然开关改成平滑变化，让细小的误差也能传回去。", "Replace an abrupt switch with a smooth curve so small errors can travel backward.");
+-                case "relu": return T(sim, "正的信号原样放行，负的信号归零，减少深层学习时的信号衰减。", "Pass positive signals through and set negative ones to zero, reducing signal loss in deep networks.");
++                case "relu": return T(sim, "ReLU 的原理是正数照传、负数归零；游戏用较高的层间保留比例表现它让深层网络更容易学习。", "ReLU passes positive values through and sets negative values to zero. The game represents easier learning in deep networks through higher per-layer retention.");
+                 case "backprop": return T(sim, "小批量训练的原理是先看一小批例题，汇总调整方向，再更新网络。", "Mini-batch training means combining suggested changes from a small group of examples before updating the network.");
+                 case "chainrule": return T(sim, "由程序算出每个参数该往哪边改，省去手工推导。", "Let the program calculate how each parameter should change.");
+                 case "features": return T(sim, "人先把零散线索整理成组合，再交给网络判断。", "People combine raw clues before the network makes its decision.");
+@@ -214,7 +214,9 @@
+                 case "weights": case "chainrule": return Speed(sim, 1.1);
+                 case "learnrule": return Speed(sim, 1.15);
+                 case "backprop": return Speed(sim, 1.2);
+-                case "relu": return Speed(sim, 1.3);
++                case "relu": return T(sim,
++                    "仅解锁购买条件不生效；购买一次后无需装备，两条训练线在随后轮次结算时获得处理量 ×1.3，与其他处理量倍率相乘，不重复叠加。每轮卡数取整并限制在 4–320 张，离线固定 12 张不享受此加成；轮次时长不变。自动配置优先采用 ReLU，一次只用一种激活函数；采用后，概念板每跨一层基础保留 98% 的反向学习信号、95% 的前向信号，逐层相乘，其他已生效技术可改变比例。若层数超过结构可承受层数，上限与过拟合估算中每个超出层的有效参数保留由 75% 改为 85%；未超出时此项无变化。成绩仍需训练后评估，不是立即加分。",
++                    "Meeting the unlock requirements alone gives no effect. Purchase once; no equipment step is needed. At subsequent epoch settlement, both tracks gain throughput ×1.3, multiplying with other throughput factors without repeat-purchase stacking. Cards per epoch are rounded and capped at 4–320; offline simulation stays at 12 cards. Epoch duration is unchanged. Automatic configuration prefers ReLU; only one activation is used at a time. When selected, the concept board retains a base 98% of backward learning signals and 95% of forward signals per layer, compounded across layers; other active techniques can change these rates. Above the architecture depth tolerance, effective parameter retention per excess layer changes from 75% to 85% in ceiling and overfitting estimates; this has no effect within the tolerance. Train and evaluate to see scores; no instant score bonus.");
+                 case "earlystop": return Speed(sim, 1.05) + T(sim, "自动停训由自动化节点「早停」提供。", "Automatic stopping is provided by the automation Early stopping level.");
+                 case "wordvec": return Speed(sim, 1.08);
+                 case "beamsearch": return Speed(sim, 1.1);

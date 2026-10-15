@@ -1,0 +1,588 @@
+{
+  "date": "2026-10-13",
+  "expectedNew": 97,
+  "created": [
+    {
+      "key": "motion-001",
+      "title": "我的电脑活了｜动效 01｜鼠标按键",
+      "threadId": "01a130f7-7d98-7f81-be69-6900b3421409",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-002",
+      "title": "我的电脑活了｜动效 02｜键盘与手柄提交",
+      "threadId": "01a130f7-97dd-7a70-a62d-8e628e7127ba",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-003",
+      "title": "我的电脑活了｜动效 03｜指针取消",
+      "threadId": "01a130f7-a901-7263-b22f-d664c9484076",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-004",
+      "title": "我的电脑活了｜动效 04｜按钮禁用",
+      "threadId": "01a130f7-bbb2-7f12-a323-0efeff7a7bbf",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-005",
+      "title": "我的电脑活了｜动效 05｜父级交互状态",
+      "threadId": "01a130f7-d2ba-7ce3-a007-201aee90a699",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-006",
+      "title": "我的电脑活了｜动效 06｜页面生命周期",
+      "threadId": "01a130f7-e82b-72d3-9d28-8c7c0b8b0f3d",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-007",
+      "title": "我的电脑活了｜动效 07｜快速连续点击",
+      "threadId": "01a130f7-fd0f-7500-b8e7-b70834f44e3d",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-008",
+      "title": "我的电脑活了｜动效 08｜长按与移出",
+      "threadId": "01a130f8-0ec6-7e73-b2ef-fc6b969a5a6f",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-009",
+      "title": "我的电脑活了｜动效 09｜布局与缩放",
+      "threadId": "01a130f8-20de-78f1-bd68-d7df5431e231",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-010",
+      "title": "我的电脑活了｜动效 10｜暂停时回弹",
+      "threadId": "01a130f8-3d69-7cc0-988a-086989b8bde1",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-011",
+      "title": "我的电脑活了｜动效 11｜减少动效偏好",
+      "threadId": "01a130f8-e707-7eb2-a3bf-1c973d7585b4",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-012",
+      "title": "我的电脑活了｜动效 12｜业务动效隔离",
+      "threadId": "01a130f9-181f-7530-824f-caf4dbea6718",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-013",
+      "title": "我的电脑活了｜动效 13｜暗色界面可读性",
+      "threadId": "01a130f9-2e08-70b1-a0c2-8d510dbe8166",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-014",
+      "title": "我的电脑活了｜动效 14｜浅色界面可读性",
+      "threadId": "01a130f9-4c21-7a52-a95e-41d7a4373234",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-015",
+      "title": "我的电脑活了｜动效 15｜训练操作双层反馈",
+      "threadId": "01a130f9-612c-7d83-a7ff-01fc556f3713",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-016",
+      "title": "我的电脑活了｜动效 16｜购买操作双层反馈",
+      "threadId": "01a130f9-9086-7823-85ad-fbc9125cc6d4",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-017",
+      "title": "我的电脑活了｜动效 17｜旧图像特效复用",
+      "threadId": "01a130f9-a7d0-7680-a59a-a4296e201bb3",
+      "hostId": "local"
+    },
+    {
+      "key": "motion-018",
+      "title": "我的电脑活了｜动效 18｜反馈开销",
+      "threadId": "01a130f9-c0ab-7b91-8adb-d712f4128ffc",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-001",
+      "title": "我的电脑活了｜引导 01｜第一张预测",
+      "threadId": "01a130f9-df40-7262-b4e3-79851729d055",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-002",
+      "title": "我的电脑活了｜引导 02｜评价答案映射",
+      "threadId": "01a130f9-f9a4-7180-a708-bc56a12120c5",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-003",
+      "title": "我的电脑活了｜引导 03｜重复与过期卡点击",
+      "threadId": "01a130fa-35fe-7eb1-8240-d0fa53a7c4ae",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-004",
+      "title": "我的电脑活了｜引导 04｜显示预测过期",
+      "threadId": "01a130fa-4f5f-7132-9e0a-d22de6c11d75",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-005",
+      "title": "我的电脑活了｜引导 05｜待复核兼容",
+      "threadId": "01a130fa-6671-7341-a36f-5314603467ca",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-006",
+      "title": "我的电脑活了｜引导 06｜家庭态度兼容",
+      "threadId": "01a130fa-7f14-7373-80b1-d64e22751e60",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-007",
+      "title": "我的电脑活了｜引导 07｜法律与关机特殊卡",
+      "threadId": "01a130fa-9666-70b3-8e81-9e23362ee74f",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-008",
+      "title": "我的电脑活了｜引导 08｜蜘蛛协作",
+      "threadId": "01a130fa-b969-73a1-9a88-2e4cef4ae43c",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-009",
+      "title": "我的电脑活了｜引导 09｜快捷键一致性",
+      "threadId": "01a130fa-d18f-74f0-b810-cd1db5ded751",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-010",
+      "title": "我的电脑活了｜引导 10｜名字与双语提示",
+      "threadId": "01a130fa-ed59-7ba1-ba24-82241ba5bc91",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-011",
+      "title": "我的电脑活了｜引导 11｜误判反馈",
+      "threadId": "01a130fb-0ad9-72d2-8c10-3c0ed0b8634e",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-012",
+      "title": "我的电脑活了｜引导 12｜教学经济与学习副作用",
+      "threadId": "01a130fb-39c8-7643-a84a-8091da85443e",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-013",
+      "title": "我的电脑活了｜引导 13｜教学事件契约",
+      "threadId": "01a130fb-9a7f-75a1-a4de-bc17a91e6ff1",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-014",
+      "title": "我的电脑活了｜引导 14｜桌面即时亮起",
+      "threadId": "01a130fb-bc8e-71b3-a9c6-111e5fb67d3b",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-015",
+      "title": "我的电脑活了｜引导 15｜事件换档生命周期",
+      "threadId": "01a130fb-d445-72a0-b546-d6c44bd1e281",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-016",
+      "title": "我的电脑活了｜引导 16｜按钮窄窗可读性",
+      "threadId": "01a130fb-eab1-7051-a32c-b8e8ece9a978",
+      "hostId": "local"
+    },
+    {
+      "key": "lesson-017",
+      "title": "我的电脑活了｜引导 17｜首分钟完整引导",
+      "threadId": "01a130fc-035c-7860-831f-3e44e0b385dd",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-001",
+      "title": "我的电脑活了｜词条 01｜循环神经网络",
+      "threadId": "01a130fc-1e30-7101-aaf1-65f52b33219b",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-002",
+      "title": "我的电脑活了｜词条 02｜长短期记忆",
+      "threadId": "01a130fc-43dc-7560-92fd-0fc6f82bb34d",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-003",
+      "title": "我的电脑活了｜词条 03｜门控循环单元",
+      "threadId": "01a130fc-642d-76d2-a5ae-37b77b3e5d8c",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-004",
+      "title": "我的电脑活了｜词条 04｜序列到序列",
+      "threadId": "01a130fc-82bd-70f2-85f6-84f333a5a465",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-005",
+      "title": "我的电脑活了｜词条 05｜注意力机制",
+      "threadId": "01a130fc-9e2e-7f10-b1d1-be42d2fa3c4c",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-006",
+      "title": "我的电脑活了｜词条 06｜图像描述生成",
+      "threadId": "01a130fd-066b-7c02-870a-95d32d15c94c",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-007",
+      "title": "我的电脑活了｜词条 07｜文本卷积网络",
+      "threadId": "01a130fd-22e7-74f2-9918-a33eb555f808",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-008",
+      "title": "我的电脑活了｜词条 08｜阶跃激活函数",
+      "threadId": "01a130fd-4096-71d1-a2d1-c9176b9f77d2",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-009",
+      "title": "我的电脑活了｜词条 09｜Sigmoid",
+      "threadId": "01a130fd-5e81-70f3-bfc6-01772f9d6238",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-010",
+      "title": "我的电脑活了｜词条 10｜ReLU",
+      "threadId": "01a130fd-7d3a-7b21-81f5-1516fe932e95",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-011",
+      "title": "我的电脑活了｜词条 11｜单位矩阵初始化",
+      "threadId": "01a130fd-9e1b-7cb0-a9be-a41cfdc8d577",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-012",
+      "title": "我的电脑活了｜词条 12｜位置编码",
+      "threadId": "01a130fd-c136-78e1-8f96-1f4cc2f68bf0",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-013",
+      "title": "我的电脑活了｜词条 13｜随机失活",
+      "threadId": "01a130fd-e1ce-7a60-8277-89cbe3c6e208",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-014",
+      "title": "我的电脑活了｜词条 14｜批量归一化",
+      "threadId": "01a130fd-fe2d-7e62-b415-2ccee74b9079",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-015",
+      "title": "我的电脑活了｜词条 15｜层归一化",
+      "threadId": "01a130fe-187f-7a53-858b-864462ce12b8",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-016",
+      "title": "我的电脑活了｜词条 16｜散热器",
+      "threadId": "01a130fe-7d9a-75d1-a948-65299dacff2f",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-017",
+      "title": "我的电脑活了｜词条 17｜机柜租赁",
+      "threadId": "01a130fe-94b5-7d41-b18e-ab3a9e1d2470",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-018",
+      "title": "我的电脑活了｜词条 18｜预训练配置指南",
+      "threadId": "01a130fe-b7a4-74e3-a6d8-645498e401be",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-019",
+      "title": "我的电脑活了｜词条 19｜标注报酬倍率",
+      "threadId": "01a130fe-d8b0-76b3-867f-3c5d281a80fa",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-020",
+      "title": "我的电脑活了｜词条 20｜自动标注",
+      "threadId": "01a130fe-f55e-7f62-a4c3-587a32af2706",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-021",
+      "title": "我的电脑活了｜词条 21｜置信度分流",
+      "threadId": "01a130ff-1131-78f1-b638-2b003522fedc",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-022",
+      "title": "我的电脑活了｜词条 22｜本地模型推理",
+      "threadId": "01a130ff-302e-7823-96a1-7b5dc1d6e030",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-023",
+      "title": "我的电脑活了｜词条 23｜难例复核奖励",
+      "threadId": "01a130ff-4c82-7970-9c92-838ede2f4e46",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-024",
+      "title": "我的电脑活了｜词条 24｜标注质量抽检",
+      "threadId": "01a130ff-665f-7f13-b9e7-84649c9a37e6",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-025",
+      "title": "我的电脑活了｜词条 25｜并发推理",
+      "threadId": "01a130ff-83e6-7823-bc55-96edddd481b5",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-026",
+      "title": "我的电脑活了｜词条 26｜金标准题匹配",
+      "threadId": "01a130ff-ff6e-72b3-96a7-b36f01b8f181",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-027",
+      "title": "我的电脑活了｜词条 27｜验证码自动填充",
+      "threadId": "01a13100-17e1-7532-b109-4572a831f6c6",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-028",
+      "title": "我的电脑活了｜词条 28｜权重",
+      "threadId": "01a13100-44fa-7f40-bb1c-ab5707a44fbb",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-029",
+      "title": "我的电脑活了｜词条 29｜学习规则",
+      "threadId": "01a13100-6531-7141-9ece-fd38cf1f3cb5",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-030",
+      "title": "我的电脑活了｜词条 30｜偏置",
+      "threadId": "01a13100-7efb-7ab1-9d58-38bbb8539dfe",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-031",
+      "title": "我的电脑活了｜词条 31｜反向传播",
+      "threadId": "01a13100-a16c-7a61-a59c-c3361adc00d1",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-032",
+      "title": "我的电脑活了｜词条 32｜链式法则",
+      "threadId": "01a13100-ff3a-7220-87b3-f1f577adeae3",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-033",
+      "title": "我的电脑活了｜词条 33｜特征组合",
+      "threadId": "01a13101-1b05-7c71-8475-0d6057b73f7c",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-034",
+      "title": "我的电脑活了｜词条 34｜学习率预热",
+      "threadId": "01a13101-3983-7ab3-9338-e59ae5f9ba5d",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-035",
+      "title": "我的电脑活了｜词条 35｜半精度计算",
+      "threadId": "01a13101-7e83-7980-a408-6b9e629437f1",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-036",
+      "title": "我的电脑活了｜词条 36｜动量",
+      "threadId": "01a13101-f518-7fe0-a0b1-e867545e54c0",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-037",
+      "title": "我的电脑活了｜词条 37｜RMSProp",
+      "threadId": "01a13102-1152-7832-90bb-29635498792f",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-038",
+      "title": "我的电脑活了｜词条 38｜Adam",
+      "threadId": "01a13102-3b4f-7b40-9c75-819cd49c10a6",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-039",
+      "title": "我的电脑活了｜词条 39｜梯度裁剪",
+      "threadId": "01a13102-58cb-7711-8eda-d3b7521045cd",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-040",
+      "title": "我的电脑活了｜词条 40｜数据增强",
+      "threadId": "01a13102-7e12-7eb0-823b-31c4a392d3f7",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-041",
+      "title": "我的电脑活了｜词条 41｜数据清洗",
+      "threadId": "01a13102-952c-7611-b6a5-c415fb7d4afb",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-042",
+      "title": "我的电脑活了｜词条 42｜学习率搜索",
+      "threadId": "01a13102-b2d7-70a1-89a2-b97ff8f9bc21",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-043",
+      "title": "我的电脑活了｜词条 43｜学习率衰减",
+      "threadId": "01a13102-cf1c-7e40-a8f3-2238353ef7de",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-044",
+      "title": "我的电脑活了｜词条 44｜cuDNN",
+      "threadId": "01a13102-e819-7810-beb3-6b0b6c17a768",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-045",
+      "title": "我的电脑活了｜词条 45｜迁移学习",
+      "threadId": "01a13103-03e8-7460-ad51-cc7924d09ace",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-046",
+      "title": "我的电脑活了｜词条 46｜早停",
+      "threadId": "01a13103-58a7-7d12-93bf-c6cb5a1fcdb6",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-047",
+      "title": "我的电脑活了｜词条 47｜词向量",
+      "threadId": "01a13103-71b0-7020-b1d2-c5ed4591b30d",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-048",
+      "title": "我的电脑活了｜词条 48｜束搜索",
+      "threadId": "01a13103-92ce-76c0-93a9-de27f482ca15",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-049",
+      "title": "我的电脑活了｜词条 49｜子词切分",
+      "threadId": "01a13103-a9c5-7f63-9418-63d571131111",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-050",
+      "title": "我的电脑活了｜词条 50｜监督微调",
+      "threadId": "01a13103-c6f9-75b2-bf29-05cfc69f7df6",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-051",
+      "title": "我的电脑活了｜词条 51｜思维链",
+      "threadId": "01a13103-e879-7061-9ed3-0479b22b1e99",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-052",
+      "title": "我的电脑活了｜词条 52｜多头注意力",
+      "threadId": "01a13104-05f5-7630-972d-0bbbd71f6bb9",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-053",
+      "title": "我的电脑活了｜词条 53｜残差连接",
+      "threadId": "01a13104-2321-71d3-873f-d8abadbd9d38",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-054",
+      "title": "我的电脑活了｜词条 54｜感知机",
+      "threadId": "01a13104-4b9b-79a0-9b70-e32f90334d08",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-055",
+      "title": "我的电脑活了｜词条 55｜多层感知机",
+      "threadId": "01a13104-7409-7983-a32e-45e420817612",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-056",
+      "title": "我的电脑活了｜词条 56｜Transformer",
+      "threadId": "01a13104-f224-7983-802e-003851751c7a",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-057",
+      "title": "我的电脑活了｜词条 57｜LeNet",
+      "threadId": "01a13105-13f8-7e71-a856-e7ceda800c66",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-058",
+      "title": "我的电脑活了｜词条 58｜AlexNet",
+      "threadId": "01a13105-2f48-7e11-ba65-a3aeebb70d21",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-059",
+      "title": "我的电脑活了｜词条 59｜VGG",
+      "threadId": "01a13105-4725-7351-96cb-c420356ea560",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-060",
+      "title": "我的电脑活了｜词条 60｜GoogLeNet",
+      "threadId": "01a13105-6831-7221-a69f-32d0adad6bfe",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-061",
+      "title": "我的电脑活了｜词条 61｜ResNet",
+      "threadId": "01a13105-942d-7de3-b5f1-d81bf75b8353",
+      "hostId": "local"
+    },
+    {
+      "key": "tech-062",
+      "title": "我的电脑活了｜词条 62｜提示框排版",
+      "threadId": "01a13105-af63-7b43-9bf1-4b75b48188b2",
+      "hostId": "local"
+    }
+  ]
+}

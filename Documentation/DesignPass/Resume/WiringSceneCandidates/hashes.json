@@ -1,0 +1,5 @@
+{
+  "dispatcher_base": "245748A352DF74D8440074C4167E6E1227E6B54BC1B6368AC458DF84196FE71B",
+  "candidate": "56CFE9FF2E6160D943104CBEE848EE952ADE1285DA323ADF1A6E9BB3740BE87E",
+  "note": "Do not replace the production dispatcher wholesale; apply dispatcher.patch only."
+}

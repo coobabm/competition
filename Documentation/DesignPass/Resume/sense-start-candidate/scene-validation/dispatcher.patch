@@ -1,0 +1,23 @@
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+index 587bc31..90583bd 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -116,6 +116,10 @@ public static partial class DesignWallpaperSmoke
+             var runtime = UnityEngine.Object.FindAnyObjectByType<ChapterOneRuntime>();
+             var brain = UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
+             var controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
++            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "sense-start" && step >= 240)
++            {
++                TickSenseStart(controller, runtime); return;
++            }
+             if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "growth" && step >= 220)
+             {
+                 TickGrowth(controller, runtime, brain); return;
+@@ -267,6 +271,7 @@ public static partial class DesignWallpaperSmoke
+                     if (mode == "tech") step = 180;
+                     if (mode == "answer-path") step = 210;
+                     if (mode == "growth") step = 220;
++                    if (mode == "sense-start") step = 240;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
+                     if (mode == "readonly")
+                     {

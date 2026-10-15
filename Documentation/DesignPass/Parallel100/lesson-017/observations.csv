@@ -1,0 +1,12 @@
+case_id,evidence_type,status,run_id,language,resolution,input,t0,t_click,t_feedback,t_wallpaper_on,t_wallpaper_off,t_next_card,old_card_id,shown_guess,truth,evaluation,new_card_id,event_count,interruption_start,interruption_end,interruption_source,focus_or_input_blocked,extra_goal,evidence_path,notes
+A,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+B1,RUNTIME,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+B1,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+B2,RUNTIME,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+B2,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+B3,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+C,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+D_FAST4,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+D_KEYS,RUNTIME,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+D_LAYOUT,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,
+D_REDUCE_FX,VISUAL,NOT_RUN,,,,,,,,,,,,,,,,,,,,,,,

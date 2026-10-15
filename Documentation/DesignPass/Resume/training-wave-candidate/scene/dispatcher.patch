@@ -1,0 +1,10 @@
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -279,6 +279,7 @@
+                     if (mode == "lesson-goal") step = 250;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
+                     if (mode == "wiring-scene") StartWiringSceneChecks(controller, runtime);
++                    if (mode == "training-scene") StartTrainingSceneChecks(controller, runtime);
+                     if (mode == "readonly")
+                     {
+                         controller.Window.MinimizeWindow(); step = 190;

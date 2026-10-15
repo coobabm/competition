@@ -1,0 +1,12 @@
+{
+  "target": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+  "source_sha256": {
+    "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs": "CF6FC6F55FD84843E96E2B2516D591F2F9AF304C0D6D4321AABA92B73A474AE7",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.cs": "C4F1998E95B717C93AD4195D5C9FBB43616614D5C4A88837CB3EBCF44DE9966B",
+    "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs": "C6716EFA175D5659BF1EA9C0BAFBAE9BE3315421F9B820B581CEB0DFCDF9D5A1",
+    "Documentation/DesignPass/Agents/issues-task-001.md": "C1F0ABF07714DC13B73A795C975D9EEDD48A9E59A418A96343E86E47F545B971"
+  },
+  "candidate_sha256": "FDDC07E0D4711F11CF6DEA90A18DCF76F2647472297AE8C29D947E9DEEAA7092",
+  "scope": "Presentation strings only; patch not applied to production."
+}

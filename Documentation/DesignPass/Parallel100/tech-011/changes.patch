@@ -1,0 +1,9 @@
+# Target: Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+# Source-SHA256: 308FE4CD23D4410107D15670FF04520EFFC6CF59AB44B6370837053ECDDADFE8
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -170,3 +170,3 @@
+                 case "features": return T(sim, "启用人工特征后，感知机也可学习组合线索；每轮训练卡数按 ", "With engineered features enabled, a perceptron can learn combined clues; epoch card throughput is multiplied by ") + N(XgSim.FeaturesCardFactor) + T(sim, " 倍计算。", ".");
+-                case "irnn": return T(sim, "配合 ReLU 的普通循环网络能保留更久的记忆；仍会衰减，梯度裁剪需另行解锁。", "A plain recurrent network with ReLU retains memory longer; it still decays, and clipping is a separate unlock.");
++                case "irnn": return T(sim, "购买后无需装备，仅在模型采用普通 RNN＋ReLU 时，于下一次训练或评估生效。每跨过一个后续字，记忆信号由保留 75% 改为保留 ", "No equipment step is needed after purchase. Applies at the next training or evaluation only with a plain RNN and ReLU. For each subsequent word, memory signal retention changes from 75% to ") + N(XgBoard.IdentityKeep * 100) + T(sim, "%：替换原比例，逐字相乘，不重复叠加购买效果。梯度裁剪是购买前置，自动配置会开启；若未开启，同配置下失稳步长阈值再减半。准确率仍取决于学到的内容与题目。", "%, replacing the old rate and multiplying once per word; purchasing adds no repeatable bonus. Gradient clipping is a purchase prerequisite and automatic configuration enables it. Without clipping, the unstable-step threshold is halved again with all other settings equal. Accuracy still depends on learned content and the question.");
+                 case "position": return T(sim, "启用位置编码后，非循环结构也能使用字的位置线索。", "When enabled, positional encoding lets non-recurrent structures use word-position clues.");

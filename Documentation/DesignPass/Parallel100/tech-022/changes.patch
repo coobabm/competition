@@ -1,0 +1,16 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -190,3 +190,11 @@
+                 case "label.coop": return T(sim, "按把握阈值分流，待复核最多 ", "Route by confidence; hold up to ") + XgSim.ReviewCapacity + T(sim, " 题，队列满时自动暂停。", " review cards and pause automation when full.");
+-                case "label.brain": return T(sim, "第四阶段起可购买；本地模型在线时参与文字题判断，离线时回退到检查点评分。", "Available from stage 4; the online local model judges text cards, falling back to checkpoint scoring when offline.");
++                case "label.brain": return T(sim,
++                    "第四阶段、已购置信度分流后可购买一次；无需装备或额外训练步骤。服务就绪后，本地模型为已开放且检查点准确率 ≥ ",
++                    "Buy once from stage 4 after Confidence-based routing; no equipment or extra training step is needed. Once the service is ready, the local model judges supported text cards at open desks with checkpoint accuracy ≥ ")
++                    + N(XgCatalog.AutoMinAccuracy * 100) + T(sim,
++                    "% 的受支持文字台判断待判题；已有判断不重算，答案与把握度仍按原阈值分流。离线、离线结算或无有效结果时回退检查点。断电、研发或复核队列满时不派发新推理。每次实际派发计入 ",
++                    "%; existing judgments stay unchanged, and answers and confidence still use the current routing threshold. Offline service, offline catch-up or no valid result falls back to checkpoints. Power loss, research or a full review queue blocks new requests. Each dispatched request accounts for ")
++                    + N(XgSim.BrainGpuSeconds) + T(sim,
++                    " 秒 GPU 用量（按电费规则结算，并非答题耗时）。本地判断替代而非叠加检查点评分；不直接增加速度或准确率。",
++                    " seconds of GPU use under the electricity billing rules, not a response-time promise. Local judgments replace checkpoint estimates; this adds no speed or accuracy bonus.");
+                 case "label.hard": return T(sim, "新题人工复核答对时，报酬 ×1.5，样本 ×2；旧数据重审不享受此奖励。", "Correct human reviews of new cards pay ×1.5 and award ×2 samples; rechecking old data does not earn this bonus.");

@@ -1,0 +1,44 @@
+[
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "sourceSha256": "D997BB22368619936B2CC7D3144EFE82519D0114A792B945BA7A9ADE40ABB838",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\XgSim.Progression.cs",
+    "candidateSha256": "0C579FCD99F9C4D10E7E4DB682284C4BCF60DBC9B6A104865809F6A67B093260"
+  },
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "sourceSha256": "1D051CDC9A59AB3C1F1825A0445ABD486CC6638273320306FB427556F17685B7",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\XgCatalog.cs",
+    "candidateSha256": "2EB9313C066B670E9839F24E74471810E5EAB46C8C407215EB2FEF25A275D54E"
+  },
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "sourceSha256": "CC5A252CE52C9E0AC6959C55DFFD25DA83B365AA65669FC19BFAAC1D5134B204",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\XgSim.cs",
+    "candidateSha256": "83199AC4C42A32829121C185D110BCFAE1CF4694435769EAE554F384286BC906"
+  },
+  {
+    "source": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "sourceSha256": "5C20DA1967F47EA3E5241613C69D1FEBDA3E5633BAB924499EB1AAAED1E222B6",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\XingGuangController.cs",
+    "candidateSha256": "B3EEEB303AAFEAF1C0CAFFD5D4089A20D32CE140A6F9646D5B92AA8F0521AA96"
+  },
+  {
+    "source": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "sourceSha256": "E413F85601162CBD87E117C8EDFA8877FC7F99A49AC5DBDC706EE7B494FFCE45",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\DesignFirstLessonChecks.cs",
+    "candidateSha256": "1F1B44DC1F33081A48EAC94BF451BB478482818EE144E7F37EE1467EA826A46D"
+  },
+  {
+    "source": "Assets/LocalBuild/Editor/PlayabilityChecks.cs",
+    "sourceSha256": "5121049BF7E23D66DBEAE3514C0ADD9D092245B9C3199DD690B3B447C37A4A15",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\PlayabilityChecks.cs",
+    "candidateSha256": "E205F0CD962D7B3C104BC393FAF0936A356F9231FCF0DD8C3F1F9ED4861AC572"
+  },
+  {
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "sourceSha256": "5C99776F76EC7C8681247D992011C07EEB19BEC09A55006157C0A921CEC0813D",
+    "candidate": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-20261011\\Documentation\\DesignPass\\Resume\\sense-start-candidate\\sources\\DesignWallpaperSmoke.FirstMinute.cs",
+    "candidateSha256": "E0414C487BA56AF4A5E9DF7387F3973F15B58FBF156C846D212469F3E0C3F3F5"
+  }
+]

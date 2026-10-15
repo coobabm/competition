@@ -1,0 +1,13 @@
+diff --git a/Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs b/Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs
+index fb122a4..0ed22bf 100644
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Side.cs
+@@ -392,7 +392,7 @@ namespace LingGuangV05.Desktop.XingGuang
+             dataTab.Set(T("数据集", "Datasets"), true, !learningView && dataView ? XgDark.Accent : XgDark.Button, !learningView && dataView ? Color.white : XgDark.Ink);
+             learningTab.Set(T("它学会了吗", "Learning"), true, learningView ? XgDark.Accent : XgDark.Button, XgDark.Ink);
+             learningPane.gameObject.SetActive(learningView);
+-            learningText.text = Sim.CheckupText();
++            learningText.text = Sim.CheckupText(dataset: run.dataset);
+             gearPane.gameObject.SetActive(!learningView && !dataView);
+             dataPane.gameObject.SetActive(!learningView && dataView);
+             gearCount.gameObject.SetActive(false);

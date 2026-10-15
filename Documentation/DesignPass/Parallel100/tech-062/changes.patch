@@ -1,0 +1,261 @@
+# Base-SHA256: f27cc730c4871776fc3e29fb95d765c099c02007889648334c42e3491ca8a523
+# Target: Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+--- a/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
++++ b/Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+@@ -53,10 +53,14 @@
+         /// <summary>Square size, slot pitch and row pitch of the generated layout, in content pixels.</summary>
+         public const float SquareSize = 56, SlotWidth = 128, RowHeight = 118, LaneHeader = 34, LaneGap = 12, TopMargin = 64;
+         public const int Columns = 5;
+         public const float StageWidth = Columns * SlotWidth + 40;
+         const float TooltipWidth = 312;
++        RectTransform tipContent;
++        ScrollRect tipScroll;
++        LayoutElement tipHeadLayout, tipCostLayout;
++        float tipExitAt = -1;
+ 
+         RectTransform viewport, content, bandLayer, linkLayer, nodeLayer, miniMap, frontierWall, eraCard, tooltip;
+         TMP_Text header, tipName, tipLevel, tipBody, tipCost, tipGlyph, eraTitle, eraBody;
+         Image tipCostBar;
+         XgTechIcon tipIcon;
+@@ -330,49 +334,76 @@
+         /// <summary>The package's Toolltip prefab, rebuilt: header (name and icon), Lv. n/m, a line, the description, the price bar.</summary>
+         void BuildTooltip()
+         {
+             tooltip = Rect("Tooltip", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
+             tooltip.pivot = new Vector2(.5f, 0); tooltip.sizeDelta = new Vector2(TooltipWidth, 0);
+-            var bg = Panel(tooltip, new Color32(5, 9, 14, 250)); bg.sprite = skin.fill; bg.raycastTarget = false;
++            var bg = Panel(tooltip, new Color32(5, 9, 14, 250)); bg.sprite = skin.fill; bg.raycastTarget = true;
+             var rim = tooltip.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
+-            var column = tooltip.gameObject.AddComponent<VerticalLayoutGroup>();
++            var clip = Rect("Clip", tooltip, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-12, 0));
++            clip.gameObject.AddComponent<RectMask2D>();
++            tipContent = Rect("TipContent", clip, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
++            tipContent.pivot = new Vector2(.5f, 1);
++            tipScroll = tooltip.gameObject.AddComponent<ScrollRect>();
++            tipScroll.viewport = clip; tipScroll.content = tipContent;
++            tipScroll.horizontal = false; tipScroll.vertical = true;
++            tipScroll.movementType = ScrollRect.MovementType.Clamped;
++            tipScroll.inertia = false; tipScroll.scrollSensitivity = 24;
++            var track = Rect("ScrollTrack", tooltip, new Vector2(1, 0), Vector2.one, new Vector2(-10, 4), new Vector2(-2, -4));
++            Panel(track, XgDark.Card);
++            var handle = Rect("Handle", track, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
++            var handleImage = Panel(handle, XgDark.Muted);
++            var scrollbar = track.gameObject.AddComponent<Scrollbar>();
++            scrollbar.handleRect = handle; scrollbar.targetGraphic = handleImage;
++            scrollbar.direction = Scrollbar.Direction.BottomToTop;
++            tipScroll.verticalScrollbar = scrollbar;
++            // Reserve the gutter even when hidden, avoiding a wrap/scrollbar feedback loop.
++            tipScroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
++            var events = tooltip.gameObject.AddComponent<EventTrigger>();
++            var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
++            enter.callback.AddListener(_ => tipExitAt = -1); events.triggers.Add(enter);
++            var leave = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
++            leave.callback.AddListener(_ => tipExitAt = Time.unscaledTime + .35f); events.triggers.Add(leave);
++            var column = tipContent.gameObject.AddComponent<VerticalLayoutGroup>();
+             column.padding = new RectOffset(12, 12, 10, 10); column.spacing = 6;
+             column.childControlWidth = column.childControlHeight = true; column.childForceExpandWidth = true; column.childForceExpandHeight = false;
+-            tooltip.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+-
+-            var head = Rect("Header", tooltip, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
++            tipContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
++
++            var head = Rect("Header", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+             var headRow = head.gameObject.AddComponent<HorizontalLayoutGroup>();
+             headRow.spacing = 8; headRow.childAlignment = TextAnchor.MiddleLeft;
+             headRow.childControlWidth = headRow.childControlHeight = true; headRow.childForceExpandWidth = headRow.childForceExpandHeight = false;
+             tipName = ui.Text(Rect("Name", head, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 19, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+             tipName.fontStyle = FontStyles.Bold;
+-            tipName.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
++            var nameLayout = tipName.gameObject.AddComponent<LayoutElement>();
++            nameLayout.minWidth = 0; nameLayout.flexibleWidth = 1;
++            tipHeadLayout = head.gameObject.AddComponent<LayoutElement>();
+             var iconBg = Rect("IconBg", head, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+             var iconFill = Panel(iconBg, XgDark.Card); iconFill.sprite = skin.fill; iconFill.raycastTarget = false;
+             var iconLe = iconBg.gameObject.AddComponent<LayoutElement>(); iconLe.preferredWidth = iconLe.minWidth = iconLe.preferredHeight = iconLe.minHeight = 36;
+             var iconRt = Rect("Icon", iconBg, Vector2.zero, Vector2.one, new Vector2(6, 6), new Vector2(-6, -6));
+             iconRt.gameObject.AddComponent<CanvasRenderer>();
+             tipIcon = iconRt.gameObject.AddComponent<XgTechIcon>(); tipIcon.raycastTarget = false;
+             tipGlyph = ui.Text(Rect("Glyph", iconBg, Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2)), "", 12, XgDark.Ink, TextAlignmentOptions.Center);
+             tipGlyph.fontStyle = FontStyles.Bold; tipGlyph.textWrappingMode = TextWrappingModes.NoWrap;
+             tipGlyph.enableAutoSizing = true; tipGlyph.fontSizeMin = 8; tipGlyph.fontSizeMax = 13;
+ 
+-            tipLevel = ui.Text(Rect("Level", tooltip, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 15, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
++            tipLevel = ui.Text(Rect("Level", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 15, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+             Divider();
+-            tipBody = ui.Text(Rect("Description", tooltip, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 15, XgDark.Ink, TextAlignmentOptions.TopLeft);
++            tipBody = ui.Text(Rect("Description", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 15, XgDark.Ink, TextAlignmentOptions.TopLeft);
+             tipBody.lineSpacing = -6;
+             Divider();
+-            var bar = Rect("CostBG", tooltip, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
++            var bar = Rect("CostBG", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+             tipCostBar = Panel(bar, XgDark.Bad); tipCostBar.sprite = skin.fill; tipCostBar.raycastTarget = false;
+-            bar.gameObject.AddComponent<LayoutElement>().preferredHeight = 28;
++            tipCostLayout = bar.gameObject.AddComponent<LayoutElement>();
++            tipCostLayout.preferredHeight = 28;
+             tipCost = ui.Text(Rect("Cost", bar, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), "", 16, Color.white, TextAlignmentOptions.Center);
+-            tipCost.fontStyle = FontStyles.Bold; tipCost.textWrappingMode = TextWrappingModes.NoWrap;
++            tipCost.fontStyle = FontStyles.Bold; tipCost.textWrappingMode = TextWrappingModes.Normal;
+             tooltip.gameObject.SetActive(false);
+ 
+             void Divider()
+             {
+-                var line = Rect("Line", tooltip, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
++                var line = Rect("Line", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+                 var img = Panel(line, new Color(1, 1, 1, .31f)); img.sprite = skin.line; img.raycastTarget = false;
+                 line.gameObject.AddComponent<LayoutElement>().preferredHeight = 2;
+             }
+         }
+ 
+@@ -583,22 +614,28 @@
+         public void Hover(XgTechNodeView v, bool on)
+         {
+             if (!built || v == null) return;
+             if (on)
+             {
++                tipExitAt = -1;
+                 if (hovered == v || !v.gameObject.activeInHierarchy) return;
++                if (hovered != null)
++                {
++                    hovered.square.DOKill(); hovered.square.localScale = Vector3.one;
++                    hovered.square.localRotation = Quaternion.identity;
++                }
+                 hovered = v;
+                 Fx.Play(XgJuice.Sfx.Id.Tick, 1.5f, .25f);
+                 if (!Fx.Reduced) { v.square.DOKill(); v.square.DOScale(1.08f, .12f).SetUpdate(true).SetLink(v.gameObject); }
+                 ShowTooltip(v);
+             }
+             else
+             {
+                 if (hovered != v) return;
+-                hovered = null;
++                // Keep the card alive while the pointer crosses the gap to its scroll area.
++                tipExitAt = Time.unscaledTime + .35f;
+                 v.square.DOKill(); v.square.localScale = Vector3.one; v.square.localRotation = Quaternion.identity;
+-                HideTooltip();
+             }
+             PaintLinks();
+             foreach (var view in views) if (view.gameObject.activeSelf) view.ring.color = view == hovered || view == pinned ? new Color(1, 1, 1, .85f) : Color.clear;
+         }
+ 
+@@ -697,42 +734,65 @@
+         // ───────────── tooltip ─────────────
+ 
+         void ShowTooltip(XgTechNodeView v)
+         {
+             FillTooltip(v);
+-            bool wasOpen = tooltip.gameObject.activeSelf;
+             tooltip.gameObject.SetActive(true); tooltip.SetAsLastSibling(); eraCard.SetAsLastSibling();
++            // A size/rotation shake can cross the screen edge after placement has clamped the card.
++            tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
++            tipScroll.StopMovement(); tipContent.anchoredPosition = Vector2.zero;
+             PlaceTooltip(v);
+-            // The package's UpgradeTooltip.OnEnable shake, kept small on the z axis so the text stays legible.
+-            tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
+-            if (!Fx.Reduced && !wasOpen)
+-            {
+-                tooltip.DOShakeRotation(.3f, new Vector3(0, 0, 6), 20, 90, true).SetUpdate(true).SetLink(tooltip.gameObject);
+-                tooltip.DOShakeScale(.2f, .12f, 5).SetUpdate(true).SetLink(tooltip.gameObject);
+-            }
++            tipScroll.verticalNormalizedPosition = 1;
+         }
+ 
+         void HideTooltip()
+         {
++            tipExitAt = -1;
+             if (tooltip == null) return;
+             tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
+             tooltip.gameObject.SetActive(false);
+         }
+ 
+-        /// <summary>Above the square, or below it when there is no room; always inside the page.</summary>
++        /// <summary>Intersect the page with the visible screen, in page-local canvas units.</summary>
++        Rect TooltipBounds()
++        {
++            var bounds = root.rect;
++            var canvas = root.GetComponentInParent<Canvas>();
++            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
++            var safe = Screen.safeArea;
++            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, safe.min, camera, out var a)
++                && RectTransformUtility.ScreenPointToLocalPointInRectangle(root, safe.max, camera, out var b))
++                bounds = Rect.MinMaxRect(Mathf.Max(bounds.xMin, Mathf.Min(a.x, b.x)), Mathf.Max(bounds.yMin, Mathf.Min(a.y, b.y)),
++                    Mathf.Min(bounds.xMax, Mathf.Max(a.x, b.x)), Mathf.Min(bounds.yMax, Mathf.Max(a.y, b.y)));
++            return bounds;
++        }
++
++        /// <summary>Wrap at the actual width, then cap height and expose the remainder by scrolling.</summary>
+         void PlaceTooltip(XgTechNodeView v)
+         {
+-            LayoutRebuilder.ForceRebuildLayoutImmediate(tooltip);
+-            var bounds = root.rect;
+-            float h = tooltip.rect.height, w = tooltip.rect.width;
++            var bounds = TooltipBounds();
++            if (bounds.width <= 8 || bounds.height <= 8) { HideTooltip(); return; }
++            float w = XgTechTooltipGeometry.Width(bounds.width, TooltipWidth);
++            tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
++            // 12 gutter + 24 padding; keep the icon only when the title has usable space.
++            float inner = Mathf.Max(1, w - 36);
++            bool showIcon = inner >= 100;
++            tipIcon.transform.parent.gameObject.SetActive(showIcon);
++            tipHeadLayout.preferredHeight = Mathf.Max(showIcon ? 36 : 0,
++                tipName.GetPreferredValues(tipName.text, Mathf.Max(1, inner - (showIcon ? 44 : 0)), Mathf.Infinity).y);
++            tipCostLayout.preferredHeight = Mathf.Max(28, tipCost.GetPreferredValues(tipCost.text, Mathf.Max(1, inner - 16), Mathf.Infinity).y + 8);
++            LayoutRebuilder.ForceRebuildLayoutImmediate(tipContent);
++            float h = Mathf.Min(tipContent.rect.height, bounds.height - 8);
++            tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
++            // Preserve the current scroll position on live copy/size updates, clamped to the new extent.
++            tipContent.anchoredPosition = new Vector2(0, Mathf.Clamp(tipContent.anchoredPosition.y, 0, Mathf.Max(0, tipContent.rect.height - h)));
+             Vector2 top = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, SquareSize * .5f, 0)));
+             Vector2 bottom = root.InverseTransformPoint(v.transform.TransformPoint(new Vector3(0, -SquareSize * .5f - 62, 0)));
+-            bool above = top.y + 10 + h <= bounds.yMax - 4;
+-            tooltip.pivot = new Vector2(.5f, above ? 0 : 1);
+-            float y = above ? top.y + 10 : Mathf.Max(bottom.y - 4, bounds.yMin + h + 4);
+-            float x = Mathf.Clamp(top.x, bounds.xMin + w * .5f + 4, bounds.xMax - w * .5f - 4);
+-            tooltip.anchoredPosition = new Vector2(x, y);
++            XgTechTooltipGeometry.Place(bounds.xMin, bounds.yMin, bounds.xMax, bounds.yMax, w, h, top.x, top.y, bottom.y, out float x, out float y);
++            tooltip.pivot = new Vector2(.5f, 1);
++            // anchoredPosition uses the centre anchor; local bounds need not have a centred pivot.
++            tooltip.anchoredPosition = new Vector2(x, y) - root.rect.center;
+         }
+ 
+         void FillTooltip(XgTechNodeView v)
+         {
+             var e = v.entry; var node = e.First;
+@@ -893,17 +953,38 @@
+         public override void Shown() { if (!built) return; Sync(false); FocusFrontier(); }
+ 
+         public override void Tick(float dt)
+         {
+             if (!built) return;
++            if (tipExitAt >= 0 && Time.unscaledTime >= tipExitAt)
++            {
++                hovered = null; HideTooltip(); PaintLinks();
++                foreach (var v in views) if (v.gameObject.activeSelf)
++                    v.ring.color = v == pinned ? new Color(1, 1, 1, .85f) : Color.clear;
++            }
+             if (eraRemaining > 0) { eraRemaining -= dt; if (eraRemaining <= 0) eraCard.gameObject.SetActive(false); }
+             // The tooltip follows its square while the view pans or zooms.
+             if (hovered != null && tooltip.gameObject.activeSelf)
+             {
+                 if (!hovered.gameObject.activeInHierarchy) { hovered = null; HideTooltip(); }
+                 else PlaceTooltip(hovered);
+             }
++        }
++    }
++
++    // Pure geometry kept separate so edge cases can run without Unity or player state.
++    internal static class XgTechTooltipGeometry
++    {
++        internal static float Width(float available, float preferred) => Math.Max(1, Math.Min(preferred, available - 8));
++
++        // x is the centre, y is the top edge. Callers cap w/h before placement.
++        internal static void Place(float left, float bottom, float right, float top,
++            float w, float h, float nodeX, float nodeTop, float nodeBottom, out float x, out float y)
++        {
++            float desiredTop = nodeTop + 10 + h <= top - 4 ? nodeTop + 10 + h : nodeBottom - 4;
++            x = Math.Max(left + w * .5f + 4, Math.Min(nodeX, right - w * .5f - 4));
++            y = Math.Max(bottom + h + 4, Math.Min(desiredTop, top - 4));
+         }
+     }
+ 
+     /// <summary>A label that keeps its Chinese and English text and shows the one for the current language.</summary>
+     public sealed class XgTechText : MonoBehaviour

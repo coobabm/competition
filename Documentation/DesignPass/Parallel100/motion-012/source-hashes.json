@@ -1,0 +1,44 @@
+{
+  "review_date": "2026-10-13",
+  "timezone": "Asia/Singapore",
+  "verification": "Static source review only; Unity compilation, runtime and visual acceptance not run.",
+  "final_recheck_unchanged": true,
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+      "sha256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+      "sha256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+      "sha256": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+      "sha256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+      "sha256": "A9A4034835455A081FACB33388AEB1155814AB835146694381DFE7AB571ABA89"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+      "sha256": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+      "sha256": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs",
+      "sha256": "7238987932349770A100D68FA8B3FC06F5A3BA48315C4B31386804A5E5C7DC40"
+    },
+    {
+      "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+      "sha256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE"
+    }
+  ]
+}

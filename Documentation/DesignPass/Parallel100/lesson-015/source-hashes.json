@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Teaching.cs",
+    "sha256": "CF6FC6F55FD84843E96E2B2516D591F2F9AF304C0D6D4321AABA92B73A474AE7"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "sha256": "5C20DA1967F47EA3E5241613C69D1FEBDA3E5633BAB924499EB1AAAED1E222B6"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaper.cs",
+    "sha256": "8D08D5480C15322DA9232A07CA9CFFAB98FC5B8F375BDD04F10C56E5E1783162"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "sha256": "C6716EFA175D5659BF1EA9C0BAFBAE9BE3315421F9B820B581CEB0DFCDF9D5A1"
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+    "sha256": "DF79E8B9079F9D845F14F1C10D8A7332F96169E0CA244325CA5EA1FE3F0BFD2C"
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+    "sha256": "E0B60830E63E1B186CF74C23392BBEAD417E875E70FAE226171E723B97F9E1B0"
+  },
+  {
+    "path": "Documentation/DesignPass/Agents/issues-task-001.md",
+    "sha256": "C1F0ABF07714DC13B73A795C975D9EEDD48A9E59A418A96343E86E47F545B971"
+  }
+]

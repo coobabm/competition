@@ -1,0 +1,74 @@
+[
+  {
+    "path": "Documentation/DesignPass/Agents/motion-task-001.md",
+    "sha256": "755DBC9C34002157AE71792FA8484A02F0776311C36CF586518DC97D9C99B9EE"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "sha256": "22E10F5BD0C8DC49168D401F727214E47B9782B7B26C6D801C48FB3D8D59530E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUi.cs",
+    "sha256": "A81D4AA3591C28EFA023FB2CAB4DCC976CC581A1B132CFE910FD181CEDC50F14"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgButtonPressFeedback.cs",
+    "sha256": "1F284BD333A1049AA0A8463BF9B3A3913D6C359AF0FEAA22794A66BCFAAABE78"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgJuice.cs",
+    "sha256": "2ABCA8BD6A93D03CF679A786F1A8B6EB2B50A2505A68CE2AA5F890844CF567EC"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+    "sha256": "615ED6C31B9512919BB1E907D9A097B4B88A350A3D3B4FCF5CB8E6EEE3925A03"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "sha256": "1AFC0A20C289705A600CA0A73A5D5A9BDF402FCFFC5D395DB7FB19141B96895E"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBoardPage.Cortex.cs",
+    "sha256": "249870A0B6A1E121BF46D8F193E75E22112072142678A2C3DA7AC7C55FBB0017"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgCortexGraphic.cs",
+    "sha256": "AFDABFBCB772B782B0589795A8BD65E965F4CCF4901D67BDA2E1E0D4B0F79033"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaper.cs",
+    "sha256": "8D08D5480C15322DA9232A07CA9CFFAB98FC5B8F375BDD04F10C56E5E1783162"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaperPresentation.cs",
+    "sha256": "C97DAD8F9DA53E61FDE90A8454D1AA6E7C730C7891C39AEC83F364C332585E5B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaperPin.cs",
+    "sha256": "E202E9CBF01CC176DA87B246EF37594DDE67E96D498F6E32F3B4018228E412CF"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperRegionCard.cs",
+    "sha256": "CA9C519BCEE834807EA46EAB77109C65CBE06B7FE0C318CF930793773DC9CF9B"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperConcepts.cs",
+    "sha256": "137BF53E38596B1DFB7851F082BA85E47F1884D197D333E62FDDCB6C71AECA50"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperConcepts.Regions.cs",
+    "sha256": "342D72E7A9FA3A2760597716DCBDA3031EDAEFF769FDB2709956EFD59C898F01"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgWallpaperPersona.cs",
+    "sha256": "E5DFB0D55B39627EEEDDA626CD63177BF42C6128160157BE6E99D35C914D9CDF"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/PrologueDesk.cs",
+    "sha256": "F98E391C7EFC7F62499B04837AE9DA9580E7F2D736702B2B36E5CE8A068370D0"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgShapes.cs",
+    "sha256": "ACD56AD041CE4A621FAD5727D539660C9D2D9EEAFFF7095D174ACF7D7099FCA6"
+  }
+]

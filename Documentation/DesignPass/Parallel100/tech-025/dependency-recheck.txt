@@ -1,0 +1,10 @@
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgSim.Collaboration.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgSim.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Desktop/XgBrain.cs
+UNCHANGED Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+UNCHANGED Assets/LingGuangV05/LocalLLM/LocalLlm.cs
+UNCHANGED Assets/LingGuangV05/Core/Chat/LlmScheduling.cs

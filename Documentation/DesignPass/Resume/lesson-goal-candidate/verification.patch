@@ -1,0 +1,57 @@
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
+index 826d875..f98f3f2 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs
+@@ -205,6 +205,7 @@ public static partial class DesignWallpaperSmoke
+                 Check(true, "FIRST_MINUTE_ENGLISH_CORRECTION_PASS (focused locale and layout scene; does not repeat the sixty-second acceptance)");
+                 yield break;
+             }
++            CheckLessonGoalState(controller, 0);
+             int answers = 0, sample = -1;
+             float nextAnswer = firstVisible + 8;
+             bool checkedNavigation = false, capturedCorrection = false;
+@@ -254,6 +255,7 @@ public static partial class DesignWallpaperSmoke
+                 if (!idle && answers == 4 && !checkedNavigation)
+                 {
+                     yield return new WaitForSecondsRealtime(.2f);
++                    CheckLessonGoalState(controller, XgCatalog.SamplesToTrain);
+                     Check(train.button.IsInteractable() && chat.button.IsInteractable() && board.button.IsInteractable(),
+                         "Training, chat and brain entries remain available during the first minute");
+                     Click(train.rt);
+@@ -436,7 +438,11 @@ public static partial class DesignWallpaperSmoke
+             "English companion localization preserves optional chat and brain navigation");
+         CheckFirstMinuteEnglishTextFits(chat.label, "English companion chat button");
+         CheckFirstMinuteEnglishTextFits(board.label, "English companion brain button");
+-        CheckFirstMinuteEnglishTextFits(train.label, "English companion train button");
++        CheckLessonGoalState(controller, answered ? 1 : 0);
++        if (train.rt.gameObject.activeInHierarchy)
++            CheckFirstMinuteEnglishTextFits(train.label, "English companion train button");
++        else
++            Check(!train.button.IsInteractable(), "English training action stays hidden and unavailable before four examples");
+         if (!answered) return;
+         var feedback = FirstMinuteField<TMP_Text>(page, "feedback");
+         Check(feedback.text.StartsWith("Last card: you corrected it\nCorrect answer: Yes", StringComparison.Ordinal)
+
+diff --git a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+index 8fc5253..c5ce61f 100644
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -116,6 +116,10 @@ public static partial class DesignWallpaperSmoke
+             var runtime = UnityEngine.Object.FindAnyObjectByType<ChapterOneRuntime>();
+             var brain = UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
+             var controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
++            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "lesson-goal" && step >= 250)
++            {
++                TickLessonGoal(controller, runtime); return;
++            }
+             if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "sense-start" && step >= 240)
+             {
+                 TickSenseStart(controller, runtime); return;
+@@ -272,6 +276,7 @@ public static partial class DesignWallpaperSmoke
+                     if (mode == "answer-path") step = 210;
+                     if (mode == "growth") step = 220;
+                     if (mode == "sense-start") step = 240;
++                    if (mode == "lesson-goal") step = 250;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
+                     if (mode == "wiring-scene") StartWiringSceneChecks(controller, runtime);
+                     if (mode == "readonly")

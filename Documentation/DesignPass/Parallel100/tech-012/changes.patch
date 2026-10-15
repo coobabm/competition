@@ -1,0 +1,12 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -84,3 +84,3 @@
+                 case "irnn": return T(sim, "让循环网络初始时尽量原样传递记忆，少丢掉前面的字。", "Start a recurrent network with wiring that passes memory onward with less loss.");
+-                case "position": return T(sim, "给每个字加上位置编号，让网络分清前后顺序。", "Tag each word with its position so the network can tell their order.");
++                case "position": return T(sim, "给字加上位置线索，让支持的网络区分它在句子中的位置。", "Give words position clues so supported networks can tell where they sit in a sentence.");
+                 case "warmup": return T(sim, "刚换设置时先小步学习，再慢慢恢复正常步幅。", "After a settings change, start with small learning steps and gradually return to the normal size.");
+@@ -171,3 +171,3 @@
+                 case "irnn": return T(sim, "配合 ReLU 的普通循环网络能保留更久的记忆；仍会衰减，梯度裁剪需另行解锁。", "A plain recurrent network with ReLU retains memory longer; it still decays, and clipping is a separate unlock.");
+-                case "position": return T(sim, "启用位置编码后，非循环结构也能使用字的位置线索。", "When enabled, positional encoding lets non-recurrent structures use word-position clues.");
++                case "position": return T(sim, "解锁后自动启用，无需装备；训练中的模型在本轮结束后配置。支持的结构在大脑训练中可区分距句尾的位置、识别句首或对齐两句中同位置的词，具体取决于结构。需继续训练学习这些线索；不直接增加评分或预训练规模，一次解锁、不叠加。", "Enabled automatically after unlock; no equipment step. Models in an active round are configured after it ends. Depending on the architecture, brain training can use distance from the sentence end, identify the opening word, or align words at matching positions in two sentences. Further training learns from these clues. No direct score or pre-training scale bonus; one unlock, no stacking.");
+                 case "warmup": return T(sim, "启用预热后，换设置的前 ", "With warm-up enabled, the first ") + XgSim.WarmupCards + T(sim, " 张训练卡逐步恢复学习率，减少开头失稳。", " training cards after a settings change gradually restore the learning rate, reducing initial instability.");

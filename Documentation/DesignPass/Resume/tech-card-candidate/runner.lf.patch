@@ -1,0 +1,21 @@
+--- a/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
++++ b/Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs
+@@ -120,6 +120,10 @@
+             {
+                 TickSenseStart(controller, runtime); return;
+             }
++            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "tech-cards" && step >= 250)
++            {
++                TickTechCards(controller, runtime); return;
++            }
+             if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "growth" && step >= 220)
+             {
+                 TickGrowth(controller, runtime, brain); return;
+@@ -271,6 +275,7 @@
+                     if (mode == "tech") step = 180;
+                     if (mode == "answer-path") step = 210;
+                     if (mode == "growth") step = 220;
++                    if (mode == "tech-cards") step = 250;
+                     if (mode == "sense-start") step = 240;
+                     if (mode == "answer-correction") StartCorrectionChecks(controller, brain);
+                     if (mode == "wiring-scene") StartWiringSceneChecks(controller, runtime);

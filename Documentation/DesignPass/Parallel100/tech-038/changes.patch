@@ -1,0 +1,32 @@
+--- a/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
++++ b/Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs
+@@ -15,6 +15,7 @@
+             if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeName(node);
+             switch (node.id)
+             {
++                case "adam": return T(sim, "Adam 优化器（自适应矩估计）", "Adam optimizer (Adaptive Moment Estimation)");
+                 case "rnn": return T(sim, "循环神经网络（RNN）", "Recurrent neural network (RNN)");
+                 case "lstm": return T(sim, "长短期记忆网络（LSTM）", "Long short-term memory (LSTM)");
+                 case "gru": return T(sim, "门控循环单元（GRU）", "Gated recurrent unit (GRU)");
+@@ -87,7 +88,7 @@
+                 case "fp16": return T(sim, "用较短的数字表示参与计算，降低大模型计算的资源需求。", "Use shorter number representations to reduce the resources needed for large-model computation.");
+                 case "momentum": return T(sim, "记住前几次调整的方向，少走来回摇摆的路。", "Remember recent update directions to reduce back-and-forth motion.");
+                 case "rmsprop": return T(sim, "根据每个参数最近变化的大小，分别调整学习步幅。", "Adjust each parameter's step size using the size of its recent changes.");
+-                case "adam": return T(sim, "同时参考过去的方向和变化大小，为每个参数调整步幅。", "Use both recent direction and change size to adjust each parameter's steps.");
++                case "adam": return T(sim, "Adam 的原理是：记住最近往哪边改、改动有多大，再为每个参数选择步幅。游戏中的简化效果见下方。", "Adam works by remembering recent update directions and sizes to choose a step for each parameter. Its simplified game effects are listed below.");
+                 case "gradclip": return T(sim, "一次改动太大时把它截短，减少训练突然失稳。", "Trim oversized updates to reduce sudden training instability.");
+                 case "dropout": return T(sim, "训练时暂时关掉部分线索，避免总靠同一条捷径答题。", "Temporarily drop some clues during training so the model cannot always rely on one shortcut.");
+                 case "augment": return T(sim, "把同一道图片题挪动、裁剪或旋转，让它练习不同样子。", "Shift, crop or rotate picture examples to practise different appearances.");
+@@ -153,6 +154,12 @@
+                 return result;
+             }
+             var research = XgCatalog.ResearchItem(node.id);
++            if (node.id == "adam" && research != null)
++                return T(sim, "第四阶段、拥有 RMSProp 后可购买；购买后自动用于两条训练线，无需装备。相对基础 SGD，训练处理量 ×", "Available from stage 4 after RMSProp. Buying automatically applies it to both training tracks; no equipping is needed. Relative to base SGD, training throughput is ×") + N(research.speed)
++                    + T(sim, "；实际卡数受算力、模型大小、取整和上限影响。", "; actual card counts depend on compute, model size, rounding and caps.")
++                    + T(sim, "训练时，导致大脑失稳的步幅阈值 ×1.25，与批量归一化和裁剪的阈值倍率相乘；仍可能失稳。", " During training, the step threshold for brain instability is ×1.25, multiplying with batch normalization and clipping threshold factors; instability is still possible.")
++                    + T(sim, "优化器仅取最快已拥有项，不彼此叠加；处理量倍率与其他训练倍率相乘。", " Only the fastest owned optimizer applies, without stacking optimizers; throughput multiplies with other training factors.")
++                    + T(sim, "训练结算采用当前效果，成绩需训练后评估。学习率标签沿用 RMSProp 的显示比例，不表示实际步幅缩小。", " Training uses the current effects at settlement; evaluate after training for scores. Learning-rate labels keep the RMSProp display scale; this does not shrink the actual step.");
+             if (research != null && research.kind == XgResearchKind.Optimizer)
+                 return T(sim, "相对基础 SGD，", "Relative to base SGD, ") + Speed(sim, research.speed) + T(sim, "优化器只采用已拥有者中速度最高的一种，倍率不相乘。", "Only the fastest owned optimizer is used; their multipliers do not stack.");
+             switch (node.id)
