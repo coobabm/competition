@@ -81,8 +81,8 @@ namespace LingGuangV05.XingGuang
             Add("步子", "Step size", "每次发现错了，改多大一步，叫【学习率】；改作文一次只改一句很稳，一次改一整段学得快，也容易改崩。",
                 "How big a fix it makes after each mistake is the 【learning rate】. Editing an essay one sentence at a time is safe; a whole paragraph at a time is fast and easy to ruin.");
             // 1.4 abilities and progress
-            Add("能力", "Ability", "它学会做的一件新事。能力不是一点点长出来的，脑子和题攒够了，会在某一刻突然冒出来，行内叫【涌现】。",
-                "A new thing it can do. Abilities do not grow bit by bit: with enough brain and questions they appear all at once, which is called 【emergence】.");
+            Add("能力", "Ability", "它学会做的一件新事。能力不是一点点长出来的，脑子和题攒够了，会在某一刻突然冒出来。",
+                "A new thing it can do. Abilities do not grow bit by bit: with enough brain and questions they show up all at once.");
             Add("阶段", "Stage", "每多一项能力就进一个阶段，一共六个，对应人工智能真实走过的六段历史。",
                 "Each new ability is a new stage. There are six, one for each chapter of real AI history.");
             Add("题量", "Questions learned", "它一共学过多少道题，也就是练过的【样本】总数。",
@@ -102,8 +102,8 @@ namespace LingGuangV05.XingGuang
                 "A company pays it to do a job under a 【contract】. Deliver on time and up to standard, and it pays.");
             Add("外包", "Crowd work", "在平台上发题、接题挣钱，叫【众包】：一道题几分钱，答的人遍布全国。",
                 "Earning by answering questions on a platform is 【crowdsourcing】: a few fen a question, workers all over the country.");
-            Add("抽查", "Spot check", "平台会偷偷混进几道早就有标准答案的题，叫【金标题】；答错了要罚钱，错多了封号。",
-                "The platform slips in questions whose answers it already knows, 【gold questions】. Miss one and you are fined; miss many and you are banned.");
+            Add("抽查", "Spot check", "平台会偷偷混进几道早就有标准答案的题，叫【金标题】；答错了要罚钱，错多了信用分会掉，抽你也抽得更勤。",
+                "The platform slips in questions whose answers it already knows, 【gold questions】. Miss one and you are fined; miss many and your credit drops, so you get checked more often.");
             Add("错上加错", "Errors on errors", "它自己标的题里藏着错，再拿来教自己，错就越滚越多，行内叫【近亲繁殖】。",
                 "Its own labels carry mistakes; teach it with them and the mistakes snowball. That is 【inbreeding】.");
             Add("找人帮忙", "Get help", "花钱请网吧的朋友替你答题，叫【转包】；钱少赚一点，手腾出来了。",

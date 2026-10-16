@@ -30,14 +30,14 @@ namespace LingGuangV05.XingGuang
         public static readonly XgNode[] LabelNodes =
         {
             LabelNode("label.raise", null, "加薪", "Pay raise", "人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。", "Hand pay: ×2, ×4, ×6 … ×34, +2× per raise; shared with the labelling shop.", 10, 17, 0),
-            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.3 题/秒；需任一 60% 检查点。", "Each global level adds 0.3 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
+            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.15 题/秒；需任一 60% 检查点。", "Each global level adds 0.15 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
             LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 20，满时自动暂停。", "Route by confidence; automation pauses when the 20-card review inbox is full.", 300, 1, 260),
             LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
             LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 800, 1, 520),
-            LabelNode("label.audit", "label.coop", "抽检", "Quality audit", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
+            LabelNode("label.audit", "label.coop", "自查", "Self-check", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
             LabelNode("label.parallel", "label.brain", "多开推理", "Parallel inference", "本地推理并发 1 → 4，保留聊天优先；实际速度取决于本机。", "Local concurrency 1 to 4, with chat priority; measured speed depends on this computer.", 3000, 1, 780),
             LabelNode(TrapMemoryNode, "label.coop", "题库比对", "Trap memory", "记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。", "Remember the platform's known-answer trap items; when one comes back it goes to your review inbox instead of being auto-submitted.", 800, 1, 910),
-            LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第三阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 3 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 2000, 1, 1040),
+            LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 4 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 2000, 1, 1040),
         };
 
         static XgNode LabelNode(string id, string parent, string name, string en, string note, string noteEn, double cost, int max, float y)
@@ -175,7 +175,7 @@ namespace LingGuangV05.XingGuang
                 default:
                     if (node.id == "label.auto") { CanBuyGlobalAuto(out string why); return why; }
                     if (node.id == "label.brain" && S.stage < 4) return T("需要第四阶段");
-                    if (node.id == CaptchaAutofillNode && Has(node.parent) && !CaptchaAutofillReady) return T("需要第三阶段，且手写数字检查点 ≥ 95%");
+                    if (node.id == CaptchaAutofillNode && Has(node.parent) && !CaptchaAutofillReady) return T("需要第四阶段，且手写数字检查点 ≥ 95%");
                     return T("先解锁前置技能");
             }
         }

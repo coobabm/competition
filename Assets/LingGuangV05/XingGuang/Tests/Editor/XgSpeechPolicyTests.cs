@@ -7,7 +7,7 @@ namespace LingGuangV05.XingGuang.Tests
         { Assert.That(typeof(XgSim).Assembly.GetType("LingGuangV05.XingGuang.XgSpeechPolicy"), Is.Not.Null); }
         [Test] public void LimitsMatchAllSixStages()
         {
-            Assert.That(new[] { XgSpeechPolicy.ContextLimit(1), XgSpeechPolicy.ContextLimit(2), XgSpeechPolicy.ContextLimit(3), XgSpeechPolicy.ContextLimit(4), XgSpeechPolicy.ContextLimit(5), XgSpeechPolicy.ContextLimit(6) }, Is.EqualTo(new[] { 1, 1, 2, 14, 14, int.MaxValue }));
+            Assert.That(new[] { XgSpeechPolicy.ContextLimit(1), XgSpeechPolicy.ContextLimit(2), XgSpeechPolicy.ContextLimit(3), XgSpeechPolicy.ContextLimit(4), XgSpeechPolicy.ContextLimit(5), XgSpeechPolicy.ContextLimit(6) }, Is.EqualTo(new[] { 1, 1, 2, 8, 12, int.MaxValue }));
             Assert.That(new[] { XgSpeechPolicy.TokenLimit(1), XgSpeechPolicy.TokenLimit(2), XgSpeechPolicy.TokenLimit(3), XgSpeechPolicy.TokenLimit(4), XgSpeechPolicy.TokenLimit(5), XgSpeechPolicy.TokenLimit(6) }, Is.EqualTo(new[] { 2, 4, 24, 60, 100, 140 }));
             Assert.That(XgSpeechPolicy.Constrain("是的，我能说很长的话", 1), Is.EqualTo("是。"));
             Assert.That(XgSpeechPolicy.Constrain("不确定。需要更多信息", 2), Is.EqualTo("不确定。"));

@@ -17,11 +17,11 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed partial class XgTrainPage
     {
-        const float ScaleHeight = 184, LedgerHeight = 106, SideGap = 10;
+        const float ScaleHeight = 200, LedgerHeight = 106, SideGap = 10;
 
         // 有效规模
         RectTransform scaleCard, nextArea, formulaArea, logBack, logFill, logMark, pFill, dFill;
-        TMP_Text scaleTitle, scaleTag, scaleBig, scaleVerdict, logLabel, pLabel, pValue, dLabel, dValue, pSub, dSub;
+        TMP_Text scaleTitle, scaleTag, scaleBig, scaleVerdict, logLabel, pLabel, pValue, dLabel, dValue, pSub, dSub, probeText;
         readonly List<Chip> formulaChips = new List<Chip>();
         const int FormulaChipCount = 2 + 7;
 
@@ -86,6 +86,11 @@ namespace LingGuangV05.Desktop.XingGuang
             nextArea = Rect("Next", scaleCard, new Vector2(0, 1), Vector2.one, new Vector2(12, -138), new Vector2(-12, -30));
             pFill = BarRow(nextArea, 0, XgDark.Params, out pLabel, out pValue, out pSub);
             dFill = BarRow(nextArea, 46, XgDark.Data, out dLabel, out dValue, out dSub);
+            // 「同一道题」: the next ability's fixed question and what it answered after the last round (XgSim.Learned.cs).
+            // Two lines (the question, then its answer): one line cut the English off (measured in Play, 2026-10-16).
+            probeText = ui.Text(Rect("Probe", nextArea, new Vector2(0, 1), Vector2.one, new Vector2(0, -128), new Vector2(0, -92)), "", 11, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            probeText.textWrappingMode = TextWrappingModes.Normal; probeText.overflowMode = TextOverflowModes.Ellipsis;
+            probeText.enableAutoSizing = true; probeText.fontSizeMin = 9; probeText.fontSizeMax = 11;
 
             scaleVerdict = ui.Text(Rect("Verdict", scaleCard, Vector2.zero, Vector2.one, new Vector2(12, 4), new Vector2(-12, -156)), "", 11, XgDark.Muted, TextAlignmentOptions.TopLeft);
             scaleVerdict.enableAutoSizing = true; scaleVerdict.fontSizeMin = 9; scaleVerdict.fontSizeMax = 11;
@@ -166,17 +171,21 @@ namespace LingGuangV05.Desktop.XingGuang
                 double paramsNeed = Sim.ParamsThreshold(next), samplesNeed = Sim.SamplesThreshold(next), size = XgSim.ParamsK(run);
                 scaleTitle.text = T("下一项能力 · 能力 " + next + "「" + XgSim.AbilityName(next, false) + "」", "NEXT ABILITY · " + next + " '" + XgSim.AbilityName(next, true) + "'");
                 scaleTag.text = "";
-                string pPct = Math.Floor(Sim.ParamsProgress(next) * 100 + 1e-9).ToString("0"), dPct = Math.Floor(Sim.SamplesProgress(next) * 100 + 1e-9).ToString("0");
-                pLabel.text = T("参数量", "Parameters"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " / " + XgSim.ParamsText(paramsNeed) + " <size=11>" + Hex(XgDark.Muted) + pPct + "%</color></size>";
-                dLabel.text = T("样本", "Samples"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " / " + XgSim.SamplesText(samplesNeed) + " <size=11>" + Hex(XgDark.Muted) + dPct + "%</color></size>";
-                SetBar(pFill, (float)Sim.ParamsProgress(next)); SetBar(dFill, (float)Sim.SamplesProgress(next));
+                // The line is hidden (XgSim.Learned.cs): how much is trained, and 「?」 until the bar is past it.
+                pLabel.text = T("参数量", "Parameters"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.ParamsLineText(next) + "</color></size>";
+                dLabel.text = T("样本", "Samples"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.SamplesLineText(next) + "</color></size>";
+                SetBar(pFill, (float)Sim.ParamsFill); SetBar(dFill, (float)Sim.SamplesFill);
+                bool probeRight;
+                string probe = Sim.ProbeLine(out probeRight);
+                probeText.gameObject.SetActive(probe.Length > 0);
+                probeText.text = Hex(XgDark.Dim) + T("同一道题：", "Same question: ") + "</color>" + probe + " " + (probeRight ? Hex(XgDark.Good) + "✓" : Hex(XgDark.Bad) + "✗") + "</color>";
                 // This model against what already counts (P only takes a model trained to grade C), and the samples there against the samples that count.
                 pSub.text = Sim.ParamsSplitText(run); pSub.color = Sim.CountState(run) == XgCountState.Counted ? XgDark.Muted : XgDark.Gold;
                 dSub.text = Sim.SamplesSplitText();
                 string line;
                 if (Sim.TrainedParamsK + 1e-9 < paramsNeed)
                     line = size + 1e-9 >= paramsNeed ? Hex(XgDark.Muted) + T("这个模型够大：练到 C 级就算数。", "This model is big enough: it counts once trained to grade C.") + "</color>"
-                        : Hex(XgDark.Gold) + T("这个模型还差 " + XgSim.ParamsText(paramsNeed - size) + "：去科技加宽、加深，或在道具买更大的结构。", "This model is " + XgSim.ParamsText(paramsNeed - size) + " short: widen or deepen in the tech tree, or buy a bigger structure on the Items page.") + "</color>";
+                        : Hex(XgDark.Gold) + T("这个模型可能还不够大：去科技加宽、加深，或在道具买更大的结构。", "This model may not be big enough yet: widen or deepen in the tech tree, or buy a bigger structure on the Items page.") + "</color>";
                 else line = Hex(XgDark.Muted) + T("参数够了，样本到门槛，它就学会这一项。", "The parameters are there; once the samples reach the line it learns this ability.") + "</color>";
                 scaleVerdict.rectTransform.offsetMax = new Vector2(-12, -122);
                 // The size's makeup (layers × width² × structure) and the caps the tech tree sets for it.
@@ -198,8 +207,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim.S.stage < 6 && Sim.NextAbility != 0)
                 return (Sim.ReadWordsTotal >= 1 ? Sim.ReadLine() + "\n" : "") + Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport() + "\n\n"
-                    + T("两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。",
-                    "When both reach the line, the next ability comes. The lines already include the items you own. Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.");
+                    + Sim.FogNote + "\n" + T("「同一道题」每一轮都问一次：它学会之前，怎么练都答不对。", "\"Same question\" is asked every round: until it learns, no amount of training gets it right.")
+                    + "\n" + T("阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。", "Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.");
             return T("有效规模 = 参数 × 数据 × 买到的倍率。参数以 " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + "、数据以 " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " 条算 1 份，各算到 " + N(XgSim.ScaleBarCap, "0.#") + " 份为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
                 "Effective scale = parameters × data × the multipliers you own. Parameters count in units of " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + " and data in units of " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " samples, each up to " + N(XgSim.ScaleBarCap, "0.#") + " units; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
         }

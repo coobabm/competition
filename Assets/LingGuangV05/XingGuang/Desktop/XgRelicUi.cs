@@ -16,6 +16,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Paints a tile: a framed square with the relic's mark. <paramref name="dim"/> shows it as not yet found.</summary>
         public static void PaintTile(XgFrameGraphic frame, TMP_Text glyph, XgRelic r, bool dim = false)
         {
+            var drawn = (r == null || dim) ? null : XgIcons.Get("relic", r.id);
+            ShowIcon(frame, drawn);
             if (r == null || dim)
             {
                 frame.Style(new Color32(10, 17, 25, 255), XgDark.Dim);
@@ -25,8 +27,33 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             var edge = RarityColor(r.rarity);
             frame.Style(new Color(edge.r * .22f, edge.g * .22f, edge.b * .22f, 1f), edge, false, 2);
-            glyph.text = r.glyph;
+            glyph.text = drawn != null ? "" : r.glyph; // the drawn object (Resources/LingGuangV05/Icons/relic) replaces the letter mark
             glyph.color = edge;
+        }
+
+        /// <summary>Shows the drawn object of a relic inside its tile (a child "RelicIcon" made on first use), or hides it when there is none.</summary>
+        static void ShowIcon(XgFrameGraphic frame, Sprite sprite)
+        {
+            if (frame == null) return;
+            var child = frame.transform.Find("RelicIcon");
+            if (sprite == null)
+            {
+                if (child != null) child.gameObject.SetActive(false);
+                return;
+            }
+            if (child == null)
+            {
+                var go = new GameObject("RelicIcon", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                var rt = (RectTransform)go.transform;
+                rt.SetParent(frame.transform, false);
+                rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+                rt.offsetMin = new Vector2(2, 2); rt.offsetMax = new Vector2(-2, -2);
+                go.GetComponent<UnityEngine.UI.Image>().raycastTarget = false;
+                child = rt;
+            }
+            child.gameObject.SetActive(true);
+            var image = child.GetComponent<UnityEngine.UI.Image>();
+            image.sprite = sprite; image.color = Color.white; image.preserveAspect = true;
         }
 
         /// <summary>The hover text of a relic. <paramref name="sim"/> says which pairs are on and whether it is equipped.</summary>

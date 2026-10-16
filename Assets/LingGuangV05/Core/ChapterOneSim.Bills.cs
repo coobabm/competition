@@ -32,7 +32,7 @@ namespace LingGuangV05.Core
         /// <summary>
         /// The lab's rent holiday: while it answers true rent-related charges are postponed (rent, broadband, air conditioning and
         /// other household charges) and the landlord never counts debt days. Electricity is always paid. The lab sets it (free until 灵光 learns its third
-        /// ability, 一个词). Not saved: the lab answers it again every tick.
+        /// ability, 看图说词). Not saved: the lab answers it again every tick.
         /// </summary>
         public Func<bool> RentWaived { get; set; }
         public bool Waived => RentWaived != null && RentWaived();
@@ -120,7 +120,15 @@ namespace LingGuangV05.Core
                 return;
             }
             // The economy starts today: this month's broadband is due now.
-            if (S.rentDay < first) { S.rentDay = today; S.broadbandMonth = 0; }
+            if (S.rentDay < first)
+            {
+                S.rentDay = today; S.broadbandMonth = 0;
+                // The free months are over: the landlord says so once, with the price (YY, from BankruptcyEnding).
+                double perDay = RentFor(GameCalendar.Now(S).Date), rise = Config.rentPerDayFromOctober;
+                LastMessage = T("小伙子，缓租的日子到头了。从今天起房租一天 " + Yuan(perDay) + "，两天一结，水电宽带另算；十月一号起涨到一天 " + Yuan(rise) + "。要是连着三次结算都还欠着，我就得催你把电脑卖了抵账——卖不卖，你自己定。",
+                    "Kid, the grace period is over. From today the rent is " + Yuan(perDay) + " a day, settled every two days, power and broadband extra; from 1 October it goes up to " + Yuan(rise) + " a day. If you are still behind after three settlements in a row, I'll have to push you to sell the computer for the rent. Your call.");
+                Raise("rent.started", Yuan(perDay));
+            }
             if (S.broadbandMonth != month)
             {
                 // One bill per month begun (a jump over a month still pays it once), none twice.
@@ -130,7 +138,11 @@ namespace LingGuangV05.Core
             }
             if (S.rentDay < today)
             {
-                if (S.rentDay < GameCalendar.DayIndex(RentRiseDate) && today >= GameCalendar.DayIndex(RentRiseDate)) Raise("rent.raised");
+                if (S.rentDay < GameCalendar.DayIndex(RentRiseDate) && today >= GameCalendar.DayIndex(RentRiseDate))
+                {
+                    LastMessage = T("跟你说一声，十月起房租涨到一天 " + Yuan(Config.rentPerDayFromOctober) + "，这片都涨了。你这孩子靠谱，别的租客我可没这么客气地说。", "Heads up: from October the rent is " + Yuan(Config.rentPerDayFromOctober) + " a day. Everyone round here has gone up. You're a reliable kid; I don't tell the other tenants this politely.");
+                    Raise("rent.raised");
+                }
                 S.rentDay = today;
             }
             if (S.ticketDay > 0 && today >= S.ticketDay)

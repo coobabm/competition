@@ -68,7 +68,9 @@ namespace LingGuangV05.Desktop.XingGuang
         void MakeIcon(PrologueDesk desk)
         {
             english = GameText.IsEnglish;
-            icon = desk.notepadIcon != null ? desk.Icon("Memory Notebook", Label(), desk.notepadIcon) : desk.Icon("Memory Notebook", Label(), null, desk.DrawBlankFile);
+            var own = XgIcons.Get("desktop", "note_txt");
+            icon = own != null ? desk.Icon("Memory Notebook", Label(), own)
+                : desk.notepadIcon != null ? desk.Icon("Memory Notebook", Label(), desk.notepadIcon) : desk.Icon("Memory Notebook", Label(), null, desk.DrawBlankFile);
             icon.GetComponent<PrologueClick>().Open = () => Open(desk);
             UiTip.Add(icon, () => Lang.T("它自己记的笔记：你们聊过的重要的事。只读。"));
         }

@@ -214,6 +214,7 @@ namespace LingGuangV05.Desktop.Story
         {
             ctx.Sim = sim;
             ctx.FinalParams = XgOriginColdOpen.FinalParams(sim);
+            ctx.BreakerTrips = sim != null ? sim.S.breakerTrips : XgOriginFilm.FilmTrips;
         }
 
         // ───────────── render ─────────────
@@ -266,7 +267,7 @@ namespace LingGuangV05.Desktop.Story
         {
             var f = XgOriginFilm.CaptionAt(t);
             if (f.Index < 0 || f.Alpha <= .001) { caption.Alpha(0); return; }
-            string text = XgOriginFilm.CaptionText(f.Index, GameText.IsEnglish, ctx.FinalParams);
+            string text = XgOriginFilm.CaptionText(f.Index, GameText.IsEnglish, ctx.FinalParams, ctx.BreakerTrips);
             caption.Alpha(OriginInk.Fade((float)f.Alpha));
             caption.SetFace(SerifWeight, 0);
             caption.Set(text);

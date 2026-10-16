@@ -92,8 +92,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (pendingFines > 0) FlushFines();
             string minutes = (seconds / 60).ToString("0", CultureInfo.InvariantCulture);
-            Popup(T("您的账号被举报：" + XgSim.ReportReasonText(reason, false) + "。\n自动标注冻结 " + minutes + " 分钟，可在标注台申诉。",
-                "Your account was reported: " + XgSim.ReportReasonText(reason, true) + ".\nAuto labelling is frozen for " + minutes + " min; appeal on the labelling page."), 10);
+            Popup(T("平台提示：" + XgSim.ReportReasonText(reason, false) + "。\n自动标注暂停 " + minutes + " 分钟。",
+                "Platform notice: " + XgSim.ReportReasonText(reason, true) + ".\nAuto labelling is paused for " + minutes + " min."), 10);
         }
 
         void OnCaptcha()
@@ -120,7 +120,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnUnfrozen(bool appealed)
         {
-            Popup(appealed ? Lang.T("申诉通过，账号已解冻。") : Lang.T("冻结期满，账号已解冻，自动标注恢复。"), 6);
+            Popup(Lang.T("自动标注已恢复。"), 6);
         }
     }
 }

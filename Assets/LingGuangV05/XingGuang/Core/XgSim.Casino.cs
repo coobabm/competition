@@ -6,7 +6,9 @@ namespace LingGuangV05.XingGuang
     [Serializable]
     public sealed class XgCasinoRound
     {
-        public int number, stake, returned, choice;
+        public int number, choice;
+        // long: with no table limit a stake may be the whole wallet, and stake x 20 must not overflow.
+        public long stake, returned;
         public string game;
         public int[] values;
     }
@@ -26,11 +28,36 @@ namespace LingGuangV05.XingGuang
 
     public sealed partial class XgState { public XgCasinoState casino; }
 
-    /// <summary>Fictional local games, not a network service. Returns are gross (include the stake).</summary>
+    /// <summary>
+    /// Fictional local games, not a network service. Returns are gross (include the stake).
+    ///
+    /// There is NO table limit: any whole-yuan stake from ¥1 up to the player's whole wallet is accepted (the funds
+    /// check is in XgSim.TryCasinoBet / StartBlackjack). <see cref="StakeCeiling"/> is only an arithmetic guard so that
+    /// stake x 20 stays exact in double/long; it is far above anything the in-game economy can reach.
+    ///
+    /// Every game is close to fair. Theoretical return to player (RTP = expected gross return / stake), derived by
+    /// exhaustive enumeration in XgCasinoTests.ExhaustiveReturnToPlayerMatchesTheDocumentedRtp and re-checked by a
+    /// 200k-round seeded simulation in XgCasinoFairnessTests:
+    ///   slots     3 reels x 6 equally likely symbols. Any pair 2x; three of a kind 3x; three 7s 20x.
+    ///             (90*2 + 5*3 + 1*20) / 216 = 215/216 = 99.54 %. Wins 96/216 = 44.4 % of spins.
+    ///   dice      3 dice, small 4-10 / big 11-17, win 2x. A triple (6/216) returns half the stake, not a loss.
+    ///             (105*2 + 6*0.5) / 216 = 213/216 = 98.61 %. Wins 105/216 = 48.6 %.
+    ///   roulette  European 0-36, red/black win 2x. Zero returns half the stake ("la partage" rule).
+    ///             (18*2 + 0.5) / 37 = 98.65 %. Wins 18/37 = 48.6 %.
+    ///   dragon    two cards A-K (1-13), higher wins 2x. A tie returns 3/4 of the stake.
+    ///             (78*2 + 13*0.75) / 169 = 98.08 %. Wins 78/169 = 46.2 %.
+    ///   blackjack fresh shuffled 52-card deck every hand, dealer stands on every 17, natural pays 3:2, double on the
+    ///             first two cards, no split / insurance / surrender. About 99.5 % with basic strategy
+    ///             (measured 99.56 %, 43.5 % of hands won, over 200k seeded hands).
+    /// The draws come from one xorshift32 stream (CasinoNext) with no streak, balance or mood adjustment of any kind.
+    /// </summary>
     public static class CasinoRules
     {
         public const double RoundSeconds = 1.5;
-        public static bool IsStake(int stake) => stake == 10 || stake == 50 || stake == 100 || stake == 500;
+        public const long StakeCeiling = 100_000_000_000_000L;
+        public static bool IsStake(long stake) => stake >= 1 && stake <= StakeCeiling;
+        /// <summary>The largest stake the wallet can cover: the whole (whole-yuan part of the) balance, "all in".</summary>
+        public static long AllIn(double money) => double.IsNaN(money) || money < 1 ? 0 : money >= StakeCeiling ? StakeCeiling : (long)Math.Floor(money);
         public static bool IsChoice(string game, int choice) => game == "slots" ? choice == 0
             : (game == "dice" || game == "roulette" || game == "dragon") && (choice == 0 || choice == 1);
         public static bool IsAddress(string address)
@@ -54,7 +81,8 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        public static int ReturnMultiplier(string game, int choice, int[] v)
+        /// <summary>Gross return as a multiple of the stake, in quarters (so 0.5x = 2, 2x = 8, 20x = 80). Integer-exact.</summary>
+        public static int ReturnQuarters(string game, int choice, int[] v)
         {
             if (!IsChoice(game, choice) || v == null) return 0;
             int count = game == "roulette" ? 1 : game == "dragon" ? 2 : 3;
@@ -64,15 +92,25 @@ namespace LingGuangV05.XingGuang
             foreach (int n in v) if (n < min || n > max) return 0;
             switch (game)
             {
-                case "slots": return v[0] == v[1] && v[1] == v[2] ? 20 : v[0] == v[1] || v[1] == v[2] || v[0] == v[2] ? 1 : 0;
+                case "slots":
+                    if (v[0] == v[1] && v[1] == v[2]) return v[0] == 0 ? 80 : 12; // three 7s 20x, other triples 3x
+                    return v[0] == v[1] || v[1] == v[2] || v[0] == v[2] ? 8 : 0;  // any pair 2x
                 case "dice":
-                    if (v[0] == v[1] && v[1] == v[2]) return 0;
-                    return (v[0] + v[1] + v[2] <= 10 ? 0 : 1) == choice ? 2 : 0;
-                case "roulette": return v[0] != 0 && (Red(v[0]) ? 0 : 1) == choice ? 2 : 0;
-                case "dragon": return v[0] != v[1] && (v[0] > v[1] ? 0 : 1) == choice ? 2 : 0;
+                    if (v[0] == v[1] && v[1] == v[2]) return 2; // triple: half the stake back
+                    return (v[0] + v[1] + v[2] <= 10 ? 0 : 1) == choice ? 8 : 0;
+                case "roulette":
+                    if (v[0] == 0) return 2; // zero: half the stake back
+                    return (Red(v[0]) ? 0 : 1) == choice ? 8 : 0;
+                case "dragon":
+                    if (v[0] == v[1]) return 3; // tie: 3/4 of the stake back
+                    return (v[0] > v[1] ? 0 : 1) == choice ? 8 : 0;
                 default: return 0;
             }
         }
+
+        public static double ReturnMultiplier(string game, int choice, int[] v) => ReturnQuarters(game, choice, v) / 4.0;
+        /// <summary>Gross return in whole yuan, rounded down to the yuan (only odd stakes on half / quarter returns lose a fraction).</summary>
+        public static long Payout(long stake, int quarters) => stake * quarters / 4;
     }
 
     public sealed partial class XgSim
@@ -88,7 +126,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>Single synchronous settlement; animations never award money. O(1) time/space, 8-entry history.</summary>
-        public bool TryCasinoBet(string game, int choice, int stake, IXgHost host, out XgCasinoRound round)
+        public bool TryCasinoBet(string game, int choice, long stake, IXgHost host, out XgCasinoRound round)
         {
             round = null;
             if (BlackjackActive || !CasinoRules.IsStake(stake) || !CasinoRules.IsChoice(game, choice)
@@ -100,7 +138,7 @@ namespace LingGuangV05.XingGuang
             int count = game == "roulette" ? 1 : game == "dragon" ? 2 : 3;
             int[] values = new int[count];
             for (int i = 0; i < count; i++) values[i] = CasinoNext(game == "roulette" ? 37 : game == "dragon" ? 13 : 6) + (game == "dice" || game == "dragon" ? 1 : 0);
-            int returned = stake * CasinoRules.ReturnMultiplier(game, choice, values);
+            long returned = CasinoRules.Payout(stake, CasinoRules.ReturnQuarters(game, choice, values));
             round = new XgCasinoRound { number = ++c.rounds, game = game, choice = choice, stake = stake, returned = returned, values = values };
             c.wagered += stake; c.returned += returned;
             if (c.history.Count >= 8) c.history.RemoveRange(0, c.history.Count - 7);
@@ -119,7 +157,7 @@ namespace LingGuangV05.XingGuang
         }
 
         bool ValidCasinoClock => !double.IsNaN(Clock) && !double.IsInfinity(Clock) && Clock >= 0;
-        bool CasinoFunds(IXgHost host, int amount) => host != null && ValidCasinoClock && !double.IsNaN(host.Money)
+        bool CasinoFunds(IXgHost host, long amount) => host != null && ValidCasinoClock && !double.IsNaN(host.Money)
             && !double.IsInfinity(host.Money) && host.Money >= amount;
         void EnsureCasinoRng()
         {

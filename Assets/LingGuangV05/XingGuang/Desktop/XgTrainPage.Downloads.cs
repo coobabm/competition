@@ -31,7 +31,9 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform dlBlock, dlList, dlDiskFill;
         Image dlDiskImage;
         TMP_Text dlLine, dlDisk;
-        XgBtn dlBatch;
+        XgBtn dlBatch, dlUpgrade;
+        RectTransform dlUpgradeRow;
+        public const string UpgradeBroadbandName = "UpgradeBroadband";
         readonly List<DlRow> dlRows = new List<DlRow>();
         float dlShownHeight = -1;
 
@@ -41,7 +43,8 @@ namespace LingGuangV05.Desktop.XingGuang
             dlBlock = Strip("Downloads", pane, DlTop, DlLineHeight, 12, 12);
 
             // Left: the line; a click goes to the home bills, where the upgrade is.
-            var line = Rect("Broadband", dlBlock, Vector2.zero, new Vector2(.5f, 1), Vector2.zero, new Vector2(-6, 0));
+            // Pinned to the top line: the block grows downward as queue rows appear.
+            var line = Rect("Broadband", dlBlock, new Vector2(0, 1), new Vector2(.5f, 1), new Vector2(0, -DlLineHeight), new Vector2(-6, 0));
             Panel(line, Color.clear);
             dlLine = ui.Text(Rect("Text", line, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             dlLine.textWrappingMode = TextWrappingModes.NoWrap; dlLine.overflowMode = TextOverflowModes.Ellipsis;
@@ -50,7 +53,7 @@ namespace LingGuangV05.Desktop.XingGuang
             UiTip.Add(line, () => view.Data != null && Sim != null ? view.Data.BroadbandTipText() : "");
 
             // Right: the disk with a thin meter under it; a click opens 淘货's storage tab.
-            var disk = Rect("Disk", dlBlock, new Vector2(.5f, 0), Vector2.one, new Vector2(6, 0), new Vector2(-130, 0));
+            var disk = Rect("Disk", dlBlock, new Vector2(.5f, 1), Vector2.one, new Vector2(6, -DlLineHeight), new Vector2(-130, 0));
             Panel(disk, Color.clear);
             dlDisk = ui.Text(Rect("Text", disk, Vector2.zero, Vector2.one, new Vector2(0, 3), Vector2.zero), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             dlDisk.textWrappingMode = TextWrappingModes.NoWrap; dlDisk.overflowMode = TextOverflowModes.Ellipsis;
@@ -64,11 +67,21 @@ namespace LingGuangV05.Desktop.XingGuang
             // Far right: the next batch of the dataset on this line.
             dlBatch = ui.Button(dlBlock, "", BuyNextBatch, 11);
             dlBatch.rt.gameObject.name = "NextBatch";
-            dlBatch.rt.anchorMin = new Vector2(1, 0); dlBatch.rt.anchorMax = Vector2.one;
-            dlBatch.rt.offsetMin = new Vector2(-124, 0); dlBatch.rt.offsetMax = Vector2.zero;
+            dlBatch.rt.anchorMin = new Vector2(1, 1); dlBatch.rt.anchorMax = Vector2.one;
+            dlBatch.rt.offsetMin = new Vector2(-124, -DlLineHeight); dlBatch.rt.offsetMax = Vector2.zero;
             dlBatch.label.enableAutoSizing = true; dlBatch.label.fontSizeMin = 8; dlBatch.label.fontSizeMax = 11;
             UiTip.Add(dlBatch.rt, () => Sim == null ? "" : T("数据包分批下载：先买下载权和第 1 批，之后每批另买，越往后越贵。买了要等宽带下完才算样本。",
                 "Packs come in batches: the first buy is the download right and batch 1, each later batch costs more. A batch counts once the line has brought it down."));
+
+            // Under the queue, while something is downloading and a faster line is on offer: the 升级宽带 button.
+            dlUpgradeRow = Strip("Upgrade", dlBlock, DlLineHeight, DlRowHeight, 0, 0);
+            dlUpgrade = ui.Button(dlUpgradeRow, "", UpgradeBroadband, 11);
+            dlUpgrade.rt.gameObject.name = UpgradeBroadbandName;
+            dlUpgrade.rt.anchorMin = Vector2.zero; dlUpgrade.rt.anchorMax = Vector2.one;
+            dlUpgrade.rt.offsetMin = new Vector2(0, 1); dlUpgrade.rt.offsetMax = new Vector2(0, -1);
+            dlUpgrade.label.enableAutoSizing = true; dlUpgrade.label.fontSizeMin = 8; dlUpgrade.label.fontSizeMax = 11;
+            UiTip.Add(dlUpgrade.rt, () => view.Data != null && Sim != null ? view.Data.BroadbandTipText() : "");
+            dlUpgradeRow.gameObject.SetActive(false);
 
             for (int i = 0; i < DlMaxRows; i++)
             {
@@ -136,8 +149,20 @@ namespace LingGuangV05.Desktop.XingGuang
                 FillDownloadRow(q, queue[i], firstOfKey.Add(queue[i].key));
             }
 
+            // 升级宽带 sits under the last queue row while something is downloading.
+            bool upgrade = rows > 0 && Sim.BroadbandUpgradeOffered;
+            dlUpgradeRow.gameObject.SetActive(upgrade);
+            if (upgrade)
+            {
+                float y = DlLineHeight + rows * DlRowHeight;
+                dlUpgradeRow.offsetMin = new Vector2(dlUpgradeRow.offsetMin.x, -(y + DlRowHeight));
+                dlUpgradeRow.offsetMax = new Vector2(dlUpgradeRow.offsetMax.x, -y);
+                dlUpgrade.Set(Sim.BroadbandUpgradeLabel(Sim.English, true), Host.Money + 1e-9 >= Sim.NextBroadbandPrice,
+                    Sim.BroadbandBottleneck ? XgDark.AccentSoft : (Color?)null, XgDark.Money);
+            }
+
             // The strip's height pushes the dataset list down.
-            float h = DlLineHeight + rows * DlRowHeight;
+            float h = DlLineHeight + (rows + (upgrade ? 1 : 0)) * DlRowHeight;
             if (Math.Abs(h - dlShownHeight) > .1f)
             {
                 dlShownHeight = h;
@@ -188,6 +213,15 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!Sim.Accelerate(q.key, Host)) { Fx.Knock(q.speedUp.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); view.Refresh(true); return; }
             Fx.Knock(q.speedUp.rt, .15f);
             Fx.Play(XgJuice.Sfx.Id.Coin);
+            view.Refresh(true);
+        }
+
+        /// <summary>升级宽带: buys the next tier (installation and the first month), the same purchase as the home bills page.</summary>
+        void UpgradeBroadband()
+        {
+            if (Sim == null) return;
+            if (Sim.BuyBroadband(Host)) { Fx.Knock(dlUpgrade.rt, .15f); Fx.Play(XgJuice.Sfx.Id.Coin); }
+            else { Fx.Knock(dlUpgrade.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); }
             view.Refresh(true);
         }
 

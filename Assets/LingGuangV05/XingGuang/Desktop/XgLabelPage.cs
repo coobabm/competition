@@ -240,7 +240,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 ? T("它猜错了就点这里：教它与刚才相反的答案。", "Choose this if its guess is wrong: teach it the opposite answer.")
                 : T("题目错就点「错」。答对 +¥，连击 +1；点错 −¥", "Wrong? Press False. +¥ and +1 combo; a miss −¥") + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + T("，连击清零。", ", combo reset."));
             UiTip.Add(auto.Root, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("？？？\n也许有更省力的办法……")
-                : Lang.T("自动答题：模型替你答题，每秒都有收入。\n需要任一模型的准确率先达到 60%；只有检查点达到 60% 的桌才会替你答。\n交出去的题会被摆渡众包抽检，抽到错的要罚钱。"));
+                : Lang.T("自动答题：模型替你答题，每秒都有收入。\n需要任一模型的准确率先达到 60%；只有检查点达到 60% 的桌才会替你答。\n以后平台会抽检交出去的题，抽到错的要罚钱。"));
             UiTip.Add(pack.Root, SourceTip);
             for (int i = 0; i < amountBtns.Length; i++) UiTip.Add(amountBtns[i].rt, "一次买几级：×1、×10，或者钱够的最大数量。", "How many levels per purchase: ×1, ×10, or as many as you can afford.");
             builtEnglish = En;
@@ -574,7 +574,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (feedbackTimer > 0) { feedbackTimer -= dt; if (feedbackTimer <= 0) { feedback.text = ""; lessonFeedbackBack.gameObject.SetActive(false); } }
             if (redTimer > 0) redTimer -= dt;
             AnimateFeed(dt);
-            if (bubbleTimer > 0) { bubbleTimer -= dt; if (bubbleTimer <= 0 && bubbleText != null) bubbleText.text = bubbleDefault; }
+            TickBubble(dt);
             TickKeys();
             RefreshAnswerFocus();
             if (Mode != displayedMode || displayedSim != Sim) { Refresh(); return; }
@@ -898,6 +898,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double acost = XgCatalog.AutoCost(al);
             // Until the protagonist has the idea (XgSim.Epiphany.cs) the row is a 「？？？」 with a hint.
             auto.SetGlyph(Sim.AutoLabelHidden ? "？" : "自");
+            auto.SetIcon(Sim.AutoLabelHidden ? "auto_hidden" : "auto");
             bool pausable = al > 0 && !Sim.AutoLabelHidden;
             autoPause.rt.gameObject.SetActive(pausable);
             if (pausable) autoPause.Set(Sim.AutoPaused ? T("▶ 继续", "▶ Resume") : T("Ⅱ 暂停", "Ⅱ Pause"), true, Sim.AutoPaused ? XgPalette.Good : (Color?)null, Sim.AutoPaused ? Color.white : (Color?)null);
@@ -911,6 +912,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // 完整数据包
             var packNode = XgCatalog.Node(desk + ".pack");
             pack.Show(packNode != null);
+            pack.SetIcon("pack");
             // Other sources of this desk's data (junk pack, story data, crowd task) take over the row when picked.
             if (packNode != null && !RefreshSourceRow(desk))
             {
@@ -1180,10 +1182,10 @@ namespace LingGuangV05.Desktop.XingGuang
             appealBtn.rt.anchorMin = new Vector2(1, 0); appealBtn.rt.anchorMax = new Vector2(1, 1);
             appealBtn.rt.offsetMin = new Vector2(-122, 2); appealBtn.rt.offsetMax = new Vector2(-3, -2);
             appealBtn.label.fontStyle = FontStyles.Bold;
-            UiTip.Add(frozenBanner, () => T("摆渡众包把账号冻结了：这段时间自动标注不能提交，也没有收入。\n手动标注不受影响，冻结期间每标对一条，信用 +" + N(XgSim.QcCreditHand, "0.#") + "。\n第 1/2/3 次举报分别冻结 3/8/20 分钟。",
-                "Bodu Crowdsourcing froze the account: auto labelling cannot submit or earn meanwhile.\nHand labelling still works; each right answer while frozen adds " + N(XgSim.QcCreditHand, "0.#") + " credit.\nReports 1/2/3 freeze for 3/8/20 minutes."));
-            UiTip.Add(appealBtn.rt, () => T("申诉：付 ¥" + N(XgSim.QcAppealMin, "0") + " 或余额的 " + N(XgSim.QcAppealShare * 100, "0") + "%（取较多者），立刻解冻。每次冻结只能申诉一次，信用分不变。",
-                "Appeal: pay ¥" + N(XgSim.QcAppealMin, "0") + " or " + N(XgSim.QcAppealShare * 100, "0") + "% of your money (whichever is more) to unfreeze now. Once per freeze; credit is unchanged."));
+            UiTip.Add(frozenBanner, () => T("自动标注暂时不能提交，也没有收入。\n手动标注不受影响。",
+                "Auto labelling cannot submit or earn for now.\nHand labelling still works."));
+            UiTip.Add(appealBtn.rt, () => T("付 ¥" + N(XgSim.QcAppealMin, "0") + " 或余额的 " + N(XgSim.QcAppealShare * 100, "0") + "%（取较多者），立刻恢复自动标注。",
+                "Pay ¥" + N(XgSim.QcAppealMin, "0") + " or " + N(XgSim.QcAppealShare * 100, "0") + "% of your money (whichever is more) to resume auto labelling now."));
             frozenBanner.gameObject.SetActive(false);
         }
 
@@ -1288,13 +1290,13 @@ namespace LingGuangV05.Desktop.XingGuang
                     + "· 抽检不合格：罚该题报酬的 2 倍，信用 −" + N(XgSim.QcCreditFail, "0") + "；抽检合格：信用 +" + N(XgSim.QcCreditPass, "0.#") + "。累计罚款 ¥" + N(Sim.S.qcFines, "0.##") + "。\n"
                     + "· 账号不会被举报或冻结，标错只扣钱。近 " + XgSim.QcWindow + " 次抽检错误率 ≥ " + pct(XgSim.QcWarnRate) + " 会提醒一次。\n"
                     + "· 信用每 " + N(1 / XgSim.QcCreditRegen, "0") + " 秒 +1，自己回到 " + N(XgSim.QcCreditStart, "0") + "。\n"
-                    + "现在怎么办：" + Sim.QualityAdvice(false) + "也可以买「抽检」先拦下错题。",
+                    + "现在怎么办：" + Sim.QualityAdvice(false) + "也可以去科技买「自查」，先拦下一部分错题。",
                 "Bodu Crowdsourcing spot-checks automatic labels (hand labels are never checked).\n"
                     + "· Credit " + N(Sim.Credit, "0.#") + " (" + TierName + "): " + pct(Sim.SpotCheckChance) + " checked, auto income ×" + N(Sim.QualityPayMultiplier, "0.0#") + ". Gold at 90+, under watch below 60.\n"
                     + "· A failed check is fined twice the card's pay and costs " + N(XgSim.QcCreditFail, "0") + " credit; a passed one adds " + N(XgSim.QcCreditPass, "0.#") + ". Fines so far: ¥" + N(Sim.S.qcFines, "0.##") + ".\n"
                     + "· The account is never reported or frozen; a wrong label only costs money. An error rate of " + pct(XgSim.QcWarnRate) + " over the last " + XgSim.QcWindow + " checks warns once.\n"
                     + "· Credit regains 1 every " + N(1 / XgSim.QcCreditRegen, "0") + " s up to " + N(XgSim.QcCreditStart, "0") + ".\n"
-                    + "Now: " + Sim.QualityAdvice(true) + " Quality audit also catches mistakes first.");
+                    + "Now: " + Sim.QualityAdvice(true) + " Buying Self-check in Tech also catches some mistakes first.");
         }
 
         void RefreshFeed()
@@ -1540,16 +1542,35 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly TMP_Text title, level, effect, glyphText;
         readonly RectTransform afford, progress;
         readonly Image bg;
+        RectTransform iconBox;
+        Image iconPanel, iconImage;
+        string iconId;
 
         /// <summary>The icon's character, e.g. a question mark while the skill is still a mystery.</summary>
         public void SetGlyph(string glyph) { if (glyphText != null && glyphText.text != glyph) glyphText.text = glyph; }
+
+        /// <summary>Shows the drawn icon Icons/data/&lt;id&gt; in place of the coloured glyph tile; with no such icon the tile and glyph stay.</summary>
+        public void SetIcon(string id)
+        {
+            if (iconId == id) return;
+            iconId = id;
+            bool has = XgIcons.Has("data", id);
+            if (has)
+            {
+                if (iconImage == null) iconImage = XgIcons.Place(iconBox, "data", id, 22, 18, 38);
+                else XgIcons.Apply(iconImage, "data", id);
+            }
+            if (iconImage != null) iconImage.gameObject.SetActive(has);
+            if (iconPanel != null) iconPanel.enabled = !has;
+            if (glyphText != null) glyphText.enabled = !has;
+        }
 
         public XgShopRow(XgUi ui, RectTransform parent, string glyph, Color color, Action buy)
         {
             Root = Rect("Row" + glyph, parent, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
             bg = Panel(Root, new Color32(247, 249, 253, 255));
             var icon = XgUi.TopLeft("Icon", Root, 8, 8, 44, 36);
-            Panel(icon, color).raycastTarget = false;
+            iconBox = icon; iconPanel = Panel(icon, color); iconPanel.raycastTarget = false;
             var g = glyphText = ui.Text(Rect("Glyph", icon, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), glyph, 22, Color.white, TextAlignmentOptions.Center);
             g.fontStyle = FontStyles.Bold;
             level = ui.Text(XgUi.TopLeft("Lv", Root, 4, 46, 52, 16), "", 11, XgPalette.Muted, TextAlignmentOptions.Center);

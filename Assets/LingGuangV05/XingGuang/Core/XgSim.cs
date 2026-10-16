@@ -666,6 +666,7 @@ namespace LingGuangV05.XingGuang
             AutoCountTrainedParams(run);
             if (run.sinceEval >= EvalEvery) e.assessment = Assess(track, host, hand);
             ObserveProgression(run);
+            CheckUnprompted();
             if (e.diverged) Diverged?.Invoke((int)track);
             EpochDone?.Invoke(e);
             return e;

@@ -70,14 +70,15 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const int DownloadsSchema = 1;
-        /// <summary>Game seconds per real second of downloading (one 15 GB ImageNet batch: about 30 s on 20M fibre, 6 s on 100M, 2.5 min on ADSL).</summary>
+        /// <summary>Game seconds per real second of downloading (one 15 GB ImageNet batch: about 30 s on the 20M line you start with, 6 s on 100M fibre, 2 s on 300M).</summary>
         public const double DownloadTimeScale = 1.0 / 200;
         /// <summary>Broadband tiers: speed (MB/s), monthly fee, installation, the stage that offers it.</summary>
-        public static readonly double[] BroadbandMBps = { .5, 2.5, 12.5 };
+        /// <remarks>2016-plausible labels, 1 Mbps = 0.125 MB/s: the 20M line you start with is 2.5 MB/s, 100M fibre 12.5, 300M fibre 37.5.</remarks>
+        public static readonly double[] BroadbandMBps = { 2.5, 12.5, 37.5 };
         public static readonly double[] BroadbandMonthly = { 100, 150, 300 };
         public static readonly double[] BroadbandInstall = { 0, 300, 600 };
         public static readonly int[] BroadbandStage = { 1, 2, 5 };
-        static readonly string[] BroadbandNamesZh = { "ADSL 4M", "光纤 20M", "光纤 100M" }, BroadbandNamesEn = { "4M ADSL", "20M fibre", "100M fibre" };
+        static readonly string[] BroadbandNamesZh = { "ADSL 20M", "光纤 100M", "光纤 300M" }, BroadbandNamesEn = { "20M ADSL", "100M fibre", "300M fibre" };
         /// <summary>The disk the lab starts with and what the system and software take of it (MB).</summary>
         public const double DiskStartMB = 500000, DiskSystemMB = 100000;
         /// <summary>数据清洗 also de-duplicates: stored data takes this share less room.</summary>
@@ -91,7 +92,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>摆渡云 super member: ¥ per game second of download it saves (at least ¥50).</summary>
         public const double AcceleratePerSecond = 15, AccelerateMin = 50;
         /// <summary>The note calls the line the bottleneck when the queue needs longer than this (game seconds).</summary>
-        public const double BroadbandSlowSeconds = 90;
+        public const double BroadbandSlowSeconds = 45;
 
         /// <summary>An item was queued (key, game seconds until it arrives).</summary>
         public event Action<string, double> DownloadStarted;
@@ -192,7 +193,7 @@ namespace LingGuangV05.XingGuang
                       "Batch 1/" + PackBatches(d) + " of " + d.nameEn + " is downloading" + QueueNote(x, true) + "."));
         }
 
-        /// <summary>"：650 MB，ADSL 4M 约 1:05" for an item just queued; null means it already arrived.</summary>
+        /// <summary>"：650 MB，ADSL 20M 约 0:03" for an item just queued; null means it already arrived.</summary>
         string QueueNote(XgDownload x, bool english)
         {
             if (x == null) return english ? ", already in" : "，已经下好了";
@@ -494,6 +495,22 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>The next tier is on offer (not at the top, the stage is reached); money is not checked.</summary>
+        public bool BroadbandUpgradeOffered => BroadbandBlocker(out _) == null;
+
+        /// <summary>
+        /// The upgrade as the buttons say it: 「升级宽带 ¥350 → 光纤 100M · 12.5 MB/s」 (short: 「升级宽带 ¥350」). Empty when no
+        /// tier is on offer. One text for the data page, the training page and the guide.
+        /// </summary>
+        public string BroadbandUpgradeLabel(bool english, bool withSpeed)
+        {
+            if (!BroadbandUpgradeOffered) return "";
+            int next = BroadbandTier + 1;
+            string price = F(Math.Ceiling(NextBroadbandPrice - 1e-9), "0");
+            string head = (english ? "Upgrade line ¥" : "升级宽带 ¥") + price;
+            return withSpeed ? head + " → " + BroadbandName(next, english) + " · " + F(BroadbandMBps[next], "0.#") + " MB/s" : head;
+        }
+
         /// <summary>Why the next tier cannot be installed now (null when it can; money is not checked).</summary>
         public string BroadbandBlocker(out string en)
         {
@@ -515,12 +532,12 @@ namespace LingGuangV05.XingGuang
             S.totalSpent += price;
             S.broadband = BroadbandTier + 1;
             S.broadbandBilled = TodayKnown ? Today / 100 : 0;
-            Say(T("电信师傅上门装好了" + BroadbandName(BroadbandTier, false) + "：下载 " + F(LineMBps, "0.#") + " MB/s，月租 ¥" + F(BroadbandMonthly[BroadbandTier], "0") + "（比 ADSL 多 ¥" + F(BroadbandExtraPerMonth, "0") + "，每月扣）。",
-                  "The telecom technician installed " + BroadbandName(BroadbandTier, true) + ": " + F(LineMBps, "0.#") + " MB/s, ¥" + F(BroadbandMonthly[BroadbandTier], "0") + " a month (¥" + F(BroadbandExtraPerMonth, "0") + " more than ADSL, charged monthly)."));
+            Say(T("电信师傅上门装好了" + BroadbandName(BroadbandTier, false) + "：下载 " + F(LineMBps, "0.#") + " MB/s，月租 ¥" + F(BroadbandMonthly[BroadbandTier], "0") + "（比 ADSL 20M 多 ¥" + F(BroadbandExtraPerMonth, "0") + "，每月扣）。",
+                  "The telecom technician installed " + BroadbandName(BroadbandTier, true) + ": " + F(LineMBps, "0.#") + " MB/s, ¥" + F(BroadbandMonthly[BroadbandTier], "0") + " a month (¥" + F(BroadbandExtraPerMonth, "0") + " more than the 20M ADSL, charged monthly)."));
             return true;
         }
 
-        /// <summary>The faster line's extra fee each new calendar month; unpaid, the line goes back to ADSL.</summary>
+        /// <summary>The faster line's extra fee each new calendar month; unpaid, the line goes back to the 20M ADSL.</summary>
         void TickBroadbandBill(IXgHost host)
         {
             if (S.broadband <= 0 || !TodayKnown || host == null) return;
@@ -532,7 +549,7 @@ namespace LingGuangV05.XingGuang
             S.broadbandBilled = month;
             if (host.Spend(fee)) { S.totalSpent += fee; return; }
             S.broadband = 0;
-            Say(T("光纤月租交不上，电信把你降回了 ADSL 4M。", "The fibre fee went unpaid; the telecom put you back on 4M ADSL."));
+            Say(T("光纤月租交不上，电信把你降回了 ADSL 20M。", "The fibre fee went unpaid; the telecom put you back on 20M ADSL."));
         }
 
         // ───────────── saves ─────────────

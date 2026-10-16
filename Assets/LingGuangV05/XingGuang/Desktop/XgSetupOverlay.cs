@@ -12,7 +12,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>
     /// Prologue Step 8 (design v1.1 §6): the first time the exe opens it asks for a name, how it calls itself, how it
     /// calls you and one sentence of personality. The sentence is read once (local model if running, else offline),
-    /// the save starts, and the home page shows one bulb, 是 / 否 and "{name}：尚无智能".
+    /// the save starts, and the home page shows one bulb, 是 / 否 and a one-line hint.
     /// </summary>
     public sealed class XgSetupOverlay
     {
@@ -150,7 +150,7 @@ namespace LingGuangV05.Desktop.XingGuang
             done.Set(reading ? L("setup_reading") : L("setup_done"), !reading, XgDark.Accent, Color.white);
             yes.Set(L("yes"), true, XgDark.Card, XgDark.Ink);
             no.Set(L("no"), true, XgDark.Card, XgDark.Ink);
-            if (homePending) homeLine.text = T("「你愿意教我吗？」\n它还说不出来。先碰一下，看看它的反应。", "Will you teach me?\nIt cannot say it yet. Touch a button to meet it.");
+            if (homePending) homeLine.text = T("它像是想问你什么，可它还说不出来。\n先碰一下，看看它的反应。", "It seems to want to ask you something, but it cannot say it yet.\nTouch a button to meet it.");
             Paint();
         }
 

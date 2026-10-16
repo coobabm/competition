@@ -217,6 +217,22 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void TheShutdownCardIsGuaranteedEarlyInStageOne()
+        {
+            for (int seedNo = 0; seedNo < 20; seedNo++)
+            {
+                var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+                int drawn = 0;
+                while (sim.S.shutdownCards == 0 && drawn < 12)
+                {
+                    var card = sim.Card("logic"); drawn++;
+                    sim.Answer("logic", card.kind == "shutdown" ? true : card.truth, host);
+                }
+                Assert.That(sim.S.shutdownCards, Is.GreaterThan(0), "the question about shutting down must show up in the first dozen cards (run " + seedNo + ")");
+            }
+        }
+
+        [Test]
         public void ShutdownCardsHaveNoRightAnswerAndPullTheSeed()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();

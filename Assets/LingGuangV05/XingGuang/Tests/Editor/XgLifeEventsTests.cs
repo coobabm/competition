@@ -240,6 +240,24 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void ZhousServerCardBurnsOutOnlyOnce()
+        {
+            var sim = Quiet(); var host = new RigHost(1000, 2);
+            Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host));
+            StringAssert.Contains("卡烧了", sim.LifeEventView(host).body);
+            Assert.IsTrue(sim.AnswerLifeEvent("refuse", host));
+            Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host, true));
+            StringAssert.Contains("还是上回那事儿", sim.LifeEventView(host).body, "asked again after a no");
+            Assert.IsTrue(sim.AnswerLifeEvent("lend", host));
+            sim.Tick(XgSim.LifeLendSeconds + 2, host);
+            sim.S.lifeFavour = 0;
+            Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host, true));
+            string again = sim.LifeEventView(host).body;
+            StringAssert.Contains("再借", again, "after a loan he asks for another one");
+            StringAssert.DoesNotContain("卡烧了", again);
+        }
+
+        [Test]
         public void RefusingCoolsZhouALittle()
         {
             var sim = Quiet(); var host = new RigHost(1000, 2);
@@ -394,6 +412,42 @@ namespace LingGuangV05.XingGuang.Tests
                 if (h.money == 10000) believed++; else { fined++; Assert.AreEqual(10000 - XgSim.LifeLandlordFine, h.money, 1e-6); }
             }
             Assert.That(believed, Is.GreaterThan(0)); Assert.That(fined, Is.GreaterThan(0));
+        }
+
+        [Test]
+        public void PeopleRespectYouMoreOnceYouAreFurtherAlongAndNeverBefore()
+        {
+            // The forum calls him 大神 only from the fourth ability on, and only then does the card come.
+            var early = Quiet(2); var he = new Host(100);
+            early.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
+            Assert.IsTrue(early.OpenLifeEventNow("forum_post", he));
+            StringAssert.DoesNotContain("大神", early.LifeEventView(he).body);
+            Assert.IsTrue(early.AnswerLifeEvent("tip", he));
+            Assert.IsFalse(early.HasAchievement("life.praise.forum"));
+            var late = Quiet(4); var hl = new Host(100);
+            late.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
+            Assert.IsTrue(late.OpenLifeEventNow("forum_post", hl));
+            StringAssert.Contains("大神", late.LifeEventView(hl).body);
+            Assert.IsTrue(late.AnswerLifeEvent("tip", hl));
+            Assert.IsTrue(late.HasAchievement("life.praise.forum"));
+            StringAssert.Contains("大神", late.S.log.Last());
+
+            // The landlord who believes the explanation says so in kind once the tenant has got somewhere.
+            int nods = 0;
+            for (long seed = 1; seed <= 30; seed++)
+            {
+                var s = Quiet(5); var h = new Host(10000);
+                s.S.rng = seed;
+                Assert.IsTrue(s.OpenLifeEventNow("landlord_meter", h, force: true));
+                Assert.IsTrue(s.AnswerLifeEvent("explain", h));
+                if (h.money == 10000) { nods++; Assert.IsTrue(s.HasAchievement("life.praise.landlord")); StringAssert.Contains("有出息", s.S.log.Last()); }
+                else Assert.IsFalse(s.HasAchievement("life.praise.landlord"));
+            }
+            Assert.That(nods, Is.GreaterThan(0));
+            var young = Quiet(2); var hy = new Host(10000);
+            Assert.IsTrue(young.OpenLifeEventNow("landlord_meter", hy, force: true));
+            Assert.IsTrue(young.AnswerLifeEvent("explain", hy));
+            Assert.IsFalse(young.HasAchievement("life.praise.landlord"));
         }
 
         [Test]

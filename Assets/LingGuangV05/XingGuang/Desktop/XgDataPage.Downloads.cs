@@ -17,6 +17,9 @@ namespace LingGuangV05.Desktop.XingGuang
         const float LineTop = 28, LineHeight = 24, QueueRowHeight = 24;
         const int MaxQueueRows = 3;
         const float SegmentsWidth = 120, SegmentGap = 2;
+        /// <summary>The 升级宽带 button at the right end of the line (it is named <see cref="UpgradeBroadbandName"/> for the guide's locator).</summary>
+        const float UpgradeWidth = 188;
+        public const string UpgradeBroadbandName = "UpgradeBroadband";
         // Queue columns, from the row's left edge (the speed-up button sits on the right like the buy buttons).
         const float QSizeX0 = 300, QSizeX1 = 380, QBarX0 = 392, QBarX1 = 592, QSpeedX0 = 604, QSpeedX1 = 760, QEtaX0 = 768, QEtaX1 = 840;
 
@@ -32,6 +35,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         RectTransform columns;
         TMP_Text lineText, diskText;
+        XgBtn upgradeButton;
         RectTransform diskFill;
         Image diskFillImage;
         readonly List<QueueRow> queueRows = new List<QueueRow>();
@@ -43,14 +47,21 @@ namespace LingGuangV05.Desktop.XingGuang
         void BuildDownloads()
         {
             var strip = Strip("Downloads", root, LineTop, LineHeight, 0, BarWidth + 6);
-            // Left: the line. A click goes to the home bills, where the upgrade is.
+            // Left: the line and its 升级宽带 button (buys the next tier right here). A click on the text still goes to the home bills.
             var line = Rect("Broadband", strip, Vector2.zero, new Vector2(.5f, 1), Vector2.zero, new Vector2(-10, 0));
             Panel(line, new Color(0, 0, 0, 0));
-            lineText = ui.Text(Rect("Text", line, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            lineText = ui.Text(Rect("Text", line, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-UpgradeWidth - 6, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             lineText.textWrappingMode = TextWrappingModes.NoWrap; lineText.overflowMode = TextOverflowModes.Ellipsis;
             var lineButton = line.gameObject.AddComponent<Button>(); lineButton.transition = Selectable.Transition.None; lineButton.targetGraphic = line.GetComponent<Image>();
             lineButton.onClick.AddListener(() => OpenApp("home", "power"));
             UiTip.Add(line, () => Sim == null ? "" : BroadbandTip());
+            upgradeButton = ui.Button(line, "", UpgradeBroadband, 12);
+            upgradeButton.rt.gameObject.name = UpgradeBroadbandName;
+            upgradeButton.rt.anchorMin = new Vector2(1, 0); upgradeButton.rt.anchorMax = Vector2.one;
+            upgradeButton.rt.offsetMin = new Vector2(-UpgradeWidth, 1); upgradeButton.rt.offsetMax = new Vector2(0, -1);
+            upgradeButton.label.enableAutoSizing = true; upgradeButton.label.fontSizeMin = 8; upgradeButton.label.fontSizeMax = 12;
+            UiTip.Add(upgradeButton.rt, () => Sim == null ? "" : BroadbandTip());
+            upgradeButton.Show(false);
 
             // Right: the disk meter. A click opens 淘货's storage tab.
             var disk = Rect("Disk", strip, new Vector2(.5f, 0), Vector2.one, Vector2.zero, Vector2.zero);
@@ -127,10 +138,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 downloadsSim.DownloadFinished += OnDownloadFinished;
             }
 
-            // 「宽带 ADSL 4M · 0.5 MB/s」, and a hint when the line is the slow part.
+            // 「宽带 ADSL 20M · 2.5 MB/s」, a hint when the line is the slow part, and the upgrade button when a faster line is on offer.
             int tier = Sim.BroadbandTier;
             lineText.text = T("宽带 ", "Line ") + XgSim.BroadbandName(tier, Sim.English) + " · " + N(Sim.LineMBps, "0.#") + " MB/s"
-                + (Sim.BroadbandBottleneck ? "  <color=#EF9F27>" + T("宽带是瓶颈 · 家里账单页可升级 ↗", "the line is the bottleneck · upgrade on the home bills ↗") + "</color>" : "");
+                + (Sim.BroadbandBottleneck ? "  <color=#EF9F27>" + T("太慢 →", "too slow →") + "</color>" : "");
+            bool offered = Sim.BroadbandUpgradeOffered;
+            upgradeButton.Show(offered);
+            if (offered)
+                upgradeButton.Set(Sim.BroadbandUpgradeLabel(Sim.English, true), Host.Money + 1e-9 >= Sim.NextBroadbandPrice,
+                    Sim.BroadbandBottleneck ? XgDark.AccentSoft : (Color?)null, XgDark.Money);
 
             // Disk: used / capacity, a note when nearly full, red when downloads stopped.
             double cap = Sim.DiskCapacityMB, used = Math.Min(cap, Sim.DiskUsedMB);
@@ -273,6 +289,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── actions and events ─────────────
 
+        /// <summary>升级宽带: buys the next tier (installation and the first month), the same purchase as the home bills page.</summary>
+        void UpgradeBroadband()
+        {
+            if (Sim == null) return;
+            if (Sim.BuyBroadband(Host)) { Fx.Knock(upgradeButton.rt, .15f); Fx.Play(XgJuice.Sfx.Id.Coin); }
+            else { Fx.Knock(upgradeButton.rt, .05f, new Vector2(8, 0)); Fx.Play(XgJuice.Sfx.Id.Thud); }
+            host.Refresh(true);
+        }
+
         void SpeedUp(QueueRow q)
         {
             if (string.IsNullOrEmpty(q.key)) return;
@@ -325,7 +350,10 @@ namespace LingGuangV05.Desktop.XingGuang
             sb.Append(XgSim.BroadbandName(tier, Sim.English)).Append(" · ").Append(N(Sim.LineMBps, "0.#")).Append(" MB/s · ").Append(T("月租 ¥", "¥")).Append(Money(XgSim.BroadbandMonthly[tier])).Append(T("", " a month")).Append('\n');
             sb.Append(T("排着的下载还要 ", "The queue still needs ")).Append(XgSim.ClockText(Sim.LineQueueSeconds)).Append('\n');
             var why = Sim.BroadbandBlocker(out string en);
-            if (why == null) sb.Append(T("升级到 ", "Upgrade to ")).Append(XgSim.BroadbandName(tier + 1, Sim.English)).Append(" ¥").Append(Money(Sim.NextBroadbandPrice)).Append(T("：点这里去家里账单页。", ": click for the home bills."));
+            if (why == null)
+                sb.Append(T("升级到 ", "Upgrade to ")).Append(XgSim.BroadbandName(tier + 1, Sim.English)).Append(" · ").Append(N(XgSim.BroadbandMBps[tier + 1], "0.#")).Append(" MB/s · ¥").Append(Money(Sim.NextBroadbandPrice))
+                    .Append(T("（装机 + 首月；之后月租 ¥" + Money(XgSim.BroadbandMonthly[tier + 1]) + "）：点「升级宽带」按钮直接装；点这行字去家里的用电账单页也行。",
+                              " (install + month 1; then ¥" + Money(XgSim.BroadbandMonthly[tier + 1]) + " a month): press the Upgrade line button, or click the text for the Home app's bills page."));
             else sb.Append(T(why, en));
             return sb.ToString();
         }

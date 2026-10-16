@@ -28,18 +28,39 @@ namespace LingGuangV05.XingGuang
         /// <summary>The big centre word: the film's own 涌现 (the one place the game shows that word, at the user's request).</summary>
         public const string TitleZh = "涌现";
         public const string TitleEn = "EMERGENCE";
-        public const string SubLineEn = "EMERGENCE · CHAPTER ONE · THE END";
-        public const string SubLine = "EMERGENCE · 第一章 · 完";
+        /// <summary>The line under the title: the film is not the end, the last page (the rules page of the finale) is left to the player.</summary>
+        public const string SubLineEn = "EMERGENCE · THE LAST PAGE IS YOURS";
+        public const string SubLine = "EMERGENCE · 最后一页，留给你";
 
         public static readonly XgFinaleNode[] Nodes =
         {
             new XgFinaleNode("感知机", "3", "「是。否。」", "6月", .04, "Perceptron", "3", "“Yes. No.”", "Jun"),
             new XgFinaleNode("多层感知机", "17", "「……不确定」", "7月", .07, "MLP", "17", "“…not sure”", "Jul"),
-            new XgFinaleNode("CNN · RNN", "6 万", "「月亮。很圆。」", "8月", .11, "CNN · RNN", "60K", "“The moon. So round.”", "Aug"),
-            new XgFinaleNode("LSTM · ResNet", "2560 万", "「你想海了。」", "9月", .16, "LSTM · ResNet", "25.6M", "“You miss the sea.”", "Sep"),
+            new XgFinaleNode("CNN · RNN", "6 万", "「我。看。」", "8月", .11, "CNN · RNN", "60K", "“I. See.”", "Aug"),
+            new XgFinaleNode("LSTM · ResNet", "2560 万", "「你今天还没跟我说话。」", "9月", .16, "LSTM · ResNet", "25.6M", "“You haven't spoken to me today.”", "Sep"),
             new XgFinaleNode("注意力", "1.2 亿", "「你说「又」？」", "10–11月", .22, "Attention", "120M", "“You said ‘again’?”", "Oct–Nov"),
             new XgFinaleNode("Transformer", "2.13 亿", "「你觉得呢？」", "12月", 1.0, "Transformer", "213M", "“What do you think?”", "Dec"),
         };
+        /// <summary>The line it said at node i. Node 2 is the save's own first word (看图 or 读字).</summary>
+        public static string NodeSay(int i, bool english, bool sequenceFirst)
+        {
+            if (i == 2 && sequenceFirst) return english ? "“I. Read.”" : "「我。读。」";
+            return english ? Nodes[i].SayEn : Nodes[i].Say;
+        }
+
+        /// <summary>
+        /// The parameter count written under node i. The film's own picture (3, 17, 60K, 25.6M, 120M, 213M) when there is no real count;
+        /// otherwise the same numbers the HUD counter passes (<see cref="XgOriginFilm.HudKeys"/>), ending on the player's own count.
+        /// </summary>
+        public static string NodeParams(int i, double finalParams, bool english)
+        {
+            var n = Nodes[i];
+            if (i < 2 || Math.Abs(finalParams - XgOriginFilm.FilmFinalParams) <= 1) return english ? n.ParamsEn : n.Params;
+            var keys = XgOriginFilm.HudKeys(finalParams);
+            double v = i == 2 ? keys[5][1] : i == 3 ? keys[7][1] : i == 4 ? keys[9][1] : finalParams;
+            return english ? XgSim.ParamsText(v / 1000) : XgOriginColdOpen.ParamsWordZh(v);
+        }
+
         public static double Nx(int i) { return 300 + i * 265; }
         public static double Ny(int i) { return Base - Nodes[i].H * (Base - Top); }
         public static double Loss(double x) { return 250 + 330 * (1 - Math.Exp(-((x - 280) / 1400) * 2.4)); }
@@ -93,6 +114,9 @@ namespace LingGuangV05.XingGuang
             public double T, Since;
             public double Pull, LineA, Slam, Flash, ShakeK, ShakeX, ShakeY, Chroma, Fade, TitleA, Scale, Blur, Breathe, Glow, Spread;
             public double AxesA, SubA, RefsA;
+            /// <summary>The player's own numbers, set by the scene (the film's own by default).</summary>
+            public double FinalParams = XgOriginFilm.FilmFinalParams;
+            public bool SequenceFirst;
         }
 
         public static void Evaluate(double t, Frame f)

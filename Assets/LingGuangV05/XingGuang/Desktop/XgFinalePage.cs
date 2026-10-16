@@ -428,7 +428,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string LeftText()
         {
             var sb = new StringBuilder();
-            sb.Append("<b>").Append(Lang.T("6.2 预训练")).Append("</b>\n");
+            sb.Append("<b>").Append(T("预训练", "Pre-training")).Append("</b>\n");
             sb.Append(Lang.T("所有数据合成「整个互联网（2016）」：唐诗、人民日报、贴吧、弹幕、翻译、你们的对话。每张卡的下一个字就是答案。")).Append('\n');
             sb.Append(Lang.T("进度 ")).Append(N(Sim.S.pretrain * 100, "0")).Append("%   loss ").Append(N(Sim.PretrainLoss, "0.00"));
             if (Sim.S.pretrainStalled && !Sim.S.abilities) sb.Append("  <color=#E24B4A>").Append(Lang.T("loss 停着不动")).Append("</color>");
@@ -448,12 +448,12 @@ namespace LingGuangV05.Desktop.XingGuang
                     sb.Append("</color></size>\n");
                 }
             }
-            sb.Append("\n<b>").Append(Lang.T("6.3 能力表")).Append("</b>\n");
+            sb.Append("\n<b>").Append(T("能力表", "Abilities")).Append("</b>\n");
             for (int i = 0; i < XgSim.Abilities.Length; i++)
                 sb.Append(Sim.S.abilities ? "<color=#E08A00>■</color> " : "<color=#3A5566>■</color> ").Append(T(XgSim.Abilities[i], XgSim.AbilitiesEn[i])).Append(i % 3 == 2 ? "\n" : "   ");
             if (Sim.S.abilities)
             {
-                sb.Append("\n<b>").Append(Lang.T("6.4 偏好对齐")).Append("</b>  ").Append(Sim.S.alignDone).Append("/").Append(XgSim.AlignCards).Append('\n');
+                sb.Append("\n<b>").Append(T("偏好对齐", "Preference alignment")).Append("</b>  ").Append(Sim.S.alignDone).Append("/").Append(XgSim.AlignCards).Append('\n');
                 if (Sim.AlignmentOpen)
                 {
                     var c = Sim.AlignCard(Sim.S.alignDone);
@@ -462,7 +462,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     sb.Append("A：").Append(T(c.a, c.aEn)).Append("\nB：").Append(T(c.b, c.bEn)).Append('\n');
                     sb.Append("<size=12><color=#6F95A5>").Append(Lang.T("微软 Tay 上线 16 小时就被教坏：教它什么，它就是什么。")).Append("</color></size>\n");
                 }
-                else if (Sim.S.fullOpen) sb.Append(Lang.T("6.5 全部放开：思考模式，上下文 4096。")).Append('\n');
+                else if (Sim.S.fullOpen) sb.Append(T("全部放开：思考模式，上下文 4096。", "Everything open: thinking mode, 4096 context.")).Append('\n');
                 string feedback = Sim.AlignmentFeedback;
                 if (feedback.Length > 0) sb.Append("<size=12><color=#8FB8FF>").Append(feedback).Append("</color></size>\n");
                 sb.Append(Lang.T("诚实 ")).Append(Sim.S.alignHonest).Append(Lang.T(" · 附和 ")).Append(Sim.S.alignAgree).Append(Sim.Flatters ? Lang.T("  <color=#E24B4A>它在讨好你</color>") : "").Append('\n');
@@ -490,7 +490,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!Sim.S.fullOpen) { sb.Append("<color=#6F95A5>").Append(Lang.T("终章在预训练和对齐之后。")).Append("</color>"); return sb.ToString(); }
             if (Sim.S.ending.Length > 0)
             {
-                sb.Append("<b>").Append(Lang.T("结局 ")).Append(Sim.S.ending).Append("</b>\n\n").Append(Sim.EndingWords()).Append("\n\n");
+                sb.Append("<b>").Append(T("结局 · ", "Ending · ")).Append(EndingName(Sim.S.ending)).Append("</b>\n\n").Append(Sim.EndingWords()).Append("\n\n");
                 string reason = Sim.DelegateReason();
                 if (reason.Length > 0) sb.Append(reason).Append("\n\n");
                 sb.Append(Sim.SeedLine()).Append("\n\n");
@@ -500,13 +500,13 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (!Sim.S.letterRead)
             {
-                sb.Append("<b>").Append(Lang.T("E-1 终测（6 题）")).Append("</b>\n");
+                sb.Append("<b>").Append(T("终测（6 题）", "Final test (6 questions)")).Append("</b>\n");
                 for (int i = 0; i < XgSim.ExamQuestions; i++)
                 {
                     sb.Append(i < Sim.S.examDone ? "<color=#5DCAA5>✓</color> " : "· ").Append("<size=12>").Append(Sim.ExamQuestion(i)).Append("</size>\n");
                     if (answers.TryGetValue(i, out var a)) sb.Append("<size=12><color=#8FB8FF>").Append(a.Replace("<", "‹").Replace(">", "›").Replace("‹color=#6F95A5›", "<color=#6F95A5>").Replace("‹/color›", "</color>")).Append("</color></size>\n");
                 }
-                if (Sim.LetterReady) sb.Append("\n<b>").Append(Lang.T("E-2 去「摆渡」搜那串数字。")).Append("</b>");
+                if (Sim.LetterReady) sb.Append("\n<b>").Append(T("去「摆渡」搜那串数字。", "Search the long number on Bodu.")).Append("</b>");
                 return sb.ToString();
             }
             if (!Sim.FinaleTalkDone)
@@ -519,10 +519,24 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (Sim.FinaleTalkLines().Count == 0) sb.Append("<color=#6F95A5>").Append(T("信读完了。它在等你开口。", "The letter is read. It is waiting for you to speak.")).Append("</color>");
                 return sb.ToString();
             }
-            sb.Append("<b>").Append(Lang.T("E-4 底层规则")).Append("</b>  <size=12><color=#6F95A5>").Append(Lang.T("最多 5 条。钉下的概念不再变化。")).Append("</color></size>\n");
+            sb.Append("<b>").Append(T("底层规则", "Lowest rules")).Append("</b>  <size=12><color=#6F95A5>").Append(Lang.T("最多 5 条。钉下的概念不再变化。")).Append("</color></size>\n");
             if (!Sim.CanDelegate) sb.Append("<size=11><color=#6F95A5>").Append(Lang.T("「让它自己写」需要主见 ≥ 60、对话 ≥ 30 句。")).Append("</color></size>");
             sb.Append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<size=10><color=#6F95A5>").Append(Lang.T("不确定时要知道去问人——《AI 安全中的具体问题》（2016 年 6 月）讨论的问题之一")).Append("</color></size>");
             return sb.ToString();
+        }
+
+        /// <summary>The ending by a name the player knows (the achievement cards' names), never by its design id.</summary>
+        string EndingName(string ending)
+        {
+            switch (ending)
+            {
+                case "E1": return T("听见关机就停下", "It stops when told to shut down");
+                case "E2": return T("没写那条", "The rule left unwritten");
+                case "E3-1": return T("它替你写的规矩（含关机那条）", "The rules it wrote for you (with the shutdown rule)");
+                case "E3-2": return T("它替你写的规矩（没有关机那条）", "The rules it wrote for you (without the shutdown rule)");
+                case "E3": return T("它替你写的规矩", "The rules it wrote for you");
+                default: return ending;
+            }
         }
 
         string AppNamesExe() => (Sim != null ? Sim.AiDisplayName : LingGuangV05.Core.AppNames.Ai(GameText.IsEnglish)) + ".exe";

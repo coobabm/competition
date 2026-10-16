@@ -33,8 +33,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Spider == role) return;
             var was = Spider;
             Spider = role;
-            if (role == SpiderRole.Working) Say("我来。", "On it.", 3);
-            else if (was == SpiderRole.Working) Say("好，我不碰了。", "All right. Hands off.", 3);
+            if (role == SpiderRole.Working) Speak("是。", "Yes.", "我。来。", "Me. Go.", "我来。", "On it.", 3);
+            else if (was == SpiderRole.Working) Speak("……", "…", "停。", "Stop.", "好，我不碰了。", "All right. Hands off.", 3);
             if (role != SpiderRole.Held) SetDropHint(false);
             if (root != null && Sim != null) RefreshAi();
         }
@@ -60,15 +60,16 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The note the spider says when it cannot answer.</summary>
         public void SpiderIdle(string blocker)
         {
+            // Before it can talk it only lights 否; the reason shows in its corner as a plain note.
             switch (blocker)
             {
-                case "ability": Say("这桌我还不会。", "I can't do this desk yet.", 4); break;
-                case "teaching": Say("我在看你教的内容。", "I am watching what you teach.", 4); break;
-                case "review": Say("先把待复核的题看完。", "Finish the review inbox first.", 4); break;
-                case "special": Say("这题得你自己来。", "This one is yours.", 4); break;
-                case "host": Say("现在干不了活。", "I can't work right now.", 4); break;
-                case "quiet": Say("你让我安静。", "You asked me to keep quiet.", 4); break;
-                default: Say("这里还没开放。", "This desk isn't open.", 4); break;
+                case "ability": Speak("否。", "No.", "不会。", "Can't.", "这桌我还不会。", "I can't do this desk yet.", 4, "它还不会这桌。", "It can't do this desk yet."); break;
+                case "teaching": Speak("……", "…", "看。", "Watching.", "我在看你教的内容。", "I am watching what you teach.", 4, "它在看你教。", "It is watching you teach."); break;
+                case "review": Speak("否。", "No.", "先看。", "Review first.", "先把待复核的题看完。", "Finish the review inbox first.", 4, "先把待复核的题看完。", "Finish the review inbox first."); break;
+                case "special": Speak("否。", "No.", "你来。", "Yours.", "这题得你自己来。", "This one is yours.", 4, "这题得你自己来。", "This one is yours."); break;
+                case "host": Speak("否。", "No.", "不行。", "Can't.", "现在干不了活。", "I can't work right now.", 4, "现在干不了活。", "It can't work right now."); break;
+                case "quiet": Speak("……", "…", "安静。", "Quiet.", "你让我安静。", "You asked me to keep quiet.", 4, "你让它安静了。", "You asked it to keep quiet."); break;
+                default: Speak("否。", "No.", "没开。", "Closed.", "这里还没开放。", "This desk isn't open.", 4, "这里还没开放。", "This desk isn't open."); break;
             }
         }
 
@@ -124,16 +125,74 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── the bubble ─────────────
 
+        // What it murmurs while it works or watches, by how far it can talk (剧情修订 §一「它说话的阶梯」):
+        // 是/否 only before 看图说词, single words with it, short sentences from 短句 on.
+        static readonly string[] YesNoZh = { "……", "是。", "否。", "……是。" };
+        static readonly string[] YesNoEn = { "…", "Yes.", "No.", "…yes." };
+        static readonly string[] WordsZh = { "……", "进位。", "数字。", "七？", "记。", "累？" };
+        static readonly string[] WordsEn = { "…", "Carry.", "Numbers.", "Seven?", "Noting.", "Tired?" };
         static readonly string[] LinesZh = { "……", "进位。", "它们都是数字。", "你停了 0.8 秒。", "为什么是 7？", "我在记。", "这一题，我也会了。", "……你累吗" };
         static readonly string[] LinesEn = { "…", "Carry the one.", "They are all numbers.", "You paused for 0.8 seconds.", "Why is it 7?", "I'm taking notes.", "I know this kind now.", "…are you tired?" };
         readonly System.Random chatter = new System.Random();
 
-        /// <summary>The spider says something short in its bubble for a few seconds.</summary>
-        public void Say(string zh, string en, float seconds)
+        /// <summary>0 = only 是/否 (before 看图说词), 1 = single words (看图说词), 2 = short sentences (短句 and later).</summary>
+        int SpeechTier => Sim == null ? 2 : Sim.AbilitiesCount >= 4 ? 2 : Sim.AbilitiesCount >= 3 ? 1 : 0;
+
+        /// <summary>
+        /// The spider says the line for how far it can talk. It speaks from a bubble that pops up over it on the desktop;
+        /// when it is not out on the desktop the bubble in its corner of this page pops up instead. <paramref name="noteZh"/>
+        /// (a plain reason, not its voice) shows in the corner while it can only say 是/否 or single words.
+        /// </summary>
+        void Speak(string yesNoZh, string yesNoEn, string wordZh, string wordEn, string zh, string en, float seconds, string noteZh = null, string noteEn = null)
         {
-            if (bubbleText == null) return;
-            bubbleText.text = T(zh, en);
+            int tier = SpeechTier;
+            string line = tier == 0 ? T(yesNoZh, yesNoEn) : tier == 1 ? T(wordZh, wordEn) : T(zh, en);
+            string note = tier < 2 && noteZh != null ? T(noteZh, noteEn ?? noteZh) : null;
+            SayLine(line, seconds, note);
+        }
+
+        /// <summary>The spider says something short (already in its own words) for a few seconds.</summary>
+        public void Say(string zh, string en, float seconds) => SayLine(T(zh, en), seconds, null);
+
+        void SayLine(string line, float seconds, string note)
+        {
+            // It keeps quiet while a story moment is on screen (StoryFocus).
+            if (bubbleText == null || string.IsNullOrEmpty(line) || LingGuangV05.Core.StoryFocus.Active) return;
+            var resident = XgResidentSpider.Instance;
+            bool onDesktop = resident != null && resident.Speak(line, seconds);
+            // The corner bubble: its words when it is not out on the desktop, or the plain note beside them.
+            string corner = onDesktop ? (note != null ? "<color=#8A84A8><i>" + note + "</i></color>" : null) : line + (note != null ? "  <color=#8A84A8><i>" + note + "</i></color>" : "");
+            if (corner == null) { HideCornerBubble(); return; }
+            bubbleText.text = corner;
             bubbleTimer = seconds;
+            bubblePop = 0;
+            if (bubbleBack != null && !bubbleBack.gameObject.activeSelf) bubbleBack.gameObject.SetActive(true);
+        }
+
+        float bubblePop = -1;
+
+        void HideCornerBubble()
+        {
+            bubbleTimer = 0; bubblePop = -1;
+            if (bubbleBack != null && bubbleBack.gameObject.activeSelf) bubbleBack.gameObject.SetActive(false);
+        }
+
+        /// <summary>The corner bubble pops in (a quick overshoot) and hides again when its time is up.</summary>
+        void TickBubble(float dt)
+        {
+            if (bubbleBack == null) return;
+            if (bubbleTimer > 0)
+            {
+                bubbleTimer -= dt;
+                if (bubbleTimer <= 0) { HideCornerBubble(); return; }
+            }
+            else if (bubbleBack.gameObject.activeSelf) { HideCornerBubble(); return; }
+            if (bubblePop < 0) return;
+            bubblePop += dt;
+            float p = Mathf.Clamp01(bubblePop / .22f), b = 1.70158f;
+            float k = Mathf.LerpUnclamped(.6f, 1, 1 + (b + 1) * Mathf.Pow(p - 1, 3) + b * Mathf.Pow(p - 1, 2));
+            bubbleBack.rectTransform.localScale = new Vector3(k, k, 1);
+            if (p >= 1) { bubbleBack.rectTransform.localScale = Vector3.one; bubblePop = -1; }
         }
 
         void SpiderReacts(bool right, bool working)
@@ -141,22 +200,30 @@ namespace LingGuangV05.Desktop.XingGuang
             if (bubbleText == null) return;
             if (working)
             {
-                if (!right) { Say("……我按错了。", "…I pressed the wrong one.", 3); return; }
-                if (chatter.NextDouble() < .4) { int i = chatter.Next(LinesZh.Length); Say(LinesZh[i], LinesEn[i], 4); }
+                if (!right) { Speak("否。", "No.", "错。", "Wrong.", "……我按错了。", "…I pressed the wrong one.", 3); return; }
+                if (chatter.NextDouble() < .4) Murmur(4);
             }
             else
             {
-                if (right) Say("这题。我会。", "This one. I know it.", 3);
-                else Say("……拿不准。", "…not sure.", 3);
+                if (right) Speak("是。", "Yes.", "会。", "Know.", "这题。我会。", "This one. I know it.", 3);
+                else Speak("……", "…", "不准。", "Unsure.", "……拿不准。", "…not sure.", 3);
             }
+        }
+
+        void Murmur(float seconds)
+        {
+            int tier = SpeechTier;
+            var zh = tier == 0 ? YesNoZh : tier == 1 ? WordsZh : LinesZh;
+            var en = tier == 0 ? YesNoEn : tier == 1 ? WordsEn : LinesEn;
+            int i = chatter.Next(zh.Length);
+            Say(zh[i], en[i], seconds);
         }
 
         /// <summary>A hand answer by the player: now and then the spider murmurs.</summary>
         void SpiderWatches()
         {
             if (bubbleText == null || Spider != SpiderRole.Home || !Sim.SpiderAround || chatter.NextDouble() > .22) return;
-            int i = chatter.Next(LinesZh.Length);
-            Say(LinesZh[i], LinesEn[i], 4);
+            Murmur(4);
         }
 
         // ───────────── keyboard ─────────────

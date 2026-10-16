@@ -63,8 +63,8 @@ namespace LingGuangV05.XingGuang
         public bool AutomationHeld => QualityFrozen || CaptchaPending || CaptchaPauseLeft > 0;
         /// <summary>Labels per second over the last minute.</summary>
         public double LabelRate { get { double n = 0; foreach (double b in S.qcSpeed) n += b; return n / SpeedWindow; } }
-        /// <summary>验证码代填 needs stage 3 and a digits checkpoint of 95% or more.</summary>
-        public bool CaptchaAutofillReady => S.stage >= 3 && BestAcc("mnist") >= .95 - 1e-9;
+        /// <summary>验证码代填 needs stage 4 (captchas only exist from then) and a digits checkpoint of 95% or more.</summary>
+        public bool CaptchaAutofillReady => S.stage >= 4 && BestAcc("mnist") >= .95 - 1e-9;
 
         void PrepareCaptcha()
         {

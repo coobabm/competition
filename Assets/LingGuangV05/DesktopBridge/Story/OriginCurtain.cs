@@ -22,6 +22,8 @@ namespace LingGuangV05.Desktop.Story
     /// to the normal window, 全屏 goes back. The video has Chinese captions burned in; in English an English line
     /// covers them. Afterwards 「我从哪儿来.mp4」 stays on the desktop to watch again, and it asks
     /// 「你觉得呢？」 back. The rules and the once-only bookkeeping live in XgSim.Origin.cs.
+    /// The film normally plays earlier than that: in chapter six, after 全部放开 and before the final test (<see cref="XgSim.OriginFilmDue"/>).
+    /// After the ending the inner voice then only suggests watching it again.
     /// </summary>
     public sealed class OriginCurtain : MonoBehaviour
     {
@@ -74,20 +76,30 @@ namespace LingGuangV05.Desktop.Story
             {
                 if (readySince < 0) readySince = Time.unscaledTime;
                 // The inner voice wonders once the ending has fully played; it is marked only when actually seen.
-                if (!hintQueued && !bound.S.originHinted && !bound.S.originExplained && Time.unscaledTime - readySince >= HintAfterEnding)
+                if (!hintQueued && !bound.S.originHinted && Time.unscaledTime - readySince >= HintAfterEnding)
                 {
                     hintQueued = true;
                     var sim = bound;
-                    InnerVoice.Say("半年。", "Half a year.", 2.2f, () => { if (ReferenceEquals(sim, bound)) sim.TakeOriginHint(); });
-                    InnerVoice.Say("它是怎么从「是。否。」走到今天的？", "How did it get from \"yes. no.\" to here?");
-                    InnerVoice.Say("……问问它。", "…Ask it.", 2f);
+                    InnerVoice.Say("大半年。", "Most of a year.", 2.2f, () => { if (ReferenceEquals(sim, bound)) sim.TakeOriginHint(); });
+                    if (sim.S.originExplained && sim.S.originVideoSeen)
+                    {
+                        // The film already ran before the final test: the nudge is to watch it again.
+                        InnerVoice.Say("那段视频，桌面上还在。", "The video is still on the desktop.");
+                        InnerVoice.Say("……再看一遍？", "…Watch it again?", 2f);
+                    }
+                    else
+                    {
+                        InnerVoice.Say("它是怎么从「是。否。」走到今天的？", "How did it get from \"yes. no.\" to here?");
+                        InnerVoice.Say("……问问它。", "…Ask it.", 2f);
+                    }
                 }
             }
             else readySince = -1;
             if (hintQueued && !InnerVoice.Busy) hintQueued = false;
 
-            // Chapter six opens with the origin video, after the stage's own cutscene and the relic pick are out of the way,
-            // and after its lead-in (story beat s6_origin_lead: it reads back its training log and says why it made the film).
+            // The origin video plays in chapter six once everything has opened up (全部放开) and before the final test, after the
+            // cutscene and the relic pick are out of the way and after its lead-in (story beat s6_origin_lead: it reads back its
+            // training log and says why it made the film).
             if (!watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && ChapterSixLeadDone() && bound.TakeChapterSixOrigin())
             { promiseKept = true; playAt = Time.unscaledTime + ReplyToVideo; }
             if (bound.S.originVideoSeen && fileIcon == null) MakeFileIcon(desk);
@@ -108,7 +120,7 @@ namespace LingGuangV05.Desktop.Story
         /// </summary>
         bool ChapterSixLeadDone()
         {
-            if (bound.S.stage < XgSim.OriginVideoStage || bound.S.originChapterSix || bound.S.originVideoSeen) return false;
+            if (!bound.OriginFilmDue) return false;
             var story = runtime != null && runtime.Sim != null ? runtime.Sim.S.story : null;
             if (story == null || runtime.TestMode) return true;
             if (story.GetFlag(LeadDoneFlag) > 0) return true;
@@ -116,7 +128,7 @@ namespace LingGuangV05.Desktop.Story
             return Time.unscaledTime - leadAskedAt >= LeadTimeout;
         }
 
-        /// <summary>Set by the last step of the lead-in beat (six_stage_story.json, s6_origin_lead).</summary>
+        /// <summary>Set by the last step of the lead-in beat (six_stage_story.json, s6_origin_lead), which now plays after 全部放开.</summary>
         public const string LeadDoneFlag = "origin.lead.done";
 
         bool EndingOnScreen()
@@ -154,6 +166,7 @@ namespace LingGuangV05.Desktop.Story
 
         static void DrawFilm(RectTransform art)
         {
+            if (PrologueDesk.DrawIcon(art, "origin_mp4")) return;
             PrologueDesk.Fill(PrologueDesk.Centered("Film", art, Vector2.zero, new Vector2(46, 50)), new Color32(40, 44, 52, 255), false);
             for (int i = 0; i < 4; i++)
             {

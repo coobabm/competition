@@ -50,7 +50,9 @@ namespace LingGuangV05.Desktop.XingGuang
         void MakeIcon(PrologueDesk desk)
         {
             english = GameText.IsEnglish;
-            icon = desk.notepadIcon != null ? desk.Icon("Lingguang Chronicle", Label(), desk.notepadIcon) : desk.Icon("Lingguang Chronicle", Label(), null, desk.DrawBlankFile);
+            var own = XgIcons.Get("desktop", "chronicle_txt");
+            icon = own != null ? desk.Icon("Lingguang Chronicle", Label(), own)
+                : desk.notepadIcon != null ? desk.Icon("Lingguang Chronicle", Label(), desk.notepadIcon) : desk.Icon("Lingguang Chronicle", Label(), null, desk.DrawBlankFile);
             icon.GetComponent<PrologueClick>().Open = () => Open(desk);
             UiTip.Add(icon, () => GameText.T("它把这一年写成了一本章回小说。只读。", "It wrote the year as a novel in chapters. Read-only."));
         }

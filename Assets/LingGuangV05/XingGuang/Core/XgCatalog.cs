@@ -524,10 +524,10 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>What the AI can do at each stage (the ability nodes of the 图鉴).</summary>
-        public static readonly string[] AbilityNames = { "", "能力 · 是 / 否", "能力 · 多选一", "能力 · 一个词", "能力 · 短句", "能力 · 长记忆", "能力 · 全部放开" };
-        public static readonly string[] AbilityNamesEn = { "", "Ability · yes / no", "Ability · pick one", "Ability · one word", "Ability · short sentences", "Ability · long memory", "Ability · everything" };
-        static readonly string[] AbilityNotes = { "", "它只会回答「是」或「否」。", "它能在几个选项里挑一个。", "它会说一个词，看图也能说出一个词。", "它能说 20 个字以内的短句，记得最近几轮。", "它记得你们聊过什么，能翻译，能读懂乱码。", "规模上去以后，能力一起冒了出来：写诗、解题、写代码、看图、总结、推理。" };
-        static readonly string[] AbilityNotesEn = { "", "It can only answer yes or no.", "It can pick one of a few options.", "It says one word, and names a picture in one word.", "It speaks short sentences of up to 20 characters and remembers the last few turns.", "It remembers what you talked about, translates and reads the garbled page.", "With scale the abilities came all at once: poems, puzzles, code, pictures, summaries, reasoning." };
+        public static readonly string[] AbilityNames = { "", "能力 · 是/否", "能力 · 多选一", "能力 · 看图说词", "能力 · 短句", "能力 · 长记忆·翻译", "能力 · 全部放开" };
+        public static readonly string[] AbilityNamesEn = { "", "Ability · Yes/No", "Ability · Pick one", "Ability · Picture to word", "Ability · Short sentences", "Ability · Memory · translation", "Ability · Everything" };
+        static readonly string[] AbilityNotes = { "", "它只会回答「是」或「否」。", "它能在几个选项里挑一个。", "它第一次开口：一个词，最多几个字的碎片。看图，能说出图里是什么。", "它能说一两句短话，只记得这次聊天里说过的。", "它记得前几天聊过的事，能翻译，能读懂乱码。", "看图的和读字的接到了一块儿。预训练跑完、偏好对齐做完，它才真正放开。" };
+        static readonly string[] AbilityNotesEn = { "", "It can only answer yes or no.", "It can pick one of a few options.", "It speaks for the first time: one word, a few characters at most. Shown a picture, it says what it is.", "It speaks a sentence or two, and remembers only what was said in this chat.", "It remembers what you talked about days ago, translates and reads the garbled page.", "The part that sees and the part that reads are joined now. After pre-training and alignment it opens up for good." };
 
         /// <summary>
         /// 加薪: hand-labelling pay multiplier per raise level. Whole numbers only: the first raise doubles the pay and
@@ -565,7 +565,7 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "zipcode", client = "区邮政局", clientEn = "District post office", job = "邮政编码分拣", jobEn = "Postcode sorting", dataset = "mnist", threshold = .99, income = 1, signBonus = 200 },
             new XgContract { id = "memetag", client = "斗图网", clientEn = "A meme site", job = "表情包自动打标签", jobEn = "Meme auto-tagging", dataset = "meme", threshold = .85, income = .6, signBonus = 120 },
             new XgContract { id = "captcha", client = "某购票网站", clientEn = "A ticketing site", job = "验证码难度测评", jobEn = "Captcha difficulty testing", dataset = "cifar", threshold = .7, income = 2, signBonus = 450 },
-            new XgContract { id = "taobao", client = "淘宝卖家联盟", clientEn = "Taobao seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 11, signBonus = 2500 },
+            new XgContract { id = "taobao", client = "淘货卖家联盟", clientEn = "Taohuo seller alliance", job = "商品图自动分类", jobEn = "Product photo tagging", dataset = "imagenet", threshold = .75, income = 11, signBonus = 2500 },
             new XgContract { id = "faceclock", client = "工业园区", clientEn = "Industrial park", job = "园区监控识别", jobEn = "Park camera recognition", dataset = "imagenet", threshold = .9, income = 35, signBonus = 8000 },
 
             new XgContract { id = "acrostic", client = "公众号「每日一诗」", clientEn = "WeChat account Daily Poem", job = "藏头诗生成", jobEn = "Acrostic poems", dataset = "poems", threshold = .35, income = .5, signBonus = 80 },

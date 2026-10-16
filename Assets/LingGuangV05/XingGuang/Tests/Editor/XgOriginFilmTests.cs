@@ -122,9 +122,9 @@ namespace LingGuangV05.XingGuang.Tests
             }
             XgOriginFilm.EvaluateHud(144, h, 3.2e8);
             Assert.AreEqual(3.2e8, h.Value, 3.2e8 * .01);
-            // a tiny count must not drag the counter below the film's earlier beats
+            // a small real count ends the counter on that count and still never runs backwards
             var keys = XgOriginFilm.HudKeys(1e6);
-            Assert.AreEqual(2.13e8, keys[11][1], 1);
+            Assert.AreEqual(1e6, keys[11][1], 1);
             for (int i = 1; i < keys.Length; i++) Assert.GreaterOrEqual(keys[i][1], keys[i - 1][1]);
         }
 
@@ -136,7 +136,11 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.stage = 5;
             Assert.IsFalse(sim.TakeChapterSixOrigin(), "not before chapter six");
             sim.S.stage = XgSim.OriginVideoStage;
-            Assert.IsTrue(sim.TakeChapterSixOrigin(), "reaching chapter six asks for the film once");
+            Assert.IsFalse(sim.TakeChapterSixOrigin(), "chapter six alone is not enough: the film waits for 全部放开");
+            sim.S.fullOpen = true;
+            Assert.IsTrue(sim.TakeChapterSixOrigin(), "全部放开 asks for the film once");
+            sim.S.fullOpen = true; sim.S.ending = "E1";
+            Assert.IsFalse(new XgSim { S = { stage = 6, fullOpen = true, ending = "E1" } }.OriginFilmDue, "never after the ending");
             Assert.IsFalse(sim.TakeChapterSixOrigin());
             Assert.IsTrue(sim.S.originExplained);
             Assert.IsTrue(sim.OriginVideoFinished(), "ending or skipping it makes it ask 你觉得呢");

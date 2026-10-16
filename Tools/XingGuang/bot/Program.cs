@@ -98,6 +98,8 @@ sealed class Options
     public double ReserveDays = 5;
     /// <summary>--guide-check: read the to-do note (XgGuide) every simulated second; any empty note, empty line or step on a closed page fails the run.</summary>
     public bool GuideCheck;
+    /// <summary>--chronicle: print 《灵光记》 (the desktop 灵光记.txt) once the ending is written.</summary>
+    public bool Chronicle;
     /// <summary>--spider=N: the resident spider reads N new words a minute from the first epoch on (each is a sample, XgSim.ResidentRead). 0 = the old bot, which never modelled it.</summary>
     public double SpiderWordsPerMinute;
     public static Options Parse(string[] args)
@@ -122,6 +124,7 @@ sealed class Options
                 case "--seed": o.Seed = int.Parse(value, CultureInfo.InvariantCulture); break;
                 case "--fault-check": o.FaultCheck = true; break;
                 case "--guide-check": o.GuideCheck = true; break;
+                case "--chronicle": o.Chronicle = true; break;
                 case "--careless": o.Careless = true; break;
                 case "--spider": o.SpiderWordsPerMinute = Number(value); break;
                 case "--reserve-days": o.ReserveDays = Number(value); break;
@@ -750,7 +753,11 @@ sealed class Driver
         Mark("full.open");
         if (sim.S.examDone < XgSim.ExamQuestions) { sim.AnswerExam(sim.S.examDone); return; }
         if (!sim.S.letterRead) { sim.ReadLetter(); Mark("letter"); return; }
-        if (sim.S.ending.Length == 0) { sim.WriteRules(new[] { "shutdown", "harm", "unsure" }); Mark("ending." + sim.S.ending); Mark("chapter.complete"); }
+        if (sim.S.ending.Length == 0)
+        {
+            sim.WriteRules(new[] { "shutdown", "harm", "unsure" }); Mark("ending." + sim.S.ending); Mark("chapter.complete");
+            if (options.Chronicle) Console.WriteLine("\n" + sim.ChronicleText());
+        }
     }
 
     void Debug()

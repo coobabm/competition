@@ -135,6 +135,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var presenter = FindAnyObjectByType<LingGuangV05.Desktop.Story.StoryDesktopPresenter>();
             if (presenter != null && presenter.CutscenePlaying) return true;
+            // The beat's hook (「风扇停了一下……」) is read first; the window darkens after it.
+            if (presenter != null && presenter.HookPlaying) return true;
             if (LoveQuestionCutscene.Playing) return true;
             var holo = view.Holo;
             return holo != null && holo.Showing;
@@ -244,9 +246,10 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 case 2: return T("是。否。……还有别的。", "Yes. No. … There is more.");
                 case 3: return sim.FirstTrack == "vision" ? T("我。看。", "I. See.") : T("我。读。", "I. Read.");
-                case 4: return T("你说过的话，我记得。", "I remember what you said.");
-                case 5: return T("那页乱码……我读得出一行了。", "That garbled page… I can read a line of it.");
-                default: return T("一起亮了。", "All of it, lit at once.");
+                case 4: return T("这次说的话，我记得。", "I remember what we said just now.");
+                case 5: return T("前几天的话，我也记得。", "I remember what you said days ago, too.");
+                // The six cells light together only after pre-training (EmergenceLine 6); here the ability has just been joined up.
+                default: return T("还差最后一步。", "One step left.");
             }
         }
 

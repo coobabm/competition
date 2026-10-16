@@ -89,7 +89,7 @@ namespace LingGuangV05.XingGuang
             => new XgBeforeAfter(p.text, p.textEn.Length > 0 ? p.textEn : p.text,
                 oldYes ? "是。" : "否。", oldYes ? "Yes." : "No.", p.yes ? "是。" : "否。", p.yes ? "Yes." : "No.", real);
 
-        /// <summary>It forgot what you said; now it quotes your last words back (or a line from the first days).</summary>
+        /// <summary>Ability 5 remembers across days: where it forgot what you said last time, it now quotes your last words back (or a line from the first days).</summary>
         XgBeforeAfter MemoryBeforeAfter()
         {
             string quote = "";
@@ -100,7 +100,7 @@ namespace LingGuangV05.XingGuang
             if (quote.Length > 16) quote = quote.Substring(0, 16) + "…";
             if (!real) quote = "明天还来";
             string quoteEn = real ? quote : "I will be back tomorrow";
-            return new XgBeforeAfter("我刚才说了什么？", "What did I just say?", "……你是谁？", "…Who are you?",
+            return new XgBeforeAfter("我上回说了什么？", "What did I say last time?", "……你是谁？", "…Who are you?",
                 "你说过：「" + quote + "」。", "You said: \"" + quoteEn + "\".", real);
         }
     }

@@ -93,13 +93,14 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.status.text = learned ? T("已学会", "Learned") : next ? T("下一项", "Next") : T("尚未学会", "Not yet");
                 row.description.text = T(XgSim.AbilityUnlocks[ability], XgSim.AbilityUnlocksEn[ability]);
                 row.parameters.text = ability == 1 ? T("参数：起始即有", "Parameters: available from the start")
-                    : T("参数 ", "Parameters ") + XgSim.ParamsText(Sim.TrainedParamsK) + " / " + XgSim.ParamsText(Sim.ParamsThreshold(ability))
-                    + GrowthFormer(XgSim.ParamsText(XgSim.AbilityParamsK[ability]), Sim.ParamsDiscount(ability) < 1);
+                    : T("参数 ", "Parameters ") + XgSim.ParamsText(Sim.TrainedParamsK) + " / " + (Sim.ParamsLineKnown(ability) ? XgSim.ParamsText(Sim.ParamsThreshold(ability))
+                    + GrowthFormer(XgSim.ParamsText(XgSim.AbilityParamsK[ability]), Sim.ParamsDiscount(ability) < 1) : "?");
                 row.samples.text = ability == 1 ? T("样本：起始即有", "Samples: available from the start")
-                    : T("有效样本 ", "Effective samples ") + XgSim.SamplesText(Sim.TrainedSamples) + " / " + XgSim.SamplesText(Sim.SamplesThreshold(ability))
-                    + GrowthFormer(XgSim.SamplesText(XgSim.AbilitySamples[ability]), Sim.SamplesDiscount(ability) < 1);
-                SetBar(row.paramsFill, ability == 1 ? 1 : (float)Sim.ParamsProgress(ability));
-                SetBar(row.samplesFill, ability == 1 ? 1 : (float)Sim.SamplesProgress(ability));
+                    : T("有效样本 ", "Effective samples ") + XgSim.SamplesText(Sim.TrainedSamples) + " / " + (Sim.SamplesLineKnown(ability) ? XgSim.SamplesText(Sim.SamplesThreshold(ability))
+                    + GrowthFormer(XgSim.SamplesText(XgSim.AbilitySamples[ability]), Sim.SamplesDiscount(ability) < 1) : "?");
+                // Learned rows are full; the others show how much is trained, never how far (XgSim.Learned.cs).
+                SetBar(row.paramsFill, ability == 1 || learned ? 1 : (float)Sim.ParamsFill);
+                SetBar(row.samplesFill, ability == 1 || learned ? 1 : (float)Sim.SamplesFill);
             }
             LayoutGrowthAbilities();
         }

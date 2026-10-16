@@ -377,7 +377,7 @@ namespace LingGuangV05.Desktop.Taohuo
             if (g.id == HardwareCatalog.Gtx1080 || g.rumour)
                 return Lang.T("问大家：1080 Ti 什么时候出？  答：亲，厂家还没通知哦，等等党永远不亏～");
             if (g.id == HardwareCatalog.Rx480)
-                return Lang.T("问大家：能跑深度学习吗？  答：亲，A 卡的话……建议您咨询一下老周哦～");
+                return Lang.T("问大家：能跑深度学习吗？  答：亲，A 卡的话……建议您咨询一下专业人士哦～");
             return Lang.T("问大家：能跑深度学习吗？  答：亲，能的哦，CUDA 都支持～");
         }
 

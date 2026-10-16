@@ -40,7 +40,8 @@ namespace LingGuangV05.Desktop.Story
         public void Enqueue(string who, string text, float seconds, bool story = false, System.Action open = null)
         {
             if (string.IsNullOrEmpty(text)) return;
-            if (!OpeningQuiet.Allows(story)) return;
+            // The opening window drops chatter; a story moment on screen only holds it (Run waits on StoryFocus).
+            if (!OpeningQuiet.Allows(story, OpeningQuiet.Active)) return;
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open });
             if (running == null) running = StartCoroutine(Run());
         }
@@ -81,6 +82,8 @@ namespace LingGuangV05.Desktop.Story
         {
             while (queue.Count > 0)
             {
+                // Nothing slides up over a story moment (剧情修订 §二): it waits until the moment is over.
+                while (queue.Peek().held == null && StoryFocus.Active) yield return null;
                 var item = queue.Dequeue();
                 if (item.valid != null && !item.valid()) continue;
                 bool closed = false;
@@ -138,6 +141,22 @@ namespace LingGuangV05.Desktop.Story
             return (new Color32(70, 100, 140, 255), new Color32(110, 140, 180, 255), "i", Lang.T("确定"));
         }
 
+        /// <summary>The drawn logo for a sender (Icons/popup), matching <see cref="Theme"/>'s branches.</summary>
+        static string LogoId(string who)
+        {
+            if (who.StartsWith("YY")) return "yy";
+            if (who.Contains("贴吧") || who.Contains("Tieba")) return "tieba";
+            if (who.Contains("360")) return "qh360";
+            if (who.Contains("迅雷") || who.Contains("Thunder")) return "xunlei";
+            if (who.Contains("Windows")) return "windows";
+            if (who.Contains("摆渡众包") || who.Contains("Bodu Crowd")) return "bodu_crowd";
+            if (who.Contains("摆渡云") || who.Contains("Bodu Cloud")) return "bodu_cloud";
+            if (who.Contains("淘货") || who.Contains("Taohuo")) return "taohuo";
+            if (who.Contains("喵鱼") || who.Contains("Miaoyu")) return "miaoyu";
+            if (who.Contains("鲁大师") || who.Contains("Master Lu")) return "ludashi";
+            return "info";
+        }
+
         // Quiet Win7 information balloon: a status notice has no marketing footer or action.
         RectTransform BuildSystemBalloon(RectTransform parent, string who, string message, System.Action close, out Hover hover)
         {
@@ -189,6 +208,8 @@ namespace LingGuangV05.Desktop.Story
             var badgeImg = PrologueDesk.Fill(badge, Color.white, false); badgeImg.sprite = PrologueDesk.Circle();
             var mark = desk.Text(PrologueDesk.Rect("Mark", badge, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "<b>" + theme.mark + "</b>", theme.mark.Length > 2 ? 9 : 13, theme.bar, TextAlignmentOptions.Center);
             mark.textWrappingMode = TextWrappingModes.NoWrap;
+            // The drawn logo (its own white disc) replaces the plain disc and the one-character mark.
+            if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(badge, "popup", LogoId(who), 12, 12, 28) != null) { badgeImg.enabled = false; mark.gameObject.SetActive(false); }
             var title = desk.Text(PrologueDesk.Rect("Who", bar, Vector2.zero, Vector2.one, new Vector2(40, 0), new Vector2(-36, 0)), who, 15, Color.white, TextAlignmentOptions.MidlineLeft);
             title.richText = false;
             title.fontStyle = FontStyles.Bold;

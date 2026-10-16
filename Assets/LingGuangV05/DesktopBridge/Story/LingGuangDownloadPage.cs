@@ -53,9 +53,7 @@ namespace LingGuangV05.Desktop.Story
                 if (router != null) router.Open(LingGuangInstallFlow.AppId);
                 return;
             }
-            // 灵光 is only passed hand to hand now: 老周 sends the file in YY.
-            var desk = FindAnyObjectByType<ChapterOneDesktopRouter>();
-            if (desk != null) desk.Open("yy");
+            // 灵光 is not public: the page has nothing to download. (The exe reached this PC by itself, in the prologue.)
             Refresh();
         }
 
@@ -96,8 +94,8 @@ namespace LingGuangV05.Desktop.Story
             else
             {
                 ShowProgress(0, 1);
-                Set(status, Lang.T("内测版不公开下载。认识开发者的人会直接用 YY 传给你。"));
-                SetButton(Lang.T("打开 YY 找老周要"), true);
+                Set(status, Lang.T("内测版不公开下载。"));
+                SetButton(Lang.T("暂未开放"), false);
             }
         }
 

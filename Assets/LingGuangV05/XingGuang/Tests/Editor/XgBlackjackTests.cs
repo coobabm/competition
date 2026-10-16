@@ -28,6 +28,33 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(100,BlackjackRules.Returned(new[]{9,8},new[]{9,7},50));
             Assert.AreEqual(0,BlackjackRules.Returned(new[]{9,8,2},new[]{9,7},50));
         }
+        [Test] public void NaturalRoundsHalfYenUpAndNoStakeIsCapped()
+        {
+            Assert.AreEqual(13,BlackjackRules.Returned(new[]{0,12},new[]{9,7},5));   // 12.5 -> 13
+            Assert.AreEqual(8,BlackjackRules.Returned(new[]{0,12},new[]{9,7},3));
+            Assert.AreEqual(2500000000000L,BlackjackRules.Returned(new[]{0,12},new[]{9,7},1000000000000L));
+            Assert.AreEqual(2000000000000L,BlackjackRules.Returned(new[]{9,8},new[]{9,7},1000000000000L));
+        }
+        [Test] public void AnyStakeUpToTheWholeWalletIsDealtAndMoreIsRefused()
+        {
+            foreach(long stake in new long[]{1,7,10,501,12345})
+            {
+                var sim=new XgSim(); var host=new Host{money=100000};
+                Assert.IsTrue(sim.StartBlackjack(stake,host),"stake "+stake);
+                Assert.AreEqual(stake,sim.Casino.blackjack.stake);
+            }
+            foreach(long wallet in new long[]{1,10,777,10000,3000000007L})
+            {
+                var sim=new XgSim(); var host=new Host{money=wallet};
+                Assert.IsTrue(sim.StartBlackjack(wallet,host),"all in "+wallet); // a natural may settle at once; either way it was accepted
+                Assert.AreEqual(1,host.debits);
+                var over=new XgSim(); var overHost=new Host{money=wallet};
+                Assert.IsFalse(over.StartBlackjack(wallet+1,overHost),"over wallet "+wallet);
+                Assert.AreEqual(wallet,overHost.money);Assert.AreEqual(0,overHost.debits);Assert.IsFalse(over.BlackjackActive);
+            }
+            Assert.IsFalse(new XgSim().StartBlackjack(0,new Host()));
+            Assert.IsFalse(new XgSim().StartBlackjack(-5,new Host()));
+        }
         [Test] public void StartShufflesAFullDeckAndCannotRedealOrPlayOtherGames()
         {
             var sim=new XgSim(); var host=new Host();

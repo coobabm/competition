@@ -15,7 +15,7 @@ namespace LingGuangV05.Desktop.Story
     {
         static string T(string zh, string en) => GameText.T(zh, en);
 
-        struct App { public string mark, name, nameEn; public Color color; public Func<string> say; }
+        struct App { public string mark, name, nameEn, id; public Color color; public Func<string> say; }
 
         public static void Install()
         {
@@ -27,11 +27,11 @@ namespace LingGuangV05.Desktop.Story
             row.gameObject.AddComponent<TrayApps>();
             var apps = new[]
             {
-                new App { mark = "酷", name = "酷狗音乐", nameEn = "KuGou Music", color = new Color32(30, 130, 230, 255), say = () => Lang.T("猜你喜欢：《告白气球》《演员》《小幸运》……") },
-                new App { mark = "云", name = "网易云音乐", nameEn = "NetEase Cloud Music", color = new Color32(200, 30, 40, 255), say = () => Lang.T("每日歌曲推荐已更新。今天的乐评：「我很好，就是有点想你。」") },
-                new App { mark = "暴", name = "暴风影音", nameEn = "Baofeng Player", color = new Color32(40, 60, 90, 255), say = () => Lang.T("左眼键：一键开启高清增强。") },
-                new App { mark = "T", name = "TGP · 腾讯游戏平台", nameEn = "TGP · Tencent Games", color = new Color32(25, 25, 30, 255), say = () => Lang.T("你的好友「老周」正在玩：守望先锋。") },
-                new App { mark = "有", name = "有道词典", nameEn = "Youdao Dictionary", color = new Color32(220, 40, 40, 255), say = () => Lang.T("划词翻译已开启。今日单词：attention /əˈtenʃn/ n. 注意") },
+                new App { id = "kugou", mark = "酷", name = "酷狗音乐", nameEn = "KuGou Music", color = new Color32(30, 130, 230, 255), say = () => Lang.T("猜你喜欢：《演员》《小幸运》《南山南》……") },
+                new App { id = "netease", mark = "云", name = "网易云音乐", nameEn = "NetEase Cloud Music", color = new Color32(200, 30, 40, 255), say = () => Lang.T("每日歌曲推荐已更新。今天的乐评：「我很好，就是有点想你。」") },
+                new App { id = "baofeng", mark = "暴", name = "暴风影音", nameEn = "Baofeng Player", color = new Color32(40, 60, 90, 255), say = () => Lang.T("左眼键：一键开启高清增强。") },
+                new App { id = "tgp", mark = "T", name = "TGP · 腾讯游戏平台", nameEn = "TGP · Tencent Games", color = new Color32(25, 25, 30, 255), say = () => Lang.T("你的好友「阿杰」正在玩：守望先锋。") },
+                new App { id = "youdao", mark = "有", name = "有道词典", nameEn = "Youdao Dictionary", color = new Color32(220, 40, 40, 255), say = () => Lang.T("划词翻译已开启。今日单词：attention /əˈtenʃn/ n. 注意") },
             };
             for (int i = 0; i < apps.Length; i++)
             {
@@ -41,6 +41,8 @@ namespace LingGuangV05.Desktop.Story
                 var img = PrologueDesk.Fill(icon, app.color);
                 var b = icon.gameObject.AddComponent<Button>(); b.targetGraphic = img;
                 b.onClick.AddListener(() => PrologueDirector.Desk?.StoryPopup(T(app.name, app.nameEn), app.say(), 6));
+                // The drawn logo replaces the coloured box and its one-character mark (the box stays as an almost invisible hit area).
+                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(icon, "tray", app.id, 12, 12, 24) != null) { img.color = new Color(1, 1, 1, .01f); UiTip.Add(icon, app.name, app.nameEn); continue; }
                 var t = PrologueDesk.Rect("Mark", icon, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<TextMeshProUGUI>();
                 t.font = PrologueDesk.CjkFont(); t.text = "<b>" + app.mark + "</b>"; t.fontSize = 15; t.color = Color.white; t.alignment = TextAlignmentOptions.Center; t.raycastTarget = false;
                 UiTip.Add(icon, app.name, app.nameEn);

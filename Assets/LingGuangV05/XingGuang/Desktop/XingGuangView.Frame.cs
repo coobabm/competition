@@ -121,7 +121,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string head = T("能力 " + Sim.AbilitiesCount + "/6。", "Abilities " + Sim.AbilitiesCount + "/6.");
             // Live numbers: each bar against its line, the models behind P with their formula, caps and memory.
             string bars = "\n" + Sim.ParamsReport(Host) + T("\n光买宽度不练，不算。", "\nWidth bought but never trained does not count.") + "\n\n" + Sim.SamplesReport()
-                + "\n\n" + T("两样都到门槛，下一项能力就有了。门槛已按买到的道具打折。", "When both reach the line, the next ability comes. The lines already include the items you own.");
+                + "\n\n" + Sim.FogNote;
             if (next == 0) return head + bars;
             return head + bars + "\n\n" + T("下一项「" + XgSim.AbilityName(next, false) + "」：", "Next, '" + XgSim.AbilityName(next, true) + "': ") + T(XgSim.AbilityUnlocks[next], XgSim.AbilityUnlocksEn[next]);
         }
@@ -144,10 +144,11 @@ namespace LingGuangV05.Desktop.XingGuang
             else
             {
                 nextHead.text = T("下一项能力 · ", "Next ability · ") + XgSim.AbilityName(next, Sim.English);
-                paramsValue.text = XgSim.ParamsText(p) + " / " + XgSim.ParamsText(Sim.ParamsThreshold(next)) + " (" + Percent(Sim.ParamsProgress(next)) + "%)";
-                dataValue.text = XgSim.SamplesText(d) + " / " + XgSim.SamplesText(Sim.SamplesThreshold(next)) + " (" + Percent(Sim.SamplesProgress(next)) + "%)";
-                SetBar(paramsFill, (float)Sim.ParamsProgress(next));
-                SetBar(dataFill, (float)Sim.SamplesProgress(next));
+                // The line is hidden (XgSim.Learned.cs): the bars say how much is trained, and 「?」 until a bar is past it.
+                paramsValue.text = XgSim.ParamsText(p) + " · " + Sim.ParamsLineText(next);
+                dataValue.text = XgSim.SamplesText(d) + " · " + Sim.SamplesLineText(next);
+                SetBar(paramsFill, (float)Sim.ParamsFill);
+                SetBar(dataFill, (float)Sim.SamplesFill);
                 // The step behind the link is planned a couple of times a second, not every refresh.
                 if (barStepAt < 0 || Time.unscaledTime - barStepAt > .5f) { barStepAt = Time.unscaledTime; barStep = FindBarStep(out _); }
                 goButton.gameObject.SetActive(barStep != null);
@@ -230,7 +231,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             public string id;
             public RectTransform rt;
-            public Image back, accent;
+            public Image back, accent, icon;
             public TMP_Text label, badge;
             public Button button;
             public bool hover;
@@ -300,7 +301,9 @@ namespace LingGuangV05.Desktop.XingGuang
             row.back = Panel(row.rt, Color.clear);
             row.accent = Panel(Rect("Accent", row.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0)), XgDark.Good);
             row.accent.raycastTarget = false;
-            row.label = ui.Text(Rect("Label", row.rt, Vector2.zero, Vector2.one, new Vector2(14, 0), new Vector2(-8, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            // The drawn tab icon (Tools/Icons/ui_icons.py); without the file the row stays text only.
+            row.icon = XgIcons.Place(row.rt, "nav", id, 22, NavRowHeight * .5f, 20);
+            row.label = ui.Text(Rect("Label", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 38 : 14, 0), new Vector2(-8, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             row.label.textWrappingMode = TextWrappingModes.NoWrap; row.label.overflowMode = TextOverflowModes.Ellipsis;
             row.badge = ui.Text(Rect("Badge", row.rt, new Vector2(.5f, 0), Vector2.one, Vector2.zero, new Vector2(-10, 0)), "", 12, XgDark.Money, TextAlignmentOptions.MidlineRight);
             row.badge.textWrappingMode = TextWrappingModes.NoWrap;
@@ -355,7 +358,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
                 case "tree": return T("成长：六项能力、参数和样本门槛，以及结构、技巧和数据包。点击节点购买；消耗品在右侧货架。", "Growth: six abilities, their parameter and sample thresholds, structures, techniques and data packs. Click a node to buy; consumables are on the right shelf.");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
-                case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练、预训练和替你回消息都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training, pre-training and replies all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
+                case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练和预训练都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training and pre-training all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");
                 case "cards": return Lang.T("成就：收集来的闪卡。稀有度越高，卡面越闪：银箔、金箔、镭射、星河，还有转动才看得见的光栅卡。\n有些卡藏在工作以外的地方。");
                 default: return T("终章：第六项能力「全部放开」以后打开。", "Finale: opens with the sixth ability, 'Everything'.");
@@ -436,6 +439,7 @@ namespace LingGuangV05.Desktop.XingGuang
             row.back.color = on ? XgDark.OnFill : row.hover && open ? new Color32(14, 28, 36, 255) : (Color)new Color32(0, 0, 0, 0);
             row.accent.enabled = on;
             row.label.color = !open ? XgDark.Dim : on || row.hover ? XgDark.Ink : XgDark.Muted;
+            if (row.icon != null) row.icon.color = !open ? new Color(1, 1, 1, .35f) : on || row.hover ? Color.white : new Color(1, 1, 1, .85f);
         }
     }
 }

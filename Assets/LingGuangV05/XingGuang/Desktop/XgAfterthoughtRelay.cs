@@ -40,7 +40,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sincePoll = 0;
             // In YY the line arrives as a YY message with its own notification; without YY it waits on 概览.
             if (bound.TakeReflectionLine() != null && !XgYyTalk.InYY)
-                PrologueDirector.Desk?.Popup(LingGuangV05.Core.AppNames.AppZh, GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f,
+                PrologueDirector.Desk?.Popup(AiDesktopIdentity.Name(controller.runtime), GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f,
                     () => { controller.Open(); controller.View?.Open("home"); });
         }
 
@@ -94,7 +94,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         void Think(string key, string argZh = null, string argEn = null)
         {
-            if (bound == null || bound.OfflineSimulation || bound.AfterthoughtSaid(key) || queued.Contains(key)) return;
+            // A story moment on screen: the thought is not said now (it comes back the next time the same thing happens).
+            if (bound == null || bound.OfflineSimulation || bound.AfterthoughtSaid(key) || queued.Contains(key) || LingGuangV05.Core.StoryFocus.Active) return;
             var thought = bound.PeekAfterthought(key, argZh, argEn);
             if (thought == null) return;
             queued.Add(key);

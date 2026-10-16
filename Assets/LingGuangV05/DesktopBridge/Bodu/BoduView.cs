@@ -67,9 +67,10 @@ namespace LingGuangV05.Desktop.Bodu
             foreach (var title in window.GetComponentsInChildren<TMP_Text>(true)) if (title.name == "Aero Window Title") title.text = name;
             var icon = GameObject.Find("Desktop List/" + NativeWindow);
             var tex = Resources.Load<Texture2D>("LingGuangV05/Forum/bodu_icon");
-            Sprite sprite = tex != null ? Sprite.Create(tex, new UnityEngine.Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f)) : Icon();
+            Sprite sprite = XgIcons.Get("desktop", "bodu") ?? (tex != null ? Sprite.Create(tex, new UnityEngine.Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f)) : Icon());
             if (icon != null) Relabel(icon, name, sprite);
             if (window.taskbarButton != null) Relabel(window.taskbarButton.gameObject, name, sprite);
+            LingGuangV05.Desktop.Taohuo.ShopView.RebrandStartRow(window, name, sprite, "摆渡 Bodu search browser");
         }
 
         static Sprite icon;
@@ -199,7 +200,7 @@ namespace LingGuangV05.Desktop.Bodu
             for (int i = body.childCount - 1; i >= 0; i--) Destroy(body.GetChild(i).gameObject);
             NewScroll();
             var today = s != null ? GameCalendar.Now(s).Date : GameCalendar.Start.Date;
-            if (page == "home") Home(today);
+            if (page == "home") Home(today, lab);
             else if (page == "artwork") ArtworkCredits();
             else if (page == "number") Number(today, lab);
             else if (page == "santi") Santi();
@@ -247,7 +248,7 @@ namespace LingGuangV05.Desktop.Bodu
             Text(PrologueDesk.Rect("Caption", row, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -87), new Vector2(108, -69)), T("资料图", "Reference"), 11, Muted, TextAlignmentOptions.Center);
         }
 
-        void Home(DateTime today)
+        void Home(DateTime today, XgSim lab)
         {
             Line(T("<u>配图来源与说明</u>", "<u>Image credits and notes</u>"), 13, Muted, () => { page = "artwork"; signature = ""; });
             if (DesktopArt.Picture("news_banner") != null)
@@ -265,8 +266,9 @@ namespace LingGuangV05.Desktop.Bodu
                 if (n++ >= 10) break;
                 NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", "news_" + e.id);
             }
+            // 淘货 is not on the desktop before it opens (stage 2): the front page does not advertise it either.
             var shop = EraContent.Events.Visible(EraEvents.Taobao, today);
-            if (shop.Count > 0)
+            if (shop.Count > 0 && lab != null && lab.S.stage >= LingGuangV05.Desktop.Taohuo.TaohuoView.OpenStage)
             {
                 Line("<b>" + T(AppNames.ShopZh + " · 新品上架", AppNames.ShopEn + " · new arrivals") + "</b>", 20, Ink);
                 for (int i = 0; i < Math.Min(5, shop.Count); i++)

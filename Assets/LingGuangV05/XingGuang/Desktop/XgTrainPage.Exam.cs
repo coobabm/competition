@@ -96,7 +96,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else if (Sim.ExamRoundsToRetry > 0 && Sim.ExamParamsReady >= XgSim.ExamOpenShare && Sim.ExamSamplesReady >= XgSim.ExamOpenShare)
                 confirmStage.Set(T("没考过：再练 " + Sim.ExamRoundsToRetry + " 轮可以重考", "Failed: train " + Sim.ExamRoundsToRetry + " more rounds to sit it again"), false);
             else
-                confirmStage.Set(T("两条进度到八成，就能考「" + name + "」", "At 80% of both bars it can sit the exam for " + name), false);
+                confirmStage.Set(T("还考不了「" + name + "」：接着练，接着喂数据", "Not ready for " + name + ": keep training, keep feeding it data"), false);
         }
 
         void ShowExam(XgExamSheet sheet)

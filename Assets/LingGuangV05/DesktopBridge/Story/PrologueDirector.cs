@@ -650,10 +650,10 @@ namespace LingGuangV05.Desktop.Story
             desk.Text(PrologueDesk.Rect("Cols", head, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero), Lang.T("名称                                    大小          类型"), 15, PrologueDesk.Muted, TextAlignmentOptions.MidlineLeft);
             string[] rows =
             {
-                AppNames.ExeZh + "                         " + "18,544 KB" + "     " + L("type_exe"),
+                AppNames.ExeZh + "                         " + "47,923 KB" + "     " + L("type_exe"),
                 Prologue.Dll + "                         " + "4 KB" + "            " + L("type_dll"),
             };
-            if (GameText.IsEnglish) rows[0] = AppNames.ExeEn + "                         " + "18,544 KB" + "     " + L("type_exe");
+            if (GameText.IsEnglish) rows[0] = AppNames.ExeEn + "                         " + "47,923 KB" + "     " + L("type_exe");
             for (int i = 0; i < rows.Length; i++)
                 desk.Text(PrologueDesk.Rect("Row", client, new Vector2(0, 1), Vector2.one, new Vector2(14, -34 - (i + 1) * 34), new Vector2(0, -34 - i * 34)), rows[i], 17, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
             var button = desk.Button(client, L("extract"), new Vector2(250, -140), new Vector2(190, 40), null);
@@ -870,7 +870,7 @@ namespace LingGuangV05.Desktop.Story
         {
             string file = exe ? T(AppNames.ExeZh, AppNames.ExeEn) : Prologue.Dll;
             var client = desk.Window("Prologue Properties", file + " " + L("properties"), new Vector2(160, 60), new Vector2(480, exe ? 520 : 430), out var window);
-            long bytes = exe ? 18544L * 1024 : SophonBytes();
+            long bytes = exe ? 47923L * 1024 : SophonBytes();
             string[,] rows =
             {
                 { L("prop_type"), exe ? L("type_exe") + " (.exe)" : L("type_dll") + " (.dll)" },
@@ -1010,7 +1010,7 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator NewYearBalloon()
         {
             yield return PrologueDesk.Wait(QuietAfterEnding);
-            yield return desk.Balloon(this, L("who_360"), Lang.T("新年快乐，您的电脑已连续开机 5424 小时。"), 8);
+            yield return desk.Balloon(this, L("who_360"), Lang.T("新年快乐，您的电脑已连续开机 5326 小时。"), 8);
         }
 
         // ───────────── housekeeping ─────────────

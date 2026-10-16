@@ -119,7 +119,7 @@ namespace LingGuangV05.UI.Tests
                 type.GetMethod("Init").Invoke(null,new object[]{host,true});var first=field.GetValue(null);
                 type.GetMethod("Init").Invoke(null,new object[]{tab,false});
                 type.GetMethod("Init").Invoke(null,new object[]{host,true});
-                Assert.AreSame(first,field.GetValue(null));Assert.AreEqual(6,host.GetComponents<AudioSource>().Length);
+                Assert.AreSame(first,field.GetValue(null));Assert.AreEqual(10,host.GetComponents<AudioSource>().Length);
                 Assert.AreEqual(0,tab.GetComponents<AudioSource>().Length);
             }
             finally{field.SetValue(null,original);UnityEngine.Object.DestroyImmediate(host);UnityEngine.Object.DestroyImmediate(tab);}

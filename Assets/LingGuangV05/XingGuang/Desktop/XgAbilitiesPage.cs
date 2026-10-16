@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         sealed class Row
         {
-            public Image rim;
+            public Image rim, icon;
             public TMP_Text index, name, status, parameters, samples, items;
             public RectTransform paramFill, dataFill, bars;
         }
@@ -38,6 +38,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 var card = ui.Card(root, "Ability" + (i + 1), new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -Top - (i + 1) * Height - i * Gap), new Vector2(0, -Top - i * (Height + Gap)));
                 var r = new Row { rim = card.GetComponent<Image>() };
                 r.index = ui.Text(Rect("Index", card, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(44, 0)), "", 14, XgDark.Dim, TextAlignmentOptions.MidlineLeft);
+                // The ability's drawn icon is the tech tree's (group "tech", ab.1-ab.6); without it the 01-06 index stays.
+                r.icon = XgIcons.Place(card, "tech", "ab." + (i + 1), 29, Height * .5f, 40);
                 r.name = ui.Text(Rect("Name", card, new Vector2(0, .5f), new Vector2(0, 1), new Vector2(46, 0), new Vector2(206, -10)), "", 16, XgDark.Ink, TextAlignmentOptions.BottomLeft);
                 r.name.textWrappingMode = TextWrappingModes.NoWrap; r.name.overflowMode = TextOverflowModes.Ellipsis;
                 r.status = ui.Text(Rect("Status", card, Vector2.zero, new Vector2(0, .5f), new Vector2(46, 10), new Vector2(206, -2)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
@@ -77,7 +79,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 var r = rows[i];
                 bool learned = Sim.HasAbility(ability), isNext = ability == next;
                 r.rim.color = learned ? XgDark.Good : isNext ? XgDark.Params : XgDark.Line;
-                r.index.text = "0" + ability;
+                r.index.text = r.icon != null ? "" : "0" + ability;
+                if (r.icon != null) r.icon.color = learned || isNext ? Color.white : new Color(1, 1, 1, .45f);
                 r.name.text = XgSim.AbilityName(ability, Sim.English);
                 r.name.color = learned ? XgDark.Good : XgDark.Ink;
                 r.status.text = learned ? "<color=#5DCAA5>" + T("已学会", "learned") + "</color>"
@@ -88,13 +91,14 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 else
                 {
+                    // The line shows once it is crossed (XgSim.Learned.cs); until then 「?」.
                     double baseP = XgSim.AbilityParamsK[ability], baseD = XgSim.AbilitySamples[ability];
                     double nowP = Sim.ParamsThreshold(ability), nowD = Sim.SamplesThreshold(ability);
-                    r.parameters.text = T("参数 ", "Params ") + Threshold(XgSim.ParamsText(baseP), XgSim.ParamsText(nowP), nowP < baseP - 1e-9);
-                    r.samples.text = T("样本 ", "Samples ") + Threshold(XgSim.SamplesText(baseD), XgSim.SamplesText(nowD), nowD < baseD - 1e-9);
+                    r.parameters.text = T("参数 ", "Params ") + (Sim.ParamsLineKnown(ability) ? Threshold(XgSim.ParamsText(baseP), XgSim.ParamsText(nowP), nowP < baseP - 1e-9) : "<b>?</b>");
+                    r.samples.text = T("样本 ", "Samples ") + (Sim.SamplesLineKnown(ability) ? Threshold(XgSim.SamplesText(baseD), XgSim.SamplesText(nowD), nowD < baseD - 1e-9) : "<b>?</b>");
                 }
                 if (r.bars.gameObject.activeSelf != isNext) r.bars.gameObject.SetActive(isNext);
-                if (isNext) { SetBar(r.paramFill, (float)Sim.ParamsProgress(ability)); SetBar(r.dataFill, (float)Sim.SamplesProgress(ability)); }
+                if (isNext) { SetBar(r.paramFill, (float)Sim.ParamsFill); SetBar(r.dataFill, (float)Sim.SamplesFill); }
                 r.items.text = ItemsText(ability);
             }
             notes.text = NotesText(next, p, d);
@@ -135,7 +139,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (ability == Sim.NextAbility) return Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport();
             string name = "「" + XgSim.AbilityName(ability, false) + "」", nameEn = "'" + XgSim.AbilityName(ability, true) + "'";
             if (ability == 1) return T(name + "起始即有，不用参数和样本。", nameEn + " is there from the start; it needs no parameters or samples.");
-            string lines = T("门槛：参数 ", "Lines: parameters ") + XgSim.ParamsText(Sim.ParamsThreshold(ability)) + T("，样本 ", ", samples ") + XgSim.SamplesText(Sim.SamplesThreshold(ability));
+            string lines = Sim.HasAbility(ability) ? T("门槛：参数 ", "Lines: parameters ") + XgSim.ParamsText(Sim.ParamsThreshold(ability)) + T("，样本 ", ", samples ") + XgSim.SamplesText(Sim.SamplesThreshold(ability))
+                : T("门槛：?（学会之前谁也不知道）", "Lines: ? (nobody knows until it learns)");
             if (Sim.HasAbility(ability)) return T(name + "已学会。\n", nameEn + " is learned.\n") + lines;
             return T(name + "还没轮到：先学会前面的能力。\n", nameEn + " comes after the earlier abilities.\n") + lines;
         }
@@ -144,19 +149,20 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var sb = new StringBuilder();
             sb.Append("<color=#A99BF2>■</color> ").Append(T("参数量：练到 C 级以上的模型里最大的那个，现在 ", "Parameters: the biggest model trained to grade C or better, now ")).Append(XgSim.ParamsText(p));
-            if (next > 0) sb.Append(" / ").Append(XgSim.ParamsText(Sim.ParamsThreshold(next))).Append(T("（", " (")).Append(N(Sim.ParamsProgress(next) * 100, "0")).Append(T("%）", "%)"));
+            if (next > 0) sb.Append(" · ").Append(Sim.ParamsLineText(next));
             sb.Append(" <color=#58798A>(").Append(XgSim.ParamScale(p, Sim.English)).Append(")</color>");
             sb.Append("    <color=#5DA8E8>■</color> ").Append(T("样本：所有数据集的有效样本，现在 ", "Samples: every dataset's effective samples, now ")).Append(XgSim.SamplesText(d));
-            if (next > 0) sb.Append(" / ").Append(XgSim.SamplesText(Sim.SamplesThreshold(next))).Append(T("（", " (")).Append(N(Sim.SamplesProgress(next) * 100, "0")).Append(T("%）", "%)"));
+            if (next > 0) sb.Append(" · ").Append(Sim.SamplesLineText(next));
             if (Sim.ReadWordsTotal >= 1) sb.Append(" <color=#58798A>(").Append(Sim.ReadShort()).Append(")</color>");
             sb.Append("\n").Append(T("结构是道具：买了能降门槛，不买也能到，只是慢一些。", "Structures are items: they lower the line; without them it still comes, only later."));
             if (next > 0)
             {
-                double shortP = Sim.ParamsThreshold(next) - p, shortD = Sim.SamplesThreshold(next) - d;
+                // Which bar is still short, never by how much: the line is hidden until it is crossed.
+                bool shortP = !Sim.ParamsLineKnown(next), shortD = !Sim.SamplesLineKnown(next);
                 sb.Append("  ").Append(T("「" + XgSim.AbilityName(next, false) + "」", "'" + XgSim.AbilityName(next, true) + "'"));
-                if (shortP > 0) sb.Append(T(" 还差参数 ", " needs parameters ")).Append(XgSim.ParamsText(shortP));
-                if (shortD > 0) sb.Append(T(" 还差样本 ", " needs samples ")).Append(XgSim.SamplesText(shortD));
-                if (shortP <= 0 && shortD <= 0) sb.Append(T(" 两样都够了。", ": both are enough."));
+                if (shortP) sb.Append(T(" 参数还没过线", " parameters not past the line"));
+                if (shortD) sb.Append(T(" 样本还没过线", " samples not past the line"));
+                if (!shortP && !shortD) sb.Append(T(" 两样都过线了。", ": both are past the line."));
             }
             return sb.ToString();
         }

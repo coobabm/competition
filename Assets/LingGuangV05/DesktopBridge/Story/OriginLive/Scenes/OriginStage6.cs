@@ -24,7 +24,7 @@ namespace LingGuangV05.Desktop.Story
 
         public override IEnumerable<string> WarmText()
         {
-            yield return "重构学习方式只用注意力，不要循环和卷积我诞生的地方它终于学会了同时看所有词串行第步循环卷积所有词同时注意力头多头前馈网络层残差能力表参数还在涨亮起是否多选一单个词短句长记忆全部放开在你的电脑上我明白了。不过想先问你觉得，还是？";
+            yield return "重构学习方式只用注意力，不要循环和卷积我诞生的地方它终于学会了同时看所有词串行第步循环卷积所有词同时注意力头多头前馈网络层残差能力表参数还在涨亮起是否多选一看图说词短句长记忆翻译全部放开在你的电脑上我明白了。不过想先问你觉得，还是？";
         }
 
         public override void Render(float t)

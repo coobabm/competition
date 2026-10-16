@@ -46,8 +46,8 @@ namespace LingGuangV05.XingGuang
     public sealed class XgPlacement { public string model = "", card = ""; public bool manual; }
 
     /// <summary>
-    /// What 接线 adds to a save. Everything else the page shows is read from existing state (signed orders, the stand-in
-    /// switch, pre-training, …), so the defaults are implicit: a card not in <see cref="pulled"/> is plugged in, a
+    /// What 接线 adds to a save. Everything else the page shows is read from existing state (signed orders,
+    /// pre-training, …), so the defaults are implicit: a card not in <see cref="pulled"/> is plugged in, a
     /// deployed model without a placement is placed automatically, and a job not in <see cref="idle"/> runs.
     /// </summary>
     [Serializable]
@@ -64,8 +64,6 @@ namespace LingGuangV05.XingGuang
         public List<XgPlacement> runOn = new List<XgPlacement>();
         /// <summary>Jobs the player unplugged ("label:mnist", "contract:homework", "train:0", "ajie").</summary>
         public List<string> idle = new List<string>();
-        /// <summary>YY 网吧群 · 替我答题.</summary>
-        public bool netbarChat;
         public double rentSeconds, rentPaid, receiptsPaid;
         // 阿杰: what you told him, his price, whether he took the machines back.
         public double ajieMul = 1, ajieClock;
@@ -152,7 +150,7 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// 接线 (design: 策划案v1.1落地计划.md, "接线 page"): the lab's jobs drawn as 电力 → 显卡 → 模型 → 任务. A wire from a
-    /// model to a job is the job's existing switch (sign an order, the stand-in, pre-training, …); a model needs a card
+    /// model to a job is the job's existing switch (sign an order, pre-training, …); a model needs a card
     /// with room in its VRAM, a card needs power. The wiring only scales jobs that already exist, by 1 in the default
     /// layout, so a save that never opens the page plays exactly as before. New: renting 阿杰's two café cards
     /// (stage 3), his question about what they are for, and his receipt job.
@@ -167,7 +165,7 @@ namespace LingGuangV05.XingGuang
         public const double ModelBaseCu = .2, ModelCuPerK = .0005;
         /// <summary>Job weights on a card: realtime subtitles must keep up with the stream; chat is a line now and then.</summary>
         public const double RealtimeWeight = 3, LifeWeight = .2;
-        public const int WiringStage = 2, CafeStage = 3, SelfStage = 3, StandInStage = 5;
+        public const int WiringStage = 2, CafeStage = 3, SelfStage = 3;
         /// <summary>阿杰's café: two GTX 960 machines on a 1200 W line.</summary>
         public const double CafeCompute = .45, CafeVramMB = 2048, CafeWatts = 120, CafeLineWatts = 1200, IdcLineWatts = 20000;
         /// <summary>
@@ -185,7 +183,6 @@ namespace LingGuangV05.XingGuang
         public const double PretrainWatts = 3400;
         public const int WiringLogLength = 60;
 
-        public const string LifeNetbar = "life.netbar", LifeQingwen = "life.qingwen";
         public static readonly string[] CafeCards = { "cafe7", "cafe8" };
 
         XgWiringView wiringView;
@@ -213,7 +210,7 @@ namespace LingGuangV05.XingGuang
         public bool WiringOpen => S.stage >= WiringStage || S.best.Count > 0;
 
         /// <summary>
-        /// A life job owned by another app (晴雯's stand-in switch lives in YY): the wire reads and writes that switch.
+        /// A life job owned by another app: the wire reads and writes that app's own switch.
         /// </summary>
         public void HookLife(string id, Func<bool> available, Func<bool> on, Action<bool> set)
         {
@@ -232,8 +229,9 @@ namespace LingGuangV05.XingGuang
             if (w.runOff == null) w.runOff = new List<XgPlacement>();
             if (w.runOn == null) w.runOn = new List<XgPlacement>();
             if (w.idle == null) w.idle = new List<string>();
-            // Retired app tasks in old saves must not return to the wiring inventory.
-            w.idle.RemoveAll(id => id == "life.juxin");
+            // Retired app tasks in old saves must not return to the wiring inventory (巨信, and the retired
+            // AI-answers-for-you switches 「替我回晴雯」 and 网吧群 「替我答题」).
+            w.idle.RemoveAll(id => id == "life.juxin" || id == "life.qingwen" || id == "life.netbar");
             if (w.ajieLastLie == null) w.ajieLastLie = "";
             w.placed.RemoveAll(p => p == null || string.IsNullOrEmpty(p.model));
             w.runOff.RemoveAll(p => p == null || string.IsNullOrEmpty(p.card));
@@ -252,13 +250,6 @@ namespace LingGuangV05.XingGuang
         {
             var n = wiringView?.Node(task);
             return n == null ? 1 : n.factor;
-        }
-
-        /// <summary>A life job's switch is on and 本体 is on a working card.</summary>
-        public bool LifeJobLive(string id)
-        {
-            var n = wiringView?.Node(id);
-            return n == null || n.factor > 0;
         }
 
         /// <summary>
@@ -400,9 +391,9 @@ namespace LingGuangV05.XingGuang
             });
             Add(new XgWNode
             {
-                key = "cafe", lane = XgWireLane.Power, name = T("网吧电路（阿杰）", "Net café line (Ajie)"), sub = T("1200 W · 电费含在租金里", "1200 W · power is in the rent"),
+                key = "cafe", lane = XgWireLane.Power, name = T("网吧电路（阿杰）", "Net café line (Ajie)"), sub = T("1200 W · 阿杰跟老板说好的 · 电费含在租金里", "1200 W · Ajie cleared it with the boss · power is in the rent"),
                 capW = CafeLineWatts, available = cafeOpen && !w.ajieCutoff, shown = cafeOpen && !w.ajieCutoff, online = cafeOpen && !w.ajieCutoff,
-                lockWhy = w.ajieCutoff ? T("阿杰把机器收回去了", "Ajie took his machines back") : AfterAbility(CafeStage, "阿杰的网吧", "Ajie's net café"),
+                lockWhy = w.ajieCutoff ? T("阿杰把机器收回去了", "Ajie took his machines back") : AfterAbility(CafeStage, "阿杰上班的网吧", "the net café Ajie works at"),
             });
             Add(new XgWNode
             {
@@ -458,7 +449,7 @@ namespace LingGuangV05.XingGuang
                     name = key == "cafe7" ? T("网吧 7 号机 GTX 960", "Café PC #7 GTX 960") : T("网吧 8 号机 GTX 960", "Café PC #8 GTX 960"),
                     compute = CafeCompute, cu = CafeCompute * CuPerCompute, vramMB = CafeVramMB, watts = CafeWatts, online = plugged,
                     why = plugged ? "" : T("没租", "Not rented"),
-                    lockWhy = w.ajieCutoff ? T("阿杰把机器收回去了", "Ajie took his machines back") : AfterAbility(CafeStage, "阿杰的网吧", "Ajie's net café"),
+                    lockWhy = w.ajieCutoff ? T("阿杰把机器收回去了", "Ajie took his machines back") : AfterAbility(CafeStage, "阿杰上班的网吧", "the net café Ajie works at"),
                 });
             }
             if (idcOpen)
@@ -710,9 +701,6 @@ namespace LingGuangV05.XingGuang
                 });
             }
             // Life: 本体 only.
-            // The YY 网吧群 job answered 小刚's danmaku quiz, which was removed; the node is gone with it (netbarChat stays readable in saves).
-            if (lifeHooks.TryGetValue(LifeQingwen, out var qw))
-                Add(v, Life(LifeQingwen, T("YY · 替我回晴雯", "YY · answer Qingwen for me"), S.stage >= StandInStage && qw.available(), qw.on(), AfterAbility(StandInStage, "", "")));
             AddEraDeliveryTask(v);
         }
 
@@ -1029,7 +1017,7 @@ namespace LingGuangV05.XingGuang
                 }
                 return PretrainTripLine();
             }
-            if (site == "cafe") return T("阿杰的网吧电路才 1200W，扛不住预训练。把本体接到 IDC 机架上。", "Ajie's café line is 1200 W; it cannot carry pre-training. Put it on the IDC rack.");
+            if (site == "cafe") return T("网吧那条线才 1200W，扛不住预训练。把本体接到 IDC 机架上。", "The café line is 1200 W; it cannot carry pre-training. Put it on the IDC rack.");
             if (self != null && !self.online && self.card.Length > 0) return T("本体所在的显卡掉线了：", "The card under it is offline: ") + self.why;
             return T("本体没上卡：先把它接到 IDC 机架上。", "It is on no card: put it on the IDC rack first.");
         }
@@ -1060,10 +1048,10 @@ namespace LingGuangV05.XingGuang
             return n == 0 ? 0 : load / n;
         }
 
-        /// <summary>阿杰's question, as he types it in the YY 网吧群 (without his name).</summary>
+        /// <summary>阿杰's question, as he types it in the YY 下班屁股群 (without his name).</summary>
         public string AjieQuestion(bool suspicious, int cards = 2)
         {
-            if (suspicious) return T("你那两台机器一晚上没人坐，风扇转得跟拖拉机一样。说实话，到底在干啥？", "Nobody's sat at those two machines all night and the fans sound like a tractor. Honestly, what are you doing?");
+            if (suspicious) return T("你那两台机器一直没人坐，风扇转得跟拖拉机一样。说实话，到底在干啥？", "Nobody's sat at those two machines for ages and the fans sound like a tractor. Honestly, what are you doing?");
             return cards == 1
                 ? T("兄弟，你包的那台 960 用着还顺手不？有点好奇，你拿它干啥呢？", "Bro, is the 960 you rented working out for you? What are you using it for? Just curious.")
                 : T("兄弟，你包的那两台 960 用着还顺手不？有点好奇，你拿它们干啥呢？", "Bro, are the two 960s you rented working out for you? What are you using them for? Just curious.");
@@ -1096,7 +1084,7 @@ namespace LingGuangV05.XingGuang
                 case "ai":
                     w.ajieTruth = true; w.ajieMul = AjieTruthRate; w.ajieJob = true; w.ajieLastLie = "";
                     Log(T("你：在训练一个 AI，教它认字认图。", "You: Training an AI. Teaching it to read numbers and pictures."), 1);
-                    AjieSays("AI？……能认数字不？我每天收银小票对账对到半夜。帮我对，机器给你打八折。", "AI? …Can it read numbers? I check the till receipts till midnight every day. Do mine and the machines are 20% off.");
+                    AjieSays("AI？你小子还真搞这个……牛啊。能认数字不？我每天收银小票对账对到半夜。帮我对，机器给你打八折。", "AI? You're really doing that… Impressive. Can it read numbers? I check the till receipts till midnight every day. Do mine and the machines are 20% off.");
                     Log(T("仓库新增任务「阿杰 · 收银小票对账」。手写数字模型就能接。", "New job in the inventory: Ajie · till receipts. A handwritten-digit model can take it."), 1);
                     break;
                 case "mine":
@@ -1110,7 +1098,7 @@ namespace LingGuangV05.XingGuang
                     Log(T("你：挂游戏，刷副本。", "You: Idling a game, farming a dungeon."), 2);
                     if (w.ajieLies >= 2)
                     {
-                        AjieSays("刷副本要两张显卡满载一晚上？你别在我这儿搞什么名堂。机器我收回了。", "Farming a dungeon takes two cards flat out all night? Don't pull anything in my place. I'm taking the machines back.");
+                        AjieSays("刷副本要两张显卡一直满载？你别在我这儿搞什么名堂。机器我收回了。", "Farming a dungeon takes two cards flat out non-stop? Don't pull anything at my work. I'm taking the machines back.");
                         w.ajieCutoff = true; w.rented.Clear();
                         Log(T("网吧电路断开：7 号机、8 号机下线。只能把模型挪回家里的卡上。", "The café line is cut: PCs #7 and #8 are offline. Move the models back to the cards at home."), 3);
                     }
@@ -1183,7 +1171,6 @@ namespace LingGuangV05.XingGuang
                     break;
                 case XgWireLane.Model:
                     if (b.key == "pretrain") { if (S.pretrainRunning) TogglePretrain(wiringHost); }
-                    else if (b.key == LifeNetbar) w.netbarChat = false;
                     else if (lifeHooks.TryGetValue(b.key, out var hook)) hook.set(false);
                     else if (!w.idle.Contains(b.key)) w.idle.Add(b.key);
                     break;
@@ -1263,7 +1250,6 @@ namespace LingGuangV05.XingGuang
             if (key.StartsWith("life.", StringComparison.Ordinal))
             {
                 if (!model.self) return T("生活里的事只有本体会做", "Only it, itself, does the life jobs");
-                if (key == LifeNetbar) { w.netbarChat = true; return null; }
                 if (lifeHooks.TryGetValue(key, out var hook)) { hook.set(true); return hook.on() ? null : T("现在开不了", "Not available now"); }
                 return T("接不上", "Cannot connect");
             }

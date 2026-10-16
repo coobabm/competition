@@ -34,6 +34,8 @@ namespace LingGuangV05.Desktop.XingGuang
     /// idle actions picked by weight with cooldowns (look around, groom, stretch, drum, hop, think, sleep when the
     /// player has been away, drop on a thread), a startle when the cursor rushes at it or a window opens beside it, and a
     /// little spin when an ability is learned or a record set. Dragging it and the hand-answer mode suspend all of that.
+    /// The body and legs are <see cref="XgSpiderWalker"/>: damped turning, eased speed, tetrapod steps as eased arcs, all
+    /// frame-rate independent.
     /// Light by design: one spider, a few glitches a second, words gathered one window at a time, pooled ghosts.
     /// The idea of a spider walking on text comes from @rybinfx's web crawler; this is an independent implementation.
     /// </summary>
@@ -115,6 +117,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         readonly XgResidentMind mind = new XgResidentMind();
         readonly XgSpiderFx fx = new XgSpiderFx();
+        readonly XgSpiderBubble bubble = new XgSpiderBubble();
         readonly List<Vector2> reachPoints = new List<Vector2>();
         float thinkTimer = 16, introCheck;
         // Answering a card for the player: the card it decided on, whether it will, and how far along it is.
@@ -263,7 +266,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!Find() || Sim == null || !Sim.SpiderAround) return;
             Sim.S.residentQuiet = false;
             StopWork(); motion.brain.Interrupt();
-            if (walker != null) walker.pos = layer.rect.center;
+            if (walker != null) { walker.pos = layer.rect.center; walker.Reseat(); }
             layerGroup.alpha = 1; Show(true);
         }
 
@@ -300,7 +303,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (walker == null || legCount != legs || Mathf.Abs(walker.size - size) > .01f)
             {
                 var at = walker != null ? walker.pos : new Vector2(screen.xMax - 160, screen.yMin + 140);
-                walker = new XgSpiderWalker(at, size, legs) { FindFoothold = Foothold, Planted = OnPlanted };
+                // A grown spider keeps facing the way it was facing (a fresh one would swing round to its default).
+                float facing = walker != null ? walker.heading : -Mathf.PI / 2;
+                walker = new XgSpiderWalker(at, size, legs) { FindFoothold = Foothold, Planted = OnPlanted, heading = facing };
                 legCount = legs;
             }
 
@@ -327,15 +332,32 @@ namespace LingGuangV05.Desktop.XingGuang
             fx.reduced = Reduced;
             ClampToScreen();
             fx.Tick(dt, walker);
+            bubble.Tick(dt, walker.pos + walker.offset, walker.size * 60f, screen);
             TickGlitches(dt);
             TickGhosts(dt);
             graphic.Redraw();
         }
 
+        /// <summary>
+        /// It says <paramref name="line"/> in a speech bubble that pops up over it (剧情修订 §二). False when it is not
+        /// on the desktop right now (the caller shows the line somewhere else).
+        /// </summary>
+        public bool Speak(string line, float seconds)
+        {
+            if (layer == null || !shown || walker == null || string.IsNullOrEmpty(line)) return false;
+            bubble.Build(layer, controller != null && controller.View != null ? controller.View.Font : null);
+            bubble.Say(line, seconds);
+            return true;
+        }
+
+        /// <summary>Its speech bubble (tests and QA).</summary>
+        public XgSpiderBubble Bubble => bubble;
+
         void Show(bool on)
         {
             if (layer == null || shown == on && layer.gameObject.activeSelf == on) return;
             shown = on;
+            if (!on) bubble.Hide();
             if (!on) { RestoreAll(); fx.Clear(); foreach (var g in ghosts) { if (g.text == null) continue; g.text.gameObject.SetActive(false); ghostPool.Push(g.text); } ghosts.Clear(); }
             layer.gameObject.SetActive(on);
         }
@@ -529,6 +551,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (pressStage == 1)
             {
                 walker.Settled = false; walker.bodyScale = 1;
+                walker.turnRate = 3.2f; walker.brake = 45;
                 walker.Tick(dt, stand, 1.2f, Reduced);
                 if (Vector2.Distance(walker.pos, stand) < 8)
                 {
@@ -646,6 +669,7 @@ namespace LingGuangV05.Desktop.XingGuang
             walker.bodyScale = 1.18f;
             walker.pos = Vector2.Lerp(walker.pos, heldAt, 1 - Mathf.Exp(-22 * dt));
             walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, 90, 1 - Mathf.Exp(-6 * dt)) * Mathf.Deg2Rad;
+            walker.Carry(); // the feet leave the page and dangle instead of stepping after the pointer
             walker.Tick(dt, walker.pos, 0, Reduced);
             var label = zhongbao.Label;
             if (label != null && label.Workspace != null) label.SetDropHint(LayerRect(label.Workspace).Contains(pointerAt));
@@ -670,6 +694,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (away > 8 && reach == Reach.Idle)
             {
                 walker.Settled = false; walker.bodyScale = 1;
+                walker.turnRate = 3.2f; walker.brake = 45;
                 walker.Tick(dt, perch, 2.4f, Reduced);
                 armK = 0;
                 return;

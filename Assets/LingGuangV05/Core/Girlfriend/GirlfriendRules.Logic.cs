@@ -31,12 +31,12 @@ namespace LingGuangV05.Core.Girlfriend
     /// <summary>What one line of his did (design §2), for the reply prompt and for the tests.</summary>
     public sealed class GfTurn
     {
-        public bool quick, opened, greetingOnly, apology, byAi;
+        public bool quick, opened, greetingOnly, apology;
         public string recalled = "";
         public GfHoliday wished;
         public bool wishedFirst;
         public string promised = "", declined = "";
-        /// <summary>"work" or "ai" when he answered 「你哪来的钱」; "admit" or "deny" when he answered being caught.</summary>
+        /// <summary>"work" or "ai" when he answered 「你哪来的钱」.</summary>
         public string answered = "";
         public int moodBefore, affectionBefore;
         /// <summary>
@@ -73,7 +73,9 @@ namespace LingGuangV05.Core.Girlfriend
             if (s.promises == null) s.promises = new List<GfPromise>();
             if (s.flags == null) s.flags = new List<string>();
             s.flags.Remove(FlagKnowsAi);
-            if (s.asking == "aiWorry") s.asking = "";
+            // Flags and an open question left by the retired 「让 AI 代我回」 (old saves).
+            foreach (var retired in new[] { "caughtAi", "deniedAi", "aiRefused", "standIn" }) s.flags.Remove(retired);
+            if (s.asking == "aiWorry" || s.asking == "caught") s.asking = "";
             if (s.done == null) s.done = new List<string>();
             if (s.orders == null) s.orders = new List<GfGiftOrder>();
             if (s.recentLines == null) s.recentLines = new List<string>();
@@ -273,11 +275,11 @@ namespace LingGuangV05.Core.Girlfriend
         /// <summary>
         /// He wrote to her (design §2): a quick answer lifts her mood, opening a topic after three quiet hours and
         /// bringing up something she said pay in affection, a holiday wish pays more if it came first, and an open
-        /// question of hers (七夕 video, the film, 「你哪来的钱」, 「这不是你吧？」) takes his answer.
+        /// question of hers (七夕 video, the film, 「你哪来的钱」) takes his answer.
         /// </summary>
-        public static GfTurn OnPlayerLine(GirlfriendState s, GfNow now, string text, bool byAi = false)
+        public static GfTurn OnPlayerLine(GirlfriendState s, GfNow now, string text)
         {
-            var turn = new GfTurn { byAi = byAi };
+            var turn = new GfTurn();
             if (s == null) return turn;
             turn.moodBefore = s.mood; turn.affectionBefore = s.affection;
             text = text ?? "";
@@ -344,14 +346,6 @@ namespace LingGuangV05.Core.Girlfriend
                     if (ai) KnowAi(s, now);
                     s.asking = "";
                     break;
-                case "caught":
-                    bool admit = AnyIn(text, new[] { "走神", "没认真", "是ai", "是 ai", "ai帮", "ai 帮", "代回", "承认", "对不起", "是它", "灵光", "program", "it was", "admit", "sorry" })
-                        && !AnyIn(text, new[] { "不是ai", "不是 ai", "就是我", "没有", "哪有", "was me", "it's me" });
-                    turn.answered = admit ? "admit" : "deny";
-                    if (admit) { AddAffection(s, -5); KnowAi(s, now); s.flags.Remove(FlagDeniedAi); }
-                    else { AddAffection(s, Has(s, FlagDeniedAi) && s.aiCaught > 1 ? -20 : -10); Mark(s, FlagDeniedAi); AddMood(s, -1); }
-                    s.asking = "";
-                    break;
                 case "aiWorry":
                     s.asking = "";
                     break;
@@ -360,7 +354,6 @@ namespace LingGuangV05.Core.Girlfriend
 
             s.awaitingReply = false; s.unansweredRun = 0; s.neglectLevel = 0;
             s.meLastAt = now.Story; s.meLastGame = now.game; s.lastAnyAt = now.Story;
-            if (byAi) s.aiReplies++;
             if (s.mood <= -3 && !s.fighting) StartFight(s, now, turn.events);
             return turn;
         }

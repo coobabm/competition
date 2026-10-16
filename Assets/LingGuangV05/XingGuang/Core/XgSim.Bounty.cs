@@ -51,7 +51,7 @@ namespace LingGuangV05.XingGuang
             ("租房没约定租期，双方都可以随时解除合同，只要提前合理通知吗？", "A tenancy with no fixed term: may either side end it at any time with reasonable notice?", true,
                 "《合同法》第 232 条：视为不定期租赁，当事人可以随时解除，出租人应在合理期限前通知。", "Contract Law art. 232: an open-ended tenancy may be ended at any time, with reasonable notice from the landlord."),
             ("工资薪金的个税起征点是每月 5000 元吗？", "Is the income-tax threshold on wages 5,000 yuan a month?", false,
-                "2011 年起是 3500 元，2018 年 10 月才提到 5000 元。", "It was 3,500 from 2011; it rose to 5,000 only in October 2018."),
+                "2011 年起就是 3500 元，不是 5000。", "It has been 3,500 since 2011, not 5,000."),
             ("没经过本人同意，把别人的照片拿去做商业广告，侵犯肖像权吗？", "Using someone's photo in an advertisement without their consent: does it infringe their portrait right?", true,
                 "《民法通则》第 100 条：未经本人同意，不得以营利为目的使用公民的肖像。", "General Principles of Civil Law art. 100."),
         };

@@ -535,8 +535,8 @@ namespace LingGuangV05.Desktop.XingGuang
         static string Form(XgSim sim)
         {
             int stage = sim.S.stage;
-            return stage <= 1 ? T("只会答 是 / 否", "yes / no only") : stage == 2 ? T("多选一", "one of a few") : stage == 3 ? T("单个词", "one word")
-                : stage == 4 ? T("短句", "short sentences") : stage == 5 ? T("长记忆", "long memory") : sim.S.fullOpen ? T("全部放开 · 思考模式", "everything · thinking") : T("流畅", "fluent");
+            return stage <= 1 ? T("只会答 是/否", "yes/no only") : stage == 2 ? T("多选一", "pick one") : stage == 3 ? T("看图说词", "picture to word")
+                : stage == 4 ? T("短句", "short sentences") : stage == 5 ? T("长记忆·翻译", "memory · translation") : sim.S.fullOpen ? T("全部放开 · 思考模式", "everything · thinking") : T("全部放开 · 还没对齐", "everything · not aligned yet");
         }
     }
 }

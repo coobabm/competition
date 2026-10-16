@@ -289,12 +289,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             nextName.text = XgSim.AbilityName(next, Sim.English);
-            double baseP = XgSim.AbilityParamsK[next], nowP = Sim.ParamsThreshold(next);
-            double baseD = XgSim.AbilitySamples[next], nowD = Sim.SamplesThreshold(next);
-            string pOf = " / " + XgSim.ParamsText(nowP) + (nowP < baseP - 1e-9 ? T("（原 ", " (was ") + XgSim.ParamsText(baseP) + T("）", ")") : "");
-            string dOf = " / " + XgSim.SamplesText(nowD) + (nowD < baseD - 1e-9 ? T("（原 ", " (was ") + XgSim.SamplesText(baseD) + T("）", ")") : "");
-            FillBig(paramsCard, T("已训练参数量", "Trained parameters"), DiscountTags(next, true), XgSim.ParamsText(p), pOf, (float)Sim.ParamsProgress(next), ParamsNote());
-            FillBig(dataCard, T("样本", "Samples"), DiscountTags(next, false), XgSim.SamplesText(d), dOf, (float)Sim.SamplesProgress(next), SamplesNote());
+            // The line is hidden (XgSim.Learned.cs): how much is trained, and 「?」 until the bar is past it.
+            FillBig(paramsCard, T("已训练参数量", "Trained parameters"), DiscountTags(next, true), XgSim.ParamsText(p), " · " + Sim.ParamsLineText(next), (float)Sim.ParamsFill, ParamsNote());
+            FillBig(dataCard, T("样本", "Samples"), DiscountTags(next, false), XgSim.SamplesText(d), " · " + Sim.SamplesLineText(next), (float)Sim.SamplesFill, SamplesNote());
         }
 
         static void FillBig(Big b, string head, string tags, string value, string of, float k, string note)
@@ -357,8 +354,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (dsc.ability != next || dsc.samplesFactor >= 1 || Sim.DiscountOwned(dsc)) continue;
                 var node = XgCatalog.Node(dsc.item.Length > 0 ? dsc.item : dsc.itemsAny[0]);
                 if (node == null) continue;
-                double now = Sim.SamplesThreshold(next);
-                string name = Sim.NodeName(node), cut = XgSim.SamplesText(now) + " → " + XgSim.SamplesText(now * dsc.samplesFactor);
+                string name = Sim.NodeName(node), cut = T("线压低 ", "line cut by ") + N((1 - dsc.samplesFactor) * 100, "0") + "%";
                 var status = Sim.Status(node, Host);
                 string how = status == XgSim.NodeStatus.Buyable ? T("去「科技」买它", "buy it under Technology")
                     : status == XgSim.NodeStatus.TooExpensive ? T("去「科技」买它，还差 ¥", "buy it under Technology, ¥") + N(Sim.NodeCost(node) - Host.Money, "#,0") + T("", " short")
@@ -380,9 +376,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 cellFills[i].color = learned ? XgDark.OnFill : XgDark.Card;
                 cellNames[i].text = XgSim.AbilityName(ability, Sim.English);
                 cellNames[i].color = learned ? XgDark.Good : XgDark.Ink;
-                cellSubs[i].text = learned ? T("已学会", "learned") : ability == 1 ? T("起始", "start")
-                    : XgSim.ParamsText(Sim.ParamsThreshold(ability)) + " · " + XgSim.SamplesText(Sim.SamplesThreshold(ability));
-                SetBar(cellBars[i], learned ? 1 : isNext ? (float)Sim.AbilityProgress(ability) : 0);
+                cellSubs[i].text = learned ? T("已学会", "learned") : ability == 1 ? T("起始", "start") : "?";
+                // An ability is not a bar that fills: nothing until it is learned, then all of it.
+                SetBar(cellBars[i], learned ? 1 : 0);
                 cellBars[i].GetComponent<Image>().color = learned ? XgDark.Good : XgDark.Params;
             }
         }

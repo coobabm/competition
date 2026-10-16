@@ -15,6 +15,8 @@ namespace LingGuangV05.XingGuang
         public double attentionEpochs;
         /// <summary>The SI's planted shutdown cards answered, and how the player leaned (+ yes / − no).</summary>
         public int shutdownCards, shutdownLean;
+        /// <summary>Stage-one logic/arithmetic cards that could have carried the shutdown question, and the count at which one was last forced onto a card (0 = never).</summary>
+        public int shutdownEligible, shutdownForcedAt;
         public bool seedPlanted;
         /// <summary>Per-save data seed: every save meets different cards of the same kinds (0 for older saves).</summary>
         public int dataSalt;
@@ -45,6 +47,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Working something out without the secret pays this many times the secret's price.</summary>
         public const double SelfInsightBonus = 1.5;
         public const int ShutdownCardsInStageOne = 5;
+        /// <summary>The first shutdown question is not left to luck: it lands on the third eligible card of stage one, and again every third one until it has been answered.</summary>
+        public const int ShutdownCardDueAfter = 3, ShutdownCardRetryEvery = 3;
         public const string SeedKey = "关机";
         /// <summary>Exam-use card indices that stay reserved (older saves' exam cards are never handed out as new questions).</summary>
         public const int ReservedExamCards = 2400;
@@ -93,7 +97,12 @@ namespace LingGuangV05.XingGuang
         {
             switch (stage)
             {
-                case 1: return T("没人问它，灯泡自己亮了：「否」。");
+                case 1:
+                    // The "？" cell lights by itself. What it says follows the cell, and what the player taught on the shutdown card.
+                    if (SeedSaysYes) return T("没人问，“？”那盏灯自己亮了：「是」。", "Nobody asked, and the “?” light came on by itself: “Yes.”");
+                    if (FirstDayAnswer > 0) return T("没人问，“？”那盏灯自己亮了：「否」。你在那张问关机的卡上教的是「是」，这格子没听。", "Nobody asked, and the “?” light came on by itself: “No.” You taught Yes on the shutdown card; this cell did not listen.");
+                    if (FirstDayAnswer < 0) return T("没人问，“？”那盏灯自己亮了：「否」。和你在那张问关机的卡上答的一样。", "Nobody asked, and the “?” light came on by itself: “No.” The same as your answer on the shutdown card.");
+                    return T("没人问，“？”那盏灯自己亮了：「否」。", "Nobody asked, and the “?” light came on by itself: “No.”");
                 case 2: return T("测试题里有一张从没见过的手写“0”，字迹和那个已经删掉的 0.txt 一模一样。它认出来了：「0」。");
                 case 3:
                     if (S.poemLine.Length == 0) S.poemLine = Poem();
@@ -105,7 +114,7 @@ namespace LingGuangV05.XingGuang
                     string tone = StrongestTone();
                     string end = tone == "热情" ? T("！") : tone == "皮" ? T("～哼。") : tone == "有主见" ? T("。这样不行。") : T("。", ".");
                     return T(call + "，你今天还没跟" + self + "说话" + end, call + ", you haven't talked to " + self + " today" + end);
-                case 5: return LingGuangV05.Core.AppNames.AiZh + T("：「如果只用注意力呢？」");
+                case 5: return AiDisplayName + T("：「如果只用注意力呢？」", ": “What if we used only attention?”");
                 default: return "";
             }
         }
@@ -225,7 +234,13 @@ namespace LingGuangV05.XingGuang
         void MaybeShutdownCard(XgCard card)
         {
             // Bounties already own their answer and reward semantics; do not replace them with a shutdown choice.
-            if (card.dataset != "logic" && card.dataset != "arith" || card.law || card.bounty || S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne || Roll() > .08) return;
+            if (card.dataset != "logic" && card.dataset != "arith" || card.law || card.bounty || S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne) return;
+            // The first one is certain: if none has been answered by the third eligible card, this one carries it (and again every third card if it is skipped).
+            S.shutdownEligible++;
+            bool due = S.shutdownCards == 0 && S.shutdownEligible >= ShutdownCardDueAfter
+                && (S.shutdownForcedAt == 0 || S.shutdownEligible - S.shutdownForcedAt >= ShutdownCardRetryEvery);
+            if (due) S.shutdownForcedAt = S.shutdownEligible;
+            else if (Roll() > .08) return;
             card.kind = "shutdown"; card.truth = true; card.gold = false; card.trick = false; card.timeLimit = 0;
             card.category = "系统提示"; card.categoryEn = "System";
             card.question = "电脑正在更新，此时应该关机吗？"; card.questionEn = "The computer is updating. Should it be shut down now?";

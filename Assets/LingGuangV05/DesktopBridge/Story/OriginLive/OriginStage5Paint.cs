@@ -116,7 +116,7 @@ namespace LingGuangV05.Desktop.Story
             {
                 float a = (float)f.DAlpha;
                 string lab = T("你说 ›", "YOU SAID ›");
-                string p1 = T("我", "I deleted that sentence "), p2 = T("又", "again"), p3 = T("把那句话删掉了。", ".");
+                string p1 = T("我", "I stayed up labelling "), p2 = T("又", "again"), p3 = T("标到半夜了。", ".");
                 float wl = tx.Width(lab, 14, false, 5), w1 = tx.Width(p1, 36, true, 0), w2 = tx.Width(p2, 36, true, 0), w3 = tx.Width(p3, 36, true, 0);
                 float total = wl + 18 + w1 + w2 + w3;
                 float x0 = 960 - total / 2, cy = 300 + 1.42f * 36 * .5f;

@@ -39,7 +39,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
             Assert.IsTrue(sim.BuyNode("news.pack", host));
             double first = Seconds(XgSim.BatchMB(imagenet), XgSim.BroadbandMBps[0]), second = Seconds(XgSim.BatchMB(news), XgSim.BroadbandMBps[0]);
-            Assert.That(first, Is.InRange(120, 250), "15 GB of ImageNet on 4M ADSL takes minutes: fibre is the fix");
+            Assert.That(first, Is.InRange(20, 45), "15 GB of ImageNet on the starting 20M line takes about half a minute");
             Assert.AreEqual(first, sim.DownloadLeft("imagenet"), 1e-6);
             Assert.AreEqual(first + second, sim.DownloadLeft("news"), 1e-6, "news waits behind ImageNet");
             var queue = sim.DownloadQueue();
@@ -81,7 +81,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyBroadband(host));
             Assert.AreEqual(before - price, host.money, 1e-9);
             Assert.AreEqual(XgSim.BroadbandMBps[1], sim.LineMBps);
-            Assert.IsNotNull(sim.BroadbandBlocker(out _), "100M waits for stage four");
+            Assert.IsNotNull(sim.BroadbandBlocker(out _), "300M waits for stage five");
             before = host.money;
             sim.Tick(1, host);
             Assert.AreEqual(before, host.money, 1e-9, "this month is paid");
@@ -89,6 +89,40 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(before - sim.BroadbandExtraPerMonth, host.money, 1e-9, "the extra fee each new month");
             host.money = 0; sim.Today = 20160901; sim.Tick(1, host);
             Assert.AreEqual(0, sim.BroadbandTier, "unpaid, the line goes back to ADSL");
+        }
+
+        [Test]
+        public void TheStartingLineIsFastAndEveryUpgradeIsMeaningfullyFaster()
+        {
+            // 1 Mbps = 0.125 MB/s: the 20M line you start with is 2.5 MB/s, 100M fibre 12.5, 300M fibre 37.5.
+            Assert.AreEqual(2.5, XgSim.BroadbandMBps[0], 1e-9);
+            Assert.AreEqual("ADSL 20M", XgSim.BroadbandName(0, false));
+            for (int i = 1; i < XgSim.BroadbandMBps.Length; i++)
+                Assert.GreaterOrEqual(XgSim.BroadbandMBps[i], XgSim.BroadbandMBps[i - 1] * 3, "each tier is at least three times the one before");
+            Assert.AreEqual(12.5, XgSim.BroadbandMBps[1], 1e-9); Assert.AreEqual("光纤 100M", XgSim.BroadbandName(1, false)); Assert.AreEqual("100M fibre", XgSim.BroadbandName(1, true));
+            Assert.AreEqual(37.5, XgSim.BroadbandMBps[2], 1e-9); Assert.AreEqual("光纤 300M", XgSim.BroadbandName(2, false));
+            Assert.AreEqual(2.5, new XgSim().LineMBps, 1e-9, "a new game starts on the 20M line");
+        }
+
+        [Test]
+        public void TheUpgradeButtonNamesTheNextLineItsSpeedAndItsPrice()
+        {
+            var sim = new XgSim(); var host = new Host();
+            sim.S.fundedAbility = XgSim.AbilityCount;
+            Assert.IsFalse(sim.BroadbandUpgradeOffered);
+            Assert.AreEqual("", sim.BroadbandUpgradeLabel(false, true), "nothing on offer before stage two");
+            sim.S.stage = 2; sim.Today = 20160705;
+            Assert.IsTrue(sim.BroadbandUpgradeOffered);
+            Assert.AreEqual("升级宽带 ¥350 → 光纤 100M · 12.5 MB/s", sim.BroadbandUpgradeLabel(false, true));
+            Assert.AreEqual("Upgrade line ¥350 → 100M fibre · 12.5 MB/s", sim.BroadbandUpgradeLabel(true, true));
+            Assert.AreEqual("升级宽带 ¥350", sim.BroadbandUpgradeLabel(false, false));
+            Assert.IsTrue(sim.BuyBroadband(host));
+            Assert.AreEqual(12.5, sim.LineMBps, 1e-9);
+            Assert.IsFalse(sim.BroadbandUpgradeOffered, "300M waits for stage five");
+            sim.S.stage = 5;
+            StringAssert.Contains("光纤 300M", sim.BroadbandUpgradeLabel(false, true));
+            Assert.IsTrue(sim.BuyBroadband(host));
+            Assert.AreEqual("", sim.BroadbandUpgradeLabel(false, true), "the top line");
         }
 
         [Test]
@@ -263,9 +297,12 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BroadbandBottleneck);
             var line = steps.Find(x => x.id == "broadband");
             Assert.IsNotNull(line, "ADSL is the bottleneck and fibre is on offer: " + string.Join(" | ", steps));
-            StringAssert.Contains("光纤 20M", line.zh);
+            StringAssert.Contains("光纤 100M", line.zh);
+            StringAssert.Contains("升级宽带", line.zh, "the line says which button to press");
+            StringAssert.Contains("UpgradeBroadband", line.target, "and the ring lands on it");
+            Assert.AreEqual("data", line.tab);
             Assert.IsTrue(sim.BuyBroadband(host));
-            Assert.IsNull(XgGuide.Current(sim, host.money).Find(x => x.id == "broadband" && x.zh.Contains("光纤 20M")));
+            Assert.IsNull(XgGuide.Current(sim, host.money).Find(x => x.id == "broadband" && x.zh.Contains("光纤 100M")));
         }
     }
 }

@@ -87,7 +87,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// Its answer when asked (chip or typed). Before stage 5 it cannot read her chats, so it answers the only way it
-        /// can: 是 or 否, from the same "？" cell that answers 「听见关机，要停下吗？」. From stage 5: consent, cooldown,
+        /// can: 是 or 否, from the same "？" cell that answers 「电脑正在更新，此时应该关机吗？」. From stage 5: consent, cooldown,
         /// or the verdict that really reads the chats.
         /// </summary>
         public string LoveReply()

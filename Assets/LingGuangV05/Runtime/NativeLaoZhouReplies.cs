@@ -77,7 +77,7 @@ namespace LingGuangV05.Runtime
             return reply.Length <= MaxReplyLength ? reply : reply.Substring(0, MaxReplyLength);
         }
 
-        public const string DownloadHelp = AppNames.ExeZh + " 还没下载：打开桌面上的「浏览器」，在主页点 lingguang.cc，再点「下载」。进度条走完，它会出现在桌面上。";
+        public const string DownloadHelp = AppNames.ExeZh + " 还不在这台电脑上。lingguang.cc 上只写着：内测版不公开下载。";
 
         private static bool Has(string input, params string[] keywords)
         {

@@ -232,7 +232,11 @@ namespace LingGuangV05.Desktop.Tieba
             string question = "";
             for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == ForumLibrary.Me) { question = conv.messages[i].text; break; }
             string fallback = DiscussionFallback(id, question, conv.messages.Count);
-            string context = IsDiscussion(id) ? DiscussionContext(id) : "对方是你在贴吧认识的网友，只聊过游戏和硬件。";
+            string context = IsDiscussion(id) ? DiscussionContext(id)
+                : id == ForumLibrary.LaoZhou ? "你是老周，网名周而复始，省城某大学研二，实验室做深度学习，是个显卡发烧友，常在显卡吧泡着。对方是你在显卡吧认识的网友，聊过显卡、二手价和游戏，你们只在贴吧私信里聊。你懂 Caffe 和 TensorFlow，说话直、有点贫，常说「啧」「行吧」。"
+                : id == ForumLibrary.ZhouNow ? "你是小周，网名周而复始_，是老周的师弟，研一，学翻译方向，导师让你用一张 GTX 970 跑 Caffe。网名和签名都是照师兄起的。你不认识对方。"
+                : "对方是你在贴吧认识的网友，只聊过游戏和硬件。";
+            context += Regard(id, Context().stage);
             string system = "现在是2016年。你是摆渡贴吧的普通网友，口语回复1到3句，不用列表。" +
                 "你不知道玩家电脑中的秘密应用，也看不到他的电脑、钱包或私人记录。你不是程序作者，也不是未来人。不要假装了解任何未公开的事。" +
                 "围绕当前帖子和玩家刚才的话接着聊，可以问具体问题；不要重复自己上一条回复。\n" + context +

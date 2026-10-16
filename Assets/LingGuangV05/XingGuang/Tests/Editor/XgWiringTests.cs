@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace LingGuangV05.XingGuang.Tests
 {
-    /// <summary>接线: the default layout changes nothing; VRAM, the breaker, 阿杰's café cards and the stand-in wire.</summary>
+    /// <summary>接线: the default layout changes nothing; VRAM, the breaker, 阿杰's café cards.</summary>
     public sealed class XgWiringTests
     {
         /// <summary>A household with real cards, a 3500 W PSU and a breaker.</summary>
@@ -603,41 +603,6 @@ namespace LingGuangV05.XingGuang.Tests
             var reloaded = new XgSim(sim.S);
             Assert.IsTrue(reloaded.AjieCutoff);
             Assert.IsNotNull(reloaded.Connect("cafe", "cafe8", rig));
-        }
-
-        [Test]
-        public void StandInWireIsTheStandInSwitch()
-        {
-            var sim = Lab(5);
-            var rig = new Rig(Ti980);
-            bool standIn = false;
-            sim.HookLife(XgSim.LifeQingwen, () => true, () => standIn, on => standIn = on);
-            sim.Tick(1, rig);
-            Assert.AreEqual("", sim.Wiring.Node(XgSim.LifeQingwen).model);
-
-            // Wiring 本体 → 替我回晴雯 turns the switch on; unplugging turns it off.
-            Assert.IsNotNull(sim.Connect("m:" + sim.Best("mnist").modelId, XgSim.LifeQingwen, rig), "only 本体 does it");
-            Assert.IsFalse(standIn);
-            Assert.IsNull(sim.Connect("self", XgSim.LifeQingwen, rig));
-            Assert.IsTrue(standIn);
-            Assert.IsTrue(sim.LifeJobLive(XgSim.LifeQingwen));
-            Assert.IsTrue(sim.Disconnect("self", XgSim.LifeQingwen, rig));
-            Assert.IsFalse(standIn);
-
-            // The switch flipped in YY shows up as the wire.
-            standIn = true;
-            sim.Tick(1, rig);
-            Assert.AreEqual("self", sim.Wiring.Node(XgSim.LifeQingwen).model);
-            standIn = false;
-            sim.Tick(1, rig);
-            Assert.AreEqual("", sim.Wiring.Node(XgSim.LifeQingwen).model);
-
-            // With 本体 off its card the switch stays on but nothing answers her.
-            standIn = true;
-            Assert.IsTrue(sim.Disconnect(sim.Wiring.Node("self").card, "self", rig));
-            Assert.IsTrue(standIn);
-            Assert.IsFalse(sim.LifeJobLive(XgSim.LifeQingwen));
-            Assert.AreEqual(XgTaskState.Error, sim.Wiring.Node(XgSim.LifeQingwen).state);
         }
 
         [Test]

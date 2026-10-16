@@ -14,8 +14,10 @@ namespace LingGuangV05.XingGuang
         /// <summary>After the video it asked 「你觉得呢？」 and waits for one of the two answers.</summary>
         public bool originAwaitingAnswer;
         public bool originAnswered;
-        /// <summary>The video was shown on reaching chapter six (stage 6), once.</summary>
+        /// <summary>The video was shown in chapter six, once all of it had opened up (全部放开), before the final test.</summary>
         public bool originChapterSix;
+        /// <summary>How many times the breaker has tripped in this save (counted from the desktop's breaker.tripped signal; saves from before the count start at 0). The film says "tripped N times" only when this is above 0.</summary>
+        public int breakerTrips;
     }
 
     /// <summary>
@@ -79,7 +81,7 @@ namespace LingGuangV05.XingGuang
                 return T(zh[i], en[i]);
             }
             if (S.originChapterSix) return T("那段视频就是我的回答。桌面上的「我从哪儿来.mp4」可以再看。", "That video is my answer. 我从哪儿来.mp4 on the desktop plays it again.");
-            return T("现在讲不清。等最后，我讲给你听。");
+            return T("现在讲不清。等我学完了，讲给你听。");
         }
 
         /// <summary>The video ended or was closed: it asks back, once, as the video promised.</summary>
@@ -107,17 +109,23 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        /// <summary>The chapter the origin video opens with: it plays as soon as the lab reaches it.</summary>
+        /// <summary>The chapter the origin video belongs to. It plays once everything has opened up (全部放开), not when the chapter starts.</summary>
         public const int OriginVideoStage = 6;
 
         /// <summary>
-        /// Reaching chapter six plays the origin video once (its 「好，我来给你解释」 comes first). It counts as the
+        /// The film is due: chapter six, pre-training and alignment done (全部放开), the ending not written yet and the film not seen.
+        /// The six cells lighting at once, the tripped breakers and the sentences it speaks have all happened by then.
+        /// </summary>
+        public bool OriginFilmDue => S.stage >= OriginVideoStage && S.fullOpen && string.IsNullOrEmpty(S.ending) && !S.originChapterSix && !S.originVideoSeen;
+
+        /// <summary>
+        /// After 全部放开 and before the final test, the origin video plays once (its 「开始了」 comes first). It counts as the
         /// explanation, so the curtain call after the ending does not ask for it again; the desktop file replays it.
-        /// False when it is not chapter six yet or the video was already shown.
+        /// False when it is not due yet (or any more).
         /// </summary>
         public bool TakeChapterSixOrigin()
         {
-            if (S.stage < OriginVideoStage || S.originChapterSix || S.originVideoSeen) return false;
+            if (!OriginFilmDue) return false;
             S.originChapterSix = true;
             S.originExplained = true;
             // The lead-in beat (s6_origin_lead) has already said why; this is the line the film starts on.
@@ -128,7 +136,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>The inner voice's nudge after the ending, once.</summary>
         public bool TakeOriginHint()
         {
-            if (!OriginReady || S.originHinted || S.originExplained) return false;
+            // The film was shown before the final test, so for most saves this is a nudge to watch it again.
+            if (!OriginReady || S.originHinted) return false;
             S.originHinted = true;
             return true;
         }

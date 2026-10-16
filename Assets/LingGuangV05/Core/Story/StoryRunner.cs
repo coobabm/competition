@@ -84,8 +84,19 @@ namespace LingGuangV05.Core.Story
         public event Action<StoryBeat> BeatStarted, BeatFinished;
 
         public StoryBeat Current { get { return current; } }
+        /// <summary>How many beats have started so far (a replayed beat counts again).</summary>
+        public int BeatsStarted { get; private set; }
         public int QueueCount { get { return queue.Count; } }
         public bool IsWaitingForOutput { get { return wait == WaitKind.Done; } }
+        /// <summary>The current beat's hook is on screen (its line, then its pause): a cutscene it announces waits for it.</summary>
+        public bool HookPlaying
+        {
+            get
+            {
+                if (current == null || current.Hook == null || wait == WaitKind.None) return false;
+                return stepIndex == 1 || stepIndex == 2 && wait == WaitKind.Timer;
+            }
+        }
 
         public void Signal(string name, string arg = null)
         {
@@ -196,6 +207,7 @@ namespace LingGuangV05.Core.Story
                     queue.RemoveAt(0);
                     stepIndex = 0;
                     narratedInBeat = false;
+                    BeatsStarted++;
                     Emit("start " + current.Id);
                     var started = BeatStarted; if (started != null) started(current);
                 }
@@ -211,7 +223,8 @@ namespace LingGuangV05.Core.Story
         private bool MustHold(StoryStep step)
         {
             if (current.Priority >= UrgentPriority) return false;
-            bool presenting = step.Op == "narrate" || step.Op == "cutscene";
+            // A beat's hook waits for a clear screen too, so it lands right before what it announces.
+            bool presenting = step.Op == "narrate" || step.Op == "cutscene" || step.Has("hook");
             if (!presenting) return false;
             var busy = IsBusy;
             if (busy != null && busy()) return true;
@@ -281,6 +294,10 @@ namespace LingGuangV05.Core.Story
                     PresentBlocking(step);
                     return;
                 case "cutscene":
+                    PresentBlocking(step);
+                    return;
+                case "think" when step.Has("hook"):
+                    // A hook is read to the end before what it announces starts (a cutscene would cut it off).
                     PresentBlocking(step);
                     return;
                 case "say":

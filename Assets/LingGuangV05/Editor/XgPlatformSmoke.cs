@@ -196,7 +196,9 @@ namespace LingGuangV05.Editor
                 Try("ledger", () => { ledger.Init(stub, ui); ledger.Build(area); ledger.Refresh(); ledger.Tick(.1f); });
                 var credit = new ZhongbaoCreditPage();
                 Try("credit", () => { credit.Init(stub, ui); credit.Build(area); credit.Refresh(); credit.Tick(.1f); });
-                foreach (var page in new XgPage[] { contracts, crew, ledger, credit })
+                var autoPage = new ZhongbaoAutoPage();
+                Try("auto", () => { autoPage.Init(stub, ui); autoPage.Build(area); autoPage.Refresh(); autoPage.Tick(.1f); });
+                foreach (var page in new XgPage[] { contracts, crew, ledger, credit, autoPage })
                     if (page.root != null) Report("page " + page.root.name, page, area);
 
                 // English: every page again, listing text that still has Chinese in it.

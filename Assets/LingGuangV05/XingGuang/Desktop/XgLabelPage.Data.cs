@@ -63,6 +63,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sourceSwitch.Show(list.Count > 1);
             sourceSwitch.Set("⇄ " + Lang.T("来源 ") + index + "/" + list.Count, true);
             pack.SetGlyph(XgDataUi.Glyph(o.source));
+            pack.SetIcon(o.source == XgDataSource.Junk ? "junk" : o.source == XgDataSource.Crowd ? "crowd" : o.source == XgDataSource.Story ? "story" : o.source == XgDataSource.Crawl ? "crawl" : "pack");
 
             string title = (o.source == XgDataSource.Public ? Lang.T("完整数据包") : o.Name(En));
             string line = XgDataUi.SourceLine(o);

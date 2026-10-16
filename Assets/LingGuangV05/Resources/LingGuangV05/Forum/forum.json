@@ -116,15 +116,15 @@
       "id": "casino_888",
       "board": "gpu",
       "author": "guaji",
-      "date": "2016-07-01",
-      "minStage": 2,
+      "date": "2016-10-05",
+      "minStage": 5,
       "title": "【水】显卡钱差一点？888.vip，来两把？",
       "titleEn": "[Off-topic] Short on GPU money? A few rounds at 888.vip?",
       "floors": [
         {
           "author": "guaji",
-          "text": "888国际娱乐，老虎机、骰子、轮盘、龙虎、21点都有。打开桌面的浏览器，地址栏输入 888.vip 就能进。十块起，输赢当场结算。\n（游戏内虚构网站，仅使用游戏钱包，无充值提现。）",
-          "textEn": "888 VIP Club: slots, dice, roulette, dragon/tiger and blackjack. Open the desktop browser and type 888.vip in the address bar. Bets start at 10, settled on the spot.\n(Fictional in-game site. Game wallet only; no real deposits or withdrawals.)"
+          "text": "888国际娱乐，老虎机、骰子、轮盘、龙虎、21点都有。打开桌面的浏览器，地址栏输入 888.vip 就能进。一块起，不设上限，输赢当场结算。\n（游戏内虚构网站，仅使用游戏钱包，无充值提现。）",
+          "textEn": "888 VIP Club: slots, dice, roulette, dragon/tiger and blackjack. Open the desktop browser and type 888.vip in the address bar. Bets start at 1 with no upper limit, settled on the spot.\n(Fictional in-game site. Game wallet only; no real deposits or withdrawals.)"
         },
         {
           "author": "dengdeng",
@@ -204,6 +204,48 @@
           "text": "7 楼这是什么暗号？",
           "textEn": "What's the code on floor 7?",
           "since": "2016-04-12"
+        },
+        {
+          "author": "xiaobai",
+          "text": "楼主大神！我照你说的，先自己标了几十条再练，真的跑起来了！谢谢楼主！",
+          "textEn": "OP, you're a legend! I did what you said and hand-labelled a few dozen first, and it really trains now! Thank you!",
+          "since": "2016-08-02",
+          "minStage": 3
+        },
+        {
+          "author": "dengdeng",
+          "text": "挖坟。当初劝楼主买新不买旧，打脸了。这几个月看楼主把那张 980 Ti 用成这样，我服。",
+          "textEn": "Digging this up. I told OP to buy new, not old. I was wrong. After watching what OP has done with that 980 Ti these months, I'm impressed.",
+          "since": "2016-08-10",
+          "minStage": 3
+        },
+        {
+          "author": "liandan",
+          "text": "楼主在 AI 吧回的帖我都看了。错在哪、改了什么、结果怎么变，三样都写清楚的人不多，我们组有些人还不如你。",
+          "textEn": "I've read all of OP's replies in the AI forum. Few people write down what went wrong, what they changed and how the result moved. Some people in our group don't do it as well as you.",
+          "since": "2016-09-12",
+          "minStage": 4
+        },
+        {
+          "author": "yanglaji",
+          "text": "当初说「楼主土豪求带」，是我嘴贱。现在是真心求带：楼主那套练法，有空发个帖讲讲呗？",
+          "textEn": "Back then I said \"rich OP, carry me\" as a joke. Now I mean it. Could OP write up that training routine when there's time?",
+          "since": "2016-10-20",
+          "minStage": 5
+        },
+        {
+          "author": "tiaocan",
+          "text": "这个号我关注了。有数据、有过程、不吹，在吧里很少见。哪天楼主发总结帖，我第一个顶。",
+          "textEn": "I'm following this account. Numbers, process, no bragging: rare around here. When OP posts a write-up, I'll be the first to bump it.",
+          "since": "2016-11-08",
+          "minStage": 5
+        },
+        {
+          "author": "chigua",
+          "text": "前排卖瓜子的向楼主道个歉。现在楼主才是前排，我换个后面的位置卖。",
+          "textEn": "The front-row melon seed seller owes OP an apology. OP is the front row now. I'll sell from further back.",
+          "since": "2016-12-08",
+          "minStage": 6
         }
       ]
     },
@@ -286,6 +328,13 @@
           "text": "图呢？无图无真相。",
           "textEn": "Pics or it didn't happen.",
           "afterSeconds": 150
+        },
+        {
+          "author": "laozhou",
+          "text": "回头翻到你这帖。当初慌成那样，后来你自己一点一点弄明白了。哈，我是服气的。",
+          "textEn": "Found this post again. You were in a panic back then, and later you worked it out bit by bit yourself. Huh, I have to give you that.",
+          "since": "2016-10-15",
+          "minStage": 5
         }
       ]
     },
@@ -347,6 +396,11 @@
           "author": "chigua",
           "text": "楼主签名有点意思。",
           "textEn": "Interesting signature, OP."
+        },
+        {
+          "author": "zhou_now",
+          "text": "跟师兄学的哈，ID 也是照他起的。他才是正主，叫周而复始，常在显卡吧。",
+          "textEn": "Copied from my senior, huh. The ID too. He's the original, 周而复始, hangs out in the GPU forum."
         }
       ]
     },
@@ -450,8 +504,8 @@
         },
         {
           "author": "akazhan",
-          "text": "A 卡显存大啊，RX 480 8G 才一千九",
-          "textEn": "AMD cards have more VRAM. An RX 480 8 GB is only 1,999."
+          "text": "A 卡显存大啊，刚发布的 RX 480 8G，传闻国行一千九上下",
+          "textEn": "AMD cards have more VRAM. The new RX 480 8 GB, just announced, is rumoured at about 1,999 in China."
         },
         {
           "author": "liandan",
@@ -609,13 +663,13 @@
         },
         {
           "author": "akazhan",
-          "text": "接模型外包要先有成绩：人家要拦截准确率 92%，你 90% 人家不签。",
+          "text": "后面还有接模型外包的路子，那要先有成绩：人家要拦截准确率 92%，你 90% 人家不签。",
           "textEn": "For model contracts you need results first: if they want 92% filter accuracy, 90% does not get signed."
         },
         {
           "author": "dengdeng",
-          "text": "对。签下来是按天给钱的，准确率越高给得越多，比手标稳。",
-          "textEn": "Right. A signed job pays every day, and more the better your accuracy. Steadier than labelling."
+          "text": "对。等你够格了，签下来是按天给钱的，准确率越高给得越多，比手标稳。现在先老老实实标。",
+          "textEn": "Right. Once you qualify, a signed job pays every day, and more the better your accuracy. Steadier than labelling. For now, keep labelling the honest way."
         },
         {
           "author": "yanglaji",
@@ -639,6 +693,13 @@
           "text": "对，那是人家律所的活，纯赚钱。数据跟你要做的任务对不上，练了也白练。",
           "textEn": "Right, that's the law firm's job, pure money. Data that doesn't match your task teaches it nothing.",
           "since": "2016-07-15"
+        },
+        {
+          "author": "akazhan",
+          "text": "补一个活例子：吧里那位「显卡在燃烧」，就是先老老实实标，再一步步把成绩做起来的。想学的去翻他的帖，大神级别。",
+          "textEn": "One more live example: the guy called \"GPU_on_fire\" here labelled honestly first, then built his numbers up step by step. If you want to learn, read his posts. Big-shot level.",
+          "since": "2016-08-20",
+          "minStage": 3
         }
       ]
     },
@@ -726,6 +787,13 @@
           "author": "dengdeng",
           "text": "火钳刘明，等我练崩了回来看",
           "textEn": "Leaving a mark here; I'll be back when mine collapses."
+        },
+        {
+          "author": "liandan",
+          "text": "「显卡在燃烧」之前也卡过，他是把错题一张张翻出来看规律才过去的。楼主可以学他。",
+          "textEn": "\"GPU_on_fire\" got stuck once too. He went through the wrong cards one by one looking for a pattern, and that got him past it. OP could copy him.",
+          "since": "2016-08-15",
+          "minStage": 3
         }
       ]
     },
@@ -760,8 +828,8 @@
         },
         {
           "author": "liandan",
-          "text": "再补一个：大模型开头误差最大，可以先用小学习率热身几百步再加上去。ResNet 论文里练 110 层就是先用 0.01 热身的。",
-          "textEn": "One more: big models have their largest errors at the start, so warm up with a small rate for a few hundred steps, then raise it. The ResNet paper warms up its 110-layer net at 0.01 first."
+          "text": "再补一个：网络越深开头误差越大，可以先用小学习率热身几百步再加上去。ResNet 论文里练 110 层就是先用 0.01 热身的。",
+          "textEn": "One more: the deeper the network, the larger its errors at the start, so warm up with a small rate for a few hundred steps, then raise it. The ResNet paper warms up its 110-layer net at 0.01 first."
         },
         {
           "author": "kedaibiao",
@@ -949,8 +1017,8 @@
         },
         {
           "author": "chigua",
-          "text": "你们说的这个，会不会就是以后的大模型？",
-          "textEn": "Could what you're describing be the big models of the future?"
+          "text": "你们说的这个，会不会以后所有人都改用它？",
+          "textEn": "Could what you're describing be what everyone switches to later?"
         },
         {
           "author": "tiaocan",
@@ -1039,8 +1107,8 @@
         },
         {
           "author": "chigua",
-          "text": "被封了，抽检全错。",
-          "textEn": "Got banned. Every spot check came back wrong."
+          "text": "我朋友试过，抽检全错，被罚光了。",
+          "textEn": "A friend of mine tried it. Every spot check came back wrong and he was fined down to nothing."
         },
         {
           "author": "kedaibiao",
@@ -1068,7 +1136,8 @@
       "id": "crowd_trap",
       "board": "ai",
       "author": "kedaibiao",
-      "date": "2016-06-01",
+      "date": "2016-09-08",
+      "minStage": 4,
       "requires": "qc.trap",
       "title": "众包里有『金标题』，别拿脚本碰",
       "titleEn": "Crowd tasks have 'golden items'. Keep your scripts away",
@@ -1095,8 +1164,8 @@
         },
         {
           "author": "xiezhi",
-          "text": "谢邀，楼上号已经被封了。",
-          "textEn": "Thanks for the invite. The poster above just got banned."
+          "text": "谢邀，楼上号已经被平台清掉了。",
+          "textEn": "Thanks for the invite. The platform has already wiped the poster above."
         }
       ]
     },

@@ -74,15 +74,15 @@ namespace LingGuangV05.Editor
             browser.webLibrary = library;
             EditorUtility.SetDirty(browser);
 
-            // 2016 home broadband: ~2 MB/s, so the 46.8 MB download takes about 23 seconds.
+            // 2016 home broadband: 20M = 2.5 MB/s (the lab's starting line), so the 46.8 MB download takes about 19 seconds.
             Undo.RecordObject(network, "2016 networks");
             network.networkItems = new List<NetworkManager.NetworkItem>
             {
-                new NetworkManager.NetworkItem { networkID = "ChinaNet-8A3F", password = "88886666", signalPower = NetworkManager.SignalPower.Best, networkSpeed = 2f },
+                new NetworkManager.NetworkItem { networkID = "ChinaNet-8A3F", password = "88886666", signalPower = NetworkManager.SignalPower.Best, networkSpeed = 2.5f },
                 new NetworkManager.NetworkItem { networkID = "TP-LINK_5C2E", password = "12345678", signalPower = NetworkManager.SignalPower.Strong, networkSpeed = 1.2f },
                 new NetworkManager.NetworkItem { networkID = "CMCC-WEB", password = "cmcc2016", signalPower = NetworkManager.SignalPower.Weak, networkSpeed = .4f },
             };
-            network.defaultSpeed = 2f;
+            network.defaultSpeed = 2.5f;
             EditorUtility.SetDirty(network);
 
             int branded = Rebrand(scene);

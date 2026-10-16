@@ -31,8 +31,6 @@ namespace LingGuangV05.Desktop.YY
         public string sticker = "";
         /// <summary>灵光's replies: 1 赞, -1 踩, 0 not rated (the lab keeps the tone card; this is what YY shows).</summary>
         public int rating;
-        /// <summary>The lab's AI wrote this line in the player's name (「让 灵光 代我回」 in 林晴雯's chat).</summary>
-        public bool byAi;
     }
 
     [Serializable]
@@ -96,7 +94,7 @@ namespace LingGuangV05.Desktop.YY
     }
 
     /// <summary>
-    /// YY (2016) chat service: conversations, persistence, 老周's file transfer of 灵光.exe and his local help replies.
+    /// YY (2016) chat service: conversations, persistence, the (legacy) file-transfer code and old-save local help replies.
     /// Story `say` lines arrive through <see cref="Receive"/>; the player's messages raise runtime signal chat.sent.
     /// </summary>
     [DisallowMultipleComponent]
@@ -116,13 +114,13 @@ namespace LingGuangV05.Desktop.YY
 
         public static readonly YYContact[] Contacts =
         {
-            new YYContact { id = LaoZhou, name = "老周", nameEn = "Lao Zhou", signature = "AI 是下一个风口。这周三个会。", signatureEn = "AI is the next big thing. Three meetings this week.", online = true, color = new Color32(232, 93, 74, 255) },
+            new YYContact { id = LaoZhou, name = "老周", nameEn = "Lao Zhou", signature = "实验室的卡又在烧了。", signatureEn = "The lab GPUs are cooking again.", online = true, color = new Color32(232, 93, 74, 255) },
             new YYContact { id = "landlord", name = "房东·按时到账", nameEn = "Landlord · Pay on time", signature = "亲兄弟明算账", signatureEn = "Rent is rent.", online = true, color = new Color32(170, 129, 80, 255) },
-            new YYContact { id = "oldfriend", name = "咸鱼本鱼", nameEn = "Salty Fish", signature = "出门走走，回来吹牛", signatureEn = "Out for a walk. Back with stories.", online = true, color = new Color32(90, 163, 139, 255) },
+            new YYContact { id = "oldfriend", name = "咸鱼本鱼", nameEn = "Salty Fish", signature = "在图书馆，勿扰", signatureEn = "At the library. Do not disturb.", online = true, color = new Color32(90, 163, 139, 255) },
             new YYContact { id = "cousin", name = "表姐", nameEn = "Cousin", signature = "加班中，勿扰", signatureEn = "Working late, do not disturb", online = false, color = new Color32(236, 151, 31, 255) },
             new YYContact { id = LingGuangId, name = AppNames.AiZh, nameEn = AppNames.AiEn, signature = "是。否。……", signatureEn = "Yes. No. …", online = true, hidden = true, color = new Color32(64, 84, 196, 255) },
             new YYContact { id = GirlfriendId, name = "晴雯ˇ", nameEn = "Qingwenˇ", signature = "今天的月亮好圆", signatureEn = "The moon is so round tonight", online = true, hidden = true, color = new Color32(240, 98, 146, 255) },
-            new YYContact { id = "netbar", name = "下班屁股群", nameEn = "Clock-out Overwatch squad", signature = "群公告：今晚八点屁股车，满五开", signatureEn = "Notice: Overwatch at 8 tonight, five-stack", group = true, color = new Color32(64, 158, 255, 255) },
+            new YYContact { id = "netbar", name = "下班屁股群", nameEn = "Clock-out Overwatch squad", signature = "群公告：屁股车随时开，满五发车", signatureEn = "Notice: Overwatch squad, leaves when five are in", group = true, color = new Color32(64, 158, 255, 255) },
         };
 
         public ChapterOneRuntime runtime;
@@ -436,11 +434,28 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return Lang.T("店里正忙呢。你说的那个我没用过，别把电脑折腾坏了就行。");
-                case "landlord": return GameText.T("欠款 ¥", "Debt ¥") + runtime.Sim.Debt.ToString("0") + GameText.T("。有困难先跟我说，账还是得慢慢还。", ". Let me know if you need time to repay.");
+                case LaoZhou: return Lang.T("在实验室呢，晚点回你。你说的那个我没用过，别把电脑折腾坏了就行。");
+                case "landlord":
+                    {
+                        // The landlord softens as the tenant proves himself: on time, no fuss, then plainly fond of him.
+                        int rank = lab != null ? lab.S.stage : 1;
+                        // Only a tenant who owes something hears about the debt.
+                        if (runtime == null || runtime.Sim == null || runtime.Sim.Debt < 1)
+                            return rank >= 5 ? GameText.T("房租又按时到了。说实话，这片我收的租客里，就数你最省心。小伙子有出息。有事再找我。", "The rent came on time again. Honestly, of all the tenants I have around here you're the easiest. You'll go far, kid. Call me if you need anything.")
+                                : rank >= 3 ? GameText.T("房租按时到了，不错，你这孩子靠谱。电线别乱拉，有事再找我。", "The rent came on time. Good, you're a reliable kid. Don't mess with the wiring; call me if something's up.")
+                                : GameText.T("房租按时到了就行。电线别乱拉，有事再找我。", "As long as the rent comes in on time, we're fine. Don't mess with the wiring; call me if something's up.");
+                        if (rank >= 5) return GameText.T("欠款 ¥", "Debt ¥") + runtime.Sim.Debt.ToString("0") + GameText.T("。你一向按时，我不急，有困难先跟我说，慢慢还。", ". You've always paid on time, so I'm in no rush. Tell me if it's tight and we'll work it out.");
+                        return GameText.T("欠款 ¥", "Debt ¥") + runtime.Sim.Debt.ToString("0") + GameText.T("。有困难先跟我说，账还是得慢慢还。", ". Let me know if you need time to repay.");
+                    }
                 case "oldfriend": return FriendFallback(last, conv);
-                case "cousin": return Lang.T("在上班，晚点说。早点睡，别熬夜。");
-                case "netbar": return YYGroup.Fallback(last, conv, offlineRng);
+                case "cousin":
+                    {
+                        int rank = lab != null ? lab.S.stage : 1;
+                        return rank >= 5 ? GameText.T("在上班，晚点说。老板又问起你了，说你交的稿子比他以前找的翻译还细。别熬夜，早点睡。", "At work, talk later. My boss asked about you again: he says your drafts are more careful than the translators he used before. Don't stay up late.")
+                            : rank >= 3 ? GameText.T("在上班，晚点说。听说你在家做数据活也能挣钱了？有点本事嘛。别太累，早点睡。", "At work, talk later. I hear you can earn from data jobs at home now? That's something. Don't overdo it, get some sleep.")
+                            : Lang.T("在上班，晚点说。早点睡，别熬夜。");
+                    }
+                case "netbar": return YYGroup.Fallback(last, conv, offlineRng, runtime != null && runtime.Sim != null ? GameCalendar.Now(runtime.Sim.S) : (DateTime?)null);
                 default:
                     int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
                     if (lab == null)
@@ -550,7 +565,7 @@ namespace LingGuangV05.Desktop.YY
             Touch();
             pending[LingGuangId] = Time.unscaledTime + 1f;
             var presenter = FindAnyObjectByType<LingGuangV05.Desktop.Story.StoryDesktopPresenter>();
-            if (presenter != null) presenter.ShowToast(GameText.T(AppNames.AiZh + "：……是。你好。", AppNames.AiEn + ": … yes. Hello."), () => { if (router != null) router.Open(AppId, LingGuangId); });
+            if (presenter != null) presenter.ShowToast(GameText.T(AppNames.AiZh + "：……是。", AppNames.AiEn + ": … yes."), () => { if (router != null) router.Open(AppId, LingGuangId); });
         }
 
         public void Select(string id)
@@ -573,8 +588,8 @@ namespace LingGuangV05.Desktop.YY
         // ───────────── 灵光.exe file transfer ─────────────
 
         /// <summary>
-        /// 老周 sends 灵光.exe right after his third intro line ("我打包好了……"). If the story already ran but the chat
-        /// history is missing (older save), he repeats the gist and sends it again, so the player is never stuck.
+        /// Legacy: 灵光.exe is no longer sent over YY (it reaches the PC by itself in the prologue, from the intruder).
+        /// Old saves that never got it still recover the local file below, so the player is never stuck.
         /// </summary>
         void EnsureFileOffer()
         {
@@ -658,7 +673,13 @@ namespace LingGuangV05.Desktop.YY
             {
                 S.seedZhouHand = true;
                 if (IsVisible(Contact(LaoZhou))) Receive(LaoZhou, Lang.T("标注这活我也干过，标到最后手都是麻的。"));
-                else Touch();
+                else
+                {
+                    // 老周 is not on YY: he grumbles in his 贴吧 private messages instead (the one thing he starts by himself).
+                    var tieba = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
+                    if (tieba != null) tieba.Receive(LingGuangV05.Core.Forum.ForumLibrary.LaoZhou, Lang.T("你还在一张一张手标啊？标到最后手都是麻的，这么标得标到猴年马月去。"));
+                    Touch();
+                }
             }
             else if (!S.seedJieAsk && hand >= SeedJieAskLabels)
             {
@@ -721,10 +742,10 @@ namespace LingGuangV05.Desktop.YY
         public static string Reply(string input, ChapterOneSim sim, XgSim lab)
         {
             string q = (input ?? "").ToLowerInvariant();
-            if (sim == null) return Lang.T("我在开会，晚点回你。");
+            if (sim == null) return Lang.T("我在实验室，晚点回你。");
             if (sim.InPrologue) return Lang.T("在忙，晚点说。");
             if (!sim.AppInstalled)
-                return T("先把" + AppNames.AppZh + "收了：咱俩聊天记录里那个文件，点「接收」。", "Grab " + AppNames.AppEn + " first: the file in our chat, press Receive.");
+                return T(AppNames.AppZh + "还没跑起来，等它起来再问我。", AppNames.AppEn + " is not running yet. Ask me again once it is.");
             if (lab == null) return T(AppNames.AppZh + "还在启动，等一下再问。", AppNames.AppEn + " is still starting, ask again in a bit.");
             var v = lab.S.vision;
             double mnist = lab.Samples("mnist"), poems = lab.Samples("poems");

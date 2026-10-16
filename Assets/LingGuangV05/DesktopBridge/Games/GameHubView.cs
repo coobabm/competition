@@ -200,7 +200,9 @@ namespace LingGuangV05.Desktop.Games
             var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img;
             var colors = b.colors; colors.highlightedColor = new Color(1.25f, 1.25f, 1.35f, 1); b.colors = colors;
             b.onClick.AddListener(() => Show(id));
-            Text(PrologueDesk.Rect("Glyph", rt, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(50, 0)), glyph, 26, Color.white, TextAlignmentOptions.Center);
+            var navGlyph = Text(PrologueDesk.Rect("Glyph", rt, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(50, 0)), glyph, 26, Color.white, TextAlignmentOptions.Center);
+            // Drawn tile icon (Resources/.../Icons/hub); the glyph stays as the fallback when it is missing.
+            if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(rt, "hub", id, 30, 28, 40) != null) navGlyph.gameObject.SetActive(false);
             navLabels[id] = Text(PrologueDesk.Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(58, 0), new Vector2(-6, 0)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft);
             navFills[id] = img;
         }
@@ -220,7 +222,8 @@ namespace LingGuangV05.Desktop.Games
                 card.gameObject.AddComponent<Outline>().effectColor = new Color32(214, 218, 228, 255);
                 var art = PrologueDesk.Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(0, -190), Vector2.zero);
                 PrologueDesk.Fill(art, g.Accent, false);
-                Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 96, Color.white, TextAlignmentOptions.Center);
+                var artGlyph = Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 96, Color.white, TextAlignmentOptions.Center);
+                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(art, "hub", g.Id, 150, 95, 150) != null) artGlyph.gameObject.SetActive(false);
                 var title = Text(PrologueDesk.Rect("Name", card, new Vector2(0, 1), Vector2.one, new Vector2(20, -240), new Vector2(-20, -198)), "", 26, new Color32(30, 36, 52, 255), TextAlignmentOptions.MidlineLeft);
                 title.fontStyle = FontStyles.Bold;
                 var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(20, 96), new Vector2(-20, -246)), "", 16, new Color32(90, 98, 114, 255));

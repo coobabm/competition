@@ -50,7 +50,7 @@ namespace LingGuangV05.XingGuang.Tests
             var lines = sim.TakeYYLines();
             Assert.AreEqual(1, lines.Count);
             Assert.AreEqual("ajie", lines[0].from);
-            Assert.AreEqual("你那个众包还缺人不？我反正在网吧坐着。", lines[0].zh);
+            Assert.AreEqual("你那个众包还缺人不？我在网吧上班，闲着也是闲着。", lines[0].zh);
             Assert.IsFalse(string.IsNullOrEmpty(lines[0].en));
             Assert.AreEqual(0, sim.PendingYYLines);
         }
@@ -59,7 +59,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void WagesRunEveryMinuteEvenWhileIdle()
         {
             var host = new Host(); var sim = Open(host);
-            sim.S.qcFrozen = 1000;
+            sim.S.qcAutoPause = 1000;
             double before = host.money;
             Assert.IsTrue(sim.Hire("ajie", host));
             Assert.AreEqual(2, before - host.money, 1e-9, "first minute up front");
@@ -69,8 +69,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(4, before - host.money, 1e-9);
             sim.Tick(60, host);
             Assert.AreEqual(6, before - host.money, 1e-9);
-            Assert.AreEqual(0, sim.Worker("ajie").labelsTotal, "a frozen account: no labels, wages still due");
-            StringAssert.Contains("冻结", sim.WorkerIdleReason("ajie"));
+            Assert.AreEqual(0, sim.Worker("ajie").labelsTotal, "a paused account: no labels, wages still due");
+            StringAssert.Contains("暂停", sim.WorkerIdleReason("ajie"));
             Assert.AreEqual(2, sim.WagesPerMinute, 1e-9);
         }
 

@@ -91,7 +91,8 @@ namespace LingGuangV05.Desktop
                 button.onClick = new Button.ButtonClickedEvent();
                 button.onClick.AddListener(() => { bridge.OpenApp(); menu.Close(); });
                 var icon = row.transform.Find("Icon")?.GetComponent<Image>();
-                if (icon != null && bridge.TaskbarShortcut?.headerButton != null) icon.sprite = bridge.TaskbarShortcut.headerButton.buttonIcon;
+                // The drawn kk.exe icon first; the taskbar button's icon is null in this scene, which left a white square.
+                if (icon != null && !XgIcons.Apply(icon, "desktop", "kk_exe") && bridge.TaskbarShortcut?.headerButton != null) icon.sprite = bridge.TaskbarShortcut.headerButton.buttonIcon;
                 SetLabels(row.transform, exe);
                 var entries = new System.Collections.Generic.List<AeroStartMenu.ProgramEntry>(menu.programs);
                 entries.Add(new AeroStartMenu.ProgramEntry { title = exe, searchKeywords = "AI 灵光 LingGuang", row = row, window = bridge.Window });

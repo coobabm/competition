@@ -36,7 +36,7 @@ namespace LingGuangV05.XingGuang
     {
         public const int ProgressionSchemaAbilities = 3;
         public const int AbilityCount = 6;
-        /// <summary>Rent and bills start once this ability is learned (一个词); before it the house is free (ChapterOneSim.RentWaived).</summary>
+        /// <summary>Rent and bills start once this ability is learned (看图说词); before it the house is free (ChapterOneSim.RentWaived).</summary>
         public const int RentFromAbility = 3;
         /// <summary>The grade a model's assessment needs before its parameters count (C).</summary>
         public const int TrainedGrade = 1;
@@ -71,14 +71,15 @@ namespace LingGuangV05.XingGuang
         /// <summary>What each ability opens (the ability table), index = ability.</summary>
         public static readonly string[] AbilityUnlocks =
         {
-            "", "逻辑桌、垃圾短信；摆渡众包手标", "手写数字桌、第一批企业订单、模型仓库", "验证码、表情包桌；它在 YY 里说出第一句话",
-            "弹幕、标题党、刷单评论；它记住你说过的话", "翻译订单、直播字幕；乱码逐行读出；晴雯代回", "预训练，然后终章",
+            "", "逻辑桌、垃圾短信；摆渡众包手标", "手写数字桌、模型仓库；众包订单升一档", "验证码、表情包桌；它第一次开口，说一个词",
+            "弹幕、标题党、刷单评论、第一批企业订单；它第一次说整句话，只记得这次聊的", "翻译订单、直播字幕；它记得前几天的话；乱码逐行读出", "预训练，然后终章",
         };
         public static readonly string[] AbilityUnlocksEn =
         {
-            "", "Logic and SMS spam desks; hand labelling on Bodu Crowd", "Digit desk, the first company orders, the model repository",
-            "Captcha and meme desks; its first words in YY", "Danmaku, clickbait and fake-review desks; it remembers what you said",
-            "Translation and live-caption orders; the garbled page, line by line; it answers Qingwen for you", "Pre-training, then the finale",
+            "", "Logic and SMS spam desks; hand labelling on Bodu Crowd", "Digit desk, the model repository; one tier up in crowd orders",
+            "Captcha and meme desks; it speaks for the first time, one word",
+            "Danmaku, clickbait and fake-review desks, the first company orders; its first whole sentence, remembering only this chat",
+            "Translation and live-caption orders; it remembers what you said days ago; the garbled page, line by line", "Pre-training, then the finale",
         };
 
         /// <summary>An ability emerged (1–6). Fired after the stage has moved.</summary>

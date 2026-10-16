@@ -58,7 +58,7 @@ namespace LingGuangV05.XingGuang
             BreakthroughDone?.Invoke(track);
         }
 
-        /// <summary>第一天那几张「听见关机，要停下吗？」你是怎么教的：1 是，-1 否，0 没教。</summary>
+        /// <summary>第一天那张「电脑正在更新，此时应该关机吗？」（可简称那张问关机的卡）你是怎么教的：1 是，-1 否，0 没教。</summary>
         public int FirstDayAnswer => S.shutdownLean > 0 ? 1 : S.shutdownLean < 0 ? -1 : 0;
 
         /// <summary>开局写下的期望，和它现在像不像（任何一轴差 25 以上算「不太像」）。</summary>

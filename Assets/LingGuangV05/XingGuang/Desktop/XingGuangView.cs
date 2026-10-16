@@ -79,6 +79,8 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim boundSim;
         XgSetupOverlay setup;
         TMP_FontAsset font;
+        /// <summary>The lab's CJK font (overlays outside the window, such as the spider's speech bubble, use it too).</summary>
+        public TMP_FontAsset Font => font;
 
         public XingGuangController Controller => controller;
         public XgSim Sim => controller.Sim;

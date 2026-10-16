@@ -45,7 +45,7 @@ namespace LingGuangV05.Desktop.Taohuo
             }
             foreach (var gift in GirlfriendRules.Gifts) GiftRow(g, gift, today, day);
             OrdersList(g);
-            Note(Lang.T("包邮，2–3 天送到她学校（奶茶当天到）。签收以后她会在 YY 上找你。"));
+            Note(Lang.T("包邮，2–3 天送到她那儿（奶茶当天到）。签收以后她会在 YY 上找你。"));
         }
 
         void GiftRow(GirlfriendState g, GfGift gift, DateTime today, int day)

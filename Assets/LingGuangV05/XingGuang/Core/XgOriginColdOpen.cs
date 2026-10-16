@@ -43,10 +43,16 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgFilmPhase[] Phases =
         {
-            new XgFilmPhase(0, 3.5, "「恭喜您中奖！点击领取」——是垃圾短信吗？", "是。", "PERCEPTRON", 1958, 4, 110, 4),
-            new XgFilmPhase(3.5, 7, "这条弹幕，是在夸，还是在骂？", "……不确定。", "MLP", 1986, 20, 72, 11),
-            new XgFilmPhase(7, 10.5, "写一句关于月亮的诗。", "月亮。很圆。想家。", "RNN", 1990, 64, 64, 11),
-            new XgFilmPhase(10.5, 14, "我昨天跟你说的那件事……", "你是说那句[没说出口]的话？你觉得——该不该说？", "TRANSFORMER", 2016, 170, 54, 11),
+            // What the game really has: a spam question (yes), a 夸/骂 question it is unsure about, a picture it names with one word,
+            // and the question it is asked about itself (the origin question's own answer, 「你教的」), which it turns back on you.
+            new XgFilmPhase(0, 3.5, "「恭喜您中奖！点击领取」——是垃圾短信吗？", "是。", "PERCEPTRON", 1958, 4, 110, 4,
+                "\"Congratulations, you won! Click to claim\" — is this spam?", "Yes."),
+            new XgFilmPhase(3.5, 7, "这条弹幕，是在夸，还是在骂？", "……不确定。", "MLP", 1986, 20, 72, 11,
+                "This danmaku comment: praise, or insult?", "...Not sure."),
+            new XgFilmPhase(7, 10.5, "［一张猫的照片］这是什么？", "猫。", "RNN", 1990, 64, 64, 11,
+                "[A photo of a cat] What is this?", "Cat."),
+            new XgFilmPhase(10.5, 14, "你是怎么学会的？", "你一张一张教的。你觉得，[我学得像吗]？", "TRANSFORMER", 2016, 170, 54, 11,
+                "How did you learn all this?", "You taught me, card by card. What do you think—[did I learn it well]?"),
         };
 
         public static readonly string[] AllArch = { "PERCEPTRON", "MLP", "CNN · RNN", "LSTM · RESNET", "ATTENTION", "TRANSFORMER" };
@@ -230,7 +236,7 @@ namespace LingGuangV05.XingGuang
         /// The state at time t (seconds from the start of the film). finalParams is the last beat's parameter count; the
         /// counter then spins up to the same factor above it that the film uses (2.13e8 → 2e9).
         /// </summary>
-        public static void Evaluate(double t, Frame f, double finalParams = 2.13e8)
+        public static void Evaluate(double t, Frame f, double finalParams = 2.13e8, bool english = false)
         {
             var P = DefaultParams;
             f.T = t;
@@ -291,9 +297,13 @@ namespace LingGuangV05.XingGuang
                 double start = p.From + .75, end = p.To - .05;
                 if (t < start - .35) { f.SpeechAlpha[i] = 0; f.SpeechChars[i] = 0; f.SpeechCursor[i] = false; continue; }
                 f.SpeechAlpha[i] = Math.Min(Ramp(t, start - .35, start), 1 - Ramp(t, end - .4, end));
-                int n = (int)Math.Floor((t - start) * p.CharsPerSecond);
-                f.SpeechChars[i] = Math.Max(0, Math.Min(PlainLength(p.Answer), n));
-                f.SpeechCursor[i] = n < PlainLength(p.Answer) || (long)Math.Floor(t * 2.4) % 2 == 0;
+                // The English answer is longer: it types faster, so it still finishes where the Chinese one does.
+                string answer = english && p.AnswerEn.Length > 0 ? p.AnswerEn : p.Answer;
+                int total = PlainLength(answer);
+                double cps = p.CharsPerSecond * (answer == p.Answer ? 1 : Math.Max(1, total / (double)PlainLength(p.Answer)));
+                int n = (int)Math.Floor((t - start) * cps);
+                f.SpeechChars[i] = Math.Max(0, Math.Min(total, n));
+                f.SpeechCursor[i] = n < total || (long)Math.Floor(t * 2.4) % 2 == 0;
             }
 
             f.Caption = -1; f.CaptionAlpha = 0; f.CaptionBlur = 0; f.CaptionLift = 0;

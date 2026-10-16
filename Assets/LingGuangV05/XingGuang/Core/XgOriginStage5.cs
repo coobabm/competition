@@ -39,7 +39,7 @@ namespace LingGuangV05.XingGuang
         public static readonly Focus[] Foci = { new Focus(540, 430, 300), new Focus(474, 440, 64), new Focus(474, 492, 52), new Focus(410, 506, 130), new Focus(474, 470, 96) };
         public const double ImgX = 240, ImgY = 220, ImgW = 600, ImgH = 420;
 
-        public const string SpeechText = "你说「[又]」——所以，这不是第一次了？";
+        public const string SpeechText = "你说「[又]」——所以，不是第一次了吧？";
         public const string SpeechTextEn = "You said \"[again]\" — so this isn't the first time?";
         public const double SpeechStart = 16.8;
         public static int SpeechTotal { get { return XgOriginColdOpen.PlainLength(SpeechText); } }

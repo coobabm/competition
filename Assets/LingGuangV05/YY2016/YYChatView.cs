@@ -217,6 +217,12 @@ namespace LingGuangV05.Desktop.YY
                 rt.anchorMin = rt.anchorMax = new Vector2(0, .5f);
                 rt.offsetMin = new Vector2(10 + i * 74, -14); rt.offsetMax = new Vector2(10 + i * 74 + 70, 14);
                 b.name = "Tool" + id;
+                // Drawn icon (Resources/.../Icons/yy) in front of the text; without it the old "☺ 表情" glyph label stays.
+                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(rt, "yy", id.ToLowerInvariant(), 16, 14, 22) != null)
+                {
+                    var toolLabel = rt.Find("Label") as RectTransform;
+                    if (toolLabel != null) toolLabel.offsetMin = new Vector2(26, 0);
+                }
             }
 
             // Scripted replies (the prologue): buttons over the tool strip.
@@ -306,7 +312,7 @@ namespace LingGuangV05.Desktop.YY
             SetButton("Close", Lang.T("关闭(C)"));
             string[] tools = { "Emoji", "File", "Shot", "Shake", "History" };
             string[] toolText = { Lang.T("☺ 表情"), Lang.T("▤ 文件"), Lang.T("✂ 截图"), Lang.T("〰 抖一抖"), Lang.T("◷ 记录") };
-            for (int i = 0; i < tools.Length; i++) SetButton("Tool" + tools[i], toolText[i]);
+            for (int i = 0; i < tools.Length; i++) SetButton("Tool" + tools[i], LingGuangV05.Desktop.XingGuang.XgIcons.Has("yy", tools[i].ToLowerInvariant()) ? StripGlyph(toolText[i]) : toolText[i]);
             if (input.placeholder is TMP_Text ph) ph.text = Lang.T("说点什么……");
             RebuildChoices();
 
@@ -500,13 +506,12 @@ namespace LingGuangV05.Desktop.YY
             if (label != null) Destroy(label.gameObject);
         }
 
-        // Exact sender + prewritten-phrase whitelist. byAi only excludes the AI speaking for the player;
-        // it does not identify whether a contact's reply came from a script or a language model.
+        // Exact sender + prewritten-phrase whitelist. It does not identify whether a contact's reply came from a script or a language model.
         static Sprite AuthoredPhoto(YYMessage message)
         {
-            if (message == null || message.kind != YYKind.Text || message.byAi) return null;
+            if (message == null || message.kind != YYKind.Text) return null;
             if (message.from == YYChatHub.GirlfriendId
-                && (message.text == "[图片] 宿舍门口那只橘猫" || message.text == "[图片] the cat at the dorm gate"))
+                && (message.text == "[图片] 楼下那只橘猫" || message.text == "[图片] the orange cat downstairs" || message.text == "[图片] 宿舍门口那只橘猫" || message.text == "[图片] the cat at the dorm gate"))
                 return DesktopArt.Picture("chat_qingwen_cat");
             // DeliverEra writes these lines to the netbar group with a localized author prefix.
             if (message.from == YYChatHub.EraGroup
@@ -748,6 +753,13 @@ namespace LingGuangV05.Desktop.YY
                 b.name = "Choice";
                 x += width + 10;
             }
+        }
+
+        /// <summary>"☺ 表情" becomes "表情" when the tool button shows a drawn icon instead of the glyph.</summary>
+        static string StripGlyph(string s)
+        {
+            int i = s == null ? -1 : s.IndexOf(' ');
+            return i > 0 && i <= 2 ? s.Substring(i + 1) : s;
         }
 
         void SetButton(string name, string label)

@@ -32,12 +32,13 @@ namespace LingGuangV05.XingGuang
             return cards;
         }
         public static bool Natural(IList<int> cards) => cards.Count == 2 && Score(cards) == 21;
-        public static int Returned(IList<int> player, IList<int> dealer, int stake)
+        /// <summary>Gross return. Natural pays 3:2 (2.5x gross, rounded half up to the yuan); win 2x; push 1x; loss 0.</summary>
+        public static long Returned(IList<int> player, IList<int> dealer, long stake)
         {
             int p = Score(player), d = Score(dealer);
             if (p > 21) return 0;
             if (Natural(dealer)) return Natural(player) ? stake : 0;
-            if (Natural(player)) return stake * 5 / 2;
+            if (Natural(player)) return (stake * 5 + 1) / 2;
             if (d > 21 || p > d) return stake * 2;
             return p == d ? stake : 0;
         }
@@ -46,7 +47,8 @@ namespace LingGuangV05.XingGuang
     public sealed class XgBlackjackHand
     {
         public bool active, doubled;
-        public int stake, position, revision;
+        public long stake;
+        public int position, revision;
         public double nextActionAt;
         public int[] deck;
         public List<int> player = new List<int>(), dealer = new List<int>();
@@ -54,7 +56,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public bool BlackjackActive => Casino.blackjack != null && Casino.blackjack.active;
-        public bool StartBlackjack(int stake, IXgHost host)
+        public bool StartBlackjack(long stake, IXgHost host)
         {
             if (BlackjackActive || !CasinoRules.IsStake(stake) || !CasinoFunds(host, stake)
                 || Clock < Casino.nextBetAt) return false;
@@ -94,7 +96,7 @@ namespace LingGuangV05.XingGuang
             var h = Casino.blackjack;
             if (!h.active) return;
             h.active = false; h.revision++;
-            int returned = BlackjackRules.Returned(h.player, h.dealer, h.stake);
+            long returned = BlackjackRules.Returned(h.player, h.dealer, h.stake);
             Casino.returned += returned; Casino.nextBetAt = Clock + CasinoRules.RoundSeconds;
             if (Casino.history.Count >= 8) Casino.history.RemoveRange(0, Casino.history.Count - 7);
             var round = new XgCasinoRound { number = ++Casino.rounds, game = "blackjack", stake = h.stake, returned = returned, values = h.player.ToArray() };

@@ -13,6 +13,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>Earned social feedback and an explicit-approval commission; no real model API or disk file writes.</summary>
     public sealed class XgEraAdvantageBridge : MonoBehaviour
     {
+        static string T(string zh,string en)=>LingGuangV05.Runtime.GameText.T(zh,en);
         XingGuangController controller;
         StoryDirector director;
         XgSim bound;
@@ -32,13 +33,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             get
             {
-                if(state==null)return "等待工作台初始化";
-                if(Flag("era.batch.delivered"))return "已由你确认交付；回执保存在文件夹。";
-                if(Flag("era.batch.ready"))return "初稿已经准备好，还没有替你发送。";
-                if(!Flag("era.batch.started"))return "先接下这批，再把本体接到「亲友委托」。";
+                if(state==null)return T("等待工作台初始化","Waiting for the workbench to start up");
+                if(Flag("era.batch.delivered"))return T("已由你确认交付；回执保存在文件夹。","Delivered with your approval; the receipt is saved in the folder.");
+                if(Flag("era.batch.ready"))return T("初稿已经准备好，还没有替你发送。","The drafts are ready. Nothing has been sent for you.");
+                if(!Flag("era.batch.started"))return T("先接下这批，再把本体接到「亲友委托」。","Take this batch first, then wire the model to the family commission.");
                 if(controller.Host.Blocker!=null)return controller.Host.Blocker;
                 var task=bound.Wiring.Node(XgSim.EraDeliveryTask);
-                return task!=null && task.state==XgTaskState.Run?"正在用已接入的电力和算力处理，断线会暂停。":"等待接线：本体 → 亲友委托 · 商品文案交付";
+                return task!=null && task.state==XgTaskState.Run?T("正在用已接入的电力和算力处理，断线会暂停。","Working on the power and compute you connected; it pauses if the line drops."):T("等待接线：本体 → 亲友委托 · 商品文案交付","Waiting for wiring: the model to the family commission, product copy");
             }
         }
         public void Bind(XingGuangController owner)
@@ -88,7 +89,6 @@ namespace LingGuangV05.Desktop.XingGuang
             {state.SetFlag("era.celebration.started",1);state.SetFlag("era.celebration.until",state.clock+30);controller.runtime.MarkDirty();}
             bool celebrating=Stage>=6&&Flag("era.batch.delivered")&&Flag("era.expert.passed")&&(!state.HasFired("era_choose_work")||state.clock<state.GetFlag("era.celebration.until"));
             ctx.SetExternal("era.celebrating",celebrating?1:0);
-            if(wasCelebrating&&!celebrating&&bound.EndingAvailable&&!state.HasFired("ending_reject"))director.Emit("lg.project","completed");
             wasCelebrating=celebrating;
             var key=new StringBuilder().Append(Stage).Append('/').Append((int)bound.S.autoCorrect).Append('/').Append(active).Append('/').Append(TranslationReady).Append('/').Append(celebrating);
             foreach(var f in state.flags)if(f.key.StartsWith("era.",StringComparison.Ordinal))key.Append(f.key).Append('=').Append(f.value).Append(';');
@@ -126,12 +126,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if(state==null||bound==null)return null;
             switch(name)
             {
-                case "eraIdentityReply":return Flag("era.identity.reply")?(state.GetFlag("era.identity.reply")==1?"就我一个。":"我自己慢慢做的。"):"我还没有回答。";
-                case "eraContextOutcome":return state.GetFlag("era.context.choice")==1?"这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。是我看过以后，才按下发送。":"我选择这次自己回。草稿留下了，它没有替我发送，也没有替我作出承诺。";
-                case "eraExpertResult":var proof=state.GetFirst("era.expert.receipt");return proof==null?"还没有新的验收记录。":"这一次的20道独立翻译题，答对了"+Math.Round(proof.value*20).ToString(CultureInfo.InvariantCulture)+"道。题目、预测和答案都留在文件夹里。";
-                case "eraDeliverySummary":return "20份商品英文页已完成；缺少单位和交期的两条另列，没有混入交付。";
-                case "eraRescueSummary":return "自动处理成功的记录已经有 "+((int)bound.S.autoCorrect).ToString(CultureInfo.InvariantCulture)+" 条。不是按钮上的演示，是它刚刚完成的活。";
-                case "eraTeamSummary":int n=0;foreach(var t in bound.Wiring.nodes)if(t.lane==XgWireLane.Task&&t.state==XgTaskState.Run)n++;return n+" 项任务正在同一台电脑上运行。钱、电、模型和接线都记在同一本账里。";
+                case "eraIdentityReply":return Flag("era.identity.reply")?(state.GetFlag("era.identity.reply")==1?T("就我一个。","Just me."):T("我自己慢慢做的。","I did it myself, slowly.")):T("我还没有回答。","I have not answered yet.");
+                case "eraContextOutcome":return state.GetFlag("era.context.choice")==1?T("这份草稿只用了刚才给出的库存信息，没有把周五到货说成明天发货。是我看过以后，才按下发送。","The draft used only the stock information just given and did not turn a Friday arrival into tomorrow's shipment. I read it first and only then pressed send."):T("我选择这次自己回。草稿留下了，它没有替我发送，也没有替我作出承诺。","I chose to answer myself this time. The draft stays; it did not send anything or promise anything for me.");
+                case "eraExpertResult":var proof=state.GetFirst("era.expert.receipt");return proof==null?T("还没有新的验收记录。","No new check on record yet."):T("这一次的20道独立翻译题，答对了"+Math.Round(proof.value*20).ToString(CultureInfo.InvariantCulture)+"道。题目和它的答案都留在文件夹里。","It got "+Math.Round(proof.value*20).ToString(CultureInfo.InvariantCulture)+" of this round's 20 fresh translation questions right. The questions and its answers are kept in the folder.");
+                case "eraDeliverySummary":return T("20份商品英文页已完成；缺少单位和交期的两条另列，没有混入交付。","All 20 English product pages are done; the two missing units and delivery dates are listed apart and not mixed into the delivery.");
+                case "eraRescueSummary":return T("自动处理成功的记录已经有 "+((int)bound.S.autoCorrect).ToString(CultureInfo.InvariantCulture)+" 条。不是按钮上的演示，是它刚刚完成的活。","It has already handled "+((int)bound.S.autoCorrect).ToString(CultureInfo.InvariantCulture)+" cases on its own. Not a demo on a button: work it just finished.");
+                case "eraTeamSummary":int n=0;foreach(var t in bound.Wiring.nodes)if(t.lane==XgWireLane.Task&&t.state==XgTaskState.Run)n++;return T(n+" 项任务正在同一台电脑上运行。钱、电、模型和接线都记在同一本账里。",n+" jobs are running on the same computer. Money, power, models and wiring all sit in the same account book.");
                 default:return null;
             }
         }
@@ -142,12 +142,12 @@ namespace LingGuangV05.Desktop.XingGuang
         public void ConfirmDelivery()
         {
             if(!CanSendToCousin()||!EraAdvantageStory.ConfirmDelivery(state))return;
-            PlayerLine("cousin","这批20份先交给你。有两处资料不全，我单独列出来了，没有乱填。");Changed();
+            PlayerLine("cousin",T("这批20份先交给你。有两处资料不全，我单独列出来了，没有乱填。","Here are the first 20. Two are missing information; I listed them separately and did not fill in guesses."));Changed();
         }
         public void ChooseIdentity(int choice)
         {
             if(!CanSendToCousin()||!EraAdvantageStory.ChooseIdentity(state,choice))return;
-            PlayerLine("cousin",choice==1?"就我一个。":"我自己慢慢做的。");Changed();
+            PlayerLine("cousin",choice==1?T("就我一个。","Just me."):T("我自己慢慢做的。","I did it myself, slowly."));Changed();
         }
         public void ChooseContext(int choice)
         {
@@ -167,14 +167,14 @@ namespace LingGuangV05.Desktop.XingGuang
             if(!Live)return;
             var forum=LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
             if(forum==null||!forum.CanMessage(ForumLibrary.ZhouNow)||!EraAdvantageStory.RequestExpert(state,Stage))return;
-            forum.SendAuthoredChoice(ForumLibrary.ZhouNow,"你好，我刚交完一批商品英文页。想请你看看译文，能换一组新的材料吗？我再做一遍，拿不准的也标出来。");Changed();
+            forum.SendAuthoredChoice(ForumLibrary.ZhouNow,T("你好，我刚交完一批商品英文页。想请你看看译文，能换一组新的材料吗？我再做一遍，拿不准的也标出来。","Hi, I have just handed in a batch of English product pages. Could you look over the translations and give me a fresh set of material? I will do it again and mark the parts I am unsure about."));Changed();
             if(forum.View!=null)forum.View.Open("chat", ForumLibrary.ZhouNow);
         }
         bool CanSendToCousin()
         {
             var yy=LingGuangV05.Desktop.YY.YYChatHub.Instance;
             bool ready=Live&&yy!=null&&yy.S!=null&&yy.Conversation("cousin")!=null;
-            if(!ready&&controller!=null&&controller.View!=null)controller.View.ShowToast("YY 还没有就绪，内容留在文件夹，暂不发送。",4);
+            if(!ready&&controller!=null&&controller.View!=null)controller.View.ShowToast(T("YY 还没有就绪，内容留在文件夹，暂不发送。","YY is not ready yet; the content stays in the folder and nothing is sent."),4);
             return ready;
         }
         static void PlayerLine(string contact,string text){var yy=LingGuangV05.Desktop.YY.YYChatHub.Instance;if(yy!=null)yy.SendAuthoredChoice(contact,text);}
@@ -184,7 +184,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(controller==null)return;
             if(Flag("era.expert.requested")&&!Flag("era.expert.passed"))bound.S.selected=(int)XgTrack.Sequence;
             controller.Open();controller.View?.ShowTab("train");
-            if(Flag("era.expert.requested")&&!Flag("era.expert.passed"))controller.View?.ShowToast("检验目标是翻译。请在序列训练页选择翻译数据，再回文件夹运行新题验收。",6);
+            if(Flag("era.expert.requested")&&!Flag("era.expert.passed"))controller.View?.ShowToast(T("检验目标是翻译。请在序列训练页选择翻译数据，再回文件夹运行新题验收。","The check is on translation. Pick the translation data on the sequence training page, then come back to the folder and run the fresh-question check."),6);
         }
     }
 }

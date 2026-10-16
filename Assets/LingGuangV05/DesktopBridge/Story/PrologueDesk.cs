@@ -263,9 +263,20 @@ namespace LingGuangV05.Desktop.Story
             Fill(Centered("Strap", art, Vector2.zero, new Vector2(8, 52)), new Color32(230, 190, 60, 255), false);
         }
 
-        /// <summary>A plain file with no icon of its own (sophon.dll).</summary>
+        /// <summary>Puts a drawn icon (Resources/LingGuangV05/Icons/desktop/&lt;id&gt;) into a desktop item's art slot; false when there is none, so the caller draws the old shape.</summary>
+        public static bool DrawIcon(RectTransform art, string id)
+        {
+            var sprite = LingGuangV05.Desktop.XingGuang.XgIcons.Get("desktop", id);
+            if (sprite == null || art == null) return false;
+            var img = Fill(art, Color.white, false);
+            img.sprite = sprite; img.preserveAspect = true;
+            return true;
+        }
+
+        /// <summary>A plain file with no icon of its own (game records); sophon.dll has its own drawn icon.</summary>
         public void DrawBlankFile(RectTransform art)
         {
+            if (art != null && art.parent != null && art.parent.name == "Prologue sophon.dll" && DrawIcon(art, "sophon_dll")) return;
             Fill(Centered("Edge", art, Vector2.zero, new Vector2(42, 54)), new Color32(150, 150, 150, 255), false);
             Fill(Centered("Page", art, Vector2.zero, new Vector2(40, 52)), Color.white, false);
             Fill(Centered("Fold", art, new Vector2(13, 19), new Vector2(14, 14)), new Color32(220, 220, 220, 255), false);
@@ -273,6 +284,7 @@ namespace LingGuangV05.Desktop.Story
 
         public void DrawRecycleBin(RectTransform art)
         {
+            if (DrawIcon(art, "recycle_bin")) return;
             Fill(Centered("Lid", art, new Vector2(0, 20), new Vector2(46, 6)), new Color32(200, 215, 230, 255), false);
             Fill(Centered("Bin", art, new Vector2(0, -4), new Vector2(38, 42)), new Color32(170, 195, 220, 210), false);
             for (int i = -1; i <= 1; i++) Fill(Centered("Rib", art, new Vector2(i * 11, -4), new Vector2(3, 34)), new Color32(120, 150, 180, 255), false);

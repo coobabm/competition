@@ -55,7 +55,7 @@ namespace LingGuangV05.Desktop
             summary.text="可用余额  ¥"+s.money.ToString("0.00")+"    未结电费  ¥"+pending.ToString("0.00")
                 +"\n累计收入  +¥"+s.fundsIncome.ToString("0.00")+"    累计支出  −¥"+s.fundsExpense.ToString("0.00")
                 +"\n"+(s.money<50?"余额偏低：先接手工任务补充资金，再决定是否训练。":"目标：用工作收入支付用电和升级，让它学会新的表达。")
-                +"\n房租："+(runtime.Sim.EconomyActive?"每分钟折算一天，¥"+runtime.Sim.RentFor(LingGuangV05.Core.GameCalendar.Now(s)).ToString("0")+" / 天":"第三章开始收取；电费从开局计费。");
+                +"\n房租："+(runtime.Sim.EconomyActive?"每分钟折算一天，¥"+runtime.Sim.RentFor(LingGuangV05.Core.GameCalendar.Now(s)).ToString("0")+" / 天":"灵光学会「看图说词」以后开始收；电费从开局计费。");
             var b=new StringBuilder();
             for(int i=s.funds.Count-1;i>=0;i--) { var e=s.funds[i]; b.Append(e.reason).Append("  ").Append(e.amount>=0?"+¥":"−¥").Append(System.Math.Abs(e.amount).ToString("0.00")).Append("    余额 ¥").Append(e.balance.ToString("0.00")).Append('\n'); }
             entries.text=b.ToString();

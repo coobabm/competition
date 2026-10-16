@@ -57,6 +57,8 @@ namespace LingGuangV05.Desktop.Story
         public TMP_FontAsset Mono { get; internal set; }
         /// <summary>The player's final parameter count (the film's 2.13e8 when there is nothing real to show).</summary>
         public double FinalParams { get; internal set; } = XgOriginFilm.FilmFinalParams;
+        /// <summary>How many times the breaker really tripped in this save (the film's own wording says three when there is no save).</summary>
+        public int BreakerTrips { get; internal set; } = XgOriginFilm.FilmTrips;
         public XgSim Sim { get; internal set; }
         /// <summary>One screen pixel in reference units (the feather width of anti-aliased edges).</summary>
         public float Pixel { get; internal set; } = 1;

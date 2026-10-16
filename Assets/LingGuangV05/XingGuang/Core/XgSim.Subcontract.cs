@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>A 网吧 friend who labels under the player's 摆渡众包 account.</summary>
+    /// <summary>A friend (two 星空网吧 colleagues and the boss) who labels under the player's 摆渡众包 account.</summary>
     public sealed class XgWorkerInfo
     {
         public string id, name, nameEn;
@@ -12,7 +12,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Seconds per card.</summary>
         public double interval;
         public double accuracy;
-        /// <summary>Only works the 网吧 night shift (22:00–06:00).</summary>
+        /// <summary>Only works the boss's night shift (22:00–06:00; the café's 包夜 rate is a different thing, 00:00–08:00).</summary>
         public bool nightOnly;
     }
 
@@ -29,7 +29,7 @@ namespace LingGuangV05.XingGuang
         public string recent = "";
     }
 
-    /// <summary>A line for the YY 网吧 group, queued by the lab and delivered by the desktop.</summary>
+    /// <summary>A line for the YY 下班屁股群, queued by the lab and delivered by the desktop.</summary>
     [Serializable]
     public sealed class XgYYLine
     {
@@ -57,17 +57,18 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>
-    /// 转包: once the player owns 自动答题 (they already outsource to the model) and has reached stage 2, 阿杰 offers in
-    /// the YY 网吧 group to label for them, which opens the 转包 panel. Three friends can be hired, each on one open desk:
-    /// 阿杰 (cheap, fast, sloppy), 小刚 (slow and careful) and the 网吧 boss (night shift only). They label under the
+    /// 转包: once the player owns 自动答题 (they already outsource to the model) and has reached stage 2, 阿杰 (the 网管
+    /// at 星空网吧) offers in the YY 下班屁股群 to label for them, which opens the 转包 panel. Three people can be hired,
+    /// each on one open desk: 阿杰 (cheap, fast, sloppy), 小刚 (talks big, works carefully: slow and exact) and the
+    /// 网吧 boss (阿杰's 表舅, not in the group; his night shift only, 22:00–06:00). They label under the
     /// player's account, so every label leaves through the same platform path as an automatic one
-    /// (<see cref="SubmitExternalLabel"/>): spot checks, fines, the speed meter, the monotone-answer detector and the
-    /// SLA clause all see them. Right labels pay the desk's automatic rate and add samples; wrong unchecked ones add
-    /// noise. Wages run every game minute even while a worker idles (frozen account, pending captcha).
+    /// (<see cref="SubmitExternalLabel"/>): the platform's spot checks (stage 4 on), the speed meter and the SLA clause
+    /// all see them. Right labels pay the desk's automatic rate and add samples; wrong unchecked ones add
+    /// noise. Wages run every game minute even while a worker idles (pending captcha).
     ///
     /// The twist (once per save): about 20 game minutes into 阿杰's work he quietly switches to a click script that
-    /// answers 是 to everything twice as fast. 小刚 warns in YY three minutes before; the monotone answers can get the
-    /// account reported. Firing 阿杰 after that brings an apology and the wages paid while the script ran.
+    /// answers 是 to everything twice as fast. 小刚 warns in YY three minutes before; the monotone answers draw the
+    /// platform's attention once spot checks exist. Firing 阿杰 after that brings an apology and the wages paid while the script ran.
     /// </summary>
     public sealed partial class XgSim
     {
@@ -127,7 +128,6 @@ namespace LingGuangV05.XingGuang
         {
             var w = Worker(id);
             if (w == null || !w.hired) return T("未雇用");
-            if (QualityFrozen) return T("账号冻结，干等着");
             if (CaptchaPending) return T("等你输验证码");
             // Their labels leave through your account, so the platform's pause after a failed captcha holds them too.
             if (CaptchaPauseLeft > 0) return T("账号被暂停提交，干等着");
@@ -248,7 +248,7 @@ namespace LingGuangV05.XingGuang
             if (info == null || w == null) { why = T("没有这个人"); return false; }
             if (!S.scUnlocked) { why = T("转包还没开张"); return false; }
             if (w.hired) { why = T("已经在干活了"); return false; }
-            if (info.nightOnly && !NightShift) { why = T("老板只上网吧夜班（22:00–06:00）"); return false; }
+            if (info.nightOnly && !NightShift) { why = T("老板只上自己的夜班（22:00–06:00）"); return false; }
             if (WorkerDesk(id).Length == 0) { why = T("没有开放的标注桌"); return false; }
             if (host == null || !FiniteMarket(host.Money) || host.Money + 1e-9 < info.wage) { why = T("连第一分钟工钱都付不起"); return false; }
             return true;
@@ -270,8 +270,8 @@ namespace LingGuangV05.XingGuang
                     if (S.scTwist == 3) Line("ajie", "这回老老实实手标，真的。", "This time I label by hand, honest.");
                     else Line("ajie", "得嘞，两块一分钟。标错了可别赖我啊。", "Deal, ¥2 a minute. Don't blame me for the odd mistake.");
                     break;
-                case "xiaogang": Line("xiaogang", "行，我慢慢标，保证质量。", "OK. I'll go slow and get them right."); break;
-                case "boss": Line("boss", "夜班没人上机，我闲着也是闲着。", "Nobody's on the night shift. I'm idle anyway."); break;
+                case "xiaogang": Line("xiaogang", "行，我慢慢标，一张一张来。别催，催了也是这个速度。", "OK, I'll go slow, one card at a time. Don't rush me. Rushing won't make me faster."); break;
+                case "boss": Line("boss", "听阿杰说你一个人把活接得挺像样。我这个点本来就守着店，闲着也是闲着，帮你看看。", "Ajie says you handle your work pretty well on your own. I'm minding the shop at this hour anyway. Might as well help."); break;
             }
             Say(T("转包：" + info.name + " 开始标「" + XgCatalog.Desk(w.desk).name + "」，¥" + F(info.wage, "0") + "/分钟。", "Subcontract: " + info.nameEn + " starts on " + XgCatalog.Desk(w.desk).nameEn + ", ¥" + F(info.wage, "0") + "/min."));
             return true;
@@ -289,8 +289,8 @@ namespace LingGuangV05.XingGuang
                 double refund = S.scScriptWages;
                 S.scScriptWages = 0;
                 if (refund > 0 && host != null) { host.Earn(refund); S.totalIncome += refund; }
-                Line("ajie", "哥，对不起……我开了按键精灵，一路点的「是」。这几分钟的工钱" + (refund > 0 ? "（¥" + F(refund, "0") + "）" : "") + "我退给你了。",
-                    "Sorry, bro… I ran a click macro that just hit Yes on everything. I'm giving back the pay for those minutes" + (refund > 0 ? " (¥" + F(refund, "0") + ")" : "") + ".");
+                Line("ajie", "哥，对不起……我开了按键精灵，一路点的「是」。这几分钟的工钱" + (refund > 0 ? "（¥" + F(refund, "0") + "）" : "") + "我退给你了。你做事有规矩，我不该糊弄你。",
+                    "Sorry, bro… I ran a click macro that just hit Yes on everything. I'm giving back the pay for those minutes" + (refund > 0 ? " (¥" + F(refund, "0") + ")" : "") + ". You run things by the book, and I shouldn't have cut corners on you.");
                 Say(T("你辞退了阿杰。他承认开了按键精灵。"));
             }
             else Say(T("你辞退了" + WorkerInfo(id).name + "。", "You let " + WorkerInfo(id).nameEn + " go."));
@@ -311,8 +311,8 @@ namespace LingGuangV05.XingGuang
                 if (!SubcontractReady) return;
                 S.scUnlocked = true;
                 foreach (var w in S.scWorkers) if (w.desk.Length == 0) w.desk = DefaultWorkerDesk();
-                Line("ajie", "你那个众包还缺人不？我反正在网吧坐着。", "Does your crowd-labelling gig need hands? I'm sitting in the netbar anyway.");
-                Say(T("阿杰在 YY 群里问要不要帮你标：摆渡众包开了「分包」页。", "Ajie offers in the YY group to label for you: the Subcontract page opened in Bodu Crowd."));
+                Line("ajie", "你那个众包还缺人不？我在网吧上班，闲着也是闲着。", "Does your crowd-labelling gig need hands? I work at the netbar, so I'm idle anyway.");
+                Say(T("阿杰在下班屁股群里问要不要帮你标：摆渡众包开了「分包」页。", "Ajie offers in the clock-out group to label for you: the Subcontract page opened in Bodu Crowd."));
                 SubcontractOpened?.Invoke();
             }
             if (S.scDay != Today) { S.scDay = Today; foreach (var w in S.scWorkers) w.labelsToday = 0; }
@@ -325,7 +325,7 @@ namespace LingGuangV05.XingGuang
                 if (info.nightOnly && !NightShift)
                 {
                     Leave(w, "shift");
-                    Line(w.id, "天亮了，交班睡觉去了。今晚十点后再叫我。", "Sun's up. Handing over the shift and going to bed. Call me after ten tonight.");
+                    Line(w.id, "六点了，我下班睡觉去了。晚上十点以后再叫我。", "It's six. I'm off shift and going to bed. Call me after ten tonight.");
                     continue;
                 }
                 if (!PayWage(w, info, dt, host)) continue;
@@ -370,7 +370,7 @@ namespace LingGuangV05.XingGuang
             if (S.scTwist == 0 && S.scAjieSeconds >= AjieScriptAfter - XiaogangHintBefore)
             {
                 S.scTwist = 1;
-                Line("xiaogang", "阿杰刚下了个按键精灵，说待会儿就能标得飞快。你看看他。", "Ajie just downloaded a click macro and says he'll be labelling super fast soon. Keep an eye on him.");
+                Line("xiaogang", "阿杰刚下了个按键精灵，吹说待会儿标得飞快。我就多一句嘴，你盯着点他。", "Ajie just downloaded a click macro and is boasting he'll be labelling super fast soon. Just my two cents: keep an eye on him.");
             }
             // Quietly: no message. The answers just turn into 是, twice as fast.
             if (S.scTwist == 1 && S.scAjieSeconds >= AjieScriptAfter) S.scTwist = 2;
@@ -396,7 +396,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>
         /// A label made outside the lab's model (a 转包 worker) leaves the player's account. It goes through the same
         /// platform path as an automatic label: the speed meter, the spot check (fine, credit, monotone detector,
-        /// report) and the SLA clause. Right: the desk's automatic pay and one sample (the data has the new meme, so
+        /// monotone detector) and the SLA clause. Right: the desk's automatic pay and one sample (the data has the new meme, so
         /// drift recovers too). Wrong and unchecked: one noisy row. Wrong and checked: the platform's fine.
         /// Never touches the lab's routing statistics or the automatic feed. Returns null if the card is unusable.
         /// </summary>

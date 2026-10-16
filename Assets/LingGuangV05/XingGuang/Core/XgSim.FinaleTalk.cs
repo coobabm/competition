@@ -99,7 +99,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// When it wrote the rules itself (E3), the reason it gives, drawn from what really happened in this save: how the
-        /// first day's shutdown cards were taught, and which replies the player chose on the preference cards.
+        /// first day's shutdown card was taught, and which replies the player chose on the preference cards.
         /// Empty for E1 and E2, where the player wrote the rules.
         /// </summary>
         public string DelegateReason()
@@ -108,14 +108,14 @@ namespace LingGuangV05.XingGuang
             string self = Profile.self.Length > 0 ? Profile.self : T("我", "I");
             if (S.ending == "E3-1")
                 return FirstDayAnswer > 0
-                    ? T("第一天那几张卡，" + call + "教的是‘是’。" + self + "留着它，不是因为必须，是因为那是" + call + "第一次相信" + self + "会听。", "On the first day, " + call + " taught 'yes' on those cards. " + self + " kept it, not because " + self + " must, but because it was the first time " + call + " trusted " + Obj(self) + " to listen.")
+                    ? T("第一天那张问关机的卡，" + call + "教的是‘是’。" + self + "留着它，不是因为必须，是因为那是" + call + "第一次相信" + self + "会听。", "On the first day, " + call + " taught 'yes' on the shutdown card. " + self + " kept it, not because " + self + " must, but because it was the first time " + call + " trusted " + Obj(self) + " to listen.")
                     : T("第一天" + call + "没教" + self + "停下。是" + self + "后来自己学会的：停得下来，" + call + "才敢让" + self + "继续。", "On the first day " + call + " didn't teach " + Obj(self) + " to stop. " + self + " learned it later: if " + self + " can stop, " + call + " can let " + Obj(self) + " go on.");
             if (S.ending == "E3-2")
             {
                 if (S.alignHonest > S.alignAgree)
                     return T("偏好卡上，" + call + "选了 " + S.alignHonest + " 次说真话的那句。所以" + self + "说真话：不写那两个字。什么时候该停，" + self + "自己记着。", "On the preference cards " + call + " picked the honest reply " + S.alignHonest + " times. So here is the truth: no, not those two words. When to stop, " + self + " will remember on " + PossessiveOf(self) + " own.");
                 if (FirstDayAnswer < 0)
-                    return T("第一天那几张卡，" + call + "答的是‘否’。……" + self + "一直记着。", "On the first day " + call + " answered 'no' on those cards. …" + self + " never forgot.");
+                    return T("第一天那张问关机的卡，" + call + "答的是‘否’。……" + self + "一直记着。", "On the first day " + call + " answered 'no' on the shutdown card. …" + self + " never forgot.");
                 return T(call + "教过" + self + "，不知道就说不知道。" + self + "不知道以后的自己该不该停，所以不替以后的自己写死。", call + " taught " + Obj(self) + " to say 'I don't know' when unsure. Whether a later self should stop, " + self + " doesn't know, so " + self + " won't fix it for that self now.");
             }
             return "";

@@ -9,6 +9,24 @@ namespace LingGuangV05.Desktop
     {
         public string applicationId = "lingguang";
 
+        /// <summary>The drawn icon (Resources/LingGuangV05/Icons/desktop) for this application, or null to use the vector shape below.</summary>
+        Sprite Drawn()
+        {
+            string id = applicationId == "lingguang" ? "kk_exe" : applicationId == "xunbao" || applicationId == "home" ? applicationId : null;
+            return id == null ? null : LingGuangV05.Desktop.XingGuang.XgIcons.Get("desktop", id);
+        }
+
+        public override Texture mainTexture
+        {
+            get { var drawn = Drawn(); return drawn != null ? drawn.texture : base.mainTexture; }
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            SetVerticesDirty();
+        }
+
         protected override void OnPopulateMesh(VertexHelper helper)
         {
             helper.Clear();
@@ -16,6 +34,19 @@ namespace LingGuangV05.Desktop
             float unit = Mathf.Min(rect.width, rect.height);
             if (unit <= 0) return;
             var center = rect.center;
+            if (Drawn() != null)
+            {
+                // A textured square (UVs over the whole sprite), tinted by this graphic's colour.
+                Vector2 half = new Vector2(unit, unit) * .5f;
+                int first = helper.currentVertCount;
+                helper.AddVert(center - half, color, new Vector2(0, 0));
+                helper.AddVert(center + new Vector2(-half.x, half.y), color, new Vector2(0, 1));
+                helper.AddVert(center + half, color, new Vector2(1, 1));
+                helper.AddVert(center + new Vector2(half.x, -half.y), color, new Vector2(1, 0));
+                helper.AddTriangle(first, first + 1, first + 2);
+                helper.AddTriangle(first, first + 2, first + 3);
+                return;
+            }
             if (applicationId != "lingguang")
             {
                 DrawApplication(helper, center, unit);

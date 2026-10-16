@@ -115,12 +115,14 @@
       "upstream_path": "128x128/apps/office-calendar.png",
       "resolved_png": "128x128/apps/korganizer.png",
       "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/korganizer.png",
-      "sha256": "6c573807815050db01b2bd82e9e8a7fb20ae8e2b7cb12150ede3051ae70514cf",
+      "sha256": "5e66cb6fef7ed71ce4586c2aa01af72e414aa58b480e751aea30f45e18772521",
       "source_files": [
         "scalable/apps/office-calendar.svgz"
       ],
       "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
-      "modified": false
+      "modified": true,
+      "upstream_sha256": "6c573807815050db01b2bd82e9e8a7fb20ae8e2b7cb12150ede3051ae70514cf",
+      "note": "Replaced by original 灵光 art (贴吧 (Tieba)), drawn procedurally by Tools/Icons/desktop_icons.py; this is not Oxygen artwork. upstream_* fields name the Oxygen icon it used to be."
     },
     {
       "app": "Settings",
@@ -168,12 +170,14 @@
       "upstream_path": "128x128/categories/applications-other.png",
       "resolved_png": "128x128/categories/applications-other.png",
       "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/categories/applications-other.png",
-      "sha256": "8cd9c164f463d32867251962cd36712c57202bb1c24a281363da9970082a9a37",
+      "sha256": "0253bed2fb0d082cd7a430ad556208d185348535931b3c8f2bf198b5808eb451",
       "source_files": [
         "scalable/categories/applications-other.svgz"
       ],
       "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
-      "modified": false
+      "modified": true,
+      "upstream_sha256": "8cd9c164f463d32867251962cd36712c57202bb1c24a281363da9970082a9a37",
+      "note": "Replaced by original 灵光 art (摆渡 (Bodu)), drawn procedurally by Tools/Icons/desktop_icons.py; this is not Oxygen artwork. upstream_* fields name the Oxygen icon it used to be."
     }
   ]
 }

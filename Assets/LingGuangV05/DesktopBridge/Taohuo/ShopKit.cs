@@ -272,6 +272,80 @@ namespace LingGuangV05.Desktop.Taohuo
                     menu.programs[i] = entry;
                     if (entry.row != null) foreach (var t in entry.row.GetComponentsInChildren<TMP_Text>(true)) if (Old(t.text) || t.name == "Title" || t.name == "Text") t.text = name;
                 }
+            RebrandStartRow(window, name, sprite, null);
+        }
+
+        static readonly Dictionary<string, (Sprite small, Sprite medium, Sprite big)> oxygenArt = new Dictionary<string, (Sprite, Sprite, Sprite)>();
+
+        /// <summary>
+        /// Shows our sprite wherever the HongmengOS icon loader would show the Oxygen art of <paramref name="key"/> ("Calculator",
+        /// "Commander"): title bar, taskbar, desktop shortcut, Start row, lists. Every AppElement reads the loader's runtime library
+        /// (also when it wakes up later, e.g. a closed window or the Start menu), so the library entry is swapped rather than each
+        /// image; null puts the Oxygen sprites back (the real calculator before 摆渡众包 unlocks).
+        /// </summary>
+        public static void SetOxygenIcons(string key, Sprite sprite)
+        {
+            var loader = FindAnyObjectByType<HongmengOS.Aero2010.AeroLicensedIconLoader>(FindObjectsInactive.Include);
+            var library = loader != null ? loader.RuntimeLibrary : null;
+            if (library == null || library.apps == null) return;
+            foreach (var item in library.apps)
+            {
+                if (item == null || item.appTitle != key) continue;
+                if (sprite != null)
+                {
+                    if (!oxygenArt.ContainsKey(key)) oxygenArt[key] = (item.appIconSmall, item.appIconMedium, item.appIconBig);
+                    item.appIconSmall = item.appIconMedium = item.appIconBig = sprite;
+                }
+                else if (oxygenArt.TryGetValue(key, out var original))
+                {
+                    item.appIconSmall = original.small; item.appIconMedium = original.medium; item.appIconBig = original.big;
+                    oxygenArt.Remove(key);
+                }
+            }
+            // Elements that are already awake keep their image until told to read the library again.
+            foreach (var element in FindObjectsByType<AppElement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (element.appID == key && element.elementType == AppElement.ElementType.Icon && element.appLibrary == library) element.UpdateElement();
+            // The window's own title-bar icon is a plain Image the loader filled once (not an AppElement): swap it too.
+            string oxygenName = "Oxygen runtime icon — " + key;
+            foreach (var img in FindObjectsByType<Image>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (img.name != "Aero Title Icon") continue;
+                if (sprite != null)
+                {
+                    if (img.sprite != null && img.sprite.name == oxygenName) { titleArt[img] = (key, img.sprite); img.sprite = sprite; }
+                    else if (titleArt.TryGetValue(img, out var mine) && mine.key == key) img.sprite = sprite;
+                }
+                else if (titleArt.TryGetValue(img, out var saved) && saved.key == key) { img.sprite = saved.sprite; titleArt.Remove(img); }
+            }
+        }
+        static readonly Dictionary<Image, (string key, Sprite sprite)> titleArt = new Dictionary<Image, (string, Sprite)>();
+
+        /// <summary>
+        /// The Start-menu row of a rebranded native window: the app's own title (the native 「命令终端」 / 「提醒事项」 text is
+        /// localised by components that would put it back, so they are switched off on the row) and its drawn icon.
+        /// </summary>
+        public static void RebrandStartRow(WindowManager window, string name, Sprite sprite, string keywords)
+        {
+            if (window == null) return;
+            var menu = FindAnyObjectByType<HongmengOS.Aero2010.AeroStartMenu>(FindObjectsInactive.Include);
+            if (menu == null || menu.programs == null) return;
+            for (int i = 0; i < menu.programs.Length; i++)
+            {
+                var entry = menu.programs[i];
+                if (entry.window != window) continue;
+                entry.title = name;
+                if (!string.IsNullOrEmpty(keywords) && (entry.searchKeywords ?? "").IndexOf(keywords, StringComparison.OrdinalIgnoreCase) < 0)
+                    entry.searchKeywords = (entry.searchKeywords ?? "") + " " + keywords;
+                menu.programs[i] = entry;
+                if (entry.row == null) continue;
+                foreach (var c in entry.row.GetComponentsInChildren<MonoBehaviour>(true))
+                {
+                    string type = c.GetType().Name;
+                    if (type == "DesktopLocalizedText" || type == "AppElement" || type == "LocalizedObject") c.enabled = false;
+                }
+                foreach (var t in entry.row.GetComponentsInChildren<TMP_Text>(true)) if (t.text != name) t.text = name;
+                if (sprite != null) foreach (var img in entry.row.GetComponentsInChildren<Image>(true)) if (img.name == "Icon") img.sprite = sprite;
+            }
         }
     }
 }

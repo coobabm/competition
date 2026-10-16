@@ -26,6 +26,8 @@ namespace LingGuangV05.Desktop.XingGuang
         public RectTransform square;
         public Image fill, frame, ring;
         public XgTechIcon icon;
+        /// <summary>The drawn icon (Resources/LingGuangV05/Icons/tech) when there is one; the vector icon keeps only the padlock then.</summary>
+        public Image pic;
         public TMP_Text glyph, badge, label, cost;
         public Vector2 home;
         bool dragged;
@@ -71,6 +73,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBtn eraDismiss;
         Image tipCostBar;
         XgTechIcon tipIcon;
+        Image tipPic;
         readonly List<XgTechNodeView> views = new List<XgTechNodeView>();
         readonly Dictionary<XgTechEntry, XgTechNodeView> viewOf = new Dictionary<XgTechEntry, XgTechNodeView>();
         readonly Dictionary<XgTechEntry, Vector2> position = new Dictionary<XgTechEntry, Vector2>();
@@ -246,6 +249,8 @@ namespace LingGuangV05.Desktop.XingGuang
             view.square = Rect("Square", rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             view.fill = view.square.gameObject.AddComponent<Image>();
             view.fill.sprite = skin.fill; view.fill.raycastTarget = true;
+            var picRt = Rect("Pic", view.square, Vector2.zero, Vector2.one, new Vector2(5, 5), new Vector2(-5, -5));
+            view.pic = picRt.gameObject.AddComponent<Image>(); view.pic.raycastTarget = false; view.pic.preserveAspect = true; view.pic.enabled = false;
             var iconRt = Rect("Icon", view.square, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -12));
             iconRt.gameObject.AddComponent<CanvasRenderer>();
             view.icon = iconRt.gameObject.AddComponent<XgTechIcon>(); view.icon.raycastTarget = false;
@@ -400,6 +405,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var iconBg = Rect("IconBg", head, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
             var iconFill = Panel(iconBg, XgDark.Card); iconFill.sprite = skin.fill; iconFill.raycastTarget = false;
             var iconLe = iconBg.gameObject.AddComponent<LayoutElement>(); iconLe.preferredWidth = iconLe.minWidth = iconLe.preferredHeight = iconLe.minHeight = 36;
+            var tipPicRt = Rect("Pic", iconBg, Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2));
+            tipPic = tipPicRt.gameObject.AddComponent<Image>(); tipPic.raycastTarget = false; tipPic.preserveAspect = true; tipPic.enabled = false;
             var iconRt = Rect("Icon", iconBg, Vector2.zero, Vector2.one, new Vector2(6, 6), new Vector2(-6, -6));
             iconRt.gameObject.AddComponent<CanvasRenderer>();
             tipIcon = iconRt.gameObject.AddComponent<XgTechIcon>(); tipIcon.raycastTarget = false;
@@ -544,6 +551,15 @@ namespace LingGuangV05.Desktop.XingGuang
             var kind = atlas && !lit ? XgTechIcon.Kind.None : IconOf(e);
             if (mystery) { glyph = "?"; kind = XgTechIcon.Kind.None; }
             else if (atlas && !lit) glyph = "?";
+            // A drawn icon replaces the vector one (it keeps only the padlock); mystery and unseen atlas squares stay "?".
+            var drawn = mystery || atlas && !lit ? null : XgIcons.Get("tech", e.id);
+            if (drawn != null)
+            {
+                v.pic.sprite = drawn; v.pic.enabled = true;
+                v.pic.color = locked ? new Color(.5f, .55f, .6f, 1f) : Color.white;
+                kind = XgTechIcon.Kind.None; glyph = "";
+            }
+            else v.pic.enabled = false;
             Color ink = locked || atlas && !lit ? new Color32(96, 118, 132, 255) : lit && atlas ? Maxed : Color.Lerp(lane, Color.white, .35f);
             v.icon.color = ink; v.icon.Set(kind, locked);
             v.glyph.text = kind == XgTechIcon.Kind.None ? glyph : "";
@@ -854,6 +870,9 @@ namespace LingGuangV05.Desktop.XingGuang
             bool atlas = XgSim.IsAtlas(node), lit = status == XgSim.NodeStatus.Owned;
             tipIcon.color = v.icon.color; tipIcon.Set(IconOfShown(v), false);
             tipGlyph.text = v.glyph.text; tipGlyph.color = v.glyph.color;
+            var tipDrawn = Sim.NodeMystery(node) || atlas && !lit ? null : XgIcons.Get("tech", e.id);
+            tipPic.enabled = tipDrawn != null;
+            if (tipDrawn != null) { tipPic.sprite = tipDrawn; tipIcon.Set(XgTechIcon.Kind.None, false); tipGlyph.text = ""; }
             var body = new StringBuilder();
             if (atlas)
             {

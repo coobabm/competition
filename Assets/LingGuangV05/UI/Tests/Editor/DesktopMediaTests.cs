@@ -52,15 +52,13 @@ namespace LingGuangV05.UI.Tests
             Assert.IsNotNull(ChatPhoto("netbar","[A-Jie] [Image: Ge You slouch] Me today."));
             Assert.IsNull(ChatPhoto("me",cat));Assert.IsNull(ChatPhoto("ajie",meme));
             Assert.IsNull(ChatPhoto("qingwen",cat+"。"));
-            Assert.IsNull(ChatPhoto("qingwen",cat,true));Assert.IsNull(ChatPhoto("netbar",meme,true));
-            Assert.IsNull(ChatPhoto("qingwen",cat,false,"File"));
+            Assert.IsNull(ChatPhoto("qingwen",cat,"File"));
         }
-        static Sprite ChatPhoto(string sender,string text,bool byAi=false,string kind="Text")
+        static Sprite ChatPhoto(string sender,string text,string kind="Text")
         {
             var messageType=Type.GetType("LingGuangV05.Desktop.YY.YYMessage, Assembly-CSharp",true);
             var message=Activator.CreateInstance(messageType);
             messageType.GetField("from").SetValue(message,sender);messageType.GetField("text").SetValue(message,text);
-            messageType.GetField("byAi").SetValue(message,byAi);
             var field=messageType.GetField("kind");field.SetValue(message,Enum.Parse(field.FieldType,kind));
             var view=Type.GetType("LingGuangV05.Desktop.YY.YYChatView, Assembly-CSharp",true);
             return (Sprite)view.GetMethod("AuthoredPhoto",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new[]{message});
@@ -100,7 +98,7 @@ namespace LingGuangV05.UI.Tests
                 finally{UnityEngine.Object.DestroyImmediate(go);}
                 count++;
             }
-            Assert.AreEqual(28,count,"The public/junk catalog changed; review its previews.");
+            Assert.AreEqual(29,count,"The public/junk catalog changed; review its previews.");
         }
         static void AssertUniquePicture(string key,HashSet<Texture2D> textures)
         {

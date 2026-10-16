@@ -79,10 +79,10 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host();
             sim.S.stage = 5; sim.S.unlocked.Add("rnn");
             foreach (var n in XgCatalog.Nodes) if (n.stage <= 5 && n.kind != XgNodeKind.Dataset && n.kind != XgNodeKind.Secret && !XgSim.IsAtlas(n) && n.tree != "label" && !sim.Has(n.id)) sim.S.unlocked.Add(n.id);
-            Assert.IsTrue(sim.BuyNode("news.pack", host), "人民日报 has 5 million samples");
-            Assert.IsTrue(sim.Downloading("news")); Assert.IsFalse(sim.Owns("news"));
-            sim.Tick(sim.DownloadLeft("news") + 1, host);
-            Assert.IsTrue(sim.Owns("news"));
+            Assert.IsTrue(sim.BuyNode("imagenet.pack", host), "ImageNet's first batch is 15 GB");
+            Assert.IsTrue(sim.Downloading("imagenet")); Assert.IsFalse(sim.Owns("imagenet"));
+            sim.Tick(sim.DownloadLeft("imagenet") + 1, host);
+            Assert.IsTrue(sim.Owns("imagenet"));
             Assert.IsTrue(sim.BuyNode("review.pack", host));
             Assert.IsFalse(sim.Downloading("review"), "small packs arrive at once");
         }
@@ -91,15 +91,16 @@ namespace LingGuangV05.XingGuang.Tests
         public void AccelerationFinishesTheDownloadForTheSecondsItSaves()
         {
             var sim = new XgSim(); var host = new Host();
-            sim.S.stage = 5; sim.S.unlocked.Add("rnn");
-            Assert.IsTrue(sim.BuyNode("news.pack", host));
-            Assert.IsTrue(sim.Downloading("news"));
-            double before = host.money, cost = sim.AccelerateCost("news");
-            Assert.AreEqual(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("news") * XgSim.AcceleratePerSecond)), cost, 1, "¥ for the seconds it saves");
-            Assert.IsTrue(sim.Accelerate("news", host));
+            sim.S.stage = 5;
+            foreach (var id in new[] { "mlp", "rnn", "lenet", "resnet" }) sim.S.unlocked.Add(id);
+            Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
+            Assert.IsTrue(sim.Downloading("imagenet"));
+            double before = host.money, cost = sim.AccelerateCost("imagenet");
+            Assert.AreEqual(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("imagenet") * XgSim.AcceleratePerSecond)), cost, 1, "¥ for the seconds it saves");
+            Assert.IsTrue(sim.Accelerate("imagenet", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
-            Assert.IsTrue(sim.Owns("news"));
-            Assert.IsFalse(sim.Accelerate("news", host), "nothing left to speed up");
+            Assert.IsTrue(sim.Owns("imagenet"));
+            Assert.IsFalse(sim.Accelerate("imagenet", host), "nothing left to speed up");
         }
 
         [Test]

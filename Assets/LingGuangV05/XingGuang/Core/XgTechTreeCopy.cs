@@ -191,7 +191,7 @@ namespace LingGuangV05.XingGuang
             {
                 var data = XgCatalog.Dataset(node.target);
                 string result = T(sim, "提供 ", "Provide ") + XgSim.SamplesText(data.samples) + T(sim, " 条训练样本；需启用数据包，已有等价剧情数据时不重复计数。", " training samples while the pack is enabled; equivalent story data is not counted twice.");
-                if (XgSim.PackBatches(data) > 1) result += T(sim, "分 ", "Comes in ") + XgSim.PackBatches(data) + T(sim, " 批下载，第一批随数据包到；每批在 ADSL 上约 ", " batches, the first with the pack; each takes about ") + N(XgSim.DownloadSecondsAt(XgSim.BatchMB(data), XgSim.BroadbandMBps[0])) + T(sim, " 秒，宽带越快越短。", " s on ADSL, less on a faster line.");
+                if (XgSim.PackBatches(data) > 1) result += T(sim, "分 ", "Comes in ") + XgSim.PackBatches(data) + T(sim, " 批下载，第一批随数据包到；每批在起步的 ADSL 20M 上约 ", " batches, the first with the pack; each takes about ") + N(XgSim.DownloadSecondsAt(XgSim.BatchMB(data), XgSim.BroadbandMBps[0])) + T(sim, " 秒，宽带越快越短。", " s on the starting 20M ADSL, less on a faster line.");
                 if (data.dataWeight != 1) result += T(sim, "每条计入总数据进度的权重为 ", "Each sample counts toward total data progress with weight ") + N(data.dataWeight) + "。";
                 return result;
             }

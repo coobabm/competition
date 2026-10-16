@@ -14,10 +14,10 @@ using UnityEngine;
 namespace LingGuangV05.Desktop.YY
 {
     /// <summary>
-    /// 林晴雯 「晴雯ˇ」 in YY (design 女友系统与YY里的AI §3, §4.5, §4.6, §7). The rules live in Core
+    /// 林晴雯 「晴雯ˇ」 in YY (design 女友系统与YY里的AI §3, §4.6, §7). The rules live in Core
     /// (GirlfriendRules); this component is the "像真人" layer on top: when she answers (her schedule and the reply
     /// delay), how (typing per character, the hesitating 「嗯」, several bubbles with gaps), what she starts herself,
-    /// the window shake, her signature and status, red packets both ways, gifts arriving from 淘货, 「让 灵光 代我回」,
+    /// the window shake, her signature and status, red packets both ways, gifts arriving from 淘货,
     /// New Year's Eve and the epilogue line. Her words come from the local model (GirlfriendPrompt) or, offline,
     /// from the line library. Attaches itself next to the YY hub at scene load; never reads real user data.
     /// </summary>
@@ -55,11 +55,9 @@ namespace LingGuangV05.Desktop.YY
         GfTurn pendingTurn;
         string pendingSituation = "";
         string[] pendingScripted;
-        bool pendingRuleDecided, caughtPending;
+        bool pendingRuleDecided;
         Action pendingAfter;
         double nextPacketAmount;
-        bool nextLineByAi, aiInFlight;
-        double aiDueGame = -1;
         float nextIdleCheck;
         string lastStatus = "", lastSignature = "";
         float nextCardCheck;
@@ -114,8 +112,7 @@ namespace LingGuangV05.Desktop.YY
                 else if (outbox.Count == 0 && replyPending && now.game >= askAtGame && act.Present && !WaitForModel(now)) Reply(g, now, act);
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
-            GuaranteeRefusal(g);
-            StandIn(g, now);
+            if (Stage >= 5 && GirlfriendRules.Mark(g, GirlfriendRules.FlagWeekendOpen)) runtime.MarkDirty();
             if (Time.unscaledTime >= nextCardCheck) { nextCardCheck = Time.unscaledTime + 1; LifeCards(g); }
         }
 
@@ -127,7 +124,6 @@ namespace LingGuangV05.Desktop.YY
             if (g.totalMessages > g.herMessages) lab.EarnSecret("life.gf.chat");
             if (GirlfriendRules.Has(g, GirlfriendRules.FlagFought)) lab.EarnSecret("life.gf.fight");
             if (GirlfriendRules.Has(g, GirlfriendRules.FlagMadeUp)) lab.EarnSecret("life.gf.makeup");
-            if (GirlfriendRules.Has(g, GirlfriendRules.FlagCaughtAi)) lab.EarnSecret("life.gf.caught");
             if (GirlfriendRules.Has(g, GirlfriendRules.FlagIphone)) lab.EarnSecret("life.gf.iphone");
             if (GirlfriendRules.Has(g, GirlfriendRules.FlagNewYear)) lab.EarnSecret("life.gf.newyear");
             if (GirlfriendRules.Tier(g) == GirlfriendTier.Sweet) lab.EarnSecret("life.gf.sweet");
@@ -138,7 +134,6 @@ namespace LingGuangV05.Desktop.YY
         {
             bound = g;
             outbox.Clear(); typing = null; generating = false; replyPending = false; pendingTurn = null; pendingScripted = null; pendingAfter = null; holdUntilGame = 0;
-            caughtPending = false; aiInFlight = false; aiDueGame = -1;
             hub.GirlfriendTyping = false;
         }
 
@@ -211,7 +206,7 @@ namespace LingGuangV05.Desktop.YY
             if (b.lines.Count > 0) outbox.Enqueue(b); else after?.Invoke();
         }
 
-        /// <summary>The protagonist's first-time thoughts (design §7): first shake, first fight, first make-up, first caught AI reply. Once per save each (the rules' flags).</summary>
+        /// <summary>The protagonist's first-time thoughts (design §7): first shake, first fight, first make-up. Once per save each (the rules' flags).</summary>
         static void Voice(string key)
         {
             switch (key)
@@ -219,7 +214,6 @@ namespace LingGuangV05.Desktop.YY
                 case "first.shake": InnerVoice.Say("窗口抖了一下。……是她。", "The window shook. …It's her."); break;
                 case "first.fight": InnerVoice.Say("……吵架了。为了什么来着。", "…We're fighting. What was it about again."); break;
                 case "first.makeup": InnerVoice.Say("和好了。……这比调参难。", "Made up. …Harder than tuning a model."); break;
-                case "first.caught": InnerVoice.Say("被发现了。它学我说话，没学像。", "Caught. It learned to talk like me. Not well enough."); break;
             }
         }
 
@@ -231,18 +225,14 @@ namespace LingGuangV05.Desktop.YY
             var g = G;
             if (g == null || !g.started || runtime == null || runtime.Sim == null) return;
             var now = Now;
-            bool byAi = nextLineByAi;
-            nextLineByAi = false;
-            if (byAi) MarkLastMineAsAi();
             double packet = nextPacketAmount;
             nextPacketAmount = 0;
-            var turn = GirlfriendRules.OnPlayerLine(g, now, text, byAi);
+            var turn = GirlfriendRules.OnPlayerLine(g, now, text);
             foreach (var e in turn.events) Handle(e);
             turn.events.Clear();
             // He promised her the weekend: the train ticket is paid on Saturday (ChapterOneSim.Bills.cs).
             if (turn.promised == "weekend") runtime.Sim.BookWeekendTrip();
             runtime.MarkDirty();
-            if (!byAi) aiDueGame = -1;
 
             string situation = "";
             string[] scripted = null;
@@ -269,7 +259,6 @@ namespace LingGuangV05.Desktop.YY
                 if (o.returned || o.result == GfPacketResult.TooMany) situation = "";
             }
             else if (turn.answered == "ai" || turn.answered == "work") { scripted = GirlfriendRules.MoneyReply(turn.answered); ruled = true; }
-            else if (turn.answered == "admit" || turn.answered == "deny") { scripted = GirlfriendRules.CaughtReply(g, turn.answered); ruled = true; }
             else if (turn.wished != null && turn.wished.thanks.Length > 0) situation = T("他刚刚祝你" + turn.wished.zh + "快乐。", "He just wished you a happy " + turn.wished.en + ".");
             else if (turn.promised.Length > 0) situation = T("他答应了：" + (turn.promised == "qixi" ? "七夕那天视频。" : turn.promised == "weekend" ? "这周末来看你。" : "12 月 2 日一起看《你的名字。》。"), "He said yes: " + (turn.promised == "qixi" ? "a video call on Qixi." : turn.promised == "weekend" ? "coming to see you this weekend." : "watching Your Name together on 2 December."));
 
@@ -296,13 +285,6 @@ namespace LingGuangV05.Desktop.YY
             if (after != null) { var prev = pendingAfter; pendingAfter = () => { prev?.Invoke(); after(); }; }
         }
 
-        void MarkLastMineAsAi()
-        {
-            var conv = Conv;
-            if (conv == null) return;
-            for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == YYChatHub.Me) { conv.messages[i].byAi = true; break; }
-        }
-
         /// <summary>The model is still booting and her reply is not long overdue: wait for it rather than go offline.</summary>
         bool WaitForModel(GfNow now)
         {
@@ -311,7 +293,7 @@ namespace LingGuangV05.Desktop.YY
         }
 
         /// <summary>
-        /// Time to answer him: a discovered AI reply, a scripted outcome, or the model (offline: the line library).
+        /// Time to answer him: a scripted outcome, or the model (offline: the line library).
         /// Called a little before the reply is due; what it queues is held until <see cref="replyAtGame"/>.
         /// </summary>
         void Reply(GirlfriendState g, GfNow now, GfActivity act)
@@ -320,16 +302,6 @@ namespace LingGuangV05.Desktop.YY
             holdUntilGame = replyAtGame;
             var turn = pendingTurn; var situation = pendingSituation; var scripted = pendingScripted; var after = pendingAfter; bool ruled = pendingRuleDecided;
             pendingTurn = null; pendingSituation = ""; pendingScripted = null; pendingAfter = null; pendingRuleDecided = false;
-            if (caughtPending)
-            {
-                caughtPending = false;
-                var events = GirlfriendRules.Caught(g, now);
-                foreach (var e in events) if (e.kind == GfEventKind.Voice) Voice(e.key);
-                var say = events.Find(e => e.kind == GfEventKind.Say);
-                var choices = events.Find(e => e.kind == GfEventKind.Choices);
-                Queue(say, false, () => { after?.Invoke(); if (choices != null) hub.Offer(YYChatHub.GirlfriendId, Pick(choices)); });
-                return;
-            }
             if (scripted != null && string.IsNullOrEmpty(situation)) { QueueReply(g, scripted, after); return; }
             Generate(g, now, act, situation, turn, ruled, false, scripted, after);
         }
@@ -543,7 +515,6 @@ namespace LingGuangV05.Desktop.YY
             if (!b.expectsReply) { g.awaitingReply = false; g.unansweredRun = 0; }
             runtime.MarkDirty();
             b.after?.Invoke();
-            if (g.aiAuto && g.awaitingReply) aiDueGame = Now.game + 5;
             Refresh();
         }
 
@@ -579,6 +550,8 @@ namespace LingGuangV05.Desktop.YY
             nextIdleCheck = Time.unscaledTime + 1;
             if (!act.Present) return;
             if (hub.ChoicesFor == YYChatHub.GirlfriendId && hub.Choices != null) return;
+            // She does not start something while a story moment is on screen (剧情修订 2026-10-16 §二).
+            if (StoryFocus.Active) return;
             bool quiet = OpeningQuiet.Active;
             if (quiet && Time.unscaledTime < spacedUntil) return;
             if (StartSomething(g, now, act) && quiet) spacedUntil = Time.unscaledTime + (float)OpeningQuiet.QingwenSpacing;
@@ -690,7 +663,7 @@ namespace LingGuangV05.Desktop.YY
             runtime.MarkDirty();
             var arrive = GameCalendar.DateOf(o.arriveDay);
             message = gift.id == GirlfriendRules.GiftMilkTea
-                ? Lang.T("下单成功！骑手已接单，预计 30 分钟送到她宿舍楼下。")
+                ? Lang.T("下单成功！骑手已接单，预计 30 分钟送到她楼下。")
                 : T("下单成功！包邮，预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达。", "Ordered! Free shipping, arriving " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture) + ".");
             return true;
         }
@@ -736,111 +709,7 @@ namespace LingGuangV05.Desktop.YY
             }
         }
 
-        // ───────────── 让 灵光 代我回 (design §4.5) ─────────────
-
-        /// <summary>The switch shows from stage 5. Ordinary messages it answers; her questions (a promise, a feeling) it hands back.</summary>
-        public bool StandInAvailable => Stage >= 5 && G != null;
-
         /// <summary>Seconds after New Year's midnight before her epilogue line: after the quiet desktop and 360's balloon.</summary>
         const double EpilogueAfterNewYear = 40;
-
-        /// <summary>Which of her questions (asking + day) the AI has already handed back, so it says so once.</summary>
-        string refusedAsk = "";
-        public string AiName => GirlfriendPrompt.AiName(Lab, English);
-
-        public void SetStandIn(bool on)
-        {
-            var g = G;
-            if (g == null || !StandInAvailable) return;
-            g.aiAuto = on;
-            if (on && g.awaitingReply) aiDueGame = Now.game + 5;
-            runtime.MarkDirty();
-        }
-
-        void StandIn(GirlfriendState g, GfNow now)
-        {
-            if (!g.aiAuto || aiInFlight || aiDueGame < 0 || now.game < aiDueGame || !g.awaitingReply || typing != null || outbox.Count > 0 || generating) return;
-            // 接线: with 本体 unplugged from its card it cannot type; her questions are still handed back below.
-            if (g.asking.Length == 0 && Lab != null && !Lab.LifeJobLive(XgSim.LifeQingwen)) return;
-            if (hub.ChoicesFor == YYChatHub.GirlfriendId && hub.Choices != null) return; // a question only he can answer
-            aiDueGame = -1;
-            var lab = Lab;
-            if (lab == null) return;
-            // Her question (come or not, the movie, where the money came from, was that the AI): only he can answer it.
-            // The first time it stops mid-reply and says why; after that it just hands the question back.
-            if (g.asking.Length > 0)
-            {
-                string ask = g.asking + "@" + g.askDay;
-                if (refusedAsk == ask) return;
-                refusedAsk = ask;
-                if (!GirlfriendRules.Has(g, GirlfriendRules.FlagAiRefused))
-                {
-                    GirlfriendRules.Mark(g, GirlfriendRules.FlagAiRefused);
-                    runtime.MarkDirty();
-                    StartCoroutine(RefusalScene(g.asking));
-                }
-                else System(AiName + T("：这句要你自己回。", ": This one you answer yourself."));
-                return;
-            }
-            var llm = LocalLlm.Instance;
-            var expected = g;
-            if (llm != null && llm.Ready)
-            {
-                aiInFlight = true;
-                var limits = lab.Limits();
-                llm.Chat(GirlfriendPrompt.StandIn(lab, Conv, English), Math.Max(48, Math.Min(120, limits.tokens)), limits.temperature, raw =>
-                {
-                    aiInFlight = false;
-                    if (!ReferenceEquals(G, expected) || !expected.awaitingReply) return;
-                    string text = GirlfriendPrompt.CleanStandIn(raw);
-                    PostStandIn(expected, text.Length > 0 ? text : GirlfriendPrompt.OfflineStandIn(expected.aiReplies, English));
-                }, false, XgSpeechPolicy.Sampling(XgSpeechPolicy.Stage(lab.S.stage)), LingGuangV05.Core.Chat.LlmSeat.LingGuang);
-            }
-            else PostStandIn(g, GirlfriendPrompt.OfflineStandIn(g.aiReplies, English));
-        }
-
-        /// <summary>
-        /// 「她问的是你，不是我。」 The AI was answering for him; at her question it stops halfway, and the line is not a
-        /// lecture but the limit of standing in: it has read the chats, and still the decision is his.
-        /// </summary>
-        System.Collections.IEnumerator RefusalScene(string asking)
-        {
-            System(AiName + T("：这句我不能替你答。", ": I can't answer this one for you."));
-            yield return new WaitForSecondsRealtime(1.6f);
-            InnerVoice.Say("你不是看过我们的聊天吗？", "Haven't you read all our chats?", 2.4f);
-            yield return new WaitForSecondsRealtime(2.8f);
-            string decide = asking != "weekend" && asking != "movie" && asking != "qixi"
-                ? T("看过。可是怎么跟她说，要你决定。", "I have. But what you tell her is your decision.")
-                : T("看过。可是去不去，要你决定。", "I have. But whether you go is your decision.");
-            System(AiName + "：" + decide);
-            yield return new WaitForSecondsRealtime(2f);
-            System(AiName + T("：" + GirlfriendRules.AiRefusalZh, ": " + GirlfriendRules.AiRefusalEn));
-        }
-
-        /// <summary>
-        /// The scene must not depend on the player having tried the switch: when her weekend question arrives and the AI has
-        /// never handed one back, he lets it reply this once (the inner voice says so), and it stops at her question.
-        /// </summary>
-        void GuaranteeRefusal(GirlfriendState g)
-        {
-            if (Stage >= 5 && GirlfriendRules.Mark(g, GirlfriendRules.FlagStandInOffered)) runtime.MarkDirty();
-            if (g.asking != "weekend" || g.aiAuto || Stage < 5 || GirlfriendRules.Has(g, GirlfriendRules.FlagAiRefused)) return;
-            g.aiAuto = true;
-            aiDueGame = Now.game + 6;
-            InnerVoice.Say("……周末。", "…The weekend.", 1.6f);
-            InnerVoice.Say("让它替我回吧。", "Let it answer for me.", 2.2f);
-            runtime.MarkDirty();
-        }
-
-        void PostStandIn(GirlfriendState g, string text)
-        {
-            var mine = new List<string>();
-            var conv = Conv;
-            if (conv != null) for (int i = conv.messages.Count - 1; i >= 0 && mine.Count < 8; i--) if (conv.messages[i].from == YYChatHub.Me && !conv.messages[i].byAi && conv.messages[i].kind == YYKind.Text) mine.Add(conv.messages[i].text);
-            double chance = GirlfriendRules.DetectChance(g, Now, GirlfriendRules.StyleDistance(mine, text));
-            nextLineByAi = true;
-            hub.Send(YYChatHub.GirlfriendId, text);
-            if (GirlfriendRules.Roll(g) < chance) caughtPending = true;
-        }
     }
 }

@@ -42,6 +42,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgUi ui;
         RectTransform overlay, card;
         TMP_Text who, title, body;
+        Image eventIcon;
         readonly XgBtn[] buttons = new XgBtn[2];
         readonly TMP_Text[] details = new TMP_Text[2];
         string signature = "";
@@ -125,6 +126,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (presenter == null) presenter = FindAnyObjectByType<StoryDesktopPresenter>();
             if (presenter != null && presenter.CutscenePlaying) return true;
             if (XgEmergenceCutscene.Busy || LoveQuestionCutscene.Playing) return true;
+            // Any story moment on screen (a beat's lines, the origin film, the AI joining YY…): the card waits.
+            if (LingGuangV05.Core.StoryFocus.Active) return true;
             var view = controller.View;
             if (view == null) return false;
             if (view.SetupShowing || view.Holo != null && view.Holo.Showing) return true;
@@ -145,6 +148,9 @@ namespace LingGuangV05.Desktop.XingGuang
             // click on the 科技 tree while 老周's question sat unanswered (2026-10-16).
             Panel(overlay, Color.clear).raycastTarget = false;
             card = ui.Card(overlay, "Card", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-280, -165), new Vector2(280, 165));
+            // The drawn event icon (Tools/Icons/ui_icons.py, group life) sits top-left; the header lines make room when it exists.
+            eventIcon = Panel(TopLeft("EventIcon", card, 22, 16, 56, 56), Color.white);
+            eventIcon.preserveAspect = true; eventIcon.raycastTarget = false; eventIcon.gameObject.SetActive(false);
             who = ui.Text(Strip("Who", card, 14, 20, 22, 22), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             who.textWrappingMode = TextWrappingModes.NoWrap;
             title = ui.Text(Strip("Title", card, 36, 32, 22, 22), "", 22, XgDark.Gold, TextAlignmentOptions.MidlineLeft);
@@ -176,6 +182,10 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var c in e.choices) sig += c.enabled ? "1" : "0";
             if (sig == signature) return;
             signature = sig;
+            bool hasIcon = XgIcons.Apply(eventIcon, "life", e.id);
+            eventIcon.gameObject.SetActive(hasIcon);
+            who.rectTransform.offsetMin = new Vector2(hasIcon ? 90 : 22, who.rectTransform.offsetMin.y);
+            title.rectTransform.offsetMin = new Vector2(hasIcon ? 90 : 22, title.rectTransform.offsetMin.y);
             who.text = e.who;
             title.text = e.title;
             body.text = e.body;

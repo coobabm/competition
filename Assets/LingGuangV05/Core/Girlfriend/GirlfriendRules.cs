@@ -17,11 +17,8 @@ namespace LingGuangV05.Core.Girlfriend
         // Flags (GirlfriendState.flags).
         public const string FlagFought = "fought";          // a first quarrel happened
         public const string FlagMadeUp = "madeUp";          // and they made up
-        public const string FlagKnowsAi = "knowsAi";        // she knows about the AI (told, or admitted when caught)
-        public const string FlagCaughtAi = "caughtAi";      // she caught an AI-written reply
-        public const string FlagDeniedAi = "deniedAi";      // he denied it when caught
-        public const string FlagAiRefused = "aiRefused";    // the AI handed one of her questions back (「她问的是你，不是我。」)
-        public const string FlagStandInOffered = "standIn"; // stage 5 reached: 「让 AI 代我回」 exists, so her weekend question can come
+        public const string FlagKnowsAi = "knowsAi";        // she knows about the AI (told)
+        public const string FlagWeekendOpen = "weekendOpen"; // stage 5 reached: her weekend question can come
         public const string FlagShook = "shook";            // she shook his window
         public const string FlagMoneyAsked = "moneyAsked";  // 「你哪来的钱」 was asked
         public const string FlagMoneyAnswered = "moneyAnswered";

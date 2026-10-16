@@ -78,7 +78,7 @@ namespace LingGuangV05.Desktop.Story
 
         public override void Render(float t)
         {
-            XgOriginColdOpen.Evaluate(t, frame, Ctx.FinalParams);
+            XgOriginColdOpen.Evaluate(t, frame, Ctx.FinalParams, OriginLiveContext.English);
             var f = frame;
             field.Frame = f; field.canvasRenderer.SetAlpha(OriginInk.Fade(Mathf.Clamp01((float)f.FieldAlpha))); field.SetVerticesDirty();
             RenderHud(t, f);

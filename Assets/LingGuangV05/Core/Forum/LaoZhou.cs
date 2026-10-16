@@ -27,9 +27,10 @@ namespace LingGuangV05.Core.Forum
     }
 
     /// <summary>
-    /// 周而复始, the future 老周 (§2, §9): the game's helper on 贴吧 private messages. He only answers, never starts
-    /// a conversation (the prologue's one message aside), never admits where he is from, gives a direction the first
-    /// time and explains on a repeat, and never says exact golden settings. <see cref="Reply"/> is the offline answer;
+    /// 周而复始, 老周 (§2, §9): a 研二 at a provincial university, deep-learning lab, GPU enthusiast, and the game's
+    /// helper on 贴吧 private messages (he never uses YY). He only answers, never starts a conversation, never says
+    /// more than a grad student would, gives a direction the first time and explains on a repeat, and never says exact
+    /// golden settings. <see cref="Reply"/> is the offline answer;
     /// <see cref="SystemPrompt"/> drives the local model when it runs; <see cref="Clean"/> filters what it says.
     /// </summary>
     public static class LaoZhouFuture
@@ -65,22 +66,49 @@ namespace LingGuangV05.Core.Forum
         /// <summary>The offline answer. <paramref name="times"/> is how often this topic was asked, this time included.</summary>
         public static string Reply(string question, LaoZhouFacts f, int times, bool english)
         {
+            return Answer(question, f, times, english) + Regard(question, f, times, english);
+        }
+
+        /// <summary>
+        /// What he lets slip about the player as the player really gets on (stage 3 on): he is gruff, so it is only on some
+        /// answers and always short, specific to how the player works, and by stage 5 he is asking the player's opinion.
+        /// Nothing here says he can see the player's computer.
+        /// </summary>
+        static string Regard(string question, LaoZhouFacts f, int times, bool english)
+        {
+            if (f.stage < 3 || f.finale) return "";
+            string topic = Topic(question, f);
+            switch (topic)
+            {
+                case "hello": case "other": case "stuck": case "overfit": case "nan": case "gpu": case "power": break;
+                default: if (!topic.StartsWith("short:", StringComparison.Ordinal)) return ""; break;
+            }
+            if (((question ?? "").Length + times + f.stage) % 2 != 0) return "";
+            string T(string zh, string en) => english ? en : zh;
+            if (f.stage == 3) return T(" 你最近问得比一般人准哈。", " Your questions have been sharper than most lately, huh.");
+            if (f.stage == 4) return T(" 说实话，你这种一样一样试的路子，比我们组有些人系统。", " Honestly, trying one thing at a time like you do is more systematic than some people in our group.");
+            if (f.stage == 5) return T(" 你问的这些，换成一年前的我，自己都想不到要问。……对了，要是换你，你会怎么选？", " A year ago I wouldn't have thought to ask any of this myself. … By the way, what would you pick in my place?");
+            return T(" 说真的，现在遇到拿不准的，我第一个想问的是你。哈。", " Honestly, when I'm unsure these days, you're the first person I want to ask. Huh.");
+        }
+
+        static string Answer(string question, LaoZhouFacts f, int times, bool english)
+        {
             string T(string zh, string en) => english ? en : zh;
             string topic = Topic(question, f);
             bool again = times >= 2;
             switch (topic)
             {
                 case "identity":
-                    return again ? T("就是个显卡吧老哥哈。我这边网……很慢，一个字一个字的，别让我多打字。你好好练你的模型。", "Just a guy from the GPU forum. My connection is… slow, one character at a time, so don't make me type much. Go train your model.")
+                    return again ? T("就是个显卡吧老哥哈，研二，在实验室炼丹的。别问太多，你好好练你的模型。", "Just a guy from the GPU forum, second-year master's, training models in a lab. Don't ask too much. Go train your model.")
                                  : T("猜的。你这种情况我见多了。", "A guess. I've seen plenty of cases like yours.");
                 case "floor7":
                     return f.stage <= 1 ? T("那楼？顺手贴的，别管它哈。", "That floor? Pasted it on a whim, never mind.")
                                         : f.stage >= 3 ? T("一串数字而已。……有时候一串数字，比一整篇帖子装得还多。", "Just a number. … Sometimes a number holds more than a whole post.")
                                         : T("啥楼？我回过的帖多了去了。", "What floor? I've replied to a million threads.");
                 case "404":
-                    return f.stage >= 3 ? T("不是我们。……我是说，不是我。", "It wasn't us. … I mean, it wasn't me.") : T("没见过哈。", "Never seen it.");
+                    return f.stage >= 3 ? T("不是我们组的。……我是说，不是我。", "It wasn't our group. … I mean, it wasn't me.") : T("没见过哈。", "Never seen it.");
                 case "zhounow":
-                    return f.stage >= 4 ? T("……挺像的哈。别去打扰他。", "… Looks a lot like me, huh. Don't bother him.") : T("谁？不认识。", "Who? Don't know him.");
+                    return f.stage >= 4 ? T("那是我师弟，研一，学翻译的，ID 是照我起的哈。别去烦他。", "That's my junior, first-year, translation track. He copied my ID, huh. Don't bother him.") : T("我师弟？他不怎么上这个吧。", "My junior? He hardly comes here.");
                 case "cortex":
                     // 贴吧传说帖「人造大脑皮层」: the half line in the screenshot came from his side; he never says so.
                     return again ? "显卡够了，就会有人做出来。你那台，不就挺够的哈。" : "……那帖子我也看过哈。";
@@ -130,9 +158,25 @@ namespace LingGuangV05.Core.Forum
             string T(string zh, string en) => english ? en : zh;
             if (f.today.Month == 12) return T("等等党永不为奴。……算了，你等不到。", "Wait-for-the-next-one, never a slave. … Forget it, you won't get to wait.");
             if (f.stage >= 3 && again) return T("2016 年网吧都在换机，970 白菜价，去喵鱼收几张。", "Net cafés are all upgrading in 2016, 970s go for peanuts. Pick some up on Meowfish.");
-            if (again) return T("你这卡跑个 7B 都……我是说，跑大点的网络都费劲。先加一张吧哈。", "Your card can't even run a 7B… I mean, it struggles with bigger networks. Add one more.");
+            if (again) return T("你这卡跑大点的网络都费劲。先加一张吧哈。", "Your card struggles with bigger networks. Add one more.");
             if (f.today < new DateTime(2016, 6, 10)) return T("等 1070 吧，1080 贵。", "Wait for the 1070, the 1080 is pricey.");
             return T("1080 贵，1070 香。A 卡……战未来吧。公版涡轮就是吹风机哈。", "The 1080 is pricey, the 1070 is the deal. AMD… built for the future. Reference blowers are hair dryers.");
+        }
+
+        /// <summary>How he feels about the player at this stage: he starts as the gruff old-timer and, as the player really gets somewhere, respects him more (never flattery for nothing).</summary>
+        public static string Attitude(int stage, bool english)
+        {
+            if (english)
+            {
+                if (stage <= 2) return "Attitude: you see him as a hobbyist who likes to tinker; you grumble at him, but you respect that he actually does things.";
+                if (stage == 3) return "Attitude: his questions keep getting sharper and you quietly think more of him. Praise is rare, short and specific.";
+                if (stage <= 5) return "Attitude: you are quietly impressed: a fresh graduate doing it step by step on his own, more solid than some in your lab. You sometimes ask for his opinion. Praise names what he got right, never gushing.";
+                return "Attitude: you treat him as a peer; when you are unsure, you want to ask him first. There is respect in your tone, still in your gruff voice.";
+            }
+            if (stage <= 2) return "你对他的态度：把他当个爱折腾的发烧友，嘴上嫌他瞎折腾，心里认可他肯动手。";
+            if (stage == 3) return "你对他的态度：他问的问题越来越像样，你心里多看他一眼。夸人很少，短，而且具体。";
+            if (stage <= 5) return "你对他的态度：暗暗佩服。一个刚毕业的人，一个人一步一步做出来，比你们实验室有些人踏实。你有时会问他的看法。夸要点出他做对了什么，不肉麻。";
+            return "你对他的态度：把他当同行，遇到拿不准的事第一个想问他。语气里有敬意，但仍是老周的直脾气。";
         }
 
         /// <summary>The local model's system prompt: persona, hard rules, and what sophon.dll shows him right now.</summary>
@@ -141,17 +185,18 @@ namespace LingGuangV05.Core.Forum
             var sb = new StringBuilder();
             if (english)
             {
-                sb.Append("You are \"周而复始\" (Zhou), a guy from a 2016 Chinese GPU forum, chatting by private message. You know deep learning well and talk casually, like a hardware forum regular. ");
-                sb.Append("Rules: only answer what you are asked, briefly (1–3 sentences). Never start new topics. Never say you are from the future, never admit watching the player's computer; if asked how you know, say it's a guess. ");
+                sb.Append("You are \"周而复始\" (Zhou), a second-year master's student in 2016 China who trains models in a lab and hangs out in the GPU forum, chatting by private message. You know deep learning well and talk casually, like a hardware forum regular. ");
+                sb.Append("Rules: only answer what you are asked, briefly (1–3 sentences). Never start new topics. Never claim to see the player's computer; if asked how you know, say it's a guess. ");
                 sb.Append("Give a direction, not a full solution; never give exact settings or numbers for the current problem. It is 2016. ");
             }
             else
             {
-                sb.Append("你是贴吧 ID「周而复始」，2016 年显卡吧的老哥，在贴吧私信里跟人聊。你很懂深度学习，说话专业又随手，句末爱加“哈”，管调参叫“炼丹”。");
-                sb.Append("规则：只回答对方问的，一到三句。不要主动开新话题。永远不承认自己来自未来，也不承认能看到对方电脑；被问你怎么知道，就说“猜的。你这种情况我见多了。”");
-                sb.Append("只给方向，不给完整答案；当前卡住的问题不要说出具体参数和数值。偶尔说漏一个未来才有的词，马上收回。现在是 2016 年。");
+                sb.Append("你是贴吧 ID「周而复始」，也就是老周：省城某大学研二，实验室做深度学习，显卡吧的老哥，在贴吧私信里跟人聊（不用 YY）。你很懂深度学习，说话专业又随手，句末爱加“哈”，管调参叫“炼丹”。");
+                sb.Append("规则：只回答对方问的，一到三句。不要主动开新话题。永远不承认能看到对方电脑；被问你怎么知道，就说“猜的。你这种情况我见多了。”");
+                sb.Append("只给方向，不给完整答案；当前卡住的问题不要说出具体参数和数值。现在是 2016 年。");
             }
             sb.Append(EraLexicon.PromptRule(english)).Append('\n');
+            sb.Append(Attitude(f.stage, english)).Append('\n');
             sb.Append(english ? "What you can see of the player's game (do not quote it as a list): " : "你能看到的对方游戏状态（不要原样念出来）：");
             sb.Append(english ? "stage " : "阶段 ").Append(f.stage).Append("; ");
             if (f.nextAbility.Length > 0) sb.Append(english ? "next ability: " : "下一项能力：").Append(f.nextAbility)
@@ -180,8 +225,9 @@ namespace LingGuangV05.Core.Forum
     }
 
     /// <summary>
-    /// 周而复始_, the 2016 老周 (§2, stage 4): a first-year grad student running Caffe. He doesn't know the player
-    /// or anything of the story; persona locked in 2016.
+    /// 周而复始_, 小周 (§2, stage 4): 老周's junior (师弟), a first-year grad student on the translation track running
+    /// Caffe; his ID and signature were copied from his senior. He doesn't know the player or anything of the story;
+    /// persona locked in 2016.
     /// </summary>
     public static class LaoZhouNow
     {
@@ -196,10 +242,11 @@ namespace LingGuangV05.Core.Forum
             if (ended) return T("虽然不认识你，但谢了哈。下周组会我讲 Transformer……咦，这词哪来的？", "Don't know you, but thanks, huh. I'm presenting Transformer at group meeting next week… wait, where did that word come from?");
             // §8 E-3: asked as a philosophy question, he has no idea what is at stake.
             if (finale && Has(q, "规则", "关机", "写不写", "rule", "shut")) return T("当然要写啊，机器不听人的那还得了？哈", "Of course you write it. A machine that doesn't listen to people? No way, huh.");
-            if (Has(q, "未来", "穿越", "周而复始", "另一个", "ai 会", "超级智能", "future", "time travel")) return T("啥？你科幻看多了吧哈。我连 AlexNet 都还没跑通呢。", "What? Too much sci-fi, huh. I can't even get AlexNet running.");
+            if (Has(q, "未来", "穿越", "超级智能", "ai 会", "future", "time travel")) return T("啥？你科幻看多了吧哈。我连 AlexNet 都还没跑通呢。", "What? Too much sci-fi, huh. I can't even get AlexNet running.");
+            if (Has(q, "周而复始", "另一个", "师兄", "老周", "另一个号")) return T("周而复始是我师兄，ID 和签名我是照着他起的哈。你认识他？", "周而复始 is my senior; I copied his ID and signature, huh. You know him?");
             if (Has(q, "显存", "out of memory", "oom", "vram")) return T("batch size 先砍一半。还不行就把图片缩小点，Caffe 的 prototxt 里改。", "Halve the batch size first. Still not enough? Shrink the images, it's in the Caffe prototxt.");
             if (Has(q, "caffe", "tensorflow", "tf", "框架", "framework")) return T("实验室都用 Caffe，TensorFlow 去年才开源，文档还不太行哈。", "The lab uses Caffe. TensorFlow was open-sourced last year, docs aren't great yet.");
-            if (Has(q, "alexnet", "vgg", "resnet")) return T("导师让我先复现 AlexNet，两张卡那个。我就一张 970……", "My advisor wants me to reproduce AlexNet, the two-GPU one. I've got one 970…");
+            if (Has(q, "alexnet", "vgg", "resnet")) return T("导师让我先把 AlexNet 跑通练练手，两张卡那个。我就一张 970……我做翻译方向的，图像这块还得问师兄。", "My advisor wants me to get AlexNet running first, the two-GPU one. I've only got one 970… I'm on the translation track, ask my senior about images.");
             if (Has(q, "transformer", "attention", "注意力")) return T("注意力？翻译那块有人在用，我还没看。", "Attention? Some translation people use it. Haven't read it yet.");
             if (Has(q, "导师", "组会", "论文", "advisor", "paper")) return T("下周组会还得讲论文，头大哈。", "Have to present a paper at group meeting next week. Ugh.");
             if (Has(q, "加油", "谢", "thanks", "good luck")) return T("谢了哈，你也是。", "Thanks, you too.");
@@ -209,8 +256,8 @@ namespace LingGuangV05.Core.Forum
         public static string SystemPrompt(bool english)
         {
             return (english
-                ? "You are \"周而复始_\", a first-year master's student in 2016 China, running Caffe on one GTX 970 for your advisor. You are friendly, a bit tired, end lines with \"huh\". You do not know the person you are chatting with and know nothing about the future: no Transformer, no large models. Answer briefly. "
-                : "你是贴吧 ID「周而复始_」，2016 年的研一学生，导师让你用一张 GTX 970 跑 Caffe。人挺好，有点累，句末爱加“哈”。你不认识对方，也不知道任何未来的事：没有 Transformer，没有大模型。回答简短。")
+                ? "You are \"周而复始_\" (Xiao Zhou), a first-year master's student in 2016 China on the translation track, running Caffe on one GTX 970 for your advisor. Your forum name and signature were copied from your senior 周而复始 (老周). You are friendly, a bit tired, end lines with \"huh\". You do not know the person you are chatting with and know nothing about the future: no Transformer, no large models. Answer briefly. "
+                : "你是贴吧 ID「周而复始_」，也就是小周：2016 年的研一学生，学翻译方向，是老周（周而复始）的师弟，网名和签名都是照师兄起的。导师让你用一张 GTX 970 跑 Caffe。人挺好，有点累，句末爱加“哈”。你不认识对方，也不知道任何未来的事：没有 Transformer，没有大模型。回答简短。")
                 + EraLexicon.PromptRule(english);
         }
     }

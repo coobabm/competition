@@ -172,7 +172,8 @@ namespace LingGuangV05.CaseMenu
             eyebrow.characterSpacing = 5f;
             var title = Label("Title", chrome, LingGuangV05.Core.AppNames.GameZh, 66, Ink);
             Place(title.rectTransform, new Vector2(0, 1), new Vector2(64, -98), new Vector2(610, 124));
-            title.overflowMode = TextOverflowModes.Ellipsis;
+            // A fixed title is never cut to "…": auto-sizing keeps it inside its box (CaseMenuHudTests).
+            title.overflowMode = TextOverflowModes.Overflow;
             title.enableAutoSizing = true; title.fontSizeMin = 42; title.fontSizeMax = 66;
             title.characterSpacing = 2f;
             var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);

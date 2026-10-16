@@ -14,6 +14,7 @@ namespace LingGuangV05.Desktop.Casino
         int shownBlackjackRevision = -1, shownPlayers, shownDealer;
         bool shownHoleHidden;
         TMP_Text dealerScore, playerScore;
+        static readonly string[] SuitIconIds = { "suit_spade", "suit_heart", "suit_club", "suit_diamond" }; // same order as 黑桃/红桃/梅花/方片
         static readonly Vector2 ShoePosition = new Vector2(682, -109);
         void AddBlackjackButtons(RectTransform slip)
         {
@@ -22,7 +23,7 @@ namespace LingGuangV05.Desktop.Casino
             for (int i = 0; i < actions.Length; i++)
             {
                 string action = actions[i];
-                var b = Button("Blackjack " + action, slip, 18 + i * 101, 170, 96, 40, labels[i], () =>
+                var b = Button("Blackjack " + action, slip, 18 + i * 101, 178, 96, 38, labels[i], () =>
                 {
                     if (controller == null || !ReferenceEquals(controller.Sim, bound) || PresentationBusy) return;
                     int before = bound.Casino.rounds;
@@ -95,7 +96,9 @@ namespace LingGuangV05.Desktop.Casino
                 string rank = Face("dragon", BlackjackRules.Rank(cards[i]));
                 string[] suit = { Lang.T("黑桃"), Lang.T("红桃"), Lang.T("梅花"), Lang.T("方片") };
                 Color ink = cards[i] / 13 == 1 || cards[i] / 13 == 3 ? Burgundy : Background;
-                Label("Card Value", front, 1, 2, 48, 70, "<size=12>" + suit[cards[i] / 13] + "</size>\n" + rank, 28, ink, TextAlignmentOptions.Center);
+                // The suit is a drawn icon (Icons/casino/suit_*) above the rank; the first text line keeps its height as a blank.
+                var suitIcon = LingGuangV05.Desktop.XingGuang.XgIcons.Place(front, "casino", SuitIconIds[cards[i] / 13], 25, 20, 16);
+                Label("Card Value", front, 1, 2, 48, 70, "<size=12>" + (suitIcon != null ? "\u00A0" : suit[cards[i] / 13]) + "</size>\n" + rank, 28, ink, TextAlignmentOptions.Center);
                 Label(!player && i == 1 ? "Hidden Dealer Card" : "Card Back Value", back, 1, 2, 48, 70, "888", 20, Gold, TextAlignmentOptions.Center);
                 var motion = CardMotion(rt, front, back);
                 float scale = motion.Reduced ? .4f : 1;

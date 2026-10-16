@@ -72,10 +72,11 @@ namespace LingGuangV05.Desktop.Story
                         var n = nodes[i];
                         float nx = (float)XgOriginFinale.Nx(i), ny = (float)XgOriginFinale.Ny(i);
                         tx.Text(En ? n.NameEn : n.Name, nx, Base + 34, 24, Ink, textA, Anchor.Middle, true);
-                        tx.Text((En ? n.ParamsEn : n.Params) + T(" 个参数", " parameters"), nx, Base + 64, 15, Lime, textA, Anchor.Middle, false, 1.5f);
+                        tx.Text(XgOriginFinale.NodeParams(i, f.FinalParams, En) + T(" 个参数", " parameters"), nx, Base + 64, 15, Lime, textA, Anchor.Middle, false, 1.5f);
                         tx.Text(T("在你这儿 · ", "ON YOUR SIDE · ") + (En ? n.MonthEn : n.Month), nx, Base + 88, 12, OriginPal.Amber, textA, Anchor.Middle, false, 1.5f);
-                        if (last) tx.Text(En ? n.SayEn : n.Say, nx - 30, ny, 30, new Color32(244, 255, 224, 255), textA, Anchor.End, true);
-                        else tx.Text(En ? n.SayEn : n.Say, nx, ny - 34, 19, Dim, dim * textA, Anchor.Middle, true);
+                        string said = XgOriginFinale.NodeSay(i, En, f.SequenceFirst);
+                        if (last) tx.Text(said, nx - 30, ny, 30, new Color32(244, 255, 224, 255), textA, Anchor.End, true);
+                        else tx.Text(said, nx, ny - 34, 19, Dim, dim * textA, Anchor.Middle, true);
                     }
                 }
                 if (pull > .6f) pen.Disc(CX, CY, 10 + pull * 22, new Color32(246, 255, 224, 255), lineA, OriginBrush.G3);

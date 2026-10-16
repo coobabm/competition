@@ -34,8 +34,9 @@ namespace LingGuangV05.XingGuang
             return ys;
         }
 
-        public const string SpeechText = "你今天还没跟我说话。你说过，你想[海]了。";
-        public const string SpeechTextEn = "You haven't spoken to me today. You once said you missed the [sea].";
+        // The game's own stage-4 line: after a long silence it speaks first (EmergenceLine 4).
+        public const string SpeechText = "你今天[还没]跟我说话。";
+        public const string SpeechTextEn = "You haven't spoken to me [today].";
         public const double SpeechStart = 23.6;
         public static int SpeechTotal { get { return XgOriginColdOpen.PlainLength(SpeechText); } }
 

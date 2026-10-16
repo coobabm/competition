@@ -192,15 +192,15 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AutofillNeedsStageThreeAndANinetyFivePercentDigitsCheckpoint()
+        public void AutofillNeedsStageFourAndANinetyFivePercentDigitsCheckpoint()
         {
             var sim = Ready(); var host = new Host(); sim.S.unlocked.Add("label.coop");
             var node = XgCatalog.Node(XgSim.CaptchaAutofillNode);
             Assert.IsNotNull(node);
-            sim.S.stage = 2; sim.S.best.Find(b => b.dataset == "mnist").acc = .99;
+            sim.S.stage = 3; sim.S.best.Find(b => b.dataset == "mnist").acc = .99;
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.StatusLabelNode(node, host));
             StringAssert.Contains("95%", sim.WhyLabelNode(node, host));
-            sim.S.stage = 3; sim.S.best.Find(b => b.dataset == "mnist").acc = .94;
+            sim.S.stage = 4; sim.S.best.Find(b => b.dataset == "mnist").acc = .94;
             Assert.AreEqual(XgSim.NodeStatus.Locked, sim.StatusLabelNode(node, host));
             sim.S.best.Find(b => b.dataset == "mnist").acc = .95;
             Assert.AreEqual(XgSim.NodeStatus.Buyable, sim.StatusLabelNode(node, host));

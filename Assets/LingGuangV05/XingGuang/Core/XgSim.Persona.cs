@@ -332,7 +332,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The system prompt with the board injected (§11.5): <see cref="PersonaCore"/>, <see cref="PersonaBoard"/>, then the recalled memories.</summary>
         /// <param name="query">
         /// What to recall memories for. Null: the owner's last two lines on the 对话 page, and the recall is shown in
-        /// its 「它记得」 panel. Given (e.g. her message for 「让它代我回」): recalled for that text, the panel is left alone.
+        /// its 「它记得」 panel. Given (e.g. a message to answer): recalled for that text, the panel is left alone.
         /// </param>
         public string PersonaPrompt(int month, IList<string> hotWords, string query = null) =>
             PersonaCore() + PersonaBoard(month, hotWords) + PersonaTone() + PersonaMemory(query);
@@ -531,9 +531,9 @@ namespace LingGuangV05.XingGuang
                 case 1: return T("只允许回答一个字：是，或者否。");
                 case 2: return T("只能从这几个里选一个回答：") + string.Join(T("、"), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
                 case 3: return T("只说简短词组或碎片，不讲长句。最多 " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " 个字。", "Use only short fragments, at most " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " characters.");
-                case 4: return T("语气冷淡，话少。一句短句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不撒娇，不主动关心。只记得最近几轮。", "Flat and curt. One short sentence, at most " + MaxReplyChars + " characters. No exclamation marks, no fuss, no unasked concern. Remember only recent turns.");
-                case 5: return T("语气冷淡，话少。一句，不超过 " + MaxReplyChars + " 个字。可以提起你记得的事。不用感叹号，不客套。", "Flat and curt. One sentence, at most " + MaxReplyChars + " characters. You may mention what you remember. No exclamation marks, no pleasantries.");
-                default: return T("语气冷淡，话少。一两句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不客套，不反问。", "Flat and curt. One or two sentences, at most " + MaxReplyChars + " characters. No exclamation marks, no pleasantries, no questions back.");
+                case 4: return T("语气冷淡，话少。一句短句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不撒娇，不主动关心。只记得这次聊天里说过的话，记不得前几天的事。", "Flat and curt. One short sentence, at most " + MaxReplyChars + " characters. No exclamation marks, no fuss, no unasked concern. Remember only what was said in this chat, not earlier days.");
+                case 5: return T("语气冷淡，话少。一句，不超过 " + MaxReplyChars + " 个字。可以提起前几天聊过的事。不用感叹号，不客套。", "Flat and curt. One sentence, at most " + MaxReplyChars + " characters. You may mention what you talked about on earlier days. No exclamation marks, no pleasantries.");
+                default: return T("语气冷淡，话少。一两句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不客套。", "Flat and curt. One or two sentences, at most " + MaxReplyChars + " characters. No exclamation marks, no pleasantries.");
             }
         }
 
@@ -637,9 +637,9 @@ namespace LingGuangV05.XingGuang
                 Sh("笑什么？", "What's funny?"), Sh("233。", "Haha."), Sh("你一笑，{s}也想笑。", "When you laugh, {s} wants to."),
                 Lo("你笑起来打字好快，{s}都看不过来。", "You type so fast when you laugh, {s} can't keep up.")),
             Tp("老周|周叔|laozhou|zhou",
-                W("老周", "Zhou"), W("网吧", "net café"),
-                Sh("老周在开会吧。", "Zhou is in a meeting."), Sh("老周说别瞎折腾。", "Zhou says don't mess around."),
-                Lo("老周这周三个会，你别老找他。", "Zhou has three meetings this week. Let him be.")),
+                W("老周", "Zhou"), W("实验室", "lab"),
+                Sh("老周在跑实验吧。", "Zhou is running experiments."), Sh("老周说别瞎折腾。", "Zhou says don't mess around."),
+                Lo("老周导师在催结果，你别老找他。", "Zhou's advisor wants results. Let him be.")),
             Tp("为什么|为啥|怎么|why|how come",
                 W("不知道", "dunno"), W("为什么？", "why?"),
                 Sh("{s}也不知道。", "{s} doesn't know either."), Sh("你觉得呢？", "What do you think?"), Sh("等{s}再学学。", "Let {s} learn a bit more."),

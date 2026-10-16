@@ -39,8 +39,8 @@ namespace LingGuangV05.Core
         /// <summary>The rule itself: quiet during the prologue and until the second ability, never in test mode.</summary>
         public static bool Rule(bool testMode, bool inPrologue, int abilities) => !testMode && (inPrologue || abilities < EndsWithAbility);
 
-        /// <summary>A story moment always passes; ambient chatter only outside the window.</summary>
-        public static bool Allows(bool story) => Allows(story, Active);
+        /// <summary>A story moment always passes; ambient chatter only outside the window and while no story moment plays (<see cref="StoryFocus"/>).</summary>
+        public static bool Allows(bool story) => Allows(story, Active || StoryFocus.Active);
         public static bool Allows(bool story, bool quiet) => story || !quiet;
 
         /// <summary>

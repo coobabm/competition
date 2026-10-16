@@ -53,15 +53,15 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgMonologueLine[] Lines =
         {
-            L(Night, "night.work", "{time} 了，明天还要上班。", "{time} already. Work tomorrow."),
+            L(Night, "night.work", "{time} 了，明天还得改简历。", "{time} already. Tomorrow I still have to fix my résumé."),
             L(Night, "night.ten", "{time}。再标十个就睡。……上次也是这么说的。", "{time}. Ten more and then bed. … I said that last time too."),
             L(Night, "night.bbq", "楼下烧烤摊都收了，我还在这儿点对、点错。", "Even the barbecue stall downstairs has packed up, and I'm still clicking Yes and No."),
             L(Night, "night.window", "这个点，整栋楼就我这扇窗还亮着吧。", "At this hour mine must be the only lit window in the building."),
 
             L(Money, "money.short", "电费单快来了，这点钱不够。", "The power bill is coming, and this won't cover it."),
             L(Money, "money.gap", "¥{money}……还差 ¥{gap} 才够交电费。", "¥{money}… still ¥{gap} short of the power bill."),
-            L(Money, "money.rate", "一题几毛钱，电费一度五毛二。", "A few mao a card, and power costs 0.52 a unit."),
-            L(Money, "money.gpu", "标一晚上，刚够显卡自己的电费。", "A whole night of labelling barely pays for the GPU's own electricity."),
+            L(Money, "money.rate", "一题才一两块，电费一度五毛二。", "A yuan or two a card, and power costs 0.52 a unit."),
+            L(Money, "money.gpu", "标了这么久，刚够显卡自己的电费。", "All this labelling barely pays for the GPU's own electricity."),
             L(Money, "money.cut", "停电了还得接着标，标的钱先抵电费。", "The power is off and I still have to label; the money goes to the bill first.", unpaid: true),
 
             L(Streak, "streak.fast", "连着对了 {streak} 个，手比脑子快了。", "{streak} right in a row. My hand is faster than my head now."),
@@ -72,7 +72,7 @@ namespace LingGuangV05.XingGuang
             L(Fatigue, "fatigue.count", "这已经是第 {n} {noun}了。", "That's {n} {noun} now."),
             L(Fatigue, "fatigue.button", "鼠标左键快被我按出包浆了。", "The left mouse button is getting a polish from all this clicking."),
             L(Fatigue, "fatigue.blur", "眼睛有点花。是、否、是、否……", "My eyes are swimming. Yes, no, yes, no…"),
-            L(Fatigue, "fatigue.total", "标了 {total} 条了，一条才几毛。", "{total} cards so far, a few mao each."),
+            L(Fatigue, "fatigue.total", "标了 {total} 条了，一条才一两块。", "{total} cards so far, a yuan or two each."),
             L(Fatigue, "fatigue.hand", "要是能多长一只手就好了。", "If only I had a third hand."),
             L(Fatigue, "fatigue.sevens", "闭上眼全是 7。", "I close my eyes and see sevens.", desk: "mnist"),
         };

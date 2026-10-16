@@ -438,12 +438,12 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void TheWeekendQuestionComesOnlyOnceStandInExistsEvenWhenSheIsCold()
+        public void TheWeekendQuestionComesOnlyFromStageFiveEvenWhenSheIsCold()
         {
             var s = Fresh(10, 10, 20);
             var now = At(10, 20, 20, 0, 0);
             Assert.AreNotEqual("weekendAsk", GirlfriendRules.DueLife(s, now)?.key, "not before stage 5");
-            GirlfriendRules.Mark(s, GirlfriendRules.FlagStandInOffered);
+            GirlfriendRules.Mark(s, GirlfriendRules.FlagWeekendOpen);
             foreach (var l in GirlfriendRules.Life) if (l.key != "weekendAsk") s.done.Add("life:" + l.key);
             Assert.AreEqual("weekendAsk", GirlfriendRules.DueLife(s, now)?.key);
             s.awaitingReply = true;
@@ -489,39 +489,28 @@ namespace LingGuangV05.Tests
             Assert.That(soldOut, Is.InRange(3, 25));
         }
 
-        // ───────────── AI stand-in ─────────────
+        // ───────────── the retired 「让 AI 代我回」 in old saves ─────────────
 
         [Test]
-        public void CaughtThenDenyTwiceCostsTwenty()
+        public void OldSavesLoseTheRetiredStandInStateButKeepEverythingElse()
         {
-            var s = Fresh(80);
-            Talking(s, At(10, 10, 2, 0, 10));
-            var events = GirlfriendRules.Caught(s, At(10, 10, 2, 0, 10));
-            Assert.IsTrue(events.Exists(e => e.kind == GfEventKind.Voice && e.key == "first.caught"));
-            Assert.IsTrue(events.Exists(e => e.kind == GfEventKind.Choices));
-            GirlfriendRules.OnPlayerLine(s, At(10, 10, 2, 1, 20), "就是我啊");
-            Assert.AreEqual(70, s.affection);
-            Talking(s, At(10, 11, 2, 0, 30));
-            GirlfriendRules.Caught(s, At(10, 11, 2, 0, 30));
-            GirlfriendRules.OnPlayerLine(s, At(10, 11, 2, 1, 40), "就是我啊");
-            Assert.AreEqual(50, s.affection);
-            var admit = Fresh(80);
-            Talking(admit, At(10, 10, 2, 0, 10));
-            GirlfriendRules.Caught(admit, At(10, 10, 2, 0, 10));
-            GirlfriendRules.OnPlayerLine(admit, At(10, 10, 2, 1, 20), "刚才走神了，对不起");
-            Assert.AreEqual(75, admit.affection, "admitting he was distracted costs five");
-            Assert.IsFalse(GirlfriendRules.Has(admit, GirlfriendRules.FlagKnowsAi), "and still tells her nothing about the application");
+            var s = Fresh(70);
+            foreach (var flag in new[] { "caughtAi", "deniedAi", "aiRefused", "standIn" }) GirlfriendRules.Mark(s, flag);
+            GirlfriendRules.Mark(s, GirlfriendRules.FlagShook);
+            s.asking = "caught";
+            GirlfriendRules.Repair(s);
+            foreach (var flag in new[] { "caughtAi", "deniedAi", "aiRefused", "standIn" }) Assert.IsFalse(GirlfriendRules.Has(s, flag), flag);
+            Assert.IsTrue(GirlfriendRules.Has(s, GirlfriendRules.FlagShook));
+            Assert.AreEqual("", s.asking, "no unanswered 「这不是你吧？」 hangs over an old save");
         }
 
         [Test]
-        public void DetectionChanceRisesWithStyleAndHolidays()
+        public void ASaveWrittenWithTheRetiredFieldsStillLoads()
         {
-            var s = Fresh();
-            double plain = GirlfriendRules.DetectChance(s, At(10, 10, 2, 0, 0), 0);
-            Assert.AreEqual(.06, plain, 1e-9);
-            double far = GirlfriendRules.DetectChance(s, At(10, 10, 2, 0, 0), GirlfriendRules.StyleDistance(new[] { "在吗", "哈哈" }, "您好，我理解您的感受。今天的学习安排如何？"));
-            Assert.Greater(far, plain);
-            Assert.AreEqual(plain * 3, GirlfriendRules.DetectChance(s, At(9, 27, 2, 0, 0), 0), 1e-9);
+            var s = UnityEngine.JsonUtility.FromJson<GirlfriendState>("{\"affection\":71,\"aiAuto\":true,\"aiReplies\":4,\"aiCaught\":2,\"asking\":\"caught\"}");
+            Assert.AreEqual(71, s.affection);
+            GirlfriendRules.Repair(s);
+            Assert.AreEqual("", s.asking);
         }
 
         // ───────────── prompt and parsing ─────────────

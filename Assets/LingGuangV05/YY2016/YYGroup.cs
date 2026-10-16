@@ -18,11 +18,16 @@ namespace LingGuangV05.Desktop.YY
 
         public static readonly (string name, string nameEn, string who)[] Members =
         {
-            ("阿杰", "A-Jie", "二十出头，网管出身，懂显卡和超频，爱吹牛，抽卡手黑，Steam 库里一堆没玩的游戏"),
+            ("阿杰", "A-Jie", "二十出头，在星空网吧当网管（网吧老板是他表舅），懂显卡和超频，爱吹牛，抽卡手黑，Steam 库里一堆没玩的游戏"),
             ("大伟", "Da Wei", "三十岁程序员，天天加班，骑士球迷，爱看电影，爱抱怨"),
             ("小刚", "Xiao Gang", "刚上班的小年轻，英雄联盟、文明玩家，嘴贫，看球熬夜"),
-            ("莉莉", "Lili", "今年 6 月刚毕业，爱在群里分享自己的生活，出去玩一定发照片，说话爱用～和哈哈哈"),
+            ("莉莉", "Lili", "阿杰的表妹，今年 6 月刚毕业，6 月被阿杰拉进群，爱在群里分享自己的生活，出去玩一定发照片，说话爱用～和哈哈哈"),
         };
+
+        /// <summary>The day 阿杰 pulls his cousin 莉莉 into the group (era_events.json lili_join); before it she does not speak.</summary>
+        public static readonly DateTime LiliJoins = new DateTime(2016, 6, 17);
+
+        static bool IsLili(string line) => line.StartsWith("[莉莉]", StringComparison.Ordinal) || line.StartsWith("[Lili]", StringComparison.Ordinal);
 
         /// <summary>Title with the member count: 「下班屁股群（23）」.</summary>
         public static string Title(YYContact c) => GameText.T(c.name, c.nameEn) + GameText.T("（" + Size + "）", " (" + Size + ")");
@@ -46,11 +51,11 @@ namespace LingGuangV05.Desktop.YY
         {
             (new[] { "屁股", "守望", "开黑", "上号", "游戏", "lol", "撸", "overwatch" }, new[] {
                 "[阿杰] 来来来，上号，就差你了", "[A-Jie] Get on, we're one short",
-                "[小刚] 今晚我玩源氏，谁也别抢", "[Xiao Gang] I'm Genji tonight, hands off",
-                "[大伟] 等我下班，九点以后", "[Da Wei] After work. Nine-ish",
+                "[小刚] 我玩源氏，谁也别抢", "[Xiao Gang] I'm Genji, hands off",
+                "[大伟] 等我下班再说", "[Da Wei] After work. Wait for me",
                 "[阿杰] 昨晚连跪五把，今天我要洗刷耻辱", "[A-Jie] Lost five straight last night. Revenge today" }),
             (new[] { "加班", "上班", "老板", "领导", "累", "困", "work", "boss", "tired" }, new[] {
-                "[大伟] 别提了，我今天又要加到十点", "[Da Wei] Don't. Here till ten again",
+                "[大伟] 别提了，我今天又要加班到很晚", "[Da Wei] Don't. Working late again",
                 "[小刚] 困得睁不开眼", "[Xiao Gang] Feeling hollowed out",
                 "[莉莉] 你们上班的好惨，我先去躺会儿", "[Lili] You working people have it rough. I'm going for a nap",
                 "[大伟] 我们老板又说要拥抱互联网+", "[Da Wei] My boss says we must embrace Internet Plus again" }),
@@ -68,7 +73,7 @@ namespace LingGuangV05.Desktop.YY
                 "[阿杰] 这方面我也不懂，先看看新闻吧", "[A-Jie] I do not know much about that. I just follow the news.",
                 "[莉莉] 听不懂，但感觉很厉害的样子", "[Lili] No idea what that means, but it sounds impressive" }),
             (new[] { "球", "奥运", "欧洲杯", "nba", "女排", "比赛", "football", "olympic" }, new[] {
-                "[小刚] 今晚熬夜看球的扣 1", "[Xiao Gang] Type 1 if you're staying up for the match",
+                "[小刚] 熬夜看球的扣 1", "[Xiao Gang] Type 1 if you're staying up for the match",
                 "[大伟] 几点开始？我定个闹钟", "[Da Wei] What time? I'll set an alarm",
                 "[莉莉] 我只看帅哥，比分你们告诉我", "[Lili] I only watch for the cute ones. Tell me the score" }),
             (new[] { "在吗", "有人", "人呢", "hello", "嗨" }, new[] {
@@ -85,6 +90,34 @@ namespace LingGuangV05.Desktop.YY
                 "[小刚] 我就静静地看着你们", "[Xiao Gang] I'll just quietly watch you all",
                 "[大伟] 这个可以有", "[Da Wei] Now that I can get behind" }),
         };
+
+        /// <summary>
+        /// What the others say when the player's line is about his work, his rent or how he is doing, by how far the year
+        /// has got (June teasing with a grudging nod, July–September plain respect, October–December they look up to him).
+        /// The group knows him as a fresh graduate with no job who keeps getting work done on 摆渡众包; it never knows about 灵光.
+        /// </summary>
+        static readonly string[] RegardKeys = { "摆渡", "众包", "接单", "标注", "标图", "找工作", "简历", "房租", "忙啥", "忙什么", "最近怎么样", "最近咋样", "混得", "你怎么样", "厉害", "牛" };
+
+        static readonly string[][] Regard =
+        {
+            new[] {
+                "[阿杰] 标图那个？一张几毛，积少成多，总比天天打游戏强", "[A-Jie] The labelling thing? A few cents a card adds up. Beats gaming all day",
+                "[小刚] 自由职业者，我们羡慕不来", "[Xiao Gang] A freelancer. We can't keep up",
+                "[大伟] 在家自己挣钱也算本事，别睡太晚", "[Da Wei] Earning at home is a skill too. Don't stay up too late",
+                "[莉莉] 阿杰说你每天都在标，好认真哦～", "[Lili] A-Jie says you're labelling every day. So dedicated～" },
+            new[] {
+                "[阿杰] 说真的，你现在比我们都忙，而且忙的全是正事", "[A-Jie] Seriously, you're busier than all of us now, and it's all real work",
+                "[小刚] 你标得又快又准，回头也教教我呗", "[Xiao Gang] You label fast and accurately. Teach me some time",
+                "[大伟] 你这状态，比我们公司那些混日子的强多了", "[Da Wei] Compared with the clock-watchers at my company, you're doing great",
+                "[莉莉] 感觉你每个月都比上个月厉害一点～", "[Lili] Feels like you get a bit better every month～" },
+            new[] {
+                "[阿杰] 咱群里要评最能折腾的，你实至名归", "[A-Jie] If this group voted for the most resourceful, it'd be you, no contest",
+                "[小刚] 有事问你准没错，群里最靠谱的就是你", "[Xiao Gang] Ask you and you're never wrong. The most reliable one in this group",
+                "[大伟] 你这大半年，我看在眼里，真不容易", "[Da Wei] I've watched you these months. It hasn't been easy",
+                "[莉莉] 我现在遇到事，第一个想到的就是问你～", "[Lili] When I hit a problem these days, you're the first person I think to ask～" },
+        };
+
+        static int RegardTier(DateTime? today) => !today.HasValue || today.Value.Month <= 6 ? 0 : today.Value.Month <= 9 ? 1 : 2;
 
         // A human contact has no access to the owner's private application. Keep this
         // check narrow so ordinary discussion of public AI news or annotation jobs survives.
@@ -129,11 +162,13 @@ namespace LingGuangV05.Desktop.YY
         }
 
         /// <summary>A preset group line for <paramref name="last"/> (the player's line), not one said in the last few group lines.</summary>
-        public static string Fallback(string last, YYConversation conv, Random rng)
+        public static string Fallback(string last, YYConversation conv, Random rng, DateTime? today = null)
         {
+            bool lili = !today.HasValue || today.Value.Date >= LiliJoins;
             string q = (last ?? "").ToLowerInvariant();
             var bucket = Pool[Pool.Length - 1];
-            foreach (var b in Pool) if (Array.Exists(b.keys, k => q.Contains(k))) { bucket = b; break; }
+            if (Array.Exists(RegardKeys, k => q.Contains(k))) bucket = (new string[0], Regard[RegardTier(today)]);
+            else foreach (var b in Pool) if (Array.Exists(b.keys, k => q.Contains(k))) { bucket = b; break; }
             var recent = new HashSet<string>();
             if (conv != null) for (int i = conv.messages.Count - 1, seen = 0; i >= 0 && seen < 6; i--, seen++) recent.Add(conv.messages[i].text);
             int pairs = bucket.lines.Length / 2, start = rng.Next(pairs);
@@ -141,10 +176,12 @@ namespace LingGuangV05.Desktop.YY
             for (int i = 0; i < pairs; i++)
             {
                 int j = (start + i) % pairs;
-                pick = GameText.T(bucket.lines[j * 2], bucket.lines[j * 2 + 1]);
+                string candidate = GameText.T(bucket.lines[j * 2], bucket.lines[j * 2 + 1]);
+                if (!lili && IsLili(candidate)) continue;
+                pick = candidate;
                 if (!recent.Contains(pick)) break;
             }
-            return pick;
+            return pick ?? GameText.T("[阿杰] 233333", "[A-Jie] 233333");
         }
     }
 }

@@ -28,9 +28,10 @@ namespace LingGuangV05.Desktop.Story
     ///   8.0  「我的电脑」 is deleted letter by letter and retyped as the AI's name; the avatar becomes the 8×8 「0」.
     ///  10.0  The signature types 「是。否。……」.
     ///  11.5  The chat opens on the AI, 「对方正在输入…」 for about 3 s.
-    ///  14.0  Its first message is the player's favourite opening line (normally 「在吗」), then 「……是。」. It only
-    ///        copies the opener; 「……是。」 is all it can say of its own yet.
-    ///        Inner voice 「……它跟谁学的这个。」「哦，跟我。」
+    ///  14.0  Its first messages are 「……」 and then 「是。」: at this stage it can only say 是 / 否 / 「……」 (the speech ladder:
+    ///        its first word comes with ability 3, its first sentence with ability 4). It is answering the player's
+    ///        favourite opening line (normally 「在吗」), which the inner voice then points out.
+    ///        Inner voice 「……它在答什么？」「哦。我开口最多的，就是「在吗」。」
     /// Afterwards the AI is the ordinary YY contact (<see cref="YYChatHub.LingGuangId"/>). The save flag
     /// (YYState.lingguangUnlocked) is set when the chat opens, so a save that already has it never replays this, and a
     /// game quit before that point plays it again. A skip, a time limit, OnDisable (also before a script reload) all
@@ -88,7 +89,7 @@ namespace LingGuangV05.Desktop.Story
         float unblockAt;
         /// <summary>Kept through a script reload (serialized) so OnEnable can give the mouse back.</summary>
         [SerializeField, HideInInspector] bool holdingInput;
-        /// <summary>How much of the end state is already in the chat: 1 the rename line, 2 the opener, 3 「……是。」.</summary>
+        /// <summary>How much of the end state is already in the chat: 1 the rename line, 2 「……」, 3 「是。」.</summary>
         int delivered;
         string opener, aiName;
         RectTransform popup, strip, danmaku;
@@ -309,8 +310,9 @@ namespace LingGuangV05.Desktop.Story
             yield return PrologueDesk.Wait(.8f);
             Deliver(3);
             Play(XgJuice.Sfx.Id.Ding, .4f);
-            InnerVoice.Say("……它跟谁学的这个。", "…where did it learn that?", 1.4f);
-            InnerVoice.Say("哦，跟我。", "Oh. From me.", 2.2f);
+            string said = string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener;
+            InnerVoice.Say("……它在答什么？", "…what is it answering?", 1.4f);
+            InnerVoice.Say("哦。我开口最多的，就是「" + said + "」。", "Oh. What I say first, most often, is \"" + said + "\".", 2.4f);
             yield return PrologueDesk.Wait(1.2f);
             timeline = null;
             Finish(false, false);
@@ -391,8 +393,9 @@ namespace LingGuangV05.Desktop.Story
             if (hub == null || !ReferenceEquals(hub.S, state)) return;
             if (delivered < 1) Unlock();
             // The playing scene already shows these bubbles and dings. Quiet fallback still needs normal notifications.
-            if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, string.IsNullOrEmpty(opener) ? ChatHistoryStats.DefaultOpener(GameText.IsEnglish) : opener, !Playing); }
-            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, Lang.T("……是。"), !Playing); }
+            // Stage 1 speaks only 是 / 否 / 「……」: nothing else may come out of it here, not even the player's own opener.
+            if (delivered < 2 && upTo >= 2) { delivered = 2; hub.Receive(YYChatHub.LingGuangId, "……", !Playing); }
+            if (delivered < 3 && upTo >= 3) { delivered = 3; hub.Receive(YYChatHub.LingGuangId, T("是。", "Yes."), !Playing); }
         }
 
         // ───────────── focus ─────────────

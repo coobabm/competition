@@ -69,11 +69,11 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void BigPacksDownloadOverTime()
         {
-            // Real 2016 sizes on 4M ADSL: text arrives at once, pictures take a while, ImageNet's batch of 120k images a few minutes.
+            // Real 2016 sizes on the starting 20M ADSL: text arrives at once, pictures take a while, ImageNet's batch of 120k images about half a minute.
             Assert.AreEqual(0, XgSim.DataOfferDef("spam.pack").downloadSec);
-            Assert.That(XgSim.DataOfferDef("news.pack").downloadSec, Is.GreaterThan(0));
-            Assert.That(XgSim.DataOfferDef("imagenet.pack").downloadSec, Is.InRange(120, 300));
-            Assert.That(XgSim.DataOfferDef("mnist.junk").downloadSec, Is.GreaterThan(0), "120k scanned digits come down through 迅雷");
+            Assert.That(XgSim.DataOfferDef("news.pack").downloadSec, Is.LessThan(5), "a batch of the news corpus is a few seconds at most");
+            Assert.That(XgSim.DataOfferDef("imagenet.pack").downloadSec, Is.InRange(20, 60));
+            Assert.That(XgSim.DataOfferDef("cifar.junk").downloadSec, Is.GreaterThan(0), "100k captcha photos come down through 迅雷");
         }
 
         // ───── shop API ─────
@@ -119,41 +119,41 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AJunkPackDownloadsThenAddsSamplesAndNoise()
         {
-            var sim = AtStage(2, "mlp"); var host = new Host();
+            var sim = AtStage(3, "mlp", "lenet"); var host = new Host();
             XgDataOffer bought = null; sim.DataOfferBought += o => bought = o;
-            double price = sim.Offer("mnist.junk").price;
-            Assert.AreEqual(Math.Round(XgSim.DataOfferDef("mnist.pack").price * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
-            Assert.IsTrue(sim.BuyDataOffer("mnist.junk", host));
+            double price = sim.Offer("cifar.junk").price;
+            Assert.AreEqual(Math.Round(XgSim.DataOfferDef("cifar.pack").price * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
+            Assert.IsTrue(sim.BuyDataOffer("cifar.junk", host));
             Assert.IsNotNull(bought);
             Assert.AreEqual(100000 - price, host.money, 1e-9);
-            var o = sim.Offer("mnist.junk");
+            var o = sim.Offer("cifar.junk");
             Assert.IsTrue(o.owned && o.downloading);
             Assert.AreEqual(0, o.downloadProgress, 1e-9);
-            Assert.AreEqual(0, sim.PackSamples("mnist"), "nothing until it is down");
-            Assert.IsFalse(sim.OwnsExtraPack("mnist"));
+            Assert.AreEqual(0, sim.PackSamples("cifar"), "nothing until it is down");
+            Assert.IsFalse(sim.OwnsExtraPack("cifar"));
             sim.Tick(o.downloadSec / 2, host);
-            Assert.AreEqual(.5, sim.Offer("mnist.junk").downloadProgress, .05);
+            Assert.AreEqual(.5, sim.Offer("cifar.junk").downloadProgress, .05);
             sim.Tick(o.downloadSec, host);
-            Assert.IsFalse(sim.Offer("mnist.junk").downloading);
-            Assert.AreEqual(120000, sim.PackSamples("mnist"));
-            Assert.IsTrue(sim.Owns("mnist") && sim.DatasetAvailable("mnist"));
-            Assert.AreEqual(120000 * .3, sim.DataNoise("mnist"), 1e-6);
-            Assert.AreEqual(.3, sim.NoiseRatio("mnist"), 1e-3);
-            Assert.IsFalse(sim.S.owned.Contains("mnist"), "the public pack is a separate purchase");
-            Assert.IsFalse(sim.BuyDataOffer("mnist.junk", host));
+            Assert.IsFalse(sim.Offer("cifar.junk").downloading);
+            Assert.AreEqual(100000, sim.PackSamples("cifar"));
+            Assert.IsTrue(sim.Owns("cifar") && sim.DatasetAvailable("cifar"));
+            Assert.AreEqual(100000 * .25, sim.DataNoise("cifar"), 1e-6);
+            Assert.AreEqual(.25, sim.NoiseRatio("cifar"), 1e-3);
+            Assert.IsFalse(sim.S.owned.Contains("cifar"), "the public pack is a separate purchase");
+            Assert.IsFalse(sim.BuyDataOffer("cifar.junk", host));
         }
 
         [Test]
         public void SuperMembershipFinishesAJunkDownload()
         {
-            var sim = AtStage(2, "mlp"); var host = new Host();
-            sim.BuyDataOffer("mnist.junk", host);
-            double before = host.money, cost = sim.AccelerateOfferCost("mnist.junk");
+            var sim = AtStage(3, "mlp", "lenet"); var host = new Host();
+            sim.BuyDataOffer("cifar.junk", host);
+            double before = host.money, cost = sim.AccelerateOfferCost("cifar.junk");
             Assert.That(cost, Is.GreaterThanOrEqualTo(50));
-            Assert.IsTrue(sim.AccelerateOffer("mnist.junk", host));
+            Assert.IsTrue(sim.AccelerateOffer("cifar.junk", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
-            Assert.AreEqual(120000, sim.PackSamples("mnist"));
-            Assert.IsFalse(sim.AccelerateOffer("mnist.junk", host));
+            Assert.AreEqual(100000, sim.PackSamples("cifar"));
+            Assert.IsFalse(sim.AccelerateOffer("cifar.junk", host));
         }
 
         [Test]

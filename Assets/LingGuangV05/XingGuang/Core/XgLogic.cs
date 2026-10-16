@@ -101,7 +101,7 @@ namespace LingGuangV05.XingGuang
             ("下雨", "地是湿的", "没下雨", "地不湿", "it rains", "the ground is wet", "it did not rain", "the ground is not wet"),
             ("电费欠缴", "家里停电", "电费没欠", "家里没停电", "the bill is unpaid", "the power is cut", "the bill is paid", "the power is on"),
             ("显卡过热", "训练降频", "显卡没过热", "训练没降频", "the GPU overheats", "training throttles", "the GPU is cool", "training is not throttled"),
-            ("老周发来文件", "桌面出现灵光", "老周没发文件", "桌面没出现灵光", "Zhou sends the file", "灵光 appears", "Zhou sent nothing", "灵光 is not there"),
+            ("文件拷完", "桌面出现图标", "文件没拷完", "桌面没出现图标", "the copy finishes", "the icon appears", "the copy is unfinished", "the icon is not there"),
             ("考试及格", "能拿到奖学金", "考试没及格", "拿不到奖学金", "you pass the exam", "you get the grant", "you failed", "you get no grant"),
         };
 
@@ -204,8 +204,8 @@ namespace LingGuangV05.XingGuang
             return new XgLogicQuestion
             {
                 category = "日历", categoryEn = "Calendar",
-                text = "（提示：2016 年 5 月 29 日是星期日）2016 年 " + day.Month + " 月 " + day.Day + " 日是星期" + Weekdays[asked] + "吗？",
-                textEn = "(Hint: 29 May 2016 was a Sunday.) Was " + day.ToString("d MMMM yyyy", CultureInfo.InvariantCulture) + " a " + ((DayOfWeek)asked) + "?",
+                text = "（提示：2016 年 5 月 24 日是星期二）2016 年 " + day.Month + " 月 " + day.Day + " 日是星期" + Weekdays[asked] + "吗？",
+                textEn = "(Hint: 24 May 2016 was a Tuesday.) Was " + day.ToString("d MMMM yyyy", CultureInfo.InvariantCulture) + " a " + ((DayOfWeek)asked) + "?",
                 truth = asked == real, why = "那天是星期" + Weekdays[real] + "。", whyEn = "It was a " + (DayOfWeek)real + "."
             };
         }
@@ -359,7 +359,7 @@ namespace LingGuangV05.XingGuang
         static readonly (string x, string y, string on, string off, string xEn, string yEn, string onEn, string offEn)[] Pairs =
         {
             ("1 号灯", "2 号灯", "亮着", "没亮", "lamp 1", "lamp 2", "is on", "is off"),
-            ("老周", "表姐", "在线", "不在线", "Zhou", "Cousin", "is online", "is offline"),
+            ("阿杰", "表姐", "在线", "不在线", "Jie", "Cousin", "is online", "is offline"),
             ("A 卡", "B 卡", "能用", "坏了", "card A", "card B", "works", "is broken"),
         };
 

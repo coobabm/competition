@@ -17,6 +17,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         const float TopBar = 46, ChromeHeight = 92;
         RectTransform viewport, surface;
         TMP_Text heading, speech, status, payLine;
+        Image headingIcon;
+        string headingIconId;
         XgBtn classic, raise;
         XgMiniGame game;
         XgMiniContext context;
@@ -44,6 +46,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var life = root.gameObject.AddComponent<XgMiniLife>(); life.Page = this;
             heading = ui.Text(XgUi.Strip("Title", root, 8, 30, 16, 400), "", 20, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             heading.enableAutoSizing = true; heading.fontSizeMin = 13; heading.fontSizeMax = 20; heading.overflowMode = TextOverflowModes.Ellipsis;
+            // The drawn game icon (Tools/Icons/ui_icons.py, group minigame) sits left of the title once the game is known.
+            headingIcon = XgUi.Panel(XgUi.TopLeft("GameIcon", root, 14, 8, 30, 30), Color.white);
+            headingIcon.preserveAspect = true; headingIcon.raycastTarget = false; headingIcon.gameObject.SetActive(false);
             classic = ui.Button(root, "", () => ShowClassic?.Invoke(), 15); XgUi.PlaceTopRight(classic, 150, 7, 140, 32);
             raise = ui.Button(root, "", () => BuyRaise?.Invoke(), 15); XgUi.PlaceTopRight(raise, 310, 7, 150, 32);
             viewport = XgUi.Rect("GameViewport", root, Vector2.zero, Vector2.one, new Vector2(8, 92), new Vector2(-8, -46));
@@ -159,6 +164,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (root == null || Sim == null) return;
             var def = XgMiniGames.Find(selected);
             var desk = def == null ? null : XgCatalog.Desk(def.Desk);
+            if (headingIcon != null && headingIconId != selected)
+            {
+                headingIconId = selected;
+                bool has = def != null && XgIcons.Apply(headingIcon, "minigame", def.Id);
+                headingIcon.gameObject.SetActive(has);
+                heading.rectTransform.offsetMin = new Vector2(has ? 52 : 16, heading.rectTransform.offsetMin.y);
+            }
             heading.text = def == null ? "" : XgUi.T(def.Name, def.NameEn) + (desk == null ? "" : "  <size=70%><color=#7A7F8C>" + XgUi.T(desk.name, desk.nameEn) + "</color></size>");
             classic.Set(XgUi.T("改答是非题", "Yes/No cards"), true);
             if (def != null)

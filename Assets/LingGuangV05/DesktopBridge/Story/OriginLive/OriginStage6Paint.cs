@@ -132,7 +132,7 @@ namespace LingGuangV05.Desktop.Story
                     pen.Alpha = ca;
                     pen.Box(x - 76, 790, 152, 46, Lime, fa, on ? Lime : Color.white, on ? 1 : .18f, on ? 2 : 1, on ? OriginBrush.G2 : 0);
                     pen.Alpha = 1;
-                    tx.Text(OriginLiveContext.English ? XgOriginStage6.CapsEn[i] : XgOriginStage6.Caps[i], x, 813, OriginLiveContext.English ? 17 : 22, on ? new Color32(244, 255, 224, 255) : Dim, (on ? 1 : dim) * ca, Anchor.Middle, true);
+                    tx.Text(OriginLiveContext.English ? XgOriginStage6.CapsEn[i] : XgOriginStage6.Caps[i], x, 813, OriginLiveContext.English ? 13 : 22, on ? new Color32(244, 255, 224, 255) : Dim, (on ? 1 : dim) * ca, Anchor.Middle, true);
                 }
             }
 

@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace LingGuangV05.XingGuang.Tests
 {
-    /// <summary>《灵光记》 (名著喂养与结局_设计.md §三): 回目 from what happened in this save, 8–10 回, the last by the ending.</summary>
+    /// <summary>《灵光记》 (名著喂养与结局_设计.md §三): 回目 from what happened in this save, 8–12 回, the last by the ending.</summary>
     public sealed class XgChronicleTests
     {
         sealed class Host : IXgHost
@@ -43,13 +43,15 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("八十", XgSim.ChineseNumber(80));
         }
 
-        [Test] public void ItHasEightToTenChaptersFromWhatHappened()
+        [Test] public void ItHasEightToTwelveChaptersFromWhatHappened()
         {
             var sim = Played();
             var chapters = sim.Chronicle();
             Assert.That(chapters.Count, Is.InRange(XgSim.ChronicleMin, XgSim.ChronicleMax));
             Assert.AreEqual("start", chapters[0].id);
-            StringAssert.Contains("凌晨一点四十七分", chapters[0].Title(1, false));
+            StringAssert.Contains("深夜旧电脑被劫持", chapters[0].Title(1, false));
+            StringAssert.DoesNotContain("一点四十七", chapters[0].Title(1, false), "no clock time in the title");
+            StringAssert.DoesNotContain("老周", chapters[0].body, "the intruder unpacked the exe, Lao Zhou did not send it");
             StringAssert.StartsWith("第一回　", chapters[0].Title(1, false));
             var ids = chapters.Select(c => c.id).ToList();
             CollectionAssert.Contains(ids, "laozhou.card");
@@ -61,6 +63,41 @@ namespace LingGuangV05.XingGuang.Tests
             var dated = chapters.Where(c => c.day > 0 && c.id != "end").Select(c => c.day).ToList();
             CollectionAssert.IsOrdered(dated);
             foreach (var c in chapters) Assert.IsNotEmpty(c.body, c.id);
+        }
+
+        [Test] public void LaoZhouBorrowedTheCardAndTheNoteOnlyClaimsWhatHappened()
+        {
+            var sim = Played();
+            var card = sim.Chronicle().First(c => c.id == "laozhou.card");
+            StringAssert.Contains("老周", card.left + card.body);
+            StringAssert.Contains("来借", card.body, "老周 came to borrow the player's card");
+            StringAssert.DoesNotContain("借给" + "你", card.body, "he did not lend one to the player");
+            // 阿杰 owns up only if he was fired while the click script ran.
+            sim.NoteChronicle("ajie");
+            sim.S.scTwist = 0;
+            StringAssert.DoesNotContain("按键精灵", sim.Chronicle().First(c => c.id == "ajie").body);
+            sim.S.scTwist = 2;
+            StringAssert.DoesNotContain("自己认了", sim.Chronicle().First(c => c.id == "ajie").body);
+            sim.S.scTwist = 3;
+            StringAssert.Contains("自己认了", sim.Chronicle().First(c => c.id == "ajie").body);
+            // The 批语 about the first eighty chapters belongs to the Red Chamber.
+            StringAssert.DoesNotContain("前八十回", sim.ChronicleComment("小林"));
+            var red = XgBooks.Get("hongloumeng");
+            sim.S.books.Add(new XgScore { key = "hongloumeng", count = red.chapters.Length, value = 20161101 });
+            StringAssert.Contains("前八十回", sim.ChronicleComment("小林"));
+        }
+
+        [Test] public void RentIsNotCalledMonthlyAndEverythingIsNotHalfAYear()
+        {
+            var sim = new XgSim { GoldChance = 0 };
+            sim.S.chronicleSchema = XgSim.ChronicleSchemaNow;
+            sim.NoteChronicle("laozhou.card");
+            sim.S.ending = "E3";
+            string text = sim.ChronicleText("小林");
+            StringAssert.DoesNotContain("每个月都交上", text);
+            StringAssert.DoesNotContain("半年", text);
+            StringAssert.DoesNotContain("放在你桌面上", text, "the rules are on the rules page");
+            StringAssert.Contains("底层规则", text);
         }
 
         [Test] public void ThingsThatNeverHappenedAreNotInIt()
@@ -119,6 +156,24 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.abilitiesEmerged.Add(3);
             sim.Tick(1, new Host());
             Assert.AreEqual(20160901, sim.ChronicleDay("ability.3"), "new things get their day");
+        }
+
+        [Test] public void EveryAbilityIsToldAndTheBigOnesCloseInOrder()
+        {
+            var sim = Played();
+            sim.NoteChronicle("ajie");
+            sim.Today = 20161101; sim.S.abilitiesEmerged.Add(5); sim.NoteChronicle("ability.5");
+            sim.Today = 20161224; sim.S.abilitiesEmerged.Add(6); sim.NoteChronicle("ability.6");
+            var nahan = XgBooks.Get("nahan");
+            sim.S.books.Add(new XgScore { key = "nahan", count = nahan.chapters.Length, value = 20161020 });
+            var ids = sim.Chronicle().Select(c => c.id).ToList();
+            Assert.That(ids.Count, Is.InRange(XgSim.ChronicleMin, XgSim.ChronicleMax));
+            for (int n = 2; n <= XgSim.AbilityCount; n++) CollectionAssert.Contains(ids, "ability." + n, "a year with a gap in the abilities reads wrong");
+            Assert.Less(ids.IndexOf("pretrain"), ids.IndexOf("ability.6"), "全部放开 comes out of the pre-training night");
+            string text = sim.ChronicleText("小林");
+            StringAssert.DoesNotContain("（鲁迅）》", text, "the author is not part of the title");
+            sim.S.handWrong = 0;
+            StringAssert.DoesNotContain("答错 0 张", sim.ChronicleText("小林"));
         }
     }
 }

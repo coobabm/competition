@@ -36,6 +36,7 @@ namespace LingGuangV05.Editor
         static int rounds;
         static IDisposable locale;
         static bool withFeedback;
+        static Func<bool> storyProbe;
         static string Dir => Path.Combine(Application.dataPath, "..", "Evidence", "Casino");
         static CasinoPage Page => UnityEngine.Object.FindAnyObjectByType<CasinoPage>();
         static XgSim Sim => controller.Sim;
@@ -52,10 +53,12 @@ namespace LingGuangV05.Editor
             Result = new Report(); steps.Clear(); Running = true;
             runtime.tickEnabled = false; controller.enabled = false;
             runtime.Sim.S.prologue = 2; runtime.Sim.S.appInstallState = 2; runtime.Sim.S.money = 10000;
-            Sim.S.stage = 3; Sim.S.chapterComplete = false; Sim.S.casino = new XgCasinoState(); Sim.Clock = 100;
+            Sim.S.stage = Math.Max(3, XgSim.FeatureUnlock["casino"]); Sim.S.chapterComplete = false; Sim.S.casino = new XgCasinoState(); Sim.Clock = 100;
             var p = UnityEngine.Object.FindAnyObjectByType<PrologueDirector>();
             typeof(PrologueDirector).GetMethod("StopPrologue", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(p, null);
             var sd = UnityEngine.Object.FindAnyObjectByType<StoryDirector>(); if (sd != null) sd.enabled = false;
+            // A story moment left on screen holds the advert by design (StoryFocus); this QA is about the casino, so lift it.
+            storyProbe = LingGuangV05.Core.StoryFocus.Probe; LingGuangV05.Core.StoryFocus.Probe = null;
             window.OpenWindow();
             ChapterOneQaReloadGuard.LockForPlayQa(100);
             steps.Enqueue(() => CasinoDesktop.Instance.OpenSite());
@@ -195,6 +198,7 @@ namespace LingGuangV05.Editor
         static void Finish()
         {
             Running = false; Result.completed = steps.Count == 0; EditorApplication.update -= Tick;
+            if (storyProbe != null) { LingGuangV05.Core.StoryFocus.Probe = storyProbe; storyProbe = null; }
             locale?.Dispose(); locale = null; Write(); ChapterOneQaReloadGuard.Release();
             if (Result.completed && Result.failed == 0 && withFeedback) CasinoJuicePlayQa.Begin();
         }

@@ -302,7 +302,7 @@ namespace LingGuangV05.XingGuang
                 if (h.amount <= 0) w.pulled.Remove(h.key);
                 if (host != null) RefreshWiring(host);
                 if (h.id == "lend")
-                    Say(T("老周把" + h.name + "还回来了，用湿巾擦得锃亮，还塞了包烟在机箱上。插回去了。", "老周 brought the " + h.nameEn + " back, wiped clean. It is plugged in again."));
+                    Say(T("老周把" + h.name + "还回来了，用湿巾擦得锃亮，还塞了瓶冰红茶在机箱上，压着张纸条：「你这哥们，靠谱。」插回去了。", "老周 brought the " + h.nameEn + " back, wiped clean, with a bottle of iced tea on the case and a note under it: \"You're a reliable guy.\" It is plugged in again."));
                 else if (h.id == "quiet")
                     Say(T(h.name + "插回去了。室友那屋没动静，应该睡熟了。", "The " + h.nameEn + " is plugged in again. Not a sound from the roommate."));
             }
@@ -317,7 +317,7 @@ namespace LingGuangV05.XingGuang
                 if (S.lifeClock < r.until) continue;
                 S.lifeReturns.RemoveAt(i);
                 if (r.amount > 0) host.Earn(r.amount);
-                if (r.id == "zhou") Say(T("老周把 ¥" + F(r.amount, "0") + " 转回来了，附言：谢了哥，回头请你撸串。", "老周 sent the ¥" + F(r.amount, "0") + " back: \"Thanks, man. Skewers are on me.\""));
+                if (r.id == "zhou") Say(T("老周把 ¥" + F(r.amount, "0") + " 转回来了，附言：谢了哥，回头请你撸串。你这人，靠谱。", "老周 sent the ¥" + F(r.amount, "0") + " back: \"Thanks, man. Skewers are on me. You're reliable.\""));
                 else Say(T("余额宝转出 ¥" + F(r.amount, "0") + "，到账了。利息够买两瓶可乐。", "¥" + F(r.amount, "0") + " came back out of Yu'e Bao. The interest buys two Cokes."));
             }
         }
@@ -414,10 +414,13 @@ namespace LingGuangV05.XingGuang
             return null;
         }
 
+        /// <summary>The favour only fetches a download with at least this many game seconds to go (about 10 GB on the starting 20M line).</summary>
+        public const double FavourMinSeconds = 20;
+
         /// <summary>The download 老周 would bring over: the longest one still to come down the home line that fits on the disk.</summary>
         XgDownload FavourTarget()
         {
-            XgDownload best = null; double most = 60;
+            XgDownload best = null; double most = FavourMinSeconds;
             if (S.downloadQueue == null) return null;
             foreach (var x in S.downloadQueue)
             {
@@ -532,9 +535,17 @@ namespace LingGuangV05.XingGuang
             switch (S.lifeOpen)
             {
                 case "zhou_card":
-                    e.who = T("老周 · YY", "老周 · YY"); e.title = T("老周来借显卡", "老周 wants to borrow a card");
-                    e.body = T("老周：哥们，我们组那台服务器的卡烧了，导师天天催结果。你那张" + card + "能借我几天不？用完原样还你。回头学校机房有啥大文件，我拿 U 盘给你拷。",
-                               "老周: Man, the card in our group's server burned out and my advisor wants results every day. Can I borrow your " + card + " for a few days? You'll get it back as it is. And if you ever need a big file, I'll copy it for you on the campus network.");
+                    e.who = T("老周 · 贴吧私信", "老周 · Tieba DM"); e.title = T("老周来借显卡", "老周 wants to borrow a card");
+                    // The card burns out once; asking again says why it is again (after a no, after a loan).
+                    if (ChronicleHas("laozhou.card"))
+                        e.body = T("老周：哥们，又得麻烦你了。上回你那张卡跑出来的数，导师问我是谁帮的忙，我说是个靠谱的哥们。这回导师让补一组对比实验，组里的卡排队排到下周。你那张" + card + "能再借我几天不？还是老规矩，原样还你，大文件我给你拷。",
+                                   "老周: Man, sorry to ask again. My advisor asked who helped with the numbers from your card last time, and I said a reliable friend. Now he wants one more comparison run and the group's cards are booked until next week. Could I borrow your " + card + " again for a few days? Same deal: back as it is, and I'll copy big files for you.");
+                    else if (S.lifeZhouCool > 0)
+                        e.body = T("老周：还是上回那事儿……组里的卡还没修好，导师又在群里点我名了。你那张" + card + "真不能借我几天？用完原样还你。",
+                                   "老周: Same thing as last time… the group's card still isn't fixed and my advisor called me out in the group chat again. Really can't lend me your " + card + " for a few days? You'll get it back as it is.");
+                    else
+                        e.body = T("老周：哥们，我们组那台服务器的卡烧了，导师天天催结果。你那张" + card + "能借我几天不？用完原样还你。回头学校机房有啥大文件，我拿 U 盘给你拷。",
+                                   "老周: Man, the card in our group's server burned out and my advisor wants results every day. Can I borrow your " + card + " for a few days? You'll get it back as it is. And if you ever need a big file, I'll copy it for you on the campus network.");
                     C("lend", T("借给他", "Lend it"), T(card + "拔下来 10 分钟；他欠你一个人情：之后一次学校快传", "The " + card + " is out for 10 minutes; he owes you one campus copy of a download"));
                     C("refuse", T("不借", "Say no"), T("他嘴上说没事", "He says it's fine"));
                     break;
@@ -569,11 +580,9 @@ namespace LingGuangV05.XingGuang
                     break;
                 case "roommate_fan":
                 {
-                    int s = (int)LifeSecondsOfDay;
-                    string clock = (s / 3600).ToString("00") + ":" + (s / 60 % 60).ToString("00");
-                    e.who = T("室友", "Roommate"); e.title = T("室友半夜被风扇吵醒", "The fans woke the roommate");
-                    e.body = T("凌晨 " + clock + "，门被敲响。室友顶着鸡窝头：「哥，你这电脑跟吹风机似的，我明早八点还要打卡……」",
-                               clock + " at night, a knock on the door. The roommate, hair like a bird's nest: \"Man, your PC sounds like a hair dryer, and I clock in at eight…\"");
+                    e.who = T("室友", "Roommate"); e.title = T("室友被风扇吵醒", "The fans woke the roommate");
+                    e.body = T("门被敲响。室友顶着鸡窝头：「哥，你这电脑跟吹风机似的，我明早八点还要打卡……」",
+                               "A knock on the door. The roommate, hair like a bird's nest: \"Man, your PC sounds like a hair dryer, and I clock in at eight…\"");
                     C("throttle", T("降频：先拔掉" + card, "Throttle: unplug the " + card), T("最吵的那张卡停 5 分钟", "The loudest card rests for 5 minutes"));
                     C("redbull", T("送他一箱红牛 ¥" + F(LifeRedBull, "0"), "Give him a case of Red Bull ¥" + F(LifeRedBull, "0")), T("他戴上耳塞回去睡了，训练照跑", "He puts in earplugs; training goes on"), money + 1e-9 >= LifeRedBull);
                     break;
@@ -581,15 +590,18 @@ namespace LingGuangV05.XingGuang
                 case "forum_post":
                 {
                     double pay = ForumMoney;
-                    e.who = T("百度贴吧 · 机器学习吧", "Baidu Tieba · ML forum"); e.title = T("帖子有人回了", "Replies on your thread");
-                    e.body = T("你在机器学习吧发的帖子「自己在家用显卡训了个小网络」被顶上了首页，三十多楼。有个研究生说可以把他们组标好的数据打包发你，还有人说要打赏。",
-                               "Your thread on the ML forum, \"Trained a little network at home on my own GPU\", hit the front page with thirty-odd replies. A grad student offers his group's labelled data, and someone wants to tip you.");
+                    e.who = T("摆渡贴吧 · 人工智能吧", "Bodu Tieba · AI forum"); e.title = T("帖子有人回了", "Replies on your thread");
+                    e.body = S.stage >= 4
+                        ? T("你在人工智能吧发的帖子「自己在家用显卡训了个小网络」被顶上了首页，三十多楼，有人在楼里直接叫你大神。有个研究生说可以把他们组标好的数据打包发你，还有人说要打赏。",
+                            "Your thread on the AI forum, \"Trained a little network at home on my own GPU\", hit the front page with thirty-odd replies, and some call you a big shot outright. A grad student offers his group's labelled data, and someone wants to tip you.")
+                        : T("你在人工智能吧发的帖子「自己在家用显卡训了个小网络」被顶上了首页，三十多楼。有个研究生说可以把他们组标好的数据打包发你，还有人说要打赏。",
+                            "Your thread on the AI forum, \"Trained a little network at home on my own GPU\", hit the front page with thirty-odd replies. A grad student offers his group's labelled data, and someone wants to tip you.");
                     C("data", T("认真回帖，要数据", "Answer properly, take the data"), T("+" + SamplesText(S.lifeArg) + " 条样本（" + name + "）", "+" + SamplesText(S.lifeArg) + " samples (" + name + ")"));
                     C("tip", T("回个谢谢，收下打赏", "Say thanks, take the tip"), "+¥" + F(pay, "0"));
                     break;
                 }
                 case "zhou_loan":
-                    e.who = T("老周 · YY", "老周 · YY"); e.title = T("老周开口借钱", "老周 asks for a loan");
+                    e.who = T("老周 · 贴吧私信", "老周 · Tieba DM"); e.title = T("老周开口借钱", "老周 asks for a loan");
                     e.body = T("老周：那个……哥们，这个月补助还没发，能先借我 ¥" + F(S.lifeArg, "0") + " 不？发了就还你。\n（账上的钱够买五回下一件大东西了。钱放着不会自己学东西。）",
                                "老周: Um… my stipend is late this month. Could you spot me ¥" + F(S.lifeArg, "0") + "? I'll pay it back when it comes.\n(The wallet holds five times the next big purchase. Money left lying around teaches nothing.)");
                     C("lend", T("借给他", "Lend it"), T("¥" + F(S.lifeArg, "0") + "，10 分钟后还你", "¥" + F(S.lifeArg, "0") + ", back in 10 minutes"), money + 1e-9 >= S.lifeArg);
@@ -606,9 +618,9 @@ namespace LingGuangV05.XingGuang
                     break;
                 }
                 case "zhou_favour":
-                    e.who = T("老周 · YY", "老周 · YY"); e.title = T("老周：我帮你拷吧", "老周: let me copy it");
-                    e.body = T("老周：看你那个" + name + "还得下 " + ClockText(S.lifeArg) + "。我们机房是教育网，我拿 U 盘拷一份，晚上骑车给你送过去？",
-                               "老周: Your " + name + " still needs " + ClockText(S.lifeArg) + ". Our lab is on the campus network; I'll copy it to a USB stick and cycle it over tonight?");
+                    e.who = T("老周 · 贴吧私信", "老周 · Tieba DM"); e.title = T("老周：我帮你拷吧", "老周: let me copy it");
+                    e.body = T("老周：看你那个" + name + "还得下 " + ClockText(S.lifeArg) + "。我们机房是教育网，我拿 U 盘拷一份，回头骑车给你送过去？",
+                               "老周: Your " + name + " still needs " + ClockText(S.lifeArg) + ". Our lab is on the campus network; I'll copy it to a USB stick and cycle it over?");
                     C("redeem", T("麻烦你了", "Yes please"), T("用掉他欠的人情，马上到", "Uses the favour he owes; it arrives at once"));
                     C("later", T("先不用，人情留着", "Not now, keep the favour"), T("下回再说", "Another time"));
                     break;
@@ -658,7 +670,7 @@ namespace LingGuangV05.XingGuang
                     NoteChronicle("laozhou.card");
                     S.lifeZhouCool = Math.Max(0, S.lifeZhouCool - 1);
                     if (S.lifeArgKey.Length > 0) Unplug("lend", S.lifeArgKey, LifeLendSeconds, host);
-                    return T("把" + card + "装进原来的纸盒给了老周。他拍拍你肩膀：「欠你一回。」", "You boxed up the " + card + " for 老周. He pats your shoulder: \"I owe you one.\"");
+                    return T("把" + card + "装进原来的纸盒给了老周。他拍拍你肩膀：「欠你一回。你这哥们，靠谱。」", "You boxed up the " + card + " for 老周. He pats your shoulder: \"I owe you one. You're a reliable guy.\"");
                 case "zhou_card/refuse":
                     S.lifeZhouCool = Math.Min(5, S.lifeZhouCool + 1);
                     SetCooldown(id, 1500 * (1 + S.lifeZhouCool));
@@ -699,7 +711,10 @@ namespace LingGuangV05.XingGuang
                     S.lifeHighMonths = 0;
                     bool believed = LifeRoll() < (S.lifeLandlordWary ? LifeExplainWaryChance : LifeExplainChance);
                     S.lifeLandlordWary = true;
-                    if (believed) return T("老王听完摆摆手：「搞科研好，别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"Research, good. Just don't burn the wiring.\" He glances back at the meter on his way out.");
+                    if (believed && S.stage >= 5) EarnSecret("life.praise.landlord");
+                    if (believed) return S.stage >= 5 ? T("老王听完摆摆手：「你这孩子有出息，租给你我放心。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You'll go far, kid. I'm easy renting to you. Just don't burn the wiring.\" He glances back at the meter on his way out.")
+                        : S.stage >= 3 ? T("老王听完摆摆手：「小伙子在搞正事，我看得出来。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You're up to something serious, kid, I can tell. Just don't burn the wiring.\" He glances back at the meter on his way out.")
+                        : T("老王听完摆摆手：「搞科研好，别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"Research, good. Just don't burn the wiring.\" He glances back at the meter on his way out.");
                     double fine = host != null ? Math.Min(LifeLandlordFine, Math.Max(0, host.Money)) : 0;
                     if (fine > 0 && host.Spend(fine)) S.totalSpent += fine;
                     if (!(fine > 0)) return T("老王不信：「科研？科研用得着这么多电？」看你钱包是空的，摆摆手说下回再这样就涨房租。", "Old Wang isn't having it: \"Research uses this much power?\" Seeing your empty wallet, he only says next time the rent goes up.");
@@ -714,17 +729,20 @@ namespace LingGuangV05.XingGuang
                 case "roommate_fan/throttle":
                     SetCooldown(id, 1200);
                     if (S.lifeArgKey.Length > 0) Unplug("quiet", S.lifeArgKey, LifeQuietSeconds, host);
-                    return T("把" + card + "的电源拔了，机箱安静了一半。室友说了句「谢了」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks,\" says the roommate, and the door closes.");
+                    return S.stage >= 4 ? T("把" + card + "的电源拔了，机箱安静了一半。室友说了句「谢了。你也别熬太晚，你这么拼，我看着都累」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks. Don't stay up too late either. Watching you work this hard tires me out,\" says the roommate, and the door closes.")
+                        : T("把" + card + "的电源拔了，机箱安静了一半。室友说了句「谢了」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks,\" says the roommate, and the door closes.");
                 case "roommate_fan/redbull":
                     if (host == null || !host.Spend(LifeRedBull)) return null;
                     S.totalSpent += LifeRedBull;
                     SetCooldown(id, 2400);
-                    return T("室友抱着一箱红牛回屋了：「得，你开吧，我戴耳塞。」", "The roommate carries off a case of Red Bull: \"Fine, keep it running. I've got earplugs.\"");
+                    return S.stage >= 4 ? T("室友抱着一箱红牛回屋了：「得，你开吧，我戴耳塞。你在折腾的那玩意儿，我虽然不懂，但看你这半年没停过，我服。」", "The roommate carries off a case of Red Bull: \"Fine, keep it running, I've got earplugs. I don't get whatever you're building, but you haven't stopped in half a year, and I respect that.\"")
+                        : T("室友抱着一箱红牛回屋了：「得，你开吧，我戴耳塞。」", "The roommate carries off a case of Red Bull: \"Fine, keep it running. I've got earplugs.\"");
                 case "forum_post/data":
                 {
                     SetCooldown(id, 1200);
                     string ds = XgCatalog.Dataset(S.lifeArgKey) != null ? S.lifeArgKey : ForumDataset();
                     if (ds != null) AddGameSamples(ds, (int)S.lifeArg);
+                    if (S.stage >= 4) EarnSecret("life.praise.forum");
                     return T("研究生发来一个压缩包：" + SamplesText(S.lifeArg) + " 条标好的 " + name + "。你回了一长串感谢。", "The grad student sends a zip: " + SamplesText(S.lifeArg) + " labelled " + name + " samples. You reply with a long thank-you.");
                 }
                 case "forum_post/tip":
@@ -732,7 +750,9 @@ namespace LingGuangV05.XingGuang
                     SetCooldown(id, 1200);
                     double pay = ForumMoney;
                     if (host != null) { host.Earn(pay); S.totalIncome += pay; }
-                    return T("支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay: \"Keep going, OP.\"");
+                    if (S.stage >= 4) EarnSecret("life.praise.forum");
+                    return S.stage >= 4 ? T("支付宝到账 ¥" + F(pay, "0") + "，附言：大神加油，期待下一帖。", "¥" + F(pay, "0") + " arrives on Alipay: \"Keep going, big shot. Waiting for your next post.\"")
+                        : T("支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay: \"Keep going, OP.\"");
                 }
                 case "zhou_loan/lend":
                     if (host == null || !host.Spend(S.lifeArg)) return null;

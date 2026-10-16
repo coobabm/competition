@@ -23,7 +23,8 @@ namespace LingGuangV05.Core.Era
 
     /// <summary>
     /// era_events.json. Push channels (<see cref="YY"/>, <see cref="Tray"/>) are delivered when the calendar reaches
-    /// their date, and only within the current month: a save that jumps months does not get a flood of old chat.
+    /// their date. One that was missed (the stage moved on before it arrived) is still delivered, but only if it falls in
+    /// the last month: a save that jumps months does not get a flood of old chat.
     /// Pull channels (news, forum, shop) are lists the apps read; nothing dated after today is ever shown.
     /// </summary>
     public sealed class EraEvents
@@ -101,18 +102,19 @@ namespace LingGuangV05.Core.Era
         }
 
         /// <summary>
-        /// Push events to deliver now: dated from the first of today's month to today, not delivered yet, oldest first.
+        /// Push events to deliver now: dated within the last month up to today, not delivered yet, oldest first
+        /// (so a line from the end of last month that never arrived is not lost).
         /// Repeating bubbles are due while today is inside their window; their repeats are the caller's timing.
         /// </summary>
         public List<EraEvent> Due(string channel, DateTime today, ICollection<string> delivered)
         {
             var list = new List<EraEvent>();
-            var monthStart = new DateTime(today.Year, today.Month, 1);
+            var windowStart = today.Date.AddMonths(-1);
             foreach (var e in all)
             {
                 if (e.channel != channel || delivered != null && delivered.Contains(e.id)) continue;
                 if (e.date > today.Date) continue;
-                if (e.Repeats ? today.Date <= e.until : e.date >= monthStart) list.Add(e);
+                if (e.Repeats ? today.Date <= e.until : e.date >= windowStart) list.Add(e);
             }
             return list;
         }

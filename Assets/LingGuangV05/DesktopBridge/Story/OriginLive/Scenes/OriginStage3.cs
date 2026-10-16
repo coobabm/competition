@@ -28,7 +28,7 @@ namespace LingGuangV05.Desktop.Story
 
         public override IEnumerable<string> WarmText()
         {
-            yield return "256个像素排成一行谁挨着谁没了视觉线序列线输入特征图卷积核层隐状态一格往后传验证码表情包写诗新闻今晚的月亮很圆走向专长那时我说在你这儿✓";
+            yield return "256个像素排成一行谁挨着谁没了视觉线序列线输入特征图卷积核层隐状态一格往后传验证码表情包写诗新闻今晚的月亮很圆走向专长那时我说我看读在你这儿✓";
             yield return "256 pixels in one row who sits next to whom is gone VISION LINE SEQUENCE LINE input feature map kernel layers hidden state passed along cell by cell captcha emoji poems news Tonight the moon is very round Specialising Moon. Round.";
         }
 
@@ -142,7 +142,9 @@ namespace LingGuangV05.Desktop.Story
             pen.Opacity = 1;
             labels.End(); canvas.End();
             tag.Render(s, Mathf.FloorToInt(s * 30 + .001f), 3, T("走向专长", "Specialising"), T("CNN（LeNet → AlexNet → VGG / GoogLeNet） · RNN", "CNN (LeNet → AlexNet → VGG / GoogLeNet) · RNN"), "1998 / 1990", "2016.08");
-            speech.Render(s, T("月亮。很圆。", "Moon. Round."), 16.4f, 1052, 720, 5, false);
+            // Its real first word: the track it was fed more (看图 or 读字) spoke first.
+            bool readFirst = Ctx.Sim != null && Ctx.Sim.FirstTrack == "sequence";
+            speech.Render(s, readFirst ? T("我。读。", "I. Read.") : T("我。看。", "I. See."), 16.4f, 1052, 720, 5, false);
         }
     }
 }

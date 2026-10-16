@@ -19,18 +19,19 @@ namespace LingGuangV05.XingGuang.Tests
             var graph = sim.RefreshWiring(null);
             Assert.That(graph.Node(RemovedTask), Is.Null);
             Assert.That(graph.edges.Any(e => e.from == RemovedTask || e.to == RemovedTask), Is.False);
-            Assert.That(graph.Node(XgSim.LifeNetbar), Is.Null, "the group quiz job went away with 小刚's quiz");
+            Assert.That(graph.Node("life.netbar"), Is.Null, "the group quiz job went away with 小刚's quiz");
+            Assert.That(graph.Node("life.qingwen"), Is.Null, "so did 「替我回晴雯」: the AI no longer answers for the player");
         }
 
         [Test]
         public void LoadingOldWiringDiscardsOnlyTheRemovedAppTask()
         {
             var saved = new XgState();
-            saved.wiring.idle.AddRange(new[] { "train:0", RemovedTask, "label:mnist", RemovedTask, "life.qingwen" });
+            saved.wiring.idle.AddRange(new[] { "train:0", RemovedTask, "label:mnist", "life.qingwen", RemovedTask, "life.netbar", "life.era.delivery" });
             var sim = new XgSim(saved);
-            CollectionAssert.AreEqual(new[] { "train:0", "label:mnist", "life.qingwen" }, sim.S.wiring.idle);
+            CollectionAssert.AreEqual(new[] { "train:0", "label:mnist", "life.era.delivery" }, sim.S.wiring.idle);
             sim = new XgSim(sim.S);
-            CollectionAssert.AreEqual(new[] { "train:0", "label:mnist", "life.qingwen" }, sim.S.wiring.idle, "migration is idempotent");
+            CollectionAssert.AreEqual(new[] { "train:0", "label:mnist", "life.era.delivery" }, sim.S.wiring.idle, "migration is idempotent");
         }
 
         [Test]
@@ -38,12 +39,12 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim();
             sim.S.stage = 5;
-            bool qingwen = false;
-            sim.HookLife(XgSim.LifeQingwen, () => true, () => qingwen, on => qingwen = on);
-            Assert.That(sim.Connect("self", XgSim.LifeQingwen, null), Is.Null);
+            bool delivery = false;
+            sim.HookLife(XgSim.EraDeliveryTask, () => true, () => delivery, on => delivery = on);
+            Assert.That(sim.Connect("self", XgSim.EraDeliveryTask, null), Is.Null);
             Assert.That(sim.Connect("self", RemovedTask, null), Is.Not.Null);
             Assert.That(sim.Disconnect("self", RemovedTask, null), Is.False);
-            Assert.That(qingwen, Is.True);
+            Assert.That(delivery, Is.True);
         }
 
         [Test]

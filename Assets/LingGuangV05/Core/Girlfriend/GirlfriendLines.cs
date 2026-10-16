@@ -75,7 +75,7 @@ namespace LingGuangV05.Core.Girlfriend
         {
             new[] { "在家", "At home", "热死了", "So hot", "在睡觉", "Sleeping", "在看电视", "Watching TV" },
             new[] { "在家吹空调|哪都不想去", "AC at home|don't want to go anywhere", "我妈又在念叨我", "Mum's nagging me again", "煤球又趴我键盘上了", "Meiqiu's lying on my keyboard again", "县城好热|冰棍都化了", "The town's so hot|my ice lolly melted" },
-            new[] { "在家好无聊|想你", "Bored at home|miss you", "我妈问我是不是谈恋爱了[害羞]", "Mum asked if I'm seeing someone [害羞]", "要不要出来|就一会儿", "Want to meet up?|just for a bit", "煤球也想你了[偷笑]", "Meiqiu misses you too [偷笑]" },
+            new[] { "在家好无聊|想你", "Bored at home|miss you", "我妈问我是不是谈恋爱了[害羞]", "Mum asked if I'm seeing someone [害羞]", "要不要视频|就一会儿", "Want to video call?|just for a bit", "煤球也想你了[偷笑]", "Meiqiu misses you too [偷笑]" },
         };
 
         /// <summary>What she is busy with these days, by the key of a dated thing in her life (GirlfriendRules.Life) she already told him about.</summary>
@@ -169,8 +169,8 @@ namespace LingGuangV05.Core.Girlfriend
             new Route { key = "work", words = new[] { "加班", "通宵", "模型", "显卡", "电脑", "网吧", "装机", "训练", "调参", "all-nighter", "computer", "graphics card", "model", "internet cafe", "training" }, lines = new[]
             {
                 new[] { "哦", "Oh", "又是电脑", "Computer again", "随你", "Up to you", "你忙吧", "You get on with it" },
-                new[] { "又是电脑|你那电脑比我还亲", "Computer again|you love it more than me", "别又通宵|身体要紧", "No all-nighter again|your health matters", "网吧好玩吗|有没有妹子[白眼]", "Is the internet cafe fun?|any girls there? [白眼]", "你说的那些我听不懂|反正别太累", "I don't get any of that|just don't overdo it" },
-                new[] { "你又要通宵啊|那我陪你到困", "Another all-nighter?|then I'll stay up with you till I'm sleepy", "好厉害|虽然听不懂[呲牙]", "Impressive|even if I don't get it [呲牙]", "弄完了要第一个告诉我哦", "Tell me first when it's done", "别光顾着电脑|也想想我", "Don't just think about the computer|think of me too" },
+                new[] { "又是电脑|你那电脑比我还亲", "Computer again|you love it more than me", "别又通宵|身体要紧", "No all-nighter again|your health matters", "网吧好玩吗|有没有妹子[白眼]", "Is the internet cafe fun?|any girls there? [白眼]", "你说的那些我听不懂|反正别太累", "I don't get any of that|just don't overdo it", "听不懂|但你比我们班那些男生认真多了", "Don't get it|but you're way more serious than the boys in my class" },
+                new[] { "你又要通宵啊|那我陪你到困", "Another all-nighter?|then I'll stay up with you till I'm sleepy", "好厉害|虽然听不懂[呲牙]", "Impressive|even if I don't get it [呲牙]", "弄完了要第一个告诉我哦", "Tell me first when it's done", "别光顾着电脑|也想想我", "Don't just think about the computer|think of me too", "我就知道你能行[偷笑]|早点睡", "I knew you could do it [偷笑]|sleep early", "我跟室友说你在做很厉害的事[害羞]", "I told my roommates you're doing something impressive [害羞]" },
             } },
             new Route { key = "tired", words = new[] { "好累", "累死", "困", "好烦", "无聊", "tired", "sleepy", "bored", "exhausted" }, lines = new[]
             {
@@ -388,7 +388,7 @@ namespace LingGuangV05.Core.Girlfriend
         static readonly Dictionary<string, string[]> Topics = new Dictionary<string, string[]>
         {
             { "roommate", new[] { "我室友打呼噜跟拖拉机一样|根本睡不着[流汗]", "My roommate snores like a tractor|I can't sleep [流汗]", "室友半夜打电话|声音超大[白眼]", "My roommate's on the phone at midnight|so loud [白眼]", "室友占着卫生间一个小时了", "My roommate's been in the bathroom for an hour" } },
-            { "photo", new[] { "[图片] 宿舍门口那只橘猫|我一摸它就跑了", "[图片] the cat at the dorm gate|it ran when I tried to pet it", "[图片] 今天的晚霞|好看吧", "[图片] tonight's sunset|pretty, right?", "[图片] 食堂新出的酸菜鱼|看着好吃 其实一般", "[图片] the canteen's new fish dish|looks good, tastes meh" } },
+            { "photo", new[] { "[图片] 楼下那只橘猫|我一摸它就跑了", "[图片] the orange cat downstairs|it ran when I tried to pet it", "[图片] 今天的晚霞|好看吧", "[图片] tonight's sunset|pretty, right?", "[图片] 食堂新出的酸菜鱼|看着好吃 其实一般", "[图片] the canteen's new fish dish|looks good, tastes meh" } },
             { "drama", new[] { "《微微一笑很倾城》好甜|你打游戏怎么就没肖奈那么帅", "Love O2O is so sweet|why don't you play games like Xiao Nai", "《欢乐颂》你看了没|樊胜美好惨", "Have you watched Ode to Joy?|poor Fan Shengmei", "在追剧|追到半夜停不下来", "Watching a drama|can't stop, it's past midnight", "《太阳的后裔》又重看了一遍|宋仲基好帅[色]", "Rewatched Descendants of the Sun|Song Joong-ki is so handsome [色]" } },
             { "food", new[] { "和室友吃了火锅|你吃饭了没", "Had hotpot with my roommates|have you eaten?", "今天吃了麻辣烫|加了好多辣[流汗]", "Had malatang today|way too spicy [流汗]", "好饿|想吃烤串", "So hungry|I want kebabs" } },
             { "missYou", new[] { "没什么|就是想找你说话[害羞]", "Nothing|just wanted to talk to you [害羞]", "你在干嘛|我有点想你", "What are you doing|I kind of miss you", "突然好想你[委屈]", "Suddenly missing you [委屈]" } },

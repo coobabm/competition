@@ -18,8 +18,8 @@ namespace LingGuangV05.XingGuang
 
         public static readonly string[] Tok = { "它", "终于", "学会", "了", "同时", "看", "所有", "词" };
         public static readonly string[] TokEn = { "It", "finally", "learned", "to", "look", "at", "every", "word" };
-        public static readonly string[] Caps = { "是 / 否", "多选一", "单个词", "短句", "长记忆", "全部放开" };
-        public static readonly string[] CapsEn = { "yes / no", "pick one", "one word", "a phrase", "long memory", "all unlocked" };
+        public static readonly string[] Caps = { "是/否", "多选一", "看图说词", "短句", "长记忆·翻译", "全部放开" };
+        public static readonly string[] CapsEn = { "yes/no", "pick one", "picture to word", "short sentences", "memory · translation", "everything" };
         public const int HeadCount = 4;
         public static readonly string[] HeadHex = { "d4f55a", "7fe6ff", "ffb44d", "b9c3ff" };
 

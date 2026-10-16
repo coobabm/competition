@@ -82,8 +82,8 @@ namespace LingGuangV05.Desktop
             buy.onClick.AddListener(Upgrade);
             buyLabel = Text(PrologueDesk.Rect("Label", b, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), 15, Color.white);
             buyLabel.alignment = TextAlignmentOptions.Center;
-            UiTip.Add(card, "下载数据走家里的宽带：线越快，数据页的下载队列走得越快。月租每月 1 号从家里余额扣。",
-                "Data comes down the home line: the faster it is, the faster the data page's queue moves. The fee is charged on the 1st of each month.");
+            UiTip.Add(card, "下载数据走家里的宽带：线越快，数据页的下载队列走得越快。月租每月 1 号从家里余额扣。灵光「数据」页顶部的「升级宽带」按钮买的是同一条线。",
+                "Data comes down the home line: the faster it is, the faster the data page's queue moves. The fee is charged on the 1st of each month. The Upgrade line button at the top of 灵光's Data page buys the same line.");
             Refresh();
         }
 
@@ -110,7 +110,7 @@ namespace LingGuangV05.Desktop
             var sim = lab != null ? lab.Sim : null;
             if (sim == null)
             {
-                title.text = T("宽带 · ADSL 4M", "Broadband · 4M ADSL");
+                title.text = T("宽带 · ADSL 20M", "Broadband · 20M ADSL");
                 body.text = T("灵光还没装好。", "灵光 is not installed yet.");
                 SetButton(false, T("暂不能升级", "No upgrade yet"));
                 return;

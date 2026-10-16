@@ -84,13 +84,16 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (runtime == null || runtime.TestMode || desk == null) return;
-            if (name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
+            if (name == "rent.started" || name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
                 LingGuangV05.Desktop.YY.YYChatHub.Instance?.Receive("landlord", runtime.Sim.LastMessage);
             switch (name)
             {
                 case "rent.decision":
                     LingGuangV05.Desktop.YY.YYChatHub.Instance?.Offer("landlord", GameText.IsEnglish ? new[] { "Keep earning", "Confirm selling the computer" } : new[] { "继续挣钱还债", "确认卖电脑" });
                     desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 12, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
+                    break;
+                case "rent.started":
+                    desk.StoryPopup(Landlord, T("缓租到头了，从今天起房租一天 " + arg + "。详情看 YY。", "The grace period is over: from today the rent is " + arg + " a day. Details in YY."), 10, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
                     break;
                 case "rent.due":
                     desk.StoryPopup(Landlord, T("房租该交了，欠着 " + arg + " 呢。", "The rent is due. You owe " + arg + "."), 9);
@@ -100,10 +103,14 @@ namespace LingGuangV05.Desktop.Story
                     InnerVoice.Say("显卡全停了。标注台还能挣一点……", "Every card has stopped. The labelling desk still pays a little…", 4);
                     break;
                 case "rent.settled":
-                    desk.StoryPopup(Landlord, T("收到了。", "Got it."), 5);
-                    break;
+                    {
+                        // The landlord warms to a tenant who gets on his feet again.
+                        int rank = LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.S.stage ?? 1;
+                        desk.StoryPopup(Landlord, rank >= 5 ? T("收到了。我就知道你会补上。", "Got it. I knew you'd make it up.") : T("收到了。", "Got it."), 5);
+                        break;
+                    }
                 case "rent.raised":
-                    desk.StoryPopup(Landlord, T("跟你说一声，十月起房租涨到一天 350，这片都涨了。", "Heads up: from October the rent is 350 a day. Everyone round here has gone up."), 9);
+                    desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 9);
                     break;
                 case "gpu.broken":
                     desk.StoryPopup(T("显卡", "Graphics card"), runtime.Sim.LastMessage, 8);

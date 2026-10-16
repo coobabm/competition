@@ -9,6 +9,105 @@ namespace LingGuangV05.Tests
 {
     public sealed class StoryTests
     {
+        [Test]
+        public void AHookIsSaidFirstThenTheBeatWaitsAMoment()
+        {
+            const string json = @"{ ""lines"": { ""h"": ""风扇停了一下。"", ""a"": ""我。看。"" },
+                ""beats"": [ { ""id"": ""b"", ""on"": ""go"", ""hook"": ""h"", ""steps"": [ { ""op"": ""say"", ""key"": ""a"" } ] } ] }";
+            var output = new FakeOutput();
+            var runner = Runner(json, new DictVars(), output);
+            runner.Signal("go");
+            runner.Tick(0);
+            CollectionAssert.AreEqual(new[] { "think:风扇停了一下。" }, output.Texts(), "the hook first, alone");
+            Assert.IsTrue(output.Commands[0].Step.Has("hook"));
+            runner.Tick(StoryLibrary.HookPause - .1);
+            Assert.AreEqual(1, output.Commands.Count, "a short pause after it");
+            runner.Tick(.2);
+            CollectionAssert.AreEqual(new[] { "think:风扇停了一下。", "say:我。看。" }, output.Texts());
+        }
+
+        [Test]
+        public void AHookIsReadToTheEndBeforeTheBeatGoesOn()
+        {
+            const string json = @"{ ""lines"": { ""h"": ""日历翻了一页。"", ""a"": ""我。看。"" },
+                ""beats"": [ { ""id"": ""b"", ""on"": ""go"", ""hook"": ""h"", ""steps"": [ { ""op"": ""say"", ""key"": ""a"" } ] } ] }";
+            var output = new FakeOutput { AutoComplete = false };
+            var runner = Runner(json, new DictVars(), output);
+            runner.Signal("go");
+            runner.Tick(0);
+            runner.Tick(StoryLibrary.HookPause + 2);
+            CollectionAssert.AreEqual(new[] { "think:日历翻了一页。" }, output.Texts(), "still being read");
+            Assert.IsTrue(runner.HookPlaying);
+            output.PendingDone(); output.PendingDone = null;
+            runner.Tick(0);
+            runner.Tick(StoryLibrary.HookPause + .1);
+            CollectionAssert.AreEqual(new[] { "think:日历翻了一页。", "say:我。看。" }, output.Texts());
+        }
+
+        [Test]
+        public void TheHookIsKnownToBePlayingUntilItsPauseEnds()
+        {
+            const string json = @"{ ""lines"": { ""h"": ""风扇停了一下。"", ""a"": ""我。看。"" },
+                ""beats"": [ { ""id"": ""b"", ""on"": ""go"", ""hook"": ""h"", ""steps"": [ { ""op"": ""say"", ""key"": ""a"" } ] } ] }";
+            var output = new FakeOutput();
+            var runner = Runner(json, new DictVars(), output);
+            Assert.IsFalse(runner.HookPlaying);
+            runner.Signal("go");
+            runner.Tick(0);
+            Assert.IsTrue(runner.HookPlaying, "its line is on screen, then its pause");
+            runner.Tick(StoryLibrary.HookPause - .1);
+            Assert.IsTrue(runner.HookPlaying, "still in its pause");
+            runner.Tick(StoryLibrary.HookPause + .1);
+            Assert.IsFalse(runner.HookPlaying, "what it announces comes next");
+        }
+
+        [Test]
+        public void AHookWaitsForAClearScreen()
+        {
+            const string json = @"{ ""lines"": { ""h"": ""日历翻了一页。"" },
+                ""beats"": [ { ""id"": ""b"", ""on"": ""go"", ""hook"": ""h"", ""steps"": [ { ""op"": ""log"", ""text"": ""x"" } ] } ] }";
+            var output = new FakeOutput();
+            var runner = Runner(json, new DictVars(), output);
+            bool busy = true;
+            runner.IsBusy = () => busy;
+            runner.Signal("go");
+            runner.Tick(1);
+            Assert.AreEqual(0, output.Commands.Count, "held while something covers the screen");
+            busy = false;
+            runner.Tick(0);
+            CollectionAssert.AreEqual(new[] { "think:日历翻了一页。" }, output.Texts());
+        }
+
+        [Test]
+        public void EveryHookInTheShippedStoryHasItsLine()
+        {
+            var dir = ContentDir();
+            var jsons = new List<string>();
+            foreach (var f in Directory.GetFiles(dir, "*.json")) jsons.Add(File.ReadAllText(f));
+            var lib = StoryLibrary.FromJson(jsons.ToArray());
+            foreach (var beat in lib.Beats)
+                if (beat.Hook != null) Assert.IsTrue(lib.HasLine(beat.Hook), beat.Id + " hook " + beat.Hook);
+        }
+
+        [Test]
+        public void EveryShippedStoryLineHasItsEnglish()
+        {
+            var dir = ContentDir();
+            var jsons = new List<string>();
+            foreach (var f in Directory.GetFiles(dir, "*.json")) jsons.Add(File.ReadAllText(f));
+            var lib = StoryLibrary.FromJson(jsons.ToArray());
+            string table = File.ReadAllText(Path.Combine(dir, "..", "..", "Localization", "StoryText.json"));
+            var missing = new List<string>();
+            foreach (var key in lib.LineKeys)
+            {
+                string text;
+                // Lines with {tokens} are filled in at runtime; their English comes from patterns or the filled values.
+                if (!lib.TryGetLine(key, 0, out text) || text.IndexOf('{') >= 0) continue;
+                if (table.IndexOf("\"zh\": \"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"", StringComparison.Ordinal) < 0) missing.Add(key + " " + text);
+            }
+            Assert.IsEmpty(missing, "StoryText.json has no English for:\n" + string.Join("\n", missing.ToArray()));
+        }
+
         // ---------- helpers ----------
 
         private sealed class DictVars : IStoryVars

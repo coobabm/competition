@@ -180,11 +180,11 @@ namespace LingGuangV05.Desktop.Zhongbao
         void OnReported(XgReportReason reason, double seconds)
         {
             string minutes = (seconds / 60).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
-            Add("账号被举报（" + XgSim.ReportReasonText(reason, false) + "），冻结 " + minutes + " 分钟",
-                "Account reported (" + XgSim.ReportReasonText(reason, true) + "), frozen " + minutes + " min");
+            Add("平台提示：" + XgSim.ReportReasonText(reason, false) + "，自动标注暂停 " + minutes + " 分钟",
+                "Platform notice: " + XgSim.ReportReasonText(reason, true) + "; auto labelling paused for " + minutes + " min");
         }
 
-        void OnUnfrozen(bool appealed) { Add(appealed ? "申诉通过，账号解冻" : "冻结期满，账号解冻", appealed ? "Appeal accepted, account unfrozen" : "Freeze over, account unfrozen"); }
+        void OnUnfrozen(bool appealed) { Add("自动标注已恢复", "Auto labelling resumed"); }
 
         void OnCaptchaFailed(bool timeout, int inARow)
         {

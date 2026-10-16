@@ -59,10 +59,10 @@ namespace LingGuangV05.Desktop.Zhongbao
 
         static readonly (string who, string zh, string en)[] Chatter =
         {
-            ("ajie", "哥，小刚手慢但不出错，老板只上夜班。我嘛，快是快，就是偶尔点歪。", "Bro, Xiaogang is slow but never wrong, and the boss only works nights. Me? Quick, but I mis-click now and then."),
+            ("ajie", "哥，小刚嘴上没把门，手上可稳了，一张不错。老板只上他那个夜班。我嘛，快是快，就是偶尔点歪。", "Bro, Xiaogang runs his mouth but his hands are steady, never a wrong one. The boss only works his night shift. Me? Quick, but I mis-click now and then."),
             ("ajie", "这周电费涨了，工资能不能一分钟加个两毛？", "Power went up this week. Can the wage go up ¥0.2 a minute?"),
-            ("xiaogang", "账号要是冻了，我们就在这儿干坐着，工钱照给就行。", "If the account freezes we just sit here. Wages keep running, that's all I ask."),
-            ("boss", "夜班没人上机，我闲着也是闲着。天亮我就回去睡。", "Nobody's online at night, so I'm idle anyway. At sunrise I go to bed."),
+            ("xiaogang", "验证码一弹出来，我们就只能在这儿干坐着，工钱照给就行。", "When a captcha pops up we just sit here. Wages keep running, that's all I ask."),
+            ("boss", "我夜里本来就守店，闲着也是闲着。早上六点交班我就回去睡。", "I'm minding the shop at night anyway. At six in the morning I hand over and go to bed."),
         };
 
         public override void Build(RectTransform area)
@@ -70,14 +70,14 @@ namespace LingGuangV05.Desktop.Zhongbao
             root = Rect("subcontract", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var crew = ZhongbaoSkin.Box(ui, root, "Crew", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-332, 0));
             ZhongbaoSkin.Header(ui, crew, "网吧兄弟", "Netbar friends", out title, out note);
-            ZhongbaoUi.TipOnHeader(crew, "阿杰、小刚和网吧老板用你的摆渡众包账号标注。平台照样抽检他们的标注：错的罚款、扣信用分都算在你头上；漏检的错题仍需人工复核。工资每分钟照付，等验证码时他们只能干等，钱照样给。",
-                "Ajie, Xiaogang and the netbar boss label under your Bodu Crowd account. The platform spot-checks their labels like any other: fines and lost credit land on you, and unchecked mistakes still need manual review. Wages are due every minute, even while a captcha keeps them waiting.");
+            ZhongbaoUi.TipOnHeader(crew, "阿杰、小刚和阿杰的表舅（网吧老板）用你的摆渡众包账号标注。平台从第 4 阶段起会照样抽检他们的标注：错的罚款、扣信用分都算在你头上；漏检的错题仍需人工复核。工资每分钟照付，等验证码时他们只能干等，钱照样给。",
+                "Ajie, Xiaogang and Ajie's uncle (the netbar boss) label under your Bodu Crowd account. From stage 4 the platform spot-checks their labels like any other: fines and lost credit land on you, and unchecked mistakes still need manual review. Wages are due every minute, even while a captcha keeps them waiting.");
             list = ZhongbaoUi.BoxScroll(crew, "Viewport");
             market = new XgMarketSection(host, ui, list);
             locked = ui.Text(Rect("Locked", crew, Vector2.zero, Vector2.one, new Vector2(60, 60), new Vector2(-60, -80)), "", 18, ZhongbaoSkin.Mute, TextAlignmentOptions.Center);
 
             var yy = ZhongbaoSkin.Box(ui, root, "Chat", new Vector2(1, 0), Vector2.one, new Vector2(-320, 0), Vector2.zero);
-            ZhongbaoSkin.Header(ui, yy, "YY · 网吧群", "YY · Netbar group", out chatTitle, out _);
+            ZhongbaoSkin.Header(ui, yy, "YY · 下班屁股群", "YY · Clock-out group", out chatTitle, out _);
             chatHost = Rect("Messages", yy, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -(ZhongbaoSkin.HeaderHeight + 12)));
             foreach (var line in Chatter)
             {
@@ -88,7 +88,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 text.lineSpacing = 6;
                 chat.Add((line.who, line.zh, line.en, bubble, text));
             }
-            UiTip.Add(yy, "YY 网吧群里的闲话：几个兄弟怎么看自己的活。", "Idle talk in the YY netbar group: how the friends see their own work.");
+            UiTip.Add(yy, "YY 下班屁股群里的闲话：几个兄弟怎么看自己的活。", "Idle talk in the YY clock-out group: how the friends see their own work.");
         }
 
         void LayoutChat()
@@ -112,14 +112,14 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (root == null || Sim == null) return;
             title.text = T("网吧兄弟", "Netbar friends");
             note.text = T("用你的账号标，按分钟发工资；罚款算你头上", "They label under your account for wages by the minute; fines land on you");
-            chatTitle.text = T("YY · 网吧群", "YY · Netbar group");
+            chatTitle.text = T("YY · 下班屁股群", "YY · Clock-out group");
             bool open = Sim.SubcontractUnlocked;
             locked.gameObject.SetActive(!open);
             if (!open)
                 locked.text = Sim.SubcontractReady
-                    ? T("阿杰马上会在 YY 群里问要不要帮你标……", "Ajie is about to ask in the YY group whether you need hands…")
-                    : T("还没人来接活。\n\n第 " + XgSim.SubcontractStage + " 阶段起、买下自动答题以后，网吧的阿杰会在 YY 群里问要不要帮你标。",
-                        "Nobody has asked for work yet.\n\nFrom stage " + XgSim.SubcontractStage + ", once you own auto-answer, Ajie from the netbar asks in the YY group.");
+                    ? T("阿杰马上会在下班屁股群里问要不要帮你标……", "Ajie is about to ask in the clock-out group whether you need hands…")
+                    : T("还没人来接活。\n\n第 " + XgSim.SubcontractStage + " 阶段起、买下自动答题以后，在网吧上班的阿杰会在下班屁股群里问要不要帮你标。",
+                        "Nobody has asked for work yet.\n\nFrom stage " + XgSim.SubcontractStage + ", once you own auto-answer, Ajie, who works at the netbar, asks in the clock-out group.");
             list.sizeDelta = new Vector2(0, market.Refresh(0));
             LayoutChat();
         }
@@ -159,7 +159,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── left: the household's bills, the debt box under them ──
             var billsBox = ZhongbaoSkin.Box(ui, left, "Bills", Vector2.zero, Vector2.one, new Vector2(0, DebtH + 12), Vector2.zero);
             ZhongbaoSkin.Header(ui, billsBox, "家里的开销", "Household bills", out billsTitle, out billsNote);
-            ZhongbaoUi.TipOnHeader(billsBox, "房租、电脑电费、宽带和夏天的空调：从六月一号起每天扣。下面是每一项现在的价和六月以来的累计。", "Rent, computer power, broadband and the summer air con: charged every day from 1 June. Each item's price now and its total since June.");
+            ZhongbaoUi.TipOnHeader(billsBox, "房租、电脑电费、宽带和夏天的空调：灵光学会「看图说词」以后开始收，每次结算一起扣。下面是每一项现在的价和开始收以来的累计。", "Rent, computer power, broadband and the summer air con: charged from the moment 灵光 learns to describe pictures, taken at each settlement. Each item's price now and its total since the rent started.");
             billsList = ZhongbaoUi.BoxScroll(billsBox, "Viewport");
             bills = new Row(ui, billsList);
 
@@ -176,8 +176,8 @@ namespace LingGuangV05.Desktop.Zhongbao
                 stepText[i] = ui.Text(Rect("Text", inner, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, DebtInk, TextAlignmentOptions.Center);
                 stepText[i].textWrappingMode = TextWrappingModes.NoWrap; stepText[i].enableAutoSizing = true; stepText[i].fontSizeMin = 9; stepText[i].fontSizeMax = 12;
             }
-            UiTip.Add(debtBox, "钱包低于零就是欠房租：每次每日结算数一天。第 1 天房东来催，第 2 天拉电闸（显卡全停，手动标注还能挣钱），第 3 天电脑卖掉抵房租。钱回到零以上就重新数。",
-                "A wallet below zero means rent owed, counted at each daily settlement. Day 1 the landlord texts, day 2 the power is cut (every card stops; hand labelling still pays), day 3 the computer is sold for the rent. Money back above zero resets the count.");
+            UiTip.Add(debtBox, "钱包低于零就是欠房租：每次结算（两天的房租一起扣）数一次。第 1 次房东来催，第 2 次拉电闸（显卡全停，手动标注还能挣钱），第 3 次房东会来催你卖电脑抵债，卖不卖由你定。钱回到零以上就重新数。",
+                "A wallet below zero means rent owed, counted at each settlement (two days of rent are taken together). The 1st time the landlord texts, the 2nd the power is cut (every card stops; hand labelling still pays), the 3rd he pushes you to sell the computer for the rent; the choice is yours. Money back above zero resets the count.");
 
             // ── right: income per second, the balance sparkline, the records ──
             var incomeBox = ZhongbaoSkin.Box(ui, right, "Income", new Vector2(0, 1), Vector2.one, new Vector2(0, -IncomeH), Vector2.zero);
@@ -188,7 +188,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             var sparkBox = ZhongbaoSkin.Box(ui, right, "Balance", new Vector2(0, 1), Vector2.one, new Vector2(0, -IncomeH - 12 - SparkH), new Vector2(0, -IncomeH - 12));
             ZhongbaoSkin.Header(ui, sparkBox, "余额 · 最近 10 天", "Balance · last 10 days", out sparkTitle, out sparkNote);
-            ZhongbaoUi.TipOnHeader(sparkBox, "每天结束时钱包里有多少，最多记最近十天。红线是一天的房租：蓝线低于红线，就是一天的房租也交不起。", "What the wallet held at the end of each day, the last ten at most. The red line is one day's rent: a blue line below it cannot pay a day's rent.");
+            ZhongbaoUi.TipOnHeader(sparkBox, "每天结束时钱包里有多少，最多记最近十天。红线是一次结算要扣的房租（两天）：蓝线低于红线，下一次结算就会欠钱。", "What the wallet held at the end of each day, the last ten at most. The red line is the rent one settlement takes (two days): a blue line below it means the next settlement leaves you in debt.");
             chart = Rect("Chart", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10)));
             chartLayer = ZhongbaoSkin.Canvas(chart, DrawChart);
             noData = ui.Text(Rect("NoData", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10))), "", 13, ZhongbaoSkin.Dim, TextAlignmentOptions.Center);
@@ -249,11 +249,11 @@ namespace LingGuangV05.Desktop.Zhongbao
             items.Add(Row.Sub(T("阶梯电价：每月 " + Money(cfg.tierOneKwh) + " 度以上 ×" + N(cfg.tierTwoFactor, "0.0#") + "，" + Money(cfg.tierTwoKwh) + " 度以上 ×" + N(cfg.tierThreeFactor, "0.0#"),
                 "Tiered pricing: above " + Money(cfg.tierOneKwh) + " kWh a month ×" + N(cfg.tierTwoFactor, "0.0#") + ", above " + Money(cfg.tierTwoKwh) + " kWh ×" + N(cfg.tierThreeFactor, "0.0#"))));
             items.Add(Row.Row(T("宽带（每月 1 号）", "Broadband (the 1st of each month)"), "−" + ZhongbaoUi.Yuan(cfg.broadbandPerMonth), ZhongbaoSkin.Red));
-            items.Add(Row.Row(T("夏天空调（7、8 月）", "Summer air con (July, August)"), "−" + ZhongbaoUi.Yuan(cfg.summerAirconPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
+            items.Add(Row.Row(T("夏天空调（8 月）", "Summer air con (August)"), "−" + ZhongbaoUi.Yuan(cfg.summerAirconPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
             if (s.repairs != null && s.repairs.Count > 0) items.Add(Row.Row(T("送修中的显卡", "Cards at the repair shop"), s.repairs.Count.ToString()));
             if (s.ticketDay > 0) items.Add(Row.Row(T("周末火车票", "Weekend train ticket"), T("周六扣 ¥", "¥") + Money(cfg.weekendTicket) + T("", " on Saturday"), ZhongbaoSkin.Red));
             var b = s.bills ?? new HouseBills();
-            items.Add(Row.Head(T("6 月以来", "Since June")));
+            items.Add(Row.Head(T("开始收租以来", "Since the rent started")));
             items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(b.rent), MoneyInk(b.rent)));
             items.Add(Row.Row(T("电脑电费", "Computer power"), "−" + ZhongbaoUi.Yuan(b.power), MoneyInk(b.power)));
             items.Add(Row.Row(T("待机电费", "Idle power"), "−" + ZhongbaoUi.Yuan(b.idlePower), MoneyInk(b.idlePower)));
@@ -272,7 +272,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             string text;
             if (house == null) text = "";
             else if (!house.EconomyActive)
-                text = T("学会「一个词」以后交房租：每玩 " + Money(house.Config.rentDaySeconds) + " 秒算一天，¥" + Money(house.Config.rentPerDay) + "。欠钱以后：", "Rent starts after the third ability: every " + Money(house.Config.rentDaySeconds) + " s of play is a day, ¥" + Money(house.Config.rentPerDay) + ". Once you owe it:");
+                text = T("灵光学会「看图说词」以后开始交房租：每玩 " + Money(house.Config.rentDaySeconds) + " 秒算一天，一天 ¥" + Money(house.Config.rentPerDay) + "，每次结算扣两天。欠钱以后：", "Rent starts once 灵光 learns to describe pictures: every " + Money(house.Config.rentDaySeconds) + " s of play is a day, ¥" + Money(house.Config.rentPerDay) + " a day, two days taken per settlement. Once you owe it:");
             else if (house.S.bankrupt)
             {
                 current = 3;
@@ -281,8 +281,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             else if (house.Debt > 0)
             {
                 current = Mathf.Clamp(Mathf.Max(house.S.debtDays, house.S.landlordCut ? 2 : 0), 1, 3);
-                text = T("<b>欠房租 ¥" + Money(house.Debt) + (house.S.landlordCut ? "，房东拉了电闸" : "") + "。</b>连着三天交不上，电脑就得卖了。",
-                    "<b>Rent owed ¥" + Money(house.Debt) + (house.S.landlordCut ? "; the landlord cut the power" : "") + ".</b> Three days without it and the computer has to be sold.");
+                text = T("<b>欠房租 ¥" + Money(house.Debt) + (house.S.landlordCut ? "，房东拉了电闸" : "") + "。</b>连着三次结算还不上，房东会来催你卖电脑抵债（卖不卖由你定）。",
+                    "<b>Rent owed ¥" + Money(house.Debt) + (house.S.landlordCut ? "; the landlord cut the power" : "") + ".</b> Three settlements in a row and the landlord will push you to sell the computer (your call).");
             }
             else
             {
@@ -291,7 +291,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 text = T("余额够交 <b>" + days + "</b> 天房租。欠钱以后：", "The balance covers <b>" + days + "</b> day" + (days == 1 ? "" : "s") + " of rent. Once you owe it:");
             }
             debtText.text = text;
-            string[] steps = { T("第 1 天 房东催", "Day 1 landlord texts"), T("第 2 天 拉电闸", "Day 2 power cut"), T("第 3 天 卖电脑", "Day 3 computer sold") };
+            string[] steps = { T("结算 1 · 房东催", "Round 1 · landlord texts"), T("结算 2 · 拉电闸", "Round 2 · power cut"), T("结算 3 · 可卖电脑", "Round 3 · may sell") };
             for (int i = 0; i < 3; i++)
             {
                 bool on = current == i + 1;
@@ -310,7 +310,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             billsTitle.text = T("家里的开销", "Household bills");
             billsNote.text = house != null ? T(GameCalendar.Now(house.S).Month + " 月" + GameCalendar.Now(house.S).Day + " 日", GameCalendar.Now(house.S).ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)) : "";
             incomeTitle.text = T("收入", "Income"); incomeNote.text = T("现在每秒", "Per second now");
-            sparkTitle.text = T("余额 · 最近 10 天", "Balance · last 10 days"); sparkNote.text = T("红线 = 一天的房租", "Red line = one day's rent");
+            sparkTitle.text = T("余额 · 最近 10 天", "Balance · last 10 days"); sparkNote.text = T("红线 = 一次结算的房租", "Red line = rent per settlement");
             recordsTitle.text = T("累计与记录", "Totals and records");
 
             // ── bills + debt ──
@@ -324,7 +324,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             foreach (var l in s.autoLevels) auto += Sim.AutoIncome(l.dataset, Host);
             int signedCount = 0; foreach (var c in XgCatalog.Contracts) if (Sim.Signed(c.id)) signedCount++;
             double net = contracts + auto - wages / XgSim.WageSeconds;
-            double dayLength = house != null ? house.Config.dayLengthSeconds : 120;
+            double dayLength = house != null ? house.Config.rentDaySeconds : 60;
             items.Clear();
             items.Add(Row.Row(T("企业订单 · " + signedCount + " 单", "Business orders · " + signedCount + " signed"), "+" + ZhongbaoUi.Yuan(contracts) + T("/秒", "/s"), ZhongbaoSkin.Green));
             items.Add(Row.Row(T("自动答题", "Auto-answer") + (Sim.QualityFrozen ? ZhongbaoUi.Muted(T("（账号冻结中，暂停）", " (account frozen, paused)")) : Sim.AutoPaused && Sim.GlobalAutoLevel > 0 ? ZhongbaoUi.Muted(T("（你暂停了）", " (paused by you)")) : ""), "+" + ZhongbaoUi.Yuan(auto) + T("/秒", "/s"), ZhongbaoSkin.Green));
@@ -334,7 +334,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             // ── balance history ──
             var history = Sim.BalanceHistory();
-            double rent = house != null ? house.RentFor(GameCalendar.Now(house.S).Date) : 0;
+            double rent = house != null ? house.RentFor(GameCalendar.Now(house.S).Date) * (house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) : 0;
             string key = rent + ":" + string.Join(",", history);
             if (key != chartKey) { chartKey = key; chartData = history; chartRent = rent; chartLayer.Redraw(); }
             noData.gameObject.SetActive(history.Count < 2);
@@ -541,8 +541,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── the account, under the dial ──
             var items = new List<Row.Item>();
             if (!active)
-                items.Add(Row.Note(T("平台还没开始抽检：买下自动答题以后，模型交出去的题才会被抽检、计信用。手动标注从不抽检。",
-                    "The platform is not checking yet: it starts spot-checking (and scoring credit) once you own auto-answer. Hand labels are never checked.")));
+                items.Add(Row.Note(T("平台还没开始抽检：要到第 4 阶段、并且买下自动答题以后，模型交出去的题才会被抽检、计信用。手动标注从不抽检。",
+                    "The platform is not checking yet: it starts spot-checking (and scoring credit) from stage 4, once you own auto-answer. Hand labels are never checked.")));
             if (Sim.QualityFrozen) items.Add(Row.Note("<b>" + T("账号冻结中 ", "Frozen ") + XgSim.FreezeClock(Sim.FreezeSecondsLeft) + "</b> · " + Sim.ReportReasonText(Sim.LastReportReason), ZhongbaoSkin.Red));
             if (Sim.CaptchaPending) items.Add(Row.Note("<b>" + T("等待人机验证 ", "Captcha waiting ") + XgSim.FreezeClock(Sim.CaptchaSecondsLeft) + "</b>" + T("（在标注台输入）", " (enter it on the labelling desk)"), ZhongbaoSkin.Red));
             else if (Sim.CaptchaPauseLeft > 0) items.Add(Row.Note(T("验证未通过，自动标注暂停 ", "Captcha failed, auto labelling paused ") + XgSim.FreezeClock(Sim.CaptchaPauseLeft), ZhongbaoSkin.Orange));

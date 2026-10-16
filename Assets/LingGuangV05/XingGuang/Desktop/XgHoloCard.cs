@@ -267,7 +267,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // An ability card stays quiet too: the emergence cutscene (XgEmergenceCutscene) is its moment.
             if (a.rarity < 1 || a.category == XgSim.CardInsight && a.id != "lingguang" || a.id.StartsWith("emerge.", System.StringComparison.Ordinal)) return;
             // The opening quiet window (OpeningQuiet): an ordinary card waits in the album without the fanfare.
-            if (a.id != "lingguang" && !LingGuangV05.Core.OpeningQuiet.Allows(false)) return;
+            if (a.id != "lingguang" && !LingGuangV05.Core.OpeningQuiet.Allows(false, LingGuangV05.Core.OpeningQuiet.Active)) return;
             if (pending.Count < 3) Enqueue(a.id);
         }
 
@@ -329,7 +329,8 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (!overlay.gameObject.activeSelf)
             {
-                if (pending.Count > 0 && view.Visible) Show(pending.Dequeue());
+                // A card waits out a story moment instead of flipping in over it (StoryFocus).
+                if (pending.Count > 0 && view.Visible && !LingGuangV05.Core.StoryFocus.Active) Show(pending.Dequeue());
                 return;
             }
             float t = Time.unscaledTime - shownAt;

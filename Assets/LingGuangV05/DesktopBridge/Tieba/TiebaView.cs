@@ -82,10 +82,13 @@ namespace LingGuangV05.Desktop.Tieba
             string name = T("摆渡贴吧", "Tieba");
             var tex = Resources.Load<Texture2D>("LingGuangV05/Forum/tieba_icon");
             var sprite = tex != null ? Sprite.Create(tex, new UnityEngine.Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f)) : null;
+            sprite = LingGuangV05.Desktop.XingGuang.XgIcons.Get("desktop", "tieba") ?? sprite;
             foreach (var title in window.GetComponentsInChildren<TMP_Text>(true)) if (title.name == "Aero Window Title") title.text = name;
             var icon = GameObject.Find("Desktop List/" + NativeWindow);
             if (icon != null) { Relabel(icon, name, sprite); iconBadge = iconBadge ?? Badge(icon.transform as RectTransform, new Vector2(24, 30)); }
             if (window.taskbarButton != null) { Relabel(window.taskbarButton.gameObject, name, sprite); taskBadge = taskBadge ?? Badge(window.taskbarButton.transform as RectTransform, new Vector2(14, 12)); }
+            // The Start-menu row still read the native 「提醒事项」 (Reminder) with the Reminder art.
+            LingGuangV05.Desktop.Taohuo.ShopView.RebrandStartRow(window, name, sprite, "贴吧 Tieba 摆渡贴吧 forum");
         }
 
         static void Relabel(GameObject entry, string name, Sprite sprite)
@@ -241,7 +244,9 @@ namespace LingGuangV05.Desktop.Tieba
                 var row = PrologueDesk.Rect("Board", side, new Vector2(0, 1), Vector2.one, new Vector2(8, -96 - i2 * 44), new Vector2(-8, -56 - i2 * 44));
                 var img = PrologueDesk.Fill(row, view == "board" && arg == board.id ? new Color32(228, 238, 255, 255) : (Color)new Color32(0, 0, 0, 0));
                 var btn = row.gameObject.AddComponent<Button>(); btn.targetGraphic = img; btn.onClick.AddListener(() => Go("board", board.id));
-                Text(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(12, 0), Vector2.zero), T(board.name, board.nameEn), 18, Link, TextAlignmentOptions.MidlineLeft);
+                // The drawn board icon (Tools/Icons/ui_icons.py, group tieba); the name makes room for it.
+                var boardIcon = LingGuangV05.Desktop.XingGuang.XgIcons.Place(row, "tieba", board.id, 26, 20, 30);
+                Text(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(boardIcon != null ? 48 : 12, 0), Vector2.zero), T(board.name, board.nameEn), 18, Link, TextAlignmentOptions.MidlineLeft);
                 i2++;
             }
         }
@@ -457,7 +462,7 @@ namespace LingGuangV05.Desktop.Tieba
             float bottom = choices ? 120 : 76;
             var header = PrologueDesk.Rect("Header", main, new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero);
             PrologueDesk.Fill(header, Color.white);
-            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
+            Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (id == ForumLibrary.LaoZhou && !(hub.S != null && hub.S.zhouGone) ? "  <size=14><color=#8A90A0>" + Lang.T("（老周）") + "</color></size>" : "") + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
             var body = PrologueDesk.Rect("Body", main, Vector2.zero, Vector2.one, new Vector2(0, bottom), new Vector2(0, -44));
             NewScroll(body, Vector2.zero);
             if (TiebaHub.IsDiscussion(id)) {

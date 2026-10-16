@@ -61,7 +61,7 @@ namespace LingGuangV05.XingGuang
         public static void InbreedingCardText(out int stage, out string name, out string nameEn, out string golden, out string goldenEn, out string why, out string whyEn)
         {
             stage = 2; name = "近亲繁殖"; nameEn = "Inbreeding";
-            golden = "人工复核旧数据 · 抽检清理噪声 · 调高「拿不准才问我」"; goldenEn = "Re-check old labels · clean noise with Quality audit · raise 'Ask when unsure'";
+            golden = "人工复核旧数据 · 自查清理噪声 · 调高「拿不准才问我」"; goldenEn = "Re-check old labels · clean noise with Self-check · raise 'Ask when unsure'";
             why = "它标错了，没人发现，这些错题又回到训练数据里。它学会的，是它自己的错。";
             whyEn = "It labelled wrong, nobody noticed, and those labels went back into its training data. What it learned was its own mistakes.";
         }

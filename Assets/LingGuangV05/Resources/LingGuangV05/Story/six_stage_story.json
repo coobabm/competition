@@ -8,7 +8,7 @@
       "steps": []
     },
     {
-      "id": "emerge_3",
+      "id": "emerge_3", "hook": "hook_emerge_3",
       "on": "lg.emerge:3",
       "priority": 66,
       "steps": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "id": "emerge_4",
+      "id": "emerge_4", "hook": "hook_emerge_4",
       "on": "lg.emerge:4",
       "priority": 66,
       "steps": [
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "id": "emerge_5",
+      "id": "emerge_5", "hook": "hook_emerge_5",
       "on": "lg.emerge:5",
       "priority": 66,
       "steps": [
@@ -41,7 +41,7 @@
       ]
     },
     {
-      "id": "emerge_6",
+      "id": "emerge_6", "hook": "hook_emerge_6",
       "on": "lg.emerge:6",
       "priority": 66,
       "steps": [
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "id": "s6_origin_lead",
+      "id": "s6_origin_lead", "hook": "hook_s6_origin_lead",
       "on": "lg.originLead",
       "priority": 50,
       "steps": [
@@ -142,7 +142,7 @@
       ]
     },
     {
-      "id": "month_1",
+      "id": "month_1", "hook": "hook_month_1",
       "on": "lg.month:1",
       "priority": 70,
       "steps": [
@@ -156,7 +156,7 @@
       ]
     },
     {
-      "id": "month_2",
+      "id": "month_2", "hook": "hook_month_2",
       "on": "lg.month:2",
       "priority": 70,
       "steps": [
@@ -170,7 +170,7 @@
       ]
     },
     {
-      "id": "month_3",
+      "id": "month_3", "hook": "hook_month_3",
       "on": "lg.month:3",
       "priority": 70,
       "steps": [
@@ -184,7 +184,7 @@
       ]
     },
     {
-      "id": "month_4",
+      "id": "month_4", "hook": "hook_month_4",
       "on": "lg.month:4",
       "priority": 70,
       "steps": [
@@ -198,7 +198,7 @@
       ]
     },
     {
-      "id": "month_5",
+      "id": "month_5", "hook": "hook_month_5",
       "on": "lg.month:5",
       "priority": 70,
       "steps": [
@@ -212,7 +212,7 @@
       ]
     },
     {
-      "id": "month_6",
+      "id": "month_6", "hook": "hook_month_6",
       "on": "lg.month:6",
       "priority": 70,
       "steps": [
@@ -226,7 +226,7 @@
       ]
     },
     {
-      "id": "bt_specialty_vision",
+      "id": "bt_specialty_vision", "hook": "hook_bt_specialty_vision",
       "on": "lg.breakthrough:bt.vision",
       "priority": 60,
       "steps": [
@@ -247,7 +247,7 @@
       ]
     },
     {
-      "id": "bt_specialty_sequence",
+      "id": "bt_specialty_sequence", "hook": "hook_bt_specialty_sequence",
       "on": "lg.breakthrough:bt.sequence",
       "priority": 60,
       "steps": [
@@ -268,7 +268,7 @@
       ]
     },
     {
-      "id": "bt_residual",
+      "id": "bt_residual", "hook": "hook_bt_residual",
       "on": "lg.breakthrough:bt.residual",
       "priority": 60,
       "steps": [
@@ -281,7 +281,7 @@
       ]
     },
     {
-      "id": "ll_remember",
+      "id": "ll_remember", "hook": "hook_ll_remember",
       "on": "state",
       "priority": 60,
       "steps": [
@@ -304,7 +304,7 @@
       ]
     },
     {
-      "id": "bt_spatial",
+      "id": "bt_spatial", "hook": "hook_bt_spatial",
       "on": "lg.breakthrough:bt.spatial",
       "priority": 60,
       "steps": [
@@ -317,7 +317,7 @@
       ]
     },
     {
-      "id": "ll_underline",
+      "id": "ll_underline", "hook": "hook_ll_underline",
       "on": "state",
       "priority": 60,
       "steps": [
@@ -341,7 +341,7 @@
       ]
     },
     {
-      "id": "ll_proposal",
+      "id": "ll_proposal", "hook": "hook_ll_proposal",
       "on": "state",
       "priority": 90,
       "steps": [
@@ -541,7 +541,7 @@
       ]
     },
     {
-      "id": "specialty_motivation",
+      "id": "specialty_motivation", "hook": "hook_specialty_motivation",
       "on": "lg.emerge:2",
       "priority": 65,
       "steps": [
@@ -584,7 +584,7 @@
       ]
     },
     {
-      "id": "aj_captcha",
+      "id": "aj_captcha", "hook": "hook_aj_captcha",
       "on": "state",
       "priority": 35,
       "steps": [
@@ -604,7 +604,7 @@
       ]
     },
     {
-      "id": "netbar_meme",
+      "id": "netbar_meme", "hook": "hook_netbar_meme",
       "on": "state",
       "priority": 35,
       "steps": [
@@ -624,7 +624,7 @@
       ]
     },
     {
-      "id": "xz_poems",
+      "id": "xz_poems", "hook": "hook_xz_poems",
       "on": "state",
       "priority": 35,
       "steps": [
@@ -644,7 +644,7 @@
       ]
     },
     {
-      "id": "cousin_translation_order",
+      "id": "cousin_translation_order", "hook": "hook_cousin_translation_order",
       "on": "state",
       "priority": 35,
       "steps": [
@@ -716,7 +716,7 @@
       ]
     },
     {
-      "id": "s2_name",
+      "id": "s2_name", "hook": "hook_s2_name",
       "on": "state",
       "priority": 40,
       "when": [
@@ -745,7 +745,7 @@
       ]
     },
     {
-      "id": "s2_moved",
+      "id": "s2_moved", "hook": "hook_s2_moved",
       "on": "state",
       "priority": 40,
       "when": [
@@ -765,7 +765,7 @@
       ]
     },
     {
-      "id": "s4_first_day",
+      "id": "s4_first_day", "hook": "hook_s4_first_day",
       "on": "state",
       "priority": 55,
       "when": [
@@ -820,7 +820,7 @@
       ]
     },
     {
-      "id": "s4_wish",
+      "id": "s4_wish", "hook": "hook_s4_wish",
       "on": "state",
       "priority": 54,
       "when": [
@@ -862,7 +862,7 @@
       ]
     },
     {
-      "id": "s5_garble_1",
+      "id": "s5_garble_1", "hook": "hook_s5_garble_1",
       "on": "state",
       "priority": 57,
       "when": [
@@ -899,7 +899,7 @@
       ]
     },
     {
-      "id": "s5_garble_2",
+      "id": "s5_garble_2", "hook": "hook_s5_garble_2",
       "on": "state",
       "priority": 56,
       "when": [
@@ -932,7 +932,7 @@
       ]
     },
     {
-      "id": "s5_garble_3",
+      "id": "s5_garble_3", "hook": "hook_s5_garble_3",
       "on": "state",
       "priority": 55,
       "when": [
@@ -969,7 +969,7 @@
       ]
     },
     {
-      "id": "s5_garble_4",
+      "id": "s5_garble_4", "hook": "hook_s5_garble_4",
       "on": "state",
       "priority": 54,
       "when": [

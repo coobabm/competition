@@ -12,6 +12,14 @@ namespace LingGuangV05.Desktop.Casino
     {
         public RectTransform Front, Back;
         public XgJuice Juice;
+
+        /// <summary>The site's recorded card sound, or the lab's synthesized one (at its own pitch and volume) when missing.</summary>
+        void Play(string clipName, XgJuice.Sfx.Id fallback, float pitch, float volume, float clipVolume)
+        {
+            if (Juice == null) return;
+            var clip = CasinoAssets.Sound(clipName);
+            if (clip != null) Juice.PlayClip(clip, 1, clipVolume); else Juice.Play(fallback, pitch, volume);
+        }
         public bool Reduced;
         public Func<bool> CanDrag;
         public bool Busy => mode != 0 || dragging;
@@ -58,7 +66,7 @@ namespace LingGuangV05.Desktop.Casino
             elapsed += Mathf.Min(seconds, .05f);
             if (elapsed < 0) return;
             group.alpha = 1;
-            if (!soundStarted) { soundStarted = true; Juice?.Play(XgJuice.Sfx.Id.Whoosh, 1.35f, .25f); }
+            if (!soundStarted) { soundStarted = true; Play("deal", XgJuice.Sfx.Id.Whoosh, 1.35f, .25f, .5f); }
             float travel = Reduced ? .13f : .38f, flip = Reduced ? .08f : .16f, settle = Reduced ? .04f : .14f;
             if (mode == 3)
             {
@@ -125,7 +133,7 @@ namespace LingGuangV05.Desktop.Casino
             mode = 0; dragging = false; Progress = 1;
             rt.anchoredPosition = target; rt.localScale = baseScale; rt.localRotation = Quaternion.identity;
             if (group != null) { group.alpha = 1; group.blocksRaycasts = true; } SetFace(faceUp); HideTrails();
-            if (sound) Juice?.Play(XgJuice.Sfx.Id.Clack, 1.2f, .3f);
+            if (sound) Play("flip", XgJuice.Sfx.Id.Clack, 1.2f, .3f, .6f);
         }
         bool Point(PointerEventData e, out Vector2 p)
         {

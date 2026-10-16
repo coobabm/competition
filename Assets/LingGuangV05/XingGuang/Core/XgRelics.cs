@@ -105,7 +105,7 @@ namespace LingGuangV05.XingGuang
             R("multimeter", XgRarity.Rare, "电", "老电工的万用表", "Old electrician's multimeter",
                 "「你家用的电，比我整栋楼都多。」", "'Your house burns more power than my whole building.'",
                 "训练电费 −40%", "Training power cost −40%", f => f.powerCut += .40),
-            R("spider_ua", XgRarity.Rare, "蛛", "伪装成百度蜘蛛的 UA", "A forged Baiduspider UA",
+            R("spider_ua", XgRarity.Rare, "蛛", "伪装成摆渡蜘蛛的 UA", "A forged Bodu spider UA",
                 "网站看了它一眼，放行了。", "The site took one look and waved it through.",
                 "读到的词每个算 3 条样本", "Every word read counts as 3 samples", f => f.readMult *= 3),
             R("arcade_tokens", XgRarity.Rare, "币", "一袋街机游戏币", "A bag of arcade tokens",
@@ -113,7 +113,7 @@ namespace LingGuangV05.XingGuang
                 "每个小游戏答对 +1 额外样本", "+1 extra sample per correct mini-game answer", f => f.miniExtra += 1),
 
             // ───────────── 史诗 ─────────────
-            R("tieba", XgRarity.Epic, "吧", "百度贴吧「精品帖」合集", "Tieba 'featured posts' archive",
+            R("tieba", XgRarity.Epic, "吧", "摆渡贴吧「精品帖」合集", "Tieba 'featured posts' archive",
                 "每层楼都在回「楼主好人」，但内容是真的。", "Every floor says 'thanks, OP', but the content is real.",
                 "能力门槛 −15%（参数和样本）", "Ability thresholds −15% (parameters and samples)", f => { f.paramsFactor *= .85; f.samplesFactor *= .85; }),
             R("allnight", XgRarity.Epic, "夜", "网吧通宵卡", "All-night café pass",

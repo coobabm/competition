@@ -57,15 +57,16 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .1f;
             var sim = controller.Sim; LearnedCount = 0; NextAbility = sim.NextAbility;
-            ParameterProgress = NextAbility > 0 ? (float)sim.ParamsProgress(NextAbility) : 0;
-            DataProgress = NextAbility > 0 ? (float)sim.SamplesProgress(NextAbility) : 0;
+            // How much is trained, never how far to the hidden line (XgSim.Learned.cs).
+            ParameterProgress = NextAbility > 0 ? (float)sim.ParamsFill : 0;
+            DataProgress = NextAbility > 0 ? (float)sim.SamplesFill : 0;
             for (int i = 0; i < learned.Length; i++)
             {
                 learned[i] = sim.HasAbility(i + 1); if (learned[i]) LearnedCount++;
                 bool current = i + 1 == NextAbility;
                 names[i].text = XgSim.AbilityName(i + 1, GameText.IsEnglish);
                 names[i].color = learned[i] ? XgCortexGraphic.N.Teal : current ? XgCortexGraphic.N.Gold : new Color32(93, 113, 130, 255);
-                progress[i].text = current ? "<color=#9D96F2>P " + Mathf.RoundToInt(ParameterProgress * 100) + "%</color>  <color=#51C0BB>D " + Mathf.RoundToInt(DataProgress * 100) + "%</color>" : "";
+                progress[i].text = current ? "<color=#9D96F2>P " + XgSim.ParamsText(sim.TrainedParamsK) + "</color>  <color=#51C0BB>D " + XgSim.SamplesText(sim.TrainedSamples) + "</color>  ?" : "";
             }
             SetVerticesDirty();
         }

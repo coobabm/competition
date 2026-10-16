@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.Story
 
         public override IEnumerable<string> WarmText()
         {
-            yield return "学会寻找重点看图说话固定长度向量整句话只能塞进这里译文我在海边长大后来去了真的很想念大海一只鸟站在树枝上权重越大看得越重回头看原文每写一个词注意力矩阵你说又把那句话删掉了所以这不是第一次了";
+            yield return "学会寻找重点看图说话固定长度向量整句话只能塞进这里译文我在海边长大后来去了真的很想念大海一只鸟站在树枝上权重越大看得越重回头看原文每写一个词注意力矩阵你说又标到半夜了所以不是第一次了吧";
         }
 
         public override void Render(float t)

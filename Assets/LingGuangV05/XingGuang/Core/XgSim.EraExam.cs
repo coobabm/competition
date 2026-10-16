@@ -23,15 +23,15 @@ namespace LingGuangV05.XingGuang
         {
             var result = new XgEraExamResult { dataset = dataset ?? "" };
             var definition = XgCatalog.Dataset(dataset ?? "");
-            if (definition == null) { result.reason = "未知数据集"; return result; }
+            if (definition == null) { result.reason = T("这个数据集不存在。", "No such dataset."); return result; }
             var run = Run(definition.track);
-            if (run.dataset != dataset) { result.reason = "请先在训练页选择此数据集；验收使用当前训练快照"; return result; }
-            if (host == null) { result.reason = "设备未就绪"; return result; }
+            if (run.dataset != dataset) { result.reason = T("先到训练页选中这个数据集，再回来验收：验收看的是它现在的状态。", "Select this dataset on the training page first, then come back: the check uses what it knows right now."); return result; }
+            if (host == null) { result.reason = T("电脑还没准备好。", "The computer is not ready yet."); return result; }
             if (host.Blocker != null) { result.reason = host.Blocker; return result; }
-            if (!(host.Compute > 0) || double.IsInfinity(host.Compute)) { result.reason = "没有可用算力"; return result; }
+            if (!(host.Compute > 0) || double.IsInfinity(host.Compute)) { result.reason = T("现在没有可用的算力。", "There is no compute available right now."); return result; }
             string blocked = Blocker(run, host);
             if (blocked != null) { result.reason = blocked; return result; }
-            if (!(TrainVram(run, host) >= VramNeedMB(run))) { result.reason = "显存不足"; return result; }
+            if (!(TrainVram(run, host) >= VramNeedMB(run))) { result.reason = T("显存不够，先腾一点出来。", "Not enough video memory; free some up first."); return result; }
 
             int level = BoardLevel(dataset), today = Today;
             var forbidden = new HashSet<string>(StringComparer.Ordinal);
@@ -71,33 +71,25 @@ namespace LingGuangV05.XingGuang
                 cards.Add(card); signatures.Add(signature);
                 if (card.truth) positives++; else negatives++;
             }
-            if (cards.Count != 20) { result.reason = "独立新题不足正负各 10 道；未使用旧题补足"; return result; }
+            if (cards.Count != 20) { result.reason = T("新题不足：凑不齐 20 道（对错各 10 道）。不拿旧题凑数。", "Not enough fresh questions for 20 (10 right, 10 wrong). Old ones are not reused to fill the gap."); return result; }
 
             var snapshot = new XgBoard(Board.S.Clone());
             var knobs = Knobs(run).Copy();
             var report = new StringBuilder();
-            report.Append("当前训练快照（非部署检查点）\ndataset=").Append(dataset).Append(" level=").Append(level)
-                .Append(" seed=").Append(seed).Append(" dataSalt=").Append(S.dataSalt).Append('\n')
-                .Append("arch=").Append(run.arch).Append(" depth=").Append(knobs.depth).Append(" width=").Append(knobs.width)
-                .Append(" wiring=").Append(knobs.wiring).Append(" activation=").Append(knobs.activation)
-                .Append(" lr=").Append(knobs.lr.ToString("R", CultureInfo.InvariantCulture))
-                .Append(" skip=").Append(knobs.skip).Append(" clip=").Append(knobs.clip).Append(" position=").Append(knobs.position)
-                .Append(" features=").Append(knobs.features).Append(" batchNorm=").Append(knobs.batchNorm)
-                .Append(" dropout=").Append(knobs.dropout).Append(" bias=").Append(knobs.bias)
-                .Append(" warmup=").Append(knobs.warmup).Append(" identityInit=").Append(knobs.identityInit)
-                .Append(" multiHead=").Append(knobs.multiHead).Append(" steadiness=").Append(knobs.steadiness.ToString("R", CultureInfo.InvariantCulture)).Append('\n');
+            report.Append(T("新题验收：20 道它没见过的题，对错各 10 道。\n这些题不在训练题里，也不在平时的测验里；用的是它现在学到的东西，不是之前存下的检查点。\n\n逐题：\n",
+                "Fresh-question check: 20 questions it has never seen, 10 right and 10 wrong.\nThey are not in the training set or in the usual quizzes, and the check uses what it knows right now, not a saved checkpoint.\n\nOne by one:\n"));
             for (int i = 0; i < cards.Count; i++)
             {
                 bool prediction = snapshot.Predict(cards[i], knobs, out bool guessed);
-                if (prediction == cards[i].truth) result.right++;
-                report.Append(i + 1).Append(". prediction=").Append(prediction).Append(" truth=").Append(cards[i].truth)
-                    .Append(" guessed=").Append(guessed).Append(" signature=").Append(signatures[i]).Append('\n');
+                bool good = prediction == cards[i].truth;
+                if (good) result.right++;
+                report.Append(i + 1).Append(good ? T(" 答对", " right") : T(" 答错", " wrong")).Append(i % 5 == 4 ? "\n" : "   ");
             }
             result.count = cards.Count;
             result.accuracy = (double)result.right / result.count;
             result.signatures = signatures.ToArray();
-            report.Append("raw accuracy=").Append(result.right).Append('/').Append(result.count).Append(" = ")
-                .Append(result.accuracy.ToString("P1", CultureInfo.InvariantCulture));
+            report.Append(T("\n结果：答对 ", "\nResult: ")).Append(result.right).Append(" / ").Append(result.count)
+                .Append(T("（", " right (")).Append(F(result.accuracy * 100, "0")).Append("%").Append(T("）。", ")."));
             result.transcript = report.ToString();
             result.valid = true;
             return result;

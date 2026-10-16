@@ -37,7 +37,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             Clear(XgUi.T("谁是卧底 · 第 "+round+" 轮","Who Is Undercover · Round "+round),XgUi.T("四人里一人拿相近词。先描述，再判断他人描述与你的词是否相像，最后投票。","One of the four holds a similar-but-different word. First describe, then judge whether the others' descriptions resemble your word, then vote."));
             T("Word",20,82,860,36,XgUi.T("你的词：「"+pair[sides[0]]+"」  · 不要直接泄露词语","Your word: \""+pairEn[sides[0]]+"\"  · Do not give the word away"),22,purple);
             for(int i=0;i<4;i++){
-                int k=i;float x=18+i*220;Shade(x,126,210,194);T("Name"+i,x+12,134,185,30,Nm(i)+(alive[i]?"":XgUi.T("（已出局）"," (out)")),21);
+                int k=i;float x=18+i*220;Shade(x,126,210,194);T("Name"+i,x+12,134,185,30,Nm(i)+(i==2?XgUi.T("（老周师弟）"," (junior)"):"")+(alive[i]?"":XgUi.T("（已出局）"," (out)")),21);
                 T("Desc"+i,x+12,172,185,90,alive[i]?(desc[i]??XgUi.T("待描述","Not described yet")):XgUi.T("旁观中","Watching"),19);
                 if(phase==2&&i!=0&&alive[i]){
                     B("Like"+i,x+8,267,94,43,(marks[i]==1?XgUi.T("[选] ","[x] "):"")+XgUi.T("像","Alike"),()=>Mark(k,1),17);

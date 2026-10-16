@@ -73,6 +73,8 @@ namespace LingGuangV05.Desktop.Miaoyu
             Rebrand(window, new[] { "Commander", "文件管理器", "喵鱼", "Miaoyu" }, T(AppNames.UsedZh, AppNames.UsedEn), Icon(),
                 Lang.T("闲置变现，喵～ 交易只在这台电脑里模拟"),
                 GameObject.Find("Desktop List/" + NativeWindow));
+            // Title bar, Start row and the rest read the Oxygen terminal art from the icon loader's library: give them ours.
+            SetOxygenIcons(NativeWindow, Icon());
             signature = "";
         }
 
@@ -88,6 +90,8 @@ namespace LingGuangV05.Desktop.Miaoyu
         /// <summary>A white fish on a yellow tile, drawn once.</summary>
         static Sprite Icon()
         {
+            var drawn = XgIcons.Get("desktop", "miaoyu");
+            if (drawn != null) return drawn;
             if (icon != null) return icon;
             const int n = 64;
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { hideFlags = HideFlags.DontSave };
@@ -279,7 +283,7 @@ namespace LingGuangV05.Desktop.Miaoyu
 
         static readonly (string zh, string en)[] Nicks =
         {
-            ("学生党小王", "Student Wang"), ("华强北老李", "Old Li from Huaqiangbei"), ("吃鸡少年", "Gamer kid"), ("矿工阿明", "Miner Ming"),
+            ("学生党小王", "Student Wang"), ("华强北老李", "Old Li from Huaqiangbei"), ("守望少年", "Overwatch kid"), ("矿工阿明", "Miner Ming"),
             ("考研狗", "Grad-school hopeful"), ("网吧老板娘", "Net cafe owner"), ("同城面交", "Local, cash only"), ("炼丹萌新", "Deep-learning newbie"),
         };
         static readonly (string zh, string en)[] Haggles =

@@ -83,9 +83,9 @@ namespace LingGuangV05.XingGuang
             {
                 // 涌现: every ability that emerged (ids of the old wall cards are retired; wall.pretrain is kept).
                 Card(CardWall, 1, "emerge.2", "选", "多选一", "Pick one", "第二项能力：它能在几个选项里挑一个。", "The second ability: it picks one of a few options.", "1969 年 Minsky 和 Papert 证明一层学不会异或；1986 年反向传播让多层网络学会了。", "In 1969 Minsky and Papert showed one layer cannot learn XOR; in 1986 backpropagation let deeper nets learn it."),
-                Card(CardWall, 1, "emerge.3", "看", "看图说词", "Picture to word", "第三项能力：它看图能说出一个词。", "The third ability: it names a picture in one word.", "图看邻居，句子看前文：不是每个格子都要连每个格子。", "Pictures look at neighbours, sentences at what came before."),
-                Card(CardWall, 1, "emerge.4", "句", "短句", "Short sentences", "第四项能力：它会说短句，记得你说过的话。", "The fourth ability: short sentences, and it remembers what you said.", "让它自己决定记住什么、忘掉什么。", "Let it decide what to keep and what to forget."),
-                Card(CardWall, 1, "emerge.5", "译", "长记忆 · 翻译", "Memory · translation", "第五项能力：它能翻译，能读懂乱码。", "The fifth ability: it translates and reads the garbled page.", "先把整句读完，再从头说一遍。", "Read the whole sentence, then say it again from the start."),
+                Card(CardWall, 1, "emerge.3", "看", "看图说词", "Picture to word", "第三项能力：它第一次开口，只说一个词。", "The third ability: it speaks for the first time, one word.", "图看邻居，句子看前文：不是每个格子都要连每个格子。", "Pictures look at neighbours, sentences at what came before."),
+                Card(CardWall, 1, "emerge.4", "句", "短句", "Short sentences", "第四项能力：它会说短句，记得这次聊天里说过的话。", "The fourth ability: short sentences, and it remembers what was said in this chat.", "让它自己决定记住什么、忘掉什么。", "Let it decide what to keep and what to forget."),
+                Card(CardWall, 1, "emerge.5", "译", "长记忆·翻译", "Memory · translation", "第五项能力：它记得前几天的话，能翻译，能读懂乱码。", "The fifth ability: it remembers what you said days ago, translates and reads the garbled page.", "先把整句读完，再从头说一遍。", "Read the whole sentence, then say it again from the start."),
                 Card(CardWall, 2, "emerge.6", "全", "全部放开", "Everything", "第六项能力：规模到了，能力一起冒了出来。", "The sixth ability: with scale, everything came at once.", "拿掉循环，每个字直接看所有字。", "Drop the loop: every word looks at every word."),
                 Card(CardWall, 1, "wall.pretrain", "模", "预训练", "Pre-training", "阶段 6 把预训练跑通。", "Ran pre-training through in stage 6.", "规模和稳定，两样都要。", "Scale and stability: you need both."),
 
@@ -118,7 +118,7 @@ namespace LingGuangV05.XingGuang
                 Life(1, "life.casino.blackjack", "A", "黑杰克", "Blackjack", "二十一点开局就拿到黑杰克。", "Dealt a natural blackjack.", "有人在二十一点的桌上等一张 A。", "Someone at the blackjack table is waiting for an ace.",
                     "一张 A，一张 K。概率 4.8%，这次是你。", "An ace and a king: 4.8%, and this time it was you."),
                 Life(2, "life.casino.jackpot", "7", "三个七", "Triple seven", "老虎机转出三个一样的。", "Hit three of a kind on the slots.", "老虎机据说真的会吐钱。", "They say the slot machine really does pay out.",
-                    "二十倍。别告诉晴雯。", "Twenty times the stake. Don't tell Qingwen."),
+                    "最高二十倍。别告诉晴雯。", "Up to twenty times the stake. Don't tell Qingwen."),
                 Life(1, "life.casino.broke", "光", "一把梭", "All in", "在赌场输到连最小的筹码都押不起。", "Lost until not even the smallest chip was affordable.", "据说有人在 888.vip 输掉了买显卡的钱。", "Word is someone lost the GPU money on 888.vip.",
                     "显卡没买成，模型还在等。", "No new graphics card. The model is still waiting."),
                 Life(2, "life.casino.loss", "庄", "久赌必输", "The house always wins", "在赌场累计净输 ¥" + CasinoLossCard + "。", "Lost ¥" + CasinoLossCard + " net at the casino.", "赌场的账本上，有一页写着你的名字。", "There is a page with your name in the casino's ledger.",
@@ -137,11 +137,9 @@ namespace LingGuangV05.XingGuang
                 Life(1, "life.gf.forgot", "忘", "钢铁直男", "Forgot again", "忘了一个对她很重要的日子。", "Forgot a day that mattered to her.", "日历上有些日子，没有闹钟会提醒你。", "Some days on the calendar have no alarm.",
                     "模型记得一万个字，你忘了一个日子。", "The model remembers ten thousand words; you forgot one date."),
                 Life(1, "life.gf.iphone", "果", "肾六换七", "The iPhone 7", "送了晴雯一部 iPhone 7。", "Gave Qingwen an iPhone 7.", "九月有个新手机，很多人在等。", "A new phone came out in September and many were waiting.",
-                    "¥5388，两张显卡的钱。", "¥5,388: the price of two graphics cards."),
+                    "¥6188，差不多三张二手 980 Ti。", "¥6,188: about three second-hand 980 Tis."),
                 Life(2, "life.gf.sweet", "甜", "热恋", "Head over heels", "晴雯的好感升到「甜」。", "Qingwen's affection reached Sweet.", "有人说，恋爱比训练模型容易。", "Some say love is easier than training a model.",
                     "没有损失函数，没有验证集，可它就是在变好。", "No loss function, no validation set, and still it got better."),
-                Life(2, "life.gf.caught", "替", "替身被识破", "Caught out", "让它替你回消息，被晴雯发现了。", "Let it answer Qingwen for you, and she noticed.", "据说有人让 AI 替自己谈恋爱。", "They say someone let an AI do their dating.",
-                    "它学你说话，没学像。", "It learned to talk like you. Not well enough."),
                 Life(3, "life.gf.newyear", "跨", "跨年", "New Year's Eve", "收到晴雯 23:59 的那条消息。", "Got Qingwen's message at 23:59.", "2016 年的最后一分钟，会有一条消息。", "There is a message in the last minute of 2016.",
                     "零点之前，她先想到了你。", "Before midnight, she thought of you first."),
                 Life(4, "life.love.ask", "爱", "她爱我吗", "Does she love me?", "让它读完你们所有的聊天记录，回答那个问题。", "Let it read every message you two sent and answer the question.", "有个问题，你一直想问它。转一下这张卡。", "There is a question you have always wanted to ask it. Turn this card.",
@@ -178,6 +176,10 @@ namespace LingGuangV05.XingGuang
                     "¥9999，信仰无价。", "¥9,999. Faith is priceless."),
                 Life(0, "life.redpacket.slow", "慢", "手慢了", "Too slow", "群里的红包没抢到。", "Missed a red packet in a group chat.", "群里的红包，有人永远抢不到。", "Some people never get the group red packets.",
                     "手慢了，红包派完了。", "Too slow: the red packet is gone."),
+                Life(1, "life.praise.forum", "神", "大神", "Big shot", "在人工智能吧，有人当面叫你大神。", "Someone on the AI forum called you a big shot to your face.", "帖子火了以后，吧里会有人这么叫你。", "Once a thread of yours takes off, someone on the forum will call you that.",
+                    "他们叫的是你，不是它。", "They meant you, not it."),
+                Life(1, "life.praise.landlord", "租", "老王点头", "Old Wang nods", "房东听完你的解释，说你这孩子有出息。", "The landlord heard you out and said you will go far.", "查电表的老王，有一回没为难你。", "The landlord who reads the meter, once, did not give you a hard time.",
+                    "「租给你我放心。」", "\"I'm easy renting to you.\""),
 
                 // 结局 (hidden until reached).
                 Card(CardEnding, 3, "end.E1", "停", "听见关机就停下", "It stops when told", "写下了那条规则。", "Wrote the rule.", hidden: true),
@@ -264,7 +266,7 @@ namespace LingGuangV05.XingGuang
         void CasinoSettled(XgCasinoRound round, bool natural, IXgHost host)
         {
             Earn("life.casino.first");
-            if (round.game == "slots" && round.returned >= round.stake * 20) Earn("life.casino.jackpot");
+            if (round.game == "slots" && round.returned >= round.stake * 3) Earn("life.casino.jackpot"); // three of a kind: 3x, three 7s 20x
             if (natural && round.returned > round.stake * 2) Earn("life.casino.blackjack");
             int streak = 0;
             for (int i = Casino.history.Count - 1; i >= 0 && Casino.history[i].returned > Casino.history[i].stake; i--) streak++;

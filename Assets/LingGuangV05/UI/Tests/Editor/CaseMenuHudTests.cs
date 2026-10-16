@@ -18,7 +18,7 @@ namespace LingGuangV05.UI.Tests
             if (host != null) UnityEngine.Object.DestroyImmediate(host);
         }
 
-        [TestCase("Title", "灵光")]
+        [TestCase("Title", "我的电脑活了")]
         [TestCase("SettingsTitle", "设置")]
         public void FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(string name, string expectedText)
         {

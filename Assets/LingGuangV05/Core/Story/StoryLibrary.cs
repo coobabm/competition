@@ -57,6 +57,8 @@ namespace LingGuangV05.Core.Story
         public StoryStep[] Steps = new StoryStep[0];
         public int Order;
         public string Source;
+        /// <summary>The hook's line key (剧情修订 §二): said as an inner-voice line before the beat's own steps, then a short pause.</summary>
+        public string Hook;
         public int Specificity { get { return When.Length; } }
         public override string ToString() { return Id; }
     }
@@ -136,7 +138,10 @@ namespace LingGuangV05.Core.Story
         }
 
         private static readonly HashSet<string> BeatKeys = new HashSet<string>(StringComparer.Ordinal)
-        { "id", "on", "when", "once", "priority", "group", "cooldown", "groupCooldown", "steps", "comment" };
+        { "id", "on", "when", "once", "priority", "group", "cooldown", "groupCooldown", "steps", "comment", "hook" };
+
+        /// <summary>Story seconds between a beat's hook line and its first step.</summary>
+        public const double HookPause = 1.0;
 
         private void AddBeat(Dictionary<string, object> obj, string source, int index)
         {
@@ -172,7 +177,20 @@ namespace LingGuangV05.Core.Story
 
             if (!obj.TryGetValue("steps", out v) || !(v is List<object>)) throw new StoryFormatException(where + ": \"steps\" must be an array.");
             var steps = (List<object>)v;
-            beat.Steps = new StoryStep[steps.Count];
+            // A hook (剧情修订 §二) comes first: one inner-voice line that says something is about to happen, then a pause.
+            int lead = 0;
+            if (obj.TryGetValue("hook", out v))
+            {
+                beat.Hook = v as string;
+                if (string.IsNullOrEmpty(beat.Hook)) throw new StoryFormatException(where + ": \"hook\" must be a line key.");
+                lead = 2;
+            }
+            beat.Steps = new StoryStep[lead + steps.Count];
+            if (lead > 0)
+            {
+                beat.Steps[0] = new StoryStep("think", new Dictionary<string, object>(StringComparer.Ordinal) { { "key", beat.Hook }, { "hook", true } });
+                beat.Steps[1] = new StoryStep("wait", new Dictionary<string, object>(StringComparer.Ordinal) { { "seconds", HookPause } });
+            }
             for (int i = 0; i < steps.Count; i++)
             {
                 var s = steps[i] as Dictionary<string, object>;
@@ -180,7 +198,7 @@ namespace LingGuangV05.Core.Story
                 if (s == null || !s.TryGetValue("op", out op) || !(op is string)) throw new StoryFormatException(where + " step #" + i + ": needs \"op\".");
                 var args = new Dictionary<string, object>(s, StringComparer.Ordinal);
                 args.Remove("op");
-                beat.Steps[i] = new StoryStep((string)op, args);
+                beat.Steps[lead + i] = new StoryStep((string)op, args);
             }
             beats.Add(beat);
             byId[beat.Id] = beat;

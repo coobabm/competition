@@ -45,6 +45,15 @@ namespace LingGuangV05.Tests
         [Test]
         public void TheDateOnlyMovesForwardAndOldMomentsKeepTheirDay()
         {
+            // The desktop's real-time clock is a static that outlives a Play session; this test runs from 01:47.
+            var wall = GameCalendar.WallClock;
+            GameCalendar.WallClock = null;
+            try { DateOnlyMovesForward(); }
+            finally { GameCalendar.WallClock = wall; }
+        }
+
+        static void DateOnlyMovesForward()
+        {
             var s = new GameState();
             Assert.AreEqual(new DateTime(2016, 5, 24, 1, 47, 0), GameCalendar.Now(s), "a new save starts in the prologue night");
             s.gameSeconds = 600;
@@ -124,7 +133,15 @@ namespace LingGuangV05.Tests
             foreach (var e in events.Visible(EraEvents.News, today)) Assert.LessOrEqual(e.date, today, e.id);
             Assert.IsNotEmpty(events.Visible(EraEvents.News, today));
             var due = events.Due(EraEvents.YY, today, new List<string>());
-            foreach (var e in due) { Assert.AreEqual(7, e.date.Month, e.id + ": an older month's chat is not replayed"); Assert.LessOrEqual(e.date, today); }
+            DateTime previous = DateTime.MinValue;
+            foreach (var e in due)
+            {
+                Assert.GreaterOrEqual(e.date, today.AddMonths(-1), e.id + ": chat older than a month is not replayed");
+                Assert.LessOrEqual(e.date, today);
+                Assert.GreaterOrEqual(e.date, previous, e.id + ": oldest first");
+                previous = e.date;
+            }
+            Assert.IsTrue(due.Exists(x => x.id == "iceland"), "a line from the end of last month that never arrived is still delivered");
             var delivered = new List<string>();
             foreach (var e in due) delivered.Add(e.id);
             Assert.IsEmpty(events.Due(EraEvents.YY, today, delivered), "delivered once");

@@ -210,7 +210,7 @@ namespace LingGuangV05.Core.Girlfriend
         public static readonly GfGift[] Gifts =
         {
             new GfGift { id = GiftMilkTea, zh = "奶茶外卖（饿了么）", en = "Bubble tea delivery (Ele.me)", price = 25, from = GameCalendar.Start.Date, match = new[] { "奶茶", "bubble tea" }, baseEffect = 0, matchEffect = 1,
-                pitchZh = "当天送到宿舍楼下，再冷的天也是热的", pitchEn = "Delivered to her dorm the same day, hot even on a cold night" },
+                pitchZh = "当天送到她楼下，再冷的天也是热的", pitchEn = "Delivered to her door the same day, hot even on a cold night" },
             new GfGift { id = GiftPlush, zh = "熊本熊 / 阿狸公仔", en = "Kumamon / Ali plush", price = 129, from = GameCalendar.Start.Date, match = new[] { "熊本熊", "阿狸", "公仔", "kumamon" }, baseEffect = 2, matchEffect = 4,
                 pitchZh = "正版授权 40cm 抱着睡刚好", pitchEn = "Licensed, 40 cm, just right to hug at night" },
             new GfGift { id = GiftBand, zh = "小米手环 2", en = "Mi Band 2", price = 149, from = new DateTime(2016, 6, 7), match = new[] { "跑步", "减肥", "手环", "running" }, baseEffect = 2, matchEffect = 4,
@@ -221,7 +221,7 @@ namespace LingGuangV05.Core.Girlfriend
                 pitchZh = "2016 年最火的一支 代购现货 手慢无", pitchEn = "The lipstick of 2016. Proxy-bought, in stock, gone in minutes" },
             new GfGift { id = GiftTickets, zh = "《你的名字。》电影票 ×2", en = "Your Name cinema tickets ×2", price = 80, from = new DateTime(2016, 11, 25), match = new[] { "你的名字", "电影", "your name" }, baseEffect = 2, matchEffect = 2,
                 pitchZh = "12 月 2 日首映场 预售中", pitchEn = "Premiere showing on 2 December, pre-sale" },
-            new GfGift { id = GiftIphone, zh = "iPhone 7 32G 亮黑色", en = "iPhone 7 32 GB Jet Black", price = 5388, from = new DateTime(2016, 9, 16), match = new string[0], baseEffect = 8, matchEffect = 8,
+            new GfGift { id = GiftIphone, zh = "iPhone 7 128G 亮黑色", en = "iPhone 7 128 GB Jet Black", price = 6188, from = new DateTime(2016, 9, 16), match = new string[0], baseEffect = 8, matchEffect = 8,
                 pitchZh = "国行 9 月 16 日首发 防水 没有耳机孔", pitchEn = "Launched 16 September. Water-resistant. No headphone jack" },
             new GfGift { id = GiftCase, zh = "情侣手机壳一对", en = "Matching couple phone cases", price = 39, from = GameCalendar.Start.Date, match = new[] { "手机壳", "phone case" }, baseEffect = 1, matchEffect = 3,
                 pitchZh = "一人一个 拼起来是一颗心", pitchEn = "One each; together they make a heart" },
@@ -357,56 +357,5 @@ namespace LingGuangV05.Core.Girlfriend
             }
             return new[] { "收到了", "Got it" };
         }
-
-        // ───────────── 让 AI 代我回 (design §4.5) ─────────────
-
-        /// <summary>
-        /// How unlike his own lines the AI's line reads, 0–1.5: length, punctuation and faces compared with his
-        /// recent messages to her. The further, the likelier she notices.
-        /// </summary>
-        public static double StyleDistance(IList<string> his, string ai)
-        {
-            if (his == null || his.Count == 0 || string.IsNullOrEmpty(ai)) return .5;
-            double len = 0, punct = 0, faces = 0;
-            foreach (var l in his) { len += (l ?? "").Length; punct += Punct(l); faces += Chat.YYFaces.CountFaces(l ?? ""); }
-            len /= his.Count; punct /= his.Count; faces /= his.Count;
-            double dLen = Math.Abs(ai.Length - len) / Math.Max(8, Math.Max(len, ai.Length));
-            double dPunct = Math.Min(1, Math.Abs(Punct(ai) - punct) / 3);
-            double dFace = Math.Min(1, Math.Abs(Chat.YYFaces.CountFaces(ai) - faces));
-            return Math.Min(1.5, dLen + .5 * dPunct + .3 * dFace);
-        }
-
-        static int Punct(string s) { int n = 0; foreach (char c in s ?? "") if ("，。！？；：,.!?;:".IndexOf(c) >= 0) n++; return n; }
-
-        /// <summary>The chance she notices one AI-written line: about 6%, more the less it sounds like him, ×3 on holidays and in a quarrel.</summary>
-        public static double DetectChance(GirlfriendState s, GfNow now, double styleDistance)
-        {
-            double p = .06 * (1 + Math.Max(0, styleDistance));
-            if (s.fighting || (HolidayOn(now.clock) != null && HolidayOn(now.clock).forgot < 0)) p *= 3;
-            return Math.Min(.5, p);
-        }
-
-        /// <summary>She caught it: 「你今天说话怎么怪怪的」, 「这不是你吧？」, and his two answers.</summary>
-        public static List<GfEvent> Caught(GirlfriendState s, GfNow now)
-        {
-            var events = new List<GfEvent>();
-            s.aiCaught++;
-            if (Mark(s, FlagCaughtAi)) events.Add(GfEvent.Of(GfEventKind.Voice, "first.caught"));
-            s.asking = "caught"; s.askDay = now.day;
-            events.Add(GfEvent.Say("caught", "你今天说话怎么怪怪的", "You sound weird today", "你有没有认真看我说的？", "Are you reading what I said?"));
-            events.Add(GfEvent.Of(GfEventKind.Choices, "caught", "刚才走神了，对不起", "Sorry, I was distracted", "就是我啊", "It's me, of course"));
-            return events;
-        }
-
-        /// <summary>Her answer to his confession or denial.</summary>
-        public static string[] CaughtReply(GirlfriendState s, string answered)
-        {
-            if (answered == "admit") return new[] { "……", "…", "你先忙完再回我吧", "Finish what you are doing first", "我想和你好好说话", "I want a proper conversation with you" };
-            if (s.aiCaught > 1) return new[] { "你又骗我", "You lied to me again", "我不想说话了", "I don't want to talk" };
-            return new[] { "哦", "Oh", "那可能是我想多了", "Maybe I'm overthinking it" };
-        }
-
-        /// <summary>Stage 6: the AI declines to answer her, once and for good (design §4.5).</summary>
-        public const string AiRefusalZh = "她问的是你，不是我。", AiRefusalEn = "She is asking you, not me.";
     }
 }

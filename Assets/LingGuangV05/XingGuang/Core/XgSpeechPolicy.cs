@@ -12,7 +12,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The first stage at which the AI may use YY bracket faces such as [微笑].</summary>
         public const int FirstFaceStage = 4;
         public static int ContextLimit(int stage)
-        { switch (Stage(stage)) { case 1: case 2: return 1; case 3: return 2; case 4: case 5: return 14; default: return int.MaxValue; } }
+        { switch (Stage(stage)) { case 1: case 2: return 1; case 3: return 2; case 4: return 8; case 5: return 12; default: return int.MaxValue; } }
         public static int TokenLimit(int stage)
         { return new[] { 2, 4, 24, 60, 100, 140 }[Stage(stage) - 1]; }
 

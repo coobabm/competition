@@ -58,7 +58,7 @@ namespace LingGuangV05.Desktop.Casino
             var round = pendingPayout; pendingPayout = null;
             int tier = CasinoPresentation.WinTier(round);
             if (juice == null) return;
-            if (tier == 0) { juice.Knock(arena, .015f, Vector2.right * 3, .15f, true); return; }
+            if (tier == 0) { juice.Knock(arena, .015f, Vector2.right * 3, .15f, true); Sound("lose", XgJuice.Sfx.Id.Thud, 1, .6f); return; }
             payoutRollAmount = round.returned; payoutRollStart = Time.unscaledTime;
             SyncEffects();
             bool big = tier == 2 || round.returned >= round.stake * 10;
@@ -74,7 +74,7 @@ namespace LingGuangV05.Desktop.Casino
             if (big) juice.Burst(at, 16, Gold, XgJuice.Shape.Confetti, 260, 360, .8f);
             juice.Shockwave(at, Gold, big ? 250 : 170, .4f, big ? 10 : 6);
             juice.TransferCoins(at, juice.At(wallet.rectTransform), big ? 10 : 6);
-            juice.Play(big ? XgJuice.Sfx.Id.Fanfare : XgJuice.Sfx.Id.Coin, Mathf.Min(1.35f, 1 + .04f * pendingStreak), .8f);
+            Sound(big ? "bigwin" : "win", big ? XgJuice.Sfx.Id.Fanfare : XgJuice.Sfx.Id.Coin, Mathf.Min(1.2f, 1 + .03f * pendingStreak), .8f);
             if (pendingStreak >= 2)
             {
                 juice.Float(at + Vector2.down * 30, Lang.T("连胜 ×") + pendingStreak + (pendingStreak >= 8 ? "+" : ""), White, 24, 35, 1.2f);

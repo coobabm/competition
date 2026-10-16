@@ -332,6 +332,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (legBlend > 0) foot = Vector2.Lerp(foot, blendFrom[i], legBlend * legBlend);
                 l.shown = l.foot = foot;
                 l.stepping = !s.stance;
+                l.lift = l.stepping ? 1f : 0f; // the walker draws a swinging foot larger by its lift
                 l.knee = Knee(l.hipWorld, foot, walker.pos, walker.upper, walker.lower);
             }
             var eye = Color.Lerp(XgDark.Good, XgDark.Bad, Mathf.Max(sag, flash));

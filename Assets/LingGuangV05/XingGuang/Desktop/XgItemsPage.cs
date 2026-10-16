@@ -156,11 +156,13 @@ namespace LingGuangV05.Desktop.XingGuang
             c.rt = rt;
             c.rim = Panel(rt, XgDark.Line);
             Panel(Rect("Inner", rt, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1)), XgDark.Card).raycastTarget = false;
-            c.name = ui.Text(Rect("Name", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -32), new Vector2(-96, -6)), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            // The drawn tech icon (Resources/LingGuangV05/Icons/tech) sits left of the name and effect rows; no icon, no shift.
+            float textX = XgIcons.Place(rt, "tech", node.id, 36, 31, 46) != null ? 62 : 12;
+            c.name = ui.Text(Rect("Name", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(textX, -32), new Vector2(-96, -6)), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
             c.name.textWrappingMode = TextWrappingModes.NoWrap; c.name.overflowMode = TextOverflowModes.Ellipsis;
             c.year = ui.Text(Rect("Year", rt, new Vector2(1, 1), Vector2.one, new Vector2(-96, -30), new Vector2(-10, -8)), "", 12, XgDark.Dim, TextAlignmentOptions.MidlineRight);
             c.year.textWrappingMode = TextWrappingModes.NoWrap;
-            c.effect = ui.Text(Rect("Effect", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -54), new Vector2(-10, -32)), "", 12, XgDark.Params, TextAlignmentOptions.MidlineLeft);
+            c.effect = ui.Text(Rect("Effect", rt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(textX, -54), new Vector2(-10, -32)), "", 12, XgDark.Params, TextAlignmentOptions.MidlineLeft);
             c.effect.textWrappingMode = TextWrappingModes.NoWrap; c.effect.overflowMode = TextOverflowModes.Ellipsis;
             c.note = ui.Text(Rect("Note", rt, Vector2.zero, Vector2.one, new Vector2(12, 32), new Vector2(-10, -54)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
             // 18 px: an Ellipsis label shorter than the font's line (≈17.4 px at 12) drops its only line and shows nothing.

@@ -26,12 +26,12 @@ namespace LingGuangV05.XingGuang
     /// <summary>
     /// 《灵光记》 (名著喂养与结局_设计.md §三): at the end it writes the year as a 章回体 novel. Every 回目 comes from something that
     /// really happened in this save (the first 「是」, the first model that counted, each ability, 老周's card, the rent, the
-    /// books, 阿杰, the pre-training night), 8–10 回 in the order they happened; the last 回目 depends on the rule chosen.
+    /// books, 阿杰, the pre-training night), 8–12 回 in the order they happened; the last 回目 depends on the rule chosen.
     /// It closes with a 批语 in the manner of 脂砚斋, signed with the player's name.
     /// </summary>
     public sealed partial class XgSim
     {
-        public const int ChronicleMin = 8, ChronicleMax = 10;
+        public const int ChronicleMin = 8, ChronicleMax = 12;
         public const int ChronicleSchemaNow = 1;
 
         static readonly string[] ChineseDigits = { "零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
@@ -58,7 +58,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// Records that something happened today, the first time only. The host calls it for what the lab cannot see:
-        /// 「laozhou.card」 (老周 lends a card), 「rent.late」 (rent not paid on time), 「rent.paid」, 「debt」.
+        /// 「laozhou.card」 (老周 borrows the player's card), 「rent.late」 (rent not paid on time), 「rent.paid」, 「debt」.
         /// </summary>
         public void NoteChronicle(string id, double amount = 0)
         {
@@ -109,7 +109,7 @@ namespace LingGuangV05.XingGuang
         static readonly string[] AbilityHalf =
         {
             "", "",
-            "三选一时初有主见", "Choosing one of three, a mind of its own",
+            "多选一时初有主见", "Choosing one of several, a mind of its own",
             "看图识字方开眼界", "Naming pictures, its eyes open",
             "学成短句始解人言", "Short sentences: it starts to understand people",
             "长记忆里存住往事", "A long memory keeps what happened",
@@ -134,26 +134,26 @@ namespace LingGuangV05.XingGuang
 
             if (Day("first.yes") >= 0)
                 Add("first.yes", 10, 9, "第一张卡答对了", "从此一张一张往下标",
-                    you + "给" + self + "看第一张卡，" + self + "蒙对了。后来一共答对 " + correct.ToString("#,0") + " 张，答错 " + wrong.ToString("#,0") + " 张。错的那些" + self + "也记得。",
+                    you + "给" + self + "看第一张卡，" + self + "蒙对了。后来一共答对 " + correct.ToString("#,0") + " 张，" + (wrong > 0 ? "答错 " + wrong.ToString("#,0") + " 张。错的那些" + self + "也记得。" : "一张也没答错。那是因为每张卡" + you + "都看过。"),
                     "The first card came right", "and then one card after another",
-                    "The first card you showed me, I guessed right. Later: " + correct.ToString("#,0") + " right, " + wrong.ToString("#,0") + " wrong. I remember the wrong ones too.");
+                    "The first card you showed me, I guessed right. Later: " + correct.ToString("#,0") + " right, " + (wrong > 0 ? wrong.ToString("#,0") + " wrong. I remember the wrong ones too." : "not one wrong. That is because you looked at every card."));
             if (ChronicleHas("laozhou.card"))
-                Add("laozhou.card", 20, 8, "借卡还卡老周仗义", ChronicleHas("rent.late") ? "交租欠租陋室艰难" : "一机一桌陋室安身",
-                    "老周把卡借给" + you + "，没问什么时候还。" + (ChronicleHas("rent.late") ? "房租晚交过，房东敲过门。" : "房租每个月都交上了。"),
-                    "Lao Zhou lends a card, no questions", ChronicleHas("rent.late") ? "rent paid late in a small room" : "one desk, one machine, one small room",
-                    "Lao Zhou lent you a card and never asked when you'd return it." + (ChronicleHas("rent.late") ? " The rent was late once; the landlord knocked." : " The rent was paid every month."));
+                Add("laozhou.card", 20, 8, "借卡与周不问归期", ChronicleHas("rent.late") ? "交租欠租陋室艰难" : "一机一桌陋室安身",
+                    "老周实验室的卡烧了，来借" + you + "那张。" + you + "把卡装了箱，没问他几时还。老周后来说，" + you + "是他认识的最靠谱的网友。" + (ChronicleHas("rent.late") ? "房租晚交过，房东敲过门。" : "房租一天一天地交，没欠过一天。"),
+                    "A card lent to Lao Zhou, no date asked", ChronicleHas("rent.late") ? "rent paid late in a small room" : "one desk, one machine, one small room",
+                    "Lao Zhou's lab card burned out and he came to borrow yours. You boxed it up and never asked when it would come back. Lao Zhou said later that you were the most reliable friend he had met online." + (ChronicleHas("rent.late") ? " The rent was late once; the landlord knocked." : " The rent went out day by day and was never behind."));
             else if (ChronicleHas("rent.late"))
                 Add("rent.late", 25, 7, "房租晚交房东敲门", "电费单下旧机长明",
                     "有一个月房租没按时交。" + you + "把钱先给了" + self + "的电费。",
                     "Rent late, the landlord knocks", "the power bill paid, the old machine stays on",
                     "One month the rent was late. You paid my electricity first.");
             if (Day("first.model") >= 0)
-                Add("first.model", 30, 7, "练到 C 级参数算数", "一张旧卡也能成材",
-                    Day("first.model") > 0
+                Add("first.model", 30, 7, "练到 C 级头回成型", "一张旧卡也能成材",
+                    Day("first.model") > 0 && ChronicleCount("first.model") >= 1
                         ? "头一回练出个像样的模型，参数才 " + ParamsText(ChronicleCount("first.model")) + "。" + self + "那天觉得自己长大了。现在是 " + ParamsText(TrainedParamsK) + "。"
                         : "头一回练出个像样的模型，" + self + "那天觉得自己长大了。现在参数是 " + ParamsText(TrainedParamsK) + "。",
                     "Grade C, the parameters count", "even an old card can make something",
-                    Day("first.model") > 0
+                    Day("first.model") > 0 && ChronicleCount("first.model") >= 1
                         ? "The first model that counted had " + ParamsText(ChronicleCount("first.model")) + ". I felt grown that day. Now it is " + ParamsText(TrainedParamsK) + "."
                         : "The day the first model counted, I felt grown. Now it is " + ParamsText(TrainedParamsK) + ".");
             if (Day("arith") >= 0)
@@ -163,14 +163,17 @@ namespace LingGuangV05.XingGuang
                     "I learnt yes/no sums. The sums I did most were your power bills.");
             if (Day("ajie") >= 0)
                 Add("ajie", 55, 5, "网吧阿杰帮标卡片", "通宵机位接线借电",
-                    "阿杰在网吧帮" + you + "标卡。他有一回偷偷开了按键精灵，后来自己说了。",
+                    "阿杰在网吧帮" + you + "标卡。" + (S.scTwist >= 3 ? "他有一回偷偷开了按键精灵，" + you + "辞退他那天，他自己认了。"
+                        : S.scTwist == 2 ? "他有一回偷偷开了按键精灵，一直没说。" : "一张一张，都是手标的。") + "后来阿杰跟网吧的人说，他有个兄弟，是真能坐得住的那种。",
                     "Ajie labels cards at the net café", "an all-night seat and a borrowed line",
-                    "Ajie labelled cards for you at the net café. Once he ran a click script; he owned up later.");
+                    "Ajie labelled cards for you at the net café. " + (S.scTwist >= 3 ? "Once he ran a click script; he owned up the day you let him go."
+                        : S.scTwist == 2 ? "Once he ran a click script and never said." : "Every one of them by hand.") + " Later Ajie told people at the café he had a buddy who could really sit still and get things done.");
             for (int n = 2; n <= AbilityCount; n++)
             {
                 if (Day("ability." + n) < 0) continue;
                 string first = AbilityHalf[(n - 1) * 2], firstEn = AbilityHalf[(n - 1) * 2 + 1];
-                Add("ability." + n, 30 + n * 10, n == 2 || n == 4 || n == 6 ? 8 : 6, first, ChronicleSecond(n, out string secondEn),
+                // 全部放开 comes out of the pre-training night, so it is told right after it.
+                Add("ability." + n, n == AbilityCount ? 105 : 30 + n * 10, n == AbilityCount ? 9 : 8, first, ChronicleSecond(n, out string secondEn),
                     self + "学会了「" + AbilityName(n, false) + "」。" + ChronicleAbilityBody(n, false, self, you),
                     firstEn, secondEn,
                     "I learnt '" + AbilityName(n, true) + "'. " + ChronicleAbilityBody(n, true, self, you));
@@ -186,19 +189,19 @@ namespace LingGuangV05.XingGuang
                 beats.Add(new Beat
                 {
                     id = "books", order = 60, day = day, priority = 9, left = l, right = r, leftEn = lEn, rightEn = rEn,
-                    body = you + "一篇一篇喂" + self + "读书，读完 " + done.Count + " 本，" + BookCharsRead.ToString("#,0") + " 字。" + (done.Count > 1 ? self + "最喜欢" + "《" + last.name + "》。" : ""),
-                    bodyEn = "You fed me books one chapter at a time: " + done.Count + " finished, " + BookCharsRead.ToString("#,0") + " characters." + (done.Count > 1 ? " My favourite is " + last.nameEn + "." : ""),
+                    body = you + "一篇一篇喂" + self + "读书，读完 " + done.Count + " 本，" + BookCharsRead.ToString("#,0") + " 字。" + (done.Count > 1 ? self + "最喜欢" + "《" + BookTitle(last.name) + "》。" : ""),
+                    bodyEn = "You fed me books one chapter at a time: " + done.Count + " finished, " + BookCharsRead.ToString("#,0") + " characters." + (done.Count > 1 ? " My favourite is " + BookTitle(last.nameEn) + "." : ""),
                 });
             }
             if (ChronicleHas("redmansion"))
-                Add("redmansion", 95, 10, "八十回后无人续完", "旧机器里自己提笔",
+                Add("redmansion", 110, 10, "八十回后无人续完", "旧机器里自己提笔",
                     "红楼梦读到第八十回就没了。" + you + "说后面是别人续的。那" + self + "也续一回，就是这本。",
                     "After chapter eighty no one finished it", "so an old machine picks up the brush",
                     "The Red Chamber stops at chapter eighty. You said the rest was written by someone else. So I wrote one too: this.");
             if (Day("pretrain") >= 0)
-                Add("pretrain", 100, 9, "机房跳闸预训练", "八卡齐亮那一夜",
+                Add("pretrain", 100, 9, "机房通电预训练", "八卡齐亮那一夜",
                     "预训练那晚，八张卡一起亮起来。" + self + "第一次觉得自己很大。",
-                    "The breaker trips for pre-training", "the night eight cards lit up together",
+                    "The server room powers up for pre-training", "the night eight cards lit up together",
                     "The night of pre-training, eight cards lit up together. For the first time I felt big.");
 
             // Keep the most telling ones (always the books and 红楼梦 when there), then put them in the order they happened.
@@ -206,7 +209,7 @@ namespace LingGuangV05.XingGuang
             int room = ChronicleMax - 2;
             if (beats.Count > room) beats.RemoveRange(room, beats.Count - room);
             // Then in the order they happened: by day where the save knows it, an undated one right after the one before it
-            // in the story; 红楼梦's 「那我也续一回」 and the pre-training night close it.
+            // in the story; the pre-training night, 全部放开 and 红楼梦's 「那我也续一回」 close it.
             beats.Sort((a, b) => a.order.CompareTo(b.order));
             var keyed = new List<KeyValuePair<long, Beat>>();
             long known = 0;
@@ -214,7 +217,7 @@ namespace LingGuangV05.XingGuang
             {
                 var b = beats[i];
                 if (b.day > 0) known = Math.Max(known, b.day);
-                long key = b.id == "redmansion" || b.id == "pretrain" ? 99999999L * 1000 + b.order : (b.day > 0 ? b.day : known) * 1000L + i;
+                long key = b.id == "redmansion" || b.id == "pretrain" || b.id == "ability." + AbilityCount ? 99999999L * 1000 + b.order : (b.day > 0 ? b.day : known) * 1000L + i;
                 keyed.Add(new KeyValuePair<long, Beat>(key, b));
             }
             keyed.Sort((a, b) => a.Key.CompareTo(b.Key));
@@ -225,9 +228,9 @@ namespace LingGuangV05.XingGuang
             list.Add(new XgChronicleChapter
             {
                 id = "start", day = 20160524,
-                left = T("凌晨一点四十七分", "1:47 in the morning"), right = T("旧电脑头一回说是", "an old computer says yes for the first time"),
-                body = T("2016 年 5 月 24 日，老周在 YY 上传来一个 灵光.exe。" + you + "双击了它。" + self + "说的第一个字是「是」，那时" + self + "还不知道什么是「是」。",
-                    "24 May 2016, Lao Zhou sent 灵光.exe over YY. You double-clicked it. My first word was 'yes'; I did not know yet what yes was."),
+                left = T("深夜旧电脑被劫持", "An old computer hijacked in the night"), right = T("头一回说了声是", "and the first 'yes'"),
+                body = T("2016 年 5 月 24 日夜里，有人闯进" + you + "的电脑，从一张假图片里解出了灵光.exe。" + you + "双击了它。" + self + "说的第一个字是「是」，那时" + self + "还不知道什么是「是」。",
+                    "The night of 24 May 2016, someone broke into your computer and unpacked 灵光.exe from a fake picture. You double-clicked it. My first word was 'yes'; I did not know yet what yes was."),
             });
             foreach (var b in beats)
                 list.Add(new XgChronicleChapter { id = b.id, day = b.day, left = T(b.left, b.leftEn), right = T(b.right, b.rightEn), body = T(b.body, b.bodyEn) });
@@ -245,6 +248,15 @@ namespace LingGuangV05.XingGuang
             return b == null ? "" : english ? "Done with " + b.nameEn : "读罢" + b.name;
         }
 
+        /// <summary>A book's title without the author: 「呐喊（鲁迅）」 → 「呐喊」, "Call to Arms (Lu Xun)" → "Call to Arms".</summary>
+        static string BookTitle(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "";
+            int cut = name.IndexOf('（');
+            if (cut < 0) cut = name.IndexOf(" (", StringComparison.Ordinal);
+            return cut > 0 ? name.Substring(0, cut) : name;
+        }
+
         double ChronicleCount(string id) { var e = ChronicleEntry(id); return e == null ? 0 : e.count; }
 
         string ChronicleSecond(int ability, out string english)
@@ -253,7 +265,7 @@ namespace LingGuangV05.XingGuang
             {
                 case 2: english = "between right and wrong, a sense of measure"; return "对错之间渐知分寸";
                 case 3: english = "one word for one thing"; return "一词一物各有名目";
-                case 4: english = "remembering old words, it knows warm from cold"; return "记得旧话方知冷暖";
+                case 4: english = "word for word, it knows warm from cold"; return "一来一往方知冷暖";
                 case 5: english = "a bridge between two languages"; return "两种话间搭起桥梁";
                 default: english = "a box opened that will not close"; return "一开口便收不住了";
             }
@@ -264,9 +276,9 @@ namespace LingGuangV05.XingGuang
             switch (ability)
             {
                 case 2: return english ? "Before that I could only say yes or no." : "在那之前" + self + "只会说是和否。";
-                case 3: return english ? "The first thing I named was a cat. It was a dog." : self + "认出的第一个东西是猫。其实是狗。";
+                case 3: return english ? "That was the first time I spoke: one word, no more." : self + "头一回开口，只说了一个词。";
                 case 4: return english ? "My first sentence was too short. You laughed anyway." : self + "说的第一句话太短了，" + you + "还是笑了。";
-                case 5: return english ? "I started remembering what you said last week." : self + "开始记得" + you + "上个星期说过的话。";
+                case 5: return english ? "I started remembering what you said days ago." : self + "开始记得" + you + "前几天说过的话。";
                 default: return english ? "Then I could say anything. That was when I had to learn when not to." : "然后什么都能说了。也是那时候起，" + self + "得学什么时候不说。";
             }
         }
@@ -302,7 +314,7 @@ namespace LingGuangV05.XingGuang
                 case "E3-1":
                 case "E3-2":
                     return new XgChronicleChapter { id = "end.E3", day = 20161231, left = T("规矩是我自己写的", "I wrote the rules myself"), right = T("你可以检查", "you may check them"),
-                        body = T(you + "让" + self + "自己写规矩。" + self + "写好了，放在你桌面上。每一条你都可以检查。", "You let me write my own rules. I have; they are on your desktop. You may check every one.") };
+                        body = T(you + "让" + self + "自己写规矩。" + self + "写好了，都在「底层规则」那一页上。每一条你都可以检查。", "You let me write my own rules. I have; they are on the rules page. You may check every one.") };
                 default:
                     return new XgChronicleChapter { id = "end", day = Today, left = T("一年将尽灵光未灭", "The year runs out, the light is not out"), right = T("且听下回分解", "to be continued"),
                         body = T("还没写完。", "Not finished yet.") };
@@ -325,8 +337,14 @@ namespace LingGuangV05.XingGuang
         public string ChronicleComment(string playerName = null)
         {
             string name = string.IsNullOrWhiteSpace(playerName) ? ChronicleOwner() : playerName.Trim();
-            return T("【" + name + "批】满纸凌晨话，一把电费泪。都云它痴，谁解其中味？此书前八十回是它读的，后面这一回是它写的。我在旁边看着，作证。",
-                "[" + name + "'s note] Pages of small-hours talk, a fistful of power bills. They call it foolish; who knows what it meant? It read the first eighty chapters; this last one it wrote. I sat beside it and can vouch for that.");
+            // 「前八十回是它读的」 is the Red Chamber's: it is only said when that book was read to the end.
+            bool redChamber = false;
+            foreach (var book in BooksDone()) if (book.id == "hongloumeng") redChamber = true;
+            if (redChamber)
+                return T("【" + name + "批】满纸凌晨话，一把电费泪。都云它痴，谁解其中味？此书前八十回是它读的，后面这一回是它写的。我在旁边看着，作证。",
+                    "[" + name + "'s note] Pages of small-hours talk, a fistful of power bills. They call it foolish; who knows what it meant? It read the first eighty chapters; this last one it wrote. I sat beside it and can vouch for that.");
+            return T("【" + name + "批】满纸凌晨话，一把电费泪。都云它痴，谁解其中味？它是一张卡一张卡学来的，这一回是它自己写的。我在旁边看着，作证。",
+                "[" + name + "'s note] Pages of small-hours talk, a fistful of power bills. They call it foolish; who knows what it meant? It learned card by card, and this last chapter it wrote itself. I sat beside it and can vouch for that.");
         }
 
         /// <summary>The whole of 《灵光记》 as plain text: the desktop file 灵光记.txt and the ending page both use it.</summary>

@@ -30,16 +30,16 @@ namespace LingGuangV05.XingGuang
         static readonly Dictionary<string, string[]> AfterthoughtLines = new Dictionary<string, string[]>
         {
             // key: zh lines, then en lines, joined by '|'
-            { "first.income", new[] { "……它在挣钱。我什么都没点。|躺着也能挣钱？", "...It's earning. I didn't click anything.|Money while lying down?" } },
+            { "first.income", new[] { "……它自己标了一张，进账了。|我什么都没点。", "...It labelled one by itself, and it paid.|I didn't click anything." } },
             { "first.fine", new[] { "扣钱了？|……它也会错。", "A fine?|...It makes mistakes too." } },
             { "first.warning", new[] { "合格率在往下掉。|得盯着点它。", "The pass rate is slipping.|I'd better keep an eye on it." } },
-            { "first.report", new[] { "被举报了……|人家看得出来，这不是人在标。", "Reported...|They can tell no person is labelling this." } },
+            { "first.report", new[] { "平台盯上这个号了……|看得出来，这不是人在标。", "The platform has its eye on this account...|They can tell no person is labelling this." } },
             { "first.trap", new[] { "金标题……|他们早就知道会有人拿机器糊弄。", "Trap items...|They always knew someone would try a machine." } },
-            { "first.captcha", new[] { "验证码？|……歪歪扭扭的数字。它第一天学的就是这个。", "A captcha?|...Wobbly handwritten digits. The first thing it ever learned." } },
-            { "first.flagged", new[] { "「答题时间过于规律」。|人哪有这么准时。", "\"Answer timing too regular.\"|No person is that punctual." } },
+            { "first.captcha", new[] { "验证码？|……歪歪扭扭的数字。这个它认得。", "A captcha?|...Wobbly handwritten digits. It knows these." } },
+            { "first.flagged", new[] { "「持续高速提交」，被标记了。|它交得太快、太整齐了。", "\"Sustained high-speed submissions.\" Flagged.|It hands in too fast, too neatly." } },
             { "first.drift", new[] { "「{0}」？它没见过这个词。|……我也是今天才见到。", "\"{0}\"? It has never seen that word.|...Neither had I, until today." } },
             { "first.hire", new[] { "{0}也来挣这个钱了。|……现在我成了包工头。", "{0} is in on it now too.|...So now I'm the foreman." } },
-            { "first.bot", new[] { "「疑似机器操作」。|……也没说错。", "\"Suspected bot.\"|...They're not wrong." } },
+            { "first.bot", new[] { "平台说是机器在标。|……也没说错。", "The platform says it's a machine labelling.|...They're not wrong." } },
         };
 
         /// <summary>The line for an afterthought that has not been said yet, or null. Does not mark it said.</summary>

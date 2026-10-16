@@ -125,7 +125,6 @@ namespace LingGuangV05.Desktop.XingGuang
         TMP_Text aiName, aiSub, bubbleText, aiHint;
         Image bubbleBack;
         float bubbleTimer;
-        string bubbleDefault = "……";
 
         void BuildAiPanel()
         {
@@ -200,8 +199,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 + (fine > 0 ? "<color=#E33E33>" + T("那时它答错要扣你的钱（每错 −¥" + N(fine, "0.00") + "）。", "Then every wrong answer costs your money (−¥" + N(fine, "0.00") + " each).") + "</color>"
                     : "<color=#E33E33>" + T("那时它答错会断掉连击。", "Then a wrong answer breaks the combo.") + "</color>")
                 + "\n" + T("放在这里时它偶尔顺手标一题，错了不扣。", "While it sits here it sometimes labels one on its own; a miss costs nothing.");
-            if (bubbleTimer <= 0 && bubbleText.text != bubbleDefault) bubbleText.text = bubbleDefault;
-            else if (bubbleTimer <= 0 && string.IsNullOrEmpty(bubbleText.text)) bubbleText.text = bubbleDefault;
+            // The corner bubble only shows while the spider is saying something (XgLabelPage.Spider.TickBubble).
+            if (bubbleTimer <= 0 && bubbleBack != null && bubbleBack.gameObject.activeSelf) bubbleBack.gameObject.SetActive(false);
             aiIcon.Redraw();
         }
 

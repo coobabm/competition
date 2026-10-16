@@ -66,8 +66,8 @@
     {
       "id": "family-secret",
       "topic": "家庭",
-      "zh": "你还没告诉爸妈你在谈恋爱，你妈觉得大学毕业前不该谈，所以暑假你们很少见面。",
-      "en": "You haven't told your parents you're seeing him; your mum thinks you shouldn't date before graduating, which is why you rarely meet in summer.",
+      "zh": "你还没告诉爸妈你在谈恋爱，你妈觉得大学毕业前不该谈，所以暑假他也不敢回县城来找你。",
+      "en": "You haven't told your parents you're seeing him; your mum thinks you shouldn't date before graduating, so he doesn't dare come to the town to see you in summer.",
       "from": "",
       "until": "",
       "importance": 3
@@ -93,8 +93,8 @@
     {
       "id": "home-county",
       "topic": "老家",
-      "zh": "你和他的老家是河南南边、驻马店下面的一个小县城，他高中毕业后一直留在县城。",
-      "en": "You and he come from a small county town in southern Henan, under Zhumadian; he stayed in the town after high school.",
+      "zh": "你和他的老家是河南南边、驻马店下面的一个小县城，他后来在省城读的大学，今年毕业了，没回县城，在省城合租了个单间。",
+      "en": "You and he come from a small county town in southern Henan, under Zhumadian; he went to university in the provincial capital, graduates this year, and did not come home: he shares a rented room there.",
       "from": "",
       "until": "",
       "importance": 3
@@ -491,7 +491,7 @@
       "topic": "喜好",
       "zh": "你迷上了《微微一笑很倾城》，觉得杨洋演的肖奈大神帅炸了。",
       "en": "You're hooked on Love O2O and think Yang Yang's Xiao Nai is unbelievably handsome.",
-      "from": "2016-08-12",
+      "from": "2016-08-22",
       "until": "",
       "importance": 2
     },
@@ -687,8 +687,8 @@
     {
       "id": "habit-redpacket",
       "topic": "习惯",
-      "zh": "他考完试或过生日，你会给他发8.88元的红包，说请他喝奶茶。",
-      "en": "When he finishes an exam or has a birthday, you send him an 8.88-yuan red packet 'for bubble tea'.",
+      "zh": "你自己考完试的时候，会给他发8.88元的红包，说「考完了 请你喝奶茶」。",
+      "en": "When you finish one of your own exams, you send him an 8.88-yuan red packet and say it is for bubble tea.",
       "from": "",
       "until": "",
       "importance": 2
@@ -822,8 +822,8 @@
     {
       "id": "us-classmates",
       "topic": "我们",
-      "zh": "你和他高三都在县一中七班，他坐你后桌，老借你的数学笔记抄。",
-      "en": "You and he were both in Class 7 of Year 12 at No. 1 High; he sat behind you and kept copying your maths notes.",
+      "zh": "你们都是县一中的，他比你高两届。你高一参加数学竞赛那阵，他是来给你们讲题的学长，老在你本子上写解法。",
+      "en": "You both went to No. 1 High; he was two years above you. When you did the maths contest in your first year, he was the senior who came to explain problems and kept writing solutions in your notebook.",
       "from": "",
       "until": "",
       "importance": 3
@@ -1029,8 +1029,8 @@
     {
       "id": "future-see-him",
       "topic": "未来",
-      "zh": "你最想要的是放假他来火车站接你，这话你只说过一次。",
-      "en": "What you want most is for him to meet you at the station when the holiday starts; you've only said it once.",
+      "zh": "你最想要的是有一天他来车站接你，这话你只说过一次。",
+      "en": "What you want most is for him to meet you at the station one day; you've only said it once.",
       "from": "",
       "until": "",
       "importance": 2
@@ -1169,6 +1169,69 @@
       "from": "",
       "until": "",
       "importance": 1
+    },
+    {
+      "id": "us-proud-early",
+      "topic": "我们",
+      "zh": "刚毕业那阵你有点担心他：工作没着落，天天窝在电脑前。你嘴上催他早点找工作，心里其实相信他不会混日子。",
+      "en": "When he had just graduated you worried a little: no job yet, always hunched over his computer. You nagged him to find work, but deep down you believed he would not drift.",
+      "from": "",
+      "until": "2016-06-30",
+      "importance": 2
+    },
+    {
+      "id": "us-proud-grad",
+      "topic": "我们",
+      "zh": "他毕业后没回县城，一个人留在省城合租，自己接活挣钱。你跟室友提起他会有点得意，可嘴上只说「他还行吧」。",
+      "en": "He did not go back to the county town after graduating; he stayed in the provincial capital in a shared flat and earns by taking jobs himself. You feel a bit proud when you mention him to your roommates, but you only say \"he's okay, I guess\".",
+      "from": "",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-proud-rent",
+      "topic": "我们",
+      "zh": "你知道他一个人在省城自己挣钱交房租，不向家里要钱，觉得他比班上那些等家里打钱的男生强多了，只是不想让他骄傲，所以不当面夸太多。",
+      "en": "You know he earns his own rent alone in the city and does not ask his family for money. You think he is far better than the boys in your class who wait for their parents to wire money. You just do not want him to get cocky, so you do not praise him too much to his face.",
+      "from": "2016-07-15",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-proud-work",
+      "topic": "我们",
+      "zh": "他电脑上忙的那些事你听不懂，可你看着他这几个月一天比一天认真、一天比一天有底气，心里替他骄傲。你会说「你好厉害」，然后叮嘱他早点睡。",
+      "en": "You do not understand what he is busy with on his computer, but you have watched him get more serious and more confident every day these months, and you are proud of him. You tell him \"you're amazing\", then remind him to sleep early.",
+      "from": "2016-09-01",
+      "until": "",
+      "importance": 3
+    },
+    {
+      "id": "us-proud-roommate",
+      "topic": "朋友",
+      "zh": "室友问你男朋友是做什么的，你说「他在自己做一件很难的事」，说完自己都有点自豪。",
+      "en": "Your roommate asked what your boyfriend does. You said \"he's doing something really hard on his own\", and felt a little proud saying it.",
+      "from": "2016-10-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-proud-mum",
+      "topic": "家庭",
+      "zh": "你妈问起他，你说他一个人在省城挣钱养活自己，没跟家里要过。你妈说这孩子有出息，你偷偷高兴了好久。",
+      "en": "Your mum asked about him, and you said he supports himself in the provincial capital without asking his family for money. She said he will go far, and you were secretly happy for a long time.",
+      "from": "2016-10-01",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "us-proud-year",
+      "topic": "我们",
+      "zh": "你想在年底见面时跟他说：这一年你看着他从一个整天熬夜的毕业生，变成真正做成了事的人，你以他为荣。可你还没想好怎么说出口。",
+      "en": "You want to tell him when you meet at the end of the year: you watched him go from a graduate who stayed up all night to someone who really got something done, and you are proud of him. You have not worked out how to say it.",
+      "from": "2016-12-01",
+      "until": "",
+      "importance": 3
     }
   ]
 }

@@ -109,6 +109,8 @@ namespace LingGuangV05.Desktop.XingGuang
             else XgCardArt.Sliced(artRt, new Color(.12f, .14f, .28f), 2);
             t.glyph = ui.Text(Rect("Glyph", owned, Vector2.zero, Vector2.one, new Vector2(0, 26), new Vector2(0, -10)), a.glyph, 54, Color.white, TextAlignmentOptions.Center);
             t.glyph.fontStyle = FontStyles.Bold; t.glyph.outlineWidth = .12f; t.glyph.outlineColor = new Color32(0, 0, 0, 110);
+            // The drawn medal (Resources/LingGuangV05/Icons/card) replaces the text glyph when there is one.
+            if (XgIcons.Place(owned, "card", a.id, CardW / 2f, 65f, 92f) != null) t.glyph.gameObject.SetActive(false);
             var strip = Rect("Name strip", owned, new Vector2(0, 0), new Vector2(1, 0), new Vector2(4, 4), new Vector2(-4, 30));
             Panel(strip, new Color(0, 0, 0, .45f)).raycastTarget = false;
             t.name = ui.Text(Rect("Name", strip, Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0)), "", 12, Color.white, TextAlignmentOptions.Center);

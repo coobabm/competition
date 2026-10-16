@@ -10,6 +10,8 @@ namespace LingGuangV05.XingGuang
     {
         public string id = "", qZh = "", qEn = "", rightZh = "", rightEn = "", wrongZh = "", wrongEn = "";
         public bool brain, right, personal;
+        /// <summary>The ability's 「同一道题」 (XgSim.Learned.cs): right only in the sitting that passes.</summary>
+        public bool probe;
         /// <summary>Fixed difficulty: right while the readiness of its bar puts the chance above it.</summary>
         public double u;
         public string reasonZh = "", reasonEn = "";
@@ -92,9 +94,12 @@ namespace LingGuangV05.XingGuang
             var sheet = new XgExamSheet { ability = ability, attempt = attempt, paramsReady = ExamParamsReady, samplesReady = ExamSamplesReady };
             var rng = new Random(StableHash("exam." + ability) ^ S.dataSalt * 131 ^ attempt * 7919);
             foreach (var item in PersonalQuestions(ability, rng)) sheet.items.Add(item);
+            // The same question every round and every sitting: it does not count towards the others, it follows the result.
+            var probe = ProbeExamItem(ability);
+            int asked = probe == null ? AbilityExamQuestions : AbilityExamQuestions - 1;
             var bank = new List<XgExamQuestion>();
             foreach (var q in XgExamBank.All) if (ability == AbilityCount ? q.ability >= 2 && q.ability < AbilityCount : q.ability == ability) bank.Add(q);
-            while (sheet.items.Count < AbilityExamQuestions && bank.Count > 0)
+            while (sheet.items.Count < asked && bank.Count > 0)
             {
                 int i = rng.Next(bank.Count);
                 var q = bank[i]; bank.RemoveAt(i);
@@ -112,12 +117,27 @@ namespace LingGuangV05.XingGuang
                 double ready = item.brain ? sheet.paramsReady : sheet.samplesReady;
                 item.right = item.u < ExamChance(ready);
                 if (item.right) continue;
-                item.reasonZh = item.brain ? "参数不够：这题要把几件事连起来想（参数到了门槛的 " + F(ready * 100, "0") + "%）"
-                                           : "没见过：这种题它见得太少（样本到了门槛的 " + F(ready * 100, "0") + "%）";
-                item.reasonEn = item.brain ? "Not enough parameters: this one needs several things put together (parameters at " + F(ready * 100, "0") + "% of the line)"
-                                           : "Not seen enough: it has met too few like this (samples at " + F(ready * 100, "0") + "% of the line)";
+                // The line stays hidden: the reason says which bar is short, not by how much.
+                string far = ready < .9 ? "还差得远" : "还差一点", farEn = ready < .9 ? "well short" : "a little short";
+                item.reasonZh = item.brain ? "参数不够：这题要把几件事连起来想（参数" + far + "）"
+                                           : "没见过：这种题它见得太少（样本" + far + "）";
+                item.reasonEn = item.brain ? "Not enough parameters: this one needs several things put together (parameters " + farEn + ")"
+                                           : "Not seen enough: it has met too few like this (samples " + farEn + ")";
             }
             foreach (var item in sheet.items) if (item.right) sheet.rightCount++;
+            if (probe != null)
+            {
+                // All or nothing: wrong in every sitting that fails, right the moment one passes.
+                probe.right = sheet.rightCount + 1 >= AbilityExamPass;
+                if (!probe.right)
+                {
+                    probe.reasonZh = "还没学会：这道题它每一轮都答成这样，答对要等它真的学会";
+                    probe.reasonEn = "Not learned yet: it has answered this one like this every round; it will be right only once it learns";
+                }
+                else sheet.rightCount++;
+                // First, so the page opens on the question it has been failing all chapter.
+                sheet.items.Insert(0, probe);
+            }
             sheet.passed = sheet.rightCount >= AbilityExamPass;
             S.exam = sheet;
             return sheet;
@@ -285,6 +305,10 @@ namespace LingGuangV05.XingGuang
         {
             var e = S.exam;
             if (e == null || e.ability != ability || !e.passed) return null;
+            // The same question it failed every round of the chapter, and its answer now.
+            foreach (var now in e.items)
+                if (now.probe && now.right && now.wrongZh != now.rightZh)
+                    return new XgBeforeAfter(now.qZh, now.qEn, now.wrongZh, now.wrongEn, now.rightZh, now.rightEn, true);
             if (S.examHistory != null)
                 for (int h = S.examHistory.Count - 1; h >= 0; h--)
                 {

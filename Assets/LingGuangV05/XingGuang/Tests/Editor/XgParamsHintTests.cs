@@ -63,9 +63,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNotNull(plan); Assert.GreaterOrEqual(plan.buy.Count, 2);
             var step = Find(XgGuide.Current(sim, 20), "ability.buy");
             TestContext.WriteLine(step.zh + "\n" + step.whyZh + "\n---\n" + step.en + "\n" + step.whyEn);
-            // P against the line, with the share and the gap.
-            StringAssert.Contains("现在 " + XgSim.ParamsText(sim.TrainedParamsK) + " / " + XgSim.ParamsText(plan.threshold) + "（", step.whyZh);
-            StringAssert.Contains("%），差 ", step.whyZh);
+            // P as it is; the line, its share and the gap stay hidden (XgSim.Learned.cs).
+            StringAssert.Contains("现在 P " + XgSim.ParamsText(sim.TrainedParamsK) + "，线在哪里学会前不知道", step.whyZh);
+            StringAssert.DoesNotContain("%），差 ", step.whyZh);
             // One numbered line per node, each with its price and the model before and after; the last lands on the plan's model.
             for (int i = 1; i <= plan.buy.Count; i++) StringAssert.Contains(i + ". ", step.whyZh);
             StringAssert.Contains("¥" + Whole(sim.NodeCost(plan.buy[0])) + "：模型 ", step.whyZh);
@@ -75,7 +75,8 @@ namespace LingGuangV05.XingGuang.Tests
             StringAssert.Contains("Total ¥" + Whole(plan.cost) + ", you have ¥20, short by ¥" + Whole(plan.cost - 20), step.whyEn);
             // The line to train to afterwards.
             string line = XgSim.Pct(XgSim.GradeAccuracy(sim.Run(plan.track).dataset, XgSim.TrainedGrade));
-            StringAssert.Contains("买齐后模型 " + XgSim.ParamsText(plan.paramsK) + " ≥ 门槛 " + XgSim.ParamsText(plan.threshold), step.whyZh);
+            StringAssert.Contains("买齐后模型 " + XgSim.ParamsText(plan.paramsK) + "，够大了", step.whyZh);
+            StringAssert.DoesNotContain(XgSim.ParamsText(plan.threshold) + " ", step.whyZh, "the line itself stays hidden");
             StringAssert.Contains("C 级（" + line + "）", step.whyZh);
             StringAssert.Contains("grade C (" + line + ")", step.whyEn);
             StringAssert.Contains("标注台", step.whyZh, "the money hint stays");
@@ -173,7 +174,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgLimit.Params, limit);
             StringAssert.StartsWith("参数量不够，再练也涨不动：去科技加宽、加深，或在道具买参数更多的结构。", text);
             StringAssert.Contains("这台 " + XgSim.ParamsText(XgSim.ParamsK(run)), text);
-            StringAssert.Contains("门槛 ", text);
+            StringAssert.Contains("门槛：?", text);
             StringAssert.Contains("准确率最高 " + XgSim.Pct(sim.CeilingAcc(run)), text);
             StringAssert.Contains("C 级线 " + XgSim.Pct(XgSim.GradeAccuracy("mnist", XgSim.TrainedGrade)), text);
             sim.Diagnose(run, XgLimit.Params, null); // the guide names the fix once the cause is worked out
@@ -202,7 +203,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void TheReportsCarryPercentFormulaCapsAndMemory()
+        public void TheReportsHideTheLineAndCarryFormulaCapsAndMemory()
         {
             var sim = Digits(5000);
             var host = new Host { vram = 4096 };
@@ -211,14 +212,16 @@ namespace LingGuangV05.XingGuang.Tests
             string report = sim.ParamsReport(host);
             TestContext.WriteLine(report);
             StringAssert.Contains("已训练参数量 P：", report);
-            StringAssert.Contains("%)", report);
+            // The line is hidden until the bar is past it (XgSim.Learned.cs).
+            StringAssert.Contains("线：?", report);
+            StringAssert.DoesNotContain(XgSim.ParamsText(sim.ParamsThreshold(sim.NextAbility)), report);
             StringAssert.Contains(sim.ModelFormula(run), report);
             StringAssert.Contains(sim.CapsText(run), report);
             StringAssert.Contains(XgSim.MemText(XgSim.VramNeedMB(run)) + " / 4 GB", report);
             string samples = sim.SamplesReport();
             TestContext.WriteLine(samples);
             StringAssert.Contains("样本 D：", samples);
-            StringAssert.Contains("%)", samples);
+            StringAssert.Contains(sim.SamplesLineKnown(sim.NextAbility) ? "过线了" : "线：?", samples);
         }
 
         [Test]

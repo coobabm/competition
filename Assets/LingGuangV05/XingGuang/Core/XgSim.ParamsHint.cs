@@ -148,11 +148,8 @@ namespace LingGuangV05.XingGuang
             int next = NextAbility;
             var sb = new StringBuilder();
             sb.Append(L("这台 ", "This model ")).Append(ParamsText(k));
-            if (next > 0)
-            {
-                double need = ParamsThreshold(next);
-                sb.Append(L("，门槛 ", ", line ")).Append(ParamsText(need)).Append(L("（", " (")).Append(F(100 * Math.Min(1, k / Math.Max(1e-9, need)), "0")).Append(L("%）", "%)"));
-            }
+            // The line is not named (XgSim.Learned.cs): only whether this model alone is already past it.
+            if (next > 0) sb.Append(k + 1e-9 >= ParamsThreshold(next) ? L("，够大了", ", big enough") : L("，门槛：?", ", line: ?"));
             sb.Append(L("；这个大小准确率最高 ", "; at this size accuracy tops out at ")).Append(Pct(CeilingAcc(run)))
               .Append(L("，C 级线 ", ", grade C is ")).Append(Pct(GradeAccuracy(run.dataset, TrainedGrade)));
             var node = XgChanceHint.NextScaleNode(this, (XgTrack)run.track);
@@ -179,7 +176,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// The parameter bar in full, for hover help: P against the line (with %), the formula, then per line the model
+        /// The parameter bar in full, for hover help: P (the line stays 「?」 until P is past it), the formula, then per line the model
         /// with its grade, whether it counts, the caps and the memory it takes of the card.
         /// </summary>
         public string ParamsReport(IXgHost host)
@@ -190,10 +187,9 @@ namespace LingGuangV05.XingGuang
             sb.Append(T("已训练参数量 P：", "Trained parameters P: ")).Append(ParamsText(p));
             if (next > 0)
             {
-                double need = ParamsThreshold(next), baseNeed = AbilityParamsK[next];
-                sb.Append(" / ").Append(ParamsText(need)).Append(" (").Append(F(100 * ParamsProgress(next), "0")).Append("%)");
-                sb.Append(need - p > 1e-9 ? T("，还差 ", "; short by ") + ParamsText(need - p) : T("，够了", "; enough"));
-                if (need < baseNeed - 1e-9) sb.Append(T("\n门槛已按道具打折，原 ", "\nThe line is discounted by your items; it was ")).Append(ParamsText(baseNeed));
+                // The line itself stays hidden until P is past it (XgSim.Learned.cs).
+                sb.Append(ParamsLineKnown(next) ? T("，过线了", "; past the line") : T("，线：?", "; line: ?"));
+                if (ParamsDiscount(next) < 1 - 1e-9) sb.Append(T("\n买到的道具已经把这道线压低了。", "\nThe items you own have already lowered this line."));
             }
             sb.Append(T("\nP = 练到 C 级以上的模型里最大的那个；没练到 C 级的不算。\n参数 = 层数 × 宽度² × 结构系数", "\nP = the biggest model trained to grade C or better; one below C does not count.\nParameters = layers × width² × structure factor"));
             foreach (var run in Runs)
@@ -201,7 +197,7 @@ namespace LingGuangV05.XingGuang
             return sb.ToString();
         }
 
-        /// <summary>The sample bar in full, for hover help: D against the line (with %), and what the noise took off.</summary>
+        /// <summary>The sample bar in full, for hover help: D (the line stays 「?」 until D is past it), and what the noise took off.</summary>
         public string SamplesReport()
         {
             double d = TrainedSamples;
@@ -210,10 +206,8 @@ namespace LingGuangV05.XingGuang
             sb.Append(T("样本 D：", "Samples D: ")).Append(SamplesText(d));
             if (next > 0)
             {
-                double need = SamplesThreshold(next), baseNeed = AbilitySamples[next];
-                sb.Append(" / ").Append(SamplesText(need)).Append(" (").Append(F(100 * SamplesProgress(next), "0")).Append("%)");
-                sb.Append(need - d > 1e-9 ? T("，还差 ", "; short by ") + SamplesText(need - d) : T("，够了", "; enough"));
-                if (need < baseNeed - 1e-9) sb.Append(T("\n门槛已按道具打折，原 ", "\nThe line is discounted by your items; it was ")).Append(SamplesText(baseNeed));
+                sb.Append(SamplesLineKnown(next) ? T("，过线了", "; past the line") : T("，线：?", "; line: ?"));
+                if (SamplesDiscount(next) < 1 - 1e-9) sb.Append(T("\n买到的道具已经把这道线压低了。", "\nThe items you own have already lowered this line."));
             }
             sb.Append("\n").Append(SamplesSplitText());
             return sb.ToString();

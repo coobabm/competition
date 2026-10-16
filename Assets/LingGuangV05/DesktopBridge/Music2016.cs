@@ -29,7 +29,6 @@ namespace LingGuangV05.Desktop
         /// <summary>Hits people were singing in 2016 (released 2016 or earlier).</summary>
         public static readonly Hit[] Hits =
         {
-            new Hit("告白气球", "周杰伦", "周杰伦的床边故事", 2016),
             new Hit("演员", "薛之谦", "绅士", 2015),
             new Hit("小幸运", "田馥甄", "我的少女时代 电影原声带", 2015),
             new Hit("不为谁而作的歌", "林俊杰", "和自己对话", 2015),

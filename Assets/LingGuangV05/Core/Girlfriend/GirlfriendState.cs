@@ -118,13 +118,11 @@ namespace LingGuangV05.Core.Girlfriend
         public int packetsDay = -1, packetsToday, bigPackets;
         public List<GfGiftOrder> orders = new List<GfGiftOrder>();
 
-        /// <summary>Lines the AI wrote for him, times she caught it, and whether he denied it last time.</summary>
-        public int aiReplies, aiCaught;
         /// <summary>Her total chat lines and his (the YY history itself is trimmed), and the first line's game seconds.</summary>
         public int totalMessages, herMessages;
         public double firstMessageAt = -1;
         public int firstMessageDay = -1;
-        /// <summary>A question of hers waiting for his answer: "qixi", "movie" (a promise), "money", "caught".</summary>
+        /// <summary>A question of hers waiting for his answer: "qixi", "movie" (a promise), "money".</summary>
         public string asking = "";
         public int askDay = -1;
         /// <summary>Play time at the last tick, and play time the calendar has spent on <see cref="today"/>.</summary>
@@ -138,8 +136,6 @@ namespace LingGuangV05.Core.Girlfriend
         /// <summary>A sulking signature after a forgotten day, until this calendar day.</summary>
         public int sulkUntil = -1;
         public string sulkZh = "", sulkEn = "";
-        /// <summary>「让 灵光 代我回」 is switched on in her chat (stage 5; the AI turns it off for good at stage 6).</summary>
-        public bool aiAuto;
         /// <summary>Her last lines, from the model or the library (GirlfriendLines.RecentLimit), so the fallback library does not repeat itself.</summary>
         public List<string> recentLines = new List<string>();
     }

@@ -34,6 +34,16 @@ namespace LingGuangV05.UI.Tests
                 Assert.That(GameText.F("名字：{0}", "Name: {0}", "家庭"), Is.EqualTo("Name: 家庭"));
             }
         }
+        [Test]
+        public void TheInnerVoiceGetsTheEnglishOfAStoryThoughtInEitherLanguage()
+        {
+            // A story thought keeps both languages so it can follow a switch while on screen.
+            using (GameText.Bind(() => "zh-CN"))
+            {
+                Assert.That(GameText.EnglishOf("十二月，窗玻璃上起了一层雾。"), Is.EqualTo("December. A fog has settled on the window glass."));
+                Assert.That(GameText.EnglishOf("user raw 家庭"), Is.EqualTo("user raw 家庭"));
+            }
+        }
         [Serializable] private class Catalog { public Entry[] entries; }
         [Serializable] private class Entry { public string zh; public string en; }
         [Test]

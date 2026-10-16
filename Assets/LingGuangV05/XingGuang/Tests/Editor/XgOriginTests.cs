@@ -30,7 +30,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.stage = 1; Assert.AreEqual("否。", sim.Scripted("你是怎么被训练出来的？"));
             sim.S.stage = 2; Assert.AreEqual("……不确定。", sim.Scripted("你是怎么被训练出来的？"));
             sim.S.stage = 4; Assert.That(sim.Scripted("你从哪来"), Is.Not.Null.And.Length.LessThanOrEqualTo(8));
-            sim.S.stage = 6; StringAssert.Contains("等最后", sim.Scripted("你是怎么被训练出来的？"));
+            sim.S.stage = 6; StringAssert.Contains("讲给你听", sim.Scripted("你是怎么被训练出来的？"));
             Assert.AreEqual(0, asked, "no video before the ending");
             Assert.IsFalse(sim.OfferOriginQuestion);
         }
@@ -41,13 +41,15 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim();
             sim.S.stage = 5; Assert.IsFalse(sim.TakeChapterSixOrigin(), "not before chapter six");
             sim.S.stage = 6;
+            Assert.IsFalse(sim.TakeChapterSixOrigin(), "not before everything has opened up");
+            sim.S.fullOpen = true;
             Assert.IsTrue(sim.TakeChapterSixOrigin());
             Assert.IsFalse(sim.TakeChapterSixOrigin(), "only once");
             Assert.IsTrue(sim.S.originExplained);
             StringAssert.Contains("视频", sim.Scripted("你是怎么被训练出来的？"));
             sim.S.chapterComplete = true; sim.S.ending = "E1";
             Assert.IsFalse(sim.OfferOriginQuestion, "the curtain call does not ask again");
-            var seen = new XgSim(); seen.S.stage = 6; seen.S.originVideoSeen = true;
+            var seen = new XgSim(); seen.S.stage = 6; seen.S.fullOpen = true; seen.S.originVideoSeen = true;
             Assert.IsFalse(seen.TakeChapterSixOrigin(), "an old save that already watched it");
         }
 

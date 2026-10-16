@@ -26,7 +26,7 @@ namespace LingGuangV05.Desktop.Zhongbao
     {
         public const string NativeWindow = "Calculator";
         static readonly string[] NativeNames = { "Calculator", "计算器" };
-        public static readonly string[] PageIds = { "label", "contracts", "subcontract", "ledger", "credit" };
+        public static readonly string[] PageIds = { "label", "auto", "contracts", "subcontract", "ledger", "credit" };
         static readonly Vector2 Design = new Vector2(1266, 763);
         /// <summary>The window as big as the other app windows (the calculator is a small one).</summary>
         public static readonly Color Blue = new Color32(41, 50, 225, 255);
@@ -111,6 +111,41 @@ namespace LingGuangV05.Desktop.Zhongbao
                 if (unlocked) Brand(); else Unbrand();
             }
             if (root != null && !ReferenceEquals(bound, Sim)) Bind(Sim);
+            if (branded && Time.unscaledTime >= nextIconCheck) { nextIconCheck = Time.unscaledTime + .5f; FollowDesktopIcon(); }
+        }
+
+        GameObject brandedIcon;
+        float nextIconCheck;
+
+        /// <summary>
+        /// A desktop rebuilt after branding (a reload re-lays the icons out) makes a fresh native 计算器 shortcut whose
+        /// localizer puts the old name back: brand that one too, remembering its native state for Unbrand.
+        /// </summary>
+        void FollowDesktopIcon()
+        {
+            var icon = DesktopIcon();
+            if (icon == null || icon == brandedIcon) return;
+            brandedIcon = icon;
+            var sprite = AppIcon();
+            foreach (var c in icon.GetComponentsInChildren<Behaviour>(true))
+            {
+                string type = c.GetType().Name;
+                if (type != "DesktopLocalizedText" && type != "AppElement" && type != "LocalizedObject") continue;
+                if (!localizers.Exists(x => x.c == c)) localizers.Add((c, c.enabled));
+                c.enabled = false;
+            }
+            foreach (var img in icon.GetComponentsInChildren<Image>(true))
+            {
+                if (img.name != "Icon") continue;
+                if (!icons.Exists(x => x.img == img)) icons.Add((img, img.sprite));
+                img.sprite = sprite;
+            }
+            foreach (var t in icon.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (t.name != "Title" && !IsNativeName(t.text)) continue;
+                if (!texts.Exists(x => x.text == t)) texts.Add(new TextCache { text = t, original = IsNativeName(t.text) ? t.text : NativeNames[1] });
+                t.text = AppTitle;
+            }
         }
 
         // ───────────── IDesktopAppView ─────────────
@@ -266,8 +301,11 @@ namespace LingGuangV05.Desktop.Zhongbao
                     {
                         startEntry = (i, menu.programs[i].title, menu.programs[i].searchKeywords);
                         if (menu.programs[i].row != null)
+                        {
+                            foreach (var img in menu.programs[i].row.GetComponentsInChildren<Image>(true)) if (img.name == "Icon") icons.Add((img, img.sprite));
                             foreach (var t in menu.programs[i].row.GetComponentsInChildren<TMP_Text>(true))
                                 if (IsNativeName(t.text)) texts.Add(new TextCache { text = t, original = t.text });
+                        }
                     }
         }
 
@@ -280,6 +318,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             branded = true;
             string name = AppTitle;
             var sprite = AppIcon();
+            // Title bar, Start row and the rest read the Oxygen calculator art from the icon loader's library: give them ours.
+            LingGuangV05.Desktop.Taohuo.ShopView.SetOxygenIcons(NativeWindow, sprite);
             foreach (var (c, _) in localizers) if (c != null) c.enabled = false;
             foreach (var (img, _) in icons) if (img != null) img.sprite = sprite;
             foreach (var cache in texts) if (cache.text != null) cache.text.text = cache.status ? T("企业数据标注 · 按题付酬", "Company annotation · Paid per task") : name;
@@ -288,6 +328,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             SetStartEntry(name, (startEntry.keywords ?? "") + " 摆渡众包 Bodu Crowd 众包 标注 订单");
             foreach (var (go, _) in nativeChildren) if (go != null && go != (root != null ? root.gameObject : null)) go.SetActive(false);
             if (root != null) root.gameObject.SetActive(true);
+            brandedIcon = DesktopIcon();
         }
 
         /// <summary>Before 灵光.exe is installed (or after a new game starts) the window is the plain calculator again.</summary>
@@ -299,6 +340,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             foreach (var (img, sprite) in icons) if (img != null) img.sprite = sprite;
             foreach (var cache in texts) if (cache.text != null) cache.text.text = cache.original;
             foreach (var (bm, text, icon) in buttons) if (bm != null) { bm.buttonText = text; bm.buttonIcon = icon; bm.UpdateUI(); }
+            LingGuangV05.Desktop.Taohuo.ShopView.SetOxygenIcons(NativeWindow, null);
             if (window.taskbarButton != null && taskTitle != null) window.taskbarButton.buttonTitle = taskTitle;
             SetStartEntry(startEntry.title, startEntry.keywords);
             var container = window.windowContainer;
@@ -322,6 +364,8 @@ namespace LingGuangV05.Desktop.Zhongbao
         /// <summary>A white paw on a Bodu-blue rounded square, drawn once.</summary>
         public static Sprite AppIcon()
         {
+            var drawn = XgIcons.Get("desktop", "zhongbao");
+            if (drawn != null) return drawn;
             if (appIcon != null) return appIcon;
             const int n = 64;
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { hideFlags = HideFlags.DontSave };
@@ -362,6 +406,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             // The pages' area: right of the nav, under the header, above the status strip, with a 12 margin (the contract the pages are built to).
             var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavW + 12, StatusH + 12), new Vector2(-12, -(HeaderH + 12)));
             Label = Add("label", new XgLabelPage(), area);
+            Add("auto", new ZhongbaoAutoPage(), area);
             Contracts = Add("contracts", new XgContractsPage(), area);
             Add("subcontract", new ZhongbaoSubcontractPage(), area);
             Add("ledger", new ZhongbaoLedgerPage(hub), area);
@@ -458,7 +503,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             UiTip.Add(hudMoney.transform.parent, "余额：和家里共用的钱包。标注、订单进账；罚款、工资、电费花钱。", "Balance: the wallet shared with home. Labelling and orders pay in; fines, wages and power take out.");
             UiTip.Add(creditBox, () => Sim == null ? "" : Sim.QualityActive
                 ? T("信用分 " + N(Sim.Credit, "0.#") + "（" + Sim.CreditTierName(Sim.CreditTier) + "）：决定抽检率和自动收入倍率。详情见「信用」页。", "Credit " + N(Sim.Credit, "0.#") + " (" + Sim.CreditTierName(Sim.CreditTier) + "): it sets the spot-check rate and the auto-income multiplier. See the Credit page.")
-                : T("买下自动答题以后，平台才开始抽检、算信用。", "The platform starts spot-checking and scoring credit once you buy auto-answer."));
+                : T("第 4 阶段以后、买下自动答题的话，平台才开始抽检、算信用。", "The platform starts spot-checking and scoring credit from stage 4, once you own auto-answer."));
             UiTip.Add(hudLevel.transform.parent, "等级：加薪的头衔，每两级换一个。加薪在标注台右边的商店里。", "Level: your pay-raise title, a new one every two raises. Raises are in the shop beside the labelling desk.");
             UiTip.Add(hudTopic.transform.parent, "今日热词：弹幕、短信这些文字桌最近在聊什么。新的梗会让旧检查点答错（新题型）。", "Today's hot word: what the text desks are talking about. A new meme makes old checkpoints answer wrong (new card types).");
             UiTip.Add(comboChip, "连续正确提交可提高标注报酬；答错、超时或停太久会清零。", "Correct submissions build a pay bonus. A wrong answer, timeout or long pause resets it.");
@@ -501,7 +546,15 @@ namespace LingGuangV05.Desktop.Zhongbao
             statusMid = ui.Text(Rect("Hand", st, Vector2.zero, new Vector2(0, 1), new Vector2(200, 0), new Vector2(460, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
             statusRight = ui.Text(Rect("Rent", st, new Vector2(1, 0), Vector2.one, new Vector2(-420, 0), new Vector2(-12, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
             foreach (var t in new[] { statusLeft, statusMid, statusRight }) t.textWrappingMode = TextWrappingModes.NoWrap;
-            UiTip.Add(st, "状态栏：手动标注从不抽检；右边是家里的房租，以及离下一次每日结算还有多久。", "Status strip: hand labels are never spot-checked; on the right, the home rent and the time to the next daily settlement.");
+            UiTip.Add(st, "状态栏：手动标注从不抽检；右边是家里的房租，以及离下一次结算还有多久（一次扣两天房租）。", "Status strip: hand labels are never spot-checked; on the right, the home rent and the time to the next settlement (two days of rent at a time).");
+        }
+
+        /// <summary>The 自动提交 tab's badge: "!" while something holds auto-answer that the player can clear, otherwise nothing.</summary>
+        string AutoBadge()
+        {
+            if (Sim == null || Sim.GlobalAutoLevel <= 0 || Sim.AutoLabelHidden) return "";
+            var s = Sim.AutoGlobalState(Host);
+            return s == XgAutoDeskState.InboxFull || s == XgAutoDeskState.Held ? "!" : "";
         }
 
         string PageHelp(string id)
@@ -510,6 +563,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             switch (id)
             {
                 case "label": return T("标注兼职：为企业核对数据，合格提交按题结算报酬。", "Annotation work: verify company data and earn pay for each accepted submission.");
+                case "auto": return T("自动提交：自动答题替你交了哪些题、每类题用的是哪个模型、为什么有的桌它不碰。", "Auto-submit: which cards auto-answer hands in for you, which model answers each kind, and why it leaves some desks alone.");
                 case "contracts": return PageOpen("contracts") ? T("企业订单：通过质量验收即可签约，持续交付获得报酬。", "Business orders: pass quality acceptance and earn pay for ongoing deliveries.")
                     : T("企业订单：尚未取得交付资质，先在标注台积累经验。", "Business orders: delivery qualification is not yet available. Start with annotation work.");
                 case "subcontract": return T("分包：网吧兄弟用你的账号帮你标，按分钟发工资。他们的错算在你头上。", "Subcontract: netbar friends label under your account for wages by the minute. Their mistakes count against you.");
@@ -711,13 +765,13 @@ namespace LingGuangV05.Desktop.Zhongbao
             hudTopic.text = T("今日热词 ", "Hot word ") + "<b>" + HotWord() + "</b>";
 
             if (page != "label" && !PageOpen(page)) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
-            string[] names = { T("标注台", "Label desk"), T("企业订单", "Orders"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
+            string[] names = { T("标注台", "Label desk"), T("自动提交", "Auto-submit"), T("企业订单", "Orders"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             int signable = 0; foreach (var c in XgCatalog.Contracts) if (!Sim.Signed(c.id) && Sim.CanSign(c)) signable++;
             bool alarm = Sim.QualityFrozen || Sim.CaptchaPending || Sim.QualityWarning;
             var house = House;
             bool indebt = house != null && house.Debt > 0;
-            string[] badges = { raiseReady ? T("加薪", "↑") : "", signable > 0 ? signable.ToString() : "", "", indebt ? T("欠", "Debt") : "", alarm ? "!" : "" };
+            string[] badges = { raiseReady ? T("加薪", "↑") : "", AutoBadge(), signable > 0 ? signable.ToString() : "", "", indebt ? T("欠", "Debt") : "", alarm ? "!" : "" };
             for (int i = 0; i < tabs.Count; i++)
             {
                 var tab = tabs[i];
@@ -729,13 +783,13 @@ namespace LingGuangV05.Desktop.Zhongbao
                 PlaceBadge(tab.badge, open ? badges[i] : "");
             }
             lingguangLink.Set(T("查看报酬", "My earnings"), true, ZhongbaoSkin.Blue, Color.white);
-            accountText.text = T("账号 kk_2016\n注册 2016-05-29\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-29\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
+            accountText.text = T("账号 kk_2016\n注册 2016-05-24\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-24\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
             statusLeft.text = "<color=#2F9E44>●</color> " + T("已连接 摆渡云", "Connected to Bodu Cloud");
             statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");
             // Rent and the next daily settlement come from the household sim; before rent starts there is nothing to show.
             statusRight.text = house != null && house.EconomyActive
-                ? T("房租 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/天 · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " 后结算",
-                    "Rent ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/day · settles in " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds))
+                ? T("房租 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/天 · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " 后扣 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date) * house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) + "（两天）",
+                    "Rent ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/day · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " until ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date) * house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) + " (two days) is taken")
                 : "";
 
             var runtime = Controller != null ? Controller.runtime : null;

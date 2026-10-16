@@ -130,6 +130,8 @@ namespace LingGuangV05.Desktop.Story
             InnerVoice.Hold = InnerVoiceHeld;
             // The opening quiet window (OpeningQuiet): ambient popups wait out the prologue and the first ability.
             OpeningQuiet.Probe = QuietOpening;
+            // A story moment on screen holds every other popup (剧情修订 §二, StoryFocus).
+            StoryFocus.Probe = StoryFocusNow;
             // The curtain call after the ending: 「你是怎么被训练出来的？」 and the evolution video.
             OriginCurtain.Install(this);
             // The protagonist's own idea that the model could label for them: thoughts, then the forum cutscene.
@@ -176,6 +178,49 @@ namespace LingGuangV05.Desktop.Story
             return OpeningQuiet.Rule(runtime.TestMode, runtime.Sim.InPrologue, lab != null && lab.Sim != null ? lab.Sim.AbilitiesCount : 1);
         }
 
+        private float storyCalmAt;
+        private OriginCurtain curtain;
+        private StoryBeat focusBeat;
+        private float focusBeatSince;
+        private int focusBeatCount;
+        /// <summary>A beat that has held the screen this long stops holding other popups (a wait that never ends).</summary>
+        private const float FocusBeatPatience = 90f;
+        /// <summary>How long a beat's hook stays after it is typed out, before the beat's short pause.</summary>
+        private const float HookHoldSeconds = 1.8f;
+
+        /// <summary><see cref="StoryFocus"/> for the running desktop: a story moment now, or one that ended moments ago.</summary>
+        /// <summary>A story beat's hook is being shown (its line and pause): what it announces should start after it.</summary>
+        public bool HookPlaying => director != null && director.Runner != null && director.Runner.HookPlaying;
+
+        private bool StoryFocusNow()
+        {
+            if (this == null) return false;
+            if (StoryOnScreen()) { storyCalmAt = Time.unscaledTime + (float)StoryFocus.SettleSeconds; return true; }
+            return Time.unscaledTime < storyCalmAt;
+        }
+
+        private bool StoryOnScreen()
+        {
+            if (cutsceneRoutine != null || narrationRoutine != null) return true;
+            var extra = director != null ? director.ExternalBusy : null;
+            if (extra != null && extra()) return true;
+            if (curtain == null) curtain = GetComponent<OriginCurtain>();
+            if (curtain != null && curtain.Playing) return true;
+            var runner = director != null ? director.Runner : null;
+            var beat = runner != null ? runner.Current : null;
+            int started = runner != null ? runner.BeatsStarted : 0;
+            if (beat != focusBeat || started != focusBeatCount) { focusBeat = beat; focusBeatCount = started; focusBeatSince = Time.unscaledTime; }
+            return beat != null && Speaks(beat) && Time.unscaledTime - focusBeatSince < FocusBeatPatience;
+        }
+
+        /// <summary>The beat puts lines or a cutscene on screen (bookkeeping-only beats do not hold anything).</summary>
+        private static bool Speaks(StoryBeat beat)
+        {
+            foreach (var step in beat.Steps)
+                if (step.Op == "say" || step.Op == "think" || step.Op == "narrate" || step.Op == "cutscene") return true;
+            return false;
+        }
+
         private void OnRuntimeSignal(string signal, string arg)
         {
             // 鲁大师's benchmark is a pitch: the opening quiet window drops it.
@@ -199,6 +244,7 @@ namespace LingGuangV05.Desktop.Story
             if (chatManager != null && chatHooked) chatManager.externalEvents.RemoveListener(OnPlayerSend);
             if (director != null) { director.Rebound -= OnStoryRebound; director.SetOutput(null); }
             if (OpeningQuiet.Probe == (Func<bool>)QuietOpening) OpeningQuiet.Probe = null;
+            if (StoryFocus.Probe == (Func<bool>)StoryFocusNow) StoryFocus.Probe = null;
             if (canvas != null) Destroy(canvas.gameObject);
             localizedLabels.Clear();
         }
@@ -212,7 +258,11 @@ namespace LingGuangV05.Desktop.Story
                 case "narrate": Narrate(command.Text, done); break;
                 case "cutscene": PlayCutscene(command, done); break;
                 case "say": Say(command.Arg("who", LaoZhou), command.Text, (float)command.DelaySeconds, command.BeatId); break;
-                case "think": InnerVoice.Say(command.Text, command.Text); break;
+                case "think":
+                    // A beat's hook holds its beat until it has been read; other thoughts just queue.
+                    if (done != null) InnerVoice.Say(command.Text, GameText.EnglishOf(command.Text), HookHoldSeconds, done);
+                    else InnerVoice.Say(command.Text, GameText.EnglishOf(command.Text));
+                    break;
                 case "notify":
                     string app = command.Arg("app"), tab = command.Arg("tab");
                     ShowToast(command.Text, app == null ? (Action)null : () => OpenApp(app, tab));
@@ -300,11 +350,14 @@ namespace LingGuangV05.Desktop.Story
             while (chatQueue.Count > 0 && (director == null || director.runtime == null || !ReferenceEquals(chatQueue.Peek().simulation, director.runtime.Sim))) chatQueue.Dequeue();
             if (chatQueue.Count == 0 || Time.unscaledTime < chatDueAt) return;
             var pendingChat = chatQueue.Dequeue();
-            if (ChatAlreadyDelivered(pendingChat)) return;
+            // Already in the chat (the beat is playing again after a reload): not sent twice, but the beat waiting for
+            // it must still hear that it arrived, or it waits forever and every later beat with it.
+            if (ChatAlreadyDelivered(pendingChat)) { NoteChatDelivered(pendingChat); return; }
             if (pendingChat.beat != null && pendingChat.beat.StartsWith("era_", StringComparison.Ordinal) && director != null && director.runtime != null)
             {
                 var lab = director.runtime.GetComponent<LingGuangV05.Desktop.XingGuang.XingGuangController>();
-                if (lab != null && lab.Sim != null && (lab.Sim.S.chapterComplete || !string.IsNullOrEmpty(lab.Sim.S.ending))) return;
+                // The year is over: the side story's message is dropped, but its beat is let go so it cannot hold the ending.
+                if (lab != null && lab.Sim != null && (lab.Sim.S.chapterComplete || !string.IsNullOrEmpty(lab.Sim.S.ending))) { NoteChatDelivered(pendingChat); return; }
             }
             string text = pendingChat.text;
             if (chatQueue.Count > 0) chatDueAt = Time.unscaledTime + chatQueue.Peek().delay;
@@ -383,7 +436,7 @@ namespace LingGuangV05.Desktop.Story
         private void DeliverEraTray()
         {
             trayWait -= Time.unscaledDeltaTime;
-            if (trayWait > 0 || CutscenePlaying) return;
+            if (trayWait > 0 || CutscenePlaying || StoryFocus.Active) return;
             trayWait = 3;
             var runtime = director != null ? director.runtime : null;
             if (runtime == null || runtime.Sim == null || runtime.TestMode) return;
@@ -504,6 +557,8 @@ namespace LingGuangV05.Desktop.Story
         {
             while (toasts.Count > 0)
             {
+                // A toast waits out a story moment instead of covering it (StoryFocus).
+                while (StoryFocus.Active) yield return null;
                 var item = toasts.Dequeue();
                 SetText(toastText, item.Key);
                 Action click = item.Value;

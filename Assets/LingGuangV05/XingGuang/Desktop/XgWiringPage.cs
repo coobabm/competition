@@ -347,7 +347,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (ui.window != null) node.rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
             var drag = node.rt.gameObject.AddComponent<XgWiringHover>(); drag.page = this; drag.key = key;
             var dot = TopLeft("Kind", node.rt, 12, 15, 6, 6); node.accent = Rounded(dot, Tone[(int)n.lane]);
-            node.title = Text(TopLeft("Title", node.rt, 25, 8, 160, 39), "", 14, Ink, TextAlignmentOptions.MidlineLeft);
+            // The drawn node icon (Tools/Icons/ui_icons.py) replaces the lane dot; the title makes room for it.
+            string iconGroup = "wiring", iconId = WireIconId(n);
+            if (n.key.StartsWith("label:", StringComparison.Ordinal) && XgIcons.Has("desk", n.dataset)) { iconGroup = "desk"; iconId = n.dataset; }
+            var nodeIcon = XgIcons.Place(node.rt, iconGroup, iconId, 20, 21, 30);
+            if (nodeIcon != null) dot.gameObject.SetActive(false);
+            node.title = Text(TopLeft("Title", node.rt, nodeIcon != null ? 41 : 25, 8, nodeIcon != null ? 144 : 160, 39), "", 14, Ink, TextAlignmentOptions.MidlineLeft);
             node.title.maxVisibleLines = 2; button.Label = node.title.rectTransform;
             node.sub = Text(TopLeft("Resource", node.rt, 13, 52, 172, 21), "", 11, Mute, TextAlignmentOptions.MidlineLeft); node.sub.textWrappingMode = TextWrappingModes.NoWrap;
             node.fill = Bar(TopLeft("Load", node.rt, 13, 81, 172, 4), "Fill", Soft, Tone[(int)n.lane]);
@@ -356,6 +361,19 @@ namespace LingGuangV05.Desktop.XingGuang
             if (n.lane != XgWireLane.Power) node.inPort = Port(node.rt, true, key, out node.inPress);
             if (n.lane != XgWireLane.Task) node.outPort = Port(node.rt, false, key, out node.outPress);
             return node;
+        }
+        /// <summary>The icon id (group "wiring") of a node: by what it is, not by which one it is.</summary>
+        static string WireIconId(XgWNode n)
+        {
+            string k = n.key;
+            if (k.StartsWith("contract:", StringComparison.Ordinal)) return "contract";
+            if (k.StartsWith("label:", StringComparison.Ordinal)) return "label";
+            if (k.StartsWith("train:", StringComparison.Ordinal)) return "train";
+            if (k.StartsWith("run:", StringComparison.Ordinal)) return k == "run:0" ? "run_0" : "run_1";
+            if (k.StartsWith("m:", StringComparison.Ordinal)) return n.repo ? "model_repo" : "model";
+            if (n.lane == XgWireLane.Gpu) return n.rack ? "rack" : n.cafe ? "gpu_cafe" : "gpu";
+            if (n.lane == XgWireLane.Task && k != "pretrain" && k != "ajie") return "life";
+            return k;
         }
         RectTransform Port(RectTransform parent, bool input, string key, out RectTransform press)
         {

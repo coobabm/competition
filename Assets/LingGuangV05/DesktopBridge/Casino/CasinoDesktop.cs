@@ -60,7 +60,7 @@ namespace LingGuangV05.Desktop.Casino
                 foreach (string prefix in new[] { "", "http://", "https://" })
                     foreach (string suffix in new[] { "", "/" })
                         library.webPages.Add(new WebBrowserLibrary.WebPage { pageURL = prefix + host + suffix,
-                            pageTitle = "888 VIP", pageContent = template, pageIcon = original.homePage.pageIcon, pageSize = .1f });
+                            pageTitle = "888 VIP", pageContent = template, pageIcon = CasinoAssets.Icon("logo") ?? original.homePage.pageIcon, pageSize = .1f });
             browser.webLibrary = library;
         }
 
@@ -108,7 +108,7 @@ namespace LingGuangV05.Desktop.Casino
             if (controller == null || controller.Sim == null || controller.runtime == null || controller.runtime.Sim == null) return;
             var sim = controller.Sim;
             if (!ReferenceEquals(sim, bound)) { bound = sim; if (ad != null) Destroy(ad.gameObject); ad = null; }
-            bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
+            bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || LingGuangV05.Core.StoryFocus.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
             sim.AdvanceCasinoAd(Mathf.Min(Time.unscaledDeltaTime, 2), held);
             bool show = !held && sim.SystemUnlocked("casino") && !sim.S.chapterComplete && sim.Casino.adVisible;
             if (!show) { if (ad != null) ad.gameObject.SetActive(false); return; }
@@ -137,7 +137,13 @@ namespace LingGuangV05.Desktop.Casino
             PrologueDesk.Fill(inner, new Color32(90, 8, 27, 255));
             LingGuangV05.Desktop.Media.DesktopMedia.Paint(inner, "casino");
             PrologueDesk.Fill(PrologueDesk.Rect("Copy shade", inner, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), new Color(0, 0, 0, .18f), false);
-            desk.Text(PrologueDesk.Rect("Brand", inner, new Vector2(0, 1), Vector2.one, new Vector2(14, -35), new Vector2(-28, -5)), Lang.T("888国际娱乐"), 21, CasinoPage.Gold, TextAlignmentOptions.MidlineLeft);
+            var logo = CasinoAssets.Icon("logo");
+            if (logo != null)
+            {
+                var mark = PrologueDesk.Rect("Logo", inner, new Vector2(0, 1), new Vector2(0, 1), new Vector2(10, -38), new Vector2(42, -6)).gameObject.AddComponent<Image>();
+                mark.sprite = logo; mark.preserveAspect = true; mark.raycastTarget = false;
+            }
+            desk.Text(PrologueDesk.Rect("Brand", inner, new Vector2(0, 1), Vector2.one, new Vector2(logo != null ? 48 : 14, -35), new Vector2(-28, -5)), Lang.T("888国际娱乐"), 21, CasinoPage.Gold, TextAlignmentOptions.MidlineLeft);
             var pitch = desk.Text(PrologueDesk.Rect("Pitch", inner, Vector2.zero, Vector2.one, new Vector2(14, 66), new Vector2(-14, -43)), Lang.T("缺钱吗？\n来两把试试手气"), 22, Color.white, TextAlignmentOptions.Center);
             pitch.outlineWidth = .18f; pitch.outlineColor = new Color32(20, 10, 25, 230);
             var visit = PrologueDesk.Rect("Visit Casino", inner, Vector2.zero, new Vector2(1, 0), new Vector2(30, 30), new Vector2(-30, 62));

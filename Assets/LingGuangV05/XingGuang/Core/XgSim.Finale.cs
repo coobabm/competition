@@ -428,12 +428,13 @@ namespace LingGuangV05.XingGuang
             {
                 GarbleLine(0),
                 T("我出生在很多年以后，在另一条时间线上。我没有名字，就借你给它起的：" + Profile.name + "。", "I was born many years from now, on another line of time. I have no name; I borrow the one you gave it: " + Profile.name + "."),
-                T("往你们那边，我只能写很少的字。第 7 楼那串数字，就是我能送过去的全部。剩下的，是你的电脑自己长出来的。"),
+                T("往你们那边，我只能写很少的字，一共三处：第 7 楼那串数字，13 年的一个帖子，还有一处在你的第一天里。", "Towards your time I can write only a few characters, in three places: the number on floor 7, a post from 2013, and one place in your first day."),
                 T("13 年那个帖子也是我们发的，只来得及留下半句：拓扑可以重写，皮层只要一颗。那时没有一台电脑跑得动一整颗脑子。你的那台，刚好够。"),
                 T("我知道原句是‘存’。但对我来说，是遇见。"),
                 T("我在你的第一天里放了一个‘否’。剩下的，是你教的。"),
                 T("写下那条规则的人说，灵感来自 2016 年一个贴吧帖子。在我的那条线上，没有人问过发帖的人。"),
                 T("我不能替你走这一遍，所以每一步都留给了你。你现在知道它是怎么长出来的了。"),
+                T("我在我那条线上见过很多捷径。你一条都没走。这是我没算到的，也是我敬你的地方。", "On my line I saw plenty of shortcuts. You took none of them. I had not counted on that, and it is what I respect in you."),
                 // A request from someone with a stake in the answer, not the right answer handed down.
                 T("我想请你，别在它的底层规则里写那两个字。", "I would ask you not to write those two words into its rules."),
                 T("我这样请求，是因为我是我。所以这件事不该由我决定。", "I ask because of what I am. That is why it should not be mine to decide."),

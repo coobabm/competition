@@ -23,12 +23,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (XgSpeechPolicy.Stage(value))
             {
-                case 1: return GameText.T("是 / 否", "Yes / No");
-                case 2: return GameText.T("多选", "Choices");
-                case 3: return GameText.T("一个词", "A word");
-                case 4: return GameText.T("一句话", "A sentence");
-                case 5: return GameText.T("长记忆", "Long memory");
-                default: return GameText.T("自由表达", "Free expression");
+                case 1: return GameText.T("是/否", "Yes/No");
+                case 2: return GameText.T("多选一", "Pick one");
+                case 3: return GameText.T("看图说词", "Picture to word");
+                case 4: return GameText.T("短句", "Short sentences");
+                case 5: return GameText.T("长记忆·翻译", "Memory · translation");
+                default: return GameText.T("全部放开", "Everything");
             }
         }
 

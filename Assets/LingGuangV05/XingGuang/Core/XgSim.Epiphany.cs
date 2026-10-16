@@ -136,8 +136,8 @@ namespace LingGuangV05.XingGuang
         {
             name = "让它替我标"; nameEn = "Let it label for me";
             golden = "它答得跟我一样，还比我快。"; goldenEn = "It answers the way I do, only faster.";
-            why = "挂机脚本只会全选「是」，一抽检就露馅。它不是脚本：它是真的认得。让它先答，我来看着。";
-            whyEn = "Click scripts only ever pick Yes, and the spot checks catch them at once. This is no script: it can actually read. Let it answer first; I keep an eye on it.";
+            why = "挂机脚本只会全选「是」，平台一查就露馅。它不是脚本：它是真的认得。让它先答，我来看着。";
+            whyEn = "Click scripts only ever pick Yes, and the platform catches them as soon as it looks. This is no script: it can actually read. Let it answer first; I keep an eye on it.";
         }
     }
 }

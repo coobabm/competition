@@ -264,6 +264,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public void Play(Sfx.Id id, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.Play(id, pitch, volume); }
+        /// <summary>Plays a recorded clip (e.g. the casino's) through the same pool, muted and hidden the same way.</summary>
+        public void PlayClip(AudioClip clip, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.PlayClip(clip, pitch, volume); }
 
         /// <summary>Discard presentation on a closed/rebuilt tab; do not replay old particles on reopen.</summary>
         public void Clear()
@@ -492,6 +494,18 @@ namespace LingGuangV05.Desktop.XingGuang
                 int variant = (lastVariant[(int)id] + UnityEngine.Random.Range(1, VariantsPerEvent)) % VariantsPerEvent;
                 lastVariant[(int)id] = variant;
                 s.clip = clips[(int)id, variant];
+                s.Play();
+            }
+
+            /// <summary>A recorded clip through the shared pool (same volume scale as the synthesized ones).</summary>
+            public static void PlayClip(AudioClip clip, float pitch = 1, float volume = 1)
+            {
+                if (sources == null || clip == null) return;
+                var s = sources[next = (next + 1) % sources.Length];
+                if (s == null) return;
+                s.pitch = Mathf.Clamp(pitch, .3f, 3f);
+                s.volume = .35f * volume;
+                s.clip = clip;
                 s.Play();
             }
 

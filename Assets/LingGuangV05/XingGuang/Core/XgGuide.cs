@@ -276,8 +276,8 @@ namespace LingGuangV05.XingGuang
             if (money >= 0 || double.IsNaN(money)) return;
             string owed = "¥" + Math.Ceiling(-money - 1e-9).ToString("0", CultureInfo.InvariantCulture);
             list.Add(Step("rent.debt", XgGuideKind.Blocker, "赚钱交房租（欠 " + owed + "）", "Earn the rent (" + owed + " owed)",
-                house.landlordCut ? "房东拉了电闸，显卡全停；手动标注照样有钱。再拖一天，电脑就得卖了。" : "钱包见底了，房东在催。标注、订单都能挣；连着三天交不上，电脑就得卖了。",
-                house.landlordCut ? "The landlord cut the power and every card has stopped; hand labelling still pays. One more day and the computer has to be sold." : "The wallet is empty and the landlord wants his rent. Labels and contracts both pay; three days without it and the computer has to be sold.",
+                house.landlordCut ? "房东拉了电闸，显卡全停；手动标注照样有钱。再拖下去，房东会来催你卖电脑抵债（卖不卖你定）。" : "钱包见底了，房东在催。标注、订单都能挣；连着几次结算都还不上，房东会来催你卖电脑抵债。",
+                house.landlordCut ? "The landlord cut the power and every card has stopped; hand labelling still pays. Keep it up and he will push you to sell the computer for the rent (your call)." : "The wallet is empty and the landlord wants his rent. Labels and contracts both pay; a few settlements in a row without it and he will push you to sell the computer.",
                 Crowd, "label", "label:是|Yes|对|True", ""));
         }
 
@@ -351,7 +351,7 @@ namespace LingGuangV05.XingGuang
             double have = sim.Samples(XgMemes.SenseDesk);
             if (!sim.TrainingUnlocked(XgTrack.Sequence))
             {
-                var s = Step("opening.label", XgGuideKind.Setup, "在摆渡众包标「" + desk.name + "」", "Label '" + desk.nameEn + "' on Bodu Crowd",
+                var s = Step("opening.label", XgGuideKind.Setup, "在「教」页标「" + desk.name + "」", "Label '" + desk.nameEn + "' on the Teach page",
                     "先教它分辨对错。标满 " + XgCatalog.SamplesToTrain + " 张，就能带它训练。", XgCatalog.SamplesToTrain + " labels unlock training; first teach it right from wrong.",
                     Crowd, "label", "name:Paper", desk.id);
                 s.current = have; s.goal = XgCatalog.SamplesToTrain;
@@ -476,7 +476,8 @@ namespace LingGuangV05.XingGuang
                 return;
             }
             double pNeed = sim.ParamsThreshold(next);
-            string have = XgSim.ParamsText(sim.TrainedParamsK), need = XgSim.ParamsText(pNeed);
+            // The line itself is never named (XgSim.Learned.cs): the steps say what to grow, not how far it is.
+            string have = XgSim.ParamsText(sim.TrainedParamsK);
             var plan = ParamsPlan(sim, next, wallet.vram > 0 ? sim.Vram(wallet) : 0);
             if (plan == null)
             {
@@ -489,14 +490,14 @@ namespace LingGuangV05.XingGuang
                     list.Add(Step("ability.card", XgGuideKind.Ability,
                         "显存放不下够大的模型（" + VramBar(needMB, cardMB, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡",
                         "Not enough VRAM for a big enough model (" + VramBar(needMB, cardMB, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
-                        "「" + name + "」要练过 " + need + " 参数，这张卡装不下那么大的模型。\n" + XgSim.ParamsText(big.paramsK) + " 的模型要 " + XgSim.MemText(needMB) + " 显存，卡上只有 " + XgSim.MemText(cardMB) + "，还差 " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + "。",
-                        "'" + nameEn + "' needs " + need + " trained parameters; this card cannot hold a model that big.\nA " + XgSim.ParamsText(big.paramsK) + " model takes " + XgSim.MemText(needMB) + " of VRAM; the card has " + XgSim.MemText(cardMB) + ", " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + " short.",
+                        "「" + name + "」要更大的模型，这张卡装不下。\n够大的模型（" + XgSim.ParamsText(big.paramsK) + "）要 " + XgSim.MemText(needMB) + " 显存，卡上只有 " + XgSim.MemText(cardMB) + "，还差 " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + "。",
+                        "'" + nameEn + "' needs a bigger model than this card can hold.\nA big enough model (" + XgSim.ParamsText(big.paramsK) + ") takes " + XgSim.MemText(needMB) + " of VRAM; the card has " + XgSim.MemText(cardMB) + ", " + XgSim.MemText(Math.Max(0, needMB - cardMB)) + " short.",
                         Shop, "shop", "name:BuyGpu", ""));
                 }
                 else
                 {
                     var line = sim.Run(TrainableTrack(sim));
-                    list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + ParamsBar(sim.TrainedParamsK, pNeed, false), "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + ParamsBar(sim.TrainedParamsK, pNeed, true),
+                    list.Add(Step("ability.params", XgGuideKind.Ability, "参数量不够：科技里加宽、加深，再练到 C 级：参数 " + have + " / ?", "Not enough parameters: widen or deepen in the tech tree, then train to grade C: parameters " + have + " / ?",
                         "下一项能力「" + name + "」要更大的模型。买到宽度和层数，或者参数更多的结构，模型自己就会长大。\n这台模型 " + sim.ModelFormula(line) + "；" + sim.CapsText(line) + "。",
                         "The next ability, '" + nameEn + "', needs a bigger model. Buy width and layers, or a bigger structure, and the model grows by itself.\nThis model: " + sim.ModelFormula(line) + "; " + sim.CapsText(line) + ".",
                         Lab, "tree", "", ""));
@@ -512,8 +513,8 @@ namespace LingGuangV05.XingGuang
                 bool vision = plan.track == XgTrack.Vision;
                 var t = Step("ability.track", XgGuideKind.Ability, "标注台标 " + labels + " 条「" + desk.name + "」，让" + (vision ? "看图" : "读字") + "的模型开练",
                     "Label " + labels + " more " + desk.nameEn + " cards so the " + (vision ? "vision" : "reading") + " model can train",
-                    "「" + name + "」要 " + need + " 参数，这条线的模型才长得到。先攒够 " + XgCatalog.SamplesToTrain + " 条数据。",
-                    "'" + nameEn + "' needs " + need + " parameters, and only this line's model grows that big. It needs " + XgCatalog.SamplesToTrain + " samples first.",
+                    "「" + name + "」要更大的模型，只有这条线的模型长得到。先攒够 " + XgCatalog.SamplesToTrain + " 条数据。",
+                    "'" + nameEn + "' needs a bigger model, and only this line's model grows that big. It needs " + XgCatalog.SamplesToTrain + " samples first.",
                     Crowd, "label", "label:是|Yes|对|True", desk.id);
                 t.current = samples; t.goal = XgCatalog.SamplesToTrain;
                 list.Add(t);
@@ -524,12 +525,12 @@ namespace LingGuangV05.XingGuang
                 var first = plan.buy[0];
                 // The numbers: P against the line, the model after each purchase, the bill against the wallet, the grade-C line to train to.
                 var planLine = sim.Run(plan.track);
-                string cLineZh = "买齐后模型 " + XgSim.ParamsText(plan.paramsK) + " ≥ 门槛 " + XgSim.ParamsText(plan.threshold) + "；再练到 C 级（" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + "）就算数。";
-                string cLineEn = "Afterwards the model is " + XgSim.ParamsText(plan.paramsK) + " ≥ line " + XgSim.ParamsText(plan.threshold) + "; train it to grade C (" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + ") and it counts.";
+                string cLineZh = "买齐后模型 " + XgSim.ParamsText(plan.paramsK) + "，够大了；再练到 C 级（" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + "）就算数。";
+                string cLineEn = "Afterwards the model is " + XgSim.ParamsText(plan.paramsK) + ", big enough; train it to grade C (" + XgSim.Pct(XgSim.GradeAccuracy(planLine.dataset, XgSim.TrainedGrade)) + ") and it counts.";
                 var s = Step("ability.buy", XgGuideKind.Ability, "科技买" + Chain(plan.buy, false), "Tech tree: buy " + Chain(plan.buy, true),
-                    "「" + name + "」要练过 " + XgSim.ParamsText(plan.threshold) + " 参数。现在 " + ParamsBar(sim.TrainedParamsK, plan.threshold, false) + "。买齐这些，模型自己长到 " + XgSim.ParamsText(plan.paramsK) + "，再练到 C 级就算数。\n"
+                    "「" + name + "」要更大的模型（现在 P " + have + "，线在哪里学会前不知道）。买齐这些，模型自己长到 " + XgSim.ParamsText(plan.paramsK) + "，再练到 C 级就算数。\n"
                         + BuyBreakdown(sim, wallet, plan, false) + "\n" + cLineZh + ShortOfMoney(sim, wallet, first, false),
-                    "'" + nameEn + "' needs " + XgSim.ParamsText(plan.threshold) + " trained parameters. Now " + ParamsBar(sim.TrainedParamsK, plan.threshold, true) + ". With these the model grows to " + XgSim.ParamsText(plan.paramsK) + " by itself; trained to grade C, it counts.\n"
+                    "'" + nameEn + "' needs a bigger model (P is " + have + " now; nobody knows the line until it learns). With these the model grows to " + XgSim.ParamsText(plan.paramsK) + " by itself; trained to grade C, it counts.\n"
                         + BuyBreakdown(sim, wallet, plan, true) + "\n" + cLineEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
                 MoneyProgress(sim, wallet, first, s);
@@ -544,14 +545,14 @@ namespace LingGuangV05.XingGuang
             {
                 // The lab configured a smaller one: the card is shared or too small for the big one.
                 double bigMB = XgSim.VramNeedMB(PlanRun(plan)), cardNow = wallet.vram > 0 ? sim.Vram(wallet) : 0;
-                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下 " + need + " 的模型（" + VramBar(bigMB, cardNow, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a " + need + " model (" + VramBar(bigMB, cardNow, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
-                    "模型按显卡自动配置，现在只放得下 " + XgSim.ParamsText(XgSim.ParamsK(run)) + "（" + VramBar(XgSim.VramNeedMB(run), cardNow, false) + "）；" + need + " 的模型要 " + XgSim.MemText(bigMB) + "。",
-                    "The model sizes itself to the card; right now it fits " + XgSim.ParamsText(XgSim.ParamsK(run)) + " (" + VramBar(XgSim.VramNeedMB(run), cardNow, true) + "); a " + need + " model takes " + XgSim.MemText(bigMB) + ".", Shop, "shop", "name:BuyGpu", ""));
+                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下够大的模型（" + VramBar(bigMB, cardNow, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a big enough model (" + VramBar(bigMB, cardNow, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+                    "模型按显卡自动配置，现在只放得下 " + XgSim.ParamsText(XgSim.ParamsK(run)) + "（" + VramBar(XgSim.VramNeedMB(run), cardNow, false) + "）；够大的模型要 " + XgSim.MemText(bigMB) + "。",
+                    "The model sizes itself to the card; right now it fits " + XgSim.ParamsText(XgSim.ParamsK(run)) + " (" + VramBar(XgSim.VramNeedMB(run), cardNow, true) + "); a big enough model takes " + XgSim.MemText(bigMB) + ".", Shop, "shop", "name:BuyGpu", ""));
                 return;
             }
             double cLine = XgSim.GradeAccuracy(run.dataset, XgSim.TrainedGrade);
             string accZh = "准确率 " + XgSim.Pct(run.valAcc) + " / C 线 " + XgSim.Pct(cLine), accEn = "accuracy " + XgSim.Pct(run.valAcc) + " / grade C " + XgSim.Pct(cLine);
-            list.Add(Step("ability.train", XgGuideKind.Ability, "把模型练到 C 级（" + accZh + "）：参数 " + have + " / " + need, "Train the model to grade C (" + accEn + "): parameters " + have + " / " + need,
+            list.Add(Step("ability.train", XgGuideKind.Ability, "把模型练到 C 级（" + accZh + "）：参数 " + have + " / ?", "Train the model to grade C (" + accEn + "): parameters " + have + " / ?",
                 "模型已经有 " + XgSim.ParamsText(XgSim.ParamsK(run)) + " 参数，够「" + name + "」了。练到 C 级就算数。\n" + CLine(run, false) + (run.shapeRounds <= 0 ? "；刚长成这个大小，还没练过一轮。" : "。"),
                 "The model already has " + XgSim.ParamsText(XgSim.ParamsK(run)) + " parameters, enough for '" + nameEn + "'. Train a few epochs; at grade C they count.\n" + CLine(run, true) + (run.shapeRounds <= 0 ? "; it just grew to this size and has not trained a round yet." : "."),
                 Lab, "train", "label:训练一轮|Train 1 epoch", arg));
@@ -588,13 +589,13 @@ namespace LingGuangV05.XingGuang
                 string zh = buy.path.Count == 1 ? "科技买" + what : "科技买" + Chain(buy.path, false);
                 string en = buy.path.Count == 1 ? "Tech tree: buy " + whatEn : "Tech tree: buy " + Chain(buy.path, true);
                 if (!pack) { zh += "¥" + Money(buy.cost) + "：" + LineCuts(sim, next, buy, false); en += " ¥" + Money(buy.cost) + ": " + LineCuts(sim, next, buy, true); }
-                string why = pack ? "下载权连第一批：补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条。"
-                    : "它把「" + name + "」要的数据压到 " + XgSim.SamplesText(dNeed - buy.gain) + " 条。";
-                string whyEn = pack ? "The download right with the first batch: " + XgSim.SamplesText(buy.gain) + " effective samples; '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "."
-                    : "It lowers the data '" + nameEn + "' needs to " + XgSim.SamplesText(dNeed - buy.gain) + ".";
+                string why = pack ? "下载权连第一批：补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」还要更多数据。"
+                    : "它把「" + name + "」要的数据压低一截。";
+                string whyEn = pack ? "The download right with the first batch: " + XgSim.SamplesText(buy.gain) + " effective samples; '" + nameEn + "' needs more data."
+                    : "It lowers the data '" + nameEn + "' needs.";
                 var s = Step(pack ? "ability.pack" : "ability.item", XgGuideKind.Ability, zh, en, why + ShortOfMoney(sim, wallet, first, false), whyEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
-                if (!MoneyProgress(sim, wallet, first, s)) { s.current = d; s.goal = pack ? dNeed : dNeed - buy.gain; }
+                MoneyProgress(sim, wallet, first, s);
                 list.Add(s);
                 after = gap - buy.gain;
             }
@@ -609,7 +610,6 @@ namespace LingGuangV05.XingGuang
                 if (buy != null) return;
                 var g = Step("ability.data", XgGuideKind.Ability, "攒数据：样本", "Gather data: samples",
                     "下一项能力「" + name + "」要更多数据。", "The next ability, '" + nameEn + "', needs more data.", Crowd, "label", "", "");
-                g.current = d; g.goal = dNeed;
                 list.Add(g);
                 return;
             }
@@ -619,17 +619,16 @@ namespace LingGuangV05.XingGuang
             var names = new List<string>(); var namesEn = new List<string>();
             foreach (var desk in desks) { names.Add("「" + desk.name + "」"); namesEn.Add(desk.nameEn); }
             bool auto = sim.GlobalAutoLevel > 0;
-            int handMinutes = (int)Math.Ceiling(labels * HandLabelSeconds / 60);
-            string labelZh = auto ? "再攒 " + labels + " 条样本：自动答题在标，手标" + string.Join("或", names) + "更快"
-                : (buy != null ? "再标 " : "标注台再标 ") + labels + " 条" + string.Join("或", names) + (handMinutes >= 2 ? "（手标约 " + handMinutes + " 分钟）" : "");
-            string labelEn = auto ? "Gather " + labels + " more samples: auto labelling is on; hand-labelling " + string.Join(" or ", namesEn) + " is faster"
-                : "Label " + labels + " more " + string.Join(" or ", namesEn) + " cards" + (handMinutes >= 2 ? " (about " + handMinutes + " min by hand)" : "");
+            // How many is not said: that would give the hidden line away.
+            string labelZh = auto ? "接着攒样本：自动答题在标，手标" + string.Join("或", names) + "更快"
+                : (buy != null ? "接着标" : "标注台接着标") + string.Join("或", names);
+            string labelEn = auto ? "Keep gathering samples: auto labelling is on; hand-labelling " + string.Join(" or ", namesEn) + " is faster"
+                : "Keep labelling " + string.Join(" or ", namesEn) + " cards";
             bool teaching = desks[0].id == XgMemes.SenseDesk && TeachesYesNo(sim);
             var label = Step("ability.label", XgGuideKind.Ability, labelZh, labelEn,
-                "「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。" + (teaching ? "「常识判断」这桌专教它分清是和否。" : ""),
-                "'" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + " effective samples (now " + XgSim.SamplesText(d) + "). Only right answers count; Arithmetic counts half." + (teaching ? " The Common sense desk teaches it yes from no." : ""),
+                "「" + name + "」还要更多有效样本（现在 " + XgSim.SamplesText(d) + "）。标对的才算，「算术」只算半条。" + (teaching ? "「常识判断」这桌专教它分清是和否。" : ""),
+                "'" + nameEn + "' needs more effective samples (now " + XgSim.SamplesText(d) + "). Only right answers count; Arithmetic counts half." + (teaching ? " The Common sense desk teaches it yes from no." : ""),
                 Crowd, "label", "label:是|Yes|对|True", desks[0].id);
-            if (buy == null) { label.current = d; label.goal = dNeed; }
             list.Add(label);
         }
 
@@ -639,12 +638,13 @@ namespace LingGuangV05.XingGuang
         /// <summary>「样本线 3.2M→1.92M、参数线 2M→1.2M」: what a threshold item does to the next ability's lines.</summary>
         static string LineCuts(XgSim sim, int next, XgDataBuy buy, bool english)
         {
-            double dNeed = sim.SamplesThreshold(next), pNeed = sim.ParamsThreshold(next), pFactor = 1;
+            double dNeed = sim.SamplesThreshold(next), pFactor = 1;
             foreach (var disc in XgSim.AbilityDiscounts)
                 if (disc.ability == next && !sim.DiscountOwned(disc) && buy.path.Exists(n => n.id == disc.item || Array.IndexOf(disc.itemsAny, n.id) >= 0))
                     pFactor *= disc.paramsFactor;
-            string s = (english ? "sample line " : "样本线 ") + XgSim.SamplesText(dNeed) + "→" + XgSim.SamplesText(dNeed - buy.gain);
-            if (pFactor < 1) s += (english ? ", parameter line " : "、参数线 ") + XgSim.ParamsText(pNeed) + "→" + XgSim.ParamsText(pNeed * pFactor);
+            // By how much, never where the line is.
+            string s = (english ? "sample line −" : "样本线 −") + Num(Math.Round(100 * buy.gain / Math.Max(1, dNeed)), "0") + "%";
+            if (pFactor < 1) s += (english ? ", parameter line −" : "、参数线 −") + Num(Math.Round(100 * (1 - pFactor)), "0") + "%";
             return s;
         }
 
@@ -663,11 +663,14 @@ namespace LingGuangV05.XingGuang
                 "下完就够「" + name + "」的数据了。现在是" + XgSim.BroadbandName(sim.BroadbandTier, false) + "，" + Num(sim.LineMBps, "0.#") + " MB/s。等的时候可以接着标注、训练。",
                 "Once it is in, '" + nameEn + "' has its data. The line is " + XgSim.BroadbandName(sim.BroadbandTier, true) + ", " + Num(sim.LineMBps, "0.#") + " MB/s. Keep labelling or training meanwhile.",
                 Lab, TabOpen(sim, Lab, "data") ? "data" : "train", "", "");
-            w.current = d; w.goal = dNeed;
             return w;
         }
 
-        /// <summary>The line is the slow part and a faster one is on offer: 「宽带太慢：装光纤 20M」.</summary>
+        /// <summary>
+        /// The line is the slow part and a faster one is on offer: 「宽带太慢：数据页点「升级宽带」→ 光纤 100M（¥350）」. The button
+        /// sits in the download strip of the 数据 page (or the 数据来源 view of 练 before the 数据 tab opens); the home bills
+        /// page still has the same upgrade.
+        /// </summary>
         static void Broadband(XgSim sim, Wallet wallet, List<XgGuideStep> list)
         {
             if (!sim.BroadbandBottleneck) return;
@@ -675,10 +678,14 @@ namespace LingGuangV05.XingGuang
             double price = sim.NextBroadbandPrice;
             string tier = XgSim.BroadbandName(next, false), tierEn = XgSim.BroadbandName(next, true);
             bool short_ = wallet.money + 1e-9 < price;
-            var s = Step("broadband", XgGuideKind.Ability, "宽带太慢：装" + tier + (short_ ? "" : "（¥" + Money(price) + "）"), "The line is the bottleneck: install " + tierEn + (short_ ? "" : " (¥" + Money(price) + ")"),
-                "排着的下载还要 " + XgSim.ClockText(sim.LineQueueSeconds) + "。" + tier + " 是 " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s，快 " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " 倍；月租 ¥" + Money(XgSim.BroadbandMonthly[next]) + "。",
-                "The queue still needs " + XgSim.ClockText(sim.LineQueueSeconds) + ". " + tierEn + " is " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s, " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " times faster; ¥" + Money(XgSim.BroadbandMonthly[next]) + " a month.",
-                Home, "power", "name:BuyBroadband", "");
+            bool dataTab = TabOpen(sim, Lab, "data");
+            string where = dataTab ? "数据页顶部" : "练页的数据来源里", whereEn = dataTab ? "the top of the Data page" : "the data sources view of Train";
+            var s = Step("broadband", XgGuideKind.Ability,
+                "宽带太慢：" + where + "点「升级宽带」→ " + tier + (short_ ? "" : "（¥" + Money(price) + "）"),
+                "The line is the bottleneck: click 'Upgrade line' at " + whereEn + " → " + tierEn + (short_ ? "" : " (¥" + Money(price) + ")"),
+                "排着的下载还要 " + XgSim.ClockText(sim.LineQueueSeconds) + "。" + tier + " 是 " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s，快 " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " 倍；月租 ¥" + Money(XgSim.BroadbandMonthly[next]) + "。在「家庭」的用电账单页也能升。",
+                "The queue still needs " + XgSim.ClockText(sim.LineQueueSeconds) + ". " + tierEn + " is " + Num(XgSim.BroadbandMBps[next], "0.#") + " MB/s, " + Num(XgSim.BroadbandMBps[next] / sim.LineMBps, "0") + " times faster; ¥" + Money(XgSim.BroadbandMonthly[next]) + " a month. The Home app's bills tab upgrades it too.",
+                Lab, dataTab ? "data" : "train", "name:UpgradeBroadband", "");
             if (short_) { s.money = true; s.current = wallet.money; s.goal = price; }
             list.Add(s);
         }
@@ -692,11 +699,10 @@ namespace LingGuangV05.XingGuang
             bool short_ = wallet.money + 1e-9 < buy.cost;
             string price = short_ ? "" : "（¥" + Money(buy.cost) + "）", priceEn = short_ ? "" : " (¥" + Money(buy.cost) + ")";
             var s = Step("ability.batch", XgGuideKind.Ability, "数据页买「" + ds.name + "」第 " + k + "/" + all + " 批" + price, "Data page: buy batch " + k + "/" + all + " of " + ds.nameEn + priceEn,
-                "补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，" + XgSim.SizeText(XgSim.BatchMB(ds)) + "，要下载一阵。「" + name + "」要 " + XgSim.SamplesText(dNeed) + " 条；每批比上一批贵 " + BatchRise + "%。",
-                XgSim.SamplesText(buy.gain) + " more effective samples, " + XgSim.SizeText(XgSim.BatchMB(ds)) + " to download. '" + nameEn + "' needs " + XgSim.SamplesText(dNeed) + "; each batch costs " + BatchRise + "% more than the last.",
+                "补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，" + XgSim.SizeText(XgSim.BatchMB(ds)) + "，要下载一阵。「" + name + "」还要更多数据；每批比上一批贵 " + BatchRise + "%。",
+                XgSim.SamplesText(buy.gain) + " more effective samples, " + XgSim.SizeText(XgSim.BatchMB(ds)) + " to download. '" + nameEn + "' needs more data; each batch costs " + BatchRise + "% more than the last.",
                 Lab, TabOpen(sim, Lab, "data") ? "data" : "tree", "batch:" + ds.id, ds.id);
             if (short_) { s.money = true; s.current = wallet.money; s.goal = buy.cost; }
-            else { s.current = d; s.goal = dNeed; }
             return s;
         }
 
@@ -1056,7 +1062,7 @@ namespace LingGuangV05.XingGuang
                 if (sim.OfferOriginQuestion)
                 {
                     list.Add(Step("origin.ask", XgGuideKind.Done, "问问它：你是怎么被训练出来的？", "Ask it: how were you trained?",
-                        "半年，从「是。否。」到今天。", "Half a year, from \"yes. no.\" to now.", YY, YYChat, "label:" + sim.OriginQuestion, ""));
+                        "大半年，从「是。否。」到今天。", "Most of a year, from \"yes. no.\" to now.", YY, YYChat, "label:" + sim.OriginQuestion, ""));
                     return;
                 }
                 list.Add(Step("done", XgGuideKind.Done, "都做完了。早点睡。", "All done. Get some sleep.",
@@ -1256,7 +1262,7 @@ namespace LingGuangV05.XingGuang
                     "炼丹的人都在那儿聊。", "Everyone training models hangs out there.", Tieba, "home", "", "");
             if (!house.yySeen)
                 return Step("side.yy", XgGuideKind.Side, "上 YY 看看大家在聊啥", "Check what people are saying on YY",
-                    "老周他们都在线。", "Lao Zhou and the others are online.", YY, "", "", "");
+                    "阿杰他们都在线。", "Ajie and the others are online.", YY, "", "", "");
             if (!house.gamesSeen && sim.S.epochs > 0 && sim.SystemUnlocked("games"))
                 return Step("side.games", XgGuideKind.Side, "累了去游戏中心下盘棋", "Tired? Play a game of chess in the Game Hub",
                     "训练可以先放一放。", "Training can wait a moment.", Games, "", "", "");

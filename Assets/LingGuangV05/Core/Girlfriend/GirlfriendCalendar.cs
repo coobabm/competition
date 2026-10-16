@@ -102,18 +102,18 @@ namespace LingGuangV05.Core.Girlfriend
         public static readonly GfLife[] Life =
         {
             new GfLife { key = "firstNight", from = new DateTime(2016, 5, 24), to = new DateTime(2016, 12, 31), lines = new[] { "还没睡？", "Still up?" } },
-            new GfLife { key = "exams", from = new DateTime(2016, 5, 25), to = new DateTime(2016, 5, 31), lines = new[] { "期末复习好烦 下礼拜就放假了", "Revising for finals is the worst. Holidays next week", "放假回去找你玩[调皮]", "I'll come and see you when I'm home [调皮]" } },
+            new GfLife { key = "exams", from = new DateTime(2016, 5, 25), to = new DateTime(2016, 5, 31), lines = new[] { "期末复习好烦 下礼拜就放假了", "Revising for finals is the worst. Holidays next week", "放假回家就有我妈做的菜吃了[调皮]", "Home next week, and my mum's cooking [调皮]" } },
             new GfLife { key = "home", from = new DateTime(2016, 6, 1), to = new DateTime(2016, 6, 12), lines = new[] { "到家了！我妈做了一桌子菜", "Home! Mum cooked a whole table of food", "煤球胖了一圈 我都抱不动了", "Meiqiu got so fat I can't lift him" },
                 memoryKey = "煤球", memoryZh = "她家的猫叫煤球", memoryEn = "her cat is called Meiqiu (Coal Ball)" },
             new GfLife { key = "drama", from = new DateTime(2016, 6, 8), to = new DateTime(2016, 6, 30), lines = new[] { "《欢乐颂》补完了 我是关雎尔本尔", "Finished Ode to Joy. I am literally Guan Ju'er", "你都不陪我看[撇嘴]", "You never watch it with me [撇嘴]" },
                 memoryKey = "欢乐颂", memoryZh = "她在追《欢乐颂》", memoryEn = "she binge-watched Ode to Joy" },
-            new GfLife { key = "plush", from = new DateTime(2016, 6, 15), to = new DateTime(2016, 7, 31), lines = new[] { "同学送了她男朋友一个熊本熊公仔", "A classmate's boyfriend gave her a Kumamon plush", "好可爱啊啊啊", "So cute aaaah" },
+            new GfLife { key = "plush", from = new DateTime(2016, 6, 15), to = new DateTime(2016, 7, 31), lines = new[] { "同学的男朋友送了她一个熊本熊公仔", "A classmate's boyfriend gave her a Kumamon plush", "好可爱啊啊啊", "So cute aaaah" },
                 memoryKey = "熊本熊", memoryZh = "她说熊本熊公仔好可爱", memoryEn = "she said a Kumamon plush is so cute" },
             new GfLife { key = "band", from = new DateTime(2016, 6, 20), to = new DateTime(2016, 8, 20), lines = new[] { "我要减肥 从明天开始跑步", "I'm going on a diet. Running from tomorrow", "你监督我[奋斗]", "You keep me honest [奋斗]" },
                 memoryKey = "跑步", memoryZh = "她说要开始跑步减肥", memoryEn = "she said she would start running to lose weight" },
             new GfLife { key = "milktea", from = new DateTime(2016, 7, 1), to = new DateTime(2016, 12, 31), lines = new[] { "好想喝奶茶 外卖还要配送费", "I want bubble tea so bad and delivery costs extra" },
                 memoryKey = "奶茶", memoryZh = "她想喝奶茶", memoryEn = "she wanted bubble tea" },
-            new GfLife { key = "weiwei", from = new DateTime(2016, 8, 12), to = new DateTime(2016, 8, 31), lines = new[] { "《微微一笑很倾城》电影上了", "Love O2O is out in cinemas", "肖奈大神好帅 你学学人家[偷笑]", "Xiao Nai is so cool. Learn from him [偷笑]" } },
+            new GfLife { key = "weiwei", from = new DateTime(2016, 8, 22), to = new DateTime(2016, 9, 10), lines = new[] { "《微微一笑很倾城》开播了", "Love O2O has started airing", "肖奈大神好帅 你学学人家[偷笑]", "Xiao Nai is so cool. Learn from him [偷笑]" } },
             new GfLife { key = "qixiAsk", from = new DateTime(2016, 8, 1), to = new DateTime(2016, 8, 8), lines = new[] { "七夕那天视频吗", "Video call on Qixi?" }, asks = "qixi" },
             new GfLife { key = "back", from = new DateTime(2016, 9, 1), to = new DateTime(2016, 9, 10), lines = new[] { "回学校了 又要异地了", "Back at uni. Long distance again", "宿舍 23:30 断电断网 以后晚上只能用流量找你了", "Power and WiFi go off at 23:30 in the dorm, so it's mobile data at night now" } },
             new GfLife { key = "battery", from = new DateTime(2016, 9, 5), to = new DateTime(2016, 10, 31), lines = new[] { "手机老没电 一天充三次", "My phone keeps dying. I charge it three times a day", "下午上课就关机了 不是不回你哈", "It dies in afternoon class, I'm not ignoring you" },
@@ -129,8 +129,8 @@ namespace LingGuangV05.Core.Girlfriend
                 memoryKey = "你的名字", memoryZh = "她想 12 月 2 日一起看《你的名字。》", memoryEn = "she wants to watch Your Name together on 2 December" },
             new GfLife { key = "cet", from = new DateTime(2016, 12, 5), to = new DateTime(2016, 12, 16), lines = new[] { "17 号考六级 我单词还没背完", "CET-6 on the 17th and I haven't finished my vocab", "你都不监督我[委屈]", "You never check on me [委屈]" },
                 memoryKey = "六级", memoryZh = "她 12 月 17 日考六级", memoryEn = "she sits the CET-6 English exam on 17 December" },
-            // Stage 5+: the question the AI will not answer for him (YYGirlfriend.RefusalScene). Sent even when she is cold.
-            new GfLife { key = "weekendAsk", from = new DateTime(2016, 10, 8), to = new DateTime(2016, 12, 29), lines = new[] { "你上次说国庆以后来看我", "You said you'd come and see me after National Day", "周末你到底来不来？", "Are you coming this weekend or not?" }, asks = "weekend", needsFlag = FlagStandInOffered },
+            // Stage 5+: she asks when he is coming. Sent even when she is cold.
+            new GfLife { key = "weekendAsk", from = new DateTime(2016, 10, 8), to = new DateTime(2016, 12, 29), lines = new[] { "你什么时候来看我呀", "When are you coming to see me?", "周末你到底来不来？", "Are you coming this weekend or not?" }, asks = "weekend", needsFlag = FlagWeekendOpen },
             new GfLife { key = "aiWorry", from = new DateTime(2016, 5, 24), to = new DateTime(2016, 12, 31), lines = new[] { "你那个 AI", "That AI of yours", "它会不会比我还懂你", "Does it understand you better than I do?" }, needsFlag = FlagKnowsAi },
         };
 

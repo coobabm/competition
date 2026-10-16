@@ -324,9 +324,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNotNull(label);
             Assert.AreEqual(XgGuide.Crowd, label.app); Assert.AreEqual("label", label.tab);
             Assert.AreEqual(1, XgCatalog.Dataset(label.arg).dataWeight, 1e-9, "never 算术");
-            int left = (int)Math.Ceiling(sim.SamplesThreshold(2) - sim.TrainedSamples - 1e-9);
-            StringAssert.Contains("再标 " + left + " 条", label.zh);
-            Assert.AreEqual(sim.SamplesThreshold(2), label.goal, 1e-9);
+            // It says where to label, never how many: the count would give the hidden line away (XgSim.Learned.cs).
+            StringAssert.Contains("接着标", label.zh);
+            Assert.IsFalse(label.HasProgress);
+            StringAssert.DoesNotContain(XgSim.SamplesText(sim.SamplesThreshold(2)), label.whyZh);
             StringAssert.Contains("算术", label.whyZh, "the half weight is explained");
         }
 

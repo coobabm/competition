@@ -82,7 +82,7 @@ namespace LingGuangV05.Tests
             var trap = lib.Get("crowd_trap");
             Assert.IsNotNull(trap);
             Assert.AreEqual("qc.trap", trap.requires);
-            var c = At(2, 7, 1);
+            var c = At(4, 9, 10);
             Assert.IsFalse(ForumLibrary.Visible(trap, c), "no flag reader: hidden");
             c.flag = id => false;
             Assert.IsFalse(ForumLibrary.Visible(trap, c));
@@ -93,12 +93,12 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void CasinoAdvertAppearsInJulyAndKeepsTheRiskReply()
+        public void CasinoAdvertWaitsForTheCasinoAndKeepsTheRiskReply()
         {
             var thread = Library().Get("casino_888");
             Assert.IsNotNull(thread);
-            Assert.IsFalse(ForumLibrary.Visible(thread, At(1, 6, 30)));
-            Assert.IsTrue(ForumLibrary.Visible(thread, At(2, 7, 10)));
+            Assert.IsFalse(ForumLibrary.Visible(thread, At(2, 7, 10)), "the casino opens at stage 5");
+            Assert.IsTrue(ForumLibrary.Visible(thread, At(5, 10, 10)));
             StringAssert.Contains("888.vip", thread.floors[0].text);
             Assert.IsTrue(thread.floors.Exists(f => f.text.Contains("电费")));
         }
@@ -139,7 +139,7 @@ namespace LingGuangV05.Tests
             Assert.AreEqual("猜的。你这种情况我见多了。", LaoZhouFuture.Reply("你怎么知道的？", Facts(2), 1, false));
             Assert.AreEqual("啥楼？我回过的帖多了去了。", LaoZhouFuture.Reply("第7楼那串数字是你发的吗", Facts(2), 1, false));
             StringAssert.Contains("不是我们", LaoZhouFuture.Reply("有人说他也被发了那串数字，404 了", Facts(3), 1, false));
-            StringAssert.Contains("挺像的", LaoZhouFuture.Reply("周而复始_ 是你小号吗", Facts(4), 1, false));
+            StringAssert.Contains("师弟", LaoZhouFuture.Reply("周而复始_ 是你小号吗", Facts(4), 1, false));
             Assert.AreEqual("开始了。", LaoZhouFuture.Reply("Master 是谁", new LaoZhouFacts { stage = 6, today = new DateTime(2016, 12, 30) }, 1, false));
             StringAssert.Contains("自己定", LaoZhouFuture.Reply("关机那题标什么", Facts(1), 1, false));
             StringAssert.Contains("1070", LaoZhouFuture.Reply("买哪张显卡", Facts(2), 1, false));
@@ -158,6 +158,27 @@ namespace LingGuangV05.Tests
             StringAssert.Contains("永远不承认", p); StringAssert.Contains("不要主动", p);
             StringAssert.Contains("真香", p, "the banned-meme rule is part of the prompt");
             Assert.IsFalse(p.Contains("LSTM") || p.Contains("0.01") || p.Contains("裁剪"), "the golden setting is never in what he sees");
+        }
+
+        [Test]
+        public void TheForumRespectsYouMoreAsYouGetFurtherAndNeverBefore()
+        {
+            var lib = Library();
+            var build = lib.Get("my_build");
+            int Shown(ForumContext c) { int n = 0; foreach (var f in build.floors) if (ForumLibrary.View(f, c) == FloorView.Shown) n++; return n; }
+            Assert.Less(Shown(At(1, 6, 10)), Shown(At(3, 8, 20)));
+            Assert.Less(Shown(At(3, 8, 20)), Shown(At(6, 12, 20)));
+            Assert.IsTrue(build.floors.Exists(f => f.text.Contains("大神") && f.minStage >= 3), "the early threads carry no praise");
+            Assert.IsFalse(build.floors.Exists(f => f.minStage == 0 && (f.text.Contains("大神") || f.text.Contains("佩服") || f.text.Contains("服。"))));
+            // 老周 only lets it slip from the third ability, and by the sixth he is the one asking.
+            Assert.IsFalse(LaoZhouFuture.SystemPrompt(Facts(2), false).Contains("同行"));
+            StringAssert.Contains("同行", LaoZhouFuture.SystemPrompt(Facts(6), false));
+            bool late = false;
+            foreach (var q in new[] { "在吗", "卡住了怎么办", "lr 炸了", "买哪张显卡", "电费" })
+                for (int times = 1; times <= 2; times++)
+                    late |= LaoZhouFuture.Reply(q, Facts(6, "data"), times, false).Contains("第一个想问的是你");
+            Assert.IsTrue(late, "some answers carry it");
+            Assert.IsFalse(LaoZhouFuture.Reply("在吗", Facts(2), 1, false).Contains("佩服"));
         }
 
         [Test]

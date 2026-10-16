@@ -161,9 +161,9 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             switch (info.id)
             {
-                case "ajie": return Lang.T("阿杰：便宜、手快，偶尔走神。正确率约 85%，抽检抽到他的错题照样罚你的钱，别让他一个人扛一张桌太久。");
-                case "xiaogang": return Lang.T("小刚：慢，但几乎不出错（约 97%）。");
-                default: return Lang.T("网吧老板：只上夜班（22:00–06:00），天一亮就回去睡觉。正确率约 93%。");
+                case "ajie": return Lang.T("阿杰：便宜、手快，偶尔走神。正确率约 85%。第 4 阶段起平台抽检抽到他的错题，照样罚你的钱，别让他一个人扛一张桌太久。");
+                case "xiaogang": return Lang.T("小刚：嘴上没把门，手上一丝不苟。慢，但几乎不出错（约 97%）。");
+                default: return Lang.T("网吧老板（阿杰的表舅）：只上他自己的夜班（22:00–06:00），早上六点交班回去睡觉。正确率约 93%。");
             }
         }
 
@@ -172,7 +172,7 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (info.id)
             {
                 case "ajie": return T("便宜手快，偶尔走神", "Cheap and quick, drifts off now and then");
-                case "xiaogang": return T("手慢，但几乎不出错", "Slow, and almost never wrong");
+                case "xiaogang": return T("嘴上跑火车，手上很稳", "Big talker, steady hands");
                 default: return T("只上夜班，22:00–06:00", "Night shift only, 22:00–06:00");
             }
         }

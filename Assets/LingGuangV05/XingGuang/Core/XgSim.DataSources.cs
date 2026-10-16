@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Share of wrong labels (0–1) before 数据清洗.</summary>
         public double noise;
         /// <summary>
-        /// Game seconds one download of it takes (a public pack: one batch) on 4M ADSL; 0 = arrives at once. Live copies
+        /// Game seconds one download of it takes (a public pack: one batch) on the starting 20M ADSL; 0 = arrives at once. Live copies
         /// from <see cref="XgSim.Offer"/> give the time on the current line. Story copies: 老周's campus link.
         /// </summary>
         public double downloadSec;
@@ -145,11 +145,11 @@ namespace LingGuangV05.XingGuang
                 "全唐诗里混着网友改写的「床前明月光，地上鞋两双」。", "The Tang poems mixed with netizen rewrites of the classics." },
             new object[] { "news", .35, 201608, "百万条微博语料，爬虫新鲜货", "A million Weibo posts, fresh from the crawler",
                 "说是百万条，其实一千万条，一半是转发和「转发微博」。", "Says a million; really ten million, half of them reposts saying \"repost\"." },
-            new object[] { "review", .4, 201609, "淘宝评论爬虫包，五星都当真", "Taobao review crawl, every five-star taken at face value",
+            new object[] { "review", .4, 201609, "淘货评论爬虫包，五星都当真", "Taohuo review crawl, every five-star taken at face value",
                 "五星好评一律算真买家，刷的单全混在里面。", "Every five-star review counted as genuine, faked orders and all." },
             new object[] { "go", .25, 201609, "野狐对局 sgf 打包，死活程序自动判", "Online Go games in sgf, life and death judged by a script",
                 "几万盘网络对局，死活是一个老程序自动判的，劫争全判错。", "Tens of thousands of online games; an old script judged life and death and gets every ko wrong." },
-            new object[] { "imagenet", .3, 201609, "百度图片关键词爬虫包（240 万张）", "Image-search keyword crawl (2.4M pictures)",
+            new object[] { "imagenet", .3, 201609, "摆渡图片关键词爬虫包（240 万张）", "Image-search keyword crawl (2.4M pictures)",
                 "按搜索词下的图，「苹果」里一半是手机。", "Pictures by search keyword: half of \"apple\" is phones." },
             new object[] { "translate", .35, 201610, "美剧字幕中英对照包（时间轴没对齐）", "US-drama subtitles, zh–en (timings off)",
                 "字幕组的双语字幕拆成句对，时间轴错位，一半对不上。", "Fansub bilingual subtitles split into pairs; the timings drift and half do not match." },

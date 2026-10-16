@@ -301,7 +301,7 @@ namespace LingGuangV05.XingGuang
             S.totalSpent += cost;
             S.qcAppealed = true;
             S.qcFrozen = 0;
-            Say(T("摆渡众包：申诉通过，账号解冻。信用分不变。"));
+            Say(T("摆渡众包：自动标注已恢复。信用分不变。"));
             QualityUnfrozen?.Invoke(true);
             return true;
         }

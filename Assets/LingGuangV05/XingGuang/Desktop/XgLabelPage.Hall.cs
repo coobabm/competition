@@ -24,7 +24,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             public string id;
             public RectTransform rt;
-            public Image bg, bar;
+            public Image bg, bar, icon;
             public TMP_Text left, pay;
         }
 
@@ -76,7 +76,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.bar = Panel(Rect("Selected", row.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0)), ZhongbaoSkin.Blue);
                 row.bar.raycastTarget = false;
                 var rule = ZhongbaoSkin.Hairline(row.rt, 0, false);
-                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(12, 3), new Vector2(-72, -3)), "", 14, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+                // The drawn desk icon (Tools/Icons/ui_icons.py); the text makes room for it.
+                row.icon = XgIcons.Place(row.rt, "desk", id, 25, HallRowH * .5f, 32);
+                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-72, -3)), "", 14, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
                 row.left.textWrappingMode = TextWrappingModes.NoWrap; row.left.overflowMode = TextOverflowModes.Ellipsis;
                 row.left.lineSpacing = 6;
                 row.pay = ui.Text(Rect("Pay", row.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -28), new Vector2(-10, -6)), "", 14, ZhongbaoSkin.Red, TextAlignmentOptions.TopRight);
@@ -124,6 +126,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool on = row.id == desk;
                 row.bg.color = on && open ? ZhongbaoSkin.Blue3 : Color.white;
                 row.bar.gameObject.SetActive(on && open);
+                if (row.icon != null) row.icon.color = open ? Color.white : new Color(1, 1, 1, .35f);
                 int level = Sim.LevelOf(row.id), max = XgSim.MaxLevelOf(row.id);
                 double pay = Sim.ManualPayFor(row.id, level);
                 if (!open)

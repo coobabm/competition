@@ -124,14 +124,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             new[]{"嗯嗯好的呀。\n我这边还在写报告。","4","对话上下文说明她忙，不应仅凭短句推断恶意。","先忙报告，等你有空再说。","写完早点休息。","你回得短就是生气了。"},
             new[]{"你手机里我的备注是什么？","5","剧情设定为确认关系中的位置。","是你喜欢的名字。你想换个特别的称呼吗？","你希望我怎么叫你？","问那么多干什么。"}
         };
-        readonly List<int> order=new List<int>();string[] scene;int round,phase,meter,truth,chosenMood,aiMood,correct,penalty;string context,result;string[] replies;int[] fits;bool[] authored;
+        readonly List<int> order=new List<int>();string[] scene;int round,phase,meter,truth,chosenMood,aiMood,correct,penalty;string context,result;string[] replies;int[] fits;
         public XgQingwenGame(XgMiniContext c):base(c){}
         public override void Build(){order.Clear();for(int i=0;i<Scenes.Length;i++)order.Add(i);Shuffle(order);round=correct=0;meter=60;Next();}
         void Next(){if(round>=12||meter<=0){phase=3;End(meter<=0?"晴雯先去休息了":"宿舍断网，晚安",$"读对 {correct} / {round} 条消息，心情 {meter}/100。\n情绪标签是本局剧情设定；现实中应结合语境、尊重对方并直接询问。",Build);return;}
             scene=Scenes[order[round++]];truth=int.Parse(scene[1]);aiMood=Guess(truth,6);phase=penalty=0;chosenMood=-1;context=scene[0];result="";Draw();
         }
         void Draw(){
-            Clear("教它认人 · 晴雯的消息","先读上下文，再标情绪并回复。贴心回复影响本局心情；AI代写按钮不会产生额外奖励。");
+            Clear("教它认人 · 晴雯的消息","先读上下文，再标情绪并回复。贴心回复影响本局心情。");
             Shade(20,92,422,340);T("Contact",36,104,390,35,"晴雯 · 私聊",25);
             T("Messages",38,158,380,200,context,25);T("Counter",37,379,380,40,"第 "+round+" / 12 条",17);
             T("MoodMeter",472,91,400,40,"心情 "+meter+" / 100",23,meter>40?green:red);
@@ -140,19 +140,18 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 T("AiMood",476,169,395,55,"灵光猜："+Moods[aiMood]+"\n（游戏模拟判断，可能出错）",18,purple);
                 for(int i=0;i<6;i++){int k=i;B("Mood"+i,472+(i%2)*207,240+(i/2)*61,195,51,Moods[i],()=>Label(k),22);}
             }else if(phase==1){T("Clue",476,162,398,74,result,17);
-                for(int i=0;i<replies.Length;i++){int k=i;B("Reply"+i,472,242+i*49,405,43,(authored[i]?"灵光拟写：":"")+replies[i],()=>Reply(k),15);}
+                for(int i=0;i<replies.Length;i++){int k=i;B("Reply"+i,472,242+i*49,405,43,replies[i],()=>Reply(k),15);}
                 B("Skip",680,442,195,29,"先不回复",()=>Reply(-1),14);
             }else {T("Outcome",474,175,398,190,result,22);B("Next",590,390,282,56,meter<=0||round>=12?"结束聊天":"下一条消息",Next,21);}
         }
         void Label(int mood){if(phase!=0)return;chosenMood=mood;bool ok=mood==truth;if(ok)correct++;C.Report(ok);penalty=!ok&&(truth==1||truth==2)?10:0;
             result=(ok?"读对了。":"本局设定为「"+Moods[truth]+"」。")+scene[2];
-            var ids=new List<int>{0,1,2};Shuffle(ids);int count=C.Skill>=.8?4:3;replies=new string[count];fits=new int[count];authored=new bool[count];
+            var ids=new List<int>{0,1,2};Shuffle(ids);replies=new string[3];fits=new int[3];
             for(int i=0;i<3;i++){replies[i]=scene[3+ids[i]];fits[i]=ids[i]==0?10:ids[i]==1?4:-10;}
-            if(count==4){replies[3]=scene[3];fits[3]=10;authored[3]=true;}
             phase=1;Draw();
         }
         void Reply(int i){if(phase!=1)return;phase=2;int delta=(i<0?-5:fits[i])-penalty;meter=Math.Max(0,Math.Min(100,meter+delta));
-            context+="\n\n你："+(i<0?"（暂未回复）":replies[i]);result=(delta>0?"她：谢谢你听我说。":"她：我想先安静一会儿。")+"\n心情 "+(delta>=0?"+":"")+delta+"\n"+(i>=0&&authored[i]?"你采用了灵光拟写的回复；请仍用自己的判断。":"回应具体处境，比猜测一个字更重要。");Draw();
+            context+="\n\n你："+(i<0?"（暂未回复）":replies[i]);result=(delta>0?"她：谢谢你听我说。":"她：我想先安静一会儿。")+"\n心情 "+(delta>=0?"+":"")+delta+"\n回应具体处境，比猜测一个字更重要。";Draw();
         }
     }
 }

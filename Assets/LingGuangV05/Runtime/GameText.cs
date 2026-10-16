@@ -61,6 +61,27 @@ namespace LingGuangV05.Runtime
         private static string Cache(Dictionary<string, string> cache, string source, string value)
         { if (cache.Count >= 512) cache.Clear(); cache[source] = value; return value; }
 
+        /// <summary>
+        /// The English of authored Chinese text whatever the current language (for things that keep both and follow a
+        /// language switch on screen, like the inner voice). Unknown text comes back unchanged.
+        /// </summary>
+        public static string EnglishOf(string source)
+        {
+            if (string.IsNullOrEmpty(source)) return source;
+            EnsureCatalog();
+            if (exact.TryGetValue(source, out Entry entry)) return entry.en;
+            foreach (Pattern pattern in patterns)
+            {
+                if (!source.StartsWith(pattern.prefix, StringComparison.Ordinal) || !source.EndsWith(pattern.suffix, StringComparison.Ordinal)) continue;
+                Match match;
+                try { match = pattern.expression.Match(source); }
+                catch (RegexMatchTimeoutException) { continue; }
+                if (!match.Success) continue;
+                return Regex.Replace(pattern.entry.en, @"\{(\d+)\}", token => match.Groups["p" + token.Groups[1].Value].Value);
+            }
+            return source;
+        }
+
         public static bool HasTranslation(string source)
         {
             EnsureCatalog();

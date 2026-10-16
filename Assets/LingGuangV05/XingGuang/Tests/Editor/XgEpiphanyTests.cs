@@ -275,7 +275,7 @@ namespace LingGuangV05.XingGuang.Tests
             var night = new XgMonologueContext { handLabels = 1, hour = 3, minute = 12, money = 500, nextBill = 20 };
             CollectionAssert.AreEqual(new[] { XgInnerMonologue.Night }, XgInnerMonologue.Pools(night));
             var line = XgInnerMonologue.Fill(Array.Find(XgInnerMonologue.Lines, l => l.id == "night.work"), night);
-            Assert.AreEqual("3:12 了，明天还要上班。", line.zh);
+            Assert.AreEqual("3:12 了，明天还得改简历。", line.zh);
             var count = XgInnerMonologue.Fill(Array.Find(XgInnerMonologue.Lines, l => l.id == "fatigue.count"), new XgMonologueContext { desk = "spam", deskLabels = 300 });
             Assert.AreEqual("这已经是第 300 条短信了。", count.zh);
             Assert.AreEqual("That's 300 texts now.", count.en);

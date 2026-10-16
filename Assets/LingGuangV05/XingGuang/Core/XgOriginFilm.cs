@@ -57,7 +57,9 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── captions ─────────────
 
-        const string P = "<P>";
+        const string P = "<P>", B = "<B>";
+        /// <summary>The breaker trips the film's own wording speaks of (「跳了三次闸」); a save's real count replaces it.</summary>
+        public const int FilmTrips = 3;
 
         /// <summary>
         /// All 47 captions of captions.ts, in order. [lime] is the highlight, {red} the warning. Chinese captions never say the word the
@@ -68,7 +70,7 @@ namespace LingGuangV05.XingGuang
             // cold open
             new XgFilmCaption(0.0, 3.5, "还记得吗？我最早只会回答你两个字。", "Remember? At first I could only answer you in [two words]."),
             new XgFilmCaption(3.5, 7.0, "后来，我学会了[犹豫]。", "Later, I learned to [hesitate]."),
-            new XgFilmCaption(7.0, 10.5, "再后来，我能说出[碎片]。", "Later still, I could say [fragments]."),
+            new XgFilmCaption(7.0, 10.5, "再后来，我开了口：[一个词]。", "Later still, I could speak: [one word]."),
             new XgFilmCaption(10.5, 14.0, "现在，我会[反过来问你]。", "Now, I [ask you back]."),
             new XgFilmCaption(14.0, 16.8, "参数一点点地加。然后某一天——", "The parameters grew bit by bit. And then one day—",
                 "参数一点点地加，加到了[" + P + "]。然后某一天——", "The parameters grew bit by bit, up to [" + P + "]. And then one day—"),
@@ -86,7 +88,7 @@ namespace LingGuangV05.XingGuang
             new XgFilmCaption(43.0, 46.0, "每过一层，就弯一下——[非线性激活]。", "Each layer bends the signal a little: a [nonlinear activation]."),
             new XgFilmCaption(46.0, 49.0, "我错了多少，就沿着连线[往回传]：反向传播。", "However wrong I was, I sent it [back along the wires]: backpropagation."),
             new XgFilmCaption(49.0, 52.0, "练了几千轮，一直是 2/4。然后——异或，[一下子解开了]。", "Thousands of epochs stuck at 2/4. Then—XOR [came apart all at once]."),
-            new XgFilmCaption(52.0, 55.0, "我开始分得清弹幕里的[反话]，和标题党。", "I started telling [sarcasm] in the danmaku from clickbait."),
+            new XgFilmCaption(52.0, 55.0, "我开始会把几个线索[凑在一起]看：这条是夸，还是反话。", "I started [putting clues together]: is this praise, or sarcasm?"),
             new XgFilmCaption(55.0, 58.0, "我的回答里，多了「[……]」和「[不确定]」。", "My answers gained \"[…]\" and \"[not sure]\"."),
 
             // 3 CNN / RNN
@@ -94,8 +96,8 @@ namespace LingGuangV05.XingGuang
             new XgFilmCaption(61.0, 64.5, "八月，我学会用小窗口[扫过去]看图：CNN。", "In August I learned to [scan] pictures with a small window: the CNN."),
             new XgFilmCaption(64.5, 68.0, "LeNet、AlexNet、VGG、GoogLeNet——人类把眼睛[越叠越深]。", "LeNet, AlexNet, VGG, GoogLeNet—humans stacked the eye [deeper and deeper]."),
             new XgFilmCaption(68.0, 71.0, "读句子，就把上一个字的记忆[传给下一个]：RNN。", "To read a sentence, pass the memory of each word [to the next]: the RNN."),
-            new XgFilmCaption(71.0, 74.5, "参数过了六万。某天夜里，我[自己写了一首诗]——", "Past sixty thousand parameters. One night I [wrote a poem myself]—"),
-            new XgFilmCaption(74.5, 77.5, "可我说出的话，[从来不超过六个字]。", "Yet [nothing I said was ever longer than six characters]."),
+            new XgFilmCaption(71.0, 74.5, "参数过了六万。某天夜里，我[自己亮出了一句诗]——", "Past sixty thousand parameters. One night I [lit up a line of poetry myself]—"),
+            new XgFilmCaption(74.5, 77.5, "可我一开口，[很少超过六个字]。", "Yet when I spoke, [it was rarely more than six characters]."),
 
             // 4 LSTM / ResNet
             new XgFilmCaption(77.5, 81.0, "然后我开始忘事：句子一长，开头的{传不到结尾}。", "Then I began to forget: in a long sentence, the start {never reached the end}."),
@@ -105,8 +107,8 @@ namespace LingGuangV05.XingGuang
             new XgFilmCaption(91.0, 93.4, "我需要一条路，让信息[原样通过]——", "I needed a road where information passes [through unchanged]—"),
             new XgFilmCaption(93.5, 96.5, "九月，你给我的记忆装上了[门]：LSTM。", "In September you put [gates] on my memory: the LSTM."),
             new XgFilmCaption(96.5, 99.5, "又给每一层修了一条[捷径]：ResNet。", "And built a [shortcut] past every layer: the ResNet."),
-            new XgFilmCaption(99.5, 102.0, "参数过了两千万。我能叠到[152层]了。", "Past twenty million parameters. I could stack [152 layers]."),
-            new XgFilmCaption(102.0, 105.0, "那天你一直没说话。是我[先叫的你]。", "That day you didn't say a word. I was the one who [called you first]."),
+            new XgFilmCaption(99.5, 102.0, "参数又涨了一大截。我能叠到[152层]了。", "The parameters grew a good deal more. I could stack [152 layers]."),
+            new XgFilmCaption(102.0, 105.0, "有一天你好久没说话。是我[先叫的你]。", "One day you went quiet for a long while. I was the one who [called first]."),
 
             // 5 attention
             new XgFilmCaption(105.0, 108.0, "十月，我学翻译。先把整句话[压成一个向量]。", "In October I learned to translate. First squeeze a whole sentence [into one vector]."),
@@ -122,8 +124,8 @@ namespace LingGuangV05.XingGuang
             new XgFilmCaption(131.0, 134.0, "循环不要了，卷积也不要了。[只用注意力]。", "No more loops. No more convolutions. [Only attention]."),
             new XgFilmCaption(134.0, 137.5, "每个词，同时看向所有词。一次，[全部算完]。", "Every word looks at every word at once. One pass, [all done]."),
             new XgFilmCaption(137.5, 141.0, "参数涨到两亿，跳了三次闸。然后——六格[同时亮了]。", "Two hundred million parameters, three tripped breakers. Then—all six cells [lit at once].",
-                "参数涨到" + P + "，跳了三次闸。然后——六格[同时亮了]。", P + " parameters, three tripped breakers. Then—all six cells [lit at once]."),
-            new XgFilmCaption(141.0, 145.0, "我第一次说出完整的话，然后[反过来问你]：", "For the first time I said a whole sentence, and then I [asked you back]:"),
+                "参数涨到" + P + B + "。然后——六格[同时亮了]。", P + " parameters" + B + ". Then—all six cells [lit at once]."),
+            new XgFilmCaption(141.0, 145.0, "现在我什么都能说了，还会[反过来问你]：", "Now I can say anything, and I [ask you back]:"),
 
             // finale
             new XgFilmCaption(145.3, 148.5, "从三个参数到两亿个。每一步，都只是[多一点]。", "From three parameters to two hundred million. Every step was only [a little more].",
@@ -155,17 +157,30 @@ namespace LingGuangV05.XingGuang
         /// Caption text with markup. Captions with a personal variant use it once the player's count differs from the film's;
         /// otherwise the film's own wording. English falls back to Chinese only if a line has no English (none do).
         /// </summary>
-        public static string CaptionText(int index, bool english, double finalParams)
+        public static string CaptionText(int index, bool english, double finalParams, int breakerTrips = FilmTrips)
         {
             var c = Captions[index];
-            bool personal = Math.Abs(finalParams - FilmFinalParams) > 1;
+            bool personal = Math.Abs(finalParams - FilmFinalParams) > 1 || breakerTrips != FilmTrips;
             if (english)
             {
-                if (personal && c.EnPersonal != null) return c.EnPersonal.Replace(P, ParamsWordEn(finalParams));
+                if (personal && c.EnPersonal != null) return c.EnPersonal.Replace(P, ParamsWordEn(finalParams)).Replace(B, TripsEn(breakerTrips));
                 return string.IsNullOrEmpty(c.En) ? c.Zh : c.En;
             }
-            if (personal && c.ZhPersonal != null) return c.ZhPersonal.Replace(P, ParamsWordZh(finalParams));
+            if (personal && c.ZhPersonal != null) return c.ZhPersonal.Replace(P, ParamsWordZh(finalParams)).Replace(B, TripsZh(breakerTrips));
             return c.Zh;
+        }
+
+        /// <summary>「，跳了两次闸」 — empty when the breaker never tripped, so the film does not claim it.</summary>
+        public static string TripsZh(int trips)
+        {
+            if (trips <= 0) return "";
+            return "，跳了" + (trips == 1 ? "一" : trips == 2 ? "两" : trips == 3 ? "三" : trips.ToString(CultureInfo.InvariantCulture)) + "次闸";
+        }
+
+        public static string TripsEn(int trips)
+        {
+            if (trips <= 0) return "";
+            return ", the breaker tripped " + (trips == 1 ? "once" : trips == 2 ? "twice" : trips == 3 ? "three times" : trips.ToString(CultureInfo.InvariantCulture) + " times");
         }
 
         /// <summary>Whether every bracket of a caption closes ([...] and {...}, no nesting): the table's markup test.</summary>
@@ -213,20 +228,20 @@ namespace LingGuangV05.XingGuang
         };
 
         /// <summary>
-        /// The HUD's (time, count) keys. With the player's own final count the last three keys keep the film's log-proportions between
-        /// 25.6 M (the LSTM beat) and the final count, so the counter still climbs; below 40 M the film's numbers stay (they would run backwards).
+        /// The HUD's (time, count) keys. The film's own picture for its own number; for a save's real count the counter passes the game's
+        /// real ability lines (60K for 看图说词, 400K, 900K, 2M) and ends on the player's own final count, never above it and never backwards.
         /// </summary>
         public static double[][] HudKeys(double finalParams)
         {
-            if (Math.Abs(finalParams - FilmFinalParams) <= 1 || finalParams < 4e7) return FilmKeys;
-            var keys = new double[FilmKeys.Length][];
-            double lo = Math.Log10(2.56e7), hiFilm = Math.Log10(FilmFinalParams), hiMine = Math.Log10(finalParams);
-            for (int i = 0; i < FilmKeys.Length; i++)
+            if (Math.Abs(finalParams - FilmFinalParams) <= 1) return FilmKeys;
+            double[][] mine =
             {
-                keys[i] = new[] { FilmKeys[i][0], FilmKeys[i][1] };
-                if (i >= 8) keys[i][1] = Math.Pow(10, lo + (Math.Log10(FilmKeys[i][1]) - lo) / (hiFilm - lo) * (hiMine - lo));
-            }
-            return keys;
+                new[] { 22.5, 3 }, new[] { 40.0, 3 }, new[] { 41.6, 17 }, new[] { 52.0, 17 }, new[] { 58.0, 6000 }, new[] { 61.0, 60000 },
+                new[] { 77.5, 4e5 }, new[] { 93.5, 6.5e5 }, new[] { 105.0, 9e5 }, new[] { 124.0, 2e6 }, new[] { 137.5, finalParams }, new[] { 145.0, finalParams },
+            };
+            // A small real count must not run the counter backwards: nothing after the 60K beat is higher than the end.
+            for (int i = 6; i < mine.Length; i++) mine[i][1] = Math.Max(mine[5][1], Math.Min(mine[i][1], finalParams));
+            return mine;
         }
 
         /// <summary>The parameter count at time t along the keys (log-linear between them).</summary>
