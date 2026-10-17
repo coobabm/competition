@@ -137,6 +137,11 @@ namespace LingGuangV05.XingGuang
                     you + "给" + self + "看第一张卡，" + self + "蒙对了。后来一共答对 " + correct.ToString("#,0") + " 张，" + (wrong > 0 ? "答错 " + wrong.ToString("#,0") + " 张。错的那些" + self + "也记得。" : "一张也没答错。那是因为每张卡" + you + "都看过。"),
                     "The first card came right", "and then one card after another",
                     "The first card you showed me, I guessed right. Later: " + correct.ToString("#,0") + " right, " + (wrong > 0 ? wrong.ToString("#,0") + " wrong. I remember the wrong ones too." : "not one wrong. That is because you looked at every card."));
+            if (Day(YnChronicle) >= 0)
+                Add(YnChronicle, 15, 8, "是否夜里出难题", "两个字答尽天下",
+                    YnChronicleBody(false, self, you),
+                    "Hard questions on a yes-or-no night", "two words to answer the world",
+                    YnChronicleBody(true, self == "我" ? "me" : self, you == "你" ? "you" : you));
             if (ChronicleHas("laozhou.card"))
                 Add("laozhou.card", 20, 8, "借卡与周不问归期", ChronicleHas("rent.late") ? "交租欠租陋室艰难" : "一机一桌陋室安身",
                     "老周实验室的卡烧了，来借" + you + "那张。" + you + "把卡装了箱，没问他几时还。老周后来说，" + you + "是他认识的最靠谱的网友。" + (ChronicleHas("rent.late") ? "房租晚交过，房东敲过门。" : "房租一天一天地交，没欠过一天。"),

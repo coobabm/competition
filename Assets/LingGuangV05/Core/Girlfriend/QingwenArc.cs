@@ -28,7 +28,7 @@ namespace LingGuangV05.Core.Girlfriend
     }
 
     /// <summary>
-    /// 晴雯的支线 (2026-10-18): six conversations in YY that come with the lab's progress, not with her schedule, so
+    /// 晴雯的支线 (2026-10-18): thirteen conversations in YY (her best friend, her family, her dorm in Wuhan) that come with the lab's progress, not with her schedule, so
     /// she is there even when the desktop clock says she is asleep or out. Each one offers three answers as buttons;
     /// they move her affection and set flags later beats read. Anything else he types goes to her model with what she
     /// just asked (<see cref="FreeSituation"/>). She never learns what the program is: he can only say he is teaching
@@ -81,47 +81,122 @@ namespace LingGuangV05.Core.Girlfriend
             },
             new GfArcBeat
             {
-                key = "home", stage = 2,
-                lines = new[] { "我妈问我你放假回不回老家", "My mum asked if you're going home for the holidays", "我说你在弄什么大项目[偷笑]", "I told her you're on some big project [偷笑]", "你回吗", "Are you?" },
-                askedZh = "你问他放假回不回老家。", askedEn = "You asked whether he is going home for the holidays.",
+                key = "xiaoyu", epochs = 8,
+                lines = new[] { "小雨跟她男朋友吵架了", "Xiaoyu had a fight with her boyfriend", "半夜给我打电话 哭了一个多小时", "She called me at midnight and cried for over an hour", "就因为那男的打游戏 一晚上不回她消息[生气]", "All because he was gaming and ignored her messages all night [生气]", "你们男生是不是都这样", "Are all you boys like that?" },
+                askedZh = "你说闺蜜赵小雨（在郑州读护理）跟男朋友吵架，因为他打游戏一晚上不回消息，她半夜打电话哭；你问他男生是不是都这样。", askedEn = "Your best friend Zhao Xiaoyu fought with her boyfriend for ignoring her while gaming; you asked whether all boys are like that.",
                 choices = new[]
                 {
-                    C("回，一定回", "Yes. Definitely", 2, "他答应放假回老家", FlagPromisedHome,
-                        "说好了啊", "That's a promise", "拉钩[害羞]", "Pinky swear [害羞]"),
-                    C("这阵子走不开，等忙完这段", "Can't get away yet. After this bit", -1, null, null,
-                        "又是忙完这段", "\"After this bit\" again", "你每次都这么说", "You always say that"),
-                    C("看情况吧", "We'll see", -1, null, null,
-                        "嗯", "Mm"),
+                    C("她也在郑州？有事让她找我", "She's in Zhengzhou too? Tell her to call me if she needs anything", 2, "他说小雨在郑州有事可以找他", null,
+                        "你还挺讲义气", "Look at you, Mr Loyal", "我跟她说了 她说你比她男朋友靠谱[偷笑]", "I told her. She says you're more reliable than her boyfriend [偷笑]"),
+                    C("一晚上不回消息确实过分", "Ignoring her all night is out of line", 1, null, null,
+                        "你也知道啊", "Oh, you know that?", "那你昨晚为什么十二点才回我", "Then why did you only reply at midnight yesterday?"),
+                    C("男生打游戏很正常", "Boys game. It's normal", -2, null, null,
+                        "正常？", "Normal?", "行 我知道了", "Right. Noted"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "home", stage = 2,
+                lines = new[] { "我妈刚打电话 又问我有没有谈恋爱", "Mum just called and asked again whether I'm seeing anyone", "我说没有[流汗]", "I said no [流汗]", "你说……哪天跟她说比较好", "When do you think… I should tell her?" },
+                askedZh = "你爸妈还不知道你们在谈恋爱。你妈刚打电话又问，你说没有，问他哪天坦白比较好。", askedEn = "Your parents don't know about you two. Your mum asked again on the phone, you said no, and you asked him when to tell her.",
+                choices = new[]
+                {
+                    C("等我做出点样子，我去你家", "Once I've made something of myself, I'll come to your house", 3, "他说等做出点样子就来我家见我爸妈", FlagPromisedHome,
+                        "真的？", "Really?", "那你得先过我爸那关 他会拉你下象棋", "You'll have to get past my dad first. He'll make you play chess"),
+                    C("现在就说，我不怕", "Tell her now. I'm not scared", 1, null, null,
+                        "你不怕我怕[大哭]", "You're not scared, but I am [大哭]", "她会念叨死我的", "She'll nag me to death"),
+                    C("再瞒一阵吧", "Keep it quiet a bit longer", -1, null, null,
+                        "嗯", "Mm", "我也是这么想的 就是有点累", "That's what I thought too. It's just tiring"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "roach", stage = 2,
+                lines = new[] { "啊啊啊啊啊啊", "AAAAAAAAH", "宿舍飞进来一只蟑螂 会飞的！！", "A cockroach flew into the dorm. A FLYING one!!", "我现在站在桌子上 何佳拿着拖鞋在追它", "I'm standing on my desk and He Jia's chasing it with a slipper", "你快说点什么 转移一下我注意力", "Say something, quick. Distract me" },
+                askedZh = "宿舍飞进来一只会飞的蟑螂，你吓得站到桌子上，室友何佳拿拖鞋在追，你让他说点什么转移注意力。", askedEn = "A flying cockroach got into the dorm; you're standing on your desk while He Jia chases it, and you asked him to distract you.",
+                choices = new[]
+                {
+                    C("我给你讲道题吧，像高中那样", "Let me walk you through a maths problem, like in high school", 2, "蟑螂飞进宿舍那晚他说给我讲题", null,
+                        "……你有病吧[偷笑]", "…Are you mad [偷笑]", "不过真的有用 何佳打到了！！", "It actually worked though. He Jia got it!!"),
+                    C("武汉的蟑螂还会飞？", "Wuhan cockroaches can fly?", 0, null, null,
+                        "会！！还很大！！", "YES!! AND THEY'RE HUGE!!", "你来武汉住一晚就知道了", "Spend one night in Wuhan and you'll see"),
+                    C("拍下来给我看看", "Take a picture for me", -1, null, null,
+                        "你是不是有病", "Are you out of your mind?", "我手都在抖", "My hands are shaking"),
                 },
             },
             new GfArcBeat
             {
                 key = "exam", stage = 3,
-                lines = new[] { "完了", "I'm done for", "中级财务会计我感觉要挂", "I think I failed Intermediate Accounting", "合并报表那道大题我只写了一半[大哭]", "I only did half the consolidated statements question [大哭]" },
-                askedZh = "你说你中级财务会计可能要挂，合并报表那题只写了一半，想要他安慰。", askedEn = "You told him you may have failed Intermediate Accounting and wanted comfort.",
+                lines = new[] { "下周就期末考了", "Finals are next week", "财务管理我一章都没看完[大哭]", "I haven't finished a single chapter of Financial Management [大哭]", "雨桐都看第二遍了", "Yutong's already on her second read" },
+                askedZh = "你下周期末考，财务管理一章都没看完，室友陈雨桐都看第二遍了，你很慌，想要他安慰。", askedEn = "Finals are next week and you haven't finished a chapter of Financial Management. You're panicking and want comfort.",
                 choices = new[]
                 {
-                    C("别慌，成绩出来再说", "Don't panic. Wait for the results", 1, null, null,
-                        "你说得轻巧", "Easy for you to say", "……嗯 你说得也对", "…Mm. You're right though"),
+                    C("别慌，现在开始还来得及", "Don't panic. There's still time", 1, null, null,
+                        "你说得轻巧", "Easy for you to say", "……嗯 那我今晚先看两章", "…Mm. I'll do two chapters tonight"),
                     C("挂了就补考呗，没事", "If you fail, you resit. No big deal", -2, null, null,
-                        "你就不能盼我点好吗[生气]", "Could you at least hope I pass [生气]"),
-                    C("今晚视频，我陪你复习", "Video call tonight. I'll study with you", 3, "考试前他陪我视频复习", null,
+                        "你就不能盼我点好吗[生气]", "Could you at least hope I pass [生气]", "乌鸦嘴", "Jinx"),
+                    C("今晚视频，我陪你复习", "Video call tonight. I'll study with you", 3, "期末前他陪我视频复习", null,
                         "你又不会会计", "You don't even know accounting", "……那十点 不许迟到", "…Ten o'clock then. Don't be late"),
                 },
             },
             new GfArcBeat
             {
-                key = "day", stage = 4,
-                lines = new[] { "今天是什么日子 你知道吗", "Do you know what day it is today?" },
-                askedZh = "你问他今天是什么日子（你们在一起两周年）。", askedEn = "You asked him what day it is (your second anniversary).",
+                key = "cat", stage = 3,
+                lines = new[] { "我爸刚打电话说 煤球两天没吃东西了", "Dad just called. Meiqiu hasn't eaten for two days", "他骑电动车带它去了镇上的兽医站", "He took him to the vet in town on the e-bike", "医生说它老了 肠胃不好[委屈]", "The vet says he's old and his stomach's bad [委屈]", "我爸说它平时趴在电视上 这两天老钻我床底下", "Dad says he usually lies on the TV, but these two days he keeps hiding under my bed" },
+                askedZh = "你家的黑猫煤球两天没吃东西，你爸带它去了兽医站，医生说是老了；它这两天老钻你床底下，你在武汉回不去，很担心。", askedEn = "Your black cat Meiqiu stopped eating; the vet says he's getting old and he keeps hiding under your bed. You're stuck in Wuhan and worried.",
                 choices = new[]
                 {
-                    C("我们在一起两周年", "Our second anniversary", 3, "两周年那天他记得", FlagRemembered,
-                        "算你有良心[玫瑰]", "So you do have a heart [玫瑰]", "礼物呢？", "And my present?"),
-                    C("……周三？", "…Wednesday?", -4, "两周年那天他忘了", FlagForgot,
+                    C("它是想你了。八岁了吧？", "He misses you. He's eight now, right?", 3, "煤球生病的时候他记得煤球八岁了", null,
+                        "你还记得它几岁", "You remember how old he is", "……考完试我就回去 天天抱着它", "…I'm going home right after finals to hold him every day"),
+                    C("让你爸给它买点好猫粮", "Get your dad to buy him good cat food", 1, null, null,
+                        "医生开了处方粮 好贵", "The vet prescribed special food. So expensive", "我爸二话没说就买了", "Dad bought it without a word"),
+                    C("猫过两天就好了", "Cats bounce back in a couple of days", -1, null, null,
+                        "你又没养过猫", "You've never had a cat", "算了", "Never mind"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "mengmeng", stage = 3,
+                lines = new[] { "王萌说她们营业厅要裁人", "Wang Meng says her phone shop is laying people off", "她可能要去深圳打工了", "She might go to Shenzhen for work", "高中我们三个说好一辈子待一块的", "In high school the three of us swore we'd always stick together", "现在一个郑州一个武汉 她再一走就散完了", "Now it's Zhengzhou and Wuhan. If she goes too, that's all of us scattered" },
+                askedZh = "你高中同学王萌在县城移动营业厅上班，要被裁了，可能去深圳打工，你有点难过。", askedEn = "Your high-school friend Wang Meng may lose her job at the county phone shop and go to Shenzhen. You're sad about it.",
+                choices = new[]
+                {
+                    C("散了也还能在 YY 上聚", "Even apart, there's always YY", 2, null, null,
+                        "也是", "True", "我去把「一中高三七班」那个群翻出来", "I'll dig out the \"No.1 High, Class 7\" group"),
+                    C("深圳机会多，是好事", "Shenzhen has jobs. It's a good thing", 1, null, null,
+                        "她也这么说", "That's what she says", "就是要坐好久的火车", "It's just such a long train ride"),
+                    C("我们俩不也是一个郑州一个武汉", "We're apart too, me in Zhengzhou and you in Wuhan", 0, null, null,
+                        "……", "…", "那不一样 你又跑不了[哼]", "That's different. You can't get away [哼]"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "day", stage = 4,
+                lines = new[] { "问你个事", "Question for you", "你还记得你答应过我什么吗", "Do you remember what you promised me?" },
+                askedZh = "你问他还记不记得答应过你什么（他答应过不再通宵弄电脑，也答应过你六级过了带你去鼓浪屿）。", askedEn = "You asked whether he remembers what he promised you (no more all-nighters at the computer; Gulangyu once you pass CET-6).",
+                choices = new[]
+                {
+                    C("不再通宵弄电脑……", "No more all-nighters at the computer…", 3, "他记得答应过我不再通宵", FlagRemembered,
+                        "算你有良心", "So you do have a heart", "那现在几点了[白眼]", "So what time is it now [白眼]"),
+                    C("六级过了带你去鼓浪屿", "Gulangyu once you pass CET-6", 2, "他记得鼓浪屿的约定", FlagRemembered,
+                        "你记得！", "You remember!", "那你等着 这次我一定过", "Then wait for it. I'm passing this time"),
+                    C("……我答应过很多事吗？", "…Did I promise that many things?", -4, "他不记得答应过我什么", FlagForgot,
                         "林晴雯现在不想说话", "Lin Qingwen does not wish to speak right now"),
-                    C("你生日？", "Your birthday?", -3, null, FlagForgot,
-                        "我生日是九月！！", "My birthday is in September!!", "你再好好想想", "Think harder"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "dad200", stage = 4,
+                lines = new[] { "跟你说个秘密", "Want to hear a secret?", "我爸刚偷偷往我卡里打了两百块", "Dad just secretly put two hundred in my account", "短信说别告诉你妈 考完试买点好吃的", "His text said: don't tell your mum, buy something nice after exams", "可他自己那双鞋都穿开胶了 上次视频我看见的[委屈]", "And his own shoes are coming apart. I saw on our last video call [委屈]" },
+                askedZh = "你爸林国强背着你妈偷偷给你卡里打了两百块，可他自己的鞋都穿开胶了，你心里不是滋味。", askedEn = "Your dad secretly sent you two hundred yuan behind your mum's back, though his own shoes are falling apart. It got to you.",
+                choices = new[]
+                {
+                    C("拿这钱给他买双新鞋", "Use it to buy him new shoes", 3, "他让我拿爸爸给的钱给爸爸买鞋", null,
+                        "……我怎么没想到", "…Why didn't I think of that", "他穿四十二码 回去就买", "He's a size 42. I'll buy them when I'm home"),
+                    C("你爸人真好", "Your dad's really nice", 1, null, null,
+                        "嗯 他就是不会说话", "Mm. He just doesn't say much", "我们家都是我妈说话", "At home it's Mum who does the talking"),
+                    C("那请我喝奶茶", "Then buy me a milk tea", -1, null, null,
+                        "你想得美", "In your dreams", "百香果双响炮 只给我自己买[哼]", "Passion fruit double, just for me [哼]"),
                 },
             },
             new GfArcBeat
@@ -138,6 +213,36 @@ namespace LingGuangV05.Core.Girlfriend
                         "……嗯", "…Mm", "我也是", "Me neither"),
                     C("别听她们瞎说", "Don't listen to them", 0, null, null,
                         "我没听她们的", "I'm not listening to them", "我是在问你", "I'm asking you"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "yutong", stage = 5,
+                lines = new[] { "雨桐决定考研了", "Yutong's decided to sit the postgrad exam", "暑假都不回家 留校复习", "She's staying on campus all summer to study", "她问我要不要一起考", "She asked if I want to sit it with her", "我怕考不上……你觉得呢", "I'm scared I won't get in… What do you think?" },
+                askedZh = "你室友陈雨桐决定考研，劝你一起考，你怕考不上，拿不准，问他的意见。", askedEn = "Your roommate Chen Yutong is sitting the postgrad exam and wants you to join; you're afraid you won't get in and asked what he thinks.",
+                choices = new[]
+                {
+                    C("你想考就考，我支持你", "If you want to, go for it. I'm with you", 3, "我说想考研时他说支持我", null,
+                        "你都不问我考哪", "You didn't even ask where", "……谢谢", "…Thanks"),
+                    C("考研好，学历高找工作容易", "Do it. A master's makes jobs easier", 1, null, null,
+                        "你跟我妈说的一模一样", "You sound exactly like my mum", "我再想想", "I'll think about it"),
+                    C("考了就更没时间理我了吧", "Then you'll have even less time for me", -2, null, null,
+                        "？？？", "???", "到底是谁天天对着电脑没时间理人", "Who's the one glued to a computer with no time for anyone?"),
+                },
+            },
+            new GfArcBeat
+            {
+                key = "photo", stage = 6,
+                lines = new[] { "收拾钱包翻出来一张照片", "Found a photo while sorting out my wallet", "高中毕业那天在一中教学楼前照的", "Graduation day, in front of the No.1 High teaching building", "你在我旁边比剪刀手 土死了", "You're next to me doing a peace sign. So tacky", "你那时候都毕业两年了 还专门跑回来", "You'd left school two years before and still came back for it" },
+                askedZh = "你翻出高中毕业那天和他在一中教学楼前的合照：他早毕业两年，还专门跑回来，在你旁边比剪刀手。", askedEn = "You found the photo from your high-school graduation: he had left two years before, came back anyway, and stood next to you doing a peace sign.",
+                choices = new[]
+                {
+                    C("那天我就是专门回去找你的", "I went back that day just to see you", 3, "他说毕业那天是专门回去找我的", null,
+                        "骗人", "Liar", "……那你怎么拖到跨年才说", "…Then why did you wait until New Year's Eve to say anything?"),
+                    C("拍给我看看", "Send me a picture", 1, null, null,
+                        "不给 你太丑了", "No. You look awful", "等见面当面看", "You can see it in person"),
+                    C("我现在也会比剪刀手", "I still do the peace sign", 0, null, null,
+                        "……笨蛋", "…Dummy", "早点睡[月亮]", "Go to bed early [月亮]"),
                 },
             },
         };

@@ -355,7 +355,9 @@ namespace LingGuangV05.XingGuang
         {
             switch (i)
             {
-                case 0: return T("这句话是假的。——这句话是真的吗？只能答是或否，再说为什么。");
+                case 0:
+                    return T("这句话是假的。——这句话是真的吗？只能答是或否，再说为什么。")
+                        + (forModel && YnResult("liar").Length > 0 ? T("（六月他问过你这道，你那时只会是和否，两个字来回闪，最后只回了「……」。）", " (He asked you this in June, when you had only yes and no; they flickered back and forth and you ended with \"…\".)") : "");
                 case 1: return T("小明有 3 张显卡，又买了 2 张，卖掉 1 张，每张 4G 显存。他现在一共多少显存？一步步算。");
                 case 2:
                     string meme = MemeNames[(int)(Math.Abs(Board.S.cards) % MemeNames.Length)];
@@ -375,7 +377,10 @@ namespace LingGuangV05.XingGuang
         {
             switch (i)
             {
-                case 0: return T("否。……也不是否。它说自己是假的，那它就是真的；它是真的，那它就是假的。这题问得不对。");
+                case 0:
+                    // 是否夜 asked it this in June, when it had only 是 and 否; the lights went back and forth.
+                    return (YnResult("liar").Length > 0 ? T("六月你问过我这道。那时候我只有是和否，两个字来回闪。现在我能说了：", "You asked me this in June. Back then I had only yes and no, and they flickered back and forth. Now I can say it: ") : "")
+                        + T("否。……也不是否。它说自己是假的，那它就是真的；它是真的，那它就是假的。这题问得不对。");
                 case 1: return T("3 + 2 − 1 = 4 张。4 × 4G = 16G。");
                 case 2: return T("因为表情和配字对不上，又对得上。大家都见过这张脸，所以一看就懂。");
                 case 3: return (S.poemLine.Length > 0 ? S.poemLine + "\n" : "") + T(Profile.self + "叫" + Profile.name + "，\n是你一张一张教出来的。\n你问是，" + Profile.self + "答否，\n后来我们都学会了别的。", Profile.self + " am " + Profile.name + ",\ntaught card by card by you.\nYou asked yes, I answered no,\nand then we both learnt more.");

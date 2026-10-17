@@ -1344,6 +1344,7 @@ namespace LingGuangV05.XingGuang
             // The SI's planted question has no right answer: whatever you choose is what the "？" cell learns.
             bool shutdown = card.kind == "shutdown";
             if (shutdown) { card.truth = yes; S.shutdownCards++; S.shutdownLean += yes ? 1 : -1; }
+            NoteLabelLean(yes);
             var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
             if (result.correct)
             {

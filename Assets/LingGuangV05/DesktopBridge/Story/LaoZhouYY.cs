@@ -12,7 +12,9 @@ namespace LingGuangV05.Desktop.Story
     /// the start of every later stage come as his YY messages, typed out one bubble at a time, followed by three answers
     /// as buttons. A picked answer gets his reply; anything typed goes to his model (LlmPersonas, with the step the
     /// to-do note is on, so he answers and steers back to it) or, offline, to XgSim.ZhouSteer. Waits for cutscenes and
-    /// story moments like the lessons did.
+    /// story moments like the lessons did. 起疑 and 坦白: his stage notes notice the pace until he is told; from stage 3 an
+    /// answer starts the confession (XgSim.ZhouNode), and once he knows his notes and advice are about the program. When
+    /// the chapter ends he has a last word (XgSim.ZhouEndingLine).
     /// </summary>
     public sealed class LaoZhouYY : MonoBehaviour
     {
@@ -99,6 +101,19 @@ namespace LingGuangV05.Desktop.Story
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.Sim == null || runtime.TestMode || runtime.Sim.InPrologue) return;
             StageNote(hub);
+            Ending(hub);
+        }
+
+        /// <summary>The chapter is done: his last word, once per save.</summary>
+        void Ending(YYChatHub hub)
+        {
+            var sim = GuideNote.TopSim;
+            if (sim == null || bubbles.Count > 0 || nextBubbleAt >= 0 || Busy()) return;
+            if (!(sim.S.chapterComplete || sim.EndingAvailable) || sim.S.tutorSeen.Contains(XgSim.ZhouEndingKey)) return;
+            if (hub.Conversation(YYChatHub.LaoZhou).messages.Count == 0) return; // he never came to YY on this save
+            sim.S.tutorSeen.Add(XgSim.ZhouEndingKey);
+            runtime.MarkDirty();
+            Say(sim.ZhouEndingLine(GameText.IsEnglish));
         }
 
         void StepBubbles(YYChatHub hub)
@@ -111,7 +126,8 @@ namespace LingGuangV05.Desktop.Story
                 if (after != null && after.Length > 0)
                 {
                     offered = after;
-                    hub.Offer(YYChatHub.LaoZhou, Texts(after));
+                    // His own buttons on his conversation (standing choices), so they never replace another chat's.
+                    hub.Stand(YYChatHub.LaoZhou, Texts(after));
                 }
                 after = null;
                 return;
@@ -137,11 +153,12 @@ namespace LingGuangV05.Desktop.Story
         {
             var sim = GuideNote.TopSim;
             if (sim == null || bubbles.Count > 0 || nextBubbleAt >= 0 || Busy() || sim.RelicPickPending) return;
-            var note = XgSim.ZhouStageNote(sim.S.stage);
-            if (note == null || sim.S.tutorSeen.Contains(XgSim.ZhouStageKey(note.stage))) return;
+            if (XgSim.ZhouStageNote(sim.S.stage) == null || sim.S.tutorSeen.Contains(XgSim.ZhouStageKey(sim.S.stage))) return;
             // Do not cut into an answer he is still waiting for.
-            if (hub.ChoicesFor == YYChatHub.LaoZhou && hub.Choices != null) return;
+            if (hub.ChoicesOf(YYChatHub.LaoZhou) != null) return;
+            var note = sim.ZhouStageNoteNow(sim.S.stage);
             sim.S.tutorSeen.Add(XgSim.ZhouStageKey(note.stage));
+            sim.ZhouStageShown(note.stage);
             runtime.MarkDirty();
             Say(T(note.zh, note.en));
             after = note.replies;
@@ -154,10 +171,24 @@ namespace LingGuangV05.Desktop.Story
         bool Heard(string text)
         {
             var picked = XgSim.ZhouMatch(offered, text);
+            if (offered != null) YYChatHub.Instance?.Stand(YYChatHub.LaoZhou, null);
             offered = null;
             if (picked == null) return false;
-            Say(T(picked.answerZh, picked.answerEn));
+            var sim = GuideNote.TopSim;
+            if (sim != null && sim.ZhouApply(picked.effect)) Told();
+            if (!string.IsNullOrEmpty(picked.answerZh)) Say(T(picked.answerZh, picked.answerEn));
+            var node = XgSim.ZhouNode(picked.next);
+            if (node != null)
+            {
+                Say(T(node.zh, node.en));
+                if (sim != null && sim.ZhouApply(node.effect)) Told();
+                after = node.replies;
+            }
+            if (runtime != null) runtime.MarkDirty();
             return true;
         }
+
+        /// <summary>He believes it now: the protagonist's one thought about it.</summary>
+        static void Told() => InnerVoice.Say("说出来了。……心里轻了一点。", "Said it. …I feel a little lighter.");
     }
 }

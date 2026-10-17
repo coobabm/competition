@@ -439,7 +439,7 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return XgSim.ZhouSteer(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish);
+                case LaoZhou: return lab != null ? lab.ZhouSteerNow(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish) : XgSim.ZhouSteer(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish);
                 case "landlord":
                     {
                         // The landlord softens as the tenant proves himself: on time, no fuss, then plainly fond of him.

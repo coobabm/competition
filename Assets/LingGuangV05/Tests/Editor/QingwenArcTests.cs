@@ -38,8 +38,12 @@ namespace LingGuangV05.Tests
             Assert.AreEqual("busy", QingwenArc.Due(s, 1, 0, 3, 500).key);
             QingwenArc.Opened(s, QingwenArc.Beat("busy"), 500);
             QingwenArc.Answer(s, "秘密，以后告诉你", out _);
-            Assert.IsNull(QingwenArc.Due(s, 1, 1, 30, 1000), "the next one needs stage 2");
-            Assert.AreEqual("home", QingwenArc.Due(s, 2, 1, 30, 1000).key);
+            Assert.IsNull(QingwenArc.Due(s, 1, 1, 5, 1000), "her best friend's story needs more rounds");
+            Assert.AreEqual("xiaoyu", QingwenArc.Due(s, 1, 1, 30, 1000).key);
+            QingwenArc.Opened(s, QingwenArc.Beat("xiaoyu"), 1000);
+            QingwenArc.Answer(s, "一晚上不回消息确实过分", out _);
+            Assert.IsNull(QingwenArc.Due(s, 1, 1, 30, 2000), "the next one needs stage 2");
+            Assert.AreEqual("home", QingwenArc.Due(s, 2, 1, 30, 2000).key);
         }
 
         [Test]
@@ -99,8 +103,45 @@ namespace LingGuangV05.Tests
                     Assert.AreEqual(0, c.reply.Length % 2, b.key + " " + c.zh);
                     Assert.That(c.zh + c.en + string.Join("", c.reply), Does.Not.Contain("灵光").And.Not.Contain("LingGuang").And.Not.Contain("涌现"));
                 }
-                Assert.That(string.Join("", b.lines), Does.Not.Contain("灵光"));
+                Assert.That(string.Join("", b.lines), Does.Not.Contain("灵光").And.Not.Contain("涌现"));
             }
+        }
+
+        [Test]
+        public void HerStoriesAreManyDistinctAndInTheLabsOrder()
+        {
+            Assert.GreaterOrEqual(QingwenArc.Beats.Length, 12);
+            var keys = new System.Collections.Generic.HashSet<string>();
+            var asked = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < QingwenArc.Beats.Length; i++)
+            {
+                var b = QingwenArc.Beats[i];
+                Assert.IsTrue(keys.Add(b.key), "one key once: " + b.key);
+                Assert.IsTrue(asked.Add(b.lines[0]), "no two stories open the same way: " + b.key);
+                if (i > 0) Assert.GreaterOrEqual(b.stage, QingwenArc.Beats[i - 1].stage, "stages never go back: " + b.key);
+            }
+            foreach (var who in new[] { "小雨", "王萌", "煤球", "我爸", "雨桐" })
+                Assert.That(Array.Exists(QingwenArc.Beats, b => string.Join("", b.lines).Contains(who)), who);
+        }
+
+        [Test]
+        public void AParentsSecretStaysASecret()
+        {
+            // Canon (qingwen.json family-secret): her parents do not know about him yet.
+            var home = QingwenArc.Beat("home");
+            Assert.That(string.Join("", home.lines), Does.Contain("我说没有"));
+            Assert.AreEqual(QingwenArc.FlagPromisedHome, home.choices[0].flag);
+        }
+
+        [Test]
+        public void HerOfflineTopicsDoNotRepeatWhenOneIsTalkedOut()
+        {
+            var s = Started();
+            var seen = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < 20; i++) Assert.IsTrue(seen.Add(string.Join("|", GirlfriendLines.Topic("roommate", false, s))), "line " + i + " came back");
+            Assert.That(s.recentLines.Count, Is.LessThanOrEqualTo(GirlfriendLines.RecentLimit));
+            foreach (var key in GirlfriendRules.TopicKeys)
+                Assert.IsNotEmpty(GirlfriendRules.TopicPrompt(key, false), key);
         }
     }
 }

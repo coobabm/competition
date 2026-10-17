@@ -16,7 +16,7 @@ namespace LingGuangV05.Core.Girlfriend
         public enum Period { Night, Day, Evening }
 
         /// <summary>How many of her recent lines (any source) the library stays clear of.</summary>
-        public const int RecentLimit = 24;
+        public const int RecentLimit = 60;
 
         public static Period PeriodOf(DateTime clock)
         {
@@ -387,15 +387,20 @@ namespace LingGuangV05.Core.Girlfriend
 
         static readonly Dictionary<string, string[]> Topics = new Dictionary<string, string[]>
         {
-            { "roommate", new[] { "我室友打呼噜跟拖拉机一样|根本睡不着[流汗]", "My roommate snores like a tractor|I can't sleep [流汗]", "室友半夜打电话|声音超大[白眼]", "My roommate's on the phone at midnight|so loud [白眼]", "室友占着卫生间一个小时了", "My roommate's been in the bathroom for an hour" } },
+            { "roommate", new[] { "何佳打呼噜跟拖拉机一样|根本睡不着[流汗]", "He Jia snores like a tractor|I can't sleep [流汗]", "苏晓晓又躲阳台给她男朋友打电话|声音超大[白眼]", "Su Xiaoxiao's on the balcony calling her boyfriend again|so loud [白眼]", "唐甜占着卫生间一个小时了|敷面膜", "Tang Tian's been in the bathroom for an hour|face mask", "婷婷说周末带我们去吃热干面|她一张嘴就是搞么斯", "Tingting's taking us for hot dry noodles this weekend|everything she says starts with gao me si", "唐甜在宿舍放鹿晗的歌|放第八遍了[流汗]", "Tang Tian's playing Lu Han in the dorm|eighth time now [流汗]", "雨桐又给我讲了一遍题|她讲得比老师清楚", "Yutong explained the problem to me again|she explains it better than the teacher" } },
             { "photo", new[] { "[图片] 楼下那只橘猫|我一摸它就跑了", "[图片] the orange cat downstairs|it ran when I tried to pet it", "[图片] 今天的晚霞|好看吧", "[图片] tonight's sunset|pretty, right?", "[图片] 食堂新出的酸菜鱼|看着好吃 其实一般", "[图片] the canteen's new fish dish|looks good, tastes meh" } },
-            { "drama", new[] { "《微微一笑很倾城》好甜|你打游戏怎么就没肖奈那么帅", "Love O2O is so sweet|why don't you play games like Xiao Nai", "《欢乐颂》你看了没|樊胜美好惨", "Have you watched Ode to Joy?|poor Fan Shengmei", "在追剧|追到半夜停不下来", "Watching a drama|can't stop, it's past midnight", "《太阳的后裔》又重看了一遍|宋仲基好帅[色]", "Rewatched Descendants of the Sun|Song Joong-ki is so handsome [色]" } },
-            { "food", new[] { "和室友吃了火锅|你吃饭了没", "Had hotpot with my roommates|have you eaten?", "今天吃了麻辣烫|加了好多辣[流汗]", "Had malatang today|way too spicy [流汗]", "好饿|想吃烤串", "So hungry|I want kebabs" } },
+            { "drama", new[] { "《欢乐颂》曲筱绡好会怼人|我也想那样说话", "Qu Xiaoxiao in Ode to Joy is so sharp|I wish I could talk like that", "《欢乐颂》你看了没|樊胜美好惨", "Have you watched Ode to Joy?|poor Fan Shengmei", "在追剧|追到半夜停不下来", "Watching a drama|can't stop, it's past midnight", "《太阳的后裔》又重看了一遍|宋仲基好帅[色]", "Rewatched Descendants of the Sun|Song Joong-ki is so handsome [色]" } },
+            { "food", new[] { "和室友吃了火锅|你吃饭了没", "Had hotpot with my roommates|have you eaten?", "今天吃了麻辣烫|加了好多辣[流汗]", "Had malatang today|way too spicy [流汗]", "好饿|想吃烤串", "So hungry|I want kebabs", "二食堂的黄焖鸡|今天居然多给了一块肉", "The canteen's braised chicken|they gave me an extra piece today", "走到校门口买了杯CoCo|百香果双响炮 少冰半糖", "Walked to the gate for a CoCo|passion fruit double, less ice, half sugar", "好想吃我妈做的糖醋排骨", "I miss Mum's sweet-and-sour ribs" } },
+            { "friend", new[] { "小雨给我发了她们实习的照片|穿护士服还挺好看", "Xiaoyu sent me photos from her placement|she looks good in the nurse's uniform", "王萌说县城开了家新的奶茶店|等我回去带我去", "Wang Meng says a new milk tea shop opened back home|she'll take me when I'm back", "「一中高三七班」群里有人发结婚请帖了|才二十岁啊[流汗]", "Someone in the class group sent a wedding invite|we're only twenty [流汗]", "小雨说她在郑州二七广场看见一个人好像你|是你吗", "Xiaoyu says she saw someone like you at Erqi Square in Zhengzhou|was it you?", "老马在群里又说我们是他带过最差的一届|笑死", "Old Ma said in the group we're the worst class he ever taught|again, lol" } },
+            { "family", new[] { "我妈又打电话|问我是不是又熬夜玩手机", "Mum called again|asking if I've been up late on my phone", "我爸发了张煤球的照片|趴在电视机上睡着了", "Dad sent a photo of Meiqiu|asleep on top of the TV", "我妈说放假回去要给我做红烧鲤鱼|我已经开始馋了", "Mum says she'll make braised carp when I'm home|I'm already drooling", "我奶奶问我什么时候回林庄|她要给我擀面条", "Grandma asked when I'm coming to Linzhuang|she wants to make me noodles", "表妹王可可又在朋友圈刷TFBOYS|她说长大要嫁王俊凯", "My cousin Keke's posting TFBOYS again|says she'll marry Wang Junkai" } },
+            { "school", new[] { "雨桐拉我去图书馆三楼占座|我七点就被叫起来了", "Yutong dragged me to the library third floor for seats|up at seven", "财务管理老师划重点了|划了一整本[大哭]", "The Financial Management teacher marked what's on the exam|the whole book [大哭]", "下午体育课又要测八百米|我要死了", "PE this afternoon, the 800 metres again|I'm going to die", "公选课老师放电影|我睡着了[偷笑]", "The elective teacher showed a film|I fell asleep [偷笑]" } },
+            { "phone", new[] { "我手机又没电了|借雨桐的手机跟你说一声", "My phone died again|borrowed Yutong's to tell you", "开心消消乐卡在一关三天了|你帮我过", "Stuck on one Happy Elimination level for three days|you do it for me", "这个月流量又快用完了|只敢连WiFi", "Almost out of data this month again|Wi-Fi only now", "我在淘货看中一条裙子|一百二 还在犹豫", "Saw a dress on Taohuo|a hundred and twenty, still deciding" } },
+            { "music", new[] { "薛之谦的《演员》|我单曲循环一天了", "Joker Xue's The Actor|been on repeat all day", "我把闹钟换成《小幸运》了|每天早上听一遍", "Changed my alarm to A Little Happiness|I hear it every morning", "宿舍在合唱《演员》|何佳跑调跑到武昌去了", "The whole dorm's singing The Actor|He Jia's so off-key", "你最近在听什么歌|发给我", "What songs are you listening to lately|send me one" } },
             { "missYou", new[] { "没什么|就是想找你说话[害羞]", "Nothing|just wanted to talk to you [害羞]", "你在干嘛|我有点想你", "What are you doing|I kind of miss you", "突然好想你[委屈]", "Suddenly missing you [委屈]" } },
             { "whatDoing", new[] { "在干嘛|又在弄电脑？", "What are you doing|on the computer again?", "人呢|在忙什么", "Where are you|busy with what?", "你今天干嘛了|跟我说说", "What did you do today|tell me" } },
         };
 
-        /// <summary>A free topic when the model is off: a line of that topic she has not said lately (bubbles).</summary>
+        /// <summary>A free topic when the model is off: a line of that topic she has not said lately, or of another topic once that one is talked out (bubbles).</summary>
         public static string[] Topic(string key, bool english, GirlfriendState s = null, Func<string, string, bool> similar = null)
         {
             if (!Topics.TryGetValue(key ?? "", out var pairs)) pairs = Topics["whatDoing"];
@@ -404,6 +409,17 @@ namespace LingGuangV05.Core.Girlfriend
             if (s == null) return (english ? pool[0].en : pool[0].zh).Split('|');
             similar = similar ?? ((a, b) => a == b);
             var fresh = pool.FindAll(l => !Seen(s, l, similar));
+            if (fresh.Count == 0)
+            {
+                // That topic is talked out: something she has not said lately from another one, before anything repeats.
+                foreach (var other in GirlfriendRules.TopicKeys)
+                {
+                    if (other == key || !Topics.TryGetValue(other, out var more)) continue;
+                    var alt = new List<(string zh, string en)>();
+                    AddPairs(alt, more);
+                    fresh.AddRange(alt.FindAll(l => !Seen(s, l, similar)));
+                }
+            }
             if (fresh.Count == 0) fresh = pool;
             return Take(s, fresh[GirlfriendRules.Pick(s, fresh.Count)], english);
         }

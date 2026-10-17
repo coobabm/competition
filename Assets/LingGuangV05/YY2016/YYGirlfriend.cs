@@ -552,7 +552,7 @@ namespace LingGuangV05.Desktop.YY
             if (Time.unscaledTime < nextIdleCheck) return;
             nextIdleCheck = Time.unscaledTime + 1;
             if (!act.Present) return;
-            if (hub.ChoicesFor == YYChatHub.GirlfriendId && hub.Choices != null) return;
+            if (hub.ChoicesOf(YYChatHub.GirlfriendId) != null) return;
             // She does not start something while a story moment is on screen (剧情修订 2026-10-16 §二).
             if (StoryFocus.Active) return;
             bool quiet = OpeningQuiet.Active;

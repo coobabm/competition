@@ -22,8 +22,8 @@ namespace LingGuangV05.Desktop.YY
         bool ArcTick(GirlfriendState g, GfNow now)
         {
             if (typing != null || generating || replyPending || outbox.Count > 0) return false;
-            if (QingwenArc.Expire(g, now.game)) { if (hub.ChoicesFor == YYChatHub.GirlfriendId) hub.EndScript(); runtime.MarkDirty(); return false; }
-            if (StoryFocus.Active || hub.ChoicesFor != null && hub.Choices != null) return false;
+            if (QingwenArc.Expire(g, now.game)) { hub.Stand(YYChatHub.GirlfriendId, null); runtime.MarkDirty(); return false; }
+            if (StoryFocus.Active || hub.ChoicesOf(YYChatHub.GirlfriendId) != null) return false;
             var lab = Lab;
             if (lab == null) return false;
             var beat = QingwenArc.Due(g, lab.S.stage, lab.AbilitiesCount, lab.S.epochs, now.game);
@@ -35,7 +35,8 @@ namespace LingGuangV05.Desktop.YY
             var choices = QingwenArc.Choices(beat, English);
             QueueLines(lines, true, () =>
             {
-                if (G == g && g.arcOpen == beat.key) hub.Offer(YYChatHub.GirlfriendId, choices);
+                // Her own buttons on her conversation (standing choices), so another chat's scene never replaces them.
+                if (G == g && g.arcOpen == beat.key) hub.Stand(YYChatHub.GirlfriendId, choices);
             });
             return true;
         }
@@ -48,6 +49,7 @@ namespace LingGuangV05.Desktop.YY
         {
             var beat = QingwenArc.Answer(g, text, out var picked);
             if (beat == null) return false;
+            hub.Stand(YYChatHub.GirlfriendId, null);
             runtime.MarkDirty();
             if (picked != null && picked.reply.Length > 0) scripted = picked.reply;
             else situation = QingwenArc.FreeSituation(beat, English);

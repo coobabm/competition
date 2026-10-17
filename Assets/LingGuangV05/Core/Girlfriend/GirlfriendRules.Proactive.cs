@@ -107,7 +107,8 @@ namespace LingGuangV05.Core.Girlfriend
             return e;
         }
 
-        public static readonly string[] TopicKeys = { "roommate", "photo", "drama", "food", "whatDoing", "missYou" };
+        /// <summary>Her free topics; the last one (想你) only when she is sweet on him.</summary>
+        public static readonly string[] TopicKeys = { "roommate", "photo", "drama", "food", "friend", "family", "school", "phone", "music", "whatDoing", "missYou" };
 
         static string Topic(GirlfriendState s)
         {
@@ -121,9 +122,14 @@ namespace LingGuangV05.Core.Girlfriend
         {
             switch (key)
             {
-                case "roommate": return english ? "You message him first to complain about a roommate (snoring, hogging the bathroom, a loud phone call)." : "你主动找他，吐槽室友（打呼噜、占卫生间、半夜打电话之类）。";
+                case "roommate": return english ? "You message him first with something about one of your roommates (He Jia's snoring, Su Xiaoxiao's loud calls, Tang Tian hogging the bathroom, Tingting, or Yutong helping you study). Pick one you have not talked about lately." : "你主动找他，说一件室友的事（何佳打呼噜、苏晓晓半夜打电话、唐甜占卫生间、婷婷、雨桐给你讲题之类），挑最近没说过的。";
+                case "friend": return english ? "You message him first with news from your friends: Zhao Xiaoyu (your high-school deskmate, studying nursing in Zhengzhou), Wang Meng (works at the county phone shop), or the class YY group. Pick one you have not talked about lately." : "你主动找他，说一件朋友的新鲜事：高中同桌赵小雨（在郑州读护理）、在县城移动营业厅上班的王萌，或者「一中高三七班」群里的事，挑最近没说过的。";
+                case "family": return english ? "You message him first about home: your mum's nagging on the phone, your quiet dad, the cat Meiqiu, grandma in the village, or your cousin. Pick one you have not talked about lately." : "你主动找他，说家里的事：你妈打电话唠叨、话少的老爸、猫煤球、乡下的奶奶或者表妹，挑最近没说过的。";
+                case "school": return english ? "You message him first about school: the library with Yutong, the end-of-term exams coming, PE, a class you dozed through." : "你主动找他，说学校的事：跟雨桐泡图书馆、快期末了、体育课、上课打瞌睡之类。";
+                case "phone": return english ? "You message him first about your phone: the battery dying, a Happy Elimination level you are stuck on, running out of data, something you saw on Taohuo." : "你主动找他，说手机上的事：又没电了、开心消消乐卡关、流量不够、在淘货看中的东西之类。";
+                case "music": return english ? "You message him first about a song you have on repeat (2016: Joker Xue's The Actor, A Little Happiness) and ask what he listens to." : "你主动找他，聊你在单曲循环的歌（2016 年：薛之谦《演员》、《小幸运》之类），问他在听什么。";
                 case "photo": return english ? "You message him first and share a photo: write it as [图片] followed by a short description of what is in it, then one line about it." : "你主动找他分享一张照片：写成「[图片]」加一句照片里是什么，再说一句感想。";
-                case "drama": return english ? "You message him first about the drama you are watching (2016: Ode to Joy, Love O2O, Nirvana in Fire is old)." : "你主动找他聊你在追的剧（2016 年：《欢乐颂》《微微一笑很倾城》之类）。";
+                case "drama": return english ? "You message him first about the drama you are watching (early 2016: Ode to Joy, Descendants of the Sun)." : "你主动找他聊你在追的剧（2016 年上半年：《欢乐颂》《太阳的后裔》之类）。";
                 case "food": return english ? "You message him first about what you ate today or ask if he has eaten." : "你主动找他，说你今天吃了什么，或者问他吃了没。";
                 case "missYou": return english ? "You message him first because you miss him; say it in your own shy, teasing way." : "你主动找他，因为想他了；用你嘴硬又撒娇的方式说。";
                 default: return english ? "You message him first and ask what he is doing, half complaining that he is always on the computer." : "你主动找他，问他在干嘛，半抱怨他又在弄电脑。";

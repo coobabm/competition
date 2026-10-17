@@ -135,7 +135,7 @@ namespace LingGuangV05.EditorTools
             if (yy != null && yy.S != null)
             {
                 var zhou = yy.Conversation(LingGuangV05.Desktop.YY.YYChatHub.LaoZhou);
-                if (zhou.messages.Count > 0) b.Append("\n老周 YY last: " + zhou.messages[zhou.messages.Count - 1].text + (yy.ChoicesFor == LingGuangV05.Desktop.YY.YYChatHub.LaoZhou && yy.Choices != null ? " [" + string.Join(" | ", yy.Choices) + "]" : ""));
+                if (zhou.messages.Count > 0) b.Append("\n老周 YY last: " + zhou.messages[zhou.messages.Count - 1].text + (yy.ChoicesOf(LingGuangV05.Desktop.YY.YYChatHub.LaoZhou) != null ? " [" + string.Join(" | ", yy.ChoicesOf(LingGuangV05.Desktop.YY.YYChatHub.LaoZhou)) + "]" : ""));
             }
             return b.ToString();
         }

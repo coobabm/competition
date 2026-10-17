@@ -26,7 +26,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// at stage 1, one of a few at stage 2, words from ability 3. Until it has joined, its lines stay on the 概览 page's
     /// 「它刚说」 card. Attaches itself next to the 灵光 controller at scene load.
     /// </summary>
-    public sealed class XgYyTalk : MonoBehaviour, ILingGuangTalk
+    public sealed partial class XgYyTalk : MonoBehaviour, ILingGuangTalk
     {
         const string Id = YYChatHub.LingGuangId;
         /// <summary>Seconds before a reply shows: it reads first, like a person, even when the answer is fixed or offline.</summary>
@@ -146,7 +146,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 bound.AddLine("ai", bound.FirstWords());
             }
             if (due != null && Time.unscaledTime >= due.at) Deliver(hub);
-            hub.Stand(Id, waiting ? null : Choices());
+            StepNight(hub);
+            hub.Stand(Id, waiting || NightPlaying ? null : Choices());
         }
 
         void Bind(XgSim sim)
@@ -156,6 +157,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bound.LineAdded += OnLine;
             ticket++;
             waiting = false; due = null; echo = false; queuedQuestion = null; replayQueued = false;
+            ResetNight();
             lines.Clear();
         }
 
@@ -189,6 +191,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sim == null || message == null) return false;
             string text = NativeLaoZhouReplies.NormalizeInput(message.text);
             if (text.Length == 0) return true;
+            // 是否夜 (XgYyTalk.Night.cs): the round's question gets its scripted answer.
+            if (!waiting && NightHeard(sim, text)) return true;
             if (!replayQueued) sim.CountLoveAsk(text);
             // The choices with rules of their own: 【读吧】【算了】 and the two answers to 「你觉得呢？」.
             if (sim.S.loveAwaitingConsent && Consent(sim, text, out bool read)) { Echo(() => sim.AnswerLoveConsent(read)); return true; }
@@ -251,6 +255,8 @@ namespace LingGuangV05.Desktop.XingGuang
         string[] Choices()
         {
             var s = bound.S;
+            var night = NightChoices();
+            if (night != null) return night;
             if (s.loveAwaitingConsent) return new[] { "【" + bound.LoveConsentText(true) + "】", "【" + bound.LoveConsentText(false) + "】" };
             if (s.originAwaitingAnswer) return new[] { bound.OriginAnswerText(true), bound.OriginAnswerText(false) };
             var list = new List<string>(2);
