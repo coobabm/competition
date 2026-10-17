@@ -386,7 +386,7 @@ sealed class Driver
             if (r != null) Record("diagnose", sim.Run(track).dataset + " " + due + (r.firstTry ? " first" : ""));
         }
         foreach (var track in new[] { XgTrack.Sequence, XgTrack.Vision })
-            if (!sim.TrainingUnlocked(track) && DeskOf(track) != null) { Answer(DeskOf(track)); return; }
+            if (!sim.TrainingUnlocked(track) && DeskOf(track) != null) { Answer(sim.OpeningFocus && track == XgTrack.Sequence ? XgMemes.SenseDesk : DeskOf(track)); return; }
         bool label = ((int)(time / 6) % 2) == 0;
         var trackToTrain = ChooseTrack();
         if (!label && sim.Blocker(sim.Run(trackToTrain), host) == null)
@@ -399,6 +399,8 @@ sealed class Driver
         // While the data bar is the short one, label where a sample counts in full (算术 counts half toward D).
         bool dataShort = sim.NextAbility > 0 && sim.TrainedSamples < sim.SamplesThreshold(sim.NextAbility);
         string desk = sim.OpenDesks().Where(d => !sim.Owns(d.id)).OrderByDescending(d => dataShort ? XgCatalog.Dataset(d.id).dataWeight : 1).ThenBy(d => sim.Labels(d.id)).Select(d => d.id).FirstOrDefault() ?? "spam";
+        // The opening's note says 常识判断 (the other starting desks are open, but only it teaches the yes/no).
+        if (sim.OpeningFocus) desk = XgMemes.SenseDesk;
         Answer(desk);
     }
 

@@ -606,7 +606,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (root == null) return;
             RefreshHandwriting();
-            if (RefreshDeskGame(true)) return;
+            // The hall stays current while a desk's game covers the cards (new desks, bought data packs, pay).
+            if (RefreshDeskGame(true)) { RefreshHall(Mode != 0); return; }
             if (displayedSim != Sim)
             {
                 displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; lastFeedId = 0;

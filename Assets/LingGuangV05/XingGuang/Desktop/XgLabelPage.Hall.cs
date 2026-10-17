@@ -31,6 +31,18 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform hallBox, hallContent;
         TMP_Text hallTitle, hallNote, hallPaused;
         readonly List<HallRow> hallRows = new List<HallRow>();
+        /// <summary>Bought data packs that have no desk (ImageNet, 翻译, 新闻 …): listed under the desks so a purchase always shows in the hall.</summary>
+        readonly List<HallRow> packRows = new List<HallRow>();
+
+        /// <summary>Data packs bought in 科技 whose dataset has no labelling desk.</summary>
+        List<XgNode> LoosePacks()
+        {
+            var list = new List<XgNode>();
+            if (Sim == null) return list;
+            foreach (var n in XgCatalog.Nodes)
+                if (n.kind == XgNodeKind.Dataset && Sim.Has(n.id) && XgCatalog.Desk(n.target) == null && XgCatalog.Dataset(n.target) != null) list.Add(n);
+            return list;
+        }
 
         void BuildHall(RectTransform parent)
         {
@@ -57,6 +69,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (Application.isPlaying) UnityEngine.Object.Destroy(r.rt.gameObject); else UnityEngine.Object.DestroyImmediate(r.rt.gameObject);
             }
             hallRows.Clear(); deskIds.Clear();
+            foreach (var r in packRows)
+            {
+                if (Application.isPlaying) UnityEngine.Object.Destroy(r.rt.gameObject); else UnityEngine.Object.DestroyImmediate(r.rt.gameObject);
+            }
+            packRows.Clear();
             var list = TabDesks(out openTabs);
             for (int i = 0; i < list.Count; i++)
             {
@@ -87,8 +104,46 @@ namespace LingGuangV05.Desktop.XingGuang
                 deskIds.Add(id);
                 UiTip.Add(row.rt, () => Sim.DeskOpen(id) ? DeskHelp(id) : LockText(id) + "\n\n" + DeskHelp(id));
             }
-            hallContent.sizeDelta = new Vector2(0, list.Count * HallRowH);
+            var packs = LoosePacks();
+            for (int k = 0; k < packs.Count; k++)
+            {
+                var node = packs[k];
+                int i = list.Count + k;
+                var row = new HallRow { id = node.target };
+                row.rt = Rect("Pack " + node.target, hallContent, new Vector2(0, 1), Vector2.one, new Vector2(0, -(i + 1) * HallRowH), new Vector2(0, -i * HallRowH));
+                row.bg = Panel(row.rt, new Color32(248, 249, 252, 255));
+                ZhongbaoSkin.Hairline(row.rt, 0, false);
+                row.icon = XgIcons.Place(row.rt, "tech", node.id, 25, HallRowH * .5f, 32);
+                // The full width: 「已买」 sits on the first line only and the (clipped) name stays clear of it.
+                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-10, -3)), "", 14, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+                row.left.textWrappingMode = TextWrappingModes.NoWrap; row.left.overflowMode = TextOverflowModes.Ellipsis;
+                row.left.lineSpacing = 6;
+                row.pay = ui.Text(Rect("Pay", row.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -28), new Vector2(-10, -6)), "", 12, ZhongbaoSkin.Mute, TextAlignmentOptions.TopRight);
+                row.pay.textWrappingMode = TextWrappingModes.NoWrap;
+                string target = node.target;
+                var data0 = XgCatalog.Dataset(target);
+                UiTip.Add(row.rt, () => "<b>" + T(data0.name, data0.nameEn) + "</b>\n"
+                    + T("买来的现成数据包：已经标好了，不用上这儿标，直接拿去训练。", "A ready-made data pack: already labelled, nothing to do here; it goes straight into training.")
+                    + "\n" + (Sim.Downloading(target) ? T("还在下载。", "Still downloading.") : T("已入库 ", "Stored: ") + N(Sim.Samples(target), "#,0") + T(" 条。", " samples."))
+                    + "\n" + T(node.note, node.noteEn));
+                packRows.Add(row);
+            }
+            hallContent.sizeDelta = new Vector2(0, (list.Count + packs.Count) * HallRowH);
             Refresh();
+        }
+
+        /// <summary>A name cut by hand to fit a hall row, so the row's own ellipsis never drops its second line.</summary>
+        /// <paramref name="max"/> is in CJK widths; a Latin letter, digit or space counts as half of one.
+        static string Clip(string text, int max)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            double width = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                width += text[i] < 0x2E80 ? .55 : 1;
+                if (width > max) return text.Substring(0, Math.Max(1, i - 1)) + "…";
+            }
+            return text;
         }
 
         /// <summary>The hall row of a desk (the audit flight lands on it).</summary>
@@ -117,6 +172,20 @@ namespace LingGuangV05.Desktop.XingGuang
             hallPaused.gameObject.SetActive(special);
             hallNote.text = special ? "" : T("按报酬排序", "by pay");
             if (special) { hallPaused.text = T("研究或终章进行中，题桌暂时关闭。", "Research or the finale is under way: the desks are closed for now."); return; }
+            // A pack bought since the last rebuild (no desk opened, so nothing else rebuilds the hall).
+            var packs = LoosePacks();
+            if (packs.Count != packRows.Count) { RebuildTabs(); return; }
+            for (int k = 0; k < packRows.Count; k++)
+            {
+                var row = packRows[k]; var node = packs[k];
+                var data = XgCatalog.Dataset(node.target);
+                bool loading = Sim.Downloading(node.target);
+                string state = loading ? T("下载中", "downloading") : T("已入库，直接训练", "stored, trains as is");
+                // The name alone on the first line: a tag there would overflow it and the ellipsis would cut the second line too.
+                row.left.text = "<b>" + Clip(T(data.name, data.nameEn), Lang.English ? 8 : 6) + "</b>"
+                    + "\n<size=12>" + Tag(T("数据包", "data pack"), ZhongbaoSkin.Blue, ZhongbaoSkin.Blue3) + " <color=#7A7F8C>" + state + "</color></size>";
+                row.pay.text = loading ? T("下载中", "loading") : T("已买", "owned");
+            }
             string desk = Desk;
             for (int i = 0; i < hallRows.Count && i < deskIds.Count; i++)
             {
@@ -143,9 +212,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 string note = T("判对错 · 错了扣钱", "true/false · a miss costs");
                 string tags = (info.pay >= 2 ? Tag(T("高价", "high pay"), ZhongbaoSkin.Orange, ZhongbaoSkin.OrangeSoft) + " " : "")
                     + (Sim.Labels(row.id) < 1 ? Tag(T("新", "new"), ZhongbaoSkin.Red, ZhongbaoSkin.RedSoft) + " " : "");
+                // A bought pack leads the second line (the first is narrow and ends in an ellipsis).
+                string packTag = Sim.Has(row.id + ".pack") ? Tag(T("数据包", "data pack"), ZhongbaoSkin.Blue, ZhongbaoSkin.Blue3) + " " : "";
                 int waiting = WorkContext ? 0 : Sim.ReviewCount(row.id);
                 if (waiting > 0) tags += Tag(T("待复核 " + waiting, "review " + waiting), Color.white, ZhongbaoSkin.Red) + " ";
-                row.left.text = "<b>" + T(info.name, info.nameEn) + "</b> " + tags + "\n<size=12>" + stars + "  <color=#7A7F8C>" + left + " · " + note + "</color></size>";
+                row.left.text = "<b>" + T(info.name, info.nameEn) + "</b> " + tags + "\n<size=12>" + packTag + stars + "  <color=#7A7F8C>" + left + " · " + note + "</color></size>";
                 row.pay.text = "<b>¥" + N(pay, "0.00") + "</b><size=11><color=#7A7F8C>" + T("/题", "/q") + "</color></size>";
             }
         }

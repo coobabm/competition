@@ -5,7 +5,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgState
     {
         /// <summary>
-        /// The first-minutes focus is on: only the common-sense desk and the training page are open until the yes/no
+        /// The first-minutes focus is on: only the starting desks and the training page are open until the yes/no
         /// reaches <see cref="XgSim.SenseVoiceLearned"/>. False in every save from before it existed, so an old save is never locked.
         /// </summary>
         public bool openingFocus;
@@ -16,8 +16,9 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>
-    /// The first five minutes: the first goal is only to label 常识判断 on 摆渡众包 and train until its yes/no is learned
-    /// (<see cref="SenseVoiceLearned"/>). Until then the other desks and the pages that are not needed for it stay shut with a
+    /// The first five minutes: the first goal is to label 常识判断 on 摆渡众包 and train until its yes/no is learned
+    /// (<see cref="SenseVoiceLearned"/>). The three starting desks (常识判断, 垃圾短信, 逻辑题) and their games are open from the
+    /// first second so the opening is a run of quick answers and combos; the pages that are not needed yet stay shut with a
     /// one-line reason, so the moment it learns is not lost among a dozen new tabs. It reuses the existing gates: the desk
     /// rules (<see cref="DeskOpen"/>), the page rules (<see cref="FeatureVisible"/>) and the guide's <c>TabOpen</c>. A new
     /// game starts it (<see cref="BeginOpening"/>); a save without the flag, or one that already has an ability, never sees it.
@@ -36,8 +37,14 @@ namespace LingGuangV05.XingGuang
         /// <summary>The note's chat step: it learned yes/no and the player has not spoken to it since.</summary>
         public bool OpeningChatDue => S.openingChatPending && S.stage == 1 && S.chatTurns <= S.openingChatBase;
 
-        /// <summary>A desk the focus keeps shut: every desk but 常识判断.</summary>
-        public bool OpeningLocksDesk(string desk) => S.openingFocus && desk != XgMemes.SenseDesk;
+        /// <summary>A desk the focus keeps shut: none of the starting desks (常识判断, 垃圾短信, 逻辑题), which are open with their games.</summary>
+        public bool OpeningLocksDesk(string desk) => S.openingFocus && !OpeningDesk(desk);
+
+        /// <summary>A desk open from the first second of a new game (<see cref="XgDeskUnlock.Start"/>).</summary>
+        public static bool OpeningDesk(string desk) => desk == XgMemes.SenseDesk || XgCatalog.Desk(desk)?.unlock == XgDeskUnlock.Start;
+
+        /// <summary>The combo window is this many times longer during the opening, so a new player reading a card keeps the streak.</summary>
+        public const double OpeningComboWindow = 2;
 
         /// <summary>
         /// A 灵光 page the focus keeps shut. Open: the labelling page, the training pages, and 概览 (the fallback when YY
@@ -57,15 +64,15 @@ namespace LingGuangV05.XingGuang
         public bool OpeningLocksCrowdTab(string tab) => S.openingFocus && !string.IsNullOrEmpty(tab) && tab != "label";
 
         /// <summary>
-        /// Starts the focus on a brand-new game: only 常识判断 is open and it is what the training page trains. A save that
+        /// Starts the focus on a brand-new game: the starting desks are open and 常识判断 is the one the training page trains. A save that
         /// already has an ability, a trained run, a checkpoint or labels on another desk is left alone.
         /// </summary>
         public void BeginOpening()
         {
             if (!S.gradualSystems || S.openingFocus || OpeningLegacyProgress()) return;
             S.openingFocus = true;
-            S.desksOpen.RemoveAll(id => id != XgMemes.SenseDesk);
-            if (!S.desksOpen.Contains(XgMemes.SenseDesk)) S.desksOpen.Add(XgMemes.SenseDesk);
+            S.desksOpen.RemoveAll(id => !OpeningDesk(id));
+            foreach (var d in XgCatalog.Desks) if (OpeningDesk(d.id) && !S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
             S.desk = XgMemes.SenseDesk;
             S.selected = 1;
             SetDataset(XgTrack.Sequence, XgMemes.SenseDesk);

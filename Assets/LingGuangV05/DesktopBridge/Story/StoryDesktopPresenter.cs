@@ -126,6 +126,8 @@ namespace LingGuangV05.Desktop.Story
             UniverseFlicker.Install(gameObject);
             // The to-do sticky note: what to do next, with a ring on where to click.
             GuideNote.Install(this);
+            // 第一阶段全程引导: each step of the note in stage one comes with a thought and 老周's plain-words answer.
+            StageOneTutor.Install(this);
             // Inner-voice lines wait while a story cutscene, the prologue or a flash card covers the screen.
             InnerVoice.Hold = InnerVoiceHeld;
             // The opening quiet window (OpeningQuiet): ambient popups wait out the prologue and the first ability.

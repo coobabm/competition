@@ -1218,11 +1218,30 @@ namespace LingGuangV05.XingGuang
             // Two lines naming the same purchase (科技买「X」 from the parameter plan and the data plan) keep the first.
             var seen = new HashSet<string>();
             list.RemoveAll(x => x.target.StartsWith("node:") && !seen.Add(x.target));
+            // 第一阶段全程引导 (XgSim.StageOneTutor.cs): after the opening, stage one keeps to the main line — no side task,
+            // no boost, at most two lines — and each step's hover text leads with its lesson in plain words.
+            bool tutor = sim.S.stage == 1 && !sim.OpeningFocus;
+            if (tutor)
+            {
+                list.RemoveAll(x => x.kind == XgGuideKind.Boost || x.kind == XgGuideKind.Side);
+                if (list.Count > TutorLines) list.RemoveRange(TutorLines, list.Count - TutorLines);
+            }
             if (list.Count == 0) list.Add(Keep(sim));
-            var side = list.Count >= 2 && !sim.OpeningFocus ? Side(sim, house) : null;
+            var side = list.Count >= 2 && !sim.OpeningFocus && !tutor ? Side(sim, house) : null;
             if (side != null) list.Insert(2, side);
+            if (tutor)
+                foreach (var step in list)
+                {
+                    var lesson = sim.TutorFor(step);
+                    if (lesson == null || step.whyZh.StartsWith(lesson.whyZh)) continue;
+                    step.whyZh = lesson.whyZh + (step.whyZh.Length > 0 ? "\n" + step.whyZh : "");
+                    step.whyEn = lesson.whyEn + (step.whyEn.Length > 0 ? "\n" + step.whyEn : "");
+                }
             return list;
         }
+
+        /// <summary>Lines the note shows in stage one after the opening: the main step and one more.</summary>
+        public const int TutorLines = 2;
 
         /// <summary>The fallback that always exists: keep labelling (before training opens) or keep training.</summary>
         public static XgGuideStep Keep(XgSim sim)

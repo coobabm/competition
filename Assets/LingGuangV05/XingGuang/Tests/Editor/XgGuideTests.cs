@@ -145,10 +145,14 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("ability.pack", data.id, "with the parameters there, the data is what is left");
             Assert.AreEqual("node:spam.pack", data.target);
 
-            int side = steps.FindIndex(x => x.kind == XgGuideKind.Side);
+            // 第一阶段全程引导: stage one keeps to the main line; side tasks come from stage two, only ever on the third line.
+            Assert.AreEqual(-1, steps.FindIndex(x => x.kind == XgGuideKind.Side), "no side task in stage one");
+            var two = Trained(2);
+            var steps2 = XgGuide.Current(two, 1000);
+            int side = steps2.FindIndex(x => x.kind == XgGuideKind.Side);
             Assert.AreEqual(2, side, "side tasks only ever take the third line");
-            Assert.AreEqual("side.forum", steps[side].id);
-            Assert.AreEqual(-1, XgGuide.Current(sim, 0, new XgGuideHouse { forumSeen = true, yySeen = true, gamesSeen = true }).FindIndex(x => x.kind == XgGuideKind.Side));
+            Assert.AreEqual("side.forum", steps2[side].id);
+            Assert.AreEqual(-1, XgGuide.Current(two, 0, new XgGuideHouse { forumSeen = true, yySeen = true, gamesSeen = true }).FindIndex(x => x.kind == XgGuideKind.Side));
         }
 
         [Test]
@@ -392,7 +396,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AutoLabellingIsOnTheNoteOnceItsIdeaHasCome()
         {
-            var sim = Trained();
+            var sim = Trained(2); // stage one keeps to the main line (第一阶段全程引导)
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
             Assert.IsTrue(sim.AutoLabelHidden);
             Assert.IsNull(Find(XgGuide.Current(sim, 1e4), "label.auto"), "not before the idea");

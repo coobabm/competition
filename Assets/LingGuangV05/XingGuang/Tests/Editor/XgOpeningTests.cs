@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LingGuangV05.XingGuang.Tests
 {
-    /// <summary>The first five minutes: only 常识判断 and training are open until the yes/no is learned, then everything; old saves never lock; the before/after pairs.</summary>
+    /// <summary>The first five minutes: the starting desks and training are open until the yes/no is learned, then everything; old saves never lock; the before/after pairs.</summary>
     public sealed class XgOpeningTests
     {
         sealed class Host : IXgHost
@@ -16,7 +16,8 @@ namespace LingGuangV05.XingGuang.Tests
             public void Train(double s) { }
         }
 
-        static readonly string[] Locked = { "logic", "spam" }; // 算术 waits for stage two since the 2026-10-15 integration
+        /// <summary>Open with 常识判断 from the first second (2026-10-18: the opening is a run of games and combos). 算术 waits for stage two since the 2026-10-15 integration.</summary>
+        static readonly string[] Locked = { "logic", "spam" };
 
         static XgSim Fresh()
         {
@@ -43,17 +44,23 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AFreshOpeningHasOnlyTheSensePathOpen()
+        public void AFreshOpeningHasTheStartingDesksAndTheirGamesOpen()
         {
             var sim = Fresh();
             Assert.IsTrue(sim.OpeningFocus);
             Assert.IsTrue(sim.DeskOpen(XgMemes.SenseDesk));
-            foreach (var id in Locked) Assert.IsFalse(sim.DeskOpen(id), id + " waits");
-            Assert.AreEqual(1, sim.OpenDesks().Count);
+            foreach (var id in Locked) Assert.IsTrue(sim.DeskOpen(id), id + " is open at once");
+            Assert.AreEqual(3, sim.OpenDesks().Count);
+            foreach (var desk in sim.OpenDesks())
+            {
+                string game = XgMiniGames.ForDesk(desk.id);
+                Assert.IsNotNull(game, desk.id + " opens as a game");
+                Assert.IsNull(sim.MiniGameBlocker(game), game + " can be played now");
+            }
+            Assert.IsFalse(sim.DeskOpen("arith"), "算术 still waits for stage two");
+            Assert.AreNotEqual(sim.OpeningReason, sim.DeskConditionText(XgCatalog.Desk("arith")), "and says its own reason");
             Assert.AreEqual(XgMemes.SenseDesk, sim.S.desk);
             Assert.AreEqual(XgMemes.SenseDesk, sim.Run(XgTrack.Sequence).dataset);
-            // The locked desks say why, in one line.
-            foreach (var id in Locked) Assert.AreEqual(sim.OpeningReason, sim.DeskConditionText(XgCatalog.Desk(id)));
             StringAssert.Contains("分辨对错", sim.OpeningReason);
             foreach (var feature in new[] { "tree", "contracts", "repo", "board", "cards", "wiring", "coop", "attention", "final", "project" })
                 Assert.IsFalse(sim.FeatureVisible(feature), feature);
@@ -75,7 +82,7 @@ namespace LingGuangV05.XingGuang.Tests
             LabelSense(sim, host, 6);
             var back = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(sim.S))) { GoldChance = 0 };
             Assert.IsTrue(back.OpeningFocus);
-            foreach (var id in Locked) Assert.IsFalse(back.DeskOpen(id), id + " stays shut after a reload");
+            foreach (var id in Locked) Assert.IsTrue(back.DeskOpen(id), id + " stays open after a reload");
             Assert.IsTrue(back.DeskOpen(XgMemes.SenseDesk));
             Assert.AreEqual(XgMemes.SenseDesk, back.S.desk);
         }
@@ -136,6 +143,18 @@ namespace LingGuangV05.XingGuang.Tests
             LabelSense(sim, host, 10); sim.TrainEpoch(XgTrack.Sequence, host);
             Assert.AreEqual(1, learned);
             Assert.IsFalse(sim.OpeningFocus);
+        }
+
+        [Test]
+        public void TheOpeningComboWindowIsLongerAndEndsWithTheFocus()
+        {
+            var sim = Fresh(); var host = new Host();
+            var c = sim.Card(XgMemes.SenseDesk); sim.Answer(XgMemes.SenseDesk, c.truth, host);
+            double window = XgCatalog.Desk(XgMemes.SenseDesk).comboWindow;
+            Assert.AreEqual(window * XgSim.OpeningComboWindow, sim.S.comboTimer, 1e-6, "a new player reading a card keeps the streak");
+            var old = new XgSim { GoldChance = 0 };
+            c = old.Card(XgMemes.SenseDesk); old.Answer(XgMemes.SenseDesk, c.truth, host);
+            Assert.AreEqual(window, old.S.comboTimer, 1e-6, "outside the opening the window is the desk's own");
         }
 
         [Test]

@@ -72,6 +72,10 @@ namespace LingGuangV05.Desktop.Story
             return true;
         }
 
+        /// <summary>The note's current first step from the lab's guide (null before it has one), and the lab it was read from: <see cref="StageOneTutor"/> tells its lesson.</summary>
+        public static XgGuideStep TopStep { get; private set; }
+        public static XgSim TopSim { get; private set; }
+
         /// <summary>Adds the note next to the story presenter (once). Call from its Start().</summary>
         public static GuideNote Install(MonoBehaviour host)
         {
@@ -140,6 +144,7 @@ namespace LingGuangV05.Desktop.Story
                 return;
             }
             else steps = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House());
+            TopStep = steps.Count > 0 ? steps[0] : null; TopSim = lab.Sim;
             if (busy) { pending = steps; return; }
             Apply(steps);
         }

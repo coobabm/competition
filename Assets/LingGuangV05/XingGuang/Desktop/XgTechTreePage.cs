@@ -900,6 +900,9 @@ namespace LingGuangV05.Desktop.XingGuang
             tipLevel.text = "Lv. " + level + " / " + max + "    " + word + "</color>";
             var shownNode = next ?? e.members[e.members.Count - 1];
             body.Append(XgTechTreeCopy.Note(shownNode, Sim));
+            // 说人话: one plain closing line after the note (XgTechPlain). Rich text wraps inside the scrolling tooltip like the note.
+            if (XgTechPlain.TryGet(shownNode, out var plainZh, out var plainEn))
+                body.Append("\n<color=#E8C48A>").Append(XgTechPlain.Prefix(Sim.English)).Append(T(plainZh, plainEn)).Append("</color>");
             if (node.id == "label.raise")
                 body.Append("\n<color=#FAC775>").Append(XgCatalog.RaiseTitle(Sim.RaiseLevel, Sim.English)).Append("</color>");
             if (e.IsChain) body.Append("\n").Append(Ladder(e));

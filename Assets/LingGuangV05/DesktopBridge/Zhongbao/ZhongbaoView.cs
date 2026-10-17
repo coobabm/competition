@@ -642,6 +642,26 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (tier >= 3) Juice.HitStop(120);
         }
 
+        /// <summary>
+        /// Every streak step has its own small hit, so the very first answers already feel like a run: a ding whose pitch climbs
+        /// with the streak, a spark, and the count floating off the chip (each step up to 10, then every fifth). 3 and 5 get a
+        /// louder call-out before the first named tier at 10.
+        /// </summary>
+        void ComboStep(int combo, int tier)
+        {
+            if (!Visible || combo < 2) return;
+            var color = XgPalette.Tiers[Mathf.Clamp(tier + 1, 1, XgPalette.Tiers.Length - 1)];
+            Juice.Play(XgJuice.Sfx.Id.Ding, 1 + .035f * Mathf.Min(combo, 20), .45f);
+            Juice.Burst(Juice.At(comboChip), 4 + Mathf.Min(combo, 12), color, XgJuice.Shape.Spark, 160 + Mathf.Min(combo, 20) * 6, 300, .45f);
+            if (combo == 3 || combo == 5)
+            {
+                Juice.Float(Juice.At(comboChip, new Vector2(-30, -44)), T("连对 ×", "Streak ×") + combo + "！", XgPalette.Good, 22 + combo, 60, .9f, 1.4f);
+                Juice.Play(XgJuice.Sfx.Id.Tier, .8f + combo * .04f, .6f);
+            }
+            else if (combo < 10 || combo % 5 == 0)
+                Juice.Float(Juice.At(comboChip, new Vector2(-20, -36)), "×" + combo, color, 16 + Mathf.Min(combo, 20) * .4f, 40, .55f, 1.2f);
+        }
+
         void OnComboBroken(int was)
         {
             if (!Visible) return;
@@ -688,7 +708,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             else comboSparkTimer = 0;
             if (combo != comboShown)
             {
-                if (comboShown >= 0 && combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); }
+                if (comboShown >= 0 && combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); ComboStep(combo, tier); }
                 comboShown = combo;
                 comboNumber.text = T("连击 ", "Combo ") + combo;
                 comboMult.text = "×" + N(Sim.ComboMultiplier, "0.0#");
