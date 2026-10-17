@@ -34,7 +34,13 @@ namespace LingGuangV05.EditorTools
             return Root;
         }
 
-        public static void Disarm() => SessionState.EraseBool(ActiveKey);
+        /// <summary>Ends the isolation. Leaving Play keeps the domain, so the redirected save folder and desktop profile would
+        /// stay set for the editor's own tests: a script reload resets them.</summary>
+        public static void Disarm()
+        {
+            SessionState.EraseBool(ActiveKey);
+            if (!EditorApplication.isPlaying) EditorUtility.RequestScriptReload();
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Isolate()

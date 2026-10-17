@@ -107,6 +107,9 @@ namespace LingGuangV05.XingGuang
             var ex = BeforeAfter(1);
             Say(T("它学会分辨对错了：「" + ex.zh[0] + "」以前答「" + Bare(ex.zh[1]) + "」，现在答「" + Bare(ex.zh[2]) + "」",
                 "It can tell right from wrong now: '" + ex.en[0] + "' was " + Bare(ex.en[1]) + ", now " + Bare(ex.en[2])));
+            // The old question starts here: it gets asked again at every ability (XgSim.OldQuestion.cs).
+            Say(T("老问题「" + OldQuestionZh + "」：第一天答「" + Bare(OldAnswer(0, false)) + "」，现在答「" + Bare(OldAnswer(1, false)) + "」。以后每学会一样，再问它一遍。",
+                "The old question '" + OldQuestionEn + "': day one it said " + Bare(OldAnswer(0, true)) + ", now " + Bare(OldAnswer(1, true)) + ". Ask it again each time it learns something."));
             OfferRelicPick();
             YesNoLearned?.Invoke();
         }

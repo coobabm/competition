@@ -40,7 +40,8 @@ namespace LingGuangV05.XingGuang
             switch (ability)
             {
                 case 1: return YesNoBeforeAfter();
-                case 2: return new XgBeforeAfter("冰是烫的还是凉的？", "Is ice hot or cold?", "是。", "Yes.", "凉的。", "Cold.");
+                // Not the ice: that one is the old question (XgSim.OldQuestion.cs), shown beside this pair.
+                case 2: return new XgBeforeAfter("猫是汪汪叫还是喵喵叫？", "Does a cat go woof or meow?", "是。", "Yes.", "喵喵叫。", "Meow.");
                 case 3:
                     return FirstTrack == "vision"
                         ? new XgBeforeAfter("［一张猫的照片］这是什么？", "[A photo of a cat] What is this?", "否。", "No.", "猫。", "Cat.")
@@ -73,7 +74,7 @@ namespace LingGuangV05.XingGuang
                 }
             // Else the old rule at a coin toss, seeded so it flips: the statement is the player's own pick from the bank.
             var level1 = new List<XgPhrase>();
-            foreach (var p in XgMemes.SenseBank) if (p.level == 1) level1.Add(p);
+            foreach (var p in XgMemes.SenseBank) if (p.level == 1 && SenseKey(p.text) != SenseKey(OldQuestionZh)) level1.Add(p); // the ice is the old question
             var chosen = level1[Math.Abs(S.dataSalt) % level1.Count];
             return cachedYesNo = YesNoPair(chosen, !chosen.yes, false);
         }

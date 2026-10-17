@@ -17,11 +17,12 @@ namespace LingGuangV05.Desktop.XingGuang
     /// beat lg.emerge:N, which waits for it (the story director treats it as busy). It starts after a story cutscene on
     /// screen (the month card) has finished. Click or Esc skips; it waits while the window is hidden and never blocks
     /// the simulation. Below the curve a before/after card asks the same question twice: first the answer it gave before
-    /// it learned (greyed and struck through), then the new one (<see cref="XgSim.BeforeAfter"/>); it adds about three seconds.
+    /// it learned (greyed and struck through), then the new one (<see cref="XgSim.BeforeAfter"/>); beside it the 老问题 card puts
+/// day one's answer to the same old question next to today's, with every answer in between (<see cref="XgSim.OldQuestionPair"/>).
     /// </summary>
     public sealed class XgEmergenceCutscene : MonoBehaviour
     {
-        const float FadeSeconds = .35f, KneeAt = 1.4f, LineAt = 2.6f, BeforeAt = 3.1f, AfterAt = 4.7f, CloseAfter = 10.5f, StartDelay = .8f;
+        const float FadeSeconds = .35f, KneeAt = 1.4f, LineAt = 2.6f, BeforeAt = 3.1f, AfterAt = 4.7f, OldBeforeAt = 5.8f, OldAfterAt = 7.2f, CloseAfter = 12f, StartDelay = .8f;
 
         static XgEmergenceCutscene active;
         /// <summary>A cutscene is on screen: the story waits for it, the inner voice too.</summary>
@@ -45,11 +46,14 @@ namespace LingGuangV05.Desktop.XingGuang
         List<float> fullTrain, fullVal;
         int ability;
         float startedAt = -1, closeAt = -1, queuedAt = -1;
-        bool kneeHit, lineShown, beforeShown, afterShown;
+        bool kneeHit, lineShown, beforeShown, afterShown, oldBeforeShown, oldAfterShown;
         string spoken = "";
         RectTransform compare;
         TMP_Text compareQuestion, compareBefore, compareAfter;
         XgBeforeAfter pair;
+        RectTransform oldCard;
+        TMP_Text oldQuestion, oldBefore, oldAfter, oldTrail;
+        XgBeforeAfter oldPair;
 
         public static XgEmergenceCutscene Install(XingGuangView view, RectTransform root, TMP_FontAsset font)
         {
@@ -80,7 +84,7 @@ namespace LingGuangV05.Desktop.XingGuang
             stats = ui.Text(Rect("Stats", overlay, new Vector2(0, 1), Vector2.one, new Vector2(40, -146), new Vector2(-40, -116)), "", 16, XgCortexGraphic.N.Text, TextAlignmentOptions.MidlineLeft);
 
             // The training curve: flat, then the kink.
-            var plot = Rect("Curve", overlay, new Vector2(0, 0), new Vector2(.42f, 1), new Vector2(40, 292), new Vector2(-10, -170));
+            var plot = Rect("Curve", overlay, new Vector2(0, 0), new Vector2(.42f, 1), new Vector2(40, 322), new Vector2(-10, -170));
             Panel(plot, XgCortexGraphic.N.Glass).raycastTarget = false;
             var chartRt = Rect("Chart", plot, Vector2.zero, Vector2.one, new Vector2(10, 10), new Vector2(-10, -28));
             chart = chartRt.gameObject.AddComponent<XgChartGraphic>();
@@ -88,7 +92,7 @@ namespace LingGuangV05.Desktop.XingGuang
             ui.Text(Strip("Label", plot, 4, 22, 10, 10), T("训练曲线", "Training curve"), 13, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineLeft);
 
             // The brain, every region lit at once.
-            var map = Rect("Brain", overlay, new Vector2(.42f, 0), Vector2.one, new Vector2(10, 292), new Vector2(-40, -170));
+            var map = Rect("Brain", overlay, new Vector2(.42f, 0), Vector2.one, new Vector2(10, 322), new Vector2(-40, -170));
             Panel(map, XgCortexGraphic.N.BgBottom).raycastTarget = false;
             var brain = Rect("Cortex", map, Vector2.zero, Vector2.one, new Vector2(6, 6), new Vector2(-6, -6));
             cortex = brain.gameObject.AddComponent<XgCortexGraphic>();
@@ -106,14 +110,24 @@ namespace LingGuangV05.Desktop.XingGuang
                 cellTexts[i].enableAutoSizing = true; cellTexts[i].fontSizeMin = 10; cellTexts[i].fontSizeMax = 15;
             }
 
-            // The same question, before and after: the old answer struck through, then the new one.
-            compare = Rect("Compare", overlay, Vector2.zero, new Vector2(1, 0), new Vector2(40, 150), new Vector2(-40, 282));
+            // Left, the same question before and after this ability: the old answer struck through, then the new one.
+            compare = Rect("Compare", overlay, Vector2.zero, new Vector2(.5f, 0), new Vector2(40, 150), new Vector2(-6, 312));
             Panel(compare, XgCortexGraphic.N.Glass).raycastTarget = false;
-            compareQuestion = ui.Text(Rect("Question", compare, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-16, -8)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft);
-            compareBefore = ui.Text(Rect("Before", compare, Vector2.zero, new Vector2(.5f, 1), new Vector2(16, 8), new Vector2(-8, -54)), "", 24, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft);
-            compareAfter = ui.Text(Rect("After", compare, new Vector2(.5f, 0), Vector2.one, new Vector2(8, 8), new Vector2(-16, -54)), "", 28, XgCortexGraphic.N.Gold, TextAlignmentOptions.TopLeft);
+            compareQuestion = Fit(ui.Text(Rect("Question", compare, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-16, -8)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft), 13, 20);
+            compareBefore = Fit(ui.Text(Rect("Before", compare, Vector2.zero, new Vector2(.5f, 1), new Vector2(16, 8), new Vector2(-8, -54)), "", 22, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft), 13, 22);
+            compareAfter = Fit(ui.Text(Rect("After", compare, new Vector2(.5f, 0), Vector2.one, new Vector2(8, 8), new Vector2(-16, -54)), "", 24, XgCortexGraphic.N.Gold, TextAlignmentOptions.TopLeft), 13, 24);
             compareAfter.fontStyle = FontStyles.Bold;
             compare.gameObject.SetActive(false);
+
+            // Right, 老问题: the question it is asked at every ability, day one's answer beside today's, the ones between below.
+            oldCard = Rect("OldQuestion", overlay, new Vector2(.5f, 0), new Vector2(1, 0), new Vector2(6, 150), new Vector2(-40, 312));
+            Panel(oldCard, XgCortexGraphic.N.Glass).raycastTarget = false;
+            oldQuestion = Fit(ui.Text(Rect("Question", oldCard, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-16, -8)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft), 13, 20);
+            oldBefore = Fit(ui.Text(Rect("DayOne", oldCard, Vector2.zero, new Vector2(.36f, 1), new Vector2(16, 34), new Vector2(-8, -54)), "", 22, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft), 13, 22);
+            oldAfter = Fit(ui.Text(Rect("Now", oldCard, new Vector2(.36f, 0), Vector2.one, new Vector2(8, 34), new Vector2(-16, -54)), "", 24, XgCortexGraphic.N.Gold, TextAlignmentOptions.TopLeft), 13, 24);
+            oldAfter.fontStyle = FontStyles.Bold;
+            oldTrail = Fit(ui.Text(Rect("Trail", oldCard, Vector2.zero, new Vector2(1, 0), new Vector2(16, 6), new Vector2(-16, 32)), "", 14, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineLeft), 10, 14);
+            oldCard.gameObject.SetActive(false);
 
             line = ui.Text(Rect("Line", overlay, Vector2.zero, new Vector2(1, 0), new Vector2(40, 34), new Vector2(-220, 80)), "", 24, Color.white, TextAlignmentOptions.MidlineLeft);
             hint = ui.Text(Rect("Hint", overlay, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-220, 34), new Vector2(-40, 80)), "", 13, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineRight);
@@ -179,6 +193,8 @@ namespace LingGuangV05.Desktop.XingGuang
             else if (t >= LineAt) lineShown = true;
             if (!beforeShown && t >= BeforeAt) ShowBefore();
             if (!afterShown && t >= AfterAt) ShowAfter();
+            if (!oldBeforeShown && t >= OldBeforeAt) ShowOldBefore();
+            if (!oldAfterShown && t >= OldAfterAt) ShowOldAfter();
             if (t >= CloseAfter) closeAt = now;
         }
 
@@ -205,6 +221,42 @@ namespace LingGuangV05.Desktop.XingGuang
             view.Juice.Knock(compareAfter.rectTransform, .15f, Vector2.zero, .3f);
         }
 
+        static TMP_Text Fit(TMP_Text text, float min, float max)
+        {
+            text.enableAutoSizing = true; text.fontSizeMin = min; text.fontSizeMax = max;
+            return text;
+        }
+
+        /// <summary>The old question and what it said on day one (greyed, struck through).</summary>
+        void ShowOldBefore()
+        {
+            oldBeforeShown = true;
+            bool en = view.Sim.English;
+            oldCard.gameObject.SetActive(true);
+            oldQuestion.text = "<color=#E8C48A>" + T("老问题", "The old question") + "</color>　" + oldPair.Question(en);
+            oldBefore.text = "<size=14><color=#8494C8>" + T("第一天", "Day one") + "</color></size>\n<s>" + oldPair.Before(en) + "</s>";
+            oldAfter.text = ""; oldTrail.text = "";
+            view.Juice.Play(XgJuice.Sfx.Id.Tick);
+        }
+
+        /// <summary>Today's answer beside day one's, and every answer it gave the question in between.</summary>
+        void ShowOldAfter()
+        {
+            oldAfterShown = true;
+            if (!oldBeforeShown) ShowOldBefore();
+            var sim = view.Sim;
+            bool en = sim.English;
+            oldAfter.text = "<size=14><color=#8494C8>" + T("现在", "Now") + "</color></size>\n" + oldPair.After(en);
+            // The answers between day one and now (both are above, large); one line, so long ones are cut.
+            var trail = sim.OldAnswerTrail(ability, en);
+            trail.RemoveAt(trail.Count - 1); trail.RemoveAt(0);
+            int max = en ? 16 : 7;
+            for (int i = 0; i < trail.Count; i++) if (trail[i].Length > max) trail[i] = trail[i].Substring(0, max) + "…";
+            oldTrail.text = trail.Count == 0 ? "" : "<color=#8494C8>" + T("中间答过", "In between") + "</color>　" + string.Join("  →  ", trail);
+            view.Juice.Play(XgJuice.Sfx.Id.Click);
+            view.Juice.Knock(oldAfter.rectTransform, .15f, Vector2.zero, .3f);
+        }
+
         string Profile() => view.Sim.Profile.name.Length > 0 ? view.Sim.Profile.name : T(AppNames.AiZh, AppNames.AiEn);
 
         void Begin(int emerged)
@@ -213,7 +265,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var sim = view.Sim;
             startedAt = Time.unscaledTime; closeAt = -1; kneeHit = false; lineShown = false; beforeShown = afterShown = false;
             compare.gameObject.SetActive(false);
+            oldCard.gameObject.SetActive(false); oldBeforeShown = oldAfterShown = false;
             pair = sim.BeforeAfter(emerged);
+            oldPair = sim.OldQuestionPair(emerged);
             overlay.gameObject.SetActive(true);
             overlay.SetAsLastSibling();
             view.Juice.BringToFront();
