@@ -67,7 +67,8 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim();
             Assert.That(sim.S.vision.arch, Is.EqualTo("perceptron")); Assert.That(sim.S.sequence.arch, Is.EqualTo("perceptron"));
             Assert.That(sim.DeskOpen("logic") && sim.DeskOpen("spam"), Is.True);
-            Assert.That(sim.DeskOpen("mnist"), Is.False, "digits wait for stage two");
+            Assert.That(sim.DeskOpen("mnist"), Is.True, "digits are written by hand from chapter one");
+            Assert.That(sim.DeskOpen("arith"), Is.False, "sums wait for stage two");
             Assert.That(sim.Board.Find("logic", XgSim.SeedKey), Is.Not.Null);
             Assert.That(sim.SeedSaysYes, Is.False, "the SI planted a no");
             Assert.That(XgCatalog.Node("secret.1"), Is.Null, "the walls' secrets are gone");

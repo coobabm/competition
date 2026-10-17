@@ -1050,14 +1050,14 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// How a locked desk opens, under the current rules: arithmetic, digits and danmaku open by themselves with the second
+        /// How a locked desk opens, under the current rules: arithmetic and danmaku open by themselves with the second
         /// ability; the rest with their data pack in the tech tree, some of which also need an item first.
         /// </summary>
         public string DeskConditionText(XgDesk desk)
         {
             // The opening keeps only desks shut that have their own reason too (the starting desks are open), so that reason is shown.
             if (desk == null || ProgressionDeskAvailable(desk.id) && !OpeningLocksDesk(desk.id)) return "";
-            if ((desk.id == "arith" || desk.id == "mnist" || desk.id == "danmu") && S.stage < 2)
+            if ((desk.id == "arith" || desk.id == "danmu") && S.stage < 2)
                 return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
             var pack = XgCatalog.Node(desk.id + ".pack");
             if (pack == null) return "";

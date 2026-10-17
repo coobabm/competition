@@ -264,7 +264,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("ability", sim.SpiderDragBlocker("arith", host));
             Assert.IsFalse(sim.SpiderDragAnswer("arith", host).accepted);
             Assert.AreEqual(1000, host.money);
-            Assert.AreEqual("closed", sim.SpiderDragBlocker("mnist", host));
+            Assert.AreEqual("closed", sim.SpiderDragBlocker("danmu", host));
             var ok = WithCheckpoint("arith", .9);
             Assert.IsNull(ok.SpiderDragBlocker("arith", host));
             ok.S.residentQuiet = true;

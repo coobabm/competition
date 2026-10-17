@@ -51,7 +51,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.TrainingUnlocked(XgTrack.Vision));
             Assert.IsNull(sim.TrainEpoch(XgTrack.Vision, host), "no data, no training");
             Assert.IsFalse(sim.ContractsUnlocked);
-            CollectionAssert.AreEquivalent(new[] { "logic", "spam", "sense" }, sim.S.desksOpen);
+            CollectionAssert.AreEquivalent(new[] { "logic", "spam", "mnist", "sense" }, sim.S.desksOpen);
             sim.Tick(60, host);
             Assert.AreEqual(1000, host.money, 1e-9, "an idle lab neither earns nor bills");
             Assert.AreEqual(0, host.trained, 1e-9);

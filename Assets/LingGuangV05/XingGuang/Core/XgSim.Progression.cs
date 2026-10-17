@@ -279,7 +279,7 @@ namespace LingGuangV05.XingGuang
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
         /// <summary>Stage one opens logic, common sense and SMS spam; stage two adds arithmetic, digits and danmaku. The first-minutes focus locks all but common sense; previously opened desks remain available on load.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == XgMemes.SenseDesk || (id == "arith" || id == "mnist" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == "mnist" || id == XgMemes.SenseDesk || (id == "arith" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
 
         void ObserveProgression(XgRun run)
         {

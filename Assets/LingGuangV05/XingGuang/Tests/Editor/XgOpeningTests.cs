@@ -17,7 +17,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         /// <summary>Open with 常识判断 from the first second (2026-10-18: the opening is a run of games and combos). 算术 waits for stage two since the 2026-10-15 integration.</summary>
-        static readonly string[] Locked = { "logic", "spam" };
+        static readonly string[] Locked = { "logic", "spam", "mnist" };
 
         static XgSim Fresh()
         {
@@ -50,10 +50,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.OpeningFocus);
             Assert.IsTrue(sim.DeskOpen(XgMemes.SenseDesk));
             foreach (var id in Locked) Assert.IsTrue(sim.DeskOpen(id), id + " is open at once");
-            Assert.AreEqual(3, sim.OpenDesks().Count);
+            Assert.AreEqual(4, sim.OpenDesks().Count);
             foreach (var desk in sim.OpenDesks())
             {
-                string game = XgMiniGames.ForDesk(desk.id);
+                string game = desk.id == "mnist" ? "draw" : XgMiniGames.ForDesk(desk.id); // 手写数字 opens the handwriting pad
                 Assert.IsNotNull(game, desk.id + " opens as a game");
                 Assert.IsNull(sim.MiniGameBlocker(game), game + " can be played now");
             }

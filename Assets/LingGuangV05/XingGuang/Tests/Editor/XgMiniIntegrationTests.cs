@@ -84,7 +84,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void LockedDesksAndLateStoryCannotBeStartedById()
         {
             var s = new XgSim(); var h = new Host();
-            foreach (string id in new[] { "unknown", "draw", "turing", "qingwen", "spidersnake" })
+            foreach (string id in new[] { "unknown", "esp", "turing", "qingwen", "spidersnake" })
                 Assert.AreEqual(0, s.BeginMiniGame(id, h), id);
         }
     }

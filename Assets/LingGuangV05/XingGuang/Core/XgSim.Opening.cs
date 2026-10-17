@@ -37,7 +37,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>The note's chat step: it learned yes/no and the player has not spoken to it since.</summary>
         public bool OpeningChatDue => S.openingChatPending && S.stage == 1 && S.chatTurns <= S.openingChatBase;
 
-        /// <summary>A desk the focus keeps shut: none of the starting desks (常识判断, 垃圾短信, 逻辑题), which are open with their games.</summary>
+        /// <summary>A desk the focus keeps shut: none of the starting desks (常识判断, 垃圾短信, 逻辑题, 手写数字), which are open with their games.</summary>
         public bool OpeningLocksDesk(string desk) => S.openingFocus && !OpeningDesk(desk);
 
         /// <summary>A desk open from the first second of a new game (<see cref="XgDeskUnlock.Start"/>).</summary>
