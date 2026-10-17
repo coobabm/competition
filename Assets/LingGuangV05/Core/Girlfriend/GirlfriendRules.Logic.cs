@@ -80,7 +80,7 @@ namespace LingGuangV05.Core.Girlfriend
             if (s.orders == null) s.orders = new List<GfGiftOrder>();
             if (s.recentLines == null) s.recentLines = new List<string>();
             s.signature = s.signature ?? ""; s.signatureEn = s.signatureEn ?? ""; s.signatureKey = s.signatureKey ?? "";
-            s.asking = s.asking ?? ""; s.sulkZh = s.sulkZh ?? ""; s.sulkEn = s.sulkEn ?? "";
+            s.asking = s.asking ?? ""; s.sulkZh = s.sulkZh ?? ""; s.sulkEn = s.sulkEn ?? ""; s.arcOpen = s.arcOpen ?? "";
             s.affection = Math.Max(0, Math.Min(100, s.affection));
             s.mood = Math.Max(-3, Math.Min(3, s.mood));
         }

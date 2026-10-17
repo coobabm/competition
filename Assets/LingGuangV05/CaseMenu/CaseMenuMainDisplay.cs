@@ -237,7 +237,8 @@ namespace LingGuangV05.CaseMenu
                 {
                     foreach (var prologue in root.GetComponentsInChildren<PrologueDirector>(true))
                     { prologue.enabled = false; prologue.StopAllCoroutines(); }
-                    foreach (var source in root.GetComponentsInChildren<AudioSource>(true)) source.Stop();
+                    // The background music fades out on its own (GameMusic.FadeOutForExit) and stops itself.
+                    foreach (var source in root.GetComponentsInChildren<AudioSource>(true)) if (!LingGuangV05.Desktop.GameMusic.FadingOut(source)) source.Stop();
                     // Story subtitles/toasts live outside the LCD texture. They must not
                     // remain painted over the physical room after the monitor switches off.
                     foreach (var canvas in root.GetComponentsInChildren<Canvas>(true))

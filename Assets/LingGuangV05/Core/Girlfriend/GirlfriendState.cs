@@ -138,5 +138,8 @@ namespace LingGuangV05.Core.Girlfriend
         public string sulkZh = "", sulkEn = "";
         /// <summary>Her last lines, from the model or the library (GirlfriendLines.RecentLimit), so the fallback library does not repeat itself.</summary>
         public List<string> recentLines = new List<string>();
+        /// <summary>The side-story beat waiting for his answer (QingwenArc), and the play time the last one was sent.</summary>
+        public string arcOpen = "";
+        public double arcAt;
     }
 }

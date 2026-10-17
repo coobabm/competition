@@ -472,11 +472,15 @@ namespace LingGuangV05.Desktop.XingGuang
                     feedback.text = T("上一题：判断正确", "Last card: correct judgment")
                         + "\n" + T("答案：", "Answer: ") + truthText + " · +¥" + N(r.pay, "0.00");
                 feedbackTimer = 3f;
-                Fx.Knock(button, .12f);
-                Fx.Knock(paper, .04f, new Vector2(answer ? 26 : -26, 6), .22f);
+                // The combo hit (闪白 击退 挤压拉伸 粒子 冲击波 顿帧 震屏 拖曳). 摆渡众包's counter adds its sound, glow and
+                // count (ZhongbaoView.ComboStep); the lab's 教它 tab has no counter, so the sound is played here.
+                if (r.combo > 0 && !WorkContext) Fx.PlayCombo(r.combo);
+                if (r.combo > 0)
+                    Fx.ComboHit(at, paper, button, host.ComboChip, r.combo, new Vector2(answer ? 1 : -1, .25f),
+                        XgPalette.Tiers[Mathf.Clamp(XgSim.TierOf(r.combo) + 1, 1, XgPalette.Tiers.Length - 1)]);
+                else { Fx.Knock(button, .12f); Fx.Knock(paper, .04f, new Vector2(answer ? 26 : -26, 6), .22f); }
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 24 + Mathf.Min(10, r.combo * .3f));
                 Fx.Burst(at, 6 + Mathf.Min(14, r.combo / 3), XgPalette.Gold, XgJuice.Shape.Yen, 240);
-                Fx.Play(XgJuice.Sfx.Id.Ding, 1 + Mathf.Min(1, r.combo * .025f));
                 if (r.bounty)
                 {
                     Fx.Shockwave(at, new Color32(123, 47, 247, 255), 260, .4f, 12);
@@ -595,7 +599,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 SetBar(timerFill, k);
                 timerFill.GetComponent<Image>().color = k < .35f ? XgPalette.Bad : XgPalette.Gold;
             }
-            paperGlow.on = card.gold || Sim.S.combo >= 5;
+            paperGlow.on = card.gold || Sim.S.combo >= 3;
             paperGlow.color = card.gold ? XgPalette.Gold : XgPalette.Tiers[Mathf.Min(4, XgSim.TierOf(Sim.S.combo) + 1)] * new Color(1, 1, 1, .6f);
             paperGlow.speed = card.gold ? 12 : 5;
         }

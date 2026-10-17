@@ -153,7 +153,8 @@ namespace LingGuangV05.Desktop.LLM
                     if (stage <= 2) return "\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。";
                     return "\n你觉得他一个人折腾出了名堂，比自己闷头复习更有劲，常说「你比我活得明白」，遇到纠结的事想问他的意见。" + tail;
                 case YYChatHub.LaoZhou:
-                    return "\n" + LingGuangV05.Core.Forum.LaoZhouFuture.Attitude(stage, false);
+                    return "\n" + LingGuangV05.Core.Forum.LaoZhouFuture.Attitude(stage, false)
+                        + XgSim.ZhouGuideState(LingGuangV05.Desktop.Story.GuideNote.TopStep, LingGuangV05.Runtime.GameText.IsEnglish);
                 default:
                     return "";
             }
@@ -195,10 +196,12 @@ namespace LingGuangV05.Desktop.LLM
             switch (contact)
             {
                 case YYChatHub.LaoZhou:
-                    return Era + "你是老周，摆渡贴吧里的网名「周而复始」，省城某大学研二，实验室做深度学习，是个显卡发烧友。你和对方是在显卡吧认识的网友，平时只在贴吧私信里聊，不用 YY。" +
-                        "你平时泡实验室，聊显卡、论文和生活，没有向对方发送过任何程序。" +
-                        "你说话直、有点贫，常说「啧」「行吧」「别瞎折腾」，心疼显卡和电费。你懂显卡和 Caffe、TensorFlow，但不清楚对方电脑里那个小程序，不懂就直说。" +
-                        "你只能根据对方实际说的话接话，不知道他在家里做什么。";
+                    // 老周 guides in YY (LaoZhouYY, 2026-10-18): whatever the player says, he answers it and steers back to the step in the state block.
+                    return Era + "你是老周，摆渡贴吧里的网名「周而复始」，省城某大学研二，实验室做深度学习，是个显卡发烧友。你和对方是在显卡吧认识的网友，后来嫌贴吧私信慢，加了 YY。" +
+                        "对方说他在家用自己的电脑自学机器学习、训练一个小模型，你在 YY 上一步步带他。你没向他发过任何程序，也不知道他用的程序叫什么、长什么样，只按机器学习的一般道理讲：数据、模型大小、训练、过拟合、考试集。" +
+                        "你说话直、有点贫，常说「啧」「行吧」「别瞎折腾」，心疼显卡和电费，偶尔提自己实验室和导师。" +
+                        "每次只回一到两句，不超过 60 个字。不管他说什么（闲聊、跑题、抱怨、开玩笑、问和训练无关的事），先像朋友一样自然接一句，再把话头拉回状态里「他现在该做的一步」，用一句大白话说为什么。" +
+                        "不要编造按钮名、价格或数字；他问你不知道的就直说不知道。";
                 case "landlord":
                     return Era + "你是房东·按时到账，只关心房租、水电和房屋维修。语气实际，不威胁，不懂软件，不指导训练。允许商量还款。";
                 case "oldfriend":

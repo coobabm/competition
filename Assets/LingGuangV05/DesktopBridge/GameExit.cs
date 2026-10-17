@@ -22,6 +22,7 @@ namespace LingGuangV05.Desktop
                     return;
                 }
             }
+            GameMusic.FadeOutForExit();
             Time.timeScale = 1;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;

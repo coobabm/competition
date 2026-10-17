@@ -105,7 +105,11 @@ namespace LingGuangV05.Desktop.XingGuang
                     + (Sim.S.combo > 1 ? "  <color=#7A5AF8>" + T("连击 ×", "Combo ×") + N(Sim.ComboMultiplier, "0.00") + "</color>" : "");
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 22);
                 Fx.Burst(at, 5, XgPalette.Gold, XgJuice.Shape.Yen, 200);
-                Fx.Play(XgJuice.Sfx.Id.Ding, 1 + Mathf.Min(1, Sim.S.combo * .025f), .7f);
+                // 摆渡众包's counter plays the combo sound; elsewhere it is played here. This is the hit itself.
+                if (Sim.S.combo > 0 && !WorkContext) Fx.PlayCombo(Sim.S.combo, .7f);
+                if (Sim.S.combo > 0)
+                    Fx.ComboHit(at, paper, button, host.ComboChip, Sim.S.combo, new Vector2(yesButton ? 1 : -1, .25f),
+                        XgPalette.Tiers[Mathf.Clamp(XgSim.TierOf(Sim.S.combo) + 1, 1, XgPalette.Tiers.Length - 1)]);
             }
             else
             {

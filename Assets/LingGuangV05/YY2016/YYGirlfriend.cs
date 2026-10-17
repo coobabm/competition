@@ -106,10 +106,12 @@ namespace LingGuangV05.Desktop.YY
             foreach (var a in GirlfriendRules.Deliver(g, now)) Arrived(a);
             Finale(g, now);
             StepTyping(g);
-            if (typing == null && !generating)
+            // 支线 (YYGirlfriend.Arc.cs): a beat and the replies around it come whatever her schedule says.
+            bool here = act.Present || ArcHolds(g, now);
+            if (typing == null && !generating && !ArcTick(g, now))
             {
-                if (outbox.Count > 0 && act.Present && now.game >= holdUntilGame) StartBatch(outbox.Dequeue());
-                else if (outbox.Count == 0 && replyPending && now.game >= askAtGame && act.Present && !WaitForModel(now)) Reply(g, now, act);
+                if (outbox.Count > 0 && here && now.game >= holdUntilGame) StartBatch(outbox.Dequeue());
+                else if (outbox.Count == 0 && replyPending && now.game >= askAtGame && here && !WaitForModel(now)) Reply(g, now, act);
                 else if (outbox.Count == 0 && !replyPending) Idle(g, now, act);
             }
             if (Stage >= 5 && GirlfriendRules.Mark(g, GirlfriendRules.FlagWeekendOpen)) runtime.MarkDirty();
@@ -238,7 +240,8 @@ namespace LingGuangV05.Desktop.YY
             string[] scripted = null;
             bool ruled = false;
             Action after = null;
-            if (packet > 0)
+            if (ArcHeard(g, text, ref scripted, ref situation)) ruled = scripted != null;
+            else if (packet > 0)
             {
                 var o = GirlfriendRules.Packet(g, now, packet);
                 situation = T(o.situationZh, o.situationEn);

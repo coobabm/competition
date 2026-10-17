@@ -32,7 +32,7 @@ namespace LingGuangV05.XingGuang.Tests
             var s = XgTrack.Sequence;
             Assert.IsTrue(sim.DatasetAvailable("longtext"));
             sim.SetDataset(s, "longtext");
-            for (int i = 0; i < 30; i++) sim.TrainEpoch(s, host);
+            for (int i = 0; i < 30; i++) sim.TrainEpoch(s, host, false); // plain rounds: the hand bonus is pacing, not part of this
             Assert.That(sim.S.sequence.arch, Is.EqualTo("rnn"));
             return sim;
         }

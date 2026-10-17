@@ -34,12 +34,16 @@ namespace LingGuangV05.Core
         /// <summary>sophon.dll grows as the game goes on (§1.4): bytes for a lab stage and the cards trained so far.</summary>
         public static long SophonBytes(int stage, long cards) => 4096 + Math.Max(0, stage) * 65536L + Math.Max(0, cards) * 12L;
 
+        /// <summary>The prologue's 是 burns the machine; after the n-th repair (1-based) the card and the thought that follow it. The third and later repeat the third.</summary>
+        public static string RepairKey(int burns) => "burn_repair_" + Math.Min(3, Math.Max(1, burns));
+        public static string StillHereKey(int burns) => "m_still_" + Math.Min(3, Math.Max(1, burns));
+
         /// <summary>Lines the prologue reads; content tests check every one exists in both languages.</summary>
         public static readonly string[] Keys =
         {
             "title", "title_sub", "boot", "who_360", "bubble_boot", "virus_title", "virus_head", "virus_body", "m_virus", "m_dodge_1", "m_dodge_2", "m_dodge_3",
             "virus_ignored", "m_ignored", "m_txt", "m_txt_again", "browser", "downloading", "m_hijack", "bubble_safe", "m_grab",
-            "dialog_title", "dialog_shutdown", "yes", "no", "notepad", "txt_bios", "m_who", "shutting_down", "m_reboot", "m_reboot_exe", "rename", "open", "delete", "properties",
+            "dialog_title", "dialog_shutdown", "yes", "no", "notepad", "txt_bios", "m_who", "shutting_down", "m_reboot", "m_reboot_exe", "bsod", "burn_repair_1", "burn_repair_2", "burn_repair_3", "m_still_1", "m_still_2", "m_still_3", "rename", "open", "delete", "properties",
             "rar_trial_title", "rar_trial", "buy", "close", "extract", "txt_poem", "m_poem", "m_left", "m_number", "m_open_exe",
             "lz_first", "lz_pick_odd", "lz_pick_yes", "lz_pick_later", "lz_odd_1", "lz_odd_2", "lz_yes_1", "lz_later_1", "lz_game_2",
             "recycle", "recycle_empty", "readonly", "hidden", "prop_type", "prop_size", "prop_desc", "prop_location", "desktop_path",

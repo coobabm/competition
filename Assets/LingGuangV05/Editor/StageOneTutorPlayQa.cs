@@ -131,6 +131,12 @@ namespace LingGuangV05.EditorTools
                 var conv = tieba.S.Conversation(ForumLibrary.LaoZhou);
                 if (conv.messages.Count > 0) b.Append("\n老周 last: " + conv.messages[conv.messages.Count - 1].text + " (unread " + conv.unread + ")");
             }
+            var yy = LingGuangV05.Desktop.YY.YYChatHub.Instance;
+            if (yy != null && yy.S != null)
+            {
+                var zhou = yy.Conversation(LingGuangV05.Desktop.YY.YYChatHub.LaoZhou);
+                if (zhou.messages.Count > 0) b.Append("\n老周 YY last: " + zhou.messages[zhou.messages.Count - 1].text + (yy.ChoicesFor == LingGuangV05.Desktop.YY.YYChatHub.LaoZhou && yy.Choices != null ? " [" + string.Join(" | ", yy.Choices) + "]" : ""));
+            }
             return b.ToString();
         }
 

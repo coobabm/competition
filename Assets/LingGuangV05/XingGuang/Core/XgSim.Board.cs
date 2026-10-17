@@ -187,6 +187,12 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public const double SerialCardFactor = .25;
 
+        /// <summary>
+        /// A round pressed by hand feeds this many times the cards of an automatic one. It stands in for the training combo
+        /// (gone 2026-10-18, it was worth up to ×2), so the chapter keeps its pace.
+        /// </summary>
+        public const double HandCardFactor = 1.4;
+
         /// <summary>Cards one epoch feeds: compute, optimiser and research speed; bigger boards cost more per card.</summary>
         public int CardsPerEpoch(XgRun run, double compute, bool hand)
         {
@@ -194,8 +200,8 @@ namespace LingGuangV05.XingGuang
             var a = XgCatalog.Arch(run.arch);
             var k = Knobs(run);
             double n = 24 * Math.Pow(Math.Max(.5, compute), .7) * OptSpeed * (a == null ? 1 : a.speed) * SpeedResearch * ProgressionSpeed(run)
-                * (hand ? ComboMultiplier : 1) * (1 + RelicFx.cardsBonus) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
-                * (run.dataset == "parallel" && SerialWiring(k) ? SerialCardFactor : 1);
+                * (1 + RelicFx.cardsBonus) / Math.Sqrt(1 + k.Cells / 256.0) * (k.features ? FeaturesCardFactor : 1)
+                * (run.dataset == "parallel" && SerialWiring(k) ? SerialCardFactor : 1) * (hand ? HandCardFactor : 1);
             return (int)Math.Max(4, Math.Min(MaxCardsPerEpoch, Math.Round(n)));
         }
 

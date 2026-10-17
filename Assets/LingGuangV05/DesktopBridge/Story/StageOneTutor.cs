@@ -10,7 +10,7 @@ namespace LingGuangV05.Desktop.Story
     /// <summary>
     /// 第一阶段全程引导: when the to-do note's first step in stage one changes to one that has a lesson
     /// (<see cref="XgSim.TutorFor"/>), the protagonist thinks it through in the inner voice, and a moment later 老周 answers
-    /// in the forum's private messages in plain words. Each lesson once per save (<see cref="XgState.tutorSeen"/>). It waits
+    /// in YY in plain words, with answers to pick (LaoZhouYY; the forum's private messages when YY is not there). Each lesson once per save (<see cref="XgState.tutorSeen"/>). It waits
     /// for cutscenes, story moments, the first lesson and other inner-voice lines, and for the player to have looked at the
     /// step for a moment, so the note's new line comes first and the lesson second.
     /// </summary>
@@ -49,8 +49,12 @@ namespace LingGuangV05.Desktop.Story
             if (replyPending != null && Time.unscaledTime >= replyAt)
             {
                 var lesson = replyPending; replyPending = null;
-                var tieba = TiebaHub.Instance;
-                if (tieba != null) tieba.Receive(ForumLibrary.LaoZhou, GameText.T(lesson.zhouZh, lesson.zhouEn));
+                // 老周 now teaches in YY, with answers to pick (LaoZhouYY); the forum DM is the fallback.
+                if (!LaoZhouYY.Lesson(lesson))
+                {
+                    var tieba = TiebaHub.Instance;
+                    if (tieba != null) tieba.Receive(ForumLibrary.LaoZhou, GameText.T(lesson.zhouZh, lesson.zhouEn));
+                }
             }
             if (Time.unscaledTime < nextCheck) return;
             nextCheck = Time.unscaledTime + CheckEvery;

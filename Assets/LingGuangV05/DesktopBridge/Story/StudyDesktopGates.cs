@@ -123,8 +123,8 @@ namespace LingGuangV05.Desktop.Story
             bool fresh = open && seen.TryGetValue(feature, out bool was) && !was;
             if (fresh && !icon.gameObject.activeSelf)
             {
-                LingGuangInstallFlow.PlaceInFreeCell(icon);
                 icon.gameObject.SetActive(true);
+                DesktopIconOrder.ArrangeNow(icon); // it takes its place in the desktop's order, no gaps
                 StartCoroutine(PopIn(icon));
             }
             else if (icon.gameObject.activeSelf != open) icon.gameObject.SetActive(open);

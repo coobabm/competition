@@ -33,6 +33,7 @@ namespace LingGuangV05.Desktop.XingGuang
         sealed class Floater { public TMP_Text text; public Vector2 from; public float t, life, rise, scale; public Color color; }
         sealed class Particle { public RectTransform rt; public Graphic g; public Vector2 pos, vel, from, to; public float t, life, spin, gravity; public Color color; public bool travelling; }
         sealed class Wave { public XgRingGraphic ring; public Vector2 pos; public float t, life, radius, width; public Color color; }
+        sealed class Blink { public Image image; public float t, life, alpha; }
         sealed class Punch
         {
             public RectTransform rt;
@@ -45,6 +46,8 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<Floater> floaters = new List<Floater>();
         readonly List<Particle> particles = new List<Particle>();
         readonly List<Wave> waves = new List<Wave>();
+        readonly List<Blink> blinks = new List<Blink>();
+        readonly Dictionary<RectTransform, Blink> blinkOf = new Dictionary<RectTransform, Blink>();
         readonly Dictionary<RectTransform, Punch> punches = new Dictionary<RectTransform, Punch>();
         List<RectTransform> completedPunches;
         readonly Stack<TMP_Text> textPool = new Stack<TMP_Text>();
@@ -186,7 +189,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public enum Shape { Square, Confetti, Yen, Star, Spark }
 
-        public void Burst(Vector2 at, int count, Color color, Shape shape = Shape.Square, float speed = 260, float gravity = 600, float life = .7f)
+        public void Burst(Vector2 at, int count, Color color, Shape shape = Shape.Square, float speed = 260, float gravity = 600, float life = .7f, float scale = 1)
         {
             if (!Visible()) return;
             if (Reduced) count = Mathf.Max(1, count / 2);
@@ -202,7 +205,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 p.spin = (UnityEngine.Random.value * 2 - 1) * 720;
                 p.color = shape == Shape.Confetti ? Color.HSVToRGB(UnityEngine.Random.value, .7f, 1) : color;
                 if (glyph) ((TMP_Text)p.g).text = shape == Shape.Yen ? "¥" : "★";
-                float size = shape == Shape.Spark ? 4 + UnityEngine.Random.value * 4 : shape == Shape.Confetti ? 7 + UnityEngine.Random.value * 6 : glyph ? 18 + UnityEngine.Random.value * 10 : 5 + UnityEngine.Random.value * 6;
+                float size = (shape == Shape.Spark ? 4 + UnityEngine.Random.value * 4 : shape == Shape.Confetti ? 7 + UnityEngine.Random.value * 6 : glyph ? 18 + UnityEngine.Random.value * 10 : 5 + UnityEngine.Random.value * 6) * scale;
                 p.rt.sizeDelta = shape == Shape.Confetti ? new Vector2(size, size * .5f) : glyph ? new Vector2(40, 40) : new Vector2(size, size);
                 if (glyph) ((TMP_Text)p.g).fontSize = size;
                 p.g.color = p.color;
@@ -263,9 +266,98 @@ namespace LingGuangV05.Desktop.XingGuang
             waves.Add(new Wave { ring = ring, pos = at, t = 0, life = seconds, radius = radius, width = width, color = color });
         }
 
+        /// <summary>闪白: the element itself goes white for a moment (an overlay on it, so it moves with its knock).</summary>
+        public void FlashWhite(RectTransform rt, float seconds = .1f, float alpha = .85f)
+        {
+            if (rt == null || !Visible()) return;
+            if (!blinkOf.TryGetValue(rt, out var b) || b.image == null)
+            {
+                var go = new GameObject("Blink", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+                go.layer = rt.gameObject.layer;
+                var brt = (RectTransform)go.transform; brt.SetParent(rt, false);
+                brt.anchorMin = Vector2.zero; brt.anchorMax = Vector2.one; brt.offsetMin = brt.offsetMax = Vector2.zero;
+                go.GetComponent<LayoutElement>().ignoreLayout = true;
+                b = new Blink { image = go.GetComponent<Image>() };
+                b.image.raycastTarget = false;
+                blinkOf[rt] = b;
+            }
+            b.image.transform.SetAsLastSibling();
+            b.t = 0; b.life = seconds; b.alpha = alpha * (Reduced ? .5f : 1);
+            b.image.color = new Color(1, 1, 1, b.alpha);
+            if (!blinks.Contains(b)) blinks.Add(b);
+        }
+
+        /// <summary>拖曳: a comet of sparks from one point to another (a hit flying into the combo counter).</summary>
+        public void Trail(Vector2 from, Vector2 to, Color color, int count = 10, float seconds = .34f)
+        {
+            if (!Visible()) return;
+            count = Mathf.Clamp(Reduced ? count / 2 : count, 1, 18);
+            for (int i = 0; i < count; i++)
+            {
+                var p = imagePool.Count > 0 ? imagePool.Pop() : NewImage();
+                p.travelling = true; p.from = from; p.to = to;
+                p.pos = from; p.vel = Vector2.zero; p.gravity = 0; p.spin = 0;
+                // Each spark is a little slower than the one before: together they draw a streak with a bright head.
+                p.t = 0; p.life = seconds * (1 + i * .055f);
+                p.color = Color.Lerp(Color.white, color, Mathf.Clamp01(i / 3f));
+                float size = Mathf.Lerp(11, 3, i / (float)count);
+                p.rt.sizeDelta = new Vector2(size, size);
+                p.rt.gameObject.SetActive(true); p.rt.SetAsLastSibling();
+                p.rt.anchoredPosition = from; p.rt.localRotation = Quaternion.identity; p.g.color = p.color;
+                particles.Add(p);
+            }
+        }
+
+        /// <summary>
+        /// One right answer in a combo, at full feel: the answered card flashes white and is knocked back along
+        /// <paramref name="dir"/>, the pressed button squashes and stretches, sparks and a shockwave go off where it hit, a
+        /// short hit-stop and a screen shake land it, and a trail carries it into the counter. Everything grows with the
+        /// combo up to the 10th hit (where the sound tops out too); the sound and the counter's own pop are the counter's.
+        /// </summary>
+        public void ComboHit(Vector2 at, RectTransform struck, RectTransform pressed, RectTransform counter, int combo, Vector2 dir, Color color)
+        {
+            if (combo < 1 || !Visible()) return;
+            float k = ComboFeel(combo);
+            if (dir.sqrMagnitude < .01f) dir = Vector2.up;
+            dir.Normalize();
+            // 闪白 击退 挤压拉伸
+            FlashWhite(struck, .09f + .06f * k, .55f + .4f * k);
+            Knock(struck, .05f + .06f * k, dir * (16 + 34 * k), .22f + .1f * k);
+            Knock(pressed, .16f + .14f * k, default, .26f, squash: true);
+            // 粒子 冲击波: big sparks and stars from the card, and a second, wider ring from the 5th hit
+            Burst(at, 10 + Mathf.RoundToInt(22 * k), color, Shape.Spark, 300 + 420 * k, 380, .45f + .25f * k, 2.2f + 1.2f * k);
+            Burst(at, 2 + Mathf.RoundToInt(6 * k), Color.Lerp(Color.white, color, .4f), Shape.Star, 220 + 200 * k, 300, .6f, 1 + .5f * k);
+            Shockwave(at, new Color(color.r, color.g, color.b, .75f + .25f * k), 120 + 220 * k, .3f + .12f * k, 7 + 10 * k);
+            if (combo >= 5) Shockwave(at, new Color(1, 1, 1, .5f), 200 + 260 * k, .45f, 4);
+            // 飘字: the count itself, big, where the hit landed
+            Float(at + new Vector2(0, 70 + 20 * k), combo + T(" 连击", " hits") + (combo >= 10 ? "！" : ""), color, 30 + 26 * k, 90 + 50 * k, .7f + .2f * k, 1.7f + .7f * k);
+            // 顿帧 震屏 闪屏
+            if (combo >= 2) HitStop(30 + 60 * k);
+            Shake(3 + 9 * k, .16f + .12f * k);
+            if (combo >= 5) Flash(Color.white, .06f + .04f * k, .06f + .14f * k);
+            // 拖曳 into the counter
+            if (counter != null) Trail(at, At(counter), color, 8 + Mathf.RoundToInt(10 * k), .3f + .08f * (1 - k));
+        }
+
+        static string T(string zh, string en) => LingGuangV05.Runtime.GameText.T(zh, en);
+
+        /// <summary>0 at the first hit, 1 from the 10th: how hard a combo hit lands.</summary>
+        public static float ComboFeel(int combo) => Mathf.Clamp01((combo - 1) / (float)(Sfx.ComboSteps - 1));
+
         public void Play(Sfx.Id id, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.Play(id, pitch, volume); }
         /// <summary>Plays a recorded clip (e.g. the casino's) through the same pool, muted and hidden the same way.</summary>
         public void PlayClip(AudioClip clip, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.PlayClip(clip, pitch, volume); }
+        /// <summary>
+        /// Combo hit: the 10-step kill-streak set (Resources/XgSfx/Combo/Kill1–10, made with Tone.js in
+        /// /Users/kk/unity/tonejs-sfx), one scale step higher per hit up to the big 10th, which then plays on every hit after it.
+        /// Falls back to the old rising Ding when the clips are missing.
+        /// </summary>
+        public void PlayCombo(int combo, float volume = 1)
+        {
+            var clip = Sfx.ComboClip(combo);
+            if (clip != null) PlayClip(clip, 1, volume * Sfx.ComboGain);
+            else Play(Sfx.Id.Ding, 1 + Mathf.Min(1, combo * .025f), volume);
+        }
 
         /// <summary>Discard presentation on a closed/rebuilt tab; do not replay old particles on reopen.</summary>
         public void Clear()
@@ -275,7 +367,8 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var f in floaters) { f.text.gameObject.SetActive(false); textPool.Push(f.text); }
             foreach (var p in particles) { p.rt.gameObject.SetActive(false); (p.g is TMP_Text ? glyphPool : imagePool).Push(p); }
             foreach (var w in waves) { w.ring.gameObject.SetActive(false); ringPool.Push(w.ring); }
-            floaters.Clear(); particles.Clear(); waves.Clear();
+            foreach (var b in blinks) if (b.image != null) b.image.color = Color.clear;
+            floaters.Clear(); particles.Clear(); waves.Clear(); blinks.Clear();
         }
 
         // ───────────── update ─────────────
@@ -356,6 +449,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 w.ring.rectTransform.sizeDelta = new Vector2(d, d);
                 w.ring.Width = Mathf.Lerp(w.width, 1, k);
                 var c = w.color; c.a = (1 - k) * w.color.a; w.ring.color = c;
+            }
+
+            for (int i = blinks.Count - 1; i >= 0; i--)
+            {
+                var b = blinks[i];
+                b.t += dt;
+                float k = b.life > 0 ? b.t / b.life : 1;
+                if (b.image == null || k >= 1) { if (b.image != null) b.image.color = Color.clear; blinks.RemoveAt(i); continue; }
+                b.image.color = new Color(1, 1, 1, b.alpha * (1 - k) * (1 - k));
             }
 
             if (punches.Count > 0)
@@ -507,6 +609,22 @@ namespace LingGuangV05.Desktop.XingGuang
                 s.volume = .35f * volume;
                 s.clip = clip;
                 s.Play();
+            }
+
+            public const int ComboSteps = 10;
+            /// <summary>The kill-streak clips are about 7 dB quieter than the Ding set after import normalisation.</summary>
+            public const float ComboGain = 2.2f;
+            static AudioClip[] comboClips;
+
+            /// <summary>Clip for the given combo count (1 → step 1, 10 → step 10, 11 and on → step 10), or null if missing.</summary>
+            public static AudioClip ComboClip(int combo)
+            {
+                if (comboClips == null)
+                {
+                    comboClips = new AudioClip[ComboSteps];
+                    for (int i = 0; i < ComboSteps; i++) comboClips[i] = Resources.Load<AudioClip>("XgSfx/Combo/Kill" + (i + 1));
+                }
+                return comboClips[Mathf.Clamp(combo, 1, ComboSteps) - 1];
             }
 
             public static AudioClip Clip(Id id, int variant)

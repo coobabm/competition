@@ -6,15 +6,16 @@ using static LingGuangV05.Desktop.XingGuang.XgUi;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// 学习率 strip over the train button (XgSim.Rates.cs): 自动, then five steps around the model's safe rate, each with
-    /// what it does to speed and the chance it 炸. A pick holds until the player picks 自动 again; a round that blows up
-    /// gets the full treatment over the curve (<see cref="Exploded"/>).
+    /// 学习率 strip over the train button (XgSim.Rates.cs): six steps around the model's safe rate (three bigger, the safe
+    /// one, two smaller), each with what it does to speed and the chance it 炸. No 自动 since 2026-10-18: an untouched
+    /// line sits on the safe step 刚好. A pick holds until the player picks another; a round that blows up gets the full
+    /// treatment over the curve (<see cref="Exploded"/>).
     /// </summary>
     public sealed partial class XgTrainPage
     {
         const float RateStripHeight = 44, RateStripGap = 6;
         RectTransform rateStrip;
-        readonly XgBtn[] rateBtns = new XgBtn[1 + 5];
+        readonly XgBtn[] rateBtns = new XgBtn[6];
 
         void BuildRates()
         {
@@ -29,7 +30,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var b = ui.Button(row, "", () => PickRate(slot), 14);
                 b.rt.anchorMin = new Vector2(i / (float)rateBtns.Length, 0); b.rt.anchorMax = new Vector2((i + 1) / (float)rateBtns.Length, 1);
                 b.rt.offsetMin = new Vector2(2, 0); b.rt.offsetMax = new Vector2(-2, 0);
-                b.rt.gameObject.name = i == 0 ? "RateAuto" : "RateStep" + XgSim.RateNotches[i - 1];
+                b.rt.gameObject.name = "RateStep" + XgSim.RateNotches[i];
                 b.label.richText = true;
                 b.label.alignment = TextAlignmentOptions.Center;
                 b.label.enableAutoSizing = true; b.label.fontSizeMin = 9; b.label.fontSizeMax = 14;
@@ -40,12 +41,12 @@ namespace LingGuangV05.Desktop.XingGuang
             UiTip.Add(title.rectTransform, () => RateTip());
         }
 
-        static int NotchOf(int slot) => slot <= 0 ? 0 : XgSim.RateNotches[slot - 1];
+        static int NotchOf(int slot) => XgSim.RateNotches[Mathf.Clamp(slot, 0, XgSim.RateNotches.Length - 1)];
 
         void PickRate(int slot)
         {
             var run = Sim.Run(Track);
-            if (run.epochActive || !Sim.SetRate(Track, NotchOf(slot), slot == 0))
+            if (run.epochActive || !Sim.SetRate(Track, NotchOf(slot), false))
             {
                 Fx.Play(XgJuice.Sfx.Id.Thud, 1, .5f);
                 view.ShowToast(T("这一轮练完才能换学习率。", "Change the rate after this round."), 2.5f);
@@ -61,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else
             {
                 Fx.Play(XgJuice.Sfx.Id.Clack, 1, .6f);
-                Fx.Float(at, slot == 0 ? T("自动：最大的不炸步子", "Auto: the biggest safe step") : NotchOf(slot) < 0 ? T("稳，但慢", "Steady, but slow") : T("刚好不炸", "Just short of tearing"), XgDark.Good, 14, 36, .9f);
+                Fx.Float(at, NotchOf(slot) < 0 ? T("稳，但慢", "Steady, but slow") : T("刚好不炸", "Just short of tearing"), XgDark.Good, 14, 36, .9f);
             }
             Fx.Knock(rateBtns[slot].rt, .08f);
             Refresh();
@@ -72,17 +73,16 @@ namespace LingGuangV05.Desktop.XingGuang
             if (rateStrip == null) return;
             rateStrip.gameObject.SetActive(unlocked);
             if (!unlocked) return;
-            int chosen = run.autoLr ? 0 : 1 + System.Array.IndexOf(XgSim.RateNotches, Sim.RateNotch(run));
+            int chosen = System.Array.IndexOf(XgSim.RateNotches, run.autoLr ? 0 : Sim.RateNotch(run));
             bool locked = run.epochActive;
             for (int i = 0; i < rateBtns.Length; i++)
             {
                 int notch = NotchOf(i);
-                double tear = i == 0 ? 0 : Sim.TearChanceAt(notch);
-                Color tone = i == 0 ? XgDark.Accent : tear >= .5 ? XgDark.Bad : tear > 0 ? XgDark.Money : notch == 0 ? XgDark.Good : XgDark.Params;
+                double tear = Sim.TearChanceAt(notch);
+                Color tone = tear >= .5 ? XgDark.Bad : tear > 0 ? XgDark.Money : notch == 0 ? XgDark.Good : XgDark.Params;
                 bool on = i == chosen;
-                string head = i == 0 ? T("自动", "Auto") : Sim.RateShownText(run, notch);
-                string sub = i == 0 ? T("不会炸 ×1", "never blows up ×1")
-                    : Sim.RateTierName(notch) + " ×" + N(XgSim.RateGainAt(notch), "0.0#")
+                string head = Sim.RateShownText(run, notch);
+                string sub = Sim.RateTierName(notch) + " ×" + N(XgSim.RateGainAt(notch), "0.0#")
                       + (tear > 0 ? " · " + T("炸 ", "blow-up ") + N(tear * 100, "0") + "%" : notch == 0 ? T(" · 不炸", " · no blow-up") : XgSim.RateSteadyAt(notch) <= 0 ? T(" · 不退步", " · never drops") : T(" · 少退步", " · fewer drops"));
                 rateBtns[i].Set("<b>" + head + "</b>\n<size=70%>" + sub + "</size>", !locked || on,
                     on ? Color.Lerp(XgDark.Card, tone, .62f) : Color.Lerp(XgDark.Card, tone, .12f),
@@ -94,10 +94,10 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var run = Sim.Run(Track);
             int notch = NotchOf(slot);
-            if (slot == 0) return T("自动：每轮用这个模型「刚好不炸」的学习率（" + Sim.RateShownText(run, 0) + "）。永远不会炸。", "Auto: each round uses this model's largest safe rate (" + Sim.RateShownText(run, 0) + "). It never blows up.");
             double tear = Sim.TearChanceAt(notch);
             string s = T("学习率 ", "Rate ") + Sim.RateShownText(run, notch) + "\n" + T("学得快慢：×", "Learning speed: ×") + N(XgSim.RateGainAt(notch), "0.#");
-            if (tear > 0) s += "\n" + T("每轮炸的概率：", "Chance each round blows up: ") + N(tear * 100, "0") + "%" + T("。炸了这一轮白练，模型退回一截，连击清零。", ". A blow-up wastes the round, sets the model back and ends the combo.");
+            if (tear > 0) s += "\n" + T("每轮炸的概率：", "Chance each round blows up: ") + N(tear * 100, "0") + "%" + T("。炸了这一轮白练，模型退回一截。", ". A blow-up wastes the round and sets the model back.");
+            else if (notch == 0) s += "\n" + T("这个模型「刚好不炸」的最大步子，没动过的话就是这一格。", "The biggest step this model takes without blowing up; a line you never touched sits here.");
             else if (notch < 0) s += "\n" + (XgSim.RateSteadyAt(notch) <= 0 ? T("这一档不会退步：稳稳地慢慢涨。", "This step never drops: slow and steady.") : T("退步的概率降到 ", "Drop chance down to ") + N(XgSim.RateSteadyAt(notch) * 100, "0") + "%");
             s += "\n" + T(notch > 0 ? "高风险高回报。" : notch < 0 ? "低风险低回报。" : "", notch > 0 ? "High risk, high return." : notch < 0 ? "Low risk, low return." : "");
             return s;

@@ -135,6 +135,9 @@ namespace LingGuangV05.Desktop.Story
             return clip.length;
         }
 
+        /// <summary>A recorded line is being spoken (the background music steps back for it).</summary>
+        public static bool Speaking => source != null && source.isPlaying;
+
         /// <summary>Stops a line cut off by a cutscene or a skip.</summary>
         public static void Stop()
         {

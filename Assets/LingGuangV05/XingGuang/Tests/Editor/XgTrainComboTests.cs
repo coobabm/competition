@@ -3,8 +3,8 @@ using NUnit.Framework;
 namespace LingGuangV05.XingGuang.Tests
 {
     /// <summary>
-    /// The hand-training combo across rounds that take seconds (XgSim.TrainPace.cs): the 1.5 s window counts from the end
-    /// of a round and holds while a hand round runs, so pressing 训练一轮 again promptly keeps it.
+    /// Training has no combo (2026-10-18): a round pressed by hand neither adds to the combo nor holds its timer, so a
+    /// combo built by labeling fades while the bar runs, as it would anywhere else.
     /// </summary>
     public sealed class XgTrainComboTests
     {
@@ -37,47 +37,28 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void PromptPressesKeepTheComboAcrossLongRounds()
+        public void HandRoundsDoNotBuildACombo()
         {
             var sim = Ready(); var host = new Host();
-            int combo = 0;
             for (int i = 0; i < 5; i++)
             {
                 Assert.That(sim.BeginEpoch(XgTrack.Vision, host, true), Is.True, "round " + i);
-                Assert.That(sim.S.vision.epochDuration, Is.GreaterThan(XgSim.EpochComboWindow), "a round outlasts the window");
                 Land(sim, host);
-                // +1 a round (+5 more when its assessment sets a record by hand).
-                Assert.That(sim.S.combo, Is.GreaterThan(combo), "round " + i + " adds to the combo");
-                combo = sim.S.combo;
-                sim.Tick(.5, host); // a moment to press again
+                Assert.That(sim.S.combo, Is.Zero, "round " + i + " adds nothing to the combo");
+                sim.Tick(.5, host);
             }
+            Assert.That(sim.S.clicks, Is.GreaterThanOrEqualTo(5), "the presses still count as clicks");
         }
 
         [Test]
-        public void TheWindowCountsFromTheEndOfTheRound()
+        public void AHandRoundDoesNotHoldALabelingCombo()
         {
             var sim = Ready(); var host = new Host();
-            sim.BeginEpoch(XgTrack.Vision, host, true);
-            Land(sim, host);
-            int combo = sim.S.combo;
-            Assert.That(combo, Is.GreaterThan(0));
-            Assert.That(sim.HandRoundRunning, Is.False);
-            sim.Tick(XgSim.EpochComboWindow - .2, host);
-            Assert.That(sim.S.combo, Is.EqualTo(combo), "still inside the window after the round");
-            sim.Tick(.4, host);
-            Assert.That(sim.S.combo, Is.Zero, "waiting past the window breaks it");
-        }
-
-        [Test]
-        public void AnAutomaticRoundDoesNotHoldTheTimer()
-        {
-            var sim = Ready(); var host = new Host();
-            sim.BeginEpoch(XgTrack.Vision, host, true);
-            Land(sim, host);
-            Assert.That(sim.BeginEpoch(XgTrack.Vision, host, false), Is.True);
-            Assert.That(sim.HandRoundRunning, Is.False);
-            sim.Tick(XgSim.EpochComboWindow + .1, host);
-            Assert.That(sim.S.combo, Is.Zero, "only a hand round holds the combo");
+            sim.S.combo = 7; sim.S.comboTimer = 1;
+            Assert.That(sim.BeginEpoch(XgTrack.Vision, host, true), Is.True);
+            Assert.That(sim.HandRoundRunning, Is.True);
+            sim.Tick(1.2, host);
+            Assert.That(sim.S.combo, Is.Zero, "the combo fades while the round runs");
         }
     }
 }

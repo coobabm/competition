@@ -120,6 +120,8 @@ namespace LingGuangV05.Desktop.Story
             StartCoroutine(Music2016.Install());
             // Background music: the music app's 灵光 playlist, track 1 on repeat at 60 %.
             GameMusic.Install(gameObject);
+            // The desktop icons stay packed in order as stage gates hide and show them.
+            DesktopIconOrder.Install(gameObject);
             // The 2016 tray crowd next to the clock, and the stage-6 flicker (design v1.1 §3, §10.2 #8).
             TrayApps.Install();
             TrayLingGuang.Install();
@@ -128,6 +130,7 @@ namespace LingGuangV05.Desktop.Story
             GuideNote.Install(this);
             // 第一阶段全程引导: each step of the note in stage one comes with a thought and 老周's plain-words answer.
             StageOneTutor.Install(this);
+            LaoZhouYY.Install(this);
             // Inner-voice lines wait while a story cutscene, the prologue or a flash card covers the screen.
             InnerVoice.Hold = InnerVoiceHeld;
             // The opening quiet window (OpeningQuiet): ambient popups wait out the prologue and the first ability.

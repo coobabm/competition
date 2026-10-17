@@ -68,7 +68,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgSim.EpochSeconds, host.trained, 1e-9);
             Assert.Greater(sim.S.vision.valAcc, before);
             Assert.IsTrue(e.assessment != null && e.assessment.record, "every round ends with an exam, and the first one is a record");
-            Assert.AreEqual(1 + 5, sim.S.combo, "a hand press is a hit, and a record adds five more");
+            Assert.AreEqual(0, sim.S.combo, "training has no combo");
             sim.Tick(30, host);
             Assert.AreEqual(1, sim.S.vision.epoch, "nothing trains on its own");
         }
@@ -90,7 +90,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void ComboRaisesTheMultiplierUpToTwo()
         {
             var sim = WithPack("mnist"); var host = new Host();
-            for (int i = 0; i < 31; i++) sim.TrainEpoch(XgTrack.Vision, host, true);
+            sim.S.combo = 31;
             Assert.AreEqual(2, sim.ComboMultiplier, 1e-9, "capped at ×2");
             Assert.Greater(sim.S.combo, 30);
         }
@@ -481,9 +481,14 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = WithPack("mnist"); var host = new Host();
             var tiers = new List<int>(); sim.ComboTier += tiers.Add;
-            Label(sim, "mnist", 5, host);
-            for (int i = 0; i < 5; i++) sim.TrainEpoch(XgTrack.Vision, host);
-            Assert.GreaterOrEqual(sim.S.combo, 10, "labels and epochs feed one combo");
+            bool teach = sim.S.teachMode;
+            sim.S.teachMode = false; // plain labeling: every right answer is a hit (a wrong model guess would break it)
+            Label(sim, "mnist", 12, host);
+            sim.S.teachMode = teach;
+            Assert.GreaterOrEqual(sim.S.combo, 10, "labels build the combo");
+            int combo = sim.S.combo;
+            for (int i = 0; i < 5; i++) sim.TrainEpoch(XgTrack.Vision, host, true);
+            Assert.LessOrEqual(sim.S.combo, combo, "training adds nothing to it");
             CollectionAssert.Contains(tiers, 0);
             sim.Tick(5, host);
             Assert.AreEqual(0, sim.S.combo, "idle too long");

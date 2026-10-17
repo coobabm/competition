@@ -286,15 +286,21 @@ namespace LingGuangV05.Desktop.Story
             dialog.SetAsLastSibling(); // the question stays on top until it is answered
             Think(L("m_who"), 5);
 
-            // Step 5: 是 / 否. Only 否 goes on.
-            while (shutdownAnswer < 0) yield return null;
-            if (shutdownAnswer == 1)
+            // Step 5: 是 / 否. Only 否 goes on. 是 burns the machine (0.txt said not to); after a long repair the desktop
+            // comes back, it is still there, and it asks again — as many times as the player says 是.
+            int burns = 0;
+            while (true)
             {
-                SetStep("shutdown-exit");
-                Release();
-                run = null;
-                LingGuangV05.Desktop.GameExit.ReturnToTitle();
-                yield break;
+                while (shutdownAnswer < 0) yield return null;
+                if (shutdownAnswer != 1) break;
+                burns++;
+                SetStep("shutdown-burn");
+                Close(ref dialog);
+                yield return BurnAndRepair(burns);
+                yield return ThinkAndWait(L(Prologue.StillHereKey(burns)), 1.2f);
+                SetStep("shutdown");
+                shutdownAnswer = -1;
+                AskShutdownAgain();
             }
             Close(ref dialog);
 

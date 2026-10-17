@@ -46,6 +46,20 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
+        public void SayingYesBurnsTheMachineAndEachRepairSaysSoAgain()
+        {
+            var lines = Lines();
+            StringAssert.Contains("漫长的维修", lines.Get(Prologue.RepairKey(1), false));
+            StringAssert.Contains("他怎么还在", lines.Get(Prologue.StillHereKey(1), false));
+            Assert.AreNotEqual(lines.Get(Prologue.RepairKey(1), false), lines.Get(Prologue.RepairKey(2), false), "the second repair is another one");
+            Assert.AreEqual(Prologue.RepairKey(3), Prologue.RepairKey(9), "from the third on it repeats");
+            Assert.AreEqual(Prologue.StillHereKey(3), Prologue.StillHereKey(9));
+            for (int burns = 1; burns <= 3; burns++)
+                foreach (var key in new[] { Prologue.RepairKey(burns), Prologue.StillHereKey(burns) })
+                    Assert.IsTrue(System.Array.IndexOf(Prologue.Keys, key) >= 0, key + " is checked with the rest");
+        }
+
+        [Test]
         public void TheSentenceBecomesAxisTargetsAndToneWords()
         {
             var p = PrologueProfile.Read("嘴硬心软，爱吐槽");

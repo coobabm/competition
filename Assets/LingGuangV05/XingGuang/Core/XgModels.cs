@@ -29,7 +29,7 @@ namespace LingGuangV05.XingGuang
         public string arch = "", dataset = "";
         public int depth = 2, width, lr = 3;
         public bool autoLr = true;
-        /// <summary>The player's learning-rate step relative to the safe rate (−2…2), used when not <see cref="autoLr"/> (XgSim.Rates.cs).</summary>
+        /// <summary>The player's learning-rate step relative to the safe rate (−2…3), used when not <see cref="autoLr"/> (XgSim.Rates.cs).</summary>
         public int rateNotch;
         public double steps, trainAcc, valAcc;
         /// <summary>Epochs trained, epochs since the last assessment, assessments in a row without a record.</summary>

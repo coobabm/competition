@@ -636,7 +636,7 @@ namespace LingGuangV05.XingGuang
             AutoConfigure(run, host);
             string blocker = Blocker(run, host);
             if (blocker != null) { if (hand) Say(blocker); return null; }
-            if (hand) { Hit(EpochComboWindow, 1); S.clicks++; }
+            if (hand) S.clicks++; // training has no combo (2026-10-18): the streak belongs to labelling
             int cards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
             // A rate the player set too big may tear the round (XgSim.Rates.cs); 自动 never rolls.
             double tearChance = TearChance(run);
@@ -729,7 +729,6 @@ namespace LingGuangV05.XingGuang
                 b.modelId = entry.id; a.modelId = entry.id;
                 S.records++;
                 run.staleEvals = 0;
-                if (hand) Hit(EpochComboWindow, 5);
             }
             for (int g = 1; g <= a.grade; g++)
             {
@@ -960,7 +959,7 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── combo ─────────────
 
-        /// <summary>A round pressed by hand is on the bar: the combo timer waits for it (it restarts when the round lands).</summary>
+        /// <summary>A round pressed by hand is on the bar.</summary>
         public bool HandRoundRunning => S.vision.epochActive && S.vision.epochHand || S.sequence.epochActive && S.sequence.epochHand;
 
         void Hit(double window, int amount)
@@ -1472,8 +1471,8 @@ namespace LingGuangV05.XingGuang
             TickDataSources(dt, host);
             TickFlywheel(dt, host);
             RelicTick(dt);
-            // 网吧通宵卡: the combo timer holds, so the combo does not fade. So does a hand round on the bar (rounds take seconds now).
-            if (S.comboTimer > 0 && !RelicFx.comboKeep && !HandRoundRunning)
+            // 网吧通宵卡: the combo timer holds, so the combo does not fade. Training has no combo (2026-10-18): a round on the bar neither holds nor feeds it.
+            if (S.comboTimer > 0 && !RelicFx.comboKeep)
             {
                 S.comboTimer = Math.Max(0, S.comboTimer - dt);
                 if (S.comboTimer <= 0) BreakCombo();

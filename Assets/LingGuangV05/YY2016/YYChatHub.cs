@@ -143,8 +143,9 @@ namespace LingGuangV05.Desktop.YY
         /// Since the prologue (design v1.1) 老周 is a forum friend (§9): only saves from before it still chat with him here.
         /// The AI is a contact once it has joined YY, shortly after its setup at stage 1 (AiJoinsYy, design 女友系统与YY里的AI §5).
         /// </summary>
+        /// <summary>老周 shows up on a new save once he has written in YY (LaoZhouYY); old saves always had him.</summary>
         public bool IsVisible(YYContact c) => c != null && (!c.hidden || (c.id == LingGuangId && S.lingguangUnlocked))
-            && !(c.id == LaoZhou && runtime != null && runtime.Sim != null && runtime.Sim.S.prologue != 0);
+            && !(c.id == LaoZhou && runtime != null && runtime.Sim != null && runtime.Sim.S.prologue != 0 && Conversation(LaoZhou).messages.Count == 0);
 
         const int MaxHistory = 200;
         /// <summary>Contacts with a reply on the way, and when it may start (a short "reading" pause).</summary>
@@ -300,6 +301,7 @@ namespace LingGuangV05.Desktop.YY
             if (AnswerQuiz(id, text)) return;
             if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
+            if (id == LaoZhou && LaoZhouHeard != null && LaoZhouHeard(text)) return;
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
             float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
@@ -315,6 +317,9 @@ namespace LingGuangV05.Desktop.YY
         string scriptFor;
 
         public void Offer(string id, string[] choices) { ChoicesFor = id; Choices = choices; Changed?.Invoke(); }
+
+        /// <summary>老周's guide (LaoZhouYY): sees the player's line to him first; true when it answered with a scripted reply.</summary>
+        public Func<string, bool> LaoZhouHeard;
 
         readonly Dictionary<string, string[]> standing = new Dictionary<string, string[]>();
 
@@ -434,7 +439,7 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return Lang.T("在实验室呢，晚点回你。你说的那个我没用过，别把电脑折腾坏了就行。");
+                case LaoZhou: return XgSim.ZhouSteer(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish);
                 case "landlord":
                     {
                         // The landlord softens as the tenant proves himself: on time, no fuss, then plainly fond of him.

@@ -151,8 +151,8 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildExam();
             for (int i = 0; i < 2; i++)
                 UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n手动按会叠连击（学得更多）；刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
-                "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nPressing by hand builds combo (it learns more); a new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
+            UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
+                "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nA new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
             UiTip.Add(summary.rt, () => ModelTip());
             UiTip.Add(risk, () => RiskTip());
             UiTip.Add(numbers, () => NumbersTip());
@@ -255,7 +255,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if ((XgTrack)e.track != Track) return;
             Fx.Knock(train.rt, .1f, new Vector2(0, -4));
             Fx.Burst(Fx.At(gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
-            Fx.Play(XgJuice.Sfx.Id.Fan, 1 + Mathf.Min(.8f, Sim.S.combo * .02f), .8f);
+            Fx.Play(XgJuice.Sfx.Id.Fan, 1, .8f);
             Refresh();
         }
 
@@ -301,8 +301,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 chartArea.anchoredPosition = chartRestPosition + (Fx.Reduced || !Sim.LastEpochWasHand ? Vector2.zero : new Vector2(UnityEngine.Random.Range(-6f, 6f), 0));
                 if (glitch <= 0) { numbers.color = XgDark.Ink; chartArea.anchoredPosition = chartRestPosition; Refresh(); }
             }
-            trainGlow.on = Sim.TrainingUnlocked(Track) && !run.epochActive && Sim.S.combo >= 10;
-            trainGlow.color = XgDark.Tiers[Mathf.Min(4, XgSim.TierOf(Sim.S.combo) + 1)] * new Color(1, 1, 1, .7f);
+            trainGlow.on = false; // training has no combo
         }
 
         public bool AssessmentBlocksInput => cardT >= 0 && cardBig && assessmentLayer.gameObject.activeSelf;
@@ -469,7 +468,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
             train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
-            trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) + (Sim.S.combo > 0 ? Lang.T(" · 连击 ×") + N(Sim.ComboMultiplier, "0.00") : "") : Lang.T("先标够样本");
+            trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) : Lang.T("先标够样本");
             RefreshBill(run, unlocked);
             RefreshRates(run, unlocked);
             assess.Show(false);
@@ -541,7 +540,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (run.staleEvals >= XgSim.StaleHintEpochs) return Sim.StaleHint(run);
             if (Sim.Memorizing(run)) return T("两条线分开了：练过的题它都会，新题不会，它在背答案。多标数据、买数据包或用 Dropout，两条线就会靠拢。",
                 "The lines have parted: it knows its practice cards but not new ones, so it is memorising. More labels, a data pack or Dropout bring them together.");
-            return T("参数和样本够，就一直往上涨；连击越高，每轮涨得越多（最多 ×2）。", "With enough parameters and samples it keeps rising; a higher combo gains more per round (up to ×2).");
+            return T("参数和样本够，就一直往上涨。", "With enough parameters and samples it keeps rising.");
         }
 
         /// <summary>The model in one line (structure · parameters · VRAM) and the save button; the rest of the old model card is in <see cref="ModelTip"/>.</summary>
