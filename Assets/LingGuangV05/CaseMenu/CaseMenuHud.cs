@@ -176,6 +176,8 @@ namespace LingGuangV05.CaseMenu
         public void ShowSettings(float volume, bool reduceMotion, bool fullscreen)
         {
             if (settingsGroup == null) return;
+            ClosePlayerHelp(false);
+            RefreshPlayerHelpEntry();
             volumeSlider.SetValueWithoutNotify(Unit(volume));
             reduceMotionToggle.SetIsOnWithoutNotify(reduceMotion);
             fullscreenToggle.SetIsOnWithoutNotify(fullscreen);
@@ -196,6 +198,7 @@ namespace LingGuangV05.CaseMenu
         public void HideSettings()
         {
             if (settingsGroup == null) return;
+            ClosePlayerHelp(false);
             if (IsSettingsOpen && EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(null);
             settingsGroup.interactable = false;
@@ -283,6 +286,7 @@ namespace LingGuangV05.CaseMenu
             fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
             var lifeEvents = BuildLifeEventsSetting(card.rectTransform);
+            var playerHelp = BuildPlayerHelpEntry(card.rectTransform);
             var returnImage = Panel("Return", card.transform, Control, true);
             Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -557), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
@@ -292,7 +296,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(returnLabel.rectTransform);
             returnLabel.alignment = TextAlignmentOptions.Midline;
             var escape = Label("EscapeHint", card.transform, "ESC 关闭", 14, Muted);
-            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(320, 34));
+            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(180, 34));
             escape.alignment = TextAlignmentOptions.MidlineRight;
             var saved = Label("SaveHint", card.transform, "设置即时保存，不会重置游戏进度", 14, Muted);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
@@ -303,8 +307,9 @@ namespace LingGuangV05.CaseMenu
             Link(fullscreenToggle, reduceMotionToggle, quality);
             Link(quality, fullscreenToggle, fps);
             Link(fps, quality, lifeEvents);
-            Link(lifeEvents, fps, returnButton);
-            Link(returnButton, lifeEvents, volumeSlider);
+            Link(lifeEvents, fps, playerHelp);
+            Link(playerHelp, lifeEvents, returnButton);
+            Link(returnButton, playerHelp, volumeSlider);
             HideSettings();
         }
 

@@ -11,7 +11,7 @@ namespace LingGuangV05.XingGuang
         public static readonly System.Collections.Generic.Dictionary<string, int> FeatureUnlock = new System.Collections.Generic.Dictionary<string, int>
         {
             { "power", 1 }, { "vram", 3 }, { "shop", 2 }, { "data", 3 },
-            { "crowd", 4 }, { "quality", 4 }, { "outsourcing", 4 },
+            { "crowd", 3 }, { "quality", 4 }, { "outsourcing", 4 },
             { "flywheel", 5 }, { "casino", 5 }, { "games", 1 } // 2026-10-18: 游戏中心 from chapter one
         };
         public bool SystemUnlocked(string id) => !S.gradualSystems || !FeatureUnlock.TryGetValue(id, out int stage) || S.stage >= stage;
@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
                 // 老周 no longer introduces pages (design v1.1 §9: he only answers), so pages open with the progress itself.
                 case "train": return TrainingUnlocked(XgTrack.Vision) || TrainingUnlocked(XgTrack.Sequence);
                 case "tree": return S.treeIntroDelivered || migrated || S.paidAssessmentReached || S.best.Count > 0 || S.trainedParamsK > 0;
-                case "contracts": return S.stage >= 4 && S.best.Exists(b => Grade(BestScore(b.dataset)) >= 1);
+                case "contracts": return S.stage >= 3;
                 case "repo": return S.best.Count > 0;
                 case "board": return UseBoard;
                 // The album opens with the first card.

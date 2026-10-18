@@ -95,13 +95,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var page=Sim.QueryTeachingNotes(csvOffset,50);csvTotal=page.total;
             if(page.total==0)return EmptyRecords;
-            var b=new StringBuilder(T("记录ID,游戏时间,题目,玩家答案,题目标签,AI答案\n","Record ID,Game time,Question,Player answer,Question label,AI answer\n"));
+            var b=new StringBuilder(T("记录ID,游戏时间,题目,记录答案,题目标签,AI答案,答案来源\n","Record ID,Game time,Question,Recorded answer,Question label,AI answer,Answer source\n"));
             foreach(var n in page.records)
             {
                 if(n==null)continue;
                 b.Append(n.id).Append(',').Append(Csv(Sim.LearningTimestamp(Sim.LearningRecord(n.learningRecordId)))).Append(',').Append(Csv(T(n.text,n.textEn))).Append(',')
                     .Append(Csv(string.IsNullOrEmpty(n.answerText)?T(n.playerAnswer?"是":"否",n.playerAnswer?"Yes":"No"):n.answerText)).Append(',')
-                    .Append(Csv(T(n.truth?"是":"否",n.truth?"Yes":"No"))).Append(',').AppendLine(Csv(n.aiAnswer));
+                    .Append(Csv(T(n.truth?"是":"否",n.truth?"Yes":"No"))).Append(',').Append(Csv(n.aiAnswer)).Append(',').AppendLine(Csv(n.answerSource));
             }
             return b.ToString();
         }
@@ -109,12 +109,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var page=Sim.QueryLearningRecords(new XgLearningQuery{offset=csvOffset,limit=50});csvTotal=page.total;
             if(page.total==0)return EmptyRecords;
-            var b=new StringBuilder(T("记录ID,来源类型,题库,题目,玩家答案,AI答案,纠正,游戏时间\n","Record ID,Source kind,Bank,Question,Player answer,AI answer,Correction,Game time\n"));
+            var b=new StringBuilder(T("记录ID,来源类型,题库,题目,记录答案,AI答案,纠正,游戏时间,答案来源\n","Record ID,Source kind,Bank,Question,Recorded answer,AI answer,Correction,Game time,Answer source\n"));
             foreach(var n in page.records)
             {
                 if(n==null)continue;
                 b.Append(n.id).Append(',').Append(Csv(n.sourceKind)).Append(',').Append(Csv(n.bankId)).Append(',').Append(Csv(T(n.question,n.questionEn))).Append(',').Append(Csv(n.playerAnswer)).Append(',')
-                    .Append(Csv(n.aiAnswer)).Append(',').Append(Csv(n.correction)).Append(',').AppendLine(Csv(Sim.LearningTimestamp(n)));
+                    .Append(Csv(n.aiAnswer)).Append(',').Append(Csv(n.correction)).Append(',').Append(Csv(Sim.LearningTimestamp(n))).Append(',').AppendLine(Csv(n.answerSource));
             }
             return b.ToString();
         }
@@ -126,8 +126,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         string NoteText(XgTeachingNote n)
         {
-            return T("游戏时间：","Game time: ")+Sim.LearningTimestamp(Sim.LearningRecord(n.learningRecordId))+"\n"+T(n.text,n.textEn)+"\n\n"+T("你的答案：","Your answer: ")
-                +(string.IsNullOrEmpty(n.answerText)?T(n.playerAnswer?"是":"否",n.playerAnswer?"Yes":"No"):n.answerText)
+            return T("游戏时间：","Game time: ")+Sim.LearningTimestamp(Sim.LearningRecord(n.learningRecordId))+"\n"+T(n.text,n.textEn)+"\n\n"+Sim.TeachingAnswerSummary(n)
                 +"\n"+T("题目标签：","Question label: ")+T(n.truth?"是":"否",n.truth?"Yes":"No")
                 +(string.IsNullOrEmpty(n.aiAnswer)?"":"\n"+Sim.AiDisplayName+": "+n.aiAnswer)
                 +"\n\n"+T(n.why,n.whyEn);

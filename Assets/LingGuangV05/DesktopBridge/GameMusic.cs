@@ -23,6 +23,9 @@ namespace LingGuangV05.Desktop
         readonly MusicMix mix = new MusicMix();
         bool ready, started, wasPlaying, exited;
         float userVolume = DefaultVolume, lastSet = -1;
+        readonly LingGuangV05.XingGuang.XgDailyPlayback dailyPlayback = new LingGuangV05.XingGuang.XgDailyPlayback();
+        LingGuangV05.XingGuang.XgSim dailyMusicLab;
+        AudioClip dailyClip;
 
         public static GameMusic Install(GameObject host)
         {
@@ -90,7 +93,7 @@ namespace LingGuangV05.Desktop
             source.Stop();
             mix.Cut();
         }
-        void OnDisable() { if (instance == this) instance = null; }
+        void OnDisable() { dailyPlayback.Reset(); dailyMusicLab = null; dailyClip = null; if (instance == this) instance = null; }
 
         IEnumerator Start()
         {
@@ -138,12 +141,22 @@ namespace LingGuangV05.Desktop
             // Repeat-one is the source's own loop, so it holds while the window (and its playback loop) is closed.
             source.loop = manager.repeat && !manager.shuffle;
             bool playing = source.isPlaying;
+            var currentLab = LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
+            if (!ReferenceEquals(currentLab, dailyMusicLab)) { dailyPlayback.Reset(); dailyMusicLab = currentLab; dailyClip = null; }
+            // A loop's wrap is also a natural completion, before observing the new start.
+            if (playing && source.loop && dailyClip == source.clip && source.time < .15f && dailyPlayback.Complete(Time.unscaledDeltaTime))
+                dailyMusicLab?.RecordDailySongCompleted(dailyPlayback.Song, dailyPlayback.Ticket);
+            if (dailyClip != source.clip) { dailyPlayback.Reset(); dailyClip = source.clip; }
+            if (source.clip != null) dailyPlayback.Observe(source.clip.name, source.time, source.clip.length, Time.unscaledDeltaTime, playing);
             // One resident owner advances both open and closed windows. A natural end can
             // report isPlaying=false before the streaming time resets to zero, so do not
             // gate the falling edge on source.time. Explicit Pause/Stop clears the request.
             if (wasPlaying && !playing && manager.PlaybackRequested && !AudioListener.pause
                 && source.enabled && source.gameObject.activeInHierarchy)
             {
+                if (dailyClip == source.clip && dailyPlayback.Complete(Time.unscaledDeltaTime))
+                    dailyMusicLab?.RecordDailySongCompleted(dailyPlayback.Song, dailyPlayback.Ticket);
+                dailyPlayback.Reset(); dailyClip = null;
                 wasPlaying=false; // consume this completion before starting the next clip
                 manager.NextTrack();playing=source.isPlaying;
             }
@@ -179,6 +192,20 @@ namespace LingGuangV05.Desktop
             if (musicWindow != null) musicWindow.onOpen.RemoveListener(OnMusicOpened);
             if (manager != null) manager.externalPlaylistAdvance=false;
             if (instance == this) instance = null;
+        }
+
+        /// <summary>Read only the already-playing music source into a caller-owned power-of-two buffer.
+        /// No song seeking, loading, playlist changes, generated BPM or scene searches.</summary>
+        public static bool TryReadMusicOutput(float[] buffer, out AudioClip clip, out float position)
+        {
+            clip = null; position = 0;
+            var music = instance;
+            if (music == null || !music.isActiveAndEnabled || !music.ready || !music.started || music.exited || buffer == null || buffer.Length < 64 || (buffer.Length & (buffer.Length - 1)) != 0) return false;
+            var audio = music.source;
+            if (audio == null || !audio.enabled || !audio.gameObject.activeInHierarchy || !audio.isPlaying || audio.clip == null || audio.mute || audio.volume <= .001f || AudioListener.pause || AudioListener.volume <= .001f) return false;
+            try { audio.GetOutputData(buffer, 0); clip = audio.clip; position = audio.time; return true; }
+            catch (System.InvalidOperationException) { return false; }
+            catch (UnityException) { return false; }
         }
 
         /// <summary>The player's volume (the app's slider writes the source directly) times the fade and the duck.</summary>

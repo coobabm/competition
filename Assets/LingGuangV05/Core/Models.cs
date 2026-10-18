@@ -33,6 +33,8 @@ namespace LingGuangV05.Core
         public LingGuangV05.Core.Story.StoryState story = new LingGuangV05.Core.Story.StoryState();
         /// <summary>灵光 lab progress (XgState as JSON). Additive: older saves load with an empty lab.</summary>
         public string labState = "";
+        /// <summary>Optional local ending lineage; older saves have no pre-choice checkpoint.</summary>
+        public string endingCheckpointId = "", endingBranchId = "";
         /// <summary>YY chat history (YYState as JSON). Additive: older saves load with an empty chat.</summary>
         public string chatState = "";
         /// <summary>摆渡贴吧 private messages and posts (Core.Forum.ForumState as JSON). Additive.</summary>

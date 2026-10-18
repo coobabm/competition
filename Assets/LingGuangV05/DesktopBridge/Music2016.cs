@@ -51,7 +51,7 @@ namespace LingGuangV05.Desktop
         };
 
         public static readonly string[] Extensions = { ".mp3", ".ogg", ".wav" };
-        public static string Folder => Path.Combine(Application.persistentDataPath, "Music2016");
+        public static string Folder => LingGuangV05.Runtime.Persistence.VerificationSavePaths.MusicDirectory ?? Path.Combine(Application.persistentDataPath, "Music2016");
 
         /// <summary>Finds the native music player and adds the playlist once the clips are loaded.</summary>
         public static IEnumerator Install()

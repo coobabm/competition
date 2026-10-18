@@ -1586,3 +1586,11 @@ Original period-inspired teaching illustrations, 2026-10-18:
 - teach_meme_power_original.png: original generic smiling mascot celebrating effort; evokes the 2016 "洪荒之力" phrase without any athlete image or likeness. Game-date gate 2016-08-08.
 Created for this game with original procedural vector drawing code draw_original_memes.py. No third-party images, photographs, fonts, or stock art used. In-game use/export permitted as project-original assets; source retained in integration staging.
 These are minigame illustrations only; not substitutes for the 13 group-chat photographs.
+
+Ending trial photographs / 终局试炼照片：
+See ENDING_TRIAL_PHOTO_CREDITS.txt in this directory for all five sources, authors, licenses and image modifications.
+五张照片的作者、来源、许可与修改说明见本目录 ENDING_TRIAL_PHOTO_CREDITS.txt。
+
+Group-chat photo illustrations / 群聊情景照片配图：
+See GROUP_CHAT_PHOTO_CREDITS.txt for the three licensed photographs used to illustrate fictional group chats, with original authors, source dates, license links and modifications. These are not newly AI-generated images.
+三张照片用于虚构群聊情节配图，并非本轮AI生成。作者、原图日期、来源、许可和改动见本目录 GROUP_CHAT_PHOTO_CREDITS.txt。

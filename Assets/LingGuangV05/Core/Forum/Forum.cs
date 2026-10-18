@@ -190,6 +190,7 @@ namespace LingGuangV05.Core.Forum
     public sealed class ForumState
     {
         public int version = 1;
+        public LaoZhouQaState laoZhouQa = new LaoZhouQaState();
         public List<ForumConversation> conversations = new List<ForumConversation>();
         /// <summary>Topics already asked of 老周 ("topic#count"): the first answer gives a direction, a repeat explains.</summary>
         public List<string> asked = new List<string>();

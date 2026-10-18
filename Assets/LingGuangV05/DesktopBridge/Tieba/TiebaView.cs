@@ -20,7 +20,7 @@ namespace LingGuangV05.Desktop.Tieba
     /// pages, the player's own page and old posts, and private messages. It lives in the desktop's spare native
     /// Reminder window, renamed and re-iconed at runtime; the scene and DreamOS assets are not changed.
     /// </summary>
-    public sealed class TiebaView : MonoBehaviour
+    public sealed partial class TiebaView : MonoBehaviour
     {
         public const string NativeWindow = "Reminder";
         static readonly Color Blue = new Color32(56, 120, 230, 255), BlueDark = new Color32(36, 92, 196, 255), Page = new Color32(243, 245, 248, 255);
@@ -187,6 +187,7 @@ namespace LingGuangV05.Desktop.Tieba
             nextRefresh = Time.unscaledTime + .5f;
             var c = hub.Context();
             string now = view + "|" + arg + "|" + c.stage + "|" + c.today.ToString("MMdd") + "|" + Count() + "|" + hub.IsTyping(arg) + "|" + (hub.Choices != null) + "|" + GameText.IsEnglish + "|" + (c.helpPosted ? (int)(c.secondsSinceHelp / 10) : -1) + "|" + DataRequestKey();
+            now += "|" + LingGuangV05.Desktop.Story.XgPublicDiscourseDesktop.Stamp;
             if (now != signature) { signature = now; Redraw(); }
         }
 
@@ -233,6 +234,8 @@ namespace LingGuangV05.Desktop.Tieba
             NewScroll(main, Vector2.zero);
             switch (view)
             {
+                case "board.club": DrawBoardClub(); break;
+                case "public.discourse": DrawPublicDiscourse(arg); break;
                 case "board": DrawBoard(c, arg); break;
                 case "thread": DrawThread(c, arg); break;
                 case "era": DrawEra(arg); break;
@@ -345,6 +348,8 @@ namespace LingGuangV05.Desktop.Tieba
 
         void DrawHome(ForumContext c)
         {
+            BoardClubRow();
+            PublicDiscourseHome();
             Line(Card(new Color32(255, 250, 230, 255)), "<b>" + Lang.T("今日热议") + "</b>  " + c.today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture), 17, Ink);
             int n = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.Tieba, c.today))
@@ -411,11 +416,28 @@ namespace LingGuangV05.Desktop.Tieba
                 AuthorLine(card, author, head, 16, Link, author == ForumLibrary.Me ? (Action)(() => Go("mine", "")) : () => Go("user", author));
                 if (v == FloorView.Deleted) Line(card, Lang.T("该楼层已被删除"), 17, Muted);
                 else if (v == FloorView.Folded) Line(card, Lang.T("该楼层疑似违规已被系统折叠"), 17, Muted);
-                else Line(card, T(f.text, f.textEn), 18, Ink);
+                else
+                {
+                    string text=T(f.text,f.textEn);
+                    if(TiebaHub.Lab()?.DailyDataLinkHighlight==true)
+                        text=text.Replace(LingGuangV05.XingGuang.XgSim.MnistSourceUrl,"<mark=#FFF0A080>"+LingGuangV05.XingGuang.XgSim.MnistSourceUrl+"</mark>");
+                    Line(card,text,18,Ink);
+                }
                 string sign = user != null && user.sign.Length > 0 && v == FloorView.Shown ? "\n<size=13><color=#A0A6B0>—— " + T(user.sign, user.signEn) + "</color></size>" : "";
                 Line(card, "<color=#A0A6B0>" + floor + Lang.T(" 楼") + "</color>" + sign, 13, Muted);
             }
+            DrawZhouLocalRecord("thread:" + id);
             DiscussionLink("thread:" + id);
+        }
+
+        // This is a local reminder, never a public post or evidence of a public reply.
+        void DrawZhouLocalRecord(string id)
+        {
+            var first = hub.ZhouQa?.first;
+            if (id != LaoZhouQuestions.DiscussionId || first == null || first.channel != "yy" || first.choice < 1 || first.choice > 3) return;
+            var card = Card(new Color32(244, 246, 250, 255));
+            Line(card, GameText.T("已在 YY 聊过 · 仅自己可见", "Discussed in YY · Only visible to you"), 15, Muted);
+            Line(card, GameText.T("你已在 YY 回复过这个问题。你的选择：", "You answered this question in YY. Your choice:") + "\n" + LaoZhouQuestions.Choices(1, GameText.IsEnglish)[first.choice - 1], 17, Ink);
         }
 
         void DiscussionLink(string id)
@@ -476,10 +498,14 @@ namespace LingGuangV05.Desktop.Tieba
 
         void DrawChat(ForumContext c, string id)
         {
+            var renderedState = hub.S;
+            var renderedSimulation = hub.runtime.Sim;
+            bool StillCurrent() => ReferenceEquals(hub.S, renderedState) && ReferenceEquals(hub.runtime.Sim, renderedSimulation);
             var conv = hub.Conversation(id);
             if (LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) hub.MarkSeen(id);
-            bool choices = hub.Choices != null && hub.ChoicesFor == id;
-            float bottom = choices ? 120 : 76;
+            var offered = hub.ChoicesFor == id && hub.Choices != null ? hub.Choices : hub.ZhouChoices(id);
+            bool choices = offered != null && offered.Length > 0;
+            float bottom = choices ? 80 + offered.Length * 64 : 76;
             var header = PrologueDesk.Rect("Header", main, new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero);
             PrologueDesk.Fill(header, Color.white);
             Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (id == ForumLibrary.LaoZhou && !(hub.S != null && hub.S.zhouGone) ? "  <size=14><color=#8A90A0>" + Lang.T("（老周）") + "</color></size>" : "") + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
@@ -488,6 +514,7 @@ namespace LingGuangV05.Desktop.Tieba
             if (TiebaHub.IsDiscussion(id)) {
                 Line(Card(), "← 返回原帖", 16, Link, () => Go(id.StartsWith("thread:") ? "thread" : "era", id.Substring(id.IndexOf(':') + 1)));
                 Line(Card(), hub.DiscussionContext(id), 16, Muted);
+                DrawZhouLocalRecord(id);
             }
             DateTime lastDay = DateTime.MinValue;
             foreach (var m in conv.messages)
@@ -497,7 +524,7 @@ namespace LingGuangV05.Desktop.Tieba
                 if (when.Date != lastDay) { lastDay = when.Date; Line(Card(new Color(0, 0, 0, 0)), "<align=center><color=#A0A6B0>" + Date(when) + "</color></align>", 13, Muted); }
                 bool mine = m.from == ForumLibrary.Me;
                 var card = Card(mine ? new Color32(220, 235, 255, 255) : Color.white);
-                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : TiebaHub.IsDiscussion(id) ? "热心吧友" : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
+                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : TiebaHub.IsDiscussion(id) && m.from != ForumLibrary.LaoZhou ? "热心吧友" : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
                 Line(card, m.text, 17, Ink);
             }
             var bar = PrologueDesk.Rect("Input", main, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, bottom));
@@ -505,15 +532,14 @@ namespace LingGuangV05.Desktop.Tieba
             if (choices)
             {
                 float x = 12;
-                foreach (var choice in hub.Choices)
+                foreach (var choice in offered)
                 {
                     string text = choice;
-                    float w = 30 + text.Length * (GameText.IsEnglish ? 8f : 16f);
-                    var rt = PrologueDesk.Rect("Choice", bar, new Vector2(0, 1), new Vector2(0, 1), new Vector2(x, -40), new Vector2(x + w, -8));
+                    var rt = PrologueDesk.Rect("Choice", bar, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -x-54), new Vector2(-12, -x));
                     var img = PrologueDesk.Fill(rt, Blue);
-                    var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img; b.onClick.AddListener(() => hub.Send(id, text));
+                    var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img; b.onClick.AddListener(() => { if (StillCurrent()) hub.Send(id, text); });
                     Text(PrologueDesk.Rect("Text", rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), text, 15, Color.white, TextAlignmentOptions.Center);
-                    x += w + 10;
+                    x += 64;
                 }
             }
             var box = PrologueDesk.Rect("Field", bar, Vector2.zero, new Vector2(1, 0), new Vector2(12, 12), new Vector2(-130, 64));
@@ -526,10 +552,10 @@ namespace LingGuangV05.Desktop.Tieba
             input = box.gameObject.AddComponent<TMP_InputField>();
             input.textViewport = area; input.textComponent = textLabel; input.placeholder = placeholder; input.fontAsset = font; input.pointSize = 16;
             input.characterLimit = NativeLaoZhouReplies.MaxInputLength; input.lineType = TMP_InputField.LineType.SingleLine; input.richText = false;
-            input.onSubmit.AddListener(_ => SendTyped(id));
+            input.onSubmit.AddListener(_ => { if (StillCurrent()) SendTyped(id); });
             var send = PrologueDesk.Rect("Send", bar, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-118, 12), new Vector2(-12, 64));
             var sendImg = PrologueDesk.Fill(send, Blue);
-            var sb = send.gameObject.AddComponent<Button>(); sb.targetGraphic = sendImg; sb.onClick.AddListener(() => SendTyped(id));
+            var sb = send.gameObject.AddComponent<Button>(); sb.targetGraphic = sendImg; sb.onClick.AddListener(() => { if (StillCurrent()) SendTyped(id); });
             Text(PrologueDesk.Rect("Text", send, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Lang.T("发送"), 17, Color.white, TextAlignmentOptions.Center);
         }
 

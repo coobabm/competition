@@ -174,7 +174,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 foreach(var file in Sim.S.dataFiles)
                 {
-                    string name=FileName(file.dataset,file.nodeId);
+                    string name=Sim.BoardDataFileName(file.fileId)??FileName(file.dataset,file.nodeId);
                     string state=file.installed?T("已安装","Installed"):T("待安装","Ready to install");
                     string size=file.sizeMB>0 ? "\n"+XgSim.SizeText(file.sizeMB):"";
                     AddRow(index++,file.fileId,name+"  ·  "+state,name+"\n"+state+size,Sim.DataFileReady(file.fileId),false);

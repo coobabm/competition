@@ -112,7 +112,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>The questions it may have about a book (empty for none).</summary>
-        public static XgBookPuzzle[] Puzzles(string bookId) => bookId != null && puzzles.TryGetValue(bookId, out var list) ? list : new XgBookPuzzle[0];
+        public static XgBookPuzzle[] Puzzles(string bookId) => bookId != null && puzzles.TryGetValue(bookId, out var list) ? list : LibraryPuzzles(bookId);
 
         /// <summary>A question by id ("xiyouji.0"), and its book; null when unknown.</summary>
         public static XgBookPuzzle Puzzle(string id, out XgBook book)

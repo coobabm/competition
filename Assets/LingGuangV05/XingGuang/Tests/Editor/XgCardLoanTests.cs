@@ -72,6 +72,7 @@ namespace LingGuangV05.XingGuang.Tests
 
             var hosted = Lab(1.25);
             hosted.DesktopHosted = true;
+            hosted.CardLoanContactAvailable = true;
             Assert.That(hosted.ChapterSceneHolds, Is.True);
             Assert.That(hosted.TakeExam(), Is.Null);
             Assert.That(hosted.CardLoanStart(1), Has.Count.EqualTo(3));
@@ -139,14 +140,26 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void HeAsksDifferentlyOnceHeKnows()
+        public void HeNeverInfersCardCountOrSecretsFromPrivateState()
         {
-            var sim = Lab(1.25);
-            Assert.That(sim.CardLoanStart(2).Last()[0], Does.Contain("2 张卡"));
-            var told = Lab(1.25); told.S.zhouKnows = true;
-            Assert.That(told.CardLoanStart(1).Last()[0], Does.Contain("程序"));
-            told.CardLoanTourDone();
-            Assert.That(told.CardLoanDecide(false, new RigHost(1))[0][0], Does.Contain("离不了卡"));
+            var sim=Lab(1.25);var told=Lab(1.25);told.S.zhouKnows=true;
+            Assert.AreEqual(sim.CardLoanStart(2).Last()[0],told.CardLoanStart(1).Last()[0]);
+            StringAssert.Contains("有空闲显卡吗",sim.CardLoanStart(2).Last()[0]);
+        }
+
+        [Test]
+        public void NoAcceptedContactNeverLocksTheExamOrClearsLoanProgress()
+        {
+            var sim=Lab(1.25);sim.DesktopHosted=true;
+            Assert.IsFalse(sim.CardLoanHolds);
+            Assert.IsNotNull(sim.TakeExam());
+            foreach(int step in new[]{1,2,3})
+            {
+                sim.S.clStep=step;sim.CardLoanContactAvailable=false;
+                Assert.IsFalse(sim.CardLoanHolds);Assert.AreEqual(step,sim.S.clStep);
+                sim.CardLoanContactAvailable=true;
+                Assert.AreEqual(step<3,sim.CardLoanHolds);
+            }
         }
 
         [Test]

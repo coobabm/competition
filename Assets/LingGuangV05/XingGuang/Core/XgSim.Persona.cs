@@ -389,6 +389,7 @@ namespace LingGuangV05.XingGuang
         public string PersonaTone()
         {
             var sb = new StringBuilder();
+            if(DailyConsiderateTag) sb.Append(T("已启用体贴表达：注意对方感受；不代替玩家许诺、送礼或声称做过未发生的事。", "Considerate style enabled: acknowledge feelings; never promise, send gifts or claim unperformed actions for the player. "));
             sb.Append(T("你实际的倾向："));
             for (int axis = 0; axis < 3; axis++) sb.Append(T(AxisNames[axis], AxisNamesEn[axis])).Append(ActualAxis(axis).ToString("0", CultureInfo.InvariantCulture)).Append(axis < 2 ? "、" : "。");
             foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「")).Append(w).Append(T("」强度 ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }

@@ -36,7 +36,7 @@ namespace LingGuangV05.Desktop.YY
         Action<YYFace> onFace;
         Action<YYSticker> onSticker;
         Action<GameObject> focus;
-        bool stickersTab;
+        bool stickersTab, helperTab;
 
         public bool IsOpen => panel != null && panel.gameObject.activeSelf;
 
@@ -76,7 +76,8 @@ namespace LingGuangV05.Desktop.YY
         {
             for (int i = panel.childCount - 1; i >= 0; i--) Destroy(panel.GetChild(i).gameObject);
             body = PrologueDesk.Rect("Body", panel, Vector2.zero, Vector2.one, new Vector2(0, TabHeight), Vector2.zero);
-            if (stickersTab) BuildStickers(); else BuildFaces();
+            if(helperTab&&LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.DailySlangHelp==true)BuildDailyHelper();
+            else if (stickersTab) BuildStickers(); else BuildFaces();
             BuildTabs();
         }
 
@@ -165,8 +166,32 @@ namespace LingGuangV05.Desktop.YY
         {
             var bar = PrologueDesk.Rect("Tabs", panel, Vector2.zero, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-1, TabHeight));
             PrologueDesk.Fill(bar, TabBar, false);
-            Tab(bar, 0, Lang.T("☺ 默认"), !stickersTab, () => { stickersTab = false; Rebuild(); });
-            Tab(bar, 1, Lang.T("斗图"), stickersTab, () => { stickersTab = true; Rebuild(); });
+            Tab(bar, 0, Lang.T("☺ 默认"), !stickersTab, () => { helperTab=false; stickersTab = false; Rebuild(); });
+            Tab(bar, 1, Lang.T("斗图"), stickersTab&&!helperTab, () => { helperTab=false; stickersTab = true; Rebuild(); });
+            if(LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.DailySlangHelp==true)
+                Tab(bar,2,GameText.T("帮我挑","Help choose"),helperTab,()=>{helperTab=true;Rebuild();});
+        }
+
+        void BuildDailyHelper()
+        {
+            Label(body,GameText.T("选一种意思，看看适合用哪张。","Choose a meaning to see a matching sticker."),Pad,Pad,13,Ink);
+            var selected=YYStickers.Find("666");
+            var caption=Label(body,"",Pad,115,14,Ink);
+            var explanation=Label(body,"",Pad,143,12,Muted);
+            var sendHint=Label(body,GameText.T("到斗图页点图发送；此处不会发送。","Open Stickers to send; this helper sends nothing."),Pad,181,12,Muted);
+            Action<string,string,string> suggest=(id,zh,en)=>
+            {
+                if(LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.DailySlangHelp!=true)return;
+                selected=YYStickers.Find(id);
+                if(selected==null||!selected.AvailableOn(today!=null?today():DateTime.MinValue))return;
+                caption.text=GameText.T("建议：","Suggestion: ")+selected.Caption(GameText.IsEnglish);
+                explanation.text=GameText.T(zh,en);
+            };
+            var choices=PrologueDesk.Rect("Meanings",body,new Vector2(0,1),new Vector2(1,1),new Vector2(0,-76),new Vector2(0,-46));
+            Tab(choices,0,GameText.T("夸一句","Praise"),false,()=>suggest("666","666：表示佩服、夸对方厉害。","666: praise for an impressive move."));
+            Tab(choices,1,GameText.T("围观","Watching"),false,()=>suggest("chigua","吃瓜：表示围观，不是亲历或作证。","Eating melon: watching, not claiming firsthand knowledge."));
+            Tab(choices,2,GameText.T("无奈","Exasperated"),false,()=>suggest("zuile","醉了：常是无奈吐槽，不一定喝了酒。","Drunk on this: exasperation, not necessarily alcohol."));
+            suggest("666","666：表示佩服、夸对方厉害。","666: praise for an impressive move.");
         }
 
         void Tab(RectTransform bar, int index, string label, bool on, Action click)

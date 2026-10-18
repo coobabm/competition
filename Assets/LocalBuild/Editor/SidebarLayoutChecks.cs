@@ -24,6 +24,9 @@ using HongmengOS.Aero2010;
 [InitializeOnLoad]
 public static class SidebarLayoutChecks
 {
+    const int AppAcquisitionActualUiHookVersion=1;
+    const int ZhongbaoBusinessHookVersion=1;
+    const int PublicReadingInteractionHookVersion=1;
     const string Key="SidebarLayoutChecks.Root";
     const BindingFlags Flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
     static string Root=>SessionState.GetString(Key,"");
@@ -44,7 +47,8 @@ public static class SidebarLayoutChecks
     static int index=-1,phase,lastFrame=-1,frames;
     static double timeout;
     static bool finishing;
-    static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck,learningCheck;
+    static IEnumerator publicReadingInteractionCheck;
+    static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck,learningCheck,zhouCheck,bookCheck,moleCheck,endingCheck,discourseCheck,prerequisitesCheck,zhongbaoBusinessCheck,appAcquisitionCheck;
     const string LearningKey="SidebarLayoutChecks.LearningOnly";
     public static void RunLearning(){SessionState.SetBool(LearningKey,true);Run();}
     const string FilesKey="SidebarLayoutChecks.FilesOnly";
@@ -74,6 +78,8 @@ public static class SidebarLayoutChecks
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]static void Isolate()
     {
         if(string.IsNullOrEmpty(Root))return;
+        LaoZhouQuestionsUiChecks.PrepareInput();
+        BookLibraryUiChecks.PrepareInput();
         ChapterOneRuntime.VerificationSaveDirectory=Path.Combine(Root,"Save");
         typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
         SceneManager.sceneLoaded+=DisableModel;
@@ -96,7 +102,9 @@ public static class SidebarLayoutChecks
         {
             EditorApplication.update-=Tick;Application.logMessageReceived-=Log;SceneManager.sceneLoaded-=DisableModel;
             string path=Root;bool ok=File.Exists(Path.Combine(path,"passed.txt"));SessionState.EraseString(Key);ChapterOneRuntime.VerificationSaveDirectory=null;
-            Debug.Log("Training lessons "+(ok?"PASS":"FAIL/INTERRUPTED")+": "+path);if(Application.isBatchMode)EditorApplication.Exit(ok?0:1);
+            try{LaoZhouQuestionsUiChecks.RestoreEditor();BookLibraryUiChecks.RestoreEditor();}
+            catch(Exception e){ok=false;Debug.LogError("LZ1 editor restore failed: "+e);}
+            finally{Debug.Log("Training lessons "+(ok?"PASS":"FAIL/INTERRUPTED")+": "+path);if(Application.isBatchMode)EditorApplication.Exit(ok?0:1);}
         }
     }
     static void Log(string message,string stack,LogType type)
@@ -154,6 +162,87 @@ public static class SidebarLayoutChecks
                 if(++frames<3)return;
                 EnableFixtureEconomy(runtime);
                 ctl.Open();ctl.View.Open("train");train=ctl.View.Train;originalStoryProbe=StoryFocus.Probe;
+                if(PublicReadingInteractionUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope=PublicReadingInteractionUiChecks.Scope;
+                    publicReadingInteractionCheck=PublicReadingInteractionUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Public reading interaction LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+240;phase=20;frames=0;return;
+                }
+                if(AppAcquisitionActualUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope=AppAcquisitionActualUiChecks.Scope;
+                    appAcquisitionCheck=AppAcquisitionActualUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"App acquisition actual LCD "+filename);report.screenshots.Add(filename);Save();},elapsedDelayFixtures:true);
+                    timeout=EditorApplication.timeSinceStartup+900;phase=19;frames=0;return;
+                }
+                if(ZhongbaoBusinessUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope=ZhongbaoBusinessUiChecks.Scope;
+                    zhongbaoBusinessCheck=ZhongbaoBusinessUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Zhongbao business actual LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+360;phase=18;frames=0;return;
+                }
+                if(MoleReviewUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="C5 isolated Main: actual LCD review/auto controls, generated calculus rendered, explicit additional time steps alongside normal view updates, explicit human teaching; no claim of arithmetic generalization.";
+                    moleCheck=MoleReviewUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"C5 actual LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+180;phase=14;frames=0;return;
+                }
+                if(EndingIntegrationUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="Ending integration: isolated explicit prerequisite fixtures, native mailbox pointer interaction, protocol failure/retry and real SaveNow bridge checks. Not a natural full ending.";
+                    endingCheck=EndingIntegrationUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Ending actual LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+240;phase=15;frames=0;return;
+                }
+                if(PublicDiscourseUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="Public discourse: actual bilingual native archives and saved source clicks, explicit date and publication fixtures; not a natural ending or real online activity.";
+                    discourseCheck=PublicDiscourseUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Public discourse LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+480;phase=16;frames=0;return;
+                }
+                if(EndingPrerequisitesActualUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope=EndingPrerequisitesActualUiChecks.Scope;
+                    prerequisitesCheck=EndingPrerequisitesActualUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Ending prerequisites LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+600;phase=17;frames=0;return;
+                }
+                if(BookLibraryUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="C4 isolated Main: actual library/read-window/YY LCD clicks, explicit stage/elapsed-reading/fault fixtures, real disk snapshots; model disabled, no natural-progression or inference claim.";
+                    bookCheck=BookLibraryUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"C4 actual LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+480;phase=13;frames=0;return;
+                }
+                if(LaoZhouQuestionsUiChecks.Requested)
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="LZ1 isolated Main: real LCD pointer clicks, explicit stage/reading/focus fixtures, real JsonUtility disk snapshots and same-size save swaps; no model, no natural-progression claim.";
+                    zhouCheck=LaoZhouQuestionsUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"LZ1 actual LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+480;phase=12;frames=0;return;
+                }
                 if(SessionState.GetBool(LearningKey,false))
                 {
                     locale=GameText.Bind(()=>language);
@@ -183,6 +272,81 @@ public static class SidebarLayoutChecks
                     phase=8;frames=0;return;
                 }
                 phase=1;frames=0;return;
+            }
+            if(phase==20)
+            {
+                if(publicReadingInteractionCheck.MoveNext())return;
+                (publicReadingInteractionCheck as IDisposable)?.Dispose();publicReadingInteractionCheck=null;
+                report.checks.AddRange(PublicReadingInteractionUiChecks.Checks);
+                report.checks.Add("Public reading interaction UI assertions: "+PublicReadingInteractionUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Three imported-photo display fixtures and notifier interaction fixtures passed; inspect scope and screenshots");Finish();return;
+            }
+            if(phase==19)
+            {
+                if(appAcquisitionCheck.MoveNext())return;
+                (appAcquisitionCheck as IDisposable)?.Dispose();appAcquisitionCheck=null;
+                report.checks.AddRange(AppAcquisitionActualUiChecks.Checks);
+                report.checks.Add("App acquisition actual UI assertions: "+AppAcquisitionActualUiChecks.AssertionCount);
+                report.status="passed";Save();
+                const string marker="App acquisition actual LCD fixtures passed; six scripts and real downloads/install clicks. Natural eligibility waits including 180/240 seconds skipped; inspect report scope and screenshots.";
+                File.WriteAllText(Path.Combine(Root,"app-acquisition-actual-ui.txt"),marker);
+                File.WriteAllText(Path.Combine(Root,"passed.txt"),marker);Finish();return;
+            }
+            if(phase==18)
+            {
+                if(zhongbaoBusinessCheck.MoveNext())return;
+                (zhongbaoBusinessCheck as IDisposable)?.Dispose();zhongbaoBusinessCheck=null;
+                report.checks.AddRange(ZhongbaoBusinessUiChecks.Checks);
+                report.checks.Add("Zhongbao business UI assertions: "+ZhongbaoBusinessUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Zhongbao actual business UI fixtures passed; not natural acquisition/training/progression");Finish();return;
+            }
+            if(phase==17)
+            {
+                if(prerequisitesCheck.MoveNext())return;
+                (prerequisitesCheck as IDisposable)?.Dispose();prerequisitesCheck=null;
+                report.checks.AddRange(EndingPrerequisitesActualUiChecks.Checks);
+                report.checks.Add("Ending prerequisites UI assertions: "+EndingPrerequisitesActualUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Ending prerequisite UI fixtures passed; not natural full ending");Finish();return;
+            }
+            if(phase==16)
+            {
+                if(discourseCheck.MoveNext())return;
+                (discourseCheck as IDisposable)?.Dispose();discourseCheck=null;
+                Require(PublicDiscourseUiChecks.SourceChecksExecuted,"Saved public source sub-suite must run");
+                report.checks.AddRange(PublicDiscourseUiChecks.Checks);
+                report.checks.Add("Public discourse UI assertions: "+PublicDiscourseUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Public discourse archive/source fixtures passed; not natural full ending");Finish();return;
+            }
+            if(phase==15)
+            {
+                if(endingCheck.MoveNext())return;
+                (endingCheck as IDisposable)?.Dispose();endingCheck=null;
+                report.checks.AddRange(EndingIntegrationUiChecks.Checks);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Ending mailbox integration fixtures passed; not natural full ending");Finish();return;
+            }
+            if(phase==14)
+            {
+                if(moleCheck.MoveNext())return;
+                (moleCheck as IDisposable)?.Dispose();moleCheck=null;
+                report.checks.AddRange(MoleReviewUiChecks.Checks);
+                report.checks.Add("C5 review UI assertions: "+MoleReviewUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"C5 explicit UI checks passed; no generalization claim");Finish();return;
+            }
+            if(phase==13)
+            {
+                if(bookCheck.MoveNext())return;
+                (bookCheck as IDisposable)?.Dispose();bookCheck=null;
+                report.checks.AddRange(BookLibraryUiChecks.Checks);
+                report.checks.Add("C4 library UI assertions: "+BookLibraryUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"C4 covered UI checks passed; inspect actual screenshots and scope");Finish();return;
+            }
+            if(phase==12)
+            {
+                if(zhouCheck.MoveNext())return;
+                (zhouCheck as IDisposable)?.Dispose();zhouCheck=null;
+                report.checks.AddRange(LaoZhouQuestionsUiChecks.Checks);
+                report.checks.Add("LZ1 UI assertions: "+LaoZhouQuestionsUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"LZ1 covered UI checks passed; inspect actual screenshots and scope");Finish();return;
             }
             if(phase==11)
             {
@@ -319,7 +483,7 @@ public static class SidebarLayoutChecks
                 report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"All 16 sidebar fixtures, crawler lifecycle and ledger UI passed");Finish();return;
             }
         }
-        catch(Exception e){report.status="failed";report.failure=e.ToString();Save();Debug.LogError("Training lesson check failed: "+e);Finish();}
+        catch(Exception e){report.status="failed";report.failure=e.ToString();try{Save();Debug.LogError("Training lesson check failed: "+e);}finally{Finish();}}
     }
     static void ClickSidebar(RectTransform target)
     {
@@ -351,6 +515,23 @@ public static class SidebarLayoutChecks
         typeof(ChapterOneRuntime).GetProperty("TestMode").GetSetMethod(true).Invoke(rt,new object[]{false});
         if(rt.TestMode||rt.useDiskSave)throw new InvalidOperationException("Live host fixture isolation failed");
     }
-    static void Finish(){(learningCheck as IDisposable)?.Dispose();learningCheck=null;SessionState.EraseBool(LearningKey);(relicCheck as IDisposable)?.Dispose();relicCheck=null;SessionState.EraseBool(RelicsKey);SessionState.EraseBool(ProfileKey);(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();finishing=true;Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
+    static void Finish()
+    {
+        finishing=true;
+        (appAcquisitionCheck as IDisposable)?.Dispose();appAcquisitionCheck=null;AppAcquisitionActualUiChecks.ClearRequest();
+        (publicReadingInteractionCheck as IDisposable)?.Dispose();publicReadingInteractionCheck=null;PublicReadingInteractionUiChecks.ClearRequest();
+        (zhongbaoBusinessCheck as IDisposable)?.Dispose();zhongbaoBusinessCheck=null;ZhongbaoBusinessUiChecks.ClearRequest();
+        (prerequisitesCheck as IDisposable)?.Dispose();prerequisitesCheck=null;EndingPrerequisitesActualUiChecks.ClearRequest();
+        (discourseCheck as IDisposable)?.Dispose();discourseCheck=null;PublicDiscourseUiChecks.ClearRequest();
+        (endingCheck as IDisposable)?.Dispose();endingCheck=null;EndingIntegrationUiChecks.ClearRequest();
+        (moleCheck as IDisposable)?.Dispose();moleCheck=null;MoleReviewUiChecks.ClearRequest();
+        (bookCheck as IDisposable)?.Dispose();bookCheck=null;BookLibraryUiChecks.ClearRequest();
+        try{(zhouCheck as IDisposable)?.Dispose();zhouCheck=null;LaoZhouQuestionsUiChecks.ClearRequest();(learningCheck as IDisposable)?.Dispose();learningCheck=null;SessionState.EraseBool(LearningKey);(relicCheck as IDisposable)?.Dispose();relicCheck=null;SessionState.EraseBool(RelicsKey);SessionState.EraseBool(ProfileKey);(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();}
+        finally
+        {
+            try{LaoZhouQuestionsUiChecks.CleanupInput();BookLibraryUiChecks.CleanupInput();}
+            finally{Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
+        }
+    }
 }
 #endif

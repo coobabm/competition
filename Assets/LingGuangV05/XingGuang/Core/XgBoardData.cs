@@ -176,6 +176,14 @@ namespace LingGuangV05.XingGuang
         /// <summary>The elements of a label card as the brain sees them. Also used for hand-labelled cards.</summary>
         public static XgBoardCard FromCard(XgCard card)
         {
+            if (card.dataset == "arith" && card.kind != "shutdown")
+            {
+                // Input is built first without access to labels, explanations or generator identity.
+                var arithmetic = XgArithmeticInput.Input(card);
+                arithmetic.truth = card.truth; // supervision target only; Predict does not read it
+                arithmetic.source = card; // diagnostic rendering only, never an input feature
+                return arithmetic;
+            }
             var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth, source = card };
             var r = new Random(card.seed ^ 0x5A17);
             switch (card.dataset)

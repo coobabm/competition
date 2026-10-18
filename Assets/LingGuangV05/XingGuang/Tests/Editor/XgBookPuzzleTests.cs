@@ -44,7 +44,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void EveryBookHasQuestionsOnChaptersItHas()
         {
             var ids = new HashSet<string>();
-            foreach (var book in XgBooks.All)
+            foreach (var book in XgBooks.LegacyBooks)
             {
                 var list = XgBooks.Puzzles(book.id);
                 Assert.That(list.Length, Is.GreaterThanOrEqualTo(2), book.id);
@@ -141,6 +141,7 @@ namespace LingGuangV05.XingGuang.Tests
             Ask(sim, "sanguo.0");
             sim.AnswerBookPuzzle("不知道", XgSim.PuzzleWrong);
             Assert.AreEqual(XgSim.PuzzleSkip, sim.S.bookAnswers.Last().verdict, "「不知道」 stays a skip");
+            sim = Lab(4, "sanguo", 6); // A new pending question: answered ids are no longer reoffered.
             Ask(sim, "sanguo.0");
             sim.AnswerBookPuzzle("他怕曹操看穿他", XgSim.PuzzleHalf);
             Assert.AreEqual(XgSim.PuzzleRight, sim.S.bookAnswers.Last().verdict, "the book's key words are a floor under a harsh model");
@@ -150,7 +151,7 @@ namespace LingGuangV05.XingGuang.Tests
 
         [Test] public void TheReplyIsColdShortAndTellsTheTruthWhenWrong()
         {
-            foreach (var book in XgBooks.All)
+            foreach (var book in XgBooks.LegacyBooks)
                 foreach (var p in XgBooks.Puzzles(book.id))
                     foreach (var answer in new[] { p.keys[0], "随便说的", "不知道" })
                     {

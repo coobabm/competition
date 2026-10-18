@@ -324,7 +324,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Skill-tree geometry: one column per stage, cards in rows of <see cref="NodesPerRow"/>, lanes stacked top to bottom.</summary>
         public const float StageWidth = 720, NodeWidth = 136, NodeHeight = 64, BreakthroughSize = 120, SlotWidth = 150, RowHeight = 84;
         public const int NodesPerRow = 4;
-        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
+        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "boardlogic", "daily", "atlas" };
         /// <summary>Lane bands in drawing order (the tree page paints their stripes).</summary>
         public static IReadOnlyList<string> Lanes => LaneOrder;
         /// <summary>Height of a lane's band (after layout).</summary>
@@ -469,6 +469,9 @@ namespace LingGuangV05.XingGuang
             AddTeachingPackNodes(list);
             AddPersonaPackNodes(list);
             XgTrainingCatalog.AddNodes(list);
+            XgDailyLife.AddNodes(list);
+            XgBoardRecords.AddNodes(list);
+            XgBoardLogic.AddNodes(list);
             LayoutStages(list);
             return list.ToArray();
         }

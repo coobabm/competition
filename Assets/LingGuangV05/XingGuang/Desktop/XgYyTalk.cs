@@ -72,6 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             if (hooked != null && ReferenceEquals(hooked.LingGuangTalk, this)) hooked.LingGuangTalk = null;
+            if (bound != null) bound.BookCompletionHosted = false;
             if (instance == this) instance = null;
         }
 
@@ -142,6 +143,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var rt = controller.runtime;
             bound.DesktopHosted = hub.S.lingguangUnlocked && rt != null && !rt.TestMode && rt.Sim != null && !rt.Sim.InPrologue;
             if (!hub.S.lingguangUnlocked) { hub.Stand(Id, null); return; }
+            TickBookNotices(hub);
             // Stage 4: it can talk now. Its first sentence is fixed (design v1.1 §7 stage 4) and waits for you to look.
             if (bound.S.stage >= 4 && !bound.S.firstWordsSaid && hub.IsShowing(Id) && !waiting)
             {
@@ -157,7 +159,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             EnsureLearningData();
-            bound = sim;
+            if (bound != null) bound.BookCompletionHosted = false;
+            bound = sim; bound.BookCompletionHosted = true; ResetBookNotices();
             bound.RepairYyLearning();
             bound.ChatNodeUnlocked += OnLearningUnlocked;
             notebookSources.Clear(); personaSources.Clear();
@@ -173,6 +176,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnLine(XgChatLine line)
         {
             if (line == null || string.IsNullOrEmpty(line.text) || echo && line.from == "me") return;
+            if (composingBookNotice || DeferredBookCompletionLine(line)) return;
             var hub = YYChatHub.Instance;
             if (hub == null || hub.S == null || !hub.S.lingguangUnlocked) return;
             if (line.from == "me") { hub.SendAuthoredChoice(Id, line.text); return; }
@@ -201,6 +205,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (text.Length == 0) return true;
             // 是否夜 (XgYyTalk.Night.cs): the round's question gets its scripted answer.
             if (!waiting && NightHeard(sim, text)) return true;
+            if (!waiting && HeardRedMansion(sim, text)) return true;
             if (!replayQueued) sim.CountLoveAsk(text);
             // The choices with rules of their own: 【读吧】【算了】 and the two answers to 「你觉得呢？」.
             if (sim.S.loveAwaitingConsent && Consent(sim, text, out bool read)) { Echo(() => sim.AnswerLoveConsent(read)); return true; }
@@ -267,6 +272,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (night != null) return night;
             if (s.loveAwaitingConsent) return new[] { "【" + bound.LoveConsentText(true) + "】", "【" + bound.LoveConsentText(false) + "】" };
             if (s.originAwaitingAnswer) return new[] { bound.OriginAnswerText(true), bound.OriginAnswerText(false) };
+            if (s.redMansionBeat == 1) return new[] { BookContinuationChoice };
+            if (bound.BookPuzzlePending != null) return null;
             var list = new List<string>(2);
             if (bound.OfferOriginQuestion) list.Add(bound.OriginQuestion);
             if (bound.OfferLoveQuestion) list.Add(bound.LoveQuestion);

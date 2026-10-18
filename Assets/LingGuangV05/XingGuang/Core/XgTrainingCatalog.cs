@@ -7,6 +7,19 @@ namespace LingGuangV05.XingGuang
         public static void AddNodes(List<XgNode> nodes)
         {
             XgTrainingLessons.AddAtlas(nodes);
+            // Arithmetic game upgrades use their approved ordinary prices.
+            nodes.Add(new XgNode { id=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MolePowersNode,
+                stage=2, cost=800, kind=XgNodeKind.Research, name="算术：幂与根式", nameEn="Arithmetic: powers and roots",
+                note="再多一种算法。\n▶ 加入幂与根式题", noteEn="One more way to calculate.\n▶ Adds powers and roots" });
+            nodes.Add(new XgNode { id=XgSim.MoleCalculusNode, parent=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MoleCalculusNode,
+                stage=3, cost=3000, kind=XgNodeKind.Research, name="算术：微积分", nameEn="Arithmetic: calculus",
+                note="看看变化的规律。\n▶ 加入极限、导数、积分", noteEn="Explore how things change.\n▶ Adds limits, derivatives and integrals" });
+            nodes.Add(new XgNode { id=XgSim.MoleAutoNode, tree="research", lane="research", target=XgSim.MoleAutoNode,
+                stage=2, cost=1500, kind=XgNodeKind.Research, name="算术自动作答", nameEn="Arithmetic auto-answer",
+                note="让它试着敲一下。\n▶ 开放自动打地鼠", noteEn="Let it try a whack.\n▶ Enables automatic whack-a-mole" });
+            nodes.Add(new XgNode { id=XgSim.LibraryNode, tree="research", lane="research", target=XgSim.LibraryNode,
+                stage=2, cost=500, kind=XgNodeKind.Research, name="图书馆网页", nameEn="Library website",
+                note="开放付费图书馆网页；书籍单独购买，已有书架继续可读。", noteEn="Opens the paid library website. Books are sold separately; existing shelf access remains." });
             // Approved ordinary prices: appended directly, outside XgCatalog.StagePrice.
             nodes.Add(new XgNode { id=XgSim.RelicExpansion8Node, tree="research", lane="research", target=XgSim.RelicExpansion8Node,
                 stage=3, cost=12000, kind=XgNodeKind.Research, name="道具扩容 I", nameEn="Relic slots I",

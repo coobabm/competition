@@ -99,7 +99,8 @@ namespace LingGuangV05.CaseMenu
             if (hud.HasTitleSelection && keyboard != null && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed || keyboard.enterKey.wasReleasedThisFrame || keyboard.spaceKey.wasReleasedThisFrame)) return;
             if (IsSettingsOpen)
             {
-                if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) CloseSettings();
+                if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
                 return;
             }
             if (keyboard != null && keyboard.lKey.wasPressedThisFrame) { hud.OpenArchives(); return; }
@@ -234,6 +235,7 @@ namespace LingGuangV05.CaseMenu
                 LastError = mainDisplay.Error;
                 hud.ShowError(LastError); Debug.LogError(LastError, this); return;
             }
+            if (IsMainReady && hud.OpenCompletedEnding()) return;
             IsTransitioning = true; TransitionCount++;
             CancelCapture(); SetHovered(null); startButton.Pulse();
             PlayerPrefs.Save();
@@ -249,6 +251,8 @@ namespace LingGuangV05.CaseMenu
             }
             if (!mainDisplay.IsReady) { IsTransitioning = false; hud.ShowError(mainDisplay.Error); yield break; }
             hud.SetLoading(-1, null);
+            // A start click during preload must make the same completed-save decision after loading.
+            if (hud.OpenCompletedEnding()) { IsTransitioning = false; yield break; }
             Play(bootClip, .22f);
             mainDisplay.PowerOnScreen();
             if (fanMotor != null) fanMotor.StartBoot();

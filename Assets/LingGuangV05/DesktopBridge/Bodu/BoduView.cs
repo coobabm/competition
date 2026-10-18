@@ -145,6 +145,7 @@ namespace LingGuangV05.Desktop.Bodu
         void Search()
         {
             query = (search.text ?? "").Trim();
+            if (query == "library.bodu" || query == "图书馆" || query.Equals("library", StringComparison.OrdinalIgnoreCase)) { OpenLibrary(); return; }
             if (LingGuangV05.Desktop.Casino.CasinoDesktop.OpenAddress(query)) return;
             page = query.Length == 0 ? "home" : "search";
             signature = "";
@@ -152,6 +153,7 @@ namespace LingGuangV05.Desktop.Bodu
 
         public void Open(string q)
         {
+            if (q == "library.bodu" || q == "图书馆" || string.Equals(q, "library", StringComparison.OrdinalIgnoreCase)) { OpenLibrary(); return; }
             if (LingGuangV05.Desktop.Casino.CasinoDesktop.OpenAddress(q)) return;
             if (window != null && !window.isOn) window.OpenWindow();
             if (search != null) search.text = q;
@@ -171,6 +173,8 @@ namespace LingGuangV05.Desktop.Bodu
             nextRefresh = Time.unscaledTime + .5f;
             var s = Save();
             string now = page + "|" + query + "|" + GameText.IsEnglish + "|" + (s != null ? GameCalendar.Now(s).ToString("MMdd") : "") + "|" + (lab != null ? lab.S.stage + "|" + lab.GarbleLinesRead + "|" + lab.S.letterRead + "|" + lab.S.ending + "|" + letterShown : "");
+            now += LibrarySignature(lab);
+            now += "|" + XgPublicDiscourseDesktop.Stamp;
             if (now == signature) return;
             signature = now;
             Redraw(s, lab);
@@ -201,7 +205,10 @@ namespace LingGuangV05.Desktop.Bodu
             NewScroll();
             var today = s != null ? GameCalendar.Now(s).Date : GameCalendar.Start.Date;
             if (page == "home") Home(today, lab);
+            else if (page == "board.club") BoardClubPage();
+            else if (page == "discourse") PublicDiscoursePage();
             else if (page == "news" || page == "news.archive") DataNewsPage(today, page == "news.archive");
+            else if (page == "library") LibraryPage(lab);
             else if (page == "artwork") ArtworkCredits();
             else if (page == "number") Number(today, lab);
             else if (page == "santi") Santi();
@@ -251,6 +258,8 @@ namespace LingGuangV05.Desktop.Bodu
 
         void Home(DateTime today, XgSim lab)
         {
+            Line(T("图书馆 · 买书与我的书架", "Library · books and my shelf"), 18, Link, OpenLibrary);
+            BoardClubLink();
             Line(T("<u>制作致谢与素材来源</u>", "<u>Credits and asset sources</u>"), 13, Muted, () => { page = "artwork"; signature = ""; });
             if (DesktopArt.Picture("news_banner") != null)
             {
@@ -262,6 +271,7 @@ namespace LingGuangV05.Desktop.Bodu
             }
             Line("<b>" + Lang.T("摆渡新闻") + "</b>  <size=14><color=#787878>" + today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture) + "</color></size>", 22, Ink);
             DataNewsHome(today);
+            PublicDiscourseHome();
             // 淘货 is not on the desktop before it opens (stage 2): the front page does not advertise it either.
             var shop = EraContent.Events.Visible(EraEvents.Taobao, today);
             if (shop.Count > 0 && lab != null && lab.S.stage >= LingGuangV05.Desktop.Taohuo.TaohuoView.OpenStage)
@@ -308,6 +318,7 @@ namespace LingGuangV05.Desktop.Bodu
                 Line("<color=#1A0DAB><u>" + Lang.T("三体 · 游戏登录") + "</u></color>\n<size=13><color=#787878>" + Lang.T("需要 V 装备与邀请码。") + "</color></size>", 18, Ink, () => { page = "santi"; signature = ""; });
             }
             int found = 0;
+            if (query.Contains("五子棋") || query.Contains("棋盘") || query.IndexOf("gomoku", StringComparison.OrdinalIgnoreCase)>=0 || query.IndexOf("board", StringComparison.OrdinalIgnoreCase)>=0) { BoardClubLink(); found++; }
             foreach (var article in AvailableNews(today))
                 if (Matches(T(article.title, article.titleEn) + T(article.body ?? "", article.bodyEn ?? "")) && found++ < 10) DataNewsRow(article);
             var hub = TiebaHub.Instance;

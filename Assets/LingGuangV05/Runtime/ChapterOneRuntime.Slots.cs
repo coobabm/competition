@@ -48,7 +48,7 @@ namespace LingGuangV05.Runtime
         {
             if (index == 1) return SaveNow();
             var archive = ArchiveStore(index, false);
-            if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked || endingArchiveBusy) return false;
             try {
                 Saving?.Invoke();
                 bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
@@ -59,7 +59,7 @@ namespace LingGuangV05.Runtime
         public bool LoadArchive(int index, bool chapter = false)
         {
             var archive = ArchiveStore(index, chapter);
-            if (archive == null || !useDiskSave || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || persistenceBlocked || endingArchiveBusy) return false;
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
             // Validate and instantiate before touching the active save. Atomic replacement retains a backup.
@@ -81,7 +81,7 @@ namespace LingGuangV05.Runtime
         public bool CaptureChapter(int chapter)
         {
             var archive = ArchiveStore(chapter, true);
-            if (archive == null || !useDiskSave || TestMode || Sim.InPrologue || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || TestMode || Sim.InPrologue || persistenceBlocked || endingArchiveBusy) return false;
             // First-unlock snapshots are immutable across reloads and new games.
             if (File.Exists(archive.SavePath) || File.Exists(archive.SavePath + ".bak")) return true;
             try {

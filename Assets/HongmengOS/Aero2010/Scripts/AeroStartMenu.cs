@@ -81,7 +81,7 @@ namespace HongmengOS.Aero2010
                     var entry = programs[i];
                     bool show = query.Length == 0 || (!string.IsNullOrEmpty(entry.title) && entry.title.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
                         || (!string.IsNullOrEmpty(entry.searchKeywords) && entry.searchKeywords.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
-                    show &= entry.window != null;
+                    show &= entry.window != null && LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(entry.window);
                     if (entry.row != null && entry.row.activeSelf != show) entry.row.SetActive(show);
                     if (show) matches++;
                 }

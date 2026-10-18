@@ -190,6 +190,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void RequestEndingConfirmation(bool delegated)
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             var sim = Sim;
             if (endingOwner != null || sim == null || !root.gameObject.activeInHierarchy || !view.Visible) return;
             endingOwner = sim;
@@ -317,6 +318,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ConfirmEnding()
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             if (endingOwner == null) return;
             string reason = EndingConfirmationBlocker();
             if (reason != null) { CancelEndingConfirmation(); view.ShowToast(reason, 4); Refresh(); return; }
@@ -336,6 +338,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The next final-test question: the model answers if it runs; the story passes either way (§8 E-1).</summary>
         void AskNext()
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             var sim = Sim;
             int i = sim.S.examDone;
             if (asking || !sim.EndingOpen || i >= XgSim.ExamQuestions) return;
@@ -369,6 +372,12 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (header == null || Sim == null) return;
+            if (Sim.S.stage >= 6 && Sim.S.fullOpen && (!Sim.S.chapterComplete || XgEpilogueFlow.HasCommittedRelease(Sim.S)))
+            {
+                CancelEndingConfirmation();
+                var endingHost = XgEndingPreparationHost.Install(host.Controller);
+                if (endingHost.Show(root)) return;
+            }
             // Rule ticks and final-test answers are page state for one save; another save starts clean.
             if (!ReferenceEquals(pageSim, Sim)) { chosen.Clear(); answers.Clear(); pageSim = Sim; stack.Snap(); stackShownLit = -1; stackLitAt = -99; }
             if (endingOwner != null)

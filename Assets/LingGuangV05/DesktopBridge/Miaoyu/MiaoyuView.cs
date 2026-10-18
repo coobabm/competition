@@ -21,7 +21,7 @@ namespace LingGuangV05.Desktop.Miaoyu
     /// them add ×3). Used prices follow the hardware timeline: every newer card that matches an old one pushes its
     /// price down. Lives in the desktop's spare native Commander window.
     /// </summary>
-    public sealed class MiaoyuView : ShopView
+    public sealed partial class MiaoyuView : ShopView
     {
         public const string NativeWindow = "Commander";
         const string NavButtons = "Top Nav Buttons";
@@ -82,7 +82,7 @@ namespace LingGuangV05.Desktop.Miaoyu
         public void Open(string requested)
         {
             if (window != null && !window.isOn) window.OpenWindow();
-            if (requested == "sell" || requested == "used" || requested == "cafe") tab = requested;
+            if (requested == "sell" || requested == "used" || requested == "cafe" || requested == "public") tab = requested;
             signature = "";
         }
 
@@ -136,13 +136,13 @@ namespace LingGuangV05.Desktop.Miaoyu
                 Yellow, "×", 24, Ink, () => window.CloseWindow(), out _);
             var bar = PrologueDesk.Rect("Tabs", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -106), new Vector2(0, -64));
             PrologueDesk.Fill(bar, Color.white);
-            string[] ids = { "sell", "used", "cafe" };
+            string[] ids = { "sell", "used", "cafe", "public" };
             for (int i = 0; i < ids.Length; i++)
             {
                 string id = ids[i];
                 var b = Btn(bar, "Tab " + id, Vector2.zero, new Vector2(0, 1), new Vector2(16 + i * 136, 0), new Vector2(16 + i * 136 + 128, 0), Color.white, "", 17, Ink, () => { tab = id; signature = ""; }, out var label);
                 tabs[id] = (b.targetGraphic as Image, label);
-                var tip = id == "sell" ? ("把旧卡挂出去回血。买家一定会砍价。", "List an old card to get money back. Buyers always haggle.")
+                var tip = id == "public" ? ("看看买卖之外，大家还在聊什么。", "See what people are talking about between trades.") : id == "sell" ? ("把旧卡挂出去回血。买家一定会砍价。", "List an old card to get money back. Buyers always haggle.")
                     : id == "used" ? ("别人的二手卡：便宜，算力也低。", "Other people's used cards: cheap, and slow.")
                     : ("网吧倒闭清仓：整机带一张 970，8 台组个小集群。", "A closing net cafe sells its PCs: each has a 970, eight make a small cluster.");
                 UiTip.Add(b, tip.Item1, tip.Item2);
@@ -176,6 +176,7 @@ namespace LingGuangV05.Desktop.Miaoyu
             bool open = Stage >= OpenStage;
             string cards = sim != null ? string.Join(",", sim.Cards) + "|" + sim.S.caseCount + "|" + sim.S.cafeBoxes : "";
             string now = tab + "|" + today.ToString("MMdd") + "|" + open + "|" + GameText.IsEnglish + "|" + cards + "|" + version;
+            now += "|" + XgPublicDiscourseDesktop.Stamp+"|"+(LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.DailyBargainingAvailable==true);
             if (now != signature) { signature = now; Redraw(sim, today, open); }
             wallet.text = sim == null ? "" : Lang.T("钱包 ") + "<b>" + Money(sim.S.money) + "</b>";
             rig.text = RigSummary(sim);
@@ -195,7 +196,7 @@ namespace LingGuangV05.Desktop.Miaoyu
             var rigTitle = root.Find("Body/Side/RigTitle")?.GetComponent<TMP_Text>(); if (rigTitle != null) rigTitle.text = "<b>" + T("我的电脑", "My computer") + "</b>";
             foreach (var kv in tabs)
             {
-                kv.Value.label.text = kv.Key == "sell" ? Lang.T("卖闲置") : kv.Key == "used" ? Lang.T("淘二手") : Lang.T("网吧清仓");
+                kv.Value.label.text = kv.Key == "public" ? T("公开讨论", "Public discussions") : kv.Key == "sell" ? Lang.T("卖闲置") : kv.Key == "used" ? Lang.T("淘二手") : Lang.T("网吧清仓");
                 kv.Value.label.fontStyle = kv.Key == tab ? FontStyles.Bold : FontStyles.Normal;
                 kv.Value.fill.color = kv.Key == tab ? YellowSoft : Color.white;
             }
@@ -204,7 +205,8 @@ namespace LingGuangV05.Desktop.Miaoyu
             buyButtons.Clear();
             Clear(list);
             if (!open || sim == null) return;
-            if (tab == "used") BuildUsed(sim, today);
+            if (tab == "public") BuildPublicDiscourse();
+            else if (tab == "used") BuildUsed(sim, today);
             else if (tab == "cafe") BuildCafe(sim, today);
             else BuildSell(sim, today);
         }
@@ -388,15 +390,25 @@ namespace LingGuangV05.Desktop.Miaoyu
                 var right = PrologueDesk.Rect("Right", row, new Vector2(1, 0), Vector2.one, new Vector2(-176, 12), new Vector2(-14, -12));
                 Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(HardwareCatalog.UsedPrice(g, today)) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
                 string id = g.id;
+                var owner=LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
+                bool bargain=owner?.DailyBargainingAvailable==true;
+                if(bargain) mid.Find("Pitch").gameObject.SetActive(false);
+                if(bargain) Label(mid,"ConditionCaveat",Vector2.zero,new Vector2(1,0),Vector2.zero,new Vector2(0,26),T("99新是卖家描述，未有检测记录。","99% new is the seller's claim; no inspection record."),13,Muted);
+                var priceLabel=right.Find("Price").GetComponent<TMP_Text>();
+                if(bargain) priceLabel.text="<b>"+Money(HardwareCatalog.UsedPrice(g,today)*.95)+"</b>";
                 var b = Btn(right, "Buy", Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(0, 42), Accent, "", 17, Ink,
-                    () => Run(s => s.BuyUsedCard(id, Today), "Bought a used " + g.nameEn + ". 99% new, they say."), out var label);
+                    () => {
+                        if(!ReferenceEquals(sim,Sim)||!ReferenceEquals(owner,LingGuangV05.Desktop.Tieba.TiebaHub.Lab()))return;
+                        if (Run(s => s.BuyUsedCard(id, Today,bargain&&owner.DailyBargainingAvailable), "Bought a used " + g.nameEn + ". 99% new, they say."))
+                            owner?.RecordDailyMiaoyuPurchase(Guid.NewGuid().ToString("N"), id);
+                    }, out var label);
                 buyButtons.Add((b, label, () =>
                 {
                     var s = Sim;
                     if (s == null) return (false, "—");
                     if (!s.SlotFree) return (false, Lang.T("插槽已满"));
-                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPrice(g, Today)) return (false, Lang.T("钱不够"));
-                    return (true, Lang.T("我想要"));
+                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPrice(g, Today)*(bargain ? .95 : 1)) return (false, Lang.T("钱不够"));
+                    return (true,bargain?T("让它砍价购买 · −5%","AI bargain & buy · −5%"):Lang.T("我想要"));
                 }));
                 UiTip.Add(b, "便宜，但算力也低。占一个插槽。", "Cheap, but slow. Takes a slot.");
             }
@@ -425,7 +437,11 @@ namespace LingGuangV05.Desktop.Miaoyu
             Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(HardwareCatalog.CafeBoxPrice) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
             Label(right, "Each", new Vector2(0, 1), Vector2.one, new Vector2(0, -62), new Vector2(0, -40), Lang.T("一台"), 13, Muted, TextAlignmentOptions.TopRight);
             var b = Btn(right, "Buy", Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(0, 42), Accent, "", 17, Ink,
-                () => Run(s => s.BuyCafeBox(Today), "A net cafe PC is connected. Cluster compute ×" + (((Sim != null ? Sim.S.cafeBoxes : 0) + 1) * g.compute).ToString("0.##", CultureInfo.InvariantCulture) + "."), out var label);
+                () => {
+                    if(!ReferenceEquals(sim,Sim))return;
+                    var owner=LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
+                    if(Run(s => s.BuyCafeBox(Today), "A net cafe PC is connected.")) owner?.RecordDailyMiaoyuPurchase(Guid.NewGuid().ToString("N"),"cafe-box");
+                }, out var label);
             buyButtons.Add((b, label, () =>
             {
                 var s = Sim;

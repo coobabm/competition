@@ -19,6 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public static Texture2D ForCard(XgCard card)
         {
             if(card==null)return null;
+            if(card.teachingImageKind=="board15")return Board15(card.teachingImageKeys);
             if(card.teachingImageKind=="photo80")return LibraryPhoto(card.teachingImageKey);
             if(card.teachingImageKind=="grid80")return LibraryGrid(card.teachingImageKeys);
             if(card.teachingImageKind=="handwriting28shift")return HandwritingVariant28(card.digit,card.seed,0);
@@ -38,6 +39,17 @@ namespace LingGuangV05.Desktop.XingGuang
             return ForCard(new XgCard{dataset=note.dataset,seed=note.seed,digit=note.digit,patternA=note.patternA,
                 teachingImageKind=note.teachingImageKind,teachingImageKey=note.teachingImageKey,
                 teachingImageKeys=note.teachingImageKeys,teachingPosition=note.teachingPosition});
+        }
+        public static Texture2D Board15(int[] cells)
+        {
+            if(cells==null||cells.Length!=225)return null;
+            string key="board15:"+string.Join(",",cells);if(TryTexture(key,out var cached))return cached;
+            var board=new LingGuangV05.Core.Games.Gomoku();
+            for(int y=0;y<15;y++)for(int x=0;x<15;x++)if(cells[y*15+x]!=0&&!board.Place(x,y,cells[y*15+x]))return null;
+            var rgb=LingGuangV05.Core.Games.GomokuPicture.Render(board);
+            // Notebook images use the normal UV orientation: flip the source's top-down rows once.
+            var pixels=new Color32[240*240];for(int y=0;y<240;y++)for(int x=0;x<240;x++){int at=(y*240+x)*3;pixels[(239-y)*240+x]=new Color32(rgb[at],rgb[at+1],rgb[at+2],255);}
+            var texture=new Texture2D(240,240,TextureFormat.RGBA32,false);texture.SetPixels32(pixels);texture.Apply();return Keep(key,texture);
         }
         public static Texture2D Grid(int[] keys)
         {

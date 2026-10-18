@@ -21,7 +21,13 @@ namespace LingGuangV05.XingGuang
 
         void PrepareProgression(bool newGame)
         {
-            if (S.chapterComplete && string.IsNullOrEmpty(S.ending)) { S.endingReflectionAnswered = true; S.chapterComplete = false; }
+            // New epilogues deliberately leave the legacy E1/E2/E3 answer untouched.
+            // Their committed completion must survive a new controller/scene binding.
+            bool completedEpilogue = S.epilogue != null && S.epilogue.schemaVersion == 1
+                && S.epilogue.phase == "completed" && !string.IsNullOrWhiteSpace(S.epilogue.completionReceipt)
+                && XgEpilogueFlow.CanEnterEpilogue(S);
+            if (S.chapterComplete && string.IsNullOrEmpty(S.ending) && !completedEpilogue)
+            { S.endingReflectionAnswered = true; S.chapterComplete = false; }
             if (S.unlocked == null) S.unlocked = new List<string>();
             if (S.owned == null) S.owned = new List<string>();
             if (S.walls == null) S.walls = new List<string>();
@@ -135,7 +141,7 @@ namespace LingGuangV05.XingGuang
             if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
             // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
-            if (node.id == LedgerNode || node.id == DataEntryNode || IsRelicExpansion(node.id)) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+            if (XgBoardLogic.IsNode(node.id) || node.id==XgBoardRecords.Node || XgDailyLife.Node(node.id) != null || node.id == LedgerNode || node.id == DataEntryNode || node.id == LibraryNode || IsRelicExpansion(node.id) || IsMoleArithmeticNode(node.id)) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
             return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }

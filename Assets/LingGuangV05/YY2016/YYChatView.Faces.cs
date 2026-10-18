@@ -88,16 +88,7 @@ namespace LingGuangV05.Desktop.YY
             if (hub == null || sticker == null) return;
             string id = hub.S.selected;
             string text = sticker.PreviewText(false);
-            hub.Send(id, text);
-            var conv = hub.Conversation(id);
-            if (conv != null)
-                for (int i = conv.messages.Count - 1; i >= 0; i--)
-                {
-                    var m = conv.messages[i];
-                    if (m.from != YYChatHub.Me || m.text != text || !string.IsNullOrEmpty(m.sticker)) continue;
-                    m.sticker = sticker.Id;
-                    break;
-                }
+            hub.Send(id, text, sticker.Id);
             lastSignature = "";
             stickBottom = true; dirty = true;
         }

@@ -53,7 +53,8 @@ namespace LingGuangV05.XingGuang
         public bool CardLoanDue => S.stage == 3 && S.clStep == 0 && (ExamReady || ExamPassPending);
 
         /// <summary>With the desktop: the chapter waits until 老周 has his answer.</summary>
-        public bool CardLoanHolds => DesktopHosted && S.stage == 3 && NextAbility == 4 && S.clStep < 3;
+        public bool CardLoanContactAvailable; // Host capability only; never character knowledge or a saved acceptance.
+        public bool CardLoanHolds => DesktopHosted && CardLoanContactAvailable && S.stage == 3 && NextAbility == 4 && S.clStep < 3;
 
         public bool CardLoanActive => S.clStep >= 1 && S.clStep < 3;
 

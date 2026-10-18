@@ -1,4 +1,33 @@
-Bundled third-party software (local, offline inference for 灵光):
+Bundled local inference software and model / 本版离线推理来源
+
+Current Windows release / 当前 Windows 发行版
+
+- Model: Qwen3-4B-Q4_K_M.gguf, Qwen team / Alibaba Cloud, Copyright 2025 Alibaba Cloud.
+  Official source: https://huggingface.co/Qwen/Qwen3-4B-GGUF
+  License: Apache License 2.0. Full license, model card and recorded checksum are beside the model:
+  MyComputerAlive_Data/StreamingAssets/LingGuang/Models/{LICENSE,MODEL_CARD.md,SHA256SUMS.txt}.
+  Recorded model SHA256: 7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5.
+- LLMUnity 3.0.3, Undream AI, Apache License 2.0.
+  Source: https://github.com/undreamai/LLMUnity/tree/9931a9ea46906b1f43adaf9498c05ccf227b5d0b
+  The final distribution's ThirdPartyNotices/ contains LLMUnity-LICENSE.md,
+  LLMUnity-ThirdPartyNotices.md and USearch-LICENSE, copied from this package.
+  The upstream notice also lists optional downloadable models; that list is not this game's model inventory.
+- LlamaLib v2.0.5, Undream AI, Apache License 2.0.
+  Source: https://github.com/undreamai/LlamaLib/tree/21d3b9dcd1c05ad13f94f198e59462960019a057
+  Windows CPU DLLs: MyComputerAlive_Data/StreamingAssets/LlamaLib-v2.0.5/win-x64/native/.
+  The final distribution's ThirdPartyNotices/LlamaLib-Native/ contains full license texts and README-SOURCES.md:
+  LlamaLib-LICENSE; llama.cpp-LICENSE (MIT, pinned 872646b30c342c5fa98efec002f94fdb4f1f1ea5);
+  FeatureDetector-LICENSE (CC0-1.0, pinned 077393260d5e0e19938582a33b9dd0e74baa8ff2);
+  jsonhpp-LICENSE and cpp-httplib-LICENSE (MIT, from the pinned llama.cpp source).
+  These provenance references identify the upstream runtime release, not a new byte comparison of installed DLLs.
+
+Paths above are relative to the game directory containing MyComputerAlive.exe.
+The release packager supplies ThirdPartyNotices; retain that directory and the model's own license files.
+This index does not replace their full license terms or copyright notices.
+
+Legacy notices retained for older payloads / 保留的旧包声明
+The entries below apply if their corresponding older binaries/models are also distributed.
+They describe the retired server bundle, not the current LlamaLib CPU runtime or Qwen3 model.
 
 - llama.cpp / ggml (https://github.com/ggml-org/llama.cpp), MIT License, Copyright (c) 2023-2026 The ggml authors.
   macOS: Homebrew build 9580 (mac-arm64/), Windows: release b11370 Vulkan x64 (win-x64/).

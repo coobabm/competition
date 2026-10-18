@@ -222,7 +222,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public int VisibleNodeCount { get { int count = 0; foreach (var v in views) if (v.gameObject.activeSelf) count += v.entry.members.Count; return count; } }
         public bool IsNodeShown(string id) => views.Exists(v => v.Covers(id) && v.gameObject.activeSelf);
 
-        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
+        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "persona", "boardlogic", "daily", "atlas" };
 
         static Color LaneColor(string lane) => lane == "vision" ? XgDark.Accent : lane == "sequence" ? new Color32(18, 135, 125, 255)
             : lane == "label" ? new Color32(200, 120, 30, 255) : lane == "trunk" ? new Color32(110, 90, 200, 255) : lane == "atlas" ? new Color32(20, 140, 160, 255)
@@ -375,6 +375,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "sequence": return T("序列", "Sequence");
                 case "research": return T("研究", "Research");
                 case "persona": return T("性格", "Personality");
+                case "boardlogic": return T("逻辑", "Board logic");
+                case "daily": return T("日常", "Daily life");
                 default: return T("图鉴 · 现象与能力", "Atlas · phenomena and abilities");
             }
         }

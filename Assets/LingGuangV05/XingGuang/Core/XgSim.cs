@@ -71,6 +71,10 @@ namespace LingGuangV05.XingGuang
         public XgSim(XgState state = null)
         {
             S = state ?? new XgState();
+            RepairBoardSelfPlayPlaceholders();
+            S.endingPreparation?.RepairOptionalPlaceholders();
+            S.releaseOutcome?.RepairOptionalPlaceholders();
+            InitializeBookLibrary(state == null);
             // Data sources first: everything below evaluates runs, which reads samples (XgSim.DataSources.cs).
             RepairDataSources();
             RepairTraces();
@@ -92,6 +96,7 @@ namespace LingGuangV05.XingGuang
             EnsureSeed();
             RepairStagePresentations();
             RepairLedgerAccess(state == null);
+            InitializeAppAcquisition(state == null);
         }
 
         void Repair()
@@ -206,7 +211,7 @@ namespace LingGuangV05.XingGuang
             if (n.tree == "label") return StatusLabelNode(n, host);
             if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return NodeStatus.Locked;
             if (Has(n.id)) return NodeStatus.Owned;
-            if (!NodeVisible(n) || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
+            if (!NodeVisible(n) || BoardLogicBlocker(n.id) != null || BoardRecordsBlocker(n.id) != null || DailyNodeBlocker(n.id) != null || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
             if (n.parent != null && !Has(n.parent)) return NodeStatus.Locked;
             foreach (var need in n.needs) if (!Has(need)) return NodeStatus.Locked;
             if (host == null || host.Money + 1e-9 < NodeCost(n)) return NodeStatus.TooExpensive;
@@ -223,6 +228,12 @@ namespace LingGuangV05.XingGuang
                 case NodeStatus.Owned: return T("已拥有");
                 case NodeStatus.Locked:
                     if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次");
+                    var boardLogic = BoardLogicBlocker(n.id);
+                    if(boardLogic != null)return boardLogic;
+                    var board = BoardRecordsBlocker(n.id);
+                    if(board != null)return board;
+                    var daily = DailyNodeBlocker(n.id);
+                    if (daily != null) return daily;
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
                     if (!ChatNodeReady(n.id)) return T("对它说一句话：____。", "Say something to it: ____. ") + ChatNodeHint(n.id);
@@ -976,7 +987,10 @@ namespace LingGuangV05.XingGuang
         /// <summary>The stage that opens business orders for signing.</summary>
         public const int ContractStage = 4;
 
-        public bool CanSign(XgContract c) { return S.stage >= ContractStage && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+        public static int ContractRequiredStage(XgContract c) => c != null &&
+            (c.id == "cheque" || c.id == "acrostic" || c.id == "danmaku") ? 3 : ContractStage;
+
+        public bool CanSign(XgContract c) { return c != null && S.stage >= ContractRequiredStage(c) && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
 
         /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
         public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);

@@ -22,6 +22,25 @@ namespace LingGuangV05.Desktop
                     return;
                 }
             }
+            ReturnToTitleCore(menu);
+        }
+
+        // Called only after the exact completion candidate has been saved. Do not add a second save gate.
+        public static bool ReturnToTitleAfterEpilogueSave(string completionReceipt)
+        {
+            var owner = Object.FindAnyObjectByType<LingGuangV05.Desktop.XingGuang.XingGuangController>();
+            var ep = owner == null || owner.Sim == null ? null : owner.Sim.S.epilogue;
+            if (owner == null || owner.runtime == null || !owner.BoundTo(owner.runtime.Sim)
+                || !owner.Sim.S.chapterComplete || ep == null || ep.phase != "completed"
+                || string.IsNullOrEmpty(completionReceipt) || ep.completionReceipt != completionReceipt) return false;
+            var menu = Object.FindAnyObjectByType<CaseMenuController>();
+            if (menu != null && (menu.IsReturningToTitle || menu.IsTransitioning)) return true;
+            ReturnToTitleCore(menu);
+            return true;
+        }
+
+        static void ReturnToTitleCore(CaseMenuController menu)
+        {
             GameMusic.FadeOutForExit();
             Time.timeScale = 1;
             Cursor.visible = true;

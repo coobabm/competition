@@ -14,6 +14,7 @@ namespace LingGuangV05.Desktop.YY
         {
             public string id, text, textEn, after;
             public int[] month;
+            public int minDate;
             public string[] replies, repliesEn;
         }
         static GroupPreset[] groupPresets;
@@ -24,7 +25,7 @@ namespace LingGuangV05.Desktop.YY
         int presetReplyGeneration;
         // Presentation scheduling only: does not start, advance or alter any authored chat.
         public bool GroupScriptPlaying => isActiveAndEnabled &&
-            (presetReplyRunning && ReferenceEquals(presetReplyOwner, S)
+            (IntroPlaying || presetReplyRunning && ReferenceEquals(presetReplyOwner, S)
                 || script != null && (scriptFor == EraGroup || Contact(scriptFor)?.group == true));
 
         void OnEnable() { StartPresetReplies(); }
@@ -60,8 +61,10 @@ namespace LingGuangV05.Desktop.YY
             var result = new List<GroupPreset>();
             var date = GameCalendar.Now(runtime.Sim.S);
             int month = date.Year * 100 + date.Month;
+            int day = month * 100 + date.Day;
             foreach (var p in groupPresets)
             {
+                if (p.minDate > 0 && day < p.minDate) continue;
                 if (p.month != null && p.month.Length >= 2 && (month < p.month[0] || month > p.month[1])) continue;
                 if (!string.IsNullOrEmpty(p.after) && !(runtime.Sim.S.eraDelivered?.Contains(p.after) ?? false)) continue;
                 // Keep members from replying before they have joined the group.
@@ -108,7 +111,7 @@ namespace LingGuangV05.Desktop.YY
                 while (generation == presetReplyGeneration && presetReplyQueue.Count > 0 && ReferenceEquals(S, expected))
                 {
                     yield return new WaitForSecondsRealtime(UnityEngine.Random.Range(2f, 4f));
-                    while (generation == presetReplyGeneration && LingGuangV05.Core.StoryFocus.Active) yield return null;
+                    while (generation == presetReplyGeneration && (LingGuangV05.Core.StoryFocus.Active||IntroPlaying)) yield return null;
                     if (generation != presetReplyGeneration || !ReferenceEquals(S, expected)) break;
                     Receive(EraGroup, presetReplyQueue.Dequeue());
                 }

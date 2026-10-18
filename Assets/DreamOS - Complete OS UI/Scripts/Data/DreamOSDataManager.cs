@@ -17,6 +17,8 @@ namespace Michsky.DreamOS
 
         static void InitializeProfile()
         {
+            string verification = LingGuangV05.Runtime.Persistence.VerificationSavePaths.DesktopProfileDirectory;
+            if (verification != null) { dataPath = verification + Path.DirectorySeparatorChar; return; }
 #if UNITY_EDITOR
             string appPath = Application.dataPath;
             appPath = appPath.Replace(GetProjectName() + "/Assets", "");

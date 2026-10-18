@@ -43,7 +43,7 @@ namespace LingGuangV05.Desktop.Games
             ? T("和" + AiName + "下国际象棋。它一边下一边解说；角落里还留着深蓝那行字。", "Chess against " + AiName + ". It comments as it plays; Deep Blue's line is still in the corner.")
             : Lang.T("和电脑下国际象棋。它是 1997 年「深蓝」那一套：不学习，只往后硬算几步。");
         string Opponent => AiPlays ? AiName : Lang.T("电脑");
-        int Depth => AiPlays ? XgGames.ChessDepth(Stage, Lab.GameAccuracy(Id)) : 3;
+        int Depth => AiPlays ? (Lab.BoardLogicLevel>=3?3:1) : 3;
         public override string Glyph => "王";
         public override Color Accent => new Color32(86,150,72,255);
 
@@ -85,7 +85,7 @@ namespace LingGuangV05.Desktop.Games
         }
 
         public override void Refresh() => Draw();
-        bool HumanTurn => !animating && game.Result == ChessGame.Ongoing && aiAt < 0 && game.SideToMove == ChessGame.White;
+        bool HumanTurn => CanInteract && !animating && game.Result == ChessGame.Ongoing && aiAt < 0 && game.SideToMove == ChessGame.White;
         bool BoardVisible()
         {
             if (!isActiveAndEnabled || areaRoot == null || !areaRoot.gameObject.activeInHierarchy) return false;
@@ -193,7 +193,7 @@ namespace LingGuangV05.Desktop.Games
         }
         void Update()
         {
-            bool visible=BoardVisible();
+            bool visible=CanInteract && BoardVisible();
             if (!visible)
             {
                 if (wasVisible) { CancelPieceDrag(); if (feedback!=null) feedback.ClearFeedback(); }
@@ -211,7 +211,7 @@ namespace LingGuangV05.Desktop.Games
         ChessMove Reply()
         {
             if (!AiPlays) return game.Best(3);
-            if (Rng.NextDouble()<XgGames.ChessRandomChance(Stage,Lab.GameAccuracy(Id)))
+            if (Lab.BoardLogicLevel==0)
             { var moves=game.LegalMoves(); if(moves.Count>0)return moves[Rng.Next(moves.Count)]; }
             return game.Best(Depth);
         }
@@ -222,10 +222,12 @@ namespace LingGuangV05.Desktop.Games
             { char p=game[f,r]; int v=char.ToLowerInvariant(p) switch{'p'=>100,'n'=>320,'b'=>330,'r'=>500,'q'=>900,_=>0}; sum+=char.IsUpper(p)?v:-v; }
             return sum;
         }
+        public override void RestartRound() => NewGame();
         void NewGame()
         {
             // A committed mate still counts if the player restarts before its short celebration finishes.
             if(game.Result!=ChessGame.Ongoing&&!counted)Finish();
+            AbandonRoundRecord();
             resetting=true; CancelPieceDrag();
             if(feedback!=null)feedback.ClearFeedback();
             game=new ChessGame(); aiAt=-1; animating=false; hiddenSquare=-1; counted=false;

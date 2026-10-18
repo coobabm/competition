@@ -206,6 +206,7 @@ namespace Michsky.DreamOS
 
         public void OpenWindow()
         {
+            if(!LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(this))return;
             FocusToWindow();
 
             isOn = true;

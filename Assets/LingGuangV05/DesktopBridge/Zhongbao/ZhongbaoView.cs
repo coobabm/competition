@@ -26,7 +26,7 @@ namespace LingGuangV05.Desktop.Zhongbao
     {
         public const string NativeWindow = "Calculator";
         static readonly string[] NativeNames = { "Calculator", "计算器" };
-        public static readonly string[] PageIds = { "label", "auto", "contracts", "subcontract", "ledger", "credit" };
+        public static readonly string[] PageIds = { "contracts", "auto", "subcontract", "ledger", "credit" };
         static readonly Vector2 Design = new Vector2(1266, 763);
         /// <summary>The window as big as the other app windows (the calculator is a small one).</summary>
         public static readonly Color Blue = new Color32(41, 50, 225, 255);
@@ -53,7 +53,7 @@ namespace LingGuangV05.Desktop.Zhongbao
         sealed class NavTab { public string id; public XgBtn btn; public Image bar; public TMP_Text badge; }
         readonly List<NavTab> tabs = new List<NavTab>();
         readonly Dictionary<string, XgPage> pages = new Dictionary<string, XgPage>();
-        string page = "label";
+        string page = "contracts";
         float refreshTimer, toastTimer, comboShownWindow = 1, comboSparkTimer;
         int comboShown = -1;
         double shownMoney = -1;
@@ -167,6 +167,7 @@ namespace LingGuangV05.Desktop.Zhongbao
         /// <summary>Shows a page (label, contracts, subcontract, ledger, credit); unknown or closed pages keep the current one.</summary>
         public void Open(string tab)
         {
+            if (tab == "label" || tab == "teach") { ShowTab("teach"); return; }
             if (tab == "orders") tab = "contracts";
             if (tab == "workers") tab = "subcontract";
             if (!string.IsNullOrEmpty(tab) && pages.ContainsKey(tab)) ShowPage(tab);
@@ -405,7 +406,6 @@ namespace LingGuangV05.Desktop.Zhongbao
             BuildStatus();
             // The pages' area: right of the nav, under the header, above the status strip, with a 12 margin (the contract the pages are built to).
             var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavW + 12, StatusH + 12), new Vector2(-12, -(HeaderH + 12)));
-            Label = Add("label", new XgLabelPage(), area);
             Add("auto", new ZhongbaoAutoPage(), area);
             Contracts = Add("contracts", new XgContractsPage(), area);
             Add("subcontract", new ZhongbaoSubcontractPage(), area);
@@ -474,16 +474,16 @@ namespace LingGuangV05.Desktop.Zhongbao
             lingguangLink.rt.anchorMin = Vector2.zero; lingguangLink.rt.anchorMax = Vector2.one; lingguangLink.rt.offsetMin = new Vector2(1, 1); lingguangLink.rt.offsetMax = new Vector2(-1, -1);
             UiTip.Add(lingguangLink.rt, () => T("查看标注报酬、企业订单收入和账户结算。", "View annotation pay, business income and account settlements."));
 
-            // The shared combo, as on 灵光's HUD: a white pill with the number, the multiplier, the tier name and the decay bar.
+            // Business income and signed orders, independent of the teaching combo.
             comboChip = Rect("Combo", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 184, -16), new Vector2(-x, 16));
             x += 184 + 8;
             comboGlow = Glow(comboChip, XgPalette.Gold, 5);
             Panel(comboChip, Color.white);
-            comboNumber = ui.Text(Rect("Number", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(10, 3), new Vector2(84, 0)), "", 16, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineLeft);
+            comboNumber = ui.Text(Rect("Number", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(10, 3), new Vector2(62, 0)), "", 12, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineLeft);
             comboNumber.fontStyle = FontStyles.Bold; comboNumber.textWrappingMode = TextWrappingModes.NoWrap;
-            comboMult = ui.Text(Rect("Mult", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(84, 3), new Vector2(128, 0)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            comboMult = ui.Text(Rect("Mult", comboChip, Vector2.zero, new Vector2(0, 1), new Vector2(62, 3), new Vector2(148, 0)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
             comboMult.textWrappingMode = TextWrappingModes.NoWrap;
-            comboTier = ui.Text(Rect("Tier", comboChip, new Vector2(0, 0), Vector2.one, new Vector2(128, 3), new Vector2(-8, 0)), "", 13, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineRight);
+            comboTier = ui.Text(Rect("Tier", comboChip, new Vector2(0, 0), Vector2.one, new Vector2(148, 3), new Vector2(-8, 0)), "", 11, ZhongbaoSkin.Blue, TextAlignmentOptions.MidlineRight);
             comboTier.fontStyle = FontStyles.Bold; comboTier.textWrappingMode = TextWrappingModes.NoWrap;
             comboTier.enableAutoSizing = true; comboTier.fontSizeMin = 9; comboTier.fontSizeMax = 13;
             var bar = Rect("Window", comboChip, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 3));
@@ -500,11 +500,11 @@ namespace LingGuangV05.Desktop.Zhongbao
             hudCreditTier = ui.Text(Rect("Tier", creditBox, Vector2.zero, Vector2.one, new Vector2(132, 0), new Vector2(-6, 0)), "", 12, ChipDim, TextAlignmentOptions.MidlineLeft);
             hudCreditTier.textWrappingMode = TextWrappingModes.NoWrap; hudCreditTier.enableAutoSizing = true; hudCreditTier.fontSizeMin = 9; hudCreditTier.fontSizeMax = 12;
             hudMoney = Chip(hud, ref x, 130, "Money");
-            UiTip.Add(hudMoney.transform.parent, "余额：和家里共用的钱包。标注、订单进账；罚款、工资、电费花钱。", "Balance: the wallet shared with home. Labelling and orders pay in; fines, wages and power take out.");
+            UiTip.Add(hudMoney.transform.parent, "余额：和家里共用的钱包。订单进账；罚款、工资、电费花钱。", "Balance: the wallet shared with home. Orders pay in; fines, wages and power take out.");
             UiTip.Add(creditBox, () => Sim == null ? "" : Sim.QualityActive
                 ? T("信用分 " + N(Sim.Credit, "0.#") + "（" + Sim.CreditTierName(Sim.CreditTier) + "）：决定抽检率和自动收入倍率。详情见「信用」页。", "Credit " + N(Sim.Credit, "0.#") + " (" + Sim.CreditTierName(Sim.CreditTier) + "): it sets the spot-check rate and the auto-income multiplier. See the Credit page.")
                 : T("第 4 阶段以后、买下自动答题的话，平台才开始抽检、算信用。", "The platform starts spot-checking and scoring credit from stage 4, once you own auto-answer."));
-            UiTip.Add(hudLevel.transform.parent, "等级：加薪的头衔，每两级换一个。加薪在标注台右边的商店里。", "Level: your pay-raise title, a new one every two raises. Raises are in the shop beside the labelling desk.");
+            UiTip.Add(hudLevel.transform.parent, "已签订单：当前已接受并保存的企业订单数量。", "Signed orders: the number of accepted business orders saved in this game.");
             UiTip.Add(hudTopic.transform.parent, "今日热词：弹幕、短信这些文字桌最近在聊什么。新的梗会让旧检查点答错（新题型）。", "Today's hot word: what the text desks are talking about. A new meme makes old checkpoints answer wrong (new card types).");
             UiTip.Add(comboChip, "连续正确提交可提高标注报酬；答错、超时或停太久会清零。", "Correct submissions build a pay bonus. A wrong answer, timeout or long pause resets it.");
         }
@@ -566,7 +566,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 case "auto": return T("自动提交：自动答题替你交了哪些题、每类题用的是哪个模型、为什么有的桌它不碰。", "Auto-submit: which cards auto-answer hands in for you, which model answers each kind, and why it leaves some desks alone.");
                 case "contracts": return PageOpen("contracts") ? T("企业订单：通过质量验收即可签约，持续交付获得报酬。", "Business orders: pass quality acceptance and earn pay for ongoing deliveries.")
                     : T("企业订单：尚未取得交付资质，先在标注台积累经验。", "Business orders: delivery qualification is not yet available. Start with annotation work.");
-                case "subcontract": return T("分包：网吧兄弟用你的账号帮你标，按分钟发工资。他们的错算在你头上。", "Subcontract: netbar friends label under your account for wages by the minute. Their mistakes count against you.");
+                case "subcontract": return T("分包：平台协作员代处理订单，按分钟结算报酬，质量由你负责。", "Subcontract: platform collaborators process work for pay by the minute; you remain responsible for its quality.");
                 case "ledger": return T("结算：现在每秒进出多少钱，以及平台记下的罚款、尾款和工资。", "Ledger: money in and out per second now, and the fines, balances and wages the platform has recorded.");
                 default: return T("信用：信用分、抽检和罚款规则，以及什么会让它涨跌。", "Credit: the credit score, the spot-check and fine rules, and what moves it.");
             }
@@ -593,11 +593,6 @@ namespace LingGuangV05.Desktop.Zhongbao
             bound = sim;
             if (sim == null) return;
             sim.Message += OnMessage;
-            sim.DeskOpened += OnDeskOpened;
-            sim.CardTimedOut += OnCardTimedOut;
-            sim.DuelDone += OnDuelDone;
-            sim.ComboTier += OnComboTier;
-            sim.ComboBroken += OnComboBroken;
             shownMoney = -1;
             Refresh(true);
         }
@@ -615,13 +610,14 @@ namespace LingGuangV05.Desktop.Zhongbao
             // 灵光 plays the unlock sound when it is the window in view.
             var lab = Controller != null ? Controller.View : null;
             if (lab == null || !lab.Visible) Juice.Play(XgJuice.Sfx.Id.Unlock);
-            Label.RebuildTabs();
+            Label?.RebuildTabs();
         }
 
-        void OnCardTimedOut(string desk) { Label.OnTimeout(); }
+        void OnCardTimedOut(string desk) { Label?.OnTimeout(); }
 
         void OnDuelDone(bool won, double bonus)
         {
+            if (Label == null) return;
             if (!won) { Juice.Play(XgJuice.Sfx.Id.Thud); return; }
             Juice.Play(XgJuice.Sfx.Id.Fanfare);
             if (!Visible) return;
@@ -680,7 +676,6 @@ namespace LingGuangV05.Desktop.Zhongbao
             float dt = Time.unscaledDeltaTime;
             if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) toast.transform.parent.gameObject.SetActive(false); }
             foreach (var p in pages.Values) if (p.root.gameObject.activeSelf) p.Tick(dt);
-            UpdateCombo();
             UpdateMoney(dt);
             refreshTimer -= dt;
             if (refreshTimer <= 0) Refresh(false);
@@ -700,35 +695,15 @@ namespace LingGuangV05.Desktop.Zhongbao
 
         void UpdateCombo()
         {
-            int combo = Sim.S.combo;
-            int tier = XgSim.TierOf(combo);
-            if (combo >= 100)
-            {
-                comboSparkTimer += Time.unscaledDeltaTime;
-                if (comboSparkTimer >= .4f) { comboSparkTimer = 0; Juice.Burst(Juice.At(comboChip), 2, XgPalette.Gold, XgJuice.Shape.Star, 70, 100, .8f); }
-            }
-            else comboSparkTimer = 0;
-            if (combo != comboShown)
-            {
-                if (comboShown >= 0 && combo > comboShown) { Juice.Knock(comboChip, .06f + Mathf.Min(.1f, (combo - comboShown) * .02f)); comboShownWindow = (float)Math.Max(Sim.S.comboTimer, .1); ComboStep(combo, tier); }
-                comboShown = combo;
-                comboNumber.text = T("连击 ", "Combo ") + combo;
-                comboMult.text = "×" + N(Sim.ComboMultiplier, "0.0#");
-                comboTier.text = tier >= 0 ? T(XgCatalog.ComboTierNames[tier], XgCatalog.ComboTierNamesEn[tier]) : (Sim.S.bestCombo > 0 ? T("最高 ×", "Best ×") + Sim.S.bestCombo : "");
-            }
-            var color = ComboInk[tier + 1];
-            if (tier >= 3) color = Color.Lerp(color, ComboInk[2], .5f + .5f * Mathf.Sin(Time.unscaledTime * 10));
-            var shown = combo > 0 ? color : new Color(ComboInk[0].r, ComboInk[0].g, ComboInk[0].b, .55f);
-            comboNumber.color = shown;
-            comboTier.color = combo > 0 ? color : ZhongbaoSkin.Mute;
-            SetBar(comboFill, combo > 0 ? (float)(Sim.S.comboTimer / Math.Max(.1, comboShownWindow)) : 0);
-            // 发光: the counter glows from the second hit, brighter and quicker as the combo climbs to the 10th.
-            float feel = XgJuice.ComboFeel(combo);
-            comboGlow.on = combo >= 2;
-            comboGlow.speed = 4 + 8 * feel;
-            comboGlow.color = XgPalette.Tiers[Mathf.Clamp(tier + 1, 1, XgPalette.Tiers.Length - 1)] * new Color(1, 1, 1, .35f + .45f * feel);
+            double income=0;
+            foreach(var contract in XgCatalog.Contracts) income+=Sim.ContractIncome(contract);
+            comboNumber.text=T("收入", "Income");
+            comboMult.text="¥"+N(income,"0.00")+T("/秒","/s");
+            comboTier.text=Sim.S.contracts.Count+T("单", "");
+            comboNumber.color=ZhongbaoSkin.Blue;
+            comboTier.color=ZhongbaoSkin.Mute;
+            SetBar(comboFill,0);comboGlow.on=false;
         }
-
         /// <summary>The hot word: today's topic, else the newest meme drifting the text desks.</summary>
         string HotWord()
         {
@@ -778,7 +753,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             Juice.Reduced = Sim.S.reduceFx;
             Juice.Muted = Sim.S.mute;
             appName.text = AppTitle;
-            subtitle.text = T("企业数据标注 · 按题付酬", "Company annotation · Paid per task");
+            subtitle.text = T("企业订单 · 持续交付", "Business orders · Ongoing delivery");
+            UpdateCombo();
             if (shownMoney < 0) hudMoney.text = T("余额 ", "Balance ") + "<b><color=#FFE27A>¥" + Money(Host.Money) + "</color></b>";
             bool active = Sim.QualityActive;
             hudCredit.text = T("信用 ", "Credit ") + "<b>" + N(Math.Floor(Sim.Credit), "0") + "</b>";
@@ -786,17 +762,16 @@ namespace LingGuangV05.Desktop.Zhongbao
             hudCreditTier.color = !active ? ChipDim : Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 170, 170, 255) : ChipInk;
             creditFill.GetComponent<Image>().color = Sim.CreditTier == XgCreditTier.Gold ? new Color32(255, 214, 102, 255) : Sim.CreditTier == XgCreditTier.Watch ? new Color32(255, 150, 150, 255) : new Color32(124, 240, 160, 255);
             SetBar(creditFill, active ? (float)(Sim.Credit / XgSim.QcCreditMax) : 0);
-            hudLevel.text = T("合格提交 ", "Accepted ") + "<b>" + Sim.S.workCorrect + " / " + Sim.S.workSubmitted + "</b>";
+            hudLevel.text = T("已签订单 ", "Signed orders ") + "<b>" + Sim.S.contracts.Count + "</b>";
             hudTopic.text = T("今日热词 ", "Hot word ") + "<b>" + HotWord() + "</b>";
 
-            if (page != "label" && !PageOpen(page)) { page = "label"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
-            string[] names = { T("标注台", "Label desk"), T("自动提交", "Auto-submit"), T("企业订单", "Orders"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
-            bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
+            if (!PageOpen(page)) { page = "ledger"; foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == page); }
+            string[] names = { T("企业订单", "Orders"), T("自动提交", "Auto-submit"), T("分包", "Subcontract"), T("结算", "Ledger"), T("信用", "Credit") };
             int signable = 0; foreach (var c in XgCatalog.Contracts) if (!Sim.Signed(c.id) && Sim.CanSign(c)) signable++;
             bool alarm = Sim.QualityFrozen || Sim.CaptchaPending || Sim.QualityWarning;
             var house = House;
             bool indebt = house != null && house.Debt > 0;
-            string[] badges = { raiseReady ? T("加薪", "↑") : "", AutoBadge(), signable > 0 ? signable.ToString() : "", "", indebt ? T("欠", "Debt") : "", alarm ? "!" : "" };
+            string[] badges = { signable > 0 ? signable.ToString() : "", AutoBadge(), "", indebt ? T("欠", "Debt") : "", alarm ? "!" : "" };
             for (int i = 0; i < tabs.Count; i++)
             {
                 var tab = tabs[i];
@@ -808,9 +783,9 @@ namespace LingGuangV05.Desktop.Zhongbao
                 PlaceBadge(tab.badge, open ? badges[i] : "");
             }
             lingguangLink.Set(T("查看报酬", "My earnings"), true, ZhongbaoSkin.Blue, Color.white);
-            accountText.text = T("账号 kk_2016\n注册 2016-05-24\n累计标注 <b>" + N(TotalLabelled(), "N0") + "</b> 条", "Account kk_2016\nJoined 2016-05-24\nLabelled <b>" + N(TotalLabelled(), "N0") + "</b> so far");
+            accountText.text = T("账号 kk_2016\n注册 2016-05-24\n企业订单 · 持续交付", "Account kk_2016\nJoined 2016-05-24\nBusiness orders · Ongoing delivery");
             statusLeft.text = "<color=#2F9E44>●</color> " + T("已连接 摆渡云", "Connected to Bodu Cloud");
-            statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");
+            statusMid.text = T("按已签订单质量持续结算", "Ongoing payment follows signed-order quality");
             // Rent and the next daily settlement come from the household sim; before rent starts there is nothing to show.
             statusRight.text = house != null && house.EconomyActive
                 ? T("房租每七天一期 · 待转 ¥" + Money(house.Debt) + " · 去 YY 找房东", "Rent every seven days · ¥" + Money(house.Debt) + " due · pay the landlord in YY")

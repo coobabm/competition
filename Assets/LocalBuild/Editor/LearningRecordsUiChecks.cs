@@ -205,6 +205,39 @@ public static class LearningRecordsUiChecks
         Call(view,"CloseLearningDrawer");window.CloseWindow();Bind(ctl,files,talk,sim,english);
         Done(suffix+": YY three pages, older search, original-image text guard and same-size save switch");
     }
+    static IEnumerable<object> Provenance(XgFilesWindow files,YYChatView view,XgSim sim,bool english,Action<RectTransform> click,Action<string> capture,string suffix)
+    {
+        // Explicit record fixtures exercise native display only; no AI inference or generated human judgment.
+        sim.RecordTeachingQuestion("C5_SOURCE_PLAYER","C5_SOURCE_PLAYER",true,true,"","","arith",null,"PLAYER_TRUE");
+        sim.RecordTeachingQuestion("C5_SOURCE_LEGACY","C5_SOURCE_LEGACY",false,true,"","","arith",null,"LEGACY_RETAINED");
+        var legacy=sim.S.askedLog.Last();var legacyNote=sim.LearningTeachingNote(legacy.teachingNoteId);
+        legacy.answerSource="";legacyNote.answerSource="";
+        sim.RecordAiAction("arith","C5_SOURCE_AI","C5_SOURCE_AI","Whack");
+        var window=Get<WindowManager>(view,"window");files.window.CloseWindow();view.OnOpened(YYChatHub.LingGuangId);window.OpenWindow();window.FocusToWindow();
+        foreach(var f in Ready(window))yield return f;
+        Call(view,"RefreshLearningTools");click((RectTransform)Get<Button>(view,"notebookTool").transform);foreach(var f in Layout())yield return f;
+        var search=Get<TMP_InputField>(view,"learningSearch");click((RectTransform)search.transform);search.text="C5_SOURCE";foreach(var f in Layout())yield return f;
+        var rows=NotebookRows(view);Need(rows.Count==3,"native YY retains player, AI-action and old unknown rows");
+        string ai=Label(rows.Single(x=>Label(x).Contains("C5_SOURCE_AI")));
+        string player=Label(rows.Single(x=>Label(x).Contains("C5_SOURCE_PLAYER")));
+        string old=Label(rows.Single(x=>Label(x).Contains("C5_SOURCE_LEGACY")));
+        Need(ai.Contains(english?"not a player judgment":"非玩家判断")&&!ai.Contains(english?"You:":"你："),"actual bilingual YY AI row is not attributed to player");
+        Need(player.Contains(english?"You:":"你：")&&player.Contains("PLAYER_TRUE"),"actual YY new manual answer remains player evidence");
+        Need(old.Contains(english?"source unknown":"来源不明")&&old.Contains("LEGACY_RETAINED"),"actual YY old record retains text without inferred author");
+        capture("learning-"+suffix+"-answer-provenance-yy.png");
+        Call(view,"CloseLearningDrawer");window.CloseWindow();files.Show();files.window.FocusToWindow();foreach(var f in Ready(files.window))yield return f;
+        foreach(var f in Pick(files,"asked",click))yield return f;
+        string csv=Get<TMP_Text>(files,"preview").text;
+        Need(csv.Contains(english?"Answer source":"答案来源")&&csv.Contains("ai_action")&&csv.Contains("C5_SOURCE_AI")&&csv.Contains("LEGACY_RETAINED"),"actual CSV exposes provenance and preserves old records");
+        capture("learning-"+suffix+"-answer-provenance-csv.png");
+        foreach(var f in Pick(files,"notes",click,true))yield return f;
+        foreach(var f in Pick(files,"notes:"+legacyNote.id,click))yield return f;
+        string preview=Get<TMP_Text>(files,"preview").text;
+        Need(preview.Contains(english?"source unknown":"来源不明")&&preview.Contains("LEGACY_RETAINED"),"actual file note identifies unknown historical answer source");
+        capture("learning-"+suffix+"-answer-provenance-old-note.png");
+        Need(sim.S.teachingNotebook.All(n=>n.text!="C5_SOURCE_AI"),"AI action never enters player teaching notebook");
+        Done(suffix+": actual YY/CSV/old-note provenance display; explicit fixtures, no text retest sent or model output fabricated");
+    }
     public static IEnumerator Frames(XingGuangController ctl,Action<bool> locale,Action<RectTransform> click,Action<string> capture)
     {
         Checks.Clear();AssertionCount=0;var runtime=ctl.runtime;
@@ -242,6 +275,7 @@ public static class LearningRecordsUiChecks
                 Need(Get<int>(files,"csvOffset")==0&&Get<TMP_Text>(files,"preview").text.Contains("SW119")&&!Get<TMP_Text>(files,"preview").text.Contains("LR"),"CSV page resets and old content disappears on save switch");
                 Bind(ctl,files,talk,sim,english);
                 foreach(var frame in Notebook(ctl,files,hub,view,talk,sim,english,click,capture,suffix))yield return frame;
+                foreach(var frame in Provenance(files,view,sim,english,click,capture,suffix))yield return frame;
             }
             Debug.Log("LearningRecordsUiChecks PASS: "+AssertionCount+" assertions; isolated bilingual Main fixture. No text retest was sent and no LLM response was required.");
         }

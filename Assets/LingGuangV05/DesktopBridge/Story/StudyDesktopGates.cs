@@ -38,7 +38,7 @@ namespace LingGuangV05.Desktop.Story
         {
             switch (app)
             {
-                case "xunbao": return "shop";
+                case "taohuo": case "xunbao": return "shop";
                 case "home": return "power";
                 case "zhongbao": return "crowd";
                 case "miaoyu": return "data";
@@ -66,7 +66,7 @@ namespace LingGuangV05.Desktop.Story
                 case "shop": return new[] { T(LingGuangV05.Core.AppNames.ShopZh, LingGuangV05.Core.AppNames.ShopEn), T("显卡、数据包，今天下单明天到。", "Graphics cards and data packs. Order today, here tomorrow.") };
                 case "data": return new[] { T(LingGuangV05.Core.AppNames.UsedZh, LingGuangV05.Core.AppNames.UsedEn), T("旧卡在这儿卖，也能淘到便宜货。", "Sell old cards here, or find a bargain.") };
                 case "games": return new[] { T("游戏中心", "Game Hub"), T("累了就下盘棋，它也会下。", "Tired? Play a game of chess. It plays too.") };
-                case "crowd": return new[] { T("摆渡众包", "Bodu Crowd"), T("答题挣钱，也有公司来找你接活了。", "Answer questions for pay, and companies now come with jobs.") };
+                case "crowd": return new[] { T("摆渡众包", "Bodu Crowd"), T("先看验收要求，再签约接单。", "Read acceptance requirements before signing a contract.") };
                 default: return null;
             }
         }
@@ -76,10 +76,26 @@ namespace LingGuangV05.Desktop.Story
             string feature = Feature(app);
             if (feature == null) return true;
             var owner = XingGuangController.Instance;
-            return owner == null || owner.Sim == null || owner.runtime == null || owner.runtime.Sim.InPrologue
-                || !owner.runtime.Sim.AppInstalled || owner.Sim.SystemUnlocked(feature);
+            if(owner==null||owner.Sim==null||owner.runtime==null)return true;
+            string id=LingGuangV05.XingGuang.XgSim.DesktopAppId(app);
+            if(!string.IsNullOrEmpty(id)&&!owner.Sim.DesktopAppInstalled(id))return false;
+            return owner.runtime.Sim.InPrologue||!owner.runtime.Sim.AppInstalled||owner.Sim.SystemUnlocked(feature);
         }
 
+        public static bool AllowsWindow(WindowManager window)
+        {
+            if(window==null)return false;
+            string route=window.name=="Calculator"?"zhongbao":window.name=="Commander"?"miaoyu":"";
+            var owner=XingGuangController.Instance;
+            if(route.Length==0&&owner?.runtime!=null)
+                foreach(var binding in DesktopWindowIndex.GetBindings(owner.runtime))if(binding.Window==window){route=binding.ApplicationId;break;}
+            return route.Length==0||Allows(route);
+        }
+        bool FeatureOpen(string feature)
+        {
+            string id=feature=="shop"?"taohuo":feature=="data"?"miaoyu":feature=="crowd"?"zhongbao":"";
+            return lab.Sim.SystemUnlocked(feature)&&(id.Length==0||lab.Sim.DesktopAppInstalled(id));
+        }
         void LateUpdate()
         {
             if(XgStageCurtain.Busy&&XgStageCurtain.Step<3)return;
@@ -94,6 +110,7 @@ namespace LingGuangV05.Desktop.Story
                     if (feature == null) continue;
                     if (binding.DesktopShortcut != null) Gate(feature, binding.DesktopShortcut.transform as RectTransform);
                     if (binding.Window != null) windows[binding.Window] = feature;
+                    if(binding.TaskbarShortcut!=null)binding.TaskbarShortcut.gameObject.SetActive(FeatureOpen(feature));
                 }
                 if(cachedDesktopList==null){var list=GameObject.Find("Desktop List");cachedDesktopList=list!=null?list.transform:null;}
                 foreach (var window in DesktopWindowIndex.Get(lab.runtime))
@@ -101,6 +118,7 @@ namespace LingGuangV05.Desktop.Story
                     string feature = WindowFeature(window.name);
                     if (feature == null) continue;
                     windows[window] = feature;
+                    if(window.taskbarButton!=null)window.taskbarButton.gameObject.SetActive(FeatureOpen(feature));
                     var icon = cachedDesktopList != null ? cachedDesktopList.Find(window.name) as RectTransform : null;
                     if (icon != null) Gate(feature, icon);
                 }
@@ -110,9 +128,9 @@ namespace LingGuangV05.Desktop.Story
             }
             foreach (var pair in windows)
             {
-                if (pair.Key == null || lab.Sim.SystemUnlocked(pair.Value) || !pair.Key.isOn) continue;
+                if (pair.Key == null || FeatureOpen(pair.Value) || !pair.Key.isOn) continue;
                 pair.Key.CloseWindow();
-                lab.View?.ShowToast(T("阶段 " + LingGuangV05.XingGuang.XgSim.FeatureUnlock[pair.Value] + " 开放", "Opens at stage " + LingGuangV05.XingGuang.XgSim.FeatureUnlock[pair.Value]), 3);
+                lab.View?.ShowToast(T("从群友的链接下载并安装后开放。", "Download and install it from the link in the group."), 3);
             }
         }
 
@@ -120,7 +138,7 @@ namespace LingGuangV05.Desktop.Story
         void Gate(string feature, RectTransform icon)
         {
             if (icon == null) return;
-            bool open = lab.Sim.SystemUnlocked(feature);
+            bool open = FeatureOpen(feature);
             scanned[feature] = open;
             bool fresh = open && seen.TryGetValue(feature, out bool was) && !was;
             if (fresh && !icon.gameObject.activeSelf)

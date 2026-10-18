@@ -44,6 +44,10 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBrain brain;
         XgStoryBridge storyBridge;
         XgPlatformPopups platformPopups;
+        XgEpilogueDirector epilogueDirector;
+        // Until the real prerequisite systems supply their saved receipts, the new entrance stays closed.
+        public Func<XgReleasePrerequisites> EpiloguePrerequisiteProvider;
+        public XgEpilogueDirector Epilogue => epilogueDirector;
         float sinceSave;
         int capturedChapter;
         ChapterOneSim linked;
@@ -92,7 +96,14 @@ namespace LingGuangV05.Desktop.XingGuang
             LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
             XgTestSetPrewarmer.Attach(this);
             XgBrainWindow.Install(this);
+            XgReadingWindow.Install(this);
             XgStageCurtain.Install(this);
+            epilogueDirector = GetComponent<XgEpilogueDirector>() ?? gameObject.AddComponent<XgEpilogueDirector>();
+            epilogueDirector.Bind(this, () => EpiloguePrerequisiteProvider?.Invoke());
+            XgEpilogueMailBridge.Install(this);
+            XgPublicDiscourseNotifier.Install(this);
+            XgEndingPreparationHost.Install(this);
+            runtime.EpiloguePresentationHeld = () => epilogueDirector != null && epilogueDirector.HoldingSimulation;
             SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
@@ -127,6 +138,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            XgPublicDiscourseNotifier.InitializeSave(Sim, state == null);
             Sim.LearningClock = () =>
             {
                 if (sim == null) return new XgLearningTime(0, -1);
@@ -143,6 +155,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (state != null) RaiseProgress(silent: true);
             savedStage = Sim.S.stage;
             if (View != null) View.Bind(this);
+            if (epilogueDirector != null) epilogueDirector.Bind(this, () => EpiloguePrerequisiteProvider?.Invoke());
+            XgDailyUnlockNotifier.Install(this);
+            XgAppAcquisitionHost.Install(this);
         }
 
         static bool LabReadable(string json)
@@ -166,6 +181,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public bool SaveNow() { return runtime != null && runtime.SaveNow(); }
+        public bool BoundTo(ChapterOneSim sim) => ReferenceEquals(linked, sim);
 
         // Never edit a replacement simulation created only to preserve an unreadable save.
         public bool LifeEventSettingsAvailable => Sim != null && unreadableLab == null;
@@ -200,6 +216,13 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
+            if (epilogueDirector != null && epilogueDirector.HoldingSimulation)
+            {
+                if (brain != null) brain.Suspend(true);
+                lifeActiveClock.ObservePause();
+                Sim.ObserveLifeEventConflict();
+                return;
+            }
             if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen)
             {
                 lifeActiveClock.ObservePause();
@@ -236,6 +259,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(!Sim.StagePresentationHeld)
             {
                 using (ProfileBrain.Auto()) { if (brain != null) brain.TickBeforeSimulation(); }
+                Sim.TickBoardSelfPlay(GameCalendar.Now(runtime.Sim.S), dt);
                 using (ProfileSim.Auto()) { Sim.Tick(dt, Host); }
             }
             // The twelve-question opening is narrated by StageOneTutor. Legacy saves retain the upstream

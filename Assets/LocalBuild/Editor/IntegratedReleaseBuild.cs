@@ -19,7 +19,8 @@ public static class IntegratedReleaseBuild
         var oldGraphics=PlayerSettings.GetGraphicsAPIs(BuildTarget.StandaloneWindows64);
         bool oldGraphicsJobs=PlayerSettings.graphicsJobs;
         var oldBackend=PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
-        string version="2026.10.18.1";
+        var oldModelPaths=new Dictionary<LLMUnity.ModelEntry,string[]>();
+        string version="2026.10.19.1";
         string stamp=DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         string directory=Path.GetFullPath("Build/MyComputerAlive-"+version+"-"+stamp);
         string[] scenes={"Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity","Assets/LingGuangV05/Scenes/Main.unity"};
@@ -29,12 +30,32 @@ public static class IntegratedReleaseBuild
         File.WriteAllText(Path.Combine(directory,"source-provenance.json"),JsonUtility.ToJson(provenance,true));
         try
         {
+            // Shared editor PlayerPrefs may refer to another project's root-level model.
+            // Keep presets intact; only route this build's known Qwen entry to our existing asset.
+            const string modelName="Qwen3-4B-Q4_K_M.gguf";
+            string modelRelative="LingGuang/Models/"+modelName;
+            string modelSource=Path.Combine(Application.streamingAssetsPath,modelRelative);
+            if(!File.Exists(modelSource))throw new FileNotFoundException("Release model missing",modelSource);
+            foreach(var entry in LLMUnity.LLMManager.modelEntries)
+            {
+                if(entry==null||entry.lora||Path.GetFileName(entry.filename)!=modelName)continue;
+                if(!oldModelPaths.ContainsKey(entry))oldModelPaths.Add(entry,new[]{entry.filename,entry.path});
+                entry.filename=modelRelative;entry.path=modelSource;
+            }
             PlayerSettings.bundleVersion=version;
             PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64,false);
             PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64,new[]{GraphicsDeviceType.Direct3D11});
             PlayerSettings.graphicsJobs=false;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
             var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=scenes,locationPathName=Path.Combine(directory,"MyComputerAlive.exe"),target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
+            if(result.summary.result==BuildResult.Succeeded)
+            {
+                string outputAssets=Path.Combine(directory,"MyComputerAlive_Data/StreamingAssets");
+                string expected=Path.GetFullPath(Path.Combine(outputAssets,modelRelative));
+                string[] models=Directory.GetFiles(outputAssets,"*.gguf",SearchOption.AllDirectories);
+                if(models.Length!=1||!string.Equals(Path.GetFullPath(models[0]),expected,StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("Release requires exactly the canonical Qwen GGUF; unexpected model output: "+string.Join(", ",models));
+            }
             var record=new Record{version=version,sourceCommit=provenance.commit,sourceDigest=provenance.digest,sourceDirty=provenance.dirty,utc=DateTime.UtcNow.ToString("o"),result=result.summary.result.ToString(),errors=result.summary.totalErrors,warnings=result.summary.totalWarnings,path=directory,company=PlayerSettings.companyName,product=PlayerSettings.productName};
             File.WriteAllText(Path.Combine(directory,"build-result.json"),JsonUtility.ToJson(record,true));
             Directory.CreateDirectory("LocalVerification/Release");
@@ -44,6 +65,7 @@ public static class IntegratedReleaseBuild
         }
         finally
         {
+            foreach(var saved in oldModelPaths){saved.Key.filename=saved.Value[0];saved.Key.path=saved.Value[1];}
             PlayerSettings.bundleVersion=oldVersion;
             PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64,oldGraphics);
             PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64,oldDefaultGraphics);

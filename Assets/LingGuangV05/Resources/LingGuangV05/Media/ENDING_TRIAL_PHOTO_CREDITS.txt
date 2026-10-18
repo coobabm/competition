@@ -1,0 +1,43 @@
+D016 ENDING TRIAL PHOTO CREDITS
+
+Five real category-matching photos; three original scene descriptions explicitly changed. No runtime verification claimed.
+These are reference photographs. The fictional character is not their real photographer.
+
+trial_netbar — File:Tongyang - downtown - internet cafe - CIMG9869.JPG
+Author: User:Vmenkov
+Source: https://commons.wikimedia.org/wiki/File:Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG
+License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+Changes: Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.
+SHA-256: 3ccf8d32b975a8a24ee0d390cfd20f51995aa84350366869212ae25a28e5ec52
+
+trial_gpubox — File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg
+Author: Evan-Amos
+Source: https://commons.wikimedia.org/wiki/File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg
+License: Public domain — see source Commons page public-domain dedication
+Changes: Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.
+SHA-256: 6beae803dc9241e228542497ca5fcb2df419a7509c86e298a4065176054d1cc0
+
+trial_westlake — File:2014.11.21.193930 Bridge causeway night Xihu Hangzhou.jpg
+Author: Hermann Luyken
+Source: https://commons.wikimedia.org/wiki/File:2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg
+License: CC0 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Changes: Wikimedia-generated review thumbnail downloaded at width 960; unchanged downloaded bytes. No crop, retouch, darkening or added rain. Unique Unity meta GUID.
+SHA-256: 32a88db47c121f895369918495c80979a33ef56019b735fc4b2e88c20d215e43
+
+trial_serverroom — File:Unique Server Racks.png
+Author: Akramusns
+Source: https://commons.wikimedia.org/wiki/File:Unique_Server_Racks.png
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+Changes: Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.
+SHA-256: 88d0e87ffc4a59fec0df9c968a74c11f012a0626122733ca8f0e757d7031d46f
+
+trial_drafts — File:Mathematics, Math, Lecture notes, Rostov-on-Don, Russia.jpg
+Author: Vyacheslav Argenberg
+Source: https://commons.wikimedia.org/wiki/File:Mathematics,_Math,_Lecture_notes,_Rostov-on-Don,_Russia.jpg
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0
+Changes: Wikimedia-generated review thumbnail downloaded at width 960; unchanged downloaded bytes. No crop, retouch, darkening or added rain. Unique Unity meta GUID.
+SHA-256: 416736b3618fecdfe3ffe6dfca44d30fb3690e4a7ce95e3baa96aede65b14be3
+
+Retain attribution and license links when distributing. Photo assets remain under their stated licenses; this does not relicense unrelated game code.
+Netbar credit correction: the source is an interior with computer rows, not the inherited catalog usage-note claim of exterior.
+The West Lake photograph shows mist; no claim is made that rain was falling.

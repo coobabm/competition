@@ -179,7 +179,7 @@ namespace LingGuangV05.XingGuang
         }
         static bool LearningContains(string text, string query) => (text ?? "").IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
         static bool RetestableRecord(XgAskedEntry record) => record != null && !string.IsNullOrWhiteSpace(record.question)
-            && (record.sourceKind == "question" || record.sourceKind == "train" || record.sourceKind == "retest" || record.sourceKind == "correction");
+            && (record.sourceKind == "question" || record.sourceKind == "train" || record.sourceKind == "retest" || record.sourceKind == "correction" || record.sourceKind == AiActionSource);
         public string LearningTimestamp(XgAskedEntry record)
         {
             if (record == null || !ValidLearningTime(record.gameDate, record.gameSecondsOfDay)) return T("未记录", "Not recorded");
@@ -200,14 +200,14 @@ namespace LingGuangV05.XingGuang
             var original = LearningRecord(originalId);
             if (!RetestableRecord(original) || string.IsNullOrWhiteSpace(deliveredAnswer) || string.IsNullOrWhiteSpace(deliveryKey)) return 0;
             return AppendLearning(new XgAskedEntry { sourceKind = "retest", bankId = original.bankId, originalId = original.id,
-                question = original.question, questionEn = original.questionEn, playerAnswer = original.playerAnswer,
+                question = original.question, questionEn = original.questionEn, playerAnswer = original.playerAnswer, answerSource = original.answerSource,
                 aiAnswer = deliveredAnswer, teachingNoteId = original.teachingNoteId, eventKey = "retest:" + deliveryKey }).id;
         }
         public long RecordLearningCorrection(long originalId, string correction, string deliveryKey)
         {
             var original = LearningRecord(originalId);
             if (!RetestableRecord(original) || string.IsNullOrWhiteSpace(correction) || string.IsNullOrWhiteSpace(deliveryKey)) return 0;
-            return AppendLearning(new XgAskedEntry { sourceKind = "correction", bankId = original.bankId, originalId = original.id,
+            return AppendLearning(new XgAskedEntry { sourceKind = "correction", answerSource = PlayerAnswerSource, bankId = original.bankId, originalId = original.id,
                 question = original.question, questionEn = original.questionEn, aiAnswer = original.aiAnswer, playerAnswer = correction,
                 correction = correction, teachingNoteId = original.teachingNoteId, eventKey = "correction:" + deliveryKey }).id;
         }
@@ -224,7 +224,7 @@ namespace LingGuangV05.XingGuang
         void RecordTeachingAsked(XgTeachingNote note)
         {
             learningNotesById[note.id] = note; learningNotesCount = S.teachingNotebook.Count;
-            var record = AppendLearning(new XgAskedEntry { sourceKind = "question", bankId = note.dataset, question = T(note.text, note.textEn), questionEn = note.textEn,
+            var record = AppendLearning(new XgAskedEntry { sourceKind = "question", answerSource = note.answerSource, bankId = note.dataset, question = T(note.text, note.textEn), questionEn = note.textEn,
                 playerAnswer = string.IsNullOrEmpty(note.answerText) ? T(note.playerAnswer ? "是" : "否", note.playerAnswer ? "Yes" : "No") : note.answerText,
                 aiAnswer = note.aiAnswer, correction = note.correction, teachingNoteId = note.id, eventKey = "teaching:" + note.id });
             note.learningRecordId = record.id;

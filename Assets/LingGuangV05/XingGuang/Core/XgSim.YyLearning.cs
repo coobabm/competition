@@ -13,6 +13,7 @@ namespace LingGuangV05.XingGuang
         public int gameDate;
         public double gameSecondsOfDay = -1;
         public string sourceKind = "", eventKey = "", questionEn = "", correction = "";
+        public string answerSource = ""; // Absent in old saves: retain unknown provenance.
     }
     [Serializable] public sealed class XgPersonaQuestion { public string q, qEn; public int stage; }
     [Serializable] public sealed class XgPersonaPack { public string id, name, nameEn, desc, descEn; public int stage; public double price; public List<XgPersonaQuestion> questions = new List<XgPersonaQuestion>(); }
@@ -85,7 +86,7 @@ namespace LingGuangV05.XingGuang
         public void RecordAsked(string bankId,string question,string playerAnswer,string aiAnswer="",double at=-1)
         {
             if(string.IsNullOrWhiteSpace(question))return;RepairYyLearning();bankId=bankId??"general";
-            AppendLearning(new XgAskedEntry{bankId=bankId,sourceKind=bankId.StartsWith("train.",StringComparison.Ordinal)?"train":"question",question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
+            AppendLearning(new XgAskedEntry{bankId=bankId,answerSource=bankId.StartsWith("train.",StringComparison.Ordinal)?"dataset_label":"",sourceKind=bankId.StartsWith("train.",StringComparison.Ordinal)?"train":"question",question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
         }
         public static double PersonaPrice(string id) { var p=personaCatalog.Find(x=>x.id==id);return p==null?double.PositiveInfinity:p.price; }
         public bool OwnsPersonaPack(string id){RepairYyLearning();return S.personaPacks.Contains(id);}

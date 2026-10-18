@@ -13,7 +13,7 @@ using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Games
 {
     /// <summary>One game inside the 游戏中心: it builds its own board into the area it is given and keeps its state while hidden.</summary>
-    public abstract class HubGame : MonoBehaviour
+    public abstract partial class HubGame : MonoBehaviour
     {
         protected TMP_FontAsset font;
         public abstract string Id { get; }
@@ -61,7 +61,7 @@ namespace LingGuangV05.Desktop.Games
         protected static XgSim Lab => TiebaHub.Lab();
 
         /// <summary>True once the lab's AI is the opponent (gomoku stage 3, go 4, chess 6); before that a built-in program plays.</summary>
-        protected bool AiPlays => Lab?.AiPlays(Id) ?? false;
+        protected bool AiPlays => privateAiOpponent && Lab?.BoardAiAvailable==true;
 
         /// <summary>The AI's name from the opening setup, or 它.</summary>
         protected static string AiName
@@ -75,24 +75,20 @@ namespace LingGuangV05.Desktop.Games
         }
 
         /// <summary>Chance the AI plays its best move (it misreads the board otherwise).</summary>
-        protected double Skill => Lab?.GameSkill(Id) ?? 1;
+        protected double Skill => !AiPlays?1:Lab.BoardLogicLevel==0?0:Lab.BoardLogicLevel>=3 ? .98 : .85;
 
         /// <summary>Every few moves of a game in progress feed the lab.</summary>
-        protected void Moved(int plies)
+        protected void Moved(int plies) { if(plies==1)BeginRoundRecord(); }
+        protected void Finished(XgGameOutcome outcome,int moves,IList<string> log)
         {
-            var lab = Lab;
-            if (lab == null) return;
-            int n = lab.GameMove(Id, plies);
-            if (n > 0) sampleNote = SampleText(lab, n);
-        }
-
-        /// <summary>A game ended: the lab learns from it and reacts on the desktop.</summary>
-        protected void Finished(XgGameOutcome outcome, int moves, IList<string> log)
-        {
-            var lab = Lab;
-            if (lab == null) return;
-            int n = GameReactions.Finish(lab, Id, outcome, moves, log);
-            if (n > 0) sampleNote = SampleText(lab, n);
+            if(!ReferenceEquals(roundOwner,Lab)||roundSession==null)return;
+            bool ai=AiPlays;
+            if(roundOwner.FinishBoardSession(roundSession,outcome,moves,log))
+            {
+                GameReactions.Finish(roundOwner,Id,outcome,moves,log,ai);
+                sampleNote=T("对局已结束。样本需在资料夹安装对局记录包。","Game complete. Samples require installing a game-record pack from Files.");
+            }
+            roundSession=null;
         }
 
         string SampleText(XgSim lab, int n)
@@ -131,7 +127,7 @@ namespace LingGuangV05.Desktop.Games
     /// launcher with 五子棋, 围棋 and 国际象棋. The window keeps its own name and icon. A sidebar switches between the
     /// home page (one card per game) and each game; games keep their position while you switch away.
     /// </summary>
-    public sealed class GameHubView : MonoBehaviour
+    public sealed partial class GameHubView : MonoBehaviour
     {
         public const string NativeWindow = "Game Hub";
         static readonly Color Side = new Color32(32, 38, 56, 255), SideHover = new Color32(52, 62, 90, 255), Page = new Color32(240, 242, 246, 255);
@@ -159,7 +155,7 @@ namespace LingGuangV05.Desktop.Games
             return view;
         }
 
-        void OnDestroy() { GameText.Changed -= Relabel; }
+        void OnDestroy() { GameText.Changed -= Relabel; composerSprites?.Dispose(); }
 
         void Start()
         {
@@ -169,7 +165,7 @@ namespace LingGuangV05.Desktop.Games
             PrologueDesk.Fill(root, Page);
             UiFitScale.Attach(root, window, new Vector2(1266, 763));
 
-            games.Add(Add<GomokuPanel>()); games.Add(Add<GoPanel>()); games.Add(Add<ChessPanel>());
+            games.Add(Add<GomokuPanel>()); games.Add(Add<GoPanel>()); games.Add(Add<ChessPanel>()); games.Add(Add<LudoPanel>()); games.Add(Add<ChineseCheckersPanel>()); games.Add(Add<MonopolyPanel>());
 
             var side = PrologueDesk.Rect("Sidebar", root, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(210, 0));
             PrologueDesk.Fill(side, Side);
@@ -177,13 +173,19 @@ namespace LingGuangV05.Desktop.Games
             sideTitle.fontStyle = FontStyles.Bold;
             Nav(side, "home", "⌂", 0);
             for (int i = 0; i < games.Count; i++) Nav(side, games[i].Id, games[i].Glyph, i + 1);
+            Nav(side,"board.reader","▦",games.Count+1);
+            Nav(side,"board.composer","♛",games.Count+2);
+            Nav(side,"board.xiangqi","车",games.Count+3);
 
             main = PrologueDesk.Rect("Main", root, Vector2.zero, Vector2.one, new Vector2(210, 0), Vector2.zero);
             BuildHome();
+            BuildBoardReader();
+            BuildBoardComposer();
+            BuildXiangqiComposer();
             foreach (var g in games)
             {
                 var area = PrologueDesk.Rect(g.Id, main, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-                g.Init(font); g.Build(area);
+                g.Init(font); g.Build(area); g.AttachBoardControls(area);
                 area.gameObject.SetActive(false);
                 areas[g.Id] = area;
             }
@@ -216,17 +218,17 @@ namespace LingGuangV05.Desktop.Games
             for (int i = 0; i < games.Count; i++)
             {
                 var g = games[i];
-                float x = 40 + i * 330;
-                var card = PrologueDesk.Rect("Card " + g.Id, home, new Vector2(0, 1), new Vector2(0, 1), new Vector2(x, -600), new Vector2(x + 300, -160));
+                float x = 30 + (i%3)*330, top = 145+(i/3)*280;
+                var card = PrologueDesk.Rect("Card " + g.Id, home, new Vector2(0, 1), new Vector2(0, 1), new Vector2(x,-top-260),new Vector2(x+300,-top));
                 PrologueDesk.Fill(card, Color.white);
                 card.gameObject.AddComponent<Outline>().effectColor = new Color32(214, 218, 228, 255);
-                var art = PrologueDesk.Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(0, -190), Vector2.zero);
+                var art = PrologueDesk.Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(0, -72), Vector2.zero);
                 PrologueDesk.Fill(art, g.Accent, false);
-                var artGlyph = Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 96, Color.white, TextAlignmentOptions.Center);
-                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(art, "hub", g.Id, 150, 95, 150) != null) artGlyph.gameObject.SetActive(false);
-                var title = Text(PrologueDesk.Rect("Name", card, new Vector2(0, 1), Vector2.one, new Vector2(20, -240), new Vector2(-20, -198)), "", 26, new Color32(30, 36, 52, 255), TextAlignmentOptions.MidlineLeft);
+                var artGlyph = Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 48, Color.white, TextAlignmentOptions.Center);
+                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(art, "hub", g.Id, 150, 36, 58) != null) artGlyph.gameObject.SetActive(false);
+                var title = Text(PrologueDesk.Rect("Name", card, new Vector2(0, 1), Vector2.one, new Vector2(15,-111),new Vector2(-15,-76)), "", 26, new Color32(30, 36, 52, 255), TextAlignmentOptions.MidlineLeft);
                 title.fontStyle = FontStyles.Bold;
-                var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(20, 96), new Vector2(-20, -246)), "", 16, new Color32(90, 98, 114, 255));
+                var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(15,78),new Vector2(-15,-114)), "", 16, new Color32(90, 98, 114, 255));
                 var state = Text(PrologueDesk.Rect("State", card, Vector2.zero, new Vector2(1, 0), new Vector2(20, 66), new Vector2(-20, 92)), "", 14, new Color32(200, 90, 40, 255), TextAlignmentOptions.MidlineLeft);
                 var play = PrologueDesk.Rect("Play", card, Vector2.zero, new Vector2(1, 0), new Vector2(20, 14), new Vector2(-20, 58));
                 var playImg = PrologueDesk.Fill(play, g.Accent);
@@ -246,10 +248,13 @@ namespace LingGuangV05.Desktop.Games
 
         void Show(string id)
         {
+            if(id=="board.reader"&&!ReaderBought||(id=="board.composer"||id=="board.xiangqi")&&!ComposerBought)id="home";
             showing = id;
+            SyncBoardReader();
+            SyncBoardComposer();SyncXiangqiComposer();
             if (home != null) home.gameObject.SetActive(id == "home");
             foreach (var kv in areas) kv.Value.gameObject.SetActive(kv.Key == id);
-            foreach (var g in games) if (g.Id == id) g.Refresh();
+            foreach (var g in games) if (g.Id == id) { g.SyncBoardOwner(); g.OnBoardShown(); g.Refresh(); }
             foreach (var kv in navFills) kv.Value.color = kv.Key == id ? SideHover : Side;
             Relabel();
         }
@@ -259,6 +264,8 @@ namespace LingGuangV05.Desktop.Games
             if (sideTitle == null) return;
             sideTitle.text = Lang.T("游戏中心");
             navLabels["home"].text = Lang.T("首页");
+            RelabelBoardReader();
+            RelabelBoardComposer();RelabelXiangqiComposer();
             foreach (var g in games) navLabels[g.Id].text = g.Title;
             homeTitle.text = Lang.T("游戏中心");
             homeLine.text = Lang.T("2016 · 本地对战 · 不用联网");
@@ -273,9 +280,11 @@ namespace LingGuangV05.Desktop.Games
 
         void Update()
         {
+            SyncBoardReader();
+            SyncBoardComposer();TickBoardComposer();SyncXiangqiComposer();TickXiangqiComposer();
             if (sideTitle == null || Time.frameCount % 30 != 0) return;
             // Titles can be teased by the lab's AI for a while (五子棋 at stage 5–6), so they are re-read here.
-            foreach (var g in games) navLabels[g.Id].text = g.Title;
+            foreach (var g in games) { g.SyncBoardOwner(); navLabels[g.Id].text = g.Title; }
             // Lock text, titles and blurbs follow the lab's stage while the home page is open.
             if (showing == "home") foreach (var c in cards) { c.state.text = c.game.Locked ?? ""; c.title.text = c.game.Title; c.blurb.text = c.game.Blurb; }
         }

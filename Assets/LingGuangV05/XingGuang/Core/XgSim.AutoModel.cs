@@ -466,7 +466,8 @@ namespace LingGuangV05.XingGuang
         /// wobble. Dropout halves the overfitting part, augmentation multiplies the picture samples, warm-up and clipping
         /// soften the jump, BatchNorm steadies the rest.
         /// </summary>
-        public XgDropRisk DropRisk(XgRun run)
+        public XgDropRisk DropRisk(XgRun run)=>DropRisk(run,null);
+        XgDropRisk DropRisk(XgRun run,double? forecastDriftPenalty)
         {
             var r = new XgDropRisk();
             var d = XgCatalog.Dataset(run.dataset);
@@ -474,7 +475,7 @@ namespace LingGuangV05.XingGuang
             double perSample = ParamsK(run) * 1000 / Math.Max(1, SamplesEffective(run));
             r.overfit = .24 * Clamp01(Math.Log10(Math.Max(1, perSample)) / 3) * (Has("dropout") ? .5 : 1);
             r.noise = Math.Min(.2, .6 * NoiseRatio(run.dataset));
-            r.drift = Math.Min(.12, .5 * MemeDriftPenalty(run.dataset));
+            r.drift = Math.Min(.12, .5 * (forecastDriftPenalty??MemeDriftPenalty(run.dataset)));
             double range = Math.Max(1e-9, d.chanceError - d.floorError);
             double jumpPoints = Math.Max(0, run.lastGain) * 1000 / range;
             r.jump = .1 * Clamp01((jumpPoints - 30) / 120) * (Has("warmup") ? .5 : 1) * (Has("gradclip") ? .7 : 1);

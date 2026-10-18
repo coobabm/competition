@@ -1,0 +1,40 @@
+Group-chat photo illustrations / 群聊情景照片配图 — three selected photographs, 2026-10-19
+
+These licensed photographs illustrate fictional characters and chat events. They are not newly AI-generated images and do not document the fictional characters, places or dates. Original capture dates and scene differences are stated below. Existing story captions are unchanged.
+这三张授权照片用于虚构人物与群聊情节的配图，不是本轮AI生成图，也不是对剧情人物、地点和日期的纪实记录。原始拍摄日期及场景差异如下，原剧情配文未改。
+
+License scope / 许可范围：
+The CC BY-SA 3.0 terms apply to the Qinghai photograph and the cropped/resized adaptation distributed here. Other game code, text, photographs and artwork do not become CC BY-SA solely because the game includes this separately credited image. Preserve its attribution, source, license link and change notice when distributing the image or its adaptation.
+CC BY-SA 3.0 适用于青海原照片及此处裁切缩放后的改图；不能仅因游戏收录此独立署名图片就将整个游戏代码、剧情文字或其他素材标为同一许可。分发该图及其改图时保留作者、来源、许可链接与改动说明。
+The GPU and noodle photographs/adaptations are credited under CC BY 2.0. Their attribution, source, license links and change notices must likewise remain with distribution.
+显卡和泡面照片及此处改图按 CC BY 2.0 署名，分发时同样保留来源、许可链接和改动说明。
+
+chat_lili_qinghai — File:Rapeseed at Qinghai Lake.jpg
+作者 / Creator: Jucember
+许可 / License: CC BY-SA 3.0
+许可链接 / License URL: https://creativecommons.org/licenses/by-sa/3.0
+来源 / Source: https://commons.wikimedia.org/wiki/File:Rapeseed_at_Qinghai_Lake.jpg
+原图日期 / Source date: 2011-08-06
+修改 / Modifications: Crop and resize to 800x600 JPEG; no compositing or recoloring
+改编许可 / Adaptation license: CC BY-SA 3.0
+场景匹配 / Context: Verified Qinghai Lake rapeseed fields and blue lake; no people, branding or watermarks. Bicycle and snowy mountains absent. Original caption remains accurate to visible scene.
+
+chat_ajie_1080 — File:Nvidia GeForce GTX 1080 Ti Founders Edition unpacking (27347711701).jpg
+作者 / Creator: Manifest Interactive from Portland, OR, USA
+许可 / License: CC BY 2.0
+许可链接 / License URL: https://creativecommons.org/licenses/by/2.0
+来源 / Source: https://commons.wikimedia.org/wiki/File:Nvidia_GeForce_GTX_1080_Ti_Founders_Edition_unpacking_(27347711701).jpg
+原图日期 / Source date: 2016-06-02 11:58
+修改 / Modifications: Crop excludes right-edge NVIDIA logo; resize to 800x600 JPEG
+改编许可 / Adaptation license: CC BY 2.0
+场景匹配 / Context: Black/silver GTX1080 blower cooler close-up on desk. Missing package, drink, screwdriver. Commons title mistakenly says Ti; current source description says Geforce GTX 1080 Founders Edition Unboxing. Source photographed June 2, not fictional May 28; use as fictional illustrative scene, never documentary evidence of May28.
+
+chat_ajie_noodles — File:Singapore Curry Flavoured Noodles, -Mar. 2011 a.jpg
+作者 / Creator: William Christiansen
+许可 / License: CC BY 2.0
+许可链接 / License URL: https://creativecommons.org/licenses/by/2.0
+来源 / Source: https://commons.wikimedia.org/wiki/File:Singapore_Curry_Flavoured_Noodles,_-Mar._2011_a.jpg
+原图日期 / Source date: 4 March 2011, 13:38 (according to Exif data)
+修改 / Modifications: Crop the upper food portion to exclude branded packaging; resize 800x600 JPEG
+改编许可 / Adaptation license: CC BY 2.0
+场景匹配 / Context: Cooked cup noodles lifted above an open cup. No faces, readable brands or watermark in crop. Missing keyboard, monitor and Christmas lights; original caption works as fictional Christmas Eve meal but source does not document that date.

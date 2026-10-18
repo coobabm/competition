@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LingGuangV05.Core;
 using LingGuangV05.Desktop.Media;
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Story;
@@ -282,7 +283,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var pointer = UnityEngine.InputSystem.Mouse.current;
             if (pointer != null && (pointer.leftButton.isPressed || pointer.rightButton.isPressed)) lastPress = Time.unscaledTime;
             TickIntro(dt);
-            bool present = Sim != null && rt != null && rt.Sim != null && Sim.SpiderAround && !IntroPlaying
+            bool present = Sim != null && rt != null && rt.Sim != null && Sim.SpiderAround && !IntroPlaying && !StoryFocus.Exclusive
                 && XgResident.Present(rt.Sim.AppInstalled, rt.Sim.InPrologue, CutscenePlaying || InsideCrawler, FullscreenVideo);
             bool labelVisible = zhongbao != null && zhongbao.Visible && zhongbao.Tab == "label" && zhongbao.Label != null && zhongbao.Label.Paper != null && zhongbao.Label.Paper.gameObject.activeInHierarchy;
             int answers = zhongbao != null && zhongbao.Label != null ? zhongbao.Label.AnswerCount : 0;
@@ -615,6 +616,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         internal void GrabSpider(PointerEventData e)
         {
+            if (StoryFocus.Exclusive) { StopWork(); return; }
             if (walker == null || !PointerInLayer(e, out var p) || zhongbao == null || zhongbao.Label == null) return;
             held = true; working = false; reach = Reach.Idle; armK = 0;
             grabOffset = walker.pos - p; heldAt = walker.pos; pointerAt = p;
@@ -624,6 +626,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         internal void MoveGrabbed(PointerEventData e)
         {
+            if (StoryFocus.Exclusive) { StopWork(); return; }
             if (!held || !PointerInLayer(e, out var p)) return;
             pointerAt = p;
             heldAt = p + grabOffset;
@@ -634,6 +637,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Dropped on the workspace it goes to work; anywhere else it is let go and carries on as before.</summary>
         internal void DropSpider(PointerEventData e)
         {
+            if (StoryFocus.Exclusive) { StopWork(); return; }
             if (!held) return;
             if (PointerInLayer(e, out var p)) { pointerAt = p; heldAt = p + grabOffset; }
             held = false;

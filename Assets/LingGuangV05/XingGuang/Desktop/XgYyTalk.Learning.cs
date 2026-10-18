@@ -60,7 +60,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bound.NoteNotebookReply(reply.text);
                 bound.RecordLearningRetest(source.id,reply.text,"yy:"+message.learningReplyId);
                 string reference=AnswerToken(source.playerAnswer),answer=AnswerToken(reply.text);
-                if(reference.Length>0&&answer.Length>0)message.learningComparison=reference==answer?1:-1;
+                if(XgSim.HasPlayerAnswer(source)&&reference.Length>0&&answer.Length>0)message.learningComparison=reference==answer?1:-1;
             }
             if(controller.runtime!=null)controller.runtime.MarkDirty();
         }

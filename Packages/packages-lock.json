@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "ai.undream.llm": {
-      "version": "https://github.com/undreamai/LLMUnity.git#v3.0.3",
+      "version": "https://github.com/undreamai/LLMUnity.git#9931a9ea46906b1f43adaf9498c05ccf227b5d0b",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -27,7 +27,7 @@
       "hash": "30d22075093d1d35dfb0091c1c7550e9ad948577"
     },
     "com.ramenvr.aura-unity": {
-      "version": "https://github.com/ramenvr/AuraForUnityPlugin.git",
+      "version": "https://github.com/ramenvr/AuraForUnityPlugin.git#558ea3c324c2cfd2803f3486bedbe9cbb740df9d",
       "depth": 0,
       "source": "git",
       "dependencies": {

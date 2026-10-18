@@ -131,7 +131,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             ticket = owner.BeginMiniGame(id, Host);
             if (ticket == 0) return false;
             selected = id; NewSurface();
-            context = new XgMiniContext(surface, new XgUi(ui.font, ui.window, ui.dark && id == "kaixincidian"), owner, Host, id,
+            context = new XgMiniContext(surface, new XgUi(ui.font, ui.window, ui.dark && (id == "kaixincidian" || id == "arith_mole")), owner, Host, id,
                 () => Focused && ReferenceEquals(owner, Sim), () => owner.MiniGameSkill(id),
                 text => { if (speech != null) speech.text = (text ?? "").Replace("\n", "  ·  "); }, Settle);
             game = XgPackGames.Create(id, context) ?? XgActionGames.Create(id, context) ?? XgBoardGames.Create(id, context) ?? XgSocialGames.Create(id, context);
@@ -157,7 +157,22 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 {
                     // Audio advances once per accepted answer; its 3-second restart never changes the saved streak.
                     Fx.PlayCombo(owner.S.combo);
-                    Fx.ComboHit(Fx.At(status.rectTransform), surface, status.rectTransform, host.ComboChip,
+                    // Question feedback is static and sits next to the stage's mask edge.
+                    // Punch only its visual background, never the shared coordinate system containing
+                    // LastAnswer/LastAiAnswer and the next question's input rectangles.
+                    RectTransform struck = surface;
+                    if (game is XgPackQuestion)
+                    {
+                        struck = null;
+                        for (int i = 0; surface != null && i < surface.childCount; i++)
+                        {
+                            var child = surface.GetChild(i);
+                            // Clear defers destruction until the frame ends; skip the previous background.
+                            if (child.name != "SocialBackground" || !child.gameObject.activeSelf) continue;
+                            struck = child as RectTransform; break;
+                        }
+                    }
+                    Fx.ComboHit(Fx.At(status.rectTransform), struck, status.rectTransform, host.ComboChip,
                         owner.S.combo, Vector2.up, XgPalette.Good);
                 }
                 else Fx.Play(XgJuice.Sfx.Id.Clack);

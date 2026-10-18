@@ -13,6 +13,13 @@ namespace LingGuangV05.XingGuang
         static string T(XgSim sim,string zh,string en)=>sim.English?en:zh;
         static readonly Dictionary<string,Copy> All=new Dictionary<string,Copy>(StringComparer.Ordinal)
         {
+            { "daily.dice", new Copy("概率直觉","Probability intuition","从几种可能里数机会","Count equally likely outcomes","概率小题；监控预报更细","Questions; finer monitor forecasts") },
+            { "daily.news", new Copy("时事","Current affairs","再想想读过的新闻","Recall news you have read","开放新闻回顾","Opens news review") },
+            { "daily.surf", new Copy("冲浪","Surfing","在帖子里找到资料","Find learning links in posts","高亮手写数字资料链接","Highlights the digit-data link") },
+            { "daily.bargain", new Copy("砍价","Bargaining","买二手显卡少花一点","Spend less on used GPUs","启用喵鱼二手显卡折扣","Discounts Miaoyu used GPUs") },
+            { "daily.care", new Copy("体贴","Considerate","记得对方说过的话","Remember what others told you","体贴表达与已知日期提醒","Considerate cues and known dates") },
+            { "daily.slang", new Copy("网络用语","Internet slang","读懂群里的梗","Understand the group slang","加入用语解释与斗图建议","Adds slang and sticker tips") },
+            { "daily.rhythm", new Copy("节奏","Rhythm","让完成提示跟上音乐","Let completion cues follow music","完成提示跟随音乐重音","Completion cues follow music accents") },
             { "perceptron", new Copy("感知机 P 1958","Perceptron P 1958","用直线分两边","Split with one line","启用基础脑型","Enables basic architecture") },
             { "mlp", new Copy("多层感知机 MLP 1986","Multilayer MLP 1986","把简单线索组合起来","Combine simple clues","加入多层脑型","Adds multilayer architecture") },
             { "lenet", new Copy("手写卷积 LeNet 1998","Digit CNN LeNet 1998","小窗口寻找笔画","Find strokes locally","加入手写卷积脑型","Adds digit CNN architecture") },
@@ -75,6 +82,7 @@ namespace LingGuangV05.XingGuang
             { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","认出见过的检查题","Recognise known test cards","金题转人工复核","Routes gold items to review") },
             { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","让它替你抄数字","Let it type the digits","新验证码自动提交","Auto-submits new captchas") },
             { "relic.slots8", new Copy("道具扩容 I","Relic slots I","给稀有道具留位置","Make room for rare items","装备格4→8","Equipped slots 4 to 8") },
+            { "books.library", new Copy("图书馆网页","Library website","挑一本想读的书","Choose something to read","开放网页，书籍另购","Opens website; books sold separately") },
             { "relic.slots12", new Copy("道具扩容 II","Relic slots II","再装上四件道具","Equip four more rare items","装备格8→12","Equipped slots 8 to 12") },
             { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","把资料装进大脑","Load files into its brain","开放资料夹、安装与网址","Opens files, import and URLs") },
             { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","看清每笔钱的去向","Track every payment","显示资金收入与电力","Shows funds, income and power") },
@@ -129,6 +137,7 @@ namespace LingGuangV05.XingGuang
         public static string Detail(XgNode n,XgSim sim)
         {
             if(n==null||sim.NodeMystery(n))return Summary(n,sim)+"。";
+            if(XgDailyLife.Node(n.id)!=null)return XgDailyLifeCopy.Detail(n.id,sim.English);
             if(n.id=="transformer"||n.id=="multihead"||n.id=="position"||n.id=="sft"||n.id=="cot")
                 return T(sim,"这是你在2016年尝试的自研方向，不是当年公开发表成果的介绍。","This is your own experiment in 2016, not a claim about a publication from that year.")+"\n"+Summary(n,sim)+T(sim,"。",".");
             if(n.id=="label.parallel")return T(sim,"待复核容量从20题增加到60题，满后自动暂停。多留四十道题，等你有空再来复核。","The review inbox expands from 20 to 60 cards; automation pauses when full. Keep forty more cards until you have time to review them.");

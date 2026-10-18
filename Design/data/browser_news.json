@@ -242,15 +242,7 @@
       "body": "口径 500 米，相当于 30 个足球场。它将寻找来自宇宙深处的信号。",
       "bodyEn": "500 metres across, thirty football pitches. It will listen for signals from deep space."
     },
-    {
-      "id": "n0928",
-      "date": "2016-09-28",
-      "kind": "科技",
-      "title": "谷歌翻译换成神经网络，错误少了六成",
-      "titleEn": "Google Translate goes neural; 60% fewer errors",
-      "body": "新系统先把整句读完，再一边看原文一边翻。",
-      "bodyEn": "It reads the whole sentence first, then translates while looking back at it."
-    },
+    {"topic": "T05", "id": "n0928", "date": "2016-09-28", "eventDate": "2016-09-27", "eventPrecision": "official-product-announcement", "earliestVisibleDate": "2016-09-28", "kind": "科技", "title": "谷歌公布 GNMT，先用于中文到英文翻译", "titleEn": "Google announces GNMT, beginning with Chinese-to-English translation", "body": "谷歌在 9 月 27 日介绍了神经机器翻译系统 GNMT；相关论文的第一版提交于 9 月 26 日。公告称，系统已用于谷歌翻译的中文到英文方向，其他方向将逐步推出，并非所有语言同时更换。作者也指出，它仍可能漏词、误译名称，处理整段上下文仍有限制。译文更顺，并不等于重要内容可以免核对。", "bodyEn": "Google introduced GNMT on September 27; version one of its paper was submitted on September 26. The announcement said GNMT was serving Chinese-to-English requests in Google Translate, with other language pairs to follow. This was not a simultaneous change for every language. The authors also noted omissions, mistranslated names and limits on wider context. Smoother wording does not remove the need to check important material.", "sourceUrl": "https://research.google/blog/a-neural-network-for-machine-translation-at-production-scale/", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."},
     {
       "id": "n1002",
       "date": "2016-10-02",
@@ -275,8 +267,8 @@
       "kind": "娱乐",
       "title": "鲍勃·迪伦获诺贝尔文学奖",
       "titleEn": "Bob Dylan wins the Nobel Prize in Literature",
-      "body": "第一次颁给一位歌手。他本人好几天没回应。",
-      "bodyEn": "The first time it goes to a songwriter. He didn't respond for days."
+      "body": "今年的诺贝尔文学奖颁给了鲍勃·迪伦。",
+      "bodyEn": "This year's Nobel Prize in Literature goes to Bob Dylan."
     },
     {
       "id": "n1017",
@@ -402,6 +394,11 @@
       "titleEn": "Mystery player Master beats top Go players online",
       "body": "已经连赢几十盘，一盘没输。没人知道它是谁。",
       "bodyEn": "Dozens of wins, no losses. Nobody knows who it is."
-    }
+    },
+    {"topic": "T01", "id": "lz2_t01_alphago", "date": "2016-05-25", "eventDate": "2016-03-15", "eventPrecision": "day", "earliestVisibleDate": "2016-03-16", "kind": "科技", "title": "回看三月围棋赛：AlphaGo 以 4 比 1 战胜李世石", "titleEn": "Looking back at March: AlphaGo beats Lee Sedol 4–1", "body": "今年三月，AlphaGo 在首尔与李世石进行了五局围棋比赛，最终以 4 比 1 获胜；李世石赢下第四局。这是围棋任务上的重要结果。它并不能单凭这一场比赛证明，程序在所有工作上都同样可靠。", "bodyEn": "In March, AlphaGo played five games of Go against Lee Sedol in Seoul and won the match 4–1. Lee won game four. This was an important result on a specific task; the match alone does not establish equal reliability in every kind of work.", "sourceUrl": "https://blog.google/technology/ai/alphagos-ultimate-challenge/", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."},
+    {"topic": "T02", "id": "lz2_t02_xiaoice", "date": "2016-05-29", "eventDate": "2014", "eventPrecision": "year", "earliestVisibleDate": "2016-01-01", "kind": "科技", "title": "聊天程序早已上网：从小冰聊起", "titleEn": "Chatbots were already online: a look at XiaoIce", "body": "微软小冰在 2014 年推出，到今年已经有公众与它聊天的经历。能顺着一句话接下去，是一种可以观察的表现；要判断它记住了什么、能否换个情境继续回答，还需要分别验证。这里不把流畅聊天等同于每轮都在训练模型。", "bodyEn": "Microsoft launched XiaoIce in 2014, and by this year people had already been chatting with it. Continuing a conversation is observable behavior. What it remembers and whether it can answer in a different situation require separate checks. Fluent conversation does not establish that each exchange trains the model.", "sourceUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."},
+    {"topic": "T03", "id": "lz2_t03_tay", "date": "2016-06-02", "eventDate": "2016-03-25", "eventPrecision": "official-report-day", "earliestVisibleDate": "2016-03-26", "kind": "科技", "title": "回看 Tay 事件：开放互动还需要防范恶意输入", "titleEn": "Looking back at Tay: public interaction needs protection from abuse", "body": "微软在 3 月 25 日的说明中表示，聊天机器人 Tay 上线后的头一天遭遇了针对漏洞的协同攻击，出现不当输出，随后下线。官方承认防护存在疏漏。这一事件说明开放互动需要应对恶意使用；仅凭一条输出，不能断定模型内部具体更新了什么。", "bodyEn": "In its March 25 account, Microsoft said Tay faced a coordinated attack exploiting a vulnerability within its first day online, produced offensive output, and was taken offline. Microsoft acknowledged a gap in its safeguards. Public interaction needs defenses against abuse; an output alone cannot establish what changed inside a model.", "sourceUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."},
+    {"topic": "T04", "id": "lz2_t04_resnet", "date": "2016-06-06", "eventDate": "2015-12-10", "eventPrecision": "paper-v1-submission", "earliestVisibleDate": "2016-01-01", "kind": "科技", "title": "读去年公开的残差网络论文：深度之外还有结构", "titleEn": "Reading last year’s residual-network paper: structure matters too", "body": "去年十二月公开的残差网络论文，把学习目标改写为相对输入的变化，并采用跨层连接。作者报告了更深网络的训练结果，包括 152 层网络的实验。这个方法帮助优化深层网络，却不表示层数加得越多，任何任务都会自动变好。", "bodyEn": "The residual-network paper made public last December reformulates learning around changes relative to the input and uses shortcut connections. Its authors report results for deeper networks, including experiments with 152 layers. The approach helps optimize deep networks; it does not mean adding layers automatically improves every task.", "sourceUrl": "https://arxiv.org/abs/1512.03385", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."},
+    {"topic": "T06", "id": "lz2_t06_siri", "date": "2016-06-10", "eventDate": "2011-10-04", "eventPrecision": "announcement-day", "earliestVisibleDate": "2016-01-01", "kind": "科技", "title": "语音助手早已进入日常工具", "titleEn": "Voice assistants were already everyday tools", "body": "苹果在 2011 年发布 iPhone 4S 时介绍了 Siri，列举了拨打电话、安排提醒等用途。到 2016 年，语音助手已经不是全新的概念。不同设备、语言和环境下的体验仍要分别看，能完成一类操作，也不表示什么事都能交给它。", "bodyEn": "Apple introduced Siri with its iPhone 4S announcement in 2011, listing uses such as calls and reminders. By 2016, voice assistants were already an established idea. Experiences still depend on the device, language and setting. Handling one kind of operation does not make an assistant reliable for every job.", "sourceUrl": "https://www.apple.com/newsroom/2011/10/04Apple-Launches-iPhone-4S-iOS-5-iCloud/", "rights": "Original bilingual summary; no source article text, images or product assets reproduced."}
   ]
 }

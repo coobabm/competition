@@ -69,6 +69,19 @@ namespace LingGuangV05.Desktop.Bodu
                 Line(T(a.title,a.titleEn),25,Ink);Line(a.date+(a.kind=="水文"?T(" · 推广"," · Sponsored"):""),13,Muted);
                 Line(T(a.body??"",a.bodyEn??""),18,Ink);
                 var lab=TiebaHub.Lab();
+                if(lab!=null)
+                {
+                    var article=a; var owner=lab; string receipt="news-read:"+a.id;
+                    bool read=owner.DailyNewsAlreadyRead(a.id), complete=owner.DailyProgress("news5").complete;
+                    Line(read?T("已读完", "Finished reading"):complete?T("阅读条件已满足（5篇）", "Reading requirement complete (5 articles)"):T("<u>我已读完这篇 ›</u>", "<u>I finished reading this article ›</u>"),16,read||complete?Muted:Blue,read||complete?(Action)null:()=>
+                    {
+                        if(!ReferenceEquals(owner,TiebaHub.Lab())||window==null||!window.isOn||page!="news"||newsId!=article.id)return;
+                        // Revalidate publication and body eligibility at the actual confirmation.
+                        foreach(var current in AvailableNews(Save()!=null?LingGuangV05.Core.GameCalendar.Now(Save()):today))
+                            if(current.id==article.id&&!current.brief&&!string.IsNullOrWhiteSpace(current.body)&&!string.IsNullOrWhiteSpace(current.bodyEn))
+                            {owner.RecordDailyNewsRead(current.id,receipt);signature="";break;}
+                    });
+                }
                 if(lab!=null&&XgNewsCatalog.Teachable(a))
                 {
                     bool taught=lab.NewsAlreadyTaught(a.id);var article=a;

@@ -43,6 +43,7 @@ namespace LingGuangV05.Desktop.Tieba
             var asset = Resources.Load<TextAsset>(ResourcePath);
             try { Library = ForumLibrary.Parse(asset != null ? asset.text : "{}"); }
             catch (FormatException error) { Debug.LogError("[Tieba] " + error.Message); Library = ForumLibrary.Parse("{}"); }
+            RegisterZhouThread();
         }
 
         void Start()
@@ -72,6 +73,7 @@ namespace LingGuangV05.Desktop.Tieba
             S = parsed ?? new ForumState();
             S.zhouGone = false;
             if (parsed == null && sim != null && sim.InPrologue) AddHistory();
+            RepairZhouQa();
             pending.Clear(); inFlight.Clear(); awayFor.Clear(); nextAway = 0;
             EndScript();
             Changed?.Invoke();
@@ -165,6 +167,12 @@ namespace LingGuangV05.Desktop.Tieba
             if (S == null || string.IsNullOrEmpty(text)) return;
             var conv = S.Conversation(id);
             conv.messages.Add(new ForumMessage { from = id, text = text, gameSeconds = Now });
+            if (id != null && id.StartsWith("thread:", StringComparison.Ordinal))
+            {
+                var thread = Library.Get(id.Substring(7));
+                if (thread != null && thread.author == ForumLibrary.Me)
+                    Lab()?.RecordDailyOwnPostReply(thread.id, Guid.NewGuid().ToString("N"), true, true);
+            }
             if (!seen) conv.unread++;
             if (id != ForumLibrary.Me)
                 DesktopNotifications.Notify(runtime, IsDiscussion(id) ? "贴吧回复" : Lang.T("贴吧私信"),
@@ -184,17 +192,20 @@ namespace LingGuangV05.Desktop.Tieba
             if (S == null || text.Length == 0 || !CanMessage(id)) return false;
             S.Conversation(id).messages.Add(new ForumMessage { from = ForumLibrary.Me, text = text, gameSeconds = Now });
             if (id == ForumLibrary.ZhouNow) S.metZhouNow = true;
+            if (id == ForumLibrary.LaoZhou) LaoZhouQuestions.Observe(ZhouQa,"tieba:"+(S.Conversation(id).messages.Count-1)+":"+Now,"tieba_dm",text,Now);
             Touch(); return true;
         }
 
         public void Send(string id, string text)
         {
+            if (TryZhouForumChoice(id, NativeLaoZhouReplies.NormalizeInput(text))) return;
             text = NativeLaoZhouReplies.NormalizeInput(text);
             if (S == null || text.Length == 0 || !CanMessage(id)) return;
             var conv = S.Conversation(id);
             conv.messages.Add(new ForumMessage { from = ForumLibrary.Me, text = text, gameSeconds = Now });
             if (id == ForumLibrary.ZhouNow) S.metZhouNow = true;
             Touch();
+            if (id == ForumLibrary.LaoZhou) LaoZhouQuestions.Observe(ZhouQa,"tieba:"+(conv.messages.Count-1)+":"+Now,"tieba_dm",text,Now);
             if (runtime != null) runtime.RaiseSignal("chat.sent", "tieba:" + id);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
@@ -211,6 +222,7 @@ namespace LingGuangV05.Desktop.Tieba
         {
             if (runtime == null || runtime.Sim == null) return;
             if (!ReferenceEquals(runtime.Sim, linked)) Bind(runtime.Sim);
+            TickZhouQuestions();
             if (View != null) View.UpdateBadges(Unread > 0);
             // Outsiders do not react to the private application or its ending.
             if (pending.Count == 0) return;
@@ -252,10 +264,11 @@ namespace LingGuangV05.Desktop.Tieba
             for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == ForumLibrary.Me) { question = conv.messages[i].text; break; }
             string fallback = DiscussionFallback(id, question, conv.messages.Count);
             string context = IsDiscussion(id) ? DiscussionContext(id)
-                : id == ForumLibrary.LaoZhou ? "你是老周，网名周而复始，省城某大学研二，实验室做深度学习，是个显卡发烧友，常在显卡吧泡着。对方是你在显卡吧认识的网友，聊过显卡、二手价和游戏，你们只在贴吧私信里聊。你懂 Caffe 和 TensorFlow，说话直、有点贫，常说「啧」「行吧」。"
+                : id == ForumLibrary.LaoZhou ? "你是老周，网名周而复始，省城某大学研二，实验室做深度学习，是个显卡发烧友，常在显卡吧泡着。对方是你在显卡吧认识的网友，聊过显卡、二手价和游戏，你们通过贴吧认识。只根据真正收到的消息了解对方。你懂 Caffe 和 TensorFlow，说话直、有点贫，常说「啧」「行吧」。"
                 : id == ForumLibrary.ZhouNow ? "你是小周，网名周而复始_，是老周的师弟，研一，学翻译方向，导师让你用一张 GTX 970 跑 Caffe。网名和签名都是照师兄起的。你不认识对方。"
                 : "对方是你在贴吧认识的网友，只聊过游戏和硬件。";
             context += Regard(id, Context().stage);
+            if (id == ForumLibrary.LaoZhou) context += "\n" + LaoZhouQuestions.VisibleContext(ZhouQa,GameText.IsEnglish);
             string system = "现在是2016年。你是摆渡贴吧的普通网友，口语回复1到3句，不用列表。" +
                 "你不知道玩家电脑中的秘密应用，也看不到他的电脑、钱包或私人记录。你不是程序作者，也不是未来人。不要假装了解任何未公开的事。" +
                 "围绕当前帖子和玩家刚才的话接着聊，可以问具体问题；不要重复自己上一条回复。\n" + context +
@@ -274,7 +287,8 @@ namespace LingGuangV05.Desktop.Tieba
             var messages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", system) };
             int start = Math.Max(0, conv.messages.Count - 10);
             for (int i = start; i < conv.messages.Count; i++)
-                messages.Add(new KeyValuePair<string, string>(conv.messages[i].from == ForumLibrary.Me ? "user" : "assistant", conv.messages[i].text));
+                if (conv.id != ForumLibrary.LaoZhou || conv.messages[i].from == ForumLibrary.Me)
+                    messages.Add(new KeyValuePair<string, string>(conv.messages[i].from == ForumLibrary.Me ? "user" : "assistant", conv.messages[i].text));
             llm.Chat(messages, maxTokens, .7f, reply => done(string.IsNullOrWhiteSpace(reply) ? null : reply));
         }
 

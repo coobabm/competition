@@ -1288,7 +1288,8 @@ namespace LingGuangV05.XingGuang
                 if (!Signed(c.id))
                 {
                     // The stage lock comes first: no score signs an order before then, so "accuracy too low" would be a false reason.
-                    if (S.stage < ContractStage) return T("第 " + ContractStage + " 阶段才开放", "Opens at stage " + ContractStage);
+                    int requiredStage = ContractRequiredStage(c);
+                    if (S.stage < requiredStage) return T("第 " + requiredStage + " 阶段才开放", "Opens at stage " + requiredStage);
                     if (!CanSign(c)) return RealtimeMiss(c, model) ? T("实时：循环网络跟不上", "Realtime: a loop cannot keep up") : TooLow(ContractAcc(c), c.threshold);
                     if (!Sign(c.id, host)) return T("签不了", "Cannot sign");
                 }

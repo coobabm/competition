@@ -31,7 +31,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         protected override void DrawQuestion()
         {
             question=C.Random.Next(Sources.Length);pinpoint=false;promptZh=Sources[question]+"\n"+Candidates[question];promptEn=promptZh;
-            if(C.Sim.TeachingAiReady){int guess=Guess(Grades[question],3);aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):GradeText(guess);}
+            if(C.Sim.TeachingAiReady){int guess=Guess(Grades[question],3);aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):GradeText(guess);CapturePrediction(C.Skill<.55?(bool?)null:guess==Grades[question]);}
             Paint();
         }
         string GradeText(int n)=>n==0?XgUi.T("准","Accurate"):n==1?XgUi.T("有点歪","Slightly off"):XgUi.T("错了","Wrong");

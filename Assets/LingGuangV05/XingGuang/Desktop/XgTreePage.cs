@@ -350,6 +350,8 @@ namespace LingGuangV05.Desktop.XingGuang
                         LaneTitle("VisionLane" + i, i, "视觉", "Vision", "vision");
                         LaneTitle("SequenceLane" + i, i, "序列", "Sequence", "sequence");
                     }
+                    if (i >= 2) LaneTitle("BoardLogicLane" + i, i, "逻辑", "Board logic", "boardlogic");
+                    if (i >= 2) LaneTitle("DailyLane" + i, i, "日常", "Daily life", "daily");
                     if (i >= 1) LaneTitle("TrunkLane" + i, i, "主干", "Core", "trunk");
                     if (i >= 1) { LaneTitle("ResearchLane" + i, i, "研究", "Research", "research"); LaneTitle("AtlasLane" + i, i, "图鉴 · 现象与能力", "Atlas · phenomena and abilities", "atlas"); }
                 }
@@ -365,14 +367,14 @@ namespace LingGuangV05.Desktop.XingGuang
                     miniButtons[i].Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgDark.AccentSoft : XgDark.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
-                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "AtlasLane" })
+                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "BoardLogicLane", "DailyLane", "AtlasLane" })
                 {
                     var lane = content.Find(prefix + pair.Key);
                     if (lane != null)
                     {
                         lane.gameObject.SetActive(visible);
                         var label = lane.GetComponent<TMP_Text>();
-                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : Lang.T("图鉴 · 现象与能力");
+                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : prefix == "BoardLogicLane" ? T("逻辑", "Board logic") : prefix == "DailyLane" ? T("日常", "Daily life") : Lang.T("图鉴 · 现象与能力");
                     }
                 }
             }

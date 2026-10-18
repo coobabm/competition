@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using LingGuangV05.XingGuang;
 using LingGuangV05.Desktop.YY;
 using LingGuangV05.Runtime;
 using TMPro;
@@ -13,11 +15,11 @@ namespace LingGuangV05.Desktop.Mail
     /// 邮件 as an ordinary 2016 inbox (the labelling game moved into 灵光). Message list on the left, reading pane on the
     /// right. Flavour only: nothing here changes game state. Read marks last for the session.
     /// </summary>
-    public sealed class MailInboxView : MonoBehaviour, IDesktopAppView
+    public sealed partial class MailInboxView : MonoBehaviour, IDesktopAppView
     {
         sealed class Mail
         {
-            public string from, fromEn, subject, subjectEn, body, bodyEn, date;
+            public string id, from, fromEn, subject, subjectEn, body, bodyEn, date;
             public bool read, spam, endingOnly;
         }
 
@@ -27,23 +29,24 @@ namespace LingGuangV05.Desktop.Mail
         // Every dated mail is from before the story starts (24 May): nothing in this inbox is dated after today.
         readonly List<Mail> mails = new List<Mail>
         {
-            new Mail { from = "投稿系统", fromEn = "Submission system", date = "次日", endingOnly = true,
+            new Mail { id = "ending.fictional_preprint_return", from = "虚构投稿系统", fromEn = "Fictional submission system", date = "次日", endingOnly = true,
                 subject = "关于您的预印本提交：退回通知", subjectEn = "Your preprint submission: returned",
                 body = "作者您好：\n\n本次提交未进入展示流程。\n\n反馈：没有循环的序列模型不可能工作。作者似乎不是本领域研究者。\n\n——投稿系统",
                 bodyEn = "Dear author,\n\nThis submission was not accepted for display.\n\nFeedback: A sequence model without recurrence cannot work. The authors appear to be outside this field.\n\n— Submission system" },
-            new Mail { from = "12306", fromEn = "12306", date = "5月23日", subject = "【铁路客服】您已成功购买车票", subjectEn = "[Railway] Ticket purchase confirmed",
+            new Mail { id = "background.railway", from = "12306", fromEn = "12306", date = "5月23日", subject = "【铁路客服】您已成功购买车票", subjectEn = "[Railway] Ticket purchase confirmed",
                 body = "尊敬的旅客：\n\n您已成功购买 6 月 18 日 G1218 次列车车票，二等座 07 车 12F 号。请携带购票时使用的有效身份证件原件乘车。\n\n本邮件由系统自动发送，请勿回复。",
                 bodyEn = "Dear passenger,\n\nYour ticket for train G1218 on 18 June is confirmed: second class, car 07, seat 12F. Bring the ID you booked with.\n\nThis is an automated message; do not reply." },
-            new Mail { from = "淘货", fromEn = "Taohuo", date = "5月23日", subject = "您关注的「亮影 1080 8G」开始预约了", subjectEn = "The 8 GB card you watched is open for pre-order",
+            new Mail { id = "background.taohuo", from = "淘货", fromEn = "Taohuo", date = "5月23日", subject = "您关注的「亮影 1080 8G」开始预约了", subjectEn = "The 8 GB card you watched is open for pre-order",
                 body = "亲，您收藏的宝贝开始预约了！\n\n亮影 1080 8G 公版  首发价 ¥4999，限购一张。\n\n库存紧张，先到先得。\n\n（此邮件为系统推送，退订请回复 TD）",
                 bodyEn = "Good news! An item you saved is open for pre-order.\n\n8 GB flagship card, launch price ¥4999, one per customer.\n\nLimited stock.\n\n(Automated; reply TD to unsubscribe)" },
-            new Mail { from = "教务处", fromEn = "Academic office", date = "5月22日", subject = "关于 2016 届本科毕业生离校手续的通知", subjectEn = "Leaving procedures for the Class of 2016",
-                body = "各位同学：\n\n本科毕业答辩安排在 6 月上旬，请于答辩前将论文终稿发送至本邮箱。\n\n答辩结束后，请在 6 月 20 日前办完离校手续（图书馆还书、一卡通注销、档案转递）。",
-                bodyEn = "Students,\n\nUndergraduate defences are in early June. Send your final thesis to this address before yours.\n\nAfter the defence, finish the leaving procedures by 20 June: return library books, close your campus card, transfer your file." },
-            new Mail { from = "幸运抽奖中心", fromEn = "Lucky Draw Center", date = "5月22日", subject = "恭喜！您获得 iPhone 6s 一部！！", subjectEn = "Congratulations! You won an iPhone 6s!!", spam = true,
+            // Same historical slot as the former graduation notice; other rows/read flags are retained.
+            new Mail { id = "background.work_roster", from = "行政同事", fromEn = "Office administration", date = "5月22日", subject = "本周值班表核对", subjectEn = "Please check this week's duty roster",
+                body = "各位同事：\n\n本周值班表已放在共享文件夹。请核对自己的班次；如需调整，请先和换班同事确认，再回复行政登记。\n\n离开工位前请检查电源和门窗。\n\n行政",
+                bodyEn = "Colleagues,\n\nThis week's duty roster is in the shared folder. Please check your shifts. If you need a change, agree with the colleague swapping with you and reply so administration can update the record.\n\nPlease check power switches and windows before leaving your desk.\n\nOffice administration" },
+            new Mail { id = "background.spam", from = "幸运抽奖中心", fromEn = "Lucky Draw Center", date = "5月22日", subject = "恭喜！您获得 iPhone 6s 一部！！", subjectEn = "Congratulations! You won an iPhone 6s!!", spam = true,
                 body = "恭喜您在本次活动中被抽中，获得 iPhone 6s 一部！\n\n请先支付运费 ¥39 至以下账户……\n\n（这封邮件看起来像垃圾邮件。）",
                 bodyEn = "Congratulations, you have been selected to receive an iPhone 6s!\n\nPlease first pay ¥39 shipping to the account below…\n\n(This looks like spam.)" },
-            new Mail { from = "网吧老板", fromEn = "Net café owner", date = "5月21日", subject = "网费", subjectEn = "Your tab",
+            new Mail { id = "background.netbar", from = "网吧老板", fromEn = "Net café owner", date = "5月21日", subject = "网费", subjectEn = "Your tab",
                 body = "上次通宵的网费还差 15，有空过来带上。\n\n另外过几天店里要进几台新的 1080，到时候来试试。",
                 bodyEn = "You still owe 15 from the last all-nighter. Bring it next time.\n\nAlso, a few new flagship cards arrive at the shop in a few days. Come try them." },
         };
@@ -56,6 +59,29 @@ namespace LingGuangV05.Desktop.Mail
         Mail current;
         bool built, rejectionShown;
         ChapterOneRuntime runtime;
+        EndingLetterPresenter endingLetter;
+        RectTransform endingRow;
+        // The owner must verify an actual submission receipt for this exact save. A story flag alone is insufficient.
+        public Func<ChapterOneSim, bool> HasVerifiedPreprintSubmission;
+
+        public EndingLetterPresenter EndingLetter => endingLetter;
+        public void BindEndingLetter(EndingLetterInput input, EndingLetterCallbacks callbacks, bool show = false)
+        {
+            EnsureReady();
+            if (endingLetter == null)
+            {
+                endingLetter = EndingLetterPresenter.Install(root, font, window.w);
+                endingRow = Rect("EndingLetterRow", list, new Vector2(0, 1), Vector2.one, new Vector2(0, -140), Vector2.zero);
+                var fill = Fill(endingRow, Selected);
+                var button = endingRow.gameObject.AddComponent<Button>(); button.targetGraphic = fill;
+                Text(Rect("Title", endingRow, new Vector2(0, 1), Vector2.one, new Vector2(14, -42), new Vector2(-14, -8)), "", 15, Ink, TextAlignmentOptions.TopLeft);
+                Text(Rect("Notice", endingRow, Vector2.zero, Vector2.one, new Vector2(14, 8), new Vector2(-14, -45)), "", 11, Muted, TextAlignmentOptions.TopLeft);
+                AddFocus(endingRow.gameObject); endingLetter.StateChanged += Refresh;
+            }
+            endingLetter.Bind(input, callbacks, show);
+            endingLetter.BindRow(endingRow.GetComponent<Button>());
+            Refresh();
+        }
 
         sealed class WindowManagerRef { public Michsky.DreamOS.WindowManager w; }
 
@@ -97,6 +123,8 @@ namespace LingGuangV05.Desktop.Mail
             var runtimeHost = FindAnyObjectByType<LingGuangV05.Desktop.XingGuang.XingGuangController>();
             LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(runtimeHost, window.w);
             Refresh();
+            if (tab == "ending") publicLetters?.Hide();
+            if (tab == "ending" && endingLetter != null) endingLetter.ShowInbox();
         }
 
         void Build()
@@ -116,7 +144,7 @@ namespace LingGuangV05.Desktop.Mail
                 var row = Rect("Mail" + i, list, new Vector2(0, 1), Vector2.one, new Vector2(0, -(i + 1) * 76), new Vector2(0, -i * 76));
                 var img = Fill(row, new Color(0, 0, 0, 0));
                 var b = row.gameObject.AddComponent<Button>(); b.targetGraphic = img;
-                b.onClick.AddListener(() => { current = m; m.read = true; Refresh(); });
+                b.onClick.AddListener(() => { endingLetter?.Session.Hide(); current = m; m.read = true; Refresh(); });
                 Fill(Rect("Line", row, Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(-16, 1)), Line);
                 Text(Rect("From", row, new Vector2(0, 1), Vector2.one, new Vector2(30, -32), new Vector2(-90, -10)), "", 15, Ink, TextAlignmentOptions.MidlineLeft).name = "From";
                 Text(Rect("Date", row, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-100, -32), new Vector2(-16, -10)), m.date, 12, Muted, TextAlignmentOptions.MidlineRight).name = "Date";
@@ -138,9 +166,10 @@ namespace LingGuangV05.Desktop.Mail
             GameText.Changed += Refresh;
         }
 
-        void OnDestroy() { GameText.Changed -= Refresh; }
+        void OnDestroy() { GameText.Changed -= Refresh; if (endingLetter != null) endingLetter.StateChanged -= Refresh; }
 
-        bool RejectionAvailable => runtime != null && runtime.Sim != null && runtime.Sim.S.story.GetFlag("rejection_mail") > 0;
+        bool RejectionAvailable => runtime != null && runtime.Sim != null && runtime.Sim.S.story.GetFlag("rejection_mail") > 0
+            && HasVerifiedPreprintSubmission != null && HasVerifiedPreprintSubmission(runtime.Sim);
         void Update()
         {
             if (built && rejectionShown != RejectionAvailable)
@@ -154,9 +183,21 @@ namespace LingGuangV05.Desktop.Mail
         void Refresh()
         {
             if (!built) return;
+            RefreshPublicLetterEntry();
             rejectionShown = RejectionAvailable;
             if (current != null && current.endingOnly && !rejectionShown) current = mails[1];
-            int unread = 0; foreach (var m in mails) if (!m.read && (!m.endingOnly || rejectionShown)) unread++;
+            bool hasLetter = endingLetter != null && endingLetter.Snapshot != null && endingLetter.Snapshot.saved;
+            if (endingRow != null)
+            {
+                endingRow.gameObject.SetActive(hasLetter);
+                endingLetter.SetLanguage(GameText.IsEnglish);
+                if (hasLetter)
+                {
+                    endingRow.Find("Title").GetComponent<TMP_Text>().text = (endingLetter.Unread ? "● " : "○ ") + endingLetter.RowTitle + " · " + endingLetter.RowStatus;
+                    endingRow.Find("Notice").GetComponent<TMP_Text>().text = endingLetter.Warning;
+                }
+            }
+            int unread = hasLetter && endingLetter.Unread ? 1 : 0; foreach (var m in mails) if (!m.read && (!m.endingOnly || rejectionShown)) unread++;
             var folder = root.Find("List/Folder");
             if (folder != null) folder.GetComponent<TMP_Text>().text = Lang.T("收件箱") + (unread > 0 ? "  <size=14><color=#2176D2>" + unread + Lang.T(" 封未读") + "</color></size>" : "");
             int visibleIndex = 0;
@@ -165,8 +206,8 @@ namespace LingGuangV05.Desktop.Mail
                 bool visible = !m.endingOnly || rejectionShown;
                 row.gameObject.SetActive(visible);
                 if (!visible) continue;
-                row.offsetMin = new Vector2(0, -(visibleIndex + 1) * 76);
-                row.offsetMax = new Vector2(0, -visibleIndex * 76);
+                row.offsetMin = new Vector2(0, -(visibleIndex + 1) * 76 - (hasLetter ? 140 : 0));
+                row.offsetMax = new Vector2(0, -visibleIndex * 76 - (hasLetter ? 140 : 0));
                 visibleIndex++;
                 row.GetComponent<Image>().color = m == current ? Selected : new Color(0, 0, 0, 0);
                 var from = row.Find("From").GetComponent<TMP_Text>();

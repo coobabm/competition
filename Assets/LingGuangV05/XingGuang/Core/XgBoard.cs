@@ -263,6 +263,7 @@ namespace LingGuangV05.XingGuang
 
         public static List<Element> Elements(XgBoardCard card, XgKnobs k)
         {
+            if (XgArithmeticRelations.TryElements(card, k, out var relations)) return relations;
             if (k.features) card = Engineered(card);
             var list = new List<Element>(card.features.Count + 1);
             if (k.bias) list.Add(new Element { id = BiasElement, act = 1, x = -1 });

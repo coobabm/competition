@@ -13,6 +13,8 @@ namespace LingGuangV05.Runtime
     {
         public bool useDiskSave = true;
         public bool tickEnabled = true;
+        // Desktop-owned presentation hold. No desktop assembly reference and no accumulated catch-up time.
+        public Func<bool> EpiloguePresentationHeld;
         public ChapterOneSim Sim { get; private set; }
         public event Action Changed;
         /// <summary>Named events for the story layer: simulation signals plus runtime ones ("name.set").</summary>
@@ -44,6 +46,8 @@ namespace LingGuangV05.Runtime
         public void EnsureInitialized()
         {
             if (initialized) return;
+            // Invalid explicit verification arguments throw before any player store/profile is opened.
+            string verificationDirectory = VerificationSavePaths.Root;
             initialized = true;
             if (useDiskSave)
             {
@@ -56,6 +60,7 @@ namespace LingGuangV05.Runtime
 #if UNITY_EDITOR
                 if (!string.IsNullOrEmpty(VerificationSaveDirectory)) SaveDirectoryOverride = VerificationSaveDirectory;
 #endif
+                if (verificationDirectory != null) SaveDirectoryOverride = verificationDirectory;
                 store = new AtomicSaveStore(string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "LingGuangV05") : SaveDirectoryOverride);
                 profiles = new PlayerProfileStore(store);
                 if (TryRead(out var restored, out string message))
@@ -147,7 +152,7 @@ namespace LingGuangV05.Runtime
             if (Sim == null) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             // In the prologue only the clock runs: no bills, heat or income before the game proper starts.
-            if (tickEnabled) { if (Sim.InPrologue) Sim.AdvanceClock(dt); else Sim.Tick(dt); }
+            if (tickEnabled && !(EpiloguePresentationHeld?.Invoke() ?? false)) { if (Sim.InPrologue) Sim.AdvanceClock(dt); else Sim.Tick(dt); }
             sinceSave += dt;
             sinceNotify += dt;
             if (notify && sinceNotify >= .12f) { notify = false; sinceNotify = 0; Changed?.Invoke(); }
@@ -191,6 +196,7 @@ namespace LingGuangV05.Runtime
         public bool SaveNow()
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false; // Archive collection/switch callbacks cannot write either primary.
             sinceSave = 0;
             if (!useDiskSave) { SaveStatus = "测试模式：不写入本机存档"; return true; }
             if (persistenceBlocked) { SaveStatus = "存档受保护：请备份后使用“重置进度”，不会自动覆盖。"; Debug.LogWarning("[存档] " + SaveStatus); notify = true; return false; }
@@ -222,6 +228,7 @@ namespace LingGuangV05.Runtime
         public bool ReloadSave()
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             if (!useDiskSave) { SaveStatus = "测试模式未启用磁盘读档"; Changed?.Invoke(); return false; }
             if (!TryRead(out var restored, out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
             if (restored.S.restartChosen)
@@ -248,6 +255,7 @@ namespace LingGuangV05.Runtime
         public bool StartOverAfterBankruptcy(bool replayOpening = false)
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             if (Sim == null || !Sim.S.bankrupt) return false;
             // What the player chose in the opening, learned from this very save if it was never written down (old installs).
             var known = KnownProfile(Sim, true);
@@ -271,6 +279,7 @@ namespace LingGuangV05.Runtime
         public bool ResetProgress(bool replayOpening = false)
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             // Learn the player's setup before the files are moved aside.
             var known = KnownProfile(Sim, true);
             if (useDiskSave && !store.ArchiveForReset(out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }

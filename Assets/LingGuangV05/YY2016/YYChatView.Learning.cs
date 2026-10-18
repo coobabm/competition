@@ -112,8 +112,7 @@ namespace LingGuangV05.Desktop.YY
                 {
                     var dataset=XgCatalog.Dataset(e.bankId);string source=dataset!=null?GameText.T(dataset.name,dataset.nameEn):e.bankId;
                     var input=sim.LearningRetestInput(e.id);bool textReady=input!=null&&!input.requiresImage;
-                    string label=sim.LearningTimestamp(e)+" · "+source+"\n"+GameText.T(e.question,string.IsNullOrEmpty(e.questionEn)?e.question:e.questionEn)+"\n"+GameText.T("你：","You: ")+e.playerAnswer
-                        +(string.IsNullOrEmpty(e.aiAnswer)?"":" · "+sim.AiDisplayName+": "+e.aiAnswer)
+                    string label=sim.LearningTimestamp(e)+" · "+source+"\n"+GameText.T(e.question,string.IsNullOrEmpty(e.questionEn)?e.question:e.questionEn)+"\n"+sim.LearningAnswerSummary(e)
                         +(textReady?"":GameText.T(" · 含原图"," · With image"));
                     LearningRow(ref y,label,()=>{if(XgYyTalk.AskFromNotebook(e))CloseLearningDrawer();},textReady,76);
                 }
