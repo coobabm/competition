@@ -15,6 +15,26 @@ namespace LingGuangV05.Desktop.Story
     public static class VoiceLines
     {
         const string Folder = "LingGuangV05/Voice/";
+        /// <summary>
+        /// 2026-10-18 trial: every line of the protagonist is "spoken" in BlipTalk babble (<see cref="BlipTalk"/>), in
+        /// either language, instead of the recordings. False brings the recordings back (they stay in Resources).
+        /// </summary>
+        public static bool UseBlips = true;
+        static AudioClip blipClip;
+        static float[] timeline;
+
+        /// <summary>
+        /// How many characters of the line being spoken have been said <paramref name="elapsed"/> seconds after
+        /// <see cref="Play"/>, or -1 when the line has no timeline (a recording, or nothing) and the caller types at its own
+        /// speed. Past the end it is every character.
+        /// </summary>
+        public static int Revealed(float elapsed)
+        {
+            if (timeline == null) return -1;
+            int n = 0;
+            while (n < timeline.Length && timeline[n] <= elapsed) n++;
+            return n < timeline.Length ? n : 99999;
+        }
 
         /// <summary>Chinese line → clip name. Keep the text identical to the line the game shows.</summary>
         static readonly Dictionary<string, string> Lines = new Dictionary<string, string>
@@ -113,13 +133,24 @@ namespace LingGuangV05.Desktop.Story
         }
 
         /// <summary>
-        /// Plays the recording for a line if the game is in Chinese and one exists. Returns its length in seconds
-        /// (0 when nothing plays), so the caller can keep the subtitle up while it is spoken.
+        /// Speaks a line: in BlipTalk babble for <paramref name="shown"/> (the text on screen) when <see cref="UseBlips"/>,
+        /// otherwise the recording if the game is in Chinese and one exists. Returns its length in seconds (0 when nothing
+        /// plays), so the caller can keep the subtitle up while it is spoken; with babble the caller types the text along
+        /// <see cref="Revealed"/>.
         /// </summary>
-        public static float Play(string zh)
+        public static float Play(string zh, string shown = null)
         {
-            if (GameText.IsEnglish) { Stop(); return 0; }
-            var clip = Find(zh);
+            AudioClip clip;
+            timeline = null;
+            if (UseBlips)
+            {
+                Stop();
+                if (blipClip != null) UnityEngine.Object.Destroy(blipClip);
+                var line = BlipTalk.Render(shown ?? zh, BlipTalk.Me);
+                clip = blipClip = line?.clip;
+                timeline = line?.reveal;
+            }
+            else clip = GameText.IsEnglish ? null : Find(zh);
             if (clip == null) { Stop(); return 0; }
             if (source == null)
             {

@@ -184,7 +184,7 @@ namespace LingGuangV05.Desktop.Story
                 SetText(english ? current.en : current.zh, 0);
                 text.ForceMeshUpdate();
                 // A recorded line keeps its subtitle up for as long as it is spoken.
-                float spoken = VoiceLines.Play(current.zh), started = Time.unscaledTime;
+                float spoken = VoiceLines.Play(current.zh, english ? current.en : current.zh), started = Time.unscaledTime;
                 bool cut = false;
                 for (float t = 0; t < FadeIn && !(cut = Held); t += Time.unscaledDeltaTime) { group.alpha = t / FadeIn; yield return null; }
                 if (!cut) group.alpha = 1;
@@ -194,7 +194,9 @@ namespace LingGuangV05.Desktop.Story
                 {
                     if (cut = Held) break;
                     typed += Time.unscaledDeltaTime / PerChar;
-                    int shown = Mathf.Min(length, (int)typed);
+                    // A spoken line is typed as it is said; otherwise at the typewriter's own speed.
+                    int said = VoiceLines.Revealed(Time.unscaledTime - started);
+                    int shown = Mathf.Min(length, said >= 0 ? said : (int)typed);
                     text.maxVisibleCharacters = shadow.maxVisibleCharacters = shown;
                     length = text.GetParsedText().Length; // a language switch may change it
                     yield return null;

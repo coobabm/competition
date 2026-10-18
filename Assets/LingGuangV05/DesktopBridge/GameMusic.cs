@@ -10,7 +10,7 @@ namespace LingGuangV05.Desktop
 {
     /// <summary>
     /// Background music. The music app's library is the 灵光 playlist (Assets/LingGuangV05/Music, set on the scene's
-    /// MusicPlayerManager); track 1 on repeat at 60 %. The prologue is silent: when it ends, and nothing else is on screen,
+    /// MusicPlayerManager); track 1 on repeat at 50 % (2026-10-18, was 60 %). The prologue is silent: when it ends, and nothing else is on screen,
     /// the protagonist thinks of putting a song on, the music app opens and the first track fades in. A save past the
     /// prologue fades it in at once. Spoken lines and cutscenes pull it down (<see cref="MusicMix"/>); 关机 fades it out.
     /// The player changes the track, repeat, shuffle and volume in the music app, and the music keeps going while its
@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop
     /// </summary>
     public sealed class GameMusic : MonoBehaviour
     {
-        public const float DefaultVolume = .6f;
+        public const float DefaultVolume = .5f;
         /// <summary>Seconds of quiet after the prologue before the protagonist puts the music on, and how long its window stays open.</summary>
         public const float IntroQuiet = 1.5f, IntroWindowSeconds = 3.5f, IntroGiveUp = 60f;
         // Written once, so an older save's demo settings (shuffle on) give way to the defaults.
