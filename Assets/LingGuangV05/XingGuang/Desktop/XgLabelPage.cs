@@ -457,6 +457,9 @@ namespace LingGuangV05.Desktop.XingGuang
             lessonFeedbackBack.gameObject.SetActive(lessonFeedback);
             var button = answer ? yes.rt : no.rt;
             var binaryReview = !WorkContext && !queued && direct ? Sim.PredictTeachingBinary(card) : null;
+            // Capture the displayed/inferred answer before submission can advance the current card.
+            string learnedAiAnswer = shownGuessValid ? YesNoWord(shownGuess)
+                : binaryReview != null && !binaryReview.guessed ? YesNoWord(binaryReview.yes) : "";
             int oldDeskLevel = Sim.LevelOf(desk);
             XgAnswer r;
             if (WorkContext)
@@ -474,7 +477,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
             if (binaryReview != null) Sim.RememberTeachingBinary(card, answer, binaryReview, card.why, card.whyEn);
-            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card);
+            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card, aiAnswer: learnedAiAnswer);
             LastAnswerDisagreed = teachingAnswer ? !answer : shownGuessValid && shownGuess != answer;
             lastAnsweredFrame = Time.frameCount;
             AnswerCount++;

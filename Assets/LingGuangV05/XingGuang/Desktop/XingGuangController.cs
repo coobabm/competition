@@ -127,6 +127,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            Sim.LearningClock = () =>
+            {
+                if (sim == null) return new XgLearningTime(0, -1);
+                var now = GameCalendar.Now(sim.S);
+                return new XgLearningTime(GameCalendar.Yyyymmdd(now), now.TimeOfDay.TotalSeconds);
+            };
             if (sim != null) sim.PowerCostsEnabled = true;
             // A new game starts with the first-minutes focus (only 常识判断 and training, XgSim.Opening.cs); a loaded save is left as it is.
             if (state == null) Sim.BeginOpening();

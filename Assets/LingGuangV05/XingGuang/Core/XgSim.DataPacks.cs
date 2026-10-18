@@ -4,7 +4,8 @@ namespace LingGuangV05.XingGuang
 {
     [Serializable] public sealed class XgTeachingNote
     {
-        public long id;
+        public long id, learningRecordId;
+        public string correction = "";
         public string text = "", textEn = "", why = "", whyEn = "", dataset = "";
         public bool truth, playerAnswer;
         public int seed, digit;
@@ -24,15 +25,14 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public void RecordTeachingQuestion(string text, string textEn, bool truth, bool playerAnswer,
-            string why, string whyEn, string dataset, XgCard card = null, string answerText = "", string aiAnswer = "")
+            string why, string whyEn, string dataset, XgCard card = null, string answerText = "", string aiAnswer = "", string correction = "")
         {
             if (S.teachingNotebook == null) S.teachingNotebook = new List<XgTeachingNote>();
-            var n = new XgTeachingNote { id = ++S.teachingNoteSerial, text = text, textEn = textEn,
-                truth = truth, playerAnswer = playerAnswer, why = why, whyEn = whyEn, dataset = dataset, answerText = answerText, aiAnswer = aiAnswer };
+            var n = new XgTeachingNote { id = NextLearningNoteId(), text = text, textEn = textEn,
+                truth = truth, playerAnswer = playerAnswer, why = why, whyEn = whyEn, dataset = dataset, answerText = answerText, aiAnswer = aiAnswer, correction = correction };
             if (card != null) { n.seed = card.seed; n.digit = card.digit; n.patternA = card.patternA; n.patternB = card.patternB; n.teachingImageKind=card.teachingImageKind; n.teachingImageKey=card.teachingImageKey; n.teachingImageKeys=card.teachingImageKeys==null?null:(int[])card.teachingImageKeys.Clone(); n.teachingPosition=card.teachingPosition; }
-            if (S.teachingNotebook.Count >= 256) S.teachingNotebook.RemoveAt(4);
             S.teachingNotebook.Add(n);
-            RecordAsked(dataset, T(text,textEn), string.IsNullOrEmpty(answerText)?T(playerAnswer?"是":"否",playerAnswer?"Yes":"No"):answerText, aiAnswer);
+            RecordTeachingAsked(n);
         }
         public string TeachingPackBlocker(XgTeachingPack p, bool purchasing = false)
         {

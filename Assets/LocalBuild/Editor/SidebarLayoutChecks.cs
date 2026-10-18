@@ -44,7 +44,9 @@ public static class SidebarLayoutChecks
     static int index=-1,phase,lastFrame=-1,frames;
     static double timeout;
     static bool finishing;
-    static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck;
+    static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck,learningCheck;
+    const string LearningKey="SidebarLayoutChecks.LearningOnly";
+    public static void RunLearning(){SessionState.SetBool(LearningKey,true);Run();}
     const string FilesKey="SidebarLayoutChecks.FilesOnly";
     const string RelicsKey="SidebarLayoutChecks.RelicsOnly";
     const string ProfileKey="SidebarLayoutChecks.ProfileOnly";
@@ -152,6 +154,15 @@ public static class SidebarLayoutChecks
                 if(++frames<3)return;
                 EnableFixtureEconomy(runtime);
                 ctl.Open();ctl.View.Open("train");train=ctl.View.Train;originalStoryProbe=StoryFocus.Probe;
+                if(SessionState.GetBool(LearningKey,false))
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="Isolated Main learning UI: 120 explicit bilingual cross-day records, notes/CSV/YY pagination, original image and same-size save swap; actual LCD clicks with deterministic scroll/input-field setup; no LLM request.";
+                    learningCheck=LearningRecordsUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"learning LCD capture "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+300;phase=11;frames=0;return;
+                }
                 if(SessionState.GetBool(RelicsKey,false))
                 {
                     locale=GameText.Bind(()=>language);
@@ -172,6 +183,14 @@ public static class SidebarLayoutChecks
                     phase=8;frames=0;return;
                 }
                 phase=1;frames=0;return;
+            }
+            if(phase==11)
+            {
+                if(learningCheck.MoveNext())return;
+                (learningCheck as IDisposable)?.Dispose();learningCheck=null;
+                report.checks.AddRange(LearningRecordsUiChecks.Checks);
+                report.checks.Add("Learning UI assertions: "+LearningRecordsUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Learning UI checks passed; screenshots require review");Finish();return;
             }
             if(phase==9)
             {
@@ -332,6 +351,6 @@ public static class SidebarLayoutChecks
         typeof(ChapterOneRuntime).GetProperty("TestMode").GetSetMethod(true).Invoke(rt,new object[]{false});
         if(rt.TestMode||rt.useDiskSave)throw new InvalidOperationException("Live host fixture isolation failed");
     }
-    static void Finish(){(relicCheck as IDisposable)?.Dispose();relicCheck=null;SessionState.EraseBool(RelicsKey);SessionState.EraseBool(ProfileKey);(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();finishing=true;Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
+    static void Finish(){(learningCheck as IDisposable)?.Dispose();learningCheck=null;SessionState.EraseBool(LearningKey);(relicCheck as IDisposable)?.Dispose();relicCheck=null;SessionState.EraseBool(RelicsKey);SessionState.EraseBool(ProfileKey);(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();finishing=true;Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
 }
 #endif

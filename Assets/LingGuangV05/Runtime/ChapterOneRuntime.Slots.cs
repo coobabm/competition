@@ -51,7 +51,7 @@ namespace LingGuangV05.Runtime
             if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked) return false;
             try {
                 Saving?.Invoke();
-                bool saved = archive.TrySave(JsonUtility.ToJson(Sim.S), out var message);
+                bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
                 SaveStatus = message; Changed?.Invoke(); return saved;
             } catch (Exception e) { SaveStatus = e.Message; return false; }
         }
@@ -72,7 +72,7 @@ namespace LingGuangV05.Runtime
                 return false;
             }
             restored.S.lastSeenUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            if (!store.TrySave(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
+            if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
             Attach(restored); KnownProfile(restored, false);
             SaveStatus = GameText.T("已读取，当前进度已切换。", "Loaded. Current progress has changed.");
             Changed?.Invoke(); return true;
@@ -86,7 +86,7 @@ namespace LingGuangV05.Runtime
             if (File.Exists(archive.SavePath) || File.Exists(archive.SavePath + ".bak")) return true;
             try {
                 Saving?.Invoke();
-                bool saved = archive.TrySave(JsonUtility.ToJson(Sim.S), out var message);
+                bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
                 if (!saved) SaveStatus = message;
                 return saved;
             } catch (Exception e) { SaveStatus = e.Message; return false; }

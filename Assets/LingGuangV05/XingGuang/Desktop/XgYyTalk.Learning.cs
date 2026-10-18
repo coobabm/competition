@@ -12,6 +12,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly Dictionary<YYMessage,XgAskedEntry> notebookSources = new Dictionary<YYMessage,XgAskedEntry>();
         readonly HashSet<YYMessage> personaSources = new HashSet<YYMessage>();
         XgAskedEntry pendingNotebook;
+        string pendingNotebookText;
         string pendingPersona;
         public static XgSim LearningSim => instance != null ? instance.bound : null;
         public static void EnsureLearningData()
@@ -25,7 +26,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var talk=instance;var hub=YYChatHub.Instance;
             if(talk==null||hub==null||question==null||hub.Conversation(Id)==null||hub.LingGuangTalk!=talk||talk.Thinking||talk.NightPlaying)return false;
-            talk.pendingNotebook=question;hub.Send(Id,question.question);talk.pendingNotebook=null;return true;
+            if(talk.bound==null||!ReferenceEquals(talk.bound.LearningRecord(question.id),question))return false;
+            var input=talk.bound.LearningRetestInput(question.id);
+            if(input==null||input.requiresImage)return false;
+            talk.pendingNotebook=question;
+            talk.pendingNotebookText=GameText.T(input.question,string.IsNullOrEmpty(input.questionEn)?input.question:input.questionEn);
+            try{hub.Send(Id,talk.pendingNotebookText);return true;}
+            finally{talk.pendingNotebook=null;talk.pendingNotebookText=null;}
         }
         public static bool AskPersona(XgPersonaPack pack,XgPersonaQuestion question)
         {
@@ -35,7 +42,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         void RememberLearningSource(YYMessage message)
         {
-            if(pendingNotebook!=null&&message.text==pendingNotebook.question)notebookSources[message]=pendingNotebook;
+            if(pendingNotebook!=null&&message.text==pendingNotebookText)notebookSources[message]=pendingNotebook;
             if(pendingPersona!=null&&message.text==pendingPersona)personaSources.Add(message);
         }
         void LearningDelivered(Reply reply,YYChatHub hub)
@@ -43,7 +50,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(reply.asked==null||reply.asked.byAi)return;
             var conv=hub.Conversation(Id);if(conv==null||conv.messages.Count==0)return;
             var message=conv.messages[conv.messages.Count-1];
-            if(message.from!=Id||message.text!=reply.text)return;
+            if(message.from!=Id||message.text!=reply.text||message.learningReplyId>0)return;
             // The user's raw line is preserved: normalization for model input is never used for unlock matching.
             message.learningReplyId=bound.RegisterYyReply(string.IsNullOrEmpty(reply.asked.rawPlayerText)?reply.asked.text:reply.asked.rawPlayerText,reply.text);
             message.learningPersona=personaSources.Remove(reply.asked);
@@ -51,6 +58,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 notebookSources.Remove(reply.asked);
                 bound.NoteNotebookReply(reply.text);
+                bound.RecordLearningRetest(source.id,reply.text,"yy:"+message.learningReplyId);
                 string reference=AnswerToken(source.playerAnswer),answer=AnswerToken(reply.text);
                 if(reference.Length>0&&answer.Length>0)message.learningComparison=reference==answer?1:-1;
             }

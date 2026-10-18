@@ -19,7 +19,8 @@ namespace LingGuangV05.Runtime
         public event Action<string, string> Signal;
         /// <summary>Raised right before the save is serialized: apps write their state into GameState here.</summary>
         public event Action Saving;
-        public string SaveStatus { get; private set; } = "尚未初始化";
+        string saveStatus = "尚未初始化";
+        public string SaveStatus { get => SnapshotStatusText.Localize(saveStatus, GameText.IsEnglish); private set => saveStatus = value; }
         public string SavePath => store == null ? "（测试内存存档）" : store.SavePath;
         public double OfflineSeconds { get; private set; }
         /// <summary>True after SetSimulationForTests: QA drives the desktop, so story overlays stay off.</summary>
@@ -208,7 +209,7 @@ namespace LingGuangV05.Runtime
                 return false;
             }
             bool saved;
-            try { saved = store.TrySave(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
+            try { saved = store.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
             catch (ArgumentException error) { saved = false; SaveStatus = "无法序列化存档：" + error.Message; }
             if (saved) dirty = false;
             // One line per write, so a save that silently failed (or never happened) shows up in the Editor log.

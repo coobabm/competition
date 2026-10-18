@@ -5,7 +5,15 @@ using LingGuangV05.Core.Story;
 
 namespace LingGuangV05.XingGuang
 {
-    [Serializable] public sealed class XgAskedEntry { public string bankId, question, playerAnswer, aiAnswer; public double at; }
+    [Serializable] public sealed class XgAskedEntry
+    {
+        public string bankId, question, playerAnswer, aiAnswer;
+        public double at; // Legacy elapsed clock; retained but never displayed as a calendar date.
+        public long id, originalId, teachingNoteId;
+        public int gameDate;
+        public double gameSecondsOfDay = -1;
+        public string sourceKind = "", eventKey = "", questionEn = "", correction = "";
+    }
     [Serializable] public sealed class XgPersonaQuestion { public string q, qEn; public int stage; }
     [Serializable] public sealed class XgPersonaPack { public string id, name, nameEn, desc, descEn; public int stage; public double price; public List<XgPersonaQuestion> questions = new List<XgPersonaQuestion>(); }
     [Serializable] public sealed class XgPersonaTag { public string id, name, nameEn, axis, flag; public int delta; }
@@ -66,7 +74,7 @@ namespace LingGuangV05.XingGuang
         }
         public void RepairYyLearning()
         {
-            if(S.askedLog==null)S.askedLog=new List<XgAskedEntry>();
+            RepairLearningRecords();
             if(S.personaPacks==null)S.personaPacks=new List<string>();
             if(S.yyReplies==null)S.yyReplies=new List<XgYyReply>();
             if(S.talkSamples==null)S.talkSamples=new List<XgTalkSample>();
@@ -77,8 +85,7 @@ namespace LingGuangV05.XingGuang
         public void RecordAsked(string bankId,string question,string playerAnswer,string aiAnswer="",double at=-1)
         {
             if(string.IsNullOrWhiteSpace(question))return;RepairYyLearning();bankId=bankId??"general";
-            S.askedLog.Add(new XgAskedEntry{bankId=bankId,question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
-            int count=0;for(int i=S.askedLog.Count-1;i>=0;i--)if(S.askedLog[i].bankId==bankId&&++count>200)S.askedLog.RemoveAt(i);
+            AppendLearning(new XgAskedEntry{bankId=bankId,sourceKind=bankId.StartsWith("train.",StringComparison.Ordinal)?"train":"question",question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
         }
         public static double PersonaPrice(string id) { var p=personaCatalog.Find(x=>x.id==id);return p==null?double.PositiveInfinity:p.price; }
         public bool OwnsPersonaPack(string id){RepairYyLearning();return S.personaPacks.Contains(id);}
@@ -113,6 +120,8 @@ namespace LingGuangV05.XingGuang
         {
             if(!deliveredSuccessfully||string.IsNullOrWhiteSpace(answer)||string.IsNullOrWhiteSpace(rawQuestion))return 0;
             RepairYyLearning();var reply=new XgYyReply{id=++S.yyReplySerial,question=rawQuestion,answer=answer};S.yyReplies.Add(reply);
+            // Keep the short interaction cache bounded; the durable learning record is separate.
+            RecordDeliveredLearningReply(reply.id,rawQuestion,answer);
             while(S.yyReplies.Count>50)S.yyReplies.RemoveAt(0);
             foreach(var u in chatUnlockCatalog)
                 if(S.stage>=u.stage&&!S.chatUnlocked.Exists(x=>x.node==u.node)&&(string.Equals(rawQuestion,u.phrase,StringComparison.Ordinal)||string.Equals(rawQuestion,u.phraseEn,StringComparison.Ordinal)))

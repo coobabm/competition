@@ -25,15 +25,16 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void NotebookKeepsFirstFourQuestionsAndNewestHistoryWithinLimit()
+        public void NotebookRetainsAllQuestionsBeyondFormerLimit()
         {
             var sim = new XgSim();
             for (int i = 0; i < 300; i++)
                 sim.RecordTeachingQuestion("Q" + i, "Q" + i, true, true, "", "", "sense");
-            Assert.AreEqual(256, sim.S.teachingNotebook.Count);
+            Assert.AreEqual(300, sim.S.teachingNotebook.Count);
             for (int i = 0; i < 4; i++) Assert.AreEqual("Q" + i, sim.S.teachingNotebook[i].text);
-            Assert.AreEqual("Q48", sim.S.teachingNotebook[4].text);
-            Assert.AreEqual("Q299", sim.S.teachingNotebook[255].text);
+            Assert.AreEqual("Q4", sim.S.teachingNotebook[4].text);
+            Assert.AreEqual("Q299", sim.S.teachingNotebook[299].text);
+            Assert.AreEqual(300, sim.S.askedLog.Count);
             Assert.AreEqual(300, sim.S.teachingNoteSerial);
         }
     }
