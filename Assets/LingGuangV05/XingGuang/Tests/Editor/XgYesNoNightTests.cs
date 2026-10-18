@@ -63,6 +63,51 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void WithTheDesktopTheChapterWaitsForTheNight()
+        {
+            var sim = Lab(1.25);
+            sim.DesktopHosted = true;
+            Assert.That(sim.YnNightHolds, Is.True);
+            Assert.That(sim.ExamReady, Is.True, "the exam is open: that is what starts the night");
+            Assert.That(sim.TakeExam(), Is.Null, "but it is sat after the night");
+            Assert.That(sim.ConfirmNextStage(), Is.False);
+            Assert.That(XgGuide.ConfirmStage(sim).app, Is.EqualTo(XgGuide.YY), "the note points to YY");
+            sim.YnNightStart();
+            while (sim.YnNightActive) Ask(sim);
+            Assert.That(sim.YnNightHolds, Is.False);
+            var e = sim.TakeExam();
+            Assert.That(e, Is.Not.Null);
+            Assert.That(e.passed, Is.True);
+            sim.RevealExam();
+            Assert.That(sim.ConfirmNextStage(), Is.True);
+            Assert.That(sim.HasAbility(2), Is.True);
+        }
+
+        [Test]
+        public void AnOlderPassWaitsForTheNightToo()
+        {
+            var sim = Lab(1.25);
+            sim.TakeExam(); sim.RevealExam();
+            Assert.That(sim.ExamPassPending, Is.True);
+            sim.DesktopHosted = true;
+            Assert.That(sim.YnNightDue, Is.True, "a pass not yet claimed still starts the night");
+            Assert.That(sim.ClaimExamPass(), Is.False);
+            sim.YnNightStart();
+            while (sim.YnNightActive) Ask(sim);
+            Assert.That(sim.ClaimExamPass(), Is.True);
+        }
+
+        [Test]
+        public void WithoutTheDesktopNothingWaits()
+        {
+            var sim = Lab(1.25);
+            Assert.That(sim.YnNightHolds, Is.False, "the bot and tests never play the night");
+            Assert.That(sim.TakeExam(), Is.Not.Null);
+            var later = Lab(1.25); later.S.stage = 2; later.DesktopHosted = true;
+            Assert.That(later.YnNightHolds, Is.False, "only stage 1 waits");
+        }
+
+        [Test]
         public void ATypedLineIsNotTheRoundsAnswer()
         {
             var sim = Lab(.9);

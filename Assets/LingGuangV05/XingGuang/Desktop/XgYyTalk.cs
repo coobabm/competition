@@ -138,6 +138,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!ReferenceEquals(hub, hooked)) { hooked = hub; lines.Clear(); }
             if (hub == null || hub.S == null) return;
             hub.LingGuangTalk = this;
+            // 是否夜 holds the end of stage 1 only where it can be played: the AI in YY, a real runtime.
+            var rt = controller.runtime;
+            bound.DesktopHosted = hub.S.lingguangUnlocked && rt != null && !rt.TestMode && rt.Sim != null && !rt.Sim.InPrologue;
             if (!hub.S.lingguangUnlocked) { hub.Stand(Id, null); return; }
             // Stage 4: it can talk now. Its first sentence is fixed (design v1.1 §7 stage 4) and waits for you to look.
             if (bound.S.stage >= 4 && !bound.S.firstWordsSaid && hub.IsShowing(Id) && !waiting)

@@ -89,7 +89,14 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshChapterButton()
         {
             string name = XgSim.AbilityName(Sim.NextAbility, Sim.English);
-            if (Sim.ExamPassPending)
+            if (Sim.CardLoanHolds && (Sim.ExamReady || Sim.ExamPassPending))
+                confirmStage.Set(Sim.S.clStep == 0 ? T("老周在 YY 上找你……", "Lao Zhou is looking for you on YY…") : T("先回老周：借不借卡", "Answer Lao Zhou first: lend the card or not"), false);
+            else if (Sim.PhoneSortHolds && (Sim.ExamReady || Sim.ExamPassPending))
+                confirmStage.Set(T("先帮阿杰分完那 " + XgSim.PhoneTotal.ToString("#,0") + " 张图", "Sort Ajie's " + XgSim.PhoneTotal.ToString("#,0") + " pictures first"), false);
+            else if (Sim.YnNightHolds && (Sim.ExamReady || Sim.ExamPassPending))
+                // 是否夜 (XgSim.YesNoNight.cs) first: the chapter waits for it.
+                confirmStage.Set(Sim.YnNightActive ? T("它在 YY 里答题……", "It is answering questions on YY…") : T("先去 YY 考考它：它还只会是和否", "Test it on YY first: it only knows yes and no"), false);
+            else if (Sim.ExamPassPending)
                 confirmStage.Set(T("能力考过了 · 继续 →", "Exam passed · continue →"), true, XgDark.Accent, Color.white);
             else if (Sim.ExamReady)
                 confirmStage.Set(T("参加能力考 ·「" + name + "」", "Sit the exam · " + name), true, new Color32(74, 52, 12, 255), XgDark.Money);

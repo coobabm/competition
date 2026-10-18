@@ -239,15 +239,24 @@ namespace LingGuangV05.XingGuang
         /// at stage 4 if it was not taken; at stage 6 he asks it himself. Once he knows, each note ends with what the
         /// program is doing right now (<see cref="ZhouLabLine"/>) so his advice is about it.
         /// </summary>
+        /// <summary>Stage 2 when it chose to read first (阿杰's A/B question picked B): the next idea is a sentence, not strokes.</summary>
+        public static readonly XgZhouStageNote ZhouReadingNote = Note(2, "过第一关了？下一步难了：一个字一个字地看不够，得记住前面读过什么。「不难看」和「难看」就差一个字，意思反过来。",
+            "Through the first stage? The next is harder: one word at a time isn't enough; it has to remember what came before. \"Not bad\" and \"bad\" differ by one word and mean the opposite.",
+            R("怎么记？", "Remember how?", "循环网络。读一个字，把心里的那点印象带到下一个字，一路带到句尾。", "A recurrent network. Read a word, carry what it made of it on to the next word, all the way to the end."),
+            R("懂了，我去试试", "Got it, I'll try", "嗯，有问题再找我。", "Right. Ask if you get stuck."),
+            R("你怎么知道它过了？", "How do you know it passed?", "你自己在贴吧嘚瑟的啊。", "You bragged about it on the forum yourself."));
+
         public XgZhouStageNote ZhouStageNoteNow(int stage)
         {
-            var b = ZhouStageNote(stage);
+            // Stage 2 follows the road it chose: strokes for 看图, the words before for 读弹幕.
+            bool reading = stage == 2 && FirstTrack == "sequence";
+            var b = reading ? ZhouReadingNote : ZhouStageNote(stage);
             if (b == null) return null;
             if (S.zhouKnows)
                 return new XgZhouStageNote { stage = stage, zh = b.zh + "你那个东西现在：" + ZhouLabLine(false) + "。", en = b.en + " Your thing right now: " + ZhouLabLine(true) + ".", replies = b.replies };
             switch (stage)
             {
-                case 2: return Note(2, b.zh + "……你这才几天，就到这一步了？我当年看懂卷积花了一个学期。", b.en + " …You got here in a few days? Convolution took me a whole term.", b.replies);
+                case 2: return Note(2, b.zh + "……你这才几天，就到这一步了？我当年看懂" + (reading ? "循环网络" : "卷积") + "花了一个学期。", b.en + " …You got here in a few days? " + (reading ? "Recurrent networks" : "Convolution") + " took me a whole term.", b.replies);
                 case 3: return Note(3, b.zh + "……说真的，你这进度不像自学的。", b.en + " …Honestly, this doesn't look self-taught.",
                     b.replies[0],
                     R("就是自学的", "It's all self-taught", "行吧，你说是就是。", "Fine. If you say so.", "", ZhouDoubtUp),

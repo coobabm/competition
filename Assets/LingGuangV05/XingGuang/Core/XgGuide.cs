@@ -248,6 +248,26 @@ namespace LingGuangV05.XingGuang
         {
             int next = sim.NextAbility;
             string name = XgSim.AbilityName(next, false), nameEn = XgSim.AbilityName(next, true);
+            if (sim.CardLoanHolds && sim.S.clStep == 1)
+                return Step(ConfirmStageId, XgGuideKind.Main, "看看机箱里都有什么", "Look at what is inside the case",
+                    "老周要借卡。借之前，先弄明白这台机器靠什么让它跑起来。", "Lao Zhou wants a card. Before answering, find out what this machine runs it on.",
+                    "", "", "", "");
+            if (sim.CardLoanHolds)
+                return Step(ConfirmStageId, XgGuideKind.Main, "去 YY 回老周：借不借卡", "Answer Lao Zhou on YY: lend the card or not",
+                    "他组里的卡烧了，等你一句话。", "His group's card burned out; he is waiting for your answer.",
+                    YY, "", "name:Session_" + XgSim.CardLoanConversation, "");
+            if (sim.PhoneSortHolds && sim.S.psStep >= 3)
+                return Step(ConfirmStageId, XgGuideKind.Main, "去 YY 群里回阿杰", "Answer Ajie in the YY group",
+                    "他拿到 U 盘了，在问是什么分的。", "He has his USB stick and is asking what sorted it.",
+                    YY, "", "name:Session_" + XgSim.PhoneConversation, "");
+            if (sim.PhoneSortHolds)
+                return Step(ConfirmStageId, XgGuideKind.Main, "帮阿杰把手机里的图分好：八个文件夹", "Sort Ajie's phone pictures into eight folders",
+                    "八个文件夹就是八选一。它现在能挑，正好让它试试。", "Eight folders is a choice of eight. It can pick now; let it try.",
+                    "", "", "", "");
+            if (sim.YnNightHolds)
+                return Step(ConfirmStageId, XgGuideKind.Main, "去 YY 考考它：它还只会是和否", "Test it on YY: it still only knows yes and no",
+                    "考「" + name + "」之前，先看看光靠两个字它能答到哪一步。", "Before the exam for " + nameEn + ", see how far two words can take it.",
+                    YY, "", "name:Session_" + XgSim.YnConversation, "");
             if (sim.ExamPassPending)
                 return Step(ConfirmStageId, XgGuideKind.Main, "能力考过了：点「继续」让它学会「" + name + "」", "The exam is passed: press 'Continue' so it learns " + nameEn,
                     "训练页右边的按钮翻到下一章。", "The button on the right of the training page turns the chapter.",

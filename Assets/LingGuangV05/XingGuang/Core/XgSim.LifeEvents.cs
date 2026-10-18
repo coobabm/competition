@@ -342,7 +342,8 @@ namespace LingGuangV05.XingGuang
             switch (id)
             {
                 case "zhou_card":
-                    return S.stage >= 3 && cards >= 2 && !HasHold("lend") && !HasHold("quiet") && S.lifeFavour == 0;
+                    // On the desktop the first ask is chapter 3's own scene (XgSim.CardLoan.cs).
+                    return S.stage >= 3 && (!DesktopHosted || S.stage > 3 || S.clStep >= 3) && cards >= 2 && !HasHold("lend") && !HasHold("quiet") && S.lifeFavour == 0;
                 case "bad_sectors":
                     return DiskCapacityMB > 0 && DiskUsedMB / DiskCapacityMB >= LifeDiskShare && BadSectorVictim() != null;
                 case "broadband":

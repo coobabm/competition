@@ -246,7 +246,7 @@ namespace LingGuangV05.XingGuang
         public bool ConfirmNextStage()
         {
             if (ExamPassPending) return ClaimExamPass();
-            if (!StageReady) return false;
+            if (!StageReady || ChapterSceneHolds) return false;
             EmergeAbility(NextAbility);
             return true;
         }

@@ -87,7 +87,7 @@ namespace LingGuangV05.XingGuang
         public XgExamSheet TakeExam()
         {
             if (ExamUnrevealed) return S.exam;
-            if (!ExamReady) return null;
+            if (!ExamReady || ChapterSceneHolds) return null;
             int ability = NextAbility;
             int attempt = 1;
             if (S.examHistory != null) foreach (var h in S.examHistory) if (h.ability == ability) attempt++;
@@ -159,7 +159,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>After a passed exam: the ability emerges and the chapter turns (as the old chapter button did).</summary>
         public bool ClaimExamPass()
         {
-            if (!ExamPassPending) return false;
+            if (!ExamPassPending || ChapterSceneHolds) return false;
             S.exam.claimed = true;
             S.examRetryEpoch = 0;
             EmergeAbility(S.exam.ability);

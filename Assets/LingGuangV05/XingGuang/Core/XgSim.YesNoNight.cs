@@ -67,6 +67,8 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const string YnChronicle = "ynnight";
+        /// <summary>Its YY conversation (YYChatHub.LingGuangId), for the guide.</summary>
+        public const string YnConversation = "lingguang";
         /// <summary>It answers 是 (否) to what it cannot know when the month's 是 (否) labels outnumber the other by this much.</summary>
         public const double YnLean = 1.1;
 
@@ -103,6 +105,21 @@ namespace LingGuangV05.XingGuang
         public bool YnNightDue => S.stage == 1 && !S.ynDone && S.ynStep == 0 && (ExamReady || ExamPassPending);
 
         public bool YnNightActive => S.ynStep > 0 && !S.ynDone;
+
+        /// <summary>
+        /// The desktop plays the chapter scenes for this lab (是否夜, 阿杰的手机备份); XgYyTalk sets it once the AI is in
+        /// YY. Not saved: a lab no desktop plays them for (the bot, tests, a test-mode runtime) is never held by them.
+        /// </summary>
+        [NonSerialized] public bool DesktopHosted;
+
+        /// <summary>
+        /// Stage 1 does not end before 是否夜: its 「光会是和否，不够用了」 leads into the 「多选一」 exam, so the exam
+        /// (and a pass from an older save) waits until the night is over.
+        /// </summary>
+        public bool YnNightHolds => DesktopHosted && S.stage == 1 && NextAbility == 2 && !S.ynDone;
+
+        /// <summary>A chapter's closing scene has not been played yet: the exam (and a pass waiting) waits for it.</summary>
+        public bool ChapterSceneHolds => YnNightHolds || PhoneSortHolds || CardLoanHolds;
 
         public XgYnRound YnRound => YnNightActive && S.ynStep <= YnRounds.Length ? YnRounds[S.ynStep - 1] : null;
 

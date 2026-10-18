@@ -142,6 +142,15 @@ namespace LingGuangV05.XingGuang
                     YnChronicleBody(false, self, you),
                     "Hard questions on a yes-or-no night", "two words to answer the world",
                     YnChronicleBody(true, self == "我" ? "me" : self, you == "你" ? "you" : you));
+            if (Day(PhoneChronicle) >= 0)
+                Add(PhoneChronicle, 28, 8, "替阿杰分四千张图", "猫耳自拍归了表情",
+                    PhoneChronicleBody(false, self, you),
+                    "Four thousand of Ajie's pictures sorted", "a cat-ear selfie filed as a meme",
+                    PhoneChronicleBody(true, self, you));
+            if (Day(CardLoanChronicle) >= 0 && !ChronicleHas("laozhou.card"))
+                Add(CardLoanChronicle, 30, 7, "拆开机箱看一看", "一张卡没借出去",
+                    CardLoanChronicleBody(false, self, you), "A look inside the case", "a card that stayed",
+                    CardLoanChronicleBody(true, self, you));
             if (ChronicleHas("laozhou.card"))
                 Add("laozhou.card", 20, 8, "借卡与周不问归期", ChronicleHas("rent.late") ? "交租欠租陋室艰难" : "一机一桌陋室安身",
                     "老周实验室的卡烧了，来借" + you + "那张。" + you + "把卡装了箱，没问他几时还。老周后来说，" + you + "是他认识的最靠谱的网友。" + (ChronicleHas("rent.late") ? "房租晚交过，房东敲过门。" : "房租一天一天地交，没欠过一天。"),
