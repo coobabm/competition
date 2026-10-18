@@ -21,7 +21,7 @@ namespace LingGuangV05.XingGuang
             { "vgg", new Copy("小窗卷积 VGG 2014","Small-filter VGG 2014","小窗口层层叠起来","Stack small filters","加入小窗卷积脑型","Adds VGG architecture") },
             { "googlenet", new Copy("多路卷积 Inception 2014","Multi-path Inception 2014","大小窗口一起看","Use several window sizes","加入多路卷积脑型","Adds multi-path architecture") },
             { "lstm", new Copy("门控记忆 LSTM 1997","Gated memory LSTM 1997","让重要线索多留一会","Keep useful clues longer","加入门控记忆脑型","Adds gated-memory architecture") },
-            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact-memory architecture") },
+            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact memory") },
             { "textcnn", new Copy("文字卷积 CNN 2014","Text CNN 2014","用小窗口读短句","Read local word groups","加入文字卷积脑型","Adds text CNN architecture") },
             { "resnet", new Copy("残差网络 ResNet 2015","Residual ResNet 2015","给信息开一条近道","Give signals a shortcut","启用跨层直连","Enables skip connections") },
             { "seq2seq", new Copy("编码解码 Seq2Seq 2014","Encoder-decoder S2S 2014","读完一句再组织输出","Read, then compose","加入编码解码脑型","Adds encoder-decoder architecture") },
@@ -94,6 +94,7 @@ namespace LingGuangV05.XingGuang
             if(n.kind==XgNodeKind.Depth)return T(sim,"网络深度 D 工具2016","Network depth D tool 2016");
             if(n.kind==XgNodeKind.Width)return T(sim,"网络宽度 W 工具2016","Network width W tool 2016");
             if(n.id=="danmu.pack")return T(sim,"弹幕情绪 DATA 工具2016","Comment sentiment DATA 2016");
+            if(n.id=="crosssentence.pack")return T(sim,"跨句理解 DATA 工具2016","Cross-sentence DATA 2016");
             if(n.id=="pack.poem_next")return T(sim,"唐诗接字 DATA 工具2016","Tang verse DATA 2016");
             return sim.NodeName(n)+T(sim,n.id.StartsWith("persona.")?" PERS 工具2016":" DATA 工具2016",n.id.StartsWith("persona.")?" PERS tool 2016":" DATA tool 2016");
         }
