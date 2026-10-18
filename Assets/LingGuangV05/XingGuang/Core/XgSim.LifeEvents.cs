@@ -62,6 +62,13 @@ namespace LingGuangV05.XingGuang
         public long lifeRng;
         /// <summary>Seconds the life events have been ticked, and the seconds left until the next draw.</summary>
         public double lifeClock, lifeNext;
+        /// <summary>Independent cadence migration; mode 0 = 8 minutes, 1 = 15 minutes, 2 = off.</summary>
+        public int lifeCadenceVersion, lifeCadenceMode;
+        public bool lifeCadenceStarted, lifeCadenceDeferred;
+        /// <summary>Permanent seen stays in lifeDataSeen; this list tracks only the current eligible-pool cycle.</summary>
+        public List<string> lifeCycleSeen = new List<string>();
+        /// <summary>Effects have already committed. Only acknowledgement clears this saved result.</summary>
+        public string lifeResultId = "", lifeResultChoice = "", lifeResultText = "", lifeResultTextEn = "";
         /// <summary>The open event ("" = none) and what it is about (a card key, a dataset, an amount).</summary>
         public string lifeOpen = "", lifeArgKey = "", lifeArgName = "", lifeArgNameEn = "";
         public double lifeArg;
@@ -83,8 +90,8 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>
-    /// 节奏重做 §2.5, the life-event pool (A Dark Room): every 3–5 minutes one event is drawn, evenly, from those whose
-    /// conditions hold. One is open at a time; none comes before the opening is over (the second ability), during the
+    /// 节奏重做 §2.5, the life-event pool (A Dark Room): every eight or fifteen active minutes one event is drawn, evenly, from those whose
+    /// conditions hold. One is open at a time; none comes before the training curve is owned, during the
     /// finale, or while something else needs the player (a cutscene, a story beat, an exam, a captcha: <see cref="LifeEventsHeld"/>,
     /// with <see cref="LifeEventHold"/> set by the desktop); a draw that falls then is put off a little. Every event asks
     /// for a real choice, and its result is written into the state through the systems that already exist: the wallet,
@@ -94,9 +101,10 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const int LifeSchema = 1;
-        public const double LifeIntervalMin = 360, LifeIntervalMax = 480;
+        public const int LifeCadenceSchema = 1;
+        public const double LifeIntervalMin = 480, LifeIntervalMax = 900;
         /// <summary>A draw that falls while the player is busy is tried again this much later.</summary>
-        public const double LifeHeldRetry = 15;
+        public const double LifeHeldRetry = 30;
         /// <summary>老周 keeps the card this long; the night throttle lasts this long.</summary>
         public const double LifeLendSeconds = 600, LifeQuietSeconds = 300;
         /// <summary>Money lent to 老周 / put in 余额宝 comes back after this long.</summary>
@@ -121,6 +129,10 @@ namespace LingGuangV05.XingGuang
         IXgHousehold House => Household ?? lifeHouse;
         /// <summary>The desktop answers true while something else holds the player (a cutscene, story, exam, the setup). Not saved.</summary>
         public Func<bool> LifeEventHold;
+        /// <summary>Host play-time gate: false during pause or native game minimization; never the internal app window.</summary>
+        public bool LifeEventActive = true;
+        /// <summary>Runtime presentation conflict (group script, reader or cutscene). Not saved.</summary>
+        public bool LifeEventConflict;
 
         /// <summary>An event opened (the card and a tray popup show it).</summary>
         public event Action<XgLifeEvent> LifeEventOpened;
@@ -134,7 +146,7 @@ namespace LingGuangV05.XingGuang
 
         void EnsureLife()
         {
-            if (ReferenceEquals(lifeRepaired, S) && S.lifeHistory != null && S.lifeCooldowns != null && S.lifeHolds != null && S.lifeReturns != null && S.lifeOpen != null) { RepairLifeData(); return; }
+            if (ReferenceEquals(lifeRepaired, S) && S.lifeHistory != null && S.lifeCooldowns != null && S.lifeHolds != null && S.lifeReturns != null && S.lifeOpen != null) { RepairLifeData(); RepairLifeCadence(); return; }
             lifeRepaired = S;
             if (S.lifeHistory == null) S.lifeHistory = new List<XgLifeRecord>();
             if (S.lifeCooldowns == null) S.lifeCooldowns = new List<XgLifeTimer>();
@@ -155,14 +167,13 @@ namespace LingGuangV05.XingGuang
             if (S.lifeVersion < LifeSchema)
             {
                 // A new game or a save from before the pool: its own dice come from the lab's, and the first draw is a whole interval away.
-                S.lifeRng = Mix(S.rng ^ 0x4C1FE5EEDL);
+                if (S.lifeRng == 0) S.lifeRng = Mix(S.rng ^ 0x4C1FE5EEDL);
                 if (S.lifeRng == 0) S.lifeRng = 0x4C1FE5EEDL;
-                S.lifeNext = NextLifeInterval();
                 S.lifeVersion = LifeSchema;
             }
             if (S.lifeRng == 0) S.lifeRng = 0x4C1FE5EEDL;
-            if (!Finite(S.lifeNext) || S.lifeNext > LifeIntervalMax) S.lifeNext = LifeIntervalMax;
             RepairLifeData();
+            RepairLifeCadence();
         }
 
         /// <summary>SplitMix64's finaliser: a small seed (7, 42) still starts the stream well mixed.</summary>
@@ -182,10 +193,87 @@ namespace LingGuangV05.XingGuang
             return (double)((ulong)S.lifeRng >> 11) / (1UL << 53);
         }
 
-        double NextLifeInterval() => LifeIntervalMin + LifeRoll() * (LifeIntervalMax - LifeIntervalMin);
+        double LifeInterval => S.lifeCadenceMode == 1 ? LifeIntervalMax : LifeIntervalMin;
 
-        /// <summary>The pool is running: the opening is over (the second ability is learned) and the finale has not begun.</summary>
-        public bool LifeEventsUnlocked => !S.openingFocus && AbilitiesCount >= 1 && !S.fullOpen && string.IsNullOrEmpty(S.ending) && !S.chapterComplete && !EndingAvailable;
+        void RepairLifeCadence()
+        {
+            if (S.lifeCadenceVersion < LifeCadenceSchema)
+            {
+                // The old random/stage timer is obsolete. Keep its independent RNG, history and financial effects.
+                S.lifeCadenceMode = 0;
+                S.lifeNext = LifeIntervalMin;
+                S.lifeCadenceStarted = Has("train.curve");
+                S.lifeCadenceDeferred = false;
+                S.lifeCycleSeen = new List<string>(S.lifeDataSeen);
+                S.lifeCadenceVersion = LifeCadenceSchema;
+            }
+            if (S.lifeCadenceMode < 0 || S.lifeCadenceMode > 2) S.lifeCadenceMode = 0;
+            if (S.lifeCycleSeen == null) S.lifeCycleSeen = new List<string>(S.lifeDataSeen);
+            if (S.lifeResultId == null) S.lifeResultId = "";
+            if (S.lifeResultChoice == null) S.lifeResultChoice = "";
+            if (S.lifeResultText == null) S.lifeResultText = "";
+            if (S.lifeResultTextEn == null) S.lifeResultTextEn = "";
+            if (!Finite(S.lifeNext)) S.lifeNext = LifeInterval;
+            S.lifeNext = Math.Max(0, Math.Min(LifeInterval, S.lifeNext));
+            if (!S.lifeCadenceStarted && Has("train.curve"))
+            {
+                S.lifeCadenceStarted = true;
+                S.lifeNext = LifeInterval;
+            }
+        }
+
+        /// <summary>Saved per game: 0 = eight minutes, 1 = fifteen minutes, 2 = off. Changing mode starts a full interval.</summary>
+        public int LifeEventIntervalMode
+        {
+            get { EnsureLife(); return S.lifeCadenceMode; }
+            set
+            {
+                EnsureLife();
+                int mode = Math.Max(0, Math.Min(2, value));
+                if (mode == S.lifeCadenceMode) return;
+                S.lifeCadenceMode = mode;
+                S.lifeNext = LifeInterval;
+                S.lifeCadenceDeferred = false;
+            }
+        }
+
+        /// <summary>Observe holds even when the host skips Sim.Tick; advances neither clock nor financial effects.</summary>
+        public void ObserveLifeEventConflict()
+        {
+            EnsureLife();
+            if (LifeEventsUnlocked && S.lifeCadenceMode != 2 && S.lifeOpen.Length == 0
+                && S.lifeResultId.Length == 0 && S.lifeNext <= 1e-9 && LifeEventsHeld)
+                S.lifeCadenceDeferred = true;
+        }
+
+        public bool LifeEventResultPending { get { EnsureLife(); return S.lifeResultId.Length > 0; } }
+        public XgLifeEvent LifeEventResultView()
+        {
+            EnsureLife();
+            if (S.lifeResultId.Length == 0) return null;
+            return new XgLifeEvent { id = S.lifeResultId, who = T("突发事件", "Life event"),
+                title = T("结果", "Result"), body = T(S.lifeResultText, S.lifeResultTextEn) };
+        }
+
+        /// <summary>Effects are already applied. Closing the result only starts the next interval, once.</summary>
+        public bool AcknowledgeLifeEventResult()
+        {
+            EnsureLife();
+            if (S.lifeResultId.Length == 0) return false;
+            S.lifeResultId = S.lifeResultChoice = S.lifeResultText = S.lifeResultTextEn = "";
+            S.lifeNext = LifeInterval;
+            S.lifeCadenceDeferred = false;
+            return true;
+        }
+
+        string LifeResultText(string zh, string en)
+        {
+            S.lifeResultText = zh; S.lifeResultTextEn = en;
+            return T(zh, en);
+        }
+
+        /// <summary>The pool is running: the training curve is owned and the finale has not begun.</summary>
+        public bool LifeEventsUnlocked => Has("train.curve") && !S.fullOpen && string.IsNullOrEmpty(S.ending) && !S.chapterComplete && !EndingAvailable;
 
         /// <summary>Something else holds the player now: a draw that falls waits.</summary>
         public bool LifeEventsHeld
@@ -194,14 +282,14 @@ namespace LingGuangV05.XingGuang
             {
                 bool desk = false;
                 try { desk = LifeEventHold != null && LifeEventHold(); } catch (Exception) { desk = false; }
-                return StagePresentationHeld || TrainingKnowledgePending || desk || EpiphanyPending || CaptchaPending || ProjectAwaitingAnswer || RelicPickPending || ExamPassPending || MiniGameSurfaceActive;
+                return LifeEventConflict || StagePresentationHeld || TrainingKnowledgePending || desk || EpiphanyPending || CaptchaPending || ProjectAwaitingAnswer || RelicPickPending || ExamPassPending || MiniGameSurfaceActive;
             }
         }
 
         public bool LifeEventOpen { get { EnsureLife(); return S.lifeOpen.Length > 0; } }
         public string LifeEventId { get { EnsureLife(); return S.lifeOpen; } }
         /// <summary>Seconds until the next draw (while the pool runs and nothing is open).</summary>
-        public double LifeEventNext => S.lifeNext;
+        public double LifeEventNext { get { EnsureLife(); return S.lifeNext; } }
         public IReadOnlyList<XgLifeRecord> LifeHistory { get { EnsureLife(); return S.lifeHistory; } }
         /// <summary>老周 owes a favour: one download comes over from his campus at once.</summary>
         public bool ZhouFavourOwed => S.lifeFavour > 0;
@@ -252,13 +340,24 @@ namespace LingGuangV05.XingGuang
             WatchBroadbandMonth();
             TickLifeHolds(host);
             TickLifeReturns(host);
-            if (!LifeEventsUnlocked || S.lifeOpen.Length > 0 || S.lifeDrawCount >= 2) return;
-            S.lifeNext -= dt;
-            if (S.lifeNext > 0) return;
-            if (LifeEventsHeld) { S.lifeNext = LifeHeldRetry; return; }
+            // Only the draw clock observes play-time holds. Repayments, card returns and boosts keep lifeClock.
+            if (!LifeEventsUnlocked || !S.lifeCadenceStarted || S.lifeCadenceMode == 2
+                || S.lifeOpen.Length > 0 || S.lifeResultId.Length > 0) return;
+            ObserveLifeEventConflict();
+            bool held = LifeEventsHeld;
+            if (!LifeEventActive || held) return;
+            if (S.lifeCadenceDeferred)
+            {
+                S.lifeCadenceDeferred = false;
+                S.lifeNext = LifeHeldRetry;
+                return;
+            }
+            S.lifeNext = Math.Max(0, S.lifeNext - dt);
+            if (S.lifeNext > 1e-9) return;
+            S.lifeNext = 0;
             var pool = LifeEventsEligible(host);
-            S.lifeNext = NextLifeInterval();
-            if (pool.Count == 0) return;
+            // No eligible row: poll slowly, without consuming RNG or forgetting the current cycle.
+            if (pool.Count == 0) { S.lifeNext = LifeHeldRetry; return; }
             OpenLifeEvent(pool[Math.Min(pool.Count - 1, (int)(LifeRoll() * pool.Count))], host);
         }
 
@@ -325,21 +424,24 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── the pool ─────────────
 
-        /// <summary>The events whose conditions hold now, in the pool's order.</summary>
+        /// <summary>The current draw pool: unseen eligible events first, then this cycle, then a fresh eligible cycle.</summary>
         public List<string> LifeEventsEligible(IXgHost host)
         {
             EnsureLife();
             if (host is IXgHousehold hh) lifeHouse = hh;
             var list = new List<string>();
-            if (S.lifeDrawCount >= 2) return list;
             foreach (var id in LifeEventIds) if (LifeEligible(id, host)) list.Add(id);
             foreach (var id in LifeData.Keys) if (LifeDataEligible(id, host)) list.Add(id);
-            return list;
+            // Newly eligible events that have never appeared take priority over any repeat.
+            var fresh = list.FindAll(id => !S.lifeDataSeen.Contains(id));
+            if (fresh.Count > 0) return fresh;
+            var remaining = list.FindAll(id => !S.lifeCycleSeen.Contains(id));
+            return remaining.Count > 0 ? remaining : list;
         }
 
         bool LifeEligible(string id, IXgHost host)
         {
-            if (!Cooled(id) || S.lifeDataSeen.Contains(id)) return false;
+            if (!Cooled(id)) return false;
             var rig = host as IXgRig;
             int cards = rig != null && rig.Cards != null ? rig.Cards.Count : 0;
             switch (id)
@@ -461,17 +563,20 @@ namespace LingGuangV05.XingGuang
         public bool OpenLifeEventNow(string id, IXgHost host, bool force = false)
         {
             EnsureLife();
-            if (S.lifeOpen.Length > 0 || (Array.IndexOf(LifeEventIds, id) < 0 && !LifeData.ContainsKey(id))) return false;
-            if (!force && (S.lifeDrawCount >= 2 || !(LifeData.ContainsKey(id) ? LifeDataEligible(id, host) : LifeEligible(id, host)))) return false;
+            if (S.lifeOpen.Length > 0 || S.lifeResultId.Length > 0 || (Array.IndexOf(LifeEventIds, id) < 0 && !LifeData.ContainsKey(id))) return false;
+            if (!force && !LifeEventsEligible(host).Contains(id)) return false;
             OpenLifeEvent(id, host);
             return true;
         }
 
         void OpenLifeEvent(string id, IXgHost host)
         {
-            S.lifeDrawCount++;
+            var pool = LifeEventsEligible(host);
+            if (pool.Contains(id) && pool.TrueForAll(item => S.lifeCycleSeen.Contains(item)))
+                foreach (var item in pool) S.lifeCycleSeen.Remove(item);
+            if (!S.lifeCycleSeen.Contains(id)) S.lifeCycleSeen.Add(id);
+            if (S.lifeDrawCount < int.MaxValue) S.lifeDrawCount++;
             if (!S.lifeDataSeen.Contains(id)) S.lifeDataSeen.Add(id);
-            S.lifeNext=NextLifeInterval();
             S.lifeOpen = id; S.lifeArg = 0; S.lifeArgKey = S.lifeArgName = S.lifeArgNameEn = "";
             var rig = host as IXgRig;
             switch (id)
@@ -654,6 +759,7 @@ namespace LingGuangV05.XingGuang
             string result = ApplyLifeChoice(id, choice, host);
             if (result == null) return false;
             S.lifeOpen = "";
+            S.lifeResultId = id; S.lifeResultChoice = choice;
             S.lifeHistory.Add(new XgLifeRecord { id = id, choice = choice, date = TodayKnown ? Today : 0, at = S.lifeClock });
             while (S.lifeHistory.Count > LifeHistoryKept) S.lifeHistory.RemoveAt(0);
             Say(result);
@@ -664,8 +770,9 @@ namespace LingGuangV05.XingGuang
         string ApplyLifeChoice(string id, string choice, IXgHost host)
         {
             if (LifeData.ContainsKey(id)) return ApplyLifeDataChoice(id, choice, host);
-            string card = T(S.lifeArgName, S.lifeArgNameEn), name = card;
-            if (card.Length == 0) card = T("显卡", "the card");
+            string card = S.lifeArgName.Length > 0 ? S.lifeArgName : "显卡";
+            string cardEn = S.lifeArgNameEn.Length > 0 ? S.lifeArgNameEn : "the card";
+            string name = S.lifeArgName, nameEn = S.lifeArgNameEn;
             double zhouWait = 1500 * (1 + S.lifeZhouCool);
             switch (id + "/" + choice)
             {
@@ -675,28 +782,28 @@ namespace LingGuangV05.XingGuang
                     NoteChronicle("laozhou.card");
                     S.lifeZhouCool = Math.Max(0, S.lifeZhouCool - 1);
                     if (S.lifeArgKey.Length > 0) Unplug("lend", S.lifeArgKey, LifeLendSeconds, host);
-                    return T("把" + card + "装进原来的纸盒给了老周。他拍拍你肩膀：「欠你一回。你这哥们，靠谱。」", "You boxed up the " + card + " for 老周. He pats your shoulder: \"I owe you one. You're a reliable guy.\"");
+                    return LifeResultText("把" + card + "装进原来的纸盒给了老周。他拍拍你肩膀：「欠你一回。你这哥们，靠谱。」", "You boxed up the " + cardEn + " for 老周. He pats your shoulder: \"I owe you one. You're a reliable guy.\"");
                 case "zhou_card/refuse":
                     S.lifeZhouCool = Math.Min(5, S.lifeZhouCool + 1);
                     SetCooldown(id, 1500 * (1 + S.lifeZhouCool));
-                    return T("老周：「行，没事，我再问问别人。」他回得比平时慢了半拍。", "老周: \"Sure, no problem, I'll ask around.\" His reply came a beat slower than usual.");
+                    return LifeResultText("老周：「行，没事，我再问问别人。」他回得比平时慢了半拍。", "老周: \"Sure, no problem, I'll ask around.\" His reply came a beat slower than usual.");
                 case "bad_sectors/backup":
                     if (host == null || !host.Spend(S.lifeArg)) return null;
                     S.totalSpent += S.lifeArg;
                     SetCooldown(id, 1200);
-                    return T("电脑城的小哥拷了一下午，坏道上的数据都救回来了，顺手给你标了块「勿用」。", "The tech at the computer market spent the afternoon on it: every byte saved, the bad patch marked off.");
+                    return LifeResultText("电脑城的小哥拷了一下午，坏道上的数据都救回来了，顺手给你标了块「勿用」。", "The tech at the computer market spent the afternoon on it: every byte saved, the bad patch marked off.");
                 case "bad_sectors/lose":
                 {
                     SetCooldown(id, 1200);
                     var d = XgCatalog.Dataset(S.lifeArgKey);
                     if (d == null || StoryOwned(d.id) || InstalledBatches(d.id) < 1)
-                        return T("坏道那块扫了几遍，好像又能读了。这回算运气好。", "After a few scans the bad patch reads again. Lucky this time.");
+                        return LifeResultText("坏道那块扫了几遍，好像又能读了。这回算运气好。", "After a few scans the bad patch reads again. Lucky this time.");
                     int bought = BatchesBought(d.id), arrived = BatchesArrived(d.id);
                     SetCount(S.installedDataBatches, d.id, Math.Max(0, InstalledBatches(d.id) - 1));
                     SetCount(S.batchesBought, d.id, Math.Max(0, bought - 1));
                     SetCount(S.batchesArrived, d.id, Math.Max(0, arrived - 1));
                     foreach (var run in Runs) if (run.dataset == d.id) Evaluate(run);
-                    return T("《" + d.name + "》少了一批（−" + SamplesText(BatchSamples(d)) + " 条）。坏道那块已经屏蔽，想补可以再买那一批。",
+                    return LifeResultText("《" + d.name + "》少了一批（−" + SamplesText(BatchSamples(d)) + " 条）。坏道那块已经屏蔽，想补可以再买那一批。",
                              d.nameEn + " lost a batch (−" + SamplesText(BatchSamples(d)) + " samples). The bad patch is fenced off; the batch can be bought again.");
                 }
                 case "broadband/renew":
@@ -706,43 +813,43 @@ namespace LingGuangV05.XingGuang
                     int month = Today / 100;
                     S.broadbandBilled = AddMonths(Math.Max(month, S.broadbandBilled), 3);
                     S.lifeBroadbandMonth = month;
-                    return T("续好了：" + BroadbandName(BroadbandTier, false) + "接下来三个月不用再交提速费。", "Renewed: no line fee on the " + BroadbandName(BroadbandTier, true) + " for the next three months.");
+                    return LifeResultText("续好了：" + BroadbandName(BroadbandTier, false) + "接下来三个月不用再交提速费。", "Renewed: no line fee on the " + BroadbandName(BroadbandTier, true) + " for the next three months.");
                 }
                 case "broadband/drop":
                     S.broadband = Math.Max(0, BroadbandTier - 1);
                     S.lifeBroadbandMonth = Today / 100;
-                    return T("降到了" + BroadbandName(BroadbandTier, false) + "：下载 " + F(LineMBps, "0.#") + " MB/s，月租省下来了。", "Down to " + BroadbandName(BroadbandTier, true) + ": " + F(LineMBps, "0.#") + " MB/s, a smaller bill.");
+                    return LifeResultText("降到了" + BroadbandName(BroadbandTier, false) + "：下载 " + F(LineMBps, "0.#") + " MB/s，月租省下来了。", "Down to " + BroadbandName(BroadbandTier, true) + ": " + F(LineMBps, "0.#") + " MB/s, a smaller bill.");
                 case "landlord_meter/explain":
                 {
                     S.lifeHighMonths = 0;
                     bool believed = LifeRoll() < (S.lifeLandlordWary ? LifeExplainWaryChance : LifeExplainChance);
                     S.lifeLandlordWary = true;
                     if (believed && S.stage >= 5) EarnSecret("life.praise.landlord");
-                    if (believed) return S.stage >= 5 ? T("老王听完摆摆手：「你这孩子有出息，租给你我放心。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You'll go far, kid. I'm easy renting to you. Just don't burn the wiring.\" He glances back at the meter on his way out.")
-                        : S.stage >= 3 ? T("老王听完摆摆手：「小伙子在搞正事，我看得出来。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You're up to something serious, kid, I can tell. Just don't burn the wiring.\" He glances back at the meter on his way out.")
-                        : T("老王听完摆摆手：「搞科研好，别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"Research, good. Just don't burn the wiring.\" He glances back at the meter on his way out.");
+                    if (believed) return S.stage >= 5 ? LifeResultText("老王听完摆摆手：「你这孩子有出息，租给你我放心。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You'll go far, kid. I'm easy renting to you. Just don't burn the wiring.\" He glances back at the meter on his way out.")
+                        : S.stage >= 3 ? LifeResultText("老王听完摆摆手：「小伙子在搞正事，我看得出来。别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"You're up to something serious, kid, I can tell. Just don't burn the wiring.\" He glances back at the meter on his way out.")
+                        : LifeResultText("老王听完摆摆手：「搞科研好，别把线烧了就行。」走的时候又回头看了一眼电表。", "Old Wang waves it off: \"Research, good. Just don't burn the wiring.\" He glances back at the meter on his way out.");
                     double fine = host != null ? Math.Min(LifeLandlordFine, Math.Max(0, host.Money)) : 0;
                     if (fine > 0 && host.Spend(fine)) S.totalSpent += fine;
-                    if (!(fine > 0)) return T("老王不信：「科研？科研用得着这么多电？」看你钱包是空的，摆摆手说下回再这样就涨房租。", "Old Wang isn't having it: \"Research uses this much power?\" Seeing your empty wallet, he only says next time the rent goes up.");
-                    return T("老王不信：「科研？科研用得着这么多电？」收了 ¥" + F(fine, "0") + " 线路费，说下回再这样就涨房租。", "Old Wang isn't having it: \"Research uses this much power?\" He takes ¥" + F(fine, "0") + " for the wiring and says next time the rent goes up.");
+                    if (!(fine > 0)) return LifeResultText("老王不信：「科研？科研用得着这么多电？」看你钱包是空的，摆摆手说下回再这样就涨房租。", "Old Wang isn't having it: \"Research uses this much power?\" Seeing your empty wallet, he only says next time the rent goes up.");
+                    return LifeResultText("老王不信：「科研？科研用得着这么多电？」收了 ¥" + F(fine, "0") + " 线路费，说下回再这样就涨房租。", "Old Wang isn't having it: \"Research uses this much power?\" He takes ¥" + F(fine, "0") + " for the wiring and says next time the rent goes up.");
                 }
                 case "landlord_meter/pay":
                     if (host == null || !host.Spend(LifeLandlordExtra)) return null;
                     S.totalSpent += LifeLandlordExtra;
                     S.lifeHighMonths = 0;
                     S.lifeLandlordWary = false;
-                    return T("多塞了 ¥" + F(LifeLandlordExtra, "0") + "。老王把钱折好放进衬衫口袋：「电线我下礼拜找人看看。」", "You hand over ¥" + F(LifeLandlordExtra, "0") + " extra. Old Wang folds it into his shirt pocket: \"I'll get the wiring checked next week.\"");
+                    return LifeResultText("多塞了 ¥" + F(LifeLandlordExtra, "0") + "。老王把钱折好放进衬衫口袋：「电线我下礼拜找人看看。」", "You hand over ¥" + F(LifeLandlordExtra, "0") + " extra. Old Wang folds it into his shirt pocket: \"I'll get the wiring checked next week.\"");
                 case "roommate_fan/throttle":
                     SetCooldown(id, 1200);
                     if (S.lifeArgKey.Length > 0) Unplug("quiet", S.lifeArgKey, LifeQuietSeconds, host);
-                    return S.stage >= 4 ? T("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了。你也别熬太晚，你这么拼，我看着都累」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks. Don't stay up too late either. Watching you work this hard tires me out,\" says the downstairs neighbor, and the door closes.")
-                        : T("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks,\" says the downstairs neighbor, and the door closes.");
+                    return S.stage >= 4 ? LifeResultText("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了。你也别熬太晚，你这么拼，我看着都累」，门关上了。", "You unplug the " + cardEn + "; the case is half as loud. \"Thanks. Don't stay up too late either. Watching you work this hard tires me out,\" says the downstairs neighbor, and the door closes.")
+                        : LifeResultText("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了」，门关上了。", "You unplug the " + cardEn + "; the case is half as loud. \"Thanks,\" says the downstairs neighbor, and the door closes.");
                 case "roommate_fan/redbull":
                     if (host == null || !host.Spend(LifeRedBull)) return null;
                     S.totalSpent += LifeRedBull;
                     SetCooldown(id, 2400);
-                    return S.stage >= 4 ? T("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。你在折腾的那玩意儿，我虽然不懂，但看你这半年没停过，我服。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running, I've got earplugs. I don't get whatever you're building, but you haven't stopped in half a year, and I respect that.\"")
-                        : T("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running. I've got earplugs.\"");
+                    return S.stage >= 4 ? LifeResultText("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。你在折腾的那玩意儿，我虽然不懂，但看你这半年没停过，我服。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running, I've got earplugs. I don't get whatever you're building, but you haven't stopped in half a year, and I respect that.\"")
+                        : LifeResultText("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running. I've got earplugs.\"");
                 case "forum_post/data":
                 {
                     if(!S.lifeFlags.Contains("posted_progress"))S.lifeFlags.Add("posted_progress");
@@ -750,7 +857,7 @@ namespace LingGuangV05.XingGuang
                     string ds = XgCatalog.Dataset(S.lifeArgKey) != null ? S.lifeArgKey : ForumDataset();
                     if (ds != null) AddGameSamples(ds, (int)S.lifeArg);
                     if (S.stage >= 4) EarnSecret("life.praise.forum");
-                    return T("你发帖后，一位研究生回帖附上一个压缩包：" + SamplesText(S.lifeArg) + " 条标好的 " + name + "。你回了一长串感谢。", "After you post, a grad student replies with a zip: " + SamplesText(S.lifeArg) + " labelled " + name + " samples. You reply with a long thank-you.");
+                    return LifeResultText("你发帖后，一位研究生回帖附上一个压缩包：" + SamplesText(S.lifeArg) + " 条标好的 " + name + "。你回了一长串感谢。", "After you post, a grad student replies with a zip: " + SamplesText(S.lifeArg) + " labelled " + nameEn + " samples. You reply with a long thank-you.");
                 }
                 case "forum_post/tip":
                 {
@@ -759,35 +866,35 @@ namespace LingGuangV05.XingGuang
                     double pay = ForumMoney;
                     if (host != null) { host.Earn(pay); S.totalIncome += pay; }
                     if (S.stage >= 4) EarnSecret("life.praise.forum");
-                    return S.stage >= 4 ? T("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：大神加油，期待下一帖。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, big shot. Waiting for your next post.\"")
-                        : T("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, OP.\"");
+                    return S.stage >= 4 ? LifeResultText("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：大神加油，期待下一帖。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, big shot. Waiting for your next post.\"")
+                        : LifeResultText("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, OP.\"");
                 }
                 case "zhou_loan/lend":
                     if (host == null || !host.Spend(S.lifeArg)) return null;
                     SetCooldown("hoard", 1200); SetCooldown(id, 2400);
                     S.lifeReturns.Add(new XgLifeTimer { id = "zhou", amount = S.lifeArg, until = S.lifeClock + LifeReturnSeconds });
-                    return T("转给老周 ¥" + F(S.lifeArg, "0") + "。他回了个抱拳的表情。", "Sent 老周 ¥" + F(S.lifeArg, "0") + ". He replies with a fist-and-palm salute.");
+                    return LifeResultText("转给老周 ¥" + F(S.lifeArg, "0") + "。他回了个抱拳的表情。", "Sent 老周 ¥" + F(S.lifeArg, "0") + ". He replies with a fist-and-palm salute.");
                 case "zhou_loan/decline":
                     SetCooldown("hoard", 1200); SetCooldown(id, 2400);
-                    return T("老周：「懂，都不容易。」顺手发了个淘货上显卡降价的链接。", "老周: \"Get it, times are tight.\" He drops a link to a GPU sale on Taohuo.");
+                    return LifeResultText("老周：「懂，都不容易。」顺手发了个淘货上显卡降价的链接。", "老周: \"Get it, times are tight.\" He drops a link to a GPU sale on Taohuo.");
                 case "licai_call/hangup":
                     SetCooldown("hoard", 1200); SetCooldown(id, 2400);
-                    return T("挂了。这年头 P2P 跑路的新闻天天有，钱还是换成显卡和数据踏实。", "Hung up. P2P platforms vanish in the news every week; cards and data feel safer.");
+                    return LifeResultText("挂了。这年头 P2P 跑路的新闻天天有，钱还是换成显卡和数据踏实。", "Hung up. P2P platforms vanish in the news every week; cards and data feel safer.");
                 case "licai_call/yuebao":
                 {
                     if (host == null || !host.Spend(S.lifeArg)) return null;
                     SetCooldown("hoard", 1200); SetCooldown(id, 2400);
                     double interest = Math.Max(1, Math.Round(S.lifeArg * .01));
                     S.lifeReturns.Add(new XgLifeTimer { id = "yuebao", amount = S.lifeArg + interest, until = S.lifeClock + LifeReturnSeconds });
-                    return T("挂了推销，转了 ¥" + F(S.lifeArg, "0") + " 进余额宝。十分钟后连本带利转出来。", "Hung up on the pitch and put ¥" + F(S.lifeArg, "0") + " in Yu'e Bao. It comes back with interest in ten minutes.");
+                    return LifeResultText("挂了推销，转了 ¥" + F(S.lifeArg, "0") + " 进余额宝。十分钟后连本带利转出来。", "Hung up on the pitch and put ¥" + F(S.lifeArg, "0") + " in Yu'e Bao. It comes back with interest in ten minutes.");
                 }
                 case "zhou_favour/redeem":
                     SetCooldown(id, 300);
-                    if (!RedeemZhouFavour()) return T("老周：「那个文件你那边已经下好了？行，人情先记着。」", "老周: \"Already downloaded? Fine, the favour stays on the books.\"");
-                    return T("U 盘插上，进度条一下走满。", "The stick goes in and the bar fills at once.");
+                    if (!RedeemZhouFavour()) return LifeResultText("老周：「那个文件你那边已经下好了？行，人情先记着。」", "老周: \"Already downloaded? Fine, the favour stays on the books.\"");
+                    return LifeResultText("U 盘插上，进度条一下走满。", "The stick goes in and the bar fills at once.");
                 case "zhou_favour/later":
                     SetCooldown(id, 900);
-                    return T("老周：「成，啥时候要说一声。」", "老周: \"Sure, just say when.\"");
+                    return LifeResultText("老周：「成，啥时候要说一声。」", "老周: \"Sure, just say when.\"");
             }
             return null;
         }

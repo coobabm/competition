@@ -160,6 +160,15 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public bool SaveNow() { return runtime != null && runtime.SaveNow(); }
+
+        // Never edit a replacement simulation created only to preserve an unreadable save.
+        public bool LifeEventSettingsAvailable => Sim != null && unreadableLab == null;
+        public bool SetLifeEventIntervalMode(int mode)
+        {
+            if (!LifeEventSettingsAvailable || mode < 0 || mode > 2) return false;
+            Sim.LifeEventIntervalMode = mode;
+            return SaveNow();
+        }
         public bool FeatureVisible(string feature) => Sim != null && Sim.FeatureVisible(feature);
         public bool EndingQuestionReady => Sim != null && Sim.EndingAvailable && runtime != null && runtime.Sim != null && runtime.Sim.S.story.GetFlag("delivered.ending_card") > 0;
 
@@ -180,11 +189,17 @@ namespace LingGuangV05.Desktop.XingGuang
         static readonly Unity.Profiling.ProfilerMarker ProfileProgress = new Unity.Profiling.ProfilerMarker("Xg.Controller.ProgressEvents");
         static readonly Unity.Profiling.ProfilerMarker ProfileChapter = new Unity.Profiling.ProfilerMarker("Xg.Controller.ChapterCaptureSave");
         float nextOpeningVoiceCheck;
+        readonly XgLifeHostActivity.ActiveClock lifeActiveClock = new XgLifeHostActivity.ActiveClock();
 
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
-            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen) return;
+            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen)
+            {
+                lifeActiveClock.ObservePause();
+                Sim.ObserveLifeEventConflict();
+                return;
+            }
             Sim.English = GameText.IsEnglish;
             runtime.Sim.PowerCostsEnabled = true;
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
@@ -207,6 +222,9 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(runtime.Sim.S));
             Sim.Clock = runtime.Sim.S.gameSeconds;
+            // User decision A: hiding the in-game .exe or switching focus does not pause this clock.
+            lifeActiveClock.Apply(Sim, Time.unscaledDeltaTime);
+            Sim.ObserveLifeEventConflict(); // Also observe due+held while the stage branch below skips Tick entirely.
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             if(brain!=null)brain.Suspend(Sim.StagePresentationHeld);
             if(!Sim.StagePresentationHeld)

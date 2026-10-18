@@ -32,6 +32,10 @@ namespace LingGuangV05.CaseMenu
         private Action<bool> fullscreenChanged;
         private Action closeRequested;
         private Action uiClick;
+        private Func<int?> lifeEventMode;
+        private Action<int> lifeEventModeChanged;
+        private UnityEngine.UI.Button lifeEventsButton;
+        private TextMeshProUGUI lifeEventsTitle, lifeEventsDetail;
         private int displayedVolume = -1;
         private int displayedProgress = -1;
         private string loadingMessage;
@@ -133,6 +137,42 @@ namespace LingGuangV05.CaseMenu
             SetChromeAlpha(1f);
         }
 
+        public void ConfigureLifeEvents(Func<int?> readMode, Action<int> writeMode)
+        {
+            lifeEventMode = readMode; lifeEventModeChanged = writeMode;
+            RefreshLifeEventsSetting();
+        }
+        public void RefreshLifeEventsSetting()
+        {
+            if (lifeEventsButton == null) return;
+            int? mode = lifeEventMode?.Invoke();
+            lifeEventsButton.interactable = mode.HasValue && mode.Value >= 0 && mode.Value <= 2 && lifeEventModeChanged != null;
+            string value = !mode.HasValue ? "" : mode.Value == 1 ? T("每 15 分钟", "Every 15 min")
+                : mode.Value == 2 ? T("关闭", "Off") : T("每 8 分钟", "Every 8 min");
+            lifeEventsTitle.text = T("突发事件", "Life events") + (value.Length > 0 ? " · " + value : "");
+            lifeEventsDetail.text = mode.HasValue ? T("当前存档 · 点击切换", "Current save · click to change")
+                : T("进入游戏后设置", "Enter the game to configure");
+        }
+        private UnityEngine.UI.Button BuildLifeEventsSetting(RectTransform parent)
+        {
+            var background = Panel("LifeEvents", parent, Control, true);
+            Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -479), new Vector2(536, 56));
+            lifeEventsButton = background.gameObject.AddComponent<UnityEngine.UI.Button>();
+            Style(lifeEventsButton, background);
+            lifeEventsTitle = Label("Label", background.transform, "", 17, Ink);
+            Place(lifeEventsTitle.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(508, 27));
+            lifeEventsDetail = Label("Description", background.transform, "", 12, Muted);
+            Place(lifeEventsDetail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(508, 22));
+            lifeEventsButton.onClick.AddListener(() =>
+            {
+                int? mode = lifeEventMode?.Invoke();
+                if (!mode.HasValue || mode.Value < 0 || mode.Value > 2 || lifeEventModeChanged == null) return;
+                lifeEventModeChanged((mode.Value + 1) % 3);
+                RefreshLifeEventsSetting(); uiClick?.Invoke();
+            });
+            RefreshLifeEventsSetting(); return lifeEventsButton;
+        }
+
         public void ShowSettings(float volume, bool reduceMotion, bool fullscreen)
         {
             if (settingsGroup == null) return;
@@ -140,6 +180,7 @@ namespace LingGuangV05.CaseMenu
             reduceMotionToggle.SetIsOnWithoutNotify(reduceMotion);
             fullscreenToggle.SetIsOnWithoutNotify(fullscreen);
             SetVolumeLabel(volumeSlider.value);
+            RefreshLifeEventsSetting();
             SetTitleActionsVisible(false);
             settingsGroup.gameObject.SetActive(true);
             settingsGroup.alpha = 1f;
@@ -216,7 +257,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(backdrop.rectTransform);
             settingsGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
             var card = Panel("SettingsCard", backdrop.transform, Surface, true);
-            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 600));
+            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 668));
             var accent = Panel("CardAccent", card.transform, Amber);
             Place(accent.rectTransform, new Vector2(0, 1), new Vector2(42, -29), new Vector2(28, 2));
 
@@ -241,8 +282,9 @@ namespace LingGuangV05.CaseMenu
             fps.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
             fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
+            var lifeEvents = BuildLifeEventsSetting(card.rectTransform);
             var returnImage = Panel("Return", card.transform, Control, true);
-            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -489), new Vector2(142, 44));
+            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -557), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(returnButton, returnImage);
             returnButton.onClick.AddListener(() => { uiClick?.Invoke(); closeRequested?.Invoke(); });
@@ -250,7 +292,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(returnLabel.rectTransform);
             returnLabel.alignment = TextAlignmentOptions.Midline;
             var escape = Label("EscapeHint", card.transform, "ESC 关闭", 14, Muted);
-            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -494), new Vector2(320, 34));
+            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(320, 34));
             escape.alignment = TextAlignmentOptions.MidlineRight;
             var saved = Label("SaveHint", card.transform, "设置即时保存，不会重置游戏进度", 14, Muted);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
@@ -260,8 +302,9 @@ namespace LingGuangV05.CaseMenu
             Link(reduceMotionToggle, volumeSlider, fullscreenToggle);
             Link(fullscreenToggle, reduceMotionToggle, quality);
             Link(quality, fullscreenToggle, fps);
-            Link(fps, quality, returnButton);
-            Link(returnButton, fps, volumeSlider);
+            Link(fps, quality, lifeEvents);
+            Link(lifeEvents, fps, returnButton);
+            Link(returnButton, lifeEvents, volumeSlider);
             HideSettings();
         }
 

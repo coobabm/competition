@@ -70,6 +70,7 @@ namespace LingGuangV05.CaseMenu
             hud.Build(font, SetVolume, SetReducedMotion, SetFullscreen, CloseSettings,
                 () => Play(releaseClip, .24f));
             mainDisplay = gameObject.AddComponent<CaseMenuMainDisplay>();
+            hud.ConfigureLifeEvents(CurrentLifeEventMode, SetLifeEventMode);
             hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame);
             Cursor.visible = true; Cursor.lockState = CursorLockMode.None;
             if (!Application.isEditor && PlayerPrefs.HasKey(FullscreenPref))
@@ -193,6 +194,21 @@ namespace LingGuangV05.CaseMenu
             hud.HideSettings(); PlayerPrefs.Save();
             keyboardFocus = false;
         }
+        LingGuangV05.Desktop.XingGuang.XingGuangController LifeSettingsOwner()
+        {
+            var rt = IsMainReady ? mainDisplay.Runtime : null;
+            var owner = rt != null ? rt.GetComponent<LingGuangV05.Desktop.XingGuang.XingGuangController>() : null;
+            return owner != null && owner.LifeEventSettingsAvailable ? owner : null;
+        }
+        int? CurrentLifeEventMode() => LifeSettingsOwner()?.Sim.LifeEventIntervalMode;
+        void SetLifeEventMode(int mode)
+        {
+            var owner = LifeSettingsOwner();
+            if (owner == null) return;
+            if (!owner.SetLifeEventIntervalMode(mode))
+                hud.ShowError(LingGuangV05.Runtime.GameText.T("事件设置已修改，但存档未保存。", "Event setting changed, but the save could not be written."));
+        }
+
         public void SetVolume(float value)
         {
             AudioListener.volume = Mathf.Clamp01(value);

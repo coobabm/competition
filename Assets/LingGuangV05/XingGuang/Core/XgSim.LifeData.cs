@@ -80,17 +80,14 @@ namespace LingGuangV05.XingGuang
             if (S.lifeDataSeen == null) S.lifeDataSeen = new List<string>();
             if (S.lifeFlags == null) S.lifeFlags = new List<string>();
             if(S.lifeSeenVersion==0){if(S.lifeHistory!=null)foreach(var old in S.lifeHistory)if(old!=null&&!S.lifeDataSeen.Contains(old.id))S.lifeDataSeen.Add(old.id);S.lifeSeenVersion=1;}
-            S.lifeDrawCount=Math.Max(0,Math.Min(2,S.lifeDrawCount));
+            S.lifeDrawCount=Math.Max(0,S.lifeDrawCount);
             if(!Finite(S.lifePauseUntil))S.lifePauseUntil=0;if(!Finite(S.lifeBoostUntil))S.lifeBoostUntil=0;if(!Finite(S.lifeBoostFactor)||S.lifeBoostFactor<1)S.lifeBoostFactor=1;
-            if (S.lifeDrawStage == S.stage) return;
-            S.lifeDrawStage = S.stage;
-            S.lifeDrawCount = 0;
-            S.lifeNext = 180 + LifeRoll() * 300;
+            // lifeDrawStage/lifeDrawCount are legacy diagnostics; advancing a stage never resets cadence or history.
         }
 
         bool LifeDataEligible(string id, IXgHost host)
         {
-            if (!LifeData.TryGetValue(id, out var d) || S.lifeDataSeen.Contains(id)) return false;
+            if (!LifeData.TryGetValue(id, out var d)) return false;
             var stage = LA(d, "stage");
             if (stage != null && stage.Count >= 2 && (S.stage < (double)stage[0] || S.stage > (double)stage[1])) return false;
             if (LN(d, "minDate") > 0 && (!TodayKnown || Today < LN(d, "minDate"))) return false;
@@ -168,10 +165,10 @@ namespace LingGuangV05.XingGuang
             double rentIncrease = LN(effect, "rentIncrease");
             if (rentIncrease > 0 && House is IXgRentLife rent) rent.RaiseRent(id == "e051" && i == 1 && rent.RentEverLate ? 200 : rentIncrease);
             if (id == "e051" && i == 1 && House is IXgRentLife late && late.RentEverLate)
-                return T("老王：「上回还拖过租，这次真不能少了。」下期起加 ¥200，到了交租日再转。", "Old Wang: \"You paid late before. I cannot lower it this time.\" Rent goes up ¥200 next period, payable on rent day.");
+                return LifeResultText("老王：「上回还拖过租，这次真不能少了。」下期起加 ¥200，到了交租日再转。", "Old Wang: \"You paid late before. I cannot lower it this time.\" Rent goes up ¥200 next period, payable on rent day.");
             string flag = LS(effect, "flag");
             if (flag.Length > 0 && !S.lifeFlags.Contains(flag)) S.lifeFlags.Add(flag);
-            return T(LS(c, "result"), LS(c, "resultEn"));
+            return LifeResultText(LS(c, "result"), LS(c, "resultEn"));
         }
 
         public bool LifeTrainingPaused => S.lifeClock < S.lifePauseUntil;

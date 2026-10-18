@@ -19,6 +19,35 @@ namespace LingGuangV05.Desktop.YY
         static GroupPreset[] groupPresets;
         readonly Queue<string> presetReplyQueue = new Queue<string>();
         bool presetReplyRunning;
+        Coroutine presetReplyRoutine;
+        YYState presetReplyOwner;
+        int presetReplyGeneration;
+        // Presentation scheduling only: does not start, advance or alter any authored chat.
+        public bool GroupScriptPlaying => isActiveAndEnabled &&
+            (presetReplyRunning && ReferenceEquals(presetReplyOwner, S)
+                || script != null && (scriptFor == EraGroup || Contact(scriptFor)?.group == true));
+
+        void OnEnable() { StartPresetReplies(); }
+        void OnDisable() { StopPresetReplies(false); }
+
+        void StopPresetReplies(bool discard)
+        {
+            // Invalidate before disposal: an older iterator's finally cannot clear resumed work.
+            presetReplyGeneration++;
+            var previous = presetReplyRoutine;
+            presetReplyRoutine = null; presetReplyRunning = false;
+            if (previous != null) StopCoroutine(previous);
+            if (discard) { presetReplyQueue.Clear(); presetReplyOwner = null; }
+        }
+
+        void StartPresetReplies()
+        {
+            if (!isActiveAndEnabled || presetReplyRunning || presetReplyQueue.Count == 0) return;
+            if (S == null || !ReferenceEquals(presetReplyOwner, S)) { StopPresetReplies(true); return; }
+            int generation = ++presetReplyGeneration;
+            presetReplyRunning = true;
+            presetReplyRoutine = StartCoroutine(DeliverPresetReplies(S, generation));
+        }
 
         List<GroupPreset> AvailableGroupPresets()
         {
@@ -61,28 +90,37 @@ namespace LingGuangV05.Desktop.YY
             foreach (var p in AvailableGroupPresets())
             {
                 if (text != p.text && text != p.textEn) continue;
+                if (!ReferenceEquals(presetReplyOwner, S)) { StopPresetReplies(true); presetReplyOwner = S; }
                 var lines = GameText.IsEnglish ? p.repliesEn : p.replies;
                 if (lines != null) foreach (var line in lines) if (!string.IsNullOrWhiteSpace(line)) presetReplyQueue.Enqueue(line);
                 S.groupPresetTurn++;
                 Touch();
-                if (!presetReplyRunning) StartCoroutine(DeliverPresetReplies(S));
+                StartPresetReplies();
                 return true;
             }
             return false;
         }
 
-        IEnumerator DeliverPresetReplies(YYState expected)
+        IEnumerator DeliverPresetReplies(YYState expected, int generation)
         {
-            presetReplyRunning = true;
-            while (presetReplyQueue.Count > 0 && ReferenceEquals(S, expected))
+            try
             {
-                yield return new WaitForSecondsRealtime(UnityEngine.Random.Range(2f, 4f));
-                while (LingGuangV05.Core.StoryFocus.Active) yield return null;
-                if (!ReferenceEquals(S, expected)) break;
-                Receive(EraGroup, presetReplyQueue.Dequeue());
+                while (generation == presetReplyGeneration && presetReplyQueue.Count > 0 && ReferenceEquals(S, expected))
+                {
+                    yield return new WaitForSecondsRealtime(UnityEngine.Random.Range(2f, 4f));
+                    while (generation == presetReplyGeneration && LingGuangV05.Core.StoryFocus.Active) yield return null;
+                    if (generation != presetReplyGeneration || !ReferenceEquals(S, expected)) break;
+                    Receive(EraGroup, presetReplyQueue.Dequeue());
+                }
             }
-            presetReplyQueue.Clear();
-            presetReplyRunning = false;
+            finally
+            {
+                if (generation == presetReplyGeneration)
+                {
+                    presetReplyQueue.Clear(); presetReplyOwner = null;
+                    presetReplyRunning = false; presetReplyRoutine = null;
+                }
+            }
         }
     }
 }
