@@ -350,22 +350,23 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Seconds between two hits that keep the combo sound climbing (2026-10-18: 「3 秒内点的都算连击」).</summary>
         public const float ComboSoundWindow = 3f;
         static float comboSoundAt = -100;
-        static int comboSoundStep, comboSoundLast;
+        static int comboSoundStep;
 
         /// <summary>
-        /// The step the next combo sound plays: one higher per hit, in order (a trick card's +2 or two hits seen in one
-        /// frame never skip a step), back to 1 after <see cref="ComboSoundWindow"/> without a hit or when the combo broke.
-        /// 0: the same hit reported twice (ignore it).
+        /// The step the next combo sound plays: the Nth right answer in a row, each within <see cref="ComboSoundWindow"/>
+        /// of the one before (a trick card's +2 or the 教 page's model streak never skip or silence a step); back to 1
+        /// after a gap or a <see cref="BreakComboSound"/>. 0: the same hit reported twice in one moment (ignore it).
         /// </summary>
-        public static int NextComboSoundStep(int combo, float now)
+        public static int NextComboSoundStep(float now)
         {
-            bool same = combo == comboSoundLast && now - comboSoundAt < .05f;
-            if (same) return 0;
-            bool goesOn = combo >= comboSoundLast && comboSoundLast > 0 && now - comboSoundAt <= ComboSoundWindow;
-            comboSoundStep = goesOn ? comboSoundStep + 1 : 1;
-            comboSoundLast = combo; comboSoundAt = now;
+            if (now - comboSoundAt < .05f) return 0;
+            comboSoundStep = now - comboSoundAt <= ComboSoundWindow ? comboSoundStep + 1 : 1;
+            comboSoundAt = now;
             return comboSoundStep;
         }
+
+        /// <summary>A wrong answer or a broken combo: the next right answer starts the sounds from the first again.</summary>
+        public static void BreakComboSound() { comboSoundAt = -100; comboSoundStep = 0; }
 
         /// <summary>
         /// Combo hit: the 10-step kill-streak set (Resources/XgSfx/Combo/Kill1–10, made with Tone.js in
@@ -375,7 +376,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void PlayCombo(int combo, float volume = 1)
         {
             if (Muted || !Visible()) return;
-            int step = NextComboSoundStep(combo, Time.unscaledTime);
+            int step = NextComboSoundStep(Time.unscaledTime);
             if (step == 0) return;
             var clip = Sfx.ComboClip(step);
             if (clip != null) PlayClip(clip, 1, volume * Sfx.ComboGain);

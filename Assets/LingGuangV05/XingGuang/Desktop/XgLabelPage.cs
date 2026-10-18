@@ -474,7 +474,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 feedbackTimer = 3f;
                 // The combo hit (闪白 击退 挤压拉伸 粒子 冲击波 顿帧 震屏 拖曳). 摆渡众包's counter adds its sound, glow and
                 // count (ZhongbaoView.ComboStep); the lab's 教它 tab has no counter, so the sound is played here.
-                if (r.combo > 0 && !WorkContext) Fx.PlayCombo(r.combo);
+                // The kill-streak clip is the only sound of a right answer (2026-10-18: bounty, 前方高能 and 纠错 no longer
+                // add a coin or chime on top of it).
+                // Every right answer of the player's: on the 教 page a correction breaks the model's streak (r.combo 0),
+                // but it is still a right click in the player's run.
+                if (!WorkContext) Fx.PlayCombo(r.combo);
                 if (r.combo > 0)
                     Fx.ComboHit(at, paper, button, host.ComboChip, r.combo, new Vector2(answer ? 1 : -1, .25f),
                         XgPalette.Tiers[Mathf.Clamp(XgSim.TierOf(r.combo) + 1, 1, XgPalette.Tiers.Length - 1)]);
@@ -485,19 +489,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     Fx.Shockwave(at, new Color32(123, 47, 247, 255), 260, .4f, 12);
                     Fx.Float(at + new Vector2(0, 90), Lang.T("悬赏到手 ×") + N(XgSim.BountyMultiplier, "0"), new Color32(123, 47, 247, 255), 30);
-                    Fx.Play(XgJuice.Sfx.Id.Coin);
                 }
                 if (r.gold)
                 {
                     Fx.Shockwave(at, XgPalette.Gold, 260, .4f, 12);
                     Fx.Float(at + new Vector2(0, 90), T("前方高能 ×3", "Hype ×3"), XgPalette.Gold, 30);
-                    Fx.Play(XgJuice.Sfx.Id.Coin);
                 }
                 if (r.corrected)
                 {
                     Fx.Float(at + new Vector2(0, 72), (TeachingContext ? T("教会一张 · 奖励 ×2", "Lesson learned · Pay ×2") : Lang.T("纠错！连击 +2")), XgPalette.Accent, 28);
                     if (!teachingAnswer) feedback.text += Lang.T("  · 纠错") + (r.samples == 2 ? Lang.T(" · 难例 +2 样本") : "");
-                    Fx.Play(XgJuice.Sfx.Id.Unlock, 1.15f, .55f);
                 }
                 else if (r.trick)
                 {
@@ -512,6 +513,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             else
             {
+                XgJuice.BreakComboSound();
                 feedback.color = XgPalette.Bad;
                 feedback.text = "<color=#D63031>× " + (r.timeout ? Lang.T("超时了。") : teachingAnswer
                     ? (shownGuess == card.truth ? T("你刚才判反了：它猜对了。", "You misjudged it: its guess was right. ") : T("你刚才判反了：它猜错了。", "You misjudged it: its guess was wrong. ")) : "")

@@ -665,6 +665,8 @@ namespace LingGuangV05.Desktop.Zhongbao
         void OnComboBroken(int was)
         {
             if (!Visible) return;
+            // Only while 摆渡众包 is up: on the lab's 教 page a correction breaks the model's streak, not the player's run.
+            XgJuice.BreakComboSound();
             Juice.Crumble(Juice.At(comboChip), Mathf.Min(30, 6 + was / 2), XgPalette.Tiers[Mathf.Min(4, XgSim.TierOf(was) + 1)]);
             Juice.Play(XgJuice.Sfx.Id.Break);
             if (was >= 10) Juice.Float(Juice.At(comboChip, new Vector2(-30, -46)), Lang.T("连击中断 ×") + was, XgPalette.Bad, 20);
