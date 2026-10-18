@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using TMPro;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using Object=UnityEngine.Object;
 
@@ -47,7 +48,7 @@ namespace HongmengOS.Retro.Editor
             foreach(var app in library.apps)if(icons.TryGetValue(app.appTitle,out var icon)) {
                 app.appIconBig=app.appIconMedium=app.appIconSmall=icon;app.appIconPreview=icon.texture;app.gradientLeft=app.gradientRight=Color.white;
             }
-            // Rebind all serialized theme references including private SettingsManager fields.
+            // Rebind all serialized theme references including private SettingsApp fields.
             foreach(var c in os.GetComponentsInChildren<MonoBehaviour>(true)) {
                 if(c==null)continue;var so=new SerializedObject(c);var p=so.GetIterator();bool changed=false;
                 while(p.Next(true))if(p.propertyType==SerializedPropertyType.ObjectReference) {

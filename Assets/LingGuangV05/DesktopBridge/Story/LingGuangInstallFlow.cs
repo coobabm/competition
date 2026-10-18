@@ -3,6 +3,7 @@ using LingGuangV05.Runtime;
 using Michsky.DreamOS;
 using UnityEngine;
 using AppNames = LingGuangV05.Core.AppNames;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Desktop.Story
 {
@@ -22,7 +23,7 @@ namespace LingGuangV05.Desktop.Story
         public ChapterOneRuntime runtime;
         public ChapterOneDesktopRouter router;
 
-        private WebBrowserManager browser;
+        private WebBrowserApp browser;
         private AeroStartMenu startMenu;
         private WindowManager hiddenWindow;
         private bool reconciled, wiredItem, networkChecked;
@@ -30,7 +31,7 @@ namespace LingGuangV05.Desktop.Story
 
         private void Start()
         {
-            browser = FindAnyObjectByType<WebBrowserManager>(FindObjectsInactive.Include);
+            browser = FindAnyObjectByType<WebBrowserApp>(FindObjectsInactive.Include);
             startMenu = FindAnyObjectByType<AeroStartMenu>(FindObjectsInactive.Include);
         }
 

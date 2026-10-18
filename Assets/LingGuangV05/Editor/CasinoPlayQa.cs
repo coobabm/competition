@@ -15,6 +15,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -29,7 +30,7 @@ namespace LingGuangV05.Editor
         static double next;
         static ChapterOneRuntime runtime;
         static XingGuangController controller;
-        static WebBrowserManager browser;
+        static WebBrowserApp browser;
         static WindowManager window;
         static string tabA;
         static double before;
@@ -48,7 +49,7 @@ namespace LingGuangV05.Editor
             if (Running) throw new InvalidOperationException("QA already running");
             withFeedback = includeFeedback;
             controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
-            browser = UnityEngine.Object.FindAnyObjectByType<WebBrowserManager>(FindObjectsInactive.Include);
+            browser = UnityEngine.Object.FindAnyObjectByType<WebBrowserApp>(FindObjectsInactive.Include);
             window = browser.GetComponentInParent<WindowManager>(true);
             Result = new Report(); steps.Clear(); Running = true;
             runtime.tickEnabled = false; controller.enabled = false;

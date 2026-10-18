@@ -3,7 +3,6 @@
     "rootNamespace": "LingGuang.Game",
     "references": [
         "LingGuang.Core",
-        "MoreMountains.Tools",
         "Unity.TextMeshPro",
         "Unity.InputSystem",
         "Unity.RenderPipelines.Universal.Runtime",

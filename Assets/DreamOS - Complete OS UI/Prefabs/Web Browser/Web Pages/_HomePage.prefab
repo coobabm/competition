@@ -474,7 +474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
@@ -620,7 +620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
@@ -766,7 +766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6420899322838873664, guid: da66ceb8da2c3e340b4d7ddd839f1e90, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument

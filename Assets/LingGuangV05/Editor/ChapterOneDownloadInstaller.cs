@@ -13,6 +13,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -49,7 +50,7 @@ namespace LingGuangV05.Editor
                 throw new InvalidOperationException("只能在编辑模式、编译完成后运行。");
             var scene = SceneManager.GetActiveScene();
             if (scene.path != ChapterOneInstaller.ScenePath) scene = EditorSceneManager.OpenScene(ChapterOneInstaller.ScenePath, OpenSceneMode.Single);
-            var browser = Find<WebBrowserManager>(scene) ?? throw new InvalidOperationException("Main 缺少原生浏览器。");
+            var browser = Find<WebBrowserApp>(scene) ?? throw new InvalidOperationException("Main 缺少原生浏览器。");
             var network = Find<NetworkManager>(scene) ?? throw new InvalidOperationException("Main 缺少原生网络管理。");
             EnsureFolder(WebDir);
             var icon = Required<Sprite>(IconPath);
@@ -176,7 +177,7 @@ namespace LingGuangV05.Editor
         /// <summary>Native slider: a clone of the Progress Bar inside the browser's own download item.</summary>
         private static Slider Progress(Transform parent, float width)
         {
-            var wb = Object.FindAnyObjectByType<WebBrowserManager>(FindObjectsInactive.Include);
+            var wb = Object.FindAnyObjectByType<WebBrowserApp>(FindObjectsInactive.Include);
             var preset = (GameObject)new SerializedObject(wb).FindProperty("downloadPreset").objectReferenceValue;
             var bar = Object.Instantiate(preset.transform.Find("Progress Bar").gameObject, parent, false);
             bar.name = "Progress";

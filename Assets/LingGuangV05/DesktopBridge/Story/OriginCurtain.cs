@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.Story
 
         RectTransform fileIcon, overlay, overlayBand, windowBand, fullscreenButton;
         TMP_Text overlaySubtitle, windowSubtitle, overlayClock;
-        VideoPlayerManager native;
+        Apps.VideoApp native;
         WindowManager nativeWindow;
         bool watching, styled;
         string url;
@@ -180,7 +180,7 @@ namespace LingGuangV05.Desktop.Story
 
         bool FindNative()
         {
-            if (native == null) native = FindAnyObjectByType<VideoPlayerManager>(FindObjectsInactive.Include);
+            if (native == null) native = FindAnyObjectByType<Apps.VideoApp>(FindObjectsInactive.Include);
             if (native == null || native.videoPlayer == null) return false;
             if (nativeWindow == null) nativeWindow = native.GetComponentInParent<WindowManager>(true);
             if (!styled) Restyle();

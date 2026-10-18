@@ -23,7 +23,6 @@ namespace LingGuang.Game
         public bool stepMode;
         public bool stepRequested;
         public bool playing;
-        public FeelElectricFeedback Electric { get; private set; }
 
         Pool<LineRenderer> lightning;
         Pool<SpriteRenderer> rings;
@@ -35,7 +34,6 @@ namespace LingGuang.Game
         int lightningThisFrame;
         int frameStamp;
         float flashBudget; // photosensitivity: large flashes per second
-        bool electricSkipCleared;
 
         sealed class Anim { public float t, life; public Action<float> step; public Action done; }
         readonly List<Anim> anims = new List<Anim>();
@@ -43,9 +41,6 @@ namespace LingGuang.Game
         public void Init(BoardView b, CameraRig r, SynthAudio s, TMP_FontAsset f)
         {
             board = b; rig = r; synth = s; font = f;
-            Electric = GetComponent<FeelElectricFeedback>();
-            if (Electric == null) Electric = gameObject.AddComponent<FeelElectricFeedback>();
-            Electric.Initialize();
             lightning = new Pool<LineRenderer>(() => { var lr = Gfx.MakeLine("bolt", transform, Gfx.Additive, 30, 0.05f); lr.positionCount = 10; return lr; });
             rings = new Pool<SpriteRenderer>(() => Gfx.MakeSprite("ring", transform, Gfx.ThinRing, Gfx.Additive, 25, 1f));
             dots = new Pool<SpriteRenderer>(() => Gfx.MakeSprite("dot", transform, Gfx.Square, Gfx.Additive, 31, 0.07f));
@@ -76,12 +71,6 @@ namespace LingGuang.Game
         {
             if (board != null) board.ReduceFlash = reduceFlash;
             if (board != null && board.WaveField != null) board.WaveField.ReduceFlash = reduceFlash;
-            if (Electric != null)
-            {
-                Electric.SetMode(reduceFlash, fastForward);
-                if (skipRequested && !electricSkipCleared) Electric.Clear();
-                electricSkipCleared = skipRequested;
-            }
             float dt = Time.deltaTime;
             for (int i = anims.Count - 1; i >= 0; i--)
             {
@@ -155,7 +144,6 @@ namespace LingGuang.Game
                             synth?.PlayChime();
                             break;
                         case SimEventType.PatternRecognized:
-                            Electric?.Pattern();
                             ShowBanner(e.text + (e.amount > 0 ? $"  ×{e.mult:0.##}" : ""), new Color(1f, 0.95f, 0.75f, 1f), 0.4f);
                             if (!reduceFlash) rig?.Shake(0.06f, 0.15f);
                             synth?.PlayPattern();
@@ -222,13 +210,8 @@ namespace LingGuang.Game
             var pos = board.CellPos(e.cell);
             var col = SparkView.ShapeColor(board.state.SparkAt(e.cell));
             board.WaveField?.Emit(pos, e.isStart ? 1f : 0.6f, Time.time);
-            if (Electric != null)
-            {
-                Electric.SetMode(reduceFlash, fastForward);
-                Electric.Fire(pos, col, Mathf.Clamp01(scale));
-            }
             // shards
-            int shards = Electric != null ? 0 : reduceFlash ? 1 : firesThisBeat > 8 ? 2 : 4;
+            int shards = reduceFlash ? 1 : firesThisBeat > 8 ? 2 : 4;
             for (int i = 0; i < shards; i++)
             {
                 var d = dots.Get();
@@ -330,12 +313,6 @@ namespace LingGuang.Game
         void Transmit(Vector3 a, Vector3 b, Color c, float width, float intensity,
             float travel, EdgeView edge, SparkView target)
         {
-            if (Electric != null)
-            {
-                Electric.SetMode(reduceFlash, fastForward);
-                Electric.Transmit(a, b, c, width, intensity, travel, edge, target);
-                return;
-            }
             if (Time.frameCount != frameStamp) { frameStamp = Time.frameCount; lightningThisFrame = 0; }
             if (++lightningThisFrame > 48) return; // cap per frame
             var lr = lightning.Get();
@@ -373,7 +350,6 @@ namespace LingGuang.Game
 
         public void ClearAll()
         {
-            Electric?.Clear();
             board?.WaveField?.Clear();
             anims.Clear();
             lightning?.ReleaseAll(); rings?.ReleaseAll(); dots?.ReleaseAll(); texts?.ReleaseAll();

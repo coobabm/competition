@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using TMPro;
 using UnityEditor;
@@ -27,17 +28,15 @@ namespace HongmengOS.Aero2010.Editor
         private static readonly Dictionary<string, string[]> FactoryFields = new Dictionary<string, string[]>
         {
             { nameof(WindowManager), new[] { "resizePreset" } },
-            { nameof(MailManager), new[] { "itemTemplate", "mailTemplate", "attachmentItem" } },
-            { nameof(MessagingManager), new[] { "chatLayout", "chatItem", "textMessageSent", "textMessageRecieved", "imageMessageSent", "imageMessageRecieved", "audioMessageSent", "audioMessageRecieved", "chatMessageTimer", "messageDate", "beginningIndicator", "storyTellerObject" } },
-            { nameof(MusicPlayerManager), new[] { "playlistTrackPreset", "playlistPanelPreset", "playlistItemPreset" } },
-            { nameof(LyricsManager), new[] { "lyricItem" } },
-            { nameof(NotepadManager), new[] { "noteLibraryPreset" } },
+            { nameof(MessagingApp), new[] { "chatLayout", "chatItem", "textMessageSent", "textMessageRecieved", "imageMessageSent", "imageMessageRecieved", "audioMessageSent", "audioMessageRecieved", "chatMessageTimer", "messageDate", "beginningIndicator", "storyTellerObject" } },
+            { nameof(LingGuangV05.Desktop.Apps.MusicApp), new[] { "playlistTrackPreset", "playlistPanelPreset", "playlistItemPreset" } },
+            { nameof(LingGuangV05.Desktop.Apps.NoteApp), new[] { "noteLibraryPreset" } },
             { nameof(WidgetManager), new[] { "libraryItem" } },
-            { nameof(GameHubManager), new[] { "sliderIndicator", "libraryPreset" } },
-            { nameof(WebBrowserManager), new[] { "tabPreset", "favoritePreset", "downloadPreset" } },
-            { nameof(PhotoGalleryManager), new[] { "pictureLibraryPreset" } },
-            { nameof(VideoPlayerManager), new[] { "videoPreset" } },
-            { nameof(ReminderManager), new[] { "reminderPreset" } },
+            { nameof(LingGuangV05.Desktop.Apps.GameHubApp), new[] { "sliderIndicator", "libraryPreset" } },
+            { nameof(WebBrowserApp), new[] { "tabPreset", "favoritePreset", "downloadPreset" } },
+            { nameof(LingGuangV05.Desktop.Apps.PhotoApp), new[] { "pictureLibraryPreset" } },
+            { nameof(LingGuangV05.Desktop.Apps.VideoApp), new[] { "videoPreset" } },
+            { nameof(LingGuangV05.Desktop.Apps.ReminderApp), new[] { "reminderPreset" } },
             { nameof(WallpaperManager), new[] { "wallpaperItem" } },
             { nameof(UserManager), new[] { "ppItem" } },
             { nameof(NetworkManager), new[] { "networkPreset" } },
@@ -195,11 +194,9 @@ namespace HongmengOS.Aero2010.Editor
             public void Style(GameObject root)
             {
                 var white = new HashSet<TMP_Text>();
-                foreach (MailPreset item in root.GetComponentsInChildren<MailPreset>(true)) PreserveAvatar(item.letterText, white);
-                foreach (MailItemPreset item in root.GetComponentsInChildren<MailItemPreset>(true)) PreserveAvatar(item.letterText, white);
-                foreach (VideoPreset item in root.GetComponentsInChildren<VideoPreset>(true))
+                foreach (LingGuangV05.Desktop.Apps.VideoListEntry item in root.GetComponentsInChildren<LingGuangV05.Desktop.Apps.VideoListEntry>(true))
                 { white.Add(item.durationText); white.Add(item.titleText); white.Add(item.descriptionText); }
-                foreach (PhotoGalleryPreset item in root.GetComponentsInChildren<PhotoGalleryPreset>(true))
+                foreach (LingGuangV05.Desktop.Apps.PhotoListEntry item in root.GetComponentsInChildren<LingGuangV05.Desktop.Apps.PhotoListEntry>(true))
                 {
                     white.Add(item.titleText); white.Add(item.descriptionText);
                     if (item.titleText != null) FixImageColor(item.titleText.transform.parent, new Color32(30, 40, 50, 230));
@@ -269,10 +266,10 @@ namespace HongmengOS.Aero2010.Editor
         {
             Image background = content.GetComponent<Image>() ?? content.gameObject.AddComponent<Image>();
             background.color = ConsolePaper; background.raycastTarget = false;
-            foreach (CommanderManager commander in content.GetComponentsInChildren<CommanderManager>(true))
+            foreach (LingGuangV05.Desktop.Apps.CommanderApp commander in content.GetComponentsInChildren<LingGuangV05.Desktop.Apps.CommanderApp>(true))
             { commander.textColor = ConsoleInk; commander.timeColor = new Color32(111, 202, 175, 255); EditorUtility.SetDirty(commander); }
             // The manager usually sits on the window rather than inside Content.
-            CommanderManager owner = content.GetComponentInParent<CommanderManager>();
+            LingGuangV05.Desktop.Apps.CommanderApp owner = content.GetComponentInParent<LingGuangV05.Desktop.Apps.CommanderApp>();
             if (owner != null) { owner.textColor = ConsoleInk; owner.timeColor = new Color32(111, 202, 175, 255); EditorUtility.SetDirty(owner); }
             foreach (TMP_Text text in content.GetComponentsInChildren<TMP_Text>(true))
             {

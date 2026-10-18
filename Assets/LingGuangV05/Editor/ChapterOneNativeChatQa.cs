@@ -9,6 +9,7 @@ using Michsky.DreamOS;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -20,7 +21,7 @@ namespace LingGuangV05.Editor
         public static Report Result { get; private set; }
         static readonly Queue<Action> steps=new Queue<Action>();
         static ChapterOneDesktopBridge bridge;
-        static MessagingManager manager;
+        static MessagingApp manager;
         static ButtonManager send;
         static double next,gameTime;
         static int before;
@@ -35,7 +36,7 @@ namespace LingGuangV05.Editor
             Result=new Report(); steps.Clear();
             path=Path.Combine(Application.dataPath,"../Evidence/LingGuang-ChapterOne/native-chat-qa.json");
             CheckNow("native adapter instead of selfdraw app",bridge.IsNative && bridge.App==null);
-            CheckNow("native MessagingManager on original window",manager!=null && manager.gameObject==bridge.Window.gameObject);
+            CheckNow("native MessagingApp on original window",manager!=null && manager.gameObject==bridge.Window.gameObject);
             CheckNow("no selfdraw chat components",bridge.Window.GetComponentsInChildren<ChapterOneApp>(true).Length==0);
             CheckNow("native panel controller restored",bridge.Window.GetComponent<WindowPanelManager>()!=null);
             CheckNow("native messaging history not redirected into old user files",!manager.saveMessageHistory);

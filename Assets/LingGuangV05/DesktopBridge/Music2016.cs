@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using LingGuangV05.Runtime;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -56,12 +57,12 @@ namespace LingGuangV05.Desktop
         /// <summary>Finds the native music player and adds the playlist once the clips are loaded.</summary>
         public static IEnumerator Install()
         {
-            var manager = Array.Find(UnityEngine.Object.FindObjectsByType<MusicPlayerManager>(FindObjectsInactive.Include, FindObjectsSortMode.None), m => m != null);
+            var manager = Array.Find(UnityEngine.Object.FindObjectsByType<MusicApp>(FindObjectsInactive.Include, FindObjectsSortMode.None), m => m != null);
             if (manager == null) yield break;
             try { Directory.CreateDirectory(Folder); WriteGuide(); }
             catch (Exception e) { Debug.LogWarning("Music2016: cannot prepare " + Folder + ": " + e.Message); yield break; }
 
-            var playlist = ScriptableObject.CreateInstance<MusicPlayerPlaylist>();
+            var playlist = ScriptableObject.CreateInstance<MusicPlaylist>();
             playlist.hideFlags = HideFlags.DontSave;
             playlist.playlistName = Lang.T("2016 热歌");
             var fallbackCover = manager.libraryPlaylist != null ? manager.libraryPlaylist.coverImage : null;
@@ -80,7 +81,7 @@ namespace LingGuangV05.Desktop
                     clip.name = stem;
                     var hit = Array.Find(Hits, h => string.Equals(h.FileStem, stem, StringComparison.OrdinalIgnoreCase));
                     Split(stem, out string artist, out string title);
-                    playlist.playlist.Add(new MusicPlayerPlaylist.MusicItem
+                    playlist.playlist.Add(new MusicPlaylist.MusicItem
                     {
                         musicTitle = hit != null ? hit.title : title,
                         artistTitle = hit != null ? hit.artist : artist,

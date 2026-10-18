@@ -8,6 +8,7 @@ using Michsky.DreamOS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using LingGuangV05.Desktop.Apps;
 
 // Invoke/yield Frames() from an isolated PlayMode verification runner, not a real player session.
 // No browser manager, ProcessDownload or ProcessComplete is invoked: those write DreamOS preferences.

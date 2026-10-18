@@ -15,7 +15,7 @@ namespace LingGuangV05.Desktop
         public LocalizationManager languageManager;
         public ContextMenuManager[] contextMenus = Array.Empty<ContextMenuManager>();
         public HorizontalSelector[] selectors = Array.Empty<HorizontalSelector>();
-        public GameHubManager[] gameHubs = Array.Empty<GameHubManager>();
+        public LingGuangV05.Desktop.Apps.GameHubApp[] gameHubs = Array.Empty<LingGuangV05.Desktop.Apps.GameHubApp>();
 
         private readonly Dictionary<HorizontalSelector.Item, ItemSource> sources =
             new Dictionary<HorizontalSelector.Item, ItemSource>();
@@ -148,7 +148,7 @@ namespace LingGuangV05.Desktop
                 // A live native indicator proves Awake created the slider; the frame delay lets
                 // native OnEnable select its current indicator. Inactive hubs refresh themselves on open.
                 bool initialized = false;
-                foreach (var indicator in hub.GetComponentsInChildren<GameHubSliderIndicatorItem>(true))
+                foreach (var indicator in hub.GetComponentsInChildren<LingGuangV05.Desktop.Apps.GameHubDot>(true))
                     if (indicator != null && indicator.bar != null && indicator.animator != null &&
                         indicator.gameIndex >= 0 && indicator.gameIndex < hub.games.Count)
                     { initialized = true; break; }

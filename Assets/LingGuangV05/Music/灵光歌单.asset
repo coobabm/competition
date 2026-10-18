@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cdf3c64a3f8691d4296e8c066e497849, type: 3}
   m_Name: "\u7075\u5149\u6B4C\u5355"
-  m_EditorClassIdentifier: Assembly-CSharp::Michsky.DreamOS.MusicPlayerPlaylist
+  m_EditorClassIdentifier: Assembly-CSharp::LingGuangV05.Desktop.Apps.MusicPlaylist
   coverImage: {fileID: 21300000, guid: d87d10131b58cbf459f7de006c4714f2, type: 3}
   playlistName: "\u7075\u5149"
   playlist:

@@ -51,7 +51,7 @@ namespace LingGuangV05.UI.Tests
                 var host = InactiveHost();
                 try
                 {
-                    var browser = host.AddComponent(RuntimeType("Michsky.DreamOS.WebBrowserManager"));
+                    var browser = host.AddComponent(RuntimeType("LingGuangV05.Desktop.Apps.WebBrowserApp"));
                     var flow = host.AddComponent(RuntimeType("LingGuangV05.Desktop.Story.LingGuangInstallFlow"));
                     Set(flow, "browser", browser);
 
@@ -75,17 +75,17 @@ namespace LingGuangV05.UI.Tests
                 ScriptableObject library = null;
                 try
                 {
-                    var browser = host.AddComponent(RuntimeType("Michsky.DreamOS.WebBrowserManager"));
+                    var browser = host.AddComponent(RuntimeType("LingGuangV05.Desktop.Apps.WebBrowserApp"));
                     var flow = host.AddComponent(RuntimeType("LingGuangV05.Desktop.Story.LingGuangInstallFlow"));
                     Set(flow, "browser", browser);
-                    library = ScriptableObject.CreateInstance(RuntimeType("Michsky.DreamOS.WebBrowserLibrary"));
+                    library = ScriptableObject.CreateInstance(RuntimeType("LingGuangV05.Desktop.Apps.WebBrowserLibrary"));
                     var fileType = library.GetType().GetNestedType("DownloadableFiles");
                     var file = Activator.CreateInstance(fileType);
                     fileType.GetField("fileName").SetValue(file, "灵光.exe");
                     ((IList)Get(library, "dlFiles")).Add(file);
                     Set(browser, "webLibrary", library);
                     Set(browser, "downloadsParent", Child(host, "Downloads").transform);
-                    var downloadType = RuntimeType("Michsky.DreamOS.WebBrowserDownloadItem");
+                    var downloadType = RuntimeType("LingGuangV05.Desktop.Apps.WebBrowserDownloadItem");
                     var ours = Child(host, "Our download").AddComponent(downloadType);
                     var other = Child(host, "Other download").AddComponent(downloadType);
                     Set(ours, "fileName", "灵光.exe");
@@ -269,7 +269,7 @@ namespace LingGuangV05.UI.Tests
                 var view = UnityEngine.Object.Instantiate(prefab, host.transform, false);
                 view.name = "Startup inactive chat";
                 view.SetActive(false);
-                var layout = view.GetComponent(RuntimeType("Michsky.DreamOS.ChatLayoutPreset"));
+                var layout = view.GetComponent(RuntimeType("LingGuangV05.Desktop.Apps.ChatLayoutPreset"));
                 Assert.That(layout, Is.Not.Null);
                 Set(layout, "personName", "Startup contact");
                 Set(layout, "personPicture", picture);

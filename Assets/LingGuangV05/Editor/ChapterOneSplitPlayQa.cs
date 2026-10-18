@@ -85,7 +85,7 @@ namespace LingGuangV05.Editor
             }
             steps.Enqueue(()=>
             {
-                var settings=UnityEngine.Object.FindFirstObjectByType<SettingsManager>(FindObjectsInactive.Include);
+                var settings=UnityEngine.Object.FindFirstObjectByType<LingGuangV05.Desktop.Apps.SettingsApp>(FindObjectsInactive.Include);
                 var iconParent=router.Get("mail").DesktopShortcut.transform.parent;
                 CheckNow("native desktop drag contract",settings!=null && iconParent.Cast<Transform>().All(x=>x.GetComponent<ItemDragger>()!=null && x.GetComponent<ItemDragger>().dragContainer!=null));
                 settings.SaveDesktopOrder(false);

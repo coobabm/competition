@@ -7,11 +7,13 @@ using UnityEngine.UI;
 using AppNames = LingGuangV05.Core.AppNames;
 
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Apps;
+
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
     /// lingguang.cc in the native browser: the 2016 project page for 灵光. Built by ChapterOneDownloadInstaller from
-    /// native DreamOS widgets. The big button starts the native download (WebBrowserManager.DownloadFile); while it runs
+    /// native DreamOS widgets. The big button starts the native download (WebBrowserApp.DownloadFile); while it runs
     /// the page mirrors the native download item: MB done / total, speed and time left. After the download the button
     /// opens the app. All text goes through GameText, so Settings → 语言 switches it.
     /// </summary>
@@ -22,14 +24,14 @@ namespace LingGuangV05.Desktop.Story
         public Slider progress;
         public float fileSizeMB = 46.8f;
 
-        private WebBrowserManager browser;
+        private WebBrowserApp browser;
         private NativeAppFontFallback fonts;
         private float nextRefresh;
         private string lastButton;
 
         private void OnEnable()
         {
-            browser = GetComponentInParent<WebBrowserManager>();
+            browser = GetComponentInParent<WebBrowserApp>();
             // Browser fonts have no CJK glyphs; same per-instance Noto fallback the native apps use.
             fonts = fonts ?? new NativeAppFontFallback();
             foreach (var label in GetComponentsInChildren<TMP_Text>(true)) fonts.Apply(label);

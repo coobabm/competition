@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73ca2ddbf6e022748a2db98a0c813735, type: 3}
   m_Name: LaoZhou
-  m_EditorClassIdentifier: Assembly-CSharp::Michsky.DreamOS.MessagingChat
+  m_EditorClassIdentifier: Assembly-CSharp::LingGuangV05.Desktop.Apps.MessagingChat
   saveConversation: 0
   useDynamicMessages: 0
   useStoryTeller: 0

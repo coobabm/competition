@@ -740,7 +740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1354,7 +1354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

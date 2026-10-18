@@ -110,10 +110,10 @@ namespace LingGuangV05.CaseMenu.Editor
             controller.settingsButton = ConfigureButton("SettingsButton", "SettingsKeycap", "SettingsRing", false, new Color(1f, .62f, .26f));
             controller.previewMonitor = monitor; controller.displayRig = displayRig;
             controller.monitorCenter = center; controller.font = font;
-            controller.hoverClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Reach - Complete Sci-Fi UI/Audio/Hover.wav");
-            controller.pressClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Feel/NiceVibrations/HapticSamples/Objects/SwitchLight1.wav");
-            controller.releaseClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Feel/NiceVibrations/HapticSamples/Objects/SwitchLight2.wav");
-            controller.bootClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Reach - Complete Sci-Fi UI/Audio/Notification.wav");
+            controller.hoverClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/LingGuangV05/CaseMenu/Art/Audio/Hover.wav");
+            controller.pressClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/LingGuangV05/CaseMenu/Art/Audio/SwitchPress.wav");
+            controller.releaseClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/LingGuangV05/CaseMenu/Art/Audio/SwitchRelease.wav");
+            controller.bootClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/LingGuangV05/CaseMenu/Art/Audio/Boot.wav");
             controller.fanClip = AssetDatabase.LoadAssetAtPath<AudioClip>(Art + "/Audio/FanLoop.wav");
 
             var scenes = EditorBuildSettings.scenes.Where(x => x.path != CaseMenuController.ScenePath && x.path != Desktop.MainSceneEntry.ScenePath).ToList();

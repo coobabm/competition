@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using AppNames = LingGuangV05.Core.AppNames;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Desktop.Story
 {
@@ -57,9 +58,9 @@ namespace LingGuangV05.Desktop.Story
         private readonly Dictionary<TMP_Text, LocalizedLabel> localizedLabels = new Dictionary<TMP_Text, LocalizedLabel>();
         private readonly List<TMP_Text> expiredLabels = new List<TMP_Text>();
 
-        // YY channel (native MessagingManager, no adapter changes)
+        // YY channel (native MessagingApp, no adapter changes)
         private ChapterOneNativeChatAdapter chatAdapter;
-        private MessagingManager chatManager;
+        private MessagingApp chatManager;
         private ChatLayoutPreset laoZhouLayout;
         private struct PendingChat { public string who, text, beat; public float delay; public LingGuangV05.Core.ChapterOneSim simulation; }
         private readonly Queue<PendingChat> chatQueue = new Queue<PendingChat>();

@@ -10,6 +10,7 @@ using LingGuangV05.Desktop.Tieba;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using TMPro;
 using UnityEngine;

@@ -733,7 +733,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1069756107}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.Examples.WebsiteScroller, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebsiteScroller, Assembly-CSharp
         m_MethodName: ScrollTo
         m_Mode: 4
         m_Arguments:
@@ -1721,7 +1721,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5251547755808023814}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserEventSender, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserEventSender, Assembly-CSharp
         m_MethodName: DownloadFile
         m_Mode: 5
         m_Arguments:
@@ -8902,7 +8902,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1069756107}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.Examples.WebsiteScroller, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebsiteScroller, Assembly-CSharp
         m_MethodName: ScrollTo
         m_Mode: 4
         m_Arguments:

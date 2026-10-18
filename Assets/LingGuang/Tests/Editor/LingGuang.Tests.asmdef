@@ -4,7 +4,6 @@
     "references": [
         "LingGuang.Core",
         "LingGuang.Game",
-        "MoreMountains.Tools",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "UnityEngine.TestRunner",

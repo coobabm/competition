@@ -8,18 +8,19 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Apps;
 namespace LingGuangV05.Desktop
 {
     /// <summary>
     /// Behavior only for builder-owned native buddy/chat windows. No UI objects, graphics or
-    /// conversations are constructed here; MessagingManager remains the native send/receive owner.
+    /// conversations are constructed here; MessagingApp remains the native send/receive owner.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class YY2010ShellController : MonoBehaviour
     {
         public ChapterOneDesktopBridge ChatBinding;
         public WindowManager FriendsWindow;
-        public MessagingManager Manager;
+        public MessagingApp Manager;
         public TMP_InputField SearchInput;
         public RectTransform FriendList;
         public Sprite PandaAvatar;
@@ -32,7 +33,7 @@ namespace LingGuangV05.Desktop
         private readonly List<EventHook> _hooks = new List<EventHook>();
         private readonly HashSet<string> _recent = new HashSet<string>(StringComparer.Ordinal);
         private readonly Dictionary<ChatLayoutPreset, int> _messageCounts = new Dictionary<ChatLayoutPreset, int>();
-        private MessagingManager _hookedManager;
+        private MessagingApp _hookedManager;
         private WindowManager _hookedChatWindow;
         private TMP_InputField _hookedSearch;
         private bool _initialized, _disposed;
@@ -63,7 +64,7 @@ namespace LingGuangV05.Desktop
                 Hook(HistoryButton, ScrollHistoryToTop);
                 if (CloseChatButton != null && !HasNativeCloseBinding(CloseChatButton)) Hook(CloseChatButton, CloseChat);
                 // SendChatButton deliberately untouched: preserve its original native
-                // MessagingManager.CreateMessageFromInput binding, including Enter behavior.
+                // MessagingApp.CreateMessageFromInput binding, including Enter behavior.
                 if (SearchInput != null)
                 {
                     ChapterOneNativeChatAdapter.RefreshNativeInputPlaceholder(SearchInput);
@@ -343,7 +344,7 @@ namespace LingGuangV05.Desktop
         private void ApplyPandaToNativeLayouts()
         {
             if (Manager == null || PandaAvatar == null) return;
-            foreach (MessagingManager.ChatItem contact in Manager.chatList) if (contact.chatTitle == "老周") contact.individualPicture = PandaAvatar;
+            foreach (MessagingApp.ChatItem contact in Manager.chatList) if (contact.chatTitle == "老周") contact.individualPicture = PandaAvatar;
             foreach (ChatLayoutPreset layout in Manager.createdLayoutPresets)
             {
                 if (layout == null || layout.name != "老周") continue;

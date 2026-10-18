@@ -633,7 +633,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -814,7 +814,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -2519,7 +2519,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -5099,7 +5099,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -5533,7 +5533,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -6318,7 +6318,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -7676,7 +7676,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -8084,7 +8084,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -8964,7 +8964,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 878234079680566839}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
         m_MethodName: CellClicked
         m_Mode: 3
         m_Arguments:
@@ -10532,7 +10532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.GameHubGameContent, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.GameHubGame, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -10734,7 +10734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.TicTacToe, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.TicTacToeGame, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 114431056980118574, guid: 8e19db8236ee2904981588dc8921be11, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -11432,7 +11432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.GameHubGameContent, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.GameHubGame, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -11661,7 +11661,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Michsky.DreamOS.GameHubGameContent, Assembly-CSharp
+      value: LingGuangV05.Desktop.Apps.GameHubGame, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7833863089904055214, guid: 748ed269b50faa84fa741b2ad92a4797, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

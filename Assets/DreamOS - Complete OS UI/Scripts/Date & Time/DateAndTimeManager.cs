@@ -45,7 +45,7 @@ namespace Michsky.DreamOS
         public float secondsPerMinute = 60;
         public bool isAm;
         int currentMonthDayCount = 30;
-        [HideInInspector] public ReminderManager reminderManager;
+        [HideInInspector] public LingGuangV05.Desktop.Apps.ReminderApp reminderManager;
         DreamOSDataManager.DataCategory dataCat = DreamOSDataManager.DataCategory.DateAndTime;
 
         [System.Serializable]

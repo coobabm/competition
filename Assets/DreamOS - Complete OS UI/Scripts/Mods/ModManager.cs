@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using LingGuangV05.Desktop.Apps;
 using UnityEngine.Networking;
 
 namespace Michsky.DreamOS
@@ -15,17 +16,17 @@ namespace Michsky.DreamOS
 
         // Modules
         public bool enableMusicPlayerModule = true;
-        [SerializeField] private MusicPlayerManager musicPlayer;
+        [SerializeField] private MusicApp musicPlayer;
         [SerializeField] private bool enableMusicPlayerImportLogs = true;
         [SerializeField] private string musicPlayerID = "Music Player";
         public bool enableNotepadModule = true;
-        [SerializeField] private NotepadManager notepad;
+        [SerializeField] private NoteApp notepad;
         [SerializeField] private string notepadID = "Notepad";
         public bool enablePhotoGalleryModule = true;
-        [SerializeField] private PhotoGalleryManager photoGallery;
+        [SerializeField] private PhotoApp photoGallery;
         [SerializeField] private string photoGalleryID = "Photo Gallery";
         public bool enableVideoPlayerModule = true;
-        [SerializeField] private VideoPlayerManager videoPlayer;
+        [SerializeField] private VideoApp videoPlayer;
         [SerializeField] private string videoPlayerID = "Video Player";
 
         // Settings
@@ -172,7 +173,7 @@ namespace Michsky.DreamOS
             {
                 if (mods[i].moduleType == ModuleType.MusicPlayer && enableMusicPlayerModule)
                 {
-                    MusicPlayerPlaylist.MusicItem tempItem = new MusicPlayerPlaylist.MusicItem();
+                    MusicPlaylist.MusicItem tempItem = new MusicPlaylist.MusicItem();
                     tempItem.musicTitle = mods[i].modTitle;
                     tempItem.artistTitle = mods[i].modDescription;
                     tempItem.musicCover = mods[i].modIcon;

@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.Story
 
         public const string SerifResource = "LingGuangV05/Fonts/OriginSerif SDF", MonoResource = "LingGuangV05/Fonts/OriginMono SDF";
         public const string SerifFontAssetPath = "Assets/LingGuangV05/Localization/Fonts/OriginSerif-SourceHanSerifSC-Bold.otf";
-        public const string MonoFontAssetPath = "Assets/Feel/NiceVibrations/Demo/Common/Fonts/RobotoMono-Medium.ttf";
+        public const string MonoFontAssetPath = "Assets/LingGuangV05/Localization/Fonts/RobotoMono-Medium.ttf";
 
         public static TMP_FontAsset Serif { get { Build(); return serif; } }
         public static TMP_FontAsset Mono { get { Build(); return mono; } }

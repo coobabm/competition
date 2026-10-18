@@ -79976,7 +79976,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8143425482647706344}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.VideoPlayerManager, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.VideoApp, Assembly-CSharp
           m_MethodName: UpdateControlInput
           m_Mode: 6
           m_Arguments:
@@ -79992,7 +79992,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8143425482647706344}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.VideoPlayerManager, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.VideoApp, Assembly-CSharp
           m_MethodName: UpdateControlInput
           m_Mode: 6
           m_Arguments:
@@ -138673,7 +138673,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 419237040}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.MessagingManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.MessagingApp, Assembly-CSharp
         m_MethodName: CreateMessageFromInput
         m_Mode: 0
         m_Arguments:
@@ -216412,7 +216412,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 419237040}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.MessagingManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.MessagingApp, Assembly-CSharp
         m_MethodName: CreateMessageFromInput
         m_Mode: 1
         m_Arguments:
@@ -319938,7 +319938,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8143425482647706344}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.VideoPlayerManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.VideoApp, Assembly-CSharp
         m_MethodName: HideMiniPlayer
         m_Mode: 1
         m_Arguments:
@@ -319995,7 +319995,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7926870137721754902}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.NotepadManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.NoteApp, Assembly-CSharp
         m_MethodName: CreateEmptyNote
         m_Mode: 1
         m_Arguments:
@@ -320211,7 +320211,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8143425482647706344}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.VideoPlayerManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.VideoApp, Assembly-CSharp
         m_MethodName: ShowMiniPlayer
         m_Mode: 1
         m_Arguments:
@@ -327599,7 +327599,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonAddition
         m_Mode: 1
         m_Arguments:
@@ -327710,7 +327710,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonMultiply
         m_Mode: 1
         m_Arguments:
@@ -327821,7 +327821,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -328043,7 +328043,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -328265,7 +328265,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonDivision
         m_Mode: 1
         m_Arguments:
@@ -328376,7 +328376,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -328487,7 +328487,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -328598,7 +328598,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -328820,7 +328820,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonEqual
         m_Mode: 1
         m_Arguments:
@@ -328931,7 +328931,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -329042,7 +329042,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonSubtraction
         m_Mode: 1
         m_Arguments:
@@ -329153,7 +329153,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonDot
         m_Mode: 1
         m_Arguments:
@@ -329264,7 +329264,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -329486,7 +329486,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -329597,7 +329597,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonDelete
         m_Mode: 1
         m_Arguments:
@@ -329708,7 +329708,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -329819,7 +329819,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonAC
         m_Mode: 1
         m_Arguments:
@@ -329930,7 +329930,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978548779844009259}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.CalculatorManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.CalculatorApp, Assembly-CSharp
         m_MethodName: ButtonNumber
         m_Mode: 3
         m_Arguments:
@@ -334112,7 +334112,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3025633371864976444}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserApp, Assembly-CSharp
         m_MethodName: ActivateURLField
         m_Mode: 6
         m_Arguments:
@@ -334127,7 +334127,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3025633371864976444}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserApp, Assembly-CSharp
         m_MethodName: ActivateURLField
         m_Mode: 6
         m_Arguments:
@@ -400118,7 +400118,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: AdjustProfilePicture
         m_Mode: 1
         m_Arguments:
@@ -403898,7 +403898,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ResetPassword
         m_Mode: 1
         m_Arguments:
@@ -435468,7 +435468,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -435584,7 +435584,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -435882,7 +435882,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -436140,7 +436140,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -436200,7 +436200,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -436348,7 +436348,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -436681,7 +436681,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -436864,7 +436864,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -437130,7 +437130,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -437873,7 +437873,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -438056,7 +438056,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -438871,7 +438871,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -439322,7 +439322,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -439770,7 +439770,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -440130,7 +440130,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -440321,7 +440321,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -440619,7 +440619,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -440727,7 +440727,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -440795,7 +440795,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -441393,7 +441393,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -442018,7 +442018,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -442134,7 +442134,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -442242,7 +442242,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -442425,7 +442425,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -442525,7 +442525,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -442858,7 +442858,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -442966,7 +442966,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -443034,7 +443034,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -443517,7 +443517,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -444265,7 +444265,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -445056,7 +445056,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -445231,7 +445231,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -446022,7 +446022,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -446465,7 +446465,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -446565,7 +446565,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentColor
         m_Mode: 5
         m_Arguments:
@@ -446796,7 +446796,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: ChangeAccentReversedColor
         m_Mode: 5
         m_Arguments:
@@ -490230,7 +490230,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3025633371864976444}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserApp, Assembly-CSharp
         m_MethodName: OpenHomePage
         m_Mode: 1
         m_Arguments:
@@ -498474,7 +498474,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1272839531022739672}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.MusicPlayerManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.MusicApp, Assembly-CSharp
         m_MethodName: SetPopupNotification
         m_Mode: 0
         m_Arguments:
@@ -518766,7 +518766,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: WipeUserData
         m_Mode: 1
         m_Arguments:
@@ -519437,7 +519437,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5152509584463530754}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.ReminderManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.ReminderApp, Assembly-CSharp
         m_MethodName: CreateReminder
         m_Mode: 1
         m_Arguments:
@@ -551045,7 +551045,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3025633371864976444}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserApp, Assembly-CSharp
         m_MethodName: Refresh
         m_Mode: 1
         m_Arguments:
@@ -597077,7 +597077,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: SelectCustomTheme
         m_Mode: 1
         m_Arguments:
@@ -597104,7 +597104,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: SelectSystemTheme
         m_Mode: 1
         m_Arguments:
@@ -615012,7 +615012,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5445743325560521030}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserFavoritesItem, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserFavoritesItem, Assembly-CSharp
         m_MethodName: SetFavorite
         m_Mode: 6
         m_Arguments:
@@ -632858,7 +632858,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 6274192421070132748}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.ReminderItem, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.ReminderRow, Assembly-CSharp
           m_MethodName: DeleteReminder
           m_Mode: 1
           m_Arguments:
@@ -639926,7 +639926,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 8143425482647706344}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.VideoPlayerManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.VideoApp, Assembly-CSharp
         m_MethodName: HideMiniPlayer
         m_Mode: 1
         m_Arguments:
@@ -664776,7 +664776,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: SpeechRecognition
         m_Mode: 0
         m_Arguments:
@@ -668430,7 +668430,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 6275150831074615210}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserDownloadItem, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserDownloadItem, Assembly-CSharp
           m_MethodName: DeleteFile
           m_Mode: 1
           m_Arguments:
@@ -719981,7 +719981,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: SaveDesktopOrder
         m_Mode: 0
         m_Arguments:
@@ -776196,7 +776196,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: SnapDesktopItems
         m_Mode: 0
         m_Arguments:
@@ -788158,7 +788158,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: AdjustProfilePicture
         m_Mode: 1
         m_Arguments:
@@ -797697,7 +797697,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2149505806351429050}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.SettingsManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.SettingsApp, Assembly-CSharp
         m_MethodName: UseShortTimeFormat
         m_Mode: 0
         m_Arguments:

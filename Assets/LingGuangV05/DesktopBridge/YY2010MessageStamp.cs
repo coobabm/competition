@@ -3,6 +3,7 @@ using UnityEngine;
 using Michsky.DreamOS;
 
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Apps;
 namespace LingGuangV05.Desktop
 {
     /// <summary>Decorates native records. Only explicitly bound authored content is localized.</summary>

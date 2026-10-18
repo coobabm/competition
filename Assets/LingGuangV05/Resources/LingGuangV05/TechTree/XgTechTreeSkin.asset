@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcce3df3ad8764246bc9f64edc0a6b18, type: 3}
   m_Name: XgTechTreeSkin
   m_EditorClassIdentifier: Assembly-CSharp::LingGuangV05.Desktop.XingGuang.XgTechTreeSkin
-  fill: {fileID: 7499154508442906066, guid: 2ee0387d01c43974e807df76ae077489, type: 3}
-  frame: {fileID: 2694264440164372620, guid: 60949702898d517479bcbb38fcb6566e, type: 3}
-  ring: {fileID: -2580516046638551275, guid: e616883fc5e43644aa5b19e8eadc0d0f, type: 3}
-  line: {fileID: 7673595411333208751, guid: 9a2261d70942f694390e9c6f9d014ba3, type: 3}
+  fill: {fileID: 21300000, guid: 497fd33a74eeb4df8a5355e0c80233ee, type: 3}
+  frame: {fileID: 21300000, guid: 33f17efb89fff4be4b763746ef866be6, type: 3}
+  ring: {fileID: 21300000, guid: 06cde4c121a6c4a4d99ba871718fdb0e, type: 3}
+  line: {fileID: 21300000, guid: dad8cd62f6aa440f7ba741e971f3cfb7, type: 3}

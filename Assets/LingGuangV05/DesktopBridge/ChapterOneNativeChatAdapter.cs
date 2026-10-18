@@ -6,16 +6,17 @@ using TMPro;
 using UnityEngine;
 
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Apps;
 namespace LingGuangV05.Desktop
 {
     /// <summary>
-    /// Data/behavior adapter for the original DreamOS MessagingManager. Never constructs a view,
+    /// Data/behavior adapter for the original DreamOS MessagingApp. Never constructs a view,
     /// changes native styles, or calls Manager.Initialize (native Awake owns preset construction).
     /// Keep this component on the active bridge holder, outside the native window hierarchy.
     /// </summary>
     public sealed class ChapterOneNativeChatAdapter : MonoBehaviour
     {
-        public MessagingManager Manager;
+        public MessagingApp Manager;
         public ChapterOneRuntime Runtime;
         public WindowManager Window;
         public TMP_Text[] ShellLabels = Array.Empty<TMP_Text>();
@@ -27,7 +28,7 @@ namespace LingGuangV05.Desktop
         private readonly Queue<string> _pending = new Queue<string>(MaxPendingReplies);
         private readonly Dictionary<TMP_FontAsset, TMP_FontAsset> _fontClones = new Dictionary<TMP_FontAsset, TMP_FontAsset>();
         private readonly Dictionary<TMP_Text, FontBinding> _fontBindings = new Dictionary<TMP_Text, FontBinding>();
-        private MessagingManager _hookedManager;
+        private MessagingApp _hookedManager;
         private ChatLayoutPreset _conversation;
         private ChatItemPreset[] _contacts = Array.Empty<ChatItemPreset>();
         private TMP_FontAsset _cjkFallback;

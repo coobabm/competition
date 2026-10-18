@@ -3,7 +3,8 @@ using UnityEngine;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// The Upgrade Tree PRO art the 科技 page draws with (Assets/HolenderGames): the square fill, the state frame,
+    /// The art the 科技 page draws with (Assets/LingGuangV05/Art/TechTree, drawn by Tools/TechTreeArt/make_tech_tree_art.py;
+    /// it replaced Upgrade Tree PRO's textures on 2026-10-19): the square fill, the state frame,
     /// the hover ring and the connector line. The page is built in code at runtime, so it reaches the package's
     /// sprites through this one asset in Resources (LingGuangV05/TechTree/XgTechTreeSkin). Without it the page
     /// still works with plain rectangles and outlines.
@@ -13,10 +14,10 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public const string ResourcePath = "LingGuangV05/TechTree/XgTechTreeSkin";
 
-        [Tooltip("Square fill (UpgradesTreePro/Textures/box).")] public Sprite fill;
-        [Tooltip("Thick state frame (UpgradesTreePro/Textures/box_outline_0).")] public Sprite frame;
-        [Tooltip("Thin hover ring (UpgradesTreePro/Textures/box_outline_1).")] public Sprite ring;
-        [Tooltip("Connector and divider lines (Demo_Examples/Textures/button_square_border, as UpgradeButton's line uses).")] public Sprite line;
+        [Tooltip("Square fill (Art/TechTree/fill).")] public Sprite fill;
+        [Tooltip("Thick state frame (Art/TechTree/frame).")] public Sprite frame;
+        [Tooltip("Thin hover ring (Art/TechTree/ring).")] public Sprite ring;
+        [Tooltip("Connector and divider lines (Art/TechTree/line).")] public Sprite line;
 
         static XgTechTreeSkin loaded;
         static bool tried;

@@ -5,6 +5,7 @@ using HongmengOS.Aero2010;
 using LingGuangV05.Desktop;
 using LingGuangV05.Runtime;
 using LingGuangV05.UI;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using TMPro;
 using UnityEditor;
@@ -429,7 +430,7 @@ namespace LingGuangV05.Editor
             if (container == null) throw new InvalidOperationException("Desktop List 缺少 ItemDragContainer。");
             var dragger = shortcut.GetComponent<ItemDragger>() ?? shortcut.gameObject.AddComponent<ItemDragger>();
             dragger.dragContainer = container;
-            // Explicit serialization is required before SettingsManager/SwitchManager
+            // Explicit serialization is required before SettingsApp/SwitchManager
             // Awake; ItemDragger.Start's lazy lookup would run too late.
             var serialized = new SerializedObject(dragger);
             var key = serialized.FindProperty("saveKey");

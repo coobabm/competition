@@ -7,6 +7,7 @@ using LingGuangV05.Desktop;
 using Michsky.DreamOS;
 using UnityEditor;
 using UnityEngine;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -19,7 +20,7 @@ namespace LingGuangV05.Editor
         static readonly Queue<Action> actions=new Queue<Action>();
         static YY2010ShellController shell;
         static ChapterOneDesktopBridge chat;
-        static MessagingManager manager;
+        static MessagingApp manager;
         static string path;
         static double next;
         static int before;

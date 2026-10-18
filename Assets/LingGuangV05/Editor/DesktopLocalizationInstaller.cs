@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -69,7 +70,7 @@ namespace LingGuangV05.Editor
             nativeContent.languageManager = manager;
             nativeContent.contextMenus = roots.SelectMany(r => r.GetComponentsInChildren<ContextMenuManager>(true)).ToArray();
             nativeContent.selectors = roots.SelectMany(r => r.GetComponentsInChildren<HorizontalSelector>(true)).ToArray();
-            nativeContent.gameHubs = roots.SelectMany(r => r.GetComponentsInChildren<GameHubManager>(true)).ToArray();
+            nativeContent.gameHubs = roots.SelectMany(r => r.GetComponentsInChildren<LingGuangV05.Desktop.Apps.GameHubApp>(true)).ToArray();
             foreach (var selector in manager.languageSelectors)
             {
                 selector.saveSelected = false; selector.useLocalization = false; selector.invokeOnAwake = false;
@@ -263,7 +264,7 @@ namespace LingGuangV05.Editor
                 var adapter = monitor.osd.GetComponent<DesktopLocalizedMonitor>() ?? monitor.osd.AddComponent<DesktopLocalizedMonitor>();
                 adapter.monitor = monitor;
             }
-            foreach (var reminder in root.GetComponentsInChildren<ReminderItem>(true))
+            foreach (var reminder in root.GetComponentsInChildren<LingGuangV05.Desktop.Apps.ReminderRow>(true))
             { var adapter = reminder.GetComponent<DesktopLocalizedReminder>() ?? reminder.gameObject.AddComponent<DesktopLocalizedReminder>(); adapter.item = reminder; }
             foreach (var shellClock in root.GetComponentsInChildren<HongmengOS.Aero2010.AeroShellClock>(true))
             {
@@ -293,7 +294,7 @@ namespace LingGuangV05.Editor
         }
         private static void GatherPayloadFields(GameObject root)
         {
-            var owners = new HashSet<string> { "HorizontalSelector", "PanelButton", "MusicPlayerManager", "GameHubManager", "AeroLcdController", "NotificationItem", "WidgetLibraryItem", "PlaylistPanel", "PlaylistItem", "PlaylistTrack", "PhotoGalleryManager", "VideoPlayerManager", "CommanderManager", "GetUserInfo", "ResetPassword", "NetworkPreset", "WebBrowserTabItem", "WebBrowserFavoritesItem", "ReminderItem", "NotepadPreset" };
+            var owners = new HashSet<string> { "HorizontalSelector", "PanelButton", "MusicApp", "GameHubApp", "AeroLcdController", "NotificationItem", "WidgetLibraryItem", "MusicPlaylistPage", "MusicPlaylistEntry", "MusicTrackRow", "PhotoApp", "VideoApp", "CommanderApp", "GetUserInfo", "ResetPassword", "NetworkPreset", "WebBrowserTabItem", "WebBrowserFavoritesItem", "ReminderRow", "NoteListEntry" };
             foreach (var component in root.GetComponentsInChildren<Component>(true))
             {
                 if (component == null || !owners.Contains(component.GetType().Name)) continue;

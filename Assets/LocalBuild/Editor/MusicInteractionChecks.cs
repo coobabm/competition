@@ -10,6 +10,7 @@ using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -28,7 +29,7 @@ public static class MusicInteractionChecks
     const string MusicThought="开机第一件事当然是来首歌听听......";
     static string Root=>SessionState.GetString(Key,"");
     static GameMusic music;
-    static MusicPlayerManager manager;
+    static MusicApp manager;
     static WindowManager window;
     static AudioSource source;
     static ChapterOneRuntime runtime;
@@ -166,7 +167,7 @@ public static class MusicInteractionChecks
                 }
                 music=UnityEngine.Object.FindAnyObjectByType<GameMusic>();
                 if(music==null||!(Field(music,"ready") is bool ready)||!ready)return;
-                manager=Field(music,"manager") as MusicPlayerManager;source=Field(music,"source") as AudioSource;window=Field(music,"musicWindow") as WindowManager;
+                manager=Field(music,"manager") as MusicApp;source=Field(music,"source") as AudioSource;window=Field(music,"musicWindow") as WindowManager;
                 if(window==null||window.transform.parent==null||!window.transform.parent.gameObject.activeInHierarchy)return;
                 Check(manager!=null&&source!=null&&window!=null,"real music components","manager, source and actual parent WindowManager resolved");
                 Check(!GameMusic.Started&&!source.isPlaying,"boot stays silent","Started="+GameMusic.Started+", playing="+source.isPlaying);

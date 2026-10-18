@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using LingGuangV05.Core;
+using LingGuangV05.Desktop.Apps;
+
 namespace LingGuangV05.Desktop.Casino
 {
     /// <summary>Local-only browser registration and midgame ad. Never opens a real URL.</summary>
@@ -18,7 +20,7 @@ namespace LingGuangV05.Desktop.Casino
     public sealed class CasinoDesktop : MonoBehaviour
     {
         public static CasinoDesktop Instance { get; private set; }
-        WebBrowserManager browser;
+        WebBrowserApp browser;
         WebBrowserLibrary original, library;
         GameObject template;
         StoryDesktopPresenter presenter;
@@ -42,7 +44,7 @@ namespace LingGuangV05.Desktop.Casino
         void Register()
         {
             if (library != null) return;
-            browser = FindAnyObjectByType<WebBrowserManager>(FindObjectsInactive.Include);
+            browser = FindAnyObjectByType<WebBrowserApp>(FindObjectsInactive.Include);
             if (browser == null || browser.webLibrary == null) return;
             original = browser.webLibrary;
             library = Instantiate(original);

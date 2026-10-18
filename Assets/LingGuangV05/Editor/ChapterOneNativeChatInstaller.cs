@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using LingGuangV05.Desktop.Apps;
 
 namespace LingGuangV05.Editor
 {
@@ -58,7 +59,7 @@ namespace LingGuangV05.Editor
                     reference = EditorSceneManager.OpenScene(ChapterOneInstaller.SourceScenePath, OpenSceneMode.Additive);
                 SceneManager.SetActiveScene(main);
                 var original = FindWindow(reference, "Messaging");
-                if (original == null || original.GetComponent<MessagingManager>() == null
+                if (original == null || original.GetComponent<MessagingApp>() == null
                     || original.GetComponent<WindowPanelManager>() == null)
                     throw new InvalidOperationException("原始 2010desktop 缺少完整原生 Messaging。");
 
@@ -75,15 +76,15 @@ namespace LingGuangV05.Editor
                 temporaryClone = null;
 
                 // This is data configuration, not a replacement contact/message view.
-                var manager = target.GetComponent<MessagingManager>();
+                var manager = target.GetComponent<MessagingApp>();
                 Sprite portrait = manager.chatList.Count > 0 ? manager.chatList[0].individualPicture : null;
-                manager.chatList = new List<MessagingManager.ChatItem>
+                manager.chatList = new List<MessagingApp.ChatItem>
                 {
-                    new MessagingManager.ChatItem
+                    new MessagingApp.ChatItem
                     {
                         chatTitle = "老周", individualName = "老周", individualSurname = string.Empty,
                         individualPicture = portrait, chatAsset = GetOrCreateChat(),
-                        defaultStatus = MessagingManager.Status.Online, isVisible = true
+                        defaultStatus = MessagingApp.Status.Online, isVisible = true
                     }
                 };
                 manager.currentLayout = 0;
@@ -311,7 +312,7 @@ namespace LingGuangV05.Editor
         private static void ValidateNative(ChapterOneDesktopBridge bridge, Scene main)
         {
             if (!bridge.IsNativeChat || bridge.App != null || bridge.NativeChat.Manager == null
-                || bridge.Window.GetComponent<MessagingManager>() != bridge.NativeChat.Manager
+                || bridge.Window.GetComponent<MessagingApp>() != bridge.NativeChat.Manager
                 || bridge.Window.GetComponent<WindowPanelManager>() == null
                 || bridge.NativeChat.Manager.messageInput == null || bridge.NativeChat.Manager.chatViewer == null
                 || bridge.Window.GetComponentsInChildren<ChapterOneApp>(true).Length != 0

@@ -1156,7 +1156,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 114472155216005958}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserDownloadItem, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserDownloadItem, Assembly-CSharp
           m_MethodName: DeleteFile
           m_Mode: 1
           m_Arguments:

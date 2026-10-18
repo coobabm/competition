@@ -6314,10 +6314,10 @@ MonoBehaviour:
   displayRig: {fileID: 1858588767}
   monitorCenter: {fileID: 878899168}
   font: {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}
-  hoverClip: {fileID: 8300000, guid: f0cb06f9461ea8b4bba64f3f7064a702, type: 3}
-  pressClip: {fileID: 8300000, guid: bbec1866c8d0041ccba6df06af0e17fd, type: 3}
-  releaseClip: {fileID: 8300000, guid: 099b00562078f4338931e30c1fad4a69, type: 3}
-  bootClip: {fileID: 8300000, guid: 35a7b929e025d674898e2f6a2d87c68a, type: 3}
+  hoverClip: {fileID: 8300000, guid: cc80087c4d2204d25a537868e7aa5037, type: 3}
+  pressClip: {fileID: 8300000, guid: d1a4e0dd0cf51498cb79c1209b302896, type: 3}
+  releaseClip: {fileID: 8300000, guid: 350faec2965a04dae894986c7d73f219, type: 3}
+  bootClip: {fileID: 8300000, guid: a00584ca8585c447c88fc9d11792c1d1, type: 3}
   fanClip: {fileID: 8300000, guid: f0c59a83903cd46d2896eaf3330ef09b, type: 3}
   transitionSeconds: 4.8
 --- !u!4 &590377866

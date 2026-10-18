@@ -1527,7 +1527,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6819630495214162688}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.WebBrowserFavoritesItem, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.Apps.WebBrowserFavoritesItem, Assembly-CSharp
         m_MethodName: SetFavorite
         m_Mode: 6
         m_Arguments:

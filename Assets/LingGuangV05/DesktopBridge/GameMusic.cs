@@ -2,6 +2,7 @@ using System.Collections;
 using LingGuangV05.Core;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Runtime;
+using LingGuangV05.Desktop.Apps;
 using Michsky.DreamOS;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ namespace LingGuangV05.Desktop
         const string DefaultsKey = "LingGuang.Music.Defaults.v2";
 
         static GameMusic instance;
-        MusicPlayerManager manager;
+        MusicApp manager;
         AudioSource source;
         WindowManager musicWindow;
         StoryDesktopPresenter presenter;
@@ -94,7 +95,7 @@ namespace LingGuangV05.Desktop
 
         IEnumerator Start()
         {
-            manager = System.Array.Find(FindObjectsByType<MusicPlayerManager>(FindObjectsInactive.Include, FindObjectsSortMode.None), m => m != null);
+            manager = System.Array.Find(FindObjectsByType<MusicApp>(FindObjectsInactive.Include, FindObjectsSortMode.None), m => m != null);
             if (manager == null || manager.audioSource == null) { Destroy(this); yield break; }
             musicWindow = manager.GetComponentInParent<WindowManager>(true);
             source = manager.audioSource;
@@ -115,7 +116,7 @@ namespace LingGuangV05.Desktop
             }
             source.volume = 0;
             // The app's volume slider sets the source from its own value when it first initialises.
-            foreach (var item in FindObjectsByType<MusicPlayerDataItem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var item in FindObjectsByType<MusicAppPart>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (!item.IsVolumeSlider) continue;
                 var slider = item.GetComponent<Slider>();

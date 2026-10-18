@@ -8,14 +8,14 @@ namespace LingGuangV05.Desktop
 {
     /// <summary>Formats the time of an existing reminder; never changes its title, schedule or saved data.</summary>
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(ReminderItem))]
+    [RequireComponent(typeof(LingGuangV05.Desktop.Apps.ReminderRow))]
     public sealed class DesktopLocalizedReminder : MonoBehaviour
     {
-        public ReminderItem item;
+        public LingGuangV05.Desktop.Apps.ReminderRow item;
 
         private void Awake()
         {
-            if (item == null) item = GetComponent<ReminderItem>();
+            if (item == null) item = GetComponent<LingGuangV05.Desktop.Apps.ReminderRow>();
         }
 
         private void OnEnable()
@@ -30,7 +30,7 @@ namespace LingGuangV05.Desktop
 
         public void Refresh()
         {
-            if (item == null) item = GetComponent<ReminderItem>();
+            if (item == null) item = GetComponent<LingGuangV05.Desktop.Apps.ReminderRow>();
             var time = DateAndTimeManager.instance;
             if (item == null || string.IsNullOrEmpty(item.reminderID) || time == null || time.timedEvents == null) return;
             foreach (var scheduled in time.timedEvents)

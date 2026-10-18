@@ -1,0 +1,4 @@
+Roboto Mono (RobotoMono-Medium.ttf)
+Copyright 2015 The Roboto Mono Project Authors (https://github.com/googlefonts/RobotoMono)
+Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+Used by the origin film's monospace text (OriginMono SDF). Unmodified.
