@@ -638,14 +638,14 @@ namespace LingGuangV05.Desktop.Zhongbao
             Juice.Knock(comboChip, .25f, Vector2.zero, .35f);
             Juice.Float(Juice.At(comboChip, new Vector2(-40, -50)), name + "！", XgPalette.Tiers[tier + 1], 30 + tier * 4, 70, 1.1f, 1.6f);
             Juice.Burst(Juice.At(comboChip), 16 + tier * 10, XgPalette.Tiers[tier + 1], tier >= 3 ? XgJuice.Shape.Star : XgJuice.Shape.Spark, 300);
-            Juice.Play(XgJuice.Sfx.Id.Tier, 1 + tier * .15f);
+            // No sound of its own: the hit's kill-streak clip is the combo's only sound (2026-10-18).
             if (tier >= 3) Juice.HitStop(120);
         }
 
         /// <summary>
         /// Every streak step has its own hit on the counter, so the very first answers already feel like a run: the kill-streak
         /// sound one step higher each time up to the 10th, a ring where the answer's trail lands (XgJuice.ComboHit, which
-        /// also floats the big count over the card), and sparks. 3 and 5 get a louder call-out before the first named tier at 10.
+        /// also floats the big count over the card), and sparks. 3 and 5 get a bigger call-out before the first named tier at 10; the only sound is the kill-streak clip.
         /// </summary>
         void ComboStep(int combo, int tier)
         {
@@ -659,7 +659,6 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (combo == 3 || combo == 5)
             {
                 Juice.Float(Juice.At(comboChip, new Vector2(-30, -44)), T("连对 ×", "Streak ×") + combo + "！", XgPalette.Good, 22 + combo, 60, .9f, 1.4f);
-                Juice.Play(XgJuice.Sfx.Id.Tier, .8f + combo * .04f, .6f);
             }
         }
 
