@@ -98,15 +98,17 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     sealed class XgQuizGame : XgSocialSurface
     {
         const float QuestionSeconds = 15;
+        /// <summary>A right answer shows why for this long, then the next question comes by itself (2026-10-18).</summary>
+        const float AutoNextSeconds = 1.5f;
         readonly HashSet<string> used = new HashSet<string>();
         XgPhrase statement;
         int correct;
         bool ended, locked, aiUsed, swapUsed;
-        float left;
+        float left, nextIn = -1;
         TMP_Text hint, ladder;
         XgBtn yes, no;
         public XgQuizGame(XgMiniContext c) : base(c) { }
-        public override void Build() { correct = 0; ended = locked = aiUsed = swapUsed = false; used.Clear(); NextQuestion(false); }
+        public override void Build() { correct = 0; ended = locked = aiUsed = swapUsed = false; nextIn = -1; used.Clear(); NextQuestion(false); }
 
         void NextQuestion(bool keepTime)
         {
@@ -158,7 +160,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             hint.text = XgUi.T(ok ? "答对了：" : "答错了：", ok ? "Right: " : "Wrong: ") + Why; hint.color = ok ? green : red;
             if (!ok) { Finish(false, false); return; }
             if (correct >= 12) { Finish(true, false); return; }
-            B("NextQuestion", 450, 408, 190, 56, XgUi.T("继续下一题", "Next question"), () => NextQuestion(false), 19);
+            nextIn = AutoNextSeconds;
         }
 
         void UseAi()
@@ -192,7 +194,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
 
         public override void Tick(float dt)
         {
-            if (disposed || ended || locked || !C.IsActive) return;
+            if (disposed || ended || !C.IsActive) return;
+            if (nextIn > 0) { if ((nextIn -= dt) <= 0) { nextIn = -1; NextQuestion(false); } return; }
+            if (locked) return;
             left -= dt; Clock(left);
             if (left <= 0) { Finish(false, false); return; }
             if (C.KeyDown(Key.Digit1) || C.KeyDown(Key.LeftArrow)) Answer(true);
