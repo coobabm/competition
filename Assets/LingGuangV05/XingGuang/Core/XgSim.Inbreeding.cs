@@ -76,7 +76,7 @@ namespace LingGuangV05.XingGuang
             double noise = Noise(desk);
             if (!FiniteCollaboration(noise) || noise < 1) return 0;
             double open = Math.Floor(noise) - PendingRechecks(desk);
-            return (int)Math.Max(0, Math.Min(Math.Min(RecheckBatch, ReviewCapacity - S.queue.Count), open));
+            return (int)Math.Max(0, Math.Min(Math.Min(RecheckBatch, ReviewLimit - S.queue.Count), open));
         }
 
         /// <summary>

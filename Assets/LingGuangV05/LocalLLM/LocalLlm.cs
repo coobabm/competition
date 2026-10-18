@@ -88,9 +88,9 @@ namespace LingGuangV05.Desktop.LLM
         public float LastJudgeSeconds { get; private set; }
         public string LastJudgeFailure { get; private set; } = "";
         /// <summary>Native completions running right now (what llama-server's /slots "is_processing" used to show).</summary>
-        public int NativeCallsInFlight { get { int n = 0; foreach (int c in nativeInFlight) n += c; return n; } }
+        public int NativeCallsInFlight { get { int n = 0; for (int i = 0; i < nativeInFlight.Length; i++) n += Volatile.Read(ref nativeInFlight[i]); return n; } }
         /// <summary>A native completion is running in this service slot.</summary>
-        public bool NativeSlotRunning(int slot) => slot >= 0 && slot < nativeInFlight.Length && nativeInFlight[slot] > 0;
+        public bool NativeSlotRunning(int slot) => slot >= 0 && slot < nativeInFlight.Length && Volatile.Read(ref nativeInFlight[slot]) > 0;
 
         /// <summary>True once the service with this id has been freed (or never existed).</summary>
         public static bool ServiceStopped(int id)
@@ -103,7 +103,7 @@ namespace LingGuangV05.Desktop.LLM
         const float TypingPause = 1.5f, AutoRestartWindow = 600, WarmupRecheck = 2, WarmupMinGap = 30;
         /// <summary>Judges keep their own short limit from dispatch, as the HTTP timeout did before.</summary>
         const float JudgeSeconds = 12;
-        /// <summary>After a cancel, how long a native call may take to return before its slot is handed back anyway.</summary>
+        /// <summary>After cancellation, release the UI callback after this grace period; native work still blocks dispatch until it returns.</summary>
         const float CancelGrace = 5;
         const int StopWaitMs = 5000;
         /// <summary>LlamaLib debug level while a service starts (log threshold 4, where llama.cpp reports GPU offload) and after.</summary>
@@ -150,6 +150,7 @@ namespace LingGuangV05.Desktop.LLM
         readonly HashSet<Job> active = new HashSet<Job>();
         readonly bool[] slotBusy = new bool[16];
         readonly bool[] nativeBusy = new bool[16];
+        // Lifetime counters span service generations: never reset while a previous native task can still return.
         readonly int[] nativeInFlight = new int[16];
         int activeChats, activeBackground, activeJudges, activeWarmups, desiredSlots = LlmScheduling.NormalSlots;
         bool changingSlots, disposing, routed, parallelJudging;
@@ -603,6 +604,11 @@ namespace LingGuangV05.Desktop.LLM
                 return;
             }
             Expire(visible); Expire(background); Expire(judges);
+            // Cancellation can release a UI slot before native inference returns. Wait for BOTH,
+            // so cancelled work cannot overlap another CPU-heavy completion and starve audio/rendering.
+            if (active.Count > 0 || NativeCallsInFlight > 0) return;
+            int preferred = visible.FindIndex(j => j.seat == LlmSeat.LingGuang);
+            if (preferred > 0) { var first = visible[preferred]; visible.RemoveAt(preferred); visible.Insert(0, first); }
             for (int i = 0; i < visible.Count; i++)
             {
                 var job = visible[i];
@@ -610,6 +616,7 @@ namespace LingGuangV05.Desktop.LLM
                 if (slot == LlmScheduling.Wait) { if (routed) AbortWarmupOn(LlmScheduling.SeatSlot(job.seat, ParallelSlots)); continue; }
                 visible.RemoveAt(i--);
                 Run(job, slot);
+                return;
             }
             if (!LlmScheduling.BackgroundMayStart(visible.Count, activeChats, PlayerTyping)) return;
             while (true)
@@ -628,6 +635,7 @@ namespace LingGuangV05.Desktop.LLM
                 }
                 list.RemoveAt(0);
                 Run(job, slot);
+                return;
             }
         }
 
@@ -672,7 +680,7 @@ namespace LingGuangV05.Desktop.LLM
             activeChats = activeBackground = activeJudges = activeWarmups = 0;
             Array.Clear(slotBusy, 0, slotBusy.Length);
             Array.Clear(nativeBusy, 0, nativeBusy.Length);
-            Array.Clear(nativeInFlight, 0, nativeInFlight.Length);
+            // Native tasks may outlive UI cancellation/shutdown. Their completion callbacks own these counters.
         }
 
         void AbortWarmupOn(int slot)
@@ -801,11 +809,24 @@ namespace LingGuangV05.Desktop.LLM
             {
                 int slot = job.native;
                 var client = target.clients[slot >= 0 && slot < target.clients.Length ? slot : 0];
-                var call = Task.Run(() => Complete(target, client, job.messages, job.parameters, job.thinking, slot));
-                lock (target.running) target.running.Add(call);
-                call.ContinueWith(t => { lock (target.running) target.running.Remove(t); });
                 int tracked = slot >= 0 && slot < nativeInFlight.Length ? slot : -1;
-                if (tracked >= 0) nativeInFlight[tracked]++;
+                if (tracked >= 0) Interlocked.Increment(ref nativeInFlight[tracked]);
+                Task<string> call = null;
+                try { call = Task.Run(() => Complete(target, client, job.messages, job.parameters, job.thinking, slot)); }
+                catch (Exception error)
+                {
+                    if (tracked >= 0) Interlocked.Decrement(ref nativeInFlight[tracked]);
+                    Debug.LogWarning("[灵光] Cannot start native inference: " + error.Message);
+                }
+                if (call == null) { Release(job); Finish(job, null, "request_failed"); yield break; }
+                lock (target.running) target.running.Add(call);
+                call.ContinueWith(t =>
+                {
+                    // Releasing a timed-out UI job must not free the native inference budget.
+                    // Even after CancelGrace, the next request waits for this actual task to return.
+                    lock (target.running) target.running.Remove(t);
+                    if (tracked >= 0) Interlocked.Decrement(ref nativeInFlight[tracked]);
+                }, TaskScheduler.Default);
                 // Judges keep their own short limit; chat gets what is left of its visible / background budget.
                 float limit = job.Judge ? started + JudgeSeconds : job.deadline;
                 float cancelledAt = float.PositiveInfinity;
@@ -821,7 +842,6 @@ namespace LingGuangV05.Desktop.LLM
                     if (now > cancelledAt + CancelGrace) break;
                     yield return null;
                 }
-                if (tracked >= 0 && nativeInFlight[tracked] > 0) nativeInFlight[tracked]--;
                 if (job.timedOut) failure = "timeout";
                 else if (job.cancelled) failure = "cancelled";
                 else if (call.Status == TaskStatus.RanToCompletion) { raw = call.Result; if (string.IsNullOrEmpty(raw)) failure = "request_failed"; }

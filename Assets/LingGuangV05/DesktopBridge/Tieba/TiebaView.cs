@@ -186,8 +186,18 @@ namespace LingGuangV05.Desktop.Tieba
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .5f;
             var c = hub.Context();
-            string now = view + "|" + arg + "|" + c.stage + "|" + c.today.ToString("MMdd") + "|" + Count() + "|" + hub.IsTyping(arg) + "|" + (hub.Choices != null) + "|" + GameText.IsEnglish + "|" + (c.helpPosted ? (int)(c.secondsSinceHelp / 10) : -1);
+            string now = view + "|" + arg + "|" + c.stage + "|" + c.today.ToString("MMdd") + "|" + Count() + "|" + hub.IsTyping(arg) + "|" + (hub.Choices != null) + "|" + GameText.IsEnglish + "|" + (c.helpPosted ? (int)(c.secondsSinceHelp / 10) : -1) + "|" + DataRequestKey();
             if (now != signature) { signature = now; Redraw(); }
+        }
+
+        /// <summary>Changes when a 「求数据」 post can be written, is written or gets its reply, so the page redraws.</summary>
+        string DataRequestKey()
+        {
+            var lab = TiebaHub.Lab();
+            if (lab == null) return "";
+            var sb = new System.Text.StringBuilder(string.Join(",", hub.AskableData()));
+            foreach (var ds in lab.S.dataAsked) sb.Append(';').Append(ds).Append(lab.DataAnswered(ds) ? '+' : '-');
+            return sb.ToString();
         }
 
         int Count()
@@ -361,6 +371,16 @@ namespace LingGuangV05.Desktop.Tieba
                 var help = hub.Library.Get("help_bios");
                 Line(card, Lang.T("发个帖子问问？") + "\n<color=#6E7480>" + T(help.title, help.titleEn) + "</color>", 16, Ink);
                 Line(card, "<b>" + Lang.T("【发表】") + "</b>", 17, Link, () => { hub.PostHelp(); Go("thread", "help_bios"); });
+            }
+            // The player's own 「求数据」 posts: story data only ever arrives as a reply to one of these.
+            foreach (var ds in hub.AskableData())
+            {
+                var ask = hub.Library.Get("ask_" + ds);
+                if (ask == null || ask.board != board) continue;
+                string dataset = ds;
+                var card = Card(new Color32(255, 248, 235, 255));
+                Line(card, Lang.T("发个帖子求数据？") + "\n<color=#6E7480>" + T(ask.title, ask.titleEn) + "</color>", 16, Ink);
+                Line(card, "<b>" + Lang.T("【发表】") + "</b>", 17, Link, () => { hub.PostDataRequest(dataset); Go("thread", "ask_" + dataset); });
             }
             foreach (var t in hub.Library.Board(board, c)) ThreadRow(t, c, false);
             foreach (var t in hub.Library.Mine(c)) if (t.board == board) ThreadRow(t, c, false);

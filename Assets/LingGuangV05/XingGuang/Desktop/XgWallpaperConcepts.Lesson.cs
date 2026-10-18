@@ -16,7 +16,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly HashSet<int> lessonConceptIds = new HashSet<int>();
         int lessonRegion;
         float lessonUntil;
-        float LessonPulse => lessonUntil <= 0 ? 0 : Mathf.Clamp01((lessonUntil - Time.unscaledTime) / LessonPulseSeconds);
+        float LessonPulse => GamePerformance.Low ? 0 : lessonUntil <= 0 ? 0 : Mathf.Clamp01((lessonUntil - Time.unscaledTime) / LessonPulseSeconds);
 
         protected override void OnEnable()
         {
@@ -84,7 +84,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         lessonConceptIds.Add(concept.id);
             lessonUntil = Time.unscaledTime + LessonPulseSeconds;
             RememberAttention(taughtCard);
-            next = 0;
+            presentation?.DataChanged();next = 0;
             Update(); // Refresh the learned board in this event; do not wait for the 100 ms poll.
             SetVerticesDirty();
         }

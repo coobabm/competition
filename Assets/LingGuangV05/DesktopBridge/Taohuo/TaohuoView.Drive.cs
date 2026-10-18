@@ -67,7 +67,7 @@ namespace LingGuangV05.Desktop.Taohuo
                 }
                 return DriveState();
             }));
-            UiTip.Add(b, "插上就是灵光的数据盘：下载队列接着下。每多买一块，价格 ×1.3。", "Plugged in, it becomes 灵光's data disk and the download queue carries on. Each extra drive costs ×1.3.");
+            UiTip.Add(b, () => T("给" + (Lab != null ? Lab.AiDisplayName : AppNames.Ai(false)) + "扩充资料空间。科技里的数据包买完直接在「教」使用。每多买一块，价格 ×1.3。", "Adds storage for " + (Lab != null ? Lab.AiDisplayName : AppNames.Ai(true)) + ". Tech data packs are ready in Teach immediately. Each additional drive costs ×1.3."));
         }
 
         /// <summary>"灵光的硬盘：已用 480 GB / 500 GB · 下载暂停".</summary>
@@ -76,7 +76,7 @@ namespace LingGuangV05.Desktop.Taohuo
             double cap = lab.DiskCapacityMB, used = Math.Min(cap, lab.DiskUsedMB);
             string state = DiskBlocked(lab) ? "  <color=#DC3C32>" + T("满了 · 下载暂停", "full · downloads paused") + "</color>"
                 : cap > 0 && used / cap >= .85 ? "  <color=#FF5000>" + T("快满了", "nearly full") + "</color>" : "";
-            return T("灵光的硬盘：已用 ", "灵光's disk: ") + XgSim.SizeText(used) + " / " + XgSim.SizeText(cap) + T("", " used")
+            return T(lab.AiDisplayName + "的硬盘：已用 ", lab.AiDisplayName + "'s disk: ") + XgSim.SizeText(used) + " / " + XgSim.SizeText(cap) + T("", " used")
                 + (lab.DrivesOwned > 0 ? T(" · 已插 " + lab.DrivesOwned + " 块移动硬盘", " · " + lab.DrivesOwned + " portable drive" + (lab.DrivesOwned > 1 ? "s" : "")) : "") + state;
         }
 

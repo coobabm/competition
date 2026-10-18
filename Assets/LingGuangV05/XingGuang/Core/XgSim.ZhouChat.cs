@@ -1,3 +1,4 @@
+using System;
 namespace LingGuangV05.XingGuang
 {
     /// <summary>One answer the player can send 老周 in YY, and what he says back.</summary>
@@ -44,6 +45,8 @@ namespace LingGuangV05.XingGuang
     /// learning in general terms until the protagonist tells him (坦白, <see cref="ZhouNode"/>) that something in the
     /// computer learns by itself; he never learns where it came from or its name. Until then he grows suspicious (起疑).
     /// </summary>
+    public sealed partial class XgState { public int selfStudyReflections; public bool selfStudyResolved; }
+
     public sealed partial class XgSim
     {
         static XgZhouReply R(string zh, string en, string answerZh, string answerEn, string next = "", string effect = "")
@@ -179,22 +182,12 @@ namespace LingGuangV05.XingGuang
         /// <summary>The same once he knows: it is about the program, not about the protagonist.</summary>
         public string ZhouSteerNow(XgGuideStep step, bool english)
         {
-            if (!S.zhouKnows || step == null || string.IsNullOrEmpty(ZhouWhat(step, english))) return ZhouSteer(step, english);
-            string why = ZhouWhy(step, english);
-            return english
-                ? "Your thing (" + ZhouLabLine(true) + ") is stuck on this: " + ZhouWhat(step, true) + (why.Length > 0 ? ". " + why : ".")
-                : "你那个东西（" + ZhouLabLine(false) + "）现在卡在这步：" + ZhouWhat(step, false) + (why.Length > 0 ? "，" + why : "。");
+            return english ? "What would you like to discuss? I can talk about general machine-learning ideas." : "想讨论哪个概念？机器学习的一般原理我可以聊聊。";
         }
 
         public static string ZhouSteer(XgGuideStep step, bool english)
         {
-            if (step == null) return english ? "Keep at it. Ask me if something's unclear." : "先练着，有不懂的再问我。";
-            string what = ZhouWhat(step, english);
-            string why = ZhouWhy(step, english);
-            if (string.IsNullOrEmpty(what)) return english ? "Keep at it. Ask me if something's unclear." : "先练着，有不懂的再问我。";
-            return english
-                ? "Ha, later. First: " + what + (string.IsNullOrEmpty(why) ? "." : ". " + why)
-                : "这个回头再说。眼下先" + what + (string.IsNullOrEmpty(why) ? "。" : "，" + why);
+            return english ? "What would you like to discuss? I can talk about general machine-learning ideas." : "想讨论哪个概念？机器学习的一般原理我可以聊聊。";
         }
 
         /// <summary>The step in his words: without the note's 「下一步：」 and the price after 「 · 」.</summary>
@@ -221,12 +214,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>For his model: the step he should pull the talk back to.</summary>
         public static string ZhouGuideState(XgGuideStep step, bool english)
         {
-            if (step == null) return english ? "\nHe is between steps right now; encourage him to keep training." : "\n他眼下没有卡在哪一步，鼓励他接着练。";
-            string what = ZhouWhat(step, english);
-            string why = ZhouWhy(step, english);
-            return english
-                ? "\nWhat he should do now: " + what + (string.IsNullOrEmpty(why) ? "" : " (why: " + why + ")")
-                : "\n他现在该做的一步：" + what + (string.IsNullOrEmpty(why) ? "" : "（为什么：" + why + "）");
+            return ""; // Private training state is never part of a human contact prompt.
         }
 
         // ───────────── 起疑 and 坦白 (2026-10-18) ─────────────
@@ -248,36 +236,26 @@ namespace LingGuangV05.XingGuang
 
         public XgZhouStageNote ZhouStageNoteNow(int stage)
         {
-            // Stage 2 follows the road it chose: strokes for 看图, the words before for 读弹幕.
-            bool reading = stage == 2 && FirstTrack == "sequence";
+            bool reading = stage == 2 && (S.firstTrack == "sequence" || S.sequence != null && S.sequence.epoch > 0);
             var b = reading ? ZhouReadingNote : ZhouStageNote(stage);
             if (b == null) return null;
-            if (S.zhouKnows)
-                return new XgZhouStageNote { stage = stage, zh = b.zh + "你那个东西现在：" + ZhouLabLine(false) + "。", en = b.en + " Your thing right now: " + ZhouLabLine(true) + ".", replies = b.replies };
-            switch (stage)
-            {
-                case 2: return Note(2, b.zh + "……你这才几天，就到这一步了？我当年看懂" + (reading ? "循环网络" : "卷积") + "花了一个学期。", b.en + " …You got here in a few days? " + (reading ? "Recurrent networks" : "Convolution") + " took me a whole term.", b.replies);
-                case 3: return Note(3, b.zh + "……说真的，你这进度不像自学的。", b.en + " …Honestly, this doesn't look self-taught.",
-                    b.replies[0],
-                    R("就是自学的", "It's all self-taught", "行吧，你说是就是。", "Fine. If you say so.", "", ZhouDoubtUp),
-                    R("其实……电脑里有个东西在自己学", "Actually… something on my computer is learning by itself", "啥？", "What?", "confess1"));
-                case 4: return Note(4, b.zh + "你那个模型连 RNN 都上了？我们师弟还在调 CNN。", b.en + " Your model's on RNNs already? Our first-year is still tuning a CNN.",
-                    b.replies[0],
-                    R("我查了很多资料", "I read up a lot", "查资料能查这么快？……算了，不问了。", "Reading gets you this fast? …Never mind, I won't ask.", "", ZhouDoubtUp),
-                    R("老实说，不是我一个人在弄", "Honestly, it's not just me doing this", "嗯？", "Hm?", "confess1"));
-                case 5: return Note(5, b.zh + "……我不问了。你不想说，就不说。", b.en + " …I'll stop asking. If you don't want to say, don't.", b.replies);
-                case 6: return Note(6, b.zh + "……我一直没问你。你电脑里那个，是不是早就不是你在教它了？", b.en + " …I never asked. That thing on your computer: you stopped being the one teaching it a while ago, didn't you?",
-                    R("是。它一直在自己学", "Yes. It's been learning on its own", "……我就知道。最后那步，你陪它走完。", "…I knew it. Walk the last step with it.", "", ZhouTold),
-                    R("我也说不清", "I can't really explain", "那就别说了，走完再说。", "Then don't. Finish first.", "", ZhouDoubtUp),
-                    R("你想多了", "You're overthinking it", "可能吧。……加油。", "Maybe. …Good luck.", "", ZhouDoubtUp));
-                default: return b;
-            }
+            string[] zh = { "", "先教题目，再看它怎样学。", "同一个东西挪个位置，它为什么就不认识？", "多练不一定更好。我需要区分记住答案和学会规律。", "读一句话，要记住前面的意思。", "面对一句长话，先找出真正重要的部分。", "走到这里，我想重新看看：它到底学到了什么？" };
+            string[] en = { "", "Teach examples, then watch it learn.", "Why does moving the same object confuse it?", "More training is not always better. Separate memorizing answers from learning patterns.", "Reading a sentence means remembering what came before.", "Find what matters in a long sentence.", "Now I want to look back: what has it actually learned?" };
+            int n = Math.Max(1, Math.Min(6, stage));
+            return Note(stage, reading ? "同一句话换个词序，意思为什么变了？我得让它记住前面读过什么。" : zh[n],
+                reading ? "Why does changing the word order change the meaning? It needs to remember what came before." : en[n],
+                R("看看当前卡在哪里", "Review the current obstacle",
+                    reading ? "试试循环网络，把前面读过的意思带到下一个词，再用新句子验证。" : "记下观察，再用新题验证。",
+                    reading ? "Try a recurrent network: carry earlier meaning to the next word, then test fresh sentences." : "Note the observation, then test fresh questions."),
+                R("整理一下我的猜想", "Organize my hypothesis", "先问自己三个问题。", "Three questions for myself.", "confess1"),
+                R("先记下来", "Save this note", "不急着下结论。", "No need to jump to a conclusion.", "", ZhouDoubtUp));
         }
 
         /// <summary>A stage note was shown: until he is told, every note from stage 2 to 5 is one more thing he noticed.</summary>
         public void ZhouStageShown(int stage)
         {
-            if (!S.zhouKnows && stage >= 2 && stage <= 5) S.zhouDoubt++;
+            // Legacy doubt/knowledge flags remain serialized, but never grant an NPC knowledge of the application.
+            if (stage >= 2 && stage <= 5) S.selfStudyReflections++;
         }
 
         /// <summary>The confession, step by step. Null for an unknown id.</summary>
@@ -285,37 +263,12 @@ namespace LingGuangV05.XingGuang
         {
             switch (id)
             {
-                case "confess1": return new XgZhouNode
-                {
-                    id = id, zh = "啥意思？你电脑里有啥？", en = "Meaning what? What's on your computer?",
-                    replies = new[]
-                    {
-                        R("它没人教，自己在长", "Nobody teaches it. It grows by itself", "", "", "confess2"),
-                        R("你来看一眼就知道", "You'd see if you looked", "", "", "confess2"),
-                        R("算了，当我没说", "Forget it, I said nothing", "……行。哪天想说了再说。", "…OK. Tell me when you want to.", "", ZhouDoubtUp),
-                    },
-                };
-                case "confess2": return new XgZhouNode
-                {
-                    id = id, zh = "别逗了，程序哪会自己学。是不是中病毒了？", en = "Come on. Programs don't learn by themselves. Got a virus?",
-                    replies = new[]
-                    {
-                        R("它会回我的话", "It talks back to me", "", "", "confess3"),
-                        R("它考过了我没教过的题", "It passed questions I never taught it", "", "", "confess3"),
-                        R("我也不信，可它就是在学", "I didn't believe it either, but it is learning", "", "", "confess3"),
-                    },
-                };
-                case "confess3": return new XgZhouNode
-                {
-                    id = id, zh = "……你截个图我看看。", en = "…Send me a screenshot.",
-                    replies = new[]
-                    {
-                        R("（发去一张截图）", "(Send a screenshot)", "……这不是你写的。行，我信一半。以后它卡在哪你直接跟我说，我按它的情况给你出主意。",
-                            "…You didn't write this. Fine, I half believe you. From now on tell me where it's stuck and I'll go by what it's actually doing.", "", ZhouTold),
-                        R("还是算了", "Never mind", "……行。哪天想说再说。", "…OK. Tell me when you want to.", "", ZhouDoubtUp),
-                        R("你别告诉别人", "Don't tell anyone", "我能告诉谁？贴吧那帮人？……截图呢？", "Who would I tell? The forum lot? …Where's the screenshot?", "confess3"),
-                    },
-                };
+                case "confess1": return new XgZhouNode { id = id, zh = "我的猜想：它在记答案，还是学规律？", en = "My hypothesis: memorizing answers, or learning patterns?", replies = new[] {
+                    R("换一道没教过的题", "Try an unseen question", "", "", "confess2"), R("把图片挪一个位置", "Move the image", "", "", "confess2"), R("先记住这个疑问", "Keep the question open", "晚点再验证。", "Test it later.", "", ZhouDoubtUp) } };
+                case "confess2": return new XgZhouNode { id = id, zh = "我的观察：只看一次回答还不够。", en = "My observation: one answer is not enough evidence.", replies = new[] {
+                    R("用同一批新题比较", "Compare the same fresh questions", "", "", "confess3"), R("记录它答错的地方", "Record its mistakes", "", "", "confess3"), R("先保留另一种解释", "Keep an alternative explanation", "", "", "confess3") } };
+                case "confess3": return new XgZhouNode { id = id, zh = "下一步：把猜想和证据分开记。", en = "Next: record hypotheses and evidence separately.", replies = new[] {
+                    R("保存这条复盘", "Save this reflection", "这是我的记录，先不下定论。", "My private notes, not a final conclusion.", "", ZhouTold), R("还需要验证", "Still needs testing", "留给下一批题。", "Leave it for the next batch.", "", ZhouDoubtUp), R("回看观察方法", "Review the method", "", "", "confess2") } };
                 default: return null;
             }
         }
@@ -323,8 +276,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>What an answer does to him. True when this answer made him believe it (the first time).</summary>
         public bool ZhouApply(string effect)
         {
-            if (effect == ZhouDoubtUp) { if (!S.zhouKnows) S.zhouDoubt++; return false; }
-            if (effect == ZhouTold && !S.zhouKnows) { S.zhouKnows = true; return true; }
+            if (effect == ZhouDoubtUp) { S.selfStudyReflections++; return false; }
+            if (effect == ZhouTold && !S.selfStudyResolved) { S.selfStudyResolved = true; return true; }
             return false;
         }
 
@@ -344,9 +297,13 @@ namespace LingGuangV05.XingGuang
         /// <summary>His last word when the chapter ends: to it, if he knows; the suspicion closed, if he only guessed.</summary>
         public string ZhouEndingLine(bool english)
         {
-            if (S.zhouKnows) return english ? "It made it to the end? …Tell it from me: well done." : "它走到最后了？……替我跟它说一声，辛苦了。";
-            if (S.zhouDoubt > 0) return english ? "I guessed long ago. You never said, so I'll act like I don't know. …Impressive, though." : "我早猜到了。你不说，我就当不知道。……不过，挺厉害的。";
-            return english ? "Heard you finished? You owe me dinner." : "听说你弄完了？请我吃饭。";
+            return english ? "I kept the observations. It reached this point, and I was here to see it." : "观察都记下来了。它走到了这里，而我一直在场。";
+        }
+
+        public string SelfStudyStatus(XgGuideStep step, bool english)
+        {
+            string what = ZhouWhat(step, english), why = ZhouWhy(step, english);
+            return (english ? "My observation: " : "我的观察：") + ZhouLabLine(english) + "\n" + what + (why.Length > 0 ? "\n" + why : "");
         }
 
         public const string ZhouEndingKey = "zhou.ending";

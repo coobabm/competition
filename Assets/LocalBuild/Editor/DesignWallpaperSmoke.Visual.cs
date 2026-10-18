@@ -24,7 +24,8 @@ public static partial class DesignWallpaperSmoke
                 + " speed=" + animator.speed + " mode=" + animator.updateMode
                 + " normalized=" + (animator.runtimeAnimatorController != null ? animator.GetCurrentAnimatorStateInfo(0).normalizedTime : -1));
         var brain = Object.FindAnyObjectByType<XgBrainWallpaper>();
-        data.AppendLine("BRAIN visible=" + brain.Reveal.Visible + " age=" + brain.Reveal.Age + " opacity=" + brain.Reveal.Opacity);
+        if (brain == null) data.AppendLine("BRAIN absent: no active purchased brain window");
+        else data.AppendLine("BRAIN visible=" + brain.Reveal.Visible + " age=" + brain.Reveal.Age + " opacity=" + brain.Reveal.Opacity);
         foreach (var graphic in bridge.sourceCanvas.GetComponentsInChildren<Graphic>(false))
         {
             data.AppendLine("GRAPHIC " + VisualPath(graphic.transform) + " type=" + graphic.GetType().Name

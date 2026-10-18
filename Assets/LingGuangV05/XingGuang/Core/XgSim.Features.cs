@@ -18,6 +18,8 @@ namespace LingGuangV05.XingGuang
         public bool FeatureVisible(string feature)
         {
             bool migrated = S.migratedBeats.Count > 0;
+            if (S.teachingFlow && feature == "tree") return TeachingTreeOpen;
+            if (S.teachingFlow && feature == "train") return TeachingTrainOpen;
             if (S.openingFocus && OpeningLocksFeature(feature)) return false;
             switch (feature)
             {

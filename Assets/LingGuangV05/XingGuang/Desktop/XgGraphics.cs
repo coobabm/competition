@@ -19,6 +19,9 @@ namespace LingGuangV05.Desktop.XingGuang
         Color ceilingColor = BestColor;
         float highlight;
         bool lossMode;
+        bool rangeDirty, pendingGeometry;
+        float nextDraw;
+        public int MeshBuilds { get; private set; }
         /// <summary>Draws a red dot on every round that went back (the training page).</summary>
         public bool MarkDrops;
         static readonly Color DropColor = new Color32(226, 75, 74, 255);
@@ -27,10 +30,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public int Capacity = 160;
 
         /// <summary>The model's ceiling as a dashed line (an accuracy; 0 = none). Set before <see cref="SetData"/> so the range includes it.</summary>
-        public void SetCeiling(float acc, Color color) { ceiling = acc; ceilingColor = color; }
+        public void SetCeiling(float acc, Color color) { if (ceiling != acc || ceilingColor != color) rangeDirty = true; ceiling = acc; ceilingColor = color; }
 
         public void SetData(List<float> trainAcc, List<float> valAcc, float bestAcc, bool simulatedLoss = false)
         {
+            if (!rangeDirty && lossMode == simulatedLoss && best == (simulatedLoss ? 0 : bestAcc)
+                && SameSeries(train, trainAcc, simulatedLoss) && SameSeries(val, valAcc, simulatedLoss)) return;
+            rangeDirty = false;
             lossMode = simulatedLoss;
             train.Clear(); foreach (float v in trainAcc) train.Add(lossMode ? -Mathf.Log(Mathf.Max(.0001f, v)) : v);
             val.Clear(); foreach (float v in valAcc) val.Add(lossMode ? -Mathf.Log(Mathf.Max(.0001f, v)) : v);
@@ -47,16 +53,36 @@ namespace LingGuangV05.Desktop.XingGuang
             Max = Mathf.Ceil((hi + span * .1f) * 100) / 100;
             if (!lossMode) { Min = Mathf.Clamp01(Min); Max = Mathf.Clamp01(Max); }
             if (Max - Min < .02f) Min = Mathf.Max(0, Max - .02f);
-            SetVerticesDirty();
+            RequestRedraw();
+        }
+
+        static bool SameSeries(List<float> current, List<float> source, bool loss)
+        {
+            if (source == null || current.Count != source.Count) return false;
+            for (int i = 0; i < current.Count; i++)
+                if (current[i] != (loss ? -Mathf.Log(Mathf.Max(.0001f, source[i])) : source[i])) return false;
+            return true;
+        }
+        void RequestRedraw()
+        {
+            pendingGeometry = true;
+            if (!GamePerformance.Low) { pendingGeometry = false; SetVerticesDirty(); }
         }
 
         float Ceiling() => lossMode ? -Mathf.Log(Mathf.Max(.0001f, ceiling)) : ceiling;
 
-        public void PulseLastSegment(float amount) { highlight = Mathf.Clamp01(amount); SetVerticesDirty(); }
-        void Update() { if (highlight <= 0) return; highlight = Mathf.Max(0, highlight - Time.unscaledDeltaTime * 1.5f); SetVerticesDirty(); }
+        public void PulseLastSegment(float amount) { highlight = Mathf.Clamp01(amount); RequestRedraw(); }
+        void Update()
+        {
+            if (highlight > 0) { highlight = Mathf.Max(0, highlight - Time.unscaledDeltaTime * 1.5f); RequestRedraw(); }
+            if (!pendingGeometry || Time.unscaledTime < nextDraw) return;
+            nextDraw = Time.unscaledTime + (GamePerformance.Low ? .1f : 0);
+            pendingGeometry = false; SetVerticesDirty();
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
+            MeshBuilds++;
             vh.Clear();
             var r = GetPixelAdjustedRect();
             if (r.width <= 1 || r.height <= 1) return;

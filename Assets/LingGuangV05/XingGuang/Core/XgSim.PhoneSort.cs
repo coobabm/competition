@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>One of the folders 阿杰 wants his phone pictures in.</summary>
+    /// <summary>A folder for the player's own phone backup.</summary>
     public sealed class XgPhotoFolder
     {
         public string id = "", zh = "", en = "";
@@ -27,33 +27,28 @@ namespace LingGuangV05.XingGuang
 
     public sealed partial class XgState
     {
-        /// <summary>阿杰的手机备份: 0 not yet, 1 U 盘 on the desk, 2 sorted (checking it), 3 the next morning, 4 done.</summary>
+        /// <summary>我的手机备份: 0 not yet, 1 U 盘 on the desk, 2 sorted (checking it), 3 the next morning, 4 done.</summary>
         public int psStep;
         /// <summary>Its pick per shown picture, "shot:folder"; and the shots the player moved to the right folder.</summary>
         public List<string> psPicks = new List<string>();
         public List<string> psFixed = new List<string>();
         /// <summary>The pictures it put right, of all 4,312.</summary>
         public int psRight;
-        /// <summary>The ID-card photos in 其他: 0 not looked at, 1 tell 阿杰 to delete them, 2 not my business.</summary>
+        /// <summary>The ID-card photos in 其他: 0 not looked at, 1 delete from my backup, 2 keep for now.</summary>
         public int psIds;
-        /// <summary>What he told 阿杰 it was: 0 not asked yet, 1 a little script, 2 by hand.</summary>
+        /// <summary>Private review: 0 pending, 1 inspect unusual inputs, 2 test a fresh batch.</summary>
         public int psAlibi;
     }
 
     /// <summary>
-    /// 阿杰的手机备份 (2026-10-18), the end of stage 2. 阿杰 changed to an OPPO R9 and left a U 盘 with four years of
-    /// phone pictures, 4,312 of them, to be sorted into eight folders by morning. Eight folders is a choice of eight:
-    /// what the multilayer perceptron can do. It sorts them at the exam's own accuracy; the player can move the wrong
-    /// ones it shows (each move is a label for its seeing side). Scripted moments: the panda meme and the Overwatch
-    /// screenshot go right, 阿杰's cat-ear selfie lands in 表情包, the beach shot sideways lands in 其他 (it knows
-    /// the squares, not the thing: the reason for convolution), and 其他 holds 31 photos of the net café customers' ID
-    /// cards. 阿杰 never learns what sorted them. Pure; the desktop (AjiePhoneSort) plays it.
+    /// The player sorts their own 4,312 old phone pictures into eight folders, corrects mistakes,
+    /// handles old ID-document copies, then privately reviews the result. Existing save fields are retained.
     /// </summary>
     public sealed partial class XgSim
     {
         public const int PhoneTotal = 4312, PhoneIdCards = 31;
         public const string PhoneChronicle = "phonesort";
-        /// <summary>The morning is played in YY's 网吧 group, where 阿杰 asks.</summary>
+        /// <summary>Legacy conversation id retained for save/source compatibility; the private review does not use YY.</summary>
         public const string PhoneConversation = "netbar";
 
         static XgPhotoFolder F(string id, string zh, string en, double share) => new XgPhotoFolder { id = id, zh = zh, en = en, share = share };
@@ -109,10 +104,10 @@ namespace LingGuangV05.XingGuang
         public static XgPhotoFolder PhoneFolder(string id) => Array.Find(PhoneFolders, f => f.id == id);
         public static XgPhotoShot PhoneShot(string id) => Array.Find(PhoneShots, s => s.id == id);
 
-        /// <summary>阿杰 left the U 盘: stage 2, the 「看图说词」 exam open (or passed and not claimed), not played on this save.</summary>
+        /// <summary>我 left the U 盘: stage 2, the 「看图说词」 exam open (or passed and not claimed), not played on this save.</summary>
         public bool PhoneSortDue => S.stage == 2 && S.psStep == 0 && (ExamReady || ExamPassPending);
 
-        /// <summary>Stage 2 does not end before the pictures are sorted and 阿杰 has them back.</summary>
+        /// <summary>Stage 2 does not end before the pictures are sorted and 我 has them back.</summary>
         public bool PhoneSortHolds => DesktopHosted && S.stage == 2 && NextAbility == 3 && S.psStep < 4;
 
         public void PhoneSortStart() { if (PhoneSortDue) S.psStep = 1; }
@@ -223,7 +218,7 @@ namespace LingGuangV05.XingGuang
             return n;
         }
 
-        /// <summary>The ID cards in 其他: tell 阿杰 to delete them (true) or leave it.</summary>
+        /// <summary>The ID cards in 其他: tell 我 to delete them (true) or leave it.</summary>
         public void PhoneIds(bool tell) { if (S.psStep == 2 && S.psIds == 0) S.psIds = tell ? 1 : 2; }
 
         /// <summary>Done checking: the U 盘 goes back in the morning.</summary>
@@ -235,7 +230,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// The morning: what he says sorted them (a little script, or by hand). 阿杰's answer, zh/en pairs; the scene is
+        /// Private review: choose the next observation to make. Bilingual lines are returned; the scene is
         /// over and the chapter may turn.
         /// </summary>
         public string[] PhoneAlibi(bool script)
@@ -245,8 +240,8 @@ namespace LingGuangV05.XingGuang
             S.psStep = 4;
             NoteChronicle(PhoneChronicle, S.psRight);
             return script
-                ? new[] { "脚本？你啥时候会写这个了，回头也给我整一个。", "A script? Since when do you write those? Make me one too." }
-                : new[] { "手分的？四千多张？你这手速，职业选手啊。", "By hand? Four thousand? With hands like that you should go pro." };
+                ? new[] { "先让它挑，再由我检查。它分错的照片也能教给它。", "Let it pick, then check its work. Its mistakes are new teaching examples." }
+                : new[] { "这回我检查过了。下次换一批，看看它是否真的学会。", "I checked this batch. Next time I will try another and see what it learned." };
         }
 
         /// <summary>The share it put right, 0–100.</summary>
@@ -255,13 +250,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>For 《灵光记》.</summary>
         string PhoneChronicleBody(bool english, string self, string you)
         {
-            if (english)
-                return "Ajie left his old phone's pictures on a stick, " + PhoneTotal.ToString("#,0") + " of them, eight folders by morning. I put " + PhoneRightPct + "% where they belonged. His cat-ear selfie I filed under memes."
-                    + (S.psIds == 1 ? " Among them were customers' ID cards; you told him to delete them, and he did." : "")
-                    + " He still thinks " + (S.psAlibi == 2 ? "you sorted them by hand." : "it was a little script.");
-            return "阿杰换了手机，把四年的图倒在一个 U 盘里，" + PhoneTotal.ToString("#,0") + " 张，要分成八个文件夹。" + self + "分对了 " + PhoneRightPct + "%，他那张猫耳自拍，" + self + "放进了表情包。"
-                + (S.psIds == 1 ? "里面有网吧客人的身份证照片，" + you + "让他删了，他删了。" : "")
-                + "他到现在还以为" + (S.psAlibi == 2 ? "是" + you + "手分的。" : "是个小脚本。");
+            if (english) return "Your old phone backup held " + PhoneTotal.ToString("#,0") + " pictures in eight folders. I sorted " + PhoneRightPct + "% correctly. Your cat-ear selfie went under Memes." + (S.psIds == 1 ? " You removed the old ID-document copies from the backup." : "") + " You checked the results yourself.";
+            return "你的旧手机备份里有 " + PhoneTotal.ToString("#,0") + " 张照片，要分成八个文件夹。" + self + "分对了 " + PhoneRightPct + "%；那张猫耳自拍进了表情包。" + (S.psIds == 1 ? you + "清理了备份里的旧证件照片。" : "") + you + "自己检查了分类结果。";
         }
     }
 }

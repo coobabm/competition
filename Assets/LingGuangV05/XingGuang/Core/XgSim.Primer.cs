@@ -34,15 +34,15 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// The opening's inner-voice lines due now (each once per save; empty outside the opening focus). The desktop asks
-        /// every frame and says what comes back.
+        /// at most twice per second for legacy saves; StageOneTutor owns the twelve-question opening.
         /// </summary>
-        public List<XgVoiceLine> OpeningVoice()
+        public IReadOnlyList<XgVoiceLine> OpeningVoice()
         {
-            var lines = new List<XgVoiceLine>();
-            if (!S.openingFocus || S.stage != 1) return lines;
+            if (S.teachingFlow || !S.openingFocus || S.stage != 1) return System.Array.Empty<XgVoiceLine>();
             double cards = Labels(XgMemes.SenseDesk);
             if (!S.openingVoiceWhat && cards >= 1)
             {
+                var lines = new List<XgVoiceLine>(2);
                 S.openingVoiceWhat = true;
                 lines.Add(new XgVoiceLine("……这都是干什么的？", "…What is all this for?", 1.8f));
                 lines.Add(new XgVoiceLine("让我给一个程序判对错？", "I'm supposed to mark a program right or wrong?", 2.2f));
@@ -50,17 +50,20 @@ namespace LingGuangV05.XingGuang
             }
             if (S.openingVoiceWhat && !S.openingVoiceTrain && cards >= XgCatalog.SamplesToTrain)
             {
+                var lines = new List<XgVoiceLine>(1);
                 S.openingVoiceTrain = true;
                 lines.Add(new XgVoiceLine("还要“训练”？训练什么……它又不是狗。", "Now \"train\" it? Train what… it's not a dog.", 2.6f));
                 return lines;
             }
             if (!S.openingVoiceGlimpse && YesNoAccuracy > .52)
             {
+                var lines = new List<XgVoiceLine>(2);
                 S.openingVoiceGlimpse = true;
                 lines.Add(new XgVoiceLine("……刚才还是瞎蒙的。现在好像对得多了点？", "…It was guessing a moment ago. Now it gets a few more right?", 2.8f));
                 lines.Add(new XgVoiceLine("……它能学？", "…It can learn?", 2f));
+                return lines;
             }
-            return lines;
+            return System.Array.Empty<XgVoiceLine>();
         }
 
         /// <summary>How many of the primer's six chapters show their title: one per ability it has learned (the first once its yes/no is learned).</summary>

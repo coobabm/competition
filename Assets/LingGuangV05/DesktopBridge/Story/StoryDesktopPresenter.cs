@@ -69,7 +69,7 @@ namespace LingGuangV05.Desktop.Story
         public bool ReduceMotion { get { return PlayerPrefs.GetInt(ReduceMotionPref, 0) == 1; } }
         public bool CutscenePlaying { get { return cutsceneRoutine != null; } }
         /// <summary>Shares the established cutscene/prologue/hologram gate with desktop message delivery.</summary>
-        public bool NotificationsHeld => OpeningSequence.FirstLessonActive || InnerVoiceHeld();
+        public bool NotificationsHeld => StoryFocus.Exclusive || OpeningSequence.FirstLessonActive || InnerVoiceHeld();
 
         PrologueDirector prologueForVoice;
         LingGuangV05.Desktop.XingGuang.XgHoloCard holoForVoice;
@@ -90,7 +90,7 @@ namespace LingGuangV05.Desktop.Story
         }
 
         private void OnEnable() { GameText.Changed += RefreshLocalizedText; RefreshLocalizedText(); }
-        private void OnDisable() { GameText.Changed -= RefreshLocalizedText; }
+        private void OnDisable() { StoryFocus.ReleaseNotification(toasts,Time.unscaledTimeAsDouble); GameText.Changed -= RefreshLocalizedText; }
 
         bool shellPrepared;
         private void Start() => PrepareDesktopShell();
@@ -155,7 +155,7 @@ namespace LingGuangV05.Desktop.Story
             {
                 director.Rebound += OnStoryRebound;
                 // The setup (naming it, then its first 是 / 否) is on screen too: the month card must not cover it.
-                director.ExternalBusy = () => OpeningSequence.FirstLessonActive || CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
+                director.ExternalBusy = () => LingGuangV05.Desktop.XingGuang.XgStageCurtain.Busy || OpeningSequence.FirstLessonActive || CutscenePlaying || SetupShowing() || BankruptcyEnding.Playing || AutoLabelEpiphany.Playing || AiJoinsYy.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.XgResidentSpider.IntroPlaying;
                 director.SetOutput(this);
             }
         }
@@ -494,7 +494,7 @@ namespace LingGuangV05.Desktop.Story
         {
             chatQueue.Clear(); chatDueAt = -1;
             toasts.Clear();
-            if (toastRoutine != null) { StopCoroutine(toastRoutine); toastRoutine = null; }
+            if (toastRoutine != null) { StoryFocus.ReleaseNotification(toasts,Time.unscaledTimeAsDouble);StopCoroutine(toastRoutine); toastRoutine = null; }
             if (toastGroup != null) { toastGroup.alpha = 0; toastGroup.blocksRaycasts = false; }
             HideAll();
         }
@@ -565,18 +565,19 @@ namespace LingGuangV05.Desktop.Story
             while (toasts.Count > 0)
             {
                 // A toast waits out a story moment instead of covering it (StoryFocus).
-                while (StoryFocus.Active) yield return null;
+                while (!StoryFocus.TakeNotification(toasts,Time.unscaledTimeAsDouble)) yield return null;
                 var item = toasts.Dequeue();
                 SetText(toastText, item.Key);
-                Action click = item.Value;
+                Action click = item.Value;bool toastClosed=false;
                 toastButton.onClick.RemoveAllListeners();
-                toastButton.onClick.AddListener(() => { if (click != null) click(); toastGroup.alpha = 0; });
+                toastButton.onClick.AddListener(() => { toastClosed=true;if (click != null) click(); toastGroup.alpha = 0; });
                 toastGroup.blocksRaycasts = true;
                 yield return Fade(toastGroup, 1, .3f);
                 float hold = 4f;
-                while (hold > 0 && toastGroup.alpha > 0) { hold -= Time.unscaledDeltaTime; yield return null; }
+                while(hold>0&&!toastClosed){if(StoryFocus.Exclusive){toastGroup.alpha=0;toastGroup.blocksRaycasts=false;yield return null;continue;}toastGroup.alpha=1;toastGroup.blocksRaycasts=true;hold-=Time.unscaledDeltaTime;yield return null;}
                 yield return Fade(toastGroup, 0, .3f);
                 toastGroup.blocksRaycasts = false;
+                StoryFocus.ReleaseNotification(toasts,Time.unscaledTimeAsDouble);
             }
             toastRoutine = null;
         }
@@ -597,6 +598,7 @@ namespace LingGuangV05.Desktop.Story
                 case "TimeSkip":
                     int stage;
                     if (!int.TryParse(command.Arg("stage", "1"), out stage)) stage = 1;
+                    if(stage>1){Complete(ref cutsceneDone);break;}
                     cutsceneRoutine = StartCoroutine(TimeSkip(stage, command.Text ?? "", LineText(command.Arg("subKey"))));
                     break;
                 case "Emerge":

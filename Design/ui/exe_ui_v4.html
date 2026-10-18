@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>len.exe 界面设计稿 v4</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#06080C;
+  --g1:rgba(255,255,255,.035); --g2:rgba(255,255,255,.06); --g3:rgba(255,255,255,.10);
+  --hair:rgba(255,255,255,.07); --hair2:rgba(255,255,255,.13);
+  --ink:#F2F4F7; --ink2:rgba(232,238,244,.62); --ink3:rgba(232,238,244,.34);
+  --mint:#5FE3B5; --mint2:#22A37C; --pur:#A594FF; --blu:#6AB8FF; --amb:#F2C46D; --red:#FF7A6E;
+  --ui:"HarmonyOS Sans SC","MiSans","PingFang SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --num:"SF Pro Display","Inter","Segoe UI Variable Display","DIN Alternate","Bahnschrift","Segoe UI",sans-serif;
+  --spring:cubic-bezier(.3,1.5,.5,1);
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#020305}
+body{font-family:var(--ui);color:var(--ink);font-size:13px;-webkit-font-smoothing:antialiased;letter-spacing:.01em}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:disabled{cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid rgba(95,227,181,.7);outline-offset:2px}
+input{font:inherit;color:var(--ink)}
+.n{font-family:var(--num);font-variant-numeric:tabular-nums}
+.amb{color:var(--amb)} .grn{color:var(--mint)} .red{color:var(--red)} .blu{color:var(--blu)} .dim{color:var(--ink3)}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* press feel: spring scale on every control */
+.btn2,.tab,.job,.yn,.op4 button,.lro,.seg button,.eq,.bbtn,.schip,.sub9 button,.exam,.tgl,.zm button,.drow button,.book .btn2,.talk,.px{transition:transform .22s var(--spring),background-color .15s,box-shadow .15s,color .15s}
+.btn2:active:not(:disabled),.tab:active:not(:disabled),.job:active,.yn:active,.op4 button:active,.lro:active,.seg button:active,.eq:active,.bbtn:active:not(:disabled),.schip:active,.sub9 button:active,.exam:active,.tgl:active,.zm button:active,.drow button:active:not(:disabled),.talk:active,.px:active{transform:scale(.95);transition-duration:.06s}
+.tbtn:active{transform:scale(.985)}
+.pressfx{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%);transform:translate(-50%,-50%) scale(.2);animation:pfx .45s ease-out forwards;z-index:60}
+@keyframes pfx{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:960px;overflow:hidden;transform-origin:center center;
+  background:radial-gradient(50% 40% at 72% 8%,rgba(150,215,245,.38),transparent 70%),repeating-linear-gradient(102deg,rgba(255,255,255,.03) 0 26px,transparent 26px 88px),linear-gradient(180deg,#2f7fb0,#165a86 45%,#0a2f4d)}
+.dicons{position:absolute;left:10px;top:20px;display:grid;gap:22px;z-index:1}
+.dico{width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;font:13px "Microsoft YaHei",sans-serif;text-shadow:0 1px 3px #000;padding:4px;border:1px solid transparent;border-radius:3px}
+.dico:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)}
+.dico svg{width:48px;height:48px}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(rgba(60,100,140,.9),rgba(18,40,64,.97));border-top:1px solid rgba(255,255,255,.3);display:flex;align-items:center;gap:6px;padding:0 10px;color:#e6eef7;font:12px "Segoe UI","Microsoft YaHei",sans-serif;z-index:12}
+.taskbar .start{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#9cd8ff,#2470b8 60%,#0c3d6e);box-shadow:0 0 8px rgba(140,200,255,.6)}
+.taskbar .tk{min-width:56px;height:38px;padding:0 10px;border-radius:4px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#e6eef7}
+.taskbar .tk.on{background:rgba(255,255,255,.22)}
+.taskbar .tk.blink{animation:tkb .8s ease-in-out 4}
+@keyframes tkb{50%{background:rgba(255,170,60,.6)}}
+.taskbar .ready{margin-left:auto;display:flex;align-items:center;gap:6px;margin-right:18px}
+.taskbar .ready i{width:8px;height:8px;border-radius:50%;background:#4be08f}
+.taskbar .clk{text-align:center;line-height:1.3;font-size:13px}
+
+/* ===== exe window ===== */
+.win{position:absolute;left:118px;top:8px;width:1474px;height:898px;display:grid;grid-template-rows:32px 84px 1fr;z-index:3;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 24px 70px rgba(0,0,0,.6);
+  background:radial-gradient(900px 520px at 12% -12%,rgba(95,227,181,.09),transparent 70%),radial-gradient(900px 560px at 100% -10%,rgba(165,148,255,.08),transparent 70%),radial-gradient(1200px 700px at 60% 120%,rgba(106,184,255,.05),transparent 70%),var(--bg)}
+.tbar{display:flex;align-items:center;gap:10px;padding:0 4px 0 16px;font-size:12px;color:var(--ink3)}
+.tbar .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.tbar b{color:var(--ink2);font-weight:500}
+.tbar .ctl{margin-left:auto;display:flex}
+.tbar .ctl span{width:42px;height:28px;display:grid;place-items:center;color:var(--ink3)}
+.hud{display:grid;grid-template-columns:230px 1fr auto auto auto;align-items:center;gap:40px;padding:0 30px 0 26px}
+.me{display:flex;align-items:center;gap:14px}
+.orb{width:46px;height:46px;border-radius:50%;flex:none;background:radial-gradient(circle at 36% 30%,#f2fff9 0,#8ff0c8 14%,#2fb38a 44%,#0b3a2c 78%,#02120c 100%);box-shadow:0 0 28px rgba(95,227,181,.38),0 0 0 1px rgba(255,255,255,.08)}
+.orb.pulse{animation:opulse .5s ease-out}
+@keyframes opulse{40%{transform:scale(1.12);box-shadow:0 0 40px rgba(95,227,181,.7)}}
+.me b{display:block;font-size:19px;font-weight:600;letter-spacing:.02em}
+.me small{color:var(--ink3);font-size:12px}
+.hbt{font-size:12px;color:var(--ink3);margin-bottom:8px}
+.hbt b{color:var(--ink);font-weight:600;font-size:13px;margin-left:4px}
+.hbr{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.mb{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;font-size:12px;color:var(--ink3)}
+.mt{height:5px;border-radius:3px;background:rgba(255,255,255,.07);position:relative;overflow:hidden;display:block}
+.mt i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+i.pur{background:linear-gradient(90deg,#7F6BFF,#C8BEFF)} i.blu{background:linear-gradient(90deg,#3E95F0,#A9D6FF)} i.mnt{background:linear-gradient(90deg,#22A37C,#8ff0c8)}
+.mv{color:var(--ink2);font-size:13px}
+.slots{display:flex;align-items:center;gap:6px}
+.slots i{width:30px;height:30px;border-radius:9px;background:var(--g1);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--ink3);box-shadow:inset 0 0 0 1px var(--hair)}
+.slots i.on{background:rgba(106,184,255,.16);color:#cfe6ff;font-weight:600;box-shadow:inset 0 0 0 1px rgba(106,184,255,.35)}
+.led{display:flex;gap:30px}
+.led div{text-align:right}
+.led small,.dt small{display:block;font-size:11px;color:var(--ink3);margin-bottom:2px}
+.led b{font-size:22px;font-weight:300;letter-spacing:-.01em}
+.dt{text-align:right} .dt b{font-size:15px;font-weight:400;color:var(--ink2)}
+.schip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--g1);box-shadow:inset 0 0 0 1px var(--hair);color:var(--ink3);font-size:12px}
+.schip b{color:var(--ink2);font-weight:500}
+.schip .n{color:var(--amb)}
+.schip:hover{background:var(--g2)}
+.schip svg{width:13px;height:13px}
+
+/* narrow sidebar, four tabs share the height evenly */
+.body{display:grid;grid-template-columns:112px 1fr;min-height:0}
+.pet{border-radius:16px;background:var(--g1);box-shadow:inset 0 0 0 1px var(--hair);padding:10px 6px 8px;display:grid;justify-items:center;gap:6px;text-align:center}
+.pet .pi{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--ink2);transition:transform .3s var(--spring)}
+.pet.out .pi{color:var(--amb);background:rgba(242,196,109,.12);transform:translateY(-2px)}
+.pet .pi svg{width:20px;height:20px}
+.pet small{font-size:10px;color:var(--ink3);line-height:1.3}
+.pet button{width:100%;height:26px;border-radius:999px;background:var(--g2);font-size:11px;color:var(--ink);transition:transform .22s var(--spring),background-color .15s}
+.pet button:active{transform:scale(.94)}
+.side{display:grid;grid-template-rows:1fr auto auto;gap:12px;padding:4px 10px 14px 12px;min-height:0}
+.tabs{display:grid;grid-template-rows:repeat(4,1fr);gap:8px;min-height:0}
+.tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:22px;font-size:15px;font-weight:500;color:var(--ink2);text-align:center;padding:8px 4px}
+.tab .ti{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 6px 16px rgba(0,0,0,.35);transition:transform .25s var(--spring)}
+.tab .ti svg{width:22px;height:22px}
+.tab.on{background:var(--g3);color:var(--ink);box-shadow:inset 0 0 0 1px var(--hair)}
+.tab.on .ti{transform:scale(1.06)}
+.tab:not(.lock):not(.on):hover{background:var(--g1)}
+.tab .cnt{position:absolute;top:calc(50% - 46px);right:18px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--amb);color:#1a1205;font-size:11px;font-weight:700;font-family:var(--num);display:grid;place-items:center}
+.tab.lock{color:var(--ink3)}
+.tab.lock .ti{background:rgba(255,255,255,.05)!important;color:var(--ink3);box-shadow:inset 0 0 0 1px var(--hair)}
+.tab .tw{font-size:11px;line-height:1.45;color:var(--ink3);font-weight:400;max-width:80px}
+.side .tog{display:flex;justify-content:center;gap:8px}
+.side .tog button{width:38px;height:38px;border-radius:50%;background:var(--g1);color:var(--ink3);display:grid;place-items:center}
+.side .tog button.on{color:var(--ink)}
+.side .tog svg{width:16px;height:16px}
+
+main{position:relative;min-width:0;min-height:0}
+.page{position:absolute;inset:0;display:none;min-height:0;padding:4px 22px 20px 6px}
+.page.on{display:grid;animation:pgin .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes pgin{from{opacity:0;transform:translateY(8px)}}
+.pn{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border-radius:var(--r);box-shadow:inset 0 0 0 1px var(--hair),inset 0 1px 0 rgba(255,255,255,.04);position:relative;min-height:0;min-width:0;overflow:hidden}
+.ph{display:flex;align-items:center;gap:10px;height:48px;padding:0 20px;font-size:12px;color:var(--ink3)}
+.ph b{color:var(--ink);font-size:15px;font-weight:600}
+.ph .r{margin-left:auto}
+.btn2{height:30px;padding:0 14px;border-radius:999px;background:var(--g2);font-size:12px;color:var(--ink);white-space:nowrap}
+.btn2:hover{background:var(--g3)}
+.btn2:disabled{color:var(--ink3);background:var(--g1)}
+
+.seal{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:12px;cursor:pointer;color:var(--ink3);overflow:hidden;border-radius:inherit;background:rgba(255,255,255,.012)}
+.seal::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent 0 60%,rgba(95,227,181,.07) 70%,rgba(165,148,255,.07) 80%,transparent 90%);animation:spin 14s linear infinite}
+.seal::after{content:"";position:absolute;inset:1px;border-radius:inherit;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 22px),rgba(8,11,16,.78)}
+.seal>*{position:relative;z-index:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.seal .lk{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--g1);box-shadow:inset 0 0 0 1px var(--hair2);color:var(--ink2);transition:color .15s,box-shadow .15s,transform .25s var(--spring)}
+.seal .lk svg{width:14px;height:14px}
+.seal b{font-size:15px;color:var(--ink);font-weight:600;letter-spacing:.04em}
+.seal p{font-size:12px;max-width:24em;line-height:1.6}
+.seal .p{font-family:var(--num);color:var(--amb);font-size:13px;padding:3px 12px;border-radius:999px;background:rgba(242,196,109,.1)}
+.seal .p.l{color:var(--ink3);background:var(--g1);font-family:var(--ui);font-size:12px}
+.seal:hover .lk{color:var(--mint);box-shadow:inset 0 0 0 1px rgba(95,227,181,.5);transform:scale(1.08)}
+.seal.row{flex-direction:row;gap:16px;justify-content:flex-start;padding:0 22px}
+.seal.row p{text-align:left}
+.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(255,255,255,.05)}
+.seg button{flex:1;white-space:nowrap;height:30px;border-radius:9px;font-size:12px;color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:5px}
+.seg button.on{background:rgba(255,255,255,.14);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.seg button svg{width:11px;height:11px}
+
+/* 教 */
+#p-teach{grid-template-columns:270px 1fr 330px;gap:16px}
+.hl{padding:0 10px 10px;display:flex;flex-direction:column;gap:2px;overflow:auto;height:calc(100% - 48px)}
+.job{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:12px;text-align:left}
+.job:hover{background:var(--g1)}
+.job.on{background:var(--g3)}
+.job .ji{width:36px;height:36px;border-radius:10px;background:rgba(95,227,181,.12);display:grid;place-items:center;color:var(--mint)}
+.job .jn{font-size:14px;min-width:0}
+.job small{display:block;color:var(--ink3);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.job .jp{color:var(--amb);font-size:13px}
+.job.lockd{opacity:.55}
+.job.lockd .ji{color:var(--ink3);background:var(--g1)}
+.qp{display:grid;grid-template-rows:56px 1fr auto 48px}
+.qh{display:flex;align-items:center;gap:12px;padding:0 26px;font-size:13px;color:var(--ink3)}
+.qh b{color:var(--ink);font-size:15px;font-weight:600}
+.qh .r{margin-left:auto;display:flex;align-items:baseline;gap:8px}
+.qh .combo{font-family:var(--num);font-size:30px;color:var(--ink);font-weight:200;display:inline-block}
+.qh .combo.bump{animation:bump .35s var(--spring)}
+@keyframes bump{40%{transform:scale(1.35);color:var(--mint)}}
+.qh .mult{color:var(--amb);font-family:var(--num);font-size:13px}
+.qc{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;gap:22px;min-height:0;animation:qin .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes qin{from{opacity:0;transform:translateX(14px)}}
+.qt{font-size:40px;font-weight:600;text-align:center;max-width:16em;line-height:1.3;letter-spacing:.02em}
+.pg{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink2);min-height:22px}
+.pg .po{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e5fff5,#2fb38a);box-shadow:0 0 8px rgba(95,227,181,.6)}
+.pg b{color:var(--ink);font-weight:500}
+.pg .n{color:var(--ink3);font-size:13px}
+.qa2{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 40px 22px}
+.yn{height:112px;border-radius:24px;font-size:40px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:14px}
+.yn.y{color:var(--mint);background:rgba(95,227,181,.08);box-shadow:inset 0 0 0 1px rgba(95,227,181,.22)}
+.yn.x{color:var(--red);background:rgba(255,122,110,.07);box-shadow:inset 0 0 0 1px rgba(255,122,110,.2)}
+.yn.y:hover{background:rgba(95,227,181,.14)} .yn.x:hover{background:rgba(255,122,110,.12)}
+.yn.ok{background:rgba(95,227,181,.3)!important} .yn.no{background:rgba(255,122,110,.3)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+kbd{font-family:var(--num);font-size:11px;font-weight:400;opacity:.45;padding:1px 6px;border-radius:5px;box-shadow:inset 0 0 0 1px currentColor}
+.op4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 40px 22px}
+.op4 button{height:76px;border-radius:20px;font-size:28px;font-weight:500;background:var(--g1);box-shadow:inset 0 0 0 1px var(--hair2);display:flex;align-items:center;justify-content:center;gap:10px}
+.op4 button:hover{background:var(--g2)}
+.op4 button.ok{background:rgba(95,227,181,.3)} .op4 button.no{background:rgba(255,122,110,.3);animation:shake .3s}
+.digit{width:200px;height:200px;border-radius:20px;background:#030507;box-shadow:inset 0 0 0 1px var(--hair)}
+.g9{display:grid;grid-template-columns:repeat(3,108px);gap:8px}
+.tile9{height:108px;border-radius:16px;background:#030507;box-shadow:inset 0 0 0 1px var(--hair);display:grid;place-items:center;position:relative;transition:transform .2s var(--spring)}
+.tile9:active{transform:scale(.95)}
+.tile9 svg{width:62px;height:62px;stroke:#d8e4ea;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.tile9.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+.tile9.ai::before{content:"";position:absolute;left:9px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 6px var(--mint)}
+.tile9.hit{box-shadow:inset 0 0 0 2px var(--mint)} .tile9.miss{box-shadow:inset 0 0 0 2px var(--red)}
+.sub9{display:flex;justify-content:center;padding:0 0 22px}
+.sub9 button{height:46px;padding:0 44px;border-radius:999px;background:var(--ink);color:#06080c;font-size:15px;font-weight:600}
+.qf{display:flex;gap:16px;align-items:center;padding:0 26px;font-size:12px;color:var(--ink3);border-top:1px solid var(--hair)}
+.qf .r{margin-left:auto}
+.fb.good{color:var(--mint)} .fb.bad{color:var(--red)}
+.float{position:absolute;font-family:var(--num);font-size:18px;font-weight:600;pointer-events:none;z-index:30;animation:up .9s ease-out forwards}
+@keyframes up{to{transform:translateY(-36px);opacity:0}}
+.hist{display:grid;grid-template-rows:48px 46px 1fr}
+.hist .seg{margin:0 14px 10px}
+.hlist{overflow:auto;padding:0 8px 10px}
+.he{display:block;width:100%;text-align:left;padding:11px 12px;border-radius:12px;transition:background-color .15s}
+.he:hover{background:var(--g1)}
+.he.open{background:var(--g2)}
+.he .t1{display:grid;grid-template-columns:16px 1fr auto;gap:10px;align-items:start;font-size:13px}
+.he .mk{font-weight:700;line-height:1.45}
+.he .q{line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.he.open .q{white-space:normal}
+.he .tm{font-size:11px;color:var(--ink3);font-family:var(--num)}
+.he .t2{margin:3px 0 0 26px;font-size:12px;color:var(--ink3);display:flex;gap:12px}
+.he .det{display:none;margin:10px 0 2px 26px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.he.open .det{display:block;animation:pgin .2s ease-out}
+.det .kv{display:grid;grid-template-columns:64px 1fr;gap:2px 10px}
+.det .kv span:nth-child(odd){color:var(--ink3)}
+.det .ex{margin-top:8px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.04);color:var(--ink)}
+.det .thumb{float:right;width:46px;height:46px;margin-left:8px;border-radius:10px;background:#030507;display:grid;place-items:center}
+.det .thumb svg{width:30px;height:30px;stroke:#d8e4ea;fill:none;stroke-width:3}
+.hempty{padding:40px 16px;color:var(--ink3);font-size:12px;line-height:1.8;text-align:center}
+
+/* 练 */
+#p-train{grid-template-columns:480px 1fr;gap:16px}
+.lcol,.rcol{display:grid;gap:16px;min-height:0}
+.lcol{grid-template-rows:232px 1fr 176px}
+.rcol{grid-template-rows:52px 1fr 66px 118px}
+.abb{padding:0 20px 16px;display:grid;gap:12px}
+.bb .top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink3)}
+.bb .top b{font-family:var(--num);color:var(--ink);font-size:20px;font-weight:300}
+.bb .top b small{font-size:13px;color:var(--ink3);margin-left:2px}
+.bb .mt{height:6px;margin:6px 0 4px}
+.bb small{font-size:11px;color:var(--ink3)}
+.exq{font-size:12px;color:var(--ink3);line-height:1.6}
+.exq em{font-style:normal;color:var(--ink2)}
+.exam{height:36px;border-radius:999px;background:var(--g1);font-size:12px;color:var(--ink3)}
+.exam.go{background:var(--ink);color:#06080c;font-size:14px;font-weight:600}
+.ltop{padding:12px 14px 4px}
+.lbody{position:absolute;left:0;right:0;bottom:0;top:52px;overflow:auto}
+.eqg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 14px 14px}
+.eq{border-radius:14px;background:var(--g1);padding:12px;min-height:78px;text-align:left}
+.eq:hover{background:var(--g2)}
+.eq b{display:block;font-size:12px;color:var(--ink);font-weight:500}
+.eq .v{font-family:var(--num);font-size:17px;font-weight:300;color:#bfe6ff;margin:4px 0 2px}
+.eq small{font-size:11px;color:var(--ink3)}
+.eq.off b,.eq.off .v{color:var(--ink3)}
+.eq.can{box-shadow:inset 0 0 0 1px rgba(95,227,181,.4)}
+.slotrow{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:10px 14px 0}
+.slot{height:42px;border-radius:11px;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--hair2);background:transparent;color:var(--ink3)}
+.slot:not(.on):not(.lk){box-shadow:none;border:1px dashed var(--hair2)}
+.slot.on{background:rgba(106,184,255,.12);color:#bfe6ff;box-shadow:inset 0 0 0 1px rgba(106,184,255,.35)}
+.slot.lk{background:rgba(255,255,255,.02);opacity:.6}
+.slot svg{width:16px;height:16px}
+.atlas{width:1040px}
+.atl{display:grid;grid-template-columns:230px 1fr;gap:20px;padding:4px 24px 24px;height:540px}
+.al{display:grid;gap:4px;align-content:start}
+.al button{text-align:left;padding:10px 12px;border-radius:12px;display:grid;gap:2px;font-size:14px}
+.al button:hover{background:var(--g1)}
+.al button.on{background:var(--g3)}
+.al button small{color:var(--ink3);font-size:11px}
+.al button.lk{opacity:.4}
+.ar{min-width:0;overflow:auto}
+.ar canvas{width:100%;height:236px;border-radius:16px;background:#030507;display:block}
+.ar h3{font-size:24px;font-weight:600;margin:18px 0 2px}
+.ar .cap{color:var(--ink3);font-size:12px}
+.ar p{font-size:14px;line-height:1.95;color:var(--ink2);margin-top:12px;max-width:44em}
+.ar .tm{margin-top:12px;font-size:12px;color:var(--ink3);display:flex;gap:18px}
+.ar .tm em{color:var(--amb);font-style:normal}
+.eqhint{grid-column:1/-1;font-size:11px;color:var(--ink3);padding:2px 2px 0}
+.dl{padding:8px 14px 14px;display:grid;gap:6px}
+.drop{border-radius:16px;padding:16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;background:rgba(95,227,181,.04);box-shadow:inset 0 0 0 1.5px rgba(95,227,181,.25);transition:background-color .15s,box-shadow .15s}
+.drop b{font-size:14px;font-weight:600}
+.drop span{grid-column:1;font-size:11px;color:var(--ink3);line-height:1.5}
+.drop .btn2{grid-row:1/3;grid-column:2}
+.drop.hot{background:rgba(95,227,181,.14);box-shadow:inset 0 0 0 2px var(--mint)}
+.url{display:flex;gap:6px;margin:2px 0 4px}
+.url input{flex:1;height:34px;border-radius:11px;background:rgba(0,0,0,.35);border:0;box-shadow:inset 0 0 0 1px var(--hair2);padding:0 12px;font-size:12px;font-family:var(--num)}
+.dsum{font-size:12px;color:var(--ink3);padding:2px 2px 4px}
+.dsum b{color:var(--ink);font-weight:400}
+.drow{display:grid;grid-template-columns:1fr 96px;gap:6px}
+.drow .dn{border-radius:11px;background:var(--g1);padding:9px 12px;font-size:12px;color:var(--ink2);position:relative;overflow:hidden}
+.drow .dn i{position:absolute;left:0;top:0;bottom:0;background:rgba(95,227,181,.13);transition:width .3s}
+.drow .dn span{position:relative}
+.drow .dn small{position:relative;color:var(--ink3);margin-left:6px}
+.drow button,.drow .st{border-radius:11px;font-size:12px;display:grid;place-items:center;color:var(--ink3);background:var(--g1)}
+.drow button.can{color:#06080c;background:var(--mint);font-weight:600}
+.drow button.poor{color:var(--red)}
+.drow .st.rdy{color:var(--mint)}
+.dropov{position:absolute;inset:0;z-index:15;display:none;place-items:center;background:rgba(6,8,12,.6);backdrop-filter:blur(4px);border-radius:18px;box-shadow:inset 0 0 0 2px var(--mint);font-size:22px;font-weight:600;color:var(--mint);pointer-events:none}
+.dropov.on{display:grid}
+.qz{padding:8px 14px 14px;display:grid;gap:10px}
+.qz .ask{display:flex;gap:6px}
+.qz input{flex:1;height:36px;border-radius:11px;background:rgba(0,0,0,.35);border:0;box-shadow:inset 0 0 0 1px var(--hair2);padding:0 12px}
+.qz .rep{min-height:46px;padding:10px 14px;border-radius:12px;background:rgba(95,227,181,.06);font-size:13px;line-height:1.6}
+.qz .abl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.qz .abl span{font-size:11px;padding:7px 8px;border-radius:9px;background:var(--g1);color:var(--ink3)}
+.qz .abl span.on{color:var(--mint)}
+.lgb{padding:0 20px 16px;display:grid;grid-template-columns:1fr 130px;gap:16px;height:calc(100% - 48px)}
+.lgr{display:grid;gap:5px;font-size:12px;align-content:start}
+.lgr div{display:flex;justify-content:space-between;color:var(--ink2)}
+.lgr div b{font-family:var(--num);font-weight:400}
+.lgr .rent{color:var(--ink3);font-size:11px;margin-top:4px;display:block}
+.spark{width:100%;height:100%}
+.arch{display:flex;align-items:center;gap:16px;padding:0 10px 0 8px;border-radius:16px}
+.arch .mode{height:36px;display:grid;place-items:center;padding:0 16px;border-radius:11px;background:rgba(95,227,181,.14);color:var(--mint);font-weight:600;font-size:13px}
+.arch b{font-size:15px;font-weight:600}
+.arch .n{color:var(--ink3);font-size:13px}
+.arch .r{margin-left:auto;display:flex;gap:6px;align-items:center}
+.arch .seal{position:relative;inset:auto;height:100%;flex:1;margin-left:-8px}
+.sp{display:grid;grid-template-rows:52px auto 1fr 176px}
+.sl{display:flex;align-items:baseline;gap:26px;padding:0 22px;font-size:12px;color:var(--ink3);align-self:center}
+.sl b{color:var(--ink);font-size:15px;font-weight:600}
+.sl em{font-style:normal;font-family:var(--num);font-size:22px;font-weight:300;color:var(--ink);margin-left:4px}
+.sl em.grn{color:var(--mint)} .sl em.blu{color:var(--blu)}
+.sh{padding:0 22px 6px}
+.shh{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);padding:0 0 4px}
+.shr{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;height:27px;font-size:13px}
+.shr .mk{font-weight:700}
+.shr .q{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--ink2)}
+.shr .a{font-size:12px;color:var(--ink3)} .shr .a b{font-weight:600}
+.ch{position:relative;padding:28px 22px 8px 58px}
+.ch svg{width:100%;height:100%;display:block}
+.lgd{position:absolute;left:58px;top:4px;display:flex;gap:16px;font-size:11px;color:var(--ink3);align-items:center}
+.lgd i{display:inline-block;width:16px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.lgd .schip{height:22px;padding:0 9px;font-size:11px;gap:5px}
+.lgd .schip svg{width:10px;height:10px}
+.cy{position:absolute;left:18px;top:28px;bottom:8px;display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:var(--ink3);font-family:var(--num)}
+.warn{position:absolute;right:26px;top:34px;font-size:12px;font-weight:600;color:#fff;background:rgba(255,122,110,.22);box-shadow:inset 0 0 0 1px rgba(255,122,110,.5);padding:3px 10px;border-radius:999px;display:none}
+.gl{stroke:rgba(255,255,255,.05);stroke-width:1;vector-effect:non-scaling-stroke}
+.capl{stroke:rgba(255,255,255,.35);stroke-dasharray:3 5;stroke-width:1;vector-effect:non-scaling-stroke}
+.trl{fill:none;stroke:#F2F4F7;stroke-width:2;vector-effect:non-scaling-stroke}
+.val{fill:none;stroke:var(--mint);stroke-width:2;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
+.ofa{fill:url(#ofg);stroke:none}
+.reg{fill:var(--red)}
+.sc{position:relative;display:grid;grid-template-rows:38px 1fr;margin:0 12px 12px;border-radius:14px;background:rgba(0,0,0,.28);overflow:hidden}
+.sch{display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;font-size:12px;color:var(--ink3)}
+.sch b{color:var(--ink);font-size:13px;font-weight:600}
+.sch .seg{padding:2px} .sch .seg button{height:24px;padding:0 9px;font-size:11px}
+.sch .r{margin-left:auto;font-size:11px}
+.sch .schip{height:28px}
+#viz{width:100%;height:100%;display:block}
+.lrr{display:grid;grid-template-columns:110px repeat(6,1fr);gap:4px;padding:6px;border-radius:16px}
+.lrl{display:flex;flex-direction:column;justify-content:center;padding-left:14px}
+.lrl b{font-size:14px;font-weight:600} .lrl small{font-size:11px;color:var(--ink3)}
+.lro{border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.lro:hover{background:var(--g1)}
+.lro b{font-size:17px;font-weight:400;font-family:var(--num)}
+.lro small{font-size:11px;color:var(--ink3)}
+.lro.on{background:rgba(255,255,255,.14)} .lro.on small{color:var(--ink2)}
+.lro.lockd{color:var(--ink3);flex-direction:row;gap:6px;font-size:12px;background:var(--g1)}
+.lro.lockd svg{width:12px;height:12px}
+.lro.hot b{color:#ffb0a8}
+.trr{display:grid;grid-template-columns:290px 1fr;gap:16px}
+.tbtn{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(140deg,#7AF5CB 0%,#2FB38A 55%,#178062 100%);box-shadow:0 10px 30px rgba(47,179,138,.25),inset 0 1px 0 rgba(255,255,255,.4);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:16px 22px;text-align:left;color:#03180F;transition:transform .22s var(--spring),filter .15s}
+.tbtn:hover{filter:brightness(1.06)}
+.tbtn b{font-size:28px;font-weight:700;letter-spacing:.06em}
+.tbtn small{font-size:13px;opacity:.7;font-family:var(--num)}
+.tbtn.busy{filter:saturate(.5) brightness(.9)}
+.tbtn i{position:absolute;left:0;bottom:0;height:4px;background:rgba(255,255,255,.85);width:0}
+.tinfo{padding:16px 20px;display:grid;gap:8px;align-content:start}
+.tinfo .tl{font-size:12px;color:var(--ink2)}
+.tinfo .tb2{height:5px;border-radius:3px;background:rgba(255,255,255,.07);position:relative;overflow:hidden}
+.tinfo .tb2 i{position:absolute;left:0;top:0;bottom:0;background:var(--mint);width:0;border-radius:3px}
+.tinfo .tl2{font-size:12px;color:var(--ink3)}
+.risk{font-size:13px;color:var(--red);font-weight:500}
+.risk.ok{color:var(--ink2);font-weight:400}
+.books{padding:8px 14px 14px;display:grid;gap:8px}
+.book{display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--g1)}
+.book .cv{width:40px;height:52px;border-radius:6px 10px 10px 6px;box-shadow:inset 3px 0 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.35)}
+.book b{display:block;font-size:13px;font-weight:500}
+.book small{font-size:11px;color:var(--ink3)}
+.book .mt{height:4px;margin-top:6px}
+.book.lk{opacity:.55}
+
+/* 科技 */
+#p-tech{grid-template-rows:64px 1fr;gap:0}
+.th{display:flex;align-items:center;gap:16px;padding:0 4px}
+.th h2{font-size:24px;font-weight:600;letter-spacing:.02em}
+.th .big{font-size:22px;font-weight:300;color:var(--amb)}
+.sj{margin-left:6px}
+.sj button{width:36px;flex:none;font-family:var(--num)}
+.lgd2{display:flex;gap:14px;font-size:12px;color:var(--ink3);margin-left:auto}
+.lgd2 i{display:inline-block;width:10px;height:10px;border-radius:4px;vertical-align:-1px;margin-right:6px}
+.lgd2 .cc{box-shadow:0 0 0 2px var(--mint)} .lgd2 .cp{box-shadow:0 0 0 2px var(--red)} .lgd2 .cl{box-shadow:0 0 0 2px rgba(255,255,255,.18)} .lgd2 .cm{background:var(--amb)}
+.tgl{height:32px;padding:0 14px;border-radius:999px;background:var(--g1);color:var(--ink2);font-size:12px}
+.tgl.on{background:var(--ink);color:#06080c}
+.zm{display:flex;align-items:center;gap:2px;padding:3px;border-radius:12px;background:rgba(255,255,255,.05)}
+.zm button{min-width:32px;height:28px;padding:0 9px;border-radius:9px;color:var(--ink2)}
+.zm button:hover{background:var(--g2)}
+.zm span{min-width:48px;text-align:center;font-size:12px;color:var(--ink3)}
+.map{position:relative;overflow:hidden;cursor:grab;border-radius:22px;background:radial-gradient(circle at 1px 1px,rgba(255,255,255,.05) 1px,transparent 1.5px) 0 0/28px 28px,rgba(255,255,255,.015);box-shadow:inset 0 0 0 1px var(--hair);touch-action:none}
+.map.drag{cursor:grabbing}
+.world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.card{position:absolute;height:132px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px var(--hair);padding:14px 16px;display:grid;gap:6px;align-content:start}
+.card.done{box-shadow:inset 0 0 0 1px rgba(95,227,181,.35)}
+.card.cur{box-shadow:inset 0 0 0 1px rgba(165,148,255,.6),0 0 40px rgba(165,148,255,.12)}
+.card.fut{opacity:.45}
+.card h4{font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline}
+.card h4 small{font-size:11px;color:var(--ink3);font-weight:400}
+.card.done h4 small{color:var(--mint)} .card.cur h4 small{color:#c6bcff}
+.card p{font-size:11px;color:var(--ink3);line-height:1.5;height:32px;overflow:hidden}
+.card .cb{font-size:11px;color:var(--ink3);display:grid;grid-template-columns:30px 1fr 84px;gap:8px;align-items:center}
+.card .cb .mt{height:4px}
+.card .cb span:last-child{text-align:right;font-family:var(--num);color:var(--ink2)}
+.arrow{position:absolute;color:var(--ink3);font-size:16px}
+.brl{position:absolute;left:14px;font-size:12px;color:var(--ink3);writing-mode:vertical-rl;letter-spacing:.35em}
+.band{position:absolute;left:0;height:1px;background:rgba(255,255,255,.04)}
+.edges{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.edges path{fill:none;stroke:rgba(255,255,255,.09);stroke-width:1.5}
+.edges path.own{stroke:rgba(242,196,109,.5)}
+.nd{position:absolute;width:78px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.nd .tile{width:50px;height:50px;border-radius:15px;background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.1);display:grid;place-items:center;position:relative;color:var(--ink2);transition:transform .25s var(--spring)}
+.nd:active .tile{transform:scale(.92)}
+.nd .tile svg{width:22px;height:22px}
+.nd .tile em{position:absolute;right:-5px;bottom:-5px;font-style:normal;font-family:var(--num);font-size:10px;padding:1px 5px;border-radius:999px;background:#0d1117;box-shadow:inset 0 0 0 1px currentColor;line-height:13px}
+.nd .nn{font-size:12px;color:var(--ink2);text-align:center;line-height:1.25;white-space:nowrap}
+.nd .np{font-size:11px;color:var(--ink3);font-family:var(--num)}
+.nd.s-can .tile{box-shadow:inset 0 0 0 1.5px var(--mint),0 0 18px rgba(95,227,181,.3);color:var(--mint)}
+.nd.s-can .np{color:var(--amb)}
+.nd.s-poor .tile{box-shadow:inset 0 0 0 1.5px rgba(255,122,110,.7);color:#ffb0a8}
+.nd.s-poor .np{color:var(--red)}
+.nd.s-max .tile{background:linear-gradient(160deg,rgba(242,196,109,.28),rgba(242,196,109,.08));box-shadow:inset 0 0 0 1px rgba(242,196,109,.5);color:var(--amb)}
+.nd.s-max .nn{color:var(--ink)}
+.nd.s-max .np{color:var(--mint)}
+.nd.s-lock{opacity:.35}
+.nd.s-chat .tile{box-shadow:inset 0 0 0 1.5px rgba(242,196,109,.6);color:var(--amb)}
+.nd.s-chat .np{color:var(--amb)}
+.nd.part .tile{box-shadow:inset 0 0 0 1.5px rgba(242,196,109,.55)}
+.nd.sel .tile{transform:scale(1.1);box-shadow:inset 0 0 0 2px #fff,0 0 24px rgba(255,255,255,.18)}
+.nd.dim{opacity:.12}
+.nd:hover .tile{transform:scale(1.07)}
+.nd.justbought .tile{animation:bought .7s var(--spring)}
+@keyframes bought{0%{transform:scale(.7)}50%{transform:scale(1.25);box-shadow:0 0 40px rgba(242,196,109,.8)}}
+.pop{position:absolute;width:320px;border-radius:20px;background:rgba(18,22,28,.9);box-shadow:inset 0 0 0 1px var(--hair2),0 24px 60px rgba(0,0,0,.6);padding:18px;display:none;z-index:5;cursor:default}
+.pop.on{display:block;animation:popin .22s var(--spring)}
+@keyframes popin{from{opacity:0;transform:scale(.94)}}
+.pt{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.ptile{width:44px;height:44px;border-radius:13px;background:linear-gradient(160deg,rgba(242,196,109,.25),rgba(242,196,109,.06));display:grid;place-items:center;color:var(--amb)}
+.pt b{font-size:19px;font-weight:600;display:block}
+.pt small{font-size:12px;color:var(--ink3)}
+.px{margin-left:auto;align-self:flex-start;width:26px;height:26px;border-radius:50%;background:var(--g1);color:var(--ink3);font-size:14px}
+.pop .one{font-size:14px;line-height:1.65;color:var(--ink)}
+.pop .eff{margin-top:12px;font-size:13px;line-height:1.6;color:#aef0d6;padding:10px 12px;border-radius:12px;background:rgba(95,227,181,.07)}
+.pop .eff span{display:block;color:var(--ink3);font-size:11px;margin-bottom:2px}
+.pop .raw{margin-top:10px;font-size:12px;color:var(--ink2);line-height:1.65}
+.pop .raw em{font-style:normal;color:var(--amb);font-weight:600}
+.lvls{margin-top:12px;display:flex;flex-wrap:wrap;gap:4px}
+.lvls span{font-size:12px;font-family:var(--num);padding:4px 8px;border-radius:9px;background:var(--g1);color:var(--ink3);display:flex;flex-direction:column;align-items:center;line-height:1.25}
+.lvls span small{font-family:var(--ui);font-size:10px}
+.lvls span.got{color:var(--amb)}
+.lvls span.nx{color:#fff;background:rgba(95,227,181,.18)}
+.req{list-style:none;margin-top:12px;font-size:12px;display:grid;gap:4px}
+.req li.y{color:var(--mint)} .req li.x{color:var(--ink3)} .req li.x.m{color:var(--red)}
+.bbtn{margin-top:14px;width:100%;height:42px;border-radius:999px;font-size:14px;font-weight:600;color:var(--ink3);background:var(--g1)}
+.bbtn.s-can{background:var(--ink);color:#06080c}
+.bbtn.s-poor{color:var(--red)}
+.bbtn.s-max{color:var(--amb)}
+
+/* 名字 */
+#p-mind{grid-template-columns:1fr 380px;gap:16px}
+.mw{position:relative;display:grid;place-items:center;background:radial-gradient(45% 45% at 50% 46%,rgba(95,227,181,.07),transparent 70%)}
+#orbc{width:min(560px,80%);aspect-ratio:1}
+.mcap{position:absolute;left:0;right:0;bottom:36px;text-align:center}
+.mcap b{font-size:34px;font-weight:600;display:block;letter-spacing:.04em}
+.mcap span{font-size:15px;color:var(--ink2)}
+.ms{padding:6px 20px 20px;display:flex;flex-direction:column;gap:22px;overflow:auto}
+.ms h5{font-size:12px;color:var(--ink3);font-weight:400;margin-bottom:10px}
+.ab6{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ab6 div{height:56px;border-radius:12px;background:var(--g1);padding:8px 10px;font-size:12px;color:var(--ink3)}
+.ab6 div span{display:block;font-family:var(--num);font-size:11px}
+.ab6 div.on{color:var(--ink);background:rgba(95,227,181,.08)}
+.ab6 div.now{box-shadow:inset 0 0 0 1px rgba(165,148,255,.6)}
+.ax{display:grid;grid-template-columns:40px 1fr 30px;gap:12px;align-items:center;font-size:12px;color:var(--ink2);margin:10px 0}
+.ax .t{height:4px;border-radius:2px;background:rgba(255,255,255,.07);position:relative}
+.ax .t i{position:absolute;top:-5px;width:14px;height:14px;border-radius:50%;background:var(--ink);transform:translateX(-50%);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.kw{display:flex;flex-wrap:wrap;gap:6px}
+.kw span{font-size:12px;padding:5px 11px;border-radius:999px;background:var(--g1);color:var(--ink2)}
+.talk{height:44px;border-radius:999px;background:var(--ink);color:#06080c;font-weight:600;font-size:14px}
+
+/* modals in exe */
+.modal{position:absolute;inset:116px 0 0 112px;background:rgba(3,5,8,.5);display:grid;place-items:center;z-index:20;animation:fadein .2s}
+@keyframes fadein{from{opacity:0}}
+.mbox{border-radius:24px;background:rgba(16,20,26,.96);box-shadow:inset 0 0 0 1px var(--hair2),0 30px 80px rgba(0,0,0,.6);overflow:hidden;animation:popin .26s var(--spring)}
+.mbox .ph{height:56px;padding:0 16px 0 24px}
+.xor{width:900px}
+.xg{display:grid;grid-template-columns:200px 1fr 240px;gap:16px;padding:4px 24px 16px}
+.xg h6{font-size:11px;color:var(--ink3);font-weight:400;margin-bottom:8px}
+.xin{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.xin div{border-radius:14px;background:#030507;height:78px;display:flex;align-items:center;justify-content:center;gap:6px;position:relative}
+.xin div i{width:16px;height:30px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);display:block}
+.xin div i.on{background:#eef}
+.xin div span{position:absolute;right:8px;bottom:5px;font-size:12px}
+#xl{width:100%;height:200px;border-radius:14px;background:#030507}
+.xh{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.xh canvas{width:100%;aspect-ratio:1;border-radius:12px;background:#030507}
+.xf{padding:0 24px 20px;font-size:12px;color:var(--ink2);line-height:1.8}
+.xf b{color:var(--ink);font-weight:500}
+.led2{width:760px}
+.l2{display:grid;grid-template-columns:250px 1fr;gap:20px;padding:4px 24px 22px;height:440px}
+.cats{display:grid;gap:14px;align-content:start;font-size:12px}
+.cats div{display:grid;gap:5px}
+.cats div p{display:flex;justify-content:space-between;color:var(--ink2)}
+.cats .mt{height:5px}
+.rows{overflow:auto;font-size:12px}
+.rows div{display:grid;grid-template-columns:52px 1fr 90px;gap:8px;padding:7px 4px;border-bottom:1px solid var(--hair);color:var(--ink2)}
+.rows div b{text-align:right;font-family:var(--num);font-weight:400}
+.read{width:720px}
+.read .rbody{padding:4px 34px 10px;display:grid;grid-template-columns:1fr 150px;gap:28px}
+.read .txt{min-height:230px;font-size:20px;line-height:2;color:var(--ink);font-family:"Source Han Serif SC","Noto Serif SC","Songti SC","SimSun",serif;letter-spacing:.06em}
+.read .txt .past{color:var(--ink3)}
+.read .txt .cur{display:inline-block;width:2px;height:22px;background:var(--mint);vertical-align:-4px;margin-left:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.read .rside{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:10px}
+.read .rorb{width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#f2fff9 0,#8ff0c8 14%,#2fb38a 44%,#0b3a2c 78%);box-shadow:0 0 40px rgba(95,227,181,.35);animation:breathe 2.4s ease-in-out infinite}
+.read.paused .rorb{animation:none;filter:grayscale(.6)}
+@keyframes breathe{50%{transform:scale(1.06);box-shadow:0 0 60px rgba(95,227,181,.5)}}
+.read .rside small{font-size:12px;color:var(--ink3);text-align:center;line-height:1.6}
+.read .rfoot{display:flex;align-items:center;gap:14px;padding:12px 24px 20px}
+.read .rfoot .mt{flex:1}
+.read .rfoot span{font-size:12px;color:var(--ink3);font-family:var(--num);min-width:80px;text-align:right}
+.toast{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(20,26,32,.95);box-shadow:inset 0 0 0 1px var(--hair2),0 12px 30px rgba(0,0,0,.45);color:var(--ink);padding:11px 22px;border-radius:999px;font-size:14px;z-index:40;white-space:nowrap;animation:tin .3s var(--spring)}
+@keyframes tin{from{opacity:0;transform:translate(-50%,12px) scale(.96)}}
+
+/* ===== desktop windows (2016 look, outside the exe) ===== */
+.w7{position:absolute;z-index:8;background:#f0f4f9;border:1px solid #5d7fa6;border-radius:6px 6px 2px 2px;box-shadow:0 10px 30px rgba(0,0,0,.5);font:12px "Microsoft YaHei",sans-serif;color:#1e2b38;display:none;overflow:hidden}
+.w7.on{display:flex;flex-direction:column;animation:w7in .18s ease-out}
+@keyframes w7in{from{opacity:0;transform:scale(.97)}}
+.w7.front{z-index:10}
+.w7 .wh{height:30px;flex:none;display:flex;align-items:center;gap:8px;padding:0 4px 0 10px;background:linear-gradient(rgba(190,215,240,.95),rgba(150,185,220,.95));color:#13283d;cursor:move;user-select:none}
+.w7 .wh b{font-weight:600}
+.w7 .wh .x{margin-left:auto;width:40px;height:20px;border-radius:3px;background:linear-gradient(#e8a093,#c74a3a);color:#fff;font-size:12px;line-height:20px;text-align:center}
+.xw{left:150px;top:150px;width:640px;height:420px}
+.xw .tb{display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #c9d6e4;background:#e9f0f8}
+.xw .tb button{height:24px;padding:0 10px;border:1px solid #b6c6d8;border-radius:3px;background:linear-gradient(#fff,#e6edf5);color:#1e2b38;font-size:12px}
+.xw .tb button:disabled{color:#9aa}
+.xw .addr{flex:1;height:24px;border:1px solid #9fb3c8;background:#fff;display:flex;align-items:center;padding:0 8px;color:#333}
+.xw .wb{flex:1;display:grid;grid-template-columns:140px 1fr 190px;min-height:0}
+.xw .nav{border-right:1px solid #d3dde8;padding:8px 0;background:#f6f9fc}
+.xw .nav div{padding:5px 14px;cursor:pointer;color:#234}
+.xw .nav div.on{background:#cfe3f8}
+.xw .files{padding:10px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow:auto;background:#fff}
+.fi{width:92px;padding:6px 4px;border:1px solid transparent;border-radius:3px;text-align:center;cursor:default;user-select:none}
+.fi:hover{background:#e8f2fd;border-color:#c5dcf5}
+.fi.sel{background:#cde5fc;border-color:#84b8ec}
+.fi svg{width:44px;height:44px}
+.fi span{display:block;margin-top:3px;font-size:12px;line-height:1.3;word-break:break-all}
+.fi small{display:block;font-size:11px;color:#6a7a8a}
+.fi.done{opacity:.45}
+.fi .pb{height:4px;background:#d6e2ee;margin:3px 6px 0;border-radius:2px;overflow:hidden}
+.fi .pb i{display:block;height:100%;background:#3fa65a}
+.fi[draggable=true]{cursor:grab}
+.xw .pv{border-left:1px solid #d3dde8;padding:12px;background:#f6f9fc;overflow:auto;line-height:1.6}
+.xw .pv b{display:block;font-size:13px;margin-bottom:4px}
+.xw .pv pre{white-space:pre-wrap;font:12px "Microsoft YaHei",sans-serif;color:#334;margin-top:8px}
+.xw .st{height:24px;flex:none;border-top:1px solid #c9d6e4;display:flex;align-items:center;padding:0 10px;color:#556;background:#e9f0f8}
+.yyw{left:900px;top:150px;width:460px;height:560px}
+.yyw.wide{width:760px;left:640px}
+.yyw .yb2{flex:1;display:grid;grid-template-columns:1fr;min-height:0}
+.yyw.wide .yb2{grid-template-columns:1fr 300px}
+.yyw .chat{display:grid;grid-template-rows:1fr auto auto;min-height:0;background:#fff}
+.yyw .msgs{overflow:auto;padding:12px 14px}
+.yyw .m{margin-bottom:10px;line-height:1.6}
+.yyw .m .w{font-size:12px;color:#2f78c2}
+.yyw .m.me .w{color:#3a8a3a}
+.yyw .tools{display:flex;gap:4px;padding:4px 8px;border-top:1px solid #d3dde8;background:#f2f6fa}
+.yyw .tools button{height:24px;padding:0 10px;border:1px solid #b6c6d8;border-radius:3px;background:linear-gradient(#fff,#e6edf5);font-size:12px;color:#1e2b38}
+.yyw .tools button.on{background:#cfe3f8;border-color:#84b8ec}
+.yyw .tools button.lk{color:#9aa;}
+.yyw .inp{display:flex;gap:6px;padding:8px}
+.yyw .inp input{flex:1;height:52px;border:1px solid #a9bccf;padding:0 8px;color:#1e2b38;background:#fff;font:inherit}
+.yyw .inp button{width:70px;background:#2f78c2;color:#fff;border-radius:3px}
+.yyw .data{border-left:1px solid #c9d6e4;background:#f6f9fc;display:grid;grid-template-rows:auto 1fr;min-height:0}
+.yyw .data h4{padding:10px 12px 6px;font-size:13px}
+.yyw .data h4 small{display:block;font-weight:400;color:#6a7a8a;font-size:11px}
+.yyw .dlist{overflow:auto;padding:0 10px 10px}
+.yyw .dgrp{margin-top:8px}
+.yyw .dgrp>b{display:block;font-size:12px;color:#2f78c2;padding:4px 0;border-bottom:1px solid #d3dde8}
+.yyw .dit{display:grid;grid-template-columns:40px 1fr;gap:6px;padding:5px 0;border-bottom:1px dashed #e1e8ef;font-size:12px}
+.yyw .dit span{color:#8090a0;font-family:Consolas,monospace;font-size:11px}
+.yyw .dit em{font-style:normal;font-size:11px;padding:0 4px;border-radius:2px;margin-right:4px;background:#e4ecf5;color:#2f5e8e}
+.yyw .dit em.b{background:#f6ead0;color:#8a6420} .yyw .dit em.p{background:#dff2e4;color:#2e7a45}
+.ytray{position:absolute;right:12px;bottom:56px;width:300px;z-index:11;background:#f3f6fa;border:1px solid #8aa6c4;box-shadow:0 8px 24px rgba(0,0,0,.45);font:12px "Microsoft YaHei",sans-serif;color:#1d2a36;display:none;cursor:pointer}
+.ytray.on{display:block;animation:yin .3s ease-out}
+@keyframes yin{from{transform:translateY(20px);opacity:0}}
+.ytray .yh{height:26px;display:flex;align-items:center;padding:0 10px;background:linear-gradient(#5aa0e0,#2f78c2);color:#fff}
+.ytray .yb{padding:10px 12px;line-height:1.6}
+.ytray .yb small{display:block;color:#2f78c2;margin-top:4px}
+
+.proto{position:fixed;left:10px;top:10px;z-index:50;width:200px;background:rgba(10,12,16,.92);border:1px solid rgba(255,255,255,.14);border-radius:10px;font-size:12px;color:#c6d0da;padding:10px;font-family:var(--ui)}
+.proto h5{font-size:12px;color:#fff;display:flex;justify-content:space-between;cursor:pointer;font-weight:600}
+.proto .pb{margin-top:8px;display:grid;gap:6px}
+.proto.min .pb{display:none}
+.proto p{color:#7f8c99;line-height:1.5}
+.proto .g{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.proto button{height:26px;border-radius:6px;background:rgba(255,255,255,.08);font-size:12px}
+.proto button.on{background:#fff;color:#111}
+.proto input{height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);color:#fff;padding:0 8px;width:100%}
+.reduce *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="ofg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF7A6E" stop-opacity=".35"/><stop offset="1" stop-color="#FF7A6E" stop-opacity=".05"/></linearGradient></defs></svg>
+<div id="stage">
+  <div class="dicons" id="dicons"></div>
+  <div class="win" id="win">
+    <div class="tbar"><span class="dot"></span><b id="exeName">len.exe</b><span>深度学习工作站</span><div class="ctl"><span>–</span><span>❐</span><span>×</span></div></div>
+    <div class="hud" id="hud"></div>
+    <div class="body">
+      <nav class="side" id="side"></nav>
+      <main id="main">
+        <section class="page" id="p-teach"></section>
+        <section class="page" id="p-train"></section>
+        <section class="page" id="p-tech"></section>
+        <section class="page" id="p-mind"></section>
+      </main>
+    </div>
+  </div>
+  <div class="w7 xw" id="xw"></div>
+  <div class="w7 yyw" id="yyw"></div>
+  <div class="ytray" id="ytray"></div>
+  <div class="taskbar"><span class="start"></span><button class="tk" id="tkYY">YY</button><button class="tk" id="tkFolder">资料</button><button class="tk on" id="tkExe">len</button>
+    <span class="ready"><i></i><span id="tbName">len</span> 就绪</span><span class="clk"><span id="tbClock">01:24 上午</span><br><span id="tbDate">2016年7月2日</span></span></div>
+</div>
+
+<aside class="proto" id="proto">
+  <h5 id="protoH"><span>原型控制（不属于游戏）</span><span>—</span></h5>
+  <div class="pb">
+    <p>切换进度，看各栏怎么一块块买出来。</p>
+    <button id="pFresh">开局：只有「教」</button>
+    <div class="g" id="pStages"></div>
+    <div class="g" style="grid-template-columns:1fr 1fr"><button id="pMoney">+¥5000</button><button id="pAll">全部买下</button></div>
+    <button id="pBook">模拟：读完一本书</button>
+    <button id="pCond">模拟：做完桌面上的事</button>
+    <label>它的名字</label><input id="pName" value="len" maxlength="8">
+  </div>
+</aside>
+
+<script>
+(() => {
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const fmtN=v=>Math.round(v).toLocaleString('en-US');
+const fmtK=k=>k>=1000?(k/1000).toFixed(k>=10000?0:1)+'M':(k>=100?Math.round(k):k.toFixed(1))+'K';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let SCALE=1;
+
+const IC={
+neuron:'<circle cx="12" cy="12" r="3"/><path d="M3 6l6 4M3 18l6-4M3 12h6M15 12h6"/>',
+width:'<rect x="4" y="5" width="4" height="14" rx="1"/><rect x="10" y="5" width="4" height="14" rx="1"/><rect x="16" y="5" width="4" height="14" rx="1"/>',
+depth:'<rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/>',
+relu:'<path d="M3 16h9l8-10"/>',conv:'<rect x="3" y="3" width="18" height="18" rx="2"/><rect x="6" y="6" width="7" height="7"/>',
+loop:'<path d="M17 7a7 7 0 1 0 2 5"/><path d="M19 4v4h-4"/>',
+drop:'<circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2" stroke-dasharray="2 2"/><circle cx="7" cy="17" r="2" stroke-dasharray="2 2"/><circle cx="17" cy="17" r="2"/>',
+gate:'<path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-7h6v7"/>',norm:'<path d="M3 18c4 0 5-12 9-12s5 12 9 12"/>',
+eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',skip:'<path d="M4 18h16"/><path d="M4 18C4 8 20 8 20 18"/>',
+star:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.8 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+ledger:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',curve:'<path d="M3 19l5-6 4 3 8-10"/>',
+gauge:'<path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/>',split:'<path d="M4 12h6l4-6h6M10 12l4 6h6"/>',step:'<path d="M4 18h5v-5h5V8h6"/>',
+scope:'<circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/>',xor:'<path d="M5 5l14 14M19 5L5 19"/>',
+cap:'<path d="M3 6h18" stroke-dasharray="3 3"/><path d="M3 19l6-7 5 3 6-6"/>',alarm:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+save:'<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+radar:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-4"/>',auto:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/>',
+quiz:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5M12 17h.01"/>',
+book:'<path d="M4 5c3-1 5-1 8 1 3-2 5-2 8-1v14c-3-1-5-1-8 1-3-2-5-2-8-1z"/><path d="M12 6v14"/>',
+db:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3 3 7 3s7-1.3 7-3"/>',
+sms:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21l3-4"/>',num:'<path d="M9 4L7 20M17 4l-2 16M4 9h17M3 15h17"/>',
+logic:'<path d="M4 6h6v6H4zM14 12h6v6h-6zM10 9h2v6h2"/>',pen:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
+img:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-6-6-9 8"/>',
+magic:'<path d="M4 20L16 8M14 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/>',broom:'<path d="M14 3l-4 9M6 13h10l2 8H4z"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',lang:'<path d="M4 6h9M8 4v2c0 4-2 7-4 8M6 10c1 2 3 3 6 4M14 20l3-8 3 8M15 17h4"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-5 5-6 5-3s-3 3-5 3M14 12c5 0 6 5 3 5s-3-3-3-5M12 14c0 5-5 6-5 3s3-3 5-3M10 12c-5 0-6-5-3-5s3 3 3 5"/>',
+chip:'<rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',mem:'<rect x="3" y="7" width="18" height="10" rx="1"/><path d="M7 7v10M11 7v10M15 7v10"/>',
+half:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/>',server:'<rect x="4" y="3" width="16" height="6" rx="1"/><rect x="4" y="11" width="16" height="6" rx="1"/><path d="M8 6h.01M8 14h.01M8 21h8"/>',
+robot:'<rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 4v4M9 13h.01M15 13h.01M9 16h6"/>',
+coin:'<circle cx="12" cy="12" r="8"/><path d="M12 7v10"/>',fill:'<rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><path d="M15 17l2 2 3-4"/>',
+play:'<path d="M7 4l12 8-12 8z"/>',orb:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+smile:'<circle cx="12" cy="12" r="9"/><path d="M8 14c2 2 6 2 8 0M9 9h.01M15 9h.01"/>',shelf:'<path d="M4 20h16M6 20V6M10 20V4M14 20l2-14 3 1-2 13"/>',
+lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',hist:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+sound:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',mute:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M17 9l5 6M22 9l-5 6"/>',
+motion:'<circle cx="7" cy="12" r="3"/><path d="M13 12h8M15 8h6M15 16h6"/>',
+grid:'<rect x="3" y="6" width="5" height="12" rx="1"/><rect x="9.5" y="6" width="5" height="12" rx="1"/><rect x="16" y="6" width="5" height="12" rx="1" stroke-dasharray="2 2"/>',
+atlas:'<rect x="4" y="3" width="16" height="18" rx="2"/><rect x="7" y="6" width="10" height="7" rx="1"/><path d="M7 16h10M7 18.5h6"/>',
+spider:'<ellipse cx="12" cy="13" rx="3.2" ry="4"/><circle cx="12" cy="7.5" r="2"/><path d="M9 11L4 8M9 13H3.5M9 15l-5 3M15 11l5-3M15 13h5.5M15 15l5 3"/>'
+};
+const ic=(k,cls='i')=>`<svg class="${cls}" viewBox="0 0 24 24">${IC[k]||IC.orb}</svg>`;
+const FICON={
+ folder:'<svg viewBox="0 0 48 48"><path d="M4 12h15l4 4h21v24H4z" fill="#f2c94c" stroke="#c9a227"/><path d="M4 18h40v22H4z" fill="#f7d96b" stroke="#c9a227"/></svg>',
+ zip:'<svg viewBox="0 0 48 48"><path d="M10 4h20l8 8v32H10z" fill="#fff" stroke="#8aa0b6"/><rect x="21" y="4" width="6" height="22" fill="#e6b84a"/><path d="M21 8h6M21 12h6M21 16h6M21 20h6" stroke="#9a7420"/><rect x="19" y="26" width="10" height="8" rx="1" fill="#9a7420"/></svg>',
+ txt:'<svg viewBox="0 0 48 48"><path d="M10 4h20l8 8v32H10z" fill="#fff" stroke="#8aa0b6"/><path d="M15 18h18M15 23h18M15 28h18M15 33h12" stroke="#7a8ea3"/></svg>',
+ ckpt:'<svg viewBox="0 0 48 48"><path d="M10 4h20l8 8v32H10z" fill="#e8f6ef" stroke="#4aa67a"/><circle cx="24" cy="27" r="7" fill="none" stroke="#2f8a5e" stroke-width="2"/><circle cx="24" cy="27" r="2" fill="#2f8a5e"/></svg>',
+ csv:'<svg viewBox="0 0 48 48"><path d="M10 4h20l8 8v32H10z" fill="#eef6e8" stroke="#6a9a4a"/><path d="M15 18h18v16H15zM15 24h18M15 29h18M21 18v16M27 18v16" stroke="#6a9a4a" fill="none"/></svg>'
+};
+
+const ABIL=['是/否','多选一','看图说词','找错字','翻译','通读'];
+const ABIL_DESC=['只会说对或错','从几个选项里挑一个','看一张图，说出一个词','读一句话，指出哪里不对','把一句话换成另一种语言','读完一整本书，回答任何问题'];
+const CARD_DESC=['常识、短信、算术，只答对或错。','手写数字、找不同。它第一次学会「挑」。','验证码、表情包。它第一次开口说一个词。','错字、病句。它开始读完整的一句话。','翻译。它能把一句话换成另一种语言。','通读整本书。它会先开口。'];
+const NEEDP=[0,4.8,20,120,800,5000];
+const NEEDD=[0,2000,10000,40000,150000,600000];
+const DATES=['06-29','07-02','07-30','09-08','10-21','12-30'];
+const DATEZH=['2016年6月29日','2016年7月2日','2016年7月30日','2016年9月8日','2016年10月21日','2016年12月30日'];
+const WID=[0.3,1.2,2.4,4.8,8.2,16,32];
+const LAY=[1,2,3,4,6,8,12];
+const BRN=['主干','练页','数据','装备','自动','性格','逻辑','日常'];
+const COND={game1:'和它在游戏中心下完任意一局',board:'和它玩完一局飞行棋、跳棋或大富翁（任选其一）',games10:'和它下满 10 局',news5:'在浏览器里读完 5 篇摆渡新闻',miaoyu:'在喵鱼上买过一件东西',gf:'和晴雯聊满 10 句',memes5:'在群里斗图 5 次',tieba:'贴吧里自己发的帖子收到回复',music3:'用音乐播放器听完 3 首歌'};
+
+const NODES=[
+{id:'perceptron',n:'感知机',st:1,br:0,sl:0,c:0,ic:'neuron',one:'一层脑子：把线索加起来，过了门槛就说「是」。',eff:'它能答对/错题',raw:'1958 年的【感知机】，最早的神经网络。'},
+{id:'width',n:'网络宽度',st:1,br:0,sl:1,c:[0,20,60,150,400,900,2000],lvSt:[1,1,1,2,2,3,4],d:['perceptron'],ic:'width',one:'每层多放几个格子，就能同时记住更多线索。',eff:'参数量变多（看「下一项能力」）',raw:'格子叫【神经元】，参数就是格子之间每根连线的分量。'},
+{id:'depth',n:'网络深度',st:2,br:0,sl:0,c:[0,40,200,600,1500,4000,9000],lvSt:[1,1,2,3,4,5,6],d:['width'],ic:'depth',one:'多一层，就多一次把简单线索组合成复杂线索的机会。',eff:'层数上限 +1，参数量变多',raw:'层数多了，就是后来说的【深度学习】。'},
+{id:'relu',n:'ReLU',st:3,br:0,sl:0,c:260,d:['depth'],ic:'relu',one:'负数直接归零、正数照传，网络再深也练得动。',eff:'深层不再越练越钝',raw:'这个开关叫【ReLU】，2010 年以后几乎人人在用。'},
+{id:'lenet',n:'卷积网络',st:3,br:0,sl:1,c:1200,d:['relu'],ic:'conv',one:'用一个小窗口在图上滑，到处找同一种笔画。',eff:'能看图，参数 ×2',raw:'【LeNet-5】，1998 年被银行用来读支票上的数字。'},
+{id:'rnn',n:'循环网络',st:3,br:0,sl:2,c:1400,d:['relu'],ic:'loop',one:'一个字一个字地读，读到后面还记得前面。',eff:'能读句子，参数 ×2',raw:'【循环神经网络 RNN】。'},
+{id:'dropout',n:'随机失活',st:4,br:0,sl:0,c:1800,d:['relu'],ic:'drop',one:'练的时候随机捂住一些格子，逼它别只靠几条线索。',eff:'新题和练过的题差得更少',raw:'【Dropout】，2014 年。',tag:'少退步'},
+{id:'lstm',n:'门控记忆',st:4,br:0,sl:1,c:3000,d:['rnn'],ic:'gate',one:'加几道门：该记的记住，该忘的忘掉。',eff:'能读长句，参数 ×3',raw:'【LSTM】，1997 年。'},
+{id:'bn',n:'批归一化',st:5,br:0,sl:0,c:3000,d:['dropout'],ic:'norm',one:'每层的输出先拉回同一个尺度，步子可以迈大。',eff:'快档学习率不容易炸',raw:'【BatchNorm】，2015 年。',tag:'快档少炸'},
+{id:'attn',n:'注意力',st:5,br:0,sl:1,c:8000,d:['lstm'],ic:'eye',one:'翻译每个词时，回头看原文里最相关的那几个。',eff:'长句翻译不再越长越差，参数 ×5',raw:'【注意力机制】，2014 年。',tag:'×5'},
+{id:'res',n:'残差连接',st:5,br:0,sl:2,c:4000,d:['bn'],ic:'skip',one:'给每层开一条近路，几十层也练得动。',eff:'深度能到 12 层',raw:'【残差网络 ResNet】，2015 年。',tag:'12 层'},
+{id:'trans',n:'Transformer',st:6,br:0,sl:0,c:0,chat:'如果只用注意力呢？',d:['attn','res'],ic:'star',one:'扔掉循环，只用注意力，所有字一起读。',eff:'解锁「通读」，参数 ×10',raw:'这个结构后来被叫作【Transformer】。',tag:'×10'},
+{id:'curve',n:'训练曲线',st:1,br:1,sl:0,c:20,ic:'curve',one:'把每一轮的成绩画成一条线。',eff:'打开「练」：曲线、答卷、训练按钮'},
+{id:'ledger',n:'记账本',st:1,br:1,sl:1,c:15,ic:'ledger',one:'把钱、收入、电费都记下来。',eff:'顶栏显示钱、收入和电力；练页多「资金账本」，能翻总账'},
+{id:'ability',n:'能力仪表',st:1,br:1,sl:2,c:30,d:['curve'],ic:'gauge',one:'看离下一项能力还差多少参数和样本。',eff:'练页多「下一项能力」，够了就能去考'},
+{id:'val',n:'新题线',st:2,br:1,sl:0,c:120,d:['curve'],ic:'split',one:'留一些题不教，专门拿来考它。',eff:'曲线多一条「新题」线，成绩以新题为准',raw:'没教过、只用来考的题叫【验证集】。'},
+{id:'lr',n:'学习率',st:2,br:1,sl:1,c:90,d:['curve'],ic:'step',one:'决定它每一步改多少：迈大了会炸，迈小了太慢。',eff:'练页多一排学习率挡位',raw:'这个步子叫【学习率】。'},
+{id:'scope',n:'显微镜',st:2,br:1,sl:2,c:240,d:['val'],ic:'scope',one:'看它脑子里的那些分量长什么样。',eff:'练页多「看它学」，每进一个阶段多一张图，旧图都留着'},
+{id:'xor',n:'真训练',st:2,br:1,sl:3,c:160,d:['scope'],ic:'xor',one:'当场真练一个小网络，看误差怎么一路传回去。',eff:'「看它学」里多「真训练 · 异或」',raw:'误差从后往前一层层改，叫【反向传播】。'},
+{id:'cap',n:'上限线',st:3,br:1,sl:0,c:150,d:['val'],ic:'cap',one:'标出现在这个结构最多能考多少。',eff:'曲线多一条「上限」虚线'},
+{id:'overfit',n:'背答案警报',st:3,br:1,sl:1,c:180,d:['val'],ic:'alarm',one:'练过的题越来越好、新题跟不上时，标红提醒你。',eff:'曲线上标出退步和「它在背答案」',raw:'行话叫【过拟合】。'},
+{id:'check',n:'回档',st:3,br:1,sl:2,c:200,d:['cap'],ic:'save',one:'自动存下成绩最好的那一版。',eff:'练坏了可以一键退回；存档文件出现在「len 的资料」里'},
+{id:'arch',n:'模型名牌',st:3,br:1,sl:3,c:60,d:['ability'],ic:'tag',one:'看它现在是什么结构、占多少显存。',eff:'练页顶上显示结构、参数和显存'},
+{id:'risk',n:'风险预报',st:4,br:1,sl:0,c:400,d:['lr'],ic:'radar',one:'练之前先算这一轮会不会炸、会不会退步。',eff:'训练按钮旁显示风险'},
+{id:'lrauto',n:'自动学习率',st:4,br:1,sl:1,c:900,d:['risk'],ic:'auto',one:'让它自己挑步子：先快后慢。',eff:'学习率多一个「自动」挡',raw:'先大后小的步子叫【学习率衰减】。'},
+{id:'quiz',n:'它学会了吗',st:4,br:1,sl:2,c:300,d:['ability'],ic:'quiz',one:'自己写一句话考它。',eff:'练页多「它学会了吗」页签'},
+{id:'sense',n:'常识判断',st:1,br:2,sl:0,c:0,ic:'book',one:'一句话，判断对不对。',eff:'「教」里的第一张题桌'},
+{id:'datatab',n:'数据来源栏',st:1,br:2,sl:1,c:50,d:['curve'],ic:'db',one:'把桌面上的数据包拖进来，也能输网址下载。',eff:'练页多「数据来源」页签，可以一次拖进好几个包'},
+{id:'spam',n:'垃圾短信',st:1,br:2,sl:2,c:75,d:['datatab'],ic:'sms',samples:1500,mb:3.1,url:'sms-spam-collection',one:'一批标好的短信，写着哪条是诈骗。',eff:'下载到「数据包」文件夹，拖进来后样本 +1,500，「教」多「划短信」'},
+{id:'arith',n:'算术是非题',st:2,br:2,sl:0,c:1000,d:['datatab'],ic:'num',samples:2000,mb:2.4,one:'「7 + 5 = 12」这样的算式，判断对错。',eff:'拖进来后样本 +2,000，「教」多「算术」'},
+{id:'logic',n:'逻辑是非题',st:2,br:2,sl:1,c:1200,d:['datatab'],ic:'logic',samples:2400,mb:2.8,one:'「所有鸟都会飞，企鹅是鸟」这样的推理。',eff:'拖进来后样本 +2,400，「教」多「逻辑」'},
+{id:'mnist',n:'手写数字',st:2,br:2,sl:2,c:800,d:['datatab'],ic:'pen',samples:7000,mb:11.6,url:'yann.lecun.com/exdb/mnist',one:'7 万个手写数字，每张都写着答案。',eff:'拖进来后样本 +7,000，「教」多「手写数字」',raw:'这套数据叫【MNIST】。'},
+{id:'captcha',n:'验证码',st:3,br:2,sl:0,c:1500,d:['mnist'],ic:'img',samples:12000,mb:42,one:'九宫格选图，「选出所有的猫」。',eff:'拖进来后样本 +12,000，「教」多「看图选择」'},
+{id:'aug',n:'数据增强',st:3,br:2,sl:1,c:600,d:['mnist'],ic:'magic',one:'一张图转一转、挪一挪，当好几张用。',eff:'有效样本 ×1.5',raw:'【数据增强】。',tag:'样本 ×1.5'},
+{id:'clean',n:'噪声清洗',st:4,br:2,sl:0,c:1200,d:['datatab'],ic:'broom',one:'把标错的数据挑出来扔掉。',eff:'噪声扣的样本归零'},
+{id:'transl',n:'翻译语料',st:4,br:2,sl:1,c:3500,d:['clean'],ic:'lang',samples:30000,mb:120,url:'statmt.org/wmt16',one:'中英对照的句子。',eff:'拖进来后样本 +30,000'},
+{id:'wiki',n:'中文百科',st:5,br:2,sl:0,c:9000,d:['transl'],ic:'globe',samples:120000,mb:900,url:'dumps.wikimedia.org/zhwiki',one:'几十万个词条。',eff:'拖进来后样本 +120,000'},
+{id:'web',n:'全网语料',st:6,br:2,sl:0,c:20000,d:['wiki'],ic:'globe',samples:500000,mb:5200,one:'能找到的所有中文网页。',eff:'拖进来后样本 +500,000'},
+{id:'equip',n:'装备栏',st:1,br:3,sl:0,c:40,d:['curve'],ic:'gear',one:'把显卡、散热和加速件摆在一处看。',eff:'练页多「装备」页签'},
+{id:'cooler',n:'九州风神',st:2,br:3,sl:0,c:300,d:['equip'],ic:'fan',one:'一个大风扇，显卡不容易烧。',eff:'烧卡概率 −50%',tag:'烧卡 −50%'},
+{id:'slots',n:'扩容装备栏',st:2,br:3,sl:2,c:[0,300,800,1800,4000,9000],lvSt:[1,2,2,3,4,5],lvL:['3 格','4 格','5 格','6 格','7 格','8 格'],d:['equip'],ic:'grid',one:'多一个格子，就能多装一件东西。',eff:'装备栏 +1 格，最多 8 格',raw:'每级换个说法：理线、换大机箱、换多插槽主板、加转接卡、再接一个电源。'},
+{id:'gpu',n:'GPU 驱动',st:2,br:3,sl:1,c:500,d:['equip'],ic:'chip',one:'让显卡帮忙算，不再只靠 CPU。',eff:'一轮快 3 倍',tag:'×3 速度'},
+{id:'cudnn',n:'cuDNN 加速',st:3,br:3,sl:0,c:700,d:['gpu'],ic:'bolt',one:'显卡专用的算法包。',eff:'电费 −30%',tag:'电费 −30%'},
+{id:'vram',n:'显存 6G',st:4,br:3,sl:0,c:2500,d:['gpu'],ic:'mem',one:'换一块大显存的卡。',eff:'更大的结构放得下',tag:'6G'},
+{id:'amp',n:'混合精度',st:5,br:3,sl:0,c:6000,d:['cudnn'],ic:'half',one:'一半数字用短格式存，省一半显存。',eff:'一轮快 2 倍',tag:'×2 速度'},
+{id:'room',n:'机房',st:6,br:3,sl:0,c:15000,d:['vram'],ic:'server',one:'租一整个机房的卡。',eff:'一轮快 8 倍',tag:'×8 卡'},
+{id:'proxy',n:'代答',st:1,br:4,sl:0,c:80,d:['curve'],ic:'robot',one:'它先猜，你再判。',eff:'题卡上显示它的答案和把握；答题记录里留下它当时的答案'},
+{id:'hard',n:'难例复核',st:2,br:4,sl:0,c:800,d:['proxy'],ic:'coin',one:'它没把握的题，你答对多给钱。',eff:'把握低于 60% 的题，报酬 ×1.5'},
+{id:'autofill',n:'验证码自动填',st:3,br:4,sl:0,c:2000,d:['captcha','proxy'],ic:'fill',one:'它有把握的验证码，自己先填上。',eff:'看图题替你选好一半'},
+{id:'autotrain',n:'自动训练',st:4,br:4,sl:0,c:2500,d:['lrauto'],ic:'play',one:'不用一直点，它自己接着练。',eff:'每 10 秒自动练一轮'},
+{id:'logic',n:'逻辑判断区',st:2,br:6,sl:0,from0:1,c:[200,600,1500,4000],lvSt:[2,3,4,5],lvL:['一步判断','看懂棋盘截图','想两步以上','自己跟自己下'],lvD:[[],['lenet'],['lstm'],['gamedata']],lvC:[null,null,null,'games10'],d:['depth'],ic:'logic',one:'让它学会「这样走会怎样」。棋盘直接用数字告诉它，不用先会看图。',eff:'Lv1 能赢就赢、能挡就挡，「教」多「下一步走哪」；Lv2 能认截图里的棋盘（要卷积网络）；Lv3 能想两步以上（要门控记忆）；Lv4 晚上自己跟自己下',raw:'第一级只要多层感知机；视觉和记忆分别是第二、三级的前置。'},
+{id:'gamedata',n:'对局记录',st:2,br:6,sl:1,c:120,d:['logic'],cond:'game1',ic:'save',one:'和它下过的棋，都变成它的练习题。',eff:'每和它下满几局，「数据包」文件夹里多一个「对局记录_<游戏>.zip」，拖进「练」就是样本'},
+{id:'nextmove',n:'下一步走哪',st:3,br:6,sl:0,c:300,d:['logic'],ic:'quiz',one:'把棋局变成选择题。',eff:'「教」多「下一步走哪」题桌：一个局面，四个走法选一个'},
+{id:'dice',n:'概率直觉',st:2,br:7,sl:0,c:200,cond:'board',side:1,ic:'coin',one:'掷过那么多次骰子，它开始对「几成把握」有感觉。',eff:'风险预报的数更准；「教」多「掷骰子」概率小题'},
+{id:'news',n:'时事',st:2,br:7,sl:1,c:150,cond:'news5',side:1,ic:'globe',one:'你读过的新闻，它也想知道。',eff:'「教」多「时事判断」题桌；它会在 YY 里聊你读过的新闻'},
+{id:'surf',n:'冲浪',st:2,br:7,sl:2,c:120,cond:'tieba',side:1,ic:'chat',one:'它陪你逛贴吧，帮你挑有用的楼层。',eff:'贴吧里带数据网址的楼层会高亮'},
+{id:'bargain',n:'砍价',st:3,br:7,sl:0,c:250,cond:'miaoyu',side:1,ic:'tag',one:'二手市场，它比你会说话。',eff:'喵鱼上多「让它帮我砍价」，二手价 −5%；能看出二手卡的成色'},
+{id:'care',n:'体贴',st:3,br:7,sl:1,c:200,cond:'gf',side:1,ic:'smile',one:'看你和晴雯聊天，它学会了照顾人。',eff:'性格多一个「体贴」标签；晴雯的生日、纪念日它会提前提醒你'},
+{id:'slang',n:'网络用语',st:3,br:7,sl:2,c:180,cond:'memes5',side:1,ic:'chat',one:'「蓝瘦香菇」是什么意思，它现在懂了。',eff:'它能看懂 2016 年的网络用语；斗图时帮你挑图回击'},
+{id:'rhythm',n:'节奏',st:4,br:7,sl:0,c:300,cond:'music3',side:1,ic:'sound',one:'边练边听歌。',eff:'训练时音乐接着放，练完一轮的提示音跟着节拍'},
+{id:'mind',n:'脑子窗口',st:1,br:5,sl:0,c:40,d:['curve'],ic:'orb',one:'把它的脑子放在桌面上看。',eff:'打开左栏「{名字}」'},
+{id:'daily',n:'日常',st:2,br:5,sl:0,c:0,d:['mind'],ic:'chat',one:'随口问问的小事。',eff:'YY 里多一组性格题'},
+{id:'shelf',n:'书架',st:2,br:5,sl:1,c:60,d:['mind'],ic:'shelf',one:'把书一页页读给它，读完它会在 YY 里问你问题。',eff:'练页多「书架」页签'},
+{id:'memo',n:'数据回顾',st:2,br:5,sl:2,c:150,d:['mind'],ic:'hist',one:'把它读过的东西按时间排好，放进和它的 YY 聊天里。',eff:'和它的 YY 聊天框多一个「数据」按钮，点开在右边列出喂过的数据'},
+{id:'tags',n:'性格标签',st:3,br:5,sl:0,c:120,d:['daily'],ic:'smile',one:'它说的每句话，你都能贴一个标签。',eff:'它往你贴的方向长'},
+{id:'tang',n:'全唐诗',st:3,br:5,sl:1,c:473,d:['shelf'],ic:'book',one:'4.9 万首唐诗。',eff:'书架多一本；它会接诗'},
+{id:'luxun',n:'鲁迅杂文选',st:4,br:5,sl:0,c:240,d:['shelf'],ic:'book',one:'冷峻，一针见血。',eff:'书架多一本；说话偶尔尖刻'},
+];
+const NODE={}; NODES.forEach(n=>NODE[n.id]=n);
+const PACKS=NODES.filter(n=>n.samples);
+const PRESET_CORE={1:['curve','ledger'],2:['val','lr','scope','mnist','daily','gpu','datatab','ability','equip','proxy','mind','spam','shelf'],3:['cap','overfit','arch','relu','lenet','aug','cudnn','tags','xor','captcha','tang','memo'],4:['risk','lrauto','check','dropout','rnn','lstm','clean','vram','luxun','quiz'],5:['bn','attn','transl','amp','autotrain'],6:['res','wiki','room']};
+
+const BANKS=[
+ {id:'sense',n:'常识判断',need:'sense',kind:'yn',pay:30,ic:'book'},
+ {id:'spam',n:'划短信',need:'spam',kind:'yn',pay:34,ic:'sms'},
+ {id:'arith',n:'算术',need:'arith',kind:'yn',pay:32,ic:'num'},
+ {id:'logic',n:'逻辑',need:'logic',kind:'yn',pay:36,ic:'logic'},
+ {id:'mnist',n:'手写数字',need:'mnist',kind:'digit',pay:48,ic:'pen'},
+ {id:'captcha',n:'看图选择',need:'captcha',kind:'grid',pay:60,ic:'img'},
+];
+const KIND={yn:'对 / 错',digit:'看图选数字',grid:'九宫格选图'};
+const Q={
+ sense:[["人用眼睛看东西。",true,"看靠眼睛，听靠耳朵。"],["鲸鱼是一种鱼。",false,"鲸鱼用肺呼吸，是哺乳动物。"],["2016 年是猴年。",true,"2016 是丙申猴年。"],["红色和黄色颜料混在一起会变成橙色。",true,"红加黄就是橙。"],["地球是一个正方体。",false,"地球接近一个球。"],["北半球的夏天在六月到八月。",true,"六七八月是北半球的夏天。"],["一年有十三个月。",false,"一年十二个月。"],["鱼会爬树。",false,"绝大多数鱼不会爬树。"],["里约奥运会在 2016 年举办。",true,"2016 年 8 月在巴西里约。"],["骆驼的驼峰里装的是水。",false,"驼峰里存的是脂肪。"]],
+ spam:[["【10086】您的积分可兑换 368 元现金，请登录 10086xx.com 领取。",true,"官方不会让你点陌生网址领现金。"],["妈：周末回来吃饭吗？",false,"家里人的正常消息。"],["您涉嫌洗钱，请把资金转入安全账户配合调查。",true,"公检法不会让你转账。"],["快递已到小区驿站，取件码 3-2-1104。",false,"正常的取件通知。"]],
+ arith:[["7 + 5 = 12",true,"7 加 5 等于 12。"],["9 × 6 = 56",false,"9 × 6 = 54。"],["48 ÷ 6 = 8",true,"48 除以 6 等于 8。"],["13 + 29 = 41",false,"13 + 29 = 42。"]],
+ logic:[["所有鸟都会飞，企鹅是鸟，所以企鹅会飞。",false,"前提就错了：不是所有鸟都会飞。"],["如果下雨地就湿；下雨了，所以地湿了。",true,"前提成立，结论跟着成立。"],["地湿了，所以一定下过雨。",false,"也可能是洒水车。"]],
+};
+const PICS=['cat','car','apple','phone','fish','cup'];
+const PICNAME={cat:'猫',car:'汽车',apple:'苹果',phone:'手机',fish:'鱼',cup:'杯子'};
+const PICSVG={
+ cat:'<path d="M18 30 L22 12 L32 24 M52 30 L48 12 L38 24"/><circle cx="35" cy="38" r="18"/><path d="M29 36h.1M41 36h.1M35 42v3M24 44h-9M46 44h9"/>',
+ car:'<path d="M10 44 V36 L18 26 H48 L58 36 V44 Z"/><circle cx="21" cy="46" r="5"/><circle cx="48" cy="46" r="5"/>',
+ apple:'<path d="M35 22 C20 16 12 30 16 42 C20 56 30 58 35 54 C40 58 50 56 54 42 C58 30 50 16 35 22 Z"/><path d="M35 22 C35 16 38 12 42 10"/>',
+ phone:'<rect x="22" y="10" width="26" height="50" rx="5"/><path d="M32 54 h6"/>',
+ fish:'<path d="M12 35 C24 20 44 20 54 35 C44 50 24 50 12 35 Z"/><path d="M54 35 L64 26 V44 Z"/><path d="M22 33h.1"/>',
+ cup:'<path d="M18 20h30l-4 36H22z"/><path d="M48 28c8 0 8 14 0 14"/>'
+};
+const DIGITS={0:[[[.5,.12],[.78,.3],[.8,.7],[.5,.9],[.22,.7],[.22,.3],[.5,.12]]],1:[[[.38,.25],[.55,.12],[.55,.9]]],2:[[[.25,.28],[.45,.12],[.72,.22],[.7,.45],[.25,.88],[.8,.88]]],3:[[[.25,.18],[.7,.15],[.48,.45],[.75,.62],[.62,.88],[.25,.84]]],4:[[[.65,.9],[.65,.12],[.2,.65],[.85,.65]]],5:[[[.75,.14],[.32,.14],[.28,.45],[.62,.42],[.76,.66],[.55,.88],[.24,.82]]],7:[[[.22,.15],[.8,.15],[.42,.9]]],8:[[[.5,.5],[.25,.3],[.5,.12],[.75,.3],[.5,.5],[.22,.7],[.5,.9],[.78,.7],[.5,.5]]],9:[[[.75,.4],[.5,.55],[.25,.4],[.5,.12],[.75,.4],[.72,.9]]]};
+const EXQ=['','猫、狗、鱼，哪个不会叫？','[一张猫的照片] 这是什么？','「我门明天去公园。」哪个字错了？','把「今晚月色真美」换成英文。','读完一本书，回答：主人公最后为什么回家？'];
+const EXA=['','是。','选 C。','「天」。','Tonight moon very beautiful.','（还读不完）'];
+const LRS=[{n:'自动',k:.12,blow:.02,back:.06,sub:'先快后慢'},{n:'2.7',k:.32,blow:.9,back:.3,sub:'炸 90%',hot:1},{n:'0.9',k:.2,blow:.35,back:.2,sub:'炸 35%',hot:1},{n:'0.3',k:.11,blow:0,back:.12,sub:'刚好'},{n:'0.1',k:.06,blow:0,back:.05,sub:'少退步'},{n:'0.0333',k:.03,blow:0,back:0,sub:'不退步'}];
+const VIZ=['权重','隐藏层','卷积核','记忆','注意力','多头'];
+const BOOKS=[
+ {id:'dict',n:'新华字典',need:null,color:'linear-gradient(160deg,#c43b32,#7e1d18)',text:'【灵】líng　①聪明，反应快：机灵，灵巧。②神仙或关于神仙的：灵怪。③有效验：这个办法真灵。\n【光】guāng　①太阳、火、电等放射出来的，使人看到东西的那种东西：阳光，灯光。②荣誉：为国争光。',ask:'「机灵」的灵和「灵怪」的灵，为什么是同一个字？'},
+ {id:'why',n:'十万个为什么',need:null,color:'linear-gradient(160deg,#2f7fd0,#173f78)',text:'为什么天是蓝的？阳光里有各种颜色的光。蓝光碰到空气里的小颗粒，被散射得最厉害，满天都是，所以我们抬头看到的是蓝色。\n为什么冬天呼出白气？嘴里呼出的热气遇冷，里面的水汽凝成了小水滴。',ask:'如果天是蓝的是因为散射，那傍晚的天为什么是红的？'},
+ {id:'tang',n:'全唐诗',need:'tang',color:'linear-gradient(160deg,#c9a24a,#6e5420)',text:'床前明月光，疑是地上霜。举头望明月，低头思故乡。\n白日依山尽，黄河入海流。欲穷千里目，更上一层楼。\n春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。',ask:'「疑是地上霜」——他是真的以为地上结霜了吗？'},
+ {id:'luxun',n:'鲁迅杂文选',need:'luxun',color:'linear-gradient(160deg,#3b3f45,#141619)',text:'其实地上本没有路，走的人多了，也便成了路。\n横眉冷对千夫指，俯首甘为孺子牛。\n我向来是不惮以最坏的恶意，来推测中国人的，然而我还不料，也不信竟会凶残到这地步。',ask:'「走的人多了，也便成了路」——那第一个走的人，不怕走错吗？'},
+];
+
+const S={stage:2,cond:{},lv:{},inst:{sense:1},dl:{},money:0,samples:0,answered:0,combo:0,today:0,todayEarn:0,tab:'teach',bank:'sense',qi:0,tr:[],va:[],marks:[],round:0,best:0,lr:3,lastDelta:0,sheet:[],viz:2,name:'len',sel:null,onlyCan:false,log:[],earnWin:[],power:295,reduce:false,sound:true,training:false,ltab:'equip',hist:[],hf:'all',openH:-1,fb:'',fbc:'',min:24,ckpt:null,qzRep:'',read:{},feed:[],chat:[],dataOpen:false,pendingAsk:null,fpath:'root',fsel:new Set()};
+const lv=id=>S.lv[id]||0;
+const inst=id=>!!S.inst[id];
+const maxLv=n=>Array.isArray(n.c)?n.c.length:1;
+const price=n=>Array.isArray(n.c)?(n.c[lv(n.id)]??0):n.c;
+const params=()=>{const w=WID[Math.max(0,lv('width')-1)],l=LAY[Math.max(0,lv('depth')-1)];let m=1;if(lv('lenet'))m*=2;if(lv('rnn'))m*=2;if(lv('lstm'))m*=3;if(lv('attn'))m*=5;if(lv('trans'))m*=10;return w*(1+(l-1)*.7)*m;};
+const noise=()=>lv('clean')?0:Math.round(S.samples*.02);
+const effSamples=()=>Math.max(0,(S.samples-noise())*(lv('aug')?1.5:1));
+const clock=()=>'01:'+String(S.min%60).padStart(2,'0');
+const stamp=()=>DATES[S.stage-1]+' '+clock();
+const tabOpen=t=>t==='teach'||(t==='tech'&&(S.answered>=12||lv('curve')))||(t==='train'&&lv('curve'))||(t==='mind'&&lv('mind'));
+function nodeState(n){
+ const L=lv(n.id),M=maxLv(n);
+ if(L>=M) return {s:'max'};
+ if(n.st>S.stage) return {s:'lock',why:`能力 ${n.st} 开放`};
+ if(n.lvSt&&n.lvSt[L]>S.stage) return {s:'lock',why:`下一级在能力 ${n.lvSt[L]} 开放`};
+ const miss=(n.d||[]).filter(d=>!lv(d));
+ if(miss.length) return {s:'lock',why:'先买「'+miss.map(d=>NODE[d].n).join('」「')+'」'};
+ const ld=(n.lvD?.[L]||[]).filter(d=>!lv(d));
+ if(ld.length) return {s:'lock',why:'这一级要先有「'+ld.map(d=>NODE[d].n).join('」「')+'」'};
+ const cd=n.lvC?n.lvC[L]:n.cond;
+ if(cd&&!S.cond[cd]) return {s:'lock',why:COND[cd]};
+ if(n.chat) return {s:'chat',why:'在 YY 对它说一句话'};
+ if(S.money<price(n)) return {s:'poor',why:'还差 ¥'+fmtN(Math.ceil(price(n)-S.money))};
+ return {s:'can'};
+}
+const canCount=()=>NODES.filter(n=>nodeState(n).s==='can').length;
+function log(what,amt,cat){
+ const last=S.log[S.log.length-1];
+ if(last&&last.what===what&&last.cat===cat){last.amt+=amt;last.cnt=(last.cnt||1)+1;last.t=clock();}
+ else S.log.push({t:clock(),what,amt,cat});
+ if(amt>0) S.earnWin.push({t:Date.now(),a:amt});
+ if(S.log.length>200) S.log.shift();
+}
+const feed=(kind,text,ok)=>S.feed.unshift({stage:S.stage,t:stamp(),kind,text,ok});
+const incomeRate=()=>{const now=Date.now();S.earnWin=S.earnWin.filter(e=>now-e.t<20000);return S.earnWin.reduce((s,e)=>s+e.a,0)/20;};
+
+/* ---------- sound (Web Audio, no files) ---------- */
+let AC=null;
+function snd(type){
+ if(!S.sound) return;
+ try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){return;}
+ const t=AC.currentTime;
+ const tone=(f,d,st=0,g=.05,wave='sine',f2)=>{const o=AC.createOscillator(),G=AC.createGain();o.type=wave;o.frequency.setValueAtTime(f,t+st);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+st+d);G.gain.setValueAtTime(.0001,t+st);G.gain.exponentialRampToValueAtTime(g,t+st+.006);G.gain.exponentialRampToValueAtTime(.0001,t+st+d);o.connect(G).connect(AC.destination);o.start(t+st);o.stop(t+st+d+.03);};
+ const S_={
+  tap:()=>tone(2100,.03,0,.018,'triangle',1100),
+  tab:()=>{tone(660,.08,0,.03);tone(990,.14,.045,.026);},
+  ok:()=>{tone(988,.07,0,.035);tone(1480,.16,.055,.03);},
+  combo:()=>{tone(988,.06,0,.03);tone(1319,.06,.05,.03);tone(1760,.2,.1,.03);},
+  no:()=>tone(220,.16,0,.04,'triangle',160),
+  buy:()=>{tone(1047,.16,0,.035);tone(1319,.16,.07,.035);tone(1568,.32,.14,.035);},
+  train:()=>tone(300,.32,0,.025,'sine',760),
+  done:()=>{tone(784,.08,0,.03);tone(1175,.18,.06,.03);},
+  pop:()=>tone(520,.07,0,.045,'sine',1200),
+  drop:()=>{tone(700,.06,0,.04,'sine',350);tone(1046,.18,.08,.03);},
+  notify:()=>{tone(1175,.09,0,.035);tone(880,.16,.11,.035);},
+  lock:()=>tone(320,.06,0,.025,'square',280),
+  open:()=>tone(440,.1,0,.025,'sine',880)
+ };
+ (S_[type]||S_.tap)();
+}
+// every button: soft tick + a light press glow under the finger
+document.addEventListener('pointerdown',e=>{
+ const b=e.target.closest('button,.tile9,.fi,.dico,.nd');if(!b) return;
+ if(b.disabled){snd('lock');return;}
+ if(!b.dataset.quiet) snd('tap');
+ if(S.reduce||!b.closest('#win')) return;
+ const w=$('#win').getBoundingClientRect();const f=document.createElement('span');f.className='pressfx';const sz=Math.max(60,b.getBoundingClientRect().width/SCALE*1.2);
+ f.style.width=f.style.height=sz+'px';f.style.left=(e.clientX-w.left)/SCALE+'px';f.style.top=(e.clientY-w.top)/SCALE+'px';$('#win').appendChild(f);setTimeout(()=>f.remove(),460);
+},true);
+
+function buy(id){
+ const n=NODE[id];if(nodeState(n).s!=='can'){snd('lock');return;}
+ const p=price(n);S.money-=p;S.lv[id]=lv(id)+1;
+ log('买「'+n.n+'」'+(maxLv(n)>1?' Lv'+S.lv[id]:''),-p,'科技');
+ snd('buy');
+ if(n.samples&&!inst(id)){startDl(id);toast('买下了「'+n.n+'」，正在下载到桌面「len 的资料 › 数据包」');}
+ else toast('买下了「'+n.n+'」'+(n.id==='curve'?'，「练」打开了':n.id==='memo'?'，去 YY 和它的聊天框看看':''));
+ S.justBought=id;renderAll();renderYY();
+}
+function startDl(id){if(S.dl[id]==null||S.dl[id]<0)S.dl[id]=0;renderFolder();}
+function install(ids){
+ if(!lv('datatab')){toast('先在科技买「数据来源栏」');snd('lock');return;}
+ const ok=ids.filter(id=>NODE[id]&&NODE[id].samples&&S.dl[id]>=1&&!inst(id));
+ if(!ok.length){toast('这些包已经装过，或者还没下载完');return;}
+ let add=0;ok.forEach(id=>{S.inst[id]=1;add+=NODE[id].samples;S.samples+=NODE[id].samples;feed('数据包',NODE[id].n+'.zip · '+fmtN(NODE[id].samples)+' 条');});
+ snd('drop');toast(`装好了 ${ok.length} 个数据包，样本 +${fmtN(add)}`);
+ S.fsel.clear();renderAll();renderFolder();renderYY();
+}
+setInterval(()=>{let changed=false;Object.keys(S.dl).forEach(id=>{const v=S.dl[id];if(v>=0&&v<1){const n=NODE[id];S.dl[id]=Math.min(1,v+.25/Math.max(1,Math.log2(n.mb+1)));changed=true;if(S.dl[id]>=1){snd('done');toast(`「${n.n}.zip」下载好了，拖进「练 › 数据来源」安装`);blink('tkFolder');}}});if(changed){renderFolder();if(S.tab==='train'&&S.ltab==='datatab')train();}},250);
+
+function caps(){
+ const p=params(),np=NEEDP[S.stage]||p,d=effSamples(),nd=NEEDD[S.stage]||d;
+ const T=Math.min(99,62+4*S.stage+12*Math.min(1,p/Math.max(np,.1)));
+ const gap=Math.max(2.5,20-14*Math.min(1,d/Math.max(nd,1))-(lv('dropout')?5:0)-(lv('aug')?3:0));
+ return {T,V:T-gap};
+}
+const last=a=>a[a.length-1];
+function trainRound(quiet){
+ const {T,V}=caps(),L=LRS[S.lr];
+ const t=last(S.tr)??50,v=last(S.va)??45;
+ const blow=Math.random()<L.blow*(lv('bn')?.4:1);
+ let nt=blow?t-rnd(6,12):t+(T-t)*L.k*rnd(.6,1.25)+rnd(-.8,.8);
+ let nv=blow?v-rnd(6,12):v+(V-v)*L.k*rnd(.5,1.15)+rnd(-1.2,1.2);
+ if(!blow&&Math.random()<L.back) nv-=rnd(2,5);
+ nt=Math.max(30,Math.min(99.5,nt));nv=Math.max(25,Math.min(nt,nv));
+ if(nv<v-1) S.marks.push(S.tr.length);
+ S.tr.push(nt);S.va.push(nv);S.round++;
+ S.lastDelta=Math.round((nv-v)*10);
+ if(nv>S.best){S.best=nv;S.ckpt={len:S.tr.length};}
+ if(!quiet){
+  const cost=(lv('cudnn')?.7:1)*(1.2+S.stage*.6);
+  S.money-=cost;log('训练电费',-cost,'电费');
+  const pool=Q[S.bank]||Q.sense;
+  S.sheet=[0,1,2,3].map(i=>{const q=pool[(S.round*3+i)%pool.length];const ok=Math.random()<nv/100;return {q:q[0],ans:ok?q[1]:!q[1],ok};});
+  if(blow){toast('这一轮练崩了，成绩掉了一截');snd('no');}else snd('done');
+ }
+ return blow;
+}
+function seedCurve(){S.tr=[];S.va=[];S.marks=[];S.best=0;const r=S.round;S.round=0;const keep=S.lr;S.lr=3;for(let i=0;i<r;i++)trainRound(true);S.lr=keep;
+ const pool=Q.sense;S.sheet=[0,1,2,3].map(i=>{const q=pool[(i*3+1)%pool.length];const ok=Math.random()<.8;return {q:q[0],ans:ok?q[1]:!q[1],ok};});}
+
+function renderAll(){hud();side();page();taskbar();}
+function sealChip(id){const n=NODE[id],st=nodeState(n);return `<button class="schip" data-seal="${id}" title="${esc(n.one)}">${ic('lock')}<b>${n.n}</b><span class="n">${st.s==='lock'&&n.st>S.stage?'能力 '+n.st:'¥'+fmtN(price(n))}</span></button>`;}
+function seal(id,row){const n=NODE[id],st=nodeState(n);const p=st.s==='lock'?`<span class="p l">${st.why}</span>`:`<span class="p">¥${fmtN(price(n))}</span>`;
+ return `<div class="seal${row?' row':''}" data-seal="${id}"><span class="lk">${ic('lock')}</span><b>${n.n}</b><p>${n.one}</p>${p}</div>`;}
+function bindSeals(root){root.querySelectorAll('[data-seal]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();gotoNode(b.dataset.seal);}));}
+function gotoNode(id){if(!tabOpen('tech')){toast('在「教」里做满 12 题，科技才会出现');return;}S.sel=id;go('tech');centerNode(id);}
+function blink(id){const el=$('#'+id);if(!el)return;el.classList.remove('blink');void el.offsetWidth;el.classList.add('blink');}
+
+function hud(){
+ const h=$('#hud');const nx=S.stage<6;let a=`<div class="me"><span class="orb" id="hudOrb"></span><div><b>${esc(S.name)}</b><small>能力 ${S.stage} / 6 · ${ABIL[S.stage-1]}</small></div></div>`;
+ if(lv('ability')){const p=params(),np=NEEDP[S.stage],d=effSamples(),nd=NEEDD[S.stage];
+  a+=nx?`<div><div class="hbt">下一项能力<b>${ABIL[S.stage]}</b></div><div class="hbr">${mbar('参数',p,np,'pur',fmtK(p)+' / '+fmtK(np))}${mbar('样本',d,nd,'blu',fmtN(d)+' / '+fmtN(nd))}</div></div>`:`<div><div class="hbt"><b>六项能力全部学会</b></div></div>`;}
+ else a+=`<div>${sealChip('ability')}</div>`;
+ a+=`<div class="slots"><i class="on" title="蜘蛛纸牌开着">蛛</i><i class="${S.stage>1?'on':''}">${S.stage>1?'券':''}</i><i></i><i></i></div>`;
+ a+=lv('ledger')?`<div class="led"><div><small>¥</small><b class="n">${fmtN(Math.floor(S.money))}</b></div><div><small>收入 / 秒</small><b class="n grn">+${incomeRate().toFixed(1)}</b></div><div><small>电力</small><b class="n">${S.training?420:S.power}<span class="dim" style="font-size:13px"> / 3500W</span></b></div></div>`:`<div class="led">${sealChip('ledger')}</div>`;
+ a+=`<div class="dt"><small>2016</small><b class="n">${DATES[S.stage-1]}　${clock()}</b></div>`;
+ h.innerHTML=a;bindSeals(h);
+}
+function pulseOrb(){const o=$('#hudOrb');if(!o||S.reduce)return;o.classList.remove('pulse');void o.offsetWidth;o.classList.add('pulse');}
+function mbar(l,v,need,c,txt){const p=Math.min(100,need?v/need*100:100);return `<div class="mb"><span>${l}</span><span class="mt"><i class="${c}" style="width:${p}%"></i></span><span class="mv n">${txt}${v>=need?' ✓':''}</span></div>`;}
+function side(){
+ const tabs=[{id:'teach',n:'教',c:'linear-gradient(160deg,#5aa8ff,#2f6fe0)',k:'book',why:''},{id:'train',n:'练',c:'linear-gradient(160deg,#ffb35c,#f07a2a)',k:'curve',why:'科技买「训练曲线」'},{id:'tech',n:'科技',c:'linear-gradient(160deg,#6be08f,#249a55)',k:'neuron',why:`做满 12 题<br>${Math.min(12,S.answered)} / 12`},{id:'mind',n:esc(S.name),c:'linear-gradient(160deg,#b49bff,#6c4ce0)',k:'orb',why:'科技买「脑子窗口」'}];
+ const cnt=canCount();
+ $('#side').innerHTML=`<div class="tabs">${tabs.map(t=>{const o=tabOpen(t.id);return `<button class="tab${S.tab===t.id?' on':''}${o?'':' lock'}" data-tab="${t.id}" data-quiet="1" ${o?'':'disabled'}><span class="ti" style="background:${t.c}">${ic(o?t.k:'lock')}</span><span>${t.n}</span>${t.id==='tech'&&o&&cnt?`<span class="cnt">${cnt}</span>`:''}${o?'':`<span class="tw">${t.why}</span>`}</button>`;}).join('')}</div>
+ <div class="pet${S.spider?' out':''}" title="预留：蜘蛛灵宠，之后再做"><span class="pi">${ic('spider')}</span><small>${S.spider?'在桌面上溜达':'在窝里'}</small><button id="petBtn">${S.spider?'休息':'出来走走'}</button></div>
+ <div class="tog"><button id="sfx" class="${S.sound?'on':''}" title="音效">${ic(S.sound?'sound':'mute')}</button><button id="rdc" class="${S.reduce?'':'on'}" title="${S.reduce?'特效已减少':'特效开着'}">${ic('motion')}</button></div>`;
+ $$('#side .tab').forEach(b=>b.onclick=()=>{if(S.tab!==b.dataset.tab)snd('tab');go(b.dataset.tab);});
+ $('#rdc').onclick=()=>{S.reduce=!S.reduce;document.body.classList.toggle('reduce',S.reduce);side();};
+ $('#sfx').onclick=()=>{S.sound=!S.sound;side();if(S.sound)snd('ok');};
+ $('#petBtn').onclick=()=>{S.spider=!S.spider;snd(S.spider?'open':'pop');toast(S.spider?'它爬出来了（蜘蛛灵宠之后做，这里先占位）':'它回窝休息了');side();};
+}
+function go(t){if(!tabOpen(t))return;const changed=S.tab!==t;S.tab=t;$$('.page').forEach(p=>{const on=p.id==='p-'+t;if(on&&changed){p.classList.remove('on');void p.offsetWidth;}p.classList.toggle('on',on);});side();page();}
+function page(){({teach,train,tech,mind})[S.tab]();}
+function taskbar(){$('#exeName').textContent=S.name+'.exe';$('#tbName').textContent=S.name;$('#tkExe').textContent=S.name;$('#tbDate').textContent=DATEZH[S.stage-1];$('#tbClock').textContent=clock()+' 上午';}
+
+/* ---------- 教 ---------- */
+function teach(){
+ const P=$('#p-teach');const open=BANKS.filter(b=>inst(b.need)),closed=BANKS.filter(b=>!inst(b.need));
+ if(!open.find(b=>b.id===S.bank)) S.bank='sense';
+ P.innerHTML=`<div class="pn"><div class="ph"><b>任务大厅</b><span class="r">按报酬排序</span></div><div class="hl">${
+  open.map(b=>`<button class="job${S.bank===b.id?' on':''}" data-b="${b.id}"><span class="ji">${ic(b.ic)}</span><span class="jn">${b.n}<small>${KIND[b.kind]}</small></span><span class="jp n">¥${b.pay}</span></button>`).join('')}${
+  closed.map(b=>{const n=NODE[b.need],st=nodeState(n);const why=lv(b.need)?(S.dl[b.need]>=1?'在桌面文件夹里，拖进「练」安装':'下载中'):st.s==='lock'?st.why:'科技 · 数据 · ¥'+fmtN(price(n));return `<button class="job lockd" ${lv(b.need)?'':`data-seal="${b.need}"`}><span class="ji">${ic('lock')}</span><span class="jn">${b.n}<small>${why}</small></span><span class="jp"></span></button>`;}).join('')}</div></div>
+  <div class="pn qp" id="qp"></div>
+  <div class="pn hist" id="hist"></div>`;
+ bindSeals(P);
+ $$('#p-teach .job[data-b]').forEach(b=>b.onclick=()=>{S.bank=b.dataset.b;S.qi=0;teach();});
+ question();history();
+}
+const mult=()=>1+Math.min(1,S.combo/50);
+function guess(){const acc=.5+S.stage*.07;return {right:Math.random()<acc,c:rnd(.52,.96)};}
+function question(){
+ const qp=$('#qp');if(!qp) return;const b=BANKS.find(x=>x.id===S.bank),proxy=lv('proxy');
+ const head=`<div class="qh"><b>开心辞典</b><span>${b.n}</span><span class="r">连对<span class="combo" id="combo">${S.combo}</span>${S.combo>=10?`<span class="mult">×${mult().toFixed(1)}</span>`:''}</span></div>`;
+ const foot=`<div class="qf"><span class="fb ${S.fbc}">${S.fb}</span><span class="r n">答对一题 ¥${b.pay} 和 1 条样本　今天 ${S.today} 题 · ¥${fmtN(S.todayEarn)}</span></div>`;
+ const g=guess();let body='',acts='',after;
+ const pl=a=>proxy?`<div class="pg"><span class="po"></span><b>${esc(S.name)}：${a}</b><span class="n">把握 ${Math.round(g.c*100)}%</span></div>`:'<div class="pg"></div>';
+ if(b.kind==='yn'){
+  const q=Q[b.id][S.qi%Q[b.id].length];const ai=g.right?q[1]:!q[1];
+  body=`<div class="qc"><div class="qt">${q[0]}</div>${pl(ai?'对':'错')}</div>`;
+  acts=`<div class="qa2"><button class="yn y" data-a="1" data-quiet="1">对<kbd>1</kbd></button><button class="yn x" data-a="0" data-quiet="1">错<kbd>2</kbd></button></div>`;
+  after=()=>$$('#qp .yn').forEach(x=>x.onclick=()=>done(x,{q:q[0],pick:x.dataset.a==='1'?'对':'错',truth:q[1]?'对':'错',why:q[2],ai:proxy?(ai?'对':'错'):null,conf:g.c,right:(x.dataset.a==='1')===q[1]}));
+ }else if(b.kind==='digit'){
+  const keys=Object.keys(DIGITS),d=keys[S.qi%keys.length];const opts=shuffle([d,...shuffle(keys.filter(k=>k!==d)).slice(0,3)]);const ai=g.right?d:opts.find(o=>o!==d);
+  body=`<div class="qc"><canvas class="digit" id="dg" width="400" height="400"></canvas>${pl(ai)}</div>`;
+  acts=`<div class="op4">${opts.map((o,i)=>`<button data-o="${o}" class="n" data-quiet="1">${o}<kbd>${i+1}</kbd></button>`).join('')}</div>`;
+  after=()=>{drawDigit($('#dg'),d);$$('#qp .op4 button').forEach(x=>x.onclick=()=>done(x,{q:'手写数字',pic:'digit:'+d,pick:x.dataset.o,truth:d,why:'这一笔写的是 '+d+'。',ai:proxy?ai:null,conf:g.c,right:x.dataset.o===d}));};
+ }else{
+  const target=PICS[S.qi%PICS.length];const others=shuffle(PICS.filter(p=>p!==target));
+  const tiles=shuffle([target,target,target,...others,others[0]]).slice(0,9);
+  const aiSel=new Set();tiles.forEach((t,i)=>{if(Math.random()<(t===target?.85:.1))aiSel.add(i);});
+  const sel=new Set();if(lv('autofill'))tiles.forEach((t,i)=>{if(aiSel.has(i)&&t===target&&Math.random()<.6)sel.add(i);});
+  body=`<div class="qc"><div class="qt" style="font-size:26px">选出所有的${PICNAME[target]}</div><div class="g9">${tiles.map((t,i)=>`<button class="tile9${proxy&&aiSel.has(i)?' ai':''}${sel.has(i)?' sel':''}" data-i="${i}"><svg viewBox="0 0 70 70">${PICSVG[t]}</svg></button>`).join('')}</div>${proxy?`<div class="pg"><span class="po"></span><b>绿点是 ${esc(S.name)} 选的</b></div>`:''}</div>`;
+  acts=`<div class="sub9"><button id="g9s" data-quiet="1">提交</button></div>`;
+  after=()=>{$$('#qp .tile9').forEach(x=>x.onclick=()=>{const i=+x.dataset.i;sel.has(i)?sel.delete(i):sel.add(i);x.classList.toggle('sel');});
+   $('#g9s').onclick=()=>{let ok=true;$$('#qp .tile9').forEach(x=>{const i=+x.dataset.i,isT=tiles[i]===target,s=sel.has(i);if(isT&&s)x.classList.add('hit');else if(isT!==s){x.classList.add('miss');ok=false;}});
+    const aiOk=tiles.every((t,i)=>(t===target)===aiSel.has(i));
+    done($('#g9s'),{q:'选出所有的'+PICNAME[target],pic:target,pick:sel.size+' 张',truth:'3 张',why:ok?'全选对了。':'红框是选错或漏选的。',ai:proxy?(aiOk?'全对':'选错了'):null,aiOk,conf:g.c,right:ok},900);};};
+ }
+ qp.innerHTML=head+body+acts+foot;after();
+}
+function done(btn,h,delay){
+ const b=BANKS.find(x=>x.id===S.bank);const right=h.right;
+ btn.classList.add(right?'ok':'no');
+ let pay=right?b.pay*mult()*(lv('hard')&&h.conf<.6?1.5:1):-b.pay/2;
+ S.money+=pay;S.today++;S.answered++;if(right){S.todayEarn+=pay;S.samples++;}
+ log('做题 · '+b.n,pay,'题目');
+ S.combo=right?S.combo+1:0;
+ snd(right?(S.combo>0&&S.combo%10===0?'combo':'ok'):'no');
+ S.fb=(right?'答对了：':'答错了：')+h.why;S.fbc=right?'good':'bad';
+ h.aiOk=h.aiOk??(h.ai!=null?h.ai===h.truth:null);
+ S.hist.unshift({...h,bank:b.n,t:clock(),pay,stage:S.stage,combo:S.combo});if(S.hist.length>120)S.hist.pop();
+ feed('题',b.n+' · '+h.q+(h.ai!=null?'（它答 '+h.ai+'）':''),right);
+ S.openH=-1;
+ floatAt(btn,(pay>0?'+':'−')+'¥'+Math.abs(pay).toFixed(0),right?'var(--mint)':'var(--red)');
+ const c=$('#combo');if(c&&right){c.textContent=S.combo;c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');}
+ if(right)pulseOrb();
+ const unlocked=S.answered===12&&!lv('curve');
+ hud();side();history();
+ setTimeout(()=>{S.qi++;question();if(unlocked){toast('「科技」出现了，去买「训练曲线」');snd('buy');}},right?(delay||260):Math.max(delay||0,850));
+}
+function history(){
+ const el=$('#hist');if(!el) return;
+ const list=S.hist.filter(h=>S.hf==='all'||(S.hf==='wrong'&&!h.right)||(S.hf==='ai'&&h.aiOk===false));
+ const ok=S.hist.filter(h=>h.right).length;
+ el.innerHTML=`<div class="ph"><b>答题记录</b><span class="r n">${ok} / ${S.hist.length}</span></div>
+ <div class="seg"><button data-f="all" class="${S.hf==='all'?'on':''}">全部</button><button data-f="wrong" class="${S.hf==='wrong'?'on':''}">我答错的</button><button data-f="ai" class="${S.hf==='ai'?'on':''}">它答错的</button></div>
+ <div class="hlist">${list.length?list.map(h=>{const i=S.hist.indexOf(h);return `<button class="he${S.openH===i?' open':''}" data-h="${i}">
+  <div class="t1"><span class="mk ${h.right?'grn':'red'}">${h.right?'✓':'✗'}</span><span class="q">${esc(h.q)}</span><span class="tm">${h.t}</span></div>
+  <div class="t2"><span>我：${h.pick}</span>${h.ai!=null?`<span class="${h.aiOk?'grn':'red'}">${esc(S.name)}：${h.ai}</span>`:'<span>它还不会代答</span>'}</div>
+  <div class="det">${h.pic?`<span class="thumb">${h.pic.startsWith('digit:')?`<b class="n" style="font-size:24px;font-weight:300">${h.pic.slice(6)}</b>`:`<svg viewBox="0 0 70 70">${PICSVG[h.pic]}</svg>`}</span>`:''}
+   <div class="kv"><span>题库</span><span>${h.bank}</span><span>正确答案</span><span>${h.truth}</span><span>我的答案</span><span class="${h.right?'grn':'red'}">${h.pick}</span><span>它当时</span><span>${h.ai!=null?`<b class="${h.aiOk?'grn':'red'}">${h.ai}</b>　把握 ${Math.round(h.conf*100)}%`:'没开代答'}</span><span>报酬</span><span class="n ${h.pay>0?'grn':'red'}">${h.pay>0?'+':'−'}¥${Math.abs(h.pay).toFixed(2)}</span><span>那时</span><span>能力 ${h.stage}　连对 ${h.combo}</span></div>
+   <div class="ex">${h.why}</div></div></button>`;}).join(''):`<div class="hempty">${S.hist.length?'这一栏还是空的。':'答过的题会留在这里。<br>点开能看解析，和它当时的答案。'}</div>`}</div>`;
+ $$('#hist .seg button').forEach(b=>b.onclick=()=>{S.hf=b.dataset.f;S.openH=-1;history();});
+ $$('#hist .he').forEach(b=>b.onclick=()=>{const i=+b.dataset.h;S.openH=S.openH===i?-1:i;history();});
+}
+
+/* ---------- 练 ---------- */
+function train(){
+ const P=$('#p-train');
+ P.innerHTML=`<div class="lcol">${abilityPanel()}${tabsPanel()}${ledgerPanel()}</div><div class="rcol">${archBar()}${scorePanel()}${lrRow()}${trainRow()}</div><div class="dropov" id="dropov">松手，装进去</div>`;
+ bindSeals(P);
+ $$('#p-train .ltop .seg button').forEach(b=>b.onclick=()=>{S.ltab=b.dataset.t;train();});
+ $$('#p-train [data-buy]').forEach(b=>b.onclick=()=>buy(b.dataset.buy));
+ $$('#p-train [data-go]').forEach(b=>b.onclick=()=>gotoNode(b.dataset.go));
+ $$('#p-train .lro[data-lr]').forEach(b=>b.onclick=()=>{S.lr=+b.dataset.lr;train();});
+ $$('#p-train .sch .seg button').forEach(b=>b.onclick=()=>{S.viz=+b.dataset.v;train();});
+ $$('#p-train [data-read]').forEach(b=>b.onclick=()=>openRead(b.dataset.read));
+ $$('#p-train [data-folder]').forEach(b=>b.onclick=()=>openFolder('packs'));
+ const ex=$('#exam');if(ex)ex.onclick=()=>{if(!ex.classList.contains('go'))return;S.stage++;S.viz=S.stage;snd('combo');toast(`${S.name} 学会了「${ABIL[S.stage-1]}」，图鉴多了一张：${ATLAS[S.stage-1].t}`);renderAll();};
+ const tb=$('#tbtn');if(tb)tb.onclick=runTrain;
+ const ol=$('#openLedger');if(ol)ol.onclick=openLedger;
+ const rb=$('#rollback');if(rb)rb.onclick=()=>{if(!S.ckpt)return;S.tr=S.tr.slice(0,S.ckpt.len);S.va=S.va.slice(0,S.ckpt.len);S.marks=S.marks.filter(m=>m<S.ckpt.len);toast('退回到成绩最好的那一版');train();};
+ const xb=$('#xorBtn');if(xb)xb.onclick=openXor;
+ const qa=$('#qzAsk');if(qa)qa.onclick=()=>{const v=$('#qzIn').value.trim();if(!v)return;S.qzRep=reply(v);train();};
+ const ug=$('#urlGo');if(ug){const go2=()=>{const v=$('#urlIn').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');const n=PACKS.find(p=>p.url&&v.includes(p.url));
+  if(!v)return;if(!n){toast('打不开这个网址');snd('no');return;}if(n.st>S.stage){toast('网页打开了，但它现在还看不懂这些');snd('no');return;}
+  if(lv(n.id)){toast('这个包已经有了');return;}S.lv[n.id]=1;startDl(n.id);snd('open');toast(`开始下载「${n.n}.zip」，ADSL 2.5 MB/s`);train();};ug.onclick=go2;$('#urlIn').addEventListener('keydown',e=>{if(e.key==='Enter')go2();});}
+ bindDrop(P);
+ drawChart();startViz();
+}
+function bindDrop(P){
+ const ov=$('#dropov'),zone=$('#drop');let depth=0;
+ const has=e=>[...(e.dataTransfer?.types||[])].includes('text/plain');
+ P.ondragenter=e=>{if(!has(e))return;depth++;ov.classList.add('on');zone&&zone.classList.add('hot');};
+ P.ondragleave=()=>{depth=Math.max(0,depth-1);if(!depth){ov.classList.remove('on');zone&&zone.classList.remove('hot');}};
+ P.ondragover=e=>{if(has(e))e.preventDefault();};
+ P.ondrop=e=>{e.preventDefault();depth=0;ov.classList.remove('on');let ids=[];try{ids=JSON.parse(e.dataTransfer.getData('text/plain'));}catch(_){}
+  if(Array.isArray(ids)&&ids.length){S.ltab='datatab';install(ids);}};
+}
+function abilityPanel(){
+ if(!lv('ability')) return `<div class="pn">${seal('ability')}</div>`;
+ if(S.stage>=6) return `<div class="pn"><div class="ph"><b>六项能力全部学会</b></div><div class="abb"><div class="exq">它已经能通读整本书。接下来，等它先开口。</div></div></div>`;
+ const p=params(),np=NEEDP[S.stage],d=effSamples(),nd=NEEDD[S.stage],ready=p>=np&&d>=nd;
+ const am=[lv('lenet')&&'卷积 ×2',lv('rnn')&&'循环 ×2',lv('lstm')&&'门控 ×3',lv('attn')&&'注意力 ×5'].filter(Boolean).join(' · ');
+ return `<div class="pn"><div class="ph"><b>下一项能力：${ABIL[S.stage]}</b><span class="r">${ABIL_DESC[S.stage]}</span></div><div class="abb">
+  <div class="bb"><div class="top"><span>参数量</span><b>${fmtK(p)}<small>/ ${fmtK(np)}</small></b></div><span class="mt"><i class="pur" style="width:${Math.min(100,p/np*100)}%"></i></span><small>宽度 Lv${lv('width')} × ${LAY[lv('depth')-1]} 层${am?'　'+am:''}　在科技买「网络宽度」「网络深度」</small></div>
+  <div class="bb"><div class="top"><span>样本</span><b>${fmtN(d)}<small>/ ${fmtN(nd)}</small></b></div><span class="mt"><i class="blu" style="width:${Math.min(100,d/nd*100)}%"></i></span><small>已有 ${fmtN(S.samples)}　噪声扣 ${fmtN(noise())}${lv('aug')?'　增强 ×1.5':''}</small></div>
+  <div class="exq">同一道题：${EXQ[S.stage]}　它答：<em>${EXA[S.stage]}</em> <span class="red">✗</span></div>
+  <button class="exam${ready?' go':''}" id="exam">${ready?'去考「'+ABIL[S.stage]+'」':(p<np?'参数不够':'样本不够')+'，还考不了'}</button></div></div>`;
+}
+function tabsPanel(){
+ const T=[['equip','装备'],['datatab','数据来源'],['quiz','它学会了吗'],['shelf','书架']];
+ const cur=S.ltab;let body;
+ if(!lv(cur)) body=seal(cur);
+ else if(cur==='equip') body=equipBody();
+ else if(cur==='datatab') body=dataBody();
+ else if(cur==='quiz') body=quizBody();
+ else body=shelfBody();
+ return `<div class="pn"><div class="ltop"><div class="seg">${T.map(([id,n])=>`<button data-t="${id}" class="${cur===id?'on':''}">${lv(id)?'':ic('lock')}${n}</button>`).join('')}</div></div><div class="lbody">${body}</div></div>`;
+}
+function archName(){return lv('trans')?'Transformer':lv('attn')?'注意力 + 门控记忆':lv('lstm')?'门控记忆网络':(lv('lenet')&&(S.bank==='captcha'||!lv('rnn')))?'LeNet-5 卷积网络':lv('rnn')?'循环网络':lv('depth')>1?'多层感知机':'感知机';}
+function equipBody(){
+ const items=['cooler','gpu','cudnn','vram','amp','room','dropout','aug','bn','res','attn','trans'];const cap=2+Math.max(1,lv('slots')),gear=['cooler','gpu','cudnn','vram','amp','room'].filter(id=>lv(id));const row=`<div class="slotrow">${Array.from({length:8},(_,i)=>i<gear.length&&i<cap?`<span class="slot on" title="${NODE[gear[i]].n}">${ic(NODE[gear[i]].ic)}</span>`:i<cap?'<span class="slot"></span>':`<button class="slot lk" data-go="slots" title="科技买「扩容装备栏」">${ic('lock')}</button>`).join('')}</div><div class="eqhint" style="padding:6px 14px 0">装备格 ${Math.min(gear.length,cap)} / ${cap}，最多 8 格</div>`;
+ return row+`<div class="eqg"><div class="eq"><b>${archName()}</b><div class="v">${fmtK(params())}</div><small>结构，自动换</small></div>${items.map(id=>{const n=NODE[id],o=lv(id),st=nodeState(n);
+  return `<button class="eq${o?'':' off'}${st.s==='can'?' can':''}" data-go="${id}"><b>${n.n}</b><div class="v">${n.tag||''}</div><small>${o?'已装':st.s==='lock'?(n.st>S.stage?'能力 '+n.st:'未解锁'):'¥'+fmtN(price(n))}</small></button>`;}).join('')}<div class="eqhint">装备在科技树「装备」「主干」两行里买，点一格直接过去。</div></div>`;
+}
+function packState(n){if(inst(n.id))return 'inst';if(lv(n.id))return S.dl[n.id]>=1?'ready':'dl';return 'none';}
+function dataBody(){
+ const ready=PACKS.filter(n=>packState(n)==='ready').length;
+ return `<div class="dl"><div class="drop" id="drop"><b>把数据包拖到这里</b><span>可以一次拖好几个。数据包在桌面「len 的资料 › 数据包」里${ready?`，现在有 ${ready} 个没装`:''}。</span><button class="btn2" data-folder="1">打开文件夹</button></div>
+ <div class="url"><input id="urlIn" placeholder="输入网址下载，比如 yann.lecun.com/exdb/mnist"><button class="btn2" id="urlGo">下载</button></div>
+ <div class="dsum">噪声 ${lv('clean')?0:2}%（标错的样本）　有效样本 <b class="n">${fmtN(effSamples())}</b></div>${PACKS.map(n=>{const st=nodeState(n),ps=packState(n);
+  const right=ps==='inst'?'<span class="st">已装</span>':ps==='ready'?'<span class="st rdy">拖进来</span>':ps==='dl'?`<span class="st n">${Math.round((S.dl[n.id]||0)*100)}%</span>`:st.s==='can'?`<button class="can" data-buy="${n.id}">¥${fmtN(price(n))}</button>`:st.s==='poor'?`<button class="poor" disabled>¥${fmtN(price(n))}</button>`:`<span class="st">${n.st>S.stage?'能力 '+n.st:'未解锁'}</span>`;
+  const w=ps==='inst'?100:ps==='dl'?(S.dl[n.id]||0)*100:ps==='ready'?100:0;
+  return `<div class="drow"><div class="dn"><i style="width:${w}%;${ps==='ready'?'background:rgba(106,184,255,.14)':''}"></i><span>${n.n}</span><small>${fmtN(n.samples)} 条 · ${n.mb} MB</small></div>${right}</div>`;}).join('')}
+  ${lv('gpu')?'<div class="dsum" style="margin-top:4px;color:var(--mint)">GPU 训练负载 125 W　累计 GPU 时间 38.7 s</div>':''}</div>`;
+}
+function reply(q){const s=S.stage;if(s===1)return Math.random()<.5?'是。':'否。';if(s===2)return '选 B。';if(s===3)return (q.match(/[一-龥]/)||['猫'])[0]+'。';if(s===4)return '「'+q.slice(0,2)+'」那里好像不对。';if(s===5)return 'I think it means: '+(q.length>6?'something about this.':'yes.');return '你问的是「'+q.slice(0,12)+'」。我想了想，答案不止一个，你想先听哪个？';}
+function quizBody(){return `<div class="qz"><div class="ask"><input id="qzIn" placeholder="写一句话考它" maxlength="40"><button class="btn2" id="qzAsk">问它</button></div><div class="rep">${S.qzRep?esc(S.name)+'：'+esc(S.qzRep):'<span class="dim">它会用现在的能力回答你。</span>'}</div><div class="abl">${ABIL.map((a,i)=>`<span class="${i<S.stage?'on':''}">${i<S.stage?'✓':'—'}　${a}</span>`).join('')}</div></div>`;}
+function shelfBody(){
+ return `<div class="books">${BOOKS.map(b=>{const open=!b.need||lv(b.need);const p=Math.min(1,(S.read[b.id]||0)/b.text.length);
+  const btn=!open?`<button class="btn2" data-seal="${b.need}">${ic('lock')}</button>`:p>=1?`<button class="btn2" data-read="${b.id}">再读一遍</button>`:`<button class="btn2" data-read="${b.id}">${p>0?'接着读':'读给它听'}</button>`;
+  return `<div class="book${open?'':' lk'}"><span class="cv" style="background:${b.color}"></span><div><b>${b.n}</b><small>${!open?'在科技「性格」里买':p>=1?'读完了，它在 YY 里问过你':p>0?'读到 '+Math.round(p*100)+'%':'还没读'}</small><span class="mt"><i class="blu" style="width:${p*100}%"></i></span></div>${btn}</div>`;}).join('')}</div>`;
+}
+function ledgerPanel(){
+ if(!lv('ledger')) return `<div class="pn">${seal('ledger')}</div>`;
+ const sum=c=>S.log.filter(l=>l.cat===c).reduce((s,l)=>s+l.amt,0);
+ return `<div class="pn"><div class="ph"><b>资金账本</b><button class="btn2 r" id="openLedger">总账</button></div><div class="lgb"><div class="lgr">
+  <div><span>做题收入</span><b class="grn">+¥${fmtN(Math.max(0,sum('题目')))}</b></div>
+  <div><span>训练电费</span><b class="red">−¥${Math.abs(sum('电费')).toFixed(1)}</b></div>
+  <div><span>科技支出</span><b class="red">−¥${fmtN(Math.abs(sum('科技')))}</b></div>
+  <div><span>本月用电</span><b>${(S.round*.12).toFixed(1)} 度</b></div>
+  <span class="rent">房租 ¥2,100，7 月 1 日到期，在 YY 转给房东</span></div>${spark()}</div></div>`;
+}
+function spark(){let b=S.money;const pts=[b];for(let i=S.log.length-1;i>=0&&pts.length<30;i--){b-=S.log[i].amt;pts.push(b);}pts.reverse();while(pts.length<2)pts.unshift(pts[0]);
+ const mn=Math.min(...pts),mx=Math.max(...pts)||1,r=mx-mn||1;const d=pts.map((v,i)=>(i?'L':'M')+(i/(pts.length-1)*140).toFixed(1)+','+(100-(v-mn)/r*86-7).toFixed(1)).join('');
+ return `<svg class="spark" viewBox="0 0 140 100" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="#F2C46D" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;}
+function archBar(){
+ const mode=lv('lenet')&&S.bank==='captcha'?'图像':'文字 / 序列';const vr=lv('vram')?6:2;
+ const left=lv('arch')?`<span class="mode">${mode}</span><b>${archName()}</b><span class="n">${fmtK(params())} 参数　显存 ${(params()/30000*vr+.3).toFixed(1)} / ${vr}G</span>`:seal('arch',true);
+ const right=lv('check')?`<button class="btn2" id="rollback" ${S.ckpt?'':'disabled'}>回档　${S.ckpt?'第 '+S.ckpt.len+' 轮':'无档'}</button>`:sealChip('check');
+ return `<div class="pn arch">${left}<div class="r">${right}</div></div>`;
+}
+function scorePanel(){
+ const t=last(S.tr)||0,v=last(S.va)||0,useV=lv('val');const sc=Math.round((useV?S.best:Math.max(...S.tr,0))*10);
+ const gr=sc>=950?'S':sc>=850?'A':sc>=700?'B':sc>=500?'C':'D';const {V}=caps();
+ const right=S.sheet.filter(s=>s.ok).length;const dl=S.lastDelta;
+ const bank=BANKS.find(b=>b.id===S.bank).n;
+ const lg=`<span><i style="border-color:#F2F4F7"></i>练过的</span>`+(lv('val')?`<span><i style="border-color:var(--mint);border-top-style:dashed"></i>新题</span>`:sealChip('val'))+(lv('cap')?`<span><i style="border-color:rgba(255,255,255,.4);border-top-style:dotted"></i>上限</span>`:sealChip('cap'))+(lv('overfit')?`<span><i style="border-color:var(--red)"></i>退步</span>`:sealChip('overfit'));
+ const scope=lv('scope')?`<div class="sch"><b>看它学</b><div class="seg">${VIZ.slice(0,S.stage).map((n,i)=>`<button data-v="${i+1}" class="${S.viz===i+1?'on':''}">${i+1} ${n}</button>`).join('')}</div><span class="r">教学示意</span>${lv('xor')?'<button class="btn2" id="xorBtn">真训练 · 异或</button>':sealChip('xor')}</div><canvas id="viz" width="1600" height="236"></canvas>`:seal('scope');
+ return `<div class="pn sp"><div class="sl"><b>${bank}</b>${useV?`<span>新题<em class="grn">${v.toFixed(1)}%</em></span>`:''}<span>练过的<em>${t.toFixed(1)}%</em></span><span>最佳<em class="blu">${gr} ${sc}</em></span>${lv('cap')?`<span>上限<em class="dim">${Math.round(V*10)}</em></span>`:''}<span>第<em>${S.round}</em>轮</span></div>
+ <div class="sh"><div class="shh"><span>答卷 ${right} / 4</span><span class="${dl>=0?'grn':'red'}">${dl>=0?'+'+dl+' 分':'退步 '+(-dl)+' 分'}</span></div>${S.sheet.map(s=>`<div class="shr"><span class="mk ${s.ok?'grn':'red'}">${s.ok?'✓':'✗'}</span><span class="q">${s.q}</span><span class="a">它答 <b class="${s.ok?'grn':'red'}">${s.ans?'是':'否'}</b></span></div>`).join('')}</div>
+ <div class="ch"><div class="lgd">${lg}</div><div class="cy"><span>100</span><span>70</span><span>40</span></div><svg id="chart" viewBox="0 0 700 140" preserveAspectRatio="none"></svg><span class="warn" id="warn">它在背答案</span></div>
+ <div class="sc">${scope}</div></div>`;
+}
+function lrRow(){
+ if(!lv('lr')) return `<div class="pn">${seal('lr',true)}</div>`;
+ return `<div class="pn lrr"><div class="lrl"><b>学习率</b><small>快 ⟷ 稳</small></div>${LRS.map((L,i)=>i===0&&!lv('lrauto')?`<button class="lro lockd" data-seal="lrauto">${ic('lock')}自动</button>`:`<button class="lro${S.lr===i?' on':''}${L.hot?' hot':''}" data-lr="${i}"><b>${L.n}</b><small>${L.sub}</small></button>`).join('')}</div>`;
+}
+const roundSecs=()=>2.8/(lv('gpu')?3:1)/(lv('amp')?2:1)/(lv('room')?8:1);
+function trainRow(){
+ const t=last(S.tr)||0,v=last(S.va)||0,L=LRS[S.lr];
+ const blow=Math.round(L.blow*(lv('bn')?40:100)),back=L.back>=.2?'高':L.back>=.1?'中':L.back>0?'低':'无';
+ return `<div class="trr"><button class="tbtn" id="tbtn" data-quiet="1"><b>训练一轮</b><small>第 ${S.round+1} 轮</small><i id="tprog"></i></button>
+ <div class="pn tinfo"><div class="tl">${S.training?'训练中':'空闲'}　一轮约 ${roundSecs().toFixed(1)} 秒${lv('autotrain')?'　自动训练开着':''}</div><div class="tb2"><i id="tbar"></i></div>
+ <div class="tl2">上一轮：练过的 ${t.toFixed(1)}%${lv('val')?'　新题 '+v.toFixed(1)+'%':''}</div>
+ ${lv('risk')?`<div class="risk${blow<10&&back!=='高'?' ok':''}">这一轮可能炸 ${blow}%　会退步：${back}</div>`:`<div>${sealChip('risk')}</div>`}</div></div>`;
+}
+function runTrain(){
+ if(S.training) return;S.training=true;snd('train');const dur=Math.max(260,roundSecs()*330);const t0=performance.now();
+ $('#tbtn').classList.add('busy');hud();
+ const step=now=>{const p=Math.min(1,(now-t0)/dur);const a=$('#tbar'),b=$('#tprog');if(a)a.style.width=p*100+'%';if(b)b.style.width=p*100+'%';
+  if(p<1)requestAnimationFrame(step);else{S.training=false;trainRound(false);pulseOrb();if(S.tab==='train')train();hud();}};
+ requestAnimationFrame(step);
+}
+function drawChart(){
+ const svg=$('#chart');if(!svg)return;const tr=S.tr.slice(-40),va=S.va.slice(-40),n=tr.length,off=S.tr.length-n;const W=700,H=140;
+ const y=v=>H-(Math.max(40,Math.min(100,v))-40)/60*H,x=i=>i*W/Math.max(1,n-1);
+ const line=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join('');
+ let s=[55,70,85].map(g=>`<line class="gl" x1="0" x2="${W}" y1="${y(g)}" y2="${y(g)}"/>`).join('');
+ if(lv('cap')){const c=caps().V;s+=`<line class="capl" x1="0" x2="${W}" y1="${y(c)}" y2="${y(c)}"/>`;}
+ if(lv('val')&&lv('overfit')&&n>1) s+=`<path class="ofa" d="${line(tr)}${va.slice().reverse().map((v,j)=>'L'+x(n-1-j).toFixed(1)+','+y(v).toFixed(1)).join('')}Z" opacity="${Math.min(1,(last(tr)-last(va))/10)}"/>`;
+ s+=`<path class="trl" d="${line(tr)}"/>`;
+ if(lv('val')) s+=`<path class="val" d="${line(va)}"/>`;
+ if(lv('overfit')&&lv('val')) S.marks.filter(m=>m>=off).forEach(m=>{s+=`<rect class="reg" x="${x(m-off)-2.5}" y="${y(va[m-off])-2.5}" width="5" height="5" rx="1"/>`;});
+ svg.innerHTML=s;
+ const w=$('#warn');if(w)w.style.display=lv('overfit')&&lv('val')&&last(tr)-last(va)>8?'block':'none';
+}
+let vizRAF=0;
+function startViz(){cancelAnimationFrame(vizRAF);const c=$('#viz');if(!c)return;const g=c.getContext('2d');
+ const loop=t=>{if(!c.isConnected)return;drawViz(g,c.width,c.height,S.viz,t/1000);if(!S.reduce)vizRAF=requestAnimationFrame(loop);};vizRAF=requestAnimationFrame(loop);}
+function wcol(v,a=1){return v>=0?`rgba(95,227,181,${Math.min(1,v)*a})`:`rgba(255,122,110,${Math.min(1,-v)*a})`;}
+function drawViz(g,W,H,k,t){
+ g.clearRect(0,0,W,H);g.font='22px "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei UI",sans-serif';g.textBaseline='middle';
+ const T='rgba(232,238,244,.34)';
+ if(k===1){const cs=(H-36)/28,x0=40,y0=18;
+  for(let i=0;i<28;i++)for(let j=0;j<28;j++){const r=Math.hypot(i-14,j-14);const v=Math.sin(i*.42+t*.4)*Math.cos(j*.36-t*.2)*Math.exp(-r*r/110)*1.4;g.fillStyle=wcol(v,.95);g.fillRect(x0+j*cs,y0+i*cs,cs-1,cs-1);}
+  const bx=x0+28*cs+80;g.fillStyle=T;g.fillText('它对每个数字的把握',bx,26);
+  for(let d=0;d<10;d++){const v=.15+.8*Math.abs(Math.sin(d*1.7+t*.5))*(d===3?1.2:.6);const y=56+d*17;g.fillStyle=T;g.fillText(d,bx,y);g.fillStyle=d===3?'#F2C46D':'rgba(106,184,255,.7)';g.fillRect(bx+26,y-4,Math.min(1,v)*(W-bx-100),8);}
+ }else if(k===2){const L=[6,9,9,4],xs=[300,620,940,1260];const pos=L.map((m,li)=>Array.from({length:m},(_,i)=>[xs[li],H/2+(i-(m-1)/2)*(H-40)/Math.max(...L)]));
+  for(let li=0;li<3;li++)pos[li].forEach((a,i)=>pos[li+1].forEach((b,j)=>{const w=Math.sin((li*31+i*7+j*13)*1.3);g.strokeStyle=wcol(w,.3);g.lineWidth=1+Math.abs(w)*1.4;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();}));
+  const ph=(t*.6)%3;const li=Math.floor(ph),f=ph-li;for(let q=0;q<4;q++){const a=pos[li][(q*2)%pos[li].length],b=pos[li+1][(q*3+1)%pos[li+1].length];g.fillStyle='#F2C46D';g.beginPath();g.arc(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,4,0,7);g.fill();}
+  pos.flat().forEach(([x,y])=>{g.fillStyle='#0b0f14';g.strokeStyle='rgba(232,238,244,.6)';g.lineWidth=1.5;g.beginPath();g.arc(x,y,8,0,7);g.fill();g.stroke();});
+  g.fillStyle=T;['线索','组合一','组合二','答案'].forEach((s,i)=>g.fillText(s,xs[i]-22,H-8));
+ }else if(k===3){const cs=10;for(let f=0;f<8;f++){const fx=40+(f%4)*70,fy=18+Math.floor(f/4)*104;for(let i=0;i<5;i++)for(let j=0;j<5;j++){const v=Math.sin(f*2.1+i*(f%3+1)*.9-j*(f%2?1:-1)*.8);g.fillStyle=wcol(v,.9);g.fillRect(fx+j*cs,fy+i*cs,cs-1,cs-1);}}
+  g.strokeStyle=T;g.beginPath();g.moveTo(340,H/2);g.lineTo(400,H/2);g.stroke();
+  for(let m=0;m<4;m++){const mx=430+m*280,my=24,s=12;for(let i=0;i<14;i++)for(let j=0;j<14;j++){const v=Math.max(0,Math.sin(i*.5+m)*Math.cos(j*.45-m*.7));g.fillStyle=`rgba(169,214,255,${v*.75})`;g.fillRect(mx+j*s,my+i*s*.98,s-1,s-2);}
+   const wx=mx+((Math.floor(t*3)+m*3)%10)*s,wy=my+((Math.floor(t*1.3)+m)%10)*s;g.strokeStyle='#F2C46D';g.lineWidth=2;g.strokeRect(wx,wy,5*s,5*s);}
+ }else if(k===4){const tok='床前明月光疑是地上'.split('');const n=tok.length,w=(W-120)/n;const act=Math.floor(t*1.5)%n;
+  tok.forEach((c,i)=>{const x=60+i*w,y=50;g.strokeStyle=i===act?'#F2C46D':'rgba(255,255,255,.14)';g.lineWidth=i===act?2.5:1.5;g.strokeRect(x,y,w-40,80);
+   for(let b=0;b<6;b++){const h=Math.abs(Math.sin(i*1.3+b*.9+(i<=act?t:0)))*60*(i<=act?1:.25);g.fillStyle=i<=act?'rgba(95,227,181,.65)':'rgba(255,255,255,.12)';g.fillRect(x+8+b*((w-56)/6),y+74-h,(w-56)/6-3,h);}
+   if(i<n-1){g.strokeStyle=T;g.beginPath();g.moveTo(x+w-40,y+40);g.lineTo(x+w,y+40);g.stroke();}
+   g.fillStyle=i===act?'#F2C46D':'rgba(232,238,244,.62)';g.font='26px "Source Han Serif SC","Songti SC","SimSun",serif';g.fillText(c,x+(w-40)/2-13,y+112);});
+  g.font='22px "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei UI",sans-serif';g.fillStyle=T;g.fillText('记忆条：越往后，前面的字还留着多少',60,22);
+ }else{const a='我 爱 北 京 天 安 门'.split(' '),b='I love Beijing Tian an men'.split(' ');
+  const heads=k===5?1:4,size=k===5?26:20,gap=k===5?0:50,tw=a.length*size;const totalW=heads*tw+(heads-1)*gap;const x0=(W-totalW)/2+(k===5?60:0);const y0=k===5?30:40;
+  for(let h=0;h<heads;h++){const hx=x0+h*(tw+gap);const row=Math.floor(t*1.2+h)%b.length;
+   for(let i=0;i<b.length;i++)for(let j=0;j<a.length;j++){const d=Math.abs(i-j+(h%2?1:0)),v=Math.exp(-d*d/(h===3?6:1.2));g.fillStyle=`rgba(${i===row?'242,196,109':'169,214,255'},${v*.85})`;g.fillRect(hx+j*size,y0+i*size,size-2,size-2);}
+   if(k===6){g.fillStyle=T;g.fillText('头 '+(h+1),hx,y0+b.length*size+18);}}
+  if(k===5){g.fillStyle=T;b.forEach((w,i)=>g.fillText(w,x0-130,y0+i*26+12));a.forEach((c,j)=>g.fillText(c,x0+j*26+2,y0+b.length*26+18));}
+  else{for(let l=0;l<6;l++){const v=.5+.5*Math.sin(t*2-l*.7);g.fillStyle=`rgba(242,196,109,${.12+v*.45})`;g.fillRect(W-160,30+l*30,110,20);}g.fillStyle=T;g.fillText('六层',W-160,H-14);}
+ }
+}
+function drawDigit(cv,d){const g=cv.getContext('2d'),W=cv.width;g.clearRect(0,0,W,W);g.lineCap='round';g.lineJoin='round';g.strokeStyle='#EEF3F6';g.lineWidth=W*.07;const j=()=>rnd(-.025,.025),sk=rnd(-.08,.08);
+ DIGITS[d].forEach(s=>{g.beginPath();s.forEach(([px,py],i)=>{const X=(px+j()+sk*(.5-py))*W,Y=(py+j())*W;i?g.lineTo(X,Y):g.moveTo(X,Y);});g.stroke();});}
+
+function openXor(){
+ snd('open');const m=document.createElement('div');m.className='modal';
+ m.innerHTML=`<div class="mbox xor"><div class="ph"><b>真训练 · 异或</b><span>两层网络，当场在你电脑上算</span><button class="btn2 r" id="xorX">合上</button></div>
+ <div class="xg"><div><h6>四张图</h6><div class="xin" id="xin"></div></div><div><h6>误差　灰：单层　金：两层</h6><canvas id="xl" width="900" height="400"></canvas></div><div><h6>四个隐藏单元各学到的线</h6><div class="xh">${[0,1,2,3].map(i=>`<canvas id="xh${i}" width="72" height="72"></canvas>`).join('')}</div></div></div>
+ <div class="xf" id="xf"></div></div>`;
+ $('#win').appendChild(m);
+ const X=[[0,0],[0,1],[1,0],[1,1]],Y=[0,1,1,0];const sg=z=>1/(1+Math.exp(-z));
+ let W1=[...Array(4)].map(()=>[rnd(-1,1),rnd(-1,1)]),b1=[...Array(4)].map(()=>rnd(-1,1)),W2=[...Array(4)].map(()=>rnd(-1,1)),b2=0;
+ let w=[rnd(-1,1),rnd(-1,1)],b=0;const L2=[],L1=[];let ep=0,run=true;
+ const fwd=x=>{const h=W1.map((r,i)=>Math.tanh(r[0]*x[0]+r[1]*x[1]+b1[i]));return {h,o:sg(h.reduce((s,v,i)=>s+v*W2[i],b2))};};
+ const step=()=>{let l2=0,l1=0;const lr=.5;
+  X.forEach((x,k)=>{const {h,o}=fwd(x);const e=o-Y[k];l2+=e*e;const dO=e*o*(1-o);
+   W2.forEach((_,i)=>{const dH=dO*W2[i]*(1-h[i]*h[i]);W2[i]-=lr*dO*h[i];W1[i][0]-=lr*dH*x[0];W1[i][1]-=lr*dH*x[1];b1[i]-=lr*dH;});b2-=lr*dO;
+   const p=sg(w[0]*x[0]+w[1]*x[1]+b),e1=p-Y[k];l1+=e1*e1;const d1=e1*p*(1-p);w[0]-=lr*d1*x[0];w[1]-=lr*d1*x[1];b-=lr*d1;});
+  L2.push(l2/4);L1.push(l1/4);ep++;};
+ const draw=()=>{const c=$('#xl');if(!c)return;const g=c.getContext('2d'),Wd=c.width,Hd=c.height;g.clearRect(0,0,Wd,Hd);
+  g.strokeStyle='rgba(255,255,255,.05)';[.25,.5,.75].forEach(f=>{g.beginPath();g.moveTo(0,Hd*f);g.lineTo(Wd,Hd*f);g.stroke();});
+  const pl=(a,col)=>{g.strokeStyle=col;g.lineWidth=3;g.beginPath();a.forEach((v,i)=>{const x=i/400*Wd,y=Hd-Math.min(1,v/.32)*Hd*.9-10;i?g.lineTo(x,y):g.moveTo(x,y);});g.stroke();};pl(L1,'rgba(232,238,244,.35)');pl(L2,'#F2C46D');
+  let wrong=0;$('#xin').innerHTML=X.map((x,k)=>{const o=fwd(x).o,ok=(o>.5)===!!Y[k];if(!ok)wrong++;return `<div><i class="${x[0]?'on':''}"></i><i class="${x[1]?'on':''}"></i><span class="${ok?'grn':'red'}">${o>.5?'是':'否'} ${ok?'✓':'✗'}</span></div>`;}).join('');
+  for(let u=0;u<4;u++){const hc=$('#xh'+u);if(!hc)continue;const hg=hc.getContext('2d');const n=12,s=hc.width/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++){const v=Math.tanh(W1[u][0]*j/(n-1)+W1[u][1]*i/(n-1)+b1[u]);hg.fillStyle=wcol(v,.9);hg.fillRect(j*s,i*s,s,s);}}
+  $('#xf').innerHTML=`第 <b class="n">${ep} / 400</b> 轮　误差 <b class="n">${(L2[L2.length-1]||0).toFixed(3)}</b>　答错 <b class="n">${wrong} / 4</b><br>误差从输出一路传回来，每个隐藏单元学一条线，几条线合起来就把四张图分开了。单层只有一条线，怎么练也分不开。只有这一段是真算，后面的阶段太大，游戏里改用模拟。`;};
+ const loop=()=>{if(!run||!m.isConnected)return;for(let i=0;i<4&&ep<400;i++)step();draw();if(ep<400)requestAnimationFrame(loop);else snd('done');};loop();
+ $('#xorX').onclick=()=>{run=false;m.remove();};
+}
+const ATLAS=[
+ {t:'它眼里的「3」',c:'28×28 的分量图',term:'权重',y:'1958 感知机 · 1998 MNIST',b:'手写数字的图片是 28×28 个小格子。最简单的网络给每个数字都配一张一样大的分量表：笔画常出现的格子是绿色，算加分；不该有笔画的格子是红色，算扣分。新图进来，逐格相乘再加起来，哪个数字得分最高就猜哪个。把分量表画出来，常常能隐约看出数字的轮廓——它没有「看懂」，只是记住了笔画通常落在哪儿。'},
+ {t:'线索的组合',c:'多层网络和流过去的一次判断',term:'隐藏层 · 反向传播',y:'1986',b:'中间几层叫隐藏层。第一层只认很小的线索，比如「这里有一横」；下一层把几条线索拼起来，「上面一横、右边一竖」可能就是 7。答错了怎么办？把误差从答案那头一层层往回传，每根线按它出了多少力来改，这叫反向传播，1986 年由 Rumelhart、Hinton 和 Williams 推广开。金色的光点就是一次判断从左流到右。'},
+ {t:'到处找同一种笔画',c:'卷积核和它扫出来的特征图',term:'卷积核',y:'1998',b:'卷积网络不让每个格子各管各的，而是拿一个 5×5 的小窗口在整张图上滑，到处找同一种图案。左边的小方块就是窗口里的分量，练好以后很多会变成「横线」「斜线」「边缘」探测器；右边是窗口扫过之后的结果，金框是窗口此刻的位置。猫在左上角还是右下角，用的是同一组窗口，不用重学。1998 年，LeCun 的 LeNet-5 就用它读银行支票上的数字。'},
+ {t:'读到后面还记得前面',c:'一个字一个字地读，柱子是还留着的记忆',term:'循环网络 · 门控记忆',y:'1997',b:'循环网络一个字一个字地读，每读一个字，就把一小段「记忆」传给下一步。普通的循环网络记性差，句子一长，前面的字就淡了。1997 年 Hochreiter 和 Schmidhuber 给它加了几道门，叫 LSTM：输入门决定记不记，遗忘门决定丢不丢，输出门决定说不说。图里每一格的柱子，就是读到那个字时还留着的记忆。'},
+ {t:'翻译时回头看原文',c:'译文的每个词在看原文的哪个字',term:'注意力',y:'2014',b:'早先的翻译网络先把整句压成一串固定长度的数字，再从里面吐出译文，句子越长丢得越多。2014 年 Bahdanau 等人让它每写一个词都回头看一遍原文，给原文的每个字打分。横着是中文原文，竖着是英文译文，越亮表示写那个词时越在看那个字。亮的地方大致沿着对角线，说明它自己学会了按顺序对齐。'},
+ {t:'所有字一起读',c:'四个头各看各的，一层层叠上去',term:'多头注意力',y:'这条时间线：2016',b:'在这条时间线上，这一步是你们先想到的：既然注意力这么好用，干脆把循环扔掉，只用注意力，所有字同时读。几个「头」各看各的关系，有的盯着前后相邻的字，有的盯着隔得很远的词，再一层层叠起来。四个方块是四个头各自的注意力，右边的金条是叠上去的层。它读一本书，不再需要从第一个字等到最后一个字。'}
+];
+function openAtlas(k){
+ snd('open');const m=document.createElement('div');m.className='modal';
+ const draw=()=>{const a=ATLAS[k-1];m.innerHTML=`<div class="mbox atlas"><div class="ph"><b>图鉴 · 它脑子里的样子</b><span>每升一个能力阶段多一张　${S.stage} / 6</span><button class="btn2 r" id="atX">关闭</button></div>
+  <div class="atl"><div class="al">${ATLAS.map((e,i)=>i<S.stage?`<button class="${i+1===k?'on':''}" data-k="${i+1}">${e.t}<small>能力 ${i+1} · ${VIZ[i]}</small></button>`:`<button class="lk" disabled>？？？<small>能力 ${i+1} 解锁</small></button>`).join('')}</div>
+  <div class="ar"><canvas id="atC" width="1500" height="236"></canvas><h3>${a.t}</h3><div class="cap">${a.c}</div><p>${a.b}</p><div class="tm"><span>原词　<em>${a.term}</em></span><span>${a.y}</span><span>在「练 › 看它学 › ${k}」里也能看到</span></div></div></div></div>`;
+  m.querySelector('#atX').onclick=()=>m.remove();m.querySelectorAll('.al button[data-k]').forEach(b=>b.onclick=()=>{k=+b.dataset.k;draw();});
+  const c=m.querySelector('#atC'),g=c.getContext('2d'),kk=k;const loop=t=>{if(!c.isConnected)return;drawViz(g,c.width,c.height,kk,t/1000);if(!S.reduce)requestAnimationFrame(loop);};requestAnimationFrame(loop);};
+ $('#win').appendChild(m);draw();
+}
+function openLedger(){
+ snd('open');const m=document.createElement('div');m.className='modal';const cats=['题目','科技','电费'];const tot=c=>S.log.filter(l=>l.cat===c).reduce((s,l)=>s+l.amt,0);const mx=Math.max(1,...cats.map(c=>Math.abs(tot(c))));
+ m.innerHTML=`<div class="mbox led2"><div class="ph"><b>总账</b><span>截至 ${DATEZH[S.stage-1]} ${clock()}</span><button class="btn2 r" id="lgX">关闭</button></div><div class="l2">
+ <div class="cats"><div><p><span>现在有</span><b class="n amb" style="font-size:22px;font-weight:300">¥${fmtN(S.money)}</b></p></div>${cats.map(c=>{const v=tot(c);return `<div><p><span>${c==='题目'?'做题收入':c==='科技'?'科技支出':'训练电费'}</span><b class="n ${v>=0?'grn':'red'}">${v>=0?'+':'−'}¥${fmtN(Math.abs(v))}</b></p><span class="mt"><i class="${v>=0?'blu':'pur'}" style="width:${Math.abs(v)/mx*100}%;${v<0?'background:var(--red)':''}"></i></span></div>`;}).join('')}
+ <div><p><span>房租</span><b class="n">¥2,100</b></p><p class="dim" style="font-size:11px">7 月 1 日到期，在 YY 里转给房东</p></div></div>
+ <div class="rows">${S.log.slice().reverse().map(l=>`<div><span class="n dim">${l.t}</span><span>${l.what}${l.cnt?' ×'+l.cnt:''}</span><b class="${l.amt>=0?'grn':'red'}">${l.amt>=0?'+':'−'}¥${Math.abs(l.amt).toFixed(l.cat==='电费'?1:0)}</b></div>`).join('')||'<div><span></span><span class="dim">还没有流水</span></div>'}</div></div></div>`;
+ $('#win').appendChild(m);$('#lgX').onclick=()=>m.remove();
+}
+
+/* ---------- 喂书：读书窗口 → 读完 YY 通知 → 在 YY 聊天框里回 ---------- */
+function openRead(id){
+ snd('open');const bk=BOOKS.find(b=>b.id===id);if((S.read[id]||0)>=bk.text.length)S.read[id]=0;
+ const m=document.createElement('div');m.className='modal';
+ m.innerHTML=`<div class="mbox read" id="rd"><div class="ph"><b>《${bk.n}》</b><span>读给 ${esc(S.name)} 听</span><button class="btn2 r" id="rdP">暂停</button><button class="btn2" id="rdX">合上</button></div>
+ <div class="rbody"><div class="txt" id="rdT"></div><div class="rside"><span class="rorb"></span><small id="rdS">${esc(S.name)} 在听</small></div></div>
+ <div class="rfoot"><span class="mt"><i class="blu" id="rdB" style="width:0"></i></span><span id="rdN"></span></div></div>`;
+ $('#win').appendChild(m);
+ let paused=false,acc=0,lt=performance.now();
+ const render=()=>{const k=S.read[id]||0,txt=bk.text;const lines=txt.slice(0,k).split('\n');
+  $('#rdT').innerHTML=lines.map((l,i)=>i<lines.length-1?`<span class="past">${esc(l)}</span>`:esc(l)).join('<br>')+'<span class="cur"></span>';
+  $('#rdB').style.width=(k/txt.length*100)+'%';$('#rdN').textContent=`${k} / ${txt.length} 字`;};
+ const loop=now=>{if(!m.isConnected)return;const dt=now-lt;lt=now;if(!paused){acc+=dt*0.03;const n=Math.floor(acc);if(n>0){acc-=n;S.read[id]=Math.min(bk.text.length,(S.read[id]||0)+n);S.samples+=n;render();}}
+  if((S.read[id]||0)>=bk.text.length){$('#rdS').textContent='读完了';$('#rdP').disabled=true;setTimeout(()=>{if(m.isConnected){m.remove();if(S.tab==='train')train();}bookDone(bk);},900);return;}
+  requestAnimationFrame(loop);};
+ render();requestAnimationFrame(loop);
+ $('#rdP').onclick=()=>{paused=!paused;$('#rd').classList.toggle('paused',paused);$('#rdP').textContent=paused?'接着读':'暂停';$('#rdS').textContent=paused?'等你':S.name+' 在听';};
+ $('#rdX').onclick=()=>{m.remove();if(S.tab==='train')train();};
+}
+function bookDone(bk){
+ feed('书','读完《'+bk.n+'》 · '+bk.text.replace(/\n/g,'').length+' 字');
+ S.chat.push({who:'ai',text:`读完《${bk.n}》了。我想问你：${bk.ask}`,t:clock()});S.pendingAsk=bk.id;
+ trayNotify(`${S.name}：读完《${bk.n}》了，我想问你一个问题。`);renderYY();
+}
+function trayNotify(text){
+ const y=$('#ytray');y.innerHTML=`<div class="yh">YY 消息</div><div class="yb">${esc(text)}<small>点这里打开聊天</small></div>`;y.classList.remove('on');void y.offsetWidth;y.classList.add('on');
+ snd('notify');blink('tkYY');y.onclick=()=>{y.classList.remove('on');openYY();};clearTimeout(trayNotify.t);trayNotify.t=setTimeout(()=>y.classList.remove('on'),9000);
+}
+
+/* ---------- YY 聊天框（桌面，2016 样式）+ 数据页 ---------- */
+function openYY(){$('#yyw').classList.add('on');front('yyw');renderYY();}
+function renderYY(){
+ const w=$('#yyw');if(!w.classList.contains('on'))return;
+ const canData=!!lv('memo');if(!canData)S.dataOpen=false;
+ w.classList.toggle('wide',S.dataOpen);
+ const grp={};S.feed.forEach(f=>{(grp[f.stage]=grp[f.stage]||[]).push(f);});
+ const data=S.dataOpen?`<div class="data"><h4>它读过的<small>按能力阶段和时间排，最新的在上面</small></h4><div class="dlist">${Object.keys(grp).sort((a,b)=>b-a).map(s=>`<div class="dgrp"><b>能力 ${s} · ${ABIL[s-1]}　${grp[s].length} 条</b>${grp[s].map(f=>`<div class="dit"><span>${f.t.slice(6)}</span><div><em class="${f.kind==='书'?'b':f.kind==='数据包'?'p':''}">${f.kind}</em>${esc(f.text)}${f.ok===false?' <span style="color:#c44">✗</span>':f.ok?' <span style="color:#3a8a3a">✓</span>':''}</div></div>`).join('')}</div>`).join('')||'<p style="color:#8090a0;padding:10px 0">还没喂过东西。</p>'}</div></div>`:'';
+ w.innerHTML=`<div class="wh" data-drag="yyw"><b>${esc(S.name)}</b><span style="color:#3a5570">在线</span><button class="x" id="yyX">✕</button></div>
+ <div class="yb2"><div class="chat"><div class="msgs" id="yyM">${S.chat.map(m=>`<div class="m ${m.who==='me'?'me':''}"><div class="w">${m.who==='me'?'我':esc(S.name)}　${m.t}</div>${esc(m.text)}</div>`).join('')||'<div class="m" style="color:#8090a0">和它说点什么吧。</div>'}</div>
+ <div class="tools"><button>表情</button><button>题本</button><button>性格</button><button id="yyData" class="${S.dataOpen?'on':''}${canData?'':' lk'}" title="${canData?'看它读过的数据':'科技买「数据回顾」'}">${canData?'':'🔒 '}数据</button></div>
+ <div class="inp"><input id="yyI" placeholder="${S.pendingAsk?'回答它的问题':'说点什么'}"><button id="yyS">发送</button></div></div>${data}</div>`;
+ const M=$('#yyM');M.scrollTop=M.scrollHeight;
+ $('#yyX').onclick=()=>w.classList.remove('on');
+ $('#yyData').onclick=()=>{if(!canData){toast('在科技「性格」里买「数据回顾」');snd('lock');return;}S.dataOpen=!S.dataOpen;snd('open');renderYY();};
+ const send=()=>{const v=$('#yyI').value.trim();if(!v)return;S.chat.push({who:'me',text:v,t:clock()});
+  let r;if(S.pendingAsk){r='记下了。你说的我会再想想。';S.samples+=200;feed('对话','回答了它关于《'+BOOKS.find(b=>b.id===S.pendingAsk).n+'》的问题');S.pendingAsk=null;}else r=reply(v);
+  renderYY();setTimeout(()=>{S.chat.push({who:'ai',text:r,t:clock()});snd('notify');renderYY();hud();},700);};
+ $('#yyS').onclick=send;$('#yyI').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+ bindWinDrag(w);
+}
+
+/* ---------- 桌面「len 的资料」文件夹 ---------- */
+function openFolder(path){S.fpath=path||S.fpath;$('#xw').classList.add('on');front('xw');snd('open');renderFolder();}
+function folderItems(){
+ if(S.fpath==='root'){const a=[{id:'@packs',k:'folder',n:'数据包',sub:PACKS.filter(n=>packState(n)==='ready').length+' 个没装'},{id:'@readme',k:'txt',n:'使用说明.txt',body:`${S.name}.exe 深度学习工作站\n\n数据包下载后放在「数据包」文件夹。\n把它们拖进「练 › 数据来源」才会装进去。\n可以按住 Ctrl 选好几个，一起拖。`},{id:'@log',k:'txt',n:'训练日志.txt',body:S.tr.slice(-6).map((v,i)=>`第 ${S.round-5+i} 轮  练过的 ${v.toFixed(1)}%  新题 ${S.va[S.va.length-6+i].toFixed(1)}%`).join('\n')},{id:'@csv',k:'csv',n:'答题记录.csv',body:`共 ${S.hist.length} 条\n`+S.hist.slice(0,5).map(h=>`${h.t},${h.bank},${h.q},${h.right?'对':'错'}`).join('\n')}];
+  if(lv('check')&&S.ckpt)a.push({id:'@ckpt',k:'ckpt',n:`存档_第${S.ckpt.len}轮.ckpt`,body:`${archName()}\n${fmtK(params())} 参数\n新题最好 ${S.best.toFixed(1)}%`});return a;}
+ return PACKS.filter(n=>lv(n.id)||inst(n.id)).map(n=>({id:n.id,k:'zip',n:n.n+'.zip',pack:n}));
+}
+function renderFolder(){
+ const w=$('#xw');if(!w.classList.contains('on'))return;
+ const items=folderItems();const sel=[...S.fsel];const one=items.find(i=>i.id===sel[sel.length-1]);
+ const path=S.fpath==='root'?'桌面 › len 的资料':'桌面 › len 的资料 › 数据包';
+ let pv='<span style="color:#8090a0">选中一个文件看详情。</span>';
+ if(one){if(one.pack){const n=one.pack,ps=packState(n);pv=`<b>${one.n}</b>${n.mb} MB · ${fmtN(n.samples)} 条样本<br>${ps==='inst'?'已经装进去了':ps==='ready'?'<span style="color:#2e7a45">下载好了，拖进「练」</span>':'下载中 '+Math.round((S.dl[n.id]||0)*100)+'%'}<pre>${n.one}</pre>`;}else pv=`<b>${one.n}</b><pre>${esc(one.body||one.sub||'')}</pre>`;}
+ w.innerHTML=`<div class="wh" data-drag="xw"><b>len 的资料</b><button class="x" id="xwX">✕</button></div>
+ <div class="tb"><button id="xwB" ${S.fpath==='root'?'disabled':''}>← 返回</button><span class="addr">${path}</span>${S.fpath==='packs'?'<button id="xwA">全选可装的</button>':''}</div>
+ <div class="wb"><div class="nav"><div class="${S.fpath==='root'?'on':''}" data-p="root">len 的资料</div><div class="${S.fpath==='packs'?'on':''}" data-p="packs">　数据包</div></div>
+ <div class="files" id="files">${items.map(it=>{const ps=it.pack?packState(it.pack):'';const dr=ps==='ready';return `<div class="fi${S.fsel.has(it.id)?' sel':''}${ps==='inst'?' done':''}" data-id="${it.id}" ${dr?'draggable="true"':''}>${FICON[it.k]}<span>${it.n}</span>${ps==='dl'?`<div class="pb"><i style="width:${(S.dl[it.id]||0)*100}%"></i></div>`:ps==='inst'?'<small>已安装</small>':ps==='ready'?'<small>可以拖了</small>':it.sub?`<small>${it.sub}</small>`:''}</div>`;}).join('')||'<span style="color:#8090a0;padding:10px">这里还是空的。在科技里买数据包，或者在「练 › 数据来源」输网址下载。</span>'}</div>
+ <div class="pv">${pv}</div></div>
+ <div class="st">${items.length} 个项目${S.fsel.size?'　已选 '+S.fsel.size+' 个':''}　${S.fpath==='packs'?'按住 Ctrl 多选，拖进「练」一次装好':''}</div>`;
+ $('#xwX').onclick=()=>w.classList.remove('on');
+ const b=$('#xwB');if(b)b.onclick=()=>{S.fpath='root';S.fsel.clear();renderFolder();};
+ const a=$('#xwA');if(a)a.onclick=()=>{S.fsel=new Set(PACKS.filter(n=>packState(n)==='ready').map(n=>n.id));renderFolder();};
+ $$('#xw .nav div').forEach(d=>d.onclick=()=>{S.fpath=d.dataset.p;S.fsel.clear();renderFolder();});
+ $$('#xw .fi').forEach(f=>{
+  f.onclick=e=>{const id=f.dataset.id;if(e.ctrlKey||e.metaKey||e.shiftKey){S.fsel.has(id)?S.fsel.delete(id):S.fsel.add(id);}else{S.fsel=new Set([id]);}renderFolder();};
+  f.ondblclick=()=>{if(f.dataset.id==='@packs'){S.fpath='packs';S.fsel.clear();renderFolder();}};
+  f.ondragstart=e=>{const id=f.dataset.id;if(!S.fsel.has(id))S.fsel=new Set([id]);const ids=[...S.fsel].filter(x=>NODE[x]&&packState(NODE[x])==='ready');e.dataTransfer.setData('text/plain',JSON.stringify(ids));e.dataTransfer.effectAllowed='copy';snd('pop');};
+ });
+ bindWinDrag(w);
+}
+let zTop=10;function front(id){$$('.w7').forEach(x=>x.classList.remove('front'));$('#'+id).classList.add('front');}
+function bindWinDrag(w){const h=w.querySelector('[data-drag]');if(!h)return;h.onpointerdown=e=>{if(e.target.closest('button'))return;front(w.id);const sx=e.clientX,sy=e.clientY,ox=w.offsetLeft,oy=w.offsetTop;h.setPointerCapture(e.pointerId);
+ h.onpointermove=ev=>{w.style.left=ox+(ev.clientX-sx)/SCALE+'px';w.style.top=Math.max(0,oy+(ev.clientY-sy)/SCALE)+'px';};h.onpointerup=()=>{h.onpointermove=null;};};
+ w.onpointerdown=()=>front(w.id);}
+
+/* ---------- 科技 ---------- */
+const COLW=370,ROW0=186,ROWH=100,X0=58;const V={x:0,y:0,k:1};let fitted=false;
+const npos=n=>({x:X0+(n.st-1)*COLW+n.sl*84,y:ROW0+n.br*ROWH});
+function tech(){
+ const P=$('#p-tech');const cnt=canCount();
+ let w='';
+ for(let i=1;i<=6;i++){const x=X0-14+(i-1)*COLW,cls=i<S.stage?'done':i===S.stage?'cur':i===S.stage+1?'':'fut';const tag=i<S.stage?'已学会':i===S.stage?'现在':i===S.stage+1?'下一项':'';
+  const p=params(),d=effSamples(),np=NEEDP[i-1],nd=NEEDD[i-1];
+  w+=`<div class="card ${cls}" style="left:${x}px;top:18px;width:${COLW-46}px"><h4>${i}　${ABIL[i-1]}<small>${tag}</small></h4><p>${CARD_DESC[i-1]}</p>
+  ${i>1?`<div class="cb"><span>参数</span><span class="mt"><i class="pur" style="width:${Math.min(100,p/np*100)}%"></i></span><span>${fmtK(Math.min(p,np*9))} / ${fmtK(np)}</span></div><div class="cb"><span>样本</span><span class="mt"><i class="blu" style="width:${Math.min(100,d/nd*100)}%"></i></span><span>${fmtN(Math.min(d,nd*9))} / ${fmtN(nd)}</span></div>`:'<div class="cb"><span></span><span class="dim">开局就会</span><span></span></div>'}</div>`;
+  if(i<6) w+=`<span class="arrow" style="left:${x+COLW-38}px;top:72px">›</span>`;}
+ BRN.forEach((b,i)=>{w+=`<div class="band" style="top:${ROW0+i*ROWH-16}px;width:${X0+6*COLW}px"></div><div class="brl" style="top:${ROW0+i*ROWH}px">${b}</div>`;});
+ let e='';NODES.forEach(n=>(n.d||[]).forEach(d=>{const a=npos(NODE[d]),z=npos(n);const ax=a.x+64,ay=a.y+25,zx=z.x+14,zy=z.y+25;const mx=zx-14;
+  e+=`<path class="${lv(n.id)&&lv(d)?'own':''}" d="M${ax},${ay} ${ay===zy?'':`H${Math.max(ax+6,mx)} V${zy}`} H${zx}"/>`;}));
+ w+=`<svg class="edges" width="${X0+6*COLW}" height="${ROW0+BRN.length*ROWH}">${e}</svg>`;
+ NODES.forEach(n=>{const p=npos(n),st=nodeState(n),L=lv(n.id),M=maxLv(n);
+  const pr=st.s==='max'?'✓':st.s==='chat'?'说一句话':st.s==='lock'&&n.st>S.stage?'能力 '+n.st:'¥'+fmtN(price(n));
+  w+=`<button class="nd s-${st.s}${M>1&&L>0&&L<M?' part':''}${S.sel===n.id?' sel':''}${S.onlyCan&&st.s!=='can'?' dim':''}${S.justBought===n.id?' justbought':''}" data-id="${n.id}" style="left:${p.x}px;top:${p.y}px"><span class="tile">${ic(n.chat&&!L?'chat':n.ic)}${M>1?`<em>${L}/${M}</em>`:''}</span><span class="nn">${n.n}</span><span class="np">${pr}</span></button>`;});
+ S.justBought=null;
+ P.innerHTML=`<div class="th"><h2>科技</h2><span class="n big">¥${fmtN(Math.floor(S.money))}</span><div class="seg sj">${[1,2,3,4,5,6].map(i=>`<button data-col="${i}" class="${i===S.stage?'on':''}" title="跳到能力 ${i}">${i}</button>`).join('')}</div>
+ <div class="lgd2"><span><i class="cc"></i>可买</span><span><i class="cp"></i>钱不够</span><span><i class="cl"></i>未解锁</span><span><i class="cm"></i>已拥有</span></div>
+ <button class="tgl" id="atlasBtn">图鉴　${S.stage} / 6</button><button class="tgl${S.onlyCan?' on':''}" id="onlyCan">只看可买　${cnt}</button><div class="zm"><button id="zo" title="缩小">−</button><span class="n" id="zp">100%</span><button id="zi" title="放大">＋</button><button id="zf">适应</button></div></div>
+ <div class="map" id="map"><div class="world" id="world">${w}</div><div class="pop" id="pop"></div></div>`;
+ bindMap();
+ if(!fitted){fitted=true;requestAnimationFrame(()=>{fit();if(S.sel)centerNode(S.sel);});}else applyView();
+ if(S.sel) requestAnimationFrame(()=>showPop(S.sel));
+}
+function popHTML(n){
+ const st=nodeState(n),L=lv(n.id),M=maxLv(n),p=price(n);
+ let reqs='';[...(n.d||[]),...(st.s!=='max'?(n.lvD?.[L]||[]):[])].forEach(d=>reqs+=`<li class="${lv(d)?'y':'x'}">${lv(d)?'✓':'✗'}　先有「${NODE[d].n}」</li>`);
+ const cd=st.s!=='max'?(n.lvC?n.lvC[L]:n.cond):null;if(cd)reqs+=`<li class="${S.cond[cd]?'y':'x'}">${S.cond[cd]?'✓':'✗'}　${COND[cd]}</li>`;
+ if(n.side)reqs+=`<li class="x">支线：不买也不影响主线</li>`;
+ if(st.s!=='max'){const ns=n.lvSt?n.lvSt[L]:n.st;reqs+=`<li class="${ns<=S.stage?'y':'x'}">${ns<=S.stage?'✓':'✗'}　能力 ${ns}</li>`;if(!n.chat)reqs+=`<li class="${S.money>=p?'y':'x m'}">${S.money>=p?'✓':'✗'}　经费 ¥${fmtN(p)}</li>`;}
+ const lvls=n.lvSt?`<div class="lvls">${n.lvSt.map((s,i)=>`<span class="${i<L?'got':''}${i===L?' nx':''}">${n.lvL?n.lvL[i]:n.id==='width'?fmtK(WID[i]):LAY[i]+' 层'}<small>能力 ${s}</small></span>`).join('')}</div>`:'';
+ const lbl={max:'已拥有',can:`买下　¥${fmtN(p)}`,poor:`钱不够　¥${fmtN(p)}`,lock:st.why,chat:'去 YY 对它说一句话'}[st.s];
+ return `<div class="pt"><span class="ptile">${ic(n.ic)}</span><div><b>${n.n}</b><small>${BRN[n.br]}　${M>1?`Lv ${L} / ${M}`:L?'已拥有':'还没有'}</small></div><button class="px" id="popX">×</button></div>
+ <p class="one">${n.one}</p><div class="eff"><span>买下以后</span>${n.eff.replace('{名字}',esc(S.name))}</div>
+ ${n.raw?`<p class="raw">${n.raw.replace(/【(.+?)】/g,'<em>$1</em>')}</p>`:''}${lvls}
+ ${n.chat&&!L?`<p class="raw">对它说：「${n.chat.replace(/[^？?]/g,'＿')}」<br>原句藏在贴吧楼层和书页批注里。</p>`:''}
+ <ul class="req">${reqs}</ul><button class="bbtn s-${st.s}" id="popBuy" data-quiet="1" ${st.s==='can'?'':'disabled'}>${lbl}</button>`;
+}
+function showPop(id){const pop=$('#pop');if(!pop)return;pop.innerHTML=popHTML(NODE[id]);pop.classList.remove('on');void pop.offsetWidth;pop.classList.add('on');placePop();
+ $('#popX').onclick=e=>{e.stopPropagation();S.sel=null;pop.classList.remove('on');$$('.nd.sel').forEach(x=>x.classList.remove('sel'));};
+ $('#popBuy').onclick=e=>{e.stopPropagation();buy(id);};}
+function placePop(){const pop=$('#pop'),map=$('#map');if(!pop||!S.sel)return;const el=$(`.nd[data-id="${S.sel}"] .tile`);if(!el)return;
+ const m=map.getBoundingClientRect(),r=el.getBoundingClientRect();const mw=map.clientWidth,mh=map.clientHeight;
+ let x=(r.right-m.left)/SCALE+16,y=(r.top-m.top)/SCALE-14;if(x+320>mw-10)x=(r.left-m.left)/SCALE-336;x=Math.max(10,x);
+ y=Math.max(10,Math.min(mh-pop.offsetHeight-10,y));pop.style.left=x+'px';pop.style.top=y+'px';}
+let vraf=0;function applyView(){const w=$('#world');if(!w)return;w.style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`;const zp=$('#zp');if(zp)zp.textContent=Math.round(V.k*100)+'%';if($('#pop')?.classList.contains('on'))placePop();}
+const sched=()=>{if(!vraf)vraf=requestAnimationFrame(()=>{vraf=0;applyView();});};
+function zoomAt(k,cx,cy){k=Math.max(.5,Math.min(1.5,k));V.x=cx-(cx-V.x)*k/V.k;V.y=cy-(cy-V.y)*k/V.k;V.k=k;sched();}
+function fit(){const m=$('#map');if(!m)return;const W=X0+6*COLW+20,H=ROW0+BRN.length*ROWH;V.k=Math.max(.5,Math.min(1.5,Math.min(m.clientWidth/W,m.clientHeight/H)));V.x=(m.clientWidth-W*V.k)/2;V.y=(m.clientHeight-H*V.k)/2;applyView();}
+function centerNode(id){requestAnimationFrame(()=>{const m=$('#map');if(!m)return;const p=npos(NODE[id]);if(V.k<.8)V.k=.9;V.x=m.clientWidth/2-170-(p.x+39)*V.k;V.y=m.clientHeight/2-(p.y+25)*V.k;applyView();showPop(id);});}
+function bindMap(){
+ const map=$('#map');let drag=null,moved=false;
+ map.addEventListener('pointerdown',e=>{if(e.target.closest('.nd,.pop'))return;drag={x:e.clientX,y:e.clientY};moved=false;map.classList.add('drag');map.setPointerCapture(e.pointerId);});
+ map.addEventListener('pointermove',e=>{if(!drag)return;const dx=(e.clientX-drag.x)/SCALE,dy=(e.clientY-drag.y)/SCALE;if(Math.abs(dx)+Math.abs(dy)>1)moved=true;V.x+=dx;V.y+=dy;drag={x:e.clientX,y:e.clientY};sched();});
+ map.addEventListener('pointerup',()=>{if(!drag)return;drag=null;map.classList.remove('drag');if(!moved){S.sel=null;$('#pop').classList.remove('on');$$('.nd.sel').forEach(x=>x.classList.remove('sel'));}});
+ map.addEventListener('wheel',e=>{e.preventDefault();const r=map.getBoundingClientRect();zoomAt(V.k*(e.deltaY<0?1.12:1/1.12),(e.clientX-r.left)/SCALE,(e.clientY-r.top)/SCALE);},{passive:false});
+ map.addEventListener('dblclick',e=>{if(e.target.closest('.nd,.pop'))return;const r=map.getBoundingClientRect();zoomAt(1,(e.clientX-r.left)/SCALE,(e.clientY-r.top)/SCALE);});
+ $$('#map .nd').forEach(b=>b.addEventListener('click',()=>{S.sel=b.dataset.id;$$('.nd.sel').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');showPop(S.sel);}));
+ const mid=()=>[map.clientWidth/2,map.clientHeight/2];
+ $('#zi').onclick=()=>zoomAt(V.k+.1,...mid());$('#zo').onclick=()=>zoomAt(V.k-.1,...mid());$('#zf').onclick=fit;
+ $('#onlyCan').onclick=()=>{S.onlyCan=!S.onlyCan;tech();};
+ $('#atlasBtn').onclick=()=>openAtlas(S.stage);
+ $$('.sj button').forEach(b=>b.onclick=()=>{const i=+b.dataset.col;V.x=map.clientWidth/2-(X0+(i-1)*COLW+COLW/2-30)*V.k;sched();});
+}
+
+/* ---------- 名字 ---------- */
+function mind(){
+ const P=$('#p-mind');const says=['……是。','……选 B。','猫。','你今天还没跟我说话。','你上周说过，想换显卡。','我读完了。你想问什么？'][S.stage-1];
+ const known=['是','否','积分兑换','鲸鱼','猫','7','床前明月光','1080','洪荒之力','房租','月色','回家'].slice(0,3+S.stage*2);
+ P.innerHTML=`<div class="pn mw"><canvas id="orbc" width="900" height="900"></canvas><div class="mcap"><b>${esc(S.name)}</b><span>${says}</span></div></div>
+ <div class="pn ms"><div class="ph" style="padding:0"><b>它现在</b></div><div><h5>能力</h5><div class="ab6">${ABIL.map((a,i)=>`<div class="${i<S.stage?'on':''}${i===S.stage-1?' now':''}"><span>${i+1}</span>${a}</div>`).join('')}</div></div>
+ <div><h5>性格</h5>${[['温度',62],['玩心',44],['主见',57]].map(([a,v])=>`<div class="ax"><span>${a}</span><span class="t"><i style="left:${v}%"></i></span><span class="n dim">${v}</span></div>`).join('')}</div>
+ <div><h5>记住的东西</h5><div class="kw">${known.map(k=>`<span>${k}</span>`).join('')}</div></div><button class="btn2" id="mAtlas" style="height:40px">图鉴：它脑子里的样子　${S.stage} / 6</button><button class="talk" id="talkBtn">去 YY 和它说话</button></div>`;
+ $('#talkBtn').onclick=openYY;$('#mAtlas').onclick=()=>openAtlas(S.stage);orb();
+}
+function orb(){const c=$('#orbc');if(!c)return;const x=c.getContext('2d'),N=800,pts=[];for(let i=0;i<N;i++){const u=Math.random()*2-1,th=Math.random()*6.283,r=Math.sqrt(1-u*u);pts.push([r*Math.cos(th),u,r*Math.sin(th),Math.random()]);}
+ let a=0;const f=()=>{if(!c.isConnected)return;const W=c.width,R=W*.33;x.clearRect(0,0,W,W);const lit=.2+S.stage*.13;
+  for(const p of pts){const ca=Math.cos(a),sa=Math.sin(a),X=p[0]*ca-p[2]*sa,Z=p[0]*sa+p[2]*ca,Y=p[1],d=(Z+1)/2,on=p[3]<lit;
+   x.fillStyle=on?`hsla(${155+X*30+Y*20},80%,${58+d*20}%,${.25+d*.75})`:`rgba(200,210,220,${.04+d*.12})`;x.beginPath();x.arc(W/2+X*R,W/2+Y*R,(on?2.6:1.5)*(.6+d*.9),0,7);x.fill();}
+  a+=.003;if(!S.reduce)requestAnimationFrame(f);};f();}
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function floatAt(el,t,col){const w=$('#win').getBoundingClientRect(),r=el.getBoundingClientRect();const f=document.createElement('div');f.className='float';f.style.color=col;f.textContent=t;f.style.left=((r.left-w.left)/SCALE+(r.width/SCALE)/2-24)+'px';f.style.top=((r.top-w.top)/SCALE-8)+'px';$('#win').appendChild(f);setTimeout(()=>f.remove(),950);}
+let toastT=0;function toast(t){$$('.toast').forEach(x=>x.remove());const f=document.createElement('div');f.className='toast';f.textContent=t;$('#win').appendChild(f);clearTimeout(toastT);toastT=setTimeout(()=>f.remove(),2600);}
+document.addEventListener('keydown',e=>{if(S.tab!=='teach'||e.target.tagName==='INPUT')return;const bs=$$('#qp .yn, #qp .op4 button');const i=+e.key-1;if(i>=0&&i<bs.length&&!bs.some(b=>b.classList.contains('ok')||b.classList.contains('no')))bs[i].click();});
+function fitStage(){SCALE=Math.min(innerWidth/1600,innerHeight/960);$('#stage').style.transform=`translate(-50%,-50%) scale(${SCALE})`;}
+addEventListener('resize',()=>{fitStage();if(S.tab==='tech')applyView();});
+setInterval(()=>{S.min++;if(lv('ledger'))hud();taskbar();},6000);
+setInterval(()=>{if(lv('autotrain')&&!S.training){trainRound(false);if(S.tab==='train')train();hud();}},10000);
+
+/* desktop */
+$('#dicons').innerHTML=`<button class="dico" id="dFolder">${FICON.folder.replace('viewBox','class="i2" viewBox')}<span>len 的资料</span></button><button class="dico" id="dYY"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="#f2b233"/><circle cx="17" cy="21" r="3" fill="#4a2c00"/><circle cx="31" cy="21" r="3" fill="#4a2c00"/><path d="M15 29c5 5 13 5 18 0" stroke="#4a2c00" stroke-width="2.5" fill="none"/></svg><span>YY</span></button><button class="dico" id="dExe"><svg viewBox="0 0 48 48"><rect x="6" y="6" width="36" height="36" rx="9" fill="#0b1a17"/><circle cx="24" cy="24" r="10" fill="#2fb38a"/><circle cx="21" cy="21" r="3" fill="#dfffee"/></svg><span>len.exe</span></button>`;
+$('#dFolder').ondblclick=()=>openFolder('root');$('#dFolder').onclick=e=>{if(e.detail===1)setTimeout(()=>{},0);};
+$('#dYY').ondblclick=openYY;$('#dExe').ondblclick=()=>{$$('.w7').forEach(x=>x.classList.remove('front'));};
+$('#tkYY').onclick=openYY;$('#tkFolder').onclick=()=>openFolder('root');$('#tkExe').onclick=()=>$$('.w7').forEach(x=>x.classList.remove('front'));
+
+function preset(s){
+ S.lv={perceptron:1,width:1,depth:1,slots:1,sense:1};S.inst={sense:1};S.dl={};S.hist=[];S.log=[];S.feed=[];S.chat=[];S.combo=0;S.today=0;S.todayEarn=0;S.ckpt=null;S.qzRep='';S.sel=null;S.fb='';S.fbc='';S.read={};S.pendingAsk=null;S.fsel.clear();S.dataOpen=false;
+ if(s===0){S.stage=1;S.money=0;S.samples=0;S.answered=0;S.round=0;S.tr=[];S.va=[];S.sheet=[];S.tab='teach';fitted=false;renderAll();go('teach');renderFolder();renderYY();return;}
+ S.stage=s;
+ NODES.forEach(n=>{if(n.chat||n.cond||n.from0)return;if(n.lvSt){S.lv[n.id]=Math.min(maxLv(n),n.lvSt.filter(x=>x<s).length+1);}else if(n.st<s)S.lv[n.id]=1;});
+ for(let i=1;i<=s;i++)(PRESET_CORE[i]||[]).forEach(id=>{if(i<s||NODE[id].st<=s)S.lv[id]=1;});
+ NODES.filter(n=>n.from0).forEach(n=>{let L=0;while(L<maxLv(n)&&n.lvSt[L]<s&&(n.lvD?.[L]||[]).every(d=>lv(d))&&!(n.lvC?.[L]&&!S.cond[n.lvC[L]]))L++;S.lv[n.id]=L;});
+ if(s===1){S.lv={perceptron:1,width:1,depth:1,slots:1,sense:1,curve:1,ledger:1};}
+ PACKS.forEach(n=>{if(lv(n.id)){S.dl[n.id]=1;S.inst[n.id]=1;}});
+ // 留一个下载好但没装的包，方便试拖拽
+ const spare=PACKS.find(n=>!lv(n.id)&&n.st<=s);if(spare){S.lv[spare.id]=1;S.dl[spare.id]=1;}
+ S.money=[0,60,1366,3844,9000,26000,80000][s];S.samples=[0,300,2600,12000,45000,160000,650000][s];S.answered=s===1?14:200*s;
+ S.round=10+8*s;S.lr=3;S.viz=Math.min(s,2);S.bank='sense';seedCurve();
+ log('做题 · 常识判断',S.answered*30*.4,'题目');S.earnWin=[];
+ ['常识判断 · 人用眼睛看东西。','常识判断 · 鲸鱼是一种鱼。'].forEach((t,i)=>S.feed.push({stage:Math.max(1,s-1),t:DATES[Math.max(0,s-2)]+' 01:1'+i,kind:'题',text:t,ok:i===0}));
+ PACKS.filter(n=>inst(n.id)).forEach(n=>S.feed.push({stage:n.st,t:DATES[n.st-1]+' 00:5'+n.sl,kind:'数据包',text:n.n+'.zip · '+fmtN(n.samples)+' 条'}));
+ S.feed.sort((a,b)=>b.stage-a.stage||b.t.localeCompare(a.t));
+ if(!tabOpen(S.tab))S.tab='teach';fitted=false;renderAll();go(S.tab);renderFolder();renderYY();
+}
+$('#pStages').innerHTML=[1,2,3,4,5,6].map(i=>`<button data-s="${i}">能力 ${i}</button>`).join('');
+$$('#pStages button').forEach(b=>b.onclick=()=>{preset(+b.dataset.s);$$('#pStages button').forEach(x=>x.classList.toggle('on',x===b));});
+$('#pFresh').onclick=()=>{preset(0);$$('#pStages button').forEach(x=>x.classList.remove('on'));};
+$('#pMoney').onclick=()=>{S.money+=5000;log('原型加钱',5000,'题目');S.earnWin=[];renderAll();};
+$('#pAll').onclick=()=>{NODES.forEach(n=>{if(n.st<=S.stage&&!n.chat){if(n.lvSt)S.lv[n.id]=Math.min(maxLv(n),n.lvSt.filter(x=>x<=S.stage).length);else{S.lv[n.id]=1;if(n.samples&&S.dl[n.id]==null)S.dl[n.id]=1;}}});renderAll();renderFolder();renderYY();};
+$('#pCond').onclick=()=>{Object.keys(COND).forEach(k=>S.cond[k]=1);toast('已模拟：下过棋、玩过飞行棋、读过新闻、喵鱼买过、和晴雯聊过……');renderAll();};
+$('#pBook').onclick=()=>{const bk=BOOKS[1];S.read[bk.id]=bk.text.length;bookDone(bk);if(S.tab==='train')train();};
+$('#pName').addEventListener('input',e=>{S.name=e.target.value.trim()||'len';renderAll();renderYY();});
+$('#protoH').onclick=()=>$('#proto').classList.toggle('min');
+
+fitStage();
+preset(2);$$('#pStages button')[1].classList.add('on');
+['人用眼睛看东西。','鲸鱼是一种鱼。','2016 年是猴年。'].forEach((q,i)=>{const it=Q.sense.find(x=>x[0]===q);const right=i!==1;S.hist.unshift({q,pick:right?(it[1]?'对':'错'):(it[1]?'错':'对'),truth:it[1]?'对':'错',why:it[2],ai:i===2?(it[1]?'错':'对'):(it[1]?'对':'错'),aiOk:i!==2,conf:.6+i*.1,right,bank:'常识判断',t:'01:2'+i,pay:right?30:-15,stage:2,combo:right?i+1:0});});
+go('teach');
+})();
+</script>
+</body>
+</html>

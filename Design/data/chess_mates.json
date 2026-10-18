@@ -1,0 +1,26 @@
+{
+  "note": "国际象棋将杀题库（《第五轮设计》第四节）。FEN 是局面，side 是走棋方，solution 是正确的第一步（UCI 写法，可能有多个都算对），line 是完整着法（mate-in-2 时包含对方被迫的应着）。每题已人工核对；整合时请用游戏里已有的国际象棋走子规则（main 的 XgMiniBoard / 游戏中心国际象棋）再自动验证一遍：①局面合法、走棋方不被将军之外的一方不在被将状态；②solution 走完后是将杀（mate1）或对方所有应着之后都有一步将杀（mate2）。验证不过的题直接丢弃。以后可以从公共领域的经典题（Lichess 题库为 CC0）补充，按同样格式录入并跑同样的验证。",
+  "puzzles": [
+    { "id": "m1_backrank", "type": "mate1", "name": "底线杀", "nameEn": "Back-rank mate",
+      "fen": "6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1", "side": "w", "solution": ["a1a8"], "line": ["a1a8"],
+      "hint": "它自己的兵挡住了退路。", "hintEn": "Its own pawns block the escape." },
+    { "id": "m1_queen_king", "type": "mate1", "name": "王后加国王", "nameEn": "Queen and king",
+      "fen": "7k/8/6K1/8/8/8/8/1Q6 w - - 0 1", "side": "w", "solution": ["b1b8"], "line": ["b1b8"],
+      "hint": "国王已经封住了第七横线。", "hintEn": "Your king already covers the seventh rank." },
+    { "id": "m1_smothered", "type": "mate1", "name": "闷杀", "nameEn": "Smothered mate",
+      "fen": "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1", "side": "w", "solution": ["g5f7"], "line": ["g5f7"],
+      "hint": "它被自己的子围死了，只差一匹马。", "hintEn": "It is boxed in by its own pieces; one knight will do." },
+    { "id": "m1_scholar", "type": "mate1", "name": "学者杀", "nameEn": "Scholar's mate",
+      "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4", "side": "w", "solution": ["h5f7"], "line": ["h5f7"],
+      "hint": "f7 只有国王在守。", "hintEn": "Only the king guards f7." },
+    { "id": "m1_two_rooks", "type": "mate1", "name": "双车", "nameEn": "Two rooks",
+      "fen": "7k/R7/1R6/8/8/8/8/6K1 w - - 0 1", "side": "w", "solution": ["b6b8"], "line": ["b6b8"],
+      "hint": "一个车封第七横线，另一个车将军。", "hintEn": "One rook holds the seventh rank, the other gives check." },
+    { "id": "m2_ladder", "type": "mate2", "name": "车梯", "nameEn": "Rook ladder",
+      "fen": "7k/8/8/8/8/8/1R6/R5K1 w - - 0 1", "side": "w", "solution": ["b2b7"], "line": ["b2b7", "h8g8", "a1a8"],
+      "hint": "先封住它的退路，再将军。", "hintEn": "Cut off the escape first, then check." },
+    { "id": "m2_philidor", "type": "mate2", "name": "菲利道尔的遗赠", "nameEn": "Philidor's legacy",
+      "fen": "5r1k/6pp/7N/3Q4/8/8/8/6K1 w - - 0 1", "side": "w", "solution": ["d5g8"], "line": ["d5g8", "f8g8", "h6f7"],
+      "hint": "把王后送掉，逼它自己把门堵上。", "hintEn": "Give up the queen so it blocks its own door." }
+  ]
+}

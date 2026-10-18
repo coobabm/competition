@@ -192,6 +192,7 @@ public static class ShutdownReturnSmoke
             titleClearFlags = menu.menuCamera.clearFlags;
             titleBackground = menu.menuCamera.backgroundColor;
             yield return Shot(cycle + "-01-title");
+            if (cycle < 2) yield return CheckTitleArchives(menu, display, cycle);
             entry.Clear();
             bootShot = false;
             yield return PressPower(menu);
@@ -368,6 +369,44 @@ public static class ShutdownReturnSmoke
         Check(sawEnd && frames >= 8 && moving >= 5 && fadeFrames >= 2 && repeatSent && middleShot,
             "cycle " + cycle + ": observed fade, multi-frame reverse path, deduplication, landing then unload (frames=" + frames + ", moving=" + moving + ", fade=" + fadeFrames + ")");
         Check(!originalMain.isLoaded, "Original Main unloads only after observed landing");
+    }
+
+    static IEnumerator CheckTitleArchives(CaseMenuController menu, CaseMenuMainDisplay display, int cycle)
+    {
+        var hud=menu.GetComponent<CaseMenuHud>();
+        Func<string,Button> find=name=>hud.GetComponentsInChildren<Button>(true).Single(b=>b.name==name&&b.gameObject.activeInHierarchy);
+        Check(menu.HitButton(PowerPoint(menu))==menu.startButton,"new title HUD does not block physical power key");
+        var rt=display.Runtime;string disk=File.ReadAllText(rt.SavePath);
+        var blocked=typeof(ChapterOneRuntime).GetField("persistenceBlocked",BindingFlags.Instance|BindingFlags.NonPublic);
+        blocked.SetValue(rt,true);
+        try { yield return ClickTitle(find("QuitGame"));Check(EditorApplication.isPlaying&&!menu.IsTransitioning&&File.ReadAllText(rt.SavePath)==disk,"actual title quit button preserves title and disk on save failure"); }
+        finally {blocked.SetValue(rt,false);}
+        using(GameText.Bind(()=>cycle==0?"zh-CN":GameText.English))
+        {
+            yield return ClickTitle(find("ReadArchives"));Check(hud.IsArchiveOpen,"actual title pointer opens archive modal");
+            Canvas.ForceUpdateCanvases();var card=(RectTransform)find("Archive1").transform.parent;
+            for(int slot=1;slot<=6;slot++)
+            {
+                var button=find("Archive"+slot);var bounds=new Vector3[4];((RectTransform)button.transform).GetWorldCorners(bounds);
+                foreach(var world in bounds){var local=card.InverseTransformPoint(world);Check(card.rect.Contains(local),"archive row "+slot+" stays inside modal");}
+                Check(button.navigation.mode==Navigation.Mode.Explicit&&button.navigation.selectOnDown!=null,"archive row "+slot+" has keyboard navigation");
+            }
+            Check(menu.HitButton(PowerPoint(menu))==null,"archive modal blocks physical controls");
+            yield return ClickTitle(find("Archive1"));Check(!menu.IsTransitioning&&find("LoadSelected").interactable,"real slot selection waits for confirm");
+            yield return Shot(cycle+"-01b-archives-"+(cycle==0?"zh":"en"));
+            yield return ClickTitle(find("CloseArchives"));Check(!hud.IsArchiveOpen&&!menu.IsTransitioning,"actual back closes without starting");
+        }
+        Check(menu.HitButton(PowerPoint(menu))==menu.startButton,"power hit recovers immediately even after hovering a UI button");
+    }
+    static IEnumerator ClickTitle(Button button)
+    {
+        Require(button!=null&&button.IsInteractable(),"title button is available");Canvas.ForceUpdateCanvases();
+        var rect=(RectTransform)button.transform;Vector2 point=RectTransformUtility.WorldToScreenPoint(null,rect.TransformPoint(rect.rect.center));
+        var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
+        Require(hits.Count>0&&ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject)==button.gameObject,"actual screen raycast reaches title button "+button.name);
+        mouse.MakeCurrent();InputSystem.QueueStateEvent(mouse,new MouseState{position=point});yield return null;
+        InputSystem.QueueStateEvent(mouse,new MouseState{position=point}.WithButton(MouseButton.Left));yield return null;
+        InputSystem.QueueStateEvent(mouse,new MouseState{position=point});yield return null;yield return null;
     }
 
     static IEnumerator PressPower(CaseMenuController menu)

@@ -15,7 +15,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgLinkGame(XgMiniContext c):base(c){}
         public override void Build()
         {
-            Frame("词图连连看","点对应的词与图；连线最多拐两次，可经过外围空白。灵光预连线需你审核。");
+            Frame("词图连连看",(XgUi.T("点对应的词与图；连线最多拐两次，可经过外围空白。灵光预连线需你审核。","Match words to pictures; a link may turn twice and pass outside the board. Check LingGuang's proposed links.")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName));
             Status.rectTransform.offsetMin=new Vector2(172,-479);Status.rectTransform.offsetMax=new Vector2(874,-454);Status.fontSize=15;
             stats=C.Text("Stats",18,90,145,65,"",18);stats.textWrappingMode=TextWrappingModes.Normal;
             C.Button("Shuffle",18,172,140,40,"洗牌 −5秒",()=>Mix(false));C.Button("Hint",18,222,140,40,"提示",Hint);
@@ -36,11 +36,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             for(int n=0;n<96;n++)if(tiles[n]!=null){int v=Value(n);tiles[n].rt.gameObject.SetActive(v!=0);tiles[n].label.text=v>0?Words[v-1]:"";icons[n].gameObject.SetActive(v<0);if(v<0)icons[n].SetIcon(-v-1);tiles[n].button.interactable=!over;tiles[n].image.color=n==selected?new Color(.73f,.93f,.79f):Color.white;tiles[n].label.color=Dark;}
             stats.text="剩 "+Math.Ceiling(seconds)+" 秒\n已配 "+matched+" / 30";yes.button.interactable=no.button.interactable=!over&&proposalA>=0;
-            if(proposalA<0)proposal.text="灵光预连线已审核。";
+            if(proposalA<0)proposal.text=(XgUi.T("灵光预连线已审核。","LingGuang's proposed link was checked.")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName);
         }
         void Select(int n)
         {
-            if(over)return;if(n==proposalA||n==proposalB){Message("这两个图块是灵光的预连线，请先审核左侧对/错。 ");return;}
+            if(over)return;if(n==proposalA||n==proposalB){Message((XgUi.T("这两个图块是灵光的预连线，请先审核左侧对/错。 ","These tiles are LingGuang's proposal. Judge it with the left yes/no buttons first.")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName));return;}
             if(selected<0){selected=n;Draw();Status.text=Value(n)>0?"已选："+Words[Value(n)-1]:"已选图卡，寻找对应的词。";return;}
             int a=selected;selected=-1;if(a==n){Draw();return;}
             if(!Pair(a,n)){Message("这两个不是对应的词图。 ");Draw();return;}
@@ -51,7 +51,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         void Propose()
         {
             if(proposals>=4||over){proposalA=proposalB=-1;Draw();return;}var options=Available(C.Random.NextDouble()<C.Skill);
-            if(options.Count==0){proposalA=proposalB=-1;return;}var pick=options[C.Random.Next(options.Count)];proposalA=pick[0];proposalB=pick[1];proposals++;proposal.text="灵光预连 "+proposals+" / 4\n紫线：配对正确吗？";ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);Draw();
+            if(options.Count==0){proposalA=proposalB=-1;return;}var pick=options[C.Random.Next(options.Count)];proposalA=pick[0];proposalB=pick[1];proposals++;proposal.text=(XgUi.T("灵光预连 ","LingGuang proposal ")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName)+proposals+" / 4\n紫线：配对正确吗？";ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);Draw();
         }
         void Review(bool accept)
         {
@@ -66,7 +66,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             for(int attempt=0;attempt<80;attempt++){Shuffle(values);for(int i=0;i<values.Length;i++)board[positions[i]/12,positions[i]%12]=values[i];if(Available(true).Count>0)break;}
             if(!automatic)seconds=Math.Max(0,seconds-5);selected=-1;HideLine();Draw();Status.text=automatic?"棋盘已就绪。":"已洗牌，扣除 5 秒。";
         }
-        void Hint(){if(over)return;if(proposalA>=0){ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);return;}var options=Available(C.Random.NextDouble()<C.Skill);if(options.Count==0)return;var p=options[C.Random.Next(options.Count)];ShowLine(XgMiniBoard.LinkPath(board,p[0],p[1]),Blue);C.Say("这是灵光的模拟建议，请自行核对。 ");}
+        void Hint(){if(over)return;if(proposalA>=0){ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);return;}var options=Available(C.Random.NextDouble()<C.Skill);if(options.Count==0)return;var p=options[C.Random.Next(options.Count)];ShowLine(XgMiniBoard.LinkPath(board,p[0],p[1]),Blue);C.Say((XgUi.T("这是灵光的模拟建议，请自行核对。 ","This is LingGuang's simulated suggestion. Check it yourself.")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName));}
         void HideLine(){foreach(var s in segments)s.gameObject.SetActive(false);lineTime=0;}
         void ShowLine(List<int> path,Color color,float duration=1.2f)
         {HideLine();if(path==null)return;for(int i=1;i<path.Count&&i<=segments.Length;i++){int a=path[i-1],b=path[i];float ax=BX+(a%12+.5f)*CW,ay=BY+(a/12+.5f)*CH,bx=BX+(b%12+.5f)*CW,by=BY+(b/12+.5f)*CH;var rt=segments[i-1].rectTransform;rt.offsetMin=new Vector2(Math.Min(ax,bx)-2,-Math.Max(ay,by)-2);rt.offsetMax=new Vector2(Math.Max(ax,bx)+2,-Math.Min(ay,by)+2);segments[i-1].color=color;segments[i-1].gameObject.SetActive(true);}lineTime=duration;}

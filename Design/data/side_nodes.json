@@ -1,0 +1,37 @@
+{
+  "note": "科技树新增两行（《第八轮设计》第一、四节）。「逻辑」行：逻辑判断区和对局记录。「日常」行：生活条件节点——要先在桌面上做过某件事（cond），才能买；都是支线，不是任何主线节点的前置，不买也能通关。cond 的达成判定写在 conditions 里。价格暂定，以 main 的数值体系为准。",
+  "conditions": {
+    "game1": { "text": "和它在游戏中心下完任意一局", "textEn": "Finish any game against it in the Game Center" },
+    "board": { "text": "和它玩完一局飞行棋、跳棋或大富翁（任选其一）", "textEn": "Finish one game of aeroplane chess, Chinese checkers or Monopoly with it (any one)" },
+    "games10": { "text": "和它下满 10 局（任何棋）", "textEn": "Play 10 games against it (any)" },
+    "news5": { "text": "在浏览器里读完 5 篇摆渡新闻", "textEn": "Read 5 news articles in the browser" },
+    "miaoyu": { "text": "在喵鱼上买过一件东西", "textEn": "Buy anything on Miaoyu" },
+    "gf": { "text": "和晴雯聊满 10 句", "textEn": "Exchange 10 messages with Qingwen" },
+    "memes5": { "text": "在下班屁股群里斗图 5 次", "textEn": "Send 5 memes in the group" },
+    "tieba": { "text": "贴吧里自己发的帖子收到回复", "textEn": "Get a reply to your own Tieba post" },
+    "music3": { "text": "用音乐播放器听完 3 首歌", "textEn": "Listen to 3 songs in the music player" }
+  },
+  "logic": {
+    "id": "logic", "name": "逻辑判断区", "nameEn": "Logic area", "row": "逻辑",
+    "one": "让它学会「这样走会怎样」。棋盘直接用数字告诉它，不用先会看图。",
+    "oneEn": "Teach it 'what happens if I move here'. The board is given as numbers, so it doesn't need vision first.",
+    "levels": [
+      { "lv": 1, "name": "一步判断", "stage": 2, "needs": ["网络深度 2 层"], "cost": 200, "effect": "能赢就赢，能挡就挡；一步杀、五子棋连五能做对；「教」多「下一步走哪」题桌（棋局四选一）" },
+      { "lv": 2, "name": "看懂棋盘截图", "stage": 3, "needs": ["卷积网络"], "cost": 600, "effect": "能把网页、贴吧里的残局截图拖给它，它先认出棋盘再答；「下一步走哪」出现图片题" },
+      { "lv": 3, "name": "想两步以上", "stage": 4, "needs": ["门控记忆"], "cost": 1500, "effect": "两步杀、跳棋连跳规划、大富翁里存钱等好地；会记住你前几步的习惯" },
+      { "lv": 4, "name": "自己跟自己下", "stage": 5, "needs": ["对局记录", "条件 games10"], "cost": 4000, "effect": "晚上自己对弈，每天早上「数据包」里多一个对局记录包；游戏中心里它最难缠" }
+    ],
+    "answer": "需要先解锁视觉和记忆吗？第一级不需要：棋盘可以直接用数字告诉它（哪一格有子），只要「多层感知机」就能学一步判断。只有「看截图认棋盘」才需要视觉（卷积网络），只有「想两步以上、记住对方前几步」才需要记忆（门控记忆）。所以视觉和记忆是第二、三级的前置，不是整条线的前置。"
+  },
+  "nodes": [
+    { "id": "gamedata", "row": "逻辑", "name": "对局记录", "stage": 2, "deps": ["logic Lv1"], "cond": "game1", "cost": 120, "one": "和它下过的棋，都变成它的练习题。", "effect": "每和它下满几局，「数据包」文件夹里生成或更新一个「对局记录_<游戏>.zip」，拖进「练」就是样本；YY「数据」页也会记一条" },
+    { "id": "nextmove", "row": "逻辑", "name": "下一步走哪", "stage": 3, "deps": ["logic Lv1"], "cost": 300, "one": "把棋局变成选择题。", "effect": "「教」多「下一步走哪」题桌：给一个局面，四个走法选一个" },
+    { "id": "dice", "row": "日常", "name": "概率直觉", "stage": 2, "cond": "board", "cost": 200, "one": "掷过那么多次骰子，它开始对「几成把握」有感觉。", "effect": "风险预报的数更准；「教」多「掷骰子」概率小题" },
+    { "id": "news", "row": "日常", "name": "时事", "stage": 2, "cond": "news5", "cost": 150, "one": "你读过的新闻，它也想知道。", "effect": "「教」多「时事判断」题桌（2016 年新闻真假）；它会在 YY 里聊你读过的新闻" },
+    { "id": "surf", "row": "日常", "name": "冲浪", "stage": 2, "cond": "tieba", "cost": 120, "one": "它陪你逛贴吧，帮你挑有用的楼层。", "effect": "贴吧里带数据网址的楼层会高亮" },
+    { "id": "bargain", "row": "日常", "name": "砍价", "stage": 3, "cond": "miaoyu", "cost": 250, "one": "二手市场，它比你会说话。", "effect": "喵鱼上多一个「让它帮我砍价」按钮，二手价 −5%；能看出二手卡的成色" },
+    { "id": "care", "row": "日常", "name": "体贴", "stage": 3, "cond": "gf", "cost": 200, "one": "看你和晴雯聊天，它学会了照顾人。", "effect": "性格多一个「体贴」标签；晴雯的生日、纪念日它会提前提醒你" },
+    { "id": "slang", "row": "日常", "name": "网络用语", "stage": 3, "cond": "memes5", "cost": 180, "one": "「蓝瘦香菇」是什么意思，它现在懂了。", "effect": "它能看懂 2016 年的网络用语；斗图时它能帮你挑图回击" },
+    { "id": "rhythm", "row": "日常", "name": "节奏", "stage": 4, "cond": "music3", "cost": 300, "one": "边练边听歌。", "effect": "训练时音乐播放器可以接着放，练完一轮的提示音跟着节拍" }
+  ]
+}

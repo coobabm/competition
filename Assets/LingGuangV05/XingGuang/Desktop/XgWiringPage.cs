@@ -251,7 +251,7 @@ namespace LingGuangV05.Desktop.XingGuang
             SetBar(meters[2], v.vramOn > 0 ? (float)(v.vramUse / v.vramOn) : 0);
             tripBanner.gameObject.SetActive(v.tripped || Sim.AjiePending);
             if (v.tripped) { tripText.text = T("机箱跳闸：断开部分显卡后，尝试合闸。任务进度保留。", "Breaker tripped. Unplug a card, then reset. Progress is kept."); resetButton.Set(T("尝试合闸", "Reset breaker"), true, Soft, Warn); }
-            else if (Sim.AjiePending) { tripText.text = T("阿杰在问网吧的机器为什么一直运转。你可以去 YY 回答，或告诉他正在训练 AI。", "Ajie asks why the café PCs keep running. Answer in YY or tell him about training."); resetButton.Set(T("告诉他在训练 AI", "Tell the truth"), true, Soft, Good); }
+            else if (Sim.AjiePending) { tripText.text = T("网吧网管阿杰问：你包的机器一直在跑，拿来干啥？", "Ajie at the café asks what the PCs you rented are running all the time."); resetButton.Set(T("说在挂游戏", "Say you're idling a game"), true, Soft, Good); }
         }
         static string Small(string text) => "<size=11><color=#7C8D71>" + text + "</color></size>";
 
@@ -600,7 +600,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Hint(ok ? T("已启动一轮训练。", "Started one epoch.") : Sim.Blocker(Sim.Run(track), Host) ?? T("暂时无法开始训练。", "Cannot start training yet.")); Refresh();
         }
         void ResetBreaker()
-        { if (Sim.Wiring.tripped) Hint(Sim.ResetBreakerFromWiring(Host) ? T("供电已恢复。", "Power restored.") : T("仍有过载，请先断开部分显卡。", "Still overloaded; unplug a card first.")); else if (Sim.AjiePending) Sim.AnswerAjie("ai"); Refresh(); }
+        { if (Sim.Wiring.tripped) Hint(Sim.ResetBreakerFromWiring(Host) ? T("供电已恢复。", "Power restored.") : T("仍有过载，请先断开部分显卡。", "Still overloaded; unplug a card first.")); else if (Sim.AjiePending) Sim.AnswerAjie("game"); Refresh(); }
         void Hint(string text) { hint = text; hintUntil = Time.unscaledTime + 7; }
 
         public void PortClick(string key, bool input)

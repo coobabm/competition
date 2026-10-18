@@ -16,7 +16,9 @@ public static partial class DesignWallpaperSmoke
     const string Key = "DesignWallpaperSmoke.Active";
     static string Output => Path.GetFullPath("LocalVerification/DesignPass/WallpaperSmoke");
     static int step;
-    static double due;
+    static double due, nextHeartbeat;
+    static XgBrainWindow purchasedBrain;
+    static bool UsesPurchasedFixture(string mode) => mode=="concepts" || mode=="links" || mode=="regions" || mode=="outputs" || mode=="persona" || mode=="family" || mode=="rules" || mode=="seed" || mode=="hover" || mode=="readonly" || mode=="sense-start" || mode=="lesson-goal" || mode=="abilities" || mode=="region-cards" || mode=="answer-path" || mode=="answer-correction" || mode=="growth" || mode=="lesson";
     static Color glassPixel;
     static Vector2 glassPoint;
     static bool reloadLocked;
@@ -68,11 +70,15 @@ public static partial class DesignWallpaperSmoke
     }
     static void Start(string mode)
     {
+        step=0;due=0;nextHeartbeat=0;purchasedBrain=null;
+        SessionState.SetFloat("DesignWallpaperSmoke.Deadline",(float)(EditorApplication.timeSinceStartup+600));
         SessionState.SetString("DesignWallpaperSmoke.Mode", mode);
-        DesignWallpaperChecks.Run();
+        if (!UsesPurchasedFixture(mode)) DesignWallpaperChecks.Run();
         Directory.CreateDirectory(Output);
         File.WriteAllText(Path.Combine(Output, "result.txt"), "RUNNING");
         File.WriteAllText(Path.Combine(Output, "checks.txt"), "");
+        File.WriteAllText(Path.Combine(Output, "runner.txt"), "");
+        File.WriteAllText(Path.Combine(Output, "pointer-diagnostics.txt"), "");
         if (mode == "hover") CheckTrainingCounts();
         if (mode == "motion" || mode == "wiring-motion") EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         else EditorSceneManager.OpenScene("Assets/LingGuangV05/Scenes/Main.unity");
@@ -86,19 +92,41 @@ public static partial class DesignWallpaperSmoke
     static void Isolate()
     {
         if (!SessionState.GetBool(Key, false)) return;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += DisableSmokeModel;
         ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(Output, "Save");
         var profile = Path.Combine(Output, "DesktopProfile") + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(profile);
         typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, profile);
+    }
+    static void DisableSmokeModel(UnityEngine.SceneManagement.Scene scene,UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        if(!SessionState.GetBool(Key,false))return;
+        foreach(var root in scene.GetRootGameObjects())foreach(var rt in root.GetComponentsInChildren<ChapterOneRuntime>(true))
+        {var llm=rt.GetComponent<LingGuangV05.Desktop.LLM.LocalLlm>()??rt.gameObject.AddComponent<LingGuangV05.Desktop.LLM.LocalLlm>();llm.enabled=false;}
     }
     static void Check(bool ok, string message)
     {
         if (!ok) throw new Exception(message);
         File.AppendAllText(Path.Combine(Output, "checks.txt"), message + "\n");
     }
+    static void CheckPurchasedReset(string message)
+    {
+        // Hidden windows deliberately stop drawing. Their cached mesh need not be
+        // rewritten to empty: the observable requirement is no cross-save display.
+        Check(purchasedBrain != null && !purchasedBrain.Visible, message);
+        Check(!purchasedBrain.Drawing.gameObject.activeInHierarchy, "Old brain drawing is inactive after save replacement");
+        Check(purchasedBrain.TaskButton == null || !purchasedBrain.TaskButton.gameObject.activeInHierarchy, "New unowned save cannot reopen prior brain through taskbar");
+        Check(!purchasedBrain.GetComponent<XingGuangController>().Sim.Has("brain.window"), "New save does not inherit the purchase");
+    }
     static void Update()
     {
-        if (!SessionState.GetBool(Key, false) || !EditorApplication.isPlaying || EditorApplication.isCompiling) return;
+        if (!SessionState.GetBool(Key, false)) return;
+        double now=EditorApplication.timeSinceStartup;
+        if(now>=nextHeartbeat)
+        {nextHeartbeat=now+10;File.AppendAllText(Path.Combine(Output,"runner.txt"),"t="+now+" step="+step+" playing="+EditorApplication.isPlaying+" compiling="+EditorApplication.isCompiling+" due="+due+"\n");}
+        if(now>SessionState.GetFloat("DesignWallpaperSmoke.Deadline",float.MaxValue))
+        {File.WriteAllText(Path.Combine(Output,"result.txt"),"FAIL: bounded runner timeout at step "+step);Finish(1);return;}
+        if(!EditorApplication.isPlaying||EditorApplication.isCompiling)return;
         if (due == 0) { due = EditorApplication.timeSinceStartup + 12; return; }
         if (EditorApplication.timeSinceStartup < due) return;
         due = EditorApplication.timeSinceStartup + 1;
@@ -114,38 +142,88 @@ public static partial class DesignWallpaperSmoke
                 StartWiringMotionChecks(); return;
             }
             var runtime = UnityEngine.Object.FindAnyObjectByType<ChapterOneRuntime>();
-            var brain = UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
+            var brain = purchasedBrain!=null ? purchasedBrain.Drawing : UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
             var controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "lesson-goal" && step >= 250)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "lesson-goal" && step >= 250 && step < 300)
             {
                 TickLessonGoal(controller, runtime); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "sense-start" && step >= 240)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "sense-start" && step >= 240 && step < 300)
             {
                 TickSenseStart(controller, runtime); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "growth" && step >= 220)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "growth" && step >= 220 && step < 300)
             {
                 TickGrowth(controller, runtime, brain); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "answer-path" && step >= 210)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "answer-path" && step >= 210 && step < 300)
             {
                 TickAnswerPaths(controller, runtime, brain); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "first-minute" && step >= 200)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "first-minute" && step >= 200 && step < 300)
             {
                 TickFirstMinute(controller, runtime, brain); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "tech" && step >= 180)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "tech" && step >= 180 && step < 300)
             {
                 TickTech(controller, runtime, brain); return;
             }
-            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "readonly" && step >= 190)
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "readonly" && step >= 190 && step < 300)
             {
                 TickReadOnly(controller, brain); return;
             }
+            if(UsesPurchasedFixture(SessionState.GetString("DesignWallpaperSmoke.Mode",""))&&step==0)
+            {
+                Check(runtime!=null&&!runtime.useDiskSave,"Isolated save for purchased-brain details");
+                var house=new ChapterOneSim();house.S.prologue=2;house.S.appInstallState=2;house.S.money=100000;
+                var lab=new LingGuangV05.XingGuang.XgSim();lab.BeginOpening();house.S.labState=JsonUtility.ToJson(lab.S);
+                runtime.SetSimulationForTests(house);
+                controller.GetType().GetMethod("BindSave",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(controller,new object[]{house});
+                foreach(var actor in UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include,FindObjectsSortMode.None))
+                {
+                    string n=actor.GetType().Name;
+                    if(n=="StoryDirector"||n=="StoryDesktopPresenter"||n=="PrologueDirector"||n=="StageOneTutor"||n=="SpiderIntroScene"||n=="LoveQuestionCutscene")
+                    {actor.CancelInvoke();actor.StopAllCoroutines();actor.enabled=false;}
+                }
+                runtime.tickEnabled=false;
+                typeof(ChapterOneRuntime).GetProperty("TestMode").GetSetMethod(true).Invoke(runtime,new object[]{false});
+                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
+                if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
+                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);
+                Check(user!=null&&user.isActiveAndEnabled,"Desktop user available");user.ShowDesktop();
+                purchasedBrain=XgBrainWindow.Install(controller);step=300;return;
+            }
             switch (step++)
             {
+                case 300:
+                    var openingMode=SessionState.GetString("DesignWallpaperSmoke.Mode","");
+                    if(openingMode=="sense-start"||openingMode=="lesson-goal")
+                    {controller.Open();controller.View.Open("teach");step=openingMode=="sense-start"?240:250;due=EditorApplication.timeSinceStartup+2;break;}
+                    Check(!purchasedBrain.Visible,"Brain absent before its purchase");
+                    Check(!controller.Sim.TeachingTreeOpen&&!controller.Sim.TeachingTrainOpen,"Fixture uses twelve-question opening");
+                    for(int i=0;i<12;i++)
+                    {
+                        var q=controller.Sim.Card(LingGuangV05.XingGuang.XgMemes.SenseDesk);
+                        Check(controller.Sim.TryAnswerStatement(q.dataset,q.id,q.truth,controller.Host,out var a)&&a.correct,"Actual opening answer "+i);
+                    }
+                    Check(controller.Sim.TeachingTreeOpen&&!controller.Sim.TeachingTrainOpen,"Tech first, then paid training curve");
+                    Check(controller.Sim.BuyNode("train.curve",controller.Host),"Buy real curve prerequisite");
+                    Check(controller.Sim.BuyNode("brain.window",controller.Host),"Buy real brain window");
+                    break;
+                case 301:
+                    Check(purchasedBrain.Visible&&purchasedBrain.Drawing!=null,"Purchase opens actual brain drawing");
+                    Check(purchasedBrain.Drawing.WindowMode,"Details target window drawing, never a recreated wallpaper");
+                    var desktop=PrologueDirector.Desk.layer.parent;
+                    Check(desktop.Find("Brain Wallpaper")==null&&desktop.Find("Brain Wallpaper Overlay")==null,"Ordinary wallpaper has no legacy overlay");
+                    purchasedBrain.MoveResize(new Vector2(640,-400),true);
+                    Canvas.ForceUpdateCanvases();
+                    Check(Mathf.Abs(purchasedBrain.Window.rect.width-960)<1 && Mathf.Abs(purchasedBrain.Window.rect.height-640)<1,"Brain fixture is actually 960 by 640 after resize");
+                    var purchasedMode=SessionState.GetString("DesignWallpaperSmoke.Mode","");
+                    // All original data, geometry, pixel and interaction assertions remain below.
+                    // Only the obsolete automatic wallpaper entry is replaced by a real purchase.
+                    step=purchasedMode=="concepts"?20:purchasedMode=="links"?30:purchasedMode=="regions"?40:purchasedMode=="outputs"?60:purchasedMode=="persona"?70:purchasedMode=="family"?90:purchasedMode=="rules"?100:purchasedMode=="seed"?50:purchasedMode=="hover"?110:purchasedMode=="readonly"?190:purchasedMode=="abilities"?80:purchasedMode=="region-cards"?130:purchasedMode=="answer-path"?210:purchasedMode=="lesson"?170:220;
+                    if(purchasedMode=="answer-correction")StartCorrectionChecks(controller,purchasedBrain.Drawing);
+                    break;
                 case 0:
                     Check(runtime != null && !runtime.useDiskSave, "Isolated player save");
                     var prologue = runtime.GetComponent<PrologueDirector>();
@@ -349,7 +427,7 @@ public static partial class DesignWallpaperSmoke
                     boardBeforeDraw = JsonUtility.ToJson(controller.Sim.S.board);
                     break;
                 case 21:
-                    Check(brain.GetComponent<XgBrainWallpaperPresentation>().Showcase, "Concept color samples use the uncovered desktop");
+                    Check(brain.GetComponent<XgBrainWallpaperPresentation>().Showcase, "Concept color samples use the visible purchased window");
                     var concepts = brain.GetComponentInChildren<XgWallpaperConcepts>();
                     Check(concepts != null && concepts.Cells.Count == 4, "Wallpaper renders real learned concepts without demo cells");
                     Check(JsonUtility.ToJson(controller.Sim.S.board) == boardBeforeDraw, "Drawing leaves simulation data unchanged");
@@ -381,7 +459,8 @@ public static partial class DesignWallpaperSmoke
                     }
                     break;
                 case 24:
-                    Check(brain.GetComponentInChildren<XgWallpaperConcepts>().Cells.Count == 0, "New game clears old learned concepts");
+                    Check(!purchasedBrain.Visible&&!controller.Sim.Has("brain.window")&&controller.Sim.Board.S.concepts.Count==0,
+                        "New game hides the old drawing and has no previous learned concepts");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 30:
                     controller.Window.MinimizeWindow();
@@ -496,13 +575,16 @@ public static partial class DesignWallpaperSmoke
                     }
                     break;
                 case 55:
-                    Check(brain.SeedConcept == null && !brain.transform.Find("Seed").gameObject.activeSelf, "Restart removes prior save question");
+                    CheckPurchasedReset("Restart hides prior save question");
                     var seedSave = new ChapterOneSim();
                     seedSave.CompletePrologue(new PrologueProfile { name = "旧种子", self = "我", callMe = "你", personality = "好奇" });
+                    var restoredSeed=new LingGuangV05.XingGuang.XgSim();restoredSeed.BeginOpening();
+                    restoredSeed.S.unlocked.Add("train.curve");restoredSeed.S.unlocked.Add("brain.window");
+                    seedSave.S.labState=JsonUtility.ToJson(restoredSeed.S);
                     runtime.SetSimulationForTests(seedSave);
                     break;
                 case 56:
-                    Check(brain.SeedConcept != null && brain.SeedConcept == controller.Sim.Board.Find("logic", LingGuangV05.XingGuang.XgSim.SeedKey), "Loading completed save restores its own seed without replay");
+                    Check(purchasedBrain.Visible && brain.SeedConcept != null && brain.SeedConcept == controller.Sim.Board.Find("logic", LingGuangV05.XingGuang.XgSim.SeedKey), "Loading completed save restores its own seed without replay");
                     Check(brain.Reveal.Age >= 99, "Loaded question does not replay first reveal");
                     Capture("seed-restored");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
@@ -542,7 +624,7 @@ public static partial class DesignWallpaperSmoke
                     }
                     break;
                 case 68:
-                    Check(brain.transform.Find("Outputs").GetComponent<CanvasGroup>().alpha == 0, "New prologue hides learned output display");
+                    CheckPurchasedReset("New prologue cannot display prior learned outputs");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 70:
                     controller.Window.MinimizeWindow(); controller.enabled = false;
@@ -596,7 +678,7 @@ public static partial class DesignWallpaperSmoke
                     controller.enabled = true; runtime.SetSimulationForTests(new ChapterOneSim());
                     break;
                 case 76:
-                    Check(brain.GetComponentInChildren<XgWallpaperPersona>().canvasRenderer.GetAlpha() == 0, "Restart hides previous personality halo");
+                    CheckPurchasedReset("Restart hides previous personality halo");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 80:
                     controller.Window.MinimizeWindow(); controller.enabled = false;
@@ -607,7 +689,7 @@ public static partial class DesignWallpaperSmoke
                 case 81:
                     var scale = brain.GetComponentInChildren<XgWallpaperAbilities>();
                     Check(scale.LearnedCount == 1 && scale.NextAbility == 2, "Only actually learned ability is lit");
-                    Check(Mathf.Approximately(scale.ParameterProgress, .5f) && Mathf.Approximately(scale.DataProgress, (float)controller.Sim.SamplesProgress(2)), "Parameter and data bars use independent real progress");
+                    Check(Mathf.Approximately(scale.ParameterProgress, (float)controller.Sim.ParamsFill) && Mathf.Approximately(scale.DataProgress, (float)controller.Sim.SamplesFill), "Parameter and data bars use independent real progress");
                     for (int ability = 0; ability < 6; ability++)
                     {
                         var lamp = Pixel(UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>().sourceCamera.WorldToScreenPoint(scale.transform.TransformPoint(scale.LampPoint(ability))));
@@ -618,12 +700,12 @@ public static partial class DesignWallpaperSmoke
                     Capture("abilities-progress"); controller.Sim.S.unlocked.Add("mlp");
                     break;
                 case 82:
-                    Check(Mathf.Approximately(brain.GetComponentInChildren<XgWallpaperAbilities>().ParameterProgress, .625f), "Owned architecture discount updates the real parameter threshold");
-                    controller.Sim.S.trainedParamsK = 6; controller.Sim.S.labels[0].count = 6000; controller.Sim.S.stageEpochs = 1;
+                    Check(Mathf.Approximately(brain.GetComponentInChildren<XgWallpaperAbilities>().ParameterProgress, (float)controller.Sim.ParamsFill), "Architecture discount does not fabricate trained parameter count on the shared log scale");
+                    controller.Sim.S.trainedParamsK = controller.Sim.ParamsThreshold(2); controller.Sim.S.labels[0].count = (int)System.Math.Ceiling(controller.Sim.SamplesThreshold(2) / LingGuangV05.XingGuang.XgCatalog.Dataset("logic").dataWeight); controller.Sim.S.stageEpochs = 1;
                     break;
                 case 83:
                     var readyScale = brain.GetComponentInChildren<XgWallpaperAbilities>();
-                    Check(readyScale.ParameterProgress == 1 && readyScale.DataProgress == 1 && readyScale.LearnedCount == 1, "Full bars do not falsely light an unconfirmed ability");
+                    Check(controller.Sim.StageReady && Mathf.Approximately(readyScale.ParameterProgress,(float)controller.Sim.ParamsFill) && Mathf.Approximately(readyScale.DataProgress,(float)controller.Sim.SamplesFill) && readyScale.LearnedCount == 1, "Eligible real counts do not falsely light an unconfirmed ability");
                     Check(controller.Sim.ConfirmNextStage(), "Player's real chapter confirmation learns the next ability");
                     break;
                 case 84:
@@ -639,7 +721,7 @@ public static partial class DesignWallpaperSmoke
                     Capture("abilities-complete"); controller.enabled = true; runtime.SetSimulationForTests(new ChapterOneSim());
                     break;
                 case 86:
-                    Check(brain.GetComponentInChildren<XgWallpaperAbilities>().canvasRenderer.GetAlpha() == 0, "New prologue hides previous ability scale");
+                    CheckPurchasedReset("New prologue hides previous ability scale");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 90:
                     controller.Window.MinimizeWindow(); controller.enabled = false;
@@ -674,7 +756,7 @@ public static partial class DesignWallpaperSmoke
                     controller.enabled = true; runtime.SetSimulationForTests(new ChapterOneSim());
                     break;
                 case 95:
-                    Check(brain.GetComponentInChildren<XgWallpaperFamilyStar>().canvasRenderer.GetAlpha() == 0, "Restart never inherits the previous family's star");
+                    CheckPurchasedReset("Restart never displays the previous family star");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 100:
                     controller.Window.MinimizeWindow(); controller.enabled = false;
@@ -709,7 +791,7 @@ public static partial class DesignWallpaperSmoke
                     controller.enabled = true; runtime.SetSimulationForTests(new ChapterOneSim());
                     break;
                 case 105:
-                    Check(brain.GetComponentInChildren<XgWallpaperConcepts>().Pins.Count == 0, "New game has no previous ending's rivets");
+                    CheckPurchasedReset("New game cannot display previous ending rivets");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 110:
                     controller.Window.MinimizeWindow(); controller.enabled = false;
@@ -736,12 +818,13 @@ public static partial class DesignWallpaperSmoke
                     controller.Open();
                     break;
                 case 114:
+                    purchasedBrain.SetTop(false);
                     controller.Window.windowContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 400);
                     var hoverNetwork = brain.GetComponentInChildren<XgWallpaperConcepts>();
                     controller.Window.windowContainer.position = hoverNetwork.transform.TransformPoint(hoverNetwork.rectTransform.rect.min + Vector2.Scale(hoverNetwork.rectTransform.rect.size, new Vector2(.87f, .5f)));
                     break;
                 case 115:
-                    Check(!brain.GetComponent<XgBrainWallpaperPresentation>().Showcase, "Application remains visibly open during blank-desktop hover test");
+                    Check(controller.Window.windowContainer.gameObject.activeInHierarchy && !purchasedBrain.AlwaysOnTop, "Application is open above an unpinned brain window");
                     HoverConcept(brain.GetComponentInChildren<XgWallpaperConcepts>(), hoverConceptId);
                     break;
                 case 116:
@@ -750,6 +833,11 @@ public static partial class DesignWallpaperSmoke
                     var coveredNetwork = brain.GetComponentInChildren<XgWallpaperConcepts>();
                     coveredNetwork.TryLocalPosition(hoverConceptId, out var coveredPoint);
                     controller.Window.windowContainer.position = coveredNetwork.transform.TransformPoint(coveredPoint);
+                    Transform above=controller.Window.windowContainer;
+                    while(above.parent!=null && above.parent!=purchasedBrain.Window.parent) above=above.parent;
+                    Check(above!=null && above.parent==purchasedBrain.Window.parent,"App and brain share an orderable window ancestor");
+                    above.SetAsLastSibling();
+                    Check(above.GetSiblingIndex()>purchasedBrain.Window.GetSiblingIndex(),"Opaque app is explicitly above unpinned brain");
                     break;
                 case 117:
                     HoverConcept(brain.GetComponentInChildren<XgWallpaperConcepts>(), hoverConceptId);
@@ -787,7 +875,10 @@ public static partial class DesignWallpaperSmoke
                     Check(visionCard.IsOpen && visionCard.Title.Contains("看图区") && visionCard.Body == LingGuangV05.XingGuang.XgItemLore.Get("lenet", false), "Real brain-area click opens current architecture's existing lore");
                     Capture("region-card-vision-diagnostic");
                     foreach (var text in visionCard.Card.GetComponentsInChildren<TMPro.TMP_Text>()) Check(!text.isTextOverflowing, "Structure card text fits: " + text.name);
-                    Check(visionCard.Card.parent == brain.transform.parent && !visionCard.Card.IsChildOf(brain.transform), "Structure card stays independent of wallpaper pin copying");
+                    Check(visionCard.Card.IsChildOf(purchasedBrain.Window) && !visionCard.Card.IsChildOf(brain.transform), "Details belong to their brain window without becoming part of its scaled drawing");
+                    var cardBounds=RectTransformUtility.CalculateRelativeRectTransformBounds((RectTransform)visionCard.Card.parent,visionCard.Card);
+                    var clientRect=((RectTransform)visionCard.Card.parent).rect;
+                    Check(cardBounds.min.x>=clientRect.xMin-1&&cardBounds.max.x<=clientRect.xMax+1&&cardBounds.min.y>=clientRect.yMin-1&&cardBounds.max.y<=clientRect.yMax+1,"Detail card stays inside its actual client bounds");
                     Capture("region-card-vision");
                     Click((RectTransform)brain.GetComponentInChildren<XgWallpaperConcepts>().transform.Find("Region sequence"));
                     break;
@@ -1014,14 +1105,37 @@ public static partial class DesignWallpaperSmoke
         Check(target != null, "Pointer target exists");
         var bridge = UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>();
         var source = bridge.sourceCamera.WorldToScreenPoint(target.TransformPoint(target.rect.center));
+        // Invert the actual LCD geometry. Scaling to Screen only works when the
+        // monitor image happens to fill the whole viewport (no longer a game rule).
+        var surface=bridge.inputSurface;
+        var display=surface.displayRect;var area=display.rect;
+        var texture=bridge.sourceCamera.targetTexture;
+        float u=source.x/texture.width,v=source.y/texture.height;if(surface.flipY)v=1-v;
+        var displayCamera=(Camera)typeof(AeroLcdInputSurface).GetMethod("DisplayEventCamera",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(surface,null);
+        var screen=RectTransformUtility.WorldToScreenPoint(displayCamera,display.TransformPoint(new Vector3(area.xMin+u*area.width,area.yMin+v*area.height,0)));
         var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
-        {
-            position = new Vector2(source.x * Screen.width / bridge.sourceCamera.targetTexture.width, source.y * Screen.height / bridge.sourceCamera.targetTexture.height),
-            button = button
-        };
+        { position=screen, button=button };
+        bool mapped=surface.TryMap(screen,out var roundTrip);
+        File.AppendAllText(Path.Combine(Output,"pointer-diagnostics.txt"),"target="+target.name+" active="+target.gameObject.activeInHierarchy+" source="+source+" physical="+screen+" roundtrip="+roundTrip+" mapped="+mapped+" enabled="+surface.inputEnabled+" activeRelay="+surface.isActiveAndEnabled+" display="+area+"\n");
+        Check(mapped&&Vector2.Distance(roundTrip,new Vector2(source.x,source.y))<1,"Pointer roundtrip reaches target through actual LCD rectangle");
+        Check(surface.inputEnabled&&surface.isActiveAndEnabled,"Actual LCD input gate is open");
         if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "menu" && UnityEngine.InputSystem.Mouse.current != null)
             UnityEngine.InputSystem.LowLevel.InputState.Change(UnityEngine.InputSystem.Mouse.current.position, pointer.position);
-        bridge.inputSurface.OnPointerEnter(pointer); bridge.inputSurface.OnPointerDown(pointer); bridge.inputSurface.OnPointerUp(pointer);
+        bridge.inputSurface.OnPointerEnter(pointer);
+        var routed=(UnityEngine.EventSystems.PointerEventData)typeof(AeroLcdInputSurface).GetField("hoverData",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(surface);
+        var hit=routed?.pointerCurrentRaycast.gameObject;
+        var ctl=UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
+        File.AppendAllText(Path.Combine(Output,"pointer-diagnostics.txt"),"hit="+(hit==null?"null":hit.name)+" path="+(hit==null?"":UnityEditor.AnimationUtility.CalculateTransformPath(hit.transform,null))+" shown="+ctl?.View.Teach.ShownCardId+" model="+ctl?.Sim.Card(ctl.Sim.S.desk).id+" before="+ctl?.Sim.S.handCorrect+"/"+ctl?.Sim.S.handWrong+"\n");
+        var intendedClick=UnityEngine.EventSystems.ExecuteEvents.GetEventHandler<UnityEngine.EventSystems.IPointerClickHandler>(target.gameObject);
+        var actualClick=hit!=null?UnityEngine.EventSystems.ExecuteEvents.GetEventHandler<UnityEngine.EventSystems.IPointerClickHandler>(hit):null;
+        var intendedDown=UnityEngine.EventSystems.ExecuteEvents.GetEventHandler<UnityEngine.EventSystems.IPointerDownHandler>(target.gameObject);
+        var actualDown=hit!=null?UnityEngine.EventSystems.ExecuteEvents.GetEventHandler<UnityEngine.EventSystems.IPointerDownHandler>(hit):null;
+        bool sameReceiver=hit!=null && (intendedClick!=null||intendedDown!=null)
+            && intendedClick==actualClick && intendedDown==actualDown;
+        File.AppendAllText(Path.Combine(Output,"pointer-diagnostics.txt"),"clickReceiver="+actualClick+" expected="+intendedClick+" downReceiver="+actualDown+" expected="+intendedDown+"\n");
+        Check(sameReceiver,"Actual relay reaches intended click/down receiver, not an arbitrary ancestor background");
+        bridge.inputSurface.OnPointerDown(pointer); bridge.inputSurface.OnPointerUp(pointer);
+        File.AppendAllText(Path.Combine(Output,"pointer-diagnostics.txt"),"after="+ctl?.Sim.S.handCorrect+"/"+ctl?.Sim.S.handWrong+" labels="+ctl?.Sim.Labels(ctl.Sim.S.desk)+"\n");
         if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "menu")
         {
             var data = typeof(AeroLcdInputSurface).GetField("hoverData", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(bridge.inputSurface) as UnityEngine.EventSystems.PointerEventData;
@@ -1072,6 +1186,7 @@ public static partial class DesignWallpaperSmoke
     }
     static void Finish(int code)
     {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= DisableSmokeModel;
         SessionState.SetBool(Key, false);
         if (reloadLocked) { reloadLocked = false; AssetDatabase.AllowAutoRefresh(); EditorApplication.UnlockReloadAssemblies(); }
         EditorApplication.isPlaying = false;

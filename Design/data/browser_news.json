@@ -1,0 +1,407 @@
+{
+  "note": "浏览器内置网页「摆渡新闻」（《第四轮设计》第二节）。只在游戏的假浏览器里显示，不访问真实网址。date = 出现日期（游戏日历到了才显示，之前的都在列表里往下排）；kind = 娱乐 / 科技 / 体育 / 社会 / 水文；首页每天显示最新 8 条，水文穿插在中间并带「推广」小字。brief = 只有标题、点不开（政治、讣告类）。不出现 2016 年以后的事。",
+  "articles": [
+    {
+      "id": "n0601",
+      "date": "2016-06-01",
+      "kind": "水文",
+      "title": "震惊！这三种水果晚上吃等于吃砒霜",
+      "titleEn": "SHOCKING! Three fruits that are poison at night",
+      "body": "专家提醒：晚上吃水果要注意。至于是哪三种，本文没有说。文末附养生茶购买链接。",
+      "bodyEn": "Experts warn: be careful with fruit at night. Which three? The article never says. Herbal-tea shop link at the bottom."
+    },
+    {
+      "id": "n0607",
+      "date": "2016-06-07",
+      "kind": "社会",
+      "title": "940 万考生今日走进高考考场",
+      "titleEn": "9.4 million sit the gaokao today",
+      "body": "全国卷一作文题是一幅漫画：考满分被亲，退步了挨巴掌。网友纷纷晒出自己当年的作文题。",
+      "bodyEn": "The national essay prompt is a cartoon: a kiss for full marks, a slap for slipping. Netizens share their own old prompts."
+    },
+    {
+      "id": "n0608",
+      "date": "2016-06-08",
+      "kind": "娱乐",
+      "title": "《魔兽》首日票房破 3 亿，影院凌晨场爆满",
+      "titleEn": "Warcraft takes ¥300m on day one; midnight screenings packed",
+      "body": "不少观众穿着兽人 T 恤进场，影厅里此起彼伏「为了部落」。",
+      "bodyEn": "Plenty arrived in orc T-shirts; \"For the Horde\" echoed round the cinemas."
+    },
+    {
+      "id": "n0616",
+      "date": "2016-06-16",
+      "kind": "社会",
+      "title": "上海迪士尼今日开园，排队最长 3 小时",
+      "titleEn": "Shanghai Disneyland opens; queues up to three hours",
+      "body": "开园当天游客冒雨排队。有人吐槽：一根火鸡腿 80 元。",
+      "bodyEn": "Visitors queued in the rain on day one. One complaint: ¥80 for a turkey leg."
+    },
+    {
+      "id": "n0620",
+      "date": "2016-06-20",
+      "kind": "体育",
+      "title": "1 比 3 落后翻盘！骑士夺得 NBA 总冠军",
+      "titleEn": "Back from 1–3! The Cavaliers win the NBA title",
+      "body": "詹姆斯赛后跪地痛哭。克利夫兰 52 年来第一个职业体育冠军。",
+      "bodyEn": "LeBron wept on the floor. Cleveland's first major title in 52 years."
+    },
+    {
+      "id": "n0624",
+      "date": "2016-06-24",
+      "kind": "社会",
+      "title": "英国公投决定脱离欧盟",
+      "titleEn": "Britain votes to leave the EU",
+      "brief": true
+    },
+    {
+      "id": "n0628",
+      "date": "2016-06-28",
+      "kind": "水文",
+      "title": "程序员为什么都穿格子衫？真相让人泪目",
+      "titleEn": "Why do programmers wear checked shirts? The truth will move you",
+      "body": "因为格子衫耐脏、不用熨、买一送一。全文 3000 字，结论只有这一句。",
+      "bodyEn": "Because they hide stains, need no ironing and come buy-one-get-one-free. 3,000 words for that."
+    },
+    {
+      "id": "n0702",
+      "date": "2016-07-02",
+      "kind": "社会",
+      "title": "武汉连日暴雨，市民「出门看海」",
+      "titleEn": "Days of rain in Wuhan: residents 'go to see the sea'",
+      "body": "多条道路积水过膝，有人在马路上划起了皮划艇。消防和志愿者连夜转移群众。",
+      "bodyEn": "Streets flooded knee-deep; someone paddled a kayak down the road. Firefighters and volunteers moved people overnight."
+    },
+    {
+      "id": "n0707",
+      "date": "2016-07-07",
+      "kind": "科技",
+      "title": "Pokémon GO 全球爆红，国内玩家只能看",
+      "titleEn": "Pokémon GO goes global; Chinese players can only watch",
+      "body": "外国人满街抓皮卡丘，有人走进喷泉，有人撞上电线杆。国内锁区，改 GPS 的玩家被封号。",
+      "bodyEn": "Abroad people roam the streets after Pikachu, into fountains and lamp posts. Here it's region-locked, and GPS fakers get banned."
+    },
+    {
+      "id": "n0708",
+      "date": "2016-07-08",
+      "kind": "娱乐",
+      "title": "《大鱼海棠》上映，十二年终于等到了",
+      "titleEn": "Big Fish & Begonia opens after twelve years",
+      "body": "画面被夸「每一帧都能当壁纸」，故事评价两极。",
+      "bodyEn": "\"Every frame a wallpaper,\" say fans. The story divides opinion."
+    },
+    {
+      "id": "n0711",
+      "date": "2016-07-11",
+      "kind": "科技",
+      "title": "Prisma 刷屏：一键把自拍变成油画",
+      "titleEn": "Prisma everywhere: turn a selfie into an oil painting",
+      "body": "朋友圈一夜之间全是梵高风格的自拍。背后是神经网络：一层看笔触，一层看构图。",
+      "bodyEn": "Overnight, every feed is Van Gogh selfies. Behind it: a neural network, one layer for brushwork, another for composition."
+    },
+    {
+      "id": "n0718",
+      "date": "2016-07-18",
+      "kind": "水文",
+      "title": "你的颈椎还好吗？每天坚持这 5 个动作",
+      "titleEn": "How's your neck? Five moves a day",
+      "body": "第一个动作：抬头。第二个动作：低头。第三到第五个动作在付费课程里。",
+      "bodyEn": "Move one: look up. Move two: look down. Moves three to five are in the paid course."
+    },
+    {
+      "id": "n0725",
+      "date": "2016-07-25",
+      "kind": "娱乐",
+      "title": "「葛优躺」火了：二十年前的剧照成了今年最红表情包",
+      "titleEn": "The 'Ge You slouch': a 20-year-old still is this year's top meme",
+      "body": "《我爱我家》里葛优瘫在沙发上的一幕被翻出来，配字「感觉身体被掏空」。",
+      "bodyEn": "Ge You sprawled on a sofa in an old sitcom, captioned \"I feel hollowed out\"."
+    },
+    {
+      "id": "n0729",
+      "date": "2016-07-29",
+      "kind": "科技",
+      "title": "今天是 Win10 免费升级最后一天",
+      "titleEn": "Today is the last day of free Windows 10 upgrades",
+      "body": "微软提醒：明天起升级要 888 元。不少用户表示：终于不弹窗了。",
+      "bodyEn": "Microsoft: from tomorrow it costs ¥888. Many users: finally, no more popups."
+    },
+    {
+      "id": "n0801",
+      "date": "2016-08-01",
+      "kind": "科技",
+      "title": "滴滴宣布收购优步中国",
+      "titleEn": "Didi announces it will buy Uber China",
+      "brief": true
+    },
+    {
+      "id": "n0808",
+      "date": "2016-08-08",
+      "kind": "体育",
+      "title": "「我已经用了洪荒之力！」傅园慧采访爆红",
+      "titleEn": "'I used my primal powers!' Fu Yuanhui's interview goes viral",
+      "body": "游完半决赛不知道自己的成绩，得知后惊喜大喊。表情包一夜之间刷屏。",
+      "bodyEn": "She didn't know her semi-final time; when told, she shrieked with joy. Memes flooded the internet overnight."
+    },
+    {
+      "id": "n0816",
+      "date": "2016-08-16",
+      "kind": "科技",
+      "title": "我国成功发射世界首颗量子科学实验卫星「墨子号」",
+      "titleEn": "China launches Micius, the first quantum science satellite",
+      "body": "卫星将测试量子密钥分发。网友：看不懂，但很厉害。",
+      "bodyEn": "It will test quantum key distribution. Netizens: no idea, but impressive."
+    },
+    {
+      "id": "n0821",
+      "date": "2016-08-21",
+      "kind": "体育",
+      "title": "中国女排时隔 12 年再夺奥运金牌",
+      "titleEn": "China's women's volleyball team wins Olympic gold after 12 years",
+      "body": "决赛 3 比 1 逆转塞尔维亚。凌晨四点，很多人家的灯亮着。",
+      "bodyEn": "3–1 over Serbia from a set down. At 4 a.m., lights were on in a lot of homes."
+    },
+    {
+      "id": "n0825",
+      "date": "2016-08-25",
+      "kind": "水文",
+      "title": "月薪三千和月薪三万的人，差在哪里？",
+      "titleEn": "What separates ¥3k and ¥30k earners?",
+      "body": "差在作者想卖给你的那本书。",
+      "bodyEn": "The book the author wants to sell you."
+    },
+    {
+      "id": "n0830",
+      "date": "2016-08-30",
+      "kind": "娱乐",
+      "title": "「先定一个小目标，比方说先挣它一个亿」",
+      "titleEn": "'First set a small goal, like earning a hundred million'",
+      "body": "首富一句访谈成了全网造句模板。网友：我的小目标是先挣它一百块。",
+      "bodyEn": "One interview line from China's richest man becomes a meme template. Netizens: my small goal is a hundred yuan."
+    },
+    {
+      "id": "n0902",
+      "date": "2016-09-02",
+      "kind": "科技",
+      "title": "三星宣布召回 Note7：电池可能起火",
+      "titleEn": "Samsung recalls the Note7: batteries may catch fire",
+      "body": "多国航空公司禁止在飞机上使用。段子手：这才是真正的「爆款」。",
+      "bodyEn": "Airlines ban it on board. Jokers: now that's a hot product."
+    },
+    {
+      "id": "n0904",
+      "date": "2016-09-04",
+      "kind": "社会",
+      "title": "G20 峰会在杭州开幕",
+      "titleEn": "The G20 summit opens in Hangzhou",
+      "brief": true
+    },
+    {
+      "id": "n0908",
+      "date": "2016-09-08",
+      "kind": "科技",
+      "title": "iPhone 7 发布：取消耳机孔，新增亮黑色",
+      "titleEn": "iPhone 7: no headphone jack, new jet black",
+      "body": "苹果称这是「勇气」。网友：勇气多少钱一个转接头？",
+      "bodyEn": "Apple calls it courage. Netizens: how much is courage per adapter?"
+    },
+    {
+      "id": "n0915",
+      "date": "2016-09-15",
+      "kind": "科技",
+      "title": "中秋夜，天宫二号发射成功",
+      "titleEn": "Tiangong-2 launches on Mid-Autumn night",
+      "body": "月饼还没吃完，空间实验室已经上天。",
+      "bodyEn": "Mooncakes not finished yet, and the space lab is up."
+    },
+    {
+      "id": "n0920",
+      "date": "2016-09-20",
+      "kind": "水文",
+      "title": "这 10 个习惯，正在悄悄毁掉你的电脑",
+      "titleEn": "Ten habits quietly killing your computer",
+      "body": "第 7 条：开机不关。第 8 条：关机。全文推荐使用某品牌清理软件。",
+      "bodyEn": "No. 7: never switching it off. No. 8: switching it off. Recommends a certain cleaning app throughout."
+    },
+    {
+      "id": "n0922",
+      "date": "2016-09-22",
+      "kind": "科技",
+      "title": "谷歌公开图像描述模型：让电脑看图写一句话",
+      "titleEn": "Google open-sources an image-captioning model",
+      "body": "谷歌公开了 Show and Tell 图像描述模型的 TensorFlow 实现。模型把图像识别与语言生成接起来，尝试为照片写一句说明。源码公开了，认错图的时候仍会写出一本正经的句子。",
+      "bodyEn": "Google released its TensorFlow implementation of Show and Tell. The model connects image recognition with language generation to describe a photograph. Open code does not stop a mistaken caption from sounding confident.",
+      "sourceUrl": "https://research.google/blog/show-and-tell-image-captioning-open-sourced-in-tensorflow/"
+    },
+    {
+      "id": "n0925",
+      "date": "2016-09-25",
+      "kind": "科技",
+      "title": "世界最大单口径射电望远镜 FAST 落成",
+      "titleEn": "FAST, the world's largest single-dish radio telescope, opens",
+      "body": "口径 500 米，相当于 30 个足球场。它将寻找来自宇宙深处的信号。",
+      "bodyEn": "500 metres across, thirty football pitches. It will listen for signals from deep space."
+    },
+    {
+      "id": "n0928",
+      "date": "2016-09-28",
+      "kind": "科技",
+      "title": "谷歌翻译换成神经网络，错误少了六成",
+      "titleEn": "Google Translate goes neural; 60% fewer errors",
+      "body": "新系统先把整句读完，再一边看原文一边翻。",
+      "bodyEn": "It reads the whole sentence first, then translates while looking back at it."
+    },
+    {
+      "id": "n1002",
+      "date": "2016-10-02",
+      "kind": "娱乐",
+      "title": "美剧《西部世界》首播：机器人开始做梦",
+      "titleEn": "Westworld premieres: the robots start to dream",
+      "body": "乐园里的接待员一次次被重置记忆，直到有一天，她们开始记得。",
+      "bodyEn": "The park's hosts have their memories wiped again and again, until one day they start to remember."
+    },
+    {
+      "id": "n1010",
+      "date": "2016-10-10",
+      "kind": "娱乐",
+      "title": "「蓝瘦，香菇」是什么梗？",
+      "titleEn": "What does 'lan shou, xiang gu' mean?",
+      "body": "一位小哥失恋后用方言录了段视频：「难受，想哭」。口音一出，全网跟着说。",
+      "bodyEn": "A heartbroken guy filmed himself saying \"sad, want to cry\" in a thick accent. Now everyone says it."
+    },
+    {
+      "id": "n1013",
+      "date": "2016-10-13",
+      "kind": "娱乐",
+      "title": "鲍勃·迪伦获诺贝尔文学奖",
+      "titleEn": "Bob Dylan wins the Nobel Prize in Literature",
+      "body": "第一次颁给一位歌手。他本人好几天没回应。",
+      "bodyEn": "The first time it goes to a songwriter. He didn't respond for days."
+    },
+    {
+      "id": "n1017",
+      "date": "2016-10-17",
+      "kind": "科技",
+      "title": "神舟十一号发射，两名航天员将在太空住一个月",
+      "titleEn": "Shenzhou-11 launches; two astronauts to stay a month",
+      "body": "景海鹏第三次飞天。他们会在天宫二号上种生菜。",
+      "bodyEn": "Jing Haipeng's third flight. They'll grow lettuce on Tiangong-2."
+    },
+    {
+      "id": "n1021",
+      "date": "2016-10-21",
+      "kind": "娱乐",
+      "title": "《文明 6》发售：「再来一回合」又害了一批人",
+      "titleEn": "Civilization VI is out: 'one more turn' claims new victims",
+      "body": "有玩家称一抬头天亮了。同日《战地 1》发售，钱包表示扛不住。",
+      "bodyEn": "One player looked up and it was dawn. Battlefield 1 out the same day. Wallets surrender."
+    },
+    {
+      "id": "n1027",
+      "date": "2016-10-27",
+      "kind": "水文",
+      "title": "PPAP 洗脑神曲：一支笔一个苹果，播放量破亿",
+      "titleEn": "PPAP: a pen, an apple, a hundred million views",
+      "body": "一分钟的视频，一个豹纹大叔。听完一遍，你会一直哼。",
+      "bodyEn": "One minute, one man in leopard print. Hear it once and you'll hum it forever."
+    },
+    {
+      "id": "n1109",
+      "date": "2016-11-09",
+      "kind": "社会",
+      "title": "美国大选结果揭晓",
+      "titleEn": "US election results announced",
+      "brief": true
+    },
+    {
+      "id": "n1112",
+      "date": "2016-11-12",
+      "kind": "社会",
+      "title": "双十一全天成交 1207 亿元",
+      "titleEn": "Singles' Day sales hit ¥120.7 billion",
+      "body": "快递小哥表示：接下来一周不要跟我说话。阿里的 AI「鲁班」今年做了 1.7 亿张海报。",
+      "bodyEn": "Couriers: don't talk to me for a week. Alibaba's AI 'Luban' made 170 million banners this year."
+    },
+    {
+      "id": "n1116",
+      "date": "2016-11-16",
+      "kind": "科技",
+      "title": "乌镇街头跑起无人车",
+      "titleEn": "Self-driving cars on the streets of Wuzhen",
+      "body": "互联网大会期间，十几辆无人车在乌镇试运营，游客排队试乘。",
+      "bodyEn": "During the internet conference, a dozen driverless cars ran trial rides in Wuzhen. Tourists queued to try."
+    },
+    {
+      "id": "n1122",
+      "date": "2016-11-22",
+      "kind": "水文",
+      "title": "隔夜菜到底能不能吃？",
+      "titleEn": "Are leftovers safe to eat?",
+      "body": "能，冷藏好、热透就行。本文没有推广，编辑说想换换口味。",
+      "bodyEn": "Yes, if chilled and reheated properly. No advert this time; the editor wanted a change."
+    },
+    {
+      "id": "n1122tech",
+      "date": "2016-11-22",
+      "kind": "科技",
+      "title": "同一套神经网络，试着翻译多种语言",
+      "titleEn": "One neural network tries multiple languages",
+      "body": "谷歌介绍了多语言神经网络翻译系统：同一个模型处理多种语言对。研究还观察到，模型能尝试训练时没有直接见过的语言对。能试着翻，不等于每句话都翻得对。",
+      "bodyEn": "Google described a multilingual neural machine translation system that handles several language pairs in one model. Researchers also observed attempts at pairs not directly seen during training. Trying an unseen pair does not guarantee a correct translation.",
+      "sourceUrl": "https://research.google/blog/zero-shot-translation-with-googles-multilingual-neural-machine-translation-system/"
+    },
+    {
+      "id": "n1129",
+      "date": "2016-11-29",
+      "kind": "娱乐",
+      "title": "《最终幻想 15》发售：玩家等了十年",
+      "titleEn": "Final Fantasy XV is out, ten years on",
+      "body": "四个男人开车旅行。有人说是公路片，有人说是露营模拟器。",
+      "bodyEn": "Four guys on a road trip. A road movie, or a camping simulator, depending who you ask."
+    },
+    {
+      "id": "n1202",
+      "date": "2016-12-02",
+      "kind": "娱乐",
+      "title": "《你的名字。》内地上映，首日票房七千多万",
+      "titleEn": "Your Name opens on the mainland with over ¥70m on day one",
+      "body": "散场后很多人站在影院门口不想走。「我们是不是在哪里见过？」",
+      "bodyEn": "Many lingered outside afterwards. \"Haven't we met somewhere?\""
+    },
+    {
+      "id": "n1215",
+      "date": "2016-12-15",
+      "kind": "社会",
+      "title": "人民币兑美元跌破 6.9",
+      "titleEn": "The yuan falls past 6.9 to the dollar",
+      "brief": true
+    },
+    {
+      "id": "n1220",
+      "date": "2016-12-20",
+      "kind": "娱乐",
+      "title": "王菲演唱会最贵票 7800，比一张显卡还贵",
+      "titleEn": "Faye Wong's top ticket: ¥7,800, more than a GPU",
+      "body": "跨年夜一场，「幻乐一场」。显卡吧：看不懂，但我们算了一下。",
+      "bodyEn": "One night on New Year's Eve. The GPU forum: no idea, but we did the maths."
+    },
+    {
+      "id": "n1226",
+      "date": "2016-12-26",
+      "kind": "水文",
+      "title": "2016 年度十大网络流行语，你用过几个？",
+      "titleEn": "2016's top ten internet phrases: how many did you use?",
+      "body": "洪荒之力、葛优躺、蓝瘦香菇、小目标、吃瓜群众……看完这一年就过去了。",
+      "bodyEn": "Primal powers, the Ge You slouch, lan shou xiang gu, small goals, melon-eaters… and the year is gone."
+    },
+    {
+      "id": "n1230",
+      "date": "2016-12-30",
+      "kind": "科技",
+      "title": "神秘棋手 Master 网上连胜中日韩高手",
+      "titleEn": "Mystery player Master beats top Go players online",
+      "body": "已经连赢几十盘，一盘没输。没人知道它是谁。",
+      "bodyEn": "Dozens of wins, no losses. Nobody knows who it is."
+    }
+  ]
+}

@@ -206,8 +206,8 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 case "aiName": return sim.Profile.name.Length > 0 ? sim.Profile.name : LingGuangV05.Core.AppNames.AiZh;
                 case "firstChoicePick":
-                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.FirstTrack == "vision" ? "[Ajie] It picked A. Ha, pictures first!" : "[Xiaogang] It picked B, reading danmaku. Told you.";
-                    return sim.FirstTrack == "vision" ? "[阿杰] 它点了 A。哈，先学看图！" : "[小刚] 它点了 B，读弹幕。我就说吧。";
+                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.FirstTrack == "vision" ? "It picked A: pictures first." : "It picked B: sentences first.";
+                    return sim.FirstTrack == "vision" ? "它点了 A，先学看图。" : "它点了 B，先学读句子。";
                 case "firstDayAnswer":
                     int answer = sim.FirstDayAnswer;
                     if (LingGuangV05.Runtime.GameText.IsEnglish) return answer > 0 ? "You taught me: yes." : answer < 0 ? "You taught me: no." : "You didn't teach me. I lit up “no” on my own.";

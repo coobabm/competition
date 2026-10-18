@@ -120,7 +120,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgActionDraw(XgMiniContext c) : base(c) { }
         public override void Build()
         {
-            Header(XgUi.T("你画我猜", "Draw and Guess"), XgUi.T("在白板上写出指定数字，提交后灵光按你的笔迹来读，交上去的字它都会记住。", "Write the asked digit on the board; LingGuang reads your hand when you submit, and remembers every drawing you hand in."), 120);
+            Header(XgUi.T("你画我猜", "Draw and Guess"), XgUi.T("在白板上写出指定数字，提交后" + C.Sim.AiDisplayName + "按你的笔迹来读，交上去的字它都会记住。", "Write the asked digit on the board; " + C.Sim.AiDisplayName + " reads your handwriting and remembers every drawing you submit."), 120);
             rounds = 0;
             var pad = C.Box("画板", 50, 117, 310, 310, Color.white);
             ink = Art(50, 117, 310, 310);
@@ -217,7 +217,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 }
                 var m = new Message { x = lane * 285 + C.Random.Next(0, 16), y = 290, vx = C.Random.Next(-12, 13), vy = -255 - C.Random.Next(70), bad = wrong, lane = lane };
                 m.card = C.Box("Card", 15 + m.x, 112 + m.y, 235, 58, new Color(.2f, .29f, .43f));
-                m.text = C.Text("Flying", 15 + m.x, 112 + m.y, 235, 58, XgUi.T(line[0], line[1]) + "\n" + XgUi.T("灵光：", "LingGuang: ") + (opinion ? XgUi.T("切掉", "slice") : XgUi.T("保留", "keep")), 17, Color.white); m.text.raycastTarget = false;
+                m.text = C.Text("Flying", 15 + m.x, 112 + m.y, 235, 58, XgUi.T(line[0], line[1]) + "\n" + C.Sim.AiDisplayName + XgUi.T("：", ": ") + (opinion ? XgUi.T("切掉", "slice") : XgUi.T("保留", "keep")), 17, Color.white); m.text.raycastTarget = false;
                 items.Add(m); spawn = Mathf.Lerp(.55f, 1.05f, time / 60);
             }
             for (int i = items.Count - 1; i >= 0; i--)
@@ -270,14 +270,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 var pool = new List<int>(); for (int i = 0; i < XgMiniContent.Headlines.Length; i++) pool.Add(i);
                 while (pool.Count > 0) { int n = C.Random.Next(pool.Count); deck.Enqueue(pool[n]); pool.RemoveAt(n); }
             }
-            current = deck.Dequeue(); headline.text = XgUi.T(XgMiniContent.Headlines[current][0], XgMiniContent.Headlines[current][1]); aiBait = Opinion(current < XgMiniContent.ClickbaitCount); hint.text = XgUi.T("灵光正在读这张卡片……", "LingGuang is reading this card..."); hintDelay = .3f + (float)(1 - C.Skill) * 1.4f; Move(0);
+            current = deck.Dequeue(); headline.text = XgUi.T(XgMiniContent.Headlines[current][0], XgMiniContent.Headlines[current][1]); aiBait = Opinion(current < XgMiniContent.ClickbaitCount); hint.text = XgUi.T(C.Sim.AiDisplayName + "正在读这张卡片……", C.Sim.AiDisplayName + " is reading this card..."); hintDelay = .3f + (float)(1 - C.Skill) * 1.4f; Move(0);
         }
         void Decide(bool bait)
         { if (!playing) return; Result(bait == (current < XgMiniContent.ClickbaitCount), (current < XgMiniContent.ClickbaitCount) ? XgUi.T("标题党：夸张、恐吓、强迫转发或隐去关键信息。", "Clickbait: hype, scare tactics, forced sharing or a hidden key fact.") : XgUi.T("正经新闻：具体事件与主体清晰；文风不是事实核查的替代。", "Honest news: a concrete event and a clear subject. Style is no substitute for fact-checking.")); Next(); }
         public override void Tick(float dt)
         {
             if (!Clock(dt)) return;
-            if ((hintDelay -= dt) <= 0) hint.text = XgUi.T("灵光建议：", "LingGuang suggests: ") + (aiBait ? XgUi.T("左滑，标题党", "left, clickbait") : XgUi.T("右滑，正经新闻", "right, honest news"));
+            if ((hintDelay -= dt) <= 0) hint.text = XgUi.T(C.Sim.AiDisplayName + "建议：", C.Sim.AiDisplayName + " suggests: ") + (aiBait ? XgUi.T("左滑，标题党", "left, clickbait") : XgUi.T("右滑，正经新闻", "right, honest news"));
             if (C.KeyDown(Key.LeftArrow)) Decide(true); else if (C.KeyDown(Key.RightArrow)) Decide(false);
         }
     }
@@ -290,14 +290,16 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         readonly TMP_Text[] signs = new TMP_Text[Cells], bangs = new TMP_Text[Cells];
         readonly float[] expires = new float[Cells], rise = new float[Cells];
         readonly bool[] wrong = new bool[Cells];
-        readonly string[] truth = new string[Cells];
+        readonly string[] truth = new string[Cells], aiAnswers = new string[Cells];
+        readonly TMP_Text[] aiSigns = new TMP_Text[Cells];
         float spawn;
-        int missed;
+        int missed,goldenMilestone,goldenBonus;
         public XgActionMoles(XgMiniContext c) : base(c) { }
+        bool Target(int i) => C.Id == "arith_mole" ? !wrong[i] : wrong[i];
         public override void Build()
         {
-            Header(XgUi.T("算术打地鼠", "Arithmetic whack-a-mole"), XgUi.T("只敲举着错误算式的地鼠，算对的放过。戴紫帽子的地鼠，答案是灵光自己算的。", "Whack only the moles holding a wrong sum and let the right ones be. A mole in a purple hat carries LingGuang's own answer."));
-            Array.Clear(expires, 0, Cells); Array.Clear(rise, 0, Cells); missed = 0; spawn = .2f;
+            Header(XgUi.T("算术打地鼠", "Arithmetic whack-a-mole"), C.Id == "arith_mole" ? XgUi.T("敲正确的算式，放过错误的算式。", "Whack correct equations; leave wrong ones alone.") : XgUi.T("敲错误的算式，放过正确的算式。", "Whack wrong equations; leave correct ones alone."));
+            Array.Clear(expires, 0, Cells); Array.Clear(rise, 0, Cells); missed = goldenMilestone = goldenBonus = 0; spawn = .2f;
             C.Box("Lawn", 15, 112, 870, 320, new Color(.36f, .56f, .33f));
             float[] x = { 42, 327, 612 };
             for (int i = 0; i < Cells; i++)
@@ -313,6 +315,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             {
                 var t = C.Text("Sum" + i, 0, 0, 132, 28, "", 21, new Color(.2f, .12f, .05f));
                 t.alignment = TextAlignmentOptions.Center; t.raycastTarget = false; t.enabled = false; signs[i] = t;
+                var ai = C.Text("AiSum"+i,0,0,180,22,"",11,new Color(.45f,.28f,.65f));ai.raycastTarget=false;ai.enabled=false;aiSigns[i]=ai;
                 var b = C.Text("Bang" + i, 0, 0, 110, 44, "", 34, new Color(.86f, .2f, .12f));
                 b.alignment = TextAlignmentOptions.Center; b.fontStyle = FontStyles.Bold; b.raycastTarget = false; b.enabled = false; bangs[i] = b;
             }
@@ -320,10 +323,17 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         void Hit(int i)
         {
             if (!playing || expires[i] <= 0) return;
-            expires[i] = 0; holes[i].HitTime = 0; holes[i].HitGood = wrong[i];
-            bangs[i].text = wrong[i] ? XgUi.T("啪！", "Pow!") : XgUi.T("冤！", "Oops!");
-            bangs[i].color = wrong[i] ? new Color(.86f, .2f, .12f) : new Color(.3f, .38f, .62f);
-            Result(wrong[i], XgUi.T("正确算式：", "The right sum: ") + truth[i]);
+            C.Sim.RecordTeachingQuestion(signs[i].text,signs[i].text,!wrong[i],C.Id=="arith_mole",
+                "正确算式："+truth[i],"Correct equation: "+truth[i],"arith",null,
+                C.Id=="arith_mole"?XgUi.T("敲：算式正确","Whack: correct equation"):XgUi.T("敲：算式错误","Whack: wrong equation"),aiAnswers[i]);
+            bool goldenHit=holes[i].Golden&&Target(i);
+            expires[i] = 0; holes[i].HitTime = 0; holes[i].HitGood = Target(i);
+            bangs[i].text = Target(i) ? XgUi.T("啪！", "Pow!") : XgUi.T("冤！", "Oops!");
+            bangs[i].color = Target(i) ? new Color(.86f, .2f, .12f) : new Color(.3f, .38f, .62f);
+            Result(Target(i), XgUi.T("正确算式：", "The right sum: ") + truth[i]);
+            if(goldenHit){goldenBonus++;bangs[i].text=XgUi.T("金！+2分","Gold! +2");feedback.text=XgUi.T("金地鼠！得分 +2。","Golden mole! +2 points.");}
+            if(!Target(i))goldenMilestone=0;
+            ShowMoleScore();
         }
         /// <summary>Lays the hole's label over its sign and the 「啪」 over its head, and redraws the hole.</summary>
         void Paint(int i)
@@ -336,6 +346,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var sc = g.SignCenter;
             bool showSign = g.SignShown && (expires[i] > 0 || g.HitTime >= 0 && g.HitTime < XgMoleGraphic.HitSeconds || rise[i] > 0);
             signs[i].enabled = showSign;
+            aiSigns[i].enabled=showSign&&C.Sim.TeachingAiReady;
+            if(aiSigns[i].enabled){aiSigns[i].text=C.Sim.AiDisplayName+"："+aiAnswers[i];Place(aiSigns[i].rectTransform,left+sc.x-90,top+sc.y+12);}
             if (showSign) Place(signs[i].rectTransform, left + sc.x - 66, top + sc.y - 14);
             bool bang = g.HitTime >= 0 && g.HitTime < XgMoleGraphic.HitSeconds;
             bangs[i].enabled = bang;
@@ -361,7 +373,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if (expires[i] > 0)
                 {
                     expires[i] -= dt; rise[i] = Mathf.Min(1, rise[i] + dt / PopSeconds);
-                    if (expires[i] <= 0) { if (wrong[i]) { missed++; combo = 0; } }
+                    if (expires[i] <= 0) { if (Target(i)) { missed++; combo = 0; goldenMilestone=0; } }
                 }
                 else if (g.HitTime >= 0)
                 {
@@ -369,7 +381,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                     if (g.HitTime >= XgMoleGraphic.HitSeconds) g.HitTime = -1;
                 }
                 else if (rise[i] > 0) rise[i] = Mathf.Max(0, rise[i] - dt / SinkSeconds);
-                else { signs[i].enabled = false; continue; }
+                else { signs[i].enabled = false; aiSigns[i].enabled=false; continue; }
                 Paint(i);
             }
             spawn -= dt;
@@ -380,14 +392,20 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 {
                     int i = free[C.Random.Next(free.Count)];
                     var mole = XgMiniContent.NextMole(C.Random, C.Skill);
-                    wrong[i] = mole.Wrong; truth[i] = mole.TruthText;
-                    signs[i].text = mole.ShownText; holes[i].Ai = mole.Ai;
+                    bool golden=C.Id=="arith_mole"&&combo>=10&&goldenMilestone<combo/10;
+                    if(golden)goldenMilestone=combo/10;holes[i].Golden=golden;
+                    wrong[i] = golden?false:mole.Wrong; truth[i] = mole.TruthText;
+                    signs[i].text = golden?mole.TruthText:mole.ShownText; holes[i].Ai = C.Sim.TeachingAiReady && mole.Ai;
+                    bool suggestion=C.Random.NextDouble()<C.Skill?Target(i):!Target(i);
+                    aiAnswers[i]=C.Skill<.55?XgUi.T("不知道","Not sure"):suggestion?XgUi.T("敲","Whack"):XgUi.T("不敲","Leave");
+                    if(C.Sim.Has("sigmoid")&&C.Skill>=.55)aiAnswers[i]+=" · "+Math.Round(C.Skill*100)+"%";
                     expires[i] = 1.3f + time / 60 * 1.3f;
                 }
                 spawn = .42f + time / 60 * .55f;
             }
-            status.text += XgUi.T("   漏敲 " + missed, "   missed " + missed);
+            ShowMoleScore();
         }
+        void ShowMoleScore(){Hud();status.text+=XgUi.T("   得分 "+(score+goldenBonus)+"   漏敲 "+missed,"   points "+(score+goldenBonus)+"   missed "+missed);}
     }
 
     sealed class XgActionShooter : XgActionBase
@@ -406,7 +424,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgActionShooter(XgMiniContext c) : base(c) { }
         public override void Build()
         {
-            Header("弹幕射击 · 保护直播间", "WASD / 方向键或拖动移动，按住空格 / 鼠标开火。只击落辱骂引战，保护正常弹幕；紫色为灵光建议。");
+            Header(XgUi.T("弹幕射击 · 保护直播间", "Comment shooter · protect the stream"), XgUi.T("WASD / 方向键或拖动移动，按住空格 / 鼠标开火。只击落辱骂引战，保护正常弹幕；紫色为" + C.Sim.AiDisplayName + "建议。", "Move with WASD / arrows or drag; hold Space / mouse to fire. Shoot abuse and protect normal comments. Purple marks " + C.Sim.AiDisplayName + " suggestions."));
             comments.Clear(); bullets.Clear(); ship = new Vector2(100, 150); spawn = .2f; fire = wingFire = 0; hp = 5; aiHits = aiMistakes = 0; wave = 1; hold = false;
             C.Button("下一波弹幕", 745, 78, 135, 28, "下一波", NextWave, 15);
             var pad = C.Box("直播区域", 15, 112, 870, 320, new Color(.065f, .085f, .16f));
@@ -426,7 +444,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (ai)
             {
                 if (c.harmful) aiHits++; else { aiMistakes++; hp--; }
-                feedback.text = c.harmful ? "灵光僚机击中了恶意弹幕（不自动产生玩家标签）。" : "灵光误伤了好评，主播心态下降。";
+                feedback.text = c.harmful ? XgUi.T(C.Sim.AiDisplayName + "僚机击中了恶意弹幕（不自动产生玩家标签）。", C.Sim.AiDisplayName + " hit an abusive comment (no player label is added automatically).") : XgUi.T(C.Sim.AiDisplayName + "误伤了好评，主播心态下降。", C.Sim.AiDisplayName + " hit a positive comment, hurting the streamer’s morale.");
             }
             else { Result(c.harmful, c.harmful ? "击落恶意弹幕。" : "误伤正常弹幕，主播心态下降。"); if (!c.harmful) hp--; }
             c.label.gameObject.SetActive(false); XgMiniContext.DestroyObject(c.label.gameObject); comments.Remove(c);
@@ -580,6 +598,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     {
         readonly Rect[] positions = { new Rect(22, 29, 68, 62), new Rect(113, 26, 76, 64), new Rect(219, 26, 57, 65), new Rect(306, 31, 67, 60), new Rect(20, 172, 61, 69), new Rect(107, 165, 81, 78), new Rect(222, 172, 64, 70), new Rect(310, 170, 66, 74) };
         readonly string[] names = { "墙上的画", "时钟", "书本", "窗户", "台灯", "显示器", "水杯", "盆栽" };
+        readonly string[] namesEn = { "painting", "clock", "books", "window", "lamp", "monitor", "cup", "plant" };
+        string Name(int i) => XgUi.T(names[i], namesEn[i]);
         readonly int[] changes = new int[8];
         readonly bool[] found = new bool[8];
         readonly HashSet<int> suggested = new HashSet<int>();
@@ -589,7 +609,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgActionDifferences(XgMiniContext c) : base(c) { }
         public override void Build()
         {
-            Header("找不同 · 双图核验", "两幅书桌图共有五处不同：颜色、缺失、位移或大小。点任意一侧差异；紫框是灵光建议，也可能完全相同。", 90);
+            Header(XgUi.T("找不同 · 双图核验", "Spot the differences · compare both images"), XgUi.T("两幅书桌图共有五处不同：颜色、缺失、位移或大小。点任意一侧差异；紫框是" + C.Sim.AiDisplayName + "建议，也可能完全相同。", "Find five changes in color, presence, position or size. Click either image. Purple boxes are " + C.Sim.AiDisplayName + " suggestions and may be wrong."), 90);
             Array.Clear(changes, 0, 8); Array.Clear(found, 0, 8); suggested.Clear(); count = 0; suggestion = -1;
             var pool = new List<int>(); for (int i = 0; i < 8; i++) pool.Add(i);
             for (int i = 0; i < 5; i++) { int at = C.Random.Next(pool.Count); changes[pool[at]] = 1 + i % 4; pool.RemoveAt(at); }
@@ -598,7 +618,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             left = Art(25, 122, 400, 280); right = Art(475, 122, 400, 280);
             C.Pointer(a.rectTransform, p => Click(p, false)); C.Pointer(b.rectTransform, p => Click(p, true));
             hint = C.Text("差异建议", 25, 408, 420, 30, "", 15, Purple); hint.raycastTarget = false;
-            C.Button("请求圈选", 464, 408, 120, 30, "灵光圈选", Suggest, 15);
+            C.Button("请求圈选", 464, 408, 120, 30, XgUi.T(C.Sim.AiDisplayName + "圈选", C.Sim.AiDisplayName + " pick"), Suggest, 15);
             C.Button("证实不同", 594, 408, 140, 30, "确有不同", () => Verify(true), 15);
             C.Button("否定圈选", 744, 408, 130, 30, "其实相同", () => Verify(false), 15);
             Paint(); Suggest();
@@ -639,15 +659,15 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (candidates.Count == 0) candidates = real.Count > 0 ? real : decoy;
             if (candidates.Count == 0) { hint.text = "没有新的圈选，请自行寻找。"; return; }
             suggestion = candidates[C.Random.Next(candidates.Count)]; suggested.Add(suggestion);
-            hint.text = "灵光觉得「" + names[suggestion] + "」不同。请核验。"; Paint();
+            hint.text = XgUi.T(C.Sim.AiDisplayName + "觉得「" + Name(suggestion) + "」不同。请核验。", C.Sim.AiDisplayName + " thinks the " + Name(suggestion) + " differs. Check it."); Paint();
         }
         void Verify(bool different)
         {
             if (!playing || suggestion < 0) return; int i = suggestion; suggestion = -1;
             bool truth = changes[i] > 0;
             if (truth && different) Mark(i);
-            else if (!truth && !different) Result(true, "纠正了灵光的误报：两侧「" + names[i] + "」相同。");
-            else Wrong(truth ? "这处确有不同，请仔细比较。扣时 3 秒。" : "这处其实相同，灵光误报了。扣时 3 秒。");
+            else if (!truth && !different) Result(true, XgUi.T("纠正了" + C.Sim.AiDisplayName + "的误报：两侧「" + Name(i) + "」相同。", "Corrected " + C.Sim.AiDisplayName + ": the " + Name(i) + " matches on both sides."));
+            else Wrong(truth ? XgUi.T("这处确有不同，请仔细比较。扣时 3 秒。", "This does differ. Compare carefully. Minus 3 seconds.") : XgUi.T("这处其实相同，" + C.Sim.AiDisplayName + "误报了。扣时 3 秒。", "These match; " + C.Sim.AiDisplayName + " was wrong. Minus 3 seconds."));
             hint.text = "可请求下一个圈选，或直接点击差异。"; Paint();
         }
         void Paint()

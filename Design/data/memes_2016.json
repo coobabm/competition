@@ -1,0 +1,25 @@
+{
+  "note": "YY 群「斗图」面板的表情包清单（《第七轮设计》第四节）。图片放 Resources/LingGuangV05/Media/Memes/<key>.png（静图，≤ 240×240，≤ 60 KB；GIF 只取一帧或做成序列帧）。from = 从哪个月起能用（游戏日期到了才出现在面板里）。kind：真人照片 / 影视剧照 / 漫画 / 平台表情 / 文字图。risk = 用原图的版权或肖像权风险：高 = 真人或影视截图，公开发布前需要授权或换成重绘版；中 = 有明确作者或公司的画作；低 = 纯文字或来源不明的通用模板。fallback = 拿不到授权时的替代做法。最终用原图还是替代版，由制作人决定（见设计文档「待确认」）。",
+  "memes": [
+    { "key": "meme_geyou", "text": "葛优躺", "from": 201607, "kind": "影视剧照", "risk": "高", "note": "《我爱我家》剧照。葛优曾就商用「葛优躺」起诉并胜诉", "fallback": "沿用项目里已有的重绘「情景配图」chat_geyou" },
+    { "key": "meme_honghuang", "text": "洪荒之力", "from": 201608, "kind": "真人照片", "risk": "高", "note": "傅园慧采访截图", "fallback": "重绘一个张大嘴的卡通人 + 文字「我已经用了洪荒之力」" },
+    { "key": "meme_xiaomubiao", "text": "先定一个小目标", "from": 201608, "kind": "真人照片", "risk": "高", "note": "王健林访谈截图", "fallback": "文字图" },
+    { "key": "meme_lanshou", "text": "蓝瘦，香菇", "from": 201610, "kind": "真人照片", "risk": "高", "note": "网友自拍视频截图", "fallback": "文字图 + 一朵香菇简笔画" },
+    { "key": "meme_heiren", "text": "黑人问号脸", "from": 201606, "kind": "真人照片", "risk": "高", "note": "球员采访截图", "fallback": "重绘一个问号脸简笔画" },
+    { "key": "meme_erkang", "text": "尔康手", "from": 201606, "kind": "影视剧照", "risk": "高", "note": "《还珠格格》剧照", "fallback": "重绘伸手剪影 + 文字「不要啊」" },
+    { "key": "meme_jinguanzhang", "text": "金馆长", "from": 201606, "kind": "真人照片", "risk": "高", "note": "韩国演员照片，熊猫头的原型", "fallback": "用熊猫头模板代替" },
+    { "key": "meme_xiaochuan", "text": "友谊的小船说翻就翻", "from": 201606, "kind": "漫画", "risk": "中", "note": "插画作者有署名，可以联系授权", "fallback": "重绘两只小动物 + 一条小船" },
+    { "key": "meme_doge", "text": "doge", "from": 201606, "kind": "真人照片", "risk": "中", "note": "柴犬照片，原照片有拍摄者版权", "fallback": "重绘柴犬侧眼简笔画" },
+    { "key": "meme_huaji", "text": "滑稽", "from": 201606, "kind": "平台表情", "risk": "中", "note": "贴吧官方表情", "fallback": "游戏内「摆渡贴吧」自己的同风格表情" },
+    { "key": "meme_panda_xinliku", "text": "宝宝心里苦", "from": 201606, "kind": "文字图", "risk": "低", "note": "熊猫头模板 + 文字，来源不明的通用模板", "fallback": "自己画熊猫头模板" },
+    { "key": "meme_panda_shangtian", "text": "你咋不上天呢", "from": 201606, "kind": "文字图", "risk": "低", "note": "熊猫头模板 + 文字", "fallback": "自己画熊猫头模板" },
+    { "key": "meme_xiasibaobao", "text": "吓死宝宝了", "from": 201606, "kind": "文字图", "risk": "低", "note": "", "fallback": "" },
+    { "key": "meme_zuile", "text": "我也是醉了", "from": 201606, "kind": "文字图", "risk": "低", "note": "2014 年起流行，2016 年还常用", "fallback": "" },
+    { "key": "meme_chenghuiwan", "text": "城会玩", "from": 201606, "kind": "文字图", "risk": "低", "note": "", "fallback": "" },
+    { "key": "meme_233", "text": "233333", "from": 201606, "kind": "文字图", "risk": "低", "note": "", "fallback": "" },
+    { "key": "meme_taolu", "text": "套路", "from": 201607, "kind": "文字图", "risk": "低", "note": "", "fallback": "" },
+    { "key": "meme_taokong", "text": "感觉身体被掏空", "from": 201608, "kind": "文字图", "risk": "低", "note": "同名歌曲 2016 年 8 月走红，只用这一句文字", "fallback": "" },
+    { "key": "meme_yiyanbuhe", "text": "一言不合就……", "from": 201607, "kind": "文字图", "risk": "低", "note": "", "fallback": "" },
+    { "key": "meme_lihaile", "text": "厉害了我的哥", "from": 201609, "kind": "文字图", "risk": "低", "note": "", "fallback": "" }
+  ]
+}

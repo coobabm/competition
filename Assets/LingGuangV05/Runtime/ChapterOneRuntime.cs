@@ -150,11 +150,23 @@ namespace LingGuangV05.Runtime
             sinceSave += dt;
             sinceNotify += dt;
             if (notify && sinceNotify >= .12f) { notify = false; sinceNotify = 0; Changed?.Invoke(); }
-            if (useDiskSave && dirty && sinceSave >= AutosaveSeconds) SaveNow();
+            TryAutosave();
         }
 
         /// <summary>Seconds between autosaves while something changed (the lab marks itself dirty every second).</summary>
-        public const float AutosaveSeconds = 60f;
+        public const float AutosaveSeconds = 300f;
+        public const double AutosaveIdleSeconds = 2;
+        static double lastDesktopInput = double.NegativeInfinity;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetDesktopActivity() { lastDesktopInput = double.NegativeInfinity; }
+        // Desktop reports input; persistence has no InputSystem dependency.
+        public static void NotifyDesktopInput() { lastDesktopInput = Time.realtimeSinceStartupAsDouble; }
+        public static bool DesktopIdleForAutosave => Time.realtimeSinceStartupAsDouble - lastDesktopInput >= AutosaveIdleSeconds;
+        public bool TryAutosave()
+        {
+            if (!useDiskSave || !dirty || sinceSave < AutosaveSeconds || !DesktopIdleForAutosave) return false;
+            return SaveNow();
+        }
 
         /// <summary>
         /// Checks an archive's lab text before it may replace the main save (XingGuangController sets it: the runtime
@@ -185,7 +197,16 @@ namespace LingGuangV05.Runtime
             if (Sim.InPrologue) { SaveStatus = "序章不存档"; dirty = false; return true; }
             Sim.S.lastSeenUnix = Math.Max(Sim.S.lastSeenUnix, UtcNow);
             try { Saving?.Invoke(); }
-            catch (Exception error) { Debug.LogWarning("保存前写入应用状态失败：" + error.Message); }
+            catch (Exception error)
+            {
+                // App snapshots are part of the save transaction. Never persist a partial snapshot.
+                SaveStatus = GameText.T("保存失败：应用状态未写入，原存档保持不变。", "Save failed: app state could not be collected. The previous save is unchanged.")
+                    + " " + error.Message;
+                dirty = true;
+                notify = true;
+                Debug.LogWarning("[Save] " + SaveStatus);
+                return false;
+            }
             bool saved;
             try { saved = store.TrySave(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
             catch (ArgumentException error) { saved = false; SaveStatus = "无法序列化存档：" + error.Message; }

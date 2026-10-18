@@ -20,6 +20,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform icon, window;
         TMP_Text body;
         bool english;
+        string shownLabel = "";
 
         public void Bind(XingGuangController owner)
         {
@@ -42,14 +43,14 @@ namespace LingGuangV05.Desktop.XingGuang
             bool show = bound.S.ending.Length > 0 && runtime.Sim.S.endingPlayed && !runtime.Sim.InPrologue;
             if (show && icon == null) MakeIcon(desk);
             else if (!show && icon != null) { Destroy(icon.gameObject); icon = null; Close(); }
-            if (icon != null && english != GameText.IsEnglish) { english = GameText.IsEnglish; PrologueDesk.SetIconLabel(icon, Label()); }
+            if (icon != null && (english != GameText.IsEnglish || shownLabel != Label())) { english = GameText.IsEnglish; shownLabel = Label(); PrologueDesk.SetIconLabel(icon, shownLabel); }
         }
 
-        static string Label() => GameText.T("灵光记.txt", "Lingguang.txt");
+        string Label() { string ai = bound != null ? bound.AiDisplayName : AppNames.Ai(GameText.IsEnglish); return GameText.T(ai + "记.txt", ai + ".txt"); }
 
         void MakeIcon(PrologueDesk desk)
         {
-            english = GameText.IsEnglish;
+            english = GameText.IsEnglish; shownLabel = Label();
             var own = XgIcons.Get("desktop", "chronicle_txt");
             icon = own != null ? desk.Icon("Lingguang Chronicle", Label(), own)
                 : desk.notepadIcon != null ? desk.Icon("Lingguang Chronicle", Label(), desk.notepadIcon) : desk.Icon("Lingguang Chronicle", Label(), null, desk.DrawBlankFile);

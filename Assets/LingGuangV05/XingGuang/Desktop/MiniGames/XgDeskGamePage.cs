@@ -27,6 +27,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         long ticket;
         int sequence;
         float textClock;
+        bool gameEnglish;
+        bool showingIntroStatus;
         /// <summary>The player asked for the yes/no cards.</summary>
         public Action ShowClassic;
         /// <summary>The player wants the pay raise (the label page owns the purchase and its effects).</summary>
@@ -39,12 +41,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
 
         public override void Build(RectTransform area)
         {
-            // The games are drawn on a light paper surface even inside the dark LingGuang shell.
-            ui = new XgUi(ui.font, ui.window, false);
+            // The teaching chrome follows its owner; game canvases opt in independently.
             root = XgUi.Rect("DeskGame", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            XgUi.Panel(root, new Color32(238, 242, 248, 255));
+            XgUi.Panel(root, ui.dark ? XgDark.Page : XgPalette.Page);
             var life = root.gameObject.AddComponent<XgMiniLife>(); life.Page = this;
-            heading = ui.Text(XgUi.Strip("Title", root, 8, 30, 16, 400), "", 20, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            heading = ui.Text(XgUi.Strip("Title", root, 8, 30, 16, 400), "", 20, ui.dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             heading.enableAutoSizing = true; heading.fontSizeMin = 13; heading.fontSizeMax = 20; heading.overflowMode = TextOverflowModes.Ellipsis;
             // The drawn game icon (Tools/Icons/ui_icons.py, group minigame) sits left of the title once the game is known.
             headingIcon = XgUi.Panel(XgUi.TopLeft("GameIcon", root, 14, 8, 30, 30), Color.white);
@@ -53,11 +54,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             raise = ui.Button(root, "", () => BuyRaise?.Invoke(), 15); XgUi.PlaceTopRight(raise, 310, 7, 150, 32);
             viewport = XgUi.Rect("GameViewport", root, Vector2.zero, Vector2.one, new Vector2(8, 92), new Vector2(-8, -46));
             viewport.gameObject.AddComponent<RectMask2D>();
-            speech = ui.Text(XgUi.Rect("Companion", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 62), new Vector2(-14, 90)), "", 16, XgPalette.Accent, TextAlignmentOptions.MidlineLeft);
+            speech = ui.Text(XgUi.Rect("Companion", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 62), new Vector2(-14, 90)), "", 16, ui.dark ? XgDark.Accent : XgPalette.Accent, TextAlignmentOptions.MidlineLeft);
             speech.enableAutoSizing = true; speech.fontSizeMin = 11; speech.fontSizeMax = 16; speech.overflowMode = TextOverflowModes.Ellipsis;
-            status = ui.Text(XgUi.Rect("Settlement", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 34), new Vector2(-14, 62)), "", 15, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            status = ui.Text(XgUi.Rect("Settlement", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 34), new Vector2(-14, 62)), "", 15, ui.dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             status.enableAutoSizing = true; status.fontSizeMin = 11; status.fontSizeMax = 15; status.overflowMode = TextOverflowModes.Ellipsis;
-            payLine = ui.Text(XgUi.Rect("PayRule", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 6), new Vector2(-14, 34)), "", 13, XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            payLine = ui.Text(XgUi.Rect("PayRule", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 6), new Vector2(-14, 34)), "", 13, ui.dark ? XgDark.Muted : XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
             payLine.enableAutoSizing = true; payLine.fontSizeMin = 10; payLine.fontSizeMax = 13; payLine.overflowMode = TextOverflowModes.Ellipsis;
         }
 
@@ -130,13 +131,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             ticket = owner.BeginMiniGame(id, Host);
             if (ticket == 0) return false;
             selected = id; NewSurface();
-            context = new XgMiniContext(surface, ui, owner, Host, id,
+            context = new XgMiniContext(surface, new XgUi(ui.font, ui.window, ui.dark && id == "kaixincidian"), owner, Host, id,
                 () => Focused && ReferenceEquals(owner, Sim), () => owner.MiniGameSkill(id),
                 text => { if (speech != null) speech.text = (text ?? "").Replace("\n", "  ·  "); }, Settle);
-            game = XgActionGames.Create(id, context) ?? XgBoardGames.Create(id, context) ?? XgSocialGames.Create(id, context);
+            game = XgPackGames.Create(id, context) ?? XgActionGames.Create(id, context) ?? XgBoardGames.Create(id, context) ?? XgSocialGames.Create(id, context);
             if (game == null) { Stop(); return false; }
-            speech.text = ""; status.text = XgUi.T("答一题，就是一条样本，钱直接进账。", "Every answer is one sample, and the pay goes straight to your balance.");
-            game.Build(); Fit(); RefreshTexts();
+            speech.text = ""; showingIntroStatus = true;
+            game.Build(); gameEnglish = XgUi.En; Fit(); RefreshTexts();
             return true;
         }
 
@@ -144,13 +145,22 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             if (owner == null || !ReferenceEquals(owner, Sim) || !Focused) return;
             var result = owner.SubmitMiniGame(ticket, sequence + 1, correct, Host, seconds);
+            showingIntroStatus = false;
             if (!result.accepted) { status.text = result.note; return; }
             sequence++;
-            status.text = (correct ? "<color=#2F9E44>" : "<color=#D63031>") + result.note + "</color>";
+            if (!correct) XgJuice.BreakComboSound();
+            status.text = (correct ? (ui.dark ? "<color=#5FE3B5>" : "<color=#2F9E44>") : (ui.dark ? "<color=#FF7A6E>" : "<color=#D63031>")) + result.note + "</color>";
             host.Controller?.runtime?.MarkDirty();
             if (Fx != null)
             {
-                Fx.Play(correct ? XgJuice.Sfx.Id.Tick : XgJuice.Sfx.Id.Clack);
+                if (correct && owner.S.combo > 0)
+                {
+                    // Audio advances once per accepted answer; its 3-second restart never changes the saved streak.
+                    Fx.PlayCombo(owner.S.combo);
+                    Fx.ComboHit(Fx.At(status.rectTransform), surface, status.rectTransform, host.ComboChip,
+                        owner.S.combo, Vector2.up, XgPalette.Good);
+                }
+                else Fx.Play(XgJuice.Sfx.Id.Clack);
                 if (correct && result.pay > 0) Fx.Float(Fx.At(status.rectTransform, new Vector2(-120, 30)), "+¥" + result.pay.ToString("0.00"), XgPalette.Money, 22);
                 else if (!correct && result.fine > 0) Fx.Float(Fx.At(status.rectTransform, new Vector2(-120, 30)), "-¥" + result.fine.ToString("0.00"), XgPalette.Bad, 22);
             }
@@ -161,7 +171,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         /// <summary>Texts that follow the sim and the language: the title, the pay rule, the raise button.</summary>
         void RefreshTexts()
         {
+            RefreshGameLanguage();
             if (root == null || Sim == null) return;
+            if (showingIntroStatus) status.text = XgUi.T("答一题，就是一条样本，钱直接进账。", "Every answer is one sample, and the pay goes straight to your balance.");
             var def = XgMiniGames.Find(selected);
             var desk = def == null ? null : XgCatalog.Desk(def.Desk);
             if (headingIcon != null && headingIconId != selected)
@@ -173,6 +185,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             }
             heading.text = def == null ? "" : XgUi.T(def.Name, def.NameEn) + (desk == null ? "" : "  <size=70%><color=#7A7F8C>" + XgUi.T(desk.name, desk.nameEn) + "</color></size>");
             classic.Set(XgUi.T("改答是非题", "Yes/No cards"), true);
+            // Supplemental photo/translation desks have no legacy binary card generator.
+            classic.rt.gameObject.SetActive(desk != null);
             if (def != null)
             {
                 double basePay = Sim.MiniBasePay(def.Desk);
@@ -185,6 +199,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             double cost = Sim.NextRaiseCost;
             bool can = !maxed && Host.Money + 1e-9 >= cost;
             raise.Set(maxed ? XgUi.T("加薪 已满", "Raise maxed") : XgUi.T("加薪 ¥", "Raise ¥") + XgUi.Money(cost), can);
+        }
+
+        void RefreshGameLanguage()
+        {
+            if (game == null || gameEnglish == XgUi.En) return;
+            gameEnglish = XgUi.En;
+            game.RefreshLanguage(); // Rebind current presentation; never restart a question/ticket.
         }
 
         void CheckOwner()
@@ -202,7 +223,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public override void Tick(float dt)
         {
             if (root == null) return;
-            CheckOwner();
+            CheckOwner(); RefreshGameLanguage();
             // The texts follow money and the day; four times a second is plenty and keeps the frame free of string building.
             if ((textClock += dt) >= .25f) { textClock = 0; Fit(); RefreshTexts(); }
             if (Focused && game != null) game.Tick(Mathf.Clamp(dt, 0, .1f));

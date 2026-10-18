@@ -15,14 +15,15 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         const float RateStripHeight = 44, RateStripGap = 6;
         RectTransform rateStrip;
+        TMP_Text rateTitle;
         readonly XgBtn[] rateBtns = new XgBtn[6];
 
         void BuildRates()
         {
             rateStrip = Rect("RateStrip", trainRow, new Vector2(0, 1), Vector2.one, new Vector2(0, -RateStripHeight), Vector2.zero);
             Panel(rateStrip, new Color32(10, 17, 24, 255));
-            var title = ui.Text(Rect("Title", rateStrip, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(76, 0)), "", 14, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            title.text = "<b>" + T("学习率", "Rate") + "</b>\n<size=10><color=#E24B4A>" + T("险", "risk") + "</color><color=#6F95A5>←→</color><color=#5DCAA5>" + T("稳", "safe") + "</color></size>";
+            rateTitle = ui.Text(Rect("Title", rateStrip, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(76, 0)), "", 14, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            RefreshRateTitle();
             var row = Rect("Steps", rateStrip, Vector2.zero, Vector2.one, new Vector2(80, 4), new Vector2(-4, -4));
             for (int i = 0; i < rateBtns.Length; i++)
             {
@@ -38,7 +39,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 rateBtns[i] = b;
                 UiTip.Add(b.rt, () => RateSlotTip(slot));
             }
-            UiTip.Add(title.rectTransform, () => RateTip());
+            UiTip.Add(rateTitle.rectTransform, () => RateTip());
+        }
+
+        void RefreshRateTitle()
+        {
+            rateTitle.text = "<b>" + T("学习率", "Rate") + "</b>\n<size=10><color=#E24B4A>" + T("险", "risk") + "</color><color=#6F95A5>←→</color><color=#5DCAA5>" + T("稳", "safe") + "</color></size>";
         }
 
         static int NotchOf(int slot) => XgSim.RateNotches[Mathf.Clamp(slot, 0, XgSim.RateNotches.Length - 1)];
@@ -71,6 +77,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshRates(XgRun run, bool unlocked)
         {
             if (rateStrip == null) return;
+            RefreshRateTitle();
             rateStrip.gameObject.SetActive(unlocked);
             if (!unlocked) return;
             int chosen = System.Array.IndexOf(XgSim.RateNotches, run.autoLr ? 0 : Sim.RateNotch(run));
@@ -84,7 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 string head = Sim.RateShownText(run, notch);
                 string sub = Sim.RateTierName(notch) + " ×" + N(XgSim.RateGainAt(notch), "0.0#")
                       + (tear > 0 ? " · " + T("炸 ", "blow-up ") + N(tear * 100, "0") + "%" : notch == 0 ? T(" · 不炸", " · no blow-up") : XgSim.RateSteadyAt(notch) <= 0 ? T(" · 不退步", " · never drops") : T(" · 少退步", " · fewer drops"));
-                rateBtns[i].Set("<b>" + head + "</b>\n<size=70%>" + sub + "</size>", !locked || on,
+                rateBtns[i].Set("<b>" + head + "</b>\n<size=70%>" + sub + "</size>", !locked,
                     on ? Color.Lerp(XgDark.Card, tone, .62f) : Color.Lerp(XgDark.Card, tone, .12f),
                     on ? Color.white : Color.Lerp(XgDark.Ink, tone, .45f));
             }

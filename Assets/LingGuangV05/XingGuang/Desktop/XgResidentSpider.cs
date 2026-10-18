@@ -212,9 +212,9 @@ namespace LingGuangV05.Desktop.XingGuang
         bool Find()
         {
             findTimer -= Time.unscaledDeltaTime;
-            if (findTimer > 0 && controller != null && layer != null) return true;
+            if (findTimer > 0) return controller != null && layer != null;
             findTimer = FindEvery;
-            if (controller == null) controller = FindAnyObjectByType<XingGuangController>();
+            if (controller == null) controller = XingGuangController.Instance;
             if (zhongbao == null) zhongbao = FindAnyObjectByType<ZhongbaoView>();
             if (yyView == null) yyView = FindAnyObjectByType<YYChatView>();
             if (presenter == null) { presenter = FindAnyObjectByType<StoryDesktopPresenter>(); if (presenter != null) curtain = presenter.GetComponent<OriginCurtain>(); }

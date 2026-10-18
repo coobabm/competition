@@ -339,6 +339,62 @@
       ]
     },
     {
+      "id": "ask_imagenet",
+      "board": "ai",
+      "author": "me",
+      "date": "2016-09-01",
+      "mine": true,
+      "requires": "asked.imagenet",
+      "title": "求助：ImageNet 哪儿能下？学校邮箱毕业就停了",
+      "titleEn": "Help: where can I get ImageNet? My school mail died when I graduated",
+      "floors": [
+        {
+          "author": "me",
+          "text": "家里电脑在练一个认图的小程序，手头的图太少了。ImageNet 官网只给学校邮箱发链接，我的邮箱毕业就停了。有没有别的办法？",
+          "textEn": "My home PC is training a small picture-recognition program and I am short of pictures. ImageNet only sends links to school addresses, and mine stopped when I graduated. Any other way?"
+        },
+        {
+          "author": "xiaobai",
+          "text": "同求，蹲一个。",
+          "textEn": "Same here, waiting."
+        },
+        {
+          "author": "laozhou",
+          "text": "楼主要 ImageNet？我有 edu 邮箱，可以帮你申请，你自己买块硬盘。别外传啊。",
+          "textEn": "Want ImageNet, OP? I have an edu mail and can apply for you; buy your own drive. Keep it to yourself.",
+          "requires": "answered.imagenet"
+        }
+      ]
+    },
+    {
+      "id": "ask_translate",
+      "board": "ai",
+      "author": "me",
+      "date": "2016-10-01",
+      "mine": true,
+      "requires": "asked.translate",
+      "title": "求干净的中英对照语料，字幕包太脏了",
+      "titleEn": "Looking for clean Chinese–English sentence pairs; subtitle packs are too dirty",
+      "floors": [
+        {
+          "author": "me",
+          "text": "电脑上在练一个翻译的小程序。淘货上的字幕包时间轴全是错的，一半对不上。有没有工整点的中英对照？",
+          "textEn": "My PC is training a small translation program. The subtitle packs on 淘货 have broken timings and half the pairs do not match. Anything neater?"
+        },
+        {
+          "author": "chigua",
+          "text": "前排，学习一下。",
+          "textEn": "Front row, here to learn."
+        },
+        {
+          "author": "laozhou",
+          "text": "联合国今年 5 月公开了一份中英平行语料，句子工整，比字幕包干净多了。要的话我帮你下。",
+          "textEn": "The UN released a Chinese–English parallel corpus this May. Neat sentences, much cleaner than subtitle packs. I can download it for you.",
+          "requires": "answered.translate"
+        }
+      ]
+    },
+    {
       "id": "gpu_wars",
       "board": "gpu",
       "author": "akazhan",

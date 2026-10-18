@@ -94,6 +94,7 @@ namespace LingGuangV05.Desktop.Taohuo
 
         void Build()
         {
+            XgYyTalk.EnsureLearningData();
             if (root != null || holder == null) return;
             font = PrologueDesk.CjkFont();
             foreach (var old in holder.GetComponents<MonoBehaviour>())

@@ -117,6 +117,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             Observe();
+            if(GamePerformance.Low){if(paths.Count>0){paths.Clear();SetVerticesDirty();}return;}
             if (paths.Count == 0) return;
             if (wallpaper == null || !wallpaper.Reveal.Visible) paths.Clear();
             else paths.RemoveAll(path => Time.unscaledTime - path.started >= Duration + (path.corrected ? CorrectionDuration : 0));
@@ -131,7 +132,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
-            vh.Clear();
+            vh.Clear();if(GamePerformance.Low)return;
             float scale = Mathf.Min(rectTransform.rect.width / 1920, rectTransform.rect.height / 1080);
             bool reduced = controller != null && controller.View != null && controller.View.Juice != null && controller.View.Juice.Reduced;
             foreach (var path in paths)

@@ -84,8 +84,9 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (runtime == null || runtime.TestMode || desk == null) return;
-            if (name == "rent.started" || name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
+            if (name == "rent.partial" || name == "rent.reminder" || name == "rent.warning" || name == "rent.started" || name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
                 LingGuangV05.Desktop.YY.YYChatHub.Instance?.Receive("landlord", runtime.Sim.LastMessage);
+            if (name == "rent.due") LingGuangV05.Desktop.YY.YYChatHub.Instance?.ReceiveRentRequest();
             switch (name)
             {
                 case "rent.decision":
@@ -93,7 +94,7 @@ namespace LingGuangV05.Desktop.Story
                     desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 12, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
                     break;
                 case "rent.started":
-                    desk.StoryPopup(Landlord, T("缓租到头了，从今天起房租一天 " + arg + "。详情看 YY。", "The grace period is over: from today the rent is " + arg + " a day. Details in YY."), 10, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
+                    desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 10, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
                     break;
                 case "rent.due":
                     desk.StoryPopup(Landlord, T("房租该交了，欠着 " + arg + " 呢。", "The rent is due. You owe " + arg + "."), 9);

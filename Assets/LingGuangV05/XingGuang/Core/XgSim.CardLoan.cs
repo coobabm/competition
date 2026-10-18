@@ -65,12 +65,7 @@ namespace LingGuangV05.XingGuang
             S.clStep = 1;
             b.Add(new[] { "哥们，在不？", "Hey man, you there?" });
             b.Add(new[] { "组里服务器那张卡烧了，导师周一要结果，我实验跑一半卡住了。", "The card in our group's server burned out. My advisor wants results on Monday and my run is stuck halfway." });
-            if (S.zhouKnows)
-                b.Add(new[] { "我知道你那个程序离不了它……两天，就两天。用完原样还你。", "I know your program needs it… two days, just two. You'll get it back as it is." });
-            else
-                b.Add(cards > 1
-                    ? new[] { "你机器上不是插着 " + cards + " 张卡嘛，借我一张用两天？用完原样还你。", "You've got " + cards + " cards in that machine, right? Lend me one for two days? You'll get it back as it is." }
-                    : new[] { "你那台机器的卡能借我两天不？用完原样还你。", "Could I borrow the card from your machine for two days? You'll get it back as it is." });
+            b.Add(new[] { "你手边有空闲显卡吗？能借我两天不？用完原样还你。", "Have a spare graphics card? Could I borrow it for two days? I will return it as it is." });
             return b;
         }
 
@@ -169,16 +164,14 @@ namespace LingGuangV05.XingGuang
                 S.lifeFavour = 1;
                 NoteChronicle("laozhou.card");
                 SetCooldown("zhou_card", 1500);
-                b.Add(new[] { "靠谱！我下午过来拿。", "You're a lifesaver! I'll come by this afternoon." });
+                b.Add(new[] { "靠谱！约在电脑城门口交接吧。", "Thanks! Let's meet outside the computer market." });
                 b.Add(new[] { "回头学校机房有啥大文件，我拿 U 盘给你拷。", "Any big file you need, I'll copy it for you on the campus network." });
             }
             else
             {
                 S.lifeZhouCool = Math.Min(5, S.lifeZhouCool + 1);
                 SetCooldown("zhou_card", 1500 * (1 + S.lifeZhouCool));
-                b.Add(S.zhouKnows
-                    ? new[] { "懂，它离不了卡。我再想想办法。", "Got it, it can't do without the card. I'll figure something out." }
-                    : new[] { "行，没事，我再问问别人。", "Sure, no problem, I'll ask around." });
+                b.Add(new[] { "行，没事，我再问问别人。", "Sure, no problem, I will ask around." });
             }
             return b;
         }

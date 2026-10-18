@@ -1,0 +1,66 @@
+[
+  {
+    "file": "MiSans-Regular.ttf",
+    "release": "Version 4.009",
+    "url": "https://hyperos.mi.com/font-download/MiSans.zip",
+    "bytes": 8122324,
+    "sha256": "9c120f0a849bc0aa5048daae2a3c0f6eecd828b5b33fce682a9622833f5feea6",
+    "fontNames": {
+      "1": "MiSans",
+      "2": "Regular",
+      "5": "Version 4.009",
+      "6": "MiSans-Regular",
+      "0": "Copyright © 2020-2025 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved."
+    }
+  },
+  {
+    "file": "Inter-Regular.ttf",
+    "release": "4.1",
+    "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+    "bytes": 411640,
+    "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
+    "fontNames": {
+      "0": "Copyright 2016 The Inter Project Authors",
+      "1": "Inter",
+      "2": "Regular",
+      "5": "Version 4.001;git-9221beed3",
+      "6": "Inter-Regular",
+      "13": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "14": "http://scripts.sil.org/OFL"
+    }
+  },
+  {
+    "file": "SourceHanSerifSC-Regular.otf",
+    "release": "2.003R",
+    "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/2.003R/OTF/SimplifiedChinese/SourceHanSerifSC-Regular.otf",
+    "bytes": 24543332,
+    "sha256": "78aa7a328fd974df2d688c8a9fd74a33d8334dfa84ab24d9d11efb2ffc464117",
+    "fontNames": {
+      "0": "© 2017-2024 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.",
+      "1": "思源宋体",
+      "2": "Regular",
+      "5": "Version 2.003;hotconv 1.1.1;makeotfexe 2.6.0",
+      "6": "SourceHanSerifSC-Regular",
+      "13": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software.",
+      "14": "http://scripts.sil.org/OFL"
+    }
+  },
+  {
+    "file": "MiSans-license.pdf",
+    "bytes": 79535,
+    "sha256": "4a93a27cd2bd81b3b5ecfd0a853144a876fa26938a93a68443c67d74172fcb86",
+    "url": "https://hyperos.mi.com/font-download/MiSans%E5%AD%97%E4%BD%93%E7%9F%A5%E8%AF%86%E4%BA%A7%E6%9D%83%E8%AE%B8%E5%8F%AF%E5%8D%8F%E8%AE%AE.pdf"
+  },
+  {
+    "file": "Inter-LICENSE.txt",
+    "bytes": 4380,
+    "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+    "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip#LICENSE.txt"
+  },
+  {
+    "file": "SourceHanSerif-LICENSE.txt",
+    "bytes": 4463,
+    "sha256": "9ff5bb567e1b92c801fc1069e5fbf992ff8efccacb9db94e5959a5b3ba9bb903",
+    "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/2.003R/LICENSE.txt"
+  }
+]

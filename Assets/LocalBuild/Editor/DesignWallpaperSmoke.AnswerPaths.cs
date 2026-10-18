@@ -63,11 +63,11 @@ public static partial class DesignWallpaperSmoke
     static IEnumerator AnswerPathSteps(XingGuangController controller, ChapterOneRuntime runtime, XgBrainWallpaper brain)
     {
         NamingChecks.Validate();
-        DesignFirstLessonChecks.Run();
+        // Twelve-question prerequisites are exercised by the shared purchase fixture.
         AnswerTraceChecks.Run();
         var graphic = brain.GetComponentInChildren<XgWallpaperAnswerPath>();
         Check(graphic != null && !graphic.raycastTarget && graphic.GetComponent<CanvasRenderer>() != null,
-            "Answer path is mounted in the real non-interactive wallpaper");
+            "Answer path is mounted in the actual non-editable purchased brain window");
         controller.enabled = false;
         controller.Sim.SelectDesk("spam"); // This regression deliberately visits the SMS desk after the default lesson changed.
         controller.View.ShowTab("teach");
@@ -97,9 +97,9 @@ public static partial class DesignWallpaperSmoke
             Check(sim.TeachingGuess(card, out bool guess), "Real prepared card has an actual prediction");
             string board = JsonUtility.ToJson(sim.S.board);
             // Deliberately misjudge a known card: the readout must still appear without a success halo.
-            Click(guess != card.truth ? controller.View.Teach.YesButton : controller.View.Teach.NoButton);
+            Click(card.truth ? controller.View.Teach.NoButton : controller.View.Teach.YesButton);
             Check(trace != null && !trace.Outcome.correct && trace.CardId == card.id && trace.Prediction != null,
-                "Actual wrong UI evaluation publishes the original card's local prediction once");
+                "Actual wrong statement judgment publishes the original card's local prediction once");
             LogAnswerPathState(graphic, "After the single wrong UI evaluation; used=" + trace.Prediction.UsedConcepts.Count
                 + "; guessed=" + trace.Prediction.Guessed + "; corrected=" + trace.Outcome.corrected);
             Check(trace.Prediction.UsedConcepts.Count > 0,

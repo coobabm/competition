@@ -1,0 +1,47 @@
+{
+  "note": "图鉴「它脑子里的样子」（《第七轮设计》第五节）。每升一个能力阶段解锁一张，和练页「看它学」里那张是同一张图。图鉴入口：科技页标题栏「图鉴」按钮、{name} 页。打开后左边列表，右边大图 + 科普。解锁时弹一次提示「图鉴多了一张：……」。注意：游戏在 2016 年，第 6 张写成「这条时间线上是你们先想到的」，不提真实年份。",
+  "entries": [
+    {
+      "stage": 1, "key": "weights", "title": "它眼里的「3」", "titleEn": "A '3' through its eyes",
+      "caption": "28×28 的分量图", "captionEn": "A 28×28 map of weights",
+      "body": "手写数字的图片是 28×28 个小格子。最简单的网络给每个数字都配一张一样大的分量表：笔画常出现的格子是绿色，算加分；不该有笔画的格子是红色，算扣分。新图进来，逐格相乘再加起来，哪个数字得分最高就猜哪个。把分量表画出来，常常能隐约看出数字的轮廓——它没有「看懂」，只是记住了笔画通常落在哪儿。",
+      "bodyEn": "A handwritten digit is a grid of 28×28 squares. The simplest network keeps one weight map of the same size for each digit: green squares, where strokes usually are, add points; red squares, where they shouldn't be, take points away. A new picture is multiplied square by square and summed, and the highest-scoring digit wins. Draw the map and you can often make out the digit itself. It hasn't understood anything; it has only remembered where strokes tend to land.",
+      "term": "权重", "termEn": "weight", "year": "1958 感知机 · 1998 MNIST", "seenIn": "练 › 看它学 › 1"
+    },
+    {
+      "stage": 2, "key": "hidden", "title": "线索的组合", "titleEn": "Clues combined",
+      "caption": "多层网络和流过去的一次判断", "captionEn": "A layered network with one decision flowing through",
+      "body": "中间几层叫隐藏层。第一层只认很小的线索，比如「这里有一横」；下一层把几条线索拼起来，「上面一横、右边一竖」可能就是 7。答错了怎么办？把误差从答案那头一层层往回传，每根线按它出了多少力来改，这叫反向传播，1986 年由 Rumelhart、Hinton 和 Williams 推广开。金色的光点就是一次判断从左流到右。",
+      "bodyEn": "The layers in the middle are hidden layers. The first only notices tiny clues, like 'a stroke across here'; the next combines them, and 'a bar on top, a line down the right' might be a 7. When it's wrong, the error is passed back layer by layer and each connection is adjusted by how much it contributed. That is backpropagation, popularised in 1986 by Rumelhart, Hinton and Williams. The gold dots are one decision flowing left to right.",
+      "term": "隐藏层 · 反向传播", "termEn": "hidden layer · backpropagation", "year": "1986", "seenIn": "练 › 看它学 › 2"
+    },
+    {
+      "stage": 3, "key": "conv", "title": "到处找同一种笔画", "titleEn": "The same stroke, everywhere",
+      "caption": "卷积核和它扫出来的特征图", "captionEn": "Filters and the feature maps they produce",
+      "body": "卷积网络不让每个格子各管各的，而是拿一个 5×5 的小窗口在整张图上滑，到处找同一种图案。左边的小方块就是窗口里的分量，练好以后很多会变成「横线」「斜线」「边缘」探测器；右边是窗口扫过之后的结果，金框是窗口此刻的位置。好处是：猫在左上角还是右下角，用的是同一组窗口，不用重学。1998 年，LeCun 的 LeNet-5 就用它读银行支票上的数字。",
+      "bodyEn": "A convolutional network doesn't give every square its own rule. It slides a small 5×5 window across the whole picture, looking for the same pattern everywhere. The small squares on the left are the window's weights; once trained, many become detectors for horizontal lines, diagonals, edges. On the right is what the window finds, the gold box marks where it is now. A cat in the top-left or bottom-right uses the same windows, nothing to relearn. In 1998 LeCun's LeNet-5 used this to read the digits on bank cheques.",
+      "term": "卷积核", "termEn": "convolution filter", "year": "1998", "seenIn": "练 › 看它学 › 3"
+    },
+    {
+      "stage": 4, "key": "memory", "title": "读到后面还记得前面", "titleEn": "Remembering the start by the end",
+      "caption": "一个字一个字地读，柱子是还留着的记忆", "captionEn": "Reading one character at a time; the bars are what it still remembers",
+      "body": "循环网络一个字一个字地读，每读一个字，就把一小段「记忆」传给下一步。普通的循环网络记性差，句子一长，前面的字就淡了。1997 年 Hochreiter 和 Schmidhuber 给它加了几道门，叫 LSTM：输入门决定记不记，遗忘门决定丢不丢，输出门决定说不说。图里每一格的柱子，就是读到那个字时还留着的记忆。",
+      "bodyEn": "A recurrent network reads one character at a time and hands a little 'memory' to the next step. Plain recurrent networks forget: in a long sentence the start fades. In 1997 Hochreiter and Schmidhuber added gates, making the LSTM: an input gate decides whether to remember, a forget gate whether to drop, an output gate whether to speak. The bars in each box are what's still remembered at that character.",
+      "term": "循环网络 · 门控记忆（LSTM）", "termEn": "recurrent network · LSTM", "year": "1997", "seenIn": "练 › 看它学 › 4"
+    },
+    {
+      "stage": 5, "key": "attention", "title": "翻译时回头看原文", "titleEn": "Looking back at the source",
+      "caption": "译文的每个词在看原文的哪个字", "captionEn": "Which source word each translated word is looking at",
+      "body": "早先的翻译网络先把整句压成一串固定长度的数字，再从里面吐出译文，句子越长丢得越多。2014 年 Bahdanau 等人让它每写一个词都回头看一遍原文，给原文的每个字打分。图里横着是中文原文，竖着是英文译文，越亮表示写那个词时越在看那个字。亮的地方大致沿着对角线，说明它自己学会了按顺序对齐。",
+      "bodyEn": "Earlier translation networks squeezed a whole sentence into a fixed list of numbers, then produced the translation from it; the longer the sentence, the more was lost. In 2014 Bahdanau and colleagues let it look back at the source for every word it writes, scoring each source word. Across is the Chinese source, down is the English output; brighter means it was looking there. The bright cells run roughly along the diagonal: it learned to align in order by itself.",
+      "term": "注意力", "termEn": "attention", "year": "2014", "seenIn": "练 › 看它学 › 5"
+    },
+    {
+      "stage": 6, "key": "multihead", "title": "所有字一起读", "titleEn": "Reading every word at once",
+      "caption": "四个头各看各的，一层层叠上去", "captionEn": "Four heads, each looking its own way, stacked layer on layer",
+      "body": "在这条时间线上，这一步是你们先想到的：既然注意力这么好用，干脆把循环扔掉，只用注意力，所有字同时读。几个「头」各看各的关系，有的盯着前后相邻的字，有的盯着隔得很远的词，再一层层叠起来。图里四个方块是四个头各自的注意力，右边的金条是叠上去的层。它读一本书，不再需要从第一个字等到最后一个字。",
+      "bodyEn": "On this timeline, you got here first: if attention works so well, drop recurrence and use only attention, reading every word at once. Several 'heads' each track their own relations, some watch neighbouring words, some watch words far apart, and the layers stack up. The four squares are four heads' attention; the gold bars on the right are the stacked layers. Reading a book no longer means waiting from the first word to the last.",
+      "term": "多头注意力", "termEn": "multi-head attention", "year": "这条时间线：2016", "seenIn": "练 › 看它学 › 6"
+    }
+  ]
+}

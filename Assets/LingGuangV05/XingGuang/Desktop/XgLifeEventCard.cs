@@ -25,12 +25,15 @@ namespace LingGuangV05.Desktop.XingGuang
         const float RefreshEvery = .25f, RemindEvery = 120, PopupSeconds = 8, BusyCheckEvery = .5f;
 
         /// <summary>The house as the life events read it: bills, this month's training kWh, the desktop clock.</summary>
-        sealed class HouseView : IXgHousehold
+        sealed class HouseView : IXgHousehold, IXgRentLife
         {
             readonly ChapterOneRuntime runtime;
             public HouseView(ChapterOneRuntime runtime) { this.runtime = runtime; }
             ChapterOneSim Sim => runtime != null && !runtime.TestMode ? runtime.Sim : null;
             public bool BillsActive => Sim != null && Sim.EconomyActive;
+            public int OnTimeRentPeriods => Sim != null ? Sim.S.rentOnTimePeriods : 0;
+            public bool RentEverLate => Sim != null && Sim.S.rentEverLate;
+            public void RaiseRent(double perPeriod) { if (Sim != null && perPeriod > 0) Sim.S.rentExtraPerPeriod += perPeriod; }
             public double MonthKwh => Sim != null ? Sim.MonthKwh : 0;
             public double HighKwh => Sim != null ? Sim.Config.tierTwoKwh : 400;
             public double SecondsOfDay => Sim != null ? GameCalendar.Now(Sim.S).TimeOfDay.TotalSeconds : -1;
@@ -87,6 +90,11 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Rebind(XgSim sim)
         {
+            if (XgSim.LifeDataCount == 0)
+            {
+                var data = Resources.Load<TextAsset>("LingGuangV05/Life/life_events_100");
+                if (data != null) XgSim.LoadLifeData(data.text);
+            }
             if (bound != null) { bound.LifeEventOpened -= OnOpened; bound.LifeEventHold = null; if (house != null && ReferenceEquals(bound.Household, house)) bound.Household = null; }
             bound = sim;
             house = new HouseView(controller.runtime);
@@ -114,7 +122,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Popup(XgLifeEvent e)
         {
             if (e == null) return;
-            PrologueDirector.Desk?.StoryPopup(e.who, e.title + T("（打开灵光处理）", " (open 灵光 to answer)"), PopupSeconds, () => { if (controller != null) controller.Open(); });
+            PrologueDirector.Desk?.StoryPopup(e.who, e.title + T("（打开" + controller.Sim.AiDisplayName + "处理）", " (open " + controller.Sim.AiDisplayName + " to answer)"), PopupSeconds, () => { if (controller != null) controller.Open(); });
         }
 
         /// <summary>Something else has the player now: a story line or cutscene, a full-window moment, an exam or diagnosis.</summary>
@@ -166,7 +174,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 // The choice on top, what it does underneath.
                 b.label.rectTransform.anchorMin = new Vector2(0, .5f); b.label.rectTransform.offsetMin = new Vector2(8, 0); b.label.rectTransform.offsetMax = new Vector2(-8, -4);
                 b.label.enableAutoSizing = true; b.label.fontSizeMin = 11; b.label.fontSizeMax = 16;
-                var d = ui.Text(Rect("Detail", b.rt, Vector2.zero, new Vector2(1, .5f), new Vector2(8, 4), new Vector2(-8, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.Center);
+                var d = ui.Text(Rect("Detail", b.Visual, Vector2.zero, new Vector2(1, .5f), new Vector2(8, 4), new Vector2(-8, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.Center);
                 d.enableAutoSizing = true; d.fontSizeMin = 9; d.fontSizeMax = 12;
                 buttons[i] = b; details[i] = d;
             }

@@ -27,14 +27,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             list.Add(fourth??"今天月亮真明亮");Shuffle(list);options=list.ToArray();Draw();
         }
         void Draw(){
-            Clear(XgUi.T("飞花令 · 第 "+round+" / 5 局","Poem Chain · Round "+round+" / 5"),XgUi.T("你和灵光轮流接带题字的真诗。10 秒内作答，假诗、没有题字和说过的都算输。","You and LingGuang take turns with a real poem line holding the key character. 10 s to answer; a fake line, a missing character or a repeat loses."));
+            Clear(XgUi.T("飞花令 · 第 "+round+" / 5 局","Poem Chain · Round "+round+" / 5"),XgUi.T(("你和灵光轮流接带题字的真诗。10 秒内作答，假诗、没有题字和说过的都算输。").Replace("灵光", C.Sim.AiDisplayName),("You and LingGuang take turns with a real poem line holding the key character. 10 s to answer; a fake line, a missing character or a repeat loses.").Replace("LingGuang", C.Sim.AiDisplayName)));
             Shade(22,93,440,330);T("Theme",40,100,400,52,XgUi.T("本局题字：「"+theme+"」","Key character: "+theme+" ("+themeEn+")"),30,red);
             T("Chain",40,166,400,235,log.Count>0?string.Join("\n",log):XgUi.T("还没人开口。\n你先来：从右边挑一句带「"+theme+"」的真诗。","Nobody has spoken yet.\nYou start: pick a real line with \""+theme+"\" from the right."),20,log.Count>0?(Color?)null:XgPalette.Muted).alignment=TMPro.TextAlignmentOptions.TopLeft;T("Judge",485,95,390,70,verdict,19);
             timer=T("Time",690,8,185,36,"",19);if(phase==0)Clock(left);
             if(phase==0)for(int i=0;i<4;i++){int k=i;B("Poem"+i,490,173+i*62,380,53,(i+1)+"  "+options[i],()=>Pick(k),22);}
-            else if(phase==1)T("Thinking",495,218,365,100,XgUi.T("灵光正在接下一句……","LingGuang is thinking of the next line..."),24,purple);
+            else if(phase==1)T("Thinking",495,218,365,100,XgUi.T(("灵光正在接下一句……").Replace("灵光", C.Sim.AiDisplayName),("LingGuang is thinking of the next line...").Replace("LingGuang", C.Sim.AiDisplayName)),24,purple);
             else B("Next",595,350,265,58,XgUi.T(round>=5?"查看成绩":"下一局",round>=5?"See results":"Next round"),NextRound);
-            T("Score",35,438,840,32,XgUi.T($"你 {wins} : {losses} 灵光  · 已使用 {used.Count} 句",$"You {wins} : {losses} LingGuang  · {used.Count} lines used"),18);
+            T("Score",35,438,840,32,XgUi.T(($"你 {wins} : {losses} 灵光  · 已使用 {used.Count} 句").Replace("灵光", C.Sim.AiDisplayName),($"You {wins} : {losses} LingGuang  · {used.Count} lines used").Replace("LingGuang", C.Sim.AiDisplayName)),18);
         }
         void Pick(int index){if(phase!=0)return;phase=1;bool good=index>=0&&XgMiniSocialRules.PoemValid(options[index],theme,used);
             if(index>=0)C.Report(good);
@@ -42,11 +42,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             used.Add(options[index]);log.Add(XgUi.T("你：","You: ")+options[index]);turn++;if(turn>=8){RoundEnd(null,XgUi.T("双方各说四句，平局。","Four lines each: a draw."));return;}verdict=XgUi.T("评委：真诗且未重复，通过。","Judge: real poem, no repeat. Passed.");aiDelay=.7f+(1-(float)C.Skill)*2.2f;Draw();
         }
         void AiTurn(){
-            var pool=Available();if(pool.Count==0){log.Add(XgUi.T("灵光：……","LingGuang: ..."));RoundEnd(true,XgUi.T("灵光想不出新句了。","LingGuang cannot think of a new line."));return;}
+            var pool=Available();if(pool.Count==0){log.Add(XgUi.T(("灵光：……").Replace("灵光", C.Sim.AiDisplayName),("LingGuang: ...").Replace("LingGuang", C.Sim.AiDisplayName)));RoundEnd(true,XgUi.T(("灵光想不出新句了。").Replace("灵光", C.Sim.AiDisplayName),("LingGuang cannot think of a new line.").Replace("LingGuang", C.Sim.AiDisplayName)));return;}
             bool good=C.Random.NextDouble()<.18+.8*C.Skill;
-            string line=good?pool[C.Random.Next(pool.Count)]:theme+"山轻烟梦中游";log.Add(XgUi.T("灵光：","LingGuang: ")+line+(good?"":XgUi.T("（编造）"," (made up)")));
-            if(!good){RoundEnd(true,XgUi.T("评委：查无此句，灵光出局。","Judge: no such line. LingGuang is out."));return;}
-            used.Add(line);turn++;if(turn>=8){RoundEnd(null,XgUi.T("双方各说四句，平局。","Four lines each: a draw."));return;}verdict=XgUi.T("评委：灵光通过，轮到你了。","Judge: LingGuang passes. Your turn.");PlayerTurn();
+            string line=good?pool[C.Random.Next(pool.Count)]:theme+"山轻烟梦中游";log.Add(XgUi.T(("灵光：").Replace("灵光", C.Sim.AiDisplayName),("LingGuang: ").Replace("LingGuang", C.Sim.AiDisplayName))+line+(good?"":XgUi.T("（编造）"," (made up)")));
+            if(!good){RoundEnd(true,XgUi.T(("评委：查无此句，灵光出局。").Replace("灵光", C.Sim.AiDisplayName),("Judge: no such line. LingGuang is out.").Replace("LingGuang", C.Sim.AiDisplayName)));return;}
+            used.Add(line);turn++;if(turn>=8){RoundEnd(null,XgUi.T("双方各说四句，平局。","Four lines each: a draw."));return;}verdict=XgUi.T(("评委：灵光通过，轮到你了。").Replace("灵光", C.Sim.AiDisplayName),("Judge: LingGuang passes. Your turn.").Replace("LingGuang", C.Sim.AiDisplayName));PlayerTurn();
         }
         void RoundEnd(bool? won,string why){phase=2;if(won==true)wins++;else if(won==false)losses++;verdict=why;Draw();}
         public override void Tick(float dt){if(disposed||!C.IsActive)return;if(phase==1){aiDelay-=dt;if(aiDelay<=0)AiTurn();return;}if(phase!=0)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){Pick(i);break;}}
@@ -76,19 +76,19 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgMemeGame(XgMiniContext c):base(c){}
         string Opt(int i)=>XgUi.T(row[order[i]],rowEn[order[i]]);
         public override void Build(){round=combo=correct=0;hp=12;lives=3;Next();}
-        void Next(){if(hp<=0||lives<=0){done=true;End(hp<=0?XgUi.T("斗图获胜","Meme battle won"):XgUi.T("斗图失利","Meme battle lost"),XgUi.T($"命中 {correct} 次；对手体力 {hp}，你的体力 {lives}。\n灵光只负责助攻，出手的是你。",$"Hits: {correct}; opponent HP {hp}, your HP {lives}.\nLingGuang only cheers you on; the replies are yours."),Build);return;}
+        void Next(){if(hp<=0||lives<=0){done=true;End(hp<=0?XgUi.T("斗图获胜","Meme battle won"):XgUi.T("斗图失利","Meme battle lost"),XgUi.T(($"命中 {correct} 次；对手体力 {hp}，你的体力 {lives}。\n灵光只负责助攻，出手的是你。").Replace("灵光", C.Sim.AiDisplayName),($"Hits: {correct}; opponent HP {hp}, your HP {lives}.\nLingGuang only cheers you on; the replies are yours.").Replace("LingGuang", C.Sim.AiDisplayName)),Build);return;}
             round++;done=false;hinted=false;left=3;hintDelay=.7f+(1-(float)C.Skill)*1.9f;int xi=C.Random.Next(Exchanges.Length);row=Exchanges[xi];rowEn=ExchangesEn[xi];order=new[]{1,2,3,4};Shuffle(order);right=Array.IndexOf(order,1);aiPick=Guess(right,4);
-            Clear(XgUi.T("斗图 · 第 "+round+" 回合","Meme Battle · Round "+round),XgUi.T("3 秒内回一张。三连击伤害加倍；第 4 回合灵光入群，用紫色文字助攻。","Reply with one meme within 3 s. A three-hit streak deals double damage; from round 4 LingGuang joins the chat and assists in purple text."));
+            Clear(XgUi.T("斗图 · 第 "+round+" 回合","Meme Battle · Round "+round),XgUi.T(("3 秒内回一张。三连击伤害加倍；第 4 回合灵光入群，用紫色文字助攻。").Replace("灵光", C.Sim.AiDisplayName),("Reply with one meme within 3 s. A three-hit streak deals double damage; from round 4 LingGuang joins the chat and assists in purple text.").Replace("LingGuang", C.Sim.AiDisplayName)));
             T("Battle",24,88,680,35,XgUi.T($"表哥体力 {hp}/12    你的体力 {lives}/3    连击 {combo}",$"Cousin HP {hp}/12    Your HP {lives}/3    Streak {combo}"),22);
             timer=T("Timer",718,88,160,35,"",20);Clock(left);
             Shade(28,143,375,145);T("Incoming",47,154,337,120,XgUi.T("表哥发来\n「"+row[0]+"」","Cousin sends\n\""+rowEn[0]+"\""),30);
-            T("Companion",438,145,420,100,XgUi.T(round>=4?"灵光已入群，正在挑回复……":"灵光在群外观察你的回击。",round>=4?"LingGuang is in the chat, picking a reply...":"LingGuang watches your comebacks from outside the chat."),22,purple);
+            T("Companion",438,145,420,100,XgUi.T(round>=4?("灵光已入群，正在挑回复……").Replace("灵光", C.Sim.AiDisplayName):("灵光在群外观察你的回击。").Replace("灵光", C.Sim.AiDisplayName),round>=4?("LingGuang is in the chat, picking a reply...").Replace("LingGuang", C.Sim.AiDisplayName):("LingGuang watches your comebacks from outside the chat.").Replace("LingGuang", C.Sim.AiDisplayName)),22,purple);
             for(int i=0;i<4;i++){int k=i;buttons[i]=B("Meme"+i,22+i*218,306,204,95,(i+1)+"\n"+Opt(i),()=>Pick(k),22);}
         }
         void Pick(int choice){if(done)return;done=true;bool ok=choice==right;
             if(choice>=0)C.ReportTimed(ok,3-left);
             if(ok){correct++;combo++;hp=Math.Max(0,hp-1-(combo>=3?1:0)-(round>=4&&aiPick==right?1:0));}else{lives--;combo=0;}
-            T("Reveal",25,410,650,58,XgUi.T((ok?"命中！":"没有接住。")+row[5]+(round>=4?" 灵光选「"+Opt(aiPick)+"」。":""),(ok?"Hit! ":"Missed it. ")+rowEn[5]+(round>=4?" LingGuang picked \""+Opt(aiPick)+"\".":"")),17,ok?green:red);
+            T("Reveal",25,410,650,58,XgUi.T((ok?"命中！":"没有接住。")+row[5]+(round>=4?(" 灵光选「").Replace("灵光", C.Sim.AiDisplayName)+Opt(aiPick)+"」。":""),(ok?"Hit! ":"Missed it. ")+rowEn[5]+(round>=4?(" LingGuang picked \"").Replace("LingGuang", C.Sim.AiDisplayName)+Opt(aiPick)+"\".":"")),17,ok?green:red);
             B("Next",715,415,160,48,XgUi.T(hp<=0||lives<=0?"看成绩":"下一回合",hp<=0||lives<=0?"See results":"Next round"),Next,18);
         }
         public override void Tick(float dt){if(disposed||done||!C.IsActive)return;left-=dt;hintDelay-=dt;Clock(left);if(left<=0){Pick(-1);return;}

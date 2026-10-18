@@ -3,8 +3,8 @@ using NUnit.Framework;
 namespace LingGuangV05.XingGuang.Tests
 {
     /// <summary>
-    /// Training has no combo (2026-10-18): a round pressed by hand neither adds to the combo nor holds its timer, so a
-    /// combo built by labeling fades while the bar runs, as it would anywhere else.
+    /// Training never adds to the teaching streak. Its timer may expire during a round, but
+    /// only an incorrect answer resets the streak; audio timing is independent.
     /// </summary>
     public sealed class XgTrainComboTests
     {
@@ -51,14 +51,15 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AHandRoundDoesNotHoldALabelingCombo()
+        public void AHandRoundDoesNotEraseALabelingCombo()
         {
             var sim = Ready(); var host = new Host();
             sim.S.combo = 7; sim.S.comboTimer = 1;
             Assert.That(sim.BeginEpoch(XgTrack.Vision, host, true), Is.True);
             Assert.That(sim.HandRoundRunning, Is.True);
             sim.Tick(1.2, host);
-            Assert.That(sim.S.combo, Is.Zero, "the combo fades while the round runs");
+            Assert.That(sim.S.combo, Is.EqualTo(7), "training and an elapsed sound window never erase correct answers");
+            Assert.That(sim.S.comboTimer, Is.Zero, "the presentation timer can still expire");
         }
     }
 }

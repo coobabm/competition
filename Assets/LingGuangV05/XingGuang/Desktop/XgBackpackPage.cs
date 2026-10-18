@@ -103,7 +103,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim == null || content == null) return;
             // Arrivals while this page is open count as seen at once, but keep their "new" mark for this visit.
             if (Sim.RelicsFresh) { foreach (var id in Sim.S.relicFresh) fresh.Add(id); Sim.MarkRelicsViewed(); }
-            string sig = BuildSignature();
+            string sig = BuildSignature() + "|" + Sim.AiDisplayName;
             if (sig != signature) { signature = sig; Rebuild(); }
             int total = XgRelics.All.Length, have = Sim.S.relicOwned.Count;
             header.text = T("背包 · 稀有道具", "BACKPACK · rare items") + "  <color=#3A5566>" + T("拥有 ", "owned ") + have + "/" + total + T(" · 装备 ", " · equipped ") + Sim.RelicsEquippedCount + "/" + XgRelics.Slots + "</color>";
@@ -142,7 +142,7 @@ namespace LingGuangV05.Desktop.XingGuang
             XgRelicUi.PaintTile(s.glyphBox, s.glyph, r);
             s.name.text = XgRelics.Name(r, Sim.English);
             s.rarity.text = Hex(edge) + XgRelics.RarityName(r.rarity, Sim.English) + "</color>";
-            s.effect.text = XgRelics.Effect(r, Sim.English);
+            s.effect.text = XgRelics.Effect(r, Sim.English).Replace("灵光", Sim.AiDisplayName);
         }
 
         // ───────────── the scrolling sections ─────────────
@@ -160,7 +160,7 @@ namespace LingGuangV05.Desktop.XingGuang
             mine.Sort((a, b) => a.rarity != b.rarity ? b.rarity.CompareTo(a.rarity) : Array.IndexOf(XgRelics.All, a).CompareTo(Array.IndexOf(XgRelics.All, b)));
             if (mine.Count == 0)
             {
-                var none = ui.Text(Strip("None", content, y, 30, 4, 4), T("还没有。灵光学会新东西时，三选一里挑一件；小游戏、蜘蛛和新纪录也偶尔会掉。", "None yet. Pick one when 灵光 learns something new; mini-games, the spider and new records drop one now and then."), 14, XgDark.Dim, TextAlignmentOptions.MidlineLeft);
+                var none = ui.Text(Strip("None", content, y, 30, 4, 4), T(("还没有。灵光学会新东西时，三选一里挑一件；小游戏、蜘蛛和新纪录也偶尔会掉。" .Replace("灵光", Sim.AiDisplayName)), ("None yet. Pick one when 灵光 learns something new; mini-games, the spider and new records drop one now and then." .Replace("灵光", Sim.AiDisplayName))), 14, XgDark.Dim, TextAlignmentOptions.MidlineLeft);
                 none.textWrappingMode = TextWrappingModes.NoWrap;
                 y += 36;
             }
@@ -234,13 +234,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 t.frame.Style(new Color32(9, 15, 22, 255), XgDark.Hairline);
                 t.name.text = T("？？？", "???"); t.name.color = XgDark.Dim;
                 t.effect.text = T("还没见过", "Not found yet"); t.effect.color = XgDark.Dim;
-                UiTip.Add(t.rt, () => T("<b>？？？</b>\n还没见过。灵光学会新东西时三选一，或者小游戏、蜘蛛、新纪录里掉出来。", "<b>???</b>\nNot found yet. It shows up when 灵光 learns something new, or drops from mini-games, the spider and new records."));
+                UiTip.Add(t.rt, () => T(("<b>？？？</b>\n还没见过。灵光学会新东西时三选一，或者小游戏、蜘蛛、新纪录里掉出来。" .Replace("灵光", Sim.AiDisplayName)), ("<b>???</b>\nNot found yet. It shows up when 灵光 learns something new, or drops from mini-games, the spider and new records." .Replace("灵光", Sim.AiDisplayName))));
                 return t;
             }
             XgRelicUi.PaintTile(t.glyphBox, t.glyph, r);
             var edge = XgRelicUi.RarityColor(r.rarity);
             t.name.text = XgRelics.Name(r, en);
-            t.effect.text = XgRelics.Effect(r, en);
+            t.effect.text = XgRelics.Effect(r, en).Replace("灵光", Sim.AiDisplayName);
             t.effect.color = XgDark.Muted;
             UiTip.Add(t.rt, () => XgRelicUi.Tip(Sim, r) + (equipable ? "\n" + Hex(XgDark.Muted) + (Sim.RelicEquipped(r.id) ? T("点一下卸下", "Click to unequip") : T("点一下装备", "Click to equip")) + "</color>" : ""));
             if (equipable)
@@ -342,7 +342,7 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < XgRelics.Slots; i++)
             {
                 var r = Sim.RelicInSlot(i);
-                chooserButtons[i].Set((i + 1) + "  " + (r == null ? "—" : XgRelics.Name(r, Sim.English) + "   " + Hex(XgDark.Muted) + XgRelics.Effect(r, Sim.English) + "</color>"), true, null, XgDark.Ink);
+                chooserButtons[i].Set((i + 1) + "  " + (r == null ? "—" : XgRelics.Name(r, Sim.English) + "   " + Hex(XgDark.Muted) + XgRelics.Effect(r, Sim.English).Replace("灵光", Sim.AiDisplayName) + "</color>"), true, null, XgDark.Ink);
             }
         }
 

@@ -29,6 +29,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Player/automation entry point. Starting never grants samples, income, or a completed epoch.</summary>
         public bool BeginEpoch(XgTrack track, IXgHost host, bool hand = true)
         {
+            if (StagePresentationHeld) return false;
+            if (TrainingLessonModalOpen) return false;
             var run = Run(track);
             if (run.epochActive || !TrainingUnlocked(track)) return false;
             EnsureData(run);
@@ -46,6 +48,8 @@ namespace LingGuangV05.XingGuang
 
         void TickEpochs(double dt, IXgHost host)
         {
+            if (StagePresentationHeld) return;
+            if (TrainingLessonModalOpen) return;
             // Snapshot this slice before either epoch can finish and release its reservation.
             double visionProgress = S.vision.epochActive && Blocker(S.vision, host) == null ? TrainingProgressFactor(S.vision) : 0;
             double sequenceProgress = S.sequence.epochActive && Blocker(S.sequence, host) == null ? TrainingProgressFactor(S.sequence) : 0;
@@ -53,7 +57,7 @@ namespace LingGuangV05.XingGuang
             double sequenceLearning = TrainingFactor(wiringView, XgTrack.Sequence, false);
             foreach (var run in Runs)
             {
-                double progressFactor = run.track == (int)XgTrack.Vision ? visionProgress : sequenceProgress;
+                double progressFactor = (run.track == (int)XgTrack.Vision ? visionProgress : sequenceProgress) * LifeTrainingBoost;
                 if (!run.epochActive) continue;
                 if (progressFactor <= 0 || Blocker(run, host) != null) { run.paceFactor = 0; continue; }
                 AdvancePace(run, dt * progressFactor, progressFactor);

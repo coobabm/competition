@@ -24,6 +24,7 @@ public static partial class DesignWallpaperSmoke
             try { File.WriteAllBytes(Path.Combine(Output, name + ".png"), image.EncodeToPNG()); }
             finally { UnityEngine.Object.Destroy(image); }
         }));
+        stack.Push(UiV4PressChecks.Frames());
         Exception failure = null;
         while (stack.Count > 0)
         {
@@ -40,3 +41,4 @@ public static partial class DesignWallpaperSmoke
         Finish(failure == null ? 0 : 1);
     }
 }
+

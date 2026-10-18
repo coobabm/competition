@@ -58,8 +58,8 @@ namespace LingGuangV05.Desktop
             if (Time.unscaledTime >= nextDownloads)
             {
                 nextDownloads = Time.unscaledTime + 1f;
-                foreach (var download in FindObjectsByType<Michsky.DreamOS.WebBrowserDownloadItem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                    if (download.fileName == Story.LingGuangInstallFlow.FileName) download.SetDisplayName(exe);
+                foreach (var download in Michsky.DreamOS.WebBrowserDownloadItem.KnownItems)
+                    if (download != null && download.fileName == Story.LingGuangInstallFlow.FileName) download.SetDisplayName(exe);
             }
             if (menu == null) menu = FindAnyObjectByType<AeroStartMenu>(FindObjectsInactive.Include);
             EnsureMenuEntry(exe);

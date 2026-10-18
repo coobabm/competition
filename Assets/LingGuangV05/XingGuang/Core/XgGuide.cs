@@ -257,11 +257,11 @@ namespace LingGuangV05.XingGuang
                     "他组里的卡烧了，等你一句话。", "His group's card burned out; he is waiting for your answer.",
                     YY, "", "name:Session_" + XgSim.CardLoanConversation, "");
             if (sim.PhoneSortHolds && sim.S.psStep >= 3)
-                return Step(ConfirmStageId, XgGuideKind.Main, "去 YY 群里回阿杰", "Answer Ajie in the YY group",
-                    "他拿到 U 盘了，在问是什么分的。", "He has his USB stick and is asking what sorted it.",
-                    YY, "", "name:Session_" + XgSim.PhoneConversation, "");
+                return Step(ConfirmStageId, XgGuideKind.Main, "复盘我的手机备份", "Review my phone backup",
+                    "看看刚才的分类，记下它不认识的情况。", "Review the folders and note what it failed to recognize.",
+                    "", "", "", "");
             if (sim.PhoneSortHolds)
-                return Step(ConfirmStageId, XgGuideKind.Main, "帮阿杰把手机里的图分好：八个文件夹", "Sort Ajie's phone pictures into eight folders",
+                return Step(ConfirmStageId, XgGuideKind.Main, "整理我的旧手机备份：八个文件夹", "Sort my old phone backup into eight folders",
                     "八个文件夹就是八选一。它现在能挑，正好让它试试。", "Eight folders is a choice of eight. It can pick now; let it try.",
                     "", "", "", "");
             if (sim.YnNightHolds)
@@ -303,18 +303,18 @@ namespace LingGuangV05.XingGuang
 
         static void Blockers(XgSim sim, XgGuideHouse house, List<XgGuideStep> list)
         {
-            if (sim.SystemUnlocked("power") && house.unpaidPower)
+            if (house.unpaidPower)
             {
                 string due = house.billDue > 0 ? " ¥" + house.billDue.ToString("0.##", CultureInfo.InvariantCulture) : "";
                 list.Add(Step("power.bill", XgGuideKind.Blocker, "交电费" + due, "Pay the power bill" + due,
-                    "欠费停电了，显卡全停。钱不够就去标注台答题抵扣。", "The power is cut for an unpaid bill; every card is idle. Short of money? Labelling pays it off.",
+                    "欠费停电了，显卡全停。钱不够先去 AI 应用的「教」答题，再处理电费。", "The power is cut for an unpaid bill; every card is idle. Short of money? Answer questions in Teach in the AI app, then settle the bill.",
                     Home, "power", "name:PayBill", ""));
             }
-            if (sim.SystemUnlocked("power") && house.breakerTripped)
+            if (house.breakerTripped)
                 list.Add(Step("power.breaker", XgGuideKind.Blocker, house.overloaded ? "电闸跳了：少插一张卡，再复位" : "复位电闸", house.overloaded ? "Breaker tripped: pull a card, then reset it" : "Reset the breaker",
                     house.overloaded ? "插的卡太多，电线扛不住。" : "跳闸了，什么都不转。", house.overloaded ? "Too many cards for the wiring." : "The breaker is off; nothing runs.",
                     Home, "power", "name:ResetBreaker", ""));
-            else if (sim.SystemUnlocked("power") && house.overloaded && !house.unpaidPower && !house.noGpu)
+            else if (house.overloaded && !house.unpaidPower && !house.noGpu)
                 list.Add(Step("power.overload", XgGuideKind.Blocker, "超负载了：少插一张卡", "Overloaded: pull a card",
                     "家里的电带不动这么多卡。", "The house cannot power this many cards.", Home, "power", "", ""));
             if (house.noGpu)
@@ -367,6 +367,18 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         static void Opening(XgSim sim, List<XgGuideStep> list)
         {
+            if (sim.S.teachingFlow && !sim.TeachingTrainOpen)
+            {
+                bool ready = sim.TeachingTreeOpen;
+                var opening = Step(ready ? "opening.curve" : "opening.twelve", XgGuideKind.Setup,
+                    ready ? "去「科技」买训练曲线" : "先做完 12 道题",
+                    ready ? "Buy Training curve in Tech" : "Answer twelve questions",
+                    ready ? "买完就能看到它怎么学。" : "这些题会成为它的第一本题本。",
+                    ready ? "See how it learns after buying the curve." : "These questions become its first notebook.",
+                    Lab, ready ? "tree" : "teach", ready ? "node:train.curve" : "name:Paper", null);
+                opening.current = sim.TeachingAnswers; opening.goal = 12;
+                list.Add(opening); return;
+            }
             var desk = XgCatalog.Desk(XgMemes.SenseDesk);
             double have = sim.Samples(XgMemes.SenseDesk);
             if (!sim.TrainingUnlocked(XgTrack.Sequence))

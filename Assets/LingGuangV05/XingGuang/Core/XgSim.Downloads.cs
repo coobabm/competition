@@ -13,6 +13,10 @@ namespace LingGuangV05.XingGuang
     {
         /// <summary>Download key: the dataset id for public packs and story data, the offer id for junk packs.</summary>
         public string key = "";
+        public string fileId = "", nodeId = "";
+        public bool installed;
+        // 0 preserves the timing of an existing in-flight save; 1 uses visible game pacing.
+        public int paceVersion;
         public string dataset = "";
         /// <summary>The offer it came from ("imagenet.pack", "mnist.junk", "imagenet.story").</summary>
         public string offer = "";
@@ -29,7 +33,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>A queue item as the pages show it (fresh copy from <see cref="XgSim.DownloadQueue"/>).</summary>
     public sealed class XgDownloadInfo
     {
-        public string key = "", dataset = "", offer = "", name = "", nameEn = "";
+        public string key = "", dataset = "", offer = "", name = "", nameEn = "", fileId = "", nodeId = "";
         public int batch, batches;
         public double sizeMB, doneMB, samples;
         /// <summary>0–1 done.</summary>
@@ -248,8 +252,19 @@ namespace LingGuangV05.XingGuang
         public double LineMBps => BroadbandMBps[BroadbandTier];
 
         /// <summary>Real megabytes this item comes down at per game second.</summary>
+        /// <summary>Simulated download duration; file sizes are content metadata, not a network-speed claim.</summary>
+        public static double PacedDownloadSeconds(double sizeMB, double lineMBps, bool junk, bool campus)
+        {
+            double baseline = sizeMB <= 10 ? 3 : sizeMB <= 100 ? 5 : sizeMB < 1000 ? 8 : sizeMB <= 10000 ? 15 : 30;
+            double speed = campus ? 1 : Math.Sqrt(Math.Max(1, lineMBps / BroadbandMBps[0]));
+            double floor = sizeMB >= 1000 ? 15 : 2;
+            return Math.Max(floor, Math.Min(30, baseline * (junk ? 1.5 : 1) / speed));
+        }
+
         double ItemRate(XgDownload x)
         {
+            if (x.paceVersion >= 1)
+                return Math.Max(1e-9, x.sizeMB / PacedDownloadSeconds(x.sizeMB, LineMBps, x.batches == 0, x.campus));
             if (x.campus)
             {
                 var o = DataOfferDef(x.offer);
@@ -315,7 +330,7 @@ namespace LingGuangV05.XingGuang
                     bool junk = o != null && o.source == XgDataSource.Junk;
                     list.Add(new XgDownloadInfo
                     {
-                        key = x.key, dataset = x.dataset, offer = x.offer, batch = x.batch, batches = PackBatches(d),
+                        key = x.key, fileId = x.fileId, nodeId = x.nodeId, dataset = x.dataset, offer = x.offer, batch = x.batch, batches = PackBatches(d),
                         name = junk ? o.name : d != null ? d.name : x.key, nameEn = junk ? o.nameEn : d != null ? d.nameEn : x.key,
                         sizeMB = x.sizeMB, doneMB = x.doneMB, samples = x.samples, progress = x.sizeMB > 0 ? Clamp01(x.doneMB / x.sizeMB) : 1,
                         secondsLeft = SecondsLeft(x), eta = DownloadEta(x), campus = x.campus, active = x.campus || x == head, paused = !x.campus && paused,
@@ -330,6 +345,9 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         XgDownload Enqueue(XgDownload x, bool quiet)
         {
+            if (string.IsNullOrEmpty(x.fileId)) x.fileId = Guid.NewGuid().ToString("N");
+            x.installed = false;
+            x.paceVersion = 1;
             S.downloadQueue.Add(x);
             if (!x.campus && LineHead() == x && SecondsLeft(x) <= InstantDownloadSeconds && (x.ownDrive || DiskFreeMB >= x.sizeMB))
             {
@@ -343,19 +361,14 @@ namespace LingGuangV05.XingGuang
 
         void Arrive(XgDownload x, bool quiet = false)
         {
-            S.downloadQueue.Remove(x);
+            if (!S.downloadQueue.Remove(x)) return;
             var d = XgCatalog.Dataset(x.dataset);
             if (x.batches > 0) SetCount(S.batchesArrived, x.dataset, Math.Min(PackBatches(d), Count(S.batchesArrived, x.dataset) + x.batches));
-            if (!quiet)
-            {
-                if (x.campus) Say(T("老周那边传完了：", "老周's copy is in: ") + DownloadName(x.offer) + T("（" + SamplesText(x.samples) + " 条）", " (" + SamplesText(x.samples) + " samples)"));
-                else if (x.batches > 0 && d != null)
-                    Say(T("下载完成：《" + d.name + "》第 " + x.batch + "/" + PackBatches(d) + " 批，+" + SamplesText(x.samples) + " 条。",
-                          "Downloaded: batch " + x.batch + "/" + PackBatches(d) + " of " + d.nameEn + ", +" + SamplesText(x.samples) + " samples."));
-                else Say(T("下载完成：") + DownloadName(x.key));
-            }
-            foreach (var run in Runs) if (run.dataset == x.dataset) Evaluate(run);
-            CheckDesks();
+            x.doneMB = x.sizeMB;
+            x.installed = false;
+            if (!S.dataFiles.Exists(file => file.fileId == x.fileId)) S.dataFiles.Add(x);
+            if (!quiet) Say(T("下载完成，拖进练页安装。", "Download complete. Drag it into Train to install."));
+            // Download completion only stores bytes. Installation evaluates data and opens desks.
             DownloadFinished?.Invoke(x.key);
         }
 
@@ -573,8 +586,7 @@ namespace LingGuangV05.XingGuang
                 S.crowdTier = Math.Max(S.crowdTier, S.fundedAbility >= 2 ? S.fundedAbility : 0);
                 S.downloadsVersion = DownloadsSchema;
             }
-            S.downloadQueue.RemoveAll(x => x == null || XgCatalog.Dataset(x.dataset) == null || DataOfferDef(x.offer) == null
-                || !Finite(x.sizeMB) || !Finite(x.doneMB) || !Finite(x.samples) || x.sizeMB < 0 || x.samples < 0);
+            S.downloadQueue.RemoveAll(x => !ValidDataFile(x));
             foreach (var x in S.downloadQueue) { x.doneMB = Math.Max(0, Math.Min(x.sizeMB, x.doneMB)); x.key = x.key ?? ""; }
             foreach (var list in new[] { S.batchesBought, S.batchesArrived })
                 list.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !Finite(n.count) || n.count < 0);
@@ -582,6 +594,7 @@ namespace LingGuangV05.XingGuang
             S.drives = DrivesOwned;
             if (!Finite(S.diskBonusMB) || S.diskBonusMB < 0) S.diskBonusMB = 0;
             S.crowdTier = Math.Max(0, Math.Min(AbilityCount, S.crowdTier));
+            RepairDataFiles();
         }
     }
 }

@@ -65,8 +65,8 @@ namespace LingGuangV05.Desktop.Story
 
         void Update()
         {
-            if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
-            if (lab == null) lab = FindAnyObjectByType<XingGuangController>();
+            if (lab == null) lab = XingGuangController.Instance;
+            if (runtime == null && lab != null) runtime = lab.runtime;
             if (lab == null || lab.Sim == null) return;
             if (!ReferenceEquals(bound, lab.Sim)) Rebind(lab.Sim);
             var desk = PrologueDirector.Desk;
@@ -100,7 +100,7 @@ namespace LingGuangV05.Desktop.Story
             // The origin video plays in chapter six once everything has opened up (全部放开) and before the final test, after the
             // cutscene and the relic pick are out of the way and after its lead-in (story beat s6_origin_lead: it reads back its
             // training log and says why it made the film).
-            if (!watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && ChapterSixLeadDone() && bound.TakeChapterSixOrigin())
+            if (bound.OriginFilmDue && !watching && playAt < 0 && !EndingOnScreen() && !XgEmergenceCutscene.Busy && !bound.RelicPickPending && ChapterSixLeadDone() && bound.TakeChapterSixOrigin())
             { promiseKept = true; playAt = Time.unscaledTime + ReplyToVideo; }
             if (bound.S.originVideoSeen && fileIcon == null) MakeFileIcon(desk);
             // It promised to explain but the video never ran (the reply came during a save switch or before a reload): run it now, once.
@@ -199,7 +199,7 @@ namespace LingGuangV05.Desktop.Story
                 if (item != null && item.preset != null) item.preset.gameObject.SetActive(false);
             url = Path.Combine(Application.streamingAssetsPath, VideoPath);
             var cover = LingGuangV05.Desktop.Media.DesktopMedia.Picture("origin_video");
-            native.CreateVideo(cover, Lang.T("我从哪儿来"), Lang.T("灵光 · 2:41"), url);
+            native.CreateVideo(cover, Lang.T("我从哪儿来"), (bound != null ? bound.AiDisplayName : AppNames.Ai(GameText.IsEnglish)) + " · 2:41", url);
             native.videoPlayer.loopPointReached += OnNativeEnded;
             // The window's own video gets the English line and a 全屏 button.
             var screen = FindVideoImage();

@@ -397,10 +397,15 @@ namespace LingGuangV05.Tests
             s.done.Add("life:lipstick");
             GirlfriendRules.Remember(s, "星辰", "她说：她想要 YSL 星辰口红");
             var o = GirlfriendRules.Order(s, At(10, 5, 2, 0, 10), GirlfriendRules.GiftLipstick);
+            Assert.AreEqual(GirlfriendRules.GiftToMe, o.state);
+            Assert.AreEqual(0, GirlfriendRules.Deliver(s, At(10, 6, 2, 0, 20)).Count, "ordering alone never sends to her");
+            GirlfriendRules.ReceiveHeld(s, At(10, 6, 2, 0, 20));
+            Assert.AreEqual(GirlfriendRules.GiftHeld, o.state);
+            Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(10, 6, 2, 0, 20), "送你口红", false));
             int days = o.arriveDay - o.orderedDay;
             Assert.IsTrue(days == 2 || days == 3);
             Assert.AreEqual(0, GirlfriendRules.Deliver(s, At(10, 6, 2, 0, 20)).Count);
-            var arrived = GirlfriendRules.Deliver(s, GfNow.At(new DateTime(2016, 10, 5).AddDays(days).AddHours(2), 40));
+            var arrived = GirlfriendRules.Deliver(s, GfNow.At(new DateTime(2016, 10, 6).AddDays(days).AddHours(2), 40));
             Assert.AreEqual(1, arrived.Count);
             Assert.IsTrue(arrived[0].order.matched);
             Assert.AreEqual(67, s.affection, "a gift she asked for: +5");
@@ -415,11 +420,15 @@ namespace LingGuangV05.Tests
             for (int i = 0; i < 3; i++)
             {
                 GirlfriendRules.Order(s, At(6, 10, 2, 0, i), GirlfriendRules.GiftPlush);
+                GirlfriendRules.ReceiveHeld(s, At(6, 11, 2, 0, 20 + i));
+                Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(6, 11, 2, 0, 20 + i), "送你公仔", false));
                 foreach (var a in GirlfriendRules.Deliver(s, At(6, 14, 2, 0, 100 + i))) results.Add(a.order.effect);
             }
             CollectionAssert.AreEqual(new[] { 2, 1, 0 }, results);
             var cold = Fresh(10);
             GirlfriendRules.Order(cold, At(9, 20, 2, 0, 0), GirlfriendRules.GiftIphone);
+            GirlfriendRules.ReceiveHeld(cold, At(9, 21, 2, 0, 20));
+            Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(cold, At(9, 21, 2, 0, 20), "送你手机", false));
             var phone = GirlfriendRules.Deliver(cold, At(9, 25, 2, 0, 100));
             Assert.AreEqual(2, phone[0].order.effect, "money is not a cure: cold tier caps a gift at +2");
             Assert.AreEqual("太贵了", phone[0].lines[0]);
@@ -430,10 +439,14 @@ namespace LingGuangV05.Tests
         {
             var s = Fresh(62);
             GirlfriendRules.Order(s, At(9, 20, 2, 0, 0), GirlfriendRules.GiftIphone);
+            GirlfriendRules.ReceiveHeld(s, At(9, 21, 2, 0, 20));
+            Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(9, 21, 2, 0, 20), "送你手机", false));
             var first = GirlfriendRules.Deliver(s, At(9, 25, 2, 0, 100));
             Assert.AreEqual(8, first[0].order.effect);
             Assert.IsTrue(first[0].events.Exists(e => e.key == "money"));
             GirlfriendRules.Order(s, At(9, 26, 2, 0, 200), GirlfriendRules.GiftIphone);
+            GirlfriendRules.ReceiveHeld(s, At(9, 27, 2, 0, 220));
+            Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(9, 27, 2, 0, 220), "送你手机", false));
             Assert.AreEqual(0, GirlfriendRules.Deliver(s, At(9, 30, 2, 0, 300))[0].order.effect);
         }
 
@@ -468,6 +481,8 @@ namespace LingGuangV05.Tests
         {
             var s = Fresh(62, 11, 26);
             GirlfriendRules.Order(s, At(11, 26, 2, 0, 0), GirlfriendRules.GiftTickets);
+            GirlfriendRules.ReceiveHeld(s, At(11, 27, 2, 0, 10));
+            Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(11, 27, 2, 0, 10), "送你电影票", false));
             GirlfriendRules.Deliver(s, At(11, 30, 2, 0, 50));
             Assert.IsTrue(s.promises.Exists(p => p.key == "movie" && p.state == 0));
             s.today = GameCalendar.DayIndex(GirlfriendRules.MovieDay);
@@ -918,6 +933,38 @@ namespace LingGuangV05.Tests
             foreach (var h in GirlfriendRules.Holidays) { Assert.AreEqual(0, h.hint.Length % 2, h.key); Assert.AreEqual(0, h.thanks.Length % 2, h.key); }
             foreach (var g in GirlfriendRules.Gifts) { Assert.IsNotEmpty(g.en); Assert.IsNotEmpty(g.pitchEn); }
             Assert.AreEqual(GirlfriendRules.MoneyAnswersZh.Length, GirlfriendRules.MoneyAnswersEn.Length);
+        }
+        [Test] public void GiftIntentRejectsNegationAiAndUnavailableInventory()
+        {
+            var now = At(10, 18, 18, 0, 100);
+            foreach (string line in new[] { "不要送你手机", "还没打算送你手机", "送你手机？", "如果送你手机", "明天送你手机", "送你手机，算了", "I am not sending you an iPhone", "I am sending you a phone tomorrow" })
+            {
+                var s = Fresh(); s.arcOpen = "hello";
+                s.orders.Add(new GfGiftOrder { gift = GirlfriendRules.GiftIphone, state = GirlfriendRules.GiftHeld });
+                Assert.IsNull(GirlfriendRules.GiveFromPlayerLine(s, now, line, false), line);
+                Assert.AreEqual(GirlfriendRules.GiftHeld, s.orders[0].state); Assert.AreEqual("hello", s.arcOpen);
+            }
+            foreach (int state in new[] { GirlfriendRules.GiftToMe, GirlfriendRules.GiftToHer, GirlfriendRules.GiftSigned, GirlfriendRules.GiftRefused, GirlfriendRules.GiftHeld })
+            {
+                var s = Fresh(); s.orders.Add(new GfGiftOrder { gift = GirlfriendRules.GiftIphone, state = state });
+                Assert.IsNull(GirlfriendRules.GiveFromPlayerLine(s, now, "送你手机", true), "AI never sends");
+                if (state != GirlfriendRules.GiftHeld) Assert.IsNull(GirlfriendRules.GiveFromPlayerLine(s, now, "送你手机", false));
+                Assert.AreEqual(state, s.orders[0].state);
+            }
+        }
+
+        [Test] public void EveryGiftPanelNameSendsExactlyOnceInBothLanguages()
+        {
+            foreach (var gift in GirlfriendRules.Gifts)
+            foreach (string line in new[] { "送你的：" + gift.zh, "A gift for you: " + gift.en })
+            {
+                var s = Fresh(); s.arcOpen = "hello";
+                s.orders.Add(new GfGiftOrder { gift = gift.id, state = GirlfriendRules.GiftHeld });
+                Assert.IsNotNull(GirlfriendRules.GiveFromPlayerLine(s, At(10, 18, 18, 0, 100), line, false), line);
+                Assert.AreEqual(GirlfriendRules.GiftToHer, s.orders[0].state);
+                Assert.AreEqual("hello", s.arcOpen, "core delivery leaves the open arc untouched; YY routing is checked separately");
+                Assert.IsNull(GirlfriendRules.GiveFromPlayerLine(s, At(10, 18, 18, 0, 100), line, false));
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ public static partial class DesignWallpaperSmoke
     {
         var card = sim.Card("spam");
         Check(sim.TeachingGuess(card, out bool guess), "Actual card supplies a teaching guess");
-        Check(sim.TryEvaluateTeachingGuess("spam", card.id, guess, guess == card.truth, host, out var answer)
+        Check(sim.TryAnswerStatement("spam", card.id, card.truth, host, out var answer)
             && answer.correct, "Actual lesson learns successfully");
     }
 
@@ -81,7 +81,7 @@ public static partial class DesignWallpaperSmoke
         Time.timeScale = 1;
         Check(oldSim.TeachingGuess(oldSim.Card("spam"), out bool currentGuess), "Next card remains teachable");
         var nextCard = oldSim.Card("spam");
-        Check(oldSim.TryEvaluateTeachingGuess("spam", nextCard.id, currentGuess, currentGuess != nextCard.truth,
+        Check(oldSim.TryAnswerStatement("spam", nextCard.id, !nextCard.truth,
             controller.Host, out var wrong) && !wrong.correct && LessonPulse(graphic) == 0, "Wrong player evaluation does not flash success");
         TeachCard(oldSim, controller.Host);
         graphic.enabled = false;
@@ -96,8 +96,11 @@ public static partial class DesignWallpaperSmoke
         Check(LessonPulse(graphic) == 0 && !ReferenceEquals(oldSim, controller.Sim), "Replacing the in-memory save synchronously clears old lesson");
         TeachCard(oldSim, controller.Host);
         Check(LessonPulse(graphic) == 0, "Detached old simulation cannot light a new save");
-        runtime.CompletePrologue(new PrologueProfile { name = "小星", self = "我", callMe = "你", personality = "好奇" });
+        var restored=new ChapterOneSim();restored.S.prologue=2;restored.S.appInstallState=2;restored.S.money=100000;
+        var restoredLab=new XgSim();restoredLab.BeginOpening();restoredLab.S.unlocked.Add("train.curve");restoredLab.S.unlocked.Add("brain.window");restored.S.labState=JsonUtility.ToJson(restoredLab.S);
+        runtime.SetSimulationForTests(restored);
         yield return new WaitForSecondsRealtime(4);
+        Check(purchasedBrain.Visible,"Owned replacement save reopens its own brain window");
         presentation.SetQuiet(true);
         yield return new WaitForSecondsRealtime(1);
         float quietLight = presentation.LightLevel;

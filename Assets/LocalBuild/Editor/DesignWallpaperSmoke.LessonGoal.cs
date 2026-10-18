@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using HongmengOS.Aero2010;
 using LingGuangV05.Core;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
@@ -14,178 +13,116 @@ using UnityEngine;
 
 public static partial class DesignWallpaperSmoke
 {
-    [MenuItem("Tools/Design Pass/Four Card Lesson Goal Scene Smoke")]
+    [MenuItem("Tools/Design Pass/Twelve Question Lesson Goal Scene Smoke")]
     public static void RunLessonGoal() { Start("lesson-goal"); }
-
     static void TickLessonGoal(XingGuangController controller, ChapterOneRuntime runtime)
+    { if(step!=250)return;step=251;controller.StartCoroutine(CheckLessonGoal(controller,runtime)); }
+    static IEnumerator CheckLessonGoal(XingGuangController controller,ChapterOneRuntime runtime)
     {
-        if (step != 250) return;
-        step = 251;
-        controller.StartCoroutine(CheckLessonGoal(controller, runtime));
+        var steps=LessonGoalSteps(controller,runtime);Exception failure=null;
+        while(true){bool more=false;object current=null;try{more=steps.MoveNext();if(more)current=steps.Current;}catch(Exception e){failure=e;}if(failure!=null||!more)break;yield return current;}
+        (steps as IDisposable)?.Dispose();File.WriteAllText(Path.Combine(Output,"result.txt"),failure==null?"PASS":"FAIL: "+failure);Finish(failure==null?0:1);
     }
-
-    static IEnumerator CheckLessonGoal(XingGuangController controller, ChapterOneRuntime runtime)
+    static T LessonGoalField<T>(object owner,string field)=>(T)owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(owner);
+    static object ActualDeskGame(XgLabelPage page)
     {
-        var checks = LessonGoalSteps(controller, runtime);
-        Exception failure = null;
-        while (true)
+        var desk=LessonGoalField<object>(page,"deskGame");
+        var root=(RectTransform)desk.GetType().GetField("root").GetValue(desk);
+        Check(root.gameObject.activeInHierarchy,"Actual desk game is visible over classic cards");
+        var game=LessonGoalField<object>(desk,"game");
+        Check(game!=null,"Actual visible game has started");return game;
+    }
+    static object ActualSenseStatement(XgLabelPage page)
+        => LessonGoalField<object>(ActualDeskGame(page),"statement");
+    static bool ActualSenseTruth(object statement)
+        => (bool)statement.GetType().GetField("yes").GetValue(statement);
+    static void ClickActualSense(XgLabelPage page,bool correct)
+    {
+        var game=ActualDeskGame(page);var statement=LessonGoalField<object>(game,"statement");
+        var control=LessonGoalField<object>(game,ActualSenseTruth(statement)==correct?"yes":"no");
+        var button=(UnityEngine.UI.Button)control.GetType().GetField("button").GetValue(control);
+        Check(button.isActiveAndEnabled&&button.IsInteractable(),"Visible quiz answer is interactive");
+        Click((RectTransform)button.transform);
+    }
+    // Samples and completed questions are separate: an incorrect answer advances the
+    // twelve-question introduction without awarding an accurate teaching sample.
+    static void CheckLessonGoalState(XingGuangController controller,int samples)
+    {
+        var sim=controller.Sim;var page=controller.View.Teach;string before=JsonUtility.ToJson(sim.S);
+        var desk=LessonGoalField<object>(page,"deskGame");
+        var deskRoot=(RectTransform)desk.GetType().GetField("root").GetValue(desk);
+        bool actualGame=deskRoot.gameObject.activeInHierarchy;
+        if(actualGame)
         {
-            bool more = false; object current = null;
-            try { more = checks.MoveNext(); if (more) current = checks.Current; }
-            catch (Exception error) { failure = error; }
-            if (failure != null || !more) break;
-            yield return current;
+            var game=ActualDeskGame(page);var progress=LessonGoalField<TMP_Text>(game,"progress");
+            Check(sim.Samples(sim.S.desk)==samples&&progress.isActiveAndEnabled&&progress.text.Contains((sim.TeachingAnswers%12)+"/12"),"Visible game's current set progress matches answered questions: "+sim.TeachingAnswers);
+            progress.ForceMeshUpdate();Check(progress.textInfo.characterCount>0&&!progress.isTextOverflowing,"Visible game progress has readable rendered text");
         }
-        (checks as IDisposable)?.Dispose();
-        File.WriteAllText(Path.Combine(Output, "result.txt"), failure == null ? "PASS" : "FAIL: " + failure);
-        Finish(failure == null ? 0 : 1);
-    }
-
-    static T LessonGoalField<T>(object owner, string field) => (T)owner.GetType()
-        .GetField(field, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner);
-
-    // Shared with the existing real-setup first-minute checks; it does not bypass setup,
-    // change focus timing, award samples, or invoke button callbacks directly.
-    static void CheckLessonGoalState(XingGuangController controller, int samples)
-    {
-        var sim = controller.Sim;
-        var page = controller.View.Teach;
-        var goal = LessonGoalField<TMP_Text>(page, "lessonProgress");
-        var companion = controller.View.GetComponentInChildren<XgTeachCompanion>(true);
-        var train = LessonGoalField<XgBtn>(companion, "train");
-        string before = JsonUtility.ToJson(sim.S);
-        int count = Math.Min(samples, XgCatalog.SamplesToTrain);
-        Check(sim.Samples(sim.S.desk) == samples && goal.isActiveAndEnabled
-            && goal.text == count + "/" + XgCatalog.SamplesToTrain,
-            "Real card progress shows only the matching sample goal: " + count + "/4");
-        Check(!LessonGoalField<TMP_Text>(page, "meta").gameObject.activeInHierarchy
-            && !LessonGoalField<TMP_Text>(page, "qno").gameObject.activeInHierarchy,
-            "The goal row replaces category, stars and question number during the first round");
-        goal.ForceMeshUpdate();
-        Check(goal.fontSize >= 16 && !goal.isTextOverflowing && goal.textInfo.lineCount == 1,
-            "The card goal is readable on one line without overflow");
-        var goalCorners = new Vector3[4]; var paperCorners = new Vector3[4];
-        goal.rectTransform.GetWorldCorners(goalCorners); page.Paper.GetWorldCorners(paperCorners);
-        var space = page.Paper.parent;
-        Check(space.InverseTransformPoint(goalCorners[0]).y >= space.InverseTransformPoint(paperCorners[1]).y,
-            "The actual progress rectangle lies above the question card");
-        bool ready = samples >= XgCatalog.SamplesToTrain;
-        Check(train.rt.gameObject.activeInHierarchy == ready && train.button.IsInteractable() == ready,
-            ready ? "The actual training action is visible and clickable at four examples"
-                : "The training action is absent and unavailable below four examples");
-        Check(JsonUtility.ToJson(sim.S) == before, "Reading the visible goal never changes the saved sample or learning state");
-    }
-
-    static IEnumerator LessonGoalSteps(XingGuangController controller, ChapterOneRuntime runtime)
-    {
-        Check(runtime != null && runtime.TestMode && !runtime.useDiskSave && !runtime.Sim.InPrologue,
-            "Lesson-goal scene uses the isolated post-setup fixture");
-        var savedHouse = runtime.Sim;
-        string houseJson = JsonUtility.ToJson(savedHouse.S);
-        bool savedTick = runtime.tickEnabled, savedController = controller.enabled, savedView = controller.View.enabled;
-        bool savedEnglish = controller.Sim.English;
-        IDisposable locale = null;
-        try
+        else
         {
-            runtime.tickEnabled = false; controller.enabled = false; controller.View.enabled = true;
-            controller.View.Open("teach");
-            yield return new WaitForSecondsRealtime(.2f);
-            var sim = controller.Sim;
-            string freshJson = JsonUtility.ToJson(sim.S);
-            Check(sim.S.stage == 1 && sim.S.desk == XgMemes.SenseDesk && sim.S.epochs == 0,
-                "Goal begins on the real default common-sense desk before its first epoch");
-            CheckLessonGoalState(controller, 0);
-            yield return new WaitForEndOfFrame();
-            LessonGoalCapture("lesson-goal-0");
-
-            // A misjudgment must not count as a learned sample. Submit the wrong evaluation
-            // through the real UI; never change the card's truth or inject training labels.
-            var card = sim.Card(XgMemes.SenseDesk);
-            Check(sim.TeachingGuess(card, out bool guess), "The natural first question supplies an actual model guess");
-            Click(card.truth ? controller.View.Teach.NoButton : controller.View.Teach.YesButton);
-            yield return new WaitForSecondsRealtime(.2f);
-            Check(sim.S.handWrong == 1 && sim.Labels(XgMemes.SenseDesk) == 0,
-                "A real incorrect judgment leaves the sample goal at zero");
-            CheckLessonGoalState(controller, 0);
-
-            for (int count = 1; count <= XgCatalog.SamplesToTrain; count++)
-            {
-                card = sim.Card(XgMemes.SenseDesk);
-                Check(sim.TeachingGuess(card, out guess), "Next natural sense card has a production model guess");
-                Click(card.truth ? controller.View.Teach.YesButton : controller.View.Teach.NoButton);
-                yield return new WaitForSecondsRealtime(.2f);
-                Check(controller.View.Tab == "teach" && sim.S.epochs == 0,
-                    "Completing an example neither navigates away nor starts training automatically");
-                CheckLessonGoalState(controller, count);
-                if (OpeningSequence.FirstLessonActive) CheckFirstMinuteVisibleObjectives(controller);
-                yield return new WaitForEndOfFrame();
-                LessonGoalCapture("lesson-goal-" + count);
-            }
-
-            // Check the previously hidden action's actual English glyphs when it becomes
-            // visible; the existing English first-card scene still verifies its hidden state.
-            locale = GameText.Bind(() => GameText.English);
-            sim.English = true; GameText.PublishChanged(); controller.View.Refresh(true);
-            yield return new WaitForSecondsRealtime(.2f);
-            Check(GameText.IsEnglish && Lang.English && sim.English, "The completed goal uses the live English locale");
-            CheckLessonGoalState(controller, 4);
-            var companion = controller.View.GetComponentInChildren<XgTeachCompanion>(true);
-            var train = LessonGoalField<XgBtn>(companion, "train");
-            Check(train.label.text == "Train →" || train.label.text == "Train together →",
-                "The newly visible training action has its actual English label");
-            CheckFirstMinuteEnglishTextFits(train.label, "English completed-goal training button");
-            yield return new WaitForEndOfFrame();
-            LessonGoalCapture("lesson-goal-4-english");
-            var source = UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>();
-            var pointer = GrowthRaycast(source, train.rt);
-            Check(pointer.pointerCurrentRaycast.gameObject != null
-                && pointer.pointerCurrentRaycast.gameObject.transform.IsChildOf(train.rt),
-                "The real LCD source can reach the newly visible training button");
-            Click(train.rt);
-            Check(controller.View.Tab == "train" && sim.SelectedTrack == XgTrack.Sequence
-                && sim.Selected.dataset == XgMemes.SenseDesk && sim.S.epochs == 0,
-                "Actual goal-button input opens training on the same sense dataset without starting an epoch");
-
-            // Explicit old-save boundary fixtures use in-memory binding only. Progress is
-            // derived from existing samples rather than a new saved counter or click total.
-            foreach (int samples in new[] { 2, 7 })
-            {
-                var state = JsonUtility.FromJson<XgState>(freshJson);
-                state.labels.Add(new XgLabelCount { dataset = XgMemes.SenseDesk, count = samples });
-                var house = JsonUtility.FromJson<GameState>(houseJson);
-                house.labState = JsonUtility.ToJson(state);
-                runtime.SetSimulationForTests(new ChapterOneSim(house));
-                controller.Sim.English = true;
-                controller.View.Open("teach"); controller.View.Refresh(true);
-                yield return new WaitForSecondsRealtime(.2f);
-                CheckLessonGoalState(controller, samples);
-                string before = JsonUtility.ToJson(controller.Sim.S);
-                controller.View.Refresh(true);
-                Check(JsonUtility.ToJson(controller.Sim.S) == before,
-                    "Refreshing an existing save preserves its samples and learning: " + samples);
-                yield return new WaitForEndOfFrame();
-                LessonGoalCapture("lesson-goal-existing-" + samples);
-            }
-            var trained = controller.Sim;
-            trained.S.epochs = 1; // Explicit already-trained boundary, not a simulated epoch.
-            controller.View.Refresh(true);
-            Check(!LessonGoalField<TMP_Text>(controller.View.Teach, "lessonProgress").gameObject.activeInHierarchy
-                && LessonGoalField<TMP_Text>(controller.View.Teach, "meta").gameObject.activeInHierarchy
-                && LessonGoalField<TMP_Text>(controller.View.Teach, "qno").gameObject.activeInHierarchy,
-                "An already-trained save returns to the established card metadata instead of repeating the first goal");
-            Check(runtime.TestMode && !runtime.useDiskSave && !runtime.tickEnabled && !controller.enabled,
-                "Goal acceptance keeps disk saves and background simulation isolated");
+        var goal=LessonGoalField<TMP_Text>(page,"lessonProgress");
+        string expected=sim.S.teachingFlow?Math.Min(12,sim.TeachingAnswers)+"/12":Math.Min(samples,XgCatalog.SamplesToTrain)+"/"+XgCatalog.SamplesToTrain;
+        Check(sim.Samples(sim.S.desk)==samples && goal.isActiveAndEnabled && goal.text==expected,"Visible progress matches current opening rule: "+expected);
+        Check(!LessonGoalField<TMP_Text>(page,"meta").gameObject.activeInHierarchy&&!LessonGoalField<TMP_Text>(page,"qno").gameObject.activeInHierarchy,"First goal replaces competing category/star/question counters");
+        goal.ForceMeshUpdate();Check(goal.fontSize>=16&&!goal.isTextOverflowing&&goal.textInfo.lineCount==1,"Goal is readable on one line");
+        var a=new Vector3[4];var b=new Vector3[4];goal.rectTransform.GetWorldCorners(a);page.Paper.GetWorldCorners(b);
+        Check(page.Paper.parent.InverseTransformPoint(a[0]).y>=page.Paper.parent.InverseTransformPoint(b[1]).y,"Goal remains above the actual card");
         }
-        finally
+        if(sim.S.teachingFlow)
         {
-            locale?.Dispose(); GameText.PublishChanged();
-            runtime.SetSimulationForTests(savedHouse); controller.Sim.English = savedEnglish;
-            controller.View.enabled = savedView; controller.enabled = savedController; runtime.tickEnabled = savedTick;
+            Check(sim.TeachingTreeOpen==(sim.TeachingAnswers>=12||sim.Has("train.curve")),"Tech gate follows twelve questions");
+            Check(sim.TeachingTrainOpen==sim.Has("train.curve"),"Training requires actual paid curve ownership");
+            Check(controller.FeatureVisible("train")==sim.TeachingTrainOpen,"Actual training navigation follows purchase gate");
         }
+        Check(JsonUtility.ToJson(sim.S)==before,"Reading progress never mutates learned state");
     }
-
-    static void LessonGoalCapture(string name)
+    static IEnumerator LessonGoalSteps(XingGuangController controller,ChapterOneRuntime runtime)
     {
-        Capture(name); CaptureVisualState(name); DesktopFadeFullScreenshot(name);
+        Check(runtime!=null&&!runtime.useDiskSave&&!runtime.Sim.InPrologue&&!runtime.tickEnabled,"Goal fixture is isolated from disk and world ticks");
+        controller.View.Open("teach");yield return new WaitForSecondsRealtime(.3f);
+        var sim=controller.Sim;string initial=JsonUtility.ToJson(sim.S);var houseJson=JsonUtility.ToJson(runtime.Sim.S);
+        Check(sim.S.teachingFlow&&sim.S.stage==1&&sim.TeachingAnswers==0&&sim.S.epochs==0,"BeginOpening supplies untouched twelve-question flow");
+        CheckLessonGoalState(controller,0);
+        var statement=ActualSenseStatement(controller.View.Teach);
+        ClickActualSense(controller.View.Teach,false);yield return new WaitForSecondsRealtime(.3f);
+        Check(sim.S.handWrong==1&&sim.Labels(XgMemes.SenseDesk)==0&&sim.TeachingAnswers==1,"Incorrect judgment advances introduction without adding sample");
+        Check(!ReferenceEquals(ActualSenseStatement(controller.View.Teach),statement),"Wrong answer also immediately advances to next card");CheckLessonGoalState(controller,0);
+        for(int count=2;count<=12;count++)
+        {
+            statement=ActualSenseStatement(controller.View.Teach);ClickActualSense(controller.View.Teach,true);yield return new WaitForSecondsRealtime(.25f);
+            Check(sim.TeachingAnswers==count&&!ReferenceEquals(ActualSenseStatement(controller.View.Teach),statement),"Real pointer advances question "+count);
+            Check(controller.View.Tab=="teach"&&sim.S.epochs==0,"Answer never changes page or starts training");CheckLessonGoalState(controller,count-1);
+            Check(!sim.TeachingTrainOpen,"Even enough samples cannot bypass paid curve");
+        }
+        Check(sim.TeachingTreeOpen&&!sim.TeachingTrainOpen,"Question twelve exposes tech only");
+        controller.View.Open("train");Check(controller.View.Tab!="train","Production page navigation rejects unpaid training");
+        controller.View.Open("tree");Check(controller.View.Tab=="tree","Production page navigation accepts unlocked tech");
+        double cash=controller.Host.Money;Check(sim.BuyNode("train.curve",controller.Host),"Buy real curve after twelve questions");
+        Check(controller.Host.Money<cash&&sim.TeachingTrainOpen,"Curve purchase charges money and opens training");
+        controller.View.Open("train");yield return new WaitForSecondsRealtime(.25f);
+        Check(controller.View.Tab=="train"&&sim.Selected.dataset==XgMemes.SenseDesk&&sim.S.epochs==0,"Training opens on taught data without automatic epoch");
+        using(GameText.Bind(()=>GameText.English))
+        {
+            sim.English=true;GameText.PublishChanged();controller.View.Open("teach");controller.View.Refresh(true);yield return new WaitForSecondsRealtime(.25f);
+            CheckLessonGoalState(controller,11);Check(GameText.IsEnglish&&Lang.English,"Live locale switched to English");
+            foreach(var text in controller.View.Teach.root.GetComponentsInChildren<TMP_Text>())
+                if(text.name=="LessonProgress"){text.ForceMeshUpdate();Check(!text.isTextOverflowing,"English goal fits actual text mesh");}
+            LessonGoalCapture("lesson-goal-twelve-english");
+        }
+        GameText.PublishChanged();
+        // Serialize interrupted new-flow progress and paid flow separately. No new
+        // counters or inferred purchases may be awarded during restoration.
+        foreach(int answers in new[]{2,7,12})
+        {
+            var state=JsonUtility.FromJson<XgState>(initial);state.handCorrect=answers;state.labels.Add(new XgLabelCount{dataset=XgMemes.SenseDesk,count=answers});
+            var house=JsonUtility.FromJson<GameState>(houseJson);house.labState=JsonUtility.ToJson(state);runtime.SetSimulationForTests(new ChapterOneSim(house));
+            controller.View.Open("teach");controller.View.Refresh(true);yield return new WaitForSecondsRealtime(.3f);
+            CheckLessonGoalState(controller,answers);Check(!controller.Sim.TeachingTrainOpen,"Reload never grants unpaid curve: "+answers);
+            string before=JsonUtility.ToJson(controller.Sim.S);controller.View.Refresh(true);Check(before==JsonUtility.ToJson(controller.Sim.S),"Refresh preserves resumed opening "+answers);
+        }
+        controller.Sim.S.epochs=1;controller.View.Refresh(true);
+        Check(ActualDeskGame(controller.View.Teach)!=null&&controller.Sim.S.epochs==1,"Trained save retains the actual game and completed training progress");
+        Check(!runtime.useDiskSave&&!runtime.tickEnabled,"All goal checks leave player disk save isolated");
     }
+    static void LessonGoalCapture(string name){Capture(name);CaptureVisualState(name);DesktopFadeFullScreenshot(name);}
 }

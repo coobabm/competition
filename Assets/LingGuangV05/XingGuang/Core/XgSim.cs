@@ -90,6 +90,8 @@ namespace LingGuangV05.XingGuang
             RepairAutoRetired();
             RepairRelics();
             EnsureSeed();
+            RepairStagePresentations();
+            RepairLedgerAccess(state == null);
         }
 
         void Repair()
@@ -139,11 +141,16 @@ namespace LingGuangV05.XingGuang
             if (S.autoVision > 0) { SetCount(S.autoLevels, "mnist", S.autoVision); S.autoVision = 0; }
             if (S.autoSequence > 0) { SetCount(S.autoLevels, "poems", S.autoSequence); S.autoSequence = 0; }
             if (S.autoLogic > 0) { SetCount(S.autoLevels, "logic", S.autoLogic); S.autoLogic = 0; }
-            if (string.IsNullOrEmpty(S.desk) || XgCatalog.Desk(S.desk) == null)
+            // Supplemental teaching desks may have no legacy XgDesk. Restore the
+            // selected, available pack before applying legacy-save fallbacks.
+            var teachingPack = XgTeachingPacks.Find(S.teachingPack);
+            bool restoreTeachingPack = teachingPack != null && TeachingPackAvailable(teachingPack.id);
+            if (restoreTeachingPack) S.desk = teachingPack.dataset;
+            if (!restoreTeachingPack && (string.IsNullOrEmpty(S.desk) || XgCatalog.Desk(S.desk) == null))
                 S.desk = XgCatalog.Desks[Math.Max(0, Math.Min(2, S.labelTrack))].id;
             S.visionCard = S.sequenceCard = S.logicCard = null;
             foreach (var d in XgCatalog.Desks) if (d.unlock == XgDeskUnlock.Start && !S.desksOpen.Contains(d.id) && !OpeningLocksDesk(d.id)) S.desksOpen.Add(d.id);
-            if (!DeskOpen(S.desk)) S.desk = S.openingFocus ? XgMemes.SenseDesk : "logic";
+            if (!restoreTeachingPack && !DeskOpen(S.desk)) S.desk = S.openingFocus ? XgMemes.SenseDesk : "logic";
             S.selected = S.selected == 1 ? 1 : 0;
             S.combo = Math.Max(0, S.combo);
             // The first version sold a one-off ×2 raise as a research node; it maps to raise level 5 (×2).
@@ -186,9 +193,9 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── tech tree ─────────────
 
-        public bool Has(string id) { return S.unlocked.Contains(id); }
+        public bool Has(string id) { return id != null && id.StartsWith("persona.", StringComparison.Ordinal) ? OwnsPersonaPack(id.Substring(8)) : S.unlocked.Contains(id); }
         /// <summary>Some pack of this dataset is in: the public pack, or a junk / story pack (XgSim.DataSources.cs).</summary>
-        public bool Owns(string datasetId) { return S.owned.Contains(datasetId) && !Downloading(datasetId) || OwnsExtraPack(datasetId); }
+        public bool Owns(string datasetId) { return S.owned.Contains(datasetId) && InstalledBatches(datasetId) > 0 || OwnsExtraPack(datasetId); }
 
         public enum NodeStatus { Owned, Buyable, TooExpensive, Locked }
 
@@ -199,7 +206,7 @@ namespace LingGuangV05.XingGuang
             if (n.tree == "label") return StatusLabelNode(n, host);
             if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return NodeStatus.Locked;
             if (Has(n.id)) return NodeStatus.Owned;
-            if (!NodeVisible(n) || ProgressionBlocker(n) != null) return NodeStatus.Locked;
+            if (!NodeVisible(n) || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
             if (n.parent != null && !Has(n.parent)) return NodeStatus.Locked;
             foreach (var need in n.needs) if (!Has(need)) return NodeStatus.Locked;
             if (host == null || host.Money + 1e-9 < NodeCost(n)) return NodeStatus.TooExpensive;
@@ -218,6 +225,7 @@ namespace LingGuangV05.XingGuang
                     if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次");
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
+                    if (!ChatNodeReady(n.id)) return T("对它说一句话：____。", "Say something to it: ____. ") + ChatNodeHint(n.id);
                     var missing = new List<string>();
                     if (n.parent != null && !Has(n.parent)) missing.Add(NodeName(XgCatalog.Node(n.parent)));
                     foreach (var need in n.needs) if (!Has(need)) missing.Add(NodeName(XgCatalog.Node(need)));
@@ -244,7 +252,7 @@ namespace LingGuangV05.XingGuang
             path.Add(n.id);
         }
 
-        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : n.id == "label.brain" ? AiDisplayName + T("的大脑", "'s brain") : T(n.name, n.nameEn); }
+        public string NodeName(XgNode n) { return n == null ? "?" : NodeMystery(n) ? T("？？？") : n.id == "label.ai" ? AiDisplayName + T("代答", " answers") : n.id == "label.brain" ? AiDisplayName + T("的大脑", "'s brain") : T(n.name, n.nameEn); }
         /// <summary>The node's description; a hint instead while it is still a mystery.</summary>
         public string NodeNote(XgNode n) { return n == null ? "" : NodeMystery(n) ? T("也许有更省力的办法……") : T(n.note, n.noteEn); }
         /// <summary>Shown as 「？？？」 with no price: 自动答题 before the protagonist has the idea.</summary>
@@ -254,6 +262,7 @@ namespace LingGuangV05.XingGuang
         {
             var n = XgCatalog.Node(id);
             if (n == null) return false;
+            if (n.id.StartsWith("persona.",StringComparison.Ordinal)) return BuyPersonaPack(n.id.Substring(8),host);
             if (n.tree == "label") return BuyLabelNode(n, host);
             if (Status(n, host) != NodeStatus.Buyable) { Say(Why(n, host)); return false; }
             double price = NodeCost(n);
@@ -265,11 +274,11 @@ namespace LingGuangV05.XingGuang
             switch (n.kind)
             {
                 case XgNodeKind.Dataset:
-                    if (!S.owned.Contains(n.target)) S.owned.Add(n.target);
-                    StartDownload(n.target);
+                    QueueTeachingData(n.target, n.id);
                     break;
             }
             ApplyProgressionNode(n);
+            ApplyTeachingPackPurchase(n);
             // A new structure, width, depth or technique: the models reconfigure themselves (XgSim.AutoModel.cs).
             AutoConfigureAll(host);
             foreach (var run in Runs) Evaluate(run);
@@ -427,7 +436,7 @@ namespace LingGuangV05.XingGuang
             if (Owns(id)) return true;
             // Free milestone desks migrated to a pack unlock, not pack ownership. Preserve their existing
             // training access without restoring paid tasks or inventing the full pack's sample count.
-            if ((id == "translate" || id == "crosssentence") && Has(id + ".pack") && !Downloading(id)) return true;
+            if ((id == "translate" || id == "crosssentence") && (FreeDataAccess(id) || InstalledBatches(id) > 0)) return true;
             return d.handLabel && (XgCatalog.Desk(id) == null || DeskOpen(id));
         }
 
@@ -571,6 +580,7 @@ namespace LingGuangV05.XingGuang
 
         public string Blocker(XgRun run, IXgHost host)
         {
+            if (LifeTrainingPaused) return T("临时停机，稍后继续", "Temporarily paused; training resumes shortly");
             if (host == null) return T("设备未就绪");
             if (host.Blocker != null) return host.Blocker;
             if (ProjectActive) return T("研发占用显卡");
@@ -587,6 +597,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Any available dataset on this track with enough samples unlocks training.</summary>
         public bool TrainingUnlocked(XgTrack track)
         {
+            if (!TeachingTrainOpen) return false;
             foreach (var d in XgCatalog.DatasetsFor(track)) if (DatasetAvailable(d.id) && Samples(d.id) >= XgCatalog.SamplesToTrain) return true;
             return false;
         }
@@ -642,7 +653,12 @@ namespace LingGuangV05.XingGuang
             double tearChance = TearChance(run);
             bool torn = tearChance > 0 && Roll() < tearChance;
             // The brain itself learns from the cards (the 大脑 page, the phenomena); the score follows the scaling law.
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochTrainBoard.Auto())
+#endif
+            {
             if (UseBoard && !torn) TrainBoard(run, cards);
+            }
             run.steps += cards;
             run.epoch++; run.sinceEval++; S.epochs++;
             MemeDriftTrained(run.dataset);
@@ -651,12 +667,44 @@ namespace LingGuangV05.XingGuang
             ChargeTraining(host, billed, true);
             S.trainedSeconds += billed;
             var e = new XgEpoch { track = (int)track, epoch = run.epoch, hand = hand, steps = cards, diverged = torn };
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochAccuracy.Auto())
+#endif
+            {
             StepAccuracy(run, cards, e);
+            }
             RelicRoundDone();
             run.shapeRounds++;
-            Evaluate(run);
-            if (UseBoard) { ObservePhenomena(run); RecordTrace(run, false, cards); WatchCure(run); }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochEvaluatePhenomena.Auto())
+#endif
+            {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochEvaluate.Auto())
+#endif
+            { Evaluate(run); }
+            if (UseBoard)
+            {
+#if UNITY_5_3_OR_NEWER
+                using (ProfileEpochObservePhenomena.Auto())
+#endif
+                { ObservePhenomena(run); }
+#if UNITY_5_3_OR_NEWER
+                using (ProfileEpochRecordTrace.Auto())
+#endif
+                { RecordTrace(run, false, cards); }
+#if UNITY_5_3_OR_NEWER
+                using (ProfileEpochWatchCure.Auto())
+#endif
+                { WatchCure(run); }
+            }
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochSheet.Auto())
+#endif
+            {
             SheetAfterRound(run);
+            }
             S.stageEpochs++;
             Push(run.histTrain, (float)run.trainAcc);
             Push(run.histVal, (float)run.valAcc);
@@ -664,11 +712,26 @@ namespace LingGuangV05.XingGuang
             e.trainAcc = run.trainAcc; e.valAcc = run.valAcc;
             CheckDesks();
             AutoCountTrainedParams(run);
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochAssessment.Auto())
+#endif
+            {
             if (run.sinceEval >= EvalEvery) e.assessment = Assess(track, host, hand);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochProgression.Auto())
+#endif
+            {
             ObserveProgression(run);
             CheckUnprompted();
+            }
             if (e.diverged) Diverged?.Invoke((int)track);
+#if UNITY_5_3_OR_NEWER
+            using (ProfileEpochDoneSubscribers.Auto())
+#endif
+            {
             EpochDone?.Invoke(e);
+            }
             return e;
         }
 
@@ -1010,7 +1073,7 @@ namespace LingGuangV05.XingGuang
             double before = Samples(datasetId);
             SetCount(S.labels, datasetId, Labels(datasetId) + 1);
             var d = XgCatalog.Dataset(datasetId);
-            if (before < XgCatalog.SamplesToTrain && Samples(datasetId) >= XgCatalog.SamplesToTrain)
+            if (TeachingTrainOpen && before < XgCatalog.SamplesToTrain && Samples(datasetId) >= XgCatalog.SamplesToTrain)
                 Say(T("攒够 " + XgCatalog.SamplesToTrain + " 条样本：「" + d.name + "」可以训练了，去「训练」页按「训练一轮」", d.nameEn + ": " + XgCatalog.SamplesToTrain + " samples, training unlocked"));
             RelicLabelBonus(datasetId);
             foreach (var run in Runs) if (run.dataset == datasetId) Evaluate(run);
@@ -1034,7 +1097,7 @@ namespace LingGuangV05.XingGuang
             return (d != null ? PackSamples(datasetId) + ExtraSamples(datasetId) : 0) + Labels(datasetId);
         }
 
-        public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && S.desksOpen.Contains(id) && !OpeningLocksDesk(id); }
+        public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && (TeachingPackDeskOpen(id) || S.desksOpen.Contains(id) && !OpeningLocksDesk(id)); }
 
         public List<XgDesk> OpenDesks()
         {
@@ -1060,6 +1123,8 @@ namespace LingGuangV05.XingGuang
                 return T("学会「" + AbilityName(2, false) + "」后自动开放。", "Opens by itself once it learns '" + AbilityName(2, true) + "'.");
             var pack = XgCatalog.Node(desk.id + ".pack");
             if (pack == null) return "";
+            if (Has(pack.id) && S.owned.Contains(desk.id) && InstalledBatches(desk.id) == 0)
+                return T("下载好数据包后，从资料文件夹拖进练页安装。", "After downloading, drag the pack from your Files folder into Train to install.");
             string zh = "在科技买「" + pack.name + "」数据包（¥" + F(NodeCost(pack), "0") + "）";
             string en = "buy the " + pack.nameEn + " data pack in the tech tree (¥" + F(NodeCost(pack), "0") + ")";
             var items = new List<XgNode>();
@@ -1340,23 +1405,24 @@ namespace LingGuangV05.XingGuang
             bool correcting = teaching && taughtGuess != yes;
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();
-            bool timeout = card.timeLimit > 0 && card.age > card.timeLimit;
+            // Timers affect only the gold quick-answer bonus, never truth or the player's streak.
+            bool quickBonus = card.gold && (card.timeLimit <= 0 || card.age <= card.timeLimit);
+            bool timeout = false;
             // The SI's planted question has no right answer: whatever you choose is what the "？" cell learns.
             bool shutdown = card.kind == "shutdown";
             if (shutdown) { card.truth = yes; S.shutdownCards++; S.shutdownLean += yes ? 1 : -1; }
             NoteLabelLean(yes);
-            var result = new XgAnswer { truth = card.truth, correct = !timeout && yes == card.truth, gold = card.gold, trick = card.trick, timeout = timeout, bounty = card.bounty };
+            var result = new XgAnswer { truth = card.truth, correct = yes == card.truth, gold = quickBonus, trick = card.trick, timeout = false, bounty = card.bounty };
             if (result.correct)
             {
                 if (teaching)
                 {
                     S.modelStreak = taughtGuess == card.truth ? S.modelStreak + 1 : 0;
                     S.bestModelStreak = Math.Max(S.bestModelStreak, S.modelStreak);
-                    if (taughtGuess == card.truth) Hit(info.comboWindow, 1); else BreakCombo();
                 }
-                else Hit(info.comboWindow, card.trick ? 2 : 1);
+                Hit(info.comboWindow, card.trick ? 2 : 1);
                 result.corrected = correcting;
-                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (card.gold ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (quickBonus ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;
@@ -1437,6 +1503,32 @@ namespace LingGuangV05.XingGuang
         public double AutoIncome(string desk, IXgHost host) { return CollaborationIncome(desk, host); }
         void AutoAnswer(double dt, IXgHost host) { TickCollaboration(dt, host); }
 
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileStepPayments = new XgSimulationMarker("Xg.Sim.StepPayments");
+        static readonly XgSimulationMarker ProfileStepWiring = new XgSimulationMarker("Xg.Sim.StepWiring");
+        static readonly XgSimulationMarker ProfileStepAutoConfigure = new XgSimulationMarker("Xg.Sim.StepAutoConfigure");
+        static readonly XgSimulationMarker ProfileStepProject = new XgSimulationMarker("Xg.Sim.StepProject");
+        static readonly XgSimulationMarker ProfileStepEpochs = new XgSimulationMarker("Xg.Sim.StepEpochs");
+        static readonly XgSimulationMarker ProfileStepAutoAnswer = new XgSimulationMarker("Xg.Sim.StepAutoAnswer");
+        static readonly XgSimulationMarker ProfileStepMarket = new XgSimulationMarker("Xg.Sim.StepMarket");
+        static readonly XgSimulationMarker ProfileStepLife = new XgSimulationMarker("Xg.Sim.StepLife");
+        static readonly XgSimulationMarker ProfileStepBooksStages = new XgSimulationMarker("Xg.Sim.StepBooksStages");
+        static readonly XgSimulationMarker ProfileStepDataRelics = new XgSimulationMarker("Xg.Sim.StepDataRelics");
+        static readonly XgSimulationMarker ProfileStepCard = new XgSimulationMarker("Xg.Sim.StepCard");
+        static readonly XgSimulationMarker ProfileStepUnlocksChronicle = new XgSimulationMarker("Xg.Sim.StepUnlocksChronicle");
+        static readonly XgSimulationMarker ProfileEpochTrainBoard = new XgSimulationMarker("Xg.Sim.EpochTrainBoard");
+        static readonly XgSimulationMarker ProfileEpochAccuracy = new XgSimulationMarker("Xg.Sim.EpochAccuracy");
+        static readonly XgSimulationMarker ProfileEpochEvaluatePhenomena = new XgSimulationMarker("Xg.Sim.EpochEvaluatePhenomena");
+        static readonly XgSimulationMarker ProfileEpochEvaluate = new XgSimulationMarker("Xg.Sim.EpochEvaluate");
+        static readonly XgSimulationMarker ProfileEpochObservePhenomena = new XgSimulationMarker("Xg.Sim.EpochObservePhenomena");
+        static readonly XgSimulationMarker ProfileEpochRecordTrace = new XgSimulationMarker("Xg.Sim.EpochRecordTrace");
+        static readonly XgSimulationMarker ProfileEpochWatchCure = new XgSimulationMarker("Xg.Sim.EpochWatchCure");
+        static readonly XgSimulationMarker ProfileEpochSheet = new XgSimulationMarker("Xg.Sim.EpochSheet");
+        static readonly XgSimulationMarker ProfileEpochAssessment = new XgSimulationMarker("Xg.Sim.EpochAssessment");
+        static readonly XgSimulationMarker ProfileEpochProgression = new XgSimulationMarker("Xg.Sim.EpochProgression");
+        static readonly XgSimulationMarker ProfileEpochDoneSubscribers = new XgSimulationMarker("Xg.Sim.EpochDoneSubscribers");
+#endif
+
         // ───────────── time ─────────────
 
         public void Tick(double seconds, IXgHost host)
@@ -1453,41 +1545,101 @@ namespace LingGuangV05.XingGuang
 
         void Step(double dt, IXgHost host)
         {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepPayments.Auto())
+#endif
+            {
             PayAbilityResearch(host);
             PayAutoRefund(host);
             PayConsumableRefund(host);
+            }
             // 接线 first: every job below reads its speed from this tick's wiring (XgSim.Wiring.cs).
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepWiring.Auto())
+#endif
+            {
             TickWiring(dt, host);
+            }
             // Training without knobs: between rounds the models follow what is owned and what fits (XgSim.AutoModel.cs).
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepAutoConfigure.Auto())
+#endif
+            {
             AutoConfigureAll(host);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepProject.Auto())
+#endif
+            {
             TickProject(dt, host);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepEpochs.Auto())
+#endif
+            {
             TickEpochs(dt, host);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepBooksStages.Auto())
+#endif
+            {
             TickBooks(dt, host);
             TickBookPuzzles(dt);
             NoteRegionWiring();
             TickStages(dt);
             if (S.stage >= 6) TickFinale(dt, host);
             TickCollection();
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepDataRelics.Auto())
+#endif
+            {
             TickDownloads(dt);
             TickDataSources(dt, host);
             TickFlywheel(dt, host);
             RelicTick(dt);
+            }
             // 网吧通宵卡: the combo timer holds, so the combo does not fade. Training has no combo (2026-10-18): a round on the bar neither holds nor feeds it.
             if (S.comboTimer > 0 && !RelicFx.comboKeep)
             {
                 S.comboTimer = Math.Max(0, S.comboTimer - dt);
-                if (S.comboTimer <= 0) BreakCombo();
+                // Reading slowly never breaks a teaching streak; only a wrong answer does.
             }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepCard.Auto())
+#endif
+            {
             if (WindowOpen && !MiniGameSurfaceActive) TickCard(dt);
+            }
 
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepAutoAnswer.Auto())
+#endif
+            {
             AutoAnswer(dt, host);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepMarket.Auto())
+#endif
+            {
             TickMarket(dt, host);
+            }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepLife.Auto())
+#endif
+            {
             TickLifeEvents(dt, host);
+            }
             double income = IncomePerSecond * dt;
             if (income > 0) { host.Earn(income); S.totalIncome += income; }
+#if UNITY_5_3_OR_NEWER
+            using (ProfileStepUnlocksChronicle.Auto())
+#endif
+            {
             CheckAbilities();
             CheckDesks();
             TickChronicle();
+            }
         }
 
         void TickCard(double dt)
@@ -1497,12 +1649,7 @@ namespace LingGuangV05.XingGuang
             foreach (var c in S.cards) if (c.dataset == S.desk) card = c;
             if (card == null || card.timeLimit <= 0) return;
             card.age += dt;
-            if (card.age <= card.timeLimit) return;
-            BreakCombo();
-            S.handWrong++;
-            if (S.desk == "meme" && duelLeft > 0) { duelLeft = 1; DuelStep("meme", false, null); }
-            NewCard(S.desk);
-            CardTimedOut?.Invoke(S.desk);
+            // Keep this question until the player answers; exceeding the timer only loses its bonus.
         }
 
         double Roll()

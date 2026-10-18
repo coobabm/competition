@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -228,6 +228,8 @@ namespace Michsky.DreamOS
 
         public void SetOpen()
         {
+            // Desktop transitions can hide the taskbar; OnEnable restores the window state.
+            if (!isActiveAndEnabled) return;
             buttonAnimator.enabled = true;
 
             StopCoroutine("DisableAnimator");
@@ -243,6 +245,8 @@ namespace Michsky.DreamOS
 
         public void SetClosed()
         {
+            // Desktop transitions can hide the taskbar; OnEnable restores the window state.
+            if (!isActiveAndEnabled) return;
             buttonAnimator.enabled = true;
 
             StopCoroutine("DisableAnimator");
@@ -254,6 +258,8 @@ namespace Michsky.DreamOS
 
         public void SetMinimized()
         {
+            // Desktop transitions can hide the taskbar; OnEnable restores the window state.
+            if (!isActiveAndEnabled) return;
             buttonAnimator.enabled = true;
             buttonAnimator.Play("Active to Inactive");
 

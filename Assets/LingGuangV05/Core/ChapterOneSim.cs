@@ -358,6 +358,7 @@ namespace LingGuangV05.Core
 
         private void AdvanceSlice(double dt)
         {
+            TickManualRent(dt);
             if (PowerCostsEnabled && RequestedWatts > Config.powerLimitWatts) TripBreaker();
             double watts = PowerWatts;
             double target = Config.ambientTemperature + watts * Config.heatPerWatt / Math.Max(1, S.caseCount);

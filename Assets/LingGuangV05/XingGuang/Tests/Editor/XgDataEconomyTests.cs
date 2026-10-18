@@ -308,6 +308,18 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage(4, "resnet"); var host = new Host();
             var lines = new List<string>(); sim.StoryDataOffered += (o, zh, en) => lines.Add(o.id);
             sim.Tick(1, host); sim.Tick(1, host);
+            Assert.IsEmpty(lines, "no offer before the player posts");
+            Assert.IsFalse(sim.Offer("imagenet.story").available);
+            Assert.IsFalse(sim.DataForumFlag("asked.imagenet"));
+            Assert.IsTrue(sim.AskForData("imagenet"));
+            Assert.IsTrue(sim.DataForumFlag("asked.imagenet"));
+            Assert.IsFalse(sim.DataForumFlag("answered.imagenet"));
+            Assert.IsFalse(sim.AskForData("imagenet"), "one request cannot be posted twice");
+            sim.Tick(XgSim.DataReplySeconds - 1, host);
+            Assert.IsEmpty(lines, "a post does not instantly invent an answer");
+            Assert.IsFalse(sim.Offer("imagenet.story").available);
+            sim.Tick(2, host); sim.Tick(1, host);
+            Assert.IsTrue(sim.DataForumFlag("answered.imagenet"));
             CollectionAssert.Contains(lines, "imagenet.story");
             Assert.AreEqual(1, lines.Count(x => x == "imagenet.story"), "said once");
             var offer = sim.Offer("imagenet.story");

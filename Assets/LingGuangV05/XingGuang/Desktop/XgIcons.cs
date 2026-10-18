@@ -21,11 +21,51 @@ namespace LingGuangV05.Desktop.XingGuang
             if (string.IsNullOrEmpty(group) || string.IsNullOrEmpty(id)) return null;
             string key = group + "/" + FileName(id);
             if (cache.TryGetValue(key, out var sprite)) return sprite;
-            var texture = Resources.Load<Texture2D>(Root + key);
+            var texture = group=="nav"?OriginalNavigation(id):null;
+            if(texture==null)texture = Resources.Load<Texture2D>(Root + key);
             sprite = texture == null ? null : Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100);
             if (sprite != null) sprite.name = "icon_" + group + "_" + FileName(id);
             cache[key] = sprite;
             return sprite;
+        }
+
+        // Original game artwork: the four primary actions share one rounded, two-tone stroke style.
+        // Rasterised once and cached with the other icons; no external art or emoji font dependency.
+        static Texture2D OriginalNavigation(string id)
+        {
+            Vector4[] lines;Vector3[] rings;
+            switch(id)
+            {
+                case "teach":
+                    lines=new[]{new Vector4(10,15,10,46),new Vector4(10,46,31,51),new Vector4(31,51,54,46),new Vector4(54,46,54,15),new Vector4(54,15,32,20),new Vector4(32,20,10,15),new Vector4(32,20,32,50),new Vector4(17,36,25,38),new Vector4(39,38,47,36)};
+                    rings=new Vector3[0];break;
+                case "train":
+                    lines=new[]{new Vector4(11,51,11,13),new Vector4(11,13,54,13),new Vector4(18,22,28,25),new Vector4(28,25,36,36),new Vector4(36,36,45,33),new Vector4(45,33,53,49)};
+                    rings=new[]{new Vector3(53,49,3)};break;
+                case "tree":
+                    lines=new[]{new Vector4(32,45,18,22),new Vector4(32,45,47,22),new Vector4(18,22,47,22)};
+                    rings=new[]{new Vector3(32,48,7),new Vector3(16,18,7),new Vector3(49,18,7)};break;
+                case "home":
+                    lines=new[]{new Vector4(23,37,23,33),new Vector4(41,37,41,33),new Vector4(24,23,32,20),new Vector4(32,20,40,23)};
+                    rings=new[]{new Vector3(32,32,23)};break;
+                default:return null;
+            }
+            const int size=64;var colors=new Color[size*size];
+            for(int y=0;y<size;y++)for(int x=0;x<size;x++)
+            {
+                var point=new Vector2(x+.5f,y+.5f);float distance=100;
+                foreach(var line in lines)
+                {
+                    var a=new Vector2(line.x,line.y);var b=new Vector2(line.z,line.w);var d=b-a;
+                    float t=Mathf.Clamp01(Vector2.Dot(point-a,d)/Mathf.Max(.001f,d.sqrMagnitude));
+                    distance=Mathf.Min(distance,Vector2.Distance(point,a+t*d));
+                }
+                foreach(var circle in rings)distance=Mathf.Min(distance,Mathf.Abs(Vector2.Distance(point,new Vector2(circle.x,circle.y))-circle.z));
+                float alpha=Mathf.Clamp01(2.2f-distance);
+                colors[y*size+x]=new Color(.62f+.3f*y/size,.91f,.88f,alpha);
+            }
+            var texture=new Texture2D(size,size,TextureFormat.RGBA32,false){name="Original navigation "+id,filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};
+            texture.SetPixels(colors);texture.Apply();return texture;
         }
 
         public static bool Has(string group, string id) => Get(group, id) != null;

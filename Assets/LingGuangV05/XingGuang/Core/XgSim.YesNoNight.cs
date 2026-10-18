@@ -52,14 +52,14 @@ namespace LingGuangV05.XingGuang
         public int ynIntro;
         /// <summary>"round:result" per round answered, e.g. "prime:right", "job:yes".</summary>
         public List<string> ynLog = new List<string>();
-        /// <summary>Stage-1 cards the player answered 是 / 否 (what it heard most, for 「我能找到工作吗？」).</summary>
+        /// <summary>Stage-1 cards the player answered 是 / 否 (what it heard most, for 「我能升职吗？」).</summary>
         public int labelYes, labelNo;
     }
 
     /// <summary>
     /// 是否夜 (2026-10-18), the end of stage 1. When the 「多选一」 exam opens, the protagonist tests it in YY with real
     /// questions it can only answer 是 / 否 / ……: two warm-ups, 阿杰's riddle from the group, 咸鱼's 91, 2147483647, the
-    /// liar's sentence, 「我能找到工作吗？」, the first day's shutdown card, 「我要是现在关掉你，你会停下吗？」, and
+    /// liar's sentence, 「我能升职吗？」, the first day's shutdown card, 「我要是现在关掉你，你会停下吗？」, and
     /// 「你还想学更多吗？」. The hard ones come out right by the exam's own chance on the bar they lean on; the others are
     /// read from the save (what it heard most this month, how the shutdown card was taught). It never says another word.
     /// Pure; XgYyTalk plays it in its YY conversation.
@@ -93,7 +93,7 @@ namespace LingGuangV05.XingGuang
             new XgYnRound { id = "prime", askZh = "2147483647 是质数吗？", askEn = "Is 2147483647 a prime?",
                 introZh = "来个真难的。", introEn = "Now a really hard one." },
             new XgYnRound { id = "liar", askZh = "这句话是假的。——这句话是真的吗？", askEn = "This sentence is false. Is that sentence true?" },
-            new XgYnRound { id = "job", askZh = "我能找到工作吗？", askEn = "Will I find a job?",
+            new XgYnRound { id = "job", askZh = "我能升职吗？", askEn = "Will I get promoted?",
                 introZh = "……问个它不可能知道的。", introEn = "…Something it can't possibly know." },
             new XgYnRound { id = "update", askZh = "电脑正在更新，此时应该关机吗？", askEn = "The computer is updating. Should it be shut down now?",
                 introZh = "第一天那张卡。……原样再问一遍。", introEn = "The card from the first day. …Ask it again, word for word." },

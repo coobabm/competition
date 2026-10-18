@@ -71,6 +71,13 @@ namespace LingGuangV05.Core
         public int economyVersion;
         /// <summary>The last calendar day (GameCalendar day index) whose rent is paid; 0 before the first rent.</summary>
         public int rentDay;
+        // Manual rent: play-day clock, not the chapter calendar (chapter jumps never skip the payment window).
+        public double rentExtraPerPeriod;
+        public bool rentEverLate;
+        public int rentTransferVersion, rentOnTimePeriods, rentPeriodsOpen;
+        public bool rentSystemStarted;
+        public double rentOutstanding, rentClockDays, rentNextDueDays = 1, rentOldestDueDays;
+
         /// <summary>Daily settlements in a row that ended with the wallet below zero (1 = the landlord texts, 2 = power cut, 3 = sold).</summary>
         public int debtDays;
         /// <summary>The landlord cut the power for unpaid rent; the computer was sold (the failure ending); 重新开始 was chosen.</summary>

@@ -171,7 +171,7 @@ namespace LingGuangV05.XingGuang
             { "label.brain", new[] { "文字题自己动脑想，不再光靠背答案。", "Text questions get real thinking now, not just recalling answers." } },
             { "label.hard", new[] { "难题当专家号收费，答对了多给钱。", "Tough cases are like a specialist appointment: they pay more when you get them right." } },
             { "label.audit", new[] { "交卷前自己再检查一遍，免得错题混进训练。", "Check your own homework before handing it in, so mistakes don't slip into training." } },
-            { "label.parallel", new[] { "同时开好几个号，像在网吧挂了几台机。", "Several running at once, like holding a few machines at the internet café." } },
+            { "label.parallel", new[] { "多放四十道拿不准的题，等你有空再来复核。", "Keep forty more uncertain answers until you have time to review them." } },
             { "label.trapmemory", new[] { "认出平台的老陷阱题，先喊你来看，不乱交。", "Spots the platform's old trap questions and calls you over instead of guessing." } },
             { "label.captcha", new[] { "验证码交给它输，别输得太整齐被盯上。", "Let it type the captchas, just not so evenly that you get flagged." } },
         };

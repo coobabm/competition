@@ -29,8 +29,13 @@ namespace LingGuangV05.Core.Girlfriend
         public int arriveDay;
         /// <summary>Game seconds the same-day milk tea arrives (0 for parcels).</summary>
         public double arriveAt;
-        /// <summary>0 on the way, 1 signed for, 2 refused (refunded).</summary>
+        /// <summary>
+        /// 0 on its way to her, 1 signed for, 2 refused (refunded), 3 in his hands (bought, not given yet),
+        /// 4 on its way to him. A gift only goes to her once he gives it himself in her chat.
+        /// </summary>
         public int state;
+        /// <summary>Calendar day the parcel reaches him (state 4 → 3).</summary>
+        public int heldDay;
         /// <summary>Affection it gave when it arrived, and whether it matched something she said.</summary>
         public int effect;
         public bool matched;

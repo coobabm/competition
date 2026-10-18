@@ -104,7 +104,7 @@ namespace LingGuangV05.Desktop.Casino
 
         void Update()
         {
-            if (controller == null) controller = FindAnyObjectByType<XingGuangController>();
+            if (controller == null) controller = XingGuangController.Instance;
             if (controller == null || controller.Sim == null || controller.runtime == null || controller.runtime.Sim == null) return;
             var sim = controller.Sim;
             if (!ReferenceEquals(sim, bound)) { bound = sim; if (ad != null) Destroy(ad.gameObject); ad = null; }

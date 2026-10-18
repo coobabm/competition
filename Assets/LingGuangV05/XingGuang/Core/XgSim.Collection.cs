@@ -61,6 +61,7 @@ namespace LingGuangV05.XingGuang
         public bool AtlasLit(XgNode n)
         {
             if (n == null) return false;
+            if (n.target != null && (n.target.StartsWith("lesson.") || n.target.StartsWith("quiz."))) return TrainingAtlasLit(n.target);
             if (n.kind == XgNodeKind.Phenomenon) return PhenomenonSeen(n.target);
             if (n.kind == XgNodeKind.Ability) return HasAbility(n.value);
             return false;

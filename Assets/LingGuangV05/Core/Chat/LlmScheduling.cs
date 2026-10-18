@@ -103,6 +103,9 @@ namespace LingGuangV05.Core.Chat
             if (mode == LlmLaunchMode.Cpu) sb.Append(" --n-gpu-layers 0 --device none --fit off");
             else sb.Append(" --fit on --fit-ctx ").Append(SlotContext.ToString(CultureInfo.InvariantCulture));
             sb.Append(" --flash-attn auto");
+            // Leave cores available for the Unity main/render threads and audio mixer.
+            int threads = Math.Max(1, Math.Min(6, Environment.ProcessorCount / 2));
+            sb.Append(" --threads ").Append(threads).Append(" --threads-batch ").Append(threads);
             if (mode != LlmLaunchMode.GpuPlainCache) sb.Append(" --cache-type-k q8_0 --cache-type-v q8_0");
             sb.Append(" --cache-reuse 256 --cache-ram ").Append(CacheRamMiB.ToString(CultureInfo.InvariantCulture))
               // LlamaLib v2.0.5's llama.cpp (2026-03) has no --checkpoint-min-step: it spaces checkpoints 64 tokens

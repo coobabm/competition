@@ -69,6 +69,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bookHead = ui.Text(Rect("Head", panel, new Vector2(0, 1), Vector2.one, new Vector2(10, -22), new Vector2(-10, -3)), "", 12, XgDark.Accent, TextAlignmentOptions.MidlineLeft);
             bookHead.fontStyle = FontStyles.Bold; bookHead.textWrappingMode = TextWrappingModes.NoWrap; bookHead.overflowMode = TextOverflowModes.Ellipsis;
             bookBody = ui.Text(Rect("Body", panel, Vector2.zero, Vector2.one, new Vector2(10, 8), new Vector2(-10, -23)), "", 12, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            if (XgUiV4Fonts.Reading != null) bookBody.font = XgUiV4Fonts.Reading;
             bookBody.enableAutoSizing = true; bookBody.fontSizeMin = 9; bookBody.fontSizeMax = 12;
             var bar = Rect("Bar", panel, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 4));
             bookPanelFill = Bar(bar, "Fill", XgDark.Track, XgDark.Gold);
@@ -259,7 +260,7 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var a in quiz)
             {
                 sb.Append("\n").Append(Hex(XgDark.Muted)).Append(T("《" + a.book.name + "》", a.book.nameEn + ": ")).Append("</color>").Append(a.question);
-                sb.Append("\n    ").Append(T("它答：", "It says: ")).Append(a.right ? Hex(XgDark.Good) : Hex(XgDark.Bad)).Append(a.said).Append(a.right ? " ✓" : " ✗").Append("</color>");
+                sb.Append("\n    ").Append(T("它答：", "It says: ")).Append(a.right ? Hex(XgDark.Good) : Hex(XgDark.Bad)).Append(a.said).Append(a.right ? " ✓" : " ×").Append("</color>");
                 if (!a.right) sb.Append(Hex(XgDark.Muted)).Append(T("（是" + a.answer + "）", " (it is " + a.answer + ")")).Append("</color>");
             }
             return sb.ToString();

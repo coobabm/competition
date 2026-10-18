@@ -111,7 +111,9 @@ namespace LingGuangV05.Desktop.Tieba
 
         public static XgSim Lab()
         {
-            var controller = FindAnyObjectByType<XingGuangController>();
+            // Shared by story/focus probes many times per frame. The owner registers once,
+            // and its current Sim is read each time so loading another save cannot leave stale state.
+            var controller = XingGuangController.Instance;
             return controller != null ? controller.Sim : null;
         }
 
@@ -123,6 +125,23 @@ namespace LingGuangV05.Desktop.Tieba
             if (!CanPostHelp) return;
             S.helpPosted = true; S.helpPostedAt = Now;
             Touch();
+        }
+
+        /// <summary>Data the player can post a 「求数据」 thread about now (thread id "ask_" + dataset in forum.json).</summary>
+        public List<string> AskableData()
+        {
+            var lab = Lab();
+            if (lab == null || runtime == null || runtime.Sim == null || runtime.Sim.InPrologue) return new List<string>();
+            var list = lab.AskableData();
+            list.RemoveAll(ds => Library.Get("ask_" + ds) == null);
+            return list;
+        }
+
+        /// <summary>The player posts his own 「求数据」 thread; replies (and the offer) come later.</summary>
+        public void PostDataRequest(string dataset)
+        {
+            var lab = Lab();
+            if (lab != null && lab.AskForData(dataset)) Touch();
         }
 
         /// <summary>周而复始_ can be written to once his thread has shown up (stage 4).</summary>

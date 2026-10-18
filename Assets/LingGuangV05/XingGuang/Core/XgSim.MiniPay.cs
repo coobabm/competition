@@ -64,7 +64,10 @@ namespace LingGuangV05.XingGuang
             {
                 if (useCombo) Hit(info.comboWindow, 1);
                 result.pay = MiniBasePay(desk);
-                result.bonus = result.pay * MiniBonusShare(seconds, useCombo ? ComboMultiplier : 1);
+                result.bonus = desk == XgMemes.SenseDesk
+                    ? result.pay * ((useCombo ? System.Math.Min(2, ComboMultiplier) : 1) - 1
+                        + (seconds >= 0 && seconds < 7.5 ? .5 : 0))
+                    : result.pay * MiniBonusShare(seconds, useCombo ? ComboMultiplier : 1);
                 host.Earn(result.Total); S.totalIncome += result.Total;
                 S.handCorrect++; QualityHandCorrect();
                 AddLabel(desk);

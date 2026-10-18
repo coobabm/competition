@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim source;
         XgBoard board;
         bool refreshConcepts;
-        bool Reduced => controller?.View?.Juice != null && controller.View.Juice.Reduced;
+        bool Reduced => GamePerformance.Low || controller?.View?.Juice != null && controller.View.Juice.Reduced;
 
         public static void Install(XingGuangController controller, XgBrainWallpaper wallpaper)
         {
@@ -85,7 +85,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Started(XgEpoch epoch)
         {
-            if (!Visible || epoch == null) return;
+            if (!Visible || epoch == null || GamePerformance.Low) return;
             if (waves.Count == MaxWaves) waves.RemoveAt(0);
             waves.Add(new Wave { started = Time.unscaledTime, strength = epoch.hand ? 1 : .35f,
                 stage = Mathf.Clamp(source.S.stage, 1, 6) });
@@ -94,6 +94,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Changed(IReadOnlyList<XgConceptTransition> changes)
         {
             if (!Visible || !ReferenceEquals(board, source.Board)) return;
+            if(GamePerformance.Low){presentation?.DataChanged();refreshConcepts=true;return;}
             foreach (var change in changes)
             {
                 lives.RemoveAll(life => life.change.Id == change.Id);
@@ -112,6 +113,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             Observe();
             if (!Visible) { if (lives.Count > 0 || waves.Count > 0) Clear(); return; }
+            if(GamePerformance.Low){if(lives.Count>0||waves.Count>0)Clear();return;}
             bool hadLife = lives.Count > 0;
             bool active = hadLife || waves.Count > 0;
             int beforeLives = lives.Count, beforeWaves = waves.Count;

@@ -1,71 +1,141 @@
 using System;
-using System.Globalization;
-using System.Text;
-
+using System.Collections.Generic;
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>Technology-page copy only. Never changes catalog data, purchases or player state.</summary>
+    /// <summary>Three-line technology cards. Explanations belong to the explicit Details action.</summary>
     public static class XgTechTreeCopy
     {
-        static string T(XgSim sim, string zh, string en) => sim.English ? en : zh;
-        static string N(double n) => n.ToString("0.##", CultureInfo.InvariantCulture);
-
-        public static string Name(XgNode node, XgSim sim)
+        sealed class Copy
         {
-            if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeName(node);
-            switch (node.id)
-            {
-                case "mlp": return T(sim, "多层感知机（MLP）", "Multilayer perceptron (MLP)");
-                case "resnet": return T(sim, "残差网络（ResNet）", "Residual network (ResNet)");
-                case "momentum": return T(sim, "动量随机梯度下降", "Momentum SGD");
-                case "adam": return T(sim, "Adam 优化器", "Adam optimizer");
-                case "sft": return T(sim, "监督微调（SFT）", "Supervised fine-tuning (SFT)");
-                case "lrschedule": return T(sim, "学习率衰减", "Learning-rate decay");
-                case "rnn": return T(sim, "循环神经网络（RNN）", "Recurrent neural network (RNN)");
-                case "lstm": return T(sim, "长短期记忆网络（LSTM）", "Long short-term memory (LSTM)");
-                case "gru": return T(sim, "门控循环单元（GRU）", "Gated recurrent unit (GRU)");
-                case "seq2seq": return T(sim, "序列到序列模型", "Sequence-to-sequence model");
-                case "attention": return T(sim, "注意力机制", "Attention mechanism");
-                case "caption": return T(sim, "图像描述生成", "Image captioning");
-                case "textcnn": return T(sim, "文本卷积网络", "Text convolutional network");
-                case "step": return T(sim, "阶跃激活函数", "Step activation function");
-                case "sigmoid": return T(sim, "Sigmoid 激活函数", "Sigmoid activation function");
-                case "relu": return T(sim, "整流线性单元（ReLU）", "Rectified linear unit (ReLU)");
-                case "irnn": return T(sim, "单位矩阵初始化", "Identity matrix initialization");
-                case "position": return T(sim, "位置编码", "Positional encoding");
-                case "dropout": return T(sim, "随机失活（Dropout）", "Dropout");
-                case "batchnorm": return T(sim, "批量归一化", "Batch normalization");
-                case "layernorm": return T(sim, "层归一化", "Layer normalization");
-                case "cooler": return T(sim, "塔式散热器", "Tower cooler");
-                case "datacenter": return T(sim, "IDC 机柜租赁", "IDC rack rental");
-                case "secret.6": return T(sim, "预训练配置指南", "Pre-training configuration guide");
-                case "label.raise": return T(sim, "标注报酬倍率", "Labelling pay multiplier");
-                case "label.auto": return T(sim, "自动标注", "Automatic labelling");
-                case "label.coop": return T(sim, "置信度分流", "Confidence-based routing");
-                case "label.brain": return T(sim, "本地模型推理", "Local model inference");
-                case "label.hard": return T(sim, "难例复核奖励", "Hard-case review rewards");
-                case "label.audit": return T(sim, "标注质量抽检", "Labelling quality audit");
-                case "label.parallel": return T(sim, "并发推理", "Concurrent inference");
-                case "label.trapmemory": return T(sim, "金标准题匹配", "Gold-standard item matching");
-                case "label.captcha": return T(sim, "验证码自动填充", "Captcha autofill");
-                default: return sim.NodeName(node);
-            }
+            public readonly string name, nameEn, summary, summaryEn, effect, effectEn;
+            public Copy(string n,string en,string s,string se,string e,string ee){name=n;nameEn=en;summary=s;summaryEn=se;effect=e;effectEn=ee;}
         }
-
-        public static string Note(XgNode node, XgSim sim)
+        static string T(XgSim sim,string zh,string en)=>sim.English?en:zh;
+        static readonly Dictionary<string,Copy> All=new Dictionary<string,Copy>(StringComparer.Ordinal)
         {
-            if (node == null || sim.NodeMystery(node) || XgSim.IsAtlas(node)) return sim.NodeNote(node);
-            string explanation = Explanation(node, sim), effect = Effect(node, sim);
-            // Unknown future nodes retain their authored copy until their implementation is reviewed.
-            if (explanation == null || effect == null) return sim.NodeNote(node);
-            var body = new StringBuilder(explanation);
-            body.Append(T(sim, "\n\n效果：", "\n\nEffect: ")).Append(effect);
-            foreach (var item in XgSim.ScaleItems)
-                if (item.item == node.id)
-                    body.Append(T(sim, "\n预训练有效规模 ×", "\nEffective pre-training scale ×")).Append(N(item.factor)).Append(T(sim, "（与其他道具倍数相乘）。", " (multiplies with other items)."));
-            return body.ToString();
+            { "perceptron", new Copy("感知机 P 1958","Perceptron P 1958","用直线分两边","Split with one line","启用基础脑型","Enables basic architecture") },
+            { "mlp", new Copy("多层感知机 MLP 1986","Multilayer MLP 1986","把简单线索组合起来","Combine simple clues","加入多层脑型","Adds multilayer architecture") },
+            { "lenet", new Copy("手写卷积 LeNet 1998","Digit CNN LeNet 1998","小窗口寻找笔画","Find strokes locally","加入手写卷积脑型","Adds digit CNN architecture") },
+            { "rnn", new Copy("循环网络 RNN 1986","Recurrent RNN 1986","边读边记前文","Read and remember","加入循环脑型","Adds recurrent architecture") },
+            { "alexnet", new Copy("深层卷积 AlexNet 2012","Deep CNN AlexNet 2012","叠起更多图像线索","Stack visual clues","加入深层卷积脑型","Adds deep CNN architecture") },
+            { "vgg", new Copy("小窗卷积 VGG 2014","Small-filter VGG 2014","小窗口层层叠起来","Stack small filters","加入小窗卷积脑型","Adds VGG architecture") },
+            { "googlenet", new Copy("多路卷积 Inception 2014","Multi-path Inception 2014","大小窗口一起看","Use several window sizes","加入多路卷积脑型","Adds multi-path architecture") },
+            { "lstm", new Copy("门控记忆 LSTM 1997","Gated memory LSTM 1997","让重要线索多留一会","Keep useful clues longer","加入门控记忆脑型","Adds gated-memory architecture") },
+            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact-memory architecture") },
+            { "textcnn", new Copy("文字卷积 CNN 2014","Text CNN 2014","用小窗口读短句","Read local word groups","加入文字卷积脑型","Adds text CNN architecture") },
+            { "resnet", new Copy("残差网络 ResNet 2015","Residual ResNet 2015","给信息开一条近道","Give signals a shortcut","启用跨层直连","Enables skip connections") },
+            { "seq2seq", new Copy("编码解码 Seq2Seq 2014","Encoder-decoder S2S 2014","读完一句再组织输出","Read, then compose","加入编码解码脑型","Adds encoder-decoder architecture") },
+            { "attention", new Copy("回看注意力 Attn 2014","Look-back Attn 2014","说话时回头看原文","Look back at the source","移除翻译瓶颈折减","Removes translation bottleneck") },
+            { "caption", new Copy("图像描述 Cap 2015","Image caption Cap 2015","给图像配一句话","Describe a picture","表情题显示描述","Shows descriptions on meme cards") },
+            { "transformer", new Copy("自研新脑 TF 探索2016","Own TF experiment 2016","让整句线索一起看","Attend across the sentence","加入自研注意力脑型","Adds experimental architecture") },
+            { "weights", new Copy("权重 W 1958","Weights W 1958","给线索分配分量","Weight each clue","训练处理量×1.1","Training throughput ×1.1") },
+            { "learnrule", new Copy("感知学习 PL 1958","Perceptron rule PL 1958","答错就朝正确方向调","Adjust after mistakes","训练处理量×1.15","Training throughput ×1.15") },
+            { "step", new Copy("阶跃开关 Step 1943","Threshold Step 1943","过线才打开开关","Switch at a threshold","成绩上限项加1点","Ceiling bonus term +1 point") },
+            { "bias", new Copy("偏置 Bias 1958","Bias 1958","让判断门槛能移动","Move the decision threshold","成绩上限项加2点","Ceiling bonus term +2 points") },
+            { "features", new Copy("组合线索 FE 工具2016","Feature tools FE tool 2016","人先帮它整理线索","Prepare combined clues","解除逻辑55%上限","Removes the 55% base logic cap") },
+            { "shared.lr", new Copy("学习率搜索 LRS 工具2016","Rate search LRS tool 2016","试试哪种步子合适","Try different step sizes","显示六档学习率","Shows six learning rates") },
+            { "sigmoid", new Copy("平滑开关 Sigmoid 1986","Smooth Sigmoid 1986","小误差也能传回来","Pass small errors back","启用平滑激活","Enables smooth activation") },
+            { "momentum", new Copy("动量下降 MSGD 1964","Momentum MSGD 1964","顺着之前的方向走","Follow recent direction","优化器处理量×1.3","Optimizer throughput ×1.3") },
+            { "backprop", new Copy("小批量 MB 工具2016","Mini-batch MB tool 2016","看一批题再改一次","Update after a small batch","训练处理量×1.2","Training throughput ×1.2") },
+            { "chainrule", new Copy("自动求导 AD 1970","Auto-diff AD 1970","让程序算调整方向","Calculate update directions","训练处理量×1.1","Training throughput ×1.1") },
+            { "cudnn", new Copy("显卡加速 cuDNN 2014","GPU library cuDNN 2014","用显卡擅长的算法","Use GPU-tuned routines","训练用电量×0.7","Training energy ×0.7") },
+            { "cooler", new Copy("塔式散热 FAN 工具2016","Tower cooler FAN tool 2016","把训练热量带走","Carry training heat away","训练烧卡风险减半","Halves training burn-out risk") },
+            { "relu", new Copy("整流激活 ReLU 2010","Rectifier ReLU 2010","正数传下去负数归零","Pass positives, zero negatives","训练处理量×1.3","Training throughput ×1.3") },
+            { "gradclip", new Copy("梯度裁剪 Clip 2013","Gradient Clip 2013","截短过大的改动","Limit oversized updates","单权重改动限幅","Clamps per-weight updates") },
+            { "irnn", new Copy("单位初始化 IRNN 2015","Identity init IRNN 2015","先让记忆原样传递","Start with identity memory","提高循环记忆保留率","Raises recurrent retention") },
+            { "dropout", new Copy("随机失活 Dropout 2012","Dropout 2012","少靠几条熟悉线索","Avoid relying on few clues","过拟合风险项减半","Halves overfit risk term") },
+            { "augment", new Copy("数据增强 AUG 工具2016","Data augmentation AUG tool 2016","换个样子继续认","Recognise varied views","扩充图像训练题池","Expands image training pool") },
+            { "dataclean", new Copy("数据清洗 CLEAN 工具2016","Data cleanup CLEAN tool 2016","先挑掉错误示范","Remove wrong examples","外来有效错标减半","Halves effective external noise") },
+            { "rmsprop", new Copy("自适应步长 RMSProp 2012","Adaptive RMSProp 2012","每个参数各走各的","Adapt each parameter's step","优化器处理量×1.6","Optimizer throughput ×1.6") },
+            { "batchnorm", new Copy("批归一化 BN 2015","Batch norm BN 2015","把一批信号调齐","Align a batch of signals","结构耐受层数加6","Architecture depth tolerance +6") },
+            { "adam", new Copy("自适应动量 Adam 2014","Adaptive momentum Adam 2014","方向和步幅一起调","Adapt direction and step","优化器处理量×2","Optimizer throughput ×2") },
+            { "lrschedule", new Copy("学习率衰减 LRD 工具2016","Rate decay LRD tool 2016","先大步再慢慢细调","Large steps, then fine steps","降低成绩上限误差项","Lowers ceiling error term") },
+            { "position", new Copy("位置标记 POS 探索2016","Own position experiment 2016","给每个字一个位置","Tag each word's position","启用文字位置线索","Enables word-position clues") },
+            { "transfer", new Copy("迁移学习 TL 工具2016","Transfer learning TL tool 2016","换脑型也带上旧知识","Carry knowledge to a new model","换脑型保留60%增益","Keeps 60% above-chance accuracy") },
+            { "multihead", new Copy("多路注意 MH 探索2016","Own multi-head experiment 2016","几路同时寻找线索","Look for several clue types","随自研脑型获得","Granted with experimental model") },
+            { "layernorm", new Copy("层归一化 LN 2016","Layer norm LN 2016","把内部信号调齐","Align internal signals","随自研脑型获得","Granted with experimental model") },
+            { "residual", new Copy("残差直连 RC 2015","Residual links RC 2015","留一条不绕远的路","Leave a direct signal path","随自研脑型获得","Granted with experimental model") },
+            { "warmup", new Copy("学习率预热 WU 工具2016","Rate warm-up WU tool 2016","换设置后先小步走","Start gently after changes","前期步幅渐进提升","Ramps initial learning steps") },
+            { "fp16", new Copy("半精度 FP16 2016","Half precision FP16 2016","用更短的数字计算","Compute with shorter numbers","预训练规模×2","Pretraining scale ×2") },
+            { "earlystop", new Copy("早停研究 ES 1990","Early-stop study ES 1990","研究何时该停下来","Study when to stop","训练处理量×1.05","Training throughput ×1.05") },
+            { "wordvec", new Copy("词向量 W2V 2013","Word vectors W2V 2013","把词语变成数字","Represent words as numbers","训练处理量×1.08","Training throughput ×1.08") },
+            { "beamsearch", new Copy("束搜索 BS 1977","Beam search BS 1977","多留几条候选句","Keep several candidates","训练处理量×1.1","Training throughput ×1.1") },
+            { "subword", new Copy("子词切分 BPE 2016","Subword BPE 2016","生僻词拆成小块","Split rare words into pieces","训练处理量×1.05","Training throughput ×1.05") },
+            { "sft", new Copy("示范跟答 SFT 探索2016","Own answer-tuning trial 2016","照着好回答学说话","Learn from good answers","训练处理量×1.05","Training throughput ×1.05") },
+            { "cot", new Copy("分步解题 CoT 探索2016","Own reasoning trial 2016","先想几步再回答","Work through steps first","训练处理量×1.05","Training throughput ×1.05") },
+            { "secret.6", new Copy("配置指南 GUIDE 工具2016","Setup guide GUIDE tool 2016","看看预训练怎样配","Read the pretraining setup","显示预训练配置提示","Shows pretraining setup hints") },
+            { "datacenter", new Copy("机柜租赁 IDC 工具2016","Rack rental IDC tool 2016","给大训练找个机位","Make room for larger training","开放机房机架","Opens the data-centre rack") },
+            { "label.raise", new Copy("答题加薪 PAY 工具2016","Answer pay PAY tool 2016","每道题多赚一点","Earn more per answer","提高人工答题报酬","Raises hand-answer pay") },
+            { "label.auto", new Copy("自动答题 AUTO 工具2016","Auto answering AUTO tool 2016","让合格模型代劳","Let qualified models help","每级每桌加0.15题秒","Adds 0.15 cards/s per desk/level") },
+            { "label.coop", new Copy("把握门槛 CONF 工具2016","Confidence gate CONF tool 2016","拿不准就留给你","Leave uncertain cards to you","开放把握阈值设置","Unlocks confidence threshold") },
+            { "label.brain", new Copy("本地判题 LLM 工具2016","Local judging LLM tool 2016","让它读题说说理由","Let it read and judge","开放本地模型判题","Unlocks local-model judging") },
+            { "label.hard", new Copy("难例奖励 HARD 工具2016","Hard-case reward HARD tool 2016","难题复核更值钱","Reward difficult reviews","新题复核报酬×1.5","New-card review pay ×1.5") },
+            { "label.audit", new Copy("答案抽检 QA 工具2016","Answer audit QA tool 2016","拦住一部分错答案","Catch wrong submissions","错题抽检率40%","Audits 40% of wrong answers") },
+            { "label.parallel", new Copy("复核扩容 Q 工具2016","Review inbox Q tool 2016","存下拿不准的题","Keep uncertain answers","复核容量20→60","Review capacity 20 to 60") },
+            { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","认出见过的检查题","Recognise known test cards","金题转人工复核","Routes gold items to review") },
+            { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","让它替你抄数字","Let it type the digits","新验证码自动提交","Auto-submits new captchas") },
+            { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","把资料装进大脑","Load files into its brain","开放资料夹、安装与网址","Opens files, import and URLs") },
+            { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","看清每笔钱的去向","Track every payment","显示资金收入与电力","Shows funds, income and power") },
+            { "train.curve", new Copy("训练曲线 CURVE 工具2016","Training curve CURVE tool 2016","看看每轮有没有进步","Watch progress each round","解锁练页","Unlocks Train") },
+            { "train.holdout", new Copy("留出新题 VAL 工具2016","Holdout set VAL tool 2016","用没练过的题考它","Test unseen questions","显示新题成绩曲线","Shows validation curve") },
+            { "train.checkpoint", new Copy("检查点 CKPT 工具2016","Checkpoint CKPT tool 2016","保留最好的一版","Keep the best version","开放最佳成绩回档","Unlocks best-checkpoint restore") },
+            { "train.monitor", new Copy("训练监控 MON 工具2016","Training monitor MON tool 2016","先看这轮有哪些风险","Preview this round's risks","显示训练风险","Shows training risks") },
+            { "train.weights", new Copy("权重可视化 VIS 工具2016","Weight viewer VIS tool 2016","看看它在注意哪里","See which clues it uses","开放看它学","Opens the learning viewer") },
+            { "brain.window", new Copy("脑子窗口 BRAIN 工具2016","Brain window BRAIN tool 2016","看看它怎么想","Watch its activity","开放脑子窗口","Opens the brain window") },
+            { "label.ai", new Copy("{AI}代答 ANS 工具2016","{AI} answers ANS tool 2016","每题先看看它怎么答","See its answer on each card","每题显示它的回答","Shows its answer on every card") },
+        };
+        public static bool Covered(XgNode n)=>n!=null&&(XgSim.IsAtlas(n)||All.ContainsKey(n.id)||n.kind==XgNodeKind.Depth||n.kind==XgNodeKind.Width||n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack.")||n.id.StartsWith("persona."));
+        public static string Name(XgNode n,XgSim sim)
+        {
+            if(n==null)return "?";
+            if(sim.NodeMystery(n))return sim.NodeName(n);
+            if(XgSim.IsAtlas(n))return sim.NodeName(n);
+            if(All.TryGetValue(n.id,out var c))return T(sim,c.name,c.nameEn).Replace("{AI}",sim.AiDisplayName);
+            if(n.kind==XgNodeKind.Depth)return T(sim,"网络深度 D 工具2016","Network depth D tool 2016");
+            if(n.kind==XgNodeKind.Width)return T(sim,"网络宽度 W 工具2016","Network width W tool 2016");
+            if(n.id=="danmu.pack")return T(sim,"弹幕情绪 DATA 工具2016","Comment sentiment DATA 2016");
+            if(n.id=="pack.poem_next")return T(sim,"唐诗接字 DATA 工具2016","Tang verse DATA 2016");
+            return sim.NodeName(n)+T(sim,n.id.StartsWith("persona.")?" PERS 工具2016":" DATA 工具2016",n.id.StartsWith("persona.")?" PERS tool 2016":" DATA tool 2016");
         }
-
+        public static string Summary(XgNode n,XgSim sim)
+        {
+            if(n==null||sim.NodeMystery(n))return T(sim,"还没发现这条线索","An undiscovered clue");
+            if(XgSim.IsAtlas(n))return T(sim,"把遇到的变化记下来","Remember what changed");
+            if(All.TryGetValue(n.id,out var c))return T(sim,c.summary,c.summaryEn);
+            if(n.kind==XgNodeKind.Depth)return T(sim,"多一层组合线索","Combine clues in more layers");
+            if(n.kind==XgNodeKind.Width)return T(sim,"同时容纳更多线索","Hold more clues per layer");
+            if(n.id.StartsWith("persona."))return T(sim,"聊聊它会怎样选择","Explore its choices");
+            if(n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack."))return T(sim,"换一套题继续教它","Teach it a new question set");
+            return T(sim,"内容待核对","Copy needs review");
+        }
+        public static string Effect(XgNode n,XgSim sim)
+        {
+            if(n==null||sim.NodeMystery(n))return T(sim,"▶ 发现后查看","▶ Discover to reveal");
+            if(XgSim.IsAtlas(n))return T(sim,"▶ 查看成长记录","▶ View the growth record");
+            if(All.TryGetValue(n.id,out var c))return "▶ "+T(sim,c.effect,c.effectEn);
+            if(n.kind==XgNodeKind.Depth)return "▶ "+T(sim,"可用层数上限"+n.value,"Layer cap "+n.value);
+            if(n.kind==XgNodeKind.Width)return "▶ "+T(sim,"每层宽度上限"+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))],"Width cap "+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))]);
+            if(n.id.StartsWith("pack."))return T(sim,"▶ 开放对应题桌","▶ Opens this question desk");
+            if(n.id.StartsWith("persona."))return T(sim,"▶ 开放对应性格题包","▶ Opens this personality pack");
+            if(n.kind==XgNodeKind.Dataset)return T(sim,"▶ 获得数据包使用权","▶ Grants access to this dataset");
+            return T(sim,"▶ 功能待核对","▶ Effect needs review");
+        }
+        public static string Card(XgNode n,XgSim sim)=>Name(n,sim)+"\n"+Summary(n,sim)+"\n"+Effect(n,sim);
+        // Kept for older callers. This is the short two-line body, never the glossary.
+        public static string Note(XgNode n,XgSim sim)=>Summary(n,sim)+"\n"+Effect(n,sim);
+        public static string Detail(XgNode n,XgSim sim)
+        {
+            if(n==null||sim.NodeMystery(n))return Summary(n,sim)+"。";
+            if(n.id=="transformer"||n.id=="multihead"||n.id=="position"||n.id=="sft"||n.id=="cot")
+                return T(sim,"这是你在2016年尝试的自研方向，不是当年公开发表成果的介绍。","This is your own experiment in 2016, not a claim about a publication from that year.")+"\n"+Summary(n,sim)+T(sim,"。",".");
+            if(n.id=="label.parallel")return T(sim,"待复核容量从20题增加到60题，满后自动暂停。多留四十道题，等你有空再来复核。","The review inbox expands from 20 to 60 cards; automation pauses when full. Keep forty more cards until you have time to review them.");
+            if(n.id.StartsWith("pack.")){var p=XgTeachingPacks.Find(n.id.Substring(5));return p==null?Summary(n,sim):T(sim,p.play,p.playEn);}
+            if(n.id.StartsWith("persona."))return T(sim,"这组问题用来了解它的选择。回答与标签记录在YY的性格页。","These questions explore its choices. Answers and labels are kept on YY's Personality page.");
+            if(n.kind==XgNodeKind.Depth||n.kind==XgNodeKind.Width)return Summary(n,sim)+T(sim,"。购买提高可用上限，模型按结构和显存配置。",". Buying raises the available cap; the model is configured for its architecture and VRAM.");
+            if(n.kind==XgNodeKind.Dataset)return T(sim,"例题和答案构成训练资料。不同题库练习不同本领。","Examples and answers form the training material. Different datasets practise different skills.");
+            string text=Explanation(n,sim);
+            return string.IsNullOrEmpty(text)?Summary(n,sim)+T(sim,"。","."):text;
+        }
         static string Explanation(XgNode node, XgSim sim)
         {
             switch (node.kind)
@@ -120,18 +190,12 @@ namespace LingGuangV05.XingGuang
                 case "label.brain": return T(sim, "让本地 AI 阅读文字题，再给出自己的判断。", "Let the local AI read text cards and give its own judgment.");
                 case "label.hard": return T(sim, "为你处理需要复核的难题提供额外奖励。", "Reward you for handling difficult cards that need human review.");
                 case "label.audit": return T(sim, "抽查自动提交的答案，在错题进入训练前拦下一部分。", "Sample automatic answers and catch some mistakes before they enter the training data.");
-                case "label.parallel": return T(sim, "让本地模型同时处理几项判断请求。", "Let the local model handle several judgment requests at once.");
+                case "label.parallel": return T(sim, "把拿不准的题先存起来，等你有空再复核。", "Keep uncertain answers until you have time to review them.");
                 case "label.trapmemory": return T(sim, "记住平台用来检查质量的标准答案题。", "Remember known-answer items the platform uses to check quality.");
                 case "label.captcha": return T(sim, "自动完成人机验证，省去手输四位数字的步骤。", "Complete four-digit verification automatically, saving you from typing it.");
                 default: return null;
             }
         }
-
-        static string Speed(XgSim sim, double factor) => T(sim, "两条训练线在购买后的轮次结算时，训练处理量 ×", "At epoch settlement after purchase, both tracks gain training throughput ×") + N(factor)
-            + T(sim, "，与其他处理量倍率相乘，无需装备。每轮卡数受算力、取整和上下限影响；离线模拟固定卡数不享受此加成。轮次时长不变，成绩需训练后评估。", ", multiplying with other throughput factors; no equipment step. Compute, rounding and caps affect cards per epoch; offline simulation keeps its fixed card count. Epoch duration is unchanged; evaluate after training for scores.");
-
-        static string CeilingBonus(XgSim sim, int points) => T(sim, "购买后无需装备，两条训练线的准确率上限公式加", "No equipment step after purchase: add ") + points
-            + T(sim, "个百分点，与同类加成相加，再受结构和数据集上限限制。不是当前成绩立即加分，需继续训练和评估。", " percentage points to both tracks' accuracy-ceiling formula. Adds to similar bonuses before architecture and dataset caps; train and evaluate to improve the actual score.");
 
         static string ArchitectureExplanation(XgNode node, XgSim sim)
         {
@@ -148,117 +212,5 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        static string ArchitectureEffect(XgNode node, XgSim sim)
-        {
-            var arch = XgCatalog.Arch(node.target);
-            var text = new StringBuilder(node.id == "perceptron"
-                ? T(sim, "开局免费拥有，两条训练线的默认结构。", "Owned free from the start; the default for both tracks.")
-                : T(sim, "加入可用结构，无需装备；系统在轮次之间按数据、已购上限和显存选用，不保证立即切换。", "Adds an architecture option with no equip step; selected between epochs for the data, purchased caps and VRAM, with no guaranteed immediate switch."));
-            switch (node.id)
-            {
-                case "perceptron": text.Append(T(sim, "未拥有人工作成的组合线索时，逻辑数据的基础准确率上限为55%。", "Without engineered clues, the base accuracy ceiling on logic data is 55%.")); break;
-                case "rnn": text.Append(T(sim, "采用时，前文信号每隔一个序列位置基础保留75%，逐步相乘；已生效技术可改变此比例，记忆没有固定字数截断。", "When selected, earlier signals retain a base 75% per sequence position, compounded each step. Active techniques can change this; there is no fixed word-count cutoff.")); break;
-                case "lstm": text.Append(T(sim, "采用时用门控记忆保留重要线索，仍会随距离衰减。", "When selected, gated memory keeps important clues longer, but still fades with distance.")); break;
-                case "gru": text.Append(T(sim, "采用时与LSTM使用相同门控记忆规则；同深度、同宽度的参数量为LSTM的75%。", "Uses the same gated-memory rule as LSTM, with 75% of its parameters at equal depth and width.")); break;
-                case "seq2seq": text.Append(T(sim, "采用后可处理需要编码—解码的数据，翻译成绩上限仍受×0.75的瓶颈折减。", "When selected, handles data requiring an encoder-decoder; the translation score ceiling still has a ×0.75 bottleneck penalty.")); break;
-                case "attention": text.Append(T(sim, "采用时，原文线索不再随距句尾的距离衰减，翻译上限不再受×0.75额外折减。", "When selected, source clues no longer fade with distance from the sentence end, and the extra ×0.75 translation-ceiling penalty is removed.")); break;
-                case "caption": text.Append(T(sim, "拥有后新生成的表情包题会显示预设描述和教学关注区域，供你核对；不是模型现场生成描述。", "New meme cards show preset descriptions and a teaching focus region for you to check; descriptions are not generated live by an image model.")); break;
-                case "mlp": text.Append(T(sim, "采用时，空间或顺序题的模拟答对率至多60%。", "When selected, simulated correctness on spatial or order cards is at most 60%.")); break;
-                case "vgg": text.Append(T(sim, "采用时超过12层，每多一层在成绩上限和单题答对率的各自计算中扣3个百分点。", "When selected above 12 layers, each extra layer subtracts 3 percentage points in each separate calculation of the score ceiling and per-card correctness.")); break;
-                case "resnet": text.Append(T(sim, "拥有后两条线下次自动配置都会启用跨层直连，层间传话不再衰减或被改写；阶跃激活仍不能传回学习信号。", "Ownership enables skip connections on both tracks at their next automatic configuration, removing inter-layer signal loss and distortion; step activation still blocks backward learning signals.")); break;
-                case "transformer": text.Append(T(sim, "采用时基础每轮时长为", "When selected, base epoch duration is ")).Append(N(XgSim.DurationFor(new XgRun { arch = node.id })))
-                    .Append(T(sim, "秒，资源阻塞仍可能延长耗时；序列准确率上限公式加6个百分点，仍受数据集上限限制。拥有时附送多头注意力、层归一化和残差标记；达标并确认第六阶段也可免费获得。", " s, subject to resource delays. The sequence accuracy-ceiling formula gains 6 percentage points, subject to dataset caps. Ownership grants the three accompanying technology markers; qualifying and confirming stage 6 also grants this architecture free.")); break;
-            }
-            if (arch.maxDepth < 999) text.Append(T(sim, "基础结构可承受", " Base architecture depth tolerance: ")).Append(arch.maxDepth)
-                .Append(T(sim, "层；实际层数还受已购上限、其他技术和显存限制。", " layers; purchased caps, other techniques and VRAM still apply."));
-            if (arch.speed != 1) text.Append(T(sim, "采用时训练处理量系数×", " When selected, training throughput factor ×")).Append(N(arch.speed))
-                .Append(T(sim, "，与其他处理量倍数相乘，卡数仍受取整和上下限限制。", ", multiplying with other throughput factors; rounding and card limits still apply."));
-            text.Append(T(sim, "每条线只用一种结构，架构效果不相乘。换结构可能需重新学习，训练后再看评估成绩。", " Each track uses one architecture, without stacking architecture effects. Switching may require relearning; train and evaluate to see the score."));
-            return text.ToString();
-        }
-
-        static string Effect(XgNode node, XgSim sim)
-        {
-            if (node.kind == XgNodeKind.Depth || node.kind == XgNodeKind.Width)
-            {
-                bool depth = node.kind == XgNodeKind.Depth;
-                string scope = node.tree == "trunk" ? T(sim, "两条训练线", "Both training tracks") : node.tree == "vision" ? T(sim, "视觉训练线", "The vision track") : T(sim, "序列训练线", "The sequence track");
-                int cap = depth ? node.value : XgCatalog.Widths[Math.Max(0, Math.Min(node.value, XgCatalog.Widths.Length - 1))];
-                return scope + T(sim, depth ? "可用层数上限解锁至 " : "每层宽度上限解锁至 ", depth ? " unlock a layer cap of " : " unlock a width cap of ") + cap
-                    + T(sim, "。实际模型由系统按结构限制和可用显存自动配置；购买后不保证立即变大或提分。", ". Models are configured automatically within architecture and available VRAM limits; a purchase does not guarantee immediate growth or a higher score.");
-            }
-            if (node.kind == XgNodeKind.Dataset)
-            {
-                var data = XgCatalog.Dataset(node.target);
-                string result = T(sim, "提供 ", "Provide ") + XgSim.SamplesText(data.samples) + T(sim, " 条训练样本；需启用数据包，已有等价剧情数据时不重复计数。", " training samples while the pack is enabled; equivalent story data is not counted twice.");
-                if (XgSim.PackBatches(data) > 1) result += T(sim, "分 ", "Comes in ") + XgSim.PackBatches(data) + T(sim, " 批下载，第一批随数据包到；每批在起步的 ADSL 20M 上约 ", " batches, the first with the pack; each takes about ") + N(XgSim.DownloadSecondsAt(XgSim.BatchMB(data), XgSim.BroadbandMBps[0])) + T(sim, " 秒，宽带越快越短。", " s on the starting 20M ADSL, less on a faster line.");
-                if (data.dataWeight != 1) result += T(sim, "每条计入总数据进度的权重为 ", "Each sample counts toward total data progress with weight ") + N(data.dataWeight) + "。";
-                return result;
-            }
-            if (node.kind == XgNodeKind.Arch) return ArchitectureEffect(node, sim);
-            var research = XgCatalog.ResearchItem(node.id);
-            if (research != null && research.kind == XgResearchKind.Optimizer)
-                return T(sim, "自动使用已拥有的最快优化器，各优化器不叠加。被采用时，相对基础 SGD，", "Automatically uses the fastest owned optimizer; optimizers do not stack. When selected, relative to base SGD, ") + Speed(sim, research.speed)
-                    + (node.id == "adam" || node.id == "rmsprop" ? T(sim, "同配置下可承受的失稳步幅阈值×", " At the same configuration, the instability step threshold is ×") + N(node.id == "adam" ? 1.25 : 1.15) + T(sim, "，与归一化、裁剪的阈值倍数相乘。", ", multiplying with normalization and clipping threshold factors.") : "");
-            switch (node.id)
-            {
-                case "weights": case "chainrule": return Speed(sim, 1.1);
-                case "learnrule": return Speed(sim, 1.15);
-                case "backprop": return Speed(sim, 1.2);
-                case "relu": return Speed(sim, 1.3) + T(sim, "自动配置优先采用ReLU，激活函数不叠加。采用后，每跨一层基础保留98%的反向学习信号、95%的前向信号，逐层相乘；其他技术可改变比例。超过结构可承受层数时，上限与过拟合估算中每个超出层的有效参数保留由75%改为85%。", " Automatic configuration prefers ReLU; activations do not stack. When selected, base retention is 98% for backward learning signals and 95% for forward signals per layer, compounded across layers; other techniques can change these rates. Above the architecture depth tolerance, effective parameter retention per excess layer changes from 75% to 85% in ceiling and overfitting estimates.");
-                case "earlystop": return Speed(sim, 1.05) + T(sim, "自动停训由自动化节点「早停」提供。", "Automatic stopping is provided by the automation Early stopping level.");
-                case "wordvec": return Speed(sim, 1.08);
-                case "beamsearch": return Speed(sim, 1.1);
-                case "subword": case "sft": case "cot": return Speed(sim, 1.05);
-                case "bias": return CeilingBonus(sim, 2) + T(sim, "后续训练还能学习判断门槛。", " Further training can also learn a decision threshold.");
-                case "step": return CeilingBonus(sim, 1) + T(sim, "阶跃激活原本就可使用。", " Step activation is already available before purchase.");
-                case "sigmoid": return CeilingBonus(sim, 1) + T(sim, "自动配置时，尚无ReLU则采用Sigmoid，激活函数不叠加。", " Automatic configuration uses Sigmoid unless ReLU is owned; activations do not stack.");
-                case "features": return T(sim, "购买解除感知机在逻辑数据上的55%基础上限。系统在轮次之间为感知机启用人工组合线索，无需装备；训练卡数计算值×", "Removes the perceptron's 55% base ceiling on logic data. Automatically enables engineered clues for perceptrons between epochs; no equipment step. Calculated training card count ×") + N(XgSim.FeaturesCardFactor) + T(sim, "，与其他处理量倍数相乘后取整和限幅；离线模拟卡数不变。需继续训练和评估。", ", multiplying with other throughput factors before rounding and limits; offline card counts are unchanged. Continue training and evaluate.");
-                case "irnn": return T(sim, "自动配置采用普通RNN与ReLU时，前文信号每隔一个序列位置的保留率由75%改为", "When automatic configuration uses a plain RNN with ReLU, earlier-signal retention per sequence position changes from 75% to ") + N(XgBoard.IdentityKeep * 100) + T(sim, "%，逐步相乘；仍会衰减。梯度裁剪是购买前置，自动配置会启用；成绩需训练后评估。", "%, compounded each step; memory still fades. Clipping is a purchase prerequisite and is enabled automatically; evaluate after training for scores.");
-                case "position": return T(sim, "轮次之间自动启用，无需装备。支持的结构可使用句尾距离、句首词或两句对齐位置的线索，具体取决于结构；继续训练才能学会利用这些线索。", "Enabled automatically between epochs with no equipment step. Supported architectures use distance from the end, the opening word or aligned positions across two sentences, depending on the wiring; further training learns to use these clues.");
-                case "warmup": return T(sim, "轮次之间自动启用。首次训练或更换数据、配置后的前", "Enabled automatically between epochs. On first training or after changing data or settings, the first ") + XgSim.WarmupCards + T(sim, "张卡逐步把学习率升至设定值。大幅进步导致的回落风险分量×0.5，可与裁剪的×0.7相乘；不是总风险减半。", " cards gradually raise the learning rate to its configured value. The recent-large-gain component of drop risk is ×0.5, multiplying with clipping's ×0.7; total risk does not necessarily halve.");
-                case "fp16": return T(sim, "拥有后立即计入下列规模倍数，可提高预训练进度上限；实际进度仍需运行预训练推进，不直接加速或把训练显存减半。", "Ownership immediately adds the scale multiplier below and can raise the pre-training progress cap. Actual progress still needs pre-training to run; this does not directly speed it up or halve training VRAM.");
-                case "gradclip": return T(sim, "自动启用后，每张卡对单个权重的拉动限制为±", "When automatically enabled, each card's pull on a weight is limited to ±") + N(XgBoard.ClipLimit) + T(sim, "。可承受的失稳步幅基础阈值×2，取消循环结构的额外折减；大幅进步造成的回落风险分量×0.7。与相应减险倍数相乘，仍可能失稳。", ". The base instability step threshold is ×2, removing extra loop penalties; the recent-large-gain drop-risk component is ×0.7. These multiply with corresponding risk-reduction factors; instability remains possible.");
-                case "dropout": return T(sim, "购买后训练会按固定规则跳过约", "After purchase, training skips updates to about ") + N(XgBoard.DropoutRate * 100) + T(sim, "%的匹配线索；背答案造成的回落风险分量和训练—评估差距系数各×0.5，总风险与显示差距不保证减半。无需装备，成绩需训练后观察。", "% of matched clues under a fixed rule. The overfitting drop-risk component and training/evaluation-gap coefficient each become ×0.5; total risk and the displayed gap need not halve. No equipment step; observe scores after training.");
-                case "augment": return T(sim, "购买后自动生效，无需装备。训练题池大小与有效样本数：手写数字 ×2，围棋 ×8，CIFAR、ImageNet、表情包 ×3，文字不变；倍率含原题，只应用一次。减少成绩上限中的数据不足项和过拟合因素，后续训练再评估成绩；不保证固定提分。已收集样本数与总数据进度不变。", "Active automatically on purchase; no equipment needed. Training-pool size and effective sample count: digits ×2, Go ×8, CIFAR, ImageNet and memes ×3; text is unchanged. Multipliers include originals and apply once. Reduces the data-shortage term in the score ceiling and overfitting factors; train and evaluate for results, with no fixed score gain. Collected samples and total data progress stay unchanged.");
-                case "dataclean": return T(sim, "购买后，已下载且纳入训练的杂包、爬取数据及众包的有效错标×0.5；只计一次，再扣按条清除的错标，最低为0。自身自动标注错题和公共、剧情包不享受此倍率。样本总数不变，后续训练使用新噪声统计。", "Once purchased, effective wrong labels from downloaded, included junk/crawl packs and crowd data become ×0.5, once, before subtracting individually cleaned labels with a floor of zero. Your automatic mistakes and public/story packs receive no such multiplier. Sample totals stay unchanged; subsequent training uses the updated noise count.");
-                case "shared.lr": return T(sim, "购买后两条线自动生效：评估上限公式中的可缩减误差项乘", "Automatically applies to both tracks on purchase: multiply the reducible error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[3]) + T(sim, "，有机会提高成绩上限；更强的同项效果优先，不相乘。需训练后评估。", " for a potentially higher score ceiling. A stronger effect on the same term takes priority; they do not multiply together. Train and evaluate to see results.");
-                case "lrschedule": return T(sim, "评估上限公式中的误差项乘 ", "Multiply the error term in the score-ceiling formula by ") + N(XgCatalog.LrFinal[4]) + T(sim, "，让可达到的成绩上限更高；替代学习率搜索，与 AutoML 的同项效果不叠加。需训练后评估。", " for a higher reachable score ceiling; replaces learning-rate search and does not stack with AutoML's same effect. Train and evaluate to see results.");
-                case "batchnorm": return Speed(sim, 1.2) + T(sim, "有限结构可承受层数+6，仍受已购上限和显存限制。回落风险合计先×0.8再封顶；自动启用后可承受的失稳步幅阈值×1.5。", " Finite architecture depth limits gain 6 layers, still within purchased caps and VRAM. Combined drop risk is ×0.8 before its cap; automatic normalization gives a ×1.5 instability step threshold.");
-                case "cudnn": return Speed(sim, 1.3) + T(sim, "训练用电量×", " Training electricity use ×") + N(XgSim.CuDnnEnergyFactor) + T(sim, "，之后按阶梯电价计费；总账单不保证减少30%。", ", then billed at tiered rates; the total bill need not fall by 30%.");
-                case "cooler": return T(sim, "购买后连续训练造成的烧卡风险×", "After purchase, the burn-out risk from prolonged continuous training is ×") + N(XgSim.CoolerWearFactor) + T(sim, "，无需装备。须电力系统开启、至少两张显卡且连续训练足够久才会触发；硅脂保护期间不会因训练烧卡。", ", with no equipment step. It only triggers with power enabled, at least two GPUs and a long enough training streak; thermal-paste protection prevents training burn-outs while active.");
-                case "transfer": return T(sim, "购买后自动适用：换结构保留准确率高于随机猜测基线部分的60%；同结构改尺寸或加载不同尺寸检查点时，保留比例", "Automatically applies after purchase: architecture changes keep 60% of accuracy above the chance baseline; resizing within one architecture or loading a differently sized checkpoint changes retention from ") + N(XgSim.GrowKeep * 100) + "% → " + N(XgSim.GrowKeepTransfer * 100) + T(sim, "%。连续变更逐次乘算，仍需训练；基础概念迁移另受新结构是否支持与位置无关线索的限制。", "%. Successive changes compound and still need training; basic-concept transfer also depends on support for position-independent clues in the new wiring.");
-                case "multihead": return T(sim, "随Transformer获得的标记，无额外收费或独立倍率。实际采用Transformer时，单句训练保留词本身的线索；启用位置编码还可学习句首词，效果须训练后观察。", "Granted with Transformer, with no extra charge or independent multiplier. When Transformer is selected, single-sentence training retains word clues; positional encoding also allows an opening-word clue. Observe results after training.");
-                case "layernorm": case "residual": return T(sim, "随 Transformer 一同获得的技术标记，不另收费，也不再叠加独立购买加成。", "A technology marker granted with Transformer, with no separate charge or additional purchase bonus.");
-                case "datacenter": return T(sim, "拥有后可用训练显存×", "Ownership gives usable training VRAM ×") + N(XgSim.DatacenterVram)
-                    + T(sim, "，并提供IDC机架。预训练须本体在线且放在机架上；自动放置会迁入，手动放置需自行调整。运行且未到当前进度上限时另付¥", " and provides an IDC rack. Pre-training needs the AI online on that rack; automatic placement moves it, while manual placement requires adjustment. While running below its current cap, the additional fee is ¥") + XgSim.DatacenterRent
-                    + T(sim, "/游戏秒；付不起就停止并保留进度，到上限停滞时不扣该费用。", "/game second; insufficient funds stop work and preserve progress. Stalling at the cap does not incur this fee.");
-                case "secret.6": return T(sim, "购买即显示配置提示，无需装备或训练，不提供额外倍率。在跑通预训练前购买，将放弃自悟奖金¥", "Buying immediately shows setup hints, without equipment, training or an added multiplier. Buying before completing pre-training forfeits a self-discovery bonus of ¥") + N(sim.NodeCost(node) * XgSim.SelfInsightBonus) + T(sim, "（本节点价格×", " (this item's price ×") + N(XgSim.SelfInsightBonus) + T(sim, "）。", ").");
-                case "label.raise": return Raise(sim);
-                case "label.auto": return T(sim, "每级每个合格标注台的基础速度增加 ", "Each level adds a base ") + N(XgCatalog.AutoRatePerLevel) + T(sim, " 题/秒；该台检查点须达到 ", " cards/s per eligible desk; that desk needs a checkpoint of at least ") + N(XgCatalog.AutoMinAccuracy * 100) + T(sim, "% 准确率。实际速度还受算力、复核队列和暂停状态限制。", "% accuracy. Compute, review capacity and pauses still limit actual speed.");
-                case "label.coop": return T(sim, "购买后下一次分流即生效。把握阈值可设50%–99%（初始80%）：低于阈值交你复核，否则仍须通过其他检查；把握不等于准确率。所有台共用", "Applies at the next routing decision after purchase. Set confidence to 50%–99% (initially 80%): lower-confidence cards go to review; others still face enabled checks. Confidence is not accuracy. All desks share ") + XgSim.ReviewCapacity + T(sim, "个复核名额，满时自动标注暂停。", " review slots; automation pauses when full.");
-                case "label.brain": return T(sim, "第四阶段起可购买。服务就绪后，为已开放且检查点≥", "Available from stage 4. Once the service is ready, judges supported text cards at open desks with a checkpoint ≥") + N(XgCatalog.AutoMinAccuracy * 100)
-                    + T(sim, "%的受支持文字台判断新待判题；已有判断不重算，仍按把握阈值分流。离线或无有效结果则回退检查点。每次派发计", "% accuracy; existing judgments stay unchanged and confidence routing still applies. Offline service or invalid results fall back to checkpoints. Each dispatched request accounts for ") + N(XgSim.BrainGpuSeconds)
-                    + T(sim, "GPU秒用量，并非答题耗时；断电、研发或复核满时不派发。", " GPU-seconds of usage, not response time; power loss, research or a full review queue blocks dispatch.");
-                case "label.hard": return T(sim, "新题人工复核答对时，报酬 ×1.5，样本 ×2；旧数据重审不享受此奖励。", "Correct human reviews of new cards pay ×1.5 and award ×2 samples; rechecking old data does not earn this bonus.");
-                case "label.audit": return T(sim, "购买后，每道进入自动提交分支的错题有", "Once purchased, each wrong answer reaching automatic submission has a ") + N(XgSim.AuditProbability * 100)
-                    + T(sim, "%概率退回复核，避免直接污染数据。另解锁手动清洗：每批最多", "% chance of review before contaminating data. Also unlocks manual cleaning: up to ") + XgSim.NoiseCleanBatchLimit
-                    + T(sim, "条，每条¥", " labels per batch at ¥") + N(XgSim.NoiseCleanMoneyPerItem) + T(sim, "并计", " plus ") + N(XgSim.NoiseCleanGpuSecondsPerItem)
-                    + T(sim, "GPU秒；先清自身错标，再清外来错标，受经费、算力和现有错标量限制。", " GPU-seconds per label; clean your own mistakes first, then outside noise, limited by funds, compute and remaining mistakes.");
-                case "label.parallel": return T(sim, "购买后，自启本地服务在空闲重启完成时，同时判题上限1→2题；聊天或输入时暂停派发新判题。外部服务保持已有容量，不自动扩容；实际速度取决于本机，无需训练。", "After purchase, once the game-started service is idle and restarts, simultaneous card judgments increase from 1 to 2. Chatting or typing pauses new judgments. External services keep their existing capacity; speed depends on the computer, with no training step required.");
-                case "label.trapmemory": return T(sim, "再遇到已记住的金标准题时，转入人工复核，不自动提交。", "Send remembered gold-standard items to human review instead of submitting automatically.");
-                case "label.captcha": return T(sim, "第三阶段、手写数字检查点≥95%且拥有置信度分流后可购买。之后新出现的验证码在", "Available at stage 3 with a digits checkpoint ≥95% and confidence routing. New captchas after purchase pass automatically after ") + N(XgSim.AutofillMinDelay) + "–" + N(XgSim.AutofillMaxDelay)
-                    + T(sim, "秒后自动通过，已弹出的不补代填。通过后信用+1、解除本次验证暂停；多次代填后仍高速提交可能额外扣信用。", " s; already pending captchas are not scheduled retroactively. Passing grants 1 credit and clears that verification pause; repeated autofills with rapid submissions can incur a credit penalty.");
-                default: return null;
-            }
-        }
-
-        static string Raise(XgSim sim)
-        {
-            int level = Math.Max(0, Math.Min(sim.RaiseLevel, XgCatalog.RaiseMax));
-            string result = T(sim, "人工答题报酬 ×", "Hand-answer pay ×") + N(XgCatalog.RaiseMultipliers[level]);
-            if (level < XgCatalog.RaiseMax) result += " → ×" + N(XgCatalog.RaiseMultipliers[level + 1]);
-            return result + T(sim, "；购买后立即用于后续人工结算，与其他适用报酬倍数相乘。与标注台商店共用；按人工报酬计算的答错罚款也会提高，实扣不超过余额。自动标注报酬不变。", "; applies to subsequent hand-answer settlements, multiplying with other applicable pay bonuses. Shared with the labelling shop; wrong-answer fines based on hand pay also rise, capped at the balance. Automatic labelling pay is unchanged.");
-        }
     }
 }

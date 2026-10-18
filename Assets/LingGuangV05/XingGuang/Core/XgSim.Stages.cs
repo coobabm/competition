@@ -66,6 +66,7 @@ namespace LingGuangV05.XingGuang
         void AdvanceStage(int from)
         {
             if (S.stage != from) return;
+            var unlockBefore = CaptureStageUnlocks();
             if (!S.emerged.Contains(from)) Emerge(from);
             S.stage = from + 1; S.stageEpochs = 0; S.stageSeconds = 0; S.monthProgress = 0;
             S.stageStartParamsK = TrainedParamsK; S.stageStartSamples = TrainedSamples; S.stageClock = 0;
@@ -86,6 +87,8 @@ namespace LingGuangV05.XingGuang
             }
             CheckDesks();
             foreach (var run in Runs) Evaluate(run);
+            SaveStageUnlockDifference(unlockBefore);
+            QueueStagePresentation(from + 1);
             StageAdvanced?.Invoke(from);
         }
 

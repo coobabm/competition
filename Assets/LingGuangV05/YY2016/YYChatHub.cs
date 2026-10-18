@@ -11,7 +11,7 @@ using AppNames = LingGuangV05.Core.AppNames;
 
 namespace LingGuangV05.Desktop.YY
 {
-    public enum YYKind { Text = 0, File = 1, System = 2 }
+    public enum YYKind { Text = 0, File = 1, System = 2, Transfer = 3 }
     public enum YYFileState { Offered = 0, Receiving = 1, Done = 2 }
 
     [Serializable]
@@ -20,9 +20,17 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Contact id, or "me".</summary>
         public string from = "";
         public string text = "";
+        // Exact player input for authored unlock phrases; empty in older saves.
+        public string rawPlayerText = "";
         public string attentionWord = "";
+        /// <summary>Legacy/generated player line. Never authorizes giving a held gift. Defaults to false.</summary>
+        public bool byAi;
+        public int learningReplyId, learningComparison;
+        public bool learningPersona;
         public double gameSeconds;
         public YYKind kind;
+        public double transferAmount;
+        public bool transferPaid;
         public string file = "";
         public double sizeMB;
         public YYFileState fileState;
@@ -44,6 +52,7 @@ namespace LingGuangV05.Desktop.YY
     [Serializable]
     public sealed class YYState
     {
+        public int groupPresetTurn;
         public int friendMonth, gfStage, gfReceived, gfReplies, gfIgnoredStage;
         public int version = 1;
         public string selected = YYChatHub.LaoZhou;
@@ -285,23 +294,26 @@ namespace LingGuangV05.Desktop.YY
 
         public void Send(string id, string text)
         {
+            string rawPlayerText = text ?? "";
             if (id == GirlfriendId && !string.IsNullOrWhiteSpace(text)) NoteGirlfriendReply(text);
             text = (text ?? "").Trim();
             if (text.Length == 0) return;
             if (text.Length > 300) text = text.Substring(0, 300);
             var conv = Conversation(id);
             if (conv == null) return;
-            var line = new YYMessage { from = Me, text = text, gameSeconds = Now };
+            var line = new YYMessage { from = Me, text = text, rawPlayerText = rawPlayerText, gameSeconds = Now };
             conv.messages.Add(line);
             Touch();
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
             if (scriptFor == id && script != null && script(text)) return;
             if (id == "landlord" && (text == "确认卖电脑" || text == "Confirm selling the computer")) { runtime.Sim.ConfirmComputerSale(); runtime.MarkDirty(); return; }
+            if (id == "landlord" && HandleLandlordLine(text)) return;
             if (AnswerQuiz(id, text)) return;
             if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
             if (id == LaoZhou && LaoZhouHeard != null && LaoZhouHeard(text)) return;
+            if (id == EraGroup && SendGroupPreset(text)) return;
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
             float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
@@ -342,6 +354,7 @@ namespace LingGuangV05.Desktop.YY
         {
             if (id == null) return null;
             if (ChoicesFor == id && Choices != null) return Choices;
+            if (id == EraGroup) return GroupPresetChoices();
             return standing.TryGetValue(id, out var c) ? c : null;
         }
 
@@ -686,11 +699,8 @@ namespace LingGuangV05.Desktop.YY
                     Touch();
                 }
             }
-            else if (!S.seedJieAsk && hand >= SeedJieAskLabels)
-            {
-                S.seedJieAsk = true;
-                Receive("netbar", "[阿杰] " + Lang.T("摆渡众包有公司发的数据标注兼职，按合格题数结报酬。我要接点单，你有空也能去看看。"));
-            }
+            // The group knows nothing of the player's work and never talks to him about it: no 阿杰 line here any more.
+            else if (!S.seedJieAsk && hand >= SeedJieAskLabels) S.seedJieAsk = true;
         }
 
         // ───────────── the month's chatter (design v1.1 §14.1, era_events.json) ─────────────
@@ -714,10 +724,12 @@ namespace LingGuangV05.Desktop.YY
             eraWait = EraChatGap;
         }
 
+        static XingGuangController cachedLab;
         static XgSim FindLab()
         {
-            var lab = FindAnyObjectByType<XingGuangController>();
-            return lab != null ? lab.Sim : null;
+            if (cachedLab == null && Instance != null && Instance.runtime != null)
+                cachedLab = Instance.runtime.GetComponent<XingGuangController>();
+            return cachedLab != null ? cachedLab.Sim : null;
         }
 
         void Touch() { if (runtime != null && !runtime.TestMode) runtime.MarkDirty(); Changed?.Invoke(); }

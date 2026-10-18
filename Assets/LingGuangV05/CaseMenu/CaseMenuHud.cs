@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 namespace LingGuangV05.CaseMenu
 {
     /// <summary>Runtime overlay only; the menu controller owns input, audio and persistence.</summary>
-    public sealed class CaseMenuHud : MonoBehaviour
+    public sealed partial class CaseMenuHud : MonoBehaviour
     {
         private static readonly Color Ink = new Color(.94f, .91f, .85f, 1f);
         private static readonly Color Muted = new Color(.68f, .66f, .61f, 1f);
@@ -72,6 +72,7 @@ namespace LingGuangV05.CaseMenu
             BuildChrome();
             BuildLoading();
             BuildSettings();
+            BuildTitleActions();
 
             // Last sibling: transition black covers the entire menu, including its modal.
             var fade = Panel("TransitionFade", canvasRoot, Color.black, true);
@@ -90,6 +91,7 @@ namespace LingGuangV05.CaseMenu
         public void SetChromeAlpha(float alpha)
         {
             if (chromeGroup != null) chromeGroup.alpha = Unit(alpha);
+            SetTitleActionsVisible(alpha >= .999f);
         }
 
         public void SetFade(float alpha)
@@ -138,6 +140,7 @@ namespace LingGuangV05.CaseMenu
             reduceMotionToggle.SetIsOnWithoutNotify(reduceMotion);
             fullscreenToggle.SetIsOnWithoutNotify(fullscreen);
             SetVolumeLabel(volumeSlider.value);
+            SetTitleActionsVisible(false);
             settingsGroup.gameObject.SetActive(true);
             settingsGroup.alpha = 1f;
             settingsGroup.interactable = true;
@@ -157,6 +160,7 @@ namespace LingGuangV05.CaseMenu
             settingsGroup.interactable = false;
             settingsGroup.blocksRaycasts = false;
             settingsGroup.gameObject.SetActive(false);
+            SetTitleActionsVisible(chromeGroup != null && chromeGroup.alpha >= .999f);
         }
 
         private void BuildChrome()
@@ -212,7 +216,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(backdrop.rectTransform);
             settingsGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
             var card = Panel("SettingsCard", backdrop.transform, Surface, true);
-            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 460));
+            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 600));
             var accent = Panel("CardAccent", card.transform, Amber);
             Place(accent.rectTransform, new Vector2(0, 1), new Vector2(42, -29), new Vector2(28, 2));
 
@@ -230,9 +234,15 @@ namespace LingGuangV05.CaseMenu
             reduceMotionToggle.onValueChanged.AddListener(value => { reduceMotionChanged?.Invoke(value); uiClick?.Invoke(); });
             fullscreenToggle = BuildToggle(card.rectTransform, "Fullscreen", "全屏显示", "切换窗口与全屏显示", 275);
             fullscreenToggle.onValueChanged.AddListener(value => { fullscreenChanged?.Invoke(value); uiClick?.Invoke(); });
+            var quality = BuildToggle(card.rectTransform, "HighQuality", LingGuangV05.Runtime.GameText.T("画面：高 / 低", "Graphics: High / Low"), LingGuangV05.Runtime.GameText.T("开启为高画质；关闭降低阴影与细节", "On: high quality. Off: fewer shadows and details."), 343);
+            quality.SetIsOnWithoutNotify(!LingGuangV05.Desktop.GamePerformance.Low);
+            quality.onValueChanged.AddListener(value => LingGuangV05.Desktop.GamePerformance.SetLow(!value));
+            var fps = BuildToggle(card.rectTransform, "FrameRate", LingGuangV05.Runtime.GameText.T("帧率：60 / 30", "Frame rate: 60 / 30"), LingGuangV05.Runtime.GameText.T("开启为 60 帧；关闭为 30 帧", "On: 60 FPS. Off: 30 FPS."), 411);
+            fps.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
+            fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
             var returnImage = Panel("Return", card.transform, Control, true);
-            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -353), new Vector2(142, 44));
+            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -489), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(returnButton, returnImage);
             returnButton.onClick.AddListener(() => { uiClick?.Invoke(); closeRequested?.Invoke(); });
@@ -240,7 +250,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(returnLabel.rectTransform);
             returnLabel.alignment = TextAlignmentOptions.Midline;
             var escape = Label("EscapeHint", card.transform, "ESC 关闭", 14, Muted);
-            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -358), new Vector2(320, 34));
+            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -494), new Vector2(320, 34));
             escape.alignment = TextAlignmentOptions.MidlineRight;
             var saved = Label("SaveHint", card.transform, "设置即时保存，不会重置游戏进度", 14, Muted);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
@@ -248,8 +258,10 @@ namespace LingGuangV05.CaseMenu
             // Explicit vertical navigation keeps the modal's keyboard focus contained.
             Link(volumeSlider, returnButton, reduceMotionToggle);
             Link(reduceMotionToggle, volumeSlider, fullscreenToggle);
-            Link(fullscreenToggle, reduceMotionToggle, returnButton);
-            Link(returnButton, fullscreenToggle, volumeSlider);
+            Link(fullscreenToggle, reduceMotionToggle, quality);
+            Link(quality, fullscreenToggle, fps);
+            Link(fps, quality, returnButton);
+            Link(returnButton, fps, volumeSlider);
             HideSettings();
         }
 

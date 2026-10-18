@@ -43,10 +43,11 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XgBrainWallpaper : MonoBehaviour
     {
         XingGuangController controller;
+        public bool WindowMode { get; private set; }
         CanvasGroup group;
         readonly CanvasGroup[] firstPoints = new CanvasGroup[4];
         ChapterOneSim observedSave;
-        bool noticePending;
+        bool noticePending;float nextPresentation,lastPresentation;XgBrainWallpaperPresentation presentation;
         public int NoticesSent { get; private set; }
         public XgWallpaperReveal Reveal { get; } = new XgWallpaperReveal();
         public static Vector2 SeedPosition => new Vector2(.52f, .35f);
@@ -80,6 +81,24 @@ namespace LingGuangV05.Desktop.XingGuang
             XgWallpaperFamilyStar.Install(controller, view);
             XgWallpaperRebirth.Install(controller, view);
             view.Observe();
+        }
+
+        public static XgBrainWallpaper InstallWindow(XingGuangController controller, RectTransform root)
+        {
+            var view=root.gameObject.AddComponent<XgBrainWallpaper>();
+            view.controller=controller;view.WindowMode=true;
+            view.group=root.gameObject.AddComponent<CanvasGroup>();
+            view.group.blocksRaycasts=false;view.group.interactable=false;
+            view.BuildFirstPoints(root);
+            var presentation=root.gameObject.AddComponent<XgBrainWallpaperPresentation>();
+            presentation.WindowMode=true;
+            XgWallpaperConcepts.Install(controller,view);
+            XgWallpaperAnswerPath.Install(controller,view);
+            XgWallpaperTraining.Install(controller,view);
+            XgWallpaperPersona.Install(controller,view);
+            XgWallpaperAbilities.Install(controller,view);
+            XgWallpaperFamilyStar.Install(controller,view);
+            view.Observe();return view;
         }
 
         void BuildFirstPoints(RectTransform root)
@@ -122,13 +141,16 @@ namespace LingGuangV05.Desktop.XingGuang
             var runtime = controller != null ? controller.runtime : null;
             if (runtime == null || runtime.Sim == null) return;
             if (observedSave != runtime.Sim) { observedSave = runtime.Sim; noticePending = false; }
-            if (Reveal.Observe(runtime.Sim, !runtime.Sim.InPrologue)) noticePending = true;
+            if (Reveal.Observe(runtime.Sim, !runtime.Sim.InPrologue) && !WindowMode) noticePending = true;
         }
 
         void Update()
         {
             if (controller == null || controller.runtime == null || !controller.runtime.isActiveAndEnabled) return;
-            Observe(); Reveal.Tick(Time.unscaledDeltaTime);
+            if(presentation==null)presentation=GetComponent<XgBrainWallpaperPresentation>();
+            if(presentation!=null&&!presentation.DrawDue(ref nextPresentation))return;
+            float now=Time.unscaledTime;float dt=lastPresentation==0?1f/15:now-lastPresentation;lastPresentation=now;
+            Observe(); Reveal.Tick(GamePerformance.Low?100:dt);
             SeedConcept = null;
             var concepts = controller.Sim?.S.board?.concepts;
             if (Reveal.Visible && concepts != null)

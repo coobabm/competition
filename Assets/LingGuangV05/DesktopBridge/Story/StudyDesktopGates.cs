@@ -24,6 +24,7 @@ namespace LingGuangV05.Desktop.Story
         XingGuangController lab;
         LingGuangV05.XingGuang.XgSim bound;
         float scanAt;
+        Transform cachedDesktopList;
 
         static string T(string zh, string en) => GameText.T(zh, en);
 
@@ -74,32 +75,33 @@ namespace LingGuangV05.Desktop.Story
         {
             string feature = Feature(app);
             if (feature == null) return true;
-            var owner = FindAnyObjectByType<XingGuangController>();
+            var owner = XingGuangController.Instance;
             return owner == null || owner.Sim == null || owner.runtime == null || owner.runtime.Sim.InPrologue
                 || !owner.runtime.Sim.AppInstalled || owner.Sim.SystemUnlocked(feature);
         }
 
         void LateUpdate()
         {
+            if(XgStageCurtain.Busy&&XgStageCurtain.Step<3)return;
             if (lab == null || lab.Sim == null || lab.runtime == null || lab.runtime.Sim.InPrologue || !lab.runtime.Sim.AppInstalled) return;
             if (!ReferenceEquals(bound, lab.Sim)) { bound = lab.Sim; seen.Clear(); announced.Clear(); scanAt = 0; }
             if (Time.unscaledTime >= scanAt)
             {
                 scanAt = Time.unscaledTime + 1;
-                foreach (var binding in FindObjectsByType<ChapterOneDesktopBridge>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                foreach (var binding in DesktopWindowIndex.GetBindings(lab.runtime))
                 {
                     string feature = Feature(binding.ApplicationId);
                     if (feature == null) continue;
                     if (binding.DesktopShortcut != null) Gate(feature, binding.DesktopShortcut.transform as RectTransform);
                     if (binding.Window != null) windows[binding.Window] = feature;
                 }
-                var list = GameObject.Find("Desktop List");
-                foreach (var window in FindObjectsByType<WindowManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if(cachedDesktopList==null){var list=GameObject.Find("Desktop List");cachedDesktopList=list!=null?list.transform:null;}
+                foreach (var window in DesktopWindowIndex.Get(lab.runtime))
                 {
                     string feature = WindowFeature(window.name);
                     if (feature == null) continue;
                     windows[window] = feature;
-                    var icon = list != null ? list.transform.Find(window.name) as RectTransform : null;
+                    var icon = cachedDesktopList != null ? cachedDesktopList.Find(window.name) as RectTransform : null;
                     if (icon != null) Gate(feature, icon);
                 }
                 // Applied after the whole scan, so every icon of one feature (some apps have several) sees the same change.

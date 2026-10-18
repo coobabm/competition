@@ -41,7 +41,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnDrag(PointerEventData e) => page.Pan.OnDrag(e);
         public void OnEndDrag(PointerEventData e) => page.Pan.OnEndDrag(e);
         /// <summary>The wheel scrolls this square's card when it is too long to show whole; otherwise it pans the tree.</summary>
-        public void OnScroll(PointerEventData e) { if (!page.ScrollTooltip(this, e)) page.Pan.OnScroll(e); }
+        public void OnScroll(PointerEventData e) => page.Pan.OnScroll(e);
         void OnDisable() { if (page != null) page.Hover(this, false); }
     }
 
@@ -55,7 +55,7 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed partial class XgTechTreePage : XgPage
     {
         /// <summary>Square size, slot pitch and row pitch of the generated layout, in content pixels.</summary>
-        public const float SquareSize = 56, SlotWidth = 128, RowHeight = 118, LaneHeader = 34, LaneGap = 12, TopMargin = 180;
+        public const float SquareSize = 56, SlotWidth = 260, RowHeight = 184, LaneHeader = 34, LaneGap = 12, TopMargin = 180;
         public const int Columns = 5;
         public const float StageWidth = Columns * SlotWidth + 40;
         const float TooltipWidth = 312;
@@ -65,6 +65,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly Vector3[] tipTaskbarCorners = new Vector3[4];
         LayoutElement tipHeadLayout, tipCostLayout;
         float tipExitAt = -1;
+        XgTechNodeView detailShown;
         /// <summary>The card never catches the pointer, so it cannot cover a square you want to buy; a long card scrolls with the wheel over its square.</summary>
         CanvasGroup tipGroup;
 
@@ -91,8 +92,10 @@ namespace LingGuangV05.Desktop.XingGuang
         float treeHeight, eraRemaining;
         int displayedStage;
         bool built;
+        bool pendingMotionRefresh;
+        XgTechLinksGraphic batchedLinks;
 
-        sealed class Link { public XgTechNodeView from, to; public Image image; public bool crossBand, crossStage, need; }
+        sealed class Link { public XgTechNodeView from, to; public int segment; public bool crossBand, crossStage, need; }
 
         public XgPan Pan { get; private set; }
         public int VisibleStageCount => Sim == null ? 0 : Sim.S.stage;
@@ -100,7 +103,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public int VisibleNodeCount { get { int count = 0; foreach (var v in views) if (v.gameObject.activeSelf) count += v.entry.members.Count; return count; } }
         public bool IsNodeShown(string id) => views.Exists(v => v.Covers(id) && v.gameObject.activeSelf);
 
-        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "atlas" };
+        static readonly string[] Bands = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
 
         static Color LaneColor(string lane) => lane == "vision" ? XgDark.Accent : lane == "sequence" ? new Color32(18, 135, 125, 255)
             : lane == "label" ? new Color32(200, 120, 30, 255) : lane == "trunk" ? new Color32(110, 90, 200, 255) : lane == "atlas" ? new Color32(20, 140, 160, 255)
@@ -112,6 +115,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Build(RectTransform area)
         {
+            XgYyTalk.EnsureLearningData();
             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
             skin = XgTechTreeSkin.Load();
             root = ui.Card(area, "tree", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -121,12 +125,20 @@ namespace LingGuangV05.Desktop.XingGuang
             viewport.gameObject.AddComponent<CanvasRenderer>();
             var grid = viewport.gameObject.AddComponent<XgGridGraphic>(); grid.color = XgDark.Page;
             viewport.gameObject.AddComponent<RectMask2D>();
+            viewport.gameObject.AddComponent<Canvas>();
+            viewport.gameObject.AddComponent<GraphicRaycaster>();
             content = Rect("Content", viewport, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, Vector2.zero);
             content.pivot = new Vector2(0, 1);
             Panel(content, Color.clear).raycastTarget = true;
             Pan = viewport.gameObject.AddComponent<XgPan>(); Pan.content = content; Pan.viewport = viewport;
-            Pan.minZoom = .6f; Pan.maxZoom = 1.5f;
+            Pan.minZoom = .5f; Pan.maxZoom = 1.5f;
+            Pan.MotionStarted = () => { hovered = null; HideTooltip(); pendingMotionRefresh = true; };
+            Pan.MotionFinished = () => { PlayerPrefs.SetFloat("LingGuang.TechZoom", content.localScale.x); if (pendingMotionRefresh) { pendingMotionRefresh = false; Refresh(); } };
+            Pan.ResetRequested = () => { Toolbar(2); };
+            Pan.ZoomChanged = zoom => { foreach (var v in views) v.cost.gameObject.SetActive(zoom >= .7f); };
             bandLayer = Layer("Bands"); linkLayer = Layer("Links"); nodeLayer = Layer("Nodes");
+            batchedLinks = linkLayer.gameObject.AddComponent<XgTechLinksGraphic>();
+            batchedLinks.raycastTarget = false;
             Layout();
             content.sizeDelta = new Vector2(StageWidth * XgSim.AbilityCount + 40, treeHeight);
             int band = 0;
@@ -233,6 +245,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "vision": return T("视觉", "Vision");
                 case "sequence": return T("序列", "Sequence");
                 case "research": return T("研究", "Research");
+                case "persona": return T("性格", "Personality");
                 default: return T("图鉴 · 现象与能力", "Atlas · phenomena and abilities");
             }
         }
@@ -270,11 +283,18 @@ namespace LingGuangV05.Desktop.XingGuang
             view.badge = ui.Text(Rect("Text", badgeRt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, XgDark.Ink, TextAlignmentOptions.Center);
             view.badge.fontStyle = FontStyles.Bold; view.badge.textWrappingMode = TextWrappingModes.NoWrap;
             // Names are what the player reads: two lines at most under the square, shrinking only for long English names.
-            view.label = ui.Text(Rect("Name", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f + 3, -42), new Vector2(SlotWidth * .5f - 3, -4)), "", 15, XgDark.Ink, TextAlignmentOptions.Top);
-            view.label.fontStyle = FontStyles.Bold; view.label.lineSpacing = -12;
-            view.label.enableAutoSizing = true; view.label.fontSizeMin = 12; view.label.fontSizeMax = 15;
-            view.cost = ui.Text(Rect("Cost", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f, -60), new Vector2(SlotWidth * .5f, -42)), "", 14, XgDark.Money, TextAlignmentOptions.Center);
+            view.label = ui.Text(Rect("Name", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f + 5, -70), new Vector2(SlotWidth * .5f - 5, -4)), "", 14, XgDark.Ink, TextAlignmentOptions.Top);
+            view.label.fontStyle = FontStyles.Normal; view.label.lineSpacing = 3;
+            view.label.textWrappingMode = TextWrappingModes.NoWrap; view.label.overflowMode = TextOverflowModes.Ellipsis;
+            view.label.enableAutoSizing = false;
+            view.cost = ui.Text(Rect("Cost", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f, -92), new Vector2(SlotWidth * .5f, -72)), "", 14, XgDark.Money, TextAlignmentOptions.Center);
             view.cost.fontStyle = FontStyles.Bold; view.cost.textWrappingMode = TextWrappingModes.NoWrap;
+            var detail=ui.Button(rt,T("详情 ›","Details ›"),()=>{
+                if(detailShown==view&&tooltip.gameObject.activeSelf){HideTooltip();return;}
+                detailShown=view;tipExitAt=-1;ShowTooltip(view);
+            },12);
+            detail.rt.anchorMin=detail.rt.anchorMax=new Vector2(.5f,0);
+            detail.rt.offsetMin=new Vector2(-55,-115);detail.rt.offsetMax=new Vector2(55,-94);
             rt.gameObject.SetActive(false);
             views.Add(view); viewOf[e] = view;
         }
@@ -290,23 +310,16 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (parent == null || parent == child.entry || !viewOf.TryGetValue(parent, out var from)) return;
             // Package style: a straight 3-pixel line from centre to centre, under the squares.
-            Vector2 a = position[parent], b = position[child.entry], d = b - a;
-            var rt = Rect("Link " + parent.id + ">" + child.entry.id, linkLayer, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, Vector2.zero);
-            rt.pivot = new Vector2(0, .5f);
-            rt.sizeDelta = new Vector2(d.magnitude, need ? 2 : 3);
-            rt.anchoredPosition = a;
-            rt.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
-            var image = rt.gameObject.AddComponent<Image>(); image.sprite = skin.line; image.raycastTarget = false;
-            rt.gameObject.SetActive(false);
-            links.Add(new Link { from = from, to = child, image = image, need = need, crossBand = XgCatalog.Band(parent.Lane) != XgCatalog.Band(child.entry.Lane), crossStage = parent.Stage != child.entry.Stage });
+            int segment = batchedLinks.Add(position[parent], position[child.entry], need ? 2 : 3);
+            links.Add(new Link { from = from, to = child, segment = segment, need = need, crossBand = XgCatalog.Band(parent.Lane) != XgCatalog.Band(child.entry.Lane), crossStage = parent.Stage != child.entry.Stage });
         }
 
         void BuildToolbar()
         {
             miniMap = Strip("DiscoveredStages", root, 48, 28, 12, 310);
             miniMap.gameObject.SetActive(false);
-            string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+" };
-            string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+" };
+            string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+", "适应" };
+            string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+", "Fit" };
             for (int i = 0; i < labels.Length; i++)
             {
                 int index = i;
@@ -315,7 +328,7 @@ namespace LingGuangV05.Desktop.XingGuang
             float right = 12;
             for (int i = toolbar.Count - 1; i >= 0; i--)
             {
-                float width = i >= 3 ? 34 : i == 0 ? 92 : 80;
+                float width = i == 5 ? 60 : i >= 3 ? 34 : i == 0 ? 92 : 80;
                 PlaceTopRight(toolbar[i], right + width, 8, width, 30); right += width + 4;
             }
             UiTip.Add(toolbar[0].rt, "跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (raises, auto labelling).");
@@ -387,7 +400,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
             enter.callback.AddListener(_ => tipExitAt = -1); events.triggers.Add(enter);
             var leave = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
-            leave.callback.AddListener(_ => tipExitAt = Time.unscaledTime + .35f); events.triggers.Add(leave);
+            leave.callback.AddListener(_ => { if(detailShown==null)tipExitAt = Time.unscaledTime + .35f; }); events.triggers.Add(leave);
             var column = tipContent.gameObject.AddComponent<VerticalLayoutGroup>();
             column.padding = new RectOffset(12, 12, 10, 10); column.spacing = 6;
             column.childControlWidth = column.childControlHeight = true; column.childForceExpandWidth = true; column.childForceExpandHeight = false;
@@ -507,9 +520,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── paint ─────────────
 
+        public int PaintPasses { get; private set; }
         public override void Refresh()
         {
             if (!built) return;
+            if (Pan.Moving) { pendingMotionRefresh = true; return; }
+            PaintPasses++;
             Sync(true);
             int buyable = 0;
             foreach (var v in views)
@@ -523,7 +539,7 @@ namespace LingGuangV05.Desktop.XingGuang
             toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
             toolbar[2].Set(T("可买 ", "Buyable ") + buyable, true, buyable > 0 ? XgDark.AccentSoft : XgDark.Button);
             PaintLinks();
-            if (hovered != null && tooltip.gameObject.activeSelf) FillTooltip(hovered);
+            if (detailShown != null && tooltip.gameObject.activeSelf) FillTooltip(detailShown);
         }
 
         string InsightOf(XgNode n)
@@ -567,7 +583,8 @@ namespace LingGuangV05.Desktop.XingGuang
             v.badge.transform.parent.gameObject.SetActive(max > 1 && !mystery);
             if (max > 1) v.badge.text = level + "/" + max;
             v.badge.color = level >= max ? Maxed : XgDark.Ink;
-            v.label.text = atlas && !lit && node.kind != XgNodeKind.Ability ? Lang.T("？？？") : XgTechTree.Name(e, Sim);
+            var cardNode = XgTechTree.Next(e, Sim) ?? e.members[e.members.Count - 1];
+            v.label.text = atlas && !lit && node.kind != XgNodeKind.Ability ? Lang.T("？？？") : XgTechTreeCopy.Card(cardNode, Sim);
             v.label.color = locked ? XgDark.Muted : XgDark.Ink;
             double cost = XgTechTree.Cost(e, Sim);
             var next = XgTechTree.Next(e, Sim);
@@ -585,12 +602,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 // Links inside a band are always drawn; a prerequisite in another band shows while either end is under the pointer.
                 bool focus = hovered != null && (hovered == link.from || hovered == link.to) || pinned != null && (pinned == link.from || pinned == link.to);
                 bool on = ends && (!link.crossBand && !link.need || focus);
-                if (link.image.gameObject.activeSelf != on) link.image.gameObject.SetActive(on);
-                if (!on) continue;
+                if (!on) { batchedLinks.Paint(link.segment, Color.clear); continue; }
                 bool owned = XgTechTree.Level(link.to.entry, Sim) > 0;
                 // Long links into a later stage run under other squares: drawn fainter so the names over them stay clear.
                 float alpha = link.crossStage ? .4f : 1;
-                link.image.color = focus ? XgDark.Gold : owned ? new Color(1, 1, 1, .72f * alpha) : new Color(.23f, .33f, .4f, .86f * alpha);
+                batchedLinks.Paint(link.segment, focus ? XgDark.Gold : owned ? new Color(1, 1, 1, .72f * alpha) : new Color(.23f, .33f, .4f, .86f * alpha));
             }
         }
 
@@ -617,7 +633,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "label.raise": return "¥";
                 case "label.coop": return "?";
                 case "label.hard": return "×1.5";
-                case "label.parallel": return "1→2";
+                case "label.parallel": return "20→60";
                 case "label.captcha": return "Aa";
             }
             return n.nameEn != null && n.nameEn.Length <= 4 ? n.nameEn : "";
@@ -653,6 +669,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Hover(XgTechNodeView v, bool on)
         {
             if (!built || v == null) return;
+            if (Pan.Moving) return;
             if (on)
             {
                 tipExitAt = -1;
@@ -665,13 +682,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 hovered = v;
                 Fx.Play(XgJuice.Sfx.Id.Tick, 1.5f, .25f);
                 if (!Fx.Reduced) { v.square.DOKill(); v.square.DOScale(1.08f, .12f).SetUpdate(true).SetLink(v.gameObject); }
-                ShowTooltip(v);
+                // Science copy opens only through the Details button.
             }
             else
             {
                 if (hovered != v) return;
                 // Keep the card alive while the pointer crosses the gap to its scroll area.
-                tipExitAt = Time.unscaledTime + .35f;
+                if(detailShown==null)tipExitAt = Time.unscaledTime + .35f;
                 v.square.DOKill(); v.square.localScale = Vector3.one; v.square.localRotation = Quaternion.identity;
             }
             PaintLinks();
@@ -690,6 +707,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Click(XgTechNodeView v)
         {
             var e = v.entry;
+            if (e.First != null && view != null && view.Train.ShowTrainingReview(e.First.target)) return;
             string card = InsightOf(e.First);
             if (card != null && XgTreePage.OpenInsightCard != null) { XgTreePage.OpenInsightCard(card); return; }
             var status = XgTechTree.Status(e, Sim, Host);
@@ -725,6 +743,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double paid = purchaseCosts.TryGetValue(node.id, out var actual) ? actual : Sim.NodeCost(node);
             purchaseCosts.Remove(node.id);
             if (!built) return;
+            PaintPasses++;
             Sync(true);
             Fx.Play(XgJuice.Sfx.Id.Unlock);
             var entry = XgTechTree.EntryOf(node.id);
@@ -767,10 +786,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;
                 case "attention": year = 2014; zh = "注意力 · 需要时回头看"; en = "Attention · look back when needed"; break;
                 case "caption": year = 2015; zh = "空间注意力 · 先找到图里重要的部分"; en = "Spatial attention · find the part that matters"; break;
-                case "transformer": year = 2017; zh = "Transformer · 只要注意力\n全世界还没人走到这一步，你先到了。"; en = "Transformer · attention is all we need\nNobody else has got here yet. You did."; break;
+                case "transformer": year = 2016; zh = "自研注意力脑 · 2016年的探索\n这是你的尝试，还不是公开发表的成果。"; en = "Your attention model · a 2016 experiment\nYour own experiment, not a published result."; break;
                 default: return;
             }
             if (!built) return;
+            PaintPasses++;
             Sync(true);
             string shownYear = XgCatalog.ShownYear(year);
             eraTitle.text = (shownYear.Length > 0 ? shownYear + " · " : "") + Lang.T("时代卡"); eraBody.text = T(zh, en);
@@ -795,6 +815,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void HideTooltip()
         {
+            detailShown=null;
             tipExitAt = -1;
             if (tooltip == null) return;
             tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
@@ -899,10 +920,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 : status == XgSim.NodeStatus.TooExpensive ? Hex(Unaffordable) + T("钱不够", "Too expensive") : Hex(LockedGrey) + T("未解锁", "Locked");
             tipLevel.text = "Lv. " + level + " / " + max + "    " + word + "</color>";
             var shownNode = next ?? e.members[e.members.Count - 1];
-            body.Append(XgTechTreeCopy.Note(shownNode, Sim));
-            // 说人话: one plain closing line after the note (XgTechPlain). Rich text wraps inside the scrolling tooltip like the note.
-            if (XgTechPlain.TryGet(shownNode, out var plainZh, out var plainEn))
-                body.Append("\n<color=#E8C48A>").Append(XgTechPlain.Prefix(Sim.English)).Append(T(plainZh, plainEn)).Append("</color>");
+            body.Append(XgTechTreeCopy.Detail(shownNode, Sim));
+            string chatAnswer = Sim.ChatNodeAnswer(shownNode.id);
+            if (!string.IsNullOrEmpty(chatAnswer)) body.Append("\n").Append(T("它当时回答：", "Its reply: ")).Append(chatAnswer.Replace("<", "‹").Replace(">", "›"));
+            // Glossary explanations are limited to the three sentences supplied by Detail.
             if (node.id == "label.raise")
                 body.Append("\n<color=#FAC775>").Append(XgCatalog.RaiseTitle(Sim.RaiseLevel, Sim.English)).Append("</color>");
             if (e.IsChain) body.Append("\n").Append(Ladder(e));
@@ -973,8 +994,9 @@ namespace LingGuangV05.Desktop.XingGuang
             Fx.Play(XgJuice.Sfx.Id.Click);
             if (index == 0) { FocusStage(0); return; }
             if (index == 1) { FocusFrontier(); return; }
-            if (index == 3) { Pan.ZoomBy(1 / 1.25f); return; }
-            if (index == 4) { Pan.ZoomBy(1.25f); return; }
+            if (index == 3) { Pan.ZoomBy(Mathf.Max(.5f, content.localScale.x - .1f) / content.localScale.x); return; }
+            if (index == 4) { Pan.ZoomBy(Mathf.Min(1.5f, content.localScale.x + .1f) / content.localScale.x); return; }
+            if (index == 5) { float fit = Mathf.Min(viewport.rect.width / content.sizeDelta.x, viewport.rect.height / content.sizeDelta.y); Pan.SetView(Mathf.Clamp(fit, .5f, 1.5f), Vector2.zero); PlayerPrefs.SetFloat("LingGuang.TechZoom", content.localScale.x); return; }
             var buyable = views.FindAll(v => v.gameObject.activeSelf && XgTechTree.Status(v.entry, Sim, Host) == XgSim.NodeStatus.Buyable);
             if (buyable.Count == 0) { if (view != null) view.ShowToast(Lang.T("现在没有买得起的节点"), 2); return; }
             int at = pinned != null ? buyable.IndexOf(pinned) : -1;
@@ -1027,18 +1049,30 @@ namespace LingGuangV05.Desktop.XingGuang
             Pin(v); Focus(v); return true;
         }
 
+        // Explicit navigation from a locked training module opens the same explanation
+        // as its Details button. Existing FocusNode callers retain their old behavior.
+        public bool FocusNodeDetails(string id)
+        {
+            if (!FocusNode(id)) return false;
+            var target = views.Find(n => n.Covers(id) && n.gameObject.activeSelf);
+            if (target == null) return false;
+            detailShown = target; tipExitAt = -1; ShowTooltip(target);
+            return true;
+        }
+
         void Focus(XgTechNodeView v) => Pan.GlideTo(v.home);
 
         public override void Shown()
         {
             if (!built) return;
             hovered = null; HideTooltip();
-            Sync(false); FocusFrontier();
+            Sync(false); Pan.SetView(PlayerPrefs.GetFloat("LingGuang.TechZoom", 1), content.anchoredPosition); FocusFrontier();
         }
 
         public override void Tick(float dt)
         {
             if (!built) return;
+            if (Pan.Moving) return;
             if (tipExitAt >= 0 && Time.unscaledTime >= tipExitAt)
             {
                 hovered = null; HideTooltip(); PaintLinks();
@@ -1047,10 +1081,10 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (eraRemaining > 0) { eraRemaining -= dt; if (eraRemaining <= 0) eraCard.gameObject.SetActive(false); }
             // The tooltip follows its square while the view pans or zooms.
-            if (hovered != null && tooltip.gameObject.activeSelf)
+            if (detailShown != null && tooltip.gameObject.activeSelf)
             {
-                if (!hovered.gameObject.activeInHierarchy) { hovered = null; HideTooltip(); }
-                else PlaceTooltip(hovered);
+                if (!detailShown.gameObject.activeInHierarchy) { HideTooltip(); }
+                else PlaceTooltip(detailShown);
             }
         }
     }

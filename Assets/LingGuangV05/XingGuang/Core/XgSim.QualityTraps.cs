@@ -44,7 +44,7 @@ namespace LingGuangV05.XingGuang
         public int TrapsRemembered => S.qcTrapsSeen.Count;
 
         /// <summary>Story and forum gates the desktop can read from the lab.</summary>
-        public bool ForumFlag(string flag) => flag == TrapForumFlag && S.qcTrapRevealed;
+        public bool ForumFlag(string flag) => flag == TrapForumFlag && S.qcTrapRevealed || DataForumFlag(flag);
 
         void PrepareTraps()
         {

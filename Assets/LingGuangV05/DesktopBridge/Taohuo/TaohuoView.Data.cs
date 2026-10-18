@@ -20,7 +20,7 @@ namespace LingGuangV05.Desktop.Taohuo
     {
         static readonly Color Blue = new Color32(60, 140, 231, 255), Red = new Color32(220, 60, 50, 255);
 
-        bool HasData { get { var lab = Lab; if (lab == null) return false; foreach (var _ in lab.ShopDataOffers()) return true; return false; } }
+        bool HasData { get { var lab = Lab; if (lab == null) return false; if(XgSim.PersonaPacks.Count>0)return true; foreach (var _ in lab.ShopDataOffers()) return true; return false; } }
 
         /// <summary>Rebuild when an offer appears, is bought, or finishes downloading.</summary>
         string DataSignature()
@@ -28,6 +28,7 @@ namespace LingGuangV05.Desktop.Taohuo
             var lab = Lab;
             if (lab == null) return "";
             var sb = new StringBuilder();
+            foreach(var p in XgSim.PersonaPacks)sb.Append(p.id).Append(lab.OwnsPersonaPack(p.id));
             foreach (var o in lab.ShopDataOffers()) sb.Append(o.id).Append(o.owned ? 'o' : '-').Append(o.downloading ? 'd' : '-').Append(o.available ? 'a' : '-').Append(';');
             return sb.ToString();
         }
@@ -37,7 +38,7 @@ namespace LingGuangV05.Desktop.Taohuo
             var lab = Lab;
             var host = FindAnyObjectByType<XingGuang.XingGuangController>()?.Host;
             if (lab == null) { Note(Lang.T("灵光还没装好。")); return; }
-            int shown = 0;
+            int shown = BuildPersonaPacks(q,lab,host);
             foreach (var o in lab.ShopDataOffers())
             {
                 if (q.Length > 0 && (o.name + o.nameEn + o.description + o.descriptionEn).IndexOf(q, StringComparison.OrdinalIgnoreCase) < 0) continue;

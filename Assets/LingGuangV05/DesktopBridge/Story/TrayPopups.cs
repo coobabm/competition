@@ -43,7 +43,7 @@ namespace LingGuangV05.Desktop.Story
             // The opening window drops chatter; a story moment on screen only holds it (Run waits on StoryFocus).
             if (!OpeningQuiet.Allows(story, OpeningQuiet.Active)) return;
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open });
-            if (running == null) running = StartCoroutine(Run());
+            if (running == null && isActiveAndEnabled) running = StartCoroutine(Run());
         }
 
         /// <summary>Message notices are invalidated on save swap and hidden/paused during a cutscene.</summary>
@@ -52,17 +52,18 @@ namespace LingGuangV05.Desktop.Story
         {
             if (string.IsNullOrEmpty(text)) return;
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held, systemBalloon = systemBalloon });
-            if (running == null) running = StartCoroutine(Run());
+            if (running == null && isActiveAndEnabled) running = StartCoroutine(Run());
         }
 
-        void OnEnable() { ClearTransient(); }
+        void OnEnable() { ClearTransient(false); if (queue.Count > 0) running = StartCoroutine(Run()); }
         void OnDisable() { ClearTransient(); }
 
-        void ClearTransient()
+        void ClearTransient(bool clearQueue = true)
         {
+            StoryFocus.ReleaseNotification(this,Time.unscaledTimeAsDouble);
             StopAllCoroutines();
             running = null;
-            queue.Clear();
+            if (clearQueue) queue.Clear();
             // A popup's buttons close over its coroutine. After reload they cannot dismiss old UI.
             // Remove only this controller's transient area, not other apps on the shared desktop layer.
             for (int i = transform.childCount - 1; i >= 0; i--)
@@ -83,9 +84,9 @@ namespace LingGuangV05.Desktop.Story
             while (queue.Count > 0)
             {
                 // Nothing slides up over a story moment (剧情修订 §二): it waits until the moment is over.
-                while (queue.Peek().held == null && StoryFocus.Active) yield return null;
+                while (!StoryFocus.TakeNotification(this,Time.unscaledTimeAsDouble)) yield return null;
                 var item = queue.Dequeue();
-                if (item.valid != null && !item.valid()) continue;
+                if (item.valid != null && !item.valid()){StoryFocus.ReleaseNotification(this,Time.unscaledTimeAsDouble);continue;}
                 bool closed = false;
                 var box = Build(item.who, item.text, () => closed = true, () =>
                 {
@@ -108,7 +109,8 @@ namespace LingGuangV05.Desktop.Story
                     yield return null;
                 }
                 if (box != null) Destroy(box.gameObject);
-                yield return new WaitForSecondsRealtime(.4f);
+                StoryFocus.ReleaseNotification(this,Time.unscaledTimeAsDouble);
+                yield return new WaitForSecondsRealtime(1.5f);
             }
             running = null;
         }
@@ -116,7 +118,7 @@ namespace LingGuangV05.Desktop.Story
         static bool Valid(Notice item) => item.valid == null || item.valid();
         static bool Ready(Notice item, RectTransform box)
         {
-            bool ready = item.held == null || !item.held();
+            bool ready = !StoryFocus.Active && (item.held == null || !item.held());
             if (box.gameObject.activeSelf != ready) box.gameObject.SetActive(ready);
             return ready;
         }

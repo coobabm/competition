@@ -52,6 +52,11 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public bool OpeningLocksLabTab(string tab)
         {
+            if (S.teachingFlow)
+            {
+                if (tab == "tree" || tab == "growth" || tab == "items" || tab == "abilities") return !TeachingTreeOpen;
+                if (tab == "train" || tab == "vision" || tab == "sequence") return !TeachingTrainOpen;
+            }
             if (!S.openingFocus) return false;
             switch (tab ?? "")
             {
@@ -71,6 +76,7 @@ namespace LingGuangV05.XingGuang
         {
             if (!S.gradualSystems || S.openingFocus || OpeningLegacyProgress()) return;
             S.openingFocus = true;
+            S.teachingFlow = true;
             S.desksOpen.RemoveAll(id => !OpeningDesk(id));
             foreach (var d in XgCatalog.Desks) if (OpeningDesk(d.id) && !S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
             S.desk = XgMemes.SenseDesk;

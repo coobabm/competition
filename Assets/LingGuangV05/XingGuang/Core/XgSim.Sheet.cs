@@ -131,6 +131,7 @@ namespace LingGuangV05.XingGuang
                 item.right = now;
                 if (item.flip != 0) run.sheetTouched = true;
                 all &= now;
+                RecordAsked("train."+item.dataset, SheetQuestion(item), SheetLabel(item), SheetAnswer(run,item));
             }
             run.sheetDone = all;
             return sheet;

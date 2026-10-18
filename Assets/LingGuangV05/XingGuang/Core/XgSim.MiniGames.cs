@@ -26,6 +26,8 @@ namespace LingGuangV05.XingGuang
         }
         public string MiniGameBlocker(string id)
         {
+            var pack = XgTeachingPacks.Find(id);
+            if (pack != null) return TeachingPackBlocker(pack);
             var g = XgMiniGames.Find(id);
             if (g == null) return "未知小游戏";
             if (S.stage < g.Stage) return "第 " + g.Stage + " 阶段开放";

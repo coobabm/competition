@@ -13,6 +13,8 @@ namespace LingGuangV05.Desktop
         readonly HashSet<WindowManager> placed = new HashSet<WindowManager>();
         readonly Dictionary<WindowManager, Vector2> areas = new Dictionary<WindowManager, Vector2>();
         float next;
+        ChapterOneRuntime runtimeOwner;
+        void Awake(){runtimeOwner=GetComponent<ChapterOneRuntime>();}
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
@@ -38,6 +40,7 @@ namespace LingGuangV05.Desktop
                 case "Mail": return new Vector2(1280, 800);
                 case "Settings": return new Vector2(1080, 760);
                 case "Notepad": return new Vector2(900, 680);
+                case "AI Files": return new Vector2(1000, 720);
                 case "Commander": return new Vector2(1280, 800); // second-hand shop
                 case "Calculator": return new Vector2(1380, 840); // crowd workbench
                 case "Reminder": return new Vector2(1280, 800); // forum
@@ -72,7 +75,7 @@ namespace LingGuangV05.Desktop
         {
             if (Time.unscaledTime < next) return;
             next = Time.unscaledTime + .5f;
-            foreach (var window in FindObjectsByType<WindowManager>(FindObjectsInactive.Include))
+            foreach (var window in DesktopWindowIndex.Get(runtimeOwner))
             {
                 if (window.windowContainer == null) continue;
                 if (registered.Add(window)) window.onOpen.AddListener(() => Prepare(window, true));

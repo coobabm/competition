@@ -62,17 +62,18 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDestroy() { Unsubscribe(); }
 
-        /// <summary>One queued line into the 网吧 group, tagged with the speaker like the story's group lines.</summary>
+        /// <summary>
+        /// One queued subcontract worker's line, as a 摆渡众包 notice (「分包 · 阿杰：…」). It never goes into the YY group:
+        /// the group chats about games and hardware and knows nothing of the player's work.
+        /// </summary>
         void DeliverLine()
         {
-            var hub = YYChatHub.Instance;
-            if (hub == null || hub.S == null || hub.Conversation(Group) == null) return;
+            if (PrologueDirector.Desk == null) return;
             var line = bound.TakeYYLine();
             if (line == null) return;
             var info = XgSim.WorkerInfo(line.from);
             string name = info == null ? line.from : T(info.name, info.nameEn);
-            // The opening quiet window (OpeningQuiet): into the group without a popup.
-            hub.Receive(Group, "[" + name + "] " + T(line.zh, line.en), OpeningQuiet.Allows(false));
+            Popup(T("分包 · ", "Subcontract · ") + name + T("：", ": ") + T(line.zh, line.en), 6);
             sinceLine = 0;
         }
 

@@ -70,7 +70,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDestroy()
         {
-            if (bound != null) bound.LineAdded -= OnLine;
+            if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             if (hooked != null && ReferenceEquals(hooked.LingGuangTalk, this)) hooked.LingGuangTalk = null;
             if (instance == this) instance = null;
         }
@@ -155,8 +155,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Bind(XgSim sim)
         {
-            if (bound != null) bound.LineAdded -= OnLine;
+            if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
+            EnsureLearningData();
             bound = sim;
+            bound.RepairYyLearning();
+            bound.ChatNodeUnlocked += OnLearningUnlocked;
+            notebookSources.Clear(); personaSources.Clear();
             bound.LineAdded += OnLine;
             ticket++;
             waiting = false; due = null; echo = false; queuedQuestion = null; replayQueued = false;
@@ -192,6 +196,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var sim = bound;
             if (sim == null || message == null) return false;
+            RememberLearningSource(message);
             string text = NativeLaoZhouReplies.NormalizeInput(message.text);
             if (text.Length == 0) return true;
             // 是否夜 (XgYyTalk.Night.cs): the round's question gets its scripted answer.
@@ -222,7 +227,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string scripted = sim.Scripted(text);
             if (scripted != null)
             {
-                due = new Reply { text = scripted, question = text, early = early, at = askedAt + ReadPause };
+                due = new Reply { text = scripted, question = text, asked = message, early = early, at = askedAt + ReadPause };
                 XgYyLens.Typing(sim, due.text, due.at);
                 return true;
             }
@@ -308,6 +313,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // The underline goes in before the reply, so YY redraws both at once.
             if (!string.IsNullOrEmpty(r.focus) && r.asked != null) r.asked.attentionWord = r.focus;
             sim.AddLine("ai", r.text);
+            LearningDelivered(r, hub);
             if (r.tagged)
             {
                 sim.TagHabit(sim.S.chat.Count - 1, r.model);
@@ -391,6 +397,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // Stage 5: it names the word of your line it read most closely; YY underlines it (XgSpeechPolicy.ReadFocus).
             if (XgSpeechPolicy.Stage(stage) == 5) state.Append('\n').Append(T("先输出一行「关注：词」，词必须逐字出现在对方最新消息里，最多16字；第二行「回复：内容」。",
                 "First write one line \"focus: word\", with a word copied exactly from the other person's latest message (at most 16 characters); then a second line \"reply: text\"."));
+            state.Append("\n").Append(sim.YyLearningPrompt());
             if (stale != null) state.Append('\n').Append(sim.RetryNote(stale));
             LingGuangV05.Core.Chat.LlmPromptLayout.AddState(messages, state.ToString(), GameText.IsEnglish);
             // Stages 1–2 are bound by a GBNF grammar (design v1.1 §11.5); later stages get anti-repeat penalties.

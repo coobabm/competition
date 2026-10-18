@@ -40,7 +40,8 @@ namespace LingGuangV05.Desktop.XingGuang
             title = Text("Title", new Vector2(18, -54), new Vector2(-50, -12), 19);
             title.enableAutoSizing = true; title.fontSizeMin = 13; title.fontSizeMax = 19;
             body = Text("Body", new Vector2(18, -240), new Vector2(-18, -66), 16);
-            body.lineSpacing = 5;
+            body.lineSpacing = 3;
+            body.enableAutoSizing=true;body.fontSizeMin=10;body.fontSizeMax=16;
             close = PrologueDesk.Rect("Close", card, Vector2.one, Vector2.one, new Vector2(-42, -42), new Vector2(-10, -10));
             var closeImage = PrologueDesk.Fill(close, new Color32(36, 49, 65, 255));
             var button = close.gameObject.AddComponent<Button>(); button.targetGraphic = closeImage; button.onClick.AddListener(Hide);
@@ -78,11 +79,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             title.text = XgWallpaperConcepts.RegionName(selected) + " · " + concepts.RegionStructure(selected);
             body.text = concepts.RegionLore(selected);
-            float textHeight = body.GetPreferredValues(body.text, 354, 0).y;
-            float height = Mathf.Clamp(textHeight + 92, 172, Mathf.Min(480, desktop.rect.height - 100));
-            card.sizeDelta = new Vector2(390, height);
+            float width = Mathf.Min(390, Mathf.Max(120, desktop.rect.width - 24));
+            float textHeight = body.GetPreferredValues(body.text, width - 36, 0).y;
+            float available = Mathf.Max(96, desktop.rect.height - 24);
+            float height = Mathf.Min(Mathf.Max(textHeight + 92, 172), Mathf.Min(480, available));
+            card.sizeDelta = new Vector2(width, height);
             body.rectTransform.offsetMin = new Vector2(18, -height + 20);
-            card.anchoredPosition = new Vector2(Mathf.Clamp(requested.x, 12, desktop.rect.width - 402), Mathf.Clamp(requested.y, height + 62, desktop.rect.height - 12));
+            card.anchoredPosition = new Vector2(Mathf.Clamp(requested.x, 12, Mathf.Max(12, desktop.rect.width - width - 12)), Mathf.Clamp(requested.y, height + 12, Mathf.Max(height + 12, desktop.rect.height - 12)));
         }
 
         public void Hide() { if (card != null) card.gameObject.SetActive(false); selected = -1; }

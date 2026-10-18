@@ -16,7 +16,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly bool[] learned = new bool[XgSim.AbilityCount];
         readonly TMP_Text[] names = new TMP_Text[XgSim.AbilityCount];
         readonly TMP_Text[] progress = new TMP_Text[XgSim.AbilityCount];
-        float nextRefresh;
+        float nextRefresh;int lastStage=-1,lastNext=-1,lastLearned=-1;double lastParams=-1,lastSamples=-1;bool lastEnglish;
         public int LearnedCount { get; private set; }
         public int NextAbility { get; private set; }
         public float ParameterProgress { get; private set; }
@@ -42,7 +42,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var text = PrologueDesk.Rect(name, transform, new Vector2(index / 6f, bottom), new Vector2((index + 1) / 6f, top),
                 new Vector2(4, 0), new Vector2(-4, 0)).gameObject.AddComponent<TextMeshProUGUI>();
             text.font = PrologueDesk.CjkFont(); text.fontSize = size; text.alignment = TextAlignmentOptions.Center;
-            text.enableAutoSizing = true; text.fontSizeMin = 8; text.fontSizeMax = size;
+            text.enableAutoSizing = false; text.fontSizeMin = 8; text.fontSizeMax = size;
             text.textWrappingMode = TextWrappingModes.NoWrap; text.raycastTarget = false;
             return text;
         }
@@ -56,7 +56,11 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < names.Length; i++) { names[i].canvasRenderer.SetAlpha(alpha); progress[i].canvasRenderer.SetAlpha(alpha); }
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .1f;
-            var sim = controller.Sim; LearnedCount = 0; NextAbility = sim.NextAbility;
+            var sim = controller.Sim;
+            int mask=0;for(int i=1;i<=XgSim.AbilityCount;i++)if(sim.HasAbility(i))mask|=1<<i;
+            if(lastStage==sim.S.stage&&lastNext==sim.NextAbility&&lastParams==sim.TrainedParamsK&&lastSamples==sim.TrainedSamples&&lastEnglish==GameText.IsEnglish&&lastLearned==mask)return;
+            lastStage=sim.S.stage;lastNext=sim.NextAbility;lastParams=sim.TrainedParamsK;lastSamples=sim.TrainedSamples;lastEnglish=GameText.IsEnglish;lastLearned=mask;
+            LearnedCount = 0; NextAbility = sim.NextAbility;
             // How much is trained, never how far to the hidden line (XgSim.Learned.cs).
             ParameterProgress = NextAbility > 0 ? (float)sim.ParamsFill : 0;
             DataProgress = NextAbility > 0 ? (float)sim.SamplesFill : 0;

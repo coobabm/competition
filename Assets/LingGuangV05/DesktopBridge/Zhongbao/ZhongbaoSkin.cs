@@ -132,7 +132,10 @@ namespace LingGuangV05.Desktop.Zhongbao
         public static XgBtn Outlined(XgUi ui, Transform parent, string label, UnityAction onClick, float size, Color rim)
         {
             var frame = Rect("Frame", parent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-            Panel(frame, rim).raycastTarget = false;
+            // Match the inner rounded face; keep the light desktop skin unchanged.
+            var rimImage = Panel(frame, ui.dark && rim == Line ? XgDark.Line : rim);
+            rimImage.raycastTarget = false;
+            if (ui.dark) XgUi.RoundSurface(rimImage, 13);
             var b = ui.Button(frame, label, onClick, size);
             b.rt.anchorMin = Vector2.zero; b.rt.anchorMax = Vector2.one; b.rt.offsetMin = new Vector2(1, 1); b.rt.offsetMax = new Vector2(-1, -1);
             return b;

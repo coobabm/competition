@@ -20,7 +20,8 @@ namespace LingGuangV05.XingGuang
         public bool CollaborationEnabled => Has("label.coop");
         /// <summary>0 cards, 1 experiment, 2 final question, 3 chapter-two entry preview.</summary>
         public int LabelPresentationMode(bool endingQuestionReady) => S.chapterComplete ? 3 : EndingAvailable && endingQuestionReady ? 2 : ProjectAwaitingAnswer ? 1 : 0;
-        public bool ReviewFull => S.queue.Count >= ReviewCapacity;
+        public int ReviewLimit => Has("label.parallel") ? 60 : ReviewCapacity;
+        public bool ReviewFull => S.queue.Count >= ReviewLimit;
         public int GlobalAutoLevel => S.autoLevel;
         /// <summary>The player's own pause of 自动答题 (the platform's captcha holds are separate, see AutomationHeld).</summary>
         public bool AutoPaused { get => S.autoPaused; set => S.autoPaused = value; }
@@ -35,7 +36,7 @@ namespace LingGuangV05.XingGuang
             LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
             LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 800, 1, 520),
             LabelNode("label.audit", "label.coop", "自查", "Self-check", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
-            LabelNode("label.parallel", "label.brain", "多开推理", "Parallel inference", "本地推理并发 1 → 4，保留聊天优先；实际速度取决于本机。", "Local concurrency 1 to 4, with chat priority; measured speed depends on this computer.", 3000, 1, 780),
+            LabelNode("label.parallel", "label.brain", "复核扩容", "Review inbox expansion", "待复核容量 20 → 60 题。", "Review inbox capacity increases from 20 to 60 cards.", 3000, 1, 780),
             LabelNode(TrapMemoryNode, "label.coop", "题库比对", "Trap memory", "记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。", "Remember the platform's known-answer trap items; when one comes back it goes to your review inbox instead of being auto-submitted.", 800, 1, 910),
             LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 4 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 2000, 1, 1040),
         };
@@ -90,10 +91,10 @@ namespace LingGuangV05.XingGuang
             S.prefetch.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
             S.queue.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
             // Recover oversize legacy/corrupt buffers without silently paying or losing user review cards.
-            if (S.queue.Count > ReviewCapacity)
+            if (S.queue.Count > ReviewLimit)
             {
-                S.prefetch.AddRange(S.queue.GetRange(ReviewCapacity, S.queue.Count - ReviewCapacity));
-                S.queue.RemoveRange(ReviewCapacity, S.queue.Count - ReviewCapacity);
+                S.prefetch.AddRange(S.queue.GetRange(ReviewLimit, S.queue.Count - ReviewLimit));
+                S.queue.RemoveRange(ReviewLimit, S.queue.Count - ReviewLimit);
             }
             S.noise.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             Trim(S.routeHistory, RouteWindow); Trim(S.autoFeed, FeedWindow);

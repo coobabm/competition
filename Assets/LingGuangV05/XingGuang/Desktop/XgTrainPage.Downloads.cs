@@ -182,9 +182,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (x.paused) q.eta.text = "<color=#E24B4A>" + T("硬盘满 · 暂停", "disk full") + "</color>";
             else if (x.active)
             {
-                double left = Math.Max(0, x.sizeMB - x.doneMB);
-                double mbps = x.secondsLeft > 1e-6 ? left / x.secondsLeft * XgSim.DownloadTimeScale : Sim.LineMBps;
-                q.eta.text = N(mbps, mbps < 10 ? "0.##" : "0.#") + " MB/s · " + XgSim.ClockText(x.eta);
+                q.eta.text = T("模拟下载 · ", "Simulated download · ") + XgSim.ClockText(x.eta);
             }
             else q.eta.text = T("排队 · ", "queued · ") + XgSim.ClockText(x.eta);
             // One speed-up per key: it finishes the first item of that key.

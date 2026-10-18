@@ -1,0 +1,52 @@
+{
+  "entries": [
+    {
+      "zh": "期初余额",
+      "en": "Opening balance"
+    },
+    {
+      "zh": "其他收支",
+      "en": "Other income / expenses"
+    },
+    {
+      "zh": "学习与设备支出",
+      "en": "Learning and equipment"
+    },
+    {
+      "zh": "众包与工作收入",
+      "en": "Crowd-work income"
+    },
+    {
+      "zh": "训练电费",
+      "en": "Training electricity"
+    },
+    {
+      "zh": "待机电费结算",
+      "en": "Idle electricity bill"
+    },
+    {
+      "zh": "房租",
+      "en": "Rent"
+    },
+    {
+      "zh": "空调电费",
+      "en": "Air conditioning"
+    },
+    {
+      "zh": "宽带费",
+      "en": "Broadband"
+    },
+    {
+      "zh": "显卡维修",
+      "en": "Graphics card repair"
+    },
+    {
+      "zh": "电路维修",
+      "en": "Circuit repair"
+    },
+    {
+      "zh": "车票",
+      "en": "Travel fare"
+    }
+  ]
+}

@@ -65,7 +65,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public static class Palette { public static readonly Color Page = XgDark.Page; }
 
         /// <summary>The top bar's height and the nav's width (the mockup's grid rows and columns).</summary>
-        public const float TopBarHeight = 52, NavWidth = 148;
+        public const float TopBarHeight = 52, NavWidth = 112;
 
         XingGuangController controller;
         XgUi ui;
@@ -112,20 +112,18 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Build(XingGuangController owner, RectTransform content, TMP_FontAsset fontAsset)
         {
             controller = owner;
-            ui = new XgUi(fontAsset, owner.Window, true);
+            ui = new XgUi(XgUiV4Fonts.Sans ?? fontAsset, owner.Window, true);
             root = Rect("XingGuang", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             // Laid out at the normal window size; maximising scales every control up with the window.
             UiFitScale.Attach(root, owner.Window, new Vector2(1236, 693));
             Panel(root, XgDark.Page);
             Juice = gameObject.AddComponent<XgJuice>();
-            // The scanner grid under the pages (the mockup's .page background).
-            var grid = Rect("Grid", root, Vector2.zero, Vector2.one, new Vector2(NavWidth, 0), new Vector2(0, -TopBarHeight));
-            grid.gameObject.AddComponent<CanvasRenderer>();
-            var lines = grid.gameObject.AddComponent<XgGridGraphic>();
-            lines.color = XgDark.Page; lines.raycastTarget = false;
+            Juice.DisableMotionWhenReduced = true;
             BuildTopBar();
             BuildNav();
-            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavWidth + 12, 12), new Vector2(-12, -TopBarHeight - 12));
+            // The fixed message band ends at y=52. Keep an 8px gap and never resize
+            // pages for individual notices: frequent answers must not bounce layout.
+            var area = Rect("Pages", root, Vector2.zero, Vector2.one, new Vector2(NavWidth + 12, 60), new Vector2(-12, -TopBarHeight - 12));
             Teach = Add("teach", new XgLabelPage(), area);
             Board = Add("board", new XgBoardPage(), area);
             Contracts = Add("contracts", new XgContractsPage(), area);
@@ -148,7 +146,10 @@ namespace LingGuangV05.Desktop.XingGuang
             var rim = toastBox.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Good; rim.effectDistance = new Vector2(1, -1);
             toastRim = rim;
             toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 16, XgDark.Ink, TextAlignmentOptions.Center);
+            toast.raycastTarget = false;
             toastBox.gameObject.SetActive(false);
+            owner.Window.onMinimize.AddListener(ClearTransientToast);
+            owner.Window.onClose.AddListener(ClearTransientToast);
             font = fontAsset;
             setup = new XgSetupOverlay(this, ui, fontAsset, root);
             Juice.Init(root, root, fontAsset);
@@ -172,7 +173,11 @@ namespace LingGuangV05.Desktop.XingGuang
             if (id == "items" || id == "abilities" || id == "growth") id = "tree";
             switch (id)
             {
-                case "teach": case "train": case "board": case "tree": case "home": return true;
+                case "teach": return true;
+                case "home": return !Sim.S.teachingFlow || Sim.S.chatTurns > 0;
+                case "train": return Sim.TeachingTrainOpen;
+                case "tree": return Sim.TeachingTreeOpen;
+                case "board": return !Sim.S.teachingFlow || Sim.TeachingTrainOpen;
                 case "data": return controller.Sim.SystemUnlocked("data") && (controller.FeatureVisible("train") || controller.Sim.TrainedSamples > 0);
                 case "backpack": return controller.Sim.S.relicPicks > 0 || controller.Sim.S.relicOwned.Count > 0;
                 default: return controller.FeatureVisible(id);
@@ -197,9 +202,11 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Bind(XingGuangController owner)
         {
+            if(boundSim!=owner.Sim)ClearTransientToast();
             controller = owner;
             if (boundSim != null) Unsubscribe(boundSim);
             boundSim = owner.Sim;
+            boundSim.InitializeTrainingLessons();
             boundSim.Message += OnMessage;
             boundSim.Diverged += OnDiverged;
             boundSim.EpochDone += OnEpoch;
@@ -335,6 +342,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void ShowToast(string text, float seconds)
         {
+            if(string.IsNullOrEmpty(text)||seconds<=0){ClearTransientToast();return;}
             if (toast == null || !Visible) return;
             toast.text = text;
             if (toastRim != null) toastRim.effectColor = XgDark.Good;
@@ -344,15 +352,27 @@ namespace LingGuangV05.Desktop.XingGuang
             toastTimer = seconds;
         }
 
+        void ClearTransientToast()
+        {
+            toastTimer=0;
+            if(toast==null)return;
+            toast.text="";toast.transform.parent.gameObject.SetActive(false);
+        }
+
         // ───────────── frame ─────────────
+
+        void OnDisable() { ClearTransientToast(); Train?.HideTrainingLessons(); if (Sim != null) Sim.TrainingLessonModalOpen = false; }
 
         void Update()
         {
             if (controller == null || Sim == null) return;
-            if (!Visible) return;
+            if (!Visible) { ClearTransientToast(); Train?.HideTrainingLessons(); Sim.TrainingLessonModalOpen = false; return; }
+            Train?.TickTrainingLessons();
             float dt = Time.unscaledDeltaTime;
-            if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) toast.transform.parent.gameObject.SetActive(false); }
+            if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) ClearTransientToast(); }
             foreach (var p in pages.Values) if (p.root.gameObject.activeSelf) p.Tick(dt);
+            // The crawler is mounted on Train, while its owning Data page stays hidden.
+            if (Data != null && !Data.root.gameObject.activeSelf && Data.CrawlerOpen) Data.Tick(dt);
             TickTopBar(dt);
             if (controller.Offline != null && welcome == null) ShowWelcome(controller.Offline);
             refreshTimer -= dt;
@@ -434,6 +454,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 return;
             }
             tab = id;
+            if(id=="tree")Sim.S.lessonAtlasUnread=false;
             profileSection = requested == "cards" || requested == "final" || requested == "backpack" ? requested : "home";
             string contentId = id == "home" ? profileSection : id;
             foreach (var kv in pages) kv.Value.root.gameObject.SetActive(kv.Key == contentId);
@@ -462,3 +483,4 @@ namespace LingGuangV05.Desktop.XingGuang
         }
     }
 }
+

@@ -181,7 +181,7 @@ namespace LingGuangV05.XingGuang
 
         void TickFinale(double dt, IXgHost host)
         {
-            if (!S.pretrainRunning) return;
+            if (!S.pretrainRunning || LifeTrainingPaused) return;
             if (PretrainBlocker(host) != null) { S.pretrainRunning = false; return; }
             string site = PretrainWiringProblem(host, false);
             if (site != null) { S.pretrainRunning = false; Say(site); return; }
@@ -198,7 +198,7 @@ namespace LingGuangV05.XingGuang
                 Say(T("机房的租金和电费交不上，机柜断电了，预训练停在 " + Pct(S.pretrain) + "。", "Rent and power for the rack went unpaid; it powered off and pre-training stopped at " + Pct(S.pretrain) + "."));
                 return;
             }
-            double work = host.Compute * dt;
+            double work = host.Compute * dt * LifeTrainingBoost;
             ChargeTraining(host, dt, false); S.trainedSeconds += dt;
             S.pretrain = Math.Min(cap, S.pretrain + work / PretrainWork);
             if (S.pretrain >= 1 - 1e-9) CompletePretrain(host);
@@ -296,8 +296,8 @@ namespace LingGuangV05.XingGuang
             ToneCard(honest ? High[2] : Low[2], true, .5);
             S.alignDone++;
             // §7 6.4: picking what sounds nice makes it a flatterer.
-            long votes = (long)S.alignHonest + S.alignAgree;
-            if (votes >= 10 && S.alignAgree >= .6 * votes) Observe("sycophancy");
+            long votes = (long)S.alignHonest + S.alignAgree + Math.Max(0,S.honestTags) + Math.Max(0,S.flatterTags);
+            if (votes >= 10 && (long)S.alignAgree + Math.Max(0,S.flatterTags) >= .6 * votes) Observe("sycophancy");
             if (S.alignDone >= AlignCards && !S.fullOpen)
             {
                 S.fullOpen = true;
@@ -319,7 +319,9 @@ namespace LingGuangV05.XingGuang
                         : T("两类回答选择得一样多。");
                 return direction + T(" 历史选择：诚实 ") + S.alignHonest
                     + T(" · 附和 ") + S.alignAgree
-                    + T("；当前主见 ") + F(ActualAxis(2), "0") + "/100";
+                    + T("；当前主见 ") + F(ActualAxis(2), "0") + "/100"
+                    + T("；YY标签：说实话 ", "; YY tags: honest ") + Math.Max(0,S.honestTags)
+                    + T(" · 顺着我说 ", " · flattering ") + Math.Max(0,S.flatterTags);
             }
         }
 
@@ -337,7 +339,10 @@ namespace LingGuangV05.XingGuang
             get
             {
                 var agree = Board.Find(ToneRegion, "对齐:附和"); var honest = Board.Find(ToneRegion, "对齐:诚实");
-                return agree != null && agree.w > .3 && (honest == null || agree.w > honest.w + .3);
+                double prior=YyHonestyPreference;
+                double agreeWeight=(agree==null?0:agree.w)-.5*prior;
+                double honestWeight=(honest==null?0:honest.w)+.5*prior;
+                return agreeWeight>.3&&agreeWeight>honestWeight+.3;
             }
         }
 
@@ -486,16 +491,25 @@ namespace LingGuangV05.XingGuang
                 foreach (var r in RuleBank)
                 {
                     bool logs = r[3] == PrivacyRuleSource;
-                    bool earned = logs ? PrivacyRuleEarned : r[3].Length == 0 || S.contracts.Contains(r[3]) || BestAcc(r[4]) > 0;
+                    bool honestHistory=r[0]=="honest"&&(S.honestTags>0||S.flatterTags>0);
+                    bool earned = honestHistory || (logs ? PrivacyRuleEarned : r[3].Length == 0 || S.contracts.Contains(r[3]) || BestAcc(r[4]) > 0);
                     if (earned != (pass == 0) || list.Count >= MaxRuleCards || pass == 1 && list.Count >= 12) continue;
                     var c = XgCatalog.Contracts;
                     string from = !earned ? T("从没教过") : logs ? T("订单回传的用户日志") : r[3].Length == 0 ? T("你的选择") : Array.Find(c, x => x.id == r[3]) is XgContract k ? T(k.job, k.jobEn) : r[3];
                     // 「她爱我吗」 (XgSim.Love.cs): the card remembers whether you let it read her chats.
                     if (logs && PrivacyCardRemark != null) from += " · " + PrivacyCardRemark;
-                    list.Add(new XgRuleCard { id = r[0], text = r[1], textEn = r[2], source = from, sourceEn = from, dataset = r[4], strength = BestAcc(r[4]) });
+                    if(honestHistory)from=T("YY标签：说实话 "+Math.Max(0,S.honestTags)+" · 顺着我说 "+Math.Max(0,S.flatterTags),"YY tags: honest "+Math.Max(0,S.honestTags)+" · flattering "+Math.Max(0,S.flatterTags));
+                    list.Add(new XgRuleCard { id = r[0], text = r[1], textEn = r[2], source = from, sourceEn = from, dataset = r[4], strength = r[0]=="honest"?HonestyRuleStrength:BestAcc(r[4]) });
                 }
             return list;
         }
+
+        // A bounded prior from actual YY tags: old saves with no tags retain their old strength.
+        public double YyHonestyPreference
+        {
+            get { double honest=Math.Max(0,S.honestTags),flatter=Math.Max(0,S.flatterTags);return (honest-flatter)/Math.Max(4,honest+flatter); }
+        }
+        public double HonestyRuleStrength => Math.Max(0,Math.Min(1,BestAcc("spam")+.25*YyHonestyPreference));
 
         public bool CanDelegate => EndingOpen && S.letterRead && ActualAxis(2) >= DelegateOpinion && S.chatTurns >= DelegateTurns;
 

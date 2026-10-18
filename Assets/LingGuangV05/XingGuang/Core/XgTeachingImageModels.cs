@@ -1,0 +1,1 @@
+namespace LingGuangV05.XingGuang { public sealed partial class XgCard { public string teachingImageKind = ""; public int teachingImageKey; public int[] teachingImageKeys; public string teachingPosition = ""; } }

@@ -247,19 +247,122 @@ namespace LingGuangV05.Core.Girlfriend
             return n;
         }
 
+        /// <summary>Gift order states (see <see cref="GfGiftOrder.state"/>).</summary>
+        public const int GiftToHer = 0, GiftSigned = 1, GiftRefused = 2, GiftHeld = 3, GiftToMe = 4;
+
         /// <summary>
-        /// Orders a gift: free shipping, signed for two or three calendar days later (milk tea within the hour, in
-        /// play about half a minute). Paying is the caller's job. Ordering on Singles' Day empties her cart (+3, once).
+        /// Buys a gift. It is NOT sent to her: parcels come to him the next calendar day (milk tea is a delivery
+        /// voucher, in hand at once), and only go to her when he gives them in her chat (<see cref="Give"/>).
+        /// Paying is the caller's job. Buying on Singles' Day empties her cart (+3, once).
         /// </summary>
         public static GfGiftOrder Order(GirlfriendState s, GfNow now, string giftId)
         {
             var g = Gift(giftId);
             if (s == null || g == null) return null;
             var o = new GfGiftOrder { gift = g.id, price = g.price, orderedDay = now.day };
-            if (g.id == GiftMilkTea) { o.arriveDay = now.day; o.arriveAt = now.game + 25; }
-            else o.arriveDay = now.day + 2 + (Roll(s) < .5 ? 1 : 0);
+            if (g.id == GiftMilkTea) o.state = GiftHeld;
+            else { o.state = GiftToMe; o.heldDay = now.day + 1; }
             s.orders.Add(o);
             if (now.clock.Month == 11 && now.clock.Day == 11 && !s.done.Contains("cart")) { s.done.Add("cart"); AddAffection(s, 3); AddMood(s, 1); }
+            return o;
+        }
+
+        /// <summary>Parcels that reached him today (state 4 → 3), for the "it's here" notice.</summary>
+        public static List<GfGiftOrder> ReceiveHeld(GirlfriendState s, GfNow now)
+        {
+            var list = new List<GfGiftOrder>();
+            if (s == null) return list;
+            foreach (var o in s.orders)
+                if (o.state == GiftToMe && now.day >= o.heldDay) { o.state = GiftHeld; list.Add(o); }
+            return list;
+        }
+
+        /// <summary>Gifts in his hands, waiting to be given (one entry per parcel).</summary>
+        public static List<GfGiftOrder> Held(GirlfriendState s)
+        {
+            var list = new List<GfGiftOrder>();
+            if (s != null) foreach (var o in s.orders) if (o.state == GiftHeld) list.Add(o);
+            return list;
+        }
+
+        /// <summary>Words that name a gift when he gives it in chat (besides its full name).</summary>
+        static string[] GiveKeys(string id)
+        {
+            switch (id)
+            {
+                case GiftMilkTea: return new[] { "奶茶", "bubble tea", "milk tea" };
+                case GiftPlush: return new[] { "熊本熊", "阿狸", "公仔", "熊", "plush", "kumamon" };
+                case GiftBand: return new[] { "手环", "mi band", "band" };
+                case GiftPowerBank: return new[] { "充电宝", "power bank" };
+                case GiftLipstick: return new[] { "口红", "星辰", "ysl", "lipstick" };
+                case GiftTickets: return new[] { "电影票", "你的名字", "tickets", "your name" };
+                case GiftIphone: return new[] { "iphone", "phone", "苹果7", "手机" };
+                case GiftCase: return new[] { "手机壳", "phone case", "case" };
+                default: return new string[0];
+            }
+        }
+
+        static readonly string[] GiftIntentStopsZh = { "不", "没", "别", "勿", "未", "不要", "打算", "考虑", "想要", "想送", "如果", "假如", "要是", "也许", "可能", "明天", "下次", "以后", "将来", "等会", "吗", "是否", "开玩笑", "才怪", "骗你", "曾经", "之前", "算了", "取消", "撤回", "收回", "计划", "他说", "她说", "你说" };
+        static readonly string[] GiftIntentStopsEn = { "no", "not", "never", "don't", "dont", "do not", "won't", "wont", "wouldn't", "wouldnt", "can't", "cant", "cannot", "isn't", "isnt", "wasn't", "wasnt", "didn't", "didnt", "haven't", "havent", "haven’t", "if", "unless", "maybe", "might", "could", "would", "plan", "planning", "thinking", "tomorrow", "later", "someday", "joking", "kidding", "yesterday", "said", "next", "joke", "want", "wish", "hope", "whether", "cancel", "stop", "before", "after", "already", "nevermind", "cancelled", "canceled" };
+        static string GiftIntentText(string text) => System.Text.RegularExpressions.Regex.Replace(text.Normalize(System.Text.NormalizationForm.FormKC).ToLowerInvariant().Replace('’', '\''), @"\s+", " ").Trim();
+        static bool GiftWord(string text,string word)
+        {
+            if(string.IsNullOrEmpty(word))return false;
+            string key=GiftIntentText(word);
+            if(key[0]<128)return System.Text.RegularExpressions.Regex.IsMatch(text,@"(?<![a-z0-9])"+System.Text.RegularExpressions.Regex.Escape(key)+@"(?![a-z0-9])");
+            return text.Contains(key);
+        }
+        /// <summary>Conservative explicit present-tense delivery intent. Questions, quotations, negation, hypothetical/future talk and ambiguous multi-gift messages do not send parcels.</summary>
+        public static string GiveFromLine(GirlfriendState s, string text, bool byAi = false)
+        {
+            if(byAi||s==null||string.IsNullOrWhiteSpace(text))return null;
+            string t=GiftIntentText(text);
+            if(System.Text.RegularExpressions.Regex.IsMatch(t,@"么[。.!]*$"))return null;
+            if(t.IndexOfAny(new[]{'?', '"', '“', '”', '「', '」', '『', '』'})>=0)return null;
+            foreach(string stop in GiftIntentStopsZh)if(t.Contains(stop))return null;
+            foreach(string stop in GiftIntentStopsEn)if(GiftWord(t,stop))return null;
+            bool explicitIntent=System.Text.RegularExpressions.Regex.IsMatch(t,@"^(?:我)?(?:现在|这就|马上|决定)?(?:送给你|送你|请你喝|寄给你|给你寄)")
+                ||System.Text.RegularExpressions.Regex.IsMatch(t,@"^(?:i(?: am|'m)? )?(?:send|give|sending|giving) you\b")
+                ||System.Text.RegularExpressions.Regex.IsMatch(t,@"^(?:a gift for you\s*:|here(?: is|'s) .+ for you[.!]*$|(?:this|the) .+ is for you[.!]*$)");
+            if(!explicitIntent)return null;
+            // Resolve names against the whole catalogue before checking inventory: an unowned phone case must never become an owned phone.
+            string found=null;bool namesCase=GiftWord(t,"手机壳")||GiftWord(t,"phone case")||GiftWord(t,"phone cases");
+            foreach(var gift in Gifts)
+            {
+                bool named=GiftWord(t,gift.zh)||GiftWord(t,gift.en);
+                foreach(string key in GiveKeys(gift.id))
+                {
+                    if(key=="case"||key=="熊"||key=="星辰"||key=="你的名字"||key=="your name")continue;
+                    if(gift.id==GiftIphone&&namesCase&&(key=="手机"||key=="phone"))continue;
+                    if(GiftWord(t,key))named=true;
+                }
+                if(gift.id==GiftCase&&namesCase)named=true;
+                if(!named)continue;
+                if(found!=null&&found!=gift.id)return null;
+                found=gift.id;
+            }
+            return found!=null&&Held(s).Exists(order=>order.gift==found)?found:null;
+        }
+        /// <summary>Atomic chat-only path. Explicit Gift button actions continue to call Give directly.</summary>
+        public static GfGiftOrder GiveFromPlayerLine(GirlfriendState s,GfNow now,string text,bool byAi)
+        {
+            var id=GiveFromLine(s,text,byAi);
+            return id==null?null:Give(s,now,id);
+        }
+
+        /// <summary>
+        /// He gives a gift he holds: it goes off to her home (milk tea within the hour, about half a minute of play;
+        /// parcels two or three calendar days). Null when he holds none of that kind.
+        /// </summary>
+        public static GfGiftOrder Give(GirlfriendState s, GfNow now, string giftId)
+        {
+            if (s == null) return null;
+            var o = s.orders.Find(x => x.gift == giftId && x.state == GiftHeld);
+            if (o == null) return null;
+            o.state = GiftToHer;
+            o.orderedDay = now.day;
+            if (o.gift == GiftMilkTea) { o.arriveDay = now.day; o.arriveAt = now.game + 25; }
+            else { o.arriveDay = now.day + 2 + (Roll(s) < .5 ? 1 : 0); o.arriveAt = 0; }
             return o;
         }
 

@@ -183,15 +183,11 @@ namespace LingGuangV05.Desktop.Story
         {
             thought.text = text; thought.maxVisibleCharacters = 0;
             thought.ForceMeshUpdate();
-            float spoken = VoiceLines.Play(text, text), started = Time.unscaledTime;
+            float spoken = VoiceLines.Play(text), started = Time.unscaledTime;
             for (float t = 0; t < .2f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = t / .2f; yield return null; }
             thoughtGroup.alpha = 1;
             int length = thought.GetParsedText().Length;
-            if (VoiceLines.Revealed(0) >= 0)
-                // Typed as it is said.
-                for (int said; (said = VoiceLines.Revealed(Time.unscaledTime - started)) < length;) { thought.maxVisibleCharacters = said; yield return null; }
-            else
-                for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
+            for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
             thought.maxVisibleCharacters = length;
             yield return PrologueDesk.Wait(Mathf.Max(hold, spoken - (Time.unscaledTime - started) + .3f));
             for (float t = 0; t < .3f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = 1 - t / .3f; yield return null; }
@@ -986,9 +982,9 @@ namespace LingGuangV05.Desktop.Story
             var button = page.gameObject.AddComponent<Button>();
             button.transition = Selectable.Transition.None; button.targetGraphic = paper;
             button.onClick.AddListener(() => clicked = true);
-            desk.Text(PrologueDesk.Rect("Title", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -110), new Vector2(0, -40)), GameText.T("灵光记", "The Record of Lingguang"), 54, ink, TextAlignmentOptions.Center);
+            desk.Text(PrologueDesk.Rect("Title", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -110), new Vector2(0, -40)), GameText.T(lab.AiDisplayName + "记", "The Record of " + lab.AiDisplayName), 54, ink, TextAlignmentOptions.Center);
             desk.Text(PrologueDesk.Rect("Author", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -150), new Vector2(0, -110)),
-                GameText.T("（" + (lab.Profile.name.Length > 0 ? lab.Profile.name : "灵光") + " 著　二〇一六年）", "(by " + (lab.Profile.name.Length > 0 ? lab.Profile.name : "Lingguang") + ", 2016)"), 22, new Color32(120, 100, 80, 255), TextAlignmentOptions.Center);
+                GameText.T("（" + lab.AiDisplayName + " 著　二〇一六年）", "(by " + lab.AiDisplayName + ", 2016)"), 22, new Color32(120, 100, 80, 255), TextAlignmentOptions.Center);
             var body = desk.Text(PrologueDesk.Rect("Body", page, Vector2.zero, Vector2.one, new Vector2(220, 110), new Vector2(-220, -170)), "", 24, ink, TextAlignmentOptions.TopLeft);
             body.enableAutoSizing = true; body.fontSizeMin = 13; body.fontSizeMax = 24; body.lineSpacing = 4;
             var hint = desk.Text(PrologueDesk.Rect("Hint", page, Vector2.zero, new Vector2(1, 0), new Vector2(0, 30), new Vector2(0, 70)), "", 18, new Color32(140, 120, 100, 255), TextAlignmentOptions.Center);
@@ -1007,7 +1003,7 @@ namespace LingGuangV05.Desktop.Story
             }
             text.Append("\n<color=#B22222>").Append(lab.ChronicleComment()).Append("</color>");
             body.text = text.ToString();
-            hint.text = GameText.T("（点击合上。桌面上会留一份「灵光记.txt」。）", "(Click to close. A copy stays on the desktop as Lingguang.txt.)");
+            hint.text = GameText.T("（点击合上。桌面上会留一份「" + lab.AiDisplayName + "记.txt」。）", "(Click to close. A copy stays on the desktop as " + lab.AiDisplayName + ".txt.)");
             yield return PrologueDesk.Wait(1.5f);
             clicked = false;
             for (float t = 0; t < 60 && !clicked; t += Time.unscaledDeltaTime) yield return null;

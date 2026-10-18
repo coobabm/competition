@@ -69,7 +69,8 @@ namespace LingGuangV05.Desktop
             for (int i = 0; i < 6; i++) {
                 int slot = i + 1; float y = 108 + i * 59;
                 descriptions[i] = Text("Slot" + slot, 24, y, 535, 46, "", 15);
-                if (slot > 1) Button("Save" + slot, 575, y + 4, 102, 34, T("保存", "Save"), () => Request(T("覆盖这个档位？再次确认后保存。", "Overwrite this slot? Confirm to save."), () => { runtime.SaveSlot(slot); Refresh(); }));
+                if (slot == 1) Button("SaveNow", 575, y + 4, 102, 34, T("立即保存", "Save now"), () => { runtime.SaveNow(); Refresh(); });
+                else Button("Save" + slot, 575, y + 4, 102, 34, T("保存", "Save"), () => Request(T("覆盖这个档位？再次确认后保存。", "Overwrite this slot? Confirm to save."), () => { runtime.SaveSlot(slot); Refresh(); }));
                 loads[i] = Button("Load" + slot, 692, y + 4, 102, 34, T("读取", "Load"), () => Request(T("读取会替换当前进度，请先保存。", "Loading replaces current progress. Save first."), () => { if (runtime.LoadArchive(slot)) Close(); else Refresh(); }));
             }
             Text("ChapterTitle", 24, 468, 780, 24, T("章节回顾 · 首次解锁后永久保留", "Chapters · first-unlock snapshots are kept"), 17);

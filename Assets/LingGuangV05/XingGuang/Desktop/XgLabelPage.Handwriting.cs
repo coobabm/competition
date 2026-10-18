@@ -54,7 +54,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The desk can be written on right now (the player may still have picked the yes/no cards).</summary>
         bool HandwritingEligible()
         {
-            if (drawRoot == null || Sim == null || view != null || Sim.S.desk != XgSim.HandwritingDesk || !Sim.DeskOpen(XgSim.HandwritingDesk)) return false;
+            if (WorkContext || drawRoot == null || Sim == null || view != null || Desk != XgSim.HandwritingDesk || !Sim.DeskOpen(XgSim.HandwritingDesk)) return false;
             if (Mode != 0 || Sim.CaptchaPending || Sim.CaptchaPauseLeft > 0 || Sim.ReviewCard(Desk) != null) return false;
             var card = CurrentCard;
             return !(card.family || card.law || card.kind == "shutdown" || card.bottleneckPreview || card.kind == "combo");
@@ -108,8 +108,8 @@ namespace LingGuangV05.Desktop.XingGuang
             drawDone = ZhongbaoSkin.Outlined(ui, drawRoot, "", HandIn, 18, ZhongbaoSkin.Blue);
             PlaceFrame(drawDone, 144, 380, 170, 38);
             ZhongbaoSkin.Frame(drawDone).name = "HandwritingDone";
-            UiTip.Add(ZhongbaoSkin.Frame(drawDone), "写完点这里：这张字按你被问的数字入库，算一条手标样本，灵光也会把它记住。",
-                "Press when you are done: the drawing is stored under the digit you were asked, counts as one hand-labelled sample, and LingGuang remembers it.");
+            UiTip.Add(ZhongbaoSkin.Frame(drawDone), () => T(("写完点这里：这张字按你被问的数字入库，算一条手标样本，灵光也会把它记住。" .Replace("灵光", Sim.AiDisplayName)),
+                ("Press when you are done: the drawing is stored under the digit you were asked, counts as one hand-labelled sample, and LingGuang remembers it." .Replace("LingGuang", Sim.AiDisplayName))));
 
             drawFeedback = ui.Text(TopLeft("Feedback", drawRoot, 14, 424, 300, 58), "", 13, ZhongbaoSkin.Ink, TextAlignmentOptions.TopLeft);
             sessionCaption = Label(drawRoot, "SessionCaption", 14, 486, 300, 16, 12, ZhongbaoSkin.Mute);
@@ -133,8 +133,8 @@ namespace LingGuangV05.Desktop.XingGuang
             guessPct = Label(guessBubble, "Confidence", 140, 4, 46, 36, 16, new Color32(75, 63, 168, 255), TextAlignmentOptions.MidlineRight);
             var bar = TopLeft("Sure", guessBubble, 10, 46, 174, 6);
             guessFill = Bar(bar, "Fill", new Color(0, 0, 0, .08f), ZhongbaoSkin.Spider);
-            UiTip.Add(guessBubble, "灵光边看边猜：数字是它此刻的读法，百分比是它有几分把握。它只认得内置字模和你写过的字。",
-                "LingGuang guesses as you write: the digit is what it reads right now, the percentage how sure it is. It only knows its built-in letterforms and the drawings you handed in.");
+            UiTip.Add(guessBubble, () => T(("灵光边看边猜：数字是它此刻的读法，百分比是它有几分把握。它只认得内置字模和你写过的字。" .Replace("灵光", Sim.AiDisplayName)),
+                ("LingGuang guesses as you write: the digit is what it reads right now, the percentage how sure it is. It only knows its built-in letterforms and the drawings you handed in." .Replace("LingGuang", Sim.AiDisplayName))));
             for (int i = 0; i < 3; i++)
             {
                 float y = 144 + i * 20;
@@ -170,7 +170,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var cf = ZhongbaoSkin.Frame(classicToggle);
             cf.anchorMin = cf.anchorMax = new Vector2(0, 0); cf.offsetMin = new Vector2(14, 8); cf.offsetMax = new Vector2(154, 34);
             cf.name = "ToHandwriting";
-            UiTip.Add(cf, "回到写字：照被问的数字写一个，灵光边看边猜。", "Back to writing: write the digit you are asked for while LingGuang guesses.");
+            UiTip.Add(cf, () => T(("回到写字：照被问的数字写一个，灵光边看边猜。" .Replace("灵光", Sim.AiDisplayName)), ("Back to writing: write the digit you are asked for while LingGuang guesses." .Replace("LingGuang", Sim.AiDisplayName))));
             ShowFrame(classicToggle, false);
             drawRoot.gameObject.SetActive(false);
         }

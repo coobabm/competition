@@ -103,6 +103,7 @@ namespace LingGuangV05.Desktop
 
         void Update()
         {
+            if(LingGuangV05.Core.StoryFocus.Exclusive){if(box!=null)box.gameObject.SetActive(false);current=null;showAt=-1;return;}
             if (current == null || showAt < 0 || Time.unscaledTime < showAt) return;
             showAt = -1;
             string text = current.Text != null ? current.Text() : null;

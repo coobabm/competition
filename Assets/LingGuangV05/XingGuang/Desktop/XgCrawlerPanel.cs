@@ -71,6 +71,8 @@ namespace LingGuangV05.Desktop.XingGuang
         float scroll, contentHeight, timeLeft, sophonAt = -1, sophonLeft, lastTick;
         int pageNo, grabbed, introCredited, startsThisFrame, glitching;
         bool running, built, marksDirty;
+        bool pendingPage, pendingGeometry, capturingGeometry;
+        int geometryFrame;
         System.Random rng = new System.Random();
 
         public bool IsOpen => root != null && root.gameObject.activeSelf;
@@ -203,6 +205,9 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Sim != null && Sim.CrawlActive && !intro) Sim.EndCrawl();
             running = false; intro = false; lookLeft = 0;
+            pendingPage = pendingGeometry = false;
+            spider = sophon = null; motion = null;
+            cached.Clear(); dirty.Clear(); words.Clear();
             ClearTransient();
             if (root != null) root.gameObject.SetActive(false);
             Fx.Play(XgJuice.Sfx.Id.Click);
@@ -245,6 +250,16 @@ namespace LingGuangV05.Desktop.XingGuang
         // ───────────── the page ─────────────
 
         void LoadPage()
+        {
+            pendingPage = true;
+            pendingGeometry = false;
+            geometryFrame = Time.frameCount;
+            spider = sophon = null; motion = null;
+            cached.Clear(); dirty.Clear(); words.Clear();
+            ClearTransient();
+        }
+
+        void BuildVisiblePage()
         {
             ClearTransient();
             foreach (var t in texts) if (t != null) UnityEngine.Object.Destroy(t.gameObject);
@@ -293,17 +308,16 @@ namespace LingGuangV05.Desktop.XingGuang
             spiderLayer.draw = DrawSpiders;
             marks.draw = DrawMarks;
 
-            // Word rects in content space (first line of a word that wraps).
-            foreach (var t in texts) t.ForceMeshUpdate(true);
-            for (int i = 0; i < texts.Count; i++) { cached.Add(texts[i].textInfo.CopyMeshInfoVertexData()); dirty.Add(false); }
-            for (int i = words.Count - 1; i >= 0; i--)
-            {
-                var w = words[i];
-                if (!WordRect(w, out w.rect)) words.RemoveAt(i);
-            }
-
+            // Let the active canvas lay out and generate fallback-material buffers first.
+            pendingGeometry = true;
+            geometryFrame = Time.frameCount;
             scroll = 0;
             content.anchoredPosition = Vector2.zero;
+        }
+
+        void StartPageSpider()
+        {
+            float width = Mathf.Max(200, viewport.rect.width - Pad * 2 - 4);
             var start = new Vector2(width * .5f + Pad, -40);
             // The resident spider itself, grown as far as the abilities have taken it.
             int abilities = Sim.AbilitiesCount;
@@ -380,10 +394,73 @@ namespace LingGuangV05.Desktop.XingGuang
             return true;
         }
 
+        // TMP can reserve unused fallback-material slots with null arrays. Snapshot only
+        // vertex/color buffers actually consumed by Rewrite, validating every visible glyph.
+        static bool TrySnapshot(TMP_Text text, out TMP_MeshInfo[] snapshot)
+        {
+            snapshot = null;
+            if (text == null || !text.isActiveAndEnabled) return false;
+            var info = text.textInfo;
+            if (info == null || info.meshInfo == null || info.characterCount == 0) return false;
+            for (int i = 0; i < info.characterCount; i++)
+            {
+                var c = info.characterInfo[i];
+                if (!c.isVisible) continue;
+                if (c.materialReferenceIndex < 0 || c.materialReferenceIndex >= info.meshInfo.Length) return false;
+                var mesh = info.meshInfo[c.materialReferenceIndex];
+                if (mesh.vertices == null || mesh.colors32 == null || c.vertexIndex < 0
+                    || c.vertexIndex + 3 >= mesh.vertices.Length || c.vertexIndex + 3 >= mesh.colors32.Length) return false;
+            }
+            snapshot = new TMP_MeshInfo[info.meshInfo.Length];
+            for (int m = 0; m < info.meshInfo.Length; m++)
+            {
+                var mesh = info.meshInfo[m];
+                if (mesh.vertices != null) snapshot[m].vertices = (Vector3[])mesh.vertices.Clone();
+                if (mesh.colors32 != null) snapshot[m].colors32 = (Color32[])mesh.colors32.Clone();
+            }
+            return true;
+        }
+
+        bool PrepareGeometry()
+        {
+            if (!Visible || Time.frameCount <= geometryFrame) return false;
+            capturingGeometry = true;
+            try
+            {
+                Canvas.ForceUpdateCanvases();
+                var snapshots = new List<TMP_MeshInfo[]>();
+                foreach (var text in texts)
+                {
+                    text.ForceMeshUpdate();
+                    if (!TrySnapshot(text, out var snapshot)) return false;
+                    snapshots.Add(snapshot);
+                }
+                cached.Clear(); dirty.Clear();
+                cached.AddRange(snapshots);
+                foreach (var text in texts) dirty.Add(true);
+                for (int i = words.Count - 1; i >= 0; i--)
+                {
+                    var w = words[i];
+                    if (!WordRect(w, out w.rect)) words.RemoveAt(i);
+                }
+                pendingGeometry = false;
+                if (spider == null) StartPageSpider();
+                marksDirty = true;
+                return true;
+            }
+            finally { capturingGeometry = false; }
+        }
+
         void OnTextChanged(UnityEngine.Object obj)
         {
-            for (int i = 0; i < texts.Count && i < cached.Count; i++)
-                if (texts[i] == obj) { cached[i] = texts[i].textInfo.CopyMeshInfoVertexData(); dirty[i] = true; }
+            if (!IsOpen || pendingPage || capturingGeometry) return;
+            for (int i = 0; i < texts.Count; i++)
+                if (texts[i] == obj)
+                {
+                    pendingGeometry = true;
+                    geometryFrame = Time.frameCount;
+                    return;
+                }
         }
 
         // ───────────── walking ─────────────
@@ -495,7 +572,16 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Tick(float dt)
         {
-            if (!IsOpen || article == null) return;
+            if (!Visible) return;
+            if (pendingPage)
+            {
+                if (Time.frameCount <= geometryFrame || viewport.rect.width <= 0 || viewport.rect.height <= 0) return;
+                pendingPage = false;
+                BuildVisiblePage();
+                return;
+            }
+            if (pendingGeometry && !PrepareGeometry()) return;
+            if (article == null || spider == null) return;
             dt = Mathf.Min(dt, .05f);
             startsThisFrame = 0;
             if (running && !intro && !Sim.CrawlActive) Finish();
@@ -778,6 +864,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void DrawMarks(VertexHelper vh)
         {
+            if (pendingPage || pendingGeometry) return;
             float life = Reduced ? ReducedGlitchSeconds : GlitchSeconds;
             var underline = XgDark.Hairline;
             foreach (var w in words)
@@ -814,6 +901,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void DrawSpiders(VertexHelper vh)
         {
+            if (pendingPage || pendingGeometry) return;
             if (spider != null)
             {
                 fx.DrawBehind(vh, spider);

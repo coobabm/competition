@@ -21,6 +21,8 @@ namespace LingGuangV05.Core.Forum
         /// <summary>Replies to the player's own help post arrive this long after it was posted.</summary>
         public double afterSeconds;
         public bool folded;
+        /// <summary>Only once this game flag is set (a reply to the player's own 「求数据」 post: "answered.imagenet").</summary>
+        public string requires = "";
     }
 
     public sealed class ForumThread
@@ -101,7 +103,7 @@ namespace LingGuangV05.Core.Forum
                             var floor = new ForumFloor
                             {
                                 author = S(fo, "author"), text = S(fo, "text"), textEn = S(fo, "textEn"), since = fo.ContainsKey("since") ? D(fo, "since") : DateTime.MinValue,
-                                minStage = (int)N(fo, "minStage", 0), deletedFromStage = (int)N(fo, "deletedFromStage", 0), afterSeconds = N(fo, "afterSeconds", 0), folded = B(fo, "folded"),
+                                minStage = (int)N(fo, "minStage", 0), deletedFromStage = (int)N(fo, "deletedFromStage", 0), afterSeconds = N(fo, "afterSeconds", 0), folded = B(fo, "folded"), requires = S(fo, "requires"),
                             };
                             if (!lib.Users.ContainsKey(floor.author)) throw new FormatException("forum: unknown floor author in " + thread.id);
                             if (floor.text.Length == 0) throw new FormatException("forum: a floor of " + thread.id + " needs text");
@@ -136,6 +138,7 @@ namespace LingGuangV05.Core.Forum
         public static FloorView View(ForumFloor f, ForumContext c)
         {
             if (f.since > c.today.Date || c.stage < f.minStage) return FloorView.Hidden;
+            if (f.requires.Length > 0 && (c.flag == null || !c.flag(f.requires))) return FloorView.Hidden;
             if (f.afterSeconds > 0 && (!c.helpPosted || c.secondsSinceHelp < f.afterSeconds)) return FloorView.Hidden;
             if (f.deletedFromStage > 0 && c.stage >= f.deletedFromStage) return FloorView.Deleted;
             return f.folded ? FloorView.Folded : FloorView.Shown;

@@ -569,6 +569,7 @@ namespace Michsky.DreamOS
 
                     // Get the component
                     WebBrowserDownloadItem dItem = dObject.GetComponent<WebBrowserDownloadItem>();
+                    dItem.RegisterIdentityRow(); // Inactive presets/parents do not invoke Awake yet.
                     dItem.manager = this;
                     dItem.fileIcon = webLibrary.dlFiles[i].fileIcon;
                     dItem.fileName = webLibrary.dlFiles[i].fileName;
@@ -784,6 +785,7 @@ namespace Michsky.DreamOS
 
                     // Get the component
                     WebBrowserDownloadItem dItem = dObject.GetComponent<WebBrowserDownloadItem>();
+                    dItem.RegisterIdentityRow(); // Inactive presets/parents do not invoke Awake yet.
                     dItem.manager = this;
                     dItem.fileIcon = webLibrary.dlFiles[i].fileIcon;
                     dItem.fileName = webLibrary.dlFiles[i].fileName;

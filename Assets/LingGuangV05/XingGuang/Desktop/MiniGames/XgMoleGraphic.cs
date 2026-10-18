@@ -27,6 +27,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public float Rise;
         /// <summary>The mole wears LingGuang's purple hat.</summary>
         public bool Ai;
+        public bool Golden;
         /// <summary>Seconds since the mole was whacked, or negative while it has not been.</summary>
         public float HitTime = -1;
         /// <summary>The whack was a right one (the sum was wrong), which flashes gold; a wrongful one flashes cool grey.</summary>
@@ -98,15 +99,16 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             XgDraw.Disc(vh, new Vector2(max.x - radius, max.y - radius), radius, color, 10);
         }
 
-        static void Mole(VertexHelper vh, float cx, float cy, float body, bool hit)
+        void Mole(VertexHelper vh, float cx, float cy, float body, bool hit)
         {
+            Color fur=Golden?new Color(1,.72f,.08f):Fur,furDark=Golden?new Color(.76f,.41f,.02f):FurDark;
             float dome = Mathf.Min(BodyHalf, body), straight = Mathf.Max(0, body - dome);
-            if (straight > 0) XgDraw.Box(vh, new Vector2(cx - BodyHalf, cy), new Vector2(cx + BodyHalf, cy + straight), Fur);
-            HalfEllipse(vh, new Vector2(cx, cy + straight), BodyHalf, dome, Fur);
+            if (straight > 0) XgDraw.Box(vh, new Vector2(cx - BodyHalf, cy), new Vector2(cx + BodyHalf, cy + straight), fur);
+            HalfEllipse(vh, new Vector2(cx, cy + straight), BodyHalf, dome, fur);
             if (body < 30) return;
             float top = cy + body;
-            XgDraw.Disc(vh, new Vector2(cx - 29, top - 7), 7, FurDark, 12);
-            XgDraw.Disc(vh, new Vector2(cx + 29, top - 7), 7, FurDark, 12);
+            XgDraw.Disc(vh, new Vector2(cx - 29, top - 7), 7, furDark, 12);
+            XgDraw.Disc(vh, new Vector2(cx + 29, top - 7), 7, furDark, 12);
             float eyeY = top - 17;
             foreach (float s in new[] { -1f, 1f })
             {
@@ -128,7 +130,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         void Board(VertexHelper vh, float cx, float cy)
         {
             RoundBox(vh, new Vector2(cx - 70, cy - 17), new Vector2(cx + 70, cy + 15), 6, PlankEdge);
-            RoundBox(vh, new Vector2(cx - 67.5f, cy - 14.5f), new Vector2(cx + 67.5f, cy + 12.5f), 4, Plank);
+            RoundBox(vh, new Vector2(cx - 67.5f, cy - 14.5f), new Vector2(cx + 67.5f, cy + 12.5f), 4, Golden?new Color(1,.91f,.35f):Plank);
             // The paws hold the sign up.
             XgDraw.Disc(vh, new Vector2(cx - 52, cy + 15), 7, FurDark, 12);
             XgDraw.Disc(vh, new Vector2(cx + 52, cy + 15), 7, FurDark, 12);

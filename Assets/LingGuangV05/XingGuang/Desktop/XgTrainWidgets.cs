@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -175,6 +175,7 @@ namespace LingGuangV05.Desktop.XingGuang
         Color ceilingColor = XgDark.Muted;
         /// <summary>Red dots on the rounds where 新题 went back.</summary>
         public bool MarkDrops = true;
+        public bool ShowValidation = true;
         public int Capacity = 160;
         public float Min { get; private set; }
         public float Max { get; private set; } = 1;
@@ -216,6 +217,12 @@ namespace LingGuangV05.Desktop.XingGuang
             return p - f >= wide;
         }
 
+        public bool LessonPoint(int index,float expected,out Vector2 point)
+        {
+            point=Vector2.zero;if(index<0||index>=fresh.Count||!fresh[index].Equals(expected))return false;
+            float value=ShowValidation?fresh[index]:practice[index];if(float.IsNaN(value)||float.IsInfinity(value))return false;
+            var r=GetPixelAdjustedRect();point=new Vector2(X(r,index,fresh.Count),Y(r,value));return !float.IsNaN(point.y)&&!float.IsInfinity(point.y)&&point.x>=r.xMin&&point.x<=r.xMax;
+        }
         float Y(Rect r, float v) => r.yMin + r.height * Mathf.InverseLerp(Min, Max, v);
         float Step(Rect r) => r.width / Mathf.Max(1, Capacity - 1);
         float X(Rect r, int i, int count) => r.xMax - Step(r) * (count - 1 - i);
@@ -248,7 +255,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             for (int i = 1; i < n; i++)
                 XgDraw.Seg(vh, new Vector2(X(r, i - 1, n), Y(r, practice[i - 1])), new Vector2(X(r, i, n), Y(r, practice[i])), 2f, PracticeColor);
-            Dashed(vh, r, fresh, 2.6f, 7, 4, NewColor);
+            if(ShowValidation) Dashed(vh, r, fresh, 2.6f, 7, 4, NewColor);
             if (MarkDrops)
                 for (int i = 1; i < n; i++)
                     if (fresh[i - 1] - fresh[i] > .0005f) XgDraw.Disc(vh, new Vector2(X(r, i, n), Y(r, fresh[i])), 3.5f, GapColor, 10);

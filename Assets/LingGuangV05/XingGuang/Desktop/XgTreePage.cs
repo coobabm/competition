@@ -16,12 +16,16 @@ namespace LingGuangV05.Desktop.XingGuang
     /// The desktop canvas is Screen Space – Camera rendered into an LCD texture, so pointer positions are converted with
     /// the event camera into the viewport's local space; raw pixel deltas would be wrong by the canvas scale.
     /// </summary>
-    public sealed class XgPan : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
+    public sealed class XgPan : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, IPointerClickHandler
     {
         public RectTransform content, viewport;
         public float minZoom = .5f, maxZoom = 1.6f;
         public const float ReadableZoom = .85f;
         public bool Dragging { get; private set; }
+        public bool Moving => Dragging || targetZoom > 0 || velocity.sqrMagnitude > 4 || glide.HasValue;
+        public Action ResetRequested, MotionStarted, MotionFinished;
+        public Action<float> ZoomChanged;
+        bool wasMoving;
         Vector2 last, velocity, zoomAnchor;
         float targetZoom = -1;
         Vector2? glide;
@@ -32,7 +36,8 @@ namespace LingGuangV05.Desktop.XingGuang
             return RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, e.position, cam, out p);
         }
 
-        public void OnBeginDrag(PointerEventData e) { Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; }
+        public void OnBeginDrag(PointerEventData e) { Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; if (Dragging) MotionStarted?.Invoke(); }
+        public void OnPointerClick(PointerEventData e) { if (e.clickCount == 2 && !Dragging) { SetView(1, content.anchoredPosition); ResetRequested?.Invoke(); } }
 
         public void OnDrag(PointerEventData e)
         {
@@ -48,13 +53,10 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnScroll(PointerEventData e)
         {
             if (content == null) return;
-            var keyboard = Keyboard.current;
-            // The wheel reads down a column; Shift-wheel (or a sideways swipe) moves between stages.
-            bool shift = keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
-            bool sideways = Mathf.Abs(e.scrollDelta.x) > Mathf.Abs(e.scrollDelta.y);
-            float delta = (sideways ? e.scrollDelta.x : e.scrollDelta.y) * 80;
-            content.anchoredPosition += shift || sideways ? new Vector2(delta, 0) : new Vector2(0, -delta);
-            velocity = Vector2.zero; glide = null; Clamp();
+            if (!Local(e, out zoomAnchor)) return;
+            float from = targetZoom > 0 ? targetZoom : content.localScale.x;
+            targetZoom = Mathf.Clamp(from + Mathf.Sign(e.scrollDelta.y) * .1f, minZoom, maxZoom);
+            velocity = Vector2.zero; glide = null; MotionStarted?.Invoke();
         }
 
         /// <summary>Zoom around the viewport centre (the +/− buttons).</summary>
@@ -63,6 +65,7 @@ namespace LingGuangV05.Desktop.XingGuang
             zoomAnchor = viewport.rect.center;
             float from = targetZoom > 0 ? targetZoom : content.localScale.x;
             targetZoom = Mathf.Clamp(from * factor, minZoom, maxZoom);
+            MotionStarted?.Invoke();
         }
 
         /// <summary>Explicit fit/reset without leaving an old zoom or inertia animation running.</summary>
@@ -73,6 +76,7 @@ namespace LingGuangV05.Desktop.XingGuang
             content.localScale = Vector3.one * Mathf.Clamp(zoom, minZoom, maxZoom);
             content.anchoredPosition = position;
             Clamp();
+            ZoomChanged?.Invoke(content.localScale.x);
         }
 
         /// <summary>Stage overview: fit every lane vertically, keep its header below the top edge, and glide only horizontally.</summary>
@@ -104,6 +108,8 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (content == null) return;
+            bool moving = Moving;
+            if (moving && !wasMoving) MotionStarted?.Invoke();
             float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
             if (!Dragging && velocity.sqrMagnitude > 4)
             {
@@ -119,6 +125,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 Vector2 local = zoomAnchor - topLeft;
                 Vector2 before = (local - content.anchoredPosition) / z;
                 content.localScale = Vector3.one * next;
+                ZoomChanged?.Invoke(next);
                 content.anchoredPosition = local - before * next;
                 Clamp();
                 if (next == targetZoom) targetZoom = -1;
@@ -130,6 +137,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 Clamp();
                 if ((content.anchoredPosition - target).sqrMagnitude < 1) glide = null;
             }
+            if (wasMoving && !Moving) MotionFinished?.Invoke();
+            wasMoving = Moving;
         }
 
         public void Clamp()

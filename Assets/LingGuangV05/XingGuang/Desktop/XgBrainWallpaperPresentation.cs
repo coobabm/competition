@@ -11,11 +11,16 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>Brighten the uncovered desktop without changing the first-meeting reveal.</summary>
     public sealed class XgBrainWallpaperPresentation : MonoBehaviour
     {
+        public bool WindowMode;
         XgBrainWallpaper wallpaper;
         CanvasGroup group;
         readonly List<Graphic> lights = new List<Graphic>();
         readonly List<UiTip> tips = new List<UiTip>();
-        float nextScan;
+        float nextScan,nextPresentation;
+        public int DataVersion { get; private set; } = 1;
+        bool lastLow;
+        public void DataChanged(){DataVersion=DataVersion==1000000?1:DataVersion+1;}
+        void OnEnable(){DataChanged();nextPresentation=0;}
         UiTip hovered;
         UiTip conceptTip;
         XgWallpaperConcepts concepts;
@@ -26,11 +31,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool Quiet { get; private set; }
         readonly Vector3[] coverageCorners = new Vector3[4];
         public bool FullyCovered { get; private set; }
-        public int BackgroundFrameRate => FullyCovered && !XgWallpaperRebirth.Playing ? 10 : 30;
+        public int BackgroundFrameRate => FullyCovered && !XgWallpaperRebirth.Playing ? 10 : 15;
         public float DrawInterval => 1f / BackgroundFrameRate;
         public bool DrawDue(ref float next)
         {
             float now = Time.unscaledTime;
+            if(lastLow!=GamePerformance.Low){lastLow=GamePerformance.Low;DataChanged();}
+            if(GamePerformance.Low){float stamp=-DataVersion;if(next==stamp)return false;next=stamp;return true;}
             if (next - now > DrawInterval + .001f) next = now;
             if (now < next) return false;
             next = now + DrawInterval; return true;
@@ -172,14 +179,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Update()
         {
-            if (wallpaper == null) return;
+            if (wallpaper == null || !DrawDue(ref nextPresentation)) return;
+            if (WindowMode) { Showcase=true;FullyCovered=false;LightLevel=1;MotionLevel=GamePerformance.Low?0:Quiet?.15f:1;group.blocksRaycasts=false;return; }
             if (Time.unscaledTime >= nextScan)
             {
                 nextScan = Time.unscaledTime + .2f;
                 Showcase = wallpaper.Reveal.Visible && !HasVisibleWindow();
             }
             LightLevel = Mathf.MoveTowards(LightLevel, (Showcase ? 1 : .62f) * (Quiet ? .4f : 1), Time.unscaledDeltaTime * .65f);
-            MotionLevel = Mathf.MoveTowards(MotionLevel, Quiet ? .15f : 1, Time.unscaledDeltaTime);
+            MotionLevel = GamePerformance.Low?0:Mathf.MoveTowards(MotionLevel, Quiet ? .15f : 1, DrawInterval);
             foreach (var light in lights) if (light != null) light.canvasRenderer.SetAlpha(LightLevel);
             bool hover = wallpaper.Reveal.Visible && wallpaper.Reveal.Age >= XgWallpaperReveal.CompleteSeconds;
             group.blocksRaycasts = hover;

@@ -57,23 +57,23 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildToday()
         {
-            todayBox = ZhongbaoSkin.Box(ui, sideContent, "Today", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
-            ZhongbaoSkin.Header(ui, todayBox, "今天", "Today", out todayTitle, out dayNote);
-            string[] zh = { "已标", "正确率", "收入", "交给灵光的样本" }, en = { "Done", "Accuracy", "Income", "Samples for LingGuang" };
+            todayBox = LabelBox(ui, sideContent, "Today", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            LabelHeader(ui, todayBox, "今天", "Today", out todayTitle, out dayNote);
+            string[] zh = { "已标", "正确率", "收入", "交给" + Sim.AiDisplayName + "的样本" }, en = { "Done", "Accuracy", "Income", "Samples for " + Sim.AiDisplayName };
             for (int i = 0; i < 4; i++)
             {
                 float y = 40 + i * 20;
-                var label = ui.Text(TopLeft("Label" + i, todayBox, 12, y, 170, 20), T(zh[i], en[i]), 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+                var label = ui.Text(TopLeft("Label" + i, todayBox, 12, y, 170, 20), T(zh[i], en[i]), 12, HallMute, TextAlignmentOptions.MidlineLeft);
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 dayLabels[i] = label;
-                dayValues[i] = ui.Text(Rect("Value" + i, todayBox, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-120, -y - 20), new Vector2(-12, -y)), "", 13, i == 2 ? ZhongbaoSkin.Red : ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineRight);
+                dayValues[i] = ui.Text(Rect("Value" + i, todayBox, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-120, -y - 20), new Vector2(-12, -y)), "", 13, i == 2 ? ZhongbaoSkin.Red : HallInk, TextAlignmentOptions.MidlineRight);
                 dayValues[i].fontStyle = FontStyles.Bold;
             }
-            UiTip.Add(dayValues[3], "你亲手标对（和灵光替你标对）的每一条都是它的训练数据。", "Every label you get right by hand, or LingGuang gets right for you, is training data for it.");
+            UiTip.Add(dayValues[3], "你亲手标对（和" + Sim.AiDisplayName + "替你标对）的每一条都是它的训练数据。", "Every label you get right by hand, or " + Sim.AiDisplayName + " gets right for you, is training data for it.");
             // The raise: price per card, the ladder of levels and the button. The guide's "name:Row薪" ring lands here.
             raiseBlock = Rect("Row薪", todayBox, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -TodayH + 4), new Vector2(0, -126));
             var rule = ZhongbaoSkin.Hairline(raiseBlock, 12, true);
-            raiseName = ui.Text(Rect("Name", raiseBlock, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -28), new Vector2(-70, -8)), "", 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            raiseName = ui.Text(Rect("Name", raiseBlock, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -28), new Vector2(-70, -8)), "", 12, HallMute, TextAlignmentOptions.MidlineLeft);
             raiseName.textWrappingMode = TextWrappingModes.NoWrap; raiseName.overflowMode = TextOverflowModes.Ellipsis;
             raiseMul = ui.Text(Rect("Multiplier", raiseBlock, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -30), new Vector2(-12, -6)), "", 17, ZhongbaoSkin.Red, TextAlignmentOptions.MidlineRight);
             raiseMul.fontStyle = FontStyles.Bold;
@@ -90,7 +90,7 @@ namespace LingGuangV05.Desktop.XingGuang
             raiseBtn.rt.anchorMin = new Vector2(0, 1); raiseBtn.rt.anchorMax = new Vector2(1, 1);
             raiseBtn.rt.offsetMin = new Vector2(12, -80); raiseBtn.rt.offsetMax = new Vector2(-12, -48);
             raiseBtn.label.fontStyle = FontStyles.Bold;
-            UiTip.Add(raiseBlock, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。灵光替你按的自动答题不吃加薪。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels. Auto-answer does not get the raise.");
+            UiTip.Add(raiseBlock, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。" + Sim.AiDisplayName + "替你按的自动答题不吃加薪。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels. Auto-answer does not get the raise.");
             UiTip.Add(raiseBtn.rt, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels.");
         }
 
@@ -128,12 +128,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildAiPanel()
         {
-            aiBox = ZhongbaoSkin.Box(ui, sideContent, "LingGuang", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            aiBox = LabelBox(ui, sideContent, "LingGuang", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
             aiHome = TopLeft("Home", aiBox, 10, 10, 36, 36);
             aiIcon = ZhongbaoSkin.Canvas(aiHome, DrawAiIcon);
-            aiName = ui.Text(TopLeft("Name", aiBox, 54, 9, SideW - 64, 20), "", 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            aiName = ui.Text(TopLeft("Name", aiBox, 54, 9, SideW - 64, 20), "", 12, HallMute, TextAlignmentOptions.MidlineLeft);
             aiName.textWrappingMode = TextWrappingModes.NoWrap; aiName.overflowMode = TextOverflowModes.Ellipsis;
-            aiSub = ui.Text(TopLeft("State", aiBox, 54, 27, SideW - 64, 18), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            aiSub = ui.Text(TopLeft("State", aiBox, 54, 27, SideW - 64, 18), "", 11, HallMute, TextAlignmentOptions.MidlineLeft);
             aiSub.textWrappingMode = TextWrappingModes.NoWrap; aiSub.overflowMode = TextOverflowModes.Ellipsis;
             var bubble = TopLeft("Bubble", aiBox, 10, 52, SideW - 20, 34);
             bubbleBack = Panel(bubble, ZhongbaoSkin.SpiderSoft); bubbleBack.raycastTarget = false;
@@ -141,8 +141,8 @@ namespace LingGuangV05.Desktop.XingGuang
             rim.effectColor = ZhongbaoSkin.SpiderLine; rim.effectDistance = new Vector2(1, -1);
             bubbleText = ui.Text(Rect("Text", bubble, Vector2.zero, Vector2.one, new Vector2(8, 2), new Vector2(-8, -2)), "", 12, new Color32(75, 63, 168, 255), TextAlignmentOptions.MidlineLeft);
             bubbleText.enableAutoSizing = true; bubbleText.fontSizeMin = 9; bubbleText.fontSizeMax = 12;
-            aiHint = ui.Text(TopLeft("Hint", aiBox, 10, 90, SideW - 20, 40), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.TopLeft);
-            UiTip.Add(aiHome, "灵光的小窝。把桌面上的它拖到题目旁边，它就会伸手替你答题；再拖开，它就停下。", "LingGuang's corner. Drag it from the desktop onto the question and it reaches out to answer for you; drag it away and it stops.");
+            aiHint = ui.Text(TopLeft("Hint", aiBox, 10, 90, SideW - 20, 40), "", 11, HallMute, TextAlignmentOptions.TopLeft);
+            UiTip.Add(aiHome, Sim.AiDisplayName + "的小窝。把桌面上的它拖到题目旁边，它就会伸手替你答题；再拖开，它就停下。", Sim.AiDisplayName + "'s corner. Drag it from the desktop onto the question and it reaches out to answer for you; drag it away and it stops.");
         }
 
         /// <summary>The little spider in the panel's corner: dim and dashed while the real one is out working.</summary>
@@ -208,8 +208,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildShop()
         {
-            shopBox = ZhongbaoSkin.Box(ui, sideContent, "Shop", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
-            ZhongbaoSkin.Header(ui, shopBox, "自动答题 · 数据", "Auto-answer · data", out shopTitle, out _);
+            shopBox = LabelBox(ui, sideContent, "Shop", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            LabelHeader(ui, shopBox, "自动答题 · 数据", "Auto-answer · data", out shopTitle, out _);
             amountBtns = new XgBtn[3];
             string[] amounts = { "×1", "×10", T("最大", "Max") };
             for (int i = 0; i < 3; i++)
@@ -265,9 +265,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void BuildSpecialBox()
         {
-            specialBox = ZhongbaoSkin.Box(ui, sideContent, "Special", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
-            ZhongbaoSkin.Header(ui, specialBox, "特别题", "Special card", out specialTitle, out _);
-            specialInfo = ui.Text(Rect("ResearchInfo", specialBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -44)), "", 15, XgPalette.Ink, TextAlignmentOptions.TopLeft);
+            specialBox = LabelBox(ui, sideContent, "Special", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            LabelHeader(ui, specialBox, "特别题", "Special card", out specialTitle, out _);
+            specialInfo = ui.Text(Rect("ResearchInfo", specialBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -44)), "", 15, DarkTeaching ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.TopLeft);
             specialBox.gameObject.SetActive(false);
         }
 
@@ -325,7 +325,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var strip = Rect("Recent", workspace, Vector2.zero, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-1, 35));
             ZhongbaoSkin.Hairline(strip, 0, true);
-            var caption = historyCaption = ui.Text(Rect("Caption", strip, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(76, 0)), T("最近 20 题", "Last 20"), 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            var caption = historyCaption = ui.Text(Rect("Caption", strip, Vector2.zero, new Vector2(0, 1), new Vector2(12, 0), new Vector2(76, 0)), T("最近 20 题", "Last 20"), 12, HallMute, TextAlignmentOptions.MidlineLeft);
             caption.textWrappingMode = TextWrappingModes.NoWrap;
             historyCells = new Image[HistorySize];
             historyMarks = new TMP_Text[HistorySize];
@@ -339,7 +339,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 historyMarks[i].textWrappingMode = TextWrappingModes.NoWrap;
                 x += 15;
             }
-            historyLegend = ui.Text(Rect("Legend", strip, Vector2.zero, Vector2.one, new Vector2(x + 8, 0), new Vector2(-12, 0)), T("「灵」= 灵光答的 · 红 = 错", "灵 = LingGuang's · red = wrong"), 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
+            historyLegend = ui.Text(Rect("Legend", strip, Vector2.zero, Vector2.one, new Vector2(x + 8, 0), new Vector2(-12, 0)), T("「AI」= " + Sim.AiDisplayName + "答的 · 红 = 错", "AI = " + Sim.AiDisplayName + "'s · red = wrong"), 11, HallMute, TextAlignmentOptions.MidlineRight);
             historyLegend.textWrappingMode = TextWrappingModes.NoWrap; historyLegend.overflowMode = TextOverflowModes.Ellipsis;
             RefreshHistory();
         }
@@ -359,9 +359,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool has = i < history.Count;
                 var m = has ? history[i] : HistoryMark.Right;
                 historyCells[i].color = !has ? ZhongbaoSkin.Track : (m == HistoryMark.Right || m == HistoryMark.SpiderRight) ? ZhongbaoSkin.Green : ZhongbaoSkin.Red;
-                historyMarks[i].text = has && (m == HistoryMark.SpiderRight || m == HistoryMark.SpiderWrong) ? T("灵", "L") : "";
+                historyMarks[i].text = has && (m == HistoryMark.SpiderRight || m == HistoryMark.SpiderWrong) ? "AI" : "";
             }
-            historyLegend.text = T("「灵」= 灵光答的 · 红 = 错", "L = LingGuang's · red = wrong");
+            historyLegend.text = T("「AI」= " + Sim.AiDisplayName + "答的 · 红 = 错", "AI = " + Sim.AiDisplayName + "'s · red = wrong");
         }
 
         bool builtEnglish;
@@ -376,7 +376,7 @@ namespace LingGuangV05.Desktop.XingGuang
             shopTitle.text = T("自动答题 · 数据", "Auto-answer · data");
             specialTitle.text = T("特别题", "Special card");
             historyCaption.text = T("最近 20 题", "Last 20");
-            string[] zh = { "已标", "正确率", "收入", "交给灵光的样本" }, en = { "Done", "Accuracy", "Income", "Samples for LingGuang" };
+            string[] zh = { "已标", "正确率", "收入", "交给" + Sim.AiDisplayName + "的样本" }, en = { "Done", "Accuracy", "Income", "Samples for " + Sim.AiDisplayName };
             for (int i = 0; i < 4; i++) dayLabels[i].text = T(zh[i], en[i]);
             amountBtns[2].label.text = T("最大", "Max");
             RefreshHistory();

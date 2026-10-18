@@ -170,11 +170,11 @@ namespace LingGuangV05.Desktop.XingGuang
             b.label.alignment = TextAlignmentOptions.MidlineLeft; b.label.fontStyle = FontStyles.Bold;
             b.label.rectTransform.anchorMin = new Vector2(0, 1); b.label.rectTransform.anchorMax = Vector2.one;
             b.label.rectTransform.offsetMin = new Vector2(12, -62); b.label.rectTransform.offsetMax = new Vector2(-10, -29);
-            var category = AssemblyText(Strip("Capability", b.rt, 5, 23, 12, installed ? 30 : 12), "", 12, AssemblyTeal);
-            var version = AssemblyText(Strip("Version", b.rt, 64, 21, 12, 9), "", 12, AssemblyMuted);
-            var accuracy = AssemblyText(Strip("Validation", b.rt, 87, 21, 12, 9), "", 12, AssemblyMuted);
-            var state = installed ? null : AssemblyText(Strip("InstallState", b.rt, 110, 20, 12, 9), "", 12, AssemblyTeal);
-            var border = b.rt.gameObject.AddComponent<Outline>(); border.effectColor = AssemblyLine; border.effectDistance = new Vector2(1, -1);
+            var category = AssemblyText(Strip("Capability", b.Visual, 5, 23, 12, installed ? 30 : 12), "", 12, AssemblyTeal);
+            var version = AssemblyText(Strip("Version", b.Visual, 64, 21, 12, 9), "", 12, AssemblyMuted);
+            var accuracy = AssemblyText(Strip("Validation", b.Visual, 87, 21, 12, 9), "", 12, AssemblyMuted);
+            var state = installed ? null : AssemblyText(Strip("InstallState", b.Visual, 110, 20, 12, 9), "", 12, AssemblyTeal);
+            var border = b.image.gameObject.GetComponent<Outline>() ?? b.image.gameObject.AddComponent<Outline>(); border.effectColor = AssemblyLine; border.effectDistance = new Vector2(1, -1);
             XgBtn remove = null;
             if (installed)
             {

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
@@ -63,6 +63,7 @@ namespace Michsky.DreamOS
 
         void Awake()
         {
+            LingGuangV05.Desktop.DesktopWindowIndex.Register(this);
             // Get the animator
             if (windowAnimator == null) { windowAnimator = gameObject.GetComponent<Animator>(); }
 
@@ -81,6 +82,7 @@ namespace Michsky.DreamOS
 
         void OnEnable()
         {
+            LingGuangV05.Desktop.DesktopWindowIndex.Register(this);
             if (enableMobileMode)
                 return;
 
@@ -123,6 +125,8 @@ namespace Michsky.DreamOS
                 }
             }
         }
+
+        void OnDestroy() { LingGuangV05.Desktop.DesktopWindowIndex.Unregister(this); }
 
         void OnDisable()
         {
@@ -213,7 +217,10 @@ namespace Michsky.DreamOS
 
             windowAnimator.enabled = true;
 
-            if (!windowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fullscreen") && (!windowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Normalize"))) { windowAnimator.Play("In"); }
+            // A same-frame Minimize may still report the previous In state. The default -Infinity
+            // time can preserve that state instead of replacing the pending Minimize request.
+            // Explicitly start the authored entry animation; keep the fullscreen/normalize guard.
+            if (!windowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fullscreen") && (!windowAnimator.GetCurrentAnimatorStateInfo(0).IsName("Normalize"))) { windowAnimator.Play("In", 0, 0f); }
             if (taskbarButton != null && !enableMobileMode) { taskbarButton.SetOpen(); }
             if (windowBGBlur != null) { windowBGBlur.BlurInAnim(); }
 

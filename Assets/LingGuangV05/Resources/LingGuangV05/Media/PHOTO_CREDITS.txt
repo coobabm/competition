@@ -927,3 +927,662 @@ thread_tip_wall — File:Digital oscilloscope in use.jpg
 https://creativecommons.org/licenses/by-sa/4.0
 来源 / Source: https://commons.wikimedia.org/wiki/File:Digital_oscilloscope_in_use.jpg
 Contextual reference photograph; not claimed to depict the exact fictional event.
+
+
+Teaching procedural images / 教学程序绘图（2026-10-18）
+XgVisualRaster.Handwriting28: original in-project pen paths reused from XgDigitGraphic, rasterised into 28 x 28 grayscale with seeded stroke width and slant; displayed at 224 x 224 with grid lines. These are synthetic game drawings, NOT downloaded MNIST records.
+手写题复用项目已有 XgDigitGraphic 笔迹路径，按种子改变笔画和倾斜，绘制 28×28 灰度图再显示为224×224网格。属于游戏合成笔迹，并非下载的 MNIST 原始数据。
+XgVisualRaster.Captcha: original 5 x 7 alphanumeric glyph definitions, warped into a 256 x 80 four-character image with light crossing lines. No external font/image service or third-party asset was used. Reproducible from the stored seed; distributed under the project's code licensing terms.
+四位验证码使用本次编写的点阵字形、扭曲和干扰线，无外部字体或图像服务素材；按存档种子重现，沿用项目代码许可。
+Existing grid photographs retain their original attribution above. Six reused categories are not represented as the requested eight-category/eighty-photo corpus; that larger licensed collection remains pending.
+现有九宫格照片沿用上方原作者与许可。当前复用的六类图片不冒充策划要求的八类各十张；完整照片集仍待补齐。
+Teaching real-photograph library / 教页真实照片库 — 2026-10-18
+80 distinct source photographs, eight classes × ten. Used as generic teaching reference images, not historical news evidence. Objects depicted existed by 2016.
+Images obtained via Wikimedia Commons API. Thumbnails resized by Commons, converted/recompressed to JPEG; in-game display may crop. No generated images, crops counted as additional photographs, or synthetic product renders. Each derivative retains its source license below.
+照片来自 Wikimedia Commons 公开许可源；缩略图缩放、JPEG 重编码，游戏显示可能裁切。非生成图，不将裁切副本计为多张照片。
+
+teach_airplane_00.jpg — File:Emirates Boeing 777-31H; A6-EMQ@LHR;06.06.2010 577af (4694718170).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Emirates_Boeing_777-31H;_A6-EMQ@LHR;06.06.2010_577af_(4694718170).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/d/d2/Emirates_Boeing_777-31H%3B_A6-EMQ%40LHR%3B06.06.2010_577af_%284694718170%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_01.jpg — File:Condor Boeing 767-300; D-ABUA@FRA;09.07.2010 581ia (4782766529).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Condor_Boeing_767-300;_D-ABUA@FRA;09.07.2010_581ia_(4782766529).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9f/Condor_Boeing_767-300%3B_D-ABUA%40FRA%3B09.07.2010_581ia_%284782766529%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_02.jpg — File:Emirates Boeing 777-300; A6-EBU@ZRH;16.07.2010 583cm (4799618533).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Emirates_Boeing_777-300;_A6-EBU@ZRH;16.07.2010_583cm_(4799618533).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e4/Emirates_Boeing_777-300%3B_A6-EBU%40ZRH%3B16.07.2010_583cm_%284799618533%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_03.jpg — File:Condor Boeing 767-300; D-ABUA@FRA;09.07.2010 581hz (4783398182).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Condor_Boeing_767-300;_D-ABUA@FRA;09.07.2010_581hz_(4783398182).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a9/Condor_Boeing_767-300%3B_D-ABUA%40FRA%3B09.07.2010_581hz_%284783398182%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_04.jpg — File:Aeroflot Boeing 767-306ER; VP-BWX@LHR;06.06.2010 577cs (4694824782).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Aeroflot_Boeing_767-306ER;_VP-BWX@LHR;06.06.2010_577cs_(4694824782).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/1/12/Aeroflot_Boeing_767-306ER%3B_VP-BWX%40LHR%3B06.06.2010_577cs_%284694824782%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_05.jpg — File:TAROM Boeing 737-700; YR-BGG@ZRH;28.02.2010 565dr (4395948182).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:TAROM_Boeing_737-700;_YR-BGG@ZRH;28.02.2010_565dr_(4395948182).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/1/1e/TAROM_Boeing_737-700%3B_YR-BGG%40ZRH%3B28.02.2010_565dr_%284395948182%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_06.jpg — File:Delta Air Lines Boeing 767-432ER; N828MH@LHR;05.06.2010 576dg (4688340405).jpg
+Author / 作者: Aero Icarus from Zürich, Switzerland
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Delta_Air_Lines_Boeing_767-432ER;_N828MH@LHR;05.06.2010_576dg_(4688340405).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/cc/Delta_Air_Lines_Boeing_767-432ER%3B_N828MH%40LHR%3B05.06.2010_576dg_%284688340405%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_07.jpg — File:N949WN Southwest Airlines 2010 Boeing 737-7H4 - cn 36663 - 3358 (35273372832).jpg
+Author / 作者: Tomás Del Coro from Las Vegas, Nevada, USA
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:N949WN_Southwest_Airlines_2010_Boeing_737-7H4_-_cn_36663_-_3358_(35273372832).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/ab/N949WN_Southwest_Airlines_2010_Boeing_737-7H4_-_cn_36663_-_3358_%2835273372832%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_08.jpg — File:American Airlines.Boeing 777-223ER.LAX.2010.jpg
+Author / 作者: Roger  Bits
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:American_Airlines.Boeing_777-223ER.LAX.2010.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a1/American_Airlines.Boeing_777-223ER.LAX.2010.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_airplane_09.jpg — File:American Airlines.Boeing 737-800.YYZ.2010.jpg
+Author / 作者: BriYYZ
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:American_Airlines.Boeing_737-800.YYZ.2010.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a7/American_Airlines.Boeing_737-800.YYZ.2010.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_00.jpg — File:A Toyota Corolla (E100) at Taichung 01.jpg
+Author / 作者: Lokseng01
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:A_Toyota_Corolla_(E100)_at_Taichung_01.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/0/04/A_Toyota_Corolla_%28E100%29_at_Taichung_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_01.jpg — File:1991 Toyota Corolla E100 sedan white front.jpg
+Author / 作者: Throwawayacc222
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:1991_Toyota_Corolla_E100_sedan_white_front.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/cd/1991_Toyota_Corolla_E100_sedan_white_front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_02.jpg — File:Toyota Corolla (E100) 21.jpg
+Author / 作者: M.rJirapat
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_(E100)_21.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e6/Toyota_Corolla_%28E100%29_21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_03.jpg — File:Toyota Corolla (E100) 24.jpg
+Author / 作者: M.rJirapat
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_(E100)_24.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/7e/Toyota_Corolla_%28E100%29_24.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_04.jpg — File:Toyota Corolla (E100) 07.jpg
+Author / 作者: M.rJirapat
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_(E100)_07.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/4/49/Toyota_Corolla_%28E100%29_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_05.jpg — File:Toyota Corolla E100, Bangladesh. (40384928305).jpg
+Author / 作者: Shadman Samee from Dhaka, Bangladesh
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_E100,_Bangladesh._(40384928305).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/b/b8/Toyota_Corolla_E100%2C_Bangladesh._%2840384928305%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_06.jpg — File:Toyota Corolla (E100) 08.jpg
+Author / 作者: M.rJirapat
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_(E100)_08.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e4/Toyota_Corolla_%28E100%29_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_07.jpg — File:1992 Toyota Corolla (E100) 4-door sedan.jpg
+Author / 作者: Manoj Prasad from Kuala Lumpur, Malaysia
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:1992_Toyota_Corolla_(E100)_4-door_sedan.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a9/1992_Toyota_Corolla_%28E100%29_4-door_sedan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_08.jpg — File:Toyota Corolla E100 Dreitürer 1.6 Si Heck.JPG
+Author / 作者: Thomas doerfer
+License / 许可: CC BY-SA 3.0
+License URL: http://creativecommons.org/licenses/by-sa/3.0/
+Source / 来源: https://commons.wikimedia.org/wiki/File:Toyota_Corolla_E100_Dreit%C3%BCrer_1.6_Si_Heck.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/2/24/Toyota_Corolla_E100_Dreit%C3%BCrer_1.6_Si_Heck.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_car_09.jpg — File:A Toyota Corolla (E100) at Taichung 03.jpg
+Author / 作者: Lokseng01
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:A_Toyota_Corolla_(E100)_at_Taichung_03.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9e/A_Toyota_Corolla_%28E100%29_at_Taichung_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_00.jpg — File:Cat November 2010-1a.jpg
+Author / 作者: Alvesgaspar
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Cat_November_2010-1a.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_01.jpg — File:Tired 20-year-old cat.jpg
+Author / 作者: Dimitri “Diti” Torterat
+License / 许可: CC BY 2.0 fr
+License URL: https://creativecommons.org/licenses/by/2.0/fr/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:Tired_20-year-old_cat.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/32/Tired_20-year-old_cat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_02.jpg — File:June odd-eyed-cat cropped.jpg
+Author / 作者: Keith Kissel
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:June_odd-eyed-cat_cropped.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/6/69/June_odd-eyed-cat_cropped.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_03.jpg — File:Six weeks old cat (aka).jpg
+Author / 作者: André Karwath aka Aka
+License / 许可: CC BY-SA 2.5
+License URL: https://creativecommons.org/licenses/by-sa/2.5
+Source / 来源: https://commons.wikimedia.org/wiki/File:Six_weeks_old_cat_(aka).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/c1/Six_weeks_old_cat_%28aka%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_04.jpg — File:Felis catus-cat on snow.jpg
+Author / 作者: Von.grzanka
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Felis_catus-cat_on_snow.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/b/b6/Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_05.jpg — File:Cat playing with a lizard.jpg
+Author / 作者: Basile Morin
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Cat_playing_with_a_lizard.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/72/Cat_playing_with_a_lizard.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_06.jpg — File:Calico cat, - Assisi, Italy.jpg
+Author / 作者: Terragio67
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Calico_cat,_-_Assisi,_Italy.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/0/01/Calico_cat%2C_-_Assisi%2C_Italy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_07.jpg — File:Cat Sphynx. Kittens. img 11.jpg
+Author / 作者: Dmitry Makeev
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Cat_Sphynx._Kittens._img_11.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/2/29/Cat_Sphynx._Kittens._img_11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_08.jpg — File:Cat in Efremov, Russia1.jpg
+Author / 作者: Юрий Д.К.
+License / 许可: CC BY 4.0
+License URL: https://creativecommons.org/licenses/by/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Cat_in_Efremov,_Russia1.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/2/2a/Cat_in_Efremov%2C_Russia1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_cat_09.jpg — File:Sleeping cat on her back.jpg
+Author / 作者: Umberto Salvagnin
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Sleeping_cat_on_her_back.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/5/5e/Sleeping_cat_on_her_back.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_00.jpg — File:Samoyed dog two year old female dllu.jpg
+Author / 作者: Dllu
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Samoyed_dog_two_year_old_female_dllu.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9d/Samoyed_dog_two_year_old_female_dllu.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_01.jpg — File:DSC09611a Search and Rescue Dog, Austrian Red Cross Perchtoldsdorf, 2024-10.jpg
+Author / 作者: Aciarium
+License / 许可: CC BY 4.0
+License URL: https://creativecommons.org/licenses/by/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:DSC09611a_Search_and_Rescue_Dog,_Austrian_Red_Cross_Perchtoldsdorf,_2024-10.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/94/DSC09611a_Search_and_Rescue_Dog%2C_Austrian_Red_Cross_Perchtoldsdorf%2C_2024-10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_02.jpg — File:White dog sleeping on the floor with puppies after nursing in Don Det Laos.jpg
+Author / 作者: Basile Morin
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:White_dog_sleeping_on_the_floor_with_puppies_after_nursing_in_Don_Det_Laos.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9d/White_dog_sleeping_on_the_floor_with_puppies_after_nursing_in_Don_Det_Laos.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_03.jpg — File:Cavapoo dog chasing a maltipoo with a ball (11881).jpg
+Author / 作者: Rhododendrites
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Cavapoo_dog_chasing_a_maltipoo_with_a_ball_(11881).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/74/Cavapoo_dog_chasing_a_maltipoo_with_a_ball_%2811881%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_04.jpg — File:Liver yellow dog in the water looking at viewer at golden hour in Don Det Laos.jpg
+Author / 作者: Basile Morin
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Liver_yellow_dog_in_the_water_looking_at_viewer_at_golden_hour_in_Don_Det_Laos.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/37/Liver_yellow_dog_in_the_water_looking_at_viewer_at_golden_hour_in_Don_Det_Laos.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_05.jpg — File:Portrait of a labrador retriever.jpg
+Author / 作者: Dktue
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:Portrait_of_a_labrador_retriever.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/35/Portrait_of_a_labrador_retriever.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_06.jpg — File:Labrador Retriever - Yellow.JPG
+Author / 作者: Skansken
+License / 许可: CC BY 3.0
+License URL: https://creativecommons.org/licenses/by/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Labrador_Retriever_-_Yellow.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/d/d4/Labrador_Retriever_-_Yellow.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_07.jpg — File:Labrador Retriever snow.jpg
+Author / 作者: Original author Hand, edit by Pharaoh Hound
+License / 许可: CC BY 2.5
+License URL: https://creativecommons.org/licenses/by/2.5
+Source / 来源: https://commons.wikimedia.org/wiki/File:Labrador_Retriever_snow.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e4/Labrador_Retriever_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_08.jpg — File:YELLOW LABRADOR RETRIEVER.jpg
+Author / 作者: Nancy Wong
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:YELLOW_LABRADOR_RETRIEVER.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/38/YELLOW_LABRADOR_RETRIEVER.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_dog_09.jpg — File:Labrador retriever puppy 2.jpg
+Author / 作者: Sivahari
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Labrador_retriever_puppy_2.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/6/63/Labrador_retriever_puppy_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_00.jpg — File:Red wine in an Italian restaurant.jpg
+Author / 作者: Jon Sullivan
+License / 许可: Public domain
+License URL: https://commons.wikimedia.org/wiki/File:Red_wine_in_an_Italian_restaurant.jpg#Licensing
+Source / 来源: https://commons.wikimedia.org/wiki/File:Red_wine_in_an_Italian_restaurant.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e7/Red_wine_in_an_Italian_restaurant.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_01.jpg — File:020260524 140002 Red wine in glass.jpg
+Author / 作者: Auctor quaerendae
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:020260524_140002_Red_wine_in_glass.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/c4/020260524_140002_Red_wine_in_glass.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_02.jpg — File:Glass of Red Wine with a bottle of Red Wine - Evan Swigart.jpg
+Author / 作者: Evan Swigart from Chicago, USA
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Glass_of_Red_Wine_with_a_bottle_of_Red_Wine_-_Evan_Swigart.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/8/88/Glass_of_Red_Wine_with_a_bottle_of_Red_Wine_-_Evan_Swigart.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_03.jpg — File:Red Wine and Tomato2.jpg
+Author / 作者: Seth Anderson
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Red_Wine_and_Tomato2.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/f/f5/Red_Wine_and_Tomato2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_04.jpg — File:Glass of red wine.jpg
+Author / 作者: Photos Public Domain
+License / 许可: Public domain
+License URL: https://commons.wikimedia.org/wiki/File:Glass_of_red_wine.jpg#Licensing
+Source / 来源: https://commons.wikimedia.org/wiki/File:Glass_of_red_wine.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/4/4b/Glass_of_red_wine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_05.jpg — File:Dao red wine.jpg
+Author / 作者: Agne27
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Dao_red_wine.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/3b/Dao_red_wine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_06.jpg — File:Red Wine & Milk.jpg
+Author / 作者: B20180
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Red_Wine_%26_Milk.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/1/1d/Red_Wine_%26_Milk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_07.jpg — File:Red Wine Glass.jpg
+Author / 作者: André Karwath aka Aka
+License / 许可: CC BY-SA 3.0
+License URL: http://creativecommons.org/licenses/by-sa/3.0/
+Source / 来源: https://commons.wikimedia.org/wiki/File:Red_Wine_Glass.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/c0/Red_Wine_Glass.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_08.jpg — File:Glass of unidentified red wine.jpg
+Author / 作者: Hungry Girl
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Glass_of_unidentified_red_wine.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a8/Glass_of_unidentified_red_wine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_red_wine_09.jpg — File:Red wine in glass in restaurant.jpg
+Author / 作者: Paolo Neo
+License / 许可: Public domain
+License URL: https://commons.wikimedia.org/wiki/File:Red_wine_in_glass_in_restaurant.jpg#Licensing
+Source / 来源: https://commons.wikimedia.org/wiki/File:Red_wine_in_glass_in_restaurant.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/5/52/Red_wine_in_glass_in_restaurant.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_00.jpg — File:Towels (6397075881).jpg
+Author / 作者: Marcin Wichary from San Francisco, Calif.
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Towels_(6397075881).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/3d/Towels_%286397075881%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_01.jpg — File:Blue and green towels on a shelf in a store in New Jersey.JPG
+Author / 作者: Tomwsulcer
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:Blue_and_green_towels_on_a_shelf_in_a_store_in_New_Jersey.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/5/5d/Blue_and_green_towels_on_a_shelf_in_a_store_in_New_Jersey.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_02.jpg — File:Tea towels (set of) (AM 2002.64.1-1).jpg
+Author / 作者: Ina Sodersten
+License / 许可: CC BY 4.0
+License URL: https://creativecommons.org/licenses/by/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Tea_towels_(set_of)_(AM_2002.64.1-1).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/5/5c/Tea_towels_%28set_of%29_%28AM_2002.64.1-1%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_03.jpg — File:Towels on shelves 03.jpg
+Author / 作者: Ата
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:Towels_on_shelves_03.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/f/f1/Towels_on_shelves_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_04.jpg — File:Four Seasons Westlake Village Hand Towels 2014.jpg
+Author / 作者: Patrick Pelletier
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Four_Seasons_Westlake_Village_Hand_Towels_2014.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/d/df/Four_Seasons_Westlake_Village_Hand_Towels_2014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_05.jpg — File:Beach Towels (22797900078).jpg
+Author / 作者: Tony Hisgett from Birmingham, UK
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Beach_Towels_(22797900078).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/6/69/Beach_Towels_%2822797900078%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_06.jpg — File:Multicoloured bath towels, John Lewis, Reading, UK - 20150711-02.jpg
+Author / 作者: Smuconlaw
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Multicoloured_bath_towels,_John_Lewis,_Reading,_UK_-_20150711-02.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/e/e9/Multicoloured_bath_towels%2C_John_Lewis%2C_Reading%2C_UK_-_20150711-02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_07.jpg — File:SeaDream II — Towels in the bathroom.JPG
+Author / 作者: User:Mattes
+License / 许可: CC BY 2.0 de
+License URL: https://creativecommons.org/licenses/by/2.0/de/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:SeaDream_II_%E2%80%94_Towels_in_the_bathroom.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/7d/SeaDream_II_%E2%80%94_Towels_in_the_bathroom.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_08.jpg — File:Towel art multiple towels of same color single towel roll.jpg
+Author / 作者: Peter Woolf
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:Towel_art_multiple_towels_of_same_color_single_towel_roll.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/2/26/Towel_art_multiple_towels_of_same_color_single_towel_roll.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_towel_09.jpg — File:Towel and small towel.jpg
+Author / 作者: Jessica F.
+License / 许可: CC BY 2.5
+License URL: https://creativecommons.org/licenses/by/2.5
+Source / 来源: https://commons.wikimedia.org/wiki/File:Towel_and_small_towel.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/f/fc/Towel_and_small_towel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_00.jpg — File:Apple iPhone 6 (Silver) - Back.jpg
+Author / 作者: Beamish4
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Apple_iPhone_6_(Silver)_-_Back.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/f/f2/Apple_iPhone_6_%28Silver%29_-_Back.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_01.jpg — File:DxO ONE connected to iPhone 6.jpg
+Author / 作者: Wilmot Yeh
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:DxO_ONE_connected_to_iPhone_6.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/d/d1/DxO_ONE_connected_to_iPhone_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_02.jpg — File:Hallo - iPhone 6 (23184370779).jpg
+Author / 作者: Tony Webster from Minneapolis, Minnesota, United States
+License / 许可: CC BY-SA 2.0
+License URL: https://creativecommons.org/licenses/by-sa/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Hallo_-_iPhone_6_(23184370779).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/0/05/Hallo_-_iPhone_6_%2823184370779%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_03.jpg — File:IPhone 6 alle Farben.jpg
+Author / 作者: Punkt64
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:IPhone_6_alle_Farben.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/c/c9/IPhone_6_alle_Farben.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_04.jpg — File:Apple iPhone 6 (15233472568).jpg
+Author / 作者: Kārlis Dambrāns from Latvia
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Apple_iPhone_6_(15233472568).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/ae/Apple_iPhone_6_%2815233472568%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_05.jpg — File:Iphone 6 Plus.jpg
+Author / 作者: Marc albiol contreras
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Iphone_6_Plus.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/b/bc/Iphone_6_Plus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_06.jpg — File:IPhone 6 (front).jpg
+Author / 作者: hurk
+License / 许可: CC0
+License URL: http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Source / 来源: https://commons.wikimedia.org/wiki/File:IPhone_6_(front).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/7e/IPhone_6_%28front%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_07.jpg — File:IPhone 6 in Apple Store 20140919.jpg
+Author / 作者: Kazuhisa OTSUBO
+License / 许可: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:IPhone_6_in_Apple_Store_20140919.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/6/6b/IPhone_6_in_Apple_Store_20140919.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_08.jpg — File:Apple iPhone 6 (Gold) - Front.jpg
+Author / 作者: Beamish4
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Apple_iPhone_6_(Gold)_-_Front.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/8/83/Apple_iPhone_6_%28Gold%29_-_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_phone_09.jpg — File:Apple iPhone 6 (Gold) - Back.jpg
+Author / 作者: Beamish4
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Apple_iPhone_6_(Gold)_-_Back.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/1/1e/Apple_iPhone_6_%28Gold%29_-_Back.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_00.jpg — File:Malus domestica 'Glorie van Holland'. Locatie, De Kruidhof Buitenpost.jpg
+Author / 作者: Agnes Monkelbaan
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_%27Glorie_van_Holland%27._Locatie,_De_Kruidhof_Buitenpost.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/a/a5/Malus_domestica_%27Glorie_van_Holland%27._Locatie%2C_De_Kruidhof_Buitenpost.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_01.jpg — File:Malus domestica Allington Pippin 01.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_Allington_Pippin_01.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9e/Malus_domestica_Allington_Pippin_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_02.jpg — File:Malus domestica Manks Codlin Locatie De Kruidhof.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_Manks_Codlin_Locatie_De_Kruidhof.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/6/66/Malus_domestica_Manks_Codlin_Locatie_De_Kruidhof.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_03.jpg — File:Malus domestica 'Stark's Earliest'. Locatie De Kruidhof 02.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_%27Stark%27s_Earliest%27._Locatie_De_Kruidhof_02.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/1/1a/Malus_domestica_%27Stark%27s_Earliest%27._Locatie_De_Kruidhof_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_04.jpg — File:Apple Malus domestica Zoete Peppel. (actm).jpg
+Author / 作者: Agnes Monkelbaan
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Apple_Malus_domestica_Zoete_Peppel._(actm).jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/7/78/Apple_Malus_domestica_Zoete_Peppel._%28actm%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_05.jpg — File:Malus domestica Allington Pippin 02.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_Allington_Pippin_02.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/3/3a/Malus_domestica_Allington_Pippin_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_06.jpg — File:Malus domestica Allington Pippin 03.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_Allington_Pippin_03.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/2/26/Malus_domestica_Allington_Pippin_03.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_07.jpg — File:Malus domestica Allington Pippin 04.JPG
+Author / 作者: Dominicus Johannes Bergsma
+License / 许可: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_Allington_Pippin_04.JPG
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/8/83/Malus_domestica_Allington_Pippin_04.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_08.jpg — File:Malus domestica - Malsch 001.jpg
+Author / 作者: H. Zell
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Malus_domestica_-_Malsch_001.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/9/9a/Malus_domestica_-_Malsch_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+teach_apple_09.jpg — File:Manzana (Malus domestica), Múnich, Alemania, 2012-06-07, DD 01.jpg
+Author / 作者: Diego Delso
+License / 许可: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0
+Source / 来源: https://commons.wikimedia.org/wiki/File:Manzana_(Malus_domestica),_M%C3%BAnich,_Alemania,_2012-06-07,_DD_01.jpg
+Original image / 原图: https://upload.wikimedia.org/wikipedia/commons/f/ff/Manzana_%28Malus_domestica%29%2C_M%C3%BAnich%2C_Alemania%2C_2012-06-07%2C_DD_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+Changes / 修改: Commons thumbnail resized; JPEG recompressed; display may crop.
+
+Original period-inspired teaching illustrations, 2026-10-18:
+- teach_meme_couch_original.png: original generic sleepy mascot reclining on a couch; evokes the 2016 online couch-lounging meme without any celebrity image or likeness. Game-date gate 2016-07-25.
+- teach_meme_power_original.png: original generic smiling mascot celebrating effort; evokes the 2016 "洪荒之力" phrase without any athlete image or likeness. Game-date gate 2016-08-08.
+Created for this game with original procedural vector drawing code draw_original_memes.py. No third-party images, photographs, fonts, or stock art used. In-game use/export permitted as project-original assets; source retained in integration staging.
+These are minigame illustrations only; not substitutes for the 13 group-chat photographs.

@@ -18,6 +18,20 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed partial class XgLabelPage
     {
+        bool hallMeshPending;
+        int hallMeshFrame;
+        public override void Shown() { hallMeshPending = true; hallMeshFrame = Time.frameCount; }
+        void RefreshVisibleHall()
+        {
+            if (!hallMeshPending || Time.frameCount <= hallMeshFrame || root == null || !root.gameObject.activeInHierarchy
+                || hallContent == null || hallContent.rect.width <= 0) return;
+            hallMeshPending = false;
+            RefreshHall(false);
+            foreach (var row in hallRows) { row.left.ForceMeshUpdate(); row.pay.ForceMeshUpdate(); }
+            foreach (var row in packRows) { row.left.ForceMeshUpdate(); row.pay.ForceMeshUpdate(); }
+            foreach (var row in teachingRows) row.left.ForceMeshUpdate();
+        }
+
         const float HallRowH = 56;
 
         sealed class HallRow
@@ -38,37 +52,47 @@ namespace LingGuangV05.Desktop.XingGuang
         List<XgNode> LoosePacks()
         {
             var list = new List<XgNode>();
-            if (Sim == null) return list;
+            if (Sim == null || !WorkContext) return list;
             foreach (var n in XgCatalog.Nodes)
                 if (n.kind == XgNodeKind.Dataset && Sim.Has(n.id) && XgCatalog.Desk(n.target) == null && XgCatalog.Dataset(n.target) != null) list.Add(n);
             return list;
         }
 
+        bool DarkTeaching => !WorkContext && ui.dark;
+        Color HallInk => DarkTeaching ? XgDark.Ink : ZhongbaoSkin.Ink;
+        Color HallMute => DarkTeaching ? XgDark.Muted : ZhongbaoSkin.Mute;
+        Color HallFill => DarkTeaching ? XgDark.Card : Color.white;
+        Color HallSelected => DarkTeaching ? XgDark.AccentSoft : ZhongbaoSkin.Blue3;
+
         void BuildHall(RectTransform parent)
         {
-            hallBox = ZhongbaoSkin.Box(ui, parent, "Hall", Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(HallW, 0));
+            hallBox = DarkTeaching ? ui.Card(parent, "Hall", Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(HallW, 0)) : ZhongbaoSkin.Box(ui, parent, "Hall", Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(HallW, 0));
             ZhongbaoSkin.Header(ui, hallBox, "任务大厅", "Task hall", out hallTitle, out hallNote);
+            hallTitle.color = HallInk; hallNote.color = HallMute;
             hallNote.text = T("按报酬排序", "by pay");
             var viewport = Rect("Viewport", hallBox, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -(ZhongbaoSkin.HeaderHeight + 1)));
+            BuildTeachingHallTools(viewport);
             Panel(viewport, new Color(1, 1, 1, 0));
             viewport.gameObject.AddComponent<RectMask2D>();
             hallContent = Rect("List", viewport, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
             hallContent.pivot = new Vector2(.5f, 1);
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.content = hallContent; scroll.viewport = viewport; scroll.horizontal = false; scroll.scrollSensitivity = 30; scroll.movementType = ScrollRect.MovementType.Clamped;
-            hallPaused = ui.Text(Rect("Paused", hallBox, Vector2.zero, Vector2.one, new Vector2(16, 16), new Vector2(-16, -60)), "", 14, ZhongbaoSkin.Mute, TextAlignmentOptions.Center);
+            hallPaused = ui.Text(Rect("Paused", hallBox, Vector2.zero, Vector2.one, new Vector2(16, 16), new Vector2(-16, -60)), "", 14, HallMute, TextAlignmentOptions.Center);
             hallPaused.gameObject.SetActive(false);
         }
 
         /// <summary>Rebuilds the hall rows (a desk opened, or the language changed).</summary>
         public void RebuildTabs()
         {
+            teachingSortScores.Clear();
             foreach (var r in hallRows)
             {
                 // The edit-mode smoke test rebuilds pages outside Play mode, where Destroy would leave stale rows behind.
                 if (Application.isPlaying) UnityEngine.Object.Destroy(r.rt.gameObject); else UnityEngine.Object.DestroyImmediate(r.rt.gameObject);
             }
             hallRows.Clear(); deskIds.Clear();
+            hallMeshPending = true; hallMeshFrame = Time.frameCount;
             foreach (var r in packRows)
             {
                 if (Application.isPlaying) UnityEngine.Object.Destroy(r.rt.gameObject); else UnityEngine.Object.DestroyImmediate(r.rt.gameObject);
@@ -81,7 +105,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 string id = d.id;
                 var row = new HallRow { id = id };
                 row.rt = Rect("Desk " + id, hallContent, new Vector2(0, 1), Vector2.one, new Vector2(0, -(i + 1) * HallRowH), new Vector2(0, -i * HallRowH));
-                row.bg = Panel(row.rt, Color.white);
+                row.bg = Panel(row.rt, HallFill);
                 var button = row.rt.gameObject.AddComponent<Button>();
                 button.targetGraphic = row.bg;
                 var colors = button.colors;
@@ -90,12 +114,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 button.colors = colors;
                 button.onClick.AddListener(() => OnTab(id));
                 if (ui.window != null) row.rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = ui.window;
-                row.bar = Panel(Rect("Selected", row.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0)), ZhongbaoSkin.Blue);
+                row.bar = Panel(Rect("Selected", row.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0)), DarkTeaching ? XgDark.Accent : ZhongbaoSkin.Blue);
                 row.bar.raycastTarget = false;
                 var rule = ZhongbaoSkin.Hairline(row.rt, 0, false);
                 // The drawn desk icon (Tools/Icons/ui_icons.py); the text makes room for it.
                 row.icon = XgIcons.Place(row.rt, "desk", id, 25, HallRowH * .5f, 32);
-                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-72, -3)), "", 14, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-72, -3)), "", 14, HallInk, TextAlignmentOptions.MidlineLeft);
                 row.left.textWrappingMode = TextWrappingModes.NoWrap; row.left.overflowMode = TextOverflowModes.Ellipsis;
                 row.left.lineSpacing = 6;
                 row.pay = ui.Text(Rect("Pay", row.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -28), new Vector2(-10, -6)), "", 14, ZhongbaoSkin.Red, TextAlignmentOptions.TopRight);
@@ -115,10 +139,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 ZhongbaoSkin.Hairline(row.rt, 0, false);
                 row.icon = XgIcons.Place(row.rt, "tech", node.id, 25, HallRowH * .5f, 32);
                 // The full width: 「已买」 sits on the first line only and the (clipped) name stays clear of it.
-                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-10, -3)), "", 14, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+                row.left = ui.Text(Rect("Text", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 44 : 12, 3), new Vector2(-10, -3)), "", 14, HallInk, TextAlignmentOptions.MidlineLeft);
                 row.left.textWrappingMode = TextWrappingModes.NoWrap; row.left.overflowMode = TextOverflowModes.Ellipsis;
                 row.left.lineSpacing = 6;
-                row.pay = ui.Text(Rect("Pay", row.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -28), new Vector2(-10, -6)), "", 12, ZhongbaoSkin.Mute, TextAlignmentOptions.TopRight);
+                row.pay = ui.Text(Rect("Pay", row.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-80, -28), new Vector2(-10, -6)), "", 12, HallMute, TextAlignmentOptions.TopRight);
                 row.pay.textWrappingMode = TextWrappingModes.NoWrap;
                 string target = node.target;
                 var data0 = XgCatalog.Dataset(target);
@@ -128,7 +152,8 @@ namespace LingGuangV05.Desktop.XingGuang
                     + "\n" + T(node.note, node.noteEn));
                 packRows.Add(row);
             }
-            hallContent.sizeDelta = new Vector2(0, (list.Count + packs.Count) * HallRowH);
+            int extra = BuildTeachingPackRows(list.Count + packs.Count);
+            hallContent.sizeDelta = new Vector2(0, (list.Count + packs.Count + extra) * HallRowH);
             Refresh();
         }
 
@@ -168,6 +193,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void RefreshHall(bool special)
         {
+            hallTitle.text = T("任务大厅", "Task hall");
+            RefreshTeachingHallTools();
+            if (!WorkContext && teachingStage != Sim.S.stage) { RebuildTabs(); return; }
+            RefreshTeachingPackRows();
             hallContent.gameObject.SetActive(!special);
             hallPaused.gameObject.SetActive(special);
             hallNote.text = special ? "" : T("按报酬排序", "by pay");
@@ -192,8 +221,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 var row = hallRows[i];
                 var info = XgCatalog.Desk(row.id);
                 bool open = i < openTabs;
-                bool on = row.id == desk;
-                row.bg.color = on && open ? ZhongbaoSkin.Blue3 : Color.white;
+                bool on = row.id == desk && (WorkContext || string.IsNullOrEmpty(Sim.S.teachingPack));
+                row.bg.color = on && open ? HallSelected : HallFill;
                 row.bar.gameObject.SetActive(on && open);
                 if (row.icon != null) row.icon.color = open ? Color.white : new Color(1, 1, 1, .35f);
                 int level = Sim.LevelOf(row.id), max = XgSim.MaxLevelOf(row.id);

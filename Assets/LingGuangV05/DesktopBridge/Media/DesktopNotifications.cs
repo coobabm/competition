@@ -119,7 +119,7 @@ namespace LingGuangV05.Desktop.Media
             if (Held()) return;
             var desk = PrologueDirector.Desk;
             var tray = desk != null && desk.layer != null ? desk.layer.GetComponent<TrayPopups>() : null;
-            if (desk == null || desk.layer == null) return; // Wait for the existing desktop, never create another shell.
+            if (desk == null || desk.layer == null || !desk.layer.gameObject.activeInHierarchy) return; // Preserve queued notifications through hidden desktop / cutscenes.
             if (!budget.TryPopup(Time.unscaledTimeAsDouble, false, tray != null && tray.IsBusy)) return;
             Pending item;
             if (pending.Count > 0) { item = pending[0]; pending.RemoveAt(0); }

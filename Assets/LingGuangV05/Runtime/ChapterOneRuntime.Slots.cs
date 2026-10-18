@@ -30,7 +30,9 @@ namespace LingGuangV05.Runtime
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) return GameText.T("损坏，无法读取", "Unreadable save");
             var state = JsonUtility.FromJson<GameState>(loaded.Payload);
-            return state.aiName + " · ¥" + state.money.ToString("0") + " · " + File.GetLastWriteTime(archive.SavePath).ToString("MM-dd HH:mm");
+            string source = loaded.Recovered ? archive.SavePath + ".bak" : archive.SavePath;
+            return state.aiName + " · ¥" + state.money.ToString("0") + " · " + File.GetLastWriteTime(source).ToString("MM-dd HH:mm")
+                + (loaded.Recovered ? GameText.T(" · 备份", " · Backup") : "");
         }
 
         static bool ValidArchive(string payload)
@@ -61,7 +63,14 @@ namespace LingGuangV05.Runtime
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
             // Validate and instantiate before touching the active save. Atomic replacement retains a backup.
-            var restored = new ChapterOneSim(JsonUtility.FromJson<GameState>(loaded.Payload));
+            ChapterOneSim restored;
+            try { restored = new ChapterOneSim(JsonUtility.FromJson<GameState>(loaded.Payload)); }
+            catch (Exception error)
+            {
+                SaveStatus = GameText.T("存档无法恢复，当前进度未改变。", "The save could not be restored. Current progress is unchanged.");
+                Debug.LogWarning("[Save] Archive reconstruction failed: " + error.Message);
+                return false;
+            }
             restored.S.lastSeenUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             if (!store.TrySave(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
             Attach(restored); KnownProfile(restored, false);

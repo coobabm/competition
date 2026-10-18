@@ -70,6 +70,7 @@ namespace LingGuangV05.CaseMenu
             hud.Build(font, SetVolume, SetReducedMotion, SetFullscreen, CloseSettings,
                 () => Play(releaseClip, .24f));
             mainDisplay = gameObject.AddComponent<CaseMenuMainDisplay>();
+            hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame);
             Cursor.visible = true; Cursor.lockState = CursorLockMode.None;
             if (!Application.isEditor && PlayerPrefs.HasKey(FullscreenPref))
                 Screen.fullScreen = PlayerPrefs.GetInt(FullscreenPref) != 0;
@@ -93,11 +94,17 @@ namespace LingGuangV05.CaseMenu
                 fanMotor.SetBootElapsed(mainDisplay.BootProgress * CaseMenuMainDisplay.BootDuration);
             if (hud == null || IsTransitioning || HasEnteredGame) return;
             var keyboard = Keyboard.current;
+            if (hud.IsArchiveOpen) { if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) hud.CloseArchives(); return; }
+            if (hud.HasTitleSelection && keyboard != null && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed || keyboard.enterKey.wasReleasedThisFrame || keyboard.spaceKey.wasReleasedThisFrame)) return;
             if (IsSettingsOpen)
             {
                 if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) CloseSettings();
                 return;
             }
+            if (keyboard != null && keyboard.lKey.wasPressedThisFrame) { hud.OpenArchives(); return; }
+            if (keyboard != null && keyboard.qKey.wasPressedThisFrame) { QuitGame(); return; }
+            if (hud.HasTitleSelection && keyboard != null && (keyboard.upArrowKey.isPressed || keyboard.downArrowKey.isPressed || keyboard.leftArrowKey.isPressed || keyboard.rightArrowKey.isPressed)) return;
+            if (keyboard != null && keyboard.tabKey.wasPressedThisFrame) EventSystem.current?.SetSelectedGameObject(null);
             if (captured == null && keyboard != null && (keyboard.tabKey.wasPressedThisFrame || keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame))
             {
                 keyboardFocus = true;
@@ -138,6 +145,7 @@ namespace LingGuangV05.CaseMenu
         public CaseMenuButton HitButton(Vector2 screenPoint)
         {
             if (menuCamera == null || IsTransitioning || IsSettingsOpen || HasEnteredGame) return null;
+            if (hud != null && hud.BlocksTitlePointer(screenPoint)) return null;
             return Physics.Raycast(menuCamera.ScreenPointToRay(screenPoint), out var hit, 15f, 1,
                 QueryTriggerInteraction.Collide) ? hit.collider.GetComponentInParent<CaseMenuButton>() : null;
         }
@@ -153,6 +161,22 @@ namespace LingGuangV05.CaseMenu
                 if (Time.unscaledTime - lastHoverSound > .09f) { Play(hoverClip, .16f); lastHoverSound = Time.unscaledTime; }
             }
             hud.SetHint(next == startButton ? "按下电源键 · 开始游戏" : next == settingsButton ? "按下设置键 · 调整音量与显示" : "点击机箱上的电源键，进入游戏");
+        }
+
+        public void QuitGame()
+        {
+            if (IsTransitioning || HasEnteredGame) return;
+            var rt = mainDisplay != null ? mainDisplay.Runtime : null;
+            try {
+                if (rt != null && rt.useDiskSave && !rt.TestMode && rt.Sim != null && !rt.Sim.InPrologue && !rt.SaveNow())
+                { hud.ShowError(LingGuangV05.Runtime.GameText.T("未退出：", "Cannot quit: ") + rt.SaveStatus); return; }
+                PlayerPrefs.Save();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            } catch (Exception e) { hud.ShowError(LingGuangV05.Runtime.GameText.T("未退出：", "Cannot quit: ") + e.Message); }
         }
 
         void Activate(CaseMenuButton button) { if (button.isStart) BeginGame(); else OpenSettings(); }
@@ -188,7 +212,7 @@ namespace LingGuangV05.CaseMenu
 
         public void BeginGame()
         {
-            if (IsTransitioning || HasEnteredGame || IsSettingsOpen || hud == null) return;
+            if (IsTransitioning || HasEnteredGame || IsSettingsOpen || hud == null || hud.IsArchiveOpen) return;
             if (!string.IsNullOrEmpty(mainDisplay.Error))
             {
                 LastError = mainDisplay.Error;

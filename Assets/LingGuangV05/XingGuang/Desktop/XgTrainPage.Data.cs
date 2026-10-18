@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using LingGuangV05.XingGuang;
 using UnityEngine;
 using static LingGuangV05.Desktop.XingGuang.XgUi;
@@ -15,13 +15,8 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         XgBtn logAuto;
 
-        public bool SourcesOpen => root != null && root.gameObject.activeInHierarchy && dataView && !learningView && !booksView;
-
-        public void OpenSources()
-        {
-            learningView = false; booksView = false; dataView = true;
-            Refresh();
-        }
+        public bool SourcesOpen => false;
+        public void OpenSources() { view.ShowTab("tree"); }
 
         bool RollbackBusy => Sim.Run(Track).epochActive || Sim.ProjectActive;
 

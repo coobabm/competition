@@ -11,6 +11,8 @@ namespace LingGuangV05.Desktop
         [SerializeField] private ChapterOneDesktopBridge[] bindings = Array.Empty<ChapterOneDesktopBridge>();
         public IReadOnlyList<ChapterOneDesktopBridge> Bindings => Array.AsReadOnly(bindings);
 
+        void Awake() { if (GetComponent<DesktopSaveActivity>() == null) gameObject.AddComponent<DesktopSaveActivity>(); }
+
         public void Configure(ChapterOneDesktopBridge[] appBindings)
         {
             bindings = appBindings != null ? (ChapterOneDesktopBridge[])appBindings.Clone()

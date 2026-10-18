@@ -45,7 +45,7 @@ namespace LingGuangV05.Desktop.Taohuo
             }
             foreach (var gift in GirlfriendRules.Gifts) GiftRow(g, gift, today, day);
             OrdersList(g);
-            Note(Lang.T("包邮，2–3 天送到她那儿（奶茶当天到）。签收以后她会在 YY 上找你。"));
+            Note(T("包邮，先寄到你家（奶茶是外卖券，买了就在手上）。要你在 YY 里亲手送她，才会寄到她住处。", "Free shipping to you first (bubble tea is a voucher, in hand at once). It only goes to her home when you give it in YY."));
         }
 
         void GiftRow(GirlfriendState g, GfGift gift, DateTime today, int day)
@@ -68,7 +68,7 @@ namespace LingGuangV05.Desktop.Taohuo
             string id = gift.id;
             var b = Btn(right, "Buy", new Vector2(0, 0), new Vector2(1, 0), new Vector2(20, 0), new Vector2(0, 40), Orange, "", 17, Color.white, () => BuyGift(id), out var label);
             buyButtons.Add((b, label, () => GiftState(id)));
-            TipFor(b, ("送到才算。记得她说过的东西，效果加倍；同一样送多了就没意思了。", "It only counts once it arrives. Something she mentioned counts double; the same thing again means less each time."));
+            TipFor(b, ("买了先寄到你家，要你在 YY 里亲手送她。记得她说过的东西，效果加倍；同一样送多了就没意思了。", "It comes to you first; give it to her yourself in YY. Something she mentioned counts double; the same thing again means less each time."));
         }
 
         (bool, string) GiftState(string id)
@@ -78,7 +78,7 @@ namespace LingGuangV05.Desktop.Taohuo
             if (!GirlfriendRules.OnSale(gift, Today)) return (false, Lang.T("未上架"));
             if (GirlfriendRules.SoldOut(g, gift, GameCalendar.DayIndex(Today), Today)) return (false, Lang.T("已售罄"));
             if (sim.S.money + 1e-9 < gift.price) return (false, Lang.T("钱不够"));
-            return (true, T("送她", "Send to her"));
+            return (true, T("买下", "Buy"));
         }
 
         void BuyGift(string id)
@@ -103,6 +103,8 @@ namespace LingGuangV05.Desktop.Taohuo
                 var arrive = GameCalendar.DateOf(o.arriveDay);
                 string state = o.state == 1 ? "<color=#3CB371>" + Lang.T("已签收") + "</color>" + (o.matched ? Lang.T("  · 她说过想要") : "")
                     : o.state == 2 ? "<color=#999999>" + Lang.T("已拒收 · 已退款") + "</color>"
+                    : o.state == GirlfriendRules.GiftHeld ? "<color=#E85078>" + T("在你手上 · 去 YY 送她", "With you · give it in YY") + "</color>"
+                    : o.state == GirlfriendRules.GiftToMe ? "<color=#FF5000>" + T("运往你家 · 明天到", "On its way to you · tomorrow") + "</color>"
                     : "<color=#FF5000>" + T("运输中 · 预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达", "On the way · arrives " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture)) + "</color>";
                 var row = Row(list, "Order", 36, Color.white);
                 Label(row, "Text", Vector2.zero, Vector2.one, new Vector2(14, 0), new Vector2(-14, 0), T(gift.zh, gift.en) + "   " + Money(o.price) + "   " + state, 15, Ink, TextAlignmentOptions.MidlineLeft);

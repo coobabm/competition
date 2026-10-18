@@ -15,6 +15,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         protected XgMiniGame(XgMiniContext context) { C = context; }
         public abstract void Build();
         public virtual void Tick(float dt) { }
+        public virtual void RefreshLanguage() { }
         public virtual void Dispose() { }
     }
 
@@ -62,7 +63,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public TMP_Text Text(string name, float x, float y, float w, float h, string text, float size = 20, Color? color = null)
         {
-            var t = Ui.Text(Rect(name, x, y, w, h), text, size, color ?? XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            var t = Ui.Text(Rect(name, x, y, w, h), text, size, color ?? (Ui.dark ? XgDark.Ink : XgPalette.Ink), TextAlignmentOptions.MidlineLeft);
             t.overflowMode = TextOverflowModes.Ellipsis;
             t.enableAutoSizing = true; t.fontSizeMin = Math.Min(11, size); t.fontSizeMax = size;
             return t;

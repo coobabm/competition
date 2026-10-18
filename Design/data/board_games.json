@@ -1,0 +1,68 @@
+{
+  "note": "游戏中心的棋类小游戏（《第八轮设计》第二、三节）。每个游戏第一次点开先弹一页规则卡（goal 一句 + rules 4–6 条 + short 小对局设置 + withAi 和它下的说明），底部按钮「开始」「下次不再显示」；游戏里右上角「?」可以再打开。对手可选「电脑」（游戏自带）或「{name}」：只有和 {name} 下的对局会变成训练数据（data），攒满 batch 局就在「{name} 的资料 › 数据包」里生成或更新一个「对局记录_<游戏>.zip」，拖进「练」安装。ai 字段 = {name} 在不同「逻辑判断区」等级下怎么下。minutes = 一局大约几分钟。",
+  "games": [
+    {
+      "id": "gomoku", "name": "五子棋", "nameEn": "Gomoku", "minutes": 4,
+      "goal": "先在横、竖或斜线上连成五颗子的人赢。", "goalEn": "First to get five in a row, across, down or diagonally, wins.",
+      "rules": [ "棋盘 15×15，黑先白后，轮流在交叉点上放一颗子。", "子放下就不能移动，也不会被吃。", "横、竖、斜任意方向连成五颗就赢。", "棋盘下满还没人连五，算平局。" ],
+      "rulesEn": [ "15×15 board. Black moves first; take turns placing one stone on an intersection.", "Stones never move and are never captured.", "Five in a row in any direction wins.", "If the board fills with no five, it's a draw." ],
+      "short": "不设禁手；每步限时 20 秒。", "shortEn": "No forbidden moves; 20 seconds per move.",
+      "withAi": "它会把每一步都记下来，赢在哪、输在哪，都是它的练习题。", "withAiEn": "It records every move. Where it won and lost becomes practice.",
+      "data": { "samplesPerGame": 80, "batch": 3, "teaches": "看局面、找连线、挡对方" },
+      "ai": { "0": "随便下", "1": "能连五就连，对方四颗就挡", "2": "同上，还能认网页上的棋盘截图", "3": "会做「活三」「冲四」这种两步的局", "4": "晚上自己跟自己下，第二天更难缠" }
+    },
+    {
+      "id": "xiangqi_endgame", "name": "象棋残局", "nameEn": "Xiangqi endgame", "minutes": 4,
+      "goal": "红方先走，在规定步数内将死黑方。", "goalEn": "Red moves first and must checkmate Black within the move limit.",
+      "rules": [ "车直走横走，格数不限；马走「日」字，被挡住马腿就不能走。", "炮走法和车一样，吃子时中间必须隔一个子。", "相走「田」字，不能过河；士和将只能在九宫里走，士斜走一格，将直走一格。", "兵过河以后可以横走，但永远不能后退。", "将和帅不能在同一条直线上面对面，中间没有棋子挡着就不行。" ],
+      "rulesEn": [ "Chariots move any distance straight. Horses move in an L and are blocked by a piece at the knee.", "Cannons move like chariots but capture by jumping exactly one piece.", "Elephants move two diagonally and can't cross the river. Advisors and generals stay in the palace: advisors one diagonal, generals one straight.", "Soldiers may move sideways after crossing the river, and never backward.", "The two generals may not face each other on an open file." ],
+      "short": "每局是一个残局，限 10 步。", "shortEn": "Each game is one endgame, 10 moves max.",
+      "withAi": "你走红、它走黑；或者让它走红，你来防。", "withAiEn": "You play Red and it defends, or it attacks and you defend.",
+      "data": { "samplesPerGame": 50, "batch": 3, "teaches": "多步算杀" },
+      "ai": { "0": "乱走", "1": "有一步杀就杀", "2": "能认截图里的残局", "3": "能算两三步的杀法", "4": "自己摆残局自己解" }
+    },
+    {
+      "id": "chess_mate", "name": "国际象棋 · 一步杀 / 两步杀", "nameEn": "Chess · mate in 1 / 2", "minutes": 2,
+      "goal": "白先，一步或两步将死黑王。", "goalEn": "White to move. Checkmate the black king in one or two moves.",
+      "rules": [ "王走一格；后横竖斜都能走，格数不限；车横竖；象斜着走；马走「日」字，可以跳过别的子；兵向前一格，吃子时斜着吃。", "王被攻击叫「将军」，必须马上解围。", "王被将军而且怎么都躲不开、挡不住、吃不掉，就是「将死」，这一局结束。" ],
+      "rulesEn": [ "King one square; queen any distance in any direction; rook straight; bishop diagonal; knight in an L and may jump; pawn forward one, captures diagonally.", "A king under attack is in check and must escape at once.", "Check with no escape, block or capture is checkmate. Game over." ],
+      "short": "题目来自 Lichess 公开题库，一题一局。", "shortEn": "Puzzles from the Lichess public database, one per game.",
+      "withAi": "你们轮流解题，看谁先解出来。", "withAiEn": "Take turns solving; see who gets there first.",
+      "data": { "samplesPerGame": 20, "batch": 5, "teaches": "找必胜的一步" },
+      "ai": { "0": "瞎猜", "1": "一步杀能做对", "2": "能做截图题", "3": "两步杀能做对", "4": "自己出题" }
+    },
+    {
+      "id": "ludo", "name": "飞行棋", "nameEn": "Aeroplane chess", "minutes": 5,
+      "goal": "先把自己的飞机全部飞回终点的人赢。", "goalEn": "First to fly all your planes home wins.",
+      "rules": [ "掷骰子决定走几格。掷到 6 才能让飞机起飞（小对局里 5 或 6 都能起飞）。", "停在和自己同色的格子上，可以再往前跳到下一个同色格。", "停在对方飞机所在的格子，就把它撞回基地。", "掷到 6 可以再掷一次。", "进终点要刚好走到，点数多了就往回退。" ],
+      "rulesEn": [ "Roll the die to move. A plane takes off only on a 6 (in the short game, 5 or 6).", "Land on your own colour and you jump ahead to the next square of that colour.", "Land on an opponent's plane and it goes back to base.", "Rolling a 6 gives another roll.", "You must reach home exactly; extra steps bounce you back." ],
+      "short": "两人对局，每人 2 架飞机，环道 28 格。", "shortEn": "Two players, 2 planes each, 28-square loop.",
+      "withAi": "骰子它改不了，但它会学：哪架飞机先走更划算。", "withAiEn": "It can't change the dice, but it learns which plane is better to move.",
+      "data": { "samplesPerGame": 30, "batch": 3, "teaches": "概率和取舍" },
+      "ai": { "0": "随便挑一架走", "1": "能撞就撞，能跳就跳", "2": "同上", "3": "会算对方下一手撞到自己的概率，躲开危险格", "4": "自己跟自己下，摸出最稳的走法" }
+    },
+    {
+      "id": "checkers_cn", "name": "跳棋", "nameEn": "Chinese checkers", "minutes": 6,
+      "goal": "先把自己的棋子全部移到对面角上的人赢。", "goalEn": "First to move all your pieces into the opposite corner wins.",
+      "rules": [ "每回合走一颗子。", "可以往相邻的空位走一步。", "也可以跳：隔着一颗相邻的棋子（谁的都行），跳到它后面的空位。", "跳完如果还能接着跳，可以一直连跳下去。", "棋子不会被吃掉。" ],
+      "rulesEn": [ "Move one piece per turn.", "Step into an adjacent empty hole.", "Or jump over one adjacent piece (anyone's) into the empty hole beyond.", "Keep jumping as long as you can, in one turn.", "Pieces are never captured." ],
+      "short": "两人对局，每人 6 颗子；每人最多 40 回合，到时进角多的赢。", "shortEn": "Two players, 6 pieces each; 40 turns each, most pieces home wins.",
+      "withAi": "连跳要看好几步之后的路，正好考它会不会想得远。", "withAiEn": "Chain jumps need looking several steps ahead, a good test of planning.",
+      "data": { "samplesPerGame": 60, "batch": 3, "teaches": "路线规划" },
+      "ai": { "0": "一步一步挪", "1": "看到能跳就跳", "2": "同上", "3": "会提前搭「梯子」连跳好几格", "4": "自己跟自己下，找最短的路" }
+    },
+    {
+      "id": "monopoly", "name": "大富翁", "nameEn": "Monopoly-style", "minutes": 6,
+      "goal": "8 轮后，现金加地产总值最多的人赢；谁先破产谁输。", "goalEn": "After 8 rounds, highest cash plus property wins. Go bankrupt and you lose.",
+      "rules": [ "每人开局 ¥1,500（游戏币，和你的真钱无关），掷骰子走格。", "停在没人买的地上，可以买下。", "停在对方的地上，要付过路费。", "停在「机会」格抽一张卡，有好有坏。", "每经过起点，领 ¥200。" ],
+      "rulesEn": [ "Each player starts with ¥1,500 in play money (not your real money). Roll and move.", "Land on unowned property and you may buy it.", "Land on the opponent's property and pay rent.", "Land on Chance and draw a card, good or bad.", "Collect ¥200 every time you pass Start." ],
+      "short": "两人对局，20 格小地图，每人 8 轮。", "shortEn": "Two players, a 20-square board, 8 rounds each.",
+      "board": [ "起点", "华强北", "机会", "中关村", "网吧", "西湖", "机会", "鼓浪屿", "淘货仓库", "外滩", "免费停车", "三里屯", "机会", "陆家嘴", "电脑城", "武康路", "机会", "国贸", "电费单", "深南大道" ],
+      "chance": [ "双十一剁手，付 ¥200", "抢到 iPhone 7，转手赚 ¥300", "网吧通宵，付 ¥50", "公司发年中奖 ¥250", "显卡烧了，付 ¥300", "群里抢到大红包 ¥88", "房东涨房租，付 ¥150", "看女排夺冠太激动，前进 3 格" ],
+      "chanceEn": [ "Singles' Day splurge: pay ¥200", "Scored an iPhone 7, resold for ¥300", "All-nighter at the café: pay ¥50", "Mid-year bonus: ¥250", "GPU burned out: pay ¥300", "Grabbed a big red envelope: ¥88", "Landlord raised the rent: pay ¥150", "Too excited by the volleyball final: move 3" ],
+      "withAi": "它要学会算账：现在买地，还是留钱交过路费。", "withAiEn": "It has to learn to budget: buy land now, or keep cash for rent.",
+      "data": { "samplesPerGame": 40, "batch": 3, "teaches": "算账和风险" },
+      "ai": { "0": "见地就买", "1": "钱不够就不买", "2": "同上", "3": "会算对方下几轮可能停哪，留钱等着买好地", "4": "自己跟自己下，摸出最稳的买法" }
+    }
+  ]
+}

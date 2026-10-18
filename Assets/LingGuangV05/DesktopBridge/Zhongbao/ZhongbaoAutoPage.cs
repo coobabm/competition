@@ -52,8 +52,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── left: one row per open desk ──
             var desks = ZhongbaoSkin.Box(ui, root, "Desks", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-RightW - 12, -TopH - 12));
             ZhongbaoSkin.Header(ui, desks, "每类题由谁来答", "Who answers each kind of card", out deskTitle, out deskNote);
-            ZhongbaoUi.TipOnHeader(desks, "每张开着的标注桌：自动答题是否在替你交、用的是哪个模型（训练页评估出的最好检查点，或第四阶段起文字题用灵光自己的大脑）。",
-                "Every open labelling desk: whether auto-answer is submitting for you, and which model does it (the best checkpoint from the training page, or from stage 4 灵光's own brain for text cards).");
+            ZhongbaoUi.TipOnHeader(desks, ("每张开着的标注桌：自动答题是否在替你交、用的是哪个模型（训练页评估出的最好检查点，或第四阶段起文字题用灵光自己的大脑）。").Replace("灵光", Sim.AiDisplayName),
+                ("Every open labelling desk: whether auto-answer is submitting for you, and which model does it (the best checkpoint from the training page, or from stage 4 灵光's own brain for text cards).").Replace("灵光", Sim.AiDisplayName));
             deskList = ZhongbaoUi.BoxScroll(desks, "Viewport");
             empty = ui.Text(Rect("Empty", desks, Vector2.zero, Vector2.one, new Vector2(24, 24), new Vector2(-24, -(ZhongbaoSkin.HeaderHeight + 24))), "", 14, ZhongbaoSkin.Mute, TextAlignmentOptions.Center);
 
@@ -113,7 +113,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                     return Sim.QualityFrozen ? T("账号冻结中", "Account frozen")
                         : Sim.CaptchaPending ? T("等你在标注台输验证码", "Waiting for the captcha on the label desk")
                         : T("验证没过，暂停 " + XgSim.FreezeClock(Sim.CaptchaPauseLeft), "Captcha failed, paused " + XgSim.FreezeClock(Sim.CaptchaPauseLeft));
-                case XgAutoDeskState.InboxFull: return T("待复核满 " + XgSim.ReviewCapacity + " 题，先去复核", "Review inbox full (" + XgSim.ReviewCapacity + "), review first");
+                case XgAutoDeskState.InboxFull: return T("待复核满 " + Sim.ReviewLimit + " 题，先去复核", "Review inbox full (" + Sim.ReviewLimit + "), review first");
                 case XgAutoDeskState.Project: return T("研发占着 GPU", "Research has the GPU");
                 case XgAutoDeskState.NoPower: return Host != null && !string.IsNullOrEmpty(Host.Blocker) ? Host.Blocker : T("显卡没在算", "The GPU is not running");
                 default: return "";
@@ -139,12 +139,12 @@ namespace LingGuangV05.Desktop.Zhongbao
         {
             // Without a 60% checkpoint nothing answers this desk, the brain included.
             if (p.state == XgAutoDeskState.NoCheckpoint || p.state == XgAutoDeskState.BelowBar)
-                return CheckpointText(p) + (p.usesBrain || p.brainFallback ? ZhongbaoUi.Muted(T(" · 到 60% 以后文字题交给灵光的大脑", " · from 60% on, 灵光's brain judges its text cards")) : "");
+                return CheckpointText(p) + (p.usesBrain || p.brainFallback ? ZhongbaoUi.Muted(T((" · 到 60% 以后文字题交给灵光的大脑").Replace("灵光", Sim.AiDisplayName), (" · from 60% on, 灵光's brain judges its text cards").Replace("灵光", Sim.AiDisplayName))) : "");
             if (p.usesBrain)
             {
                 string brain = BrainName();
-                string text = T("模型 <b>灵光的大脑</b>（本机语言模型" + (brain.Length > 0 ? " " + brain : "") + "）· 用自己的话判断",
-                    "Model <b>灵光's brain</b> (local language model" + (brain.Length > 0 ? " " + brain : "") + ") · judges in its own words");
+                string text = T(("模型 <b>灵光的大脑</b>（本机语言模型").Replace("灵光", Sim.AiDisplayName) + (brain.Length > 0 ? " " + brain : "") + "）· 用自己的话判断",
+                    ("Model <b>灵光's brain</b> (local language model").Replace("灵光", Sim.AiDisplayName) + (brain.Length > 0 ? " " + brain : "") + ") · judges in its own words");
                 if (p.brainJudgments > 0) text += T(" · 近 " + p.brainJudgments + " 题对 ", " · " + ZhongbaoUi.Pct(p.brainAccuracy) + " right of the last " + p.brainJudgments) + (Sim.English ? "" : ZhongbaoUi.Pct(p.brainAccuracy));
                 return text;
             }
@@ -179,8 +179,8 @@ namespace LingGuangV05.Desktop.Zhongbao
                 string d = T(running + " 类题在自动交 · 每秒 " + N(rate, "0.##") + " 题 · 约 +" + ZhongbaoUi.Yuan(income) + "/秒",
                     running + " kind" + (running == 1 ? "" : "s") + " submitting · " + N(rate, "0.##") + " cards/s · about +" + ZhongbaoUi.Yuan(income) + "/s");
                 d += "\n" + (Sim.CollaborationEnabled
-                    ? T("把握低于 " + ZhongbaoUi.Pct(Sim.S.coopThreshold) + " 的题交给你复核（待复核 " + Sim.ReviewCount() + "/" + XgSim.ReviewCapacity + "）",
-                        "Cards it is less than " + ZhongbaoUi.Pct(Sim.S.coopThreshold) + " sure of go to your review inbox (" + Sim.ReviewCount() + "/" + XgSim.ReviewCapacity + ")")
+                    ? T("把握低于 " + ZhongbaoUi.Pct(Sim.S.coopThreshold) + " 的题交给你复核（待复核 " + Sim.ReviewCount() + "/" + Sim.ReviewLimit + "）",
+                        "Cards it is less than " + ZhongbaoUi.Pct(Sim.S.coopThreshold) + " sure of go to your review inbox (" + Sim.ReviewCount() + "/" + Sim.ReviewLimit + ")")
                     : T("它答什么就交什么；买「拿不准才问我」后，没把握的题会留给你。", "It submits whatever it answers; with 「Ask when unsure」 the unsure ones wait for you."));
                 if (Sim.QualityActive) d += T(" · 平台抽检 ", " · spot checks ") + ZhongbaoUi.Pct(Sim.SpotCheckChance);
                 detail.text = d;
@@ -242,7 +242,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 else { mark = "<color=#D63031>×</color>"; value = T("错了 · 成了噪声", "wrong · now noise"); valueInk = ZhongbaoSkin.Mute; }
                 items.Add(Row.Row(mark + " " + name, value, valueInk));
                 string who;
-                if (rec.judgeSource == "brain") who = T("灵光的大脑", "灵光's brain");
+                if (rec.judgeSource == "brain") who = T(("灵光的大脑").Replace("灵光", Sim.AiDisplayName), ("灵光's brain").Replace("灵光", Sim.AiDisplayName));
                 else
                 {
                     var best = Sim.Best(rec.dataset);

@@ -51,14 +51,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < 3; i++) target[i] = float.IsNaN(target[i]) ? .5f : Mathf.Clamp01(target[i]);
                 if (observed != controller.Sim.S) { observed = controller.Sim.S; Axes = target; }
             }
-            Axes = Vector3.Lerp(Axes, target, 1 - Mathf.Exp(-Time.unscaledDeltaTime * 3));
+            if(GamePerformance.Low && Axes!=target)presentation?.DataChanged();
+            if (presentation != null ? !presentation.DrawDue(ref nextDraw) : now < nextDraw) return;
+            if (presentation == null) nextDraw = now + 1f / 15;
+            Axes = GamePerformance.Low?target:Vector3.Lerp(Axes, target, 1 - Mathf.Exp(-1f/15 * 3));
             float reveal = wallpaper.Reveal.Visible ? Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / 1.2f) : 0;
             canvasRenderer.SetAlpha(reveal * (presentation != null ? presentation.LightLevel : 1));
             // Integrate phase so toggling Quiet never jumps to another point in the wave.
-            if (controller.View?.Juice == null || !controller.View.Juice.Reduced)
-                Phase += Time.unscaledDeltaTime * (presentation != null ? presentation.MotionLevel : 1);
-            if (presentation != null ? !presentation.DrawDue(ref nextDraw) : now < nextDraw) return;
-            if (presentation == null) nextDraw = now + 1f / 30;
+            if (!GamePerformance.Low && (controller.View?.Juice == null || !controller.View.Juice.Reduced))
+                Phase += 1f/15 * (presentation != null ? presentation.MotionLevel : 1);
             SetVerticesDirty();
         }
 

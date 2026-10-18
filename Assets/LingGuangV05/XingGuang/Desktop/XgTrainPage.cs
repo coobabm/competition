@@ -61,6 +61,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Build(RectTransform area)
         {
             root = Rect("train", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var fileDrop = root.gameObject.AddComponent<XgFilesTrainDrop>();
+            fileDrop.CurrentSim = () => Sim;
+            fileDrop.TargetVisible = () => view.Visible && view.Tab == "train";
+            fileDrop.Notify = message => view.ShowToast(message, 3.5f);
+            fileDrop.RefreshView = () => view.Refresh(true);
+            var fileDropSurface = root.gameObject.AddComponent<Image>();
+            fileDropSurface.color = Color.clear; fileDropSurface.raycastTarget = true;
             // Keep the curve and training controls together; the source roll is always on their left.
             left = Rect("TrainingMain", root, Vector2.zero, Vector2.one, new Vector2(RightWidth + ColumnGap, 0), Vector2.zero);
             right = Rect("SourceSidebar", root, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(RightWidth, 0));
@@ -128,9 +135,9 @@ namespace LingGuangV05.Desktop.XingGuang
             train.label.alignment = TextAlignmentOptions.TopLeft;
             train.label.rectTransform.offsetMin = new Vector2(8, 34); train.label.rectTransform.offsetMax = new Vector2(-104, -8);
             train.label.enableAutoSizing = true; train.label.fontSizeMin = 15; train.label.fontSizeMax = 28;
-            trainSub = ui.Text(Rect("Sub", train.rt, Vector2.zero, new Vector2(1, 0), new Vector2(14, 8), new Vector2(-14, 30)), "", 13, Color.white, TextAlignmentOptions.BottomLeft);
+            trainSub = ui.Text(Rect("Sub", train.Visual, Vector2.zero, new Vector2(1, 0), new Vector2(14, 8), new Vector2(-14, 30)), "", 13, Color.white, TextAlignmentOptions.BottomLeft);
             trainSub.textWrappingMode = TextWrappingModes.NoWrap;
-            trainBill = ui.Text(Rect("Bill", train.rt, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-104, -44), new Vector2(-10, -8)), "", 14, XgDark.Money, TextAlignmentOptions.TopRight);
+            trainBill = ui.Text(Rect("Bill", train.Visual, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-104, -44), new Vector2(-10, -8)), "", 14, XgDark.Money, TextAlignmentOptions.TopRight);
             trainBill.textWrappingMode = TextWrappingModes.NoWrap;
             hold = train.rt.gameObject.AddComponent<XgHold>();
             hold.Down = () => Press();
@@ -149,9 +156,10 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildCard();
             BuildDiagnosis();
             BuildExam();
+            BuildTrainingSeals();
             for (int i = 0; i < 2; i++)
-                UiTip.Add(trackTabs[i].rt, "两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。", "The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.");
-            UiTip.Add(train.rt, () => T("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。",
+                UiTip.Add(trackTabs[i].rt, () => T(("两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。" .Replace("灵光", Sim.AiDisplayName)), ("The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds." .Replace("灵光", Sim.AiDisplayName))));
+            UiTip.Add(train.rt, () => T(("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。" .Replace("灵光", Sim.AiDisplayName)),
                 "Train one epoch: feed the model a batch of cards, then an exam on unseen cards.\nAn epoch here is a batch, not a pass over the whole dataset: the more data, the more epochs one pass takes (the model's note says how many passes so far).\nA new record is scored, saved and paid.\nThe price at the top right is what this round costs: this month's tiered rate, halved under off-peak power."));
             UiTip.Add(summary.rt, () => ModelTip());
             UiTip.Add(risk, () => RiskTip());
@@ -254,7 +262,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!view.Visible || view.Tab != "train") return;
             if ((XgTrack)e.track != Track) return;
             Fx.Knock(train.rt, .1f, new Vector2(0, -4));
-            Fx.Burst(Fx.At(gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
+            Fx.Burst(Fx.At(gpuTarget != null && gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
             Fx.Play(XgJuice.Sfx.Id.Fan, 1, .8f);
             Refresh();
         }
@@ -470,7 +478,7 @@ namespace LingGuangV05.Desktop.XingGuang
             train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) : Lang.T("先标够样本");
             RefreshBill(run, unlocked);
-            RefreshRates(run, unlocked);
+            RefreshRates(run, Sim.TrainPart("rate"));
             assess.Show(false);
 
             // The chance that the next round goes down, and the cards' heat (XgSim.AutoModel.cs, ChapterOneSim.Bills.cs).
@@ -524,7 +532,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The price of the next round, as the household's bills will take it (this month's tier, cuDNN trims the energy).</summary>
         void RefreshBill(XgRun run, bool unlocked)
         {
-            if (!unlocked || !(Host is XingGuangHost home) || !home.EconomyActive) { trainBill.text = ""; return; }
+            if (!unlocked || !(Host is XingGuangHost home)) { trainBill.text = ""; return; }
             double price = home.RoundPrice(XgSim.DurationFor(run), Sim.TrainPriceFactor, Sim.TrainEnergyFactor);
             trainBill.text = T("电费 ¥", "Power ¥") + N(price, price < 10 ? "0.0" : "0");
         }
@@ -662,15 +670,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 LingGuangV05.Desktop.Story.PrologueDirector.Desk?.Popup(Lang.T("摆渡云"),
                     T("正在下载《" + XgCatalog.Dataset(dataset).name + "》……走家里的" + XgSim.BroadbandName(Sim.BroadbandTier, false) + "（" + LineSpeed(Sim.LineMBps) + "），预计 " + N(Sim.DownloadLeft(dataset), "0") + " 秒。急用可以开摆渡云超级会员。",
                       "Downloading " + XgCatalog.Dataset(dataset).nameEn + "… over the home " + XgSim.BroadbandName(Sim.BroadbandTier, true) + " (" + LineSpeed(Sim.LineMBps) + "), about " + N(Sim.DownloadLeft(dataset), "0") + " s. Bodu Cloud super membership speeds it up."), 8);
-            Fx.Knock(gpuTarget, .12f, new Vector2(0, -8));
-            Fx.Shockwave(Fx.At(gpuTarget), XgDark.Accent, 150, .35f, 7);
-            Fx.Burst(Fx.At(gpuTarget), 20, XgDark.Gold, XgJuice.Shape.Spark, 220);
+            Fx.Knock(gpuTarget != null ? gpuTarget : train.rt, .12f, new Vector2(0, -8));
+            Fx.Shockwave(Fx.At(gpuTarget != null ? gpuTarget : train.rt), XgDark.Accent, 150, .35f, 7);
+            Fx.Burst(Fx.At(gpuTarget != null ? gpuTarget : train.rt), 20, XgDark.Gold, XgJuice.Shape.Spark, 220);
             Fx.Play(XgJuice.Sfx.Id.Clack, .7f, .7f); Fx.Play(XgJuice.Sfx.Id.Buzz, 1.8f, .25f);
             view.Refresh(true);
             return true;
         }
 
-        public void SetPackDragging(bool dragging) { gpuGlow.on = dragging; }
+        public void SetPackDragging(bool dragging) { if(gpuGlow != null) gpuGlow.on = dragging; }
 
         /// <summary>The home line's speed as a download dialog shows it: 250KB/s, 1.2MB/s.</summary>
         static string LineSpeed(double mbps) => mbps < 1 ? N(Math.Max(1, mbps * 1024), "0") + "KB/s" : N(mbps, mbps < 10 ? "0.#" : "0") + "MB/s";
@@ -751,6 +759,11 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgTrainPage Page;
         public void OnDrop(PointerEventData e)
         {
+            if (e.pointerDrag != null && e.pointerDrag.GetComponent<XgFilesRow>() != null)
+            {
+                GetComponentInParent<XgFilesTrainDrop>()?.OnDrop(e);
+                return;
+            }
             var drag = e.pointerDrag != null ? e.pointerDrag.GetComponent<XgDataPackDrag>() : null;
             if (drag != null && drag.Dragging && drag.Page == Page) Page.InstallPack(drag.Dataset);
         }

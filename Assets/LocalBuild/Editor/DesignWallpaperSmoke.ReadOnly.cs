@@ -25,9 +25,9 @@ public static partial class DesignWallpaperSmoke
                 break;
             case 1:
                 Check(concepts.Cells.Count > 0, "Read-only view contains actual learned concepts");
-                Check(brain.GetComponent<XgBrainWallpaperPresentation>().Showcase, "Read-only input test has an uncovered desktop");
+                Check(brain.GetComponent<XgBrainWallpaperPresentation>().Showcase, "Read-only input test uses visible purchased brain window");
                 foreach (var component in brain.GetComponentsInChildren<MonoBehaviour>(true))
-                    Check(!(component is IDragHandler) && !(component is IDropHandler), "Wallpaper has no editing drag/drop handler: " + component.GetType().Name);
+                    Check(!(component is IDragHandler) && !(component is IDropHandler), "Brain drawing has no concept-editing drag/drop handler: " + component.GetType().Name);
                 Check(concepts.TryLocalPosition(concepts.Cells[0].id, out var point), "Learned concept is located");
                 var source = bridge.sourceCamera.WorldToScreenPoint(concepts.transform.TransformPoint(point));
                 readOnlyStart = new Vector2(source.x * Screen.width / bridge.sourceCamera.targetTexture.width,
@@ -56,6 +56,10 @@ public static partial class DesignWallpaperSmoke
                 controller.StartCoroutine(CaptureRendered("wallpaper-readonly"));
                 break;
             case 5:
+                var beforeMove=purchasedBrain.Window.anchoredPosition;
+                purchasedBrain.MoveResize(new Vector2(-30,25),false);
+                Check(purchasedBrain.Window.anchoredPosition!=beforeMove,"Read-only drawing still permits moving its enclosing window");
+                Check(JsonUtility.ToJson(controller.Sim.S.board)==readOnlyBoard,"Window movement does not edit learned concepts");
                 File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
         }
     }

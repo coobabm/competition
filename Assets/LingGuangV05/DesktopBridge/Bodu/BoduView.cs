@@ -201,6 +201,7 @@ namespace LingGuangV05.Desktop.Bodu
             NewScroll();
             var today = s != null ? GameCalendar.Now(s).Date : GameCalendar.Start.Date;
             if (page == "home") Home(today, lab);
+            else if (page == "news" || page == "news.archive") DataNewsPage(today, page == "news.archive");
             else if (page == "artwork") ArtworkCredits();
             else if (page == "number") Number(today, lab);
             else if (page == "santi") Santi();
@@ -250,7 +251,7 @@ namespace LingGuangV05.Desktop.Bodu
 
         void Home(DateTime today, XgSim lab)
         {
-            Line(T("<u>配图来源与说明</u>", "<u>Image credits and notes</u>"), 13, Muted, () => { page = "artwork"; signature = ""; });
+            Line(T("<u>制作致谢与素材来源</u>", "<u>Credits and asset sources</u>"), 13, Muted, () => { page = "artwork"; signature = ""; });
             if (DesktopArt.Picture("news_banner") != null)
             {
                 var banner = PrologueDesk.Rect("NewsBanner", content, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
@@ -260,12 +261,7 @@ namespace LingGuangV05.Desktop.Bodu
                 Text(PrologueDesk.Rect("Caption", banner, Vector2.zero, Vector2.one, new Vector2(156, 0), Vector2.zero), Lang.T("看见世界的每一天\n<size=12>配图 · 非新闻现场照片</size>"), 21, Blue, TextAlignmentOptions.MidlineLeft);
             }
             Line("<b>" + Lang.T("摆渡新闻") + "</b>  <size=14><color=#787878>" + today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture) + "</color></size>", 22, Ink);
-            int n = 0;
-            foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
-            {
-                if (n++ >= 10) break;
-                NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>" + (e.text.Length > 0 ? "\n<size=14><color=#555555>" + EraContent.Text(e) + "</color></size>" : "") + "\n<size=12><color=#787878>" + Date(e.date) + "</color></size>", "news_" + e.id);
-            }
+            DataNewsHome(today);
             // 淘货 is not on the desktop before it opens (stage 2): the front page does not advertise it either.
             var shop = EraContent.Events.Visible(EraEvents.Taobao, today);
             if (shop.Count > 0 && lab != null && lab.S.stage >= LingGuangV05.Desktop.Taohuo.TaohuoView.OpenStage)
@@ -279,6 +275,18 @@ namespace LingGuangV05.Desktop.Bodu
         void ArtworkCredits()
         {
             Line(T("<u>返回新闻</u>", "<u>Back to news</u>"), 16, Blue, () => { page = "home"; signature = ""; });
+            Line(T("制作致谢", "Credits"), 24, Ink);
+            Line(T("感谢 Lichess 及其社区提供公开国际象棋题库。", "Thanks to Lichess and its community for the public chess puzzle database."), 16, Ink);
+            Line("Lichess puzzle database · CC0 1.0 Universal", 14, Ink);
+            Line("https://database.lichess.org/#puzzles", 13, Blue);
+            Line("https://creativecommons.org/publicdomain/zero/1.0/", 13, Blue);
+            Line(T("字体致谢", "Font credits"), 21, Ink);
+            Line(T("本游戏使用 MiSans 字体。", "This game uses MiSans fonts."), 16, Ink);
+            var fontCredits = Resources.Load<TextAsset>("LingGuangV05/Fonts/UiV4/FONT_CREDITS");
+            if (fontCredits != null)
+                foreach (string entry in fontCredits.text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries))
+                    Line(entry, 13, Ink).richText = false;
+            Line(T("配图来源与说明", "Image credits and notes"), 21, Ink);
             var credits = Resources.Load<TextAsset>("LingGuangV05/Media/PHOTO_CREDITS");
             string text = credits != null ? credits.text : T("来源文件暂不可用。", "Credits are not available.");
             foreach (string entry in text.Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries))
@@ -300,8 +308,8 @@ namespace LingGuangV05.Desktop.Bodu
                 Line("<color=#1A0DAB><u>" + Lang.T("三体 · 游戏登录") + "</u></color>\n<size=13><color=#787878>" + Lang.T("需要 V 装备与邀请码。") + "</color></size>", 18, Ink, () => { page = "santi"; signature = ""; });
             }
             int found = 0;
-            foreach (var e in EraContent.Events.Visible(EraEvents.News, today))
-                if (Matches(EraContent.Title(e) + EraContent.Text(e)) && found++ < 10) NewsRow("<color=#1A0DAB>" + EraContent.Title(e) + "</color>\n<size=12><color=#787878>" + Lang.T("摆渡新闻") + " · " + Date(e.date) + "</color></size>", "news_" + e.id);
+            foreach (var article in AvailableNews(today))
+                if (Matches(T(article.title, article.titleEn) + T(article.body ?? "", article.bodyEn ?? "")) && found++ < 10) DataNewsRow(article);
             var hub = TiebaHub.Instance;
             if (hub != null)
                 foreach (var t in hub.Library.Threads)

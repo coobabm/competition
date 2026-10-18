@@ -22,6 +22,8 @@ namespace LingGuangV05.Desktop.XingGuang
     [DisallowMultipleComponent]
     public sealed class XingGuangController : MonoBehaviour, IDesktopAppView
     {
+        public static XingGuangController Instance { get; private set; }
+        void Awake() { Instance = this; }
         public const string AppId = "lingguang";
         /// <summary>摆渡众包 (DesktopBridge/Zhongbao): it hosts the 标注台 and 订单 pages against this controller's Sim.</summary>
         public const string CrowdAppId = "zhongbao";
@@ -71,6 +73,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Initialize()
         {
+            Instance = this;
             if (initialized || runtime == null) return;
             initialized = true;
             runtime.EnsureInitialized();
@@ -85,7 +88,10 @@ namespace LingGuangV05.Desktop.XingGuang
             TakeOverWindow();
             AiDesktopIdentity.Attach(runtime);
             DesktopWindowDefaults.Attach(runtime);
-            XgBrainWallpaper.Install(this);
+            LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
+            LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
+            XgBrainWindow.Install(this);
+            XgStageCurtain.Install(this);
             SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
@@ -120,7 +126,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
-            if (sim != null) sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+            if (sim != null) sim.PowerCostsEnabled = true;
             // A new game starts with the first-minutes focus (only 常识判断 and training, XgSim.Opening.cs); a loaded save is left as it is.
             if (state == null) Sim.BeginOpening();
             // The save's own date, before any catch-up tick reads the calendar.
@@ -166,21 +172,29 @@ namespace LingGuangV05.Desktop.XingGuang
             SyncProfile(runtime.Sim.S);
         }
 
+        static readonly Unity.Profiling.ProfilerMarker ProfileCalendar = new Unity.Profiling.ProfilerMarker("Xg.Controller.CalendarProfile");
+        static readonly Unity.Profiling.ProfilerMarker ProfileBrain = new Unity.Profiling.ProfilerMarker("Xg.Controller.BrainTick");
+        static readonly Unity.Profiling.ProfilerMarker ProfileSim = new Unity.Profiling.ProfilerMarker("Xg.Controller.SimTick");
+        static readonly Unity.Profiling.ProfilerMarker ProfileOpening = new Unity.Profiling.ProfilerMarker("Xg.Controller.OpeningVoice");
+        static readonly Unity.Profiling.ProfilerMarker ProfileProgress = new Unity.Profiling.ProfilerMarker("Xg.Controller.ProgressEvents");
+        static readonly Unity.Profiling.ProfilerMarker ProfileChapter = new Unity.Profiling.ProfilerMarker("Xg.Controller.ChapterCaptureSave");
+        float nextOpeningVoiceCheck;
+
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
-            LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
             if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen) return;
-            LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
             Sim.English = GameText.IsEnglish;
-            runtime.Sim.PowerCostsEnabled = Sim.SystemUnlocked("power");
+            runtime.Sim.PowerCostsEnabled = true;
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
-            // The rent holiday: nothing is charged until 灵光 learns its third ability (ChapterOneSim.Bills.cs).
+            // Rent starts at its existing milestone; electricity is charged from the start.
             if (runtime.Sim.RentWaived == null) runtime.Sim.RentWaived = () => Sim == null || Sim.AbilitiesCount < XgSim.RentFromAbility;
             // 实验室的旧服务器钥匙 (a relic) cuts the rent; the sim answers it again every tick.
             if (runtime.Sim.RentFactor == null) runtime.Sim.RentFactor = () => Sim == null ? 1 : Sim.RelicRentFactor;
             // The 2016 calendar follows the lab (design v1.1 §11.7): the prologue day until 灵光 is installed, then
             // the stage's month at its progress. It reads progress and never holds anything back.
+            using (ProfileCalendar.Auto())
+            {
             if (runtime.Sim.AppInstalled && !runtime.Sim.InPrologue)
             {
                 GameCalendar.Advance(runtime.Sim.S, GameCalendar.DayFor(Sim.S.stage, Sim.MonthProgress));
@@ -189,21 +203,40 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (Sim.S.ending.Length > 0) GameCalendar.NewYear(runtime.Sim.S);
                 SyncProfile(runtime.Sim.S);
             }
+            }
             Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(runtime.Sim.S));
             Sim.Clock = runtime.Sim.S.gameSeconds;
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
-            if (brain != null) brain.TickBeforeSimulation();
-            Sim.Tick(dt, Host);
-            // The opening's doubts and its first glimpse that it learns (XgSim.Primer.cs).
-            if (!runtime.Sim.InPrologue)
-                foreach (var line in Sim.OpeningVoice()) LingGuangV05.Desktop.Story.InnerVoice.Say(line.zh, line.en, line.seconds);
+            if(brain!=null)brain.Suspend(Sim.StagePresentationHeld);
+            if(!Sim.StagePresentationHeld)
+            {
+                using (ProfileBrain.Auto()) { if (brain != null) brain.TickBeforeSimulation(); }
+                using (ProfileSim.Auto()) { Sim.Tick(dt, Host); }
+            }
+            // The twelve-question opening is narrated by StageOneTutor. Legacy saves retain the upstream
+            // doubts, checked at most twice a second and never over an exclusive presentation.
+            if (!Sim.S.teachingFlow && !Sim.StagePresentationHeld && !runtime.Sim.InPrologue
+                && Time.unscaledTime >= nextOpeningVoiceCheck
+                && !LingGuangV05.Desktop.Story.InnerVoice.Busy && !StoryFocus.Active)
+            {
+                nextOpeningVoiceCheck = Time.unscaledTime + .5f;
+                using (ProfileOpening.Auto())
+                {
+                var openingLines = Sim.OpeningVoice();
+                foreach (var line in openingLines) LingGuangV05.Desktop.Story.InnerVoice.Say(line.zh, line.en, line.seconds);
+                if (openingLines.Count > 0) runtime.MarkDirty();
+                }
+            }
             // 《灵光记》 (XgSim.Chronicle.cs): the rent the lab cannot see for itself.
             if (runtime.Sim.Debt > 0 || runtime.Sim.S.debtDays > 0) Sim.NoteChronicle("rent.late");
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;
-            RaiseProgress();
+            using (ProfileProgress.Auto()) { RaiseProgress(); }
+            using (ProfileChapter.Auto())
+            {
             if (capturedChapter != Sim.S.stage && runtime.CaptureChapter(Sim.S.stage)) capturedChapter = Sim.S.stage;
             // A new stage is written at once: a crash or a killed process must not take a chapter back.
             if (Sim.S.stage != savedStage && unreadableLab == null && !runtime.TestMode && runtime.SaveNow()) savedStage = Sim.S.stage;
+            }
             UnreadableNotice();
             // Training, income and auto-answers change the lab every frame; the runtime autosaves every AutosaveSeconds.
             sinceSave += dt;
@@ -221,21 +254,31 @@ namespace LingGuangV05.Desktop.XingGuang
                 "Lingguang's progress could not be read. The old progress is kept untouched and a copy is in the save folder. Lab progress in this session will not be saved."), 12);
         }
 
-        string profileSignature = "";
+        string profileName,profileSelf,profileCall,profilePersonality;
+        double profileWarmth,profilePlay,profileOpinion;
+        bool profileEnglish;
+        readonly List<string> profileWords=new List<string>();
+        bool ProfileMatches(GameState s)
+        {
+            if(!ReferenceEquals(profiled,Sim)||profileEnglish!=GameText.IsEnglish||profileName!=s.aiName||profileSelf!=s.aiSelf||profileCall!=s.aiCallMe||profilePersonality!=s.personality||profileWarmth!=s.targetWarmth||profilePlay!=s.targetPlay||profileOpinion!=s.targetOpinion)return false;
+            int count=s.toneWords?.Count??0;if(profileWords.Count!=count)return false;
+            for(int i=0;i<count;i++)if(profileWords[i]!=s.toneWords[i])return false;
+            return true;
+        }
         XgSim profiled;
 
         /// <summary>The opening setup (saved in GameState) is what the lab's personality reads (design v1.1 §11.4).</summary>
         void SyncProfile(GameState s)
         {
-            string signature = s.aiName + "|" + s.aiSelf + "|" + s.aiCallMe + "|" + s.personality + "|" + s.targetWarmth + "|" + s.targetPlay + "|" + s.targetOpinion + "|" + string.Join(",", s.toneWords ?? new System.Collections.Generic.List<string>());
-            // A reloaded or reset lab is a new XgSim: it needs the profile too.
-            if (signature == profileSignature && ReferenceEquals(profiled, Sim)) return;
-            profileSignature = signature; profiled = Sim;
+            // Compare saved values directly: no per-frame concatenation, numeric formatting or Join.
+            if(ProfileMatches(s))return;
+            profiled=Sim;profileEnglish=GameText.IsEnglish;profileName=s.aiName;profileSelf=s.aiSelf;profileCall=s.aiCallMe;profilePersonality=s.personality;
+            profileWarmth=s.targetWarmth;profilePlay=s.targetPlay;profileOpinion=s.targetOpinion;profileWords.Clear();if(s.toneWords!=null)profileWords.AddRange(s.toneWords);
             Sim.Profile = new XgProfile
             {
                 name = s.aiName == "the code" ? "" : AppNames.PersonalName(s.aiName, GameText.IsEnglish), self = s.aiSelf.Length > 0 ? s.aiSelf : "我", callMe = s.aiCallMe.Length > 0 ? s.aiCallMe : "你",
                 personality = s.personality, warmth = s.targetWarmth, play = s.targetPlay, opinion = s.targetOpinion,
-                words = new System.Collections.Generic.List<string>(s.toneWords ?? new System.Collections.Generic.List<string>()),
+                words = new List<string>(profileWords),
             };
             ApplyShellText();
             if (!Sim.S.personaSeeded && s.prologue == 2) { Sim.S.personaSeeded = true; Sim.SeedPersonality(); }
@@ -271,6 +314,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDestroy()
         {
+            if (Instance == this) Instance = null;
             if (runtime != null) { runtime.Changed -= OnRuntimeChanged; runtime.Saving -= WriteToSave; }
             GameText.Changed -= ApplyShellText;
         }

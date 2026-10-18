@@ -10,23 +10,28 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public const string BackingName = "Opaque App Backing";
         float next;
+        Transform appWindows;
+        int childCount = -1;
 
-        void Start() { RefreshWindows(); }
+        void Start() { appWindows = transform.parent.Find("Apps & Windows"); RefreshWindows(); }
 
         void LateUpdate()
         {
             if (Time.unscaledTime < next) return;
-            next = Time.unscaledTime + .1f;
+            next = Time.unscaledTime + .5f;
+            if (appWindows == null) appWindows = transform.parent.Find("Apps & Windows");
+            if (appWindows == null || appWindows.childCount == childCount) return;
             RefreshWindows();
         }
 
         void RefreshWindows()
         {
             // Prepare inactive windows too, so their first open frame already has a solid base.
-            foreach (var window in FindObjectsByType<WindowManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                if (window.transform.IsChildOf(transform.parent)) EnsureOpaque(window.windowContainer);
-            var windows = transform.parent.Find("Apps & Windows");
+            foreach (var window in transform.parent.GetComponentsInChildren<WindowManager>(true))
+                EnsureOpaque(window.windowContainer);
+            var windows = appWindows;
             if (windows == null) return;
+            childCount = windows.childCount;
             foreach (Transform child in windows)
                 if (child.Find("Title") != null && child.Find("Client") != null)
                     EnsureOpaque(child as RectTransform);

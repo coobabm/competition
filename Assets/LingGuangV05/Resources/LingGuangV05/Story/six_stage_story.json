@@ -546,40 +546,32 @@
       "priority": 65,
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "six_aj_choice"
         },
         {
-          "op": "waitSignal",
-          "ev": "story.delivered:specialty_motivation"
+          "op": "wait",
+          "seconds": 3
         },
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "six_xg_choice"
         },
         {
-          "op": "waitSignal",
-          "ev": "story.delivered:specialty_motivation"
+          "op": "wait",
+          "seconds": 3
         },
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "s2_choice_ask"
         },
         {
-          "op": "waitSignal",
-          "ev": "story.delivered:specialty_motivation"
+          "op": "wait",
+          "seconds": 3
         },
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "s2_choice_pick"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:specialty_motivation"
         }
       ]
     },
@@ -589,13 +581,8 @@
       "priority": 35,
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "six_captcha"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:aj_captcha"
         }
       ],
       "when": [
@@ -609,13 +596,8 @@
       "priority": 35,
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "six_meme"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:netbar_meme"
         }
       ],
       "when": [
@@ -629,13 +611,8 @@
       "priority": 35,
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "six_poems"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:xz_poems"
         }
       ],
       "when": [
@@ -725,22 +702,16 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "s2_name_quiz"
         },
         {
-          "op": "waitSignal",
-          "ev": "story.delivered:s2_name"
+          "op": "wait",
+          "seconds": 3
         },
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "s2_name_pick"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:s2_name"
         }
       ]
     },
@@ -754,13 +725,8 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "who": "netbar",
+          "op": "think",
           "key": "s2_moved"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:s2_moved"
         }
       ]
     },

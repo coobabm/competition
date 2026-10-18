@@ -82,8 +82,8 @@ namespace LingGuangV05.Desktop
             buy.onClick.AddListener(Upgrade);
             buyLabel = Text(PrologueDesk.Rect("Label", b, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), 15, Color.white);
             buyLabel.alignment = TextAlignmentOptions.Center;
-            UiTip.Add(card, "下载数据走家里的宽带：线越快，数据页的下载队列走得越快。月租每月 1 号从家里余额扣。灵光「数据」页顶部的「升级宽带」按钮买的是同一条线。",
-                "Data comes down the home line: the faster it is, the faster the data page's queue moves. The fee is charged on the 1st of each month. The Upgrade line button at the top of 灵光's Data page buys the same line.");
+            UiTip.Add(card, "科技里的数据包买完直接出现在「教」。宽带承载贴吧回复中的资料下载；月租每月 1 号从家里余额扣。",
+                "Data packs bought in Tech appear immediately in Teach. Broadband handles files linked in forum replies; its fee is charged on the 1st of each month.");
             Refresh();
         }
 

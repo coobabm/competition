@@ -45,6 +45,11 @@ namespace LingGuangV05.Desktop.XingGuang
         XgTinyCurve curve;
         readonly Queue<XgTinyLesson> pending = new Queue<XgTinyLesson>();
         XgTinyRun run;
+        bool stageHosted;int hostedStage;Transform normalParent;
+        public void BeginStageDemo(RectTransform target,int stage){EndStageDemo();normalParent=panel.parent;stageHosted=true;hostedStage=stage;panel.SetParent(target,false);Begin(stage==2?XgTinyLesson.XorPerceptron:stage==3?XgTinyLesson.Zero:XgTinyLesson.Microscope);panel.anchorMin=panel.anchorMax=new Vector2(.5f,.5f);panel.pivot=new Vector2(.5f,.5f);panel.sizeDelta=new Vector2(stage>3?MicroW:W,stage>3?MicroH:H);panel.anchoredPosition=new Vector2(0,25);panel.localScale=Vector3.one*1.18f;skip.rt.gameObject.SetActive(false);}
+        public void TickStageDemo(){if(stageHosted)Update();}
+        public void EndStageDemo(){if(!stageHosted)return;stageHosted=false;panel.gameObject.SetActive(false);panel.SetParent(normalParent,false);panel.anchorMin=panel.anchorMax=new Vector2(1,0);panel.pivot=new Vector2(.5f,.5f);panel.localScale=Vector3.one;skip.rt.gameObject.SetActive(true);run=null;}
+
         float budget, doneAt = -1, closeAt = -1;
         // The microscope.
         RectTransform storyRoot, microRoot;
@@ -210,8 +215,8 @@ namespace LingGuangV05.Desktop.XingGuang
             bound = null;
         }
 
-        void OnStageAdvanced(int from) { if (from == 1) { Show(XgTinyLesson.XorPerceptron); Show(XgTinyLesson.XorMlp); } }
-        void OnEmerged(int stage, string line) { if (stage == 2) Show(XgTinyLesson.Zero); }
+        void OnStageAdvanced(int from) { /* The stage curtain owns these demonstrations. */ }
+        void OnEmerged(int stage, string line) { /* The stage curtain owns the zero demonstration. */ }
 
         void Skip() { if (Showing && closeAt < 0) closeAt = Time.unscaledTime; }
 
@@ -292,10 +297,10 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (!Showing)
             {
-                if (pending.Count > 0 && view.Visible && !InsightCardUp) Begin(pending.Dequeue());
+                if (pending.Count > 0 && view.Visible && !InsightCardUp && !StoryFocus.Active) Begin(pending.Dequeue());
                 return;
             }
-            if (!view.Visible) return; // paused while the window is hidden
+            if (!stageHosted && (!view.Visible || StoryFocus.Exclusive)) return; // hosted demo is independent of the exe window
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
             if (closeAt >= 0)
             {
@@ -314,7 +319,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (run.Done) { doneAt = now; view.Juice.Play(run.lesson == XgTinyLesson.XorPerceptron ? XgJuice.Sfx.Id.Thud : XgJuice.Sfx.Id.Fanfare, 1, .5f); }
                 Refresh();
             }
-            else if (doneAt >= 0 && now - doneAt > LingerSeconds) closeAt = now;
+            else if(stageHosted&&hostedStage==2&&run.lesson==XgTinyLesson.XorPerceptron&&now-doneAt>.8f){var parent=panel.parent as RectTransform;BeginStageDemo(parent,2);Begin(XgTinyLesson.XorMlp);panel.anchorMin=panel.anchorMax=new Vector2(.5f,.5f);panel.sizeDelta=new Vector2(W,H);panel.anchoredPosition=new Vector2(0,25);}
+            else if (!stageHosted && doneAt >= 0 && now - doneAt > LingerSeconds) closeAt = now;
         }
 
         void UpdateMicroscope(float now, float dt)
@@ -326,7 +332,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (n > 0) { budget -= n; run.Step(n); microCurve.Changed(); }
                 if (run.Done) { doneAt = now; view.Juice.Play(XgJuice.Sfx.Id.Fanfare, 1, .35f); }
             }
-            else if (doneAt >= 0 && now - doneAt > MicroLinger) { closeAt = now; return; }
+            else if (!stageHosted && doneAt >= 0 && now - doneAt > MicroLinger) { closeAt = now; return; }
             RefreshMicroscope(dt);
         }
 

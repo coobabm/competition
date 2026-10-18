@@ -63,7 +63,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     sb.Append(Lang.T("便宜量大，但标错很多：单独用会拉低准确率。研究树的「数据清洗」能把标错减半。"));
                     break;
                 case XgDataSource.Crowd: sb.Append(Lang.T("相当于雇人坐标注台：按条付钱，一直流入，少量标错。钱不够会自动下架。")); break;
-                case XgDataSource.Story: sb.Append(Lang.T("要靠关系才拿得到的干净数据。")); break;
+                case XgDataSource.Story: sb.Append(T("市面上买不到的干净数据：得自己去贴吧发帖求，有人回帖才拿得到。", "Clean data you cannot buy: post a request on the forum yourself and wait for a reply.")); break;
                 case XgDataSource.Crawl:
                     sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回来，时间到或抓满为止；中途收工也留下已经抓到的。" + sim.ReadRuleText() + "（越往后的阶段越多），计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛走到的词也这样算，不用花钱；书架上读的书，一个字也这样算。",
                         "Paid per run: every word the crawler steps on comes back until time is up or the run is full; stopping early keeps what it grabbed. " + sim.ReadRuleText() + " (more in the later stages), toward the data total; a few adverts and typos count as wrong labels. Words the resident spider walks over count the same way, for free, and so does every character of a book on the shelf."));

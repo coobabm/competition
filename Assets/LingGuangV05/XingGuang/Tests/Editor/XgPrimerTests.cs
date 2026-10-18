@@ -25,6 +25,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void HeDoubtsFirstAndOnlyThenGlimpsesThatItLearns()
         {
             var sim = Opening();
+            sim.S.teachingFlow = false; // Only legacy openings use these lines.
             Assert.That(sim.OpeningVoice(), Is.Empty, "nothing before the first card");
             Cards(sim, 1);
             var what = sim.OpeningVoice();
@@ -36,6 +37,20 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.OpeningVoice(), Is.Empty, "no glimpse while it still guesses");
             foreach (var line in what) Assert.That(line.en, Is.Not.Empty);
             foreach (var line in what) Assert.That(line.zh + line.en, Does.Not.Contain("灵光").And.Not.Contain("涌现"));
+        }
+
+        [Test]
+        public void TwelveQuestionOpeningKeepsItsOwnNarrationAndAllocatesNoEmptyLists()
+        {
+            var sim = Opening();
+            Cards(sim, 12);
+            var first = sim.OpeningVoice();
+            Assert.That(first, Is.Empty);
+            Assert.That(sim.OpeningVoice(), Is.SameAs(first));
+            Assert.That(sim.S.openingVoiceWhat || sim.S.openingVoiceTrain || sim.S.openingVoiceGlimpse, Is.False);
+            sim.S.teachingFlow = false;
+            sim.S.openingFocus = false;
+            Assert.That(sim.OpeningVoice(), Is.SameAs(first));
         }
 
         [Test]

@@ -58,6 +58,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 caption = ui.Text(Rect("Caption", cell, new Vector2(0, .5f), Vector2.one, new Vector2(0, 1), new Vector2(0, -6)), "", 12, XgDark.Muted, TextAlignmentOptions.BottomRight);
                 caption.textWrappingMode = TextWrappingModes.NoWrap;
                 var value = ui.Text(Rect("Value", cell, Vector2.zero, new Vector2(1, .5f), new Vector2(0, 5), new Vector2(0, -1)), "", 14, ink, TextAlignmentOptions.TopRight);
+                if (XgUiV4Fonts.Numbers != null) { value.font = XgUiV4Fonts.Numbers; value.fontFeatures.Clear(); }
                 value.textWrappingMode = TextWrappingModes.NoWrap;
                 return value;
             }
@@ -65,6 +66,8 @@ namespace LingGuangV05.Desktop.XingGuang
             statPower = Stat("Chip2", 96, XgDark.Ink, out var powerCaption, out var powerCell);
             statIncome = Stat("Chip1", 74, XgDark.Good, out var incomeCaption, out var incomeCell);
             statMoney = Stat("Chip0", 98, XgDark.Money, out var moneyCaption, out moneyRect);
+            BuildLedgerWarning(stats);
+            moneyTextReady=false;
             moneyCaption.text = "¥";
             incomeCaption.text = T("收入/秒", "income/s");
             powerCaption.text = T("电力", "power");
@@ -97,6 +100,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 label = ui.Text(Rect("Label", row, Vector2.zero, new Vector2(0, 0), new Vector2(0, 11), new Vector2(64, 29)), "", 13, XgDark.Muted, TextAlignmentOptions.BottomLeft);
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 value = ui.Text(Rect("Value", row, Vector2.zero, new Vector2(1, 0), new Vector2(64, 11), new Vector2(0, 29)), "", 13, XgDark.Ink, TextAlignmentOptions.BottomRight);
+                if (XgUiV4Fonts.Numbers != null) { value.font = XgUiV4Fonts.Numbers; value.fontFeatures.Clear(); }
                 value.textWrappingMode = TextWrappingModes.NoWrap; value.overflowMode = TextOverflowModes.Ellipsis;
                 var track = Rect("Track", row, Vector2.zero, new Vector2(1, 0), new Vector2(0, 6), new Vector2(0, 10));
                 return Bar(track, "Fill", XgDark.Track, fill);
@@ -137,7 +141,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (next == 0)
             {
                 nextHead.text = T("六项都有了", "All six learned");
-                paramsValue.text = XgSim.ParamsText(p); dataValue.text = XgSim.SamplesText(d);
+                paramsValue.text = XgUiV4Fonts.FixedDigits(XgSim.ParamsText(p)); dataValue.text = XgUiV4Fonts.FixedDigits(XgSim.SamplesText(d));
                 SetBar(paramsFill, 1); SetBar(dataFill, 1);
                 barStep = null; goButton.gameObject.SetActive(false);
             }
@@ -145,8 +149,8 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 nextHead.text = T("下一项能力 · ", "Next ability · ") + XgSim.AbilityName(next, Sim.English);
                 // The line is hidden (XgSim.Learned.cs): the bars say how much is trained, and 「?」 until a bar is past it.
-                paramsValue.text = XgSim.ParamsText(p) + " · " + Sim.ParamsLineText(next);
-                dataValue.text = XgSim.SamplesText(d) + " · " + Sim.SamplesLineText(next);
+                paramsValue.text = XgUiV4Fonts.FixedDigits(XgSim.ParamsText(p) + " · " + Sim.ParamsLineText(next));
+                dataValue.text = XgUiV4Fonts.FixedDigits(XgSim.SamplesText(d) + " · " + Sim.SamplesLineText(next));
                 SetBar(paramsFill, (float)Sim.ParamsFill);
                 SetBar(dataFill, (float)Sim.SamplesFill);
                 // The step behind the link is planned a couple of times a second, not every refresh.
@@ -154,18 +158,19 @@ namespace LingGuangV05.Desktop.XingGuang
                 goButton.gameObject.SetActive(barStep != null);
                 goLabel.text = T("去做 ›", "Do it ›");
             }
-            if (shownMoney < 0) statMoney.text = Money(Host.Money);
-            statIncome.text = "+" + Money(IncomeRate);
+            if (shownMoney < 0) ApplyMoneyText(Host.Money);
+            statIncome.text = XgUiV4Fonts.FixedDigits("+" + Money(IncomeRate));
             var w = Sim.Wiring;
             double watts = w != null ? w.psuW : 0, limit = w != null && w.psuLimit > 0 ? w.psuLimit : 3500;
-            statPower.text = Sim.SystemUnlocked("power") ? N(watts, "0") + "/" + N(limit, "0") + "W" : T("教学期免费", "Free while learning");
+            statPower.text = N(watts, "0") + "/" + N(limit, "0") + "W";
             statPower.color = w != null && w.tripped || watts > limit ? XgDark.Bad : watts > limit * .85 ? XgDark.Hot : XgDark.Ink;
+            RefreshLedgerVisibility();
             var rt = controller.runtime;
             if (rt != null && rt.Sim != null)
             {
                 var now = GameCalendar.Now(rt.Sim.S);
                 statYear.text = now.Year.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                statClock.text = now.ToString("MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                statClock.text = XgUiV4Fonts.FixedDigits(now.ToString("MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture));
             }
         }
 
@@ -196,6 +201,15 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         float orbTime;
+        bool moneyTextReady,moneyTextEnglish;
+        double moneyTextValue;
+        void ApplyMoneyText(double amount)
+        {
+            bool english=En;
+            if(moneyTextReady&&moneyTextValue.Equals(amount)&&moneyTextEnglish==english)return;
+            moneyTextValue=amount;moneyTextEnglish=english;moneyTextReady=true;
+            statMoney.text=XgUiV4Fonts.FixedDigits(Money(amount));
+        }
 
         void TickTopBar(float dt)
         {
@@ -213,7 +227,7 @@ namespace LingGuangV05.Desktop.XingGuang
             double before = shownMoney;
             shownMoney += (money - shownMoney) * (1 - Math.Exp(-10 * dt));
             if (Math.Abs(money - shownMoney) < .005) shownMoney = money;
-            statMoney.text = Money(shownMoney);
+            ApplyMoneyText(shownMoney);
             statMoney.color = money > before + .004 ? new Color32(255, 230, 160, 255) : (Color)XgDark.Money;
         }
 
@@ -232,7 +246,8 @@ namespace LingGuangV05.Desktop.XingGuang
             public string id;
             public RectTransform rt;
             public Image back, accent, icon;
-            public TMP_Text label, badge;
+            public TMP_Text label, badge, lockedHint;
+            public RectTransform lockIcon;
             public Button button;
             public bool hover;
         }
@@ -249,7 +264,7 @@ namespace LingGuangV05.Desktop.XingGuang
         const float NavRowHeight = 27, NavGroupHeight = 26;
         readonly Dictionary<string, NavRow> navRows = new Dictionary<string, NavRow>();
         readonly List<TMP_Text> navGroupLabels = new List<TMP_Text>();
-        RectTransform nav, crowdLink;
+        RectTransform nav, navMenu, crowdLink;
         TMP_Text crowdTitle, crowdSub;
         XgBtn soundToggle, fxToggle, residentToggle, residentRecall;
 
@@ -258,6 +273,7 @@ namespace LingGuangV05.Desktop.XingGuang
             nav = Rect("Nav", root, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(NavWidth, -TopBarHeight));
             Panel(nav, XgDark.Panel);
             Panel(Rect("Rule", nav, new Vector2(1, 0), Vector2.one, new Vector2(-1, 0), Vector2.zero), XgDark.Hairline).raycastTarget = false;
+            navMenu=Rect("NavigationArea",nav,Vector2.zero,Vector2.one,new Vector2(8,120),new Vector2(-8,-8));
             foreach (var g in NavGroups)
             {
                 var label = ui.Text(Rect("Group", nav, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero), "", 12, XgDark.Dim, TextAlignmentOptions.BottomLeft);
@@ -267,7 +283,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
 
             // 摆渡众包: labelling, orders and the combo live there.
-            crowdLink = Rect("CrowdLink", nav, Vector2.zero, new Vector2(1, 0), new Vector2(10, 120), new Vector2(-10, 168));
+            crowdLink = Rect("CrowdLink", nav, Vector2.zero, new Vector2(1, 0), new Vector2(8,84), new Vector2(-8,108));
             var face = Panel(crowdLink, XgDark.Panel);
             var rim = crowdLink.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var hover = crowdLink.gameObject.AddComponent<XgHoverRim>(); hover.rim = rim; hover.rest = XgDark.Line; hover.hot = XgDark.Link; hover.Apply();
@@ -278,35 +294,46 @@ namespace LingGuangV05.Desktop.XingGuang
             crowdTitle.textWrappingMode = TextWrappingModes.NoWrap;
             crowdSub = ui.Text(Rect("Sub", crowdLink, Vector2.zero, new Vector2(1, .5f), new Vector2(4, 3), new Vector2(-4, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.Top);
             crowdSub.textWrappingMode = TextWrappingModes.NoWrap; crowdSub.overflowMode = TextOverflowModes.Ellipsis;
-            UiTip.Add(crowdLink, "打开 YY，直接输入想对灵光说的话。教完或训练后，再问问它，看看回答有什么变化。", "Open YY and type freely. After teaching or training, ask it again and see how its answers change.");
+            crowdSub.gameObject.SetActive(false);crowdTitle.rectTransform.anchorMin=Vector2.zero;crowdTitle.rectTransform.anchorMax=Vector2.one;crowdTitle.alignment=TextAlignmentOptions.Center;crowdTitle.fontSize=11;
+            UiTip.Add(crowdLink, () => T("打开 YY，直接输入想对" + Sim.AiDisplayName + "说的话。教完或训练后，再问问它，看看回答有什么变化。", "Open YY and talk freely to " + Sim.AiDisplayName + ". After teaching or training, ask again and see how its answers change."));
 
             soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; Refresh(true); }, 12);
-            PlaceBottom(soundToggle, 34, 24, 10, 10);
+            PlaceSidebarToggle(soundToggle,-23);
             fxToggle = ui.Button(nav, "", () => { Sim.S.reduceFx = !Sim.S.reduceFx; Juice.Reduced = Sim.S.reduceFx; Refresh(true); }, 12);
-            PlaceBottom(fxToggle, 8, 24, 10, 10);
+            PlaceSidebarToggle(fxToggle,23);
             UiTip.Add(soundToggle.rt, "打开或关闭音效。", "Turn sound effects on or off.");
             UiTip.Add(fxToggle.rt, "减少闪光、震动和粒子特效。", "Fewer flashes, shakes and particles.");
             // The resident spider (XgResidentSpider) roams the desktop; this parks it in a corner, saved with the lab.
             residentToggle = ui.Button(nav, "", () => { Sim.S.residentQuiet = !Sim.S.residentQuiet; Juice.Play(XgJuice.Sfx.Id.Click); Refresh(true); }, 12);
-            PlaceBottom(residentToggle, 60, 24, 10, 10);
+            PlaceBottom(residentToggle,52,24,8,58);
             residentRecall = ui.Button(nav, "", () => { XgResidentSpider.Instance?.Recall(); Refresh(true); }, 12);
-            PlaceBottom(residentRecall, 88, 24, 10, 10);
+            PlaceBottom(residentRecall,52,24,58,8);
+            foreach(var control in new[]{residentToggle,residentRecall}){control.label.fontSize=11;control.label.rectTransform.offsetMin=new Vector2(2,0);control.label.rectTransform.offsetMax=new Vector2(-2,0);}
+            nav.gameObject.AddComponent<NavResize>().resized=LayoutNavRows;
             UiTip.Add(residentToggle.rt, "它会在桌面上到处爬，你标注时还会过来旁观。点一下让它停下，慢慢隐身。", "It crawls all over the desktop and comes to watch when you label. Click to make it stop and fade away.");
         }
 
         NavRow MakeNavRow(string id)
         {
             var row = new NavRow { id = id };
-            row.rt = Rect("Tab " + id, nav, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
-            row.back = Panel(row.rt, Color.clear);
+            row.rt = Rect("Tab " + id, navMenu, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+            row.back = Panel(row.rt, Color.clear);RoundSurface(row.back,12);
             row.accent = Panel(Rect("Accent", row.rt, Vector2.zero, new Vector2(0, 1), Vector2.zero, new Vector2(3, 0)), XgDark.Good);
             row.accent.raycastTarget = false;
-            // The drawn tab icon (Tools/Icons/ui_icons.py); without the file the row stays text only.
-            row.icon = XgIcons.Place(row.rt, "nav", id, 22, NavRowHeight * .5f, 20);
-            row.label = ui.Text(Rect("Label", row.rt, Vector2.zero, Vector2.one, new Vector2(row.icon != null ? 38 : 14, 0), new Vector2(-8, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            row.label.textWrappingMode = TextWrappingModes.NoWrap; row.label.overflowMode = TextOverflowModes.Ellipsis;
-            row.badge = ui.Text(Rect("Badge", row.rt, new Vector2(.5f, 0), Vector2.one, Vector2.zero, new Vector2(-10, 0)), "", 12, XgDark.Money, TextAlignmentOptions.MidlineRight);
-            row.badge.textWrappingMode = TextWrappingModes.NoWrap;
+            row.icon=XgIcons.Place(row.rt,"nav",id,0,0,50);
+            if(row.icon!=null){row.icon.rectTransform.anchorMin=row.icon.rectTransform.anchorMax=new Vector2(.5f,1);row.icon.rectTransform.anchoredPosition=new Vector2(0,-27);}
+            row.lockIcon=Rect("LockIcon",row.rt,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-25,-52),new Vector2(25,-2));
+            // Draw the lock with geometry; no emoji font dependency or missing glyph.
+            Panel(Rect("Body",row.lockIcon,new Vector2(.24f,.18f),new Vector2(.76f,.58f),Vector2.zero,Vector2.zero),XgDark.Muted).raycastTarget=false;
+            Panel(Rect("Left",row.lockIcon,new Vector2(.30f,.58f),new Vector2(.38f,.82f),Vector2.zero,Vector2.zero),XgDark.Muted).raycastTarget=false;
+            Panel(Rect("Right",row.lockIcon,new Vector2(.62f,.58f),new Vector2(.70f,.82f),Vector2.zero,Vector2.zero),XgDark.Muted).raycastTarget=false;
+            Panel(Rect("Top",row.lockIcon,new Vector2(.38f,.78f),new Vector2(.62f,.86f),Vector2.zero,Vector2.zero),XgDark.Muted).raycastTarget=false;
+            row.label=ui.Text(Rect("Label",row.rt,new Vector2(0,1),Vector2.one,new Vector2(1,-73),new Vector2(-1,-53)),"",14,XgDark.Muted,TextAlignmentOptions.Center);
+            row.label.textWrappingMode=TextWrappingModes.NoWrap;row.label.overflowMode=TextOverflowModes.Ellipsis;
+            row.lockedHint=ui.Text(Rect("LockedHint",row.rt,new Vector2(0,1),Vector2.one,new Vector2(0,-99),new Vector2(0,-74)),"",10,XgDark.Muted,TextAlignmentOptions.Top);
+            row.lockedHint.textWrappingMode=TextWrappingModes.Normal;row.lockedHint.raycastTarget=false;
+            row.badge=ui.Text(Rect("Badge",row.rt,new Vector2(.5f,1),Vector2.one,new Vector2(12,-18),new Vector2(-1,-2)),"",10,XgDark.Money,TextAlignmentOptions.TopRight);
+            row.badge.textWrappingMode=TextWrappingModes.NoWrap;
             row.button = row.rt.gameObject.AddComponent<Button>();
             row.button.targetGraphic = row.back; row.button.transition = Selectable.Transition.None;
             row.button.onClick.AddListener(() => { if (!FeatureOpen(id)) return; ShowTab(id); Juice.Play(XgJuice.Sfx.Id.Click); });
@@ -346,13 +373,19 @@ namespace LingGuangV05.Desktop.XingGuang
             }
         }
 
-        static string TabHelp(string id)
+        string TabHelp(string id)
         {
+            if (!FeatureOpen(id))
+            {
+                if (id == "tree") return T("做完一套题开放", "Opens after twelve questions");
+                if (id == "train") return T("在科技里买「训练曲线」", "Buy Training curve in Tech");
+                if (id == "home") return T("第一次和它说话后开放", "Opens after your first conversation");
+            }
             switch (id)
             {
                 case "teach": return T("教：逻辑、常识题直接判断题目对错；其他教学卡按按钮提示回答。", "Teach: judge logic and common-sense statements directly; follow the prompts on other cards.");
                 case "home": return T("概览：它现在会什么、下一项能力还差多少，和最近发生的事。", "Overview: what it can do now, how far the next ability is, and what just happened.");
-                case "train": return Lang.T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。");
+                case "train": return T("训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让" + Sim.AiDisplayName + "学。\n每轮练完自动考一次；成绩好才能签订单。", "Train: select data and this region's network, then train " + Sim.AiDisplayName + " for one round.\nEach round ends with an exam; better results unlock contracts.");
                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
                 case "backpack": return T("背包：拿到的稀有道具都在这里，最多装备 4 件，只有装备的才生效，随时可换。也有已买的结构和技巧，和稀有道具图鉴。", "Backpack: every rare item you found. Equip up to four; only equipped ones work, and you can swap any time. Also the structures and techniques you bought, and the collection book.");
                 case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
@@ -372,7 +405,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 // 背包 now lives in the AI page, so a fresh rare item marks that row.
                 case "home": return Sim.RelicsFresh && !(tab == "home" && profileSection == "backpack") ? "<color=#E24B4A>●</color>" : "";
                 case "items": { int n = Items != null ? Items.BuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
-                case "tree": { int n = Tree != null ? Tree.GrowthBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
+                case "tree": { if(Sim.S.lessonAtlasUnread)return "<color=#E24B4A>●</color>"; int n = Tree != null ? Tree.GrowthBuyableCount() : 0; return n > 0 ? T("可买 ", "") + n : ""; }
                 case "repo": { int fresh = Sim.S.nextModelId - 1 - (Repo != null ? Repo.SeenUpTo : 0); return fresh > 0 && tab != "repo" ? "+" + fresh : ""; }
                 case "wiring": return (Sim.AjiePending || Sim.Wiring.tripped) && tab != "wiring" ? "!" : "";
                 case "cards": { int n = Sim.NewCards(); return n > 0 ? "+" + n : ""; }
@@ -384,7 +417,7 @@ namespace LingGuangV05.Desktop.XingGuang
         bool NavVisible(string id)
         {
             if (id == "items" || id == "abilities") return false; // Legacy routes remain available through the single Growth row.
-            if (id == "home") return true;
+            if (id == "home" || id == "teach" || id == "tree" || id == "train") return true;
             if (Sim.S.gradualSystems && Sim.S.stage < 3 && System.Array.IndexOf(new[] { "teach", "train", "board", "tree", "chat" }, id) < 0) return false;
             return FeatureOpen(id) || id == "final";
         }
@@ -410,9 +443,10 @@ namespace LingGuangV05.Desktop.XingGuang
                     bool show = NavVisible(id);
                     row.rt.gameObject.SetActive(show);
                     if (!show) continue;
-                    row.rt.offsetMin = new Vector2(0, -y - NavRowHeight); row.rt.offsetMax = new Vector2(0, -y);
-                    y += NavRowHeight;
-                    row.label.text = NavName(id);
+
+                    row.label.text=NavName(id);
+                    row.lockedHint.gameObject.SetActive(!open);row.lockedHint.text=NavLockedHint(id);
+                    row.lockIcon.gameObject.SetActive(!open);if(row.icon!=null)row.icon.gameObject.SetActive(open);
                     row.badge.text = open ? NavBadge(id) : "";
                     row.button.interactable = open;
                     PaintNavRow(row);
@@ -421,25 +455,71 @@ namespace LingGuangV05.Desktop.XingGuang
             crowdLink.gameObject.SetActive(Sim.SystemUnlocked("crowd"));
             bool raiseReady = Sim.RaiseLevel < XgCatalog.RaiseMax && Host.Money >= Sim.NextRaiseCost;
             // The 加薪 badge follows the shop to 摆渡众包.
-            crowdTitle.text = T("和它聊聊 ↗", "Talk to it ↗");
+            crowdTitle.text = T("YY 聊天 ↗", "YY chat ↗");
             crowdSub.text = T("在 YY 自由输入", "Speak freely in YY");
-            soundToggle.Set(Sim.S.mute ? Lang.T("音效：关") : Lang.T("音效：开"), true, XgDark.Panel, XgDark.Muted);
-            fxToggle.Set(Sim.S.reduceFx ? Lang.T("减少特效：开") : Lang.T("减少特效：关"), true, XgDark.Panel, XgDark.Muted);
+            soundToggle.Set(Sim.S.mute ? "S×" : "S♪", true, XgDark.Panel, XgDark.Muted);
+            fxToggle.Set(Sim.S.reduceFx ? "FX−" : "FX", true, XgDark.Panel, XgDark.Muted);
             // Only once the desktop spider has shown up (its intro played).
             residentToggle.rt.gameObject.SetActive(Sim.SpiderAround);
             residentRecall.rt.gameObject.SetActive(Sim.SpiderAround);
-            residentRecall.Set(T("叫回灵宠", "Recall companion"), true, XgDark.Panel, XgDark.Muted);
-            residentToggle.Set(Sim.S.residentQuiet ? T("让它自由走走", "Let it roam") : T("让它安静一会儿", "Let it rest a while"), true, XgDark.Panel, XgDark.Muted);
+            residentRecall.Set(T("叫回", "Recall"), true, XgDark.Panel, XgDark.Muted);
+            residentToggle.Set(Sim.S.residentQuiet ? T("走走", "Roam") : T("休息", "Rest"), true, XgDark.Panel, XgDark.Muted);
+            LayoutNavRows();
+        }
+
+        // The footer keeps its own space; the open pages share the remaining height evenly.
+        void LayoutNavRows()
+        {
+            if(navMenu==null||crowdLink==null)return;
+            const float footer=120;
+            navMenu.offsetMin=new Vector2(8,footer);navMenu.offsetMax=new Vector2(-8,-8);
+            const int count=4;
+            if(count==0)return;
+            float height=Mathf.Max(0,navMenu.rect.height),slot=height/count;
+            float rowHeight=Mathf.Max(0,slot-4);int index=0;
+            foreach(var id in NavIds)
+            {
+                var row=navRows[id];if(!row.rt.gameObject.activeSelf)continue;
+                float center=1-(index+.5f)/count;index++;
+                row.rt.anchorMin=new Vector2(0,center);row.rt.anchorMax=new Vector2(1,center);
+                row.rt.offsetMin=new Vector2(0,-rowHeight*.5f);row.rt.offsetMax=new Vector2(0,rowHeight*.5f);
+                float inset=Mathf.Max(2,(rowHeight-108)*.5f);
+                if(row.icon!=null)row.icon.rectTransform.anchoredPosition=new Vector2(0,-inset-25);
+                row.lockIcon.offsetMin=new Vector2(-25,-inset-50);row.lockIcon.offsetMax=new Vector2(25,-inset);
+                row.label.rectTransform.offsetMin=new Vector2(1,-inset-71);row.label.rectTransform.offsetMax=new Vector2(-1,-inset-51);
+                row.lockedHint.rectTransform.offsetMin=new Vector2(0,-inset-108);row.lockedHint.rectTransform.offsetMax=new Vector2(0,-inset-72);
+            }
+        }
+        string NavLockedHint(string id)
+        {
+            if(FeatureOpen(id))return "";
+            if(id=="tree")return T("做满12题\n"+Math.Min(12,Sim.TeachingAnswers)+" / 12","Answer 12\n"+Math.Min(12,Sim.TeachingAnswers)+" / 12");
+            if(id=="train")return T("科技购买\n训练曲线","Buy Training\ncurve in Tech");
+            if(id=="home")return T("和它聊过一次","Talk to it first");
+            return TabHelp(id);
+        }
+        static void PlaceSidebarToggle(XgBtn button,float x)
+        {
+            button.rt.anchorMin=button.rt.anchorMax=new Vector2(.5f,0);button.rt.pivot=new Vector2(.5f,0);
+            button.rt.anchoredPosition=new Vector2(x,8);button.rt.sizeDelta=new Vector2(38,38);
+            button.image.sprite=LingGuangV05.Desktop.Story.PrologueDesk.Circle();button.image.type=Image.Type.Simple;
+            button.label.fontSize=12;button.label.alignment=TextAlignmentOptions.Center;
+        }
+        sealed class NavResize : MonoBehaviour
+        {
+            public Action resized;
+            void OnRectTransformDimensionsChange(){resized?.Invoke();}
         }
 
         void PaintNavRow(NavRow row)
         {
             bool on = row.id == tab;
             bool open = row.button.interactable;
-            row.back.color = on ? XgDark.OnFill : row.hover && open ? new Color32(14, 28, 36, 255) : (Color)new Color32(0, 0, 0, 0);
-            row.accent.enabled = on;
+            row.back.color = on ? new Color(1,1,1,.10f) : row.hover && open ? new Color(1,1,1,.04f) : Color.clear;
+            row.accent.enabled = false;
             row.label.color = !open ? XgDark.Dim : on || row.hover ? XgDark.Ink : XgDark.Muted;
             if (row.icon != null) row.icon.color = !open ? new Color(1, 1, 1, .35f) : on || row.hover ? Color.white : new Color(1, 1, 1, .85f);
         }
     }
 }
+

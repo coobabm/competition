@@ -156,7 +156,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     view.home += Vector2.down * delta; position[view.entry] = view.home;
                     ((RectTransform)view.transform).anchoredPosition = view.home;
                 }
-                foreach (var link in links) link.image.rectTransform.anchoredPosition += Vector2.down * delta;
+                foreach (var link in links) batchedLinks.Move(link.segment, Vector2.down * delta);
             }
             content.sizeDelta = new Vector2(content.sizeDelta.x, treeHeight);
         }
@@ -166,7 +166,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!built) return;
             int column = Math.Max(0, Math.Min(XgSim.AbilityCount - 1, ability - 1));
             Canvas.ForceUpdateCanvases();
-            Pan.FitColumn(column * StageWidth + StageWidth * .5f);
+            Pan.GlideTo(new Vector2(column * StageWidth + StageWidth * .5f, -TopMargin));
         }
 
         bool GrowthLaneVisible(string lane, int column)

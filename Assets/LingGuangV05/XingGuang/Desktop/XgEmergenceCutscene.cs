@@ -145,9 +145,16 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnAbility(int emerged) { if (!XgWallpaperRebirth.Available && !pending.Contains(emerged)) { pending.Enqueue(emerged); queuedAt = Time.unscaledTime; } }
 
         /// <summary>Another full-window moment is on: the story's own cutscene (the month card), a love question, an insight card.</summary>
+        LingGuangV05.Desktop.Story.StoryDesktopPresenter cutscenePresenter;
+        float nextPresenterLookup;
         bool OtherCutscene()
         {
-            var presenter = FindAnyObjectByType<LingGuangV05.Desktop.Story.StoryDesktopPresenter>();
+            if (cutscenePresenter == null && Time.unscaledTime >= nextPresenterLookup)
+            {
+                nextPresenterLookup = Time.unscaledTime + .5f;
+                cutscenePresenter = FindAnyObjectByType<LingGuangV05.Desktop.Story.StoryDesktopPresenter>();
+            }
+            var presenter = cutscenePresenter;
             if (presenter != null && presenter.CutscenePlaying) return true;
             // The beat's hook (「风扇停了一下……」) is read first; the window darkens after it.
             if (presenter != null && presenter.HookPlaying) return true;
@@ -163,6 +170,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (view == null) return;
             var sim = view.Sim;
             if (sim != bound) { Unbind(); bound = sim; if (bound != null) bound.AbilityEmerged += OnAbility; }
+            if(XgStageCurtain.Busy){while(pending.Count>0&&XgStageCurtain.CoversAbility(pending.Peek()))pending.Dequeue();if(Showing)overlay.gameObject.SetActive(false);return;}
             if (!Showing)
             {
                 // The month card the story raises in the same moment goes first; this follows it.

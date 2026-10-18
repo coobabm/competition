@@ -80,7 +80,7 @@ namespace LingGuangV05.Desktop.XingGuang
             XgSoftDraw.Seg(vh, from, to, 1.4f * scale, 4 * scale, ink);
             XgDraw.Ring(vh, from, 3 * scale, scale, ink, 12);
         }
-        bool StructureReduced => controller?.View?.Juice != null && controller.View.Juice.Reduced;
+        bool StructureReduced => GamePerformance.Low || controller?.View?.Juice != null && controller.View.Juice.Reduced;
         bool StructureMoving => System.Array.IndexOf(movingRegions, true) >= 0 && Time.unscaledTime - structureStarted <= StructureSeconds;
 
         void ClearStructure()

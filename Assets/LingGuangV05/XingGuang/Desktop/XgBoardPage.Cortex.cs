@@ -120,7 +120,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.label.textWrappingMode = TextWrappingModes.Normal;
                 row.label.enableAutoSizing = true; row.label.fontSizeMin = 9; row.label.fontSizeMax = 13;
                 row.label.rectTransform.offsetMin = new Vector2(10, 2); row.label.rectTransform.offsetMax = new Vector2(-58, -2);
-                regionStatus[i] = ui.Text(Rect("Status", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-60, 0), new Vector2(-8, 0)), "", 12, XgDark.Good, TextAlignmentOptions.MidlineRight);
+                regionStatus[i] = ui.Text(Rect("Status", row.Visual, new Vector2(1, 0), Vector2.one, new Vector2(-60, 0), new Vector2(-8, 0)), "", 12, XgDark.Good, TextAlignmentOptions.MidlineRight);
                 regionRows[i] = row;
             }
             detail = ui.Text(Rect("Detail", side, Vector2.zero, Vector2.one, new Vector2(12, 96), new Vector2(-12, -36 - 4 * 56 - 10)), "", 13, XgDark.Ink, TextAlignmentOptions.TopLeft);

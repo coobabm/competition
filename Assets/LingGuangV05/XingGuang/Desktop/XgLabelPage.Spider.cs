@@ -101,7 +101,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (r.correct)
             {
                 feedback.color = XgPalette.Good;
-                feedback.text = "<color=#2F9E44>✓ " + T("灵光标对了", "LingGuang got it") + "  +¥" + N(r.pay, "0.00") + "</color>"
+                feedback.text = "<color=#2F9E44>✓ " + T(("灵光标对了" .Replace("灵光", Sim.AiDisplayName)), ("LingGuang got it" .Replace("LingGuang", Sim.AiDisplayName))) + "  +¥" + N(r.pay, "0.00") + "</color>"
                     + (Sim.S.combo > 1 ? "  <color=#7A5AF8>" + T("连击 ×", "Combo ×") + N(Sim.ComboMultiplier, "0.00") + "</color>" : "");
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 22);
                 Fx.Burst(at, 5, XgPalette.Gold, XgJuice.Shape.Yen, 200);
@@ -114,7 +114,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else
             {
                 feedback.color = XgPalette.Bad;
-                feedback.text = "<color=#D63031>× " + T("灵光伸手答错了", "LingGuang reached for the wrong one")
+                feedback.text = "<color=#D63031>× " + T(("灵光伸手答错了" .Replace("灵光", Sim.AiDisplayName)), ("LingGuang reached for the wrong one" .Replace("LingGuang", Sim.AiDisplayName)))
                     + (r.fine > 0 ? T(" · 扣你 ¥", " · it cost you ¥") + N(r.fine, "0.00") : T(" · 连击清零", " · combo reset"))
                     + T(" · 应该是「", " · it was ") + truthWord + T("」", "") + "</color>";
                 if (r.fine > 0) Fx.Float(Fx.At(button, new Vector2(0, 40)), "−¥" + N(r.fine, "0.00"), XgPalette.Bad, 24);

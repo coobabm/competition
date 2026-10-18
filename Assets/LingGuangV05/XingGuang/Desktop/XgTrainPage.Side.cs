@@ -32,7 +32,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform learningPane;
         TMP_Text learningText;
         TMP_Text gearCount;
-        bool dataView = true;
+        bool dataView;
         sealed class Tile
         {
             public RectTransform rt;
@@ -45,6 +45,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // 今天的账
         RectTransform ledgerCard;
+        XgBtn fundsBook;
         TMP_Text ledgerHead, ledgerDate, ledgerLeft, ledgerRight, ledgerWarn;
 
         void BuildSide()
@@ -53,6 +54,7 @@ namespace LingGuangV05.Desktop.XingGuang
             gearCard = ui.Card(right, "Gear", Vector2.zero, Vector2.one, new Vector2(0, LedgerHeight + SideGap), new Vector2(0, -ScaleHeight - SideGap));
             BuildGearCard();
             BuildLedgerCard();
+            BuildLedgerSeal();
             orders = ui.Button(ledgerCard, "", () => view.ShowTab("contracts"), 12);
             orders.rt.anchorMin = orders.rt.anchorMax = new Vector2(1, 1);
             orders.rt.offsetMin = new Vector2(-144, -30); orders.rt.offsetMax = new Vector2(-8, -6);
@@ -178,7 +180,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool probeRight;
                 string probe = Sim.ProbeLine(out probeRight);
                 probeText.gameObject.SetActive(probe.Length > 0);
-                probeText.text = Hex(XgDark.Dim) + T("同一道题：", "Same question: ") + "</color>" + probe + " " + (probeRight ? Hex(XgDark.Good) + "✓" : Hex(XgDark.Bad) + "✗") + "</color>";
+                probeText.text = Hex(XgDark.Dim) + T("同一道题：", "Same question: ") + "</color>" + probe + " " + (probeRight ? Hex(XgDark.Good) + "✓" : Hex(XgDark.Bad) + "×") + "</color>";
                 // This model against what already counts (P only takes a model trained to grade C), and the samples there against the samples that count.
                 pSub.text = Sim.ParamsSplitText(run); pSub.color = Sim.CountState(run) == XgCountState.Counted ? XgDark.Muted : XgDark.Gold;
                 dSub.text = Sim.SamplesSplitText();
@@ -220,9 +222,6 @@ namespace LingGuangV05.Desktop.XingGuang
             gearTab = ui.Button(gearCard, "", () => { learningView = false; booksView = false; dataView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
             gearTab.rt.gameObject.name = "GearTab";
             PlaceTopLeft(gearTab, 8, 6, 84, 22);
-            dataTab = ui.Button(gearCard, "", () => { learningView = false; booksView = false; dataView = true; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
-            dataTab.rt.gameObject.name = "DataTab";
-            PlaceTopLeft(dataTab, 98, 6, 96, 22);
             learningTab = ui.Button(gearCard, T("它学会了吗", "Learning"), () => { learningView = true; booksView = false; RefreshSide(Track, Sim.Run(Track)); }, 12);
             PlaceTopLeft(learningTab, 202, 6, 104, 22);
             BuildBooksTab();
@@ -263,39 +262,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 tiles.Add(tile);
             }
 
-            // The datasets, the packs, the noise: what the old model card kept.
-            dataPane = Rect("DataPane", gearCard, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -32));
-            noiseText = ui.Text(Strip("DatasetNoise", dataPane, 2, 22, 12, 170), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            noiseText.enableAutoSizing = true; noiseText.fontSizeMin = 10; noiseText.fontSizeMax = 13;
-            noiseText.textWrappingMode = TextWrappingModes.NoWrap;
-            noiseHint = ui.Text(Strip("NoiseCleaningHint", dataPane, 28, 32, 12, 180), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            noiseHint.enableAutoSizing = true; noiseHint.fontSizeMin = 9; noiseHint.fontSizeMax = 11;
-            noiseHint.textWrappingMode = TextWrappingModes.NoWrap;
-            cleanNoise = ui.Button(dataPane, "", CleanCurrentNoise, 12);
-            cleanNoise.rt.gameObject.name = "CleanDatasetNoise";
-            PlaceTopRight(cleanNoise, 172, 28, 160, 32);
-            BuildDataEconomy(dataPane);
-            dataTitle = ui.Text(Strip("DataTitle", dataPane, 64, 22, 12, 12), "", 15, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            dataTitle.fontStyle = FontStyles.Bold;
-            NodeLink(dataTitle, () => Sim.Run(Track).dataset + ".pack");
-            var scroll = Rect("Datasets", dataPane, Vector2.zero, Vector2.one, new Vector2(12, 58), new Vector2(-12, -88));
-            var scroller = scroll.gameObject.AddComponent<ScrollRect>();
-            dataViewport = Rect("Viewport", scroll, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Panel(dataViewport, Color.clear); dataViewport.gameObject.AddComponent<RectMask2D>();
-            dataBox = Rect("Content", dataViewport, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
-            dataBox.pivot = new Vector2(.5f, 1); dataBox.sizeDelta = Vector2.zero;
-            scroller.viewport = dataViewport; scroller.content = dataBox; scroller.horizontal = false; scroller.vertical = true; scroller.scrollSensitivity = 24;
-            scroller.movementType = ScrollRect.MovementType.Clamped;
-            gpuTarget = Rect("GpuInstallTarget", dataPane, Vector2.zero, new Vector2(1, 0), new Vector2(12, 6), new Vector2(-12, 52));
-            Panel(gpuTarget, XgDark.AccentSoft);
-            gpuGlow = Glow(gpuTarget, XgDark.Gold, 4);
-            gpuLabel = ui.Text(Rect("GpuLabel", gpuTarget, Vector2.zero, Vector2.one, new Vector2(12, 3), new Vector2(-12, -3)), "", 13, XgDark.Accent, TextAlignmentOptions.MidlineLeft);
-            gpuLabel.enableAutoSizing = true; gpuLabel.fontSizeMin = 9; gpuLabel.fontSizeMax = 13;
-            gpuTarget.gameObject.AddComponent<XgGpuInstallDrop>().Page = this;
-            BuildDownloadStrip(dataPane);
-            UiTip.Add(noiseText, () => XgDataUi.NoiseTip(Sim, Sim.Run(Track).dataset));
-            UiTip.Add(cleanNoise.rt, () => T("花钱和 GPU 时间把已知的脏标注扔掉（需要科技里的「标注抽检」）。更省事的办法：道具页的清洗脚本，一次清 50 条。",
-                "Spend money and GPU time to discard the known dirty labels (needs the 'label audit' tech). A cheaper way: the cleaning script on the Items page removes 50 at once."));
+            // Data packs are bought in Technology; no hidden source/download UI is built.
+
         }
 
         /// <summary>One tile of the 装备 grid: what it is, its state, and what a click does.</summary>
@@ -406,19 +374,20 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshSide(XgTrack track, XgRun run)
         {
             RefreshScale(track, run);
-            bool other = learningView || booksView;
-            gearTab.Set(T("装备", "Gear"), true, !other && !dataView ? XgDark.Accent : XgDark.Button, !other && !dataView ? Color.white : XgDark.Ink);
-            dataTab.Set(T("数据来源", "Data sources"), true, !other && dataView ? XgDark.Accent : XgDark.Button, !other && dataView ? Color.white : XgDark.Ink);
+            bool gear=Sim.TrainPart("gear"), learning=Sim.TrainPart("learning"), books=Sim.TrainPart("books");
+            if(!learning)learningView=false; if(!books)booksView=false;
+            if(!gear&&!learningView&&!booksView){learningView=learning;booksView=!learning&&books;}
+            bool other=learningView||booksView;
+            gearTab.Set(T("装备", "Gear"), true, !other ? XgDark.Accent : XgDark.Button, !other ? Color.white : XgDark.Ink);
             learningTab.Set(T("它学会了吗", "Learning"), true, learningView ? XgDark.Accent : XgDark.Button, XgDark.Ink);
             booksTab.Set(T("书架", "Books"), true, booksView ? XgDark.Accent : XgDark.Button, booksView ? Color.white : XgDark.Ink);
             learningPane.gameObject.SetActive(learningView);
-            if (learningView) learningText.text = Sim.CheckupText(dataset: run.dataset) + BookQuizText();
+            if(learningView)learningText.text=Sim.CheckupText(dataset:run.dataset)+BookQuizText();
             booksPane.gameObject.SetActive(booksView);
-            gearPane.gameObject.SetActive(!other && !dataView);
-            dataPane.gameObject.SetActive(!other && dataView);
-            gearCount.gameObject.SetActive(false);
-            if (booksView) RefreshBooks(); else if (dataView) RefreshDataPane(track, run); else RefreshGear();
-            RefreshLedger();
+            gearPane.gameObject.SetActive(!other&&gear); gearCount.gameObject.SetActive(false);
+            if(booksView)RefreshBooks();else if(gear&&!other)RefreshGear();
+            if(Sim.TrainPart("ledger"))RefreshLedger();
+            RefreshTrainingParts();
         }
 
         // ───────────── 今天的账 ─────────────
@@ -431,13 +400,14 @@ namespace LingGuangV05.Desktop.XingGuang
             ledgerHead.characterSpacing = 1; ledgerHead.textWrappingMode = TextWrappingModes.NoWrap;
             ledgerDate = ui.Text(Rect("Date", ledgerCard, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-140, -24), new Vector2(-12, -6)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineRight);
             ledgerDate.textWrappingMode = TextWrappingModes.NoWrap; ledgerDate.gameObject.SetActive(false);
-            var funds=ui.Button(ledgerCard,T("查看资金账本","Funds book"),()=>{
+            fundsBook=ui.Button(ledgerCard,T("查看资金账本","Accounts"),()=>{
+                if(!Sim.LedgerOpen)return;
                 var runtime=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Runtime.ChapterOneRuntime>();
                 if(runtime!=null)(runtime.GetComponent<LingGuangV05.Desktop.FundsPanel>() ?? runtime.gameObject.AddComponent<LingGuangV05.Desktop.FundsPanel>()).Open();
             },11);
-            funds.rt.name="OpenFundsBook";funds.rt.anchorMin=funds.rt.anchorMax=Vector2.one;
-            funds.rt.anchorMin=funds.rt.anchorMax=new Vector2(0,1);
-            funds.rt.offsetMin=new Vector2(8,-24);funds.rt.offsetMax=new Vector2(130,-3);
+            fundsBook.rt.name="OpenFundsBook";fundsBook.rt.anchorMin=fundsBook.rt.anchorMax=Vector2.one;
+            fundsBook.rt.anchorMin=fundsBook.rt.anchorMax=new Vector2(0,1);
+            fundsBook.rt.offsetMin=new Vector2(8,-24);fundsBook.rt.offsetMax=new Vector2(130,-3);
             ledgerLeft = ui.Text(Rect("Left", ledgerCard, Vector2.zero, Vector2.one, new Vector2(12, 34), new Vector2(-150, -26)), "", 12, XgDark.Muted, TextAlignmentOptions.TopLeft);
             ledgerLeft.textWrappingMode = TextWrappingModes.NoWrap; ledgerLeft.lineSpacing = 0;
             ledgerRight = ui.Text(Rect("Right", ledgerCard, Vector2.zero, Vector2.one, new Vector2(-150, 34), new Vector2(-12, -26)), "", 12, XgDark.Ink, TextAlignmentOptions.TopRight);
@@ -448,13 +418,14 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var home = Host as XingGuangHost;
                 string one = N(home != null ? home.TierOneKwh : 240, "0"), two = N(home != null ? home.TierTwoKwh : 400, "0");
-                return T("训练每一轮都要交电费，按这个月的阶梯电价：一个月用电超过 " + one + " 度，超出的部分贵一成；超过 " + two + " 度，贵五成。房租每分钟按一天折算，10 月起涨到 ¥350。",
-                    "Every training round pays electricity at this month's tiered rate: past " + one + " kWh a month the rest costs 10% more; past " + two + " kWh, 50% more. Rent is paid once per calendar day, rising to ¥350 from October.");
+                return T("训练每一轮都要交电费，按这个月的阶梯电价：一个月用电超过 " + one + " 度，超出的部分贵一成；超过 " + two + " 度，贵五成。房租到期后在 YY 向房东转账，可先付一部分。",
+                    "Every training round pays electricity at this month's tiered rate: past " + one + " kWh a month the rest costs 10% more; past " + two + " kWh, 50% more. Pay rent to the landlord in YY when due; partial transfers are allowed.");
             });
         }
 
         void RefreshLedger()
         {
+            fundsBook.label.text=T("查看资金账本","Accounts");
             ledgerHead.text = T("今天的账", "TODAY'S BILLS");
             if (!(Host is XingGuangHost home)) { ledgerDate.text = ""; ledgerLeft.text = ledgerRight.text = ledgerWarn.text = ""; return; }
             var day = home.Today;
@@ -462,11 +433,11 @@ namespace LingGuangV05.Desktop.XingGuang
             home.TodayBills(out double power, out _);
             double kwh = home.MonthKwh;
             int tier = home.PowerTier;
-            ledgerLeft.text = T("训练电费（今天）", "Training power (today)") + "\n" + T("房租（每分钟折算一天）", "Rent (one day per minute)") + "\n" + T("本月用电 " + N(kwh, "0") + " 度 · 第 " + tier + " 档", N(kwh, "0") + " kWh this month · tier " + tier);
+            ledgerLeft.text = T("训练电费（今天）", "Training power (today)") + "\n" + T("房租（日均预算，非自动扣款）", "Rent (daily budget; paid manually)") + "\n" + T("本月用电 " + N(kwh, "0") + " 度 · 第 " + tier + " 档", N(kwh, "0") + " kWh this month · tier " + tier);
             string tierNote = tier >= 3 ? Hex(XgDark.Bad) + T("更贵 ×1.5", "dearer ×1.5") : tier == 2 ? Hex(XgDark.Money) + T("贵了 ×1.1", "dearer ×1.1") : Hex(XgDark.Muted) + "—";
             ledgerRight.text = Hex(XgDark.Bad) + "−¥" + N(power, "0.0") + "</color>\n" + Hex(XgDark.Bad) + "¥" + N(home.EconomyActive ? home.RentToday : 0, "0") + T("/天", "/day") + "</color>\n" + tierNote + "</color>";
             bool poor = Host.Money < Math.Max(50, home.EconomyActive ? home.RentToday : 0);
-            ledgerWarn.text = poor ? T("⚠ 余额偏低。先做众包补充资金；每轮训练都收电费。", "⚠ Not enough for the next day's rent. Earn some on the labelling desk in Bodu Crowd, or train fewer rounds.") : "";
+            ledgerWarn.text = poor ? T("余额偏低。完成已开放的工作补充资金；训练照常收电费。", "Low funds. Complete available work to earn money; training power is still billed.") : "";
         }
     }
 }

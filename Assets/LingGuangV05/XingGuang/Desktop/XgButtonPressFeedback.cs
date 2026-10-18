@@ -5,12 +5,15 @@ using UnityEngine.UI;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// A normal uGUI Button with a small label press. Business effects own the button rect;
-    /// the separate label effect cannot replace their Knock, sound or result presentation.
+    /// A normal uGUI Button with an independent visual-shell press. Business effects own the button rect;
+    /// the separate visual effect cannot replace their Knock, sound or result presentation.
     /// </summary>
     public sealed class XgButtonPressFeedback : Button, ICancelHandler
     {
         public RectTransform Label { get; set; }
+        public bool V4Press { get; set; }
+        public RectTransform PressTarget { get; set; }
+        RectTransform Target => V4Press && PressTarget != null ? PressTarget : Label;
 
         XgJuice pressFx, hostFx;
         bool reducedPress;
@@ -55,6 +58,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // Leave IDragHandler to the parent ScrollRect and keep ordinary click rules.
             if (feedbackPointerId == eventData.pointerId && eventData.dragging &&
                 eventData.pointerPress != eventData.pointerDrag) ResetPress();
+            else if (feedbackPointerId == eventData.pointerId) ReleaseLabel();
         }
 
         public void OnCancel(BaseEventData eventData)
@@ -68,42 +72,50 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             // Run before onClick: callbacks may disable, hide or rebuild the button.
             PressLabel();
+            ReleaseLabel();
             base.OnSubmit(eventData);
         }
 
         void PressLabel(int? pointerId = null)
         {
-            if (!IsActive() || !IsInteractable() || Label == null) return;
+            if (!IsActive() || !IsInteractable() || Target == null) return;
             hostFx = transform.parent != null ? transform.parent.GetComponentInParent<XgJuice>() : null;
             if (hostFx != null && (!hostFx.isActiveAndEnabled || !hostFx.Visible())) return;
 
+            if (V4Press && hostFx != null && hostFx.Reduced) { ResetPress(); return; }
+
             // Knock needs no particle canvas or audio Init. Allocate only on first use.
             // A private stack allows cancellation without clearing the host's business FX.
-            if (pressFx == null) pressFx = Label.gameObject.AddComponent<XgJuice>();
+            if (pressFx == null) pressFx = Target.gameObject.AddComponent<XgJuice>();
             pressFx.TrackKnockLayoutChanges = true;
             pressFx.enabled = true;
-            bool reduced = hostFx != null && hostFx.Reduced;
-            reducedPress = reduced;
-            float duration = reduced ? .12f : .18f;
             feedbackPointerId = pointerId;
-            pressFx.Knock(Label, reduced ? .015f : .045f,
-                reduced ? Vector2.zero : Vector2.down, duration);
-            // Repeated presses reuse Knock's saved resting transform, never the deformed one.
+            reducedPress = hostFx != null && hostFx.Reduced;
+            if (V4Press) pressFx.HoldPress(Target);
+            else pressFx.Knock(Target, reducedPress ? .015f : .045f,
+                reducedPress ? Vector2.zero : Vector2.down, reducedPress ? .12f : .18f);
+        }
+
+        void ReleaseLabel()
+        {
+            if (!V4Press) return;
+            feedbackPointerId = null;
+            if (V4Press && pressFx != null && Target != null) pressFx.ReleasePress(Target);
         }
 
         void LateUpdate()
         {
             if (pressFx == null || !pressFx.enabled) return;
-            if (!IsInteractable() || Label == null || !pressFx.HasActiveKnock(Label) ||
+            if (!IsInteractable() || Target == null || !pressFx.HasActiveKnock(Target) ||
                 (hostFx != null && (!hostFx.isActiveAndEnabled || !hostFx.Visible())))
             {
                 ResetPress();
                 return;
             }
-            if (!reducedPress && hostFx != null && hostFx.Reduced)
+            if (hostFx != null && hostFx.Reduced)
             {
-                reducedPress = true;
-                pressFx.SettleKnock(Label);
+                if (V4Press) ResetPress();
+                else if (!reducedPress) { reducedPress = true; pressFx.SettleKnock(Target); }
             }
         }
 

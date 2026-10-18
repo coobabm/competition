@@ -25,7 +25,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             details=C.Text("Stats",495,213,380,60,"",18);
             C.Button("Left",495,290,80,40,"←",()=>Move(-1,0));C.Button("Rotate",585,290,100,40,"旋转",Rotate);C.Button("Right",695,290,80,40,"→",()=>Move(1,0));
             C.Button("Drop",495,340,130,40,"直落",Drop);C.Button("Hold",635,340,140,40,"暂存 C",Hold);
-            C.Button("Hint",495,390,280,36,"灵光落点建议",Hint);
+            C.Button("Hint",495,390,280,36,(XgUi.T("灵光落点建议","LingGuang landing tip")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName),Hint);
             C.Button("Restart",22,407,205,40,"重新开始",Reset);C.Button("Pause",790,290,85,90,"暂停",()=>{paused=!paused;Draw();});Reset();
         }
         int Take(){if(bag.Count==0){int[] a={0,1,2,3,4,5,6};Shuffle(a);foreach(int i in a)bag.Enqueue(i);}return bag.Dequeue();}
@@ -62,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 int cleared=XgMiniBoard.ClearRows(test),height=0,holes=0;for(int xx=0;xx<10;xx++){bool occupied=false;for(int yy=0;yy<22;yy++){if(test[yy,xx]!=0){if(!occupied)height+=22-yy;occupied=true;}else if(occupied)holes++;}}
                 options.Add(Tuple.Create(cleared*100.0-holes*25-height,(int[,])r.Clone(),col,row));
             }
-            if(options.Count==0)return;options.Sort((a,b)=>b.Item1.CompareTo(a.Item1));int rank=C.Random.NextDouble()<C.Skill?0:C.Random.Next(options.Count);var p=options[rank];suggestion=p.Item2;sx=p.Item3;sy=p.Item4;Draw();C.Say("紫色是灵光模拟的建议落点；你仍需自己旋转和移动。 ");
+            if(options.Count==0)return;options.Sort((a,b)=>b.Item1.CompareTo(a.Item1));int rank=C.Random.NextDouble()<C.Skill?0:C.Random.Next(options.Count);var p=options[rank];suggestion=p.Item2;sx=p.Item3;sy=p.Item4;Draw();C.Say((XgUi.T("紫色是灵光模拟的建议落点；你仍需自己旋转和移动。 ","Purple marks LingGuang's suggested landing; you still rotate and move the piece yourself.")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName));
         }
         public override void Tick(float dt)
         {

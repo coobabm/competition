@@ -48,7 +48,7 @@ public static partial class DesignWallpaperSmoke
         {
             Click(controller.View.Teach.NoButton);
             Check(trace != null && trace.CardId == card.id && trace.Outcome.corrected && trace.Outcome.correct,
-                "Actual Guessed wrong mouse action settles exactly this successful correction");
+                "Actual False statement mouse action settles exactly this successful correction");
             Check(trace.CorrectionPulls.Count > 0 && AnswerPaths(graphic).Count == 1,
                 "Correcting preserves the actual prediction route and captures changed concepts");
             var path = AnswerPaths(graphic)[0];

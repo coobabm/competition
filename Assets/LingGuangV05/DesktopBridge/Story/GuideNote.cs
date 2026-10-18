@@ -119,7 +119,7 @@ namespace LingGuangV05.Desktop.Story
         {
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
             bool exe = WaitingForExe();
-            bool ready = runtime != null && runtime.Sim != null && !runtime.TestMode && (!runtime.Sim.InPrologue || exe) && !CutscenePlaying
+            bool ready = !StoryFocus.Exclusive && runtime != null && runtime.Sim != null && !runtime.TestMode && (!runtime.Sim.InPrologue || exe) && !CutscenePlaying
                 && Lab() != null && lab.Sim != null && PrologueDirector.Desk != null;
             if (ready && note == null) Build(PrologueDirector.Desk);
             if (note == null) return;

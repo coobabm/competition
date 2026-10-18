@@ -1,0 +1,15 @@
+本游戏使用 MiSans 字体。 / This game uses MiSans fonts.
+MiSans is used under the MiSans Font Intellectual Property License Agreement.
+Original font files are unmodified and embedded for use in this game only.
+
+MiSans-Regular.ttf
+Copyright © 2020-2025 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved.
+https://hyperos.mi.com/font-download/MiSans.zip
+
+Inter-Regular.ttf
+Copyright 2016 The Inter Project Authors
+https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+
+SourceHanSerifSC-Regular.otf
+© 2017-2024 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
+https://raw.githubusercontent.com/adobe-fonts/source-han-serif/2.003R/OTF/SimplifiedChinese/SourceHanSerifSC-Regular.otf

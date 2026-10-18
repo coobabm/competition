@@ -190,7 +190,8 @@ namespace LingGuangV05.Core.Girlfriend
 
         static bool HasTickets(GirlfriendState s, int byDay)
         {
-            foreach (var o in s.orders) if (o.gift == GiftTickets && o.state != 2 && o.orderedDay <= byDay) return true;
+            // Only tickets he actually gave her count (bought-but-held ones are still in his drawer).
+            foreach (var o in s.orders) if (o.gift == GiftTickets && (o.state == GiftToHer || o.state == GiftSigned) && o.orderedDay <= byDay) return true;
             return false;
         }
 

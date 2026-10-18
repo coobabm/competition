@@ -311,8 +311,8 @@ namespace LingGuangV05.XingGuang
                 if (!SubcontractReady) return;
                 S.scUnlocked = true;
                 foreach (var w in S.scWorkers) if (w.desk.Length == 0) w.desk = DefaultWorkerDesk();
-                Line("ajie", "你那个众包还缺人不？我在网吧上班，闲着也是闲着。", "Does your crowd-labelling gig need hands? I work at the netbar, so I'm idle anyway.");
-                Say(T("阿杰在下班屁股群里问要不要帮你标：摆渡众包开了「分包」页。", "Ajie offers in the clock-out group to label for you: the Subcontract page opened in Bodu Crowd."));
+                // Opened by the platform, not by the YY group: the group never hears about the player's work.
+                Say(T("摆渡众包开放了「分包」：可以雇人用你的账号标注，按分钟付工钱。", "Bodu Crowd opened Subcontract: hire people to label under your account, paid by the minute."));
                 SubcontractOpened?.Invoke();
             }
             if (S.scDay != Today) { S.scDay = Today; foreach (var w in S.scWorkers) w.labelsToday = 0; }

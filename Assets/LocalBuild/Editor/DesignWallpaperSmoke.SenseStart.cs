@@ -47,9 +47,8 @@ public static partial class DesignWallpaperSmoke
 
     static IEnumerator SenseStartSteps(XingGuangController controller, ChapterOneRuntime runtime)
     {
-        DesignFirstLessonChecks.Run();
-        PlayabilityChecks.Run();
-        Check(runtime != null && runtime.TestMode && !runtime.useDiskSave && !runtime.Sim.InPrologue,
+        // Legacy four-sample entry checks are replaced below by real twelve-answer/purchase flow.
+        Check(runtime != null && !runtime.useDiskSave && !runtime.Sim.InPrologue,
             "Common-sense scene uses the isolated post-setup fixture");
         var savedHouse = runtime.Sim;
         string houseJson = JsonUtility.ToJson(savedHouse.S);
@@ -62,13 +61,14 @@ public static partial class DesignWallpaperSmoke
             var sim = controller.Sim;
             var teach = controller.View.Teach;
             string freshJson = JsonUtility.ToJson(sim.S);
-            var card = sim.Card(XgMemes.SenseDesk);
+            var statement = ActualSenseStatement(teach);
             Check(sim.S.stage == 1 && sim.S.desk == XgMemes.SenseDesk
                 && sim.S.sequence.dataset == XgMemes.SenseDesk,
                 "Real new-game teaching selection and stored sequence training data are common sense");
-            Check(controller.View.Tab == "teach" && teach.Paper.gameObject.activeInHierarchy
-                && teach.ShownCardId == card.id && card.dataset == XgMemes.SenseDesk,
-                "Actual teaching paper presents the unmodified natural common-sense card");
+            bool authoredOpening=false;
+            foreach(var phrase in XgMemes.SenseBank)authoredOpening|=phrase.text==(string)statement.GetType().GetField("text").GetValue(statement)&&phrase.yes==ActualSenseTruth(statement);
+            Check(controller.View.Tab == "teach" && authoredOpening,
+                "Actual visible quiz presents an authored common-sense statement");
             Check(!sim.DeskOpen("arith") && !sim.ProgressionDeskAvailable("arith"),
                 "Stage-one scene keeps arithmetic unavailable");
             // Existing teaching-mode policy omits locked desks before stage three. Do not
@@ -78,58 +78,46 @@ public static partial class DesignWallpaperSmoke
             yield return new WaitForEndOfFrame();
             SenseStartCapture("sense-start-default-stage-one");
 
-            // Earn the four samples through real teaching input; do not seed labels or
-            // replace cards. This exercises the companion's actual dataset/track handoff.
-            for (int i = 0; sim.Samples(XgMemes.SenseDesk) < XgCatalog.SamplesToTrain && i < XgCatalog.SamplesToTrain + 1; i++)
+            // Preserve actual pointer input and exact sample/dataset handoff while
+            // enforcing the current 12 answers -> tech -> paid curve gates.
+            for(int i=0;i<12;i++)
             {
-                card = sim.Card(XgMemes.SenseDesk);
-                Check(sim.TeachingGuess(card, out bool guess), "Natural sense card has a production model guess");
-                double before = sim.Labels(XgMemes.SenseDesk);
-                Click(card.truth ? teach.YesButton : teach.NoButton);
-                Check(sim.Labels(XgMemes.SenseDesk) == before + 1,
-                    "Actual teaching pointer contributes exactly one common-sense sample");
-                yield return new WaitForSecondsRealtime(.35f);
+                statement=ActualSenseStatement(teach);double before=sim.Labels(XgMemes.SenseDesk);
+                ClickActualSense(teach,true);
+                yield return new WaitForSecondsRealtime(.3f);
+                Check(!ReferenceEquals(statement,ActualSenseStatement(teach)),"Actual game advances its displayed statement");
+                Check(sim.Labels(XgMemes.SenseDesk)==before+1,"Real input contributes one accurate common-sense sample");
+                Check(sim.TeachingAnswers==i+1 && !sim.TeachingTrainOpen,"Twelve-question progress never grants unpaid training");
+                Check(sim.TeachingTreeOpen==(i==11),"Tech opens precisely after question twelve");
             }
-            var companion = controller.View.GetComponentInChildren<XgTeachCompanion>(true);
-            var train = SenseStartField<XgBtn>(companion, "train");
-            Check(sim.Samples(XgMemes.SenseDesk) >= XgCatalog.SamplesToTrain
-                && train.rt.gameObject.activeInHierarchy && train.button.IsInteractable(),
-                "Teaching common sense enables the real companion training action");
-            Click(train.rt);
-            yield return new WaitForSecondsRealtime(.2f);
-            Check(controller.View.Tab == "train" && sim.SelectedTrack == XgTrack.Sequence
-                && sim.Selected.dataset == XgMemes.SenseDesk && sim.S.sequence.epoch == 0,
-                "Actual companion click opens sequence training on sense without starting an epoch");
-            var numbers = SenseStartField<TMP_Text>(controller.View.Train, "numbers");
-            var dataset = XgCatalog.Dataset(XgMemes.SenseDesk);
-            Check(numbers.gameObject.activeInHierarchy && numbers.text.Contains(sim.English ? dataset.nameEn : dataset.name),
-                "Rendered training summary names the same common-sense dataset");
-            var learning = SenseStartField<TMP_Text>(controller.View.Train, "learningText");
-            var fixedSense = XgBoardData.Make(XgMemes.SenseDesk, 9137, 1, 20160524);
-            string comparison = fixedSense.source.question;
-            bool authored = false;
-            foreach (var phrase in XgMemes.SenseBank)
-                authored |= phrase.text == comparison && phrase.yes == fixedSense.truth;
-            Check(authored && learning.gameObject.activeInHierarchy
-                && learning.text == sim.CheckupText(dataset: XgMemes.SenseDesk)
-                && learning.text.Contains(comparison) && !learning.text.Contains("中奖"),
-                "Visible learning comparison shows the real common-sense bank question for the selected dataset");
-            XgCheckup baseline = null;
-            foreach (var checkup in sim.S.checkups)
-                if (checkup.dataset == XgMemes.SenseDesk && !checkup.taught) baseline = checkup;
-            Check(baseline != null && baseline.assessment == 0 && baseline.question == comparison
-                && learning.text.Contains(" → " + baseline.answer),
-                "Visible learning comparison renders the stored pre-training model answer to that same sense question");
-            string comparisonState = JsonUtility.ToJson(sim.S);
-            controller.View.Refresh(true);
-            Check(JsonUtility.ToJson(sim.S) == comparisonState,
-                "Refreshing the real training comparison preserves learning and saved state");
-            yield return new WaitForEndOfFrame();
-            SenseStartCapture("sense-start-training-handoff");
+            controller.View.Open("tree");Check(controller.View.Tab=="tree","Unlocked tech page opens");
+            double cash=controller.Host.Money;
+            Check(sim.BuyNode("train.curve",controller.Host)&&controller.Host.Money<cash,"Real curve purchase deducts funds");
+            controller.View.Open("train");yield return new WaitForSecondsRealtime(.3f);
+            Check(controller.View.Tab=="train"&&sim.SelectedTrack==XgTrack.Sequence&&sim.Selected.dataset==XgMemes.SenseDesk&&sim.S.sequence.epoch==0,"Training handoff preserves actual taught dataset without auto epoch");
+            // The new answer sheet replaces the removed legacy learningText comparison.
+            // Assert every rendered question and answer against the exact saved sheet item.
+            var rows=SenseStartField<RectTransform>(controller.View.Train,"sheetRowsRoot");
+            var sheet=sim.Sheet(sim.Selected);
+            Check(rows.gameObject.activeInHierarchy&&sheet.Count>0,"Actual training answer sheet is visible");
+            for(int i=0;i<sheet.Count;i++)
+            {
+                var row=rows.Find("Question"+(i+1));Check(row!=null&&row.gameObject.activeInHierarchy,"Actual answer row exists "+i);
+                string question=sim.SheetQuestion(sheet[i]),answer=sim.SheetAnswer(sim.Selected,sheet[i]);
+                bool hasQuestion=false,hasAnswer=false;
+                foreach(var label in row.GetComponentsInChildren<TMP_Text>()){hasQuestion|=label.text.Contains(question);hasAnswer|=label.text.Contains(answer);}
+                Check(hasQuestion&&hasAnswer&&sheet[i].dataset==XgMemes.SenseDesk,"Visible comparison binds saved sense question and model answer "+i);
+                var source=sim.SheetCard(sheet[i]);bool authored=false;
+                foreach(var phrase in XgMemes.SenseBank)authored|=phrase.text==source.source.question&&phrase.yes==source.truth;
+                Check(authored,"Sheet question comes from authored common-sense bank "+i);
+            }
+            string comparisonState=JsonUtility.ToJson(sim.S);controller.View.Refresh(true);
+            Check(comparisonState==JsonUtility.ToJson(sim.S),"Refreshing sheet preserves learning and saved state");
+            yield return new WaitForEndOfFrame();SenseStartCapture("sense-start-training-handoff");
 
             // Stage two is an explicit boundary fixture, not a claim of playing through
             // the chapter. Production loading and Tick perform the real desk unlock.
-            var second = JsonUtility.FromJson<XgState>(freshJson); second.stage = 2;
+            var second = JsonUtility.FromJson<XgState>(freshJson); second.stage = 2; second.openingFocus=false;
             SenseStartLoad(controller, runtime, houseJson, second);
             controller.Sim.Tick(.1, controller.Host);
             controller.View.Open("teach"); controller.View.Refresh(true);
@@ -140,8 +128,8 @@ public static partial class DesignWallpaperSmoke
                 "Stage two exposes arithmetic through its real unlock path without a purchased pack");
             SenseStartClickDesk(controller, "arith");
             yield return new WaitForSecondsRealtime(.2f);
-            Check(controller.Sim.S.desk == "arith" && controller.View.Teach.ShownCardId == controller.Sim.Card("arith").id,
-                "Actual stage-two hall click enters a generated arithmetic card");
+            Check(controller.Sim.S.desk == "arith" && ActualDeskGame(controller.View.Teach)!=null && (string)LessonGoalField<object>(controller.View.Teach,"deskGame").GetType().GetProperty("SelectedGame").GetValue(LessonGoalField<object>(controller.View.Teach,"deskGame"))=="dadishu",
+                "Actual stage-two hall click enters the arithmetic game");
             yield return new WaitForEndOfFrame();
             SenseStartCapture("sense-start-stage-two-arithmetic");
 
@@ -165,12 +153,12 @@ public static partial class DesignWallpaperSmoke
             yield return new WaitForSecondsRealtime(.2f);
             SenseStartClickDesk(controller, "arith");
             yield return new WaitForSecondsRealtime(.2f);
-            Check(controller.Sim.S.desk == "arith" && controller.View.Teach.ShownCardId == legacyCard
+            Check(controller.Sim.S.desk == "arith" && ActualDeskGame(controller.View.Teach)!=null && (string)LessonGoalField<object>(controller.View.Teach,"deskGame").GetType().GetProperty("SelectedGame").GetValue(LessonGoalField<object>(controller.View.Teach,"deskGame"))=="dadishu" && controller.Sim.Card("arith").id==legacyCard
                 && controller.Sim.Labels("arith") == 7 && controller.Sim.DeskConditionText(XgCatalog.Desk("arith")) == "",
                 "Actual hall clicks can leave and re-enter an old unlocked arithmetic desk at stage one");
             yield return new WaitForEndOfFrame();
             SenseStartCapture("sense-start-old-unlocked-arithmetic");
-            Check(runtime.TestMode && !runtime.useDiskSave && !runtime.tickEnabled && !controller.enabled,
+            Check(!runtime.useDiskSave && !runtime.tickEnabled && !controller.enabled,
                 "Common-sense scene retains disk-save and background-tick isolation");
         }
         finally

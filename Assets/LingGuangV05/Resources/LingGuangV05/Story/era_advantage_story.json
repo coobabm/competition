@@ -14,24 +14,6 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "key": "era_skeptic_aj",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_skeptic"
-        },
-        {
-          "op": "say",
-          "key": "era_skeptic_xg",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_skeptic"
-        },
-        {
           "op": "think",
           "key": "era_skeptic_think"
         }
@@ -52,26 +34,12 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "key": "era_rescue_aj",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_first_rescue"
-        },
-        {
           "op": "think",
           "key": "era_rescue_receipt"
         },
         {
-          "op": "say",
-          "key": "era_rescue_xg",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_first_rescue"
+          "op": "wait",
+          "seconds": 3
         },
         {
           "op": "think",
@@ -94,26 +62,12 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "key": "era_team_aj",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_small_team"
-        },
-        {
           "op": "think",
           "key": "era_team_receipt"
         },
         {
-          "op": "say",
-          "key": "era_team_xg",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_small_team"
+          "op": "wait",
+          "seconds": 3
         },
         {
           "op": "think",
@@ -134,35 +88,8 @@
       ],
       "steps": [
         {
-          "op": "say",
-          "key": "era_changed_xg",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_changed_question"
-        },
-        {
-          "op": "say",
-          "key": "era_changed_aj",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_changed_question"
-        },
-        {
           "op": "think",
           "key": "era_changed_think"
-        },
-        {
-          "op": "say",
-          "key": "era_changed_ask",
-          "who": "netbar"
-        },
-        {
-          "op": "waitSignal",
-          "ev": "story.delivered:era_changed_question"
         }
       ]
     },

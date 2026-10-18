@@ -187,10 +187,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             else if (x.active)
             {
-                // Real MB/s: what is left over the game seconds it still needs, back on the real clock.
-                double left = Math.Max(0, x.sizeMB - x.doneMB);
-                double mbps = x.secondsLeft > 1e-6 ? left / x.secondsLeft * XgSim.DownloadTimeScale : Sim.LineMBps;
-                q.speed.text = N(mbps, mbps < 10 ? "0.##" : "0.#") + " MB/s";
+                q.speed.text = T("模拟下载", "Simulated download");
                 q.eta.text = XgSim.ClockText(x.eta);
             }
             else
@@ -318,19 +315,16 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (root == null || !root.gameObject.activeInHierarchy || Sim == null) return;
             var d = XgCatalog.Dataset(key);
-            double samples;
             string text;
             if (d != null)
             {
-                samples = XgSim.BatchSamples(d);
-                int k = Sim.BatchesArrived(key);
-                text = T(d.name + " 第 " + k + " 批下完了 · +", d.nameEn + " batch " + k + " is in · +") + XgSim.SamplesText(samples);
+                text = T(d.name + " 下载完成 · 待安装", d.nameEn + " downloaded · ready to install");
             }
             else
             {
                 var o = Sim.Offer(key);
                 if (o == null) return;
-                text = T(o.name + " 下完了 · +", o.nameEn + " is in · +") + XgSim.SamplesText(o.samples);
+                text = T(o.name + " 下载完成 · 待安装", o.nameEn + " downloaded · ready to install");
             }
             RectTransform at = root;
             foreach (var r in datasetRows) if (d != null && r.id == d.id && r.rt.gameObject.activeInHierarchy) { at = r.rt; break; }

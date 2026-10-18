@@ -22,7 +22,7 @@ namespace LingGuangV05.Core
     {
         public const int EconomySchema = 1;
         /// <summary>Settlements in debt before the landlord texts, cuts the power, and the computer is sold.</summary>
-        public const int DebtTextDay = 1, DebtCutDay = 2, DebtSaleDay = 3;
+        public const int DebtTextDay = 1, DebtCutDay = 3, DebtSaleDay = 4;
         /// <summary>The day rent goes up (the landlord's YY message).</summary>
         public static readonly DateTime RentRiseDate = new DateTime(2016, 10, 1);
 
@@ -42,7 +42,7 @@ namespace LingGuangV05.Core
         /// <summary>Rent is being paid: bills, debt and bankruptcy apply.</summary>
         public bool EconomyActive => S.rentDay > 0 && !Waived;
         /// <summary>What the wallet is short by (0 when not in debt).</summary>
-        public double Debt => Math.Max(0, -S.money);
+        public double Debt => Math.Max(0, S.rentOutstanding);
 
         static string T(string zh, string en) => Lang.English ? en : zh;
         static string Yuan(double v) => "¥" + Math.Round(v).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
@@ -57,6 +57,7 @@ namespace LingGuangV05.Core
             S.repairs.RemoveAll(r => r == null || !HardwareCatalog.Ownable(r.model) || !Finite(r.readyAt) || r.readyAt < 0);
             if (S.bills == null) S.bills = new HouseBills();
             if (S.billsToday == null) S.billsToday = new HouseBills();
+            MigrateManualRent();
             if (S.economyVersion >= EconomySchema) return;
             S.economyVersion = EconomySchema;
             int today = GameCalendar.CurrentDay(S);
@@ -123,12 +124,9 @@ namespace LingGuangV05.Core
             if (S.rentDay < first)
             {
                 S.rentDay = today; S.broadbandMonth = 0;
-                // The free months are over: the landlord says so once, with the price (YY, from BankruptcyEnding).
-                double perDay = RentFor(GameCalendar.Now(S).Date), rise = Config.rentPerDayFromOctober;
-                LastMessage = T("小伙子，缓租的日子到头了。从今天起房租一天 " + Yuan(perDay) + "，两天一结，水电宽带另算；十月一号起涨到一天 " + Yuan(rise) + "。要是连着三次结算都还欠着，我就得催你把电脑卖了抵账——卖不卖，你自己定。",
-                    "Kid, the grace period is over. From today the rent is " + Yuan(perDay) + " a day, settled every two days, power and broadband extra; from 1 October it goes up to " + Yuan(rise) + " a day. If you are still behind after three settlements in a row, I'll have to push you to sell the computer for the rent. Your call.");
-                Raise("rent.started", Yuan(perDay));
+
             }
+            StartManualRent();
             if (S.broadbandMonth != month)
             {
                 // One bill per month begun (a jump over a month still pays it once), none twice.
@@ -159,7 +157,7 @@ namespace LingGuangV05.Core
         {
             var date = GameCalendar.Now(S).Date;
             double days = Config.dayLengthSeconds / Math.Max(1, Config.rentDaySeconds);
-            Bill(BillKind.Rent, RentFor(date) * days);
+            // Rent is paid explicitly through YY; only utility charges settle here.
             if (date.Month == 7 || date.Month == 8) Bill(BillKind.Aircon, Config.summerAirconPerDay * days);
         }
 
@@ -312,36 +310,16 @@ namespace LingGuangV05.Core
             double idle = S.billDue;
             S.billDue = 0; S.unpaidPower = false;
             if (idle > Epsilon) Bill(BillKind.IdlePower, idle);
-            if (S.money >= -Epsilon) { ClearDebtIfPaid(); return; }
-            S.debtDays++;
-            string owed = Yuan(Debt);
-            if (S.debtDays == DebtTextDay)
-            {
-                LastMessage = T("房东：房租该交了（欠 " + owed + "）。", "Landlord: the rent is due (" + owed + " owed).");
-                Raise("rent.due", owed);
-            }
-            else if (S.debtDays == DebtCutDay)
-            {
-                S.landlordCut = true;
-                LastMessage = T("房东拉了电闸：欠 " + owed + "，再不交就别住了。显卡全停，手动标注还能挣钱。", "The landlord cut the power: " + owed + " owed. Pay or move out. Every card has stopped; hand labelling still pays.");
-                Raise("power.cut", owed);
-            }
-            else if (S.debtDays == DebtCutDay + 1)
-            {
-                LastMessage = T("欠款还没还清。可以继续手动标注还债；是否卖电脑，由你决定。", "Debt remains. Keep labelling to repay it, or choose to sell the computer.");
-                Raise("rent.decision", owed);
-            }
+            ClearDebtIfPaid();
         }
 
-        /// <summary>Money back to zero or above ends the landlord's countdown and brings the power back.</summary>
         void ClearDebtIfPaid()
         {
-            if (S.bankrupt || S.debtDays == 0 && !S.landlordCut || S.money < -Epsilon) return;
-            bool wasCut = S.landlordCut;
-            S.debtDays = 0; S.landlordCut = false;
-            LastMessage = T("房租交上了。" + (wasCut ? "来电了。" : ""), "The rent is paid." + (wasCut ? " The power is back." : ""));
-            Raise("rent.settled");
+            if (S.bankrupt || S.debtDays == 0 && !S.landlordCut || Debt > Epsilon) return;
+            S.debtDays = 0;
+            S.landlordCut = false;
         }
+
 
         /// <summary>What the computer and every card fetch second-hand today.</summary>
         public double ComputerSaleValue()
@@ -356,7 +334,7 @@ namespace LingGuangV05.Core
         /// <summary>The third day in debt: the computer is sold to pay the rent. The failure ending plays on the desktop.</summary>
         public bool ConfirmComputerSale()
         {
-            if (S.bankrupt || S.money >= -Epsilon || S.debtDays <= DebtCutDay) return false;
+            if (S.bankrupt || Debt <= Epsilon || S.debtDays < DebtSaleDay) return false;
             SellComputer(); return true;
         }
 
@@ -364,7 +342,8 @@ namespace LingGuangV05.Core
         {
             if (S.bankrupt) return;
             S.soldFor = ComputerSaleValue();
-            S.money = Math.Min(ResourceCeiling, S.money + S.soldFor);
+            S.money = Math.Min(ResourceCeiling, S.money + S.soldFor - Debt);
+            S.rentOutstanding = 0;
             S.bankrupt = true; S.landlordCut = false; S.jobEnabled = false;
             LastMessage = T("电脑卖了 " + Yuan(S.soldFor) + "。房租交上了。", "The computer sold for " + Yuan(S.soldFor) + ". The rent is paid.");
             Raise("bankrupt", Yuan(S.soldFor));

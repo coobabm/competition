@@ -66,8 +66,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sim.RelicEquipped(r.id)) sb.Append("  ").Append(Hex(XgDark.Good)).Append(T("已装备", "Equipped")).Append("</color>");
             else if (sim.RelicOwned(r.id)) sb.Append("  ").Append(Hex(XgDark.Muted)).Append(T("在背包里", "In the backpack")).Append("</color>");
             sb.Append("\n").Append(Hex(XgDark.Muted)).Append(XgRelics.Flavor(r, en)).Append("</color>");
-            sb.Append("\n").Append(Hex(XgDark.Money)).Append(T("效果：", "Effect: ")).Append(XgRelics.Effect(r, en)).Append("</color>");
-            sb.Append("\n").Append(Hex(XgDark.Muted)).Append(T("来源：", "From: ")).Append(XgRelics.Source(r, en)).Append("</color>");
+            sb.Append("\n").Append(Hex(XgDark.Money)).Append(T("效果：", "Effect: ")).Append(XgRelics.Effect(r, en).Replace("灵光", sim.AiDisplayName)).Append("</color>");
+            sb.Append("\n").Append(Hex(XgDark.Muted)).Append(T("来源：", "From: ")).Append(XgRelics.Source(r, en).Replace("灵光", sim.AiDisplayName)).Append("</color>");
             var pair = XgRelics.PairOf(r.id);
             if (pair != null)
             {

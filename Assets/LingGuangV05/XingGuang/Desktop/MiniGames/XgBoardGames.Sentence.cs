@@ -29,7 +29,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if(revealed)return;revealed=true;int positions=0;for(int i=0;i<placed.Count;i++)if(words[placed[i]]==words[i])positions++;
             bool exact=positions==words.Length;int units=exact?2:positions>=words.Length*.7?1:0;if(exact)correct++;
             C.Report(units>0);var ai=(string[])words.Clone();bool memo=known.Contains(deck[round]);if(!memo&&C.Random.NextDouble()>C.Skill)Shuffle(ai);
-            reveal.text="原句："+string.Concat(words);Status.text=(exact?"排对！":units==1?"基本通顺。":"顺序不对。")+" 在位 "+positions+" / "+words.Length+"\n灵光（模拟"+(memo?"，本次会话已记住":"")+"）："+string.Concat(ai);
+            reveal.text="原句："+string.Concat(words);Status.text=(exact?"排对！":units==1?"基本通顺。":"顺序不对。")+" 在位 "+positions+" / "+words.Length+(XgUi.T("\n灵光（模拟","\nLingGuang (simulated")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName)+(memo?"，本次会话已记住":"")+"）："+string.Concat(ai);
             if(exact)known.Add(deck[round]);Draw();
         }
         void Next(){if(!revealed)return;if(round>=7){Status.text="本局结束：排对 "+correct+" / 8。点击新一局。";return;}round++;NewRound();}

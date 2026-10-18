@@ -99,7 +99,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         static void Rim(XgBtn b, Color c)
         {
-            var o = b.rt.gameObject.AddComponent<Outline>();
+            var o = b.image.gameObject.GetComponent<Outline>() ?? b.image.gameObject.AddComponent<Outline>();
             o.effectColor = c; o.effectDistance = new Vector2(1, -1);
         }
 
@@ -116,13 +116,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 var b = ui.Button(root, "", () => { filter = k; justSigned.Clear(); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 13);
                 PlaceTopLeft(b, i * 80, 1, 72, 26);
                 Rim(b, ZhongbaoSkin.Line);
-                filterBtns.Add((b, b.rt.GetComponent<Outline>()));
+                filterBtns.Add((b, b.image.GetComponent<Outline>()));
             }
-            toTrain = ui.Button(root, T("去灵光训练 ↗", "Train in LingGuang ↗"), () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab("train"); }, 13);
+            toTrain = ui.Button(root, T(("去灵光训练 ↗" .Replace("灵光", Sim.AiDisplayName)), ("Train in LingGuang ↗" .Replace("LingGuang", Sim.AiDisplayName))), () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab("train"); }, 13);
             toTrain.rt.gameObject.name = "ToTrain";
             PlaceTopRight(toTrain, 150, 0, 150, FilterH);
             Rim(toTrain, ZhongbaoSkin.Blue2);
-            UiTip.Add(toTrain.rt, "检查点从灵光的训练页来：练得越好，能签的订单越多、单价越高。", "Checkpoints come from LingGuang's training page: the better the model, the more contracts you can sign and the more they pay.");
+            UiTip.Add(toTrain.rt, () => T(("检查点从灵光的训练页来：练得越好，能签的订单越多、单价越高。" .Replace("灵光", Sim.AiDisplayName)), ("Checkpoints come from LingGuang's training page: the better the model, the more contracts you can sign and the more they pay." .Replace("LingGuang", Sim.AiDisplayName))));
             summary = ui.Text(Rect("Summary", root, Vector2.one, Vector2.one, new Vector2(-470, -FilterH), new Vector2(-162, 0)), "", 13, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
             summary.textWrappingMode = TextWrappingModes.NoWrap;
 
@@ -250,7 +250,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (root == null) return;
-            ZhongbaoSkin.Ghost(toTrain, T("去灵光训练 ↗", "Train in LingGuang ↗"), true);
+            ZhongbaoSkin.Ghost(toTrain, T(("去灵光训练 ↗" .Replace("灵光", Sim.AiDisplayName)), ("Train in LingGuang ↗" .Replace("LingGuang", Sim.AiDisplayName))), true);
             for (int i = 0; i < filterBtns.Count; i++)
             {
                 bool on = i == filter;
@@ -291,7 +291,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             SetText(stripLabel, T("<b>我的检查点</b>", "<b>My checkpoints</b>"));
             stripEmpty.gameObject.SetActive(chips.Count == 0);
-            SetText(stripEmpty, T("还没有检查点：去灵光练一个，再回来拖到订单上。", "No checkpoint yet: train one in LingGuang, then drag it onto an order here."));
+            SetText(stripEmpty, T(("还没有检查点：去灵光练一个，再回来拖到订单上。" .Replace("灵光", Sim.AiDisplayName)), ("No checkpoint yet: train one in LingGuang, then drag it onto an order here." .Replace("LingGuang", Sim.AiDisplayName))));
             foreach (var (dataset, chip) in chips)
             {
                 double sc = Sim.BestScore(dataset);
@@ -347,7 +347,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     // Short of the bar: whole percentage points to go (at least 1); the button does nothing.
                     int gap = Mathf.Max(1, Mathf.CeilToInt((float)((c.threshold - best) * 100 - 1e-6)));
-                    ZhongbaoSkin.Primary(k.btn, T("还差 " + gap + "%：去灵光练", gap + "% short: train in LingGuang"), false);
+                    ZhongbaoSkin.Primary(k.btn, T("还差 " + gap + ("%：去灵光练" .Replace("灵光", Sim.AiDisplayName)), gap + ("% short: train in LingGuang" .Replace("LingGuang", Sim.AiDisplayName))), false);
                 }
             }
             list.sizeDelta = new Vector2(0, rowsHeight);

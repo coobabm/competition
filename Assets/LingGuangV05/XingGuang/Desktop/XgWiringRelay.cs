@@ -49,15 +49,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 asked = false;
                 return;
             }
-            if (!asked)
-            {
-                asked = true;
-                hub.Receive(Group, "[" + T("阿杰", "Ajie") + "] " + bound.AjieQuestion(bound.S.wiring.ajieAsked > 1, Math.Max(1, bound.CafeCardsOnline)));
-                hub.Script(Group, Reply);
-                scripted = true;
-            }
-            // 林晴雯's choices win the one choice row; ours come back when hers are gone.
-            if (hub.ChoicesFor == null) hub.Offer(Group, Choices());
+            // 阿杰's question about the rented café cards is asked and answered on the 接线 page only: the YY group
+            // never asks the player about his own work.
+            asked = true;
         }
 
         string[] Choices()

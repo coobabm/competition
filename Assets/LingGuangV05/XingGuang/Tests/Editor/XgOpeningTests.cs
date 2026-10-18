@@ -16,8 +16,8 @@ namespace LingGuangV05.XingGuang.Tests
             public void Train(double s) { }
         }
 
-        /// <summary>Open with 常识判断 from the first second (2026-10-18: the opening is a run of games and combos). 算术 waits for stage two since the 2026-10-15 integration.</summary>
-        static readonly string[] Locked = { "logic", "spam", "mnist" };
+        /// <summary>Legacy starting datasets remain readable; the teaching manifest now adds free stage-one arithmetic.</summary>
+        static readonly string[] LegacyStarting = { "logic", "spam", "mnist" };
 
         static XgSim Fresh()
         {
@@ -37,6 +37,7 @@ namespace LingGuangV05.XingGuang.Tests
             for (int round = 1; round <= maxRounds; round++)
             {
                 LabelSense(sim, host, 10);
+                if (sim.TeachingTreeOpen && !sim.Has("train.curve")) sim.BuyNode("train.curve", host);
                 sim.TrainEpoch(XgTrack.Sequence, host);
                 if (!sim.OpeningFocus) return round;
             }
@@ -49,16 +50,22 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Fresh();
             Assert.IsTrue(sim.OpeningFocus);
             Assert.IsTrue(sim.DeskOpen(XgMemes.SenseDesk));
-            foreach (var id in Locked) Assert.IsTrue(sim.DeskOpen(id), id + " is open at once");
-            Assert.AreEqual(4, sim.OpenDesks().Count);
+            foreach (var id in LegacyStarting) Assert.IsTrue(sim.DeskOpen(id), id + " is open at once");
+            var actualDesks = new List<string>(); foreach (var desk in sim.OpenDesks()) actualDesks.Add(desk.id);
+            CollectionAssert.AreEquivalent(new[] { "sense", "logic", "spam", "mnist", "arith" }, actualDesks,
+                "Stage-one free arith_mole opens arithmetic; legacy starting datasets are not removed from old-save APIs.");
+            var arithmetic = XgTeachingPacks.Find("arith_mole");
+            Assert.AreEqual(1, arithmetic.stage); Assert.IsFalse(arithmetic.buy);
+            Assert.IsTrue(sim.TeachingPackAvailable("arith_mole"), "the manifest's free arithmetic game opens in stage one");
+            Assert.IsFalse(sim.TeachingPackAvailable("make24"), "sharing arithmetic does not grant its paid puzzle pack");
+            Assert.IsFalse(sim.TeachingPackAvailable("mnist_write"), "legacy MNIST dataset access does not bypass stage-two/vision/purchase gates");
             foreach (var desk in sim.OpenDesks())
             {
-                string game = desk.id == "mnist" ? "draw" : XgMiniGames.ForDesk(desk.id); // 手写数字 opens the handwriting pad
+                string game = desk.id == "arith" ? "arith_mole" : desk.id == "mnist" ? "draw" : XgMiniGames.ForDesk(desk.id); // 手写数字 opens the handwriting pad
                 Assert.IsNotNull(game, desk.id + " opens as a game");
                 Assert.IsNull(sim.MiniGameBlocker(game), game + " can be played now");
             }
-            Assert.IsFalse(sim.DeskOpen("arith"), "算术 still waits for stage two");
-            Assert.AreNotEqual(sim.OpeningReason, sim.DeskConditionText(XgCatalog.Desk("arith")), "and says its own reason");
+            Assert.IsTrue(sim.DeskOpen("arith"), "the newer stage-one teaching pack replaces the old stage-two arithmetic gate");
             Assert.AreEqual(XgMemes.SenseDesk, sim.S.desk);
             Assert.AreEqual(XgMemes.SenseDesk, sim.Run(XgTrack.Sequence).dataset);
             StringAssert.Contains("分辨对错", sim.OpeningReason);
@@ -66,7 +73,8 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.IsFalse(sim.FeatureVisible(feature), feature);
             foreach (var tab in new[] { "board", "tree", "data", "items", "wiring", "repo", "abilities", "cards", "final", "games", "contracts" })
                 Assert.IsTrue(sim.OpeningLocksLabTab(tab), tab);
-            foreach (var tab in new[] { "teach", "train", "vision", "sequence", "home", "" }) Assert.IsFalse(sim.OpeningLocksLabTab(tab), tab);
+            foreach (var tab in new[] { "teach", "home", "" }) Assert.IsFalse(sim.OpeningLocksLabTab(tab), tab);
+            foreach (var tab in new[] { "train", "vision", "sequence" }) Assert.IsTrue(sim.OpeningLocksLabTab(tab), tab);
             Assert.IsFalse(sim.OpeningLocksCrowdTab("label"));
             foreach (var tab in new[] { "games", "contracts", "subcontract", "ledger", "credit" }) Assert.IsTrue(sim.OpeningLocksCrowdTab(tab), tab);
             Assert.IsFalse(XgGuide.TabOpen(sim, XgGuide.Lab, "tree"));
@@ -82,7 +90,7 @@ namespace LingGuangV05.XingGuang.Tests
             LabelSense(sim, host, 6);
             var back = new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(sim.S))) { GoldChance = 0 };
             Assert.IsTrue(back.OpeningFocus);
-            foreach (var id in Locked) Assert.IsTrue(back.DeskOpen(id), id + " stays open after a reload");
+            foreach (var id in LegacyStarting) Assert.IsTrue(back.DeskOpen(id), id + " stays open after a reload");
             Assert.IsTrue(back.DeskOpen(XgMemes.SenseDesk));
             Assert.AreEqual(XgMemes.SenseDesk, back.S.desk);
         }
@@ -93,12 +101,14 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Fresh(); var host = new Host();
             var steps = XgGuide.Current(sim, 0);
             Assert.AreEqual(1, steps.Count, "one lonely line, no side task");
-            Assert.AreEqual("opening.label", steps[0].id);
-            Assert.AreEqual(XgGuide.Crowd, steps[0].app); Assert.AreEqual("label", steps[0].tab); Assert.AreEqual(XgMemes.SenseDesk, steps[0].arg);
-            StringAssert.Contains("常识判断", steps[0].zh);
-            Assert.AreEqual(XgCatalog.SamplesToTrain, steps[0].goal);
-
-            LabelSense(sim, host, XgCatalog.SamplesToTrain);
+            Assert.AreEqual("opening.twelve", steps[0].id);
+            Assert.AreEqual(XgGuide.Lab, steps[0].app); Assert.AreEqual("teach", steps[0].tab);
+            Assert.AreEqual(12, steps[0].goal);
+            LabelSense(sim, host, 12);
+            steps = XgGuide.Current(sim, host.money);
+            Assert.AreEqual("opening.curve", steps[0].id);
+            Assert.IsFalse(sim.TrainingUnlocked(XgTrack.Sequence));
+            Assert.IsTrue(sim.BuyNode("train.curve", host));
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence));
             steps = XgGuide.Current(sim, host.money);
             Assert.AreEqual("opening.train", steps[0].id);
@@ -133,7 +143,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(1, learned);
             Assert.IsFalse(sim.OpeningFocus);
             Assert.GreaterOrEqual(sim.YesNoAccuracy, XgSim.SenseVoiceLearned);
-            foreach (var id in Locked) Assert.IsTrue(sim.DeskOpen(id), id + " opens with it");
+            foreach (var id in LegacyStarting) Assert.IsTrue(sim.DeskOpen(id), id + " opens with it");
             Assert.IsTrue(sim.FeatureVisible("tree"));
             Assert.IsFalse(sim.OpeningLocksLabTab("tree"));
             Assert.IsTrue(sim.OpeningChatDue);
@@ -174,7 +184,7 @@ namespace LingGuangV05.XingGuang.Tests
             // A save from before the focus existed: the flag is off and every desk is as it was.
             var old = new XgSim { GoldChance = 0 };
             Assert.IsFalse(old.OpeningFocus);
-            foreach (var id in Locked) Assert.IsTrue(old.DeskOpen(id), id);
+            foreach (var id in LegacyStarting) Assert.IsTrue(old.DeskOpen(id), id);
             Assert.IsTrue(old.FeatureVisible("teach"));
             Assert.IsFalse(old.OpeningLocksLabTab("tree"));
             Assert.IsFalse(old.OpeningLocksCrowdTab("subcontract"));
@@ -194,7 +204,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(scored.OpeningFocus, "a checkpoint");
             var labelled = new XgSim { GoldChance = 0 }; labelled.S.labels.Add(new XgLabelCount { dataset = "logic", count = 30 }); labelled.BeginOpening();
             Assert.IsFalse(labelled.OpeningFocus, "labels elsewhere");
-            foreach (var id in Locked) Assert.IsTrue(labelled.DeskOpen(id));
+            foreach (var id in LegacyStarting) Assert.IsTrue(labelled.DeskOpen(id));
 
             // A focus flag on a save that has since moved past stage 1 (a jump from outside) ends silently at the next check.
             var jumped = Fresh(); var host = new Host();
@@ -202,7 +212,7 @@ namespace LingGuangV05.XingGuang.Tests
             jumped.S.stage = 3;
             var card = jumped.Card(XgMemes.SenseDesk); jumped.Answer(XgMemes.SenseDesk, card.truth, host);
             Assert.IsFalse(jumped.OpeningFocus);
-            foreach (var id in Locked) Assert.IsTrue(jumped.DeskOpen(id), id);
+            foreach (var id in LegacyStarting) Assert.IsTrue(jumped.DeskOpen(id), id);
             Assert.IsFalse(said.Exists(m => m.Contains("它学会分辨对错了")), "no learned notice for a jump");
             Assert.IsFalse(jumped.OpeningChatDue);
         }

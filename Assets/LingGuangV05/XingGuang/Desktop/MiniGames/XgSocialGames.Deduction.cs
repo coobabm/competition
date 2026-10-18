@@ -25,8 +25,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             new[]{"Phone","Tablet","Touch screen, needs charging","Carried in a pocket for making calls","Big screen, a bit awkward to carry around","pocket","big screen"},
             new[]{"WeChat","QQ","You can chat and send pictures","Moments and red packets, even Mom uses it","Penguin avatar, sun and moon levels","Moments","penguin"},
             new[]{"Coffee","Milk tea","A cup in your hand, often a queue to buy","Bitter, keeps you awake late at night","Sweet, with optional pearls and sugar level","bitter","pearls"}};
-        static readonly string[] Names={"你","灵光","小周","阿杰"},NamesEn={"You","LingGuang","Xiao Zhou","A-Jie"};
-        static string Nm(int i)=>XgUi.T(Names[i],NamesEn[i]);
+        string[] Names => new[]{"你",C.Sim.AiDisplayName,"虚拟玩家 A","虚拟玩家 B"};
+        string[] NamesEn => new[]{"You",C.Sim.AiDisplayName,"Virtual player A","Virtual player B"};
+        string Nm(int i)=>XgUi.T(Names[i],NamesEn[i]);
         readonly bool[] alive=new bool[4];readonly int[] sides=new int[4],marks=new int[4],descSide=new int[4];readonly string[] desc=new string[4];
         readonly List<string> history=new List<string>();
         string[] pair,pairEn;int odd,round,phase,goodVotes;float delay;
@@ -37,7 +38,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             Clear(XgUi.T("谁是卧底 · 第 "+round+" 轮","Who Is Undercover · Round "+round),XgUi.T("四人里一人拿相近词。先描述，再判断他人描述与你的词是否相像，最后投票。","One of the four holds a similar-but-different word. First describe, then judge whether the others' descriptions resemble your word, then vote."));
             T("Word",20,82,860,36,XgUi.T("你的词：「"+pair[sides[0]]+"」  · 不要直接泄露词语","Your word: \""+pairEn[sides[0]]+"\"  · Do not give the word away"),22,purple);
             for(int i=0;i<4;i++){
-                int k=i;float x=18+i*220;Shade(x,126,210,194);T("Name"+i,x+12,134,185,30,Nm(i)+(i==2?XgUi.T("（老周师弟）"," (junior)"):"")+(alive[i]?"":XgUi.T("（已出局）"," (out)")),21);
+                int k=i;float x=18+i*220;Shade(x,126,210,194);T("Name"+i,x+12,134,185,30,Nm(i)+(alive[i]?"":XgUi.T("（已出局）"," (out)")),21);
                 T("Desc"+i,x+12,172,185,90,alive[i]?(desc[i]??XgUi.T("待描述","Not described yet")):XgUi.T("旁观中","Watching"),19);
                 if(phase==2&&i!=0&&alive[i]){
                     B("Like"+i,x+8,267,94,43,(marks[i]==1?XgUi.T("[选] ","[x] "):"")+XgUi.T("像","Alike"),()=>Mark(k,1),17);
@@ -69,7 +70,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         void Mark(int seat,int mark){if(phase!=2||!alive[seat])return;marks[seat]=mark;Draw();}
         void Vote(int selected){if(phase!=3||!alive[selected])return;phase=4;
-            bool correct=selected==odd;if(correct)goodVotes++;C.Report(correct);
+            bool correct=selected==odd;if(correct)goodVotes++;
+            C.Sim.RecordTeachingQuestion("谁拿到了不同的词？我的词："+pair[sides[0]],
+                "Who holds the different word? My word: "+pairEn[sides[0]],correct,true,
+                Names[odd]+"拿到「"+pair[sides[odd]]+"」。",NamesEn[odd]+" holds "+pairEn[sides[odd]]+".","longtext",null,Nm(selected));
+            C.Report(correct);
             int[] votes=new int[4];votes[selected]++;
             for(int i=1;i<4;i++)if(alive[i]){int pick=odd;double accuracy=i==1?C.Skill:.65;if(i==odd||C.Random.NextDouble()>accuracy){var available=new List<int>();for(int j=0;j<4;j++)if(alive[j]&&j!=i)available.Add(j);pick=available[C.Random.Next(available.Count)];}votes[pick]++;}
             int top=-1,max=0;bool tied=false;for(int i=0;i<4;i++)if(alive[i]){if(votes[i]>max){max=votes[i];top=i;tied=false;}else if(votes[i]==max)tied=true;}
@@ -83,122 +88,102 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             T("VoteResult",32,110,836,100,outcome+(finished?XgUi.T("\n身份揭晓："+Names[odd]+"是卧底，词是「"+pair[sides[odd]]+"」。","\nReveal: "+NamesEn[odd]+" is the undercover, with the word \""+pairEn[sides[odd]]+"\"."):XgUi.T("\n身份暂不公开，继续比较描述。","\nIdentities stay hidden for now; keep comparing descriptions.")),24);
             T("History",32,225,836,115,string.Join("\n",history),18);
             if(finished){
-                T("Explain",32,351,836,55,XgUi.T("灵光学得越好，越会顺着别人的话装。看描述说了什么，别看语气。","The better LingGuang learns, the better it plays along. Weigh what is said, not the tone."),18);
+                T("Explain",32,351,836,55,XgUi.T(C.Sim.AiDisplayName+"学得越好，越会顺着别人的话装。看描述说了什么，别看语气。","The better "+C.Sim.AiDisplayName+" learns, the better it plays along. Weigh what is said, not the tone."),18);
                 B("Again",330,415,240,50,XgUi.T("重新发词","Deal new words"),Build);
             }else B("Continue",330,415,240,50,XgUi.T("再描述一轮","Describe another round"),NextRound);
         }
         public override void Tick(float dt){if(!disposed&&C.IsActive&&phase==1){delay-=dt;if(delay<=0)RevealDescriptions();}}
     }
 
-    /// <summary>
-    /// 开心辞典 on the 常识判断 desk: the quiz-show frame (twelve questions up a ladder, a clock, safe points, two lifelines) around
-    /// the desk's own yes/no statements, answered with 对 / 错. The statements come from the desk's bank (XgMemes.SenseBank) and 求助灵光
-    /// answers with its real yes/no ability (XgSim.SenseHelp), so early on it is often wrong.
-    /// </summary>
+    /// <summary>Unlimited statement judging: advance after each answer; the clock only grants a quick-answer bonus.</summary>
     sealed class XgQuizGame : XgSocialSurface
     {
         const float QuestionSeconds = 15;
-        /// <summary>A right answer shows why for this long, then the next question comes by itself (2026-10-18).</summary>
-        const float AutoNextSeconds = 1.5f;
         readonly HashSet<string> used = new HashSet<string>();
         XgPhrase statement;
-        int correct;
-        bool ended, locked, aiUsed, swapUsed;
-        float left, nextIn = -1;
-        TMP_Text hint, ladder;
+        bool locked, aiSays;
+        float left, feedbackLeft;
+        string lastFeedback = "";
+        bool lastCorrect;
+        int answeredFrame;
+        TMP_Text hint, progress, questionText, aiText;
+        string feedbackZh = "", feedbackEn = "";
         XgBtn yes, no;
         public XgQuizGame(XgMiniContext c) : base(c) { }
-        public override void Build() { correct = 0; ended = locked = aiUsed = swapUsed = false; nextIn = -1; used.Clear(); NextQuestion(false); }
+        public override void Build() { used.Clear(); NextQuestion(); }
 
-        void NextQuestion(bool keepTime)
+        void NextQuestion()
         {
-            statement = XgMiniContent.SenseStatement(C.Random, correct, C.Sim.Today, used);
-            used.Add(statement.text);
-            if (!keepTime) left = QuestionSeconds;
-            locked = false; Draw();
+            statement = XgMiniContent.SenseStatement(C.Random, C.Sim.TeachingAnswers, C.Sim.Today, used);
+            used.Add(statement.text); left = QuestionSeconds; locked = false;
+            aiSays = C.Sim.SenseHelp(statement, C.Random);
+            Draw();
         }
-        string Statement => XgUi.T(statement.text, string.IsNullOrEmpty(statement.textEn) ? statement.text : statement.textEn);
         string Why => XgUi.T(statement.why, string.IsNullOrEmpty(statement.whyEn) ? statement.why : statement.whyEn);
         static string Word(bool value) => value ? XgUi.T("对", "True") : XgUi.T("错", "False");
-
+        string Progress()
+        {
+            int count = C.Sim.TeachingAnswers;
+            return XgUi.T("连对", "Streak") + "\n<size=36>" + C.Sim.S.combo + "</size>\n×" + C.Sim.ComboMultiplier.ToString("0.0")
+                + "\n\n" + XgUi.T("第 " + (count / 12 + 1) + " 套 · " + (count % 12) + "/12", "Set " + (count / 12 + 1) + " · " + (count % 12) + "/12");
+        }
+        string AiAnswer => !C.Sim.TeachingAiReady ? "" : C.Sim.AiDisplayName + "：" + (C.Sim.YesNoAccuracy < .55
+            ? XgUi.T("……不知道", "…not sure") : Word(aiSays) + " · " + (int)Math.Round(C.Sim.YesNoAccuracy * 100) + "%");
         void Draw()
         {
-            Clear(XgUi.T("开心辞典 · 第 " + (correct + 1) + " / 12 题", "Quiz Show · Question " + (correct + 1) + " / 12"),
-                XgUi.T("判断这句话对不对，答对一题往上爬一级。第 4、8 题是安全点；求助灵光和换一题各有一次。",
-                    "Is the statement true or false? Every right answer climbs a rung. Questions 4 and 8 are safe points; you get one ask-LingGuang and one swap."));
-            Shade(20, 94, 620, 150); T("Question", 42, 108, 575, 124, Statement, 31);
+            Clear(XgUi.T("常识判断", "Common sense"), XgUi.T("判断题目对错；快答有奖励，慢慢想也没关系。", "Judge the statement. Quick answers earn a bonus; take your time if needed."));
+            Shade(20, 94, 620, 150);
+            questionText = T("Question", 42, 108, 575, 124, XgUi.T(statement.text, string.IsNullOrEmpty(statement.textEn) ? statement.text : statement.textEn), 31);
             timer = T("Timer", 708, 8, 175, 36, "", 19); Clock(left);
-            yes = B("True", 20, 262, 300, 128, Word(true), () => Answer(true), 46);
-            no = B("False", 340, 262, 300, 128, Word(false), () => Answer(false), 46);
-            yes.image.color = new Color32(214, 238, 224, 255); yes.label.color = green;
-            no.image.color = new Color32(246, 220, 222, 255); no.label.color = red;
-            Shade(666, 91, 214, 282); ladder = T("Ladder", 681, 102, 187, 260, Ladder(), 14);
-            hint = T("AiHint", 25, 398, 410, 74, XgUi.T("拿不准的话，可以问问灵光。", "Not sure? You can ask LingGuang."), 17, purple);
+            aiText = T("AiAnswer", 25, 244, 610, 38, AiAnswer, 22, purple);
+            yes = B("True", 20, 290, 300, 100, Word(true), () => Answer(true), 46);
+            no = B("False", 340, 290, 300, 100, Word(false), () => Answer(false), 46);
+            yes.image.color = C.Ui.dark ? XgDark.AccentSoft : new Color32(214, 238, 224, 255); yes.label.color = green;
+            no.image.color = C.Ui.dark ? new Color32(52, 28, 31, 255) : new Color32(246, 220, 222, 255); no.label.color = red;
+            Shade(666, 91, 214, 282); progress = T("Progress", 681, 102, 187, 260, Progress(), 18);
+            hint = T("Feedback", 25, 398, 610, 74, feedbackLeft > 0 ? lastFeedback : "", 17, lastCorrect ? green : red);
             hint.textWrappingMode = TextWrappingModes.Normal;
-            B("Ai", 666, 381, 214, 30, XgUi.T("求助灵光" + (aiUsed ? "（已用）" : ""), "Ask LingGuang" + (aiUsed ? " (used)" : "")), UseAi, 16);
-            B("Swap", 666, 416, 214, 30, XgUi.T("换一题" + (swapUsed ? "（已用）" : ""), "Swap question" + (swapUsed ? " (used)" : "")), Swap, 15);
-            B("Quit", 686, 450, 175, 25, XgUi.T("放弃并保留成绩", "Quit and keep score"), () => Finish(false, true), 14);
         }
-
-        string Ladder()
-        {
-            string s = XgUi.T("已答对 " + correct + " 题\n安全点 " + XgMiniSocialRules.SafeLevel(correct) + "\n\n", "Correct: " + correct + "\nSafe level: " + XgMiniSocialRules.SafeLevel(correct) + "\n\n");
-            for (int n = 12; n >= 1; n--)
-                s += (n == correct + 1 ? "> " : "  ") + n + "  " + (n == 4 || n == 8 ? XgUi.T("安全点", "safe") : "") + (n <= correct ? XgUi.T(" 已通过", " cleared") : "") + "\n";
-            return s;
-        }
-
         void Answer(bool says)
         {
-            if (ended || locked) return;
+            if (locked || !C.IsActive) return;
             locked = true;
             bool ok = says == statement.yes;
+            C.Sim.RecordTeachingQuestion(statement.text, statement.textEn, statement.yes, says, statement.why, statement.whyEn, "sense");
             C.ReportTimed(ok, QuestionSeconds - left);
-            if (ok) correct++;
-            ladder.text = Ladder();
+            progress.text = Progress();
             yes.button.interactable = no.button.interactable = false;
-            hint.text = XgUi.T(ok ? "答对了：" : "答错了：", ok ? "Right: " : "Wrong: ") + Why; hint.color = ok ? green : red;
-            if (!ok) { Finish(false, false); return; }
-            if (correct >= 12) { Finish(true, false); return; }
-            nextIn = AutoNextSeconds;
+            (says ? yes : no).image.color = ok ? green : red;
+            if (C.Ui.dark) (says ? yes : no).label.color = XgDark.Page;
+            string aiMark = C.Sim.TeachingAiReady ? "  " + C.Sim.AiDisplayName + (aiSays == statement.yes ? " ✓" : " ×") : "";
+            feedbackZh = (ok ? "答对了：" : "答错了：") + statement.why + aiMark;
+            feedbackEn = (ok ? "Right: " : "Wrong: ") + (string.IsNullOrEmpty(statement.whyEn) ? statement.why : statement.whyEn) + aiMark;
+            hint.text = XgUi.T(feedbackZh, feedbackEn);
+            hint.color = ok ? green : red;
+            lastFeedback = hint.text; lastCorrect = ok; feedbackLeft = 1.5f; answeredFrame = Time.frameCount;
         }
-
-        void UseAi()
+        public override void RefreshLanguage()
         {
-            if (ended || locked || aiUsed) return;
-            aiUsed = true;
-            // Its real yes/no ability decides: a coin toss early on, never wrong on a taught statement once it has learned.
-            bool says = C.Sim.SenseHelp(statement, C.Random);
-            var mark = says ? yes : no;
-            mark.label.text = Word(says) + "  <size=45%><color=#734EB8>" + XgUi.T("灵光选了这个", "LingGuang's pick") + "</color></size>";
-            double accuracy = C.Sim.YesNoAccuracy;
-            bool learned = accuracy >= XgSim.SenseVoiceLearned;
-            hint.text = XgUi.T("灵光觉得：「" + Word(says) + "」。" + (learned ? "这类题它学会了。" : "它现在大约能答对 " + (int)Math.Round(accuracy * 100) + "%。"),
-                "LingGuang says \"" + Word(says) + "\". " + (learned ? "It has learned this kind." : "It gets about " + (int)Math.Round(accuracy * 100) + "% of these right."));
-            hint.color = purple;
+            // Keep the same statement, countdown, answer lock, random state and reward ticket.
+            var title = C.Root.Find("Title")?.GetComponent<TMP_Text>();
+            var rule = C.Root.Find("Rule")?.GetComponent<TMP_Text>();
+            if (title != null) title.text = XgUi.T("常识判断", "Common sense");
+            if (rule != null) rule.text = XgUi.T("判断题目对错；快答有奖励，慢慢想也没关系。", "Judge the statement. Quick answers earn a bonus; take your time if needed.");
+            if (questionText != null) questionText.text = XgUi.T(statement.text, string.IsNullOrEmpty(statement.textEn) ? statement.text : statement.textEn);
+            if (aiText != null) aiText.text = AiAnswer;
+            if (yes != null) yes.label.text = Word(true);
+            if (no != null) no.label.text = Word(false);
+            if (progress != null) progress.text = Progress();
+            lastFeedback = XgUi.T(feedbackZh, feedbackEn);
+            if (hint != null) hint.text = feedbackLeft > 0 ? lastFeedback : "";
+            Clock(left);
         }
-
-        void Swap() { if (ended || locked || swapUsed) return; swapUsed = true; NextQuestion(true); }
-
-        void Finish(bool won, bool quit)
-        {
-            if (ended) return;
-            ended = true; locked = true;
-            int kept = won || quit ? correct : XgMiniSocialRules.SafeLevel(correct);
-            string reveal = !won && !quit
-                ? XgUi.T("\n刚才那句其实是「" + Word(statement.yes) + "」：" + statement.why, "\nThat one was actually \"" + Word(statement.yes) + "\": " + Why)
-                : "";
-            End(won ? XgUi.T("十二题通关", "All twelve cleared") : quit ? XgUi.T("见好就收", "Quit while ahead") : XgUi.T("挑战结束", "Challenge over"),
-                XgUi.T("本局答对 " + correct + " 题，保住第 " + kept + " 级。" + reveal, "You got " + correct + " right and keep rung " + kept + "." + reveal), Build);
-        }
-
         public override void Tick(float dt)
         {
-            if (disposed || ended || !C.IsActive) return;
-            if (nextIn > 0) { if ((nextIn -= dt) <= 0) { nextIn = -1; NextQuestion(false); } return; }
-            if (locked) return;
-            left -= dt; Clock(left);
-            if (left <= 0) { Finish(false, false); return; }
+            if (disposed || !C.IsActive) return;
+            if (locked) { if (Time.frameCount > answeredFrame) NextQuestion(); return; }
+            if (feedbackLeft > 0) { feedbackLeft -= dt; if (feedbackLeft <= 0) hint.text = ""; }
+            left = Mathf.Max(0, left - dt); Clock(left);
             if (C.KeyDown(Key.Digit1) || C.KeyDown(Key.LeftArrow)) Answer(true);
             else if (C.KeyDown(Key.Digit2) || C.KeyDown(Key.RightArrow)) Answer(false);
         }

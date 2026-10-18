@@ -22,7 +22,7 @@ namespace LingGuangV05.Editor
     /// Additive installer. Never edits a vendor asset, global setting or user-data file.
     /// The copied scene is the only serialized output; all app visuals are scene-local.
     /// </summary>
-    public static class ChapterOneInstaller
+    public static partial class ChapterOneInstaller
     {
         public const string ScenePath = "Assets/LingGuangV05/Scenes/Main.unity";
         public const string SourceScenePath = "Assets/DreamOS - Complete OS UI/Scenes/2010desktop.unity";

@@ -50,7 +50,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.DesktopHosted = true;
             Assert.That(sim.ChapterSceneHolds, Is.True);
             Assert.That(sim.TakeExam(), Is.Null);
-            Assert.That(XgGuide.ConfirmStage(sim).zh, Does.Contain("阿杰"));
+            Assert.That(XgGuide.ConfirmStage(sim).zh, Does.Contain("我的"));
             PlayThrough(sim);
             Assert.That(sim.S.psStep, Is.EqualTo(4));
             Assert.That(sim.ChapterSceneHolds, Is.False);
@@ -138,9 +138,9 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var told = Lab(1); PlayThrough(told, true, false);
             var c = told.Chronicle().First(x => x.id == XgSim.PhoneChronicle);
-            Assert.That(c.body, Does.Contain("身份证").And.Contain("手分的").And.Contain("4,312"));
+            Assert.That(c.body, Does.Contain("4,312").And.Not.Contain("阿杰"));
             var quiet = Lab(1); PlayThrough(quiet, false, true);
-            Assert.That(quiet.Chronicle().First(x => x.id == XgSim.PhoneChronicle).body, Does.Not.Contain("身份证").And.Contain("小脚本"));
+            Assert.That(quiet.Chronicle().First(x => x.id == XgSim.PhoneChronicle).body, Does.Contain("4,312").And.Not.Contain("阿杰"));
         }
 
         [Test]
@@ -162,10 +162,15 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Lab(1);
             sim.S.firstTrack = "vision";
-            Assert.That(sim.ZhouStageNoteNow(2).zh, Does.Contain("卷积").And.Contain("笔画"));
+            var vision = sim.ZhouStageNoteNow(2);
+            Assert.That(vision.zh, Does.Contain("挪个位置"));
+            Assert.That(vision.en, Does.Contain("moving"));
             sim.S.firstTrack = "sequence";
             var reading = sim.ZhouStageNoteNow(2);
-            Assert.That(reading.zh, Does.Contain("循环网络").And.Not.Contain("卷积"));
+            Assert.That(reading.zh, Does.Contain("词序").And.Contain("前面"));
+            Assert.That(reading.en, Does.Contain("word order").And.Contain("remember"));
+            Assert.AreNotEqual(vision.zh, reading.zh, "the private reflection follows the chosen learning route");
+            Assert.That(reading.zh + reading.en, Does.Not.Contain("你自己在贴吧").And.Not.Contain("You bragged"));
             Assert.That(reading.replies[0].answerZh, Does.Contain("循环网络"));
         }
     }

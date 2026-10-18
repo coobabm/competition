@@ -546,7 +546,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             statusMid = ui.Text(Rect("Hand", st, Vector2.zero, new Vector2(0, 1), new Vector2(200, 0), new Vector2(460, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
             statusRight = ui.Text(Rect("Rent", st, new Vector2(1, 0), Vector2.one, new Vector2(-420, 0), new Vector2(-12, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
             foreach (var t in new[] { statusLeft, statusMid, statusRight }) t.textWrappingMode = TextWrappingModes.NoWrap;
-            UiTip.Add(st, "状态栏：手动标注从不抽检；右边是家里的房租，以及离下一次结算还有多久（一次扣两天房租）。", "Status strip: hand labels are never spot-checked; on the right, the home rent and the time to the next settlement (two days of rent at a time).");
+            UiTip.Add(st, "房租每七天一期，到期在 YY 手动转账，可以先转一部分。", "Rent is due every seven days. Pay it manually in YY; partial payments are allowed.");
         }
 
         /// <summary>The 自动提交 tab's badge: "!" while something holds auto-answer that the player can clear, otherwise nothing.</summary>
@@ -813,8 +813,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             statusMid.text = T("手动标注从不抽检", "Hand labels are never spot-checked");
             // Rent and the next daily settlement come from the household sim; before rent starts there is nothing to show.
             statusRight.text = house != null && house.EconomyActive
-                ? T("房租 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/天 · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " 后扣 ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date) * house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) + "（两天）",
-                    "Rent ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date)) + "/day · " + Clock(house.Config.dayLengthSeconds - house.S.daySeconds) + " until ¥" + Money(house.RentFor(GameCalendar.Now(house.S).Date) * house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) + " (two days) is taken")
+                ? T("房租每七天一期 · 待转 ¥" + Money(house.Debt) + " · 去 YY 找房东", "Rent every seven days · ¥" + Money(house.Debt) + " due · pay the landlord in YY")
                 : "";
 
             var runtime = Controller != null ? Controller.runtime : null;

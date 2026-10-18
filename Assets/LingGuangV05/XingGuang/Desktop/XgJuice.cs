@@ -22,6 +22,11 @@ namespace LingGuangV05.Desktop.XingGuang
         bool hitstopOwned;
         float previousTimeScale = 1;
         public bool Reduced, Muted;
+        public bool DisableMotionWhenReduced;
+        bool MotionDisabled => DisableMotionWhenReduced && Reduced;
+        public const int FloaterLimit = 8, ParticleLimit = 96;
+        public int ActiveFloaters => floaters.Count;
+        public int ActiveParticles => particles.Count;
         /// <summary>Opt-in for private label stacks: adopt external absolute layout/rest writes.</summary>
         public bool TrackKnockLayoutChanges;
         /// <summary>Opt-in for desktop minigames: freeze only this effect stack, never the shared simulation.</summary>
@@ -40,7 +45,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public Vector3 scale, appliedScale, settleScale;
             public Vector2 pos, dir, appliedPos, settlePos;
             public float t, life, amp;
-            public bool squash, settling;
+            public bool squash, settling, press, held;
         }
 
         readonly List<Floater> floaters = new List<Floater>();
@@ -88,6 +93,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Flash(Color color, float seconds = .09f, float alpha = .8f)
         {
+            if (MotionDisabled) return;
             if (!Visible()) return;
             flashColor = color; flashColor.a = alpha * (Reduced ? .4f : 1);
             flashTime = 0; flashDuration = seconds;
@@ -96,6 +102,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Shake(float amplitude, float seconds = .25f)
         {
+            if (MotionDisabled) return;
             if (Reduced || !Visible() || shakeTarget == null) return;
             if (Time.unscaledTime - lastShake < .3f && amplitude <= shakeAmp) return;
             lastShake = Time.unscaledTime;
@@ -105,6 +112,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Freezes the game and these effects for a few milliseconds.</summary>
         public void HitStop(float ms)
         {
+            if (MotionDisabled) return;
             if (Reduced || !Visible()) return;
             hitstop = Mathf.Max(hitstop, ms / 1000f);
             // Only in Play mode: an edit-mode page render would leave the global clock at 0 and the next Play starts frozen.
@@ -114,6 +122,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Scale punch (buttons "pressed in" then overshoot) plus an optional knockback offset.</summary>
         public void Knock(RectTransform rt, float amp = .08f, Vector2 dir = default, float seconds = .22f, bool squash = false)
         {
+            if (MotionDisabled) return;
             if (rt == null || !Visible()) return;
             if (!punches.TryGetValue(rt, out var p))
             {
@@ -122,7 +131,29 @@ namespace LingGuangV05.Desktop.XingGuang
                 RememberApplied(p);
             }
             RebaseExternalTransform(p);
-            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash; p.settling = false;
+            p.t = 0; p.life = seconds; p.amp = amp; p.dir = dir; p.squash = squash; p.settling = false; p.press = p.held = false;
+        }
+
+        /// <summary>Hold a visual target at 95%; do not use a hit rectangle or business FX stack.</summary>
+        public void HoldPress(RectTransform rt)
+        {
+            if (rt == null || !Visible()) return;
+            Knock(rt, .05f);
+            if (!punches.TryGetValue(rt, out var p)) return;
+            p.press = p.held = true;
+            rt.localScale = p.scale * .95f;
+            rt.anchoredPosition = p.pos;
+            RememberApplied(p);
+        }
+
+        /// <summary>Release from the current pose with a short, bounded rebound.</summary>
+        public void ReleasePress(RectTransform rt)
+        {
+            if (rt == null || !punches.TryGetValue(rt, out var p) || !p.press || !p.held) return;
+            RebaseExternalTransform(p);
+            p.held = false; p.t = 0; p.life = .22f;
+            p.settleScale = rt.localScale;
+            RememberApplied(p);
         }
 
         /// <summary>True until Knock restores its target or is explicitly cleared.</summary>
@@ -136,7 +167,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (remaining <= 0 || seconds <= 0) return;
             RebaseExternalTransform(p);
             p.settleScale = rt.localScale; p.settlePos = rt.anchoredPosition;
-            p.life = Mathf.Min(seconds, remaining); p.t = 0; p.settling = true;
+            p.life = Mathf.Min(seconds, remaining); p.t = 0; p.settling = true; p.press = p.held = false;
             RememberApplied(p);
         }
 
@@ -150,7 +181,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (scale[axis] != p.appliedScale[axis])
                 {
                     p.scale[axis] = scale[axis];
-                    if (p.settling) p.settleScale[axis] = scale[axis];
+                    if (p.settling || (p.press && !p.held)) p.settleScale[axis] = scale[axis];
                 }
             for (int axis = 0; axis < 2; axis++)
                 if (pos[axis] != p.appliedPos[axis])
@@ -178,7 +209,13 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Float(Vector2 at, string text, Color color, float size = 22, float rise = 60, float life = .75f, float scale = 1.3f)
         {
+            if (MotionDisabled) return;
             if (!Visible()) return;
+            if (floaters.Count >= FloaterLimit)
+            {
+                var oldest = floaters[0];
+                oldest.text.gameObject.SetActive(false); textPool.Push(oldest.text); floaters.RemoveAt(0);
+            }
             var t = textPool.Count > 0 ? textPool.Pop() : NewText();
             t.gameObject.SetActive(true);
             t.text = text; t.fontSize = size; t.color = color;
@@ -191,8 +228,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Burst(Vector2 at, int count, Color color, Shape shape = Shape.Square, float speed = 260, float gravity = 600, float life = .7f, float scale = 1)
         {
-            if (!Visible()) return;
+            if (MotionDisabled) return;
+            if (!Visible() || GamePerformance.Low) return;
             if (Reduced) count = Mathf.Max(1, count / 2);
+            count = Mathf.Clamp(count, 0, ParticleLimit - particles.Count);
             for (int i = 0; i < count; i++)
             {
                 bool glyph = shape == Shape.Yen || shape == Shape.Star;
@@ -223,8 +262,10 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Visible payment direction, using the existing bounded glyph pool.</summary>
         public void TransferCoins(Vector2 from, Vector2 to, int count = 8)
         {
-            if (!Visible()) return;
+            if (MotionDisabled) return;
+            if (!Visible() || GamePerformance.Low) return;
             count = Mathf.Clamp(Reduced ? count / 2 : count, 1, 12);
+            count = Mathf.Min(count, ParticleLimit - particles.Count);
             for (int i = 0; i < count; i++)
             {
                 var p = glyphPool.Count > 0 ? glyphPool.Pop() : NewGlyph();
@@ -241,7 +282,9 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Particles falling from a point (a broken combo crumbling).</summary>
         public void Crumble(Vector2 at, int count, Color color)
         {
-            if (!Visible()) return;
+            if (MotionDisabled) return;
+            if (!Visible() || GamePerformance.Low) return;
+            count = Mathf.Clamp(count, 0, ParticleLimit - particles.Count);
             for (int i = 0; i < count; i++)
             {
                 var p = imagePool.Count > 0 ? imagePool.Pop() : NewImage();
@@ -257,6 +300,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Shockwave(Vector2 at, Color color, float radius = 220, float seconds = .35f, float width = 10)
         {
+            if (MotionDisabled) return;
             if (!Visible()) return;
             var ring = ringPool.Count > 0 ? ringPool.Pop() : NewRing();
             ring.gameObject.SetActive(true);
@@ -269,6 +313,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>闪白: the element itself goes white for a moment (an overlay on it, so it moves with its knock).</summary>
         public void FlashWhite(RectTransform rt, float seconds = .1f, float alpha = .85f)
         {
+            if (MotionDisabled) return;
             if (rt == null || !Visible()) return;
             if (!blinkOf.TryGetValue(rt, out var b) || b.image == null)
             {
@@ -290,8 +335,10 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>拖曳: a comet of sparks from one point to another (a hit flying into the combo counter).</summary>
         public void Trail(Vector2 from, Vector2 to, Color color, int count = 10, float seconds = .34f)
         {
-            if (!Visible()) return;
+            if (MotionDisabled) return;
+            if (!Visible() || GamePerformance.Low) return;
             count = Mathf.Clamp(Reduced ? count / 2 : count, 1, 18);
+            count = Mathf.Min(count, ParticleLimit - particles.Count);
             for (int i = 0; i < count; i++)
             {
                 var p = imagePool.Count > 0 ? imagePool.Pop() : NewImage();
@@ -399,6 +446,12 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Update()
         {
+            if (MotionDisabled || !Visible()) { if (floaters.Count + particles.Count + waves.Count + blinks.Count + punches.Count > 0 || hitstopOwned || flashDuration > 0 || shakeDuration > 0) Clear(); return; }
+            if (GamePerformance.Low && particles.Count > 0)
+            {
+                foreach (var p in particles) { p.rt.gameObject.SetActive(false); (p.g is TMP_Text ? glyphPool : imagePool).Push(p); }
+                particles.Clear();
+            }
             float raw = Time.unscaledDeltaTime;
             if (hitstop > 0)
             {
@@ -491,9 +544,25 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     if (p.rt == null) { done.Add(p.rt); continue; }
                     RebaseExternalTransform(p);
+                    if (p.press && p.held)
+                    {
+                        p.rt.localScale = p.scale * .95f;
+                        p.rt.anchoredPosition = p.pos;
+                        RememberApplied(p);
+                        continue;
+                    }
                     p.t += dt;
                     float k = p.t / p.life;
                     if (k >= 1) { p.rt.localScale = p.scale; p.rt.anchoredPosition = p.pos; done.Add(p.rt); continue; }
+                    if (p.press)
+                    {
+                        // One small overshoot, then exact rest at .22 seconds; no translation.
+                        float residual = (1 - k) * (1 - k) * Mathf.Cos(k * Mathf.PI * 2);
+                        p.rt.localScale = p.scale + (p.settleScale - p.scale) * residual;
+                        p.rt.anchoredPosition = p.pos;
+                        RememberApplied(p);
+                        continue;
+                    }
                     if (p.settling)
                     {
                         float ease = k * k * (3 - 2 * k);
@@ -593,6 +662,26 @@ namespace LingGuangV05.Desktop.XingGuang
             static int[] lastVariant;
             static AudioSource[] sources;
             static int next;
+            static readonly Dictionary<AudioClip, float> nextDataRetry = new Dictionary<AudioClip, float>();
+            [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+            static void ResetDataRetries() { nextDataRetry.Clear(); }
+
+            // A cached AudioClip is metadata, not evidence that its PCM is ready. Imported short SFX
+            // load in the background; do not busy-wait, postpone a callback or advance a source here.
+            static void RequestAudioData(AudioClip clip)
+            {
+                if (clip == null) return;
+                var state = clip.loadState;
+                if (state == AudioDataLoadState.Loaded) { nextDataRetry.Remove(clip); return; }
+                if (state == AudioDataLoadState.Loading) return;
+                // Only called for our XgSfx resources. Never change an external PlayClip request.
+                // Procedural fallback clips are already loaded; never force a synchronous load.
+                if (!clip.loadInBackground) return;
+                float now = Time.realtimeSinceStartup;
+                if (nextDataRetry.TryGetValue(clip, out float after) && now < after) return;
+                nextDataRetry[clip] = now + 2f;
+                clip.LoadAudioData(); // Unity schedules the background load; Failed is retried on later use.
+            }
 
             public static void Init(GameObject host, bool persistent = false)
             {
@@ -620,6 +709,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 int variant = (lastVariant[(int)id] + UnityEngine.Random.Range(1, VariantsPerEvent)) % VariantsPerEvent;
                 lastVariant[(int)id] = variant;
                 s.clip = clips[(int)id, variant];
+                RequestAudioData(s.clip);
                 s.Play();
             }
 
@@ -646,16 +736,24 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (comboClips == null)
                 {
                     comboClips = new AudioClip[ComboSteps];
-                    for (int i = 0; i < ComboSteps; i++) comboClips[i] = Resources.Load<AudioClip>("XgSfx/Combo/Kill" + (i + 1));
+                    for (int i = 0; i < ComboSteps; i++)
+                    {
+                        comboClips[i] = Resources.Load<AudioClip>("XgSfx/Combo/Kill" + (i + 1));
+                        RequestAudioData(comboClips[i]);
+                    }
                 }
-                return comboClips[Mathf.Clamp(combo, 1, ComboSteps) - 1];
+                var clip = comboClips[Mathf.Clamp(combo, 1, ComboSteps) - 1];
+                RequestAudioData(clip);
+                return clip;
             }
 
             public static AudioClip Clip(Id id, int variant)
             {
                 if (variant < 0 || variant >= VariantsPerEvent) throw new ArgumentOutOfRangeException(nameof(variant));
                 EnsureClips();
-                return clips[(int)id, variant];
+                var clip = clips[(int)id, variant];
+                RequestAudioData(clip);
+                return clip;
             }
 
             static void EnsureClips()
@@ -669,6 +767,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     {
                         var rendered = Resources.Load<AudioClip>("XgSfx/" + id + "_v" + variant);
                         clips[(int)id, variant] = rendered != null ? rendered : Build(id, variant);
+                        RequestAudioData(clips[(int)id, variant]);
                     }
             }
 

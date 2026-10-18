@@ -28,6 +28,9 @@ namespace Michsky.DreamOS
         public bool repeat;
         /// <summary>Background music: closing the window leaves the music playing (LingGuang GameMusic).</summary>
         [HideInInspector] public bool keepPlayingWhenClosed;
+        /// <summary>When true, the persistent desktop owner alone advances completed tracks.</summary>
+        [HideInInspector] public bool externalPlaylistAdvance;
+        public bool PlaybackRequested { get; private set; }
         public bool shuffle;
         public bool sortListByName = true;
         public bool enablePopupNotification;
@@ -267,6 +270,7 @@ namespace Michsky.DreamOS
             }
 
             // Return playing
+            PlaybackRequested = true;
             audioSource.Play();
 
             // Update all available data items
@@ -292,6 +296,7 @@ namespace Michsky.DreamOS
             audioSource.clip = track.playlist.playlist[currentTrackIndex].musicClip;
             audioSource.time = 0;
             duration = GetDuration();
+            PlaybackRequested = true;
             audioSource.Play();
 
             // Update all available data items
@@ -328,6 +333,7 @@ namespace Michsky.DreamOS
             audioSource.clip = clip;
             audioSource.time = 0;
             duration = GetDuration();
+            PlaybackRequested = true;
             audioSource.Play();
 
             // Update all available data items
@@ -346,6 +352,7 @@ namespace Michsky.DreamOS
 
         public void Pause()
         {
+            PlaybackRequested = false;
             audioSource.Pause();
 
             // Disable previous track np state
@@ -356,6 +363,7 @@ namespace Michsky.DreamOS
 
         public void Stop()
         {
+            PlaybackRequested = false;
             StopCoroutine("ProcessPlayback");
 
             if (audioSource != null) { audioSource.Stop(); }
@@ -420,6 +428,7 @@ namespace Michsky.DreamOS
             // Play and change the data
             duration = GetDuration();
             audioSource.time = 0;
+            PlaybackRequested = true;
             audioSource.Play();
 
             UpdateDataItems();
@@ -475,6 +484,7 @@ namespace Michsky.DreamOS
             duration = GetDuration();
             audioSource.clip = currentPlaylist.playlist[currentTrackIndex].musicClip;
             audioSource.time = 0;
+            PlaybackRequested = true;
             audioSource.Play();
 
             // Update all available data items
@@ -612,8 +622,8 @@ namespace Michsky.DreamOS
                 seconds = GetPlayTime();
 
                 // Change playback based on parameters
-                if (playTime >= duration && repeat && !shuffle) { audioSource.Stop(); audioSource.time = 0; audioSource.Play(); }
-                else if (playTime >= duration) { NextTrack(); }
+                if (!externalPlaylistAdvance && playTime >= duration && repeat && !shuffle) { audioSource.Stop(); audioSource.time = 0; audioSource.Play(); }
+                else if (!externalPlaylistAdvance && playTime >= duration) { NextTrack(); }
 
                 yield return null;
             }

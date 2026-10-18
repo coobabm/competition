@@ -510,7 +510,65 @@ public static partial class DesignWallpaperSmoke
 
     static void TickGrowth(XingGuangController controller, ChapterOneRuntime runtime, XgBrainWallpaper brain)
     {
-        File.WriteAllText(Path.Combine(Output, "result.txt"), "SKIPPED: no consumables shelf on this branch"); Finish(0);
+        if(step!=220)return;step=221;controller.StartCoroutine(CurrentGrowthChecks(controller,runtime));
+    }
+    static IEnumerator CurrentGrowthChecks(XingGuangController controller,ChapterOneRuntime runtime)
+    {
+        var run=CurrentGrowthSteps(controller,runtime);Exception failure=null;
+        while(true){bool more=false;object current=null;try{more=run.MoveNext();if(more)current=run.Current;}catch(Exception e){failure=e;}if(failure!=null||!more)break;yield return current;}
+        (run as IDisposable)?.Dispose();File.WriteAllText(Path.Combine(Output,"result.txt"),failure==null?"PASS":"FAIL: "+failure);Finish(failure==null?0:1);
+    }
+    static IEnumerator CurrentGrowthSteps(XingGuangController controller,ChapterOneRuntime runtime)
+    {
+        Check(!runtime.useDiskSave&&!runtime.tickEnabled,"Growth uses isolated purchased-curve fixture");
+        purchasedBrain.Hide();controller.Open();yield return new WaitForSecondsRealtime(.4f);
+        var sim=controller.Sim;var page=controller.View.Tree;
+        foreach(string route in new[]{"tree","items","abilities","growth"})
+        {
+            controller.View.Open(route);yield return new WaitForSecondsRealtime(.15f);
+            Check(controller.View.Tab=="tree"&&page.root.gameObject.activeInHierarchy,"Current merged route opens one tree: "+route);
+            Check(controller.View.NavButton(route)==controller.View.NavButton("tree"),"Alias highlights single navigation: "+route);
+            Check(!controller.View.Items.root.gameObject.activeSelf&&!controller.View.Abilities.root.gameObject.activeSelf,"No duplicate legacy page appears: "+route);
+        }
+        // Consumable shelf was replaced upstream by rare inventory. Opening its old
+        // alias must not resurrect dead purchase controls or change owned resources.
+        string unchanged=JsonUtility.ToJson(sim.S);double wallet=controller.Host.Money;
+        page.SetGrowthShelf(true);Check(!page.GrowthShelfVisible,"Removed consumable shelf is not recreated by old alias");
+        Check(JsonUtility.ToJson(sim.S)==unchanged&&controller.Host.Money==wallet,"Legacy shelf alias spends nothing and grants nothing");
+        foreach(bool english in new[]{false,true})
+        {
+            using(GameText.Bind(()=>english?GameText.English:GameText.Chinese))
+            {
+                sim.English=english;GameText.PublishChanged();page.Refresh();Canvas.ForceUpdateCanvases();
+                string stable=JsonUtility.ToJson(sim.S);float previous=float.NegativeInfinity;
+                for(int ability=1;ability<=XgSim.AbilityCount;ability++)
+                {
+                    var card=page.GrowthAbilityTarget(ability);Check(card!=null&&card.gameObject.activeInHierarchy&&card.localPosition.x>previous,"Current six-ability route ordered: "+ability);previous=card.localPosition.x;
+                    Check(card.Find("Name").GetComponent<TMP_Text>().text.Contains(XgSim.AbilityName(ability,english)),"Real ability name follows locale: "+ability);
+                    if(ability>1)
+                    {
+                        string parameters=card.Find("Parameters").GetComponent<TMP_Text>().text;
+                        string samples=card.Find("Samples").GetComponent<TMP_Text>().text;
+                        Check(parameters.Contains(XgSim.ParamsText(sim.TrainedParamsK))&&samples.Contains(XgSim.SamplesText(sim.TrainedSamples)),"Current learned counts bind actual simulation: "+ability);
+                        Check(parameters.Contains(sim.ParamsLineKnown(ability)?XgSim.ParamsText(sim.ParamsThreshold(ability)):"?"),"Parameter threshold obeys knowledge gate: "+ability);
+                        Check(samples.Contains(sim.SamplesLineKnown(ability)?XgSim.SamplesText(sim.SamplesThreshold(ability)):"?"),"Data threshold obeys knowledge gate: "+ability);
+                    }
+                    foreach(var text in card.GetComponentsInChildren<TMP_Text>()){text.ForceMeshUpdate();Check(!text.isTextOverflowing,"Actual growth text fits "+ability+"/"+text.name+"/"+english);}
+                }
+                page.Refresh();Check(stable==JsonUtility.ToJson(sim.S),"Reading growth route never edits saved learning");
+                yield return new WaitForEndOfFrame();Capture(english?"growth-current-en":"growth-current-zh");
+            }
+        }
+        GameText.PublishChanged();
+        XgNode candidate=null;
+        foreach(var node in XgCatalog.Nodes)if(sim.Status(node,controller.Host)==XgSim.NodeStatus.Buyable&&node.cost>0&&node.maxLevel==1){candidate=node;break;}
+        Check(candidate!=null,"At least one real paid technology is available after curve purchase");
+        var money=runtime.Sim.S.money;runtime.Sim.S.money=0;
+        Check(!sim.BuyNode(candidate.id,controller.Host)&&!sim.Has(candidate.id),"Current technology purchase cannot bypass insufficient funds");
+        runtime.Sim.S.money=money;wallet=controller.Host.Money;
+        Check(sim.BuyNode(candidate.id,controller.Host)&&sim.Has(candidate.id)&&controller.Host.Money<wallet,"Actual technology purchase grants item and charges current wallet");
+        double after=controller.Host.Money;Check(!sim.BuyNode(candidate.id,controller.Host)&&controller.Host.Money==after,"Repeated technology purchase cannot charge twice");
+        Check(!runtime.useDiskSave&&!runtime.tickEnabled,"Growth boundary fixtures leave player saves untouched");
     }
 
     // Shared with the lesson-goal and sense-start scenarios.

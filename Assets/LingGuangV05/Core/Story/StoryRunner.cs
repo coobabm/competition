@@ -222,6 +222,7 @@ namespace LingGuangV05.Core.Story
 
         private bool MustHold(StoryStep step)
         {
+            if (LingGuangV05.Core.StoryFocus.Exclusive && (step.Op == "narrate" || step.Op == "cutscene" || step.Has("hook"))) return true;
             if (current.Priority >= UrgentPriority) return false;
             // A beat's hook waits for a clear screen too, so it lands right before what it announces.
             bool presenting = step.Op == "narrate" || step.Op == "cutscene" || step.Has("hook");

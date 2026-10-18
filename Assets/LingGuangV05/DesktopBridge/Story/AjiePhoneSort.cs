@@ -12,16 +12,7 @@ using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop.Story
 {
-    /// <summary>
-    /// 阿杰的手机备份 on the desktop (XgSim.PhoneSort.cs). When the 「看图说词」 exam opens and the desktop is quiet, 阿杰
-    /// has left a U 盘 (his group messages say what is on it), the protagonist thinks of letting it sort, and a window
-    /// 「G:\阿杰的手机备份」 opens: the picture it is looking at on the left, eight folders on the right. 「让它来分」 plays
-    /// the shown pictures one by one into their folders, faster and faster, then the rest as a blur while the counts
-    /// run up. Then 其他's ID cards (a choice) and the wrong ones to move (click one, then its folder). Handing it back
-    /// closes the window; the next morning is in YY's 网吧 group: 阿杰 has taken the stick, the ID cards come up if the
-    /// protagonist chose to tell him, and he asks what sorted them (two reply buttons). Closing the window keeps the
-    /// step: a toast brings it back. A reload resumes at the step it was on.
-    /// </summary>
+    /// <summary>Private phone-backup classification and review. Compatibility component name is retained.</summary>
     public sealed class AjiePhoneSort : MonoBehaviour
     {
         const float CheckEvery = .5f;
@@ -57,7 +48,7 @@ namespace LingGuangV05.Desktop.Story
             return host is StoryDesktopPresenter presenter && (presenter.CutscenePlaying || presenter.NotificationsHeld);
         }
 
-        void OnDisable() { if (window != null) Destroy(window.gameObject); window = null; playing = null; }
+        void OnDisable() { StopAllCoroutines(); if (window != null) Destroy(window.gameObject); window = null; playing = null; morning = false; leadIn = false; toastShown = false; }
 
         void Update()
         {
@@ -84,7 +75,7 @@ namespace LingGuangV05.Desktop.Story
             if (!toastShown && host is StoryDesktopPresenter p)
             {
                 toastShown = true;
-                p.ShowToast(T("阿杰的 U 盘还插着。", "Ajie's USB stick is still plugged in."), () => { toastShown = false; Open(Sim); });
+                p.ShowToast(T("我的备份 U 盘还插着。", "My backup stick is still plugged in."), () => { toastShown = false; Open(Sim); });
             }
         }
 
@@ -92,29 +83,12 @@ namespace LingGuangV05.Desktop.Story
 
         IEnumerator LeadIn(XgSim sim)
         {
-            leadIn = true;
-            sim.PhoneSortStart();
-            runtime.MarkDirty();
-            var hub = YYChatHub.Instance;
-            InnerVoice.Say("阿杰下了班过来，往我键盘边上扔了个 U 盘就走了。", "Ajie came by after his shift, dropped a USB stick by my keyboard and left.", 3f);
-            yield return new WaitForSecondsRealtime(2.5f);
-            if (hub != null)
-            {
-                hub.Receive(YYChatHub.EraGroup, T("[阿杰] U 盘放你键盘边上了 新换了 R9 旧手机四年的图全倒里面了 四千多张 乱成一锅粥 找个表情包要翻半天",
-                    "[Ajie] Left the stick by your keyboard. Got an R9, dumped four years of the old phone's pictures on it. 4,000+, a total mess, takes me forever to find a meme"));
-                yield return new WaitForSecondsRealtime(1.6f);
-                hub.Receive(YYChatHub.EraGroup, T("[阿杰] 帮我分分：表情包 游戏截图 聊天截图 自拍 吃的 风景 猫狗 其他 明早来拿 烧烤我请",
-                    "[Ajie] Sort them for me: memes, game screenshots, chat screenshots, selfies, food, places, cats & dogs, other. I'll pick it up in the morning, barbecue's on me"));
-                yield return new WaitForSecondsRealtime(1.6f);
-                hub.Receive(YYChatHub.EraGroup, T("[小刚] 分个图还请烧烤 我也来", "[Xiaogang] Barbecue for sorting pictures? Count me in"), false);
-            }
-            yield return new WaitForSecondsRealtime(1.5f);
+            leadIn = true; sim.PhoneSortStart(); runtime.MarkDirty();
+            InnerVoice.Say("翻到一个旧 U 盘，里面是我旧手机四年的备份。", "I found an old USB stick: four years of my old phone's backups.", 3f);
             while (InnerVoice.Busy) yield return null;
-            InnerVoice.Say("四千多张……手分得分到天亮。", "Four thousand… by hand that's till sunrise.", 2.6f);
-            InnerVoice.Say("八个文件夹……不就是八选一吗？它会挑。", "Eight folders… that's a choice of eight. It can pick.", 3f);
+            InnerVoice.Say("四千多张，表情包、截图、自拍混在一起。八个文件夹……让它试着挑。", "Over four thousand pictures: memes, screenshots, selfies mixed together. Eight folders… let it try picking.", 3f);
             while (InnerVoice.Busy) yield return null;
-            leadIn = false;
-            Open(Sim);
+            leadIn = false; Open(Sim);
         }
 
         // ───────────── the window ─────────────
@@ -123,7 +97,7 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (sim == null || desk == null || window != null) return;
-            var client = desk.Window("Ajie Phone Backup", T("G:\\阿杰的手机备份", "G:\\Ajie's phone backup"), Vector2.zero, new Vector2(1060, 680), out window, () => { window = null; StopPlaying(); });
+            var client = desk.Window("Private Phone Backup", T("G:\\我的旧手机备份", "G:\\My old phone backup"), Vector2.zero, new Vector2(1060, 680), out window, () => { window = null; StopPlaying(); });
             client.GetComponent<Image>().color = new Color32(246, 248, 252, 255);
             header = desk.Text(PrologueDesk.Rect("Header", client, new Vector2(0, 1), Vector2.one, new Vector2(18, -40), new Vector2(-18, -8)), "", 16, PrologueDesk.Muted, TextAlignmentOptions.MidlineLeft);
             now = PrologueDesk.Rect("Now", client, new Vector2(0, 0), new Vector2(0, 1), new Vector2(18, 110), new Vector2(378, -50));
@@ -173,7 +147,7 @@ namespace LingGuangV05.Desktop.Story
             if (window == null || sim == null) return;
             ClearButtons();
             selected = null;
-            header.text = T("G:\\阿杰的手机备份 · " + XgSim.PhoneTotal.ToString("#,0") + " 个项目", "G:\\Ajie's phone backup · " + XgSim.PhoneTotal.ToString("#,0") + " items");
+            header.text = T("G:\\我的旧手机备份 · " + XgSim.PhoneTotal.ToString("#,0") + " 个项目", "G:\\My old phone backup · " + XgSim.PhoneTotal.ToString("#,0") + " items");
             RefreshCounts(sim);
             switch (sim.S.psStep)
             {
@@ -188,7 +162,7 @@ namespace LingGuangV05.Desktop.Story
                     ShowFixes(sim);
                     break;
                 case 3:
-                    CloseWindow(); // the morning is in YY
+                    CloseWindow(); // the private review follows
                     break;
             }
         }
@@ -226,7 +200,7 @@ namespace LingGuangV05.Desktop.Story
                 StartCoroutine(Pop(tiles[pick]));
                 XgJuice.Sfx.Play(XgJuice.Sfx.Id.Tick, 1 + done * .01f, .35f);
                 // The moments the story stops on.
-                if (shot.id == "catear") { InnerVoice.Say("……阿杰那张猫耳自拍，进了表情包。", "…Ajie's cat-ear selfie went into memes.", 2.4f); InnerVoice.Say("也不能说全错。", "Can't say it's all wrong.", 2.2f); yield return new WaitForSecondsRealtime(1.6f); }
+                if (shot.id == "catear") { InnerVoice.Say("……我那张猫耳自拍，进了表情包。", "…My cat-ear selfie went into memes.", 2.4f); InnerVoice.Say("也不能说全错。", "Can't say it's all wrong.", 2.2f); yield return new WaitForSecondsRealtime(1.6f); }
                 if (shot.id == "beach") { InnerVoice.Say("海边那张是横着拍的……它扔进了「其他」。", "The beach one was taken sideways… it threw it in Other.", 2.8f); InnerVoice.Say("它认的是那几个格子。图一转，就不认识了。", "It knows those squares. Turn the picture and it doesn't know it.", 3.2f); yield return new WaitForSecondsRealtime(2f); }
             }
             // The rest go by as a blur while the counts run up.
@@ -302,10 +276,10 @@ namespace LingGuangV05.Desktop.Story
         {
             ShowShot(XgSim.PhoneShot("idcard"));
             nowPick.text = T("其他 · " + XgSim.PhoneIdCards + " 张", "Other · " + XgSim.PhoneIdCards + " of these");
-            status.text = T(XgSim.PhoneIdCards + " 张身份证照片。是网吧客人的实名登记——读卡器坏的那几天，阿杰拿手机拍的。",
-                XgSim.PhoneIdCards + " photos of ID cards. Net café customers' registrations: the days the reader was broken, Ajie took them with his phone.");
-            AddButton(T("明早跟他说，让他删了", "Tell him to delete them"), 0, 2, () => { sim.PhoneIds(true); runtime.MarkDirty(); Show(sim); });
-            AddButton(T("不关我的事", "Not my business"), 1, 2, () => { sim.PhoneIds(false); runtime.MarkDirty(); Show(sim); });
+            status.text = T(XgSim.PhoneIdCards + " 张旧证件照片。是我以前办手续时留下的备份，已经不再需要。",
+                XgSim.PhoneIdCards + " old ID-document photos left from my own paperwork. They are no longer needed.");
+            AddButton(T("从我的备份删掉", "Delete from my backup"), 0, 2, () => { sim.PhoneIds(true); runtime.MarkDirty(); Show(sim); });
+            AddButton(T("暂时保留", "Keep for now"), 1, 2, () => { sim.PhoneIds(false); runtime.MarkDirty(); Show(sim); });
         }
 
         void ShowFixes(XgSim sim)
@@ -327,7 +301,7 @@ namespace LingGuangV05.Desktop.Story
                 status.text = summary + T(" 这几张不对（还有 " + wrong.Count + " 张）：点它该去的文件夹。", " These are wrong (" + wrong.Count + " left): click the folder it belongs in.");
                 if (wrong.Count > 1) AddButton(T("下一张", "Next one"), 0, 2, () => { var w = Sim.PhoneWrong(); int i = w.FindIndex(x => x.id == selected); selected = w[(i + 1) % w.Count].id; Show(Sim); });
             }
-            AddButton(T("就这样，明早还他", "That'll do. Back to him in the morning"), wrong.Count > 1 ? 1 : 0, wrong.Count > 1 ? 2 : 1, () => { if (Sim.PhoneHandBack()) { runtime.MarkDirty(); CloseWindow(); } }, true);
+            AddButton(T("检查完成，保存备份", "Checked. Save the backup"), wrong.Count > 1 ? 1 : 0, wrong.Count > 1 ? 2 : 1, () => { if (Sim.PhoneHandBack()) { runtime.MarkDirty(); CloseWindow(); } }, true);
         }
 
         void FolderClicked(string folder)
@@ -346,98 +320,34 @@ namespace LingGuangV05.Desktop.Story
             else XgJuice.Sfx.Play(XgJuice.Sfx.Id.Thud, 1, .5f);
         }
 
-        // ───────────── the morning, in YY ─────────────
-
-        const string AskZh = "[阿杰] 卧槽 一晚上就分完了？你写了个啥程序？我的按键精灵都没这么快",
-            AskEn = "[Ajie] Whoa, all done in one night? What did you write? My click script isn't that fast";
-        static readonly string[] AnswersZh = { "写了个小脚本", "手分的" }, AnswersEn = { "Wrote a little script", "By hand" };
+        // The original psStep / psAlibi values remain valid; the final choice is a private review.
         bool morning;
-
-        void CloseWindow()
-        {
-            StopPlaying();
-            if (window != null) Destroy(window.gameObject);
-            window = null;
-        }
-
-        static bool Said(YYChatHub hub, string zh, string en)
-        {
-            var conv = hub.Conversation(XgSim.PhoneConversation);
-            return conv != null && conv.messages.Exists(m => m.text == zh || m.text == en);
-        }
-
+        void CloseWindow() { StopPlaying(); if (window != null) Destroy(window.gameObject); window = null; }
         IEnumerator Morning(XgSim sim)
         {
-            morning = true;
-            CloseWindow();
-            var hub = YYChatHub.Instance;
-            if (hub == null) { morning = false; yield break; }
-            string g = XgSim.PhoneConversation;
-            if (!Said(hub, AskZh, AskEn))
-            {
-                InnerVoice.Say("U 盘拔下来，放回键盘边上。……睡了。", "Pulled the stick, put it back by the keyboard. …Bed.", 2.6f);
-                InnerVoice.Say("第二天一早，YY 响了。", "Early next morning, YY pinged.", 2.4f);
-                while (InnerVoice.Busy) yield return null;
-                hub.Receive(g, T("[阿杰] U 盘我拿走了 看你睡得跟猪一样就没叫你", "[Ajie] Took the stick. You were sleeping like a log so I didn't wake you"));
-                yield return new WaitForSecondsRealtime(2.2f);
-                if (sim.S.psIds == 1)
-                {
-                    hub.SendAuthoredChoice(g, T("「其他」里那堆身份证照片 赶紧删了", "Those ID card photos in Other: delete them, now"));
-                    yield return new WaitForSecondsRealtime(2.4f);
-                    hub.Receive(g, T("[阿杰] ……读卡器坏那几天拍的 我这就删 要让我舅知道得骂死我", "[Ajie] …From the days the reader was broken. Deleting now. If my uncle finds out he'll kill me"));
-                    yield return new WaitForSecondsRealtime(1.6f);
-                    hub.Receive(g, T("[小刚] 啥身份证", "[Xiaogang] What ID cards"), false);
-                    yield return new WaitForSecondsRealtime(1.4f);
-                    hub.Receive(g, T("[阿杰] 没啥 吃你的早饭", "[Ajie] Nothing. Eat your breakfast"), false);
-                    yield return new WaitForSecondsRealtime(1.8f);
-                }
-                hub.Receive(g, T(AskZh, AskEn));
-            }
-            Ask(hub);
+            morning = true; CloseWindow();
+            InnerVoice.Say("备份整理好了。检查过错分的图，再留一句复盘。", "The backup is sorted. I checked its mistakes; now a note for next time.", 2.6f);
+            while (InnerVoice.Busy) yield return null;
+            var desk = PrologueDirector.Desk;
+            if (desk == null) { morning = false; yield break; }
+            var client = desk.Window("Phone Backup Review", T("旧手机备份 · 复盘", "Old phone backup · review"), Vector2.zero, new Vector2(620,280), out window, () => { window = null; morning = false; });
+            desk.Text(PrologueDesk.Rect("Summary", client, Vector2.zero, Vector2.one, new Vector2(20,90), new Vector2(-20,-20)),
+                T("分对了 " + sim.PhoneRightPct + "%；猫耳自拍进了表情包，横过来的照片就认不出来。", "It sorted " + sim.PhoneRightPct + "% correctly; the cat-ear selfie became a meme, and a rotated photo confused it."), 18, PrologueDesk.Ink, TMPro.TextAlignmentOptions.MidlineLeft);
+            desk.Button(client, T("先让它分，我来检查", "Let it sort; I check"), new Vector2(-145,-85), new Vector2(270,42), () => Answer(true));
+            desk.Button(client, T("换一批再验证", "Test another batch"), new Vector2(145,-85), new Vector2(270,42), () => Answer(false));
         }
-
-        void Ask(YYChatHub hub)
-        {
-            string g = XgSim.PhoneConversation;
-            hub.Offer(g, GameText.IsEnglish ? AnswersEn : AnswersZh);
-            hub.Script(g, text =>
-            {
-                int i = System.Array.IndexOf(AnswersZh, text);
-                if (i < 0) i = System.Array.IndexOf(AnswersEn, text);
-                if (i < 0) { hub.Offer(g, GameText.IsEnglish ? AnswersEn : AnswersZh); return false; } // typed something else: ask again
-                hub.EndScript();
-                Answer(i == 0);
-                return true;
-            });
-        }
-
         void Answer(bool script)
         {
-            var sim = Sim;
-            if (sim == null) return;
-            var reply = sim.PhoneAlibi(script);
-            if (reply.Length == 0) return;
-            runtime.MarkDirty();
-            StartCoroutine(After(sim, reply));
+            var sim = Sim; if (sim == null) return;
+            var reply = sim.PhoneAlibi(script); if (reply.Length == 0) return;
+            runtime.MarkDirty(); CloseWindow(); StartCoroutine(After(sim, reply));
         }
-
         IEnumerator After(XgSim sim, string[] reply)
         {
-            var hub = YYChatHub.Instance;
-            string g = XgSim.PhoneConversation;
-            yield return new WaitForSecondsRealtime(1.8f);
-            if (hub != null)
-            {
-                hub.Receive(g, T("[阿杰] " + reply[0], "[Ajie] " + reply[1]));
-                yield return new WaitForSecondsRealtime(2.4f);
-                string n = sim.PhoneCount("meme").ToString("#,0");
-                hub.Receive(g, T("[阿杰] 表情包文件夹 " + n + " 张 今晚斗图谁来", "[Ajie] Meme folder: " + n + " pictures. Who's up for a meme war tonight"));
-                yield return new WaitForSecondsRealtime(1.6f);
-                hub.Receive(g, T("[小刚] 来啊 谁怕谁", "[Xiaogang] Bring it"), false);
-            }
-            yield return new WaitForSecondsRealtime(1.5f);
-            InnerVoice.Say("它能挑了。可它不是真的看见，歪一点就不认识。", "It can pick now. But it doesn't really see: tilt it a little and it's lost.", 3.2f);
-            InnerVoice.Say("得让它真的看见。", "It has to really see.", 2.6f);
+            InnerVoice.Say(reply[0], reply[1], 2.6f);
+            while (InnerVoice.Busy) yield return null;
+            InnerVoice.Say("它能挑了。可它不是真的看见，歪一点就不认识。得让它真的看见。", "It can pick now, but tilt a picture and it is lost. It needs to really see.", 3.2f);
+            while (InnerVoice.Busy) yield return null;
             morning = false;
         }
 

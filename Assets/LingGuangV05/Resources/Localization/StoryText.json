@@ -1,5 +1,18 @@
 {
   "entries": [
+    {"zh": "我给它出了道选择题：「你叫什么？」A. 小冰　B. {aiName}　C. Siri", "en": "I gave it a choice: What is your name? A. Xiaoice  B. {aiName}  C. Siri"},
+    { "zh": "先教它看图？12306 那破验证码，我自己都认不全。", "en": "Teach it pictures first? I can't even read half the 12306 captchas myself." },
+    { "zh": "还是先教它读句子？一句话是夸还是骂，顺序一换就不一样。", "en": "Or sentences first? Whether a line praises or mocks changes when you swap the word order." },
+    { "zh": "验证码挪个位置，它还认得出来吗？", "en": "If the captcha moves a little, will it still read it?" },
+    { "zh": "表情包得先看脸，再看配字。配字可能是在骗人。", "en": "With memes, look at the face first, then the caption. The caption may be lying." },
+    { "zh": "给它半句诗，让它猜下一个字。顺序倒过来，它还分得清吗？", "en": "Give it half a line of poetry and let it guess the next character. Reverse the order: can it still tell?" },
+    { "zh": "你不是英语过六级了吗？我这儿有一批商品介绍要翻成英文。先拿一小批试试，行不行你看完再说。", "en": "Didn't you pass CET-6? I have some product descriptions to put into English. Try a small batch first and see." },
+    { "zh": "它点了 B。换了三次顺序，都点它。", "en": "It clicked B. I shuffled the order three times; it picked it every time." },
+    { "zh": "怪了，它认对的那张 7，我往右挪一格，它就不认识了。", "en": "Weird. The 7 it got right: shift it one cell right and it no longer knows it." },
+    { "zh": "算了，出道选择题让它自己选：A 看图，B 读句子。", "en": "Fine, let it choose: A, pictures; B, sentences." },
+    { "zh": "它点了 A，先学看图。", "en": "It clicked A: pictures first." },
+    { "zh": "它点了 B，先学读句子。", "en": "It clicked B: sentences first." },
+    { "zh": "换了一组它没见过的题，答案还是对得上。", "en": "A set of questions it had never seen, and the answers still match." },
     {
       "zh": "……这题问得不对。",
       "en": "...That question is wrong."
@@ -726,6 +739,8 @@
     { "zh": "草稿箱里那条还亮着。", "en": "That message is still sitting in drafts." },
     { "zh": "贴吧私信多了一条，ID 后面带个下划线。", "en": "A new Tieba DM, from an ID ending in an underscore." },
     { "zh": "那个带下划线的 ID 又来了。", "en": "The ID with the underscore is back." },
-    { "zh": "表姐的消息安安静静地躺在那儿，没催。", "en": "My cousin's message sits there quietly. No rush." }
+    { "zh": "表姐的消息安安静静地躺在那儿，没催。", "en": "My cousin's message sits there quietly. No rush." },
+    {"zh": "下班回家，我想再试试它认不认得自己的名字。", "en": "Ajie came by after his shift and spent ages fiddling at my computer."},
+    {"zh": "我盯着屏幕，把题图挪了一个位置。", "en": "Xiaogang leaned in too and watched the screen for a while."}
   ]
 }

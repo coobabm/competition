@@ -94,7 +94,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const int LifeSchema = 1;
-        public const double LifeIntervalMin = 180, LifeIntervalMax = 300;
+        public const double LifeIntervalMin = 360, LifeIntervalMax = 480;
         /// <summary>A draw that falls while the player is busy is tried again this much later.</summary>
         public const double LifeHeldRetry = 15;
         /// <summary>老周 keeps the card this long; the night throttle lasts this long.</summary>
@@ -134,13 +134,13 @@ namespace LingGuangV05.XingGuang
 
         void EnsureLife()
         {
-            if (ReferenceEquals(lifeRepaired, S) && S.lifeHistory != null && S.lifeCooldowns != null && S.lifeHolds != null && S.lifeReturns != null && S.lifeOpen != null) return;
+            if (ReferenceEquals(lifeRepaired, S) && S.lifeHistory != null && S.lifeCooldowns != null && S.lifeHolds != null && S.lifeReturns != null && S.lifeOpen != null) { RepairLifeData(); return; }
             lifeRepaired = S;
             if (S.lifeHistory == null) S.lifeHistory = new List<XgLifeRecord>();
             if (S.lifeCooldowns == null) S.lifeCooldowns = new List<XgLifeTimer>();
             if (S.lifeHolds == null) S.lifeHolds = new List<XgLifeTimer>();
             if (S.lifeReturns == null) S.lifeReturns = new List<XgLifeTimer>();
-            if (S.lifeOpen == null || Array.IndexOf(LifeEventIds, S.lifeOpen) < 0) S.lifeOpen = "";
+            if (S.lifeOpen == null || (Array.IndexOf(LifeEventIds, S.lifeOpen) < 0 && !IsLifeDataId(S.lifeOpen))) S.lifeOpen = "";
             if (S.lifeArgKey == null) S.lifeArgKey = "";
             if (S.lifeArgName == null) S.lifeArgName = "";
             if (S.lifeArgNameEn == null) S.lifeArgNameEn = "";
@@ -162,6 +162,7 @@ namespace LingGuangV05.XingGuang
             }
             if (S.lifeRng == 0) S.lifeRng = 0x4C1FE5EEDL;
             if (!Finite(S.lifeNext) || S.lifeNext > LifeIntervalMax) S.lifeNext = LifeIntervalMax;
+            RepairLifeData();
         }
 
         /// <summary>SplitMix64's finaliser: a small seed (7, 42) still starts the stream well mixed.</summary>
@@ -184,7 +185,7 @@ namespace LingGuangV05.XingGuang
         double NextLifeInterval() => LifeIntervalMin + LifeRoll() * (LifeIntervalMax - LifeIntervalMin);
 
         /// <summary>The pool is running: the opening is over (the second ability is learned) and the finale has not begun.</summary>
-        public bool LifeEventsUnlocked => !S.openingFocus && AbilitiesCount >= 2 && !S.fullOpen && string.IsNullOrEmpty(S.ending) && !S.chapterComplete && !EndingAvailable;
+        public bool LifeEventsUnlocked => !S.openingFocus && AbilitiesCount >= 1 && !S.fullOpen && string.IsNullOrEmpty(S.ending) && !S.chapterComplete && !EndingAvailable;
 
         /// <summary>Something else holds the player now: a draw that falls waits.</summary>
         public bool LifeEventsHeld
@@ -193,7 +194,7 @@ namespace LingGuangV05.XingGuang
             {
                 bool desk = false;
                 try { desk = LifeEventHold != null && LifeEventHold(); } catch (Exception) { desk = false; }
-                return desk || EpiphanyPending || CaptchaPending || ProjectAwaitingAnswer || RelicPickPending || ExamPassPending || MiniGameSurfaceActive;
+                return StagePresentationHeld || TrainingKnowledgePending || desk || EpiphanyPending || CaptchaPending || ProjectAwaitingAnswer || RelicPickPending || ExamPassPending || MiniGameSurfaceActive;
             }
         }
 
@@ -251,7 +252,7 @@ namespace LingGuangV05.XingGuang
             WatchBroadbandMonth();
             TickLifeHolds(host);
             TickLifeReturns(host);
-            if (!LifeEventsUnlocked || S.lifeOpen.Length > 0) return;
+            if (!LifeEventsUnlocked || S.lifeOpen.Length > 0 || S.lifeDrawCount >= 2) return;
             S.lifeNext -= dt;
             if (S.lifeNext > 0) return;
             if (LifeEventsHeld) { S.lifeNext = LifeHeldRetry; return; }
@@ -304,7 +305,7 @@ namespace LingGuangV05.XingGuang
                 if (h.id == "lend")
                     Say(T("老周把" + h.name + "还回来了，用湿巾擦得锃亮，还塞了瓶冰红茶在机箱上，压着张纸条：「你这哥们，靠谱。」插回去了。", "老周 brought the " + h.nameEn + " back, wiped clean, with a bottle of iced tea on the case and a note under it: \"You're a reliable guy.\" It is plugged in again."));
                 else if (h.id == "quiet")
-                    Say(T(h.name + "插回去了。室友那屋没动静，应该睡熟了。", "The " + h.nameEn + " is plugged in again. Not a sound from the roommate."));
+                    Say(T(h.name + "插回去了。楼下安静了，阿姨应该睡熟了。", "The " + h.nameEn + " is plugged in again. The downstairs neighbor seems to be asleep."));
             }
         }
 
@@ -330,13 +331,15 @@ namespace LingGuangV05.XingGuang
             EnsureLife();
             if (host is IXgHousehold hh) lifeHouse = hh;
             var list = new List<string>();
+            if (S.lifeDrawCount >= 2) return list;
             foreach (var id in LifeEventIds) if (LifeEligible(id, host)) list.Add(id);
+            foreach (var id in LifeData.Keys) if (LifeDataEligible(id, host)) list.Add(id);
             return list;
         }
 
         bool LifeEligible(string id, IXgHost host)
         {
-            if (!Cooled(id)) return false;
+            if (!Cooled(id) || S.lifeDataSeen.Contains(id)) return false;
             var rig = host as IXgRig;
             int cards = rig != null && rig.Cards != null ? rig.Cards.Count : 0;
             switch (id)
@@ -400,7 +403,7 @@ namespace LingGuangV05.XingGuang
             foreach (var id in S.owned)
             {
                 var d = XgCatalog.Dataset(id);
-                if (d == null || StoryOwned(id) || BatchesArrived(id) < 2) continue;
+                if (d == null || StoryOwned(id) || InstalledBatches(id) < 2) continue;
                 double mb = BatchesArrived(id) * BatchMB(d);
                 if (mb > most) { most = mb; best = id; }
             }
@@ -458,14 +461,17 @@ namespace LingGuangV05.XingGuang
         public bool OpenLifeEventNow(string id, IXgHost host, bool force = false)
         {
             EnsureLife();
-            if (S.lifeOpen.Length > 0 || Array.IndexOf(LifeEventIds, id) < 0) return false;
-            if (!force && !LifeEligible(id, host)) return false;
+            if (S.lifeOpen.Length > 0 || (Array.IndexOf(LifeEventIds, id) < 0 && !LifeData.ContainsKey(id))) return false;
+            if (!force && (S.lifeDrawCount >= 2 || !(LifeData.ContainsKey(id) ? LifeDataEligible(id, host) : LifeEligible(id, host)))) return false;
             OpenLifeEvent(id, host);
             return true;
         }
 
         void OpenLifeEvent(string id, IXgHost host)
         {
+            S.lifeDrawCount++;
+            if (!S.lifeDataSeen.Contains(id)) S.lifeDataSeen.Add(id);
+            S.lifeNext=NextLifeInterval();
             S.lifeOpen = id; S.lifeArg = 0; S.lifeArgKey = S.lifeArgName = S.lifeArgNameEn = "";
             var rig = host as IXgRig;
             switch (id)
@@ -528,6 +534,7 @@ namespace LingGuangV05.XingGuang
         {
             EnsureLife();
             if (S.lifeOpen.Length == 0) return null;
+            if (LifeData.ContainsKey(S.lifeOpen)) return LifeDataView(host);
             double money = host != null ? host.Money : 0;
             string card = T(S.lifeArgName, S.lifeArgNameEn), name = T(S.lifeArgName, S.lifeArgNameEn);
             if (card.Length == 0) card = T("显卡", "card");
@@ -581,24 +588,20 @@ namespace LingGuangV05.XingGuang
                     break;
                 case "roommate_fan":
                 {
-                    e.who = T("室友", "Roommate"); e.title = T("室友被风扇吵醒", "The fans woke the roommate");
-                    e.body = T("门被敲响。室友顶着鸡窝头：「哥，你这电脑跟吹风机似的，我明早八点还要打卡……」",
-                               "A knock on the door. The roommate, hair like a bird's nest: \"Man, your PC sounds like a hair dryer, and I clock in at eight…\"");
+                    e.who = T("楼下阿姨", "Downstairs neighbor"); e.title = T("楼下阿姨被风扇吵醒", "The fans woke the downstairs neighbor");
+                    e.body = T("门被敲响。楼下阿姨披着外套：「小伙子，你这电脑跟吹风机似的，阿姨明早还要上班……」",
+                               "A knock on the door. The downstairs neighbor, hair like a bird's nest: \"Man, your PC sounds like a hair dryer, and I clock in at eight…\"");
                     C("throttle", T("降频：先拔掉" + card, "Throttle: unplug the " + card), T("最吵的那张卡停 5 分钟", "The loudest card rests for 5 minutes"));
-                    C("redbull", T("送他一箱红牛 ¥" + F(LifeRedBull, "0"), "Give him a case of Red Bull ¥" + F(LifeRedBull, "0")), T("他戴上耳塞回去睡了，训练照跑", "He puts in earplugs; training goes on"), money + 1e-9 >= LifeRedBull);
+                    C("redbull", T("赔她一套隔音耳塞 ¥" + F(LifeRedBull, "0"), "Buy her a set of earplugs ¥" + F(LifeRedBull, "0")), T("她戴上耳塞回去睡了，训练照跑", "She puts in earplugs; training goes on"), money + 1e-9 >= LifeRedBull);
                     break;
                 }
                 case "forum_post":
                 {
                     double pay = ForumMoney;
-                    e.who = T("摆渡贴吧 · 人工智能吧", "Bodu Tieba · AI forum"); e.title = T("帖子有人回了", "Replies on your thread");
-                    e.body = S.stage >= 4
-                        ? T("你在人工智能吧发的帖子「自己在家用显卡训了个小网络」被顶上了首页，三十多楼，有人在楼里直接叫你大神。有个研究生说可以把他们组标好的数据打包发你，还有人说要打赏。",
-                            "Your thread on the AI forum, \"Trained a little network at home on my own GPU\", hit the front page with thirty-odd replies, and some call you a big shot outright. A grad student offers his group's labelled data, and someone wants to tip you.")
-                        : T("你在人工智能吧发的帖子「自己在家用显卡训了个小网络」被顶上了首页，三十多楼。有个研究生说可以把他们组标好的数据打包发你，还有人说要打赏。",
-                            "Your thread on the AI forum, \"Trained a little network at home on my own GPU\", hit the front page with thirty-odd replies. A grad student offers his group's labelled data, and someone wants to tip you.");
-                    C("data", T("认真回帖，要数据", "Answer properly, take the data"), T("+" + SamplesText(S.lifeArg) + " 条样本（" + name + "）", "+" + SamplesText(S.lifeArg) + " samples (" + name + ")"));
-                    C("tip", T("回个谢谢，收下打赏", "Say thanks, take the tip"), "+¥" + F(pay, "0"));
+                    e.who = T("摆渡贴吧 · 人工智能吧", "Bodu Tieba · AI forum"); e.title = T("发个帖子？", "Start a thread?");
+                    e.body = T("最近积攒了一点经验。要不要在人工智能吧发帖，问问哪里有数据，或者分享自己的训练心得？", "You have learned a few things. Post on the AI forum to ask for data, or share your training notes?");
+                    C("data", T("发帖求数据", "Post asking for data"), T("向吧友请教数据来源", "Ask the forum about data sources"));
+                    C("tip", T("发帖分享心得", "Post your notes"), T("把自己的经验写出来", "Share what you have learned"));
                     break;
                 }
                 case "zhou_loan":
@@ -660,6 +663,7 @@ namespace LingGuangV05.XingGuang
 
         string ApplyLifeChoice(string id, string choice, IXgHost host)
         {
+            if (LifeData.ContainsKey(id)) return ApplyLifeDataChoice(id, choice, host);
             string card = T(S.lifeArgName, S.lifeArgNameEn), name = card;
             if (card.Length == 0) card = T("显卡", "the card");
             double zhouWait = 1500 * (1 + S.lifeZhouCool);
@@ -685,9 +689,10 @@ namespace LingGuangV05.XingGuang
                 {
                     SetCooldown(id, 1200);
                     var d = XgCatalog.Dataset(S.lifeArgKey);
-                    if (d == null || StoryOwned(d.id) || BatchesArrived(d.id) < 1)
+                    if (d == null || StoryOwned(d.id) || InstalledBatches(d.id) < 1)
                         return T("坏道那块扫了几遍，好像又能读了。这回算运气好。", "After a few scans the bad patch reads again. Lucky this time.");
                     int bought = BatchesBought(d.id), arrived = BatchesArrived(d.id);
+                    SetCount(S.installedDataBatches, d.id, Math.Max(0, InstalledBatches(d.id) - 1));
                     SetCount(S.batchesBought, d.id, Math.Max(0, bought - 1));
                     SetCount(S.batchesArrived, d.id, Math.Max(0, arrived - 1));
                     foreach (var run in Runs) if (run.dataset == d.id) Evaluate(run);
@@ -730,30 +735,32 @@ namespace LingGuangV05.XingGuang
                 case "roommate_fan/throttle":
                     SetCooldown(id, 1200);
                     if (S.lifeArgKey.Length > 0) Unplug("quiet", S.lifeArgKey, LifeQuietSeconds, host);
-                    return S.stage >= 4 ? T("把" + card + "的电源拔了，机箱安静了一半。室友说了句「谢了。你也别熬太晚，你这么拼，我看着都累」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks. Don't stay up too late either. Watching you work this hard tires me out,\" says the roommate, and the door closes.")
-                        : T("把" + card + "的电源拔了，机箱安静了一半。室友说了句「谢了」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks,\" says the roommate, and the door closes.");
+                    return S.stage >= 4 ? T("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了。你也别熬太晚，你这么拼，我看着都累」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks. Don't stay up too late either. Watching you work this hard tires me out,\" says the downstairs neighbor, and the door closes.")
+                        : T("把" + card + "的电源拔了，机箱安静了一半。楼下阿姨说了句「谢了」，门关上了。", "You unplug the " + card + "; the case is half as loud. \"Thanks,\" says the downstairs neighbor, and the door closes.");
                 case "roommate_fan/redbull":
                     if (host == null || !host.Spend(LifeRedBull)) return null;
                     S.totalSpent += LifeRedBull;
                     SetCooldown(id, 2400);
-                    return S.stage >= 4 ? T("室友抱着一箱红牛回屋了：「得，你开吧，我戴耳塞。你在折腾的那玩意儿，我虽然不懂，但看你这半年没停过，我服。」", "The roommate carries off a case of Red Bull: \"Fine, keep it running, I've got earplugs. I don't get whatever you're building, but you haven't stopped in half a year, and I respect that.\"")
-                        : T("室友抱着一箱红牛回屋了：「得，你开吧，我戴耳塞。」", "The roommate carries off a case of Red Bull: \"Fine, keep it running. I've got earplugs.\"");
+                    return S.stage >= 4 ? T("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。你在折腾的那玩意儿，我虽然不懂，但看你这半年没停过，我服。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running, I've got earplugs. I don't get whatever you're building, but you haven't stopped in half a year, and I respect that.\"")
+                        : T("楼下阿姨收下耳塞下楼了：「得，你开吧，我戴耳塞。」", "The downstairs neighbor takes the earplugs downstairs: \"Fine, keep it running. I've got earplugs.\"");
                 case "forum_post/data":
                 {
+                    if(!S.lifeFlags.Contains("posted_progress"))S.lifeFlags.Add("posted_progress");
                     SetCooldown(id, 1200);
                     string ds = XgCatalog.Dataset(S.lifeArgKey) != null ? S.lifeArgKey : ForumDataset();
                     if (ds != null) AddGameSamples(ds, (int)S.lifeArg);
                     if (S.stage >= 4) EarnSecret("life.praise.forum");
-                    return T("研究生发来一个压缩包：" + SamplesText(S.lifeArg) + " 条标好的 " + name + "。你回了一长串感谢。", "The grad student sends a zip: " + SamplesText(S.lifeArg) + " labelled " + name + " samples. You reply with a long thank-you.");
+                    return T("你发帖后，一位研究生回帖附上一个压缩包：" + SamplesText(S.lifeArg) + " 条标好的 " + name + "。你回了一长串感谢。", "After you post, a grad student replies with a zip: " + SamplesText(S.lifeArg) + " labelled " + name + " samples. You reply with a long thank-you.");
                 }
                 case "forum_post/tip":
                 {
+                    if(!S.lifeFlags.Contains("posted_progress"))S.lifeFlags.Add("posted_progress");
                     SetCooldown(id, 1200);
                     double pay = ForumMoney;
                     if (host != null) { host.Earn(pay); S.totalIncome += pay; }
                     if (S.stage >= 4) EarnSecret("life.praise.forum");
-                    return S.stage >= 4 ? T("支付宝到账 ¥" + F(pay, "0") + "，附言：大神加油，期待下一帖。", "¥" + F(pay, "0") + " arrives on Alipay: \"Keep going, big shot. Waiting for your next post.\"")
-                        : T("支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay: \"Keep going, OP.\"");
+                    return S.stage >= 4 ? T("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：大神加油，期待下一帖。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, big shot. Waiting for your next post.\"")
+                        : T("你发帖后，有人回帖打赏。支付宝到账 ¥" + F(pay, "0") + "，附言：楼主加油。", "¥" + F(pay, "0") + " arrives on Alipay after a reader tips your new post: \"Keep going, OP.\"");
                 }
                 case "zhou_loan/lend":
                     if (host == null || !host.Spend(S.lifeArg)) return null;

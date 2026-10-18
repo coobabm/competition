@@ -34,14 +34,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         protected bool disposed;
         protected TMP_Text timer;
         protected readonly Color purple = new Color32(115,78,184,255), green = new Color32(34,126,93,255), red = new Color32(174,49,56,255);
-        protected XgSocialSurface(XgMiniContext c):base(c) { }
+        protected XgSocialSurface(XgMiniContext c):base(c) { if (c.Ui.dark) { purple = new Color32(165,148,255,255); green = XgDark.Good; red = XgDark.Bad; } }
         protected void Clear(string title,string rule)
         {
             version++; timer=null;
             for(int i=C.Root.childCount-1;i>=0;i--) {
                 var g=C.Root.GetChild(i).gameObject; g.SetActive(false); XgMiniContext.DestroyObject(g);
             }
-            C.Box("SocialBackground",0,0,900,480,new Color32(243,246,251,255));
+            C.Box("SocialBackground",0,0,900,480,C.Ui.dark ? XgDark.Page : new Color32(243,246,251,255));
             C.Text("Title",18,8,660,35,title,26);
             C.Text("Rule",18,44,862,38,rule,15);
         }
@@ -51,7 +51,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             return C.Button(id,x,y,w,h,text,()=> { if(!disposed && v==version) f(); },size);
         }
         protected TMP_Text T(string id,float x,float y,float w,float h,string text,float size=20,Color? color=null) => C.Text(id,x,y,w,h,text,size,color);
-        protected void Shade(float x,float y,float w,float h) => C.Box("Card",x,y,w,h,Color.white);
+        protected void Shade(float x,float y,float w,float h) => C.Box("Card",x,y,w,h,C.Ui.dark ? XgDark.Card : Color.white);
         protected void Shuffle<TValue>(IList<TValue> list) { for(int i=list.Count-1;i>0;i--) { int j=C.Random.Next(i+1); TValue t=list[i];list[i]=list[j];list[j]=t; } }
         protected int Guess(int truth,int count) => XgMiniContent.Guess(C.Random,C.Skill,truth,count);
         protected void Clock(float left) { if(timer!=null) { int sec=Math.Max(0,(int)Math.Ceiling(left)); timer.text=XgUi.T("剩余 "+sec+" 秒",sec+" s left"); } }
@@ -74,17 +74,17 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public XgEspGame(XgMiniContext c):base(c){}
         public override void Build(){round=hits=labels=0;Next();}
         void Next(){
-            if(round>=12){End(XgUi.T("暗号对照表","Code Cross-check"),XgUi.T($"12 条弹幕：默契 {hits} 次，读对情绪 {labels} 次。\n对上暗号不一定就对，灵光也会猜错。",$"12 comments: {hits} matches, {labels} moods read right.\nMatching codes do not make it right; LingGuang can guess wrong too."),Build);return;}
+            if(round>=12){End(XgUi.T("暗号对照表","Code Cross-check"),XgUi.T($"12 条弹幕：默契 {hits} 次，读对情绪 {labels} 次。\n对上暗号不一定就对，{C.Sim.AiDisplayName}也会猜错。",$"12 comments: {hits} matches, {labels} moods read right.\nMatching codes do not make it right; {C.Sim.AiDisplayName} can guess wrong too."),Build);return;}
             round++;answered=false;left=8;item=Items[C.Random.Next(Items.Length)];
             var choices=new List<string>(Moods);choices.Remove(item[1]);Shuffle(choices);choices.RemoveRange(3,choices.Count-3);choices.Add(item[1]);Shuffle(choices);options=choices.ToArray();truth=Array.IndexOf(options,item[1]);ai=Guess(truth,4);
-            Clear(XgUi.T("对暗号 · "+round+" / 12","Code Match · "+round+" / 12"),XgUi.T("8 秒内为弹幕选情绪。你先选，灵光再翻牌，看看你们对不对得上暗号。","Pick the mood of the comment within 8 s. You choose first, then LingGuang flips its card: do your codes match?"));
+            Clear(XgUi.T("对暗号 · "+round+" / 12","Code Match · "+round+" / 12"),XgUi.T(("8 秒内为弹幕选情绪。你先选，灵光再翻牌，看看你们对不对得上暗号。").Replace("灵光", C.Sim.AiDisplayName),("Pick the mood of the comment within 8 s. You choose first, then LingGuang flips its card: do your codes match?").Replace("LingGuang", C.Sim.AiDisplayName)));
             Shade(25,97,850,130);T("Message",50,110,800,100,XgUi.T(item[0],item[2]),36);
             timer=T("Timer",690,9,200,32,"",19);Clock(left);
             for(int i=0;i<4;i++){int k=i;B("Emotion"+i,30+i*215,250,195,72,(i+1)+"  "+Mood(options[i]),()=>Pick(k));}
-            hidden=T("Hidden",50,351,790,80,XgUi.T("灵光已经选好……等你翻牌。","LingGuang has chosen... waiting for you to flip."),23,purple);
+            hidden=T("Hidden",50,351,790,80,XgUi.T(("灵光已经选好……等你翻牌。").Replace("灵光", C.Sim.AiDisplayName),("LingGuang has chosen... waiting for you to flip.").Replace("LingGuang", C.Sim.AiDisplayName)),23,purple);
         }
         void Pick(int k){if(answered)return;answered=true;if(hidden!=null)hidden.gameObject.SetActive(false);if(k==ai)hits++;if(k==truth)labels++;if(k>=0)C.ReportTimed(k==truth,8-left);
-            T("Reveal",35,340,830,95,XgUi.T($"你：{(k<0?"未选择":Mood(options[k]))}   灵光：{Mood(options[ai])}   正解：{Mood(item[1])}\n"+(k==ai?"暗号对上了。":"没有对上，记住这次差别。"),$"You: {(k<0?"no pick":Mood(options[k]))}   LingGuang: {Mood(options[ai])}   Answer: {Mood(item[1])}\n"+(k==ai?"The code matched.":"No match; remember this difference.")),22);
+            T("Reveal",35,340,830,95,XgUi.T($"你：{(k<0?"未选择":Mood(options[k]))}   {C.Sim.AiDisplayName}：{Mood(options[ai])}   正解：{Mood(item[1])}\n"+(k==ai?"暗号对上了。":"没有对上，记住这次差别。"),$"You: {(k<0?"no pick":Mood(options[k]))}   {C.Sim.AiDisplayName}: {Mood(options[ai])}   Answer: {Mood(item[1])}\n"+(k==ai?"The code matched.":"No match; remember this difference.")),22);
             B("Next",685,428,180,40,XgUi.T("下一条","Next comment"),Next,18);
         }
         public override void Tick(float dt){if(disposed||answered||!C.IsActive)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){Pick(i);break;}}
@@ -116,7 +116,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             for(int i=0;i<8;i++)items[i]=i<count?yes[i%yes.Count]:no[i-count];
             Shuffle(items);
             for(int i=0;i<8;i++)if(Matches(items[i]))truth|=1<<i;
-            Clear(XgUi.T("12306 验证码 · "+round+" / 12","12306 Captcha · "+round+" / 12"),XgUi.T("8 秒内点出所有符合要求的生活物件。紫色「灵」是灵光圈的，点不点由你。","Tap every matching everyday object within 8 s. A purple \"LG\" is a cell LingGuang picked; tapping is up to you."));
+            Clear(XgUi.T("12306 验证码 · "+round+" / 12","12306 Captcha · "+round+" / 12"),XgUi.T(("8 秒内点出所有符合要求的生活物件。紫色「灵」是灵光圈的，点不点由你。").Replace("灵光", C.Sim.AiDisplayName),("Tap every matching everyday object within 8 s. A purple \"LG\" is a cell LingGuang picked; tapping is up to you.").Replace("LingGuang", C.Sim.AiDisplayName)));
             T("Ask",25,88,650,38,XgUi.T("请选择全部「"+TargetName+"」","Select all: "+TargetName),27);
             timer=T("Timer",700,90,175,35,"",19);Clock(left);
             for(int i=0;i<8;i++){

@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang
             new XgMiniGameDef("zhaoshuijun", "找水军", "Spot the shills", "review", "标注", "观察评论证据，找出刷单评论", "Read the evidence and find the fake reviews"),
             new XgMiniGameDef("dadishu", "打地鼠", "Whack-a-mole", "arith", "标注", "只敲算错的算式；漏敲和误敲都会失误", "Whack only the wrong sums; a miss or a false alarm both count against you"),
             new XgMiniGameDef("shuishiwodi", "谁是卧底", "Who is the spy", "logic", "标注", "听每个人描述，再投票找出卧底", "Hear everyone describe their word, then vote out the spy"),
-            new XgMiniGameDef("kaixincidian", "开心辞典", "Quiz show", "sense", "标注", "判断十二句话对不对，求助机会有限", "Twelve true-or-false statements in a row; help is limited"),
+            new XgMiniGameDef("kaixincidian", "常识判断", "Common sense", "sense", "标注", "判断题目对错，答完即下一题，连击不限", "Judge the statement; the next question follows immediately, with unlimited streaks"),
             new XgMiniGameDef("danmushooter", "弹幕射击", "Danmaku shooter", "danmu", "标注", "移动飞机击落恶意弹幕，不伤友善弹幕", "Fly the plane and shoot down hostile comments, spare the friendly ones"),
             new XgMiniGameDef("spidersnake", "爬虫贪吃蛇", "Crawler snake", "news", "数据", "吃词避障；开始要付百科爬虫费，每轮采集有上限", "Eat words and dodge walls; a crawl fee is paid up front and the run limit applies", 3, XgMiniReward.Crawl),
             new XgMiniGameDef("vramtetris", "显存俄罗斯方块", "VRAM Tetris", "", "训练", "消行就开一轮训练，显存和电费照旧要用", "Clear a line to start a training round; VRAM and power are still needed", 1, XgMiniReward.Training),
@@ -40,7 +40,12 @@ namespace LingGuangV05.XingGuang
             new XgMiniGameDef("lianliankan", "连连看", "Link-up", "cifar", "剧情", "把词语和对应图形配对", "Pair each word with its picture", 3)
         };
         public static IReadOnlyList<XgMiniGameDef> All { get; } = Array.AsReadOnly(games);
-        public static XgMiniGameDef Find(string id) { foreach (var g in games) if (g.Id == id) return g; return null; }
+        public static XgMiniGameDef Find(string id)
+        {
+            foreach (var g in games) if (g.Id == id) return g;
+            var p = XgTeachingPacks.Find(id);
+            return p == null ? null : new XgMiniGameDef(p.id, p.name, p.nameEn, p.dataset, "教", p.play, p.playEn, p.stage);
+        }
         /// <summary>
         /// The game that is a desk's main view in 摆渡众包, or null when the desk keeps its yes/no cards (or has its own view:
         /// the digits desk is written on, XgSim.Handwriting.cs). Every mapped game labels that desk's own dataset.

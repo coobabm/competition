@@ -115,8 +115,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!r.accepted) return r;
             var button = r.yes ? yes.rt : no.rt;
             Fx.Knock(button, .12f);
-            feedback.color = r.correct ? XgPalette.Good : XgPalette.Bad;
-            feedback.text = (r.correct ? "<color=#2F9E44>" : "<color=#D63031>") + T("它替你按了「" + YesNoWord(r.yes) + "」", "It pressed \"" + YesNoWord(r.yes) + "\" for you")
+            feedback.color = r.correct ? (DarkTeaching ? XgDark.Good : XgPalette.Good) : (DarkTeaching ? XgDark.Bad : XgPalette.Bad);
+            feedback.text = (r.correct ? FeedbackGoodTag : FeedbackBadTag) + T("它替你按了「" + YesNoWord(r.yes) + "」", "It pressed \"" + YesNoWord(r.yes) + "\" for you")
                 + (r.correct ? "  +¥" + N(r.pay, "0.00") : T("，按错了（不扣钱）", ", wrongly (it costs nothing)")) + "</color>";
             feedbackTimer = 3f;
             if (r.correct) Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 20);
@@ -126,6 +126,31 @@ namespace LingGuangV05.Desktop.XingGuang
             Refresh();
             return r;
         }
+        RectTransform LabelBox(XgUi kit, RectTransform parent, string name, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
+            => DarkTeaching ? kit.Card(parent, name, min, max, offMin, offMax) : ZhongbaoSkin.Box(kit, parent, name, min, max, offMin, offMax);
+
+        void LabelHeader(XgUi kit, RectTransform box, string zh, string en, out TMP_Text title, out TMP_Text note)
+        {
+            ZhongbaoSkin.Header(kit, box, zh, en, out title, out note);
+            if (DarkTeaching) { title.color = XgDark.Ink; note.color = XgDark.Muted; }
+        }
+
+        // Content graphics retain their original paper and ink; only plain-text cards opt in.
+        bool DarkTextPaper => DarkTeaching && !digit.gameObject.activeSelf && !captchaA.gameObject.activeSelf &&
+            !face.gameObject.activeSelf && !go.gameObject.activeSelf && !previewRoot.gameObject.activeSelf;
+        void RefreshPaperTheme(bool gold = false)
+        {
+            bool dark = DarkTextPaper;
+            Color paperBase = dark ? XgDark.Paper : XgPalette.Paper;
+            Color wrong = dark ? new Color32(66, 28, 32, 255) : new Color32(255, 200, 200, 255);
+            Color gilded = dark ? new Color32(49, 40, 23, 255) : new Color32(255, 248, 220, 255);
+            paperImage.color = redTimer > 0 ? Color.Lerp(paperBase, wrong, redTimer / .35f) : gold ? gilded : paperBase;
+            text.color = poem.color = dark ? XgDark.Ink : XgPalette.Ink;
+        }
+
+        string FeedbackGoodTag => DarkTeaching ? "<color=#5FE3B5>" : "<color=#2F9E44>";
+        string FeedbackBadTag => DarkTeaching ? "<color=#FF7A6E>" : "<color=#D63031>";
+        string FeedbackSampleTag => DarkTeaching ? "<color=#5FE3B5>" : "<color=#0F8C7E>";
         bool WorkContext => host is ZhongbaoView;
         bool TeachingContext => !WorkContext && Sim.TeachMode;
         string Desk => WorkContext ? (string.IsNullOrEmpty(Sim.S.workDesk) ? "sense" : Sim.S.workDesk) : Sim.S.desk;
@@ -149,16 +174,16 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildHall(root);
 
             // ── the workspace ──
-            workspace = ZhongbaoSkin.Box(ui, root, "Workspace", Vector2.zero, Vector2.one, new Vector2(HallW + ColumnGap, 0), new Vector2(-(SideW + ColumnGap), 0));
-            ZhongbaoSkin.Header(ui, workspace, "标注台", "Labelling desk", out wkTitle, out wkRule);
+            workspace = LabelBox(ui, root, "Workspace", Vector2.zero, Vector2.one, new Vector2(HallW + ColumnGap, 0), new Vector2(-(SideW + ColumnGap), 0));
+            LabelHeader(ui, workspace, "标注台", "Labelling desk", out wkTitle, out wkRule);
             UiTip.Add(wkRule, () => Sim == null ? "" : PayTip());
             body = Rect("Body", workspace, Vector2.zero, Vector2.one, new Vector2(1, 38), new Vector2(-1, -35));
             BuildFeed(body);
             BuildFrozenBanner(body);
-            meta = ui.Text(Rect("Meta", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-96, -36)), "", 14, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
+            meta = ui.Text(Rect("Meta", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-96, -36)), "", 14, HallMute, TextAlignmentOptions.MidlineLeft);
             meta.textWrappingMode = TextWrappingModes.NoWrap; meta.overflowMode = TextOverflowModes.Ellipsis;
-            qno = ui.Text(Rect("QuestionNo", body, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-94, -58), new Vector2(-14, -36)), "", 13, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
-            lessonProgress = ui.Text(Rect("LessonProgress", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-14, -36)), "", 16, ZhongbaoSkin.Ink, TextAlignmentOptions.Center);
+            qno = ui.Text(Rect("QuestionNo", body, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-94, -58), new Vector2(-14, -36)), "", 13, HallMute, TextAlignmentOptions.MidlineRight);
+            lessonProgress = ui.Text(Rect("LessonProgress", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-14, -36)), "", 16, HallInk, TextAlignmentOptions.Center);
             lessonProgress.gameObject.SetActive(false);
 
             paper = Rect("Paper", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -252), new Vector2(224, -66));
@@ -189,15 +214,15 @@ namespace LingGuangV05.Desktop.XingGuang
             timerBar = Rect("Timer", body, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-224, -262), new Vector2(224, -256));
             timerFill = Bar(timerBar, "Fill", new Color(0, 0, 0, .08f), XgPalette.Gold);
 
-            question = ui.Text(Strip("Question", body, 268, 34), "", 24, XgPalette.Ink, TextAlignmentOptions.Center);
+            question = ui.Text(Strip("Question", body, 268, 34), "", 24, DarkTeaching ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.Center);
             question.fontStyle = FontStyles.Bold;
             question.enableAutoSizing = true; question.fontSizeMin = 14; question.fontSizeMax = 24;
-            suggestion = ui.Text(Strip("Suggestion", body, 296, 50), "", 15, XgPalette.Accent, TextAlignmentOptions.Top);
+            suggestion = ui.Text(Strip("Suggestion", body, 296, 50), "", 15, DarkTeaching ? XgDark.Accent : XgPalette.Accent, TextAlignmentOptions.Top);
             suggestion.fontStyle = FontStyles.Bold;
             confidenceRoot = Strip("Confidence", body, 350, 4, 60, 60);
             confidenceFill = Bar(confidenceRoot, "Fill", XgPalette.Line, XgPalette.Accent);
-            yes = ZhongbaoSkin.Outlined(ui, body, "", null, 24, new Color32(203, 210, 230, 255));
-            no = ZhongbaoSkin.Outlined(ui, body, "", null, 24, new Color32(203, 210, 230, 255));
+            yes = ZhongbaoSkin.Outlined(ui, body, "", null, 24, DarkTeaching ? XgDark.Line : new Color32(203, 210, 230, 255));
+            no = ZhongbaoSkin.Outlined(ui, body, "", null, 24, DarkTeaching ? XgDark.Line : new Color32(203, 210, 230, 255));
             yes.button.gameObject.AddComponent<XgLessonAnswerInput>().Bind(yes.button, () => CaptureAnswer(true));
             no.button.gameObject.AddComponent<XgLessonAnswerInput>().Bind(no.button, () => CaptureAnswer(false));
             var yesFrame = ZhongbaoSkin.Frame(yes); var noFrame = ZhongbaoSkin.Frame(no);
@@ -209,14 +234,14 @@ namespace LingGuangV05.Desktop.XingGuang
             feedback = ui.Text(Rect("Feedback", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(16, -460), new Vector2(-16, -426)), "", 15, XgPalette.Good, TextAlignmentOptions.Top);
             feedback.fontSizeMin = 13; feedback.fontSizeMax = 16;
             var feedbackSurface = Rect("LessonFeedbackSurface", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -476), new Vector2(-14, -426));
-            lessonFeedbackBack = Panel(feedbackSurface, new Color32(246, 252, 248, 255));
+            lessonFeedbackBack = Panel(feedbackSurface, DarkTeaching ? XgDark.AccentSoft : new Color32(246, 252, 248, 255));
             lessonFeedbackBack.raycastTarget = false;
             feedbackSurface.SetSiblingIndex(feedback.transform.GetSiblingIndex());
             feedbackSurface.gameObject.SetActive(false);
             // The desk's info line: samples, difficulty, hot word, the next step.
             infoBack = Rect("InfoBox", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -506), new Vector2(-14, -464));
-            Panel(infoBack, ZhongbaoSkin.Page).raycastTarget = false;
-            steps = ui.Text(Rect("Info", infoBack, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2)), "", 13, XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            Panel(infoBack, DarkTeaching ? XgDark.Card : ZhongbaoSkin.Page).raycastTarget = false;
+            steps = ui.Text(Rect("Info", infoBack, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2)), "", 13, DarkTeaching ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
             steps.enableAutoSizing = true; steps.fontSizeMin = 10; steps.fontSizeMax = 13;
             // Built after the card and the answer buttons so it covers them while a captcha waits.
             captchaCard = new XgCaptchaCard(ui, body, 30, 428, () => Sim, OnCaptchaAnswered);
@@ -270,7 +295,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string what;
             switch (id)
             {
-                case "mnist": what = T("照被问的数字写一个，灵光边看边猜，写得越多它越认得你的字；也可以切回是非题。", "Write the digit you are asked for while LingGuang guesses; the more you write, the better it reads your hand. You can switch back to yes/no cards."); break;
+                case "mnist": what = T(("照被问的数字写一个，灵光边看边猜，写得越多它越认得你的字；也可以切回是非题。" .Replace("灵光", Sim.AiDisplayName)), ("Write the digit you are asked for while LingGuang guesses; the more you write, the better it reads your hand. You can switch back to yes/no cards." .Replace("LingGuang", Sim.AiDisplayName))); break;
                 case "poems": what = Lang.T("看诗句，判断空格里是不是问的那个字。"); break;
                 case "arith": what = T("算术题：看一道写好答案的算式（加减乘除、百分数、分数……），判断它对不对。点错要扣钱；报酬比别的桌低，每条只算半条总样本。", "Sums: read an equation that already shows its answer (+ − × ÷, percentages, fractions…) and judge whether it is right. A wrong pick costs money; it pays less than the other desks and each sample counts half toward the total."); break;
                 case "logic": what = Lang.T("逻辑和推理题。要动脑子，所以报酬最高。"); break;
@@ -338,6 +363,11 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Every desk of the catalog: the open ones first, then the locked ones, so a new player sees what is coming. Each group by pay, highest first.</summary>
         List<XgDesk> TabDesks(out int open)
         {
+            if (!WorkContext)
+            {
+                open = 1;
+                return new List<XgDesk> { XgCatalog.Desk(XgMemes.SenseDesk) };
+            }
             var list = new List<XgDesk>(Sim.OpenDesks());
             open = list.Count;
             foreach (var d in XgCatalog.Desks) if (!WorkContext && !Sim.DeskOpen(d.id) && (!TeachingContext || Sim.S.stage >= 3)) list.Add(d);
@@ -347,13 +377,13 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         /// <summary>A stable sort (catalog order breaks ties) of one stretch of the list by the desk's pay factor, highest first.</summary>
-        static void SortByPay(List<XgDesk> list, int from, int count)
+        void SortByPay(List<XgDesk> list, int from, int count)
         {
             if (count < 2) return;
             var part = list.GetRange(from, count);
             var order = new List<(XgDesk d, int i)>();
             for (int i = 0; i < part.Count; i++) order.Add((part[i], i));
-            order.Sort((a, b) => { int c = b.d.pay.CompareTo(a.d.pay); return c != 0 ? c : a.i.CompareTo(b.i); });
+            order.Sort((a, b) => { if(!WorkContext&&Sim.TeachingUncertainFirst){int unsure=TeachingSortScore(a.d.id).CompareTo(TeachingSortScore(b.d.id));if(unsure!=0)return unsure;} int c = b.d.pay.CompareTo(a.d.pay); return c != 0 ? c : a.i.CompareTo(b.i); });
             for (int i = 0; i < order.Count; i++) list[from + i] = order[i].d;
         }
 
@@ -374,7 +404,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Select(string id)
         {
-            if (id == Desk) return;
+            if (id == Desk && (WorkContext || string.IsNullOrEmpty(Sim.S.teachingPack))) return;
+            deskGame?.Stop();
+            if (!WorkContext) Sim.S.teachingPack = "";
             if (WorkContext) Sim.S.workDesk = id; else Sim.SelectDesk(id);
             feedback.text = "";
             Fx.Play(XgJuice.Sfx.Id.Swoosh, 1.2f, .6f);
@@ -424,6 +456,7 @@ namespace LingGuangV05.Desktop.XingGuang
             feedback.fontStyle = lessonFeedback ? FontStyles.Bold : FontStyles.Normal;
             lessonFeedbackBack.gameObject.SetActive(lessonFeedback);
             var button = answer ? yes.rt : no.rt;
+            var binaryReview = !WorkContext && !queued && direct ? Sim.PredictTeachingBinary(card) : null;
             int oldDeskLevel = Sim.LevelOf(desk);
             XgAnswer r;
             if (WorkContext)
@@ -440,6 +473,8 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             else r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
+            if (binaryReview != null) Sim.RememberTeachingBinary(card, answer, binaryReview, card.why, card.whyEn);
+            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card);
             LastAnswerDisagreed = teachingAnswer ? !answer : shownGuessValid && shownGuess != answer;
             lastAnsweredFrame = Time.frameCount;
             AnswerCount++;
@@ -450,7 +485,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (r.subjective) {
                 feedback.text = Sim.AiDisplayName + T("记住了你的态度 · +¥", " remembered your choice · +¥") + N(r.pay, "0.00");
-                feedback.color = XgPalette.Accent; feedbackTimer = 3f;
+                feedback.color = DarkTeaching ? XgDark.Accent : XgPalette.Accent; feedbackTimer = 3f;
                 Refresh(); return;
             }
             Remember(r.correct ? HistoryMark.Right : HistoryMark.Wrong);
@@ -458,12 +493,12 @@ namespace LingGuangV05.Desktop.XingGuang
             Vector2 at = Fx.At(paper);
             if (r.correct)
             {
-                feedback.color = XgPalette.Good;
-                feedback.text = "<color=#2F9E44>✓ " + Lang.T("对了") + "  +¥" + N(r.pay, "0.00") + "</color>"
+                feedback.color = DarkTeaching ? XgDark.Good : XgPalette.Good;
+                feedback.text = FeedbackGoodTag + "✓ " + Lang.T("对了") + "  +¥" + N(r.pay, "0.00") + "</color>"
                     + (r.combo > 1 ? "  <color=#7A5AF8>" + Lang.T("连击 ×") + N(Sim.ComboMultiplier, "0.00") + "</color>" : "")
                     + (why.Length > 0 && card.question.Length > 0 ? "\n<size=13><color=#68748C>" + why + "</color></size>" : "");
                 // A user log from the data flywheel was labelled: it counts as several samples.
-                if (!queued && r.samples > 1) feedback.text += "  <color=#0F8C7E>" + Lang.T("用户日志 +") + r.samples + Lang.T(" 样本") + "</color>";
+                if (!queued && r.samples > 1) feedback.text += "  " + FeedbackSampleTag + Lang.T("用户日志 +") + r.samples + Lang.T(" 样本") + "</color>";
                 if (teachingAnswer)
                     feedback.text = T("上一题：", "Last card: ")
                         + (r.corrected ? T("你纠正了它", "you corrected it") : T("它答对了", "it got it right"))
@@ -514,8 +549,8 @@ namespace LingGuangV05.Desktop.XingGuang
             else
             {
                 XgJuice.BreakComboSound();
-                feedback.color = XgPalette.Bad;
-                feedback.text = "<color=#D63031>× " + (r.timeout ? Lang.T("超时了。") : teachingAnswer
+                feedback.color = DarkTeaching ? XgDark.Bad : XgPalette.Bad;
+                feedback.text = FeedbackBadTag + "× " + (r.timeout ? Lang.T("超时了。") : teachingAnswer
                     ? (shownGuess == card.truth ? T("你刚才判反了：它猜对了。", "You misjudged it: its guess was right. ") : T("你刚才判反了：它猜错了。", "You misjudged it: its guess was wrong. ")) : "")
                     + (teachingAnswer ? T("题目的答案是「", "The answer to the question is \"") : Lang.T("应该是「")) + truthText
                     + (r.fine > 0 ? T("」。扣 ¥" + N(r.fine, "0.00") + "，连击清零，这条作废", "\". It cost ¥" + N(r.fine, "0.00") + ", the combo resets and the label is discarded")
@@ -540,7 +575,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     + (r.fine > 0 ? " · −¥" + N(r.fine, "0.00") : "") + T(" · 连击清零", " · Streak reset");
             if (lessonFeedback)
             {
-                feedback.color = r.correct ? new Color32(20, 83, 45, 255) : new Color32(127, 29, 29, 255);
+                feedback.color = DarkTeaching ? (r.correct ? XgDark.Good : XgDark.Bad) : (r.correct ? new Color32(20, 83, 45, 255) : new Color32(127, 29, 29, 255));
                 feedbackTimer = 5f;
             }
             Refresh();
@@ -560,8 +595,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (WorkContext) return;
             Fx.Float(Fx.At(paper, new Vector2(0, 60)), Lang.T("超时！"), XgPalette.Bad, 30);
-            feedback.color = XgPalette.Bad;
-            feedback.text = "<color=#D63031>" + Lang.T("超时：没有钱，连击清零") + "</color>";
+            feedback.color = DarkTeaching ? XgDark.Bad : XgPalette.Bad;
+            feedback.text = FeedbackBadTag + Lang.T("超时：没有钱，连击清零") + "</color>";
             feedbackTimer = 2.5f;
             Remember(HistoryMark.Wrong);
             Wrong(Fx.At(paper));
@@ -570,6 +605,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Tick(float dt)
         {
+            if(teachingReviewOverlay!=null&&teachingReviewOverlay.gameObject.activeInHierarchy)return;
+            RefreshVisibleHall();
             // The setup arms this window; start its clock only after an actual rendered, usable teaching card.
             if (lessonPresented && Time.frameCount > lessonPresentedFrame && host.Visible && FrontWindow()
                 && (host.Tab == "teach" || host.Tab == "label") && root.gameObject.activeInHierarchy
@@ -592,7 +629,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (card.id != displayedId) { Refresh(); return; }
             AnimateTranslation(card, dt);
             AnimateMemory(card, dt);
-            paperImage.color = redTimer > 0 ? Color.Lerp(XgPalette.Paper, new Color32(255, 200, 200, 255), redTimer / .35f) : card.gold ? new Color32(255, 248, 220, 255) : XgPalette.Paper;
+            RefreshPaperTheme(card.gold);
             bool timed = card.timeLimit > 0;
             timerBar.gameObject.SetActive(timed);
             if (timed)
@@ -611,6 +648,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (root == null) return;
+            HideClassicTeachingTools();
             RefreshHandwriting();
             // The hall stays current while a desk's game covers the cards (new desks, bought data packs, pay).
             if (RefreshDeskGame(true)) { RefreshHall(Mode != 0); return; }
@@ -724,6 +762,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             previewRoot.gameObject.SetActive(dedicatedPreview);
             if (dedicatedPreview) RefreshPreviewSurface(card);
+            RefreshPaperTheme(card.gold);
             bool queued = !WorkContext && Sim.ReviewCard(desk) != null;
             bool hasGuess;
             bool guess;
@@ -785,12 +824,13 @@ namespace LingGuangV05.Desktop.XingGuang
             confidenceRoot.gameObject.SetActive(hasGuess && !teaching && !direct);
             SetBar(confidenceFill, (float)confidence);
             confidenceFill.GetComponent<UnityEngine.UI.Image>().color = confidence < Sim.S.coopThreshold ? XgPalette.Gold : XgPalette.Good;
+            RefreshClassicTeachingTools(card, queued);
             yes.label.fontSize = no.label.fontSize = 24;
-            yes.Set((teaching ? T("猜对了", "Guessed right") : YesNoWord(true)) + (teaching ? TeachingKeyHint(1) : KeyHint(1)), true, Color.white, ZhongbaoSkin.Ink);
-            no.Set((teaching ? T("猜错了", "Guessed wrong") : YesNoWord(false)) + (teaching ? TeachingKeyHint(2) : KeyHint(2)), true, Color.white, ZhongbaoSkin.Ink);
+            yes.Set((teaching ? T("猜对了", "Guessed right") : YesNoWord(true)) + (teaching ? TeachingKeyHint(1) : KeyHint(1)), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
+            no.Set((teaching ? T("猜错了", "Guessed wrong") : YesNoWord(false)) + (teaching ? TeachingKeyHint(2) : KeyHint(2)), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
             if (card.family) {
-                yes.Set(T("当作垃圾", "Mark as junk") + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
-                no.Set(T("留作重要", "Keep as important") + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
+                yes.Set(T("当作垃圾", "Mark as junk") + KeyHint(1), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
+                no.Set(T("留作重要", "Keep as important") + KeyHint(2), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
             }
 
             if (card.kind == "translation") { translationFadeCount = -1; AnimateTranslation(card, 0); }
@@ -844,6 +884,15 @@ namespace LingGuangV05.Desktop.XingGuang
             double best = Sim.BestAcc(d.id);
             if (TeachingContext)
             {
+                if (Sim.S.teachingFlow)
+                {
+                    steps.text = !Sim.TeachingTreeOpen
+                        ? T("先判断题目对错 · 还剩 ", "Judge the statement · ") + Math.Max(0, 12 - Sim.TeachingAnswers) + T(" 题", " questions left")
+                        : !Sim.TeachingTrainOpen ? T("12 题做完了 · 去「科技」买训练曲线", "Twelve done · buy Training curve in Tech")
+                        : T("训练已开启 · 去「练」看看它学会了什么", "Training is open · visit Train to see what it learned");
+                    RefreshShop(desk, d);
+                    return;
+                }
                 if (XgFirstLessonWindow.ActiveFor(Sim, Time.unscaledTime))
                 {
                     if (XgSim.DirectTruthJudgment(CurrentCard))
@@ -1080,7 +1129,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void BuildFeed(RectTransform left)
         {
             feedRoot = Strip("AutomaticFeed", left, 8, 24, 14, 14);
-            Panel(feedRoot, new Color32(241, 245, 249, 255)).raycastTarget = false;
+            Panel(feedRoot, DarkTeaching ? XgDark.Paper : new Color32(241, 245, 249, 255)).raycastTarget = false;
             feedRoot.gameObject.AddComponent<UnityEngine.UI.RectMask2D>();
             for (int i = 0; i < XgSim.FeedWindow; i++)
             {
@@ -1151,7 +1200,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string share = st.total == 0 ? "—" : XgSim.Pct(st.automaticFraction);
             string accuracy = st.automatic == 0 ? "—" : XgSim.Pct(st.automaticAccuracy);
             coopStats.text = Lang.T("近 100 题 · 自动 ") + share + Lang.T(" · 准确率 ") + accuracy
-                + "\n" + Lang.T("噪声标签 ") + N(Sim.NoiseTotal, "0") + Lang.T(" · 待复核 ") + Sim.ReviewCount() + "/" + XgSim.ReviewCapacity
+                + "\n" + Lang.T("噪声标签 ") + N(Sim.NoiseTotal, "0") + Lang.T(" · 待复核 ") + Sim.ReviewCount() + "/" + Sim.ReviewLimit
                 + (Sim.ReviewFull ? " <color=#B36A00>" + Lang.T("自动已暂停") + "</color>" : "");
             bool online = Sim.BrainOnline && string.IsNullOrEmpty(Sim.BrainStatus);
             string source = Sim.Has("label.brain") && XgSim.IsBrainDesk(Desk)
@@ -1376,7 +1425,7 @@ namespace LingGuangV05.Desktop.XingGuang
             lessonProgress.gameObject.SetActive(lessonGoal);
             meta.gameObject.SetActive(!lessonGoal); qno.gameObject.SetActive(!lessonGoal);
             if (lessonGoal)
-                lessonProgress.text = (int)Math.Max(0, Math.Min(XgCatalog.SamplesToTrain, Sim.Samples(Sim.S.desk))) + "/" + XgCatalog.SamplesToTrain;
+                lessonProgress.text = Sim.S.teachingFlow ? Math.Min(12, Sim.TeachingAnswers) + "/12" : (int)Math.Max(0, Math.Min(XgCatalog.SamplesToTrain, Sim.Samples(Sim.S.desk))) + "/" + XgCatalog.SamplesToTrain;
             if (teachingCompanion != null) teachingCompanion.gameObject.SetActive(!special && TeachingContext && Sim.ReviewCard(Sim.S.desk) == null);
             specialInfo.gameObject.SetActive(special);
             if (special)
@@ -1404,12 +1453,12 @@ namespace LingGuangV05.Desktop.XingGuang
             face.gameObject.SetActive(false); caption.gameObject.SetActive(false); go.gameObject.SetActive(false); captionFocus.gameObject.SetActive(false);
             text.gameObject.SetActive(true); text.fontSizeMax = 32;
             timerBar.gameObject.SetActive(false); paperGlow.on = false;
-            paperImage.color = XgPalette.Paper;
+            RefreshPaperTheme();
             confidenceRoot.gameObject.SetActive(Mode == 1);
             feedback.text = "";
             yes.label.fontSize = no.label.fontSize = 30;
-            yes.Set(T("是", "Yes") + KeyHint(1), true, Color.white, ZhongbaoSkin.Ink);
-            no.Set(T("否", "No") + KeyHint(2), true, Color.white, ZhongbaoSkin.Ink);
+            yes.Set(T("是", "Yes") + KeyHint(1), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
+            no.Set(T("否", "No") + KeyHint(2), true, DarkTeaching ? XgDark.Button : Color.white, HallInk);
             if (Mode == 1)
             {
                 string[] questions = { "把循环全部去掉？", "让几组注意力同时看不同的东西？", "没有循环，它就不知道词的先后。给每个位置编个号？" };

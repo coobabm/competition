@@ -77,7 +77,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             locked = ui.Text(Rect("Locked", crew, Vector2.zero, Vector2.one, new Vector2(60, 60), new Vector2(-60, -80)), "", 18, ZhongbaoSkin.Mute, TextAlignmentOptions.Center);
 
             var yy = ZhongbaoSkin.Box(ui, root, "Chat", new Vector2(1, 0), Vector2.one, new Vector2(-320, 0), Vector2.zero);
-            ZhongbaoSkin.Header(ui, yy, "YY · 下班屁股群", "YY · Clock-out group", out chatTitle, out _);
+            ZhongbaoSkin.Header(ui, yy, "分包留言", "Worker notes", out chatTitle, out _);
             chatHost = Rect("Messages", yy, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -(ZhongbaoSkin.HeaderHeight + 12)));
             foreach (var line in Chatter)
             {
@@ -88,7 +88,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                 text.lineSpacing = 6;
                 chat.Add((line.who, line.zh, line.en, bubble, text));
             }
-            UiTip.Add(yy, "YY 下班屁股群里的闲话：几个兄弟怎么看自己的活。", "Idle talk in the YY clock-out group: how the friends see their own work.");
+            UiTip.Add(yy, "接分包的人在平台上给你的留言。", "Notes the hired workers left you on the platform.");
         }
 
         void LayoutChat()
@@ -112,14 +112,14 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (root == null || Sim == null) return;
             title.text = T("网吧兄弟", "Netbar friends");
             note.text = T("用你的账号标，按分钟发工资；罚款算你头上", "They label under your account for wages by the minute; fines land on you");
-            chatTitle.text = T("YY · 下班屁股群", "YY · Clock-out group");
+            chatTitle.text = T("分包留言", "Worker notes");
             bool open = Sim.SubcontractUnlocked;
             locked.gameObject.SetActive(!open);
             if (!open)
                 locked.text = Sim.SubcontractReady
-                    ? T("阿杰马上会在下班屁股群里问要不要帮你标……", "Ajie is about to ask in the clock-out group whether you need hands…")
-                    : T("还没人来接活。\n\n第 " + XgSim.SubcontractStage + " 阶段起、买下自动答题以后，在网吧上班的阿杰会在下班屁股群里问要不要帮你标。",
-                        "Nobody has asked for work yet.\n\nFrom stage " + XgSim.SubcontractStage + ", once you own auto-answer, Ajie, who works at the netbar, asks in the clock-out group.");
+                    ? T("分包马上开放……", "Subcontracting opens in a moment…")
+                    : T("分包还没开放。\n\n第 " + XgSim.SubcontractStage + " 阶段起、买下自动答题以后开放。",
+                        "Subcontracting is not open yet.\n\nIt opens from stage " + XgSim.SubcontractStage + ", once you own auto-answer.");
             list.sizeDelta = new Vector2(0, market.Refresh(0));
             LayoutChat();
         }
@@ -141,8 +141,8 @@ namespace LingGuangV05.Desktop.Zhongbao
         TMP_Text billsTitle, billsNote, incomeTitle, incomeNote, sparkTitle, sparkNote, recordsTitle, debtText, noData;
         RectTransform billsList, recordsList, chart;
         Row bills, income, records;
-        readonly TMP_Text[] stepText = new TMP_Text[3];
-        readonly Image[] stepFill = new Image[3];
+        readonly TMP_Text[] stepText = new TMP_Text[4];
+        readonly Image[] stepFill = new Image[4];
         XgCrawlerLayer chartLayer;
         List<double> chartData = new List<double>();
         double chartRent;
@@ -159,7 +159,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── left: the household's bills, the debt box under them ──
             var billsBox = ZhongbaoSkin.Box(ui, left, "Bills", Vector2.zero, Vector2.one, new Vector2(0, DebtH + 12), Vector2.zero);
             ZhongbaoSkin.Header(ui, billsBox, "家里的开销", "Household bills", out billsTitle, out billsNote);
-            ZhongbaoUi.TipOnHeader(billsBox, "房租、电脑电费、宽带和夏天的空调：灵光学会「看图说词」以后开始收，每次结算一起扣。下面是每一项现在的价和开始收以来的累计。", "Rent, computer power, broadband and the summer air con: charged from the moment 灵光 learns to describe pictures, taken at each settlement. Each item's price now and its total since the rent started.");
+            ZhongbaoUi.TipOnHeader(billsBox, "房租从第三阶段起每七天一期，在 YY 手动转给房东；电费照常结算。这里显示已付开销。", "From stage three, rent is due every seven days and paid manually to the landlord in YY. Electricity settles normally. Paid expenses appear here.");
             billsList = ZhongbaoUi.BoxScroll(billsBox, "Viewport");
             bills = new Row(ui, billsList);
 
@@ -167,17 +167,16 @@ namespace LingGuangV05.Desktop.Zhongbao
             debtText = ui.Text(Rect("Text", debtBox, Vector2.zero, Vector2.one, new Vector2(14, 50), new Vector2(-14, -10)), "", 13, DebtInk, TextAlignmentOptions.TopLeft);
             debtText.lineSpacing = 6;
             var steps = Rect("Steps", debtBox, Vector2.zero, new Vector2(1, 0), new Vector2(14, 14), new Vector2(-14, 42));
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
-                var step = Rect("Step" + (i + 1), steps, new Vector2(i / 3f, 0), new Vector2((i + 1) / 3f, 1), new Vector2(i > 0 ? 3 : 0, 0), new Vector2(i < 2 ? -3 : 0, 0));
+                var step = Rect("Step" + (i + 1), steps, new Vector2(i / 4f, 0), new Vector2((i + 1) / 4f, 1), new Vector2(i > 0 ? 3 : 0, 0), new Vector2(i < 3 ? -3 : 0, 0));
                 Panel(step, ZhongbaoSkin.RedLine).raycastTarget = false;
                 var inner = Rect("Inner", step, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1));
                 stepFill[i] = Panel(inner, Color.white); stepFill[i].raycastTarget = false;
                 stepText[i] = ui.Text(Rect("Text", inner, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, DebtInk, TextAlignmentOptions.Center);
                 stepText[i].textWrappingMode = TextWrappingModes.NoWrap; stepText[i].enableAutoSizing = true; stepText[i].fontSizeMin = 9; stepText[i].fontSizeMax = 12;
             }
-            UiTip.Add(debtBox, "钱包低于零就是欠房租：每次结算（两天的房租一起扣）数一次。第 1 次房东来催，第 2 次拉电闸（显卡全停，手动标注还能挣钱），第 3 次房东会来催你卖电脑抵债，卖不卖由你定。钱回到零以上就重新数。",
-                "A wallet below zero means rent owed, counted at each settlement (two days of rent are taken together). The 1st time the landlord texts, the 2nd the power is cut (every card stops; hand labelling still pays), the 3rd he pushes you to sell the computer for the rent; the choice is yours. Money back above zero resets the count.");
+            UiTip.Add(debtBox, "待付房租不自动扣款。逾期一天提醒，两天警告，三天拉闸，四天押电脑；在 YY 补齐后恢复。", "Rent is never deducted automatically. Overdue: day one reminder, day two warning, day three power off, day four computer collateral. Pay in YY to restore power.");
 
             // ── right: income per second, the balance sparkline, the records ──
             var incomeBox = ZhongbaoSkin.Box(ui, right, "Income", new Vector2(0, 1), Vector2.one, new Vector2(0, -IncomeH), Vector2.zero);
@@ -188,7 +187,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             var sparkBox = ZhongbaoSkin.Box(ui, right, "Balance", new Vector2(0, 1), Vector2.one, new Vector2(0, -IncomeH - 12 - SparkH), new Vector2(0, -IncomeH - 12));
             ZhongbaoSkin.Header(ui, sparkBox, "余额 · 最近 10 天", "Balance · last 10 days", out sparkTitle, out sparkNote);
-            ZhongbaoUi.TipOnHeader(sparkBox, "每天结束时钱包里有多少，最多记最近十天。红线是一次结算要扣的房租（两天）：蓝线低于红线，下一次结算就会欠钱。", "What the wallet held at the end of each day, the last ten at most. The red line is the rent one settlement takes (two days): a blue line below it means the next settlement leaves you in debt.");
+            ZhongbaoUi.TipOnHeader(sparkBox, "每日余额，保留最近十天。红线是七天一期的房租参考，不会自动扣。", "Daily balance for the last ten days. The red line is one seven-day rent period, never deducted automatically.");
             chart = Rect("Chart", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10)));
             chartLayer = ZhongbaoSkin.Canvas(chart, DrawChart);
             noData = ui.Text(Rect("NoData", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10))), "", 13, ZhongbaoSkin.Dim, TextAlignmentOptions.Center);
@@ -272,17 +271,16 @@ namespace LingGuangV05.Desktop.Zhongbao
             string text;
             if (house == null) text = "";
             else if (!house.EconomyActive)
-                text = T("灵光学会「看图说词」以后开始交房租：每玩 " + Money(house.Config.rentDaySeconds) + " 秒算一天，一天 ¥" + Money(house.Config.rentPerDay) + "，每次结算扣两天。欠钱以后：", "Rent starts once 灵光 learns to describe pictures: every " + Money(house.Config.rentDaySeconds) + " s of play is a day, ¥" + Money(house.Config.rentPerDay) + " a day, two days taken per settlement. Once you owe it:");
+                text = T("第三阶段起每七天一期，房东提前一天通知。到期在 YY 转账。", "From stage three: seven-day periods, announced one day ahead. Transfer the rent in YY.");
             else if (house.S.bankrupt)
             {
-                current = 3;
+                current = 4;
                 text = T("<b>电脑已经卖了（¥" + Money(house.S.soldFor) + "）。</b>房租交上了，可你的机器没了。", "<b>The computer was sold (¥" + Money(house.S.soldFor) + ").</b> The rent is paid, but your machine is gone.");
             }
             else if (house.Debt > 0)
             {
-                current = Mathf.Clamp(Mathf.Max(house.S.debtDays, house.S.landlordCut ? 2 : 0), 1, 3);
-                text = T("<b>欠房租 ¥" + Money(house.Debt) + (house.S.landlordCut ? "，房东拉了电闸" : "") + "。</b>连着三次结算还不上，房东会来催你卖电脑抵债（卖不卖由你定）。",
-                    "<b>Rent owed ¥" + Money(house.Debt) + (house.S.landlordCut ? "; the landlord cut the power" : "") + ".</b> Three settlements in a row and the landlord will push you to sell the computer (your call).");
+                current = Mathf.Clamp(Mathf.Max(house.S.debtDays, house.S.landlordCut ? 3 : 0), 0, 4);
+                text = T("<b>待付房租 ¥" + Money(house.Debt) + "。</b>去 YY 给房东转账，可先付一部分。", "<b>Rent due ¥" + Money(house.Debt) + ".</b> Transfer it to the landlord in YY. Partial payments are allowed.");
             }
             else
             {
@@ -291,8 +289,8 @@ namespace LingGuangV05.Desktop.Zhongbao
                 text = T("余额够交 <b>" + days + "</b> 天房租。欠钱以后：", "The balance covers <b>" + days + "</b> day" + (days == 1 ? "" : "s") + " of rent. Once you owe it:");
             }
             debtText.text = text;
-            string[] steps = { T("结算 1 · 房东催", "Round 1 · landlord texts"), T("结算 2 · 拉电闸", "Round 2 · power cut"), T("结算 3 · 可卖电脑", "Round 3 · may sell") };
-            for (int i = 0; i < 3; i++)
+            string[] steps = { T("1天 · 提醒", "Day 1 · reminder"), T("2天 · 警告", "Day 2 · warning"), T("3天 · 拉闸", "Day 3 · power off"), T("4天 · 押电脑", "Day 4 · collateral") };
+            for (int i = 0; i < 4; i++)
             {
                 bool on = current == i + 1;
                 stepText[i].text = steps[i];
@@ -334,7 +332,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             // ── balance history ──
             var history = Sim.BalanceHistory();
-            double rent = house != null ? house.RentFor(GameCalendar.Now(house.S).Date) * (house.Config.dayLengthSeconds / Math.Max(1, house.Config.rentDaySeconds)) : 0;
+            double rent = house != null ? house.RentFor(GameCalendar.Now(house.S).Date) * ChapterOneSim.RentPeriodDays : 0;
             string key = rent + ":" + string.Join(",", history);
             if (key != chartKey) { chartKey = key; chartData = history; chartRent = rent; chartLayer.Redraw(); }
             noData.gameObject.SetActive(history.Count < 2);
@@ -402,7 +400,7 @@ namespace LingGuangV05.Desktop.Zhongbao
         XgCrawlerLayer dialLayer;
         Row status, rules, more;
         readonly TMP_Text[][] tierCells = new TMP_Text[4][];
-        readonly Image[] tierBands = new Image[3];
+        readonly Image[] tierBands = new Image[4];
         readonly TMP_Text[] tierHead = new TMP_Text[4];
         double dialCredit = -1;
 

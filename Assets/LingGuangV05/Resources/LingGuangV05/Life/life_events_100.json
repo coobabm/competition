@@ -1,0 +1,3663 @@
+{
+  "note": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率：每个阶段最多弹 2 个，第一个在进入阶段后 3–8 分钟随机出现，两个之间至少隔 6 分钟；过场、考试、验证码、升阶界面期间不弹。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。每条只出现一次。",
+  "events": [
+    {
+      "id": "e001",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "房东老王",
+      "whoEn": "Old Wang, landlord",
+      "title": "房租怎么转",
+      "titleEn": "How to pay rent",
+      "body": "老王在 YY 上说：「交租日我会发转账卡，钱够就转，不够也可以先转一部分。电费另外算。」",
+      "bodyEn": "Old Wang on YY: \"I will send a transfer request on rent day. Pay in full or send part first. Electricity is separate.\"",
+      "choices": [
+        {
+          "label": "记住了，去 YY 转账",
+          "labelEn": "Got it; pay in YY",
+          "effects": {},
+          "result": "交租时打开房东聊天，点转账卡或「￥ 转账」。",
+          "resultEn": "When rent is due, open the landlord chat and use the request card or Transfer button."
+        },
+        {
+          "label": "下班再说",
+          "labelEn": "After work",
+          "effects": {},
+          "result": "老王：「行，别忘了。」",
+          "resultEn": "Old Wang: \"Fine, don't forget.\""
+        }
+      ],
+      "when": "bills"
+    },
+    {
+      "id": "e002",
+      "stage": [
+        1,
+        3
+      ],
+      "when": "day",
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "周六加班",
+      "titleEn": "Saturday overtime",
+      "body": "经理在部门群里 @所有人：「这周六项目上线，大家辛苦一下。」",
+      "bodyEn": "Your manager in the team chat: \"Launch this Saturday. Thanks for pitching in, everyone.\"",
+      "choices": [
+        {
+          "label": "去加班",
+          "labelEn": "Go in",
+          "effects": {
+            "money": 200,
+            "pause": 120
+          },
+          "result": "加班费到手，电脑一天没人管。",
+          "resultEn": "Overtime pay in; the PC sat alone all day."
+        },
+        {
+          "label": "说家里有事",
+          "labelEn": "Say you're busy",
+          "effects": {
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "经理回了个「嗯」。周一有点尴尬。",
+          "resultEn": "The manager replies \"OK\". Monday will be awkward."
+        }
+      ]
+    },
+    {
+      "id": "e003",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "training",
+      "who": "楼下阿姨",
+      "whoEn": "The neighbour downstairs",
+      "title": "楼下来敲门",
+      "titleEn": "A knock from downstairs",
+      "body": "楼下阿姨上来敲门：「小伙子，你屋里嗡嗡响一晚上了，我家天花板都在震。」",
+      "bodyEn": "The lady downstairs knocks: \"Young man, your room's been humming all night. My ceiling is shaking.\"",
+      "choices": [
+        {
+          "label": "关一会儿",
+          "labelEn": "Switch off for a while",
+          "effects": {
+            "pause": 300
+          },
+          "result": "阿姨满意地下楼了。",
+          "resultEn": "She goes back down, satisfied."
+        },
+        {
+          "label": "给机箱垫块泡沫",
+          "labelEn": "Put foam under the case",
+          "effects": {
+            "money": -30
+          },
+          "result": "淘货买了块减震垫，嗡嗡声小多了。",
+          "resultEn": "A ¥30 damping pad from Taohuo. The hum is much quieter."
+        }
+      ]
+    },
+    {
+      "id": "e004",
+      "stage": [
+        1,
+        3
+      ],
+      "month": [
+        201606,
+        201607
+      ],
+      "who": "Windows",
+      "whoEn": "Windows",
+      "title": "Win10 强制更新",
+      "titleEn": "A forced Windows 10 upgrade",
+      "body": "下班回来，屏幕上写着「正在升级到 Windows 10，请勿关机 27%」。",
+      "bodyEn": "Home from work, the screen says \"Upgrading to Windows 10. Do not turn off your PC. 27%\".",
+      "choices": [
+        {
+          "label": "等它升完",
+          "labelEn": "Let it finish",
+          "effects": {
+            "pause": 240
+          },
+          "result": "升完了，显卡驱动要重装。",
+          "resultEn": "Done. The GPU driver needs reinstalling."
+        },
+        {
+          "label": "拔电源回滚",
+          "labelEn": "Pull the plug and roll back",
+          "effects": {
+            "pause": 120,
+            "noise": 20
+          },
+          "result": "回滚成功，但有个数据文件坏了。",
+          "resultEn": "Rolled back, but one data file got corrupted."
+        }
+      ]
+    },
+    {
+      "id": "e005",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "妈",
+      "whoEn": "Mum",
+      "title": "妈打来电话",
+      "titleEn": "Mum calls",
+      "body": "妈：「吃饭了没？一个人在外面别老点外卖。你那电脑别整宿开着，费电。」",
+      "bodyEn": "Mum: \"Have you eaten? Don't live on takeaway. And don't leave that computer on all night, it eats power.\"",
+      "choices": [
+        {
+          "label": "聊半小时",
+          "labelEn": "Talk for half an hour",
+          "effects": {
+            "pause": 60,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "挂电话时，她又叮嘱了三遍早点睡。",
+          "resultEn": "Before hanging up she says go to bed early three more times."
+        },
+        {
+          "label": "说在忙，晚点回",
+          "labelEn": "Say you're busy, call back later",
+          "effects": {},
+          "result": "她说「好好好」。你没回。",
+          "resultEn": "She says \"OK, OK.\" You don't call back."
+        }
+      ]
+    },
+    {
+      "id": "e006",
+      "stage": [
+        1,
+        4
+      ],
+      "month": [
+        201606,
+        201608
+      ],
+      "when": "day",
+      "who": "电力局",
+      "whoEn": "The power bureau",
+      "title": "小区停电",
+      "titleEn": "Area power cut",
+      "body": "楼道贴了通知：今天 14:00–17:00 线路检修停电。",
+      "bodyEn": "A notice in the stairwell: power off for line work today, 14:00–17:00.",
+      "choices": [
+        {
+          "label": "认了",
+          "labelEn": "Accept it",
+          "effects": {
+            "pause": 300
+          },
+          "result": "下午三小时，电脑一声不吭。",
+          "resultEn": "Three silent hours."
+        },
+        {
+          "label": "买个 UPS",
+          "labelEn": "Buy a UPS",
+          "effects": {
+            "money": -399,
+            "flag": "ups"
+          },
+          "result": "山特 UPS 撑了半小时，之后还是停了，但存档保住了。",
+          "resultEn": "The UPS lasts half an hour. Training still stops, but nothing is lost."
+        }
+      ]
+    },
+    {
+      "id": "e007",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "360安全卫士",
+      "whoEn": "360 Safeguard",
+      "title": "360 要清理",
+      "titleEn": "360 wants to clean up",
+      "body": "「检测到 12.4 GB 垃圾文件，一键清理可提速 38%！」列表里有一个文件夹叫「训练数据」。",
+      "bodyEn": "\"12.4 GB of junk found. One click and your PC is 38% faster!\" One of the folders is called \"training data\".",
+      "choices": [
+        {
+          "label": "一键清理",
+          "labelEn": "Clean it all",
+          "effects": {
+            "samples": -200
+          },
+          "result": "电脑没变快，题库少了一截。",
+          "resultEn": "Not faster. Some questions are gone."
+        },
+        {
+          "label": "取消勾选那个文件夹",
+          "labelEn": "Untick that folder",
+          "effects": {},
+          "result": "清完了，什么都没少。",
+          "resultEn": "Cleaned. Nothing lost."
+        }
+      ]
+    },
+    {
+      "id": "e008",
+      "stage": [
+        1,
+        3
+      ],
+      "who": "咸鱼本鱼",
+      "whoEn": "Salted Fish",
+      "title": "老同学来蹭饭",
+      "titleEn": "An old classmate drops by",
+      "body": "咸鱼本鱼：「我出差路过你那儿，晚上一起撸串？」",
+      "bodyEn": "Salted Fish: \"Passing through on a work trip. Skewers tonight?\"",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -80,
+            "pause": 180,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "喝到十一点，聊的全是大学宿舍的事。",
+          "resultEn": "Drinks till eleven, all dorm stories."
+        },
+        {
+          "label": "改天吧",
+          "labelEn": "Another time",
+          "effects": {},
+          "result": "「行，你忙。」",
+          "resultEn": "\"Sure, you're busy.\""
+        }
+      ]
+    },
+    {
+      "id": "e009",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "training",
+      "who": "鲁大师",
+      "whoEn": "Master Lu",
+      "title": "显卡 89°C",
+      "titleEn": "GPU at 89°C",
+      "body": "鲁大师弹窗：「显卡温度过高，可能影响硬件寿命！」",
+      "bodyEn": "Master Lu: \"GPU temperature too high. Hardware life may be affected!\"",
+      "choices": [
+        {
+          "label": "开空调",
+          "labelEn": "Turn on the AC",
+          "effects": {
+            "money": -20
+          },
+          "result": "温度降到 72°C，电费多了一点。",
+          "resultEn": "Down to 72°C. A little more on the bill."
+        },
+        {
+          "label": "开窗，继续跑",
+          "labelEn": "Open the window, keep going",
+          "effects": {
+            "noise": 10
+          },
+          "result": "降频跑了一阵，有几题算错了。",
+          "resultEn": "It throttled for a while; a few answers came out wrong."
+        }
+      ]
+    },
+    {
+      "id": "e010",
+      "stage": [
+        1,
+        2
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "包邮的硅脂",
+      "titleEn": "Free-shipping thermal paste",
+      "body": "淘货推送：「信越 7921 硅脂 9.9 包邮，显卡降温 10 度！」",
+      "bodyEn": "Taohuo: \"Shin-Etsu 7921 paste, ¥9.9 shipped. Cools your GPU by 10 degrees!\"",
+      "choices": [
+        {
+          "label": "买",
+          "labelEn": "Buy",
+          "effects": {
+            "money": -10,
+            "boost": [
+              1.1,
+              300
+            ]
+          },
+          "result": "拆卡涂上，跑得顺了点。",
+          "resultEn": "Repasted. Runs a bit smoother."
+        },
+        {
+          "label": "不折腾",
+          "labelEn": "Don't bother",
+          "effects": {},
+          "result": "关掉了推送。",
+          "resultEn": "Notification closed."
+        }
+      ]
+    },
+    {
+      "id": "e011",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "night",
+      "who": "自己",
+      "whoEn": "You",
+      "title": "凌晨两点",
+      "titleEn": "2 a.m.",
+      "body": "明早九点要打卡。屏幕上它还在练，进度条走到一半。",
+      "bodyEn": "You clock in at nine. On screen it is still training, the bar half full.",
+      "choices": [
+        {
+          "label": "去睡觉",
+          "labelEn": "Go to bed",
+          "effects": {
+            "pause": 120
+          },
+          "result": "关了显示器，风扇声陪你睡着。",
+          "resultEn": "Monitor off. The fans hum you to sleep."
+        },
+        {
+          "label": "再看一轮",
+          "labelEn": "One more round",
+          "effects": {
+            "boost": [
+              1.2,
+              180
+            ],
+            "flag": "late_night"
+          },
+          "result": "第二天上班哈欠连天。",
+          "resultEn": "You yawn all through work the next day."
+        }
+      ]
+    },
+    {
+      "id": "e012",
+      "stage": [
+        1,
+        4
+      ],
+      "who": "表姐",
+      "whoEn": "Cousin",
+      "title": "表姐要拼单",
+      "titleEn": "Cousin wants a group buy",
+      "body": "表姐：「我在拼多多看中个拼团，帮我看看划不划算？」",
+      "bodyEn": "Cousin: \"I found a group buy on Pinduoduo. Can you check if it is worth it?\"",
+      "choices": [
+        {
+          "label": "帮她看看",
+          "labelEn": "Check it for her",
+          "effects": {
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "表姐：「爱你！」又发来三个链接。",
+          "resultEn": "Cousin: \"Love you!\" Three more links follow."
+        },
+        {
+          "label": "装没看见",
+          "labelEn": "Pretend you didn't see",
+          "effects": {},
+          "result": "她第二天又问了一遍。",
+          "resultEn": "She asks again the next day."
+        }
+      ]
+    },
+    {
+      "id": "e013",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "迅雷",
+      "whoEn": "Thunder",
+      "title": "迅雷离线",
+      "titleEn": "Thunder offline download",
+      "body": "迅雷会员到期：「续费享离线下载加速，首月 5 元。」",
+      "bodyEn": "Thunder VIP expired: \"Renew for offline-download speedups. First month ¥5.\"",
+      "choices": [
+        {
+          "label": "续一个月",
+          "labelEn": "Renew a month",
+          "effects": {
+            "money": -5,
+            "boost": [
+              1.1,
+              600
+            ]
+          },
+          "result": "数据包下得快多了。",
+          "resultEn": "Data packs download much faster."
+        },
+        {
+          "label": "不续",
+          "labelEn": "Don't renew",
+          "effects": {},
+          "result": "速度掉回 200 KB/s。",
+          "resultEn": "Back to 200 KB/s."
+        }
+      ]
+    },
+    {
+      "id": "e014",
+      "stage": [
+        1,
+        3
+      ],
+      "when": "day",
+      "who": "同事",
+      "whoEn": "A colleague",
+      "title": "同事问你周末干嘛",
+      "titleEn": "A colleague asks about your weekend",
+      "body": "午饭时同事问：「你周末都宅家里干嘛？打游戏？」",
+      "bodyEn": "At lunch a colleague asks: \"What do you do at home every weekend? Games?\"",
+      "choices": [
+        {
+          "label": "嗯，打游戏",
+          "labelEn": "Yeah, games",
+          "effects": {},
+          "result": "他推荐了守望先锋。",
+          "resultEn": "He recommends Overwatch."
+        },
+        {
+          "label": "在学点东西",
+          "labelEn": "Learning something",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "「卷王啊。」他笑着走开了。",
+          "resultEn": "\"Overachiever.\" He laughs and walks off."
+        }
+      ]
+    },
+    {
+      "id": "e015",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "支付宝",
+      "whoEn": "Alipay",
+      "title": "花呗账单",
+      "titleEn": "Huabei bill",
+      "body": "「您本月花呗账单 ¥1,286，还款日 10 号。」上个月买的电源也在里面。",
+      "bodyEn": "\"Your Huabei bill this month: ¥1,286, due on the 10th.\" Last month's PSU is in there.",
+      "choices": [
+        {
+          "label": "全额还",
+          "labelEn": "Pay in full",
+          "effects": {
+            "money": -300
+          },
+          "result": "还清了，心里踏实。",
+          "resultEn": "Paid off. Feels better."
+        },
+        {
+          "label": "分期",
+          "labelEn": "Pay in instalments",
+          "effects": {
+            "money": -100,
+            "flag": "huabei"
+          },
+          "result": "每月少还点，利息另算。",
+          "resultEn": "Smaller monthly payments, plus interest."
+        }
+      ]
+    },
+    {
+      "id": "e016",
+      "stage": [
+        1,
+        2
+      ],
+      "month": [
+        201606,
+        201606
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "高考作文题刷屏",
+      "titleEn": "Gaokao essay topics everywhere",
+      "body": "朋友圈都在晒今年高考作文题。有人说「让 AI 写一篇试试」。",
+      "bodyEn": "Everyone is posting this year's gaokao essay prompts. Someone says \"let an AI write one\".",
+      "choices": [
+        {
+          "label": "转发",
+          "labelEn": "Repost",
+          "effects": {
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "评论区在怀念自己的高考。",
+          "resultEn": "The comments are all about people's own exams."
+        },
+        {
+          "label": "划走",
+          "labelEn": "Scroll past",
+          "effects": {},
+          "result": "—",
+          "resultEn": "—"
+        }
+      ],
+      "minDate": 20160607
+    },
+    {
+      "id": "e017",
+      "stage": [
+        2,
+        3
+      ],
+      "month": [
+        201607,
+        201607
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "1060 预售",
+      "titleEn": "GTX 1060 pre-order",
+      "body": "淘货：「GTX 1060 6G 预售，定金 100 抵 150！7 月 19 日发货。」",
+      "bodyEn": "Taohuo: \"GTX 1060 6GB pre-order. ¥100 deposit counts as ¥150! Ships 19 July.\"",
+      "choices": [
+        {
+          "label": "交定金",
+          "labelEn": "Pay the deposit",
+          "effects": {
+            "money": -100,
+            "flag": "preorder_1060"
+          },
+          "result": "到货时便宜 150。",
+          "resultEn": "¥150 off when it ships."
+        },
+        {
+          "label": "等等党",
+          "labelEn": "Wait and see",
+          "effects": {},
+          "result": "等等党永不为奴。",
+          "resultEn": "Patience is a virtue."
+        }
+      ],
+      "minDate": 20160707
+    },
+    {
+      "id": "e018",
+      "stage": [
+        2,
+        6
+      ],
+      "month": [
+        201607,
+        201608
+      ],
+      "when": "day",
+      "who": "空调",
+      "whoEn": "The AC",
+      "title": "38 度",
+      "titleEn": "38 degrees",
+      "body": "下班回家，屋里闷得像蒸笼，机箱摸上去烫手。",
+      "bodyEn": "Home from work, the room is a steamer and the case is hot to the touch.",
+      "choices": [
+        {
+          "label": "空调开一整天",
+          "labelEn": "Leave the AC on all day",
+          "effects": {
+            "money": -60
+          },
+          "result": "电费单会说话。",
+          "resultEn": "The bill will have something to say."
+        },
+        {
+          "label": "白天关机",
+          "labelEn": "Power off by day",
+          "effects": {
+            "pause": 240
+          },
+          "result": "白天它休息，晚上再练。",
+          "resultEn": "It rests by day and trains at night."
+        }
+      ]
+    },
+    {
+      "id": "e019",
+      "stage": [
+        2,
+        4
+      ],
+      "who": "喵鱼",
+      "whoEn": "Miaoyu",
+      "title": "网吧淘汰卡",
+      "titleEn": "Internet-café cast-offs",
+      "body": "喵鱼上有人甩卖：「网吧换机，GTX 970 十张，600 一张，不议价。」",
+      "bodyEn": "On Miaoyu: \"Café upgrade, ten GTX 970s, ¥600 each, firm.\"",
+      "choices": [
+        {
+          "label": "买一张",
+          "labelEn": "Buy one",
+          "effects": {
+            "money": -600,
+            "boost": [
+              1.3,
+              900
+            ]
+          },
+          "result": "风扇有点响，但能用。",
+          "resultEn": "The fan's a bit loud, but it works."
+        },
+        {
+          "label": "怕是矿卡",
+          "labelEn": "Might be worn out",
+          "effects": {},
+          "result": "第二天全卖光了。",
+          "resultEn": "All gone by the next day."
+        }
+      ]
+    },
+    {
+      "id": "e020",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "我",
+      "whoEn": "Me",
+      "title": "翻到一篇论文",
+      "titleEn": "A paper worth reading",
+      "body": "逛人工智能吧时，你看到一位研究生公开分享了组会论文。标题里的一个词，让你停下了滚轮。",
+      "bodyEn": "While browsing the AI forum, you find a paper shared publicly by a graduate student. One word in its title makes you stop scrolling.",
+      "choices": [
+        {
+          "label": "熬夜读完",
+          "labelEn": "Read it overnight",
+          "effects": {
+            "boost": [
+              1.15,
+              600
+            ],
+            "pause": 60
+          },
+          "result": "看懂了三成，但有个技巧能用上。",
+          "resultEn": "You understood a third, but one trick is usable."
+        },
+        {
+          "label": "收藏，以后看",
+          "labelEn": "Save it for later",
+          "effects": {},
+          "result": "收藏夹又多了一篇「以后看」。",
+          "resultEn": "One more \"read later\"."
+        }
+      ]
+    },
+    {
+      "id": "e021",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "电信 10000",
+      "whoEn": "China Telecom",
+      "title": "宽带推销",
+      "titleEn": "Broadband upsell",
+      "body": "「您好，您的宽带可以免费提速到 50M，只需改签两年合约……」",
+      "bodyEn": "\"Hello, you can upgrade to 50M for free with a two-year contract…\"",
+      "choices": [
+        {
+          "label": "签",
+          "labelEn": "Sign",
+          "effects": {
+            "money": -50,
+            "boost": [
+              1.1,
+              1200
+            ]
+          },
+          "result": "下载快了，合约长了。",
+          "resultEn": "Faster downloads, longer contract."
+        },
+        {
+          "label": "挂掉",
+          "labelEn": "Hang up",
+          "effects": {},
+          "result": "下周他们还会打来。",
+          "resultEn": "They'll call again next week."
+        }
+      ]
+    },
+    {
+      "id": "e022",
+      "stage": [
+        2,
+        4
+      ],
+      "month": [
+        201607,
+        201607
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "Pokémon GO 锁区",
+      "titleEn": "Pokémon GO region-locked",
+      "body": "同事在研究改 GPS 抓皮卡丘：「你懂电脑，帮我弄一下？」",
+      "bodyEn": "A colleague wants to fake GPS to catch Pikachu: \"You know computers. Help me?\"",
+      "choices": [
+        {
+          "label": "帮他折腾",
+          "labelEn": "Help him",
+          "effects": {
+            "pause": 90,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "折腾一晚，号被封了。",
+          "resultEn": "A whole evening; his account got banned."
+        },
+        {
+          "label": "我也不会",
+          "labelEn": "Can't do it either",
+          "effects": {},
+          "result": "他去问别人了。",
+          "resultEn": "He asks someone else."
+        }
+      ],
+      "minDate": 20160706
+    },
+    {
+      "id": "e023",
+      "stage": [
+        2,
+        6
+      ],
+      "when": "bills",
+      "who": "房东老王",
+      "whoEn": "Old Wang",
+      "title": "电表跳了",
+      "titleEn": "The breaker tripped",
+      "body": "啪一声全屋黑了。老王在电话里：「你那屋功率太大，电闸扛不住！」",
+      "bodyEn": "Click. Everything goes dark. Old Wang on the phone: \"Your room draws too much. The breaker can't take it!\"",
+      "choices": [
+        {
+          "label": "出钱换粗线",
+          "labelEn": "Pay for thicker wiring",
+          "effects": {
+            "money": -260
+          },
+          "result": "电工来换了线，以后不怕跳闸。",
+          "resultEn": "An electrician rewires. No more trips."
+        },
+        {
+          "label": "少插一张卡",
+          "labelEn": "Run one card fewer",
+          "effects": {
+            "pause": 300
+          },
+          "result": "安全了，也慢了。",
+          "resultEn": "Safe, and slower."
+        }
+      ]
+    },
+    {
+      "id": "e024",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "咸鱼本鱼",
+      "whoEn": "Salted Fish",
+      "title": "借钱",
+      "titleEn": "A loan",
+      "body": "咸鱼本鱼：「下个月发工资还你，先借我 500 应个急。」",
+      "bodyEn": "Salted Fish: \"Lend me ¥500 till payday? Bit of an emergency.\"",
+      "choices": [
+        {
+          "label": "借",
+          "labelEn": "Lend it",
+          "effects": {
+            "money": -500,
+            "flag": "lent_fish",
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "「够意思！」下个月他真还了，还多请了顿饭。",
+          "resultEn": "\"You're a mate!\" He pays it back next month, with dinner."
+        },
+        {
+          "label": "手头紧",
+          "labelEn": "Tight myself",
+          "effects": {},
+          "result": "「理解理解。」",
+          "resultEn": "\"Totally get it.\""
+        }
+      ]
+    },
+    {
+      "id": "e025",
+      "stage": [
+        2,
+        5
+      ],
+      "who": "摆渡贴吧",
+      "whoEn": "Bodu Tieba",
+      "title": "要不要发帖晒一下",
+      "titleEn": "Post about it?",
+      "body": "你盯着曲线看了很久。要不要去人工智能吧发个帖，晒一下自己在家练的东西？",
+      "bodyEn": "You stare at the curve a while. Post on the AI forum about what you're training at home?",
+      "choices": [
+        {
+          "label": "发帖",
+          "labelEn": "Post",
+          "effects": {
+            "samples": 300,
+            "flag": "posted_progress"
+          },
+          "result": "有个研究生回帖，打包发了一批标好的题。",
+          "resultEn": "A grad student replies and sends a batch of labelled questions."
+        },
+        {
+          "label": "算了，低调",
+          "labelEn": "Stay low-key",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "没发。曲线只有你一个人看。",
+          "resultEn": "No post. Only you see the curve."
+        }
+      ]
+    },
+    {
+      "id": "e026",
+      "stage": [
+        2,
+        4
+      ],
+      "month": [
+        201607,
+        201608
+      ],
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "团建",
+      "titleEn": "Team outing",
+      "body": "「周末部门团建去郊区漂流，AA 每人 150。」",
+      "bodyEn": "\"Team outing this weekend: rafting out of town, ¥150 each.\"",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -150,
+            "pause": 240,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "晒黑了一圈，跟同事熟了点。",
+          "resultEn": "Sunburnt, and a bit closer to the team."
+        },
+        {
+          "label": "请假",
+          "labelEn": "Skip it",
+          "effects": {},
+          "result": "周一大家在聊你没听过的梗。",
+          "resultEn": "On Monday they share jokes you missed."
+        }
+      ]
+    },
+    {
+      "id": "e027",
+      "stage": [
+        2,
+        6
+      ],
+      "when": "night",
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "蓝屏",
+      "titleEn": "Blue screen",
+      "body": "半夜一声「嘟」，屏幕蓝了：IRQL_NOT_LESS_OR_EQUAL。",
+      "bodyEn": "A beep in the night and the screen turns blue: IRQL_NOT_LESS_OR_EQUAL.",
+      "choices": [
+        {
+          "label": "重启，从上一版接着练",
+          "labelEn": "Restart from the last save",
+          "effects": {
+            "pause": 60
+          },
+          "result": "退回上一版，这一轮白练了。",
+          "resultEn": "Back to the last save; the round is lost."
+        },
+        {
+          "label": "查驱动",
+          "labelEn": "Check the drivers",
+          "effects": {
+            "pause": 180,
+            "boost": [
+              1.1,
+              600
+            ]
+          },
+          "result": "更新了驱动，之后更稳了。",
+          "resultEn": "Drivers updated. More stable now."
+        }
+      ]
+    },
+    {
+      "id": "e028",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "表姐",
+      "whoEn": "Cousin",
+      "title": "表姐的微商",
+      "titleEn": "Cousin's online shop",
+      "body": "表姐：「帮我转发一下朋友圈呗，面膜买二送一！」",
+      "bodyEn": "Cousin: \"Repost my shop on Moments? Face masks, buy two get one free!\"",
+      "choices": [
+        {
+          "label": "转",
+          "labelEn": "Repost",
+          "effects": {
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "三个同学点赞，一个同学屏蔽了你。",
+          "resultEn": "Three likes, and one classmate mutes you."
+        },
+        {
+          "label": "私下买一盒",
+          "labelEn": "Buy a box instead",
+          "effects": {
+            "money": -99
+          },
+          "result": "表姐多送了一片。",
+          "resultEn": "She throws in an extra mask."
+        }
+      ]
+    },
+    {
+      "id": "e029",
+      "stage": [
+        2,
+        6
+      ],
+      "when": "day",
+      "who": "同事",
+      "whoEn": "A colleague",
+      "title": "同事借 U 盘",
+      "titleEn": "A colleague borrows a USB stick",
+      "body": "同事：「借个 U 盘拷文件。」你的 U 盘里存着一份题库备份。",
+      "bodyEn": "A colleague: \"Can I borrow a USB stick?\" Yours holds a backup of the question bank.",
+      "choices": [
+        {
+          "label": "借，叮嘱别删",
+          "labelEn": "Lend it, don't delete anything",
+          "effects": {
+            "noise": 5
+          },
+          "result": "还回来时多了个病毒，杀掉了，丢了几条。",
+          "resultEn": "It comes back with a virus. Removed, but a few items lost."
+        },
+        {
+          "label": "说忘带了",
+          "labelEn": "Say you forgot it",
+          "effects": {},
+          "result": "他找了别人。",
+          "resultEn": "He asks someone else."
+        }
+      ]
+    },
+    {
+      "id": "e030",
+      "stage": [
+        2,
+        3
+      ],
+      "month": [
+        201607,
+        201607
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "大鱼海棠",
+      "titleEn": "Big Fish & Begonia",
+      "body": "《大鱼海棠》上映，咸鱼本鱼问：「周末去看不？」",
+      "bodyEn": "Big Fish & Begonia is out. Salted Fish: \"Cinema this weekend?\"",
+      "choices": [
+        {
+          "label": "去看",
+          "labelEn": "Go",
+          "effects": {
+            "money": -45,
+            "pause": 150,
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "画面好看，故事见仁见智。",
+          "resultEn": "Gorgeous. The story, opinions vary."
+        },
+        {
+          "label": "等网盘",
+          "labelEn": "Wait for a download",
+          "effects": {},
+          "result": "迅雷：敏感资源，无法下载。",
+          "resultEn": "Thunder: restricted resource."
+        }
+      ],
+      "minDate": 20160708
+    },
+    {
+      "id": "e031",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "电源啸叫",
+      "titleEn": "PSU coil whine",
+      "body": "电源发出高频的吱吱声，越听越刺耳。",
+      "bodyEn": "The power supply whines at a pitch that grows harder to ignore.",
+      "choices": [
+        {
+          "label": "换个好电源",
+          "labelEn": "Buy a better PSU",
+          "effects": {
+            "money": -420
+          },
+          "result": "安静了，心也静了。",
+          "resultEn": "Quiet again."
+        },
+        {
+          "label": "戴耳机",
+          "labelEn": "Wear headphones",
+          "effects": {
+            "noise": 5
+          },
+          "result": "某天电压一抖，有几题算错了。",
+          "resultEn": "One day the voltage dips; a few answers go wrong."
+        }
+      ]
+    },
+    {
+      "id": "e032",
+      "stage": [
+        2,
+        6
+      ],
+      "who": "晴雯",
+      "whoEn": "Qingwen",
+      "title": "她问你在干嘛",
+      "titleEn": "She asks what you're doing",
+      "body": "晴雯：「你这几天下班都在干嘛？消息回得好慢。」",
+      "bodyEn": "Qingwen: \"What have you been doing after work? You're so slow to reply.\"",
+      "choices": [
+        {
+          "label": "视频聊一会儿",
+          "labelEn": "Video call for a bit",
+          "effects": {
+            "pause": 120,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "她给你看了新买的猫爬架。",
+          "resultEn": "She shows you her new cat tree."
+        },
+        {
+          "label": "说在加班",
+          "labelEn": "Say overtime",
+          "effects": {
+            "flag": "lied_qingwen"
+          },
+          "result": "「哦。」",
+          "resultEn": "\"Oh.\""
+        }
+      ]
+    },
+    {
+      "id": "e033",
+      "stage": [
+        3,
+        4
+      ],
+      "month": [
+        201608,
+        201608
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "奥运凌晨",
+      "titleEn": "Olympics at dawn",
+      "body": "凌晨四点女排决赛。你醒着，它也醒着。",
+      "bodyEn": "Volleyball final at 4 a.m. You're up, and so is it.",
+      "choices": [
+        {
+          "label": "看完再睡",
+          "labelEn": "Watch, then sleep",
+          "effects": {
+            "pause": 120,
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "赢了！你在屋里喊出声，楼下没敲门。",
+          "resultEn": "They win! You shout; nobody knocks."
+        },
+        {
+          "label": "让它练，自己睡",
+          "labelEn": "Let it train, you sleep",
+          "effects": {
+            "boost": [
+              1.1,
+              600
+            ]
+          },
+          "result": "早上看新闻才知道赢了。",
+          "resultEn": "You learn they won from the morning news."
+        }
+      ],
+      "minDate": 20160806
+    },
+    {
+      "id": "e034",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "喵鱼",
+      "whoEn": "Miaoyu",
+      "title": "有人收你的旧卡",
+      "titleEn": "Someone wants your old card",
+      "body": "喵鱼私信：「你那张旧卡 800 出不出？我给我弟装 LOL。」",
+      "bodyEn": "On Miaoyu: \"Sell your old card for ¥800? It's for my brother's LoL.\"",
+      "choices": [
+        {
+          "label": "卖",
+          "labelEn": "Sell",
+          "effects": {
+            "money": 800,
+            "pause": 120
+          },
+          "result": "钱到手，机箱空出一格。",
+          "resultEn": "Cash in, one slot free."
+        },
+        {
+          "label": "留着",
+          "labelEn": "Keep it",
+          "effects": {},
+          "result": "它还能多算一点。",
+          "resultEn": "It still adds a little compute."
+        }
+      ]
+    },
+    {
+      "id": "e035",
+      "stage": [
+        3,
+        6
+      ],
+      "when": "bills",
+      "who": "房东老王",
+      "whoEn": "Old Wang",
+      "title": "老王查电表",
+      "titleEn": "Old Wang reads the meter",
+      "body": "老王拿手电筒照着电表：「你这一个月用了别人三个月的电。」",
+      "bodyEn": "Old Wang shines a torch at the meter: \"You used three months' power in one.\"",
+      "choices": [
+        {
+          "label": "解释在学东西",
+          "labelEn": "Explain you're studying",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "「学什么要这么多电？」他摇摇头走了。",
+          "resultEn": "\"Studying what, with that much power?\" He shakes his head and leaves."
+        },
+        {
+          "label": "多给 100",
+          "labelEn": "Hand him ¥100 extra",
+          "effects": {
+            "money": -100,
+            "flag": "landlord_good"
+          },
+          "result": "「年轻人，懂事。」",
+          "resultEn": "\"Sensible lad.\""
+        }
+      ]
+    },
+    {
+      "id": "e036",
+      "stage": [
+        3,
+        5
+      ],
+      "month": [
+        201608,
+        201609
+      ],
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "要出差一周",
+      "titleEn": "A week-long trip",
+      "body": "「下周你去成都驻场一周，客户那边要人。」",
+      "bodyEn": "\"You're on site in Chengdu next week. The client needs someone.\"",
+      "choices": [
+        {
+          "label": "去，远程开机",
+          "labelEn": "Go, leave it running",
+          "effects": {
+            "money": 300,
+            "noise": 15
+          },
+          "result": "出差补助到手；回来发现自动标的题里有一堆错。",
+          "resultEn": "Travel allowance in; back home, the auto-labels are full of mistakes."
+        },
+        {
+          "label": "去，关机",
+          "labelEn": "Go, switch it off",
+          "effects": {
+            "money": 300,
+            "pause": 300
+          },
+          "result": "一周没练，回来接着来。",
+          "resultEn": "A week off, then back to it."
+        }
+      ]
+    },
+    {
+      "id": "e037",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "硬盘咔哒响",
+      "titleEn": "The hard disk clicks",
+      "body": "机械硬盘时不时咔哒一声。HD Tune 扫出几个黄格子。",
+      "bodyEn": "The hard disk clicks now and then. HD Tune shows a few yellow blocks.",
+      "choices": [
+        {
+          "label": "换块新盘",
+          "labelEn": "Buy a new disk",
+          "effects": {
+            "money": -350
+          },
+          "result": "数据全挪过去了。",
+          "resultEn": "Everything moved over."
+        },
+        {
+          "label": "先用着",
+          "labelEn": "Keep using it",
+          "effects": {
+            "noise": 25
+          },
+          "result": "一周后坏了几个扇区，丢了些题。",
+          "resultEn": "A week later some sectors fail; questions lost."
+        }
+      ]
+    },
+    {
+      "id": "e038",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "老周",
+      "whoEn": "老周",
+      "title": "老周问能不能借卡",
+      "titleEn": "老周 asks to borrow a card",
+      "body": "老周：「组里服务器卡烧了，导师催结果。你那张卡能借我两天不？」",
+      "bodyEn": "老周: \"Our server's card burned out and my advisor wants results. Lend me yours for two days?\"",
+      "choices": [
+        {
+          "label": "借",
+          "labelEn": "Lend it",
+          "effects": {
+            "pause": 300,
+            "flag": "zhou_favour"
+          },
+          "result": "他说回头学校有大文件帮你拷。",
+          "resultEn": "He says he'll copy big files for you on campus."
+        },
+        {
+          "label": "不借",
+          "labelEn": "Say no",
+          "effects": {},
+          "result": "「行，我再问问。」",
+          "resultEn": "\"Fine, I'll ask around.\""
+        }
+      ]
+    },
+    {
+      "id": "e039",
+      "stage": [
+        3,
+        5
+      ],
+      "month": [
+        201608,
+        201608
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "小目标",
+      "titleEn": "A small goal",
+      "body": "朋友圈都在定小目标。你在备忘录里写下自己的。",
+      "bodyEn": "Everyone's setting \"small goals\". You type yours into a note.",
+      "choices": [
+        {
+          "label": "今年让它学会说话",
+          "labelEn": "Teach it to talk this year",
+          "effects": {
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "写完自己笑了一下。",
+          "resultEn": "You smile at it."
+        },
+        {
+          "label": "先挣一个亿",
+          "labelEn": "First, a hundred million",
+          "effects": {
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "转发到群里，阿杰回了个 666。",
+          "resultEn": "You post it to the group. A-Jie replies 666."
+        }
+      ],
+      "minDate": 20160829
+    },
+    {
+      "id": "e040",
+      "stage": [
+        3,
+        6
+      ],
+      "when": "day",
+      "who": "HR",
+      "whoEn": "HR",
+      "title": "年中考评",
+      "titleEn": "Mid-year review",
+      "body": "HR：「请填写年中自评表，周五前交。」",
+      "bodyEn": "HR: \"Please fill in your mid-year self-review by Friday.\"",
+      "choices": [
+        {
+          "label": "认真写",
+          "labelEn": "Write it properly",
+          "effects": {
+            "pause": 60,
+            "money": 150
+          },
+          "result": "评了个良，多了点奖金。",
+          "resultEn": "Rated good; a small bonus."
+        },
+        {
+          "label": "抄去年的",
+          "labelEn": "Copy last year's",
+          "effects": {},
+          "result": "经理没看出来。",
+          "resultEn": "Your manager didn't notice."
+        }
+      ]
+    },
+    {
+      "id": "e041",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "表姐",
+      "whoEn": "Cousin",
+      "title": "表姐被骗了？",
+      "titleEn": "Was Cousin scammed?",
+      "body": "表姐：「我收到短信说我中了一台 iPhone，要先交 200 手续费……真的假的？」",
+      "bodyEn": "Cousin: \"A text says I won an iPhone but need to pay a ¥200 fee first… real?\"",
+      "choices": [
+        {
+          "label": "让它看看",
+          "labelEn": "Ask it",
+          "effects": {
+            "samples": 20,
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "它答「是骗子」。你把这条也教进了题库。",
+          "resultEn": "It says \"scam\". You add the text to the question bank."
+        },
+        {
+          "label": "直接说骗子",
+          "labelEn": "Tell her it's a scam",
+          "effects": {},
+          "result": "表姐：「吓死我了，差点就转了。」",
+          "resultEn": "Cousin: \"Phew, I almost paid.\""
+        }
+      ]
+    },
+    {
+      "id": "e042",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "电信",
+      "whoEn": "China Telecom",
+      "title": "宽带断了",
+      "titleEn": "Broadband down",
+      "body": "网断了。客服说片区光纤被挖断，预计明天修好。",
+      "bodyEn": "No internet. Support says a dig cut the area's fibre; fixed tomorrow.",
+      "choices": [
+        {
+          "label": "开手机热点",
+          "labelEn": "Use phone hotspot",
+          "effects": {
+            "money": -40
+          },
+          "result": "流量费心疼，但没断。",
+          "resultEn": "Pricey data, but no gap."
+        },
+        {
+          "label": "等修好",
+          "labelEn": "Wait",
+          "effects": {
+            "pause": 180
+          },
+          "result": "一晚上只能看本地的。",
+          "resultEn": "A night offline."
+        }
+      ]
+    },
+    {
+      "id": "e043",
+      "stage": [
+        3,
+        4
+      ],
+      "month": [
+        201608,
+        201609
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "Titan X 上架",
+      "titleEn": "Titan X listed",
+      "body": "淘货首页：TITAN X Pascal，¥9999。你看了很久。",
+      "bodyEn": "Taohuo front page: TITAN X Pascal, ¥9,999. You stare at it a long time.",
+      "choices": [
+        {
+          "label": "加购物车",
+          "labelEn": "Add to cart",
+          "effects": {
+            "flag": "titan_cart"
+          },
+          "result": "购物车里躺着它。",
+          "resultEn": "It sits in your cart."
+        },
+        {
+          "label": "关掉网页",
+          "labelEn": "Close the tab",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "冷静。",
+          "resultEn": "Calm."
+        }
+      ],
+      "minDate": 20160802
+    },
+    {
+      "id": "e044",
+      "stage": [
+        3,
+        6
+      ],
+      "when": "night",
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "风扇卡住",
+      "titleEn": "A fan jams",
+      "body": "机箱里咯噔一声，有个风扇不转了。",
+      "bodyEn": "A clunk in the case. One fan has stopped.",
+      "choices": [
+        {
+          "label": "拆开清灰",
+          "labelEn": "Open it and clean",
+          "effects": {
+            "pause": 120,
+            "boost": [
+              1.1,
+              600
+            ]
+          },
+          "result": "一团猫毛……你没养猫。",
+          "resultEn": "A ball of fluff. You don't even have a cat."
+        },
+        {
+          "label": "明天再说",
+          "labelEn": "Deal with it tomorrow",
+          "effects": {
+            "noise": 10
+          },
+          "result": "降频跑了一晚。",
+          "resultEn": "Throttled all night."
+        }
+      ]
+    },
+    {
+      "id": "e045",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "晴雯",
+      "whoEn": "Qingwen",
+      "title": "她要来你城市",
+      "titleEn": "She's coming to your city",
+      "body": "晴雯：「国庆我去你那边玩两天，你有空吗？」",
+      "bodyEn": "Qingwen: \"I'm visiting your city over National Day. Free?\"",
+      "choices": [
+        {
+          "label": "当然有空",
+          "labelEn": "Of course",
+          "effects": {
+            "money": -300,
+            "pause": 300,
+            "persona": [
+              "温度",
+              3
+            ]
+          },
+          "result": "两天没开电脑，过得很快。",
+          "resultEn": "Two days without the PC. They fly by."
+        },
+        {
+          "label": "可能要加班",
+          "labelEn": "Might have overtime",
+          "effects": {
+            "flag": "missed_qingwen"
+          },
+          "result": "「那算了。」",
+          "resultEn": "\"Never mind then.\""
+        }
+      ]
+    },
+    {
+      "id": "e046",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "摆渡新闻",
+      "whoEn": "Bodu News",
+      "title": "电信诈骗新闻",
+      "titleEn": "Telecom fraud in the news",
+      "body": "新闻：大学生被电信诈骗骗走学费。全国开始严打。",
+      "bodyEn": "News: a student loses her tuition to a phone scam. A national crackdown begins.",
+      "choices": [
+        {
+          "label": "多教它几条诈骗短信",
+          "labelEn": "Teach it more scam texts",
+          "effects": {
+            "samples": 100
+          },
+          "result": "垃圾短信题库多了一批新套路。",
+          "resultEn": "New scam patterns added to the spam bank."
+        },
+        {
+          "label": "转给家人看",
+          "labelEn": "Forward to family",
+          "effects": {
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "妈回：「知道了，你也小心。」",
+          "resultEn": "Mum: \"Got it, you be careful too.\""
+        }
+      ]
+    },
+    {
+      "id": "e047",
+      "stage": [
+        3,
+        6
+      ],
+      "when": "day",
+      "who": "同事",
+      "whoEn": "A colleague",
+      "title": "同事想跳槽",
+      "titleEn": "A colleague job-hunting",
+      "body": "同事小声：「听说百度在招机器学习，要不要一起投？」",
+      "bodyEn": "A colleague whispers: \"Baidu's hiring for machine learning. Apply together?\"",
+      "choices": [
+        {
+          "label": "投一份试试",
+          "labelEn": "Apply",
+          "effects": {
+            "pause": 120,
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "一周后收到婉拒邮件：「需要硕士学历。」",
+          "resultEn": "A polite rejection a week later: \"Master's degree required.\""
+        },
+        {
+          "label": "再说吧",
+          "labelEn": "Not now",
+          "effects": {},
+          "result": "他自己投了。",
+          "resultEn": "He applies alone."
+        }
+      ]
+    },
+    {
+      "id": "e048",
+      "stage": [
+        3,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "驱动更新",
+      "titleEn": "Driver update",
+      "body": "GeForce Experience：「新驱动 372.70 可用，游戏性能提升！」",
+      "bodyEn": "GeForce Experience: \"New driver 372.70. Better game performance!\"",
+      "choices": [
+        {
+          "label": "更新",
+          "labelEn": "Update",
+          "effects": {
+            "pause": 60,
+            "boost": [
+              1.05,
+              900
+            ]
+          },
+          "result": "快了一点点。",
+          "resultEn": "A touch faster."
+        },
+        {
+          "label": "能用就别动",
+          "labelEn": "If it works, don't touch it",
+          "effects": {},
+          "result": "稳如老狗。",
+          "resultEn": "Rock solid."
+        }
+      ]
+    },
+    {
+      "id": "e049",
+      "stage": [
+        4,
+        5
+      ],
+      "month": [
+        201609,
+        201609
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "iPhone 7 首发",
+      "titleEn": "iPhone 7 launch",
+      "body": "同事都在抢 iPhone 7。你的 4S 还能用。",
+      "bodyEn": "Colleagues are scrambling for the iPhone 7. Your 4S still works.",
+      "choices": [
+        {
+          "label": "换",
+          "labelEn": "Upgrade",
+          "effects": {
+            "money": -5388,
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "亮黑色，三天就有划痕了。",
+          "resultEn": "Jet black. Scratched in three days."
+        },
+        {
+          "label": "钱留着买卡",
+          "labelEn": "Save it for a card",
+          "effects": {
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "4S 再战一年。",
+          "resultEn": "The 4S fights on."
+        }
+      ],
+      "minDate": 20160916
+    },
+    {
+      "id": "e050",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "组里要做个分类功能",
+      "titleEn": "The team needs a classifier",
+      "body": "经理：「客户想要个自动给工单分类的功能，你们谁懂点？」",
+      "bodyEn": "Your manager: \"The client wants tickets sorted automatically. Anyone know how?\"",
+      "choices": [
+        {
+          "label": "举手",
+          "labelEn": "Raise your hand",
+          "effects": {
+            "money": 500,
+            "pause": 180,
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "你用业余时间做了个原型，经理请你吃了顿饭。",
+          "resultEn": "You build a prototype after hours; your manager buys you dinner."
+        },
+        {
+          "label": "低头",
+          "labelEn": "Keep your head down",
+          "effects": {},
+          "result": "最后外包了。",
+          "resultEn": "They outsource it."
+        }
+      ]
+    },
+    {
+      "id": "e051",
+      "stage": [
+        4,
+        6
+      ],
+      "when": "bills",
+      "who": "房东老王",
+      "whoEn": "Old Wang",
+      "title": "要涨房租",
+      "titleEn": "Rent going up",
+      "body": "老王：「下个月起涨 200，周边都涨了。」",
+      "bodyEn": "Old Wang: \"Up ¥200 from next month. Everyone round here is raising it.\"",
+      "choices": [
+        {
+          "label": "认了",
+          "labelEn": "Accept",
+          "effects": {
+            "rentIncrease": 200
+          },
+          "result": "搬家太麻烦。下期房租加 ¥200，到了交租日再转。",
+          "resultEn": "Moving is a pain. Rent goes up ¥200 next period; pay it on rent day."
+        },
+        {
+          "label": "讲价",
+          "labelEn": "Haggle",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ],
+            "rentIncrease": 100
+          },
+          "result": "老王：「行，看你按时交，涨一百。」下期起加 ¥100，到了交租日再转。",
+          "resultEn": "Old Wang: \"You pay on time. A hundred, then.\" Rent goes up ¥100 next period; pay on rent day."
+        }
+      ]
+    },
+    {
+      "id": "e052",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "咸鱼本鱼",
+      "whoEn": "Salted Fish",
+      "title": "他要结婚了",
+      "titleEn": "He's getting married",
+      "body": "咸鱼本鱼：「兄弟，十月结婚，你必须来当伴郎！」",
+      "bodyEn": "Salted Fish: \"Getting married in October. You're my best man!\"",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -1000,
+            "pause": 300,
+            "persona": [
+              "温度",
+              3
+            ]
+          },
+          "result": "挡了一晚上酒，份子钱也到位了。",
+          "resultEn": "You fend off drinks all night. Gift money delivered."
+        },
+        {
+          "label": "红包到，人不到",
+          "labelEn": "Send money, skip it",
+          "effects": {
+            "money": -600
+          },
+          "result": "「懂，你忙。」",
+          "resultEn": "\"Got it, you're busy.\""
+        }
+      ]
+    },
+    {
+      "id": "e053",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "机箱漏电",
+      "titleEn": "The case gives a shock",
+      "body": "摸机箱被电了一下，手指发麻。",
+      "bodyEn": "You touch the case and get a tingle.",
+      "choices": [
+        {
+          "label": "叫电工接地线",
+          "labelEn": "Get it earthed",
+          "effects": {
+            "money": -120
+          },
+          "result": "老房子没地线，现在有了。",
+          "resultEn": "The old flat had no earth. Now it does."
+        },
+        {
+          "label": "以后别碰",
+          "labelEn": "Just don't touch it",
+          "effects": {
+            "noise": 10
+          },
+          "result": "偶尔会莫名其妙掉一题。",
+          "resultEn": "Now and then an answer glitches."
+        }
+      ]
+    },
+    {
+      "id": "e054",
+      "stage": [
+        4,
+        6
+      ],
+      "month": [
+        201609,
+        201610
+      ],
+      "who": "摆渡新闻",
+      "whoEn": "Bodu News",
+      "title": "谷歌翻译换了神经网络",
+      "titleEn": "Google Translate goes neural",
+      "body": "新闻：谷歌翻译换成神经网络，错误少了六成。你看了半天。",
+      "bodyEn": "News: Google Translate switches to a neural network, 60% fewer errors. You read it twice.",
+      "choices": [
+        {
+          "label": "把这条新闻存下来",
+          "labelEn": "Save the article",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ],
+            "flag": "read_gnmt"
+          },
+          "result": "「整句读完再翻」，你记住了这句话。",
+          "resultEn": "\"Read the whole sentence, then translate.\" You remember that."
+        },
+        {
+          "label": "关掉",
+          "labelEn": "Close it",
+          "effects": {},
+          "result": "—",
+          "resultEn": "—"
+        }
+      ],
+      "minDate": 20160927
+    },
+    {
+      "id": "e055",
+      "stage": [
+        4,
+        6
+      ],
+      "when": "night",
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "雷暴",
+      "titleEn": "Thunderstorm",
+      "body": "窗外打雷，灯闪了两下。",
+      "bodyEn": "Thunder outside. The lights flicker twice.",
+      "choices": [
+        {
+          "label": "拔电源",
+          "labelEn": "Unplug everything",
+          "effects": {
+            "pause": 240
+          },
+          "result": "安全第一。",
+          "resultEn": "Safety first."
+        },
+        {
+          "label": "赌一把",
+          "labelEn": "Risk it",
+          "effects": {
+            "noise": 20
+          },
+          "result": "一个浪涌，存档坏了一点。",
+          "resultEn": "A surge; part of the save is corrupted."
+        }
+      ]
+    },
+    {
+      "id": "e056",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "表姐",
+      "whoEn": "Cousin",
+      "title": "表姐要来借住",
+      "titleEn": "Cousin wants to stay over",
+      "body": "表姐：「我来你城市面试，在你那挤两晚行不？」",
+      "bodyEn": "Cousin: \"Interview in your city. Can I crash for two nights?\"",
+      "choices": [
+        {
+          "label": "行，我睡沙发",
+          "labelEn": "Sure, I'll take the sofa",
+          "effects": {
+            "pause": 240,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "她说你屋里一股热风，像住在吹风机里。",
+          "resultEn": "She says your flat feels like the inside of a hair dryer."
+        },
+        {
+          "label": "帮她订个酒店",
+          "labelEn": "Book her a hotel",
+          "effects": {
+            "money": -260
+          },
+          "result": "表姐：「太客气了。」",
+          "resultEn": "Cousin: \"You shouldn't have.\""
+        }
+      ]
+    },
+    {
+      "id": "e057",
+      "stage": [
+        4,
+        6
+      ],
+      "when": "day",
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "年假",
+      "titleEn": "Annual leave",
+      "body": "HR 提醒：你还有 5 天年假没休，年底清零。",
+      "bodyEn": "HR: you have 5 days of leave left. They expire at year's end.",
+      "choices": [
+        {
+          "label": "请三天在家",
+          "labelEn": "Take three days at home",
+          "effects": {
+            "boost": [
+              1.3,
+              900
+            ]
+          },
+          "result": "三天都在陪它练。",
+          "resultEn": "Three days spent training it."
+        },
+        {
+          "label": "出去玩",
+          "labelEn": "Go travelling",
+          "effects": {
+            "money": -800,
+            "pause": 300,
+            "persona": [
+              "玩心",
+              3
+            ]
+          },
+          "result": "去了趟厦门，鼓浪屿排了一小时队。",
+          "resultEn": "Xiamen. An hour's queue on Gulangyu."
+        }
+      ]
+    },
+    {
+      "id": "e058",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "晴雯",
+      "whoEn": "Qingwen",
+      "title": "她生病了",
+      "titleEn": "She's ill",
+      "body": "晴雯：「发烧了，一个人在宿舍好难受。」",
+      "bodyEn": "Qingwen: \"Got a fever. Feeling awful alone in the dorm.\"",
+      "choices": [
+        {
+          "label": "订外卖送粥",
+          "labelEn": "Send her congee",
+          "effects": {
+            "money": -40,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "「你怎么知道我想喝粥。」",
+          "resultEn": "\"How did you know I wanted congee?\""
+        },
+        {
+          "label": "多喝热水",
+          "labelEn": "Drink hot water",
+          "effects": {
+            "flag": "hot_water"
+          },
+          "result": "她回了一个句号。",
+          "resultEn": "She replies with a full stop."
+        }
+      ]
+    },
+    {
+      "id": "e059",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "摆渡贴吧",
+      "whoEn": "Bodu Tieba",
+      "title": "一条公开求助帖",
+      "titleEn": "A public question",
+      "body": "吧里有人发帖：「我的门控记忆总是练崩，学习率应该怎么调？」帖子还没人回复。",
+      "bodyEn": "Someone posts publicly: \"My gated-memory model keeps diverging. How should I change the learning rate?\" There are no replies yet.",
+      "choices": [
+        {
+          "label": "发帖认真回答",
+          "labelEn": "Post an explanation",
+          "effects": {
+            "pause": 60,
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "他回：「靠谱。」",
+          "resultEn": "He replies: \"Solid.\""
+        },
+        {
+          "label": "回一个表情包",
+          "labelEn": "Reply with a meme",
+          "effects": {
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "「……行吧哈。」",
+          "resultEn": "\"…Fine, ha.\""
+        }
+      ]
+    },
+    {
+      "id": "e060",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "内存条松了",
+      "titleEn": "Loose RAM",
+      "body": "开机滴滴滴三声长鸣。",
+      "bodyEn": "Three long beeps at boot.",
+      "choices": [
+        {
+          "label": "拔下来擦金手指",
+          "labelEn": "Reseat and clean the contacts",
+          "effects": {
+            "pause": 90
+          },
+          "result": "橡皮一擦，好了。",
+          "resultEn": "A rub with an eraser. Fixed."
+        },
+        {
+          "label": "加一根内存",
+          "labelEn": "Add more RAM",
+          "effects": {
+            "money": -260,
+            "boost": [
+              1.1,
+              1200
+            ]
+          },
+          "result": "16G 了，开题库快多了。",
+          "resultEn": "16 GB now. Banks load faster."
+        }
+      ]
+    },
+    {
+      "id": "e061",
+      "stage": [
+        4,
+        6
+      ],
+      "month": [
+        201609,
+        201610
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "阴阳师",
+      "titleEn": "Onmyoji",
+      "body": "同事都在抽 SSR，拉你入坑。",
+      "bodyEn": "Colleagues are pulling for SSRs and want you in.",
+      "choices": [
+        {
+          "label": "入坑",
+          "labelEn": "Join",
+          "effects": {
+            "money": -68,
+            "pause": 120,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "非酋。",
+          "resultEn": "No luck at all."
+        },
+        {
+          "label": "不碰抽卡",
+          "labelEn": "No gacha",
+          "effects": {},
+          "result": "钱包保住了。",
+          "resultEn": "Wallet intact."
+        }
+      ],
+      "minDate": 20160902
+    },
+    {
+      "id": "e062",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "摆渡贴吧",
+      "whoEn": "Bodu Tieba",
+      "title": "帖子下有人想买笔记",
+      "titleEn": "A reader wants your notes",
+      "body": "有人在你发过的学习记录帖下留言：「你自己整理的标注笔记，能卖一份拷贝吗？200 块。」",
+      "bodyEn": "Someone replies under the learning notes you posted: \"Could I buy a copy of your annotation notes? ¥200.\"",
+      "requires": "posted_progress",
+      "choices": [
+        {
+          "label": "卖一份拷贝",
+          "labelEn": "Sell a copy",
+          "effects": {
+            "money": 200
+          },
+          "result": "钱到了。不知道他拿去干嘛。",
+          "resultEn": "Paid. No idea what he wants it for."
+        },
+        {
+          "label": "不卖",
+          "labelEn": "Decline",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "「小气。」他拉黑了你。",
+          "resultEn": "\"Stingy.\" He blocks you."
+        }
+      ]
+    },
+    {
+      "id": "e063",
+      "stage": [
+        4,
+        6
+      ],
+      "when": "day",
+      "who": "同事",
+      "whoEn": "A colleague",
+      "title": "同事看到你的屏保",
+      "titleEn": "A colleague sees your screensaver",
+      "body": "同事路过你工位：「你这屏保是啥，一堆点连来连去的。」",
+      "bodyEn": "A colleague passes your desk: \"What's that screensaver? All dots and lines.\"",
+      "choices": [
+        {
+          "label": "随便下的",
+          "labelEn": "Just something I downloaded",
+          "effects": {},
+          "result": "他也想要一个。",
+          "resultEn": "He wants one too."
+        },
+        {
+          "label": "我自己画的",
+          "labelEn": "Made it myself",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "「可以啊。」",
+          "resultEn": "\"Not bad.\""
+        }
+      ]
+    },
+    {
+      "id": "e064",
+      "stage": [
+        4,
+        6
+      ],
+      "who": "银行",
+      "whoEn": "The bank",
+      "title": "信用卡提额",
+      "titleEn": "Credit limit raised",
+      "body": "「恭喜您，信用卡额度提升至 20000 元！」",
+      "bodyEn": "\"Congratulations, your credit limit is now ¥20,000!\"",
+      "choices": [
+        {
+          "label": "刷张新卡",
+          "labelEn": "Put a GPU on it",
+          "effects": {
+            "money": 3000,
+            "flag": "card_debt"
+          },
+          "result": "钱包鼓了，下个月要还。",
+          "resultEn": "Wallet fuller. Due next month."
+        },
+        {
+          "label": "不动",
+          "labelEn": "Leave it",
+          "effects": {},
+          "result": "—",
+          "resultEn": "—"
+        }
+      ]
+    },
+    {
+      "id": "e065",
+      "stage": [
+        5,
+        6
+      ],
+      "month": [
+        201610,
+        201610
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "国庆堵车",
+      "titleEn": "National Day traffic",
+      "body": "高速堵成停车场，朋友圈全是堵车照。你在家。",
+      "bodyEn": "Motorways jammed solid, Moments full of it. You're home.",
+      "choices": [
+        {
+          "label": "宅七天",
+          "labelEn": "Stay in all week",
+          "effects": {
+            "boost": [
+              1.3,
+              1200
+            ]
+          },
+          "result": "七天，它进步最快的一周。",
+          "resultEn": "Its best week yet."
+        },
+        {
+          "label": "回老家",
+          "labelEn": "Go home to the family",
+          "effects": {
+            "pause": 300,
+            "persona": [
+              "温度",
+              3
+            ]
+          },
+          "result": "妈做了一桌菜。",
+          "resultEn": "Mum cooks a feast."
+        }
+      ],
+      "minDate": 20161001
+    },
+    {
+      "id": "e066",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "要不要转岗",
+      "titleEn": "Change roles?",
+      "body": "经理：「公司要成立数据组，你有兴趣吗？」",
+      "bodyEn": "Your manager: \"We're setting up a data team. Interested?\"",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Yes",
+          "effects": {
+            "money": 800,
+            "pause": 120,
+            "persona": [
+              "主见",
+              2
+            ]
+          },
+          "result": "白天也在跟数据打交道了。",
+          "resultEn": "Now it's data by day too."
+        },
+        {
+          "label": "留在原组",
+          "labelEn": "Stay put",
+          "effects": {},
+          "result": "白天写业务，晚上写它。",
+          "resultEn": "Business code by day, it by night."
+        }
+      ]
+    },
+    {
+      "id": "e067",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "显卡花屏",
+      "titleEn": "Artifacts on screen",
+      "body": "屏幕上出现一道道彩色条纹。",
+      "bodyEn": "Coloured streaks across the screen.",
+      "choices": [
+        {
+          "label": "送修",
+          "labelEn": "Send it for repair",
+          "effects": {
+            "money": -300,
+            "pause": 300
+          },
+          "result": "保修内，换了个风扇。",
+          "resultEn": "Under warranty; new fan."
+        },
+        {
+          "label": "降频继续",
+          "labelEn": "Underclock and carry on",
+          "effects": {
+            "noise": 30
+          },
+          "result": "条纹少了，错题多了。",
+          "resultEn": "Fewer streaks, more wrong answers."
+        }
+      ]
+    },
+    {
+      "id": "e068",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "表姐",
+      "whoEn": "Cousin",
+      "title": "表姐开店了",
+      "titleEn": "Cousin opens a shop",
+      "body": "表姐：「我把微商做成淘宝店了！能帮我写点英文的商品介绍吗？」",
+      "bodyEn": "Cousin: \"My shop's on Taobao now! Help me with some English product descriptions?\"",
+      "choices": [
+        {
+          "label": "帮她",
+          "labelEn": "Help",
+          "effects": {
+            "money": 200,
+            "samples": 50
+          },
+          "result": "她硬塞了 200 块。那些句子也进了翻译题库。",
+          "resultEn": "She insists on ¥200. The sentences go into the translation bank."
+        },
+        {
+          "label": "推荐她用谷歌翻译",
+          "labelEn": "Point her to Google Translate",
+          "effects": {},
+          "result": "「打不开啊？」",
+          "resultEn": "\"It won't load?\""
+        }
+      ]
+    },
+    {
+      "id": "e069",
+      "stage": [
+        5,
+        6
+      ],
+      "month": [
+        201610,
+        201610
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "蓝瘦香菇",
+      "titleEn": "Lan shou xiang gu",
+      "body": "满屏「蓝瘦，香菇」。你想试试它懂不懂。",
+      "bodyEn": "\"Lan shou, xiang gu\" everywhere. You want to see if it gets it.",
+      "choices": [
+        {
+          "label": "教它这个梗",
+          "labelEn": "Teach it the meme",
+          "effects": {
+            "samples": 10,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "它学会了用「香菇」表示难过。",
+          "resultEn": "It learns \"mushroom\" means sad."
+        },
+        {
+          "label": "算了",
+          "labelEn": "Skip it",
+          "effects": {},
+          "result": "下个月就没人说了。",
+          "resultEn": "Nobody will say it next month."
+        }
+      ],
+      "minDate": 20161008
+    },
+    {
+      "id": "e070",
+      "stage": [
+        5,
+        6
+      ],
+      "when": "bills",
+      "who": "电力局",
+      "whoEn": "The power bureau",
+      "title": "阶梯电价第三档",
+      "titleEn": "Top power tier",
+      "body": "电费单上写着：第三档，每度 0.83 元。",
+      "bodyEn": "The bill says: third tier, ¥0.83 per kWh.",
+      "choices": [
+        {
+          "label": "改到夜里练",
+          "labelEn": "Train at night",
+          "effects": {
+            "pause": 120,
+            "money": 50
+          },
+          "result": "谷电便宜一半。",
+          "resultEn": "Off-peak is half price."
+        },
+        {
+          "label": "照常",
+          "labelEn": "Carry on",
+          "effects": {
+            "money": -80
+          },
+          "result": "钱包在哭。",
+          "resultEn": "The wallet weeps."
+        }
+      ]
+    },
+    {
+      "id": "e071",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "摆渡贴吧",
+      "whoEn": "Bodu Tieba",
+      "title": "有人公开征集翻译材料",
+      "titleEn": "A public request for translations",
+      "body": "一位研究生在吧里公开征集翻译对照材料，说会在论文里致谢提供者。你想起自己存过的一些公开资料。",
+      "bodyEn": "A graduate student publicly asks for parallel translation material and promises acknowledgements. You remember some public material you saved.",
+      "choices": [
+        {
+          "label": "给他",
+          "labelEn": "Give it",
+          "effects": {
+            "flag": "zhou_thanks",
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "致谢里写着「一位网友」。",
+          "resultEn": "The acknowledgements say \"a forum friend\"."
+        },
+        {
+          "label": "不方便",
+          "labelEn": "Not convenient",
+          "effects": {},
+          "result": "「理解哈。」",
+          "resultEn": "\"Understood, ha.\""
+        }
+      ]
+    },
+    {
+      "id": "e072",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "硬盘满了",
+      "titleEn": "Disk full",
+      "body": "C 盘红了：剩余 200 MB。",
+      "bodyEn": "C: is red. 200 MB free.",
+      "choices": [
+        {
+          "label": "买 2T 移动硬盘",
+          "labelEn": "Buy a 2 TB drive",
+          "effects": {
+            "money": -450
+          },
+          "result": "全挪过去，C 盘又蓝了。",
+          "resultEn": "Moved over. C: is blue again."
+        },
+        {
+          "label": "删点旧存档",
+          "labelEn": "Delete old saves",
+          "effects": {
+            "samples": -100
+          },
+          "result": "腾出空间，也丢了点东西。",
+          "resultEn": "Space freed, something lost."
+        }
+      ]
+    },
+    {
+      "id": "e073",
+      "stage": [
+        5,
+        6
+      ],
+      "when": "day",
+      "who": "同事",
+      "whoEn": "A colleague",
+      "title": "饭局",
+      "titleEn": "Work dinner",
+      "body": "同事升职请客，KTV 续摊。",
+      "bodyEn": "A colleague's promotion dinner, karaoke after.",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -100,
+            "pause": 180,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "唱了首《演员》。",
+          "resultEn": "You sing a sad ballad."
+        },
+        {
+          "label": "提前走",
+          "labelEn": "Leave early",
+          "effects": {},
+          "result": "回家它还在练。",
+          "resultEn": "Home; it's still training."
+        }
+      ]
+    },
+    {
+      "id": "e074",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "晴雯",
+      "whoEn": "Qingwen",
+      "title": "她想见你家人",
+      "titleEn": "She wants to meet your family",
+      "body": "晴雯：「春节你带我回家吧？」",
+      "bodyEn": "Qingwen: \"Take me home for Spring Festival?\"",
+      "choices": [
+        {
+          "label": "好",
+          "labelEn": "Yes",
+          "effects": {
+            "persona": [
+              "温度",
+              3
+            ],
+            "flag": "qingwen_home"
+          },
+          "result": "你把这件事记在了日历上。",
+          "resultEn": "You put it in the calendar."
+        },
+        {
+          "label": "再想想",
+          "labelEn": "Let me think",
+          "effects": {
+            "flag": "qingwen_wait"
+          },
+          "result": "她没再提。",
+          "resultEn": "She doesn't bring it up again."
+        }
+      ]
+    },
+    {
+      "id": "e075",
+      "stage": [
+        5,
+        6
+      ],
+      "month": [
+        201611,
+        201611
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "双十一零点",
+      "titleEn": "Singles' Day midnight",
+      "body": "零点倒计时。购物车里有显卡、硬盘和给妈买的羽绒服。",
+      "bodyEn": "Countdown to midnight. Cart: a GPU, a disk and a down jacket for Mum.",
+      "choices": [
+        {
+          "label": "全买",
+          "labelEn": "Buy it all",
+          "effects": {
+            "money": -2000,
+            "boost": [
+              1.3,
+              1200
+            ],
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "快递堆满门口。",
+          "resultEn": "Parcels pile up at the door."
+        },
+        {
+          "label": "只买羽绒服",
+          "labelEn": "Just the jacket",
+          "effects": {
+            "money": -399,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "妈：「乱花钱。」穿上就没脱。",
+          "resultEn": "Mum: \"Wasting money.\" She never takes it off."
+        }
+      ],
+      "minDate": 20161111
+    },
+    {
+      "id": "e076",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "电信",
+      "whoEn": "China Telecom",
+      "title": "光纤入户",
+      "titleEn": "Fibre to the home",
+      "body": "电信：「小区光纤改造完成，100M 包年 1200。」",
+      "bodyEn": "Telecom: \"Fibre's in. 100M for ¥1,200 a year.\"",
+      "choices": [
+        {
+          "label": "办",
+          "labelEn": "Sign up",
+          "effects": {
+            "money": -1200,
+            "boost": [
+              1.2,
+              1800
+            ]
+          },
+          "result": "下载大数据包不再熬夜。",
+          "resultEn": "No more all-nighters for big downloads."
+        },
+        {
+          "label": "够用",
+          "labelEn": "Good enough",
+          "effects": {},
+          "result": "—",
+          "resultEn": "—"
+        }
+      ]
+    },
+    {
+      "id": "e077",
+      "stage": [
+        5,
+        6
+      ],
+      "when": "night",
+      "who": "自己",
+      "whoEn": "You",
+      "title": "失眠",
+      "titleEn": "Can't sleep",
+      "body": "躺在床上睡不着。屏幕的光从门缝透进来。",
+      "bodyEn": "You can't sleep. The screen's glow leaks under the door.",
+      "choices": [
+        {
+          "label": "起来跟它聊几句",
+          "labelEn": "Get up and talk to it",
+          "effects": {
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "它回了一句你没教过的话。",
+          "resultEn": "It says something you never taught it."
+        },
+        {
+          "label": "数羊",
+          "labelEn": "Count sheep",
+          "effects": {},
+          "result": "数到第三百只。",
+          "resultEn": "You reach sheep three hundred."
+        }
+      ]
+    },
+    {
+      "id": "e078",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "摆渡新闻",
+      "whoEn": "Bodu News",
+      "title": "语音识别追平人类",
+      "titleEn": "Speech recognition matches humans",
+      "body": "新闻：微软语音识别错误率追平人类速记员。",
+      "bodyEn": "News: Microsoft's speech recognition matches human transcribers.",
+      "choices": [
+        {
+          "label": "转到群里",
+          "labelEn": "Share in the group",
+          "effects": {
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "大伟：「以后开会不用记纪要了。」",
+          "resultEn": "Da Wei: \"No more meeting minutes then.\""
+        },
+        {
+          "label": "默默看完",
+          "labelEn": "Read quietly",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "你想：它什么时候能听懂我说话？",
+          "resultEn": "You wonder when it will understand your voice."
+        }
+      ],
+      "minDate": 20161018
+    },
+    {
+      "id": "e079",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "妈",
+      "whoEn": "Mum",
+      "title": "相亲",
+      "titleEn": "A blind date",
+      "body": "妈：「你王阿姨的女儿也在你那个城市，周末见一面？」",
+      "bodyEn": "Mum: \"Auntie Wang's daughter lives in your city. Meet her this weekend?\"",
+      "choices": [
+        {
+          "label": "我有对象了",
+          "labelEn": "I have someone",
+          "effects": {
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "妈愣了三秒：「谁啊？带回来看看。」",
+          "resultEn": "Mum pauses three seconds: \"Who? Bring her home.\""
+        },
+        {
+          "label": "最近忙",
+          "labelEn": "Busy lately",
+          "effects": {},
+          "result": "「你天天忙什么？」",
+          "resultEn": "\"Busy with what, every day?\""
+        }
+      ]
+    },
+    {
+      "id": "e080",
+      "stage": [
+        5,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "电源炸了",
+      "titleEn": "The PSU blows",
+      "body": "「砰」，一股焦味。电源烧了。",
+      "bodyEn": "Bang. A burning smell. The power supply is dead.",
+      "choices": [
+        {
+          "label": "连夜去电脑城",
+          "labelEn": "Rush to the computer market",
+          "effects": {
+            "money": -500,
+            "pause": 180
+          },
+          "result": "换了个金牌电源。",
+          "resultEn": "A gold-rated PSU now."
+        },
+        {
+          "label": "淘货下单等两天",
+          "labelEn": "Order online, wait two days",
+          "effects": {
+            "money": -380,
+            "pause": 480
+          },
+          "result": "便宜了，慢了。",
+          "resultEn": "Cheaper, slower."
+        }
+      ]
+    },
+    {
+      "id": "e081",
+      "stage": [
+        6,
+        6
+      ],
+      "month": [
+        201612,
+        201612
+      ],
+      "who": "朋友圈",
+      "whoEn": "Moments",
+      "title": "你的名字。",
+      "titleEn": "Your Name",
+      "body": "朋友圈都在刷《你的名字。》。晴雯问你去不去看。",
+      "bodyEn": "Everyone's posting about Your Name. Qingwen asks if you want to go.",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -80,
+            "pause": 150,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "散场时她哭了。",
+          "resultEn": "She cries at the end."
+        },
+        {
+          "label": "过几天",
+          "labelEn": "In a few days",
+          "effects": {},
+          "result": "她和室友去了。",
+          "resultEn": "She goes with her roommate."
+        }
+      ],
+      "minDate": 20161202
+    },
+    {
+      "id": "e082",
+      "stage": [
+        6,
+        6
+      ],
+      "who": "部门经理",
+      "whoEn": "Your manager",
+      "title": "年终奖",
+      "titleEn": "Year-end bonus",
+      "body": "经理：「今年年终奖两个月，下周发。」",
+      "bodyEn": "Your manager: \"Two months' bonus this year. Paid next week.\"",
+      "choices": [
+        {
+          "label": "全投进机房",
+          "labelEn": "All into the server rack",
+          "effects": {
+            "money": 6000,
+            "flag": "bonus_rack"
+          },
+          "result": "钱到账，机房的单子还开着。",
+          "resultEn": "Paid in. The rack order is still open."
+        },
+        {
+          "label": "给家里一半",
+          "labelEn": "Half for the family",
+          "effects": {
+            "money": 3000,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "妈说留着自己花。",
+          "resultEn": "Mum says keep it."
+        }
+      ]
+    },
+    {
+      "id": "e083",
+      "stage": [
+        6,
+        6
+      ],
+      "when": "bills",
+      "who": "房东老王",
+      "whoEn": "Old Wang",
+      "title": "老王来送饺子",
+      "titleEn": "Old Wang brings dumplings",
+      "body": "冬至，老王端来一盘饺子：「一个人在外面，吃点热乎的。」",
+      "bodyEn": "Winter solstice. Old Wang brings a plate of dumplings: \"On your own out here, have something warm.\"",
+      "choices": [
+        {
+          "label": "请他进来坐",
+          "labelEn": "Invite him in",
+          "effects": {
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "他看着机箱说：「这玩意儿，比我那台电视还热乎。」",
+          "resultEn": "He eyes the case: \"Warmer than my telly.\""
+        },
+        {
+          "label": "道谢",
+          "labelEn": "Thank him",
+          "effects": {},
+          "result": "饺子是韭菜馅的。",
+          "resultEn": "Chive filling."
+        }
+      ]
+    },
+    {
+      "id": "e084",
+      "stage": [
+        6,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "整栋楼跳闸",
+      "titleEn": "The whole building trips",
+      "body": "跑到一半，整栋楼黑了。楼道里有人骂。",
+      "bodyEn": "Mid-run, the whole building goes dark. Someone swears in the stairwell.",
+      "choices": [
+        {
+          "label": "去机房租机柜",
+          "labelEn": "Rent a rack at a data centre",
+          "effects": {
+            "money": -1500,
+            "flag": "rack_now"
+          },
+          "result": "机器搬走了，屋里突然好安静。",
+          "resultEn": "The machines are gone. The flat is suddenly quiet."
+        },
+        {
+          "label": "晚上再跑",
+          "labelEn": "Run at night only",
+          "effects": {
+            "pause": 300
+          },
+          "result": "白天它睡，晚上它醒。",
+          "resultEn": "It sleeps by day and wakes at night."
+        }
+      ]
+    },
+    {
+      "id": "e085",
+      "stage": [
+        6,
+        6
+      ],
+      "month": [
+        201612,
+        201612
+      ],
+      "who": "淘货",
+      "whoEn": "Taohuo",
+      "title": "Steam 冬促",
+      "titleEn": "Steam winter sale",
+      "body": "Steam 冬促，阿杰在群里刷屏。",
+      "bodyEn": "Steam winter sale. A-Jie floods the group.",
+      "choices": [
+        {
+          "label": "买两个",
+          "labelEn": "Buy two games",
+          "effects": {
+            "money": -120,
+            "persona": [
+              "玩心",
+              2
+            ]
+          },
+          "result": "库里又多两个不玩的。",
+          "resultEn": "Two more unplayed games."
+        },
+        {
+          "label": "今年不买",
+          "labelEn": "Not this year",
+          "effects": {},
+          "result": "G 胖少赚一笔。",
+          "resultEn": "Gabe earns a little less."
+        }
+      ],
+      "minDate": 20161222
+    },
+    {
+      "id": "e086",
+      "stage": [
+        6,
+        6
+      ],
+      "who": "我",
+      "whoEn": "Me",
+      "title": "少一点循环，多一点注意力？",
+      "titleEn": "Less recurrence, more attention?",
+      "body": "你翻着自己的实验记录：如果少绕几圈，让每个词直接看向整句话，会怎么样？",
+      "bodyEn": "Reading your own experiment notes, you wonder: what if each word could look straight at the whole sentence, with fewer recurrent steps?",
+      "choices": [
+        {
+          "label": "把想法记下来",
+          "labelEn": "Write down the idea",
+          "effects": {
+            "flag": "attention_noted",
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "你在本子上画了几条交叉的线，准备自己试试。",
+          "resultEn": "You sketch crossing lines in your notebook, ready to try it yourself."
+        },
+        {
+          "label": "先多做几轮对照",
+          "labelEn": "Run more comparisons first",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "先记下疑问，不急着下结论。",
+          "resultEn": "You keep the question open instead of jumping to a conclusion."
+        }
+      ]
+    },
+    {
+      "id": "e087",
+      "stage": [
+        6,
+        6
+      ],
+      "when": "night",
+      "who": "自己",
+      "whoEn": "You",
+      "title": "年底了",
+      "titleEn": "Year's end",
+      "body": "日历只剩几页。你翻了翻这一年的电费单。",
+      "bodyEn": "A few pages left on the calendar. You flip through the year's power bills.",
+      "choices": [
+        {
+          "label": "算一笔账",
+          "labelEn": "Add it up",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "够买一台二手车了。",
+          "resultEn": "Enough for a used car."
+        },
+        {
+          "label": "不算了",
+          "labelEn": "Don't",
+          "effects": {
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "算了也回不来。",
+          "resultEn": "It won't come back either way."
+        }
+      ]
+    },
+    {
+      "id": "e088",
+      "stage": [
+        6,
+        6
+      ],
+      "who": "晴雯",
+      "whoEn": "Qingwen",
+      "title": "跨年计划",
+      "titleEn": "New Year's Eve plans",
+      "body": "晴雯：「跨年你还对着电脑吗？」",
+      "bodyEn": "Qingwen: \"Still at the computer on New Year's Eve?\"",
+      "choices": [
+        {
+          "label": "陪你跨年",
+          "labelEn": "I'll be with you",
+          "effects": {
+            "persona": [
+              "温度",
+              3
+            ],
+            "flag": "nye_qingwen"
+          },
+          "result": "她发来一张倒计时的截图。",
+          "resultEn": "She sends a countdown screenshot."
+        },
+        {
+          "label": "它快好了",
+          "labelEn": "It's nearly done",
+          "effects": {
+            "flag": "nye_pc"
+          },
+          "result": "「它比我重要？」",
+          "resultEn": "\"It matters more than me?\""
+        }
+      ]
+    },
+    {
+      "id": "e089",
+      "stage": [
+        6,
+        6
+      ],
+      "month": [
+        201612,
+        201612
+      ],
+      "who": "摆渡新闻",
+      "whoEn": "Bodu News",
+      "title": "人民币跌破 6.9",
+      "titleEn": "Yuan below 6.9",
+      "body": "新闻：人民币跌破 6.9。淘货的显卡又涨了 200。",
+      "bodyEn": "News: the yuan falls past 6.9. GPUs on Taohuo up another ¥200.",
+      "choices": [
+        {
+          "label": "赶紧买",
+          "labelEn": "Buy now",
+          "effects": {
+            "money": -3000,
+            "boost": [
+              1.3,
+              1800
+            ]
+          },
+          "result": "第二天又涨了 100，你庆幸。",
+          "resultEn": "Up another ¥100 the next day. Lucky."
+        },
+        {
+          "label": "不买了",
+          "labelEn": "Skip it",
+          "effects": {},
+          "result": "现有的卡够用。",
+          "resultEn": "Current cards will do."
+        }
+      ]
+    },
+    {
+      "id": "e090",
+      "stage": [
+        6,
+        6
+      ],
+      "who": "咸鱼本鱼",
+      "whoEn": "Salted Fish",
+      "title": "同学聚会",
+      "titleEn": "Class reunion",
+      "body": "咸鱼本鱼：「年底同学聚会，你去不去？好几个都结婚了。」",
+      "bodyEn": "Salted Fish: \"Class reunion at year's end. Coming? Loads of them are married.\"",
+      "choices": [
+        {
+          "label": "去",
+          "labelEn": "Go",
+          "effects": {
+            "money": -200,
+            "pause": 240,
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "有人问你在干嘛，你说「写程序」。",
+          "resultEn": "Someone asks what you do. \"Programming,\" you say."
+        },
+        {
+          "label": "不去",
+          "labelEn": "Skip it",
+          "effects": {},
+          "result": "合照里没有你。",
+          "resultEn": "You're not in the group photo."
+        }
+      ]
+    },
+    {
+      "id": "e091",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "键盘进水",
+      "titleEn": "Coffee on the keyboard",
+      "body": "手一抖，咖啡洒了一键盘。",
+      "bodyEn": "A slip, and coffee across the keyboard.",
+      "choices": [
+        {
+          "label": "买个新的",
+          "labelEn": "Buy a new one",
+          "effects": {
+            "money": -99
+          },
+          "result": "新键盘手感不错。",
+          "resultEn": "Nice new keyboard."
+        },
+        {
+          "label": "晾一晚上",
+          "labelEn": "Dry it overnight",
+          "effects": {
+            "pause": 120
+          },
+          "result": "W 键从此有点黏。",
+          "resultEn": "The W key sticks a little now."
+        }
+      ]
+    },
+    {
+      "id": "e092",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "快递",
+      "whoEn": "Courier",
+      "title": "快递放门口",
+      "titleEn": "Parcel at the door",
+      "body": "快递员：「你不在家，放门口了。」门口什么都没有。",
+      "bodyEn": "Courier: \"You weren't in, left it at the door.\" There's nothing at the door.",
+      "choices": [
+        {
+          "label": "投诉",
+          "labelEn": "Complain",
+          "effects": {
+            "pause": 60,
+            "money": 50
+          },
+          "result": "赔了 50。",
+          "resultEn": "¥50 compensation."
+        },
+        {
+          "label": "算了",
+          "labelEn": "Let it go",
+          "effects": {
+            "money": -50
+          },
+          "result": "就当破财消灾。",
+          "resultEn": "Chalk it up."
+        }
+      ]
+    },
+    {
+      "id": "e093",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "day",
+      "who": "公司",
+      "whoEn": "Work",
+      "title": "公司断网",
+      "titleEn": "Office internet down",
+      "body": "公司断网一下午，大家都在摸鱼。",
+      "bodyEn": "Office internet down all afternoon. Everyone's slacking.",
+      "choices": [
+        {
+          "label": "手机上看它的日志",
+          "labelEn": "Check its logs on your phone",
+          "effects": {
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "看到它答对了一道难题。",
+          "resultEn": "You see it got a hard one right."
+        },
+        {
+          "label": "跟同事聊天",
+          "labelEn": "Chat with colleagues",
+          "effects": {
+            "persona": [
+              "玩心",
+              1
+            ]
+          },
+          "result": "聊到了守望先锋。",
+          "resultEn": "Talk turns to Overwatch."
+        }
+      ]
+    },
+    {
+      "id": "e094",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "物业",
+      "whoEn": "Building management",
+      "title": "物业查违规电器",
+      "titleEn": "Electrical inspection",
+      "body": "物业挨家挨户查大功率电器。",
+      "bodyEn": "Building management is going door to door checking high-power appliances.",
+      "choices": [
+        {
+          "label": "开门让查",
+          "labelEn": "Let them in",
+          "effects": {
+            "pause": 60
+          },
+          "result": "「电脑啊，没事。」",
+          "resultEn": "\"Just a computer. Fine.\""
+        },
+        {
+          "label": "装不在家",
+          "labelEn": "Pretend you're out",
+          "effects": {
+            "pause": 120
+          },
+          "result": "关了灯坐了半小时。",
+          "resultEn": "Half an hour sitting in the dark."
+        }
+      ]
+    },
+    {
+      "id": "e095",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "妈",
+      "whoEn": "Mum",
+      "title": "家里寄来特产",
+      "titleEn": "A parcel from home",
+      "body": "妈寄来一箱腊肉和一张纸条：「别老熬夜。」",
+      "bodyEn": "Mum sends cured meat and a note: \"Don't stay up so late.\"",
+      "choices": [
+        {
+          "label": "拍照发给她",
+          "labelEn": "Send her a photo",
+          "effects": {
+            "persona": [
+              "温度",
+              2
+            ]
+          },
+          "result": "她回了一串语音。",
+          "resultEn": "She sends a string of voice messages."
+        },
+        {
+          "label": "收下",
+          "labelEn": "Put it away",
+          "effects": {},
+          "result": "冰箱塞满了。",
+          "resultEn": "The fridge is full."
+        }
+      ]
+    },
+    {
+      "id": "e096",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "鼠标双击",
+      "titleEn": "Mouse double-clicks",
+      "body": "鼠标开始单击变双击，标题的时候点错了好几次。",
+      "bodyEn": "The mouse double-clicks on single clicks. Several labels went wrong.",
+      "choices": [
+        {
+          "label": "换鼠标",
+          "labelEn": "New mouse",
+          "effects": {
+            "money": -69
+          },
+          "result": "罗技 G102，稳。",
+          "resultEn": "A new Logitech. Solid."
+        },
+        {
+          "label": "将就",
+          "labelEn": "Put up with it",
+          "effects": {
+            "noise": 10
+          },
+          "result": "题库里混进了几条错题。",
+          "resultEn": "A few wrong labels slip in."
+        }
+      ]
+    },
+    {
+      "id": "e097",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "night",
+      "who": "楼下",
+      "whoEn": "Downstairs",
+      "title": "楼下装修",
+      "titleEn": "Renovation downstairs",
+      "body": "楼下装修，电钻从早响到晚，电压一跳一跳的。",
+      "bodyEn": "Renovation downstairs. Drills all day; the voltage keeps dipping.",
+      "choices": [
+        {
+          "label": "装个稳压器",
+          "labelEn": "Buy a voltage stabiliser",
+          "effects": {
+            "money": -150
+          },
+          "result": "不怕跳了。",
+          "resultEn": "No more dips."
+        },
+        {
+          "label": "白天别练",
+          "labelEn": "No training by day",
+          "effects": {
+            "pause": 180
+          },
+          "result": "等他们收工。",
+          "resultEn": "Wait till they knock off."
+        }
+      ]
+    },
+    {
+      "id": "e098",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "银行",
+      "whoEn": "The bank",
+      "title": "工资到账",
+      "titleEn": "Payday",
+      "body": "「您的账户收到工资 ¥5,860.00。」",
+      "bodyEn": "\"Salary of ¥5,860.00 received.\"",
+      "choices": [
+        {
+          "label": "拿一部分给它",
+          "labelEn": "Put some towards it",
+          "effects": {
+            "money": 1500
+          },
+          "result": "其余的交房租和吃饭。",
+          "resultEn": "The rest is rent and food."
+        },
+        {
+          "label": "全存起来",
+          "labelEn": "Save it all",
+          "effects": {
+            "money": 500,
+            "persona": [
+              "主见",
+              1
+            ]
+          },
+          "result": "存款多了一点。",
+          "resultEn": "Savings up a little."
+        }
+      ]
+    },
+    {
+      "id": "e099",
+      "stage": [
+        1,
+        6
+      ],
+      "who": "电脑",
+      "whoEn": "The PC",
+      "title": "系统时间错了",
+      "titleEn": "The clock is wrong",
+      "body": "主板电池没电，开机时间变成了 2009 年。",
+      "bodyEn": "The CMOS battery died. The clock says 2009.",
+      "choices": [
+        {
+          "label": "换颗纽扣电池",
+          "labelEn": "Replace the button cell",
+          "effects": {
+            "money": -5,
+            "pause": 30
+          },
+          "result": "回到 2016 年。",
+          "resultEn": "Back to 2016."
+        },
+        {
+          "label": "手动改时间",
+          "labelEn": "Set it by hand",
+          "effects": {},
+          "result": "下次开机又是 2009。",
+          "resultEn": "Next boot, 2009 again."
+        }
+      ]
+    },
+    {
+      "id": "e100",
+      "stage": [
+        1,
+        6
+      ],
+      "when": "night",
+      "who": "自己",
+      "whoEn": "You",
+      "title": "它在等你",
+      "titleEn": "It's waiting",
+      "body": "加班到十一点回家，屏幕还亮着。光标在闪。",
+      "bodyEn": "Home at eleven after overtime. The screen is still on. The cursor blinks.",
+      "choices": [
+        {
+          "label": "教它几题再睡",
+          "labelEn": "Teach a few before bed",
+          "effects": {
+            "samples": 20,
+            "persona": [
+              "温度",
+              1
+            ]
+          },
+          "result": "十题，然后关灯。",
+          "resultEn": "Ten questions, then lights out."
+        },
+        {
+          "label": "直接睡",
+          "labelEn": "Straight to bed",
+          "effects": {},
+          "result": "它一直亮到天明。",
+          "resultEn": "It glows till morning."
+        }
+      ]
+    }
+  ]
+}

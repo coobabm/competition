@@ -8,30 +8,21 @@ using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop
 {
-    /// <summary>
-    /// Background music. The music app's library is the 灵光 playlist (Assets/LingGuangV05/Music, set on the scene's
-    /// MusicPlayerManager); track 1 on repeat at 50 % (2026-10-18, was 60 %). The prologue is silent: when it ends, and nothing else is on screen,
-    /// the protagonist thinks of putting a song on, the music app opens and the first track fades in. A save past the
-    /// prologue fades it in at once. Spoken lines and cutscenes pull it down (<see cref="MusicMix"/>); 关机 fades it out.
-    /// The player changes the track, repeat, shuffle and volume in the music app, and the music keeps going while its
-    /// window is closed.
-    /// </summary>
+    /// <summary>Player-opened desktop music with smooth cutscene ducking and shutdown fades.</summary>
     public sealed class GameMusic : MonoBehaviour
     {
         public const float DefaultVolume = .5f;
-        /// <summary>Seconds of quiet after the prologue before the protagonist puts the music on, and how long its window stays open.</summary>
-        public const float IntroQuiet = 1.5f, IntroWindowSeconds = 3.5f, IntroGiveUp = 60f;
         // Written once, so an older save's demo settings (shuffle on) give way to the defaults.
-        const string DefaultsKey = "LingGuang.Music.Defaults.v1";
+        const string DefaultsKey = "LingGuang.Music.Defaults.v2";
 
         static GameMusic instance;
         MusicPlayerManager manager;
         AudioSource source;
-        ChapterOneRuntime runtime;
+        WindowManager musicWindow;
         StoryDesktopPresenter presenter;
         readonly MusicMix mix = new MusicMix();
-        bool ready, started, sawPrologue, wasPlaying, exited;
-        float userVolume = DefaultVolume, lastSet = -1, quietSince = -1, afterPrologue = -1, closeWindowAt = -1;
+        bool ready, started, wasPlaying, exited;
+        float userVolume = DefaultVolume, lastSet = -1;
 
         public static GameMusic Install(GameObject host)
         {
@@ -83,21 +74,21 @@ namespace LingGuangV05.Desktop
             }
         }
 
-        /// <summary>The music has started (after the prologue, or at once on a later save).</summary>
+        /// <summary>The player has opened the music app and started music this boot.</summary>
         public static bool Started => instance != null && instance.started;
 
         void OnEnable()
         {
             instance = this;
-            // Back from the title screen: the track starts again and fades in.
+            // A new boot waits for the player to open the app again.
             if (!exited || source == null) return;
             exited = false;
             wasPlaying = false;
             if (source.transform.parent != transform) source.transform.SetParent(transform, false);
             source.volume = lastSet = 0;
-            if (started && !source.isPlaying) source.Play();
+            started = false;
+            source.Stop();
             mix.Cut();
-            if (started) mix.FadeIn();
         }
         void OnDisable() { if (instance == this) instance = null; }
 
@@ -105,18 +96,22 @@ namespace LingGuangV05.Desktop
         {
             manager = System.Array.Find(FindObjectsByType<MusicPlayerManager>(FindObjectsInactive.Include, FindObjectsSortMode.None), m => m != null);
             if (manager == null || manager.audioSource == null) { Destroy(this); yield break; }
+            musicWindow = manager.GetComponentInParent<WindowManager>(true);
             source = manager.audioSource;
+            source.playOnAwake = false;
+            source.Stop();
             manager.keepPlayingWhenClosed = true;
+            manager.externalPlaylistAdvance = true;
             // The window, and the desktop's app layer around it, are switched off at times; the music lives here instead.
             source.transform.SetParent(transform, false);
 
             if (PlayerPrefs.GetInt(DefaultsKey, 0) == 0)
             {
-                DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Repeat", true);
+                DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Repeat", false);
                 DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Shuffle", false);
                 PlayerPrefs.SetInt(DefaultsKey, 1);
                 PlayerPrefs.Save();
-                manager.repeat = true; manager.shuffle = false;
+                manager.repeat = false; manager.shuffle = false;
             }
             source.volume = 0;
             // The app's volume slider sets the source from its own value when it first initialises.
@@ -127,57 +122,63 @@ namespace LingGuangV05.Desktop
                 if (slider != null) slider.SetValueWithoutNotify(DefaultVolume);
             }
 
-            // Let the window close itself first (WindowManager.Start); the music waits for the prologue.
+            // Ignore scene setup. Only a subsequent open starts the song.
             yield return null;
             yield return null;
             ready = true;
+            if (musicWindow != null) musicWindow.onOpen.AddListener(OnMusicOpened);
         }
 
         void Update()
         {
             if (!ready || manager == null || source == null) return;
             if (exited) return; // the exit fade has the source
-            if (!started) WaitToStart();
-            if (closeWindowAt >= 0 && Time.unscaledTime >= closeWindowAt) { closeWindowAt = -1; Window()?.CloseWindow(); }
+            if (!started) return;
             Mix();
             // Repeat-one is the source's own loop, so it holds while the window (and its playback loop) is closed.
             source.loop = manager.repeat && !manager.shuffle;
             bool playing = source.isPlaying;
-            // With the window closed nothing moves on to the next track; do it here.
-            if (wasPlaying && !playing && source.time <= 0 && !manager.isActiveAndEnabled) { manager.NextTrack(); playing = source.isPlaying; }
+            // One resident owner advances both open and closed windows. A natural end can
+            // report isPlaying=false before the streaming time resets to zero, so do not
+            // gate the falling edge on source.time. Explicit Pause/Stop clears the request.
+            if (wasPlaying && !playing && manager.PlaybackRequested && !AudioListener.pause
+                && source.enabled && source.gameObject.activeInHierarchy)
+            {
+                wasPlaying=false; // consume this completion before starting the next clip
+                manager.NextTrack();playing=source.isPlaying;
+            }
             wasPlaying = playing;
         }
 
-        void WaitToStart()
+        void OnMusicOpened()
         {
-            // The player put a track on in the music app themselves (even during the prologue): it plays as they set it.
-            if (source.isPlaying) { started = true; mix.Full(); return; }
-            if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
-            var sim = runtime != null ? runtime.Sim : null;
-            if (runtime != null && sim == null) return; // still loading
-            if (sim != null && sim.InPrologue) { sawPrologue = true; return; }
-            if (!sawPrologue) { Begin(); return; } // a save past the prologue
-            // The prologue has just ended: the protagonist puts the music on once the screen is quiet.
-            if (afterPrologue < 0) afterPrologue = Time.unscaledTime;
-            if (Busy() || InnerVoice.Busy || OpeningSequence.FirstLessonActive) { quietSince = -1; if (Time.unscaledTime - afterPrologue < IntroGiveUp) return; }
-            else if (quietSince < 0) { quietSince = Time.unscaledTime; return; }
-            else if (Time.unscaledTime - quietSince < IntroQuiet) return;
-            bool quiet = Time.unscaledTime - afterPrologue < IntroGiveUp;
-            if (quiet)
+            if (!ready || started || exited || manager == null || source == null) return;
+            // Each boot starts in playlist order. A manual change remains in effect while this
+            // playback session continues, including closing and reopening the player.
+            manager.repeat = false; manager.shuffle = false; source.loop = false;
+            DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Repeat", false);
+            DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Shuffle", false);
+            manager.UpdateDataItems();
+            foreach (var track in manager.playerQueue)
             {
-                InnerVoice.Say("……放首歌压压惊。", "…Some music. To calm down.");
-                var window = Window();
-                if (window != null && !window.isOn) { window.OpenWindow(); closeWindowAt = Time.unscaledTime + IntroWindowSeconds; }
+                if (track == null || track.playlist == null || track.itemIndex < 0 || track.itemIndex >= track.playlist.playlist.Count) continue;
+                var clip = track.playlist.playlist[track.itemIndex].musicClip;
+                // Preserve the original desktop song after alphabetical title sorting.
+                if (clip == null || clip.name != "emergency_1") continue;
+                manager.Play(track);
+                if (!source.isPlaying) return;
+                started = wasPlaying = true;
+                mix.FadeIn();
+                InnerVoice.Say("开机第一件事当然是来首歌听听......", "First things first after booting up: put on some music......");
+                return;
             }
-            Begin();
         }
 
-        void Begin()
+        void OnDestroy()
         {
-            started = true;
-            if (!source.isPlaying && manager.playerQueue.Count > 0 && manager.playerQueue[0] != null) manager.Play(manager.playerQueue[0]);
-            if (!source.isPlaying) Debug.LogWarning("GameMusic: the music player has no track to start.");
-            mix.FadeIn();
+            if (musicWindow != null) musicWindow.onOpen.RemoveListener(OnMusicOpened);
+            if (manager != null) manager.externalPlaylistAdvance=false;
+            if (instance == this) instance = null;
         }
 
         /// <summary>The player's volume (the app's slider writes the source directly) times the fade and the duck.</summary>
@@ -187,8 +188,6 @@ namespace LingGuangV05.Desktop
             float level = mix.Step(Time.unscaledDeltaTime, VoiceLines.Speaking || Busy());
             source.volume = lastSet = userVolume * level;
         }
-
-        WindowManager Window() => manager != null ? manager.GetComponentInParent<WindowManager>(true) : null;
 
         /// <summary>A cutscene is on screen: the music steps back.</summary>
         bool Busy()

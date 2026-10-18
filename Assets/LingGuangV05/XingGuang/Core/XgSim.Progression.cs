@@ -132,7 +132,10 @@ namespace LingGuangV05.XingGuang
         public double NodeCost(XgNode node)
         {
             if (node == null) return double.PositiveInfinity;
+            if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
+            // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
+            if (node.id == LedgerNode || node.id == DataEntryNode) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
             return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }
@@ -166,6 +169,8 @@ namespace LingGuangV05.XingGuang
             if (node == null) return T("未知节点");
             if (Has(node.id)) return null;
             if (!NodeVisible(node)) return T("还没到这一阶段");
+            var teachingBlock = TeachingNodeBlocker(node);
+            if (teachingBlock != null) return teachingBlock;
             if (node.id == "transformer" && !TransformerIdeaReached)
                 return TransformerIdeaHint();
             if (node.id == "multihead" || node.id == "layernorm" || node.id == "residual")
@@ -279,7 +284,7 @@ namespace LingGuangV05.XingGuang
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
         /// <summary>Stage one opens logic, common sense and SMS spam; stage two adds arithmetic, digits and danmaku. The first-minutes focus locks all but common sense; previously opened desks remain available on load.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == "mnist" || id == XgMemes.SenseDesk || (id == "arith" || id == "danmu") && S.stage >= 2 || Has(id + ".pack") || Owns(id));
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == "mnist" || id == XgMemes.SenseDesk || (id == "arith" || id == "danmu") && S.stage >= 2 || FreeDataAccess(id) || Owns(id));
 
         void ObserveProgression(XgRun run)
         {

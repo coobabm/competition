@@ -41,48 +41,48 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public static class XgDark
     {
-        public static readonly Color Page = new Color32(7, 12, 18, 255);
-        public static readonly Color Card = new Color32(14, 24, 35, 255);
-        public static readonly Color Line = new Color32(40, 71, 90, 255);
-        public static readonly Color Hud = new Color32(11, 19, 28, 255);
-        public static readonly Color HudChip = new Color32(18, 33, 48, 255);
-        public static readonly Color Ink = new Color32(214, 238, 245, 255);
-        public static readonly Color Muted = new Color32(111, 149, 165, 255);
-        public static readonly Color Accent = new Color32(42, 138, 112, 255);
-        public static readonly Color AccentSoft = new Color32(15, 42, 42, 255);
-        public static readonly Color Money = new Color32(250, 199, 117, 255);
-        public static readonly Color Good = new Color32(93, 202, 165, 255);
-        public static readonly Color Bad = new Color32(226, 75, 74, 255);
-        public static readonly Color Button = new Color32(18, 33, 48, 255);
-        public static readonly Color Disabled = new Color32(13, 21, 30, 255);
+        public static readonly Color Page = new Color32(6, 8, 12, 255);
+        public static readonly Color Card = new Color32(17, 19, 23, 255);
+        public static readonly Color Line = new Color32(255, 255, 255, 18);
+        public static readonly Color Hud = new Color32(9, 11, 15, 255);
+        public static readonly Color HudChip = new Color32(22, 24, 28, 255);
+        public static readonly Color Ink = new Color32(242, 244, 247, 255);
+        public static readonly Color Muted = new Color32(151, 153, 158, 255);
+        public static readonly Color Accent = new Color32(95, 227, 181, 255);
+        public static readonly Color AccentSoft = new Color32(24, 45, 40, 255);
+        public static readonly Color Money = new Color32(242, 196, 109, 255);
+        public static readonly Color Good = new Color32(95, 227, 181, 255);
+        public static readonly Color Bad = new Color32(255, 122, 110, 255);
+        public static readonly Color Button = new Color32(22, 24, 28, 255);
+        public static readonly Color Disabled = new Color32(15, 17, 21, 255);
         public static readonly Color Star = new Color32(255, 214, 102, 255);
         public static readonly Color Gold = new Color32(255, 190, 40, 255);
-        public static readonly Color Paper = new Color32(18, 30, 42, 255);
-        public static readonly Color[] Grades = { new Color32(111, 149, 165, 255), new Color32(93, 202, 165, 255), new Color32(93, 168, 232, 255), new Color32(169, 155, 242, 255), new Color32(250, 199, 117, 255) };
+        public static readonly Color Paper = new Color32(20, 22, 26, 255);
+        public static readonly Color[] Grades = { new Color32(151, 153, 158, 255), new Color32(95, 227, 181, 255), new Color32(106, 184, 255, 255), new Color32(165, 148, 255, 255), new Color32(242, 196, 109, 255) };
         public static readonly Color[] Tiers = XgPalette.Tiers;
 
         // The mockup's own names.
         /// <summary>The title bar and the window frame.</summary>
-        public static readonly Color Frame = new Color32(5, 9, 14, 255);
+        public static readonly Color Frame = new Color32(6, 8, 12, 255);
         /// <summary>Top bar, nav and status bar.</summary>
-        public static readonly Color Panel = new Color32(11, 19, 28, 255);
+        public static readonly Color Panel = new Color32(9, 11, 15, 255);
         /// <summary>Raised cells and hovered rows.</summary>
-        public static readonly Color Panel3 = new Color32(18, 33, 48, 255);
+        public static readonly Color Panel3 = new Color32(22, 24, 28, 255);
         /// <summary>Hairlines between rows.</summary>
-        public static readonly Color Hairline = new Color32(27, 45, 59, 255);
+        public static readonly Color Hairline = new Color32(255, 255, 255, 18);
         /// <summary>Group labels, dates, the quietest text.</summary>
-        public static readonly Color Dim = new Color32(58, 85, 102, 255);
+        public static readonly Color Dim = new Color32(83, 85, 90, 255);
         /// <summary>The grid lines of the page background.</summary>
         public static readonly Color Grid = new Color32(12, 24, 34, 255);
         /// <summary>The bar tracks.</summary>
-        public static readonly Color Track = new Color32(21, 38, 47, 255);
+        public static readonly Color Track = new Color32(28, 30, 34, 255);
         /// <summary>Trained parameters (purple) and samples (blue): the two bars of the main line.</summary>
-        public static readonly Color Params = new Color32(169, 155, 242, 255);
-        public static readonly Color Data = new Color32(93, 168, 232, 255);
-        public static readonly Color Hot = new Color32(239, 159, 39, 255);
-        public static readonly Color Link = new Color32(143, 184, 255, 255);
+        public static readonly Color Params = new Color32(165, 148, 255, 255);
+        public static readonly Color Data = new Color32(106, 184, 255, 255);
+        public static readonly Color Hot = new Color32(242, 196, 109, 255);
+        public static readonly Color Link = new Color32(106, 184, 255, 255);
         /// <summary>A learned cell or the selected nav row (dark teal under the green rim).</summary>
-        public static readonly Color OnFill = new Color32(15, 42, 42, 255);
+        public static readonly Color OnFill = new Color32(24, 45, 40, 255);
     }
 
     /// <summary>
@@ -105,12 +105,19 @@ namespace LingGuangV05.Desktop.XingGuang
         public Button button; public Image image; public TMP_Text label; public RectTransform rt;
         /// <summary>Drawn by a dark (灵光) kit: the defaults come from <see cref="XgDark"/>.</summary>
         public bool dark;
+        public RectTransform visual;
+        public RectTransform Visual => visual != null ? visual : rt;
         public void Set(string text, bool interactable, Color? fill = null, Color? ink = null)
         {
             if (label.text != text) label.text = text;
             button.interactable = interactable;
             image.color = interactable ? (fill ?? (dark ? XgDark.Button : XgPalette.Button)) : dark ? XgDark.Disabled : XgPalette.Disabled;
             label.color = interactable ? (ink ?? (dark ? XgDark.Ink : XgPalette.Ink)) : dark ? XgDark.Dim : XgPalette.Muted;
+            // Existing primary actions supplied white ink for the old dark accent.
+            // The v4 mint fill needs dark ink; light desktop applications are untouched.
+            if (dark && interactable && image.color.a > .9f &&
+                image.color.r * .2126f + image.color.g * .7152f + image.color.b * .0722f > .65f &&
+                label.color.r > .8f && label.color.g > .8f && label.color.b > .8f) label.color = XgDark.Page;
         }
         public void Show(bool on) { if (button.gameObject.activeSelf != on) button.gameObject.SetActive(on); }
     }
@@ -176,12 +183,22 @@ namespace LingGuangV05.Desktop.XingGuang
         public RectTransform Card(RectTransform parent, string name, Vector2 min, Vector2 max, Vector2 offMin, Vector2 offMax)
         {
             var border = Rect(name, parent, min, max, offMin, offMax);
-            Panel(border, dark ? XgDark.Line : XgPalette.Line);
+            var borderImage = Panel(border, dark ? XgDark.Line : XgPalette.Line);
+            if (dark) RoundSurface(borderImage, 18);
             var inner = Rect("Inner", border, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1));
-            Panel(inner, dark ? XgDark.Card : XgPalette.Card).raycastTarget = false;
+            var innerImage = Panel(inner, dark ? XgDark.Card : XgPalette.Card);
+            innerImage.raycastTarget = false;
+            if (dark) RoundSurface(innerImage, 17);
             return border;
         }
 
+        // Reuses a single tiny sliced sprite; no realtime blur or per-frame texture work.
+        public static void RoundSurface(Image image, float radius)
+        {
+            image.sprite = XgCardArt.Rounded();
+            image.type = Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = 14f / Mathf.Max(1, radius);
+        }
         public TMP_Text Text(RectTransform rt, string text, float size, Color color, TextAlignmentOptions align)
         {
             var t = rt.gameObject.AddComponent<TextMeshProUGUI>();
@@ -197,8 +214,19 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgBtn Button(Transform parent, string label, UnityAction onClick, float size)
         {
             var rt = Rect("Button", parent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-            var img = Panel(rt, dark ? XgDark.Button : XgPalette.Button);
+            // Root keeps layout, input and business effects; only the visual shell presses.
+            var visual = rt;
+            if (dark)
+            {
+                Panel(rt, Color.clear).raycastTarget = true;
+                visual = Rect("Visual", rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            }
+            var img = Panel(visual, dark ? XgDark.Button : XgPalette.Button);
+            if (dark) img.raycastTarget = false;
+            if (dark) RoundSurface(img, 12);
             var button = rt.gameObject.AddComponent<XgButtonPressFeedback>();
+            button.V4Press = dark;
+            button.PressTarget = dark ? visual : null;
             button.targetGraphic = img;
             var colors = button.colors;
             colors.normalColor = Color.white; colors.highlightedColor = new Color(.93f, .95f, 1f); colors.pressedColor = new Color(.82f, .86f, .96f);
@@ -209,15 +237,15 @@ namespace LingGuangV05.Desktop.XingGuang
             if (dark)
             {
                 // The mockup's .btn: a hairline rim that turns green under the pointer.
-                var rim = rt.gameObject.AddComponent<Outline>();
+                var rim = visual.gameObject.AddComponent<Outline>();
                 rim.effectDistance = new Vector2(1, -1);
                 var hover = rt.gameObject.AddComponent<XgHoverRim>();
                 hover.rim = rim; hover.Apply();
             }
-            var text = Text(Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(6, 0), new Vector2(-6, 0)), label, size, dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.Center);
+            var text = Text(Rect("Label", visual, Vector2.zero, Vector2.one, new Vector2(6, 0), new Vector2(-6, 0)), label, size, dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.Center);
             text.textWrappingMode = TextWrappingModes.NoWrap;
             button.Label = text.rectTransform;
-            return new XgBtn { button = button, image = img, label = text, rt = rt, dark = dark };
+            return new XgBtn { button = button, image = img, label = text, rt = rt, visual = visual, dark = dark };
         }
 
         public static void Place(XgBtn b, RectTransform at) { Copy(at, b.rt); UnityEngine.Object.Destroy(at.gameObject); }
@@ -278,3 +306,4 @@ namespace LingGuangV05.Desktop.XingGuang
         public static string Hex(Color c) { return "<color=#" + ColorUtility.ToHtmlStringRGB(c) + ">"; }
     }
 }
+

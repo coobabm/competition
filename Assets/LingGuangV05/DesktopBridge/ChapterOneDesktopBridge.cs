@@ -75,6 +75,8 @@ namespace LingGuangV05.Desktop
             nativeChat = null;
             nativeApp = null;
             window = desktopWindow;
+            DesktopWindowIndex.Register(this);
+            DesktopWindowIndex.Register(window);
             content = appContent;
             font = appFont;
             desktopShortcut = desktopButton;
@@ -92,6 +94,8 @@ namespace LingGuangV05.Desktop
             runtime = gameRuntime;
             applicationId = "yy";
             window = desktopWindow;
+            DesktopWindowIndex.Register(this);
+            DesktopWindowIndex.Register(window);
             nativeChat = chat;
             nativeApp = null;
             app = null;
@@ -111,6 +115,8 @@ namespace LingGuangV05.Desktop
             runtime = gameRuntime;
             applicationId = profile;
             window = desktopWindow;
+            DesktopWindowIndex.Register(this);
+            DesktopWindowIndex.Register(window);
             nativeApp = view;
             nativeChat = null;
             app = null;
@@ -126,6 +132,7 @@ namespace LingGuangV05.Desktop
 
         private void Awake()
         {
+            DesktopWindowIndex.Register(this);
             // Native taskbar, Start-menu and Show Desktop restores also enter here.
             // Do not force a selected tab when a previously opened window restores.
             if (window != null) window.onOpen.AddListener(HandleWindowOpened);
@@ -133,8 +140,11 @@ namespace LingGuangV05.Desktop
 
         private void OnDestroy()
         {
+            DesktopWindowIndex.Unregister(this);
             if (window != null) window.onOpen.RemoveListener(HandleWindowOpened);
         }
+
+        private void OnEnable() { DesktopWindowIndex.Register(this); }
 
         private void Start()
         {

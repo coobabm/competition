@@ -1,0 +1,17 @@
+{
+  "note": "对话解锁（《第三轮设计》第六节）：某些科技节点的解锁条件是「在 YY 里对它打出一句指定的话，并且它回答了」。比对时去掉空格和标点、全角半角统一、大小写不敏感，其余必须完全相同。玩家不知道原句时，节点卡上只显示「对它说一句话：____」和提示；完整原句藏在 hint 指向的地方（贴吧楼层、书架、老周的回答、新闻）。它回答后（不论回答什么），节点从锁着变成可买，播放一次「对上了」动画，回答保存在节点卡背面。answer = 它在当前阶段说不出完整句子时的预设回答（模型可用时由模型生成，仍受阶段说话规则限制）。",
+  "unlocks": [
+    { "node": "bias", "stage": 1, "phrase": "多少分才算是？", "phraseEn": "How many points count as yes?", "hint": "贴吧「萌新求问」楼里有人说：门槛不挪，永远是同一条线。", "hintEn": "In the beginner thread: \"If the bar never moves, it's always the same line.\"", "answer": "……是。", "answerEn": "…Yes." },
+    { "node": "mlp", "stage": 1, "phrase": "异或怎么分？", "phraseEn": "How do you split XOR?", "hint": "书架《感知机》最后一页的批注。", "hintEn": "A note on the last page of the book Perceptrons on the shelf.", "answer": "否。", "answerEn": "No." },
+    { "node": "dropout", "stage": 3, "phrase": "换一道题你还会吗？", "phraseEn": "Would you still know if I changed the question?", "hint": "吧友出题的帖子标题。", "hintEn": "The title of the forum thread where people set it new questions.", "answer": "不……知道。", "answerEn": "Don't… know." },
+    { "node": "lstm", "stage": 3, "phrase": "你还记得我刚才说了什么吗？", "phraseEn": "Do you remember what I just said?", "hint": "唐诗桌连续答错长句后，「我」的独白。", "hintEn": "The protagonist's thought after it keeps failing long poem lines.", "answer": "刚才……忘。", "answerEn": "Just now… forgot." },
+    { "node": "wordvec", "stage": 4, "phrase": "国王减男人加女人等于什么？", "phraseEn": "King minus man plus woman equals what?", "hint": "老周被问到「词怎么变成数字」时的回答。", "hintEn": "老周's answer when asked how words become numbers.", "answer": "女王？", "answerEn": "Queen?" },
+    { "node": "position", "stage": 5, "phrase": "狗咬人和人咬狗一样吗？", "phraseEn": "Is 'dog bites man' the same as 'man bites dog'?", "hint": "摆渡新闻里一条标题党的评论区。", "hintEn": "The comments under a clickbait headline on Bodu News.", "answer": "不一样。一个是新闻。", "answerEn": "No. One of them is news." },
+    { "node": "attention", "stage": 4, "phrase": "这句话里哪个词最重要？", "phraseEn": "Which word in this sentence matters most?", "hint": "表姐的翻译委托里，她圈出来的一句。", "hintEn": "The line Cousin circled in her translation job.", "answer": "「重要」。", "answerEn": "\"Matters.\"" },
+    { "node": "transfer", "stage": 3, "phrase": "你还记得以前学的吗？", "phraseEn": "Do you remember what you learned before?", "hint": "第一次换脑型后「我」的独白。", "hintEn": "The protagonist's thought after the first brain change.", "answer": "记得……一点。", "answerEn": "A little." },
+    { "node": "lrschedule", "stage": 3, "phrase": "慢一点。", "phraseEn": "Slow down.", "hint": "第一次练崩后，知识卡「练崩了」背面。", "hintEn": "The back of the 'Blown up' knowledge card.", "answer": "好。", "answerEn": "OK." },
+    { "node": "cot", "stage": 6, "phrase": "一步一步想：3 加 5 再乘 2 是多少？", "phraseEn": "Think step by step: 3 plus 5, times 2?", "hint": "家教网站委托的说明：「要写过程」。", "hintEn": "The tutoring job's brief: \"show your working\".", "answer": "3 加 5 是 8，8 乘 2 是 16。", "answerEn": "3 plus 5 is 8, 8 times 2 is 16." },
+    { "node": "sft", "stage": 6, "phrase": "请你回答，不要接着出题。", "phraseEn": "Please answer. Don't write more questions.", "hint": "通读后它第一次「接着出题」时，「我」的独白。", "hintEn": "The protagonist's thought when it first keeps writing questions after pre-training.", "answer": "好的。你想问什么？", "answerEn": "Sure. What do you want to ask?" },
+    { "node": "attention_only", "stage": 5, "phrase": "如果只用注意力呢？", "phraseEn": "What if we only used attention?", "hint": "乱码页解出的第四行之后，屏幕右下角一闪而过。", "hintEn": "Flashes in the corner after the fourth line of the garbled page is decoded.", "answer": "……可以试试。", "answerEn": "…Worth a try." }
+  ]
+}

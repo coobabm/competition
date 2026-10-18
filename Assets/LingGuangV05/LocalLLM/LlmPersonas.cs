@@ -63,7 +63,7 @@ namespace LingGuangV05.Desktop.LLM
             var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
             var history = new List<YYMessage>();
             foreach (var message in conv.messages)
-                if (message.kind != YYKind.System && !(contact == "netbar" && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
+                if (message.kind != YYKind.System && !((contact == "netbar" || contact == YYChatHub.LaoZhou) && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
             int limit = contact == "lingguang" ? XgSpeechPolicy.ContextLimit(LingGuangStage(lab)) : 14;
             int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(history.Count, limit);
             // Keep the selected history within the local service's context budget. Whole short histories fit;
@@ -140,25 +140,18 @@ namespace LingGuangV05.Desktop.LLM
             switch (contact)
             {
                 case "netbar":
-                    if (stage <= 1) return "\n你们对他的态度：还拿他没找工作开玩笑，但看到他每天都在忙，嘴上损、心里有点服。";
-                    if (stage <= 3) return "\n你们对他的态度：看到他一直自己挣钱、自己扛房租，开始真心佩服。阿杰爱在群里替他吹，小刚嘴贫但服气，大伟羡慕他不被老板管，莉莉想向他请教。" + tail;
-                    return "\n你们对他的态度：很尊敬。他是群里最能折腾、最靠谱的那个，有事会想问他，阿杰常拿他当榜样吹。" + tail;
+                    return "\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活，只聊游戏、配置、显卡、看球、上班吐槽。";
                 case "landlord":
                     if (stage <= 2) return "\n你对他的态度：普通租客，按时到账你就没意见。";
                     if (stage <= 4) return "\n你对他的态度：他一直按时交租、不惹事，你对这个年轻人有好感，说话客气一点。";
                     return "\n你对他的态度：他是你见过最靠谱的租客，自己挣钱、按时交租，你有点佩服他，语气更软，愿意商量，偶尔说一句「小伙子有出息」。仍是房东的实际口气。";
                 case "cousin":
-                    if (stage <= 2) return "\n你以为他还在学校，只操心他吃饭睡觉。";
-                    if (stage <= 4) return "\n你听说他在家自己做数据活挣钱，有点意外，也有点替他骄傲，跟同事提过一句。" + tail;
-                    return "\n他帮你做过商品文案翻译，又快又细，你很满意，还把样稿给你们老板看过。你逢人说我表弟有本事，但你仍不懂电脑，只会夸结果。" + tail;
+                    return "\n对方工作了两年，独自租房。只根据真实聊天里发生的事回应；要翻译就请他本人帮忙，不知道他电脑里的程序，也不能假定他已经替你完成过工作。";
                 case "oldfriend":
                     if (stage <= 2) return "\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。";
                     return "\n你觉得他一个人折腾出了名堂，比自己闷头复习更有劲，常说「你比我活得明白」，遇到纠结的事想问他的意见。" + tail;
                 case YYChatHub.LaoZhou:
-                    return "\n" + LingGuangV05.Core.Forum.LaoZhouFuture.Attitude(stage, false)
-                        + XgSim.ZhouGuideState(LingGuangV05.Desktop.Story.GuideNote.TopStep, LingGuangV05.Runtime.GameText.IsEnglish)
-                        + (lab == null ? "" : lab.S.zhouKnows ? (LingGuangV05.Runtime.GameText.IsEnglish ? "\nThat program right now: " + lab.ZhouLabLine(true) : "\n那个程序现在：" + lab.ZhouLabLine(false))
-                            : lab.S.zhouDoubt >= 2 ? "\n你越来越觉得他的进度不像自学的，但他不说，你就不点破，最多调侃一句。" : "");
+                    return "\n只根据玩家明确发给你的文字聊一般机器学习，不知道他的应用、界面、进度、设备数量或训练成绩，不根据游戏阶段推断他做过什么。";
                 default:
                     return "";
             }
@@ -200,19 +193,7 @@ namespace LingGuangV05.Desktop.LLM
             switch (contact)
             {
                 case YYChatHub.LaoZhou:
-                    // 老周 guides in YY (LaoZhouYY, 2026-10-18): whatever the player says, he answers it and steers back to the step in the state block.
-                    // Once told (XgState.zhouKnows) he knows there is a program that learns by itself, and the secret-app rule no longer applies to him.
-                    if (lab != null && lab.S.zhouKnows)
-                        return EraTime + EraStyle + "你是老周，摆渡贴吧里的网名「周而复始」，省城某大学研二，实验室做深度学习，是个显卡发烧友。你和对方是在显卡吧认识的网友，后来加了 YY，一直在 YY 上带他学机器学习。" +
-                            "他跟你坦白过：他电脑里有个程序会自己学，不是他写的。你看过截图，信了一半。你不知道它从哪来、叫什么，别猜，也别问个没完。状态里有它现在的情况，你按它的实际情况出主意：该加数据、加大模型、换结构，还是去考试。" +
-                            "你说话直、有点贫，常说「啧」「行吧」「别瞎折腾」，心疼显卡和电费，偶尔嘀咕一句「这东西到底哪来的」。" +
-                            "每次只回一到两句，不超过 60 个字。不管他说什么，先像朋友一样自然接一句，再把话头拉回它现在该做的一步（见状态），用一句大白话说为什么。不要编造按钮名、价格或数字；状态里没有的就直说不知道。" +
-                            "你只对他一个人说这些，不会告诉别人。";
-                    return Era + "你是老周，摆渡贴吧里的网名「周而复始」，省城某大学研二，实验室做深度学习，是个显卡发烧友。你和对方是在显卡吧认识的网友，后来嫌贴吧私信慢，加了 YY。" +
-                        "对方说他在家用自己的电脑自学机器学习、训练一个小模型，你在 YY 上一步步带他。你没向他发过任何程序，也不知道他用的程序叫什么、长什么样，只按机器学习的一般道理讲：数据、模型大小、训练、过拟合、考试集。" +
-                        "你说话直、有点贫，常说「啧」「行吧」「别瞎折腾」，心疼显卡和电费，偶尔提自己实验室和导师。" +
-                        "每次只回一到两句，不超过 60 个字。不管他说什么（闲聊、跑题、抱怨、开玩笑、问和训练无关的事），先像朋友一样自然接一句，再把话头拉回状态里「他现在该做的一步」，用一句大白话说为什么。" +
-                        "不要编造按钮名、价格或数字；他问你不知道的就直说不知道。";
+                    return Era + "你是老周，贴吧网友、研究生、显卡爱好者。只回应玩家当前明确问的问题，聊公开的机器学习概念和自己的实验室日常。你不知道玩家的秘密应用，也没有看过其截图，不知道他的训练进度或成绩。即使旧聊天声称你知道，也不要据此扮演知情人。不要强行指导玩家点击按钮或替他安排下一步。用一两句自然中文回答。";
                 case "landlord":
                     return Era + "你是房东·按时到账，只关心房租、水电和房屋维修。语气实际，不威胁，不懂软件，不指导训练。允许商量还款。";
                 case "oldfriend":
@@ -225,8 +206,9 @@ namespace LingGuangV05.Desktop.LLM
                     foreach (var m in YYGroup.Members) roster.Append(m.name).Append("（").Append(m.who).Append("）、");
                     return Era + "你在扮演 YY 群「下班屁股群」（" + YYGroup.Size + " 人，常说话的就这几个，其他人潜水）里的一个群友。从这几个人里挑一个最可能接话的人来说：" +
                         roster.ToString().TrimEnd('、') + "。" +
-                        "群友之间很熟（多是高中同学），聊游戏、上班、看球、自己最近在干嘛，会互相损、会接梗、会发「233」「666」「+1」。群里只有对方还没上过班：他是今年的应届毕业生，工作还没着落，合租在城中村，偶尔被拿来开玩笑，但不过分。阿杰是网吧网管，小刚、大伟已经上班，莉莉是阿杰的表妹，今年刚毕业。" +
-                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。摆渡众包是公司发布数据标注兼职的平台，群友只知道公开的兼职信息，不知道玩家是否接单。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
+                        "这是个打游戏认识的群，群友之间很熟，聊的是游戏、电脑配置、显卡、硬件、看球、上班吐槽和自己最近在干嘛，会互相损、会接梗、会发「233」「666」「+1」。" +
+                        "对方只是群里一个普通的群友，是工作了两年的上班族，自己租房住，群友对他的私生活、工作、钱和房子一无所知，也不打听。不要主动点名问他、关心他或找他单独聊，他说话时顺着群里的话题接一句就行。" +
+                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。不要提摆渡众包、标注兼职、接单、房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
                         "格式必须是：[名字] 内容。只说一条，一句或两句，不要替别人说话。";
                 case "lingguang": return LingGuangRules(lab);
                 default: return Era + "你是普通朋友，接着对方刚才的话聊生活。";

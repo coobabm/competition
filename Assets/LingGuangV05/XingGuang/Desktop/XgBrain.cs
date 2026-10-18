@@ -9,7 +9,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// <summary>
     /// Live transport adapter, not a second simulation. Called before XgSim.Tick; never during offline catch-up.
     /// Prefetch ownership, stable tickets, inference results and all rewards remain in the pure Core.
-    /// O(1) transport work per frame (at most three queued/in-flight requests), bounded by Core's per-desk buffer.
+    /// O(1) transport work per frame (at most one queued/in-flight request), bounded by Core's per-desk buffer.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class XgBrain : MonoBehaviour
@@ -60,7 +60,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 sim.BrainStatus = sim.English ? "Research occupies the GPU; brain is waiting" : "研发占用 GPU；大脑等待";
                 return;
             }
-            if (transport != null) transport.SetParallelJudging(sim.Has("label.parallel"));
+            // Inbox expansion changes simulation capacity, never native service slots.
+            if (transport != null) transport.SetParallelJudging(false);
             if (sim.Has("label.brain") && !ready)
                 sim.BrainStatus = sim.English ? "Brain offline; checkpoint fallback" : "大脑离线；回退检查点";
             else if (ready && transport.ParallelUnavailable)
@@ -71,7 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
             // The Core assigns clearly labelled checkpoint predictions if the live service is unavailable.
             sim.FillJudgmentBuffer();
             if (!ready || sim.ReviewFull) return;
-            int limit = transport.ParallelSlots >= 4 && sim.Has("label.parallel") ? 3 : 1;
+            const int limit = 1;
             while (pending.Count < limit && sim.TryTakeBrainTicket(out var ticket))
             {
                 int generation = bindingGeneration;
@@ -117,6 +118,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void Suspend(bool value)
         {
+            if(paused==value)return;
             paused = value;
             if (!value) return;
             CancelPending("paused");

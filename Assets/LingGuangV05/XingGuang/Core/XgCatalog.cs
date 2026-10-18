@@ -176,6 +176,7 @@ namespace LingGuangV05.XingGuang
 
         public static readonly XgDataset[] Datasets =
         {
+            new XgDataset { id = "chess", name = "国际象棋残局", nameEn = "Chess endgames", metric = "将杀准确率", metricEn = "mating accuracy", track = XgTrack.Sequence, samples = 5700, sizeMB = 1, chanceError = .8, floorError = .02, scale = 4, complexity = 2, handLabel = true, need = 500, note = "合法走子和将杀。", noteEn = "Legal moves and checkmate." },
             new XgDataset { id = "longtext", name = "长句理解", nameEn = "Long sentences", metric = "理解准确率", metricEn = "comprehension accuracy", track = XgTrack.Sequence,
                 price = 2500, samples = 80000, sizeMB = 40, chanceError = .5, floorError = .02, scale = 4, complexity = 2, handLabel = true, need = 1200, needSpan = 60,
                 rewardBase = 6, note = "句首的决定性信息隔着干扰句。", noteEn = "Decisive information separated by distractors." },
@@ -323,7 +324,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Skill-tree geometry: one column per stage, cards in rows of <see cref="NodesPerRow"/>, lanes stacked top to bottom.</summary>
         public const float StageWidth = 720, NodeWidth = 136, NodeHeight = 64, BreakthroughSize = 120, SlotWidth = 150, RowHeight = 84;
         public const int NodesPerRow = 4;
-        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "atlas" };
+        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
         /// <summary>Lane bands in drawing order (the tree page paints their stripes).</summary>
         public static IReadOnlyList<string> Lanes => LaneOrder;
         /// <summary>Height of a lane's band (after layout).</summary>
@@ -462,6 +463,12 @@ namespace LingGuangV05.XingGuang
             S("secret.6", 6, "transformer", 30000, "秘籍 · 预训练", "Secret · pre-training");
             Add(Simple("datacenter", XgNodeKind.Label, "transformer", 60000, "租机房（IDC 机柜）", "Rent a server room (IDC rack)", "预训练一开，一台机箱的 3500W 就跳闸。在 IDC 租一个机柜，八张卡接专线：这里付押金和首月租金；预训练跑着的时候，按时长另付租金和电费（¥" + XgSim.DatacenterRent + "/秒），钱不够就断电。", "Pre-training trips one case's 3500 W breaker. Rent a rack in a data centre, eight cards on a dedicated line: this pays the deposit and the first month; while pre-training runs, rent and power cost ¥" + XgSim.DatacenterRent + "/s more, and it powers off when the money runs out."), 6, "research");
             foreach (var node in XgSim.LabelNodes) Add(node, 0, "label");
+            Add(Simple("train.curve", XgNodeKind.Research, null, 10, "训练曲线", "Training curve", "看见每轮进步。▶ 解锁练页", "See each round improve. Unlocks Train."), 1, "research");
+            Add(Simple("brain.window", XgNodeKind.Research, "train.curve", 15, "脑子窗口", "Brain window", "看看它怎么想。▶ 打开脑子窗口", "Watch it think. Opens the brain window."), 1, "research");
+            Add(Simple("label.ai", XgNodeKind.Research, "train.curve", 20, "代答", "AI answers", "每题看看它的答案。▶ 每题显示它的回答", "See its answer to every question. Shows AI answers."), 1, "research");
+            AddTeachingPackNodes(list);
+            AddPersonaPackNodes(list);
+            XgTrainingCatalog.AddNodes(list);
             LayoutStages(list);
             return list.ToArray();
         }
@@ -557,7 +564,7 @@ namespace LingGuangV05.XingGuang
         public static readonly string[] ComboTierNamesEn = { "Nice", "Warming up", "On fire", "Flash of insight" };
 
         public static XgNode Node(string id) { foreach (var n in Nodes) if (n.id == id) return n; return null; }
-        public static XgDesk Desk(string id) { foreach (var d in Desks) if (d.id == id) return d; return null; }
+        public static XgDesk Desk(string id) { foreach (var d in Desks) if (d.id == id) return d; return ExtraTeachingDesk(id); }
 
         public static readonly XgContract[] Contracts =
         {
@@ -744,3 +751,4 @@ namespace LingGuangV05.XingGuang
         }
     }
 }
+

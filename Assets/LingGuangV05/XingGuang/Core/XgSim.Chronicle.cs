@@ -365,9 +365,9 @@ namespace LingGuangV05.XingGuang
         public string ChronicleText(string playerName = null)
         {
             var sb = new StringBuilder();
-            string title = T("灵光记", "The Record of Lingguang");
+            string title = T(AiDisplayName + "记", "The Record of " + AiDisplayName);
             sb.Append(title).Append('\n');
-            sb.Append(T("（" + (Profile.name.Length > 0 ? Profile.name : "灵光") + " 著，2016 年）", "(by " + (Profile.name.Length > 0 ? Profile.name : "Lingguang") + ", 2016)")).Append("\n\n");
+            sb.Append(T("（" + AiDisplayName + " 著，2016 年）", "(by " + AiDisplayName + ", 2016)")).Append("\n\n");
             var chapters = Chronicle();
             for (int i = 0; i < chapters.Count; i++)
             {

@@ -93,6 +93,13 @@ namespace LingGuangV05.XingGuang
         public List<string> crowdOn = new List<string>();
         /// <summary>Story offers 老周 has already mentioned.</summary>
         public List<string> storyOffered = new List<string>();
+        /// <summary>
+        /// Datasets the player asked for in a forum thread of his own (摆渡贴吧 「求数据」). Story data is only offered as a
+        /// reply to such a post: nobody hands the player data he never asked for.
+        /// </summary>
+        public List<string> dataAsked = new List<string>();
+        /// <summary>Game seconds left until the reply to each data request arrives.</summary>
+        public List<XgLabelCount> dataAskWait = new List<XgLabelCount>();
         /// <summary>Owned packs switched off for training: "logic.pack" (public or story data), "logic.junk".</summary>
         public List<string> dataExcluded = new List<string>();
     }
@@ -158,12 +165,12 @@ namespace LingGuangV05.XingGuang
         /// <summary>Story data: dataset, price, noise, seconds until 老周 brings his copy (links come down the home line instead), month, zh name, en name, zh note, en note, 老周 zh, 老周 en.</summary>
         static readonly object[][] StoryPacks =
         {
-            new object[] { "imagenet", 600.0, .005, 150.0, 201609, "ImageNet 学术下载（老周的 edu 邮箱）", "ImageNet academic download (老周's edu mail)",
-                "ImageNet 只给学校邮箱发下载链接。老周用他的 edu 邮箱帮你申请了，只要买块移动硬盘。", "ImageNet only sends download links to university addresses. 老周 applied with his edu mail; you just buy a portable drive.",
-                "ImageNet 要学校邮箱才给下，我拿我的 edu 邮箱帮你申请了。你买块硬盘就行，别外传啊。", "ImageNet only gives links to school addresses. I applied with my edu mail for you. Just buy a drive, and keep it to yourself." },
-            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料 v1.0（今年 5 月刚公开）", "UN Parallel Corpus v1.0 (public since May)",
-                "联合国文件的中英对照，句子工整。今年 5 月刚公开，老周帮你下好了，钱是硬盘和整理的钱。", "Chinese–English UN documents, neat sentence pairs. Made public this May; 老周 downloaded it for you, you pay for the drive and the clean-up.",
-                "联合国今年 5 月公开了中英平行语料，我帮你下好了。比淘货上那些字幕包干净多了。", "The UN released its Chinese–English corpus this May; I downloaded it for you. Much cleaner than the subtitle packs on 淘货." },
+            new object[] { "imagenet", 600.0, .005, 150.0, 201609, "ImageNet 学术下载（贴吧求来的）", "ImageNet academic download (asked for on the forum)",
+                "你在贴吧发帖求 ImageNet，周而复始回了：只给学校邮箱发链接，他可以用 edu 邮箱帮你申请，你买块移动硬盘。", "You asked for ImageNet on the forum and 周而复始 replied: links only go to university addresses; he can apply with his edu mail if you buy a portable drive.",
+                "楼主要 ImageNet？那个只给学校邮箱发链接。我有 edu 邮箱，可以帮你申请，你自己买块硬盘。别外传啊。", "Want ImageNet, OP? Links only go to school addresses. I have an edu mail and can apply for you; buy your own drive. Keep it to yourself." },
+            new object[] { "translate", 1500.0, .01, 120.0, 201610, "联合国平行语料 v1.0（贴吧求来的）", "UN Parallel Corpus v1.0 (asked for on the forum)",
+                "你在贴吧发帖求中英语料，周而复始回了：联合国今年 5 月刚公开，句子工整。钱是硬盘和整理的钱。", "You asked for a Chinese–English corpus on the forum and 周而复始 replied: the UN made one public this May, neat sentence pairs. You pay for the drive and the clean-up.",
+                "楼主要中英对照？联合国今年 5 月公开了一份平行语料，比淘货上那些字幕包干净多了。要的话我帮你下。", "Want Chinese–English pairs, OP? The UN released a parallel corpus this May, much cleaner than the subtitle packs on 淘货. I can download it for you." },
         };
 
         /// <summary>
@@ -293,7 +300,7 @@ namespace LingGuangV05.XingGuang
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
-                if (o != null && o.datasetId == dataset && (o.source == XgDataSource.Junk || o.source == XgDataSource.Story) && !Downloading(DownloadKey(o))) return true;
+                if (o != null && o.datasetId == dataset && (o.source == XgDataSource.Junk || o.source == XgDataSource.Story) && DataOfferInstalled(o.id)) return true;
             }
             return false;
         }
@@ -306,11 +313,11 @@ namespace LingGuangV05.XingGuang
         {
             var d = XgCatalog.Dataset(dataset);
             if (d == null) return 0;
-            double n = PackIncluded(dataset + ".pack") ? BatchSamples(d) * BatchesArrived(dataset) : 0;
+            double n = PackIncluded(dataset + ".pack") ? BatchSamples(d) * InstalledBatches(dataset) : 0;
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
-                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || Downloading(DownloadKey(o))) continue;
+                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || !DataOfferInstalled(o.id)) continue;
                 if (PackIncluded(o.id)) n += o.samples;
             }
             return n;
@@ -321,7 +328,7 @@ namespace LingGuangV05.XingGuang
         {
             double rows = 0;
             var d = XgCatalog.Dataset(dataset);
-            int arrived = BatchesArrived(dataset);
+            int arrived = InstalledBatches(dataset);
             if (d != null && arrived > 0 && PackIncluded(dataset + ".pack") && !dirtyOnly)
             {
                 var o = DataOfferDef(dataset + (StoryOwned(dataset) ? ".story" : ".pack"));
@@ -330,7 +337,7 @@ namespace LingGuangV05.XingGuang
             foreach (var id in S.dataOffers)
             {
                 var o = DataOfferDef(id);
-                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || Downloading(DownloadKey(o))) continue;
+                if (o == null || o.datasetId != dataset || o.source != XgDataSource.Junk || !DataOfferInstalled(o.id)) continue;
                 if (PackIncluded(o.id)) rows += o.samples * o.noise;
             }
             return rows;
@@ -357,6 +364,7 @@ namespace LingGuangV05.XingGuang
             if (!PackSwitchable(o)) { en = "Only packs can be switched"; return "只有数据包能开关"; }
             if (!OfferOwned(offerId)) { en = "Not owned"; return "还没买"; }
             if (Downloading(DownloadKey(o))) { en = "Still downloading"; return "还在下载"; }
+            if (!DataOfferInstalled(o.id)) { en = "Install it from your Files folder first"; return "先从资料文件夹安装"; }
             var d = XgCatalog.Dataset(o.datasetId);
             if (d != null && Run(d.track).epochActive && Run(d.track).dataset == o.datasetId) { en = "Finish the active epoch first"; return "先完成当前训练轮次"; }
             return null;
@@ -514,6 +522,7 @@ namespace LingGuangV05.XingGuang
                 if (!NodeVisible(n) || ProgressionBlocker(n) != null) { en = "Not at this stage yet"; return "还没到这一阶段"; }
                 if (n.parent != null && !Has(n.parent)) { var p = XgCatalog.Node(n.parent); en = "Unlock first: " + (p != null ? p.nameEn : n.parent); return "先解锁 " + (p != null ? p.name : n.parent); }
                 foreach (var need in n.needs) if (!Has(need)) { var p = XgCatalog.Node(need); en = "Unlock first: " + (p != null ? p.nameEn : need); return "先解锁 " + (p != null ? p.name : need); }
+                if (o.source == XgDataSource.Story && !DataAnswered(o.datasetId)) { en = "Ask for it on the forum first"; return DataAsked(o.datasetId) ? "等贴吧回帖" : "先去贴吧发帖求数据"; }
                 if (o.source == XgDataSource.Story && AnyEpochActive) { en = "Finish the active epoch first"; return "先完成当前训练轮次"; }
             }
             if (o.source == XgDataSource.Junk)
@@ -584,13 +593,13 @@ namespace LingGuangV05.XingGuang
                 {
                     for (int b = 1; b <= all; b++)
                         Enqueue(new XgDownload { key = def.datasetId, dataset = def.datasetId, offer = def.id, batch = b, batches = 1, sizeMB = BatchMB(d), samples = BatchSamples(d), ownDrive = true }, false);
-                    Say(T("收到老周转来的下载链接：《" + def.name + "》，" + SizeText(def.sizeMB) + " 走你家宽带，" + BroadbandName(BroadbandTier, false) + " 约 " + ClockText(LineQueueSeconds) + "，分 " + all + " 批到。钱买的那块硬盘专门放它。",
-                          "老周 forwarded the link: " + def.nameEn + ", " + SizeText(def.sizeMB) + " over your own broadband, about " + ClockText(LineQueueSeconds) + " on " + BroadbandName(BroadbandTier, true) + ", in " + all + " batches. The drive the money bought holds it."));
+                    Say(T("收到贴吧回复中的下载链接：《" + def.name + "》，" + SizeText(def.sizeMB) + " 走你家宽带，" + BroadbandName(BroadbandTier, false) + " 约 " + ClockText(LineQueueSeconds) + "，分 " + all + " 批到。钱买的那块硬盘专门放它。",
+                          "The forum reply linked: " + def.nameEn + ", " + SizeText(def.sizeMB) + " over your own broadband, about " + ClockText(LineQueueSeconds) + " on " + BroadbandName(BroadbandTier, true) + ", in " + all + " batches. The drive the money bought holds it."));
                 }
                 else
                 {
                     Enqueue(new XgDownload { key = def.datasetId, dataset = def.datasetId, offer = def.id, batches = all, sizeMB = def.sizeMB, samples = def.samples, campus = true, ownDrive = true }, false);
-                    Say(T("老周：《" + def.name + "》我下好了，拷在硬盘里给你拿过来，约 " + ClockText(def.downloadSec) + " 到。", "老周: " + def.nameEn + " is already downloaded; he is bringing it over on a drive, about " + ClockText(def.downloadSec) + "."));
+                    Say(T("贴吧回帖 · 周而复始：《" + def.name + "》我下好了，拷在硬盘里给你寄过来，约 " + ClockText(def.downloadSec) + " 到。", "Forum reply · 周而复始: " + def.nameEn + " is already downloaded; he is mailing it on a drive, about " + ClockText(def.downloadSec) + "."));
                 }
                 CheckDesks();
             }
@@ -676,7 +685,9 @@ namespace LingGuangV05.XingGuang
         {
             TickCrowd(dt, host);
             TickBroadbandBill(host);
-            // Story data: 老周 mentions it once, the first time it is on offer.
+            // A data request on the forum gets its reply after a while.
+            foreach (var w in S.dataAskWait) if (w.count > 0) w.count = Math.Max(0, w.count - dt);
+            // Story data: 周而复始 offers it once, as the reply to the player's own forum request.
             foreach (var s in StoryPacks)
             {
                 string id = (string)s[0] + ".story";
@@ -686,9 +697,51 @@ namespace LingGuangV05.XingGuang
                 if (!o.available) { if (o.lockedReasonEn == "Already have this data") S.storyOffered.Add(id); continue; }
                 S.storyOffered.Add(id);
                 var line = StoryLines(id);
-                Say(T("老周：") + T(line[0], line[1]));
+                Say(T("贴吧回帖 · 周而复始：", "Forum reply · 周而复始: ") + T(line[0], line[1]));
                 StoryDataOffered?.Invoke(o, line[0], line[1]);
             }
+        }
+
+        // ───────────── asking for data on the forum ─────────────
+
+        /// <summary>Game seconds between the player's 「求数据」 post and the reply.</summary>
+        public const double DataReplySeconds = 60;
+
+        public bool DataAsked(string dataset) => S.dataAsked != null && S.dataAsked.Contains(dataset);
+        public bool DataAnswered(string dataset) => DataAsked(dataset) && Count(S.dataAskWait, dataset) <= 0;
+
+        /// <summary>Datasets the player can post a 「求数据」 thread about now: hard-to-get data on sale this month, not owned, not asked yet.</summary>
+        public List<string> AskableData()
+        {
+            var list = new List<string>();
+            foreach (var s in StoryPacks)
+            {
+                string ds = (string)s[0];
+                var def = DataOfferDef(ds + ".story");
+                if (def == null || DataAsked(ds)) continue;
+                if (def.month > CurrentMonth || def.stage > S.stage) continue;
+                if (Has(def.node) || S.owned.Contains(ds)) continue;
+                list.Add(ds);
+            }
+            return list;
+        }
+
+        /// <summary>The player posts a 「求数据」 thread on the forum. The reply (and the offer) comes after <see cref="DataReplySeconds"/>.</summary>
+        public bool AskForData(string dataset)
+        {
+            if (!AskableData().Contains(dataset)) return false;
+            S.dataAsked.Add(dataset);
+            SetCount(S.dataAskWait, dataset, DataReplySeconds);
+            return true;
+        }
+
+        /// <summary>Forum flags of the data requests: "asked.imagenet" once posted, "answered.imagenet" once replied.</summary>
+        public bool DataForumFlag(string flag)
+        {
+            if (string.IsNullOrEmpty(flag)) return false;
+            if (flag.StartsWith("asked.", StringComparison.Ordinal)) return DataAsked(flag.Substring(6));
+            if (flag.StartsWith("answered.", StringComparison.Ordinal)) return DataAnswered(flag.Substring(9));
+            return false;
         }
 
         void RepairDataSources()
@@ -699,6 +752,14 @@ namespace LingGuangV05.XingGuang
             if (S.dataCleaned == null) S.dataCleaned = new List<XgLabelCount>();
             if (S.crowdOn == null) S.crowdOn = new List<string>();
             if (S.storyOffered == null) S.storyOffered = new List<string>();
+            if (S.dataAsked == null) S.dataAsked = new List<string>();
+            if (S.dataAskWait == null) S.dataAskWait = new List<XgLabelCount>();
+            // Old saves where a story pack was already bought or offered keep it: those count as asked and answered.
+            foreach (var s in StoryPacks)
+            {
+                string ds = (string)s[0];
+                if ((S.dataOffers.Contains(ds + ".story") || S.storyOffered.Contains(ds + ".story")) && !S.dataAsked.Contains(ds)) S.dataAsked.Add(ds);
+            }
             if (S.dataExcluded == null) S.dataExcluded = new List<string>();
             S.dataOffers.RemoveAll(id => DataOfferDef(id) == null);
             S.dataExcluded.RemoveAll(id => !PackSwitchable(DataOfferDef(id)) || id.EndsWith(".story", StringComparison.Ordinal));

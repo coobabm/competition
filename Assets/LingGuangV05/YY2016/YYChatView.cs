@@ -315,6 +315,8 @@ namespace LingGuangV05.Desktop.YY
             for (int i = 0; i < tools.Length; i++) SetButton("Tool" + tools[i], LingGuangV05.Desktop.XingGuang.XgIcons.Has("yy", tools[i].ToLowerInvariant()) ? StripGlyph(toolText[i]) : toolText[i]);
             if (input.placeholder is TMP_Text ph) ph.text = Lang.T("说点什么……");
             RebuildChoices();
+            RefreshRentTools();
+            RefreshLearningTools();
 
             // sessions, sorted by latest message
             var order = new List<YYContact>();
@@ -387,7 +389,7 @@ namespace LingGuangV05.Desktop.YY
                 bool mine = m.from == YYChatHub.Me;
                 var who = YYChatHub.Contact(m.from);
                 var photo = AuthoredPhoto(m);
-                float h = m.kind == YYKind.File ? FileCard(y, m, mine, who, width) : IsSticker(m) ? StickerBubble(y, m, mine, who, width) : photo != null ? PhotoBubble(y, m, who, maxBubble, photo) : Bubble(y, m, mine, who, width, maxBubble);
+                float h = m.kind == YYKind.Transfer ? RentCard(y, m, mine, width) : m.kind == YYKind.File ? FileCard(y, m, mine, who, width) : IsSticker(m) ? StickerBubble(y, m, mine, who, width) : photo != null ? PhotoBubble(y, m, who, maxBubble, photo) : Bubble(y, m, mine, who, width, maxBubble);
                 y += h + 14;
             }
             scrollContent.sizeDelta = new Vector2(0, y + 8);
@@ -449,7 +451,8 @@ namespace LingGuangV05.Desktop.YY
             var rt = probe.rectTransform;
             rt.offsetMin = new Vector2(left + padX, -y - nameH - padY - th); rt.offsetMax = new Vector2(left + padX + tw, -y - nameH - padY);
             if (!mine && m.from == YYChatHub.LingGuangId) Rating(m, left + bw + 8, -y - nameH - bh);
-            return Mathf.Max(avatar, bh + nameH);
+            float bubbleHeight = Mathf.Max(avatar, bh + nameH);
+            return bubbleHeight + LearningBubble(m, y + bubbleHeight + 4, width);
         }
 
         // ───────────── 灵光: 赞 / 踩 and its notes ─────────────
@@ -513,10 +516,50 @@ namespace LingGuangV05.Desktop.YY
             if (message.from == YYChatHub.GirlfriendId
                 && (message.text == "[图片] 楼下那只橘猫" || message.text == "[图片] the orange cat downstairs" || message.text == "[图片] 宿舍门口那只橘猫" || message.text == "[图片] the cat at the dorm gate"))
                 return DesktopArt.Picture("chat_qingwen_cat");
-            // DeliverEra writes these lines to the netbar group with a localized author prefix.
-            if (message.from == YYChatHub.EraGroup
-                && (message.text == "[阿杰] [图片：葛优躺] 今天的我。" || message.text == "[A-Jie] [Image: Ge You slouch] Me today."))
-                return DesktopArt.Picture("chat_geyou");
+            // DeliverEra writes the group's photo lines as 「[谁] [图片：标签] 配字」; the label picks the photo
+            // (Resources/LingGuangV05/Media/Photos/<key>). A missing file falls back to the plain text line.
+            if (message.from == YYChatHub.EraGroup)
+            {
+                string label = PhotoLabel(message.text);
+                if (label != null && GroupPhotos.TryGetValue(label, out var key)) return DesktopArt.Picture(key);
+            }
+            return null;
+        }
+
+        /// <summary>The group's photo labels (zh and en, as written in era_events.json) → the photo file.</summary>
+        static readonly System.Collections.Generic.Dictionary<string, string> GroupPhotos = new System.Collections.Generic.Dictionary<string, string>
+        {
+            { "葛优躺", "chat_geyou" }, { "Ge You slouch", "chat_geyou" },
+            { "学士服合影", "chat_lili_grad" }, { "graduation photo", "chat_lili_grad" },
+            { "鼓浪屿", "chat_lili_gulangyu" }, { "Gulangyu", "chat_lili_gulangyu" },
+            { "青海湖", "chat_lili_qinghai" }, { "Qinghai Lake", "chat_lili_qinghai" },
+            { "断桥", "chat_lili_westlake" }, { "Broken Bridge", "chat_lili_westlake" },
+            { "1080 开箱", "chat_ajie_1080" }, { "1080 unboxing", "chat_ajie_1080" },
+            { "凌晨的电视", "chat_xg_tv" }, { "TV at 3 a.m.", "chat_xg_tv" },
+            { "加班的工位", "chat_dw_desk" }, { "desk at the office", "chat_dw_desk" },
+            { "网吧大屏", "chat_dw_cafe" }, { "café big screen", "chat_dw_cafe" },
+            { "亮黑色 iPhone 7", "chat_dw_iphone" }, { "jet-black iPhone 7", "chat_dw_iphone" },
+            { "天亮的窗户", "chat_xg_dawn" }, { "window at dawn", "chat_xg_dawn" },
+            { "快递堆", "chat_lili_parcels" }, { "pile of parcels", "chat_lili_parcels" },
+            { "电影票根", "chat_lili_ticket" }, { "ticket stubs", "chat_lili_ticket" },
+            { "泡面和显示器", "chat_ajie_noodles" }, { "instant noodles by the monitor", "chat_ajie_noodles" },
+        };
+
+        /// <summary>Photos drawn as a scene, not a real snapshot: they carry the 「情景配图」 note.</summary>
+        static bool IsSceneArt(Sprite photo) => photo != null && photo.name == "Photos/chat_geyou";
+
+        /// <summary>「[阿杰] [图片：葛优躺] 今天的我。」 → 「葛优躺」 (also 「[Image: …]」); null when the line has no photo.</summary>
+        static string PhotoLabel(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+            foreach (var open in new[] { "[图片：", "[Image: " })
+            {
+                int a = text.IndexOf(open, StringComparison.Ordinal);
+                if (a < 0) continue;
+                a += open.Length;
+                int b = text.IndexOf(']', a);
+                if (b > a) return text.Substring(a, b - a).Trim();
+            }
             return null;
         }
 
@@ -533,7 +576,14 @@ namespace LingGuangV05.Desktop.YY
                     caption.Substring(1, end - 1), 12, C.Muted, TextAlignmentOptions.MidlineLeft);
                 caption = caption.Substring(end + 1).TrimStart();
             }
-            bool illustratedMeme = message.from == YYChatHub.EraGroup;
+            // Only drawn scenes (the meme) carry the note; the friends' snapshots look like real phone photos.
+            bool illustratedMeme = message.from == YYChatHub.EraGroup && IsSceneArt(photo);
+            // The caption keeps only the friend's words: the 「[图片：…]」 tag is now the picture itself.
+            if (message.from == YYChatHub.EraGroup)
+            {
+                int tagEnd = caption.StartsWith("[图片：", StringComparison.Ordinal) || caption.StartsWith("[Image: ", StringComparison.Ordinal) ? caption.IndexOf(']') : -1;
+                if (tagEnd > 0) caption = caption.Substring(tagEnd + 1).TrimStart();
+            }
             float noteHeight = illustratedMeme ? 30 : 0;
             float photoWidth = Mathf.Min(240, maxBubble - padding * 2);
             float photoHeight = Mathf.Min(220, photoWidth * photo.rect.height / photo.rect.width);
@@ -747,7 +797,13 @@ namespace LingGuangV05.Desktop.YY
                 string text = choice;
                 var b = FlatButton(choiceStrip, text, () => { hub.Send(target, text); stickBottom = true; dirty = true; }, 14, Color.white, C.Mine);
                 var rt = (RectTransform)b.transform;
-                float width = 28 + text.Length * (GameText.IsEnglish ? 7.5f : 15f);
+                float width = target == YYChatHub.EraGroup ? Mathf.Max(70, (choiceStrip.rect.width - 40) / 3) : 28 + text.Length * (GameText.IsEnglish ? 7.5f : 15f);
+                if (target == YYChatHub.EraGroup)
+                {
+                    var label = b.GetComponentInChildren<TMP_Text>();
+                    label.fontSize = 13; label.textWrappingMode = TextWrappingModes.NoWrap; label.overflowMode = TextOverflowModes.Ellipsis;
+                    UiTip.Add(b, () => text);
+                }
                 rt.anchorMin = rt.anchorMax = new Vector2(0, .5f);
                 rt.offsetMin = new Vector2(x, -13); rt.offsetMax = new Vector2(x + width, 13);
                 b.name = "Choice";

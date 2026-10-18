@@ -12,7 +12,7 @@ namespace LingGuangV05.Desktop
         /// <summary>The drawn icon (Resources/LingGuangV05/Icons/desktop) for this application, or null to use the vector shape below.</summary>
         Sprite Drawn()
         {
-            string id = applicationId == "lingguang" ? "kk_exe" : applicationId == "xunbao" || applicationId == "home" ? applicationId : null;
+            string id = applicationId == "ai-files" ? "delivery_folder" : applicationId == "lingguang" ? "kk_exe" : applicationId == "xunbao" || applicationId == "home" ? applicationId : null;
             return id == null ? null : LingGuangV05.Desktop.XingGuang.XgIcons.Get("desktop", id);
         }
 

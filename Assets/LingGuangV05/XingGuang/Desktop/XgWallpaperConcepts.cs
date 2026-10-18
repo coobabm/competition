@@ -45,6 +45,8 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBrainWallpaperPresentation presentation;
         Transform initialCenter;
         float next;
+        float presentationRotation;
+        public void RearrangeForAbility(int ability) { presentationRotation=ability*.19f;next=0; }
         public int MeshBuilds { get; private set; }
         internal XgWallpaperTraining TrainingVisual { get; set; }
         internal void RefreshTrainingSnapshot() { next = 0; Update(); }
@@ -89,6 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             ObserveLessonSource();
+            if(presentation!=null&&!presentation.DrawDue(ref next))return;
             TickLessonPulse();
             if (wallpaper == null || controller == null || controller.runtime == null || !controller.runtime.isActiveAndEnabled) return;
             float reveal = Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / .6f);
@@ -99,8 +102,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var board = controller.Sim?.S.board;
             ObserveStructure(board);
             UpdateAttentionLabels();
-            if (presentation != null ? !presentation.DrawDue(ref next) : Time.unscaledTime < next) return;
-            if (presentation == null) next = Time.unscaledTime + 1f / 30;
+            if (presentation == null && Time.unscaledTime < next) return;
+            if (presentation == null) next = Time.unscaledTime + 1f / 15;
             cells.Clear(); positions.Clear(); links.Clear(); pins.Clear(); linkedPairs.Clear(); Array.Clear(regionCounts, 0, regionCounts.Length);
             ClearDust();
             SyncRegions(board);
@@ -124,6 +127,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     int region = Region(concept.region), index = regionCounts[region]++;
                     var position = RegionCenter(region) + Vector2.Scale(new Vector2(.06f, .06f), LayoutPosition(architectures[region], index, regionTotals[region]));
                     position = StructurePosition(concept.id, region, position);
+                    if(wallpaper.WindowMode && presentationRotation!=0) { var center=RegionCenter(region);var d=position-center;float c=Mathf.Cos(presentationRotation),sn=Mathf.Sin(presentationRotation);position=center+new Vector2(d.x*c-d.y*sn,d.x*sn+d.y*c); }
                     positions[concept.id] = position;
                     cells.Add(new Cell { id = concept.id, region = region, layer = index % 3, uv = position, tint = Tint(concept), strength = Strength(concept) });
                     if (concept.pinned) pins.Add(new Pin { id = concept.id, uv = position, inset = 8 });

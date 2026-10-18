@@ -62,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             Juice.Play(XgJuice.Sfx.Id.Click);
             if (FeatureOpen("backpack")) ShowTab("backpack");
-            else ShowToast(T("灵光学会第一件事后，这里会有稀有道具。", "Rare items turn up here once 灵光 has learned its first thing."), 3);
+            else ShowToast(T(("灵光学会第一件事后，这里会有稀有道具。" .Replace("灵光", Sim.AiDisplayName)), ("Rare items turn up here once 灵光 has learned its first thing." .Replace("灵光", Sim.AiDisplayName))), 3);
         }
 
         void RefreshRelicStrip()
@@ -119,7 +119,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 Juice.Play(XgJuice.Sfx.Id.Fanfare, 1.1f, .5f);
                 foreach (var c in pickCards) if (c != null) Juice.Knock(c, .1f, Vector2.zero, .35f);
             }
-            pickTitle.text = T("灵光学会了新东西。挑一件稀有道具", "灵光 learned something new. Pick a rare item");
+            pickTitle.text = T(("灵光学会了新东西。挑一件稀有道具" .Replace("灵光", Sim.AiDisplayName)), ("灵光 learned something new. Pick a rare item" .Replace("灵光", Sim.AiDisplayName)));
             pickSub.text = T("它进背包后，随时可以装备或换下", "It goes in the backpack; equip or swap it any time");
         }
 
@@ -158,7 +158,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var name = ui.Text(Rect("Name", rt, new Vector2(0, 1), Vector2.one, new Vector2(12, -154), new Vector2(-12, -122)), XgRelics.Name(r, en), 19, XgDark.Ink, TextAlignmentOptions.Center);
             name.textWrappingMode = TextWrappingModes.NoWrap; name.overflowMode = TextOverflowModes.Ellipsis; name.fontStyle = FontStyles.Bold;
             ui.Text(Rect("Flavor", rt, new Vector2(0, 1), Vector2.one, new Vector2(16, -214), new Vector2(-16, -156)), XgRelics.Flavor(r, en), 14, XgDark.Muted, TextAlignmentOptions.Top);
-            ui.Text(Rect("Effect", rt, new Vector2(0, 1), Vector2.one, new Vector2(16, -262), new Vector2(-16, -216)), XgRelics.Effect(r, en), 16, XgDark.Money, TextAlignmentOptions.Top);
+            ui.Text(Rect("Effect", rt, new Vector2(0, 1), Vector2.one, new Vector2(16, -262), new Vector2(-16, -216)), XgRelics.Effect(r, en).Replace("灵光", Sim.AiDisplayName), 16, XgDark.Money, TextAlignmentOptions.Top);
             var pair = XgRelics.PairOf(r.id);
             if (pair != null)
             {

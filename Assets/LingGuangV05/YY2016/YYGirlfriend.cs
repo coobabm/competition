@@ -73,7 +73,7 @@ namespace LingGuangV05.Desktop.YY
         void Awake() { Instance = this; runtime = GetComponent<ChapterOneRuntime>() ?? FindAnyObjectByType<ChapterOneRuntime>(); }
         void OnDestroy() { if (Instance == this) Instance = null; if (hub != null && hub.Girlfriend == this) hub.Girlfriend = null; }
 
-        XgSim Lab { get { if (labController == null) labController = FindAnyObjectByType<XingGuangController>(); return labController != null ? labController.Sim : null; } }
+        XgSim Lab { get { if (labController == null) labController = XingGuangController.Instance; return labController != null ? labController.Sim : null; } }
         int Stage => Lab != null ? Lab.S.stage : 0;
         GfNow Now => GfNow.Of(runtime.Sim.S);
         YYConversation Conv => hub.Conversation(YYChatHub.GirlfriendId);
@@ -103,6 +103,7 @@ namespace LingGuangV05.Desktop.YY
             var now = Now;
             var act = GirlfriendRules.Schedule(g, now);
             foreach (var e in GirlfriendRules.Tick(g, now)) Handle(e);
+            foreach (var o in GirlfriendRules.ReceiveHeld(g, now)) ParcelHere(o);
             foreach (var a in GirlfriendRules.Deliver(g, now)) Arrived(a);
             Finale(g, now);
             StepTyping(g);
@@ -228,7 +229,11 @@ namespace LingGuangV05.Desktop.YY
             if (g == null || !g.started || runtime == null || runtime.Sim == null) return;
             var now = Now;
             double packet = nextPacketAmount;
+            bool giftWasSent = false;
             nextPacketAmount = 0;
+            // A gift only goes to her when he says so himself (「送你……」 naming a gift he holds); the AI cannot give it for him.
+            var sent = GirlfriendRules.GiveFromPlayerLine(g, now, text, LastPlayerLineByAi());
+            if (sent != null) { GiftSent(sent); giftWasSent = true; }
             var turn = GirlfriendRules.OnPlayerLine(g, now, text);
             foreach (var e in turn.events) Handle(e);
             turn.events.Clear();
@@ -240,7 +245,7 @@ namespace LingGuangV05.Desktop.YY
             string[] scripted = null;
             bool ruled = false;
             Action after = null;
-            if (ArcHeard(g, text, ref scripted, ref situation)) ruled = scripted != null;
+            if (packet <= 0 && !giftWasSent && ArcHeard(g, text, ref scripted, ref situation)) ruled = scripted != null;
             else if (packet > 0)
             {
                 var o = GirlfriendRules.Packet(g, now, packet);
@@ -664,11 +669,52 @@ namespace LingGuangV05.Desktop.YY
             runtime.Sim.S.money -= gift.price;
             var o = GirlfriendRules.Order(g, now, giftId);
             runtime.MarkDirty();
-            var arrive = GameCalendar.DateOf(o.arriveDay);
             message = gift.id == GirlfriendRules.GiftMilkTea
-                ? Lang.T("下单成功！骑手已接单，预计 30 分钟送到她楼下。")
-                : T("下单成功！包邮，预计 " + arrive.Month + " 月 " + arrive.Day + " 日送达。", "Ordered! Free shipping, arriving " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture) + ".");
+                ? T("买好了一张奶茶外卖券。去 YY 跟她说「请你喝奶茶」，骑手才会出发。", "Bubble-tea voucher bought. Tell her in YY you're treating her, and the rider sets off.")
+                : T("下单成功！明天送到你家。到了以后，去 YY 跟她说「送你……」，或点「礼物」，才会寄给她。", "Ordered! It reaches you tomorrow. Then tell her in YY it's for her, or press Gift, to send it on.");
             return true;
+        }
+
+        /// <summary>Gifts in his hands, waiting to be given (the 「礼物」 panel in her chat).</summary>
+        bool LastPlayerLineByAi()
+        {
+            var conv = Conv;
+            if (conv == null) return false;
+            for (int i = conv.messages.Count - 1; i >= 0; i--)
+                if (conv.messages[i].from == YYChatHub.Me) return conv.messages[i].byAi;
+            return false;
+        }
+
+        public List<GfGiftOrder> HeldGifts => G != null ? GirlfriendRules.Held(G) : new List<GfGiftOrder>();
+
+        /// <summary>The 「礼物」 panel: he gives one in her chat. The line goes through the normal chat path, so she reacts to it.</summary>
+        public bool GiveFromPanel(string giftId)
+        {
+            var gift = GirlfriendRules.Gift(giftId);
+            if (gift == null || hub == null || G == null || !GirlfriendRules.Held(G).Exists(o => o.gift == giftId)) return false;
+            hub.Send(YYChatHub.GirlfriendId, gift.id == GirlfriendRules.GiftMilkTea
+                ? T("请你喝奶茶，" + gift.zh + "，马上到～", "A gift for you: " + gift.en)
+                : T("送你的：" + gift.zh, "A gift for you: " + gift.en));
+            return true;
+        }
+
+        void ParcelHere(GfGiftOrder o)
+        {
+            var gift = GirlfriendRules.Gift(o.gift);
+            if (gift == null) return;
+            PrologueDirector.Desk?.StoryPopup(Lang.T("淘货"), T("快递到了：「" + gift.zh + "」在你这儿。去 YY 跟她说「送你……」或点「礼物」，才会寄给她。", "Delivered: \"" + gift.en + "\" is with you. Tell her in YY it's for her, or press Gift, to send it on."), 7);
+            runtime.MarkDirty();
+        }
+
+        void GiftSent(GfGiftOrder o)
+        {
+            var gift = GirlfriendRules.Gift(o.gift);
+            if (gift == null) return;
+            var arrive = GameCalendar.DateOf(o.arriveDay);
+            System(gift.id == GirlfriendRules.GiftMilkTea
+                ? T("骑手已接单，大约 30 分钟送到她楼下。", "The rider is on the way; about 30 minutes to her building.")
+                : T("「" + gift.zh + "」寄出了，预计 " + arrive.Month + " 月 " + arrive.Day + " 日到她住处。", "\"" + gift.en + "\" sent; it reaches her home on " + arrive.ToString("d MMMM", CultureInfo.InvariantCulture) + "."));
+            runtime.MarkDirty();
         }
 
         void Arrived(GfArrival a)

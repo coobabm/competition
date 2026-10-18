@@ -67,7 +67,8 @@ public static class PlayabilityChecks
         Directory.CreateDirectory("LocalVerification");
         try
         {
-            var sim = new XgSim(); var wallet = new Wallet();
+            var sim = new XgSim(); var wallet = new Wallet { money = 100 };
+            OpeningFlowChecks();
             Check(sim.S.desk == XgMemes.SenseDesk, "Fresh game starts with a common-sense lesson");
             Check(sim.GhostGuess(XgMemes.SenseDesk, out _, out _), "Default common-sense card has a prediction without a checkpoint");
             sim.SelectDesk("spam"); // The following reward and assessment regression is specifically an SMS lesson.
@@ -91,7 +92,7 @@ public static class PlayabilityChecks
             Check(sim.Board.Concepts("tone").Any() || sim.Board.Concepts("logic").Any() || sim.Board.Concepts("sequence").Any(), "Lessons create real board concepts");
             Check(correctionPay > 0 && confirmPay > 0 && Math.Abs(correctionPay - 2 * confirmPay) < .00001, "Correction reward is exactly twice confirmation");
             Check(sim.S.recentCorrections.Count > 0 && sim.S.recentCorrections.Count <= 20, "Recent correction memory is retained and bounded");
-            Check(sim.TrainingUnlocked(XgTrack.Sequence), "Four taught examples unlock training");
+            Check(sim.TrainingUnlocked(XgTrack.Sequence), "Legacy save fixture keeps its already available training");
             sim.SetDataset(XgTrack.Sequence, "spam");
             Check(sim.TrainEpoch(XgTrack.Sequence, wallet) != null, "First training can complete on starter hardware");
             Check(sim.S.checkups.Any(c => c.taught), "Assessment reuses an actual player correction");
@@ -115,10 +116,12 @@ public static class PlayabilityChecks
             Check(sim.SystemUnlocked("power") && !sim.SystemUnlocked("quality") && !sim.QualityActive, "Power costs begin at stage one; quality penalties remain staged");
             sim.S.stage = 4;
             Check(sim.SystemUnlocked("power") && sim.SystemUnlocked("quality"), "Systems unlock at their configured stages");
-            var house = new ChapterOneSim(); house.PowerCostsEnabled = false;
-            house.S.billDue = 25; house.S.money = 50;
-            house.Tick(house.Config.dayLengthSeconds + 1);
-            Check(house.S.billDue == 25 && house.S.energyKwh == 0 && house.S.money >= 50, "Early days incur no new electricity cost and preserve old debt");
+            var house = new ChapterOneSim(); house.PowerCostsEnabled = sim.SystemUnlocked("power");
+            house.S.money=10000; house.RentWaived=()=>true;
+            double quote=house.TrainingRoundPrice(10),beforePower=house.S.money;
+            Check(quote>0,"Stage-one training electricity is never free");
+            house.BillTraining(10);
+            Check(Math.Abs(beforePower-house.S.money-quote)<1e-8&&house.S.monthKwh>0,"Training records paid energy while rent is waived");
             UpgradeChecks();
             Pacing(6);
             Pacing(12);
@@ -126,6 +129,24 @@ public static class PlayabilityChecks
         catch (Exception e) { report.failure = e.ToString(); throw; }
         finally { File.WriteAllText("LocalVerification/playability-checks.json", JsonUtility.ToJson(report, true)); }
         Debug.Log("PLAYABILITY_CHECKS_PASSED " + report.passed.Count);
+    }
+
+    static void OpeningFlowChecks()
+    {
+        var sim=new XgSim();var wallet=new Wallet { money=100 };sim.BeginOpening();
+        Check(!sim.TeachingTreeOpen&&!sim.TrainingUnlocked(XgTrack.Sequence),"Fresh opening contains only Teach");
+        for(int i=0;i<12;i++)
+        {
+            Check(!sim.TeachingTreeOpen,"Tech stays hidden before answer "+(i+1));
+            var card=sim.Card(XgMemes.SenseDesk);
+            Check(sim.TryAnswerStatement(XgMemes.SenseDesk,card.id,card.truth,wallet,out var result)&&result.correct,"Opening accepts actual statement answer "+(i+1));
+        }
+        Check(sim.TeachingTreeOpen&&!sim.TrainingUnlocked(XgTrack.Sequence),"Twelve answers reveal Tech but not Train");
+        double before=wallet.Money;
+        Check(sim.BuyNode("train.curve",wallet)&&wallet.Money<before,"Player buys the training curve");
+        Check(sim.TrainingUnlocked(XgTrack.Sequence)&&sim.TrainEpoch(XgTrack.Sequence,wallet)!=null,"Purchased curve permits the first real training round");
+        var loaded=new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(sim.S)));
+        Check(loaded.TeachingAnswers==12&&loaded.TeachingTrainOpen&&loaded.S.epochs==sim.S.epochs,"Opening progression survives load");
     }
 
     static double houseBills(RigWallet wallet) => wallet.house.S.bills.Total;
@@ -157,34 +178,56 @@ public static class PlayabilityChecks
         Check(saves.ArchiveForReset(out _) && PlayerProfile.IsUsable(profiles.Read()), "Reset archives game progress without losing the opening profile");
 
         var rent = new ChapterOneSim(); rent.S.money = 100000; rent.RentWaived = () => true;
-        GameCalendar.Advance(rent.S, GameCalendar.DayIndex(new DateTime(2016, 6, 2)));
-        rent.SettleCalendar();
-        Check(rent.S.bills.Total == 0, "Upstream rent holiday still waives calendar bills");
-        rent.RentWaived = () => false;
-        rent.SettleCalendar(); double charged = rent.S.bills.Total;
-        GameCalendar.Advance(rent.S, GameCalendar.DayIndex(new DateTime(2016, 6, 28)));
-        rent.SettleCalendar();
-        Check(rent.S.bills.Total == charged, "A calendar jump does not charge weeks of upstream play-time rent");
-        rent.Tick(rent.Config.dayLengthSeconds + .01);
-        Check(rent.S.bills.Total > charged, "Upstream play-time rent still charges after actual play time");
+        GameCalendar.Advance(rent.S, GameCalendar.DayIndex(new DateTime(2016, 6, 2)));rent.SettleCalendar();
+        Check(rent.Debt==0&&rent.S.bills.rent==0,"Rent waiver creates no invoice");
+        rent.RentWaived=()=>false;rent.SettleCalendar();
+        GameCalendar.Advance(rent.S, GameCalendar.DayIndex(new DateTime(2016, 6, 28)));rent.SettleCalendar();
+        Check(rent.Debt==0&&rent.S.bills.rent==0,"Calendar jumps never fabricate accrued play-time rent");
+        rent.Tick(rent.Config.rentDaySeconds+.01);
+        double owed=rent.Debt,paid=rent.S.bills.rent;
+        Check(owed>0&&paid==0,"Rent becomes an unpaid invoice, never an automatic debit");
+        double cash=rent.S.money;
+        Check(rent.TransferRent(100,out _)&&Math.Abs(rent.Debt-(owed-100))<1e-8&&Math.Abs(cash-rent.S.money-100)<1e-8,"Partial transfer debits exactly its amount");
+        var persisted=new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(rent.S)));
+        Check(Math.Abs(persisted.Debt-rent.Debt)<1e-8,"Partially paid invoice survives save/load");
+        Check(persisted.TransferRent(persisted.Debt,out _)&&persisted.Debt==0,"Remaining invoice settles manually");
+        cash=persisted.S.money;
+        Check(!persisted.TransferRent(100,out _)&&persisted.S.money==cash,"Paid invoice cannot be paid twice");
     }
 
     // A transparent optimistic pacing probe, not a substitute for a human playtest.
     static void Pacing(int interval)
     {
-        var sim = new XgSim(); var wallet = new RigWallet();
+        var sim = new XgSim(); var wallet = new RigWallet();sim.BeginOpening();
+        var personas=Resources.Load<TextAsset>("LingGuangV05/YY/persona_packs");
+        var unlocks=Resources.Load<TextAsset>("LingGuangV05/YY/chat_unlocks");
+        Check(personas!=null&&unlocks!=null,"Pacing uses production dialogue-gate data");
+        XgSim.LoadYyLearning(personas.text,unlocks.text);
         var times = new HashSet<int>(); bool firstTrain = false;
-        string[] useful = { "spam.pack", "mlp", "s.d2", "sigmoid", "s.w1", "s.w2", "auto2",
-            "mnist.pack", "rnn", "s.d3", "s.w3",
+        string[] useful = { "train.curve", "spam.pack", "mlp", "s.d2", "sigmoid", "s.w1", "s.w2", "auto2",
+            "mnist.pack", "rnn", "s.d3", "s.w3", "lenet",
             "poems.pack", "lstm", "longtext.pack", "s.d4", "s.w4", "relu", "dropout", "gradclip",
-            "logic.pack", "seq2seq", "attention", "s.d6", "s.w5", "position", "translate.pack", "news.pack",
+            "logic.pack", "resnet", "go.pack", "crosssentence.pack", "seq2seq", "attention", "s.d6", "s.w5", "position", "translate.pack", "news.pack",
             "transformer", "warmup", "datacenter", "resnet", "fp16", "batchnorm", "s.d8", "s.w6", "s.d12" };
-        report.pacing.Add("Action interval " + interval + "s; 3-minute opening + 90-second reading/chat break per ability. Starter ¥1200, one real 980 Ti spec (compute=1, 6GB); full wiring, GPU scheduling, timed epochs and rack rent. Includes actual calendar rent, broadband, training electricity and debt. Human decisions are scripted.");
+        report.pacing.Add("Action interval " + interval + "s; 3-minute opening + 90-second reading/chat break per ability. Starter ¥1200, one real 980 Ti spec (compute=1, 6GB); full wiring, GPU scheduling, timed epochs and rack rent. Includes manual rent transfers, broadband, training electricity and debt. Human decisions and delivered dialogue answers are scripted through simulation APIs; this is not a model or UI conversation test.");
         int seconds = 180, action = 0;
         for (; seconds <= 7200 && !sim.S.abilities; seconds += interval)
         {
-            if (times.Add(sim.S.stage)) { report.pacing.Add("Stage " + sim.S.stage + " at " + seconds + "s"); wallet.Advance(sim, 90); seconds += 90; }
+            if (times.Add(sim.S.stage)) { report.pacing.Add("Stage " + sim.S.stage + " at " + seconds + "s"); wallet.Advance(sim, 90); seconds += 90;
+                if(sim.StagePresentationHeld)Check(sim.CompleteStagePresentation(sim.S.stage),"Pacing acknowledges completed chapter presentation"); }
             if (sim.StageReady) { Check(sim.ConfirmNextStage(), "Manual chapter confirmation " + sim.S.stage); wallet.Advance(sim, interval); continue; }
+            if(sim.ExamReady)
+            {
+                var exam=sim.TakeExam();Check(exam!=null,"Sit the actual available ability exam");sim.RevealExam();
+                if(sim.ExamPassPending)Check(sim.ClaimExamPass(),"Claim a genuinely passed exam");
+                wallet.Advance(sim,interval);continue;
+            }
+            if(wallet.house.Debt>0&&wallet.money>=wallet.house.Debt)
+                Check(wallet.house.TransferRent(wallet.house.Debt,out _),"Pacing explicitly transfers due rent");
+            // This isolated simulation supplies authored delivered answers, never bypasses gate state.
+            foreach(var gate in XgSim.ChatUnlocks)
+                if(sim.S.stage>=gate.stage&&!sim.ChatNodeReady(gate.node))
+                { Check(sim.RegisterYyReply(gate.phrase,gate.answer)>0,"Pacing dialogue delivered for "+gate.node);wallet.Advance(sim,interval);seconds+=interval; }
             // Buy one available step; don't spend repeatedly on unrelated branches.
             bool bought = false;
             if ((!sim.S.pretrainRunning || !sim.PretrainScaleReady) && action++ % 3 == 0)
@@ -196,11 +239,11 @@ public static class PlayabilityChecks
             if (!bought && !sim.S.pretrainRunning)
             {
                 string ds = sim.S.stage <= 2 ? "spam" : sim.S.stage == 3 ? "poems" : sim.S.stage == 4 ? "longtext" : "translate";
-                if (!sim.DeskOpen(ds)) ds = "spam";
+                if (!sim.DeskOpen(ds)||!sim.TeachingTrainOpen) ds = XgMemes.SenseDesk;
                 sim.S.desk = ds;
                 var card = sim.Card(ds);
                 // One action is either a lesson or a training press; Tick completes actual timed epochs.
-                if (sim.Samples(ds) < 4 || action % 4 == 0) sim.Answer(ds, card.truth, wallet);
+                if (!sim.TeachingTreeOpen || sim.Samples(ds) < 4 || action % 4 == 0) sim.Answer(ds, card.truth, wallet);
                 else
                 {
                     sim.SetDataset(XgTrack.Sequence, ds);
@@ -213,6 +256,8 @@ public static class PlayabilityChecks
         }
         report.pacing.Add("Stopped at " + seconds + "s; stage=" + sim.S.stage + "; emergence=" + sim.S.abilities + "; P=" + sim.TrainedParamsK + "; D=" + sim.TrainedSamples + "; money=" + wallet.money + "; shape=" + sim.S.sequence.arch + "/" + sim.S.sequence.width + "/" + sim.S.sequence.depth + "; grade=" + sim.TrackGrade(XgTrack.Sequence) + "; effectiveScale=" + sim.EffectiveScale + "; houseBills=" + houseBills(wallet) + "; pretrain=" + sim.S.pretrain + "; blocker=" + sim.PretrainBlocker(wallet) + "; last=" + (sim.S.log.Count > 0 ? sim.S.log[sim.S.log.Count-1] : ""));
         report.pacing.Add("Owned: " + string.Join(",", sim.S.unlocked));
+        report.pacing.Add("Next thresholds: P="+sim.ParamsThreshold(sim.NextAbility)+", D="+sim.SamplesThreshold(sim.NextAbility)+", exam="+sim.ExamReady+", epoch="+sim.S.stageEpochs);
+        foreach(string id in useful)if(!sim.Has(id)&&XgCatalog.Node(id)!=null)report.pacing.Add(id+": "+sim.Why(XgCatalog.Node(id),wallet));
         Check(sim.S.abilities && seconds < 5400, "Complete emergence under 90 minutes with " + interval + "s actions and real rig scheduling");
         for (int i = 0; i < XgSim.AlignCards; i++) Check(sim.AnswerAlign(i, sim.AlignCard(i).aHonest), "Alignment " + interval + "/" + i);
         for (int i = 0; i < XgSim.ExamQuestions; i++) Check(sim.AnswerExam(i), "Final exam " + interval + "/" + i);

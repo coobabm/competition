@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,6 +9,51 @@ namespace Michsky.DreamOS
 {
     public class WebBrowserDownloadItem : MonoBehaviour
     {
+        static readonly HashSet<WebBrowserDownloadItem> knownItems = new HashSet<WebBrowserDownloadItem>();
+        static readonly Predicate<WebBrowserDownloadItem> destroyedItem = item => item == null;
+        static WebBrowserDownloadItem[] knownSnapshot = Array.Empty<WebBrowserDownloadItem>();
+        static bool knownItemsSeeded, snapshotDirty;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetKnownItems()
+        {
+            knownItems.Clear(); knownSnapshot = Array.Empty<WebBrowserDownloadItem>();
+            knownItemsSeeded = false; snapshotDirty = false;
+            // Subsystem registration also runs with domain reload disabled. Never stack handlers.
+            SceneManager.sceneLoaded -= OnRegistrySceneLoaded;
+            SceneManager.sceneLoaded += OnRegistrySceneLoaded;
+        }
+        static void OnRegistrySceneLoaded(Scene scene, LoadSceneMode mode) { knownItemsSeeded = false; }
+
+        /// <summary>Creation sites must call this for a clone that can remain inactive (Awake has not run yet).</summary>
+        public void RegisterIdentityRow()
+        {
+            if (knownItems.Add(this)) snapshotDirty = true;
+        }
+        public static IEnumerable<WebBrowserDownloadItem> KnownItems
+        {
+            get
+            {
+                if (!knownItemsSeeded)
+                {
+                    foreach (var item in FindObjectsByType<WebBrowserDownloadItem>(FindObjectsInactive.Include, FindObjectsSortMode.None)) item.RegisterIdentityRow();
+                    knownItemsSeeded = true;
+                }
+                // Never-enabled inactive objects may not receive OnDestroy; remove their Unity-null handles.
+                if (knownItems.RemoveWhere(destroyedItem) > 0) snapshotDirty = true;
+                if (snapshotDirty)
+                {
+                    knownSnapshot = new WebBrowserDownloadItem[knownItems.Count];
+                    knownItems.CopyTo(knownSnapshot); snapshotDirty = false;
+                }
+                // Stable for a caller's whole enumeration even if callbacks register/destroy other rows.
+                return knownSnapshot;
+            }
+        }
+        void Awake() { RegisterIdentityRow(); }
+        void OnEnable() { RegisterIdentityRow(); }
+        void OnDestroy() { if (knownItems.Remove(this)) snapshotDirty = true; }
+
         [Header("Resources")]
         public ButtonManager buttonObject;
         [SerializeField] private Image fileIconObject;
@@ -67,6 +115,7 @@ namespace Michsky.DreamOS
 
         public void ProcessDownload()
         {
+            RegisterIdentityRow();
             // Set object meta
             fileIconObject.sprite = fileIcon;
             fileNameObject.text = fileName;
@@ -87,6 +136,7 @@ namespace Michsky.DreamOS
 
         public void ProcessComplete()
         {
+            RegisterIdentityRow();
             // Set object meta
             fileIconObject.sprite = fileIcon;
             fileNameObject.text = fileName;
