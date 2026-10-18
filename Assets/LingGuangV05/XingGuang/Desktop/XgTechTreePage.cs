@@ -254,7 +254,15 @@ namespace LingGuangV05.Desktop.XingGuang
             Pan.ReduceMotion = Fx.Reduced;
             Pan.minZoom = .5f; Pan.maxZoom = 1.5f;
             Pan.MotionStarted = () => { hovered = null; HideTooltip(); pendingMotionRefresh = true; };
-            Pan.MotionFinished = () => { PlayerPrefs.SetFloat("LingGuang.TechZoom", content.localScale.x); if (pendingMotionRefresh) { pendingMotionRefresh = false; Refresh(); } };
+            Pan.MotionFinished = () =>
+            {
+                PlayerPrefs.SetFloat("LingGuang.TechZoom", content.localScale.x);
+                if (!pendingMotionRefresh) return;
+                pendingMotionRefresh = false;
+                // OnDisable also ends motion. Do not rearrange children while Unity is
+                // deactivating this hierarchy; ShowTab refreshes it when it is shown again.
+                if (root.gameObject.activeInHierarchy && Pan.isActiveAndEnabled) Refresh();
+            };
             Pan.ResetRequested = () => { Toolbar(2); };
             Pan.ZoomChanged = zoom => { foreach (var v in views) v.cost.gameObject.SetActive(zoom >= .7f); };
             bandLayer = Layer("Bands"); linkLayer = Layer("Links"); nodeLayer = Layer("Nodes");

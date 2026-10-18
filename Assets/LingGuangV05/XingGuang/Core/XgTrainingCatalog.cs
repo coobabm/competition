@@ -7,6 +7,13 @@ namespace LingGuangV05.XingGuang
         public static void AddNodes(List<XgNode> nodes)
         {
             XgTrainingLessons.AddAtlas(nodes);
+            // Approved ordinary prices: appended directly, outside XgCatalog.StagePrice.
+            nodes.Add(new XgNode { id=XgSim.RelicExpansion8Node, tree="research", lane="research", target=XgSim.RelicExpansion8Node,
+                stage=3, cost=12000, kind=XgNodeKind.Research, name="道具扩容 I", nameEn="Relic slots I",
+                note="稀有道具装备格从4格扩到8格；已装备道具保持。可选升级，不是升阶前置。", noteEn="Expand equipped relic slots from 4 to 8; keep equipped items. Optional, never required to advance." });
+            nodes.Add(new XgNode { id=XgSim.RelicExpansion12Node, parent=XgSim.RelicExpansion8Node, tree="research", lane="research", target=XgSim.RelicExpansion12Node,
+                stage=4, cost=48000, kind=XgNodeKind.Research, name="道具扩容 II", nameEn="Relic slots II",
+                note="稀有道具装备格从8格扩到12格；已装备道具保持。需先购买道具扩容I。", noteEn="Expand equipped relic slots from 8 to 12; keep equipped items. Requires Relic slots I." });
             Add(nodes,XgSim.DataEntryNode,"train.curve",50,"数据导入","Data Import","把资料装进大脑。\n▶ 开放资料夹、安装与网址","Load files into its brain.\n▶ Opens Files, drag import and URLs");
             Add(nodes,XgSim.LedgerNode,"train.curve",15,"记账本","Ledger","看清每笔钱的去向。\n▶ 打开资金与电力面板","Track where each payment goes.\n▶ Opens funds and power details");
             Add(nodes,"train.holdout","train.curve",60,"留出验证集","Holdout set","留些新题考它。\n▶ 显示新题成绩","Keep unseen questions.\n▶ Shows validation results");

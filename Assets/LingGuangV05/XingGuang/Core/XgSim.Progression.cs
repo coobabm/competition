@@ -135,7 +135,7 @@ namespace LingGuangV05.XingGuang
             if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
             // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
-            if (node.id == LedgerNode || node.id == DataEntryNode) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+            if (node.id == LedgerNode || node.id == DataEntryNode || IsRelicExpansion(node.id)) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
             return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }
@@ -144,6 +144,7 @@ namespace LingGuangV05.XingGuang
         {
             if (node == null) return false;
             if (Has(node.id)) return true;
+            if (IsRelicExpansion(node.id)) return true; // Locked slots must be able to locate their technology.
             if (node.tree == "label") return node.id != "label.brain" && node.id != "label.parallel" || S.stage >= 4;
             if (node.kind == XgNodeKind.Project || node.kind == XgNodeKind.Breakthrough) return false;
             if (node.id == "secret.6") return S.stage >= 6 && S.pretrainStalled;
@@ -168,6 +169,7 @@ namespace LingGuangV05.XingGuang
         {
             if (node == null) return T("未知节点");
             if (Has(node.id)) return null;
+            if (IsRelicExpansion(node.id) && S.stage < node.stage) return T("第 " + node.stage + " 阶段开放", "Opens at stage " + node.stage);
             if (!NodeVisible(node)) return T("还没到这一阶段");
             var teachingBlock = TeachingNodeBlocker(node);
             if (teachingBlock != null) return teachingBlock;
@@ -213,6 +215,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         void ApplyProgressionNode(XgNode node)
         {
+            if (IsRelicExpansion(node.id)) ResizeRelicSlots();
             switch (node.id)
             {
                 case "lenet": if (S.firstSpecialty == "") S.firstSpecialty = "vision"; break;

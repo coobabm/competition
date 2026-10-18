@@ -44,9 +44,13 @@ public static class SidebarLayoutChecks
     static int index=-1,phase,lastFrame=-1,frames;
     static double timeout;
     static bool finishing;
-    static IEnumerator crawlerCheck,ledgerCheck,filesCheck;
+    static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck;
     const string FilesKey="SidebarLayoutChecks.FilesOnly";
+    const string RelicsKey="SidebarLayoutChecks.RelicsOnly";
+    const string ProfileKey="SidebarLayoutChecks.ProfileOnly";
     public static void RunFiles(){SessionState.SetBool(FilesKey,true);Run();}
+    public static void RunRelics(){SessionState.SetBool(RelicsKey,true);Run();}
+    public static void RunProfile(){SessionState.SetBool(ProfileKey,true);RunRelics();}
     static Report report;
     [Serializable] sealed class Report
     {
@@ -148,6 +152,15 @@ public static class SidebarLayoutChecks
                 if(++frames<3)return;
                 EnableFixtureEconomy(runtime);
                 ctl.Open();ctl.View.Open("train");train=ctl.View.Train;originalStoryProbe=StoryFocus.Probe;
+                if(SessionState.GetBool(RelicsKey,false))
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="Isolated Main equipment and profile UI, real LCD input and host purchases; explicit unlock fixtures, not natural progression.";
+                    relicCheck=RelicExpansionUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();}, ClickSidebar,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"relic LCD capture "+filename);report.screenshots.Add(filename);Save();},SessionState.GetBool(ProfileKey,false));
+                    phase=9;frames=0;return;
+                }
                 if(SessionState.GetBool(FilesKey,false))
                 {
                     locale=GameText.Bind(()=>language);
@@ -159,6 +172,13 @@ public static class SidebarLayoutChecks
                     phase=8;frames=0;return;
                 }
                 phase=1;frames=0;return;
+            }
+            if(phase==9)
+            {
+                if(relicCheck.MoveNext())return;
+                (relicCheck as IDisposable)?.Dispose();relicCheck=null;
+                report.checks.Add("Relic expansion actual LCD route, purchase, replacement and stale-save checks passed");
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Relic UI checks passed; screenshots require review");Finish();return;
             }
             if(phase==8)
             {
@@ -294,7 +314,8 @@ public static class SidebarLayoutChecks
         Require(surface.inputEnabled&&surface.isActiveAndEnabled,"LCD input disabled");
         var pointer=new PointerEventData(EventSystem.current){position=screen,button=PointerEventData.InputButton.Left};surface.OnPointerEnter(pointer);
         var routed=Field<PointerEventData>(surface,"hoverData");var hit=routed?.pointerCurrentRaycast.gameObject;
-        Require(hit!=null&&ExecuteEvents.GetEventHandler<IPointerClickHandler>(hit)==target.gameObject&&ExecuteEvents.GetEventHandler<IPointerDownHandler>(hit)==target.gameObject,"Sidebar pointer intercepted: "+target.name+" by "+hit);
+        string hitPath=hit==null?"none":UnityEditor.AnimationUtility.CalculateTransformPath(hit.transform,null);
+        Require(hit!=null&&ExecuteEvents.GetEventHandler<IPointerClickHandler>(hit)==target.gameObject&&ExecuteEvents.GetEventHandler<IPointerDownHandler>(hit)==target.gameObject,"Sidebar pointer intercepted: "+target.name+" by "+hitPath);
         surface.OnPointerDown(pointer);surface.OnPointerUp(pointer);
     }
     // QA keeps the isolated save, but real purchases/rewards require the production host.
@@ -311,6 +332,6 @@ public static class SidebarLayoutChecks
         typeof(ChapterOneRuntime).GetProperty("TestMode").GetSetMethod(true).Invoke(rt,new object[]{false});
         if(rt.TestMode||rt.useDiskSave)throw new InvalidOperationException("Live host fixture isolation failed");
     }
-    static void Finish(){(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();finishing=true;Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
+    static void Finish(){(relicCheck as IDisposable)?.Dispose();relicCheck=null;SessionState.EraseBool(RelicsKey);SessionState.EraseBool(ProfileKey);(filesCheck as IDisposable)?.Dispose();filesCheck=null;SessionState.EraseBool(FilesKey);(ledgerCheck as IDisposable)?.Dispose();ledgerCheck=null;(crawlerCheck as IDisposable)?.Dispose();crawlerCheck=null;locale?.Dispose();locale=null;StoryFocus.Probe=originalStoryProbe;if(emergenceQueue!=null)emergenceQueue.Clear();finishing=true;Application.logMessageReceived-=Log;EditorApplication.update-=Tick;EditorApplication.ExitPlaymode();}
 }
 #endif

@@ -10,14 +10,14 @@ using static LingGuangV05.Desktop.XingGuang.XgUi;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// 养成 › 背包: every rare item the player owns (稀有道具), the four equipped slots on top (big tiles, a dashed box when empty),
+    /// 养成 › 背包: every rare item the player owns (稀有道具), up to twelve equipped slots at the top of the scroll view (big tiles, a dashed box when empty),
     /// the owned permanent items read-only with a link to 道具, and the collection book (an item not yet seen reads 「？？？」).
-    /// Click an item to equip or unequip it; with four equipped, the click asks which slot to replace. Only equipped items work.
+    /// Click an item to equip or unequip it; with every unlocked slot filled, the click asks which slot to replace. Only equipped items work.
     /// Presentation only: the rules are in XgSim.Relics.cs.
     /// </summary>
     public sealed class XgBackpackPage : XgPage
     {
-        const float HeaderHeight = 30, SlotHeight = 118, Gap = 10, TileHeight = 74, ItemHeight = 34, SectionHead = 32;
+        const float HeaderHeight = 48, SlotHeight = 118, Gap = 10, TileHeight = 74, ItemHeight = 34, SectionHead = 32;
 
         sealed class SlotView
         {
@@ -35,28 +35,26 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         TMP_Text header, motto;
-        readonly SlotView[] slots = new SlotView[XgRelics.Slots];
+        readonly SlotView[] slots = new SlotView[XgRelics.MaxSlots];
         readonly List<Tile> owned = new List<Tile>();
         RectTransform content, chooser;
         TMP_Text chooserTitle;
-        readonly XgBtn[] chooserButtons = new XgBtn[XgRelics.Slots];
+        XgBtn chooserCancel;
+        readonly XgBtn[] chooserButtons = new XgBtn[XgRelics.MaxSlots];
         string chooserFor = "", signature = "";
+        XgSim shownSim, chooserSim;
         readonly HashSet<string> fresh = new HashSet<string>();
 
         public override void Build(RectTransform area)
         {
             root = Rect("backpack", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            header = ui.Text(Strip("Header", root, 0, HeaderHeight, 2, 560), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+            header = ui.Text(Strip("Header", root, 0, 24, 2, 2), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             header.textWrappingMode = TextWrappingModes.NoWrap; header.characterSpacing = 2;
-            motto = ui.Text(Rect("Motto", root, new Vector2(1, 1), Vector2.one, new Vector2(-560, -HeaderHeight), new Vector2(0, 0)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineRight);
+            motto = ui.Text(Rect("Motto", root, new Vector2(0, 1), Vector2.one, new Vector2(2, -HeaderHeight), new Vector2(-2, -24)), "", 13, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             motto.textWrappingMode = TextWrappingModes.NoWrap; motto.overflowMode = TextOverflowModes.Ellipsis;
 
-            // The four equipped slots.
-            var row = Rect("Slots", root, new Vector2(0, 1), Vector2.one, new Vector2(0, -HeaderHeight - 8 - SlotHeight), new Vector2(0, -HeaderHeight - 8));
-            for (int i = 0; i < XgRelics.Slots; i++) slots[i] = MakeSlot(row, i);
-
-            // Everything else scrolls.
-            var list = Rect("List", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -HeaderHeight - 8 - SlotHeight - 10));
+            // Equipped and locked slots share the scroll view, so all twelve fit small windows.
+            var list = Rect("List", root, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -HeaderHeight - 8));
             list.gameObject.AddComponent<RectMask2D>();
             Panel(list, new Color(0, 0, 0, 0));
             content = Rect("Content", list, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
@@ -69,7 +67,8 @@ namespace LingGuangV05.Desktop.XingGuang
         SlotView MakeSlot(RectTransform row, int index)
         {
             var s = new SlotView();
-            s.rt = Rect("Slot" + (index + 1), row, new Vector2(index / 4f, 0), new Vector2((index + 1) / 4f, 1), new Vector2(index == 0 ? 0 : Gap / 2, 0), new Vector2(index == 3 ? 0 : -Gap / 2, 0));
+            int col = index % 4; float top = (index / 4) * (SlotHeight + Gap);
+            s.rt = Rect("Slot" + (index + 1), row, new Vector2(col / 4f, 1), new Vector2((col + 1) / 4f, 1), new Vector2(col == 0 ? 0 : Gap / 2, -top - SlotHeight), new Vector2(col == 3 ? 0 : -Gap / 2, -top));
             s.frame = s.rt.gameObject.AddComponent<XgFrameGraphic>();
             var button = s.rt.gameObject.AddComponent<Button>();
             button.targetGraphic = s.frame; button.transition = Selectable.Transition.None;
@@ -86,12 +85,14 @@ namespace LingGuangV05.Desktop.XingGuang
             s.effect = ui.Text(Rect("Effect", s.rt, Vector2.zero, Vector2.one, new Vector2(12, 6), new Vector2(-10, -68)), "", 14, XgDark.Money, TextAlignmentOptions.TopLeft);
             s.effect.overflowMode = TextOverflowModes.Ellipsis;
             s.empty = ui.Text(Rect("Empty", s.rt, Vector2.zero, Vector2.one, new Vector2(10, 8), new Vector2(-10, -8)), "", 14, XgDark.Dim, TextAlignmentOptions.Center);
-            UiTip.Add(s.rt, () => { var r = Sim.RelicInSlot(index); return r == null ? XgRelicUi.EmptyTip(Sim) : XgRelicUi.Tip(Sim, r) + "\n" + Hex(XgDark.Muted) + T("点一下卸下", "Click to unequip") + "</color>"; });
+            UiTip.Add(s.rt, () => { if (index >= Sim.RelicSlotCapacity) return LockedSlotText(index); var r = Sim.RelicInSlot(index); return r == null ? XgRelicUi.EmptyTip(Sim) : XgRelicUi.Tip(Sim, r) + "\n" + Hex(XgDark.Muted) + T("点一下卸下", "Click to unequip") + "</color>"; });
             return s;
         }
 
         public override void Shown()
         {
+            CloseChooser();
+            shownSim = Sim;
             // Remember what was new on arrival so those tiles keep their mark during this visit, then clear the dot.
             fresh.Clear();
             if (Sim != null) { foreach (var id in Sim.S.relicFresh) fresh.Add(id); Sim.MarkRelicsViewed(); }
@@ -101,14 +102,21 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (Sim == null || content == null) return;
+            if (!ReferenceEquals(shownSim, Sim))
+            {
+                shownSim = Sim;
+                CloseChooser();
+                fresh.Clear();
+                signature = "";
+            }
             // Arrivals while this page is open count as seen at once, but keep their "new" mark for this visit.
             if (Sim.RelicsFresh) { foreach (var id in Sim.S.relicFresh) fresh.Add(id); Sim.MarkRelicsViewed(); }
             string sig = BuildSignature() + "|" + Sim.AiDisplayName;
             if (sig != signature) { signature = sig; Rebuild(); }
             int total = XgRelics.All.Length, have = Sim.S.relicOwned.Count;
-            header.text = T("背包 · 稀有道具", "BACKPACK · rare items") + "  <color=#3A5566>" + T("拥有 ", "owned ") + have + "/" + total + T(" · 装备 ", " · equipped ") + Sim.RelicsEquippedCount + "/" + XgRelics.Slots + "</color>";
-            motto.text = T("最多装备 4 件，随时可换；没装备的不生效", "Four equipped at most, swap any time; unequipped items do nothing");
-            for (int i = 0; i < slots.Length; i++) PaintSlot(slots[i], Sim.RelicInSlot(i));
+            header.text = T("背包 · 稀有道具", "BACKPACK · rare items") + "  <color=#3A5566>" + T("拥有 ", "owned ") + have + "/" + total + T(" · 装备 ", " · equipped ") + Sim.RelicsEquippedCount + "/" + Sim.RelicSlotCapacity + "</color>";
+            motto.text = T("装备上限 " + Sim.RelicSlotCapacity + " · 可随时更换", "Up to " + Sim.RelicSlotCapacity + " equipped · swap any time");
+            for (int i = 0; i < slots.Length; i++) PaintSlot(slots[i], Sim.RelicInSlot(i), i);
             foreach (var t in owned) PaintOwned(t);
             if (chooser != null && chooser.gameObject.activeSelf) PaintChooser();
         }
@@ -116,7 +124,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string BuildSignature()
         {
             var sb = new StringBuilder();
-            sb.Append(Sim.English ? 'e' : 'z');
+            sb.Append(Sim.English ? 'e' : 'z').Append(Sim.RelicSlotCapacity);
             foreach (var id in Sim.S.relicOwned) sb.Append(id).Append(',');
             sb.Append('|');
             foreach (var id in Sim.S.relicSeen) sb.Append(id).Append(',');
@@ -125,7 +133,7 @@ namespace LingGuangV05.Desktop.XingGuang
             return sb.ToString();
         }
 
-        void PaintSlot(SlotView s, XgRelic r)
+        void PaintSlot(SlotView s, XgRelic r, int index)
         {
             bool has = r != null;
             s.name.gameObject.SetActive(has); s.rarity.gameObject.SetActive(has); s.effect.gameObject.SetActive(has);
@@ -134,7 +142,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!has)
             {
                 s.frame.Style(new Color32(9, 15, 22, 255), XgDark.Dim, true, 2);
-                s.empty.text = T("空位\n在下面点一件道具装备", "Empty\nClick an item below to equip it");
+                s.empty.text = index >= Sim.RelicSlotCapacity ? LockedSlotText(index) : T("空位\n在下面点一件道具装备", "Empty\nClick an item below to equip it");
                 return;
             }
             var edge = XgRelicUi.RarityColor(r.rarity);
@@ -152,7 +160,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // Self-destroying graphics under a RectMask2D: switch them off before they go (XgGuideHighlight explains the bug).
             foreach (Transform child in content) { child.gameObject.SetActive(false); UnityEngine.Object.Destroy(child.gameObject); }
             owned.Clear();
-            float y = 0;
+            for (int i = 0; i < slots.Length; i++) slots[i] = MakeSlot(content, i);
+            float y = 3 * (SlotHeight + Gap);
             // 1. owned rare items
             y = Section(y, T("拥有的稀有道具", "Rare items you own"), Sim.S.relicOwned.Count + "", null);
             var mine = new List<XgRelic>();
@@ -294,8 +303,20 @@ namespace LingGuangV05.Desktop.XingGuang
             OpenChooser(id);
         }
 
+        string LockedSlotText(int slot)
+        {
+            var node = XgCatalog.Node(XgSim.RelicExpansionForSlot(slot));
+            return T("封印 · ", "Locked · ") + T(node.name, node.nameEn) + "\n"
+                + T("第 " + node.stage + " 阶段 · 查看科技 ›", "Stage " + node.stage + " · View tech ›");
+        }
+
         void OnSlotClick(int slot)
         {
+            if (slot >= Sim.RelicSlotCapacity)
+            {
+                if (view != null) { view.ShowTab("tree"); view.Tree.FocusNodeDetails(XgSim.RelicExpansionForSlot(slot)); }
+                return;
+            }
             var r = Sim.RelicInSlot(slot);
             if (r == null) { Fx.Play(XgJuice.Sfx.Id.Click, 1, .4f); return; }
             Sim.UnequipRelic(r.id);
@@ -303,28 +324,31 @@ namespace LingGuangV05.Desktop.XingGuang
             host.Refresh(true);
         }
 
-        /// <summary>All four slots are taken: asks which one the item replaces.</summary>
+        /// <summary>All unlocked slots are taken: asks which one the item replaces.</summary>
         void OpenChooser(string id)
         {
             chooserFor = id;
+            chooserSim = Sim;
             if (chooser == null)
             {
                 chooser = Rect("Chooser", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
                 Panel(chooser, new Color(0, 0, 0, .6f));
                 var dim = chooser.gameObject.AddComponent<Button>(); dim.transition = Selectable.Transition.None;
                 dim.onClick.AddListener(CloseChooser);
-                var box = ui.Card(chooser, "Box", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-250, -190), new Vector2(250, 190));
+                var box = ui.Card(chooser, "Box", Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -12));
                 box.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;
-                chooserTitle = ui.Text(Strip("Title", box, 14, 50, 20, 20), "", 17, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-                for (int i = 0; i < XgRelics.Slots; i++)
+                chooserTitle = ui.Text(Strip("Title", box, 8, 32, 20, 20), "", 17, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+                for (int i = 0; i < XgRelics.MaxSlots; i++)
                 {
                     int at = i;
                     var b = ui.Button(box, "", () => ChooseSlot(at), 15);
-                    b.rt.anchorMin = new Vector2(0, 1); b.rt.anchorMax = new Vector2(1, 1);
-                    b.rt.offsetMin = new Vector2(20, -76 - 54 * (i + 1)); b.rt.offsetMax = new Vector2(-20, -76 - 54 * i - 6);
+                    int col = i % 2, row = i / 2;
+                    b.rt.anchorMin = new Vector2(col * .5f, 1 - row * .1f); b.rt.anchorMax = new Vector2((col + 1) * .5f, 1 - row * .1f);
+                    b.rt.offsetMin = new Vector2(12, -82); b.rt.offsetMax = new Vector2(-12, -54);
+                    UiTip.Add(b.rt, () => { var r = Sim.RelicInSlot(at); return r == null ? "" : XgRelicUi.Tip(Sim, r); });
                     chooserButtons[i] = b;
                 }
-                var cancel = ui.Button(box, T("算了", "Cancel"), CloseChooser, 15);
+                var cancel = chooserCancel = ui.Button(box, T("算了", "Cancel"), CloseChooser, 15);
                 cancel.rt.anchorMin = cancel.rt.anchorMax = new Vector2(.5f, 0);
                 cancel.rt.offsetMin = new Vector2(-70, 12); cancel.rt.offsetMax = new Vector2(70, 46);
             }
@@ -336,21 +360,25 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void PaintChooser()
         {
+            if (!ReferenceEquals(chooserSim, Sim)) { CloseChooser(); return; }
             var incoming = XgRelics.Get(chooserFor);
             if (incoming == null) { CloseChooser(); return; }
-            chooserTitle.text = T("装备栏满了。「" + XgRelics.Name(incoming, false) + "」换掉哪一格？", "All four slots are taken. Which one does '" + XgRelics.Name(incoming, true) + "' replace?");
-            for (int i = 0; i < XgRelics.Slots; i++)
+            chooserCancel.Set(T("算了", "Cancel"), true);
+            chooserTitle.text = T("装备栏满了。「" + XgRelics.Name(incoming, false) + "」换掉哪一格？", "All equipped slots are taken. Which one does '" + XgRelics.Name(incoming, true) + "' replace?");
+            for (int i = 0; i < XgRelics.MaxSlots; i++)
             {
+                chooserButtons[i].rt.gameObject.SetActive(i < Sim.RelicSlotCapacity);
                 var r = Sim.RelicInSlot(i);
-                chooserButtons[i].Set((i + 1) + "  " + (r == null ? "—" : XgRelics.Name(r, Sim.English) + "   " + Hex(XgDark.Muted) + XgRelics.Effect(r, Sim.English).Replace("灵光", Sim.AiDisplayName) + "</color>"), true, null, XgDark.Ink);
+                chooserButtons[i].Set((i + 1) + "  " + (r == null ? "—" : XgRelics.Name(r, Sim.English)), true, null, XgDark.Ink);
             }
         }
 
         void ChooseSlot(int slot)
         {
+            bool sameSim = ReferenceEquals(chooserSim, Sim);
             string id = chooserFor;
             CloseChooser();
-            if (string.IsNullOrEmpty(id) || !Sim.EquipRelic(id, slot)) return;
+            if (!sameSim || string.IsNullOrEmpty(id) || !Sim.EquipRelic(id, slot)) return;
             Fx.Play(XgJuice.Sfx.Id.Unlock, 1, .7f);
             if (slots[slot] != null) { Fx.Knock(slots[slot].rt, .08f); Fx.Burst(Fx.At(slots[slot].rt), 14, XgRelicUi.RarityColor(XgRelics.Get(id).rarity), XgJuice.Shape.Spark, 260); }
             host.Refresh(true);
@@ -359,6 +387,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void CloseChooser()
         {
             chooserFor = "";
+            chooserSim = null;
             if (chooser != null) chooser.gameObject.SetActive(false);
         }
     }

@@ -66,12 +66,13 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// 稀有道具: 24 relics of 2016 China's tech and internet culture and of machine-learning history. Each is strong and
-    /// does one clear thing to a real number of the sim; the player holds any number in the backpack and equips four.
+    /// does one clear thing to a real number of the sim; the player holds any number in the backpack and equips four initially, expandable to eight or twelve.
     /// The full table with the numbers, sources and pairs is Documentation/LingGuang-Incremental/稀有道具.md.
     /// </summary>
     public static class XgRelics
     {
-        public const int Slots = 4;
+        // Slots remains the legacy/new-game capacity; never use it as the purchased capacity.
+        public const int Slots = 4, MaxSlots = 12;
 
         public static string RarityName(XgRarity r, bool english) => english ? new[] { "Rare", "Epic", "Legendary" }[(int)r] : new[] { "稀有", "史诗", "传说" }[(int)r];
 

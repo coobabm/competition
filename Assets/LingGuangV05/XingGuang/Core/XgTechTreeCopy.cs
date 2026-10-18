@@ -74,6 +74,8 @@ namespace LingGuangV05.XingGuang
             { "label.parallel", new Copy("复核扩容 Q 工具2016","Review inbox Q tool 2016","存下拿不准的题","Keep uncertain answers","复核容量20→60","Review capacity 20 to 60") },
             { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","认出见过的检查题","Recognise known test cards","金题转人工复核","Routes gold items to review") },
             { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","让它替你抄数字","Let it type the digits","新验证码自动提交","Auto-submits new captchas") },
+            { "relic.slots8", new Copy("道具扩容 I","Relic slots I","给稀有道具留位置","Make room for rare items","装备格4→8","Equipped slots 4 to 8") },
+            { "relic.slots12", new Copy("道具扩容 II","Relic slots II","再装上四件道具","Equip four more rare items","装备格8→12","Equipped slots 8 to 12") },
             { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","把资料装进大脑","Load files into its brain","开放资料夹、安装与网址","Opens files, import and URLs") },
             { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","看清每笔钱的去向","Track every payment","显示资金收入与电力","Shows funds, income and power") },
             { "train.curve", new Copy("训练曲线 CURVE 工具2016","Training curve CURVE tool 2016","看看每轮有没有进步","Watch progress each round","解锁练页","Unlocks Train") },
