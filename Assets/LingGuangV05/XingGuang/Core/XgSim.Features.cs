@@ -12,7 +12,7 @@ namespace LingGuangV05.XingGuang
         {
             { "power", 1 }, { "vram", 3 }, { "shop", 2 }, { "data", 3 },
             { "crowd", 4 }, { "quality", 4 }, { "outsourcing", 4 },
-            { "flywheel", 5 }, { "casino", 5 }, { "games", 3 }
+            { "flywheel", 5 }, { "casino", 5 }, { "games", 1 } // 2026-10-18: 游戏中心 from chapter one
         };
         public bool SystemUnlocked(string id) => !S.gradualSystems || !FeatureUnlock.TryGetValue(id, out int stage) || S.stage >= stage;
         public bool FeatureVisible(string feature)

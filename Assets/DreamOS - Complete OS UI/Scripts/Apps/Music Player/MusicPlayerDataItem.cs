@@ -123,7 +123,8 @@ namespace Michsky.DreamOS
             else if (objectType == ObjectType.Cover && imageObj != null) { imageObj.sprite = playerManager.GetCoverArt(); }
             else if (objectType == ObjectType.PlayTime && textObj != null) { textObj.text = playerManager.GetNormalizedPlayTime(); }
             else if (objectType == ObjectType.Duration && textObj != null) { textObj.text = playerManager.GetNormalizedDuration(); }
-            else if (objectType == ObjectType.MusicSlider && sliderObj != null) { sliderObj.maxValue = playerManager.audioSource.clip.length; sliderObj.value = playerManager.audioSource.time; }
+            // Without notify: the slider's own listener seeks the music, and a seek on every update made it stutter (2026-10-18).
+            else if (objectType == ObjectType.MusicSlider && sliderObj != null) { sliderObj.maxValue = playerManager.audioSource.clip.length; sliderObj.SetValueWithoutNotify(playerManager.audioSource.time); }
             else if (objectType == ObjectType.Shuffle && playerManager.shuffle && animHandler != null) { animHandler.PlayIn(); }
             else if (objectType == ObjectType.Shuffle && !playerManager.shuffle && animHandler != null) { animHandler.PlayOut(); }
             else if (objectType == ObjectType.Repeat && playerManager.repeat && animHandler != null) { animHandler.PlayIn(); }
