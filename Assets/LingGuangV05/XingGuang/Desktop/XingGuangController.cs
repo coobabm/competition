@@ -90,6 +90,7 @@ namespace LingGuangV05.Desktop.XingGuang
             DesktopWindowDefaults.Attach(runtime);
             LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
             LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
+            XgTestSetPrewarmer.Attach(this);
             XgBrainWindow.Install(this);
             XgStageCurtain.Install(this);
             SyncProfile(runtime.Sim.S);
