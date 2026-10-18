@@ -347,16 +347,39 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Play(Sfx.Id id, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.Play(id, pitch, volume); }
         /// <summary>Plays a recorded clip (e.g. the casino's) through the same pool, muted and hidden the same way.</summary>
         public void PlayClip(AudioClip clip, float pitch = 1, float volume = 1) { if (!Muted && Visible()) Sfx.PlayClip(clip, pitch, volume); }
+        /// <summary>Seconds between two hits that keep the combo sound climbing (2026-10-18: 「3 秒内点的都算连击」).</summary>
+        public const float ComboSoundWindow = 3f;
+        static float comboSoundAt = -100;
+        static int comboSoundStep, comboSoundLast;
+
+        /// <summary>
+        /// The step the next combo sound plays: one higher per hit, in order (a trick card's +2 or two hits seen in one
+        /// frame never skip a step), back to 1 after <see cref="ComboSoundWindow"/> without a hit or when the combo broke.
+        /// 0: the same hit reported twice (ignore it).
+        /// </summary>
+        public static int NextComboSoundStep(int combo, float now)
+        {
+            bool same = combo == comboSoundLast && now - comboSoundAt < .05f;
+            if (same) return 0;
+            bool goesOn = combo >= comboSoundLast && comboSoundLast > 0 && now - comboSoundAt <= ComboSoundWindow;
+            comboSoundStep = goesOn ? comboSoundStep + 1 : 1;
+            comboSoundLast = combo; comboSoundAt = now;
+            return comboSoundStep;
+        }
+
         /// <summary>
         /// Combo hit: the 10-step kill-streak set (Resources/XgSfx/Combo/Kill1–10, made with Tone.js in
-        /// /Users/kk/unity/tonejs-sfx), one scale step higher per hit up to the big 10th, which then plays on every hit after it.
-        /// Falls back to the old rising Ding when the clips are missing.
+        /// /Users/kk/unity/tonejs-sfx), low to high one step per hit (<see cref="NextComboSoundStep"/>) up to the big 10th,
+        /// which then plays on every hit after it. Falls back to the old rising Ding when the clips are missing.
         /// </summary>
         public void PlayCombo(int combo, float volume = 1)
         {
-            var clip = Sfx.ComboClip(combo);
+            if (Muted || !Visible()) return;
+            int step = NextComboSoundStep(combo, Time.unscaledTime);
+            if (step == 0) return;
+            var clip = Sfx.ComboClip(step);
             if (clip != null) PlayClip(clip, 1, volume * Sfx.ComboGain);
-            else Play(Sfx.Id.Ding, 1 + Mathf.Min(1, combo * .025f), volume);
+            else Play(Sfx.Id.Ding, 1 + Mathf.Min(1, step * .025f), volume);
         }
 
         /// <summary>Discard presentation on a closed/rebuilt tab; do not replay old particles on reopen.</summary>
