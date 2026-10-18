@@ -194,6 +194,9 @@ namespace LingGuangV05.Desktop.XingGuang
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             if (brain != null) brain.TickBeforeSimulation();
             Sim.Tick(dt, Host);
+            // The opening's doubts and its first glimpse that it learns (XgSim.Primer.cs).
+            if (!runtime.Sim.InPrologue)
+                foreach (var line in Sim.OpeningVoice()) LingGuangV05.Desktop.Story.InnerVoice.Say(line.zh, line.en, line.seconds);
             // 《灵光记》 (XgSim.Chronicle.cs): the rent the lab cannot see for itself.
             if (runtime.Sim.Debt > 0 || runtime.Sim.S.debtDays > 0) Sim.NoteChronicle("rent.late");
             Sim.S.linkedGameSeconds = runtime.Sim.S.gameSeconds;

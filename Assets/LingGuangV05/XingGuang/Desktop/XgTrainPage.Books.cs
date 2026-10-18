@@ -37,6 +37,9 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBtn bookAnswerSend;
         bool bookAsking, bookJudging;
         readonly List<BookRow> bookRows = new List<BookRow>();
+        /// <summary>《AI是怎么炼成的》, the book it arrived with (XgSim.Primer.cs): the top row, read, and it never opens.</summary>
+        BookRow primerRow;
+        const string PrimerId = "primer";
         string selectedBook = "";
         /// <summary>The chapter the local model was last asked about (ability 6), so it is asked once.</summary>
         string bookAskedKey = "";
@@ -53,31 +56,13 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(scroll, Color.clear); scroll.gameObject.AddComponent<RectMask2D>();
             var content = Rect("Content", scroll, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
             content.pivot = new Vector2(.5f, 1);
-            content.sizeDelta = new Vector2(0, XgBooks.All.Count * (BookRowHeight + 3));
+            content.sizeDelta = new Vector2(0, (XgBooks.All.Count + 1) * (BookRowHeight + 3));
+            primerRow = BookRowAt(content, 0, PrimerId);
+            primerRow.feed.Set(T("打不开", "Won't open"), false);
             var scroller = scroll.gameObject.AddComponent<ScrollRect>();
             scroller.viewport = scroll; scroller.content = content; scroller.horizontal = false; scroller.scrollSensitivity = 24;
             scroller.movementType = ScrollRect.MovementType.Clamped;
-            for (int i = 0; i < XgBooks.All.Count; i++)
-            {
-                var book = XgBooks.All[i];
-                var row = new BookRow();
-                row.rt = Rect("Book_" + book.id, content, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -(i + 1) * (BookRowHeight + 3) + 3), new Vector2(0, -i * (BookRowHeight + 3)));
-                row.back = Panel(row.rt, XgDark.Track);
-                var select = row.rt.gameObject.AddComponent<Button>(); select.transition = Selectable.Transition.None; select.targetGraphic = row.back;
-                string id = book.id;
-                select.onClick.AddListener(() => { selectedBook = id; Fx.Play(XgJuice.Sfx.Id.Click); RefreshBooks(); });
-                var meter = Rect("Meter", row.rt, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(-96, 3));
-                row.fill = Bar(meter, "Fill", Color.clear, XgDark.Data);
-                row.name = ui.Text(Rect("Name", row.rt, Vector2.zero, Vector2.one, new Vector2(8, 3), new Vector2(-150, 0)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-                row.name.textWrappingMode = TextWrappingModes.NoWrap; row.name.overflowMode = TextOverflowModes.Ellipsis;
-                row.count = ui.Text(Rect("Count", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-150, 3), new Vector2(-98, 0)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineRight);
-                row.count.textWrappingMode = TextWrappingModes.NoWrap;
-                row.feed = ui.Button(row.rt, "", () => Feed(id), 11);
-                row.feed.rt.gameObject.name = "Feed";
-                PlaceTopRight(row.feed, 92, 3, 88, BookRowHeight - 6);
-                UiTip.Add(row.rt, () => BookTip(XgBooks.Get(id)));
-                bookRows.Add(row);
-            }
+            for (int i = 0; i < XgBooks.All.Count; i++) bookRows.Add(BookRowAt(content, i + 1, XgBooks.All[i].id));
 
             var panel = Rect("Reading", booksPane, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, BookPanelHeight));
             Panel(panel, XgDark.AccentSoft);
@@ -163,6 +148,26 @@ namespace LingGuangV05.Desktop.XingGuang
                 book.nameEn + " (" + book.authorEn + ")\n" + book.chapters.Length + " chapters · about " + book.TotalChars.ToString("#,0") + " characters → about " + samples + " samples of " + corpus + " (" + Sim.ReadRuleText().Replace("word", "character") + ")\nFinish it: parameters +" + XgSim.ParamsText(book.paramsK) + ", and it quotes it in chat.\nReading uses the card and pays power; at half speed while a training round runs.");
         }
 
+        BookRow BookRowAt(RectTransform content, int i, string id)
+        {
+            var row = new BookRow();
+            row.rt = Rect("Book_" + id, content, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -(i + 1) * (BookRowHeight + 3) + 3), new Vector2(0, -i * (BookRowHeight + 3)));
+            row.back = Panel(row.rt, XgDark.Track);
+            var select = row.rt.gameObject.AddComponent<Button>(); select.transition = Selectable.Transition.None; select.targetGraphic = row.back;
+            select.onClick.AddListener(() => { selectedBook = id; Fx.Play(XgJuice.Sfx.Id.Click); RefreshBooks(); });
+            var meter = Rect("Meter", row.rt, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(-96, 3));
+            row.fill = Bar(meter, "Fill", Color.clear, XgDark.Data);
+            row.name = ui.Text(Rect("Name", row.rt, Vector2.zero, Vector2.one, new Vector2(8, 3), new Vector2(-150, 0)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            row.name.textWrappingMode = TextWrappingModes.NoWrap; row.name.overflowMode = TextOverflowModes.Ellipsis;
+            row.count = ui.Text(Rect("Count", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-150, 3), new Vector2(-98, 0)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineRight);
+            row.count.textWrappingMode = TextWrappingModes.NoWrap;
+            row.feed = ui.Button(row.rt, "", () => { if (id != PrimerId) Feed(id); }, 11);
+            row.feed.rt.gameObject.name = "Feed";
+            PlaceTopRight(row.feed, 92, 3, 88, BookRowHeight - 6);
+            if (id != PrimerId) UiTip.Add(row.rt, () => BookTip(XgBooks.Get(id)));
+            return row;
+        }
+
         void RefreshBooks()
         {
             if (booksPane == null || Sim == null || !booksPane.gameObject.activeInHierarchy) return;
@@ -183,6 +188,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 else if (!open) row.feed.Set(T("没解锁", "Locked"), false);
                 else row.feed.Set(read == 0 ? T("喂第一篇", "Feed ch.1") : T("喂下一篇", "Feed next"), Sim.ReadBlocker(book, Host) == null, XgDark.Accent, Color.white);
             }
+
+            primerRow.name.text = T("《" + XgSim.PrimerTitle + "》", XgSim.PrimerTitleEn);
+            primerRow.count.text = T("5月24日读完", "read May 24");
+            SetBar(primerRow.fill, 1);
+            primerRow.back.color = selectedBook == PrimerId ? XgDark.AccentSoft : XgDark.Track;
+            primerRow.feed.Set(T("打不开", "Won't open"), false);
 
             var shown = reading ?? XgBooks.Get(selectedBook) ?? XgBooks.Get(Sim.S.bookLineBook) ?? XgBooks.All[0];
             SetBar(bookPanelFill, reading != null ? (float)Sim.ReadingProgress : (float)Sim.BookShare(shown));
@@ -217,6 +228,13 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 bookHead.text = T("《红楼梦》第八十回 · 读完了", "Dream of the Red Chamber, ch.80 · finished");
                 bookBody.text = T("它：后面呢？", "It: What comes next?");
+                return;
+            }
+            if (selectedBook == PrimerId)
+            {
+                bookHead.text = T("《" + XgSim.PrimerTitle + "》· 打不开", XgSim.PrimerTitleEn + " · won't open");
+                bookBody.text = Sim.PrimerPage();
+                SetBar(bookPanelFill, 1);
                 return;
             }
             bookHead.text = T("《" + shown.name + "》· 它的笔记", shown.nameEn + " · its notes");
