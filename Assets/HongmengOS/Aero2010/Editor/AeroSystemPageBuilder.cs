@@ -16,7 +16,7 @@ namespace HongmengOS.Aero2010.Editor
    Text(root,font,"Edition details","Aero Desktop\nClassic PC collection · 2010 edition",19,new Color32(66,80,94,255),0,169,660,65);
    var im=new GameObject("LCD desktop emblem",typeof(RectTransform),typeof(Image)).GetComponent<Image>();im.transform.SetParent(root,false);im.sprite=icon;im.color=Color.white;im.preserveAspect=true;im.raycastTarget=false;im.rectTransform.anchorMin=im.rectTransform.anchorMax=new Vector2(1,1);im.rectTransform.pivot=new Vector2(1,1);im.rectTransform.anchoredPosition=new Vector2(-12,-115);im.rectTransform.sizeDelta=new Vector2(104,104);
    Section(root,font,"System",265);
-   Row(root,font,"Desktop engine","DreamOS / Unity",310);
+   Row(root,font,"Desktop engine","hongmengos / Unity",310);
    Row(root,font,"Display","1920 × 1080 · 16:9 widescreen LCD",350);
    Row(root,font,"Appearance","Aero Glass · Full-color desktop icons",390);
    Row(root,font,"Input","Mouse and keyboard",430);

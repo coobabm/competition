@@ -37,7 +37,7 @@
     { "id": "rx480_shop", "date": "2016-06-29", "channel": "taobao", "title": "RX 480 8G", "titleEn": "RX 480 8GB", "price": 1999, "text": "A 卡战未来。注：首批有用户反映供电超标。", "textEn": "AMD, built for the future. Note: some early buyers report power draw over spec." },
     { "id": "rx480_tieba", "date": "2016-06-30", "channel": "tieba", "title": "RX480 烧主板？实测 PCIe 供电超标", "titleEn": "Is the RX480 frying boards? PCIe power measured over spec", "text": "A 卡战未来，先战一下主板。", "textEn": "Built for the future. First it fights your motherboard." },
 
-    { "id": "tray_win10", "date": "2016-07-01", "until": "2016-07-29", "repeatMinutes": 8, "channel": "tray", "who": "获取 Windows 10", "whoEn": "Get Windows 10", "text": "您可以免费升级到 Windows 10。免费升级将于 7 月 29 日截止。", "textEn": "Upgrade to Windows 10 for free. The free offer ends on 29 July." },
+    { "id": "tray_win10", "date": "2016-07-01", "until": "2016-07-29", "repeatMinutes": 8, "channel": "tray", "who": "获取 hongmengos 10", "whoEn": "Get hongmengos 10", "text": "您可以免费升级到 hongmengos 10。免费升级将于 7 月 29 日截止。", "textEn": "Upgrade to hongmengos 10 for free. The free offer ends on 29 July." },
     { "id": "pokemon_go", "date": "2016-07-07", "channel": "tieba", "title": "Pokémon GO 锁区了，北京只有三只", "titleEn": "Pokémon GO is region-locked. Beijing has three", "text": "据说改 GPS 能抓，小心封号。", "textEn": "Some say you can fake GPS. Watch out for bans." },
     { "id": "big_fish", "date": "2016-07-08", "channel": "tray", "who": "迅雷", "whoEn": "Thunder", "text": "《大鱼海棠》：敏感资源，无法下载。", "textEn": "Big Fish & Begonia: restricted resource, cannot download." },
     { "id": "escape", "date": "2016-07-08", "channel": "tieba", "title": "“4 小时逃离北上广”是真的吗", "titleEn": "Was \"escape Beijing in 4 hours\" real", "text": "说是送机票，到底有没有人真去了。", "textEn": "Free air tickets, they said. Did anyone actually go?" },
@@ -49,7 +49,7 @@
     { "id": "ge_you", "date": "2016-07-25", "channel": "yy", "who": "阿杰", "whoEn": "A-Jie", "text": "[图片：葛优躺] 今天的我。", "textEn": "[Image: Ge You slouch] Me today." },
     { "id": "hollowed", "date": "2016-07-27", "channel": "yy", "who": "大伟", "whoEn": "Da Wei", "text": "加了一周班，感觉身体被掏空。", "textEn": "A week of overtime. I feel hollowed out." },
     { "id": "dawei_envy", "date": "2016-07-30", "channel": "yy", "who": "大伟", "whoEn": "Da Wei", "text": "加班加到怀疑人生，突然想到：咱群里就你一个是给自己干活的。羡慕，也有点佩服，真的。", "textEn": "Overtime to the point of doubting life, and then it hit me: you're the only one in this group working for yourself. I'm jealous, and a bit in awe, seriously." },
-    { "id": "win10_deadline", "date": "2016-07-29", "channel": "news", "title": "Win10 免费升级今天截止", "titleEn": "Free Windows 10 upgrade ends today", "brief": true },
+    { "id": "win10_deadline", "date": "2016-07-29", "channel": "news", "title": "hongmengos 10 免费升级今天截止", "titleEn": "Free hongmengos 10 upgrade ends today", "brief": true },
 
     { "id": "didi_uber", "date": "2016-08-01", "channel": "news", "title": "滴滴出行宣布收购优步中国", "titleEn": "Didi announces it is buying Uber China", "brief": true },
     { "id": "tray_360_attacks", "date": "2016-08-01", "channel": "tray", "who": "360安全卫士", "whoEn": "360 Safeguard", "text": "今日已为您拦截 0 次攻击。", "textEn": "0 attacks blocked for you today." },

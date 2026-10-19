@@ -309,7 +309,7 @@ MonoBehaviour:
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
     - key: SetupWelcomeDesc
-      value: 'I''m here to assist you while initializing your <b>DreamOS</b>.
+      value: 'I''m here to assist you while initializing your <b>hongmengos</b>.
 
         Are
         you ready?'
@@ -519,7 +519,7 @@ MonoBehaviour:
     - key: SetupFinalDescSimple
       value: 'Almost done!
 
-        You can now reboot the system and enjoy <b>DreamOS</b>.'
+        You can now reboot the system and enjoy <b>hongmengos</b>.'
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
   - table: {fileID: 11400000, guid: 0eb7e7ab93f454510aac812a1eb2dc34, type: 2}
@@ -546,7 +546,7 @@ MonoBehaviour:
       spriteValue: {fileID: 0}
     - key: SampleMail1Content
       value: "This is just a sample mail created from a mail item. You can add new
-        mail items using <b>Create > DreamOS > New Mail Item</b>. \r\n\r\nIt is possible
+        mail items using <b>the mail app</b>. \r\n\r\nIt is possible
         to add attachments as well as custom content."
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}

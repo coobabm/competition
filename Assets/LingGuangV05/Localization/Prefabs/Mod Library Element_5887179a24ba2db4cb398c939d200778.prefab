@@ -265,7 +265,7 @@ GameObject:
   m_Layer: 5
   m_Name: Mod Library Element_5887179a24ba2db4cb398c939d200778
   m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: db81715f234ecb4438f812231b4a9ded, type: 3}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using HongmengOS.Aero2010;
 using LingGuangV05.Core;
 using LingGuangV05.Desktop.XingGuang;

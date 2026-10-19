@@ -47,7 +47,7 @@ namespace LingGuangV05.Desktop.Media
         public static bool IsWindowVisible(Component view)
         {
             if (view == null || !view.gameObject.activeInHierarchy) return false;
-            var window = view.GetComponentInParent<Michsky.DreamOS.WindowManager>();
+            var window = view.GetComponentInParent<LingGuangV05.Desktop.OS.WindowManager>();
             if (window == null || !window.isOn) return false;
             var group = window.GetComponent<CanvasGroup>();
             return group == null || group.alpha > .01f;

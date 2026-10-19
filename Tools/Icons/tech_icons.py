@@ -30,7 +30,7 @@ def grow(m, px):
 
 iconkit.grow = grow
 
-OUT = "/Users/kk/competition/Assets/LingGuangV05/Resources/LingGuangV05/Icons/tech"
+OUT = "/Users/kk/unity/competition/Assets/LingGuangV05/Resources/LingGuangV05/Icons/tech"
 SCRATCH = "/private/tmp/claude-501/-Users-kk-unity/0b11848a-3722-4bc3-8ee4-9222e5441068/scratchpad"
 
 WH = (255, 255, 255)

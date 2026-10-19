@@ -58,7 +58,7 @@ public static class PlayabilityDesktopSmoke
         ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(output, "Save");
         var path = Path.Combine(output, "DesktopProfile") + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(path);
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, path);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, path);
     }
 
     static void Shot(string name)
@@ -184,14 +184,14 @@ public static class PlayabilityDesktopSmoke
                     Shot("09-funds-book"); break;
                 case 19:
                     runtime.transform.Find("FundsCanvas")?.gameObject.SetActive(false);
-                    var wallpapers=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.WallpaperManager>();
+                    var wallpapers=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.WallpaperManager>();
                     if(wallpapers==null || wallpapers.wallpaperLibrary.wallpapers.Count<2) throw new Exception("Wallpaper library missing");
                     wallpaperBefore=wallpapers.wallpaperIndex; wallpaperAfter=(wallpaperBefore+1)%wallpapers.wallpaperLibrary.wallpapers.Count;
                     wallpapers.SetWallpaper(wallpaperAfter,true);
                     break;
                 case 20:
                     var bridge=UnityEngine.Object.FindAnyObjectByType<HongmengOS.Aero2010.AeroLcdSourceBridge>();
-                    var wm=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.WallpaperManager>();
+                    var wm=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.WallpaperManager>();
                     var background=bridge.sourceCanvas.transform.Find("Desktop/Wallpaper").GetComponent<UnityEngine.UI.Image>();
                     if(background.sprite!=wm.GetWallpaper(wallpaperAfter) || wm.GetWallpaper(wallpaperBefore)==wm.GetWallpaper(wallpaperAfter)) throw new Exception("Visible desktop wallpaper did not change");
                     Shot("10-changed-wallpaper");

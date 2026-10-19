@@ -14,7 +14,7 @@ using LingGuangV05.Desktop;
 using LingGuangV05.Desktop.LLM;
 using UnityEngine;
 using UnityEngine.UI;
-using LingGuangV05.Desktop.Story;using TMPro;using Michsky.DreamOS;
+using LingGuangV05.Desktop.Story;using TMPro;using LingGuangV05.Desktop.OS;
 using System.Linq;
 using LingGuangV05.Desktop.Bodu;
 /// <summary>Run only in an already isolated Play session. Does not start Unity or touch a normal player's save.</summary>
@@ -37,7 +37,7 @@ public static class KnowledgeVisualsQa
     {
         if(string.IsNullOrEmpty(Root))return;
         ChapterOneRuntime.VerificationSaveDirectory=Path.Combine(Root,"Save");
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
         SceneManager.sceneLoaded+=DisableModel;
     }
     static void DisableModel(Scene scene,LoadSceneMode mode)
@@ -66,8 +66,8 @@ public static class KnowledgeVisualsQa
             {
                 rt.useDiskSave=false;var lab=new XgSim();var house=new ChapterOneSim();house.S.prologue=2;house.S.appInstallState=2;house.S.money=100000;house.S.gpuModels.Add("gtx980ti");house.S.gpuCount=1;house.S.labState=JsonUtility.ToJson(lab.S);
                 rt.SetSimulationForTests(house);ctl.GetType().GetMethod("BindSave",Flags).Invoke(ctl,new object[]{house});
-                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
-                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);if(user==null||!user.isActiveAndEnabled)throw new Exception("Desktop user unavailable");user.ShowDesktop();fixtureReady=true;return;
+                var boot=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include);if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
+                var user=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);if(user==null||!user.isActiveAndEnabled)throw new Exception("Desktop user unavailable");user.ShowDesktop();fixtureReady=true;return;
             }
             var binding=rt.GetComponent<ChapterOneDesktopRouter>()?.Get(XingGuangController.AppId);if(binding?.TaskbarShortcut==null||!binding.TaskbarShortcut.isActiveAndEnabled||binding.DesktopShortcut==null||!binding.DesktopShortcut.gameObject.activeInHierarchy)return;
             EditorApplication.update-=Boot;Start();

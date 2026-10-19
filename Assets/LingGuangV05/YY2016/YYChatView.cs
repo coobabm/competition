@@ -2,7 +2,7 @@ using System;
 using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
 using System.Collections.Generic;
 using LingGuangV05.Runtime;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;

@@ -365,8 +365,11 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!WorkContext)
             {
-                open = 1;
-                return new List<XgDesk> { XgCatalog.Desk(XgMemes.SenseDesk) };
+                // 2026-10-19 (owner): 手写数字 (yes/no: 「这张手写数字是 X 吗？」) is in the hall from the start, beside 常识判断
+                var teaching = new List<XgDesk> { XgCatalog.Desk(XgMemes.SenseDesk) };
+                if (Sim.DeskOpen(XgSim.HandwritingDesk)) teaching.Add(XgCatalog.Desk(XgSim.HandwritingDesk));
+                open = teaching.Count;
+                return teaching;
             }
             var list = new List<XgDesk>(Sim.OpenDesks());
             open = list.Count;

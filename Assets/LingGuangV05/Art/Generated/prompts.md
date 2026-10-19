@@ -10,7 +10,7 @@ Import/wiring boundary: this art task did not edit Unity scenes, code, or import
 
 ## gpu-9800.png
 
-- Project: `/Users/kk/competition/Assets/LingGuangV05/Art/Generated/gpu-9800.png`
+- Project: `/Users/kk/unity/competition/Assets/LingGuangV05/Art/Generated/gpu-9800.png`
 - Generated source: `/Users/kk/.codex/generated_images/01a0fe5d-eb64-79f1-bdb2-20adef4c54f5/exec-e89af8a2-01f1-44a9-95dc-6e20d9b13ab5.png`
 - Format: PNG
 - Dimensions: 1254 × 1254
@@ -33,7 +33,7 @@ Constraints: one complete graphics card only, unbranded, no visible letters, num
 
 ## pc-tower.png
 
-- Project: `/Users/kk/competition/Assets/LingGuangV05/Art/Generated/pc-tower.png`
+- Project: `/Users/kk/unity/competition/Assets/LingGuangV05/Art/Generated/pc-tower.png`
 - Generated source: `/Users/kk/.codex/generated_images/01a0fe5d-eb64-79f1-bdb2-20adef4c54f5/exec-8b740789-249d-4259-be0a-866c6b75d23d.png`
 - Format: PNG
 - Dimensions: 1254 × 1254
@@ -56,7 +56,7 @@ Constraints: one complete computer tower only, no keyboard, screen, cables or ex
 
 ## neural-workbench.png
 
-- Project: `/Users/kk/competition/Assets/LingGuangV05/Art/Generated/neural-workbench.png`
+- Project: `/Users/kk/unity/competition/Assets/LingGuangV05/Art/Generated/neural-workbench.png`
 - Generated source: `/Users/kk/.codex/generated_images/01a0fe5d-eb64-79f1-bdb2-20adef4c54f5/exec-f90168e0-df54-469b-9d05-35c43b5b94fc.png`
 - Format: PNG
 - Dimensions: 1774 × 887 (2:1)
@@ -79,7 +79,7 @@ Constraints: artwork only; NO text, NO numbers, NO letters, NO labels, NO logo, 
 
 ## household-meter.png
 
-- Project: `/Users/kk/competition/Assets/LingGuangV05/Art/Generated/household-meter.png`
+- Project: `/Users/kk/unity/competition/Assets/LingGuangV05/Art/Generated/household-meter.png`
 - Generated source: `/Users/kk/.codex/generated_images/01a0fe5d-eb64-79f1-bdb2-20adef4c54f5/exec-8b122713-b82a-467a-99b8-41617effbd64.png`
 - Format: PNG
 - Dimensions: 1254 × 1254

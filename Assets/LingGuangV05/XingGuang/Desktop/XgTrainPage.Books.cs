@@ -18,8 +18,6 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed partial class XgTrainPage
     {
-        const float BookRowHeight = 26, BookPanelHeight = 104;
-
         sealed class BookRow
         {
             public RectTransform rt, fill;
@@ -30,7 +28,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         XgBtn booksTab, redMansionAnswer;
         bool booksView;
-        RectTransform booksPane, bookPanelFill;
+        RectTransform booksPane, bookPanelFill, bookAnswerRow;
         TMP_Text bookHead, bookBody;
         /// <summary>The answer box for its question about a book (XgSim.BookPuzzles.cs), shown while one is pending.</summary>
         TMP_InputField bookAnswerField;
@@ -45,67 +43,52 @@ namespace LingGuangV05.Desktop.XingGuang
         string bookAskedKey = "";
         XgSim bookAskedSim;
 
-        void BuildBooksTab()
+        void BuildBooksTab(XgModuleRefs m)
         {
-            booksTab = ui.Button(gearCard, T("书架", "Books"), () => { booksView = true; learningView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12);
-            booksTab.rt.gameObject.name = "BooksTab";
-            PlaceTopLeft(booksTab, 312, 6, 60, 22);
+            booksTab = m.Button("booksTab", ui, T("书架", "Books"), () => { booksView = true; learningView = false; Fx.Play(XgJuice.Sfx.Id.Click); RefreshSide(Track, Sim.Run(Track)); }, 12, "BooksTab");
 
-            booksPane = Rect("BooksPane", gearCard, Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-12, -34));
-            var scroll = Rect("Shelf", booksPane, Vector2.zero, Vector2.one, new Vector2(0, BookPanelHeight + 4), Vector2.zero);
-            Panel(scroll, Color.clear); scroll.gameObject.AddComponent<RectMask2D>();
-            var content = Rect("Content", scroll, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero);
-            content.pivot = new Vector2(.5f, 1);
-            content.sizeDelta = new Vector2(0, (XgBooks.All.Count + 1) * (BookRowHeight + 3));
-            primerRow = BookRowAt(content, 0, PrimerId);
+            // The shelf scrolls (one row per book, the primer on top); the reading panel under it keeps its height.
+            booksPane = m.Get("booksPane");
+            var content = m.Get("shelf");
+            primerRow = BookRowAt(content, PrimerId);
             primerRow.feed.Set(T("打不开", "Won't open"), false);
-            var scroller = scroll.gameObject.AddComponent<ScrollRect>();
-            scroller.viewport = scroll; scroller.content = content; scroller.horizontal = false; scroller.scrollSensitivity = 24;
-            scroller.movementType = ScrollRect.MovementType.Clamped;
-            for (int i = 0; i < XgBooks.All.Count; i++) bookRows.Add(BookRowAt(content, i + 1, XgBooks.All[i].id));
+            for (int i = 0; i < XgBooks.All.Count; i++) bookRows.Add(BookRowAt(content, XgBooks.All[i].id));
 
-            var panel = Rect("Reading", booksPane, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, BookPanelHeight));
-            Panel(panel, XgDark.AccentSoft);
-            bookHead = ui.Text(Rect("Head", panel, new Vector2(0, 1), Vector2.one, new Vector2(10, -22), new Vector2(-10, -3)), "", 12, XgDark.Accent, TextAlignmentOptions.MidlineLeft);
-            bookHead.fontStyle = FontStyles.Bold; bookHead.textWrappingMode = TextWrappingModes.NoWrap; bookHead.overflowMode = TextOverflowModes.Ellipsis;
-            bookBody = ui.Text(Rect("Body", panel, Vector2.zero, Vector2.one, new Vector2(10, 8), new Vector2(-10, -23)), "", 12, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            var panel = m.Get("reading");
+            bookHead = m.Text("bookHead");
+            bookBody = m.Text("bookBody");
             if (XgUiV4Fonts.Reading != null) bookBody.font = XgUiV4Fonts.Reading;
-            bookBody.enableAutoSizing = true; bookBody.fontSizeMin = 9; bookBody.fontSizeMax = 12;
-            var bar = Rect("Bar", panel, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, 4));
-            bookPanelFill = Bar(bar, "Fill", XgDark.Track, XgDark.Gold);
-            redMansionAnswer = ui.Button(panel, "", () =>
+            bookPanelFill = m.Get("bookFill");
+            // Under the text: the answer to 「后面呢？」, or the box for its question about a book; the row is hidden otherwise.
+            bookAnswerRow = m.Get("answerRow");
+            redMansionAnswer = m.Button("redMansion", ui, "", () =>
             {
                 Sim.AnswerRedMansion();
                 Fx.Play(XgJuice.Sfx.Id.Ding);
                 RefreshBooks();
-            }, 12);
-            redMansionAnswer.rt.gameObject.name = "RedMansionAnswer";
-            PlaceBottom(redMansionAnswer, 8, 24, 10, 10);
-            BuildBookAnswer(panel);
+            }, 12, "RedMansionAnswer");
+            redMansionAnswer.label.enableAutoSizing = true; redMansionAnswer.label.fontSizeMin = 9; redMansionAnswer.label.fontSizeMax = 12;
+            redMansionAnswer.label.overflowMode = TextOverflowModes.Ellipsis;
+            BuildBookAnswer(m);
             panel.gameObject.AddComponent<XgBookReveal>().Page = this;
         }
 
-        void BuildBookAnswer(RectTransform panel)
+        void BuildBookAnswer(XgModuleRefs m)
         {
-            var box = Rect("BookAnswer", panel, Vector2.zero, new Vector2(1, 0), new Vector2(10, 8), new Vector2(-74, 32));
-            Panel(box, XgDark.Button);
-            var area = Rect("Text Area", box, Vector2.zero, Vector2.one, new Vector2(8, 2), new Vector2(-8, -2));
-            area.gameObject.AddComponent<RectMask2D>();
-            var placeholder = ui.Text(Rect("Placeholder", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), T("你觉得是什么意思？", "What do you think it means?"), 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
-            var text = ui.Text(Rect("Text", area, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            text.richText = false; text.textWrappingMode = TextWrappingModes.NoWrap;
-            bookAnswerField = box.gameObject.AddComponent<TMP_InputField>();
-            bookAnswerField.textViewport = area; bookAnswerField.textComponent = text; bookAnswerField.placeholder = placeholder;
-            bookAnswerField.fontAsset = ui.font; bookAnswerField.pointSize = 12; bookAnswerField.characterLimit = 60; bookAnswerField.richText = false;
-            bookAnswerField.lineType = TMP_InputField.LineType.SingleLine;
+            var box = m.Get("answerField");
+            bookAnswerField = box.GetComponent<TMP_InputField>();
+            if (bookAnswerField.placeholder is TMP_Text placeholder) placeholder.text = T("你觉得是什么意思？", "What do you think it means?");
+            bookAnswerField.fontAsset = ui.font;
             bookAnswerField.onSubmit.AddListener(_ => SendBookAnswer());
-            bookAnswerSend = ui.Button(panel, T("回答", "Answer"), SendBookAnswer, 12);
-            bookAnswerSend.rt.gameObject.name = "BookAnswerSend";
-            bookAnswerSend.rt.anchorMin = bookAnswerSend.rt.anchorMax = new Vector2(1, 0);
-            bookAnswerSend.rt.offsetMin = new Vector2(-68, 8); bookAnswerSend.rt.offsetMax = new Vector2(-10, 32);
+            bookAnswerSend = m.Button("answerSend", ui, T("回答", "Answer"), SendBookAnswer, 12, "BookAnswerSend");
             box.gameObject.SetActive(false);
-            bookAnswerSend.Show(false);
+            ShowSlot(bookAnswerSend, false);
+            ShowSlot(redMansionAnswer, false);
+            Part(bookAnswerRow, false);
         }
+
+        /// <summary>Shows or hides a button together with its layout slot, so a hidden button leaves no gap.</summary>
+        static void ShowSlot(XgBtn b, bool on) { b.Show(on); Part(b.rt.parent, on); }
 
         /// <summary>The owner's answer from the shelf: judged like a YY reply, and both lines go into the chat history.</summary>
         void SendBookAnswer()
@@ -149,22 +132,19 @@ namespace LingGuangV05.Desktop.XingGuang
                 book.nameEn + " (" + book.authorEn + ")\n" + book.chapters.Length + " chapters · about " + book.TotalChars.ToString("#,0") + " characters → about " + samples + " samples of " + corpus + " (" + Sim.ReadRuleText().Replace("word", "character") + ")\nFinish it: parameters +" + XgSim.ParamsText(book.paramsK) + ", and it quotes it in chat.\nReading uses the card and pays power; at half speed while a training round runs.");
         }
 
-        BookRow BookRowAt(RectTransform content, int i, string id)
+        BookRow BookRowAt(RectTransform content, string id)
         {
+            var m = XgModuleRefs.Spawn("TrainBookRow", content, ui);
             var row = new BookRow();
-            row.rt = Rect("Book_" + id, content, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -(i + 1) * (BookRowHeight + 3) + 3), new Vector2(0, -i * (BookRowHeight + 3)));
-            row.back = Panel(row.rt, XgDark.Track);
-            var select = row.rt.gameObject.AddComponent<Button>(); select.transition = Selectable.Transition.None; select.targetGraphic = row.back;
-            select.onClick.AddListener(() => { selectedBook = id; Fx.Play(XgJuice.Sfx.Id.Click); RefreshBooks(); });
-            var meter = Rect("Meter", row.rt, Vector2.zero, new Vector2(1, 0), new Vector2(0, 0), new Vector2(-96, 3));
-            row.fill = Bar(meter, "Fill", Color.clear, XgDark.Data);
-            row.name = ui.Text(Rect("Name", row.rt, Vector2.zero, Vector2.one, new Vector2(8, 3), new Vector2(-150, 0)), "", 12, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            row.name.textWrappingMode = TextWrappingModes.NoWrap; row.name.overflowMode = TextOverflowModes.Ellipsis;
-            row.count = ui.Text(Rect("Count", row.rt, new Vector2(1, 0), Vector2.one, new Vector2(-150, 3), new Vector2(-98, 0)), "", 11, XgDark.Muted, TextAlignmentOptions.MidlineRight);
-            row.count.textWrappingMode = TextWrappingModes.NoWrap;
-            row.feed = ui.Button(row.rt, "", () => { if (id != PrimerId) Feed(id); }, 11);
-            row.feed.rt.gameObject.name = "Feed";
-            PlaceTopRight(row.feed, 92, 3, 88, BookRowHeight - 6);
+            row.rt = (RectTransform)m.transform;
+            row.rt.name = "Book_" + id;
+            row.back = row.rt.GetComponent<Image>();
+            row.rt.GetComponent<Button>().onClick.AddListener(() => { selectedBook = id; Fx.Play(XgJuice.Sfx.Id.Click); RefreshBooks(); });
+            row.fill = m.Get("fill");
+            row.name = m.Text("name");
+            row.count = m.Text("count");
+            row.feed = m.Button("feed", ui, "", () => { if (id != PrimerId) Feed(id); }, 11, "Feed");
+            row.feed.label.enableAutoSizing = true; row.feed.label.fontSizeMin = 9; row.feed.label.fontSizeMax = 11;
             if (id != PrimerId) UiTip.Add(row.rt, () => BookTip(XgBooks.Get(id)));
             return row;
         }
@@ -199,13 +179,13 @@ namespace LingGuangV05.Desktop.XingGuang
             var shown = reading ?? XgBooks.Get(selectedBook) ?? XgBooks.Get(Sim.S.bookLineBook) ?? XgBooks.All[0];
             SetBar(bookPanelFill, reading != null ? (float)Sim.ReadingProgress : (float)Sim.BookShare(shown));
             bool askNext = Sim.S.redMansionBeat == 1;
-            redMansionAnswer.Show(askNext);
+            ShowSlot(redMansionAnswer, askNext);
             if (askNext) redMansionAnswer.Set(Sim.RedMansionAnswerText, true, XgDark.Accent, Color.white);
             var puzzle = askNext ? null : Sim.BookPuzzlePending;
             bookAsking = puzzle != null;
             bookAnswerField.gameObject.SetActive(bookAsking);
-            bookBody.rectTransform.offsetMin = new Vector2(10, bookAsking ? 36 : 8);
-            bookAnswerSend.Show(bookAsking);
+            ShowSlot(bookAnswerSend, bookAsking);
+            Part(bookAnswerRow, askNext || bookAsking);
             if (bookAsking)
             {
                 var pb = Sim.BookPuzzleBook;

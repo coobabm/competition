@@ -57,7 +57,7 @@ namespace LingGuangV05.Desktop.Mail
         bool built, rejectionShown;
         ChapterOneRuntime runtime;
 
-        sealed class WindowManagerRef { public Michsky.DreamOS.WindowManager w; }
+        sealed class WindowManagerRef { public LingGuangV05.Desktop.OS.WindowManager w; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         internal static void Attach()

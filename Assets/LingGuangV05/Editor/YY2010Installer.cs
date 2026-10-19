@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using HongmengOS.Aero2010;
 using LingGuangV05.Desktop;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Events;
@@ -22,9 +22,9 @@ namespace LingGuangV05.Editor
     {
         private const string Owned = "Assets/LingGuangV05/Content/Native/YY2010";
         private const string PandaPath = "Assets/LingGuangV05/Art/Generated/yy-panda-red-scarf.png";
-        private const string ButtonPath = "Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Button/Default Button.prefab";
-        private const string InputPath = "Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Input Field/Input Field.prefab";
-        private const string RowPath = "Assets/DreamOS - Complete OS UI/Prefabs/Settings/Settings Element - Button.prefab";
+        private const string ButtonPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/UI Elements/Button/Default Button.prefab";
+        private const string InputPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/UI Elements/Input Field/Input Field.prefab";
+        private const string RowPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/Settings/Settings Element - Button.prefab";
         private static readonly Color Ink = new Color32(32, 53, 75, 255);
         private static readonly Color Subtle = new Color32(88, 112, 135, 255);
         private static readonly Color Blue = new Color32(88, 171, 226, 255);

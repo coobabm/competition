@@ -39,7 +39,7 @@ public static class IntegrationProfilerCapture
     static double warmingSince,expectedSince;
     static int visibleChecks;
     static string expectedApp;
-    static Michsky.DreamOS.WindowManager expectedWindow;
+    static LingGuangV05.Desktop.OS.WindowManager expectedWindow;
     static RectTransform expectedRoot;
     static TMPro.TMP_Text[] expectedLabels;
     const double WarmupSeconds=3;
@@ -81,7 +81,7 @@ public static class IntegrationProfilerCapture
     {
         if (string.IsNullOrEmpty(Root)) return;
         ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(Root, "Save");
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null, Path.Combine(Root,"DesktopProfile") + Path.DirectorySeparatorChar);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null, Path.Combine(Root,"DesktopProfile") + Path.DirectorySeparatorChar);
         SceneManager.sceneLoaded += DisableModel;
     }
     static void DisableModel(Scene scene, LoadSceneMode mode)
@@ -122,9 +122,9 @@ public static class IntegrationProfilerCapture
                 ctl.GetType().GetMethod("BindSave",Flags).Invoke(ctl,new object[]{house});
                 if(YYChatHub.Instance?.S!=null) YYChatHub.Instance.S.lingguangUnlocked=true;
                 router=runtime.GetComponent<ChapterOneDesktopRouter>();
-                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
+                var boot=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include);
                 if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
-                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);
+                var user=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);
                 Require(user!=null&&user.isActiveAndEnabled,"Desktop user unavailable");user.ShowDesktop();
                 fixtureBound=true;return;
             }
@@ -208,7 +208,7 @@ public static class IntegrationProfilerCapture
     static void Expect(MonoBehaviour view,string app)
     {
         Require(view!=null,"View unavailable: "+app);expectedApp=app;expectedView=view;
-        expectedWindow=view.GetType().GetField("window",Flags)?.GetValue(view) as Michsky.DreamOS.WindowManager;
+        expectedWindow=view.GetType().GetField("window",Flags)?.GetValue(view) as LingGuangV05.Desktop.OS.WindowManager;
         expectedRoot=view.GetType().GetField("root",Flags)?.GetValue(view) as RectTransform;
         expectedLabels=null;expectedSince=EditorApplication.timeSinceStartup;
     }
@@ -221,7 +221,7 @@ public static class IntegrationProfilerCapture
         if(visible&&expectedWindow.transform.parent!=null){
             var parent=expectedWindow.transform.parent;
             for(int i=parent.childCount-1;i>=0;i--){var child=parent.GetChild(i);if(!child.gameObject.activeInHierarchy)continue;
-                var other=child.GetComponent<Michsky.DreamOS.WindowManager>();if(other==null||!other.isOn)continue;visible=other==expectedWindow;break;}
+                var other=child.GetComponent<LingGuangV05.Desktop.OS.WindowManager>();if(other==null||!other.isOn)continue;visible=other==expectedWindow;break;}
         }
         if(visible){
             if(expectedLabels==null)expectedLabels=expectedRoot.GetComponentsInChildren<TMPro.TMP_Text>(true);

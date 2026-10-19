@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from iconkit import *
 from multiprocessing import Pool
 
-ROOT = "/Users/kk/competition/Assets"
+ROOT = "/Users/kk/unity/competition/Assets"
 ICONS = ROOT + "/LingGuangV05/Resources/LingGuangV05/Icons"
 OXY = ROOT + "/StreamingAssets/HongmengOS-Aero2010/Oxygen"
 

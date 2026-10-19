@@ -89,7 +89,10 @@ namespace LingGuangV05.Editor
 
                 var drawRoot = Field<RectTransform>(label, "drawRoot");
                 var body = (RectTransform)drawRoot.parent;
-                Check(drawRoot.gameObject.activeSelf, "writing view is the desk's main view");
+                Check(!drawRoot.gameObject.activeSelf, "the desk opens on the yes/no cards");
+                Check(Field<XgBtn>(label, "classicToggle").rt.parent.gameObject.activeSelf, "with a toggle to the writing view");
+                Field<XgBtn>(label, "classicToggle").button.onClick.Invoke();
+                Check(drawRoot.gameObject.activeSelf, "the toggle opens the writing view");
                 Note("body " + body.rect.width.ToString("0") + " x " + body.rect.height.ToString("0") + ", writing view " + drawRoot.rect.width.ToString("0") + " x " + drawRoot.rect.height.ToString("0"));
                 Check(drawRoot.rect.height >= 540 && drawRoot.rect.width >= 572, "writing view is big enough for its layout (needs 572 x 540)");
                 var asked = Field<int>(label, "asked");

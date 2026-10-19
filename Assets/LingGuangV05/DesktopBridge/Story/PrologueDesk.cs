@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.Story
                 if ((((RectTransform)child).anchoredPosition - rt.anchoredPosition).sqrMagnitude < 50 * 50)
                 {
                     PrologueDesk.PlaceInFreeCell(rt);
-                    var dragger = GetComponent<Michsky.DreamOS.ItemDragger>();
+                    var dragger = GetComponent<LingGuangV05.Desktop.OS.ItemDragger>();
                     if (dragger != null && dragger.rememberPosition) dragger.UpdatePositionData();
                     return;
                 }

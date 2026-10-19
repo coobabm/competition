@@ -8,7 +8,8 @@ Keep this NOTICE, licenses/, source/, and manifest.json with the distributed des
 Preferred editable SVG sources and complete license texts are included locally; no source-code offer or external download is necessary.
 To replace an icon, preserve the corresponding application filename and supply a valid PNG.
 The parent application must not prohibit modification of these LGPL library files or reverse engineering for debugging such modifications.
-Apart from two files, no artwork pixel changes were made; files have only been given application-specific runtime filenames. Exact upstream paths and SHA-256 values are in manifest.json.
-The two exceptions are Reminder.png and Widget Library.png: the 灵光 game uses those two desktop slots for its own apps from the start, so they hold original 灵光 artwork (not Oxygen, not derived from it), drawn by Tools/Icons/desktop_icons.py. manifest.json marks them "modified": true and keeps the replaced Oxygen paths for reference.
+Apart from three files, no artwork pixel changes were made; files have only been given application-specific runtime filenames. Exact upstream paths and SHA-256 values are in manifest.json.
+Two of the exceptions are Reminder.png and Widget Library.png: the 灵光 game uses those two desktop slots for its own apps from the start, so they hold original 灵光 artwork (not Oxygen, not derived from it), drawn by Tools/Icons/desktop_icons.py. manifest.json marks them "modified": true and keeps the replaced Oxygen paths for reference.
+The third is Messaging.png: the YY messenger's piglet-in-a-red-scarf icon, original 灵光 artwork drawn by Tools/OSArt/Icons/make_yy_icon.py, also marked "modified": true.
 
 Historical upstream file: licenses/COPYING.LIB contains an older LGPLv2.1 text and is preserved verbatim for provenance. The applicable license for this selected artwork is LGPL-3.0-or-later as stated by upstream REUSE.toml and COPYING, including its artwork clarification.

@@ -1855,7 +1855,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3842964797444246499}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.PopupPanelManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.OS.PopupPanelManager, Assembly-CSharp
         m_MethodName: AnimatePanel
         m_Mode: 1
         m_Arguments:

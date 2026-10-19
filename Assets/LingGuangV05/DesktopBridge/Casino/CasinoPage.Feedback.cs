@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.XingGuang;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEngine;
 
 using LingGuangV05.Core;

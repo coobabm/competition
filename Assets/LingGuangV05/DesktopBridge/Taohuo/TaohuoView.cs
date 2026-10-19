@@ -7,7 +7,7 @@ using LingGuangV05.Core.Hardware;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Runtime;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -452,7 +452,7 @@ namespace LingGuangV05.Desktop.Taohuo
             ("2345 好压", "2345 HaoZip", "2345 好压安装完成。浏览器主页已为您锁定为 2345 网址导航。", "2345 HaoZip installed. Your browser home page is now locked to the 2345 portal."),
             ("大白菜 U 盘启动", "Dabaicai USB boot maker", "大白菜 U 盘启动盘制作成功。你没有 U 盘。", "Boot USB created. You don't have a USB stick."),
             ("一键 Ghost", "One-click Ghost", "一键 Ghost：C 盘已备份。还原点：它还不会说话的时候。", "One-click Ghost: drive C backed up. Restore point: before it could talk."),
-            ("番茄花园 Win7 旗舰版", "Tomato Garden Win7 Ultimate", "番茄花园：此版本已停止维护。建议升级 Windows 10（7 月 29 日前免费）。", "Tomato Garden: this edition is no longer maintained. Upgrade to Windows 10 (free until 29 July)."),
+            ("番茄花园 hongmengos 旗舰版", "Tomato Garden hongmengos Ultimate", "番茄花园：此版本已停止维护。建议升级 hongmengos 10（7 月 29 日前免费）。", "Tomato Garden: this edition is no longer maintained. Upgrade to hongmengos 10 (free until 29 July)."),
         };
 
         void BuildSoft()

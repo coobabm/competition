@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 
 using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.Story

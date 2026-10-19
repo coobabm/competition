@@ -1,6 +1,6 @@
 using System.Globalization;
 using LingGuangV05.Runtime;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -64,8 +64,8 @@ namespace LingGuangV05.Desktop.Story
             nextRefresh = Time.unscaledTime + .2f;
             Set(title, GameText.T(AppNames.AppZh + " " + AppNames.AppEn, AppNames.AppEn));
             Set(tagline, Lang.T("一个会自己学习的小程序"));
-            Set(meta, GameText.T("v0.1.3 · 2016-05-20 · Windows 7 / 8 / 10 · " + Mb(fileSizeMB) + " MB",
-                "v0.1.3 · 2016-05-20 · Windows 7 / 8 / 10 · " + Mb(fileSizeMB) + " MB"));
+            Set(meta, GameText.T("v0.1.3 · 2016-05-20 · hongmengos 2016 / 10 · " + Mb(fileSizeMB) + " MB",
+                "v0.1.3 · 2016-05-20 · hongmengos 2016 / 10 · " + Mb(fileSizeMB) + " MB"));
             Set(body, Lang.T("它一开始什么都不会，只会回答「是」和「否」。\n你教它，它就会学。\n\n·  本地运行，不联网也能用\n·  开源，由几个爱好者维护\n·  我们不保证它会学成什么样"));
             Set(footer, Lang.T("© 2016 lingguang.cc · 下载即表示你知道这只是个实验"));
 

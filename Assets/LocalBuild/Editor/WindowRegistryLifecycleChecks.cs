@@ -7,7 +7,7 @@ using System.Reflection;
 using LingGuangV05.Core;
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -27,7 +27,7 @@ public static class WindowRegistryLifecycleChecks
     public static WindowManager MakeWindow(string name,Transform parent)
     {
         var go=new GameObject(name,typeof(RectTransform));go.SetActive(false);if(parent!=null)go.transform.SetParent(parent,false);
-        var animator=go.AddComponent<Animator>();animator.runtimeAnimatorController=AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/DreamOS - Complete OS UI/Animations/Apps/App Window/Window.controller");
+        var animator=go.AddComponent<Animator>();animator.runtimeAnimatorController=AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/LingGuangV05/DesktopBridge/OSArt/Animations/Apps/App Window/Window.controller");
         if(animator.runtimeAnimatorController==null)throw new InvalidOperationException("Fixture window animator controller missing");animator.enabled=false;
         var window=go.AddComponent<WindowManager>();window.windowAnimator=animator;window.windowContainer=(RectTransform)go.transform;
         // Avoid unrelated resize-prefab, taskbar, preference and animation behavior, while allowing real callbacks.

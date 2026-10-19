@@ -130,7 +130,7 @@ namespace LingGuangV05.UI.Tests
 
         [Test] public void FirstExplicitNativeOpenSurvivesDeferredStart()
         {
-            var windowType = Type.GetType("Michsky.DreamOS.WindowManager, Assembly-CSharp", true);
+            var windowType = Type.GetType("LingGuangV05.Desktop.OS.WindowManager, Assembly-CSharp", true);
             var go = new GameObject("Cold native window", typeof(RectTransform), typeof(CanvasGroup), typeof(Animator));
             go.SetActive(false);
             go.transform.SetParent(root.transform, false);

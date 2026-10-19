@@ -54,7 +54,7 @@ public static class VisualRasterInteractionChecks
     {
         if(string.IsNullOrEmpty(Root))return;
         ChapterOneRuntime.VerificationSaveDirectory=Path.Combine(Root,"Save");
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
         SceneManager.sceneLoaded+=DisableModel;
     }
     static void DisableModel(Scene scene,LoadSceneMode mode)
@@ -110,9 +110,9 @@ public static class VisualRasterInteractionChecks
                 runtime.SetSimulationForTests(house);typeof(XingGuangController).GetMethod("BindSave",Flags).Invoke(ctl,new object[]{house});
                 // This fixture exercises desktop games, not the title/login sequence. Complete the
                 // isolated DreamOS profile's boot explicitly; an empty profile otherwise waits at login.
-                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
+                var boot=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include);
                 if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
-                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);
+                var user=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);
                 Require(user!=null&&user.isActiveAndEnabled,"Desktop user manager unavailable");
                 user.ShowDesktop();
                 File.WriteAllText(Path.Combine(Root,"fixture-lab.json"),JsonUtility.ToJson(lab.S,true));

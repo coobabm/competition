@@ -2,7 +2,7 @@ using System.IO;
 using System.Text;
 using HongmengOS.Aero2010;
 using LingGuangV05.Desktop.XingGuang;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEngine;
 using UnityEngine.UI;
 

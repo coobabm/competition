@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LingGuangV05.Desktop.Story;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Events;
@@ -30,7 +30,7 @@ namespace LingGuangV05.Editor
         private const string PagePath = WebDir + "/lingguang.cc.prefab";
         private const string Url = "lingguang.cc";
         private const float FileSizeMB = 46.8f;
-        private const string IconPath = "Assets/DreamOS - Complete OS UI/Textures/Icons/64x/Apps.png";
+        private const string IconPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Textures/Icons/64x/Apps.png";
         private const string HeroPath = "Assets/LingGuangV05/Art/Generated/neural-workbench.png";
         private const string DownloadsTemplate = "Assets/HongmengOS/Aero2010/Theme/Prefabs/downloads.com_d74d3a24ece4b37408f750a5f982cb47.prefab";
 

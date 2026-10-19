@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System;using System.Collections.Generic;using System.Reflection;using System.Linq;
-using LingGuangV05.Core;using LingGuangV05.Runtime;using LingGuangV05.XingGuang;using LingGuangV05.Desktop;using LingGuangV05.Desktop.XingGuang;using UnityEngine;using UnityEditor;using Michsky.DreamOS;
+using LingGuangV05.Core;using LingGuangV05.Runtime;using LingGuangV05.XingGuang;using LingGuangV05.Desktop;using LingGuangV05.Desktop.XingGuang;using UnityEngine;using UnityEditor;using LingGuangV05.Desktop.OS;
 public static class DesktopHotpathChecks
 {
  const BindingFlags Flags=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;static int count;static void Check(bool ok,string text){if(!ok)throw new Exception(text);count++;Debug.Log("[DesktopHotpathChecks] PASS "+text);}

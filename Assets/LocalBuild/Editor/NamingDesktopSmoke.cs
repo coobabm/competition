@@ -27,7 +27,7 @@ public static class NamingDesktopSmoke
     static double due;
     static string taskbarKey;
     static XgSetupOverlay setup;
-    static Michsky.DreamOS.WindowManager browser;
+    static LingGuangV05.Desktop.OS.WindowManager browser;
     static Vector2 browserSize, browserPosition;
     static NamingDesktopSmoke() { EditorApplication.update += Update; }
     public static void Validate() { NamingChecks.Validate(); Run(); }
@@ -55,7 +55,7 @@ public static class NamingDesktopSmoke
         ChapterOneRuntime.VerificationSaveDirectory = SessionState.GetString("NamingDesktopSmoke.SaveRoot", Path.Combine(output, "Save"));
         var path = Path.Combine(output, "DesktopProfile") + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(path);
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, path);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, path);
     }
     static T Field<T>(object target, string name) => (T)target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(target);
     static void Check(bool ok, string message) { if (!ok) throw new Exception(message); File.AppendAllText(Path.Combine(output, "checks.txt"), message + "\n"); }
@@ -132,7 +132,7 @@ public static class NamingDesktopSmoke
                     runtime.SetSimulationForTests(restored); break;
                 case 6:
                     VerifyIdentity("读档测试"); Shot("05-restored-name");
-                    foreach (var window in UnityEngine.Object.FindObjectsByType<Michsky.DreamOS.WindowManager>(FindObjectsInactive.Include))
+                    foreach (var window in UnityEngine.Object.FindObjectsByType<LingGuangV05.Desktop.OS.WindowManager>(FindObjectsInactive.Include))
                     {
                         if (window.windowContainer == null) continue;
                         var area = ((RectTransform)window.windowContainer.parent).rect.size;
@@ -141,7 +141,7 @@ public static class NamingDesktopSmoke
                         Check(actual.x < area.x * .9f && actual.y < area.y * .9f, "Desktop remains visible around " + window.name);
                     }
                     controller.View.ShowTab("train");
-                    browser = UnityEngine.Object.FindObjectsByType<Michsky.DreamOS.WindowManager>(FindObjectsInactive.Include).First(w => w.name == "Web Browser");
+                    browser = UnityEngine.Object.FindObjectsByType<LingGuangV05.Desktop.OS.WindowManager>(FindObjectsInactive.Include).First(w => w.name == "Web Browser");
                     browser.OpenWindow();
                     UnityEngine.Object.FindAnyObjectByType<ChapterOneDesktopRouter>().Open("yy");
                     break;

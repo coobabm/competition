@@ -16,7 +16,7 @@ namespace HongmengOS.Retro
         public RawImage display;
         public Camera sourceCamera;
         public RetroCrtInputSurface inputSurface;
-        public Michsky.DreamOS.AudioManager desktopAudio;
+        public LingGuangV05.Desktop.OS.AudioManager desktopAudio;
         public AudioSource hardwareAudio;
         public Graphic powerLamp;
         public RectTransform focusDial;

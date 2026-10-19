@@ -72,7 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 var parent = window.transform.parent;
                 for (int i = window.transform.GetSiblingIndex() + 1; i < parent.childCount; i++)
                 {
-                    var other = parent.GetChild(i).GetComponent<Michsky.DreamOS.WindowManager>();
+                    var other = parent.GetChild(i).GetComponent<LingGuangV05.Desktop.OS.WindowManager>();
                     if (other != null && other.isOn && other.gameObject.activeInHierarchy) return false;
                 }
                 return true;

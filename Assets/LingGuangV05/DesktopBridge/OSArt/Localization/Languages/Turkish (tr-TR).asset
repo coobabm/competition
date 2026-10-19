@@ -1,0 +1,961 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 741ce2ace64af9a449fd306c0372eba2, type: 3}
+  m_Name: Turkish (tr-TR)
+  m_EditorClassIdentifier: 
+  localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee, type: 2}
+  languageID: tr-TR
+  languageName: Turkish
+  localizedName: "T\xFCrk\xE7e"
+  tableList:
+  - table: {fileID: 11400000, guid: 3a533ebcf12a719498067d0c32240e88, type: 2}
+    tableContent:
+    - key: CalculatorTitle
+      value: "Hesap Makinesi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: CommanderTitle
+      value: "Komut Sat\u0131r\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: GameHubTitle
+      value: "Oyun Merkezi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailTitle
+      value: "E-posta"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MessagingTitle
+      value: "Mesajlar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerTitle
+      value: "M\xFCzik \xC7alar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotepadTitle
+      value: "Not Defteri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: PhotoGalleryTitle
+      value: "Foto\u011Fraf Galerisi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderTitle
+      value: "Hat\u0131rlat\u0131c\u0131lar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsTitle
+      value: "Ayarlar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: VideoPlayerTitle
+      value: "Video Oynat\u0131c\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserTitle
+      value: "Web Taray\u0131c\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WidgetLibraryTitle
+      value: "Widget Kitapl\u0131\u011F\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelHome
+      value: "Ana Sayfa"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelLibrary
+      value: "Kitapl\u0131k"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlay
+      value: "Oyna"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MessagingChatsLabel
+      value: "Sohbetler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNowPlaying
+      value: "\u015Eimdi \xC7al\u0131yor"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlaylists
+      value: "\xC7alma Listeleri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSettings
+      value: "Ayarlar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderOnceLabel
+      value: "Bir kez"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderDailyLabel
+      value: "Her g\xFCn"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCustomization
+      value: "Ki\u015Fiselle\u015Ftirme"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAccount
+      value: "Hesap"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDateAndTime
+      value: "Tarih ve Saat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAccessibility
+      value: "Eri\u015Filebilirlik"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAbout
+      value: "Hakk\u0131nda"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelMods
+      value: "Eklentiler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModsEmptyDescription
+      value: "Hen\xFCz y\xFCkl\xFC bir \u015Fey yok"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelWallpaper
+      value: "Duvar Ka\u011F\u0131d\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescWallpaper
+      value: "Masa\xFCst\xFC arka plan\u0131n\u0131 de\u011Fi\u015Ftir"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelCustomTheme
+      value: "\xD6zel renkler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescCustomTheme
+      value: "Standart renkler yerine se\xE7ti\u011Fin bir vurgu rengini kullan"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSnapDesktopItems
+      value: "Simgeleri \u0131zgaraya hizala"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSnapDesktopItems
+      value: "Simgeleri \u0131zgaraya sabitle ya da istedi\u011Fin yere koy"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSaveDesktopLayout
+      value: "Simge d\xFCzenini koru"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSaveDesktopLayout
+      value: "Yeniden ba\u015Flatmadan sonra simge konumlar\u0131n\u0131 geri y\xFCkle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelAdjustYourPhoto
+      value: "Profil resmi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescAdjustYourPhoto
+      value: "Hesab\u0131nda g\xF6r\xFCnecek resmi se\xE7"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelResetPassword
+      value: "Parolay\u0131 de\u011Fi\u015Ftir"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescResetPassword
+      value: "Hesab\u0131n i\xE7in yeni bir parola belirle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelWipeUserData
+      value: "T\xFCm verileri sil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescWipeUserData
+      value: "Kaydetti\u011Fin her \u015Feyi kald\u0131r ve sistemi ilk haline d\xF6nd\xFCr"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabel12HourClock
+      value: "12 saatlik saat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDesc12HourClock
+      value: "Saati AM/PM ile ya da 24 saatlik bi\xE7imde g\xF6ster"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelLanguage
+      value: "Dil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescLanguage
+      value: "Aray\xFCz dilini se\xE7"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSpeechRecognition
+      value: "Sesli asistan"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSpeechRecognition
+      value: "Asistanla konu\u015Farak bilgisayar\u0131 kullan"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSupport
+      value: "Yard\u0131m ve destek"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSupport
+      value: "Sorun mu var? A\u015Fa\u011F\u0131daki kanallardan bize ula\u015Fabilirsin"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescDiscord
+      value: "Topluluk sohbetimize kat\u0131l"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescTwitter
+      value: "Son duyurular\u0131m\u0131z\u0131 oku"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescYouTube
+      value: "Videolar\u0131m\u0131z\u0131 izle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserLabelFavorites
+      value: "Yer \u0130mleri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserLabelDownloads
+      value: "\u0130ndirilenler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelApps
+      value: "Programlar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelWelcome
+      value: "Ho\u015F Geldin"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelClear
+      value: "T\xFCm\xFCn\xFC temizle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotificationEmptyDesc
+      value: "Yeni bildirim yok"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: BootScreenWelcomeMessage
+      value: "Merhaba"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LockScreenLoginDesc
+      value: "Giri\u015F yapmak i\xE7in bir tu\u015Fa bas"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPassword
+      value: "Parola"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelResetPassword
+      value: "Parolay\u0131 De\u011Fi\u015Ftir"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WrongPasswordDesc
+      value: "Parola do\u011Fru de\u011Fil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalProfilePictureTitle
+      value: "Profil Resmi Se\xE7"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCancel
+      value: "\u0130ptal"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelConfirm
+      value: "Tamam"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalResetPasswordTitle
+      value: "Parolay\u0131 De\u011Fi\u015Ftir"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalWipeUserDataTitle
+      value: "T\xFCm Verileri Sil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalWipeUserDataDesc
+      value: "Kaydetti\u011Fin her \u015Fey kal\u0131c\u0131 olarak silinecek. Devam etmek istiyor musun?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeTitle
+      value: "Merhaba!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeDesc
+      value: "<b>Masa\xFCst\xFCn\xFC</b> birka\xE7 k\u0131sa ad\u0131mda kural\u0131m.\nHaz\u0131r oldu\u011Funda ba\u015Flayabiliriz."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupButtonLetsGo
+      value: "Ba\u015Fla"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoTitle
+      value: "Sen kimsin?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoDesc
+      value: "Ad\u0131n\u0131 yaz. \u0130stersen bir profil resmi de se\xE7ebilirsin."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelContinue
+      value: "\u0130leri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyTitle
+      value: "Hesab\u0131n\u0131 koru"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyDesc
+      value: "Hesab\u0131n\u0131 kendi belirledi\u011Fin bir parolayla koru."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRetypePassword
+      value: "Parolay\u0131 Tekrar Yaz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSecurityQuestion
+      value: "G\xFCvenlik Sorusu"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSecurityQuestionAnswer
+      value: "G\xFCvenlik Sorusunun Cevab\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkTitle
+      value: "Ba\u011Flant\u0131 kur"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkDesc
+      value: "\u015Eimdi bir Wi-Fi a\u011F\u0131na ba\u011Flan ya da bu ad\u0131m\u0131 atlay\u0131p sonra yap."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalTitle
+      value: "Son bir ad\u0131m"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalDesc
+      value: "Neredeyse bitti! Be\u011Fendi\u011Fin bir duvar ka\u011F\u0131d\u0131 se\xE7."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelReboot
+      value: "Yeniden Ba\u015Flat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeStep
+      value: "Ho\u015F Geldin"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoStep
+      value: "Sen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyStep
+      value: "Parola"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkStep
+      value: "A\u011F"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalStep
+      value: "Biti\u015F"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNewPassword
+      value: "Yeni Parola"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailInboxLabel
+      value: "Gelen Kutusu"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailSentLabel
+      value: "G\xF6nderilenler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailJunkLabel
+      value: "Gereksiz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelConntect
+      value: "Ba\u011Flan"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDisconnect
+      value: "Ba\u011Flant\u0131y\u0131 Kes"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelMyNotes
+      value: "Notlar\u0131m"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNewNote
+      value: "Yeni Not"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDelete
+      value: "Sil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlayAll
+      value: "T\xFCm\xFCn\xFC Oynat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDesktopSettings
+      value: "Masa\xFCst\xFC se\xE7enekleri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyReminderIndicator
+      value: "Hen\xFCz hat\u0131rlat\u0131c\u0131 yok"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyFavoritePagesIndicator
+      value: "Hen\xFCz yer imi yok"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyDownloadsIndicator
+      value: "Hen\xFCz bir \u015Fey indirilmedi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPreviousPage
+      value: "Geri"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSystemVersion
+      value: "Sistem s\xFCr\xFCm\xFC"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCloseWindow
+      value: "Kapat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPinTaskbar
+      value: "G\xF6rev \xE7ubu\u011Funa sabitle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelUnpinTaskbar
+      value: "G\xF6rev \xE7ubu\u011Fundan kald\u0131r"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelView
+      value: "G\xF6r\xFCn\xFCm"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorName
+      value: "Ad\u0131n en az 2 karakter olmal\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorLastName
+      value: "Soyad\u0131n en az 2 karakter olmal\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorPassword
+      value: "Parolan en az 4 karakter olmal\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorPasswordCheck
+      value: "\u0130ki parola birbirinden farkl\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ResetPasswordError
+      value: "Cevap yanl\u0131\u015F ya da parolalar birbirini tutmuyor"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRefresh
+      value: "Yenile"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelShutDown
+      value: "Kapat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRestart
+      value: "Yeniden Ba\u015Flat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelLock
+      value: "Kilitle"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNotifications
+      value: "Bildirimler"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LoginLabel
+      value: "Giri\u015F yap"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalDescSimple
+      value: "Neredeyse bitti!\n<b>Masa\xFCst\xFCn\xFC</b> kullanmaya ba\u015Flamak i\xE7in \u015Fimdi yeniden ba\u015Flat."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 5be61a8f2561b1b459eeba0252755c94, type: 2}
+    tableContent:
+    - key: TicTacToeDescription
+      value: "\u0130ki oyuncu s\u0131rayla \xFC\xE7 \xE7arp\u0131 \xFC\xE7l\xFCk bir \u0131zgaraya X ve O koyar. Kendi i\u015Faretinden \xFC\xE7\xFCn\xFC ilk hizalayan kazan\u0131r."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: 3DTestDescription
+      value: "Oyun penceresinde canl\u0131 3D kamera g\xF6r\xFCnt\xFCs\xFCn\xFC g\xF6steren k\xFC\xE7\xFCk bir demo."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyGameDescription
+      value: "Bir oyun penceresinin nas\u0131l g\xF6r\xFCnd\xFC\u011F\xFCn\xFC g\xF6steren bo\u015F bir \xF6rnek oyun."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: f6e6b4aaa6f2f004e915a560d310d6a5, type: 2}
+    tableContent:
+    - key: SampleMail1Subject
+      value: "Gelen kutundan merhaba"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail1Content
+      value: "Bu, bir e-posta \xF6\u011Fesinden olu\u015Fturulmu\u015F \xF6rnek bir iletidir. E-posta \xF6\u011Feleri ek dosyalar ve istedi\u011Fin metni ta\u015F\u0131yabilir.\n\n\u0130letilerin nas\u0131l g\xF6r\xFCnd\xFC\u011F\xFCn\xFC g\xF6rmek i\xE7in kullanabilirsin."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail2Subject
+      value: "Toplant\u0131 notlar\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail2Content
+      value: "Gelen kutusu listesinde g\xF6r\xFCnen ba\u015Fka bir \xF6rnek ileti."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail3Subject
+      value: "G\xF6nderilmi\u015F e-posta \xF6rne\u011Fi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail3Content
+      value: "'G\xF6nderilenler' klas\xF6r\xFCnde duran bir \xF6rnek ileti."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail4Subject
+      value: "Gereksiz e-posta \xF6rne\u011Fi"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail4Content
+      value: "'Gereksiz' klas\xF6r\xFCnde duran bir \xF6rnek ileti."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: c426ec06101062a4dbc9ef60778cd378, type: 2}
+    tableContent:
+    - key: ExampleChat_1
+      value: "Selam, orada m\u0131s\u0131n?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_2
+      value: "Buraday\u0131m, sende ne var ne yok?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_3
+      value: "Pek bir \u015Fey yok. B\xF6l\xFCm tasar\u0131mlar\u0131n\u0131 bitirdin mi?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_4
+      value: "Neredeyse. Teslim tarihi \xE7ok s\u0131k\u0131\u015F\u0131k, o y\xFCzden birka\xE7 fikri k\u0131rpmam gerekti."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_5
+      value: "Hatalar\u0131 hi\xE7 anlatmayay\u0131m..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_6
+      value: "Yo\u011Fun mesai haftalar\u0131 beni bitiriyor. Umar\u0131m bu yak\u0131nda biter."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_7
+      value: "Bende de \xF6yle."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_8
+      value: "\xC7\u0131k\u0131\u015F tarihinin ertelendi\u011Fini duydun mu?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_9
+      value: "Hay\u0131r, ben de \u015Fimdi internette g\xF6rd\xFCm."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_10
+      value: "\u015Eu y\xFCze bak!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_11
+      value: "Ahh, ne kadar tatl\u0131 bir \xE7ocuk!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_1
+      value: "Erin!!! \xC7ok uzun zaman oldu, nas\u0131ls\u0131n?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_2
+      value: "Hep ayn\u0131, \xE7ok \xE7al\u0131\u015F\u0131yorum. Son zamanlarda epey stresliyim. Sen?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_3
+      value: "Asl\u0131nda i\u015Fimden ayr\u0131ld\u0131m. D\xFCr\xFCst olmak gerekirse \xE7ok daha iyi hissediyorum."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_4
+      value: "Mutluysan sorun yok, \xF6nemli olan bu!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_5
+      value: "Bu arada numaran\u0131 kaybettim ve uzun s\xFCre sana ula\u015Famad\u0131m... kusura bakma!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_6
+      value: "Art\u0131k elinde ;)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_7
+      value: "Peki... bir ara kahve i\xE7meye ne dersin?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_8
+      value: "Doyas\u0131ya sohbet etmek g\xFCzel olurdu ;)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_9
+      value: "Olur, neden olmas\u0131n."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_10
+      value: "Harika! O zaman yar\u0131n ak\u015Fam be\u015F gibi?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_11
+      value: "M\xFCkemmel, g\xF6r\xFC\u015F\xFCr\xFCz!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_12
+      value: "\u0130dare eder, sen nas\u0131ls\u0131n?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat3_1
+      value: "Tebrikler! 1.000.000 $ de\u011Ferinde bir \xF6d\xFCl i\xE7in se\xE7ildin. \xD6d\xFCl\xFCn\xFC almak i\xE7in bu iletiye cevap ver. Tamamen ger\xE7ek ve kesinlikle bir doland\u0131r\u0131c\u0131l\u0131k de\u011Fil."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_1
+      value: "Cevap almak i\xE7in \"What's up?\" yazabilirsin."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_2
+      value: "Burada her \u015Fey yolunda, umar\u0131m sen de iyisindir!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_3
+      value: "Ne oldu?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_1
+      value: "\xD6nceden kurgulanm\u0131\u015F bir konu\u015Fma i\xE7in <b>StoryTeller</b> \xF6zelli\u011Fini a\xE7."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_2
+      value: "StoryTeller \xF6\u011Feleri, oyuncunun se\xE7ti\u011Fi cevaba g\xF6re konu\u015Fmay\u0131 farkl\u0131 y\xF6nlere ay\u0131rabilir."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_3
+      value: "Ba\u015Fka bir \xF6\u011Feyi kimli\u011Fiyle zincirlemek i\xE7in <b>'Call After'</b> kullan."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_4
+      value: "Kendi kodundan bir \xF6\u011Feyi <b>MessagingManager.CreateStoryTeller(\"Chat ID\", \"StoryTeller ID\");</b> ile ba\u015Flatabilirsin."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_5
+      value: "\xC7al\u0131\u015F\u0131rken g\xF6rmek ister misin? <b>SEQ_0</b> yaz. 'Debug StoryTeller' a\xE7\u0131kken bir \xF6\u011Fenin kimli\u011Fini yazmak onu oynat\u0131r."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_1
+      value: "Selam, nas\u0131l gidiyor?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1B
+      value: "Pek iyi de\u011Fil"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1C
+      value: "A\xE7\u0131k\xE7as\u0131 son zamanlarda kendimi \xE7ok k\xF6t\xFC hissediyorum..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1F
+      value: "Eyvah, ne oldu?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2B
+      value: "\u0130dare eder"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2C
+      value: "Fena de\u011Fil, sen nas\u0131ls\u0131n?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2F
+      value: "Bende de \xF6yle."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3B
+      value: "Harika"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3C
+      value: "\xC7ok iyi, ya sen?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3F
+      value: "O zaman ikimiz de iyiyiz!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_1
+      value: "Sadece..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1B
+      value: "Yorgunum"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1C
+      value: "Bilmiyorum, sadece bitkinim"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1F
+      value: "Ne zamand\u0131r?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2B
+      value: "Karn\u0131m a\u011Fr\u0131yor"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2C
+      value: "Karn\u0131m ger\xE7ekten \xE7ok a\u011Fr\u0131yor"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2F
+      value: "Yak\u0131nda bir doktora g\xF6r\xFCnmelisin."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3B
+      value: "Uyuyam\u0131yorum"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3C
+      value: "Bu aralar uyuyam\u0131yorum, nedenini bilmiyorum"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3F
+      value: "Umar\u0131m ciddi bir \u015Fey de\u011Fildir!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_1
+      value: "Bir ara bulu\u015Fmal\u0131y\u0131z"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1B
+      value: "Olur"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1C
+      value: "Olur, g\xFCzel olur :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1F
+      value: "S\xFCper! Ne zaman m\xFCsait oldu\u011Funu s\xF6yle :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2B
+      value: "Me\u015Fgul\xFCm"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2C
+      value: "San\u0131r\u0131m olmaz, bu aralar \xE7ok yo\u011Funum :/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2F
+      value: "Neyse. Belki ba\u015Fka zaman."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3B
+      value: "Hay\u0131r, sa\u011F ol"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3C
+      value: "Hay\u0131r, sa\u011F ol, ben kat\u0131lmayay\u0131m."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3F
+      value: "Of :'/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_1
+      value: "Hadi, bir sohbet edelim mi?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1B
+      value: "Olur"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1C
+      value: "Olur, neden olmas\u0131n :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1F
+      value: "Harika! Vaktin olunca haber ver :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2B
+      value: "Me\u015Fgul\xFCm"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2C
+      value: "Sanm\u0131yorum, \u015Fu an i\u015Flerim \xE7ok yo\u011Fun :/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2F
+      value: "Yaz\u0131k. Sonra yine deneriz."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3B
+      value: "Hay\u0131r, sa\u011F ol"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3C
+      value: "Hay\u0131r, sa\u011F ol, istemem."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3F
+      value: "Bu can\u0131m\u0131 yakt\u0131 :'/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_1
+      value: "Kendine iyi bak, biraz su i\xE7."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R1B
+      value: "Tamam"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R1C
+      value: "Evet, i\xE7erim"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2B
+      value: "Hay\u0131r"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2C
+      value: "Hay\u0131r, suyu pek sevmem"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2F
+      value: "Neden? Su sa\u011Fl\u0131\u011F\u0131n i\xE7in \xE7ok \xF6nemli."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: BeginningIndicator
+      value: "Konu\u015Fman\u0131z burada ba\u015Fl\u0131yor"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: TypeIndicator
+      value: "Bir mesaj yaz..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 77e4b89821ef6914c86f04674a1d6b5b, type: 2}
+    tableContent:
+    - key: SampleNote1Title
+      value: "\u0130lk not"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote1Content
+      value: "Bu not, not defteri y\xF6neticisi taraf\u0131ndan olu\u015Fturuldu. Y\xF6netici haz\u0131r notlar da ekleyebilir.\n\nBu metni ve ba\u015Fl\u0131\u011F\u0131n\u0131 da de\u011Fi\u015Ftirebilirsin. \u0130kisinden birine t\u0131klay\u0131p yazmaya ba\u015Fla."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote2Title
+      value: "Biliyor muydun?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote2Content
+      value: "Pasifik Okyanusu D\xFCnya y\xFCzeyinin yakla\u015F\u0131k \xFC\xE7te birini kaplar ve t\xFCm k\u0131talar\u0131n toplam\u0131ndan daha geni\u015Ftir. Denizin bilinen en derin noktas\u0131 olan Mariana \xC7ukuru da burada, y\xFCzeyin yakla\u015F\u0131k on bir kilometre alt\u0131ndad\u0131r."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 931c4ecb0810e844098897ad26a2de6c, type: 2}
+    tableContent:
+    - key: HomePageTitle
+      value: "Ba\u015Flang\u0131\xE7 Sayfas\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionTitle
+      value: "\xC7evrimd\u0131\u015F\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotFoundTitle
+      value: "Sayfa Bulunamad\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionErrorTitle
+      value: "Eyvah!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionErrorDesc
+      value: "\u0130nternet ba\u011Flant\u0131s\u0131 bulunamad\u0131.\nA\u011F\u0131n\u0131 kontrol edip yeniden dene."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoutFoundErrorTitle
+      value: "Hmm..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoutFoundErrorDesc
+      value: "Bu sayfaya ula\u015F\u0131lam\u0131yor.\nBiraz sonra yeniden dene."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: f0c6e838ab9555c409da2eb645d16de2, type: 2}
+    tableContent:
+    - key: AnalogClockTitle
+      value: "Analog Saat"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: AnalogClockDesc
+      value: "Sade bir saat kadran\u0131"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerTitle
+      value: "M\xFCzik \xC7alar"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerDesc
+      value: "\xC7alma denetimleri tek bak\u0131\u015Fta"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: QuickNoteTitle
+      value: "H\u0131zl\u0131 Not"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: QuickNoteDesc
+      value: "Akl\u0131na geleni hemen yaz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}

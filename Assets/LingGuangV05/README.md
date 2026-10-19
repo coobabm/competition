@@ -37,7 +37,7 @@
 
 五个软件只有一个游戏时钟和存档，不会各自复制经费或训练进度。考试进行时，邮件软件暂停普通标注，避免把考试题误当训练邮件提交。
 
-该场景先从 `/Users/kk/competition/Assets/DreamOS - Complete OS UI/Scenes/2010desktop.unity` 原样复制，再增量接入游戏。原场景保留，不覆盖旧版 LingGuang、DreamOS 代码、共享主题或全局构建列表。不要直接播放旧版 LingGuang 场景来寻找此应用。
+该场景先从 `/Users/kk/competition/Assets/LingGuangV05/DesktopBridge/OSArt/Scenes/2010desktop.unity` 原样复制，再增量接入游戏。原场景保留，不覆盖旧版 LingGuang、DreamOS 代码、共享主题或全局构建列表。不要直接播放旧版 LingGuang 场景来寻找此应用。
 
 ## 第一章怎么玩
 

@@ -4954,7 +4954,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3755201653734662042}
-        m_TargetAssemblyTypeName: Michsky.DreamOS.LaunchURL, Assembly-CSharp
+        m_TargetAssemblyTypeName: LingGuangV05.Desktop.OS.LaunchURL, Assembly-CSharp
         m_MethodName: OpenURL
         m_Mode: 5
         m_Arguments:

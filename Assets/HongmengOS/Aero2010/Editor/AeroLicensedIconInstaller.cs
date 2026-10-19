@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 namespace HongmengOS.Aero2010.Editor
 {

@@ -8,14 +8,14 @@ using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using TMPro;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using Object=UnityEngine.Object;
 
 namespace HongmengOS.Retro.Editor
 {
     public static class RetroDesktopStyleEditor
     {
-        public const string ScenePath="Assets/DreamOS - Complete OS UI/Scenes/90desktop.unity";
+        public const string ScenePath="Assets/LingGuangV05/DesktopBridge/OSArt/Scenes/90desktop.unity";
         const string Base="Assets/HongmengOS/Retro/";
         static readonly Color Gray=new Color32(192,192,192,255), Navy=new Color32(0,0,128,255), Teal=new Color32(0,128,128,255);
         static TMP_FontAsset font;

@@ -2,7 +2,7 @@ using System;
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,18 +39,18 @@ namespace LingGuangV05.Desktop
             retry = Time.unscaledTime + 1;
             var window = Array.Find(FindObjectsByType<WindowManager>(FindObjectsInactive.Include, FindObjectsSortMode.None), w => w.name == "Settings");
             if (window?.windowContainer == null) return;
+            // 2026-10-19 (owner): no buttons in the Settings title bar any more. The ledger stays on the training page
+            // (查看资金账本); saves & chapters moved into Settings → About, its only entry.
+            var panels = window.GetComponentInChildren<WindowPanelManager>(true);
+            var about = panels != null ? panels.panels.Find(p => p.panelName == "About")?.panelObject : null;
+            if (about == null) return;
             ui = new XgUi(PrologueDesk.CjkFont(), window);
-            var button = ui.Button(window.windowContainer, T("存档与章节", "Saves & chapters"), Open, 15);
+            var button = ui.Button((RectTransform)about.transform, T("存档与章节", "Saves & chapters"), Open, 15);
             button.rt.name = "SaveSlotsSettingsButton";
-            button.rt.anchorMin = button.rt.anchorMax = new Vector2(1, 1);
-            button.rt.offsetMin = new Vector2(-270, -42); button.rt.offsetMax = new Vector2(-110, -10);
-            button.rt.SetAsLastSibling();
-            var funds = ui.Button(window.windowContainer, "资金账本", () => {
-                var book=runtime.GetComponent<FundsPanel>() ?? runtime.gameObject.AddComponent<FundsPanel>(); book.Open();
-            }, 15);
-            funds.rt.name="FundsSettingsButton"; funds.rt.anchorMin=funds.rt.anchorMax=new Vector2(1,1);
-            funds.rt.offsetMin=new Vector2(-400,-42); funds.rt.offsetMax=new Vector2(-280,-10);
-            funds.rt.SetAsLastSibling(); installed = true;
+            // Bottom right, above the About page's footer note
+            button.rt.anchorMin = button.rt.anchorMax = new Vector2(1, 0);
+            button.rt.offsetMin = new Vector2(-204, 62); button.rt.offsetMax = new Vector2(-24, 100);
+            button.rt.SetAsLastSibling(); installed = true;
         }
         void Build()
         {

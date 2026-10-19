@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using LingGuangV05.Desktop;
 using LingGuangV05.Runtime;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -18,7 +18,7 @@ namespace LingGuangV05.Editor
     public static class DesktopLocalizationInstaller
     {
         public const string Root = "Assets/LingGuangV05/Localization";
-        private const string Vendor = "Assets/DreamOS - Complete OS UI/Localization/";
+        private const string Vendor = "Assets/LingGuangV05/DesktopBridge/OSArt/Localization/";
         private static readonly Dictionary<Object, Object> copies = new Dictionary<Object, Object>();
         private static readonly Dictionary<string, string> prefabs = new Dictionary<string, string>();
         private static readonly HashSet<TMP_Text> dynamicTexts = new HashSet<TMP_Text>();

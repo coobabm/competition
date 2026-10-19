@@ -56,7 +56,7 @@ public static class SelectionIsolationInteractionChecks
     {
         if(string.IsNullOrEmpty(Root))return;
         ChapterOneRuntime.VerificationSaveDirectory=Path.Combine(Root,"Save");
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath",BindingFlags.Static|BindingFlags.NonPublic)?.SetValue(null,Path.Combine(Root,"DesktopProfile")+Path.DirectorySeparatorChar);
         SceneManager.sceneLoaded+=DisableModel;
     }
     static void DisableModel(Scene scene,LoadSceneMode mode)
@@ -121,9 +121,9 @@ public static class SelectionIsolationInteractionChecks
                 runtime.SetSimulationForTests(house);typeof(XingGuangController).GetMethod("BindSave",Flags).Invoke(ctl,new object[]{house});
                 // This fixture exercises desktop games, not the title/login sequence. Complete the
                 // isolated DreamOS profile's boot explicitly; an empty profile otherwise waits at login.
-                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
+                var boot=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include);
                 if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
-                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);
+                var user=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);
                 Require(user!=null&&user.isActiveAndEnabled,"Desktop user manager unavailable");
                 user.ShowDesktop();
                 File.WriteAllText(Path.Combine(Root,"fixture-lab.json"),JsonUtility.ToJson(lab.S,true));
@@ -258,7 +258,7 @@ public static class SelectionIsolationInteractionChecks
         Require(runtime.TestMode&&!runtime.Sim.InPrologue,"Screenshot fixture is not a post-prologue desktop");
         foreach(var prologue in UnityEngine.Object.FindObjectsByType<LingGuangV05.Desktop.Story.PrologueDirector>(FindObjectsInactive.Include,FindObjectsSortMode.None))
             Require(!prologue.Running,"Screenshot covered by running prologue at "+prologue.Step);
-        foreach(var boot in UnityEngine.Object.FindObjectsByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include,FindObjectsSortMode.None))
+        foreach(var boot in UnityEngine.Object.FindObjectsByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include,FindObjectsSortMode.None))
             Require(boot.bootAnimator==null||!boot.bootAnimator.gameObject.activeInHierarchy,"DreamOS boot overlay is visible");
         // These full-desktop blockers are outside WindowManager siblings, which the old focus check did not see.
         foreach(var image in UnityEngine.Object.FindObjectsByType<Image>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
@@ -276,7 +276,7 @@ public static class SelectionIsolationInteractionChecks
         Require(window!=null&&window.isOn&&window.gameObject.activeInHierarchy,"Screenshot window closed");
         for(int i=window.transform.GetSiblingIndex()+1;i<window.transform.parent.childCount;i++)
         {
-            var other=window.transform.parent.GetChild(i).GetComponent<Michsky.DreamOS.WindowManager>();
+            var other=window.transform.parent.GetChild(i).GetComponent<LingGuangV05.Desktop.OS.WindowManager>();
             Require(other==null||!other.isOn||!other.gameObject.activeInHierarchy,"Screenshot window covered by "+(other==null?"":other.name));
         }
     }
@@ -361,7 +361,7 @@ public static class SelectionIsolationInteractionChecks
         Require(window!=null&&window.isOn&&window.gameObject.activeInHierarchy,"Theme window is closed: "+name);
         for(int i=window.transform.GetSiblingIndex()+1;i<window.transform.parent.childCount;i++)
         {
-            var other=window.transform.parent.GetChild(i).GetComponent<Michsky.DreamOS.WindowManager>();
+            var other=window.transform.parent.GetChild(i).GetComponent<LingGuangV05.Desktop.OS.WindowManager>();
             Require(other==null||!other.isOn||!other.gameObject.activeInHierarchy,"Another app covers theme capture: "+name);
         }
         ClassicThemeChecks.Assert(page,work,visual);

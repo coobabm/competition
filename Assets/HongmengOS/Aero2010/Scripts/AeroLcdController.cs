@@ -11,7 +11,7 @@ namespace HongmengOS.Aero2010
         public RawImage display;
         public Camera sourceCamera;
         public AeroLcdInputSurface inputSurface;
-        public Michsky.DreamOS.AudioManager desktopAudio;
+        public LingGuangV05.Desktop.OS.AudioManager desktopAudio;
         public Renderer powerLamp;
         public GameObject osd;
         public TMP_Text osdLabel;

@@ -96,7 +96,7 @@ public static partial class DesignWallpaperSmoke
         ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(Output, "Save");
         var profile = Path.Combine(Output, "DesktopProfile") + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(profile);
-        typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, profile);
+        typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, profile);
     }
     static void DisableSmokeModel(UnityEngine.SceneManagement.Scene scene,UnityEngine.SceneManagement.LoadSceneMode mode)
     {
@@ -187,9 +187,9 @@ public static partial class DesignWallpaperSmoke
                 }
                 runtime.tickEnabled=false;
                 typeof(ChapterOneRuntime).GetProperty("TestMode").GetSetMethod(true).Invoke(runtime,new object[]{false});
-                var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
+                var boot=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.BootManager>(FindObjectsInactive.Include);
                 if(boot!=null){boot.CancelInvoke();boot.StopAllCoroutines();if(boot.bootAnimator!=null)boot.bootAnimator.gameObject.SetActive(false);}
-                var user=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.UserManager>(FindObjectsInactive.Include);
+                var user=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);
                 Check(user!=null&&user.isActiveAndEnabled,"Desktop user available");user.ShowDesktop();
                 purchasedBrain=XgBrainWindow.Install(controller);step=300;return;
             }
@@ -915,7 +915,7 @@ public static partial class DesignWallpaperSmoke
                 case 150:
                     controller.enabled = false;
                     boardBeforeDraw = JsonUtility.ToJson(controller.Sim.S.board);
-                    var desktopMenu = brain.transform.parent.Find("Desktop Context Menu").GetComponent<Michsky.DreamOS.ContextMenuContent>();
+                    var desktopMenu = brain.transform.parent.Find("Desktop Context Menu").GetComponent<LingGuangV05.Desktop.OS.ContextMenuContent>();
                     originalMenuCount = desktopMenu.menuItems.Count - 3;
                     Check(originalMenuCount >= 2, "Original desktop menu actions are retained");
                     Click((RectTransform)brain.transform, UnityEngine.EventSystems.PointerEventData.InputButton.Right);
@@ -980,13 +980,13 @@ public static partial class DesignWallpaperSmoke
                     }
                     break;
                 case 163:
-                    var resetMenu = brain.transform.parent.Find("Desktop Context Menu").GetComponent<Michsky.DreamOS.ContextMenuContent>();
+                    var resetMenu = brain.transform.parent.Find("Desktop Context Menu").GetComponent<LingGuangV05.Desktop.OS.ContextMenuContent>();
                     Check(resetMenu.menuItems.Count == originalMenuCount && !brain.GetComponent<XgBrainWallpaperPresentation>().Quiet, "New game removes AI menu entries and restores Quiet state");
                     runtime.CompletePrologue(new PrologueProfile { name = "小星", self = "我", callMe = "你", personality = "好奇" });
                     due = EditorApplication.timeSinceStartup + 4;
                     break;
                 case 164:
-                    Check(brain.transform.parent.Find("Desktop Context Menu").GetComponent<Michsky.DreamOS.ContextMenuContent>().menuItems.Count == originalMenuCount + 3, "Completing setup again adds one copy of each menu item");
+                    Check(brain.transform.parent.Find("Desktop Context Menu").GetComponent<LingGuangV05.Desktop.OS.ContextMenuContent>().menuItems.Count == originalMenuCount + 3, "Completing setup again adds one copy of each menu item");
                     File.WriteAllText(Path.Combine(Output, "result.txt"), "PASS"); Finish(0); break;
                 case 170:
                     DesignFirstLessonChecks.Run();
@@ -1090,7 +1090,7 @@ public static partial class DesignWallpaperSmoke
     static RectTransform MenuButton(string label)
     {
         var menu = UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>().contextMenu;
-        foreach (var button in menu.contentRect.GetComponentsInChildren<Michsky.DreamOS.ButtonManager>())
+        foreach (var button in menu.contentRect.GetComponentsInChildren<LingGuangV05.Desktop.OS.ButtonManager>())
             if (button.buttonText == label) return button.transform as RectTransform;
         return null;
     }
@@ -1166,7 +1166,7 @@ public static partial class DesignWallpaperSmoke
                 var group = node.GetComponent<CanvasGroup>();
                 if (group != null) diagnostic += "Group " + node.name + "=" + group.alpha + "\n";
             }
-            foreach (var window in UnityEngine.Object.FindObjectsByType<Michsky.DreamOS.WindowManager>(FindObjectsSortMode.None))
+            foreach (var window in UnityEngine.Object.FindObjectsByType<LingGuangV05.Desktop.OS.WindowManager>(FindObjectsSortMode.None))
                 if (window.windowContainer != null && brain.transform.IsChildOf(window.windowContainer)) diagnostic += "Ancestor window=" + window.name + " container=" + window.windowContainer.name + " on=" + window.isOn + "\n";
             foreach (var camera in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))
                 if (camera.targetTexture != null) diagnostic += "Camera=" + camera.name + " target=" + camera.targetTexture.name + " id=" + camera.targetTexture.GetInstanceID() + " flags=" + camera.clearFlags + " mask=" + camera.cullingMask + "\n";

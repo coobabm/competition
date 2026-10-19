@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from iconkit import *
 from multiprocessing import Pool
 
-OUT = "/Users/kk/competition/Assets/LingGuangV05/Resources/LingGuangV05/Icons"
+OUT = "/Users/kk/unity/competition/Assets/LingGuangV05/Resources/LingGuangV05/Icons"
 SCRATCH = "/private/tmp/claude-501/-Users-kk-unity/0b11848a-3722-4bc3-8ee4-9222e5441068/scratchpad"
 REG = []
 

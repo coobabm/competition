@@ -6,7 +6,7 @@ Created: 2026-10-03, Asia/Seoul local project date.
 - Built-in setting: `transparent_background: true`.
 - Intent: original messenger mascot avatar, a single new image with no reference images.
 - Calls: one successful generation; no retries or post-editing.
-- Project asset: `/Users/kk/competition/Assets/LingGuangV05/Art/Generated/yy-panda-red-scarf.png`.
+- Project asset: `/Users/kk/unity/competition/Assets/LingGuangV05/Art/Generated/yy-panda-red-scarf.png`.
 - Generated source: `/Users/kk/.codex/generated_images/01a0fe5d-eb64-79f1-bdb2-20adef4c54f5/exec-b458f56d-1f40-4e84-a8fe-8f006bc73af4.png`.
 - PNG dimensions: 1254 × 1254.
 - Alpha channel: yes, verified via read-only `sips` metadata.

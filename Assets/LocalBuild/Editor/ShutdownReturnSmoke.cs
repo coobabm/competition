@@ -15,7 +15,7 @@ using LingGuangV05.Desktop.LLM;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Runtime;
 using LingGuangV05.Runtime.Persistence;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;

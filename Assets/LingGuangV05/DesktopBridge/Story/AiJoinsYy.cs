@@ -401,17 +401,17 @@ namespace LingGuangV05.Desktop.Story
         // ───────────── focus ─────────────
 
         /// <summary>The window the player was working in when the scene began (null: the desktop itself).</summary>
-        Michsky.DreamOS.WindowManager workingIn;
+        LingGuangV05.Desktop.OS.WindowManager workingIn;
         /// <summary>Seconds the AI's first words stay in front before the player's window comes back.</summary>
         const float FocusBackAfter = 3.5f;
 
         /// <summary>The open, visible window on top of the desktop other than YY.</summary>
-        Michsky.DreamOS.WindowManager FrontWindow()
+        LingGuangV05.Desktop.OS.WindowManager FrontWindow()
         {
             var yy = router != null ? router.Get(YYChatHub.AppId) : null;
             var yyWindow = yy != null ? yy.Window : null;
-            Michsky.DreamOS.WindowManager best = null;
-            foreach (var w in FindObjectsByType<Michsky.DreamOS.WindowManager>(FindObjectsSortMode.None))
+            LingGuangV05.Desktop.OS.WindowManager best = null;
+            foreach (var w in FindObjectsByType<LingGuangV05.Desktop.OS.WindowManager>(FindObjectsSortMode.None))
             {
                 if (w == null || w == yyWindow || !w.isOn || !LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(w)) continue;
                 if (best == null || w.transform.parent == best.transform.parent && w.transform.GetSiblingIndex() > best.transform.GetSiblingIndex()) best = w;
@@ -420,7 +420,7 @@ namespace LingGuangV05.Desktop.Story
         }
 
         /// <summary>Brings the player's window back to the front, unless they have clicked something since the scene ended.</summary>
-        System.Collections.IEnumerator GiveFocusBack(Michsky.DreamOS.WindowManager window, float endedAt)
+        System.Collections.IEnumerator GiveFocusBack(LingGuangV05.Desktop.OS.WindowManager window, float endedAt)
         {
             for (float t = 0; t < FocusBackAfter; t += Time.unscaledDeltaTime) yield return null;
             if (window == null || !window.isOn || lastPress > endedAt || Playing) yield break;

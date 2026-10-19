@@ -70,7 +70,7 @@
 0	ModalWipeUserDataTitle	清除用户数据
 0	ModalWipeUserDataDesc	确定要删除所有个人数据吗？此操作无法撤销。
 0	SetupWelcomeTitle	你好！
-0	SetupWelcomeDesc	我将帮助你完成 <b>DreamOS</b> 的初始设置。\n准备好了吗？
+0	SetupWelcomeDesc	我将帮助你完成 <b>hongmengos</b> 的初始设置。\n准备好了吗？
 0	SetupButtonLetsGo	开始设置
 0	SetupUserInfoTitle	如何称呼你？
 0	SetupUserInfoDesc	请输入姓名。你也可以选择一张头像。
@@ -121,12 +121,12 @@
 0	LabelLock	锁定
 0	LabelNotifications	通知
 0	LoginLabel	登录
-0	SetupFinalDescSimple	即将完成！\n现在可以重启系统，开始使用 <b>DreamOS</b>。
+0	SetupFinalDescSimple	即将完成！\n现在可以重启系统，开始使用 <b>hongmengos</b>。
 1	TicTacToeDescription	井字棋由两名玩家在三乘三的棋盘上对弈，双方轮流在九个格子中的一个空格内标记 X 或 O。\n
 1	3DTestDescription	这是另一个示例游戏，用于测试游戏中心内的 3D 摄像机渲染。
 1	EmptyGameDescription	这是一个空白示例游戏，用于展示游戏窗口。
 2	SampleMail1Subject	示例邮件
-2	SampleMail1Content	这是一封通过邮件条目创建的示例邮件。你可以使用 <b>Create > DreamOS > New Mail Item</b> 添加新的邮件条目。\n\n也可以添加附件和自定义内容。
+2	SampleMail1Content	这是一封通过邮件条目创建的示例邮件。你可以使用 <b>邮件应用</b> 添加新的邮件条目。\n\n也可以添加附件和自定义内容。
 2	SampleMail2Subject	相信我，飞行员
 2	SampleMail2Content	这是另一封通过邮件条目创建的示例邮件。
 2	SampleMail3Subject	已发送邮件示例

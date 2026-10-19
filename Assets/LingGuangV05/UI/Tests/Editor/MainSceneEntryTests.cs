@@ -144,13 +144,13 @@ namespace LingGuangV05.UI.Tests
                 var desktop = Child(root, "Desktop List");
                 var removedIcon = Child(desktop, "Photo Gallery");
                 var otherIcon = Child(desktop, "Web Browser");
-                var windowType = Type.GetType("Michsky.DreamOS.WindowManager, Assembly-CSharp", true);
+                var windowType = Type.GetType("LingGuangV05.Desktop.OS.WindowManager, Assembly-CSharp", true);
                 var removedWindow = Child(root, "Photo Gallery").AddComponent(windowType);
                 var otherWindow = Child(root, "Web Browser").AddComponent(windowType);
                 windowType.GetField("enableMobileMode", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(removedWindow, true);
                 windowType.GetField("isOn").SetValue(removedWindow, true);
                 windowType.GetField("isOn").SetValue(otherWindow, true);
-                var taskbarType = Type.GetType("Michsky.DreamOS.TaskbarButton, Assembly-CSharp", true);
+                var taskbarType = Type.GetType("LingGuangV05.Desktop.OS.TaskbarButton, Assembly-CSharp", true);
                 var removedTaskbar = Child(root, "Gallery taskbar").AddComponent(taskbarType);
                 windowType.GetField("taskbarButton").SetValue(removedWindow, removedTaskbar);
                 var otherTaskbar = Child(root, "Browser taskbar").AddComponent(taskbarType);

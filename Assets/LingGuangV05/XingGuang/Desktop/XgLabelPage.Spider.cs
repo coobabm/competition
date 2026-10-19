@@ -255,7 +255,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var child = parent.GetChild(i);
                 if (!child.gameObject.activeInHierarchy) continue;
-                var other = child.GetComponent<Michsky.DreamOS.WindowManager>();
+                var other = child.GetComponent<LingGuangV05.Desktop.OS.WindowManager>();
                 if (other == null || !other.isOn) continue;
                 return other == w;
             }

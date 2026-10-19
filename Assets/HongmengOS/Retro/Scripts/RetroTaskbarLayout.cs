@@ -1,5 +1,5 @@
 using UnityEngine;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 namespace HongmengOS.Retro
 {
     /// <summary>Preserves DreamOS animation/state logic; only owns classic task button geometry.

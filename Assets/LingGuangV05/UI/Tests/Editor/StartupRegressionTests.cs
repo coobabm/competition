@@ -96,7 +96,7 @@ namespace LingGuangV05.UI.Tests
 
                     Assert.DoesNotThrow(() => Invoke(flow, "Reconcile", false));
 
-                    var manager = RuntimeType("Michsky.DreamOS.DreamOSDataManager");
+                    var manager = RuntimeType("LingGuangV05.Desktop.OS.DreamOSDataManager");
                     var category = Enum.Parse(manager.GetNestedType("DataCategory"), "Network");
                     Assert.That(manager.GetMethod("ReadIntData").Invoke(null, new[] { category, DownloadKey }), Is.EqualTo(0));
                     Assert.That(downloads.Count, Is.EqualTo(1));
@@ -119,7 +119,7 @@ namespace LingGuangV05.UI.Tests
             var disconnected = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), Vector2.zero);
             try
             {
-                var manager = host.AddComponent(RuntimeType("Michsky.DreamOS.NetworkManager"));
+                var manager = host.AddComponent(RuntimeType("LingGuangV05.Desktop.OS.NetworkManager"));
                 var indicator = Child(host, "Indicator").AddComponent<Image>();
                 ((IList)Get(manager, "networkIndicators")).Add(indicator);
                 Set(manager, "signalDisconnected", disconnected);
@@ -147,7 +147,7 @@ namespace LingGuangV05.UI.Tests
             var connected = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), Vector2.zero);
             try
             {
-                var manager = host.AddComponent(RuntimeType("Michsky.DreamOS.NetworkManager"));
+                var manager = host.AddComponent(RuntimeType("LingGuangV05.Desktop.OS.NetworkManager"));
                 var indicator = Child(host, "Indicator").AddComponent<Image>();
                 ((IList)Get(manager, "networkIndicators")).Add(indicator);
                 Set(manager, "signalWeak", connected);
@@ -175,7 +175,7 @@ namespace LingGuangV05.UI.Tests
             var host = InactiveHost();
             try
             {
-                var button = host.AddComponent(RuntimeType("Michsky.DreamOS.ButtonManager"));
+                var button = host.AddComponent(RuntimeType("LingGuangV05.Desktop.OS.ButtonManager"));
                 ((Behaviour)button).enabled = false; // Deterministically defer its OnEnable while an external caller refreshes.
                 Set(button, "autoFitContent", false);
                 Set(button, "useLocalization", false);
@@ -214,7 +214,7 @@ namespace LingGuangV05.UI.Tests
             Application.logMessageReceived += capture;
             try
             {
-                var button = host.AddComponent(RuntimeType("Michsky.DreamOS.ButtonManager"));
+                var button = host.AddComponent(RuntimeType("LingGuangV05.Desktop.OS.ButtonManager"));
                 Set(button, "autoFitContent", false);
                 Set(button, "useLocalization", false);
                 Set(button, "useUINavigation", true);
@@ -264,7 +264,7 @@ namespace LingGuangV05.UI.Tests
             Application.logMessageReceived += capture;
             try
             {
-                var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DreamOS - Complete OS UI/Prefabs/Messaging/Chat Layout.prefab");
+                var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/Messaging/Chat Layout.prefab");
                 Assert.That(prefab, Is.Not.Null, "Use the real authored chat layout, including its animator and display bindings.");
                 var view = UnityEngine.Object.Instantiate(prefab, host.transform, false);
                 view.name = "Startup inactive chat";
@@ -324,7 +324,7 @@ namespace LingGuangV05.UI.Tests
             public string NetworkFile { get; }
             public TemporaryDreamOsData(string networkJson)
             {
-                pathField = RuntimeType("Michsky.DreamOS.DreamOSDataManager").GetField("dataPath", BindingFlags.NonPublic | BindingFlags.Static);
+                pathField = RuntimeType("LingGuangV05.Desktop.OS.DreamOSDataManager").GetField("dataPath", BindingFlags.NonPublic | BindingFlags.Static);
                 previousPath = pathField.GetValue(null);
                 directory = Path.Combine(Path.GetTempPath(), "lingguang-startup-regression-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(directory);

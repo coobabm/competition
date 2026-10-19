@@ -7,7 +7,7 @@ using LingGuangV05.Core.Story;
 using LingGuangV05.Desktop.Media;
 using LingGuangV05.Runtime;
 using LingGuangV05.Runtime.Story;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -123,6 +123,7 @@ namespace LingGuangV05.Desktop.Story
             GameMusic.Install(gameObject);
             // The desktop icons stay packed in order as stage gates hide and show them.
             DesktopIconOrder.Install(gameObject);
+            DesktopLabelShadow.Install(gameObject);
             // The 2016 tray crowd next to the clock, and the stage-6 flicker (design v1.1 §3, §10.2 #8).
             TrayApps.Install();
             TrayLingGuang.Install();

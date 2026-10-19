@@ -6,7 +6,7 @@ using LingGuangV05.Desktop;
 using LingGuangV05.Runtime;
 using LingGuangV05.UI;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Events;
@@ -26,7 +26,7 @@ namespace LingGuangV05.Editor
     public static partial class ChapterOneInstaller
     {
         public const string ScenePath = "Assets/LingGuangV05/Scenes/Main.unity";
-        public const string SourceScenePath = "Assets/DreamOS - Complete OS UI/Scenes/2010desktop.unity";
+        public const string SourceScenePath = "Assets/LingGuangV05/DesktopBridge/OSArt/Scenes/2010desktop.unity";
         public const string FontPath = "Assets/Emergence/Resources/Fonts/SparkUI_Readable_CJK_SDF.asset";
         public const string AppTitle = "灵光.exe";
         private const string RuntimeName = "LingGuang Chapter One Runtime";

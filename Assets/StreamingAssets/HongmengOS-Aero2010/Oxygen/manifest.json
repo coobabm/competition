@@ -61,12 +61,14 @@
       "upstream_path": "128x128/apps/kopete.png",
       "resolved_png": "128x128/apps/kopete.png",
       "upstream_url": "https://raw.githubusercontent.com/KDE/oxygen-icons/65ccf0752df19c9cf97da4884e41bfd4e8c8ec69/128x128/apps/kopete.png",
-      "sha256": "9f8c2e2fe72d78a912e8f7b529640ab7c318500dab9419478673ce22f5f527fa",
+      "sha256": "6c1f1f7eac71de4b086aebbaeae2121b376d16e07a0d90fafcaceca0cb4cffa6",
       "source_files": [
         "scalable/apps/kopete.svgz"
       ],
       "license": "LGPL-3.0-or-later with Oxygen artwork clarification",
-      "modified": false
+      "modified": true,
+      "upstream_sha256": "9f8c2e2fe72d78a912e8f7b529640ab7c318500dab9419478673ce22f5f527fa",
+      "note": "Replaced by original 灵光 art (YY piglet in a red scarf), drawn by Tools/OSArt/Icons/yy_pig.svg + make_yy_icon.py; this is not Oxygen artwork. upstream_* fields name the Oxygen icon it used to be."
     },
     {
       "app": "Music Player",

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- YY mascot: a flat, front-facing piglet in a red scarf (2016 flat icon style, drawn by us) -->
+  <defs>
+    <clipPath id="bodyClip"><ellipse cx="256" cy="338" rx="146" ry="138"/></clipPath>
+  </defs>
+  <!-- ground shadow -->
+  <ellipse cx="256" cy="486" rx="150" ry="16" fill="#000" opacity="0.10"/>
+  <!-- feet -->
+  <ellipse cx="196" cy="468" rx="50" ry="22" fill="#F07F9B"/>
+  <ellipse cx="316" cy="468" rx="50" ry="22" fill="#F07F9B"/>
+  <path d="M170 476 Q196 452 222 476" fill="none" stroke="#D9627F" stroke-width="7" stroke-linecap="round"/>
+  <path d="M290 476 Q316 452 342 476" fill="none" stroke="#D9627F" stroke-width="7" stroke-linecap="round"/>
+  <!-- arms -->
+  <ellipse cx="114" cy="352" rx="34" ry="66" fill="#F290A8" transform="rotate(22 114 352)"/>
+  <ellipse cx="398" cy="352" rx="34" ry="66" fill="#F290A8" transform="rotate(-22 398 352)"/>
+  <!-- body -->
+  <ellipse cx="256" cy="338" rx="146" ry="138" fill="#F9A8BC"/>
+  <g clip-path="url(#bodyClip)">
+    <ellipse cx="300" cy="372" rx="150" ry="140" fill="#F497AE" opacity="0.35"/>
+  </g>
+  <!-- belly -->
+  <ellipse cx="256" cy="372" rx="96" ry="92" fill="#FFE3EA"/>
+  <!-- ears -->
+  <path d="M122 120 Q104 40 150 30 Q196 26 214 92 Z" fill="#F9A8BC"/>
+  <path d="M138 104 Q130 56 156 52 Q182 52 192 92 Z" fill="#EE7F9C"/>
+  <path d="M390 120 Q408 40 362 30 Q316 26 298 92 Z" fill="#F9A8BC"/>
+  <path d="M374 104 Q382 56 356 52 Q330 52 320 92 Z" fill="#EE7F9C"/>
+  <!-- head -->
+  <ellipse cx="256" cy="186" rx="156" ry="132" fill="#FBB3C5"/>
+  <!-- cheeks -->
+  <ellipse cx="156" cy="232" rx="30" ry="18" fill="#F37E9C" opacity="0.55"/>
+  <ellipse cx="356" cy="232" rx="30" ry="18" fill="#F37E9C" opacity="0.55"/>
+  <!-- eyes -->
+  <ellipse cx="196" cy="168" rx="20" ry="28" fill="#2A2124"/>
+  <ellipse cx="316" cy="168" rx="20" ry="28" fill="#2A2124"/>
+  <circle cx="203" cy="157" r="8" fill="#FFF"/>
+  <circle cx="323" cy="157" r="8" fill="#FFF"/>
+  <!-- snout -->
+  <ellipse cx="256" cy="222" rx="56" ry="38" fill="#F48AA6"/>
+  <ellipse cx="256" cy="216" rx="50" ry="30" fill="#F696AF"/>
+  <ellipse cx="236" cy="222" rx="10" ry="15" fill="#C4506E"/>
+  <ellipse cx="276" cy="222" rx="10" ry="15" fill="#C4506E"/>
+  <!-- scarf: neck band -->
+  <path d="M106 274 Q256 330 406 274 L414 318 Q256 382 98 318 Z" fill="#E3232C"/>
+  <path d="M106 274 Q256 330 406 274 L408 288 Q256 344 104 288 Z" fill="#F24A50"/>
+  <!-- scarf: knot and hanging tail -->
+  <path d="M300 312 Q340 304 352 330 L376 444 Q350 456 322 448 L304 336 Z" fill="#C81D25"/>
+  <path d="M312 316 Q336 312 344 330 L362 440 Q350 444 336 442 L320 334 Z" fill="#E3232C"/>
+  <ellipse cx="316" cy="320" rx="30" ry="24" fill="#E3232C"/>
+  <ellipse cx="312" cy="314" rx="20" ry="13" fill="#F24A50"/>
+  <!-- tail fringe -->
+  <g stroke="#C81D25" stroke-width="7" stroke-linecap="round">
+    <line x1="330" y1="450" x2="331" y2="470"/>
+    <line x1="344" y1="452" x2="346" y2="472"/>
+    <line x1="358" y1="451" x2="361" y2="471"/>
+    <line x1="371" y1="448" x2="375" y2="467"/>
+  </g>
+</svg>

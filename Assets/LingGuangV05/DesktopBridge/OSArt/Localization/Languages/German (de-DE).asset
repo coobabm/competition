@@ -1,0 +1,961 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 741ce2ace64af9a449fd306c0372eba2, type: 3}
+  m_Name: German (de-DE)
+  m_EditorClassIdentifier: 
+  localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee, type: 2}
+  languageID: de-DE
+  languageName: German
+  localizedName: Deutsch
+  tableList:
+  - table: {fileID: 11400000, guid: 3a533ebcf12a719498067d0c32240e88, type: 2}
+    tableContent:
+    - key: CalculatorTitle
+      value: "Rechner"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: CommanderTitle
+      value: "Kommandozeile"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: GameHubTitle
+      value: "Spielezentrum"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailTitle
+      value: "E-Mail"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MessagingTitle
+      value: "Nachrichten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerTitle
+      value: "Musikplayer"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotepadTitle
+      value: "Notizblock"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: PhotoGalleryTitle
+      value: "Fotogalerie"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderTitle
+      value: "Erinnerungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsTitle
+      value: "Einstellungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: VideoPlayerTitle
+      value: "Videoplayer"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserTitle
+      value: "Webbrowser"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WidgetLibraryTitle
+      value: "Widget-Bibliothek"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelHome
+      value: "Start"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelLibrary
+      value: "Bibliothek"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlay
+      value: "Spielen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MessagingChatsLabel
+      value: "Unterhaltungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNowPlaying
+      value: "Aktuelle Wiedergabe"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlaylists
+      value: "Wiedergabelisten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSettings
+      value: "Einstellungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderOnceLabel
+      value: "Einmalig"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ReminderDailyLabel
+      value: "T\xE4glich"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCustomization
+      value: "Anpassung"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAccount
+      value: "Konto"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDateAndTime
+      value: "Datum & Uhrzeit"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAccessibility
+      value: "Bedienungshilfen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelAbout
+      value: "Info"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelMods
+      value: "Erweiterungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModsEmptyDescription
+      value: "Noch nichts installiert"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelWallpaper
+      value: "Hintergrundbild"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescWallpaper
+      value: "Neuen Desktop-Hintergrund ausw\xE4hlen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelCustomTheme
+      value: "Eigene Farben"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescCustomTheme
+      value: "Die Standardfarben durch eine Akzentfarbe nach Wahl ersetzen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSnapDesktopItems
+      value: "Symbole am Raster ausrichten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSnapDesktopItems
+      value: "Symbole am Raster einrasten lassen oder frei platzieren"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSaveDesktopLayout
+      value: "Symbolanordnung merken"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSaveDesktopLayout
+      value: "Symbolpositionen nach einem Neustart wiederherstellen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelAdjustYourPhoto
+      value: "Profilbild"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescAdjustYourPhoto
+      value: "Das Bild f\xFCr dein Konto ausw\xE4hlen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelResetPassword
+      value: "Passwort \xE4ndern"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescResetPassword
+      value: "Ein neues Passwort f\xFCr dein Konto festlegen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelWipeUserData
+      value: "Alle Daten l\xF6schen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescWipeUserData
+      value: "Alle gespeicherten Daten entfernen und das System zur\xFCcksetzen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabel12HourClock
+      value: "12-Stunden-Anzeige"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDesc12HourClock
+      value: "Uhrzeit mit AM/PM oder im 24-Stunden-Format anzeigen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelLanguage
+      value: "Sprache"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescLanguage
+      value: "Sprache der Benutzeroberfl\xE4che w\xE4hlen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSpeechRecognition
+      value: "Sprachassistent"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSpeechRecognition
+      value: "Den Computer per Sprache \xFCber den Assistenten bedienen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsLabelSupport
+      value: "Hilfe & Support"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescSupport
+      value: "Fragen? \xDCber die folgenden Kan\xE4le erreichst du uns"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescDiscord
+      value: "Unserem Community-Chat beitreten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescTwitter
+      value: "Unsere neuesten Neuigkeiten lesen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SettingsDescYouTube
+      value: "Unsere Videos ansehen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserLabelFavorites
+      value: "Lesezeichen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WebBrowserLabelDownloads
+      value: "Heruntergeladene Dateien"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelApps
+      value: "Programme"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelWelcome
+      value: "Willkommen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelClear
+      value: "Alle l\xF6schen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotificationEmptyDesc
+      value: "Keine neuen Benachrichtigungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: BootScreenWelcomeMessage
+      value: "Hallo"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LockScreenLoginDesc
+      value: "Beliebige Taste zum Anmelden dr\xFCcken"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPassword
+      value: "Passwort"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelResetPassword
+      value: "Passwort \xE4ndern"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: WrongPasswordDesc
+      value: "Das Passwort ist nicht korrekt"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalProfilePictureTitle
+      value: "Profilbild ausw\xE4hlen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCancel
+      value: "Abbrechen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelConfirm
+      value: "OK"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalResetPasswordTitle
+      value: "Passwort \xE4ndern"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalWipeUserDataTitle
+      value: "Alle Daten l\xF6schen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ModalWipeUserDataDesc
+      value: "Alle deine gespeicherten Daten werden endg\xFCltig entfernt. M\xF6chtest du fortfahren?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeTitle
+      value: "Hallo!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeDesc
+      value: "Richten wir deinen <b>Desktop</b> in wenigen Schritten ein.\nSag Bescheid, wenn du bereit bist."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupButtonLetsGo
+      value: "Los geht's"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoTitle
+      value: "Wer bist du?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoDesc
+      value: "Gib deinen Namen ein. Auf Wunsch kannst du auch ein Profilbild ausw\xE4hlen."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelContinue
+      value: "Weiter"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyTitle
+      value: "Sch\xFCtze dein Konto"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyDesc
+      value: "Sch\xFCtze dein Konto mit einem eigenen Passwort."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRetypePassword
+      value: "Passwort wiederholen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSecurityQuestion
+      value: "Sicherheitsfrage"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSecurityQuestionAnswer
+      value: "Antwort auf die Sicherheitsfrage"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkTitle
+      value: "Verbinde dich"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkDesc
+      value: "Verbinde dich jetzt mit einem WLAN oder \xFCberspringe den Schritt und hole ihn sp\xE4ter nach."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalTitle
+      value: "Fast geschafft"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalDesc
+      value: "Gleich geschafft! W\xE4hle ein Hintergrundbild, das dir gef\xE4llt."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelReboot
+      value: "Neu starten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupWelcomeStep
+      value: "Willkommen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupUserInfoStep
+      value: "\xDCber dich"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupPrivacyStep
+      value: "Passwort"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupNetworkStep
+      value: "Netzwerk"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalStep
+      value: "Abschluss"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNewPassword
+      value: "Neues Passwort"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailInboxLabel
+      value: "Posteingang"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailSentLabel
+      value: "Gesendet"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MailJunkLabel
+      value: "Spam"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelConntect
+      value: "Verbinden"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDisconnect
+      value: "Trennen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelMyNotes
+      value: "Meine Notizen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNewNote
+      value: "Neue Notiz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDelete
+      value: "L\xF6schen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPlayAll
+      value: "Alle abspielen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelDesktopSettings
+      value: "Desktop-Optionen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyReminderIndicator
+      value: "Noch keine Erinnerungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyFavoritePagesIndicator
+      value: "Noch keine Lesezeichen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyDownloadsIndicator
+      value: "Noch nichts heruntergeladen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPreviousPage
+      value: "Zur\xFCck"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelSystemVersion
+      value: "Systemversion"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelCloseWindow
+      value: "Schlie\xDFen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelPinTaskbar
+      value: "An die Taskleiste anheften"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelUnpinTaskbar
+      value: "Von der Taskleiste l\xF6sen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelView
+      value: "Ansicht"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorName
+      value: "Der Vorname muss mindestens 2 Zeichen lang sein"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorLastName
+      value: "Der Nachname muss mindestens 2 Zeichen lang sein"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorPassword
+      value: "Das Passwort muss mindestens 4 Zeichen lang sein"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupErrorPasswordCheck
+      value: "Die beiden Passw\xF6rter stimmen nicht \xFCberein"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ResetPasswordError
+      value: "Die Antwort ist falsch oder die Passw\xF6rter stimmen nicht \xFCberein"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRefresh
+      value: "Aktualisieren"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelShutDown
+      value: "Herunterfahren"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelRestart
+      value: "Neu starten"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelLock
+      value: "Sperren"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LabelNotifications
+      value: "Benachrichtigungen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: LoginLabel
+      value: "Anmelden"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SetupFinalDescSimple
+      value: "Fast fertig!\nStarte jetzt neu, um deinen <b>Desktop</b> zu verwenden."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 5be61a8f2561b1b459eeba0252755c94, type: 2}
+    tableContent:
+    - key: TicTacToeDescription
+      value: "Zwei Spieler setzen abwechselnd X und O in ein Raster aus drei mal drei Feldern. Wer zuerst drei eigene Zeichen in einer Reihe hat, gewinnt."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: 3DTestDescription
+      value: "Eine kleine Demo, die ein 3D-Kamerabild live im Spielfenster zeigt."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: EmptyGameDescription
+      value: "Ein leeres Platzhalterspiel, das nur zeigt, wie ein Spielfenster aussieht."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: f6e6b4aaa6f2f004e915a560d310d6a5, type: 2}
+    tableContent:
+    - key: SampleMail1Subject
+      value: "Hallo aus deinem Posteingang"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail1Content
+      value: "Dies ist eine Platzhalternachricht, die aus einem Mail-Eintrag erzeugt wurde. Solche Eintr\xE4ge k\xF6nnen Anh\xE4nge und beliebigen Text enthalten.\n\nSo siehst du, wie Nachrichten dargestellt werden."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail2Subject
+      value: "Besprechungsnotizen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail2Content
+      value: "Eine weitere Platzhalternachricht in der Liste des Posteingangs."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail3Subject
+      value: "Beispiel f\xFCr gesendete Mail"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail3Content
+      value: "Eine Platzhalternachricht im Ordner 'Gesendet'."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail4Subject
+      value: "Beispiel f\xFCr Spam"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleMail4Content
+      value: "Eine Platzhalternachricht im Ordner 'Spam'."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: c426ec06101062a4dbc9ef60778cd378, type: 2}
+    tableContent:
+    - key: ExampleChat_1
+      value: "Hey, bist du da?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_2
+      value: "Ja, und bei dir?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_3
+      value: "Nicht viel. Hast du die Level-Entw\xFCrfe schon fertig?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_4
+      value: "Fast. Die Deadline ist brutal, also musste ich ein paar Ideen streichen."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_5
+      value: "Und von den Bugs fange ich gar nicht erst an..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_6
+      value: "Crunch-Wochen schlauchen mich. Hoffentlich ist es bald vorbei."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_7
+      value: "Geht mir genauso."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_8
+      value: "Hast du geh\xF6rt, dass der Release verschoben wurde?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_9
+      value: "Nein, ich habe es eben erst online gesehen."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_10
+      value: "Sieh dir dieses Gesicht an!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat_11
+      value: "Aww, so ein braver Kerl!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_1
+      value: "Erin!!! Wir haben uns ewig nicht gesehen, wie geht's dir?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_2
+      value: "Wie immer, viel Arbeit. In letzter Zeit ziemlich gestresst. Und du?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_3
+      value: "Ich habe tats\xE4chlich gek\xFCndigt. Ehrlich gesagt geht es mir viel besser."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_4
+      value: "Hauptsache, du bist gl\xFCcklich!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_5
+      value: "\xDCbrigens, ich hatte deine Nummer verloren und konnte dich ewig nicht erreichen... tut mir leid!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_6
+      value: "Jetzt hast du sie ja wieder ;)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_7
+      value: "Also... Lust, mal einen Kaffee trinken zu gehen?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_8
+      value: "Es w\xE4re sch\xF6n, mal richtig zu quatschen ;)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_9
+      value: "Klar, warum nicht."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_10
+      value: "Super! Dann morgen gegen 17 Uhr?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_11
+      value: "Perfekt, bis dann!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat2_12
+      value: "Ganz gut, und dir?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleChat3_1
+      value: "Herzlichen Gl\xFCckwunsch! Du wurdest f\xFCr einen Preis im Wert von 1.000.000 $ ausgew\xE4hlt. Antworte auf diese Nachricht, um ihn abzuholen. Das ist v\xF6llig echt und ganz bestimmt kein Betrug."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_1
+      value: "Du kannst \"What's up?\" eintippen, um eine Antwort zu bekommen."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_2
+      value: "Alles gut hier, ich hoffe, dir geht es auch gut!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleDynamicMessage_3
+      value: "Was ist los?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_1
+      value: "F\xFCr einen vorgegebenen Gespr\xE4chsverlauf aktivierst du die Funktion <b>StoryTeller</b>."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_2
+      value: "StoryTeller-Eintr\xE4ge k\xF6nnen das Gespr\xE4ch verzweigen, je nachdem, welche Antwort der Spieler w\xE4hlt."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_3
+      value: "Mit <b>'Call After'</b> verkn\xFCpfst du einen weiteren Eintrag \xFCber seine ID."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_4
+      value: "Aus eigenem Code startest du einen Eintrag mit <b>MessagingManager.CreateStoryTeller(\"Chat ID\", \"StoryTeller ID\");</b>."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: ExampleStoryTeller_5
+      value: "Du willst es in Aktion sehen? Tippe <b>SEQ_0</b> ein. Solange 'Debug StoryTeller' aktiv ist, spielt die Eingabe einer ID den Eintrag ab."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_1
+      value: "Hey, wie l\xE4uft's?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1B
+      value: "Ziemlich schlecht"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1C
+      value: "Ehrlich gesagt geht es mir in letzter Zeit richtig schlecht..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R1F
+      value: "Oh nein, was ist passiert?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2B
+      value: "Geht so"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2C
+      value: "Nicht schlecht, und dir?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R2F
+      value: "Bei mir auch."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3B
+      value: "Super"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3C
+      value: "Richtig gut, und bei dir?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ0_R3F
+      value: "Dann geht es uns beiden gut!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_1
+      value: "Es ist nur..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1B
+      value: "Ich bin m\xFCde"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1C
+      value: "Ich wei\xDF nicht, ich bin einfach ersch\xF6pft"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R1F
+      value: "Seit wann denn?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2B
+      value: "Bauchschmerzen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2C
+      value: "Mein Bauch tut richtig weh"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R2F
+      value: "Du solltest bald zum Arzt gehen."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3B
+      value: "Ich kann nicht schlafen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3C
+      value: "Ich kann in letzter Zeit nicht schlafen, keine Ahnung warum"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1_R3F
+      value: "Hoffentlich ist es nichts Ernstes!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_1
+      value: "Wir sollten uns mal treffen"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1B
+      value: "Gern"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1C
+      value: "Gern, klingt gut :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R1F
+      value: "Super! Sag mir, wann du Zeit hast :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2B
+      value: "Ich habe viel zu tun"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2C
+      value: "Eher nicht, ich bin gerade total eingespannt :/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R2F
+      value: "Schade. Vielleicht ein andermal."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3B
+      value: "Lieber nicht"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3C
+      value: "Nein danke, darauf verzichte ich."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ2_R3F
+      value: "Autsch :'/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_1
+      value: "Wollen wir uns mal wieder austauschen?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1B
+      value: "Gern"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1C
+      value: "Klar, warum nicht :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R1F
+      value: "Prima! Sag Bescheid, wenn du Zeit hast :)"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2B
+      value: "Ich habe viel zu tun"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2C
+      value: "Ich glaube nicht, bei mir ist gerade viel los :/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R2F
+      value: "Schade. Versuchen wir es sp\xE4ter noch mal."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3B
+      value: "Lieber nicht"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3C
+      value: "Nein danke, lieber nicht."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ3_R3F
+      value: "Das tut weh :'/"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_1
+      value: "Pass auf dich auf und trink etwas Wasser."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R1B
+      value: "Mach ich"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R1C
+      value: "Ja, mache ich"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2B
+      value: "N\xF6"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2C
+      value: "N\xF6, Wasser mag ich nicht so"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SEQ1-1_R2F
+      value: "Warum nicht? Wasser ist wichtig f\xFCr die Gesundheit."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: BeginningIndicator
+      value: "Hier beginnt eure Unterhaltung"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: TypeIndicator
+      value: "Nachricht schreiben..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 77e4b89821ef6914c86f04674a1d6b5b, type: 2}
+    tableContent:
+    - key: SampleNote1Title
+      value: "Erste Notiz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote1Content
+      value: "Diese Notiz wurde vom Notizblock-Manager erstellt. Der Manager kann auch weitere vorbereitete Notizen hinzuf\xFCgen.\n\nText und Titel lassen sich ebenfalls bearbeiten. Klicke einfach darauf und tippe los."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote2Title
+      value: "Schon gewusst?"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: SampleNote2Content
+      value: "Der Pazifik bedeckt etwa ein Drittel der Erdoberfl\xE4che und damit mehr Fl\xE4che als alle Kontinente zusammen. Hier liegt auch die tiefste bekannte Stelle des Meeres, der Marianengraben, fast elf Kilometer unter der Oberfl\xE4che."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: 931c4ecb0810e844098897ad26a2de6c, type: 2}
+    tableContent:
+    - key: HomePageTitle
+      value: "Startseite"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionTitle
+      value: "Offline"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NotFoundTitle
+      value: "Seite fehlt"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionErrorTitle
+      value: "Hoppla!"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoConnectionErrorDesc
+      value: "Es wurde keine Internetverbindung gefunden.\nPr\xFCfe dein Netzwerk und versuche es erneut."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoutFoundErrorTitle
+      value: "Hmm..."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: NoutFoundErrorDesc
+      value: "Diese Seite ist nicht erreichbar.\nBitte versuche es in einer Weile noch einmal."
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+  - table: {fileID: 11400000, guid: f0c6e838ab9555c409da2eb645d16de2, type: 2}
+    tableContent:
+    - key: AnalogClockTitle
+      value: "Analoguhr"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: AnalogClockDesc
+      value: "Ein schlichtes Zifferblatt"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerTitle
+      value: "Musikplayer"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: MusicPlayerDesc
+      value: "Wiedergabesteuerung auf einen Blick"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: QuickNoteTitle
+      value: "Schnellnotiz"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}
+    - key: QuickNoteDesc
+      value: "Schnell etwas notieren"
+      audioValue: {fileID: 0}
+      spriteValue: {fileID: 0}

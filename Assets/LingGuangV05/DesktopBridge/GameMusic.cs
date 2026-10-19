@@ -3,7 +3,7 @@ using LingGuangV05.Core;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEngine;
 using UnityEngine.UI;
 

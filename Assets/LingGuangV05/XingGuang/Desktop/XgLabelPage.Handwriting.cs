@@ -14,7 +14,8 @@ namespace LingGuangV05.Desktop.XingGuang
     /// 手写数字 as a drawing task (the desk's main view in 摆渡众包): the page asks for a digit, the player writes it with
     /// the mouse, and LingGuang reads the ink live in a speech bubble. Handing a drawing in labels it with the asked
     /// digit (XgSim.SubmitHandwriting), pays like a hand label and teaches the recogniser, whose recent accuracy is on
-    /// show. The yes/no cards stay one toggle away. The rules live in XgSim.Handwriting.cs; this file only presents them.
+    /// show. The desk opens on the yes/no cards (2026-10-19); writing is one toggle away. The rules live in
+    /// XgSim.Handwriting.cs; this file only presents them.
     /// </summary>
     public sealed partial class XgLabelPage
     {
@@ -41,7 +42,8 @@ namespace LingGuangV05.Desktop.XingGuang
         XgHandwritingGuess liveGuess;
         XgSim handwritingOwner;
         Vector2 lastPoint;
-        bool yesNoChosen, inkDirty, hasInk;
+        // 2026-10-19 (owner): the desk just asks 「这张手写数字是 X 吗？」 yes/no first; writing is the optional toggle.
+        bool yesNoChosen = true, inkDirty, hasInk;
         int asked = -1, sessionRight, strokeBudget;
         double sessionIncome;
         float drawClock, guessTimer, rightSince = -1, resultAge = 99;

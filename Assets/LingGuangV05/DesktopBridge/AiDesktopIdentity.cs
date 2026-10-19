@@ -16,7 +16,7 @@ namespace LingGuangV05.Desktop
         ChapterOneDesktopBridge bridge;
         AeroStartMenu menu;
         float next, nextDownloads;
-        Michsky.DreamOS.TaskbarButton tipped;
+        LingGuangV05.Desktop.OS.TaskbarButton tipped;
         public static string Name(ChapterOneRuntime owner) => AppNames.PersonalName(owner != null && owner.Sim != null ? owner.Sim.S.aiName : null, GameText.IsEnglish);
         public static string Exe(ChapterOneRuntime owner) => Name(owner) + ".exe";
 

@@ -7,13 +7,13 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using TMPro;
 using LingGuangV05.Desktop.Apps;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using Object=UnityEngine.Object;
 namespace HongmengOS.Aero2010.Editor
 {
  public static class AeroDesktopStyleEditor
  {
-  public const string ScenePath="Assets/DreamOS - Complete OS UI/Scenes/2010desktop.unity";
+  public const string ScenePath="Assets/LingGuangV05/DesktopBridge/OSArt/Scenes/2010desktop.unity";
   const string Base="Assets/HongmengOS/Aero2010/";
   static TMP_FontAsset font;static Dictionary<string,Sprite> icons;static Material glass;
   static readonly Color Ink=new Color32(25,38,51,255),Paper=new Color32(245,249,252,255);

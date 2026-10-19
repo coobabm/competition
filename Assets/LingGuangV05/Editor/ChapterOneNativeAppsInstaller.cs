@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using HongmengOS.Aero2010;
 using LingGuangV05.Desktop;
 using LingGuangV05.UI;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -19,9 +19,9 @@ namespace LingGuangV05.Editor
     /// <summary>Three app-specific layouts assembled from actual native DreamOS widgets.</summary>
     public static class ChapterOneNativeAppsInstaller
     {
-        private const string ButtonPath = "Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Button/Default Button.prefab";
-        private const string InputPath = "Assets/DreamOS - Complete OS UI/Prefabs/UI Elements/Input Field/Input Field.prefab";
-        private const string RowPath = "Assets/DreamOS - Complete OS UI/Prefabs/Settings/Settings Element - Button.prefab";
+        private const string ButtonPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/UI Elements/Button/Default Button.prefab";
+        private const string InputPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/UI Elements/Input Field/Input Field.prefab";
+        private const string RowPath = "Assets/LingGuangV05/DesktopBridge/OSArt/Prefabs/Settings/Settings Element - Button.prefab";
         private const string AeroThemePath = "Assets/HongmengOS/Aero2010/Theme/Aero 2010 UI.asset";
         private const string ThemeDirectory = "Assets/LingGuangV05/Content/Native/Themes";
         private const string ArtDirectory = "Assets/LingGuangV05/Art/Generated/";

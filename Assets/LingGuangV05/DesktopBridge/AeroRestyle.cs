@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using LingGuangV05.Runtime;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,10 +27,13 @@ namespace LingGuangV05.Desktop
     {
         const string DesktopRoot = "hongmengos 2010 Desktop Source";
         // Desktop icons (Desktop List) and the desktop's own layers keep their look (user, 2026-10-19: 「不要改图标样式」).
+        // Loading spinners stay round too: the boot screen's ring is a radial-filled circle, and squaring it drew a
+        // spinning pie wedge in a box (2026-10-19, 「进入桌面那个圈圈的加载有问题」).
         static readonly string[] Skip = { "灵光.exe", "Taskbar", "Aero Start Menu", "Aero Shell Controller", "Aero Glass Taskbar",
-            "Desktop List", "Widgets", "Resident Spider", "Prologue Layer", "Aero Edition Mark" };
-        static readonly string[] Wallpapers = { "morning", "aurora", "harmony", "dusk" };
-        static readonly string[] WallpaperNames = { "晨光", "极光蓝", "翠绿", "暮紫" };
+            "Desktop List", "Widgets", "Resident Spider", "Prologue Layer", "Aero Edition Mark", "Spinner" };
+        // "bliss" (原野, the owner's pick 2026-10-19) is first, so it is the default wallpaper.
+        static readonly string[] Wallpapers = { "bliss", "morning", "aurora", "harmony", "dusk" };
+        static readonly string[] WallpaperNames = { "原野", "晨光", "极光蓝", "翠绿", "暮紫" };
         /// <summary>A circle at most this big (desktop px) is a dot or a badge and stays round.</summary>
         const float DotSize = 22;
 

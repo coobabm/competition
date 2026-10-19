@@ -47,7 +47,7 @@ namespace LingGuangV05.EditorTools
         {
             if (!SessionState.GetBool(ActiveKey, false)) return;
             ChapterOneRuntime.VerificationSaveDirectory = Path.Combine(Root, "Save");
-            var profile = typeof(Michsky.DreamOS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic);
+            var profile = typeof(LingGuangV05.Desktop.OS.DreamOSDataManager).GetField("dataPath", BindingFlags.Static | BindingFlags.NonPublic);
             profile?.SetValue(null, Path.Combine(Root, "DesktopProfile") + Path.DirectorySeparatorChar);
             SceneManager.sceneLoaded -= NoModel;
             SceneManager.sceneLoaded += NoModel;

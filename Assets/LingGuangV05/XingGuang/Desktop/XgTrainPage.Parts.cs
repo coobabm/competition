@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Part(scaleCard,Sim.TrainPart("next")); Part(ledgerCard,Sim.TrainPart("ledger"));
             Part(trainBill,true); // Per-round price is a transaction cost, not hidden ledger detail.
             bool gear=Sim.TrainPart("gear"), learning=Sim.TrainPart("learning"), books=Sim.TrainPart("books");
-            gearTab.Show(gear); learningTab.Show(learning); booksTab.Show(books);
+            ShowSlot(gearTab,gear); ShowSlot(learningTab,learning); ShowSlot(booksTab,books);
             if(booksView&&!books)booksView=false;
             if(learningView&&!learning)learningView=false;
             if(!gear&&!booksView&&!learningView){if(learning)learningView=true;else if(books)booksView=true;}
@@ -40,6 +40,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(!Sim.TrainPart("ceiling"))chart.SetCeiling(0,Color.clear);
             if(!legacy&&!Sim.TrainPart("monitor"))hint.text="";
             ledgerSeal?.RefreshState();
+            if(ledgerSeal!=null)Part(ledgerSeal.transform.parent,ledgerSeal.gameObject.activeSelf);
             LayoutTrainingSeals();
         }
     }

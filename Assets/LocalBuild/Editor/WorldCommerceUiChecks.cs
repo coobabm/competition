@@ -34,7 +34,7 @@ public static class WorldCommerceUiChecks
    economy.S.prologue=2;economy.S.appInstallState=2;economy.S.money=100000;
    var controller=go.AddComponent<XingGuangController>();controller.enabled=false;controller.runtime=rt;
    var sim=new XgSim();sim.English=en;sim.S.stage=6;sim.S.teachingFlow=false;sim.S.unlocked.Add("train.curve");typeof(XingGuangController).GetProperty("Sim").SetValue(controller,sim);typeof(XingGuangController).GetProperty("Host").SetValue(controller,new XingGuangHost(rt));
-   var shopGo=Rect(go.transform,"Shop",new Vector2(1200,800)).gameObject;var shop=shopGo.AddComponent<TaohuoView>();shop.enabled=false;Set(shop,"holder",(RectTransform)shopGo.transform);var shopWindow=shopGo.AddComponent<Michsky.DreamOS.WindowManager>();shopWindow.enabled=false;shopWindow.isOn=true;Set(shop,"window",shopWindow);Set(shop,"runtime",rt);Set(shop,"lab",controller);
+   var shopGo=Rect(go.transform,"Shop",new Vector2(1200,800)).gameObject;var shop=shopGo.AddComponent<TaohuoView>();shop.enabled=false;Set(shop,"holder",(RectTransform)shopGo.transform);var shopWindow=shopGo.AddComponent<LingGuangV05.Desktop.OS.WindowManager>();shopWindow.enabled=false;shopWindow.isOn=true;Set(shop,"window",shopWindow);Set(shop,"runtime",rt);Set(shop,"lab",controller);
    go.SetActive(true);Check(UnityEngine.Object.FindAnyObjectByType<XingGuangController>()==controller,"shop resolves isolated controller");
    Check(shop.EnsureReady(),"actual shop builds");Call(shop,"Show","data");Call(shop,"Update");
    var list=(RectTransform)Get(shop,"list");var paid=XgSim.PersonaPacks.Where(p=>p.price>0).Take(2).ToArray();Check(paid.Length==2,"two paid packs available");

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using LingGuangV05.Desktop.XingGuang;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 using UnityEngine;
 
 public static partial class DesignWallpaperSmoke

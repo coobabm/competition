@@ -904,7 +904,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8959021294415419785}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.WidgetItem, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.OS.WidgetItem, Assembly-CSharp
           m_MethodName: AlignToCenter
           m_Mode: 1
           m_Arguments:
@@ -923,7 +923,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 8959021294415419785}
-          m_TargetAssemblyTypeName: Michsky.DreamOS.WidgetPreset, Assembly-CSharp
+          m_TargetAssemblyTypeName: LingGuangV05.Desktop.OS.WidgetPreset, Assembly-CSharp
           m_MethodName: SetDisabled
           m_Mode: 6
           m_Arguments:

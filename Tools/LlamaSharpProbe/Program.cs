@@ -10,7 +10,7 @@ using LLama.Sampling;
 // Feasibility probe: can LLamaSharp run the game's Qwen3.5-4B in-process, and how fast is it next to llama-server?
 // Usage: dotnet run -c Release [-- --server]   (--server also times the same prompt on the running llama-server)
 
-string model = "/Users/kk/competition/Assets/StreamingAssets/LingGuang/Models/Qwen_Qwen3.5-4B-Q4_K_M.gguf";
+string model = "/Users/kk/unity/competition/Assets/StreamingAssets/LingGuang/Models/Qwen_Qwen3.5-4B-Q4_K_M.gguf";
 bool alsoServer = args.Contains("--server");
 
 const string Gbnf = "root ::= [^\\n<]{2,60}\n";

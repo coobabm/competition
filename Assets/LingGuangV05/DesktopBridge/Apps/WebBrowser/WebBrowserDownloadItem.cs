@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Michsky.DreamOS;
+using LingGuangV05.Desktop.OS;
 
 namespace LingGuangV05.Desktop.Apps
 {
