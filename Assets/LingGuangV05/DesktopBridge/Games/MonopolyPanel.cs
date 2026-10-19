@@ -28,9 +28,13 @@ namespace LingGuangV05.Desktop.Games
                 squares[i]=Text(PrologueDesk.Rect("Square text",cell,Vector2.zero,Vector2.one,new Vector2(3,3),new Vector2(-3,-3)),"",14,new Color32(48,43,31,255),TextAlignmentOptions.Center);
                 squares[i].enableAutoSizing=true;squares[i].fontSizeMin=10;squares[i].fontSizeMax=14;
             }
-            account=Text(PrologueDesk.Centered("Accounts",board,new Vector2(0,0),new Vector2(350,345)),"",21,new Color32(48,43,31,255),TextAlignmentOptions.Center);
+            // The inner edges of the property ring are at +/-196. Keep six units of clearance
+            // and use the available center height for both localized account summaries.
+            account=Text(PrologueDesk.Centered("Accounts",board,new Vector2(0,0),new Vector2(380,380)),"",21,new Color32(48,43,31,255),TextAlignmentOptions.Center);
             var side=PrologueDesk.Rect("Side",area,new Vector2(1,0),Vector2.one,new Vector2(-345,32),new Vector2(-28,-64));
             status=Text(PrologueDesk.Rect("Status",side,new Vector2(0,.43f),Vector2.one,Vector2.zero,Vector2.zero),"",20,new Color32(48,43,31,255));
+            // Latin glyph bearings (notably Y) extend slightly left of the text origin.
+            status.margin=new Vector4(2,0,2,0);
             rollButton=Button(side,"Roll",new Vector2(0,.31f),new Vector2(1,.41f),Accent,Roll,out rollLabel);
             buyButton=Button(side,"Buy property",new Vector2(0,.20f),new Vector2(1,.29f),Accent,()=>Purchase(true),out buyLabel);
             skipButton=Button(side,"Skip purchase",new Vector2(0,.11f),new Vector2(1,.19f),new Color32(130,128,118,255),()=>Purchase(false),out skipLabel);

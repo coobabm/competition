@@ -10,10 +10,39 @@ namespace LingGuangV05.XingGuang
         public int trainingLessonObservedStage;
         public int trainingSmallSteps;
         public bool lessonAtlasUnread;
+        public bool trainingQuizBonusPending;
         public List<XgLessonCurveStamp> lessonCurveStamps=new List<XgLessonCurveStamp>();
+    }
+    public sealed partial class XgRun
+    {
+        public bool trainingQuizBonusReserved;
     }
     public sealed partial class XgSim
     {
+        public const double TrainingQuizBonusFactor = 1.05;
+        public bool TrainingQuizBonusAvailable => S.trainingQuizBonusPending;
+        public bool TrainingQuizBonusHeld => S.trainingQuizBonusPending || S.vision.trainingQuizBonusReserved || S.sequence.trainingQuizBonusReserved;
+        void ReserveTrainingQuizBonus(XgRun run)
+        {
+            if (OfflineSimulation || !S.trainingQuizBonusPending) return;
+            run.trainingQuizBonusReserved = true;
+            S.trainingQuizBonusPending = false;
+        }
+        void RefundTrainingQuizBonus(XgRun run)
+        {
+            if (!run.trainingQuizBonusReserved) return;
+            run.trainingQuizBonusReserved = false;
+            S.trainingQuizBonusPending = true;
+        }
+        double ConsumeTrainingQuizBonus(XgRun run)
+        {
+            if (OfflineSimulation) { RefundTrainingQuizBonus(run); return 1; }
+            // A round already in flight cannot take a reward earned after it started.
+            if (!timedEpochLearning.HasValue) ReserveTrainingQuizBonus(run);
+            bool bonus = run.trainingQuizBonusReserved;
+            run.trainingQuizBonusReserved = false;
+            return bonus ? TrainingQuizBonusFactor : 1;
+        }
         bool trainingLessonsBound;
         public bool TrainingLessonModalOpen {get;set;}
         public bool TrainingKnowledgePending => S.lessonPending!=null&&S.lessonPending.Count>0;
@@ -100,7 +129,7 @@ namespace LingGuangV05.XingGuang
             InitializeTrainingLessons();right=false;var q=XgTrainingLessons.Quiz(id);
             if(host==null||q==null||q.options==null||choice<0||choice>=q.options.Length||S.quizAnswered.Contains(id)||!S.quizQueued.Contains(id))return false;
             right=choice==q.answer;S.quizAnswered.Add(id);S.quizQueued.Remove(id);
-            if(right){host.Earn(20);S.totalIncome+=20;}
+            if(right && !TrainingQuizBonusHeld) S.trainingQuizBonusPending=true;
             return true;
         }
         public void CollectTrainingLesson(string id)

@@ -166,6 +166,7 @@ namespace LingGuangV05.XingGuang
             foreach (var run in Runs)
             {
                 // Unfinished UI actions have no settlement and do not survive a save reload.
+                RefundTrainingQuizBonus(run);
                 run.epochActive = false; run.epochProgress = 0; run.epochDuration = DurationFor(run);
                 var track = (XgTrack)run.track;
                 var a = XgCatalog.Arch(run.arch);
@@ -198,7 +199,7 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── tech tree ─────────────
 
-        public bool Has(string id) { return id != null && id.StartsWith("persona.", StringComparison.Ordinal) ? OwnsPersonaPack(id.Substring(8)) : S.unlocked.Contains(id); }
+        public bool Has(string id) { return id != null && id != PersonaArchiveNode && id.StartsWith("persona.", StringComparison.Ordinal) ? OwnsPersonaPack(id.Substring(8)) : S.unlocked.Contains(id); }
         /// <summary>Some pack of this dataset is in: the public pack, or a junk / story pack (XgSim.DataSources.cs).</summary>
         public bool Owns(string datasetId) { return S.owned.Contains(datasetId) && InstalledBatches(datasetId) > 0 || OwnsExtraPack(datasetId); }
 
@@ -273,13 +274,13 @@ namespace LingGuangV05.XingGuang
         {
             var n = XgCatalog.Node(id);
             if (n == null) return false;
-            if (n.id.StartsWith("persona.",StringComparison.Ordinal)) return BuyPersonaPack(n.id.Substring(8),host);
+            if (n.id!=PersonaArchiveNode&&n.id.StartsWith("persona.",StringComparison.Ordinal)) return BuyPersonaPack(n.id.Substring(8),host);
             if (n.tree == "label") return BuyLabelNode(n, host);
             if (Status(n, host) != NodeStatus.Buyable) { Say(Why(n, host)); return false; }
             double price = NodeCost(n);
             if (!host.Spend(price)) { Say(T("经费不足 ¥") + F(NodeCost(n), "0")); return false; }
             S.totalSpent += price;
-            UseDiagnosisCoupon(n);
+            if (n.id != PersonaArchiveNode) UseDiagnosisCoupon(n);
             if (n.kind != XgNodeKind.Project) S.unlocked.Add(n.id);
             Say(T("解锁 ") + NodeName(n));
             switch (n.kind)
@@ -659,7 +660,10 @@ namespace LingGuangV05.XingGuang
             string blocker = Blocker(run, host);
             if (blocker != null) { if (hand) Say(blocker); return null; }
             if (hand) S.clicks++; // training has no combo (2026-10-18): the streak belongs to labelling
-            int cards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            int baseCards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            double quizBonus = ConsumeTrainingQuizBonus(run);
+            // Extra real training samples are rounded; pace, electricity and data ownership stay unchanged.
+            int cards = (int)Math.Round(baseCards * quizBonus);
             // A rate the player set too big may tear the round (XgSim.Rates.cs); 自动 never rolls.
             double tearChance = TearChance(run);
             bool torn = tearChance > 0 && Roll() < tearChance;
@@ -682,7 +686,7 @@ namespace LingGuangV05.XingGuang
             using (ProfileEpochAccuracy.Auto())
 #endif
             {
-            StepAccuracy(run, cards, e);
+            StepAccuracy(run, baseCards, e, quizBonus);
             }
             RelicRoundDone();
             run.shapeRounds++;

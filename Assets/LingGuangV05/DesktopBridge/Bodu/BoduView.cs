@@ -172,7 +172,7 @@ namespace LingGuangV05.Desktop.Bodu
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .5f;
             var s = Save();
-            string now = page + "|" + query + "|" + GameText.IsEnglish + "|" + (s != null ? GameCalendar.Now(s).ToString("MMdd") : "") + "|" + (lab != null ? lab.S.stage + "|" + lab.GarbleLinesRead + "|" + lab.S.letterRead + "|" + lab.S.ending + "|" + letterShown : "");
+            string now = page + "|" + query + "|" + GameText.IsEnglish + "|" + (s != null ? GameCalendar.Now(s).ToString("MMdd") : "") + "|" + (lab != null ? lab.S.stage + "|" + lab.GarbleLinesRead + "|" + lab.S.letterRead + "|" + lab.S.ending + "|" + letterShown + "|" + XgEndingPresentation.UsesPreparation(lab.S) : "");
             now += LibrarySignature(lab);
             now += "|" + XgPublicDiscourseDesktop.Stamp;
             if (now == signature) return;
@@ -357,7 +357,7 @@ namespace LingGuangV05.Desktop.Bodu
                 Line(sb.ToString(), 18, Ink);
                 if (letterShown > lines.Count) Line("<i><color=#787878>" + lab.LetterCaption() + "</color></i>", 15, Muted);
             }
-            else if (lab != null && lab.LetterReady)
+            else if (lab != null && lab.LetterReady && !XgEndingPresentation.UsesPreparation(lab.S))
             {
                 Line("<color=#1A0DAB><u>" + Lang.T("【让它读】") + "</u></color>", 18, Ink, () => { if (lab.ReadLetter()) { letterShown = 0; nextLetterLine = 0; signature = ""; } });
             }

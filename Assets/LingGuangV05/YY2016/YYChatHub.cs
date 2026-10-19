@@ -33,6 +33,7 @@ namespace LingGuangV05.Desktop.YY
         public double gameSeconds;
         public YYKind kind;
         public double transferAmount;
+        public int rentInvoiceMonth; // yyyyMM for monthly rent cards; 0 for existing cards / transfers.
         public bool transferPaid;
         public string file = "";
         public double sizeMB;
@@ -56,7 +57,10 @@ namespace LingGuangV05.Desktop.YY
     [Serializable]
     public sealed class YYState
     {
-        public int groupPresetTurn;
+        public EndingPrivateState endingPrivate = new EndingPrivateState();
+        public int groupPresetTurn; // Legacy counter retained for compatible saves/diagnostics; no longer selects bubbles.
+        /// <summary>Ordinary group preset lifecycle (daily frozen ids, sent ids, weekly silence). Old saves load a fresh one.</summary>
+        public GroupPresetState groupPresets = new GroupPresetState();
         public int friendMonth, gfStage, gfReceived, gfReplies, gfIgnoredStage;
         public int version = 1;
         public string selected = YYChatHub.LaoZhou;
@@ -189,6 +193,8 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Chat history lives inside the 灵光 save (GameState.chatState), so it always matches the game it belongs to.</summary>
         void BindSave(ChapterOneSim sim)
         {
+            // The previous save's silent-group playback and pending group replies must never reach this save.
+            StopPresetReplies(true); StopGroupColdScenes(); groupReplyGeneration++; observedGroupDay = -1;
             linked = sim;
             YYState parsed = null;
             string json = sim != null ? sim.S.chatState : null;
@@ -200,11 +206,16 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
+            // Old saves: null-safe lifecycle plus exact preset history backfill (before any new player line).
+            RepairGroupLifecycle();
             // Rewrite only obsolete NPC knowledge; preserve player lines, timestamps,
             // unread counts, normal conversation and every progression flag.
             YYGroup.MigratePrivateKnowledge(S, sim?.S.aiName);
             pending.Clear(); inFlight.Clear(); standing.Clear(); quizReplies.Clear();
             script = null; scriptFor = null; Choices = null; ChoicesFor = null;
+            // Observe today and freeze its choices from the loaded save without MarkDirty.
+            BindGroupPresetDay(sim);
+            StartGroupColdScenes();
             Changed?.Invoke();
         }
 
@@ -308,6 +319,7 @@ namespace LingGuangV05.Desktop.YY
         {
             if(id==EraGroup&&IntroPlaying){IntroHost.Choose((text??"").Trim());return;}
             if (id == LaoZhou && (!ZhouContactReady || LingGuangV05.Desktop.Tieba.TiebaHub.Instance.TryZhouYyChoice((text ?? "").Trim()))) return;
+            if (id == EraGroup) RepairGroupLifecycle(); // Import exact history before this new player line is added.
             string rawPlayerText = text ?? "";
             if (id == GirlfriendId && !string.IsNullOrWhiteSpace(text)) NoteGirlfriendReply(text);
             text = (text ?? "").Trim();
@@ -330,6 +342,9 @@ namespace LingGuangV05.Desktop.YY
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
             if (id == LaoZhou && LaoZhouHeard != null && LaoZhouHeard(text)) return;
             if (id == EraGroup && SendGroupPreset(text)) return;
+            if (id == EraGroup && string.IsNullOrEmpty(stickerId) && SendGroupFutureNameReply(text)) return;
+            // Ordinary free text only (scripts, quiz, presets and intro already declined it; stickers never count).
+            if (id == EraGroup && string.IsNullOrEmpty(stickerId) && TryGroupColdTurn(text)) return;
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
             float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
@@ -370,7 +385,7 @@ namespace LingGuangV05.Desktop.YY
         {
             if (id == null) return null;
             if (ChoicesFor == id && Choices != null) return Choices;
-            if (id == LaoZhou && ZhouContactReady) { var qa = LingGuangV05.Desktop.Tieba.TiebaHub.Instance.ZhouYyChoices(); if (qa != null) return qa; }
+            if (id == LaoZhou && ZhouContactReady) { var qa = LingGuangV05.Desktop.Tieba.TiebaHub.Instance.ZhouYyChoices(); if (qa != null) return qa; var ending = EndingPrivateChoices(); if (ending != null) return ending; }
             if (id == EraGroup) return IntroPlaying?IntroHost.Choices():GroupPresetChoices();
             return standing.TryGetValue(id, out var c) ? c : null;
         }
@@ -391,12 +406,14 @@ namespace LingGuangV05.Desktop.YY
                 inFlight.Add(id);
                 float requestAt = pending[id];
                 bool delivered = false;
+                int replyingGroupGeneration = groupReplyGeneration;
                 var replyingState = S;
                 var replyingSimulation = runtime.Sim;
                 long verificationRequestId=VerificationTrace.NewRequest();string replySource="scripted";
                 VerificationTrace.Emit(verificationRequestId,"yy_reply_requested",id==LingGuangId?"ai_private":id==GirlfriendId?"girlfriend_private":id=="netbar"?"group":"other");
                 Reply(id, text =>
                 {
+                    if (id == EraGroup && replyingGroupGeneration != groupReplyGeneration) { VerificationTrace.Emit(verificationRequestId, "yy_not_delivered", "group_cold_turn"); return; }
                     if (!ReferenceEquals(S, replyingState) || !ReferenceEquals(runtime.Sim, replyingSimulation)) {VerificationTrace.Emit(verificationRequestId,"yy_not_delivered","stale_owner");return;}
                     if (delivered) return;
                     delivered = true;
@@ -691,6 +708,8 @@ namespace LingGuangV05.Desktop.YY
         void Update()
         {
             if (S == null || runtime == null || runtime.Sim == null) return;
+            FlushPendingRentInvoices();
+            TickGroupPresetDate();
             float dt = Mathf.Min(Time.unscaledDeltaTime, 1f);
             EnsureFileOffer();
             TickTransfers(dt);

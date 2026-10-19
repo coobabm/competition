@@ -288,7 +288,7 @@ namespace LingGuangV05.Desktop.LLM
                     yield break;
                 }
                 if (tail.Contains("missing tensor 'blk."))
-                    Debug.LogWarning("[灵光] 模型缺张量：新版 Qwen3.5 GGUF 带 MTP（nextn）层，LlamaLib 的 llama.cpp 还不认，用 Tools/LocalLLM/strip_qwen_mtp.py 去掉它。");
+                    Debug.LogWarning("[Local model] Missing tensor: verify the GGUF checksum and runtime compatibility. Only use strip_qwen_mtp.py if the file metadata actually declares MTP/nextn layers; the pinned release model does not contain them.");
                 if (!LlmScheduling.Fallback(mode, out var next))
                 {
                     Debug.LogWarning("[灵光] 本地模型启动失败（" + mode + "）：\n" + tail);
@@ -452,6 +452,8 @@ namespace LingGuangV05.Desktop.LLM
             foreach (var dir in dirs)
             {
                 if (!Directory.Exists(dir)) continue;
+                string canonical = Path.Combine(dir, LocalModelRelease.FileName);
+                if (File.Exists(canonical) && new FileInfo(canonical).Length == LocalModelRelease.Bytes) return canonical;
                 var files = Directory.GetFiles(dir, "*.gguf");
                 Array.Sort(files, StringComparer.Ordinal);
                 foreach (var f in files) if (!Path.GetFileName(f).StartsWith("mmproj", StringComparison.OrdinalIgnoreCase) && new FileInfo(f).Length > 100_000_000) return f;

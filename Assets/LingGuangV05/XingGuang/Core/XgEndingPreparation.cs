@@ -209,12 +209,13 @@ namespace LingGuangV05.XingGuang
                 if(OrdinaryMemoryCount(d)>=2)break;
                 if(r==null||r.id<=0||!RealDate(r.gameDate)||r.gameDate>sim.Today||!XgSim.HasPlayerAnswer(r))continue;
                 var note=sim.S.teachingNotebook==null?null:sim.S.teachingNotebook.Find(n=>n!=null&&n.id==r.teachingNoteId&&n.learningRecordId==r.id);
-                string q=(r.question??"").ToLowerInvariant(),answer=(r.playerAnswer??"").ToLowerInvariant();
+                string q=(r.question??"").ToLowerInvariant();
                 bool humanNote=XgSim.HasPlayerTeachingAnswer(r,note);
                 bool scam=humanNote&&note.dataset=="spam"&&(q.Contains("诈骗")||q.Contains("中奖")||q.Contains("转账")||q.Contains("scam")||q.Contains("prize"));
-                bool gamble=(q.Contains("888")||q.Contains("赌")||q.Contains("gambl"))&&(answer.Contains("不")||answer.Contains("别")||answer.Contains("no")||answer.Contains("don"));
+                // gamble_888 is no longer guessed from words (any answer with 「不」 to a question with 「赌」 used to count).
+                // It comes only from the dated 888.vip scam record (XgSim.Gambling.cs → XgEndingNarrative.cs).
                 bool wrong=humanNote&&note.playerAnswer!=note.truth;
-                foreach(string id in new[]{scam?"scam_sms":"",gamble?"gamble_888":"",wrong?"learned_wrong":""})
+                foreach(string id in new[]{scam?"scam_sms":"",wrong?"learned_wrong":""})
                 {
                     if(id.Length==0||d.memories.Exists(m=>m.id==id)||OrdinaryMemoryCount(d)>=2)continue;
                     var template=text.memories.Find(t=>t!=null&&t.id==id);if(template==null)return Fail("memory_template_missing:"+id);

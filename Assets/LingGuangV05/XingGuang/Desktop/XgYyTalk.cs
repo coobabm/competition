@@ -394,6 +394,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // RAG (XgSim.Knowledge.cs): taught cards, read chapters, older talks and 2016 news that fit the owner's line.
             string known = sim.PersonaKnowledge(null, null, start);
             if (known.Length > 0) state.Append('\n').Append(known);
+            string readNews = sim.PersonaReadNewsKnowledge(Id);
+            if (readNews.Length > 0) state.Append(readNews);
             // The learned tone habit (XgSim.Habits.cs): picked once per question, kept for the retry.
             if (stale == null) sim.PickHabit(question, today);
             string habit = sim.HabitOrder();
@@ -421,6 +423,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public static string StableSystem(XgSim sim, DateTime today)
         {
             var sb = new StringBuilder(sim.PersonaCore());
+            sb.Append('\n').Append(XgSim.ReadNewsPromptRule(GameText.IsEnglish));
             sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish));
             sb.Append('\n').Append(T("你们在 YY（一款像 QQ 的电脑聊天软件）上打字聊天。", "You are typing to each other on YY, a desktop chat app like QQ."));
             if (!sim.StageRuleVaries) sb.Append('\n').Append(sim.StageRule(""));
@@ -527,7 +530,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             if (llm != null && llm.Ready && llm.Detail.Length > 0) sb.Append("\n<color=#E08A00>").Append(llm.Detail).Append("</color>");
             if (sim.Listening) sb.Append("\n<color=#E08A00>").Append(T("监听中", "Listening")).Append("</color>");
-            sb.Append("\n\n<b>").Append(T("性格", "Personality")).Append("</b>  <color=#9AA4B2>").Append(T("实际 / 目标（开局写的）", "actual / target (from the setup)")).Append("</color>");
+            sb.Append("\n\n<b>").Append(T("性格", "Personality")).Append("</b>  <color=#9AA4B2>").Append(T("当前表现 / 开局愿望", "current expression / opening wish")).Append("</color>");
+            if (!string.IsNullOrEmpty(sim.Profile.personality)) sb.Append('\n').Append(T("开局写下：", "You wrote at setup: ")).Append(Safe(sim.Profile.personality));
             string[] lo = { T("冷静", "calm"), T("正经", "serious"), T("顺从", "agreeable") };
             string[] hi = { T("热情", "warm"), T("皮", "cheeky"), T("有主见", "opinionated") };
             for (int axis = 0; axis < 3; axis++)

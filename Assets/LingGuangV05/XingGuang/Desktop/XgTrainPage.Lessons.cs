@@ -102,7 +102,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var q=XgTrainingLessons.Quiz(shownQuizId);
             if(q==null||!Sim.AnswerTrainingQuiz(q.id,choice,Host,out bool right))return;
             answeredQuiz=q;
-            quizResult=T(right?"答对了 · +¥20":"看看解释",right?"Correct · +¥20":"Here is why")+"\n"+T(q.explain,q.explainEn);
+            quizResult=T(right?"答对了 · 一轮训练收益 +5%（不叠加）":"看看解释",right?"Correct · +5% learning for one round (no stacking)":"Here is why")+"\n"+T(q.explain,q.explainEn);
             RefreshLessons();view.Refresh(true);
         }
         public void TickTrainingLessons()

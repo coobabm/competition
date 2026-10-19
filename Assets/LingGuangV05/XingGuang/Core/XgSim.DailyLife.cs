@@ -111,7 +111,7 @@ namespace LingGuangV05.XingGuang
             if (XgDailyLife.BoardGame(gameId)) changed |= DailyCommit("board", completionId, gameId);
             return changed;
         }
-        public bool DailyNewsAlreadyRead(string articleId) { foreach(var r in DailyValid("news5")) if(r.subjectId==articleId)return true; return false; }
+        public bool DailyNewsAlreadyRead(string articleId) { if(S.readNewsIds!=null&&S.readNewsIds.Contains(articleId))return true; foreach(var r in DailyValid("news5")) if(r.subjectId==articleId)return true; return false; }
         public bool RecordDailyNewsRead(string articleId, string completionId) => DailyCommit("news5", completionId, articleId);
         public bool RecordDailyMiaoyuPurchase(string transactionId, string itemId) => DailyCommit("miaoyu", transactionId, itemId);
         public bool RecordDailyOwnPostReply(string threadId, string replyId, bool ownThread, bool otherAuthor)

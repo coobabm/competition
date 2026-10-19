@@ -1594,3 +1594,7 @@ See ENDING_TRIAL_PHOTO_CREDITS.txt in this directory for all five sources, autho
 Group-chat photo illustrations / 群聊情景照片配图：
 See GROUP_CHAT_PHOTO_CREDITS.txt for the three licensed photographs used to illustrate fictional group chats, with original authors, source dates, license links and modifications. These are not newly AI-generated images.
 三张照片用于虚构群聊情节配图，并非本轮AI生成。作者、原图日期、来源、许可和改动见本目录 GROUP_CHAT_PHOTO_CREDITS.txt。
+
+Original group-chat illustrations / 原创群聊插画：
+Ten project-original procedural scene illustrations were added as the authorized non-photographic alternative; no image-generation API was used. Full authorship, method, rights and scene notes are in GROUP_CHAT_PHOTO_CREDITS.txt. Existing three licensed photos and five ending-trial photos are separate and unchanged.
+新增十张为授权替代方案下的原创情境插画，非摄影、非图像API生成；作者、方法、使用范围和逐图说明见 GROUP_CHAT_PHOTO_CREDITS.txt。已有三张许可照片和五张终局图独立保留。

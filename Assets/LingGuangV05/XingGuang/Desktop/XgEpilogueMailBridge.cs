@@ -178,6 +178,7 @@ namespace LingGuangV05.Desktop.XingGuang
             inbox.BindEndingLetter(new EndingLetterInput
             {
                 owner = boundSave, revision = token.Revision, articleId = articleId,
+                personalDisclosure = PrivateLetterDisclosure(),
                 paragraphId = ep.readParagraphId, saved = ep.savedAt != 0, opened = ep.opened,
                 consentShown = ep.consentShown, readOnly = readOnly, completionEligible = !readOnly,
                 english = GameText.IsEnglish, reduceFx = boundLab.S.reduceFx, soundEnabled = !boundLab.S.mute
@@ -200,6 +201,18 @@ namespace LingGuangV05.Desktop.XingGuang
             }, show);
             restoredMail = true;
             return true;
+        }
+        EndingLetterDisclosure PrivateLetterDisclosure()
+        {
+            // Reading/replay only projects the private transcript. It never writes a disclosure or contacts anyone.
+            var yy=LingGuangV05.Desktop.YY.YYChatHub.Instance;
+            if(yy!=null&&yy.BoundTo(boundSave))return EndingPrivateDisclosure.PlannedFact(yy.S?.endingPrivate);
+            try
+            {
+                var saved=string.IsNullOrEmpty(boundSave.S.chatState)?null:JsonUtility.FromJson<LingGuangV05.Desktop.YY.YYState>(boundSave.S.chatState);
+                return EndingPrivateDisclosure.PlannedFact(saved?.endingPrivate);
+            }
+            catch(ArgumentException){return null;}
         }
         void BindPublicLetters()
         {

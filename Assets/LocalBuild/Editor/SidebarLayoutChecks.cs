@@ -48,6 +48,13 @@ public static class SidebarLayoutChecks
     static double timeout;
     static bool finishing;
     static IEnumerator publicReadingInteractionCheck;
+    static IEnumerator newsCommentsCheck,endingPrivateCheck,readNewsRagCheck;
+    const string ReadNewsRagKey="SidebarLayoutChecks.ReadNewsRagOnly";
+    public static void RunReadNewsRag(){SessionState.SetBool(ReadNewsRagKey,true);Run();}
+    const string NewsCommentsKey="SidebarLayoutChecks.NewsCommentsOnly";
+    const string EndingPrivateKey="SidebarLayoutChecks.EndingPrivateOnly";
+    public static void RunNewsComments(){SessionState.SetBool(NewsCommentsKey,true);Run();}
+    public static void RunEndingPrivate(){SessionState.SetBool(EndingPrivateKey,true);Run();}
     static IEnumerator crawlerCheck,ledgerCheck,filesCheck,relicCheck,learningCheck,zhouCheck,bookCheck,moleCheck,endingCheck,discourseCheck,prerequisitesCheck,zhongbaoBusinessCheck,appAcquisitionCheck;
     const string LearningKey="SidebarLayoutChecks.LearningOnly";
     public static void RunLearning(){SessionState.SetBool(LearningKey,true);Run();}
@@ -98,13 +105,17 @@ public static class SidebarLayoutChecks
             index=-1;scenario=0;phase=frames=0;lastFrame=-1;finishing=false;timeout=EditorApplication.timeSinceStartup+180;
             report=new Report{unityVersion=Application.unityVersion};Application.logMessageReceived+=Log;EditorApplication.update+=Tick;
         }
+        if(state==PlayModeStateChange.ExitingPlayMode&&readNewsRagCheck!=null&&!finishing)
+        {
+            report.status="failed";report.failure="Read-news UI interrupted before completion";Save();Finish();
+        }
         if(state==PlayModeStateChange.EnteredEditMode)
         {
             EditorApplication.update-=Tick;Application.logMessageReceived-=Log;SceneManager.sceneLoaded-=DisableModel;
             string path=Root;bool ok=File.Exists(Path.Combine(path,"passed.txt"));SessionState.EraseString(Key);ChapterOneRuntime.VerificationSaveDirectory=null;
             try{LaoZhouQuestionsUiChecks.RestoreEditor();BookLibraryUiChecks.RestoreEditor();}
             catch(Exception e){ok=false;Debug.LogError("LZ1 editor restore failed: "+e);}
-            finally{Debug.Log("Training lessons "+(ok?"PASS":"FAIL/INTERRUPTED")+": "+path);if(Application.isBatchMode)EditorApplication.Exit(ok?0:1);}
+            finally{Debug.Log("Training lessons "+(ok?"PASS":"FAIL/INTERRUPTED")+": "+path);if(Application.isBatchMode || Array.IndexOf(Environment.GetCommandLineArgs(), "-verificationExit") >= 0)EditorApplication.Exit(ok?0:1);}
         }
     }
     static void Log(string message,string stack,LogType type)
@@ -162,6 +173,31 @@ public static class SidebarLayoutChecks
                 if(++frames<3)return;
                 EnableFixtureEconomy(runtime);
                 ctl.Open();ctl.View.Open("train");train=ctl.View.Train;originalStoryProbe=StoryFocus.Probe;
+                if(SessionState.GetBool(ReadNewsRagKey,false))
+                {
+                    locale=GameText.Bind(()=>language);report.scope=ReadNewsRagActualUiChecks.Scope;
+                    readNewsRagCheck=ReadNewsRagActualUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Read news LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+420;phase=23;frames=0;return;
+                }
+                if(SessionState.GetBool(NewsCommentsKey,false))
+                {
+                    locale=GameText.Bind(()=>language);report.scope=LaoZhouNewsCommentsUiChecks.Scope;
+                    newsCommentsCheck=LaoZhouNewsCommentsUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"News comment LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+420;phase=21;frames=0;return;
+                }
+                if(SessionState.GetBool(EndingPrivateKey,false))
+                {
+                    locale=GameText.Bind(()=>language);
+                    report.scope="Isolated Main: actual LCD optional private disclosure preview/cancel/send and native window close, real isolated slot save/load, bilingual 960x600 public/private letter rendering and long answer scrolling. Stage, accepted contact, SI read, route and AI answer are explicit fixtures; no natural progression or inference claim.";
+                    endingPrivateCheck=EndingPrivateActualUiChecks.Frames(ctl,
+                        en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},FilesWindowUiChecks.Click,
+                        filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"Ending private LCD "+filename);report.screenshots.Add(filename);Save();});
+                    timeout=EditorApplication.timeSinceStartup+420;phase=22;frames=0;return;
+                }
                 if(PublicReadingInteractionUiChecks.Requested)
                 {
                     locale=GameText.Bind(()=>language);
@@ -264,7 +300,7 @@ public static class SidebarLayoutChecks
                 if(SessionState.GetBool(FilesKey,false))
                 {
                     locale=GameText.Bind(()=>language);
-                    report.scope="Isolated Main data-import UI: official real-host purchase, actual LCD input/captures; notebook/data rows are explicit fixture records, not natural progression. Ctrl key automation not yet covered.";
+                    report.scope="Isolated Main data-import UI: official real-host purchase, actual LCD input/captures; notebook/data rows are explicit fixture records, not natural progression. Guide segment uses declared hand-label preparation via XgSim.Answer to open Train, actual paid purchases/download, note-row LCD click and LCD drag import; this guide segment is Chinese only. Ctrl key automation not yet covered.";
                     filesCheck=FilesWindowUiChecks.Frames(ctl,
                         en=>{language=en?GameText.English:"zh-CN";GameText.PublishChanged();},
                         filename=>{Check(QaDesktopCapture.Save(Path.Combine(Root,filename)),"files LCD capture "+filename);report.screenshots.Add(filename);Save();},
@@ -273,13 +309,39 @@ public static class SidebarLayoutChecks
                 }
                 phase=1;frames=0;return;
             }
+            if(phase==23)
+            {
+                if(readNewsRagCheck.MoveNext())return;
+                (readNewsRagCheck as IDisposable)?.Dispose();readNewsRagCheck=null;
+                report.checks.AddRange(ReadNewsRagActualUiChecks.Checks);
+                Require(ReadNewsRagActualUiChecks.ReadClicks==14,"Both languages executed six confirmations and one duplicate each");
+                report.checks.Add("Read news UI assertions: "+ReadNewsRagActualUiChecks.AssertionCount+"; read clicks: "+ReadNewsRagActualUiChecks.ReadClicks);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Read-news LCD and constructed-prompt fixtures passed; no model response verified. Inspect scope and screenshots.");Finish();return;
+            }
+            if(phase==22)
+            {
+                if(endingPrivateCheck.MoveNext())return;
+                (endingPrivateCheck as IDisposable)?.Dispose();endingPrivateCheck=null;
+                report.checks.AddRange(EndingPrivateActualUiChecks.Checks);
+                report.checks.Add("Ending private UI assertions: "+EndingPrivateActualUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Optional ending private disclosure fixtures passed; inspect scope and screenshots");Finish();return;
+            }
+            if(phase==21)
+            {
+                if(newsCommentsCheck.MoveNext())return;
+                (newsCommentsCheck as IDisposable)?.Dispose();newsCommentsCheck=null;
+                report.checks.AddRange(LaoZhouNewsCommentsUiChecks.Checks);
+                Require(LaoZhouNewsCommentsUiChecks.ShareClicks==24&&LaoZhouNewsCommentsUiChecks.AcceptanceClicks==4,"All actual news shares and contact acceptances executed");
+                report.checks.Add("News comment UI assertions: "+LaoZhouNewsCommentsUiChecks.AssertionCount);
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Optional news comment actual LCD fixtures passed; inspect scope and screenshots");Finish();return;
+            }
             if(phase==20)
             {
                 if(publicReadingInteractionCheck.MoveNext())return;
                 (publicReadingInteractionCheck as IDisposable)?.Dispose();publicReadingInteractionCheck=null;
                 report.checks.AddRange(PublicReadingInteractionUiChecks.Checks);
                 report.checks.Add("Public reading interaction UI assertions: "+PublicReadingInteractionUiChecks.AssertionCount);
-                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Three imported-photo display fixtures and notifier interaction fixtures passed; inspect scope and screenshots");Finish();return;
+                report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"Thirteen scene display fixtures and notifier interaction fixtures passed; inspect scope and screenshots");Finish();return;
             }
             if(phase==19)
             {
@@ -518,6 +580,15 @@ public static class SidebarLayoutChecks
     static void Finish()
     {
         finishing=true;
+        try{(readNewsRagCheck as IDisposable)?.Dispose();}
+        catch(Exception e)
+        {
+            report.status="failed";report.failure+="\nRead-news cleanup failed: "+e;Save();
+            string passed=Path.Combine(Root,"passed.txt");if(File.Exists(passed))File.Delete(passed);
+        }
+        finally{readNewsRagCheck=null;SessionState.EraseBool(ReadNewsRagKey);}
+        (newsCommentsCheck as IDisposable)?.Dispose();newsCommentsCheck=null;SessionState.EraseBool(NewsCommentsKey);
+        (endingPrivateCheck as IDisposable)?.Dispose();endingPrivateCheck=null;SessionState.EraseBool(EndingPrivateKey);
         (appAcquisitionCheck as IDisposable)?.Dispose();appAcquisitionCheck=null;AppAcquisitionActualUiChecks.ClearRequest();
         (publicReadingInteractionCheck as IDisposable)?.Dispose();publicReadingInteractionCheck=null;PublicReadingInteractionUiChecks.ClearRequest();
         (zhongbaoBusinessCheck as IDisposable)?.Dispose();zhongbaoBusinessCheck=null;ZhongbaoBusinessUiChecks.ClearRequest();

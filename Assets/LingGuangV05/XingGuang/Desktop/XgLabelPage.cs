@@ -83,6 +83,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float feedbackTimer, redTimer;
         long commentCardId = -1;
         string comment;
+        bool commentGenerated;
 
         public RectTransform Paper => paper;
         RectTransform paper;
@@ -657,7 +658,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (RefreshDeskGame(true)) { RefreshHall(Mode != 0); return; }
             if (displayedSim != Sim)
             {
-                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; lastFeedId = 0;
+                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; commentGenerated = false; lastFeedId = 0;
                 for (int i = 0; i < feedIds.Count; i++) { feedIds[i] = -1; feedAges[i] = 2; }
                 displayedSim = Sim;
                 // Rebinding can open or remove desks. Rebuild before using stale tab callbacks.
@@ -801,10 +802,11 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (card.id != commentCardId || commentOwner != Sim)
                 {
+                    commentGenerated = false;
                     comment = queued ? XgSpeechPolicy.Constrain(Lang.T("这个……我拿不准。你来。"), Sim.S.stage, En) : null;
                     RequestComment(desk, card, guess, confidence);
                 }
-                if (!string.IsNullOrEmpty(comment)) suggestion.text += "\n<size=14><color=#4054C4>" + Sim.AiDisplayName + T("：「", ": “") + Safe(comment) + T("」", "”") + "</color></size>";
+                if (!string.IsNullOrEmpty(comment)) suggestion.text += "\n<size=14><color=#4054C4>" + (commentGenerated ? T("[AI 合成内容] ", "[AI-generated] ") : "") + Sim.AiDisplayName + T("：「", ": “") + Safe(comment) + T("」", "”") + "</color></size>";
             }
             if (teaching) suggestion.text = Sim.AiDisplayName + T("猜：", " guesses: ") + (guess ? T("是", "Yes") : T("否", "No"));
             if (direct || WorkContext) suggestion.text = "";
@@ -1582,6 +1584,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (replyEnglish != En) { commentCardId = -1; return; }
                     if (string.IsNullOrWhiteSpace(reply)) return;
                     comment = FormatCardComment(reply, q, Sim.S.stage, replyEnglish);
+                    commentGenerated = true;
                     Refresh();
                 });
             if (!queued) { commentCardId = previousId; commentOwner = previousOwner; }

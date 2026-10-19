@@ -44,7 +44,7 @@ public static partial class BoardGamesUiPlayQa
     static double deadline;
     static bool fixtureReady, running;
     [Serializable] sealed class Report { public string status, detail; public List<string> passed, failed, errors, infrastructure; public List<TextResult> labels; }
-    [Serializable] sealed class TextResult { public string field, language, text; public int characters, visible; public bool truncated, overflow, missingGlyph, contained; }
+    [Serializable] sealed class TextResult { public string field, language, text, boundsFailure; public int characters, visible; public bool truncated, overflow, missingGlyph, contained; }
     static BoardGamesUiPlayQa() { EditorApplication.playModeStateChanged += State; }
     public static void Run()=>RunMode("games");
     public static void RunWithLogicTools()=>RunMode("all");
@@ -80,7 +80,7 @@ public static partial class BoardGamesUiPlayQa
     {
         if (component == null) return;
         string name = component.GetType().Name;
-        if (name == "PrologueDirector" || name == "StoryDirector" || name == "StoryDesktopPresenter" || name == "StageOneTutor" || name == "SpiderIntroScene" || name == "LaoZhouYY")
+        if (name == "PrologueDirector" || name == "StoryDirector" || name == "StoryDesktopPresenter" || name == "StageOneTutor" || name == "SpiderIntroScene" || name == "LaoZhouYY" || name == "AiJoinsYy")
         { component.CancelInvoke(); component.StopAllCoroutines(); component.enabled = false; }
     }
     static void State(PlayModeStateChange state)
@@ -97,7 +97,7 @@ public static partial class BoardGamesUiPlayQa
         {
             EditorApplication.update -= Boot; EditorApplication.update -= Tick; Application.logMessageReceived -= Log; SceneManager.sceneLoaded -= OnScene;
             bool ok = File.Exists(Path.Combine(Root, "passed.txt")); SessionState.EraseString(Key);SessionState.EraseString(Key+".Mode"); ChapterOneRuntime.VerificationSaveDirectory = null;
-            if (Application.isBatchMode) EditorApplication.Exit(ok ? 0 : 1);
+            if (Application.isBatchMode || Array.IndexOf(Environment.GetCommandLineArgs(), "-verificationExit") >= 0) EditorApplication.Exit(ok ? 0 : 1);
         }
     }
     static void Log(string message, string stack, LogType type)
@@ -127,7 +127,9 @@ public static partial class BoardGamesUiPlayQa
                 runtime.tickEnabled = false; ctl.enabled = false;
                 var lab = new XgSim(); lab.S.stage = 1; lab.S.handCorrect = 12; lab.S.unlocked.Add("train.curve"); lab.LifeEventIntervalMode = 0;
                 var house = new ChapterOneSim(); house.S.prologue = 2; house.S.appInstallState = 2; house.S.money = 100000;
-                house.S.gpuModels.Add("gtx980ti"); house.S.gpuCount = 1; house.S.labState = JsonUtility.ToJson(lab.S);
+                house.S.gpuModels.Clear(); house.S.gpuModels.Add("gtx980ti"); house.S.gpuCount = 1; house.S.labState = JsonUtility.ToJson(lab.S);
+                // The fresh simulation already owns a starter card. Validate the fixture before binding it.
+                house = new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(house.S)));
                 Rebind(house);
                 var boot = UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);
                 if (boot != null) { boot.CancelInvoke(); boot.StopAllCoroutines(); if (boot.bootAnimator != null) boot.bootAnimator.gameObject.SetActive(false); }
@@ -156,6 +158,7 @@ public static partial class BoardGamesUiPlayQa
         hub=UnityEngine.Object.FindAnyObjectByType<GameHubView>(FindObjectsInactive.Include);
         Require(hub!=null,"Actual Main GameHubView exists");gameWindow=hub.GetComponentInParent<Michsky.DreamOS.WindowManager>(true);
         Require(gameWindow!=null,"Native Game Hub window exists");gameWindow.OpenWindow();
+        Check(true,"Prepared-desktop fixture isolates AiJoinsYy alongside the existing story hosts; native LCD and board rules remain live.");
         running=true;deadline=EditorApplication.timeSinceStartup+(LogicMode=="all"?1080:LogicMode=="tools"?360:720);lastFrame=-1;routine=SelectedChecks();EditorApplication.update+=Tick;
     }
     static IEnumerator Checks()
@@ -244,13 +247,42 @@ public static partial class BoardGamesUiPlayQa
         }
         Require(ctl.Sim.S.boardBatches.Count==1&&ctl.Sim.S.boardBatches[0].game=="monopoly","Exactly three completed Monopoly games create exactly one actual pack");
         Require(ctl.Sim.S.boardBatches[0].rounds.Count==3,"Pack references three actual session tickets");
-        Capture("monopoly-real-complete-zh.png",Area(monopoly));Inspect(Field<TMP_Text>(monopoly,"status"),"monopoly complete zh");
-        language=GameText.English;GameText.PublishChanged();ctl.Sim.English=true;monopoly.SyncBoardOwner();monopoly.Refresh();yield return null;
+        Capture("monopoly-real-complete-zh.png",Area(monopoly));Inspect(Field<TMP_Text>(monopoly,"status"),"monopoly complete zh");Inspect(Field<TMP_Text>(monopoly,"account"),"monopoly accounts zh");
+        var narrative=runtime.GetComponent<XgEndingPreparationHost>();
+        var currentSeed=narrative==null?null:Field<RectTransform>(narrative,"seedPanel");
+        Require(currentSeed!=null&&currentSeed.gameObject.activeInHierarchy,"Actual pending shutdown question is available for language-switch regression");
+        string seedId=Field<string>(narrative,"shownSeed");float seedCooldown=Field<float>(narrative,"nextSeedAllowed");
+        var seedQuestion=Field<TMP_Text>(narrative,"seedQuestionLabel");
+        var seedOptions=Field<TMP_Text[]>(narrative,"seedOptionLabels");
+        string completedBoard=JsonUtility.ToJson(Field<MonopolyGame>(monopoly,"game").S);
+        int completedRounds=ctl.Sim.S.boardRounds.Count,completedPacks=ctl.Sim.S.boardBatches.Count;
+        language=GameText.English;ctl.Sim.English=true;GameText.PublishChanged();yield return null;
+        yield return null;
+        Require(ReferenceEquals(currentSeed,Field<RectTransform>(narrative,"seedPanel"))&&ReferenceEquals(seedQuestion,Field<TMP_Text>(narrative,"seedQuestionLabel"))&&ReferenceEquals(seedOptions,Field<TMP_Text[]>(narrative,"seedOptionLabels")),"Language switch retains the live question and option controls");
+        Require(seedId==Field<string>(narrative,"shownSeed")&&seedCooldown==Field<float>(narrative,"nextSeedAllowed"),"Language switch preserves unanswered prompt and cooldown");
+        Require(seedQuestion.text.StartsWith("No right answer")||seedQuestion.text.StartsWith("A remembered day"),"Existing question text refreshes to English");
+        var seedPrompt=Field<XgEndingSeedPrompt>(narrative,"shownSeedPrompt");
+        for(int i=0;i<seedOptions.Length;i++)Require(seedOptions[i].text==seedPrompt.options[i].en,"Existing question option refreshes to English: "+i);
+        Require(Field<TMP_Text>(narrative,"seedLaterLabel").text=="Later","Existing question deferral control refreshes to English");
+        var yyView=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.YY.YYChatView>(FindObjectsInactive.Include);
+        Require(yyView!=null&&Field<TMP_Text>(yyView,"nativeStatus").text==Lang.T("YY 2016 · 消息只保存在本机"),"Native YY footer refreshes with the shared language event");
         Capture("monopoly-real-complete-en.png",Area(monopoly));Inspect(Field<TMP_Text>(monopoly,"status"),"monopoly complete en");Inspect(Field<TMP_Text>(monopoly,"account"),"monopoly accounts en");
-        language="zh-CN";GameText.PublishChanged();ctl.Sim.English=false;monopoly.SyncBoardOwner();
+        Require(Field<TMP_Text>(monopoly,"status").text.Contains("Game complete.")&&!Field<TMP_Text>(monopoly,"status").text.Contains("对局已结束"),"Completed game receipt relocalizes to English without another game");
+        Require(Field<TMP_Text>(monopoly,"account").text.Contains(ctl.Sim.AiDisplayName),"Private opponent uses the same AI display name as the lab");
+        language="zh-CN";ctl.Sim.English=false;GameText.PublishChanged();
+        yield return null;yield return null;
+        Require(ReferenceEquals(currentSeed,Field<RectTransform>(narrative,"seedPanel"))&&seedId==Field<string>(narrative,"shownSeed")&&seedCooldown==Field<float>(narrative,"nextSeedAllowed"),"Switching back retains the same unanswered shutdown prompt");
+        Require(seedQuestion.text.StartsWith("没有标准答案")||seedQuestion.text.StartsWith("记得的那一天"),"Existing question text switches back to Chinese");
+        Require(Field<TMP_Text>(yyView,"nativeStatus").text=="YY 2016 · 消息只保存在本机","Native YY footer switches back to Chinese");
+        Require(JsonUtility.ToJson(Field<MonopolyGame>(monopoly,"game").S)==completedBoard&&ctl.Sim.S.boardRounds.Count==completedRounds&&ctl.Sim.S.boardBatches.Count==completedPacks,"Actual language events redraw the completed board without changing result, rounds or packs");
+        Require(Field<TMP_Text>(monopoly,"status").text.Contains("对局已结束")&&!Field<TMP_Text>(monopoly,"status").text.Contains("Game complete."),"Completed receipt switches back to Chinese without changing its result");
         ctl.Sim.S.unlocked.Add(XgSim.DataEntryNode);ctl.Open();ctl.View.Open("train");gameWindow.CloseWindow();yield return null;
+        var collect=CollectVisibleCards();while(collect.MoveNext())yield return collect.Current;
         var files=runtime.GetComponent<XgFilesWindow>();Require(files!=null,"Actual Files window exists");files.Bind(ctl.Sim);files.Show();
         wait=EditorApplication.timeSinceStartup+.8;while(EditorApplication.timeSinceStartup<wait)yield return null;
+        Capture("records-before-window-arrangement.png",files.client);
+        var arrange=DragFilesToLeft(files);while(arrange.MoveNext())yield return arrange.Current;
+        Capture("records-after-window-arrangement.png",files.client);
         var folder=files.client.GetComponentsInChildren<XgFilesRow>().First(r=>r.folder&&r.fileId=="packs");ClickRect((RectTransform)folder.transform,2);yield return null;
         var file=ctl.Sim.S.dataFiles.Single(f=>f.offer=="board.records");var row=files.client.GetComponentsInChildren<XgFilesRow>().First(r=>r.fileId==file.fileId);
         Require(row.ready,"Actual completed records pack is ready in Files");
@@ -269,6 +301,9 @@ public static partial class BoardGamesUiPlayQa
         Require(ctl.Sim.LearningRecordsNewest().Count(x=>x.sourceKind=="game")==1,"One game-install learning receipt is visible to the learning log");
         Capture("records-real-drop-installed.png",drop.transform as RectTransform);
         Require(ctl.Sim.Labels("go")==goSamples,"Unrelated dataset samples remain unchanged");
+        // Retained receipts belong to their original save even before a hidden board is revisited.
+        Rebind(new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S))));
+        Require(!((string)Call(monopoly,"LabLines")).Contains("对局已结束"),"A new save owner cannot inherit the previous board's completion receipt");
     }
     static RectTransform Area(HubGame game)=>Field<RectTransform>(game,"boardArea");
     static IEnumerator WaitLudoPlane(LudoPanel panel,LudoGame expected,int plane)
@@ -303,7 +338,23 @@ public static partial class BoardGamesUiPlayQa
     {
         var bridge=UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>();
         if(bridge?.inputSurface==null||!bridge.inputSurface.isActiveAndEnabled||!bridge.inputSurface.inputEnabled)
-            throw new InvalidOperationException("Actual Main LCD input is unavailable");
+        {
+            var surface=bridge==null?null:bridge.inputSurface;
+            var lcd=bridge==null?null:bridge.controller;
+            var source=surface==null?null:surface.sourceCamera;
+            var prologue=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.Story.PrologueDirector>(FindObjectsInactive.Include);
+            var join=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.Story.AiJoinsYy>(FindObjectsInactive.Include);
+            var title=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.CaseMenu.CaseMenuMainDisplay>(FindObjectsInactive.Include);
+            throw new InvalidOperationException("Actual Main LCD input is unavailable; scene="+SceneManager.GetActiveScene().path+
+                "; bridge="+(bridge!=null)+"; surface="+(surface!=null)+"; surfaceActive="+(surface!=null&&surface.isActiveAndEnabled)+
+                "; inputEnabled="+(surface!=null&&surface.inputEnabled)+"; sourceCamera="+(source!=null)+"; cameraActive="+(source!=null&&source.isActiveAndEnabled)+
+                "; lcdActive="+(lcd!=null&&lcd.isActiveAndEnabled)+"; powered="+(lcd!=null&&lcd.IsPowered)+"; powerTransition="+(lcd!=null&&lcd.IsTransitioning)+
+                "; eventSystem="+(EventSystem.current!=null&&EventSystem.current.isActiveAndEnabled)+
+                "; prologue="+(prologue==null?"absent":prologue.enabled+"/"+prologue.Running+"/"+prologue.Step)+
+                "; AiJoinsYy="+(join==null?"absent":join.enabled.ToString())+"/playing="+LingGuangV05.Desktop.Story.AiJoinsYy.Playing+
+                "; AutoLabelPlaying="+LingGuangV05.Desktop.Story.AutoLabelEpiphany.Playing+
+                "; titleDisplay="+(title==null?"absent":title.HasEnteredDesktop+"/"+title.IsScreenPowered+"/"+title.IsRevealingDesktop));
+        }
         return bridge.inputSurface;
     }
     static Vector2 LcdPoint(RectTransform rect,Vector2 local)
@@ -369,6 +420,80 @@ public static partial class BoardGamesUiPlayQa
         var button=rect.GetComponent<Button>();if(button!=null)Require(button.IsActive()&&button.IsInteractable(),"Native control enabled: "+rect.name);
         for(int i=0;i<count;i++){var e=Pointer(rect);RequireTop(rect,e);FilesWindowUiChecks.Click(rect);}
     }
+    // Arrange the existing overlapping windows by the same native caption drag a player uses.
+    // Never change frame rectangles, sorting, raycast flags, focus, or the installation transaction here.
+    static IEnumerator DragFilesToLeft(XgFilesWindow files)
+    {
+        var window=files.window;var dragger=window.windowDragger;
+        Require(dragger!=null&&dragger.isActiveAndEnabled&&!window.isFullscreen,"Files has a live normal-window caption dragger");
+        var caption=(RectTransform)dragger.transform;var frame=dragger.dragObject;var area=dragger.dragArea;
+        Require(frame!=null&&area!=null,"Native caption declares its actual window frame and drag bounds");
+        Canvas.ForceUpdateCanvases();var corners=new Vector3[4];frame.GetWorldCorners(corners);
+        float beforeLeft=corners.Min(p=>area.InverseTransformPoint(p).x);
+        float deltaX=area.rect.xMin+16-beforeLeft;var beforeSize=frame.rect.size;
+        if(Mathf.Abs(deltaX)<2)yield break;
+        Vector2 start=Vector2.zero;bool exposed=false;
+        foreach(float fraction in new[]{.25f,.4f,.55f,.7f})
+        {
+            var local=new Vector2(Mathf.Lerp(caption.rect.xMin,caption.rect.xMax,fraction),caption.rect.center.y);
+            if(!TryLcdPoint(caption,local,out var point))continue;
+            var hit=LcdHit(point).gameObject;
+            if(hit==null||ExecuteEvents.GetEventHandler<IDragHandler>(hit)!=dragger.gameObject)continue;
+            start=point;exposed=true;break;
+        }
+        if(!exposed)SaveHitEvidence(caption,Pointer(caption),"files-caption-occluded");
+        Require(exposed,"Actual LCD top hit owns the native Files caption drag handler");
+        var surface=LcdSurface();Require(surface.TryMap(start,out var sourceStart),"Files caption maps into source pixels");
+        Require(RectTransformUtility.ScreenPointToLocalPointInRectangle(area,sourceStart,surface.sourceCamera,out var startLocal),"Files caption maps into native drag coordinates");
+        var e=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=start};
+        RequireTop(caption,e);surface.OnPointerDown(e);
+        try
+        {
+            // The native begin-drag captures its origin at the threshold-crossing sample.
+            // Send that sample first, then move by the desired window offset across real frames.
+            var dragOrigin=startLocal+new Vector2(20,0);
+            e.position=LcdPoint(area,dragOrigin);surface.OnDrag(e);yield return null;
+            for(int step=1;step<=8;step++)
+            {
+                e.position=LcdPoint(area,dragOrigin+new Vector2(deltaX*step/8f,0));
+                surface.OnDrag(e);yield return null;
+            }
+        }
+        finally{surface.OnPointerUp(e);}
+        yield return null;Canvas.ForceUpdateCanvases();frame.GetWorldCorners(corners);
+        float afterLeft=corners.Min(p=>area.InverseTransformPoint(p).x);
+        Require(Mathf.Abs(afterLeft-(area.rect.xMin+16))<2,"Actual LCD title drag places Files at the desktop left margin");
+        Require(Vector2.Distance(frame.rect.size,beforeSize)<.1f,"Native window drag preserves its full original size");
+        Require(window.isOn&&ctl.Window.isOn,"Files and Train remain open after native window arrangement");
+    }
+    // Explicit fixtures may legitimately discover cards when the lab first opens.
+    // Accept them through their exposed background control before starting a drag.
+    static IEnumerator CollectVisibleCards()
+    {
+        double until=EditorApplication.timeSinceStartup+45;
+        int quietFrames=0;
+        while(quietFrames<3)
+        {
+            Require(EditorApplication.timeSinceStartup<until,"Pending cards finish through their real collect controls");
+            var overlay=ctl.View.GetComponentsInChildren<RectTransform>(false).FirstOrDefault(r=>r.name=="Card Overlay");
+            if(overlay==null){quietFrames++;yield return null;continue;}
+            quietFrames=0;
+            double ready=EditorApplication.timeSinceStartup+.8;
+            while(EditorApplication.timeSinceStartup<ready)yield return null;
+            if(!overlay.gameObject.activeInHierarchy)continue;
+            bool clicked=false;
+            for(int y=1;y<10&&!clicked;y++)for(int x=1;x<10&&!clicked;x++)
+            {
+                var local=new Vector2(Mathf.Lerp(overlay.rect.xMin,overlay.rect.xMax,x/10f),Mathf.Lerp(overlay.rect.yMin,overlay.rect.yMax,y/10f));
+                if(!TryLcdPoint(overlay,local,out var point)||LcdHit(point).gameObject!=overlay.gameObject)continue;
+                var pointer=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=point};
+                var surface=LcdSurface();surface.OnPointerDown(pointer);surface.OnPointerUp(pointer);clicked=true;
+            }
+            Require(clicked,"Real card background has an exposed LCD collect point");
+            ready=EditorApplication.timeSinceStartup+.8;
+            while(EditorApplication.timeSinceStartup<ready)yield return null;
+        }
+    }
     static Vector2 DropPoint(XgFilesTrainDrop target)
     {
         var rect=(RectTransform)target.transform;
@@ -378,6 +503,7 @@ public static partial class BoardGamesUiPlayQa
             var hit=LcdHit(point).gameObject;
             if(hit!=null&&hit.GetComponentInParent<XgFilesTrainDrop>()==target)return point;
         }
+        SaveHitEvidence(rect,Pointer(rect),"train-drop-occluded");
         throw new InvalidOperationException("No exposed native Train drop point; do not bypass window occlusion");
     }
     static void Inspect(TMP_Text label,string name)
@@ -387,7 +513,7 @@ public static partial class BoardGamesUiPlayQa
         for(int i=0;i<info.characterCount;i++)
         {
             var c=info.characterInfo[i];if(!char.IsWhiteSpace(c.character)&&(c.textElement==null||c.textElement.unicode!=c.character))row.missingGlyph=true;
-            if(!c.isVisible)continue;row.visible++;if(c.bottomLeft.x<rect.xMin-.5f||c.topRight.x>rect.xMax+.5f||c.bottomLeft.y<rect.yMin-.5f||c.topRight.y>rect.yMax+.5f)row.contained=false;
+            if(!c.isVisible)continue;row.visible++;if(c.bottomLeft.x<rect.xMin-.5f||c.topRight.x>rect.xMax+.5f||c.bottomLeft.y<rect.yMin-.5f||c.topRight.y>rect.yMax+.5f){row.contained=false;row.boundsFailure+="U+"+((int)c.character).ToString("X4")+" bottomLeft="+c.bottomLeft+" topRight="+c.topRight+" rect="+rect+"; ";}
         }
         labels.Add(row);Check(row.visible>0&&!row.truncated&&!row.overflow&&!row.missingGlyph&&row.contained,"Complete visible glyphs contained: "+name);
     }

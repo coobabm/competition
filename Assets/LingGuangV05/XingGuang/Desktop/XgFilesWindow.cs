@@ -77,6 +77,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!CanBrowse) return;
             EnsureBuilt(); window.OpenWindow(); Refresh();
         }
+        // Navigation only. The player must still select and drag a ready file into Train.
+        public void ShowTrainingData(XgSim expected)
+        {
+            if (!ReferenceEquals(Sim, expected) || !CanBrowse) return;
+            CancelDrag(); selected.Clear(); folder = "packs"; previewId = null;
+            Show();
+        }
         public void Bind(XgSim sim)
         {
             if (ReferenceEquals(Sim, sim)) return;

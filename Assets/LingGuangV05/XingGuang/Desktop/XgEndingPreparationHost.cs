@@ -67,8 +67,8 @@ namespace LingGuangV05.Desktop.XingGuang
         bool Persist()
         {
             if(!Current||!owner.runtime.useDiskSave||owner.runtime.TestMode||boundSave.InPrologue)return false;
-            string before=boundSave.S.labState,chatJson=boundSave.S.chatState;bool success=false;owner.runtime.MarkDirty();
-            var oldChat=boundLab.S.chat;var rollback=new List<Action>();bool appended=false;var hub=MatchingHub();
+            string before=boundSave.S.labState,chatJson=boundSave.S.chatState,forumJson=boundSave.S.forumState;bool success=false;owner.runtime.MarkDirty();
+            var oldChat=boundLab.S.chat;var rollback=new List<Action>();bool appended=false,forumAppended=false;var hub=MatchingHub();var forum=MatchingForum();
             try
             {
                 var d=boundLab.S.endingPreparation;
@@ -87,15 +87,27 @@ namespace LingGuangV05.Desktop.XingGuang
                     if(!string.IsNullOrEmpty(d.siReadReceipt)&&!d.siQuestionAnnounced&&hub.IsVisible(YYChatHub.Contact(YYChatHub.LaoZhou)))
                     {AppendPrepared(hub,YYChatHub.LaoZhou,Safe(GameText.IsEnglish?text.askedQuestionEn:text.askedQuestionZh,GameText.IsEnglish),rollback);d.siQuestionAnnounced=true;appended=true;}
                 }
+                // A2: no YY contact -> the same authored question, once, in his Tieba DM, inside this same save.
+                if(d!=null&&forum!=null&&text!=null&&!string.IsNullOrEmpty(d.siReadReceipt)&&!d.siQuestionAnnounced)
+                {
+                    var undo=forum.AppendZhouEndingDm(boundSave,Safe(GameText.IsEnglish?text.askedQuestionEn:text.askedQuestionZh,GameText.IsEnglish));
+                    if(undo!=null){rollback.Add(undo);d.siQuestionAnnounced=true;forumAppended=true;}
+                }
                 success=owner.SaveNow();return success;
             }
             finally
             {
-                if(!success){boundSave.S.labState=before;boundSave.S.chatState=chatJson;boundLab.S.chat=oldChat;for(int i=rollback.Count-1;i>=0;i--)rollback[i]();}
-                else if(appended){try{hub.NotifyEndingProjectionSaved();}catch(Exception error){Debug.LogWarning("Ending YY redraw failed after a committed save: "+error.GetType().Name);}}
+                if(!success){boundSave.S.labState=before;boundSave.S.chatState=chatJson;boundSave.S.forumState=forumJson;boundLab.S.chat=oldChat;for(int i=rollback.Count-1;i>=0;i--)rollback[i]();}
+                else
+                {
+                    if(appended){try{hub.NotifyEndingProjectionSaved();}catch(Exception error){Debug.LogWarning("Ending YY redraw failed after a committed save: "+error.GetType().Name);}}
+                    if(forumAppended){try{forum.NotifyZhouEndingDmSaved();}catch(Exception error){Debug.LogWarning("Ending Tieba redraw failed after a committed save: "+error.GetType().Name);}}
+                }
             }
         }
         YYChatHub MatchingHub(){var hub=YYChatHub.Instance;return hub!=null&&hub.S!=null&&ReferenceEquals(hub.runtime?.Sim,boundSave)&&hub.EndingBoundTo(boundSave)?hub:null;}
+        // Tieba fallback for the post-letter question: only when he is not a YY contact of this same save.
+        LingGuangV05.Desktop.Tieba.TiebaHub MatchingForum(){var forum=LingGuangV05.Desktop.Tieba.TiebaHub.Instance;return forum!=null&&forum.ZhouEndingDmReady(boundSave)?forum:null;}
         static void AppendPrepared(YYChatHub hub,string id,string line,List<Action> rollback)
         {
             var conversation=hub.Conversation(id);if(conversation==null)throw new InvalidOperationException("yy_not_ready");
@@ -151,7 +163,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 var template=text?.memories?.Find(t=>t.id==m.id);
                 var row=new EndingUiMemory{id=m.id,pinnable=m.pinnable,title=Text(Date(m.day)+" · "+(template?.titleZh??"记忆"),Date(m.day)+" · "+(template?.titleEn??"Memory")),face=Text(m.line,m.lineEn)};
-                foreach(var source in m.sources)row.sources.Add(new EndingUiSource{id=source.refId,date=Date(source.day),quote=Text(source.summary)});s.memories.Add(row);
+                foreach(var source in m.sources)row.sources.Add(new EndingUiSource{id=source.refId,date=Date(source.day),quote=Text(XgEndingPresentation.SourceSummary(boundLab,source,false),XgEndingPresentation.SourceSummary(boundLab,source,true))});s.memories.Add(row);
             }
             s.memories.Add(new EndingUiMemory{id="shutdown",shutdown=true,title=Text("关机","Shutdown"),face=s.shutdownFace.Copy()});
             if(d.aiDecision!=null){s.aiConclusion=Text(d.aiDecision.line,d.aiDecision.lineEn);foreach(var id in d.aiDecision.citedMemoryIds){var m=d.memories.Find(x=>x.id==id);if(m!=null)s.aiQuotes.Add(new EndingUiSource{id=m.sources.Count>0?m.sources[0].refId:"",date=Date(m.day),quote=Text(m.line,m.lineEn)});}}
@@ -183,8 +195,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(n.currentRequest!=null){s.night.requestId=n.currentRequest.id;s.night.question=Text(n.currentRequest.nickname+"\n"+n.currentRequest.questionZh,n.currentRequest.nickname+"\n"+n.currentRequest.questionEn);}
             if(n.currentAnswer!=null){var a=n.currentAnswer;s.night.corrupted=a.wrong;s.night.answer=Text(a.answer,a.answerEn);
                 var memory=d.memories.Find(m=>m.id==a.sourceMemoryId);var evidence=memory?.sources.Find(source=>source.refId==a.sourceRef&&source.day==a.sourceDay);
-                string citation=evidence==null?"":Date(evidence.day)+" · "+evidence.summary;
-                s.night.reason=Text((a.wrong?"这次回答被带偏了。 ":"")+citation,(a.wrong?"This answer went astray. ":"")+citation);}
+                s.night.reason=Text(XgEndingPresentation.Evidence(boundLab,evidence,false),XgEndingPresentation.Evidence(boundLab,evidence,true));}
             foreach(var q in n.queue)s.night.queue.Add(Text(q.nickname+" · "+q.questionZh,q.nickname+" · "+q.questionEn));
         }
         bool FlushNight()
@@ -293,8 +304,10 @@ namespace LingGuangV05.Desktop.XingGuang
             if(guard!=null&&flow!=null&&Time.unscaledTime>=nextNoticeRetry)
             {
                 var d=flow.GetSnapshot();var hub=MatchingHub();nextNoticeRetry=Time.unscaledTime+2;
-                if(hub!=null&&((hub.S.lingguangUnlocked&&d.memories.Exists(m=>!d.announcedMemoryIds.Contains(m.id)))
-                    ||(!string.IsNullOrEmpty(d.siReadReceipt)&&!d.siQuestionAnnounced&&hub.IsVisible(YYChatHub.Contact(YYChatHub.LaoZhou)))))
+                // The post-letter question is pending for YY (visible contact) or, with no YY contact, for his Tieba DM (A2).
+                bool zhouQuestion=!string.IsNullOrEmpty(d.siReadReceipt)&&!d.siQuestionAnnounced
+                    &&(hub!=null&&hub.IsVisible(YYChatHub.Contact(YYChatHub.LaoZhou))||MatchingForum()!=null);
+                if((hub!=null&&hub.S.lingguangUnlocked&&d.memories.Exists(m=>!d.announcedMemoryIds.Contains(m.id)))||zhouQuestion)
                 {if(flow.CheckpointPresentation(flow.CaptureBinding()).Success&&!sourceShown)RefreshPanels();}
             }
             // Record discovery is keyed to actual saved record serial and current stage, including pre-ending play.

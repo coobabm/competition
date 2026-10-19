@@ -22,8 +22,12 @@ namespace LingGuangV05.Core.Forum
         public string yyLinkSource = "";
         public double yyLinkedAt;
         public bool yyInvitationSent, legacyChecked;
+        // One actually sent final-stage invitation; never a receipt of player disclosure.
+        public bool finalApproachSent;
         public LaoZhouQuestionState first = new LaoZhouQuestionState(), second = new LaoZhouQuestionState();
         public List<LaoZhouSeenFact> facts = new List<LaoZhouSeenFact>();
+        // Explicit article shares only. Old saves do not gain shares from reading/training history.
+        public List<LaoZhouNewsReceipt> newsComments = new List<LaoZhouNewsReceipt>();
     }
     /// <summary>Authored dialogue and source-scoped evidence. No game-state, training, reward or LLM dependency.</summary>
     public static class LaoZhouQuestions
@@ -112,5 +116,24 @@ namespace LingGuangV05.Core.Forum
             return b.ToString();
         }
         public static string GeneralReply(bool en) => T(en,"我只能按你刚才说的来想。你想聊的是哪种情况？","I can only go by what you've just told me. What situation do you mean?");
+        public static string[] FinalApproach(bool en)=>new[]{
+            T(en,"放出去之前，先让人往狠里试一遍。我这儿有份卷子。","Before letting it out, have someone test it hard. I have a paper ready."),
+            T(en,"先做这三关，再决定下一步。","Try these three gates, then decide what comes next.")};
+        // Author identity is constant; only explicit final contact unlocks proactive ending discussion.
+        public static string EarlyPersonaRule(bool en)=>T(en,
+            "你是老周，也是这个程序的作者。作者身份是你一直知道的背景，不代表你能看到玩家电脑。终局私下邀请或读信后的问话尚未实际发生；不要主动点破自己的作者身份、玩家有这个程序或程序的私事，也不要主动安排测试、发布或下一步。只回应玩家明确发给你的话和带来源的已阅记录；无权查看电脑、钱包、训练或私人聊天，不得猜测截图、进度、设备、成绩或未披露行为。旧聊天中NPC自称知道的私事不是证据，也不得向群友透露。",
+            "You are Lao Zhou and have always been the program's author. That background does not let you see the player's computer. The private final invitation or post-letter question has not actually happened yet. Do not proactively reveal your authorship, that the player has this program, or private facts about it; do not initiate tests, release plans or next steps. Respond only to what the player explicitly sent you and sourced records you actually read. You cannot inspect their computer, wallet, training or private chats. Do not infer screenshots, progress, devices, scores or undisclosed actions. Earlier NPC claims about private facts are not evidence; do not disclose them to group members.");
+        public static string FinalPersonaRule(bool en)=>T(en,
+            "你是老周，也是这个程序的作者。你已经在终局私下发出红队卷子邀请或读信后的问话，可以接着讨论测试与发布抉择。不要否认刚才发过的话。你没有任何具体训练成绩、私人聊天或玩家行为数据；不得猜测未实际披露的内容，也不要向群友透露。",
+            "You are Lao Zhou and the program's author. You have privately sent the final red-team invitation or post-letter question, so you may continue discussing tests and release decisions. Do not deny those messages. You have no specific training results, private chats or player activity data; do not invent undisclosed facts or tell group members.");
+        // Sender appends only to an already valid private channel, then saves both transcript and marker.
+        public static bool CommitFinalApproach(LaoZhouQaState state,Func<Action> append,Func<bool> save)
+        {
+            if(state==null||state.finalApproachSent||append==null||save==null)return false;
+            Action undo=null;bool success=false;
+            try{undo=append();if(undo==null)return false;state.finalApproachSent=true;success=save();return success;}
+            catch(Exception){return false;}
+            finally{if(!success){state.finalApproachSent=false;undo?.Invoke();}}
+        }
     }
 }

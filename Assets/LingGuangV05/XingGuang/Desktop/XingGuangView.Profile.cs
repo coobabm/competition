@@ -9,7 +9,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform profileSections, profileMoreOverlay, profileMorePanel;
         string profileSection = "home", profileMoreTab = "", profileMoreSection = "";
         XgSim profileMoreOwner;
-        XgBtn profileOverview, profileMore, profileCards, profileBackpack, profileFinal;
+        XgBtn profileOverview, profileMore, profileCards, profileBackpack, profileFinal, profileAtlas, profilePersonaArchive;
 
         void BuildProfileSections(RectTransform area)
         {
@@ -19,6 +19,9 @@ namespace LingGuangV05.Desktop.XingGuang
             profileOverview = ui.Button(profileSections, "", () => OpenProfileSection("home"), 14);
             profileMore = ui.Button(profileSections, "", ToggleProfileMore, 14);
             PlaceTopLeft(profileOverview, 0, 0, 180, 34);
+            profilePersonaArchive = ui.Button(profileSections, "", OpenPersonaArchive, 14);
+            profilePersonaArchive.rt.gameObject.name = "Open personality archive";
+            PlaceTopLeft(profilePersonaArchive, 190, 0, 220, 34);
             profileMore.rt.anchorMin = profileMore.rt.anchorMax = Vector2.one;
             profileMore.rt.offsetMin = new Vector2(-160, -34);
             profileMore.rt.offsetMax = Vector2.zero;
@@ -37,6 +40,8 @@ namespace LingGuangV05.Desktop.XingGuang
             profileCards = ui.Button(profileMorePanel, "", () => OpenProfileSection("cards"), 14);
             profileBackpack = ui.Button(profileMorePanel, "", () => OpenProfileSection("backpack"), 14);
             profileFinal = ui.Button(profileMorePanel, "", () => OpenProfileSection("final"), 14);
+            profileAtlas = ui.Button(profileMorePanel, "", OpenAtlas, 14);
+            profileAtlas.rt.gameObject.name = "Open unified atlas";
             profileMoreOverlay.gameObject.SetActive(false);
             controller.Window.onMinimize.AddListener(HideProfileMore);
             controller.Window.onClose.AddListener(HideProfileMore);
@@ -70,9 +75,11 @@ namespace LingGuangV05.Desktop.XingGuang
                 HideProfileMore();
             profileMoreOwner = Sim; profileMoreTab = tab; profileMoreSection = profileSection;
             profileOverview.Set(profileSection == "home" ? T("近况与性格", "About me") : T("返回名字页", "Back to profile"), true);
+            profilePersonaArchive.Set(Sim.PersonaArchiveUnlocked ? T("性格档案", "Personality archive") : T("性格档案 · 未解锁", "Personality archive · Locked"), true);
 
             // Preserve the original visibility/interaction rules: cards and awards share one existing page.
             profileCards.Set(T("闪卡与成就", "Cards & awards"), true);
+            profileAtlas.Set(T("图鉴", "Atlas"), true);
             bool backpack = FeatureOpen("backpack"), finale = FeatureOpen("final");
             bool fresh = backpack && Sim.RelicsFresh && profileSection != "backpack";
             string badge = fresh ? " <color=#E24B4A>●</color>" : "";
@@ -84,6 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
             float y = 12;
             PlaceTopLeft(profileCards, 12, y, 264, 40); y += 46;
+            PlaceTopLeft(profileAtlas, 12, y, 264, 40); y += 46;
             if (backpack) { PlaceTopLeft(profileBackpack, 12, y, 264, 40); y += 46; }
             if (finale) { PlaceTopLeft(profileFinal, 12, y, 264, 40); y += 46; }
             profileMorePanel.offsetMin = new Vector2(-288, -y - 6);

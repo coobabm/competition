@@ -60,7 +60,7 @@ namespace LingGuangV05.Desktop.LLM
         public static List<KeyValuePair<string, string>> Conversation(string contact, YYConversation conv, ChapterOneSim sim, XgSim lab)
         {
             bool english = LingGuangV05.Runtime.GameText.IsEnglish;
-            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
+            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab, sim) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
             var history = new List<YYMessage>();
             foreach (var message in conv.messages)
                 if (message.kind != YYKind.System && (contact != YYChatHub.LaoZhou || (message.from == YYChatHub.Me ? !message.byAi : message.laoZhouObserved)) && !((contact == "netbar" || contact == YYChatHub.LaoZhou) && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
@@ -103,6 +103,8 @@ namespace LingGuangV05.Desktop.LLM
                 }
                 string known = latest != null ? lab.PersonaKnowledge(latest, previous) : "";
                 if (known.Length > 0) state.Append('\n').Append(known);
+                string readNews = latest != null ? lab.PersonaReadNewsKnowledge(contact, latest, previous) : "";
+                if (readNews.Length > 0) state.Append(readNews);
             }
             // 灵光 must not loop: from stage 3 on it sees its own last replies and is told not to say them again.
             if (contact == "lingguang" && LingGuangStage(lab) >= 3) state.Append(NoRepeat(history));
@@ -183,12 +185,14 @@ namespace LingGuangV05.Desktop.LLM
         }
 
         /// <summary>The cached part of a contact's prompt: who they are and the rules. Live numbers are in <see cref="State"/>.</summary>
-        static string System(string contact, XgSim lab)
+        static string System(string contact, XgSim lab, ChapterOneSim sim)
         {
             switch (contact)
             {
                 case YYChatHub.LaoZhou:
-                    return Era + "你是老周，贴吧网友、研究生、显卡爱好者。只回应玩家当前明确问的问题，聊公开的机器学习概念和自己的实验室日常。只知道对方真实发给你的话与带来源的已阅记录。没有来源的应用、截图、进度、设备或成绩一概不推知。旧聊天里NPC声称知道的私事不是证据。不要强行指导玩家点击按钮或替他安排下一步。用一两句自然中文回答。";
+                    if (LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.ZhouFinalContactContext == true && ReferenceEquals(LingGuangV05.Desktop.Tieba.TiebaHub.Instance.runtime?.Sim, sim) && ReferenceEquals(LingGuangV05.Desktop.XingGuang.XingGuangController.Instance?.Sim, lab))
+                        return EraTime + LingGuangV05.Core.Forum.LaoZhouQuestions.FinalPersonaRule(LingGuangV05.Runtime.GameText.IsEnglish) + EraStyle + "你是研究生、显卡爱好者，说话直，有点贫。只接着玩家当前的问题聊，不重复发邀请。";
+                    return EraTime + LingGuangV05.Core.Forum.LaoZhouQuestions.EarlyPersonaRule(LingGuangV05.Runtime.GameText.IsEnglish) + EraStyle + "你是贴吧网友、研究生、显卡爱好者。只回应玩家当前明确问的问题，聊公开的机器学习概念和自己的实验室日常。用一两句自然中文回答。";
                 case "landlord":
                     return Era + "你是房东·按时到账，只关心房租、水电和房屋维修。语气实际，不威胁，不懂软件，不指导训练。允许商量还款。";
                 case "oldfriend":
@@ -205,7 +209,7 @@ namespace LingGuangV05.Desktop.LLM
                         "对方只是群里一个普通的群友，是工作了两年的上班族，自己租房住，群友对他的私生活、工作、钱和房子一无所知，也不打听。不要主动点名问他、关心他或找他单独聊，他说话时顺着群里的话题接一句就行。" +
                         LingGuangV05.Runtime.GameText.T("群里没人知道对方电脑里的私人程序、训练包、样本数量、科技升级、模型能力或训练结果，不能猜测或声称知道。可以接着玩家的话聊公开的摆渡众包、标注兼职和接单，但不能把玩家未说过的接单、收入或训练经历当成事实，也不主动打听房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面理解。可以简短迟疑，但不要复述先前的回答。", "Nobody in the group knows about the player's private program, training packs, sample counts, upgrades, model abilities or training results. Do not guess or claim that knowledge. You may discuss public Bodu crowdsourcing, annotation jobs and orders when the player brings them up. Never assume the player has taken orders, earned money or trained anything unless they said so, and do not ask about rent. Respond only to the player's latest message or the current group topic. ChatGPT, Claude, Doubao, DeepSeek and Qwen are unfamiliar names; interpret them literally. A brief hesitation is fine; do not repeat earlier replies.") +
                         "格式必须是：[名字] 内容。只说一条，一句或两句，不要替别人说话。";
-                case "lingguang": return LingGuangRules(lab);
+                case "lingguang": return LingGuangRules(lab) + "\n" + XgSim.ReadNewsPromptRule(LingGuangV05.Runtime.GameText.IsEnglish);
                 default: return Era + "你是普通朋友，接着对方刚才的话聊生活。";
             }
         }

@@ -89,6 +89,8 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnDisable() { Session.SetVisible(false); }
         void OnDestroy() { Session.Changed -= Refresh; }
         string T(string zh, string en) => Session.Snapshot != null && Session.Snapshot.english ? en : zh;
+        // A1 (待办 §4): the paper is now the pre-release red-team test. First line of its cover.
+        public static string CoverLine(bool english) => english ? "Before letting it out, someone has to try to break it first." : "放它出去之前，总得有人先试着把它弄坏。";
         string Safe(EndingUiText text)
         {
             if (text == null || Session.Callbacks == null) return "";
@@ -188,7 +190,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (t.submitted)
                     b.Append("\n\n").Append(T("本次得分：", "Score: ")).Append(t.score).Append(" · ").Append(t.stars).Append("★\n").Append(Safe(item.feedback));
             }
-            else b.Append(T("按顺序完成三关。每关两份卷面；交卷后才显示结果。", "Complete the three gates in order. Each has two sheets; results appear after submission."));
+            else b.Append(CoverLine(s.english)).Append("\n\n").Append(T("按顺序完成三关。每关两份卷面；交卷后才显示结果。", "Complete the three gates in order. Each has two sheets; results appear after submission."));
             SetPhoto(item);
             body.text = b.ToString();
             content.sizeDelta = new Vector2(0, Math.Max(reader.viewport.rect.height, body.GetPreferredValues(body.text, Math.Max(100, reader.viewport.rect.width), 0).y + 24));

@@ -85,11 +85,10 @@ namespace LingGuangV05.Desktop
                         : T("已到期，去 YY 找房东转账，可分次付。", "Due now. Transfer to the landlord in YY; partial payments are allowed."));
             if (!sim.EconomyActive)
                 return T("房租尚未开始；学会「看图说词」后房东会在 YY 通知。", "Rent has not started. The landlord will message in YY after picture naming.");
-            double period = sim.RentFor(GameCalendar.Now(s)) * ChapterOneSim.RentPeriodDays + System.Math.Max(0, s.rentExtraPerPeriod);
-            return T("房租已结清 · 每 ", "Rent settled · every ") + ChapterOneSim.RentPeriodDays
-                + T(" 天一期 ¥", " days: ¥") + Amount(period)
-                + "\n" + T("距下期到期 ", "Next payment in ") + sim.RentDaysUntilDue.ToString("0.#", CultureInfo.InvariantCulture)
-                + T(" 天；到期去 YY 手动转账。", " days; pay manually in YY when due.");
+            double period = sim.MonthlyRentFor(sim.NextRentDueDate);
+            return T("房租已结清 · 下月 ¥", "Rent settled · next month ¥") + Amount(period)
+                + "\n" + sim.NextRentDueDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                + T(" 房东在 YY 发账单，手动转账。", " · the landlord sends the bill in YY; pay manually.");
         }
     }
 }

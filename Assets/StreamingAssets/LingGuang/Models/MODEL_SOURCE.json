@@ -1,0 +1,17 @@
+{
+  "model": "Qwen3.5-4B",
+  "filename": "Qwen3.5-4B-Q4_K_M.gguf",
+  "quantization": "Q4_K_M",
+  "bytes": 2740937888,
+  "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+  "baseModel": "https://huggingface.co/Qwen/Qwen3.5-4B",
+  "baseRevision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "quantizer": "Unsloth",
+  "quantizationRepository": "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF",
+  "quantizationRevision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "downloadMirror": "https://modelscope.cn/models/unsloth/Qwen3.5-4B-GGUF",
+  "license": "Apache-2.0",
+  "transformation": "None. Exact upstream quantizer bytes; this payload contains 32 qwen35 blocks and no nextn/MTP layer.",
+  "usage": "Local text generation only; no multimodal projector is bundled. Game slot context remains 4096; model metadata maximum is not the game allocation.",
+  "replaces": "Qwen3-4B-Q4_K_M.gguf in releases through 2026.10.19.3; historical packages remain unchanged."
+}

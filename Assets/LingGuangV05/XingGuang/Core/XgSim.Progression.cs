@@ -138,6 +138,7 @@ namespace LingGuangV05.XingGuang
         public double NodeCost(XgNode node)
         {
             if (node == null) return double.PositiveInfinity;
+            if (node.id == PersonaArchiveNode) return PersonaArchivePrice;
             if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
             // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
@@ -149,6 +150,7 @@ namespace LingGuangV05.XingGuang
         public bool NodeVisible(XgNode node)
         {
             if (node == null) return false;
+            if (node.id == PersonaArchiveNode) return true; // The sealed profile entry must be able to find its technology.
             if (Has(node.id)) return true;
             if (IsRelicExpansion(node.id)) return true; // Locked slots must be able to locate their technology.
             if (node.tree == "label") return node.id != "label.brain" && node.id != "label.parallel" || S.stage >= 4;
@@ -174,6 +176,7 @@ namespace LingGuangV05.XingGuang
         public string ProgressionBlocker(XgNode node)
         {
             if (node == null) return T("未知节点");
+            if (node.id == PersonaArchiveNode) return PersonaArchiveBlocker();
             if (Has(node.id)) return null;
             if (IsRelicExpansion(node.id) && S.stage < node.stage) return T("第 " + node.stage + " 阶段开放", "Opens at stage " + node.stage);
             if (!NodeVisible(node)) return T("还没到这一阶段");

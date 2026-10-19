@@ -25,6 +25,9 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        /// <summary>Presentation grouping only. Existing chess weights stay in their persisted sequence region.</summary>
+        public static string DisplayRegion(string dataset) => dataset == "chess" ? "logic" : Region(dataset);
+
         /// <summary>What a generated card is for: training pool, diagnostic (shown) set, or the independent wall exam.</summary>
         public enum Use { Train = 0, Diagnostic = 1, Exam = 2 }
 

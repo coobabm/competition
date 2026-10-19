@@ -55,12 +55,25 @@ namespace LingGuangV05.Desktop.Games
         }
         static Vector2 Cell(int square)
         {float angle=(square*360f/28+90)*Mathf.Deg2Rad;return new Vector2(Mathf.Cos(angle),Mathf.Sin(angle))*265;}
-        Vector2 PlanePoint(int player,int plane)
+        // View-only slots: the core position, turn and random die never change here.
+        // A 34px token cannot use the old +/-7px offsets: the later sibling covers its centre.
+        static Vector2 PlanePoint(LudoGame state,int player,int plane,out float size)
         {
-            int p=game.Position(player,plane);
+            size=34;
+            int p=state.Position(player,plane);
             if(p<0)return new Vector2((player==0?-110:110)+(plane==0?-24:24),42);
             if(p==LudoGame.Home)return new Vector2((player==0?-55:55)+(plane==0?-18:18),-125);
-            return Cell(game.Global(player,p))+new Vector2(plane==0?-7:7,player==0?-5:5);
+            int square=state.Global(player,p),index=player*2+plane,count=0,slot=0;
+            for(int i=0;i<4;i++)
+                if(state.Global(i/2,state.Position(i/2,i%2))==square)
+                {if(i<index)slot++;count++;}
+            var centre=Cell(square);
+            if(count==1)return centre;
+            // Two planes get disjoint left/right buttons. Three/four use a compact 2x2 grid,
+            // including imported states with opposing colours on the same square.
+            // Every button stays inside its cell area and clear of neighbouring-cell buttons.
+            if(count==2){size=22;return centre+new Vector2(slot==0?-12:12,0);}
+            size=18;return centre+new Vector2(slot%2==0?-10:10,slot<2?10:-10);
         }
         public override void Refresh()=>Draw();
         public override void RestartRound()
@@ -96,7 +109,10 @@ namespace LingGuangV05.Desktop.Games
             var legal=game.LegalPlanes();
             for(int i=0;i<4;i++)
             {
-                tokens[i].anchoredPosition=PlanePoint(i/2,i%2);
+                tokens[i].anchoredPosition=PlanePoint(game,i/2,i%2,out float size);
+                tokens[i].sizeDelta=Vector2.one*size;
+                tokenLabels[i].fontSize=size==34?19:size==22?14:12;
+                tokens[i].GetComponent<Outline>().effectDistance=Vector2.one*(size==34?2:1);
                 tokenButtons[i].interactable=i<2&&!game.Over&&game.S.turn==0&&legal.Contains(i);
                 tokenLabels[i].text=(i%2+1).ToString();
             }

@@ -476,7 +476,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
-            train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
+            train.Set(Lang.T("训练一轮") + (Sim.TrainingQuizBonusAvailable || run.trainingQuizBonusReserved ? " · +5%" : ""), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) : Lang.T("先标够样本");
             RefreshBill(run, unlocked);
             RefreshRates(run, Sim.TrainPart("rate"));

@@ -9,6 +9,7 @@ namespace LingGuangV05.Core
     [Serializable] public sealed class CardData { public int id; public string prompt = "", explanation = "", category = ""; public bool expectedYes, predictedYes; public double confidence; }
     [Serializable] public sealed class CardResolution { public int cardId; public bool correct, corrected; public string explanation = ""; }
     [Serializable] public sealed class TrainingPulse { public int[] nodeIds = new int[0]; public bool correction; }
+    [Serializable] public sealed class RentInvoice { public int month; public double amount, total, gameSeconds; }
     [Serializable] public sealed class GameState
     {
         public bool fundsStarted;
@@ -73,10 +74,12 @@ namespace LingGuangV05.Core
         public int economyVersion;
         /// <summary>The last calendar day (GameCalendar day index) whose rent is paid; 0 before the first rent.</summary>
         public int rentDay;
-        // Manual rent: play-day clock, not the chapter calendar (chapter jumps never skip the payment window).
+        // Monthly story-calendar invoices; a separate play-day clock preserves the payment grace period.
         public double rentExtraPerPeriod;
         public bool rentEverLate;
         public int rentTransferVersion, rentOnTimePeriods, rentPeriodsOpen;
+        public int rentBilledMonth; // yyyyMM; monthly YY invoice cursor, independent of the play-time debt clock.
+        public List<RentInvoice> rentInvoiceOutbox = new List<RentInvoice>();
         public bool rentSystemStarted;
         public double rentOutstanding, rentClockDays, rentNextDueDays = 1, rentOldestDueDays;
 

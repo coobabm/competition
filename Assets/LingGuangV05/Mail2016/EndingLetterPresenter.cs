@@ -191,13 +191,18 @@ namespace LingGuangV05.Desktop.Mail
         {
             if(session?.Input==null)return;
             var article=catalog.Get(session.Input.articleId);
-            // Nine retained paragraph objects. Switching language/size changes text/layout only, not an every-frame rebuild.
-            while(paragraphs.Count<article.paragraphs.Length)
+            // Public text stays intact; a separately labelled private appendix follows only verified evidence.
+            var displayed=new List<EndingLetterParagraph>(article.paragraphs);
+            var appendix=catalog.EligibleAppendix(article.id,session.Input.personalDisclosure);
+            if(appendix!=null)displayed.Add(new EndingLetterParagraph { id=appendix.id,
+                zh="私人附记 · 回复你主动发送的消息\n\n"+appendix.zh,
+                en="Private note · In response to the message you sent\n\n"+appendix.en });
+            while(paragraphs.Count<displayed.Count)
             {var text=Text(Rect("Paragraph",content,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),size,Ink);paragraphs.Add(("",text));}
             for(int i=0;i<paragraphs.Count;i++)
             {
-                bool active=i<article.paragraphs.Length;paragraphs[i].text.gameObject.SetActive(active);if(!active)continue;
-                var p=article.paragraphs[i];var text=paragraphs[i].text;paragraphs[i]=(p.id,text);text.name="Paragraph_"+p.id;text.text=p.Text(english);text.fontSize=size;text.lineSpacing=9;
+                bool active=i<displayed.Count;paragraphs[i].text.gameObject.SetActive(active);if(!active)continue;
+                var p=displayed[i];var text=paragraphs[i].text;paragraphs[i]=(p.id,text);text.name="Paragraph_"+p.id;text.text=p.Text(english);text.fontSize=size;text.lineSpacing=9;
                 text.fontStyle=p.id=="signature"?FontStyles.Italic:FontStyles.Normal;
             }
         }
@@ -238,7 +243,10 @@ namespace LingGuangV05.Desktop.Mail
         void OnScrolled(Vector2 position)
         {
             if(restoring||session?.View!=EndingLetterView.Reading||!Visible)return;
-            queuedPosition=VisibleParagraph();savePositionAt=Time.unscaledTime+.3f;
+            queuedPosition=VisibleParagraph();
+            // Supplemental text resumes at the public signature; public paragraph IDs and save protocol remain stable.
+            if(queuedPosition=="LP1"||queuedPosition=="LP2"||queuedPosition=="LP4")queuedPosition="signature";
+            savePositionAt=Time.unscaledTime+.3f;
         }
         void FlushPosition()
         {

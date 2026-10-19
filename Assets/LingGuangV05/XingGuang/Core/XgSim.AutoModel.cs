@@ -505,7 +505,7 @@ namespace LingGuangV05.XingGuang
         /// One round's change: with the drop chance the accuracy falls 5–15 score points; otherwise it moves the
         /// round's share of the way to the ceiling (nothing once it is there). Deterministic through the save's RNG.
         /// </summary>
-        void StepAccuracy(XgRun run, int cards, XgEpoch e)
+        void StepAccuracy(XgRun run, int cards, XgEpoch e, double quizBonus = 1)
         {
             var d = XgCatalog.Dataset(run.dataset);
             if (d == null) return;
@@ -520,7 +520,7 @@ namespace LingGuangV05.XingGuang
                 Remember(run);
                 return;
             }
-            run.lastRate = Math.Min(1, GainRate(run, cards) * RateGain(run));
+            run.lastRate = Math.Min(1, GainRate(run, cards) * RateGain(run) * quizBonus);
             var risk = DropRisk(run);
             if (Roll() < risk.chance * RateSteady(run))
             {

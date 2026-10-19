@@ -18,17 +18,41 @@ namespace LingGuangV05.XingGuang
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         static readonly Regex BreakTags = new Regex(@"<br\s*/?>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+        // A small local contact check, not semantic moderation. No player text is logged or uploaded.
+        static readonly Regex Phone = ContactPattern(@"(?<![0-9])1[3-9][0-9]{9}(?![0-9])");
+        static readonly Regex Qq = ContactPattern(@"(?:\bqq|扣扣|企鹅)\s*(?:号|number)?\s*[:：]?\s*[0-9]{5,11}(?![0-9])");
+        static readonly Regex Mail = ContactPattern(@"[\w.+-]+@[\w-]+(?:\.[\w-]+)+");
+        // Explicit schemes and a narrow set of common bare web domains. Do not treat .exe/.cs as web links.
+        // Keep queries, fragments, credentials and path suffixes in the match: none may inherit an allowed prefix.
+        static readonly Regex Web = ContactPattern(@"(?:[a-z][a-z0-9+.-]*://|www\.)[^\s<>""'()\[\]{},;，。；！？]+|(?<![a-z0-9_.@-])(?:[a-z0-9-]+\.)+(?:com|cn|net|org|cc|io|me|top|xyz|edu|gov|co|uk|de|jp|ru|info|biz|app|dev)(?![a-z0-9.-])(?:[/:?#][^\s<>""'()\[\]{},;，。；！？]*)?");
+        static Regex ContactPattern(string pattern) => new Regex(pattern,
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(50));
+
+        static bool HasContact(string normalized)
+        {
+            try
+            {
+                if (Phone.IsMatch(normalized) || Qq.IsMatch(normalized) || Mail.IsMatch(normalized)) return true;
+                foreach (Match match in Web.Matches(normalized))
+                    // Reuse the actual in-game data registry, whose authority/path checks are exact.
+                    // Never remove a trusted substring from untrusted text or open a real connection.
+                    if (XgSim.ResolveDataUrl(match.Value) == null) return true;
+                return false;
+            }
+            catch (RegexMatchTimeoutException) { return true; }
+        }
+
         /// <summary>Player input and model-generated 2016 content. Does not apply identity filename/length rules.</summary>
         public static string Filter(string value, bool english)
         {
             string clean = NormalizeDynamic(value);
-            if (clean == null) return null;
+            if (clean == null || HasContact(clean)) return null;
             clean = BreakTags.Replace(clean, "\n");
             clean = SimpleTags.Replace(clean, "");
             if (AiNamePolicy.ContainsAbusiveLanguage(clean)) return null;
             clean = EraLexicon.Scrub(clean).Trim();
             // Recheck after removing future slang so token boundaries cannot reveal an unchecked term.
-            if (AiNamePolicy.ContainsAbusiveLanguage(clean) || new StringInfo(clean).LengthInTextElements > MaxDynamicCharacters) return null;
+            if (AiNamePolicy.ContainsAbusiveLanguage(clean) || HasContact(clean) || new StringInfo(clean).LengthInTextElements > MaxDynamicCharacters) return null;
             return clean;
         }
 

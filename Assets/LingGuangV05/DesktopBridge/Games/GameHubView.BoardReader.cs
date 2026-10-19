@@ -17,8 +17,9 @@ namespace LingGuangV05.Desktop.Games
         {
             var area=PrologueDesk.Rect("board.reader",main,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             areas["board.reader"]=area;
-            readerTitle=Text(PrologueDesk.Rect("Title",area,new Vector2(0,1),Vector2.one,new Vector2(40,-95),new Vector2(-40,-30)),"",30,Side);
-            readerHelp=Text(PrologueDesk.Rect("Help",area,new Vector2(0,.55f),new Vector2(1,1),new Vector2(40,0),new Vector2(-40,-110)),"",20,Side);
+            readerTitle=Text(PrologueDesk.Rect("Title",area,new Vector2(0,1),Vector2.one,new Vector2(40,-114),new Vector2(-40,-30)),"",24,Side);
+            readerHelp=Text(PrologueDesk.Rect("Help",area,new Vector2(0,.55f),new Vector2(1,1),new Vector2(40,0),new Vector2(-40,-130)),"",20,Side);
+            readerTitle.margin=readerHelp.margin=new Vector4(2,0,2,0);
             var drop=PrologueDesk.Rect("Board pixel drop",area,new Vector2(.05f,.15f),new Vector2(.95f,.52f),Vector2.zero,Vector2.zero);
             PrologueDesk.Fill(drop,new Color32(219,225,240,255));
             readerResult=Text(PrologueDesk.Rect("Result",drop,Vector2.zero,Vector2.one,new Vector2(22,16),new Vector2(-22,-16)),"",23,Side,TextAlignmentOptions.Center);
@@ -40,8 +41,8 @@ namespace LingGuangV05.Desktop.Games
         {
             navLabels["board.reader"].text=T("棋盘读图","Board reader");
             if(readerTitle==null)return;
-            readerTitle.text=T("棋盘读图 · 逻辑 Lv2","Board reader · Logic Lv2");
-            readerHelp.text=T("在摆渡搜索「五子棋」，或打开贴吧首页的棋类交流帖。把棋盘原图拖到下方。\n仅支持本站标准15路五子棋图（240×240），按黑棋下一手判断。横向 A–O，纵向 1–15 从上往下。", "Search Bodu for ‘gomoku’, or open the board-game post on Tieba home. Drag its original board image below.\nSupports only these standard 15×15 Gomoku images (240×240), with Black to move. Columns A–O; rows 1–15 top to bottom.");
+            readerTitle.text=T("棋盘读图\n逻辑 Lv2","Board reader\nLogic Lv2");
+            readerHelp.text=T("在摆渡搜「五子棋」或打开贴吧棋类帖，将原图拖到下方。\n仅识别本站 240×240、15 路五子棋图，判断黑棋下一手。横向 A–O；纵向 1–15，自上而下。", "Find ‘gomoku’ on Bodu or the board-game post on Tieba. Drag the original image below.\nOnly this site's 240×240, 15×15 Gomoku boards; Black to move. A–O across, 1–15 top to bottom.");
             readerResult.text=T("将棋盘原图拖到这里","Drop the original board image here");
         }
         void ReadPublicBoard(byte[] rgb)

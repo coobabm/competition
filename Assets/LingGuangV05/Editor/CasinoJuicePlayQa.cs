@@ -48,22 +48,22 @@ namespace LingGuangV05.Editor
             sim.CloseCasinoAd();
             yield return Ready();
             Click("Game roulette");yield return Ready();yield return new WaitForSecondsRealtime(.15f);
-            Click("Stake 500");Click("Choice 1");
+            Click("Stake 10");Click("Choice 1");
             for(int round=0;round<2;round++)
             {
                 sim.Casino.rng=1;sim.Clock+=3;
                 yield return new WaitForSecondsRealtime(.15f);
                 double money=runtime.Sim.S.money;int n=sim.Casino.rounds;
                 Click("Place Bet");yield return new WaitForSecondsRealtime(1.32f);
-                Check("Win committed once "+round,sim.Casino.rounds==n+1&&runtime.Sim.S.money==money+500);
+                Check("Win committed once "+round,sim.Casino.rounds==n+1&&runtime.Sim.S.money==money+10);
                 Check("Global clock unchanged on win "+round,Mathf.Approximately(Time.timeScale,scale));
                 bool floaters=Page.GetComponentsInChildren<TMPro.TMP_Text>().Any(t=>t.name=="Float"&&t.gameObject.activeInHierarchy);
                 Check("Win floaters visible "+round,floaters);
-                Capture(round==0?"big-win-impact":"win-streak");
+                Capture(round==0?"small-win-impact":"small-win-streak");
                 yield return new WaitForSecondsRealtime(1.3f);
             }
             sim.Clock+=3;Click("Game blackjack");yield return Ready();
-            Click("Stake 50");sim.Casino.rng=12345;yield return new WaitForSecondsRealtime(.15f);
+            Click("Stake 10");sim.Casino.rng=12345;yield return new WaitForSecondsRealtime(.15f);
             Click("Place Bet");yield return new WaitForSecondsRealtime(.18f);
             Check("Cards are travelling rather than appearing",Page.GetComponentsInChildren<CasinoCardMotion>().Any(m=>m.Busy&&m.Progress>0&&m.Progress<1));
             Capture("blackjack-dealing-mid");
@@ -94,6 +94,21 @@ namespace LingGuangV05.Editor
             yield return new WaitForSecondsRealtime(1.6f);
             Check("Clock restored unchanged after effects",Mathf.Approximately(Time.timeScale,scale));
             Capture("blackjack-settled");
+            // The real 500 win now triggers the ordinary freeze; it must not be bypassed in isolation.
+            sim.Clock+=3;Click("Game roulette");yield return Ready();
+            Click("Stake 500");Click("Choice 1");sim.Casino.rng=1;
+            yield return new WaitForSecondsRealtime(.15f);
+            double beforeFreeze=runtime.Sim.S.money;int beforeRound=sim.Casino.rounds;
+            Click("Place Bet");yield return new WaitForSecondsRealtime(3);
+            Check("Win then freeze debits earned profit once",sim.Casino.rounds==beforeRound+1&&sim.CasinoFrozenNow
+                &&runtime.Sim.S.money==beforeFreeze+500-sim.S.casinoFrozen);
+            Check("Normal product rejects another bet while frozen",!sim.TryCasinoBet("roulette",0,10,controller.Host,out _));
+            Check("Risk notice is visible",Page.transform.GetComponentsInChildren<Transform>().Any(t=>t.name=="Risk Notice"&&t.gameObject.activeInHierarchy));
+            Capture("risk-freeze-after-win");
+            Click("Quit Casino");yield return new WaitForSecondsRealtime(.3f);
+            Check("Refusal closes the site without deposit",sim.CasinoClosed&&sim.S.casinoFeePaid==0);
+            Check("Closed page is visible",Page.transform.GetComponentsInChildren<Transform>().Any(t=>t.name=="Site Closed"&&t.gameObject.activeInHierarchy));
+            Capture("site-closed-after-refusal");
         }
         static void Click(string name)
         {

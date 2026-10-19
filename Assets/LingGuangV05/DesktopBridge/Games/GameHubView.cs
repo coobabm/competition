@@ -55,6 +55,8 @@ namespace LingGuangV05.Desktop.Games
         protected static readonly System.Random Rng = new System.Random();
         /// <summary>The last "+N 样本 · dataset" line and the last stage-6 commentary line, shown under the status.</summary>
         protected string sampleNote = "", commentary = "";
+        string commentaryEn = "";
+        XgSim sampleNoteOwner;
         XgMoveSituation lastSituation;
         int lastComment = -1;
 
@@ -63,14 +65,13 @@ namespace LingGuangV05.Desktop.Games
         /// <summary>True once the lab's AI is the opponent (gomoku stage 3, go 4, chess 6); before that a built-in program plays.</summary>
         protected bool AiPlays => privateAiOpponent && Lab?.BoardAiAvailable==true;
 
-        /// <summary>The AI's name from the opening setup, or 它.</summary>
+        /// <summary>Use the same saved/default AI name policy as the lab.</summary>
         protected static string AiName
         {
             get
             {
                 var lab = Lab;
-                string name = lab != null && lab.Profile != null ? lab.Profile.name : null;
-                return string.IsNullOrEmpty(name) ? Lang.T("它") : name;
+                return lab != null ? lab.AiDisplayName : Lang.T("它");
             }
         }
 
@@ -86,7 +87,9 @@ namespace LingGuangV05.Desktop.Games
             if(roundOwner.FinishBoardSession(roundSession,outcome,moves,log))
             {
                 GameReactions.Finish(roundOwner,Id,outcome,moves,log,ai);
-                sampleNote=T("对局已结束。样本需在资料夹安装对局记录包。","Game complete. Samples require installing a game-record pack from Files.");
+                // Keep a receipt marker, not a sentence frozen in the completion language.
+                sampleNote="completed";
+                sampleNoteOwner=roundOwner;
             }
             roundSession=null;
         }
@@ -106,7 +109,7 @@ namespace LingGuangV05.Desktop.Games
             int i = XgGames.NoRepeat(XgGames.CommentCount(situation), situation == lastSituation ? lastComment : -1, Rng.NextDouble());
             lastSituation = situation; lastComment = i;
             var line = XgGames.Comment(situation, i, lab.GameContext(Id, XgGameOutcome.Draw, moves));
-            commentary = T(line.zh, line.en);
+            commentary = line.zh; commentaryEn = line.en;
         }
 
         /// <summary>A new game clears the commentary; the last sample note stays as a receipt.</summary>
@@ -116,8 +119,8 @@ namespace LingGuangV05.Desktop.Games
         protected string LabLines()
         {
             string s = "";
-            if (commentary.Length > 0) s += "\n\n<color=#7A4FA0>" + AiName + Lang.T("：「") + commentary + T("」", "”") + "</color>";
-            if (sampleNote.Length > 0) s += "\n\n<size=15><color=#2E8B57>" + sampleNote + "</color></size>";
+            if (commentary.Length > 0) s += "\n\n<color=#7A4FA0>" + AiName + Lang.T("：「") + T(commentary, commentaryEn) + T("」", "”") + "</color>";
+            if (sampleNote.Length > 0 && ReferenceEquals(sampleNoteOwner,Lab)) s += "\n\n<size=15><color=#2E8B57>" + T("对局已结束。样本需在资料夹安装对局记录包。","Game complete. Samples require installing a game-record pack from Files.") + "</color></size>";
             return s;
         }
     }
@@ -141,6 +144,7 @@ namespace LingGuangV05.Desktop.Games
         readonly List<(HubGame game, TMP_Text title, TMP_Text blurb, TMP_Text state, TMP_Text button)> cards = new List<(HubGame, TMP_Text, TMP_Text, TMP_Text, TMP_Text)>();
         TMP_Text homeTitle, homeLine, sideTitle;
         string showing = "home";
+        bool boardLanguageDirty;
 
         static string T(string zh, string en) => GameText.T(zh, en);
 
@@ -151,11 +155,21 @@ namespace LingGuangV05.Desktop.Games
             if (holder == null) return null;
             var view = holder.gameObject.GetComponent<GameHubView>() ?? holder.gameObject.AddComponent<GameHubView>();
             view.window = window;
-            GameText.Changed += view.Relabel;
+            GameText.Changed += view.OnLanguage;
             return view;
         }
 
-        void OnDestroy() { GameText.Changed -= Relabel; composerSprites?.Dispose(); }
+        void OnDestroy() { GameText.Changed -= OnLanguage; composerSprites?.Dispose(); }
+
+        void OnLanguage() { Relabel(); boardLanguageDirty=true; }
+        void LateUpdate()
+        {
+            if(!boardLanguageDirty||window==null||!window.isOn)return;
+            // The controller updates its display locale during Update. Redraw once afterwards,
+            // including completed boards that no longer receive move-driven redraws.
+            foreach(var game in games)if(game.Id==showing){game.SyncBoardOwner();game.Refresh();break;}
+            boardLanguageDirty=false;
+        }
 
         void Start()
         {
@@ -202,9 +216,9 @@ namespace LingGuangV05.Desktop.Games
             var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img;
             var colors = b.colors; colors.highlightedColor = new Color(1.25f, 1.25f, 1.35f, 1); b.colors = colors;
             b.onClick.AddListener(() => Show(id));
-            var navGlyph = Text(PrologueDesk.Rect("Glyph", rt, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(50, 0)), glyph, 26, Color.white, TextAlignmentOptions.Center);
-            // Drawn tile icon (Resources/.../Icons/hub); the glyph stays as the fallback when it is missing.
-            if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(rt, "hub", id, 30, 28, 40) != null) navGlyph.gameObject.SetActive(false);
+            // Resolve the drawn icon first, so unused fallback glyphs never reach TMP.
+            if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(rt, "hub", id, 30, 28, 40) == null)
+                Text(PrologueDesk.Rect("Glyph", rt, Vector2.zero, new Vector2(0, 1), new Vector2(10, 0), new Vector2(50, 0)), glyph, 26, Color.white, TextAlignmentOptions.Center);
             navLabels[id] = Text(PrologueDesk.Rect("Label", rt, Vector2.zero, Vector2.one, new Vector2(58, 0), new Vector2(-6, 0)), "", 20, Color.white, TextAlignmentOptions.MidlineLeft);
             navFills[id] = img;
         }
@@ -224,8 +238,8 @@ namespace LingGuangV05.Desktop.Games
                 card.gameObject.AddComponent<Outline>().effectColor = new Color32(214, 218, 228, 255);
                 var art = PrologueDesk.Rect("Art", card, new Vector2(0, 1), Vector2.one, new Vector2(0, -72), Vector2.zero);
                 PrologueDesk.Fill(art, g.Accent, false);
-                var artGlyph = Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 48, Color.white, TextAlignmentOptions.Center);
-                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(art, "hub", g.Id, 150, 36, 58) != null) artGlyph.gameObject.SetActive(false);
+                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(art, "hub", g.Id, 150, 36, 58) == null)
+                    Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 48, Color.white, TextAlignmentOptions.Center);
                 var title = Text(PrologueDesk.Rect("Name", card, new Vector2(0, 1), Vector2.one, new Vector2(15,-111),new Vector2(-15,-76)), "", 26, new Color32(30, 36, 52, 255), TextAlignmentOptions.MidlineLeft);
                 title.fontStyle = FontStyles.Bold;
                 var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(15,78),new Vector2(-15,-114)), "", 16, new Color32(90, 98, 114, 255));

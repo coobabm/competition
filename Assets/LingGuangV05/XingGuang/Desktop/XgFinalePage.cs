@@ -510,6 +510,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!Sim.S.letterRead)
             {
                 sb.Append("<b>").Append(T("终测（6 题）", "Final test (6 questions)")).Append("</b>\n");
+                sb.Append("<size=12><color=#6F95A5>").Append(T("部分回答为 AI 合成内容，仅供参考", "Some answers are AI-generated, for reference only")).Append("</color></size>\n");
                 for (int i = 0; i < XgSim.ExamQuestions; i++)
                 {
                     sb.Append(i < Sim.S.examDone ? "<color=#5DCAA5>✓</color> " : "· ").Append("<size=12>").Append(Sim.ExamQuestion(i)).Append("</size>\n");

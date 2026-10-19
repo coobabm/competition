@@ -546,7 +546,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             statusMid = ui.Text(Rect("Hand", st, Vector2.zero, new Vector2(0, 1), new Vector2(200, 0), new Vector2(460, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft);
             statusRight = ui.Text(Rect("Rent", st, new Vector2(1, 0), Vector2.one, new Vector2(-420, 0), new Vector2(-12, -1)), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
             foreach (var t in new[] { statusLeft, statusMid, statusRight }) t.textWrappingMode = TextWrappingModes.NoWrap;
-            UiTip.Add(st, "房租每七天一期，到期在 YY 手动转账，可以先转一部分。", "Rent is due every seven days. Pay it manually in YY; partial payments are allowed.");
+            UiTip.Add(st, "房租按游戏日历每月出账，房东在 YY 发账单，手动转账，可以先转一部分。", "Rent is billed each story-calendar month. The landlord sends a bill in YY; pay manually, in full or in part.");
         }
 
         /// <summary>The 自动提交 tab's badge: "!" while something holds auto-answer that the player can clear, otherwise nothing.</summary>
@@ -788,7 +788,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             statusMid.text = T("按已签订单质量持续结算", "Ongoing payment follows signed-order quality");
             // Rent and the next daily settlement come from the household sim; before rent starts there is nothing to show.
             statusRight.text = house != null && house.EconomyActive
-                ? T("房租每七天一期 · 待转 ¥" + Money(house.Debt) + " · 去 YY 找房东", "Rent every seven days · ¥" + Money(house.Debt) + " due · pay the landlord in YY")
+                ? T("每月房租账单 · 待转 ¥" + Money(house.Debt) + " · 去 YY 找房东", "Monthly rent bill · ¥" + Money(house.Debt) + " due · pay the landlord in YY")
                 : "";
 
             var runtime = Controller != null ? Controller.runtime : null;

@@ -881,7 +881,8 @@ namespace LingGuangV05.Desktop.XingGuang
             string line = string.IsNullOrEmpty(r.model) ? r.conclusion : r.model;
             yield return PrologueDesk.Type(first, "", line, .05f);
             yield return PrologueDesk.Wait(.5f);
-            yield return PrologueDesk.Type(second, "", r.limit, .045f);
+            string limit = r.limit + (string.IsNullOrEmpty(r.model) ? "" : T(" · AI 合成内容，仅供参考", " · AI-generated content, for reference only"));
+            yield return PrologueDesk.Type(second, "", limit, .045f);
             yield return PrologueDesk.Wait(hold);
         }
 

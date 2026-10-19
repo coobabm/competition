@@ -52,8 +52,12 @@ namespace LingGuangV05.Editor
             window = browser.GetComponentInParent<WindowManager>(true);
             Result = new Report(); steps.Clear(); Running = true;
             runtime.tickEnabled = false; controller.enabled = false;
-            runtime.Sim.S.prologue = 2; runtime.Sim.S.appInstallState = 2; runtime.Sim.S.money = 10000;
-            Sim.S.stage = Math.Max(3, XgSim.FeatureUnlock["casino"]); Sim.S.chapterComplete = false; Sim.S.casino = new XgCasinoState(); Sim.Clock = 100;
+            // A fresh declared save owner, not a switch disabling the scam for QA.
+            var fixture = new XgSim(); fixture.S.stage = XgSim.FeatureUnlock["casino"];
+            var house = new LingGuangV05.Core.ChapterOneSim(); house.S.prologue=2;house.S.appInstallState=2;house.S.money=10000;
+            house.S.labState=JsonUtility.ToJson(fixture.S);runtime.SetSimulationForTests(house);
+            if(!controller.BoundTo(house))throw new InvalidOperationException("Casino fixture owner did not bind");
+            Sim.S.stage=XgSim.FeatureUnlock["casino"];Sim.Clock = 100;
             var p = UnityEngine.Object.FindAnyObjectByType<PrologueDirector>();
             typeof(PrologueDirector).GetMethod("StopPrologue", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(p, null);
             var sd = UnityEngine.Object.FindAnyObjectByType<StoryDirector>(); if (sd != null) sd.enabled = false;
@@ -63,7 +67,7 @@ namespace LingGuangV05.Editor
             ChapterOneQaReloadGuard.LockForPlayQa(100);
             steps.Enqueue(() => CasinoDesktop.Instance.OpenSite());
             steps.Enqueue(() => { CheckNow("Native 888.vip opens playable page", Page != null); tabA = browser.currentTabs.First(t => t.tabPage != null && t.tabPage.activeInHierarchy).guid; });
-            steps.Enqueue(() => Click("Stake 50"));
+            steps.Enqueue(() => Click("Stake 10"));
             foreach (string g in new[] { "slots", "dice", "roulette", "dragon" })
             {
                 string game = g;
@@ -77,7 +81,7 @@ namespace LingGuangV05.Editor
             {
                 before = runtime.Sim.S.money; rounds = Sim.Casino.rounds;
                 Click("Place Bet"); Click("Place Bet");
-                CheckNow("Blackjack deals once and holds stake", Sim.BlackjackActive && runtime.Sim.S.money == before - 50);
+                CheckNow("Blackjack deals once and holds stake", Sim.BlackjackActive && runtime.Sim.S.money == before - 10);
                 CheckNow("Dealer hole card is hidden", Page.GetComponentsInChildren<TMP_Text>().Any(t => t.name == "Hidden Dealer Card" && t.text == "888"));
                 Capture("blackjack-hand");
                 Sim.Clock += 1;
@@ -170,7 +174,7 @@ namespace LingGuangV05.Editor
             outer.labState = JsonUtility.ToJson(Sim.S);
             var restoredOuter = JsonUtility.FromJson<LingGuangV05.Core.GameState>(JsonUtility.ToJson(outer));
             var restored = new XgSim(JsonUtility.FromJson<XgState>(restoredOuter.labState));
-            CheckNow("Nested native save roundtrip preserves wallet and casino", restoredOuter.money == runtime.Sim.S.money && restored.Casino.rounds == Sim.Casino.rounds && restored.Casino.rng == Sim.Casino.rng && restored.Casino.history.Count == Sim.Casino.history.Count);
+            CheckNow("Nested native save roundtrip preserves wallet and casino", restoredOuter.money == runtime.Sim.S.money && restored.Casino.rounds == Sim.Casino.rounds && restored.Casino.rng == Sim.Casino.rng && restored.Casino.history.Count == Sim.Casino.history.Count && restored.S.casinoSaidFirst && restored.S.casinoWatching && restored.S.casinoAiSeq == Sim.S.casinoAiSeq);
         }
 
         static void Tick()

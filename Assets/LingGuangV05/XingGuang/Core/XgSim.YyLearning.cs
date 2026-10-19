@@ -80,7 +80,7 @@ namespace LingGuangV05.XingGuang
             if(S.yyReplies==null)S.yyReplies=new List<XgYyReply>();
             if(S.talkSamples==null)S.talkSamples=new List<XgTalkSample>();
             if(S.chatUnlocked==null)S.chatUnlocked=new List<XgUnlockedChat>();
-            foreach(var node in S.unlocked) if(node!=null&&node.StartsWith("persona.",StringComparison.Ordinal)&&!S.personaPacks.Contains(node.Substring(8)))S.personaPacks.Add(node.Substring(8));
+            foreach(var node in S.unlocked) if(node!=null&&node!=PersonaArchiveNode&&node.StartsWith("persona.",StringComparison.Ordinal)&&!S.personaPacks.Contains(node.Substring(8)))S.personaPacks.Add(node.Substring(8));
             if(!S.personaPacks.Contains("daily"))S.personaPacks.Add("daily");
         }
         public void RecordAsked(string bankId,string question,string playerAnswer,string aiAnswer="",double at=-1)
@@ -144,7 +144,8 @@ namespace LingGuangV05.XingGuang
             feedback="";RepairYyLearning();var r=S.yyReplies.Find(x=>x.id==replyId);var tag=personaTags.Find(x=>x.id==tagId);
             if(r==null||tag==null)return false;if(r.tags==null)r.tags=new List<string>();if(r.tags.Count>=2||r.tags.Contains(tagId))return false;r.tags.Add(tagId);
             int axis=tag.axis=="温度"?0:tag.axis=="玩心"?1:tag.axis=="主见"?2:-1;
-            if(axis>=0){double target=Math.Max(0,Math.Min(100,TargetAxis(axis)+tag.delta));if(axis==0)Profile.warmth=target;else if(axis==1)Profile.play=target;else Profile.opinion=target;ToneCard(tag.delta>=0?High[axis]:Low[axis],true,Math.Abs(tag.delta)/10.0);feedback=T(AxisNames[axis],AxisNamesEn[axis])+" "+(tag.delta>0?"+":"")+tag.delta;}
+            // Tags teach the actual tone board; they never rewrite the player's opening wish.
+            if(axis>=0){ToneCard(tag.delta>=0?High[axis]:Low[axis],true,Math.Abs(tag.delta)/10.0,"tag");feedback=T(AxisNames[axis],AxisNamesEn[axis])+" "+(tag.delta>0?"+":"")+tag.delta;}
             else feedback=T("记下这次答歪了","Noted: off the mark");
             if(tag.flag=="honest")S.honestTags++;if(tag.flag=="flatter")S.flatterTags++;
             S.talkSamples.Add(new XgTalkSample{tag=tagId,text=r.answer});int count=0;for(int i=S.talkSamples.Count-1;i>=0;i--)if(S.talkSamples[i].tag==tagId&&++count>5)S.talkSamples.RemoveAt(i);
@@ -155,6 +156,8 @@ namespace LingGuangV05.XingGuang
             RepairYyLearning();var b=new StringBuilder();
             foreach(var p in personaCatalog)if(p.id!="daily"&&S.personaPacks.Contains(p.id))b.AppendLine(T(p.desc,p.descEn));
             foreach(var s in S.talkSamples){var tag=personaTags.Find(x=>x.id==s.tag);if(tag!=null)b.AppendLine(T("你曾说：「"+s.text+"」；主人给这句贴的标签是「"+tag.name+"」。","You once said: \""+s.text+"\"; the player tagged it \""+tag.nameEn+"\"."));}
+            // 888.vip (XgSim.Gambling.cs): it saw the player gamble; it talks people out of it. Empty until then.
+            string gambling=GamblingPromptLine();if(gambling.Length>0)b.AppendLine(gambling);
             return b.ToString();
         }
     }

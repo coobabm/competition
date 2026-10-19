@@ -191,6 +191,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (step.app != XgGuide.Lab) return;
             Open(step.tab == "train" && (step.arg == "vision" || step.arg == "sequence") ? step.arg : step.tab);
             XgGuideHighlight.Show(this, step.tab, step.target);
+            if (step.id == "data.install" && Sim.DataFileReady(step.arg))
+                UnityEngine.Object.FindAnyObjectByType<XgFilesWindow>(UnityEngine.FindObjectsInactive.Include)?.ShowTrainingData(Sim);
         }
 
         string GoTip()

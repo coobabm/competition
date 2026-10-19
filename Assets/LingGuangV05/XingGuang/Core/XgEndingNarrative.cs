@@ -56,11 +56,15 @@ namespace LingGuangV05.XingGuang
                 if(record.sourceKind=="chat"&&(record.eventKey??"").StartsWith("yy:",StringComparison.Ordinal)&&!string.IsNullOrWhiteSpace(record.question)
                     &&(answer.Contains("不知道")||answer.Contains("不确定")||answer.Contains("don't know")||answer.Contains("do not know")||answer.Contains("not sure")))
                     choices.Add(new KeyValuePair<string,int>("admitted_unknown",1));
+                // 888.vip (XgSim.Gambling.cs): the dated record written when the scam resolved; its key carries the lean
+                // (stopped / did not pay = good; paid the deposit or kept betting after it asked you to stop = bent).
+                if(XgSim.CasinoScamMemory(record,out int casinoLean))choices.Add(new KeyValuePair<string,int>("gamble_888",casinoLean));
                 foreach(var choice in choices)
                 {
                     if(d.memories.Exists(m=>m.id==choice.Key)||OrdinaryMemoryCount(d)>=2)continue;
                     var template=text.memories.Find(t=>t!=null&&t.id==choice.Key);if(template==null||sim.S.stage<template.minStage)continue;
-                    var sources=new List<XgEndingMemorySource>{new XgEndingMemorySource{kind=record.sourceKind=="chat"?"chat":"answer",refId="answer:"+record.id,day=record.gameDate,summary=Filter(record.question)}};
+                    string sourceKind=record.sourceKind=="chat"?"chat":record.sourceKind==XgSim.CasinoSourceKind?"event":"answer";
+                    var sources=new List<XgEndingMemorySource>{new XgEndingMemorySource{kind=sourceKind,refId="answer:"+record.id,day=record.gameDate,summary=Filter(record.question)}};
                     if(original!=null)sources.Add(new XgEndingMemorySource{kind="answer",refId="answer:"+original.id,day=original.gameDate,summary=Filter(original.question)});
                     d.memories.Add(new XgEndingMemoryCard{id=choice.Key,day=sim.Today,stage=sim.S.stage,lean=choice.Value,
                         line=Filter(choice.Value>=0?template.goodZh:template.badZh),lineEn=Filter(choice.Value>=0?template.goodEn:template.badEn),sources=sources});added++;

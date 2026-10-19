@@ -4,17 +4,21 @@ namespace LingGuangV05.Core
 {
     public sealed partial class ChapterOneSim
     {
-        public const int RentPeriodDays = 7;
-        public double RentDaysUntilDue => Math.Max(0, S.rentNextDueDays - S.rentClockDays);
+        // Preserve the established ¥2100 / ¥2450 invoice prices. The legacy config stores price units,
+        // not the new billing interval; rent is now invoiced once per story-calendar month.
+        public double MonthlyRentFor(DateTime date) => RentFor(date) * 7 + Math.Max(0, S.rentExtraPerPeriod);
+        public DateTime NextRentDueDate => S.rentBilledMonth > 0
+            ? new DateTime(S.rentBilledMonth / 100, S.rentBilledMonth % 100, 1).AddMonths(1)
+            : new DateTime(GameCalendar.Now(S).Year, GameCalendar.Now(S).Month, 1);
+        public double RentDaysUntilDue => Math.Max(0, (NextRentDueDate - GameCalendar.Now(S).Date).TotalDays);
 
         void MigrateManualRent()
         {
-            if (S.rentTransferVersion >= 1) return;
-            S.rentTransferVersion = 1;
-            S.rentNextDueDays = 1;
+            if (S.rentInvoiceOutbox == null) S.rentInvoiceOutbox = new System.Collections.Generic.List<RentInvoice>();
+            if (S.rentTransferVersion >= 2) return;
             // Earlier builds charged rent into a negative wallet. Preserve net wealth and the debt,
             // but make it explicitly payable instead of silently repaying it from future income.
-            if (S.money < 0 && S.debtDays > 0)
+            if (S.rentTransferVersion < 1 && S.money < 0 && S.debtDays > 0)
             {
                 S.rentOutstanding = -S.money;
                 S.money = 0;
@@ -23,30 +27,59 @@ namespace LingGuangV05.Core
                 S.rentNextDueDays = S.rentClockDays + 1;
                 S.rentPeriodsOpen = 1;
             }
+            // Current-version saves with the previous weekly schedule keep all outstanding debt and
+            // payments. Treat their current month as issued, so loading never adds a duplicate bill.
+            if (S.rentSystemStarted) S.rentBilledMonth = MonthOf(GameCalendar.CurrentDay(S));
+            S.rentTransferVersion = 2;
         }
 
         void StartManualRent()
         {
             if (S.rentSystemStarted || !EconomyActive) return;
             S.rentSystemStarted = true;
-            LastMessage = T("明天开始收房租了哈，每七天一期，一期 " + Yuan((RentFor(GameCalendar.Now(S)) * RentPeriodDays + Math.Max(0, S.rentExtraPerPeriod))) + "。到时候在 YY 里转给我。",
-                "Rent starts tomorrow: one payment every seven days, " + Yuan((RentFor(GameCalendar.Now(S)) * RentPeriodDays + Math.Max(0, S.rentExtraPerPeriod))) + " per period. Transfer it to me in YY.");
+            LastMessage = T("房租每月 " + Yuan(MonthlyRentFor(GameCalendar.Now(S))) + "。这个月的账单我发在 YY 里，以后每月一号发，记得手动转给我。",
+                "Rent is " + Yuan(MonthlyRentFor(GameCalendar.Now(S))) + " a month. I'll send this month's bill in YY, then one on the first of each month. Please transfer it manually.");
             Raise("rent.started");
+        }
+
+        void SettleMonthlyRent()
+        {
+            if (!EconomyActive || !S.rentSystemStarted || S.bankrupt) return;
+            var now = GameCalendar.DateOf(GameCalendar.CurrentDay(S));
+            var month = new DateTime(now.Year, now.Month, 1);
+            var due = S.rentBilledMonth > 0 ? NextRentDueDate : month;
+            // A progress jump may cross November inside stage 5. Each elapsed month gets its own
+            // invoice, using that month's price, rather than silently skipping it or charging daily.
+            while (due <= month)
+            {
+                S.rentBilledMonth = due.Year * 100 + due.Month; // Advance before event callbacks / saves.
+                double amount = MonthlyRentFor(due);
+                if (amount > Epsilon)
+                {
+                    if (Debt <= Epsilon) S.rentOldestDueDays = S.rentClockDays;
+                    S.rentOutstanding += amount;
+                    S.rentPeriodsOpen++;
+                    var invoice = new RentInvoice { month = S.rentBilledMonth, amount = amount, total = Debt, gameSeconds = S.gameSeconds };
+                    S.rentInvoiceOutbox.Add(invoice); // YY may not exist yet on the first loaded frame.
+                    LastMessage = RentInvoiceText(invoice);
+                    Raise("rent.due", Yuan(Debt));
+                }
+                due = due.AddMonths(1);
+            }
+        }
+
+        public static string RentInvoiceText(RentInvoice invoice)
+        {
+            var date = new DateTime(invoice.month / 100, invoice.month % 100, 1);
+            return T(date.Month + " 月房租账单：本月 " + Yuan(invoice.amount) + "，待付合计 " + Yuan(invoice.total) + "。在 YY 转给我就行，可以分次付。",
+                "Rent bill for " + date.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture) + ": " + Yuan(invoice.amount) + " this month, " + Yuan(invoice.total) + " outstanding in total. Transfer it in YY; partial payments are fine.");
         }
 
         void TickManualRent(double dt)
         {
             if (!EconomyActive || !S.rentSystemStarted || S.bankrupt) return;
+            // Keep the existing playable grace period. Calendar jumps must not instantly foreclose.
             S.rentClockDays += Math.Max(0, dt) / Math.Max(1, Config.rentDaySeconds);
-            while (S.rentClockDays + Epsilon >= S.rentNextDueDays)
-            {
-                if (Debt <= Epsilon) S.rentOldestDueDays = S.rentNextDueDays;
-                S.rentOutstanding += (RentFor(GameCalendar.Now(S)) * RentPeriodDays + Math.Max(0, S.rentExtraPerPeriod));
-                S.rentPeriodsOpen++;
-                S.rentNextDueDays += RentPeriodDays;
-                LastMessage = T("小伙子，这期房租该交了，目前应付 " + Yuan(Debt) + "，今天转一下哈。", "The rent is due. Please transfer " + Yuan(Debt) + " today.");
-                Raise("rent.due", Yuan(Debt));
-            }
             if (Debt <= Epsilon) return;
             int overdue = Math.Min(DebtSaleDay, Math.Max(0, (int)Math.Floor(S.rentClockDays - S.rentOldestDueDays + Epsilon)));
             while (S.debtDays < overdue)

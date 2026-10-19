@@ -161,7 +161,7 @@ namespace LingGuangV05.Desktop.Casino
             history = Label("Recent Results", board, 26, 575, 1070, 36, "", 14, Muted, TextAlignmentOptions.TopLeft);
             PrologueDesk.Fill(Rect("Footer Line", board, 24, 620, 1072, 1), Burgundy, false);
             Label("Notice", board, 24, 628, 1072, 25, Lang.T("虚构游戏支线 · 无充值提现 · 单局有输有赢，长期赔率仍略偏向庄家 · 别拿电费试手气 · 未满 18 岁请勿赌博"), 13, Muted, TextAlignmentOptions.Center);
-            EnsureEffects(); BuildArena();
+            EnsureEffects(); BuildArena(); BuildScam();
         }
 
         bool Spinning => reveal != null && Time.unscaledTime < revealAt;
@@ -317,7 +317,7 @@ namespace LingGuangV05.Desktop.Casino
 
         void PlaceBet()
         {
-            if (controller == null || !ReferenceEquals(controller.Sim, bound) || PresentationBusy) return;
+            if (controller == null || !ReferenceEquals(controller.Sim, bound) || PresentationBusy || ScamBlocks) return;
             if (Games[game] == "blackjack")
             {
                 int before = bound.Casino.rounds;
@@ -349,7 +349,7 @@ namespace LingGuangV05.Desktop.Casino
             if (root == null) return;
             if (controller == null) controller = FindAnyObjectByType<XingGuangController>();
             if (controller == null || controller.Sim == null) return;
-            if (!ReferenceEquals(bound, controller.Sim)) { CancelPresentation(); bound = controller.Sim; feedback = null; ShowLastResult(); }
+            if (!ReferenceEquals(bound, controller.Sim)) { CancelPresentation(); bound = controller.Sim; feedback = null; Build(); ShowLastResult(); }
             EnsureEffects(); SyncEffects();
             if (!PageVisible()) { CancelPresentation(); return; }
             if (english != GameText.IsEnglish) Build();
@@ -374,6 +374,7 @@ namespace LingGuangV05.Desktop.Casino
             }
             RevealPayout();
             if (Time.unscaledTime >= nextRefresh) { nextRefresh = Time.unscaledTime + .1f; Refresh(); }
+            TickScam();
         }
 
         void Refresh()
@@ -383,7 +384,8 @@ namespace LingGuangV05.Desktop.Casino
             double money = controller.Host.Money - (pendingPayout != null ? pendingPayout.returned : 0);
             if (payoutRollAmount > 0) money -= payoutRollAmount * (1 - Mathf.SmoothStep(0, 1, (Time.unscaledTime - payoutRollStart) / 1.2f));
             wallet.text = Lang.T("余额  ") + "¥" + Money(money);
-            totals.text = Lang.T("累计净输赢  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0));
+            totals.text = Lang.T("累计净输赢  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0))
+                + (bound.S.casinoFrozen > 0 ? "\n<size=13>" + T("其中被冻结  ¥", "of which frozen  ¥") + Money(bound.S.casinoFrozen) + "</size>" : "");
             string id = Games[game];
             for (int i = 0; i < tabs.Count; i++) { tabs[i].interactable = !PresentationBusy; tabs[i].GetComponent<Image>().color = game == i ? Burgundy : Panel; }
             bool stakeLocked = PresentationBusy || bound.BlackjackActive;
@@ -406,7 +408,7 @@ namespace LingGuangV05.Desktop.Casino
             ticket.text = Lang.T("本局  ") + "¥" + Money(id == "blackjack" && bound.BlackjackActive ? c.blackjack.stake : stake) + "  /  " + (id == "blackjack" ? "BLACKJACK" : id == "slots" ? Lang.T("单次旋转") : ChoiceName(id, choice));
             bet.GetComponentInChildren<TMP_Text>().text = bound.BlackjackActive ? Lang.T("请先完成 21 点这一手") : Spinning ? Lang.T("开奖中…") : Lang.T("下注  ") + "¥" + Money(stake);
             bool affordable = CasinoRules.IsStake(stake) && money >= stake && !double.IsNaN(money) && !double.IsInfinity(money);
-            bet.interactable = !bound.BlackjackActive && !PresentationBusy && bound.Clock >= c.nextBetAt && affordable;
+            bet.interactable = !bound.BlackjackActive && !PresentationBusy && !ScamBlocks && bound.Clock >= c.nextBetAt && affordable;
             hint.text = feedback ?? (bound.BlackjackActive ? Lang.T("关页不退注 · 回到 21 点可继续")
                 : allIn < 1 ? Lang.T("余额不足，去标注台赚些零钱")
                 : !CasinoRules.IsStake(stake) ? Lang.T("请输入下注金额，或点「全押」")

@@ -167,7 +167,8 @@ namespace LingGuangV05.CaseMenu
             Place(playerHelpCard, new Vector2(.5f, .5f), Vector2.zero, new Vector2(width, height));
             playerHelpHeading.text = PlayerKnowledgeCopy.Audience(english);
             playerHelpContext.text = PlayerKnowledgeCopy.Context(english);
-            playerHelpMain.text = "<b>" + PlayerKnowledgeCopy.Title1(english) + "</b>\n\n" + PlayerKnowledgeCopy.Body1(english)
+            playerHelpMain.text = "<b>" + AiContentNotice.Title(english) + "</b>\n\n" + AiContentNotice.Description(english)
+                + "\n\n<b>" + PlayerKnowledgeCopy.Title1(english) + "</b>\n\n" + PlayerKnowledgeCopy.Body1(english)
                 + "\n\n<b>" + PlayerKnowledgeCopy.Title2(english) + "</b>\n\n" + PlayerKnowledgeCopy.Body2(english)
                 + "\n\n<b>" + PlayerKnowledgeCopy.Title4(english) + "</b>\n\n" + PlayerKnowledgeCopy.Summary4(english);
             string[] titles = { PlayerKnowledgeCopy.Title3(english), PlayerKnowledgeCopy.Title4(english), PlayerKnowledgeCopy.Title5(english), PlayerKnowledgeCopy.Title6(english) };

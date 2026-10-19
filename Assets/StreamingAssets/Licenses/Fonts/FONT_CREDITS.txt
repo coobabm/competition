@@ -2,7 +2,7 @@
 MiSans is used under the MiSans Font Intellectual Property License Agreement.
 Original font files are unmodified and embedded for use in this game only.
 
-MiSans-Regular.ttf
+MiSans-Regular.ttf, MiSans-Medium.ttf, MiSans-Semibold.ttf
 Copyright © 2020-2025 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved.
 https://hyperos.mi.com/font-download/MiSans.zip
 

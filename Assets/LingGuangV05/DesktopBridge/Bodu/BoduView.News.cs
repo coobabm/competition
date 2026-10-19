@@ -4,6 +4,8 @@ using LingGuangV05.Runtime;
 using LingGuangV05.XingGuang;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.Tieba;
+using LingGuangV05.Core.Forum;
+using LingGuangV05.Desktop.YY;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -68,18 +70,32 @@ namespace LingGuangV05.Desktop.Bodu
                 if(archive){DataNewsRow(a);continue;}if(a.id!=newsId||a.brief)continue;
                 Line(T(a.title,a.titleEn),25,Ink);Line(a.date+(a.kind=="水文"?T(" · 推广"," · Sponsored"):""),13,Muted);
                 Line(T(a.body??"",a.bodyEn??""),18,Ink);
+                var zhou = TiebaHub.Instance;
+                if(zhou?.ZhouQa != null && LaoZhouNewsComments.Supported(a.id))
+                {
+                    var article = a; var expected = zhou.S; var expectedYy = YYChatHub.Instance?.S;
+                    var shared = LaoZhouNewsComments.Receipt(zhou.ZhouQa,a.id);
+                    string channel = shared?.channel ?? LaoZhouNewsComments.Channel(zhou.ZhouQa);
+                    Line(LaoZhouNewsComments.Label(channel,shared != null,GameText.IsEnglish),16,shared != null ? Muted : Blue,shared != null ? (Action)null : () =>
+                    {
+                        if(!ReferenceEquals(zhou,TiebaHub.Instance) || window == null || !window.isOn || page != "news" || newsId != article.id)return;
+                        if(zhou.ShareNewsWithZhou(article.id,channel,expected,expectedYy))signature="";
+                    });
+                    // An inline view of the reply earned by this share; opening/reading the article never earns one.
+                    if(shared != null)Line(T("老周：","Lao Zhou: ")+LaoZhouNewsComments.Reply(a.id,GameText.IsEnglish),16,Ink);
+                }
                 var lab=TiebaHub.Lab();
                 if(lab!=null)
                 {
                     var article=a; var owner=lab; string receipt="news-read:"+a.id;
-                    bool read=owner.DailyNewsAlreadyRead(a.id), complete=owner.DailyProgress("news5").complete;
-                    Line(read?T("已读完", "Finished reading"):complete?T("阅读条件已满足（5篇）", "Reading requirement complete (5 articles)"):T("<u>我已读完这篇 ›</u>", "<u>I finished reading this article ›</u>"),16,read||complete?Muted:Blue,read||complete?(Action)null:()=>
+                    bool read=owner.DailyNewsAlreadyRead(a.id);
+                    Line(read?T("已读完", "Finished reading"):T("<u>我已读完这篇 ›</u>", "<u>I finished reading this article ›</u>"),16,read?Muted:Blue,read?(Action)null:()=>
                     {
                         if(!ReferenceEquals(owner,TiebaHub.Lab())||window==null||!window.isOn||page!="news"||newsId!=article.id)return;
                         // Revalidate publication and body eligibility at the actual confirmation.
                         foreach(var current in AvailableNews(Save()!=null?LingGuangV05.Core.GameCalendar.Now(Save()):today))
                             if(current.id==article.id&&!current.brief&&!string.IsNullOrWhiteSpace(current.body)&&!string.IsNullOrWhiteSpace(current.bodyEn))
-                            {owner.RecordDailyNewsRead(current.id,receipt);signature="";break;}
+                            {owner.RecordReadNewsArticle(current.id,receipt);signature="";break;}
                     });
                 }
                 if(lab!=null&&XgNewsCatalog.Teachable(a))

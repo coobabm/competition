@@ -13,12 +13,14 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using GuideNoteT = LingGuangV05.Desktop.Story.GuideNote;
 
 // Embedded in an isolated live-host Main fixture. Does not open/save scenes or touch player saves.
 public static class FilesWindowUiChecks
 {
     public static void Run()=>SidebarLayoutChecks.RunFiles();
     const BindingFlags Flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    const BindingFlags StaticFlags=BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic;
     static T Field<T>(object o,string n)=>(T)o.GetType().GetField(n,Flags).GetValue(o);
     static void Need(bool ok,string message){if(!ok)throw new InvalidOperationException("Files UI: "+message);}
     static double WaitUntil()=>EditorApplication.timeSinceStartup+.45;
@@ -116,6 +118,62 @@ public static class FilesWindowUiChecks
         Need(hit!=null&&hit.GetComponentInParent<XgFilesTrainDrop>()!=null,"real drop destination is the training root: "+hit);
         surface.OnPointerUp(p);
     }
+    // ───────────── guide-note diagnostics: read-only; never assigns TopStep/TopSim or calls Show/Apply/Go ─────────────
+    static string Try(Func<object> read){try{var v=read();return v==null?"null":v.ToString();}catch(Exception e){var x=e is TargetInvocationException&&e.InnerException!=null?e.InnerException:e;return "err:"+x.GetType().Name+":"+x.Message;}}
+    static object StaticValue(Type t,string n){var f=t.GetField(n,StaticFlags);if(f!=null)return f.GetValue(null);var p=t.GetProperty(n,StaticFlags);return p?.GetValue(null);}
+    /// <summary>The household facts GuideNote.Update passes to XgGuide.Current (its private House(); reads runtime and PlayerPrefs only).</summary>
+    static XgGuideHouse NoteHouse(GuideNoteT note)=>(XgGuideHouse)typeof(GuideNoteT).GetMethod("House",Flags).Invoke(note,null);
+    /// <summary>XgGuide.PendingDataImport with the same wallet XgGuide.Current builds (private, side-effect free).</summary>
+    static string PendingImport(XgSim sim,double money,double vram)
+    {
+        var walletType=typeof(XgGuide).GetNestedType("Wallet",BindingFlags.NonPublic);
+        var wallet=Activator.CreateInstance(walletType,true);
+        walletType.GetField("money").SetValue(wallet,money);walletType.GetField("vram").SetValue(wallet,vram);
+        var step=(XgGuideStep)typeof(XgGuide).GetMethod("PendingDataImport",StaticFlags).Invoke(null,new[]{sim,wallet});
+        return step==null?"null":step.id+"/"+step.arg;
+    }
+    static string Ids(System.Collections.Generic.List<XgGuideStep> steps)=>steps==null?"null":"["+string.Join(",",steps.Select(s=>s.id+(string.IsNullOrEmpty(s.arg)?"":"/"+s.arg)))+"]";
+    static string SimName(XgSim sim,XgSim guided,XingGuangController ctl)=>sim==null?"null":ReferenceEquals(sim,guided)?"guided":ReferenceEquals(sim,ctl.Sim)?"ctl.Sim(not guided)":"other";
+    static string GuideDiagnostics(GuideNoteT note,XingGuangController ctl,XgFilesWindow files,XgSim guided,XgDownload file)
+    {
+        var rt=ctl.runtime;var b=new StringBuilder();
+        var top=GuideNoteT.TopStep;
+        b.Append("TopStep=").Append(top==null?"null":top.id+"/"+top.arg)
+            .Append(" TopSim=").Append(SimName(GuideNoteT.TopSim,guided,ctl))
+            .Append(" | note: enabled=").Append(note!=null&&note.isActiveAndEnabled);
+        if(note!=null)
+            b.Append(" busy=").Append(Try(()=>Field<bool>(note,"busy")))
+                .Append(" shownFor=").Append(Try(()=>SimName(Field<XgSim>(note,"shownFor"),guided,ctl)))
+                .Append(" row0Step=").Append(Try(()=>{var s=Field<XgGuideStep>(Field<Array>(note,"rows").GetValue(0),"step");return s==null?"null":s.id+"/"+s.arg;}))
+                .Append(" row0Active=").Append(Try(()=>{var r=Field<RectTransform>(Field<Array>(note,"rows").GetValue(0),"rt");return r==null?"unbuilt":(object)r.gameObject.activeInHierarchy;}))
+                .Append(" noteVisible=").Append(Try(()=>{var n=Field<RectTransform>(note,"note");return n==null?"unbuilt":(object)n.gameObject.activeInHierarchy;}))
+                .Append(" collapsed=").Append(Try(()=>StaticValue(typeof(GuideNoteT),"collapsed")))
+                .Append(" noteLabIsCtl=").Append(Try(()=>ReferenceEquals(Field<XingGuangController>(note,"lab"),ctl)))
+                .Append(" noteRuntimeIsRt=").Append(Try(()=>ReferenceEquals(Field<object>(note,"runtime"),rt)))
+                .Append(" cutscene=").Append(Try(()=>typeof(GuideNoteT).GetProperty("CutscenePlaying",Flags).GetValue(note)));
+        b.Append(" | ready inputs: exclusive=").Append(Try(()=>StoryFocus.Exclusive))
+            .Append(" testMode=").Append(Try(()=>rt.TestMode)).Append(" inPrologue=").Append(Try(()=>rt.Sim.InPrologue))
+            .Append(" prologueDesk=").Append(Try(()=>LingGuangV05.Desktop.Story.PrologueDirector.Desk!=null))
+            .Append(" setupShowing=").Append(Try(()=>ctl.View.SetupShowing))
+            .Append(" view=").Append(Try(()=>ctl.View.Visible+"/"+ctl.View.Tab))
+            .Append(" acquisitionCurrent=").Append(Try(()=>XgAppAcquisitionHost.Instance==null?"none":(object)XgAppAcquisitionHost.Instance.Current));
+        b.Append(" | guide: pendingImport=").Append(Try(()=>PendingImport(guided,ctl.Host.Money,ctl.Host.VramMB)))
+            .Append(" current=").Append(Try(()=>note==null?"no note":Ids(XgGuide.Current(guided,rt.Sim.S.money,NoteHouse(note)))))
+            .Append(" house=").Append(Try(()=>{var h=NoteHouse(note);return "installed:"+h.appInstalled+" unpaid:"+h.unpaidPower+" breaker:"+h.breakerTripped+" noGpu:"+h.noGpu+" overloaded:"+h.overloaded+" vram:"+h.vramMB;}))
+            .Append(" money=").Append(Try(()=>ctl.Host.Money));
+        b.Append(" | train gate: tabTrain=").Append(XgGuide.TabOpen(guided,XgGuide.Lab,"train")).Append(" tabTree=").Append(XgGuide.TabOpen(guided,XgGuide.Lab,"tree"))
+            .Append(" featureTrain=").Append(guided.FeatureVisible("train"))
+            .Append(" unlockedSeq/Vis=").Append(guided.TrainingUnlocked(XgTrack.Sequence)).Append('/').Append(guided.TrainingUnlocked(XgTrack.Vision))
+            .Append(" openingFocus=").Append(guided.OpeningFocus).Append(" teachingFlow=").Append(guided.S.teachingFlow)
+            .Append(" spamLabels=").Append(guided.Labels("spam")).Append(" spamSamples=").Append(guided.Samples("spam")).Append(" need=").Append(XgCatalog.SamplesToTrain)
+            .Append(" trainedSamples=").Append(guided.TrainedSamples).Append(" canInstall=").Append(guided.CanInstallData)
+            .Append(" file=").Append(file==null?"null":file.fileId+" ready:"+guided.DataFileReady(file.fileId)+" installed:"+file.installed)
+            .Append(" spamBatches=").Append(guided.InstalledBatches("spam"));
+        b.Append(" | binding: ctlSim=").Append(SimName(ctl.Sim,guided,ctl)).Append(" filesSim=").Append(SimName(files.Sim,guided,ctl))
+            .Append(" filesWindow=").Append(Restored(files.window)).Append(" trainWindow=").Append(Restored(ctl.Window))
+            .Append(" folder=").Append(Try(()=>Field<string>(files,"folder"))).Append(" payload=").Append(files.ActivePayload!=null);
+        return b.ToString();
+    }
     public static IEnumerator Frames(XingGuangController ctl,Action<bool> language,Action<string> capture,Action<string> check)
     {
         var rt=ctl.runtime;Need(rt!=null&&!rt.useDiskSave&&!rt.tickEnabled&&!rt.TestMode,"isolated real-host Main required");
@@ -206,7 +264,110 @@ public static class FilesWindowUiChecks
             Need(!sim.InstallDataFile(a.fileId)&&!sim.InstallDataFile(b.fileId),"duplicate core install is a no-op");
             files.Refresh();yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-11-real-batch-installed.png");
             check("actual LCD target raycast: revoked gate rejects, ready selection batch installs once");
-            Debug.Log("FilesWindowUiChecks PASS: real paid gate, LCD opening/records/source drag/batch drop, cross-save and minimize cancellation. Ctrl-key automation remains pending.");
+            // Bounded guide regression: early-game UI fixture, actual purchases/download, no injected data samples.
+            // Gate chain: GuideNote.Update -> XgGuide.Current -> PendingDataImport needs TabOpen(train) ->
+            // FeatureVisible("train") -> TrainingUnlocked: an available dataset with XgCatalog.SamplesToTrain samples.
+            // Declared setup, not LCD input: the spam desk is hand-labelled through the product answer API
+            // (XgSim.SelectDesk/Card/Answer, as XgGuideTests.AfterLabelsItSuggestsTrainingThenAnAssessment does)
+            // only until SamplesToTrain. The downloaded pack is never installed, counted or marked by setup;
+            // samples/wallet/install baselines are read after setup.
+            language(false);var guided=new XgSim();guided.S.epochs=1;guided.S.assessments=1;guided.S.treeIntroDelivered=true;
+            Need(!XgGuide.TabOpen(guided,XgGuide.Lab,"train"),"guide fixture without labels keeps Train closed (original gate)");
+            guided.SelectDesk("spam");
+            for(int i=0;i<40&&guided.Samples("spam")<XgCatalog.SamplesToTrain;i++){var labelCard=guided.Card("spam");guided.Answer("spam",labelCard.truth,ctl.Host);}
+            Need(guided.Labels("spam")>=XgCatalog.SamplesToTrain&&guided.TrainingUnlocked(XgTrack.Sequence),
+                "declared hand-label setup opens the Train gate: labels="+guided.Labels("spam")+"/"+XgCatalog.SamplesToTrain);
+            Need(guided.S.dataFiles.Count==0&&guided.InstalledBatches("spam")==0,"hand-label setup creates no data file or installed batch");
+            Bind(ctl,files,guided);rt.Sim.S.money=1000;
+            Need(ReferenceEquals(ctl.Sim,guided)&&ReferenceEquals(ctl.View.Controller,ctl)&&ReferenceEquals(files.Sim,guided),"guide fixture bound to controller, view and Files");
+            foreach(string purchase in new[]{"train.curve",XgSim.DataEntryNode,"spam.pack"})
+            {
+                double before=ctl.Host.Money,price=guided.NodeCost(XgCatalog.Node(purchase));
+                Need(guided.BuyNode(purchase,ctl.Host)&&Math.Abs(ctl.Host.Money-(before-price))<.001,"guide fixture actual paid purchase "+purchase);
+            }
+            for(int i=0;i<20&&guided.S.dataFiles.Count==0;i++){guided.Tick(.5,ctl.Host);yield return null;}
+            var guideFile=guided.S.dataFiles.FirstOrDefault(f=>guided.DataFileReady(f.fileId));
+            Need(guideFile!=null&&!guideFile.installed&&guided.InstalledBatches("spam")==0,"guide pack downloaded but uninstalled");
+            Need(guided.CanInstallData&&XgGuide.TabOpen(guided,XgGuide.Lab,"tree")&&XgGuide.TabOpen(guided,XgGuide.Lab,"train"),
+                "Tech, data import and Train are open before the note is read: "+GuideDiagnostics(GuideNoteT.Instance,ctl,files,guided,guideFile));
+            files.window.CloseWindow();ctl.Window.CloseWindow();
+            var note=GuideNoteT.Instance;
+            Need(note!=null&&note.isActiveAndEnabled,"actual guide note installed and updating");
+            // Pure product reading with the note's own household facts: separates core gates (rent, power, GPU, disk,
+            // captcha, Train page) from note/runtime gates (story focus, cutscene, binding, busy) before any waiting.
+            XgGuideHouse noteHouse=null;string houseError=null;
+            try{noteHouse=NoteHouse(note);}catch(Exception e){houseError=(e.InnerException??e).Message;}
+            Need(noteHouse!=null,"read the note's household facts: "+houseError+" / "+GuideDiagnostics(note,ctl,files,guided,guideFile));
+            var expected=XgGuide.Current(guided,rt.Sim.S.money,noteHouse);
+            Need(expected.Count>0&&expected[0].id=="data.install"&&expected[0].arg==guideFile.fileId,
+                "product guide leads with this ready pack's import: "+GuideDiagnostics(note,ctl,files,guided,guideFile));
+            check("declared hand-label setup opens Train; XgGuide.Current leads with data.install for the downloaded, uninstalled paid pack");
+            // Same 6 s bound as before; on timeout report every gate value, keep a screenshot, and fail.
+            until=EditorApplication.timeSinceStartup+6;
+            while(!ReferenceEquals(GuideNoteT.TopSim,guided)||GuideNoteT.TopStep?.id!="data.install"||Field<bool>(note,"busy"))
+            {
+                if(EditorApplication.timeSinceStartup>=until)
+                {
+                    string why=GuideDiagnostics(note,ctl,files,guided,guideFile);Debug.LogWarning("Files UI guide note timeout: "+why);
+                    capture("files-12a-guide-note-timeout.png");
+                    Need(false,"guide import note became visible within deadline: "+why);
+                }
+                yield return null;
+            }
+            var noteRows=Field<Array>(note,"rows");var firstRow=noteRows.GetValue(0);var noteRow=Field<RectTransform>(firstRow,"rt");
+            var noteRoot=Field<RectTransform>(note,"note");var shownStep=Field<XgGuideStep>(firstRow,"step");
+            Need(ReferenceEquals(Field<XgSim>(note,"shownFor"),guided)&&shownStep!=null&&shownStep.id=="data.install"&&shownStep.arg==guideFile.fileId,
+                "note row 0 is bound to this save's ready pack: "+GuideDiagnostics(note,ctl,files,guided,guideFile));
+            Need(Field<TMP_Text>(firstRow,"label").text.Contains("训练数据"),"note row names the 训练数据 folder: "+Field<TMP_Text>(firstRow,"label").text);
+            if(!noteRow.gameObject.activeInHierarchy)
+            {
+                var fold=Field<RectTransform>(note,"titleBar").Find("Fold") as RectTransform;Click(fold);yield return null;
+            }
+            Canvas.ForceUpdateCanvases();yield return null;
+            Need(noteRoot!=null&&noteRoot.gameObject.activeInHierarchy&&noteRow.gameObject.activeInHierarchy,"rendered import note row: "+GuideDiagnostics(note,ctl,files,guided,guideFile));
+            var noteButton=Field<UnityEngine.UI.Button>(firstRow,"button");Need(noteButton!=null&&noteButton.IsInteractable(),"import note row button is interactable");
+            double samplesBefore=guided.TrainedSamples,walletBefore=ctl.Host.Money,labelsBefore=guided.Labels("spam");
+            int batchesBefore=guided.InstalledBatches("spam"),unlockedBefore=guided.S.unlocked.Count;
+            string filesBefore=string.Join(";",guided.S.dataFiles.Select(f=>f.fileId+":"+f.installed));
+            capture("files-12-guide-ready-before-click.png");Click(noteRow);
+            until=EditorApplication.timeSinceStartup+4;
+            while(!Restored(files.window)||!Restored(ctl.Window)||Field<string>(files,"folder")!="packs"||ctl.View.Tab!="train")
+            {
+                if(EditorApplication.timeSinceStartup>=until)
+                {
+                    string why=GuideDiagnostics(note,ctl,files,guided,guideFile);Debug.LogWarning("Files UI guide navigation timeout: "+why);
+                    capture("files-12b-guide-navigation-timeout.png");
+                    Need(false,"note click opened Files training-data folder and Train: "+why);
+                }
+                yield return null;
+            }
+            Need(Field<TMP_Text>(files,"breadcrumb").text.Contains("训练数据")&&ctl.View.Visible,"Files shows 训练数据 and Train page is visible");
+            Need(!guideFile.installed&&guided.InstalledBatches("spam")==batchesBefore&&guided.TrainedSamples==samplesBefore&&guided.Labels("spam")==labelsBefore,"note click installs nothing and adds no samples");
+            Need(ctl.Host.Money==walletBefore&&guided.S.unlocked.Count==unlockedBefore,"note click charges nothing and buys nothing");
+            Need(string.Join(";",guided.S.dataFiles.Select(f=>f.fileId+":"+f.installed))==filesBefore&&files.ActivePayload==null,"note click leaves install flags unchanged and starts no drag");
+            check("actual guide note row LCD click opens Files 训练数据 and Train; no install, no fee, no purchase");
+            sourceFrame.anchorMin=sourceFrame.anchorMax=new Vector2(.5f,.5f);sourceFrame.sizeDelta=new Vector2(700,650);sourceFrame.anchoredPosition=new Vector2(-490,0);
+            targetFrame.anchorMin=targetFrame.anchorMax=new Vector2(.5f,.5f);targetFrame.sizeDelta=new Vector2(850,650);targetFrame.anchoredPosition=new Vector2(330,0);
+            files.window.FocusToWindow();Canvas.ForceUpdateCanvases();yield return null;Canvas.ForceUpdateCanvases();yield return null;
+            capture("files-13-guide-navigation-before-drag.png");
+            var guideRow=Row(files,guideFile.fileId);Need(guideRow.ready,"guide pack row is a ready source");
+            var drop=ctl.View.Train.root.GetComponent<XgFilesTrainDrop>();Need(drop!=null,"Train root carries the actual drop target");
+            BeginDrag((RectTransform)guideRow.transform);
+            Need(files.ActivePayload!=null&&ReferenceEquals(files.ActivePayload.Source,guided)&&files.ActivePayload.FileIds.Count==1&&files.ActivePayload.FileIds[0]==guideFile.fileId,
+                "guide source starts actual LCD drag of the one ready pack");
+            Need(!guideFile.installed&&guided.InstalledBatches("spam")==batchesBefore,"drag start alone installs nothing");
+            EndDrag(ctl.View.Train.root);
+            Need(guideFile.installed&&drop.LastInstalled==1&&files.ActivePayload==null,"actual LCD target hit installs exactly the dragged pack once");
+            Need(guided.InstalledBatches("spam")>batchesBefore&&guided.TrainedSamples>samplesBefore,"only actual drop imports the purchased pack");
+            Need(ctl.Host.Money==walletBefore,"drag import has no second fee");
+            double samplesAfter=guided.TrainedSamples;int batchesAfter=guided.InstalledBatches("spam");
+            files.Refresh();yield return null;Canvas.ForceUpdateCanvases();yield return null;
+            var installedRow=Row(files,guideFile.fileId);Need(!installedRow.ready,"installed pack row is no longer a ready source");
+            BeginDrag((RectTransform)installedRow.transform);Need(files.ActivePayload==null,"installed pack cannot start a second LCD drag");Bridge().inputSurface.CancelInteraction();
+            Need(guided.InstalledBatches("spam")==batchesAfter&&guided.TrainedSamples==samplesAfter&&ctl.Host.Money==walletBefore,"second attempt adds no samples or fee");
+            files.Refresh();yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-14-guide-real-drop-installed.png");
+            check("actual LCD source drag and Train target hit install the downloaded paid pack exactly once; re-drag of installed row refused");
+            Debug.Log("FilesWindowUiChecks PASS: real paid gate, LCD opening/records/source drag/batch drop, cross-save and minimize cancellation, guide note navigation and drag import. Ctrl-key automation remains pending.");
         }
         finally
         {

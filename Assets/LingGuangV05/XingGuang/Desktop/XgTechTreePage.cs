@@ -451,8 +451,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             miniMap = Strip("DiscoveredStages", root, 48, 28, 12, 310);
             miniMap.gameObject.SetActive(false);
-            string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+", "适应" };
-            string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+", "Fit" };
+            string[] labels = { "⓪ 标注", "前沿", "可买", "−", "+", "适应", "图鉴" };
+            string[] labelsEn = { "⓪ Labels", "Frontier", "Buyable", "−", "+", "Fit", "Atlas" };
             for (int i = 0; i < labels.Length; i++)
             {
                 int index = i;
@@ -461,7 +461,7 @@ namespace LingGuangV05.Desktop.XingGuang
             float right = 12;
             for (int i = toolbar.Count - 1; i >= 0; i--)
             {
-                float width = i == 5 ? 60 : i >= 3 ? 34 : i == 0 ? 92 : 80;
+                float width = i == 6 ? 92 : i == 5 ? 60 : i >= 3 ? 34 : i == 0 ? 92 : 80;
                 PlaceTopRight(toolbar[i], right + width, 8, width, 30); right += width + 4;
             }
             UiTip.Add(toolbar[0].rt, "跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (raises, auto labelling).");
@@ -469,6 +469,8 @@ namespace LingGuangV05.Desktop.XingGuang
             UiTip.Add(toolbar[2].rt, "依次跳到现在买得起的节点。", "Cycle through the nodes you can afford now.");
             UiTip.Add(toolbar[3].rt, "缩小。", "Zoom out.");
             UiTip.Add(toolbar[4].rt, "放大。", "Zoom in.");
+            toolbar[6].rt.gameObject.name = "Open unified atlas";
+            UiTip.Add(toolbar[6].rt, "查看已收录的能力演示、训练现象与网络结构。", "Browse collected abilities, training phenomena and networks.");
         }
 
         /// <summary>The four frame colours, bottom left, so the states read without the tooltip.</summary>
@@ -672,6 +674,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             header.text = "<b>" + T("成长 · 科技", "Growth · Tech") + "</b>  <color=#FAC775>¥ " + Money(Host.Money) + "</color>";
             eraDismiss.Set(T("继续", "Continue"), true);
+            toolbar[6].Set(T("图鉴", "Atlas"), view != null);
             toolbar[0].Set(T("⓪ 标注", "⓪ Labels"), true); toolbar[1].Set(T("前沿", "Frontier"), true);
             toolbar[2].Set(T("可买 ", "Buyable ") + buyable, true, buyable > 0 ? XgDark.AccentSoft : XgDark.Button);
             PaintLinks();
@@ -1128,6 +1131,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Toolbar(int index)
         {
             Fx.Play(XgJuice.Sfx.Id.Click);
+            if (index == 6) { view?.OpenAtlas(); return; }
             if (index == 0) { FocusStage(0); return; }
             if (index == 1) { FocusFrontier(); return; }
             if (index == 3) { Pan.ZoomBy(Mathf.Max(.5f, content.localScale.x - .1f) / content.localScale.x); return; }

@@ -115,6 +115,7 @@ namespace LingGuangV05.XingGuang
             if(All.TryGetValue(n.id,out var c))return T(sim,c.summary,c.summaryEn);
             if(n.kind==XgNodeKind.Depth)return T(sim,"多一层组合线索","Combine clues in more layers");
             if(n.kind==XgNodeKind.Width)return T(sim,"同时容纳更多线索","Hold more clues per layer");
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"看懂性格如何变化","Understand personality changes");
             if(n.id.StartsWith("persona."))return T(sim,"聊聊它会怎样选择","Explore its choices");
             if(n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack."))return T(sim,"换一套题继续教它","Teach it a new question set");
             return T(sim,"内容待核对","Copy needs review");
@@ -127,6 +128,7 @@ namespace LingGuangV05.XingGuang
             if(n.kind==XgNodeKind.Depth)return "▶ "+T(sim,"可用层数上限"+n.value,"Layer cap "+n.value);
             if(n.kind==XgNodeKind.Width)return "▶ "+T(sim,"每层宽度上限"+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))],"Width cap "+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))]);
             if(n.id.StartsWith("pack."))return T(sim,"▶ 开放对应题桌","▶ Opens this question desk");
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"▶ 名字页打开性格档案","▶ Open Personality archive from the profile");
             if(n.id.StartsWith("persona."))return T(sim,"▶ 开放对应性格题包","▶ Opens this personality pack");
             if(n.kind==XgNodeKind.Dataset)return T(sim,"▶ 获得数据包使用权","▶ Grants access to this dataset");
             return T(sim,"▶ 功能待核对","▶ Effect needs review");
@@ -142,6 +144,7 @@ namespace LingGuangV05.XingGuang
                 return T(sim,"这是你在2016年尝试的自研方向，不是当年公开发表成果的介绍。","This is your own experiment in 2016, not a claim about a publication from that year.")+"\n"+Summary(n,sim)+T(sim,"。",".");
             if(n.id=="label.parallel")return T(sim,"待复核容量从20题增加到60题，满后自动暂停。多留四十道题，等你有空再来复核。","The review inbox expands from 20 to 60 cards; automation pauses when full. Keep forty more cards until you have time to review them.");
             if(n.id.StartsWith("pack.")){var p=XgTeachingPacks.Find(n.id.Substring(5));return p==null?Summary(n,sim):T(sim,p.play,p.playEn);}
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"阶段2起，赞/踩满15次或发现性格漂移后花¥300解锁。对照开局愿望，查看近14游戏日的性格变化和原因。","From stage 2, unlock for ¥300 after 15 ratings or observed drift. Compare personality with your opening wish and explore changes and causes over the last 14 game days.");
             if(n.id.StartsWith("persona."))return T(sim,"这组问题用来了解它的选择。回答与标签记录在YY的性格页。","These questions explore its choices. Answers and labels are kept on YY's Personality page.");
             if(n.kind==XgNodeKind.Depth||n.kind==XgNodeKind.Width)return Summary(n,sim)+T(sim,"。购买提高可用上限，模型按结构和显存配置。",". Buying raises the available cap; the model is configured for its architecture and VRAM.");
             if(n.kind==XgNodeKind.Dataset)return T(sim,"例题和答案构成训练资料。不同题库练习不同本领。","Examples and answers form the training material. Different datasets practise different skills.");

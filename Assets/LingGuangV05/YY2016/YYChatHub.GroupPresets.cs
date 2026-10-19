@@ -26,10 +26,11 @@ namespace LingGuangV05.Desktop.YY
         // Presentation scheduling only: does not start, advance or alter any authored chat.
         public bool GroupScriptPlaying => isActiveAndEnabled &&
             (IntroPlaying || presetReplyRunning && ReferenceEquals(presetReplyOwner, S)
+                || groupColdRoutine != null && ReferenceEquals(groupColdOwner, S)
                 || script != null && (scriptFor == EraGroup || Contact(scriptFor)?.group == true));
 
-        void OnEnable() { StartPresetReplies(); }
-        void OnDisable() { StopPresetReplies(false); }
+        void OnEnable() { StartPresetReplies(); StartGroupColdScenes(); }
+        void OnDisable() { StopPresetReplies(false); StopGroupColdScenes(); }
 
         void StopPresetReplies(bool discard)
         {
@@ -50,7 +51,7 @@ namespace LingGuangV05.Desktop.YY
             presetReplyRoutine = StartCoroutine(DeliverPresetReplies(S, generation));
         }
 
-        List<GroupPreset> AvailableGroupPresets()
+        static void LoadGroupPresets()
         {
             if (groupPresets == null)
             {
@@ -58,12 +59,21 @@ namespace LingGuangV05.Desktop.YY
                 groupPresets = asset != null ? JsonUtility.FromJson<GroupPresetFile>(asset.text)?.presets : null;
                 if (groupPresets == null) groupPresets = Array.Empty<GroupPreset>();
             }
+        }
+
+        /// <summary>Date/event/member-gated presets not yet sent in this save. Pure read: no repair, import or freeze.</summary>
+        List<GroupPreset> AvailableGroupPresets()
+        {
+            LoadGroupPresets();
+            var sent = S?.groupPresets?.sentIds;
             var result = new List<GroupPreset>();
-            var date = GameCalendar.Now(runtime.Sim.S);
+            var date = GameCalendar.DateOf(GroupPresetDay);
             int month = date.Year * 100 + date.Month;
             int day = month * 100 + date.Day;
             foreach (var p in groupPresets)
             {
+                if (p == null || string.IsNullOrEmpty(p.id)) continue;
+                if (sent != null && sent.Contains(p.id)) continue;
                 if (p.minDate > 0 && day < p.minDate) continue;
                 if (p.month != null && p.month.Length >= 2 && (month < p.month[0] || month > p.month[1])) continue;
                 if (!string.IsNullOrEmpty(p.after) && !(runtime.Sim.S.eraDelivered?.Contains(p.after) ?? false)) continue;
@@ -74,15 +84,18 @@ namespace LingGuangV05.Desktop.YY
             return result;
         }
 
+        /// <summary>
+        /// Pure read for ChoicesOf: today's frozen ids still unsent and eligible (at most three, no same-day refill).
+        /// Before today is frozen it previews exactly what FreezeGroupPresetDay would store, without storing it.
+        /// </summary>
         string[] GroupPresetChoices()
         {
             var available = AvailableGroupPresets();
-            int count = Math.Min(3, available.Count);
-            var result = new string[count];
-            int offset = available.Count == 0 ? 0 : Math.Max(0, S.groupPresetTurn) % available.Count;
-            for (int i = 0; i < count; i++)
+            var ids = GroupPresetLifecycle.Visible(S.groupPresets, GroupPresetDay, available.ConvertAll(p => p.id));
+            var result = new string[ids.Length];
+            for (int i = 0; i < ids.Length; i++)
             {
-                var p = available[(offset + i) % available.Count];
+                var p = available.Find(x => x.id == ids[i]);
                 result[i] = GameText.T(p.text, p.textEn);
             }
             return result;
@@ -93,15 +106,26 @@ namespace LingGuangV05.Desktop.YY
             foreach (var p in AvailableGroupPresets())
             {
                 if (text != p.text && text != p.textEn) continue;
-                if (!ReferenceEquals(presetReplyOwner, S)) { StopPresetReplies(true); presetReplyOwner = S; }
+                // Freeze today before recording the send, so the remaining bubbles cannot shift or refill.
+                FreezeGroupPresetDay();
+                if (!GroupPresetLifecycle.MarkSent(S.groupPresets, p.id)) return false;
                 var lines = GameText.IsEnglish ? p.repliesEn : p.replies;
-                if (lines != null) foreach (var line in lines) if (!string.IsNullOrWhiteSpace(line)) presetReplyQueue.Enqueue(line);
-                S.groupPresetTurn++;
+                QueueGroupAuthoredReplies(lines);
+                S.groupPresetTurn++; // Legacy counter, kept for old diagnostics/checks; no longer selects bubbles.
                 Touch();
                 StartPresetReplies();
                 return true;
             }
             return false;
+        }
+
+        void QueueGroupAuthoredReplies(IEnumerable<string> lines)
+        {
+            // Authored responses keep their own queue even if the player's next free line is a cold turn.
+            InvalidateGroupFreeReply();
+            if (!ReferenceEquals(presetReplyOwner, S)) { StopPresetReplies(true); presetReplyOwner = S; }
+            if (lines != null) foreach (var line in lines) if (!string.IsNullOrWhiteSpace(line)) presetReplyQueue.Enqueue(line);
+            StartPresetReplies();
         }
 
         IEnumerator DeliverPresetReplies(YYState expected, int generation)

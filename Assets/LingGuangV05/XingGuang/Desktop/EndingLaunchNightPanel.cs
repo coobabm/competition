@@ -130,7 +130,8 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (s.reduceFx) { answer.maxVisibleCharacters = int.MaxValue; revealed = true; }
             string reasonText = Safe(n.reason);
-            reason.text = string.IsNullOrEmpty(reasonText) ? "" : (n.corrupted ? T("被带偏：", "Misled: ") : T("依据：", "Based on: ")) + reasonText;
+            // A4: the grey line is already the sentence 「因为你在 X 月 X 日……」; only corrupted answers get the red marker.
+            reason.text = string.IsNullOrEmpty(reasonText) ? "" : (n.corrupted ? T("被带偏：", "Misled: ") : "") + reasonText;
             reason.color = n.corrupted ? XgDark.Bad : XgDark.Muted;
             metrics.text = T("电表", "Power meter") + "\n" + n.powerWh.ToString("0.00", CultureInfo.InvariantCulture) + " Wh\n\n" +
                 T("显卡温度", "GPU temperature") + "\n" + n.temperatureC.ToString("0.0", CultureInfo.InvariantCulture) + " °C\n\n" +

@@ -158,9 +158,8 @@ namespace LingGuangV05.XingGuang
             {
                 int axis = (string)persona[0] == "温度" ? 0 : (string)persona[0] == "玩心" ? 1 : 2;
                 double delta = (double)persona[1];
-                ToneCard(delta >= 0 ? High[axis] : Low[axis], true, Math.Abs(delta) / 10);
-                double target = Math.Max(0, Math.Min(100, TargetAxis(axis) + delta));
-                if (axis == 0) Profile.warmth = target; else if (axis == 1) Profile.play = target; else Profile.opinion = target;
+                ToneCard(delta >= 0 ? High[axis] : Low[axis], true, Math.Abs(delta) / 10, "life");
+                // Life choices change learned expression, not the persisted opening wish.
             }
             double rentIncrease = LN(effect, "rentIncrease");
             if (rentIncrease > 0 && House is IXgRentLife rent) rent.RaiseRent(id == "e051" && i == 1 && rent.RentEverLate ? 200 : rentIncrease);

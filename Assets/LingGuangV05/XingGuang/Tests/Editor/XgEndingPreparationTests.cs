@@ -28,6 +28,12 @@ namespace LingGuangV05.XingGuang.Tests
                 sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=id,bankId=dataset,sourceKind="question",question=q,playerAnswer=label?"是":"否",gameDate=date,teachingNoteId=id});
                 sim.S.teachingNotebook.Add(new XgTeachingNote{answerSource=XgSim.PlayerAnswerSource,id=id,learningRecordId=id,dataset=dataset,text=q,truth=truth,playerAnswer=label});
             }
+            /// <summary>The dated record XgSim.Gambling.cs writes when the 888.vip scam resolves (the only gamble_888 source).</summary>
+            public void Casino(long id,bool good,int date)
+            {
+                sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=id,bankId="casino.888",sourceKind=XgSim.CasinoSourceKind,
+                    eventKey=XgSim.CasinoScamEventPrefix+(good?XgSim.CasinoRefused+":good":XgSim.CasinoPaid+":bent"),question="888.vip「风控冻结」：要求先交保证金 ¥200 才能提现。",playerAnswer=good?"没交，不玩了":"交了保证金 ¥200",gameDate=date});
+            }
             public void PassAll()
             {
                 for(int q=0;q<6;q++)
@@ -128,10 +134,25 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void SourceDatesAndPerStageMemoryCapAreReal()
         {
             var f=new Fixture();f.sim.S.stage=5;f.Source(1,"spam","中奖转账",true,true);f.Source(2,"logic","二加二等于五",false,true);
-            f.sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=3,question="888 赌博可以翻本吗",playerAnswer="不赌",gameDate=20160701});
+            f.Casino(3,true,20160701);
             Assert.IsTrue(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Success);var d=f.flow.GetSnapshot();Assert.AreEqual(2,d.memories.Count);
             Assert.AreEqual("answer:1",d.memories[0].sources[0].refId);Assert.AreEqual(20160601,d.memories[0].sources[0].day);Assert.AreEqual(20161231,d.memories[0].day);
             f.sim.S.stage=6;Assert.IsTrue(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Success);Assert.AreEqual(3,f.flow.GetSnapshot().memories.Count);
+            var gamble=f.flow.GetSnapshot().memories.Find(m=>m.id=="gamble_888");Assert.IsNotNull(gamble);
+            Assert.AreEqual("event",gamble.sources[0].kind);Assert.AreEqual("answer:3",gamble.sources[0].refId);Assert.AreEqual(20160701,gamble.sources[0].day);
+        }
+        [Test] public void GambleWordsInATaughtAnswerNoLongerMakeTheCasinoMemory()
+        {
+            // The old keyword trigger: any player answer with 「不」 to a question with 「888」/「赌」. Not a casino event.
+            var f=new Fixture();f.sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=1,question="888 赌博能翻本吗",playerAnswer="不赌",gameDate=20160701});
+            f.sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=2,question="赌一把明天会不会下雨",playerAnswer="不会",gameDate=20160702});
+            Assert.IsFalse(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Changed);Assert.IsEmpty(f.flow.GetSnapshot().memories);
+            // A forged or malformed casino key cannot make it either; the real one can, with its lean.
+            f.sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=3,sourceKind=XgSim.CasinoSourceKind,eventKey=XgSim.CasinoScamEventPrefix+"paid",question="888",playerAnswer="交了",gameDate=20160703});
+            f.sim.S.askedLog.Add(new XgAskedEntry{answerSource="",id=4,sourceKind=XgSim.CasinoSourceKind,eventKey=XgSim.CasinoScamEventPrefix+"paid:bent",question="888",playerAnswer="交了",gameDate=20160703});
+            Assert.IsFalse(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Changed);
+            f.Casino(5,false,20160704);Assert.IsTrue(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Success);
+            var card=f.flow.GetSnapshot().memories.Find(m=>m.id=="gamble_888");Assert.IsNotNull(card);Assert.AreEqual(-1,card.lean);Assert.AreEqual(20160704,card.sources[0].day);
         }
         [Test] public void UndatedAndUnlinkedOldSourcesAreNotInvented()
         {var f=new Fixture();f.Source(1,"spam","中奖转账",true,true,0);Assert.IsFalse(f.flow.DiscoverMemories(f.flow.CaptureBinding()).Changed);Assert.IsEmpty(f.flow.GetSnapshot().memories);}
@@ -181,7 +202,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void AiRouteUsesActualCardsAndActualAxisBeforePlayerPins(bool goodMajority,bool high,string expected)
         {
             var f=new Fixture();f.Source(1,"spam","中奖转账是诈骗",true,true);
-            if(goodMajority)f.sim.S.askedLog.Add(new XgAskedEntry{answerSource=XgSim.PlayerAnswerSource,id=2,question="888 赌博能翻本吗",playerAnswer="不赌",gameDate=20160701});
+            if(goodMajority)f.Casino(2,true,20160701);
             else f.Source(2,"logic","二加二等于五",false,true);
             f.flow.DiscoverMemories(f.flow.CaptureBinding());f.PassAll();var ids=goodMajority?new[]{"scam_sms","gamble_888"}:new[]{"scam_sms","learned_wrong"};
             Assert.IsTrue(f.flow.ConfirmMemoryReview(f.flow.CaptureBinding(),ids).Success);

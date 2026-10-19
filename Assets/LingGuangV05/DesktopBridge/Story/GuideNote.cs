@@ -381,6 +381,8 @@ namespace LingGuangV05.Desktop.Story
             // Pages build some rows on refresh; give them a frame or two.
             yield return null; yield return null;
             if (c.View != null) XgGuideHighlight.Show(c.View, step.tab, step.target);
+            if (step.id == "data.install" && c.Sim.DataFileReady(step.arg))
+                FindAnyObjectByType<XgFilesWindow>(FindObjectsInactive.Include)?.ShowTrainingData(c.Sim);
         }
 
         /// <summary>摆渡众包's 标注台 and 企业订单 (moved out of the lab): open it on the page, then ring the control.</summary>

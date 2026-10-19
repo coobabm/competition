@@ -159,7 +159,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             // ── left: the household's bills, the debt box under them ──
             var billsBox = ZhongbaoSkin.Box(ui, left, "Bills", Vector2.zero, Vector2.one, new Vector2(0, DebtH + 12), Vector2.zero);
             ZhongbaoSkin.Header(ui, billsBox, "家里的开销", "Household bills", out billsTitle, out billsNote);
-            ZhongbaoUi.TipOnHeader(billsBox, "房租从第三阶段起每七天一期，在 YY 手动转给房东；电费照常结算。这里显示已付开销。", "From stage three, rent is due every seven days and paid manually to the landlord in YY. Electricity settles normally. Paid expenses appear here.");
+            ZhongbaoUi.TipOnHeader(billsBox, "房租从第三阶段起按游戏日历每月出账，在 YY 手动转给房东；电费照常结算。这里显示已付开销。", "From stage three, rent is billed each story-calendar month and paid manually to the landlord in YY. Electricity settles normally. Paid expenses appear here.");
             billsList = ZhongbaoUi.BoxScroll(billsBox, "Viewport");
             bills = new Row(ui, billsList);
 
@@ -187,7 +187,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             var sparkBox = ZhongbaoSkin.Box(ui, right, "Balance", new Vector2(0, 1), Vector2.one, new Vector2(0, -IncomeH - 12 - SparkH), new Vector2(0, -IncomeH - 12));
             ZhongbaoSkin.Header(ui, sparkBox, "余额 · 最近 10 天", "Balance · last 10 days", out sparkTitle, out sparkNote);
-            ZhongbaoUi.TipOnHeader(sparkBox, "每日余额，保留最近十天。红线是七天一期的房租参考，不会自动扣。", "Daily balance for the last ten days. The red line is one seven-day rent period, never deducted automatically.");
+            ZhongbaoUi.TipOnHeader(sparkBox, "每日余额，保留最近十天。红线是一个月的房租参考，不会自动扣。", "Daily balance for the last ten days. The red line is one month's rent, never deducted automatically.");
             chart = Rect("Chart", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10)));
             chartLayer = ZhongbaoSkin.Canvas(chart, DrawChart);
             noData = ui.Text(Rect("NoData", sparkBox, Vector2.zero, Vector2.one, new Vector2(14, 12), new Vector2(-14, -(ZhongbaoSkin.HeaderHeight + 10))), "", 13, ZhongbaoSkin.Dim, TextAlignmentOptions.Center);
@@ -234,15 +234,15 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (!house.EconomyActive)
             {
                 items.Add(Row.Note(T("日常账单启用后，家里的开销会记在这里。", "Once daily billing starts, household expenses are listed here.")));
-                items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(cfg.rentPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
+                items.Add(Row.Row(T("房租", "Rent"), "−" + ZhongbaoUi.Yuan(house.MonthlyRentFor(today)) + T("/月", "/month"), ZhongbaoSkin.Red));
                 items.Add(Row.Row(T("宽带（每月 1 号）", "Broadband (the 1st of each month)"), "−" + ZhongbaoUi.Yuan(cfg.broadbandPerMonth), ZhongbaoSkin.Red));
                 return;
             }
             var t = s.billsToday ?? new HouseBills();
             double todayTotal = s.billsDay == GameCalendar.CurrentDay(s) ? t.Total : 0;
             items.Add(Row.Row(T(today.Month + " 月 " + today.Day + " 日账单", "Bill for " + today.ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)), "−" + ZhongbaoUi.Yuan(todayTotal), MoneyInk(todayTotal)));
-            items.Add(Row.Row(T("房租", "Rent") + (today < ChapterOneSim.RentRiseDate ? ZhongbaoUi.Muted(T("（10 月起 ¥" + Money(cfg.rentPerDayFromOctober) + "）", " (¥" + Money(cfg.rentPerDayFromOctober) + " from October)")) : ""),
-                "−" + ZhongbaoUi.Yuan(house.RentFor(today)) + T("/天", "/day"), ZhongbaoSkin.Red));
+            items.Add(Row.Row(T("房租", "Rent") + (today < ChapterOneSim.RentRiseDate ? ZhongbaoUi.Muted(T("（10 月起 ¥" + Money(house.MonthlyRentFor(ChapterOneSim.RentRiseDate)) + "）", " (¥" + Money(house.MonthlyRentFor(ChapterOneSim.RentRiseDate)) + " from October)")) : ""),
+                "−" + ZhongbaoUi.Yuan(house.MonthlyRentFor(today)) + T("/月", "/month"), ZhongbaoSkin.Red));
             items.Add(Row.Row(T("电脑电费 · 本月 " + Money(house.MonthKwh) + " 度 · 第 " + house.PowerTier + " 档", "Computer power · " + Money(house.MonthKwh) + " kWh this month · tier " + house.PowerTier),
                 T("约 ¥", "about ¥") + N(house.TrainingRoundPrice(XgSim.EpochSeconds), "0.0") + T("/轮", "/round"), ZhongbaoSkin.Red));
             items.Add(Row.Sub(T("阶梯电价：每月 " + Money(cfg.tierOneKwh) + " 度以上 ×" + N(cfg.tierTwoFactor, "0.0#") + "，" + Money(cfg.tierTwoKwh) + " 度以上 ×" + N(cfg.tierThreeFactor, "0.0#"),
@@ -271,7 +271,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             string text;
             if (house == null) text = "";
             else if (!house.EconomyActive)
-                text = T("第三阶段起每七天一期，房东提前一天通知。到期在 YY 转账。", "From stage three: seven-day periods, announced one day ahead. Transfer the rent in YY.");
+                text = T("第三阶段起按游戏日历每月出账，房东在 YY 发账单。收到后手动转账。", "From stage three, the landlord sends a bill in YY each story-calendar month. Transfer the rent manually.");
             else if (house.S.bankrupt)
             {
                 current = 4;
@@ -284,9 +284,9 @@ namespace LingGuangV05.Desktop.Zhongbao
             }
             else
             {
-                double rent = house.RentFor(GameCalendar.Now(house.S).Date);
-                int days = rent > 0 ? (int)Math.Floor(house.S.money / rent) : 0;
-                text = T("余额够交 <b>" + days + "</b> 天房租。欠钱以后：", "The balance covers <b>" + days + "</b> day" + (days == 1 ? "" : "s") + " of rent. Once you owe it:");
+                double rent = house.MonthlyRentFor(GameCalendar.Now(house.S).Date);
+                int months = rent > 0 ? Math.Max(0, (int)Math.Floor(house.S.money / rent)) : 0;
+                text = T("余额够交 <b>" + months + "</b> 个月房租。欠钱以后：", "The balance covers <b>" + months + "</b> month" + (months == 1 ? "" : "s") + " of rent. Once you owe it:");
             }
             debtText.text = text;
             string[] steps = { T("1天 · 提醒", "Day 1 · reminder"), T("2天 · 警告", "Day 2 · warning"), T("3天 · 拉闸", "Day 3 · power off"), T("4天 · 押电脑", "Day 4 · collateral") };
@@ -308,7 +308,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             billsTitle.text = T("家里的开销", "Household bills");
             billsNote.text = house != null ? T(GameCalendar.Now(house.S).Month + " 月" + GameCalendar.Now(house.S).Day + " 日", GameCalendar.Now(house.S).ToString("d MMM", System.Globalization.CultureInfo.InvariantCulture)) : "";
             incomeTitle.text = T("收入", "Income"); incomeNote.text = T("现在每秒", "Per second now");
-            sparkTitle.text = T("余额 · 最近 10 天", "Balance · last 10 days"); sparkNote.text = T("红线 = 一次结算的房租", "Red line = rent per settlement");
+            sparkTitle.text = T("余额 · 最近 10 天", "Balance · last 10 days"); sparkNote.text = T("红线 = 一个月的房租", "Red line = one month's rent");
             recordsTitle.text = T("累计与记录", "Totals and records");
 
             // ── bills + debt ──
@@ -332,7 +332,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             // ── balance history ──
             var history = Sim.BalanceHistory();
-            double rent = house != null ? house.RentFor(GameCalendar.Now(house.S).Date) * ChapterOneSim.RentPeriodDays : 0;
+            double rent = house != null ? house.MonthlyRentFor(GameCalendar.Now(house.S).Date) : 0;
             string key = rent + ":" + string.Join(",", history);
             if (key != chartKey) { chartKey = key; chartData = history; chartRent = rent; chartLayer.Redraw(); }
             noData.gameObject.SetActive(history.Count < 2);

@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using LingGuangV05.Core;
 using LingGuangV05.Core.Forum;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.XingGuang;
 using LingGuangV05.Desktop.YY;
 using LingGuangV05.Runtime;
+using LingGuangV05.XingGuang;
 using UnityEngine;
 
 namespace LingGuangV05.Desktop.Tieba
@@ -60,6 +62,61 @@ namespace LingGuangV05.Desktop.Tieba
         {
             var c=S.Conversation(conversation);c.messages.Add(new ForumMessage{from=from,text=text,gameSeconds=Now});
             if(from!=ForumLibrary.Me&&!IsShowing(conversation))c.unread++;
+        }
+        ForumConversation ExistingZhouExchange()
+        {
+            var c=S?.conversations?.Find(x=>x!=null&&x.id==ForumLibrary.LaoZhou);
+            return c?.messages!=null&&c.messages.Exists(x=>x!=null&&x.from==ForumLibrary.Me&&!string.IsNullOrWhiteSpace(x.text))
+                &&c.messages.Exists(x=>x!=null&&x.from==ForumLibrary.LaoZhou&&!string.IsNullOrWhiteSpace(x.text))?c:null;
+        }
+        public bool ZhouEndingDmReady(ChapterOneSim owner)=>owner!=null&&S!=null&&!S.zhouGone&&ZhouQa!=null&&ZhouQa.legacyChecked
+            &&ReferenceEquals(linked,owner)&&ReferenceEquals(runtime?.Sim,owner)&&!ZhouYyLinked&&ExistingZhouExchange()!=null;
+        public Action AppendZhouEndingDm(ChapterOneSim owner,string text)
+        {
+            if(!ZhouEndingDmReady(owner)||string.IsNullOrWhiteSpace(text))return null;
+            var c=ExistingZhouExchange();var old=c.messages;int unread=c.unread;
+            c.messages=new List<ForumMessage>(old);ZhouForumLine(ForumLibrary.LaoZhou,ForumLibrary.LaoZhou,text);
+            return ()=>{c.messages=old;c.unread=unread;};
+        }
+        public void NotifyZhouEndingDmSaved()=>Changed?.Invoke();
+        public bool ZhouFinalContactContext
+        {
+            get
+            {
+                var ctl=XingGuangController.Instance;
+                return ctl!=null&&ctl.BoundTo(linked)&&ReferenceEquals(runtime?.Sim,linked)&&XgEndingPresentation.UsesPreparation(ctl.Sim?.S)
+                    &&(ZhouQa?.finalApproachSent==true||ctl.Sim.S.endingPreparation?.siQuestionAnnounced==true);
+            }
+        }
+        bool ZhouFinalApproachDue()
+        {
+            var ctl=XingGuangController.Instance;
+            return S!=null&&!S.zhouGone&&!StoryFocus.Exclusive&&ZhouQa!=null&&ctl!=null&&ctl.BoundTo(linked)&&ReferenceEquals(runtime?.Sim,linked)
+                &&XgEndingPresentation.FinalApproachDue(ctl.Sim?.S,ZhouQa.finalApproachSent);
+        }
+        void SendZhouFinalApproach(YYChatHub yy)
+        {
+            if(!runtime.useDiskSave||runtime.TestMode||!ZhouFinalApproachDue())return;
+            var world=linked;string oldForum=world.S.forumState,oldChat=world.S.chatState,oldLab=world.S.labState;
+            bool sent=LaoZhouQuestions.CommitFinalApproach(ZhouQa,()=>
+            {
+                var lines=LaoZhouQuestions.FinalApproach(GameText.IsEnglish);
+                if(yy!=null)
+                {
+                    if(!yy.BoundTo(world)||!yy.ZhouContactReady||!yy.AppInstalled)return null;
+                    var c=yy.Conversation(YYChatHub.LaoZhou);var old=c.messages;int unread=c.unread;
+                    c.messages=new List<YYMessage>(old);
+                    foreach(var line in lines)yy.AppendZhouAuthored(YYChatHub.LaoZhou,line);
+                    return ()=>{c.messages=old;c.unread=unread;};
+                }
+                if(!ZhouEndingDmReady(world))return null;
+                var conversation=ExistingZhouExchange();var messages=conversation.messages;int beforeUnread=conversation.unread;
+                conversation.messages=new List<ForumMessage>(messages);
+                foreach(var line in lines)ZhouForumLine(ForumLibrary.LaoZhou,ForumLibrary.LaoZhou,line);
+                return ()=>{conversation.messages=messages;conversation.unread=beforeUnread;};
+            },()=>{runtime.MarkDirty();return runtime.SaveNow();});
+            if(!sent){world.S.forumState=oldForum;world.S.chatState=oldChat;world.S.labState=oldLab;nextQaCheck=Time.unscaledTime+2;return;}
+            if(ReferenceEquals(runtime.Sim,world)){if(yy!=null&&yy.BoundTo(world))yy.RefreshZhouAuthored();else NotifyZhouEndingDmSaved();}
         }
         public bool TryZhouForumChoice(string id,string line)
         {
@@ -132,7 +189,12 @@ namespace LingGuangV05.Desktop.Tieba
                 ZhouQa.yyInvitationSent=true;
                 ZhouForumLine(ForumLibrary.LaoZhou,ForumLibrary.LaoZhou,LaoZhouQuestions.Invitation(GameText.IsEnglish));Touch();return;
             }
-            if(!ZhouYyLinked||yy==null||!yy.BoundTo(runtime.Sim)||!yy.AppInstalled)return;
+            if(!ZhouYyLinked)
+            {
+                if(ZhouEndingDmReady(runtime.Sim)&&!IsTyping(ForumLibrary.LaoZhou)&&ChoicesFor!=ForumLibrary.LaoZhou&&ZhouFinalApproachDue())SendZhouFinalApproach(null);
+                return;
+            }
+            if(yy==null||!yy.BoundTo(runtime.Sim)||!yy.AppInstalled||!yy.ZhouContactReady)return;
             yy.NoteZhouLinked();
             if(ZhouQa.first.choice>0&&ZhouQa.first.channel=="tieba_public"&&!ZhouQa.first.yyContinued)
             {
@@ -143,6 +205,7 @@ namespace LingGuangV05.Desktop.Tieba
                 else yy.AppendZhouAuthored(YYChatHub.LaoZhou,LaoZhouQuestions.T(GameText.IsEnglish,"下次看到“越聊越聪明”的说法，我得先问问，它到底改了什么。","Next time I see a claim that it gets smarter the more you chat, I'll first ask what actually changed."));
                 yy.RefreshZhouAuthored();Touch();return;
             }
+            if(ZhouFinalApproachDue()){SendZhouFinalApproach(yy);return;}
             int due=LaoZhouQuestions.Due(ZhouQa,Lab().S.stage,true);if(due==0)return;
             LaoZhouQuestions.Question(ZhouQa,due).yyOffered=true;
             foreach(var text in LaoZhouQuestions.Opening(due,ZhouQa.first.choice>0,GameText.IsEnglish))yy.AppendZhouAuthored(YYChatHub.LaoZhou,text);

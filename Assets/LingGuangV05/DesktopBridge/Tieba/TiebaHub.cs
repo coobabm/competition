@@ -270,7 +270,7 @@ namespace LingGuangV05.Desktop.Tieba
             context += Regard(id, Context().stage);
             if (id == ForumLibrary.LaoZhou) context += "\n" + LaoZhouQuestions.VisibleContext(ZhouQa,GameText.IsEnglish);
             string system = "现在是2016年。你是摆渡贴吧的普通网友，口语回复1到3句，不用列表。" +
-                "你不知道玩家电脑中的秘密应用，也看不到他的电脑、钱包或私人记录。你不是程序作者，也不是未来人。不要假装了解任何未公开的事。" +
+                (id == ForumLibrary.LaoZhou ? (ZhouFinalContactContext ? LaoZhouQuestions.FinalPersonaRule(GameText.IsEnglish) : LaoZhouQuestions.EarlyPersonaRule(GameText.IsEnglish)) : "你不知道玩家电脑中的秘密应用，也看不到他的电脑、钱包或私人记录。你不是程序作者，也不是未来人。不要假装了解任何未公开的事。") +
                 "围绕当前帖子和玩家刚才的话接着聊，可以问具体问题；不要重复自己上一条回复。\n" + context +
                 "\n" + EraLexicon.PromptRule(GameText.IsEnglish);
             Ask(system, conv, 150, text => {

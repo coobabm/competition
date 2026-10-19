@@ -24,11 +24,21 @@ namespace Michsky.DreamOS
             appPath = appPath.Replace(GetProjectName() + "/Assets", "");
             dataPath = appPath + GetProjectName() + "/" + subPath + "/" + profileID + "/";
 #else
-            string appPath = Application.dataPath;
-            appPath = appPath.Replace(Application.productName + "_Data", "");
-            dataPath = appPath + subPath + "/" + profileID + "/";
+            // Player desktop state follows the save root even when the executable has a different name.
+            dataPath = LingGuangV05.Runtime.Persistence.DesktopProfilePaths.Resolve(null, PlayerDataRoot(), profileID);
 #endif
         }
+
+#if !UNITY_EDITOR
+        static string PlayerDataRoot()
+        {
+#if RECORDING_PREVIEW
+            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "UserData"));
+#else
+            return Application.persistentDataPath;
+#endif
+        }
+#endif
 
         static string GetProjectName()
         {
@@ -225,7 +235,7 @@ namespace Michsky.DreamOS
 
         public static void DeleteDataCategory(DataCategory cat)
         {
-            File.WriteAllText(dataPath + cat.ToString() + jsonExtension, "{}");
+            File.WriteAllText(GetTempDataPath(cat), "{}");
         }
     }
 }

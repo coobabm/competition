@@ -75,11 +75,17 @@ namespace LingGuangV05.XingGuang
     public enum EndingLetterView { Closed, Preview, Consent, Reading, Complete }
     public sealed class EndingLetterInput
     {
+        public EndingLetterDisclosure personalDisclosure;
         public object owner;
         public long revision;
         public string articleId="",paragraphId="greeting";
         public bool saved,opened,consentShown,readOnly,completionEligible,english,reduceFx,soundEnabled;
-        public EndingLetterInput Copy()=>(EndingLetterInput)MemberwiseClone();
+        public EndingLetterInput Copy()
+        {
+            var copy=(EndingLetterInput)MemberwiseClone();
+            if(personalDisclosure!=null)copy.personalDisclosure=new EndingLetterDisclosure { evidenceKey=personalDisclosure.evidenceKey, sourceRef=personalDisclosure.sourceRef, timing=personalDisclosure.timing, authorBound=personalDisclosure.authorBound, receivedByZhou=personalDisclosure.receivedByZhou };
+            return copy;
+        }
     }
     public sealed class EndingLetterRequest
     {

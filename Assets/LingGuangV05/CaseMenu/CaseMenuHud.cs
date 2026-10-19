@@ -61,7 +61,10 @@ namespace LingGuangV05.CaseMenu
             uiClick = onUIClick;
             if (canvasRoot != null) return;
 
-            this.font = font != null ? font : TMP_Settings.defaultFontAsset;
+            // Title and .exe share MiSans (UiSans) so the first screen already looks like the game's own UI;
+            // the scene's Desktop CJK font stays the fallback when the UiV4 assets are unavailable.
+            var uiSans = LingGuangV05.Desktop.XingGuang.XgUiV4Fonts.Sans;
+            this.font = uiSans != null ? uiSans : font != null ? font : TMP_Settings.defaultFontAsset;
             canvasRoot = Rect("CaseMenuOverlay", transform);
             var canvas = canvasRoot.gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -223,7 +226,14 @@ namespace LingGuangV05.CaseMenu
             // A fixed title is never cut to "…": auto-sizing keeps it inside its box (CaseMenuHudTests).
             title.overflowMode = TextOverflowModes.Overflow;
             title.enableAutoSizing = true; title.fontSizeMin = 42; title.fontSizeMax = 66;
-            title.characterSpacing = 2f;
+            title.characterSpacing = 3f;
+            var titleFace = LingGuangV05.Desktop.XingGuang.XgUiV4Fonts.SansSemibold;
+            if (titleFace != null) title.font = titleFace;
+            // Original static power / learning-signal motif, in the gap below the title.
+            var titleSignal = Rect("TitleSignal", chrome);
+            Place(titleSignal, new Vector2(0, 1), new Vector2(70, -222), new Vector2(360, 12));
+            var signalGraphic = titleSignal.gameObject.AddComponent<CaseMenuTitleSignalGraphic>();
+            signalGraphic.color = Amber; signalGraphic.raycastTarget = false;
             var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);
             Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, -234), new Vector2(640, 36));
 
@@ -234,6 +244,14 @@ namespace LingGuangV05.CaseMenu
             var keyboard = Label("KeyboardHint", chrome, "TAB 切换 · ENTER 确认", 15, Muted);
             Place(keyboard.rectTransform, new Vector2(1, 0), new Vector2(-70, 63), new Vector2(520, 30));
             keyboard.alignment = TextAlignmentOptions.MidlineRight;
+            // Keep the muted notice readable over the bright papers in the room scene.
+            var disclosureBacking = Panel("AiContentNoticeBacking", chrome, new Color(0, 0, 0, .62f));
+            Place(disclosureBacking.rectTransform, Vector2.zero, new Vector2(62, 18), new Vector2(1136, 34));
+            var disclosure = Label("AiContentNoticeBody", chrome,
+                LingGuangV05.Runtime.AiContentNotice.Description(LingGuangV05.Runtime.GameText.IsEnglish), 14, Muted);
+            Place(disclosure.rectTransform, Vector2.zero, new Vector2(70, 22), new Vector2(1120, 26));
+            disclosure.enableAutoSizing = false;
+            disclosure.textWrappingMode = TextWrappingModes.NoWrap;
         }
 
         private void BuildLoading()
@@ -465,6 +483,64 @@ namespace LingGuangV05.CaseMenu
         private static float Unit(float value)
         {
             return float.IsNaN(value) || float.IsInfinity(value) ? 0f : Mathf.Clamp01(value);
+        }
+    }
+}
+
+
+namespace LingGuangV05.CaseMenu
+{
+    // One static mesh. Shapes are original geometry, not text glyphs or external assets.
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class CaseMenuTitleSignalGraphic : UnityEngine.UI.MaskableGraphic
+    {
+        protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper vh)
+        {
+            vh.Clear();
+            Vector2 origin = rectTransform.rect.min;
+            Color faint = color; faint.a *= .35f;
+            Color live = color; live.a *= .78f;
+            // Open power ring; the top gap and stem remain legible when scaled down.
+            var center = origin + new Vector2(6, 6);
+            const int segments = 24;
+            for (int i = 0; i < segments; i++)
+            {
+                float a = (135 + 270f * i / segments) * Mathf.Deg2Rad;
+                float b = (135 + 270f * (i + 1) / segments) * Mathf.Deg2Rad;
+                Stroke(vh, center + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 4.5f,
+                    center + new Vector2(Mathf.Cos(b), Mathf.Sin(b)) * 4.5f, live, 1.5f);
+            }
+            Stroke(vh, center, center + new Vector2(0, 5), live, 1.5f);
+            Stroke(vh, origin + new Vector2(20, 6), origin + new Vector2(126, 6), faint, 1.5f);
+            Stroke(vh, origin + new Vector2(126, 6), origin + new Vector2(132, 10), live, 1.5f);
+            Stroke(vh, origin + new Vector2(132, 10), origin + new Vector2(153, 10), live, 1.5f);
+            Stroke(vh, origin + new Vector2(153, 10), origin + new Vector2(159, 6), live, 1.5f);
+            Stroke(vh, origin + new Vector2(159, 6), origin + new Vector2(326, 6), faint, 1.5f);
+            Stroke(vh, origin + new Vector2(56, 6), origin + new Vector2(64, 2), faint, 1.25f);
+            Dot(vh, origin + new Vector2(64, 2), live, 1.5f);
+            Dot(vh, origin + new Vector2(102, 6), live, 1.5f);
+            // A steady terminal caret, deliberately not blinking.
+            Stroke(vh, origin + new Vector2(342, 2), origin + new Vector2(342, 10), live, 2.5f);
+        }
+
+        static void Stroke(UnityEngine.UI.VertexHelper vh, Vector2 a, Vector2 b, Color ink, float width)
+        {
+            Vector2 direction = (b - a).normalized;
+            Vector2 normal = new Vector2(-direction.y, direction.x) * (width * .5f);
+            int start = vh.currentVertCount;
+            vh.AddVert(a - normal, ink, Vector2.zero); vh.AddVert(a + normal, ink, Vector2.zero);
+            vh.AddVert(b + normal, ink, Vector2.zero); vh.AddVert(b - normal, ink, Vector2.zero);
+            vh.AddTriangle(start, start + 1, start + 2); vh.AddTriangle(start, start + 2, start + 3);
+        }
+
+        static void Dot(UnityEngine.UI.VertexHelper vh, Vector2 center, Color ink, float radius)
+        {
+            int start = vh.currentVertCount;
+            vh.AddVert(center + Vector2.up * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.right * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.down * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.left * radius, ink, Vector2.zero);
+            vh.AddTriangle(start, start + 1, start + 2); vh.AddTriangle(start, start + 2, start + 3);
         }
     }
 }

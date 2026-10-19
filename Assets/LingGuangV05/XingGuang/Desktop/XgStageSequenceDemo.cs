@@ -20,7 +20,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly float[] memory = new float[6];
         readonly float[] fading = new float[6];
         int stage, previous = -1;
-        bool english;
+        bool english, reduced;
         float started;
         static readonly Color Idle = new Color32(26,39,62,255);
         static readonly Color Hot = new Color32(78,206,198,255);
@@ -57,9 +57,9 @@ namespace LingGuangV05.Desktop.XingGuang
             text.textWrappingMode=TextWrappingModes.Normal;text.raycastTarget=false;return text;
         }
         string T(string zh,string en)=>english?en:zh;
-        public void Begin(int value,bool en)
+        public void Begin(int value,bool en,bool reduceMotion=false)
         {
-            stage=value;english=en;previous=-1;started=Time.unscaledTime;root.gameObject.SetActive(true);
+            stage=value;english=en;reduced=reduceMotion;previous=-1;started=Time.unscaledTime;root.gameObject.SetActive(true);
             string[] zh=stage==4?new[]{"钥匙","在抽屉","吃完饭","洗了碗","准备走","钥匙呢？"}:stage==5?new[]{"我","把","钥匙","放在","蓝色","抽屉"}:new[]{"钥匙","留在","抽屉","它","没有","移动"};
             string[] eng=stage==4?new[]{"The key","in a drawer","Dinner","Dishes","Time to go","Where?"}:stage==5?new[]{"I","put","the key","in","the blue","drawer"}:new[]{"The key","stayed in","the drawer","It","did not","move"};
             for(int i=0;i<6;i++) { words[i].text=en?eng[i]:zh[i];bars[i].gameObject.SetActive(stage<6);values[i].gameObject.SetActive(stage<6); }
@@ -91,7 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Tick()
         {
             if(!Visible)return;
-            int at=Mathf.Min(5,(int)((Time.unscaledTime-started)/1.1f));
+            int at=reduced?5:Mathf.Min(5,(int)((Time.unscaledTime-started)/1.1f));
             if(at==previous)return;previous=at;
             for(int i=0;i<6;i++)
             {

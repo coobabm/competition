@@ -43,7 +43,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 receipt.status = "interrupted"; controller.runtime.MarkDirty(); controller.SaveNow();
             }
             bool returned = receipt != null && receipt.status == "returned" && receipt.english == GameText.IsEnglish && !string.IsNullOrEmpty(receipt.reply);
-            string label = returned ? T("它的读后感", "Its reaction")
+            string label = returned ? T("它的读后感 · AI 合成内容，仅供参考", "Its reaction · AI-generated content, for reference only")
                 : receipt != null && receipt.status == "requested" ? T("正在想……", "Thinking…")
                 : T("阅读反馈", "Reading response");
             reactionText.text = label + "\n" + (returned ? receipt.reply : fixedText);

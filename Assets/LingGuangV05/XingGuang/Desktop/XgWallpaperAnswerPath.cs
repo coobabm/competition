@@ -22,6 +22,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public float started;
             public Color ink;
             public bool corrected;
+            public bool bright;
             public IReadOnlyList<XgConceptPull> pulls;
         }
         readonly List<Path> paths = new List<Path>(MaxPaths);
@@ -31,6 +32,8 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBrainWallpaperPresentation presentation;
         ChapterOneRuntime runtime;
         XgSim source;
+        bool Reduced => XgBrainWallpaper.MotionReduced(controller);
+        bool wasReduced;
 
         public static void Install(XingGuangController controller, XgBrainWallpaper wallpaper)
         {
@@ -95,6 +98,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (paths.Count == MaxPaths) paths.RemoveAt(0);
             var path = new Path { input = start, output = end, concepts = ids.ToArray(), started = Time.unscaledTime,
                 ink = yes ? XgCortexGraphic.N.Good : XgCortexGraphic.N.Bad,
+                bright = wallpaper.TryStartGlow(XgBoardData.DisplayRegion(answer.Dataset)),
                 corrected = answer.Outcome.correct && answer.Outcome.corrected && answer.Prediction != null,
                 pulls = answer.CorrectionPulls };
             ResolvePoints(path); paths.Add(path);
@@ -117,11 +121,13 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             Observe();
-            if(GamePerformance.Low){if(paths.Count>0){paths.Clear();SetVerticesDirty();}return;}
             if (paths.Count == 0) return;
+            bool reduced = Reduced, modeChanged = reduced != wasReduced;
+            wasReduced = reduced;
+            int before = paths.Count;
             if (wallpaper == null || !wallpaper.Reveal.Visible) paths.Clear();
             else paths.RemoveAll(path => Time.unscaledTime - path.started >= Duration + (path.corrected ? CorrectionDuration : 0));
-            if (paths.Count == 0 || presentation == null || presentation.DrawDue(ref nextDraw)) SetVerticesDirty();
+            if (paths.Count != before || modeChanged || !reduced && (presentation == null || presentation.DrawDue(ref nextDraw))) SetVerticesDirty();
         }
         float nextDraw;
 
@@ -132,22 +138,23 @@ namespace LingGuangV05.Desktop.XingGuang
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
-            vh.Clear();if(GamePerformance.Low)return;
+            vh.Clear();
             float scale = Mathf.Min(rectTransform.rect.width / 1920, rectTransform.rect.height / 1080);
-            bool reduced = controller != null && controller.View != null && controller.View.Juice != null && controller.View.Juice.Reduced;
+            bool reduced = Reduced;
             foreach (var path in paths)
             {
                 // A lesson can add/rearrange cells after the answer event in this same frame.
                 // Follow the participating identities, never their former screen slots.
                 if (!ResolvePoints(path)) continue;
                 float elapsed = Time.unscaledTime - path.started;
-                bool returning = path.corrected && elapsed >= Duration;
-                float age = Mathf.Clamp01(returning ? (elapsed - Duration) / CorrectionDuration : elapsed / Duration);
+                bool quiet = reduced || !path.bright;
+                bool returning = path.corrected && !quiet && elapsed >= Duration;
+                float age = quiet ? .5f : Mathf.Clamp01(returning ? (elapsed - Duration) / CorrectionDuration : elapsed / Duration);
                 if (age >= 1) continue;
-                float fade = Mathf.Clamp01((1 - age) * 4);
+                float fade = quiet ? 1 : Mathf.Clamp01((1 - age) * 4);
                 int count = path.points.Count;
                 var ink = returning ? new Color(.72f, .48f, 1) : path.ink;
-                var line = ink; line.a = (reduced ? .18f : .32f) * fade;
+                var line = ink; line.a = (quiet ? .10f : .32f) * fade;
                 for (int i = 0; i + 1 < count; i++)
                 {
                     var glow = line; glow.a *= .22f;
@@ -165,6 +172,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         }
                     }
                 }
+                if (quiet) continue; // Static low-brightness evidence stays; no new glow onset bypasses the shared gate.
                 for (int i = 0; i < count; i++)
                 {
                     // Returning paths highlight only cells actually pulled by the correction below.

@@ -96,6 +96,12 @@ public static class LaoZhouNewsChecks
         }
         Need(EraContent.Events.Get("gnmt").date == new DateTime(2016, 9, 28), "era GNMT corrected date");
     }
+    // Explicit lifecycle fixture: today's frozen selection holds exactly this preset; nothing sent yet.
+    static void PresetFixture(ChapterOneRuntime runtime, YYChatHub hub, string id)
+    {
+        hub.S.groupPresets = new GroupPresetState { historyImported = true, hasDailySelection = true,
+            selectionDay = GameCalendar.CurrentDay(runtime.Sim.S), dailyIds = new List<string> { id } };
+    }
     static void GroupConsumers(ChapterOneRuntime runtime, YYChatHub hub)
     {
         Asset("LingGuangV05/YY/yy_group_presets");
@@ -104,13 +110,14 @@ public static class LaoZhouNewsChecks
             ("lz2_g_gnmt", new DateTime(2016, 9, 28)), ("lz2_g_voice", new DateTime(2016, 6, 10)) };
         foreach (var item in cases)
         {
+            PresetFixture(runtime, hub, item.Item1);
             Date(runtime, item.Item2.AddDays(-1)); Need(Preset(hub, item.Item1) == null, "actual group filter hides day before " + item.Item1);
             Date(runtime, item.Item2); var preset = Preset(hub, item.Item1); Need(preset != null, "actual JsonUtility + group filter opens on date " + item.Item1);
             Date(runtime, item.Item2.AddDays(1)); Need(Preset(hub, item.Item1) != null, "group remains available day after " + item.Item1);
             Date(runtime, item.Item2);
             foreach (bool english in new[] { false, true }) using (GameText.Bind(() => english ? GameText.English : GameText.Chinese))
             {
-                var choices = Available(hub); hub.S.groupPresetTurn = choices.FindIndex(p => Get<string>(p, "id") == item.Item1);
+                PresetFixture(runtime, hub, item.Item1);
                 string selected = Get<string>(preset, english ? "textEn" : "text");
                 var replies = Get<string[]>(preset, english ? "repliesEn" : "replies");
                 Need(hub.ChoicesOf("netbar")[0] == selected, "public ChoicesOf localizes actual preset " + item.Item1);
@@ -119,6 +126,8 @@ public static class LaoZhouNewsChecks
                 Need(Group(hub).messages.Count == before + 1 && Group(hub).messages.Last().from == YYChatHub.Me, "public Send records actual player choice");
                 Need(hub.S.groupPresetTurn == turn + 1 && Queue(hub).SequenceEqual(replies), "Send traverses real preset queue in selected language");
                 DeliverAll(hub, replies);
+                Need(Preset(hub, item.Item1) == null && hub.ChoicesOf("netbar").Length == 0, "sent preset disappears without same-day refill");
+                Need(hub.S.groupPresets.weeklyFreeInputs == 0 && hub.S.groupPresets.pendingColdScenes.Count == 0, "preset send never counts as a free input");
             }
         }
         Date(runtime, new DateTime(2016, 5, 31)); Need(Preset(hub, "lz2_g_gnmt") == null, "May group excludes September news");
@@ -128,6 +137,7 @@ public static class LaoZhouNewsChecks
         using (GameText.Bind(() => english ? GameText.English : GameText.Chinese))
         {
             Date(runtime, new DateTime(2016, 9, 28));
+            PresetFixture(runtime, hub, "lz2_g_gnmt");
             var preset = Preset(hub, "lz2_g_gnmt");
             string selected = Get<string>(preset, english ? "textEn" : "text");
             var replies = Get<string[]>(preset, english ? "repliesEn" : "replies");
@@ -140,17 +150,23 @@ public static class LaoZhouNewsChecks
                 Need(!string.IsNullOrEmpty(runtime.Sim.S.chatState), "real WriteToSave produces YY JSON");
                 var roundtrip = JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S));
                 int turn = hub.S.groupPresetTurn, messages = Group(hub).messages.Count;
+                var frozenDay = hub.S.groupPresets.selectionDay; var frozenIds = hub.S.groupPresets.dailyIds.ToArray();
                 runtime.SetSimulationForTests(new ChapterOneSim(roundtrip)); // Changed -> real YY OnRuntimeChanged -> BindSave.
                 Need(!ReferenceEquals(oldState, hub.S), "actual runtime event rebinds a new YY state");
                 Need(Group(hub).messages.Count == messages && Group(hub).messages.Last().text == selected && hub.S.groupPresetTurn == turn,
-                    "JsonUtility save/rebind preserves real player history and rotation");
+                    "JsonUtility save/rebind preserves real player history and legacy counter");
+                Need(hub.S.groupPresets.sentIds.Contains("lz2_g_gnmt") && Preset(hub, "lz2_g_gnmt") == null, "sent id survives actual JsonUtility rebind");
+                Need(hub.S.groupPresets.selectionDay == frozenDay && hub.S.groupPresets.dailyIds.SequenceEqual(frozenIds), "same-day frozen selection survives rebind unchanged");
                 Need(!hub.GroupScriptPlaying, "stale save owner cannot report active group playback");
                 // Queue another real preset before the old iterator wakes. Its stale finally must not erase new work.
-                hub.Send("netbar", selected); var next = Queue(hub).ToArray();
-                Need(next.SequenceEqual(replies), "new save receives only its newly requested queue");
+                var nextPreset = Available(hub).First();
+                string nextText = Get<string>(nextPreset, english ? "textEn" : "text");
+                var nextReplies = Get<string[]>(nextPreset, english ? "repliesEn" : "replies");
+                hub.Send("netbar", nextText); var next = Queue(hub).ToArray();
+                Need(next.SequenceEqual(nextReplies), "new save receives only its newly requested unsent preset queue");
                 Need(!stale.MoveNext(), "old iterator stops after actual save rebind");
                 Need(Queue(hub).SequenceEqual(next) && Group(hub).messages.Count == messages + 1, "stale wake/finally cannot deliver or clear new-save work");
-                DeliverAll(hub, replies);
+                DeliverAll(hub, nextReplies);
                 Call(hub, "WriteToSave");
                 int delivered = Group(hub).messages.Count;
                 var saved = JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S));
@@ -162,7 +178,7 @@ public static class LaoZhouNewsChecks
     }
     static void FocusGate(ChapterOneRuntime runtime, YYChatHub hub)
     {
-        Date(runtime, new DateTime(2016, 6, 10)); var preset = Preset(hub, "lz2_g_voice");
+        Date(runtime, new DateTime(2016, 6, 10)); PresetFixture(runtime, hub, "lz2_g_voice"); var preset = Preset(hub, "lz2_g_voice");
         using (GameText.Bind(() => GameText.Chinese)) hub.Send("netbar", Get<string>(preset, "text"));
         int before = Group(hub).messages.Count; var iterator = Delivery(hub);
         var prior = StoryFocus.Probe;
