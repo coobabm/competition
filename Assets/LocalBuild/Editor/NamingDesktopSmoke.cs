@@ -165,9 +165,10 @@ public static class NamingDesktopSmoke
                     AfterShot(GameExit.ReturnToTitle); due += 15; break;
                 case 12:
                     var hud = UnityEngine.Object.FindAnyObjectByType<LingGuangV05.CaseMenu.CaseMenuHud>();
-                    var title = hud.GetComponentsInChildren<TMP_Text>(true).First(t => t.text == AppNames.GameZh);
-                    Canvas.ForceUpdateCanvases(); title.ForceMeshUpdate();
-                    Check(!title.isTextOverflowing, "Fixed game title fits menu");
+                    var titleArt = hud.GetComponentsInChildren<UnityEngine.UI.RawImage>(true).First(image => image.name == "TitleLogoV9");
+                    Canvas.ForceUpdateCanvases();
+                    Check(titleArt.canvasRenderer.GetMesh() != null && titleArt.canvasRenderer.GetMesh().vertexCount > 0,
+                        "Fixed game title artwork renders in the menu");
                     Shot("09-game-title");
                     UnityEngine.Object.FindAnyObjectByType<LingGuangV05.CaseMenu.CaseMenuController>().BeginGame();
                     due += 16;

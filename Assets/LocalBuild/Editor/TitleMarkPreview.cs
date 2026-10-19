@@ -62,18 +62,20 @@ public static class TitleMarkPreview
                 Need(primary != null, "existing primary font available");
                 typeof(CaseMenuHud).GetField("font", Private).SetValue(hud, primary);
                 typeof(CaseMenuHud).GetField("canvasRoot", Private).SetValue(hud, rootObject.GetComponent<RectTransform>());
-                var sourceLogo = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV5");
-                Need(sourceLogo != null, "v5 Resources texture must be available before constructing title; asset=" + AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/LingGuangV05/Resources/LingGuangV05/Branding/TitleLogoV5.png"));
+                var sourceLogo = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
+                Need(sourceLogo != null, "v9 Resources texture must be available before constructing title; asset=" + AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/LingGuangV05/Resources/LingGuangV05/Branding/TitleLogoV9.png"));
                 Invoke(hud, "BuildChrome"); Invoke(hud, "BuildTitleActions");
                 hud.SetChromeAlpha(1);
                 foreach (var t in host.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 30;
-                var mark = host.GetComponentsInChildren<RawImage>(true).Single(g => g.name == "TitleLogoV5");
-                var approved = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV5");
-                Need(approved != null && mark.texture == approved, "approved v5 logo resource is loaded");
-                Need(approved.width == 2078 && approved.height == 1110, "source dimensions are preserved");
+                var mark = host.GetComponentsInChildren<RawImage>(true).Single(g => g.name == "TitleLogoV9");
+                var approved = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
+                Need(approved != null && mark.texture == approved, "approved v9 logo resource is loaded");
+                Need(approved.width == 1775 && approved.height == 1040, "source dimensions are preserved");
+                Need(approved.width / (float)approved.height < 2f, "two-line in-game lockup, not the single-line store art");
                 Need(Mathf.Approximately(mark.rectTransform.sizeDelta.x, 500f), "approved title width is 500 reference pixels");
                 Need(mark.color == Color.white && mark.uvRect == new Rect(0, 0, 1, 1), "artwork has no tint or crop");
-                Need(mark.rectTransform.anchoredPosition == new Vector2(64, -98), "title retains its top-left anchor");
+                Need(mark.rectTransform.anchoredPosition == new Vector2(65, -98), "title retains its top-left anchor");
+                Need(mark.rectTransform.anchoredPosition.x + mark.rectTransform.rect.width <= 715f, "title clears the Turing poster at x~715");
                 Need(!host.GetComponentsInChildren<Transform>(true).Any(t => t.name == "TitleSignal"), "no duplicate signal decoration");
                 var eyebrow = host.GetComponentsInChildren<TextMeshProUGUI>(true).Single(t => t.name == "Eyebrow");
                 Need(eyebrow.text.Contains("MY COMPUTER IS ALIVE"), "English title remains visible");
@@ -101,12 +103,19 @@ public static class TitleMarkPreview
                         var mesh = mark.canvasRenderer.GetMesh();
                         Need(mesh != null && mesh.vertexCount > 0 && mesh.triangles.Length > 0, "CanvasRenderer has actual decoration mesh");
                         float aspect = mark.rectTransform.rect.width / mark.rectTransform.rect.height;
-                        Need(Mathf.Abs(aspect - 2078f / 1110f) < .001f, "logo retains source aspect ratio");
+                        Need(Mathf.Abs(aspect - 1775f / 1040f) < .001f, "logo retains source aspect ratio");
                         var logoCorners = new Vector3[4]; var subtitleCorners = new Vector3[4];
                         mark.rectTransform.GetWorldCorners(logoCorners); subheading.rectTransform.GetWorldCorners(subtitleCorners);
                         Need(logoCorners[0].y > subtitleCorners[1].y, "logo does not overlap the subheading");
+                        // Gap measured in the shared chrome rect: both are children of the same stretched parent,
+                        // so anchored positions are already reference pixels (world corners are not).
+                        float gapPx = (mark.rectTransform.anchoredPosition.y - mark.rectTransform.rect.height) - subheading.rectTransform.anchoredPosition.y;
+                        Need(gapPx >= 8f, "title keeps >= 8 reference px above the subheading, actual " + gapPx.ToString("F2"));
                         Need(!eyebrow.isTextOverflowing, "English title remains fully readable");
-                        report.AppendLine(width + "x" + height + ": logo=" + approved.name + ", source=" + approved.width + "x" + approved.height + ", aspect=" + aspect + ", vertices=" + mesh.vertexCount + ", raycast=" + mark.raycastTarget);
+                        report.AppendLine(width + "x" + height + ": logo=" + approved.name + ", source=" + approved.width + "x" + approved.height
+                            + ", draw=" + mark.rectTransform.rect.width + "x" + mark.rectTransform.rect.height.ToString("F2")
+                            + ", right=" + (mark.rectTransform.anchoredPosition.x + mark.rectTransform.rect.width).ToString("F0")
+                            + ", aspect=" + aspect + ", gap=" + gapPx.ToString("F2") + ", vertices=" + mesh.vertexCount + ", raycast=" + mark.raycastTarget);
                         foreach (bool english in new[] { false, true })
                         {
                             disclosure.text = AiContentNotice.Description(english);

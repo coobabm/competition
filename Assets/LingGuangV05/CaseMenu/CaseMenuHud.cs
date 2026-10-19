@@ -14,6 +14,14 @@ namespace LingGuangV05.CaseMenu
         private static readonly Color Surface = new Color(.082f, .079f, .073f, 1f);
         private static readonly Color Control = new Color(.14f, .134f, .12f, 1f);
 
+        // Opening title artwork (v9 clean lockup: 我的电脑 / [monitor icon 活]了). Reference pixels at 1920x1080.
+        // Two lines at 500 px wide keep the same footprint the retired v5 art had, so the room framing and the
+        // 8 px gap to the subheading keep working; the cleaner art simply has less transparent padding.
+        private const float TitleLogoLeft = 65f;   // the art carries ~4.8 px transparent padding at this size, ink starts at x~70
+        private const float TitleLogoTop = -98f;
+        private const float TitleLogoWidth = 500f;
+        private const float TitleLogoSubheadingGap = 8f;
+
         private TMP_FontAsset font;
         private RectTransform canvasRoot;
         private CanvasGroup chromeGroup;
@@ -238,20 +246,21 @@ namespace LingGuangV05.CaseMenu
             var eyebrow = Label("Eyebrow", chrome, "MY COMPUTER IS ALIVE / 2016", 14, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(70, -66), new Vector2(520, 26));
             eyebrow.characterSpacing = 5f;
-            // Reuse the approved v5 transparent title at its original aspect ratio.
-            // The artwork replaces both the old text title and separate signal decoration.
-            var logoTexture = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV5");
+            // v9 clean lockup: 我的电脑[monitor icon carrying 活]了. The icon replaces the 活 character, so the
+            // artwork replaces both the old text title and the separate signal decoration.
+            var logoTexture = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
             float subheadingTop;
             if (logoTexture != null)
             {
-                var logoRoot = Rect("TitleLogoV5", chrome);
-                float logoHeight = 500f * logoTexture.height / logoTexture.width;
-                Place(logoRoot, new Vector2(0, 1), new Vector2(64, -98), new Vector2(500, logoHeight));
+                var logoRoot = Rect("TitleLogoV9", chrome);
+                float logoHeight = TitleLogoWidth * logoTexture.height / logoTexture.width;
+                Place(logoRoot, new Vector2(0, 1), new Vector2(TitleLogoLeft, TitleLogoTop),
+                    new Vector2(TitleLogoWidth, logoHeight));
                 var logo = logoRoot.gameObject.AddComponent<UnityEngine.UI.RawImage>();
                 logo.texture = logoTexture;
                 logo.color = Color.white;
                 logo.raycastTarget = false;
-                subheadingTop = -98f - logoHeight - 8f;
+                subheadingTop = TitleLogoTop - logoHeight - TitleLogoSubheadingGap;
             }
             else
             {
