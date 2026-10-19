@@ -70,8 +70,12 @@ namespace LingGuangV05.Desktop.XingGuang
             bool eligible = DeskGameEligible(id);
             bool show = eligible && !classicDesks.Contains(Desk);
             if (show != deskGame.root.gameObject.activeSelf) { deskGame.root.gameObject.SetActive(show); if (show) deskGame.root.SetAsLastSibling(); }
-            ShowFrame(gameToggle, eligible && !show);
-            if (eligible && !show) gameToggle.Set(T("← 改回小游戏", "← Back to the game"), true, DarkTeaching ? XgDark.Button : Color.white, DarkTeaching ? XgDark.Accent : ZhongbaoSkin.Blue);
+            bool toggleShow = eligible && !show;
+            var toggleFrame = ZhongbaoSkin.Frame(gameToggle);
+            bool toggleChanged = toggleFrame != null && toggleFrame.gameObject.activeSelf != toggleShow;
+            ShowFrame(gameToggle, toggleShow);
+            if (toggleShow && (full || toggleChanged))
+                gameToggle.Set(T("← 改回小游戏", "← Back to the game"), true, DarkTeaching ? XgDark.Button : Color.white, DarkTeaching ? XgDark.Accent : ZhongbaoSkin.Blue);
             if (!show) return false;
             // Building/refreshing a hidden page is not a failed game launch or a player preference.
             // Leave it pending; the next visible refresh starts it. Focus still gates input, not rendering.

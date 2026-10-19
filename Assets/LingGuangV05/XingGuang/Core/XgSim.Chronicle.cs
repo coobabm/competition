@@ -151,6 +151,10 @@ namespace LingGuangV05.XingGuang
                 Add(CardLoanChronicle, 30, 7, "拆开机箱看一看", "一张卡没借出去",
                     CardLoanChronicleBody(false, self, you), "A look inside the case", "a card that stayed",
                     CardLoanChronicleBody(true, self, you));
+            if (Day(ForgetNightChronicle) >= 0)
+                Add(ForgetNightChronicle, 72, 8, "刚说完的话转头忘", "方知短句留不住夜",
+                    ForgetNightChronicleBody(false, self, you), "A code forgotten two lines later", "short sentences cannot hold the night",
+                    ForgetNightChronicleBody(true, self == "我" ? "me" : self, you == "你" ? "you" : you));
             if (ChronicleHas("laozhou.card"))
                 Add("laozhou.card", 20, 8, "借卡与周不问归期", ChronicleHas("rent.late") ? "交租欠租陋室艰难" : "一机一桌陋室安身",
                     "老周实验室的卡烧了，来借" + you + "那张。" + you + "把卡装了箱，没问他几时还。老周后来说，" + you + "是他认识的最靠谱的网友。" + (ChronicleHas("rent.late") ? "房租晚交过，房东敲过门。" : "房租一天一天地交，没欠过一天。"),

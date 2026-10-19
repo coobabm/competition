@@ -120,18 +120,18 @@ namespace LingGuangV05.Desktop.XingGuang
                     : Hex(XgDark.Bad) + T("不够 · 预训练会卡在 " + N(Math.Min(1, Sim.ScaleRatio) * 100, "0") + "%", "Short · stalls at " + N(Math.Min(1, Sim.ScaleRatio) * 100, "0") + "%") + "</color>";
 
                 // 参数 × 数据 × each multiplier: owned solid, missing dashed.
-                var chips = new List<(string text, Color ink, bool own)>();
-                chips.Add((T("参数 ", "Params ") + N(Sim.ScaleParamsRatio, "0.00"), XgDark.Params, true));
-                chips.Add(("×" + T("数据 ", "Data ") + N(Sim.ScaleDataRatio, "0.00"), XgDark.Data, true));
+                formulaChipsBuffer.Clear();
+                formulaChipsBuffer.Add((T("参数 ", "Params ") + N(Sim.ScaleParamsRatio, "0.00"), XgDark.Params, true));
+                formulaChipsBuffer.Add(("×" + T("数据 ", "Data ") + N(Sim.ScaleDataRatio, "0.00"), XgDark.Data, true));
                 foreach (var item in XgSim.ScaleItems)
-                    chips.Add(("×" + T(item.name, item.nameEn) + " " + N(item.factor, "0.#"), Sim.Has(item.item) ? XgDark.Money : XgDark.Dim, Sim.Has(item.item)));
+                    formulaChipsBuffer.Add(("×" + T(item.name, item.nameEn) + " " + N(item.factor, "0.#"), Sim.Has(item.item) ? XgDark.Money : XgDark.Dim, Sim.Has(item.item)));
                 for (int i = 0; i < formulaChips.Count; i++)
                 {
                     var c = formulaChips[i];
-                    c.text.text = chips[i].text; c.text.color = chips[i].ink;
+                    c.text.text = formulaChipsBuffer[i].text; c.text.color = formulaChipsBuffer[i].ink;
                     bool ratio = i < 2;
-                    c.frame.Style(ratio ? new Color(chips[i].ink.r, chips[i].ink.g, chips[i].ink.b, .08f) : chips[i].own ? new Color(.98f, .78f, .46f, .1f) : Color.clear,
-                        ratio ? new Color(chips[i].ink.r, chips[i].ink.g, chips[i].ink.b, .55f) : chips[i].own ? new Color32(110, 90, 46, 255) : XgDark.Line, !ratio && !chips[i].own);
+                    c.frame.Style(ratio ? new Color(formulaChipsBuffer[i].ink.r, formulaChipsBuffer[i].ink.g, formulaChipsBuffer[i].ink.b, .08f) : formulaChipsBuffer[i].own ? new Color(.98f, .78f, .46f, .1f) : Color.clear,
+                        ratio ? new Color(formulaChipsBuffer[i].ink.r, formulaChipsBuffer[i].ink.g, formulaChipsBuffer[i].ink.b, .55f) : formulaChipsBuffer[i].own ? new Color32(110, 90, 46, 255) : XgDark.Line, !ratio && !formulaChipsBuffer[i].own);
                 }
                 logFill.anchorMax = new Vector2(LogShare(eff), 1);
                 var fillImage = logFill.GetComponent<Image>(); if (fillImage != null) fillImage.color = ready ? XgDark.Good : XgDark.Params;
@@ -171,6 +171,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 scaleVerdict.text = line + "\n" + Hex(XgDark.Dim) + Sim.ModelFormula(run) + " · " + Sim.CapsText(run) + "</color>";
             }
         }
+        readonly List<(string text, Color ink, bool own)> formulaChipsBuffer = new List<(string text, Color ink, bool own)>(FormulaChipCount);
 
         string ScaleVerdict()
         {
@@ -223,7 +224,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var frame = rt.GetComponent<XgFrameGraphic>();
                 rt.GetComponent<Button>().onClick.AddListener(() => ClickGear(index));
                 var tile = new Tile { rt = rt, frame = frame, name = t.Text("name"), big = t.Text("big"), state = t.Text("state") };
-                UiTip.Add(rt, () => GearAt(index).tip);
+                UiTip.Add(rt, () => GearAt(index, true).tip);
                 tiles.Add(tile);
             }
 
@@ -239,7 +240,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public XgNode node;
         }
 
-        Gear GearAt(int index)
+        Gear GearAt(int index, bool includeTip = false)
         {
             var g = new Gear();
             var run = Sim.Run(Track);
@@ -248,7 +249,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var a = XgCatalog.Arch(run.arch);
                 g.structure = true; g.owned = true;
                 g.name = T(a.name, a.nameEn); g.big = XgSim.ParamsText(XgSim.ParamsK(run)); g.state = T("结构 · 自动换", "structure · auto");
-                g.tip = ArchTip(run.arch) + "\n\n" + T("结构是道具：买到更好的，它自己换上。点一下去道具页。", "Structures are items: buy a better one and it switches by itself. Click for the Items page.");
+                if (includeTip) g.tip = ArchTip(run.arch) + "\n\n" + T("结构是道具：买到更好的，它自己换上。点一下去道具页。", "Structures are items: buy a better one and it switches by itself. Click for the Items page.");
                 return g;
             }
             string id; double factor = 0; bool scaleItem = false;
@@ -259,15 +260,15 @@ namespace LingGuangV05.Desktop.XingGuang
             g.name = scaleItem ? T(XgSim.ScaleItems[index - 1 - PassiveGear.Length].name, XgSim.ScaleItems[index - 1 - PassiveGear.Length].nameEn) : node != null ? Sim.NodeName(node) : id;
             g.owned = Sim.Has(id);
             var status = node == null ? XgSim.NodeStatus.Locked : Sim.Status(node, Host);
-            string effect;
-            if (scaleItem) { g.big = "×" + N(factor, "0.#"); effect = T("有效规模 ×" + N(factor, "0.#") + "（阶段 6 预训练用）", "effective scale ×" + N(factor, "0.#") + " (counts for stage-6 pre-training)"); }
+            string effect = "";
+            if (scaleItem) { g.big = "×" + N(factor, "0.#"); if (includeTip) effect = T("有效规模 ×" + N(factor, "0.#") + "（阶段 6 预训练用）", "effective scale ×" + N(factor, "0.#") + " (counts for stage-6 pre-training)"); }
             else
             {
                 switch (id)
                 {
-                    case "cudnn": g.big = T("电费 −30%", "power −30%"); effect = T("所有训练快 30%，电费少 30%。", "All training 30% faster and 30% less electricity."); break;
-                    case "cooler": g.big = T("烧卡 −50%", "burn-outs −50%"); effect = T("连着练太久时，显卡烧坏的概率减半。要有两张卡才会烧。", "Training non-stop burns a card out half as often. A card only burns out when you own two."); break;
-                    default: g.big = T("少退步", "fewer drops"); effect = T("让「退步」少一些。", "Makes drops rarer."); break;
+                    case "cudnn": g.big = T("电费 −30%", "power −30%"); if (includeTip) effect = T("所有训练快 30%，电费少 30%。", "All training 30% faster and 30% less electricity."); break;
+                    case "cooler": g.big = T("烧卡 −50%", "burn-outs −50%"); if (includeTip) effect = T("连着练太久时，显卡烧坏的概率减半。要有两张卡才会烧。", "Training non-stop burns a card out half as often. A card only burns out when you own two."); break;
+                    default: g.big = T("少退步", "fewer drops"); if (includeTip) effect = T("让「退步」少一些。", "Makes drops rarer."); break;
                 }
                 var small = g.big; g.big = "<size=12>" + small + "</size>";
             }
@@ -279,6 +280,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else if (status == XgSim.NodeStatus.Buyable) { g.state = "¥" + Money(cost); g.buyable = true; }
             else if (status == XgSim.NodeStatus.TooExpensive) { g.state = "¥" + Money(cost); g.poor = true; }
             else g.state = (id == "transformer" || id == "warmup") ? T("剧情送", "from the story") : T("未解锁", "locked");
+            if (!includeTip) return g;
             string note = node != null ? Sim.NodeNote(node) : "";
             string how = g.owned ? T("已拥有：一直生效，不用点。", "Owned: always on, nothing to press.")
                 : !seen ? T("阶段 " + (node != null ? node.stage : 6) + " 才能买。", "Available from stage " + (node != null ? node.stage : 6) + ".")

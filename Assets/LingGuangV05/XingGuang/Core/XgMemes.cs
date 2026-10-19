@@ -183,13 +183,20 @@ namespace LingGuangV05.XingGuang
         /// <summary>
         /// Picks a phrase: the answer first (about half yes), then a phrase with that answer, open by date and level.
         /// From level 3, about one card in seven is a 老司机 trick. Today's topic shows up three times as often.
+        /// When <paramref name="allowTemplates"/> is true, about a third of text desk picks are assembled from
+        /// parameterized 2016 slot templates so hand-labelling does not repeat the same two dozen lines.
         /// </summary>
-        public static XgPhrase Pick(string desk, Random r, int level, int today, string topic, bool includeFamily = true)
+        public static XgPhrase Pick(string desk, Random r, int level, int today, string topic, bool includeFamily = true, bool allowTemplates = false)
         {
             var bank = Bank(desk);
             if (bank == null) return null;
             bool want = r.NextDouble() < .5;
             bool trick = level >= 3 && r.NextDouble() < .15;
+            if (allowTemplates && desk != SenseDesk && desk != "translate" && r.NextDouble() < .35)
+            {
+                var templated = PickTemplated(desk, r, level, today, want, trick);
+                if (templated != null) return templated;
+            }
             for (int attempt = 0; attempt < 3; attempt++)
             {
                 var pool = new List<XgPhrase>();
@@ -211,12 +218,156 @@ namespace LingGuangV05.XingGuang
 
         static double Weight(XgPhrase p, string topic) { return !string.IsNullOrEmpty(topic) && p.topic == topic ? 3 : 1; }
 
+        // ───────────── 参数化模板 + 2016 词槽组合（解决刷空题库后的重复感） ─────────────
+
+        static T Choose<T>(Random r, T[] items) => items[r.Next(items.Length)];
+
+        static readonly string[] DanmuTargets = { "这波走位", "这段剪辑", "这个转场", "这段配音", "刚才那波操作", "这个踩点" };
+        static readonly string[] DanmuPraises = { "太溜了 666666", "给跪了，up 主辛苦了", "看得鸡皮疙瘩都起来了", "可以的，这剪辑我服" };
+        static readonly string[] DanmuGripes = { "真的辣眼睛，看不下去了", "尴尬癌都犯了，关了", "一言不合就插广告，退钱！" };
+        static readonly string[] DanmuCheckins = { "空降 02:15，前排打卡", "前排卖瓜子矿泉水，打卡", "弹幕护体，第一！", "来了来了，前排占座" };
+        static readonly string[] DanmuIronyBad = { "一集水了三十分钟回忆", "字幕把人名全打错了", "背景音乐吵得听不清人话" };
+        static readonly string[] DanmuIronyGood = { "害我单曲循环了二十遍", "大半夜看得我泡了两桶面", "笑得我眼泪都止不住" };
+
+        static readonly (string code, string name)[] SpamBanks = { ("95588", "工商银行"), ("95555", "招商银行"), ("95533", "建设银行"), ("95599", "农业银行") };
+        static readonly string[] SpamFakeDomains = { "icbc-vip.cc", "cmb-jf88.cc", "ccb-hd.cc", "bank-2016.cc" };
+        static readonly string[] SpamShops = { "天猫商城", "聚美优品", "京东商城", "苏宁易购", "唯品会" };
+        static readonly string[] SpamCouriers = { "顺丰速运", "圆通速递", "中通快递", "韵达快运", "菜鸟驿站" };
+        static readonly string[] SpamStations = { "小区门口菜鸟驿站", "南门丰巢快递柜", "星光网吧旁代收点", "3 号楼下超市货架" };
+
+        static readonly string[] HeadlineOpeners = { "震惊！", "刚刚曝光！", "朋友圈传疯了！" };
+        static readonly string[] HeadlineSubjects = { "小伙半夜在网吧连坐三天", "男子把旧电脑拆开清理灰尘", "姑娘连喝一星期可乐", "房东打开租客退租的房间", "大学生花三百块淘了张旧显卡" };
+        static readonly string[] HeadlineHooks = { "结果所有人沉默了……", "打开一看彻底惊呆了！", "背后的原因99%的人都不知道", "看完这一幕我哭了", "最后一个动作让人不敢相信！" };
+        static readonly string[] HeadlineAgencies = { "市气象台", "市市政公用局", "县城南街道办", "市交通委" };
+        static readonly string[] HeadlinePlainEvents =
+        {
+            "明日最高气温 34℃，午后局部有雷阵雨，请注意防暑",
+            "6 月起 3 路公交车末班延时至 22:30，方便市民夜间出行",
+            "周四上午 9:00 至 12:00 城南片区线路检修停电通知",
+            "普通高校招生考试期间考点周边路段实行临时交通管制",
+            "老旧小区水表改造工程将于本周六正式启动",
+        };
+        static readonly string[] HeadlineTrickYes =
+        {
+            "震惊！围棋世界冠军连输三盘，对手的真实身份竟然是……",
+            "千万别在夜里十一点后去星光网吧！去过的人竟然都……",
+            "男子花三百块买二手显卡，插上电脑那一刻全家沉默了！",
+        };
+        static readonly string[] HeadlineTrickNo =
+        {
+            "全国高考报名人数达 940 万，明日上午九点开考",
+            "千万别忘带准考证！市招办发布 2016 高考考前提醒",
+            "震惊世界的引力波是怎么测出来的？LIGO 实验原理图解",
+        };
+
+        static readonly string[] ReviewSpamOpens = { "好评好评好评", "宝贝收到了，非常满意", "质量不错，物流很快，包装很好", "掌柜服务态度超好，必须五星好评" };
+        static readonly string[] ReviewSpamMids = { "跟描述的一模一样", "打开包装很有档次", "比实体店便宜太多了" };
+        static readonly string[] ReviewSpamTails = { "老板人很好，下次还来！", "物超所值，强烈推荐，亲们放心买！", "非常好非常好，全五分给力！！！" };
+        static readonly string[] ReviewRealItems = { "淘的二手显卡用了两天，", "给出租屋买的台灯到了，", "星光网吧同款鼠标收到了，", "替室友带的机械键盘试了下，" };
+        static readonly string[] ReviewRealPros = { "玩守望先锋帧数够用", "微动按起来手感挺脆", "包装盒塞了泡沫没压坏", "插上电脑一次点亮" };
+        static readonly string[] ReviewRealCons = { "就是风扇转起来有点响", "不过快递走了四天才到", "但是线材稍微有点硬，习惯性好评", "就是外壳有一道小划痕，凑合用吧" };
+        static readonly string[] ReviewTrickYes =
+        {
+            "差评！发货太快了，害我机箱还没到显卡就先到了，必须给老板五星好评！",
+            "本来想给差评的，结果打开一看质量好得离谱，物超所值，强烈推荐购买！",
+            "在星光网吧用了三年电脑，都没见过这么好用的宝贝，掌柜人超好，全五分好评！",
+        };
+        static readonly string[] ReviewTrickNo =
+        {
+            "好评！二手电源刚插上有点啸叫，找客服换了一根供电线就好了，带 980Ti 很稳",
+            "冲着掌柜说的「物超所值」买的，结果风扇轴承是歪的，退货还要我自己垫运费",
+            "默认五星好评免得卖家一直打电话骚扰，其实硅脂都干透了，大家自己避坑",
+        };
+
+        /// <summary>Assembles a fresh 2016 card from slot templates while keeping core vocabulary bigrams aligned with the board.</summary>
+        public static XgPhrase PickTemplated(string desk, Random r, int level, int today, bool want, bool trick)
+        {
+            switch (desk)
+            {
+                case "danmu":
+                    if (trick)
+                    {
+                        return want
+                            ? P("这 up 主有毒，" + Choose(r, DanmuIronyGood), true, "嘴上说「有毒」，其实是夸内容吸引人。", "B 站弹幕", trick: true)
+                            : P("真棒，" + Choose(r, DanmuIronyBad) + "，感谢 up 主替我省时间", false, "反话：「真棒」「感谢」是在讽刺视频注水粗糙。", "反讽弹幕", trick: true);
+                    }
+                    if (want)
+                        return P(Choose(r, DanmuTargets) + "，" + Choose(r, DanmuPraises), true, "直接夸视频操作或制作水平。", "B 站弹幕", level: Math.Min(2, level));
+                    if (level >= 2 && r.Next(2) == 0)
+                        return P(Choose(r, DanmuCheckins), false, "只是签到占座或报时间点，没有在夸。", "B 站弹幕", level: 2);
+                    return P(Choose(r, DanmuTargets) + "，" + Choose(r, DanmuGripes), false, "直接吐槽视频难看或广告烦。", "B 站弹幕");
+
+                case "spam":
+                {
+                    var bank = Choose(r, SpamBanks);
+                    int tail = 1000 + r.Next(9000);
+                    string code4 = (1000 + r.Next(9000)).ToString();
+                    if (trick)
+                    {
+                        if (want)
+                        {
+                            int cardTail = 1000 + r.Next(9000);
+                            return M("138 0000 " + code4, "我是房东，旧卡不用了，这个月房租 1350 元直接打到新卡 6222 **** " + cardTail, true, "陌生号码冒充房东说换卡号要转账，经典诈骗。", "冒充房东诈骗", trick: true);
+                        }
+                        int bill = 120 + r.Next(180);
+                        return M("95598", "【供电局】您户本月电费 " + bill + ".40 元，请按时到营业厅或网上缴纳，无需回复。", false, "正规电费通知，无钓鱼链接，也没让你向私人卡号转账。", "电费通知", trick: true);
+                    }
+                    if (want)
+                    {
+                        if (r.Next(2) == 0)
+                        {
+                            int pts = (3 + r.Next(7)) * 1000;
+                            int cash = pts / 10;
+                            return M(bank.code, "【" + bank.name + "】尊敬的客户，您尾号 " + tail + " 积分满 " + pts + " 可兑 " + cash + " 元现金，请登录 " + Choose(r, SpamFakeDomains) + " 领取", true, "伪基站冒充银行发陌生 .cc 链接领现金，是钓鱼短信。", "伪基站钓鱼");
+                        }
+                        string shop = Choose(r, SpamShops);
+                        return M("1069 " + code4 + " 0524", "【" + shop + "】会员专享满 199 减 100 优惠券明日到期，戳 t.cn/" + code4 + " 抢购，退订回 TD", true, "群发电商促销短信，末尾带「退订回 TD」，算垃圾短信。", "电商营销短信", level: Math.Min(2, level));
+                    }
+                    if (r.Next(2) == 0)
+                    {
+                        string courier = Choose(r, SpamCouriers);
+                        string station = Choose(r, SpamStations);
+                        int shelf = 1 + r.Next(9), box = 1000 + r.Next(9000);
+                        return M("1065 " + code4 + " 1000", "【" + courier + "】您的包裹已到" + station + "，取件码 " + shelf + "-" + box + "。", false, "正常的快递取件码通知。", "快递通知");
+                    }
+                    int spent = 15 + r.Next(150), bal = 300 + r.Next(2000);
+                    return M(bank.code, "【" + bank.name + "】您尾号 " + tail + " 的储蓄卡消费 " + spent + ".00 元，余额 " + bal + ".50 元。", false, "正常的银行消费提醒，没有链接也不索要验证码。", "银行通知");
+                }
+
+                case "headline":
+                    if (trick)
+                    {
+                        return want
+                            ? P(Choose(r, HeadlineTrickYes), true, "虽然借了真实事件或日常场景，但用「震惊！」「竟然……」留悬念吊胃口，属于标题党。", "UC 震惊部", trick: true)
+                            : P(Choose(r, HeadlineTrickNo), false, "虽然带有感叹词或大数字，但把核心事实与结论直接交代清楚，不是标题党。", "新闻", trick: true);
+                    }
+                    if (want)
+                        return P(Choose(r, HeadlineOpeners) + Choose(r, HeadlineSubjects) + "，" + Choose(r, HeadlineHooks), true, "用夸张开头加悬念省略号，只吊胃口不交代事实，是标题党。", "公众号标题");
+                    return P(Choose(r, HeadlineAgencies) + "：" + Choose(r, HeadlinePlainEvents), false, "直接把通知内容说清楚，不是标题党。", "新闻");
+
+                case "review":
+                    if (trick)
+                    {
+                        return want
+                            ? P(Choose(r, ReviewTrickYes), true, "表面欲扬先抑或套近乎，实则全是空洞套话，是刷单套路。", "刷单套路", trick: true)
+                            : P(Choose(r, ReviewTrickNo), false, "虽然表面带「好评」或「物超所值」，但写明了具体故障与真实体验，是真买家。", "真实评价", trick: true);
+                    }
+                    if (want)
+                        return P(Choose(r, ReviewSpamOpens) + "，" + Choose(r, ReviewSpamMids) + "，" + Choose(r, ReviewSpamTails), true, "套话堆砌、哪件商品都能复制粘贴，是刷单评论。", "淘宝刷单");
+                    return P(Choose(r, ReviewRealItems) + Choose(r, ReviewRealPros) + "，" + Choose(r, ReviewRealCons), false, "有具体的使用场景和优缺点细节，是真买家。", "真实评价");
+
+                default:
+                    return null;
+            }
+        }
+
         // ───────────── 弹幕情绪：这条弹幕是在夸吗？ ─────────────
 
         static readonly XgPhrase[] Danmu =
         {
             P("666666", true, "「6」=「溜」，夸操作厉害。", "游戏直播弹幕"),
             P("给跪了", true, "佩服到跪下，是夸。", "网络用语"),
+            P("请收下我的膝盖", true, "佩服得五体投地，是夸。", "B 站弹幕"),
             P("up 主辛苦了", true, "感谢做视频的人，是夸。", "B 站弹幕"),
             P("这波操作可以", true, "夸操作。", "游戏直播弹幕"),
             P("23333333 笑死", true, "「233」是猫扑第 233 号表情，捶地大笑。笑成这样是夸。", "猫扑表情 233"),
@@ -244,6 +395,7 @@ namespace LingGuangV05.XingGuang
             P("这届 up 主不行", false, "改自「这届人民不行」，是嫌弃。", "「这届人民不行」，2016-03 走红", 20160324),
             P("看不下去了，关了", false, "不看了，是差评。", "B 站弹幕"),
             P("退钱！", false, "觉得不值，是骂。", "网络用语"),
+            P("已举报，整段视频都是搬运抄袭的", false, "举报抄袭，是骂。", "B 站弹幕"),
             P("尴尬癌都犯了", false, "尴尬到受不了，是吐槽。", "2015 年流行语"),
             P("宝宝心里苦", false, "委屈，是吐槽。", "2016 年流行语"),
             P("感觉身体被掏空", false, "累到不行，是吐槽。", "《感觉身体被掏空》，2016-07-27", 20160727, topic: "葛优躺"),
@@ -258,12 +410,16 @@ namespace LingGuangV05.XingGuang
             P("前排卖瓜子饮料矿泉水", false, "吃瓜群众在占座，没有在夸。", "「吃瓜群众」，2016 年流行语", level: 2),
             P("弹幕护体", false, "用弹幕挡住吓人的画面，不是夸。", "B 站弹幕", level: 2),
 
+            // 字面规则 vs 语义反转（老司机题）
             P("真棒，一集水了四十分钟", false, "反话：「真棒」是讽刺注水。", "反讽弹幕", trick: true),
             P("好厉害哦，字幕全是错别字", false, "反话：嫌字幕差。", "反讽弹幕", trick: true),
             P("感谢 up 主，又浪费了我十分钟", false, "反话：「感谢」是在骂浪费时间。", "反讽弹幕", trick: true),
+            P("膝盖都坐麻了还没进入正题，散了散了", false, "虽然有「膝盖」，但不是「收下膝盖」，而是嫌拖沓。", "B 站弹幕", trick: true),
             P("这 up 主有毒，我循环了十遍", true, "「有毒」= 停不下来，是夸。", "网络用语", trick: true),
             P("吓死我了，再来一遍", true, "嘴上喊怕，其实爱看，是夸。", "B 站弹幕", trick: true),
             P("丧心病狂，但我喜欢", true, "看着像骂，结尾说喜欢，是夸。", "B 站弹幕", trick: true),
+            P("举报了，大半夜放烤串视频，馋得我泡了两桶面", true, "嘴上说「举报」，其实是夸美食视频拍得太诱人。", "深夜放毒弹幕", trick: true),
+            P("up 主赔钱！害我笑着笑着看哭了，眼泪止不住", true, "嘴上喊「赔钱」，其实是夸视频感人。", "B 站弹幕", trick: true),
         };
 
         // ───────────── 垃圾短信：这条是垃圾短信吗？ ─────────────
@@ -293,13 +449,17 @@ namespace LingGuangV05.XingGuang
             P("【12306】您已购 6 月 3 日 K1234 次车票，请按时乘车", false, "正常的购票通知。", "12306 通知"),
             P("【招商银行】您尾号 0524 的卡消费 45.00 元", false, "正常的消费提醒，没有让你点链接。", "银行通知"),
             M("阿杰", "网吧换下来一台旧机子，你要不要？有空来拿", false, "阿杰发的。", "日常短信"),
+            M("房东", "小伙子，水电费单贴你门上了，月底跟房租一起给就行", false, "房东发的日常水电通知，没让你给陌生卡号打钱。", "日常短信"),
             P("【菜鸟驿站】您的双 11 包裹已到驿站，取件码 3-2-1106", false, "正常的取件通知。", "双 11 快递，2016-11", 20161112, topic: "双11"),
-            P("【中国移动】充 100 送 20，回复 1 办理", false, "运营商自己的正规推广，不算垃圾短信。", "运营商推广", level: 2),
+            P("【中国移动】充 100 送 20，回复 1 办理", true, "运营商群发的充值促销推销，也算垃圾短信。", "运营商营销", level: 2),
 
+            // 字面规则 vs 语义反转（老司机题）
             P("我是你领导，明天上午来我办公室一趟，先把这个号存一下", true, "冒充领导，下一步就是借钱。", "冒充领导诈骗", trick: true),
             P("爸，我换号了，这是新号码。没钱了，先打 2000 到这张卡", true, "冒充子女要钱。", "冒充亲人诈骗", trick: true),
             P("【中国移动】尊敬的客户，您的积分即将清零，请登录 10086jf.cc 兑换", true, "网址不是 10086.cn，是钓鱼。", "钓鱼短信", trick: true),
             P("【电业局】您户本月电费 238.6 元，请按时到营业厅或网上缴纳", false, "正规缴费通知：没有可疑链接，没让你转账。", "电费通知", trick: true),
+            M("139 0000 4399", "我是房东，原来的卡注销了，这个月房租现在直接转到新卡 6228 **** 9981", true, "经典「我是房东换卡号」群发诈骗，陌生号码直接让你转账。", "冒充房东诈骗，2016 年高发", trick: true),
+            M("1069 8800 1234", "【顺丰速运】您有一份违禁包裹被扣留，请立即登录 sf-check.cc 配合清查", true, "顺丰不会发陌生链接让你清查违禁包裹，是冒充快递钓鱼。", "快递诈骗", trick: true),
 
             // 带发件人的短信：先看号码，再看内容。号码只是线索，内容才定输赢。
             M("10086", "尊敬的客户，您 5 月话费 58.30 元，账户余额 12.70 元。", false, "10086 的月结提醒，没有链接，没让你回复。", "运营商通知"),
@@ -355,7 +515,8 @@ namespace LingGuangV05.XingGuang
             M("1069 2016 0309", "【围棋】AlphaGo 同款人工智能炒股软件，月入十万，免费体验点 ag-gp.cc", true, "蹭 AlphaGo 的热点卖炒股软件，标准骗局。", "AlphaGo 人机大战之后，2016-03", 20160316, topic: "AlphaGo"),
             M("1065 2016 1010", "【宝宝心里苦】蓝瘦香菇？点击 xg-hb.cc 领 88 元红包安慰一下", true, "蹭热词 + 红包链接。", "「蓝瘦香菇」，2016-10", 20161012, topic: "蓝瘦香菇"),
             M("1069 0000 1234", "【小目标】先定一个能实现的小目标，比方说先赚他一个亿。理财咨询加微信 xmb666", true, "蹭「小目标」的理财广告。", "「小目标」，2016-08-29 走红", 20160830),
-            M("10086", "【中国移动】充 50 送 50，仅限今日，回复 KT 办理。", false, "运营商自己的正规活动，回复后要二次确认。不算垃圾短信。", "运营商推广", level: 2, trick: true),
+            M("10086", "【中国移动】充 50 送 50，仅限今日，回复 KT 办理。", true, "虽然发件人是 10086，但属于群发充值促销推销，算垃圾短信。", "运营商营销", level: 2, trick: true),
+            M("10086", "【中国移动】您尾号 0524 的手机卡已完成实名登记核验，无需回复。", false, "实名制办理结果回执，不推销、不扣费、无链接，是正常通知。", "运营商通知", level: 2, trick: true),
         };
 
         // ───────────── 标题党：这是标题党吗？ ─────────────
@@ -395,10 +556,14 @@ namespace LingGuangV05.XingGuang
             P("鲍勃·迪伦获诺贝尔文学奖", false, "直接说结果。", "诺贝尔文学奖，2016-10-13", 20161013),
             P("双 11 全天成交 1207 亿元", false, "数字大，但只是陈述。", "双 11，2016-11-12", 20161112, topic: "双11"),
 
+            // 字面规则 vs 语义反转（老司机题）
             P("震惊！一个围棋程序打败了世界冠军", true, "事情是真的，但「震惊！」的写法就是标题党。只看写法。", "AlphaGo，2016-03", 20160309, trick: true, topic: "AlphaGo"),
-            P("震惊！县城网吧老板用旧显卡训练出人工智能", true, "「震惊！」开头，标题党。", "灵光", trick: true),
+            P("震惊！小伙在出租屋里关门三个月，打开门房东惊呆了……", true, "「震惊！」+「惊呆了」+ 省略号，标准标题党。", "UC 震惊部", trick: true),
+            P("为什么男人都爱去网吧？最后一个原因太真实了……", true, "「为什么……最后一个原因」吊胃口不说内容，标准标题党。", "公众号标题", trick: true),
             P("霍金开通微博，24 小时粉丝破两百万", false, "数字惊人，但写法是平实的陈述。", "霍金开微博，2016-04-12", 20160412, trick: true),
             P("《美人鱼》票房突破 30 亿", false, "数字大，但只是陈述。", "《美人鱼》，2016 年春节档", 20160310, trick: true),
+            P("消防提醒：千万别把电瓶车推上楼充电", false, "虽然有「千万别」，但把具体要求在标题里直接说清楚了，不是标题党。", "消防通知", trick: true),
+            P("英伟达发布 GTX 1080 显卡，售价 599 美元起", false, "直接给出型号与售价，标准科技新闻。", "科技新闻，2016-05", 20160527, trick: true),
         };
 
         // ───────────── 刷单评论：这条评论是刷出来的吗？ ─────────────
@@ -416,6 +581,7 @@ namespace LingGuangV05.XingGuang
 
             P("显卡风扇有点响，玩 LOL 够用了，就是电费涨了", false, "有具体的用法和缺点，是真买家。", "真实评价"),
             P("比网吧那台快多了，但是驱动装了半天", false, "具体，有好有坏。", "真实评价"),
+            P("星光网吧 32 号机同款鼠标，左键清脆，打守望先锋刚好", false, "有具体型号和使用感受，是真买家。", "真实评价", 20160524),
             P("快递三天才到，盒子压扁了，东西倒是没坏", false, "具体的经过。", "真实评价"),
             P("颜色比图片深一点，一洗就缩水，差评", false, "具体的毛病。", "真实评价"),
             P("买来给我爸用的，他说字太小看不清", false, "具体的使用场景。", "真实评价"),
@@ -423,9 +589,14 @@ namespace LingGuangV05.XingGuang
             P("风扇声音太大，晚上睡不着，退了", false, "具体的毛病。", "真实评价"),
             P("表姐推荐的，用了一个月，键盘 F 键有点松", false, "有时间、有细节。", "真实评价"),
 
+            // 字面规则 vs 语义反转（老司机题）
             P("差评！发货太快了，我还没准备好钱包就到了", true, "假差评真好评，内容空，刷单常见套路。", "刷单套路", trick: true),
-            P("好评！电源适配器坏了联系客服，第二天就换了新的", false, "开头是「好评！」，但后面有具体经过，是真买家。", "真实评价", trick: true),
+            P("差评！怪我自己买晚了，这么好用的散热硅脂居然才发现，必须五星好评！", true, "欲扬先抑的假差评，通篇像广告词，是刷单套路。", "刷单套路", trick: true),
+            P("宝贝很好，给五星！（括号里的字删掉，一条五毛发截图结账）", true, "刷客复制文案时忘了删掉群主的括弧指令，铁证如山。", "刷单翻车", trick: true),
             P("五星，因为老板答应返现五块", true, "好评返现买来的评价，也算刷的。", "好评返现", trick: true),
+            P("好评！电源适配器坏了联系客服，第二天就换了新的", false, "开头是「好评！」，但后面有具体经过，是真买家。", "真实评价", trick: true),
+            P("五星好评！二手 GTX 960 挡板有点生锈，但烤机半小时稳定 72 度，没翻车", false, "虽然开头写「五星好评」，但有具体成色和烤机温度，是真买家。", "真实评价", trick: true),
+            P("物超所值！买来装在出租屋旧机箱里的，风扇比原来那把安静多了", false, "虽然写了「物超所值」，但有具体安装场景和对比细节，是真买家。", "真实评价", trick: true),
         };
 
         // ───────────── 中式英语：这句英文说得对吗？ ─────────────
@@ -442,8 +613,9 @@ namespace LingGuangV05.XingGuang
             P("We two who and who?", false, "中式英语：咱俩谁跟谁。", "老笑话"),
             P("Add oil!", false, "「加油」的直译，2016 年英语里还不这么说。", "中式英语", level: 2),
             P("Slip carefully", false, "「小心地滑」译错了，应为 Caution: wet floor。", "公共标识", level: 2),
-            P("「老司机」翻译成 old driver", false, "老司机是「老手」，应译 old hand 或 veteran。", "「老司机」，2016 年初走红", 20160101, level: 2, topic: "老司机"),
-            P("「你行你上」翻译成 you can you up", false, "直译，英语里不这么说。", "网络流行语", level: 2),
+            P("He is an old driver in Dota.", false, "中式英语：「老司机」指老手，英文应说 old hand 或 veteran，不能直译成 old driver。", "「老司机」，2016 年初走红", 20160101, level: 2, topic: "老司机"),
+            P("Can you open the computer #32 for me?", false, "中式英语：网吧「开机」应为 turn on the computer，open 是拆开机箱。", "常见搭配错误", level: 2),
+            P("Horse horse tiger tiger.", false, "中式英语：「马马虎虎」的逐字硬翻，英文应说 so-so。", "老笑话", level: 2),
 
             P("Excuse me, where is the toilet?", true, "正确。", "课本"),
             P("It's raining cats and dogs.", true, "地道习语：雨很大。", "英语习语"),
@@ -452,9 +624,12 @@ namespace LingGuangV05.XingGuang
             P("Welcome to Beijing!", true, "正确。", "日常英语"),
             P("Hello, my name is LingGuang.", true, "正确。", "灵光"),
 
+            // 字面规则 vs 语义反转（老司机题）
             P("How old are you?", true, "「怎么老是你」是网络笑话，但这句英文本身完全正确。", "网络笑话", trick: true),
             P("Long time no see.", true, "源自中式英语，但早就被英语接受了。", "英语外来说法", trick: true),
             P("lose face", true, "源自中文「丢脸」，英语词典早已收录。", "英语外来说法", trick: true),
+            P("Paper tiger.", true, "源自中文「纸老虎」，但早已被英语词典正式收录。", "英语外来说法", trick: true),
+            P("Brainwash.", true, "源自中文「洗脑」，早已成为标准英语单词。", "英语外来说法", trick: true),
             P("Good good study", false, "看着眼熟，但还是中式英语。", "老笑话", trick: true),
         };
     }

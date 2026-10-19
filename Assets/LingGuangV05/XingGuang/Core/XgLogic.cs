@@ -198,15 +198,18 @@ namespace LingGuangV05.XingGuang
 
         static XgLogicQuestion Calendar(Random r, int level, bool want)
         {
-            var day = new DateTime(2016, 1, 1).AddDays(r.Next(366));
+            int delta = r.Next(-14, 15);
+            if (delta == 0) delta = 7;
+            var day = new DateTime(2016, 5, 24).AddDays(delta);
             int real = (int)day.DayOfWeek;
             int asked = want ? real : (real + 1 + r.Next(6)) % 7;
+            string shift = delta > 0 ? "往后推 " + delta + " 天" : "往前推 " + (-delta) + " 天";
             return new XgLogicQuestion
             {
                 category = "日历", categoryEn = "Calendar",
                 text = "（提示：2016 年 5 月 24 日是星期二）2016 年 " + day.Month + " 月 " + day.Day + " 日是星期" + Weekdays[asked] + "吗？",
                 textEn = "(Hint: 24 May 2016 was a Tuesday.) Was " + day.ToString("d MMMM yyyy", CultureInfo.InvariantCulture) + " a " + ((DayOfWeek)asked) + "?",
-                truth = asked == real, why = "那天是星期" + Weekdays[real] + "。", whyEn = "It was a " + (DayOfWeek)real + "."
+                truth = asked == real, why = "5 月 24 日是星期二，" + shift + "，那天是星期" + Weekdays[real] + "。", whyEn = "It was a " + (DayOfWeek)real + "."
             };
         }
 

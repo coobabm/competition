@@ -56,6 +56,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public YYMessage asked;
             public bool model, tagged, early;
             public float at;
+            public XgVoiceLine[] fnVoice;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -223,6 +224,18 @@ namespace LingGuangV05.Desktop.XingGuang
                 return true;
             }
             // Before stage 5 the first 「她……爱我吗？」 gets one word it cannot possibly know; the inner voice notices.
+            if (sim.ForgetNightMatches(text))
+            {
+                var fn = sim.ForgetNightAnswer(text);
+                if (fn != null)
+                {
+                    string fnReply = T(fn.replyZh, fn.replyEn);
+                    due = new Reply { text = fnReply, question = text, asked = message, at = askedAt + ReadPause, fnVoice = fn.voice };
+                    XgYyLens.Typing(sim, due.text, due.at);
+                    MarkNightDirty();
+                    return true;
+                }
+            }
             bool early = XgSim.IsLoveQuestion(text) && sim.S.stage < XgSim.LoveStage && sim.S.loveEarlyAsked == 0;
             string scripted = sim.Scripted(text);
             if (scripted != null)
@@ -267,7 +280,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (night != null) return night;
             if (s.loveAwaitingConsent) return new[] { "【" + bound.LoveConsentText(true) + "】", "【" + bound.LoveConsentText(false) + "】" };
             if (s.originAwaitingAnswer) return new[] { bound.OriginAnswerText(true), bound.OriginAnswerText(false) };
-            var list = new List<string>(2);
+            var list = new List<string>(3);
+            if (bound.OfferForgetNight)
+            {
+                string fn = bound.ForgetNightChoice(GameText.IsEnglish);
+                if (!string.IsNullOrEmpty(fn)) list.Add(fn);
+            }
             if (bound.OfferOriginQuestion) list.Add(bound.OriginQuestion);
             if (bound.OfferLoveQuestion) list.Add(bound.LoveQuestion);
             return list.Count > 0 ? list.ToArray() : null;
@@ -328,6 +346,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (yes) InnerVoice.Say("……可我居然有点高兴。", "…And yet I'm a little happy.", 2.4f);
                 else InnerVoice.Say("……它就会这两个字。别当真。", "…Those are the only two words it knows. Don't take it seriously.", 2.6f);
             }
+            if (r.fnVoice != null)
+                foreach (var line in r.fnVoice) InnerVoice.Say(line.zh, line.en, line.seconds);
             // Its plain 是 / 否 at stage 1: what he makes of it (XgSim.YesNoVoice). The reply that carries the love line says only that.
             if (sim.S.stage == 1 && (r.tagged || r.early))
                 foreach (var line in sim.YesNoVoice(r.early)) InnerVoice.Say(line.zh, line.en, line.seconds);

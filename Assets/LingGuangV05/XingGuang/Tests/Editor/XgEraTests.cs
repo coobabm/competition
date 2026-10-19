@@ -110,5 +110,52 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.GreaterOrEqual(fresh, 2, "phrases first seen in the month starting " + monthStarts[i - 1]);
             }
         }
+
+        [Test]
+        public void ParametricTemplatesStayIn2016AndRespectTruthAndTrick()
+        {
+            var r = new System.Random(20160524);
+            var lines = new List<string>();
+            foreach (var desk in new[] { "danmu", "spam", "headline", "review" })
+            {
+                var unique = new HashSet<string>();
+                foreach (bool want in new[] { true, false })
+                {
+                    foreach (bool trick in new[] { false, true })
+                    {
+                        for (int i = 0; i < 20; i++)
+                        {
+                            var p = XgMemes.PickTemplated(desk, r, 3, 20160901, want, trick);
+                            Assert.IsNotNull(p, $"{desk} want={want} trick={trick}");
+                            Assert.AreEqual(want, p.yes, p.text);
+                            Assert.AreEqual(trick, p.trick, p.text);
+                            unique.Add(p.text);
+                            lines.Add(p.text);
+                            lines.Add(p.why);
+                        }
+                    }
+                }
+                Assert.GreaterOrEqual(unique.Count, 24, $"parametric variety for {desk}");
+            }
+            Assert.IsEmpty(EraLexicon.Audit(lines));
+        }
+
+        [Test]
+        public void PoemDistractorNeverReturnsTargetCharAndPrefersConfusables()
+        {
+            foreach (var line in XgCatalog.PoemLines)
+            {
+                for (int pos = 1; pos < line.Length; pos++)
+                {
+                    string right = line.Substring(pos, 1);
+                    for (int pick = 0; pick < 8; pick++)
+                    {
+                        string wrong = XgCatalog.PoemDistractor(line, pos, pick);
+                        Assert.AreEqual(1, wrong.Length);
+                        Assert.AreNotEqual(right, wrong, $"line={line} pos={pos}");
+                    }
+                }
+            }
+        }
     }
 }
