@@ -29,7 +29,7 @@ namespace LingGuangV05.Desktop.Story
     {
         const string VideoPath = "LingGuangV05/Video/evolution.mp4";
         /// <summary>
-        /// Play the real-time film (<see cref="OriginLive"/>, all nine scenes, 161 s) instead of the mp4. On by default
+        /// Play the real-time film (<see cref="OriginLive"/>, all nine scenes, the 88 s cut) instead of the mp4. On by default
         /// (<see cref="XgOriginFilm.LiveFilmByDefault"/>); the mp4 is only the fallback when the live player cannot be built. When the
         /// film ends (or Esc skips it) the curtain finishes as if the video had ended, so 「你觉得呢？」 still follows.
         /// </summary>

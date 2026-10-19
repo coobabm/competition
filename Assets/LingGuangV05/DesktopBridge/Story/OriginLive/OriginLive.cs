@@ -86,7 +86,9 @@ namespace LingGuangV05.Desktop.Story
     }
 
     /// <summary>
-    /// The origin film (161 s) rendered live: a full-screen player drawn with uGUI, hosting the film's scenes (<see cref="OriginLiveScenes"/>).
+    /// The origin film rendered live: a full-screen player drawn with uGUI, hosting the film's scenes (<see cref="OriginLiveScenes"/>).
+    /// It plays the 88 s cut (<see cref="XgOriginCut"/>): the player's clock is cut time, mapped to the scenes' 161 s film time, with a
+    /// flash on each cut and a zoom kick on the loud downbeats.
     /// The host owns the layers that run over every scene (backdrop, parameter HUD, captions, vignette and grain) and routes the film time to the
     /// scene that is active, with the fade and drift of the Remotion Main.tsx. Everything on screen is a pure function of the time passed to
     /// <see cref="Render"/>, so any frame can be drawn without Play mode, and scrubbing is just calling Render with another t.
@@ -95,7 +97,7 @@ namespace LingGuangV05.Desktop.Story
     /// </summary>
     public sealed class OriginLive : MonoBehaviour
     {
-        public const float Duration = (float)XgOriginFilm.Duration;
+        public const float Duration = (float)XgOriginCut.Duration;
         const string AudioPath = "LingGuangV05/Video/origin_live_soundtrack";
 
         // CSS line-height: normal of the film's faces, as a multiple of the font size (measured from the reference render).
@@ -111,7 +113,7 @@ namespace LingGuangV05.Desktop.Story
         public static float SerifWeight = .03f, MonoWeight = .03f;
 
         RectTransform root, stage, scenesRoot;
-        RawImage back, vignette, grain;
+        RawImage back, vignette, grain, flash;
         OriginGridGraphic grid;
         OriginText caption;
         OriginParamHud hud;
@@ -190,6 +192,8 @@ namespace LingGuangV05.Desktop.Story
                 new OriginTextLayer { Rgb = Color.black, Alpha = .9f, Dilate = .3f, Softness = 1, DeltaY = 2 },
                 new OriginTextLayer { Rgb = OriginInk.Lime, Alpha = .6f, Dilate = .25f, Softness = 1, HighlightsOnly = true });
 
+            flash = ctx.Raw("Cut Flash", stage, Texture2D.whiteTexture);
+            flash.color = new Color(1, 1, 1, 0);
             vignette = ctx.Raw("Vignette", stage, OriginTextures.Vignette());
             grain = ctx.Raw("Grain", stage, OriginTextures.Grain());
 
@@ -234,12 +238,15 @@ namespace LingGuangV05.Desktop.Story
             }
         }
 
-        /// <summary>Draws the film at t seconds. Pure: the same t always gives the same picture.</summary>
-        public void Render(float t)
+        /// <summary>Draws the cut at t seconds (cut time). Pure: the same t always gives the same picture.</summary>
+        public void Render(float cut)
         {
-            t = Mathf.Clamp(t, 0, Duration);
-            Clock = t;
+            cut = Mathf.Clamp(cut, 0, Duration);
+            Clock = cut;
             FitStage();
+            float t = (float)XgOriginCut.FilmTime(cut);
+            float kick = 1 + .006f * (float)XgOriginCut.Kick(cut);
+            flash.color = new Color(.92f, 1f, .86f, .16f * (float)XgOriginCut.Flash(cut));
 
             int active = XgOriginFilm.SceneAt(t);
             ActiveScene = active;
@@ -250,7 +257,7 @@ namespace LingGuangV05.Desktop.Story
                 if (!on) continue;
                 var span = XgOriginFilm.Spans[i];
                 groups[i].alpha = OriginInk.Fade((float)span.Alpha(t));
-                float k = (float)span.Scale(t);
+                float k = (float)span.Scale(t) * kick;
                 containers[i].localScale = new Vector3(k, k, 1);
                 scenes[i].SetVisible(true);
                 try { scenes[i].Render(t); }
@@ -259,7 +266,7 @@ namespace LingGuangV05.Desktop.Story
             hud.Render(t, ctx.FinalParams);
             RenderCaption(t);
 
-            int g = Mathf.FloorToInt(t * 30 + .001f) % 12;
+            int g = Mathf.FloorToInt(cut * 30 + .001f) % 12;
             grain.uvRect = new Rect((float)XgOriginColdOpen.Rand("gx" + g), (float)XgOriginColdOpen.Rand("gy" + g), 1920f / 512, 1080f / 512);
         }
 
