@@ -25,7 +25,9 @@ namespace LingGuangV05.Runtime
         /// <summary>A prologue line in the current language.</summary>
         public static string L(string key) => Lines.Get(key, GameText.IsEnglish);
 
-        /// <summary>The recorded "do you want to shut down?" (placeholder: macOS system voice, replace before release).</summary>
+        /// <summary>The recorded "do you want to shut down?". The macOS-voice placeholders moved to VoiceArchive
+        /// (2026-10-19), so this is null and the dialog reveals its question on text timing; put a real recording back
+        /// in Resources/LingGuangV05/Prologue to voice it.</summary>
         public static AudioClip ShutdownVoice() => Resources.Load<AudioClip>(GameText.IsEnglish ? "LingGuangV05/Prologue/shutdown_voice_en" : "LingGuangV05/Prologue/shutdown_voice_zh");
     }
 }
