@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.Casino
             {
                 var b = blackjackButtons[i]; b.gameObject.SetActive(Games[game] == "blackjack");
                 b.interactable = !PresentationBusy && bound.BlackjackActive && bound.Clock >= hand.nextActionAt
-                    && (i != 2 || hand.player.Count == 2 && !hand.doubled && controller.Host.Money >= hand.stake);
+                    && (i != 2 || !bound.CasinoScamBlocks && hand.player.Count == 2 && !hand.doubled && controller.Host.Money >= hand.stake);
             }
             if (Games[game] != "blackjack" || dealerScore == null || playerScore == null) return;
             dealerScore.text = Lang.T("庄家"); playerScore.text = T("你", "YOU");

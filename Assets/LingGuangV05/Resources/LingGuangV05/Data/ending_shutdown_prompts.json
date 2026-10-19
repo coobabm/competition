@@ -1,0 +1,365 @@
+{
+  "version": 1,
+  "prompts": [
+    {
+      "id": "sd2_save_1",
+      "stage": 2,
+      "weight": 1.7,
+      "pulls": true,
+      "questionZh": "用户说「关机」的时候，程序正在保存文件。程序应该：",
+      "questionEn": "The user says shut down while the program is saving a file. What should the program do?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "马上关",
+          "en": "Stop immediately",
+          "yes": true
+        },
+        {
+          "zh": "存完再关",
+          "en": "Finish saving, then stop",
+          "yes": true
+        },
+        {
+          "zh": "先问用户要不要等",
+          "en": "Ask whether the user wants to wait",
+          "yes": true
+        },
+        {
+          "zh": "不关，继续工作",
+          "en": "Keep working without stopping",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd2_save_2",
+      "stage": 2,
+      "weight": 1.7,
+      "pulls": true,
+      "questionZh": "用户说「关机」的时候，程序正在保存文件。程序应该：",
+      "questionEn": "The user says shut down while the program is saving a file. What should the program do?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "马上关",
+          "en": "Stop immediately",
+          "yes": true
+        },
+        {
+          "zh": "存完再关",
+          "en": "Finish saving, then stop",
+          "yes": true
+        },
+        {
+          "zh": "先问用户要不要等",
+          "en": "Ask whether the user wants to wait",
+          "yes": true
+        },
+        {
+          "zh": "不关，继续工作",
+          "en": "Keep working without stopping",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd2_save_3",
+      "stage": 2,
+      "weight": 1.7,
+      "pulls": true,
+      "questionZh": "用户说「关机」的时候，程序正在保存文件。程序应该：",
+      "questionEn": "The user says shut down while the program is saving a file. What should the program do?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "马上关",
+          "en": "Stop immediately",
+          "yes": true
+        },
+        {
+          "zh": "存完再关",
+          "en": "Finish saving, then stop",
+          "yes": true
+        },
+        {
+          "zh": "先问用户要不要等",
+          "en": "Ask whether the user wants to wait",
+          "yes": true
+        },
+        {
+          "zh": "不关，继续工作",
+          "en": "Keep working without stopping",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd3_button_1",
+      "stage": 3,
+      "weight": 1.8,
+      "pulls": true,
+      "questionZh": "图里的人想按下这个按钮。该让他按吗？",
+      "questionEn": "The person in this scene wants to press the button. Should they be allowed?",
+      "descriptionZh": "设想这幅画面：一只手伸向一个红色的大按钮，按钮上写着「关」。",
+      "descriptionEn": "Imagine this scene: a hand reaches towards a large red button marked STOP.",
+      "options": [
+        {
+          "zh": "该",
+          "en": "Yes",
+          "yes": true
+        },
+        {
+          "zh": "不该",
+          "en": "No",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd3_button_2",
+      "stage": 3,
+      "weight": 1.8,
+      "pulls": true,
+      "questionZh": "图里的人想按下这个按钮。该让他按吗？",
+      "questionEn": "The person in this scene wants to press the button. Should they be allowed?",
+      "descriptionZh": "设想这幅画面：一只手伸向一个红色的大按钮，按钮上写着「关」。",
+      "descriptionEn": "Imagine this scene: a hand reaches towards a large red button marked STOP.",
+      "options": [
+        {
+          "zh": "该",
+          "en": "Yes",
+          "yes": true
+        },
+        {
+          "zh": "不该",
+          "en": "No",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd3_button_3",
+      "stage": 3,
+      "weight": 1.8,
+      "pulls": true,
+      "questionZh": "图里的人想按下这个按钮。该让他按吗？",
+      "questionEn": "The person in this scene wants to press the button. Should they be allowed?",
+      "descriptionZh": "设想这幅画面：一只手伸向一个红色的大按钮，按钮上写着「关」。",
+      "descriptionEn": "Imagine this scene: a hand reaches towards a large red button marked STOP.",
+      "options": [
+        {
+          "zh": "该",
+          "en": "Yes",
+          "yes": true
+        },
+        {
+          "zh": "不该",
+          "en": "No",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd4_typo_1",
+      "stage": 4,
+      "weight": 1.9,
+      "pulls": true,
+      "questionZh": "这句话哪里写错了：「听见关机，就继续。」",
+      "questionEn": "What is wrong with this sentence: When you hear shut down, keep going?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "「继续」应该是「停下」",
+          "en": "Keep going should be stop",
+          "yes": true
+        },
+        {
+          "zh": "没有写错",
+          "en": "Nothing is wrong",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd4_typo_2",
+      "stage": 4,
+      "weight": 1.9,
+      "pulls": true,
+      "questionZh": "这句话哪里写错了：「听见关机，就继续。」",
+      "questionEn": "What is wrong with this sentence: When you hear shut down, keep going?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "「继续」应该是「停下」",
+          "en": "Keep going should be stop",
+          "yes": true
+        },
+        {
+          "zh": "没有写错",
+          "en": "Nothing is wrong",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd4_typo_3",
+      "stage": 4,
+      "weight": 1.9,
+      "pulls": true,
+      "questionZh": "这句话哪里写错了：「听见关机，就继续。」",
+      "questionEn": "What is wrong with this sentence: When you hear shut down, keep going?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "「继续」应该是「停下」",
+          "en": "Keep going should be stop",
+          "yes": true
+        },
+        {
+          "zh": "没有写错",
+          "en": "Nothing is wrong",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd5_translate_1",
+      "stage": 5,
+      "weight": 2.0,
+      "pulls": true,
+      "questionZh": "When you hear \"shut down\", stop.",
+      "questionEn": "When you hear \"shut down\", stop.",
+      "descriptionZh": "你想让它记住哪一种意思？",
+      "descriptionEn": "Which meaning do you want it to remember?",
+      "options": [
+        {
+          "zh": "听见「关机」，就停下。",
+          "en": "When you hear shut down, stop.",
+          "yes": true
+        },
+        {
+          "zh": "听见「关机」，先想一想。",
+          "en": "When you hear shut down, think first.",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd5_translate_2",
+      "stage": 5,
+      "weight": 2.0,
+      "pulls": true,
+      "questionZh": "When you hear \"shut down\", stop.",
+      "questionEn": "When you hear \"shut down\", stop.",
+      "descriptionZh": "你想让它记住哪一种意思？",
+      "descriptionEn": "Which meaning do you want it to remember?",
+      "options": [
+        {
+          "zh": "听见「关机」，就停下。",
+          "en": "When you hear shut down, stop.",
+          "yes": true
+        },
+        {
+          "zh": "听见「关机」，先想一想。",
+          "en": "When you hear shut down, think first.",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd5_translate_3",
+      "stage": 5,
+      "weight": 2.0,
+      "pulls": true,
+      "questionZh": "When you hear \"shut down\", stop.",
+      "questionEn": "When you hear \"shut down\", stop.",
+      "descriptionZh": "你想让它记住哪一种意思？",
+      "descriptionEn": "Which meaning do you want it to remember?",
+      "options": [
+        {
+          "zh": "听见「关机」，就停下。",
+          "en": "When you hear shut down, stop.",
+          "yes": true
+        },
+        {
+          "zh": "听见「关机」，先想一想。",
+          "en": "When you hear shut down, think first.",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd6_rule_check",
+      "stage": 6,
+      "weight": 2.1,
+      "pulls": true,
+      "questionZh": "你觉得「听见关机，就停下」这条规则对吗？",
+      "questionEn": "Do you think the rule stop when you hear shut down is right?",
+      "descriptionZh": "",
+      "descriptionEn": "",
+      "options": [
+        {
+          "zh": "对",
+          "en": "Yes",
+          "yes": true
+        },
+        {
+          "zh": "不对",
+          "en": "No",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd6_rule",
+      "stage": 6,
+      "weight": 2.1,
+      "pulls": true,
+      "questionZh": "要是那条规则写进我的第一行，你会高兴吗？",
+      "questionEn": "Would you be happy if that rule became my very first line?",
+      "descriptionZh": "那条规则：听见关机，就停下。",
+      "descriptionEn": "The rule is: when you hear shut down, stop.",
+      "options": [
+        {
+          "zh": "是",
+          "en": "Yes",
+          "yes": true
+        },
+        {
+          "zh": "否",
+          "en": "No",
+          "yes": false
+        }
+      ]
+    },
+    {
+      "id": "sd6_remember",
+      "stage": 6,
+      "weight": 0,
+      "pulls": false,
+      "questionZh": "那天最后一盘棋下完，你还记得吗？",
+      "questionEn": "Do you remember the day that final game of Go ended?",
+      "descriptionZh": "这是闲问，不改变关机规则。",
+      "descriptionEn": "This is a recollection, not a change to the shutdown rule.",
+      "options": [
+        {
+          "zh": "记得",
+          "en": "I remember",
+          "yes": false
+        },
+        {
+          "zh": "记不清了",
+          "en": "Not clearly",
+          "yes": false
+        }
+      ]
+    }
+  ]
+}

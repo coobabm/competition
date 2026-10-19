@@ -16,7 +16,7 @@ namespace LingGuangV05.Editor
     public static partial class ChapterOneInstaller
     {
         // Explicit additive scene migration, never run automatically while loading the game.
-        // Data Import unlocks this folder and installation together, with no second charge.
+        // Purchased files reveal the folder; Data Import separately unlocks installation.
         [MenuItem("Tools/LingGuang/Install Virtual Files Window")]
         public static void InstallFilesWindow()
         {
@@ -46,7 +46,7 @@ namespace LingGuangV05.Editor
             view.shortcutRoot=shortcut.gameObject;shortcut.gameObject.SetActive(false);
             view.titleLabel=window.windowDragger.transform.Find("ChapterOneTitle").GetComponent<TMP_Text>();
             view.desktopLabel=shortcut.transform.Find("ChapterOneDesktopLabel").GetComponent<TMP_Text>();
-            view.titleLabel.text=view.desktopLabel.text="资料";
+            view.titleLabel.text=view.desktopLabel.text="资料文件夹";
             var status=window.windowContainer.Find("Aero Status Bar/Status");if(status!=null)status.gameObject.SetActive(false);
             UnityEventTools.AddPersistentListener(shortcut.onClick,view.Show);
             UnityEventTools.AddPersistentListener(close.onClick,window.CloseWindow);

@@ -20,7 +20,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim gameOwner;
         /// <summary>Desks whose player picked the yes/no cards (kept for this session).</summary>
         readonly HashSet<string> classicDesks = new HashSet<string>();
-        bool DeskGameVisible => deskGame != null && deskGame.root != null && deskGame.root.gameObject.activeSelf;
+        public bool DeskGameVisible => deskGame != null && deskGame.root != null && deskGame.root.gameObject.activeInHierarchy;
 
         void BuildDeskGame()
         {

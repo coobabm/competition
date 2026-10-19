@@ -35,7 +35,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     float angle = i * 2.39996323f + region * .7f;
                     float radius = .066f + i % 3 * .002f;
-                    var uv = RegionCenter(region) + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+                    var uv = RegionCenter(region) + RegionOffset(region, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius);
                     var at = area.min + Vector2.Scale(area.size, uv);
                     var ink = dustColors[region]; ink.a = .5f;
                     // Each small cloud aggregates many real off-screen concepts, without individual IDs or invented links.

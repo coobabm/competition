@@ -263,6 +263,7 @@ namespace LingGuangV05.XingGuang
 
         public static List<Element> Elements(XgBoardCard card, XgKnobs k)
         {
+            if (XgArithmeticRelations.TryElements(card, k, out var relations)) return relations;
             if (k.features) card = Engineered(card);
             var list = new List<Element>(card.features.Count + 1);
             if (k.bias) list.Add(new Element { id = BiasElement, act = 1, x = -1 });
@@ -543,12 +544,20 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>Share of cards answered right (the test set is never trained on).</summary>
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileAccuracy = new XgSimulationMarker("Xg.Board.Accuracy");
+#endif
         public double Accuracy(IList<XgBoardCard> cards, XgKnobs k)
         {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileAccuracy.Auto())
+#endif
+            {
             if (cards == null || cards.Count == 0) return 0;
             int right = 0;
             foreach (var card in cards) if (Predict(card, k, out _) == card.truth) right++;
             return (double)right / cards.Count;
+                    }
         }
 
         // ───────────── training: R1–R6 on one card ─────────────

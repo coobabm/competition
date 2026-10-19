@@ -82,6 +82,7 @@ namespace LingGuangV05.XingGuang
 
             // ───────────── 级别 2 · 否 ─────────────
             S(2, false, "太阳绕着地球转。", "The sun goes around the Earth.", "是地球绕着太阳转。", "It is the Earth that goes around the sun."),
+            S(2, false, "黄河是中国最长的河。", "The Yellow River is the longest river in China.", "最长的是长江，黄河排第二。", "The Yangtze is the longest; the Yellow River comes second."),
             S(2, false, "一小时有一百分钟。", "An hour has a hundred minutes.", "一小时是六十分钟。", "An hour is sixty minutes."),
             S(2, false, "铁永远不会生锈。", "Iron never rusts.", "铁放在潮湿的地方会生锈。", "Iron rusts in a damp place."),
             S(2, false, "一米等于十厘米。", "One metre is ten centimetres.", "1 米是 100 厘米。", "1 m is 100 cm."),
@@ -153,7 +154,7 @@ namespace LingGuangV05.XingGuang
             S(1, true, "西红柿炒鸡蛋是一道菜。", "Tomato and scrambled egg is a dish.", "家常菜，酸酸甜甜，配米饭最香。", "A home-cooked classic, sweet and sour, best with rice."),
             S(1, true, "熊猫身上是黑白两种颜色。", "A panda is black and white.", "黑眼圈、黑耳朵、白肚子。", "Black eye patches, black ears, white belly."),
             S(1, true, "刚泡好的方便面是烫的。", "Freshly made instant noodles are hot.", "开水泡的，小心烫嘴。", "Made with boiling water. Mind your tongue."),
-            S(1, true, "长颈鹿的脖子很长。", "A giraffe has a long neck.", "名字里就写着呢。", "It is in the name."),
+            S(1, true, "长颈鹿的脖子很长。", "A giraffe has a long neck.", "长脖子是它的显著特征。", "Its long neck is a distinctive feature."),
             S(1, true, "柠檬是酸的。", "Lemons are sour.", "咬一口，脸都皱起来。", "One bite and your whole face scrunches up."),
             S(1, true, "牙刷是用来刷牙的。", "A toothbrush is for brushing teeth.", "早晚各一次。", "Morning and night."),
             S(1, true, "人的血是红色的。", "Human blood is red.", "划破手指流出来的是红的。", "Cut a finger and it bleeds red."),

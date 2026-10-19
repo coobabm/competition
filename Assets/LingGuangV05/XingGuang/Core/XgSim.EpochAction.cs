@@ -42,6 +42,7 @@ namespace LingGuangV05.XingGuang
             run.epochProgress = 0;
             // The bar takes real time and moves like a real one (XgSim.TrainPace.cs).
             PlanPace(run, host, PaceSeconds(run, host));
+            ReserveTrainingQuizBonus(run);
             EpochStarted?.Invoke(new XgEpoch { track = (int)track, epoch = run.epoch + 1, hand = hand });
             return true;
         }
@@ -69,7 +70,7 @@ namespace LingGuangV05.XingGuang
                 LastEpochWasHand = hand;
                 var previousLearning = timedEpochLearning;
                 timedEpochLearning = (run.track, learningFactor);
-                try { TrainEpoch((XgTrack)run.track, host, hand); }
+                try { if (TrainEpoch((XgTrack)run.track, host, hand) == null) RefundTrainingQuizBonus(run); }
                 finally { timedEpochLearning = previousLearning; }
             }
         }

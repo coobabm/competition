@@ -84,9 +84,9 @@ namespace LingGuangV05.Desktop.Story
         {
             var desk = PrologueDirector.Desk;
             if (runtime == null || runtime.TestMode || desk == null) return;
-            if (name == "rent.partial" || name == "rent.reminder" || name == "rent.warning" || name == "rent.started" || name == "rent.due" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
+            if (name == "rent.partial" || name == "rent.reminder" || name == "rent.warning" || name == "rent.started" || name == "power.cut" || name == "rent.decision" || name == "rent.settled" || name == "rent.raised")
                 LingGuangV05.Desktop.YY.YYChatHub.Instance?.Receive("landlord", runtime.Sim.LastMessage);
-            if (name == "rent.due") LingGuangV05.Desktop.YY.YYChatHub.Instance?.ReceiveRentRequest();
+            if (name == "rent.due") LingGuangV05.Desktop.YY.YYChatHub.Instance?.FlushPendingRentInvoices();
             switch (name)
             {
                 case "rent.decision":

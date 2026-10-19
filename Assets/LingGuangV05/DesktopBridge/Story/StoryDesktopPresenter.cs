@@ -776,6 +776,8 @@ namespace LingGuangV05.Desktop.Story
             var yes = ChoiceButton(buttonArea, "是", new Vector2(-170, 0), new Color(.18f, .45f, .62f, 1), () => answered = 1);
             var no = ChoiceButton(buttonArea, "否", new Vector2(170, 0), new Color(.29f, .35f, .45f, 1), () => answered = 0);
             var spoken = Label(card, "", 44, new Vector2(0, -120), new Vector2(780, 120), new Color(.92f, .94f, .97f, 1));
+            var spokenNotice=AiContentNotice.CreateFooter(card,font,new Color(.6f,.65f,.72f,1),4);
+            spokenNotice.transform.parent.gameObject.SetActive(false);
             var hint = Label(cutsceneRoot, "点“是”或“否”回答 · Esc 跳过", 20, new Vector2(0, -230), new Vector2(900, 30), new Color(.6f, .65f, .72f, .8f));
 
             yield return Fade(cutsceneGroup, 1, .6f);
@@ -829,6 +831,7 @@ namespace LingGuangV05.Desktop.Story
                 }
                 yield return Fade(buttonsGroup, 0, .4f);
                 SetText(spoken, sentence);
+                spokenNotice.transform.parent.gameObject.SetActive(true);
                 if (reduce)
                 {
                     spoken.alpha = 0;
@@ -847,7 +850,8 @@ namespace LingGuangV05.Desktop.Story
                 chatGroup.alpha = 0;
                 Panel(chat, new Vector2(0, 66), new Vector2(460, 38), new Color(.36f, .6f, .82f, 1));
                 Label(chat, "YY · 新消息", 20, new Vector2(-120, 66), new Vector2(200, 30), Color.white);
-                Label(chat, sentence, 26, new Vector2(0, -12), new Vector2(420, 90), new Color(.1f, .12f, .16f, 1));
+                Label(chat, sentence, 26, new Vector2(0, 0), new Vector2(420, 78), new Color(.1f, .12f, .16f, 1));
+                AiContentNotice.CreateFooter(chat,font,new Color(.32f,.37f,.42f,1),4);
                 yield return Fade(chatGroup, 1, .8f);
                 yield return Wait(1.6f);
             }

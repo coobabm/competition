@@ -116,21 +116,36 @@ namespace LingGuangV05.Tests
         static LaoZhouFacts Facts(int stage, string shortOf = "") => new LaoZhouFacts { stage = stage, shortOf = shortOf, nextAbility = shortOf.Length > 0 ? "看图说词" : "", today = GameCalendar.FirstDay(stage).AddDays(10), money = 1200, temperature = 50, gpus = 2 };
 
         [Test]
-        public void FutureLaoZhouAnswersADirectionFirstAndExplainsOnARepeat()
+        public void FutureLaoZhouPracticalReplyDoesNotReadPrivateProgress()
         {
-            var f = Facts(2, "params");
-            string first = LaoZhouFuture.Reply("卡在 50% 了", f, 1, false);
-            string second = LaoZhouFuture.Reply("卡在 50% 了", f, 2, false);
-            StringAssert.Contains("模型小了", first);
-            Assert.AreNotEqual(first, second);
-            StringAssert.Contains("C 级", second);
-            StringAssert.Contains("数据包", LaoZhouFuture.Reply("卡住了怎么办", Facts(3, "data"), 1, false));
-            foreach (var shortOf in new[] { "params", "data", "" })
-                for (int times = 1; times <= 3; times++)
+            foreach(var query in new[]{"卡住了怎么办","电费","显卡温度","在吗","背答案"})
+            {
+                var early=Facts(1);var late=Facts(6,"data");late.today=early.today;
+                Assert.AreEqual(LaoZhouFuture.Reply(query,early,1,false),LaoZhouFuture.Reply(query,late,1,false));
+            }
+        }
+
+        [Test]
+        public void LegacyTechnicalKnowledgeIsRelevantAndIndependentOfPrivateSave()
+        {
+            var early=Facts(1);var late=Facts(6,"data");late.today=early.today;
+            late.nanCount=981;late.temperature=987;late.bestAccuracy=.99;late.phenomenon="PRIVATE_PHENOMENON";
+            late.aiName="PRIVATE_AI";late.money=998877;late.emergedThisStage=true;
+            foreach(bool english in new[]{false,true})
+            {
+                string nan=LaoZhouFuture.Reply(english?"What is NaN?":"NaN 是什么",early,1,english);
+                string overfit=LaoZhouFuture.Reply(english?"What is overfitting?":"什么是过拟合",early,1,english);
+                StringAssert.Contains(english?"learning rate":"学习率",nan);
+                StringAssert.Contains(english?"test set":"测试集",overfit);
+                Assert.AreNotEqual(nan,overfit);
+                Assert.AreNotEqual(LaoZhouQuestions.GeneralReply(english),nan);
+                foreach(var query in new[]{"NaN 是什么","什么是过拟合","What is NaN?","What is overfitting?"})
                 {
-                    string reply = LaoZhouFuture.Reply("卡住了怎么办", Facts(3, shortOf), times, false);
-                    Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(reply, "0\\.\\d|\\d{2,}"), "never a number: " + reply);
+                    string reply=LaoZhouFuture.Reply(query,late,2,english);
+                    Assert.AreEqual(LaoZhouFuture.Reply(query,early,2,english),reply);
+                    Assert.IsFalse(reply.Contains("PRIVATE_")||reply.Contains("981")||reply.Contains("987")||reply.Contains("998877"));
                 }
+            }
         }
 
         [Test]
@@ -150,14 +165,12 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
-        public void ThePromptCarriesTheGameStateButNoGoldenSettings()
+        public void ThePromptDoesNotCarryPrivateGameState()
         {
-            var f = Facts(3, "params"); f.nanCount = 4; f.phenomenon = "梯度消失";
-            string p = LaoZhouFuture.SystemPrompt(f, false);
-            StringAssert.Contains("看图说词", p); StringAssert.Contains("参数量", p); StringAssert.Contains("梯度消失", p); StringAssert.Contains("NaN 4", p);
-            StringAssert.Contains("永远不承认", p); StringAssert.Contains("不要主动", p);
-            StringAssert.Contains("真香", p, "the banned-meme rule is part of the prompt");
-            Assert.IsFalse(p.Contains("LSTM") || p.Contains("0.01") || p.Contains("裁剪"), "the golden setting is never in what he sees");
+            var f=Facts(3,"params");f.nanCount=481;f.phenomenon="PRIVATE_PHENOMENON";f.aiName="PRIVATE_AI";
+            string p=LaoZhouFuture.SystemPrompt(f,false);
+            Assert.IsFalse(p.Contains("PRIVATE_")||p.Contains("481")||p.Contains("看图说词")||p.Contains("1200"));
+            Assert.AreEqual(p,LaoZhouFuture.SystemPrompt(Facts(6),false));
         }
 
         [Test]
@@ -170,15 +183,8 @@ namespace LingGuangV05.Tests
             Assert.Less(Shown(At(3, 8, 20)), Shown(At(6, 12, 20)));
             Assert.IsTrue(build.floors.Exists(f => f.text.Contains("大神") && f.minStage >= 3), "the early threads carry no praise");
             Assert.IsFalse(build.floors.Exists(f => f.minStage == 0 && (f.text.Contains("大神") || f.text.Contains("佩服") || f.text.Contains("服。"))));
-            // 老周 only lets it slip from the third ability, and by the sixth he is the one asking.
-            Assert.IsFalse(LaoZhouFuture.SystemPrompt(Facts(2), false).Contains("同行"));
-            StringAssert.Contains("同行", LaoZhouFuture.SystemPrompt(Facts(6), false));
-            bool late = false;
-            foreach (var q in new[] { "在吗", "卡住了怎么办", "lr 炸了", "买哪张显卡", "电费" })
-                for (int times = 1; times <= 2; times++)
-                    late |= LaoZhouFuture.Reply(q, Facts(6, "data"), times, false).Contains("第一个想问的是你");
-            Assert.IsTrue(late, "some answers carry it");
-            Assert.IsFalse(LaoZhouFuture.Reply("在吗", Facts(2), 1, false).Contains("佩服"));
+            Assert.AreEqual(LaoZhouFuture.SystemPrompt(Facts(2),false),LaoZhouFuture.SystemPrompt(Facts(6),false));
+            Assert.AreEqual(LaoZhouFuture.Attitude(2,false),LaoZhouFuture.Attitude(6,false));
         }
 
         [Test]

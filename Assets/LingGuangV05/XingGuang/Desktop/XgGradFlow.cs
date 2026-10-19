@@ -114,10 +114,11 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (pending == null) return;
                 if (Time.unscaledTime - pendingAt > StaleSeconds) { pending = null; return; }
-                if (view.Visible && (real == null || !real.Showing) && !InsightCardUp) { Begin(pending); pending = null; }
+                if (view.Visible && (real == null || !real.Showing) && !InsightCardUp && !(view.Teach?.DeskGameVisible ?? false)) { Begin(pending); pending = null; }
                 return;
             }
             if (!view.Visible) return; // paused while the window is hidden
+            if (view.Teach?.DeskGameVisible ?? false) { panel.gameObject.SetActive(false); lesson = null; return; }
             float clock = Time.unscaledTime;
             if (real != null && real.Showing && closeAt < 0) closeAt = clock; // a real run takes the corner
             if (closeAt >= 0)

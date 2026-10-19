@@ -27,6 +27,8 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.unlocked.Remove("lstm"); sim.S.unlocked.Remove("gru"); sim.S.unlocked.Remove("mlp");
             sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 300 });
             if (!sim.S.owned.Contains("longtext")) sim.S.owned.Add("longtext");
+            sim.S.installedDataBatches.Add(new XgLabelCount { dataset = "longtext", count = XgSim.PackBatches("longtext") });
+            Assert.That(sim.InstalledBatches("longtext"), Is.GreaterThan(0), "fixture has installed training data");
             sim = new XgSim(sim.S) { GoldChance = 0 };
             host = new Host();
             var s = XgTrack.Sequence;

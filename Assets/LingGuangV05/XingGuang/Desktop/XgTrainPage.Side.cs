@@ -67,6 +67,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var scroll = right.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = right; scroll.content = sideContent; scroll.horizontal = false; scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 25;
+            BuildRelicAccess();
             BuildScaleCard();
             BuildGearCard();
             BuildLedgerCard();

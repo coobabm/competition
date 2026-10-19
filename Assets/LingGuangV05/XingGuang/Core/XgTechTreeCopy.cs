@@ -13,6 +13,13 @@ namespace LingGuangV05.XingGuang
         static string T(XgSim sim,string zh,string en)=>sim.English?en:zh;
         static readonly Dictionary<string,Copy> All=new Dictionary<string,Copy>(StringComparer.Ordinal)
         {
+            { "daily.dice", new Copy("概率直觉","Probability intuition","从几种可能里数机会","Count equally likely outcomes","概率小题；监控预报更细","Questions; finer monitor forecasts") },
+            { "daily.news", new Copy("时事","Current affairs","再想想读过的新闻","Recall news you have read","开放新闻回顾","Opens news review") },
+            { "daily.surf", new Copy("冲浪","Surfing","在帖子里找到资料","Find learning links in posts","高亮手写数字资料链接","Highlights the digit-data link") },
+            { "daily.bargain", new Copy("砍价","Bargaining","买二手显卡少花一点","Spend less on used GPUs","启用喵鱼二手显卡折扣","Discounts Miaoyu used GPUs") },
+            { "daily.care", new Copy("体贴","Considerate","记得对方说过的话","Remember what others told you","体贴表达与已知日期提醒","Considerate cues and known dates") },
+            { "daily.slang", new Copy("网络用语","Internet slang","读懂群里的梗","Understand the group slang","加入用语解释与斗图建议","Adds slang and sticker tips") },
+            { "daily.rhythm", new Copy("节奏","Rhythm","让完成提示跟上音乐","Let completion cues follow music","完成提示跟随音乐重音","Completion cues follow music accents") },
             { "perceptron", new Copy("感知机 P 1958","Perceptron P 1958","用直线分两边","Split with one line","启用基础脑型","Enables basic architecture") },
             { "mlp", new Copy("多层感知机 MLP 1986","Multilayer MLP 1986","把简单线索组合起来","Combine simple clues","加入多层脑型","Adds multilayer architecture") },
             { "lenet", new Copy("手写卷积 LeNet 1998","Digit CNN LeNet 1998","小窗口寻找笔画","Find strokes locally","加入手写卷积脑型","Adds digit CNN architecture") },
@@ -21,7 +28,7 @@ namespace LingGuangV05.XingGuang
             { "vgg", new Copy("小窗卷积 VGG 2014","Small-filter VGG 2014","小窗口层层叠起来","Stack small filters","加入小窗卷积脑型","Adds VGG architecture") },
             { "googlenet", new Copy("多路卷积 Inception 2014","Multi-path Inception 2014","大小窗口一起看","Use several window sizes","加入多路卷积脑型","Adds multi-path architecture") },
             { "lstm", new Copy("门控记忆 LSTM 1997","Gated memory LSTM 1997","让重要线索多留一会","Keep useful clues longer","加入门控记忆脑型","Adds gated-memory architecture") },
-            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact-memory architecture") },
+            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact memory") },
             { "textcnn", new Copy("文字卷积 CNN 2014","Text CNN 2014","用小窗口读短句","Read local word groups","加入文字卷积脑型","Adds text CNN architecture") },
             { "resnet", new Copy("残差网络 ResNet 2015","Residual ResNet 2015","给信息开一条近道","Give signals a shortcut","启用跨层直连","Enables skip connections") },
             { "seq2seq", new Copy("编码解码 Seq2Seq 2014","Encoder-decoder S2S 2014","读完一句再组织输出","Read, then compose","加入编码解码脑型","Adds encoder-decoder architecture") },
@@ -74,6 +81,18 @@ namespace LingGuangV05.XingGuang
             { "label.parallel", new Copy("复核扩容 Q 工具2016","Review inbox Q tool 2016","存下拿不准的题","Keep uncertain answers","复核容量20→60","Review capacity 20 to 60") },
             { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","认出见过的检查题","Recognise known test cards","金题转人工复核","Routes gold items to review") },
             { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","让它替你抄数字","Let it type the digits","新验证码自动提交","Auto-submits new captchas") },
+            { "relic.slots8", new Copy("道具扩容 I","Relic slots I","给稀有道具留位置","Make room for rare items","装备格4→8","Equipped slots 4 to 8") },
+            { "arith.powers", new Copy("算术：幂与根式","Powers and roots","再多一种算法","Try another calculation","加入幂与根式题","Adds powers and roots") },
+            { "arith.calculus", new Copy("算术：微积分","Calculus","看看变化的规律","Explore how things change","加入极限、导数、积分","Limits, derivatives, integrals") },
+            { "arith.auto", new Copy("算术自动作答","Auto arithmetic","让它试着敲一下","Let it try a whack","开放自动打地鼠","Enables auto whack-a-mole") },
+            { "gamedata", new Copy("对局记录","Game records","收集与AI的新对局","Collect new games with your AI","对局产包，拖入练页安装","Creates packs to install in Train") },
+            { "board.logic1", new Copy("一步判断","One-move judgment","从棋盘数字找机会","Find chances from board cells","寻找直接连五或挡四","Finds a win or blocks four") },
+            { "board.logic2", new Copy("看懂棋盘截图","Read board pictures","从棋盘原图读出棋子","Read stones from a board image","开放五子棋读图","Unlocks the Gomoku reader") },
+            { "board.logic3", new Copy("想两步以上","Plan ahead","先想对手会怎么应","Consider the next reply","开启多步走法判断","Enables multi-step planning") },
+            { "board.logic4", new Copy("自己跟自己下","Self-play","夜间让它轮流自对弈","Practise a game each night","开启夜间自对弈","Enables night self-play") },
+            { "nextmove", new Copy("下一步走哪","Next move","练习判断下一步棋","Practise choosing a move","教页开放棋局四选一题","Four-choice board quiz in Teach") },
+            { "books.library", new Copy("图书馆网页","Library website","挑一本想读的书","Choose something to read","开放网页，书籍另购","Opens website; books sold separately") },
+            { "relic.slots12", new Copy("道具扩容 II","Relic slots II","再装上四件道具","Equip four more rare items","装备格8→12","Equipped slots 8 to 12") },
             { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","把资料装进大脑","Load files into its brain","开放资料夹、安装与网址","Opens files, import and URLs") },
             { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","看清每笔钱的去向","Track every payment","显示资金收入与电力","Shows funds, income and power") },
             { "train.curve", new Copy("训练曲线 CURVE 工具2016","Training curve CURVE tool 2016","看看每轮有没有进步","Watch progress each round","解锁练页","Unlocks Train") },
@@ -94,6 +113,7 @@ namespace LingGuangV05.XingGuang
             if(n.kind==XgNodeKind.Depth)return T(sim,"网络深度 D 工具2016","Network depth D tool 2016");
             if(n.kind==XgNodeKind.Width)return T(sim,"网络宽度 W 工具2016","Network width W tool 2016");
             if(n.id=="danmu.pack")return T(sim,"弹幕情绪 DATA 工具2016","Comment sentiment DATA 2016");
+            if(n.id=="crosssentence.pack")return T(sim,"跨句理解 DATA 工具2016","Cross-sentence DATA 2016");
             if(n.id=="pack.poem_next")return T(sim,"唐诗接字 DATA 工具2016","Tang verse DATA 2016");
             return sim.NodeName(n)+T(sim,n.id.StartsWith("persona.")?" PERS 工具2016":" DATA 工具2016",n.id.StartsWith("persona.")?" PERS tool 2016":" DATA tool 2016");
         }
@@ -104,6 +124,7 @@ namespace LingGuangV05.XingGuang
             if(All.TryGetValue(n.id,out var c))return T(sim,c.summary,c.summaryEn);
             if(n.kind==XgNodeKind.Depth)return T(sim,"多一层组合线索","Combine clues in more layers");
             if(n.kind==XgNodeKind.Width)return T(sim,"同时容纳更多线索","Hold more clues per layer");
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"看懂性格如何变化","Understand personality changes");
             if(n.id.StartsWith("persona."))return T(sim,"聊聊它会怎样选择","Explore its choices");
             if(n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack."))return T(sim,"换一套题继续教它","Teach it a new question set");
             return T(sim,"内容待核对","Copy needs review");
@@ -116,6 +137,7 @@ namespace LingGuangV05.XingGuang
             if(n.kind==XgNodeKind.Depth)return "▶ "+T(sim,"可用层数上限"+n.value,"Layer cap "+n.value);
             if(n.kind==XgNodeKind.Width)return "▶ "+T(sim,"每层宽度上限"+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))],"Width cap "+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))]);
             if(n.id.StartsWith("pack."))return T(sim,"▶ 开放对应题桌","▶ Opens this question desk");
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"▶ 名字页打开性格档案","▶ Open Personality archive from the profile");
             if(n.id.StartsWith("persona."))return T(sim,"▶ 开放对应性格题包","▶ Opens this personality pack");
             if(n.kind==XgNodeKind.Dataset)return T(sim,"▶ 获得数据包使用权","▶ Grants access to this dataset");
             return T(sim,"▶ 功能待核对","▶ Effect needs review");
@@ -126,10 +148,12 @@ namespace LingGuangV05.XingGuang
         public static string Detail(XgNode n,XgSim sim)
         {
             if(n==null||sim.NodeMystery(n))return Summary(n,sim)+"。";
+            if(XgDailyLife.Node(n.id)!=null)return XgDailyLifeCopy.Detail(n.id,sim.English);
             if(n.id=="transformer"||n.id=="multihead"||n.id=="position"||n.id=="sft"||n.id=="cot")
                 return T(sim,"这是你在2016年尝试的自研方向，不是当年公开发表成果的介绍。","This is your own experiment in 2016, not a claim about a publication from that year.")+"\n"+Summary(n,sim)+T(sim,"。",".");
             if(n.id=="label.parallel")return T(sim,"待复核容量从20题增加到60题，满后自动暂停。多留四十道题，等你有空再来复核。","The review inbox expands from 20 to 60 cards; automation pauses when full. Keep forty more cards until you have time to review them.");
             if(n.id.StartsWith("pack.")){var p=XgTeachingPacks.Find(n.id.Substring(5));return p==null?Summary(n,sim):T(sim,p.play,p.playEn);}
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"阶段2起，赞/踩满15次或发现性格漂移后花¥300解锁。对照开局愿望，查看近14游戏日的性格变化和原因。","From stage 2, unlock for ¥300 after 15 ratings or observed drift. Compare personality with your opening wish and explore changes and causes over the last 14 game days.");
             if(n.id.StartsWith("persona."))return T(sim,"这组问题用来了解它的选择。回答与标签记录在YY的性格页。","These questions explore its choices. Answers and labels are kept on YY's Personality page.");
             if(n.kind==XgNodeKind.Depth||n.kind==XgNodeKind.Width)return Summary(n,sim)+T(sim,"。购买提高可用上限，模型按结构和显存配置。",". Buying raises the available cap; the model is configured for its architecture and VRAM.");
             if(n.kind==XgNodeKind.Dataset)return T(sim,"例题和答案构成训练资料。不同题库练习不同本领。","Examples and answers form the training material. Different datasets practise different skills.");
@@ -147,6 +171,9 @@ namespace LingGuangV05.XingGuang
             }
             switch (node.id)
             {
+                case "board.logic2": return T(sim, "把摆渡或贴吧的本站240×240标准五子棋原图拖入游戏中心的棋盘读图入口。它从像素识别15路棋盘，再建议黑棋下一步。", "Drag this site's original 240×240 Gomoku image from Bodu or Tieba into the Game Hub board reader. It reads the 15×15 board from its pixels and suggests Black's next move.");
+                case "board.logic3": return T(sim, "五子棋和国际象棋会搜索后续走法，再判断当前这步。飞行棋会避险，跳棋会规划路线，大富翁会留出现金。", "Gomoku and chess search later moves before choosing the current move. Aeroplane chess considers risk, Chinese checkers plans routes, and Monopoly-style play keeps a cash reserve.");
+                case "board.logic4": return T(sim, "游戏内22:00–06:00、保持游戏运行时，每夜选一种棋类自对弈，按五子棋、飞行棋、跳棋、大富翁轮换。完成3局后，早晨生成记录包。把包拖入练页安装后才更新偏好。", "During in-game 22:00–06:00 while the game is running, one game per night rotates among Gomoku, aeroplane chess, Chinese checkers and Monopoly-style play. Three finished games are packed in the morning. Drag the pack into Train to update preferences.");
                 case "weights": return T(sim, "给每条线索分配不同的分量，重要的线索更能影响答案。", "Give each clue a weight so important clues influence the answer more.");
                 case "learnrule": return T(sim, "答错后，把线索的分量往正确答案的方向调一点。", "After a wrong answer, adjust the weights a little toward the right one.");
                 case "bias": return T(sim, "让判断的门槛可以移动，不必总从同一个起点划线。", "Move the decision threshold instead of always drawing the boundary from the same starting point.");

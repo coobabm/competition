@@ -1,4 +1,5 @@
 using System;
+using VerificationTrace = LingGuangV05.Runtime.Persistence.ReleaseVerificationTrace;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -112,6 +113,7 @@ namespace LingGuangV05.Desktop.LLM
 
         sealed class Job
         {
+            public long verificationRequestId;
             public IList<KeyValuePair<string, string>> messages;
             public JObject parameters;
             public bool thinking;
@@ -187,6 +189,8 @@ namespace LingGuangV05.Desktop.LLM
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         internal static void Attach()
         {
+            // An invalid explicit verification path must not continue into model/game startup.
+            _ = LingGuangV05.Runtime.Persistence.VerificationSavePaths.Root;
             var runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.TestMode) return;
             var llm = runtime.GetComponent<LocalLlm>() ?? runtime.gameObject.AddComponent<LocalLlm>();
@@ -284,7 +288,7 @@ namespace LingGuangV05.Desktop.LLM
                     yield break;
                 }
                 if (tail.Contains("missing tensor 'blk."))
-                    Debug.LogWarning("[灵光] 模型缺张量：新版 Qwen3.5 GGUF 带 MTP（nextn）层，LlamaLib 的 llama.cpp 还不认，用 Tools/LocalLLM/strip_qwen_mtp.py 去掉它。");
+                    Debug.LogWarning("[Local model] Missing tensor: verify the GGUF checksum and runtime compatibility. Only use strip_qwen_mtp.py if the file metadata actually declares MTP/nextn layers; the pinned release model does not contain them.");
                 if (!LlmScheduling.Fallback(mode, out var next))
                 {
                     Debug.LogWarning("[灵光] 本地模型启动失败（" + mode + "）：\n" + tail);
@@ -448,6 +452,8 @@ namespace LingGuangV05.Desktop.LLM
             foreach (var dir in dirs)
             {
                 if (!Directory.Exists(dir)) continue;
+                string canonical = Path.Combine(dir, LocalModelRelease.FileName);
+                if (File.Exists(canonical) && new FileInfo(canonical).Length == LocalModelRelease.Bytes) return canonical;
                 var files = Directory.GetFiles(dir, "*.gguf");
                 Array.Sort(files, StringComparer.Ordinal);
                 foreach (var f in files) if (!Path.GetFileName(f).StartsWith("mmproj", StringComparison.OrdinalIgnoreCase) && new FileInfo(f).Length > 100_000_000) return f;
@@ -469,11 +475,12 @@ namespace LingGuangV05.Desktop.LLM
         /// visible work, held while the player types, ~40 s budget, then done(null)).
         /// </param>
         public void Chat(IList<KeyValuePair<string, string>> messages, int maxTokens, float temperature, Action<string> done, bool thinking = false, XgSampling sampling = null,
-            LlmSeat seat = LlmSeat.Others, LlmLane lane = LlmLane.Visible)
+            LlmSeat seat = LlmSeat.Others, LlmLane lane = LlmLane.Visible, long verificationRequestId = 0)
         {
             var queue = lane == LlmLane.Visible ? visible : background;
-            if ((!Ready && !changingSlots) || disposing || messages == null || queue.Count >= (lane == LlmLane.Visible ? MaxQueuedChats : MaxQueuedBackground)) { done?.Invoke(null); return; }
-            Enqueue(queue, ChatJob(messages, maxTokens, temperature, thinking, sampling, done, seat, lane));
+            if(verificationRequestId==0)verificationRequestId=VerificationTrace.NewRequest();
+            if ((!Ready && !changingSlots) || disposing || messages == null || queue.Count >= (lane == LlmLane.Visible ? MaxQueuedChats : MaxQueuedBackground)) { VerificationTrace.Emit(verificationRequestId,"chat_callback","rejected");done?.Invoke(null); return; }
+            var job=ChatJob(messages, maxTokens, temperature, thinking, sampling, done, seat, lane);job.verificationRequestId=verificationRequestId;Enqueue(queue,job);
         }
 
         /// <summary>
@@ -496,6 +503,8 @@ namespace LingGuangV05.Desktop.LLM
 
         void Enqueue(List<Job> queue, Job job)
         {
+            if(job.verificationRequestId==0)job.verificationRequestId=VerificationTrace.NewRequest();
+            VerificationTrace.Emit(job.verificationRequestId,"queued",job.warmup?"warmup":job.Judge?"judge":job.lane==LlmLane.Visible?"visible_chat":"background_chat");
             float now = Time.realtimeSinceStartup;
             job.queuedAt = now;
             job.deadline = now + LlmScheduling.Timeout(job.lane, SlowMode);
@@ -558,6 +567,7 @@ namespace LingGuangV05.Desktop.LLM
                 if (!ReferenceEquals(job.owner, owner)) continue;
                 judges.RemoveAt(i--);
                 job.cancelled = true;
+                VerificationTrace.Emit(job.verificationRequestId,"cancel_requested","queued_judge");
                 Finish(job, null, "cancelled");
             }
             // Cancelling is asynchronous; RunJob still owns the native call and removes the active entry.
@@ -694,6 +704,7 @@ namespace LingGuangV05.Desktop.LLM
         {
             if (job.cancelled) return;
             job.cancelled = true;
+            VerificationTrace.Emit(job.verificationRequestId,"cancel_requested","active",OwnedServiceId,job.native);
             CancelNative(native, job.native);
         }
 
@@ -812,7 +823,17 @@ namespace LingGuangV05.Desktop.LLM
                 int tracked = slot >= 0 && slot < nativeInFlight.Length ? slot : -1;
                 if (tracked >= 0) Interlocked.Increment(ref nativeInFlight[tracked]);
                 Task<string> call = null;
-                try { call = Task.Run(() => Complete(target, client, job.messages, job.parameters, job.thinking, slot)); }
+                try
+                {
+                    VerificationTrace.Emit(job.verificationRequestId,"native_dispatch","scheduled",target.id,slot);
+                    call = Task.Run(() =>
+                    {
+                        VerificationTrace.Emit(job.verificationRequestId,"native_enter","running",target.id,slot);
+                        bool returned=false;
+                        try{string result=Complete(target,client,job.messages,job.parameters,job.thinking,slot);returned=true;return result;}
+                        finally{VerificationTrace.Emit(job.verificationRequestId,"native_return",returned?"returned":"threw",target.id,slot);}
+                    });
+                }
                 catch (Exception error)
                 {
                     if (tracked >= 0) Interlocked.Decrement(ref nativeInFlight[tracked]);
@@ -822,6 +843,7 @@ namespace LingGuangV05.Desktop.LLM
                 lock (target.running) target.running.Add(call);
                 call.ContinueWith(t =>
                 {
+                    VerificationTrace.Emit(job.verificationRequestId,"native_task_completed",t.Status==TaskStatus.RanToCompletion?"completed":t.IsCanceled?"cancelled":"faulted",target.id,slot);
                     // Releasing a timed-out UI job must not free the native inference budget.
                     // Even after CancelGrace, the next request waits for this actual task to return.
                     lock (target.running) target.running.Remove(t);
@@ -835,7 +857,7 @@ namespace LingGuangV05.Desktop.LLM
                     float now = Time.realtimeSinceStartup;
                     if (float.IsPositiveInfinity(cancelledAt) && (job.cancelled || now > limit))
                     {
-                        if (!job.cancelled) { job.timedOut = true; job.cancelled = true; CancelNative(target, slot); }
+                        if (!job.cancelled) { job.timedOut = true; job.cancelled = true; VerificationTrace.Emit(job.verificationRequestId,"cancel_requested","timeout",target.id,slot);CancelNative(target, slot); }
                         cancelledAt = now;
                     }
                     // A native call that ignores the cancel must not hold its slot (and the queue) forever.
@@ -901,6 +923,7 @@ namespace LingGuangV05.Desktop.LLM
                     LastJudgeFailure = failure ?? "";
                     if (failure != null && failure != "cancelled") judgeRetryAfter = Time.realtimeSinceStartup + 2;
                     try { job.rawObserver?.Invoke(reply ?? raw); } catch (Exception error) { Debug.LogException(error); }
+                    VerificationTrace.Emit(job.verificationRequestId,"judge_callback",p.HasValue?"native":failure??"no_result");
                     job.judged(p, failure);
                     return;
                 }
@@ -912,6 +935,7 @@ namespace LingGuangV05.Desktop.LLM
                     else text = Clean(AfterThinking(parsed.Value<string>("content")));
                 }
                 catch (Exception error) { Debug.LogWarning("[灵光] 模型回复解析失败：" + error.Message); }
+                VerificationTrace.Emit(job.verificationRequestId,"chat_callback",!string.IsNullOrWhiteSpace(text)?"native":failure??"empty_or_parse_error");
                 job.done?.Invoke(string.IsNullOrWhiteSpace(text) ? null : text);
             }
             catch (Exception error)
@@ -1006,7 +1030,7 @@ namespace LingGuangV05.Desktop.LLM
             {
                 StopAllCoroutines();
                 var cancelled = new List<Job>(active);
-                foreach (var job in cancelled) { job.cancelled = true; CancelNative(native, job.native); }
+                foreach (var job in cancelled) { job.cancelled = true; VerificationTrace.Emit(job.verificationRequestId,"cancel_requested","shutdown",OwnedServiceId,job.native);CancelNative(native, job.native); }
                 ClearActive();
                 foreach (var job in cancelled) Finish(job, null, "cancelled");
                 FinishQueued("cancelled");

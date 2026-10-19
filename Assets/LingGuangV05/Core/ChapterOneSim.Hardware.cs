@@ -81,11 +81,13 @@ namespace LingGuangV05.Core
         }
 
         /// <summary>Buy someone else's used card on 喵鱼 at today's second-hand price.</summary>
-        public bool BuyUsedCard(string modelId, DateTime today)
+        public bool BuyUsedCard(string modelId, DateTime today) => BuyUsedCard(modelId,today,false);
+        // The desktop validates the bound lab entitlement before requesting the negotiated quote.
+        public bool BuyUsedCard(string modelId, DateTime today, bool negotiated)
         {
             var g = HardwareCatalog.Gpu(modelId);
             if (g == null || g.rumour || !HardwareCatalog.Released(g, today)) return Reject("这张卡已经被别人拍走了。");
-            double price = HardwareCatalog.UsedPrice(g, today);
+            double price = HardwareCatalog.UsedPrice(g, today) * (negotiated ? .95 : 1);
             if (!SlotFree) return Reject("机箱插槽已满（" + Slots + " 个）。");
             if (!CanSpend(price)) return Reject("经费不足：要 ¥" + price.ToString("0") + "。");
             S.money -= price;

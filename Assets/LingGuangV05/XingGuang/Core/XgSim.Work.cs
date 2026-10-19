@@ -17,7 +17,7 @@ namespace LingGuangV05.XingGuang
         // a private lesson or become training examples in the player's local model.
         public XgCard WorkCard(string desk)
         {
-            if (XgCatalog.Desk(desk) == null) return null;
+            if (XgCatalog.CrowdDesk(desk) == null) return null;
             if (S.workCards == null) S.workCards = new List<XgCard>();
             S.workCards.RemoveAll(c => c == null);
             foreach (var card in S.workCards)
@@ -38,7 +38,7 @@ namespace LingGuangV05.XingGuang
         public bool TryAnswerWork(string desk, long cardId, bool answer, IXgHost host, out XgAnswer result)
         {
             result = default;
-            if (host == null || XgCatalog.Desk(desk) == null || !DeskOpen(desk)) return false;
+            if (host == null || XgCatalog.CrowdDesk(desk) == null || !CrowdDeskOpen(desk)) return false;
             var card = WorkCard(desk);
             if (card.id != cardId) return false;
             result = new XgAnswer { accepted = true, truth = card.truth, correct = answer == card.truth,

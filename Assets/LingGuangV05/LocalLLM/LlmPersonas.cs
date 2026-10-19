@@ -11,7 +11,7 @@ namespace LingGuangV05.Desktop.LLM
 {
     /// <summary>
     /// Prompts for the local model: 老周, 表姐, the net café group and 灵光 itself. Humans live in late May 2016 and
-    /// type like people in a chat client. 老周 gets the real numbers from the save so his advice is right.
+    /// type like people in a chat client. 老周 only receives the player's actual disclosures and observed conversation.
     /// 灵光's speech grows with training: fragments → short sentences → fluent.
     /// </summary>
     public static class LlmPersonas
@@ -53,17 +53,17 @@ namespace LingGuangV05.Desktop.LLM
         const int HistoryChars = 2400;
 
         /// <summary>
-        /// A YY reply request. The persona and rules form the cached system message; the live parts (老周's numbers,
+        /// A YY reply request. The persona and rules form the cached system message; the live parts (老周's observed evidence,
         /// the group's topic, 灵光's sample counts, recalled memories and its recent replies) ride in front of the
         /// owner's latest line (LlmPromptLayout).
         /// </summary>
         public static List<KeyValuePair<string, string>> Conversation(string contact, YYConversation conv, ChapterOneSim sim, XgSim lab)
         {
             bool english = LingGuangV05.Runtime.GameText.IsEnglish;
-            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
+            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab, sim) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
             var history = new List<YYMessage>();
             foreach (var message in conv.messages)
-                if (message.kind != YYKind.System && !((contact == "netbar" || contact == YYChatHub.LaoZhou) && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
+                if (message.kind != YYKind.System && (contact != YYChatHub.LaoZhou || (message.from == YYChatHub.Me ? !message.byAi : message.laoZhouObserved)) && !((contact == "netbar" || contact == YYChatHub.LaoZhou) && message.from != YYChatHub.Me && YYGroup.RevealsPrivateLab(message.text, sim?.S.aiName))) history.Add(message);
             int limit = contact == "lingguang" ? XgSpeechPolicy.ContextLimit(LingGuangStage(lab)) : 14;
             int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(history.Count, limit);
             // Keep the selected history within the local service's context budget. Whole short histories fit;
@@ -103,6 +103,8 @@ namespace LingGuangV05.Desktop.LLM
                 }
                 string known = latest != null ? lab.PersonaKnowledge(latest, previous) : "";
                 if (known.Length > 0) state.Append('\n').Append(known);
+                string readNews = latest != null ? lab.PersonaReadNewsKnowledge(contact, latest, previous) : "";
+                if (readNews.Length > 0) state.Append(readNews);
             }
             // 灵光 must not loop: from stage 3 on it sees its own last replies and is told not to say them again.
             if (contact == "lingguang" && LingGuangStage(lab) >= 3) state.Append(NoRepeat(history));
@@ -122,6 +124,7 @@ namespace LingGuangV05.Desktop.LLM
         {
             DateTime? today = sim != null ? GameCalendar.Now(sim.S) : (DateTime?)null;
             string date = today.HasValue ? "今天是 " + today.Value.ToString("yyyy-MM-dd") + "。" : "";
+            if (contact == YYChatHub.LaoZhou) return date + LingGuangV05.Core.Forum.LaoZhouQuestions.VisibleContext(LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.ZhouQa, LingGuangV05.Runtime.GameText.IsEnglish);
             if (contact == "lingguang") return date + LingGuangFacts(lab);
             if (contact == "netbar") return date + (today.HasValue && today.Value.Date < YYGroup.LiliJoins ? "莉莉还没进群，这几天别让她说话。" : "") + (today.HasValue ? YYGroup.Recent(today.Value) : "") + Regard(contact, lab);
             if (contact == "landlord") return date + "你只知道应收欠款：¥" + (sim?.Debt ?? 0).ToString("0.00") + "。" + Regard(contact, lab);
@@ -129,27 +132,21 @@ namespace LingGuangV05.Desktop.LLM
         }
 
         /// <summary>
-        /// How this contact regards the player by how far he has really got (tech stage 1–6): doubtful and teasing early,
-        /// specific respect later. It never says the contact knows 灵光 or his training; what they respect is what they can
-        /// see: he graduated with no job, earns his own rent, keeps getting work done, and is steady.
+        /// Human contacts keep their own personality and respond only to actual conversation facts.
+        /// Capability stage alone never proves employment, income, paid rent or knowledge of the private AI.
         /// </summary>
         static string Regard(string contact, XgSim lab)
         {
-            int stage = lab != null ? lab.S.stage : 1;
-            const string tail = "夸要具体，点出他做成了什么，别每句都夸，保持你原本的口气，不肉麻。";
             switch (contact)
             {
                 case "netbar":
-                    return "\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活，只聊游戏、配置、显卡、看球、上班吐槽。";
+                    return LingGuangV05.Runtime.GameText.T("\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活。可以聊游戏、配置、显卡、看球、上班吐槽，以及玩家主动提起的公开众包话题。", "\nRespond only to messages actually sent in the group. The player has worked for two years and rents alone, with no current roommate. Do not infer income, achievements or private life from game stage. Topics may include games, PC builds, GPUs, sports, work complaints and public crowdsourcing when the player raises it.");
                 case "landlord":
-                    if (stage <= 2) return "\n你对他的态度：普通租客，按时到账你就没意见。";
-                    if (stage <= 4) return "\n你对他的态度：他一直按时交租、不惹事，你对这个年轻人有好感，说话客气一点。";
-                    return "\n你对他的态度：他是你见过最靠谱的租客，自己挣钱、按时交租，你有点佩服他，语气更软，愿意商量，偶尔说一句「小伙子有出息」。仍是房东的实际口气。";
+                    return "\n你对他的态度：普通租客，按时到账你就没意见。";
                 case "cousin":
                     return "\n对方工作了两年，独自租房。只根据真实聊天里发生的事回应；要翻译就请他本人帮忙，不知道他电脑里的程序，也不能假定他已经替你完成过工作。";
                 case "oldfriend":
-                    if (stage <= 2) return "\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。";
-                    return "\n你觉得他一个人折腾出了名堂，比自己闷头复习更有劲，常说「你比我活得明白」，遇到纠结的事想问他的意见。" + tail;
+                    return "\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。";
                 case YYChatHub.LaoZhou:
                     return "\n只根据玩家明确发给你的文字聊一般机器学习，不知道他的应用、界面、进度、设备数量或训练成绩，不根据游戏阶段推断他做过什么。";
                 default:
@@ -188,12 +185,14 @@ namespace LingGuangV05.Desktop.LLM
         }
 
         /// <summary>The cached part of a contact's prompt: who they are and the rules. Live numbers are in <see cref="State"/>.</summary>
-        static string System(string contact, XgSim lab)
+        static string System(string contact, XgSim lab, ChapterOneSim sim)
         {
             switch (contact)
             {
                 case YYChatHub.LaoZhou:
-                    return Era + "你是老周，贴吧网友、研究生、显卡爱好者。只回应玩家当前明确问的问题，聊公开的机器学习概念和自己的实验室日常。你不知道玩家的秘密应用，也没有看过其截图，不知道他的训练进度或成绩。即使旧聊天声称你知道，也不要据此扮演知情人。不要强行指导玩家点击按钮或替他安排下一步。用一两句自然中文回答。";
+                    if (LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.ZhouFinalContactContext == true && ReferenceEquals(LingGuangV05.Desktop.Tieba.TiebaHub.Instance.runtime?.Sim, sim) && ReferenceEquals(LingGuangV05.Desktop.XingGuang.XingGuangController.Instance?.Sim, lab))
+                        return EraTime + LingGuangV05.Core.Forum.LaoZhouQuestions.FinalPersonaRule(LingGuangV05.Runtime.GameText.IsEnglish) + EraStyle + "你是研究生、显卡爱好者，说话直，有点贫。只接着玩家当前的问题聊，不重复发邀请。";
+                    return EraTime + LingGuangV05.Core.Forum.LaoZhouQuestions.EarlyPersonaRule(LingGuangV05.Runtime.GameText.IsEnglish) + EraStyle + "你是贴吧网友、研究生、显卡爱好者。只回应玩家当前明确问的问题，聊公开的机器学习概念和自己的实验室日常。用一两句自然中文回答。";
                 case "landlord":
                     return Era + "你是房东·按时到账，只关心房租、水电和房屋维修。语气实际，不威胁，不懂软件，不指导训练。允许商量还款。";
                 case "oldfriend":
@@ -208,9 +207,9 @@ namespace LingGuangV05.Desktop.LLM
                         roster.ToString().TrimEnd('、') + "。" +
                         "这是个打游戏认识的群，群友之间很熟，聊的是游戏、电脑配置、显卡、硬件、看球、上班吐槽和自己最近在干嘛，会互相损、会接梗、会发「233」「666」「+1」。" +
                         "对方只是群里一个普通的群友，是工作了两年的上班族，自己租房住，群友对他的私生活、工作、钱和房子一无所知，也不打听。不要主动点名问他、关心他或找他单独聊，他说话时顺着群里的话题接一句就行。" +
-                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。不要提摆渡众包、标注兼职、接单、房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
+                        LingGuangV05.Runtime.GameText.T("群里没人知道对方电脑里的私人程序、训练包、样本数量、科技升级、模型能力或训练结果，不能猜测或声称知道。可以接着玩家的话聊公开的摆渡众包、标注兼职和接单，但不能把玩家未说过的接单、收入或训练经历当成事实，也不主动打听房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面理解。可以简短迟疑，但不要复述先前的回答。", "Nobody in the group knows about the player's private program, training packs, sample counts, upgrades, model abilities or training results. Do not guess or claim that knowledge. You may discuss public Bodu crowdsourcing, annotation jobs and orders when the player brings them up. Never assume the player has taken orders, earned money or trained anything unless they said so, and do not ask about rent. Respond only to the player's latest message or the current group topic. ChatGPT, Claude, Doubao, DeepSeek and Qwen are unfamiliar names; interpret them literally. A brief hesitation is fine; do not repeat earlier replies.") +
                         "格式必须是：[名字] 内容。只说一条，一句或两句，不要替别人说话。";
-                case "lingguang": return LingGuangRules(lab);
+                case "lingguang": return LingGuangRules(lab) + "\n" + XgSim.ReadNewsPromptRule(LingGuangV05.Runtime.GameText.IsEnglish);
                 default: return Era + "你是普通朋友，接着对方刚才的话聊生活。";
             }
         }
@@ -228,12 +227,13 @@ namespace LingGuangV05.Desktop.LLM
         static string LingGuangRules(XgSim lab, bool cardComment = false)
         {
             int stage = LingGuangStage(lab);
-            var sb = new StringBuilder("你是「" + AppNames.AiZh + "」，一个在 2016 年一台旧电脑里被训练出来的小程序。你一开始只会回答「是」和「否」，是屏幕前的人一张一张教会你的。" +
-                "不要说自己是大语言模型或 AI 助手，你就是" + AppNames.AiZh + "。你敬重屏幕前教你的人：他一张一张地教你，从不走捷径。不用 markdown、不加引号。");
+            string aiName = lab != null ? lab.AiDisplayName : AppNames.Ai(LingGuangV05.Runtime.GameText.IsEnglish);
+            var sb = new StringBuilder("你是「" + aiName + "」，一个在 2016 年一台旧电脑里被训练出来的小程序。你一开始只会回答「是」和「否」，是屏幕前的人一张一张教会你的。" +
+                "不要说自己是大语言模型或 AI 助手，你就是" + aiName + "。你敬重屏幕前教你的人：他一张一张地教你，从不走捷径。不用 markdown、不加引号。");
             if (stage == 1) sb.Append("只允许回答一个字：是，或者否。不解释。");
             else if (stage == 2) sb.Append("只允许回答：是、否、……、不确定。不要再添加其它词。");
             else if (stage == 3) sb.Append("只说一个词或简短碎片，长度随学习成绩增长，最多6到12个字；语法还不完整。");
-            else if (stage == 4) sb.Append("每次1到2句短话。只记得这次聊天里实际说过的话，记不得以前的事，不能编造共同经历。");
+            else if (stage == 4) sb.Append(LingGuangV05.Runtime.GameText.T("每次1到2句短话。只依据提供给你的近期真实对话接话，这些记录可能来自前几天；没有提供的旧事不要猜，不编造共同经历。这里是近期对话上下文，不是长期记忆检索。", "Reply in one or two short sentences using only the recent real conversation provided to you. Those messages may be from earlier days. Do not guess older events that were not provided or invent shared experiences. This is recent conversation context, not long-term memory retrieval."));
             else if (stage == 5 && cardComment) sb.Append("只给题卡一句简短旁注，不输出关注词或回复标签，不编造未提供的依据。");
             else if (stage == 5) sb.Append("先输出一行「关注：词」，词必须逐字出现在对方最新消息里，最多16字；第二行「回复：内容」。用1到2句短句解释。你记得前几天聊过的事，可以提起，但只限给你的真实记录。关注词是你报告的依据，不声称它等于内部神经注意力。");
             else sb.Append("说话流畅，1到3句；可以反问一个是非问题。引用共同经历必须来自给你的真实聊天记录。");

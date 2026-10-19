@@ -652,7 +652,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void JobWiresUseTheOrdersRules()
         {
-            var sim = Lab(XgSim.FeatureUnlock["crowd"]); // orders can only be signed from the crowd stage on
+            var sim = Lab(XgSim.ContractStage); // enterprise orders keep their own stage gate
             var rig = new Rig(Ti980);
             sim.Tick(1, rig);
             string digits = "m:" + sim.Best("mnist").modelId, logic = "m:" + sim.Best("logic").modelId;

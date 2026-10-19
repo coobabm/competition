@@ -1,0 +1,116 @@
+{
+  "decision": "D020",
+  "selected_count": 3,
+  "requested_count": 13,
+  "remaining_count": 10,
+  "new_generation_used": false,
+  "use": "Licensed photographs illustrating fictional chat events; original captions unchanged",
+  "integration": "Assets only; GroupPhotos already contains all six Chinese/English mappings",
+  "images": [
+    {
+      "id": "chat_lili_qinghai",
+      "status": "candidate",
+      "caption": "油菜花还没谢！",
+      "source": {
+        "title": "File:Rapeseed at Qinghai Lake.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Rapeseed_at_Qinghai_Lake.jpg",
+        "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Rapeseed_at_Qinghai_Lake.jpg/1280px-Rapeseed_at_Qinghai_Lake.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Rapeseed_at_Qinghai_Lake.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "author": "Jucember",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_date": "2011-08-06",
+        "description": "Rapeseed field at Qinghai Lake — Qinghai.",
+        "metadata_snapshot": "provenance/search-qinghai.json",
+        "kind": "licensed photograph"
+      },
+      "source_file": "downloads/qinghai.jpg",
+      "crop_xywh": [
+        72,
+        0,
+        1136,
+        852
+      ],
+      "modifications": "Crop and resize to 800x600 JPEG; no compositing or recoloring",
+      "match": "Verified Qinghai Lake rapeseed fields and blue lake; no people, branding or watermarks. Bicycle and snowy mountains absent. Original caption remains accurate to visible scene.",
+      "adaptation_license": "CC BY-SA 3.0",
+      "source_sha256": "088ea5f3f9be1886093c1ec89a393d24aa992a657262b05cc86567fd60918554",
+      "output": "candidates/chat_lili_qinghai.jpg",
+      "output_sha256": "fad26019a1955c049575f6c682f3b25525aefd0bf373685206e31b274bdc6cc2",
+      "output_size": [
+        800,
+        600
+      ]
+    },
+    {
+      "id": "chat_ajie_1080",
+      "status": "candidate",
+      "caption": "抢到了！",
+      "source": {
+        "title": "File:Nvidia GeForce GTX 1080 Ti Founders Edition unpacking (27347711701).jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Nvidia_GeForce_GTX_1080_Ti_Founders_Edition_unpacking_(27347711701).jpg",
+        "download_url": null,
+        "original_url": "https://upload.wikimedia.org/wikipedia/commons/5/50/Nvidia_GeForce_GTX_1080_Ti_Founders_Edition_unpacking_%2827347711701%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "author": "Manifest Interactive from Portland, OR, USA",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_date": "2016-06-02 11:58",
+        "description": "Geforce GTX 1080 Founders Edition Unboxing",
+        "metadata_snapshot": "provenance/source-gpu.json",
+        "kind": "licensed photograph"
+      },
+      "source_file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/era_gtx1080_tieba.jpg",
+      "crop_xywh": [
+        0,
+        75,
+        780,
+        585
+      ],
+      "modifications": "Crop excludes right-edge NVIDIA logo; resize to 800x600 JPEG",
+      "match": "Black/silver GTX1080 blower cooler close-up on desk. Missing package, drink, screwdriver. Commons title mistakenly says Ti; current source description says Geforce GTX 1080 Founders Edition Unboxing. Source photographed June 2, not fictional May 28; use as fictional illustrative scene, never documentary evidence of May28.",
+      "adaptation_license": "CC BY 2.0",
+      "source_sha256": "98b9c8722df29b26f36faf2340fe51719343f9763968ac2155b7e110f9049659",
+      "output": "candidates/chat_ajie_1080.jpg",
+      "output_sha256": "9a9ad00d03467b61ae85f7462c3217944b957ff479a02282a8a0abf61d7ddd92",
+      "output_size": [
+        800,
+        600
+      ]
+    },
+    {
+      "id": "chat_ajie_noodles",
+      "status": "candidate",
+      "caption": "平安夜，我和我的泡面",
+      "source": {
+        "title": "File:Singapore Curry Flavoured Noodles, -Mar. 2011 a.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Singapore_Curry_Flavoured_Noodles,_-Mar._2011_a.jpg",
+        "download_url": "https://upload.wikimedia.org/wikipedia/commons/5/50/Singapore_Curry_Flavoured_Noodles%2C_-Mar._2011_a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original_url": "https://upload.wikimedia.org/wikipedia/commons/5/50/Singapore_Curry_Flavoured_Noodles%2C_-Mar._2011_a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "author": "William Christiansen",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_date": "4 March 2011, 13:38 (according to Exif data)",
+        "description": "「シンガポール・カレー風味ヌードル」。日清食品のシンガポール法人[1]が明星ブランドで販売する即席麺。",
+        "metadata_snapshot": "provenance/search-noodles5.json",
+        "kind": "licensed photograph"
+      },
+      "source_file": "downloads/noodles-3.jpg",
+      "crop_xywh": [
+        0,
+        225,
+        864,
+        648
+      ],
+      "modifications": "Crop the upper food portion to exclude branded packaging; resize 800x600 JPEG",
+      "match": "Cooked cup noodles lifted above an open cup. No faces, readable brands or watermark in crop. Missing keyboard, monitor and Christmas lights; original caption works as fictional Christmas Eve meal but source does not document that date.",
+      "adaptation_license": "CC BY 2.0",
+      "source_sha256": "982ac7767f0a0deb18e225c22e072bd22cd6e3831765e7ae590cf87048c5f5d7",
+      "output": "candidates/chat_ajie_noodles.jpg",
+      "output_sha256": "7fc2d15efe9e6640719c6f44b80bb15f5b81b88934b1a9309438b2593497db77",
+      "output_size": [
+        800,
+        600
+      ]
+    }
+  ]
+}

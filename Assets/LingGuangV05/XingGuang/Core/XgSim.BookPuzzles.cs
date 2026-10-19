@@ -36,6 +36,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Seconds between two questions, and the stage it starts asking at (it can say sentences).</summary>
         public const double BookAskEvery = 60;
         public const int BookAskStage = 4;
+        // Non-persisted host capability: the desktop owns durable completion delivery.
+        public bool BookCompletionHosted { get; set; }
         /// <summary>The longest reply it gives to an answer.</summary>
         public const int PuzzleReplyChars = 40;
         static readonly string[] SkipWords = { "不知道", "不清楚", "不明白", "不懂", "没懂", "跳过", "算了", "以后", "不晓得", "没看过", "idk", "don't know", "dont know", "not sure", "skip", "no idea" };
@@ -69,6 +71,7 @@ namespace LingGuangV05.XingGuang
             if (S.bookAnswers == null) S.bookAnswers = new List<XgBookAnswerRecord>();
             if (S.bookPuzzle == null) S.bookPuzzle = "";
             if (S.stage < BookAskStage || S.bookPuzzle.Length > 0 || S.chapterComplete) return;
+            if (BookCompletionHosted && PendingBookCompletion != null) return;
             S.bookAskTimer += dt;
             if (S.bookAskTimer < BookAskEvery) return;
             var p = NextBookPuzzle();
@@ -79,8 +82,9 @@ namespace LingGuangV05.XingGuang
         /// <summary>Asks one question now (also used by tests): it goes into the YY chat and the feed.</summary>
         public void AskBookPuzzle(XgBookPuzzle p)
         {
-            if (p == null) return;
+            if (p == null || S.stage < BookAskStage || !string.IsNullOrEmpty(S.bookPuzzle) || PuzzleAsked(p.id)) return;
             XgBooks.Puzzle(p.id, out var book);
+            if (book == null || p.chapter < 0 || p.chapter >= ChaptersRead(book)) return;
             S.bookPuzzle = p.id;
             S.bookAskTimer = 0;
             string q = T(p.q, p.qEn);

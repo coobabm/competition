@@ -10,6 +10,9 @@ using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Apps;
 using LingGuangV05.Desktop.OS;
 using TMPro;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+using Unity.Profiling;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,11 +24,22 @@ namespace LingGuangV05.Desktop.Tieba
     /// pages, the player's own page and old posts, and private messages. It lives in the desktop's spare native
     /// Reminder window, renamed and re-iconed at runtime; the scene and DreamOS assets are not changed.
     /// </summary>
-    public sealed class TiebaView : MonoBehaviour
+    public sealed partial class TiebaView : MonoBehaviour
     {
         public const string NativeWindow = "Reminder";
         static readonly Color Blue = new Color32(56, 120, 230, 255), BlueDark = new Color32(36, 92, 196, 255), Page = new Color32(243, 245, 248, 255);
         static readonly Color Ink = new Color32(40, 44, 52, 255), Muted = new Color32(130, 136, 148, 255), Rule = new Color32(226, 230, 236, 255), Link = new Color32(40, 100, 200, 255);
+
+        // Nested measurements overlap; Clear measures Destroy scheduling, not deferred OnDestroy.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        static readonly ProfilerMarker RedrawGoMarker = new ProfilerMarker("TiebaView.Redraw(Go)");
+        static readonly ProfilerMarker RedrawClearedMarker = new ProfilerMarker("TiebaView.Redraw(Cleared)");
+        static readonly ProfilerMarker RedrawKeyMarker = new ProfilerMarker("TiebaView.Redraw(KeyChanged)");
+        static readonly ProfilerMarker KeyMarker = new ProfilerMarker("TiebaView.RefreshKey");
+        static readonly ProfilerMarker SideMarker = new ProfilerMarker("TiebaView.Redraw.Side");
+        static readonly ProfilerMarker ClearMarker = new ProfilerMarker("TiebaView.Redraw.Clear");
+        static readonly ProfilerMarker PageMarker = new ProfilerMarker("TiebaView.Redraw.Page");
+#endif
 
         TiebaHub hub;
         WindowManager window;
@@ -39,6 +53,8 @@ namespace LingGuangV05.Desktop.Tieba
         string signature = "";
         float nextRefresh;
         TMP_InputField input;
+        ForumState renderedForum;
+        ChapterOneSim renderedOwner;
 
         static string T(string zh, string en) => GameText.T(zh, en);
 
@@ -50,23 +66,53 @@ namespace LingGuangV05.Desktop.Tieba
             if (content == null) return null;
             var view = content.gameObject.GetComponent<TiebaView>() ?? content.gameObject.AddComponent<TiebaView>();
             view.hub = hub; view.window = window;
+            view.BindEvents();
             hub.View = view;
             // The desktop entry is renamed now; the window content is built when it first opens.
             view.Rename();
-            GameText.Changed += view.Rename;
             return view;
         }
+
+        TiebaHub subscribedHub;
+        bool subscribedText;
+
+        void BindEvents()
+        {
+            if (!ReferenceEquals(subscribedHub, hub))
+            {
+                if (!ReferenceEquals(subscribedHub, null)) subscribedHub.Changed -= MarkStale;
+                subscribedHub = hub;
+                if (!ReferenceEquals(subscribedHub, null)) subscribedHub.Changed += MarkStale;
+                MarkStale();
+            }
+            if (subscribedText) return;
+            GameText.Changed += Rename;
+            GameText.Changed += MarkStale;
+            subscribedText = true;
+        }
+
+        void MarkStale() => signature = "";
 
         void Start()
         {
             font = PrologueDesk.CjkFont();
             foreach (Transform child in transform) child.gameObject.SetActive(false); // the native reminder UI
             Build();
-            hub.Changed += () => signature = "";
-            GameText.Changed += () => signature = "";
+            BindEvents();
         }
 
-        void OnDestroy() { GameText.Changed -= Rename; }
+        void OnDestroy()
+        {
+            if (subscribedText)
+            {
+                GameText.Changed -= Rename;
+                GameText.Changed -= MarkStale;
+                subscribedText = false;
+            }
+            // A destroyed Unity hub can still hold managed event delegates.
+            if (!ReferenceEquals(subscribedHub, null)) subscribedHub.Changed -= MarkStale;
+            subscribedHub = null;
+        }
 
         /// <summary>The red dot on the desktop icon and taskbar button (called by the hub every frame, window open or not).</summary>
         public void UpdateBadges(bool unread)
@@ -117,7 +163,10 @@ namespace LingGuangV05.Desktop.Tieba
 
         // ───────────── layout ─────────────
 
-        void OnEnable() { if (root != null) Go(view, arg); }
+        bool opening;
+
+        // Explicit Open draws its requested page; native reopen still restores the current page here.
+        void OnEnable() { if (root != null && !opening) Go(view, arg); }
 
         void Build()
         {
@@ -159,8 +208,16 @@ namespace LingGuangV05.Desktop.Tieba
             hub.Showing = where == "chat" && LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this) ? arg : null;
             if (hub.Showing != null) hub.MarkSeen(arg);
             if (input != null) input.text = "";
-            signature = "";
-            Redraw();
+            // Remember the state drawn below; the next polling tick need not rebuild it again.
+            // Changed events during/after Redraw still clear this key through the existing handlers.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (KeyMarker.Auto())
+#endif
+                signature = RefreshKey();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (RedrawGoMarker.Auto())
+#endif
+                Redraw();
             if (scroll != null) scroll.verticalNormalizedPosition = where == "chat" ? 0 : 1;
         }
 
@@ -169,9 +226,14 @@ namespace LingGuangV05.Desktop.Tieba
             if (window != null)
             {
                 // Explicit visits must restore/focus minimized windows; reuse YY's first-open recovery.
-                LingGuangV05.Desktop.XingGuang.XingGuangController.KeepOpenOnFirstStart(window);
-                window.OpenWindow();
-                LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(hub, window);
+                opening = true;
+                try
+                {
+                    LingGuangV05.Desktop.XingGuang.XingGuangController.KeepOpenOnFirstStart(window);
+                    window.OpenWindow();
+                    LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(hub, window);
+                }
+                finally { opening = false; }
             }
             view = where; arg = what ?? ""; signature = "";
             if (root != null) Go(where, what);
@@ -186,9 +248,35 @@ namespace LingGuangV05.Desktop.Tieba
             if (hub.Showing != null) hub.MarkSeen(arg);
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .5f;
+            string now;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (KeyMarker.Auto())
+#endif
+                now = RefreshKey();
+            if (now != signature)
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                var marker = signature.Length == 0 ? RedrawClearedMarker : RedrawKeyMarker;
+#endif
+                signature = now;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                using (marker.Auto())
+#endif
+                    Redraw();
+            }
+        }
+
+        // Shared by Go and Update so a just-drawn page has the same original refresh key.
+        string RefreshKey()
+        {
             var c = hub.Context();
-            string now = view + "|" + arg + "|" + c.stage + "|" + c.today.ToString("MMdd") + "|" + Count() + "|" + hub.IsTyping(arg) + "|" + (hub.Choices != null) + "|" + GameText.IsEnglish + "|" + (c.helpPosted ? (int)(c.secondsSinceHelp / 10) : -1) + "|" + DataRequestKey();
-            if (now != signature) { signature = now; Redraw(); }
+            // Only elapsed-time thresholds affect delayed floors; an endless ten-second bucket does not.
+            string now = view + "|" + arg + "|" + c.stage + "|" + c.today.ToString("yyyyMMdd") + "|" + Count() + "|" + hub.IsTyping(arg) + "|" + (hub.Choices != null) + "|" + GameText.IsEnglish + "|" + c.helpPosted + "|" + DelayedFloorKey(hub.Library, c) + "|" + DataRequestKey();
+            now += "|" + LingGuangV05.Desktop.Story.XgPublicDiscourseDesktop.Stamp;
+            // These display inputs can change without hub.Changed, including before a help post exists.
+            now += "|" + FlagGateKey(hub.Library, c) + "|" + (TiebaHub.Lab()?.DailyDataLinkHighlight == true);
+            now += "|" + (hub.runtime?.Sim?.InPrologue == true) + "|" + SideKey(GameText.IsEnglish, view == "board" ? arg : "", hub.Library.Boards);
+            return now;
         }
 
         /// <summary>Changes when a 「求数据」 post can be written, is written or gets its reply, so the page redraws.</summary>
@@ -218,43 +306,66 @@ namespace LingGuangV05.Desktop.Tieba
             navHome.text = Lang.T("首页");
             navMine.text = Lang.T("我的");
             navInbox.text = Lang.T("私信") + (hub.Unread > 0 ? " <color=#FFD24A>(" + hub.Unread + ")</color>" : "");
-            DrawSide(c);
-            // A half-typed message survives the redraw that a new reply causes.
-            string draft = input != null ? input.text : "";
-            bool focused = input != null && input.isFocused;
-            for (int i = main.childCount - 1; i >= 0; i--) Destroy(main.GetChild(i).gameObject);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (SideMarker.Auto())
+#endif
+                DrawSide(c);
+            // Preserve a reply draft on redraw, but never carry it into another loaded save.
+            bool sameOwner = ReferenceEquals(renderedForum, hub.S) && ReferenceEquals(renderedOwner, hub.runtime?.Sim);
+            string draft = sameOwner && input != null ? input.text : "";
+            bool focused = sameOwner && input != null && input.isFocused;
+            renderedForum = hub.S;
+            renderedOwner = hub.runtime?.Sim;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (ClearMarker.Auto())
+#endif
+                for (int i = main.childCount - 1; i >= 0; i--) Destroy(main.GetChild(i).gameObject);
             input = null;
-            if (view == "chat")
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            using (PageMarker.Auto())
+#endif
             {
-                DrawChat(c, arg);
-                if (input != null) { input.text = draft; if (focused) input.ActivateInputField(); }
-                StartCoroutine(ScrollToEnd());
-                return;
-            }
-            NewScroll(main, Vector2.zero);
-            switch (view)
-            {
-                case "board": DrawBoard(c, arg); break;
-                case "thread": DrawThread(c, arg); break;
-                case "era": DrawEra(arg); break;
-                case "user": DrawUser(c, arg); break;
-                case "mine": DrawUser(c, ForumLibrary.Me); break;
-                case "inbox": DrawInbox(c); break;
-                default: DrawHome(c); break;
+                if (view == "chat")
+                {
+                    DrawChat(c, arg);
+                    if (input != null) { input.text = draft; if (focused) input.ActivateInputField(); }
+                    // Defensive: inactive objects cannot start a coroutine. OnEnable will draw again on reopen.
+                    if (gameObject.activeInHierarchy) StartCoroutine(ScrollToEnd(scroll));
+                    return;
+                }
+                NewScroll(main, Vector2.zero);
+                switch (view)
+                {
+                    case "board.club": DrawBoardClub(); break;
+                    case "public.discourse": DrawPublicDiscourse(arg); break;
+                    case "board": DrawBoard(c, arg); break;
+                    case "thread": DrawThread(c, arg); break;
+                    case "era": DrawEra(arg); break;
+                    case "user": DrawUser(c, arg); break;
+                    case "mine": DrawUser(c, ForumLibrary.Me); break;
+                    case "inbox": DrawInbox(c); break;
+                    default: DrawHome(c); break;
+                }
             }
         }
 
+        string sideKey;
+
         void DrawSide(ForumContext c)
         {
+            string key = SideKey(GameText.IsEnglish, view == "board" ? arg : "", hub.Library.Boards);
+            if (key == sideKey && side.childCount == hub.Library.Boards.Count + 1) return;
+            sideKey = key;
             for (int i = side.childCount - 1; i >= 0; i--) Destroy(side.GetChild(i).gameObject);
             var head = Text(PrologueDesk.Rect("Head", side, new Vector2(0, 1), Vector2.one, new Vector2(16, -50), new Vector2(-10, -12)), Lang.T("我关注的吧"), 16, Muted, TextAlignmentOptions.MidlineLeft);
             int i2 = 0;
             foreach (var b in hub.Library.Boards)
             {
                 var board = b;
+                string boardId = board.id;
                 var row = PrologueDesk.Rect("Board", side, new Vector2(0, 1), Vector2.one, new Vector2(8, -96 - i2 * 44), new Vector2(-8, -56 - i2 * 44));
                 var img = PrologueDesk.Fill(row, view == "board" && arg == board.id ? new Color32(228, 238, 255, 255) : (Color)new Color32(0, 0, 0, 0));
-                var btn = row.gameObject.AddComponent<Button>(); btn.targetGraphic = img; btn.onClick.AddListener(() => Go("board", board.id));
+                var btn = row.gameObject.AddComponent<Button>(); btn.targetGraphic = img; btn.onClick.AddListener(() => Go("board", boardId));
                 // The drawn board icon (Tools/Icons/ui_icons.py, group tieba); the name makes room for it.
                 var boardIcon = LingGuangV05.Desktop.XingGuang.XgIcons.Place(row, "tieba", board.id, 26, 20, 30);
                 Text(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(boardIcon != null ? 48 : 12, 0), Vector2.zero), T(board.name, board.nameEn), 18, Link, TextAlignmentOptions.MidlineLeft);
@@ -299,6 +410,16 @@ namespace LingGuangV05.Desktop.Tieba
                 var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = t; b.onClick.AddListener(() => click());
             }
             return t;
+        }
+
+        void ReplyNotice(RectTransform parent, string sender)
+        {
+            if (string.IsNullOrEmpty(sender) || sender == ForumLibrary.Me || sender == "system") return;
+            var notice = Line(parent, "", 12, Muted);
+            notice.name = "AiReplyNotice:" + sender;
+            LingGuangV05.Runtime.AiContentNotice.BindFooter(notice);
+            notice.alignment = TextAlignmentOptions.MidlineLeft;
+            notice.gameObject.AddComponent<LayoutElement>().preferredHeight = 22;
         }
 
         // Portrait and illustration rows are decoration only; navigation stays on the original text.
@@ -346,6 +467,8 @@ namespace LingGuangV05.Desktop.Tieba
 
         void DrawHome(ForumContext c)
         {
+            BoardClubRow();
+            PublicDiscourseHome();
             Line(Card(new Color32(255, 250, 230, 255)), "<b>" + Lang.T("今日热议") + "</b>  " + c.today.ToString(GameText.IsEnglish ? "MMMM d, yyyy" : "yyyy 年 M 月 d 日", CultureInfo.InvariantCulture), 17, Ink);
             int n = 0;
             foreach (var e in EraContent.Events.Visible(EraEvents.Tieba, c.today))
@@ -412,11 +535,29 @@ namespace LingGuangV05.Desktop.Tieba
                 AuthorLine(card, author, head, 16, Link, author == ForumLibrary.Me ? (Action)(() => Go("mine", "")) : () => Go("user", author));
                 if (v == FloorView.Deleted) Line(card, Lang.T("该楼层已被删除"), 17, Muted);
                 else if (v == FloorView.Folded) Line(card, Lang.T("该楼层疑似违规已被系统折叠"), 17, Muted);
-                else Line(card, T(f.text, f.textEn), 18, Ink);
+                else
+                {
+                    string text=T(f.text,f.textEn);
+                    if(TiebaHub.Lab()?.DailyDataLinkHighlight==true)
+                        text=text.Replace(LingGuangV05.XingGuang.XgSim.MnistSourceUrl,"<mark=#FFF0A080>"+LingGuangV05.XingGuang.XgSim.MnistSourceUrl+"</mark>");
+                    Line(card,text,18,Ink);
+                }
                 string sign = user != null && user.sign.Length > 0 && v == FloorView.Shown ? "\n<size=13><color=#A0A6B0>—— " + T(user.sign, user.signEn) + "</color></size>" : "";
                 Line(card, "<color=#A0A6B0>" + floor + Lang.T(" 楼") + "</color>" + sign, 13, Muted);
+                if (v == FloorView.Shown) ReplyNotice(card, author);
             }
+            DrawZhouLocalRecord("thread:" + id);
             DiscussionLink("thread:" + id);
+        }
+
+        // This is a local reminder, never a public post or evidence of a public reply.
+        void DrawZhouLocalRecord(string id)
+        {
+            var first = hub.ZhouQa?.first;
+            if (id != LaoZhouQuestions.DiscussionId || first == null || first.channel != "yy" || first.choice < 1 || first.choice > 3) return;
+            var card = Card(new Color32(244, 246, 250, 255));
+            Line(card, GameText.T("已在 YY 聊过 · 仅自己可见", "Discussed in YY · Only visible to you"), 15, Muted);
+            Line(card, GameText.T("你已在 YY 回复过这个问题。你的选择：", "You answered this question in YY. Your choice:") + "\n" + LaoZhouQuestions.Choices(1, GameText.IsEnglish)[first.choice - 1], 17, Ink);
         }
 
         void DiscussionLink(string id)
@@ -425,7 +566,11 @@ namespace LingGuangV05.Desktop.Tieba
             var conv = hub.Conversation(id);
             var card = Card(new Color32(232, 240, 255, 255));
             Line(card, "参与讨论 · " + conv.messages.Count + " 条新回复" + (conv.unread > 0 ? "  ●" + conv.unread : ""), 18, Link, () => Go("chat", id));
-            if (conv.messages.Count > 0) Line(card, conv.messages[conv.messages.Count - 1].text, 16, Ink);
+            if (conv.messages.Count > 0)
+            {
+                var latest = conv.messages[conv.messages.Count - 1];
+                Line(card, latest.text, 16, Ink); ReplyNotice(card, latest.from);
+            }
         }
 
         void DrawEra(string id)
@@ -437,9 +582,11 @@ namespace LingGuangV05.Desktop.Tieba
             AuthorLine(card, "chigua", "<b>" + Name("chigua") + "</b>  <color=#E08A00>Lv.3</color>  <color=#3878E6>" + Lang.T("楼主") + "</color>", 16, Link);
             TopicLine(card, "era_" + e.id, EraContent.Title(e));
             Line(card, EraContent.Text(e), 18, Ink);
+            ReplyNotice(card, "chigua");
             var reply = Card();
             AuthorLine(reply, "xiaobai", "<b>" + Name("xiaobai") + "</b>  <color=#E08A00>Lv.2</color>", 16, Link);
             Line(reply, Lang.T("前排。"), 18, Ink);
+            ReplyNotice(reply, "xiaobai");
             DiscussionLink("era:" + id);
         }
 
@@ -477,10 +624,14 @@ namespace LingGuangV05.Desktop.Tieba
 
         void DrawChat(ForumContext c, string id)
         {
+            var renderedState = hub.S;
+            var renderedSimulation = hub.runtime.Sim;
+            bool StillCurrent() => ReferenceEquals(hub.S, renderedState) && ReferenceEquals(hub.runtime.Sim, renderedSimulation);
             var conv = hub.Conversation(id);
             if (LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) hub.MarkSeen(id);
-            bool choices = hub.Choices != null && hub.ChoicesFor == id;
-            float bottom = choices ? 120 : 76;
+            var offered = hub.ChoicesFor == id && hub.Choices != null ? hub.Choices : hub.ZhouChoices(id);
+            bool choices = offered != null && offered.Length > 0;
+            float bottom = choices ? 80 + offered.Length * 64 : 76;
             var header = PrologueDesk.Rect("Header", main, new Vector2(0, 1), Vector2.one, new Vector2(0, -44), Vector2.zero);
             PrologueDesk.Fill(header, Color.white);
             Text(PrologueDesk.Rect("Name", header, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-16, 0)), "<b>" + Name(id) + "</b>" + (id == ForumLibrary.LaoZhou && !(hub.S != null && hub.S.zhouGone) ? "  <size=14><color=#8A90A0>" + Lang.T("（老周）") + "</color></size>" : "") + (hub.IsTyping(id) ? "  <size=14><color=#8A90A0>" + Lang.T("对方正在输入…") + "</color></size>" : ""), 18, Ink, TextAlignmentOptions.MidlineLeft);
@@ -489,6 +640,7 @@ namespace LingGuangV05.Desktop.Tieba
             if (TiebaHub.IsDiscussion(id)) {
                 Line(Card(), "← 返回原帖", 16, Link, () => Go(id.StartsWith("thread:") ? "thread" : "era", id.Substring(id.IndexOf(':') + 1)));
                 Line(Card(), hub.DiscussionContext(id), 16, Muted);
+                DrawZhouLocalRecord(id);
             }
             DateTime lastDay = DateTime.MinValue;
             foreach (var m in conv.messages)
@@ -498,23 +650,23 @@ namespace LingGuangV05.Desktop.Tieba
                 if (when.Date != lastDay) { lastDay = when.Date; Line(Card(new Color(0, 0, 0, 0)), "<align=center><color=#A0A6B0>" + Date(when) + "</color></align>", 13, Muted); }
                 bool mine = m.from == ForumLibrary.Me;
                 var card = Card(mine ? new Color32(220, 235, 255, 255) : Color.white);
-                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : TiebaHub.IsDiscussion(id) ? "热心吧友" : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
+                AuthorLine(card, m.from, "<b>" + (mine ? Name(ForumLibrary.Me) : TiebaHub.IsDiscussion(id) && m.from != ForumLibrary.LaoZhou ? "热心吧友" : Name(m.from)) + "</b>  <color=#A0A6B0>" + when.ToString("HH:mm", CultureInfo.InvariantCulture) + "</color>", 14, mine ? BlueDark : Link);
                 Line(card, m.text, 17, Ink);
+                ReplyNotice(card, m.from);
             }
             var bar = PrologueDesk.Rect("Input", main, Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, bottom));
             PrologueDesk.Fill(bar, Color.white);
             if (choices)
             {
                 float x = 12;
-                foreach (var choice in hub.Choices)
+                foreach (var choice in offered)
                 {
                     string text = choice;
-                    float w = 30 + text.Length * (GameText.IsEnglish ? 8f : 16f);
-                    var rt = PrologueDesk.Rect("Choice", bar, new Vector2(0, 1), new Vector2(0, 1), new Vector2(x, -40), new Vector2(x + w, -8));
+                    var rt = PrologueDesk.Rect("Choice", bar, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -x-54), new Vector2(-12, -x));
                     var img = PrologueDesk.Fill(rt, Blue);
-                    var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img; b.onClick.AddListener(() => hub.Send(id, text));
+                    var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = img; b.onClick.AddListener(() => { if (StillCurrent()) hub.Send(id, text); });
                     Text(PrologueDesk.Rect("Text", rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), text, 15, Color.white, TextAlignmentOptions.Center);
-                    x += w + 10;
+                    x += 64;
                 }
             }
             var box = PrologueDesk.Rect("Field", bar, Vector2.zero, new Vector2(1, 0), new Vector2(12, 12), new Vector2(-130, 64));
@@ -527,17 +679,18 @@ namespace LingGuangV05.Desktop.Tieba
             input = box.gameObject.AddComponent<TMP_InputField>();
             input.textViewport = area; input.textComponent = textLabel; input.placeholder = placeholder; input.fontAsset = font; input.pointSize = 16;
             input.characterLimit = NativeLaoZhouReplies.MaxInputLength; input.lineType = TMP_InputField.LineType.SingleLine; input.richText = false;
-            input.onSubmit.AddListener(_ => SendTyped(id));
+            input.onSubmit.AddListener(_ => { if (StillCurrent()) SendTyped(id); });
             var send = PrologueDesk.Rect("Send", bar, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-118, 12), new Vector2(-12, 64));
             var sendImg = PrologueDesk.Fill(send, Blue);
-            var sb = send.gameObject.AddComponent<Button>(); sb.targetGraphic = sendImg; sb.onClick.AddListener(() => SendTyped(id));
+            var sb = send.gameObject.AddComponent<Button>(); sb.targetGraphic = sendImg; sb.onClick.AddListener(() => { if (StillCurrent()) SendTyped(id); });
             Text(PrologueDesk.Rect("Text", send, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Lang.T("发送"), 17, Color.white, TextAlignmentOptions.Center);
         }
 
-        System.Collections.IEnumerator ScrollToEnd()
+        System.Collections.IEnumerator ScrollToEnd(ScrollRect target)
         {
             yield return null; // the layout has its size after one frame
-            if (scroll != null) scroll.verticalNormalizedPosition = 0;
+            // A chat redraw must not scroll a different page opened before this coroutine resumes.
+            if (target != null && target == scroll) target.verticalNormalizedPosition = 0;
         }
 
         GameState runtimeSave => hub.runtime != null && hub.runtime.Sim != null ? hub.runtime.Sim.S : null;

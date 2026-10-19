@@ -123,14 +123,22 @@ namespace LingGuangV05.XingGuang
         /// <summary>Card difficulty on the board: the desk's own level.</summary>
         public int BoardLevel(string dataset) => Math.Max(1, LevelOf(dataset));
 
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileSimTestSet = new XgSimulationMarker("Xg.Sim.TestSetLookupBuild");
+#endif
         public List<XgBoardCard> TestSet(string dataset)
         {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileSimTestSet.Auto())
+#endif
+            {
             int level = BoardLevel(dataset);
             // A fixed set per dataset and level: a new month only brings new cards where the cards follow the calendar.
             bool topical = XgBoardData.Topical(dataset);
             string key = dataset + "|" + level + "|" + (topical ? Today / 100 : 0) + "|" + S.dataSalt;
-            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = XgBoardData.TestSet(dataset, level, topical ? Today : 0, S.dataSalt);
+            if (!testSets.TryGetValue(key, out var set)) testSets[key] = set = TakePreparedTestSet(dataset, level, topical ? Today : 0) ?? XgBoardData.TestSet(dataset, level, topical ? Today : 0, S.dataSalt);
             return set;
+                    }
         }
 
         /// <summary>The next card of the labelled pool (the pool grows with the samples you own).</summary>
@@ -244,6 +252,9 @@ namespace LingGuangV05.XingGuang
             var made = new XgScore { key = key }; list.Add(made); return made;
         }
 
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfilePhenomenonEvents = new XgSimulationMarker("Xg.Sim.PhenomenonMessageAndSubscribers");
+#endif
         void ObservePhenomena(XgRun run)
         {
             if (S.phenomena == null) S.phenomena = new XgPhenomenaMemory();
@@ -259,8 +270,13 @@ namespace LingGuangV05.XingGuang
             {
                 tracePhenomena.Add(id);
                 var p = XgPhenomena.Get(id);
+#if UNITY_5_3_OR_NEWER
+                using (ProfilePhenomenonEvents.Auto())
+#endif
+                {
                 Say(T("现象：") + T(p.name, p.nameEn) + T("。", ". ") + T(p.why, p.whyEn));
                 PhenomenonFound?.Invoke(p);
+                }
             }
             // Datasets left alone fade (catastrophic forgetting) — checked against their own test sets.
             foreach (var other in S.boardLastTrained)
@@ -269,7 +285,14 @@ namespace LingGuangV05.XingGuang
                 long idle = Board.S.cards - (long)other.value;
                 if (idle < 500) continue;
                 var po = new XgObservation { dataset = other.key, region = o.region, knobs = o.knobs, train = .5, test = Board.Accuracy(TestSet(other.key), o.knobs), cards = (long)Count(S.boardCards, other.key).value, idle = idle };
-                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board)) { var p = XgPhenomena.Get(id); Say(T("现象：") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
+                foreach (var id in XgPhenomena.Observe(po, S.phenomena, Board))
+                {
+                    var p = XgPhenomena.Get(id);
+#if UNITY_5_3_OR_NEWER
+                    using (ProfilePhenomenonEvents.Auto())
+#endif
+                    { Say(T("现象：") + T(p.name, p.nameEn)); PhenomenonFound?.Invoke(p); }
+                }
             }
         }
 

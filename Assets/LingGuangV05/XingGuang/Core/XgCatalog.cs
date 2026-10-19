@@ -324,7 +324,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Skill-tree geometry: one column per stage, cards in rows of <see cref="NodesPerRow"/>, lanes stacked top to bottom.</summary>
         public const float StageWidth = 720, NodeWidth = 136, NodeHeight = 64, BreakthroughSize = 120, SlotWidth = 150, RowHeight = 84;
         public const int NodesPerRow = 4;
-        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
+        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "boardlogic", "daily", "atlas" };
         /// <summary>Lane bands in drawing order (the tree page paints their stripes).</summary>
         public static IReadOnlyList<string> Lanes => LaneOrder;
         /// <summary>Height of a lane's band (after layout).</summary>
@@ -469,6 +469,9 @@ namespace LingGuangV05.XingGuang
             AddTeachingPackNodes(list);
             AddPersonaPackNodes(list);
             XgTrainingCatalog.AddNodes(list);
+            XgDailyLife.AddNodes(list);
+            XgBoardRecords.AddNodes(list);
+            XgBoardLogic.AddNodes(list);
             LayoutStages(list);
             return list.ToArray();
         }
@@ -564,7 +567,9 @@ namespace LingGuangV05.XingGuang
         public static readonly string[] ComboTierNamesEn = { "Nice", "Warming up", "On fire", "Flash of insight" };
 
         public static XgNode Node(string id) { foreach (var n in Nodes) if (n.id == id) return n; return null; }
-        public static XgDesk Desk(string id) { foreach (var d in Desks) if (d.id == id) return d; return ExtraTeachingDesk(id); }
+        // Only the platform catalog authorizes crowd submissions. Supplemental teaching desks do not.
+        public static XgDesk CrowdDesk(string id) { foreach (var d in Desks) if (d.id == id) return d; return null; }
+        public static XgDesk Desk(string id) => CrowdDesk(id) ?? ExtraTeachingDesk(id);
 
         public static readonly XgContract[] Contracts =
         {
@@ -741,11 +746,17 @@ namespace LingGuangV05.XingGuang
                 foreach (var need in n.needs) if (Node(need) == null) throw new InvalidOperationException("node needs " + n.id);
                 if (n.kind == XgNodeKind.Arch && Arch(n.target) == null) throw new InvalidOperationException("node arch " + n.id);
                 if (n.kind == XgNodeKind.Dataset && Dataset(n.target) == null) throw new InvalidOperationException("node data " + n.id);
-                if (n.kind == XgNodeKind.Research && ResearchItem(n.target) == null) throw new InvalidOperationException("node research " + n.id);
                 // A parent chain must end at a root: no cycles.
                 var seen = new HashSet<string>(); for (var p = n; p != null; p = p.parent == null ? null : Node(p.parent)) if (!seen.Add(p.id)) throw new InvalidOperationException("node cycle " + n.id);
             }
-            foreach (var r in Research) if (Node(r.id) == null) throw new InvalidOperationException("research without node " + r.id);
+            // Research also represents feature unlocks, teaching/persona packs and optional daily abilities.
+            // Only catalogued model effects require a ResearchItem; validate their complete node mapping.
+            foreach (var r in Research)
+            {
+                var node = Node(r.id);
+                if (node == null) throw new InvalidOperationException("research without node " + r.id);
+                if (node.kind != XgNodeKind.Research || node.target != r.id) throw new InvalidOperationException("node research " + r.id);
+            }
             foreach (var a in Archs) if (Node(a.id) == null) throw new InvalidOperationException("arch without node " + a.id);
             foreach (var d in Desks) { var data = Dataset(d.id); if (data == null || !data.handLabel) throw new InvalidOperationException("desk dataset " + d.id); }
         }

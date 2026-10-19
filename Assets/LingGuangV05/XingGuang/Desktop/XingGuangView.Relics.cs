@@ -20,9 +20,11 @@ namespace LingGuangV05.Desktop.XingGuang
             public string shown = "";
         }
 
-        const float StripSlotSize = 32, StripGap = 5, PickDelay = 1.2f;
+        const float StripSlotSize = 26, StripGap = 2, StripArrowWidth = 16, PickDelay = 1.2f;
         /// <summary>The strip's width in the top bar; the main-line bars end this far left of the stats.</summary>
-        public const float StripWidth = 4 * StripSlotSize + 3 * StripGap;
+        public const float StripWidth = 143;
+        int relicStripPage;
+        XgSim relicStripSim;
 
         readonly StripSlot[] strip = new StripSlot[XgRelics.Slots];
         RectTransform relicStrip, pickOverlay;
@@ -36,21 +38,38 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             // Left of the ¥ / income / power / clock columns.
             relicStrip = Rect("Relics", bar, new Vector2(1, 0), Vector2.one, new Vector2(-406 - StripWidth, 0), new Vector2(-406, 0));
+            for (int direction = -1; direction <= 1; direction += 2)
+            {
+                int step = direction;
+                var arrow = ui.Button(relicStrip, step < 0 ? "<" : ">", () => { relicStripPage = (relicStripPage + step + 3) % 3; RefreshRelicStrip(); }, 15);
+                arrow.rt.name = step < 0 ? "PreviousSlots" : "NextSlots";
+                arrow.rt.anchorMin = arrow.rt.anchorMax = new Vector2(step < 0 ? 0 : 1, .5f);
+                arrow.rt.offsetMin = new Vector2(step < 0 ? 0 : -StripArrowWidth, -16);
+                arrow.rt.offsetMax = new Vector2(step < 0 ? StripArrowWidth : 0, 16);
+                UiTip.Add(arrow.rt, () => T("切换装备格 1–4 / 5–8 / 9–12", "Browse slots 1–4 / 5–8 / 9–12"));
+            }
             for (int i = 0; i < strip.Length; i++)
             {
                 var s = new StripSlot();
-                s.rt = Rect("Slot" + (i + 1), relicStrip, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(i * (StripSlotSize + StripGap), -StripSlotSize / 2), new Vector2(i * (StripSlotSize + StripGap) + StripSlotSize, StripSlotSize / 2));
+                s.rt = Rect("Slot" + (i + 1), relicStrip, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(StripArrowWidth + i * (StripSlotSize + StripGap), -StripSlotSize / 2), new Vector2(StripArrowWidth + i * (StripSlotSize + StripGap) + StripSlotSize, StripSlotSize / 2));
                 s.frame = s.rt.gameObject.AddComponent<XgFrameGraphic>();
                 var button = s.rt.gameObject.AddComponent<Button>();
                 button.targetGraphic = s.frame; button.transition = Selectable.Transition.None;
-                button.onClick.AddListener(OpenBackpack);
+                int localSlot = i;
+                button.onClick.AddListener(() => OpenRelicStripSlot(localSlot));
                 if (controller.Window != null) s.rt.gameObject.AddComponent<ChapterOneWindowFocus>().Window = controller.Window;
                 s.glyph = ui.Text(Rect("Glyph", s.rt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "", 15, XgDark.Ink, TextAlignmentOptions.Center);
                 s.glyph.textWrappingMode = TextWrappingModes.NoWrap; s.glyph.fontStyle = FontStyles.Bold;
                 int at = i;
                 UiTip.Add(s.rt, () =>
                 {
-                    var r = Sim == null ? null : Sim.RelicInSlot(at);
+                    int slot = relicStripPage * 4 + at;
+                    if (Sim != null && slot >= Sim.RelicSlotCapacity)
+                    {
+                        var node = XgCatalog.Node(XgSim.RelicExpansionForSlot(slot));
+                        return T("封印 · ", "Locked · ") + T(node.name, node.nameEn) + "\n" + T("第 " + node.stage + " 阶段 · 查看科技", "Stage " + node.stage + " · View tech");
+                    }
+                    var r = Sim == null ? null : Sim.RelicInSlot(slot);
                     return (r == null ? XgRelicUi.EmptyTip(Sim) : XgRelicUi.Tip(Sim, r)) + "\n" + Hex(XgDark.Muted) + T("点一下打开背包", "Click to open the backpack") + "</color>";
                 });
                 strip[i] = s;
@@ -65,14 +84,25 @@ namespace LingGuangV05.Desktop.XingGuang
             else ShowToast(T(("灵光学会第一件事后，这里会有稀有道具。" .Replace("灵光", Sim.AiDisplayName)), ("Rare items turn up here once 灵光 has learned its first thing." .Replace("灵光", Sim.AiDisplayName))), 3);
         }
 
+        void OpenRelicStripSlot(int localSlot)
+        {
+            if (Sim == null) return;
+            int slot = relicStripPage * 4 + localSlot;
+            if (slot >= Sim.RelicSlotCapacity) { ShowTab("tree"); Tree.FocusNodeDetails(XgSim.RelicExpansionForSlot(slot)); }
+            else OpenBackpack();
+        }
+
         void RefreshRelicStrip()
         {
             if (relicStrip == null || Sim == null) return;
+            if (!ReferenceEquals(relicStripSim, Sim)) { relicStripSim = Sim; relicStripPage = 0; }
             for (int i = 0; i < strip.Length; i++)
             {
                 var s = strip[i];
-                var r = Sim.RelicInSlot(i);
-                if (r == null) { s.frame.Style(new Color32(9, 15, 22, 255), XgDark.Dim, true, 1); s.glyph.text = ""; s.shown = ""; continue; }
+                int slot = relicStripPage * 4 + i;
+                var r = Sim.RelicInSlot(slot);
+                if (slot >= Sim.RelicSlotCapacity) { s.frame.Style(new Color32(9, 15, 22, 255), XgDark.Dim, true, 1); s.glyph.color = XgDark.Dim; s.glyph.text = "+"; s.shown = ""; continue; }
+                if (r == null) { s.frame.Style(new Color32(9, 15, 22, 255), XgDark.Dim, true, 1); s.glyph.text = (slot + 1).ToString(); s.glyph.color = XgDark.Dim; s.shown = ""; continue; }
                 var edge = XgRelicUi.RarityColor(r.rarity);
                 s.frame.Style(new Color(edge.r * .22f, edge.g * .22f, edge.b * .22f, 1f), edge, false, 2);
                 s.glyph.text = r.glyph; s.glyph.color = edge;

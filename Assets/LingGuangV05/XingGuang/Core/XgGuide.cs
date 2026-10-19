@@ -125,6 +125,9 @@ namespace LingGuangV05.XingGuang
 
             if (sim.S.stage >= 6) { Finale(sim, wallet, list); Contracts(sim, list); return Finish(list, sim, house); }
 
+            var import = PendingDataImport(sim, wallet);
+            if (import != null) { list.Add(import); return Finish(list, sim, house); }
+
             bool trainable = sim.TrainingUnlocked(XgTrack.Vision) || sim.TrainingUnlocked(XgTrack.Sequence);
             if (!trainable) Label(sim, list);
             else if (sim.S.epochs == 0) Train(sim, list);
@@ -153,6 +156,38 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>Both bars this full lead with the exam (its pass odds are high by then; at 80% they are about one in seven).</summary>
         public const double ExamLeadShare = .95;
+
+        // Downloads become training data only after the player imports the virtual file.
+        // Recommend existing paid prerequisites; reading/clicking a note never buys or installs anything.
+        static XgGuideStep PendingDataImport(XgSim sim, Wallet wallet)
+        {
+            if (!TabOpen(sim, Lab, "tree") || sim.S.dataFiles == null) return null;
+            XgDownload ready = null;
+            foreach (var file in sim.S.dataFiles)
+                if (file != null && sim.DataFileReady(file.fileId)) { ready = file; break; }
+            if (ready == null) return null;
+            if (!sim.CanInstallData)
+            {
+                var path = Path(sim, XgSim.DataEntryNode);
+                if (path == null || path.Count == 0) return null;
+                var node = path[0];
+                var step = Step("data.import.unlock", XgGuideKind.Main,
+                    "科技买「" + node.name + "」 · ¥" + sim.NodeCost(node).ToString("0"),
+                    "Buy " + node.nameEn + " in Tech · ¥" + sim.NodeCost(node).ToString("0"),
+                    "数据包已下载。先开放数据导入，再从资料文件夹拖到「练」；下载本身不增加训练样本。" + ShortOfMoney(sim, wallet, node, false),
+                    "The data pack is downloaded. Unlock Data Import, then drag it from Training files to Train; downloading alone adds no training samples." + ShortOfMoney(sim, wallet, node, true),
+                    Lab, "tree", "node:" + node.id, "");
+                MoneyProgress(sim, wallet, node, step);
+                return step;
+            }
+            if (!TabOpen(sim, Lab, "train")) return null;
+            return Step("data.install", XgGuideKind.Main,
+                "资料文件夹打开「训练数据」，把待装数据包拖到「练」",
+                "Open Training data in Training files; drag a ready pack to Train",
+                "点击便签打开资料文件夹和练页。安装后样本才会计入训练，已安装文件不会重复添加。",
+                "Click the note to open Training files and Train. Samples count after import; installed files cannot add them twice.",
+                Lab, "train", "", ready.fileId);
+        }
 
         static bool ExamLeads(XgSim sim) => sim.ExamPassPending || Math.Min(sim.ExamParamsReady, sim.ExamSamplesReady) + 1e-9 >= ExamLeadShare;
 
@@ -220,6 +255,8 @@ namespace LingGuangV05.XingGuang
             if (next == 0 || !TabOpen(sim, Lab, "tree")) return null;
             // The exam is open (or passed): the way on is the chapter button, not another purchase.
             if (ChapterWaits(sim) && TabOpen(sim, Lab, "train")) { paramsBar = true; return ConfirmStage(sim); }
+            var import = PendingDataImport(sim, new Wallet { money = money, vram = vramMB });
+            if (import != null) { paramsBar = false; return import; }
             bool paramsFirst = sim.ParamsProgress(next) <= sim.SamplesProgress(next);
             for (int pass = 0; pass < 2; pass++)
             {
@@ -621,9 +658,9 @@ namespace LingGuangV05.XingGuang
                 string zh = buy.path.Count == 1 ? "科技买" + what : "科技买" + Chain(buy.path, false);
                 string en = buy.path.Count == 1 ? "Tech tree: buy " + whatEn : "Tech tree: buy " + Chain(buy.path, true);
                 if (!pack) { zh += "¥" + Money(buy.cost) + "：" + LineCuts(sim, next, buy, false); en += " ¥" + Money(buy.cost) + ": " + LineCuts(sim, next, buy, true); }
-                string why = pack ? "下载权连第一批：补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，「" + name + "」还要更多数据。"
+                string why = pack ? "购买完整数据包；下载后从资料文件夹拖进练页安装，可补 " + XgSim.SamplesText(buy.gain) + " 条有效样本，用于「" + name + "」。"
                     : "它把「" + name + "」要的数据压低一截。";
-                string whyEn = pack ? "The download right with the first batch: " + XgSim.SamplesText(buy.gain) + " effective samples; '" + nameEn + "' needs more data."
+                string whyEn = pack ? "Buy the full data pack. After downloading, drag it from Training files into Train to install: " + XgSim.SamplesText(buy.gain) + " effective samples toward '" + nameEn + "'."
                     : "It lowers the data '" + nameEn + "' needs.";
                 var s = Step(pack ? "ability.pack" : "ability.item", XgGuideKind.Ability, zh, en, why + ShortOfMoney(sim, wallet, first, false), whyEn + ShortOfMoney(sim, wallet, first, true),
                     Lab, "tree", "node:" + first.id, "");
@@ -692,8 +729,8 @@ namespace LingGuangV05.XingGuang
             var w = Step("ability.download", XgGuideKind.Ability,
                 paused ? "下载停了（硬盘满）：" + what + "，样本" : "等下载：" + what + " 还要 " + eta + "，样本",
                 paused ? "Downloads stopped (disk full): " + whatEn + ", samples" : "Wait for the download: " + whatEn + ", " + eta + " left, samples",
-                "下完就够「" + name + "」的数据了。现在是" + XgSim.BroadbandName(sim.BroadbandTier, false) + "，" + Num(sim.LineMBps, "0.#") + " MB/s。等的时候可以接着标注、训练。",
-                "Once it is in, '" + nameEn + "' has its data. The line is " + XgSim.BroadbandName(sim.BroadbandTier, true) + ", " + Num(sim.LineMBps, "0.#") + " MB/s. Keep labelling or training meanwhile.",
+                "下载完成后，从资料文件夹拖进练页安装，就够「" + name + "」的数据了。现在是" + XgSim.BroadbandName(sim.BroadbandTier, false) + "，" + Num(sim.LineMBps, "0.#") + " MB/s。等的时候可以接着标注、训练。",
+                "After downloading, drag the file from Training files into Train to install; then '" + nameEn + "' has its data. The line is " + XgSim.BroadbandName(sim.BroadbandTier, true) + ", " + Num(sim.LineMBps, "0.#") + " MB/s. Keep labelling or training meanwhile.",
                 Lab, TabOpen(sim, Lab, "data") ? "data" : "train", "", "");
             return w;
         }
@@ -986,8 +1023,8 @@ namespace LingGuangV05.XingGuang
                 }
                 var path = Path(sim, n.id);
                 if (path == null || path.Count == 0) continue;
-                // The pack node is the download right with its first batch.
-                options.Add(Option(sim, n, path, ds.dataWeight * XgSim.BatchSamples(ds)));
+                // New purchases queue the complete file; legacy partial packs use the branch above.
+                options.Add(Option(sim, n, path, ds.dataWeight * ds.samples));
             }
             foreach (var disc in XgSim.AbilityDiscounts)
             {
@@ -1088,6 +1125,11 @@ namespace LingGuangV05.XingGuang
         static void Finale(XgSim sim, Wallet wallet, List<XgGuideStep> list)
         {
             var s = sim.S;
+            if (XgEndingPresentation.UsesPreparation(s))
+            {
+                list.Add(XgEndingPresentation.Guide(s));
+                return;
+            }
             if (s.ending.Length > 0)
             {
                 // The curtain call (XgSim.Origin.cs): one question left before the night is over.

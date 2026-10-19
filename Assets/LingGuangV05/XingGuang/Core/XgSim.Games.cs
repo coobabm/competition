@@ -53,7 +53,7 @@ namespace LingGuangV05.XingGuang
         public const int MovesPerBatch = 10, SamplesPerBatch = 5;
 
         /// <summary>The stage from which the lab's AI is the opponent (gomoku 3, go 4, chess 6); before that a built-in program plays.</summary>
-        public static int AiStage(string game) => game == Gomoku ? 3 : game == Go ? 4 : game == Chess ? 6 : 99;
+        public static int AiStage(string game) => XgBoardRecords.Known(game) ? 2 : 99;
 
         public static bool AiPlays(string game, int stage) => stage >= AiStage(game);
 
@@ -376,12 +376,7 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>A game in progress reached <paramref name="plies"/> moves; every few moves add samples. Returns the samples added.</summary>
-        public int GameMove(string game, int plies)
-        {
-            int n = GameDataset(game).Length > 0 ? XgGames.MoveSamples(plies) : 0;
-            if (n > 0) { AddGameSamples(GameDataset(game), n); GameRecord(game).samples += n; }
-            return n;
-        }
+        public int GameMove(string game, int plies) => 0;
 
         /// <summary>A hub game ended: records the score and adds its training samples. Returns the samples added.</summary>
         public int GamePlayed(string game, XgGameOutcome outcome, int moves)
@@ -392,13 +387,8 @@ namespace LingGuangV05.XingGuang
             if (outcome == XgGameOutcome.PlayerWon) r.playerWins++;
             else if (outcome == XgGameOutcome.PlayerLost) r.playerLosses++;
             else r.draws++;
-            // Against its own model (once it plays the game): beating it, or being beaten by it.
-            if (AiPlays(game) && outcome == XgGameOutcome.PlayerWon) Earn("life.game.won");
-            if (AiPlays(game) && outcome == XgGameOutcome.PlayerLost) Earn("life.game.lost");
-            int n = GameDataset(game).Length > 0 ? XgGames.SamplesFor(game, outcome, moves) : 0;
-            AddGameSamples(GameDataset(game), n);
-            r.samples += n;
-            return n;
+            // Samples are credited only by installing a receipt-backed board data file.
+            return 0;
         }
 
         void AddGameSamples(string datasetId, int n)

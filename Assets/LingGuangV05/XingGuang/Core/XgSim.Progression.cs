@@ -21,7 +21,13 @@ namespace LingGuangV05.XingGuang
 
         void PrepareProgression(bool newGame)
         {
-            if (S.chapterComplete && string.IsNullOrEmpty(S.ending)) { S.endingReflectionAnswered = true; S.chapterComplete = false; }
+            // New epilogues deliberately leave the legacy E1/E2/E3 answer untouched.
+            // Their committed completion must survive a new controller/scene binding.
+            bool completedEpilogue = S.epilogue != null && S.epilogue.schemaVersion == 1
+                && S.epilogue.phase == "completed" && !string.IsNullOrWhiteSpace(S.epilogue.completionReceipt)
+                && XgEpilogueFlow.CanEnterEpilogue(S);
+            if (S.chapterComplete && string.IsNullOrEmpty(S.ending) && !completedEpilogue)
+            { S.endingReflectionAnswered = true; S.chapterComplete = false; }
             if (S.unlocked == null) S.unlocked = new List<string>();
             if (S.owned == null) S.owned = new List<string>();
             if (S.walls == null) S.walls = new List<string>();
@@ -132,10 +138,11 @@ namespace LingGuangV05.XingGuang
         public double NodeCost(XgNode node)
         {
             if (node == null) return double.PositiveInfinity;
+            if (node.id == PersonaArchiveNode) return PersonaArchivePrice;
             if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
             // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
-            if (node.id == LedgerNode || node.id == DataEntryNode) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+            if (XgBoardLogic.IsNode(node.id) || node.id==XgBoardRecords.Node || XgDailyLife.Node(node.id) != null || node.id == LedgerNode || node.id == DataEntryNode || node.id == LibraryNode || IsRelicExpansion(node.id) || IsMoleArithmeticNode(node.id)) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
             return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }
@@ -143,7 +150,9 @@ namespace LingGuangV05.XingGuang
         public bool NodeVisible(XgNode node)
         {
             if (node == null) return false;
+            if (node.id == PersonaArchiveNode) return true; // The sealed profile entry must be able to find its technology.
             if (Has(node.id)) return true;
+            if (IsRelicExpansion(node.id)) return true; // Locked slots must be able to locate their technology.
             if (node.tree == "label") return node.id != "label.brain" && node.id != "label.parallel" || S.stage >= 4;
             if (node.kind == XgNodeKind.Project || node.kind == XgNodeKind.Breakthrough) return false;
             if (node.id == "secret.6") return S.stage >= 6 && S.pretrainStalled;
@@ -167,7 +176,9 @@ namespace LingGuangV05.XingGuang
         public string ProgressionBlocker(XgNode node)
         {
             if (node == null) return T("未知节点");
+            if (node.id == PersonaArchiveNode) return PersonaArchiveBlocker();
             if (Has(node.id)) return null;
+            if (IsRelicExpansion(node.id) && S.stage < node.stage) return T("第 " + node.stage + " 阶段开放", "Opens at stage " + node.stage);
             if (!NodeVisible(node)) return T("还没到这一阶段");
             var teachingBlock = TeachingNodeBlocker(node);
             if (teachingBlock != null) return teachingBlock;
@@ -213,6 +224,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         void ApplyProgressionNode(XgNode node)
         {
+            if (IsRelicExpansion(node.id)) ResizeRelicSlots();
             switch (node.id)
             {
                 case "lenet": if (S.firstSpecialty == "") S.firstSpecialty = "vision"; break;
@@ -284,7 +296,7 @@ namespace LingGuangV05.XingGuang
             (Has("relu") ? 1.3 : 1) * (Has("weights") ? 1.1 : 1) * (Has("learnrule") ? 1.15 : 1) * (Has("backprop") ? 1.2 : 1) * (Has("chainrule") ? 1.1 : 1);
         public double GpuUtilization(XgRun run) => run.arch == "rnn" || run.arch == "lstm" || run.arch == "gru" || run.arch == "seq2seq" || run.arch == "attention" ? .31 : 1;
         /// <summary>Stage one opens logic, common sense and SMS spam; stage two adds arithmetic, digits and danmaku. The first-minutes focus locks all but common sense; previously opened desks remain available on load.</summary>
-        public bool ProgressionDeskAvailable(string id) => XgCatalog.Desk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == "mnist" || id == XgMemes.SenseDesk || (id == "arith" || id == "danmu") && S.stage >= 2 || FreeDataAccess(id) || Owns(id));
+        public bool ProgressionDeskAvailable(string id) => XgCatalog.CrowdDesk(id) != null && !OpeningLocksDesk(id) && (DeskOpen(id) || id == "logic" || id == "spam" || id == "mnist" || id == XgMemes.SenseDesk || (id == "arith" || id == "danmu") && S.stage >= 2 || FreeDataAccess(id) || Owns(id));
 
         void ObserveProgression(XgRun run)
         {

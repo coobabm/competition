@@ -54,8 +54,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (observed != controller.Sim.S) { observed = controller.Sim.S; opacity = Strong ? 1 : 0; }
                 label.text = GameText.T("家人之星", "Family star");
             }
-            opacity = Mathf.MoveTowards(opacity, Strong ? 1 : 0, Time.unscaledDeltaTime * 1.5f);
-            float alpha = opacity * (wallpaper.Reveal.Visible ? Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / .8f) : 0);
+            opacity = wallpaper.ReduceMotion ? (Strong ? 1 : 0) : Mathf.MoveTowards(opacity, Strong ? 1 : 0, Time.unscaledDeltaTime * 1.5f);
+            float alpha = opacity * (wallpaper.Reveal.Visible ? wallpaper.ReduceMotion ? 1 : Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / .8f) : 0);
             alpha *= presentation != null ? presentation.LightLevel : 1;
             canvasRenderer.SetAlpha(alpha); label.canvasRenderer.SetAlpha(alpha);
         }

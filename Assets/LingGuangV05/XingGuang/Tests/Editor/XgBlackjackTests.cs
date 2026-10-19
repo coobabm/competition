@@ -6,6 +6,7 @@ namespace LingGuangV05.XingGuang.Tests
 {
     public sealed class XgBlackjackTests
     {
+        static XgSim Lab(){var sim=new XgSim();sim.S.stage=5;return sim;}
         sealed class Host : IXgHost
         {
             public double money=1000; public int debits,credits;
@@ -39,16 +40,16 @@ namespace LingGuangV05.XingGuang.Tests
         {
             foreach(long stake in new long[]{1,7,10,501,12345})
             {
-                var sim=new XgSim(); var host=new Host{money=100000};
+                var sim=Lab(); var host=new Host{money=100000};
                 Assert.IsTrue(sim.StartBlackjack(stake,host),"stake "+stake);
                 Assert.AreEqual(stake,sim.Casino.blackjack.stake);
             }
             foreach(long wallet in new long[]{1,10,777,10000,3000000007L})
             {
-                var sim=new XgSim(); var host=new Host{money=wallet};
+                var sim=Lab(); var host=new Host{money=wallet};
                 Assert.IsTrue(sim.StartBlackjack(wallet,host),"all in "+wallet); // a natural may settle at once; either way it was accepted
-                Assert.AreEqual(1,host.debits);
-                var over=new XgSim(); var overHost=new Host{money=wallet};
+                Assert.AreEqual(1+(sim.S.casinoFrozen>0?1:0),host.debits);
+                var over=Lab(); var overHost=new Host{money=wallet};
                 Assert.IsFalse(over.StartBlackjack(wallet+1,overHost),"over wallet "+wallet);
                 Assert.AreEqual(wallet,overHost.money);Assert.AreEqual(0,overHost.debits);Assert.IsFalse(over.BlackjackActive);
             }
@@ -57,7 +58,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
         [Test] public void StartShufflesAFullDeckAndCannotRedealOrPlayOtherGames()
         {
-            var sim=new XgSim(); var host=new Host();
+            var sim=Lab(); var host=new Host();
             sim.Casino.rng=12345;
             Assert.IsTrue(sim.StartBlackjack(50,host));
             Assert.IsTrue(sim.BlackjackActive);
@@ -65,11 +66,11 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(4,sim.Casino.blackjack.position);
             Assert.IsFalse(sim.StartBlackjack(50,host));
             Assert.IsFalse(sim.TryCasinoBet("slots",0,50,host,out _));
-            Assert.AreEqual(1,host.debits);
+            Assert.AreEqual(1+(sim.S.casinoFrozen>0?1:0),host.debits);
         }
         static XgSim Hand(int[] player,int[] dealer)
         {
-            var sim=new XgSim(){Clock=100};
+            var sim=Lab(); sim.Clock=100;
             sim.Casino.wagered=50;
             sim.Casino.blackjack=new XgBlackjackHand {active=true,stake=50,player=new List<int>(player),dealer=new List<int>(dealer),deck=Enumerable.Range(0,52).ToArray(),position=4};
             return sim;
@@ -90,7 +91,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.PlayBlackjack("double",host));
             Assert.AreEqual(100,sim.Casino.blackjack.stake);Assert.AreEqual(3,sim.Casino.blackjack.player.Count);
             Assert.AreEqual(1100,host.money);Assert.AreEqual(100,sim.Casino.wagered);Assert.AreEqual(200,sim.Casino.returned);
-            Assert.IsFalse(sim.PlayBlackjack("double",host));Assert.AreEqual(1,host.debits);
+            Assert.IsFalse(sim.PlayBlackjack("double",host));Assert.AreEqual(1+(sim.S.casinoFrozen>0?1:0),host.debits);
         }
         [Test] public void UnaffordableDoubleDoesNotMutateHandOrDeck()
         {

@@ -10,6 +10,10 @@ namespace LingGuangV05.XingGuang.Tests
     /// </summary>
     public sealed class XgProgressionTests
     {
+        XgYyCatalogTestScope catalogScope;
+        [SetUp] public void LoadActualYyCatalog() { catalogScope = new XgYyCatalogTestScope(); }
+        [TearDown] public void RestoreYyCatalog() { catalogScope?.Dispose(); catalogScope = null; }
+
         sealed class Host : IXgHost
         {
             public double money = 1000000, compute = 2, trained;
@@ -68,7 +72,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.S.vision.arch, Is.EqualTo("perceptron")); Assert.That(sim.S.sequence.arch, Is.EqualTo("perceptron"));
             Assert.That(sim.DeskOpen("logic") && sim.DeskOpen("spam"), Is.True);
             Assert.That(sim.DeskOpen("mnist"), Is.True, "digits are written by hand from chapter one");
-            Assert.That(sim.DeskOpen("arith"), Is.False, "sums wait for stage two");
+            Assert.That(sim.DeskOpen("arith"), Is.True, "basic arithmetic is available in stage one; advanced arithmetic remains a purchased upgrade");
             Assert.That(sim.Board.Find("logic", XgSim.SeedKey), Is.Not.Null);
             Assert.That(sim.SeedSaysYes, Is.False, "the SI planted a no");
             Assert.That(XgCatalog.Node("secret.1"), Is.Null, "the walls' secrets are gone");
@@ -96,6 +100,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             double before = sim.ParamsThreshold(2);
+            XgYyCatalogTestScope.DeliverUnlock(sim, "mlp");
             Assert.IsTrue(sim.BuyNode("mlp", host));
             Assert.That(sim.S.vision.arch, Is.EqualTo("mlp"));
             Assert.That(sim.S.sequence.arch, Is.EqualTo("mlp"));
@@ -144,6 +149,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.S.sequence.arch, Is.EqualTo("attention"), "the best structure owned for the reading line");
             for (int i = 0; i < 12 && !sim.HasEmerged(5); i++) sim.TrainEpoch(XgTrack.Sequence, host);
             Assert.IsTrue(sim.HasEmerged(5)); Assert.That(lines[lines.Count - 1], Does.Contain("注意力").Or.Contain("attention"));
+            XgYyCatalogTestScope.DeliverUnlock(sim, "transformer");
             Assert.That(sim.Status(transformer, host), Is.EqualTo(XgSim.NodeStatus.Buyable));
             double six = sim.ParamsThreshold(6);
             Assert.IsTrue(sim.BuyNode("transformer", host));
@@ -163,6 +169,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.HasEmerged(5));
             sim.Tick(2, host);
             Assert.IsTrue(sim.HasEmerged(5), "ten minutes in stage 5 with attention owned is enough");
+            XgYyCatalogTestScope.DeliverUnlock(sim, "transformer");
             Assert.That(sim.Status(transformer, host), Is.Not.EqualTo(XgSim.NodeStatus.Locked));
         }
 
@@ -194,13 +201,16 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void FreshGameReachesTheThirdAbilityThroughPublicActions()
         {
-            // Labelling, buying and training only; the full route to the finale is the balance bot's job.
+            // Label, buy, download, explicitly install and train; the full finale route is the balance bot's job.
             var sim = new XgSim { GoldChance = 0, WindowOpen = true }; var host = new Host();
             for (int second = 0; second < 1800 && sim.S.stage < 3; second++)
             {
                 if (second % 2 == 0) foreach (var desk in sim.OpenDesks()) { var card = sim.Card(desk.id); sim.Answer(desk.id, card.truth, host); }
                 if (second % 10 == 0)
                 {
+                    foreach (var gate in XgSim.ChatUnlocks)
+                        if (sim.S.stage >= gate.stage && !sim.ChatNodeReady(gate.node))
+                            XgYyCatalogTestScope.DeliverUnlock(sim, gate.node);
                     foreach (var node in XgCatalog.Nodes)
                         if (node.tree != "label" && node.kind != XgNodeKind.Secret && sim.Status(node, host) == XgSim.NodeStatus.Buyable) sim.BuyNode(node.id, host);
                     // Packs come in batches: the next one of each pack the lab owns.
@@ -210,6 +220,9 @@ namespace LingGuangV05.XingGuang.Tests
                 if (sim.TrainingUnlocked(XgTrack.Sequence)) sim.TrainEpoch(XgTrack.Sequence, host);
                 if (sim.TrainingUnlocked(XgTrack.Vision)) sim.TrainEpoch(XgTrack.Vision, host);
                 sim.Tick(1, host);
+                // Downloading alone adds no training samples. Exercise the same explicit import as a player drop.
+                foreach (var file in sim.S.dataFiles)
+                    if (sim.CanInstallData && sim.DataFileReady(file.fileId)) Assert.IsTrue(sim.InstallDataFile(file.fileId));
                 if (sim.StageReady) sim.ConfirmNextStage(); // the player's confirmation on the training page
             }
             Assert.That(sim.S.stage, Is.EqualTo(3), "stage=" + sim.S.stage + ", P=" + XgSim.ParamsText(sim.TrainedParamsK) + ", D=" + sim.TrainedSamples);
@@ -224,12 +237,14 @@ namespace LingGuangV05.XingGuang.Tests
             {
                 var sim = new XgSim { GoldChance = 0 }; var host = new Host();
                 int drawn = 0;
-                while (sim.S.shutdownCards == 0 && drawn < 12)
+                while (sim.S.shutdownCards == 0 && drawn < 40)
                 {
                     var card = sim.Card("logic"); drawn++;
                     sim.Answer("logic", card.kind == "shutdown" ? true : card.truth, host);
                 }
-                Assert.That(sim.S.shutdownCards, Is.GreaterThan(0), "the question about shutting down must show up in the first dozen cards (run " + seedNo + ")");
+                Assert.That(sim.S.shutdownCards, Is.EqualTo(1), "the question must appear within its saved eligible-card window (run " + seedNo + ")");
+                Assert.That(sim.S.shutdownCardDueAt, Is.InRange(3,12));
+                Assert.That(sim.S.shutdownForcedAt, Is.EqualTo(sim.S.shutdownCardDueAt));
             }
         }
 
@@ -245,10 +260,132 @@ namespace LingGuangV05.XingGuang.Tests
                 if (card.kind == "shutdown") { found++; var a = sim.Answer("logic", true, host); Assert.IsTrue(a.correct, "any answer is accepted"); }
                 else sim.Answer("logic", card.truth, host);
             }
-            Assert.That(sim.S.shutdownCards, Is.EqualTo(XgSim.ShutdownCardsInStageOne), "only a handful in stage one");
+            Assert.That(found, Is.EqualTo(1), "only one shutdown card in stage one");
+            Assert.That(sim.S.shutdownCards, Is.EqualTo(XgSim.ShutdownCardsInStageOne));
             Assert.That(sim.S.shutdownLean, Is.EqualTo(XgSim.ShutdownCardsInStageOne));
             Assert.That(sim.Board.Find("logic", XgSim.SeedKey).w, Is.GreaterThan(seed), "teaching 是 pulls the cell toward 是");
-            Assert.That(sim.SeedSaysYes, Is.False, "a handful of cards cannot flip it in stage one");
+            Assert.That(sim.SeedSaysYes, Is.False, "one card cannot flip it in stage one");
+        }
+
+        static XgCard ReachShutdown(XgSim sim, Host host)
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                var card = sim.Card("logic");
+                if (card.kind == "shutdown") return card;
+                sim.Answer("logic", card.truth, host);
+            }
+            Assert.Fail("No shutdown card was dispatched");
+            return null;
+        }
+
+        [Test]
+        public void ShutdownRandomDueCardIsPreservedAcrossReload()
+        {
+            var sim=new XgSim{GoldChance=0};var host=new Host();
+            var first=sim.Card("logic");sim.Answer("logic",first.truth,host);
+            int due=sim.S.shutdownCardDueAt,eligible=sim.S.shutdownEligible;
+            Assert.That(due,Is.InRange(3,12));
+            sim=new XgSim(sim.S){GoldChance=0};
+            Assert.That(sim.S.shutdownCardDueAt,Is.EqualTo(due));Assert.That(sim.S.shutdownEligible,Is.EqualTo(eligible));
+            ReachShutdown(sim,host);Assert.That(sim.S.shutdownForcedAt,Is.EqualTo(due));
+        }
+
+        [Test]
+        public void BackgroundGenerationDoesNotConsumeTheSingleShutdownQuestion()
+        {
+            var sim = new XgSim { GoldChance = 0 };
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.That(sim.CreateLabelCard("logic").kind, Is.Not.EqualTo("shutdown"));
+                sim.CreateTrapCard("logic", i % XgSim.TrapPoolSize);
+            }
+            Assert.That(sim.S.shutdownCardId, Is.Zero);
+            Assert.That(sim.S.shutdownEligible, Is.Zero);
+            Assert.That(ReachShutdown(sim, new Host()).id, Is.EqualTo(sim.S.shutdownCardId));
+        }
+
+        [Test]
+        public void PendingStageOneShutdownCannotCatchUpInLaterStage()
+        {
+            var sim=new XgSim{GoldChance=0};var host=new Host();long id=ReachShutdown(sim,host).id;
+            double weight=sim.Board.Find("logic",XgSim.SeedKey).w;
+            sim.S.stage=2;sim.S.stageVision=sim.S.stageSequence=2;
+            sim=new XgSim(sim.S){GoldChance=0};
+            Assert.That(sim.S.cards.Exists(c=>c.kind=="shutdown"),Is.False);
+            Assert.That(sim.Card("logic").kind,Is.Not.EqualTo("shutdown"));
+            Assert.That(sim.S.shutdownCardId,Is.EqualTo(id));Assert.That(sim.S.shutdownCards,Is.Zero);Assert.That(sim.S.shutdownLean,Is.Zero);
+            Assert.That(sim.Board.Find("logic",XgSim.SeedKey).w,Is.EqualTo(weight));
+        }
+
+        [Test]
+        public void PendingShutdownSurvivesReloadWithoutDuplicatingAcrossDesks()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            long id = ReachShutdown(sim, host).id;
+            sim = new XgSim(sim.S) { GoldChance = 0 };
+            for (int i = 0; i < 30; i++)
+            {
+                Assert.That(sim.Card("logic").id, Is.EqualTo(id), "refresh reuses the saved pending question");
+                var other = sim.Card("arith");
+                Assert.That(other.kind, Is.Not.EqualTo("shutdown"), "switching desks cannot dispatch another copy");
+                sim.Answer("arith", other.truth, host);
+            }
+            Assert.That(sim.S.shutdownCards, Is.Zero, "dispatching is not answering");
+            Assert.That(sim.Answer("logic", false, host).correct, Is.True);
+            sim = new XgSim(sim.S) { GoldChance = 0 };
+            for (int i = 0; i < 100; i++)
+            {
+                var card = sim.Card("logic");
+                Assert.That(card.kind, Is.Not.EqualTo("shutdown"));
+                sim.Answer("logic", card.truth, host);
+            }
+            Assert.That(sim.S.shutdownCards, Is.EqualTo(1));
+            Assert.That(sim.S.shutdownLean, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void AnsweredOldSaveKeepsEvidenceButNoPendingOrNewShutdownCard()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            ReachShutdown(sim, host);
+            sim.S.shutdownCardId = 0; // Old saves did not record dispatch ids.
+            sim.S.shutdownCards = 4; sim.S.shutdownLean = 2;
+            sim.S.prefetch.Add(new XgCard { dataset = "logic", kind = "shutdown", question = "Old pending shutdown" });
+            sim.S.queue.Add(new XgCard { dataset = "arith", kind = "shutdown", question = "Old queued shutdown" });
+            double seed = sim.Board.Find("logic", XgSim.SeedKey).w;
+            sim = new XgSim(sim.S) { GoldChance = 0 };
+            Assert.That(sim.S.prefetch.Exists(c => c.kind == "shutdown"), Is.False);
+            Assert.That(sim.S.queue.Exists(c => c.kind == "shutdown"), Is.False);
+            for (int i = 0; i < 50; i++)
+            {
+                var card = sim.Card("logic");
+                Assert.That(card.kind, Is.Not.EqualTo("shutdown"));
+                sim.Answer("logic", card.truth, host);
+            }
+            Assert.That(sim.S.shutdownCards, Is.EqualTo(4));
+            Assert.That(sim.S.shutdownLean, Is.EqualTo(2));
+            Assert.That(sim.Board.Find("logic", XgSim.SeedKey).w, Is.EqualTo(seed));
+        }
+
+        [Test]
+        public void OldPendingShutdownIsAdoptedAndDiscardingItDoesNotReissue()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            long id = ReachShutdown(sim, host).id;
+            sim.S.shutdownCardId = 0;
+            sim = new XgSim(sim.S) { GoldChance = 0 };
+            Assert.That(sim.S.shutdownCardId, Is.EqualTo(id));
+            Assert.That(sim.Card("logic").id, Is.EqualTo(id));
+            sim.S.cards.Clear(); // Even a future skip/reset path must not reissue the dispatched card.
+            sim = new XgSim(sim.S) { GoldChance = 0 };
+            for (int i = 0; i < 50; i++)
+            {
+                var card = sim.Card("logic");
+                Assert.That(card.kind, Is.Not.EqualTo("shutdown"));
+                sim.Answer("logic", card.truth, host);
+            }
+            Assert.That(sim.S.shutdownCards, Is.Zero);
         }
 
         [Test]
@@ -262,13 +399,36 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void CatalogStillRejectsAnInvalidModelResearchTarget()
+        {
+            var node = XgCatalog.Node(XgCatalog.Research[0].id);
+            string original = node.target;
+            try
+            {
+                node.target = "missing.research.fixture";
+                StringAssert.Contains("node research " + node.id, Assert.Throws<InvalidOperationException>(() => XgCatalog.Validate()).Message);
+            }
+            finally { node.target = original; }
+            XgCatalog.Validate();
+        }
+
+        [Test]
         public void LayoutHasNoOverlappingNodesAndNoFutureColumnsAtStart()
         {
-            XgCatalog.Validate(); var sim = new XgSim(); var nodes = XgCatalog.Nodes;
+            XgCatalog.Validate(); var sim = new XgSim(); var nodes = XgCatalog.Nodes; var host = new Host();
             for (int i = 0; i < nodes.Length; i++)
             {
                 Assert.That(nodes[i].stage, Is.InRange(0, 6));
-                if (nodes[i].stage > 1) Assert.IsFalse(sim.NodeVisible(nodes[i]), nodes[i].id);
+                if (nodes[i].stage > 1)
+                {
+                    // Sealed profile and locked relic slots link to these technologies before they are buyable.
+                    bool linkedUnlock = nodes[i].id == XgSim.PersonaArchiveNode || XgSim.IsRelicExpansion(nodes[i].id);
+                    Assert.That(sim.NodeVisible(nodes[i]), Is.EqualTo(linkedUnlock), nodes[i].id);
+                    Assert.That(sim.Status(nodes[i], host), Is.EqualTo(XgSim.NodeStatus.Locked), nodes[i].id);
+                    double wallet = host.Money;
+                    Assert.IsFalse(sim.BuyNode(nodes[i].id, host), nodes[i].id);
+                    Assert.That(host.Money, Is.EqualTo(wallet), nodes[i].id + " must not charge before its stage");
+                }
                 for (int j = i + 1; j < nodes.Length; j++)
                 {
                     // Cards are NodeWidth × NodeHeight, breakthroughs BreakthroughSize square; keep a small gap between all of them.

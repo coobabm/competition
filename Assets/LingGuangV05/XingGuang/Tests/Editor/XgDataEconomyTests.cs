@@ -29,6 +29,42 @@ namespace LingGuangV05.XingGuang.Tests
             return sim;
         }
 
+        // Invoke the real download tick without unrelated payments/calendar changes.
+        static void TickDownloads(XgSim sim, double seconds)
+        {
+            var tick = typeof(XgSim).GetMethod("TickDownloads", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(tick);
+            tick.Invoke(sim, new object[] { seconds });
+        }
+
+        static void FinishDownloads(XgSim sim)
+        {
+            var queue = sim.DownloadQueue();
+            Assert.IsNotEmpty(queue);
+            TickDownloads(sim, queue.Max(x => x.eta) + 1);
+            Assert.IsEmpty(sim.DownloadQueue(), "the real download tick delivers all queued files");
+        }
+
+        static void InstallReadyFiles(XgSim sim)
+        {
+            var files = sim.S.dataFiles.Where(x => !x.installed).ToArray();
+            Assert.IsNotEmpty(files);
+            foreach (var file in files)
+            {
+                Assert.IsTrue(sim.DataFileReady(file.fileId));
+                Assert.IsFalse(sim.InstallDataFile(file.fileId), "Data Import is still required");
+            }
+            // This fixture grants the prerequisite; the data files themselves use the manual install API.
+            sim.S.unlocked.Add(XgSim.DataEntryNode);
+            foreach (var file in files)
+            {
+                Assert.IsTrue(sim.InstallDataFile(file.fileId));
+                double samples = sim.PackSamples(file.dataset);
+                Assert.IsFalse(sim.InstallDataFile(file.fileId), "duplicate installation is a no-op");
+                Assert.AreEqual(samples, sim.PackSamples(file.dataset));
+            }
+        }
+
         // ───── catalog ─────
 
         [Test]
@@ -106,8 +142,17 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage(1, "perceptron"); var host = new Host();
             Assert.IsTrue(sim.Offer("spam.pack").available);
             double price = sim.Offer("spam.pack").price;
+            Assert.AreEqual(75, price, "preserve the existing ordinary spam pack price");
+            Assert.AreEqual(sim.NodeCost(XgCatalog.Node("spam.pack")), price);
             Assert.IsTrue(sim.BuyDataOffer("spam.pack", host));
             Assert.IsTrue(sim.Has("spam.pack"));
+            Assert.IsFalse(sim.Owns("spam"), "purchase does not install");
+            Assert.AreEqual(0, sim.PackSamples("spam"));
+            Assert.AreEqual(100000 - price, host.money, 1e-9);
+            FinishDownloads(sim);
+            Assert.IsFalse(sim.Owns("spam"), "download completion does not install");
+            Assert.AreEqual(0, sim.PackSamples("spam"));
+            InstallReadyFiles(sim);
             Assert.IsTrue(sim.Owns("spam"));
             Assert.AreEqual(100000 - price, host.money, 1e-9);
             var o = sim.Offer("spam.pack");
@@ -135,6 +180,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(.5, sim.Offer("cifar.junk").downloadProgress, .05);
             sim.Tick(o.downloadSec, host);
             Assert.IsFalse(sim.Offer("cifar.junk").downloading);
+            Assert.AreEqual(0, sim.PackSamples("cifar"), "downloaded files are not installed");
+            Assert.IsFalse(sim.OwnsExtraPack("cifar"));
+            InstallReadyFiles(sim);
             Assert.AreEqual(100000, sim.PackSamples("cifar"));
             Assert.IsTrue(sim.Owns("cifar") && sim.DatasetAvailable("cifar"));
             Assert.AreEqual(100000 * .25, sim.DataNoise("cifar"), 1e-6);
@@ -152,6 +200,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(cost, Is.GreaterThanOrEqualTo(50));
             Assert.IsTrue(sim.AccelerateOffer("cifar.junk", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
+            Assert.IsFalse(sim.Offer("cifar.junk").downloading);
+            Assert.AreEqual(0, sim.PackSamples("cifar"), "acceleration does not install");
+            InstallReadyFiles(sim);
+            Assert.AreEqual(before - cost, host.money, 1e-9, "installation does not charge again");
             Assert.AreEqual(100000, sim.PackSamples("cifar"));
             Assert.IsFalse(sim.AccelerateOffer("cifar.junk", host));
         }
@@ -170,8 +222,11 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void TheNoiseShareCountsEveryRowNotJustHandLabels()
         {
-            var sim = AtStage(2);
-            sim.S.owned.Add("mnist");
+            var sim = AtStage(2, "mlp"); var host = new Host();
+            Assert.IsTrue(sim.BuyDataOffer("mnist.pack", host));
+            FinishDownloads(sim);
+            Assert.AreEqual(0, sim.PackSamples("mnist"));
+            InstallReadyFiles(sim);
             sim.S.labels.Add(new XgLabelCount { dataset = "mnist", count = 1000 });
             sim.S.noise.Add(new XgLabelCount { dataset = "mnist", count = 100 });
             double packNoise = 60000 * XgSim.DataOfferDef("mnist.pack").noise;
@@ -221,9 +276,12 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void DataCleaningHalvesJunkAndCrowdNoiseButNotPublicNoise()
         {
-            var sim = AtStage(3, "mlp"); var host = new Host();
-            sim.S.owned.Add("news");
-            sim.S.dataOffers.Add("news.junk");
+            var sim = AtStage(5, "mlp", "rnn"); var host = new Host();
+            Assert.IsTrue(sim.BuyDataOffer("news.pack", host));
+            Assert.IsTrue(sim.BuyDataOffer("news.junk", host));
+            FinishDownloads(sim);
+            Assert.AreEqual(0, sim.PackSamples("news"));
+            InstallReadyFiles(sim);
             sim.S.crowdNoise.Add(new XgLabelCount { dataset = "news", count = 100 });
             double pub = 5e6 * XgSim.DataOfferDef("news.pack").noise, junk = 1e7 * .35;
             Assert.AreEqual(pub + junk + 100, sim.DataNoise("news"), 1e-3);
@@ -331,6 +389,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.Downloading("imagenet"));
             Assert.IsFalse(sim.Offer("imagenet.pack").available, "the public pack is the same data");
             sim.Tick(offer.downloadSec + 1, host);
+            Assert.IsFalse(sim.Downloading("imagenet"));
+            Assert.AreEqual(0, sim.PackSamples("imagenet"), "the story reply and download do not install");
+            InstallReadyFiles(sim);
             Assert.AreEqual(1200000, sim.PackSamples("imagenet"), "counted once");
             Assert.AreEqual(1200000, sim.Samples("imagenet"));
         }

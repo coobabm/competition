@@ -77,6 +77,7 @@ namespace LingGuangV05.Desktop.XingGuang
         double shownMoney = -1;
         RectTransform welcome;
         XgSim boundSim;
+        bool nativeMinimized;
         XgSetupOverlay setup;
         TMP_FontAsset font;
         /// <summary>The lab's CJK font (overlays outside the window, such as the spider's speech bubble, use it too).</summary>
@@ -104,7 +105,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgBackpackPage Backpack { get; private set; }
         /// <summary>The big card overlay (earned cards flip in; the album opens them).</summary>
         public XgHoloCard Holo { get; private set; }
-        public bool Visible => controller != null && controller.Window != null && controller.Window.isOn && isActiveAndEnabled;
+        public bool Visible => controller != null && controller.Window != null && controller.Window.isOn && !nativeMinimized && isActiveAndEnabled;
         public string Tab => tab;
         /// <summary>The combo lives in 摆渡众包; effects aimed at it here land on the main-line bars.</summary>
         public RectTransform ComboChip => barsRect;
@@ -148,8 +149,9 @@ namespace LingGuangV05.Desktop.XingGuang
             toast = ui.Text(Rect("Text", toastBox, Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-10, 0)), "", 16, XgDark.Ink, TextAlignmentOptions.Center);
             toast.raycastTarget = false;
             toastBox.gameObject.SetActive(false);
-            owner.Window.onMinimize.AddListener(ClearTransientToast);
-            owner.Window.onClose.AddListener(ClearTransientToast);
+            owner.Window.onOpen.AddListener(NativeWindowOpened);
+            owner.Window.onMinimize.AddListener(NativeWindowMinimized);
+            owner.Window.onClose.AddListener(NativeWindowClosed);
             font = fontAsset;
             setup = new XgSetupOverlay(this, ui, fontAsset, root);
             Juice.Init(root, root, fontAsset);
@@ -235,7 +237,20 @@ namespace LingGuangV05.Desktop.XingGuang
             sim.YesNoLearned -= OnYesNoLearned; sim.RelicGained -= OnRelicGained;
         }
 
-        void OnDestroy() { if (boundSim != null) Unsubscribe(boundSim); }
+        // DreamOS keeps isOn and the GameObject active while minimized. Suppress
+        // presentation as soon as minimize starts, including same-frame sim events.
+        void NativeWindowOpened() { nativeMinimized = false; }
+        void NativeWindowClosed() { Train?.CancelRhythmFeedback(); ClearTransientToast(); }
+        void NativeWindowMinimized() { nativeMinimized = true; Train?.CancelRhythmFeedback(); ClearTransientToast(); }
+
+        void OnDestroy()
+        {
+            if (boundSim != null) Unsubscribe(boundSim);
+            if (controller == null || controller.Window == null) return;
+            controller.Window.onOpen.RemoveListener(NativeWindowOpened);
+            controller.Window.onMinimize.RemoveListener(NativeWindowMinimized);
+            controller.Window.onClose.RemoveListener(NativeWindowClosed);
+        }
 
         // ───────────── the recent-events feed (概览) ─────────────
 

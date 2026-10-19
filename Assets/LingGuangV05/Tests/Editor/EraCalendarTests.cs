@@ -190,5 +190,29 @@ namespace LingGuangV05.Tests
             StringAssert.Contains("真香", EraLexicon.PromptRule(false));
             StringAssert.Contains("2016", EraLexicon.PromptRule(true));
         }
+
+        [Test]
+        public void FreestyleKeeps2016SportsAndMusicButRejectsTheLaterCatchphrase()
+        {
+            foreach (var plain in new[] {
+                "Sun Yang won the 200 m freestyle gold in Rio.",
+                "Katie Ledecky won the women's 800 m freestyle in Rio in 2016.",
+                "The freestyle swimming final starts tonight.",
+                "Freestyle rap existed before 2016.",
+                "孙杨拿到了里约男子200米自由泳金牌。" })
+            {
+                Assert.IsNull(EraLexicon.FirstBanned(plain), plain);
+                Assert.AreEqual(plain, EraLexicon.Scrub(plain), plain);
+            }
+            foreach (var meme in new[] { "你有freestyle吗？", "你有 FREE STYLE 吗", "有 freestyle 么？", "你 有 freestyle 嘛！" })
+            {
+                Assert.IsNotNull(EraLexicon.FirstBanned(meme), meme);
+                StringAssert.DoesNotContain("freestyle", EraLexicon.Scrub(meme).ToLowerInvariant().Replace(" ", ""));
+            }
+            string mixed = "Sun Yang won the 200 m freestyle gold in Rio. 你有freestyle吗？";
+            StringAssert.StartsWith("Sun Yang won the 200 m freestyle gold in Rio.", EraLexicon.Scrub(mixed));
+            Assert.IsNull(EraLexicon.FirstBanned(EraLexicon.Scrub(mixed)));
+            CollectionAssert.DoesNotContain(EraLexicon.Banned, "freestyle");
+        }
     }
 }

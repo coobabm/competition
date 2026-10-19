@@ -21,6 +21,7 @@ namespace LingGuangV05.Desktop.Media
         {
             public string channel, sender, body;
             public int count = 1;
+            public bool aiReply;
             public Action open;
         }
 
@@ -54,7 +55,7 @@ namespace LingGuangV05.Desktop.Media
         }
 
         public static void Notify(ChapterOneRuntime runtime, string channel, string sender, string body,
-            bool visibleConversation = false, Action onClick = null)
+            bool visibleConversation = false, Action onClick = null, bool aiReply = false)
         {
             if (string.IsNullOrWhiteSpace(body)) return;
             var service = Install(runtime);
@@ -74,6 +75,7 @@ namespace LingGuangV05.Desktop.Media
             }
             else item.count++;
             item.body = text;
+            item.aiReply = aiReply;
             item.open = onClick;
         }
 
@@ -135,7 +137,7 @@ namespace LingGuangV05.Desktop.Media
             string body = (item.count > 1 ? GameText.F("{0} 条新消息\n", "{0} new messages\n", item.count) : "") + item.body;
             var save = bound;
             tray.EnqueueNotification(title, body, 6, item.open,
-                () => this != null && runtime != null && !runtime.TestMode && ReferenceEquals(runtime.Sim, save), Held);
+                () => this != null && runtime != null && !runtime.TestMode && ReferenceEquals(runtime.Sim, save), Held, aiReply: item.aiReply);
         }
     }
 }

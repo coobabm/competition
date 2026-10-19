@@ -82,8 +82,8 @@ namespace LingGuangV05.Desktop
             buy.onClick.AddListener(Upgrade);
             buyLabel = Text(PrologueDesk.Rect("Label", b, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), 15, Color.white);
             buyLabel.alignment = TextAlignmentOptions.Center;
-            UiTip.Add(card, "科技里的数据包买完直接出现在「教」。宽带承载贴吧回复中的资料下载；月租每月 1 号从家里余额扣。",
-                "Data packs bought in Tech appear immediately in Teach. Broadband handles files linked in forum replies; its fee is charged on the 1st of each month.");
+            UiTip.Add(card, "下载好的训练数据在桌面「资料文件夹」里，拖到「练」安装。宽带承载贴吧回复中的资料下载；月租每月 1 号从家里余额扣。",
+                "Downloaded training data is in desktop Training files; drag it into Train to install. Broadband handles files linked in forum replies; its fee is charged on the 1st of each month.");
             Refresh();
         }
 

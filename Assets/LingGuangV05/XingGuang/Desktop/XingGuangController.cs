@@ -44,6 +44,10 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBrain brain;
         XgStoryBridge storyBridge;
         XgPlatformPopups platformPopups;
+        XgEpilogueDirector epilogueDirector;
+        // Until the real prerequisite systems supply their saved receipts, the new entrance stays closed.
+        public Func<XgReleasePrerequisites> EpiloguePrerequisiteProvider;
+        public XgEpilogueDirector Epilogue => epilogueDirector;
         float sinceSave;
         int capturedChapter;
         ChapterOneSim linked;
@@ -90,8 +94,16 @@ namespace LingGuangV05.Desktop.XingGuang
             DesktopWindowDefaults.Attach(runtime);
             LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
             LingGuangV05.Desktop.Story.StudyDesktopGates.Attach(this);
+            XgTestSetPrewarmer.Attach(this);
             XgBrainWindow.Install(this);
+            XgReadingWindow.Install(this);
             XgStageCurtain.Install(this);
+            epilogueDirector = GetComponent<XgEpilogueDirector>() ?? gameObject.AddComponent<XgEpilogueDirector>();
+            epilogueDirector.Bind(this, () => EpiloguePrerequisiteProvider?.Invoke());
+            XgEpilogueMailBridge.Install(this);
+            XgPublicDiscourseNotifier.Install(this);
+            XgEndingPreparationHost.Install(this);
+            runtime.EpiloguePresentationHeld = () => epilogueDirector != null && epilogueDirector.HoldingSimulation;
             SyncProfile(runtime.Sim.S);
             brain = GetComponent<XgBrain>() ?? gameObject.AddComponent<XgBrain>();
             brain.Bind(this);
@@ -126,6 +138,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            XgPublicDiscourseNotifier.InitializeSave(Sim, state == null);
+            Sim.LearningClock = () =>
+            {
+                if (sim == null) return new XgLearningTime(0, -1);
+                var now = GameCalendar.Now(sim.S);
+                return new XgLearningTime(GameCalendar.Yyyymmdd(now), now.TimeOfDay.TotalSeconds);
+            };
             if (sim != null) sim.PowerCostsEnabled = true;
             // A new game starts with the first-minutes focus (only 常识判断 and training, XgSim.Opening.cs); a loaded save is left as it is.
             if (state == null) Sim.BeginOpening();
@@ -136,6 +155,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (state != null) RaiseProgress(silent: true);
             savedStage = Sim.S.stage;
             if (View != null) View.Bind(this);
+            if (epilogueDirector != null) epilogueDirector.Bind(this, () => EpiloguePrerequisiteProvider?.Invoke());
+            XgDailyUnlockNotifier.Install(this);
+            XgAppAcquisitionHost.Install(this);
         }
 
         static bool LabReadable(string json)
@@ -159,6 +181,16 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public bool SaveNow() { return runtime != null && runtime.SaveNow(); }
+        public bool BoundTo(ChapterOneSim sim) => ReferenceEquals(linked, sim);
+
+        // Never edit a replacement simulation created only to preserve an unreadable save.
+        public bool LifeEventSettingsAvailable => Sim != null && unreadableLab == null;
+        public bool SetLifeEventIntervalMode(int mode)
+        {
+            if (!LifeEventSettingsAvailable || mode < 0 || mode > 2) return false;
+            Sim.LifeEventIntervalMode = mode;
+            return SaveNow();
+        }
         public bool FeatureVisible(string feature) => Sim != null && Sim.FeatureVisible(feature);
         public bool EndingQuestionReady => Sim != null && Sim.EndingAvailable && runtime != null && runtime.Sim != null && runtime.Sim.S.story.GetFlag("delivered.ending_card") > 0;
 
@@ -179,11 +211,24 @@ namespace LingGuangV05.Desktop.XingGuang
         static readonly Unity.Profiling.ProfilerMarker ProfileProgress = new Unity.Profiling.ProfilerMarker("Xg.Controller.ProgressEvents");
         static readonly Unity.Profiling.ProfilerMarker ProfileChapter = new Unity.Profiling.ProfilerMarker("Xg.Controller.ChapterCaptureSave");
         float nextOpeningVoiceCheck;
+        readonly XgLifeHostActivity.ActiveClock lifeActiveClock = new XgLifeHostActivity.ActiveClock();
 
         void Update()
         {
             if (Sim == null || runtime == null || runtime.Sim == null) return;
-            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen) return;
+            if (epilogueDirector != null && epilogueDirector.HoldingSimulation)
+            {
+                if (brain != null) brain.Suspend(true);
+                lifeActiveClock.ObservePause();
+                Sim.ObserveLifeEventConflict();
+                return;
+            }
+            if (LingGuangV05.Desktop.SaveSlotsPanel.IsOpen)
+            {
+                lifeActiveClock.ObservePause();
+                Sim.ObserveLifeEventConflict();
+                return;
+            }
             Sim.English = GameText.IsEnglish;
             runtime.Sim.PowerCostsEnabled = true;
             Sim.WindowOpen = Window != null && Window.isOn && View != null;
@@ -206,11 +251,15 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             Sim.Today = GameCalendar.Yyyymmdd(GameCalendar.Now(runtime.Sim.S));
             Sim.Clock = runtime.Sim.S.gameSeconds;
+            // User decision A: hiding the in-game .exe or switching focus does not pause this clock.
+            lifeActiveClock.Apply(Sim, Time.unscaledDeltaTime);
+            Sim.ObserveLifeEventConflict(); // Also observe due+held while the stage branch below skips Tick entirely.
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             if(brain!=null)brain.Suspend(Sim.StagePresentationHeld);
             if(!Sim.StagePresentationHeld)
             {
                 using (ProfileBrain.Auto()) { if (brain != null) brain.TickBeforeSimulation(); }
+                Sim.TickBoardSelfPlay(GameCalendar.Now(runtime.Sim.S), dt);
                 using (ProfileSim.Auto()) { Sim.Tick(dt, Host); }
             }
             // The twelve-question opening is narrated by StageOneTutor. Legacy saves retain the upstream

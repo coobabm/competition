@@ -44,10 +44,33 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void EveryTechNodeIsHandWritten()
+        public void EveryTechNodeHasReviewedVisibleCopy()
         {
-            // The generic fallback exists for nodes added later; the shipped catalog must not rely on it.
-            foreach (var n in TechNodes()) Assert.IsTrue(XgTechPlain.IsAuthored(n), n.id + " has only the fallback line");
+            // The current page uses XgTechTreeCopy; the old closing-line table is compatibility-only.
+            // Inspect actual text in both languages and reject review placeholders, not merely null strings.
+            var sim = new XgSim();
+            sim.S.stage = 6; sim.S.autoLabelRevealed = true;
+            foreach (bool english in new[] { false, true })
+            {
+                sim.English = english;
+                foreach (var n in TechNodes())
+                {
+                    Assert.IsTrue(XgTechTreeCopy.Covered(n), n.id + " has no reviewed current copy");
+                    Assert.IsFalse(sim.NodeMystery(n), "Authored-copy audit must inspect the revealed node: " + n.id);
+                    string card = XgTechTreeCopy.Card(n, sim);
+                    string detail = XgTechTreeCopy.Detail(n, sim);
+                    string[] lines = card.Split('\n');
+                    Assert.AreEqual(3, lines.Length, n.id + " must retain the three-line card");
+                    foreach (var line in lines) Assert.IsFalse(string.IsNullOrWhiteSpace(line), n.id);
+                    Assert.IsFalse(string.IsNullOrWhiteSpace(detail), n.id + " glossary");
+                    foreach (var placeholder in new[] { "内容待核对", "功能待核对", "Copy needs review", "Effect needs review" })
+                    {
+                        StringAssert.DoesNotContain(placeholder, card, n.id);
+                        StringAssert.DoesNotContain(placeholder, detail, n.id);
+                    }
+                    Assert.IsNull(EraLexicon.FirstBanned(card), n.id + " card");
+                }
+            }
         }
 
         [Test]

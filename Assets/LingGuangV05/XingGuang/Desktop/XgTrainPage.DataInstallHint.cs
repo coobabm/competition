@@ -1,0 +1,55 @@
+using TMPro;
+using UnityEngine;
+using static LingGuangV05.Desktop.XingGuang.XgUi;
+
+namespace LingGuangV05.Desktop.XingGuang
+{
+    public sealed partial class XgTrainPage
+    {
+        const float DataInstallHintHeight = 84;
+        RectTransform dataInstallHint;
+        TMP_Text dataInstallHeading, dataInstallInstructions;
+
+        void BuildDataInstallHint()
+        {
+            // This banner is inside the real root drop target, not a second installation action.
+            dataInstallHint = ui.Card(root, "DataInstallHint", new Vector2(0, 1), Vector2.one,
+                new Vector2(0, -DataInstallHintHeight), Vector2.zero);
+            dataInstallHeading = ui.Text(Rect("Status", dataInstallHint, new Vector2(0, 1), Vector2.one,
+                new Vector2(12, -28), new Vector2(-12, -6)), "", 14, XgDark.Data, TextAlignmentOptions.MidlineLeft);
+            dataInstallInstructions = ui.Text(Rect("Instructions", dataInstallHint, Vector2.zero, Vector2.one,
+                new Vector2(12, 6), new Vector2(-12, -30)), "", 13, XgDark.Muted, TextAlignmentOptions.TopLeft);
+            dataInstallInstructions.richText = false;
+            dataInstallInstructions.textWrappingMode = TextWrappingModes.Normal;
+            dataInstallHint.gameObject.SetActive(false);
+        }
+
+        void RefreshDataInstallHint()
+        {
+            if (dataInstallHint == null) return;
+            bool available = Sim.CanInstallData;
+            dataInstallHint.gameObject.SetActive(available);
+            float inset = available ? DataInstallHintHeight + RowGap : 0;
+            left.offsetMax = new Vector2(left.offsetMax.x, -inset);
+            right.offsetMax = new Vector2(right.offsetMax.x, -inset);
+            if (!available) return;
+
+            int ready = 0, installed = 0;
+            foreach (var file in Sim.S.dataFiles)
+            {
+                if (file == null) continue;
+                if (file.installed) installed++;
+                else if (Sim.DataFileReady(file.fileId)) ready++;
+            }
+            dataInstallHeading.text = T("数据包安装 · ", "Data packs · ") + (ready > 0
+                ? T(ready + " 个待安装", ready + " ready to install")
+                : installed > 0 ? T("已安装 " + installed + " 个，暂无待安装包", installed + " installed; none waiting")
+                : T("暂无可安装包", "No packs ready yet"));
+            string folder = T("资料文件夹 → 训练数据", "Training files → Training data");
+            dataInstallInstructions.text = (ready > 0
+                ? T("打开「" + folder + "」，把待安装包拖到这里安装。", "Open " + folder + " and drag ready packs here to install.")
+                : T("下载完成后，在「" + folder + "」找到数据包，拖到这里安装。", "After downloading, find packs in " + folder + " and drag them here to install."))
+                + "\n" + T("按住 Ctrl 多选后，可一起拖入。", "Hold Ctrl to select several packs, then drag them together.");
+        }
+    }
+}

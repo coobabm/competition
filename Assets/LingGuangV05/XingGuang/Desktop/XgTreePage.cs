@@ -12,7 +12,7 @@ using LingGuangV05.Core;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// Drag to pan with inertia. Wheel pans horizontally, Shift-wheel vertically; buttons zoom.
+    /// Drag to pan with inertia; wheel zooms at the pointer and buttons zoom at the viewport centre.
     /// The desktop canvas is Screen Space – Camera rendered into an LCD texture, so pointer positions are converted with
     /// the event camera into the viewport's local space; raw pixel deltas would be wrong by the canvas scale.
     /// </summary>
@@ -25,10 +25,22 @@ namespace LingGuangV05.Desktop.XingGuang
         public bool Moving => Dragging || targetZoom > 0 || velocity.sqrMagnitude > 4 || glide.HasValue;
         public Action ResetRequested, MotionStarted, MotionFinished;
         public Action<float> ZoomChanged;
-        bool wasMoving;
+        bool wasMoving, reduceMotion;
         Vector2 last, velocity, zoomAnchor;
         float targetZoom = -1;
         Vector2? glide;
+
+        /// <summary>Finish pending navigation/zoom immediately; direct pointer input stays available.</summary>
+        public bool ReduceMotion
+        {
+            get => reduceMotion;
+            set
+            {
+                if (reduceMotion == value) return;
+                reduceMotion = value;
+                if (value) SettleMotion();
+            }
+        }
 
         bool Local(PointerEventData e, out Vector2 p)
         {
@@ -36,7 +48,15 @@ namespace LingGuangV05.Desktop.XingGuang
             return RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, e.position, cam, out p);
         }
 
-        public void OnBeginDrag(PointerEventData e) { Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; if (Dragging) MotionStarted?.Invoke(); }
+        void NotifyMotion()
+        {
+            bool moving = Moving;
+            if (moving == wasMoving) return;
+            wasMoving = moving;
+            if (moving) MotionStarted?.Invoke(); else MotionFinished?.Invoke();
+        }
+
+        public void OnBeginDrag(PointerEventData e) { Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; NotifyMotion(); }
         public void OnPointerClick(PointerEventData e) { if (e.clickCount == 2 && !Dragging) { SetView(1, content.anchoredPosition); ResetRequested?.Invoke(); } }
 
         public void OnDrag(PointerEventData e)
@@ -45,27 +65,30 @@ namespace LingGuangV05.Desktop.XingGuang
             var d = p - last; last = p;
             content.anchoredPosition += d;
             Clamp();
-            velocity = Vector2.Lerp(velocity, d / Mathf.Max(Time.unscaledDeltaTime, .005f), .5f);
+            velocity = ReduceMotion ? Vector2.zero : Vector2.Lerp(velocity, d / Mathf.Max(Time.unscaledDeltaTime, .005f), .5f);
         }
 
-        public void OnEndDrag(PointerEventData e) { Dragging = false; }
+        public void OnEndDrag(PointerEventData e) { Dragging = false; if (ReduceMotion) velocity = Vector2.zero; NotifyMotion(); }
 
         public void OnScroll(PointerEventData e)
         {
-            if (content == null) return;
+            if (content == null || viewport == null) return;
             if (!Local(e, out zoomAnchor)) return;
             float from = targetZoom > 0 ? targetZoom : content.localScale.x;
             targetZoom = Mathf.Clamp(from + Mathf.Sign(e.scrollDelta.y) * .1f, minZoom, maxZoom);
-            velocity = Vector2.zero; glide = null; MotionStarted?.Invoke();
+            velocity = Vector2.zero; glide = null; NotifyMotion();
+            if (ReduceMotion) SettleMotion();
         }
 
         /// <summary>Zoom around the viewport centre (the +/− buttons).</summary>
         public void ZoomBy(float factor)
         {
+            if (content == null || viewport == null) return;
             zoomAnchor = viewport.rect.center;
             float from = targetZoom > 0 ? targetZoom : content.localScale.x;
             targetZoom = Mathf.Clamp(from * factor, minZoom, maxZoom);
-            MotionStarted?.Invoke();
+            NotifyMotion();
+            if (ReduceMotion) SettleMotion();
         }
 
         /// <summary>Explicit fit/reset without leaving an old zoom or inertia animation running.</summary>
@@ -77,7 +100,17 @@ namespace LingGuangV05.Desktop.XingGuang
             content.anchoredPosition = position;
             Clamp();
             ZoomChanged?.Invoke(content.localScale.x);
+            NotifyMotion();
         }
+
+        /// <summary>Cancel animation/drag without jumping to its old destination (page hide or rebind).</summary>
+        public void CancelMotion()
+        {
+            targetZoom = -1; velocity = Vector2.zero; glide = null; Dragging = false;
+            NotifyMotion();
+        }
+
+        void OnDisable() => CancelMotion();
 
         /// <summary>Stage overview: fit every lane vertically, keep its header below the top edge, and glide only horizontally.</summary>
         public void FitColumn(float centreX, float padding = 16)
@@ -94,23 +127,52 @@ namespace LingGuangV05.Desktop.XingGuang
             var position = content.anchoredPosition; position.y = -padding; content.anchoredPosition = position;
             glide = new Vector2(size.x * .5f - centreX * fit, -padding);
             Clamp();
+            NotifyMotion();
+            if (ReduceMotion) SettleMotion();
         }
 
         /// <summary>Slide so this content point (local, top-left origin) sits near the viewport centre.</summary>
         public void GlideTo(Vector2 contentPoint)
         {
+            if (content == null || viewport == null) return;
             float z = targetZoom > 0 ? targetZoom : content.localScale.x;
             Vector2 view = viewport.rect.size;
             glide = new Vector2(view.x * .45f - contentPoint.x * z, -view.y * .42f - contentPoint.y * z);
             velocity = Vector2.zero;
+            NotifyMotion();
+            if (ReduceMotion) SettleMotion();
         }
 
-        void Update()
+        void ApplyZoom(float next)
         {
-            if (content == null) return;
-            bool moving = Moving;
-            if (moving && !wasMoving) MotionStarted?.Invoke();
-            float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
+            float z = content.localScale.x;
+            Vector2 topLeft = new Vector2(viewport.rect.xMin, viewport.rect.yMax);
+            Vector2 local = zoomAnchor - topLeft;
+            Vector2 before = (local - content.anchoredPosition) / z;
+            content.localScale = Vector3.one * next;
+            content.anchoredPosition = local - before * next;
+            Clamp();
+            ZoomChanged?.Invoke(next);
+        }
+
+        void SettleMotion()
+        {
+            velocity = Vector2.zero;
+            if (content != null && viewport != null)
+            {
+                if (targetZoom > 0) ApplyZoom(targetZoom);
+                if (glide.HasValue) content.anchoredPosition = ClampedPosition(glide.Value);
+            }
+            targetZoom = -1; glide = null;
+            NotifyMotion();
+        }
+
+        void Update() => AdvanceMotion(Mathf.Min(Time.unscaledDeltaTime, .05f));
+
+        void AdvanceMotion(float dt)
+        {
+            if (content == null || viewport == null) return;
+            NotifyMotion();
             if (!Dragging && velocity.sqrMagnitude > 4)
             {
                 content.anchoredPosition += velocity * dt;
@@ -121,35 +183,34 @@ namespace LingGuangV05.Desktop.XingGuang
             if (targetZoom > 0)
             {
                 float next = Mathf.Abs(z - targetZoom) < .002f ? targetZoom : Mathf.Lerp(z, targetZoom, 1 - Mathf.Exp(-14 * dt));
-                Vector2 topLeft = new Vector2(viewport.rect.xMin, viewport.rect.yMax);
-                Vector2 local = zoomAnchor - topLeft;
-                Vector2 before = (local - content.anchoredPosition) / z;
-                content.localScale = Vector3.one * next;
-                ZoomChanged?.Invoke(next);
-                content.anchoredPosition = local - before * next;
-                Clamp();
+                ApplyZoom(next);
                 if (next == targetZoom) targetZoom = -1;
             }
             if (glide.HasValue && !Dragging)
             {
-                var target = glide.Value;
+                // Compare with the reachable destination, including after zoom or viewport resizing.
+                var target = ClampedPosition(glide.Value);
                 content.anchoredPosition = Vector2.Lerp(content.anchoredPosition, target, 1 - Mathf.Exp(-10 * dt));
                 Clamp();
-                if ((content.anchoredPosition - target).sqrMagnitude < 1) glide = null;
+                if ((content.anchoredPosition - target).sqrMagnitude < 1)
+                {
+                    content.anchoredPosition = target;
+                    glide = null;
+                }
             }
-            if (wasMoving && !Moving) MotionFinished?.Invoke();
-            wasMoving = Moving;
+            NotifyMotion();
         }
 
-        public void Clamp()
+        Vector2 ClampedPosition(Vector2 p)
         {
             float z = content.localScale.x;
             Vector2 size = content.sizeDelta * z, view = viewport.rect.size;
-            var p = content.anchoredPosition;
             p.x = Mathf.Clamp(p.x, Mathf.Min(40, view.x - size.x - 40), 40);
             p.y = Mathf.Clamp(p.y, -40, Mathf.Max(-40, size.y - view.y + 40));
-            content.anchoredPosition = p;
+            return p;
         }
+
+        public void Clamp() => content.anchoredPosition = ClampedPosition(content.anchoredPosition);
     }
 
     /// <summary>One node: press and hold 0.6 s to buy; dragging pans the canvas instead.</summary>
@@ -289,6 +350,8 @@ namespace LingGuangV05.Desktop.XingGuang
                         LaneTitle("VisionLane" + i, i, "视觉", "Vision", "vision");
                         LaneTitle("SequenceLane" + i, i, "序列", "Sequence", "sequence");
                     }
+                    if (i >= 2) LaneTitle("BoardLogicLane" + i, i, "逻辑", "Board logic", "boardlogic");
+                    if (i >= 2) LaneTitle("DailyLane" + i, i, "日常", "Daily life", "daily");
                     if (i >= 1) LaneTitle("TrunkLane" + i, i, "主干", "Core", "trunk");
                     if (i >= 1) { LaneTitle("ResearchLane" + i, i, "研究", "Research", "research"); LaneTitle("AtlasLane" + i, i, "图鉴 · 现象与能力", "Atlas · phenomena and abilities", "atlas"); }
                 }
@@ -304,14 +367,14 @@ namespace LingGuangV05.Desktop.XingGuang
                     miniButtons[i].Set(i == 0 ? Lang.T("标注") : i.ToString(), true, i == stage ? XgDark.AccentSoft : XgDark.Button);
                 }
                 // Lane titles from a previous save must not survive a new-game bind.
-                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "AtlasLane" })
+                foreach (string prefix in new[] { "TrunkLane", "VisionLane", "SequenceLane", "ResearchLane", "BoardLogicLane", "DailyLane", "AtlasLane" })
                 {
                     var lane = content.Find(prefix + pair.Key);
                     if (lane != null)
                     {
                         lane.gameObject.SetActive(visible);
                         var label = lane.GetComponent<TMP_Text>();
-                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : Lang.T("图鉴 · 现象与能力");
+                        label.text = prefix == "TrunkLane" ? Lang.T("主干") : prefix == "VisionLane" ? Lang.T("视觉") : prefix == "SequenceLane" ? Lang.T("序列") : prefix == "ResearchLane" ? Lang.T("研究") : prefix == "BoardLogicLane" ? T("逻辑", "Board logic") : prefix == "DailyLane" ? T("日常", "Daily life") : Lang.T("图鉴 · 现象与能力");
                     }
                 }
             }

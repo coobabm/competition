@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace LingGuangV05.Core
 {
-    /// <summary>Local identity validation. Never applied to free chat or generated dialogue.</summary>
+    /// <summary>Identity validation and a shared abuse baseline. Full identity rules never apply to sentences.</summary>
     public static class AiNamePolicy
     {
         public const int MaxName = 16, MaxAddress = 8;
@@ -34,6 +34,18 @@ namespace LingGuangV05.Core
 
         public static int Length(string value) => new StringInfo(value ?? "").LengthInTextElements;
 
+        /// <summary>Shared small abuse baseline for normalized plain text; no identity length or filename restrictions.</summary>
+        public static bool ContainsAbusiveLanguage(string clean)
+        {
+            if (string.IsNullOrEmpty(clean)) return false;
+            var compact = new StringBuilder();
+            foreach (char c in clean) if (!char.IsWhiteSpace(c) && !char.IsPunctuation(c) && !char.IsSymbol(c)) compact.Append(c);
+            string compactText = compact.ToString();
+            foreach (string word in BlockedZh)
+                if (compactText.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            return BlockedEn.IsMatch(clean.Replace('_', ' '));
+        }
+
         public static string Problem(string value, bool english = false, int max = MaxName, bool fileName = true)
         {
             string T(string zh, string en) => english ? en : zh;
@@ -49,13 +61,7 @@ namespace LingGuangV05.Core
                 return T("请去掉格式标签和文件名特殊符号。", "Remove markup and filename special characters.");
             if (fileName && (clean.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || clean.EndsWith(".") || clean == ".." || Device.IsMatch(clean) || clean == "the code"))
                 return T("只填 AI 的名字，不用加 .exe；请避开系统保留名。", "Enter only the AI name, without .exe or a reserved system name.");
-            var compact = new StringBuilder();
-            foreach (char c in clean) if (!char.IsWhiteSpace(c) && !char.IsPunctuation(c) && !char.IsSymbol(c)) compact.Append(c);
-            string compactName = compact.ToString();
-            foreach (string word in BlockedZh)
-                if (compactName.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
-                    return T("这个称呼含有不合适的用语，换一个吧。", "Please choose a name without abusive language.");
-            if (BlockedEn.IsMatch(clean.Replace('_', ' ')))
+            if (ContainsAbusiveLanguage(clean))
                 return T("这个称呼含有不合适的用语，换一个吧。", "Please choose a name without abusive language.");
             return null;
         }

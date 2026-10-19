@@ -54,7 +54,7 @@ namespace LingGuangV05.Desktop.YY
                 "[小刚] 我玩源氏，谁也别抢", "[Xiao Gang] I'm Genji, hands off",
                 "[大伟] 等我下班再说", "[Da Wei] After work. Wait for me",
                 "[阿杰] 昨晚连跪五把，今天我要洗刷耻辱", "[A-Jie] Lost five straight last night. Revenge today" }),
-            (new[] { "加班", "上班", "老板", "领导", "累", "困", "work", "boss", "tired" }, new[] {
+            (new[] { "加班", "上班", "老板", "领导", "累", "困", "摆渡众包", "众包", "接单", "标注", "标图", "找工作", "简历", "crowdsourcing", "annotation", "work", "boss", "tired" }, new[] {
                 "[大伟] 别提了，我今天又要加班到很晚", "[Da Wei] Don't. Working late again",
                 "[小刚] 困得睁不开眼", "[Xiao Gang] Feeling hollowed out",
                 "[莉莉] 你们上班的好惨，我先去躺会儿", "[Lili] You working people have it rough. I'm going for a nap",
@@ -90,34 +90,6 @@ namespace LingGuangV05.Desktop.YY
                 "[小刚] 我就静静地看着你们", "[Xiao Gang] I'll just quietly watch you all",
                 "[大伟] 这个可以有", "[Da Wei] Now that I can get behind" }),
         };
-
-        /// <summary>
-        /// What the others say when the player's line is about his work, his rent or how he is doing, by how far the year
-        /// has got (June teasing with a grudging nod, July–September plain respect, October–December they look up to him).
-        /// The group knows him as a fresh graduate with no job who keeps getting work done on 摆渡众包; it never knows about 灵光.
-        /// </summary>
-        static readonly string[] RegardKeys = { "摆渡", "众包", "接单", "标注", "标图", "找工作", "简历", "房租", "忙啥", "忙什么", "最近怎么样", "最近咋样", "混得", "你怎么样", "厉害", "牛" };
-
-        static readonly string[][] Regard =
-        {
-            new[] {
-                "[阿杰] 标图那个？一张几毛，积少成多，总比天天打游戏强", "[A-Jie] The labelling thing? A few cents a card adds up. Beats gaming all day",
-                "[小刚] 自由职业者，我们羡慕不来", "[Xiao Gang] A freelancer. We can't keep up",
-                "[大伟] 在家自己挣钱也算本事，别睡太晚", "[Da Wei] Earning at home is a skill too. Don't stay up too late",
-                "[莉莉] 阿杰说你每天都在标，好认真哦～", "[Lili] A-Jie says you're labelling every day. So dedicated～" },
-            new[] {
-                "[阿杰] 说真的，你现在比我们都忙，而且忙的全是正事", "[A-Jie] Seriously, you're busier than all of us now, and it's all real work",
-                "[小刚] 你标得又快又准，回头也教教我呗", "[Xiao Gang] You label fast and accurately. Teach me some time",
-                "[大伟] 你这状态，比我们公司那些混日子的强多了", "[Da Wei] Compared with the clock-watchers at my company, you're doing great",
-                "[莉莉] 感觉你每个月都比上个月厉害一点～", "[Lili] Feels like you get a bit better every month～" },
-            new[] {
-                "[阿杰] 咱群里要评最能折腾的，你实至名归", "[A-Jie] If this group voted for the most resourceful, it'd be you, no contest",
-                "[小刚] 有事问你准没错，群里最靠谱的就是你", "[Xiao Gang] Ask you and you're never wrong. The most reliable one in this group",
-                "[大伟] 你这大半年，我看在眼里，真不容易", "[Da Wei] I've watched you these months. It hasn't been easy",
-                "[莉莉] 我现在遇到事，第一个想到的就是问你～", "[Lili] When I hit a problem these days, you're the first person I think to ask～" },
-        };
-
-        static int RegardTier(DateTime? today) => !today.HasValue || today.Value.Month <= 6 ? 0 : today.Value.Month <= 9 ? 1 : 2;
 
         // A human contact has no access to the owner's private application. Keep this
         // check narrow so ordinary discussion of public AI news or annotation jobs survives.
@@ -167,8 +139,7 @@ namespace LingGuangV05.Desktop.YY
             bool lili = !today.HasValue || today.Value.Date >= LiliJoins;
             string q = (last ?? "").ToLowerInvariant();
             var bucket = Pool[Pool.Length - 1];
-            if (Array.Exists(RegardKeys, k => q.Contains(k))) bucket = (new string[0], Regard[RegardTier(today)]);
-            else foreach (var b in Pool) if (Array.Exists(b.keys, k => q.Contains(k))) { bucket = b; break; }
+            foreach (var b in Pool) if (Array.Exists(b.keys, k => q.Contains(k))) { bucket = b; break; }
             var recent = new HashSet<string>();
             if (conv != null) for (int i = conv.messages.Count - 1, seen = 0; i >= 0 && seen < 6; i--, seen++) recent.Add(conv.messages[i].text);
             int pairs = bucket.lines.Length / 2, start = rng.Next(pairs);

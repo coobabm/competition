@@ -50,6 +50,8 @@ namespace LingGuangV05.XingGuang
     ///             first two cards, no split / insurance / surrender. About 99.5 % with basic strategy
     ///             (measured 99.56 %, 43.5 % of hands won, over 200k seeded hands).
     /// The draws come from one xorshift32 stream (CasinoNext) with no streak, balance or mood adjustment of any kind.
+    /// The 888.vip scam story (XgSim.Gambling.cs) never touches a draw or a payout: it only watches settled rounds and,
+    /// once frozen or gone, refuses new bets.
     /// </summary>
     public static class CasinoRules
     {
@@ -129,9 +131,10 @@ namespace LingGuangV05.XingGuang
         public bool TryCasinoBet(string game, int choice, long stake, IXgHost host, out XgCasinoRound round)
         {
             round = null;
-            if (BlackjackActive || !CasinoRules.IsStake(stake) || !CasinoRules.IsChoice(game, choice)
+            if (!CasinoAvailable || BlackjackActive || CasinoScamBlocks || !CasinoRules.IsStake(stake) || !CasinoRules.IsChoice(game, choice)
                 || !CasinoFunds(host, stake) || Clock < Casino.nextBetAt) return false;
             if (!host.Spend(stake)) return false;
+            BeginGambling();
             var c = Casino;
             c.nextBetAt = Clock + CasinoRules.RoundSeconds;
             EnsureCasinoRng();
@@ -145,6 +148,7 @@ namespace LingGuangV05.XingGuang
             c.history.Add(round);
             if (returned > 0) host.Earn(returned);
             CasinoSettled(round, false, host);
+            WatchGambling(round, host);
             return true;
         }
 
@@ -166,10 +170,10 @@ namespace LingGuangV05.XingGuang
             if (Casino.rng == 0) Casino.rng = 0x6C8E9CF5L;
         }
 
-        /// <summary>Only active eligible desktop time counts; offline catch-up never calls this.</summary>
+        /// <summary>Only active eligible desktop time counts; offline catch-up never calls this. No ad once 888.vip is frozen or gone.</summary>
         public void AdvanceCasinoAd(double seconds, bool held)
         {
-            if (S.stage < 3 || S.chapterComplete || held || seconds <= 0 || double.IsNaN(seconds) || double.IsInfinity(seconds)) return;
+            if (S.stage < 3 || S.chapterComplete || CasinoScamBlocks || held || seconds <= 0 || double.IsNaN(seconds) || double.IsInfinity(seconds)) return;
             if (Casino.adVisible) return;
             Casino.adRemaining = Math.Max(0, Casino.adRemaining - seconds);
             if (Casino.adRemaining == 0) Casino.adVisible = true;

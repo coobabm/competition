@@ -21,7 +21,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly TMP_FontAsset font;
         readonly RectTransform root, form, home;
         readonly TMP_InputField name, selfCustom, callCustom, mood;
-        readonly TMP_Text title, error, bulb, homeLine;
+        readonly TMP_Text title, error, bulb, homeLine, nameNote;
         readonly List<TMP_Text> labels = new List<TMP_Text>();
         readonly List<(string value, XgBtn b)> selfChips = new List<(string, XgBtn)>(), callChips = new List<(string, XgBtn)>();
         readonly XgBtn done, yes, no;
@@ -45,7 +45,9 @@ namespace LingGuangV05.Desktop.XingGuang
             float y = 66;
             labels.Add(ui.Text(Strip("NameLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             name = Input(Strip("Name", form, y + 26, 38, 24, 24), 128, false);
-            y += 76;
+            nameNote = ui.Text(Strip("NameNote", form, y + 66, 18, 24, 24), "", 13, XgDark.Money, TextAlignmentOptions.MidlineLeft);
+            nameNote.raycastTarget = false;
+            y += 96;
             labels.Add(ui.Text(Strip("SelfLabel", form, y, 24, 24, 24), "", 16, XgDark.Muted, TextAlignmentOptions.MidlineLeft));
             selfCustom = Chips(form, y + 26, PrologueProfile.SelfChoices, selfChips, v => self = v);
             y += 76;
@@ -144,13 +146,14 @@ namespace LingGuangV05.Desktop.XingGuang
             string[] keys = { "setup_name", "setup_self", "setup_call", "setup_mood" };
             for (int i = 0; i < labels.Count; i++) labels[i].text = L(keys[i]) + (i == 0 ? " · 1–16" : i == 3 ? " · 1–60" : " · 1–8");
             ((TMP_Text)name.placeholder).text = T("给它取个名字，不用加 .exe", "A name for your AI, without .exe");
+            nameNote.text = T("名字只能起一次，游戏中不能修改。", "You can name it only once; it can't be changed later.");
             ((TMP_Text)mood.placeholder).text = L("setup_mood_hint");
             ((TMP_Text)selfCustom.placeholder).text = L("setup_custom");
             ((TMP_Text)callCustom.placeholder).text = L("setup_custom");
             done.Set(reading ? L("setup_reading") : L("setup_done"), !reading, XgDark.Accent, Color.white);
             yes.Set(L("yes"), true, XgDark.Card, XgDark.Ink);
             no.Set(L("no"), true, XgDark.Card, XgDark.Ink);
-            if (homePending) homeLine.text = T("它像是想问你什么，可它还说不出来。\n先碰一下，看看它的反应。", "It seems to want to ask you something, but it cannot say it yet.\nTouch a button to meet it.");
+            if (homePending) homeLine.text = T("它像是想问你什么，可它还说不出来。", "It seems to want to ask you something, but it cannot say it yet.");
             Paint();
         }
 

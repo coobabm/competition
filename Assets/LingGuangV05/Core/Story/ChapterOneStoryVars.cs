@@ -36,6 +36,7 @@ namespace LingGuangV05.Core
             "jobEnabled", "breakerTripped", "unpaidPower", "powered",
             "accuracy", "heartbeatsPerSecond", "incomePerSecond", "hasOutputPath", "canStartExam",
             "labCaptcha", "labMeme", "labGo", "labPoems", "labNews", "labTranslate", "labUnsure", "labStage", "labVisionStage", "labSequenceStage", "labProjectActive", "labCanProject", "labExperiment", "labEndingAnswered", "labMigrated", "labStageEpochs", "labChatTurns", "labGarble",
+            "labLegacyEndingEnabled", // Retired story content; the lab bridge always supplies zero.
             "hiddenNodes", "edges", "memoryUsed", "memoryRatio", "fanOutCount", "convergeCount", "named", "appInstalled", "prologueDone",
         };
 

@@ -54,8 +54,8 @@ namespace LingGuangV05.Desktop.XingGuang
             public static readonly Color Accent = new Color32(96, 150, 255, 255), AccentSoft = new Color32(96, 150, 255, 255);
             public static readonly Color Teal = new Color32(40, 230, 210, 255), Purple = new Color32(180, 130, 255, 255);
             public static readonly Color Orange = new Color32(255, 154, 60, 255), Gold = new Color32(255, 206, 90, 255);
-            public static readonly Color Star = new Color32(255, 240, 190, 255), Good = new Color32(60, 240, 140, 255);
-            public static readonly Color Bad = new Color32(255, 82, 110, 255), Wire = new Color32(120, 145, 220, 255);
+            public static readonly Color Star = new Color32(255, 240, 190, 255), Good = new Color32(95, 227, 181, 255);
+            public static readonly Color Bad = new Color32(255, 122, 110, 255), Wire = new Color32(120, 145, 220, 255);
             public static readonly Color BrainFill = new Color32(17, 26, 64, 255), Edge = new Color32(110, 180, 255, 255);
             public static readonly Color Sulcus = new Color32(70, 92, 160, 255), Dim = new Color32(50, 62, 108, 255);
             public static readonly Color Line = new Color32(64, 80, 130, 255), Text = new Color32(226, 233, 255, 255);
@@ -571,6 +571,22 @@ namespace LingGuangV05.Desktop.XingGuang
             new[] { V(250, 420), V(300, 400), V(340, 410), V(380, 440) },
         };
         static List<Vector2> brainOutline, stemOutline;
+
+        // Shared static anatomy: the wallpaper/window must not instantiate a second animated Cortex
+        // with demo cells. These samples are also used by this topology view.
+        public static IReadOnlyList<Vector2> BrainOutline => brainOutline ?? (brainOutline = Sample(BrainPath, 16));
+        public static IReadOnlyList<Vector2> BrainStemOutline => stemOutline ?? (stemOutline = Sample(StemPath, 8));
+        public static int SulcusCount => Sulci.Length;
+        public static Vector2 SulcusPoint(int index, float progress)
+        {
+            var curve = Sulci[index];
+            return Bez(curve[0], curve[1], curve[2], curve[3], Mathf.Clamp01(progress));
+        }
+
+        // Public presentation order: vision, sequence, tone, logic (not Regions' topology order).
+        public static Vector2 PresentationCenter(int region) => region == 0 ? V(652, 258) : region == 1 ? V(432, 356) : region == 2 ? V(432, 150) : V(215, 262);
+        public static Vector2 PresentationRadius(int region) => region == 0 ? V(112, 106) : region == 1 ? V(152, 74) : region == 2 ? V(122, 72) : V(112, 104);
+        public static Vector2 PresentationLabel(int region) => region == 0 ? V(684, 160) : region == 1 ? V(432, 292) : region == 2 ? V(432, 96) : V(205, 168);
 
         static List<Vector2> Sample(Vector2[][] path, int per)
         {

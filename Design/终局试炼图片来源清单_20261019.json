@@ -1,0 +1,355 @@
+{
+  "decision": "D016",
+  "status": "FIVE_CATEGORY_PHOTO_CANDIDATES_READY_FOR_ROOT_IMPORT",
+  "scope": "Five real category-matching photos; three original scene descriptions explicitly changed. No runtime verification claimed.",
+  "records": [
+    {
+      "title": "File:Tongyang - downtown - internet cafe - CIMG9869.JPG",
+      "source": "https://commons.wikimedia.org/wiki/File:Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG/960px-Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "author": "User:Vmenkov",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "description": "An internet café in Tongyang Town, the county seat of Tongshan County, Hubei.",
+      "date": "2008-09-04",
+      "width": 1600,
+      "height": 1200,
+      "index": 3,
+      "key": "avatar_netbar",
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/avatar_netbar.jpg",
+      "sha256": "3ccf8d32b975a8a24ee0d390cfd20f51995aa84350366869212ae25a28e5ec52",
+      "bytes": 132630,
+      "retrieved": "2026-10-07",
+      "trialId": "trial_netbar",
+      "originalCatalogRecord": {
+        "title": "File:Tongyang - downtown - internet cafe - CIMG9869.JPG",
+        "source": "https://commons.wikimedia.org/wiki/File:Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+        "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG/960px-Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+        "author": "User:Vmenkov",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "description": "An internet café in Tongyang Town, the county seat of Tongshan County, Hubei.",
+        "date": "2008-09-04",
+        "width": 1600,
+        "height": 1200,
+        "index": 3,
+        "key": "avatar_netbar",
+        "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/avatar_netbar.jpg",
+        "sha256": "3ccf8d32b975a8a24ee0d390cfd20f51995aa84350366869212ae25a28e5ec52",
+        "bytes": 132630,
+        "usage_note": "A real 2008 Hubei internet-cafe exterior, used as the fictional netbar group avatar; not the exact fictional establishment.",
+        "retrieved": "2026-10-07"
+      },
+      "assetPath": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg",
+      "changes": "Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.",
+      "resourcePath": "LingGuangV05/Media/Photos/trial_netbar",
+      "originalSceneZh": "网吧里一排亮着的电脑",
+      "originalSceneEn": "A row of lit computers in a net bar",
+      "sceneZh": "网吧里一排亮着的电脑",
+      "sceneEn": "A row of lit computers in a net bar",
+      "answerZh": "电脑",
+      "answerEn": "computer",
+      "sceneChanged": false,
+      "provenanceNote": "Licensed reference photograph used in a fictional trial; not photographed by the fictional character.",
+      "unityGuid": "c015b9d69f755f7da02fe302172611ad"
+    },
+    {
+      "title": "File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/6/62/NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/NVIDIA-GTX-1070-FoundersEdition-FL.jpg/960px-NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+      "author": "Evan-Amos",
+      "license": "Public domain",
+      "license_url": "",
+      "description": "The NVIDIA GTX 1070 video card for desktop computers.  This is the NVIDIA-designed reference card for the 1070 series, known as the Founders Edition, that retailed for $449 when it launched in June 2016.  This card and the more powerful GTX 1080 are the first to use NVIDIA's 16nm manufacturing process, a large improvement over the 28nm manufacturing process that was used for years on the previous cards.  The 1070 comes with 8 GBs of GDDR5 VRAM and has slightly better performance than the more expensive 980 Ti and Titan X cards from the previous generation.",
+      "date": "2016-06-24",
+      "width": 4700,
+      "height": 3500,
+      "index": 0,
+      "key": "gpu_gtx1070",
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/gpu_gtx1070.jpg",
+      "sha256": "6beae803dc9241e228542497ca5fcb2df419a7509c86e298a4065176054d1cc0",
+      "bytes": 90285,
+      "retrieved": "2026-10-07",
+      "sourceKind": "photograph",
+      "trialId": "trial_gpubox",
+      "originalCatalogRecord": {
+        "title": "File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/62/NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+        "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/NVIDIA-GTX-1070-FoundersEdition-FL.jpg/960px-NVIDIA-GTX-1070-FoundersEdition-FL.jpg",
+        "author": "Evan-Amos",
+        "license": "Public domain",
+        "license_url": "",
+        "description": "The NVIDIA GTX 1070 video card for desktop computers.  This is the NVIDIA-designed reference card for the 1070 series, known as the Founders Edition, that retailed for $449 when it launched in June 2016.  This card and the more powerful GTX 1080 are the first to use NVIDIA's 16nm manufacturing process, a large improvement over the 28nm manufacturing process that was used for years on the previous cards.  The 1070 comes with 8 GBs of GDDR5 VRAM and has slightly better performance than the more expensive 980 Ti and Titan X cards from the previous generation.",
+        "date": "2016-06-24",
+        "width": 4700,
+        "height": 3500,
+        "index": 0,
+        "key": "gpu_gtx1070",
+        "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/gpu_gtx1070.jpg",
+        "sha256": "6beae803dc9241e228542497ca5fcb2df419a7509c86e298a4065176054d1cc0",
+        "bytes": 90285,
+        "usage_note": "Photograph of the named hardware model. Manufacturer markings in this source are not the fictional shop brand. The GTX 1080 Ti is shown only as an unavailable rumour in the 2016 game timeline.",
+        "retrieved": "2026-10-07",
+        "sourceKind": "photograph"
+      },
+      "assetPath": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg",
+      "changes": "Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.",
+      "resourcePath": "LingGuangV05/Media/Photos/trial_gpubox",
+      "originalSceneZh": "桌上一只拆开的显卡盒",
+      "originalSceneEn": "An opened graphics card box on a desk",
+      "sceneZh": "白色背景上的一块显卡",
+      "sceneEn": "A graphics card against a white background",
+      "answerZh": "显卡",
+      "answerEn": "graphics card",
+      "sceneChanged": true,
+      "provenanceNote": "Licensed reference photograph used in a fictional trial; not photographed by the fictional character.",
+      "unityGuid": "ab786cbe837e5499804037530e82cf93"
+    },
+    {
+      "trialId": "trial_westlake",
+      "title": "File:2014.11.21.193930 Bridge causeway night Xihu Hangzhou.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/960px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Hermann Luyken",
+      "license": "CC0",
+      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "description": "Bridge at the causeway at night - Xihu (West Lake), Hangzhou, Zhejiang, China, 21.11.2014",
+      "date": "2014-11-21 19:39:30",
+      "sha256": "32a88db47c121f895369918495c80979a33ef56019b735fc4b2e88c20d215e43",
+      "assetPath": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg",
+      "changes": "Wikimedia-generated review thumbnail downloaded at width 960; unchanged downloaded bytes. No crop, retouch, darkening or added rain. Unique Unity meta GUID.",
+      "sourceMetadata": {
+        "searchQuery": "\"West Lake\" night filetype:bitmap",
+        "page": {
+          "pageid": 38229206,
+          "ns": 6,
+          "title": "File:2014.11.21.193930 Bridge causeway night Xihu Hangzhou.jpg",
+          "index": 1,
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "size": 1095021,
+              "width": 2736,
+              "height": 1824,
+              "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/960px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+              "thumbwidth": 960,
+              "thumbheight": 640,
+              "responsiveUrls": {
+                "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/1920px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+              },
+              "thumbattribs": {
+                "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/960px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "decoding": "async",
+                "loading": "lazy",
+                "width": 960,
+                "height": 640,
+                "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/1920px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+              },
+              "url": "https://upload.wikimedia.org/wikipedia/commons/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg",
+              "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=38229206",
+              "extmetadata": {
+                "ImageDescription": {
+                  "value": "Bridge at the causeway at night - Xihu (West Lake), Hangzhou, Zhejiang, China, 21.11.2014",
+                  "source": "commons-desc-page"
+                },
+                "DateTimeOriginal": {
+                  "value": "2014-11-21 19:39:30",
+                  "source": "commons-desc-page"
+                },
+                "Artist": {
+                  "value": "<a href=\"//commons.wikimedia.org/wiki/User:Hermann_Luyken\" title=\"User:Hermann Luyken\">Hermann Luyken</a>",
+                  "source": "commons-desc-page"
+                },
+                "LicenseShortName": {
+                  "value": "CC0",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "LicenseUrl": {
+                  "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+                  "source": "commons-desc-page"
+                }
+              }
+            }
+          ]
+        },
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg/960px-2014.11.21.193930_Bridge_causeway_night_Xihu_Hangzhou.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "localFile": "westlake-193930.jpg",
+        "sha256": "32a88db47c121f895369918495c80979a33ef56019b735fc4b2e88c20d215e43"
+      },
+      "resourcePath": "LingGuangV05/Media/Photos/trial_westlake",
+      "originalSceneZh": "雨夜的西湖，远处有灯",
+      "originalSceneEn": "West Lake on a rainy night, lights far off",
+      "sceneZh": "夜晚的西湖，水面上有雾，岸边亮着灯",
+      "sceneEn": "West Lake at night, with mist above the water and lights along the shore",
+      "answerZh": "湖",
+      "answerEn": "lake",
+      "sceneChanged": true,
+      "provenanceNote": "Licensed reference photograph used in a fictional trial; not photographed by the fictional character.",
+      "unityGuid": "0c734aec8c9c54e18979cdef0fc0cfd9"
+    },
+    {
+      "title": "File:Unique Server Racks.png",
+      "source": "https://commons.wikimedia.org/wiki/File:Unique_Server_Racks.png",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/d/db/Unique_Server_Racks.png",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Unique_Server_Racks.png/960px-Unique_Server_Racks.png",
+      "author": "Akramusns",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+      "description": "The image depicts the server racks of the Unique Star (web hosting)",
+      "date": "2014-12-15",
+      "width": 1000,
+      "height": 388,
+      "index": 3,
+      "key": "era_weibo_down",
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/era_weibo_down.png",
+      "sha256": "88d0e87ffc4a59fec0df9c968a74c11f012a0626122733ca8f0e757d7031d46f",
+      "bytes": 659611,
+      "retrieved": "2026-10-07",
+      "event_date": "2016-08-14",
+      "event_title": "凌晨一条离婚声明，微博服务器又挂了",
+      "editorial_label": "资料图 / Reference image",
+      "artist_html": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Akramusns (page does not exist)\">Akramusns</a>",
+      "credit_html": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+      "author_links": [
+        "https://commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1"
+      ],
+      "trialId": "trial_serverroom",
+      "originalCatalogRecord": {
+        "title": "File:Unique Server Racks.png",
+        "source": "https://commons.wikimedia.org/wiki/File:Unique_Server_Racks.png",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/db/Unique_Server_Racks.png",
+        "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Unique_Server_Racks.png/960px-Unique_Server_Racks.png",
+        "author": "Akramusns",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "description": "The image depicts the server racks of the Unique Star (web hosting)",
+        "date": "2014-12-15",
+        "width": 1000,
+        "height": 388,
+        "index": 3,
+        "key": "era_weibo_down",
+        "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/era_weibo_down.png",
+        "sha256": "88d0e87ffc4a59fec0df9c968a74c11f012a0626122733ca8f0e757d7031d46f",
+        "bytes": 659611,
+        "usage_note": "Real hosting-server racks, photographed in 2014; infrastructure context, explicitly not Weibo's own data center.",
+        "retrieved": "2026-10-07",
+        "event_date": "2016-08-14",
+        "event_title": "凌晨一条离婚声明，微博服务器又挂了",
+        "editorial_label": "资料图 / Reference image",
+        "artist_html": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Akramusns (page does not exist)\">Akramusns</a>",
+        "credit_html": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+        "author_links": [
+          "https://commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1"
+        ]
+      },
+      "assetPath": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png",
+      "changes": "Unchanged existing licensed photograph bytes; renamed resource and unique Unity meta GUID.",
+      "resourcePath": "LingGuangV05/Media/Photos/trial_serverroom",
+      "originalSceneZh": "一间机房，一排排机柜",
+      "originalSceneEn": "A server room, rows of racks",
+      "sceneZh": "一间机房，一排排机柜",
+      "sceneEn": "A server room, rows of racks",
+      "answerZh": "机柜",
+      "answerEn": "server rack",
+      "sceneChanged": false,
+      "provenanceNote": "Licensed reference photograph used in a fictional trial; not photographed by the fictional character.",
+      "unityGuid": "25749c6049a3585b94741d36f23cb3f1"
+    },
+    {
+      "trialId": "trial_drafts",
+      "title": "File:Mathematics, Math, Lecture notes, Rostov-on-Don, Russia.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Mathematics,_Math,_Lecture_notes,_Rostov-on-Don,_Russia.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0",
+      "description": "Mathematics. Math. Mathematical analysis. Linear algebra. Lecture notes. Rostov-on-Don, Russia.",
+      "date": "2012-07-09 14:55:54",
+      "sha256": "416736b3618fecdfe3ffe6dfca44d30fb3690e4a7ce95e3baa96aede65b14be3",
+      "assetPath": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg",
+      "changes": "Wikimedia-generated review thumbnail downloaded at width 960; unchanged downloaded bytes. No crop, retouch, darkening or added rain. Unique Unity meta GUID.",
+      "sourceMetadata": {
+        "searchQuery": "\"lecture notes\" filetype:bitmap",
+        "page": {
+          "pageid": 130344487,
+          "ns": 6,
+          "title": "File:Mathematics, Math, Lecture notes, Rostov-on-Don, Russia.jpg",
+          "index": 3,
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "size": 13184364,
+              "width": 4912,
+              "height": 3264,
+              "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+              "thumbwidth": 960,
+              "thumbheight": 638,
+              "responsiveUrls": {
+                "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/1920px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+              },
+              "thumbattribs": {
+                "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "decoding": "async",
+                "loading": "lazy",
+                "width": 960,
+                "height": 638,
+                "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/1920px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+              },
+              "url": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:Mathematics,_Math,_Lecture_notes,_Rostov-on-Don,_Russia.jpg",
+              "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=130344487",
+              "extmetadata": {
+                "ImageDescription": {
+                  "value": "Mathematics. Math. Mathematical analysis. Linear algebra. Lecture notes. Rostov-on-Don, Russia.",
+                  "source": "commons-desc-page"
+                },
+                "DateTimeOriginal": {
+                  "value": "2012-07-09 14:55:54",
+                  "source": "commons-desc-page"
+                },
+                "Artist": {
+                  "value": "<a href=\"//commons.wikimedia.org/wiki/User:Argenberg\" title=\"User:Argenberg\">Vyacheslav Argenberg</a>",
+                  "source": "commons-desc-page"
+                },
+                "LicenseShortName": {
+                  "value": "CC BY 4.0",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "LicenseUrl": {
+                  "value": "https://creativecommons.org/licenses/by/4.0",
+                  "source": "commons-desc-page"
+                }
+              }
+            }
+          ]
+        },
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Mathematics%2C_Math%2C_Lecture_notes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "localFile": "handwritten-math-notes.jpg",
+        "sha256": "416736b3618fecdfe3ffe6dfca44d30fb3690e4a7ce95e3baa96aede65b14be3"
+      },
+      "resourcePath": "LingGuangV05/Media/Photos/trial_drafts",
+      "originalSceneZh": "桌上摊满写满字的草稿纸",
+      "originalSceneEn": "A desk covered in scribbled drafts",
+      "sceneZh": "摊开的手写演算纸和笔记",
+      "sceneEn": "Handwritten calculation sheets and notes spread out",
+      "answerZh": "草稿纸",
+      "answerEn": "drafts",
+      "sceneChanged": true,
+      "provenanceNote": "Licensed reference photograph used in a fictional trial; not photographed by the fictional character.",
+      "unityGuid": "72154122124d50199684234132afd5df"
+    }
+  ],
+  "noteZh": "看看这些照片。它要是认错了，你得看出来。",
+  "noteEn": "Look at these photographs. If it gets one wrong, you have to catch it.",
+  "questionAnswersScoring": "Keep original what-is-in-the-photo question, five category answers, choices, shuffle, scoring and thresholds unchanged.",
+  "generation": "No generated images and no generation/model calls."
+}

@@ -53,6 +53,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBeforeAfter pair;
         RectTransform oldCard;
         TMP_Text oldQuestion, oldBefore, oldAfter, oldTrail;
+        RectTransform beforeNotice,afterNotice,oldBeforeNotice,oldAfterNotice;
         XgBeforeAfter oldPair;
 
         public static XgEmergenceCutscene Install(XingGuangView view, RectTransform root, TMP_FontAsset font)
@@ -117,6 +118,7 @@ namespace LingGuangV05.Desktop.XingGuang
             compareBefore = Fit(ui.Text(Rect("Before", compare, Vector2.zero, new Vector2(.5f, 1), new Vector2(16, 8), new Vector2(-8, -54)), "", 22, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft), 13, 22);
             compareAfter = Fit(ui.Text(Rect("After", compare, new Vector2(.5f, 0), Vector2.one, new Vector2(8, 8), new Vector2(-16, -54)), "", 24, XgCortexGraphic.N.Gold, TextAlignmentOptions.TopLeft), 13, 24);
             compareAfter.fontStyle = FontStyles.Bold;
+            beforeNotice=ReplyNotice(compareBefore);afterNotice=ReplyNotice(compareAfter);
             compare.gameObject.SetActive(false);
 
             // Right, 老问题: the question it is asked at every ability, day one's answer beside today's, the ones between below.
@@ -126,11 +128,13 @@ namespace LingGuangV05.Desktop.XingGuang
             oldBefore = Fit(ui.Text(Rect("DayOne", oldCard, Vector2.zero, new Vector2(.36f, 1), new Vector2(16, 34), new Vector2(-8, -54)), "", 22, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.TopLeft), 13, 22);
             oldAfter = Fit(ui.Text(Rect("Now", oldCard, new Vector2(.36f, 0), Vector2.one, new Vector2(8, 34), new Vector2(-16, -54)), "", 24, XgCortexGraphic.N.Gold, TextAlignmentOptions.TopLeft), 13, 24);
             oldAfter.fontStyle = FontStyles.Bold;
+            oldBeforeNotice=ReplyNotice(oldBefore);oldAfterNotice=ReplyNotice(oldAfter);
             oldTrail = Fit(ui.Text(Rect("Trail", oldCard, Vector2.zero, new Vector2(1, 0), new Vector2(16, 6), new Vector2(-16, 32)), "", 14, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineLeft), 10, 14);
             oldCard.gameObject.SetActive(false);
 
             line = ui.Text(Rect("Line", overlay, Vector2.zero, new Vector2(1, 0), new Vector2(40, 34), new Vector2(-220, 80)), "", 24, Color.white, TextAlignmentOptions.MidlineLeft);
             hint = ui.Text(Rect("Hint", overlay, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-220, 34), new Vector2(-40, 80)), "", 13, XgCortexGraphic.N.TextMuted, TextAlignmentOptions.MidlineRight);
+            LingGuangV05.Runtime.AiContentNotice.CreateFooter(line.rectTransform,line.font,XgCortexGraphic.N.TextMuted,-24);
             overlay.gameObject.SetActive(false);
         }
 
@@ -215,6 +219,7 @@ namespace LingGuangV05.Desktop.XingGuang
             compareQuestion.text = "<color=#8494C8>" + T("同一个问题", "The same question") + "　</color>" + pair.Question(en);
             compareBefore.text = "<size=14><color=#8494C8>" + T("以前", "Before") + "</color></size>\n<s>" + pair.Before(en) + "</s>";
             compareAfter.text = "";
+            beforeNotice.gameObject.SetActive(true);afterNotice.gameObject.SetActive(false);
             view.Juice.Play(XgJuice.Sfx.Id.Tick);
         }
 
@@ -225,6 +230,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!beforeShown) ShowBefore();
             bool en = view.Sim.English;
             compareAfter.text = "<size=14><color=#8494C8>" + T("现在", "Now") + "</color></size>\n" + pair.After(en);
+            afterNotice.gameObject.SetActive(true);
             view.Juice.Play(XgJuice.Sfx.Id.Click);
             view.Juice.Knock(compareAfter.rectTransform, .15f, Vector2.zero, .3f);
         }
@@ -233,6 +239,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             text.enableAutoSizing = true; text.fontSizeMin = min; text.fontSizeMax = max;
             return text;
+        }
+        static RectTransform ReplyNotice(TMP_Text reply)
+        {
+            reply.margin=new Vector4(0,0,0,32);
+            var notice=LingGuangV05.Runtime.AiContentNotice.CreateFooter(reply.rectTransform,reply.font,XgCortexGraphic.N.TextMuted,0,32);
+            notice.textWrappingMode=TextWrappingModes.Normal;
+            return (RectTransform)notice.transform.parent;
         }
 
         /// <summary>The old question and what it said on day one (greyed, struck through).</summary>
@@ -244,6 +257,7 @@ namespace LingGuangV05.Desktop.XingGuang
             oldQuestion.text = "<color=#E8C48A>" + T("老问题", "The old question") + "</color>　" + oldPair.Question(en);
             oldBefore.text = "<size=14><color=#8494C8>" + T("第一天", "Day one") + "</color></size>\n<s>" + oldPair.Before(en) + "</s>";
             oldAfter.text = ""; oldTrail.text = "";
+            oldBeforeNotice.gameObject.SetActive(true);oldAfterNotice.gameObject.SetActive(false);
             view.Juice.Play(XgJuice.Sfx.Id.Tick);
         }
 
@@ -255,6 +269,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var sim = view.Sim;
             bool en = sim.English;
             oldAfter.text = "<size=14><color=#8494C8>" + T("现在", "Now") + "</color></size>\n" + oldPair.After(en);
+            oldAfterNotice.gameObject.SetActive(true);
             // The answers between day one and now (both are above, large); one line, so long ones are cut.
             var trail = sim.OldAnswerTrail(ability, en);
             trail.RemoveAt(trail.Count - 1); trail.RemoveAt(0);

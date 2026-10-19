@@ -80,14 +80,31 @@ public static class WorldCompletenessQa
     sealed class Host:IXgHost,IXgHousehold{public double Compute=>100;public double VramMB=>99999;public double Money=>999999;public string Blocker=>null;public bool Spend(double n)=>true;public void Earn(double n){}public void Train(double n){}public bool BillsActive=>true;public double MonthKwh=>0;public double HighKwh=>100;public double hour=12;public double SecondsOfDay=>hour*3600;}
     static void Check(bool ok,string detail){if(!ok)throw new Exception(detail);passed.Add(detail);}
     static void LifeTick(XgSim s,Host h,double seconds)=>typeof(XgSim).GetMethod("TickLifeEvents",Flags).Invoke(s,new object[]{seconds,h});
-    static XgSim EventSim(int stage){var s=new XgSim();s.S.stage=stage;s.Today=20161201;s.S.openingFocus=false;return s;}
+    static XgSim EventSim(int stage){var s=new XgSim();s.S.stage=stage;s.Today=20161201;s.S.openingFocus=false;s.S.unlocked.Add("train.curve");return s;}
     static void CoreChecks(){
       XgSim.LoadLifeData(Resources.Load<TextAsset>("LingGuangV05/Life/life_events_100").text);XgNewsCatalog.Load(Resources.Load<TextAsset>("LingGuangV05/Browser/browser_news").text);var h=new Host();
-      for(int stage=1;stage<=6;stage++){var s=EventSim(stage);Check(s.LifeEventsUnlocked,"event fixture enabled stage "+stage);LifeTick(s,h,.01);s.S.lifeNext=0;LifeTick(s,h,1);Check(s.LifeEventOpen&&s.S.lifeDrawCount==1,"natural eligible-pool draw stage "+stage);string first=s.LifeEventId;Check(s.AnswerLifeEvent(1,h),"natural event answer stage "+stage);Check(s.LifeEventNext>=360&&s.LifeEventNext<=480,"next interval >=6 minutes stage "+stage);s.S.lifeNext=0;LifeTick(s,h,1);Check(s.LifeEventOpen&&s.LifeEventId!=first&&s.S.lifeDrawCount==2,"second distinct natural draw stage "+stage);s.AnswerLifeEvent(1,h);s.S.lifeNext=0;LifeTick(s,h,999);Check(!s.LifeEventOpen&&s.S.lifeDrawCount==2,"third timer expiry cannot exceed stage cap "+stage);}
+      for(int stage=1;stage<=6;stage++)
+      {
+        var s=EventSim(stage);Check(s.LifeEventsUnlocked,"event fixture enabled stage "+stage);
+        LifeTick(s,h,.01);s.S.lifeNext=0;LifeTick(s,h,1);
+        Check(s.LifeEventOpen&&s.S.lifeDrawCount==1,"natural eligible-pool draw stage "+stage);
+        string first=s.LifeEventId;
+        Check(s.AnswerLifeEvent(1,h)&&s.LifeEventResultPending,"natural answer waits for result confirmation stage "+stage);
+        LifeTick(s,h,900);Check(!s.LifeEventOpen&&s.LifeEventResultPending,"no draw while result is pending stage "+stage);
+        Check(s.AcknowledgeLifeEventResult()&&Math.Abs(s.LifeEventNext-480)<1e-6,"next eight minutes start at result close stage "+stage);
+        s.S.lifeNext=0;LifeTick(s,h,1);
+        Check(s.LifeEventOpen&&s.LifeEventId!=first&&s.S.lifeDrawCount==2,"second distinct natural draw stage "+stage);
+        Check(s.AnswerLifeEvent(1,h)&&s.AcknowledgeLifeEventResult(),"second result confirmed stage "+stage);
+        s.S.lifeNext=0;LifeTick(s,h,1);
+        Check(s.LifeEventOpen&&s.S.lifeDrawCount==3,"third draw is permitted without obsolete stage cap "+stage);
+      }
       var condition=EventSim(1);condition.Today=20160608;Check(condition.LifeEventsEligible(h).Contains("e016"),"June/stage1 event eligible");condition.Today=20160701;Check(!condition.LifeEventsEligible(h).Contains("e016"),"month gate rejects July");condition.Today=20160608;condition.S.stage=3;Check(!condition.LifeEventsEligible(h).Contains("e016"),"stage gate rejects stage3");
       condition=EventSim(4);Check(!condition.LifeEventsEligible(h).Contains("e062"),"reply event absent before player posting");Check(condition.OpenLifeEventNow("e025",h),"posting opportunity opens through real eligibility");Check(condition.AnswerLifeEvent(0,h)&&condition.S.lifeFlags.Contains("posted_progress"),"actual post choice records history");Check(condition.LifeEventsEligible(h).Contains("e062"),"reply event becomes eligible after posting");
       var decline=EventSim(4);decline.OpenLifeEventNow("e025",h);decline.AnswerLifeEvent(1,h);Check(!decline.LifeEventsEligible(h).Contains("e062"),"declining post never invents replies");
-      var held=EventSim(3);held.QueueStagePresentation(3);LifeTick(held,h,.01);held.S.lifeNext=0;LifeTick(held,h,1);Check(!held.LifeEventOpen&&held.S.lifeDrawCount==0,"curtain holds natural event without consuming quota");held.CompleteStagePresentation(3);held.S.lifeNext=0;LifeTick(held,h,1);Check(held.LifeEventOpen,"natural event resumes after curtain");
+      var held=EventSim(3);held.QueueStagePresentation(3);LifeTick(held,h,.01);held.S.lifeNext=0;
+      held.ObserveLifeEventConflict();Check(!held.LifeEventOpen&&held.S.lifeDrawCount==0&&held.S.lifeCadenceDeferred,"curtain observes due event without consuming a draw");
+      held.CompleteStagePresentation(3);LifeTick(held,h,1);Check(!held.LifeEventOpen&&Math.Abs(held.LifeEventNext-30)<1e-6,"curtain completion starts thirty-second grace");
+      LifeTick(held,h,30);Check(held.LifeEventOpen,"natural event resumes after curtain grace");
       Check(XgNewsCatalog.All.Count==45,"45 bundled news articles");for(int month=6;month<=12;month++){var date=new DateTime(2016,month,1);Check(XgNewsCatalog.Available(date).All(x=>DateTime.Parse(x.date)<=date),"no future stories month "+month);}
       var news=EventSim(3);news.Today=20160921;Check(!news.TeachNews("n0922"),"unpublished article cannot be taught");news.Today=20160922;Check(news.TeachNews("n0922")&&!news.TeachNews("n0922"),"published article taught only once");var reload=new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(news.S)));Check(reload.NewsAlreadyTaught("n0922")&&!reload.TeachNews("n0922"),"actual Unity save serialization retains teaching receipt");
     }

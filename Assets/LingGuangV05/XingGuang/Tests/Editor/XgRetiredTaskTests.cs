@@ -49,11 +49,12 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.owned.Add(id); sim.S.unlocked.Add(id + ".pack");
             sim.S.desksOpen.Add(id); // Old UI/state references are not authorization to resume a task.
             string selected = sim.S.desk;
-            Assert.IsNull(XgCatalog.Desk(id));
-            Assert.IsFalse(sim.DeskOpen(id));
+            Assert.IsNull(XgCatalog.CrowdDesk(id));
+            Assert.IsFalse(sim.CrowdDeskOpen(id));
             Assert.IsFalse(sim.ProgressionDeskAvailable(id));
             Assert.IsFalse(sim.SetCrowd(id, true));
-            sim.SelectDesk(id);
+            Assert.IsNull(sim.WorkCard(id));
+            Assert.IsFalse(sim.TryAnswerWork(id, 0, true, new Host(), out _));
             Assert.AreEqual(selected, sim.S.desk);
         }
 
@@ -94,9 +95,13 @@ namespace LingGuangV05.XingGuang.Tests
             var card = sim.CreateLabelCard(id);
             Assert.IsNotNull(card);
             Assert.IsNotEmpty(card.question);
-            Assert.IsFalse(sim.Answer(id, card.truth, host).correct);
+            Assert.IsNull(sim.WorkCard(id));
+            Assert.IsFalse(sim.TryAnswerWork(id, card.id, card.truth, host, out _));
             Assert.AreEqual(0, sim.ChatLabel(id, true, host));
+            sim.S.scUnlocked = true;
+            Assert.IsFalse(sim.AssignWorkerDesk("ajie", id));
             card.hasJudgment = true; card.guess = card.truth; card.confidence = 1;
+            Assert.IsNull(sim.SubmitExternalLabel(card, host));
             sim.S.prefetch.Add(card);
             Assert.IsFalse(sim.Route(card.id, host));
             sim.S.queue.Add(card);
@@ -113,7 +118,18 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.DatasetAvailable(id));
             Assert.IsFalse(sim.SetDataset(XgTrack.Sequence, id));
             Assert.IsNotNull(XgCatalog.Node(id + ".pack"));
-            sim.S.owned.Add(id);
+            sim.S.stage = sim.S.stageVision = sim.S.stageSequence = 5;
+            foreach (var node in new[] { "mlp", "rnn", "lstm", "attention", XgSim.DataEntryNode }) sim.S.unlocked.Add(node);
+            var host = new Host();
+            Assert.IsTrue(sim.BuyNode(id + ".pack", host));
+            Assert.IsFalse(sim.DatasetAvailable(id), "purchase only queues the file");
+            sim.Tick(sim.DownloadLeft(id) + 1, host);
+            var file = sim.S.dataFiles.Find(x => x.dataset == id);
+            Assert.IsNotNull(file);
+            Assert.IsTrue(sim.DataFileReady(file.fileId));
+            Assert.IsFalse(sim.DatasetAvailable(id), "downloaded bytes are not installed data");
+            Assert.IsTrue(sim.InstallDataFile(file.fileId));
+            Assert.IsFalse(sim.InstallDataFile(file.fileId), "a second drop cannot install twice");
             Assert.IsTrue(sim.DatasetAvailable(id));
             Assert.IsTrue(sim.SetDataset(XgTrack.Sequence, id));
             Assert.Greater(sim.Samples(id), 0);
@@ -135,7 +151,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.DatasetAvailable(id), "legacy free-desk access must survive retirement");
             Assert.AreEqual(id, sim.S.sequence.dataset);
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence));
-            Assert.IsFalse(sim.DeskOpen(id));
+            Assert.IsFalse(sim.CrowdDeskOpen(id));
             Assert.IsFalse(sim.Owns(id), "a free legacy desk did not include a full data pack");
             Assert.AreEqual(60, sim.Samples(id));
             Assert.IsTrue(new XgSim(sim.S).DatasetAvailable(id), "access must survive a second reload after the desk is removed");
@@ -152,6 +168,31 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(state);
             Assert.IsTrue(sim.Downloading(id));
             Assert.IsFalse(sim.DatasetAvailable(id));
+        }
+
+        [Test]
+        public void TranslationTeachingSurvivesWithoutAuthorizingCrowdOrRetiringContracts()
+        {
+            var sim = new XgSim(Saved()); var host = new Host();
+            Assert.IsNotNull(XgCatalog.Desk("translate"));
+            Assert.IsNull(XgCatalog.CrowdDesk("translate"));
+            Assert.IsTrue(sim.TeachingPackAvailable("stage_translation"));
+            Assert.IsTrue(sim.SelectTeachingPack("stage_translation"));
+            var card = sim.Card("translate");
+            Assert.IsTrue(sim.TryAnswerStatement("translate", card.id, card.truth, host, out var answer));
+            Assert.IsTrue(answer.correct);
+            Assert.Greater(sim.Labels("translate"), 0);
+            Assert.IsTrue(sim.SettleMiniAction("translate", true, host).accepted);
+            sim.S.contracts.Add("crossborder");
+            sim.S.best.Add(new XgBest { dataset = "translate", acc = .9 });
+            var reloaded = new XgSim(sim.S);
+            Assert.AreEqual("stage_translation", reloaded.S.teachingPack);
+            Assert.AreEqual("translate", reloaded.S.desk);
+            Assert.IsTrue(reloaded.TeachingPackAvailable("stage_translation"));
+            Assert.IsFalse(reloaded.CrowdDeskOpen("translate"));
+            Assert.IsTrue(reloaded.Signed("crossborder"));
+            foreach (var id in new[] { "crossborder", "subtitle", "livesub", "lawfirm" })
+                Assert.IsNotNull(XgCatalog.Contract(id), "removing old crowd work must preserve enterprise orders");
         }
 
         [Test]

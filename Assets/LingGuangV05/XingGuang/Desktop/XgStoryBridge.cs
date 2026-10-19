@@ -231,6 +231,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         double? ReadFact(string name)
         {
+            if (name == "labLegacyEndingEnabled") return 0; // Old ending stays retired even before migration.
             var sim = controller != null ? controller.Sim : null;
             if (sim == null) return null;
             switch (name)

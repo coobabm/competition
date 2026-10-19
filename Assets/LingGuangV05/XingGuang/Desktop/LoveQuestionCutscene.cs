@@ -527,12 +527,13 @@ namespace LingGuangV05.Desktop.XingGuang
             Box(head, new Color32(16, 132, 220, 255));
             Label(PrologueDesk.Rect("Name", head, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-10, 0)), r.girl, 20, Color.white, TextAlignmentOptions.MidlineLeft);
             int shown = 0;
-            for (int i = s.messages.Count - 1; i >= 0 && shown < 7; i--, shown++)
+            for (int i = s.messages.Count - 1; i >= 0 && shown < 5; i--, shown++)
             {
                 var m = s.messages[i];
-                var bubble = PrologueDesk.Rect("Line", yy, new Vector2(0, 0), new Vector2(1, 0), new Vector2(m.fromHer ? 14 : 120, 14 + shown * 62), new Vector2(m.fromHer ? -120 : -14, 62 + shown * 62));
+                var bubble = PrologueDesk.Rect("Line", yy, new Vector2(0, 0), new Vector2(1, 0), new Vector2(m.fromHer ? 14 : 120, 14 + shown * 88), new Vector2(m.fromHer ? -120 : -14, 88 + shown * 88));
                 Box(bubble, m.fromHer ? Color.white : Mine);
-                Label(PrologueDesk.Rect("Text", bubble, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2)), Cut(m.text, 16), 15, m.fromHer ? new Color32(34, 40, 52, 255) : (Color32)Color.white, TextAlignmentOptions.MidlineLeft);
+                var reply=Label(PrologueDesk.Rect("Text", bubble, Vector2.zero, Vector2.one, new Vector2(10, m.fromHer?26:2), new Vector2(-10, -2)), Cut(m.text, 16), 15, m.fromHer ? new Color32(34, 40, 52, 255) : (Color32)Color.white, TextAlignmentOptions.MidlineLeft);
+                if(m.fromHer)AiContentNotice.CreateFooter(bubble,reply.font,new Color32(80,93,108,255));
             }
             // Its window.
             var win = At("Lab", sec, 0, -60, 620, 560);
@@ -617,10 +618,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (pick >= picks.Count) pick = -1;
                 var row = At("Row", sec, 150, 250 - i * 62, 900, 50);
                 var fill = Box(row, new Color(1, 1, 1, .05f));
-                string text;
-                if (pick >= 0) text = picks[pick].message.text;
-                else text = s.messages.Count > 0 ? s.messages[rng.Next(s.messages.Count)].text : "";
-                var label = Label(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-190, 0)), Cut(text, 30), 17, Faint, TextAlignmentOptions.MidlineLeft);
+                LoveMessage? message=pick>=0?picks[pick].message:s.messages.Count>0?s.messages[rng.Next(s.messages.Count)]:(LoveMessage?)null;
+                string text=message?.text??"";
+                var label = Label(PrologueDesk.Rect("Text", row, Vector2.zero, Vector2.one, new Vector2(16, message?.fromHer==true?24:0), new Vector2(-190, 0)), Cut(text, 30), 17, Faint, TextAlignmentOptions.MidlineLeft);
+                if(message?.fromHer==true)AiContentNotice.CreateFooter(row,label.font,Soft);
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 rows.Add((row, fill, label, pick));
             }
@@ -878,10 +879,13 @@ namespace LingGuangV05.Desktop.XingGuang
             var sec = Section("Words");
             var first = Label(At("Conclusion", sec, 0, -285, 1300, 50), "", 28, Color.white, TextAlignmentOptions.Center);
             var second = Label(At("Limit", sec, 0, -340, 1300, 44), "", 21, Soft, TextAlignmentOptions.Center);
+            var replyNotice=At("ReplyDisclosure",sec,0,-382,1300,24);
+            AiContentNotice.CreateFooter(replyNotice,second.font,Soft);
             string line = string.IsNullOrEmpty(r.model) ? r.conclusion : r.model;
             yield return PrologueDesk.Type(first, "", line, .05f);
             yield return PrologueDesk.Wait(.5f);
-            yield return PrologueDesk.Type(second, "", r.limit, .045f);
+            string limit = r.limit;
+            yield return PrologueDesk.Type(second, "", limit, .045f);
             yield return PrologueDesk.Wait(hold);
         }
 

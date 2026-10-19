@@ -125,9 +125,15 @@ namespace LingGuangV05.Desktop.XingGuang
                     }
                     if (cells.Count == MeshCellLimit) { GatherDust(concept); continue; }
                     int region = Region(concept.region), index = regionCounts[region]++;
-                    var position = RegionCenter(region) + Vector2.Scale(new Vector2(.06f, .06f), LayoutPosition(architectures[region], index, regionTotals[region]));
+                    var position = RegionCenter(region) + Vector2.Scale(RegionContentRadius(region), LayoutPosition(architectures[region], index, regionTotals[region]));
                     position = StructurePosition(concept.id, region, position);
-                    if(wallpaper.WindowMode && presentationRotation!=0) { var center=RegionCenter(region);var d=position-center;float c=Mathf.Cos(presentationRotation),sn=Mathf.Sin(presentationRotation);position=center+new Vector2(d.x*c-d.y*sn,d.x*sn+d.y*c); }
+                    if(wallpaper.WindowMode && presentationRotation!=0)
+                    {
+                        var center=RegionCenter(region);var radius=RegionContentRadius(region);var d=position-center;
+                        d=new Vector2(d.x/radius.x,d.y/radius.y);
+                        float c=Mathf.Cos(presentationRotation),sn=Mathf.Sin(presentationRotation);
+                        position=center+Vector2.Scale(radius,new Vector2(d.x*c-d.y*sn,d.x*sn+d.y*c));
+                    }
                     positions[concept.id] = position;
                     cells.Add(new Cell { id = concept.id, region = region, layer = index % 3, uv = position, tint = Tint(concept), strength = Strength(concept) });
                     if (concept.pinned) pins.Add(new Pin { id = concept.id, uv = position, inset = 8 });

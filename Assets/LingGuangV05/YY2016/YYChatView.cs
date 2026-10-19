@@ -34,7 +34,7 @@ namespace LingGuangV05.Desktop.YY
             public static readonly Color Online = new Color32(76, 175, 80, 255);
         }
 
-        const float SideWidth = 244, RowHeight = 64, HeaderHeight = 58, ToolHeight = 34, InputHeight = 96, BottomHeight = 44;
+        const float SideWidth = 244, RowHeight = 64, HeaderHeight = 58, AiNoticeHeight = 30, ToolHeight = 34, InputHeight = 96, BottomHeight = 44;
 
         YYChatHub hub;
         WindowManager window;
@@ -43,8 +43,10 @@ namespace LingGuangV05.Desktop.YY
         RectTransform root, contactList, scrollContent, messageArea, choiceStrip, peerAvatar;
         string peerAvatarId = "";
         string shownChoices = "";
+        bool zhouChoiceExpanded;
+        object shownChoiceOwner, shownQuestionOwner;
         ScrollRect scroll;
-        TMP_Text peerName, peerSign, typing, meName, memoryLine;
+        TMP_Text peerName, peerSign, typing, meName, memoryLine, nativeStatus, aiContentNotice;
         TMP_InputField input;
         readonly List<RectTransform> contactRows = new List<RectTransform>();
         string lastSignature = "";
@@ -91,16 +93,18 @@ namespace LingGuangV05.Desktop.YY
                 binding.DesktopShortcut.onClick = new Button.ButtonClickedEvent();
                 binding.DesktopShortcut.onClick.AddListener(() => router.Open(YYChatHub.AppId));
             }
+            TMP_Text nativeStatus = null;
             foreach (var label in window.windowContainer.GetComponentsInChildren<TMP_Text>(true))
             {
                 if (label.transform.IsChildOf(content)) continue;
                 var localized = label.GetComponent<DesktopLocalizedText>();
                 if (localized != null) Destroy(localized);
                 if (label.name == "Aero Window Title") label.text = "YY";
-                else if (label.name == "Status") label.text = Lang.T("YY 2016 · 消息只保存在本机");
+                else if (label.name == "Status") { nativeStatus = label; label.text = Lang.T("YY 2016 · 消息只保存在本机"); }
                 if (font != null) label.font = font;
             }
             var view = content.gameObject.GetComponent<YYChatView>() ?? content.gameObject.AddComponent<YYChatView>();
+            view.nativeStatus = nativeStatus;
             view.Setup(hub, window, font, lz, me ?? lz);
             binding.UseCustomView(view);
         }
@@ -131,7 +135,11 @@ namespace LingGuangV05.Desktop.YY
         }
 
         void OnDestroy() { GameText.Changed -= OnLanguage; if (hub != null && hub.View == this) hub.View = null; }
-        void OnLanguage() { lastSignature = ""; dirty = true; }
+        void OnLanguage()
+        {
+            if (nativeStatus != null) nativeStatus.text = Lang.T("YY 2016 · 消息只保存在本机");
+            lastSignature = ""; dirty = true;
+        }
 
         public bool EnsureReady()
         {
@@ -189,11 +197,20 @@ namespace LingGuangV05.Desktop.YY
             // 灵光 only: 「它记得」 (stage 5+) at the bottom right, its persona on its name; both explain themselves on hover.
             memoryLine = Text(Rect("Memory", header, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-250, 3), new Vector2(-16, 20)), "", 12, C.Muted, TextAlignmentOptions.MidlineRight);
             memoryLine.textWrappingMode = TextWrappingModes.NoWrap;
-            UiTip.Add(memoryLine, () => LingGuangShown ? hub.LingGuangTalk.MemoryTip() : "");
+            UiTip.Add(memoryLine, () => LingGuangShown ? hub.LingGuangTalk.MemoryTip() : KnownDateTip());
             UiTip.Add(peerName, () => LingGuangShown ? hub.LingGuangTalk.PersonaTip() : "");
 
+            // These contacts are backed by the local-model reply services (with authored fallbacks).
+            // Keep the disclosure outside the scrolling history; it describes replies, never player bubbles.
             float bottom = BottomHeight + InputHeight + ToolHeight;
-            messageArea = Rect("Messages", main, Vector2.zero, Vector2.one, new Vector2(0, bottom), new Vector2(0, -HeaderHeight));
+            var aiNoticeBar = Rect("AiContentNotice", main, Vector2.zero, new Vector2(1, 0),
+                new Vector2(0, bottom), new Vector2(0, bottom + AiNoticeHeight));
+            Fill(aiNoticeBar, new Color32(232, 240, 250, 255)).raycastTarget = false;
+            aiContentNotice = Text(Rect("Label", aiNoticeBar, Vector2.zero, Vector2.one,
+                new Vector2(14, 0), new Vector2(-14, 0)), "", 13, new Color32(58, 78, 104, 255), TextAlignmentOptions.MidlineLeft);
+            AiContentNotice.BindFooter(aiContentNotice);
+
+            messageArea = Rect("Messages", main, Vector2.zero, Vector2.one, new Vector2(0, bottom + AiNoticeHeight), new Vector2(0, -HeaderHeight));
             Fill(messageArea, C.Page);
             scroll = messageArea.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false; scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 30;
@@ -290,11 +307,14 @@ namespace LingGuangV05.Desktop.YY
 
         void Update()
         {
+            PollEndingPrivatePreview();
             if (!built || !IsOpen) return;
+            PollPublicDiscourse();
             hub.MarkSeen(); // Also runs after the opening/minimize animation becomes visible.
             if (typing != null) typing.text = hub.IsTyping(hub.S.selected) ? Lang.T("对方正在输入…") : "";
             foreach (var f in liveFiles) UpdateFile(f.message, f.fill, f.status, f.width);
             if (dirty && Time.unscaledTime >= nextBuild) Rebuild();
+            RefreshGroupIntro();
         }
 
         void Rebuild()
@@ -307,7 +327,7 @@ namespace LingGuangV05.Desktop.YY
             if (meStatus != null) meStatus.GetComponent<TMP_Text>().text = Lang.T("● 在线  ·  今天也要好好学习");
             DrawLevel();
             var hint = FindDeep(root, "SearchHint"); if (hint != null) hint.GetComponent<TMP_Text>().text = Lang.T("搜索：联系人、群");
-            var enter = FindDeep(root, "EnterHint"); if (enter != null) enter.GetComponent<TMP_Text>().text = Lang.T("Enter 发送  ·  只是本地预设回复，不连网");
+            var enter = FindDeep(root, "EnterHint"); if (enter != null) enter.GetComponent<TMP_Text>().text = GameText.T("Enter 发送 · 本地对话", "Enter to send · Local conversation");
             SetButton("Send", GameText.T("发送(S)", "Send"));
             SetButton("Close", Lang.T("关闭(C)"));
             string[] tools = { "Emoji", "File", "Shot", "Shake", "History" };
@@ -317,6 +337,7 @@ namespace LingGuangV05.Desktop.YY
             RebuildChoices();
             RefreshRentTools();
             RefreshLearningTools();
+            RefreshZhouChoiceLayout();
 
             // sessions, sorted by latest message
             var order = new List<YYContact>();
@@ -351,6 +372,7 @@ namespace LingGuangV05.Desktop.YY
                 hub.S.selected = contact.id;
             }
             peerName.text = contact.id == YYChatHub.EraGroup ? YYGroup.Title(contact) : GameText.T(contact.name, contact.nameEn);
+            aiContentNotice.text = AiContentNotice.Footer(GameText.IsEnglish);
             if (peerAvatarId != contact.id)
             {
                 peerAvatarId = contact.id;
@@ -360,8 +382,10 @@ namespace LingGuangV05.Desktop.YY
             peerSign.text = (contact.group ? Lang.T("群 · ") : contact.online ? Lang.T("<color=#4CAF50>●</color> 在线 · ") : Lang.T("○ 离线 · ")) + GameText.T(contact.signature, contact.signatureEn);
             if (contact.id == YYChatHub.GirlfriendId && hub.Girlfriend != null) peerSign.text = hub.Girlfriend.StatusLine();
             if (LingGuangShown) { string axes = hub.LingGuangTalk.AxisLine(); if (axes.Length > 0) peerSign.text = axes; }
+            if(LingGuangShown&&LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.DailyConsiderateTag==true)peerSign.text+=GameText.T(" · 体贴"," · Considerate");
             peerSign.richText = true;
             string remembers = contact.id == YYChatHub.LingGuangId && hub.LingGuangTalk != null ? hub.LingGuangTalk.MemoryLine() : "";
+            if(contact.id==YYChatHub.GirlfriendId)remembers=hub.KnownDateReminder(Today(),out _);
             memoryLine.text = remembers;
             memoryLine.gameObject.SetActive(remembers.Length > 0);
 
@@ -389,9 +413,19 @@ namespace LingGuangV05.Desktop.YY
                 bool mine = m.from == YYChatHub.Me;
                 var who = YYChatHub.Contact(m.from);
                 var photo = AuthoredPhoto(m);
-                float h = m.kind == YYKind.Transfer ? RentCard(y, m, mine, width) : m.kind == YYKind.File ? FileCard(y, m, mine, who, width) : IsSticker(m) ? StickerBubble(y, m, mine, who, width) : photo != null ? PhotoBubble(y, m, who, maxBubble, photo) : Bubble(y, m, mine, who, width, maxBubble);
-                y += h + 14;
+                float h = m.kind == YYKind.AppLink ? IntroLinkCard(y,m,width) : m.kind == YYKind.Transfer ? RentCard(y, m, mine, width) : m.kind == YYKind.File ? FileCard(y, m, mine, who, width) : IsSticker(m) ? StickerBubble(y, m, mine, who, width) : photo != null ? PhotoBubble(y, m, who, maxBubble, photo) : Bubble(y, m, mine, who, width, maxBubble);
+                y += h;
+                if (!mine)
+                {
+                    var notice = Text(Rect("AiReplyNotice:" + m.from, scrollContent, new Vector2(0, 1), Vector2.one,
+                        new Vector2(62, -y - 24), new Vector2(-16, -y - 2)), "", 12, C.Muted, TextAlignmentOptions.MidlineLeft);
+                    AiContentNotice.BindFooter(notice);
+                    notice.alignment = TextAlignmentOptions.MidlineLeft;
+                    y += 24;
+                }
+                y += 14;
             }
+            y = AppendPublicDiscourse(y, width);
             scrollContent.sizeDelta = new Vector2(0, y + 8);
             if (stickBottom) Canvas.ForceUpdateCanvases();
             if (stickBottom) scroll.verticalNormalizedPosition = 0;
@@ -546,7 +580,18 @@ namespace LingGuangV05.Desktop.YY
         };
 
         /// <summary>Photos drawn as a scene, not a real snapshot: they carry the 「情景配图」 note.</summary>
-        static bool IsSceneArt(Sprite photo) => photo != null && photo.name == "Photos/chat_geyou";
+        static bool IsSceneArt(Sprite photo) => photo != null &&
+            (photo.name == "Photos/chat_geyou" ||
+             photo.name == "Photos/chat_lili_grad" ||
+             photo.name == "Photos/chat_lili_gulangyu" ||
+             photo.name == "Photos/chat_lili_westlake" ||
+             photo.name == "Photos/chat_xg_tv" ||
+             photo.name == "Photos/chat_dw_desk" ||
+             photo.name == "Photos/chat_dw_cafe" ||
+             photo.name == "Photos/chat_dw_iphone" ||
+             photo.name == "Photos/chat_xg_dawn" ||
+             photo.name == "Photos/chat_lili_parcels" ||
+             photo.name == "Photos/chat_lili_ticket");
 
         /// <summary>「[阿杰] [图片：葛优躺] 今天的我。」 → 「葛优躺」 (also 「[Image: …]」); null when the line has no photo.</summary>
         static string PhotoLabel(string text)
@@ -567,40 +612,61 @@ namespace LingGuangV05.Desktop.YY
         {
             const float avatar = 36, left = 16 + avatar + 10, padding = 6;
             bool group = who != null && who.group;
-            float nameHeight = group ? 18 : 0;
+            float nameHeight = 0;
+            float photoWidth = Mathf.Min(240, maxBubble - padding * 2);
             string caption = message.text;
             if (group && HasSenderLabel(caption))
             {
                 int end = caption.IndexOf(']');
-                Text(Rect("Sender", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - 16), new Vector2(left + 240, -y)),
+                float senderWidth = photoWidth + padding * 2;
+                var sender = Text(Rect("Sender", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y), new Vector2(left + senderWidth, -y)),
                     caption.Substring(1, end - 1), 12, C.Muted, TextAlignmentOptions.MidlineLeft);
+                sender.richText = false; sender.enableAutoSizing = false;
+                // The shared TMP font's 12-point line can exceed 16 px. Reserve its measured height.
+                float senderHeight = Mathf.Max(16, Mathf.Ceil(sender.GetPreferredValues(sender.text, senderWidth, 0).y) + 4);
+                sender.rectTransform.offsetMin = new Vector2(left, -y - senderHeight);
+                nameHeight = senderHeight + 2;
                 caption = caption.Substring(end + 1).TrimStart();
             }
-            // Only drawn scenes (the meme) carry the note; the friends' snapshots look like real phone photos.
-            bool illustratedMeme = message.from == YYChatHub.EraGroup && IsSceneArt(photo);
+            // Original scene illustrations are explicitly labelled; existing licensed photos retain their credits.
+            bool illustratedScene = message.from == YYChatHub.EraGroup && IsSceneArt(photo);
             // The caption keeps only the friend's words: the 「[图片：…]」 tag is now the picture itself.
             if (message.from == YYChatHub.EraGroup)
             {
                 int tagEnd = caption.StartsWith("[图片：", StringComparison.Ordinal) || caption.StartsWith("[Image: ", StringComparison.Ordinal) ? caption.IndexOf(']') : -1;
                 if (tagEnd > 0) caption = caption.Substring(tagEnd + 1).TrimStart();
             }
-            float noteHeight = illustratedMeme ? 30 : 0;
-            float photoWidth = Mathf.Min(240, maxBubble - padding * 2);
+            float noteHeight = 0;
             float photoHeight = Mathf.Min(220, photoWidth * photo.rect.height / photo.rect.width);
             float height = photoHeight + 44 + noteHeight + padding * 2;
-            Avatar(scrollContent, MessageSprite(message, who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y), avatar);
+            Avatar(scrollContent, MessageSprite(message, who), Initial(who), who != null ? who.color : C.Muted, new Vector2(16, -y - nameHeight), avatar);
             var card = Rect("Authored Photo", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - nameHeight - height), new Vector2(left + photoWidth + padding * 2, -y - nameHeight));
             var shape = card.gameObject.AddComponent<YYRoundRect>();
             shape.radius = 8; shape.color = C.Theirs; shape.border = 1; shape.borderColor = C.Line;
             var picture = Rect("Photograph", card, new Vector2(0, 1), new Vector2(1, 1), new Vector2(padding, -padding - photoHeight), new Vector2(-padding, -padding));
             var image = picture.gameObject.AddComponent<Image>();
             image.sprite = photo; image.preserveAspect = true; image.raycastTarget = false;
+            if (illustratedScene)
+            {
+                var notice = Text(Rect("Illustration Notice", card, Vector2.zero, new Vector2(1, 0), new Vector2(10, 4), new Vector2(-10, 4)),
+                    (photo.name == "Photos/chat_geyou"
+                        ? GameText.T("情景配图 · 非原影视截图", "Illustrative scene · not a film still")
+                        : GameText.T("原创情景插画 · 非实拍", "Original illustration · not a photo")), 10, C.Muted, TextAlignmentOptions.MidlineLeft);
+                notice.richText = false; notice.enableAutoSizing = false;
+                float noticeHeight = Mathf.Max(26, Mathf.Ceil(notice.GetPreferredValues(notice.text, photoWidth + padding * 2 - 20, 0).y) + 4);
+                notice.rectTransform.offsetMax = new Vector2(-10, 4 + noticeHeight);
+                noteHeight = 4 + noticeHeight;
+            }
             var captionLabel = Text(Rect("Caption", card, Vector2.zero, new Vector2(1, 0), new Vector2(10, 6 + noteHeight), new Vector2(-10, 44 + noteHeight)),
                 caption, 14, C.Ink, TextAlignmentOptions.MidlineLeft);
-            captionLabel.richText = false; captionLabel.enableAutoSizing = true; captionLabel.fontSizeMin = 11; captionLabel.fontSizeMax = 14;
-            if (illustratedMeme)
-                Text(Rect("Illustration Notice", card, Vector2.zero, new Vector2(1, 0), new Vector2(10, 4), new Vector2(-10, 30)),
-                    GameText.T("情景配图 · 非原影视截图", "Illustrative scene · not a film still"), 10, C.Muted, TextAlignmentOptions.MidlineLeft).richText = false;
+            captionLabel.richText = false; captionLabel.enableAutoSizing = false;
+            captionLabel.textWrappingMode = TextWrappingModes.Normal;
+            // Measure this authored caption once when rebuilding messages, at its actual fixed font/width.
+            // English captions can need more lines; grow the bubble instead of shrinking or truncating text.
+            float captionHeight = Mathf.Max(38, Mathf.Ceil(captionLabel.GetPreferredValues(caption, photoWidth + padding * 2 - 20, 0).y) + 4);
+            captionLabel.rectTransform.offsetMax = new Vector2(-10, 6 + noteHeight + captionHeight);
+            height = photoHeight + captionHeight + noteHeight + padding * 3;
+            card.offsetMin = new Vector2(left, -y - nameHeight - height);
             return height + nameHeight;
         }
 
@@ -786,16 +852,29 @@ namespace LingGuangV05.Desktop.YY
             var choices = hub.ChoicesOf(target);
             bool on = choices != null && choices.Length > 0;
             string signature = on ? target + ":" + string.Join("|", choices) : "";
+            var renderedState = hub.S;
+            var renderedSimulation = hub.runtime.Sim;
+            var renderedForum = LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.S;
             choiceStrip.gameObject.SetActive(on);
-            if (signature == shownChoices) return;
+            if (signature == shownChoices && ReferenceEquals(shownChoiceOwner, renderedState) && ReferenceEquals(shownQuestionOwner, renderedForum)) return;
             shownChoices = signature;
+            shownChoiceOwner = renderedState; shownQuestionOwner = renderedForum;
             for (int i = choiceStrip.childCount - 1; i >= 0; i--) Destroy(choiceStrip.GetChild(i).gameObject);
             if (!on) return;
             float x = 10;
+            int row = 0;
             foreach (var choice in choices)
             {
                 string text = choice;
-                var b = FlatButton(choiceStrip, text, () => { hub.Send(target, text); stickBottom = true; dirty = true; }, 14, Color.white, C.Mine);
+                bool endingPrivateChoice = target == YYChatHub.LaoZhou
+                    && Array.IndexOf(hub.EndingPrivateChoices() ?? Array.Empty<string>(), text) >= 0;
+                var b = FlatButton(choiceStrip, text, () => {
+                    if (!ReferenceEquals(hub.S, renderedState) || !ReferenceEquals(hub.runtime.Sim, renderedSimulation)
+                        || target == YYChatHub.LaoZhou && !ReferenceEquals(LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.S, renderedForum)) return;
+                    // A stale preview action must never fall through into sending its UI label as a chat message.
+                    if (endingPrivateChoice) { TryPreviewEndingPrivate(text); return; }
+                    hub.Send(target, text); stickBottom = true; dirty = true;
+                }, 14, Color.white, C.Mine);
                 var rt = (RectTransform)b.transform;
                 float width = target == YYChatHub.EraGroup ? Mathf.Max(70, (choiceStrip.rect.width - 40) / 3) : 28 + text.Length * (GameText.IsEnglish ? 7.5f : 15f);
                 if (target == YYChatHub.EraGroup)
@@ -807,8 +886,34 @@ namespace LingGuangV05.Desktop.YY
                 rt.anchorMin = rt.anchorMax = new Vector2(0, .5f);
                 rt.offsetMin = new Vector2(x, -13); rt.offsetMax = new Vector2(x + width, 13);
                 b.name = "Choice";
+                if (target == YYChatHub.LaoZhou)
+                {
+                    rt.anchorMin = new Vector2(0,1); rt.anchorMax = Vector2.one;
+                    rt.offsetMin = new Vector2(10,-8-row*62-54);rt.offsetMax = new Vector2(-10,-8-row*62);
+                    var label=b.GetComponentInChildren<TMP_Text>();label.textWrappingMode=TextWrappingModes.Normal;label.overflowMode=TextOverflowModes.Overflow;
+                    AddFocus(b.gameObject);row++;
+                }
                 x += width + 10;
             }
+        }
+
+        void RefreshZhouChoiceLayout()
+        {
+            if(choiceStrip==null||messageArea==null)return;
+            var choices=hub.S.selected==YYChatHub.LaoZhou?hub.ChoicesOf(YYChatHub.LaoZhou):null;
+            bool expanded=choices!=null&&choices.Length>0;
+            if(!expanded&&!zhouChoiceExpanded)return;
+            float height=expanded?16+choices.Length*62:ToolHeight;
+            choiceStrip.offsetMax=new Vector2(choiceStrip.offsetMax.x,BottomHeight+InputHeight+height);
+            SetMessageBottom(BottomHeight+InputHeight+height);
+            zhouChoiceExpanded=expanded;
+        }
+
+        void SetMessageBottom(float bottom)
+        {
+            messageArea.offsetMin = new Vector2(messageArea.offsetMin.x, bottom + AiNoticeHeight);
+            var notice = (RectTransform)aiContentNotice.transform.parent;
+            notice.offsetMin = new Vector2(0, bottom); notice.offsetMax = new Vector2(0, bottom + AiNoticeHeight);
         }
 
         /// <summary>"☺ 表情" becomes "表情" when the tool button shows a drawn icon instead of the glyph.</summary>

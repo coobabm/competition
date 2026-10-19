@@ -31,7 +31,7 @@ namespace LingGuangV05.Desktop
         public bool Open(string appId, string tab = null)
         {
             var binding = Get(appId);
-            if (binding == null) return false;
+            if (binding == null || !LingGuangV05.Desktop.Story.StudyDesktopGates.Allows(appId)) return false;
             binding.OpenApp(tab);
             return true;
         }

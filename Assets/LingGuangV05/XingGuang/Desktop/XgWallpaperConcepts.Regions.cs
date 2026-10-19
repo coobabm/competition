@@ -15,9 +15,14 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly TMP_Text[] regionLabels = new TMP_Text[4];
         readonly Vector2[] ellipse = new Vector2[49];
         public System.Collections.Generic.IReadOnlyList<string> Architectures => architectures;
-        public static Vector2 RegionCenter(int region) => new Vector2(region % 2 == 0 ? .435f : .605f, region < 2 ? .65f : .465f);
+        public static Vector2 RegionCenter(int region) => XgBrainWindowBody.AnatomyUv(XgCortexGraphic.PresentationCenter(region));
+        public static Vector2 RegionRadius(int region) => XgBrainWindowBody.AnatomyRadius(XgCortexGraphic.PresentationRadius(region));
+        public static Vector2 RegionLabelPosition(int region) => XgBrainWindowBody.AnatomyUv(XgCortexGraphic.PresentationLabel(region));
+        // A common anatomical extent keeps real cells and structural guides inside their lobe.
+        public static Vector2 RegionContentRadius(int region) => RegionRadius(region) * .62f;
+        static Vector2 RegionOffset(int region, Vector2 oldOffset) => Vector2.Scale(RegionContentRadius(region), oldOffset / .06f);
         public static string RegionName(int region) => region == 0 ? GameText.T("看图区", "Vision") : region == 1 ? GameText.T("读字区", "Reading")
-            : region == 2 ? GameText.T("语气区", "Tone") : GameText.T("逻辑区", "Logic");
+            : region == 2 ? GameText.T("语气区", "Tone") : GameText.T("推理区", "Reasoning");
         public int HitRegion(Vector2 screen, Camera camera)
         {
             if (!wallpaper.Reveal.Visible || !RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screen, camera, out var local)) return -1;
@@ -26,7 +31,8 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int region = 0; region < 4; region++)
             {
                 var offset = uv - RegionCenter(region);
-                if (Mathf.Abs(offset.x) <= .077f && offset.y >= -.079f && offset.y <= .113f) return region;
+                var radius = RegionRadius(region);
+                if (offset.x * offset.x / (radius.x * radius.x) + offset.y * offset.y / (radius.y * radius.y) <= 1) return region;
             }
             return -1;
         }
@@ -57,12 +63,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             for (int i = 0; i < 4; i++)
             {
-                var center = RegionCenter(i);
-                var label = PrologueDesk.Rect("Region " + RegionIds[i], transform, center + new Vector2(-.077f, .079f),
-                    center + new Vector2(.077f, .113f), Vector2.zero, Vector2.zero).gameObject.AddComponent<TextMeshProUGUI>();
-                label.font = PrologueDesk.CjkFont(); label.fontSize = 13; label.color = new Color32(144, 170, 186, 255);
+                var center = RegionLabelPosition(i);
+                var label = PrologueDesk.Rect("Region " + RegionIds[i], transform, center, center,
+                    new Vector2(-150, -16), new Vector2(150, 16)).gameObject.AddComponent<TextMeshProUGUI>();
+                label.font = PrologueDesk.CjkFont(); label.fontSize = 24; label.color = new Color32(144, 170, 186, 255);
                 label.alignment = TextAlignmentOptions.Center; label.textWrappingMode = TextWrappingModes.NoWrap;
-                label.enableAutoSizing = true; label.fontSizeMin = 9; label.fontSizeMax = 13;
+                label.enableAutoSizing = true; label.fontSizeMin = 18; label.fontSizeMax = 24;
                 label.raycastTarget = false; regionLabels[i] = label;
             }
         }
@@ -143,16 +149,9 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < 4; i++)
             {
                 var center = area.min + Vector2.Scale(area.size, RegionCenter(i));
-                var radius = Vector2.Scale(area.size, new Vector2(.06f, .06f));
+                var radius = Vector2.Scale(area.size, RegionContentRadius(i));
                 var ink = XgCortexGraphic.N.Wire; ink.a = regionTotals[i] > 0 ? .2f : .065f;
-                // Small corner brackets keep areas readable without enclosing the desktop in panels.
-                var frame = Vector2.Scale(area.size, new Vector2(.077f, .075f));
-                foreach (int x in new[] { -1, 1 }) foreach (int y in new[] { -1, 1 })
-                {
-                    var corner = center + new Vector2(frame.x * x, frame.y * y);
-                    XgDraw.Seg(vh, corner, corner - new Vector2(x * 12 * scale, 0), scale, ink);
-                    XgDraw.Seg(vh, corner, corner - new Vector2(0, y * 12 * scale), scale, ink);
-                }
+                EllipseLine(vh, center, Vector2.Scale(area.size, RegionRadius(i)), .6f * scale, ink);
                 string arch = architectures[i];
                 if (arch == "rnn" || arch == "lstm" || arch == "gru")
                 {

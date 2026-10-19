@@ -18,7 +18,6 @@ namespace LingGuangV05.UI.Tests
             if (host != null) UnityEngine.Object.DestroyImmediate(host);
         }
 
-        [TestCase("Title", "我的电脑活了")]
         [TestCase("SettingsTitle", "设置")]
         public void FixedTitlesFitTheShippedCjkLineBoxAndRenderVisibleCharacters(string name, string expectedText)
         {
@@ -39,11 +38,31 @@ namespace LingGuangV05.UI.Tests
         }
 
         [Test]
+        public void MainTitleUsesApprovedTransparentArtworkWithoutDuplicateDecoration()
+        {
+            BuildHud();
+            var logo = host.GetComponentsInChildren<UnityEngine.UI.RawImage>(true).Single(image => image.name == "TitleLogoV5");
+            var approved = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV5");
+            Assert.That(approved, Is.Not.Null);
+            Assert.That(logo.texture, Is.SameAs(approved));
+            Assert.That(approved.width, Is.EqualTo(2078));
+            Assert.That(approved.height, Is.EqualTo(1110));
+            Assert.That(logo.raycastTarget, Is.False);
+            Assert.That(logo.color, Is.EqualTo(Color.white));
+            Assert.That(logo.rectTransform.rect.width, Is.EqualTo(500f));
+            Assert.That(logo.uvRect, Is.EqualTo(new Rect(0, 0, 1, 1)));
+            Assert.That(logo.rectTransform.rect.width / logo.rectTransform.rect.height,
+                Is.EqualTo(2078f / 1110f).Within(.001f));
+            Assert.That(host.GetComponentsInChildren<Transform>(true).Any(item => item.name == "TitleSignal"), Is.False);
+            Assert.That(host.GetComponentsInChildren<TextMeshProUGUI>(true)
+                .Single(label => label.name == "Eyebrow").text, Does.Contain("MY COMPUTER IS ALIVE"));
+        }
+        [Test]
         public void MainTitleLineBoxDoesNotOverlapItsSubheading()
         {
             BuildHud();
             var labels = host.GetComponentsInChildren<TextMeshProUGUI>(true);
-            var title = labels.Single(label => label.name == "Title").rectTransform;
+            var title = host.GetComponentsInChildren<UnityEngine.UI.RawImage>(true).Single(image => image.name == "TitleLogoV5").rectTransform;
             var subheading = labels.Single(label => label.name == "Subheading").rectTransform;
             float titleBottom = title.anchoredPosition.y - title.rect.height;
             Assert.That(titleBottom, Is.GreaterThanOrEqualTo(subheading.anchoredPosition.y + 8f),
@@ -52,6 +71,7 @@ namespace LingGuangV05.UI.Tests
 
         private void BuildHud()
         {
+            Assert.That(Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV5"), Is.Not.Null, "Approved v5 Resources texture must load before HUD construction");
             var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset");
             Assert.That(font, Is.Not.Null, "Regression must use the actual shipped menu font");
             var type = Type.GetType("LingGuangV05.CaseMenu.CaseMenuHud, Assembly-CSharp");

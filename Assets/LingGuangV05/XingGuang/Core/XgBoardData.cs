@@ -8,7 +8,7 @@ namespace LingGuangV05.XingGuang
     /// wiring decides how they are read. Deterministic per (dataset, seed, level, date), so training pools and test
     /// sets can be regenerated instead of saved.
     /// </summary>
-    public static class XgBoardData
+    public static partial class XgBoardData
     {
         /// <summary>Held-out cards per test set: about ±2.5 points of noise on a yes/no score.</summary>
         public const int TestSize = 400;
@@ -24,6 +24,9 @@ namespace LingGuangV05.XingGuang
                 default: return "sequence";
             }
         }
+
+        /// <summary>Presentation grouping only. Existing chess weights stay in their persisted sequence region.</summary>
+        public static string DisplayRegion(string dataset) => dataset == "chess" ? "logic" : Region(dataset);
 
         /// <summary>What a generated card is for: training pool, diagnostic (shown) set, or the independent wall exam.</summary>
         public enum Use { Train = 0, Diagnostic = 1, Exam = 2 }
@@ -45,8 +48,15 @@ namespace LingGuangV05.XingGuang
         /// A held-out set: cards that are not also in the training pool (same elements, same answer), so "unseen" means
         /// unseen. Small card spaces may run out of new cards; the set then fills up with what it has.
         /// </summary>
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileBuildTestSet = new XgSimulationMarker("Xg.BoardData.TestSetTotal");
+#endif
         public static List<XgBoardCard> TestSet(string dataset, int level, int today, int salt = 0, Use use = Use.Diagnostic)
         {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileBuildTestSet.Auto())
+#endif
+            {
             var train = TrainSignatures(dataset, level, today, salt);
             var list = new List<XgBoardCard>(TestSize);
             var spare = new List<XgBoardCard>();
@@ -58,9 +68,25 @@ namespace LingGuangV05.XingGuang
             }
             for (int i = 0; list.Count < TestSize && i < spare.Count; i++) list.Add(spare[i]);
             return list;
+                    }
         }
 
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileTrainSignaturesMiss = new XgSimulationMarker("Xg.BoardData.TrainSignaturesMiss4096");
+#endif
         static readonly Dictionary<string, HashSet<string>> trainSignatures = new Dictionary<string, HashSet<string>>();
+
+        // Existing entries are complete and never mutated. Expose membership only; preparation must not publish early.
+        internal static bool TryGetTrainSignatures(string dataset, int level, int today, int salt, out Func<string, bool> contains)
+        {
+            string key = dataset + "|" + level + "|" + today + "|" + salt;
+            lock (trainSignatures)
+            {
+                if (trainSignatures.TryGetValue(key, out var set)) { contains = set.Contains; return true; }
+            }
+            contains = null;
+            return false;
+        }
 
         /// <summary>What a card is to the brain: its elements and its answer.</summary>
         public static string Signature(XgBoardCard card)
@@ -71,17 +97,30 @@ namespace LingGuangV05.XingGuang
             return card.region + "|" + card.truth + "|" + string.Join(";", parts);
         }
 
+#if UNITY_5_3_OR_NEWER
+        static readonly XgSimulationMarker ProfileTrainSignatures = new XgSimulationMarker("Xg.BoardData.TrainSignatures");
+#endif
         static HashSet<string> TrainSignatures(string dataset, int level, int today, int salt)
         {
+#if UNITY_5_3_OR_NEWER
+            using (ProfileTrainSignatures.Auto())
+#endif
+            {
             string key = dataset + "|" + level + "|" + today + "|" + salt;
             lock (trainSignatures)
             {
                 if (trainSignatures.TryGetValue(key, out var set)) return set;
                 set = new HashSet<string>();
+#if UNITY_5_3_OR_NEWER
+                using (ProfileTrainSignaturesMiss.Auto())
+#endif
+                {
                 for (int i = 0; i < PoolLimit; i++) set.Add(Signature(Make(dataset, Seed(dataset, i, Use.Train, salt), level, today)));
+                }
                 trainSignatures[key] = set;
                 return set;
             }
+                    }
         }
 
         /// <summary>Datasets whose cards follow the calendar (this month's memes and phrases); the rest never change.</summary>
@@ -140,6 +179,14 @@ namespace LingGuangV05.XingGuang
         /// <summary>The elements of a label card as the brain sees them. Also used for hand-labelled cards.</summary>
         public static XgBoardCard FromCard(XgCard card)
         {
+            if (card.dataset == "arith" && card.kind != "shutdown")
+            {
+                // Input is built first without access to labels, explanations or generator identity.
+                var arithmetic = XgArithmeticInput.Input(card);
+                arithmetic.truth = card.truth; // supervision target only; Predict does not read it
+                arithmetic.source = card; // diagnostic rendering only, never an input feature
+                return arithmetic;
+            }
             var b = new XgBoardCard { region = Region(card.dataset), seed = card.seed, truth = card.truth, source = card };
             var r = new Random(card.seed ^ 0x5A17);
             switch (card.dataset)

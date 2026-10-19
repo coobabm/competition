@@ -157,6 +157,7 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildDiagnosis();
             BuildExam();
             BuildTrainingSeals();
+            BuildDataInstallHint();
             for (int i = 0; i < 2; i++)
                 UiTip.Add(trackTabs[i].rt, () => T(("两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。" .Replace("灵光", Sim.AiDisplayName)), ("The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds." .Replace("灵光", Sim.AiDisplayName))));
             UiTip.Add(train.rt, () => T(("训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\n刷新纪录就记成绩、存检查点、发奖金。\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。" .Replace("灵光", Sim.AiDisplayName)),
@@ -270,7 +271,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnEpoch(XgEpoch e)
         {
             if (!view.Visible || view.Tab != "train" || (XgTrack)e.track != Track) return;
-            Fx.Shockwave(Fx.At(epochBar, new Vector2(epochBar.rect.width * .5f, 0)), XgDark.Accent, 60, .3f, 5);
+            QueueRoundPulse(e); // Only the completion cue may follow a live music accent; results remain immediate.
             var d = XgCatalog.Dataset(Sim.Run(Track).dataset);
             double points = d == null ? 0 : e.gain * 1000 / Math.Max(1e-9, d.chanceError - d.floorError);
             if (e.dropped)
@@ -297,6 +298,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Tick(float dt)
         {
+            TickRhythm();
             TickExam(dt);
             view.Data?.Tick(dt);
             var run = Sim.Run(Track);
@@ -475,16 +477,16 @@ namespace LingGuangV05.Desktop.XingGuang
 
             bool unlocked = Sim.TrainingUnlocked(track);
             string blocker = Sim.StartBlocker(run, Host);
-            train.Set(Lang.T("训练一轮"), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
+            train.Set(Lang.T("训练一轮") + (Sim.TrainingQuizBonusAvailable || run.trainingQuizBonusReserved ? " · +5%" : ""), unlocked && blocker == null && !run.epochActive, XgDark.Accent, Color.white);
             trainSub.text = unlocked ? T("第 " + run.epoch + " 轮", "epoch " + run.epoch) : Lang.T("先标够样本");
             RefreshBill(run, unlocked);
             RefreshRates(run, Sim.TrainPart("rate"));
             assess.Show(false);
 
             // The chance that the next round goes down, and the cards' heat (XgSim.AutoModel.cs, ChapterOneSim.Bills.cs).
-            var dropRisk = Sim.DropRisk(run);
-            risk.text = unlocked ? RiskLine(run, dropRisk) : "";
-            risk.color = dropRisk.level >= 2 ? XgDark.Bad : dropRisk.level == 1 ? XgDark.Money : XgDark.Muted;
+            var forecast = Sim.TrainingRiskForecast(run);
+            risk.text = unlocked ? RiskLine(run, forecast) : "";
+            risk.color = forecast.level >= 2 ? XgDark.Bad : forecast.level == 1 ? XgDark.Money : XgDark.Muted;
             string waiting = run.epochActive ? Sim.Blocker(run, Host) : null;
             hint.text = blocker != null ? "⚠ " + blocker : waiting != null ? "◷ " + waiting : Hint(run);
             hint.color = blocker != null ? XgDark.Bad : Sim.Plateaued(run) || Sim.ParamsShortForNext(run) ? XgDark.Gold : XgDark.Muted;
@@ -496,11 +498,9 @@ namespace LingGuangV05.Desktop.XingGuang
         /// 「下一轮退步：中 12% · 脏标注 120 条」, and on a second line the warning when the cards are hot. The reason of the
         /// risk is in the tooltip.
         /// </summary>
-        string RiskLine(XgRun run, XgDropRisk r)
+        string RiskLine(XgRun run, XgRiskForecast forecast)
         {
-            string line = T("下一轮退步：", "Next round drops: ") + XgSim.RiskLevelName(r.level, Sim.English) + " " + N(r.chance * 100, "0") + "%";
-            double tear = Sim.TearChance(run);
-            if (tear > 0) line = "<color=#E24B4A><b>" + T("这一轮可能炸：", "This round may blow up: ") + N(tear * 100, "0") + "%</b></color>  " + line;
+            string line = Sim.TrainingRiskLine(forecast);
             double dirty = Math.Floor(Sim.Noise(run.dataset) + Sim.DataNoise(run.dataset));
             if (dirty >= 1) line += "  <color=#3A5566>" + T("脏标注 " + N(dirty, "0") + " 条", N(dirty, "0") + " dirty labels") + "</color>";
             if (HeatWarning()) line += "\n<color=#EF9F27>" + T("显卡太热，可能烧卡", "The cards are hot and may burn out") + "</color>";
@@ -515,7 +515,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string RiskTip()
         {
             var run = Sim.Run(Track);
-            string tip = XgGlossary.Tip("退步", Sim.English, Sim.DropRiskText(run) + T("。", "."));
+            string tip = Sim.TrainingRiskDetail(Sim.TrainingRiskForecast(run));
             if (Host is XingGuangHost home && home.WearRiskLive)
                 tip += "\n\n" + T("显卡连着练太久了：每多练一秒都有一点概率烧掉一张卡（送修要花钱，修好前少一张卡）。歇几秒就清零。九州风神让概率减半。",
                     "The cards have trained non-stop for long: every further second may burn one out (a repair costs money, and the card is gone until it is back). A few seconds of rest reset it. The tower cooler halves the chance.");

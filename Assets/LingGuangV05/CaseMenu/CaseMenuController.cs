@@ -14,9 +14,9 @@ namespace LingGuangV05.CaseMenu
     public sealed class CaseMenuController : MonoBehaviour
     {
         public const string ScenePath = "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity";
-        public const string VolumePref = "LingGuangV05.MasterVolume";
-        public const string ReduceMotionPref = "LingGuangV05.ReduceMotion";
-        public const string FullscreenPref = "LingGuangV05.Fullscreen";
+        public const string VolumePref = GameSettings.VolumePref;
+        public const string ReduceMotionPref = GameSettings.ReduceMotionPref;
+        public const string FullscreenPref = GameSettings.FullscreenPref;
         public Camera menuCamera;
         public CaseMenuButton startButton, settingsButton;
         public GameObject previewMonitor;
@@ -57,8 +57,8 @@ namespace LingGuangV05.CaseMenu
             }
             initialFov = menuCamera.fieldOfView;
             originalListenerVolume = AudioListener.volume;
-            AudioListener.volume = Mathf.Clamp01(PlayerPrefs.GetFloat(VolumePref, .8f));
-            reducedMotion = PlayerPrefs.GetInt(ReduceMotionPref, 0) != 0;
+            GameSettings.ApplySaved();
+            reducedMotion = GameSettings.ReducedMotion;
             startButton.ReducedMotion = settingsButton.ReducedMotion = reducedMotion;
             effects = gameObject.AddComponent<AudioSource>();
             effects.playOnAwake = false; effects.spatialBlend = 0; effects.priority = 48;
@@ -70,10 +70,9 @@ namespace LingGuangV05.CaseMenu
             hud.Build(font, SetVolume, SetReducedMotion, SetFullscreen, CloseSettings,
                 () => Play(releaseClip, .24f));
             mainDisplay = gameObject.AddComponent<CaseMenuMainDisplay>();
+            hud.ConfigureLifeEvents(CurrentLifeEventMode, SetLifeEventMode);
             hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame);
             Cursor.visible = true; Cursor.lockState = CursorLockMode.None;
-            if (!Application.isEditor && PlayerPrefs.HasKey(FullscreenPref))
-                Screen.fullScreen = PlayerPrefs.GetInt(FullscreenPref) != 0;
         }
 
         IEnumerator Start()
@@ -92,13 +91,20 @@ namespace LingGuangV05.CaseMenu
         {
             if (fanMotor != null && mainDisplay != null && mainDisplay.IsScreenPowered && !HasEnteredGame)
                 fanMotor.SetBootElapsed(mainDisplay.BootProgress * CaseMenuMainDisplay.BootDuration);
-            if (hud == null || IsTransitioning || HasEnteredGame) return;
+            if (hud == null || IsTransitioning) return;
             var keyboard = Keyboard.current;
+            if (HasEnteredGame)
+            {
+                if (IsSettingsOpen && keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
+                return;
+            }
             if (hud.IsArchiveOpen) { if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) hud.CloseArchives(); return; }
             if (hud.HasTitleSelection && keyboard != null && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed || keyboard.enterKey.wasReleasedThisFrame || keyboard.spaceKey.wasReleasedThisFrame)) return;
             if (IsSettingsOpen)
             {
-                if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) CloseSettings();
+                if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
                 return;
             }
             if (keyboard != null && keyboard.lKey.wasPressedThisFrame) { hud.OpenArchives(); return; }
@@ -187,27 +193,33 @@ namespace LingGuangV05.CaseMenu
             CancelCapture(); SetHovered(null);
             hud.ShowSettings(AudioListener.volume, reducedMotion, Screen.fullScreen);
         }
+        public void OpenDesktopSettings()
+        {
+            if (!HasEnteredGame || IsTransitioning || hud == null) return;
+            hud.ShowSettings(AudioListener.volume, GameSettings.ReducedMotion, Screen.fullScreen);
+        }
         public void CloseSettings()
         {
             if (hud == null) return;
             hud.HideSettings(); PlayerPrefs.Save();
             keyboardFocus = false;
         }
+        int? CurrentLifeEventMode() => GameSettings.CurrentLifeEventMode(IsMainReady ? mainDisplay.Runtime : null);
+        void SetLifeEventMode(int mode) => GameSettings.SetLifeEventMode(IsMainReady ? mainDisplay.Runtime : null, mode, hud);
+
         public void SetVolume(float value)
         {
-            AudioListener.volume = Mathf.Clamp01(value);
-            PlayerPrefs.SetFloat(VolumePref, AudioListener.volume);
+            GameSettings.SetVolume(value);
         }
         public void SetReducedMotion(bool value)
         {
             reducedMotion = value;
             startButton.ReducedMotion = settingsButton.ReducedMotion = value;
-            PlayerPrefs.SetInt(ReduceMotionPref, value ? 1 : 0);
+            GameSettings.SetReducedMotion(value);
         }
         public void SetFullscreen(bool value)
         {
-            PlayerPrefs.SetInt(FullscreenPref, value ? 1 : 0);
-            Screen.fullScreen = value;
+            GameSettings.SetFullscreen(value);
         }
 
         public void BeginGame()
@@ -218,6 +230,7 @@ namespace LingGuangV05.CaseMenu
                 LastError = mainDisplay.Error;
                 hud.ShowError(LastError); Debug.LogError(LastError, this); return;
             }
+            if (IsMainReady && hud.OpenCompletedEnding()) return;
             IsTransitioning = true; TransitionCount++;
             CancelCapture(); SetHovered(null); startButton.Pulse();
             PlayerPrefs.Save();
@@ -233,6 +246,8 @@ namespace LingGuangV05.CaseMenu
             }
             if (!mainDisplay.IsReady) { IsTransitioning = false; hud.ShowError(mainDisplay.Error); yield break; }
             hud.SetLoading(-1, null);
+            // A start click during preload must make the same completed-save decision after loading.
+            if (hud.OpenCompletedEnding()) { IsTransitioning = false; yield break; }
             Play(bootClip, .22f);
             mainDisplay.PowerOnScreen();
             if (fanMotor != null) fanMotor.StartBoot();

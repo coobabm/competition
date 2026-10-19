@@ -29,6 +29,12 @@ namespace LingGuangV05.Desktop.Casino
         bool english;
         Coroutine navigation;
         XgSim bound;
+        // 888.vip scam notices (XgSim.Gambling.cs): its line as a popup while it is not in YY yet, and the group's gossip.
+        XgSim noticeOwner;
+        int noticeSeq, gossipPending;
+        float gossipAt;
+        /// <summary>Real seconds between the event and the group's line about the site, so it reads as news, not as a reaction.</summary>
+        const float GossipDelay = 40;
 
         public static CasinoDesktop Install(StoryDesktopPresenter host)
         {
@@ -110,9 +116,13 @@ namespace LingGuangV05.Desktop.Casino
             if (controller == null || controller.Sim == null || controller.runtime == null || controller.runtime.Sim == null) return;
             var sim = controller.Sim;
             if (!ReferenceEquals(sim, bound)) { bound = sim; if (ad != null) Destroy(ad.gameObject); ad = null; }
-            bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || LingGuangV05.Core.StoryFocus.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled || controller.runtime.TestMode;
+            if (!controller.BoundTo(controller.runtime.Sim)) return;
+            bool held = Held() || LingGuangV05.Core.OpeningQuiet.Active || LingGuangV05.Core.StoryFocus.Active || controller.runtime.Sim.InPrologue || !controller.runtime.Sim.AppInstalled;
+            // Frozen and ignored for a whole game day: the site goes on its own.
+            if (!held && sim.TickCasinoScam()) { controller.runtime.MarkDirty(); controller.SaveNow(); }
+            TickScamNotices(sim, held);
             sim.AdvanceCasinoAd(Mathf.Min(Time.unscaledDeltaTime, 2), held);
-            bool show = !held && sim.SystemUnlocked("casino") && !sim.S.chapterComplete && sim.Casino.adVisible;
+            bool show = !held && sim.SystemUnlocked("casino") && !sim.S.chapterComplete && !sim.CasinoScamBlocks && sim.Casino.adVisible;
             if (!show) { if (ad != null) ad.gameObject.SetActive(false); return; }
             if (ad != null && english != GameText.IsEnglish) { Destroy(ad.gameObject); ad = null; }
             if (ad == null) BuildAd();
@@ -125,6 +135,42 @@ namespace LingGuangV05.Desktop.Casino
                 float bottom = trayShowing ? 270 : 62;
                 ad.offsetMin = new Vector2(-334, bottom); ad.offsetMax = new Vector2(-14, bottom + 190);
             }
+        }
+
+        /// <summary>
+        /// Its 888 line already went into its chat (= YY, with YY's own notification). Only before it has joined YY is the
+        /// line shown as a desktop popup. The group gets at most one line per beat per save, some time after the event,
+        /// about the site only: they do not know about the AI, and never mention the player's own bets.
+        /// </summary>
+        void TickScamNotices(XgSim sim, bool held)
+        {
+            if (!ReferenceEquals(noticeOwner, sim)) { noticeOwner = sim; noticeSeq = sim.S.casinoAiSeq; gossipPending = 0; }
+            if (held) return;
+            if (noticeSeq != sim.S.casinoAiSeq)
+            {
+                noticeSeq = sim.S.casinoAiSeq;
+                if (!XgYyTalk.InYY && !string.IsNullOrEmpty(sim.S.casinoAiLast)) PrologueDirector.Desk?.StoryPopup(sim.AiDisplayName, sim.S.casinoAiLast, 7);
+            }
+            int beat = sim.CasinoGossipDue();
+            if (beat == 0) { gossipPending = 0; return; }
+            if (beat != gossipPending) { gossipPending = beat; gossipAt = Time.unscaledTime + GossipDelay; return; }
+            if (Time.unscaledTime < gossipAt) return;
+            var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance;
+            string line = XgSim.GamblingGossip(beat, GameText.IsEnglish);
+            var owner = controller.runtime.Sim;
+            if (hub == null || hub.S == null || string.IsNullOrEmpty(line) || !hub.BoundTo(owner)
+                || !controller.BoundTo(owner) || !ReferenceEquals(controller.Sim, sim) || hub.IntroPlaying
+                || hub.IsTyping(LingGuangV05.Desktop.YY.YYChatHub.EraGroup)) return;
+            var conversation = hub.Conversation(LingGuangV05.Desktop.YY.YYChatHub.EraGroup);
+            if (conversation == null) return;
+            int before = conversation.messages.Count;
+            hub.Receive(LingGuangV05.Desktop.YY.YYChatHub.EraGroup, line, LingGuangV05.Core.OpeningQuiet.Allows(false));
+            if (!ReferenceEquals(controller.runtime.Sim, owner) || !hub.BoundTo(owner)
+                || conversation.messages.Count != before + 1) return;
+            sim.MarkCasinoGossip(beat);
+            controller.runtime.MarkDirty();
+            controller.SaveNow();
+            gossipPending = 0;
         }
 
         void BuildAd()

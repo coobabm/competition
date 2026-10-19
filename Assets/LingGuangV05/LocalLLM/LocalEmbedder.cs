@@ -77,7 +77,7 @@ namespace LingGuangV05.Desktop.LLM
             modelPath = FindModel();
             if (modelPath == null) { Debug.Log("[灵光] 没有向量模型（StreamingAssets/LingGuang/Embedding/*.gguf）：检索只用 BM25。"); return; }
             ModelName = Path.GetFileNameWithoutExtension(modelPath);
-            cachePath = Path.Combine(Application.persistentDataPath, "LingGuangV05", "embeddings-" + ModelName + ".bin");
+            cachePath = Path.Combine(LingGuangV05.Runtime.Persistence.VerificationSavePaths.ModelCacheDirectory ?? Path.Combine(Application.persistentDataPath, "LingGuangV05"), "embeddings-" + ModelName + ".bin");
             stopping = false;
             string model = modelPath, path = cachePath;
             bool gpu = Application.platform != RuntimePlatform.WindowsPlayer && Application.platform != RuntimePlatform.WindowsEditor;

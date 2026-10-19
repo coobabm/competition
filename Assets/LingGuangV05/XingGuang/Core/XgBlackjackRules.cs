@@ -58,9 +58,10 @@ namespace LingGuangV05.XingGuang
         public bool BlackjackActive => Casino.blackjack != null && Casino.blackjack.active;
         public bool StartBlackjack(long stake, IXgHost host)
         {
-            if (BlackjackActive || !CasinoRules.IsStake(stake) || !CasinoFunds(host, stake)
+            if (!CasinoAvailable || BlackjackActive || CasinoScamBlocks || !CasinoRules.IsStake(stake) || !CasinoFunds(host, stake)
                 || Clock < Casino.nextBetAt) return false;
             if (!host.Spend(stake)) return false;
+            BeginGambling();
             EnsureCasinoRng();
             var h = new XgBlackjackHand { active = true, stake = stake, deck = BlackjackRules.Shuffle(CasinoNext), nextActionAt = Clock + .4 };
             Casino.blackjack = h; Casino.wagered += stake; Casino.nextBetAt = Clock + CasinoRules.RoundSeconds;
@@ -77,7 +78,7 @@ namespace LingGuangV05.XingGuang
             if (action != "hit" && action != "stand" && action != "double") return false;
             if (action == "double")
             {
-                if (h.player.Count != 2 || h.doubled || !CasinoFunds(host, h.stake) || !host.Spend(h.stake)) return false;
+                if (CasinoScamBlocks || h.player.Count != 2 || h.doubled || !CasinoFunds(host, h.stake) || !host.Spend(h.stake)) return false;
                 Casino.wagered += h.stake; h.stake *= 2; h.doubled = true;
             }
             h.nextActionAt = Clock + .4; h.revision++;
@@ -103,6 +104,7 @@ namespace LingGuangV05.XingGuang
             Casino.history.Add(round);
             if (returned > 0) host.Earn(returned);
             CasinoSettled(round, BlackjackRules.Natural(h.player), host);
+            WatchGambling(round, host);
         }
     }
 }

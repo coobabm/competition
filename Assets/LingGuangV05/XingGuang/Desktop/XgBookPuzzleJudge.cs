@@ -16,10 +16,15 @@ namespace LingGuangV05.Desktop.XingGuang
             var p = sim?.BookPuzzlePending;
             if (p == null) { done?.Invoke(null); return; }
             string id = p.id;
+            var owner = XingGuangController.Instance;
+            var save = owner?.runtime?.Sim;
+            bool hosted = owner != null;
+            bool Current() => !hosted || owner != null && ReferenceEquals(owner.Sim, sim) && ReferenceEquals(owner.runtime?.Sim, save) && owner.BoundTo(save);
+            if (!Current()) { done?.Invoke(null); return; }
             Action<int?> finish = verdict =>
             {
                 // The answer belongs to this question of this save; a late model reply after a switch is dropped.
-                if (sim.S.bookPuzzle != id) { done?.Invoke(null); return; }
+                if (!Current() || sim.S.bookPuzzle != id) { done?.Invoke(null); return; }
                 done?.Invoke(sim.AnswerBookPuzzle(answer, verdict));
             };
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;

@@ -47,6 +47,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>Kinds whose catalog ladders become one square with levels.</summary>
         public static bool Ladder(XgNodeKind kind) => kind == XgNodeKind.Depth || kind == XgNodeKind.Width;
 
+        static bool ChainNode(XgNode node)=>Ladder(node.kind)||(node.id!=null&&node.id.StartsWith("board.logic",StringComparison.Ordinal));
+
         static void Ensure()
         {
             var nodes = XgCatalog.Nodes;
@@ -59,7 +61,7 @@ namespace LingGuangV05.XingGuang
             // Children of the same kind, so a ladder can be walked from its first step.
             var next = new Dictionary<string, List<XgNode>>();
             foreach (var n in nodes)
-                if (Ladder(n.kind) && n.parent != null && index.TryGetValue(n.parent, out var p) && p.kind == n.kind)
+                if (ChainNode(n) && n.parent != null && index.TryGetValue(n.parent, out var p) && p.kind == n.kind)
                 {
                     if (!next.TryGetValue(p.id, out var list)) next[p.id] = list = new List<XgNode>();
                     list.Add(n);
@@ -68,11 +70,11 @@ namespace LingGuangV05.XingGuang
             {
                 if (byNode.ContainsKey(n.id)) continue;
                 // A ladder step is drawn by its ladder's first step.
-                if (Ladder(n.kind) && n.parent != null && index.TryGetValue(n.parent, out var parent) && parent.kind == n.kind) continue;
+                if (ChainNode(n) && n.parent != null && index.TryGetValue(n.parent, out var parent) && parent.kind == n.kind) continue;
                 var entry = new XgTechEntry { id = n.id };
                 entry.members.Add(n); byNode[n.id] = entry;
                 // Follow the ladder while it stays a single line; a fork starts squares of its own.
-                for (var at = n; Ladder(n.kind) && next.TryGetValue(at.id, out var children) && children.Count == 1;)
+                for (var at = n; ChainNode(n) && next.TryGetValue(at.id, out var children) && children.Count == 1;)
                 {
                     at = children[0];
                     if (byNode.ContainsKey(at.id)) break;
@@ -143,6 +145,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static string Name(XgTechEntry e, XgSim sim)
         {
+            if(e.id=="board.logic1")return sim.English?"Board logic":"逻辑判断区";
             if (!e.IsChain) return XgTechTreeCopy.Name(e.First, sim);
             var at = Next(e, sim) ?? e.members[e.members.Count - 1];
             bool en = sim.English;

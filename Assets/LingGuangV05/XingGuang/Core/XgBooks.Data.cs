@@ -6,7 +6,7 @@ namespace LingGuangV05.XingGuang
     {
         public const string PoemsDataset = "poems", NovelDataset = "longtext";
 
-        static readonly XgBook[] all =
+        static readonly XgBook[] legacyBooks =
         {
             new XgBook
             {

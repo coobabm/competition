@@ -188,8 +188,11 @@ namespace LingGuangV05.XingGuang
             };
             // 书架: one card per book read to the end (XgSim.Books.cs).
             foreach (var b in XgBooks.All)
-                list.Add(Card(CardData, b.ability >= 5 ? 2 : b.ability >= 4 ? 1 : 0, "book." + b.id, b.name.Substring(0, 1), "读完《" + b.name + "》", "Read " + b.nameEn,
-                    "把《" + b.name + "》一篇一篇读完了：参数 +" + ParamsText(b.paramsK) + "。", "Read " + b.nameEn + " to the end, chapter by chapter: parameters +" + ParamsText(b.paramsK) + ".", b.note, b.noteEn));
+                list.Add(Card(CardData, b.ability >= 5 ? 2 : b.ability >= 4 ? 1 : 0, "book." + b.id, b.name.Substring(0, 1),
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "读完《" + b.name + "》导读" : "读完《" + b.name + "》选段",
+                    "Read " + (XgBooks.LibraryEntry(b.id).IsGuide ? "the guide to " : "selected excerpts from ") + b.nameEn,
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "读完原创导读，并非原著全文。" : "把《" + b.name + "》选段读完了：参数 +" + ParamsText(b.paramsK) + "。",
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "Completed the original guide, not the complete book." : "Read selected excerpts from " + b.nameEn + ": parameters +" + ParamsText(b.paramsK) + ".", b.note, b.noteEn));
             // 现象图鉴: one common card per phenomenon of the board.
             foreach (var p in XgPhenomena.All)
                 list.Add(Card(CardPhenomenon, 0, "ph." + p.id, p.name.Substring(0, 1), p.name, p.nameEn, "第一次观察到「" + p.name + "」。", "Saw " + p.nameEn + " for the first time.", p.why, p.whyEn));

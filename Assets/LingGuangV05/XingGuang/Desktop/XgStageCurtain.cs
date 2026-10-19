@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang {
   public static bool Showing=>active!=null&&active.root!=null&&active.root.gameObject.activeSelf;
   public static int Step=>active==null?-1:active.step;
   public static bool CoversAbility(int ability)=>Busy&&active.owner.Sim.S.stagePresentations.Contains(ability);
-  public static XgStageCurtain Install(XingGuangController owner){var c=owner.GetComponent<XgStageCurtain>()??owner.gameObject.AddComponent<XgStageCurtain>();c.owner=owner;active=c;StoryFocus.ExclusiveProbe=()=>Busy;return c;}
+  public static XgStageCurtain Install(XingGuangController owner){var c=owner.GetComponent<XgStageCurtain>()??owner.gameObject.AddComponent<XgStageCurtain>();c.owner=owner;active=c;StoryFocus.ExclusiveProbe=()=>Busy||XgEpilogueDirector.IsHolding(owner);return c;}
   string T(string zh,string en)=>sim!=null&&sim.English?en:zh;
   void Update(){if(owner==null||owner.View==null)return;if(sim!=owner.Sim){StopVisual();sim=owner.Sim;}if(sim==null)return;
    if(!Showing){if(!sim.StagePresentationHeld)return;desk=PrologueDirector.Desk;if(desk==null)return;if(presenter==null)presenter=owner.GetComponent<StoryDesktopPresenter>();if(presenter!=null&&(presenter.CutscenePlaying||presenter.HookPlaying))return;if(root==null)Build();stage=sim.S.stagePresentations[0];root.gameObject.SetActive(true);group.alpha=1;Enter(0);}

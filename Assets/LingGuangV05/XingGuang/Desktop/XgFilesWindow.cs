@@ -22,13 +22,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public TMP_Text desktopLabel, titleLabel;
         public Canvas sourceCanvas;
         public GameObject shortcutRoot;
-        // Data Import buys both the folder and installation once; no separate folder charge.
+        // Purchased/downloaded files remain browsable before Data Import; installation keeps its own gate.
         public bool CanBrowse
         {
-            get { var owner=XingGuangController.Instance;return Sim!=null&&Sim.CanInstallData&&owner!=null&&owner.runtime!=null&&owner.runtime.Sim!=null&&owner.runtime.isActiveAndEnabled&&!owner.runtime.Sim.InPrologue; }
+            get { var owner=XingGuangController.Instance;return Sim!=null&&(Sim.CanInstallData||Sim.S.dataFiles.Count>0||Sim.S.downloadQueue.Count>0)&&owner!=null&&ReferenceEquals(owner.Sim,Sim)&&owner.runtime!=null&&owner.runtime.Sim!=null&&owner.runtime.isActiveAndEnabled&&!owner.runtime.Sim.InPrologue; }
         }
         public XgSim Sim { get; private set; }
-        public string DisplayName => Sim == null ? T("资料", "Files") : Sim.AiDisplayName + T("的资料", "'s files");
+        public string DisplayName => T("资料文件夹", "Training files");
         public bool InstallAllowed => Sim != null && Sim.CanInstallData;
         public string InstallReason => Sim != null ? Sim.DataInstallBlocker() : T("安装入口尚未接入。", "Installation is not connected yet.");
         readonly HashSet<string> selected = new HashSet<string>();
@@ -76,6 +76,13 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!CanBrowse) return;
             EnsureBuilt(); window.OpenWindow(); Refresh();
+        }
+        // Navigation only. The player must still select and drag a ready file into Train.
+        public void ShowTrainingData(XgSim expected)
+        {
+            if (!ReferenceEquals(Sim, expected) || !CanBrowse) return;
+            CancelDrag(); selected.Clear(); folder = "packs"; previewId = null;
+            Show();
         }
         public void Bind(XgSim sim)
         {
@@ -146,6 +153,7 @@ namespace LingGuangV05.Desktop.XingGuang
             preview.alignment=TextAlignmentOptions.TopLeft;preview.textWrappingMode=TextWrappingModes.Normal;preview.overflowMode=TextOverflowModes.Overflow;
             previewContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
             previewScroll=previewViewport.gameObject.AddComponent<ScrollRect>();previewScroll.viewport=previewViewport;previewScroll.content=previewContent;previewScroll.horizontal=false;previewScroll.movementType=ScrollRect.MovementType.Clamped;
+            BuildRecordPreviewPager(detail);
             footer=Text(Rect("Status",client,Vector2.zero,Vector2.right,new Vector2(12,4),new Vector2(-12,36)),"",14);
         }
         public void Refresh()
@@ -163,8 +171,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 AddRow(index++,"packs",T("训练数据","Training data"),T("已下载的游戏资料。","Downloaded game data."),false,true);
                 AddRow(index++,"readme",T("使用说明.txt","Readme.txt"),T("在这里查看下载的数据包。选中待安装文件，拖到训练窗口。","Browse downloaded data packs here. Select ready files and drag them to the training window."),false,false);
                 AddRow(index++,"training",T("训练日志.txt","Training log.txt"),TrainingLog(),false,false);
-                AddRow(index++,"answers",T("答题记录.csv","Answers.csv"),AnswerCsv(),false,false);
-                AddRow(index++,"asked",T("对话题本.csv","Conversation questions.csv"),AskedCsv(),false,false);
+                AddRow(index++,"answers",T("答题记录.csv","Answers.csv"),"",false,false);
+                AddRow(index++,"asked",T("对话题本.csv","Conversation questions.csv"),"",false,false);
                 AddRow(index++,"notes",FolderTitle("notes"),T("已经答过的真实题目和标注。","Actual answered questions and labels."),false,true);
                 AddRow(index++,"images",FolderTitle("images"),T("来自已答题目的训练图片。","Training images from answered questions."),false,true);
                 if(Sim.Has("train.checkpoint")) AddRow(index++,"models",FolderTitle("models"),T("存档里实际保存的模型。","Models actually saved in this game."),false,true);
@@ -173,7 +181,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 foreach(var file in Sim.S.dataFiles)
                 {
-                    string name=FileName(file.dataset,file.nodeId);
+                    string name=Sim.BoardDataFileName(file.fileId)??FileName(file.dataset,file.nodeId);
                     string state=file.installed?T("已安装","Installed"):T("待安装","Ready to install");
                     string size=file.sizeMB>0 ? "\n"+XgSim.SizeText(file.sizeMB):"";
                     AddRow(index++,file.fileId,name+"  ·  "+state,name+"\n"+state+size,Sim.DataFileReady(file.fileId),false);
@@ -195,7 +203,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var face=r.gameObject.AddComponent<Image>();face.color=Color.white;faces[id]=face;
             Text(Rect("Name",r,Vector2.zero,Vector2.one,new Vector2(12,0),new Vector2(-10,0)),label,16);
             var input=r.gameObject.AddComponent<XgFilesRow>();input.owner=this;input.fileId=id;input.ready=ready;input.folder=isFolder;input.detail=detail;input.picture=picture;
-            if(id==previewId)ShowPreview(detail,picture,false);
+            if(id==previewId){if(IsRecordCsv(id))ShowRecordCsv(false);else ShowPreview(detail,picture,false);}
         }
         public void Pick(XgFilesRow row, PointerEventData e)
         {
@@ -204,7 +212,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool control=Keyboard.current!=null&&(Keyboard.current.leftCtrlKey.isPressed||Keyboard.current.rightCtrlKey.isPressed);
             if(!control)selected.Clear();
             if(row.ready){if(!selected.Add(row.fileId)&&control)selected.Remove(row.fileId);}
-            previewId=row.fileId;ShowPreview(row.detail,row.picture,true);UpdateSelection();
+            previewId=row.fileId;if(IsRecordCsv(previewId))ShowRecordCsv(true);else ShowPreview(row.detail,row.picture,true);UpdateSelection();
         }
         void SelectReady(){if(folder!="packs")return;selected.Clear();foreach(var f in Sim.S.dataFiles)if(Sim.DataFileReady(f.fileId))selected.Add(f.fileId);UpdateSelection();}
         void UpdateSelection()

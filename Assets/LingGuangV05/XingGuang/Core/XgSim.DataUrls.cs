@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang
             foreach (var file in S.downloadQueue)
                 if (file.offer == id) { p.status = XgDataUrlStatus.Downloading; p.message = T("这份数据正在下载。", "This data is already downloading."); return p; }
             foreach (var file in S.dataFiles)
-                if (file.offer == id && !file.installed) { p.status = XgDataUrlStatus.Downloaded; p.message = T("已在资料夹，拖入练页安装。", "Already in Files; drag it to Train to install."); return p; }
+                if (file.offer == id && !file.installed) { p.status = XgDataUrlStatus.Downloaded; p.message = T("已在资料文件夹，拖入练页安装。", "Already in Training files; drag it to Train to install."); return p; }
             if (DataOfferInstalled(id)) { p.status = XgDataUrlStatus.Installed; p.message = T("这份数据已经安装。", "This data is already installed."); return p; }
             // Legacy entitlements may have no virtual file. Never fabricate a second sample reward.
             if (OfferOwned(id) || Has(def.node) || S.owned.Contains(def.datasetId))

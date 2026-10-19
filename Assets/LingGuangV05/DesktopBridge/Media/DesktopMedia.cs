@@ -40,6 +40,7 @@ namespace LingGuangV05.Desktop.Media
         public static Sprite Picture(string key)
         {
             key=(key??"").Trim().ToLowerInvariant();
+            if(key=="board_club_2016")return BoardClubPicture.Picture();
             if(key=="casino")return Full("casino_backdrop");
             if(Pictures.TryGetValue(key,out var alias))key=alias;
             return ValidKey(key)?Full("Photos/"+key):null;

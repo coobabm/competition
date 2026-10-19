@@ -15,6 +15,11 @@ namespace LingGuangV05.Desktop.YY
         RectTransform learningDrawer,learningContent;
         TMP_InputField learningSearch;
         string learningMode="",learningStamp="";
+        int learningOffset;
+        XgSim learningOwner;
+        Button learningRandom;
+        Button learningPrevious,learningNext;
+        TMP_Text learningPageLabel;
         const float LearningHeight=260;
         void RefreshLearningTools()
         {
@@ -33,9 +38,16 @@ namespace LingGuangV05.Desktop.YY
             foreach(string name in new[]{"File","Shot","Shake","History"}){var old=tools.Find("Tool"+name);if(old!=null)old.gameObject.SetActive(!show);}
             if(!show&&learningDrawer!=null&&learningDrawer.gameObject.activeSelf)CloseLearningDrawer();
             var sim=XgYyTalk.LearningSim;
+            if(!ReferenceEquals(learningOwner,sim))
+            {
+                learningOwner=sim;learningOffset=0;learningStamp="";
+                if(learningSearch!=null)learningSearch.SetTextWithoutNotify("");
+            }
+            notebookTool.GetComponentInChildren<TMP_Text>().text=GameText.T("题本","Notebook");
+            personaTool.GetComponentInChildren<TMP_Text>().text=GameText.T("性格","Personality");
             if(show&&learningMode.Length>0&&sim!=null)
             {
-                string stamp=sim.S.stage+":"+sim.S.askedLog.Count+":"+sim.S.personaPacks.Count+":"+GameText.IsEnglish;
+                string stamp=sim.S.stage+":"+sim.S.learningRecordSerial+":"+sim.S.askedLog.Count+":"+sim.S.personaPacks.Count+":"+GameText.IsEnglish;
                 if(stamp!=learningStamp){learningStamp=stamp;DrawLearningRows();}
             }
         }
@@ -43,14 +55,14 @@ namespace LingGuangV05.Desktop.YY
         {
             if(learningMode==mode){CloseLearningDrawer();return;}
             if(learningDrawer==null)BuildLearningDrawer();if(learningDrawer==null)return;
-            learningMode=mode;learningDrawer.gameObject.SetActive(true);learningSearch.SetTextWithoutNotify("");
-            messageArea.offsetMin=new Vector2(messageArea.offsetMin.x,BottomHeight+InputHeight+ToolHeight+LearningHeight);
+            learningMode=mode;learningOffset=0;learningDrawer.gameObject.SetActive(true);learningSearch.SetTextWithoutNotify("");
+            SetMessageBottom(BottomHeight+InputHeight+ToolHeight+LearningHeight);
             learningDrawer.SetAsLastSibling();DrawLearningRows();dirty=true;lastSignature="";
         }
         void CloseLearningDrawer()
         {
             learningMode="";if(learningDrawer!=null)learningDrawer.gameObject.SetActive(false);
-            if(messageArea!=null)messageArea.offsetMin=new Vector2(messageArea.offsetMin.x,BottomHeight+InputHeight+ToolHeight);
+            if(messageArea!=null)SetMessageBottom(BottomHeight+InputHeight+ToolHeight);
             dirty=true;lastSignature="";
         }
         void BuildLearningDrawer()
@@ -60,12 +72,17 @@ namespace LingGuangV05.Desktop.YY
             learningDrawer=Rect("LearningDrawer",main,Vector2.zero,new Vector2(1,0),new Vector2(0,bottom),new Vector2(0,bottom+LearningHeight));Fill(learningDrawer,new Color32(244,248,253,255));
             var searchBox=Rect("Search",learningDrawer,new Vector2(0,1),Vector2.one,new Vector2(8,-38),new Vector2(-138,-6));Fill(searchBox,Color.white);
             learningSearch=BuildInput(searchBox);learningSearch.lineType=TMP_InputField.LineType.SingleLine;learningSearch.onSubmit.RemoveAllListeners();
-            ((TMP_Text)learningSearch.placeholder).text=GameText.T("搜索题目","Search questions");learningSearch.onValueChanged.AddListener(_=>DrawLearningRows());
-            var random=FlatButton(learningDrawer,GameText.T("抽一道","Random"),RandomNotebook,12,C.Ink,Color.white);Place((RectTransform)random.transform,new Vector2(1,1),new Vector2(-132,-36),new Vector2(-48,-8));
+            ((TMP_Text)learningSearch.placeholder).text=GameText.T("搜索题目","Search questions");learningSearch.onValueChanged.AddListener(_=>{learningOffset=0;DrawLearningRows();});
+            learningRandom=FlatButton(learningDrawer,GameText.T("抽一道","Random"),RandomNotebook,12,C.Ink,Color.white);Place((RectTransform)learningRandom.transform,new Vector2(1,1),new Vector2(-132,-36),new Vector2(-48,-8));
             var close=FlatButton(learningDrawer,"×",CloseLearningDrawer,18,C.Ink,Color.white);Place((RectTransform)close.transform,new Vector2(1,1),new Vector2(-42,-36),new Vector2(-8,-8));
-            var area=Rect("List",learningDrawer,Vector2.zero,Vector2.one,new Vector2(8,6),new Vector2(-8,-44));area.gameObject.AddComponent<RectMask2D>();Fill(area,new Color(0,0,0,0));
+            var area=Rect("List",learningDrawer,Vector2.zero,Vector2.one,new Vector2(8,36),new Vector2(-8,-44));area.gameObject.AddComponent<RectMask2D>();Fill(area,new Color(0,0,0,0));
             var sc=area.gameObject.AddComponent<ScrollRect>();sc.horizontal=false;sc.movementType=ScrollRect.MovementType.Clamped;sc.scrollSensitivity=25;
             learningContent=Rect("Content",area,new Vector2(0,1),Vector2.one,Vector2.zero,Vector2.zero);learningContent.pivot=new Vector2(.5f,1);sc.viewport=area;sc.content=learningContent;
+            learningPrevious=FlatButton(learningDrawer,GameText.T("上一页","Previous"),()=>{learningOffset=Math.Max(0,learningOffset-50);DrawLearningRows();},12,C.Ink,Color.white);
+            Place((RectTransform)learningPrevious.transform,Vector2.zero,new Vector2(8,4),new Vector2(100,30));
+            learningNext=FlatButton(learningDrawer,GameText.T("下一页","Next"),()=>{learningOffset+=50;DrawLearningRows();},12,C.Ink,Color.white);
+            Place((RectTransform)learningNext.transform,new Vector2(1,0),new Vector2(-100,4),new Vector2(-8,30));
+            learningPageLabel=Text(Rect("Page",learningDrawer,Vector2.zero,Vector2.right,new Vector2(108,4),new Vector2(-108,30)),"",12,C.Muted,TextAlignmentOptions.Center);
             foreach(var selectable in learningDrawer.GetComponentsInChildren<Selectable>(true))AddFocus(selectable.gameObject);
         }
         bool LearningMatch(string text)=>string.IsNullOrEmpty(learningSearch.text)||(text??"").IndexOf(learningSearch.text,StringComparison.OrdinalIgnoreCase)>=0;
@@ -81,20 +98,25 @@ namespace LingGuangV05.Desktop.YY
             if(learningContent==null||learningMode.Length==0)return;
             for(int i=learningContent.childCount-1;i>=0;i--){var old=learningContent.GetChild(i).gameObject;old.SetActive(false);Destroy(old);}
             var sim=XgYyTalk.LearningSim;if(sim==null)return;sim.RepairYyLearning();float y=0;
+            ((TMP_Text)learningSearch.placeholder).text=GameText.T("搜索题目","Search questions");
+            learningRandom.GetComponentInChildren<TMP_Text>().text=GameText.T("抽一道","Random");
+            learningPrevious.GetComponentInChildren<TMP_Text>().text=GameText.T("上一页","Previous");
+            learningNext.GetComponentInChildren<TMP_Text>().text=GameText.T("下一页","Next");
             if(learningMode=="book")
             {
-                var grouped=new Dictionary<string,List<XgAskedEntry>>();var order=new List<string>();
-                for(int i=sim.S.askedLog.Count-1;i>=0;i--){var e=sim.S.askedLog[i];if(e==null||!LearningMatch(e.question))continue;string bankId=e.bankId??"general";if(!grouped.TryGetValue(bankId,out var rows)){grouped.Add(bankId,rows=new List<XgAskedEntry>());order.Add(bankId);}if(rows.Count<50)rows.Add(e);}
-                foreach(string bank in order)
+                var page=sim.QueryLearningRecords(new XgLearningQuery{text=learningSearch.text,offset=learningOffset,limit=50,retestableOnly=true});
+                if(learningOffset>=page.total&&learningOffset>0){learningOffset=Math.Max(0,((page.total-1)/50)*50);page=sim.QueryLearningRecords(new XgLearningQuery{text=learningSearch.text,offset=learningOffset,limit=50,retestableOnly=true});}
+                learningPrevious.interactable=learningOffset>0;learningNext.interactable=page.HasMore;
+                learningPageLabel.text=GameText.T("第 "+(learningOffset/50+1)+" 页 · 共 "+page.total+" 条","Page "+(learningOffset/50+1)+" · "+page.total+" records");
+                foreach(var e in page.records)
                 {
-                    var dataset=XgCatalog.Dataset(bank);LearningRow(ref y,dataset!=null?GameText.T(dataset.name,dataset.nameEn):bank,null,false,26);
-                    foreach(var e in grouped[bank])
-                    {
-                        string label=e.question+"\n"+GameText.T("你：","You: ")+e.playerAnswer+(string.IsNullOrEmpty(e.aiAnswer)?"":" · "+sim.AiDisplayName+": "+e.aiAnswer);
-                        LearningRow(ref y,label,()=>{if(XgYyTalk.AskFromNotebook(e))CloseLearningDrawer();});
-                    }
+                    var dataset=XgCatalog.Dataset(e.bankId);string source=dataset!=null?GameText.T(dataset.name,dataset.nameEn):e.bankId;
+                    var input=sim.LearningRetestInput(e.id);bool textReady=input!=null&&!input.requiresImage;
+                    string label=sim.LearningTimestamp(e)+" · "+source+"\n"+GameText.T(e.question,string.IsNullOrEmpty(e.questionEn)?e.question:e.questionEn)+"\n"+sim.LearningAnswerSummary(e)
+                        +(textReady?"":GameText.T(" · 含原图"," · With image"));
+                    LearningRow(ref y,label,()=>{if(XgYyTalk.AskFromNotebook(e))CloseLearningDrawer();},textReady,76);
                 }
-                if(order.Count==0)LearningRow(ref y,GameText.T("先去「教」答几题，题目就会留在这里。","Answer in Teach to collect questions here."),null,false,58);
+                if(page.total==0)LearningRow(ref y,GameText.T("先去「教」答几题，题目就会留在这里。","Answer in Teach to collect questions here."),null,false,58);
             }
             else foreach(var pack in XgSim.PersonaPacks)
             {
@@ -106,6 +128,7 @@ namespace LingGuangV05.Desktop.YY
                     bool ready=sim.S.stage>=q.stage;LearningRow(ref y,label+(ready?"":GameText.T(" · 第 "+q.stage+" 阶段"," · Stage "+q.stage)),()=>{if(XgYyTalk.AskPersona(pack,q))CloseLearningDrawer();},ready);
                 }
             }
+            learningPrevious.gameObject.SetActive(learningMode=="book");learningNext.gameObject.SetActive(learningMode=="book");learningPageLabel.gameObject.SetActive(learningMode=="book");
             learningContent.sizeDelta=new Vector2(0,y);
         }
         void RandomNotebook()
@@ -113,7 +136,8 @@ namespace LingGuangV05.Desktop.YY
             var sim=XgYyTalk.LearningSim;if(sim==null)return;
             if(learningMode=="book")
             {
-                var rows=sim.S.askedLog.FindAll(e=>e!=null&&LearningMatch(e.question));if(rows.Count>0&&XgYyTalk.AskFromNotebook(rows[UnityEngine.Random.Range(0,rows.Count)]))CloseLearningDrawer();
+                var query=new XgLearningQuery{text=learningSearch.text,limit=1,retestableOnly=true,textOnly=true};var page=sim.QueryLearningRecords(query);
+                if(page.total>0){query.offset=UnityEngine.Random.Range(0,page.total);page=sim.QueryLearningRecords(query);if(page.records.Count>0&&XgYyTalk.AskFromNotebook(page.records[0]))CloseLearningDrawer();}
             }
             else
             {

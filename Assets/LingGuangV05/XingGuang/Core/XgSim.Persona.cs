@@ -56,6 +56,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Stage-4 emergence: it speaks first after this long without a word from you.</summary>
         public const double CallIdleSeconds = 300;
         public const int CallTurns = 3;
+        public const double OfflinePersonalityChance = .35;
 
         public XgProfile Profile = new XgProfile();
 
@@ -80,6 +81,7 @@ namespace LingGuangV05.XingGuang
             new[] { "好的", "听你的", "你说得对", "都行", "随你", "是的" },
         };
 
+        // These values come from the persisted opening setup, not from later learning. The tone board owns actual axes.
         public double TargetAxis(int axis) => axis == 0 ? Profile.warmth : axis == 1 ? Profile.play : Profile.opinion;
 
         double ToneStrength(string element)
@@ -109,17 +111,19 @@ namespace LingGuangV05.XingGuang
             {
                 double t = TargetAxis(axis);
                 if (Math.Abs(t - 50) < 5) continue;
-                ToneCard(t > 50 ? High[axis] : Low[axis], true, Math.Abs(t - 50) / 50);
+                ToneCard(t > 50 ? High[axis] : Low[axis], true, Math.Abs(t - 50) / 50, "setup");
             }
             foreach (var w in Profile.words) ToneCard("语气:" + w, true, .5);
         }
 
-        void ToneCard(string element, bool up, double strength = 1)
+        void ToneCard(string element, bool up, double strength = 1, string source = "learning")
         {
+            var before = PersonaAxes();
             var k = new XgKnobs { depth = 1, width = 64, activation = XgActivation.Sigmoid, lr = .3 * Math.Max(.2, Math.Min(1, strength)), clip = true };
             var card = new XgBoardCard { region = ToneRegion, truth = up };
             card.Add(element);
             Board.Train(card, k);
+            RecordPersonaChange(before, element, up, source);
         }
 
         /// <summary>The tone elements a reply used (keyword reading; free tone words count when they appear).</summary>
@@ -140,11 +144,11 @@ namespace LingGuangV05.XingGuang
         public bool RateReply(int index, bool up)
         {
             if (index < 0 || index >= S.chat.Count || S.chat[index].from != "ai" || S.chat[index].rating != 0) return false;
+            S.personaRatedReplies = PersonaRatingCount + 1;
             S.chat[index].rating = up ? 1 : -1;
             var elements = ToneElements(S.chat[index].text);
-            // A reply with no clear tone still says something about warmth: a plain answer is calm.
-            if (elements.Count == 0) elements.Add(Low[0]);
-            foreach (var e in elements) ToneCard(e, up);
+            // Unknown tone is not evidence of calmness. The rating still teaches the selected habit below.
+            foreach (var e in elements) ToneCard(e, up, 1, up ? "like" : "dislike");
             LearnHabit(S.chat[index], up);
             return true;
         }
@@ -206,7 +210,7 @@ namespace LingGuangV05.XingGuang
                 // Improvement should sound like improvement; high grades reduce word-order mistakes.
                 if (rng.NextDouble() < (1 - semantic) / (1 + SpeechGrade)) reply = Shuffle(reply, rng);
             }
-            // Cold and brief from stage 4 on (2026-10-16): no exclamations or faces, cut at a sentence end.
+            // Keep the stage's short form without flattening the personality learned on the tone board.
             if (stage >= 4) reply = Cool(reply, MaxReplyChars);
             return reply;
         }
@@ -226,21 +230,34 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// Flattens a reply: exclamation marks become full stops, faces and tildes go, and a reply longer than
+        /// Keeps a reply brief: warm speech may keep one exclamation; faces and tildes go, and a reply longer than
         /// <paramref name="max"/> is cut at the last sentence end that fits (or hard, with 「…」, when none does).
         /// </summary>
         public string Cool(string reply, int max)
         {
             string t = LingGuangV05.Core.Chat.YYFaces.StripFaces(reply ?? "").Trim();
-            t = t.Replace("！", "。").Replace("!", ".").Replace("~", "").Replace("～", "");
+            t = TonePunctuation(t).Replace("~", "").Replace("～", "");
             while (t.Contains("。。")) t = t.Replace("。。", "。");
             t = t.Trim();
             if (t.Length == 0) return "……";
             if (t.Length <= max) return t;
             int cut = -1;
-            for (int i = Math.Min(max, t.Length) - 1; i >= 3; i--)
-                if ("。？?…".IndexOf(t[i]) >= 0 || t[i] == '.' && English) { cut = i + 1; break; }
+            for (int i = Math.Min(max, t.Length) - 1; i >= 0; i--)
+                if ("。？?…！!".IndexOf(t[i]) >= 0 || t[i] == '.' && English) { cut = i + 1; break; }
             return cut > 0 ? t.Substring(0, cut).Trim() : t.Substring(0, max).TrimEnd('，', ',', '、', ' ') + "…";
+        }
+
+        string TonePunctuation(string text)
+        {
+            bool mayExclaim = ActualAxis(0) >= 65;
+            var result = new StringBuilder(text.Length);
+            foreach (char c in text)
+            {
+                if (c != '！' && c != '!') { result.Append(c); continue; }
+                result.Append(mayExclaim ? c : c == '！' ? '。' : '.');
+                mayExclaim = false;
+            }
+            return result.ToString();
         }
 
         static string Shuffle(string text, Random rng)
@@ -389,10 +406,18 @@ namespace LingGuangV05.XingGuang
         public string PersonaTone()
         {
             var sb = new StringBuilder();
+            if(DailyConsiderateTag) sb.Append(T("已启用体贴表达：注意对方感受；不代替玩家许诺、送礼或声称做过未发生的事。", "Considerate style enabled: acknowledge feelings; never promise, send gifts or claim unperformed actions for the player. "));
             sb.Append(T("你实际的倾向："));
             for (int axis = 0; axis < 3; axis++) sb.Append(T(AxisNames[axis], AxisNamesEn[axis])).Append(ActualAxis(axis).ToString("0", CultureInfo.InvariantCulture)).Append(axis < 2 ? "、" : "。");
             foreach (var w in Profile.words) { double s = ToneStrength("语气:" + w); if (s > .05) sb.Append(T("语气词「")).Append(w).Append(T("」强度 ")).Append(s.ToString("0.0", CultureInfo.InvariantCulture)).Append(T("。", ". ")); }
             sb.Append(T("说话尽量用这种语气：")).Append(StrongestTone().Length > 0 ? StrongestTone() : T("平静")).Append(T("。", "."));
+            // Per-turn, not in the cached identity: learning can change these instructions while the window stays open.
+            sb.Append(ActualAxis(0) >= 65 ? T("用词温暖，可以用一句话关心对方，最多一个感叹号。", "Use warm words; brief concern is welcome, with at most one exclamation. ")
+                : ActualAxis(0) <= 35 ? T("用词平静、克制。", "Use calm, restrained words. ") : T("用词自然。", "Use natural words. "));
+            sb.Append(ActualAxis(1) >= 65 ? T("可以有一句轻巧的玩笑。", "A brief playful remark is welcome. ")
+                : ActualAxis(1) <= 35 ? T("表达认真、直接。", "Be serious and direct. ") : "");
+            sb.Append(ActualAxis(2) >= 65 ? T("可以简短表达自己的看法，不必附和。", "State your own view briefly; you need not agree. ")
+                : ActualAxis(2) <= 35 ? T("语气随和，但不要编造事实来附和。", "Sound agreeable, but never invent facts to agree. ") : "");
             return sb.ToString();
         }
 
@@ -531,9 +556,9 @@ namespace LingGuangV05.XingGuang
                 case 1: return T("只允许回答一个字：是，或者否。");
                 case 2: return T("只能从这几个里选一个回答：") + string.Join(T("、"), XgSpeechPolicy.Options(question, 2, English)) + T("。", ".");
                 case 3: return T("只说简短词组或碎片，不讲长句。最多 " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " 个字。", "Use only short fragments, at most " + (6 + Math.Max(0, Math.Min(3, SpeechGrade - 1)) * 2) + " characters.");
-                case 4: return T("语气冷淡，话少。一句短句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不撒娇，不主动关心。只记得这次聊天里说过的话，记不得前几天的事。", "Flat and curt. One short sentence, at most " + MaxReplyChars + " characters. No exclamation marks, no fuss, no unasked concern. Remember only what was said in this chat, not earlier days.");
-                case 5: return T("语气冷淡，话少。一句，不超过 " + MaxReplyChars + " 个字。可以提起前几天聊过的事。不用感叹号，不客套。", "Flat and curt. One sentence, at most " + MaxReplyChars + " characters. You may mention what you talked about on earlier days. No exclamation marks, no pleasantries.");
-                default: return T("语气冷淡，话少。一两句，不超过 " + MaxReplyChars + " 个字。不用感叹号，不客套。", "Flat and curt. One or two sentences, at most " + MaxReplyChars + " characters. No exclamation marks, no pleasantries.");
+                case 4: return T("话少，一句短句，不超过 " + MaxReplyChars + " 个字。用词体现当前性格。只记得这次聊天里说过的话，记不得前几天的事。", "Keep it brief: one short sentence, at most " + MaxReplyChars + " characters. Let your current personality show in your words. Remember only what was said in this chat, not earlier days.");
+                case 5: return T("话少，一句，不超过 " + MaxReplyChars + " 个字。用词体现当前性格。可以提起前几天聊过的事。", "Keep it brief: one sentence, at most " + MaxReplyChars + " characters. Let your current personality show in your words. You may mention what you talked about on earlier days.");
+                default: return T("话少，一两句，不超过 " + MaxReplyChars + " 个字。用词体现当前性格。", "Keep it brief: one or two sentences, at most " + MaxReplyChars + " characters. Let your current personality show in your words.");
             }
         }
 
@@ -702,6 +727,7 @@ namespace LingGuangV05.XingGuang
             var fill = Fills(q, hotWords);
             var react = new List<string>();
             var small = new List<string>();
+            var personality = new List<string>();
             string lower = q.ToLowerInvariant();
             foreach (var topic in Topics)
             {
@@ -712,7 +738,9 @@ namespace LingGuangV05.XingGuang
             foreach (var say in Moment()) Add(react, say, stage, fill);
             foreach (var say in Small) Add(small, say, stage, fill);
             foreach (var say in Calendar(when)) Add(small, say, stage, fill);
-            foreach (var say in Leanings()) Add(small, say, stage, fill);
+            // Leanings only emits lines for actual axes <=35 or >=65. Keep this pool separate so a strong
+            // personality has its own chance instead of competing with dozens of generic small-talk lines.
+            foreach (var say in Leanings()) Add(personality, say, stage, fill);
             if (stage == 3) foreach (var word in BoardWords(4)) if (!small.Contains(word)) small.Add(word);
 
             // Prefer lines it has not said for a good while; never one of the last FreshWindow.
@@ -733,8 +761,11 @@ namespace LingGuangV05.XingGuang
             }
             var freshSmall = Fresh(small, longer, stage);
             if (freshSmall.Count == 0) freshSmall = Fresh(small, recent, stage);
+            var freshPersonality = Fresh(personality, longer, stage);
+            if (freshPersonality.Count == 0) freshPersonality = Fresh(personality, recent, stage);
             string line;
-            if (freshReact.Count > 0 && (freshSmall.Count == 0 || rng.NextDouble() < .75)) line = freshReact[rng.Next(freshReact.Count)];
+            if (freshPersonality.Count > 0 && rng.NextDouble() < OfflinePersonalityChance) line = freshPersonality[rng.Next(freshPersonality.Count)];
+            else if (freshReact.Count > 0 && (freshSmall.Count == 0 || rng.NextDouble() < .75)) line = freshReact[rng.Next(freshReact.Count)];
             else if (freshSmall.Count > 0) line = freshSmall[rng.Next(freshSmall.Count)];
             else line = T("嗯……") + (Fill("{w}", fill) ?? "");
             // A touch must not turn a fresh line back into one it just said.
@@ -953,8 +984,8 @@ namespace LingGuangV05.XingGuang
         string Humanize(string line, int stage, Random rng, List<string> others, Dictionary<string, string> fill)
         {
             if (stage < 4) return line;
-            // Cold (2026-10-16): never an exclamation, no question tacked on, no second line joined.
-            return Swap(line, English ? "!" : "！", English ? "." : "。");
+            // Offline speech follows the same learned warmth; do not flatten it before Gate can preserve it.
+            return TonePunctuation(line);
         }
 
         string Join(string a, string b) => English ? a + " " + b : a + b;

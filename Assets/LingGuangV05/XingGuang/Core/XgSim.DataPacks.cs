@@ -4,7 +4,10 @@ namespace LingGuangV05.XingGuang
 {
     [Serializable] public sealed class XgTeachingNote
     {
-        public long id;
+        public long id, learningRecordId;
+        // Empty means historical/unknown; never infer a human source when loading old notes.
+        public string answerSource = "";
+        public string correction = "";
         public string text = "", textEn = "", why = "", whyEn = "", dataset = "";
         public bool truth, playerAnswer;
         public int seed, digit;
@@ -24,20 +27,22 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public void RecordTeachingQuestion(string text, string textEn, bool truth, bool playerAnswer,
-            string why, string whyEn, string dataset, XgCard card = null, string answerText = "", string aiAnswer = "")
+            string why, string whyEn, string dataset, XgCard card = null, string answerText = "", string aiAnswer = "", string correction = "")
         {
             if (S.teachingNotebook == null) S.teachingNotebook = new List<XgTeachingNote>();
-            var n = new XgTeachingNote { id = ++S.teachingNoteSerial, text = text, textEn = textEn,
-                truth = truth, playerAnswer = playerAnswer, why = why, whyEn = whyEn, dataset = dataset, answerText = answerText, aiAnswer = aiAnswer };
+            var n = new XgTeachingNote { id = NextLearningNoteId(), answerSource = PlayerAnswerSource, text = text, textEn = textEn,
+                truth = truth, playerAnswer = playerAnswer, why = why, whyEn = whyEn, dataset = dataset, answerText = answerText, aiAnswer = aiAnswer, correction = correction };
             if (card != null) { n.seed = card.seed; n.digit = card.digit; n.patternA = card.patternA; n.patternB = card.patternB; n.teachingImageKind=card.teachingImageKind; n.teachingImageKey=card.teachingImageKey; n.teachingImageKeys=card.teachingImageKeys==null?null:(int[])card.teachingImageKeys.Clone(); n.teachingPosition=card.teachingPosition; }
-            if (S.teachingNotebook.Count >= 256) S.teachingNotebook.RemoveAt(4);
             S.teachingNotebook.Add(n);
-            RecordAsked(dataset, T(text,textEn), string.IsNullOrEmpty(answerText)?T(playerAnswer?"是":"否",playerAnswer?"Yes":"No"):answerText, aiAnswer);
+            RecordTeachingAsked(n);
         }
         public string TeachingPackBlocker(XgTeachingPack p, bool purchasing = false)
         {
             if (p == null) return T("没有这张题桌", "Unknown question desk");
             if (S.stage < p.stage) return T("第 " + p.stage + " 阶段开放", "Opens in stage " + p.stage);
+            if (p.needs == "nextmove" && !Has("nextmove")) return T("先购买下一步走哪", "Buy Next move first");
+            if (p.needs == "daily.dice" && !DailyProbabilityQuestions) return T("先购买概率直觉", "Buy Probability intuition first");
+            if (p.needs == "daily.news" && !DailyNewsQuestions) return T("先购买时事", "Buy Current affairs first");
             if(p.needs=="imagenet"&&!Owns("imagenet"))return T("先取得 ImageNet 数据包", "Obtain the ImageNet data pack first");
             if (p.needs == "vision" && S.firstSpecialty != "vision" && !Has("lenet") && !Has("conv"))
                 return T("先选择看图线或购买卷积", "Choose the vision path or buy convolution first");

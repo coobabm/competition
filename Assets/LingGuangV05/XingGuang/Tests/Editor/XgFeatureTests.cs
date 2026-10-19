@@ -6,9 +6,11 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void FeatureVisibilityIsACorePolicyNotOnlyDisabledButtons()
         { Assert.That(typeof(XgSim).GetMethod("FeatureVisible"), Is.Not.Null); }
         [Test]
-        public void FreshUiHidesFuturePagesUntilTheirActualMilestones()
+        public void LegacyUiHidesFuturePagesUntilTheirActualMilestones()
         {
+            // BeginOpening enables the modern flow; XgTeachingFlowTests covers curve-purchase gating.
             var sim = new XgSim();
+            Assert.That(sim.S.teachingFlow, Is.False, "This fixture covers legacy progress");
             Assert.That(sim.FeatureVisible("label"), Is.True);
             foreach (var feature in new[] { "train", "tree", "contracts", "repo", "save-model", "coop", "attention", "lingguang-contact", "project", "unknown" })
                 Assert.That(sim.FeatureVisible(feature), Is.False, feature);
@@ -17,14 +19,18 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.FeatureVisible("train"), Is.True, "training opens as soon as there are enough samples");
             Assert.That(sim.FeatureVisible("tree"), Is.False);
             sim.S.paidAssessmentReached = true; Assert.That(sim.FeatureVisible("tree"), Is.True, "the tree opens with the first paid assessment");
-            Assert.That(sim.FeatureVisible("contracts"), Is.False, "contracts need a checkpoint");
+            Assert.That(sim.FeatureVisible("contracts"), Is.False, "the order page requires stage three");
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8 }); Assert.That(sim.FeatureVisible("repo"), Is.True);
             Assert.That(sim.FeatureVisible("contracts"), Is.False, "orders belong to the crowd stage, whatever the checkpoint");
             sim.S.stage = XgSim.FeatureUnlock["crowd"];
             Assert.That(XgSim.Grade(sim.BestScore("mnist")), Is.GreaterThanOrEqualTo(1));
-            Assert.That(sim.FeatureVisible("contracts"), Is.True, "the crowd stage with a graded checkpoint");
+            Assert.That(sim.FeatureVisible("contracts"), Is.True, "stage three opens the order requirements");
             sim.S.best[0].acc = .1;
-            Assert.That(sim.FeatureVisible("contracts"), Is.False, "and a checkpoint that earned a grade");
+            Assert.That(sim.FeatureVisible("contracts"), Is.True, "low quality must not hide the requirements");
+            sim.S.best.Clear();
+            Assert.That(sim.FeatureVisible("contracts"), Is.True, "D017: requirements are visible without a checkpoint");
+            foreach (var contract in XgCatalog.Contracts)
+                Assert.That(sim.CanSign(contract), Is.False, "visibility does not waive quality: " + contract.id);
         }
         [Test] public void UnfinishedStageMilestonesResume()
         {

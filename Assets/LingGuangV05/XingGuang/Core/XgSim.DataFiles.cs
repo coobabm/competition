@@ -59,6 +59,7 @@ namespace LingGuangV05.XingGuang
             XgDownload file = S.dataFiles.Find(x => x.fileId == fileId);
             // Commit all simulation state before any callbacks. Duplicate drop/IDs are no-ops.
             file.installed = true;
+            InstallBoardDataFile(file);
             if (file.batches > 0)
                 SetCount(S.installedDataBatches, file.dataset,
                     Math.Min(BatchesArrived(file.dataset), InstalledBatches(file.dataset) + file.batches));
@@ -110,6 +111,7 @@ namespace LingGuangV05.XingGuang
         {
             if (file == null || !Finite(file.sizeMB) || !Finite(file.doneMB) || !Finite(file.samples)
                 || file.sizeMB < 0 || file.samples < 0 || file.batches < 0) return false;
+            if (ValidBoardDataFile(file)) return true;
             if (XgCatalog.Dataset(file.dataset) != null && DataOfferDef(file.offer) != null) return true;
             if (string.IsNullOrEmpty(file.nodeId) || !file.nodeId.StartsWith("pack.", StringComparison.Ordinal)) return false;
             var teaching = XgTeachingPacks.Find(file.nodeId.Substring(5));

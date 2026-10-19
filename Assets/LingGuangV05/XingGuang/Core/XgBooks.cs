@@ -11,12 +11,16 @@ namespace LingGuangV05.XingGuang
         public string titleEn = "";
         /// <summary>A short excerpt of the original text (40–160 characters), shown scrolling in while it reads.</summary>
         public string excerpt = "";
+        /// <summary>Original game gloss/guide for English UI, not a published translation.</summary>
+        public string excerptEn = "";
         /// <summary>About how many characters the whole chapter has: what one read is worth in samples.</summary>
         public int chars;
         /// <summary>1–3 people or images of the chapter (ability 2 picks one: 「猴子？」).</summary>
         public string[] names = new string[0];
+        public string[] namesEn = new string[0];
         /// <summary>Three key words (ability 3 strings them: 「猴子 / 打架 / 佛」).</summary>
         public string[] words = new string[0];
+        public string[] wordsEn = new string[0];
         /// <summary>One plain sentence in its own voice, at most about 18 characters (ability 4).</summary>
         public string gist = "";
         public string gistEn = "";
@@ -96,9 +100,10 @@ namespace LingGuangV05.XingGuang
             { "自己", new[] { "你是谁", "你是什么", "你自己", "活", "意识", "who are you", "alive", "yourself" } },
         };
 
-        public static IReadOnlyList<XgBook> All => all;
-        public static XgBook Get(string id) { foreach (var b in all) if (b.id == id) return b; return null; }
-        public static int IndexOf(string id) { for (int i = 0; i < all.Length; i++) if (all[i].id == id) return i; return -1; }
+        public static IReadOnlyList<XgBook> All => LibraryBooks;
+        public static IReadOnlyList<XgBook> LegacyBooks => legacyBooks;
+        public static XgBook Get(string id) { foreach (var b in All) if (b.id == id) return b; return null; }
+        public static int IndexOf(string id) { for (int i = 0; i < All.Count; i++) if (All[i].id == id) return i; return -1; }
         public static string TagWord(string tag, bool english)
         {
             int i = Array.IndexOf(Tags, tag);

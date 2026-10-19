@@ -187,6 +187,7 @@ namespace LingGuangV05.Desktop.OS
 
         public void OpenWindow()
         {
+            if (!LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(this)) { return; }
             // Sound only when the window actually appears (not when focusing one already on screen)
             if (!isOn || sfxMinimized || !gameObject.activeInHierarchy) { DesktopSfx.Play(DesktopSound.WindowOpen); }
             sfxMinimized = false;

@@ -13,13 +13,16 @@ namespace LingGuangV05.Runtime
     {
         public bool useDiskSave = true;
         public bool tickEnabled = true;
+        // Desktop-owned presentation hold. No desktop assembly reference and no accumulated catch-up time.
+        public Func<bool> EpiloguePresentationHeld;
         public ChapterOneSim Sim { get; private set; }
         public event Action Changed;
         /// <summary>Named events for the story layer: simulation signals plus runtime ones ("name.set").</summary>
         public event Action<string, string> Signal;
         /// <summary>Raised right before the save is serialized: apps write their state into GameState here.</summary>
         public event Action Saving;
-        public string SaveStatus { get; private set; } = "尚未初始化";
+        string saveStatus = "尚未初始化";
+        public string SaveStatus { get => SnapshotStatusText.Localize(saveStatus, GameText.IsEnglish); private set => saveStatus = value; }
         public string SavePath => store == null ? "（测试内存存档）" : store.SavePath;
         public double OfflineSeconds { get; private set; }
         /// <summary>True after SetSimulationForTests: QA drives the desktop, so story overlays stay off.</summary>
@@ -43,6 +46,8 @@ namespace LingGuangV05.Runtime
         public void EnsureInitialized()
         {
             if (initialized) return;
+            // Invalid explicit verification arguments throw before any player store/profile is opened.
+            string verificationDirectory = VerificationSavePaths.Root;
             initialized = true;
             if (useDiskSave)
             {
@@ -55,6 +60,7 @@ namespace LingGuangV05.Runtime
 #if UNITY_EDITOR
                 if (!string.IsNullOrEmpty(VerificationSaveDirectory)) SaveDirectoryOverride = VerificationSaveDirectory;
 #endif
+                if (verificationDirectory != null) SaveDirectoryOverride = verificationDirectory;
                 store = new AtomicSaveStore(string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "LingGuangV05") : SaveDirectoryOverride);
                 profiles = new PlayerProfileStore(store);
                 if (TryRead(out var restored, out string message))
@@ -63,8 +69,10 @@ namespace LingGuangV05.Runtime
                     // The opening was finished before, so it starts right after it.
                     if (restored.S.restartChosen)
                     {
-                        BeginNewGame(false, KnownProfile(restored, true));
-                        SaveStatus = GameText.T("上一局已经结束，开始新的一局；旧存档留作备份。", "The last game ended; a new one has begun. The old save is kept as a backup.");
+                        bool begun = BeginNewGame(false, KnownProfile(restored, true));
+                        SaveStatus = begun
+                            ? GameText.T("上一局已经结束，开始新的一局；旧存档留作备份。", "The last game ended; a new one has begun. The old save is kept as a backup.")
+                            : UnsavedNewGameStatus();
                         return;
                     }
                     Attach(restored);
@@ -79,8 +87,8 @@ namespace LingGuangV05.Runtime
                     return;
                 }
                 // No (readable) save: a new game. A player who finished the opening before does not see it again.
-                BeginNewGame(false, KnownProfile(null, true));
-                SaveStatus = message;
+                bool started = BeginNewGame(false, KnownProfile(null, true));
+                SaveStatus = started ? message : message + " " + saveStatus;
                 return;
             }
             else SaveStatus = "测试模式：不写入本机存档";
@@ -146,7 +154,7 @@ namespace LingGuangV05.Runtime
             if (Sim == null) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, 2f);
             // In the prologue only the clock runs: no bills, heat or income before the game proper starts.
-            if (tickEnabled) { if (Sim.InPrologue) Sim.AdvanceClock(dt); else Sim.Tick(dt); }
+            if (tickEnabled && !(EpiloguePresentationHeld?.Invoke() ?? false)) { if (Sim.InPrologue) Sim.AdvanceClock(dt); else Sim.Tick(dt); }
             sinceSave += dt;
             sinceNotify += dt;
             if (notify && sinceNotify >= .12f) { notify = false; sinceNotify = 0; Changed?.Invoke(); }
@@ -190,6 +198,7 @@ namespace LingGuangV05.Runtime
         public bool SaveNow()
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false; // Archive collection/switch callbacks cannot write either primary.
             sinceSave = 0;
             if (!useDiskSave) { SaveStatus = "测试模式：不写入本机存档"; return true; }
             if (persistenceBlocked) { SaveStatus = "存档受保护：请备份后使用“重置进度”，不会自动覆盖。"; Debug.LogWarning("[存档] " + SaveStatus); notify = true; return false; }
@@ -208,7 +217,7 @@ namespace LingGuangV05.Runtime
                 return false;
             }
             bool saved;
-            try { saved = store.TrySave(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
+            try { saved = store.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
             catch (ArgumentException error) { saved = false; SaveStatus = "无法序列化存档：" + error.Message; }
             if (saved) dirty = false;
             // One line per write, so a save that silently failed (or never happened) shows up in the Editor log.
@@ -221,12 +230,15 @@ namespace LingGuangV05.Runtime
         public bool ReloadSave()
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             if (!useDiskSave) { SaveStatus = "测试模式未启用磁盘读档"; Changed?.Invoke(); return false; }
             if (!TryRead(out var restored, out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
             if (restored.S.restartChosen)
             {
-                BeginNewGame(false, KnownProfile(restored, true));
-                SaveStatus = GameText.T("上一局已经结束，开始新的一局；旧存档留作备份。", "The last game ended; a new one has begun. The old save is kept as a backup.");
+                bool begun = BeginNewGame(false, KnownProfile(restored, true));
+                SaveStatus = begun
+                    ? GameText.T("上一局已经结束，开始新的一局；旧存档留作备份。", "The last game ended; a new one has begun. The old save is kept as a backup.")
+                    : UnsavedNewGameStatus();
                 Changed?.Invoke();
                 return true;
             }
@@ -247,6 +259,7 @@ namespace LingGuangV05.Runtime
         public bool StartOverAfterBankruptcy(bool replayOpening = false)
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             if (Sim == null || !Sim.S.bankrupt) return false;
             // What the player chose in the opening, learned from this very save if it was never written down (old installs).
             var known = KnownProfile(Sim, true);
@@ -256,20 +269,35 @@ namespace LingGuangV05.Runtime
                 if (!store.CopyForRestart(out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
                 Sim.S.restartChosen = true;
                 dirty = true;
-                SaveNow();
+                // A failed choice write must keep the ended game active so the player can retry.
+                if (!SaveNow())
+                {
+                    Sim.S.restartChosen = false;
+                    SaveStatus = GameText.T("没有重新开始：", "Did not start again: ") + saveStatus;
+                    Changed?.Invoke();
+                    return false;
+                }
             }
             persistenceBlocked = false;
             OfflineSeconds = 0;
-            BeginNewGame(replayOpening, known);
-            SaveStatus = GameText.T("重新开始：旧存档留作备份。", "Started again: the old save is kept as a backup.");
+            // The saved choice commits the restart; a failed first save stays dirty for the next retry.
+            bool begun = BeginNewGame(replayOpening, known);
+            SaveStatus = begun
+                ? GameText.T("重新开始：旧存档留作备份。", "Started again: the old save is kept as a backup.")
+                : UnsavedNewGameStatus();
             Changed?.Invoke();
             return true;
         }
+
+        string UnsavedNewGameStatus() =>
+            GameText.T("新的一局已开始，旧存档留作备份；但新进度还没有存进磁盘，会在下次保存时重试：",
+                "A new game has begun and the old save is kept as a backup, but the new progress is not on disk yet; the next save retries: ") + saveStatus;
 
         /// <summary>Caller must obtain an explicit reset confirmation first.</summary>
         public bool ResetProgress(bool replayOpening = false)
         {
             EnsureInitialized();
+            if (endingArchiveBusy) return false;
             // Learn the player's setup before the files are moved aside.
             var known = KnownProfile(Sim, true);
             if (useDiskSave && !store.ArchiveForReset(out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
@@ -294,7 +322,7 @@ namespace LingGuangV05.Runtime
             if (known != null) return known;
             if (from != null) known = PlayerProfile.FromState(from.S);
             if (known == null && scanSaves) known = profiles.DeriveFromSaves();
-            if (known != null) profiles.Write(known, out _);
+            if (known != null && useDiskSave) profiles.Write(known, out _);
             return known;
         }
 
@@ -302,12 +330,13 @@ namespace LingGuangV05.Runtime
         /// A new game. With a known profile (and no wish to see the opening again) the opening story and the
         /// install are skipped: the game ends the prologue through the usual path with that profile, so it starts
         /// where a first-timer is right after the setup. Otherwise it starts in the prologue.
+        /// False when the new game left the prologue but its first save failed (it stays dirty).
         /// </summary>
-        void BeginNewGame(bool replayOpening, PlayerProfile known)
+        bool BeginNewGame(bool replayOpening, PlayerProfile known)
         {
             Attach(new ChapterOneSim());
-            if (replayOpening || !PlayerProfile.IsUsable(known)) return;
-            FinishPrologue(known.CopyOfSetup(), false);
+            if (replayOpening || !PlayerProfile.IsUsable(known)) return true;
+            return FinishPrologue(known.CopyOfSetup(), false) || Sim.InPrologue;
         }
 
         public bool RecordName(string name)
@@ -341,7 +370,7 @@ namespace LingGuangV05.Runtime
         bool FinishPrologue(PrologueProfile profile, bool remember)
         {
             if (!Sim.CompletePrologue(profile, legacyProfile: !remember)) { SaveStatus = PrologueProfile.Problem(profile, GameText.IsEnglish) ?? "序章已结束。"; Changed?.Invoke(); return false; }
-            if (remember && profiles != null)
+            if (remember && useDiskSave && profiles != null)
             {
                 var played = PlayerProfile.FromSetup(profile);
                 if (played != null) profiles.Write(played, out _);

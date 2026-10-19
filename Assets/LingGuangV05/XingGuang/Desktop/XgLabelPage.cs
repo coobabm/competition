@@ -83,6 +83,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float feedbackTimer, redTimer;
         long commentCardId = -1;
         string comment;
+        bool commentGenerated;
 
         public RectTransform Paper => paper;
         RectTransform paper;
@@ -460,6 +461,9 @@ namespace LingGuangV05.Desktop.XingGuang
             lessonFeedbackBack.gameObject.SetActive(lessonFeedback);
             var button = answer ? yes.rt : no.rt;
             var binaryReview = !WorkContext && !queued && direct ? Sim.PredictTeachingBinary(card) : null;
+            // Capture the displayed/inferred answer before submission can advance the current card.
+            string learnedAiAnswer = shownGuessValid ? YesNoWord(shownGuess)
+                : binaryReview != null && !binaryReview.guessed ? YesNoWord(binaryReview.yes) : "";
             int oldDeskLevel = Sim.LevelOf(desk);
             XgAnswer r;
             if (WorkContext)
@@ -477,7 +481,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
             if (binaryReview != null) Sim.RememberTeachingBinary(card, answer, binaryReview, card.why, card.whyEn);
-            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card);
+            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card, aiAnswer: learnedAiAnswer);
             LastAnswerDisagreed = teachingAnswer ? !answer : shownGuessValid && shownGuess != answer;
             lastAnsweredFrame = Time.frameCount;
             AnswerCount++;
@@ -657,7 +661,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (RefreshDeskGame(true)) { RefreshHall(Mode != 0); return; }
             if (displayedSim != Sim)
             {
-                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; lastFeedId = 0;
+                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; commentGenerated = false; lastFeedId = 0;
                 for (int i = 0; i < feedIds.Count; i++) { feedIds[i] = -1; feedAges[i] = 2; }
                 displayedSim = Sim;
                 // Rebinding can open or remove desks. Rebuild before using stale tab callbacks.
@@ -801,6 +805,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (card.id != commentCardId || commentOwner != Sim)
                 {
+                    commentGenerated = false;
                     comment = queued ? XgSpeechPolicy.Constrain(Lang.T("这个……我拿不准。你来。"), Sim.S.stage, En) : null;
                     RequestComment(desk, card, guess, confidence);
                 }
@@ -809,6 +814,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (teaching) suggestion.text = Sim.AiDisplayName + T("猜：", " guesses: ") + (guess ? T("是", "Yes") : T("否", "No"));
             if (direct || WorkContext) suggestion.text = "";
             if (card.family) suggestion.text = Sim.AiDisplayName + T("：这条消息，你在意吗？", ": Does this message matter to you?");
+            if ((hasGuess && !direct && !WorkContext) || card.family)
+                suggestion.text += "\n<size=10><color=#6F95A5>" + LingGuangV05.Runtime.AiContentNotice.Footer(En) + "</color></size>";
             suggestion.fontSize = teaching ? 34 : 16;
             // Keep the answer beside the question on spacious windows; the narrow
             // fallback remains directly above the answer buttons.
@@ -1582,6 +1589,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (replyEnglish != En) { commentCardId = -1; return; }
                     if (string.IsNullOrWhiteSpace(reply)) return;
                     comment = FormatCardComment(reply, q, Sim.S.stage, replyEnglish);
+                    commentGenerated = true;
                     Refresh();
                 });
             if (!queued) { commentCardId = previousId; commentOwner = previousOwner; }

@@ -26,10 +26,10 @@ namespace LingGuangV05.Desktop.Games
 
         public override string Id => "gomoku";
         public override string Title => GameReactions.GomokuTitle ?? Lang.T("五子棋");
-        public override string Blurb => T("15 路棋盘，连成五子就赢。和" + LingGuangV05.Core.AppNames.AiZh + "下：它用同一个小窗口扫过整盘棋。", "15 × 15, five in a row wins. Play the lab's AI: it slides one small window over the whole board.");
+        public override string Blurb => T("15路棋盘，连成五子就赢。可选电脑或自己的AI；AI阶段2开放。","15×15, five in a row wins. Choose the computer or your AI; your AI opens at stage 2.");
         public override string Glyph => "●";
         public override Color Accent => new Color32(196, 140, 70, 255);
-        public override string Locked => Stage >= 3 ? null : Lang.T("第 3 阶段（卷积）以后它才看得懂棋盘");
+        public override string Locked => null;
 
         public override void Build(RectTransform area)
         {
@@ -62,8 +62,10 @@ namespace LingGuangV05.Desktop.Games
 
         public override void Refresh() => Draw();
 
+        public override void RestartRound() => NewGame();
         void NewGame()
         {
+            AbandonRoundRecord();
             game = new Gomoku(); aiAt = -1; counted = false; log.Clear(); ClearComment();
             Draw();
         }
@@ -74,7 +76,7 @@ namespace LingGuangV05.Desktop.Games
 
         void Play(int x, int y)
         {
-            if (Locked != null || Over || aiAt >= 0 || !game.Place(x, y, Gomoku.Black)) return;
+            if (!CanInteract || Locked != null || Over || aiAt >= 0 || !game.Place(x, y, Gomoku.Black)) return;
             log.Add(Point(x, y));
             Moved(game.Moves);
             if (!Finish()) aiAt = Time.unscaledTime + .6f;
@@ -83,10 +85,10 @@ namespace LingGuangV05.Desktop.Games
 
         void Update()
         {
-            if (aiAt < 0 || Time.unscaledTime < aiAt) return;
+            if (!CanInteract || aiAt < 0 || Time.unscaledTime < aiAt) return;
             aiAt = -1;
             // It reads the board right as often as its vision accuracy allows; otherwise it takes a weaker point.
-            if (!Over && game.Pick(Gomoku.White, Skill, Rng, out int x, out int y))
+            if (!Over && GomokuLogic.Pick(game, Gomoku.White, AiPlays?Lab.BoardLogicLevel:1, Rng, AiPlays?Lab.BoardLearnedBias():null, out int x, out int y))
             {
                 var situation = game.Score(x, y, Gomoku.White) >= 900 ? XgMoveSituation.Threat : game.Score(x, y, Gomoku.Black) >= 900 ? XgMoveSituation.Block : XgMoveSituation.Quiet;
                 game.Place(x, y, Gomoku.White);
@@ -125,10 +127,10 @@ namespace LingGuangV05.Desktop.Games
             if (Locked != null) status.text = head + Lang.T("它还看不懂棋盘。\n第 3 阶段（卷积）以后，它就能和你下了。");
             else
             {
-                string state = game.Winner == Gomoku.Black ? Lang.T("你赢了。") : game.Winner == Gomoku.White ? AiName + Lang.T("赢了。") : game.Full ? Lang.T("棋盘下满了，和棋。")
-                    : aiAt >= 0 ? AiName + Lang.T("在看棋盘……") : Lang.T("你执黑，先手。");
-                status.text = head + Lang.T("对手：") + AiName + Lang.T(" · 看对棋盘 ") + Mathf.RoundToInt((float)Skill * 100) + "%\n\n" + state + "\n\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + LabLines() + "\n\n<size=15><color=#806040>" +
-                    Lang.T("它用同一个小窗口扫过整个棋盘：每个空点看四条线，自己能连几个、你能连几个。这就是卷积在干的事。视觉准确率越高，它越少看错。") + "</color></size>";
+                string state = game.Winner == Gomoku.Black ? Lang.T("你赢了。") : game.Winner == Gomoku.White ? OpponentName + Lang.T("赢了。") : game.Full ? Lang.T("棋盘下满了，和棋。")
+                    : aiAt >= 0 ? OpponentName + Lang.T("在看棋盘……") : Lang.T("你执黑，先手。");
+                status.text = head + Lang.T("对手：") + OpponentName + T(" · 逻辑等级 "," · Logic level ") + (AiPlays?Lab.BoardLogicLevel:1) + "\n\n" + state + "\n\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + LabLines() + "\n\n<size=15><color=#806040>" +
+                    T("电脑使用本地规则；自己的AI未学逻辑时随机选点，逻辑升级后会判断连线。","The computer uses local rules. Your AI starts with random moves; logic upgrades improve its line choices.") + "</color></size>";
             }
             again.text = Lang.T("再来一局");
         }
