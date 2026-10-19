@@ -19,7 +19,7 @@ The handoff scene uses a generic Player account and has no startup password or s
 No source local DreamOS_UserData, accounts, saves, credentials, Library or MCP packages are bundled.
 
 Included changes:
-- Lucide icons; desktop icons 78 x 78.
+- Our own line icons (Tools/OSArt/Glyphs); desktop icons 78 x 78.
 - Full-viewport monitor bezel and hongmengos branding.
 - Settings pinned in taskbar; other apps appear only while open.
 - About support/social-link blocks hidden.
@@ -29,5 +29,4 @@ Included changes:
 Import into a new project/branch first. The DreamOS files retain their original paths and GUIDs;
 importing into a project with DreamOS can overwrite existing DreamOS files.
 Keep the licenses, original attribution, and use this package only within your appropriately licensed team.
-The original DreamOS asset license is not replaced by the Lucide license.
 This is an editable Unity source package, not a Windows/macOS executable.

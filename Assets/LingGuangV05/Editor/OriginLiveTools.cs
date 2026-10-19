@@ -46,16 +46,39 @@ namespace LingGuangV05.Editor
             return RenderFrames(StillSeconds, "/tmp/origin_live_", 1920, 1080);
         }
 
-        /// <summary>The still sweep: one still every 5 s from 0 to 160 (→ /tmp/origin_sweep_&lt;sec&gt;.png), in Chinese or English.</summary>
+        /// <summary>The still sweep: one still every 5 s of the cut (→ /tmp/origin_sweep_&lt;sec&gt;.png), in Chinese or English.</summary>
         public static string RenderSweep(bool english = false)
         {
             var secs = new System.Collections.Generic.List<float>();
-            for (int t = 0; t <= 160; t += 5) secs.Add(t);
+            for (int t = 0; t <= OriginLive.Duration; t += 5) secs.Add(t);
             return RenderFramesIn(secs.ToArray(), english ? "/tmp/origin_sweep_en_" : "/tmp/origin_sweep_", 1920, 1080, english);
         }
 
         [MenuItem("Tools/LingGuang/Origin live – render sweep")]
         public static void RenderSweepMenu() { Debug.Log(RenderSweep()); }
+
+        /// <summary>
+        /// Every frame of the cut at fps to dir/f_00000.png… (for an mp4 preview with the music: ffmpeg -framerate fps -i f_%05d.png).
+        /// Frames from..to (exclusive) so a long render can be split across calls.
+        /// </summary>
+        public static string RenderSequence(string dir, int fps, int width, int height, int from = 0, int to = int.MaxValue)
+        {
+            Directory.CreateDirectory(dir);
+            int count = Mathf.CeilToInt(OriginLive.Duration * fps);
+            to = Mathf.Min(to, count);
+            var secs = new System.Collections.Generic.List<float>();
+            for (int i = from; i < to; i++) secs.Add(i / (float)fps);
+            string log = RenderFrames(secs.ToArray(), Path.Combine(dir, "t_"), width, height);
+            // RenderFrames names by seconds; rename to a frame index for ffmpeg.
+            for (int i = from; i < to; i++)
+            {
+                string src = Path.Combine(dir, "t_" + (i / (float)fps).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + ".png");
+                string dst = Path.Combine(dir, "f_" + i.ToString("00000") + ".png");
+                if (File.Exists(dst)) File.Delete(dst);
+                if (File.Exists(src)) File.Move(src, dst);
+            }
+            return (to - from) + " frames → " + dir + (log.StartsWith("skipped") ? " (" + log.Trim() + ")" : "");
+        }
 
         /// <summary>RenderFrames with the game language forced to English or Chinese for the duration.</summary>
         public static string RenderFramesIn(float[] seconds, string prefix, int width, int height, bool english)
