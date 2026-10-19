@@ -8,13 +8,31 @@ using UnityEngine;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
-    /// Legacy protagonist recording lookup. Gameplay keeps written thoughts only; Play never starts audio.
+    /// The protagonist's voice. Every line is "spoken" in BlipTalk babble (<see cref="BlipTalk"/>), in either language, and
+    /// the caller types the text along <see cref="Revealed"/>. The old recordings (matched by Chinese text, ignoring
+    /// punctuation, spaces and rich-text tags) moved to VoiceArchive on 2026-10-19 and no longer ship, so <see cref="Find"/>
+    /// only finds a clip if one is put back under Resources/LingGuangV05/Voice.
     /// </summary>
     public static class VoiceLines
     {
         const string Folder = "LingGuangV05/Voice/";
-        /// <summary>Written thoughts have no speech timeline.</summary>
-        public static int Revealed(float elapsed) => -1;
+        /// <summary>True: BlipTalk babble for every line (the default since 2026-10-18). False: a recording if one exists.</summary>
+        public static bool UseBlips = true;
+        static AudioClip blipClip;
+        static float[] timeline;
+
+        /// <summary>
+        /// How many characters of the line being spoken have been said <paramref name="elapsed"/> seconds after
+        /// <see cref="Play"/>, or -1 when the line has no timeline (a recording, or nothing) and the caller types at its own
+        /// speed. Past the end it is every character.
+        /// </summary>
+        public static int Revealed(float elapsed)
+        {
+            if (timeline == null) return -1;
+            int n = 0;
+            while (n < timeline.Length && timeline[n] <= elapsed) n++;
+            return n < timeline.Length ? n : 99999;
+        }
 
         /// <summary>Chinese line → clip name. Keep the text identical to the line the game shows.</summary>
         static readonly Dictionary<string, string> Lines = new Dictionary<string, string>
@@ -113,13 +131,37 @@ namespace LingGuangV05.Desktop.Story
         }
 
         /// <summary>
-        /// Retains the subtitle timing API while disabling protagonist recordings in every language.
+        /// Speaks a line: in BlipTalk babble for <paramref name="shown"/> (the text on screen) when <see cref="UseBlips"/>,
+        /// otherwise the recording if the game is in Chinese and one exists. Returns its length in seconds (0 when nothing
+        /// plays), so the caller can keep the subtitle up while it is spoken; with babble the caller types the text along
+        /// <see cref="Revealed"/>.
         /// </summary>
         public static float Play(string zh, string shown = null)
         {
-            // The protagonist now speaks only through written thoughts.
-            Stop();
-            return 0;
+            AudioClip clip;
+            timeline = null;
+            if (UseBlips)
+            {
+                Stop();
+                if (blipClip != null) UnityEngine.Object.Destroy(blipClip);
+                var line = BlipTalk.Render(shown ?? zh, BlipTalk.Me);
+                clip = blipClip = line?.clip;
+                timeline = line?.reveal;
+            }
+            else clip = GameText.IsEnglish ? null : Find(zh);
+            if (clip == null) { Stop(); return 0; }
+            if (source == null)
+            {
+                var go = new GameObject("LingGuang Voice Lines");
+                UnityEngine.Object.DontDestroyOnLoad(go);
+                source = go.AddComponent<AudioSource>();
+                source.playOnAwake = false;
+                source.spatialBlend = 0;
+            }
+            source.Stop();
+            source.clip = clip;
+            source.Play();
+            return clip.length;
         }
 
         /// <summary>A recorded line is being spoken (the background music steps back for it).</summary>

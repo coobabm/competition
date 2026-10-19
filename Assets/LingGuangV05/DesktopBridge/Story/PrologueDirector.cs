@@ -183,11 +183,15 @@ namespace LingGuangV05.Desktop.Story
         {
             thought.text = text; thought.maxVisibleCharacters = 0;
             thought.ForceMeshUpdate();
-            float spoken = VoiceLines.Play(text), started = Time.unscaledTime;
+            float spoken = VoiceLines.Play(text, text), started = Time.unscaledTime;
             for (float t = 0; t < .2f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = t / .2f; yield return null; }
             thoughtGroup.alpha = 1;
             int length = thought.GetParsedText().Length;
-            for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
+            if (VoiceLines.Revealed(0) >= 0)
+                // Typed as it is said.
+                for (int said; (said = VoiceLines.Revealed(Time.unscaledTime - started)) < length;) { thought.maxVisibleCharacters = said; yield return null; }
+            else
+                for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
             thought.maxVisibleCharacters = length;
             yield return PrologueDesk.Wait(Mathf.Max(hold, spoken - (Time.unscaledTime - started) + .3f));
             for (float t = 0; t < .3f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = 1 - t / .3f; yield return null; }

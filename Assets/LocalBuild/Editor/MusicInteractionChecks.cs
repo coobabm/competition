@@ -178,12 +178,13 @@ public static class MusicInteractionChecks
             {
                 Check(!GameMusic.Started&&!source.isPlaying,"idle does not autoplay","one second without opening Music");
                 string line="我去，什么玩意儿在动我电脑？不会中病毒了吧？！";
-                var recorded=VoiceLines.Find(line);
-                Check(recorded!=null,"recording fixture exists","VoiceLines.Find resolves a real legacy clip");report.voiceClip=recorded.name;
+                Check(VoiceLines.Find(line)==null,"recordings do not ship","VoiceLines.Find finds no legacy clip");
                 float duration=VoiceLines.Play(line);
-                Check(duration==0&&!VoiceLines.Speaking,"recorded thought remains silent","Play returned "+duration+", Speaking="+VoiceLines.Speaking);
+                Check(duration>0&&VoiceLines.Speaking&&VoiceLines.Revealed(0)>=0,"thought is spoken in BlipTalk babble","Play returned "+duration+", Speaking="+VoiceLines.Speaking);
                 var voiceSource=typeof(VoiceLines).GetField("source",StaticFlags)?.GetValue(null) as AudioSource;
-                Check(voiceSource==null||!voiceSource.isPlaying,"voice AudioSource stopped","existing voice source was not started");
+                report.voiceClip=voiceSource!=null&&voiceSource.clip!=null?voiceSource.clip.name:"";
+                VoiceLines.Stop();
+                Check(voiceSource!=null&&!voiceSource.isPlaying,"voice AudioSource stops","Stop silences the babble before the music checks");
                 manager.repeat=true;manager.shuffle=true;source.loop=true;
                 ticketsBefore=VoiceTicket();window.OpenWindow();ticketsAfter=VoiceTicket();
                 Check(!manager.repeat&&!manager.shuffle&&!source.loop,"first opening defaults to sequential playlist","repeat/shuffle/source.loop all false, overriding legacy modes");
