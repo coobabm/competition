@@ -718,6 +718,40 @@ namespace LingGuangV05.XingGuang
             return null;
         }
 
+        static readonly Dictionary<char, string> PoemConfusables = new Dictionary<char, string>
+        {
+            { '光', "霜亮明" }, { '霜', "光雪露" }, { '月', "日星云" }, { '乡', "家归人" },
+            { '尽', "落没绝" }, { '流', "归去行" }, { '目', "眼望看" }, { '楼', "台阁层" },
+            { '觉', "知醒闻" }, { '晓', "早旦明" }, { '鸟', "雀燕鸦" }, { '声', "音响吹" },
+            { '少', "多几尽" }, { '国', "乡地邦" }, { '枝', "朵叶花" }, { '绝', "尽灭无" },
+            { '灭', "绝尽没" }, { '翁', "人客叟" }, { '雪', "霜冰水" }, { '在', "存留立" },
+            { '深', "密茂长" }, { '时', "夕夜刻" }, { '草', "木花苗" }, { '荣', "枯生发" },
+            { '生', "发长起" }, { '柳', "树枝杨" }, { '天', "云空霄" }, { '船', "舟帆舸" },
+            { '客', "人旅身" }, { '亲', "人家乡" }, { '间', "中里边" }, { '还', "归回到" },
+            { '住', "停休断" }, { '山', "峰岭峦" }, { '望', "看思见" }, { '思', "想念忆" },
+            { '闻', "听见知" }, { '啼', "鸣叫飞" },
+        };
+
+        /// <summary>Picks a plausible wrong next-character for a Tang poem line (confusable or same-position character).</summary>
+        public static string PoemDistractor(string line, int pos, int pick)
+        {
+            if (string.IsNullOrEmpty(line) || pos < 0 || pos >= line.Length) return "春";
+            char right = line[pos];
+            int p = pick & int.MaxValue;
+            if (PoemConfusables.TryGetValue(right, out string conf) && conf.Length > 0 && (pos == line.Length - 1 || (p & 1) == 0))
+            {
+                char c = conf[(p >> 1) % conf.Length];
+                if (c != right) return c.ToString();
+            }
+            for (int t = 0; t < PoemLines.Length; t++)
+            {
+                string other = PoemLines[((p % PoemLines.Length) + t) % PoemLines.Length];
+                int idx = pos < other.Length ? pos : other.Length - 1;
+                if (other[idx] != right) return other.Substring(idx, 1);
+            }
+            return right == '春' ? "秋" : "春";
+        }
+
         public static XgArch Arch(string id) { foreach (var a in Archs) if (a.id == id) return a; return null; }
         public static XgDataset Dataset(string id) { foreach (var d in Datasets) if (d.id == id) return d; return null; }
         public static XgContract Contract(string id) { foreach (var c in Contracts) if (c.id == id) return c; return null; }

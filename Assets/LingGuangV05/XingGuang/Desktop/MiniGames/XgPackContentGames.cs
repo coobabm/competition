@@ -19,8 +19,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             phrase=C.Sim.PickTeachingPhrase(pack.dataset,C.Random,out int seed);
             QuestionCard=XgSim.TeachingPhraseCard(pack.dataset,phrase,seed);prediction=C.Sim.PredictTeachingBinary(QuestionCard);
             promptZh=phrase.text;promptEn=phrase.textEn;
-            string left=pack.dataset=="spam"?"诈骗短信":pack.dataset=="review"?"刷单评论":"标题党";
-            string leftEn=pack.dataset=="spam"?"Scam":pack.dataset=="review"?"Fake review":"Clickbait";
+            string left=pack.dataset=="spam"?"垃圾短信":pack.dataset=="review"?"刷单评论":"标题党";
+            string leftEn=pack.dataset=="spam"?"Spam":pack.dataset=="review"?"Fake review":"Clickbait";
             Header(pack.name,pack.nameEn,"左划："+left+"；右划：正常。","Swipe left for "+leftEn.ToLowerInvariant()+", right for genuine.");
             falling=pack.dataset=="spam";dragging=false;fallOffset=0;
             card=C.Box("SwipeCard",150,falling?90:110,600,falling?145:190,Color.white).rectTransform;
@@ -67,9 +67,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             if(submitted)return;var p=XgTeachingPacks.Find(C.Id);
             C.Sim.RememberTeachingBinary(QuestionCard,yes,prediction,phrase.why,phrase.whyEn);
-            chosenText=yes?(p.dataset=="spam"?XgUi.T("诈骗短信","Scam"):p.dataset=="review"?XgUi.T("刷单评论","Fake review"):XgUi.T("标题党","Clickbait")):XgUi.T("正常","Genuine");
+            chosenText=yes?(p.dataset=="spam"?XgUi.T("垃圾短信","Spam"):p.dataset=="review"?XgUi.T("刷单评论","Fake review"):XgUi.T("标题党","Clickbait")):XgUi.T("正常","Genuine");
             string why=phrase.why,whyEn=phrase.whyEn;
-            if(falling){smsRounds++;if(!yes&&phrase.yes){why="模拟收件箱：诈骗短信被放行了。"+why;whyEn="Practice inbox: the scam text was let through. "+whyEn;}}
+            if(falling){smsRounds++;if(!yes&&phrase.yes){why="模拟收件箱：垃圾短信被放行了。"+why;whyEn="Practice inbox: the spam text was let through. "+whyEn;}}
             Submit(yes==phrase.yes,why,whyEn);
         }
     }

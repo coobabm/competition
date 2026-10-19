@@ -44,6 +44,7 @@ namespace LingGuangV05.Desktop.XingGuang
         bool echo;
         float askedAt;
         Reply due;
+        XgFnRequest pendingForgetNight;
         YYMessage queuedQuestion;
         bool replayQueued;
         readonly Dictionary<YYMessage, XgChatLine> lines = new Dictionary<YYMessage, XgChatLine>();
@@ -56,6 +57,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public YYMessage asked;
             public bool model, tagged, early;
             public float at;
+            public XgFnRequest forgetNight;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -70,6 +72,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDestroy()
         {
+            CancelForgetNight();
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             if (hooked != null && ReferenceEquals(hooked.LingGuangTalk, this)) hooked.LingGuangTalk = null;
             if (bound != null) bound.BookCompletionHosted = false;
@@ -157,6 +160,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Bind(XgSim sim)
         {
+            CancelForgetNight();
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             EnsureLearningData();
             if (bound != null) bound.BookCompletionHosted = false;
@@ -228,6 +232,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 return true;
             }
             // Before stage 5 the first 「她……爱我吗？」 gets one word it cannot possibly know; the inner voice notices.
+            if (sim.ForgetNightMatches(text))
+            {
+                var request = sim.BeginForgetNightRequest(text);
+                if (request == null) { waiting = false; return true; }
+                pendingForgetNight = request;
+                int ft = ++ticket;
+                // Use the actual chat history and normal model request. Never supply an authored answer or force forgetting.
+                Ask(sim, text, null, reply => AnswerForgetNight(sim, ft, request, message, reply));
+                return true;
+            }
             bool early = XgSim.IsLoveQuestion(text) && sim.S.stage < XgSim.LoveStage && sim.S.loveEarlyAsked == 0;
             string scripted = sim.Scripted(text);
             if (scripted != null)
@@ -274,7 +288,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (s.originAwaitingAnswer) return new[] { bound.OriginAnswerText(true), bound.OriginAnswerText(false) };
             if (s.redMansionBeat == 1) return new[] { BookContinuationChoice };
             if (bound.BookPuzzlePending != null) return null;
-            var list = new List<string>(2);
+            var list = new List<string>(3);
+            if (bound.OfferForgetNight)
+            {
+                string fn = bound.ForgetNightChoice(GameText.IsEnglish);
+                if (!string.IsNullOrEmpty(fn)) list.Add(fn);
+            }
             if (bound.OfferOriginQuestion) list.Add(bound.OriginQuestion);
             if (bound.OfferLoveQuestion) list.Add(bound.LoveQuestion);
             return list.Count > 0 ? list.ToArray() : null;
@@ -310,6 +329,36 @@ namespace LingGuangV05.Desktop.XingGuang
             XgYyLens.Typing(sim, said, due.at);
         }
 
+        void OnDisable() { CancelForgetNight(); }
+
+        // Cancel only this optional exchange. Ordinary chat behaviour and the main story are unchanged.
+        public void CancelForgetNight()
+        {
+            if (pendingForgetNight == null) return;
+            bound?.CancelForgetNightRequest();
+            pendingForgetNight = null;
+            ticket++;
+            due = null; waiting = false;
+        }
+
+        void AnswerForgetNight(XgSim sim, int forTicket, XgFnRequest request, YYMessage asked, string response)
+        {
+            if (this == null || !ReferenceEquals(sim, bound) || forTicket != ticket) return;
+            if (!sim.ForgetNightRequestCurrent(request)) { CancelForgetNight(); ReplyToQueued(); return; }
+            string text = EraLexicon.Scrub(StripThinking(response ?? "")) ?? "";
+            // No offline fallback and no anti-repeat substitution: recalling the same code is a valid model answer.
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                CancelForgetNight();
+                InnerVoice.Say("这次模型没有回复。等它准备好，再问这一句。", "The model did not reply. Try this line again when it is ready.", 2.5f);
+                ReplyToQueued();
+                return;
+            }
+            due = new Reply { text = text, question = request.Question, asked = asked, model = true, tagged = true,
+                forgetNight = request, at = Math.Max(Time.unscaledTime, askedAt + ReadPause) };
+            XgYyLens.Typing(sim, text, due.at);
+        }
+
         void Deliver(YYChatHub hub)
         {
             var r = due;
@@ -317,6 +366,10 @@ namespace LingGuangV05.Desktop.XingGuang
             waiting = false;
             var sim = bound;
             if (r == null || sim == null || string.IsNullOrEmpty(r.text)) return;
+            var fnConversation = r.forgetNight != null && hub != null && hub.S != null && hub.S.lingguangUnlocked ? hub.Conversation(Id) : null;
+            if (r.forgetNight != null && (fnConversation == null || !sim.ForgetNightRequestCurrent(r.forgetNight)))
+            { CancelForgetNight(); ReplyToQueued(); return; }
+            int fnMessageCount = fnConversation != null ? fnConversation.messages.Count : 0;
             // The underline goes in before the reply, so YY redraws both at once.
             if (!string.IsNullOrEmpty(r.focus) && r.asked != null) r.asked.attentionWord = r.focus;
             sim.AddLine("ai", r.text);
@@ -334,6 +387,26 @@ namespace LingGuangV05.Desktop.XingGuang
                 InnerVoice.Say("……它连她是谁都不知道。", "…It doesn't even know who she is.", 2.4f);
                 if (yes) InnerVoice.Say("……可我居然有点高兴。", "…And yet I'm a little happy.", 2.4f);
                 else InnerVoice.Say("……它就会这两个字。别当真。", "…Those are the only two words it knows. Don't take it seriously.", 2.6f);
+            }
+            if (r.forgetNight != null)
+            {
+                // OnLine must really have appended the reply to YY; LearningDelivered then supplies the receipt.
+                var last = fnConversation.messages.Count > fnMessageCount ? fnConversation.messages[fnConversation.messages.Count - 1] : null;
+                bool delivered = last != null && last.from == Id && last.text == r.text && last.learningReplyId > 0;
+                bool committed = delivered && sim.CommitForgetNightReply(r.forgetNight, last.learningReplyId, r.model);
+                if (committed)
+                {
+                    pendingForgetNight = null;
+                    MarkNightDirty();
+                    if (r.forgetNight.Round == 3)
+                    {
+                        var result = sim.ForgetNightResult;
+                        if (result == null) InnerVoice.Say("这次回答还不能判断。再问一次暗号。", "That reply is inconclusive. Ask for the code again.", 2.5f);
+                        else if (result.recall == XgFnRecall.Remembered) InnerVoice.Say("暗号答对了。这一次，它还记得。", "The code is right. This time it remembered.", 2.5f);
+                        else InnerVoice.Say("这一次，它说想不起来了。", "This time it said it could not remember.", 2.5f);
+                    }
+                }
+                else CancelForgetNight();
             }
             // Its plain 是 / 否 at stage 1: what he makes of it (XgSim.YesNoVoice). The reply that carries the love line says only that.
             if (sim.S.stage == 1 && (r.tagged || r.early))

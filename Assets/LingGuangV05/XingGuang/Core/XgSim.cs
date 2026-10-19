@@ -1344,13 +1344,7 @@ namespace LingGuangV05.XingGuang
                     card.line = lines[(int)(Roll() * lines.Length) % lines.Length];
                     card.shown = 1 + (int)(Roll() * (card.line.Length - 1)) % (card.line.Length - 1);
                     string next = card.line.Substring(card.shown, 1);
-                    card.askedChar = next;
-                    if (!card.truth)
-                        for (int tries = 0; tries < 20 && card.askedChar == next; tries++)
-                        {
-                            string other = lines[(int)(Roll() * lines.Length) % lines.Length];
-                            card.askedChar = other.Substring((int)(Roll() * other.Length) % other.Length, 1);
-                        }
+                    card.askedChar = card.truth ? next : XgCatalog.PoemDistractor(card.line, card.shown, (int)(Roll() * int.MaxValue));
                     if (card.askedChar == next) card.truth = true;
                     break;
                 case XgDeskKind.Logic:
@@ -1366,7 +1360,7 @@ namespace LingGuangV05.XingGuang
                     card.category = sum.category; card.categoryEn = sum.categoryEn;
                     break;
                 case XgDeskKind.Text:
-                    var p = XgMemes.Pick(desk, r, level, Today, Topic, allowFamily && TotalLabels >= XgCatalog.SamplesToTrain);
+                    var p = XgMemes.Pick(desk, r, level, Today, Topic, allowFamily && TotalLabels >= XgCatalog.SamplesToTrain, allowTemplates: desk != XgMemes.SenseDesk);
                     if (p == null) break; // Progression-only text desks are filled by DecorateProgressionCard.
                     card.truth = p.yes; card.trick = p.trick;
                     card.question = p.text; card.questionEn = p.textEn.Length > 0 ? p.textEn : p.text;

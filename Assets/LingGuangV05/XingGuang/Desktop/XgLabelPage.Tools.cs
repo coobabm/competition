@@ -50,7 +50,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var row=rows[0];var owner=Sim;reviewToolOwner=owner;
             teachingReviewOverlay=Rect("TeachingReviewOverlay",root,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             Panel(teachingReviewOverlay,new Color(.94f,.96f,1,1)).raycastTarget=true;teachingReviewOverlay.SetAsLastSibling();
-            string question=row.dataset=="spam"?T("这条是诈骗短信吗？","Is this a scam text?"):row.dataset=="review"?T("这条是刷单评论吗？","Is this a fake review?"):T("这条是标题党吗？","Is this clickbait?");
+            string question=row.dataset=="spam"?T("这条是垃圾短信吗？","Is this spam?"):row.dataset=="review"?T("这条是刷单评论吗？","Is this a fake review?"):T("这条是标题党吗？","Is this clickbait?");
             ui.Text(Rect("Heading",teachingReviewOverlay,new Vector2(0,1),Vector2.one,new Vector2(25,-65),new Vector2(-25,-15)),suspect?T("? 疑似错题","? Suspected label"):T("复核","Review"),24,XgPalette.Ink,TextAlignmentOptions.MidlineLeft);
             ui.Text(Rect("Question",teachingReviewOverlay,Vector2.zero,Vector2.one,new Vector2(30,170),new Vector2(-30,-85)),T(row.text,row.textEn)+"\n\n"+question,24,XgPalette.Ink,TextAlignmentOptions.Center);
             var result=ui.Text(Rect("Result",teachingReviewOverlay,new Vector2(0,0),new Vector2(1,0),new Vector2(25,110),new Vector2(-25,160)),"",17,XgPalette.Ink,TextAlignmentOptions.Center);

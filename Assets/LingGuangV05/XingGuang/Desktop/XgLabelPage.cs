@@ -622,7 +622,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (RefreshDeskGame(false)) { deskGame.Tick(dt); return; }
             TickHandwriting(dt);
             if (feedbackTimer > 0) { feedbackTimer -= dt; if (feedbackTimer <= 0) { feedback.text = ""; lessonFeedbackBack.gameObject.SetActive(false); } }
-            if (redTimer > 0) redTimer -= dt;
+            bool hadRed = redTimer > 0;
+            if (hadRed) redTimer = Mathf.Max(0, redTimer - dt);
             AnimateFeed(dt);
             TickBubble(dt);
             TickKeys();
@@ -636,7 +637,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (card.id != displayedId) { Refresh(); return; }
             AnimateTranslation(card, dt);
             AnimateMemory(card, dt);
-            RefreshPaperTheme(card.gold);
+            if (hadRed) RefreshPaperTheme(card.gold);
             bool timed = card.timeLimit > 0;
             timerBar.gameObject.SetActive(timed);
             if (timed)
@@ -1365,19 +1366,26 @@ namespace LingGuangV05.Desktop.XingGuang
                     + "Now: " + Sim.QualityAdvice(true) + " Buying Self-check in Tech also catches some mistakes first.");
         }
 
+        readonly long[] oldFeedIds = new long[XgSim.FeedWindow];
+        readonly float[] oldFeedAges = new float[XgSim.FeedWindow];
+
         void RefreshFeed()
         {
             feedRoot.gameObject.SetActive(!WorkContext && Sim.CollaborationEnabled && Mode == 0);
             if (WorkContext || !Sim.CollaborationEnabled || Mode != 0) return;
-            var oldIds = feedIds.ToArray(); var oldAges = feedAges.ToArray();
+            for (int i = 0; i < feedIds.Count && i < oldFeedIds.Length; i++)
+            {
+                oldFeedIds[i] = feedIds[i];
+                oldFeedAges[i] = feedAges[i];
+            }
             for (int i = 0; i < feedRects.Count; i++)
             {
                 bool on = i < Sim.S.autoFeed.Count;
                 feedRects[i].gameObject.SetActive(on);
                 if (!on) { feedIds[i] = -1; continue; }
                 var record = Sim.S.autoFeed[i];
-                int was = Array.IndexOf(oldIds, record.cardId);
-                feedIds[i] = record.cardId; feedAges[i] = was >= 0 ? oldAges[was] : 0;
+                int was = Array.IndexOf(oldFeedIds, record.cardId, 0, Math.Min(feedIds.Count, oldFeedIds.Length));
+                feedIds[i] = record.cardId; feedAges[i] = was >= 0 ? oldFeedAges[was] : 0;
                 var info = XgCatalog.Desk(record.dataset);
                 bool fined = record.spotChecked && !record.correct && !record.audited;
                 feedTexts[i].text = fined ? "× " + Lang.T("抽检不合格 −¥") + N(record.fine, "0.##")

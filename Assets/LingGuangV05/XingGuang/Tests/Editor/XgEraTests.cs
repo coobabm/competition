@@ -110,5 +110,149 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.GreaterOrEqual(fresh, 2, "phrases first seen in the month starting " + monthStarts[i - 1]);
             }
         }
+
+        [Test]
+        public void ParametricTemplatesStayIn2016AndRespectTruthAndTrick()
+        {
+            var r = new System.Random(20160524);
+            var lines = new List<string>();
+            foreach (var desk in new[] { "danmu", "spam", "headline", "review" })
+            {
+                var unique = new HashSet<string>();
+                foreach (bool want in new[] { true, false })
+                {
+                    foreach (bool trick in new[] { false, true })
+                    {
+                        for (int i = 0; i < 20; i++)
+                        {
+                            var p = XgMemes.PickTemplated(desk, r, 3, 20160901, want, trick);
+                            Assert.IsNotNull(p, $"{desk} want={want} trick={trick}");
+                            Assert.AreEqual(want, p.yes, p.text);
+                            Assert.AreEqual(trick, p.trick, p.text);
+                            unique.Add(p.text);
+                            lines.Add(p.text);
+                            lines.Add(p.why);
+                        }
+                    }
+                }
+                Assert.GreaterOrEqual(unique.Count, 24, $"parametric variety for {desk}");
+            }
+            Assert.IsEmpty(EraLexicon.Audit(lines));
+        }
+
+        [Test]
+        public void DatedTemplatesWaitForTheirEventsAndCarryTheirReleaseDate()
+        {
+            var r = new System.Random(20161020);
+            var seen = new HashSet<string>();
+            foreach (int today in new[] { 20160101, 20160210, 20160211, 20160311, 20160312, 20160523, 20160524, 20160531, 20160601, 20160605, 20160606, 20160901 })
+            {
+                foreach (var desk in new[] { "headline", "review" })
+                foreach (bool want in new[] { true, false })
+                foreach (bool trick in new[] { false, true })
+                for (int i = 0; i < 100; i++)
+                {
+                    var p = XgMemes.PickTemplated(desk, r, 3, today, want, trick);
+                    Assert.IsNotNull(p, "dated options must retain a usable fallback");
+                    Assert.LessOrEqual(p.since, today, p.text);
+                    foreach (var dated in new[] { ("围棋世界冠军连输三盘", 20160312), ("LIGO", 20160211), ("守望先锋", 20160524), ("940 万", 20160606), ("2016 高考考前提醒", 20160601) })
+                    {
+                        if (!p.text.Contains(dated.Item1)) continue;
+                        Assert.GreaterOrEqual(today, dated.Item2, p.text);
+                        Assert.AreEqual(dated.Item2, p.since, p.text);
+                        seen.Add(dated.Item1);
+                    }
+                    Assert.IsFalse(p.text.Contains("明日上午九点开考"), "a June event must not become tomorrow's exam in September");
+                }
+            }
+            Assert.AreEqual(5, seen.Count, "all gated event variants remain available after release");
+        }
+
+        [Test]
+        public void GeneratedRealReviewsKeepProductDetailsCompatible()
+        {
+            var r = new System.Random(20161020);
+            var products = new HashSet<string>();
+            for (int i = 0; i < 500; i++)
+            {
+                var text = XgMemes.PickTemplated("review", r, 3, 20160901, false, false).text;
+                if (text.Contains("台灯"))
+                {
+                    products.Add("lamp");
+                    foreach (var mismatch in new[] { "帧数", "微动", "风扇", "插上电脑", "按键", "键帽" })
+                        Assert.IsFalse(text.Contains(mismatch), text);
+                }
+                if (text.Contains("显卡"))
+                {
+                    products.Add("gpu");
+                    foreach (var mismatch in new[] { "微动", "灯臂", "滚轮", "键帽", "空格键" })
+                        Assert.IsFalse(text.Contains(mismatch), text);
+                }
+                if (text.Contains("鼠标"))
+                {
+                    products.Add("mouse");
+                    foreach (var mismatch in new[] { "帧数", "灯臂", "风扇", "键帽", "空格键" })
+                        Assert.IsFalse(text.Contains(mismatch), text);
+                }
+                if (text.Contains("机械键盘"))
+                {
+                    products.Add("keyboard");
+                    foreach (var mismatch in new[] { "帧数", "灯臂", "风扇", "微动", "滚轮" })
+                        Assert.IsFalse(text.Contains(mismatch), text);
+                }
+            }
+            Assert.AreEqual(4, products.Count);
+        }
+
+        [Test]
+        public void MarketingIsSpamButServiceNotificationsAreNot()
+        {
+            int promotions = 0, notifications = 0;
+            foreach (var p in XgMemes.Bank("spam"))
+            {
+                if (p.text.Contains("充 100 送 20") || p.text.Contains("充 50 送 50") || p.text.Contains("退订回") || p.text.Contains("回 TD 退订"))
+                {
+                    Assert.IsTrue(p.yes, p.text);
+                    promotions++;
+                }
+                if (p.source == "电费通知" || p.source == "银行通知" || p.source == "快递通知")
+                {
+                    Assert.IsFalse(p.yes, p.text);
+                    notifications++;
+                }
+            }
+            Assert.GreaterOrEqual(promotions, 4);
+            Assert.GreaterOrEqual(notifications, 3);
+            var r = new System.Random(20161020);
+            var types = new HashSet<string>();
+            for (int i = 0; i < 100; i++)
+            foreach (bool want in new[] { true, false })
+            foreach (bool trick in new[] { false, true })
+            {
+                var p = XgMemes.PickTemplated("spam", r, 3, 20160901, want, trick);
+                if (p.source == "电商营销短信") { Assert.IsTrue(p.yes, p.text); types.Add(p.source); }
+                if (p.source == "电费通知" || p.source == "银行通知" || p.source == "快递通知")
+                { Assert.IsFalse(p.yes, p.text); types.Add(p.source); }
+            }
+            Assert.AreEqual(4, types.Count);
+        }
+
+        [Test]
+        public void PoemDistractorNeverReturnsTargetCharAndPrefersConfusables()
+        {
+            foreach (var line in XgCatalog.PoemLines)
+            {
+                for (int pos = 1; pos < line.Length; pos++)
+                {
+                    string right = line.Substring(pos, 1);
+                    for (int pick = 0; pick < 8; pick++)
+                    {
+                        string wrong = XgCatalog.PoemDistractor(line, pos, pick);
+                        Assert.AreEqual(1, wrong.Length);
+                        Assert.AreNotEqual(right, wrong, $"line={line} pos={pos}");
+                    }
+                }
+            }
+        }
     }
 }

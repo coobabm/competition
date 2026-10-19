@@ -91,10 +91,16 @@ namespace LingGuangV05.XingGuang
         /// <summary>What a card is to the brain: its elements and its answer.</summary>
         public static string Signature(XgBoardCard card)
         {
-            var parts = new List<string>(card.features.Count);
-            foreach (var f in card.features) parts.Add(f.name + "@" + f.x + "," + f.y + "," + f.seq);
-            parts.Sort(string.CompareOrdinal);
-            return card.region + "|" + card.truth + "|" + string.Join(";", parts);
+            int count = card.features.Count;
+            if (count == 0) return card.region + "|" + card.truth + "|";
+            var parts = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                var f = card.features[i];
+                parts[i] = string.Concat(f.name, "@", f.x.ToString(), ",", f.y.ToString(), ",", f.seq.ToString());
+            }
+            if (count > 1) Array.Sort(parts, StringComparer.Ordinal);
+            return string.Concat(card.region, "|", card.truth ? "True" : "False", "|", string.Join(";", parts));
         }
 
 #if UNITY_5_3_OR_NEWER
@@ -110,7 +116,7 @@ namespace LingGuangV05.XingGuang
             lock (trainSignatures)
             {
                 if (trainSignatures.TryGetValue(key, out var set)) return set;
-                set = new HashSet<string>();
+                set = new HashSet<string>(PoolLimit, StringComparer.Ordinal);
 #if UNITY_5_3_OR_NEWER
                 using (ProfileTrainSignaturesMiss.Auto())
 #endif
@@ -154,7 +160,7 @@ namespace LingGuangV05.XingGuang
                     var lines = XgCatalog.PoemLines;
                     card.line = lines[r.Next(lines.Length)];
                     card.shown = 1 + r.Next(card.line.Length - 1);
-                    card.askedChar = card.truth ? card.line.Substring(card.shown, 1) : lines[r.Next(lines.Length)].Substring(0, 1);
+                    card.askedChar = card.truth ? card.line.Substring(card.shown, 1) : XgCatalog.PoemDistractor(card.line, card.shown, r.Next());
                     card.truth = card.askedChar == card.line.Substring(card.shown, 1);
                     break;
                 case "logic":

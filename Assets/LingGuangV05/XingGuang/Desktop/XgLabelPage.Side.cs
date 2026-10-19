@@ -201,8 +201,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 + "\n" + T("放在这里时它偶尔顺手标一题，错了不扣。", "While it sits here it sometimes labels one on its own; a miss costs nothing.");
             // The corner bubble only shows while the spider is saying something (XgLabelPage.Spider.TickBubble).
             if (bubbleTimer <= 0 && bubbleBack != null && bubbleBack.gameObject.activeSelf) bubbleBack.gameObject.SetActive(false);
-            aiIcon.Redraw();
+            bool away = Spider != SpiderRole.Home;
+            if (away != lastAiAway) { lastAiAway = away; aiIcon.Redraw(); }
         }
+        bool lastAiAway;
 
         // ───────────── auto-answer, data, collaboration ─────────────
 

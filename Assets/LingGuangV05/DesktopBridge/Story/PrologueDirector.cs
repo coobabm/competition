@@ -188,8 +188,8 @@ namespace LingGuangV05.Desktop.Story
             thoughtGroup.alpha = 1;
             int length = thought.GetParsedText().Length;
             if (VoiceLines.Revealed(0) >= 0)
-                // Typed as it is said.
-                for (int said; (said = VoiceLines.Revealed(Time.unscaledTime - started)) < length;) { thought.maxVisibleCharacters = said; yield return null; }
+                // Typed as it is said. Revealed turns -1 if another line takes the voice mid-sentence: stop following it then.
+                for (int said; (said = VoiceLines.Revealed(Time.unscaledTime - started)) >= 0 && said < length;) { thought.maxVisibleCharacters = said; yield return null; }
             else
                 for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
             thought.maxVisibleCharacters = length;
