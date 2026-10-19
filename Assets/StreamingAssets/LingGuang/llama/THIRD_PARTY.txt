@@ -1,15 +1,15 @@
-Bundled local inference software and model / 本版离线推理来源
+﻿Bundled local inference software and model / 本版离线推理来源
 
 Current Windows release / 当前 Windows 发行版
 
-- Model: Qwen3.5-4B-Q4_K_M.gguf, Qwen team / Alibaba Cloud, Copyright 2026 Alibaba Cloud.
-  Base source: https://huggingface.co/Qwen/Qwen3.5-4B (revision 851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a).
-  GGUF quantization: Unsloth, https://huggingface.co/unsloth/Qwen3.5-4B-GGUF
-  Pinned quantization revision: e87f176479d0855a907a41277aca2f8ee7a09523.
+- Model: Qwen3-1.7B-Q4_K_M.gguf, Qwen team / Alibaba Cloud, Copyright 2025 Alibaba Cloud.
+  Base source: https://huggingface.co/Qwen/Qwen3-1.7B (revision 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e).
+  GGUF quantization: Unsloth, https://huggingface.co/unsloth/Qwen3-1.7B-GGUF
+  Pinned quantization revision: d7f544eead698dbd1f15126ef60b45a1e1933222.
   License: Apache License 2.0. Unmodified upstream GGUF, no local MTP stripping.
   Full license, base and quantizer cards, source provenance and checksum are beside the model:
   MyComputerAlive_Data/StreamingAssets/LingGuang/Models/{LICENSE,MODEL_CARD.md,QUANT_MODEL_CARD.md,MODEL_SOURCE.json,SHA256SUMS.txt}.
-  Recorded model SHA256: 00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4.
+  Recorded model SHA256: b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897 (1,107,409,472 bytes).
   Runtime use is text-only; no vision projector is bundled.
 - LLMUnity 3.0.3, Undream AI, Apache License 2.0.
   Source: https://github.com/undreamai/LLMUnity/tree/9931a9ea46906b1f43adaf9498c05ccf227b5d0b
@@ -37,4 +37,4 @@ They describe the retired server bundle, not the current LlamaLib CPU runtime or
   macOS: Homebrew build 9580 (mac-arm64/), Windows: release b11370 Vulkan x64 (win-x64/).
 - LLVM OpenMP runtime (libomp), Apache License 2.0 with LLVM Exceptions (win-x64/LICENSE-LLVM-OpenMP).
 - OpenSSL 3 (macOS libssl / libcrypto), Apache License 2.0.
-- Model: Qwen3.5-4B (Qwen team, Alibaba Cloud), Apache License 2.0; GGUF Q4_K_M quantization by bartowski.
+- Model: Qwen3-1.7B (Qwen team, Alibaba Cloud), Apache License 2.0; GGUF Q4_K_M quantization by Unsloth.

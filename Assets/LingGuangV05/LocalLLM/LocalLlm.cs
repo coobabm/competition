@@ -28,7 +28,7 @@ using UnityEditor;
 namespace LingGuangV05.Desktop.LLM
 {
     /// <summary>
-    /// Local language model for free chat (Qwen3.5-4B GGUF by default). Runs llama.cpp in-process through LLM for
+    /// Local language model for free chat (Qwen3-1.7B GGUF by default). Runs llama.cpp in-process through LLM for
     /// Unity's LlamaLib (package ai.undream.llm): one service with a slot per character, one LlamaLib client per slot
     /// so each request carries its own sampling and grammar. Offline: nothing leaves the machine.
     /// Model search: StreamingAssets/LingGuang/Models/*.gguf, then (editor) &lt;project&gt;/Models/*.gguf.
