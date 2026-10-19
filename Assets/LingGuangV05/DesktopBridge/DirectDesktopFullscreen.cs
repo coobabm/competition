@@ -37,8 +37,10 @@ namespace LingGuangV05.Desktop
             if (physicalCanvas != null) physicalCanvas.enabled = false;
             foreach (var root in scene.GetRootGameObjects())
             {
+                foreach (var camera in root.GetComponentsInChildren<Camera>(true))
+                    if (camera != lcd.sourceCamera) camera.enabled = false;
                 foreach (var framing in root.GetComponentsInChildren<AeroMonitorFraming>(true)) framing.enabled = false;
-                if (root.name == "HongmengOS 2010 LCD Model") root.SetActive(false);
+                if (root.name == "HongmengOS 2010 LCD Model" || root.name == "LCD Studio Lighting") root.SetActive(false);
             }
             lcd.GetComponent<AeroLcdResolution>()?.PrepareViewportResolution();
             lcd.inputSurface.SetInputEnabled(lcd.IsPowered);

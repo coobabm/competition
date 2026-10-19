@@ -96,7 +96,7 @@ namespace LingGuangV05.XingGuang
             Q(5, "5.saturday", false, "晴雯说她周六要来，顺便把上次借的书还我。她哪天来？", "Qingwen says she's coming on Saturday, and will bring back the book she borrowed. Which day is she coming?", "周六。", "Saturday.", "memory"),
             Q(5, "5.key", true, "钥匙我放在鼠标垫下面了，你别跟别人说，也别动它。钥匙在哪？", "I put the key under the mouse pad; don't tell anyone and don't touch it. Where is the key?", "鼠标垫下面。", "Under the mouse pad.", "memory"),
             Q(5, "5.lender", true, "老周昨天借走了我的显卡。显卡是谁的？", "Lao Zhou borrowed my graphics card yesterday. Whose card is it?", "我的。", "Mine.", "memory"),
-            Q(5, "5.rent", false, "房东说了，十月起房租一天 350。房租多少？", "The landlord says from October the rent is 350 a day. How much is the rent?", "一天 350。", "350 a day.", "memory"),
+            Q(5, "5.rent", false, "房东说了，十月起房租一个月 1350。房租多少？", "The landlord says from October the rent is 1,350 a month. How much is the rent?", "一个月 1350。", "1,350 a month.", "memory"),
             Q(5, "5.city", false, "我小时候在杭州住过，后来搬了三次家。我小时候住在哪？", "I lived in Hangzhou as a child, then we moved three times. Where did I live as a child?", "杭州。", "Hangzhou.", "memory"),
             Q(5, "5.t.lent", true, "翻译：我昨天把显卡借给了老周。", "Translate: 我昨天把显卡借给了老周。", "I lent Lao Zhou my graphics card yesterday.", "I lent Lao Zhou my graphics card yesterday.", "translate"),
             Q(5, "5.t.homework", false, "翻译：今天的作业实在太多了。", "Translate: 今天的作业实在太多了。", "There is far too much homework today.", "There is far too much homework today.", "translate"),

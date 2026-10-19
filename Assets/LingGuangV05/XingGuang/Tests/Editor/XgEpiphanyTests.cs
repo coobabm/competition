@@ -42,6 +42,7 @@ namespace LingGuangV05.XingGuang.Tests
         /// <summary>Answers the visible card agreeing (or not) with its ghost; the ghost must be there.</summary>
         static void AnswerGhost(XgSim sim, Host host, bool agree)
         {
+            SkipFamilyTexts(sim, host);
             Assert.IsTrue(sim.GhostGuess(Desk, out bool ghost, out double confidence), "the ghost shows on this card");
             Assert.That(confidence, Is.InRange(0.0, 1.0));
             sim.Answer(Desk, agree ? ghost : !ghost, host);
