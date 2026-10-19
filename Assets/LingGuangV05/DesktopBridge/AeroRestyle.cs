@@ -31,9 +31,9 @@ namespace LingGuangV05.Desktop
         // spinning pie wedge in a box (2026-10-19, 「进入桌面那个圈圈的加载有问题」).
         static readonly string[] Skip = { "灵光.exe", "Taskbar", "Aero Start Menu", "Aero Shell Controller", "Aero Glass Taskbar",
             "Desktop List", "Widgets", "Resident Spider", "Prologue Layer", "Aero Edition Mark", "Spinner" };
-        // "bliss" (原野, the owner's pick 2026-10-19) is first, so it is the default wallpaper.
-        static readonly string[] Wallpapers = { "bliss", "morning", "aurora", "harmony", "dusk" };
-        static readonly string[] WallpaperNames = { "原野", "晨光", "极光蓝", "翠绿", "暮紫" };
+        // All self-made; 晨光 first, so it is the default. The Bliss photo was dropped 2026-10-19 (Microsoft's copyright).
+        static readonly string[] Wallpapers = { "morning", "aurora", "harmony", "dusk" };
+        static readonly string[] WallpaperNames = { "晨光", "极光蓝", "翠绿", "暮紫" };
         /// <summary>A circle at most this big (desktop px) is a dot or a badge and stays round.</summary>
         const float DotSize = 22;
 
