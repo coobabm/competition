@@ -5,12 +5,13 @@ namespace LingGuangV05.Core.Chat
 {
     /// <summary>
     /// How chat prompts are laid out so llama-server can reuse the previous turn's work (prompt prefix caching).
-    /// The local model (Qwen3.5) is hybrid recurrent: the server can only resume from checkpoints it saves at the
-    /// start of the last user message, so a turn is cheap only when the new prompt extends the previous one up to
-    /// that point. Hence: the system message (persona, rules, slowly changing state) and the few-shots stay
-    /// byte-identical between turns, history only grows, and everything that changes per turn (clock, memories,
-    /// mood, recent replies, live numbers) rides in the last user turn as a 「当前状态」 block. Qwen's template
-    /// accepts a single system message, first, so this block cannot be a second system message.
+    /// The shipped model (Qwen3-1.7B) is a plain dense transformer, so llama.cpp reuses the shared KV prefix directly:
+    /// a turn is cheap when the new prompt keeps the previous prefix byte-identical. Hence: the system message
+    /// (persona, rules, slowly changing state) and the few-shots stay byte-identical between turns, history only grows,
+    /// and everything that changes per turn (clock, memories, mood, recent replies, live numbers) rides in the last
+    /// user turn as a 「当前状态」 block. Qwen's template accepts a single system message, first, so this block cannot
+    /// be a second system message. (This layout was originally written for the retired Qwen3.5 hybrid-recurrent
+    /// model, where only checkpointed prefixes were reusable; it stays correct and simpler for the dense model.)
     /// </summary>
     public static class LlmPromptLayout
     {

@@ -138,12 +138,12 @@
 >
 > Bot (`Tools/XingGuang/bot 90`, 2026-10-08): completes, careless still goes bankrupt at 06:00, `--guide-check` 0 faults. The route is slower because the bot spreads its labels over one more stage-1 desk (and chases one more S grade): ability 2 at 08:29 (was 06:13), ability 3 at 11:11 (07:15), chapter complete at 44:36 (33:25).
 
-## 本地大模型（Qwen3.5-4B）
+## 本地大模型（Qwen3-1.7B）
 
-2026.10.19.5 的模型为 Qwen3.5-4B（Q4_K_M，原始文件 2,740,937,888 字节，约 2.74 GB）。完整文件校验、加载与隔离场景真实回复已通过；构建及独立 Player 验证以对应发行说明为准；此前 Windows Qwen3-4B 证据不适用于新模型。代码在 `Assets/LingGuangV05/LocalLLM/`。
+2026.10.20.1 的模型为 Qwen3-1.7B（Q4_K_M，1,107,409,472 字节，约 1.03 GB），用于把商店包体压到 1.8 GB 以内。本轮只完成构建、包体与 SHA256 校验；真实推理与独立 Player 表现尚未验收。代码在 `Assets/LingGuangV05/LocalLLM/`。
 
 - **运行方式**：LLM for Unity 3.0.3 / LlamaLib v2.0.5 在游戏进程内运行，当前 Windows 方案使用 CPU。旧 Mac llama-server 的速度记录不代表本版本 Windows 性能。
-- **目标模型位置**：`Assets/StreamingAssets/LingGuang/Models/Qwen3.5-4B-Q4_K_M.gguf`。来源为固定版本的 `unsloth/Qwen3.5-4B-GGUF`，完整哈希与验收状态见[模型来源](../../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)与[校验文件](../../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)。
+- **目标模型位置**：`Assets/StreamingAssets/LingGuang/Models/Qwen3-1.7B-Q4_K_M.gguf`。来源为固定版本的 `unsloth/Qwen3-1.7B-GGUF`，完整哈希与验收状态见[模型来源](../../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)与[校验文件](../../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)。
 - **兼容性**：已检查原始 GGUF 头部，架构 `qwen35`、32 blocks、426 tensors，无额外 MTP/nextn 张量；使用 Unsloth 未修改的量化文件，无需剥离，完整校验与隔离场景实际加载/真实回复已通过。游戏槽 context 4096 不变，不携带多模态 projector，不声明视觉推理。
 - **检索**：当前不携带 embedding GGUF，使用 BM25；可选向量模型与聊天模型不同。
 - **人设**（`LlmPersonas`）：

@@ -86,10 +86,10 @@ YY 从未修改的 `2010desktop` 原生 Messaging 组件树恢复，保留了 Ma
 
 ## 本地模型（LLM for Unity）
 
-2026.10.19.5 的本地聊天模型为 Qwen3.5-4B（Q4_K_M），已完成文件校验及隔离场景 CPU AVX2 真实推理验证；构建及独立 Player 验证以对应发行说明为准。此前 Windows 包使用 Qwen3-4B，其验证结果不能证明新模型已通过。当前由 LLM for Unity（`ai.undream.llm` 3.0.3，底层 LlamaLib v2.0.5）在游戏进程内运行。代码在 `LocalLLM/LocalLlm.cs`，请求调度规则在 `Core/Chat/LlmScheduling.cs`。
+2026.10.20.1 的本地聊天模型为 Qwen3-1.7B（Q4_K_M，1,107,409,472 字节），本轮只完成构建、包体与 SHA256 校验；真实推理与独立 Player 表现尚未验收。此前 Qwen3-4B / Qwen3.5-4B 的验证结果不适用于新模型。当前由 LLM for Unity（`ai.undream.llm` 3.0.3，底层 LlamaLib v2.0.5）在游戏进程内运行。代码在 `LocalLLM/LocalLlm.cs`，请求调度规则在 `Core/Chat/LlmScheduling.cs`。
 
 - 运行库：第一次打开工程时，LLM for Unity 会把 LlamaLib 下载到 `Assets/StreamingAssets/LlamaLib-v2.0.5/`（已 gitignore）。打包时只保留目标平台；Windows 包由 `LocalLLM/Editor/LlamaBuildStrip.cs` 去除 GPU 库，当前方案使用 CPU，目标模型的隔离场景 CPU AVX2 加载与真实回复已通过，完整 Player 性能仍待验证。
-- 目标模型：`StreamingAssets/LingGuang/Models/Qwen3.5-4B-Q4_K_M.gguf`，来自固定版本的 `unsloth/Qwen3.5-4B-GGUF`，原始文件 2,740,937,888 字节。完整版本、已核验 SHA256 与当前进度见 [模型来源](../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)及[校验文件](../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)。
+- 目标模型：`StreamingAssets/LingGuang/Models/Qwen3-1.7B-Q4_K_M.gguf`，来自固定版本的 `unsloth/Qwen3-1.7B-GGUF`，原始文件 1,107,409,472 字节。完整版本、已核验 SHA256 与当前进度见 [模型来源](../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)及[校验文件](../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)。
 - 转换边界：已检查目标 GGUF 头部：`qwen35`、32 blocks、426 tensors，无额外 MTP/nextn 张量。选择使用 Unsloth 未修改的量化文件，不需要也未执行剥离；完整文件校验与隔离场景实际加载/真实回复已通过。`Tools/LocalLLM/strip_qwen_mtp.py` 不适用于本次所选原始文件。模型元数据 context 262144、embedding length 2560，游戏槽 context 仍为 4096；不携带多模态 projector，不声明视觉推理。
 - 已知限制：llama.cpp 原生层如果 abort，会连游戏一起退出（以前只是子进程退出，然后自动重启）。LlamaLib 的 `apply_template` 不能并发，所以 `LocalLlm` 给它加了锁。`SixStageParallelQa` 通过 LlamaLib 自带的 HTTP 服务读 `/props`（POST），slot 占用改从 `LocalLlm.NativeCallsInFlight` 读。
 
@@ -98,7 +98,7 @@ YY 从未修改的 `2010desktop` 原生 Messaging 组件树恢复，保留了 Ma
 回复之前，游戏先找出和对方最新一句相关的几条资料，放进这一轮的状态块。系统提示词不变，所以前缀缓存照常生效。
 
 - 打分：`Core/Chat/Rag.cs` 的 `HybridScorer`，用 BM25 加向量余弦。语义相近（余弦 ≥ .46）就算相关；字面命中但意思无关（余弦 < .36）就过滤掉。没有向量时退回纯 BM25。
-- 当前 Windows 发行配置没有 embedding GGUF，实际检索使用 BM25。可选的 Qwen3-Embedding-0.6B 接入代码位于 `LocalLLM/LocalEmbedder.cs`，与此次 Qwen3.5-4B 聊天模型不同；只有另行提供兼容向量模型后才会启用独立向量服务与缓存，不能把可选实现描述为当前包已携带。
+- 当前 Windows 发行配置没有 embedding GGUF，实际检索使用 BM25。可选的 Qwen3-Embedding-0.6B 接入代码位于 `LocalLLM/LocalEmbedder.cs`，与此次 Qwen3-1.7B 聊天模型不同；只有另行提供兼容向量模型后才会启用独立向量服务与缓存，不能把可选实现描述为当前包已携带。
 - 知识库：`Resources/LingGuang/Rag/qingwen.json` 是晴雯的生活设定，`era2016.json` 是 2016 年的常识和新闻。每条带 `from`/`until`（游戏内日期），过期或还没发生的不会被检索到。可以直接改 JSON。
 - 晴雯：每轮带 3 条自身设定、1 条时代常识、2 段窗口之外的旧聊天。实现在 `GirlfriendPromptText.Knowledge` 和 `GirlfriendPrompt.Recall`。
 - 灵光：`XingGuang/Core/XgSim.Knowledge.cs`。从阶段 3 起能检索被教过的卡和时代新闻，阶段 4 起加上读过的书（按回目和概要检索），阶段 5 起加上和主人的旧对话。研究「词向量」后的语义检索还依赖可用的向量模型；当前无 embedding GGUF，仍使用 BM25。

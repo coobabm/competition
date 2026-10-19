@@ -3,14 +3,14 @@
     "modelEntries": [
         {
             "label": "",
-            "filename": "LingGuang/Models/Qwen3.5-4B-Q4_K_M.gguf",
-            "path": "LingGuang/Models/Qwen3.5-4B-Q4_K_M.gguf",
+            "filename": "LingGuang/Models/Qwen3-1.7B-Q4_K_M.gguf",
+            "path": "LingGuang/Models/Qwen3-1.7B-Q4_K_M.gguf",
             "lora": false,
             "url": "",
             "embeddingOnly": false,
-            "embeddingLength": 2560,
+            "embeddingLength": 2048,
             "includeInBuild": true,
-            "contextLength": 262144
+            "contextLength": 40960
         }
     ],
     "debugMode": 1

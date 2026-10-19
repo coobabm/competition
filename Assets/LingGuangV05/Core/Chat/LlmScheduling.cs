@@ -26,9 +26,10 @@ namespace LingGuangV05.Core.Chat
         /// <summary>Host-RAM prompt cache: idle slots and older prompts are parked here and restored on a match.</summary>
         public const int CacheRamMiB = 2048;
         /// <summary>
-        /// Qwen3.5 is a hybrid (recurrent + attention) model: a prompt can only be resumed from a saved checkpoint, and
-        /// llama.cpp saves one at the start of the last user message. A small spacing lets every turn leave one behind
-        /// (the spacing is llama.cpp's built-in minimum in the LlamaLib build; it is not passed as a flag).
+        /// Prompt-cache checkpoints. The retired Qwen3.5 hybrid (recurrent + attention) model could only resume from a
+        /// saved checkpoint, so these kept every turn's prefix reusable. Qwen3-1.7B is a dense transformer and reuses
+        /// the plain KV prefix, so the setting is no longer required; it is kept (and not passed as a flag) until a
+        /// measured run shows it buys nothing.
         /// </summary>
         public const int CheckpointsPerSlot = 6, CheckpointSpacing = 64;
         public const float VisibleTimeout = 20, BackgroundTimeout = 40, SlowFactor = 3;
