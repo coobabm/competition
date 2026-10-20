@@ -97,8 +97,8 @@ namespace LingGuangV05.Desktop.Story
         void BuildTaskNotifications(PrologueDesk d)
         {
             taskMenu=FindAnyObjectByType<CaseMenuController>();
-            // Keep the entry above the native taskbar instead of covering its pinned app buttons.
-            taskButtonRoot=PrologueDesk.Rect("Tasks entry",d.layer,new Vector2(0,0),new Vector2(0,0),new Vector2(12,54),new Vector2(104,84));
+            // The player opens task hints from the original top-right task-list position.
+            taskButtonRoot=PrologueDesk.Rect("Tasks entry",d.layer,Vector2.one,Vector2.one,new Vector2(-128,-50),new Vector2(-16,-16));
             taskButtonImage=PrologueDesk.Fill(taskButtonRoot,new Color32(42,58,76,255),true);
             var button=taskButtonRoot.gameObject.AddComponent<Button>();button.targetGraphic=taskButtonImage;
             button.onClick.AddListener(()=>{if(!TaskPresentationAllowed())return;if(taskListOpen)CloseTaskList();else OpenTaskList();});
@@ -131,9 +131,9 @@ namespace LingGuangV05.Desktop.Story
 
         void BuildTaskPanel(PrologueDesk d)
         {
-            // Above the 「任务」 button; grows with its rows (Layout in RefreshTaskPanel).
-            taskPanel=PrologueDesk.Rect("Task panel",d.layer,Vector2.zero,Vector2.zero,new Vector2(12,92),new Vector2(12+TaskPanelWidth,92+200));
-            taskPanel.pivot=Vector2.zero;
+            // Below the top-right task button; grows downwards with its rows.
+            taskPanel=PrologueDesk.Rect("Task panel",d.layer,Vector2.one,Vector2.one,new Vector2(-16-TaskPanelWidth,-258),new Vector2(-16,-58));
+            taskPanel.pivot=Vector2.one;taskPanel.anchoredPosition=new Vector2(-16,-58);
             PrologueDesk.Fill(taskPanel,PanelBg,true);
             panelTitle=d.Text(PrologueDesk.Rect("Title",taskPanel,new Vector2(0,1),Vector2.one,new Vector2(16,-34),new Vector2(-40,-10)),"",17,PanelInk,TextAlignmentOptions.MidlineLeft);
             panelTitle.fontStyle=FontStyles.Bold;panelTitle.textWrappingMode=TextWrappingModes.NoWrap;
@@ -230,7 +230,7 @@ namespace LingGuangV05.Desktop.Story
             BindTaskOwner();
             bool show=ready&&lab!=null&&lab.Sim!=null&&lab.Sim.TeachingTreeOpen;
             taskButtonRoot.gameObject.SetActive(ready);
-            taskButtonText.text=GameText.T("任务","Tasks");taskViewCaption.text=GameText.T("查看","View");
+            taskButtonText.text=GameText.T("任务提示","Tasks");taskViewCaption.text=GameText.T("查看","View");
             float now=Time.unscaledTime;
             // Feed the queue (the save) twice a second; collect what happened for one merged notice.
             if(lab!=null&&lab.Sim!=null&&runtime!=null&&runtime.Sim!=null&&!runtime.Sim.InPrologue&&now>=nextTaskTick)

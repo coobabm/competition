@@ -74,8 +74,8 @@ public static class TaskQueueUiChecks
             Need(r, XingGuangController.Instance == oldController && GuideNote.Instance == oldNote && !root.activeInHierarchy, "Inactive component construction does not replace live singleton instances");
             Need(r, (bool)Call(note, "TaskPresentationAllowed"), "Ambient presentation gates permit isolated callback checks (no globals overridden)");
             var entry = Get<RectTransform>(note, "taskButtonRoot"); var panel = Get<RectTransform>(note, "taskPanel");
-            Need(r, entry.anchorMin == Vector2.zero && entry.anchorMax == Vector2.zero && entry.offsetMin == new Vector2(12, 54) && entry.offsetMax == new Vector2(104, 84), "Real task entry geometry is (12,54)-(104,84)");
-            Need(r, entry.offsetMin.y > 42 && panel.offsetMin.y >= entry.offsetMax.y + 8, "Task entry clears reserved bottom strip and panel starts above entry");
+            Need(r, entry.anchorMin == Vector2.one && entry.anchorMax == Vector2.one && entry.offsetMin == new Vector2(-128, -50) && entry.offsetMax == new Vector2(-16, -16), "Task entry is anchored to the top-right desktop corner");
+            Need(r, panel.anchorMax == Vector2.one && panel.pivot == Vector2.one && panel.offsetMax.y <= entry.offsetMin.y - 8, "Task panel opens below the top-right entry and grows downwards");
             Need(r, Mathf.Approximately(panel.rect.width, 380), "Real panel is 380 pixels wide");
             Need(r, entry.GetComponent<Image>().raycastTarget && entry.GetComponent<Button>() != null, "Entry has an actual raycast target and Button callback");
             sim.S.taskActive.AddRange(new[] { "train.first", "streak.three", "labels.hundred", "streak.nine", "mlp" });

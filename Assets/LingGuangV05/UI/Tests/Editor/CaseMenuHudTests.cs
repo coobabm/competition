@@ -12,6 +12,47 @@ namespace LingGuangV05.UI.Tests
     {
         private GameObject host;
 
+        [TestCase(0, 70, true)]
+        [TestCase(90, 70, false)]
+        [TestCase(0, 30, false)]
+        [TestCase(0, 99, false)]
+        public void MoleStrikeRequiresVisibleHeadInsteadOfCellOrSign(float x,float y,bool expected)
+        {
+            var type=Type.GetType("LingGuangV05.Desktop.XingGuang.MiniGames.XgMoleGraphic, Assembly-CSharp");
+            Assert.That(type,Is.Not.Null);
+            host=new GameObject("MoleHeadHitTest",typeof(RectTransform));
+            var rect=(RectTransform)host.transform;rect.pivot=Vector2.zero;rect.sizeDelta=new Vector2(245,100);
+            var mole=host.AddComponent(type);type.GetField("Rise").SetValue(mole,1f);
+            var contains=type.GetMethod("ContainsHead");
+            Assert.That(contains.Invoke(mole,new object[]{new Vector2(122.5f+x,y)}),Is.EqualTo(expected));
+            type.GetField("Rise").SetValue(mole,0f);
+            Assert.That(contains.Invoke(mole,new object[]{new Vector2(122.5f,70)}),Is.False,"Hidden moles cannot be struck");
+        }
+
+        [Test]
+        public void ArchivePanelOffersNewGameAndClosesBeforeBoot()
+        {
+            BuildHud();
+            var hud=host.GetComponent(Type.GetType("LingGuangV05.CaseMenu.CaseMenuHud, Assembly-CSharp"));
+            var type=hud.GetType();
+            type.GetMethod("HideSettings").Invoke(hud,null);
+            var rtHost=new GameObject("InMemoryNewGameRuntime");rtHost.SetActive(false);
+            try
+            {
+                var rt=rtHost.AddComponent<LingGuangV05.Runtime.ChapterOneRuntime>();rt.useDiskSave=false;rt.EnsureInitialized();
+                bool started=false;
+                type.GetMethod("ConfigureTitleActions").Invoke(hud,new object[]{new Func<LingGuangV05.Runtime.ChapterOneRuntime>(()=>rt),new Action(()=>started=true),null,null});
+                type.GetMethod("SetTitleActionsVisible",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(hud,new object[]{true});
+                type.GetMethod("OpenArchives").Invoke(hud,null);
+                var button=host.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="StartNewGame");
+                Assert.That(button.interactable,Is.True);button.onClick.Invoke();
+                Assert.That(rt.Sim.InPrologue,Is.True,"New game replays the opening");
+                Assert.That(type.GetProperty("IsArchiveOpen").GetValue(hud),Is.False);
+                Assert.That(started,Is.True);
+            }
+            finally{UnityEngine.Object.DestroyImmediate(rtHost);}
+        }
+
         [TearDown]
         public void TearDown()
         {

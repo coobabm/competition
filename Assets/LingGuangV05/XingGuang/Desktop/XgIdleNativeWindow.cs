@@ -11,6 +11,8 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XgIdleNativeWindow : MonoBehaviour
     {
         bool active;
+        bool mini;
+        public Vector2 RequestedSize => XgIdleWindow.WindowSize(mini);
         int width,height;
         FullScreenMode mode;
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
@@ -27,6 +29,19 @@ namespace LingGuangV05.Desktop.XingGuang
         int style;
         bool captured;
 #endif
+        public void SetMini(bool value)
+        {
+            if(mini==value)return;
+            mini=value;
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+            if(active&&captured)
+            {
+                StopAllCoroutines();
+                var size=RequestedSize;Screen.SetResolution((int)size.x,(int)size.y,FullScreenMode.Windowed);
+                StartCoroutine(Position(false));
+            }
+#endif
+        }
         public void Enter()
         {
             if(active)return;
@@ -36,18 +51,24 @@ namespace LingGuangV05.Desktop.XingGuang
             captured=handle!=IntPtr.Zero&&GetWindowRect(handle,out original);
             if(!captured){active=false;Debug.LogWarning("Compact window: OS handle unavailable; keeping the current window size.");return;}
             if(captured)style=GetWindowLong(handle,-16);
-            Screen.SetResolution(288,168,FullScreenMode.Windowed);
-            StartCoroutine(Position());
+            var size=RequestedSize;Screen.SetResolution((int)size.x,(int)size.y,FullScreenMode.Windowed);
+            StartCoroutine(Position(true));
 #endif
         }
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
-        IEnumerator Position()
+        IEnumerator Position(bool initial)
         {
             yield return null;yield return new WaitForEndOfFrame();
             if(!active||handle==IntPtr.Zero)yield break;
             if(captured)SetWindowLong(handle,-16,style & ~0x00CF0000);
             if(SystemParametersInfo(0x0030,0,out var work,0))
-                SetWindowPos(handle,IntPtr.Zero,work.right-300,work.bottom-180,288,168,0x0034);
+            {
+                var size=RequestedSize;int w=(int)size.x,h=(int)size.y;
+                Bounds current=default;bool keep=!initial&&GetWindowRect(handle,out current);
+                int x=keep?current.left:work.right-w-12,y=keep?current.top:work.bottom-h-12;
+                x=Math.Max(work.left,Math.Min(x,work.right-w));y=Math.Max(work.top,Math.Min(y,work.bottom-h));
+                SetWindowPos(handle,IntPtr.Zero,x,y,w,h,0x0034);
+            }
         }
 #endif
         public void Restore()

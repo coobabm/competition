@@ -9,12 +9,12 @@ namespace LingGuangV05.CaseMenu
     public sealed partial class CaseMenuHud
     {
         CanvasGroup titleActions, archiveGroup;
-        Button archiveConfirm;
+        Button archiveConfirm, archiveNewGame;
         TMP_Text archiveStatus;
         Func<ChapterOneRuntime> titleRuntime;
         Action archiveStart, quitRequested, prepareArchiveRuntime;
         int archivePage;
-        bool archiveLoaded, pendingArchiveOpen;
+        bool archiveLoaded, pendingArchiveOpen, newGameConfirmation;
         Button archiveClose;
         int selectedArchive;
         static string T(string zh,string en)=>GameText.T(zh,en);
@@ -69,7 +69,7 @@ namespace LingGuangV05.CaseMenu
             if(titleActions==null||!titleActions.interactable||IsSettingsOpen)return;
             var rt=titleRuntime?.Invoke();
             if(rt==null){pendingArchiveOpen=true;prepareArchiveRuntime?.Invoke();return;}
-            archivePage=0;selectedArchive=0;archiveLoaded=false;BuildArchivePage(rt);
+            archivePage=0;selectedArchive=0;archiveLoaded=false;newGameConfirmation=false;BuildArchivePage(rt);
         }
         void BuildArchivePage(ChapterOneRuntime rt)
         {
@@ -96,19 +96,21 @@ namespace LingGuangV05.CaseMenu
             archiveStatus=Label("Status",card.transform,"",17,Muted);Place(archiveStatus.rectTransform,new Vector2(0,0),new Vector2(30,83),new Vector2(840,52));archiveStatus.textWrappingMode=TextWrappingModes.Normal;
             archiveConfirm=ActionButton(card.transform,"LoadSelected",T("读取并开机","Load and power on"),new Vector2(-30,25),LoadSelected);archiveConfirm.interactable=selectedArchive>0&&!archiveLoaded;
             var close=archiveClose=ActionButton(card.transform,"CloseArchives",archiveLoaded?T("关闭并开机","Close and power on"):T("返回","Back"),new Vector2(-270,25),CloseArchiveByPlayer);
-            if(previous!=null)Link(previous,previous.navigation.selectOnUp,page);Link(page,previous,archiveConfirm);Link(archiveConfirm,previous,close);Link(close,archiveConfirm,first);if(first!=null){var n=first.navigation;n.selectOnUp=close;first.navigation=n;}
+            archiveNewGame=ActionButton(card.transform,"StartNewGame",T("开始新游戏","Start new game"),new Vector2(-510,25),StartNewGameFromArchives);
+            if(previous!=null)Link(previous,previous.navigation.selectOnUp,page);Link(page,previous,archiveConfirm);Link(archiveConfirm,previous,close);Link(close,archiveConfirm,archiveNewGame);Link(archiveNewGame,close,first);if(first!=null){var n=first.navigation;n.selectOnUp=archiveNewGame;first.navigation=n;}
             RefreshArchiveSelection();EventSystem.current?.SetSelectedGameObject(close.gameObject);
             if(Application.isPlaying && !GameSettings.ReducedMotion)StartCoroutine(AnimateArchive(archiveGroup,card.rectTransform));
         }
         void SelectArchive(int slot)
-        {selectedArchive=slot;archiveLoaded=false;RefreshArchiveSelection();}
+        {selectedArchive=slot;archiveLoaded=false;newGameConfirmation=false;RefreshArchiveSelection();}
         void RefreshArchiveSelection()
         {
             if(archiveStatus==null)return;
-            archiveStatus.text=archiveLoaded?T("已读取。关闭此面板后开机。","Loaded. Close this panel to power on."):
+            archiveStatus.text=newGameConfirmation?T("将重新播放开场。已有手动存档保留，当前自动存档留作备份。再次点击确认。","Replay the opening. Manual saves are retained; the current autosave is backed up. Click again to confirm."):archiveLoaded?T("已读取。关闭此面板后开机。","Loaded. Close this panel to power on."):
                 selectedArchive>0?T("已选择进度，点击“读取”确认。当前主档保留备份。","Session selected. Confirm Load; the current primary keeps a backup."):
                 (titleRuntime?.Invoke()?.HasAnyArchive ?? false)?T("请选择存档；系统自动档在最后一页。","Choose a save. The system autosave is on the last page."):
-                T("还没有存档。返回标题后点击电源键开始。","No saves yet. Return to the title and press power to begin.");
+                T("还没有存档。点击“开始新游戏”进入。","No saves yet. Click Start new game to begin.");
+            archiveNewGame.GetComponentInChildren<TMP_Text>().text=newGameConfirmation?T("确认开始新游戏","Confirm new game"):T("开始新游戏","Start new game");
             archiveConfirm.interactable=selectedArchive>0&&!archiveLoaded;
             archiveConfirm.GetComponentInChildren<TMP_Text>().text=T("读取","Load");
             archiveClose.GetComponentInChildren<TMP_Text>().text=archiveLoaded?T("关闭并开机","Close and power on"):T("返回","Back");
@@ -129,8 +131,23 @@ namespace LingGuangV05.CaseMenu
         void LoadSelected()
         {
             var rt=titleRuntime?.Invoke();if(rt==null||selectedArchive==0)return;
+            newGameConfirmation=false;
             try{if(!rt.LoadArchive(selectedArchive)){archiveStatus.text=rt.SaveStatus;return;}archiveLoaded=true;RefreshArchiveSelection();}
             catch(Exception e){archiveStatus.text=T("读取失败：","Load failed: ")+e.Message;}
+        }
+        void StartNewGameFromArchives()
+        {
+            var rt=titleRuntime?.Invoke();if(rt==null)return;
+            if(rt.HasAnyArchive&&!newGameConfirmation){newGameConfirmation=true;RefreshArchiveSelection();return;}
+            // ResetProgress archives the primary and its backup before replacing the session.
+            // Manual slots and ending/chapter archives are untouched; backup failure aborts.
+            try
+            {
+                if(!rt.ResetProgress(true)){archiveStatus.text=rt.SaveStatus;return;}
+                archiveLoaded=true;newGameConfirmation=false;
+                CloseArchiveByPlayer();
+            }
+            catch(Exception e){archiveStatus.text=T("无法开始新游戏：","Could not start a new game: ")+e.Message;}
         }
         System.Collections.IEnumerator StartAfterArchiveClosed()
         {

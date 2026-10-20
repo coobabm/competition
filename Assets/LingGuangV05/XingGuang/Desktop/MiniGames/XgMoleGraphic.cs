@@ -63,8 +63,24 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
 
         public void OnPointerDown(PointerEventData e)
         {
-            if (e.button != PointerEventData.InputButton.Left) return;
+            if (e.button != PointerEventData.InputButton.Left ||
+                !RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform,e.position,e.pressEventCamera,out var local) ||
+                !ContainsHead(local)) return;
             Down?.Invoke();
+        }
+
+        // Match the visible upper dome, not the whole 245 x 100 cell, sign or lawn.
+        // Keep the cell's hover raycast for reading the question; only strikes use this shape.
+        public bool ContainsHead(Vector2 local)
+        {
+            if(Rise<.9f || HitTime>=0) return false;
+            var r=rectTransform.rect;
+            float body=BodyHeight*Mathf.Max(0,Rise),dome=Mathf.Min(BodyHalf,body);
+            float signTop=r.yMin+HoleY+SignLift-(1-Mathf.Min(1,Rise))*20+(WideSign?23:15);
+            if(local.y<=signTop)return false;
+            float x=(local.x-r.center.x)/BodyHalf;
+            float y=(local.y-(r.yMin+HoleY+Mathf.Max(0,body-dome)))/dome;
+            return y>=0 && x*x+y*y<=1;
         }
 
         protected override void OnPopulateMesh(VertexHelper vh)

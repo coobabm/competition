@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// Both the square and its price row purchase through <see cref="XgTechTree.Buy"/>, which is the simulation's
     /// own <see cref="XgSim.BuyNode"/>.
     /// </summary>
-    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ICancelHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
+    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ICancelHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, ISelectHandler, IDeselectHandler
     {
         public XgTechEntry entry;
         public XgTechTreePage page;
@@ -28,6 +28,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgTechIcon icon;
         /// <summary>The drawn icon (Resources/LingGuangV05/Icons/tech) when there is one; the vector icon keeps only the padlock then.</summary>
         public Image pic;
+        public XgTechIconSignal signal;
         public TMP_Text glyph, badge, label, cost;
         public Vector2 home;
         bool dragged, purchaseMotion;
@@ -39,12 +40,11 @@ namespace LingGuangV05.Desktop.XingGuang
         // Keep purchase feedback alive when the pointer leaves or the tooltip refreshes.
         internal void HoverMotion(bool on)
         {
+            signal?.Show(on);
             if (purchaseMotion || pressedPointer.HasValue) return;
-            if (!MotionAllowed) { StopMotion(); return; }
-            page.NoteNodeMotion();
             squareMotion?.Kill();
             square.anchoredPosition = Vector2.zero;
-            squareMotion = square.DOScale(on ? 1.08f : 1, .12f).SetUpdate(true);
+            square.localScale = Vector3.one;
         }
 
         internal void PurchaseMotion()
@@ -89,6 +89,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         internal void StopMotion()
         {
+            signal?.Show(false);
             StopSquareMotion();
             revealMotion?.Kill(); revealMotion = null;
             transform.localScale = Vector3.one;
@@ -96,6 +97,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public bool Covers(string id) => entry != null && entry.Covers(id);
         public void OnPointerEnter(PointerEventData e) => page.Hover(this, true);
+        public void OnSelect(BaseEventData e) => page.Hover(this, true);
+        public void OnDeselect(BaseEventData e) => page.Hover(this, false);
         public void OnPointerExit(PointerEventData e)
         {
             if (pressedPointer == e.pointerId) StopSquareMotion();
@@ -121,7 +124,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         public void OnCancel(BaseEventData e) { dragged = true; StopSquareMotion(); }
         public void OnPointerClick(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) page.Click(this); }
-        public void OnBeginDrag(PointerEventData e) { dragged = true; StopSquareMotion(); page.Pan.OnBeginDrag(e); }
+        public void OnBeginDrag(PointerEventData e) { dragged = true; signal?.Show(false); StopSquareMotion(); page.Pan.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => page.Pan.OnDrag(e);
         public void OnEndDrag(PointerEventData e) => page.Pan.OnEndDrag(e);
         /// <summary>The wheel scrolls this square's card when it is too long to show whole; otherwise it pans the tree.</summary>
@@ -194,7 +197,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool next = page.NodeMotionAllowed;
             if (next == allowed && (next || !page.NodeMotionPending)) return;
             allowed = next;
-            if (!next) page?.StopNodeMotion();
+            if (!next) page.StopNodeMotion(nextVisible && nextReduced);
         }
     }
 
@@ -269,10 +272,15 @@ namespace LingGuangV05.Desktop.XingGuang
         internal bool NodeMotionAllowed => NodeMotionVisible && !ReducedMotion;
         internal bool NodeMotionPending { get; private set; }
         internal void NoteNodeMotion() { NodeMotionPending = true; }
-        internal void StopNodeMotion()
+        internal void StopNodeMotion(bool preserveStaticSignal = false)
         {
             foreach (var nodeView in views) nodeView.StopMotion();
             NodeMotionPending = false;
+            // Reduced effects retain the hovered icon's static trace. Restore just that icon,
+            // not the tree's animations, and never revive it in a hidden/unfocused window.
+            if (preserveStaticSignal && ReducedMotion && NodeMotionVisible && Application.isFocused &&
+                hovered != null && hovered.isActiveAndEnabled && (Pan == null || !Pan.Moving))
+                hovered.signal?.Show(true);
         }
         public int VisibleStageCount => Sim == null ? 0 : Sim.S.stage;
         /// <summary>Catalog nodes on squares that are shown now (a ladder counts all its steps).</summary>
@@ -310,7 +318,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Pan = viewport.gameObject.AddComponent<XgPan>(); Pan.content = content; Pan.viewport = viewport;
             Pan.ReduceMotion = Fx.Reduced;
             Pan.minZoom = .5f; Pan.maxZoom = 1.5f;
-            Pan.MotionStarted = () => { hovered = null; HideTooltip(); pendingMotionRefresh = true; };
+            Pan.MotionStarted = () => { hovered?.HoverMotion(false); hovered = null; HideTooltip(); pendingMotionRefresh = true; };
             Pan.MotionFinished = () =>
             {
                 PlayerPrefs.SetFloat("LingGuang.TechZoom", content.localScale.x);
@@ -455,6 +463,8 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(rt, Color.clear).raycastTarget = true;
             var picRt = Rect("Pic", view.square, Vector2.zero, Vector2.one, new Vector2(5, 5), new Vector2(-5, -5));
             view.pic = picRt.gameObject.AddComponent<Image>(); view.pic.raycastTarget = false; view.pic.preserveAspect = true; view.pic.enabled = false;
+            var signalRt = Rect("IconSignal", view.square, Vector2.zero, Vector2.one, new Vector2(5, 5), new Vector2(-5, -5));
+            view.signal = signalRt.gameObject.AddComponent<XgTechIconSignal>(); view.signal.raycastTarget = false; view.signal.enabled = false;
             var iconRt = Rect("Icon", view.square, Vector2.zero, Vector2.one, new Vector2(12, 12), new Vector2(-12, -12));
             iconRt.gameObject.AddComponent<CanvasRenderer>();
             view.icon = iconRt.gameObject.AddComponent<XgTechIcon>(); view.icon.raycastTarget = false;
@@ -728,7 +738,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!built) return;
             RefreshKnowledge();
             if (knowledgeRoot != null && knowledgeRoot.gameObject.activeSelf) return;
-            if (!NodeMotionAllowed) foreach (var nodeView in views) nodeView.StopMotion();
+            if (!NodeMotionAllowed) StopNodeMotion(true);
             if (Pan.Moving) { pendingMotionRefresh = true; return; }
             PaintPasses++;
             Sync(true);
@@ -790,6 +800,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (max > 1) v.badge.text = level + "/" + max;
             v.badge.color = level >= max ? Maxed : XgDark.Ink;
             var cardNode = XgTechTree.Next(e, Sim) ?? e.members[e.members.Count - 1];
+            v.signal.Configure(this, cardNode.id, mystery || atlas && !lit, locked);
             v.label.text = atlas && !lit && node.kind != XgNodeKind.Ability ? Lang.T("？？？") : CardLabel(cardNode);
             v.label.color = locked ? XgDark.Muted : XgDark.Ink;
             double cost = XgTechTree.Cost(e, Sim);
@@ -893,7 +904,10 @@ namespace LingGuangV05.Desktop.XingGuang
             if (on)
             {
                 tipExitAt = -1;
-                if (hovered == v || !v.gameObject.activeInHierarchy) return;
+                if (!v.gameObject.activeInHierarchy) return;
+                // A focus loss stops the signal without changing this page's pointer owner.
+                // Enter/select on the same node must be able to restart that local signal.
+                if (hovered == v) { v.HoverMotion(true); return; }
                 if (hovered != null)
                 {
                     hovered.HoverMotion(false);
@@ -905,7 +919,6 @@ namespace LingGuangV05.Desktop.XingGuang
                     explanationPinned = false;
                     ShowTooltip(v);
                 }
-                Fx.Play(XgJuice.Sfx.Id.Tick, 1.5f, .25f);
                 v.HoverMotion(true);
             }
             else

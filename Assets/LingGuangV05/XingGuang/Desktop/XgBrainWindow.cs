@@ -16,7 +16,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim bound; XgBoard board;
         PrologueDesk desk;
         RectTransform window,client,virtualBrain,taskButton;
-        TMP_Text title,taskLabel,pinLabel,conceptLabel;
+        TMP_Text title,pinLabel,conceptLabel;
         XgBrainWallpaper brain;
         XgBrainWindowFeedback feedback;
         bool Current=>controller!=null&&bound!=null&&ReferenceEquals(bound,controller.Sim);
@@ -69,9 +69,10 @@ namespace LingGuangV05.Desktop.XingGuang
             bool owned=bound.Has("brain.window")&&controller.runtime!=null&&controller.runtime.Sim!=null&&controller.runtime.isActiveAndEnabled&&!controller.runtime.Sim.InPrologue;
             if(!owned){if(taskButton!=null)taskButton.gameObject.SetActive(false);Hide();wasOwned=false;return;}
             if(window==null){desk=PrologueDirector.Desk;if(desk==null)return;Build();}
+            if(taskButton==null)InstallTaskButton();
             if(taskButton!=null&&!taskButton.gameObject.activeSelf)taskButton.gameObject.SetActive(true);
             if(!wasOwned){wasOwned=true;Show();}
-            string name=bound.AiDisplayName+T("的脑子","'s brain");if(name!=lastName){lastName=name;UpdateTitle();if(taskLabel!=null)taskLabel.text=name;}
+            string name=bound.AiDisplayName+T("的脑子","'s brain");if(name!=lastName){lastName=name;UpdateTitle();}
         }
         void Build()
         {
@@ -116,11 +117,12 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach(var rt in canvas.GetComponentsInChildren<RectTransform>(true))if(rt.name=="Taskbar"){bar=rt;break;}
             if(bar==null)return;
             var oldPin=bar.Find("Brain Pin Toggle");if(oldPin!=null)oldPin.gameObject.SetActive(false);
-            var area=bar.Find("Aero Notification Area") as RectTransform;float right=area!=null?area.rect.width:242;
-            taskButton=PrologueDesk.Rect("AI Brain Taskbar",bar,new Vector2(1,0),Vector2.one,new Vector2(-right-334,3),new Vector2(-right-268,-3));
-            var bg=PrologueDesk.Fill(taskButton,new Color32(48,82,107,255));var button=taskButton.gameObject.AddComponent<Button>();button.targetGraphic=bg;button.onClick.AddListener(Show);
-            taskLabel=desk.Text(PrologueDesk.Rect("Text",taskButton,Vector2.zero,Vector2.one,new Vector2(5,0),new Vector2(-5,0)),"",12,Color.white,TextAlignmentOptions.Center);taskLabel.raycastTarget=false;taskLabel.overflowMode=TextOverflowModes.Ellipsis;
-            LingGuangV05.Desktop.UiTip.Add(button,()=>T("打开 ","Open ")+bound.AiDisplayName+T("的脑子 · 关闭后点这里重新打开","'s brain · reopen here after closing"));
+            taskButton=PrologueDesk.Centered("AI Brain Taskbar",bar,Vector2.zero,new Vector2(32,32));
+            XgTaskbarUtilities.Attach(bar,taskButton);
+            var bg=PrologueDesk.Fill(taskButton,new Color32(48,82,107,90));var button=taskButton.gameObject.AddComponent<Button>();button.targetGraphic=bg;
+            button.onClick.AddListener(()=>{if(Visible)Hide();else Show();});
+            var icon=PrologueDesk.Centered("Brain Icon",taskButton,Vector2.zero,new Vector2(28,28)).gameObject.AddComponent<XgBrainTrayGraphic>();icon.raycastTarget=false;
+            LingGuangV05.Desktop.UiTip.Add(button,()=>bound.AiDisplayName+T("的脑子 · 点击显示或收起","'s brain · click to show or hide"));
         }
         void PlaceBesideApp()
         {
@@ -184,6 +186,20 @@ namespace LingGuangV05.Desktop.XingGuang
         void Caption(string value){if(conceptLabel==null)return;conceptLabel.text=value;conceptLabel.gameObject.SetActive(true);conceptUntil=Time.unscaledTime+3;}
         void Detach(){if(bound!=null){bound.NodeBought-=Bought;bound.CardAnswered-=Answered;bound.ComboTier-=Combo;bound.EpochDone-=Epoch;bound.AbilityEmerged-=Ability;bound.PhenomenonFound-=Phenomenon;bound.StageAdvanced-=StageAdvanced;bound.Emerged-=Emerged;bound.EpochStarted-=EpochStarted;bound.Assessed-=Assessed;bound.DataFileInstalled-=DataInstalled;bound.Diverged-=Diverged;}if(board!=null)board.ConceptsChanged-=Concepts;board=null;bound=null;OnsetGate.Clear();pendingStage=pendingAbility=0;pendingEmergence=nanRegion=phenomenonTitle=lastName="";titleUntil=conceptUntil=0;if(conceptLabel!=null)conceptLabel.gameObject.SetActive(false);}
         void OnDestroy(){if(active==this)active=null;Detach();if(window!=null)Destroy(window.gameObject);if(taskButton!=null)Destroy(taskButton.gameObject);}
+    }
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class XgBrainTrayGraphic:MaskableGraphic
+    {
+        protected override void OnPopulateMesh(VertexHelper vh)
+        {
+            vh.Clear();var r=rectTransform.rect;float scale=Mathf.Min(r.width,r.height)/28;
+            var points=new[]{new Vector2(-3,10),new Vector2(-9,5),new Vector2(-9,-3),new Vector2(-3,-9),new Vector2(3,10),new Vector2(9,5),new Vector2(9,-3),new Vector2(3,-9),new Vector2(0,1)};
+            for(int i=0;i<points.Length;i++)points[i]=r.center+points[i]*scale;
+            var edges=new[]{0,1,1,2,2,3,4,5,5,6,6,7,0,4,3,7,1,8,6,8,3,8,4,8};
+            var line=new Color32(134,204,238,255);
+            for(int i=0;i<edges.Length;i+=2)XgDraw.Seg(vh,points[edges[i]],points[edges[i+1]],1.6f*scale,line);
+            for(int i=0;i<points.Length;i++)XgDraw.Disc(vh,points[i],(i==8?2.8f:2)*scale,i==8?new Color32(202,172,255,255):new Color32(164,238,231,255),12);
+        }
     }
     public sealed class XgBrainWindowDrag:MonoBehaviour,IBeginDragHandler,IDragHandler,IPointerDownHandler
     {

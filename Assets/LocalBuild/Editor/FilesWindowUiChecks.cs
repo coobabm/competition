@@ -80,7 +80,7 @@ public static class FilesWindowUiChecks
         double until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
         Canvas.ForceUpdateCanvases();yield return null;capture("files-00-restored-pack-before-import.png");
         Bind(ctl,files,Fresh());oldClick();
-        Need(!files.window.isOn&&!files.CanBrowse&&!files.shortcutRoot.activeSelf,"empty save hides the folder and rejects a previous save's notification callback");
+        Need(!files.window.isOn&&files.CanBrowse&&files.shortcutRoot.activeSelf,"empty save keeps the folder and rejects a previous save's notification callback");
         check("real paid purchase reveals the folder before Data Import; start/completion notices, restored ready files, install/URL gates and stale callback isolation");
     }
     static XgFilesRow Row(XgFilesWindow files,string id)
@@ -233,13 +233,13 @@ public static class FilesWindowUiChecks
             var beforeImport=BeforeImportFrames(ctl,files,capture,check);try{while(beforeImport.MoveNext())yield return beforeImport.Current;}finally{(beforeImport as IDisposable)?.Dispose();}
             language(false);var sim=Fresh();Bind(ctl,files,sim);rt.Sim.S.money=1000;
             double until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
-            Need(!files.shortcutRoot.activeSelf&&!files.CanBrowse,"before purchase folder hidden");files.Show();Need(!files.window.isOn,"before purchase cannot open");
+            Need(files.shortcutRoot.activeSelf&&files.CanBrowse,"folder visible before purchase");files.Show();Need(files.window.isOn,"empty folder opens before purchase");files.window.CloseWindow();
             Need(InstallHint(ctl)!=null&&!InstallHint(ctl).gameObject.activeSelf,"training installation hint respects the existing unowned import gate");
-            yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-01-unowned.png");check("unowned folder hidden and Show denied");
-            var node=XgCatalog.Node(XgSim.DataEntryNode);Need(node!=null&&sim.NodeCost(node)==50,"ordinary data import price is 50");
-            rt.Sim.S.money=49;Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==49,"insufficient funds do not grant access");
-            rt.Sim.S.money=1000;Need(sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==950,"official purchase charges 50 once");
-            Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==950,"duplicate purchase no charge");
+            yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-01-unowned.png");check("empty folder visible and browsable without granting installation");
+            var node=XgCatalog.Node(XgSim.DataEntryNode);Need(node!=null,"data import node exists");double importCost=sim.NodeCost(node);Need(importCost>=100,"ordinary data import base price is at least 100");
+            rt.Sim.S.money=importCost-1;Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==importCost-1,"insufficient funds do not grant access");
+            rt.Sim.S.money=importCost+1000;Need(sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==1000,"official purchase charges the displayed price once");
+            Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==1000,"duplicate purchase no charge");
             ctl.View.Refresh(true);
             Need(InstallHint(ctl).gameObject.activeSelf&&InstallHintText(ctl).Contains("暂无可安装包")&&InstallHintText(ctl).Contains("资料文件夹 → 训练数据"),"owned empty import names the desktop folder without installing anything");
             Need(sim.S.dataFiles.Count==0,"showing empty installation guidance creates no data packs");

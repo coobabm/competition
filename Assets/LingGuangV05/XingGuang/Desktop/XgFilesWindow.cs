@@ -22,10 +22,10 @@ namespace LingGuangV05.Desktop.XingGuang
         public TMP_Text desktopLabel, titleLabel;
         public Canvas sourceCanvas;
         public GameObject shortcutRoot;
-        // Purchased/downloaded files remain browsable before Data Import; installation keeps its own gate.
+        // The desktop folder is always browsable after the opening; installation keeps its technology gate.
         public bool CanBrowse
         {
-            get { var owner=XingGuangController.Instance;return Sim!=null&&(Sim.CanInstallData||Sim.S.dataFiles.Count>0||Sim.S.downloadQueue.Count>0)&&owner!=null&&ReferenceEquals(owner.Sim,Sim)&&owner.runtime!=null&&owner.runtime.Sim!=null&&owner.runtime.isActiveAndEnabled&&!owner.runtime.Sim.InPrologue; }
+            get { var owner=XingGuangController.Instance;return Sim!=null&&owner!=null&&ReferenceEquals(owner.Sim,Sim)&&owner.runtime!=null&&owner.runtime.Sim!=null&&owner.runtime.isActiveAndEnabled&&!owner.runtime.Sim.InPrologue; }
         }
         public XgSim Sim { get; private set; }
         public string DisplayName => T("资料文件夹", "Training files");
@@ -91,7 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Sim = sim; generation++; lastName = null; ResetDataUrl(); BindDownloadFeedback(sim);
             if (window != null && window.isOn) window.CloseWindow();
             UpdateNames();
-            if(shortcutRoot!=null)shortcutRoot.SetActive(CanBrowse);
+            RefreshShortcut();
         }
         void Update()
         {
@@ -101,12 +101,27 @@ namespace LingGuangV05.Desktop.XingGuang
             var owner = XingGuangController.Instance;
             Bind(owner != null ? owner.Sim : null);
             UpdateNames();
-            if(shortcutRoot!=null)shortcutRoot.SetActive(CanBrowse);
+            RefreshShortcut();
             if (window == null || !window.isOn || !window.gameObject.activeInHierarchy || !built || Sim == null) return;
             var visibleGroup=window.GetComponent<CanvasGroup>();if(visibleGroup!=null&&visibleGroup.alpha<.01f)return;
             RefreshDataUrl();
             if (ActivePayload != null) return;
             var key = StateKey(); if (key != snapshot) Refresh();
+        }
+        bool shortcutPlaced;
+        float shortcutArrangeAfter;
+        void RefreshShortcut()
+        {
+            if(shortcutRoot==null)return;
+            bool show=CanBrowse;
+            if(show&&!shortcutRoot.activeSelf)shortcutArrangeAfter=Time.unscaledTime+.5f;
+            shortcutRoot.SetActive(show);
+            if(!show||shortcutPlaced||Time.unscaledTime<shortcutArrangeAfter)return;
+            // Keep this essential folder in the first desktop column, not beyond the monitor
+            // after the older desktop's saved icon order has been restored.
+            shortcutRoot.transform.SetSiblingIndex(0);
+            LingGuangV05.Desktop.Story.DesktopIconOrder.ArrangeNow(shortcutRoot.transform as RectTransform);
+            shortcutPlaced=true;
         }
         string StateKey()
         {
