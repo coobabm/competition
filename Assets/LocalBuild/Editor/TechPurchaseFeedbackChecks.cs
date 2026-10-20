@@ -205,6 +205,22 @@ public static class TechPurchaseFeedbackChecks
             host.sim.NodeBought -= onBought; host.sim = new XgSim(); host.sim.NodeBought += onBought;
             tree.Refresh();
             Check(report, !Motion(node) && node.square.localScale == Vector3.one, "Rebinding simulation cancels previous purchase motion");
+            // The card's own price row is what 「点击价格购买」 points at, and it covers the square's row:
+            // it must buy through the same spend path, not just look like a button.
+            host.visible = true;
+            node = tree.NodeTarget("label.raise").GetComponent<XgTechNodeView>();
+            int cardBought = bought;
+            double cardMoney = host.wallet.money;
+            double cardPrice = host.sim.NodeCost(XgTechTree.Next(node.entry, host.sim));
+            node.OnPointerEnter(pointer);
+            yield return new WaitForSecondsRealtime(.4f); tree.Tick(.4f);
+            Canvas.ForceUpdateCanvases();
+            var cardBar = Field<Image>(tree, "tipCostBar");
+            var cardAction = cardBar != null ? cardBar.GetComponent<XgTechTipPriceAction>() : null;
+            Check(report, Field<RectTransform>(tree, "tooltip").gameObject.activeSelf && Field<XgTechNodeView>(tree, "detailShown") == node
+                && cardBar.raycastTarget && cardAction != null && cardAction.page == tree, "Card price row is a live purchase target for the shown square");
+            ExecuteEvents.Execute(cardAction.gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            Check(report, bought == cardBought + 1 && Math.Abs(cardMoney - host.wallet.money - cardPrice) < 1e-6, "Clicking the card's price row buys exactly the shown price");
             report.status = "passed";
             string dir = Path.Combine(Path.GetTempPath(), "LingGuang-TechFeedback-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(dir);
