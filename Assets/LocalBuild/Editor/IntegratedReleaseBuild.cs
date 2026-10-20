@@ -25,7 +25,7 @@ public static class IntegratedReleaseBuild
         string managerPath=Path.Combine(Application.streamingAssetsPath,"LLMManager.json");
         byte[] oldManager=File.Exists(managerPath)?File.ReadAllBytes(managerPath):null;
         byte[] oldManagerMeta=File.Exists(managerPath+".meta")?File.ReadAllBytes(managerPath+".meta"):null;
-        string version="2026.10.20.3";
+        string version="2026.10.21.1";
         string stamp=DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         string directory=Path.GetFullPath("Build/MyComputerAlive-"+version+"-"+stamp);
         string[] scenes={"Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity","Assets/LingGuangV05/Scenes/Main.unity"};
