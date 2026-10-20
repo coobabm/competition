@@ -124,7 +124,8 @@ namespace LingGuangV05.Desktop.Story
             if (ready && note == null) Build(PrologueDirector.Desk);
             if (note == null) return;
             ready = ready && TaskPresentationAllowed();
-            if (note.gameObject.activeSelf != (ready && taskListOpen)) note.gameObject.SetActive(ready && taskListOpen);
+            // The 任务 panel (GuideNote.Notifications.cs) replaced the yellow note; the guide keeps running behind it (TopStep, Follow).
+            if (note.gameObject.activeSelf) note.gameObject.SetActive(false);
             TickTaskNotifications(ready);
             if (Time.unscaledTime < nextRefresh) return;
             if (!ready)

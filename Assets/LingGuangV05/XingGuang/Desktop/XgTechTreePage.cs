@@ -298,7 +298,7 @@ namespace LingGuangV05.Desktop.XingGuang
             root.gameObject.AddComponent<XgTechMotionWatch>().page = this;
             // One growth route now owns technologies, items and ability progress.
             header = ui.Text(Strip("Header", root, 8, 30, 16, 520), "", 18, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            viewport = Rect("Viewport", root, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -78));
+            viewport = Rect("Viewport", root, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -114));
             viewport.gameObject.AddComponent<CanvasRenderer>();
             var grid = viewport.gameObject.AddComponent<XgGridGraphic>(); grid.color = XgDark.Page;
             viewport.gameObject.AddComponent<RectMask2D>();
@@ -345,6 +345,7 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildTooltip();
             BuildEraCard();
             BuildGrowthShelf();
+            BuildKnowledge();
             built = true;
             Sync(false);
         }
@@ -530,8 +531,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The four frame colours, bottom left, so the states read without the tooltip.</summary>
         void BuildLegend()
         {
-            // On the second header row, right of the stage buttons, so it never covers a square.
-            var box = Rect("Legend", root, Vector2.one, Vector2.one, new Vector2(-12 - 470, -44 - 30), new Vector2(-12, -44));
+            // Reserve a separate third header row for the legend: long English labels must not overlap the tree/knowledge tabs in narrow windows.
+            var box = Rect("Legend", root, Vector2.one, Vector2.one, new Vector2(-12 - 470, -80 - 30), new Vector2(-12, -80));
             box.pivot = Vector2.one;
             Panel(box, new Color32(7, 12, 18, 220)).raycastTarget = false;
             var row = box.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -725,6 +726,8 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (!built) return;
+            RefreshKnowledge();
+            if (knowledgeRoot != null && knowledgeRoot.gameObject.activeSelf) return;
             if (!NodeMotionAllowed) foreach (var nodeView in views) nodeView.StopMotion();
             if (Pan.Moving) { pendingMotionRefresh = true; return; }
             PaintPasses++;
@@ -1362,6 +1365,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Shown()
         {
             if (!built) return;
+            if (knowledgeRoot != null && knowledgeRoot.gameObject.activeSelf) { RefreshKnowledge(); return; }
             hovered = null; HideTooltip();
             Sync(false); Pan.SetView(PlayerPrefs.GetFloat("LingGuang.TechZoom", 1), content.anchoredPosition); FocusFrontier();
         }
@@ -1369,6 +1373,11 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Tick(float dt)
         {
             if (!built) return;
+            if (knowledgeRoot != null && knowledgeRoot.gameObject.activeSelf)
+            {
+                if (knowledgeEnglish != En) RefreshKnowledge();
+                return;
+            }
             if (Pan.Moving) return;
             if (tipExitAt >= 0 && !tipPointerInside && hovered == null && Time.unscaledTime >= tipExitAt)
             {
