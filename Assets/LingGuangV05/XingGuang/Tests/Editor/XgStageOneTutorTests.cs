@@ -31,6 +31,48 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void OpeningThoughtsWaitForVisibleExeAndThreeRealAnswersAndSurviveSave()
+        {
+            var sim = new XgSim(); sim.BeginOpening();
+            Assert.IsNull(sim.TakeTeachingThought(false));
+            Assert.IsFalse(sim.S.teachIntroSaid);
+            Assert.IsTrue(sim.TakeTeachingThought(true).HasValue);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+            var host = new Host();
+            for (int i = 0; i < 2; i++)
+            {
+                var card = sim.Card(XgMemes.SenseDesk);
+                sim.Answer(XgMemes.SenseDesk, card.truth, host);
+                Assert.IsNull(sim.TakeTeachingThought(true), "No third-question thought before three submitted answers");
+            }
+            var third = sim.Card(XgMemes.SenseDesk);
+            sim.Answer(XgMemes.SenseDesk, third.truth, host);
+            Assert.IsNull(sim.TakeTeachingThought(false), "Minimized/closed exe does not narrate");
+            StringAssert.Contains("这都什么破题", sim.TakeTeachingThought(true).Value.zh);
+            var loaded = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S)));
+            Assert.IsNull(loaded.TakeTeachingThought(true), "Saved thoughts do not repeat on reopen/reload");
+        }
+
+        [Test]
+        public void OlderSaveDoesNotBackfillCompletedThoughts()
+        {
+            // Raw XgState defaults contain legacy lenet/rnn and migrate to stage three.
+            // Use a real stage-one save, predating only the thought-version field.
+            var old = new XgSim().S;
+            old.teachingFlow = true; old.teachingThoughtVersion = 0;
+            old.handCorrect = 12; old.epochs = 1;
+            var sim = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(old)));
+            Assert.AreEqual(1, sim.S.stage, "Fixture must remain in the teaching stage after load");
+            Assert.AreEqual(12, sim.TeachingAnswers);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+            Assert.IsTrue(sim.S.teachThirdSaid);
+            Assert.IsTrue(sim.S.teachTreeSaid);
+            Assert.IsTrue(sim.S.teachTrainSaid);
+            Assert.IsTrue(sim.S.teachIntroSaid);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+        }
+
+        [Test]
         public void EveryLessonIsWrittenInBothLanguagesAndNeverSaysTheBannedWord()
         {
             Assert.GreaterOrEqual(XgSim.TutorLessons.Length, 10);

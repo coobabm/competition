@@ -36,7 +36,38 @@ public static class TechPurchaseFeedbackChecks
         Debug.Log("TECH_FEEDBACK_RAYCAST rect=" + rect.name + " screen=" + pointer.position + " size=" + rect.rect + " hits=" + string.Join(",", hits.ConvertAll(hit => hit.gameObject.name + ":" + hit.depth)));
         return hits.Count == 0 ? null : ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject);
     }
-    [Serializable] sealed class Report { public string status = "running"; public List<string> passed = new List<string>(); public List<string> uncovered = new List<string>(); }
+    [Serializable] sealed class Report { public string status = "running"; public List<string> passed = new List<string>(); public List<string> uncovered = new List<string>(); public List<string> screenshots = new List<string>(); }
+    // Render the real fixture Canvas, not a recreated HTML/mock UI. Manual Camera.Render works
+    // in batch PlayMode where WaitForEndOfFrame does not resume. Restore all render state.
+    static void CaptureCanvas(Canvas canvas, string directory, string name, Report report)
+    {
+        var mode = canvas.renderMode; var oldCamera = canvas.worldCamera; float plane = canvas.planeDistance;
+        var oldTarget = RenderTexture.active;
+        GameObject cameraObject = null; RenderTexture target = null; Texture2D pixels = null;
+        try
+        {
+            cameraObject = new GameObject("Temporary technology QA screenshot camera", typeof(Camera));
+            var camera = cameraObject.GetComponent<Camera>(); camera.enabled = false;
+            camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.015f, .025f, .04f);
+            camera.orthographic = true; camera.orthographicSize = 450; camera.nearClipPlane = .01f; camera.farClipPlane = 100;
+            target = new RenderTexture(1400, 900, 24); target.Create(); camera.targetTexture = target;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 1;
+            Canvas.ForceUpdateCanvases(); camera.Render(); RenderTexture.active = target;
+            pixels = new Texture2D(1400, 900, TextureFormat.RGB24, false);
+            pixels.ReadPixels(new Rect(0, 0, 1400, 900), 0, 0); pixels.Apply();
+            string path = Path.Combine(directory, name + ".png"); File.WriteAllBytes(path, pixels.EncodeToPNG());
+            report.screenshots.Add(path);
+        }
+        finally
+        {
+            canvas.renderMode = mode; canvas.worldCamera = oldCamera; canvas.planeDistance = plane;
+            RenderTexture.active = oldTarget;
+            if (pixels != null) UnityEngine.Object.Destroy(pixels);
+            if (cameraObject != null) { cameraObject.GetComponent<Camera>().targetTexture = null; UnityEngine.Object.Destroy(cameraObject); }
+            if (target != null) { target.Release(); UnityEngine.Object.Destroy(target); }
+            Canvas.ForceUpdateCanvases();
+        }
+    }
     static void Check(Report report, bool ok, string label)
     {
         if (!ok) throw new InvalidOperationException("Tech purchase feedback: " + label);
@@ -78,6 +109,8 @@ public static class TechPurchaseFeedbackChecks
     public static IEnumerator Frames()
     {
         var report = new Report();
+        string dir = Path.Combine(Path.GetTempPath(), "LingGuang-TechFeedback-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
         var root = new GameObject("Tech feedback fixture", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster), typeof(AudioListener));
         var eventsGo = new GameObject("Tech feedback events", typeof(EventSystem));
         var host = new PageHost();
@@ -85,9 +118,12 @@ public static class TechPurchaseFeedbackChecks
         bool hadZoom = PlayerPrefs.HasKey("LingGuang.TechZoom");
         float previousZoom = PlayerPrefs.GetFloat("LingGuang.TechZoom", 1);
         int bought = 0;
+        IDisposable locale = null;
         Action<XgNode> onBought = node => { bought++; tree.OnBought(node); tree.Refresh(); };
         try
         {
+            locale = LingGuangV05.Runtime.GameText.Bind(() => "zh-CN");
+            LingGuangV05.Runtime.GameText.PublishChanged();
             root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             var rt = (RectTransform)root.transform; rt.sizeDelta = new Vector2(1400, 900);
             host.juice = root.AddComponent<XgJuice>();
@@ -97,7 +133,7 @@ public static class TechPurchaseFeedbackChecks
             var font = XgUiV4Fonts.Sans;
             Check(report, font != null, "Use the shipped CJK-capable exe font in the actual fixture");
             host.juice.Init(rt, rt, font);
-            host.sim.English = true;
+            host.sim.English = false;
             tree.Init(host, new XgUi(font, null, true));
             tree.Build(rt); tree.Refresh(); host.sim.NodeBought += onBought;
             // Let the overlay/sub-Canvas register and render before testing real raycaster depth.
@@ -127,6 +163,7 @@ public static class TechPurchaseFeedbackChecks
             node.OnPointerEnter(pointer);
             Check(report, Field<RectTransform>(tree, "tooltip").gameObject.activeSelf && Field<XgTechNodeView>(tree, "detailShown") == node
                 && bought == 0 && host.wallet.money == untouchedMoney, "Hover opens immediately without spending or waiting for Tick");
+            CaptureCanvas(root.GetComponent<Canvas>(), dir, "01-node-card", report);
             var priceAction = node.cost.GetComponent<XgTechPriceAction>();
             var priceRect = node.cost.rectTransform;
             Canvas.ForceUpdateCanvases();
@@ -161,13 +198,58 @@ public static class TechPurchaseFeedbackChecks
             Check(report, peak > 1.01f, "Purchase visibly enlarges the node across rendered frames");
             Check(report, node.square.localScale == Vector3.one && !Motion(node), "Purchase returns to exact rest");
 
+            before = host.wallet.money;
+            int ownedLevel = XgTechTree.Level(node.entry, host.sim);
+            node.OnPointerDown(pointer); node.OnPointerUp(pointer); node.OnPointerClick(pointer);
+            yield return null;
+            var knowledge = Field<RectTransform>(tree, "knowledgeRoot");
+            Check(report, knowledge.gameObject.activeInHierarchy && !tree.Pan.viewport.gameObject.activeSelf,
+                "Clicking an owned icon opens its knowledge reader and suspends tree hit targets");
+            var article = Field<XgKnowledge.Entry>(tree, "knowledgeSelected");
+            Check(report, article != null && article.Key == XgTechTreeCopy.KnowledgeFor(node.entry.First, host.sim).Key,
+                "Owned icon selects its own article instead of reusing an unrelated glossary selection");
+            Check(report, Field<int>(tree, "knowledgeCategory") == article.Category,
+                "Synthetic node article selects its own sidebar category, not the previously viewed category");
+            foreach (var text in Field<RectTransform>(tree, "knowledgeDetail").GetComponentsInChildren<TMPro.TMP_Text>())
+                Check(report, text.text != "延伸阅读" && text.text != "Related terms" &&
+                    !text.text.StartsWith("以2016年前后技术为背景", StringComparison.Ordinal) &&
+                    !text.text.StartsWith("Set around 2016.", StringComparison.Ordinal),
+                    "Function-only article has no empty related heading or unrelated historical footer");
+            Check(report, bought == 1 && host.wallet.money == before && XgTechTree.Level(node.entry, host.sim) == ownedLevel,
+                "Opening owned repeatable node does not spend or buy its next level");
+            CaptureCanvas(root.GetComponent<Canvas>(), dir, "02-owned-knowledge", report);
+            Field<XgBtn>(tree, "knowledgeBack").rt.GetComponent<Button>().onClick.Invoke();
+            yield return new WaitForSecondsRealtime(.5f);
+            tree.Pan.CancelMotion();
+            Check(report, !knowledge.gameObject.activeSelf && tree.Pan.viewport.gameObject.activeInHierarchy &&
+                Field<XgTechNodeView>(tree, "detailShown") == node, "Knowledge back button returns to the originating node");
+            CaptureCanvas(root.GetComponent<Canvas>(), dir, "03-return-to-node", report);
+            tree.ToggleExplanation(node); // Close the intentionally pinned return card before later hover checks.
+            Check(report, node.cost.text.Contains("Upgrade") || node.cost.text.Contains("升级"), "Repeatable owned node advertises a separate upgrade price action");
+
+            foreach (var cardView in Field<List<XgTechNodeView>>(tree, "views"))
+            {
+                if (!cardView.gameObject.activeInHierarchy) continue;
+                cardView.label.ForceMeshUpdate(true, true);
+                Check(report, cardView.label.overflowMode != TMPro.TextOverflowModes.Ellipsis &&
+                    !cardView.label.isTextTruncated && !cardView.label.isTextOverflowing,
+                    "Complete rendered technology label fits without ellipsis: " + cardView.entry.id);
+                var shownNode = XgTechTree.Next(cardView.entry, host.sim) ?? cardView.entry.members[cardView.entry.members.Count - 1];
+                if (!XgTechTreeCopy.HasNumericEffect(shownNode, host.sim))
+                {
+                    var tag = XgTechTreeCopy.Tag(shownNode, host.sim);
+                    Check(report, string.IsNullOrEmpty(tag) || !cardView.label.text.Contains(tag),
+                        "Non-numeric node omits metadata: " + cardView.entry.id);
+                }
+            }
+
             host.juice.Clear(); host.wallet.refuse = true; before = host.wallet.money;
-            tree.Click(node);
+            tree.Click(node, true);
             Check(report, bought == 1 && host.wallet.money == before && Waves(host.juice).Count == 0, "Spend rejection cannot debit wallet or emit purchase ring");
-            host.wallet.refuse = false; host.wallet.money = 0; tree.Click(node);
+            host.wallet.refuse = false; host.wallet.money = 0; tree.Click(node, true);
             Check(report, bought == 1 && host.wallet.money == 0 && Waves(host.juice).Count == 0, "Unaffordable click has no purchase feedback");
             host.wallet.money = 1e8;
-            tree.Click(node); yield return null;
+            tree.Click(node, true); yield return null;
             host.juice.Reduced = true; tree.Refresh(); yield return null; yield return null;
             Check(report, tree.Pan.ReduceMotion, "Page watcher propagates reduce preference to pan");
             Check(report, !Motion(node) && node.square.localScale == Vector3.one && node.square.anchoredPosition == Vector2.zero, "Reduce mid-purchase immediately clears node tween and pose");
@@ -178,16 +260,16 @@ public static class TechPurchaseFeedbackChecks
             Check(report, bought == priorBought + 1 && Math.Abs(before - host.wallet.money - price) < 1e-6, "Reduced purchase preserves actual rules and price");
             Check(report, !Motion(node) && node.square.localScale == Vector3.one && Waves(host.juice).Count == 0 && host.juice.ActiveParticles == 0, "Reduced purchase and press start no animation");
             Check(report, AudioIndex != audio, "Reduce does not mute purchase sounds");
-            host.juice.Muted = true; audio = AudioIndex; tree.Click(node);
+            host.juice.Muted = true; audio = AudioIndex; tree.Click(node, true);
             Check(report, AudioIndex == audio, "Mute independently suppresses sounds");
             host.juice.Reduced = false;
             node.OnPointerDown(pointer); host.juice.Reduced = true; yield return null; yield return null;
             Check(report, node.square.localScale == Vector3.one, "Reduce mid-hold clears press without requiring refresh");
-            host.juice.Reduced = false; tree.Click(node); tree.root.gameObject.SetActive(false);
+            host.juice.Reduced = false; tree.Click(node, true); tree.root.gameObject.SetActive(false);
             Check(report, !Motion(node) && node.square.localScale == Vector3.one, "Closing page kills its node animation");
             tree.root.gameObject.SetActive(true); tree.Refresh();
             Check(report, !Motion(node) && node.square.localScale == Vector3.one, "Reopen does not resume stale animation");
-            tree.Click(node); host.visible = false; yield return null; yield return null;
+            tree.Click(node, true); host.visible = false; yield return null; yield return null;
             Check(report, !Motion(node) && node.square.localScale == Vector3.one, "Canvas-group hidden host clears node motion");
             Check(report, !tree.Pan.Moving && !tree.Pan.ReduceMotion, "Hidden host cancels pan without changing the user's reduce preference");
             host.visible = true;
@@ -196,7 +278,7 @@ public static class TechPurchaseFeedbackChecks
             host.visible = false; yield return null; yield return null;
             Check(report, !tree.Pan.Moving, "Same-frame reopen and hide cancels newly pending navigation");
             host.visible = true;
-            tree.Click(node);
+            tree.Click(node, true);
             host.sim.NodeBought -= onBought; host.sim = new XgSim(); host.sim.NodeBought += onBought;
             tree.Refresh();
             Check(report, !Motion(node) && node.square.localScale == Vector3.one, "Rebinding simulation cancels previous purchase motion");
@@ -249,7 +331,14 @@ public static class TechPurchaseFeedbackChecks
                         && Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Catalog immediate hover: " + next.id);
                     liveNode.OnPointerExit(pointer);
                     Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Catalog immediate exit: " + next.id);
-                    liveNode.OnPointerDown(pointer); liveNode.OnPointerUp(pointer); liveNode.OnPointerClick(pointer);
+                    if (levelBefore == 0)
+                    { liveNode.OnPointerDown(pointer); liveNode.OnPointerUp(pointer); liveNode.OnPointerClick(pointer); }
+                    else
+                    {
+                        var upgrade = liveNode.cost.GetComponent<XgTechPriceAction>();
+                        Check(report, upgrade != null, "Repeatable catalog node retains an upgrade action: " + coverageKey);
+                        upgrade.OnPointerDown(pointer); upgrade.OnPointerClick(pointer);
+                    }
                     double difference = Math.Abs(catalogBefore - host.wallet.money - catalogPrice);
                     Check(report, bought == catalogBought + 1 && XgTechTree.Level(entry, host.sim) == levelBefore + 1
                         && difference <= Math.Max(1e-5, Math.Abs(catalogPrice) * 1e-12), "Catalog node click ledger: " + coverageKey);
@@ -296,13 +385,14 @@ public static class TechPurchaseFeedbackChecks
             Debug.Log("TECH_CATALOG_CLICK_COVERAGE exercised=" + exercised.Count + " total=" + XgTechTree.Entries.Count
                 + "; remaining entries retain real stage, quest, ownership and visibility gates");
             report.status = "passed";
-            string dir = Path.Combine(Path.GetTempPath(), "LingGuang-TechFeedback-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(dir);
             string path = Path.Combine(dir, "report.json"); File.WriteAllText(path, JsonUtility.ToJson(report, true));
             Debug.Log("TechPurchaseFeedbackChecks PASS: " + path);
         }
         finally
         {
+            locale?.Dispose();
+            LingGuangV05.Runtime.GameText.PublishChanged();
             host.sim.NodeBought -= onBought;
             host.juice?.Clear();
             UnityEngine.Object.Destroy(root); UnityEngine.Object.Destroy(eventsGo);

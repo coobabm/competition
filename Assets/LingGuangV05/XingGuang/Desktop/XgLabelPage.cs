@@ -744,6 +744,7 @@ namespace LingGuangV05.Desktop.XingGuang
             int level = card.level > 0 ? card.level : Sim.LevelOf(desk), max = XgSim.MaxLevelOf(desk);
             string stars = max > 1 ? "  <color=#E8A317>" + new string('★', Math.Min(level, max)) + "</color><color=#B4B8C2>" + new string('☆', Math.Max(0, max - level)) + "</color>" : "";
             wkTitle.text = T(info.name, info.nameEn);
+            wkRule.gameObject.SetActive(false);
             double handPay = Sim.ManualPayFor(desk, level);
             wkRule.text = T("每题 ¥", "¥") + N(handPay * (card.bounty ? XgSim.BountyMultiplier : 1), "0.00") + T("", " a card")
                 + " · " + T("点错 −¥", "a miss −¥") + N(Sim.HandFineFor(desk, level), "0.00") + " · " + T("连击越高越多", "the higher the combo, the more");

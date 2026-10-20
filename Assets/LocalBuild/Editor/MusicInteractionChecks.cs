@@ -190,7 +190,7 @@ public static class MusicInteractionChecks
                 Check(!manager.repeat&&!manager.shuffle&&!source.loop,"first opening defaults to sequential playlist","repeat/shuffle/source.loop all false, overriding legacy modes");
                 Check(GameMusic.Started&&source.isPlaying,"real window open starts music","Started="+GameMusic.Started+", playing="+source.isPlaying+", queue="+manager.playerQueue.Count);
                 Check(source.clip!=null&&source.clip.name=="emergency_1","correct first track",source.clip==null?"null clip":source.clip.name);
-                Check(ticketsBefore>=0&&ticketsAfter==ticketsBefore+1&&MusicThoughtCount()==1,"one opening thought","InnerVoice ticket "+ticketsBefore+" -> "+ticketsAfter+"; expected line: "+MusicThought);
+                Check(ticketsBefore>=0&&ticketsAfter==ticketsBefore&&MusicThoughtCount()==0,"music open does not repeat prologue thought","InnerVoice ticket "+ticketsBefore+" -> "+ticketsAfter);
                 Wait(2,1);return;
             }
             if(phase==2)

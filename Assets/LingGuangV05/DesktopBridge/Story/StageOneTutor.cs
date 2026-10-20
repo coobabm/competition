@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.Story
 
         void Update()
         {
-            if (replyPending != null && Time.unscaledTime >= replyAt)
+            if (replyPending != null && Time.unscaledTime >= replyAt && !Busy())
             {
                 var lesson = replyPending; replyPending = null;
                 // 老周 now teaches in YY, with answers to pick (LaoZhouYY); the forum DM is the fallback.
@@ -60,14 +60,19 @@ namespace LingGuangV05.Desktop.Story
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (runtime == null || runtime.Sim == null || runtime.TestMode || runtime.Sim.InPrologue) return;
             var sim = GuideNote.TopSim;
-            if (sim != null && sim.S.teachingFlow && !Busy())
+            var lab = LingGuangV05.Desktop.XingGuang.XingGuangController.Instance;
+            if (sim != null && lab != null && ReferenceEquals(lab.Sim, sim) && !Busy())
             {
-                string zh = null, en = null;
-                if (!sim.S.teachIntroSaid) { sim.S.teachIntroSaid = true; zh = "这又是什么鬼？我难道要做题吗？"; en = "What on earth is this? Am I supposed to answer questions?"; }
-                else if (!sim.S.teachThirdSaid && sim.TeachingAnswers >= 3) { sim.S.teachThirdSaid = true; zh = "这都是什么弱智题目？有什么意义啊？……先做完再说吧。"; en = "What are these silly questions? What's the point? …I'll finish them first."; }
-                else if (!sim.S.teachTreeSaid && sim.TeachingTreeOpen) { sim.S.teachTreeSaid = true; zh = "做完了……然后呢？"; en = "Done… now what?"; }
-                else if (!sim.S.teachTrainSaid && sim.S.epochs > 0) { sim.S.teachTrainSaid = true; zh = "……它在答我刚才答的题？所以那几道弱智题，是在教它。"; en = "…It's answering the questions I just answered? So those silly questions were teaching it."; }
-                if (zh != null) { InnerVoice.Say(zh, en); runtime.MarkDirty(); return; }
+                int thoughtVersion = sim.S.teachingThoughtVersion;
+                var thought = sim.TakeTeachingThought(lab.View != null && lab.View.Visible);
+                if (thoughtVersion != sim.S.teachingThoughtVersion) runtime.MarkDirty();
+                if (thought.HasValue)
+                {
+                    var line = thought.Value;
+                    InnerVoice.Say(line.zh, line.en, line.seconds);
+                    runtime.MarkDirty();
+                    return;
+                }
             }
             var step = GuideNote.TopStep;
             string id = step == null ? null : step.id + "|" + step.target;

@@ -239,9 +239,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 string hex = ColorUtility.ToHtmlStringRGB(XgJuice.StreakColor(multiplier));
                 string streakZh = "<color=#" + hex + ">连对 " + combo + " · ×" + multiplier + "</color>" + (toNext > 0 ? "（再对 " + toNext + " 题 ×" + (multiplier + 1) + "）" : "（满倍）");
                 string streakEn = "<color=#" + hex + ">Streak " + combo + " · ×" + multiplier + "</color>" + (toNext > 0 ? " (" + toNext + " more for ×" + (multiplier + 1) + ")" : " (max)");
-                payLine.text = XgUi.T(
-                    streakZh + "　每题 ¥" + basePay.ToString("0.00") + " 加一条样本；每连对两题，下一题加一倍，最高 ×5；快答 +50%；" + (fine > 0 ? "答错扣 ¥" + fine.ToString("0.00") + "并清零" : "答错清零") + "。今天 " + Sim.DayDone + " 条 · ¥" + Sim.DayIncome.ToString("0.00"),
-                    streakEn + "  Each answer ¥" + basePay.ToString("0.00") + " and one sample; every 2 correct answers add 1× from the next answer, up to ×5; quick +50%; " + (fine > 0 ? "a miss costs ¥" + fine.ToString("0.00") + " and resets" : "a miss resets") + ". Today " + Sim.DayDone + " · ¥" + Sim.DayIncome.ToString("0.00"));
+                payLine.text = XgUi.T(streakZh, streakEn);
             }
             bool maxed = Sim.RaiseLevel >= XgCatalog.RaiseMax;
             double cost = Sim.NextRaiseCost;

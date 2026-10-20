@@ -111,7 +111,11 @@ namespace LingGuangV05.Desktop
         void Request(string text, Action action) { status.text = text; pending = action; confirm.Show(true); }
         public void Open()
         {
-            if (runtime.Sim.InPrologue || ui == null) return;
+            if(IsOpen){if(overlay!=null)overlay.SetAsLastSibling();return;}
+            if(runtime==null)runtime=GetComponent<ChapterOneRuntime>();
+            if (runtime?.Sim==null || runtime.Sim.InPrologue) return;
+            // The Start menu can open saves before the Settings window's delayed install pass.
+            if(ui==null)ui=new XgUi(PrologueDesk.CjkFont(),null);
             if (overlay == null) Build();
             tickBefore = runtime.tickEnabled; runtime.tickEnabled = false; IsOpen = true;
             overlay.gameObject.SetActive(true); Refresh();

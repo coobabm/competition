@@ -4,6 +4,7 @@ namespace LingGuangV05.XingGuang
     {
         // Enabled only by BeginOpening: existing saves retain every page they already unlocked.
         public bool teachingFlow;
+        public int teachingThoughtVersion;
         public bool teachIntroSaid, teachThirdSaid, teachTreeSaid, teachTrainSaid;
     }
 
@@ -13,6 +14,44 @@ namespace LingGuangV05.XingGuang
         public bool TeachingTreeOpen => !S.teachingFlow || TeachingAnswers >= 12 || Has("train.curve");
         public bool TeachingTrainOpen => !S.teachingFlow || Has("train.curve");
         public bool TeachingAiReady => Has("label.ai");
+
+        /// <summary>Consume one thought only when the player can see the exe. Progress, not elapsed time, selects it.</summary>
+        public XgVoiceLine? TakeTeachingThought(bool visible)
+        {
+            if (!visible || !S.teachingFlow || S.stage != 1) return null;
+            if (S.teachingThoughtVersion < 1)
+            {
+                // Upgrade existing saves without backfilling lines about actions already completed.
+                S.teachingThoughtVersion = 1;
+                S.teachIntroSaid = true;
+                S.teachThirdSaid |= TeachingAnswers >= 3;
+                S.teachTreeSaid |= TeachingTreeOpen;
+                S.teachTrainSaid |= S.epochs > 0;
+                return null;
+            }
+            if (!S.teachIntroSaid && TeachingAnswers < 3)
+            {
+                S.teachIntroSaid = true;
+                return new XgVoiceLine("这又是什么鬼？我难道要做题吗？", "What on earth is this? Am I supposed to answer questions?", 2.8f);
+            }
+            if (!S.teachThirdSaid && TeachingAnswers >= 3)
+            {
+                // An older save may already be past the introduction. Never replay that stale opening line.
+                S.teachIntroSaid = S.teachThirdSaid = true;
+                return new XgVoiceLine("这都什么破题？有什么意义啊？……先做完再说吧。", "What kind of lousy questions are these? What's the point? …I'll finish them first.", 2.8f);
+            }
+            if (!S.teachTrainSaid && S.epochs > 0)
+            {
+                S.teachTreeSaid = S.teachTrainSaid = true;
+                return new XgVoiceLine("……它在答我刚才答的题？所以那几道破题，是在教它。", "…It's answering the questions I just answered? So those questions were teaching it.", 2.8f);
+            }
+            if (!S.teachTreeSaid && TeachingTreeOpen)
+            {
+                S.teachTreeSaid = true;
+                return new XgVoiceLine("做完了……然后呢？", "Done… now what?", 2.8f);
+            }
+            return null;
+        }
 
         public string TeachingNodeBlocker(XgNode node)
         {

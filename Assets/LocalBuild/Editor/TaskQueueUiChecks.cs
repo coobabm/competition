@@ -83,11 +83,13 @@ public static class TaskQueueUiChecks
             entry.GetComponent<Button>().onClick.Invoke();
             Need(r, Get<bool>(note, "taskListOpen") && panel.gameObject.activeSelf, "Real entry Button opens task panel");
             var rows = Get<Array>(note, "taskRows"); Need(r, rows.Length == 5, "Five actual task rows built");
+            Need(r, !Get<TMP_Text>(note, "panelSub").gameObject.activeSelf, "Redundant task explanation is hidden");
             float previousBottom = 0;
             for (int i = 0; i < rows.Length; i++)
             {
                 object row = rows.GetValue(i); var rt = Get<RectTransform>(row, "rt"); var task = Get<XgTaskDef>(row, "task");
-                Need(r, rt.gameObject.activeSelf && task.id == sim.S.taskActive[i] && rt.rect.height >= 56 && (i == 0 || rt.offsetMax.y <= previousBottom - 7.9f), "Row " + i + " binds correct task and does not overlap previous row");
+                Need(r, rt.gameObject.activeSelf && task.id == sim.S.taskActive[i] && rt.rect.height >= 40 && (i == 0 || rt.offsetMax.y <= previousBottom - 7.9f), "Row " + i + " binds correct task and does not overlap previous row");
+                Need(r, !Get<TMP_Text>(row, "body").gameObject.activeSelf, "Task row retains title and progress without gray explanation");
                 previousBottom = rt.offsetMin.y;
                 Need(r, !string.IsNullOrWhiteSpace(Get<TMP_Text>(row, "title").text) && Get<Button>(row, "go").gameObject.activeSelf, "Row " + i + " has title and live jump button");
             }

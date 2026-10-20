@@ -486,9 +486,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ApplyShellText()
         {
-            if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", GameText.T("深度学习工作站", "deep learning workstation"));
-            else if (title != null) title.text = AiDesktopIdentity.Exe(runtime) + GameText.T("  —  深度学习工作站", "  —  deep learning workstation");
-            if (status != null) status.text = Lang.T("显卡、电费和 ¥ 与家里共用 · 窗口关闭后训练继续");
+            if (chrome != null) chrome.SetTitle((Sim != null ? Sim.AiDisplayName : GameText.T(AppNames.AiZh, AppNames.AiEn)) + ".exe", "");
+            else if (title != null) title.text = AiDesktopIdentity.Exe(runtime);
+            if (status != null) { status.text = ""; status.gameObject.SetActive(false); }
             if (View != null) View.Refresh(true);
         }
     }

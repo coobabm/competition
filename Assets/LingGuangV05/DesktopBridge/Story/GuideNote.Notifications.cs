@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop.Story
     /// </summary>
     public sealed partial class GuideNote
     {
-        const float TaskPanelWidth = 380, TaskRowHeight = 70, TaskMerge = 1.5f, TaskToastStay = 4f, TaskBlinkHalf = .5f;
+        const float TaskPanelWidth = 380, TaskRowHeight = 52, TaskMerge = 1.5f, TaskToastStay = 4f, TaskBlinkHalf = .5f;
         const int TaskBlinkToggles = 6;
         const float TaskClearAfter = 3f, TaskTickEvery = .5f;
         static readonly Color PanelBg = new Color32(22, 28, 36, 250), PanelRow = new Color32(29, 37, 48, 255), PanelLine = new Color32(42, 52, 64, 255);
@@ -142,13 +142,13 @@ namespace LingGuangV05.Desktop.Story
             d.Text(PrologueDesk.Rect("Label",x,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),"×",18,PanelSoft,TextAlignmentOptions.Center);
             xButton.onClick.AddListener(CloseTaskList);
             panelSub=d.Text(PrologueDesk.Rect("Sub",taskPanel,new Vector2(0,1),Vector2.one,new Vector2(16,-54),new Vector2(-16,-34)),"",12,PanelDim,TextAlignmentOptions.MidlineLeft);
-            panelSub.textWrappingMode=TextWrappingModes.NoWrap;
+            panelSub.gameObject.SetActive(false);
 
             // 「眼下最该做」: the guide's current step, one line, its own 去看看.
-            panelNow=PrologueDesk.Rect("Now",taskPanel,new Vector2(0,1),Vector2.one,new Vector2(12,-90),new Vector2(-12,-60));
+            panelNow=PrologueDesk.Rect("Now",taskPanel,new Vector2(0,1),Vector2.one,new Vector2(12,-92),new Vector2(-12,-40));
             PrologueDesk.Fill(panelNow,new Color32(36,46,30,255),false);
             panelNowLabel=d.Text(PrologueDesk.Rect("Label",panelNow,Vector2.zero,Vector2.one,new Vector2(10,0),new Vector2(-84,0)),"",13,new Color32(240,226,160,255),TextAlignmentOptions.MidlineLeft);
-            panelNowLabel.textWrappingMode=TextWrappingModes.NoWrap;panelNowLabel.overflowMode=TextOverflowModes.Ellipsis;
+            panelNowLabel.textWrappingMode=TextWrappingModes.Normal;panelNowLabel.overflowMode=TextOverflowModes.Truncate;panelNowLabel.enableAutoSizing=true;panelNowLabel.fontSizeMin=10;panelNowLabel.fontSizeMax=13;
             GoButton(d,panelNow,()=>{var s=TopStep;if(s!=null&&Follow(s))CloseTaskList();});
 
             for(int i=0;i<taskRows.Length;i++)
@@ -194,11 +194,11 @@ namespace LingGuangV05.Desktop.Story
             var sim=lab.Sim;var c=new XgTaskContext(sim,House0);bool en=GameText.IsEnglish;
             var shown=sim.TasksShown;int waiting=sim.TasksWaiting;
             panelTitle.text=GameText.T("任务","Tasks")+"  <size=13><color=#98a2ab>"+shown.Count+"/"+XgSim.TaskCapacity+(waiting>0?GameText.T(" · +"+waiting+" 排队中"," · +"+waiting+" waiting"):"")+"</color></size>";
-            panelSub.text=GameText.T("进度来自游戏 · 这里只提醒，不替你完成","Progress comes from the game · reminders only");
+            panelSub.text="";
             var now=TopStep;bool hasNow=now!=null&&runtime!=null&&runtime.Sim!=null&&!runtime.Sim.InPrologue;
             panelNow.gameObject.SetActive(hasNow);
             if(hasNow)panelNowLabel.text=GameText.T("眼下最该做：","Right now: ")+now.Text(en);
-            float y=hasNow?98:64;
+            float y=hasNow?100:42;
             for(int i=0;i<taskRows.Length;i++)
             {
                 var r=taskRows[i];var t=i<shown.Count?XgTaskBook.Find(shown[i]):null;r.task=t;
@@ -206,18 +206,18 @@ namespace LingGuangV05.Desktop.Story
                 if(t==null)continue;
                 bool done=sim.TaskDone(t.id);
                 r.title.text=(done?"<color=#3fcf8e>✓</color> ":"")+t.Title(en);
-                r.body.text=t.Body(en);
+                r.body.text="";r.body.gameObject.SetActive(false);
                 r.group.alpha=done?.6f:1;
                 bool bar=t.HasProgress;
                 r.bar.gameObject.SetActive(bar);r.progress.gameObject.SetActive(bar);
                 if(bar){r.fill.anchorMax=new Vector2(done?1:(float)t.Fraction(c),1);r.progress.text=done?"":t.ProgressText(c);}
                 r.go.gameObject.SetActive(!done&&t.Jump()!=null);
-                float h=bar?TaskRowHeight:56;
+                float h=bar?TaskRowHeight:40;
                 r.rt.offsetMin=new Vector2(12,-y-h);r.rt.offsetMax=new Vector2(-12,-y);
                 y+=h+8;
             }
             panelEmpty.gameObject.SetActive(shown.Count==0);
-            if(shown.Count==0){panelEmpty.text=GameText.T("还没有任务。\n<size=13>先去教页答几题。</size>","No tasks yet.\n<size=13>Answer a few cards on Teach first.</size>");y+=70;}
+            if(shown.Count==0){panelEmpty.text=GameText.T("还没有任务。","No tasks yet.");y+=70;}
             var names=new List<string>();foreach(var id in sim.S.taskWaiting){var w=XgTaskBook.Find(id);if(w!=null)names.Add(w.Title(en));}
             panelWaiting.gameObject.SetActive(names.Count>0);
             if(names.Count>0){panelWaiting.text=GameText.T("排队中：","Waiting: ")+string.Join(GameText.T("、",", "),names);y+=24;}

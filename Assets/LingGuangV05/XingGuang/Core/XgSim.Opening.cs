@@ -77,6 +77,7 @@ namespace LingGuangV05.XingGuang
             if (!S.gradualSystems || S.openingFocus || OpeningLegacyProgress()) return;
             S.openingFocus = true;
             S.teachingFlow = true;
+            S.teachingThoughtVersion = 1;
             S.desksOpen.RemoveAll(id => !OpeningDesk(id));
             foreach (var d in XgCatalog.Desks) if (OpeningDesk(d.id) && !S.desksOpen.Contains(d.id)) S.desksOpen.Add(d.id);
             S.desk = XgMemes.SenseDesk;

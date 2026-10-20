@@ -143,10 +143,10 @@ namespace HongmengOS.Aero2010.Editor
             var vlg = content.gameObject.AddComponent<VerticalLayoutGroup>(); vlg.childControlWidth = true; vlg.childControlHeight = false; vlg.childForceExpandWidth = true; vlg.childForceExpandHeight = false; vlg.spacing = 2; vlg.padding = new RectOffset(1, 1, 1, 1);
             content.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize; scroll.content = content; scroll.viewport = viewport;
             var entries = new List<AeroStartMenu.ProgramEntry>();
-            var gameSettings = ProgramRow("Settings", content, Icon("Settings"));
-            gameSettings.name = "Game Settings";
-            UnityEventTools.AddPersistentListener(gameSettings.onClick, control.OpenSettings);
-            entries.Add(new AeroStartMenu.ProgramEntry { title = "Settings", searchKeywords = "设置 游戏 音量 全屏 帮助 settings volume fullscreen help", row = gameSettings.gameObject, gameSettings = true });
+            var gameSettings = ProgramRow("Saves", content, null);
+            gameSettings.name = "Game Archives";
+            UnityEventTools.AddPersistentListener(gameSettings.onClick, control.OpenArchives);
+            entries.Add(new AeroStartMenu.ProgramEntry { title = "Saves", searchKeywords = "存档 保存 读取 章节 saves save load chapters", row = gameSettings.gameObject, gameArchives = true });
             var desktopList = desktop.Find("Desktop List");
             if (desktopList != null)
                 foreach (Transform item in desktopList)

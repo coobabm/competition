@@ -183,7 +183,7 @@ namespace LingGuangV05.Desktop
                 if (!source.isPlaying) return;
                 started = wasPlaying = true;
                 mix.FadeIn();
-                InnerVoice.Say("开机第一件事当然是来首歌听听......", "First things first after booting up: put on some music......");
+                // The new-game prologue already owns the music thought; later player opens only start playback.
                 return;
             }
         }

@@ -48,9 +48,12 @@ public static class StartMenuSettingsChecks
             var menu = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<AeroStartMenu>(true)).Single();
             menu.Close();
             for (int i = 0; i < 3; i++) { menu.Toggle(); menu.Close(); }
-            Check(menu.programs.Count(entry => entry.gameSettings) == 1, "Repeated opening adds exactly one settings entry.");
-            var entry = menu.programs.Single(item => item.gameSettings);
-            Check(entry.row.transform.GetSiblingIndex() == 0, "Settings is first in the scrollable program list.");
+            Check(menu.programs.Count(entry => entry.gameArchives) == 1 && !menu.programs.Any(entry=>entry.gameSettings), "Repeated opening migrates the extra settings row to exactly one saves entry.");
+            var entry = menu.programs.Single(item => item.gameArchives);
+            Check(entry.row.transform.GetSiblingIndex() == 0, "Saves is first in the scrollable program list.");
+            Check(entry.row.GetComponentInChildren<AeroSaveMenuIcon>(true)!=null,"Saves has its own compact floppy icon");
+            Check(entry.row.GetComponentInChildren<AeroSaveMenuIcon>(true).GetComponent<CanvasRenderer>()!=null,"Saves icon has its required CanvasRenderer");
+            Check(menu.programs.Where(item=>item.window!=null&&item.window.name=="Messaging").All(item=>item.title=="YY"&&item.row.GetComponentInChildren<TMP_Text>(true).text=="YY"),"Messaging menu labels use YY");
             var rightColumn=menu.panel.Find("Places And System");
             Check(rightColumn!=null,"Actual start menu has its documents/music column");
             var rightSettings=rightColumn.Find("Game Settings Shortcut");
@@ -58,14 +61,16 @@ public static class StartMenuSettingsChecks
             Check(rightSettings.GetComponentInChildren<TMP_Text>(true).text=="设置","Right-column shortcut has a clear Chinese settings label");
             var rightRect=(RectTransform)rightSettings;
             CheckRightSettingsLayout(menu,rightRect,rightColumn);
-            Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "设置", "Chinese settings label.");
-            menu.Toggle(); menu.SetSearch("音量");
-            Check(entry.row.activeSelf, "Chinese settings keyword search.");
-            menu.SubmitSearch("音量");
+            Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "存档", "Chinese saves label.");
+            menu.Toggle(); menu.SetSearch("存档");
+            Check(entry.row.activeSelf, "Chinese saves keyword search.");
+            CheckSavesShortcut(menu,entry);
+            menu.Toggle();
+            rightSettings.GetComponent<Button>().onClick.Invoke();
             var fallback = menu.GetComponent<DesktopSettingsOverlay>();
             Check(fallback != null, "Direct Main uses the shared HUD fallback.");
             var directHud = (CaseMenuHud)typeof(DesktopSettingsOverlay).GetField("hud", PrivateInstance).GetValue(fallback);
-            Check(directHud != null && directHud.IsSettingsOpen && !menu.menu.activeSelf, "Search submit opens settings and closes Start.");
+            Check(directHud != null && directHud.IsSettingsOpen && !menu.menu.activeSelf, "Retained right shortcut opens settings and closes Start.");
             Check(directHud.transform.parent == null, "Fallback is rooted outside the offscreen LCD canvas.");
             var slider = directHud.GetComponentsInChildren<Slider>(true).Single();
             slider.value = .31f;
@@ -111,10 +116,10 @@ public static class StartMenuSettingsChecks
 
             locale.Dispose(); locale = GameText.Bind(() => GameText.English);
             menu.Toggle();
-            Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "Settings", "Reopen updates the English menu label.");
+            Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "Saves", "Reopen updates the English saves label.");
             Check(rightSettings.GetComponentInChildren<TMP_Text>(true).text=="Settings","Right-column shortcut updates its English label");
-            menu.SetSearch("settings"); menu.SubmitSearch("settings");
-            Check(titleHud.IsSettingsOpen, "English search opens the same title HUD.");
+            rightSettings.GetComponent<Button>().onClick.Invoke();
+            Check(titleHud.IsSettingsOpen, "English settings shortcut opens the same title HUD.");
             Check(titleHud.GetComponentsInChildren<TMP_Text>(true).Single(label => label.name == "SettingsTitle").text == "Settings", "Reused HUD refreshes English settings labels.");
             title.CloseSettings();
             Debug.Log("START_MENU_SETTINGS_PASS " + checks + ". Actual Main start-menu and HUD callbacks in isolated EditMode; title entered state injected. Not full boot, physical input, native fullscreen, or disk-save acceptance.");
@@ -130,6 +135,22 @@ public static class StartMenuSettingsChecks
             if (existed[2]) PlayerPrefs.SetInt(keys[2], fullscreenPref); else PlayerPrefs.DeleteKey(keys[2]);
             PlayerPrefs.Save(); AudioListener.volume = listenerVolume; Screen.fullScreen = fullscreen;
         }
+    }
+
+    static void CheckSavesShortcut(AeroStartMenu menu,AeroStartMenu.ProgramEntry entry)
+    {
+            var runtime=Object.FindAnyObjectByType<ChapterOneRuntime>(FindObjectsInactive.Include);
+            Check(runtime!=null&&runtime.Sim==null,"Additive editor scene runtime has not opened any player save");
+            runtime.useDiskSave=false;runtime.EnsureInitialized();
+            var profile=LingGuangV05.Core.PrologueProfile.Read("嘴硬心软");profile.name="存档测试";profile.self="我";profile.callMe="你";
+            Check(runtime.CompletePrologue(profile),"In-memory saves fixture leaves opening without disk writes");
+            var saves=runtime.GetComponent<SaveSlotsPanel>();
+            typeof(SaveSlotsPanel).GetField("ui",PrivateInstance).SetValue(saves,null);
+            entry.row.GetComponent<Button>().onClick.Invoke();
+            Check(saves!=null&&SaveSlotsPanel.IsOpen&&!menu.menu.activeSelf,"Saves shortcut opens existing save UI before delayed Settings install");
+            saves.Open();Check(!runtime.tickEnabled,"Opening saves twice keeps simulation paused without replacing original tick state");
+            typeof(SaveSlotsPanel).GetMethod("Close",PrivateInstance).Invoke(saves,null);
+            Check(!SaveSlotsPanel.IsOpen&&runtime.tickEnabled,"Closing saves restores simulation ticking");
     }
 
     static void CheckRightSettingsLayout(AeroStartMenu menu,RectTransform settings,Transform column)

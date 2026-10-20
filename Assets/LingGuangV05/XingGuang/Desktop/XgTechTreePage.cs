@@ -141,7 +141,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) dragged = false; }
         public void OnPointerClick(PointerEventData e)
         {
-            if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) node.page.Click(node);
+            if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) node.page.Click(node, true);
         }
         public void OnBeginDrag(PointerEventData e) { dragged = true; node.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => node.OnDrag(e);
@@ -159,7 +159,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (page == null || e.button != PointerEventData.InputButton.Left || e.dragging) return;
             var shown = page.DetailShown;
-            if (shown != null) page.Click(shown);
+            if (shown != null) page.Click(shown, true);
         }
     }
 
@@ -486,8 +486,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // Names are what the player reads: two lines at most under the square, shrinking only for long English names.
             view.label = ui.Text(Rect("Name", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f + 5, -70), new Vector2(SlotWidth * .5f - 5, -4)), "", 14, XgDark.Ink, TextAlignmentOptions.Top);
             view.label.fontStyle = FontStyles.Normal; view.label.lineSpacing = 3;
-            view.label.textWrappingMode = TextWrappingModes.NoWrap; view.label.overflowMode = TextOverflowModes.Ellipsis;
-            view.label.enableAutoSizing = false;
+            view.label.textWrappingMode = TextWrappingModes.Normal; view.label.overflowMode = TextOverflowModes.Overflow;
+            view.label.enableAutoSizing = true; view.label.fontSizeMin = 8; view.label.fontSizeMax = 14;
             view.cost = ui.Text(Rect("Cost", rt, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(-SlotWidth * .5f, -92), new Vector2(SlotWidth * .5f, -72)), "", 14, XgDark.Money, TextAlignmentOptions.Center);
             view.cost.fontStyle = FontStyles.Bold; view.cost.textWrappingMode = TextWrappingModes.NoWrap;
             view.cost.raycastTarget = true;
@@ -811,17 +811,15 @@ namespace LingGuangV05.Desktop.XingGuang
             else if (lit) v.cost.text = max > 1 ? "<color=#FFBE28>MAX</color>" : "<color=#5DCAA5>✓</color>";
             else if (mystery || double.IsInfinity(cost) || next == null || !Sim.NodeVisible(next)) v.cost.text = "";
             else v.cost.text = Hex(status == XgSim.NodeStatus.Buyable ? XgDark.Money : status == XgSim.NodeStatus.TooExpensive ? Unaffordable : XgDark.Muted)
-                + T("购买 ", "Buy ") + (cost > 0 ? "¥" + Money(cost) : T("免费", "Free")) + "</color>";
+                + (level > 0 ? T("升级 ", "Upgrade ") : T("购买 ", "Buy ")) + (cost > 0 ? "¥" + Money(cost) : T("免费", "Free")) + "</color>";
         }
 
         string CardLabel(XgNode node)
         {
-            string card = XgTechTreeCopy.Card(node, Sim);
-            int line = card.IndexOf('\n');
-            if (line < 0) return card;
-            string tag = XgTechTreeCopy.Tag(node, Sim);
-            string metadata = string.IsNullOrEmpty(tag) ? "" : "\n<size=10>" + Hex(XgDark.Muted) + tag + "</color></size>";
-            return card.Substring(0, line) + metadata + "\n<size=12>" + Hex(XgDark.Muted) + card.Substring(line + 1) + "</color></size>";
+            string tag = XgTechTreeCopy.HasNumericEffect(node, Sim) ? XgTechTreeCopy.Tag(node, Sim) : "";
+            string metadata = string.IsNullOrEmpty(tag) ? "" : "\n<size=72%>" + Hex(XgDark.Muted) + tag + "</color></size>";
+            return "<nobr>" + XgTechTreeCopy.Name(node, Sim) + "</nobr>" + metadata + "\n<size=85%>" + Hex(XgDark.Muted)
+                + XgTechTreeCopy.Effect(node, Sim).Replace("▶ ", "") + "</color></size>";
         }
 
         void PaintLinks()
@@ -941,10 +939,16 @@ namespace LingGuangV05.Desktop.XingGuang
             return true;
         }
 
-        public void Click(XgTechNodeView v)
+        public void Click(XgTechNodeView v, bool purchaseUpgrade = false)
         {
             if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
             var e = v.entry;
+            if (XgTechTree.Level(e, Sim) > 0 && (!purchaseUpgrade || XgTechTree.Next(e, Sim) == null))
+            {
+                OpenNodeKnowledge(e.First);
+                Fx.Play(XgJuice.Sfx.Id.Click);
+                return;
+            }
             if (e.First != null && XgSim.IsAtlas(e.First) && view != null && view.Train.ShowTrainingReview(e.First.target)) return;
             var status = XgTechTree.Status(e, Sim, Host);
             if (status == XgSim.NodeStatus.Buyable)
@@ -1212,7 +1216,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string word = lit ? Hex(Maxed) + (max > 1 ? T("已满级", "Maxed") : T("已拥有", "Owned"))
                 : status == XgSim.NodeStatus.Buyable ? Hex(Affordable) + T("可以买", "Affordable")
                 : status == XgSim.NodeStatus.TooExpensive ? Hex(Unaffordable) + T("钱不够", "Too expensive") : Hex(LockedGrey) + T("未解锁", "Locked");
-            string tag = XgTechTreeCopy.Tag(next ?? node, Sim);
+            string tag = XgTechTreeCopy.HasNumericEffect(next ?? node, Sim) ? XgTechTreeCopy.Tag(next ?? node, Sim) : "";
             tipLevel.text = (string.IsNullOrEmpty(tag) ? "" : "<size=12>" + tag + "</size>\n") + "Lv. " + level + " / " + max + "    " + word + "</color>";
             var shownNode = next ?? e.members[e.members.Count - 1];
             body.Append(XgTechTreeCopy.Detail(shownNode, Sim));
@@ -1251,11 +1255,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (d.itemsAny.Length > 0) body.Append(T("（同组只计一次）", " (once per group)"));
                 body.Append("</color>");
             }
-            if (discounts.Count > 0) body.Append(T("\n门槛优惠拥有即生效，无需采用该结构；不同优惠相乘。进阶仍需参数、数据及本阶段训练达标，再由你确认。", "\nThreshold discounts apply on ownership, without selecting the architecture; separate discounts multiply. Advancing still needs the parameter, data and stage-training requirements, then your confirmation."));
             tipBody.text = body.ToString();
             if (lit) SetCost(Maxed, max > 1 ? T("已满级 · MAX", "MAX") : "✓ " + T("已拥有", "Owned"));
             else if (double.IsInfinity(cost)) SetCost(LockedGrey, T("未解锁", "Locked"));
-            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + T("点击节点购买", "click node to buy"));
+            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + (level > 0 ? T("点击价格升级", "click price to upgrade") : T("点击节点购买", "click node to buy")));
             else if (status == XgSim.NodeStatus.TooExpensive) SetCost(Color.Lerp(Unaffordable, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("还差 ¥", "short ¥") + Money(cost - Host.Money));
             else SetCost(Color.Lerp(LockedGrey, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("未解锁", "locked"));
         }

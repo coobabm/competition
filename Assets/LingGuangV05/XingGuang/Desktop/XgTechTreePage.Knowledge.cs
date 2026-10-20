@@ -88,8 +88,15 @@ namespace LingGuangV05.Desktop.XingGuang
             return body;
         }
 
+        void OpenNodeKnowledge(XgNode node)
+        {
+            var article = XgTechTreeCopy.KnowledgeFor(node, Sim);
+            if (article == null) return;
+            OpenKnowledge(null, article.Category, node.id, article);
+        }
+
         // Also serves as the destination for terminology-card title/category links.
-        public void OpenKnowledge(string term = null, int category = -1, string originNode = null)
+        public void OpenKnowledge(string term = null, int category = -1, string originNode = null, XgKnowledge.Entry article = null)
         {
             if (knowledgeRoot == null) return;
             knowledgeOrigin = originNode ?? (detailShown != null ? detailShown.entry.First.id : null);
@@ -97,8 +104,8 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var node in views) node.StopMotion();
             knowledgeCategory = Mathf.Clamp(category, -1, 3);
             knowledgeSearch.SetTextWithoutNotify("");
-            knowledgeSelected = XgKnowledge.Find(term) ?? knowledgeSelected ?? XgKnowledge.Find("算力");
-            if (term != null && knowledgeSelected != null) knowledgeCategory = knowledgeSelected.Category;
+            knowledgeSelected = article ?? XgKnowledge.Find(term) ?? knowledgeSelected ?? XgKnowledge.Find("算力");
+            if ((article != null || term != null) && knowledgeSelected != null) knowledgeCategory = knowledgeSelected.Category;
             knowledgeRoot.gameObject.SetActive(true); knowledgeRoot.SetAsLastSibling();
             // Suspend the tree sub-canvas while reading: it must not raycast through this page.
             viewport.gameObject.SetActive(false);
@@ -180,15 +187,17 @@ namespace LingGuangV05.Desktop.XingGuang
                 KnowledgeText(T("游戏中在哪里遇到", "Where it appears in the game"), 15, XgDark.Muted);
                 KnowledgeText(usage, 16, XgDark.Ink);
             }
-            KnowledgeText(T("延伸阅读", "Related terms"), 16, XgDark.Muted);
+            bool hasRelated = false;
             foreach (string key in entry.Related)
             {
                 var target = XgKnowledge.Find(key);
                 if (target == null) continue;
+                if (!hasRelated) { KnowledgeText(T("延伸阅读", "Related terms"), 16, XgDark.Muted); hasRelated = true; }
                 var b = ui.Button(knowledgeDetail, target.Name(En) + " ›", () => { SelectKnowledge(target); }, 15);
                 b.rt.gameObject.AddComponent<LayoutElement>().preferredHeight = 40;
             }
-            KnowledgeText(T("以2016年前后技术为背景；游戏数值是简化规则，后续技术会注明年代。", "Set around 2016. Game values simplify reality; later technologies are marked with historical context."), 13, XgDark.Muted);
+            if (Array.IndexOf(XgKnowledge.Entries, entry) >= 0)
+                KnowledgeText(T("以2016年前后技术为背景；游戏数值是简化规则，后续技术会注明年代。", "Set around 2016. Game values simplify reality; later technologies are marked with historical context."), 13, XgDark.Muted);
             knowledgeDetail.anchoredPosition = Vector2.zero;
             for (int i = 0; i < knowledgeRows.Count; i++) knowledgeRows[i].Set(KnowledgeRowName(XgKnowledge.Entries[i]), true, XgKnowledge.Entries[i] == entry ? XgDark.AccentSoft : XgDark.Button);
         }

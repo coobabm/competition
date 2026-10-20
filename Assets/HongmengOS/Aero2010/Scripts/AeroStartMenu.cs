@@ -21,6 +21,7 @@ namespace HongmengOS.Aero2010
             public GameObject row;
             public WindowManager window;
             public bool gameSettings;
+            public bool gameArchives;
         }
         public GameObject menu;
         public RectTransform panel;
@@ -40,6 +41,7 @@ namespace HongmengOS.Aero2010
         private void Start()
         {
             EnsureSettingsEntry();
+            EnsureProgramNames();
             EnsureRightSettingsShortcut();
             if (FindAnyObjectByType<CaseMenuController>() == null) GameSettings.ApplySaved();
         }
@@ -47,7 +49,8 @@ namespace HongmengOS.Aero2010
         private void EnsureSettingsEntry()
         {
             if (programs == null || programScroll == null || programScroll.content == null) return;
-            int index = Array.FindIndex(programs, entry => entry.gameSettings);
+            // Migrate the extra settings row from older scenes into the requested saves shortcut.
+            int index = Array.FindIndex(programs, entry => entry.gameArchives || entry.gameSettings);
             if (index < 0)
             {
                 var template = Array.Find(programs, entry => controlPanelWindow != null && entry.window == controlPanelWindow && entry.row != null).row;
@@ -55,26 +58,52 @@ namespace HongmengOS.Aero2010
                 if (template == null) template = Array.Find(programs, entry => entry.row != null && entry.row.GetComponent<UnityEngine.UI.Button>() != null).row;
                 if (template == null) return;
                 var row = Instantiate(template, programScroll.content);
-                row.name = "Game Settings";
+                row.name = "Game Archives";
                 // This row has its own action; never retain the copied app's serialized launch listeners.
                 row.GetComponent<UnityEngine.UI.Button>().onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
                 var icon = row.transform.Find("Icon");
                 if (icon != null && !hasSettingsIcon) icon.gameObject.SetActive(false);
                 var entries = new List<ProgramEntry>(programs);
-                entries.Insert(0, new ProgramEntry { title = "Settings", searchKeywords = "设置 游戏 音量 全屏 帮助 settings volume fullscreen help", row = row, gameSettings = true });
+                entries.Insert(0, new ProgramEntry { title = "Saves", searchKeywords = "存档 保存 读取 章节 saves load chapters", row = row, gameArchives = true });
                 programs = entries.ToArray(); index = 0;
             }
             var settings = programs[index];
             if (settings.row == null) return;
+            settings.gameSettings=false;settings.gameArchives=true;settings.title="Saves";
+            settings.searchKeywords="存档 保存 读取 章节 saves save load chapters";programs[index]=settings;
+            settings.row.name="Game Archives";
             settings.row.transform.SetAsFirstSibling();
             var button = settings.row.GetComponent<UnityEngine.UI.Button>();
             if (button == null) return;
             button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-            button.onClick.AddListener(OpenSettings);
+            button.onClick.AddListener(OpenArchives);
             foreach (var binding in settings.row.GetComponentsInChildren<LingGuangV05.Desktop.DesktopLocalizedText>(true))
                 binding.enabled = false;
-            foreach (var label in settings.row.GetComponentsInChildren<TMP_Text>(true)) label.text = GameText.T("设置", "Settings");
+            foreach (var label in settings.row.GetComponentsInChildren<TMP_Text>(true)) label.text = GameText.T("存档", "Saves");
+            var previousIcon=settings.row.transform.Find("Icon");if(previousIcon!=null)previousIcon.gameObject.SetActive(false);
+            var iconRect=settings.row.transform.Find("Archive Icon") as RectTransform;
+            if(iconRect==null)
+            {
+                var iconObject=new GameObject("Archive Icon",typeof(RectTransform));iconObject.transform.SetParent(settings.row.transform,false);iconRect=(RectTransform)iconObject.transform;
+                iconRect.anchorMin=iconRect.anchorMax=new Vector2(0,.5f);iconRect.pivot=new Vector2(.5f,.5f);iconRect.anchoredPosition=new Vector2(28,0);iconRect.sizeDelta=new Vector2(32,32);
+            }
+            iconRect.gameObject.SetActive(true);
+            var saveIcon=iconRect.GetComponent<AeroSaveMenuIcon>()??iconRect.gameObject.AddComponent<AeroSaveMenuIcon>();saveIcon.raycastTarget=false;
             button.interactable = true;
+        }
+
+        private void EnsureProgramNames()
+        {
+            if(programs==null)return;
+            for(int i=0;i<programs.Length;i++)
+            {
+                var entry=programs[i];
+                if(entry.title!="Messaging"&&entry.title!="即时通讯"&&!(entry.window!=null&&entry.window.name=="Messaging"))continue;
+                entry.title="YY";entry.searchKeywords="YY 即时通讯 聊天 messaging chat";programs[i]=entry;
+                if(entry.row==null)continue;
+                foreach(var binding in entry.row.GetComponentsInChildren<LingGuangV05.Desktop.DesktopLocalizedText>(true))binding.enabled=false;
+                foreach(var label in entry.row.GetComponentsInChildren<TMP_Text>(true))label.text="YY";
+            }
         }
 
         private void EnsureRightSettingsShortcut()
@@ -124,6 +153,7 @@ namespace HongmengOS.Aero2010
             if (menu.activeSelf) { Close(); return; }
             menu.SetActive(true);
             EnsureSettingsEntry();
+            EnsureProgramNames();
             EnsureRightSettingsShortcut();
             menu.transform.SetAsLastSibling();
             if (panel != null && menu.transform is RectTransform bounds)
@@ -163,7 +193,7 @@ namespace HongmengOS.Aero2010
                     var entry = programs[i];
                     bool show = query.Length == 0 || (!string.IsNullOrEmpty(entry.title) && entry.title.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
                         || (!string.IsNullOrEmpty(entry.searchKeywords) && entry.searchKeywords.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
-                    show &= entry.gameSettings || entry.window != null && LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(entry.window);
+                    show &= entry.gameArchives || entry.gameSettings || entry.window != null && LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(entry.window);
                     if (entry.row != null && entry.row.activeSelf != show) entry.row.SetActive(show);
                     if (show) matches++;
                 }
@@ -181,8 +211,9 @@ namespace HongmengOS.Aero2010
         {
             if (programs == null) return;
             for (int i = 0; i < programs.Length; i++)
-                if (programs[i].row != null && programs[i].row.activeSelf && (programs[i].gameSettings || programs[i].window != null))
+                if (programs[i].row != null && programs[i].row.activeSelf && (programs[i].gameArchives || programs[i].gameSettings || programs[i].window != null))
                 {
+                    if (programs[i].gameArchives) { OpenArchives(); return; }
                     if (programs[i].gameSettings) { OpenSettings(); return; }
                     programs[i].window.OpenWindow();
                     Close();
@@ -191,6 +222,13 @@ namespace HongmengOS.Aero2010
         }
 
         public void OpenComputer() { Open(computerWindow); }
+        public void OpenArchives()
+        {
+            Close();
+            var runtime=FindAnyObjectByType<ChapterOneRuntime>();if(runtime==null)return;
+            LingGuangV05.Desktop.SaveSlotsPanel.Attach(runtime);
+            runtime.GetComponent<LingGuangV05.Desktop.SaveSlotsPanel>().Open();
+        }
         public void OpenSettings()
         {
             Close();
@@ -244,5 +282,22 @@ namespace HongmengOS.Aero2010
         }
 
         private static int CompareWindowOrder(WindowManager a, WindowManager b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex());
+    }
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class AeroSaveMenuIcon : UnityEngine.UI.MaskableGraphic
+    {
+        protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper vh)
+        {
+            vh.Clear();var r=rectTransform.rect;float s=Mathf.Min(r.width,r.height)/32;var c=r.center;
+            var blue=new Color32(69,136,181,255);var edge=new Color32(35,80,116,255);var paper=new Color32(224,239,243,255);
+            Vector2 P(float x,float y)=>c+new Vector2(x,y)*s;
+            LingGuangV05.Desktop.XingGuang.XgDraw.Poly(vh,new[]{P(-12,-13),P(12,-13),P(12,8),P(7,13),P(-12,13)},edge);
+            LingGuangV05.Desktop.XingGuang.XgDraw.Poly(vh,new[]{P(-10,-11),P(10,-11),P(10,7),P(6,11),P(-10,11)},blue);
+            LingGuangV05.Desktop.XingGuang.XgDraw.Box(vh,P(-7,3),P(5,11),paper);
+            LingGuangV05.Desktop.XingGuang.XgDraw.Box(vh,P(1,5),P(4,10),edge);
+            LingGuangV05.Desktop.XingGuang.XgDraw.Box(vh,P(-7,-11),P(7,-2),paper);
+            LingGuangV05.Desktop.XingGuang.XgDraw.Seg(vh,P(-4,-5),P(4,-5),s,new Color32(121,159,178,255));
+            LingGuangV05.Desktop.XingGuang.XgDraw.Seg(vh,P(-4,-8),P(3,-8),s,new Color32(121,159,178,255));
+        }
     }
 }

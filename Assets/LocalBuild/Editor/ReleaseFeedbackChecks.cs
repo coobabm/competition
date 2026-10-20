@@ -8,6 +8,15 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 public static class ReleaseFeedbackChecks
 {
+    public static void RunScreenshotUI()
+    {
+        var isolatedRoot=LingGuangV05.Runtime.Persistence.VerificationSavePaths.Root;
+        if(string.IsNullOrEmpty(isolatedRoot))throw new Exception("External verification save root required");
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
+        StartMenuSettingsChecks.Run();
+        TaskQueueUiChecks.Run();
+        Debug.Log("SCREENSHOT_FEEDBACK_UI_PASS");
+    }
     public static void BuildChecked() { TechIconResourceChecks.Run(); IntegratedReleaseBuild.Run(); }
     public static void RunIdle() { EditorSearchWarmup.Run(); DesignWallpaperSmoke.RunIdle(); }
     public static void Run()
