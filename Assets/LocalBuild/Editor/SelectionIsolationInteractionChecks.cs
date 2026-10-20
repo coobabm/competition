@@ -127,7 +127,7 @@ public static class SelectionIsolationInteractionChecks
                 Require(user!=null&&user.isActiveAndEnabled,"Desktop user manager unavailable");
                 user.ShowDesktop();
                 File.WriteAllText(Path.Combine(Root,"fixture-lab.json"),JsonUtility.ToJson(lab.S,true));
-                Require(XgTeachingPacks.All.Length==19,"Expected manifest's 19 packs");frames=0;phase=10;return;
+                Require(XgTeachingPacks.All.Length==20,"Expected manifest's 20 packs");frames=0;phase=10;return;
             }
             if(phase==10)
             {

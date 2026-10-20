@@ -33,9 +33,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 row.bg = Panel(row.rt, HallFill);
                 var button = row.rt.gameObject.AddComponent<Button>(); button.targetGraphic = row.bg;
                 button.onClick.AddListener(() => {
-                    if (!Sim.SelectTeachingPack(id)) {
-                        host.ShowToast(Sim.TeachingPackBlocker(p), 3);
-                        if (p.buy && Sim.TeachingTreeOpen) host.ShowTab("tree");
+                    var owner = Sim;
+                    if (owner == null || displayedSim != owner || !row.rt.gameObject.activeInHierarchy) return;
+                    if (!owner.SelectTeachingPack(id)) {
+                        host.ShowToast(owner.TeachingPackBlocker(p), 3);
+                        // Purchased-but-uninstalled packs keep their installation guidance.
+                        if (p.buy && !owner.Has(p.NodeId)) FocusTeachingPurchase(owner, p.NodeId);
                         return;
                     }
                     classicDesks.Remove(p.dataset); deskGame.Stop(); Refresh();

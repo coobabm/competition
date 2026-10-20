@@ -90,7 +90,7 @@ namespace LingGuangV05.Core.Chat
     /// BM25 plus embedding similarity. A document is relevant when its meaning is close (cosine ≥
     /// <see cref="SemanticFloor"/>), so 「期末准备得怎么样」 finds 「11 月 2 日考概率论」, or when it shares words with the
     /// query and is not unrelated in meaning (cosine ≥ <see cref="LexicalFloor"/>: 「女排那场你看了吗」 shares 「你看了」
-    /// with 「迪士尼开园了，你看了好多照片」 at cosine .28). The score is mostly the cosine, with a saturating bonus for
+    /// with 「迪士尼开园了，你看了好多照片」 at cosine .28 (bge-small-zh .36)). The score is mostly the cosine, with a saturating bonus for
     /// shared words. A document not embedded yet is judged by BM25 alone; without vectors (no embedding model,
     /// <see cref="Semantic"/> off) it is exactly BM25.
     /// </summary>
@@ -101,10 +101,13 @@ namespace LingGuangV05.Core.Chat
         /// <summary>Off: words only (the lab AI before it has researched 词向量).</summary>
         public bool Semantic = true;
         public readonly Bm25Scorer Lexical = new Bm25Scorer();
-        /// <summary>Cosine from which a document counts as related (Qwen3-Embedding-0.6B: related ≈ .48–.62, unrelated ≈ .25–.42).</summary>
+        /// <summary>
+        /// Cosine from which a document counts as related (Qwen3-Embedding-0.6B: related ≈ .48–.62, unrelated ≈ .25–.42;
+        /// bge-small-zh-v1.5 agrees best with Qwen's judgement at the same .46).
+        /// </summary>
         public double SemanticFloor = .46;
-        /// <summary>Cosine a document sharing words still needs (measured: word-only noise ≤ .32, real matches ≥ .43).</summary>
-        public double LexicalFloor = .36;
+        /// <summary>Cosine a document sharing words still needs (measured: word-only noise ≤ .32 Qwen / ≤ .36 bge, real matches ≥ .43).</summary>
+        public double LexicalFloor = .38;
         public double LexicalWeight = .3, LexicalHalf = 5;
 
         public double[] Score(MemoryQuery query, IList<string> documents)

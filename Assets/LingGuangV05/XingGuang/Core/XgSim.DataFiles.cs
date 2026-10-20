@@ -71,6 +71,7 @@ namespace LingGuangV05.XingGuang
             foreach (var run in Runs) if (run.dataset == file.dataset) Evaluate(run);
             CheckDesks();
             Say(T("数据包装好了。", "Data pack installed."));
+            RecordInstalledDataForReview(file);
             DataFileInstalled?.Invoke(fileId);
             return true;
         }

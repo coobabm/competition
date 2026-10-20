@@ -121,7 +121,9 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(bar, XgDark.Panel3).raycastTarget = false;
             var field = Rect("Field", bar, Vector2.zero, Vector2.one, new Vector2(64, 4), new Vector2(-8, -4));
             Panel(field, XgDark.Page).raycastTarget = false;
-            ui.Text(Rect("Nav", bar, Vector2.zero, new Vector2(0, 1), new Vector2(8, 0), new Vector2(60, 0)), "◀ ▶", 12, XgDark.Dim, TextAlignmentOptions.MidlineLeft).textWrappingMode = TextWrappingModes.NoWrap;
+            var nextPage = ui.Button(bar, "→", () => { if (running) { Fx.Play(XgJuice.Sfx.Id.Click); LoadPage(); } }, 16);
+            XgUi.PlaceTopLeft(nextPage, 8, 2, 48, 24);
+            UiTip.Add(nextPage.rt, "翻到下一篇百科。购买自主浏览后会自动翻页。", "Next encyclopedia article. Autonomous browsing turns pages automatically.");
             urlText = ui.Text(Rect("Url", field, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
             urlText.textWrappingMode = TextWrappingModes.NoWrap; urlText.overflowMode = TextOverflowModes.Ellipsis;
 
@@ -175,6 +177,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         public void Open(bool introScene)
         {
+            if (Sim == null || !Sim.SpiderReadingUnlocked) return;
             if (!built) Build();
             if (introScene && !running) intro = true;
             root.gameObject.SetActive(true);
@@ -583,6 +586,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (pendingGeometry && !PrepareGeometry()) return;
             if (article == null || spider == null) return;
             dt = Mathf.Min(dt, .05f);
+            spider.maxSpeed = 70 * spider.size * Sim.SpiderTravelSpeed;
             startsThisFrame = 0;
             if (running && !intro && !Sim.CrawlActive) Finish();
             if (running && !intro)
@@ -654,7 +658,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 spider.eyeBoost = Mathf.MoveTowards(spider.eyeBoost, lookLeft > 0 ? 1 : 0, dt * 3);
                 spider.pos.x = Mathf.Clamp(spider.pos.x, 10, width - 10);
                 // Reached the bottom: follow a link to the next article.
-                if (running && -spider.pos.y > contentHeight - 150) { LoadPage(); return; }
+                if (running && Sim.SpiderAutomaticBrowsing && -spider.pos.y > contentHeight - 150) { LoadPage(); return; }
             }
             TickSophon(dt, width, viewH);
 

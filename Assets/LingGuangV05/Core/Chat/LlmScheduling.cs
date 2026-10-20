@@ -26,10 +26,9 @@ namespace LingGuangV05.Core.Chat
         /// <summary>Host-RAM prompt cache: idle slots and older prompts are parked here and restored on a match.</summary>
         public const int CacheRamMiB = 2048;
         /// <summary>
-        /// Prompt-cache checkpoints. The retired Qwen3.5 hybrid (recurrent + attention) model could only resume from a
-        /// saved checkpoint, so these kept every turn's prefix reusable. Qwen3-1.7B is a dense transformer and reuses
-        /// the plain KV prefix, so the setting is no longer required; it is kept (and not passed as a flag) until a
-        /// measured run shows it buys nothing.
+        /// Qwen3.5 is a hybrid (recurrent + attention) model: a prompt can only be resumed from a saved checkpoint, and
+        /// llama.cpp saves one at the start of the last user message. A small spacing lets every turn leave one behind
+        /// (the spacing is llama.cpp's built-in minimum in the LlamaLib build; it is not passed as a flag).
         /// </summary>
         public const int CheckpointsPerSlot = 6, CheckpointSpacing = 64;
         public const float VisibleTimeout = 20, BackgroundTimeout = 40, SlowFactor = 3;
@@ -157,6 +156,46 @@ namespace LingGuangV05.Core.Chat
             var m = TrailingClosedThinking.Match(templated);
             if (!m.Success) return templated;
             return templated.Substring(0, m.Index) + (thinking ? OpenThinking : ClosedThinking);
+        }
+
+        /// <summary>
+        /// Reasoning tokens a thinking request may spend before its answer budget starts (stage 6's full open). The
+        /// request's own token count is the answer; LocalLlm asks for both at once. Qwen3.5-2B rarely closes its
+        /// reasoning in under ~250 tokens, and at ~60 tok/s on a GPU 384 + an answer stays well inside the 20 s limit.
+        /// </summary>
+        public const int ThinkingTokens = 384;
+
+        /// <summary>
+        /// Appended to reasoning that hit <see cref="ThinkingTokens"/> without closing, so the model answers from what
+        /// it has (Qwen's own early-exit wording; never shown to the player).
+        /// </summary>
+        public const string ForcedThinkingClose = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n";
+
+        /// <summary>
+        /// The answer after the model's reasoning. When the prompt opened a block (<paramref name="opened"/>), only
+        /// "…&lt;/think&gt;" appears and the answer is what follows the last close; a block that never closed is all
+        /// reasoning and yields null, so the caller's fallback runs. Without an opened block a closed one is cut out and
+        /// an unclosed "&lt;think&gt;" the model started by itself drops everything after it.
+        /// </summary>
+        public static string AfterThinking(string content, bool opened)
+        {
+            if (string.IsNullOrEmpty(content)) return content;
+            int end = content.LastIndexOf("</think>", StringComparison.Ordinal);
+            if (end >= 0) return content.Substring(end + "</think>".Length);
+            if (opened) return null;
+            int start = content.IndexOf("<think>", StringComparison.Ordinal);
+            return start >= 0 ? content.Substring(0, start) : content;
+        }
+
+        /// <summary>
+        /// Whether a thinking completion ran out of tokens still inside its reasoning, so a second request should close
+        /// the block (<see cref="ForcedThinkingClose"/>) and ask for the answer. A cancelled or stopped one does not.
+        /// </summary>
+        public static bool ThinkingCutOff(string content, string stopType, bool stoppedLimit, int predicted, int limit)
+        {
+            if (string.IsNullOrEmpty(content) || content.Contains("</think>")) return false;
+            if (!string.IsNullOrEmpty(stopType)) return stopType == "limit";
+            return stoppedLimit || (limit > 0 && predicted >= limit);
         }
 
         /// <summary>Player-facing note for a model that does not run fully on the GPU; empty when it does.</summary>

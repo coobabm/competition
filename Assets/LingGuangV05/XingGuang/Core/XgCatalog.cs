@@ -469,6 +469,8 @@ namespace LingGuangV05.XingGuang
             AddTeachingPackNodes(list);
             AddPersonaPackNodes(list);
             XgTrainingCatalog.AddNodes(list);
+            AddSpiderNodes(list);
+            AddDataReviewNode(list);
             XgDailyLife.AddNodes(list);
             XgBoardRecords.AddNodes(list);
             XgBoardLogic.AddNodes(list);
@@ -547,7 +549,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public static readonly double[] RaiseMultipliers = { 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         public static int RaiseMax { get { return RaiseMultipliers.Length - 1; } }
-        public static double RaiseCost(int level) { return Math.Round(10 * Math.Pow(1.7, level)); }
+        public static double RaiseCost(int level) { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(Math.Round(10 * Math.Pow(1.7, level))); }
         static readonly string[] RaiseTitlesZh = { "实习标注员", "标注员", "熟练标注员", "资深标注员", "标注组长", "质检主管", "项目经理", "标注总监", "合伙人", "首席标注官" };
         static readonly string[] RaiseTitlesEn = { "Intern labeller", "Labeller", "Skilled labeller", "Senior labeller", "Team lead", "QA lead", "Project manager", "Labelling director", "Partner", "Chief labelling officer" };
         /// <summary>Job title for a raise level: a new title every two raises, the last one at max.</summary>
@@ -561,8 +563,11 @@ namespace LingGuangV05.XingGuang
         public static readonly double[] GradeBonus = { 0, 20, 60, 200, 800 };
         public static readonly int[] GradeScore = { 0, 300, 600, 800, 950 };
         public static readonly string[] GradeNames = { "D", "C", "B", "A", "S" };
-        /// <summary>Combo tiers: 10 不错, 25 手热了, 50 上头, 100 灵光一闪.</summary>
-        public static readonly int[] ComboTiers = { 10, 25, 50, 100 };
+        /// <summary>
+        /// Combo tiers, one per pay multiplier: after two right answers in a row the third pays double (3 in a row ×2 不错),
+        /// then each two completed answers unlock the following tier: 5 ×3 手热了, 7 ×4 上头, 9 ×5 灵光一闪 (the cap, <see cref="XgSim.ComboMaxMultiplier"/>).
+        /// </summary>
+        public static readonly int[] ComboTiers = { 3, 5, 7, 9 };
         public static readonly string[] ComboTierNames = { "不错", "手热了", "上头", "灵光一闪" };
         public static readonly string[] ComboTierNamesEn = { "Nice", "Warming up", "On fire", "Flash of insight" };
 
@@ -654,8 +659,10 @@ namespace LingGuangV05.XingGuang
         /// <summary>
         /// Hand labelling pays this many times <see cref="LabelPay"/> (every desk). Only hand answers (and the dragged
         /// spider's, which are hand answers) get it: automatic labels, contracts and the platform's fines keep their rates.
+        /// 1.5 since the streak pays up to ×5 (was 2.5 under the old +5%-per-hit, ×2 cap): a 90%-accurate hand earns about
+        /// a third more than before, a 60% one about a fifth less, so the money follows the streak rather than the clicks.
         /// </summary>
-        public const double HandPayScale = 2.5;
+        public const double HandPayScale = 1.5;
         /// <summary>The 算术 desk is true/false: a wrong pick costs this fraction of a right answer's base pay.</summary>
         public const double ArithFine = .5;
         /// <summary>Every other desk: a wrong hand answer costs this fraction of a right answer's base pay (0 = free misses).</summary>
@@ -665,7 +672,7 @@ namespace LingGuangV05.XingGuang
         public const int AutoMaxLevel = 10;
         /// <summary>Cards per second per auto-answer level (needs the GPUs running).</summary>
         public const double AutoRatePerLevel = .15;
-        public static double AutoCost(int level) { return 60 * Math.Pow(1.7, level); }
+        public static double AutoCost(int level) { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(60 * Math.Pow(1.7, level)); }
 
         /// <summary>Lines for the sequence cards (public-domain Tang poems).</summary>
         public static readonly string[] PoemLines =
@@ -776,7 +783,7 @@ namespace LingGuangV05.XingGuang
             foreach (var n in Nodes)
             {
                 if (!nodes.Add(n.id)) throw new InvalidOperationException("dup node " + n.id);
-                if (n.parent != null && Node(n.parent) == null) throw new InvalidOperationException("node parent " + n.id);
+                if (!string.IsNullOrEmpty(n.parent) && Node(n.parent) == null) throw new InvalidOperationException("node parent " + n.id);
                 foreach (var need in n.needs) if (Node(need) == null) throw new InvalidOperationException("node needs " + n.id);
                 if (n.kind == XgNodeKind.Arch && Arch(n.target) == null) throw new InvalidOperationException("node arch " + n.id);
                 if (n.kind == XgNodeKind.Dataset && Dataset(n.target) == null) throw new InvalidOperationException("node data " + n.id);

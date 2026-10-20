@@ -17,6 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 case "make24": return new XgTwentyFourPack(c);
                 case "odd_one": return new XgOddPack(c);
                 case "sequence": return new XgSequencePack(c);
+                case "sudoku": return new XgSudokuPack(c);
                 case "danmu_mood": return new XgPackDanmu(c);
                 case "meme_word": return new XgMemeCaptionPack(c);
                 case "stage_photo": case "mnist_write": case "captcha": return new XgPackPhotos(c);

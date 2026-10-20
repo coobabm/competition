@@ -87,7 +87,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             T("Reveal",35,340,830,95,XgUi.T($"你：{(k<0?"未选择":Mood(options[k]))}   {C.Sim.AiDisplayName}：{Mood(options[ai])}   正解：{Mood(item[1])}\n"+(k==ai?"暗号对上了。":"没有对上，记住这次差别。"),$"You: {(k<0?"no pick":Mood(options[k]))}   {C.Sim.AiDisplayName}: {Mood(options[ai])}   Answer: {Mood(item[1])}\n"+(k==ai?"The code matched.":"No match; remember this difference.")),22);
             B("Next",685,428,180,40,XgUi.T("下一条","Next comment"),Next,18);
         }
-        public override void Tick(float dt){if(disposed||answered||!C.IsActive)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){Pick(i);break;}}
+        public override void Tick(float dt){if(disposed||answered||!C.IsActive)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){C.PlayerInput(()=>Pick(i));break;}}
     }
 
     sealed class XgCaptchaGame : XgSocialSurface
@@ -146,7 +146,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public override void Tick(float dt){if(disposed||done||!C.IsActive)return;left-=dt;hintTime-=dt;Clock(left);if(left<=0){Submit(true);return;}
             if(!hinted&&hintTime<=0){hinted=true;for(int i=0;i<8;i++){bool truthCell=(truth&(1<<i))!=0;bool says=C.Random.NextDouble()<(.5+.47*C.Skill)?truthCell:!truthCell;if(says){cells[i].label.text=(i+1)+XgUi.T("  灵","  LG");cells[i].label.color=purple;}}C.Say(XgUi.T("我先圈了几个，你看看对不对。","I marked a few. Do they look right to you?"));}
-            for(int i=0;i<8;i++)if(C.KeyDown((Key)((int)Key.Digit1+i)))Toggle(i);if(C.KeyDown(Key.Enter))Submit(false);
+            for(int i=0;i<8;i++)if(C.KeyDown((Key)((int)Key.Digit1+i)))C.PlayerInput(()=>Toggle(i));if(C.KeyDown(Key.Enter))C.PlayerInput(()=>Submit(false));
         }
     }
 }

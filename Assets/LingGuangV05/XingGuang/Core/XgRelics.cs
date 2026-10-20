@@ -30,9 +30,10 @@ namespace LingGuangV05.XingGuang
         public double rentCut;
         /// <summary>Share of the training power bill that is not paid, and the share added on top.</summary>
         public double powerCut, powerRise;
-        /// <summary>The combo never breaks; and how much the combo bonus cap rises above ×2.</summary>
+        /// <summary>The combo never breaks.</summary>
         public bool comboKeep;
-        public double comboCapBonus;
+        /// <summary>The streak multiplier steps up every two right answers instead of three (still capped at ×5).</summary>
+        public bool comboFastStep;
         /// <summary>Share of the chance of a training drop that is removed.</summary>
         public double dropCut;
         /// <summary>Every this many rounds the next drop does not count (0 = none).</summary>
@@ -165,7 +166,7 @@ namespace LingGuangV05.XingGuang
             new XgRelicPair { a = "imagenet_disc", b = "attention_scratch", zh = "两线齐飞", en = "Both lines fly",
                 textZh = "两条线训练每轮再 +25%", textEn = "Both lines gain another +25% per round", apply = f => f.gain += .25 },
             new XgRelicPair { a = "allnight", b = "redbull", zh = "通宵赶工", en = "Crunch night",
-                textZh = "连击加成的上限从 ×2 提到 ×3", textEn = "The combo bonus cap rises from ×2 to ×3", apply = f => f.comboCapBonus += 1 },
+                textZh = "连对倍率每 2 题就升一档（原来 3 题），8 连对就到 ×5", textEn = "The streak multiplier steps up every 2 right answers instead of 3: ×5 after 8 in a row", apply = f => f.comboFastStep = true },
             new XgRelicPair { a = "mining_1080", b = "multimeter", zh = "矿工的自我修养", en = "A miner's craft",
                 textZh = "矿卡的电费惩罚取消，显存再 +0.5 倍", textEn = "The mining card's power penalty is gone and VRAM gains another +0.5", apply = f => { f.powerRise = Math.Max(0, f.powerRise - .30); f.vramBonus += .5; } },
             new XgRelicPair { a = "dropout_paper", b = "batchnorm_paper", zh = "正则化套餐", en = "Regularisation combo",

@@ -350,8 +350,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 asking = false;
                 // A reply that arrives after a save switch belongs to the old save: never answer the new one with it.
                 if (!ReferenceEquals(sim, Sim)) { Refresh(); return; }
-                reply = EraLexicon.Scrub((reply ?? "").Trim());
-                int end = reply.IndexOf("</think>", StringComparison.Ordinal); if (end >= 0) reply = reply.Substring(end + 8).Trim();
+                reply = EraLexicon.Scrub((LingGuangV05.Core.Chat.LlmScheduling.AfterThinking(reply, false) ?? "").Trim()) ?? "";
                 bool weak = reply.Length < 4;
                 if (weak) reply = Sim.ExamFallback(i);
                 answers[i] = reply + (weak || i == 1 && !reply.Contains("16") ? "\n<color=#6F95A5>" + Lang.T("（我：……错了，但错得像个人。）") + "</color>" : "");

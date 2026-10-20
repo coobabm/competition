@@ -391,14 +391,14 @@ namespace LingGuangV05.Desktop.Miaoyu
                 Label(mid, "Who", new Vector2(0, 1), Vector2.one, new Vector2(0, -78), new Vector2(0, -56), T(nick.zh, nick.en) + " · " + T(place.zh, place.en) + "   " + Stats(g), 14, Muted);
                 Label(mid, "Pitch", new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, 26), T(g.pitch, g.pitchEn), 14, Muted);
                 var right = PrologueDesk.Rect("Right", row, new Vector2(1, 0), Vector2.one, new Vector2(-176, 12), new Vector2(-14, -12));
-                Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(HardwareCatalog.UsedPrice(g, today)) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
+                Label(right, "Price", new Vector2(0, 1), Vector2.one, new Vector2(0, -40), Vector2.zero, "<b>" + Money(HardwareCatalog.UsedPurchasePrice(g, today)) + "</b>", 26, new Color32(255, 80, 0, 255), TextAlignmentOptions.TopRight);
                 string id = g.id;
                 var owner=LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
                 bool bargain=owner?.DailyBargainingAvailable==true;
                 if(bargain) mid.Find("Pitch").gameObject.SetActive(false);
                 if(bargain) Label(mid,"ConditionCaveat",Vector2.zero,new Vector2(1,0),Vector2.zero,new Vector2(0,26),T("99新是卖家描述，未有检测记录。","99% new is the seller's claim; no inspection record."),13,Muted);
                 var priceLabel=right.Find("Price").GetComponent<TMP_Text>();
-                if(bargain) priceLabel.text="<b>"+Money(HardwareCatalog.UsedPrice(g,today)*.95)+"</b>";
+                if(bargain) priceLabel.text="<b>"+Money(HardwareCatalog.UsedPurchasePrice(g,today,true))+"</b>";
                 var b = Btn(right, "Buy", Vector2.zero, new Vector2(1, 0), new Vector2(16, 0), new Vector2(0, 42), Accent, "", 17, Ink,
                     () => {
                         if(!ReferenceEquals(sim,Sim)||!ReferenceEquals(owner,LingGuangV05.Desktop.Tieba.TiebaHub.Lab()))return;
@@ -410,7 +410,7 @@ namespace LingGuangV05.Desktop.Miaoyu
                     var s = Sim;
                     if (s == null) return (false, "—");
                     if (!s.SlotFree) return (false, Lang.T("插槽已满"));
-                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPrice(g, Today)*(bargain ? .95 : 1)) return (false, Lang.T("钱不够"));
+                    if (s.S.money + 1e-9 < HardwareCatalog.UsedPurchasePrice(g, Today,bargain)) return (false, Lang.T("钱不够"));
                     return (true,bargain?T("让它砍价购买 · −5%","AI bargain & buy · −5%"):Lang.T("我想要"));
                 }));
                 UiTip.Add(b, "便宜，但算力也低。占一个插槽。", "Cheap, but slow. Takes a slot.");

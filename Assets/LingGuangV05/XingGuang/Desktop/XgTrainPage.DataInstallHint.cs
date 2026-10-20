@@ -28,11 +28,18 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (dataInstallHint == null) return;
             bool available = Sim.CanInstallData;
-            dataInstallHint.gameObject.SetActive(available);
-            float inset = available ? DataInstallHintHeight + RowGap : 0;
+            bool show = available || Sim.S.dataFiles.Count > 0 || Sim.S.downloadQueue.Count > 0;
+            dataInstallHint.gameObject.SetActive(show);
+            float inset = show ? DataInstallHintHeight + RowGap : 0;
             left.offsetMax = new Vector2(left.offsetMax.x, -inset);
             right.offsetMax = new Vector2(right.offsetMax.x, -inset);
-            if (!available) return;
+            if (!show) return;
+            if (!available)
+            {
+                dataInstallHeading.text = T("数据包安装暂未开放", "Data installation unavailable");
+                dataInstallInstructions.text = Sim.DataInstallBlocker();
+                return;
+            }
 
             int ready = 0, installed = 0;
             foreach (var file in Sim.S.dataFiles)
@@ -41,7 +48,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (file.installed) installed++;
                 else if (Sim.DataFileReady(file.fileId)) ready++;
             }
-            dataInstallHeading.text = T("数据包安装 · ", "Data packs · ") + (ready > 0
+            dataInstallHeading.text = T("拖到这里安装数据包 · ", "Drop data packs here to install · ") + (ready > 0
                 ? T(ready + " 个待安装", ready + " ready to install")
                 : installed > 0 ? T("已安装 " + installed + " 个，暂无待安装包", installed + " installed; none waiting")
                 : T("暂无可安装包", "No packs ready yet"));

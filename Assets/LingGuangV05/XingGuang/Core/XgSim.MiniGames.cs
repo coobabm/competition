@@ -97,11 +97,11 @@ namespace LingGuangV05.XingGuang
                 return r;
             }
             var a = SettleMiniAction(g.Desk, correct, host, seconds);
-            r.samples = a.samples; r.pay = a.Total; r.bonus = a.bonus; r.fine = a.fine;
+            r.samples = a.samples; r.pay = a.Total; r.bonus = a.bonus; r.fine = a.fine; r.multiplier = correct ? a.multiplier : 0;
             record.samples += r.samples; record.income += a.Total - a.fine;
             r.note = correct
-                ? T("样本 +" + r.samples + " · 收入 +¥" + r.pay.ToString("0.00") + (r.bonus > 0 ? "（含奖励 ¥" + r.bonus.ToString("0.00") + "）" : ""),
-                    "Sample +" + r.samples + " · +¥" + r.pay.ToString("0.00") + (r.bonus > 0 ? " (bonus ¥" + r.bonus.ToString("0.00") + " included)" : ""))
+                ? T("样本 +" + r.samples + " · 收入 +¥" + r.pay.ToString("0.00") + (r.multiplier > 1 ? " · 连对 ×" + r.multiplier : "") + (r.bonus > 0 ? "（含奖励 ¥" + r.bonus.ToString("0.00") + "）" : ""),
+                    "Sample +" + r.samples + " · +¥" + r.pay.ToString("0.00") + (r.multiplier > 1 ? " · streak ×" + r.multiplier : "") + (r.bonus > 0 ? " (bonus ¥" + r.bonus.ToString("0.00") + " included)" : ""))
                 : T("样本不入库" + (r.fine > 0 ? " · 扣款 ¥" + r.fine.ToString("0.00") : " · 无收入"), "Not stored as a sample" + (r.fine > 0 ? " · fined ¥" + r.fine.ToString("0.00") : " · no pay"));
             return r;
         }

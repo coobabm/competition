@@ -46,7 +46,7 @@ namespace LingGuangV05.XingGuang
             S.workSubmitted++;
             if (result.correct)
             {
-                Hit(XgCatalog.Desk(desk).comboWindow, card.trick ? 2 : 1);
+                Hit(XgCatalog.Desk(desk).comboWindow);
                 result.pay = ManualPayFor(desk, card.level) * ComboMultiplier * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;

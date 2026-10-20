@@ -83,10 +83,10 @@ namespace LingGuangV05.Desktop
             card = Rect("Card", overlay, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-420, -330), new Vector2(420, 330));
             Panel(card, XgPalette.Page);
             Text("Title", 24, 15, 650, 36, T("存档与章节", "Saves & chapters"), 26);
-            Text("Hint", 24, 58, 770, 38, T("第 1 档每五分钟自动保存；章节保留第一次解锁时的进度。", "Slot 1 saves every five minutes. Chapters keep the first unlock snapshot."), 15);
+            Text("Hint", 24, 58, 770, 38, T("系统自动档在最后，每五分钟保存；章节保留第一次解锁时的进度。", "The last row is the five-minute autosave. Chapters keep the first unlock snapshot."), 15);
             Button("Close", 778, 16, 40, 36, "×", Close);
             for (int i = 0; i < 6; i++) {
-                int slot = i + 1; float y = 108 + i * 59;
+                int slot = ChapterOneRuntime.ArchiveDisplaySlot(i); float y = 108 + i * 59;
                 descriptions[i] = Text("Slot" + slot, 24, y, 535, 46, "", 15);
                 if (slot == 1) Button("SaveNow", 575, y + 4, 102, 34, T("立即保存", "Save now"), () => { runtime.SaveNow(); Refresh(); });
                 else Button("Save" + slot, 575, y + 4, 102, 34, T("保存", "Save"), () => Request(T("覆盖这个档位？再次确认后保存。", "Overwrite this slot? Confirm to save."), () => { runtime.SaveSlot(slot); Refresh(); }));
@@ -120,8 +120,9 @@ namespace LingGuangV05.Desktop
         {
             pending = null; confirm.Show(false); status.text = runtime.SaveStatus;
             for (int i = 0; i < 6; i++) {
-                descriptions[i].text = (i == 0 ? T("1 · 自动存档", "1 · Autosave") : T((i + 1) + " · 手动存档", (i + 1) + " · Manual")) + "\n" + runtime.ArchiveDescription(i + 1);
-                loads[i].button.interactable = runtime.ArchiveExists(i + 1);
+                int slot = ChapterOneRuntime.ArchiveDisplaySlot(i);
+                descriptions[i].text = (slot == 1 ? T("系统自动存档", "System autosave") : T((slot-1) + " · 手动存档", (slot-1) + " · Manual")) + "\n" + runtime.ArchiveDescription(slot);
+                loads[i].button.interactable = runtime.ArchiveExists(slot);
                 chapters[i].button.interactable = runtime.ArchiveExists(i + 1, true);
             }
         }

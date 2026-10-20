@@ -121,8 +121,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if(augmentation!=null){if(C.IsActive)elapsed+=dt;return;}
             bool advancing=submitted;base.Tick(dt);if(advancing||!captcha||!textCaptcha||submitted||!C.IsActive)return;
             var keyboard=Keyboard.current;if(keyboard==null)return;
-            foreach(char c in XgVisualRaster.Alphabet){Key key=(Key)Enum.Parse(typeof(Key),char.IsDigit(c)?"Digit"+c:c.ToString());if(C.KeyDown(key))AddCaptcha(c);}
-            if(C.KeyDown(Key.Backspace))BackCaptcha();if(C.KeyDown(Key.Enter)||C.KeyDown(Key.NumpadEnter))SubmitCaptcha();
+            foreach(char c in XgVisualRaster.Alphabet){Key key=(Key)Enum.Parse(typeof(Key),char.IsDigit(c)?"Digit"+c:c.ToString());if(C.KeyDown(key))C.PlayerInput(()=>AddCaptcha(c));}
+            if(C.KeyDown(Key.Backspace))C.PlayerInput(BackCaptcha);if(C.KeyDown(Key.Enter)||C.KeyDown(Key.NumpadEnter))C.PlayerInput(SubmitCaptcha);
         }
         public override void Dispose(){handwriting?.Dispose();base.Dispose();}
         string GuessText(XgHandwritingGuess guess)=>!guess.valid?XgUi.T("……不知道","…not sure"):guess.digit.ToString()+(C.Sim.Has("sigmoid")?" · "+Math.Round(guess.confidence*100)+"%":"");

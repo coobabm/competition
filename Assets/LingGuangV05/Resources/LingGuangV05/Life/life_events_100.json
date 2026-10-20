@@ -96,10 +96,10 @@
           "label": "给机箱垫块泡沫",
           "labelEn": "Put foam under the case",
           "effects": {
-            "money": -30
+            "money": -300
           },
           "result": "淘货买了块减震垫，嗡嗡声小多了。",
-          "resultEn": "A ¥30 damping pad from Taohuo. The hum is much quieter."
+          "resultEn": "A ¥300 damping pad from Taohuo. The hum is much quieter."
         }
       ]
     },
@@ -326,14 +326,14 @@
       "whoEn": "Taohuo",
       "title": "包邮的硅脂",
       "titleEn": "Free-shipping thermal paste",
-      "body": "淘货推送：「信越 7921 硅脂 9.9 包邮，显卡降温 10 度！」",
-      "bodyEn": "Taohuo: \"Shin-Etsu 7921 paste, ¥9.9 shipped. Cools your GPU by 10 degrees!\"",
+      "body": "淘货推送：「信越 7921 硅脂 100 元包邮，显卡降温 10 度！」",
+      "bodyEn": "Taohuo: \"Shin-Etsu 7921 paste, ¥100 shipped. Cools your GPU by 10 degrees!\"",
       "choices": [
         {
           "label": "买",
           "labelEn": "Buy",
           "effects": {
-            "money": -10,
+            "money": -100,
             "boost": [
               1.1,
               300
@@ -433,14 +433,14 @@
       "whoEn": "Thunder",
       "title": "迅雷离线",
       "titleEn": "Thunder offline download",
-      "body": "迅雷会员到期：「续费享离线下载加速，首月 5 元。」",
-      "bodyEn": "Thunder VIP expired: \"Renew for offline-download speedups. First month ¥5.\"",
+      "body": "迅雷会员到期：「续费享离线下载加速，首月 500 元。」",
+      "bodyEn": "Thunder VIP expired: \"Renew for offline-download speedups. First month ¥500.\"",
       "choices": [
         {
           "label": "续一个月",
           "labelEn": "Renew a month",
           "effects": {
-            "money": -5,
+            "money": -500,
             "boost": [
               1.1,
               600
@@ -721,14 +721,14 @@
       "whoEn": "China Telecom",
       "title": "宽带推销",
       "titleEn": "Broadband upsell",
-      "body": "「您好，您的宽带可以免费提速到 50M，只需改签两年合约……」",
-      "bodyEn": "\"Hello, you can upgrade to 50M for free with a two-year contract…\"",
+      "body": "「您好，您的宽带可以提速到 50M，办理费 500 元，需改签两年合约……」",
+      "bodyEn": "\"Hello, you can upgrade to 50M for a ¥500 setup fee with a two-year contract…\"",
       "choices": [
         {
           "label": "签",
           "labelEn": "Sign",
           "effects": {
-            "money": -50,
+            "money": -500,
             "boost": [
               1.1,
               1200
@@ -1000,7 +1000,7 @@
           "label": "私下买一盒",
           "labelEn": "Buy a box instead",
           "effects": {
-            "money": -99
+            "money": -990
           },
           "result": "表姐多送了一片。",
           "resultEn": "She throws in an extra mask."
@@ -1060,7 +1060,7 @@
           "label": "去看",
           "labelEn": "Go",
           "effects": {
-            "money": -45,
+            "money": -450,
             "pause": 150,
             "persona": [
               "温度",
@@ -2098,7 +2098,7 @@
           "label": "订外卖送粥",
           "labelEn": "Send her congee",
           "effects": {
-            "money": -40,
+            "money": -400,
             "persona": [
               "温度",
               2
@@ -2216,7 +2216,7 @@
           "label": "入坑",
           "labelEn": "Join",
           "effects": {
-            "money": -68,
+            "money": -680,
             "pause": 120,
             "persona": [
               "玩心",
@@ -2954,7 +2954,7 @@
           "label": "去",
           "labelEn": "Go",
           "effects": {
-            "money": -80,
+            "money": -800,
             "pause": 150,
             "persona": [
               "温度",
@@ -3330,7 +3330,7 @@
           "label": "买个新的",
           "labelEn": "Buy a new one",
           "effects": {
-            "money": -99
+            "money": -990
           },
           "result": "新键盘手感不错。",
           "resultEn": "Nice new keyboard."
@@ -3504,7 +3504,7 @@
           "label": "换鼠标",
           "labelEn": "New mouse",
           "effects": {
-            "money": -69
+            "money": -690
           },
           "result": "新鼠标，稳。",
           "resultEn": "A new mouse. Solid."
@@ -3608,7 +3608,7 @@
           "label": "换颗纽扣电池",
           "labelEn": "Replace the button cell",
           "effects": {
-            "money": -5,
+            "money": -500,
             "pause": 30
           },
           "result": "回到 2016 年。",

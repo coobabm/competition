@@ -22,6 +22,7 @@ namespace LingGuangV05.Desktop.Casino
         }
         public bool Reduced;
         public Func<bool> CanDrag;
+        public Func<bool> PageVisible;
         public bool Busy => mode != 0 || dragging;
         public float Progress { get; private set; }
         RectTransform rt;
@@ -31,7 +32,8 @@ namespace LingGuangV05.Desktop.Casino
         readonly Image[] trails = new Image[3];
         float elapsed, startAngle;
         int mode;
-        bool faceUp, dragging, soundStarted;
+        bool faceUp, dragging, soundStarted, lifted;
+        int originalSibling;
 
         void Cache()
         {
@@ -44,12 +46,14 @@ namespace LingGuangV05.Desktop.Casino
         public void Deal(Vector2 shoe, float delay, bool reveal)
         {
             Cache(); from = shoe; elapsed = -Mathf.Max(0, delay); faceUp = reveal; mode = 1; Progress = 0; soundStarted = false;
+            if (Reduced) { Finish(true); return; }
             rt.anchoredPosition = from; group.alpha = 0; group.blocksRaycasts = false;
             SetFace(false); MakeTrails();
         }
         public void Reveal(float delay = 0)
         {
             Cache(); faceUp = true; mode = 2; elapsed = -Mathf.Max(0, delay); Progress = 0; soundStarted = false;
+            if (Reduced) { Finish(true); return; }
             group.alpha = 1; group.blocksRaycasts = false; SetFace(false);
         }
         public void Rest(bool reveal) { Cache(); faceUp = reveal; Finish(false); }
@@ -62,6 +66,8 @@ namespace LingGuangV05.Desktop.Casino
         void Update() => Step(Time.unscaledDeltaTime);
         public void Step(float seconds)
         {
+            if (PageVisible != null && !PageVisible()) { Cancel(); return; }
+            if (Reduced && mode != 0) { Finish(false); return; }
             if (mode == 0 || seconds <= 0 || float.IsNaN(seconds) || float.IsInfinity(seconds) || Juice != null && Juice.IsHitStopped) return;
             elapsed += Mathf.Min(seconds, .05f);
             if (elapsed < 0) return;
@@ -131,6 +137,7 @@ namespace LingGuangV05.Desktop.Casino
         {
             if (rt == null) return;
             mode = 0; dragging = false; Progress = 1;
+            if (lifted) { rt.SetSiblingIndex(originalSibling); lifted = false; }
             rt.anchoredPosition = target; rt.localScale = baseScale; rt.localRotation = Quaternion.identity;
             if (group != null) { group.alpha = 1; group.blocksRaycasts = true; } SetFace(faceUp); HideTrails();
             if (sound) Play("flip", XgJuice.Sfx.Id.Clack, 1.2f, .3f, .6f);
@@ -145,13 +152,15 @@ namespace LingGuangV05.Desktop.Casino
         public void OnBeginDrag(PointerEventData e)
         {
             Cache();
-            if (e.button != PointerEventData.InputButton.Left || Busy || CanDrag != null && !CanDrag() || !Point(e, out var p)) return;
-            dragging = true; dragOffset = rt.anchoredPosition - p; rt.SetAsLastSibling(); rt.localScale = baseScale * 1.07f;
+            if (!isActiveAndEnabled || e == null || e.button != PointerEventData.InputButton.Left || Busy || PageVisible != null && !PageVisible() || CanDrag != null && !CanDrag() || !Point(e, out var p)) return;
+            dragging = true; originalSibling = rt.GetSiblingIndex(); lifted = true;
+            dragOffset = rt.anchoredPosition - p; rt.SetAsLastSibling(); rt.localScale = Reduced ? baseScale : baseScale * 1.07f;
             Juice?.Play(XgJuice.Sfx.Id.Tick, 1, .25f);
         }
         public void OnDrag(PointerEventData e)
         {
-            if (!dragging || !Point(e, out var p)) return;
+            if (!isActiveAndEnabled || PageVisible != null && !PageVisible()) { Cancel(); return; }
+            if (!dragging || e == null || !Point(e, out var p)) return;
             var parent = (RectTransform)rt.parent;
             p += dragOffset;
             rt.anchoredPosition = new Vector2(Mathf.Clamp(p.x, rt.rect.width * .5f, parent.rect.width - rt.rect.width * .5f),
@@ -161,6 +170,7 @@ namespace LingGuangV05.Desktop.Casino
         public void OnEndDrag(PointerEventData e)
         {
             if (!dragging) return;
+            if (Reduced || !isActiveAndEnabled || PageVisible != null && !PageVisible()) { Finish(false); return; }
             dragging = false; from = rt.anchoredPosition; startAngle = Mathf.DeltaAngle(0, rt.localEulerAngles.z);
             elapsed = 0; mode = 3; group.blocksRaycasts = false; MakeTrails();
         }

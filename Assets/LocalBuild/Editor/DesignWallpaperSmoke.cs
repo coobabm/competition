@@ -144,6 +144,34 @@ public static partial class DesignWallpaperSmoke
             var runtime = UnityEngine.Object.FindAnyObjectByType<ChapterOneRuntime>();
             var brain = purchasedBrain!=null ? purchasedBrain.Drawing : UnityEngine.Object.FindAnyObjectByType<XgBrainWallpaper>();
             var controller = UnityEngine.Object.FindAnyObjectByType<XingGuangController>();
+            // The tech tree no longer depends on the retired wallpaper brain. Start its
+            // isolated production-scene fixture directly, without restoring that feature.
+            if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "tech" && step == 0)
+            {
+                Check(runtime != null && !runtime.useDiskSave, "Isolated player save for technology scene");
+                var techHouse = new ChapterOneSim();
+                techHouse.CompletePrologue(new PrologueProfile { name = "小星", self = "我", callMe = "你", personality = "好奇" });
+                techHouse.S.appInstallState = 2; techHouse.S.money = 100000;
+                runtime.SetSimulationForTests(techHouse);
+                controller.GetType().GetMethod("BindSave", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(controller, new object[] { techHouse });
+                for (int answer = 0; answer < 12 && !controller.Sim.TeachingTreeOpen; answer++)
+                {
+                    var question = controller.Sim.Card(LingGuangV05.XingGuang.XgMemes.SenseDesk);
+                    Check(controller.Sim.TryAnswerStatement(question.dataset, question.id, question.truth, controller.Host, out var result) && result.correct,
+                        "Real opening question unlocks technology " + answer);
+                }
+                Check(controller.Sim.TeachingTreeOpen, "Technology fixture passes the twelve-question opening gate");
+                foreach (var actor in UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    string name = actor.GetType().Name;
+                    if (name == "StoryDirector" || name == "StoryDesktopPresenter" || name == "PrologueDirector" || name == "StageOneTutor" || name == "SpiderIntroScene" || name == "LoveQuestionCutscene")
+                    { actor.CancelInvoke(); actor.StopAllCoroutines(); actor.enabled = false; }
+                }
+                var techUser = UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.OS.UserManager>(FindObjectsInactive.Include);
+                Check(techUser != null, "Technology fixture has a desktop user");
+                techUser.ShowDesktop(); runtime.tickEnabled = false; controller.Open();
+                step = 180; due = EditorApplication.timeSinceStartup + 3; return;
+            }
             if (SessionState.GetString("DesignWallpaperSmoke.Mode", "") == "lesson-goal" && step >= 250 && step < 300)
             {
                 TickLessonGoal(controller, runtime); return;

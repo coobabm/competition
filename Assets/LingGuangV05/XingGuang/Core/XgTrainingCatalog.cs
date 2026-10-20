@@ -7,10 +7,13 @@ namespace LingGuangV05.XingGuang
         public static void AddNodes(List<XgNode> nodes)
         {
             XgTrainingLessons.AddAtlas(nodes);
-            // Arithmetic game upgrades use their approved ordinary prices.
-            nodes.Add(new XgNode { id=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MolePowersNode,
-                stage=2, cost=800, kind=XgNodeKind.Research, name="算术：幂与根式", nameEn="Arithmetic: powers and roots",
-                note="再多一种算法。\n▶ 加入幂与根式题", noteEn="One more way to calculate.\n▶ Adds powers and roots" });
+            // Existing arithmetic upgrade prices are retained; mixed operations is the first pack.
+            nodes.Add(new XgNode { id=XgSim.MoleMixedNode, tree="research", lane="research", target=XgSim.MoleMixedNode,
+                stage=1, cost=300, kind=XgNodeKind.Research, name="算术：混合运算", nameEn="Arithmetic: mixed operations",
+                note="先后顺序有讲究。\n▶ 开放括号与组合运算", noteEn="Order matters.\n▶ Unlocks brackets and combined operations" });
+            nodes.Add(new XgNode { id=XgSim.MolePowersNode, parent=XgSim.MoleMixedNode, tree="research", lane="research", target=XgSim.MolePowersNode,
+                stage=2, cost=800, kind=XgNodeKind.Research, name="算术：幂指对", nameEn="Arithmetic: powers, exponents and logs",
+                note="再多一种算法。\n▶ 开放幂指对与根式", noteEn="One more way to calculate.\n▶ Unlocks powers, exponents, logs and roots" });
             nodes.Add(new XgNode { id=XgSim.MoleCalculusNode, parent=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MoleCalculusNode,
                 stage=3, cost=3000, kind=XgNodeKind.Research, name="算术：微积分", nameEn="Arithmetic: calculus",
                 note="看看变化的规律。\n▶ 加入极限、导数、积分", noteEn="Explore how things change.\n▶ Adds limits, derivatives and integrals" });

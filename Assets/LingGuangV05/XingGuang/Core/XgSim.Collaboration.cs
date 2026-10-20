@@ -10,7 +10,8 @@ namespace LingGuangV05.XingGuang
         public const int ReviewCapacity = 20, PrefetchPerDesk = 3, RouteWindow = 100, BrainWindow = 50, FeedWindow = 6;
         public const double NoisePenalty = 2, AuditProbability = .4, BrainGpuSeconds = .05;
         public const int NoiseCleanBatchLimit = 10;
-        public const double NoiseCleanMoneyPerItem = 2, NoiseCleanGpuSecondsPerItem = .1;
+        public static double NoiseCleanMoneyPerItem => LingGuangV05.Core.PurchasePricing.AtLeastHundred(2);
+        public const double NoiseCleanGpuSecondsPerItem = .1;
         static long nextCollaborationGeneration;
         readonly long collaborationGeneration = Interlocked.Increment(ref nextCollaborationGeneration);
         public long CollaborationGeneration => collaborationGeneration;
@@ -152,7 +153,7 @@ namespace LingGuangV05.XingGuang
             return node.id == "label.raise" ? RaiseLevel : node.id == "label.auto" ? GlobalAutoLevel : Has(node.id) ? 1 : 0;
         }
         public double LabelNodeCost(XgNode node)
-        { return node.id == "label.raise" ? NextRaiseCost : node.id == "label.auto" ? (GlobalAutoLevel >= XgCatalog.AutoMaxLevel ? double.PositiveInfinity : XgCatalog.AutoCost(GlobalAutoLevel)) : node.cost; }
+        { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(node.id == "label.raise" ? NextRaiseCost : node.id == "label.auto" ? (GlobalAutoLevel >= XgCatalog.AutoMaxLevel ? double.PositiveInfinity : XgCatalog.AutoCost(GlobalAutoLevel)) : node.cost); }
         public NodeStatus StatusLabelNode(XgNode node, IXgHost host)
         {
             if (LabelNodeLevel(node) >= Math.Max(1, node.maxLevel)) return NodeStatus.Owned;
@@ -188,8 +189,9 @@ namespace LingGuangV05.XingGuang
             else if (node.id == "label.auto") bought = BuyGlobalAuto(host);
             else
             {
-                if (!host.Spend(node.cost)) return false;
-                S.totalSpent += node.cost; S.unlocked.Add(node.id); bought = true;
+                double price = LabelNodeCost(node);
+                if (!host.Spend(price)) return false;
+                S.totalSpent += price; S.unlocked.Add(node.id); bought = true;
             }
             if (bought) NodeBought?.Invoke(node);
             return bought;
@@ -398,7 +400,7 @@ namespace LingGuangV05.XingGuang
                 if (correct)
                 {
                     pay = unitPay;
-                    host.Earn(pay); S.totalIncome += pay; S.autoCorrect++; AddLabel(card.dataset);
+                    host.Earn(pay); S.totalIncome += pay; S.idleAutomaticIncome += pay; S.autoCorrect++; AddLabel(card.dataset);
                 }
                 else
                 {
@@ -430,7 +432,7 @@ namespace LingGuangV05.XingGuang
             if (result.correct)
             {
                 result.corrected = card.hasJudgment && yes != card.guess;
-                Hit(XgCatalog.Desk(card.dataset).comboWindow, result.corrected || card.trick ? 2 : 1);
+                Hit(XgCatalog.Desk(card.dataset).comboWindow);
                 // Re-checked old rows pay as ordinary cards: no hard-case bonus on top of the cleaned noise.
                 bool hard = Has("label.hard") && !card.recheck;
                 result.pay = ManualPayFor(card.dataset, card.level) * ComboMultiplier * (hard ? 1.5 : 1);

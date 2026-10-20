@@ -2,15 +2,15 @@ Bundled local inference software and model / 本版离线推理来源
 
 Current Windows release / 当前 Windows 发行版
 
-- Model: Qwen3-1.7B-Q4_K_M.gguf, Qwen team / Alibaba Cloud, Copyright 2024 Alibaba Cloud.
-  Base source: https://huggingface.co/Qwen/Qwen3-1.7B (revision 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e).
-  GGUF quantization: Unsloth, https://huggingface.co/unsloth/Qwen3-1.7B-GGUF
-  Pinned quantization revision: d7f544eead698dbd1f15126ef60b45a1e1933222.
-  License: Apache License 2.0. Unmodified upstream GGUF, no local MTP stripping.
-  Full license, base and quantizer cards, source provenance and checksum are beside the model:
+- Model: Qwen3.5-2B-Q5_K_S-emb5.gguf, based on Qwen3.5-2B by the Qwen team / Alibaba Cloud, Apache License 2.0.
+  Base source: https://huggingface.co/Qwen/Qwen3.5-2B (bf16 GGUF and imatrix from bartowski/Qwen_Qwen3.5-2B-GGUF).
+  Modified by the game team: a LoRA trained on the game's own dialogue is merged into the weights, the MTP (nextn)
+  block is removed, and the file is quantized to Q5_K_S with a Q5_K token embedding.
+  Full license, model card, source provenance and checksum are beside the model:
   MyComputerAlive_Data/StreamingAssets/LingGuang/Models/{LICENSE,MODEL_CARD.md,QUANT_MODEL_CARD.md,MODEL_SOURCE.json,SHA256SUMS.txt}.
-  Recorded model SHA256: b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897 (1,107,409,472 bytes).
+  Recorded model SHA256: 4b154ece943d21ebdf8179935a335cd35897babd212cb144a86a8605bf1782b1 (1,306,533,984 bytes).
   Runtime use is text-only; no vision projector is bundled.
+- Retrieval model: bge-small-zh-v1.5-q8_0.gguf, BAAI, MIT License; GGUF conversion by CompendiumLabs.
 - LLMUnity 3.0.3, Undream AI, Apache License 2.0.
   Source: https://github.com/undreamai/LLMUnity/tree/9931a9ea46906b1f43adaf9498c05ccf227b5d0b
   The final distribution's ThirdPartyNotices/ contains LLMUnity-LICENSE.md,
@@ -31,7 +31,7 @@ This index does not replace their full license terms or copyright notices.
 
 Legacy notices retained for older payloads / 保留的旧包声明
 The entries below apply if their corresponding older binaries/models are also distributed.
-They describe the retired server bundle and the previous Qwen3.5-4B payload, not the current LlamaLib CPU runtime or Qwen3-1.7B model.
+They describe the retired server bundle and the previous Qwen3.5-4B payload, not the current LlamaLib CPU runtime or Qwen3.5-2B model.
 
 - llama.cpp / ggml (https://github.com/ggml-org/llama.cpp), MIT License, Copyright (c) 2023-2026 The ggml authors.
   macOS: Homebrew build 9580 (mac-arm64/), Windows: release b11370 Vulkan x64 (win-x64/).

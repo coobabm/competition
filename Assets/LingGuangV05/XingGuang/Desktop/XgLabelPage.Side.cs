@@ -384,4 +384,47 @@ namespace LingGuangV05.Desktop.XingGuang
             RefreshHistory();
         }
     }
+
+    /// <summary>Two noninteractive charge cells; only repaint when the saved streak or language changes.</summary>
+    internal sealed class XgStreakEnergyIndicator
+    {
+        readonly Image[] cells = new Image[2];
+        readonly TMP_Text caption;
+        readonly bool dark;
+        int lastCombo = -1, lastMultiplier = -1, lastRemaining = -1;
+        bool lastEnglish;
+
+        public XgStreakEnergyIndicator(XgUi ui, RectTransform root)
+        {
+            dark = ui.dark;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                var at = XgUi.Rect("Energy" + i, root, new Vector2(0, .5f), new Vector2(0, .5f),
+                    new Vector2(i * 22, -4), new Vector2(i * 22 + 18, 4));
+                cells[i] = XgUi.Panel(at, dark ? XgDark.Line : ZhongbaoSkin.Track);
+                cells[i].raycastTarget = false;
+            }
+            caption = ui.Text(XgUi.Rect("EnergyCaption", root, Vector2.zero, Vector2.one,
+                new Vector2(50, 0), Vector2.zero), "", 11, dark ? XgDark.Muted : XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
+            caption.raycastTarget = false;
+            caption.textWrappingMode = TextWrappingModes.NoWrap;
+            caption.overflowMode = TextOverflowModes.Ellipsis;
+        }
+
+        public void Refresh(XgSim sim)
+        {
+            if (sim == null) return;
+            int combo = sim.S.combo, multiplier = sim.StreakMultiplier, remaining = sim.StreakToNext;
+            bool english = XgUi.En;
+            if (combo == lastCombo && multiplier == lastMultiplier && remaining == lastRemaining && english == lastEnglish) return;
+            lastCombo = combo; lastMultiplier = multiplier; lastRemaining = remaining; lastEnglish = english;
+            bool max = multiplier >= XgSim.ComboMaxMultiplier;
+            int filled = max ? 2 : Mathf.Clamp(3 - remaining, 0, 2);
+            Color ink = XgJuice.StreakColor(max ? multiplier : multiplier + 1);
+            for (int i = 0; i < cells.Length; i++) cells[i].color = i < filled ? ink : dark ? XgDark.Line : ZhongbaoSkin.Track;
+            caption.text = "×" + multiplier + " · " + (max ? XgUi.T("满倍", "Max")
+                : filled == 2 ? XgUi.T("下一题 ×", "Next: ×") + (multiplier + 1)
+                : XgUi.T("蓄能 ", "Charge ") + filled + "/2");
+        }
+    }
 }

@@ -15,6 +15,7 @@ namespace LingGuangV05.XingGuang
         // Standalone simulation fallback generated from Design/data/minigame_packs.json.
         // The player replaces these from the bundled JSON before loading any scene.
         public static XgTeachingPack[] All = {
+            new XgTeachingPack { id="sudoku", name="数独", nameEn="Sudoku", dataset="logic", needs="", stage=2, buy=true, play="每行、每列和每宫填入1—9，不重复。", playEn="Fill each row, column and box with 1–9 without repeats." },
             new XgTeachingPack { id = "spam_swipe", name = "划短信", nameEn = "Swipe the texts", dataset = "spam", needs = "", play = "短信一条条从上面掉下来，左划是垃圾短信，右划是正常。越到后面掉得越快。", playEn = "Texts fall one by one: swipe left for spam, right for genuine. They fall faster as you go.", stage = 1, buy = false },
             new XgTeachingPack { id = "arith_mole", name = "算术打地鼠", nameEn = "Whack-a-sum", dataset = "arith", needs = "", play = "地洞里冒出带算式的地鼠（7+5=12），算对的敲，算错的放过。", playEn = "Moles pop up wearing sums (7+5=12): whack the right ones, leave the wrong ones.", stage = 1, buy = false },
             new XgTeachingPack { id = "minesweeper_yn", name = "扫雷判官", nameEn = "Minesweeper judge", dataset = "logic", needs = "", play = "Windows 扫雷的残局，高亮一格，问「这格是雷吗？」。答是 / 否，点开验证。", playEn = "A Windows Minesweeper endgame with one cell highlighted: is it a mine? Answer yes or no, then it opens.", stage = 1, buy = false },

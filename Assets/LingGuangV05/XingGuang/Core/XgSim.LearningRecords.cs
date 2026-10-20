@@ -143,6 +143,7 @@ namespace LingGuangV05.XingGuang
             RepairLearningRecords();
             if (!string.IsNullOrEmpty(record.eventKey) && learningByEvent.TryGetValue(record.eventKey, out var existing)) return existing;
             record.id = checked(S.learningRecordSerial + 1);
+            record.learningStage = Math.Max(1, Math.Min(6, S.stage));
             var when = LearningClock != null ? LearningClock() : new XgLearningTime(0, -1);
             if (ValidLearningTime(when.date, when.secondsOfDay)) { record.gameDate = when.date; record.gameSecondsOfDay = when.secondsOfDay; }
             else { record.gameDate = 0; record.gameSecondsOfDay = -1; }

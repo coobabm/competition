@@ -130,6 +130,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void ItFirstShowsUpALittleIntoStageOneWhenNothingElsePlays()
         {
             var sim = new XgSim();
+            sim.S.unlocked.Add(XgSim.SpiderAcquireNode);
             Assert.IsFalse(sim.SpiderIntroDue(true, false, false), "no epoch trained yet");
             sim.S.epochs = XgSim.SpiderIntroEpochs;
             Assert.IsTrue(sim.SpiderIntroDue(true, false, false));

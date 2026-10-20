@@ -75,35 +75,66 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(sim.MiniBasePay("sense") * 3.2, sim.MiniBasePay("logic"), 1e-9);
         }
 
-        [Test] public void TheBonusFollowsSpeedOrComboAndNeverExceedsTheBase()
+        [Test] public void EachTwoCompletedCorrectAnswersRaiseTheFollowingAnswerUpToFive()
         {
-            Assert.AreEqual(1, XgSim.MiniSpeedShare(0), 1e-9);
-            Assert.AreEqual(.5, XgSim.MiniSpeedShare(2.5), 1e-9);
+            int[] expected = { 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 5 };
+            for (int combo = 0; combo < expected.Length; combo++)
+                Assert.AreEqual(expected[combo], XgSim.StreakMultiplierOf(combo), "streak " + combo);
+            Assert.AreEqual(5, XgSim.StreakMultiplierOf(500), "capped at ×5");
+            Assert.AreEqual(1, XgSim.StreakMultiplierOf(-3));
+            Assert.AreEqual(3, XgSim.ToNextMultiplier(0));
+            Assert.AreEqual(1, XgSim.ToNextMultiplier(2), "two in a row: the next one doubles");
+            Assert.AreEqual(2, XgSim.ToNextMultiplier(3));
+            Assert.AreEqual(1, XgSim.ToNextMultiplier(8));
+            Assert.AreEqual(0, XgSim.ToNextMultiplier(9), "nothing left at ×5");
+            CollectionAssert.AreEqual(new[] { 3, 5, 7, 9 }, XgCatalog.ComboTiers, "one combo tier per multiplier");
+        }
+
+        [Test] public void TheBonusIsTheStreakPlusASpeedShare()
+        {
+            Assert.AreEqual(.5, XgSim.MiniSpeedShare(0), 1e-9);
+            Assert.AreEqual(.25, XgSim.MiniSpeedShare(2.5), 1e-9);
             Assert.AreEqual(0, XgSim.MiniSpeedShare(XgSim.MiniFastSeconds), 1e-9);
             Assert.AreEqual(0, XgSim.MiniSpeedShare(9), 1e-9);
             Assert.AreEqual(0, XgSim.MiniSpeedShare(-1), 1e-9, "not timed");
             Assert.AreEqual(0, XgSim.MiniSpeedShare(double.NaN), 1e-9);
-            Assert.AreEqual(1, XgSim.MiniBonusShare(0, 1.6), 1e-9, "speed alone can reach the cap");
-            Assert.AreEqual(.6, XgSim.MiniBonusShare(-1, 1.6), 1e-9, "combo alone");
-            Assert.AreEqual(.6, XgSim.MiniBonusShare(4, 1.6), 1e-9, "the larger of the two, not their sum");
-            Assert.AreEqual(1, XgSim.MiniBonusShare(0, 3), 1e-9, "capped at +100%");
+            Assert.AreEqual(.5, XgSim.MiniBonusShare(0, 1), 1e-9, "speed alone: +50%");
+            Assert.AreEqual(1, XgSim.MiniBonusShare(-1, 2), 1e-9, "×2 streak alone: +100%");
+            Assert.AreEqual(2.1, XgSim.MiniBonusShare(4, 3), 1e-9, "streak and speed add up");
+            Assert.AreEqual(4.5, XgSim.MiniBonusShare(0, 5), 1e-9, "×5 and an instant answer");
+            Assert.AreEqual(4.5, XgSim.MiniBonusShare(0, 9), 1e-9, "the multiplier never goes past ×5");
+            Assert.AreEqual(.5, XgSim.MiniBonusShare(3, 1, true), 1e-9, "常识判断: flat +50% under 7.5 s");
+            Assert.AreEqual(0, XgSim.MiniBonusShare(8, 1, true), 1e-9);
 
             {
                 var s = OpenAll(); var h = new Host();
                 s.S.combo = 500;
                 double basePay = s.MiniBasePay("spam");
                 var a = s.SettleMiniAction("spam", true, h, 0);
-                Assert.LessOrEqual(a.bonus, basePay + 1e-9, "bonus at most +100% of base");
-                Assert.AreEqual(basePay, a.bonus, 1e-9, "a long streak plus an instant answer is still only +100%");
+                Assert.AreEqual(5, a.multiplier);
+                Assert.AreEqual(basePay * XgSim.MiniBonusCap, a.bonus, 1e-9, "a long streak plus an instant answer: ×5 and +50%");
             }
         }
 
-        [Test] public void AFreshStreakEarnsASmallComboBonusAndNoSpeedBonus()
+        [Test] public void EveryTwoCompletedAnswersUpgradeTheNextPayoutAndOnlyOneTierEvent()
         {
             var s = OpenAll(); var h = new Host(); s.S.combo = 0;
-            var a = s.SettleMiniAction("spam", true, h);
-            Assert.AreEqual(a.pay * .05, a.bonus, 1e-9, "combo 1 pays +5%");
-            Assert.AreEqual(1, s.S.combo);
+            double basePay = s.MiniBasePay("spam");
+            var events = new System.Collections.Generic.List<int>();
+            s.ComboTier += events.Add;
+            int[] expected = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5 };
+            for (int i = 0; i < expected.Length; i++)
+            {
+                double before = h.Money;
+                var answer = s.SettleMiniAction("spam", true, h);
+                Assert.AreEqual(expected[i], answer.multiplier, "correct answer " + (i + 1));
+                Assert.AreEqual(basePay * expected[i], answer.Total, 1e-9);
+                Assert.AreEqual(answer.Total, h.Money - before, 1e-6, "exactly one payout");
+            }
+            CollectionAssert.AreEqual(new[] { 0, 1, 2, 3 }, events);
+            s.SettleMiniAction("spam", false, h);
+            Assert.AreEqual(0, s.S.combo);
+            Assert.AreEqual(basePay, s.SettleMiniAction("spam", true, h).Total, 1e-9, "a wrong answer starts again at ×1");
         }
 
         [Test] public void EveryDeskFinesOnlyAfterAWrongAnswer()
@@ -142,7 +173,7 @@ namespace LingGuangV05.XingGuang.Tests
                 var r = s.SubmitMiniGame(t, i, true, h);
                 Assert.AreEqual(1, r.samples, "action " + i);
                 Assert.AreEqual(rows + 1, s.Labels("spam"), "action " + i);
-                Assert.LessOrEqual(r.pay, basePay * 2 + 1e-9, "a long streak never pays more than double (action " + i + ")");
+                Assert.LessOrEqual(r.pay, basePay * XgSim.ComboMaxMultiplier + 1e-9, "a long streak never pays more than ×5 (action " + i + ")");
             }
             Assert.AreEqual(before + 300, s.Labels("spam"));
             Assert.AreEqual(300, s.MiniGameRecord("slice").samples);
@@ -154,10 +185,12 @@ namespace LingGuangV05.XingGuang.Tests
             var s = OpenAll(); var h = new Host();
             long a = s.BeginMiniGame("kaixincidian", h);
             double sensePay = s.SubmitMiniGame(a, 1, true, h).pay;
-            Assert.AreEqual(s.MiniBasePay("sense") * (1 + .05), sensePay, 1e-9);
+            Assert.AreEqual(s.MiniBasePay("sense"), sensePay, 1e-9);
+            Assert.AreEqual(s.MiniBasePay("sense"), s.SubmitMiniGame(a, 2, true, h).pay, 1e-9);
             long b = s.BeginMiniGame("dadishu", h);
-            double arithPay = s.SubmitMiniGame(b, 1, true, h).pay;
-            Assert.AreEqual(s.MiniBasePay("arith") * (1 + .10), arithPay, 1e-9, "the shared combo carries on across games");
+            var arith = s.SubmitMiniGame(b, 1, true, h);
+            Assert.AreEqual(s.MiniBasePay("arith") * 2, arith.pay, 1e-9, "the shared combo carries on across games: the third in a row doubles");
+            Assert.AreEqual(2, arith.multiplier);
         }
 
         [Test] public void TheWritingViewKeepsItsNumbers()

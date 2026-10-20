@@ -49,7 +49,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             used.Add(line);turn++;if(turn>=8){RoundEnd(null,XgUi.T("双方各说四句，平局。","Four lines each: a draw."));return;}verdict=XgUi.T(("评委：灵光通过，轮到你了。").Replace("灵光", C.Sim.AiDisplayName),("Judge: LingGuang passes. Your turn.").Replace("LingGuang", C.Sim.AiDisplayName));PlayerTurn();
         }
         void RoundEnd(bool? won,string why){phase=2;if(won==true)wins++;else if(won==false)losses++;verdict=why;Draw();}
-        public override void Tick(float dt){if(disposed||!C.IsActive)return;if(phase==1){aiDelay-=dt;if(aiDelay<=0)AiTurn();return;}if(phase!=0)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){Pick(i);break;}}
+        public override void Tick(float dt){if(disposed||!C.IsActive)return;if(phase==1){aiDelay-=dt;if(aiDelay<=0)AiTurn();return;}if(phase!=0)return;left-=dt;Clock(left);if(left<=0){Pick(-1);return;}for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){C.PlayerInput(()=>Pick(i));break;}}
     }
 
     sealed class XgMemeGame : XgSocialSurface
@@ -93,7 +93,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public override void Tick(float dt){if(disposed||done||!C.IsActive)return;left-=dt;hintDelay-=dt;Clock(left);if(left<=0){Pick(-1);return;}
             if(round>=4&&!hinted&&hintDelay<=0){hinted=true;buttons[aiPick].label.text=(aiPick+1)+XgUi.T("  灵\n","  LG\n")+Opt(aiPick);buttons[aiPick].label.color=purple;}
-            for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){Pick(i);break;}}
+            for(int i=0;i<4;i++)if(C.KeyDown((Key)((int)Key.Digit1+i))){C.PlayerInput(()=>Pick(i));break;}}
     }
 
     sealed class XgReviewGame : XgSocialSurface

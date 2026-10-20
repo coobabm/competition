@@ -38,11 +38,13 @@ public static partial class TeachingFullRoundChecks
     sealed class FeedbackSnapshot { public object game;public bool playerCorrect,visible;public bool? aiCorrect;public string aiAnswer,playerText,aiText; }
     static Report report;
     static int correctBefore,wrongBefore,samplesBefore;static double incomeBefore;
-    static XgTeachingPack[] Packs => XgTeachingPacks.All;
+    static readonly string[] CoveredPackIds = { "spam_swipe","arith_mole","minesweeper_yn","make24","headline_swipe","odd_one","sequence","danmu_mood","mnist_write","chess_mate1","gomoku_win","captcha","meme_word","poem_next","idiom_chain","chess_mate2","spy","review_swipe","chinglish" };
+    // Sudoku has completion-only settlement; it requires its separate interaction checks.
+    static XgTeachingPack[] Packs => CoveredPackIds.Select(id => XgTeachingPacks.All.Single(p => p.id == id)).ToArray();
     [Serializable] sealed class Entry { public string id,language,gameType,clicked="",note="";public bool built,visible;public int texts,images,buttons,answersBefore,answersAfter; }
     [Serializable] sealed class Report
     {
-        public string scope="Main PlayMode, isolated save, explicit stage-six/all-research/all-paid-teaching-nodes-installed QA fixture (installation receipts are fixture state, not acquisition coverage); all 19 packs in Chinese and English through existing Unity Button callbacks and explicit action-game ticks, not LCD or physical pointer coverage. Correct/wrong settlement and JsonUtility record reload; pre-submit displayed AI prediction, retained two-line footer after natural next-frame rebuild, unknown gray and rendered text/mask bounds. Hidden truth selects deterministic QA answers and independently checks supported prediction types. Other prediction verdicts are snapshot-propagation checks, not model accuracy claims. Actual current window size, not a forced small-window matrix.";
+        public string scope="Main PlayMode, isolated save, explicit stage-six/all-research/all-paid-teaching-nodes-installed QA fixture (installation receipts are fixture state, not acquisition coverage); the explicitly listed 19 pre-Sudoku packs in Chinese and English (Sudoku excluded and covered by separate checks) through existing Unity Button callbacks and explicit action-game ticks, not LCD or physical pointer coverage. Correct/wrong settlement and JsonUtility record reload; pre-submit displayed AI prediction, retained two-line footer after natural next-frame rebuild, unknown gray and rendered text/mask bounds. Hidden truth selects deterministic QA answers and independently checks supported prediction types. Other prediction verdicts are snapshot-propagation checks, not model accuracy claims. Actual current window size, not a forced small-window matrix.";
         public string status="running",failure="",unityVersion;
         public List<Entry> packs=new List<Entry>();public List<string> runtimeErrors=new List<string>();
         public List<string> editorInfrastructureErrors=new List<string>();
@@ -139,7 +141,7 @@ public static partial class TeachingFullRoundChecks
                 Require(user!=null&&user.isActiveAndEnabled,"Desktop user manager unavailable");
                 user.ShowDesktop();
                 File.WriteAllText(Path.Combine(Root,"fixture-lab.json"),JsonUtility.ToJson(lab.S,true));
-                Require(XgTeachingPacks.All.Length==19,"Expected manifest's 19 packs");frames=0;phase=10;return;
+                Require(XgTeachingPacks.All.Length==20,"Expected manifest's 20 packs");frames=0;phase=10;return;
             }
             if(phase==10)
             {

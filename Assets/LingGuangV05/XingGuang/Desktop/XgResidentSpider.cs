@@ -5,7 +5,6 @@ using LingGuangV05.Desktop.Media;
 using LingGuangV05.Runtime;
 using LingGuangV05.Desktop.Story;
 using LingGuangV05.Desktop.YY;
-using LingGuangV05.Desktop.Zhongbao;
 using LingGuangV05.XingGuang;
 using LingGuangV05.Desktop.OS;
 using TMPro;
@@ -96,7 +95,15 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // Scene references, found lazily.
         XingGuangController controller;
-        ZhongbaoView zhongbao;
+        XgLabelPage workLabel;
+        XgSim workOwner;
+        XgLabelPage TeachingLabel => controller != null && controller.View != null ? controller.View.Teach : null;
+        bool TeachingVisible => controller != null && controller.View != null && controller.View.Visible
+            && controller.View.Tab == "teach" && TeachingLabel != null && TeachingLabel.Paper != null
+            && TeachingLabel.Paper.gameObject.activeInHierarchy && TeachingLabel.ShownCardId >= 0
+            && !LingGuangV05.Desktop.SaveSlotsPanel.IsOpen;
+        LingGuangV05.Desktop.Apps.WebBrowserApp spiderBrowser;
+        float browserTurnClock;
         YYChatView yyView;
         StoryDesktopPresenter presenter;
         OriginCurtain curtain;
@@ -141,6 +148,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float reachClock, thinkLeft, noteClock;
         bool reachYes, pressed;
         long workCard = -2;
+        string workDesk;
         RectTransform reachButton;
         Vector2 armBase, armTip;
         float armK;
@@ -216,7 +224,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (findTimer > 0) return controller != null && layer != null;
             findTimer = FindEvery;
             if (controller == null) controller = XingGuangController.Instance;
-            if (zhongbao == null) zhongbao = FindAnyObjectByType<ZhongbaoView>();
+            if (spiderBrowser == null) spiderBrowser = FindAnyObjectByType<LingGuangV05.Desktop.Apps.WebBrowserApp>();
             if (yyView == null) yyView = FindAnyObjectByType<YYChatView>();
             if (presenter == null) { presenter = FindAnyObjectByType<StoryDesktopPresenter>(); if (presenter != null) curtain = presenter.GetComponent<OriginCurtain>(); }
             if (curtain == null) curtain = FindAnyObjectByType<OriginCurtain>();
@@ -285,9 +293,9 @@ namespace LingGuangV05.Desktop.XingGuang
             TickIntro(dt);
             bool present = Sim != null && rt != null && rt.Sim != null && Sim.SpiderAround && !IntroPlaying && !StoryFocus.Exclusive
                 && XgResident.Present(rt.Sim.AppInstalled, rt.Sim.InPrologue, CutscenePlaying || InsideCrawler, FullscreenVideo);
-            bool labelVisible = zhongbao != null && zhongbao.Visible && zhongbao.Tab == "label" && zhongbao.Label != null && zhongbao.Label.Paper != null && zhongbao.Label.Paper.gameObject.activeInHierarchy;
-            int answers = zhongbao != null && zhongbao.Label != null ? zhongbao.Label.AnswerCount : 0;
-            bool disagreed = zhongbao != null && zhongbao.Label != null && zhongbao.Label.LastAnswerDisagreed;
+            bool labelVisible = TeachingVisible;
+            int answers = TeachingLabel != null ? TeachingLabel.AnswerCount : 0;
+            bool disagreed = TeachingLabel != null && TeachingLabel.LastAnswerDisagreed;
             var mode = mind.Tick(dt, present, Sim != null && Sim.S.residentQuiet, labelVisible, answers, disagreed);
 
             if (mode == XgResidentMode.Hidden) { StopWork(); UpdateHandle(false); Show(false); motion.brain.SetSuspended(true); threat.Reset(); return; }
@@ -310,13 +318,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 legCount = legs;
             }
 
+            walker.maxSpeed = 70 * walker.size * Sim.SpiderTravelSpeed;
+            TickAutomaticBrowser(dt);
             scanTimer -= dt;
             if (scanTimer <= 0) { scanTimer = ScanEvery; ScanNext(); }
 
             glitchCooldown -= dt;
             // The handle that lets the player pick it up exists only while the 标注台 is in front.
             bool canDrag = labelVisible && mode != XgResidentMode.Parked;
-            if (!canDrag) StopWork();
+            if (!canDrag || (held || working) && (workLabel != TeachingLabel || !ReferenceEquals(workOwner, Sim))) StopWork();
             UpdateHandle(canDrag);
             if (mode != XgResidentMode.Watch || Dragged) { fx.SetReach(null); decidedCard = -2; pressPlanned = false; }
             TickBehaviour(dt, mode);
@@ -441,7 +451,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     walker.Settled = true;
                     readTimer -= dt;
                     bool free = brain.Act == XgSpiderAct.None || brain.Act == XgSpiderAct.Look;
-                    if (readTimer <= 0 && !fx.Thinking && free) { readTimer = .5f + (float)rng.NextDouble() * .7f; TapNear(walker.pos, 70 * walker.size); }
+                    if (readTimer <= 0 && !fx.Thinking && free) { readTimer = (.5f + (float)rng.NextDouble() * .7f) / Sim.SpiderReadingSpeed; TapNear(walker.pos, 70 * walker.size); }
                     walker.Tick(dt, walker.pos, 0, Reduced);
                 }
                 brain.Tick(dt, true);
@@ -475,7 +485,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void TickWatch(float dt)
         {
-            var paper = zhongbao.Label.Paper;
+            var paper = TeachingLabel?.Paper;
+            if (paper == null) return;
             var card = LayerRect(paper);
             XgResident.Perch(Box(card), Box(screen), walker.size, out double px, out double py, out bool facesLeft);
             var perch = new Vector2((float)px, (float)py);
@@ -527,7 +538,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         bool TickPress(float dt, ref Vector2 perch)
         {
-            var label = zhongbao.Label;
+            var label = TeachingLabel;
+            if (!TeachingVisible || label == null) return false;
             long id = label.ShownCardId;
             if (id != decidedCard)
             {
@@ -617,16 +629,18 @@ namespace LingGuangV05.Desktop.XingGuang
         internal void GrabSpider(PointerEventData e)
         {
             if (StoryFocus.Exclusive) { StopWork(); return; }
-            if (walker == null || !PointerInLayer(e, out var p) || zhongbao == null || zhongbao.Label == null) return;
+            if (walker == null || !PointerInLayer(e, out var p) || !TeachingVisible) return;
+            workLabel = TeachingLabel; workOwner = Sim;
             held = true; working = false; reach = Reach.Idle; armK = 0;
             grabOffset = walker.pos - p; heldAt = walker.pos; pointerAt = p;
-            zhongbao.Label.SetSpiderRole(XgLabelPage.SpiderRole.Held);
-            zhongbao.Juice?.Play(XgJuice.Sfx.Id.Swoosh, 1.4f, .5f);
+            workLabel.SetSpiderRole(XgLabelPage.SpiderRole.Held);
+            controller.View.Juice?.Play(XgJuice.Sfx.Id.Swoosh, 1.4f, .5f);
         }
 
         internal void MoveGrabbed(PointerEventData e)
         {
             if (StoryFocus.Exclusive) { StopWork(); return; }
+            if (!TeachingVisible || workLabel != TeachingLabel || !ReferenceEquals(workOwner, Sim)) { StopWork(); return; }
             if (!held || !PointerInLayer(e, out var p)) return;
             pointerAt = p;
             heldAt = p + grabOffset;
@@ -641,12 +655,12 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!held) return;
             if (PointerInLayer(e, out var p)) { pointerAt = p; heldAt = p + grabOffset; }
             held = false;
-            var label = zhongbao != null ? zhongbao.Label : null;
-            if (label != null && label.Workspace != null && LayerRect(label.Workspace).Contains(pointerAt))
+            var label = workLabel;
+            if (TeachingVisible && label == TeachingLabel && ReferenceEquals(workOwner, Sim) && label.Workspace != null && LayerRect(label.Workspace).Contains(pointerAt))
             {
                 working = true; reach = Reach.Idle; workCard = -2; thinkLeft = .5f; noteClock = 0; armK = 0;
                 label.SetSpiderRole(XgLabelPage.SpiderRole.Working);
-                zhongbao.Juice?.Play(XgJuice.Sfx.Id.Unlock, 1.3f, .5f);
+                controller.View.Juice?.Play(XgJuice.Sfx.Id.Unlock, 1.3f, .5f);
             }
             else
             {
@@ -662,8 +676,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!held && !working) return;
             held = false; working = false; reach = Reach.Idle; armK = 0; reachButton = null;
             if (walker != null) walker.eyeBoost = 0;
-            var label = zhongbao != null ? zhongbao.Label : null;
+            var label = workLabel;
             label?.SetSpiderRole(XgLabelPage.SpiderRole.Home);
+            workLabel = null; workOwner = null;
         }
 
         void TickHeld(float dt)
@@ -675,7 +690,7 @@ namespace LingGuangV05.Desktop.XingGuang
             walker.heading = Mathf.LerpAngle(walker.heading * Mathf.Rad2Deg, 90, 1 - Mathf.Exp(-6 * dt)) * Mathf.Deg2Rad;
             walker.Carry(); // the feet leave the page and dangle instead of stepping after the pointer
             walker.Tick(dt, walker.pos, 0, Reduced);
-            var label = zhongbao.Label;
+            var label = TeachingLabel;
             if (label != null && label.Workspace != null) label.SetDropHint(LayerRect(label.Workspace).Contains(pointerAt));
         }
 
@@ -688,7 +703,8 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         void TickWork(float dt)
         {
-            var label = zhongbao.Label;
+            var label = TeachingLabel;
+            if (!TeachingVisible || label != workLabel || !ReferenceEquals(workOwner, Sim)) { StopWork(); return; }
             var card = LayerRect(label.Paper);
             var area = LayerRect(label.Workspace);
             float size = walker.size;
@@ -722,7 +738,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 {
                     armK = Mathf.MoveTowards(armK, 0, 6 * dt);
                     long id = label.ShownCardId;
-                    if (id != workCard) { workCard = id; thinkLeft = .32f + .16f * (float)rng.NextDouble(); }
+                    if (id != workCard) { workCard = id; thinkLeft = Mathf.Max(.05f, Sim.SpiderAnswerPeriod - ReachOut - ReachHold - ReachBack); }
                     string blocker = label.SpiderBlocker();
                     if (blocker != null || id < 0)
                     {
@@ -733,12 +749,13 @@ namespace LingGuangV05.Desktop.XingGuang
                     thinkLeft -= dt;
                     if (thinkLeft > 0) return;
                     if (!label.SpiderPeek(out bool yes)) return;
+                    workCard = label.ShownCardId; workDesk = Sim.S.desk;
                     reachYes = yes; reachButton = label.Button(yes); reachClock = 0; pressed = false; reach = Reach.Out;
                     return;
                 }
                 case Reach.Out:
                 {
-                    if (reachButton == null || !reachButton.gameObject.activeInHierarchy) { reach = Reach.Back; return; }
+                    if (label.ShownCardId != workCard || Sim.S.desk != workDesk || label.SpiderBlocker() != null || reachButton == null || !reachButton.gameObject.activeInHierarchy) { reach = Reach.Back; reachClock = 1; return; }
                     reachClock += dt / ReachOut;
                     armK = Ease(reachClock);
                     armTip = Vector2.Lerp(armBase + walker.Forward * 16 * size, LayerRect(reachButton).center, armK);
@@ -752,6 +769,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (!pressed)
                     {
                         pressed = true;
+                        if (label.ShownCardId != workCard || Sim.S.desk != workDesk || label.SpiderBlocker() != null) { reach = Reach.Back; reachClock = 1; return; }
                         var r = label.SpiderHandPress(reachYes);
                         if (r.accepted) { pulseT = 0; if (r.correct) fx.Credit(); }
                     }
@@ -841,7 +859,7 @@ namespace LingGuangV05.Desktop.XingGuang
         System.Collections.IEnumerator IntroScene()
         {
             IntroPlaying = true;
-            Sim.S.spiderIntroDone = true;
+            Sim.BeginPurchasedSpiderIntro();
             controller.Open();
             yield return null;
             if (controller == null) { IntroPlaying = false; intro = null; yield break; }
@@ -932,6 +950,38 @@ namespace LingGuangV05.Desktop.XingGuang
             if (XgReadCredit.Read(Sim, w.text, w.first, w.count)) fx.Credit(); // a new word is a sample (XgSim.ResidentRead)
         }
 
+        // Only Unity's simulated browser tabs are inspected: never an OS browser or a real file.
+        void TickAutomaticBrowser(float dt)
+        {
+            if (!Sim.SpiderAutomaticBrowsing || Dragged || StoryFocus.Exclusive || spiderBrowser == null || !spiderBrowser.isActiveAndEnabled) return;
+            var browserWindow = spiderBrowser.GetComponentInParent<WindowManager>();
+            if (browserWindow == null || !DesktopNotifications.IsWindowVisible(browserWindow)) return;
+            if (Time.unscaledTime - lastPress < 5) return; // Do not turn a page under the player's click.
+            var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            if (selected != null && selected.GetComponent<TMP_InputField>() != null) return;
+            browserTurnClock += dt;
+            if (browserTurnClock < 20) return;
+            browserTurnClock = 0;
+            var tabs = spiderBrowser.currentTabs;
+            int current = -1;
+            for (int i = 0; i < tabs.Count; i++)
+                if (tabs[i].tabPage != null && tabs[i].tabPage.activeInHierarchy) { current = i; break; }
+            if (current < 0) return;
+            var scroll = tabs[current].tabPage.GetComponentInChildren<ScrollRect>();
+            if (scroll != null && scroll.vertical && scroll.content != null && scroll.viewport != null
+                && scroll.content.rect.height > scroll.viewport.rect.height + 1 && scroll.verticalNormalizedPosition > .01f)
+            {
+                scroll.verticalNormalizedPosition = Mathf.Max(0, scroll.verticalNormalizedPosition - .5f);
+                scanTimer = 0;
+                return;
+            }
+            if (tabs.Count > 1)
+            {
+                spiderBrowser.SwitchToTab(tabs[(current + 1) % tabs.Count].guid);
+                scanTimer = 0;
+            }
+        }
+
         // ───────────── reading the screen ─────────────
 
         void RefreshWindows()
@@ -954,7 +1004,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 // The window root covers the screen; its frame is the container.
                 var frame = win.manager != null && win.manager.windowContainer != null ? win.manager.windowContainer as RectTransform : null;
                 win.rect = LayerRect(frame != null ? frame : child);
-                win.forbidden = !mayQingwen && qingwenOpen && yyWindow != null && win.manager == yyWindow;
+                bool browserPage = win.rt.GetComponentInChildren<LingGuangV05.Desktop.Apps.WebBrowserApp>(true) != null;
+                win.forbidden = (!Sim.SpiderAutomaticBrowsing && !browserPage) || !mayQingwen && qingwenOpen && yyWindow != null && win.manager == yyWindow;
                 // A window that just opened right where it stands (or close beside it) makes it jump.
                 if (win.known && win.visible && !win.wasVisible && walker != null && !popupNear)
                 {

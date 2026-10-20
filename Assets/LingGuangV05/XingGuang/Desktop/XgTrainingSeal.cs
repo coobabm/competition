@@ -54,7 +54,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 ()=>view.Visible&&view.Tab=="train"&&!view.Juice.Reduced&&!view.Sim.S.reduceFx&&!GamePerformance.Low,
                 ()=>{
                     if(view.Sim.TrainPart(part))return;
-                    view.Juice.Play(XgJuice.Sfx.Id.Thud);view.ShowTab("tree");
+                    view.Juice.Play(XgJuice.Sfx.Id.Click);view.ShowTab("tree");
+                    // ShowTab already explains the opening gate; do not focus a hidden page.
+                    if(view.Tab!="tree")return;
                     if(!view.Tree.FocusNodeDetails(nodeId))view.ShowToast(GameText.T("暂时无法找到对应科技。","The matching technology is currently unavailable."),3);
                 });
         }

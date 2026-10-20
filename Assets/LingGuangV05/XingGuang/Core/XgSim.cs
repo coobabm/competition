@@ -94,6 +94,8 @@ namespace LingGuangV05.XingGuang
             RepairConsumablesRetired();
             RepairAutoRetired();
             RepairRelics();
+            RepairMoleTopics();
+            RepairSpiderUpgrades();
             EnsureSeed();
             RepairStagePresentations();
             RepairLedgerAccess(state == null);
@@ -217,7 +219,7 @@ namespace LingGuangV05.XingGuang
             if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return NodeStatus.Locked;
             if (Has(n.id)) return NodeStatus.Owned;
             if (!NodeVisible(n) || BoardLogicBlocker(n.id) != null || BoardRecordsBlocker(n.id) != null || DailyNodeBlocker(n.id) != null || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
-            if (n.parent != null && !Has(n.parent)) return NodeStatus.Locked;
+            if (!string.IsNullOrEmpty(n.parent) && !Has(n.parent)) return NodeStatus.Locked;
             foreach (var need in n.needs) if (!Has(need)) return NodeStatus.Locked;
             if (host == null || host.Money + 1e-9 < NodeCost(n)) return NodeStatus.TooExpensive;
             return NodeStatus.Buyable;
@@ -241,13 +243,13 @@ namespace LingGuangV05.XingGuang
                     if (daily != null) return daily;
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
-                    if (!ChatNodeReady(n.id)) return T("对它说一句话：____。", "Say something to it: ____. ") + ChatNodeHint(n.id);
+                    if (!ChatNodeReady(n.id)) return ChatNodePurchaseHint(n.id);
                     var missing = new List<string>();
-                    if (n.parent != null && !Has(n.parent)) missing.Add(NodeName(XgCatalog.Node(n.parent)));
+                    if (!string.IsNullOrEmpty(n.parent) && !Has(n.parent)) missing.Add(NodeName(XgCatalog.Node(n.parent)));
                     foreach (var need in n.needs) if (!Has(need)) missing.Add(NodeName(XgCatalog.Node(need)));
                     return T("先解锁 ") + string.Join(T("、"), missing);
                 case NodeStatus.TooExpensive: return T("经费不足 ¥") + F(NodeCost(n), "0");
-                default: return T("按住购买 ¥") + F(NodeCost(n), "0");
+                default: return T("点击购买 ¥", "Click to buy ¥") + F(NodeCost(n), "0");
             }
         }
 
@@ -628,8 +630,35 @@ namespace LingGuangV05.XingGuang
             if (best != null) SetDataset((XgTrack)run.track, best.id);
         }
 
-        /// <summary>Combo multiplier for hand labels and hand epochs: +5% per hit, up to ×2 (a relic pair raises the cap).</summary>
-        public double ComboMultiplier { get { return 1 + Math.Min(1 + RelicFx.comboCapBonus, .05 * S.combo); } }
+        /// <summary>Right answers in a row per step of the pay multiplier (two in a row, then the third pays double).</summary>
+        public const int ComboStep = 2;
+        /// <summary>The streak multiplier never goes past this (the ninth correct answer at the normal pace).</summary>
+        public const int ComboMaxMultiplier = 5;
+
+        /// <summary>
+        /// The pay multiplier of a streak of <paramref name="combo"/> with <paramref name="step"/> right answers per step:
+        /// Two completed correct answers unlock the next tier for the following answer: ×1 for 0–2, ×2 from 3, ×3 from 5, ×4 from 7, ×5 from 9.
+        /// </summary>
+        public static int StreakMultiplierOf(int combo, int step = ComboStep)
+        { return Math.Min(ComboMaxMultiplier, 1 + Math.Max(0, Math.Max(0, combo) - 1) / Math.Max(1, step)); }
+
+        /// <summary>Right answers still needed for the next multiplier (0 at the cap).</summary>
+        public static int ToNextMultiplier(int combo, int step = ComboStep)
+        {
+            combo = Math.Max(0, combo); step = Math.Max(1, step);
+            int multiplier = StreakMultiplierOf(combo, step);
+            return multiplier >= ComboMaxMultiplier ? 0 : (int)Math.Min(int.MaxValue, 1L + (long)step * multiplier - combo);
+        }
+
+        /// <summary>Completed right answers before the following answer advances a multiplier tier.</summary>
+        public int ComboStepNow => RelicFx.comboFastStep ? 2 : ComboStep;
+        /// <summary>The current streak's pay multiplier, ×1 … ×5 (a right answer is counted before it is priced).</summary>
+        public int StreakMultiplier => StreakMultiplierOf(S.combo, ComboStepNow);
+        /// <summary>Right answers still needed for the next multiplier (0 at ×5).</summary>
+        public int StreakToNext => ToNextMultiplier(S.combo, ComboStepNow);
+
+        /// <summary>Combo multiplier for hand answers (cards, desk games, orders): see <see cref="StreakMultiplierOf"/>.</summary>
+        public double ComboMultiplier { get { return StreakMultiplier; } }
 
         /// <summary>
         /// Why a round cannot start. Like <see cref="Blocker"/>, except that the other line's running epoch is no reason:
@@ -1047,15 +1076,16 @@ namespace LingGuangV05.XingGuang
         /// <summary>A round pressed by hand is on the bar.</summary>
         public bool HandRoundRunning => S.vision.epochActive && S.vision.epochHand || S.sequence.epochActive && S.sequence.epochHand;
 
-        void Hit(double window, int amount)
+        void Hit(double window)
         {
             int before = S.combo;
-            S.combo += amount;
+            S.combo = S.combo == int.MaxValue ? int.MaxValue : S.combo + 1; // one answered question is one consecutive correct answer
             if (S.openingFocus) window *= OpeningComboWindow;
             S.comboTimer = Math.Max(S.comboTimer, window);
             if (S.combo > S.bestCombo) S.bestCombo = S.combo;
-            for (int i = 0; i < XgCatalog.ComboTiers.Length; i++)
-                if (before < XgCatalog.ComboTiers[i] && S.combo >= XgCatalog.ComboTiers[i]) ComboTier?.Invoke(i);
+            // One tier per multiplier (tier 0 = ×2 … 3 = ×5). Only the newly reached tier is announced.
+            int reached = StreakMultiplierOf(S.combo, ComboStepNow);
+            if (reached > StreakMultiplierOf(before, ComboStepNow)) ComboTier?.Invoke(reached - 2);
         }
 
         void BreakCombo()
@@ -1405,8 +1435,8 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>
-        /// Hand answer. Right: ¥ (× combo, ×3 on 前方高能, harder cards pay more), one more sample, combo +1 (+2 on a
-        /// 老司机 trick). Wrong or too late: no pay, combo reset, label discarded. Either way the next card comes up.
+        /// Hand answer. Right: ¥ (× the streak multiplier ×1…×5, ×3 on 前方高能, harder cards pay more), one more sample, combo +1.
+        /// Hard-card bonuses do not count as extra answers. Wrong or too late: no pay, combo reset, label discarded.
         /// </summary>
         public XgAnswer Answer(string desk, bool yes, IXgHost host)
         {
@@ -1444,9 +1474,10 @@ namespace LingGuangV05.XingGuang
                     S.modelStreak = taughtGuess == card.truth ? S.modelStreak + 1 : 0;
                     S.bestModelStreak = Math.Max(S.bestModelStreak, S.modelStreak);
                 }
-                Hit(info.comboWindow, card.trick ? 2 : 1);
+                Hit(info.comboWindow);
                 result.corrected = correcting;
-                result.pay = ManualPayFor(desk, card.level) * (teaching ? (correcting ? CorrectionPayMultiplier : 1) : ComboMultiplier) * (quickBonus ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
+                // The streak multiplier (×1…×5) pays on every hand answer, the 教 page's included; a correction there doubles on top.
+                result.pay = ManualPayFor(desk, card.level) * (correcting ? CorrectionPayMultiplier : 1) * ComboMultiplier * (quickBonus ? 3 : 1) * (card.bounty ? BountyMultiplier : 1);
                 host.Earn(result.pay);
                 S.totalIncome += result.pay;
                 S.handCorrect++;

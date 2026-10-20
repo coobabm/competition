@@ -7,8 +7,10 @@ namespace LingGuangV05.XingGuang
     {
         Add, Subtract, Multiply, Divide, Parentheses, Precedence,
         Power, SignedPower, SquareRoot, RootOfSquare,
-        Limit, Derivative, DefiniteIntegral, IndefiniteIntegral
+        Limit, Derivative, DefiniteIntegral, IndefiniteIntegral, Exponential, Logarithm
     }
+
+    public enum XgMoleTopic { Basic, Mixed, Powers, Calculus }
 
     /// <summary>Exact, bounded rational values. No text parsing or floating-point tolerance decides a label.</summary>
     public readonly struct XgMoleNumber : IEquatable<XgMoleNumber>
@@ -66,10 +68,20 @@ namespace LingGuangV05.XingGuang
         static long Pow(int a, int n) { long value = 1; for (int i = 0; i < n; i++) value *= a; return value; }
 
         public static XgMoleQuestion Generate(int seed, int tier)
+            => Generate(seed, tier, (XgMoleTopic)(-1));
+
+        public static XgMoleQuestion Generate(int seed, int tier, XgMoleTopic topic)
         {
             var r = new Random(seed);
-            int count = tier >= 3 ? 14 : tier >= 2 ? 10 : 6;
-            var kind = (XgMoleMathKind)r.Next(count);
+            int[] pool;
+            if (tier < 2 || topic == XgMoleTopic.Basic) pool = new[] { 0, 1, 2, 3 };
+            else if (topic == XgMoleTopic.Mixed) pool = new[] { 4, 5 };
+            else if (topic == XgMoleTopic.Powers) pool = new[] { 6, 7, 8, 9, 14, 15 };
+            else if (topic == XgMoleTopic.Calculus && tier >= 3) pool = new[] { 10, 11, 12, 13 };
+            else if (topic == XgMoleTopic.Calculus) pool = new[] { 0, 1, 2, 3 };
+            else pool = tier >= 3 ? new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
+                : new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15 };
+            var kind = (XgMoleMathKind)pool[r.Next(pool.Length)];
             int a = r.Next(2, 10), b = r.Next(2, 10), n = r.Next(2, 5);
             string prefix, suffix = "", category = "混合运算", zh = "先算括号，再乘除，后加减。", en = "Brackets first, then multiplication/division, then addition/subtraction.";
             XgMoleNumber expected;
@@ -100,6 +112,13 @@ namespace LingGuangV05.XingGuang
                 case XgMoleMathKind.RootOfSquare:
                     prefix = "√((" + I(-a) + ")²)="; expected = new XgMoleNumber(a); category = "根式";
                     zh = "实数范围内 √(x²)=|x|。"; en = "For real x, √(x²)=|x|."; break;
+                case XgMoleMathKind.Exponential:
+                    prefix = I(a) + "^" + I(n) + "="; expected = new XgMoleNumber(Pow(a, n)); category = "指数";
+                    zh = "正整数底数的指数运算。"; en = "Exponentiation with a positive integer base."; break;
+                case XgMoleMathKind.Logarithm:
+                    prefix = "log[" + I(a) + "](" + Pow(a, n).ToString(CultureInfo.InvariantCulture) + ")=";
+                    expected = new XgMoleNumber(n); category = "对数";
+                    zh = "底数大于1，真数为正。"; en = "The base is greater than one and the argument is positive."; break;
                 case XgMoleMathKind.Limit:
                     prefix = "lim[x→" + I(a) + "] (x²−" + I(a * a) + ")/(x−" + I(a) + ")=";
                     expected = new XgMoleNumber(2 * a); category = "极限";

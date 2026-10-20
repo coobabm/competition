@@ -17,6 +17,13 @@ namespace LingGuangV05.Runtime
                 chapter ? "chapters" : "slots", index.ToString()));
         }
 
+        public bool HasAnyArchive
+        {
+            get { for (int slot=1; slot<=6; slot++) if (ArchiveExists(slot)) return true; return false; }
+        }
+        // UI order changes without moving or renaming any existing save file.
+        public static int ArchiveDisplaySlot(int row) => row >= 0 && row < 5 ? row + 2 : row == 5 ? 1 : 0;
+
         public bool ArchiveExists(int index, bool chapter = false)
         {
             var archive = ArchiveStore(index, chapter);
@@ -59,7 +66,13 @@ namespace LingGuangV05.Runtime
         public bool LoadArchive(int index, bool chapter = false)
         {
             var archive = ArchiveStore(index, chapter);
-            if (archive == null || !useDiskSave || persistenceBlocked || endingArchiveBusy) return false;
+            if (archive == null || !useDiskSave || persistenceBlocked || endingArchiveBusy)
+            {
+                SaveStatus = endingArchiveBusy
+                    ? GameText.T("正在保存结局，请稍后再读取。", "Saving the ending. Please try loading again shortly.")
+                    : GameText.T("暂时无法读取存档，当前进度未改变。请返回后重试。", "Unable to load right now. Your current progress is unchanged. Please go back and try again.");
+                return false;
+            }
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
             // Validate and instantiate before touching the active save. Atomic replacement retains a backup.
@@ -71,10 +84,11 @@ namespace LingGuangV05.Runtime
                 Debug.LogWarning("[Save] Archive reconstruction failed: " + error.Message);
                 return false;
             }
-            restored.S.lastSeenUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            restored.S.lastSeenUnix = Math.Max(restored.S.lastSeenUnix,UtcNow);
+            if (!PrepareOfflineArchive(restored.S)) return false;
             if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
             Attach(restored); KnownProfile(restored, false);
-            SaveStatus = GameText.T("已读取，当前进度已切换。", "Loaded. Current progress has changed.");
+            SaveStatus = GameText.T("已读取，当前进度已切换。", "Loaded. Current progress has changed.") + OfflineSummary();
             Changed?.Invoke(); return true;
         }
 

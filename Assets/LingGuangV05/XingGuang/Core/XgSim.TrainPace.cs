@@ -46,7 +46,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         /// <summary>Seconds of a tiny model on one GTX 980 Ti (compute 1) at the reference sample count.</summary>
-        public const double PaceBaseSeconds = 1.4;
+        public const double PaceBaseSeconds = .5;
         /// <summary>Extra length per decade of parameters: ×(1 + this · log10(1 + K params)). 2K ≈ ×1.5, 2M ≈ ×4.3.</summary>
         public const double PaceParamsWeight = 1.0;
         /// <summary>Cards one round reads at which the data term is ×1 (CardsPerEpoch's base).</summary>
@@ -62,7 +62,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Transformer: every word at once instead of one after another, the same idea as <see cref="DurationFor"/>'s ×0.3.</summary>
         public const double PaceTransformerFactor = .5;
         /// <summary>A round is never shorter / longer than this at full speed.</summary>
-        public const double PaceMinSeconds = 1, PaceMaxSeconds = 11;
+        public const double PaceMinSeconds = .18, PaceMaxSeconds = 11;
 
         /// <summary>Progress at which loading ends and training starts, and at which validation starts.</summary>
         public const double PaceTrainAt = .12, PaceValidateAt = .92;
@@ -232,7 +232,7 @@ namespace LingGuangV05.XingGuang
         double RateAt(XgRun run, double nominal, double clock, double progress)
         {
             if (progress >= PaceValidateAt) return 0;
-            double size = BucketSeconds(progress);
+            double size = BucketSeconds(progress, nominal);
             int bucket = (int)Math.Floor(clock / size);
             double u = Hash01(run.paceSeed, bucket), v = Hash01(run.paceSeed, bucket + 7919);
             double rate;
@@ -259,7 +259,13 @@ namespace LingGuangV05.XingGuang
         }
 
         /// <summary>How often the speed changes: quicker while loading (the bursts), steadier while training.</summary>
-        static double BucketSeconds(double progress) => progress < PaceTrainAt ? PaceLoadBucketSeconds : PaceBucketSeconds;
+        static double BucketSeconds(double progress, double nominal)
+        {
+            // Preserve several visible phases in subsecond rounds. Long rounds keep the
+            // original cadence; the floor bounds integration work on very fast hardware.
+            double original = progress < PaceTrainAt ? PaceLoadBucketSeconds : PaceBucketSeconds;
+            return Math.Max(.015, original * Math.Min(1, nominal / 1.4));
+        }
 
         /// <summary>
         /// Advances the round by <paramref name="seconds"/> of effective GPU time (wall time × the line's share of its
@@ -286,7 +292,7 @@ namespace LingGuangV05.XingGuang
                     break;
                 }
                 if (run.paceStall != (int)XgPaceStall.None && run.paceStallClock < 0 && p >= run.paceStallAt) run.paceStallClock = t;
-                double bucket = BucketSeconds(p);
+                double bucket = BucketSeconds(p, nominal);
                 double step = Math.Min(left, (Math.Floor(t / bucket) + 1) * bucket - t);
                 if (StallActive(run, t)) step = Math.Min(step, run.paceStallClock + run.paceStallLength - t);
                 double deadline = PaceTrainDeadline * nominal - t;

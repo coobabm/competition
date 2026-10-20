@@ -30,10 +30,11 @@ namespace LingGuangV05.Runtime
                 var loaded = source.Load(ValidArchive);
                 if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
                 var restored = new ChapterOneSim(JsonUtility.FromJson<GameState>(loaded.Payload));
-                restored.S.lastSeenUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                restored.S.lastSeenUnix = Math.Max(restored.S.lastSeenUnix,UtcNow);
+                if (!PrepareOfflineArchive(restored.S)) return false;
                 if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
                 Attach(restored); KnownProfile(restored, false);
-                SaveStatus = GameText.T("已导入，当前进度已切换。", "Imported. Current progress has changed.");
+                SaveStatus = GameText.T("已导入，当前进度已切换。", "Imported. Current progress has changed.") + OfflineSummary();
                 Changed?.Invoke(); return true;
             }
             catch (Exception error) when (error is IOException || error is InvalidDataException || error is UnauthorizedAccessException || error is ArgumentException || error is InvalidOperationException)

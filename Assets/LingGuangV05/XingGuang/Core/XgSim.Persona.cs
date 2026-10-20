@@ -166,7 +166,7 @@ namespace LingGuangV05.XingGuang
                 case 3: return new XgSpeechLimits { tokens = tokens, context = 512, contextMessages = 2, temperature = 1f };
                 case 4: return new XgSpeechLimits { tokens = tokens, context = 1024, contextMessages = 8, temperature = .9f };
                 case 5: return new XgSpeechLimits { tokens = tokens, context = 2048, contextMessages = 12, temperature = .8f };
-                default: return new XgSpeechLimits { tokens = S.fullOpen ? 400 : 90, context = 4096, contextMessages = 20, temperature = .8f, thinking = S.fullOpen };
+                default: return new XgSpeechLimits { tokens = S.fullOpen ? 120 : 90, context = 4096, contextMessages = 20, temperature = .8f, thinking = S.fullOpen };
             }
         }
 

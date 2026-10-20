@@ -2,106 +2,116 @@ using System;
 using System.Collections.Generic;
 namespace LingGuangV05.XingGuang
 {
-    /// <summary>Three-line technology cards. Explanations belong to the explicit Details action.</summary>
-    public static class XgTechTreeCopy
+    /// <summary>Three-line technology cards. Metadata is separate; explanations appear on hover or icon press.</summary>
+    public static partial class XgTechTreeCopy
     {
         sealed class Copy
         {
-            public readonly string name, nameEn, summary, summaryEn, effect, effectEn;
-            public Copy(string n,string en,string s,string se,string e,string ee){name=n;nameEn=en;summary=s;summaryEn=se;effect=e;effectEn=ee;}
+            public readonly string name, nameEn, tag, tagEn, summary, summaryEn, effect, effectEn;
+            public Copy(string n,string en,string s,string se,string e,string ee)
+            {
+                SeparateMetadata(n,en,out name,out nameEn,out tag,out tagEn);
+                summary=s;summaryEn=se;effect=e;effectEn=ee;
+            }
         }
         static string T(XgSim sim,string zh,string en)=>sim.English?en:zh;
         static readonly Dictionary<string,Copy> All=new Dictionary<string,Copy>(StringComparer.Ordinal)
         {
-            { "daily.dice", new Copy("概率直觉","Probability intuition","从几种可能里数机会","Count equally likely outcomes","概率小题；监控预报更细","Questions; finer monitor forecasts") },
-            { "daily.news", new Copy("时事","Current affairs","再想想读过的新闻","Recall news you have read","开放新闻回顾","Opens news review") },
-            { "daily.surf", new Copy("冲浪","Surfing","在帖子里找到资料","Find learning links in posts","高亮手写数字资料链接","Highlights the digit-data link") },
-            { "daily.bargain", new Copy("砍价","Bargaining","买二手显卡少花一点","Spend less on used GPUs","启用喵鱼二手显卡折扣","Discounts Miaoyu used GPUs") },
-            { "daily.care", new Copy("体贴","Considerate","记得对方说过的话","Remember what others told you","体贴表达与已知日期提醒","Considerate cues and known dates") },
-            { "daily.slang", new Copy("网络用语","Internet slang","读懂群里的梗","Understand the group slang","加入用语解释与斗图建议","Adds slang and sticker tips") },
-            { "daily.rhythm", new Copy("节奏","Rhythm","让完成提示跟上音乐","Let completion cues follow music","完成提示跟随音乐重音","Completion cues follow music accents") },
-            { "perceptron", new Copy("感知机 P 1958","Perceptron P 1958","用直线分两边","Split with one line","启用基础脑型","Enables basic architecture") },
-            { "mlp", new Copy("多层感知机 MLP 1986","Multilayer MLP 1986","把简单线索组合起来","Combine simple clues","加入多层脑型","Adds multilayer architecture") },
-            { "lenet", new Copy("手写卷积 LeNet 1998","Digit CNN LeNet 1998","小窗口寻找笔画","Find strokes locally","加入手写卷积脑型","Adds digit CNN architecture") },
-            { "rnn", new Copy("循环网络 RNN 1986","Recurrent RNN 1986","边读边记前文","Read and remember","加入循环脑型","Adds recurrent architecture") },
-            { "alexnet", new Copy("深层卷积 AlexNet 2012","Deep CNN AlexNet 2012","叠起更多图像线索","Stack visual clues","加入深层卷积脑型","Adds deep CNN architecture") },
-            { "vgg", new Copy("小窗卷积 VGG 2014","Small-filter VGG 2014","小窗口层层叠起来","Stack small filters","加入小窗卷积脑型","Adds VGG architecture") },
-            { "googlenet", new Copy("多路卷积 Inception 2014","Multi-path Inception 2014","大小窗口一起看","Use several window sizes","加入多路卷积脑型","Adds multi-path architecture") },
-            { "lstm", new Copy("门控记忆 LSTM 1997","Gated memory LSTM 1997","让重要线索多留一会","Keep useful clues longer","加入门控记忆脑型","Adds gated-memory architecture") },
-            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","用更少参数记前文","Remember with fewer weights","加入简化记忆脑型","Adds compact memory") },
-            { "textcnn", new Copy("文字卷积 CNN 2014","Text CNN 2014","用小窗口读短句","Read local word groups","加入文字卷积脑型","Adds text CNN architecture") },
-            { "resnet", new Copy("残差网络 ResNet 2015","Residual ResNet 2015","给信息开一条近道","Give signals a shortcut","启用跨层直连","Enables skip connections") },
-            { "seq2seq", new Copy("编码解码 Seq2Seq 2014","Encoder-decoder S2S 2014","读完一句再组织输出","Read, then compose","加入编码解码脑型","Adds encoder-decoder architecture") },
-            { "attention", new Copy("回看注意力 Attn 2014","Look-back Attn 2014","说话时回头看原文","Look back at the source","移除翻译瓶颈折减","Removes translation bottleneck") },
-            { "caption", new Copy("图像描述 Cap 2015","Image caption Cap 2015","给图像配一句话","Describe a picture","表情题显示描述","Shows descriptions on meme cards") },
-            { "transformer", new Copy("自研新脑 TF 探索2016","Own TF experiment 2016","让整句线索一起看","Attend across the sentence","加入自研注意力脑型","Adds experimental architecture") },
-            { "weights", new Copy("权重 W 1958","Weights W 1958","给线索分配分量","Weight each clue","训练处理量×1.1","Training throughput ×1.1") },
-            { "learnrule", new Copy("感知学习 PL 1958","Perceptron rule PL 1958","答错就朝正确方向调","Adjust after mistakes","训练处理量×1.15","Training throughput ×1.15") },
-            { "step", new Copy("阶跃开关 Step 1943","Threshold Step 1943","过线才打开开关","Switch at a threshold","成绩上限项加1点","Ceiling bonus term +1 point") },
-            { "bias", new Copy("偏置 Bias 1958","Bias 1958","让判断门槛能移动","Move the decision threshold","成绩上限项加2点","Ceiling bonus term +2 points") },
-            { "features", new Copy("组合线索 FE 工具2016","Feature tools FE tool 2016","人先帮它整理线索","Prepare combined clues","解除逻辑55%上限","Removes the 55% base logic cap") },
-            { "shared.lr", new Copy("学习率搜索 LRS 工具2016","Rate search LRS tool 2016","试试哪种步子合适","Try different step sizes","显示六档学习率","Shows six learning rates") },
-            { "sigmoid", new Copy("平滑开关 Sigmoid 1986","Smooth Sigmoid 1986","小误差也能传回来","Pass small errors back","启用平滑激活","Enables smooth activation") },
-            { "momentum", new Copy("动量下降 MSGD 1964","Momentum MSGD 1964","顺着之前的方向走","Follow recent direction","优化器处理量×1.3","Optimizer throughput ×1.3") },
-            { "backprop", new Copy("小批量 MB 工具2016","Mini-batch MB tool 2016","看一批题再改一次","Update after a small batch","训练处理量×1.2","Training throughput ×1.2") },
-            { "chainrule", new Copy("自动求导 AD 1970","Auto-diff AD 1970","让程序算调整方向","Calculate update directions","训练处理量×1.1","Training throughput ×1.1") },
-            { "cudnn", new Copy("显卡加速 cuDNN 2014","GPU library cuDNN 2014","用显卡擅长的算法","Use GPU-tuned routines","训练用电量×0.7","Training energy ×0.7") },
-            { "cooler", new Copy("塔式散热 FAN 工具2016","Tower cooler FAN tool 2016","把训练热量带走","Carry training heat away","训练烧卡风险减半","Halves training burn-out risk") },
-            { "relu", new Copy("整流激活 ReLU 2010","Rectifier ReLU 2010","正数传下去负数归零","Pass positives, zero negatives","训练处理量×1.3","Training throughput ×1.3") },
-            { "gradclip", new Copy("梯度裁剪 Clip 2013","Gradient Clip 2013","截短过大的改动","Limit oversized updates","单权重改动限幅","Clamps per-weight updates") },
-            { "irnn", new Copy("单位初始化 IRNN 2015","Identity init IRNN 2015","先让记忆原样传递","Start with identity memory","提高循环记忆保留率","Raises recurrent retention") },
-            { "dropout", new Copy("随机失活 Dropout 2012","Dropout 2012","少靠几条熟悉线索","Avoid relying on few clues","过拟合风险项减半","Halves overfit risk term") },
-            { "augment", new Copy("数据增强 AUG 工具2016","Data augmentation AUG tool 2016","换个样子继续认","Recognise varied views","扩充图像训练题池","Expands image training pool") },
-            { "dataclean", new Copy("数据清洗 CLEAN 工具2016","Data cleanup CLEAN tool 2016","先挑掉错误示范","Remove wrong examples","外来有效错标减半","Halves effective external noise") },
-            { "rmsprop", new Copy("自适应步长 RMSProp 2012","Adaptive RMSProp 2012","每个参数各走各的","Adapt each parameter's step","优化器处理量×1.6","Optimizer throughput ×1.6") },
-            { "batchnorm", new Copy("批归一化 BN 2015","Batch norm BN 2015","把一批信号调齐","Align a batch of signals","结构耐受层数加6","Architecture depth tolerance +6") },
-            { "adam", new Copy("自适应动量 Adam 2014","Adaptive momentum Adam 2014","方向和步幅一起调","Adapt direction and step","优化器处理量×2","Optimizer throughput ×2") },
-            { "lrschedule", new Copy("学习率衰减 LRD 工具2016","Rate decay LRD tool 2016","先大步再慢慢细调","Large steps, then fine steps","降低成绩上限误差项","Lowers ceiling error term") },
-            { "position", new Copy("位置标记 POS 探索2016","Own position experiment 2016","给每个字一个位置","Tag each word's position","启用文字位置线索","Enables word-position clues") },
-            { "transfer", new Copy("迁移学习 TL 工具2016","Transfer learning TL tool 2016","换脑型也带上旧知识","Carry knowledge to a new model","换脑型保留60%增益","Keeps 60% above-chance accuracy") },
-            { "multihead", new Copy("多路注意 MH 探索2016","Own multi-head experiment 2016","几路同时寻找线索","Look for several clue types","随自研脑型获得","Granted with experimental model") },
-            { "layernorm", new Copy("层归一化 LN 2016","Layer norm LN 2016","把内部信号调齐","Align internal signals","随自研脑型获得","Granted with experimental model") },
-            { "residual", new Copy("残差直连 RC 2015","Residual links RC 2015","留一条不绕远的路","Leave a direct signal path","随自研脑型获得","Granted with experimental model") },
-            { "warmup", new Copy("学习率预热 WU 工具2016","Rate warm-up WU tool 2016","换设置后先小步走","Start gently after changes","前期步幅渐进提升","Ramps initial learning steps") },
-            { "fp16", new Copy("半精度 FP16 2016","Half precision FP16 2016","用更短的数字计算","Compute with shorter numbers","预训练规模×2","Pretraining scale ×2") },
-            { "earlystop", new Copy("早停研究 ES 1990","Early-stop study ES 1990","研究何时该停下来","Study when to stop","训练处理量×1.05","Training throughput ×1.05") },
-            { "wordvec", new Copy("词向量 W2V 2013","Word vectors W2V 2013","把词语变成数字","Represent words as numbers","训练处理量×1.08","Training throughput ×1.08") },
-            { "beamsearch", new Copy("束搜索 BS 1977","Beam search BS 1977","多留几条候选句","Keep several candidates","训练处理量×1.1","Training throughput ×1.1") },
-            { "subword", new Copy("子词切分 BPE 2016","Subword BPE 2016","生僻词拆成小块","Split rare words into pieces","训练处理量×1.05","Training throughput ×1.05") },
-            { "sft", new Copy("示范跟答 SFT 探索2016","Own answer-tuning trial 2016","照着好回答学说话","Learn from good answers","训练处理量×1.05","Training throughput ×1.05") },
-            { "cot", new Copy("分步解题 CoT 探索2016","Own reasoning trial 2016","先想几步再回答","Work through steps first","训练处理量×1.05","Training throughput ×1.05") },
-            { "secret.6", new Copy("配置指南 GUIDE 工具2016","Setup guide GUIDE tool 2016","看看预训练怎样配","Read the pretraining setup","显示预训练配置提示","Shows pretraining setup hints") },
-            { "datacenter", new Copy("机柜租赁 IDC 工具2016","Rack rental IDC tool 2016","给大训练找个机位","Make room for larger training","开放机房机架","Opens the data-centre rack") },
-            { "label.raise", new Copy("答题加薪 PAY 工具2016","Answer pay PAY tool 2016","每道题多赚一点","Earn more per answer","提高人工答题报酬","Raises hand-answer pay") },
-            { "label.auto", new Copy("自动答题 AUTO 工具2016","Auto answering AUTO tool 2016","让合格模型代劳","Let qualified models help","每级每桌加0.15题秒","Adds 0.15 cards/s per desk/level") },
-            { "label.coop", new Copy("把握门槛 CONF 工具2016","Confidence gate CONF tool 2016","拿不准就留给你","Leave uncertain cards to you","开放把握阈值设置","Unlocks confidence threshold") },
-            { "label.brain", new Copy("本地判题 LLM 工具2016","Local judging LLM tool 2016","让它读题说说理由","Let it read and judge","开放本地模型判题","Unlocks local-model judging") },
-            { "label.hard", new Copy("难例奖励 HARD 工具2016","Hard-case reward HARD tool 2016","难题复核更值钱","Reward difficult reviews","新题复核报酬×1.5","New-card review pay ×1.5") },
-            { "label.audit", new Copy("答案抽检 QA 工具2016","Answer audit QA tool 2016","拦住一部分错答案","Catch wrong submissions","错题抽检率40%","Audits 40% of wrong answers") },
-            { "label.parallel", new Copy("复核扩容 Q 工具2016","Review inbox Q tool 2016","存下拿不准的题","Keep uncertain answers","复核容量20→60","Review capacity 20 to 60") },
-            { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","认出见过的检查题","Recognise known test cards","金题转人工复核","Routes gold items to review") },
-            { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","让它替你抄数字","Let it type the digits","新验证码自动提交","Auto-submits new captchas") },
-            { "relic.slots8", new Copy("道具扩容 I","Relic slots I","给稀有道具留位置","Make room for rare items","装备格4→8","Equipped slots 4 to 8") },
-            { "arith.powers", new Copy("算术：幂与根式","Powers and roots","再多一种算法","Try another calculation","加入幂与根式题","Adds powers and roots") },
-            { "arith.calculus", new Copy("算术：微积分","Calculus","看看变化的规律","Explore how things change","加入极限、导数、积分","Limits, derivatives, integrals") },
-            { "arith.auto", new Copy("算术自动作答","Auto arithmetic","让它试着敲一下","Let it try a whack","开放自动打地鼠","Enables auto whack-a-mole") },
-            { "gamedata", new Copy("对局记录","Game records","收集与AI的新对局","Collect new games with your AI","对局产包，拖入练页安装","Creates packs to install in Train") },
-            { "board.logic1", new Copy("一步判断","One-move judgment","从棋盘数字找机会","Find chances from board cells","寻找直接连五或挡四","Finds a win or blocks four") },
-            { "board.logic2", new Copy("看懂棋盘截图","Read board pictures","从棋盘原图读出棋子","Read stones from a board image","开放五子棋读图","Unlocks the Gomoku reader") },
-            { "board.logic3", new Copy("想两步以上","Plan ahead","先想对手会怎么应","Consider the next reply","开启多步走法判断","Enables multi-step planning") },
-            { "board.logic4", new Copy("自己跟自己下","Self-play","夜间让它轮流自对弈","Practise a game each night","开启夜间自对弈","Enables night self-play") },
-            { "nextmove", new Copy("下一步走哪","Next move","练习判断下一步棋","Practise choosing a move","教页开放棋局四选一题","Four-choice board quiz in Teach") },
-            { "books.library", new Copy("图书馆网页","Library website","挑一本想读的书","Choose something to read","开放网页，书籍另购","Opens website; books sold separately") },
-            { "relic.slots12", new Copy("道具扩容 II","Relic slots II","再装上四件道具","Equip four more rare items","装备格8→12","Equipped slots 8 to 12") },
-            { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","把资料装进大脑","Load files into its brain","开放资料夹、安装与网址","Opens files, import and URLs") },
-            { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","看清每笔钱的去向","Track every payment","显示资金收入与电力","Shows funds, income and power") },
-            { "train.curve", new Copy("训练曲线 CURVE 工具2016","Training curve CURVE tool 2016","看看每轮有没有进步","Watch progress each round","解锁练页","Unlocks Train") },
-            { "train.holdout", new Copy("留出新题 VAL 工具2016","Holdout set VAL tool 2016","用没练过的题考它","Test unseen questions","显示新题成绩曲线","Shows validation curve") },
-            { "train.checkpoint", new Copy("检查点 CKPT 工具2016","Checkpoint CKPT tool 2016","保留最好的一版","Keep the best version","开放最佳成绩回档","Unlocks best-checkpoint restore") },
-            { "train.monitor", new Copy("训练监控 MON 工具2016","Training monitor MON tool 2016","先看这轮有哪些风险","Preview this round's risks","显示训练风险","Shows training risks") },
-            { "train.weights", new Copy("权重可视化 VIS 工具2016","Weight viewer VIS tool 2016","看看它在注意哪里","See which clues it uses","开放看它学","Opens the learning viewer") },
-            { "brain.window", new Copy("脑子窗口 BRAIN 工具2016","Brain window BRAIN tool 2016","看看它怎么想","Watch its activity","开放脑子窗口","Opens the brain window") },
-            { "label.ai", new Copy("{AI}代答 ANS 工具2016","{AI} answers ANS tool 2016","每题先看看它怎么答","See its answer on each card","每题显示它的回答","Shows its answer on every card") },
+            { "daily.dice", new Copy("概率直觉","Probability intuition","细化概率提示","Refine probability hints","显示概率题与风险预报","Show probability questions and risk forecasts") },
+            { "daily.news", new Copy("时事","Current affairs","显示新闻回顾","Show news review","复习已读新闻","Review news already read") },
+            { "daily.surf", new Copy("冲浪","Surfing","提示资料链接","Highlight learning links","高亮手写数字资料","Highlight handwritten-digit data") },
+            { "daily.bargain", new Copy("砍价","Bargaining","降低显卡价格","Reduce GPU purchase prices","二手显卡价格减5%","Used GPU purchase price −5%") },
+            { "daily.care", new Copy("体贴","Considerate","提醒重要日期","Remind of important dates","显示已知日期提醒","Show reminders for known dates") },
+            { "daily.slang", new Copy("网络用语","Internet slang","解释网络用语","Explain internet slang","显示用语解释与斗图建议","Show slang explanations and sticker tips") },
+            { "daily.rhythm", new Copy("节奏","Rhythm","同步音乐节奏","Follow the music rhythm","完成提示跟随音乐重音","Completion cues follow music accents") },
+            { "perceptron", new Copy("感知机 P 1958","Perceptron P 1958","学习基础判断","Learn basic classification","使用感知机学习分类","Classify with a perceptron") },
+            { "mlp", new Copy("多层感知机 MLP 1986","Multilayer MLP 1986","学习复杂判断","Learn complex classification","组合多层判断线索","Combine clues across layers") },
+            { "lenet", new Copy("手写卷积 LeNet 1998","Digit CNN LeNet 1998","识别图像特征","Recognise visual features","使用卷积识别笔画","Recognise strokes with convolution") },
+            { "rnn", new Copy("循环网络 RNN 1986","Recurrent RNN 1986","利用前文信息","Use preceding context","使用循环记忆","Use recurrent memory") },
+            { "alexnet", new Copy("深层卷积 AlexNet 2012","Deep CNN AlexNet 2012","扩展识图能力","Expand image recognition","使用深层卷积模型","Use a deep convolutional model") },
+            { "vgg", new Copy("小窗卷积 VGG 2014","Small-filter VGG 2014","扩展识图能力","Expand image recognition","使用小窗卷积模型","Use a small-filter convolutional model") },
+            { "googlenet", new Copy("多路卷积 Inception 2014","Multi-path Inception 2014","扩展识图能力","Expand image recognition","使用多路卷积模型","Use a multi-path convolutional model") },
+            { "lstm", new Copy("门控记忆 LSTM 1997","Gated memory LSTM 1997","保留长句信息","Retain longer context","使用门控记忆","Use gated memory") },
+            { "gru", new Copy("简化记忆 GRU 2014","Compact memory GRU 2014","精简记忆结构","Simplify memory structure","使用简化门控记忆","Use compact gated memory") },
+            { "textcnn", new Copy("文字卷积 CNN 2014","Text CNN 2014","识别短语特征","Recognise phrase features","使用文字卷积","Use text convolution") },
+            { "resnet", new Copy("残差网络 ResNet 2015","Residual ResNet 2015","改善深层学习","Improve deep learning","增加跨层信息通道","Add shortcuts between layers") },
+            { "seq2seq", new Copy("编码解码 Seq2Seq 2014","Encoder-decoder S2S 2014","学习句子转换","Learn sentence conversion","使用编码解码模型","Use an encoder-decoder model") },
+            { "attention", new Copy("回看注意力 Attn 2014","Look-back Attn 2014","利用原句信息","Use source-sentence context","解除翻译瓶颈限制","Remove the translation bottleneck") },
+            { "caption", new Copy("图像描述 Cap 2015","Image caption Cap 2015","生成图像描述","Generate image descriptions","显示表情图描述","Show descriptions for expression images") },
+            { "transformer", new Copy("自研新脑 TF 探索2016","Own TF experiment 2016","综合句中信息","Combine sentence context","使用自研注意力模型","Use an experimental attention model") },
+            { "weights", new Copy("权重 W 1958","Weights W 1958","提升训练效率","Increase training throughput","训练处理量×1.1","Training throughput ×1.1") },
+            { "learnrule", new Copy("感知学习 PL 1958","Perceptron rule PL 1958","提升训练效率","Increase training throughput","训练处理量×1.15","Training throughput ×1.15") },
+            { "step", new Copy("阶跃开关 Step 1943","Threshold Step 1943","提高成绩上限","Raise the score ceiling","上限加成+1点","Ceiling bonus +1 point") },
+            { "bias", new Copy("偏置 Bias 1958","Bias 1958","提高成绩上限","Raise the score ceiling","上限加成+2点","Ceiling bonus +2 points") },
+            { "features", new Copy("组合线索 FE 工具2016","Feature tools FE tool 2016","扩展逻辑学习","Expand logic learning","解除逻辑55%上限","Remove the base 55% logic ceiling") },
+            { "shared.lr", new Copy("学习率搜索 LRS 工具2016","Rate search LRS tool 2016","调整学习步幅","Adjust learning step size","显示六档学习率","Show six learning rates") },
+            { "sigmoid", new Copy("平滑开关 Sigmoid 1986","Smooth Sigmoid 1986","细化判断方式","Refine decision signals","使用连续判断数值","Use continuous decision values") },
+            { "momentum", new Copy("动量下降 MSGD 1964","Momentum MSGD 1964","提升优化效率","Increase optimisation throughput","优化器处理量×1.3","Optimizer throughput ×1.3") },
+            { "backprop", new Copy("小批量 MB 工具2016","Mini-batch MB tool 2016","提升训练效率","Increase training throughput","训练处理量×1.2","Training throughput ×1.2") },
+            { "chainrule", new Copy("自动求导 AD 1970","Auto-diff AD 1970","提升训练效率","Increase training throughput","训练处理量×1.1","Training throughput ×1.1") },
+            { "cudnn", new Copy("显卡加速 cuDNN 2014","GPU library cuDNN 2014","节省训练用电","Reduce training energy","训练用电量×0.7","Training energy ×0.7") },
+            { "cooler", new Copy("塔式散热 FAN 工具2016","Tower cooler FAN tool 2016","降低硬件风险","Reduce hardware risk","训练烧卡风险减半","Halve training GPU failure risk") },
+            { "relu", new Copy("整流激活 ReLU 2010","Rectifier ReLU 2010","提升训练效率","Increase training throughput","训练处理量×1.3","Training throughput ×1.3") },
+            { "gradclip", new Copy("梯度裁剪 Clip 2013","Gradient Clip 2013","限制更新幅度","Limit update size","限制单次参数改动","Limit individual parameter updates") },
+            { "irnn", new Copy("单位初始化 IRNN 2015","Identity init IRNN 2015","保留前文信息","Retain preceding context","提高循环记忆保留率","Improve recurrent memory retention") },
+            { "dropout", new Copy("随机失活 Dropout 2012","Dropout 2012","改善新题表现","Improve unseen-question performance","过拟合风险项减半","Halve the overfitting risk term") },
+            { "augment", new Copy("数据增强 AUG 工具2016","Data augmentation AUG tool 2016","扩充训练题目","Expand training examples","扩充图像变换题池","Add transformed image examples") },
+            { "dataclean", new Copy("数据清洗 CLEAN 工具2016","Data cleanup CLEAN tool 2016","改善标注质量","Improve label quality","外来有效错标减半","Halve effective external label noise") },
+            { "rmsprop", new Copy("自适应步长 RMSProp 2012","Adaptive RMSProp 2012","提升优化效率","Increase optimisation throughput","优化器处理量×1.6","Optimizer throughput ×1.6") },
+            { "batchnorm", new Copy("批归一化 BN 2015","Batch norm BN 2015","支持更深网络","Support deeper networks","耐受层数增加6层","Increase tolerated depth by 6 layers") },
+            { "adam", new Copy("自适应动量 Adam 2014","Adaptive momentum Adam 2014","提升优化效率","Increase optimisation throughput","优化器处理量×2","Optimizer throughput ×2") },
+            { "lrschedule", new Copy("学习率衰减 LRD 工具2016","Rate decay LRD tool 2016","细化后期学习","Refine later learning","降低上限误差项","Reduce the ceiling error term") },
+            { "position", new Copy("位置标记 POS 探索2016","Own position experiment 2016","识别词语顺序","Recognise word order","使用词语位置线索","Use word-position clues") },
+            { "transfer", new Copy("迁移学习 TL 工具2016","Transfer learning TL tool 2016","复用学习成果","Reuse learned progress","更换模型保留部分成果","Retain some progress when changing models") },
+            { "multihead", new Copy("多路注意 MH 探索2016","Own multi-head experiment 2016","综合多类线索","Combine different clue types","随自研模型获得","Included with the experimental model") },
+            { "layernorm", new Copy("层归一化 LN 2016","Layer norm LN 2016","规范信号范围","Normalise signal ranges","随自研模型获得","Included with the experimental model") },
+            { "residual", new Copy("残差直连 RC 2015","Residual links RC 2015","改善信息传递","Improve signal transfer","随自研模型获得","Included with the experimental model") },
+            { "warmup", new Copy("学习率预热 WU 工具2016","Rate warm-up WU tool 2016","平缓参数更新","Gradual parameter updates","学习步幅逐步增加","Gradually increase learning steps") },
+            { "fp16", new Copy("半精度 FP16 2016","Half precision FP16 2016","扩大训练规模","Expand training scale","预训练规模×2","Pretraining scale ×2") },
+            { "earlystop", new Copy("早停研究 ES 1990","Early-stop study ES 1990","提升训练效率","Increase training throughput","训练处理量×1.05","Training throughput ×1.05") },
+            { "wordvec", new Copy("词向量 W2V 2013","Word vectors W2V 2013","提升训练效率","Increase training throughput","训练处理量×1.08","Training throughput ×1.08") },
+            { "beamsearch", new Copy("束搜索 BS 1977","Beam search BS 1977","提升训练效率","Increase training throughput","训练处理量×1.1","Training throughput ×1.1") },
+            { "subword", new Copy("子词切分 BPE 2016","Subword BPE 2016","提升训练效率","Increase training throughput","训练处理量×1.05","Training throughput ×1.05") },
+            { "sft", new Copy("示范跟答 SFT 探索2016","Own answer-tuning trial 2016","提升训练效率","Increase training throughput","训练处理量×1.05","Training throughput ×1.05") },
+            { "cot", new Copy("分步解题 CoT 探索2016","Own reasoning trial 2016","提升训练效率","Increase training throughput","训练处理量×1.05","Training throughput ×1.05") },
+            { "secret.6", new Copy("配置指南 GUIDE 工具2016","Setup guide GUIDE tool 2016","显示配置建议","Show setup suggestions","显示预训练配置","Show pretraining setup") },
+            { "datacenter", new Copy("机柜租赁 IDC 工具2016","Rack rental IDC tool 2016","扩展计算设备","Expand computing hardware","显示机房机架","Show the server rack") },
+            { "label.raise", new Copy("答题加薪 PAY 工具2016","Answer pay PAY tool 2016","提高答题报酬","Increase answer pay","提高手动答题报酬","Increase pay for manual answers") },
+            { "label.auto", new Copy("自动答题 AUTO 工具2016","Auto answering AUTO tool 2016","自动处理标注题","Automate labelling cards","每级每桌加0.15题/秒","Add 0.15 cards/s per desk per level") },
+            { "label.coop", new Copy("把握门槛 CONF 工具2016","Confidence gate CONF tool 2016","筛选待复核题","Select cards for review","低把握题转人工","Route low-confidence cards to manual review") },
+            { "label.brain", new Copy("本地判题 LLM 工具2016","Local judging LLM tool 2016","启用模型判题","Enable model judgment","文字题交由模型判断","Let the model judge text questions") },
+            { "label.hard", new Copy("难例奖励 HARD 工具2016","Hard-case reward HARD tool 2016","提高复核报酬","Increase review pay","新题复核报酬×1.5","New-card review pay ×1.5") },
+            { "label.audit", new Copy("答案抽检 QA 工具2016","Answer audit QA tool 2016","抽查自动答案","Audit automatic answers","抽检40%自动错题","Audit 40% of wrong automatic answers") },
+            { "label.parallel", new Copy("复核扩容 Q 工具2016","Review inbox Q tool 2016","扩大复核容量","Expand review capacity","待复核题20→60","Review capacity 20→60") },
+            { "label.trapmemory", new Copy("金题匹配 GOLD 工具2016","Gold-item match GOLD tool 2016","识别已知检查题","Recognise known checks","检查题转人工复核","Route known checks to manual review") },
+            { "label.captcha", new Copy("验证码代填 OCR 工具2016","Captcha helper OCR tool 2016","代填数字验证码","Fill numeric captchas","自动填写并提交","Automatically fill and submit") },
+            { "relic.slots8", new Copy("道具扩容 I","Relic slots I","增加装备位置","Add equipment slots","装备格4→8","Equipment slots 4→8") },
+            { "arith.mixed", new Copy("算术：混合运算","Mixed arithmetic","扩展运算题型","Expand arithmetic types","加入括号与多步运算","Add brackets and multi-step calculations") },
+            { "arith.powers", new Copy("算术：幂指对","Powers, exponents and logs","扩展运算题型","Expand arithmetic types","加入幂指对与根式","Add powers, exponents, logs and roots") },
+            { "arith.calculus", new Copy("算术：微积分","Calculus","扩展运算题型","Expand arithmetic types","加入极限导数积分","Add limits, derivatives and integrals") },
+            { "arith.auto", new Copy("算术自动作答","Auto arithmetic","自动完成运算题","Automate arithmetic answers","自动选择打地鼠答案","Select whack-a-mole answers automatically") },
+            { "spider.acquire", new Copy("灵宠蜘蛛","Resident spider","采集网页内容","Collect webpage content","开放网页采集与拖题","Enable web reading and dragged answers") },
+            { "spider.fast", new Copy("敏捷爬行","Agile crawler","提升采集速度","Increase collection speed","爬行读取速度×2","Movement and reading speed ×2") },
+            { "spider.browse", new Copy("自主浏览","Autonomous browsing","自动浏览页面","Browse pages automatically","自动翻页切换页面","Scroll and switch pages automatically") },
+            { "spider.autoanswer", new Copy("快速自动答题","Fast automatic answers","提升作答速度","Increase answer speed","答题间隔3秒→1秒","Answer interval 3s→1s") },
+            { "data.review", new Copy("数据回顾","Learning review","显示学习记录","Show learning records","显示YY数据页与再考","Show YY Data and retesting") },
+            { "gamedata", new Copy("对局记录","Game records","收集对局数据","Collect game records","对局记录生成训练包","Turn game records into training packs") },
+            { "board.logic1", new Copy("一步判断","One-move judgment","提升棋局判断","Improve board judgment","寻找直接连五或挡四","Find an immediate win or block four") },
+            { "board.logic2", new Copy("看懂棋盘截图","Read board pictures","识别棋盘图片","Recognise board images","显示五子棋读图","Show the Gomoku image reader") },
+            { "board.logic3", new Copy("想两步以上","Plan ahead","提升棋局判断","Improve board judgment","开启多步走法判断","Enable multi-step move planning") },
+            { "board.logic4", new Copy("自己跟自己下","Self-play","自动进行练棋","Automate board practice","开启夜间自对弈","Enable night self-play") },
+            { "nextmove", new Copy("下一步走哪","Next move","扩展棋局题型","Expand board-game questions","显示棋局选择题","Show board-game multiple-choice questions") },
+            { "books.library", new Copy("图书馆网页","Library website","显示图书馆入口","Show the library entrance","图书另行购买","Books are purchased separately") },
+            { "relic.slots12", new Copy("道具扩容 II","Relic slots II","增加装备位置","Add equipment slots","装备格8→12","Equipment slots 8→12") },
+            { "train.data", new Copy("数据导入 DATA 工具2016","Data Import DATA tool 2016","显示资料文件夹","Show the materials folder","支持拖入与网址导入","Import by dragging or URL") },
+            { "train.ledger", new Copy("记账本 LEDGER 工具2016","Ledger LEDGER tool 2016","显示资金与电力","Show funds and power","显示收入和用电信息","Show income and power information") },
+            { "train.curve", new Copy("训练曲线 CURVE 工具2016","Training curve CURVE tool 2016","显示训练页面","Show the training page","开放训练操作","Enable training controls") },
+            { "train.holdout", new Copy("留出新题 VAL 工具2016","Holdout set VAL tool 2016","显示新题成绩","Show unseen-question scores","显示验证成绩曲线","Show the validation curve") },
+            { "train.checkpoint", new Copy("检查点 CKPT 工具2016","Checkpoint CKPT tool 2016","保留最佳成果","Keep the best progress","显示最佳版本恢复","Show best-checkpoint restoration") },
+            { "train.monitor", new Copy("训练监控 MON 工具2016","Training monitor MON tool 2016","显示训练风险","Show training risks","显示本轮风险提示","Show risks for this training round") },
+            { "train.weights", new Copy("权重可视化 VIS 工具2016","Weight viewer VIS tool 2016","显示学习特征","Show learned features","显示「看它学」","Show the learning visualisation") },
+            { "brain.window", new Copy("脑子窗口 BRAIN 工具2016","Brain window BRAIN tool 2016","显示网络活动","Show network activity","显示大脑动画窗口","Show the animated brain window") },
+            { "label.ai", new Copy("{AI}代答 ANS 工具2016","{AI} answers ANS tool 2016","显示参考答案","Show reference answers","每题显示它的回答","Show its answer on every card") },
         };
         public static bool Covered(XgNode n)=>n!=null&&(XgSim.IsAtlas(n)||All.ContainsKey(n.id)||n.kind==XgNodeKind.Depth||n.kind==XgNodeKind.Width||n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack.")||n.id.StartsWith("persona."));
         public static string Name(XgNode n,XgSim sim)
@@ -110,33 +120,39 @@ namespace LingGuangV05.XingGuang
             if(sim.NodeMystery(n))return sim.NodeName(n);
             if(XgSim.IsAtlas(n))return sim.NodeName(n);
             if(All.TryGetValue(n.id,out var c))return T(sim,c.name,c.nameEn).Replace("{AI}",sim.AiDisplayName);
-            if(n.kind==XgNodeKind.Depth)return T(sim,"网络深度 D 工具2016","Network depth D tool 2016");
-            if(n.kind==XgNodeKind.Width)return T(sim,"网络宽度 W 工具2016","Network width W tool 2016");
-            if(n.id=="danmu.pack")return T(sim,"弹幕情绪 DATA 工具2016","Comment sentiment DATA 2016");
-            if(n.id=="crosssentence.pack")return T(sim,"跨句理解 DATA 工具2016","Cross-sentence DATA 2016");
-            if(n.id=="pack.poem_next")return T(sim,"唐诗接字 DATA 工具2016","Tang verse DATA 2016");
-            return sim.NodeName(n)+T(sim,n.id.StartsWith("persona.")?" PERS 工具2016":" DATA 工具2016",n.id.StartsWith("persona.")?" PERS tool 2016":" DATA tool 2016");
+            if(n.kind==XgNodeKind.Depth)return T(sim,"网络深度","Network depth");
+            if(n.kind==XgNodeKind.Width)return T(sim,"网络宽度","Network width");
+            if(n.id=="danmu.pack")return T(sim,"弹幕情绪","Comment sentiment");
+            if(n.id=="crosssentence.pack")return T(sim,"跨句理解","Cross-sentence understanding");
+            if(n.id=="pack.poem_next")return T(sim,"唐诗接字","Tang verse");
+            return sim.NodeName(n);
         }
         public static string Summary(XgNode n,XgSim sim)
         {
             if(n==null||sim.NodeMystery(n))return T(sim,"还没发现这条线索","An undiscovered clue");
             if(XgSim.IsAtlas(n))return T(sim,"把遇到的变化记下来","Remember what changed");
             if(All.TryGetValue(n.id,out var c))return T(sim,c.summary,c.summaryEn);
-            if(n.kind==XgNodeKind.Depth)return T(sim,"多一层组合线索","Combine clues in more layers");
-            if(n.kind==XgNodeKind.Width)return T(sim,"同时容纳更多线索","Hold more clues per layer");
+            if(n.kind==XgNodeKind.Depth)return T(sim,"扩展网络层数","Expand network depth");
+            if(n.kind==XgNodeKind.Width)return T(sim,"扩展模型容量","Expand model capacity");
             if(n.id==XgSim.PersonaArchiveNode)return T(sim,"看懂性格如何变化","Understand personality changes");
             if(n.id.StartsWith("persona."))return T(sim,"聊聊它会怎样选择","Explore its choices");
-            if(n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack."))return T(sim,"换一套题继续教它","Teach it a new question set");
+            if(n.kind==XgNodeKind.Dataset||n.id.StartsWith("pack."))return T(sim,"扩展题目类型","Expand question types");
             return T(sim,"内容待核对","Copy needs review");
         }
         public static string Effect(XgNode n,XgSim sim)
         {
             if(n==null||sim.NodeMystery(n))return T(sim,"▶ 发现后查看","▶ Discover to reveal");
             if(XgSim.IsAtlas(n))return T(sim,"▶ 查看成长记录","▶ View the growth record");
+            if(n.id=="label.raise")
+            {
+                int next=Math.Min(XgCatalog.RaiseMax,sim.RaiseLevel+1);
+                return "▶ "+T(sim,"报酬","Answer pay")+" ×"+sim.RaiseMultiplier+"→×"+XgCatalog.RaiseMultipliers[next];
+            }
+            if(n.id=="label.ai")return "▶ "+T(sim,"每题显示"+sim.AiDisplayName+"回答","Show "+sim.AiDisplayName+"'s answer on every card");
             if(All.TryGetValue(n.id,out var c))return "▶ "+T(sim,c.effect,c.effectEn);
             if(n.kind==XgNodeKind.Depth)return "▶ "+T(sim,"可用层数上限"+n.value,"Layer cap "+n.value);
             if(n.kind==XgNodeKind.Width)return "▶ "+T(sim,"每层宽度上限"+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))],"Width cap "+XgCatalog.Widths[Math.Max(0,Math.Min(n.value,XgCatalog.Widths.Length-1))]);
-            if(n.id.StartsWith("pack."))return T(sim,"▶ 开放对应题桌","▶ Opens this question desk");
+            if(n.id.StartsWith("pack."))return "▶ "+T(sim,"显示"+sim.NodeName(n)+"题桌","Show the "+sim.NodeName(n)+" desk");
             if(n.id==XgSim.PersonaArchiveNode)return T(sim,"▶ 名字页打开性格档案","▶ Open Personality archive from the profile");
             if(n.id.StartsWith("persona."))return T(sim,"▶ 开放对应性格题包","▶ Opens this personality pack");
             if(n.kind==XgNodeKind.Dataset)return T(sim,"▶ 获得数据包使用权","▶ Grants access to this dataset");
@@ -146,6 +162,13 @@ namespace LingGuangV05.XingGuang
         // Kept for older callers. This is the short two-line body, never the glossary.
         public static string Note(XgNode n,XgSim sim)=>Summary(n,sim)+"\n"+Effect(n,sim);
         public static string Detail(XgNode n,XgSim sim)
+        {
+            if(n==null||sim.NodeMystery(n))return Summary(n,sim)+T(sim,"。",".");
+            if(n.id==XgSim.PersonaArchiveNode)return T(sim,"对照开局愿望，查看近期性格变化。","Compare recent personality changes with the opening wish.");
+            if(ShortDetails.TryGetValue(n.id,out var detail))return T(sim,detail[0],detail[1]);
+            return FirstSentence(LegacyDetail(n,sim),sim.English);
+        }
+        static string LegacyDetail(XgNode n,XgSim sim)
         {
             if(n==null||sim.NodeMystery(n))return Summary(n,sim)+"。";
             if(XgDailyLife.Node(n.id)!=null)return XgDailyLifeCopy.Detail(n.id,sim.English);

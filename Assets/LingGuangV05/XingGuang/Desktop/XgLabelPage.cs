@@ -25,6 +25,7 @@ namespace LingGuangV05.Desktop.XingGuang
         TMP_Text wkTitle, wkRule, qno, lessonProgress;
         /// <summary>Funds while teaching: the desk header shows the wallet the desk pays into, so a miss's fine is visible.</summary>
         TMP_Text wkMoney;
+        XgStreakEnergyIndicator streakEnergy;
         RectTransform confidenceRoot, confidenceFill, coopPanel, feedRoot, captionFocus;
         UnityEngine.UI.Slider threshold;
         RectTransform previewRoot, previewMemoryRoot, previewMemoryFill;
@@ -191,6 +192,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 UiTip.Add(wkMoney, "经费。答对加钱，答错、超时扣钱；科技和道具也花这笔钱。", "Funds. Right answers pay, misses and timeouts cost; tech and items spend the same wallet.");
             }
             body = Rect("Body", workspace, Vector2.zero, Vector2.one, new Vector2(1, 38), new Vector2(-1, -35));
+            streakEnergy = new XgStreakEnergyIndicator(ui, Rect("StreakEnergy", workspace, Vector2.zero, new Vector2(1, 0), new Vector2(12, 5), new Vector2(-12, 31)));
             BuildFeed(body);
             BuildFrozenBanner(body);
             meta = ui.Text(Rect("Meta", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-96, -36)), "", 14, HallMute, TextAlignmentOptions.MidlineLeft);
@@ -414,8 +416,23 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnTab(string id)
         {
             if (Sim.DeskOpen(id)) { Select(id); return; }
+            var owner = Sim;
             host.ShowToast(LockText(id), 4);
             Fx.Play(XgJuice.Sfx.Id.Thud);
+            // Pure ability-stage locks have no purchasable pack to navigate to.
+            if ((id == "arith" || id == "danmu") && owner.S.stage < 2) return;
+            var pack = XgCatalog.Node(id + ".pack");
+            if (pack != null && !owner.Has(pack.id)) FocusTeachingPurchase(owner, pack.id);
+        }
+
+        void FocusTeachingPurchase(XgSim owner, string nodeId)
+        {
+            if (owner == null || !ReferenceEquals(Sim, owner) || displayedSim != owner || WorkContext ||
+                view == null || !view.Visible || root == null || !root.gameObject.activeInHierarchy ||
+                !owner.TeachingTreeOpen || owner.Has(nodeId) || XgCatalog.Node(nodeId) == null) return;
+            view.ShowTab("tree");
+            if (!ReferenceEquals(Sim, owner) || view.Tab != "tree") return;
+            view.Tree.FocusNodeDetails(nodeId);
         }
 
         void Select(string id)
@@ -477,6 +494,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string learnedAiAnswer = shownGuessValid ? YesNoWord(shownGuess)
                 : binaryReview != null && !binaryReview.guessed ? YesNoWord(binaryReview.yes) : "";
             int oldDeskLevel = Sim.LevelOf(desk);
+            int multiplierBefore = Sim.StreakMultiplier;
             XgAnswer r;
             if (WorkContext)
             {
@@ -492,6 +510,8 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             else r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
+            // The accepted player input keeps its ordinary click beneath any result or streak sound.
+            Fx.Play(XgJuice.Sfx.Id.Click);
             if (binaryReview != null) Sim.RememberTeachingBinary(card, answer, binaryReview, card.why, card.whyEn);
             if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card, aiAnswer: learnedAiAnswer);
             LastAnswerDisagreed = teachingAnswer ? !answer : shownGuessValid && shownGuess != answer;
@@ -514,7 +534,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 feedback.color = DarkTeaching ? XgDark.Good : XgPalette.Good;
                 feedback.text = FeedbackGoodTag + "✓ " + Lang.T("对了") + "  +¥" + N(r.pay, "0.00") + "</color>"
-                    + (r.combo > 1 ? "  <color=#7A5AF8>" + Lang.T("连击 ×") + N(Sim.ComboMultiplier, "0.00") + "</color>" : "")
+                    + (Sim.ComboMultiplier > 1 ? "  <color=#" + ColorUtility.ToHtmlStringRGB(XgJuice.StreakColor((int)Sim.ComboMultiplier)) + ">" + T("连对 ×", "Streak ×") + N(Sim.ComboMultiplier, "0") + "</color>" : "")
                     + (why.Length > 0 && card.question.Length > 0 ? "\n<size=13><color=#68748C>" + why + "</color></size>" : "");
                 // A user log from the data flywheel was labelled: it counts as several samples.
                 if (!queued && r.samples > 1) feedback.text += "  " + FeedbackSampleTag + Lang.T("用户日志 +") + r.samples + Lang.T(" 样本") + "</color>";
@@ -528,14 +548,18 @@ namespace LingGuangV05.Desktop.XingGuang
                 feedbackTimer = 3f;
                 // The combo hit (闪白 击退 挤压拉伸 粒子 冲击波 顿帧 震屏 拖曳). 摆渡众包's counter adds its sound, glow and
                 // count (ZhongbaoView.ComboStep); the lab's 教它 tab has no counter, so the sound is played here.
-                // The kill-streak clip is the only sound of a right answer (2026-10-18: bounty, 前方高能 and 纠错 no longer
-                // add a coin or chime on top of it).
+                // Keep the ordinary input click, Kill step and multiplier sound layered together.
                 // Every right answer of the player's: on the 教 page a correction breaks the model's streak (r.combo 0),
                 // but it is still a right click in the player's run.
                 if (!WorkContext) Fx.PlayCombo(r.combo);
+                // 连对倍率: the card that reaches ×2…×5 gets its tier's show (before the hit, so it owns the particle budget).
+                int multiplier = Sim.StreakMultiplier;
+                bool tierUp = multiplier > multiplierBefore;
+                if (tierUp) Fx.StreakUp(at, at, button, view?.WalletChip ?? host.ComboChip, multiplier);
+                else Fx.StreakHit(at, multiplier);
                 if (r.combo > 0)
                     Fx.ComboHit(at, paper, button, host.ComboChip, r.combo, new Vector2(answer ? 1 : -1, .25f),
-                        XgPalette.Tiers[Mathf.Clamp(XgSim.TierOf(r.combo) + 1, 1, XgPalette.Tiers.Length - 1)]);
+                        XgPalette.Tiers[Mathf.Clamp(Sim.StreakMultiplier - 1, 1, XgPalette.Tiers.Length - 1)], countLabel: !tierUp);
                 else { Fx.Knock(button, .12f); Fx.Knock(paper, .04f, new Vector2(answer ? 26 : -26, 6), .22f); }
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 24 + Mathf.Min(10, r.combo * .3f));
                 Fx.Burst(at, 6 + Mathf.Min(14, r.combo / 3), XgPalette.Gold, XgJuice.Shape.Yen, 240);
@@ -551,18 +575,13 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 if (r.corrected)
                 {
-                    Fx.Float(at + new Vector2(0, 72), (TeachingContext ? T("教会一张 · 奖励 ×2", "Lesson learned · Pay ×2") : Lang.T("纠错！连击 +2")), XgPalette.Accent, 28);
+                    Fx.Float(at + new Vector2(0, 72), (TeachingContext ? T("教会一张 · 奖励 ×2", "Lesson learned · Pay ×2") : T("纠错成功！", "Correction complete!")), XgPalette.Accent, 28);
                     if (!teachingAnswer) feedback.text += Lang.T("  · 纠错") + (r.samples == 2 ? Lang.T(" · 难例 +2 样本") : "");
                 }
                 else if (r.trick)
                 {
-                    Fx.Float(at + new Vector2(0, 60), Lang.T("老司机！连击 +2"), new Color32(150, 90, 255, 255), 28);
+                    Fx.Float(at + new Vector2(0, 60), T("难题答对！", "Tricky answer correct!"), new Color32(150, 90, 255, 255), 28);
                     Fx.Flash(new Color(.6f, .4f, 1f), .1f, .35f);
-                }
-                if (r.combo > 0 && r.combo % 10 == 0 && Array.IndexOf(XgCatalog.ComboTiers, r.combo) < 0)
-                {
-                    Fx.Flash(Color.white, .08f, .4f);
-                    Fx.Float(Fx.At(host.ComboChip, new Vector2(-20, -50)), Lang.T("连击 ×") + N(Sim.ComboMultiplier, "0.00"), XgPalette.Gold, 22);
                 }
             }
             else
@@ -587,6 +606,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 feedbackTimer = why.Length > 0 ? 7f : 3f;
                 if (r.fine > 0) Fx.Float(Fx.At(button, new Vector2(0, 40)), "−¥" + N(r.fine, "0.00"), XgPalette.Bad, 26);
                 Wrong(at);
+                Fx.StreakDrop(at, button, multiplierBefore, Sim.StreakMultiplier);
             }
             if (direct && !r.correct)
                 feedback.text = T("上一题：", "Last card: ") + (r.timeout ? T("超时了", "Time ran out") : T("判断错误", "Incorrect judgment"))
@@ -625,6 +645,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Keeps the desk header's wallet line in step; the page is on screen during teaching, where the HUD is hidden.</summary>
         void UpdateFunds()
         {
+            streakEnergy?.Refresh(Sim);
             if (wkMoney == null || Sim == null) return;
             var ink = DarkTeaching ? XgDark.Money : XgPalette.Money;
             string text = "¥ " + Money(Host.Money);
@@ -671,7 +692,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 timerFill.GetComponent<Image>().color = k < .35f ? XgPalette.Bad : XgPalette.Gold;
             }
             paperGlow.on = card.gold || Sim.S.combo >= 3;
-            paperGlow.color = card.gold ? XgPalette.Gold : XgPalette.Tiers[Mathf.Min(4, XgSim.TierOf(Sim.S.combo) + 1)] * new Color(1, 1, 1, .6f);
+            paperGlow.color = card.gold ? XgPalette.Gold : XgPalette.Tiers[Mathf.Min(4, Sim.StreakMultiplier - 1)] * new Color(1, 1, 1, .6f);
             paperGlow.speed = card.gold ? 12 : 5;
         }
 
@@ -680,6 +701,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (root == null) return;
+            streakEnergy?.Refresh(Sim);
             HideClassicTeachingTools();
             RefreshHandwriting();
             // The hall stays current while a desk's game covers the cards (new desks, bought data packs, pay).

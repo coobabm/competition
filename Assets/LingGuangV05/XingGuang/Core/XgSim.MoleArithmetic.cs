@@ -44,13 +44,36 @@ namespace LingGuangV05.XingGuang
         public static XgBoardCard Input(XgCard displayed) => XgArithmeticInput.Input(displayed);
     }
 
+    public sealed partial class XgState
+    {
+        public int moleArithmeticTopic; // Old saves default to single-step basic arithmetic.
+    }
+
     public sealed partial class XgSim
     {
-        public const string MolePowersNode = "arith.powers", MoleCalculusNode = "arith.calculus", MoleAutoNode = "arith.auto";
-        public static bool IsMoleArithmeticNode(string id) => id == MolePowersNode || id == MoleCalculusNode || id == MoleAutoNode;
+        public const string MoleMixedNode = "arith.mixed", MolePowersNode = "arith.powers", MoleCalculusNode = "arith.calculus", MoleAutoNode = "arith.auto";
+        public static bool IsMoleArithmeticNode(string id) => id == MoleMixedNode || id == MolePowersNode || id == MoleCalculusNode || id == MoleAutoNode;
         long moleQuestionSerial;
         public long NextMoleQuestionToken() => ++moleQuestionSerial;
         public int MoleArithmeticTier => Has(MolePowersNode) ? (Has(MoleCalculusNode) ? 3 : 2) : 1;
+        public void RepairMoleTopics()
+        {
+            if (Has(MoleCalculusNode) && !Has(MolePowersNode)) S.unlocked.Add(MolePowersNode);
+            if (Has(MolePowersNode) && !Has(MoleMixedNode)) S.unlocked.Add(MoleMixedNode);
+            if (!MoleTopicAvailable((XgMoleTopic)S.moleArithmeticTopic)) S.moleArithmeticTopic = 0;
+        }
+        public bool MoleTopicAvailable(XgMoleTopic topic) => topic == XgMoleTopic.Basic ||
+            (topic == XgMoleTopic.Mixed && (Has(MoleMixedNode) || Has(MolePowersNode) || Has(MoleCalculusNode))) ||
+            (topic == XgMoleTopic.Powers && (Has(MolePowersNode) || Has(MoleCalculusNode))) ||
+            (topic == XgMoleTopic.Calculus && Has(MoleCalculusNode));
+        public XgMoleTopic MoleTopic => MoleTopicAvailable((XgMoleTopic)S.moleArithmeticTopic)
+            ? (XgMoleTopic)S.moleArithmeticTopic : XgMoleTopic.Basic;
+        public bool SelectMoleTopic(XgMoleTopic topic)
+        {
+            if (!MoleTopicAvailable(topic)) return false;
+            S.moleArithmeticTopic = (int)topic; return true;
+        }
+        public XgMoleQuestion GenerateMoleQuestion(int seed) => XgMoleArithmetic.Generate(seed, MoleTopic == XgMoleTopic.Calculus ? 3 : MoleTopic == XgMoleTopic.Basic ? 1 : 2, MoleTopic);
         public bool MoleAutoAvailable(string gameId) => UseBoard && S.stage >= 2 && Has(MoleAutoNode) &&
             (gameId == "arith_mole" || gameId == "dadishu");
         public event Action<XgMoleFeedback> ArithmeticMoleFeedback;

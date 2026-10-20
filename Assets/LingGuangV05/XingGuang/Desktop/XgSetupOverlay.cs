@@ -182,7 +182,10 @@ namespace LingGuangV05.Desktop.XingGuang
                     new KeyValuePair<string, string>("system", PrologueProfile.ModelPrompt(GameText.IsEnglish)),
                     new KeyValuePair<string, string>("user", draft.personality.Trim()),
                 };
-                llm.Chat(messages, 80, .2f, reply => { read = PrologueProfile.ParseModel(reply, draft.personality.Trim()); answered = true; });
+                // Keep the existing JSON prompt, parser and offline fallback. The upstream
+                // ModelGrammar helper is absent; do not depend on an unshipped API.
+                var sampling = new global::LingGuangV05.XingGuang.XgSampling { presencePenalty = 0 };
+                llm.Chat(messages, 80, .2f, reply => { read = PrologueProfile.ParseModel(reply, draft.personality.Trim()); answered = true; }, false, sampling);
                 for (float t = 0; t < 8 && !answered; t += Time.unscaledDeltaTime) yield return null;
             }
             if (read == null) read = PrologueProfile.Read(draft.personality.Trim());

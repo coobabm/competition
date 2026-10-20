@@ -23,6 +23,7 @@ namespace LingGuangV05.Desktop.YY
         const float LearningHeight=260;
         void RefreshLearningTools()
         {
+            RefreshDataReviewTools();
             if(root==null||hub==null||hub.S==null)return;
             var main=root.Find("Conversation") as RectTransform;var tools=main!=null?main.Find("Tools") as RectTransform:null;if(tools==null)return;
             if(notebookTool==null)
@@ -53,6 +54,7 @@ namespace LingGuangV05.Desktop.YY
         }
         void ToggleLearningDrawer(string mode)
         {
+            CloseDataReview();
             if(learningMode==mode){CloseLearningDrawer();return;}
             if(learningDrawer==null)BuildLearningDrawer();if(learningDrawer==null)return;
             learningMode=mode;learningOffset=0;learningDrawer.gameObject.SetActive(true);learningSearch.SetTextWithoutNotify("");

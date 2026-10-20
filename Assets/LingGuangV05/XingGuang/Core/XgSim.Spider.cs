@@ -40,7 +40,7 @@ namespace LingGuangV05.XingGuang
         /// epoch trained, and nothing else on screen (the caller passes whether a cutscene, video or inner voice is busy).
         /// </summary>
         public bool SpiderIntroDue(bool installed, bool inPrologue, bool busy) =>
-            !S.spiderIntroDone && installed && !inPrologue && !busy && S.epochs >= SpiderIntroEpochs;
+            !S.spiderIntroDone && SpiderReadingUnlocked && installed && !inPrologue && !busy && S.epochs >= SpiderIntroEpochs;
 
         /// <summary>The resident lives on the desktop only after its first appearance.</summary>
         public bool SpiderAround => S.spiderIntroDone;

@@ -27,7 +27,9 @@ namespace LingGuangV05.Core.Girlfriend
     public sealed class GfGift
     {
         public string id, zh, en, pitchZh, pitchEn;
-        public double price;
+        double catalogPrice;
+        // Catalog-only type: paid order records retain their original serialized price.
+        public double price { get => PurchasePricing.AtLeastHundred(catalogPrice); set => catalogPrice = value; }
         public DateTime from;
         /// <summary>Words in her memories that make this the gift she asked for.</summary>
         public string[] match;

@@ -97,6 +97,8 @@ namespace LingGuangV05.Desktop.XingGuang
             XgTestSetPrewarmer.Attach(this);
             XgBrainWindow.Install(this);
             XgReadingWindow.Install(this);
+            XgIdleWindow.Install(this);
+            XgOfflineIncome.Install(this);
             XgStageCurtain.Install(this);
             epilogueDirector = GetComponent<XgEpilogueDirector>() ?? gameObject.AddComponent<XgEpilogueDirector>();
             epilogueDirector.Bind(this, () => EpiloguePrerequisiteProvider?.Invoke());

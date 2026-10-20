@@ -32,6 +32,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         readonly Func<double> skill;
         readonly Action<string> say;
         readonly Action<bool, double> report;
+        XgJuice inputFx;
         bool disposed;
         public bool IsActive => !disposed && Root != null && Root.gameObject.activeInHierarchy && active();
         public double Skill => Math.Max(0, Math.Min(1, skill()));
@@ -70,13 +71,24 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public XgBtn Button(string name, float x, float y, float w, float h, string text, Action click, float size = 20)
         {
-            var b = Ui.Button(Root, text, () => { if (IsActive) click?.Invoke(); }, size);
+            var b = Ui.Button(Root, text, () => PlayerInput(click), size);
             b.rt.name = name; XgUi.PlaceTopLeft(b, x, y, w, h);
             b.label.textWrappingMode = TextWrappingModes.Normal;
             b.label.overflowMode = TextOverflowModes.Ellipsis;
             b.label.enableAutoSizing = true; b.label.fontSizeMin = Math.Min(12, size); b.label.fontSizeMax = size;
             b.button.navigation = new Navigation { mode = Navigation.Mode.None };
             return b;
+        }
+        /// <summary>One actual player action; result sounds remain independent. Never call from automatic settlement.</summary>
+        public void PlayerInput(Action action)
+        {
+            if (!IsActive || action == null) return;
+            if (Sim != null && !Sim.S.mute)
+            {
+                if (inputFx == null) inputFx = Root.GetComponentInParent<XgJuice>();
+                if (inputFx != null) inputFx.Play(XgJuice.Sfx.Id.Click);
+            }
+            action();
         }
         public XgMiniPointer Pointer(RectTransform rect, Action<Vector2> down, Action<Vector2> drag = null, Action<Vector2> up = null)
         {
@@ -105,7 +117,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (e.button != PointerEventData.InputButton.Left || Context == null) return;
             Context.Ui.window?.FocusToWindow();
             if (!Context.IsActive) return;
-            held = true; Down?.Invoke(Point(e));
+            held = true;
+            // A pure pointer surface has no Button click callback. Sound only its initial press,
+            // never the drag stream or release. Combined Button/drag cards already sound on click.
+            if (GetComponent<Button>() == null) Context.PlayerInput(() => Down?.Invoke(Point(e)));
+            else Down?.Invoke(Point(e));
         }
         public void OnDrag(PointerEventData e) { if (held && Context != null && Context.IsActive) Drag?.Invoke(Point(e)); }
         public void OnPointerUp(PointerEventData e) { if (held && Context != null && Context.IsActive) Up?.Invoke(Point(e)); held = false; }

@@ -141,7 +141,7 @@ namespace LingGuangV05.Core.Hardware
         public static double Price(GpuModel g, DateTime date)
         {
             if (g == null || !g.SoldNew) return 0;
-            return Math.Round(g.price * (date.Date == SinglesDay ? SinglesDayFactor : 1));
+            return Math.Round(PurchasePricing.AtLeastHundred(g.price) * (date.Date == SinglesDay ? SinglesDayFactor : 1));
         }
 
         /// <summary>Newer cards out by this day that do at least <see cref="MatchShare"/> of this card's work.</summary>
@@ -164,6 +164,10 @@ namespace LingGuangV05.Core.Hardware
             double v = g.usedPrice * Math.Max(UsedFloor, Math.Pow(UsedStep, NewerRivals(g, date)));
             return Math.Max(10, Math.Floor(v / 10) * 10);
         }
+
+        /// <summary>Buy-side quote, including bargaining; resale and collateral valuations stay unchanged.</summary>
+        public static double UsedPurchasePrice(GpuModel g, DateTime date, bool negotiated = false)
+            => PurchasePricing.AtLeastHundred(UsedPrice(g, date)) * (negotiated ? .95 : 1);
 
         /// <summary>鲁大师's score after a new card (§3, §14.3): 98% for a new card, 99.7% for a GTX 1080.</summary>
         public static double LudashiPercent(string id)

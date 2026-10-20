@@ -237,6 +237,10 @@ namespace LingGuangV05.XingGuang
                 });
             }
             list.Add(CrawlOfferDef());
+            // Purchase quotes only: per-row crowd wages remain continuous operating expenses.
+            foreach (var offer in list)
+                if (offer.source != XgDataSource.Crowd)
+                    offer.price = LingGuangV05.Core.PurchasePricing.AtLeastHundred(offer.price);
             return list;
         }
 
@@ -485,6 +489,11 @@ namespace LingGuangV05.XingGuang
             var def = DataOfferDef(id);
             if (def == null) return null;
             var o = def.Copy();
+            if (def.source == XgDataSource.Public)
+            {
+                var node = XgCatalog.Node(def.node);
+                if (node != null) o.price = NodeCost(node);
+            }
             o.owned = OfferOwned(id);
             string key = DownloadKey(def);
             var queued = def.source == XgDataSource.Crowd || def.source == XgDataSource.Crawl ? null : FirstQueued(key);

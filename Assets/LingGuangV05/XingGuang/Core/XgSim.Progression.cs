@@ -137,14 +137,26 @@ namespace LingGuangV05.XingGuang
         public const double StoryResearchPrice = .25;
         public double NodeCost(XgNode node)
         {
+            // Scale the regular price once. Genuine discounts may then bring it below 100.
+            double price = LingGuangV05.Core.PurchasePricing.AtLeastHundred(BaseNodeCost(node) * (node != null && node.tree != "label" ? EarlyTechnologyPriceFactor(node) : 1));
+            if (node == null || node.tree == "label" || node.id == PersonaArchiveNode || node.id.StartsWith("persona.", StringComparison.Ordinal)) return price;
+            return Math.Ceiling(price * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+        }
+        public static double EarlyTechnologyPriceFactor(XgNode node)
+        {
+            if(node==null||node.stage!=1||node.tree=="label"||node.kind==XgNodeKind.Dataset||node.id.StartsWith("persona.",StringComparison.Ordinal)||node.id.StartsWith("pack.",StringComparison.Ordinal)||node.id==MoleMixedNode)return 1;
+            return 10;
+        }
+        double BaseNodeCost(XgNode node)
+        {
             if (node == null) return double.PositiveInfinity;
             if (node.id == PersonaArchiveNode) return PersonaArchivePrice;
             if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
             if (node.tree == "label") return LabelNodeCost(node);
             // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
-            if (XgBoardLogic.IsNode(node.id) || node.id==XgBoardRecords.Node || XgDailyLife.Node(node.id) != null || node.id == LedgerNode || node.id == DataEntryNode || node.id == LibraryNode || IsRelicExpansion(node.id) || IsMoleArithmeticNode(node.id)) return Math.Ceiling(node.cost * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+            if (XgBoardLogic.IsNode(node.id) || node.id==XgBoardRecords.Node || XgDailyLife.Node(node.id) != null || node.id == LedgerNode || node.id == DataEntryNode || node.id == LibraryNode || IsRelicExpansion(node.id) || IsMoleArithmeticNode(node.id)) return Math.Ceiling(node.cost);
             // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
-            return Math.Ceiling(node.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
+            return Math.Ceiling(node.cost * StoryResearchPrice);
         }
 
         public bool NodeVisible(XgNode node)

@@ -73,12 +73,14 @@ namespace LingGuangV05.Desktop.XingGuang
             }
         }
 
-        /// <summary>What the spider would press for the card on screen (the checkpoint's guess); false when it cannot.</summary>
+        /// <summary>Use the answer actually presented on this card, including the trained teaching board's prediction.</summary>
         public bool SpiderPeek(out bool yesButton)
         {
             yesButton = false;
-            if (Sim == null || WorkContext || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return false;
-            return Sim.SpiderDragPeek(Desk, Host, out yesButton);
+            if (Sim == null || WorkContext || Mode != 0 || DeskGameVisible || HandwritingVisible || shownTeachingEvaluation
+                || !shownGuessValid || displayedSim != Sim || CurrentCard.id != displayedId || Sim.SpiderDragBlocker(Desk, Host) != null) return false;
+            yesButton = shownGuess;
+            return true;
         }
 
         /// <summary>The button the spider reaches for.</summary>
@@ -90,9 +92,10 @@ namespace LingGuangV05.Desktop.XingGuang
         /// </summary>
         public XgSpiderAnswer SpiderHandPress(bool yesButton)
         {
-            if (Sim == null || WorkContext || Mode != 0 || shownTeachingEvaluation || displayedSim != Sim || CurrentCard.id != displayedId) return default;
+            if (!SpiderPeek(out bool displayedAnswer) || displayedAnswer != yesButton) return default;
             var card = CurrentCard;
             string truthWord = YesNoWord(card.truth);
+            int multiplierBefore = Sim.StreakMultiplier;
             var r = Sim.SpiderDragPress(Desk, Host, yesButton);
             if (!r.accepted) return r;
             var button = yesButton ? yes.rt : no.rt;
@@ -102,14 +105,17 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 feedback.color = XgPalette.Good;
                 feedback.text = "<color=#2F9E44>✓ " + T(("灵光标对了" .Replace("灵光", Sim.AiDisplayName)), ("LingGuang got it" .Replace("LingGuang", Sim.AiDisplayName))) + "  +¥" + N(r.pay, "0.00") + "</color>"
-                    + (Sim.S.combo > 1 ? "  <color=#7A5AF8>" + T("连击 ×", "Combo ×") + N(Sim.ComboMultiplier, "0.00") + "</color>" : "");
+                    + (Sim.ComboMultiplier > 1 ? "  <color=#" + ColorUtility.ToHtmlStringRGB(XgJuice.StreakColor((int)Sim.ComboMultiplier)) + ">" + T("连对 ×", "Streak ×") + N(Sim.ComboMultiplier, "0") + "</color>" : "");
                 Fx.Float(Fx.At(button, new Vector2(0, 40)), "+¥" + N(r.pay, "0.00"), XgPalette.Money, 22);
                 Fx.Burst(at, 5, XgPalette.Gold, XgJuice.Shape.Yen, 200);
                 // 摆渡众包's counter plays the combo sound; elsewhere it is played here. This is the hit itself.
                 if (Sim.S.combo > 0 && !WorkContext) Fx.PlayCombo(Sim.S.combo, .7f);
+                bool tierUp = Sim.StreakMultiplier > multiplierBefore;
+                if (tierUp) Fx.StreakUp(at, at, button, view?.WalletChip ?? host.ComboChip, Sim.StreakMultiplier);
+                else Fx.StreakHit(at, Sim.StreakMultiplier);
                 if (Sim.S.combo > 0)
                     Fx.ComboHit(at, paper, button, host.ComboChip, Sim.S.combo, new Vector2(yesButton ? 1 : -1, .25f),
-                        XgPalette.Tiers[Mathf.Clamp(XgSim.TierOf(Sim.S.combo) + 1, 1, XgPalette.Tiers.Length - 1)]);
+                        XgPalette.Tiers[Mathf.Clamp(Sim.StreakMultiplier - 1, 1, XgPalette.Tiers.Length - 1)], countLabel: !tierUp);
             }
             else
             {
@@ -119,6 +125,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     + T(" · 应该是「", " · it was ") + truthWord + T("」", "") + "</color>";
                 if (r.fine > 0) Fx.Float(Fx.At(button, new Vector2(0, 40)), "−¥" + N(r.fine, "0.00"), XgPalette.Bad, 24);
                 Wrong(at);
+                Fx.StreakDrop(at, button, multiplierBefore, Sim.StreakMultiplier);
             }
             feedbackTimer = 2.5f;
             Remember(r.correct ? HistoryMark.SpiderRight : HistoryMark.SpiderWrong);

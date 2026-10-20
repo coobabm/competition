@@ -66,8 +66,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public override void Tick(float dt)
         {
-            if(C.KeyDown(Key.P)){paused=!paused;Draw();}if(over||paused)return;
-            if(C.KeyDown(Key.UpArrow)||C.KeyDown(Key.X))Rotate();if(C.KeyDown(Key.Space)){Drop();return;}if(C.KeyDown(Key.C))Hold();
+            if(C.KeyDown(Key.P))C.PlayerInput(()=>{paused=!paused;Draw();});if(over||paused)return;
+            if(C.KeyDown(Key.UpArrow)||C.KeyDown(Key.X))C.PlayerInput(Rotate);if(C.KeyDown(Key.Space)){C.PlayerInput(Drop);return;}if(C.KeyDown(Key.C))C.PlayerInput(Hold);
             repeat-=dt;if(C.KeyDown(Key.LeftArrow)||C.KeyDown(Key.RightArrow))repeat=0;
             if(repeat<=0){if(C.KeyHeld(Key.LeftArrow))Move(-1,0);else if(C.KeyHeld(Key.RightArrow))Move(1,0);repeat=.12f;}
             fall+=dt;float interval=C.KeyHeld(Key.DownArrow)?.055f:Math.Max(.1f,.8f-lines/8*.07f);

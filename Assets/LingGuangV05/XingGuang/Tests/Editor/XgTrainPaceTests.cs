@@ -56,6 +56,17 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void FreshGameTinyModelUsesShortFeedbackCadence()
+        {
+            var sim = new XgSim(); var host = new Host();
+            var run = sim.Run(XgTrack.Sequence);
+            double seconds = sim.PaceSeconds(run, host);
+            TestContext.WriteLine("fresh-game pace: " + seconds + " s; paramsK=" + XgSim.ParamsK(run)
+                + "; cards=" + sim.CardsPerEpoch(run, host.Compute, false));
+            Assert.That(seconds, Is.InRange(.4, .8), "the initial tiny model should be near the requested 0.6 second cadence");
+        }
+
+        [Test]
         public void DurationGrowsWithParamsAndShrinksWithCompute()
         {
             var sim = Lab();
@@ -64,14 +75,34 @@ namespace LingGuangV05.XingGuang.Tests
             var big = new XgRun { track = 0, arch = "resnet", dataset = "mnist", depth = 20, width = 5 };
             double smallOne = sim.PaceSeconds(small, host), bigOne = sim.PaceSeconds(big, host);
             Assert.Greater(bigOne, smallOne, "a bigger model takes longer");
-            Assert.That(smallOne, Is.InRange(1.2, 3.0), "an early small model on one card: a few seconds");
+            Assert.That(smallOne, Is.InRange(.4, 1.1), "an early small model returns feedback in roughly 0.6 seconds");
             host.compute = 2;
             double bigTitan = sim.PaceSeconds(big, host);
-            Assert.That(bigTitan, Is.InRange(3.0, 7.0), "a large late model on one fast card");
+            Assert.That(bigTitan, Is.InRange(1.0, 2.6), "a larger model still takes longer on one fast card");
             host.compute = 8;
             Assert.Less(sim.PaceSeconds(big, host), bigTitan, "more cards, shorter rounds");
             Assert.Less(sim.PaceSeconds(new XgRun { track = 1, arch = "transformer", dataset = "spam", depth = 4, width = 4 }, host),
                 sim.PaceSeconds(new XgRun { track = 1, arch = "lstm", dataset = "spam", depth = 4, width = 4 }, host), "attention reads the sentence at once");
+        }
+
+        [Test]
+        public void FastHardwareHasABoundedRoundAndCannotInstantlySettle()
+        {
+            var sim = Lab(); var host = new Host();
+            var run = sim.Run(XgTrack.Vision);
+            double baseline = sim.PaceSeconds(run, host);
+            host.compute = 1000000;
+            double accelerated = sim.PaceSeconds(run, host);
+            Assert.Less(accelerated, baseline);
+            Assert.GreaterOrEqual(accelerated, .18);
+            Assert.IsTrue(sim.BeginEpoch(XgTrack.Vision, host, false));
+            int epoch = run.epoch;
+            sim.Tick(.001, host);
+            Assert.AreEqual(epoch, run.epoch, "a press starts work; it does not grant an instant result");
+            Assert.IsTrue(run.epochActive);
+            Assert.That(sim.BilledSeconds(run), Is.GreaterThan(0));
+            sim.Tick(100, host);
+            Assert.LessOrEqual(run.epoch, epoch + 1, "one long frame cannot repeatedly settle the same round");
         }
 
         [Test]
@@ -80,7 +111,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Lab();
             var host = new Host();
             var trace = new List<XgPace>();
-            double t = RunRound(sim, XgTrack.Vision, host, .05, trace);
+            double t = RunRound(sim, XgTrack.Vision, host, .01, trace);
             Assert.Greater(t, 0);
             var speeds = new HashSet<double>();
             double lo = double.MaxValue, hi = 0;
@@ -110,7 +141,7 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < 40; i++)
             {
                 var trace = new List<XgPace>();
-                double t = RunRound(sim, XgTrack.Vision, host, .05, trace);
+                double t = RunRound(sim, XgTrack.Vision, host, .01, trace);
                 double nominal = sim.S.vision.epochDuration;
                 Assert.That(t, Is.InRange(XgSim.PaceMinFactor * nominal - .05, XgSim.PaceMaxFactor * nominal + .05), "round " + i);
             }
@@ -241,7 +272,7 @@ namespace LingGuangV05.XingGuang.Tests
             for (int r = 0; r < 6; r++)
             {
                 var trace = new List<XgPace>();
-                double t = RunRound(sim, XgTrack.Vision, host, .05, trace);
+                double t = RunRound(sim, XgTrack.Vision, host, .01, trace);
                 Assert.Greater(t, 0);
                 double prev = double.MaxValue;
                 foreach (var p in trace)

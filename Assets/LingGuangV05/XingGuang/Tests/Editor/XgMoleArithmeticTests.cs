@@ -59,7 +59,14 @@ namespace LingGuangV05.XingGuang.Tests
         static double RealFromDisplayed(XgMoleQuestion q, out double shown)
         {
             string text = q.Text;
-            if (q.Kind <= XgMoleMathKind.RootOfSquare)
+            if (q.Kind == XgMoleMathKind.Logarithm)
+            {
+                var logarithm = Regex.Match(text, @"^log\[(\d+)\]\((\d+)\)=(.+)$");
+                Assert.IsTrue(logarithm.Success, text);
+                shown = Eval(logarithm.Groups[3].Value);
+                return Math.Log(Number(logarithm, 2), Number(logarithm, 1));
+            }
+            if (q.Kind <= XgMoleMathKind.RootOfSquare || q.Kind == XgMoleMathKind.Exponential)
             {
                 var sides = text.Split('='); shown = Eval(sides[1]); return Eval(sides[0]);
             }
@@ -112,9 +119,61 @@ namespace LingGuangV05.XingGuang.Tests
                     Assert.IsFalse(double.IsNaN(real) || double.IsInfinity(real), q.Text);
                     Assert.IsTrue(q.AsTrue().Truth); Assert.AreEqual(q.CorrectText, q.AsTrue().Text);
                 }
-                Assert.AreEqual(tier == 1 ? 6 : tier == 2 ? 10 : 14, kinds.Count);
+                Assert.AreEqual(tier == 1 ? 4 : tier == 2 ? 12 : 16, kinds.Count);
                 Assert.That((double)trueCount / 3500, Is.InRange(.44, .56));
             }
+        }
+
+        [Test] public void TopicSelectionGatesPurchasesAndPreservesOldOwnedPacks()
+        {
+            var sim = new XgSim();
+            Assert.AreEqual(XgMoleTopic.Basic, sim.MoleTopic);
+            Assert.IsFalse(sim.SelectMoleTopic(XgMoleTopic.Mixed));
+            Assert.IsFalse(sim.SelectMoleTopic(XgMoleTopic.Powers));
+            Assert.IsFalse(sim.SelectMoleTopic(XgMoleTopic.Calculus));
+            sim.S.unlocked.Add(XgSim.MoleMixedNode);
+            Assert.IsTrue(sim.SelectMoleTopic(XgMoleTopic.Mixed));
+            Assert.IsFalse(sim.SelectMoleTopic(XgMoleTopic.Powers));
+            sim.S.unlocked.Add(XgSim.MolePowersNode);
+            Assert.IsTrue(sim.SelectMoleTopic(XgMoleTopic.Powers));
+            Assert.IsFalse(sim.SelectMoleTopic(XgMoleTopic.Calculus));
+            sim.S.unlocked.Add(XgSim.MoleCalculusNode);
+            Assert.IsTrue(sim.SelectMoleTopic(XgMoleTopic.Calculus));
+            Assert.AreEqual(XgMoleTopic.Calculus, new XgSim(sim.S).MoleTopic);
+            var old = new XgSim(); old.S.unlocked.Add(XgSim.MoleCalculusNode);
+            old.RepairMoleTopics(); old.RepairMoleTopics();
+            Assert.AreEqual(1, old.S.unlocked.Count(x => x == XgSim.MoleMixedNode));
+            Assert.AreEqual(1, old.S.unlocked.Count(x => x == XgSim.MolePowersNode));
+            old.S.moleArithmeticTopic = 99; old.RepairMoleTopics();
+            Assert.AreEqual(XgMoleTopic.Basic, old.MoleTopic);
+        }
+
+        [Test] public void SelectedTopicNeverLeaksOtherOrLockedQuestionKinds()
+        {
+            var sim = new XgSim();
+            sim.S.unlocked.Add(XgSim.MoleMixedNode); sim.S.unlocked.Add(XgSim.MolePowersNode); sim.S.unlocked.Add(XgSim.MoleCalculusNode);
+            var allowed = new[] {
+                new[] { XgMoleMathKind.Add, XgMoleMathKind.Subtract, XgMoleMathKind.Multiply, XgMoleMathKind.Divide },
+                new[] { XgMoleMathKind.Parentheses, XgMoleMathKind.Precedence },
+                new[] { XgMoleMathKind.Power, XgMoleMathKind.SignedPower, XgMoleMathKind.SquareRoot, XgMoleMathKind.RootOfSquare, XgMoleMathKind.Exponential, XgMoleMathKind.Logarithm },
+                new[] { XgMoleMathKind.Limit, XgMoleMathKind.Derivative, XgMoleMathKind.DefiniteIntegral, XgMoleMathKind.IndefiniteIntegral }
+            };
+            for (int topic = 0; topic < allowed.Length; topic++)
+            {
+                Assert.IsTrue(sim.SelectMoleTopic((XgMoleTopic)topic));
+                var seen = new HashSet<XgMoleMathKind>();
+                for (int seed = 0; seed < 200; seed++)
+                {
+                    var q = sim.GenerateMoleQuestion(seed * 7919);
+                    CollectionAssert.Contains(allowed[topic], q.Kind); seen.Add(q.Kind);
+                    double actual = RealFromDisplayed(q, out double shown);
+                    Assert.AreEqual(Math.Abs(actual-shown) < .0002, q.Truth, q.Text);
+                    if (topic == 0) { StringAssert.DoesNotContain("(", q.Text); StringAssert.DoesNotContain(")", q.Text); }
+                }
+                CollectionAssert.AreEquivalent(allowed[topic], seen);
+            }
+            var locked = new XgSim(); locked.S.moleArithmeticTopic = (int)XgMoleTopic.Calculus;
+            for (int seed=0; seed<100; seed++) CollectionAssert.Contains(allowed[0], locked.GenerateMoleQuestion(seed).Kind);
         }
 
         [Test] public void EquivalentRationalsNormalizeAndZeroDenominatorsAreRejected()
@@ -161,13 +220,22 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void OutputReadsLiveModelWeightsRatherThanAccuracyOrAnswerLabels()
         {
             // This checks the live-board connection, not training efficacy of the new text vocabulary.
-            var sim = new XgSim(); var q = XgMoleArithmetic.Generate(71, 1);
-            sim.S.board = new XgBoardState(); // force a fresh index for the isolated fixture
-            var concept = new XgConcept { id=999, layer=1, region="logic", key="类:"+q.Category, w=1, s=1, pinned=true };
+            var sim = new XgSim();
+            var displayed = new XgCard { dataset="arith", question="2+3=5", category="加减" };
+            // Simple arithmetic uses visible numeric-relation features, not category tokens.
+            // Pin its operator context, never a label or the question generator's random kind.
+            var encoded = XgMoleInference.Input(displayed);
+            var knobs = sim.Knobs(sim.Run(XgCatalog.Dataset("arith").track));
+            Assert.IsTrue(XgArithmeticRelations.TryElements(encoded, knobs, out var elements));
+            string visibleOperator = elements.Single(e => e.id.StartsWith("numrel:v1:算符:", StringComparison.Ordinal)).id;
+            sim.S.board = new XgBoardState();
+            var concept = new XgConcept { id=999, layer=1, region="logic", key=visibleOperator, w=1, s=1, pinned=true };
             sim.S.board.concepts.Add(concept);
-            Assert.IsTrue(sim.PredictMole(q.Card()).AnswerYes);
+            var positive = sim.PredictMole(displayed);
+            Assert.IsFalse(positive.Guessed); Assert.Greater(positive.Score, 0); Assert.IsTrue(positive.AnswerYes);
             concept.w = -1;
-            Assert.IsFalse(sim.PredictMole(q.Card()).AnswerYes);
+            var negative = sim.PredictMole(displayed);
+            Assert.IsFalse(negative.Guessed); Assert.Less(negative.Score, 0); Assert.IsFalse(negative.AnswerYes);
         }
 
         [Test] public void TurnRejectsDuplicateInactiveExpiredAndPreviousQuestionCallbacks()
@@ -220,12 +288,15 @@ namespace LingGuangV05.XingGuang.Tests
             sim.UseBoard = false; Assert.IsNull(sim.PredictMole(XgMoleArithmetic.Generate(0, 1).Card()));
         }
 
-        [Test] public void CatalogHasApprovedPricesAndOnlyTheExplicitPrerequisite()
+        [Test] public void CatalogKeepsExistingPricesAndChainsTheNewMixedPackFirst()
         {
             var nodes = new List<XgNode>(); XgTrainingCatalog.AddNodes(nodes);
+            var mixed = nodes.Single(n => n.id == XgSim.MoleMixedNode);
             var powers = nodes.Single(n => n.id == XgSim.MolePowersNode);
             var calculus = nodes.Single(n => n.id == XgSim.MoleCalculusNode);
             var auto = nodes.Single(n => n.id == XgSim.MoleAutoNode);
+            Assert.AreEqual(mixed.id, powers.parent); Assert.AreEqual(1, mixed.stage);
+            Assert.Greater(mixed.cost, 0);
             Assert.AreEqual(800, powers.cost); Assert.AreEqual(2, powers.stage);
             Assert.AreEqual(3000, calculus.cost); Assert.AreEqual(3, calculus.stage); Assert.AreEqual(powers.id, calculus.parent);
             Assert.AreEqual(1500, auto.cost); Assert.AreEqual(2, auto.stage); Assert.IsTrue(string.IsNullOrEmpty(auto.parent));

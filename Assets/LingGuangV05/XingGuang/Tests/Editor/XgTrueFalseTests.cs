@@ -90,14 +90,14 @@ namespace LingGuangV05.XingGuang.Tests
         // ───────────── the money ─────────────
 
         [Test]
-        public void EveryDeskPaysTwoAndAHalfTimesAsMuchByHand()
+        public void EveryDeskPaysOneAndAHalfTimesAsMuchByHand()
         {
-            Assert.AreEqual(2.5, XgCatalog.HandPayScale, 1e-9);
+            Assert.AreEqual(1.5, XgCatalog.HandPayScale, 1e-9, "1.5 since the streak pays up to ×5");
             var sim = new XgSim();
             foreach (var d in XgCatalog.Desks)
-                Assert.AreEqual(XgCatalog.LabelPay * d.pay * 2.5, sim.ManualPayFor(d.id, 1), 1e-9, d.id);
+                Assert.AreEqual(XgCatalog.LabelPay * d.pay * 1.5, sim.ManualPayFor(d.id, 1), 1e-9, d.id);
             sim.S.payRaise = 4;
-            Assert.AreEqual(sim.PayFor("arith", 3) * 2.5 * XgCatalog.RaiseMultipliers[4], sim.ManualPayFor("arith", 3), 1e-9);
+            Assert.AreEqual(sim.PayFor("arith", 3) * 1.5 * XgCatalog.RaiseMultipliers[4], sim.ManualPayFor("arith", 3), 1e-9);
         }
 
         [Test]
@@ -235,6 +235,67 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(n, sim.S.spiderDragAnswers);
             Assert.AreEqual(fines, sim.S.handFines, 1e-6);
             Assert.That(right / (double)n, Is.InRange(.6, .9), "as right as a 75% checkpoint");
+        }
+
+        [Test]
+        public void BetterTrainedCheckpointImprovesSpiderOnTheSameQuestions()
+        {
+            var sim = WithCheckpoint("arith", .62);
+            var host = new Host { money = 5000 };
+            sim.S.teachMode = false;
+            sim.S.desk = "arith";
+            var checkpoint = sim.S.best.Find(b => b.dataset == "arith");
+            const int count = 400;
+            int lowRight = 0, highRight = 0;
+            for (int i = 0; i < count; i++)
+            {
+                var card = sim.Card("arith");
+                // Both checkpoints see the same question and stratified draw, avoiding
+                // random-seed sensitivity. Advance only after comparing both previews.
+                card.roll = (i + .5) / count;
+                checkpoint.acc = .62;
+                Assert.IsTrue(sim.Suggestion("arith", out bool lowGuess, out _));
+                Assert.IsTrue(sim.SpiderDragPeek("arith", host, out bool lowPeek));
+                Assert.AreEqual(lowGuess, lowPeek, "low checkpoint: card " + i);
+                checkpoint.acc = .95;
+                Assert.IsTrue(sim.Suggestion("arith", out bool highGuess, out _));
+                Assert.IsTrue(sim.SpiderDragPeek("arith", host, out bool highPeek));
+                Assert.AreEqual(highGuess, highPeek, "high checkpoint: card " + i);
+                Assert.AreSame(card, sim.Card("arith"), "peeking must not consume the question");
+                if (lowPeek == card.truth) lowRight++;
+                if (highPeek == card.truth) highRight++;
+                if (lowPeek == card.truth)
+                    Assert.AreEqual(card.truth, highPeek, "a better checkpoint must preserve correct answers on the same draw");
+                var answer = sim.SpiderDragAnswer("arith", host);
+                Assert.IsTrue(answer.accepted);
+                Assert.AreEqual(highPeek, answer.yes, "the actual press must match its preview");
+            }
+            Assert.Greater(lowRight, count / 2, "the eligible low checkpoint performs above chance");
+            Assert.Less(lowRight, count, "the checkpoint is not an always-correct oracle");
+            Assert.Greater(highRight, lowRight + count / 10, "training must improve answers, not just the displayed percentage");
+            Assert.AreEqual(count, sim.S.spiderDragAnswers);
+        }
+
+        [TestCase(0)]
+        [TestCase(.59)]
+        public void MissingOrBelowThresholdCheckpointCannotPreviewOrPress(double accuracy)
+        {
+            var sim = WithCheckpoint("arith", accuracy);
+            if (accuracy == 0) sim.S.best.Clear();
+            var host = new Host();
+            sim.S.desk = "arith";
+            var card = sim.Card("arith");
+            double wallet = host.money;
+            int answers = sim.S.spiderAnswers, dragged = sim.S.spiderDragAnswers;
+            Assert.AreEqual("ability", sim.SpiderDragBlocker("arith", host));
+            Assert.IsFalse(sim.SpiderDragPeek("arith", host, out _));
+            Assert.IsFalse(sim.SpiderDragAnswer("arith", host).accepted);
+            Assert.IsFalse(sim.SpiderDragPress("arith", host, card.truth).accepted,
+                "a previously queued press must recheck eligibility");
+            Assert.AreSame(card, sim.Card("arith"));
+            Assert.AreEqual(wallet, host.money);
+            Assert.AreEqual(answers, sim.S.spiderAnswers);
+            Assert.AreEqual(dragged, sim.S.spiderDragAnswers);
         }
 
         [Test]

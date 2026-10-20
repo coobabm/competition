@@ -28,7 +28,7 @@ using UnityEditor;
 namespace LingGuangV05.Desktop.LLM
 {
     /// <summary>
-    /// Local language model for free chat (Qwen3-1.7B GGUF by default). Runs llama.cpp in-process through LLM for
+    /// Local language model for free chat (Qwen3.5-2B GGUF, Q5_K_S with imatrix, chosen so the game ships under 2 GB). Runs llama.cpp in-process through LLM for
     /// Unity's LlamaLib (package ai.undream.llm): one service with a slot per character, one LlamaLib client per slot
     /// so each request carries its own sampling and grammar. Offline: nothing leaves the machine.
     /// Model search: StreamingAssets/LingGuang/Models/*.gguf, then (editor) &lt;project&gt;/Models/*.gguf.
@@ -499,7 +499,7 @@ namespace LingGuangV05.Desktop.LLM
 
         static Job ChatJob(IList<KeyValuePair<string, string>> messages, int maxTokens, float temperature, bool thinking, XgSampling sampling,
             Action<string> done, LlmSeat seat, LlmLane lane) =>
-            new Job { messages = new List<KeyValuePair<string, string>>(messages), parameters = ChatParameters(maxTokens, temperature, sampling), thinking = thinking, done = done, seat = seat, lane = lane };
+            new Job { messages = new List<KeyValuePair<string, string>>(messages), parameters = ChatParameters(thinking ? maxTokens + LlmScheduling.ThinkingTokens : maxTokens, temperature, sampling), thinking = thinking, done = done, seat = seat, lane = lane };
 
         void Enqueue(List<Job> queue, Job job)
         {
@@ -904,7 +904,39 @@ namespace LingGuangV05.Desktop.LLM
             }
             if (string.IsNullOrEmpty(prompt)) throw new InvalidOperationException("Empty chat template result.");
             prompt = LlmScheduling.WithThinking(prompt, thinking);
-            return Marshal.PtrToStringUTF8(library.LLM_Completion(client.llm, prompt, null, slot, true));
+            string raw = Marshal.PtrToStringUTF8(library.LLM_Completion(client.llm, prompt, null, slot, true));
+            return thinking ? CloseThinking(library, client, prompt, raw, parameters, slot) : raw;
+        }
+
+        /// <summary>
+        /// A thinking request asks for <see cref="LlmScheduling.ThinkingTokens"/> + the answer at once. When the
+        /// reasoning used all of it without closing, the block is closed for it and the answer budget asked for again on
+        /// the same slot (the prompt plus its reasoning is still cached), so the player gets an answer rather than the
+        /// reasoning. Any failure returns the first result, whose unclosed block then yields no reply.
+        /// </summary>
+        static string CloseThinking(LlamaNative library, NativeClient client, string prompt, string raw, JObject parameters, int slot)
+        {
+            try
+            {
+                var first = JObject.Parse(raw);
+                string content = first.Value<string>("content") ?? "";
+                int limit = parameters.Value<int?>("n_predict") ?? 0;
+                if (first["error"] != null || !LlmScheduling.ThinkingCutOff(content, first.Value<string>("stop_type"),
+                        first.Value<bool?>("stopped_limit") ?? false, first.Value<int?>("tokens_predicted") ?? 0, limit)) return raw;
+                var second = (JObject)parameters.DeepClone();
+                second["n_predict"] = Math.Max(16, limit - LlmScheduling.ThinkingTokens);
+                lock (TemplateLock)
+                {
+                    library.LLM_Set_Grammar(client.llm, "");
+                    library.LLM_Set_Completion_Parameters(client.llm, second.ToString(Newtonsoft.Json.Formatting.None));
+                }
+                string closed = content + LlmScheduling.ForcedThinkingClose;
+                var answer = JObject.Parse(Marshal.PtrToStringUTF8(library.LLM_Completion(client.llm, prompt + closed, null, slot, true)));
+                if (answer["error"] != null) return raw;
+                answer["content"] = closed + (answer.Value<string>("content") ?? "");
+                return answer.ToString(Newtonsoft.Json.Formatting.None);
+            }
+            catch (Exception) { return raw; }
         }
 
         void Finish(Job job, string raw, string failure)
@@ -932,7 +964,7 @@ namespace LingGuangV05.Desktop.LLM
                 {
                     var parsed = JObject.Parse(raw);
                     if (parsed["error"] != null) Debug.LogWarning("[灵光] 模型回复出错：" + parsed["error"].ToString(Newtonsoft.Json.Formatting.None));
-                    else text = Clean(AfterThinking(parsed.Value<string>("content")));
+                    else text = Clean(LlmScheduling.AfterThinking(parsed.Value<string>("content"), job.thinking));
                 }
                 catch (Exception error) { Debug.LogWarning("[灵光] 模型回复解析失败：" + error.Message); }
                 VerificationTrace.Emit(job.verificationRequestId,"chat_callback",!string.IsNullOrWhiteSpace(text)?"native":failure??"empty_or_parse_error");
@@ -942,17 +974,6 @@ namespace LingGuangV05.Desktop.LLM
             {
                 Debug.LogWarning("[灵光] 模型回复处理失败：" + error.Message);
             }
-        }
-
-        /// <summary>
-        /// A raw completion returns the model's reasoning inline (llama-server's chat endpoint used to split it off).
-        /// When the prompt already opened the block, only "…&lt;/think&gt;" appears, so keep what follows the last close.
-        /// </summary>
-        static string AfterThinking(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return text;
-            int end = text.LastIndexOf("</think>", StringComparison.Ordinal);
-            return end >= 0 ? text.Substring(end + "</think>".Length) : text;
         }
 
         static readonly Regex Think = new Regex("<think>[\\s\\S]*?</think>", RegexOptions.Compiled);

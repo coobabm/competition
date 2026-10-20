@@ -49,6 +49,7 @@ namespace LingGuangV05.Runtime
             // Invalid explicit verification arguments throw before any player store/profile is opened.
             string verificationDirectory = VerificationSavePaths.Root;
             initialized = true;
+            offlineSessionStartedUnix = UtcNow;
             if (useDiskSave)
             {
 #if RECORDING_PREVIEW
@@ -132,12 +133,13 @@ namespace LingGuangV05.Runtime
         {
             long now = UtcNow;
             long last = Sim.S.lastSeenUnix;
-            // No offline progress: time away is not simulated (no income, power bills or training while closed).
-            OfflineSeconds = 0;
+            ApplyOfflineIncome();
             Sim.S.lastSeenUnix = Math.Max(last, now);
         }
 
-        string OfflineSummary() => OfflineSeconds > 0 ? " 离线结算 " + Math.Round(OfflineSeconds) + " 秒（上限 30 分钟，含电费）。" : "";
+        string OfflineSummary() => !string.IsNullOrEmpty(OfflineIncomeStatus) ? " " + OfflineIncomeStatus : OfflineIncome > 0
+            ? GameText.T(" 离线收益 ¥", " Offline income ¥") + OfflineIncome.ToString("0.00")
+                + GameText.T("（50%效率，最多8小时，仅资金）。", " (50% efficiency, up to 8 hours, funds only).") : "";
 
         void OnSimulationChanged() { dirty = true; notify = true; }
         void OnSimulationSignal(string name, string arg) { Signal?.Invoke(name, arg); }
@@ -205,7 +207,7 @@ namespace LingGuangV05.Runtime
             // Design v1.1 §6: the prologue is never saved; the save starts with the opening setup (Step 8).
             if (Sim.InPrologue) { SaveStatus = "序章不存档"; dirty = false; return true; }
             Sim.S.lastSeenUnix = Math.Max(Sim.S.lastSeenUnix, UtcNow);
-            try { Saving?.Invoke(); }
+            try { Saving?.Invoke(); CaptureOfflineIncome(); }
             catch (Exception error)
             {
                 // App snapshots are part of the save transaction. Never persist a partial snapshot.

@@ -40,6 +40,7 @@ namespace HongmengOS.Aero2010
         private void Start()
         {
             EnsureSettingsEntry();
+            EnsureRightSettingsShortcut();
             if (FindAnyObjectByType<CaseMenuController>() == null) GameSettings.ApplySaved();
         }
 
@@ -76,6 +77,42 @@ namespace HongmengOS.Aero2010
             button.interactable = true;
         }
 
+        private void EnsureRightSettingsShortcut()
+        {
+            if(panel==null)return;
+            var column=panel.Find("Places And System");
+            if(column==null)return;
+            var row=column.Find("Game Settings Shortcut") as RectTransform;
+            if(row==null)
+            {
+                var template=column.Find("Control Panel")??column.Find("Documents");
+                if(template==null||template.GetComponent<UnityEngine.UI.Button>()==null)return;
+                row=(RectTransform)Instantiate(template.gameObject,column).transform;
+                row.name="Game Settings Shortcut";
+            }
+            row.pivot=new Vector2(.5f,.5f);
+            // Tall menus have room above the footer. Short menus use the empty space
+            // beside the portrait, so the fixed documents/music/app rows never overlap it.
+            bool compact=panel.rect.height<700;
+            row.anchorMin=compact?Vector2.one:Vector2.zero;
+            row.anchorMax=compact?Vector2.one:new Vector2(1,0);
+            row.anchoredPosition=compact?new Vector2(-34,-48):new Vector2(0,126);
+            row.sizeDelta=compact?new Vector2(60,30):new Vector2(-10,42);
+            var button=row.GetComponent<UnityEngine.UI.Button>();
+            button.onClick=new UnityEngine.UI.Button.ButtonClickedEvent();
+            button.onClick.AddListener(OpenSettings);button.interactable=true;
+            foreach(var binding in row.GetComponentsInChildren<LingGuangV05.Desktop.DesktopLocalizedText>(true))binding.enabled=false;
+            foreach(var label in row.GetComponentsInChildren<TMP_Text>(true))
+            {
+                label.text=GameText.T("设置","Settings");label.fontSize=compact?13:18;
+                label.enableAutoSizing=false;label.textWrappingMode=TextWrappingModes.NoWrap;
+                label.alignment=TextAlignmentOptions.Midline;
+                label.rectTransform.anchorMin=Vector2.zero;label.rectTransform.anchorMax=Vector2.one;
+                label.rectTransform.offsetMin=new Vector2(3,0);label.rectTransform.offsetMax=new Vector2(-3,0);
+            }
+            row.gameObject.SetActive(true);
+        }
+
         private void Update()
         {
             if (menu != null && menu.activeSelf && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Close();
@@ -87,6 +124,7 @@ namespace HongmengOS.Aero2010
             if (menu.activeSelf) { Close(); return; }
             menu.SetActive(true);
             EnsureSettingsEntry();
+            EnsureRightSettingsShortcut();
             menu.transform.SetAsLastSibling();
             if (panel != null && menu.transform is RectTransform bounds)
             {
@@ -95,6 +133,7 @@ namespace HongmengOS.Aero2010
                 size.x = Mathf.Min(660, Mathf.Max(400, bounds.rect.width - 16));
                 panel.sizeDelta = size;
             }
+            EnsureRightSettingsShortcut();
             if (startOrb != null) startOrb.Selected = true;
             ShowAllPrograms();
             if (search != null)

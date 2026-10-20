@@ -124,5 +124,44 @@ namespace LingGuangV05.UI.Tests
             }
             finally{field.SetValue(null,original);UnityEngine.Object.DestroyImmediate(host);UnityEngine.Object.DestroyImmediate(tab);}
         }
+        [Test] public void ReducedCardsSnapToTheirFinalPoseAndVisibilityCancelsMotion()
+        {
+            var go=new GameObject("Reduced card",typeof(RectTransform));
+            try
+            {
+                var rt=(RectTransform)go.transform;var target=new Vector2(100,-80);rt.anchoredPosition=target;
+                var type=Find("LingGuangV05.Desktop.Casino.CasinoCardMotion");var motion=go.AddComponent(type);
+                type.GetField("Reduced").SetValue(motion,true);
+                type.GetMethod("Deal").Invoke(motion,new object[]{new Vector2(600,-50),.4f,true});
+                Assert.AreEqual(target,rt.anchoredPosition);Assert.IsFalse((bool)type.GetProperty("Busy").GetValue(motion));
+                type.GetMethod("Reveal").Invoke(motion,new object[]{.4f});Assert.IsFalse((bool)type.GetProperty("Busy").GetValue(motion));
+                type.GetField("Reduced").SetValue(motion,false);
+                type.GetMethod("Deal").Invoke(motion,new object[]{new Vector2(600,-50),0f,true});
+                type.GetField("PageVisible").SetValue(motion,(Func<bool>)(()=>false));
+                type.GetMethod("Step").Invoke(motion,new object[]{.05f});
+                Assert.AreEqual(target,rt.anchoredPosition);Assert.IsFalse((bool)type.GetProperty("Busy").GetValue(motion));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(go);}
+        }
+        [Test] public void CasinoButtonsRejectDisabledHiddenRepeatedAndRebuiltCallbacks()
+        {
+            var go=new GameObject("Casino guarded buttons",typeof(RectTransform));
+            try
+            {
+                var type=Find("LingGuangV05.Desktop.Casino.CasinoPage");var page=go.AddComponent(type);
+                var root=new GameObject("Root",typeof(RectTransform));root.transform.SetParent(go.transform,false);
+                var rootField=type.GetField("root",BindingFlags.Instance|BindingFlags.NonPublic);rootField.SetValue(page,(RectTransform)root.transform);
+                int calls=0;
+                var button=(UnityEngine.UI.Button)type.GetMethod("Button",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(page,new object[]{"Test",root.transform,0f,0f,100f,40f,"Test",(Action)(()=>calls++)});
+                button.interactable=false;button.onClick.Invoke();Assert.AreEqual(0,calls);
+                button.interactable=true;root.SetActive(false);button.onClick.Invoke();Assert.AreEqual(0,calls);
+                root.SetActive(true);button.onClick.Invoke();button.onClick.Invoke();Assert.AreEqual(1,calls,"same-frame duplicate is ignored");
+                var replacement=new GameObject("New Root",typeof(RectTransform));replacement.transform.SetParent(go.transform,false);rootField.SetValue(page,(RectTransform)replacement.transform);
+                // Reset debounce so this assertion independently verifies stale-root protection.
+                var fresh=(UnityEngine.UI.Button)type.GetMethod("Button",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(page,new object[]{"Stale",root.transform,0f,45f,100f,40f,"Stale",(Action)(()=>calls++)});
+                fresh.onClick.Invoke();Assert.AreEqual(1,calls,"old subtree cannot operate the current page");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(go);}
+        }
     }
 }

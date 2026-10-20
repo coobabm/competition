@@ -37,7 +37,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform previewViewport;
         RawImage previewImage;
         ScrollRect previewScroll;
-        TMP_Text preview, breadcrumb, footer, backLabel, selectLabel;
+        TMP_Text preview, breadcrumb, footer, backLabel, selectLabel, installSideHint;
         bool built;
         string folder="";
         string snapshot, lastName, previewId;
@@ -110,7 +110,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         string StateKey()
         {
-            return Sim.English + ":" + folder + ":" + string.Join(";", Sim.S.dataFiles.Select(f => f.fileId + ":" + f.installed))
+            return Sim.English + ":" + InstallAllowed + ":" + InstallReason + ":" + folder + ":" + string.Join(";", Sim.S.dataFiles.Select(f => f.fileId + ":" + f.installed))
                 + "|" + string.Join(";", Sim.DownloadQueue().Select(DownloadSignature))+RecordsKey();
         }
         void UpdateNames()
@@ -143,7 +143,14 @@ namespace LingGuangV05.Desktop.XingGuang
             viewport.gameObject.AddComponent<Image>().color=Color.white; viewport.gameObject.AddComponent<RectMask2D>();
             rows=Rect("Rows",viewport,new Vector2(0,1),Vector2.one,Vector2.zero,Vector2.zero);rows.pivot=new Vector2(.5f,1);
             var scroll=list.gameObject.AddComponent<ScrollRect>();scroll.viewport=viewport;scroll.content=rows;scroll.horizontal=false;scroll.movementType=ScrollRect.MovementType.Clamped;
-            var detail=Rect("Preview",body,new Vector2(.64f,0),Vector2.one,new Vector2(8,0),Vector2.zero);
+            var side=Rect("File details",body,new Vector2(.64f,0),Vector2.one,new Vector2(8,0),Vector2.zero);
+            var detail=Rect("Preview",side,Vector2.zero,Vector2.one,new Vector2(0,124),Vector2.zero);
+            var installHelp=Rect("Installation guidance",side,Vector2.zero,Vector2.right,Vector2.zero,new Vector2(0,116));
+            installHelp.gameObject.AddComponent<Image>().color=new Color32(222,235,247,255);
+            installSideHint=Text(Rect("Instructions",installHelp,Vector2.zero,Vector2.one,new Vector2(12,8),new Vector2(-12,-8)),"",14);
+            installSideHint.richText=false;
+            installSideHint.alignment=TextAlignmentOptions.TopLeft;
+            installSideHint.textWrappingMode=TextWrappingModes.Normal;
             detail.gameObject.AddComponent<Image>().color=new Color32(231,239,248,255);
             previewImage=Rect("Image",detail,new Vector2(0,1),Vector2.one,new Vector2(12,-192),new Vector2(-12,-12)).gameObject.AddComponent<RawImage>();previewImage.raycastTarget=false;previewImage.gameObject.SetActive(false);
             previewViewport=Rect("Preview viewport",detail,Vector2.zero,Vector2.one,new Vector2(14,12),new Vector2(-14,-12));
@@ -163,6 +170,8 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach(Transform child in rows) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
             selected.RemoveWhere(id => !Sim.DataFileReady(id));
             backLabel.text=T("← 返回","← Back");selectLabel.text=T("选中待装","Select ready");
+            installSideHint.text=T("安装到哪里？\n打开 ","Where to install?\nOpen ")+Sim.AiDisplayName+T(".exe → 练，将待安装包拖到「拖到这里安装数据包」。\nCtrl 可多选。",".exe → Train. Drop ready packs onto “Drop data packs here to install”.\nCtrl selects multiple packs.");
+            if(!InstallAllowed)installSideHint.text=T("暂时不能安装\n","Installation unavailable\n")+InstallReason;
             breadcrumb.text=DisplayName+(folder.Length>0 ? " › "+FolderTitle(folder) : "");
             ShowPreview(T("单击预览；双击打开文件夹。\n按住 Ctrl 可以多选数据包。","Click to preview; double-click a folder to open.\nHold Ctrl to select multiple data packs."),null,false);
             int index=0;

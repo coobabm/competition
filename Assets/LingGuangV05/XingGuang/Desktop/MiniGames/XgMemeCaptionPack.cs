@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             text.richText=false;text.textWrappingMode=TextWrappingModes.NoWrap;
             captionInput=box.gameObject.AddComponent<TMP_InputField>();captionInput.textViewport=area;captionInput.textComponent=text;captionInput.placeholder=placeholder;
             captionInput.fontAsset=C.Ui.font;captionInput.pointSize=22;captionInput.characterLimit=24;captionInput.richText=false;captionInput.lineType=TMP_InputField.LineType.SingleLine;
-            captionInput.onSubmit.AddListener(_=>SubmitCaption());B("SubmitCaption",320,365,260,54,XgUi.T("提交","Submit"),SubmitCaption,24);
+            captionInput.onSubmit.AddListener(_=>C.PlayerInput(SubmitCaption));B("SubmitCaption",320,365,260,54,XgUi.T("提交","Submit"),SubmitCaption,24);
         }
         void SubmitCaption()
         {

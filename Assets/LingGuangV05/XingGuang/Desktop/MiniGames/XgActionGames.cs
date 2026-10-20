@@ -278,7 +278,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             if (!Clock(dt)) return;
             if ((hintDelay -= dt) <= 0) hint.text = XgUi.T(C.Sim.AiDisplayName + "建议：", C.Sim.AiDisplayName + " suggests: ") + (aiBait ? XgUi.T("左滑，标题党", "left, clickbait") : XgUi.T("右滑，正经新闻", "right, honest news"));
-            if (C.KeyDown(Key.LeftArrow)) Decide(true); else if (C.KeyDown(Key.RightArrow)) Decide(false);
+            if (C.KeyDown(Key.LeftArrow)) C.PlayerInput(() => Decide(true)); else if (C.KeyDown(Key.RightArrow)) C.PlayerInput(() => Decide(false));
         }
     }
 
@@ -297,6 +297,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         readonly XgPredictionTrace[] predictions = new XgPredictionTrace[Cells];
         readonly float[] autoDelay = new float[Cells];
         XgBtn autoButton;
+        RectTransform topicMenu;
         TMP_Text questionDetail;
         int hovered = -1;
         RectTransform reviewRoot;
@@ -333,7 +334,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                     : XgUi.T("自动作答已", "Auto-answer ") + (autoEnabled ? XgUi.T("开启", "on") : XgUi.T("关闭", "off"));
             }, 13);
             C.Button("MoleReview", 745, 78, 135, 28, XgUi.T("题目回顾", "Review"), () => { if (generation == buildGeneration) OpenReview(); }, 14);
-            status.rectTransform.sizeDelta = new Vector2(520, 28);
+            status.rectTransform.sizeDelta = new Vector2(285, 28);
+            C.Button("MoleTopic", 305, 78, 230, 28, TopicLabel(C.Sim.MoleTopic), () =>
+            {
+                if (generation == buildGeneration && topicMenu != null) topicMenu.gameObject.SetActive(!topicMenu.gameObject.activeSelf);
+            }, 13);
             C.Box("Lawn", 15, 112, 870, 320, new Color(.36f, .56f, .33f));
             float[] x = { 42, 327, 612 };
             for (int i = 0; i < Cells; i++)
@@ -343,7 +348,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 turns[i].Invalidate(); predictions[i] = null; questions[i] = null;
                 var g = C.Rect("Hole" + i, x[i % 3], 122 + i / 3 * 102, XgMoleGraphic.CellWidth, XgMoleGraphic.CellHeight).gameObject.AddComponent<XgMoleGraphic>();
                 g.raycastTarget = true; g.HitTime = -1;
-                g.Down = () => { C.Ui.window?.FocusToWindow(); if (generation == buildGeneration && C.IsActive) Hit(slot, turns[slot].Token, false); };
+                g.Down = () => { C.Ui.window?.FocusToWindow(); if (generation == buildGeneration && C.IsActive) C.PlayerInput(() => Hit(slot, turns[slot].Token, false)); };
                 holes[i] = g;
                 g.Hover = entered =>
                 {
@@ -363,6 +368,36 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 b.alignment = TextAlignmentOptions.Center; b.fontStyle = FontStyles.Bold; b.raycastTarget = false; b.enabled = false; bangs[i] = b;
             }
             BuildReview();
+            topicMenu = C.Rect("MoleTopicMenu", 300, 108, 280, 164);
+            var topicBackground = topicMenu.gameObject.AddComponent<Image>(); topicBackground.color = new Color(.10f,.14f,.20f,.98f);
+            for (int topicIndex = 0; topicIndex < 4; topicIndex++)
+            {
+                var topic = (XgMoleTopic)topicIndex;
+                bool available = C.Sim.MoleTopicAvailable(topic);
+                var option = C.Button("MoleTopic" + topicIndex, 308, 114 + topicIndex * 39, 264, 34,
+                    TopicLabel(topic) + (available ? "" : XgUi.T(" · 未购买", " · Locked")), () =>
+                    {
+                        if (generation != buildGeneration || !C.IsActive) return;
+                        if (!C.Sim.SelectMoleTopic(topic))
+                        {
+                            feedback.text = XgUi.T("先在科技购买对应题包。", "Buy this question pack in Technology first.");
+                            topicMenu.gameObject.SetActive(false); return;
+                        }
+                        Restart();
+                    }, 13);
+                option.rt.SetParent(topicMenu, true);
+            }
+            topicMenu.gameObject.SetActive(false);
+        }
+        static string TopicLabel(XgMoleTopic topic)
+        {
+            switch (topic)
+            {
+                case XgMoleTopic.Mixed: return XgUi.T("混合运算", "Mixed operations");
+                case XgMoleTopic.Powers: return XgUi.T("幂指对与根式", "Powers, logs and roots");
+                case XgMoleTopic.Calculus: return XgUi.T("极限 / 求导 / 积分", "Limits / derivatives / integrals");
+                default: return XgUi.T("加减乘除", "Basic arithmetic");
+            }
         }
         void BuildReview()
         {
@@ -439,7 +474,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                         || owner != null && (!ReferenceEquals(owner, XingGuangController.Instance) || !ReferenceEquals(owner.Sim, sim))
                         || !ReferenceEquals(question, questions[reviewSlot]) || token != turns[reviewSlot].Token
                         || sim.MoleLessonAnswered(token)) return;
-                    TeachReviewed(token, label);
+                    C.PlayerInput(() => TeachReviewed(token, label));
                 };
             };
         }
@@ -468,7 +503,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         void Hit(int i, long token, bool automatic)
         {
-            if (!playing || reviewing || !C.IsActive) return;
+            if (!playing || reviewing || (topicMenu != null && topicMenu.gameObject.activeSelf) || !C.IsActive) return;
             if (expires[i] <= 0 || !turns[i].TryWhack(token, true))
             {
                 if (!automatic) feedback.text = XgUi.T("这里没有尚未作答的题目。", "There is no unanswered live question here.");
@@ -537,7 +572,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public override void Tick(float dt)
         {
             if (float.IsNaN(dt) || float.IsInfinity(dt) || dt <= 0) return;
-            if (reviewing) return;
+            if (reviewing || (topicMenu != null && topicMenu.gameObject.activeSelf)) return;
             if (!Clock(dt)) { for (int i = 0; i < Cells; i++) Paint(i); return; }
             int generation = buildGeneration;
             for (int i = 0; i < Cells; i++)
@@ -581,7 +616,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if (free.Count > 0)
                 {
                     int i = free[C.Random.Next(free.Count)];
-                    var question = XgMoleArithmetic.Generate(C.Random.Next(), C.Sim.MoleArithmeticTier);
+                    var question = C.Sim.GenerateMoleQuestion(C.Random.Next());
                     bool golden=C.Id=="arith_mole"&&combo>=10&&goldenMilestone<combo/10;
                     if(golden) { goldenMilestone=combo/10; question=question.AsTrue(); }
                     holes[i].Golden=golden;

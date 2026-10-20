@@ -52,6 +52,6 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var t=Tickets();int sum=0;foreach(int n in t)sum+=n;odds.text="签袋（按权重抽取，不是命中时机）\n涨 "+(100*t[0]/sum)+"%　悟 "+(100*t[1]/sum)+"%　平 "+(100*t[2]/sum)+"%\n退 "+(100*t[3]/sum)+"%　爆 "+(frenzy>0?0:100*t[4]/sum)+"%";
             for(int i=0;i<8;i++){papers[i].label.text=(research[i]?"已获 ":"")+Research[i];papers[i].button.interactable=!over&&!research[i]&&!Current.Dead&&Current.Level>=2;}
         }
-        public override void Tick(float dt){cooldown=Math.Max(0,cooldown-dt);if(frenzy>0){frenzy=Math.Max(0,frenzy-dt);Draw();}if(C.KeyDown(Key.Space))Strike();if(C.KeyDown(Key.F))Frenzy();}
+        public override void Tick(float dt){cooldown=Math.Max(0,cooldown-dt);if(frenzy>0){frenzy=Math.Max(0,frenzy-dt);Draw();}if(C.KeyDown(Key.Space))C.PlayerInput(Strike);if(C.KeyDown(Key.F))C.PlayerInput(Frenzy);}
     }
 }

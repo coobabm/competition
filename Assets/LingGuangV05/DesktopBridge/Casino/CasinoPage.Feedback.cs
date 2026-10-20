@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.Casino
             if (juice != null || board == null || controller == null) return;
             juice = board.gameObject.AddComponent<XgJuice>();
             juice.Init(board, board, font, controller.gameObject);
-            juice.LocalHitStop = true; juice.Visible = PageVisible;
+            juice.LocalHitStop = true; juice.Visible = PageVisible; juice.DisableMotionWhenReduced = true;
             var halo = Rect("Win Glow", board, 16, 146, 736, 334);
             var image = PrologueDesk.Fill(halo, Color.clear, false);
             halo.SetSiblingIndex(arena.GetSiblingIndex());
@@ -45,7 +45,8 @@ namespace LingGuangV05.Desktop.Casino
         {
             if (juice == null || bound == null) return;
             juice.Reduced = bound.S.reduceFx; juice.Muted = bound.S.mute;
-            if (winGlow != null) { winGlow.on = Time.unscaledTime < glowUntil; winGlow.color.a = juice.Reduced ? .08f : .35f; }
+            foreach (var motion in cardMotions) if (motion != null) motion.Reduced = bound.S.reduceFx;
+            if (winGlow != null) { winGlow.on = !juice.Reduced && Time.unscaledTime < glowUntil; winGlow.color.a = .35f; }
         }
         void QueuePayout(XgCasinoRound round)
         {
@@ -95,7 +96,8 @@ namespace LingGuangV05.Desktop.Casino
             var motion = card.gameObject.AddComponent<CasinoCardMotion>();
             motion.Front = front; motion.Back = back; motion.Juice = juice;
             motion.Reduced = bound != null && bound.S.reduceFx;
-            motion.CanDrag = () => !PresentationBusy;
+            motion.CanDrag = () => PageVisible() && !PresentationBusy;
+            motion.PageVisible = PageVisible;
             cardMotions.Add(motion); return motion;
         }
     }

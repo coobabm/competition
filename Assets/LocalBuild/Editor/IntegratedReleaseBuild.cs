@@ -25,7 +25,7 @@ public static class IntegratedReleaseBuild
         string managerPath=Path.Combine(Application.streamingAssetsPath,"LLMManager.json");
         byte[] oldManager=File.Exists(managerPath)?File.ReadAllBytes(managerPath):null;
         byte[] oldManagerMeta=File.Exists(managerPath+".meta")?File.ReadAllBytes(managerPath+".meta"):null;
-        string version="2026.10.20.2";
+        string version="2026.10.20.3";
         string stamp=DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         string directory=Path.GetFullPath("Build/MyComputerAlive-"+version+"-"+stamp);
         string[] scenes={"Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity","Assets/LingGuangV05/Scenes/Main.unity"};
@@ -35,14 +35,16 @@ public static class IntegratedReleaseBuild
         File.WriteAllText(Path.Combine(directory,"source-provenance.json"),JsonUtility.ToJson(provenance,true));
         try
         {
-            // Build from one explicit release entry; stale shared-editor presets must not
+            // Build from two explicit release entries; stale shared-editor presets must not
             // copy an older model. Restore the original list and disk config in finally.
             const string modelName=LocalModelRelease.FileName;
             string modelRelative="LingGuang/Models/"+modelName;
             string modelSource=Path.Combine(Application.streamingAssetsPath,modelRelative);
             if(!File.Exists(modelSource))throw new FileNotFoundException("Release model missing",modelSource);
-            VerifyModel(modelSource);
-            LLMUnity.LLMManager.modelEntries=new List<LLMUnity.ModelEntry>{new LLMUnity.ModelEntry(modelSource){filename=modelRelative,path=modelSource,includeInBuild=true}};
+            VerifyPayload(Application.streamingAssetsPath);
+            string embeddingRelative="LingGuang/Embedding/"+LocalModelRelease.EmbeddingFileName;
+            string embeddingSource=Path.Combine(Application.streamingAssetsPath,embeddingRelative);
+            LLMUnity.LLMManager.modelEntries=new List<LLMUnity.ModelEntry>{new LLMUnity.ModelEntry(modelSource){filename=modelRelative,path=modelSource,includeInBuild=true},new LLMUnity.ModelEntry(embeddingSource){filename=embeddingRelative,path=embeddingSource,includeInBuild=true,embeddingOnly=true}};
             LLMUnity.LLMManager.downloadOnStart=false;
             PlayerSettings.bundleVersion=version;
             PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64,false);
@@ -53,17 +55,15 @@ public static class IntegratedReleaseBuild
             if(result.summary.result==BuildResult.Succeeded)
             {
                 string outputAssets=Path.Combine(directory,"MyComputerAlive_Data/StreamingAssets");
-                string expected=Path.GetFullPath(Path.Combine(outputAssets,modelRelative));
-                string[] models=Directory.GetFiles(outputAssets,"*.gguf",SearchOption.AllDirectories);
-                if(models.Length!=1||!string.Equals(Path.GetFullPath(models[0]),expected,StringComparison.OrdinalIgnoreCase))
-                    throw new InvalidOperationException("Release requires exactly the canonical Qwen GGUF; unexpected model output: "+string.Join(", ",models));
-                VerifyModel(expected);
+                VerifyPayload(outputAssets);
+                LingGuangV05.Desktop.LLM.Editor.LlamaBuildStrip.CheckSize(directory);
             }
-            var record=new Record{version=version,model=LocalModelRelease.Name,modelSha256=LocalModelRelease.Sha256,modelBytes=LocalModelRelease.Bytes,sourceCommit=provenance.commit,sourceDigest=provenance.digest,sourceDirty=provenance.dirty,utc=DateTime.UtcNow.ToString("o"),result=result.summary.result.ToString(),errors=result.summary.totalErrors,warnings=result.summary.totalWarnings,path=directory,company=PlayerSettings.companyName,product=PlayerSettings.productName};
+            var record=new Record{version=version,model=LocalModelRelease.Name,modelSha256=LocalModelRelease.Sha256,modelBytes=LocalModelRelease.Bytes,embedding=LocalModelRelease.EmbeddingFileName,embeddingSha256=LocalModelRelease.EmbeddingSha256,embeddingBytes=LocalModelRelease.EmbeddingBytes,sourceCommit=provenance.commit,sourceDigest=provenance.digest,sourceDirty=provenance.dirty,utc=DateTime.UtcNow.ToString("o"),result=result.summary.result.ToString(),errors=result.summary.totalErrors,warnings=result.summary.totalWarnings,path=directory,company=PlayerSettings.companyName,product=PlayerSettings.productName};
             File.WriteAllText(Path.Combine(directory,"build-result.json"),JsonUtility.ToJson(record,true));
             Directory.CreateDirectory("LocalVerification/Release");
             File.WriteAllText("LocalVerification/Release/latest-build.json",JsonUtility.ToJson(record,true));
             if(result.summary.result!=BuildResult.Succeeded)throw new Exception("Integrated Windows build failed: "+directory);
+            LingGuangV05.Desktop.LLM.Editor.LlamaBuildStrip.CheckSize(directory);
             Debug.Log("INTEGRATED_RELEASE_BUILD_PASS "+directory);
         }
         finally
@@ -91,12 +91,32 @@ public static class IntegratedReleaseBuild
         if(bytes!=null)File.WriteAllBytes(path,bytes);
         else if(File.Exists(path))File.Delete(path);
     }
-    static void VerifyModel(string path)
+    // Both the input and output must contain exactly the two pinned release models.
+    // Old models must be archived outside Assets before building, never silently included or deleted.
+    public static void VerifyPayload(string streaming)
     {
-        if(new FileInfo(path).Length!=LocalModelRelease.Bytes)throw new InvalidDataException("Release model size mismatch: "+path);
+        string chat=Path.GetFullPath(Path.Combine(streaming,"LingGuang/Models/"+LocalModelRelease.FileName));
+        string embedding=Path.GetFullPath(Path.Combine(streaming,"LingGuang/Embedding/"+LocalModelRelease.EmbeddingFileName));
+        string[] models=Directory.GetFiles(streaming,"*",SearchOption.AllDirectories);
+        int count=0;
+        foreach(string model in models)
+        {
+            if(!model.EndsWith(".gguf",StringComparison.OrdinalIgnoreCase))continue;
+            count++;
+            string full=Path.GetFullPath(model);
+            if(!string.Equals(full,chat,StringComparison.OrdinalIgnoreCase)&&!string.Equals(full,embedding,StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Unexpected release model; archive outside Assets: "+model);
+        }
+        if(count!=2)throw new InvalidDataException("Release requires exactly the pinned chat and embedding GGUF files.");
+        VerifyModel(chat,LocalModelRelease.Bytes,LocalModelRelease.Sha256);
+        VerifyModel(embedding,LocalModelRelease.EmbeddingBytes,LocalModelRelease.EmbeddingSha256);
+    }
+    static void VerifyModel(string path,long bytes,string digest)
+    {
+        if(new FileInfo(path).Length!=bytes)throw new InvalidDataException("Release model size mismatch: "+path);
         using(var input=File.OpenRead(path))
         using(var sha=SHA256.Create())
-            if(Hex(sha.ComputeHash(input))!=LocalModelRelease.Sha256)throw new InvalidDataException("Release model checksum mismatch: "+path);
+            if(Hex(sha.ComputeHash(input))!=digest)throw new InvalidDataException("Release model checksum mismatch: "+path);
     }
     // Hash the working files, including untracked source, rather than pretending HEAD contains dirty edits.
     // Large binary payloads are listed separately; the model has its own SHA256SUMS.txt.
@@ -145,5 +165,5 @@ public static class IntegratedReleaseBuild
     }
     [Serializable] sealed class SourceEntry{public string path,sha256;public long bytes;}
     [Serializable] sealed class SourceProvenance{public string commit,digest,algorithm,gitStatus;public bool dirty;public SourceEntry[] files;public string[] omitted;}
-    [Serializable] sealed class Record{public string version,utc,result,path,company,product,sourceCommit,sourceDigest,model,modelSha256;public long modelBytes;public bool sourceDirty;public int errors,warnings;}
+    [Serializable] sealed class Record{public string version,utc,result,path,company,product,sourceCommit,sourceDigest,model,modelSha256,embedding,embeddingSha256;public long modelBytes,embeddingBytes;public bool sourceDirty;public int errors,warnings;}
 }

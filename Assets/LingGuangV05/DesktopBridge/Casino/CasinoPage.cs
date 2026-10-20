@@ -100,7 +100,19 @@ namespace LingGuangV05.Desktop.Casino
             var image = PrologueDesk.Fill(rt, Burgundy);
             var b = rt.gameObject.AddComponent<Button>(); b.targetGraphic = image;
             var colors = b.colors; colors.highlightedColor = new Color(1.2f, 1.2f, 1.2f); colors.disabledColor = new Color(.5f, .5f, .5f, .6f); b.colors = colors;
-            b.onClick.AddListener(() => action());
+            float lastClick = float.NegativeInfinity;
+            b.onClick.AddListener(() =>
+            {
+                if (!PageVisible() || b == null || !b.IsActive() || !b.IsInteractable()
+                    || root == null || !b.transform.IsChildOf(root)
+                    || controller != null && !ReferenceEquals(controller.Sim, bound)
+                    || Time.unscaledTime - lastClick < .08f) return;
+                lastClick = Time.unscaledTime;
+                SyncEffects();
+                juice?.Play(XgJuice.Sfx.Id.Click, 1, .3f);
+                juice?.Knock(rt, .035f, default, .12f, true);
+                action?.Invoke();
+            });
             Label("Text", rt, 4, 1, w - 8, h - 2, text, 19, White, TextAlignmentOptions.Center);
             return b;
         }
@@ -271,14 +283,18 @@ namespace LingGuangV05.Desktop.Casino
             stakeInput.characterValidation = TMP_InputField.CharacterValidation.Digit;
             stakeInput.characterLimit = 15;
             stakeInput.SetTextWithoutNotify(stake.ToString(CultureInfo.InvariantCulture));
+            var capturedInput = stakeInput;
+            bool CanEditStake() => PageVisible() && capturedInput != null && capturedInput == stakeInput
+                && capturedInput.isActiveAndEnabled && capturedInput.interactable && !PresentationBusy
+                && (bound == null || !bound.BlackjackActive);
             // Typing only records the number; PlaceBet and the wallet check decide whether it can be played.
             stakeInput.onValueChanged.AddListener(t =>
             {
-                if (PresentationBusy) return;
+                if (!CanEditStake()) return;
                 stake = long.TryParse(t, NumberStyles.None, CultureInfo.InvariantCulture, out var v) ? v : 0;
                 feedback = null;
             });
-            stakeInput.onEndEdit.AddListener(t => { if (stake >= 1) SetStake(stake); });
+            stakeInput.onEndEdit.AddListener(t => { if (CanEditStake() && stake >= 1) SetStake(stake); });
             halfStake = Button("Stake Half", slip, 178, 116, 64, 34, "½", () => { if (!PresentationBusy) { SetStake(stake / 2); feedback = null; } });
             doubleStake = Button("Stake Double", slip, 248, 116, 68, 34, "×2", () =>
             {
@@ -318,7 +334,7 @@ namespace LingGuangV05.Desktop.Casino
 
         void PlaceBet()
         {
-            if (controller == null || !ReferenceEquals(controller.Sim, bound) || PresentationBusy || ScamBlocks) return;
+            if (!PageVisible() || controller == null || !ReferenceEquals(controller.Sim, bound) || PresentationBusy || ScamBlocks) return;
             if (Games[game] == "blackjack")
             {
                 int before = bound.Casino.rounds;
@@ -328,7 +344,7 @@ namespace LingGuangV05.Desktop.Casino
             }
             if (!bound.TryCasinoBet(Games[game], choice, stake, controller.Host, out var round))
             { feedback = Lang.T("余额不足或上一局尚未结束"); return; }
-            reveal = round; revealAt = Time.unscaledTime + 1.2f;
+            reveal = round; revealAt = Time.unscaledTime + (bound.S.reduceFx ? 0 : 1.2f);
             // The spin is heard for the 1.2 s it takes (the clips are cut to it); 龙虎's cards bring their own.
             switch (round.game)
             {
@@ -355,6 +371,7 @@ namespace LingGuangV05.Desktop.Casino
             if (!PageVisible()) { CancelPresentation(); return; }
             if (english != GameText.IsEnglish) Build();
             if (Games[game] == "blackjack" && (shownHand != bound.Casino.blackjack || shownBlackjackRevision != (bound.Casino.blackjack?.revision ?? 0))) BuildArena();
+            if (bound.S.reduceFx && reveal != null) revealAt = Time.unscaledTime;
             if (Spinning)
             {
                 if (Time.unscaledTime >= nextFrame)
@@ -383,7 +400,7 @@ namespace LingGuangV05.Desktop.Casino
             if (bound == null) return;
             var c = bound.Casino;
             double money = controller.Host.Money - (pendingPayout != null ? pendingPayout.returned : 0);
-            if (payoutRollAmount > 0) money -= payoutRollAmount * (1 - Mathf.SmoothStep(0, 1, (Time.unscaledTime - payoutRollStart) / 1.2f));
+            if (!bound.S.reduceFx && payoutRollAmount > 0) money -= payoutRollAmount * (1 - Mathf.SmoothStep(0, 1, (Time.unscaledTime - payoutRollStart) / 1.2f));
             wallet.text = Lang.T("余额  ") + "¥" + Money(money);
             totals.text = Lang.T("累计净输赢  ") + Signed(c.returned - c.wagered - (pendingPayout?.returned ?? 0))
                 + (bound.S.casinoFrozen > 0 ? "\n<size=13>" + T("其中被冻结  ¥", "of which frozen  ¥") + Money(bound.S.casinoFrozen) + "</size>" : "");

@@ -299,7 +299,7 @@ namespace LingGuangV05.Desktop.XingGuang
             crowdSub.gameObject.SetActive(false);crowdTitle.rectTransform.anchorMin=Vector2.zero;crowdTitle.rectTransform.anchorMax=Vector2.one;crowdTitle.alignment=TextAlignmentOptions.Center;crowdTitle.fontSize=11;
             UiTip.Add(crowdLink, () => T("打开 YY，直接输入想对" + Sim.AiDisplayName + "说的话。教完或训练后，再问问它，看看回答有什么变化。", "Open YY and talk freely to " + Sim.AiDisplayName + ". After teaching or training, ask again and see how its answers change."));
 
-            soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; Refresh(true); }, 12);
+            soundToggle = ui.Button(nav, "", () => { Sim.S.mute = !Sim.S.mute; Juice.Muted = Sim.S.mute; if (Juice.Muted) XgJuice.Sfx.StopStreakClips(); Refresh(true); }, 12);
             PlaceSidebarToggle(soundToggle,-23);
             fxToggle = ui.Button(nav, "", () => { Sim.S.reduceFx = !Sim.S.reduceFx; Juice.Reduced = Sim.S.reduceFx; Refresh(true); }, 12);
             PlaceSidebarToggle(fxToggle,23);

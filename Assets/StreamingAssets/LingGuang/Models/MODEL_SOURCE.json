@@ -1,17 +1,24 @@
 {
-  "model": "Qwen3-1.7B",
-  "filename": "Qwen3-1.7B-Q4_K_M.gguf",
-  "quantization": "Q4_K_M",
-  "bytes": 1107409472,
-  "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
-  "baseModel": "https://huggingface.co/Qwen/Qwen3-1.7B",
-  "baseRevision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
-  "quantizer": "Unsloth",
-  "quantizationRepository": "https://huggingface.co/unsloth/Qwen3-1.7B-GGUF",
-  "quantizationRevision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
-  "downloadMirror": "https://modelscope.cn/models/unsloth/Qwen3-1.7B-GGUF",
+  "model": "Qwen3.5-2B (灵光 LoRA r2)",
+  "filename": "Qwen3.5-2B-Q5_K_S-emb5.gguf",
+  "quantization": "Q5_K_S, token embedding Q5_K, imatrix",
+  "bytes": 1306533984,
+  "sha256": "4b154ece943d21ebdf8179935a335cd35897babd212cb144a86a8605bf1782b1",
+  "baseModel": "https://huggingface.co/Qwen/Qwen3.5-2B",
+  "quantizationSource": "https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF (bf16 GGUF and imatrix)",
   "license": "Apache-2.0",
-  "transformation": "None. Exact upstream quantizer bytes; this payload is a 28-block dense qwen3 transformer (310 tensors) with no nextn/MTP layer.",
-  "usage": "Local text generation only; text-only dense model, no vision projector or multimodal file is bundled. Game slot context remains 4096; model metadata maximum is not the game allocation.",
-  "replaces": "Qwen3.5-4B-Q4_K_M.gguf in releases through 2026.10.19.5; historical packages remain unchanged."
+  "transformation": "A LoRA (rank 16, all 24 layers) trained by the team on the game's own dialogue (晴雯, 老周, 灵光 and the other contacts, Chinese) is merged into the weights; the MTP (nextn) block is stripped (Tools/LocalLLM/strip_qwen_mtp.py); quantized with llama-quantize --imatrix --token-embedding-type q5_K ... Q5_K_S (Tools/LocalLLM/quantize_qwen35_2b.sh). Pipeline: Exports/model-work/lora.",
+  "usage": "Local text generation only; no vision projector is bundled. Game slot context remains 4096.",
+  "replaces": "Qwen3-1.7B-Q4_K_M.gguf (2026.10.20.x) and Qwen3.5-4B-Q4_K_M.gguf (through 2026.10.19.5); historical packages remain unchanged.",
+  "reproducibility": "Exact release bytes are pinned by Git LFS OID and SHA256SUMS.txt. LoRA adapter, training data/config revision, merge pipeline and report are not present in this repository; base, imatrix and quantizer tool revisions are not recorded. The candidate quantization script requires externally supplied original LoRA-merged bf16, imatrix and matching tools and does not reproduce the release from the public base alone.",
+  "embedding": {
+    "filename": "../Embedding/bge-small-zh-v1.5-q8_0.gguf",
+    "bytes": 26472640,
+    "sha256": "5a88d266870fbd27c6f329df60de80e2d4cf3bbd5e6f080bd5c1b2e5abb12039",
+    "baseModel": "https://huggingface.co/BAAI/bge-small-zh-v1.5",
+    "conversionSource": "https://huggingface.co/CompendiumLabs/bge-small-zh-v1.5-gguf",
+    "license": "MIT",
+    "sourceRevision": null,
+    "note": "Source revision is not recorded upstream; exact release bytes are pinned by Git LFS OID."
+  }
 }

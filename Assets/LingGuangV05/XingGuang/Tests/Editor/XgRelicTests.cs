@@ -225,9 +225,9 @@ namespace LingGuangV05.XingGuang.Tests
             var node = XgCatalog.Nodes.First(n => n.cost > 20 && !double.IsInfinity(n.cost) && !XgItems.IsItem(n.id));
             var plain = Fresh(); var coupon = With("coupon"); var angel = With("angel_term"); var both = With("coupon", "angel_term");
             double basePrice = plain.NodeCost(node);
-            Assert.AreEqual(basePrice * .9, coupon.NodeCost(node), 1.01);
-            Assert.AreEqual(basePrice * .9, angel.NodeCost(node), 1.01);
-            Assert.AreEqual(basePrice * .8, both.NodeCost(node), 1.01, "they add up");
+            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.9)*XgSim.EarlyTechnologyPriceFactor(node), coupon.NodeCost(node), 1e-6);
+            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.9)*XgSim.EarlyTechnologyPriceFactor(node), angel.NodeCost(node), 1e-6);
+            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.8)*XgSim.EarlyTechnologyPriceFactor(node), both.NodeCost(node), 1e-6, "discounts apply before final multiplier");
         }
 
         [Test] public void TheServerKeyCutsTheRent()
@@ -268,13 +268,17 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(12, with.S.combo, "and time does not fade it");
         }
 
-        [Test] public void TheCrunchPairLiftsTheComboCap()
+        [Test] public void TheCrunchPairStepsTheStreakEveryTwoAnswers()
         {
             var plain = Fresh(); var one = With("allnight", "redbull"); var none = With("allnight");
-            plain.S.combo = none.S.combo = one.S.combo = 100;
+            plain.S.combo = none.S.combo = one.S.combo = 4;
             Assert.AreEqual(2, plain.ComboMultiplier, 1e-9);
             Assert.AreEqual(2, none.ComboMultiplier, 1e-9);
-            Assert.AreEqual(3, one.ComboMultiplier, 1e-9);
+            Assert.AreEqual(3, one.ComboMultiplier, 1e-9, "a step every two right answers");
+            Assert.AreEqual(2, one.StreakToNext);
+            plain.S.combo = one.S.combo = 100;
+            Assert.AreEqual(5, plain.ComboMultiplier, 1e-9);
+            Assert.AreEqual(5, one.ComboMultiplier, 1e-9, "still capped at ×5");
         }
 
         [Test] public void TheUsbStickAndKinAddSamplesToEveryHandLabel()
@@ -374,7 +378,7 @@ namespace LingGuangV05.XingGuang.Tests
             fx = XgRelics.Build(new[] { "tieba", "advisor_page" });
             Assert.AreEqual(.85 * .75 * .95, fx.paramsFactor, 1e-9); Assert.AreEqual(.85 * .75 * .95, fx.samplesFactor, 1e-9);
             fx = XgRelics.Build(new[] { "allnight", "redbull" });
-            Assert.AreEqual(1, fx.comboCapBonus, 1e-9);
+            Assert.IsTrue(fx.comboFastStep);
         }
 
         [Test] public void EachRelicOnItsOwnMovesAtLeastOneChannel()

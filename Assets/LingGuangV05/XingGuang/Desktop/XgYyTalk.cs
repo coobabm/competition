@@ -423,11 +423,7 @@ namespace LingGuangV05.Desktop.XingGuang
             finally { replayQueued = false; }
         }
 
-        static string StripThinking(string reply)
-        {
-            int end = reply.IndexOf("</think>", StringComparison.Ordinal);
-            return end >= 0 ? reply.Substring(end + 8).Trim() : reply.Trim();
-        }
+        static string StripThinking(string reply) => (LingGuangV05.Core.Chat.LlmScheduling.AfterThinking(reply, false) ?? "").Trim();
 
         DateTime Now()
         {

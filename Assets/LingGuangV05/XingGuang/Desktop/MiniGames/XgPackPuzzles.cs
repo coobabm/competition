@@ -98,7 +98,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if(disposed || !C.IsActive)return;
             if(submitted){if(Time.frameCount>nextFrame)Build();return;}
             elapsed+=dt;
-            var kb=Keyboard.current;if(kb!=null){var digits=new[]{kb.digit1Key,kb.digit2Key,kb.digit3Key,kb.digit4Key,kb.digit5Key,kb.digit6Key};for(int i=0;i<keys.Length&&i<digits.Length;i++)if(digits[i].wasPressedThisFrame){keys[i]?.Invoke();break;}}
+            var kb=Keyboard.current;if(kb!=null){var digits=new[]{kb.digit1Key,kb.digit2Key,kb.digit3Key,kb.digit4Key,kb.digit5Key,kb.digit6Key};for(int i=0;i<keys.Length&&i<digits.Length;i++)if(digits[i].wasPressedThisFrame){C.PlayerInput(keys[i]);break;}}
         }
     }
 

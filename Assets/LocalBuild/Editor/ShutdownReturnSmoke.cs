@@ -384,14 +384,18 @@ public static class ShutdownReturnSmoke
         using(GameText.Bind(()=>cycle==0?"zh-CN":GameText.English))
         {
             yield return ClickTitle(find("ReadArchives"));Check(hud.IsArchiveOpen,"actual title pointer opens archive modal");
-            Canvas.ForceUpdateCanvases();var card=(RectTransform)find("Archive1").transform.parent;
-            for(int slot=1;slot<=6;slot++)
+            Canvas.ForceUpdateCanvases();var card=(RectTransform)find("Archive2").transform.parent;
+            for(int slot=2;slot<=6;slot++)
             {
                 var button=find("Archive"+slot);var bounds=new Vector3[4];((RectTransform)button.transform).GetWorldCorners(bounds);
                 foreach(var world in bounds){var local=card.InverseTransformPoint(world);Check(card.rect.Contains(local),"archive row "+slot+" stays inside modal");}
                 Check(button.navigation.mode==Navigation.Mode.Explicit&&button.navigation.selectOnDown!=null,"archive row "+slot+" has keyboard navigation");
             }
             Check(menu.HitButton(PowerPoint(menu))==null,"archive modal blocks physical controls");
+            yield return ClickTitle(find("ArchivePage"));
+            var autoBounds=new Vector3[4];((RectTransform)find("Archive1").transform).GetWorldCorners(autoBounds);
+            card=(RectTransform)find("Archive1").transform.parent;
+            foreach(var world in autoBounds)Check(card.rect.Contains(card.InverseTransformPoint(world)),"autosave row stays inside last page modal");
             yield return ClickTitle(find("Archive1"));Check(!menu.IsTransitioning&&find("LoadSelected").interactable,"real slot selection waits for confirm");
             yield return Shot(cycle+"-01b-archives-"+(cycle==0?"zh":"en"));
             yield return ClickTitle(find("CloseArchives"));Check(!hud.IsArchiveOpen&&!menu.IsTransitioning,"actual back closes without starting");

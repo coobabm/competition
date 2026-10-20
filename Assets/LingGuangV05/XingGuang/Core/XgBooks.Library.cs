@@ -8,7 +8,9 @@ namespace LingGuangV05.XingGuang
         public string id, title, titleEn, author, authorEn, language, publication, sourceUrl, materialKind, rights, band;
         // availableBy is a conservative sale threshold, not a claimed exact first-publication date.
         public int availableBy, stage;
-        public double price;
+        double catalogPrice;
+        // One quote for library cards, purchase checks and charges; historical receipts are separate.
+        public double price { get => LingGuangV05.Core.PurchasePricing.AtLeastHundred(catalogPrice); set => catalogPrice = value; }
         public string introZh, introEn, insightZh, insightEn, questionZh, questionEn, keysZh, keysEn;
         public bool IsGuide => materialKind == "original-guide";
     }

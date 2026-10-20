@@ -23,7 +23,7 @@ namespace LingGuangV05.Desktop.XingGuang
         TMP_Text paceHead, paceEta, paceSub, otherName, otherState, memorizeNote;
         RectTransform otherRow;
         XgBtn microscope;
-        float paceTextTimer;
+        float paceTextTimer, paceSparkTimer;
         readonly bool[] paceWasActive = new bool[2];
         readonly int[] paceEpoch = new int[2];
 
@@ -110,6 +110,20 @@ namespace LingGuangV05.Desktop.XingGuang
             if (paceWasActive[t] && !run.epochActive && run.epoch != paceEpoch[t]) paceBar.Finish();
             paceWasActive[t] = run.epochActive; paceEpoch[t] = run.epoch;
             bool moving = pace.active && pace.phase != XgPacePhase.Validate && pace.speed > .05;
+            // Tiny local pulses accelerate with this round; no global camera motion or time scaling.
+            if (moving && !reduced && view.Visible && view.Tab == "train")
+            {
+                paceSparkTimer -= dt;
+                if (paceSparkTimer <= 0)
+                {
+                    paceSparkTimer = Mathf.Clamp((float)pace.nominal * Mathf.Lerp(.34f, .14f, (float)pace.progress), .08f, .3f);
+                    Fx.Knock(train.rt, .025f, new Vector2(1, 0));
+                    Fx.Burst(Fx.At(epochBar, new Vector2(Mathf.Lerp(epochBar.rect.xMin, epochBar.rect.xMax, (float)pace.progress), 0)), 2,
+                        XgDark.Accent, XgJuice.Shape.Spark, 70, 90, .16f);
+                }
+            }
+            else paceSparkTimer = 0;
+
             if (!paceBar.Flashing) paceBar.Show(pace.active ? (float)pace.progress : 0, pace.active, moving, Stalled(pace));
 
             var other = track == XgTrack.Vision ? XgTrack.Sequence : XgTrack.Vision;

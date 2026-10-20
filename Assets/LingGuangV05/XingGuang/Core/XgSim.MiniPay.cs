@@ -10,8 +10,10 @@ namespace LingGuangV05.XingGuang
         public bool correct;
         /// <summary>Samples added to the desk's dataset: 1 for a right answer (a waiting log can add more), 0 for a wrong one.</summary>
         public int samples;
-        /// <summary>The desk's per-label pay, the speed or combo bonus on top of it, and the fine of a wrong answer.</summary>
+        /// <summary>The desk's per-label pay, the streak and speed bonus on top of it, and the fine of a wrong answer.</summary>
         public double pay, bonus, fine;
+        /// <summary>The streak multiplier this answer was paid at (1 when it was wrong or did not count for the streak).</summary>
+        public int multiplier;
         public double Total => pay + bonus;
     }
 
@@ -19,33 +21,39 @@ namespace LingGuangV05.XingGuang
     /// One pay rule for every desk game (切短信, 打地鼠, 对暗号 … and the writing view of 手写数字). A game answers items;
     /// each valid item is one action:
     ///  - right: one sample of the desk's own dataset and the desk's hand pay (<see cref="XgSim.ManualPayFor"/>, which already
-    ///    holds the raise and <see cref="XgCatalog.HandPayScale"/>), plus a bonus of at most +100% of that pay for being quick
-    ///    (<see cref="MiniFastSeconds"/>) or for a streak (the shared combo), whichever is larger; the two never add up;
+    ///    holds the raise and <see cref="XgCatalog.HandPayScale"/>) times the streak multiplier (×1 … ×5, the shared combo:
+    ///    the third right answer in a row pays double, each two completed answers unlock the following tier), plus a speed bonus of at most
+    ///    <see cref="MiniSpeedCap"/> of the base for being quick (<see cref="MiniFastSeconds"/>; 常识判断: under 7.5 s);
     ///  - wrong: no sample, no pay, the combo breaks, and the desk's own fine if it has one (XgDesk.fine; only 算术 does).
     /// The size of a game round, its score or the value of an item never changes the pay.
     /// </summary>
     public sealed partial class XgSim
     {
-        /// <summary>The bonus never exceeds this share of the base pay.</summary>
-        public const double MiniBonusCap = 1;
+        /// <summary>The speed bonus never exceeds this share of the base pay (it is not multiplied by the streak).</summary>
+        public const double MiniSpeedCap = .5;
+        /// <summary>The whole bonus never exceeds this share of the base pay: the ×5 streak plus the full speed bonus.</summary>
+        public const double MiniBonusCap = ComboMaxMultiplier - 1 + MiniSpeedCap;
+        /// <summary>常识判断 pays its flat speed bonus for answers under this many seconds (its clock is 15 s).</summary>
+        public const double SenseFastSeconds = 7.5;
         /// <summary>An answer this fast earns the full speed bonus; it fades to nothing at this many seconds.</summary>
         public const double MiniFastSeconds = 5;
 
         /// <summary>What one right answer on a desk pays before any bonus.</summary>
         public double MiniBasePay(string desk) { return ManualPayFor(desk, LevelOf(desk)); }
 
-        /// <summary>The speed share of the bonus: +100% for an instant answer, fading linearly to 0 at five seconds. A negative time means "not timed".</summary>
+        /// <summary>The speed share of the bonus: +50% for an instant answer, fading linearly to 0 at five seconds. A negative time means "not timed".</summary>
         public static double MiniSpeedShare(double seconds)
         {
             if (double.IsNaN(seconds) || seconds < 0 || seconds > MiniFastSeconds) return 0;
-            return Math.Max(0, Math.Min(MiniBonusCap, 1 - seconds / MiniFastSeconds));
+            return Math.Max(0, Math.Min(MiniSpeedCap, MiniSpeedCap * (1 - seconds / MiniFastSeconds)));
         }
 
-        /// <summary>The bonus as a share of the base pay: the larger of the speed share and the combo share, capped at <see cref="MiniBonusCap"/>.</summary>
-        public static double MiniBonusShare(double seconds, double comboMultiplier)
+        /// <summary>The bonus as a share of the base pay: the streak's share (multiplier − 1) plus the speed share, capped at <see cref="MiniBonusCap"/>.</summary>
+        public static double MiniBonusShare(double seconds, double comboMultiplier, bool sense = false)
         {
-            double combo = double.IsNaN(comboMultiplier) ? 0 : comboMultiplier - 1;
-            return Math.Max(0, Math.Min(MiniBonusCap, Math.Max(MiniSpeedShare(seconds), combo)));
+            double combo = double.IsNaN(comboMultiplier) ? 0 : Math.Max(0, Math.Min(ComboMaxMultiplier, comboMultiplier) - 1);
+            double speed = sense ? (seconds >= 0 && seconds < SenseFastSeconds ? MiniSpeedCap : 0) : MiniSpeedShare(seconds);
+            return Math.Max(0, Math.Min(MiniBonusCap, combo + speed));
         }
 
         /// <summary>
@@ -62,12 +70,12 @@ namespace LingGuangV05.XingGuang
             NoteLabelSpeed();
             if (correct)
             {
-                if (useCombo) Hit(info.comboWindow, 1);
+                if (useCombo) Hit(info.comboWindow);
                 result.pay = MiniBasePay(desk);
-                result.bonus = desk == XgMemes.SenseDesk
-                    ? result.pay * ((useCombo ? System.Math.Min(2, ComboMultiplier) : 1) - 1
-                        + (seconds >= 0 && seconds < 7.5 ? .5 : 0))
-                    : result.pay * MiniBonusShare(seconds, useCombo ? ComboMultiplier : 1);
+                result.multiplier = useCombo ? StreakMultiplier : 1;
+                // The writing view has no streak, so it keeps its old speed bonus of up to +100% (twice the speed share).
+                result.bonus = useCombo ? result.pay * MiniBonusShare(seconds, result.multiplier, desk == XgMemes.SenseDesk)
+                    : result.pay * 2 * MiniSpeedShare(seconds);
                 host.Earn(result.Total); S.totalIncome += result.Total;
                 S.handCorrect++; QualityHandCorrect();
                 AddLabel(desk);

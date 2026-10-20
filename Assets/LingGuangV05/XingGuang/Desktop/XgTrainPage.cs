@@ -65,6 +65,15 @@ namespace LingGuangV05.Desktop.XingGuang
             fileDrop.CurrentSim = () => Sim;
             fileDrop.TargetVisible = () => view.Visible && view.Tab == "train";
             fileDrop.Notify = message => view.ShowToast(message, 3.5f);
+            fileDrop.NavigateToNode = nodeId =>
+            {
+                var owner = Sim;
+                if (owner == null || !view.Visible || view.Tab != "train" || !owner.TeachingTreeOpen ||
+                    owner.Has(nodeId) || XgCatalog.Node(nodeId) == null) return;
+                view.ShowTab("tree");
+                if (!ReferenceEquals(Sim, owner) || view.Tab != "tree") return;
+                view.Tree.FocusNodeDetails(nodeId);
+            };
             fileDrop.RefreshView = () => view.Refresh(true);
             var fileDropSurface = root.gameObject.AddComponent<Image>();
             fileDropSurface.color = Color.clear; fileDropSurface.raycastTarget = true;
@@ -262,8 +271,9 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!view.Visible || view.Tab != "train") return;
             if ((XgTrack)e.track != Track) return;
-            Fx.Knock(train.rt, .1f, new Vector2(0, -4));
-            Fx.Burst(Fx.At(gpuTarget != null && gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 12, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 300, 500, .45f);
+            float duration = Mathf.Clamp((float)Sim.PaceSeconds(Sim.Run(Track), Host), .18f, 1.2f);
+            Fx.Knock(train.rt, .07f, new Vector2(0, -3));
+            Fx.Burst(Fx.At(gpuTarget != null && gpuTarget.gameObject.activeInHierarchy ? gpuTarget : train.rt), 8, new Color32(255, 200, 90, 255), XgJuice.Shape.Spark, 260, 420, Mathf.Min(.3f, duration * .5f));
             Fx.Play(XgJuice.Sfx.Id.Fan, 1, .8f);
             Refresh();
         }
@@ -408,8 +418,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Float(Fx.At(card, new Vector2(0, 70)), Lang.T("没有进步 +¥0"), new Color(.8f, .82f, .9f), 20);
                 return;
             }
-            Fx.HitStop(a.grade >= 4 ? 200 : 120);
-            Fx.Shake(a.grade >= 4 ? 12 : 6, a.grade >= 4 ? .45f : .3f);
+            // Record feedback stays local: no hit-stop or global input pause during rapid training.
+            Fx.Knock(card, a.grade >= 4 ? .10f : .06f, new Vector2(a.grade >= 4 ? 5 : 3, 0));
             Fx.Shockwave(at, color, 260, .4f, 12);
             Fx.Play(XgJuice.Sfx.Id.Stamp);
             Fx.Flash(Color.white, .1f, .6f);

@@ -35,7 +35,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var pool=C.Random.NextDouble()<C.Skill&&good.Count>0?good:legal;if(pool.Count==0)return;int p=pool[C.Random.Next(pool.Count)];
             Message(XgUi.T(("灵光建议下在 ").Replace("灵光", C.Sim.AiDisplayName)+"ABCDEFGHJ"[p%9]+" "+(p/9+1)+"。\n目标："+Puzzle.Goal,("LingGuang would play at ").Replace("LingGuang", C.Sim.AiDisplayName)+"ABCDEFGHJ"[p%9]+" "+(p/9+1)+".\nGoal: "+Puzzle.GoalEn));cells[p].label.text="?";
         }
-        public override void Tick(float dt){if(done)return;seconds=Math.Max(0,seconds-dt);timer.text=XgUi.T("第 "+(index+1)+" / 13 题　剩余 "+Math.Ceiling(seconds)+" 秒","Puzzle "+(index+1)+" / 13　"+Math.Ceiling(seconds)+" s left");if(seconds<=0){done=true;C.Report(false);Message(XgUi.T("时间到。\n"+Puzzle.Why,"Time is up.\n"+Puzzle.WhyEn));}if(C.KeyDown(Key.H))Hint();}
+        public override void Tick(float dt){if(done)return;seconds=Math.Max(0,seconds-dt);timer.text=XgUi.T("第 "+(index+1)+" / 13 题　剩余 "+Math.Ceiling(seconds)+" 秒","Puzzle "+(index+1)+" / 13　"+Math.Ceiling(seconds)+" s left");if(seconds<=0){done=true;C.Report(false);Message(XgUi.T("时间到。\n"+Puzzle.Why,"Time is up.\n"+Puzzle.WhyEn));}if(C.KeyDown(Key.H))C.PlayerInput(Hint);}
     }
     internal sealed class XgMergeGame:XgBoardMini
     {
@@ -56,6 +56,6 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             Status.text="步数："+moves+"\n最高："+(max==0?0:100*Math.Pow(2,max-1)).ToString("N0")+" 条\n目标：合成 COCO 级（约20万）\n"+(over?"CPU 过载：没有合法移动，请重新开始。":max>=12?"已达到目标！可继续合成。":"合并才结算；滑动和提示不结算。");}
         void Hint(){if(over)return;int best=0;double score=double.NegativeInfinity;for(int d=0;d<4;d++){var b=(int[,])board.Clone();if(!XgMiniBoard.Slide(b,d,out int gain))continue;int empty=0;foreach(int v in b)if(v==0)empty++;double s=gain*10+empty;if(s>score){score=s;best=d;}}
             int dir=C.Random.NextDouble()<C.Skill?best:C.Random.Next(4);Message((XgUi.T("灵光建议：","LingGuang suggests: ")).Replace(XgUi.T("灵光","LingGuang"), C.Sim.AiDisplayName)+new[]{"左","上","右","下"}[dir]+"。\n根据当前能力模拟，可能选到无效方向。 ");}
-        public override void Tick(float dt){if(C.KeyDown(Key.LeftArrow)||C.KeyDown(Key.A))Move(0);if(C.KeyDown(Key.UpArrow)||C.KeyDown(Key.W))Move(1);if(C.KeyDown(Key.RightArrow)||C.KeyDown(Key.D))Move(2);if(C.KeyDown(Key.DownArrow)||C.KeyDown(Key.S))Move(3);if(C.KeyDown(Key.Space))Hint();if(C.KeyDown(Key.R))Reset();}
+        public override void Tick(float dt){if(C.KeyDown(Key.LeftArrow)||C.KeyDown(Key.A))C.PlayerInput(()=>Move(0));if(C.KeyDown(Key.UpArrow)||C.KeyDown(Key.W))C.PlayerInput(()=>Move(1));if(C.KeyDown(Key.RightArrow)||C.KeyDown(Key.D))C.PlayerInput(()=>Move(2));if(C.KeyDown(Key.DownArrow)||C.KeyDown(Key.S))C.PlayerInput(()=>Move(3));if(C.KeyDown(Key.Space))C.PlayerInput(Hint);if(C.KeyDown(Key.R))C.PlayerInput(Reset);}
     }
 }

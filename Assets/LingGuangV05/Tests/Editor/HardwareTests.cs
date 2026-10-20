@@ -13,6 +13,36 @@ namespace LingGuangV05.Tests
         static ChapterOneSim Rich(double money = 100000) { var sim = new ChapterOneSim(); sim.S.money = money; return sim; }
 
         [Test]
+        public void SaleDiscountCanReduceNormalizedPriceBelowHundred()
+        {
+            var listing = new GpuModel { price = 120 };
+            Assert.That(HardwareCatalog.Price(listing, HardwareCatalog.SinglesDay), Is.EqualTo(96));
+            Assert.That(HardwareCatalog.Price(listing, D(11, 10)), Is.EqualTo(120));
+        }
+
+        [Test]
+        public void CheapUsedPurchaseUsesTheQuoteWithoutRaisingResaleValue()
+        {
+            var g = HardwareCatalog.Gpu(HardwareCatalog.Gtx750Ti);
+            double previousPrice = g.usedPrice;
+            try
+            {
+                g.usedPrice = 100;
+                var date = g.release;
+                Assert.That(HardwareCatalog.UsedPrice(g, date), Is.EqualTo(100));
+                Assert.That(HardwareCatalog.UsedPurchasePrice(g, date, true), Is.EqualTo(95));
+                var poor = Rich(94);
+                Assert.That(poor.BuyUsedCard(g.id, date, true), Is.False);
+                Assert.That(poor.S.money, Is.EqualTo(94));
+                var exact = Rich(95);
+                Assert.That(exact.BuyUsedCard(g.id, date, true), Is.True);
+                Assert.That(exact.S.money, Is.Zero);
+                Assert.That(HardwareCatalog.UsedPrice(g, date), Is.EqualTo(100));
+            }
+            finally { g.usedPrice = previousPrice; }
+        }
+
+        [Test]
         public void ANewGameStartsWithOneGtx980TiAtTimesOne()
         {
             var sim = new ChapterOneSim();

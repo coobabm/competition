@@ -19,12 +19,12 @@ using UnityEditor;
 namespace LingGuangV05.Desktop.LLM
 {
     /// <summary>
-    /// The embedding model behind retrieval (RAG): Qwen3-Embedding-0.6B in its own LlamaLib service next to the chat
+    /// The embedding model behind retrieval (RAG): bge-small-zh-v1.5 (26 MB, so the game fits in 2 GB) in its own LlamaLib service next to the chat
     /// model, called from one worker thread. It fills <see cref="RagVectors.Source"/>: texts are embedded once and
     /// cached (also on disk, shared by all saves), so a lookup never waits. A search text is embedded first, through
     /// <see cref="Prepare"/>, right before a prompt is built (≈10–30 ms on the GPU); stored texts are embedded in the
     /// background and fall back to BM25 until they are. Without the model everything stays BM25.
-    /// Model search: StreamingAssets/LingGuang/Embedding/*.gguf, then (editor) &lt;project&gt;/Models/Embedding/*.gguf.
+    /// Model search: the pinned BGE file in StreamingAssets/LingGuang/Embedding, then (editor) &lt;project&gt;/Models/Embedding.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LocalEmbedder : MonoBehaviour, IVectorSource
@@ -40,6 +40,19 @@ namespace LingGuangV05.Desktop.LLM
 
         /// <summary>Qwen3-Embedding wants an instruction in front of a search text (not in front of stored texts).</summary>
         public const string QueryInstruction = "Instruct: Given a chat message, retrieve memories, facts and past conversations relevant to it\nQuery:";
+        /// <summary>bge-*-zh's instruction for a short search text against passages.</summary>
+        public const string BgeZhQueryInstruction = "为这个句子生成表示以用于检索相关文章：";
+        /// <summary>
+        /// The search instruction of a model file, and whether it only reads Chinese: bge-small-zh's English vectors
+        /// are noise (measured against Qwen3-Embedding on the knowledge files: F1 .50 in English, .63 in Chinese), so
+        /// texts without Chinese get no vector and fall back to BM25, which suits English well.
+        /// </summary>
+        public static string InstructionFor(string modelName, out bool chineseOnly)
+        {
+            string name = (modelName ?? "").ToLowerInvariant();
+            chineseOnly = name.Contains("bge") && name.Contains("-zh");
+            return chineseOnly ? BgeZhQueryInstruction : QueryInstruction;
+        }
         /// <summary>How long a prompt waits for its search text at most; after that it is built with BM25 alone.</summary>
         public const float PrepareSeconds = 1.5f;
         const int MaxChars = 600, MaxCached = 12000, MaxLater = 4000, SaveEvery = 64, StopWaitMs = 4000;
@@ -56,7 +69,8 @@ namespace LingGuangV05.Desktop.LLM
         bool wanted;
         bool ready;
         int unsaved;
-        string cachePath, modelPath;
+        string cachePath, modelPath, instruction = QueryInstruction;
+        bool chineseOnly;
         Task<NativeService> starting;
         NativeService service;
         NativeClient client;
@@ -77,6 +91,7 @@ namespace LingGuangV05.Desktop.LLM
             modelPath = FindModel();
             if (modelPath == null) { Debug.Log("[灵光] 没有向量模型（StreamingAssets/LingGuang/Embedding/*.gguf）：检索只用 BM25。"); return; }
             ModelName = Path.GetFileNameWithoutExtension(modelPath);
+            instruction = InstructionFor(ModelName, out chineseOnly);
             cachePath = Path.Combine(LingGuangV05.Runtime.Persistence.VerificationSavePaths.ModelCacheDirectory ?? Path.Combine(Application.persistentDataPath, "LingGuangV05"), "embeddings-" + ModelName + ".bin");
             stopping = false;
             string model = modelPath, path = cachePath;
@@ -156,9 +171,9 @@ namespace LingGuangV05.Desktop.LLM
             foreach (var dir in dirs)
             {
                 if (!Directory.Exists(dir)) continue;
-                var files = Directory.GetFiles(dir, "*.gguf");
-                Array.Sort(files, StringComparer.Ordinal);
-                if (files.Length > 0) return files[0];
+                string canonical = Path.Combine(dir, LocalModelRelease.EmbeddingFileName);
+                if (File.Exists(canonical) && new FileInfo(canonical).Length == LocalModelRelease.EmbeddingBytes)
+                    return canonical;
             }
             return null;
         }
@@ -167,6 +182,7 @@ namespace LingGuangV05.Desktop.LLM
 
         static string QueryKey(string text) => "q\u0001" + Trim(text);
         static string DocumentKey(string text) => "d\u0001" + Trim(text);
+        static bool HasChinese(string text) { foreach (char c in text) if (c >= '\u4e00' && c <= '\u9fff') return true; return false; }
         static string Trim(string text) { text = (text ?? "").Trim(); return text.Length > MaxChars ? text.Substring(0, MaxChars) : text; }
 
         public float[] Query(string text) => Lookup(QueryKey(text), false);
@@ -174,7 +190,7 @@ namespace LingGuangV05.Desktop.LLM
 
         float[] Lookup(string key, bool queueMissing)
         {
-            if (key.Length <= 2) return null;
+            if (key.Length <= 2 || chineseOnly && !HasChinese(key)) return null;
             lock (gate)
             {
                 if (cache.TryGetValue(key, out var v)) return v;
@@ -205,7 +221,7 @@ namespace LingGuangV05.Desktop.LLM
                 {
                     if (string.IsNullOrWhiteSpace(q)) continue;
                     string key = QueryKey(q);
-                    if (e.cache.ContainsKey(key)) continue;
+                    if (e.cache.ContainsKey(key) || e.chineseOnly && !HasChinese(key)) continue;
                     keys.Add(key);
                     if (e.queued.Add(key)) e.urgent.Enqueue(key);
                     Monitor.Pulse(e.gate);
@@ -243,7 +259,7 @@ namespace LingGuangV05.Desktop.LLM
                 float[] vector = null;
                 try
                 {
-                    string text = key.StartsWith("q\u0001", StringComparison.Ordinal) ? QueryInstruction + key.Substring(2) : key.Substring(2);
+                    string text = key.StartsWith("q\u0001", StringComparison.Ordinal) ? instruction + key.Substring(2) : key.Substring(2);
                     vector = JArray.Parse(Marshal.PtrToStringUTF8(service.llamaLib.LLM_Embeddings(client.llm, text)) ?? "[]").ToObject<float[]>();
                 }
                 catch (Exception error) { Debug.LogWarning("[灵光] 向量计算失败：" + error.Message); }

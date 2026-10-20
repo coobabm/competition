@@ -24,6 +24,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim AtStage(int stage)
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.unlocked.Add(XgSim.SpiderAcquireNode); // Own the crawler before testing its reading ledger.
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = stage;
             return sim;
         }

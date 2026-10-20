@@ -28,7 +28,7 @@ namespace LingGuangV05.Desktop.Story
     /// left to do is open the exe it left behind (and the note says so).
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class GuideNote : MonoBehaviour
+    public sealed partial class GuideNote : MonoBehaviour
     {
         const float Width = 300, TitleHeight = 26, Pad = 10, RightMargin = 14, TopMargin = 44;
         const float RefreshEvery = .5f, TickHold = .9f, SlideTime = .35f, FadeIn = .25f;
@@ -92,7 +92,7 @@ namespace LingGuangV05.Desktop.Story
             router = FindAnyObjectByType<ChapterOneDesktopRouter>(FindObjectsInactive.Include);
         }
 
-        void OnDestroy() { if (note != null) Destroy(note.gameObject); if (Instance == this) Instance = null; }
+        void OnDestroy() { DestroyTaskNotifications(); if (note != null) Destroy(note.gameObject); if (Instance == this) Instance = null; }
 
         // The note steps aside for story cutscenes and while the origin video plays (it would cover the player).
         bool CutscenePlaying => AiJoinsYy.Playing || host is StoryDesktopPresenter presenter && (presenter.CutscenePlaying || presenter.GetComponent<OriginCurtain>() is OriginCurtain c && c.Playing);
@@ -123,8 +123,17 @@ namespace LingGuangV05.Desktop.Story
                 && Lab() != null && lab.Sim != null && PrologueDirector.Desk != null;
             if (ready && note == null) Build(PrologueDirector.Desk);
             if (note == null) return;
-            if (note.gameObject.activeSelf != ready) note.gameObject.SetActive(ready);
-            if (!ready || Time.unscaledTime < nextRefresh) return;
+            ready = ready && TaskPresentationAllowed();
+            if (note.gameObject.activeSelf != (ready && taskListOpen)) note.gameObject.SetActive(ready && taskListOpen);
+            TickTaskNotifications(ready);
+            if (Time.unscaledTime < nextRefresh) return;
+            if (!ready)
+            {
+                nextRefresh = Time.unscaledTime + RefreshEvery;
+                if (lab != null && lab.Sim != null && runtime != null && runtime.Sim != null && !runtime.Sim.InPrologue)
+                { var queued = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House()); XgAppAcquisitionHost.Instance?.AddTodos(queued); ObserveTaskNotifications(queued); }
+                return;
+            }
             nextRefresh = Time.unscaledTime + RefreshEvery;
             NoteSeenPlaces();
             List<XgGuideStep> steps;
@@ -140,11 +149,13 @@ namespace LingGuangV05.Desktop.Story
                 } };
                 // Do not finish an old collect/train objective over the current lesson.
                 if (busy) { StopAllCoroutines(); busy = false; pending = null; }
-                Show(steps);
+                TopStep=steps[0];TopSim=lab.Sim;
+                ObserveTaskNotifications(new List<XgGuideStep>());Show(new List<XgGuideStep>());
                 return;
             }
             else {steps = XgGuide.Current(lab.Sim, runtime.Sim.S.money, House());XgAppAcquisitionHost.Instance?.AddTodos(steps);}
             TopStep = steps.Count > 0 ? steps[0] : null; TopSim = lab.Sim;
+            steps = ObserveTaskNotifications(steps);
             if (busy) { pending = steps; return; }
             Apply(steps);
         }
@@ -240,6 +251,7 @@ namespace LingGuangV05.Desktop.Story
                 rows[i] = row;
             }
             Layout();
+            BuildTaskNotifications(d);
         }
 
         static ColorBlock Tint(float normal, float hover, float pressed)
@@ -257,10 +269,10 @@ namespace LingGuangV05.Desktop.Story
         {
             bool sameSave = ReferenceEquals(shownFor, lab.Sim);
             var current = shown.Count > 0 ? shown[0] : null;
-            if (sameSave && !collapsed && current != null && !steps.Exists(s => s.id == current.id)) { StartCoroutine(Finish(steps)); return; }
+            if (sameSave && taskListOpen && !TaskReduced && !collapsed && current != null && !steps.Exists(s => s.id == current.id)) { StartCoroutine(Finish(steps)); return; }
             bool fresh = current == null || steps.Count == 0 || steps[0].id != current.id;
             Show(steps);
-            if (fresh && sameSave) StartCoroutine(FadeInCurrent());
+            if (fresh && sameSave && taskListOpen && !TaskReduced) StartCoroutine(FadeInCurrent());
         }
 
         void Show(List<XgGuideStep> steps)
@@ -276,6 +288,7 @@ namespace LingGuangV05.Desktop.Story
                 rows[i].label.text = step == null ? "" : (i == 0 ? "□ " : "· ") + step.Text(english);
             }
             Layout();
+            if(taskEmpty!=null)taskEmpty.gameObject.SetActive(steps.Count==0&&!collapsed);
         }
 
         /// <summary>Sizes the note to its lines, or to the folded strip.</summary>
@@ -306,7 +319,7 @@ namespace LingGuangV05.Desktop.Story
                 rows[i].rt.offsetMin = new Vector2(1, -y - h); rows[i].rt.offsetMax = new Vector2(-1, -y);
                 y += h + (i == 0 ? 4 : 0);
             }
-            note.sizeDelta = new Vector2(Width, collapsed ? TitleHeight + 2 : y + 8);
+            note.sizeDelta = new Vector2(Width, collapsed ? TitleHeight + 2 : shown.Count==0 ? 76 : y + 8);
         }
 
         IEnumerator Finish(List<XgGuideStep> next)
@@ -315,9 +328,9 @@ namespace LingGuangV05.Desktop.Story
             var row = rows[0];
             row.label.text = "√ <s>" + shown[0].Text(english) + "</s>";
             row.label.color = Done;
-            for (float t = 0; t < TickHold; t += Time.unscaledDeltaTime) yield return null;
+            for (float t = 0; t < TickHold && !TaskReduced; t += Time.unscaledDeltaTime) yield return null;
             var start = row.rt.anchoredPosition;
-            for (float t = 0; t < SlideTime; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < SlideTime && !TaskReduced; t += Time.unscaledDeltaTime)
             {
                 float k = t / SlideTime;
                 row.rt.anchoredPosition = start + new Vector2(-48 * k * k, 0);
@@ -334,7 +347,7 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator FadeInCurrent()
         {
             var group = rows[0].group;
-            for (float t = 0; t < FadeIn; t += Time.unscaledDeltaTime) { group.alpha = t / FadeIn; yield return null; }
+            for (float t = 0; t < FadeIn && !TaskReduced; t += Time.unscaledDeltaTime) { group.alpha = t / FadeIn; yield return null; }
             group.alpha = 1;
         }
 

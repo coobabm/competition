@@ -212,7 +212,7 @@ namespace LingGuangV05.Desktop.Story
             SetStep("title");
             yield return TitleAndBoot();
             StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_boot"), 5));
-            yield return PrologueDesk.Wait(2.5f);
+            yield return ApproachMusicBeforeVirus();
 
             // Before Step 1: 360 finds it, and it will not let the player say 是.
             SetStep("virus");

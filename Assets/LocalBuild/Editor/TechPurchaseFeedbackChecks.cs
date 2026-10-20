@@ -36,7 +36,7 @@ public static class TechPurchaseFeedbackChecks
         Debug.Log("TECH_FEEDBACK_RAYCAST rect=" + rect.name + " screen=" + pointer.position + " size=" + rect.rect + " hits=" + string.Join(",", hits.ConvertAll(hit => hit.gameObject.name + ":" + hit.depth)));
         return hits.Count == 0 ? null : ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject);
     }
-    [Serializable] sealed class Report { public string status = "running"; public List<string> passed = new List<string>(); }
+    [Serializable] sealed class Report { public string status = "running"; public List<string> passed = new List<string>(); public List<string> uncovered = new List<string>(); }
     static void Check(Report report, bool ok, string label)
     {
         if (!ok) throw new InvalidOperationException("Tech purchase feedback: " + label);
@@ -124,22 +124,17 @@ public static class TechPurchaseFeedbackChecks
             yield return new WaitForSecondsRealtime(.3f);
             Check(report, node.square.localScale == Vector3.one && bought == 0, "Release restores rest without purchase");
             double untouchedMoney = host.wallet.money;
-            node.OnPointerClick(pointer);
-            Check(report, bought == 0 && host.wallet.money == untouchedMoney && Field<XgTechNodeView>(tree, "detailShown") == node, "Icon opens science without buying");
+            node.OnPointerEnter(pointer);
+            Check(report, Field<RectTransform>(tree, "tooltip").gameObject.activeSelf && Field<XgTechNodeView>(tree, "detailShown") == node
+                && bought == 0 && host.wallet.money == untouchedMoney, "Hover opens immediately without spending or waiting for Tick");
             var priceAction = node.cost.GetComponent<XgTechPriceAction>();
             var priceRect = node.cost.rectTransform;
             Canvas.ForceUpdateCanvases();
             var priceHandler = ClickHandlerAt(EventSystem.current, priceRect, priceRect.rect.center);
-            Check(report, priceAction != null && priceHandler == priceAction.gameObject, "Open explanation leaves the separate price action clickable");
-            node.OnPointerClick(pointer);
-            Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Second icon click closes the pinned explanation");
-            node.OnPointerEnter(pointer); tree.Tick(0);
-            Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Hover does not open immediately");
-            yield return new WaitForSecondsRealtime(.4f); tree.Tick(.4f);
-            Check(report, Field<XgTechNodeView>(tree, "detailShown") == node && bought == 0, "Hover opens after 0.35 seconds without buying");
+            Check(report, priceAction != null && priceHandler == priceAction.gameObject, "Hover explanation leaves the separate price action clickable");
             node.OnPointerExit(pointer);
-            yield return new WaitForSecondsRealtime(.4f); tree.Tick(.4f);
-            Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Unpinned hover explanation closes after leaving");
+            Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Pointer exit closes explanation immediately without waiting for Tick");
+            yield return new WaitForSecondsRealtime(.2f);
             node.OnPointerDown(pointer); node.OnCancel(pointer); node.OnPointerClick(pointer);
             Check(report, node.square.localScale == Vector3.one && bought == 0, "Cancel cannot purchase or strand pressed face");
             node.OnPointerDown(pointer); node.OnBeginDrag(pointer); node.OnPointerUp(pointer); node.OnPointerClick(pointer); node.OnEndDrag(pointer);
@@ -148,8 +143,8 @@ public static class TechPurchaseFeedbackChecks
             Check(report, bought == 0 && host.wallet.money == untouchedMoney, "Dragging the price row cannot purchase on release");
             tree.Pan.SetView(1, Vector2.zero);
             double before = host.wallet.money, price = host.sim.NodeCost(XgTechTree.Next(node.entry, host.sim));
-            priceAction.OnPointerDown(pointer); priceAction.OnPointerClick(pointer);
-            Check(report, bought == 1 && Math.Abs(before - host.wallet.money - price) < 1e-6, "Successful real purchase spends exactly live price once");
+            node.OnPointerDown(pointer); node.OnPointerUp(pointer); node.OnPointerClick(pointer);
+            Check(report, bought == 1 && Math.Abs(before - host.wallet.money - price) < 1e-6, "Node icon click purchases and spends exactly live price once");
             Check(report, Waves(host.juice).Count == 1 && Field<Color>(Waves(host.juice)[0], "color") == XgDark.Gold, "Only successful purchase emits gold ring");
             Check(report, Motion(node), "Success starts node rebound");
             tree.Refresh(); tree.Refresh();
@@ -213,7 +208,10 @@ public static class TechPurchaseFeedbackChecks
             double cardMoney = host.wallet.money;
             double cardPrice = host.sim.NodeCost(XgTechTree.Next(node.entry, host.sim));
             node.OnPointerEnter(pointer);
-            yield return new WaitForSecondsRealtime(.4f); tree.Tick(.4f);
+            Check(report, !Field<CanvasGroup>(tree, "tipGroup").blocksRaycasts, "Ordinary hover details do not intercept node clicks");
+            node.OnPointerExit(pointer);
+            tree.ToggleExplanation(node);
+            Check(report, Field<CanvasGroup>(tree, "tipGroup").blocksRaycasts, "Explicitly pinned details enable their controls");
             Canvas.ForceUpdateCanvases();
             var cardBar = Field<Image>(tree, "tipCostBar");
             var cardAction = cardBar != null ? cardBar.GetComponent<XgTechTipPriceAction>() : null;
@@ -221,6 +219,82 @@ public static class TechPurchaseFeedbackChecks
                 && cardBar.raycastTarget && cardAction != null && cardAction.page == tree, "Card price row is a live purchase target for the shown square");
             ExecuteEvents.Execute(cardAction.gameObject, pointer, ExecuteEvents.pointerClickHandler);
             Check(report, bought == cardBought + 1 && Math.Abs(cardMoney - host.wallet.money - cardPrice) < 1e-6, "Clicking the card's price row buys exactly the shown price");
+            // Exercise every currently purchasable catalog entry through its actual node handler.
+            // Re-scan after purchases so newly unlocked descendants join the same real fixture.
+            // Do not fabricate purchases or bypass quest/chat conditions just to force coverage.
+            host.juice.Reduced = true; host.juice.Muted = true; host.wallet.money = 1e100;
+            host.sim.S.stage = 6; tree.Refresh();
+            var exercised = new HashSet<string>();
+            bool progressed;
+            do
+            {
+                progressed = false;
+                foreach (var entry in XgTechTree.Entries)
+                {
+                    if (XgTechTree.Status(entry, host.sim, host.wallet) != XgSim.NodeStatus.Buyable) continue;
+                    var next = XgTechTree.Next(entry, host.sim);
+                    if (next == null) continue;
+                    int levelBefore = XgTechTree.Level(entry, host.sim);
+                    string coverageKey = next.id + "@" + (levelBefore + 1);
+                    if (exercised.Contains(coverageKey)) continue;
+                    var target = tree.NodeTarget(next.id);
+                    var liveNode = target != null ? target.GetComponent<XgTechNodeView>() : null;
+                    if (liveNode == null || !liveNode.gameObject.activeInHierarchy) continue;
+                    tree.Pan.SetView(1, Vector2.zero);
+                    host.wallet.money = 1e8 + host.sim.NodeCost(next);
+                    double catalogBefore = host.wallet.money, catalogPrice = host.sim.NodeCost(next);
+                    int catalogBought = bought;
+                    liveNode.OnPointerEnter(pointer);
+                    Check(report, Field<XgTechNodeView>(tree, "detailShown") == liveNode
+                        && Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Catalog immediate hover: " + next.id);
+                    liveNode.OnPointerExit(pointer);
+                    Check(report, !Field<RectTransform>(tree, "tooltip").gameObject.activeSelf, "Catalog immediate exit: " + next.id);
+                    liveNode.OnPointerDown(pointer); liveNode.OnPointerUp(pointer); liveNode.OnPointerClick(pointer);
+                    double difference = Math.Abs(catalogBefore - host.wallet.money - catalogPrice);
+                    Check(report, bought == catalogBought + 1 && XgTechTree.Level(entry, host.sim) == levelBefore + 1
+                        && difference <= Math.Max(1e-5, Math.Abs(catalogPrice) * 1e-12), "Catalog node click ledger: " + coverageKey);
+                    exercised.Add(coverageKey); progressed = true;
+                    host.wallet.money = 1e100;
+                }
+            } while (progressed);
+            foreach (var entry in XgTechTree.Entries)
+            {
+                int level = XgTechTree.Level(entry, host.sim), max = XgTechTree.MaxLevel(entry);
+                var pending = XgTechTree.Next(entry, host.sim);
+                var target = pending != null ? tree.NodeTarget(pending.id) : null;
+                string reason = pending == null ? "no next purchase (owned or atlas)"
+                    : XgTechTree.Status(entry, host.sim, host.wallet).ToString() + "; target="
+                        + (target == null ? "missing" : target.gameObject.activeInHierarchy ? "visible" : "hidden");
+                for (int missing = level + 1; missing <= max; missing++)
+                    report.uncovered.Add(entry.id + " level " + missing + ": " + reason);
+            }
+            // Explicit regression: possessing the pretrain insight must not hijack a buyable secret icon.
+            host.sim.NodeBought -= onBought; host.sim = new XgSim(); host.sim.NodeBought += onBought;
+            host.sim.S.stage = 6;
+            host.sim.S.unlocked.Add("transformer");
+            host.sim.S.pretrainStalled = true;
+            host.sim.S.insights.Add("pretrain");
+            host.wallet.money = 1e8; tree.Refresh(); tree.Pan.SetView(1, Vector2.zero);
+            var secretEntry = XgTechTree.EntryOf("secret.6");
+            Check(report, XgTechTree.Status(secretEntry, host.sim, host.wallet) == XgSim.NodeStatus.Buyable,
+                "Pretrain insight regression fixture is genuinely buyable");
+            var secretNode = tree.NodeTarget("secret.6").GetComponent<XgTechNodeView>();
+            double secretMoney = host.wallet.money, secretPrice = host.sim.NodeCost(XgTechTree.Next(secretEntry, host.sim));
+            int secretBought = bought, secretLevel = XgTechTree.Level(secretEntry, host.sim);
+            var previousInsight = XgTreePage.OpenInsightCard;
+            int insightOpened = 0;
+            try
+            {
+                XgTreePage.OpenInsightCard = _ => insightOpened++;
+                secretNode.OnPointerDown(pointer); secretNode.OnPointerUp(pointer); secretNode.OnPointerClick(pointer);
+                Check(report, bought == secretBought + 1 && XgTechTree.Level(secretEntry, host.sim) == secretLevel + 1
+                    && Math.Abs(secretMoney - host.wallet.money - secretPrice) < 1e-6 && insightOpened == 0,
+                    "Buyable secret.6 with pretrain insight purchases instead of opening insight");
+            }
+            finally { XgTreePage.OpenInsightCard = previousInsight; }
+            Check(report, exercised.Count > 0, "Catalog sweep exercised available entries via real pointer click");
+            Debug.Log("TECH_CATALOG_CLICK_COVERAGE exercised=" + exercised.Count + " total=" + XgTechTree.Entries.Count
+                + "; remaining entries retain real stage, quest, ownership and visibility gates");
             report.status = "passed";
             string dir = Path.Combine(Path.GetTempPath(), "LingGuang-TechFeedback-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(dir);

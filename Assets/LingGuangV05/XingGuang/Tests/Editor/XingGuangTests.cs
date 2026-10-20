@@ -110,11 +110,15 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void ComboRaisesTheMultiplierUpToTwo()
+        public void ComboRaisesTheMultiplierUpToFive()
         {
             var sim = WithPack("mnist"); var host = new Host();
+            sim.S.combo = 2;
+            Assert.AreEqual(1, sim.ComboMultiplier, 1e-9, "two in a row still pay the base");
+            sim.S.combo = 3;
+            Assert.AreEqual(2, sim.ComboMultiplier, 1e-9, "the third doubles");
             sim.S.combo = 31;
-            Assert.AreEqual(2, sim.ComboMultiplier, 1e-9, "capped at ×2");
+            Assert.AreEqual(5, sim.ComboMultiplier, 1e-9, "capped at ×5");
             Assert.Greater(sim.S.combo, 30);
         }
 
@@ -371,7 +375,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.teachMode = false; // taught answers pay on their own terms (a correction pays double)
             sim.S.payRaise = 10;
             var card = sim.Card(desk); card.gold = gold; card.level = 3;
-            double expected = sim.PayFor(desk, card.level) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[10] * 1.05 * (gold ? 3 : 1);
+            double expected = sim.PayFor(desk, card.level) * XgCatalog.HandPayScale * XgCatalog.RaiseMultipliers[10] * (gold ? 3 : 1); // the first right answer is at ×1
             var result = sim.Answer(desk, card.truth, host);
             Assert.AreEqual(expected, result.pay, 1e-9);
             Assert.AreEqual(1, sim.Samples(desk));
@@ -479,7 +483,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.teachMode = false; // the combo multiplier is what is being priced
             var r = sim.Answer("mnist", sim.Card("mnist").truth, host);
             Assert.IsTrue(r.correct);
-            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 1.05, host.money, 1e-9, "first combo step");
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale, host.money, 1e-9, "first answer of a streak: ×1");
             Assert.AreEqual(1, sim.Samples("mnist"), 1e-9);
             Assert.AreEqual(1, sim.S.combo);
         }
@@ -511,18 +515,18 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.teachMode = false; // plain labeling: every right answer is a hit (a wrong model guess would break it)
             Label(sim, "mnist", 12, host);
             sim.S.teachMode = teach;
-            Assert.GreaterOrEqual(sim.S.combo, 10, "labels build the combo");
+            Assert.GreaterOrEqual(sim.S.combo, 12, "labels build the combo");
             int combo = sim.S.combo;
             for (int i = 0; i < 5; i++) sim.TrainEpoch(XgTrack.Vision, host, true);
             Assert.LessOrEqual(sim.S.combo, combo, "training adds nothing to it");
-            CollectionAssert.Contains(tiers, 0);
+            CollectionAssert.AreEqual(new[] { 0, 1, 2, 3 }, tiers, "×2, ×3, ×4 and ×5 are each announced once");
             sim.Tick(5, host);
             Assert.AreEqual(combo, sim.S.combo, "idle time preserves the unlimited streak");
             sim.S.teachMode = false;
             var wrong = sim.Card("mnist");
             Assert.IsFalse(sim.Answer("mnist", !wrong.truth, host).correct);
             Assert.AreEqual(0, sim.S.combo, "a wrong answer still breaks the streak");
-            Assert.GreaterOrEqual(sim.S.bestCombo, 10);
+            Assert.GreaterOrEqual(sim.S.bestCombo, 12);
         }
 
         [Test]
@@ -627,7 +631,7 @@ namespace LingGuangV05.XingGuang.Tests
             var card = sim.Card("mnist");
             Assert.IsTrue(card.gold);
             sim.Answer("mnist", card.truth, host);
-            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 1.05 * 3, host.money, 1e-9);
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 3, host.money, 1e-9);
             sim.S.desk = "mnist"; sim.WindowOpen = true;
             int timeouts = 0; sim.CardTimedOut += _ => timeouts++;
             Label(sim, "mnist", 3, host);
@@ -645,7 +649,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void TrickCardsAddTwoToTheCombo()
+        public void TrickCardsCountAsOneActualAnswerForTheCombo()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
             sim.S.teachMode = false; // taught answers build the combo one step at a time
@@ -657,7 +661,7 @@ namespace LingGuangV05.XingGuang.Tests
                 var c = sim.Card("danmu");
                 int before = sim.S.combo;
                 sim.Answer("danmu", c.truth, host);
-                if (c.trick) { tricks++; Assert.AreEqual(before + 2, sim.S.combo); }
+                if (c.trick) { tricks++; Assert.AreEqual(before + 1, sim.S.combo); }
             }
             Assert.Greater(tricks, 20, "about one in seven at level 3");
         }

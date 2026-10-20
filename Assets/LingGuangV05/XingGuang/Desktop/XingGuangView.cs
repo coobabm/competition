@@ -109,6 +109,8 @@ namespace LingGuangV05.Desktop.XingGuang
         public string Tab => tab;
         /// <summary>The combo lives in 摆渡众包; effects aimed at it here land on the main-line bars.</summary>
         public RectTransform ComboChip => barsRect;
+        /// <summary>The 经费 chip in the top bar, where paid coins fly to.</summary>
+        public RectTransform WalletChip => moneyRect;
 
         public void Build(XingGuangController owner, RectTransform content, TMP_FontAsset fontAsset)
         {
@@ -406,14 +408,11 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(welcome, new Color(0, 0, 0, .6f));
             var card = ui.Card(welcome, "Card", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-230, -140), new Vector2(230, 140));
             ui.Text(Strip("Title", card, 14, 34, 20, 20), Lang.T("欢迎回来"), 22, XgDark.Good, TextAlignmentOptions.MidlineLeft);
-            var t = TimeSpan.FromSeconds(Math.Min(r.seconds, 86400));
+            var t = TimeSpan.FromSeconds(Math.Min(r.seconds, 28800));
             string away = t.TotalHours >= 1 ? T((int)t.TotalHours + " 小时 " + t.Minutes + " 分", (int)t.TotalHours + " h " + t.Minutes + " min") : T(t.Minutes + " 分钟", t.Minutes + " min");
             var body = new System.Text.StringBuilder();
-            body.Append(Lang.T("你离开了 ")).Append(away).Append(r.seconds > 86400 ? Lang.T("（最多算 24 小时）") : "").Append(T("。" + AppNames.AiZh + "没闲着：", ". " + AppNames.AiEn + " kept working:")).Append("\n\n");
+            body.Append(T("离线结算：", "Offline settlement: ")).Append(away).Append("\n").Append(T("50% 效率 · 最多 8 小时 · 仅金钱", "50% efficiency · up to 8 hours · money only")).Append("\n").Append(T("游戏关闭时不运行模型或训练。", "The model and training do not run while the game is closed.")).Append("\n\n");
             body.Append("<size=30><color=#FAC775><b>+¥").Append(Money(r.income)).Append("</b></color></size>\n");
-            if (r.labels > 0) body.Append(Lang.T("自动答题标了 ")).Append(N(r.labels, "0")).Append(T(" 条", "")).Append("  ");
-            if (r.epochs > 0) body.Append(Lang.T("后台训练 ")).Append(r.epochs).Append(T(" 轮", " epochs")).Append("  ");
-            if (r.records > 0) body.Append(Lang.T("刷新纪录 ")).Append(r.records).Append(T(" 次", ""));
             ui.Text(Rect("Body", card, Vector2.zero, Vector2.one, new Vector2(20, 64), new Vector2(-20, -54)), body.ToString(), 16, XgDark.Ink, TextAlignmentOptions.TopLeft);
             var ok = ui.Button(card, Lang.T("收下"), () =>
             {

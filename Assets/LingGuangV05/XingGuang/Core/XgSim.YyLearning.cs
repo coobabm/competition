@@ -11,6 +11,7 @@ namespace LingGuangV05.XingGuang
         public double at; // Legacy elapsed clock; retained but never displayed as a calendar date.
         public long id, originalId, teachingNoteId;
         public int gameDate;
+        public int learningStage; // 0 = older history did not record its stage.
         public double gameSecondsOfDay = -1;
         public string sourceKind = "", eventKey = "", questionEn = "", correction = "";
         public string answerSource = ""; // Absent in old saves: retain unknown provenance.
@@ -56,6 +57,7 @@ namespace LingGuangV05.XingGuang
                 var d=(Dictionary<string,object>)row;var p=new XgPersonaPack{id=YS(d,"id"),name=YS(d,"name"),nameEn=YS(d,"nameEn"),desc=YS(d,"desc"),descEn=YS(d,"descEn"),stage=(int)YN(d,"stage"),price=YN(d,"price")};
                 if(p.id.Length==0||!ids.Add(p.id))throw new FormatException("Duplicate persona pack");
                 foreach(var raw in YA(d,"questions")) {var q=(Dictionary<string,object>)raw;p.questions.Add(new XgPersonaQuestion{q=YS(q,"q"),qEn=YS(q,"qEn"),stage=(int)YN(q,"stage")});}
+                p.price = LingGuangV05.Core.PurchasePricing.AtLeastHundred(p.price);
                 personaCatalog.Add(p);
             }
             ids.Clear();
@@ -114,6 +116,15 @@ namespace LingGuangV05.XingGuang
         public string ChatNodeHint(string node)
         {
             var u=chatUnlockCatalog.Find(x=>x.node==node);return u==null?"":T(u.hint,u.hintEn);
+        }
+        public string ChatNodePurchaseHint(string node)
+        {
+            var u=chatUnlockCatalog.Find(x=>x.node==node);
+            // MLP is available before the library: its first conversation must be discoverable here.
+            if(node=="mlp" && u!=null)
+                return T("在 YY 对它发送原句「"+u.phrase+"」，收到回复后可购买。",
+                    "In YY, send the exact phrase \""+u.phraseEn+"\" and receive its reply before purchasing.");
+            return T("对它说一句话：____。", "Say something to it: ____. ")+ChatNodeHint(node);
         }
         public string ChatNodeAnswer(string node){RepairYyLearning();return S.chatUnlocked.Find(x=>x.node==node)?.answer??"";}
         // Call only once a response to this exact player message has actually been delivered.

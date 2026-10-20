@@ -51,6 +51,13 @@ public static class StartMenuSettingsChecks
             Check(menu.programs.Count(entry => entry.gameSettings) == 1, "Repeated opening adds exactly one settings entry.");
             var entry = menu.programs.Single(item => item.gameSettings);
             Check(entry.row.transform.GetSiblingIndex() == 0, "Settings is first in the scrollable program list.");
+            var rightColumn=menu.panel.Find("Places And System");
+            Check(rightColumn!=null,"Actual start menu has its documents/music column");
+            var rightSettings=rightColumn.Find("Game Settings Shortcut");
+            Check(rightSettings!=null&&rightColumn.Cast<Transform>().Count(x=>x.name=="Game Settings Shortcut")==1,"Repeated opening creates exactly one right-column settings shortcut");
+            Check(rightSettings.GetComponentInChildren<TMP_Text>(true).text=="设置","Right-column shortcut has a clear Chinese settings label");
+            var rightRect=(RectTransform)rightSettings;
+            CheckRightSettingsLayout(menu,rightRect,rightColumn);
             Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "设置", "Chinese settings label.");
             menu.Toggle(); menu.SetSearch("音量");
             Check(entry.row.activeSelf, "Chinese settings keyword search.");
@@ -92,8 +99,8 @@ public static class StartMenuSettingsChecks
             typeof(CaseMenuController).GetField("hud", PrivateInstance).SetValue(title, titleHud);
             typeof(CaseMenuController).GetField("<HasEnteredGame>k__BackingField", PrivateInstance).SetValue(title, true);
             int sceneCount = SceneManager.sceneCount;
-            menu.Toggle(); entry.row.GetComponent<Button>().onClick.Invoke();
-            Check(titleHud.IsSettingsOpen && title.IsSettingsOpen, "Desktop button opens the already-built title HUD.");
+            menu.Toggle(); rightSettings.GetComponent<Button>().onClick.Invoke();
+            Check(titleHud.IsSettingsOpen && title.IsSettingsOpen, "Right-column settings shortcut opens the already-built title HUD.");
             Check(menu.GetComponent<DesktopSettingsOverlay>() == null, "Title entry creates no fallback HUD.");
             Check(SceneManager.sceneCount == sceneCount && title.TransitionCount == 0, "Opening settings does not load a scene or transition.");
             titleHud.GetComponentsInChildren<Slider>(true).Single().value = .64f;
@@ -105,6 +112,7 @@ public static class StartMenuSettingsChecks
             locale.Dispose(); locale = GameText.Bind(() => GameText.English);
             menu.Toggle();
             Check(entry.row.GetComponentInChildren<TMP_Text>(true).text == "Settings", "Reopen updates the English menu label.");
+            Check(rightSettings.GetComponentInChildren<TMP_Text>(true).text=="Settings","Right-column shortcut updates its English label");
             menu.SetSearch("settings"); menu.SubmitSearch("settings");
             Check(titleHud.IsSettingsOpen, "English search opens the same title HUD.");
             Check(titleHud.GetComponentsInChildren<TMP_Text>(true).Single(label => label.name == "SettingsTitle").text == "Settings", "Reused HUD refreshes English settings labels.");
@@ -121,6 +129,40 @@ public static class StartMenuSettingsChecks
             if (existed[1]) PlayerPrefs.SetInt(keys[1], motionPref); else PlayerPrefs.DeleteKey(keys[1]);
             if (existed[2]) PlayerPrefs.SetInt(keys[2], fullscreenPref); else PlayerPrefs.DeleteKey(keys[2]);
             PlayerPrefs.Save(); AudioListener.volume = listenerVolume; Screen.fullScreen = fullscreen;
+        }
+    }
+
+    static void CheckRightSettingsLayout(AeroStartMenu menu,RectTransform settings,Transform column)
+    {
+        var original=menu.panel.sizeDelta;
+        try
+        {
+            foreach(float height in new[]{724f,480f,320f})
+            {
+                menu.panel.sizeDelta=new Vector2(original.x,height);
+                typeof(AeroStartMenu).GetMethod("EnsureRightSettingsShortcut",PrivateInstance).Invoke(menu,null);
+                Canvas.ForceUpdateCanvases();
+                var parent=(RectTransform)column;
+                Rect LocalBounds(RectTransform item)
+                {
+                    var corners=new Vector3[4];item.GetWorldCorners(corners);
+                    var a=parent.InverseTransformPoint(corners[0]);var b=parent.InverseTransformPoint(corners[2]);
+                    return Rect.MinMaxRect(a.x,a.y,b.x,b.y);
+                }
+                var area=LocalBounds(settings);
+                Check(area.xMin>=parent.rect.xMin-.1f&&area.xMax<=parent.rect.xMax+.1f&&area.yMin>=parent.rect.yMin-.1f&&area.yMax<=parent.rect.yMax+.1f,"Right settings remains inside column at height "+height);
+                foreach(Transform sibling in column)
+                {
+                    if(sibling==settings||!sibling.gameObject.activeSelf||!(sibling is RectTransform rect))continue;
+                    Check(!area.Overlaps(LocalBounds(rect)),"Right settings avoids "+sibling.name+" at height "+height);
+                }
+                Check(settings.sizeDelta.y==(height<700?30:42),"Right settings uses appropriate compact height at "+height);
+            }
+        }
+        finally
+        {
+            menu.panel.sizeDelta=original;
+            typeof(AeroStartMenu).GetMethod("EnsureRightSettingsShortcut",PrivateInstance).Invoke(menu,null);
         }
     }
 

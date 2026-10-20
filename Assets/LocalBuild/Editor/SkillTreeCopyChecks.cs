@@ -98,6 +98,8 @@ public static class SkillTreeCopyChecks
         Check(sim.NodeMystery(hidden), "Fresh automatic labelling remains a mystery");
         Check(XgTechTreeCopy.Name(hidden, sim) == sim.NodeName(hidden), "Hidden name never reveals a discovery");
         Check(!XgTechTreeCopy.Card(hidden, sim).Contains("cards/s"), "Hidden card does not expose rates");
+        Check(XgTechTreeCopy.Tag(hidden, sim) == "", "Hidden metadata never reveals a discovery");
+        Check(XgTechTreeCopy.Tag(null, sim) == "", "Null metadata fallback is safe");
         Check(!string.IsNullOrWhiteSpace(XgTechTreeCopy.Card(null, sim)), "Null card fallback is safe");
         sim.S.autoLabelRevealed = true;
         ReadOnly(sim, () => {
@@ -105,23 +107,34 @@ public static class SkillTreeCopyChecks
             foreach(var node in XgCatalog.Nodes)
             {
                 if(sim.NodeMystery(node)) continue;
-                string name=XgTechTreeCopy.Name(node,sim), summary=XgTechTreeCopy.Summary(node,sim), effect=XgTechTreeCopy.Effect(node,sim), detail=XgTechTreeCopy.Detail(node,sim);
+                string name=XgTechTreeCopy.Name(node,sim), summary=XgTechTreeCopy.Summary(node,sim), effect=XgTechTreeCopy.Effect(node,sim), detail=XgTechTreeCopy.Detail(node,sim), tag=XgTechTreeCopy.Tag(node,sim);
                 Check(XgTechTreeCopy.Covered(node), "Authored copy covers " + node.id);
                 Check(XgTechTreeCopy.Card(node,sim).Split('\n').Length==3, "Exactly three card lines " + node.id);
                 Check(!string.IsNullOrWhiteSpace(name)&&name!=node.id, "Readable name " + node.id);
                 Check(!string.IsNullOrWhiteSpace(summary)&&effect.StartsWith("▶ "), "Summary and definite effect " + node.id);
-                Check(english ? !ContainsHan(name+summary+effect+detail) : ContainsHan(summary), "Localized copy " + node.id);
+                Check(english ? !ContainsHan(name+summary+effect+detail+tag) : ContainsHan(summary), "Localized copy " + node.id);
                 Check(english || (summary.Length<=12 && effect.Substring(2).Length<=14), "Chinese card length budget " + node.id);
                 foreach(string banned in new[]{"不保证","需训练后评估","与其他倍数相乘","下载进度","batches, the first","not guaranteed"})
                     Check(!(name+summary+effect).Contains(banned), "No obsolete caveat on card " + node.id + "/" + banned);
                 int sentences=System.Text.RegularExpressions.Regex.Matches(detail, english ? @"[.!?](?:\s|$)" : "[。！？]").Count;
-                Check(sentences<=3, "Details at most three sentences " + node.id);
+                Check(!string.IsNullOrWhiteSpace(detail) && sentences<=3 && !detail.Contains("\n"), "Details stay short and readable " + node.id);
                 var entry=XgTechTree.EntryOf(node.id);Check(entry!=null,"Catalog entry " + node.id);
-                if(XgSim.IsAtlas(node)) atlas++;
-                else { Check(System.Text.RegularExpressions.Regex.IsMatch(name,@"[A-Za-z].*\d{4}"), "Abbreviation and year " + node.id); covered++; }
+                if(XgSim.IsAtlas(node)) { Check(tag=="", "Atlas has no invented technology metadata " + node.id); atlas++; }
+                else
+                {
+                    Check(!System.Text.RegularExpressions.Regex.IsMatch(name,@"(?:工具|探索|tool)?\d{4}$"), "Year metadata is separate from the readable name " + node.id);
+                    Check(!tag.Contains("\n") && !tag.Contains("工具") && !tag.Contains("探索"), "Metadata remains one compact line " + node.id);
+                    if(System.Text.RegularExpressions.Regex.IsMatch(tag,@"\d{4}"))
+                        Check(System.Text.RegularExpressions.Regex.IsMatch(tag,@"^.+ · \d{4}$"), "Historical or research year uses the v2 separator " + node.id);
+                    covered++;
+                }
             }
             Check(covered>0&&atlas>0,"Ordinary and atlas coverage");
         }, "Complete three-line catalog");
+        Check(XgTechTreeCopy.Tag(XgCatalog.Node("mlp"),sim)=="MLP · 1986", "Historical architecture has abbreviation and year metadata");
+        Check(XgTechTreeCopy.Tag(XgCatalog.Node("lenet"),sim)=="LeNet-5 · 1998", "LeNet version and historical year match the actual catalog");
+        Check(XgTechTreeCopy.Tag(XgCatalog.Node("shared.lr"),sim)=="LRS", "Tool metadata omits an invented historical year");
+        Check(XgTechTreeCopy.Tag(XgCatalog.Node("transformer"),sim)==(english?"Research · 2016":"自研 · 2016"), "In-game exploration uses the research tag");
     }
 
     static void PayAndAutomaticLabelling(bool english)
@@ -155,9 +168,9 @@ public static class SkillTreeCopyChecks
         ReadOnly(sim, () =>
         {
             string reluCopy = XgTechTreeCopy.Note(relu, sim);
-            Check(XgTechTreeCopy.Name(relu,sim).Contains("ReLU"),"ReLU keeps its technical abbreviation");
+            Check(XgTechTreeCopy.Tag(relu,sim)=="ReLU · 2010","ReLU retains its abbreviation and year in metadata");
             Check(!XgTechTreeCopy.Detail(augment,sim).Contains(english ? "crop" : "裁剪"),"Augmentation does not promise an unimplemented crop");
-            Check(XgTechTreeCopy.Detail(augment,sim).Contains(english ? "same answers" : "答案保持不变"),"Augmentation explains label preservation");
+            Check(!string.IsNullOrWhiteSpace(XgTechTreeCopy.Detail(augment,sim)),"Augmentation keeps a concise readable explanation");
         }, "Late research copy");
         var run = new XgRun { arch = "perceptron", dataset = "spam", depth = 3, width = 0 };
         double speed = sim.ProgressionSpeed(run);
@@ -179,6 +192,14 @@ public static class SkillTreeCopyChecks
                 && Math.Abs(sim.SamplesEffective(run) - effective * factor) < 1e-6 && sim.Samples(dataset) == samples,
                 "Augmentation changes the pool and effective count, preserving collected samples: " + dataset);
         }
+        foreach (bool truth in new[] { false, true })
+        foreach (string dataset in new[] { "mnist", "go", "cifar", "imagenet", "meme" })
+        for (int variant=0;variant<sim.AugmentFactor(dataset);variant++)
+        {
+            var original = new XgBoardCard { truth=truth }.Add("point",1,2).Add("word");
+            Check(XgBoardData.Augment(original,dataset,variant).truth==truth,
+                "Actual augmentation preserves both answer labels: "+dataset+"/"+variant+"/"+truth);
+        }
         var card = new XgBoardCard { truth = true }.Add("point", 1, 2).Add("word");
         var shifted = XgBoardData.Augment(card, "mnist", 1);
         Check(shifted.truth == card.truth && shifted.features.Count == card.features.Count && shifted.features[0].x == 2
@@ -194,11 +215,11 @@ public static class SkillTreeCopyChecks
             {
                 if(node.kind!=XgNodeKind.Dataset)continue;
                 string copy=XgTechTreeCopy.Card(node,sim)+XgTechTreeCopy.Detail(node,sim);
-                Check(!copy.Contains("ADSL")&&!copy.Contains("批下载")&&!copy.Contains("download batches"),"Dataset has no installation/download UI promise "+node.id);
+                Check(!copy.Contains("ADSL")&&!copy.Contains("批下载")&&!copy.Contains("download batches"),"Dataset card omits technical download timing "+node.id);
                 Check(XgCatalog.Dataset(node.target).samples>0,"Dataset retains its real sample budget "+node.id);count++;
             }
             Check(count>0,"Dataset coverage nonempty");
-        },"Immediate dataset copy");
+        },"Dataset copy");
         foreach(var pack in XgTeachingPacks.All)
         {
             if(!pack.buy)continue;
@@ -207,8 +228,21 @@ public static class SkillTreeCopyChecks
             buyer.S.unlocked.AddRange(new[]{"train.curve","rnn","lstm","conv"});
             Check(!buyer.TeachingPackAvailable(pack.id),"Paid desk is unavailable before purchase "+pack.id);
             Check(buyer.BuyNode(pack.NodeId,new CopyHost()),"Purchase actual dataset node "+pack.id+": "+buyer.Why(XgCatalog.Node(pack.NodeId),new CopyHost()));
-            Check(buyer.TeachingPackAvailable(pack.id)&&buyer.SelectTeachingPack(pack.id),"Bought dataset is immediately selectable in Teach "+pack.id);
-            Check(!buyer.S.downloadQueue.Exists(x=>x.dataset==pack.dataset),"Purchase creates no pending download "+pack.id);
+            Check(!buyer.TeachingPackAvailable(pack.id)&&!buyer.SelectTeachingPack(pack.id),"Purchased desk waits for download and installation "+pack.id);
+            Check(buyer.S.downloadQueue.Exists(x=>x.nodeId==pack.NodeId),"Purchase queues its own teaching-pack download "+pack.id);
+            Check(buyer.BuyDrive(new CopyHost()),"Download fixture buys space for the teaching file "+pack.id);
+            // Advance the production download subsystem only: no model, bills or player saves.
+            var downloadTick=typeof(XgSim).GetMethod("TickDownloads",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            Check(downloadTick!=null,"Production download tick is available");
+            downloadTick.Invoke(buyer,new object[]{100000000d});
+            var file=buyer.S.dataFiles.Find(x=>x.nodeId==pack.NodeId&&!x.installed);
+            Check(file!=null&&buyer.DataFileReady(file.fileId),"Completed download appears in the virtual files folder "+pack.id);
+            Check(!buyer.InstallDataFile(file.fileId),"Data Import purchase remains required before installation "+pack.id);
+            buyer.S.unlocked.Add(XgSim.DataEntryNode); // Independent fixture prerequisite, not a free unlock in production.
+            Check(buyer.InstallDataFile(file.fileId),"Downloaded teaching file installs through the real drop handler "+pack.id);
+            Check(buyer.TeachingPackAvailable(pack.id)&&buyer.SelectTeachingPack(pack.id),"Installed desk is selectable in Teach "+pack.id);
+            Check(!buyer.InstallDataFile(file.fileId),"Repeated installation is a no-op "+pack.id);
+            Check(!buyer.S.downloadQueue.Exists(x=>x.nodeId==pack.NodeId),"Installed file leaves no pending download "+pack.id);
         }
     }
 
@@ -231,7 +265,7 @@ public static class SkillTreeCopyChecks
                     Check(XgTechTree.Next(entry, sim) == (maxed ? null : shown), "Chain " + entry.id + " level " + level + ": next member");
                     Check(XgTechTree.Level(entry, sim) == level && XgTechTree.MaxLevel(entry) == entry.members.Count, "Chain " + entry.id + " level " + level + ": level display");
                     string name = XgTechTree.Name(entry, sim);
-                    string term = entry.First.kind == XgNodeKind.Depth ? (english ? "network depth" : "网络深度") : entry.First.kind == XgNodeKind.Width ? (english ? "network width" : "网络宽度") : (english ? "Training automation" : "训练自动化");
+                    string term = entry.id == "board.logic1" ? (english ? "Board logic" : "逻辑判断区") : entry.First.kind == XgNodeKind.Depth ? (english ? "network depth" : "网络深度") : entry.First.kind == XgNodeKind.Width ? (english ? "network width" : "网络宽度") : (english ? "Training automation" : "训练自动化");
                     Check(name.Contains(term), "Chain " + entry.id + " level " + level + ": professional chain term");
                     if (entry.First.kind == XgNodeKind.Depth || entry.First.kind == XgNodeKind.Width)
                     {

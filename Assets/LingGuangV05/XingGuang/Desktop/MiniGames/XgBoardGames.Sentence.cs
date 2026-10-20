@@ -33,7 +33,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if(exact)known.Add(deck[round]);Draw();
         }
         void Next(){if(!revealed)return;if(round>=7){Status.text="本局结束：排对 "+correct+" / 8。点击新一局。";return;}round++;NewRound();}
-        public override void Tick(float dt){if(!revealed){time=Math.Max(0,time-dt);clock.text="第 "+(round+1)+" / 8 句　剩余 "+Math.Ceiling(time)+" 秒　排对 "+correct;if(time<=0)Submit();}if(C.KeyDown(Key.Enter))Submit();if(C.KeyDown(Key.Space))Next();}
+        public override void Tick(float dt){if(!revealed){time=Math.Max(0,time-dt);clock.text="第 "+(round+1)+" / 8 句　剩余 "+Math.Ceiling(time)+" 秒　排对 "+correct;if(time<=0)Submit();}if(C.KeyDown(Key.Enter))C.PlayerInput(Submit);if(C.KeyDown(Key.Space))C.PlayerInput(Next);}
         static readonly string[] Raw={
 "今天/北京/的/天气/非常/适合/出去/放风筝。",
 "这部/电影/的/特效/比/我/想象/中/好/得多。",

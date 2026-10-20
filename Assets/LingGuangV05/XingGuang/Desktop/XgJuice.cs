@@ -11,7 +11,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// screen shake, shockwaves, glow and procedural sound. Effects run on unscaled time and pause together during a
     /// hit-stop. "Reduce effects" drops shake and hit-stop; automatic events call the light variants.
     /// </summary>
-    public sealed class XgJuice : MonoBehaviour
+    public sealed partial class XgJuice : MonoBehaviour
     {
         RectTransform fxLayer, shakeTarget;
         Image flash;
@@ -361,9 +361,17 @@ namespace LingGuangV05.Desktop.XingGuang
         /// short hit-stop and a screen shake land it, and a trail carries it into the counter. Everything grows with the
         /// combo up to the 10th hit (where the sound tops out too); the sound and the counter's own pop are the counter's.
         /// </summary>
-        public void ComboHit(Vector2 at, RectTransform struck, RectTransform pressed, RectTransform counter, int combo, Vector2 dir, Color color)
+        /// <param name="countLabel">False on the answer that reaches a new streak multiplier: its tier call-out takes the text slot.</param>
+        public void ComboHit(Vector2 at, RectTransform struck, RectTransform pressed, RectTransform counter, int combo, Vector2 dir, Color color, bool countLabel = true)
         {
             if (combo < 1 || !Visible()) return;
+            // Milestones replace the ordinary large hit, rather than stacking another celebration on it.
+            if (combo == 20 || combo == 50)
+            {
+                StreakMilestone(at, combo);
+                Knock(pressed, .08f, default, .18f, squash: true);
+                return;
+            }
             float k = ComboFeel(combo);
             if (dir.sqrMagnitude < .01f) dir = Vector2.up;
             dir.Normalize();
@@ -377,7 +385,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Shockwave(at, new Color(color.r, color.g, color.b, .75f + .25f * k), 120 + 220 * k, .3f + .12f * k, 7 + 10 * k);
             if (combo >= 5) Shockwave(at, new Color(1, 1, 1, .5f), 200 + 260 * k, .45f, 4);
             // 飘字: the count itself, big, where the hit landed
-            Float(at + new Vector2(0, 70 + 20 * k), combo + T(" 连击", " hits") + (combo >= 10 ? "！" : ""), color, 30 + 26 * k, 90 + 50 * k, .7f + .2f * k, 1.7f + .7f * k);
+            if (countLabel) Float(at + new Vector2(0, 70 + 20 * k), combo + T(" 连击", " hits") + (combo >= 10 ? "！" : ""), color, 30 + 26 * k, 90 + 50 * k, .7f + .2f * k, 1.7f + .7f * k);
             // 顿帧 震屏 闪屏
             if (combo >= 2) HitStop(30 + 60 * k);
             Shake(3 + 9 * k, .16f + .12f * k);
@@ -653,7 +661,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// Tools/XingGuang/sfx/make_sfx.py), falling back to the old procedural chiptune clip when a file is missing.
         /// Played through a small pool of sources.
         /// </summary>
-        public static class Sfx
+        public static partial class Sfx
         {
             public enum Id { Click, Ding, Clack, Whoosh, Fan, Tick, Stamp, Fanfare, Buzz, Thud, Charge, Unlock, Coin, Break, Tier, Swoosh }
             public const int VariantsPerEvent = 3;

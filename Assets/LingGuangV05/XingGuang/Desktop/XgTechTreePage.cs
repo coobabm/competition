@@ -14,8 +14,8 @@ using static LingGuangV05.Desktop.XingGuang.XgUi;
 namespace LingGuangV05.Desktop.XingGuang
 {
     /// <summary>
-    /// One square of the 科技 tree: click or rest the pointer to read its explanation, drag to pan.
-    /// The separate price action purchases through <see cref="XgTechTree.Buy"/>, which is the simulation's
+    /// One square of the 科技 tree: hover for immediate details, click to purchase, drag to pan.
+    /// Both the square and its price row purchase through <see cref="XgTechTree.Buy"/>, which is the simulation's
     /// own <see cref="XgSim.BuyNode"/>.
     /// </summary>
     public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ICancelHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
@@ -120,7 +120,7 @@ namespace LingGuangV05.Desktop.XingGuang
             page.NoteNodeMotion();
         }
         public void OnCancel(BaseEventData e) { dragged = true; StopSquareMotion(); }
-        public void OnPointerClick(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) page.ToggleExplanation(this); }
+        public void OnPointerClick(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) page.Click(this); }
         public void OnBeginDrag(PointerEventData e) { dragged = true; StopSquareMotion(); page.Pan.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => page.Pan.OnDrag(e);
         public void OnEndDrag(PointerEventData e) => page.Pan.OnEndDrag(e);
@@ -147,8 +147,7 @@ namespace LingGuangV05.Desktop.XingGuang
     }
 
     /// <summary>
-    /// The card's own price row (「¥ 3.0 · 点击价格购买」) buys the square it describes. The card is drawn above the
-    /// square and its price row covers the square's row, so without this the one row the text points at does nothing.
+    /// An explicitly pinned card can buy its node from the price row. Hover cards remain click-through.
     /// </summary>
     public sealed class XgTechTipPriceAction : MonoBehaviour, IPointerClickHandler
     {
@@ -158,6 +157,19 @@ namespace LingGuangV05.Desktop.XingGuang
             if (page == null || e.button != PointerEventData.InputButton.Left || e.dragging) return;
             var shown = page.DetailShown;
             if (shown != null) page.Click(shown);
+        }
+    }
+
+    /// <summary>Prerequisite links work only in explicitly opened details; hover cards stay passive.</summary>
+    public sealed class XgTechPrerequisiteAction : MonoBehaviour, IPointerClickHandler
+    {
+        public XgTechTreePage page;
+        public TMP_Text text;
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (page == null || text == null || e.button != PointerEventData.InputButton.Left || e.dragging) return;
+            int at = TMP_TextUtilities.FindIntersectingLink(text, e.position, e.pressEventCamera);
+            if (at >= 0) page.FollowPrerequisite(text.textInfo.linkInfo[at].GetLinkID());
         }
     }
 
@@ -201,14 +213,13 @@ namespace LingGuangV05.Desktop.XingGuang
         public const float StageWidth = Columns * SlotWidth + 40;
         const float TooltipWidth = 312;
         // Match the desktop's UiTip delay.
-        const float TooltipHoverDelay = .35f;
         RectTransform tipContent;
         ScrollRect tipScroll;
         RectTransform tipTaskbar;
         readonly Vector3[] tipTaskbarCorners = new Vector3[4];
+        readonly Vector3[] tipViewportCorners = new Vector3[4];
         LayoutElement tipHeadLayout, tipCostLayout;
         float tipExitAt = -1;
-        float tipShowAt = -1;
         bool explanationPinned;
         XgTechNodeView detailShown;
         /// <summary>The square whose card is on screen; the card's price row buys for it.</summary>
@@ -235,6 +246,13 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<XgBtn> toolbar = new List<XgBtn>();
         readonly List<Link> links = new List<Link>();
         XgTechNodeView hovered, pinned;
+        bool tipLayoutDirty = true, tipPointerInside;
+        float tipMeasuredWidth = -1;
+        float tipMeasuredHeight = -1;
+        string tipCostFullText = "";
+        Rect tipPlacedBounds;
+        Vector2 tipPlacedTop, tipPlacedBottom;
+        bool tipPlacementValid;
         XgSim displayedSim;
         XgTechTreeSkin skin;
         float treeHeight, eraRemaining;
@@ -463,6 +481,7 @@ namespace LingGuangV05.Desktop.XingGuang
             view.cost.fontStyle = FontStyles.Bold; view.cost.textWrappingMode = TextWrappingModes.NoWrap;
             view.cost.raycastTarget = true;
             view.cost.gameObject.AddComponent<XgTechPriceAction>().node = view;
+            batchedLinks.Exclude(rt, new Rect(-SlotWidth * .5f, -SquareSize * .5f - 92, SlotWidth, 92));
             rt.gameObject.SetActive(false);
             views.Add(view); viewOf[e] = view;
         }
@@ -545,7 +564,7 @@ namespace LingGuangV05.Desktop.XingGuang
             tooltip = Rect("Tooltip", root, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
             tooltip.pivot = new Vector2(.5f, 0); tooltip.sizeDelta = new Vector2(TooltipWidth, 0);
             var bg = Panel(tooltip, new Color32(5, 9, 14, 250)); bg.sprite = skin.fill; bg.raycastTarget = true;
-            tipGroup = tooltip.gameObject.AddComponent<CanvasGroup>(); tipGroup.blocksRaycasts = true; tipGroup.interactable = true;
+            tipGroup = tooltip.gameObject.AddComponent<CanvasGroup>(); tipGroup.blocksRaycasts = false; tipGroup.interactable = false;
             var rim = tooltip.gameObject.AddComponent<Outline>(); rim.effectColor = XgDark.Line; rim.effectDistance = new Vector2(1, -1);
             var clip = Rect("Clip", tooltip, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-12, 0));
             clip.gameObject.AddComponent<RectMask2D>();
@@ -568,9 +587,9 @@ namespace LingGuangV05.Desktop.XingGuang
             tipScroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             var events = tooltip.gameObject.AddComponent<EventTrigger>();
             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-            enter.callback.AddListener(_ => tipExitAt = -1); events.triggers.Add(enter);
+            enter.callback.AddListener(_ => { tipPointerInside = true; tipExitAt = -1; }); events.triggers.Add(enter);
             var leave = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
-            leave.callback.AddListener(_ => { if (!explanationPinned) tipExitAt = Time.unscaledTime + .35f; }); events.triggers.Add(leave);
+            leave.callback.AddListener(_ => { tipPointerInside = false; if (!explanationPinned && hovered == null) tipExitAt = Time.unscaledTime + .35f; }); events.triggers.Add(leave);
             var column = tipContent.gameObject.AddComponent<VerticalLayoutGroup>();
             column.padding = new RectOffset(12, 12, 10, 10); column.spacing = 6;
             column.childControlWidth = column.childControlHeight = true; column.childForceExpandWidth = true; column.childForceExpandHeight = false;
@@ -601,6 +620,9 @@ namespace LingGuangV05.Desktop.XingGuang
             Divider();
             tipBody = ui.Text(Rect("Description", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 15, XgDark.Ink, TextAlignmentOptions.TopLeft);
             tipBody.lineSpacing = -6;
+            tipBody.raycastTarget = true;
+            var prerequisiteAction = tipBody.gameObject.AddComponent<XgTechPrerequisiteAction>();
+            prerequisiteAction.page = this; prerequisiteAction.text = tipBody;
             Divider();
             var bar = Rect("CostBG", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
             tipCostBar = Panel(bar, XgDark.Bad); tipCostBar.sprite = skin.fill; tipCostBar.raycastTarget = true;
@@ -734,7 +756,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var e = v.entry; var node = e.First;
             var status = XgTechTree.Status(e, Sim, Host);
             int level = XgTechTree.Level(e, Sim), max = XgTechTree.MaxLevel(e);
-            bool atlas = XgSim.IsAtlas(node), mystery = Sim.NodeMystery(node), insight = InsightOf(node) != null;
+            bool atlas = XgSim.IsAtlas(node), mystery = Sim.NodeMystery(node), insight = InsightOf(node) != null && status != XgSim.NodeStatus.Buyable;
             bool lit = status == XgSim.NodeStatus.Owned;
             Color state = insight || lit ? Maxed : status == XgSim.NodeStatus.Buyable ? Affordable : status == XgSim.NodeStatus.TooExpensive ? Unaffordable : LockedGrey;
             Color lane = LaneColor(node.lane);
@@ -783,11 +805,14 @@ namespace LingGuangV05.Desktop.XingGuang
             string card = XgTechTreeCopy.Card(node, Sim);
             int line = card.IndexOf('\n');
             if (line < 0) return card;
-            return card.Substring(0, line) + "\n<size=12>" + Hex(XgDark.Muted) + card.Substring(line + 1) + "</color></size>";
+            string tag = XgTechTreeCopy.Tag(node, Sim);
+            string metadata = string.IsNullOrEmpty(tag) ? "" : "\n<size=10>" + Hex(XgDark.Muted) + tag + "</color></size>";
+            return card.Substring(0, line) + metadata + "\n<size=12>" + Hex(XgDark.Muted) + card.Substring(line + 1) + "</color></size>";
         }
 
         void PaintLinks()
         {
+            batchedLinks.RefreshExclusions();
             foreach (var link in links)
             {
                 bool ends = link.from.gameObject.activeSelf && link.to.gameObject.activeSelf;
@@ -871,7 +896,12 @@ namespace LingGuangV05.Desktop.XingGuang
                     hovered.HoverMotion(false);
                 }
                 hovered = v;
-                tipShowAt = Time.unscaledTime + TooltipHoverDelay;
+                // Show in the pointer-enter event: no dwell or next-frame scheduling.
+                if (detailShown != v || !tooltip.gameObject.activeSelf)
+                {
+                    explanationPinned = false;
+                    ShowTooltip(v);
+                }
                 Fx.Play(XgJuice.Sfx.Id.Tick, 1.5f, .25f);
                 v.HoverMotion(true);
             }
@@ -879,30 +909,27 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (hovered != v) return;
                 hovered = null;
-                tipShowAt = -1;
-                // Keep the card alive while the pointer crosses the gap to its scroll area.
-                if (!explanationPinned) tipExitAt = Time.unscaledTime + .35f;
+                // Hover details are passive: leaving the node closes them immediately.
+                if (!explanationPinned) HideTooltip();
                 v.HoverMotion(false);
             }
             PaintLinks();
             foreach (var view in views) if (view.gameObject.activeSelf) view.ring.color = view == hovered || view == pinned ? new Color(1, 1, 1, .85f) : Color.clear;
         }
 
-        /// <summary>Scrolls the hovered square's card when it is longer than it shows; false when there is nothing to scroll.</summary>
+        /// <summary>The hovered node owns wheel input; a short card must not start a pan that hides itself.</summary>
         public bool ScrollTooltip(XgTechNodeView v, PointerEventData e)
         {
             if (v == null || v != detailShown || tooltip == null || !tooltip.gameObject.activeSelf || tipScroll == null) return false;
-            if (tipContent.rect.height <= tooltip.rect.height + 1) return false;
-            tipScroll.OnScroll(e);
+            if (tipScroll.viewport != null && tipContent.rect.height > tipScroll.viewport.rect.height + 1) tipScroll.OnScroll(e);
             return true;
         }
 
         public void Click(XgTechNodeView v)
         {
+            if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
             var e = v.entry;
-            if (e.First != null && view != null && view.Train.ShowTrainingReview(e.First.target)) return;
-            string card = InsightOf(e.First);
-            if (card != null && XgTreePage.OpenInsightCard != null) { XgTreePage.OpenInsightCard(card); return; }
+            if (e.First != null && XgSim.IsAtlas(e.First) && view != null && view.Train.ShowTrainingReview(e.First.target)) return;
             var status = XgTechTree.Status(e, Sim, Host);
             if (status == XgSim.NodeStatus.Buyable)
             {
@@ -911,6 +938,9 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (XgTechTree.Buy(e, Sim, Host)) { if (view != null) view.Refresh(true); return; }
                 purchaseCosts.Remove(next.id);
             }
+            // A discovered insight must not intercept a node advertised as purchasable.
+            string card = InsightOf(e.First);
+            if (status != XgSim.NodeStatus.Buyable && card != null && XgTreePage.OpenInsightCard != null) { XgTreePage.OpenInsightCard(card); return; }
             // Not for sale now: a sideways shake and a thud (a click on a maxed square only clicks).
             if (status != XgSim.NodeStatus.Owned) v.RejectMotion();
             Fx.Play(status == XgSim.NodeStatus.Owned ? XgJuice.Sfx.Id.Click : XgJuice.Sfx.Id.Thud, 1.2f, .6f);
@@ -921,7 +951,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!built || v == null || !v.gameObject.activeInHierarchy) return;
             if (detailShown == v && explanationPinned && tooltip.gameObject.activeSelf) { HideTooltip(); return; }
             explanationPinned = true;
-            tipShowAt = tipExitAt = -1;
+            tipExitAt = -1;
             ShowTooltip(v);
         }
 
@@ -1008,6 +1038,10 @@ namespace LingGuangV05.Desktop.XingGuang
         void ShowTooltip(XgTechNodeView v)
         {
             detailShown = v;
+            // Only explicit navigation (FocusNodeDetails) opens an interactive pinned card.
+            tipGroup.blocksRaycasts = explanationPinned;
+            tipGroup.interactable = explanationPinned;
+            tipClose.rt.parent.gameObject.SetActive(explanationPinned);
             FillTooltip(v);
             tooltip.gameObject.SetActive(true); tooltip.SetAsLastSibling(); eraCard.SetAsLastSibling();
             // A size/rotation shake can cross the screen edge after placement has clamped the card.
@@ -1020,8 +1054,9 @@ namespace LingGuangV05.Desktop.XingGuang
         void HideTooltip()
         {
             detailShown=null;
+            tipPointerInside = false; tipPlacementValid = false;
             explanationPinned = false;
-            tipShowAt = tipExitAt = -1;
+            tipExitAt = -1;
             if (tooltip == null) return;
             tooltip.DOKill(); tooltip.localRotation = Quaternion.identity; tooltip.localScale = Vector3.one;
             tooltip.gameObject.SetActive(false);
@@ -1031,6 +1066,18 @@ namespace LingGuangV05.Desktop.XingGuang
         Rect TooltipBounds()
         {
             var bounds = root.rect;
+            // The explanation belongs to the tree viewport, below both toolbar rows.
+            viewport.GetWorldCorners(tipViewportCorners);
+            var viewportMin = new Vector2(float.MaxValue, float.MaxValue);
+            var viewportMax = new Vector2(float.MinValue, float.MinValue);
+            foreach (var corner in tipViewportCorners)
+            {
+                var local = (Vector2)root.InverseTransformPoint(corner);
+                viewportMin = Vector2.Min(viewportMin, local);
+                viewportMax = Vector2.Max(viewportMax, local);
+            }
+            bounds = UnityEngine.Rect.MinMaxRect(Mathf.Max(bounds.xMin, viewportMin.x), Mathf.Max(bounds.yMin, viewportMin.y),
+                Mathf.Min(bounds.xMax, viewportMax.x), Mathf.Min(bounds.yMax, viewportMax.y));
             var canvas = root.GetComponentInParent<Canvas>();
             var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
             // The desktop camera renders to an LCD texture. Its pixels are not GameView pixels:
@@ -1064,20 +1111,41 @@ namespace LingGuangV05.Desktop.XingGuang
             var bounds = TooltipBounds();
             if (bounds.width <= 8 || bounds.height <= 8) { HideTooltip(); return; }
             float w = XgTechTooltipGeometry.Width(bounds.width, TooltipWidth);
-            tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
-            // 12 gutter + 24 padding; keep the icon only when the title has usable space.
-            float inner = Mathf.Max(1, w - 36);
-            bool showIcon = inner >= 100;
-            tipIcon.transform.parent.gameObject.SetActive(showIcon);
-            tipHeadLayout.preferredHeight = Mathf.Max(showIcon ? 36 : 0,
-                tipName.GetPreferredValues(tipName.text, Mathf.Max(1, inner - (showIcon ? 44 : 0)), Mathf.Infinity).y);
-            tipCostLayout.preferredHeight = Mathf.Max(28, tipCost.GetPreferredValues(tipCost.text, Mathf.Max(1, inner - 16), Mathf.Infinity).y + 8);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tipContent);
-            Vector2 top = root.InverseTransformPoint(v.square.TransformPoint(new Vector3(0, SquareSize * .5f, 0)));
-            Vector2 bottom = root.InverseTransformPoint(v.cost.rectTransform.TransformPoint(new Vector3(0, v.cost.rectTransform.rect.yMin - 8, 0)));
+            // Geometry is based on stable layout coordinates, never the animated face.
+            Vector2 top = root.InverseTransformPoint(nodeLayer.TransformPoint(v.home + Vector2.up * (SquareSize * .5f)));
+            Vector2 bottom = root.InverseTransformPoint(nodeLayer.TransformPoint(v.home + Vector2.down * (SquareSize * .5f + 100)));
+            bool measure = tipLayoutDirty || Mathf.Abs(tipMeasuredWidth - w) > .01f
+                || Mathf.Abs(tipMeasuredHeight - bounds.height) > .01f;
+            if (!measure && tipPlacementValid && bounds == tipPlacedBounds && top == tipPlacedTop && bottom == tipPlacedBottom) return;
+            if (measure)
+            {
+                tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
+                // Measure only when content or available width changes, not every frame.
+                float inner = Mathf.Max(1, w - 36);
+                // In a very short viewport keep the price actionable in one compact row.
+                // Ownership, locks and full requirements remain in the scrollable copy.
+                tipCost.text = tipCostFullText;
+                if (bounds.height < 100 && tipCostFullText.StartsWith("¥ "))
+                {
+                    int separator = tipCostFullText.IndexOf('·');
+                    tipCost.text = (separator >= 0 ? tipCostFullText.Substring(0, separator) : tipCostFullText).Trim().Replace("¥ ", "¥");
+                }
+                bool showIcon = inner >= 100;
+                tipIcon.transform.parent.gameObject.SetActive(showIcon);
+                tipHeadLayout.preferredHeight = Mathf.Max(showIcon ? 36 : 0,
+                    tipName.GetPreferredValues(tipName.text, Mathf.Max(1, inner - (showIcon ? 44 : 0)), Mathf.Infinity).y);
+                tipCostLayout.preferredHeight = Mathf.Max(28, tipCost.GetPreferredValues(tipCost.text, Mathf.Max(1, inner - 16), Mathf.Infinity).y + 8);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(tipContent);
+                tipLayoutDirty = false; tipMeasuredWidth = w; tipMeasuredHeight = bounds.height;
+            }
+            tipPlacedBounds = bounds; tipPlacedTop = top; tipPlacedBottom = bottom; tipPlacementValid = true;
             // Scroll the explanation within the larger free space above/below this node,
             // rather than clamping a tall card across its price action.
             float freeHeight = Mathf.Max(bounds.yMax - 4 - top.y - 10, bottom.y - bounds.yMin - 8);
+            // On narrow windows the translated requirement can wrap to several lines.
+            // Keep its complete action row readable when scrolled to the bottom, even
+            // when neither side of the node provides enough space for that row alone.
+            freeHeight = Mathf.Max(freeHeight, tipCostLayout.preferredHeight + 20);
             float h = Mathf.Min(tipContent.rect.height, Mathf.Max(1, Mathf.Min(bounds.height - 8, freeHeight)));
             tooltip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
 
@@ -1091,6 +1159,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void FillTooltip(XgTechNodeView v)
         {
+            tipLayoutDirty = true;
             tipClose.Set(T("关闭", "Close"), true);
             var e = v.entry; var node = e.First;
             var status = XgTechTree.Status(e, Sim, Host);
@@ -1127,7 +1196,8 @@ namespace LingGuangV05.Desktop.XingGuang
             string word = lit ? Hex(Maxed) + (max > 1 ? T("已满级", "Maxed") : T("已拥有", "Owned"))
                 : status == XgSim.NodeStatus.Buyable ? Hex(Affordable) + T("可以买", "Affordable")
                 : status == XgSim.NodeStatus.TooExpensive ? Hex(Unaffordable) + T("钱不够", "Too expensive") : Hex(LockedGrey) + T("未解锁", "Locked");
-            tipLevel.text = "Lv. " + level + " / " + max + "    " + word + "</color>";
+            string tag = XgTechTreeCopy.Tag(next ?? node, Sim);
+            tipLevel.text = (string.IsNullOrEmpty(tag) ? "" : "<size=12>" + tag + "</size>\n") + "Lv. " + level + " / " + max + "    " + word + "</color>";
             var shownNode = next ?? e.members[e.members.Count - 1];
             body.Append(XgTechTreeCopy.Detail(shownNode, Sim));
             string chatAnswer = Sim.ChatNodeAnswer(shownNode.id);
@@ -1140,9 +1210,16 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 body.Append("\n");
                 void Condition(bool ok, string text) => body.Append("\n").Append(ok ? "<color=#5DCAA5>✓ " : "<color=#E07B4F>○ ").Append(text).Append("</color>");
-                if (next.parent != null && next.tree != "label")
-                    Condition(Sim.Has(next.parent), XgTechTreeCopy.Name(XgCatalog.Node(next.parent), Sim));
-                foreach (string need in next.needs) Condition(Sim.Has(need), XgTechTreeCopy.Name(XgCatalog.Node(need), Sim));
+                void Prerequisite(string id)
+                {
+                    var required = XgCatalog.Node(id);
+                    if (required == null) return;
+                    bool met = Sim.Has(id);
+                    string name = XgTechTreeCopy.Name(required, Sim);
+                    Condition(met, !met && explanationPinned ? "<link=\"tech:" + id + "\"><u>" + name + " ›</u></link>" : name);
+                }
+                if (!string.IsNullOrEmpty(next.parent) && next.tree != "label") Prerequisite(next.parent);
+                foreach (string need in next.needs) Prerequisite(need);
                 if (next.id == "caption") Condition(Sim.S.stage >= 5, T("第五阶段", "Stage five"));
                 if (next.id == "transformer") Condition(Sim.TransformerIdeaReached, T("它自己问出「如果只用注意力呢？」", "It asked: what if only attention?"));
                 if (!double.IsInfinity(cost)) Condition(Host.Money + 1e-9 >= cost, T("经费 ¥", "Funds ¥") + Money(cost));
@@ -1162,7 +1239,7 @@ namespace LingGuangV05.Desktop.XingGuang
             tipBody.text = body.ToString();
             if (lit) SetCost(Maxed, max > 1 ? T("已满级 · MAX", "MAX") : "✓ " + T("已拥有", "Owned"));
             else if (double.IsInfinity(cost)) SetCost(LockedGrey, T("未解锁", "Locked"));
-            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + T("点击价格购买", "click the price to buy"));
+            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + T("点击节点购买", "click node to buy"));
             else if (status == XgSim.NodeStatus.TooExpensive) SetCost(Color.Lerp(Unaffordable, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("还差 ¥", "short ¥") + Money(cost - Host.Money));
             else SetCost(Color.Lerp(LockedGrey, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("未解锁", "locked"));
         }
@@ -1174,7 +1251,7 @@ namespace LingGuangV05.Desktop.XingGuang
             return IconOf(v.entry);
         }
 
-        void SetCost(Color bar, string text) { tipCostBar.color = bar; tipCost.text = text; }
+        void SetCost(Color bar, string text) { tipCostBar.color = bar; tipCostFullText = text; tipCost.text = text; }
 
         /// <summary>A ladder's steps in one line (2 · 3 · 4 层): owned green, the next one gold, later ones grey with their stage.</summary>
         string Ladder(XgTechEntry e)
@@ -1259,14 +1336,24 @@ namespace LingGuangV05.Desktop.XingGuang
             Pin(v); Focus(v); return true;
         }
 
-        // Explicit navigation from a locked training module opens the same explanation
-        // as clicking its icon. Existing FocusNode callers retain their old behavior.
+        public bool FollowPrerequisite(string link)
+        {
+            if (!explanationPinned || string.IsNullOrEmpty(link) || !link.StartsWith("tech:", StringComparison.Ordinal)) return false;
+            string id = link.Substring(5);
+            if (XgCatalog.Node(id) == null) return false;
+            bool found = FocusNodeDetails(id);
+            if (found) Fx.Play(XgJuice.Sfx.Id.Click);
+            else if (view != null) view.ShowToast(T("暂时无法找到对应科技。", "The matching technology is currently unavailable."), 3);
+            return found;
+        }
+
+        // Explicit navigation opens pinned details; ordinary node clicks purchase directly.
         public bool FocusNodeDetails(string id)
         {
             if (!FocusNode(id)) return false;
             var target = views.Find(n => n.Covers(id) && n.gameObject.activeSelf);
             if (target == null) return false;
-            explanationPinned = true; tipShowAt = tipExitAt = -1; ShowTooltip(target);
+            explanationPinned = true; tipExitAt = -1; ShowTooltip(target);
             return true;
         }
 
@@ -1283,16 +1370,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!built) return;
             if (Pan.Moving) return;
-            if (tipShowAt >= 0 && Time.unscaledTime >= tipShowAt && hovered != null)
-            {
-                tipShowAt = -1;
-                if (detailShown != hovered || !tooltip.gameObject.activeSelf)
-                {
-                    explanationPinned = false;
-                    ShowTooltip(hovered);
-                }
-            }
-            if (tipExitAt >= 0 && Time.unscaledTime >= tipExitAt)
+            if (tipExitAt >= 0 && !tipPointerInside && hovered == null && Time.unscaledTime >= tipExitAt)
             {
                 hovered = null; HideTooltip(); PaintLinks();
                 foreach (var v in views) if (v.gameObject.activeSelf)

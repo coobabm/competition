@@ -1,1 +1,2 @@
-b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897  Qwen3-1.7B-Q4_K_M.gguf
+4b154ece943d21ebdf8179935a335cd35897babd212cb144a86a8605bf1782b1  Qwen3.5-2B-Q5_K_S-emb5.gguf
+5a88d266870fbd27c6f329df60de80e2d4cf3bbd5e6f080bd5c1b2e5abb12039  ../Embedding/bge-small-zh-v1.5-q8_0.gguf

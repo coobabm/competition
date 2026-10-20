@@ -71,7 +71,7 @@ namespace LingGuangV05.CaseMenu
                 () => Play(releaseClip, .24f));
             mainDisplay = gameObject.AddComponent<CaseMenuMainDisplay>();
             hud.ConfigureLifeEvents(CurrentLifeEventMode, SetLifeEventMode);
-            hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame);
+            hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame, RequestPowerOn);
             Cursor.visible = true; Cursor.lockState = CursorLockMode.None;
         }
 
@@ -99,7 +99,7 @@ namespace LingGuangV05.CaseMenu
                 { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
                 return;
             }
-            if (hud.IsArchiveOpen) { if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) hud.CloseArchives(); return; }
+            if (hud.IsArchiveOpen) { if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) hud.CloseArchiveByPlayer(); return; }
             if (hud.HasTitleSelection && keyboard != null && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed || keyboard.enterKey.wasReleasedThisFrame || keyboard.spaceKey.wasReleasedThisFrame)) return;
             if (IsSettingsOpen)
             {
@@ -185,7 +185,7 @@ namespace LingGuangV05.CaseMenu
             } catch (Exception e) { hud.ShowError(LingGuangV05.Runtime.GameText.T("未退出：", "Cannot quit: ") + e.Message); }
         }
 
-        void Activate(CaseMenuButton button) { if (button.isStart) BeginGame(); else OpenSettings(); }
+        void Activate(CaseMenuButton button) { if (button.isStart) RequestPowerOn(); else OpenSettings(); }
 
         public void OpenSettings()
         {
@@ -220,6 +220,25 @@ namespace LingGuangV05.CaseMenu
         public void SetFullscreen(bool value)
         {
             GameSettings.SetFullscreen(value);
+        }
+
+        bool waitingForArchiveRuntime;
+        public void RequestPowerOn()
+        {
+            if (IsTransitioning || HasEnteredGame || IsSettingsOpen || hud == null || hud.IsArchiveOpen || waitingForArchiveRuntime) return;
+            CancelCapture(); SetHovered(null);
+            if (IsMainReady) { hud.RequestPowerOn(); return; }
+            StartCoroutine(WaitForArchiveRuntime());
+        }
+        IEnumerator WaitForArchiveRuntime()
+        {
+            waitingForArchiveRuntime = true;
+            while (!mainDisplay.IsReady && string.IsNullOrEmpty(mainDisplay.Error))
+            { hud.SetLoading(0, LingGuangV05.Runtime.GameText.T("桌面正在准备", "Preparing the desktop")); yield return null; }
+            waitingForArchiveRuntime = false;
+            hud.SetLoading(-1, null);
+            if (!mainDisplay.IsReady) { hud.ShowError(mainDisplay.Error); yield break; }
+            if (!HasEnteredGame && !IsTransitioning && !IsSettingsOpen) hud.RequestPowerOn();
         }
 
         public void BeginGame()

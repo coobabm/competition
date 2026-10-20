@@ -24,6 +24,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim AtStage(int stage)
         {
             var sim = new XgSim { GoldChance = 0 };
+            sim.S.unlocked.Add(XgSim.SpiderAcquireNode); // Paid crawler tests own the newly required spider.
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = stage;
             return sim;
         }
@@ -37,7 +38,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgSim.CrawlDataset, def.datasetId);
             Assert.IsNotNull(XgCatalog.Dataset(def.datasetId));
             Assert.AreEqual(XgSim.CrawlCap, def.samples);
-            Assert.AreEqual(XgSim.CrawlCap * XgSim.CrowdPricePerLabel, def.price, 1e-9, "the same ¥ per row as a crowd task");
+            Assert.AreEqual(800, def.price, 1e-9, "one-time crawling purchase follows the hundred-yuan price policy");
             Assert.AreEqual(3, def.stage);
             Assert.IsFalse(string.IsNullOrEmpty(def.nameEn) || string.IsNullOrEmpty(def.descriptionEn));
 
@@ -74,7 +75,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void ClosingEarlyKeepsWhatWasGrabbed()
         {
-            var sim = AtStage(3); var host = new Host();
+            var sim = AtStage(3); var host = new Host { money = 2000 };
             Assert.IsTrue(sim.StartCrawl(host));
             sim.CrawlGrab(37);
             Assert.AreEqual(37, sim.EndCrawl());
@@ -82,7 +83,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(0, sim.CrawlGrab(), "the rest of a closed run is gone");
             Assert.AreEqual(0, sim.EndCrawl(), "ending twice does nothing");
             Assert.IsTrue(sim.StartCrawl(host), "another run is paid again");
-            Assert.AreEqual(1000 - 2 * XgSim.CrawlPrice, host.money, 1e-9);
+            Assert.AreEqual(2000 - 2 * XgSim.CrawlPrice, host.money, 1e-9);
             Assert.AreEqual(0, sim.CrawlTaken);
             sim.CrawlGrab(5); sim.EndCrawl();
             Assert.AreEqual(42, sim.Samples(XgSim.CrawlDataset), 1e-9);

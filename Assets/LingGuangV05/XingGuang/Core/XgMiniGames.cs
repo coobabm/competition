@@ -78,6 +78,8 @@ namespace LingGuangV05.XingGuang
         public int samples;
         /// <summary>Total paid (bonus included), the bonus part of it, and the fine of a wrong answer.</summary>
         public double pay, bonus, fine;
+        /// <summary>The streak multiplier the answer was paid at (×1 … ×5); 0 when nothing was paid.</summary>
+        public int multiplier;
         public string note;
     }
 }

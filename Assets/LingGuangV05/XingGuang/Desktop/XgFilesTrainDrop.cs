@@ -11,6 +11,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public Func<XgSim> CurrentSim;
         public Func<bool> TargetVisible;
         public Action<string> Notify;
+        public Action<string> NavigateToNode;
         public Action RefreshView;
         public int LastInstalled { get; private set; }
         string T(XgSim sim,string zh,string en)=>sim!=null&&sim.English?en:zh;
@@ -27,6 +28,10 @@ namespace LingGuangV05.Desktop.XingGuang
             if(!sim.CanInstallData)
             {
                 Notify?.Invoke(sim.DataInstallBlocker());
+                // Notify can change the current save or hide the target; never navigate into another session.
+                if (CurrentSim != null && ReferenceEquals(CurrentSim(), sim) && payload.SourceStillCurrent &&
+                    TargetVisible != null && TargetVisible() && sim.TeachingTreeOpen && !sim.Has(XgSim.DataEntryNode))
+                    NavigateToNode?.Invoke(XgSim.DataEntryNode);
                 return;
             }
             // Claim before any core callbacks. A second drop or reentrant handler cannot spend/install twice.

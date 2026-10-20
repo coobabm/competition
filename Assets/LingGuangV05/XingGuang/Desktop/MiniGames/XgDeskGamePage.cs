@@ -18,6 +18,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         RectTransform viewport, surface;
         TMP_Text heading, speech, status, payLine, replyNotice;
         Image headingIcon;
+        XgStreakEnergyIndicator streakEnergy;
         string headingIconId;
         XgBtn classic, raise;
         XgMiniGame game;
@@ -56,7 +57,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             viewport.gameObject.AddComponent<RectMask2D>();
             speech = ui.Text(XgUi.Rect("Companion", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 62), new Vector2(-14, 90)), "", 16, ui.dark ? XgDark.Accent : XgPalette.Accent, TextAlignmentOptions.MidlineLeft);
             speech.enableAutoSizing = true; speech.fontSizeMin = 11; speech.fontSizeMax = 16; speech.overflowMode = TextOverflowModes.Ellipsis;
-            status = ui.Text(XgUi.Rect("Settlement", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 34), new Vector2(-14, 62)), "", 15, ui.dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            status = ui.Text(XgUi.Rect("Settlement", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 34), new Vector2(-226, 62)), "", 15, ui.dark ? XgDark.Ink : XgPalette.Ink, TextAlignmentOptions.MidlineLeft);
+            streakEnergy = new XgStreakEnergyIndicator(ui, XgUi.Rect("StreakEnergy", root, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-218, 35), new Vector2(-14, 61)));
             status.enableAutoSizing = true; status.fontSizeMin = 11; status.fontSizeMax = 15; status.overflowMode = TextOverflowModes.Ellipsis;
             payLine = ui.Text(XgUi.Rect("PayRule", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 6), new Vector2(-14, 34)), "", 13, ui.dark ? XgDark.Muted : XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
             payLine.enableAutoSizing = true; payLine.fontSizeMin = 10; payLine.fontSizeMax = 13; payLine.overflowMode = TextOverflowModes.Ellipsis;
@@ -154,6 +156,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         void Settle(bool correct, double seconds)
         {
             if (owner == null || !ReferenceEquals(owner, Sim) || !Focused) return;
+            int multiplierBefore = owner.StreakMultiplier;
             var result = owner.SubmitMiniGame(ticket, sequence + 1, correct, Host, seconds);
             showingIntroStatus = false;
             if (!result.accepted) { status.text = result.note; return; }
@@ -182,16 +185,31 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                             struck = child as RectTransform; break;
                         }
                     }
-                    Fx.ComboHit(Fx.At(status.rectTransform), struck, status.rectTransform, host.ComboChip,
-                        owner.S.combo, Vector2.up, XgPalette.Good);
+                    // 连对倍率: the answer that reaches ×2…×5 gets its tier's show first (it owns the particle budget),
+                    // every later one at that tier its coin layer; the plain combo hit stays underneath both.
+                    int multiplier = owner.StreakMultiplier;
+                    Vector2 at = Fx.At(status.rectTransform);
+                    bool up = multiplier > multiplierBefore;
+                    if (up) Fx.StreakUp(at, Fx.At(surface), StreakBadge, (host as XingGuangView)?.WalletChip ?? host.ComboChip, multiplier);
+                    else Fx.StreakHit(at, multiplier);
+                    Fx.ComboHit(at, struck, status.rectTransform, host.ComboChip,
+                        owner.S.combo, Vector2.up, multiplier > 1 ? XgJuice.StreakColor(multiplier) : XgPalette.Good, countLabel: !up);
                 }
-                else Fx.Play(XgJuice.Sfx.Id.Clack);
-                if (correct && result.pay > 0) Fx.Float(Fx.At(status.rectTransform, new Vector2(-120, 30)), "+¥" + result.pay.ToString("0.00"), XgPalette.Money, 22);
+                else
+                {
+                    Fx.Play(XgJuice.Sfx.Id.Clack);
+                    if (!correct) Fx.StreakDrop(Fx.At(status.rectTransform), StreakBadge, multiplierBefore, owner.StreakMultiplier);
+                }
+                if (correct && result.pay > 0) Fx.Float(Fx.At(status.rectTransform, new Vector2(-120, 30)), "+¥" + result.pay.ToString("0.00"),
+                    result.multiplier > 1 ? XgJuice.StreakColor(result.multiplier) : XgPalette.Money, 22 + 3 * Mathf.Max(0, result.multiplier - 1));
                 else if (!correct && result.fine > 0) Fx.Float(Fx.At(status.rectTransform, new Vector2(-120, 30)), "-¥" + result.fine.ToString("0.00"), XgPalette.Bad, 22);
             }
             Answered?.Invoke(result);
             RefreshTexts();
         }
+
+        /// <summary>What a multiplier change punches: the status line (games redraw their own panels on the next question).</summary>
+        RectTransform StreakBadge => status.rectTransform;
 
         /// <summary>Texts that follow the sim and the language: the title, the pay rule, the raise button.</summary>
         void RefreshTexts()
@@ -216,9 +234,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             {
                 double basePay = Sim.MiniBasePay(def.Desk);
                 double fine = Sim.HandFineFor(def.Desk, Sim.LevelOf(def.Desk));
+                int combo = Sim.S.combo, multiplier = Sim.StreakMultiplier, toNext = Sim.StreakToNext;
+                streakEnergy?.Refresh(Sim);
+                string hex = ColorUtility.ToHtmlStringRGB(XgJuice.StreakColor(multiplier));
+                string streakZh = "<color=#" + hex + ">连对 " + combo + " · ×" + multiplier + "</color>" + (toNext > 0 ? "（再对 " + toNext + " 题 ×" + (multiplier + 1) + "）" : "（满倍）");
+                string streakEn = "<color=#" + hex + ">Streak " + combo + " · ×" + multiplier + "</color>" + (toNext > 0 ? " (" + toNext + " more for ×" + (multiplier + 1) + ")" : " (max)");
                 payLine.text = XgUi.T(
-                    "每答一题 ¥" + basePay.ToString("0.00") + " 加一条样本；答得快或连对最多再加 100%；" + (fine > 0 ? "答错扣 ¥" + fine.ToString("0.00") : "答错不扣钱") + "。今天 " + Sim.DayDone + " 条 · ¥" + Sim.DayIncome.ToString("0.00"),
-                    "Each answer ¥" + basePay.ToString("0.00") + " and one sample; a quick answer or a streak adds up to +100%; " + (fine > 0 ? "a wrong one costs ¥" + fine.ToString("0.00") : "a wrong one costs nothing") + ". Today " + Sim.DayDone + " · ¥" + Sim.DayIncome.ToString("0.00"));
+                    streakZh + "　每题 ¥" + basePay.ToString("0.00") + " 加一条样本；每连对两题，下一题加一倍，最高 ×5；快答 +50%；" + (fine > 0 ? "答错扣 ¥" + fine.ToString("0.00") + "并清零" : "答错清零") + "。今天 " + Sim.DayDone + " 条 · ¥" + Sim.DayIncome.ToString("0.00"),
+                    streakEn + "  Each answer ¥" + basePay.ToString("0.00") + " and one sample; every 2 correct answers add 1× from the next answer, up to ×5; quick +50%; " + (fine > 0 ? "a miss costs ¥" + fine.ToString("0.00") + " and resets" : "a miss resets") + ". Today " + Sim.DayDone + " · ¥" + Sim.DayIncome.ToString("0.00"));
             }
             bool maxed = Sim.RaiseLevel >= XgCatalog.RaiseMax;
             double cost = Sim.NextRaiseCost;

@@ -142,7 +142,8 @@ namespace LingGuangV05.XingGuang
             var n = XgCatalog.Node(dataset + ".pack");
             if (n == null) return double.PositiveInfinity;
             if (index <= 0) return NodeCost(n);
-            return Math.Ceiling(n.cost * StoryResearchPrice * (1 - Math.Min(.7, RelicFx.techCut)) * Math.Pow(BatchPriceGrowth, index));
+            double basePrice = LingGuangV05.Core.PurchasePricing.AtLeastHundred(Math.Ceiling(n.cost * StoryResearchPrice * Math.Pow(BatchPriceGrowth, index)));
+            return Math.Ceiling(basePrice * (1 - Math.Min(.7, RelicFx.techCut)));
         }
 
         /// <summary>The next batch's price, or infinity when every batch is bought.</summary>
@@ -419,11 +420,11 @@ namespace LingGuangV05.XingGuang
         /// <summary>The line is the slow part: the queue needs a while and a faster tier is on offer.</summary>
         public bool BroadbandBottleneck => LineHead() != null && LineQueueSeconds > BroadbandSlowSeconds && BroadbandBlocker(out _) == null;
 
-        /// <summary>摆渡云 super member for the next item of this key: ¥ for the seconds it saves, at least ¥50.</summary>
+        /// <summary>摆渡云 super member for the next item of this key: ¥ for the seconds it saves, normalized to the purchase minimum.</summary>
         public double AccelerateCost(string key)
         {
             var x = FirstQueued(key);
-            return x == null ? AccelerateMin : Math.Max(AccelerateMin, Math.Ceiling(SecondsLeft(x) * AcceleratePerSecond));
+            return LingGuangV05.Core.PurchasePricing.AtLeastHundred(x == null ? AccelerateMin : Math.Max(AccelerateMin, Math.Ceiling(SecondsLeft(x) * AcceleratePerSecond)));
         }
 
         /// <summary>Finishes the next item of this key at once (it still needs the room on the disk).</summary>
@@ -504,7 +505,7 @@ namespace LingGuangV05.XingGuang
             get
             {
                 int next = BroadbandTier + 1;
-                return next >= BroadbandMBps.Length ? double.PositiveInfinity : BroadbandInstall[next] + BroadbandMonthly[next] - BroadbandMonthly[0];
+                return next >= BroadbandMBps.Length ? double.PositiveInfinity : LingGuangV05.Core.PurchasePricing.AtLeastHundred(BroadbandInstall[next] + BroadbandMonthly[next] - BroadbandMonthly[0]);
             }
         }
 

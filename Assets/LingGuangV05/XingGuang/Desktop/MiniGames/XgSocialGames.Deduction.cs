@@ -123,15 +123,22 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         static string Word(bool value) => value ? XgUi.T("对", "True") : XgUi.T("错", "False");
         string Progress()
         {
-            int count = C.Sim.TeachingAnswers;
-            return XgUi.T("连对", "Streak") + "\n<size=36>" + C.Sim.S.combo + "</size>\n×" + C.Sim.ComboMultiplier.ToString("0.0")
+            int count = C.Sim.TeachingAnswers, combo = C.Sim.S.combo;
+            int multiplier = C.Sim.StreakMultiplier, toNext = C.Sim.StreakToNext;
+            // The multiplier is the big number, in its tier's colour and growing with it; the streak and the way to the next step around it.
+            string hex = ColorUtility.ToHtmlStringRGB(XgJuice.StreakColor(multiplier));
+            string next = toNext > 0 ? XgUi.T("再对 " + toNext + " 题 ×" + (multiplier + 1), toNext + " more: ×" + (multiplier + 1)) : XgUi.T("满倍", "Max");
+            return XgUi.T("连对 ", "Streak ") + combo
+                + "\n<size=" + (34 + 6 * multiplier) + "><color=#" + hex + ">×" + multiplier + "</color></size>"
+                + (multiplier > 1 ? "\n<color=#" + hex + ">" + XgJuice.StreakName(multiplier) + "</color>" : "")
+                + "\n<size=14>" + next + "</size>"
                 + "\n\n" + XgUi.T("第 " + (count / 12 + 1) + " 套 · " + (count % 12) + "/12", "Set " + (count / 12 + 1) + " · " + (count % 12) + "/12");
         }
         string AiAnswer => !C.Sim.TeachingAiReady ? "" : C.Sim.AiDisplayName + "：" + (C.Sim.YesNoAccuracy < .55
             ? XgUi.T("……不知道", "…not sure") : Word(aiSays) + " · " + (int)Math.Round(C.Sim.YesNoAccuracy * 100) + "%");
         void Draw()
         {
-            Clear(XgUi.T("常识判断", "Common sense"), XgUi.T("判断题目对错；快答有奖励，慢慢想也没关系。", "Judge the statement. Quick answers earn a bonus; take your time if needed."));
+            Clear(XgUi.T("常识判断", "Common sense"), XgUi.T("判断题目对错；连对越多奖励越高，最高五倍。", "Judge the statement. A longer streak pays more, up to five times."));
             Shade(20, 94, 620, 150);
             questionText = T("Question", 42, 108, 575, 124, XgUi.T(statement.text, string.IsNullOrEmpty(statement.textEn) ? statement.text : statement.textEn), 31);
             timer = T("Timer", 708, 8, 175, 36, "", 19); Clock(left);
@@ -168,7 +175,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var title = C.Root.Find("Title")?.GetComponent<TMP_Text>();
             var rule = C.Root.Find("Rule")?.GetComponent<TMP_Text>();
             if (title != null) title.text = XgUi.T("常识判断", "Common sense");
-            if (rule != null) rule.text = XgUi.T("判断题目对错；快答有奖励，慢慢想也没关系。", "Judge the statement. Quick answers earn a bonus; take your time if needed.");
+            if (rule != null) rule.text = XgUi.T("判断题目对错；连对越多奖励越高，最高五倍。", "Judge the statement. A longer streak pays more, up to five times.");
             if (questionText != null) questionText.text = XgUi.T(statement.text, string.IsNullOrEmpty(statement.textEn) ? statement.text : statement.textEn);
             if (aiText != null) aiText.text = AiAnswer;
             if (yes != null) yes.label.text = Word(true);
@@ -184,8 +191,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (locked) { if (Time.frameCount > answeredFrame) NextQuestion(); return; }
             if (feedbackLeft > 0) { feedbackLeft -= dt; if (feedbackLeft <= 0) hint.text = ""; }
             left = Mathf.Max(0, left - dt); Clock(left);
-            if (C.KeyDown(Key.Digit1) || C.KeyDown(Key.LeftArrow)) Answer(true);
-            else if (C.KeyDown(Key.Digit2) || C.KeyDown(Key.RightArrow)) Answer(false);
+            if (C.KeyDown(Key.Digit1) || C.KeyDown(Key.LeftArrow)) C.PlayerInput(() => Answer(true));
+            else if (C.KeyDown(Key.Digit2) || C.KeyDown(Key.RightArrow)) C.PlayerInput(() => Answer(false));
         }
     }
 }

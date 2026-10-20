@@ -23,8 +23,8 @@ namespace LingGuangV05.XingGuang
         public const string CrawlOfferId = "news.crawl", CrawlDataset = "news";
         /// <summary>Most words one run can grab.</summary>
         public const int CrawlCap = 200;
-        /// <summary>¥ per run: the crowd task's price per label times the cap (¥0.04 × 200 = ¥8).</summary>
-        public const double CrawlPrice = CrawlCap * CrowdPricePerLabel;
+        /// <summary>One-off run price, normalized separately from continuous crowd-task rates.</summary>
+        public static double CrawlPrice => LingGuangV05.Core.PurchasePricing.AtLeastHundred(CrawlCap * CrowdPricePerLabel);
         /// <summary>How long a run lasts on screen, in seconds.</summary>
         public const double CrawlSeconds = 60;
         /// <summary>Share of junk rows (adverts, typos, edit-war leftovers) before 数据清洗.</summary>
@@ -51,12 +51,14 @@ namespace LingGuangV05.XingGuang
         /// <summary>Pays for a run and starts it. False if one is going on, it is not on offer yet, or money is short.</summary>
         public bool StartCrawl(IXgHost host)
         {
+            if (!SpiderReadingUnlocked) { Say(T("先在科技购买灵宠蜘蛛。", "Buy the resident spider in Tech first.")); return false; }
             var def = DataOfferDef(CrawlOfferId);
             if (def == null || host == null) return false;
             var why = OfferBlocker(def, out string whyEn);
             if (why != null) { Say(T(why, whyEn)); return false; }
             if (!host.Spend(def.price)) { Say(T("经费不足 ¥" + F(def.price, "0"), "Not enough money: ¥" + F(def.price, "0"))); return false; }
             S.totalSpent += def.price;
+            if (!LegacySpiderAbilities) S.spiderPurchasedInitially = true;
             S.crawlRuns++;
             CrawlActive = true;
             CrawlTaken = 0;
